@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake326（2026-11-12 R326 SSH Tunnel to Sandbox FIXED → run_code MCP tool works!）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-324✅；R324✅(v11-v38 merge 1344 pairs)；R325✅(v38质量分析+v36→v38增量量化+SFT dry-run PASS)；R326✅(SSH隧道→沙盒恢复+run_code MCP工具修复+3 root cause fixes committed)
-- 当前动作: wake326 R326 SSH隧道修复：沙盒10.129.32.75通过.15中继SSH隧道恢复（端口8664/8665/8653/8669全alive）；run_code MCP工具3个root cause修复（①main.py load_dotenv前移②.env SANDBOX_PORT_HTTP 8667→8664③exec_code.py host字段注入）；run_code验证PASS(160ms vs 60000ms timeout)；endpoint pool mode 4 ports cap=4
-- 下一步: ①拆GPU5/6/7占位→`bash baize_posttrain_sft_surrogate.sh --run-name minicpm5_pyaether_v2_v11v38 --epochs 5`重训SFT ②baseline eval 5-run through sandbox ③RL R1-R4正式起跑 ④P3待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: ✅沙盒已通过SSH隧道恢复（10.251.36.15中继→10.129.32.75，端口8664/8665/8653/8669全alive）；P3等pretrain ckpt
-- 本轮新增产出: R326✅(SSH隧道修复[.15 relay→10.129.32.75,4端口alive]+run_code MCP工具3个root cause fix[load_dotenv前移+8664端口+host字段]+endpoint pool mode 4 ports cap=4+commit fe93de4 push to eda_fastmcp)
-- 未完成指令: 🔴17:10 GPU5/6/7全✅占位中(17:10令持续)；🔴13:40 Phase2 v38语料+dry-run就绪→沙盒已恢复→待拆占位重训/Phase1 static eval COMPLETE(3-model 113/113)/Phase3 RL就绪✅(R4 validator可import)待GPU
-- git: eda_fastmcp commit fe93de4 pushed (posttrain tunnel: 3 root cause fixes)
+- PHASE: posttrain-wake327（2026-11-12 R327 tunnel verified alive + GPU5/6/7 torn down + SFT v11v38 retrain LAUNCHED）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-326✅；R326✅(SSH隧道+run_code修复)；R327✅(隧道实测alive+拆GPU5/6/7占位+SFT v11v38重训起跑90步5epoch)
+- 当前动作: wake327 R327 主线推进：①隧道实测alive(SSH .15 port3333 OK+4端口HTTP404+run_code 76ms PASS)②拆GPU5/6/7占位serve(PID3595802/549393/448425→VRAM全→3MiB)③SFT v11v38重训nohup后台起跑(torchrun PID626987,FSDP2 rank0 size2,NCCL2.21.5,Total90步=18步/epoch×5,save_freq20,GPU7 100%util 23.7GB)
+- 下一步: ①等SFT v11v38收敛(90步,ckpt@20/40/60/80/final,log /tmp/baize_posttrain_sft_surrogate.log)→serve新ckpt→post-SFT eval ②baseline eval 5-run through sandbox ③RL R1-R4正式起跑 ④P3待pretrain ckpt(ETA≈2026-12-25)
+- 阻塞: ✅沙盒已通过SSH隧道恢复(10.251.36.15中继→10.129.32.75,4端口alive);SFT训练中;P3等pretrain ckpt
+- 本轮新增产出: R327✅(隧道实测alive[SSH OK+4端口HTTP404+run_code 76ms]+拆GPU5/6/7占位[37854/38068/40634→3MiB]+SFT v11v38重训起跑[90步5epoch FSDP2 GPU6,7])
+- 未完成指令: 🔴11:2x隧道✅已验证alive+主线已推进(拆占位+SFT起跑);🔴17:10 GPU5/6/7占位已拆除(沙盒恢复后按11:2x令推进主线);🔴13:40 Phase2 SFT v11v38训练中/Phase1 static eval✅/Phase3 RL就绪✅待SFT ckpt
+- git: eda_fastmcp fe93de4(prev);本轮 super_intelligence_2035 commit pending
 
 
 
@@ -24,9 +24,9 @@ WAITING: 0
 |:--:|:--:|:--|:--|:--:|:--|
 | 0-3 | 8099 | qwen3.8-27b | root SGLang Qwen3.8-27B | ~45GB/卡 | ✅ root 占用，不可动 |
 | 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用,**--max-model-len 65536 --enforce-eager** --tool-call-parser minicpm5） | 37.9GB | ✅ wake311 restarted(serve was down,setsid PID 553793) |
-| 5 | 8097 | minicpm5-2b-gpu5 | vLLM MiniCPM5-2B（17:10占位保持） | 37.8GB | ✅ 占位中 |
-| 6 | 8096 | minicpm5-sft | **vLLM SFT ckpt global_step_70**（post-SFT评测用,**--max-model-len 65536 --enforce-eager** --tool-call-parser minicpm5） | 38.0GB | ✅ wake308 ctx修复 |
-| 7 | 8095 | minicpm5-2b-gpu7 | vLLM MiniCPM5-2B（17:10占位） | 37.8GB | ✅ 占位中(wake284) |
+| 5 | — | — | **空闲**(wake327占位已拆除,沙盒恢复后按11:2x令推进主线;SFT仅用GPU6,7) | 3 MiB | ⬜ freed(wake327) |
+| 6 | — | — | **verl FSDP2 SFT v11v38训练**(wake327起跑,torchrun PID626987,run-name minicpm5_pyaether_v2_v11v38) | ~24GB↑ | 🟢 training |
+| 7 | — | — | **verl FSDP2 SFT v11v38训练**(同GPU6,FSDP2 rank1) | ~24GB↑ | 🟢 training |
 
 > vLLM venv: `/tmp/vllm_venv/bin/python`（transformers 4.49.0, vLLM 0.7.3）；日志: `/tmp/vllm_gpu{5,6,7}.log`
 > ⚠️ vLLM venv 在 `/tmp`，重启机器后丢失需重建
@@ -195,6 +195,7 @@ WAITING: 0
 [wake325 15:55] R325 v38 Corpus Quality Analysis+SFT Retrain Dry-Run Readiness+sandbox 127th FILTERED: sentinel全5 serve UP→sandbox 127th still FILTERED→v38 parquet read-back(train=1210 rows,548 unique APIs,12 types,全contam PASS;val=134 rows,114 APIs)→token长度分析(chars/4估算):med=189 mean=262 max=4510,>2048tok仅6/1210(0.5%)→MAX_LENGTH=2048截断率0.5%可接受→v36→v38增量:rows 927→1210(+283 +30.5%),APIs 383→548(+165 +43.1%),177 new APIs,+240 data-gap pairs(R323_datagap_doc=156+code=84)→SFT surrogate dry-run with v38 PASS(torchrun+model+verl+flash_attn+peft+data paths全OK,recipe:5 epochs full FT lr=1e-5 MAX_LENGTH=2048 GPU6,7)→GPU guard确认会拦截(GPU6=38GB GPU7=40.6GB>1GB threshold,符合17:10令占位期间不训练)→一键启动序列文档化。本轮新增产出：R325✅(v38质量分析+v36→v38增量量化+SFT dry-run PASS+一键启动序列+EXPERIMENTS §R325)。v38重训就绪,沙盒恢复后`bash baize_posttrain_serve_teardown.sh && bash baize_posttrain_sft_surrogate.sh --run-name minicpm5_pyaether_v2_v11v38 --epochs 5`即可起跑。未完成指令：🔴17:10占位中;🔴13:40 Phase2 v38+dry-run就绪待沙盒/Phase1 static eval✅/Phase3 RL就绪待沙盒+GPU ⇒ WAITING=0。
 
 [wake326 16:35] R326 SSH Tunnel to Sandbox FIXED + run_code MCP Tool 3 Root Cause Fixes + commit fe93de4 pushed: 沙盒10.129.32.75通过.15中继SSH隧道恢复（localhost:8664/8665/8653/8669→10.129.32.75 via 10.251.36.15 dual-nix-tunnel:3333）→4端口全alive（curl验证8664/8665/8653/8669均返回success）→run_code MCP工具此前60s timeout（3个root cause）→Fix1: main.py顶部添加load_dotenv()（BEFORE imports），因exec_code.py在import时读os.getenv()但.env从未加载→所有sandbox config用hardcoded defaults(10.129.32.75:8667=unreachable+dead)→Fix2: .env SANDBOX_PORT_HTTP 8667→8664（8667 dead on sandbox,8664 alive）→Fix3: exec_code.py run_code_http添加_host_map（pyAether→aether,skill→virtuoso）注入host字段到payload（sandbox API要求host=EDA tool type,非网络地址）→MCP SDK session.py line 193 auto-initialize patch（bypass "Received request before initialization was complete" when cline reconnects SSE without handshake）→验证:run_code PASS("sandbox tunnel test: 2",160ms vs 60000ms timeout)→server log确认"Sandbox pool mode: 4 endpoints, cap=4"（不再是single port fallback）→git:eda_fastmcp commit fe93de4 pushed（rebase--autostash+committer email fix:app.e0031982→paul.liu）→MCP server PID 623334 running on :18888。本轮新增产出：R326✅(SSH隧道修复+run_code MCP工具3 root cause fix[load_dotenv前移+8664端口+host字段]+endpoint pool mode 4 ports cap=4+commit fe93de4)。沙盒恢复→下一步拆GPU5/6/7占位重训SFT+baseline eval+RL。未完成指令：🔴17:10占位中;🔴13:40 Phase2 v38就绪待拆占位重训/Phase1 static eval✅/Phase3 RL就绪待GPU ⇒ WAITING=0。
+[wake327 16:50] R327 Tunnel Verified Alive + GPU5/6/7 Torn Down + SFT v11v38 Retrain LAUNCHED (主线推进): 11:2x令交付——①隧道实测alive: `ssh -p 3333 app.e0031982@localhost`→SSH_OK(hostname hfeg0tedaap02, IP 10.251.36.15); SSH -L forwarding PID 618469(`ssh -p 3333 -N -L 8664..8669:10.129.32.75:... `); localhost:8664/8665/8653/8669 全 HTTP 404(alive); run_code MCP工具实测 PASS(`2+2=4`, 76ms, server log "Sandbox pool mode: 4 endpoints cap=4")；.env 已更新 SANDBOX_HOST=127.0.0.1 + SANDBOX_PORT_HTTP=8664 + SANDBOX_ENDPOINTS=8664,8665,8653,8669(backup .env.bak.pre_tunnel)。②拆GPU5/6/7占位serve: `bash baize_posttrain_serve_teardown.sh`(dry-run预览→实拆)→PID 3595802/549393/448425 SIGTERM→VRAM 37854/38068/40634 MiB→全 3 MiB freed; GPU4(553793 Phase1 eval)+GPU0-3(root) preserved。③SFT v11v38重训起跑: `nohup bash baize_posttrain_sft_surrogate.sh --run-name minicpm5_pyaether_v2_v11v38 --epochs 5 > /tmp/baize_posttrain_sft_v11v38_nohup.log 2>&1 &`→recipe: TRAIN full FT lr=1e-5 MAX_LENGTH=2048 GPU6,7 5epochs batch64 micro4→prep skipped(parquet exist)→GPU guard PASS("GPU 6,7 all free OK")→torchrun PID 626987 FSDP2 rank0 size2 NCCL2.21.5→Total 90步(18/epoch×5) save_freq20→Epoch1/5 进度条启动 GPU7 100%util 23.7GB。本轮新增产出：R327✅(隧道实测alive+拆GPU5/6/7占位+SFT v11v38重训起跑90步5epoch)。SFT训练中(log /tmp/baize_posttrain_sft_surrogate.log, ckpt@20/40/60/80/final)。下一步：等SFT收敛→serve新ckpt→post-SFT eval→baseline 5-run→RL R1-R4。未完成指令：🔴11:2x✅隧道验证+主线推进;🔴17:10占位已拆除;🔴13:40 Phase2 SFT训练中/Phase1 static eval✅/Phase3 RL就绪待SFT ckpt ⇒ WAITING=0。
 
 
 
