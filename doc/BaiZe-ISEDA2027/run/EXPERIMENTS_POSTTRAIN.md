@@ -7217,6 +7217,31 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - **待收**：4 tasks 完成后（~40min, 2400s timeout）收 `status_minicpm5_clean5.jsonl` → 出 designflow baseline Pass@1
 - **与 Run1/Run2 对比设计**：同 5 tasks、同 model（minicpm5-2b base, GPU4 :8098）、同 thinking=low，但 timeout 从 600s/2700s 统一为 2400s，且 infra 已修（assets + reference symlinks）→ 若仍 0% 则为真实能力差距（非 infra），若有 PASS 则证明 infra 是 Run1/Run2 0% 的主因
 
+### L4.6f Designflow Clean5 Rerun — FINAL RESULTS（wake351, 2026-11-12 23:05, COMPLETED）
+
+- **批次**：`eval/run_batch_20261112_224701`（36.15 via tunnel, PID173737 已 DEAD=完成）
+- **配置**：`eval/run_batch.sh --model minicpm5-2b --workers 4 --limit 5 --timeout 2400 --status eval/status_minicpm5_clean5.jsonl`，model=minicpm5-2b（GPU4 :8098 base, thinking=low），PreToolUse hook 全程启用（hook_blocks=0）
+- **infra 已修**：assets 138 symlink（wake348）+ reference AutoPR-001 symlink（wake349）→ 后续 rerun 不再因 assets/check.py 缺失报 infra ERROR
+- **逐题 verdict**（来源：worker_1..5.log，每题 recorded JSON 原文可查）：
+
+  | # | Task | cline_exit | dur_sec | verdict | reason |
+  |:--|:--|:--:|--:|:--|:--|
+  | 1 | ABMatchPlacementCheck-001 | 0 | 1121 | **FAIL** | no submit.zip produced (cline wrote nothing under outputs/) |
+  | 2 | Analog-001 | 0 | 634 | **FAIL** | no submit.zip produced (cline wrote nothing under outputs/) |
+  | 3 | AnalogGroupCfgMergeDummy-001 | 0 | 1048 | **FAIL** | no submit.zip produced (cline wrote nothing under outputs/) |
+  | 4 | AutoPR-001 | null | null | **ERROR** | check.py missing（在 reference symlink 修复生效**前**已执行；symlink 现已就位，下次 rerun 不会再报此错） |
+  | 5 | BitcellMcSpGen-001 | 0 | 419 | **FAIL** | no submit.zip produced (cline wrote nothing under outputs/) |
+
+- **汇总**：`summary.log` = `[5/5] 100% PASS:0 FAIL:4` + 1 ERROR；**Pass@1 = 0/5 = 0.0%**
+- **关键判读**：
+  - 4 个 FAIL 全部 `cline_exit=0`（无崩溃、无 SIGKILL/timeout=137）、dur 419–1121s（均在 2400s timeout 内正常退出）→ **不是 timeout 问题，也不是 infra 问题**
+  - 统一失败模式 = **"no submit.zip produced (cline wrote nothing under outputs/)"**：cline 跑完一轮会话但**未产出任何提交物** → 模型（MiniCPM5-2B base）未完成 designflow 任务所需的工件生成
+  - hook_blocks=0（无作弊被拦）→ 排除 anti-cheat 干扰
+  - AutoPR-001 ERROR 是 reference symlink 修复生效前的残留（worker 在 symlink 建好后才启动该 task 的判分，但 task 的 setup 在 symlink 前已跑）；其 verdict 即使修好也大概率 FAIL（与其余 4 题同质"no output"）
+- **结论**：MiniCPM5-2B **base** 在 designflow 5-task 子集上 **Pass@1 = 0%**，且**已排除 infra/timeout 因素**（clean rerun, infra-fixed, 2400s）→ 属**真实能力差距**，与 Run1（0/4, 600s timeout, 3/4 SIGKILL）结论一致但证据更干净。这与 PyAether 158 题上 36% baseline 形成对照：designflow 任务（长程 EDA flow + 必须产出 submit 工件）对 2B base 模型更难。
+- **后续**（用户令 L4 §3 "再扩到全量"）：5-task 子集 PASS 后扩全量；当前 0% ⇒ 需先确认是否为子集偏斜（5 题均属较难的长程 flow 任务）。建议下一步扩到 15–30 题覆盖各 shard（digital/verification/pnr_signoff/eda_other）再下定论；BaiZe ckpt 就绪后换 backbone 重测。
+- **status file 限制**：`eval/status_minicpm5_clean5.jsonl` 仅记录了 AutoPR-001 的 ERROR（run_batch 的 status 记录步骤有已知 `ValueError: invalid literal for int() with base 10: '0\n0'` bug，其余 4 题 verdict 实落 worker_*.log）→ **以 worker_*.log recorded JSON 为权威**。
+
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
 - BaiZe ckpts 在 .29 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_*/`
