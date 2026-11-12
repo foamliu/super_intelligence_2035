@@ -2509,3 +2509,21 @@
 | 2026-11-12 | 【评论防重·非入账】英伟达收紧东南亚 AI 芯片管控（第 260 轮已评 C：3→4） | 今日头条 | comment-done | https://www.toutiao.com/article/7707096089979060770/ |
 | 2026-11-12 | 【评论防重·非入账】DeepSeek Harness 产品分析（第 260 轮已评 D：4→5） | 今日头条 | comment-done | https://www.toutiao.com/article/7706715263105761807/ |
 | 2026-11-12 | 【评论防重·非入账】东莞 AI 终端安全实验室揭牌（第 260 轮已评 E：0→1） | 今日头条 | comment-done | https://www.toutiao.com/article/7707110356312654386/ |
+| 2026-11-12 | 字节火山引擎发布 Seedance 2.5 flash 视频模型：生成速度翻倍，价格更低 | IT之家 | https://www.ithome.com/1/026/069.htm |
+| 2026-11-12 | AMD 收购 World Labs 后李飞飞首次与苏姿丰同台对话：机器人将成为「算力新引擎」 | IT之家 | https://www.ithome.com/1/026/084.htm |
+| 2026-11-12 | 软银领投 Agile Robots 公司 5 亿美元融资，加码人形机器人规模化生产 | IT之家 | https://www.ithome.com/1/026/072.htm |
+| 2026-11-12 | 百度天池 1024 卡超节点发布：可支撑 5 万亿参数模型训练，明年上市 | IT之家 | https://www.ithome.com/1/026/026.htm |
+| 2026-11-12 | 台积电证实部分员工资料泄露，黑客开价 3 枚比特币兜售 | IT之家 | https://www.ithome.com/1/026/087.htm |
+| 2026-11-12 | 韩国金融安全院遭黑客攻击，超过 850 条记录泄露 | IT之家 | https://www.ithome.com/1/026/078.htm |
+| 2026-11-12 | 工信部：「二次号码焕新」覆盖 259 款应用，第三季度下架 72 款违规 App | IT之家 | https://www.ithome.com/1/026/056.htm |
+| 2026-11-12 | 重庆：力争到 2028 年全市可调度智算规模超 10 万 P | IT之家 | https://www.ithome.com/1/026/066.htm |
+| 2026-11-12 | 中国在风电领域实现国际标准新突破（IEC 风电退役及回收准备） | 中新网 | https://www.chinanews.com.cn/cj/2026/11-12/10730736.shtml |
+| 2026-11-12 | 报告：2025年中国传媒产业总产值同比上升6.79% | 中新网 | https://www.chinanews.com.cn/cj/2026/11-12/10730798.shtml |
+| 2026-11-12 | 苹果详解 Secure Exclaves 安全架构：Siri、摄像头和麦克风隐私保护升级 | IT之家 | https://www.ithome.com/1/026/040.htm |
+| 2026-11-12 | 中国天眼 FAST 数据中发现疑似「人造特征」信号，论文作者更倾向于干扰 | IT之家 | https://www.ithome.com/1/026/047.htm |
+| 2026-11-12 | 不用驾照也能「自驾游」，萝卜快跑、神州租车打造全球首个无人车租车服务 | IT之家 | https://www.ithome.com/1/026/064.htm |
+| 2026-11-12 | 助力 Anthropic IPO：Claude 10 月网站访问量创历史新高 | IT之家 | https://www.ithome.com/1/026/041.htm |
+| 2026-11-12 | 马斯克回应 Anthropic「提前终止 SpaceX 算力租赁合作」 | IT之家 | https://www.ithome.com/1/026/035.htm |
+| 2026-11-12 | 刚刚，豆包工作官宣接入 Kimi、DeepSeek，AI 模型自由来了 | 爱范儿 | https://www.ifanr.com/1689176 |
+| 2026-11-12 | 【附录·骨架】海光信息总经理沙超群：预计明年量产新一代 CPU | IT之家 | https://www.ithome.com/1/026/099.htm |
+| 2026-11-12 | 【附录·骨架】通芯智能已完成数亿元融资，首款 AGI 芯片计划 12 月原型验证 | IT之家 | https://www.ithome.com/1/026/050.htm |
