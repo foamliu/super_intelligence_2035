@@ -1,0 +1,18 @@
+=== Recording 10 empty patches as failed(capability) ===
+  cline-patched/sympy__sympy-21930: EMPTY->failed(capability)
+  cline-patched/sympy__sympy-22456: EMPTY->failed(capability)
+  cline-patched/sympy__sympy-22714: EMPTY->failed(capability)
+  codex/pydata__xarray-7393: EMPTY->failed(capability)
+  codex/pylint-dev__pylint-4551: EMPTY->failed(capability)
+  codex/pylint-dev__pylint-4604: EMPTY->failed(capability)
+  codex/pylint-dev__pylint-4661: EMPTY->failed(capability)
+  codex/pylint-dev__pylint-4970: EMPTY->failed(capability)
+  codex/pylint-dev__pylint-6386: EMPTY->failed(capability)
+  codex/pylint-dev__pylint-6528: EMPTY->failed(capability)
+
+=== cline-patched: sympy__sympy-23413 (REAL -> docker eval) ===
+  merged 278 real preds
+  [15:07:27] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  eval done rc=0
