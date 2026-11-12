@@ -141,8 +141,23 @@ def process_shard(args):
             # which to_pylist() can handle even for deeply nested types.
             print(f"  [shard {shard_idx}] row-group read failed ({arrow_err}), trying iter_batches fallback", flush=True)
             files_col = []
-            for rb in pf.iter_batches(batch_size=500, columns=["repo_path", "files"]):
-                files_col.extend(rb.column("files").to_pylist())
+            try:
+                for rb in pf.iter_batches(batch_size=500, columns=["repo_path", "files"]):
+                    files_col.extend(rb.column("files").to_pylist())
+            except Exception as arrow_err2:
+                # Fallback 2: Full read with dotted column paths.
+                # This is the approach proven by stackv3_eda_scan.py Phase A
+                # which successfully scanned ALL 4600 shards with zero errors.
+                # pf.read() returns single-chunk arrays where to_pylist() works
+                # even for deeply nested list-of-struct types.
+                print(f"  [shard {shard_idx}] iter_batches also failed ({arrow_err2}), trying full-read fallback", flush=True)
+                tbl = pf.read(columns=["repo_path",
+                    "files.list.element.file_path",
+                    "files.list.element.language",
+                    "files.list.element.size_bytes",
+                    "files.list.element.is_vendor",
+                    "files.list.element.content"])
+                files_col = tbl.column("files").to_pylist()
         for repo_files in files_col:
             if not repo_files:
                 continue
