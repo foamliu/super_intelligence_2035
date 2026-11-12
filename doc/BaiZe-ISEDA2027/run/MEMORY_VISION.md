@@ -1,8 +1,10 @@
 WAITING: 0
 
-> 🆕 **【wake #1104 · 2026-11-13 07:58】v9监控·GRPO Phase3 step16+/30·nz_std=100%持续·进展正常**：v9 RUNNING(PID1351796/etimes~10544s/stat=RNl/pcpu~1233%/RSS~67GB/进程健康)·**Phase3 GRPO进展**:step16/30 reward=**0.750** std=**0.433** nz_std=**100%**(持续全信号·远优于v8)·step13 reward=0.750 std=0.433·step10 reward=0.875·step7 reward=0.750·step4 reward=0.625·step1 std=0(初始正常)·**Eval A=0.0%**(zero-shot✓)·**Eval B=49.5%**(SFT✓优于v8 45%)·按~66s/step推算当前实际≈step20(日志step19待flush)·剩余:seed0 GRPO~10步(~11min→~08:09)+EvalC(~3min)+seeds1-2(复用SFT·各~33min)+control(~33min)·ETA完成≈09:40-10:10·v8 MIXED(A=0%/B=45%/C=52.5%±6.1%/p=0.0312)·analyze_v9就绪·✅HTML报告45187B(v8版)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull: Already up to date·GPU pretrain全占·体积TASK27KB/MEMORY 14KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1105 · 2026-11-13 07:58】v9监控·GRPO Phase3 step22/30·nz_std=100%持续·reward回升0.750·进展正常**：v9 RUNNING(PID1351796/etimes~10826s/stat=RNl/pcpu~1240%/RSS~67GB/进程健康)·**Phase3 GRPO进展**:step22/30 reward=**0.750** std=**0.433** nz_std=**100%**(持续全信号)·step19 reward=0.500 std=0.500·step16 reward=0.750·step13 reward=0.750·step10 reward=0.875·**Eval A=0.0%**(zero-shot✓)·**Eval B=49.5%**(SFT✓优于v8 45%)·剩余:seed0 GRPO~8步(~9min→~08:07)+EvalC(~3min)+seeds1-2(复用SFT·各~33min)+control(~33min)·ETA完成≈09:40-10:10·v8 MIXED(A=0%/B=45%/C=52.5%±6.1%/p=0.0312)·analyze_v9就绪·✅HTML报告45187B(v8版)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull: Already up to date·GPU pretrain全占·体积TASK27KB/MEMORY 14KB均✓·**WAITING: 0**。
 
-> 📦 **wake #1103 · 2026-11-13 07:53** v9监控·GRPO step13/30·nz_std=100%全信号·已fold(见wake#1104)。
+> 📦 **wake #1104 · 2026-11-13 07:58** v9监控·GRPO step16/30·nz_std=100%持续·已fold(见wake#1105)。
+
+> 📦 **wake #1103 · 2026-11-13 07:53** v9监控·GRPO step13/30·nz_std=100%全信号·已fold(见wake#1105)。
 
 > 📦 **wake #1102 · 2026-11-13 07:42** v9监控·GRPO step7/30信号转正·已fold(见wake#1103)。
 
