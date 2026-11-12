@@ -18,7 +18,7 @@
 
 4) **排期门禁（已满足，记录在案）**：门禁原文 = 轴 B 15/15 全部收口（含 B_en_r1 基座对齐重跑落盘 idx31 + trace 归档）+ 主报告/轴 B 独立报告/audit §5.3 刷新 + commit/push。**现状（2026-11-12 21:0x）**：B_en_r1 = 124/158 = **78.5%**（batch 2026_1112_161042，trace 332M/158 子目录），B_en 三轮均值 81.0±2.9%，轴 B 15/15 = dsv4-pro-cloud 恒定；报告/audit/独立报告已刷新并提交（`a909fe482`）。⇒ **门禁判定 PASS，本实验即刻可起跑**。仍不允许与 designflow 或其他评测并发（额度/沙盒互斥）。
 5) **P1 试点（v2）**：固定 8 题（seed=42，取 Top-40 清单前 8）× 两臂各 1 轮；量三个数：压缩率、Pass@1、单题耗时。**调档规则**：压缩率 <60% → `maxInputTokens` 32K→24K→16K（每次只动这一个数）；压缩率 >95% 且 Pass@1 <20% → 回调 48K；两臂压缩率差 >15pp → 先查 strategy 是否真生效（basic`kind=compaction` / agentic`kind=compaction_summary`）。锁定最终档位后再开全量。
-6) **P2 主实验（v2）**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION` + 独立 `--data-dir`），**40 题 × 2 臂 × 3 轮**（约 0.94h/轮，纯跑 ~5.6h），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。可选：自然 128K regime 用同清单前 20 题 × 2 臂 × 1 轮做描述性验证（+~0.9h，不设判据）。
+6) **P2 主实验（默认方案，可按 item 14 的自行判断替换）**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION` + 独立 `--data-dir`），**默认 40 题 × 2 臂 × 3 轮**（若你按 item 14 选了别的设计，以你的 decision 为准；约 0.94h/轮，纯跑 ~5.6h），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。可选：自然 128K regime 用同清单前 20 题 × 2 臂 × 1 轮做描述性验证（+~0.9h，不设判据）。
 7) **P3 报告（用户点名要中文 HTML）**：`reports/report_zhulong_compaction_basic_vs_agentic_zh.html`——单文件自包含、内联 CSS、**0 外链**；8 节：摘要（三问结论）/机制口径/主结果（40 题 × 6 轮表 + 逐题配对 + regime 声明 tight-context）/亚组（是否触发压缩×轨迹长度×domain）/失败分类/成本-收益/摘要质量/结论与默认策略建议 + 附录。**主终点唯一 = 3 轮 Pass@1 均值（ITT）**；亚组只作次要终点，须报效应量+CI+n。
 8) **预注册纪律**：跑前不改判据；所有轮次全入表、不剔除；单轮不下结论；差异 <3pp 就写「证据不足」，不许包装成增益。
 9) **红线**：不 kill 编排器/loop；不与 designflow 并发抢沙盒；不改 benchmark/评分器；不删旧结果与 trace；不改别线文件。
@@ -68,15 +68,16 @@ wc -l run/compaction_subset_40.txt   # 必须 40
 
 12) **P1 只做两件事**：8 题 × 2 臂，①确认触发（32K 路径：每臂 ≥70%；fallback 路径：15 题全部触发）②确认 `metadata.kind` 正确。结果落 `run/compaction_pilot.json`；**不再做 32K→24K→16K 的多档调档**（那个数不生效就没档可调，生效就不用调）。
 
-13) **收尾**：`run/compaction_subset_40.txt` + `run/compaction_pilot.json` + `run/run_compaction_ablation.sh` + `run/ablation_compaction_results.json` + `run/cost_C_*_r*.json` + 报告，一并 `git add`（只加本线文件）→ commit → push；MEMORY 写一行总结（最终 maxInputTokens 或 fallback / Δ / p / 一句话结论）。
+13) **收尾**：`run/compaction_p0_decision.md`（你的调查结论）+ `run/compaction_pilot.json` + `run/run_compaction_ablation.sh` + `run/ablation_compaction_results.json` + `run/cost_C_*_r*.json` + 报告，一并 `git add`（只加本线文件）→ commit → push；MEMORY 写一行总结（选定设计 / Δ / p / 一句话结论）。
 
-14) **🔻 简化版 v4（2026-11-12 用户质疑后收敛，执行以本条为准；§11/§12 的 P0.5/mediation 全部取消）**
-   - **就一个数**：`maxInputTokens = 32000`（`models.json`，两臂同值）→ 触发点 0.9×32K ≈ **28.8K**。
-   - **唯一前置 P0e（0.3h）**：先确认 harness 把 data-dir 传给了 cline——`grep -n -- '--data-dir' scripts/run_cline_script.sh`；没有就**加 1 行** `--data-dir "$CLI_DATA_DIR"`（空值时退回默认，保持向后兼容）。然后跑 1 题验证：`compaction.json.source_tokens ≈ 28.8K (±10%)` 且两臂都在该点触发。⚠️ **P0d 的「3.0.51 忽略 models.json」未证实**：当时触发 229.9K ≈ 默认 256K×0.9，极可能只是 data-dir 没传进去；**若这 1 行生效，就不升级 4.x、不做任何 fallback**。
-   - **路径 A（数生效，推荐）**：40 题 × 2 臂 × 3 轮 ABBA，~5.6h；只比 **Pass@1 / tok·题 / 墙钟 / 触发率**。
-   - **路径 B（数不生效，不折腾版本）**：直接换 **Top-15 超长任务**（历史 trace 总 token ≥230K，basic 必触发）× 2 臂 × 3 轮，~2–3h；主结论 = 部署效果（agentic 更早压缩+语义摘要 vs basic 更晚+逐字保留），报告注明两臂触发时机不同即可。
-   - **不做**：P0.5 离线摘要实验、混合效应/中介分析、4 档调档、额外 shard 扩展——这些都不回答“basic vs agentic 哪个好”。
-15) **报告最小集**：3 轮 Pass@1 均值±std + 逐题配对 McNemar + tok/题 + 墙钟/题 + 每臂触发率与触发 token 中位数 + 失败分类（infra/能力）；最后一句明确给结论（选 basic / 选 agentic / 证据不足）。
+14) **实现路径由你决定（用户令 2026-11-12：不要替 agent 做主）**
+   目标只有一个：在**两臂相同预算**下让压缩真实发生（或证明做不到），从而回答 basic vs agentic 哪个好。
+   **你要自己查、自己定**：
+   a. 读 `EDA-Eval-Framework/scripts/run_cline_script.sh`：它怎么起 cline、有没有把 data-dir/env 传下去；
+   b. 读/实测 cline（现网 3.0.51）如何解析 `maxInputTokens` / `contextWindow`（`<data-dir>/settings/models.json`、`global-settings.json`）；P0d 的「不生效」到底是因为版本不读，还是因为配置没送到——**用 1 题最小实验给出证据**（`compaction.json.source_tokens` 与 `maxInputTokens` 的关系）；
+   c. 据此**自己选最简可行设计**并执行（能控预算 → 固定预算 + 两臂；控不了 → 换成超长任务做部署对比，**不要为了配置去升级/改源码**）；
+   d. 先写 `run/compaction_p0_decision.md`（结论 + 证据 + 选定设计 + 预计时长），再开跑；若判断另一条路更快，直接走另一条，不必等确认。
+15) **只约束这些，不约束实现细节**：同基座/同 cline 版本/同协议（`-p 8 -n`、thinking=medium、同一任务清单）；两臂**只差 compaction**；每臂 ≥3 轮；报告必须给 Pass@1（±std + 配对检验）+ tok/题 + 墙钟 + **每臂触发率与触发 token 中位数** + 失败分类；结论明确写「选 basic / 选 agentic / 证据不足」。**计划书里的 32K、补丁位置、fallback 阶梯都只是参考，不是命令。**
 
 
 
