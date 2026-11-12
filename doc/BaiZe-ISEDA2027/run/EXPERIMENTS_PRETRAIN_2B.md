@@ -1850,3 +1850,21 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - **Training impact**: step ~7.5s (slight CPU contention from eval, nice 19, within acceptable range)
 - **Results file**: `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_hf_gsm8k_direct/results.json`
 - **Next**: L2 remaining tasks (BBH/MATH/MBPP) can be re-evaluated with HF transformers in future rounds
+
+### #2060 · 2026-11-12 16:03 · L2 MBPP HF Direct Eval Started + L4 Confirm + Monitor
+
+- **Round**: #2060 (2026-11-12 16:03)
+- **Training status**: iter 176,760/700k (25.3%), step 7006ms < 7.4s ✅, loss 2.03, 0 NaN/skip, GPU 8×100%/75GB
+- **L2 MBPP HF eval**: Started (PID 2716774, .29)
+  - Script: `baize_l2_hf_mbpp_direct.py` (custom MBPP evaluator, load from HF cache arrow, generate code, run test_list assertions)
+  - Config: sglang env (transformers 5.18.0, native NemotronH, CPU bfloat16) · limit=20 · max_new_tokens=128 · torch.set_num_threads(8) · OMP_NUM_THREADS=4 · nice 19 · CUDA_VISIBLE_DEVICES=""
+  - Model: hf_iter_160000 (160k checkpoint)
+  - Status: **COMPLETED** — pass@1 = 1/20 = **5.0%** (task_id=17 PASS, code_length=556 chars)
+  - 19/20 FAIL but code is coherent (150-555 chars, non-degenerate)
+  - Per-problem gen_time: ~14s (torch.set_num_threads(8) fixed the slowness)
+  - Total eval time: 4.5 min (16:01:42 → 16:06:20)
+  - **Triple verification**: HumanEval HF=15.0% + GSM8K HF=10.0% + MBPP HF=5.0% vs llama.cpp all 0% → llama.cpp SSM bug is confirmed as L2 generation 0% primary cause
+  - Results file: `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_hf_mbpp_direct/results.json`
+- **L4 status**: Confirmed BLOCKED again — SSH .15 (10.251.36.15) and .17 (10.252.32.17) both timeout (16:01 test, 5s ConnectTimeout)
+- **180k autoqueue**: Still waiting for iter_0180000 checkpoint (train iter 176,620, ETA ~6h at current ~7s/iter)
+- **Training impact**: step 7006ms < 7400ms ✅ (no impact from MBPP eval)
