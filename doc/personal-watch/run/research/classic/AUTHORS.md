@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **57** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**）｜已发信 **16**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu**）｜X 已核验 **32**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / **`@billpeeb`** / **`@_tim_brooks`** / **`@rm_rafailov`** / **`@archit_sharma97`** / **`@_onurmutlu_`**）｜X 未找到 **25**（57 人中 32 已核验）｜**X 可达（本机 Mihomo 7897；2026-11-12 12:0x 实测：需显式 `--proxy http://127.0.0.1:7897` —— 本 shell 环境未继承 `HTTPS_PROXY`，直连 `x.com` 返回 `000`、带代理返回 `200`；`x_fetch.py` 内部已默认走代理，2/2 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **14 条**（V1–V14；V13/V14 经推文页 `og:title` 核验为**他人推文** ⇒ 作废不采用；本期 `voice_ready` 仍为 V2 / V4 两条）
+**本轮快照**：累计 **61** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**）｜已发信 **19**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert**）｜X 已核验 **35**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / **`@billpeeb`** / **`@_tim_brooks`** / **`@rm_rafailov`** / **`@archit_sharma97`** / **`@_onurmutlu_`** / **`@danqi_chen`** / **`@natolambert`** / **`@_lewtun`**）｜X 未找到 **26**（61 人中 35 已核验）｜**X 可达（本机 Mihomo 7897；2026-11-12 12:0x 实测：需显式 `--proxy http://127.0.0.1:7897` —— 本 shell 环境未继承 `HTTPS_PROXY`，直连 `x.com` 返回 `000`、带代理返回 `200`；`x_fetch.py` 内部已默认走代理，2/2 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **16 条**（V1–V16；V13/V14 与本轮 **V15/V16** 均经单条推文页 `og:title` 核验为**他人推文** —— V15 实为 `@esonghori2`、V16 实为 `@deanwball` ⇒ 作废不采用；本期 `voice_ready` 仍为 V2 / V4 两条，**本轮无新增合格言论**）
 
 
 ---
@@ -764,6 +764,58 @@
 | 状态 | **已发信**（2026-11-12 15:03:05 `SENT OK`）· X 待 follow |
 | 备注 | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）。信问三点：① 批量短评测（成千上万配置）是否适合 Ramulator 2.0、抽象先在哪破；② 只做「排序」时哪些建模部件可简化而不改排序；③ power/thermal 与 RowHammer 模型相对 timing 的成熟度。回填 zhulong 批量评测基座 + designflow L1–L5 保真度三分。其 X 以课程/workshop 通知为主，`voice_ready` 价值低但**技术判断密度高**。 |
 
+### 58. Danqi Chen（陈丹琦）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danqi Chen（陈丹琦） |
+| 机构 | **Princeton University**（Princeton Language and Intelligence / CS；X bio 自证 `Associate professor @princetonPLI @PrincetonCS`） |
+| 代表论文 | SimPO（`2405.14734`，**三作 / 通讯**）· 另：SimCSE / REALM 等（本线未逐条核验，不引用） |
+| 邮箱 | **danqic@cs.princeton.edu**（来源：本人主页 <https://www.cs.princeton.edu/~danqic/> 明文，2026-11-12 18:0x 实测 `HTTP 200` / 4,734 B；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.cs.princeton.edu/~danqic/>（实测 `HTTP 200` / 4,734 B，主页外链即 `twitter.com/danqi_chen`） |
+| X 账号 | **@danqi_chen**（核验：`x_fetch.py` 实测 `200`，`og:description` = `Associate professor @princetonPLI @PrincetonCS` ⇒ 身份可证） |
+| 状态 | **已发信**（2026-11-12 18:06:04 `SENT OK`）· X 待 follow |
+| 备注 | SimPO 的「去参考模型 + 平均对数概率奖励」直接对应 zhulong 的奖励取舍。信（**中文**，296 字）问三点：① 工具轨迹长度差异远大于摘要任务时长度归一是否足够；② 几万条域内偏好对下 γ/β 怎么取；③ 可验证信号偏好与人工偏好应混训还是分开加权。回填 zhulong 奖励设计 + data 偏好数据表。 |
+
+### 59. Yibo Lin（林一博）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yibo Lin（林一博） |
+| 机构 | **北京大学**（论文作者机构含北大 / 清华；本轮只核到个人主页与邮箱，未核职称） |
+| 代表论文 | CircuitNet（`2208.01040`，**三作**）· 另：EDA / 布局布线方向多篇（本线未逐条核验） |
+| 邮箱 | **yibolin@pku.edu.cn**（来源：本人主页 <https://yibolin.com/> 的 `mailto:`，2026-11-12 18:0x 实测 `HTTP 200` / 11,701 B；**非 2022 年论文 PDF 旧地址**） |
+| 主页 | <https://yibolin.com/>（实测 `HTTP 200` / 11,701 B） |
+| X 账号 | **未找到 X**（主页未挂 X 外链；本轮搜索工具不可用 ⇒ 按令**不猜 handle**，宁缺勿错） |
+| 状态 | **已发信**（2026-11-12 18:06:07 `SENT OK`）· X 未找到 |
+| 备注 | **designflow / data 线最直接的关系人之一**（公开 EDA 数据集）。信（**中文**，262 字）问三点：① 三类标签跨工艺节点与 PDK 的可迁移性、按设计切分是否足够防泄漏；② 闭环任务（读设计→调工具→看结果）的数据集规模与样本组织建议；③ 从模型预测到 signoff 的差距卡在哪一环、哪些指标适合先做代理模型。回填 data 切分纪律 + designflow 造题 + zhulong 代理模型。 |
+
+### 60. Nathan Lambert
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nathan Lambert |
+| 机构 | **Allen Institute for AI（Ai2）/ Trillium Labs**（X bio：`Open model research, founder, director @trillium_labs`；论文发表时为 HuggingFace H4）；Interconnects 作者 |
+| 代表论文 | Zephyr（`2310.16944`，**三作**） |
+| 邮箱 | **mail@interconnects.ai**（来源：本人站点 <https://interconnects.ai/about> 明文，2026-11-12 18:0x 实测 `HTTP 200` / 196,029 B）；⚠️ 属**其 newsletter 公开信箱**（可能由团队过滤）⇒ 30 天无回音按「通道未达」记，不催发 |
+| 主页 | <https://interconnects.ai>（about 页实测 `HTTP 200`） |
+| X 账号 | **@natolambert**（核验：`x_fetch.py` 实测 `200`，`og:description` = `Open model research, founder, director @trillium_labs ...`；站点 about 页亦外链该 handle） |
+| 状态 | **已发信**（2026-11-12 18:06:13 `SENT OK`）· X 待 follow |
+| 备注 | 后训练（尤其 RLHF / 偏好优化）**一手判断源**，言论密度高且技术性强 ⇒ `voice_ready` 高价值候选（须原文 + 链接）。信（**英文**，178 词）问三点：① ~2B + 数万条域内偏好对时 dSFT→dDPO 是否仍划算、先坏在哪；② 可验证任务上是否仍用 AI 反馈而非 checker 偏好；③ 增益里教师排序质量 vs DPO 步本身如何归因。 |
+
+### 61. Lewis Tunstall
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lewis Tunstall |
+| 机构 | **HuggingFace**（X bio：`🤠 post-training @huggingface`；论文发表时 HF H4） |
+| 代表论文 | Zephyr（`2310.16944`，**一作**） |
+| 邮箱 | **未找到**（HF 个人页 <https://huggingface.co/lewtun> 实测 `200` / 463,995 B，无公开邮箱；个人站 `lewistunstall.github.io` 实测 **`404`** ⇒ 按令**不猜**） |
+| 主页 | <https://huggingface.co/lewtun>（实测 `HTTP 200`；页面外链 `twitter.com/_lewtun`） |
+| X 账号 | **@_lewtun**（核验：`x_fetch.py` 实测 `200`，`og:description` = `🤠 post-training @huggingface`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信；**同论文已发信给三作 Nathan Lambert**，同论文 ≤1 封） |
+| 备注 | 其 X 以 post-training 实操经验为主（MoE 训练手册、SFT/RL 取舍）⇒ `voice_ready` 候选源。⚠️ 本轮从其 profile 时间线 JSON 取到的高相关推文经单条页核验**实为他人所发**（见第二节 V15/V16 更正），**未采用**。 |
+
 ---
 
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
@@ -790,6 +842,8 @@
 | 单条推文页取全文 | ⚠️ 部分 | 推文页 `200` 且 `og:title` 可核验作者，但正文由 JS 渲染，**长推文正文可能不在 HTML**（Jason Wei 的 benchmark 那条即如此） |
 | follow / like / 发帖 | ❌ | 需登录态；🚫 令明确不许注册新账号、不许用未授权凭据 ⇒ **本轮 0 follow（未假装已 follow）** |
 | 抓取节奏 | ⏱ 受限 | 本轮 6 个 handle + 4 条推文页，串行、相邻请求 ≥3s；脚本 `research/classic/x_fetch.py`（只读，仅标准库） |
+
+> ⚠️ **本轮新增教训（V15/V16，2026-11-12 18:0x）**：对 `@_lewtun` / `@natolambert` 的 profile 页内嵌 timeline JSON 解析出的**高相关推文**，经单条推文页 `og:title` 核验**分别属于 `@esonghori2` 与 `@deanwball`**（即他人推文被混入 profile JSON）⇒ 两条**均作废、不采用**，也不进 `voice_ready`。结论：**profile JSON 只能当「线索」**，任何拟引用的言论必须先用 `x.com/<handle>/status/<id>` 的 `og:title` 核作者、`og:description` 核全文，两处与 profile 记录一致才可用。
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
@@ -884,6 +938,10 @@
 | 2026-11-12 12:04（**第十二轮**） | Nisan Stiennon | `2009.01325` Learning to summarize from human feedback | 本人站 `nisanstiennon.com` 的 `mailto:nisan+web@stiennon.com`（`200` / 5,575 B，直连与代理 **md5 一致**） | `SENT OK`（`nisan+web@stiennon.com`，英文；⚠️ **`wc -w` 实测 212 词，超 ≤200 规格 12 词，已如实记入台账**） |
 | 2026-11-12 15:03（**第十三轮**） | Archit Sharma | `2305.18290` DPO | 本人主页 `architsharma97.github.io` 的 `mailto:architsh@stanford.edu`（`200` / 3,936 B，代理实测） | `SENT OK`（`architsh@stanford.edu`，**英文 197 词**；🚦 **发送前 `wc -w` 已核**；⚠️ 其 X bio 已写 `prev: @Stanford` ⇒ 若退信记「通道失效」不重发；Stanford 当日第 1 封（Moo Jin Kim 那封属 **11-11** 21:04，按 11-12 00:00 起算不计入今日 ⇒ 1/2）） |
 | 2026-11-12 15:03（**第十三轮**） | Onur Mutlu | `2308.11030` Ramulator 2.0 | 本人 ETH 主页 `people.inf.ethz.ch/omutlu/` 的 `mailto:omutlu@gmail.com`（`200` / 19,850 B 实测） | `SENT OK`（`omutlu@gmail.com`，**英文 177 词**；🚦 发送前 `wc -w` 已核；ETH Zurich 当日第 1 封） |
+| 2026-11-12 18:06（**第十四轮**） | Danqi Chen（陈丹琦） | `2405.14734` SimPO | 本人主页 `www.cs.princeton.edu/~danqic/` 明文 `danqic@cs.princeton.edu`（`200` / 4,734 B，2026-11-12 18:0x 实测） | `SENT OK`（**中文 296 字**，发送前 `wc` 已核；Princeton 今日第 1 封） |
+| 2026-11-12 18:06（**第十四轮**） | Yibo Lin（林一博） | `2208.01040` CircuitNet | 本人主页 `yibolin.com` 的 `mailto:yibolin@pku.edu.cn`（`200` / 11,701 B） | `SENT OK`（**中文 262 字**；PKU 首封；X 未找到） |
+| 2026-11-12 18:06（**第十四轮**） | Nathan Lambert | `2310.16944` Zephyr | 本人站点 `interconnects.ai/about` 明文 `mail@interconnects.ai`（`200` / 196,029 B） | `SENT OK`（**英文 178 词**，发送前 `wc -w` 已核；⚠️ newsletter 公开信箱 ⇒ 30 天无回音记「通道未达」，不催） |
+
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
 
 ---

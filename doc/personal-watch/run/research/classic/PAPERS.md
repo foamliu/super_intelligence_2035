@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **51** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **28** · vision **17** · harness **32** · data **29** · zhulong **36** · designflow **16**
+**本轮快照**：累计 **55** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **30** · vision **17** · harness **32** · data **32** · zhulong **39** · designflow **18**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -917,6 +917,76 @@
 | 与我们工作的关系 | **zhulong（实验基座 / 成本口径）**：如果要把「LLM 出配置 → 模拟器跑 → 回填指标」做成闭环，**模拟器本身必须是可脚本化、可批量、单次成本可控的**；Ramulator 2.0 的「规格语法 + 模块化控制器」正是把配置空间暴露成可搜参数的形态。<b>动作</b>：zhulong 在设计「批量短评测」pipeline 前，先用 Ramulator 2.0 做一次**吞吐标定**（单配置固定 trace 的墙钟时间），<b>判据</b>：若单次评测 &gt;30s，则闭环必须先做代理模型 / 缩短 trace，🚫 直接上 LLM 搜参。<br>**designflow（L1–L5 保真度分层）**：本文明确区分「timing / 功耗 / 可靠性」三类模型成熟度 ⇒ designflow 的保真度分层可参照此三分，而不是笼统一个「高/中/低」。<br>**data（存储领域语料）**：DRAM 规格语法（DDR5/LPDDR5/HBM3/GDDR6）是**结构化领域文本**的样本来源 ⇒ data 线可评估「规格文档 → 可执行配置」这类任务的语料形态。<b>风险</b>：① 被引 185 未达门槛，收录属「领域标志性」判断（我们的观察）；② 摘要未给具体加速倍数与验证误差，🚫 不写「快 N 倍」；③ 与我们 CXMT 内部模型/工具链无任何对接验证。 |
 
 首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 期刊 DOI）
+
+---
+
+## 52. SimPO: Simple Preference Optimization with a Reference-Free Reward
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SimPO: Simple Preference Optimization with a Reference-Free Reward |
+| 作者（前 3） | Yu Meng · Mengzhou Xia · **Danqi Chen**（共 3 位） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-23**；本线取到 **v3 / 2024-11-01**） |
+| 会议 / 期刊 | **NeurIPS 2024**（arXiv `comment` 原文含 `NeurIPS 2024`；OpenAlex `type=conference-paper`，会议 DOI `10.52202/079017-3946`，页码 **124198–124235**） |
+| 被引数 | **560**（OpenAlex，DOI `10.48550/arxiv.2405.14734`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.14734> ｜ 会议 DOI `10.52202/079017-3946` ｜ 代码 <https://github.com/princeton-nlp/SimPO> |
+| 一句话贡献 | 摘要原文：把**序列的平均对数概率**当作隐式奖励（与生成时的打分口径一致），从而**不需要参考模型**、更省显存与算力；同时在 Bradley–Terry 目标中加入**目标奖励边际（target reward margin）**以拉开正负样本间距，作者自报在多种设置下优于 DPO 及其变体。 |
+| 与我们工作的关系 | **zhulong（奖励设计，直接影响）**：我们当前在 ~2B 规模上纠结「要不要保留参考模型」；SimPO 给出了一条**去参考模型**的路径，代价是奖励变成「平均对数概率」⇒ 长度效应被显式引入。<b>动作</b>：zhulong 的奖励消融固定三臂 —— `DPO（带参考）` / `SimPO（无参考 + γ）` / `SimPO 去 γ`，<b>预注册判据</b>：若 SimPO 三臂中「平均回答长度」与「判定正确率」的相关系数 **&gt;0.5**，则必须加长度归一或长度惩罚后重跑，否则不采信其胜出。<br>**data（偏好数据）**：γ 与 β 一起决定「多接近才算赢」，直接影响标注粒度需求 ⇒ data 线的偏好对采集表要同时记录 `长度差` 与 `胜负有无可验证依据`。<br>**harness**：评测必须报**平均输出长度**，否则「胜出」可能只是更长。<b>风险</b>：① 作者自报、本线未复现；② 摘要未给具体胜率数字 ⇒ 本文不引用任何「提升 X%」；③ 我们面对的是工具调用轨迹（长尾、含报错文本），与摘要任务分布差异大，结论不能直接搬。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 会议 DOI / 页码）
+
+---
+
+## 53. Zephyr: Direct Distillation of LM Alignment
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Zephyr: Direct Distillation of LM Alignment |
+| 作者（前 3） | Lewis Tunstall · Edward Beeching · **Nathan Lambert**（et al.，共 14 位） |
+| 年份 | 2023（arXiv 首次提交 **2023-10-25**，仅 v1） |
+| 会议 / 期刊 | **预印本**（arXiv；OpenAlex `type=preprint`，本轮**未核到会议 DOI**） |
+| 被引数 | **867**（OpenAlex，DOI `10.48550/arxiv.2310.16944`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.16944> |
+| 一句话贡献 | 摘要原文：先做**蒸馏式 SFT（dSFT）**，再用**AI 反馈排序出的偏好数据**做**蒸馏式 DPO（dDPO）**，得到 Zephyr-7B；作者自报其在 7B 级 chat 基准上为当时最好，**无需人工标注**，且微调**只需数小时、无需额外采样**。 |
+| 与我们工作的关系 | **pretrain / posttrain（后训练配方）**：这是「**AI 反馈替代人工标注**」这条线的代表作 ⇒ 对我们最实际的问题是「域内偏好对只有几万条时，教师排序 + DPO 是否仍优于纯 SFT」。<b>动作</b>：posttrain 在 ~2B 上做**四臂对照**：`dSFT only` / `dSFT+dDPO(AI 反馈)` / `dSFT+DPO(checker 偏好)` / `dSFT+dDPO 但教师换成我们自己的 7B`，<b>判据</b>：以 harness 的「工具调用一次成功率」为主指标，若 checker 偏好臂不劣于 AI 反馈臂，则**优先 checker**（可自动化、无标注成本）。<br>**data（偏好数据来源）**：AI 反馈 = 可放大但会继承教师偏好；checker = 精确但覆盖窄 ⇒ data 线需要一张「哪些任务可 checker 化」的清单。<br>**zhulong（消融归因）**：Zephyr 的增益同时来自教师数据与 DPO 步，任何引用它的消融都必须把两者拆开。<b>风险</b>：① 7B 结果不外推到 2B；② 全文数字本线未复现，不引用具体分数；③ 「无需人工标注」不等于「无需人工设计教师与筛选」。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议=未核到）
+
+---
+
+## 54. CircuitNet: An Open-Source Dataset for Machine Learning Applications in Electronic Design Automation (EDA)
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | CircuitNet: An Open-Source Dataset for Machine Learning Applications in Electronic Design Automation (EDA) |
+| 作者（前 3） | Zhuomin Chai · Yuxiang Zhao · **Yibo Lin**（共 6 位：+ Wei Liu · Runsheng Wang · Ru Huang） |
+| 年份 | 2022（arXiv 首次提交 **2022-08-01**；本线取到 **v4 / 2022-09-01**） |
+| 会议 / 期刊 | **Science China Information Sciences** 65(**12**)，DOI `10.1007/s11432-022-3571-8`（OpenAlex `type=other`，2026-11-12 实测） |
+| 被引数 | **44**（OpenAlex，上述期刊 DOI，查询日 **2026-11-12**；S2 未查）<br>⚠️ **远低于 §1「被引 ≥500」门槛**，按判据 ④「本领域（EDA / LLM-for-EDA）标志性工作」收录 —— 摘要自称 **the first open-source dataset** for ML in VLSI CAD，是本领域少数公开可下载的设计-指标数据集。 |
+| arXiv / DOI | <https://arxiv.org/abs/2208.01040> ｜ 期刊 DOI `10.1007/s11432-022-3571-8` |
+| 一句话贡献 | 摘要原文：指出 EDA 社区做跨阶段预测时**普遍缺大规模公开数据**、多数研究只能用自建小数据集验证，因此给出**首个开源数据集**（CircuitNet），用于 VLSI CAD 中的机器学习任务。 |
+| 与我们工作的关系 | **data（EDA 语料 / 切分纪律，直接可用）**：公开数据集的价值不只在于「有数据」，而在于**给了可比较的切分口径**。<b>动作</b>：data 线在建 BaiZe 的 EDA 语料时，把「**按设计切分而非按样本切分**」写成硬规则（同一设计的不同采样点不得跨 train/test），并用 CircuitNet 做一次泄漏对照实验，<b>判据</b>：按设计切分后指标若下降 &gt;20%，说明此前的随机切分确实在泄漏。<br>**designflow（造题 / 保真度）**：它把「设计 → 预测指标」做成标准任务 ⇒ designflow 的 L1–L2 题面可直接对齐这类任务形态（读设计特征、预测某项指标），L3+ 才引入工具闭环。<br>**zhulong（代理模型）**：若要把「LLM 出配置 → 工具跑 → 回填」闭环压到可承受成本，代理模型必须先在公开数据上标定误差。<b>风险</b>：① 被引 44 未达门槛，收录属「领域标志性」判断（我们的观察）；② 摘要未给数据规模 / 工艺节点 / 指标清单 ⇒ 本文只写摘要出现的内容，具体类别（IR-drop / DRC / 拥塞）属**领域常识**，未在本文摘要中出现，引用时须另行核验；③ 与我们 CXMT 内部设计数据无任何对接验证。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 期刊 DOI）
+
+---
+
+## 55. The Bitter Lesson（**非论文条目 · 博客随笔**，单列）
+
+> ⚠️ 本条**不是论文**：无 arXiv、无 DOI、无被引口径。按用户令里「必读基线」的候选清单收录（Sutton 一系），**单独标注类型**，不混入论文计数口径的引用场景。
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Bitter Lesson |
+| 作者 | **Richard S. Sutton**（单作者） |
+| 年份 | **2019-03-13**（页面原文日期；`HTTP 200` / 7,297 B，2026-11-12 18:0x 实测） |
+| 会议 / 期刊 | 无（个人主页随笔；`incompleteideas.net`） |
+| 被引数 | **未查**（博客无被引口径；🚫 不写任何估算值） |
+| 链接 | <http://www.incompleteideas.net/IncIdeas/BitterLesson.html> |
+| 一句话贡献 | 原文首句逐字：`The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin.`；随后论证：多数 AI 研究假设算力恒定、转而注入人类领域知识，但长期只有「利用算力」有效，且**两者在实践中往往相互挤占**。 |
+| 与我们工作的关系 | **pretrain（战略口径，不是技术细节）**：这篇是「**通用方法 + 算力** 长期胜出」最常被引的表述，直接对上我们「2B 领域模型 + 领域先验」的取舍 —— 它提醒：领域知识的注入是**短期收益**，长期会被通用方法吃掉。<b>动作</b>：pretrain 在写「为什么要做领域继续预训练」的立项依据时，必须同时给出**通用基线**（同 token 预算的通用语料）作为对照，<b>判据</b>：若领域语料带来的增益在 &lt;2× token 预算内被通用基线追平，则该领域配比按「战术性」而非「战略性」投入。<br>**designflow（造题倾向）**：提示我们少造「靠人肉先验可解」的题，多造「必须调用工具、可规模化验证」的题。<b>风险</b>：① 是**观点文**不是实验证据，🚫 不能当作「已验证结论」引用；② 常被断章取义成「数据无用 / 领域知识无用」，原文明确说两者「need not run counter」，引用须带上下文；③ 无被引数、无同行评审。 |
+
+首次收录: 2026-11-12（第十四轮）｜ 状态: 原文已实测（`HTTP 200` / 7,297 B；首句逐字核对）｜ 类型: **blog（非论文）**
 
 ---
 

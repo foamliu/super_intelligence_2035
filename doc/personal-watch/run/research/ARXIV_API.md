@@ -2286,3 +2286,14 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **OpenAlex（查询日 2026-11-12，4/4 `200`）**：DPO **3,123**（conference-paper，NeurIPS 会场 DOI `10.52202/075280-2338`，pp. 53728–53741）· Mamba-2 `2405.21060` **1,003**（preprint；arXiv `comment` = `ICML 2024`）· FlashAttention-2 `2307.08691` **1,844**（preprint，无会场）· Ramulator 2.0 `2308.11030` **185**（article，IEEE CAL **23(1):112–116**，DOI `10.1109/LCA.2023.3333759`）。
 - **X（只读）**：直连 `x.com` **`000`** / 显式 `--proxy http://127.0.0.1:7897` **`200`**（代理在线）⇒ 3 个 profile **3/3 `200`**（`_onurmutlu_` / `archit_sharma97` / `rm_rafailov`）；**2 条拟引用推文经单条页 `og:title` 核验为他人推文**（`@koraykv` / `@Shalev_lif`）⇒ V13 / V14 **作废**；**0 follow**（写操作需登录态）。
 - **发信 2 封（均 `SENT OK 2026-11-12 15:03:05`）**：Archit Sharma（`2305.18290`，英文 **197 词**，`architsh@stanford.edu`）· Onur Mutlu（`2308.11030`，英文 **177 词**，`omutlu@gmail.com`）；**发送前 `wc -w` 均已核**（落实 12:00 教训）。
+
+## §9.158 · 2026-11-12 18:00 CST（时窗轮 · A 轨重扫 + B 轨第十四轮 + 第 8/9/10 封信）
+
+- **批次仍未刷新**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（6.78s / 3.34s / 2.02s / 3.38s / 2.65s，串行间隔 ≥3.2s），`totalResults` = `cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** / `cs.SE` **30,986** —— 与 06:00 / 09:00 / 12:00 / 15:00 **逐字节同值** ⇒ 公告批仍为 `2026-11-10`。
+- **A 轨结果**：merged **410** / seen **13** / fresh **397**；当日额度 5/5 已满 ⇒ **0 新收**；产物 `raw/2026-11-12-18h-candidates-r158.json`（脚本 `raw/candidates_r158.py`）。
+- **B 轨元数据（arXiv `id_list`）**：`2310.16944,2405.14734,2208.01040` → **`200` + atom**（7,639 B / 3 条；Zephyr v1 2023-10-25 · SimPO v3 2024-11-01 · CircuitNet v4 2022-09-01）。
+- **B 轨标题检索（补核 ID 是否一手）**：`ti:"CircuitNet"` → **`200` + atom**（1 条 = `2208.01040v4`）；`ti:"Simple Preference Optimization"` → **`200` + atom**（1 条 = `2405.14734v3`）。
+- **OpenAlex（查询日 2026-11-12，4/4 `200`）**：Zephyr `2310.16944` **867**（type=`preprint`，无会场 DOI）· SimPO `2405.14734` **560**（type=`conference-paper`，会议 DOI `10.52202/079017-3946`，pp. **124198–124235**）· CircuitNet arXiv-DOI **44**，其期刊 DOI `10.1007/s11432-022-3571-8`（Sci China Inf Sci **65(12)**）亦 **44**（type=`other`）。
+- **《The Bitter Lesson》**：`http://www.incompleteideas.net/IncIdeas/BitterLesson.html` **`200` / 7,297 B**；页面日期 `March 13, 2019`；首句逐字核对通过 ⇒ **无被引口径，记「未查」**（博客条目，单列）。
+- **X（只读）**：直连 `x.com` **`000`** / 显式 `--proxy http://127.0.0.1:7897` **`200`**（代理在线）⇒ profile **3/3 `200`**（`danqi_chen` / `natolambert` / `_lewtun`）；单条推文页 **3/3 `200`**，其中 **2 条 `og:title` 为他人**（`@esonghori2` / `@deanwball`）⇒ 记 V15/V16 作废，**不采用**。
+- **发信 3 封（均 `SENT OK`）**：Danqi Chen `18:06:04`（`2405.14734`，中文 **296** 字）· Yibo Lin `18:06:07`（`2208.01040`，中文 **262** 字）· Nathan Lambert `18:06:13`（`2310.16944`，英文 **178** 词）；**发送前字数/词数均已核**。
