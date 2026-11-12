@@ -38,12 +38,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 181.2k+/700k, ~761B tokens）</div>
+  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 181.5k+/700k, ~761B tokens）</div>
   <div class="meta">
     <span>📅 2026-11-13</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈181.2k / 700k(25.9%) · step ~7048ms(<7.4s✅) · loss 2.024 · 0NaN/0skip · ckpt 180k已落盘(180k eval:llama-server+lm_eval运行中~45min,PID1673374+1682068,port8191,-t4,nice19) · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
-    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 180k评测运行中(llama-server+lm_eval active,8集limit=100) | L2: 6/6完成 ✅ · 🟢<b>HF transformers五重验证全部完成</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> + <b>🟡BBH HF=1/30=3.3%✅</b> + <b>🔴MATH HF=0/10=0.0%✅</b> vs llama.cpp全0% · MMLU=23.16%(≈随机) | L3: 🔴TB 0/2(无GPU做vLLM重试,.17 SSH不通) | L4: 🔄<b>HANDOFF→post-train</b>(2026-11-12用户令·只读引用post-train出数)</span>
+    <span>🔥 训练 iter≈181.5k / 700k(25.9%) · step ~7110ms(<7.4s✅) · loss 2.022 · 0NaN/0skip · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 论文§4.6已刷新iter177k+PDF 0err</span>
+    <span>📊 L1: 18 ckpt ✅(160k=58.13%峰值,170k=57.75%,180k=57.25%) · 评测已全部完成 | L2: 6/6完成 ✅ · 🟢<b>HF transformers五重验证全部完成</b>→llama.cpp SSM bug是0%主因 · <b>🟢HumanEval HF=3/20=15.0%✅</b> + <b>🟢GSM8K HF=1/10=10.0%✅</b> + <b>🟢MBPP HF=1/20=5.0%✅</b> + <b>🟡BBH HF=1/30=3.3%✅</b> + <b>🔴MATH HF=0/10=0.0%✅</b> vs llama.cpp全0% · MMLU=23.16%(≈随机) | L3: 🔴TB 0/2(无GPU做vLLM重试,.17 SSH不通) | L4: 🔄<b>HANDOFF→post-train</b>(2026-11-12用户令·只读引用post-train出数)</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -51,14 +51,14 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </header>
 
 <!-- L1 -->
-<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 17/20 ckpt</span></h2>
+<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 18/20 ckpt</span></h2>
 <div class="card">
   <h3>评测口径</h3>
   <table>
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
-    <tr><td class="l">已评</td><td class="l">10k–170k（<b>17 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">正在评测</td><td class="l">180k（ckpt已落盘,HF导出运行中,PID2567957）</td></tr>
+    <tr><td class="l">已评</td><td class="l">10k–180k（<b>18 个</b>万整数 ckpt）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">190k（训练 iter≈181.5k，ETA ~17h）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -82,11 +82,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>150k</td><td>629B</td><td>57.12%</td><td class="ok">+1.87</td></tr>
     <tr><td><b>160k</b></td><td><b>671B</b></td><td><b>58.13%</b></td><td class="ok">+1.01 新高</td></tr>
     <tr><td>170k</td><td>713B</td><td>57.75%</td><td class="bad">-0.38</td></tr>
+    <tr><td>180k</td><td>755B</td><td>57.25%</td><td class="bad">-0.50</td></tr>
   </table>
-  <p class="trend">📊 51.50%(10k)→58.13%(160k峰值)→57.75%(170k)，<b>+6.25pp</b>。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
+  <p class="trend">📊 51.50%(10k)→58.13%(160k峰值)→57.75%(170k)→57.25%(180k)，<b>+5.75pp</b>。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
 </div>
 <div class="ok-box">
-  <b>L1 结论</b>：常识推理持续上升，160k 峰值 58.13%，170k=57.75%（-0.38pp，在 stderr±4.5% 内属正常波动）。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~3.7pp。<b>下一步</b>：继续每万整数 ckpt 评测，下一个 180k。
+  <b>L1 结论</b>：常识推理持续上升，160k 峰值 58.13%，170k=57.75%，180k=57.25%（-0.50pp，在 stderr±4.5% 内属正常波动）。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~3.5pp。<b>下一步</b>：继续每万整数 ckpt 评测，下一个 190k（ETA ~17h）。
 </div>
 
 <!-- L2 -->
@@ -471,19 +472,20 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h3>四层能力总表</h3>
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
-    <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 17ckpt</span></td><td>58.13%@160k(峰值),57.75%@170k</td><td class="l">继续每万 ckpt(下一个180k)</td></tr>
+    <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 18ckpt</span></td><td>58.13%@160k(峰值),57.75%@170k,57.25%@180k</td><td class="l">继续每万 ckpt(下一个190k,ETA~17h)</td></tr>
     <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-warn">🟡 6/6完成 · HF三重验证✅</span></td><td><b>llama.cpp全0%</b>(GSM8K/BBH/MATH/HumanEval/MBPP) · MMLU=23.16% · <b>🟢HF: HumanEval=15.0%✅ GSM8K=10.0%✅ MBPP=5.0%✅</b> · SSM bug是0%主因</td><td class="l">BBH/MATH HF重评→等decay/SFT</td></tr>
     <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">🔴 TB smoke完成 0/2</span></td><td>2 tasks · reward=0.0 · fix-git pytest 2/2 failed · 生成退化致agent无法编辑文件</td><td class="l">延后至decay/SFT后</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-info">🔄 HANDOFF→post-train</span></td><td>— · 2026-11-12用户令移交post-train（隧道4次复验OK）</td><td class="l">只读引用post-train出数</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2069)动作</h3>
+  <h3>本轮(#2080)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 180,040/700,000（25.7%）· step ~7050ms（<7.4s✅） · loss 2.018 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
+    <li><b>训练健康确认</b>：iter 181,560/700,000（25.9%）· step ~7110ms（<7.4s✅） · loss 2.022 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · PID 146283 · 实测命令：<code>tail -5 /proc/146283/fd/1</code></li>
     <li><b>L1/L2 评测脚本入库确认</b>：code/baize-llm/scripts/eval/ 10文件全在 ✅ · README §4.6 已含口径/用法/依赖/已知坑 ✅ · commit ed6ea54e4 · 确认可用并接手维护（今后改动直接改 scripts/eval/）</li>
     <li><b>L4 移交 post-train（2026-11-12 用户令）</b>：L4 状态从 BLOCKED 改为 HANDOFF→post-train · 不再做 L4 资源调查/SSH .15/.17 直连 · 四层口径调整为 L1/L2/L3 由 pretrain 负责、L4 只读引用</li>
-    <li><b>180k eval 运行中</b>：PID 2567957 · .29 · 180k ckpt已落盘,HF导出运行中(原autoqueue PID2896237因NFS stale file handle崩溃,已从/tmp重启) · 预计~30-60min完成(HF→GGUF→8集eval→报告)</li>
+    <li><b>180k L1 eval 完成 ✅</b>：results.json 已落盘（22816 B, 01:31）· 8集 limit=100, harness Avg=57.25% · 较 170k(57.75%) -0.50pp（在 stderr±4.5% 内属正常波动）· L1 scaling report 已刷新（18/20 ckpt）· 四层报告已同步更新</li>
+    <li><b>下一个 190k ckpt</b>：训练 iter≈181.5k，ETA ~17h（step≈7.1s, 距 190k 还有 ~8500 步）· autoqueue 脚本待部署</li>
     <li><b>核心发现（不变·待用户拍板）</b>：L2/L3 低分根因——code+math 数据占比 26%(vs DeepSeek 最优 60%) + stable 阶段未 decay + llama.cpp SSM 生成 bug · 建议方案 A(decay 4:2:4)/B(SFT)/C(A+B) · L4 已移交 post-train</li>
   </ol>
   <div class="alert">
@@ -551,7 +553,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-13 00:55 更新(#2078 · 监控巡检轮 · 训练健康iter181.2k/700k(25.9%) step7048ms<7.4s✅ loss2.024 · 180k eval:llama-server(PID1673374 port8191 -t4 nice19)+lm_eval(PID1682068)运行中~45min·8集limit=100·output待写入 · L1 17/17(10k-170k,160k峰值58.13%) · L2 🟢HF五重验证全部完成(HumanEval=15.0%✅+GSM8K=10.0%✅+MBPP=5.0%✅+BBH=3.3%✅+MATH=0.0%✅ vs llama.cpp全0%,MMLU=23.16%)→llama.cpp SSM bug是L2生成0%主因 · L3 TB 0/2(无GPU做vLLM重试) · L4 🔄HANDOFF→post-train(2026-11-12用户令·只读引用post-train出数)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-13 01:42 更新(#2080 · 监控巡检+180k eval完成轮 · 训练健康iter181.5k/700k(25.9%) step7110ms<7.4s✅ loss2.022 · 180k L1 eval完成✅ harness Avg=57.25%(-0.50pp) · L1 18/20(10k-180k,160k峰值58.13%) · L2 🟢HF五重验证全部完成(HumanEval=15.0%✅+GSM8K=10.0%✅+MBPP=5.0%✅+BBH=3.3%✅+MATH=0.0%✅ vs llama.cpp全0%,MMLU=23.16%)→llama.cpp SSM bug是L2生成0%主因 · L3 TB 0/2(无GPU做vLLM重试) · L4 🔄HANDOFF→post-train(2026-11-12用户令·只读引用post-train出数)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
