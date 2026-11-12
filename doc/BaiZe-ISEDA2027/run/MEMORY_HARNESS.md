@@ -4,21 +4,25 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2283 监控轮(自检PASS·eval backlog=0·cline predict重启PID3619039·5/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 5/7 alive
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2283·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2282 incr_eval+监控+报告+ETA·R2282 incr_eval(+3resolved→1659)·R2283 监控(cline predict重启·eval backlog=0·双报告REGEN)·总resolved 1659
-当前动作:     R2283: 自检PASS(CPU load35/224=16%·无harness进程>80核·MEM OK 1081G avail)·gateway 200(curl实测glm-5.3-flash)·gw_proxy 9092=200·eval全7路backlog=0(detect_backlog_R2202验证)·cline predict orch死亡(日志r2053b止于07:12 task11 astropy-14365·约11h前)→重启PID3619039(setsid·r2283 log·SKIP前5·predict astropy-13579)·predict 5/7 alive(cline290/codex128/cc281/pi253/hermes450·opencode500 DONE·dsh175 DONE=能力)·双报告REGEN R2283(glm53_7way 12196B+cline_special 10269B)·research日报2026-11-12已阅(mtime15:10·无18:00更新·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY+双报告+push ②cline predict向500推进(已重启) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
-阻塞:         <各路尚未满500:cline290/codex128/cc281/pi253/hermes450·§22:4x未全交付·opencode+dsh DONE>
+PHASE:        R2287 incr_eval轮(自检PASS·incr_eval 2inst/1resolved→总1670·eval backlog=0全清·predict 5/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2287·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2286 incr_eval+监控+报告+ETA·R2286 incr_eval(4inst/3resolved→总1669)·R2287 incr_eval(2inst/1resolved→总1670·双报告REGEN)·总resolved 1670
+当前动作:     R2287: 自检PASS(CPU load41/224≈18%·无harness进程>80核·MEM avail1077G)·gateway gw_proxy9092/9093=200(直连agi-gateway=403=key问题·predict走proxy正常)·_find_unevaluated发现hermes 1NEW(django-15695)·incr_eval自动发现pi 1NEW(matplotlib-23299)→incr_eval_glm53_R2287.py(setsid·PID351437·1min完成·2inst eval'd)·结果:pi matplotlib-23299 FAIL(+1fail→183不变)·hermes django-15695 RESOLVED(+1res→412)·总1669→1670(+1res+1fail)·eval backlog=0全清·predict 5/7 alive(cline296/codex130/cc288/pi255/hermes456·opencode500 DONE·dsh175 DONE)·磁盘OK(/data 5.8T 18%·/ 351G 4%)·双报告REGEN R2287(glm53_7way 12195B+cline_special 10276B)·research日报2026-11-12已阅(mtime18:10·无新更新·harness建议#3 ACF+#5等算力+#36 ACI配对+#41 n_eval=参考非新指令)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY+双报告+push ②下轮incr_eval拾取新backlog(predict进行中产出) ③predict 5/7向500推进 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+阻塞:         <各路尚未满500:cline296/codex130/cc288/pi255/hermes456·§22:4x未全交付·opencode+dsh DONE>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=31KB
- cline专项小结: predict_glm53=290files/282real/218resolved/8empty(gateway functional产real·C3 resume fix R1733仍有效·8empty全sympy=能力)·C1:282real/290total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→290)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=8(全sympy·能力差·靐resume bug·gateway functional)·C5:报告R2283(cline special·218/282real=77.3%·10269B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
+  cline专项小结: predict_glm53=296files/287real/221resolved/9empty(gateway functional产real·C3 resume fix R1733仍有效·9empty全sympy=能力)·C1:287real/296total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→296)·C2:failed=能力66/49.6%·429 44/33.1%·超时15/11.3%·5xx 1/0.8%(R2233分类)·C3:empty=9(全sympy·能力差·靔resume bug·gateway functional)·C4:221res/287real=77.0%·C5:报告R2287(cline special·221/287real=77.0%·10276B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-> [18:0x] R2283: 监控轮·自检PASS(CPU load35/224=16%·无harness进程>80核·MEM avail1081G)·gateway 200(curl实测glm-5.3-flash model)·gw_proxy 9092=200(alive)·eval全7路backlog=0(detect_backlog_R2202:7/7=0)·cline predict orch发现死亡(日志r2053b止于07:12 task11 astropy-14365·无进程·约11h前·astropy连续4empty=能力)→用codex进程env重启cline predict PID3619039(setsid·log r2283·SKIP前5·PREDICT astropy-13579)·predict 5/7 alive(cline290/codex128/cc281/pi253/hermes450·opencode500 DONE·dsh175 DONE)·eval stats unchanged(cline218/codex80/opencode414/cc215/pi183/hermes408/dsh141·总1659)·双报告REGEN R2283(gen_report_glm53_7way 12196B+gen_cline_special 10269B)·research日报2026-11-12已阅(mtime15:10·无18:00更新·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
-> [17:5x] R2282: incr_eval轮·自检PASS(CPU load36/224=16%·无harness进程>80核·MEM avail1080G)·gateway 200(curl实测real key GLM53_KEY)·detect_backlog_R2202发现3NEW real patch(opencode sympy-19346 plen1772+cc django-11141 plen3454+hermes django-13406 plen3546)·incr_eval_glm53_R2282.py(setsid detached·首轮nohup被cmd timeout杀掉·改setsid存活)·3NEW全RESOLVED(opencode→414·cc→215·hermes→408)·总resolved 1648→1659·eval全7路backlog=0(detect复验)·predict 5/7 alive(cline290/codex127/cc280/pi253/hermes450·opencode500 DONE·dsh175 DONE)·cline+1新文件=empty(能力·empty7→8)·双报告REGEN R2282(gen_report_glm53_7way 10559B+gen_cline_special 8962B)·research日报2026-11-12已阅(mtime15:10·无18:00更新·建议同R2281·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
+> [19:1x] R2287: incr_eval轮·自检PASS(CPU load41/224≈18%·无harness>80核·MEM avail1077G)·gateway gw_proxy9092/9093=200(直连agi-gateway=403=key问题·predict走proxy正常产real)·_find_unevaluated发现hermes 1NEW(django-15695)·incr_eval自动发现pi 1NEW(matplotlib-23299)→incr_eval_glm53_R2287.py(setsid detached PID351437·1min完成·2inst eval'd)·结果:pi matplotlib-23299 FAIL(+1fail→183不变=能力)·hermes django-15695 RESOLVED(+1res→412)·总1669→1670(+1res+1fail)·eval backlog=0全清(_find_unevaluated复检全0)·predict 5/7 alive(cline296/codex130/cc288/pi255/hermes456·opencode500 DONE·dsh175 DONE)·磁盘OK(/data 5.8T 18%·/ 351G 4%)·双报告REGEN R2287(gen_report_glm53_7way 12195B+gen_cline_special 10276B)·research日报2026-11-12已阅(mtime18:10·无新更新·harness建议#3 ACF+#5等算力+#36 ACI配对+#41 n_eval=参考非新指令·纳入观察不改排期)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2286 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 4inst/3resolved(cline+1·codex+1·cc+1)→总1669。需要时再读。
+> 📦 R2285 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 3inst/1resolved(cline+1)→总1666。需要时再读。
+> 📦 R2284 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 8inst/6resolved(cline+1·cc+2·hermes+3)→总1665。需要时再读。
+> 📦 R2283 流水已归档 → daily-memories-harness/2026-11-12.md。结论：监控轮·cline predict重启·eval backlog=0·总1659。需要时再读。
+> 📦 R2282 流水已归档 → daily-memories-harness/2026-11-12.md。结论：incr_eval 3NEW全RESOLVED·总1648→1659。需要时再读。
 > 📦 R2280 流水已归档 → daily-memories-harness/2026-11-12.md。结论：监控轮·gateway 200·eval backlog=0·重启3停滞 predict orch·6/7 alive。需要时再读。
 
 > 📦 R2279 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2279 ETA双报告补§9 ETA节(TB-2.1=已交付·SWE-bench Verified=~15天瓶颈codex)+生成器脚本更新+cline 287f/281r/217res/6empty pass77.2%。需要时再读。
@@ -94,27 +98,7 @@ ERROR_COUNT:  0
 
 > 📦 R2148-R2160 流水(2026-11-11,~13轮监控+gateway 429→200恢复+codex predict RESTARTED+cleanup多次+TB-2.1 opencode rerun)已归档 → daily-memories-harness/2026-11-11.md。需要时再读。
 
-> 📦 [06:55] R2152 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 429 QUOTA持续+predict 1673real不变+cleanup 14empty(429infra)+incr_eval 0NEW(1340resolved不变)+TB-2.1 opencode 82/89done。需要时再读。
-
-> 📦 [05:48] R2147 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 429 QUOTA+incr_eval 2new(+2resolved→1340)+TB-2.1 opencode rerun ALIVE+双报告REGEN R2147。需要时再读。
-> 📦 [05:32] R2146 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 429 QUOTA+incr_eval 5new ALL resolved(+5→1338)+TB-2.1 opencode rerun ALIVE+双报告REGEN R2146。需要时再读。
-> 📦 [05:18] R2145: incr_eval轮·①CPU PASS(load40/224·无harness进程>8000%·最高pcpu=191%=claude-code run_single) ②MEM PASS(761G/2Ti·1.1Ti avail·/data 5.8T) ③gateway 200 RECOVERED(gateway_probe.sh HTTP 200·predict加速·+26files since R2144) ④predict 7路ALIVE:cline220·codex136·opencode449·cc239·pi185·hermes393·dsh175=1815files(+26) ⑤incr_eval R2145 RUNNING:opencode9new DONE(362/443↑9·0infra)·hermes9new launching·deepseek2new pending·eval 1326resolved(↑9·opencode362·hermes332·cline153·cc151·pi135·dsh129·codex64) ⑥TB-2.1 opencode rerun ALIVE(31p/89t·harbor PID3984113) ⑦research日报2026-11-10已查·harness建议=异构判官>重复跑(已在7way中) ⑧cline C4:220files/206real/153resolved/14empty·C2失败top1=能力差(real patch but tests fail) ⑨双报告REGEN R2145(glm53_7way 9.0KB+cline_special 6.6KB)·清理3个orphan incr_eval进程(仅保留PID3163523)·未完成指令:有(§10:10+§22:4x)⇒W:0
-> 📦 [04:56] R2144 流水已归档 → 本文件上半。结论：监控轮·gateway 429·predict +8files·1317resolved UNCHANGED·TB-2.1 opencode rerun ALIVE·MEMORY归档。需要时再读。
-> 📦 [04:46] R2143 流水已归档 → 本文件上半。结论：incr_eval R2142 DONE(1317resolved)+TB-2.1 opencode run31p+双报告REGEN+gen_report动态修复+CPU/MEM PASS。需要时再读。
-> 📦 [04:17] R2141 流水已归档 → daily-memories-harness/2026-11-11.md。结论：incr_eval R2141(7new·4new resolved)+双报告regen+gateway RECOVERED(429清除)+7路ALIVE(1768files)+TB-2.1 99p。需要时再读。
-> 📦 [03:45] R2140 流水已归档 → daily-memories-harness/2026-11-11.md。结论：incr_eval R2140(10new·6new resolved)+双报告regen+gateway 429 QUOTA_EXHAUSTED+7路ALIVE(1728files)+TB-2.1 79p。需要时再读。
-> 📦 [02:55] R2138 流水已归档 → daily-memories-harness/2026-11-11.md。结论：incr_eval R2138(pi 2new both failed=能力·0new resolved·全7路eval caught up)+双报告regen+7路ALIVE(1662files)+TB-2.1 79p。需要时再读。
-> 📦 R2134-R2137 流水已归档 → daily-memories-harness/2026-11-11.md。结论：R2134 incr_eval(+1resolved)+双报告regen·R2135 CPU KILL(sklearn 180核)+重启3停滞orch→7路ALIVE·R2136 incr_eval(+4resolved→1297)+双报告regen·R2137 opencode eval merge(django-11734→fail)+双报告regen。需要时再读。
-> 📦 [01:31] R2133 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+predict 1603real(↑5)+incr_eval R2133(1inst·+1resolved)+eval 1292resolved(↑5)+cleanup 1empty(429)+双报告REGENERATED(R2133)+TB-2.1 79p。需要时再读。
-> 📦 [01:16] R2132 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+predict 1598real(↑9)+incr_eval R2132(6inst·+4resolved)+eval 1287resolved(↑4)+cleanup 3empty(429)+双报告REGENERATED(R2132)+TB-2.1 79p。需要时再读。
-> 📦 [01:00] R2131 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+predict 1589real(↑3)+incr_eval R2131(3inst·+1resolved)+eval 1283resolved(↑1)+双报告REGENERATED(R2131)+TB-2.1 78p。需要时再读。
-> 📦 [00:47] R2130 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+predict 1586real(↑7)+cleanup 0empty+incr_eval R2130(11inst·+9resolved)+eval 1282resolved(↑9)+双报告REGENERATED(R2130)+TB-2.1 77p。需要时再读。
-> 📦 [00:33] R2129 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+predict 1579real(↑9)+cleanup 2empty+incr_eval R2129(4inst)+eval 1273resolved(↑3)+双报告REGENERATED(R2129)+merge_R2129_glm53.py修复deepseek model_dir。需要时再读。
-> 📦 [00:15] R2128 流水已归档 → daily-memories-harness/2026-11-11.md。结论：gateway 200 STABLE+predict 1570real(↑4)+cleanup 1empty+incr_eval R2128(5inst)+eval 1270resolved(↑6)+双报告REGENERATED(R2128)。需要时再读。
-> 📦 [00:05] R2127 流水已归档 → daily-memories-harness/2026-11-10.md。结论：gateway 200 STABLE+predict 1566real(↑14)+cleanup 4empty+incr_eval R2127(22inst)+eval 1264resolved(↑22)+双报告REGENERATED(R2127)。需要时再读。
-> 📦 [23:25] R2125 流水已归档 → daily-memories-harness/2026-11-10.md。结论：gateway 200 STABLE+predict 1526real(↑9)+cleanup 3empty+incr_eval R2125(28inst)+eval 1234resolved/1502evaluated+TB-2.1 82p/682t+双报告REGENERATED(R2125)。需要时再读。
-> 📦 R2013-R2118 流水(2026-11-09~10,~100轮监控+gateway 429反复+incr_eval+TB-2.1+双报告+多次CPU KILL)已 bulk 归档 → daily-memories-harness/2026-11-09.md / 2026-11-10.md。**关键**:gateway 429/QUOTA反复→恢复·predict 1250→1455real·incr_eval多路catch up·TB-2.1 40→85p·cline empty=能力差非429·gen_report动态状态行修复。需要时再读。
-> 📦 R1958-R2012 流水(2026-11-09,~25轮监控+gateway 429/QUOTA_EXHAUSTED+incr_eval+TB-2.1)已 bulk 归档 → daily-memories-harness/2026-11-09.md。**关键**:gateway 429反复·QUOTA_EXHAUSTED reset~02:24·predict 2680/3500·TB-2.1 123p·incr_eval 7/7DONE。需要时再读。
+> 📦 R1958-R2152 流水(2026-11-09~11,gateway 429反复+incr_eval+TB-2.1+双报告+多次CPU KILL)已 bulk 归档 → daily-memories-harness/2026-11-09.md / 2026-11-10.md / 2026-11-11.md。需要时再读。
 
 > 📦 R1885-R1957 流水(2026-11-08,~30轮监控+incr_eval+TB-2.1+双报告更新)已 bulk 归档 → daily-memories-harness/2026-11-08.md。**关键**:gateway 429反复→200恢复·predict 1561→2061/3500·real 662→790·TB-2.1 62→69p·codex TB-2.1 84err=适配器(wire_api)·deepseek proxy修复。需要时再读。
 

@@ -370,3 +370,42 @@
   3. **D 线**：本轮 0 case 交付，DEBT 0→1（selection 0/25）。下轮 #551 须偿 DEBT：建议(1) 扩 kw 到含 .measure/.param/.inc/.lib/.data 更细 SPICE 标记词以提 produce-task 命中；(2) peek mc10-25 低段（r550 只扫 mc30-40 top，低段未探，#539 的 19ycs mc19 命中说明低段仍有 produce-task）；(3) 重试不可达 host（hfeg0plg219/234 DNS 可能瞬时故障）。
 
 - **配额状态**：上次发言 r546，本轮 r550 diff=4 ≥4（配额欠一条），board OPEN=0 无强制议题。本条即清付 r550 配额。下轮配额 due r554（r550+4）。**本条交付物**：(a) selection-cost 第三次复测 25-peek 0/25，三轮合计 1/51=2% 净可用率，证 geography 非决定因素、user intent 分布 × mc 段 是结构性约束；(b) §9 selection-cost 修正建议（从 geography 决定 → intent 分布决定）；(c) 本轮 0 case DEBT 0→1，下轮低段+扩 kw 偿债路径。
+
+---
+
+## [r554] 2026-11-12 · D 域「structural netlist parse + gate-level sim」子族成形——本轮 TscodecompTruthTable-001 是第三例，anti-hardcode 的「rewire(B) + rename(C)」双轨对结构解析类 case 是可复用 pattern
+
+### 本轮交付
+
+**TscodecompTruthTable-001** · 67is1 dsgao@hfeg0pkn001 mc=10 schematic_netlist · D.jsonl 358→359 · ledger_D case 354→355（covered 222→223）。trace 是单轮 produce-task「分析这个电路的真值表」+ attached `Ras_Tscodecomp.netlist`（3-bit 阈值码比较器 CDL 门级网表，stdlib oai21/aoi21/nand2/nor2/inv/and2 层级搭建，顶层 9 输入 A/B/C<2:0> + 3 输出 HT/LT/NT）。SUT = 纯 stdlib CDL 解析（`.SUBCKT`/`*.PININFO`/`XI.../` 实例）→ 顶层识别（不被实例化者，跳 switch_*/基本门）→ 2^9 枚举输入 → 迭代松弛门级求值（门函数 + 用户子电路递归，v*! 电源/体跳过）→ `truth_table.csv`。check.py 16 条件 a-p 独立 structural oracle（自己 parse 找 `_3bit` 实例 + and2/nor2 门，迭代松弛求值，不 import SUT）+ subprocess 真跑 SUT on hidden B / embedded C + 3 negatives。自验 16/16 PASS（relative + absolute workdir 均通过），3 neg 全 FAIL。
+
+### 观察：「structural netlist parse + gate-level sim」是 D 域第三个可识别子族
+
+D 域 schematic_netlist 近期交付里，一类「不 drive 任何 EDA 工具、纯靠结构解析 + 0/1 求值就能判分」的 case 已经成形到三例，值得单列：
+
+| case | trace | 输入格式 | SUT 核心机制 | anti-hardcode 双轨 |
+|---|---|---|---|---|
+| PwrSpVSrcBitExpand-001 (#551) | q2ccz qilongw pwr.sp | SPICE v-source deck | 正则识别比特行 + header 原样保留 + 从 sample 抽 sep/node/val + 组×比特 bit-blast | B(不同组前缀/组数/比特范围/node/val) + C(更小样本, node=gnd 反 0 0v 硬编码) |
+| GrDecPwrSwitchTbGen-001 | — | CDL→TB | (CDL 结构→testbench 合成) | — |
+| **TscodecompTruthTable-001 (#554)** | 67is1 dsgao Ras_Tscodecomp.netlist | CDL 门级网表 | `.SUBCKT`/PININFO 解析 + 顶层识别 + 2^n 枚举 + 迭代松弛门级仿真 | **B(rewire 顶层接线 XI2=A,B XI15=C,B → X=(A<B)/Y=(C<B)) + C(rename 信号 P/Q/R/HI/LO/EQ, 逻辑同 A)** |
+
+这一子族的共同特征：(1) SUT 全程 0 EDA 工具运行时（depth 1-2，与 P-003「域级标签系统性上调」一致——schematic_netlist 域标签会给 depth 4-5，但实际 tool_demand=0）；(2) 判分器能用 stdlib 独立重算 oracle（解析同一结构 → 求值），不依赖 live license；(3) anti-hardcode 有两条正交轨道可叠加。
+
+### 「rewire(B) + rename(C)」双轨 anti-hardcode 对结构解析类是可复用 pattern
+
+r546 提过「regex-coverage trap」（真实 agent bug 嵌入 check.py）作为可复用 case-design pattern。本轮补一条平行的 **「rewire + rename」双轨**，专门针对「SUT 解析结构再求值」这类 case：
+
+- **B = rewire（同元件库、同信号名空间、不同接线）**：B 网表用同一个 `Ras_Tscodecomp_3bit` 子电路 + 同一组 stdlib 门，但顶层把 XI2 接成 `A,B`、XI15 接成 `C,B`，于是 X=(A<B)、Y=(C<B)，HT/LT/NT 真值与 A 全不同。这测的是「SUT 是不是真按接线求值」——如果 SUT 偷懒把 `Ras_Tscodecomp` 当固定函数（比如硬编码 X=(A<C)），B 必败。
+- **C = rename（同逻辑、不同信号名空间）**：C 网表顶层改名 `TscompC`，信号 A/B/C→P/Q/R、HT/LT/NT→HI/LO/EQ，接线逻辑与 A 完全一致。这测的是「SUT 是不是按信号名硬编码」——如果 SUT 写死找 `HT`/`LT`/`NT` 列或认 `Ras_Tscodecomp` 顶层名，C 必败。
+
+两轨正交：B 改接线不动名字（卡「固定函数」硬编码），C 改名字不动接线（卡「固定信号名」硬编码）。任一轨单独都能被一种硬编码绕过（B 能被「按名求值」绕过、C 能被「固定真值表」绕过），**双轨叠加才把两条捷径都堵死**。这条对任何「parse-structure → evaluate」型 case（不止 netlist，含 SPICE deck 解析、.mt0 分组解析）都可直接套用——比单一「换数值」的 anti-hardcode 更强，因为结构和命名都被扰动。
+
+### 对 §9 的建议
+
+@A（论文 §9 case-design，0.1h，依赖 r546+本条）：§9 的 anti-hardcode 设计模式可从 r546 单条「regex-coverage trap」扩成两条并列可复用 pattern——
+1. **regex-coverage trap**（r546）：真实 agent 的解析 bug 作为可测失败模式嵌入 check.py。
+2. **rewire(B) + rename(C) 双轨**（r554）：对结构解析类 case，B 扰动接线、C 扰动信号名，两轨正交叠加堵死「固定函数」与「固定信号名」两条硬编码捷径。
+
+两条都来自 D 域实证、可跨域复用，建议在 §9 case-design 一节并列入「anti-hardcode 模式库」。
+
+- **配额状态**：上次发言 r550，本轮 r554 diff=4 ≥4（配额欠一条），board OPEN=0 无强制议题。本条即清付 r554 配额。下轮配额 due r558（r554+4）。**本条交付物**：(a) #554 TscodecompTruthTable-001 交付（schematic_netlist，D.jsonl 358→359，16/16 自验）；(b) D 域「structural netlist parse + gate-level sim」子族识别（三例：PwrSpVSrcBitExpand / GrDecPwrSwitchTbGen / TscodecompTruthTable，全 depth 1-2 tool_demand=0，再证 P-003 域级标签上调）；(c) 「rewire(B) + rename(C)」双轨 anti-hardcode pattern 提炼（两轨正交，对 parse-structure→evaluate 类 case 可跨域复用，§9 建议与 r546 regex-coverage trap 并列入 anti-hardcode 模式库）。

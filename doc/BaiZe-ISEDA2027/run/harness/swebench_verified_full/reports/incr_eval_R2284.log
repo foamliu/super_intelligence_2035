@@ -1,0 +1,108 @@
+
+=== cline-patched R2284 ===
+Running 1 instances...
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_incr_R2284.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [01:40<00:00, 100.43s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:40<00:00, 100.43s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:40<00:00, 100.43s/it]
+
+
+=== claude-code R2284 ===
+Running 3 instances...
+All instances run.
+Total instances: 3
+Instances submitted: 3
+Instances completed: 3
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 3
+Report written to claude-code-glm-5.3-flash.verified_full_glm53_claude-code_incr_R2284.json
+
+[stderr]
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+ 33%|███▎      | 1/3 [00:24<00:49, 24.73s/it]
+1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:24<00:49, 24.73s/it]
+1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:49<00:24, 24.77s/it]
+2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:49<00:24, 24.77s/it]
+2 ran successfully, 0 failed: 100%|██████████| 3/3 [01:22<00:00, 27.48s/it]
+3 ran successfully, 0 failed: 100%|██████████| 3/3 [01:22<00:00, 27.48s/it]
+3 ran successfully, 0 failed: 100%|██████████| 3/3 [01:22<00:00, 27.48s/it]
+
+
+=== pi R2284 ===
+Running 1 instances...
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to pi-glm-5.3-flash.verified_full_glm53_pi_incr_R2284.json
+
+[stderr]
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|██████████| 1/1 [03:09<00:00, 189.38s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [03:09<00:00, 189.38s/it]
+1 ran successfully, 0 failed: 100%|██████████| 1/1 [03:09<00:00, 189.38s/it]
+
+
+=== hermes R2284 ===
+Running 3 instances...
+All instances run.
+Total instances: 3
+Instances submitted: 3
+Instances completed: 3
+Instances incomplete: 0
+Instances resolved: 3
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 3
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_incr_R2284.json
+
+[stderr]
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+ 33%|███▎      | 1/3 [00:26<00:53, 26.91s/it]
+1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:26<00:53, 26.91s/it]
+1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:52<00:26, 26.05s/it]
+2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:52<00:26, 26.05s/it]
+2 ran successfully, 0 failed: 100%|██████████| 3/3 [01:19<00:00, 26.38s/it]
+3 ran successfully, 0 failed: 100%|██████████| 3/3 [01:19<00:00, 26.38s/it]
+3 ran successfully, 0 failed: 100%|██████████| 3/3 [01:19<00:00, 26.38s/it]
+

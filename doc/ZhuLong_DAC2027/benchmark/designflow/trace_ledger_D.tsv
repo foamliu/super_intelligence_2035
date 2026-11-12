@@ -1495,3 +1495,6 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793771016430_o0tur	shanliny	hfeg0plg53	12	waveform	case	EDA-Eval-DesignFlow-Mt0BlConsistSummary-001	2026-11-12 16:40	
 1793102574043_2h9t1	kaixuanx	hfeg0pkn002	26	waveform	case	EDA-Eval-DesignFlow-PvtPwrWinAvg-001	2026-11-12 17:26	host hfeg0pkn002/10.129.2.11 unreachable from .75 (ssh timeout 2x); reclassify later if host returns
 1791955659176_a63u6	jianwang	hfeg0pkn001	23	analog_context	case	EDA-Eval-DesignFlow-IddBlkCmpHighlight-001	2026-11-12 17:49	
+1793187040509_67is1	dsgao	hfeg0pkn001	10	schematic_netlist	case	EDA-Eval-DesignFlow-TscodecompTruthTable-001	2026-11-12 18:42	
+1793877732979_qyroq	shanksw	10.129.32.75	21	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001	2026-11-12 19:20	
+1793243276846_85qew	qinqinl	10.129.2.12	25	analog_context	case	EDA-Eval-DesignFlow-SacapBlCouplingSummary-001	2026-11-12 19:58	
