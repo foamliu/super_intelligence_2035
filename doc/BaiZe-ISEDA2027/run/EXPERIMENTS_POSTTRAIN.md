@@ -8153,3 +8153,47 @@ From `worker_1.log` and `worker_3.log` on 36.15:
 - **Tunnel UP**: ssh -p3333 → 36.15 (hfeg0tedaap02), reverse tunnel PID1008898 (R18096→.17:8096 verified from 36.15)
 - **All curl /v1/models OK**
 
+### §L4-zhulong (2026-11-13 wake384) 5-Run Eval — Run 2 Progress Update + Stuck Worker Cleanup + Critical Harness Comparison Analysis
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 2 Progress (as of wake384 ~07:45 CST)
+
+- **Stats counters**: success=59, failure=2, timeout=3 → 64/158 tasks processed (40.5%)
+- **Task queue remaining**: 87/158 (71 dequeued, 7 in-progress by 5 active workers)
+- **3 stuck workers killed**: PIDs 1125529 (3610s), 1125782 (3607s), 1126404 (3502s) — all exceeded 2500s timeout but `timeout` command failed to kill them (same pattern as wake370-376). Killed with `kill -9` on both `timeout` parent and `cline` child PIDs.
+- **5 workers remaining** (all within timeout): PIDs 1135722 (1885s), 1137119 (1547s), 1145126 (467s), 1147860 (67s), 1148261 (21s)
+- **Autocomplete daemon** (PID1122770): still waiting for run2 PID1109190, will auto-run runs 3-5 + 5-run summary
+
+#### 🔴 Critical Finding: Harness Mode Mismatch (3.8% SFT vs 36% Base)
+
+**The 3.8% Pass@1 (SFT v39 step105) and 36% Pass@1 (base MiniCPM5-2B) are NOT on the same harness mode:**
+
+| Metric | 36% (Base) | 3.8% (SFT step105) |
+|:---|:---|:---|
+| Harness mode | **Full harness** (interactive multi-turn) | **Single-turn code-gen + post-hoc sandbox** |
+| Tool access | search_apis + get_api_details + **sandbox execution** | search_apis + get_api_details only |
+| Iteration | ✅ Model can run code, see errors, fix, iterate | ❌ No execution feedback during generation |
+| Feedback loop | Write → execute → error → fix → re-submit | Write → submit → (sandbox eval post-hoc) |
+| Eval prompt | (full harness, multi-turn) | "本场景无沙箱可实际执行，内部推演是唯一的逻辑校验手段" |
+
+**Implication**: The 3.8% is on a STRICTLY HARDER task (no execution feedback loop). The base model's 36% benefits from iterative fix-up via sandbox feedback. Comparing 3.8% to 36% directly is apples-to-oranges.
+
+**Required action**: Run the **base MiniCPM5-2B** (GPU4:8098) on the SAME single-turn code-gen pipeline to get a proper comparison. ⚠️ This must wait until step105 5-run eval completes (providers.json is shared — parallel eval would conflict). After step105 5-run done → launch base model 5-run eval on GPU4:8098.
+
+#### Step60 vs Step105 Summary (single-run, run1)
+
+| Metric | step60 (GPU5:8097) | step105 (GPU6:8096) |
+|:---|---:|---:|
+| Pass@1 | 2/158 = 1.3% | 6/158 = 3.8% |
+| Code-gen success | 42/158 (26.6%) | 62/158 (39.2%) |
+| Pass/assemble-OK | 2/42 = 4.8% | 6/62 = 9.7% |
+
+→ step105 (more SFT training) > step60 at ALL metrics. Consistent with prior 4 confirmations.
+
+#### Next Steps
+1. ⏳ Wait for step105 5-run eval to complete (autocomplete daemon handles runs 3-5)
+2. 🔴 Launch base model 5-run eval on GPU4:8098 (same pipeline) for proper comparison
+3. 📊 Compute 5-run mean±std + McNemar/paired bootstrap (SFT vs base, same pipeline)
+4. 📝 Update baseline report with proper comparison
+

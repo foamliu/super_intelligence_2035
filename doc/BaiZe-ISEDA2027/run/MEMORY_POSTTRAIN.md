@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake383（2026-11-13 R383: **designflow 5-task eval VERIFIED COMPLETE 0/5=0% (protocol mismatch root cause)+run2 zhulong codegen 57/158(36%)**; run 1 Pass@1=6/158=3.8%）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-382✅;R382✅(designflow blocker fixed+5-task eval launched);R383✅(designflow 0/5 verified complete+protocol mismatch analysis+run2 progress documented)
-- 当前动作: wake383 R383:①designflow 5-task eval COMPLETE on 36.15:0/5=0%,all FAIL "no submit.zip produced",cline_exit=0,hook_blocks=0,dur=17-167s→root cause=PROTOCOL MISMATCH(model writes text not files to outputs/;SFT trained on single .py not submit.zip format) ②run2 zhulong codegen(batch 2026_1113_062714):57/158 tasks processed(36%),success=53/fail=1/timeout=3,task_queue remaining 93/158,8 cline workers active ③autocomplete daemon PID1122770 alive,waiting for run2 PID1109190 ④3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final,99%util) ⑤tunnel UP:ssh -p3333→36.15 TUNNEL_OK+reverse tunnel PID1008898 verified ⑥git clean
-- 下一步: ①run2 codegen~13min remaining→sandbox eval→autocomplete auto-runs 3-5 ②collect 5run_summary.json for mean±std ③McNemar/paired bootstrap vs 36% baseline ④designflow baseline DELIVERED 0/5=0% (all models 0%)—no further action unless protocol changes
-- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(run 2 of 5, runs 3-5 auto-queued)
-- 本轮新增产出: R383✅(designflow 5-task eval VERIFIED COMPLETE 0/5=0% with protocol mismatch root cause analysis:100% protocol failure(model doesn't know designflow output format),0% infra failure;run2 zhulong codegen 57/158=36% progress documented in EXPERIMENTS)
-- 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run2/5, designflow baseline DELIVERED 0/5=0% protocol mismatch);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit 4b42c0a1a wake382);本轮 commit pending(wake383)
+- PHASE: posttrain-wake384（2026-11-13 R384: **run2 codegen 64/158(40.5%)+3 stuck workers killed+harness mode mismatch analysis(3.8% single-turn vs 36% full-harness NOT comparable)**; step105 run1=3.8%, step60 run1=1.3%）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-383✅;R383✅(designflow 0/5 verified+protocol mismatch);R384✅(run2 progress+stuck worker cleanup+harness mismatch analysis)
+- 当前动作: wake384 R384:①run2 zhulong codegen(batch 2026_1113_062714):64/158 tasks processed(40.5%),success=59/fail=2/timeout=3,task_queue remaining 87/158,5 workers active(3 stuck killed:>2500s elapsed) ②autocomplete daemon PID1122770 alive,waiting for run2 PID1109190→auto-runs 3-5 ③3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final,98%util) ④tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑤🔴KEY FINDING:3.8%(SFT single-turn code-gen)vs 36%(base full-harness interactive)are DIFFERENT harness modes→need base model eval on same single-turn pipeline for proper comparison(providers.json shared,must wait for step105 5-run to finish) ⑥git clean
+- 下一步: ①wait step105 5-run eval complete(autocomplete daemon handles runs 3-5) ②🔴launch base model 5-run eval on GPU4:8098(same single-turn pipeline)for proper SFT-vs-base comparison ③compute 5-run mean±std+McNemar/paired bootstrap ④designflow baseline DELIVERED 0/5=0%
+- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(run 2 of 5);base model eval BLOCKED on providers.json conflict until step105 5-run done
+- 本轮新增产出: R384✅(run2 progress update 64/158+3 stuck workers killed+harness mode mismatch critical analysis:3.8% single-turn vs 36% full-harness are NOT comparable,need base model eval on same pipeline;documented in EXPERIMENTS §L4-zhulong wake384)
+- 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run2/5;designflow DELIVERED 0/5=0%);13:40 SFT v39 eval→5-run eval IN PROGRESS
+- git: super_intelligence_2035(commit f7df56340 wake383);本轮 commit pending(wake384)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -224,6 +224,8 @@ WAITING: 0
 
 [wake382 07:22] R382 **designflow "check.py missing" BLOCKER RESOLVED + 5-task eval LAUNCHED** → 原文已归档 daily-memories-posttrain/2026-11-13.md
 
-[wake383 07:35] R383 **designflow 5-task eval VERIFIED COMPLETE 0/5=0% (protocol mismatch)+run2 zhulong codegen 57/158(36%)**:①designflow 5-task eval COMPLETE on 36.15 via tunnel:0/5=0%,all FAIL "no submit.zip produced(cline wrote nothing under outputs/)",cline_exit=0,hook_blocks=0,dur=17-167s→root cause=PROTOCOL MISMATCH:model generates text but doesn't write files to outputs/ dir;SFT trained on single .py→pyAether_code/ not submit.zip→EDA flow scripts;100% protocol failure,0% infra failure;consistent with all prior designflow results(base 0/5=0%,base 0/30=0%,DeepSeek 0/30=0%) ②run2 zhulong codegen(batch 2026_1113_062714):57/158 tasks processed(36%),success=53/fail=1/timeout=3,task_queue remaining 93/158,8 cline workers active,ETA~13min codegen remaining ③autocomplete daemon PID1122770 alive,waiting for run2 PID1109190→will auto-run runs 3-5+5run summary ④infra all green:3 serves UP(8098/8097/8096 99%util),tunnel ssh -p3333→36.15 TUNNEL_OK+reverse tunnel verified ⑤EXPERIMENTS updated with designflow protocol mismatch analysis+run2 progress ⑥git clean. R383✅.WAITING=0。
+[wake383 07:35] R383 **designflow 5-task eval VERIFIED COMPLETE 0/5=0% (protocol mismatch)+run2 zhulong codegen 57/158(36%)** → 原文已归档 daily-memories-posttrain/2026-11-13.md
+
+[wake384 07:45] R384 **run2 codegen 64/158(40.5%)+3 stuck workers killed+harness mode mismatch analysis**:①run2 codegen:64/158 tasks(success=59/fail=2/timeout=3),87 remaining,5 workers active after killing 3 stuck(>2500s elapsed,timeout cmd failed) ②autocomplete daemon alive,waiting for run2→auto-runs 3-5 ③3 serves UP+tunnel OK ④🔴CRITICAL:3.8%(SFT single-turn code-gen,no sandbox feedback)vs 36%(base full-harness interactive w/sandbox)are DIFFERENT harness modes→NOT comparable→need base model eval on SAME single-turn pipeline(providers.json shared,must wait step105 5-run done) ⑤EXPERIMENTS updated §L4-zhulong wake384 ⑥git clean. R384✅.WAITING=0。
 
 
