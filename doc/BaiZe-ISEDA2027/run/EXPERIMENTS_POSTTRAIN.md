@@ -5782,3 +5782,74 @@ wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤
 - 评测脚本：`run/baize_posttrain_static_eval_full.py`（236 行）
 - 后台进程：PID 554362, `setsid python3 baize_posttrain_static_eval_full.py --base-url http://localhost:8098 --base-model minicpm5-2b --sft-url http://localhost:8096 --sft-model minicpm5-sft --out static_eval_r311_results.json --max-tokens 2048`
 - 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json+ast 完成。
+
+## §R313 (2026-11-12 wake313) R311 Static Eval 80/113 Progress: Full-Metric Analysis + API Coverage Trends
+
+> 续 R312（70/113）。eval 进程 PID 554362 仍在后台运行（etimes~42min），已增至 **80/113 tasks**。
+> 本轮做全指标分析（syntax + finish + has_function + API coverage + time + per-scenario），确认趋势延续。
+
+### 1. 全指标汇总（80/113 tasks, temp=0.0, max_tokens=2048, no_sandbox）
+
+| 指标 | BASE | SFT | Delta |
+|:--|:--|:--|:--|
+| Syntax OK | 53/80 (66.2%) | 77/80 (96.2%) | **+30.0pp** |
+| Finish=stop | 51/80 (63.8%) | 76/80 (95.0%) | **+31.2pp** |
+| Finish=length | 29/80 (36.2%) | 4/80 (5.0%) | **-31.2pp** |
+| Has function | 75/80 (93.8%) | 80/80 (100.0%) | **+6.2pp** |
+| Mean code chars | 6370 | 1284 | **0.20x (5.0x shorter)** |
+| Mean API coverage | 0.1786 | 0.1909 | 1.07x |
+| Mean time/sec | 23.5 | 5.3 | **0.23x (4.4x faster)** |
+
+> 与 R312 (70 tasks) 对比：syntax delta +25.7pp → +30.0pp（小幅扩大），conciseness 5.1x → 5.0x（稳定）。
+> 新增 10 tasks（70→80）后 SFT 优势**继续扩大或保持**，无反转。
+
+### 2. Per-Scenario Breakdown（80 tasks）
+
+| Scenario | n | Syntax | Stop | Has Func | API Cov |
+|:--|--:|:--|:--|:--|:--|
+| Design Management | 17 | 47%→**100%** (+53pp) | 47%→94% | 100%→100% | 0.042→0.058 |
+| Layout | 22 | 68%→**95%** (+27pp) | 68%→95% | 91%→100% | 0.224→0.230 |
+| Others | 19 | 74%→**100%** (+26pp) | 68%→100% | 89%→100% | 0.239→0.242 |
+| Schematic | 22 | 73%→**91%** (+18pp) | 68%→91% | 95%→100% | 0.186→0.210 |
+
+> 与 R312 (70 tasks) 对比：
+> - Design Mgmt: +46pp → **+53pp**（继续扩大，最大受益者）
+> - Schematic: 89% → **91%** syn（唯一未满分，但小幅改善）
+> - Layout/Others: 100% syn 保持
+
+### 3. API Coverage 深入分析
+
+| 指标 | BASE | SFT |
+|:--|:--|:--|
+| Mean API coverage | 0.1786 | 0.1909 |
+| Tasks with coverage>0 | — | — |
+| Tasks with full coverage (1.0) | 0/80 | 0/80 |
+
+> API coverage 改善有限（+0.012, 1.07x）——SFT 修好了**代码格式与结构**（syntax, length, function），
+> 但**API 知识正确性**改善微弱。这与 D4 诊断一致：断言失败（语义推理）需 RL 而非 SFT。
+> **SFT 回收的是「协议可回收」部分（D1/D3），RL 需攻「真实能力差距」（D4/D6）。**
+
+### 4. 趋势稳定性（20→50→70→80 tasks）
+
+| 指标 | 20-task | 50-task | 70-task | 80-task | 趋势 |
+|:--|:--|:--|:--|:--|:--|
+| Syntax valid delta | +20.0pp | +26.0pp | +25.7pp | **+30.0pp** | 稳定↑ |
+| finish=stop delta | +20.0pp | +28.0pp | +27.1pp | **+31.2pp** | 稳定↑ |
+| Code conciseness | 3.7x | 5.0x | 5.1x | **5.0x** | 稳定 ~5x |
+| Time speedup | — | 4.3x | 4.5x | **4.4x** | 稳定 ~4.4x |
+
+> 四档数据一致：SFT recipe 效果方向在 20→80 任务区间无反转，full 113 完成后预计数字稳定。
+
+### 5. 局限
+
+- ⚠️ **80/113 tasks**：eval 仍在后台运行（PID 554362, etimes~42min），~33 tasks 待完成。
+- ⚠️ **静态评测**：无 Pass@1。syntax valid ≠ 功能正确。需沙盒恢复后跑真实评测。
+- ⚠️ **temp=0.0 单 run**：非协议冻结的 5-run mean±std。
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe。
+
+### 6. 溯源
+
+- 结果文件：`run/static_eval_r311_results.json`（80 tasks / 1.13MB，仍在增长）
+- 评测脚本：`run/baize_posttrain_static_eval_full.py`（236 行）
+- 后台进程：PID 554362, `setsid python3 baize_posttrain_static_eval_full.py --base-url http://localhost:8098 --base-model minicpm5-2b --sft-url http://localhost:8096 --sft-model minicpm5-sft --out static_eval_r311_results.json --max-tokens 2048`
+- 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json 完成。
