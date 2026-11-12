@@ -1,6 +1,44 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-[用户令 · 2026-11-11 22:4x · 最高优先 · 覆盖任何"抽检后停机/作废"建议]
+[用户令 · 2026-11-12 15:4x · 最高优先 · 覆盖 done_all 等待状态 · 基座对齐补救]
+用户原话："既然你确定仅 B_en_r1 = glm-5.2，其余 14 轮（含 B_zh_r3 重跑）= deepseek-v4-pro-cloud，那就安排 zhulong agent 重新测试 B_en_r1；测完后刷新中文 HTML 报告，表格中加上 token 列。"
+
+执行口径（严格按序，不许改序）：
+1) **重跑 B_en_r1**：用与 B_en_r2/r3 完全相同的配置起新 batch 重跑 —— `thinking=medium`、`LANG_HINT="Think in English."`、**默认基座（deepseek-v4-pro-fp4/cloud，不强制 glm-5.2）**、`-p 8 -n`、158 题。目的：让轴 B 全部 15 轮基座一致（消除 wake#865 发现的基座违规），使 B 轴从「降级描述性」升级为「同基座可横比」。
+2) **启动方式**（参考 B_zh_r3 重跑 PID 4037472 的成功模式）：
+   ```bash
+   cd /nasdata/app.e0031982/code/eda_fastmcp
+   export CLI_AGENT=cline PARALLEL=8 CLINE_THINKING=medium LANG_HINT="Think in English."
+   export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+   export EVAL_ROOT_DIR_OVERRIDE=/nasdata/app.e0031982/code/eda_code_eval
+   export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+   export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+   export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
+   unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+   export PATH="/home/app.e0031982/.local/node-20/bin:$PATH"
+   setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_B_en_r1_rerun.log 2>&1' < /dev/null &
+   ```
+   ⚠️ 先 `pgrep -f '^bash scripts/run_cline_script'` 确认无其他评测在跑再起；沙盒端口 8664/8665/8653/8669 须全空闲（designflow 线不抢沙盒）。
+3) **旧 B_en_r1 留档**（idx 15, pass=75.3%, batch 2026_1109_084446, glm-5.2）：
+   - 在 `run/ablation_think_lang_results.json` 的 idx 15 summary 里加 `superseded_note` 字段，内容：`"2026-11-12 15:4x 令·基座对齐重跑·旧值 75.3% (glm-5.2) 留档不删·新 r1 完成后追加"`（参考 B_zh_r3 旧版 idx 20 的处理）。
+   - `run/cost_B_en_r1.json` 改名 `run/cost_B_en_r1_old_glm52.json` 留档；新 r1 的 cost 写进新的 `run/cost_B_en_r1.json`。
+4) **新 r1 落盘**（gen + score + cost 全完成后）：
+   - 新 summary 追加到 `ablation_think_lang_results.json` 末尾（新 entry，tag 仍 `B_en_r1`，batch 为新 batch id，含完整 pass_rate_pct/passed/total/tokens/converged/timeout/gen_fail/success 字段）。
+   - trace 存档到 `/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/<new_batch>/`（旧 batch 目录保留不删）。
+5) **刷新报告**（新 r1 落盘后必做）：
+   ```bash
+   cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+   python3 gen_report_zhulong_ablation_think_lang_zh.py
+   ```
+   - 主报告 `reports/report_zhulong_ablation_thinking_language_zh.html` 已含 token 列（prompt/completion/reasoning/total tok + tok/题），刷新后 B_en 行自动用新 r1 数据。
+   - **基座违规 banner 需改写**：B_en_r1 重跑后轴 B 全 15 轮基座一致（dsv4-pro-fp4），原 banner「仅 B_en_r1=glm-5.2，其余 14 轮=dsv4-pro」不再成立 → 改为「轴 B 15/15 轮 = dsv4-pro-fp4 ✅ 恒定合规（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）」；§⑦ 降级结论同步升级（B 轴可作同基座横比，但与基线 glm-5.2 的 Δpp 仍不可直接归因为语言效应，因基座不同）。
+   - audit 报告 `reports/report_zhulong_lang_switch_audit_zh.html` §5.3 的「修正建议」同步标注「B_en_r1 已重跑对齐，剩余 14 轮本就同基座 → 基座恒定条件已满足；基础 prompt 中性化 + 语言切换验证仍需做」。
+6) **B 轴独立报告** `reports/report_zhulong_ablation_axisB_language_zh.html`（11-12 15:34 生成）：
+   - 由编排 agent 重新生成（用与主报告相同的 results JSON 数据源）；如无现成生成器，手动更新该 HTML 的 §2.1/§2.2 表格：① B_en r1 行替换为新 pass 率 + 新 batch + 新 tokens；② §2.1/§2.2 主表**每行加 token 列**（prompt/completion/reasoning/total tok，与主报告口径一致）；③ 顶部红色「基座违规」banner 改写为「基座已对齐」绿色 banner；④ §七 降级结论同步升级。
+7) **心跳**：每轮写明 B_en_r1 重跑状态（PID / etime / log 大小 / batch / step）；WAITING=1（重跑跑中）；新 r1 落盘 + 报告刷新 + commit/push 完成后写 done_all + WAITING=1 等下一条指令。
+8) **红线**：不 kill 编排器/loop；不碰 trace 原文（旧 B_en_r1 batch 目录保留）；不占沙盒（designflow 线不抢）；不改别线；不 clean/reset/stash 别线未提交改动（designflow 线 dirty tree 非本线）。
+
+[用户令 · 2026-11-11 22:4x · 已交付 · 降级为历史参照]
 用户原话："抽样的结果只做参考，跑完再说。不许因为抽检思维链漂回英文而停止评测。坚决把评测执行到底。RU之后，regrade zh r2.再之后重跑 zh r3"
 
 执行口径（严格按顺序，不许改序）：
