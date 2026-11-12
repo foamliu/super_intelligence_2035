@@ -1,0 +1,9 @@
+[incr-eval 09:52:53] === incr_eval R2253 start ===
+[incr-eval 09:52:53] cline: 0 new instances, skip
+[incr-eval 09:52:53] codex: 0 new instances, skip
+[incr-eval 09:52:53] opencode: 0 new instances, skip
+
+=== claude-code R2253 ===
+new instances: 2 ['sympy__sympy-15599', 'sympy__sympy-15809']
+[incr-eval 09:52:53] claude-code: merged 2 new patches -> predictions_claude-code_new_R2253.json
+[incr-eval 09:52:53] claude-code: EVAL 2 instances -> run_id=verified_full_glm53_claude-code_incr_R2253

@@ -1,0 +1,34 @@
+[incr-eval 09:57:34] === incr_eval R2253b start ===
+[incr-eval 09:57:34] cline: 0 new instances, skip
+[incr-eval 09:57:34] codex: 0 new instances, skip
+[incr-eval 09:57:34] opencode: 0 new instances, skip
+
+=== claude-code R2253b ===
+new instances: 2 ['sympy__sympy-15599', 'sympy__sympy-15809']
+[incr-eval 09:57:34] claude-code: merged 2 new patches -> predictions_claude-code_new_R2253b.json
+[incr-eval 09:57:34] claude-code: EVAL 2 instances -> run_id=verified_full_glm53_claude-code_incr_R2253b
+[incr-eval 09:58:37] claude-code: eval rc=0
+[incr-eval 09:58:37]   sympy__sympy-15599: FAILED
+[incr-eval 09:58:37]   sympy__sympy-15809: RESOLVED
+[incr-eval 09:58:37] claude-code: cumulative n=256 resolved=207 failed=47 infra=2 -> eval_glm53_claude-code.json
+
+=== pi R2253b ===
+new instances: 3 ['django__django-16560', 'django__django-16569', 'django__django-16595']
+[incr-eval 09:58:37] pi: merged 3 new patches -> predictions_pi_new_R2253b.json
+[incr-eval 09:58:37] pi: EVAL 3 instances -> run_id=verified_full_glm53_pi_incr_R2253b
+[incr-eval 10:00:03] pi: eval rc=0
+[incr-eval 10:00:03]   django__django-16560: RESOLVED
+[incr-eval 10:00:03]   django__django-16569: RESOLVED
+[incr-eval 10:00:03]   django__django-16595: RESOLVED
+[incr-eval 10:00:03] pi: cumulative n=236 resolved=174 failed=62 infra=0 -> eval_glm53_pi.json
+
+=== hermes R2253b ===
+new instances: 2 ['sympy__sympy-23950', 'sympy__sympy-24213']
+[incr-eval 10:00:03] hermes: merged 2 new patches -> predictions_hermes_new_R2253b.json
+[incr-eval 10:00:03] hermes: EVAL 2 instances -> run_id=verified_full_glm53_hermes_incr_R2253b
+[incr-eval 10:00:56] hermes: eval rc=0
+[incr-eval 10:00:56]   sympy__sympy-23950: RESOLVED
+[incr-eval 10:00:56]   sympy__sympy-24213: RESOLVED
+[incr-eval 10:00:56] hermes: cumulative n=452 resolved=406 failed=44 infra=2 -> eval_glm53_hermes.json
+[incr-eval 10:00:56] deepseek: 0 new instances, skip
+[incr-eval 10:00:56] === incr_eval R2253b done: 7 instances, +6resolved +1failed +0infra ===
