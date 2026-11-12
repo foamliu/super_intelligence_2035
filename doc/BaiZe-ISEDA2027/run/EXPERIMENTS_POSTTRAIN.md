@@ -5582,3 +5582,116 @@ python3 str.replace 模拟 → 3 placeholder 全替换、0 残留、rendered 111
 - 沙盒探测：`/tmp/sandbox_probe.py`（python3 socket，全超时）
 - 路由：`ip route get 10.129.32.75` → via 10.252.32.1
 - 无伪造：模板为真实新建文件、验证为真实命令输出、沙盒探测为真实 socket 结果。
+
+---
+
+## §R311 (2026-11-12 wake311) Full Static Eval Launched: Base vs SFT across 113 Non-Techlib Tasks (no_sandbox, preliminary 20-task results)
+
+### 1. 动机
+
+Phase 1 基线评测需要量化 base (MiniCPM5-2B) 与 SFT (global_step_70) 的差距。
+沙盒（10.129.32.75）仍 FILTERED → 无法跑 cline harness 158 任务正式 Pass@1 评测。
+但 **no_sandbox 静态评测不需沙盒**：直接向 vLLM `/v1/chat/completions` 发送函数签名，
+收集生成代码，做静态分析（语法/API 覆盖/finish_reason/has_function）。
+这是 R286 mini-eval（10 任务）的全量扩展（113 non-techlib tasks）。
+
+### 2. GPU4 Base Serve 恢复
+
+wake311 唤醒时发现 GPU4（:8098 base MiniCPM5-2B）**serve 已死**：
+- nvidia-smi -i 4 → 3 MiB（无进程）
+- curl :8098 → 空响应
+- /tmp/vllm_gpu4.log 显示 10:30 启动成功后进程退出
+
+**重启**（11:23，setsid 脱离进程组）：
+```
+CUDA_VISIBLE_DEVICES=4 HF_HOME=/tmp/hf_home setsid /tmp/vllm_venv/bin/python -m vllm.entrypoints.openai.api_server \
+  --model /nas_data/app.e0031982/models/MiniCPM5-2B --served-model-name minicpm5-2b \
+  --host 0.0.0.0 --port 8098 --trust-remote-code --gpu-memory-utilization 0.85 \
+  --max-model-len 65536 --enable-auto-tool-choice --tool-call-parser minicpm5 --enforce-eager
+```
+验证：curl :8098/v1/models → 200 OK，nvidia-smi -i 4 → 37962 MiB ✅
+
+### 3. 方法
+
+**脚本**：`baize_posttrain_static_eval_full.py`（已有，wake287 建造）
+**数据集**：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 任务，过滤 techlib_dependency=True 后 113 non-techlib）
+**端点**：base http://localhost:8098 (minicpm5-2b) / SFT http://localhost:8096 (minicpm5-sft)
+**参数**：temp=0.0, max_tokens=2048, timeout=120s/调用, no_proxy=localhost
+**指标**（纯静态，无沙盒执行）：
+1. Syntax valid = compile() 通过（strip markdown fences 后）
+2. finish_reason = stop vs length（截断）
+3. has_function = 目标函数名是否定义
+4. API coverage = 正确 API 名 found / expected API count
+5. Code length = 字符数
+
+**执行**：11:24 启动（PID 554362，setsid 后台），每 10 任务 checkpoint。
+**状态**：截至本节写入，20/113 任务完成（checkpoint(20)），full eval 仍在运行。
+
+### 4. 初步结果（20 tasks，preliminary）
+
+| Metric | Base (minicpm5-2b) | SFT (global_step_70) | Delta |
+|:--|:--|:--|:--|
+| Syntax valid | 14/20 (70.0%) | 18/20 (90.0%) | **+20.0pp** |
+| finish=stop | 13/20 (65.0%) | 17/20 (85.0%) | **+20.0pp** |
+| finish=length (truncated) | 7/20 (35.0%) | 3/20 (15.0%) | **-20.0pp** |
+| has_function | 18/20 (90.0%) | 20/20 (100.0%) | **+10.0pp** |
+| API coverage (mean) | 0.088 | 0.101 | +0.013 |
+| Code length (mean chars) | 6264 | 1712 | **3.7x 更简洁** |
+| API errors | 0/20 | 0/20 | — |
+
+### 5. 关键发现
+
+1. **SFT 将 syntax validity 从 70% → 90%（+20pp）**：base 模型在 35% 的任务上
+   生成不完整代码（finish=length，2048 token 用尽仍在写推理散文）→ compile 失败。
+   SFT 模型 85% finish=stop（提前完成）→ 语法几乎全通过。
+
+2. **SFT 代码 3.7x 更简洁（6264 → 1712 chars）**：与 R175/R176 定性发现一致——
+   base 模型陷入"思考模式"生成大量推理散文，SFT 模型直接产出可执行代码。
+   这直接量化了 D1/D2 协议差距的修复效果。
+
+3. **SFT 100% 定义目标函数（vs base 90%）**：base 在 2/20 任务中未定义
+   `entry_point` 函数（代码被截断在函数定义之前），SFT 全部定义。
+
+4. **API coverage 均低（base 8.8% / SFT 10.1%）**：可能因 `metadata.apis_used`
+   字段不完整或模型使用了不同的 API 路径。SFT 略高但不显著——
+   API 正确性需沙盒执行验证（Pass@1），静态分析无法判定。
+
+5. **base 模型 35% truncation rate 证实 D3（超上下文/截断）问题**：
+   与 R176 的 base 16/16 finish=length 一致（R176 用 max_tokens=400）。
+   本轮 max_tokens=2048 仍 35% 截断 → base 思考模式极顽固。
+
+### 6. 与 R175/R176 的一致性验证
+
+| 发现 | R175/R176 (定性, 8-16 题) | R311 (定量, 20 题) |
+|:--|:--|:--|
+| Base 卡在思考模式 | 100% finish=length | 35% finish=length (2048 tok) |
+| SFT 产出可执行代码 | 0% → 100% 有代码 | 65% → 85% finish=stop |
+| SFT 代码更简洁 | 肉眼可见 | 3.7x 量化 |
+| SFT 定义目标函数 | 8/8 | 20/20 (100%) |
+
+### 7. 局限
+
+- ⚠️ **静态评测**：无沙盒执行 → 无 Pass@1。syntax valid ≠ 功能正确。
+  需沙盒恢复后跑 `baize_posttrain_baseline_eval.sh` 获取真实 Pass@1。
+- ⚠️ **20 tasks preliminary**：full 113-task eval 仍在运行（PID 554362），
+  完成后数字可能变化。下一步 wake 读取 `static_eval_r311_results.json` 全量分析。
+- ⚠️ **temp=0.0**：非评测协议冻结的 5-run mean±std（协议要求 5-run）。
+  本轮为单 run 静态快速评测，用于验证 SFT recipe 效果方向。
+- ⚠️ **113 non-techlib tasks**：158 总任务中 45 个 techlib_dependency=True 被过滤。
+  techlib 任务需沙盒中的 techlib 环境，静态评测不适用。
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe。
+
+### 8. 下一步
+
+1. **Full 113-task eval 完成**（后台运行中）→ 下次 wake 读取 `static_eval_r311_results.json` 全量分析
+2. **沙盒恢复后**：跑 `baize_posttrain_baseline_eval.sh --model minicpm5_2b --runs 5` 获取真实 Pass@1 5-run mean±std
+3. **Phase 1 里程碑报告**：`reports/report_posttrain_baseline_3model_zh.html`（需 3 模型 × 5-run 完整数据）
+
+### 9. 溯源
+
+- 静态评测脚本：`run/baize_posttrain_static_eval_full.py`（236 行）
+- 结果文件：`run/static_eval_r311_results.json`（20 tasks / 291KB，仍在增长）
+- 评测日志：`/tmp/static_eval_r311.log`
+- GPU4 serve 日志：`/tmp/vllm_gpu4.log`
+- 数据集：`~/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 行）
+- 无伪造：所有数据为真实 vLLM API 调用输出，静态分析由 Python compile()/ast 完成。
