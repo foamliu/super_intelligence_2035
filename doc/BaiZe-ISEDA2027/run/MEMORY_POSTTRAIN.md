@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake377（2026-11-13 R377: **5-run eval LAUNCHED** — dual Pass@1 results recorded in EXPERIMENTS; 5-run eval script created (baize_posttrain_5run_eval.sh); run 2 of 5 kicked off in background (PID1109190, code-gen running via vLLM :8096 step_105); run 1 results saved; PYTHON env var fix applied to script）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-376✅;R376✅;R376b✅;R376c✅(DUAL Pass@1=3.8%vs1.3%);R377✅(5run eval script+run2 launched)
-- 当前动作: wake377 R377:①dual Pass@1 FINAL results recorded in EXPERIMENTS §L4-zhulong wake376c FINAL(step_105=6/158=3.8% vs step_60=2/158=1.3%,passed tasks:003,046,067,096,127,153,exec-fail breakdown,reproduce commands,5run eval plan) ②5-run eval automation script created `baize_posttrain_5run_eval.sh`(bash -n✅,dry-run✅,saves/restores providers.json,sets PYTHON env var,kicks off code-gen+eval,computes mean±std) ③run 1 results saved to /tmp/posttrain_5run_eval/step105/run1/(JSONL+summary) ④run 2 of 5 KICKED OFF in background(PID1109190,code-gen running,vLLM :8096,providers.json→local,PYTHON=venv python) ⑤first attempt failed(python not found)→fixed by adding PYTHON env var to script
-- 下一步: ①wait for run 2 code-gen(~3h)+sandbox eval(~30min) to complete ②kick off runs 3-5 in subsequent wakes ③compute 5-run mean±std after all 5 complete ④McNemar/paired bootstrap vs baseline ⑤Phase3 RL launch-ready待SFT配方最终判定
-- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(run 2 of 5 running)
-- 本轮新增产出: R377✅(5run eval script baize_posttrain_5run_eval.sh;EXPERIMENTS §L4-zhulong wake376c FINAL section with full dual Pass@1 results+reproduce commands;run 2 of 5 launched in background;run 1 results saved)
-- 未完成指令: L4 2026-11-12(zhulong eval 1/5 runs done,designflow 0%);13:40 SFT v39 eval→5-run eval IN PROGRESS(run 2 of 5 running)
-- git: super_intelligence_2035(commit 699cfa5a3 wake376c);本轮 commit pending(wake377)
+- PHASE: posttrain-wake378（2026-11-13 R378: **5-run eval autocomplete launched** — run 2 of 5 code-gen 38/158 in progress (PID1109190); autocomplete script created+launched (PID1122770) waits for run2 then auto-runs 3-5+computes 5-run mean±std; run 1 results: Pass@1=6/158=3.8%）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-376✅;R376✅;R376b✅;R376c✅(DUAL Pass@1=3.8%vs1.3%);R377✅(5run eval script+run2 launched);R378✅(autocomplete script+run2 progress checked)
+- 当前动作: wake378 R378:①run 2 of 5 code-gen progress checked: 38/158 tasks done (120 remaining in queue), GPU6:8096 89%util, tunnel UP (8664/8665/8653/8669), 3 serves UP (8098+8097+8096), ETA ~23min code-gen + ~30min sandbox eval ②autocomplete script `baize_posttrain_5run_autocomplete.sh` created (bash -n✅): waits for run2 PID→runs 3,4,5 sequentially→computes 5-run mean±std→saves 5run_summary.json ③autocomplete LAUNCHED in background (PID1122770, ppid=1 daemon, waiting for run2 to finish) ④run 1 final results confirmed: Pass@1=6/158=3.8%, passed tasks: 003,046,067,096,127,153
+- 下一步: ①autocomplete auto-runs 3-5 after run2 finishes (~50min) ②check 5run_summary.json in next wake for mean±std ③McNemar/paired bootstrap vs 36% baseline ④Phase3 RL launch-ready待SFT配方最终判定
+- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(run 2 of 5 running, runs 3-5 auto-queued)
+- 本轮新增产出: R378✅(autocomplete script baize_posttrain_5run_autocomplete.sh;run2 progress verified 38/158;autocomplete launched PID1122770)
+- 未完成指令: L4 2026-11-12(zhulong eval run 2/5 in progress, runs 3-5 auto-queued, designflow 0% done);13:40 SFT v39 eval→5-run eval IN PROGRESS
+- git: super_intelligence_2035(commit 9296578eb wake377);本轮 commit pending(wake378)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -214,6 +214,8 @@ WAITING: 0
 
 > 📦 wake376 流水已归档 → daily-memories-posttrain/2026-11-13.md（R376 dual eval code-gen 98%+syntax scan+empty-dir analysis:step_105>>step_60 all metrics）
 
-[wake377 06:27] R377 **5-run eval LAUNCHED+EXPERIMENTS updated**:①dual Pass@1 FINAL results recorded in EXPERIMENTS §L4-zhulong wake376c FINAL(step_105=6/158=3.8% vs step_60=2/158=1.3%,passed:003,046,067,096,127,153,exec-fail:SyntaxErr17+AttrErr15+TypeErr13,reproduce commands,5run eval plan) ②5-run eval automation script `baize_posttrain_5run_eval.sh` created(bash -n✅,dry-run✅,saves/restores providers.json,PYTHON env var,code-gen+eval,mean±std computation) ③run 1 results saved to /tmp/posttrain_5run_eval/step105/run1/(JSONL+summary.json) ④run 2 of 5 KICKED OFF in background(PID1109190,code-gen running,vLLM :8096 step_105,providers.json→local,PYTHON=venv python) ⑤first attempt failed(`python` not found)→fixed by adding `PYTHON=$VENV_PYTHON`+`PATH=$HOME/.bun/bin:$PATH` to script ⑥tunnel UP(ports 8664/8665/8653/8669 listening,PID618469) ⑦3 serves UP(GPU4:8098+GPU5:8097+GPU6:8096 all healthy,curl /v1/models OK) ⑧git clean(commit 699cfa5a3 wake376c). R377✅.WAITING=0。
+> 📦 wake377 流水已归档 → daily-memories-posttrain/2026-11-13.md（R377 5run eval script+run2 launched+dual Pass@1 in EXPERIMENTS）
+
+[wake378 06:40] R378 **5-run eval autocomplete launched**:①run 2 of 5 code-gen progress checked: 38/158 tasks done(120 remaining in .task_queue),GPU6:8096 89%util,8 workers active,tunnel UP(8664/8665/8653/8669 PID618469),3 serves UP(8098+8097+8096 all curl OK),ETA ~23min code-gen+~30min sandbox eval ②run 1 final results confirmed:Pass@1=6/158=3.8%,passed:003,046,067,096,127,153,exec-fail:SyntaxErr17+AttrErr15+TypeErr13 ③autocomplete script `baize_posttrain_5run_autocomplete.sh` created(bash -n✅):waits for run2 PID1109190→runs 3,4,5 sequentially via baize_posttrain_5run_eval.sh→computes 5-run mean±std+always-pass/any-pass task analysis→saves 5run_summary.json ④autocomplete LAUNCHED in background(PID1122770,ppid=1 daemon,log:/tmp/posttrain_5run_autocomplete.log,waiting for run2 to finish) ⑤designflow L4 status confirmed:base+SFT v39 both 0% on designflow(0/5+0/30),DeepSeek also 0%→benchmark extremely hard,results already in EXPERIMENTS §L4.6f/§L4.10/§L4-DesignFlow ⑥git clean(commit 9296578eb wake377). R378✅.WAITING=0。
 
 
