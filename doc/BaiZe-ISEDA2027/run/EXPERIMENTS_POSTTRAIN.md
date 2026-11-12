@@ -7129,16 +7129,26 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
   - 5 tasks: ABMatchPlacementCheck-001, Analog-001, AnalogGroupCfgMergeDummy-001, AutoPR-001, BitcellMcSpGen-001
   - progress: done=0, pass=0, fail=0（仍在第一题）
   - wake343 更新（21:21）：PID 3858541 alive on 36.15（etimes≈1156s≈19min），进程树已从 task1(ABMatchPlacementCheck-001) 推进到 task2(EDA-Eval-DesignFlow-Analog-001) → **有进展**；CWD=`/nasdata/app.e0031982/code/EDA-Flow-Bench`；`eval/status_rerun_2700s.jsonl` 仍空（status 记录步骤有已知 `ValueError: invalid literal for int() with base 10: '0\n0'` bug，见历史 worker_1.log，judge verdict 实落 worker log / `~/.cache/judge_*`）；仍 RUNNING
-- 预计耗时：worst case 5×2700s = 3.75hr，但多数任务应在 2700s 内完成
-- 结果：TBD（下轮 wake 检查；Run2 完成后从 worker log/.cache 收集 per-task verdict）
+  - wake344 更新（21:33）：PID 3858541 alive on 36.15（etimes≈1996s≈33min）；**2/5 tasks DONE, both FAIL**：
+    - Task 1 (ABMatchPlacementCheck-001): **FAIL** — cline exit=0 dur=1045s, no submit.zip produced (cline wrote nothing under outputs/), hook_blocks=0
+    - Task 2 (Analog-001): **FAIL** — cline exit=0 dur=751s, harness packed 1 file to submit.zip but judge found missing required files (sample_output.txt, error_summary.txt), hook_blocks=0; also FileNotFoundError on `benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl` during judge (CWD issue, but verdict still FAIL for missing submit contents)
+    - Task 3 (AnalogGroupCfgMergeDummy-001): **RUNNING** (worker_3 started, cline executing, PreToolUse hook deployed ✅)
+  - summary.log: `[2/5] 40% | PASS:0 FAIL:2 | 29:56<44:54, 898.0s/it | running: AnalogGroupCfgMergeDummy-001`
+  - progress: done=2, pass=0, fail=2, running=task3
+  - status_rerun_2700s.jsonl: **still 0 bytes** (ValueError bug confirmed — worker logs show "recorded:" entries with full JSON but file remains empty; verdicts recoverable from worker_*.log)
+  - Model confirmed: `minicpm5-2b` via cline (provider=openai-compatible, thinking=low) — correct, NOT glm-5.2 (the glm-5.2 opencode process on 36.15 is the separate ZhuLong designflow shard D loop, PID 1723625-1723628, ~250hr uptime)
+  - PreToolUse hook: deployed ✅ on all tasks, hook_blocks=0 (no cheat attempts detected)
+- 预计耗时：~45min remaining for 3 tasks (at ~898s/task avg)
+- 结果：TBD（Run2 完成后从 worker log/.cache 收集 per-task verdict；current 0/2 PASS = 0% Pass@1, infra-limited [no output / missing files]）
 
-### L4.6c Post-SFT Eval Progress（wake342→wake343 监控）
-- PID 789217 alive on .17（wake343: etimes≈8125s ≈ 2hr 15min）
+### L4.6c Post-SFT Eval Progress（wake342→wake344 监控）
+- PID 789217 alive on .17（wake344: etimes≈9009s ≈ 2hr 30min）
 - 输出目录：`~/eda_code_eval/2026_1112_190335/`
-- 进度（wake343 21:21）：**83/158 已结算** = success=79 / failure=3 / timeout=1（wake342 时 ~51 .py / failure=3 → 已推进 ~32 任务）；8 workers (worker_1..8) 活跃；newest file 21:18:57（worker_7 cline.log/hooks.jsonl/messages.json，~3s ago at check）→ 仍活跃写
-- GPU5 :8097 (minicpm5-2b-sft) serving at 90% utilization — actively generating
-- 预计剩余：~1-1.5hr（~75 tasks remaining, 8 workers）
-- 结果：TBD（等 final_report.json；注意 stats/success=代码生成完成数，非 Pass@1，真正 pass 需 run_eval.py 评分）
+- 进度（wake344 21:33）：**90/158 已结算** = success=86 / failure=3 / timeout=1（wake343 时 83/158 → 推进 7 任务）；8 workers (worker_1..8) 活跃；task_queue 剩余 60 行（98 已分发，~8 在途）；newest activity 21:30（code dir 最后修改）→ 仍活跃写
+- GPU5 :8097 (minicpm5-2b-sft, global_step_90) serving at **98% utilization** — actively generating
+- 代码生成完成率：86/90 = **95.6%**（注意：这是 cline 代码生成完成数，非 Pass@1；真正 pass 需 run_eval.py 评分）
+- 预计剩余：~1.5-2hr（~68 tasks remaining, 8 workers, ~36 tasks/hr throughput）
+- 结果：TBD（等 final_report.json → run_eval.py 评分 → compare vs 36% baseline）
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
