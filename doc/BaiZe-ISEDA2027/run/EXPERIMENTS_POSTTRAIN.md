@@ -7794,3 +7794,68 @@ setsid bash -c "eval/run_batch.sh \
 - **隧道依赖**：SSH 反向隧道进程在 .17 上（`ssh -p 3333 -fN -R 18096:localhost:8096`），若 .17 重启或进程退出需重建
 - **下一步**：等 5-task eval 完成 → 读 `status_sft_v39_final.jsonl` → 报告 Pass@1 baseline → 如有 PASS 则扩到全量
 
+### §L4-DesignFlow (2026-11-13 wake365) SFT v39 Final 5-Task Eval — FINAL RESULTS (COMPLETED)
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+- **批次**：`eval/run_batch_20261113_031709`（36.15, via SSH reverse tunnel .17:8096→36.15:18096）
+- **模型**：MiniCPM5-2B-SFT v39 final（global_step_105, GPU6 :8096 vLLM serve）
+- **配置**：`--workers 2 --sample 5 --model minicpm5-2b-sft-v39-final --timeout 2400`
+- **总耗时**：~8min（5 tasks, 2 workers）
+
+#### 最终计数
+
+| 指标 | 值 | 说明 |
+|:--|--:|:--|
+| **Pass@1** | **0/5 = 0.0%** | 🔴 零 pass |
+| 已完成 | 5/5 | 全部完成 |
+| FAIL | 5 | 全部 "no submit.zip produced (cline wrote nothing under outputs/)" |
+| ERROR | 0 | 无 infra crash |
+| PreToolUse hook | ✅ deployed | hook_blocks=0（无作弊拦截） |
+| anti-cheat | ✅ | workdir clean, no leak |
+
+#### 逐题 verdict
+
+| task_id | shard | dur_sec | cline_exit | verdict | reason |
+|:--|:--|--:|--:|:--|:--|
+| NetlistGate2Verilog-001 | D | 161 | 0 | FAIL | no submit.zip (outputs/ empty) |
+| CslWlGateMap-001 | A | 363 | 0 | FAIL | no submit.zip (outputs/ empty) |
+| LdoCircuitReport-001 | D | 101 | 0 | FAIL | no submit.zip (outputs/ empty) |
+| DivSelDuty-001 | B | 44 | 0 | FAIL | no submit.zip (outputs/ empty) |
+| PinFloatAether-001 | C | 167 | 0 | FAIL | no submit.zip (outputs/ empty) |
+
+#### 失败分析
+
+- **统一模式**：cline 进程正常退出（exit=0）但 **outputs/ 目录为空** → 模型生成了对话内容但**未产出任何交付件文件**
+- 与 §L4.6f clean5（base model, 0/5=0%）和 §L4.10 expand30（base model, 0/30=0%）**一致**
+- **根因**：SFT v39 模型在 designflow 任务上无法遵循"产出文件到 outputs/"的指令——模型生成文本回复但不写文件
+- **非 infra 问题**：无 crash、无 timeout、无磁盘满、无 hook 拦截 → 纯能力 gap
+- **结论**：MiniCPM5-2B SFT v39 final 在 designflow 5-task 上 **Pass@1 = 0%**，与 base model 持平（均 0%），SFT 未改善 designflow 能力
+
+#### DesignFlow 历史基线汇总
+
+| 模型 | 任务数 | Pass@1 | 数据来源 |
+|:--|--:|--:|:--|
+| DeepSeek-V4-Pro (cloud) | 30 | 0% | §L4.10（11 FAIL + 19 error/timeout） |
+| MiniCPM5-2B **base** | 30 | 0% | §L4.10 expand30 |
+| MiniCPM5-2B **base** | 5 | 0% | §L4.6f clean5 |
+| MiniCPM5-2B **SFT v39 final** | 5 | 0% | **本轮** |
+
+→ DesignFlow benchmark 对所有测试模型均为 0% Pass@1，包括 DeepSeek——这表明该 benchmark 任务难度极高或评测协议需进一步调优
+
+### §L4-zhulong (2026-11-13 wake365) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+- **两个并行 158-task eval 仍在运行**（无 final_report.json，code-gen 阶段未完成）
+
+| eval | GPU | model | code dirs | code-gen success | code-gen failure | timeout | queue remaining | elapsed |
+|:--|:--:|:--|--:|--:|--:|--:|--:|--:|
+| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 94/158 | 80 | 6 | 0 | 64 | ~74min |
+| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 81/158 | 70 | 1 | 0 | 79 | ~47min |
+
+- **code-gen success** = cline 成功产出代码（非 eval pass）；实际 Pass@1 须等 code-gen 全部完成后 run_eval.py 评分得出
+- **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 step_60 已有 80/94=85% code-gen 成功率，**远优于 v11v38 的 22.78%** → 新 SFT 配方显著改善代码生成格式
+- **ETA**：step_60 ~98min remaining, step_105 ~92min remaining → 约 1.5h 后两 eval 完成
+- **下一步**：等 final_report.json 产出 → 记录 Pass@1 step_60 vs step_105 → 与 base 36% 对比 → 判定 SFT v39 配方是否有效
+
