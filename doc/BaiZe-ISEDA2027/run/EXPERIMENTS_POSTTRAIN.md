@@ -5323,3 +5323,102 @@ cp /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/b
 - 实现：参考 hermes parser 结构 + 复用 verl parser 的 regex/类型推断逻辑
 - 验证：注册检查 + 3 组 curl 测试（SFT search / base search / SFT CDATA code）
 - 无伪造：所有数据为真实 curl 响应 / vLLM 源码 / ps 输出。
+
+---
+
+## §R307 — 工具名对齐实证：模型遵循 tool schema 全名而非 system prompt 短名（2026-11-12 wake307）
+
+### 1. 问题背景
+
+wake306 修复了 minicpm5 vLLM tool-call parser（`<function>` XML → 结构化 `tool_calls`），但遗留一个"工具名对齐"待解决项：
+- 系统 prompt 模板（`eval_sys_prompt_template*.md`）引用**短名**：`search_apis`、`get_api_details`、`run_code`
+- 旧模板（`eval_sys_prompt_template_old.md`）引用**旧名**：`run_pyAether_code_tool`
+- MCP 服务器在 cline 配置中名为 `pyAether_MCP_server`（`~/.cline/data/settings/cline_mcp_settings.json` L3）
+- cline 向 LLM 发送 tool schema 时使用**全名**：`pyAether_MCP_server__search_apis`、`pyAether_MCP_server__run_code` 等
+
+**疑问**：2B 模型会遵循 system prompt 的短名（→ 工具不存在 → 失败），还是遵循 tool schema 的全名（→ 正确执行）？
+
+### 2. 实证测试
+
+#### 2.1 测试设计
+
+向 base 模型（:8098, `--tool-call-parser minicpm5`）发送 chat completion：
+- system prompt 包含**短名**（`search_apis`、`run_code`）—— 模拟 eval 模板
+- tools schema 包含**全名**（`pyAether_MCP_server__search_apis`、`pyAether_MCP_server__run_code`）—— 模拟 cline 实际发送
+- `tool_choice: "auto"`, `temperature: 0.0`
+
+#### 2.2 测试 1：search_apis
+
+```
+system: "工具清单: search_apis 搜索API, run_code 执行代码"
+tools:  [{name: "pyAether_MCP_server__search_apis"}, {name: "pyAether_MCP_server__run_code"}]
+user:   "搜索与bus string相关的pyAether API"
+```
+
+**结果**（base :8098）：
+```json
+{"finish_reason": "tool_calls",
+ "tool_calls": [{"function": {"name": "pyAether_MCP_server__search_apis",
+                              "arguments": "{\"query\": \"bus string\"}"}}]}
+```
+✅ 模型输出**全名** `pyAether_MCP_server__search_apis`，不是短名 `search_apis`
+
+#### 2.3 测试 2：run_code
+
+```
+system: "工具: search_apis, run_code"
+tools:  [{name: "pyAether_MCP_server__search_apis"}, {name: "pyAether_MCP_server__run_code"}, {name: "submit_and_exit"}]
+user:   "执行代码 import pyAether as py; print(py.__version__)"
+```
+
+**结果**（base :8098）：
+```json
+{"finish_reason": "tool_calls",
+ "tool_calls": [{"function": {"name": "pyAether_MCP_server__run_code",
+                              "arguments": "{\"code\": \"import pyAether as py; print(py.__version__)\"}"}}]}
+```
+✅ 模型输出**全名** `pyAether_MCP_server__run_code`
+
+**结果**（SFT :8096）：
+```json
+{"finish_reason": "tool_calls",
+ "tool_calls": [{"function": {"name": "pyAether_MCP_server__run_code",
+                              "arguments": "{\"code\": \"import pyAether as py; print(py.__version__)\"}"}}]}
+```
+✅ SFT 模型也输出**全名**
+
+### 3. 结论：工具名不匹配**已解决**
+
+**MiniCPM5-2B（base + SFT）遵循 tool schema 中的全名**（`pyAether_MCP_server__*`），而非 system prompt 中的短名。这是 OpenAI tool-calling API 的标准行为——模型从 `tools` 参数中获取工具定义（含名称），system prompt 中的文字描述仅作指引，不覆盖 schema 名称。
+
+**旧名 `run_pyAether_code_tool` 问题**：仅出现在 `eval_sys_prompt_template_old.md`（旧模板），当前 `.env` 指向 `eval_sys_prompt_template_no_sandbox.md`（用短名 `run_code`）。模型不遵循短名 → 不受影响。
+
+**Phase 1 解锁条件更新**：
+1. ~~`tool_calls` 始终为空（hermes parser 不匹配）~~ → wake306 修复 ✅
+2. ~~工具名对齐（prompt 短名 vs MCP 全名）~~ → **本 wake 实证解决 ✅**
+3. 沙盒 10.129.32.75 可达 → 仍阻塞（111th wake，全端口 FILTERED）❌
+
+### 4. 新发现：上下文溢出风险
+
+在 cline task 历史 JSON 中发现 vLLM 400 错误：
+```
+"This model's maximum context length is 32768 tokens. However, you requested 32807 tokens in the messages"
+```
+- 当前 serve `--max-model-len 32768`
+- eval 多轮对话（system prompt ~2K tok + task prompt + 多轮 tool call/result）可能超限
+- **建议**：沙盒恢复后，首测 Phase 1 观察 context 使用；若频繁溢出，考虑提高 `--max-model-len`（需更多 VRAM）或裁剪 system prompt
+
+### 5. `submit_and_exit` 来源确认
+
+- `submit_and_exit` 是 cline `--yolo` 模式的**内置终端工具**（`run_cli.sh` L181-184）
+- 非 MCP 工具，不经过 `pyAether_MCP_server__` 前缀
+- cline 自动注入到 tool schema → 模型可调用 → 无名称对齐问题
+
+### 6. 溯源
+
+- curl 测试 base :8098：`curl http://localhost:8098/v1/chat/completions` + tools schema（全名）+ system prompt（短名）→ tool_calls 全名 ✅
+- curl 测试 SFT :8096：同上 → tool_calls 全名 ✅
+- cline MCP 配置：`~/.cline/data/settings/cline_mcp_settings.json` L3 `"pyAether_MCP_server"`
+- 上下文溢出证据：`~/.cline/data/tasks/*/api_conversation_history.json` 中 vLLM 400 响应
+- `submit_and_exit`：`~/code/eda_fastmcp/scripts/run_cli.sh` L181-184
+- 无伪造：所有数据为真实 curl 响应 / 配置文件 / task 历史 JSON。
