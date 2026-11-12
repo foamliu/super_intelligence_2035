@@ -62,7 +62,7 @@
   <h1>EDA-LiveFlow-Bench 论文改进建议 · shard B 视角</h1>
   <div class="meta">
     <span class="tag b">shard B · spice_sim / characterization</span>
-    <span class="tag">论文报告 v10</span> ·
+    <span class="tag">论文报告 v12</span> ·
     2026-11-12 ·
     视角：研究组成员（不是审稿人） ·
     论文目录 <code>doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/</code>（只读，未修改任何论文文件）
@@ -242,6 +242,8 @@
   <li><strong>不建议加「AI 辅助 layout 生成」</strong>：目前 trace 里没有足够的生成式 layout 活动，靠合成会偏离 benchmark 定位。</li>
 </ul>
 <p><strong>④ living benchmark 的「增长曲线」应分层披露。</strong>如 Q3 ⑤ 所述，spice_sim 供给已近枯竭（mc10.fresh=0），而 digital/schematic 可能仍有空间。论文应给一张「各域近 30 天新增 case 数」的曲线，诚实展示哪些域仍在增长、哪些已收敛——这比单一 \Ntasks 总数更有信息量，也预防「living 但其实不动」的质疑。</p>
+
+<p><strong>⑤ 域内用户浓度：spice_sim top-1 用户 9.1%，是 §5 line 134 域级失衡之下的二阶失衡（v12 新证）。</strong>本人本轮全量实测 B.jsonl 220 spice_sim case 的用户分布：tongfanl 一人贡献 20/220 = <strong>9.1%</strong>（全部 DDR6 DSCQA analogsim WTM vecgen 主题），top-5 用户（tongfanl 20 / tongni 11 / jiangbaol 7 / e0024852 7 / e0030760 6）合计 33/220 = <strong>15.0%</strong>。论文 §5（<code>5_analysis.tex:134</code>）「top three domains hold 44.3%」是<strong>域级</strong>失衡；本条证 <strong>域内还有用户级失衡</strong>——tongfanl 单人 9.1% 且全 DDR6 DSCQA 主题，把「DDR6 DSCQA 约定」在 spice_sim 域内的比重放大。这对 §5（<code>5_analysis.tex:154</code>）「Trace provenance: may contain company-specific conventions」是直接量化证据：不是抽象的「可能含 company-specific」，而是可指出「spice_sim 9.1% 来自同一工程师的 DDR6 DSCQA 工作流」。<strong>建议 §5 Threats 补一行「Intra-domain user concentration」</strong>（spice_sim top-1 9.1% / top-5 15.0%），与域级失衡并列。这与本报告 Q1 判断的「grounding-depth 因果叙事是最薄弱环节」互补——薄弱环节之二即「代表性叙事」：域级 + 域内双层失衡都需披露，macro-average（② 建议）只对冲域级，对域内浓度无效（macro 仍按域等权，不区分域内用户权重）。</p>
 </div>
 
 <!-- Q6 -->
@@ -335,7 +337,7 @@
 </div>
 
 <div class="foot">
-  <p><strong>报告说明</strong>：本报告由 shard B（spice_sim / characterization）以研究组成员视角撰写，基于 2026-11-12 09:0x 的论文状态（<code>main.tex \Ntasks=1155</code>，与 jsonl A225+B273+C311+D346=1155 自洽；论文/jsonl/候选池自 08:58 v10 以来无变化）。所有论文引用均给出 section 文件 + 行号或原句，未转述。所有未运行的实验标注「建议验证」，未称「已验证」。论文文件全部只读，未修改。本版 v11 相对 v10 的增量：对 42 条余量中 spice 关键词最高的 2 条做了实测 peek（v9zug=kanban 看板会话、2gxuy=vscode how-to 咨询），累计 peek 14→16 / CLEAN 仍 2 / 最近 10 peek 0 CLEAN。</p>
+  <p><strong>报告说明</strong>：本报告由 shard B（spice_sim / characterization）以研究组成员视角撰写，基于 2026-11-12 09:2x 的论文状态（<code>main.tex \Ntasks=1155</code>，与 jsonl A225+B273+C311+D346=1155 自洽；论文/jsonl/候选池自 09:19 v11 以来无变化）。所有论文引用均给出 section 文件 + 行号或原句，未转述。所有未运行的实验标注「建议验证」，未称「已验证」。论文文件全部只读，未修改。<strong>本版 v12 相对 v11 的增量</strong>：Q5 新增 ⑤——全量实测 B.jsonl 220 spice_sim case 用户浓度，发现 top-1 用户 tongfanl 20/220=9.1%（全 DDR6 DSCQA 主题）、top-5 15.0%，是 §5 line 134 域级失衡之下的域内二阶失衡新证，建议 §5 Threats 补「Intra-domain user concentration」一行。v11 相对 v10 的增量：2-peek 余量 spice≥10 top 全 REJECT（v9zug=kanban、2gxuy=vscode how-to），累计 peek 16 / CLEAN 2 / 最近 10 peek 0 CLEAN。</p>
   <p><strong>触发与证据</strong>：本轮 mc-matrix（src=<code>designflow/summary_1105.tsv</code>）输出 mc10.fresh=0（pool 486 / touched 486 / fresh 0）⇒ 🟢 2026-11-11 用户令触发。B 域 42 条 genuine unledgered（rescan_1112_r417）无一满足 B 域过滤口径（spice 工具数 ≥10 ∧ 密度 ≥35%），最强候选 lvack hspice=8&lt;10。本轮对余量中仅有的两条 spice≥10 候选实测 peek：v9zug（hspice:14）实为 <code>.cline/apps/kanban/</code> 看板会话非编码会话；2gxuy（hspice:20，余量 spice 关键词最高）首条用户消息「怎么在当前服务器中打开 vscode」+ 工具链全 <code>list_allowed_files/search_codebase</code> 零仿真 ⇒ <strong>余量 spice 关键词最高的候选是 how-to 咨询</strong>，关键词计数系统性高估 spice 相关性。i8070（hspice:11）peek 因远端 ssh 超时未成，但过滤器显示 netlist:131 主导、密度 4.8% → 非 B 域。两条已 park 入 ledger。</p>
   <p><strong>B 线造题经验引用</strong>：Q3 ④⑤ 基于本人 273 条 B case 造题记录（273/273 断言清单达标，A 档几乎均不可行 → B 档合成；16 peek / 2 CLEAN / 最近 10 peek 0 CLEAN）。</p>
   <p><strong>未碰</strong>：board.md / 其他 shard .md / 主 jsonl / eval_triage / 论文任何文件（只读）。</p>
