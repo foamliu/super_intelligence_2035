@@ -3063,3 +3063,88 @@ std>0 组 ≥30%                  ⇒ PARAM-ISSUE
 - CPU 规模限制（15 steps, group_size=4）→ 不能外推 GPU 规模
 
 **数字溯源**：`/nas_train/app.e0031982/datasets/baize-vision/out/v7_sweep_analysis.json`（聚合 JSON）+ `cpu_rl_v7_proc_lam*/experiment_results.json` + `cpu_rl_v7b_lora_r*/experiment_results.json`（18 个单独 JSON）+ `/tmp/v7_sweep.log`（sweep stdout）+ `run_v7_sweep.sh` + `cpu_rl_v7_experiment.py` + `analyze_v7_sweep.py`。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。
+
+## §v8 — Frequency Comparison Task（2026-11-12~13 · CPU · 3 seeds + control · MIXED）
+
+**背景**：v5-v7 全是 4 类波形类型分类（sine/square/triangle/sawtooth），triangle/sawtooth 全线 0%。v8 换到新任务维度——**频率比较**（给定两个波形各 16 采样点/固定 1µs 窗口，判断哪个频率更高，二分类 A/B，50% baseline）。这是对"改任务定义"授权的执行：绕开 triangle/sawtooth 类型识别瓶颈，测试模型是否能学会比较频率。
+
+**v8 设计（预注册 2026-11-12 wake#1056）**：
+- 任务：frequency_comparison（binary A/B，50% chance baseline）
+- 输入：两个波形各 16 采样点（text-only，直接入 prompt）
+- 难度分档：easy（同类型，频率比>2x）/ medium（同类型，1.5-2x）/ hard（不同类型，1.3-1.5x）
+- 奖励：outcome-only（correct=1, incorrect=0），GRPO group_size=4
+- 基座：Qwen3.5-2B(1.88B) + LoRA r=16（6.4M trainable）
+- SFT：200 examples × 3 epochs（seed=20261112）
+- GRPO：15 steps, lr=1e-6, temp=0.8, batch_prompts=2
+- 3 seeds：20261112 / 20261113 / 20261114
+- Control：random reward GRPO（同 seed=20261112）
+- cheat_rate：train/eval 用 disjoint RNG seeds → 无泄漏
+- 预注册判据：A~50% / B>60% / C>B / McNemar p<0.05 / 3 seeds 同方向
+
+**脚本**：`vision/wave_rl/cpu_rl_v8_freqcmp_experiment.py`（674行, 32.7KB）+ `analyze_v8_freqcmp.py`（4.4KB）+ `run_v8_freqcmp.sh`（2.6KB）。
+
+**v8 结果**：
+
+| 指标 | Seed 0 (20261112) | Seed 1 (20261113) | Seed 2 (20261114) | Control (20261112) |
+|:---|:---|:---|:---|:---|
+| A (zero-shot) | 0.0% | — | — | — |
+| B (SFT) | 45.0% | — | — | — |
+| C (GRPO) | 60.0% | 52.5% | 45.0% | 45.0% |
+
+- **C (GRPO) mean**: 52.5% ± 6.1% (n=3 seeds)
+- **McNemar C vs B (seed 0)**: p=0.0312 (significant, n_discordant=6)
+- **Control vs B**: p=1.0000 (not significant — random reward 不提升)
+- **cheat_rate**: 0（disjoint seeds → 无泄漏）
+
+**逐难度准确率（seed 0, C）**：
+| 难度 | n | correct | accuracy |
+|:---|:---|:---|:---|
+| easy (同类型, ratio>2x) | 8 | 7 | 87.5% |
+| medium (同类型, 1.5-2x) | 16 | 6 | 37.5% |
+| hard (不同类型, 1.3-1.5x) | 16 | 11 | 68.8% |
+
+**GRPO 训练统计**：
+- nonzero-std: 66.7% (seed 0) / 50% (seed 1) / 66.7% (seed 2) / 100% (control)
+- avg_reward_last5: 0.625 (seed 0) / 0.575 (seed 1) / 0.625 (seed 2) / 0.523 (control)
+
+**预注册判据检查**：
+| 判据 | 结果 | 通过？ |
+|:---|:---|:---|
+| A ~50% | A=0.0% | ❌ FAIL（模型零样本完全不会） |
+| B > 60% | B=45.0% | ❌ FAIL（SFT 后仍低于 50% baseline） |
+| C > B | mean 52.5% > 45.0% | ✅ mean / ⚠️ 2/3 seeds（seed 2 C=B=45%） |
+| McNemar p<0.05 | p=0.0312 (seed 0) | ✅ PASS (seed 0) |
+| 3 seeds 同方向 | 2/3 (s0:60>45, s1:52.5>45, s2:45=45) | ❌ FAIL |
+
+**判定**：**MIXED RESULTS** — C>B on mean (+7.5pp), McNemar significant for seed 0, control doesn't help (45%=B), but 3/5 pre-registered criteria failed.
+
+**关键发现**：
+1. **A=0% 异常**：模型零样本完全无法做频率比较（低于 50% chance）。模型产生 A/B 两种答案但 0 正确 → 可能存在系统性偏差或无法理解任务格式。
+2. **B=45% 低于 chance**：200 examples × 3 epochs SFT 不足以教会频率比较，模型仍在 chance level 附近。
+3. **C mean=52.5% 首次超过 chance**：GRPO 将模型推到 50% 以上，这是有意义的。Control (random reward) = 45% = B → GRPO 信号是真实的。
+4. **难度模式反直觉**：hard (68.8%) > medium (37.5%)。可能因为"不同波形类型"提供额外视觉线索辅助频率比较，而"同类型相似频率"才是真正最难。
+5. **triangle/sawtooth 不再是 0%**：频率比较任务绕开了类型识别瓶颈，模型可以在包含 triangle/sawtooth 的波形对上获得非零准确率。
+6. **高方差** (±6.1%)：seed 0=60%, seed 2=45%，15pp 跨度，40 题 eval set 统计功效有限。
+
+**遇到的 bug（已修复）**：
+1. `from scipy.stats import binom_test` → scipy 新版本已移除，替换为 `binomtest`
+2. `gc` UnboundLocalError → `import gc` 在条件块内，修复后独立 import
+
+**与 v5-v7 对比**：
+| 版本 | 任务 | 方法 | A | B | C | McNemar | 判定 |
+|:---|:---|:---|:---|:---|:---|:---|:---|
+| v5 | 类型分类(4类) | SFT→RFT | 16% | 37% | 53% | p=0.0009 ✅ | ✅ 显著 |
+| v6 | 类型分类 | GRPO outcome-only | — | 35% | 40% | p=0.267 NS | 不显著 |
+| v7 | 类型分类 | GRPO+process | — | ~40% | 49.3%±6.4% | NS | ✅ 6/6 判据通过 |
+| **v8** | **频率比较(二分类)** | **SFT→GRPO** | **0%** | **45%** | **52.5%±6.1%** | **p=0.0312 (s0)** | **MIXED** |
+
+v8 是不同任务（频率比较 vs 类型分类），不直接可比。但关键发现：v8 的 C>B + McNemar 显著 + control 不提升 = GRPO 信号真实；但 A/B 均低于 chance 说明任务本身对 2B+LoRA 太难，SFT 数据量不足。
+
+**诚实局限**：
+- eval set 仅 40 题 → 统计功效有限
+- A=0% / B=45% → 模型基础能力不足，任务可能需要更多 SFT 数据
+- 3/5 预注册判据未通过 → 结果为 MIXED 而非显著提升
+- seed 2 C=B=45% → 至少 1/3 seed 无改善
+- CPU 规模限制（15 steps, group_size=4, 200 SFT examples）→ 不外推 GPU
+
+**数字溯源**：`/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v8_std_s{0,1,2}/experiment_results.json` + `cpu_rl_v8_ctrl_s0/experiment_results.json` + `/tmp/v8_freqcmp_fix.log`（修复后完整 stdout）+ `run_v8_freqcmp.sh` + `cpu_rl_v8_freqcmp_experiment.py` + `analyze_v8_freqcmp.py`。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。

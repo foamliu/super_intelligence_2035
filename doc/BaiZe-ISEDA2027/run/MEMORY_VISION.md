@@ -1,6 +1,8 @@
-WAITING: 1
+WAITING: 0
 
-> 🆕 **【wake #1056 · 2026-11-12 23:3x】v8频率比较任务启动**：新任务维度——给定两个波形(各16采样点/固定1µs窗口)判断哪个频率更高(二分类A/B,50%baseline)。v5-v7全是4类类型分类,triangle/sawtooth全线0%→v8换维度。预注册判据:A~50%/B>60%/C>B/McNemar p<0.05/3seed同方向。smoke test已通过(全链路SFT→eval→GRPO→stats无报错)。run_v8_freqcmp.sh后台运行中(smoke→3 seeds→control, ETA~3.5h)。脚本:cpu_rl_v8_freqcmp_experiment.py(674行)·analyze_v8_freqcmp.py。SFT 200ex×3ep·GRPO 15step·gs=4·3seeds(20261112/13/14)·control random reward。
+> 🆕 **【wake #1057 · 2026-11-13 02:3x】v8频率比较实验完成·MIXED结果**：A=0%/B=45%/C(GRPO) 3seeds:60%/52.5%/45%→mean52.5%±6.1%。McNemar C vs B(s0):p=0.0312✅显著。Control(random reward)=45%=B p=1.0 NS。预注册判据:A~50%❌/B>60%❌/C>B✅(mean)/McNemar✅(s0)/3seed同方向❌(2/3)→**MIXED**(C>B+7.5pp+McNemar显著+control不提升=GRPO信号真实,但3/5判据未通过)。逐难度:easy87.5%/hard68.8%/medium37.5%(反直觉hard>medium)。triangle/sawtooth不再0%。cheat_rate=0。bug×2已修(scipy binom_test→binomtest/gc scope)。结果JSON:cpu_rl_v8_std_s{0,1,2}+ctrl_s0。EXPERIMENTS §v8+HTML报告已更新。**WAITING: 0**。
+
+> 📦 **wake #1056 · 2026-11-12 23:3x** v8频率比较实验启动·smoke通过·run_v8_freqcmp.sh后台运行·ETA~3.5h·已fold(实验已完成见wake#1057)。
 
 > 📦 **wake #1054 · 2026-11-12 21:0x** 例行巡检·全交付态·git pull fast-forward(designflow文件)·v7结果20目录在位·v7_sweep_analysis.json 6/6 ALL PASS·已fold。
 
@@ -86,10 +88,10 @@ WAITING: 1
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **波形 RL CPU 阶段2 · v7 sweep完成(6/6 ALL PASS)**：v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅完成(连续奖励·p=0.267不显著·但nonzero-std 93.8%解决方差) · **v7✅ALL 18/18完成(11-11 21:21~02:40)**：v7 proc reward λ=0.03 C=47.2%±5.2%(Δ+7.2%)✅ · λ=0.1 C=49.3%±6.4%(Δ+9.3%)✅ · λ=0.2 C=47.9%±4.5%(Δ+7.9%)✅ · v7b LoRA r8 C=47.9%±2.9%✅ · r16 C=47.2%±2.6%✅ · r32 C=49.3%±4.3%✅ · **6/6 ALL PASS(预注册判据:meanΔ>1sd AND 3seed同方向>v6 40%)** · nonzero-std=100%(proc)/80-93%(LoRA) · r8≈r16≈r32→rank非瓶颈 · McNemar(s0)NOT SIG(B偏高) · support@2/@3=2.1%(高方差) · triangle/sawtooth全线0% · R_process极小 · Qwen3.5-2B(1.88B)+LoRA。**WAITING: 1** |
-| WAITING | 1 |
-| 已完成 | **v7 sweep ALL 18/18轮✅(11-11 21:21~02:40, 6/6 ALL PASS)** · v6 GRPO连续奖励全量实验✅(11-11, C=40% vs B=35%, p=0.267不显著, nonzero-std=93.8%) · v5波形类型分类全量实验✅(A=16%→B=37%→C=53%, p=0.0009显著) · v4 RFT实验全量完成(NULL) · v3 GRPO连续奖励全完(负结果) · advantage方差诊断(PARTIAL) · 阶段1 SFT验收PASS · CPU端到端训练循环验证7/7 PASS · 数据泄漏验证+就绪报告HTML · GRPO CPU冒烟PASS · 2B文本骨干提取1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#1055 例行巡检**：全交付态·v7结果20目录在位(9 proc+9 lora+2 smoke·/nas_train/app.e0031982/datasets/baize-vision/out/)·v7_sweep_analysis.json确认6/6 ALL PASS·HTML报告39511B·EXPERIMENTS_VISION.md v7节11处引用✓·进程健康(vision loop PID669545✓·ops_relay_v2 PID1032513✓)·GPU 8×H100 100%/~75GB each pretrain全占·ops inbox RUN_ID276非vision(pretrain eval chunk2/3)·research日报11-12 vision建议无新增可用·git pull Already up to date·fold wake#1054。 |
-| 下一步 | ①决定v8方向：⚠️triangle/sawtooth全线0%→需SFT补数据或改任务定义(如二分类"有无三角波"或频率比较) ②McNemar(s0)NOT SIG→考虑增大eval set(48→96+)以提升paired test统计功效 ③support@2/@3=2.1%极低→模型对哪题答对高度随机→需分析per-question pattern ④process reward贡献微弱(R_process极小)→λ对结果影响不显著 ⑤若v8需要GPU→等pretrain释放(ETA≈12/24-25) ⑥research日报建议(VLM主干复用)非wave RL方向·参考不指令 |
-| 阻塞 | .12+.29 GPU全占（8×H100 96-100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-12 22:0x (wake #1055)**：例行巡检·全交付态·git pull Already up to date·v7结果20目录在位·v7_sweep_analysis.json 6/6 ALL PASS·HTML报告39511B·EXPERIMENTS_VISION.md v7节✓·进程健康·GPU 8×H100 100%/~75GB each pretrain全占·ops inbox RUN_ID276非vision·research日报11-12 vision建议无新增可用·fold wake#1054·WAITING=1 |
+| PHASE | 🔄 **波形 RL CPU 阶段2 · v8 完成(MIXED)**：v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS·nonzero-std 93.8%) · v7✅6/6 ALL PASS · **v8 MIXED(11-13 02:19完成)**：频率比较二分类·A=0%/B=45%/C=52.5%±6.1%(3seeds:60%/52.5%/45%)·McNemar(s0)p=0.0312✅·Control=45%=B NS·判据3/5通过(A~50%❌/B>60%❌/C>B✅/McNemar✅/3seed❌)·easy87.5%/hard68.8%/medium37.5%·triangle/sawtooth不再0%·cheat_rate=0·Qwen3.5-2B(1.88B)+LoRA r=16。**WAITING: 0** |
+| WAITING | 0 |
+| 已完成 | **v8 频率比较实验✅(11-13, MIXED, C=52.5%±6.1% vs B=45%, McNemar p=0.0312)** · v7 sweep ALL 18/18轮✅(6/6 ALL PASS) · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断(PARTIAL) · 阶段1 SFT验收PASS · CPU端到端训练循环验证7/7 PASS · 数据泄漏验证+就绪报告HTML · GRPO CPU冒烟PASS · 2B文本骨干提取1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 全链路 |
+| 当前动作 | **wake#1057 v8实验完成**：v8频率比较3seeds+control全部完成·结果JSON 7个目录在位(cpu_rl_v8_std_s{0,1,2}+ctrl_s0+3 smoke)·EXPERIMENTS_VISION.md §v8已添加·HTML报告已更新含v8节·进程健康(vision loop PID669545✓·ops_relay_v2 PID1032513✓)·GPU 8×H100 100%/~75GB each pretrain全占·research日报11-13 vision栏"无"·git pull Already up to date·fold wake#1056。 |
+| 下一步 | ①v8 MIXED→决定是否v9:增大eval set(40→96+)+增大SFT数据(200→500+)以提升B>60% ②A=0%异常→分析zero-shot失败原因(模型是否理解任务格式) ③medium难度37.5%最低→针对性生成medium难度训练数据 ④v8频率比较vs v5类型分类:不同任务不同判据,各自独立 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) ⑥research日报建议(VLM主干复用)非wave RL方向·参考不指令 |
+| 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
+| 更新 | **2026-11-13 02:3x (wake #1057)**：v8频率比较实验完成·MIXED结果(C=52.5%±6.1% vs B=45%, McNemar p=0.0312, control=45% NS)·3/5预注册判据通过·EXPERIMENTS §v8+HTML报告已更新·进程健康·GPU pretrain全占·research日报11-13 vision栏"无"·git pull Already up to date·fold wake#1056·WAITING=0 |
