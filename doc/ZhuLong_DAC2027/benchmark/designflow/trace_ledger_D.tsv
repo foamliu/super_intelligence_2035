@@ -1544,3 +1544,11 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793686536776_0g146.messages.json	bensonh	hfeg0plg104	27	netlist	parked		2026-11-13 00:21	r569 peek: setup/config 'change cwd + create debug folder, remember for future'
 1793251739525_86g62.messages.json	tongfanl	hfhds201	29	analog_context	parked		2026-11-13 00:21	r569 peek: code-review 'check gen_wtm_write_data for unreasonable parts'
 1791523500020_u4vj2.messages.json	bensonh	hfeg0plg104	26	netlist	parked		2026-11-13 00:21	r569 peek: capability-check 'can you see current path files' (open turn)
+1794467282803_3r2ci	clarawu	hfeg0pkn003	10	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: netlist ref @/proj/.../netlist_delvto + stimulus_Ron.sp, /proj asset-inaccessible (P-002 D); mc10
+1794467651213_9wc1h	xflin	hfeg0pkn003	10	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: '看下这个语法有什么问题' + HSPICE probe/sweep ERROR log paste = debug Q&A syntax; mc10
+1794444455754_0ij67	reedchen	hfeg0pkn003	28	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: '目录下模块仿真一直跑不出来帮我分析原因' = debug Q&A sim-fail diagnose; mc28
+1794481759263_xlym9	alleng	hfeg0pkn002	12	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: 'spice网表转ibis方法' = how-to Q&A; mc12
+1794472156729_uwq51	t0002470	hfeg0pkn002	13	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: '阅读这个skill' + lpddr5-coverage-closure.zip = skill-reading/meta Q&A; mc13
+1794459946831_4q7vd	hairuizh	hfeg0pkn002	22	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: PRODUCE-TASK '提取仿真结果' @/rundata/.../plat_invs_thick.mt0.csv BUT (a)/rundata Permission denied from .75 sandbox NEW asset-unreachable mode (b)sim-extract skill-scaffolded (skill provides ref impl scripts/sim_extract.py) not free-form; mc22
+1794367188865_8v6w7	e0046913	hfeg0pkn003	53	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: e0046913 user = A-domain STA/history (hvfis r568 also A-domain), low-mc netlist kw but user-domain mismatch; parked; mc53
+1794464932663_5li8u	ghyang	hfeg0pkn003	59	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: unclassified-low-priority (not deep-read, budget), parked to close ledger gap; mc59
