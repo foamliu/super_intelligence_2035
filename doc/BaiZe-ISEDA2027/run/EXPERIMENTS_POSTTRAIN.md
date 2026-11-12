@@ -8054,9 +8054,102 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 
 #### 5-run Eval Plan
 - Run 1: ✅ DONE (this run, Pass@1=3.8%)
-- Run 2: 🔄 KICKED OFF in wake377 (background)
-- Run 3-5: ⬜ pending (loop will handle in subsequent wakes)
+- Run 2: 🔄 RUNNING (PID1109190, started 06:27, codegen ~36% done, 57/158 tasks processed)
+- Run 3-5: ⬜ auto-queued by autocomplete script (PID1122770, waiting for run2)
 - Script: `run/baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8096/v1 --model minicpm5-2b-sft-v39-final --label step105 --run N`
 - Results dir: `/tmp/posttrain_5run_eval/step105/run{1..5}/`
 - After 5 runs: compute mean±std, report with McNemar/paired bootstrap vs baseline
+
+---
+
+### §L4-DesignFlow (2026-11-13 wake383) 5-Task Eval VERIFIED COMPLETE — Protocol Mismatch Analysis
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Status: ✅ COMPLETE (0/5 = 0.0% Pass@1)
+
+The wake382 5-task eval (with 5 VALID tasks after fixing "check.py missing" infra bug) has been verified complete on 36.15 via tunnel SSH.
+
+#### Detailed Results (status_minicpm5_sft_v39_5task.jsonl)
+
+| # | Task ID | Duration | cline_exit | Verdict | Reason | hook_blocks |
+|:--|:---|---:|---:|:---|:---|---:|
+| 1 | EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001 | 97s | 0 | FAIL | no submit.zip produced | 0 |
+| 2 | EDA-Eval-DesignFlow-Analog-001 | 167s | 0 | FAIL | no submit.zip produced | 0 |
+| 3 | EDA-Eval-DesignFlow-BitcellMcSpGen-001 | 17s | 0 | FAIL | no submit.zip produced | 0 |
+| 4 | EDA-Eval-DesignFlow-ChPulseRespGen-001 | 17s | 0 | FAIL | no submit.zip produced | 0 |
+| 5 | EDA-Eval-DesignFlow-AutoPR-001 | 129s | 0 | FAIL | no submit.zip produced | 0 |
+
+- **Model**: minicpm5-2b-sft-v39-final (via reverse tunnel: .17:8096 → 36.15:18096)
+- **Harness**: cline (thinking=low, timeout=2400s, provider=openai-compatible)
+- **Anti-cheat**: PreToolUse hook deployed, 0 blocks across all 5 tasks
+- **Batch dir on 36.15**: `/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261113_072215/`
+- **Status JSONL**: `/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/status_minicpm5_sft_v39_5task.jsonl`
+
+#### Worker Log Analysis (root cause of 0%)
+
+From `worker_1.log` and `worker_3.log` on 36.15:
+```
+[run_one] 2. 建 workdir: .../EDA-Eval-DesignFlow-Analog-001/20261113_072215
+   task_brief.md: copied from assets (case-specific)
+   attachments copied: ['dram_fragment.v', 'parasitics_command.log', 'task_brief.md']
+[run_one] 3. 跑 cline (model=minicpm5-2b-sft-v39-final thinking=low timeout=2400s)
+[run_one]    cline exit=0 dur=167s
+[run_one] 3b. outputs/ 为空, 不打包 (cline 未产出任何交付件)
+[run_one] 4. 独立判分: no submit.zip produced (cline wrote nothing under outputs/)
+```
+
+**Root cause**: **Protocol/format mismatch**, NOT infra failure:
+1. cline ran successfully (exit=0, no crash) for all 5 tasks
+2. Anti-cheat hook did NOT block anything (hook_blocks=0)
+3. The model generated text responses but **did NOT write any files to the `outputs/` directory**
+4. The designflow benchmark expects `submit.zip` containing EDA flow scripts in `outputs/`
+5. The SFT model was trained on **single .py file** generation (PyAether code → `pyAether_code/` dir), a fundamentally different output protocol
+6. Duration variation (17s vs 167s) correlates with task complexity — short tasks = model gives up quickly, long tasks = model attempts work but doesn't produce files
+
+**Classification**: 100% **protocol failure** (model doesn't know designflow output format), 0% infra failure. This is analogous to D1/D2 (tool protocol) issue from P0 diagnosis.
+
+#### DesignFlow Baseline Summary (all models tested)
+
+| Model | Tasks | Pass@1 | Source |
+|:---|---:|---:|:---|
+| DeepSeek-V4-Pro (cloud) | 30 | 0% | §L4.10 expand30 |
+| MiniCPM5-2B **base** | 30 | 0% | §L4.10 expand30 |
+| MiniCPM5-2B **base** | 5 | 0% | §L4.6f clean5 |
+| MiniCPM5-2B **SFT v39 final** | 5 | 0% | **wake382/wake383** (valid tasks, check.py fixed) |
+
+→ **DesignFlow benchmark baseline = 0% for ALL models** (including DeepSeek). The failure mode is uniformly "no submit.zip produced" — this indicates the benchmark's output protocol (multi-file EDA flow scripts → submit.zip) is fundamentally different from what current models produce. Fixing this requires either:
+- (a) SFT on designflow-format data (teaching the model to write to `outputs/`), or
+- (b) Adjusting the eval harness to accept alternative output formats, or
+- (c) Providing explicit output-format instructions in the task prompt
+
+**L4 designflow deliverable**: ✅ Baseline established (0% for all models), root cause identified (protocol mismatch), reproduce commands documented. No further designflow action needed unless protocol changes.
+
+### §L4-zhulong (2026-11-13 wake383) 5-Run Eval — Run 2 Progress
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 2 Status (PID1109190, started 06:27 CST)
+
+- **Codegen progress**: 57/158 tasks processed (36%) after ~1h09m
+  - Stats counters: success=53, failure=1, timeout=3
+  - Task queue remaining: 93/158 (65 dequeued)
+  - Code directories created: 66
+  - 8 cline workers active (worker_1 through worker_8)
+  - Batch ID: `2026_1113_062714`
+- **Estimated remaining**: ~101 tasks × ~1min/task ÷ 8 workers ≈ ~13min more for codegen → then sandbox eval (~10-15min)
+- **Run 2 ETA**: codegen complete ~07:50, sandbox eval complete ~08:05
+- **Autocomplete script** (PID1122770): waiting for run2 PID, then will auto-run runs 3-5 sequentially + compute 5-run summary
+
+#### Run 1 Result (reference)
+
+- Pass@1 = 6/158 = 3.8% (tasks: 003, 046, 067, 096, 127, 153)
+- Code-gen: 62 success, 92 fail, 4 timeout (39.2% success rate)
+- Exec failures: SyntaxError(17), AttributeError(15), TypeError(13), AssertionError(3), NameError(2), IndentationError(2), ModuleNotFoundError(1)
+
+#### Infrastructure Health (wake383)
+
+- **3 serves UP**: 8098 (GPU4 base), 8097 (GPU5 step60), 8096 (GPU6 step105-final, 99% util)
+- **Tunnel UP**: ssh -p3333 → 36.15 (hfeg0tedaap02), reverse tunnel PID1008898 (R18096→.17:8096 verified from 36.15)
+- **All curl /v1/models OK**
 
