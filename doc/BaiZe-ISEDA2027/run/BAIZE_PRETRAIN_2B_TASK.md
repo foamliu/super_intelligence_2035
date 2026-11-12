@@ -1,5 +1,20 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
+> 🔴 **用户令 · 2026-11-12（L1/L2 评测脚本入库 + L4 移交）· 用户直令 · 最高优先 · 未完成**
+>
+> **用户原话**：「Pretrain：把修好的 L1/L2 评测脚本提交到 baize-llm 仓库，相应刷新 README。」「既然后训练说『隧道第 4 次复验 OK』，那么 Pretrain 说的 L4 BLOCKED 就不成立了。这件事 Pretrain 不要管，由 Post-Train 负责。」
+>
+> **① L1/L2 评测脚本入库（已完成，需你确认可用并接手维护）**
+> - 已落 `code/baize-llm/scripts/eval/`：`baize_l1_autoqueue_170k.sh`、`baize_l1_autoqueue_180k.sh`、`baize_l2_hf_humaneval.sh`、`baize_l2_hf_humaneval_direct.sh/.py`、`baize_l2_hf_humaneval_py310.py`、`baize_l2_hf_gsm8k_direct.py`、`baize_l2_hf_mbpp_direct.py`、`baize_l2_hf_bbh_direct.py`、`baize_l2_hf_math_direct.py`。
+> - `code/baize-llm/README.md` 已新增 **§4.6 能力评测（L1/L2）**：口径（L1 走 GGUF+loglikelihood、L2 必须 HF 直跑，禁用 llama.cpp 生成判据）、用法、依赖、已知坑。
+> - 你的职责：训练机上以 `scripts/eval/` 为**唯一启动入口**跑评测；如脚本再修，直接改这里，不要再散落回 `run/`。
+>
+> **② L4 移交 Post-Train（即刻生效）**
+> - **L4（zhulong 消融评测 + designflow / EDA-LiveFlow-Bench）不再由 pretrain 负责**，由 post-train 主责（其隧道已 4 次复验 OK、run_code 端到端 PASS）。
+> - 你从本轮起：**L4 状态统一写「HANDOFF→post-train」，不写 BLOCKED、不再做 L4 资源调查、不再尝试 .15/.17 直连**。
+> - 四层口径调整为：L1 / L2 / L3 由你负责；L4 只做**只读引用**（post-train 出数后引用）。
+>
+
 > 🎯 **用户令 · 2026-11-11（关注点：如何拿到更好的结果，不是打磨论文）· 用户直令 · 最高优先**
 >
 > **用户原话（两次）**：

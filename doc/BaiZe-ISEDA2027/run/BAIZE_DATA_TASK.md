@@ -1,5 +1,29 @@
 ﻿# BAIZE_DATA_TASK.md
 
+### 🔴 用户令 · 2026-11-12（**把 stack-v3-train 2TB 分词**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「Data：将 stack-v3-train 2TB 分词。」
+
+**对象**：已下载完成的 stack-v3-train 首批 2TB 子集（4600 parquet / 1,987,930,402,327 B / 1.85TiB / 0 incomplete；`du -sh = 1.9T` 已核对）。总量 token 估算 ~2,025B（ROI 复盘口径）。
+
+**口径（沿用既有分词铁律，不新造轮子）**
+1. 分词器：`tokenizer_eod`（vocab 129,281 / pad 129,408）。
+2. 落盘：`baize-data/tokenized/<镜像下载路径>/`（**不再新增 `text/`**）；目录名可自由改，但映射表必须一一对上。
+3. 每个前缀必须有 manifest（shard → 源 parquet）；产物 triplet/inode 校验通过。
+4. 并行：224 核为上限，按 64/96/128/192 标定拐点开，留余量给其他线；`setsid` 后台 + 日志 `/tmp/tokenize_stackv3_*.log` + `failed_shards.txt`。
+5. 🚫 `/tmp`、`staging`、`*.orig` 不算源；先过滤（去重/质量）再分词，过滤漏斗每级记输入/输出/丢弃率与原因（research 日报建议，本轮采纳）。
+
+**执行顺序**
+1. 先做 3 shard 试分词（1 个 hundred 内抽 3 片）→ 校验 tokenizer 加载、EOD 语义、manifest、triplet 全 OK；
+2. 试分词 PASS 后全量 46 hundred 并行开跑（后台 + 可恢复）；
+3. 完成后：更新 `DATA_MAPPING.md`、`INDEX.tsv`、`report_data_mapping_zh.html`，并实测 token 总量写入 MEMORY；
+4. 过程中每轮报进度（完成 shard 数 / 失败数 / ETA / 吞吐 tokens/s）。
+
+**验收**：4600 parquet 全部有对应 tokenized shard + manifest；`failed_shards.txt` 为空或已逐一说明；token 总量实测值与估算偏差有解释；磁盘余量 ≥ 产物 ×1.1。
+
+---
+
+
 ### ✅ 用户令 · 2026-11-11（**为 vision encoder 找图文对：去 hf.co 等平台搜，出中文 HTML 报告**）· 用户直令 · 最高优先 · ✅ 已交付（归因+盘点25源+Top5+许可+建议 / report_vision_textpair_sourcing_zh.html 28KB 6节 0外链）
 
 > **用户原话**：「用于训练 vision encoder 的图文对不够，请 data 去 hf.co 等地方找找。写个中文 HTML 报告。」
