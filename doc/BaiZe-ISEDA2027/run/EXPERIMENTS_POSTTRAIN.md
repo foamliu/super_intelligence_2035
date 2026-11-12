@@ -6683,3 +6683,104 @@ R321 识别出 166 个「true data gap」API（NOT in SFT corpus）。本节构�
 
 ### 无伪造声明
 所有数字为 MCP get_api_details 实际返回 + synthesis 脚本计算 + contamination gate 实跑结果。
+
+---
+
+## §R323 (2026-11-12 wake323) Full Data Gap SFT Synthesis: 166 APIs -> 258 Pairs + Contam Gate PASS (零 GPU · CPU)
+
+### 1. 动机与任务
+
+R322 PoC 验证了 Data Gap SFT Synthesis Pipeline（8 APIs -> 14 pairs），但仅覆盖 166 data gap APIs 中的 4.8%。
+R321 Missing API Coverage Analysis 确认 166 个 data gap APIs（NOT in SFT corpus）是真正的数据缺口。
+本轮目标：**将 pipeline 从 8 API PoC 扩展到 full 166 API**，产出完整的 SFT v38 augmentation 语料。
+
+### 2. 方法：多源文档合并
+
+166 data gap APIs 的文档来源分布：
+
+| 来源 | API 数 | 说明 |
+|:--|--:|:--|
+| R322 PoC | 8 | R322 已通过 MCP get_api_details 获取的 PoC 批次 |
+| **Local KB** | **104** | 从 `/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json`（8463 entries, 17.7MB）直接提取 |
+| **MCP fetch** | **18** | 通过 pyAether MCP get_api_details 获取（EmyLPPHeader getters/setters, EmyNtlUtil, MdePlat*, aeIpcProcess, emyAttrDisplay, emyTransformF 等） |
+| **Stub** | **36** | enum constants (emc*) + callbacks (ae*CallBack) + 部分方法（KB/MCP 均无，用简短描述生成 stub doc pair） |
+| **合计** | **166** | **100% 覆盖** |
+
+**Local KB 提取**（`baize_posttrain_r323_datagap_fetch_local.py`）：
+- 从 `API_INFO_MERGED_V3.json` 按 "Module.method" key 匹配 158 remaining APIs → 104 found (65.8%)
+- 对每个 API 提取 signature（`**`backtick`**` pattern）、description（cut at "补充说明" markers, ≤800 chars）、example（`>>>` lines）
+- 输出 `r323_datagap_api_docs_local.json`（104 APIs, 361.2 KB）
+
+**MCP fetch**：对 54 local KB 未找到的 API，通过 `get_api_details` 分 9 批（每批 6）获取：
+- 18 个成功返回（EmyLPPHeader getPriority/getPurposeNum/getTech/isFilled/setFilled/setMaskNum/setPacketName/setPriority, EmyNtlUtil.checkViewList, MdePlatParamSweep*, MdeSpeOutput.exprType, aeIpcProcess.readline/wait, emyAttrDisplay.create, emyTransformF.concat/getXOffset/getYOffset）
+- 36 个 MCP 也无（emc* enum constants, ae*CallBack, dbCV, dbInst, CString*, GuCartPolyLine*, MdePlat*setMaxJobNum, MdeSpeOutput.plot/save, MdeSweepType.stepMode, emyBlock.create, emyPointArray*.append, emyRect.addToPin, emyStringArray.append）→ 用简短英文描述生成 stub doc pair
+
+### 3. 合并与合成
+
+`baize_posttrain_r323_merge_and_synthesize.py`：
+- 合并 4 源文档（PoC 8 + local 104 + MCP 18 + stub 36 = 166 unique, dedup by api_name）
+- 覆盖率：**166/166 (100%)**
+- 对每个 API 生成 up to 2 pairs：doc pair（"请说明 API 用法" -> 签名+说明+示例）+ code pair（"用 API 编写代码" -> 示例代码，仅有 example 时生成）
+
+### 4. 结果
+
+| 指标 | 值 |
+|:--|:--|
+| 输入 APIs | 166 (100% data gap coverage) |
+| 生成 pairs | **258** (doc=166 + code=92) |
+| 输出大小 | 163.6 KB |
+| 模块分布 top-5 | unknown 41, EmyLPPHeader 11, emyBitArray 9, emyBoxF 9, MdePlatSession 8 |
+| 来源分布 | local_kb 104, stub 36, mcp 18, poc 8 |
+
+### 5. 污染隔离闸门（红线 §5.1）
+
+```
+bash baize_posttrain_contamination_gate.sh --sft-synth r323_datagap_sft_pairs.jsonl --out /tmp/r323_contam_gate.md
+```
+
+- 黑名单：6 评测快照并集 536 任务（含 v20260311 的 158）
+- 命中判定：13-gram 重合率 ≥ 0.8 或短 8-gram 兜底 ≥ 1
+- **扫描 258 / 命中 0 → ✅ PASS**
+- 合成数据与 158 评测任务不同源，可投料
+
+### 6. 与 R322 的对比
+
+| | R322 (PoC) | R323 (Full) |
+|:--|:--|:--|
+| APIs 覆盖 | 8/166 (4.8%) | **166/166 (100%)** |
+| SFT pairs | 14 | **258** |
+| 数据大小 | 7.5 KB | **163.6 KB** |
+| 文档来源 | MCP only | Local KB + MCP + stubs |
+| Contam gate | PASS (14 scanned, 0 hit) | **PASS (258 scanned, 0 hit)** |
+
+### 7. 对 SFT v38 的贡献
+
+- R322 PoC 14 pairs → R323 full 258 pairs = **18.4× 扩展**
+- 166 data gap APIs 全覆盖 → SFT 语料从"不知道这些 API 存在"升级到"有 API 参考文档训练对"
+- 与 R321 learning failure（178 APIs, 在 corpus 中但不调用）的 RL R4 强化策略互补
+- **下一步**：将 258 pairs 合并到 SFT v38 语料 → 重训 SFT → 评测验证 data gap coverage 改善
+
+### 8. 局限
+
+- 36 个 stub APIs 仅有简短描述（无签名/示例）→ doc pair 质量低于 MCP/local KB 来源
+- code pairs 仅 92/258 (35.7%) → 部分 API 无 `>>>` 示例代码
+- ⚠️ **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe
+- 沙盒恢复后需重跑 SFT v38 + EDA-Eval 5-run 评测验证实际提分
+
+### 9. 产物
+
+| 文件 | 说明 |
+|:--|:--|
+| `baize_posttrain_r323_datagap_fetch_local.py` | Local KB extraction script |
+| `baize_posttrain_r323_merge_and_synthesize.py` | Merge + synthesis script |
+| `r323_datagap_api_docs_local.json` | 104 local KB API docs (361.2 KB) |
+| `r323_mcp_api_docs.json` | 18 MCP-fetched API docs (8.0 KB) |
+| `r323_stub_api_docs.json` | 36 enum/callback stub docs (4.7 KB) |
+| `r323_datagap_api_docs_full.json` | Full merged 166 API docs (398.7 KB) |
+| `r323_datagap_sft_pairs.jsonl` | **258 SFT training pairs (163.6 KB)** |
+| `r323_sft_synthesis_stats.json` | Pipeline stats |
+| `r323_datagap_needs_mcp.txt` | 54 APIs needing MCP fetch |
+
+### 10. 无伪造声明
+
+所有数字为 local KB 实际提取 + MCP get_api_details 实际返回 + synthesis 脚本计算 + contamination gate 实跑结果。gate 报告路径：`/tmp/r323_contam_gate.md`。

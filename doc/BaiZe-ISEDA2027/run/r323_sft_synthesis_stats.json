@@ -1,0 +1,41 @@
+{
+  "R323": "Full Data Gap SFT Synthesis",
+  "date": "2026-11-12",
+  "n_input_apis": 166,
+  "n_total_data_gap": 166,
+  "n_missing": 0,
+  "n_pairs_generated": 258,
+  "n_doc_pairs": 166,
+  "n_code_pairs": 92,
+  "sources": {
+    "stub": 36,
+    "unknown": 8,
+    "mcp": 18,
+    "local_kb": 104
+  },
+  "modules_covered": {
+    "unknown": 41,
+    "EmyLPPHeader": 11,
+    "emyBitArray": 9,
+    "emyBoxF": 9,
+    "MdePlatSession": 8,
+    "GuCartPolyLine": 5,
+    "MdePlatDonauJobPolicy": 5,
+    "MdePlatOGEJobPolicy": 5,
+    "MdePlatParamSweepCenterSpan": 5,
+    "emyTransformF": 5,
+    "MdeDcAnalysis": 4,
+    "MdeOutput": 4,
+    "MdeSpeOutput": 4,
+    "MdeSweepRange": 4,
+    "MdeSweepVariable": 4,
+    "MdeTranAnalysis": 4,
+    "emyBox": 4,
+    "emyPointArrayF": 4,
+    "MdePlatLSFJobPolicy": 3,
+    "emyDesign": 3
+  },
+  "output_file": "r323_datagap_sft_pairs.jsonl",
+  "output_size_kb": 163.6,
+  "contamination_note": "Name-level pre-check only; full 13-gram gate required before training"
+}
