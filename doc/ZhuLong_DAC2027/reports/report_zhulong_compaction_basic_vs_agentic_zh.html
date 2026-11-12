@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong 压缩机制消融报告：basic vs agentic（DAC 2027）</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; color: #1a1a1a; line-height: 1.7; background: #fafafa; }
+  h1 { font-size: 1.5em; border-bottom: 3px solid #2563eb; padding-bottom: 10px; }
+  h2 { font-size: 1.25em; color: #2563eb; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 2em; }
+  h3 { font-size: 1.1em; color: #444; margin-top: 1.5em; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+  th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
+  th { background: #2563eb; color: #fff; font-weight: 600; }
+  td.l { text-align: left; }
+  tr:nth-child(even) { background: #f5f5f5; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: 600; }
+  .t-basic { background: #dbeafe; color: #1e40af; }
+  .t-agentic { background: #fce7f3; color: #9f1239; }
+  .t-pass { background: #d1fae5; color: #065f46; }
+  .t-fail { background: #fee2e2; color: #991b1b; }
+  .banner { padding: 12px 16px; border-radius: 6px; margin: 1em 0; }
+  .banner.info { background: #eff6ff; border-left: 4px solid #2563eb; }
+  .banner.warn { background: #fffbeb; border-left: 4px solid #f59e0b; }
+  .banner.pass { background: #ecfdf5; border-left: 4px solid #10b981; }
+  .banner.fail { background: #fef2f2; border-left: 4px solid #ef4444; }
+  .small { font-size: 0.82em; color: #666; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.88em; }
+  .metric { font-size: 1.6em; font-weight: 700; }
+  .metric-basic { color: #1e40af; }
+  .metric-agentic { color: #9f1239; }
+  .metric-delta { color: #059669; }
+  .tbd { color: #999; font-style: italic; }
+  .q-box { background: #fff; border: 2px solid #2563eb; border-radius: 8px; padding: 16px; margin: 1em 0; }
+  .q-box h3 { margin-top: 0; color: #2563eb; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; }
+  .card h4 { margin: 0 0 8px 0; color: #555; }
+  details summary { cursor: pointer; font-weight: 600; color: #2563eb; }
+  .scroll-x { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<h1>ZhuLong 压缩机制消融报告：cline <code>--compaction basic</code> vs <code>agentic</code></h1>
+<p class="small">
+基座：deepseek-v4-pro-cloud · harness：cline CLI 3.0.51 · 数据集：EDA-Eval-PyAether-158（40 题长轨迹子集）·
+协议：<code>-p 8 -n</code>、CLINE_THINKING=medium、LANG_HINT=空 · 2 臂 × 3 轮 ABBA 反平衡 ·
+日期：2026-11-12 · 预注册计划书：<code>plan_zhulong_compaction_basic_vs_agentic_zh.html</code>
+</p>
+
+<!-- ================================================================ -->
+<h2>① 摘要：三个核心问题</h2>
+<div class="grid2">
+  <div class="q-box">
+    <h3>Q1：agentic 是否带来 ≥3pp 的稳定 Pass@1 增益？</h3>
+    <p id="q1-answer" class="tbd">[待 P2 数据填充]</p>
+  </div>
+  <div class="q-box">
+    <h3>Q2：增益是否只存在于长会话（触发压缩的题）？</h3>
+    <p id="q2-answer" class="tbd">[待 P2 数据填充]</p>
+  </div>
+</div>
+<div class="q-box">
+  <h3>Q3：综合 token 成本与墙钟时间，默认策略应选哪个？</h3>
+  <p id="q3-answer" class="tbd">[待 P2 数据填充]</p>
+</div>
+
+<div class="banner info">
+  <b>一句话结论</b>：<span id="one-line-conclusion" class="tbd">[待 P2 数据填充]</span>
+</div>
+
+<table>
+  <tr><th>指标</th><th><span class="tag t-basic">basic</span></th><th><span class="tag t-agentic">agentic</span></th><th>Δ（agentic − basic）</th></tr>
+  <tr><td class="l">Pass@1（3 轮均值，40 题）</td><td id="m-basic-pass" class="tbd">TBD</td><td id="m-agentic-pass" class="tbd">TBD</td><td id="m-delta-pass" class="tbd">TBD</td></tr>
+  <tr><td class="l">压缩触发率（触发题数 / 40）</td><td id="m-basic-trig" class="tbd">TBD</td><td id="m-agentic-trig" class="tbd">TBD</td><td id="m-delta-trig" class="tbd">TBD</td></tr>
+  <tr><td class="l">Token 压缩率（均值）</td><td id="m-basic-cr" class="tbd">TBD</td><td id="m-agentic-cr" class="tbd">TBD</td><td id="m-delta-cr" class="tbd">TBD</td></tr>
+  <tr><td class="l">每题墙钟时间（均值，秒）</td><td id="m-basic-wall" class="tbd">TBD</td><td id="m-agentic-wall" class="tbd">TBD</td><td id="m-delta-wall" class="tbd">TBD</td></tr>
+  <tr><td class="l">总 Token 消耗（3 轮）</td><td id="m-basic-tok" class="tbd">TBD</td><td id="m-agentic-tok" class="tbd">TBD</td><td id="m-delta-tok" class="tbd">TBD</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2>② 机制与口径</h2>
+
+<h3>2.1 两种压缩策略</h3>
+<table>
+  <tr><th>维度</th><th><span class="tag t-basic">basic（规则折叠）</span></th><th><span class="tag t-agentic">agentic（LLM 摘要）</span></th></tr>
+  <tr><td class="l">实现</td><td class="l">纯规则、零额外 LLM 调用；保留最新 user prompt + 最近 3 条 assistant 回复，其余折叠；完全确定性</td><td class="l">额外一次摘要 LLM 调用；保留尾部 <code>preserveRecentTokens</code> + 结构化摘要（目标 / 当前状态 / 关键决策 / 下一步）；非确定性</td></tr>
+  <tr><td class="l">compaction.json msg[0]</td><td class="l">逐字保留原始 user prompt（<code>&lt;user_input mode="act"&gt;...）</code></td><td class="l">LLM 生成 <code>Context summary:\n\n## Goal\n...\n## State\n...</code></td></tr>
+  <tr><td class="l">触发阈值（3.0.51 实测）</td><td class="l">~230K tokens（≈模型默认上下文窗口）</td><td class="l">~120K tokens（≈basic 的 50%，主动提前压缩）</td></tr>
+</table>
+
+<div class="banner warn">
+  <b>⚠ 计划偏差（已在 P0d smoke 发现并记录）</b>：预注册计划 §11 假设 cline 4.x 语义（<code>maxInputTokens=32K</code> 驱动触发阈值），
+  但实测 cline <b>3.0.51</b> 的触发阈值由<b>策略内部逻辑</b>决定，<code>models.json</code> 的 <code>contextWindow=32000</code> 被忽略。
+  basic 在 ~230K tokens 触发，agentic 在 ~120K tokens 触发——两者阈值不同，这意味着：
+  <ul>
+  <li>"同一触发点比较策略" 的设计意图无法在 3.0.51 实现；实际比较的是「不同触发阈值 + 不同压缩方法」的<b>联合效应</b></li>
+  <li>agentic 触发更早 → 更多题会压缩 → 压缩触发率本身是策略差异的一部分（非混淆变量）</li>
+  <li>外部效度受限：结论适用于 cline 3.0.51 的默认行为，不能直接外推到 4.x</li>
+  </ul>
+</div>
+
+<h3>2.2 实验设计</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td class="l">基座模型</td><td>deepseek-v4-pro-cloud（/cloud/v1，maxTokens 16384，reasoning.enabled=false）</td></tr>
+  <tr><td class="l">cline 版本</td><td>3.0.51</td></tr>
+  <tr><td class="l">子集</td><td>40 题（从 158 题按 z-score 选取长轨迹子集，中位数 153 工具调用，6 类别分层，seed=42）</td></tr>
+  <tr><td class="l">臂</td><td>2 臂：basic / agentic（仅 <code>--compaction</code> 与 <code>CLI_DATA_DIR</code> 不同，其余全恒定）</td></tr>
+  <tr><td class="l">轮数</td><td>每臂 3 轮 = 6 轮总计</td></tr>
+  <tr><td class="l">顺序</td><td>ABBA 反平衡：basic_r1 → agentic_r1 → agentic_r2 → basic_r2 → basic_r3 → agentic_r3</td></tr>
+  <tr><td class="l">并行度</td><td>8（<code>-p 8</code>）</td></tr>
+  <tr><td class="l">统计</td><td>题级配对（McNemar），3 轮多数票；bootstrap 10k CI</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2>③ 主结果（6 轮表 + 配对）</h2>
+<h3>3.1 各轮 Pass@1</h3>
+<div class="scroll-x">
+<table>
+  <tr><th>轮次</th><th>臂</th><th>Pass@1（%）</th><th>压缩触发题数 / 40</th><th>平均压缩率</th><th>墙钟（min）</th><th>总 Token</th></tr>
+  <tr><td>r1</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-1-pass" class="tbd">TBD</td><td id="r-basic-1-trig" class="tbd">TBD</td><td id="r-basic-1-cr" class="tbd">TBD</td><td id="r-basic-1-wall" class="tbd">TBD</td><td id="r-basic-1-tok" class="tbd">TBD</td></tr>
+  <tr><td>r1</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-1-pass" class="tbd">TBD</td><td id="r-agentic-1-trig" class="tbd">TBD</td><td id="r-agentic-1-cr" class="tbd">TBD</td><td id="r-agentic-1-wall" class="tbd">TBD</td><td id="r-agentic-1-tok" class="tbd">TBD</td></tr>
+  <tr><td>r2</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-2-pass" class="tbd">TBD</td><td id="r-agentic-2-trig" class="tbd">TBD</td><td id="r-agentic-2-cr" class="tbd">TBD</td><td id="r-agentic-2-wall" class="tbd">TBD</td><td id="r-agentic-2-tok" class="tbd">TBD</td></tr>
+  <tr><td>r2</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-2-pass" class="tbd">TBD</td><td id="r-basic-2-trig" class="tbd">TBD</td><td id="r-basic-2-cr" class="tbd">TBD</td><td id="r-basic-2-wall" class="tbd">TBD</td><td id="r-basic-2-tok" class="tbd">TBD</td></tr>
+  <tr><td>r3</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-3-pass" class="tbd">TBD</td><td id="r-basic-3-trig" class="tbd">TBD</td><td id="r-basic-3-cr" class="tbd">TBD</td><td id="r-basic-3-wall" class="tbd">TBD</td><td id="r-basic-3-tok" class="tbd">TBD</td></tr>
+  <tr><td>r3</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-3-pass" class="tbd">TBD</td><td id="r-agentic-3-trig" class="tbd">TBD</td><td id="r-agentic-3-cr" class="tbd">TBD</td><td id="r-agentic-3-wall" class="tbd">TBD</td><td id="r-agentic-3-tok" class="tbd">TBD</td></tr>
+  <tr style="font-weight:700;background:#e0e7ff;"><td>均值</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-avg-pass" class="tbd">TBD</td><td colspan="4" class="small">—</td></tr>
+  <tr style="font-weight:700;background:#fce7f3;"><td>均值</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-avg-pass" class="tbd">TBD</td><td colspan="4" class="small">—</td></tr>
+</table>
+</div>
+
+<h3>3.2 题级配对（McNemar）</h3>
+<p class="small">3 轮多数票后，40 题中每题在两臂的通过情况配对。</p>
+<table>
+  <tr><th></th><th>agentic 通过</th><th>agentic 失败</th><th>合计</th></tr>
+  <tr><td><b>basic 通过</b></td><td id="mc-both-pass" class="tbd">TBD</td><td id="mc-basic-only" class="tbd">TBD</td><td id="mc-basic-total" class="tbd">TBD</td></tr>
+  <tr><td><b>basic 失败</b></td><td id="mc-agentic-only" class="tbd">TBD</td><td id="mc-both-fail" class="tbd">TBD</td><td id="mc-agentic-fail-total" class="tbd">TBD</td></tr>
+  <tr><td><b>合计</b></td><td id="mc-agentic-pass-total" class="tbd">TBD</td><td colspan="2" id="mc-grand-total" class="tbd">TBD</td></tr>
+</table>
+<p>McNemar χ² = <span id="mc-chisq" class="tbd">TBD</span> · p = <span id="mc-p" class="tbd">TBD</span> · Δ Pass@1 = <span id="mc-delta" class="tbd">TBD</span>pp · 95% bootstrap CI = [<span id="mc-ci-lo" class="tbd">TBD</span>, <span id="mc-ci-hi" class="tbd">TBD</span>]</p>
+
+<!-- ================================================================ -->
+<h2>④ 亚组分析</h2>
+
+<h3>4.1 压缩触发亚组</h3>
+<p class="small">仅在<b>至少一臂触发压缩</b>的题上比较（这些题才是压缩策略实际起作用的场景）。</p>
+<table>
+  <tr><th>亚组</th><th>题数</th><th><span class="tag t-basic">basic</span> Pass@1</th><th><span class="tag t-agentic">agentic</span> Pass@1</th><th>Δ</th></tr>
+  <tr><td class="l">两臂均触发</td><td id="sg-both-trig-n" class="tbd">TBD</td><td id="sg-both-trig-basic" class="tbd">TBD</td><td id="sg-both-trig-agentic" class="tbd">TBD</td><td id="sg-both-trig-delta" class="tbd">TBD</td></tr>
+  <tr><td class="l">仅 agentic 触发</td><td id="sg-agentic-only-trig-n" class="tbd">TBD</td><td id="sg-agentic-only-trig-basic" class="tbd">TBD</td><td id="sg-agentic-only-trig-agentic" class="tbd">TBD</td><td id="sg-agentic-only-trig-delta" class="tbd">TBD</td></tr>
+  <tr><td class="l">两臂均未触发</td><td id="sg-none-trig-n" class="tbd">TBD</td><td id="sg-none-trig-basic" class="tbd">TBD</td><td id="sg-none-trig-agentic" class="tbd">TBD</td><td id="sg-none-trig-delta" class="tbd">TBD</td></tr>
+</table>
+
+<h3>4.2 轨迹长度亚组</h3>
+<p class="small">按子集内原始 trace 工具调用数的中位数（153）分短/长两组。</p>
+<table>
+  <tr><th>长度组</th><th>题数</th><th><span class="tag t-basic">basic</span> Pass@1</th><th><span class="tag t-agentic">agentic</span> Pass@1</th><th>Δ</th></tr>
+  <tr><td class="l">短轨迹（&lt; 153 工具调用）</td><td id="sg-short-n" class="tbd">TBD</td><td id="sg-short-basic" class="tbd">TBD</td><td id="sg-short-agentic" class="tbd">TBD</td><td id="sg-short-delta" class="tbd">TBD</td></tr>
+  <tr><td class="l">长轨迹（≥ 153 工具调用）</td><td id="sg-long-n" class="tbd">TBD</td><td id="sg-long-basic" class="tbd">TBD</td><td id="sg-long-agentic" class="tbd">TBD</td><td id="sg-long-delta" class="tbd">TBD</td></tr>
+</table>
+
+<h3>4.3 题类亚组（6 类别）</h3>
+<div class="scroll-x">
+<table id="sg-category-table">
+  <tr><th>类别</th><th>题数</th><th><span class="tag t-basic">basic</span> Pass@1</th><th><span class="tag t-agentic">agentic</span> Pass@1</th><th>Δ</th></tr>
+  <tr><td colspan="5" class="tbd">[待 P2 数据填充：6 类别行]</td></tr>
+</table>
+</div>
+
+<!-- ================================================================ -->
+<h2>⑤ 失败分类</h2>
+<p class="small">对两臂<b>不一致</b>的题（一臂过一臂挂）做失败归因，4 类：</p>
+<table>
+  <tr><th>失败类型</th><th>定义</th><th><span class="tag t-basic">basic 独挂</span></th><th><span class="tag t-agentic">agentic 独挂</span></th></tr>
+  <tr><td class="l">① 交付形态/位置错</td><td class="l">生成了代码但文件名/路径/格式不符</td><td id="fc-1-basic" class="tbd">TBD</td><td id="fc-1-agentic" class="tbd">TBD</td></tr>
+  <tr><td class="l">② 前提缺失/上下文丢失</td><td class="l">压缩后丢失关键上下文（API 名、参数、设计规格）</td><td id="fc-2-basic" class="tbd">TBD</td><td id="fc-2-agentic" class="tbd">TBD</td></tr>
+  <tr><td class="l">③ 能力不足</td><td class="l">模型本身无法完成（与压缩无关）</td><td id="fc-3-basic" class="tbd">TBD</td><td id="fc-3-agentic" class="tbd">TBD</td></tr>
+  <tr><td class="l">④ 判分歧义</td><td class="l">判分器边界案例（与压缩无关）</td><td id="fc-4-basic" class="tbd">TBD</td><td id="fc-4-agentic" class="tbd">TBD</td></tr>
+</table>
+<div class="banner info" id="fc-summary">
+  <b>关键观察</b>：<span class="tbd">[②类失败（上下文丢失）的分布是压缩策略差异的核心证据——若 agentic 的②类显著少于 basic，说明 LLM 摘要更好地保住了任务状态]</span>
+</div>
+
+<!-- ================================================================ -->
+<h2>⑥ 成本-收益</h2>
+<h3>6.1 Token 成本</h3>
+<table>
+  <tr><th>指标</th><th><span class="tag t-basic">basic</span></th><th><span class="tag t-agentic">agentic</span></th><th>比值（agentic/basic）</th></tr>
+  <tr><td class="l">总输入 Token（3 轮）</td><td id="cb-basic-in-tok" class="tbd">TBD</td><td id="cb-agentic-in-tok" class="tbd">TBD</td><td id="cb-ratio-in" class="tbd">TBD</td></tr>
+  <tr><td class="l">总输出 Token（3 轮）</td><td id="cb-basic-out-tok" class="tbd">TBD</td><td id="cb-agentic-out-tok" class="tbd">TBD</td><td id="cb-ratio-out" class="tbd">TBD</td></tr>
+  <tr><td class="l">压缩摘要额外 Token</td><td id="cb-basic-compact-tok" class="tbd">0（规则折叠无额外调用）</td><td id="cb-agentic-compact-tok" class="tbd">TBD</td><td>—</td></tr>
+  <tr><td class="l">总墙钟时间（3 轮，min）</td><td id="cb-basic-wall" class="tbd">TBD</td><td id="cb-agentic-wall" class="tbd">TBD</td><td id="cb-ratio-wall" class="tbd">TBD</td></tr>
+</table>
+
+<h3>6.2 效率-效果象限</h3>
+<div class="banner info" id="ce-quadrant">
+  <b>成本-收益判定</b>：<span class="tbd">[待 P2 数据填充：若 agentic ΔPass@1 ≥ +3pp 且 Token 开销增幅 <20%，则「高效增益」；若增益 <3pp 但开销显著，则「得不偿失」]</span>
+</div>
+
+<!-- ================================================================ -->
+<h2>⑦ 摘要质量抽检</h2>
+<p class="small">对 agentic 臂的 compaction.json 做人工抽检（5 条），评估 LLM 生成摘要是否准确保留了关键任务状态。</p>
+<table>
+  <tr><th>题号</th><th>压缩时消息数</th><th>摘要是否含 Goal</th><th>摘要是否含 State/Done</th><th>关键 API/参数是否保留</th><th>质量评级</th></tr>
+  <tr><td colspan="6" class="tbd">[待 P2 数据填充：5 条抽检]</td></tr>
+</table>
+<div class="banner info" id="quality-summary">
+  <b>摘要质量结论</b>：<span class="tbd">[待 P2 数据填充]</span>
+</div>
+
+<!-- ================================================================ -->
+<h2>⑧ 结论与默认策略建议</h2>
+
+<div class="banner pass" id="conclusion-box">
+  <h3 style="margin-top:0">三问明确结论</h3>
+  <p><b>Q1（≥3pp 增益？）</b>：<span id="conclusion-q1" class="tbd">[是 / 否 / 证据不足 + 数字]</span></p>
+  <p><b>Q2（只存在于长会话？）</b>：<span id="conclusion-q2" class="tbd">[是 / 否 / 证据不足 + 数字]</span></p>
+  <p><b>Q3（默认策略推荐？）</b>：<span id="conclusion-q3" class="tbd">[basic / agentic / 无偏好 + 理由]</span></p>
+</div>
+
+<h3>默认策略建议</h3>
+<table>
+  <tr><th>条件</th><th>建议</th></tr>
+  <tr><td class="l">Δ ≥ +3pp 且 p&lt;0.05，长轨迹同向</td><td class="l"><b>agentic 设为默认</b>；论文写「语义摘要保住任务状态，长轨迹收益最大」；保留 basic 作溢出恢复</td></tr>
+  <tr><td class="l">Δ ∈ (−3, +3) 且 CI 跨 0</td><td class="l"><b>证据不足</b>；默认维持 agentic（成本可接受），写「未观测到显著增益」，不做宣传性表述</td></tr>
+  <tr><td class="l">Δ ≤ −3pp</td><td class="l"><b>basic 设为默认</b>；agentic 的摘要 LLM 调用引入噪声或丢信息，得不偿失</td></tr>
+</table>
+<p id="conclusion-final" class="tbd">[待 P2 数据填充：最终落在哪一行]</p>
+
+<!-- ================================================================ -->
+<h2>附录</h2>
+
+<h3>A. 复现命令</h3>
+<pre><code># 1. 建两臂 data-dir
+python3 run/setup_compaction_arm_dirs.py
+
+# 2. 启动 P2 消融（ABBA 6 轮）
+setsid bash -lc 'exec bash run/run_compaction_ablation.sh' > /tmp/zhulong_compaction_ablation.log 2>&1 &lt; /dev/null &amp;
+
+# 3. 抽取成本
+python3 run/extract_cost.py --batch &lt;gen_batch&gt; --tag C_basic_r1 --out run/cost_C_basic_r1.json
+</code></pre>
+
+<h3>B. P0d Smoke 验证结果</h3>
+<p class="small">任务 EDA-Eval-PyAether-105（子集中最长轨迹，954 工具调用）。两臂均产生 compaction.json，签名清晰区分：</p>
+<table>
+  <tr><th>指标</th><th><span class="tag t-basic">basic</span></th><th><span class="tag t-agentic">agentic</span></th></tr>
+  <tr><td class="l">触发时 tokens</td><td>229.9k</td><td>120.2k</td></tr>
+  <tr><td class="l">压缩后 tokens</td><td>29.4k</td><td>34.9k</td></tr>
+  <tr><td class="l">Token 压缩率</td><td>87.2%</td><td>71.0%</td></tr>
+  <tr><td class="l">消息压缩率</td><td>91.4%（81→7）</td><td>87.7%（57→7）</td></tr>
+  <tr><td class="l">msg[0] 类型</td><td class="l">逐字 user prompt</td><td class="l">LLM 摘要（Context summary + ## Goal + ## State）</td></tr>
+  <tr><td class="l">compaction.json 大小</td><td>52 KB</td><td>73 KB</td></tr>
+  <tr><td class="l">P0d 判定</td><td><span class="tag t-pass">PASS</span></td><td><span class="tag t-pass">PASS</span></td></tr>
+</table>
+
+<h3>C. 变更记录</h3>
+<table>
+  <tr><th>时间</th><th>变更</th><th>原因</th></tr>
+  <tr><td class="l">2026-11-12 22:42</td><td class="l">P2 启动（6 轮 ABBA）</td><td class="l">P0d smoke PASS</td></tr>
+  <tr><td class="l">2026-11-12 22:38</td><td class="l">P0d agentic smoke 验证完成</td><td class="l">确认 agentic 策略签名</td></tr>
+  <tr><td class="l">2026-11-12 22:22</td><td class="l">P0d basic smoke 验证完成</td><td class="l">确认 basic 策略签名</td></tr>
+  <tr><td class="l">2026-11-12（计划偏差）</td><td class="l">32K regime → 实测 ~120K/230K 触发阈值</td><td class="l">cline 3.0.51 忽略 models.json contextWindow=32000，使用策略内部默认阈值</td></tr>
+</table>
+
+<h3>D. 外部效度限制</h3>
+<div class="banner warn">
+  <ul>
+  <li>本实验在 cline <b>3.0.51</b> 上进行；4.x 的 <code>--compaction</code> 语义可能不同（4.x 用 <code>maxInputTokens</code> 驱动触发，3.0.51 用策略内部阈值）</li>
+  <li>触发阈值不是配置项（3.0.51 忽略 <code>contextWindow</code>），无法实现「同一触发点比较策略」的原始设计</li>
+  <li>40 题子集从 158 题中按轨迹长度选取，偏向长轨迹任务——结论适用于「压缩可能发生」的场景，不代表人均短任务行为</li>
+  <li>单基座（deepseek-v4-pro-cloud）——不同模型的摘要能力差异可能影响 agentic 效果</li>
+  </ul>
+</div>
+
+<p class="small" style="margin-top:2em;border-top:1px solid #ddd;padding-top:10px;">
+ZhuLong DAC 2027 · 压缩机制消融 · 生成时间：<span id="gen-time">2026-11-12</span> ·
+脚本：<code>run/run_compaction_ablation.sh</code> · 数据：<code>run/ablation_compaction_results.json</code>
+</p>
+
+</body>
+</html>
