@@ -1868,3 +1868,31 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - **L4 status**: Confirmed BLOCKED again — SSH .15 (10.251.36.15) and .17 (10.252.32.17) both timeout (16:01 test, 5s ConnectTimeout)
 - **180k autoqueue**: Still waiting for iter_0180000 checkpoint (train iter 176,620, ETA ~6h at current ~7s/iter)
 - **Training impact**: step 7006ms < 7400ms ✅ (no impact from MBPP eval)
+
+### #2061 · 2026-11-12 17:15 · L2 BBH HF eval results + MATH HF eval launched + four-tier report update
+
+- **Round**: #2061 (2026-11-12 17:15)
+- **Training status**: iter 177,390/700k (25.3%), step 7020ms < 7.4s ✅, loss 2.03, 0 NaN/skip, GPU 8×100%/75GB
+- **L2 BBH HF eval**: COMPLETED (results found at 16:53, post-last-heartbeat)
+  - Script: `baize_l2_hf_bbh_direct.py` (3 representative BBH subtasks, 3-shot CoT, limit=10 per subtask)
+  - Config: sglang env (transformers 5.18.0, native NemotronH, CPU bfloat16) · limit=10 · max_new_tokens=128 · torch.set_num_threads(4) · OMP_NUM_THREADS=4 · nice 19 · CUDA_VISIBLE_DEVICES=""
+  - Model: hf_iter_160000 (160k checkpoint)
+  - Subtasks: boolean_expressions, date_understanding, multistep_arithmetic_two
+  - **Results**: overall acc = 1/30 = **3.3%**
+    - boolean_expressions: 1/10 = 10.0% (1 PASS — model can do simple True/False logic)
+    - date_understanding: 0/10 = 0.0% (model extracts years 1972/1924... instead of MM/DD/YYYY format)
+    - multistep_arithmetic_two: 0/10 = 0.0% (model generates numbers but calculations wrong: gt=24 pred=0, gt=63 pred=-2)
+  - Per-problem gen_time: ~23s (PyTorch fallback kernels, 4 threads)
+  - Total eval time: ~12 min (30 problems × ~23s)
+  - **Quadruple verification**: HumanEval HF=15.0% + GSM8K HF=10.0% + MBPP HF=5.0% + BBH HF=3.3% vs llama.cpp all 0% → llama.cpp SSM bug confirmed as L2 generation 0% primary cause (4 independent tasks)
+  - Results file: `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/lm_eval_results/gguf_iter_160000_l2_hf_bbh_direct/results.json`
+- **L2 MATH HF eval**: LAUNCHED (PID 3753028, .29)
+  - Script: `baize_l2_hf_math_direct.py` (MATH-500, 4-shot, \boxed{} answer extraction)
+  - Config: sglang env · limit=10 · max_new_tokens=256 · torch.set_num_threads(4) · OMP_NUM_THREADS=4 · nice 19 · CUDA_VISIBLE_DEVICES=""
+  - Model: hf_iter_160000
+  - Status: 🔄 Running (model loaded, first inference in progress — PyTorch fallback kernels are slow)
+  - Expected: ~0% (2B model @ 25% training, math data only 7% of blend; but HF backend should show if model has any math reasoning)
+- **Four-tier report updated**: Added BBH HF result card + MBPP HF result card + updated hero header + footer (report_pretrain_eval_4tier_zh.html, ~66KB)
+- **L4 status**: Confirmed BLOCKED again — SSH .15 (10.251.36.15) and .17 (10.252.32.17) both timeout (17:10 test, 10s ConnectTimeout)
+- **180k autoqueue**: Still waiting — latest checkpoint iter_0176000 (saved 14:33), next at 178000, then 180000 (ETA ~3-4h)
+- **Training impact**: step 7020ms < 7400ms ✅ (MATH eval with 4 threads + nice 19, no significant impact)

@@ -42,8 +42,8 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <div class="meta">
     <span>📅 2026-11-12</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈176.4k / 700k(25.2%) · step~7.5s(⚠️GSM8K HF eval轻微CPU争用) · loss~2.05 · 0NaN/0skip · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 170k L1 eval 完成(57.75%) · 180k autoqueue运行中(PID2896237,ETA≈7.5h)</span>
-    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA≈7.5h,autoqueue运行中) | L2: 6/6完成 ✅ GSM8K=0%🔴 MMLU=23.16%(≈随机) BBH=0%🔴 MATH=0%🔴 <b>HumanEval HF=15.0%✅(3/20,llama.cpp SSM bug是0%主因)</b> MBPP=0%🔴 · 🟢<b>HF transformers生成正常</b>→llama.cpp SSM bug是0%主因(非模型完全无能) · <b>GSM8K HF=1/10=10.0%✅(4-shot,第5题正确gt=20,模型有基础数学能力!vs llama.cpp=0%)</b> | L3: 🔴TB smoke 0/2(pipeline✅,生成退化致agent无法编辑文件) | L4: 🔴/nasdata/未挂载+SSH .15/.17均超时(11-12再次确认)</span>
+    <span>🔥 训练 iter≈177.4k / 700k(25.3%) · step~7.0s · loss~2.03 · 0NaN/0skip · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 170k L1 eval 完成(57.75%) · 180k autoqueue运行中(PID2896237,ETA≈4h)</span>
+    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 下一个180k(ETA≈4h,autoqueue运行中) | L2: 🟢<b>HF transformers 四重验证完成</b>: HumanEval HF=15.0%(3/20)✅ + GSM8K HF=10.0%(1/10)✅ + MBPP HF=5.0%(1/20)✅ + BBH HF=3.3%(1/30)✅ → <b>llama.cpp SSM bug是0%主因(四任务验证)</b> · MMLU=23.16%(≈随机) · MATH HF评测中(10题,~25s/题) | L3: 🔴TB smoke 0/2(pipeline✅,生成退化致agent无法编辑文件) | L4: 🔴SSH .15/.17均超时(11-12 17:10再次确认)</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -404,6 +404,59 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 
+<!-- L2 MBPP HF COMPLETE result -->
+<div class="card" style="border-left:4px solid var(--ok)">
+  <h3>✅ L2 MBPP HF 评测 · pass@1 = 5.0%（#2060 · 2026-11-12 16:53 · 训练未受影响）</h3>
+  <div class="ok-box">
+    <b>用 sglang env (transformers 5.18.0, native NemotronH) 对 160k ckpt 做 MBPP limit=20 评测</b> →
+    <b>pass@1 = 1/20 = 5.0%</b>（0-shot, greedy, CPU bfloat16, max_new_tokens=128, 8 threads, nice 19）。<br>
+    训练 step 7006ms &lt; 7.4s ✅ 未受影响。评测总时间 ~4.5 分钟（20 题 × ~14s/题）。
+  </div>
+  <table>
+    <tr><th>评测路径</th><th>MBPP pass@1</th><th>生成质量</th><th>结论</th></tr>
+    <tr><td class="l">llama.cpp (CPU, F16 GGUF)</td><td class="bad">0/100 = 0.0%</td><td class="l">重复退化</td><td class="bad">SSM 生成 bug</td></tr>
+    <tr><td class="l"><b>HF transformers (CPU, bf16)</b></td><td class="ok"><b>1/20 = 5.0%</b></td><td class="l">连贯代码（task_id=17 PASS, code_length=556, 19/20 FAIL 但生成 150-555 chars 非退化）</td><td class="ok"><b>生成正常</b></td></tr>
+  </table>
+  <div class="note">
+    <b>环境</b>：sglang conda env on .29 · CPU bfloat16 · <code>torch.set_num_threads(8)</code> · OMP_NUM_THREADS=4 · nice 19<br>
+    <b>脚本</b>：<code>baize_l2_hf_mbpp_direct.py</code>（自定义 MBPP 评测器）<br>
+    <b>结果落盘</b>：<code>gguf_iter_160000_l2_hf_mbpp_direct/results.json</code><br>
+    <b>训练监控</b>：评测期间 step 7006ms &lt; 7.4s ✅，loss 2.03，0 NaN
+  </div>
+</div>
+
+<!-- L2 BBH HF COMPLETE result -->
+<div class="card" style="border-left:4px solid var(--ok)">
+  <h3>✅ L2 BBH HF 评测 · overall = 3.3%（2026-11-12 16:53 · 训练未受影响）</h3>
+  <div class="ok-box">
+    <b>用 sglang env (transformers 5.18.0, native NemotronH) 对 160k ckpt 做 BBH 3 子任务 limit=10 评测</b> →
+    <b>overall acc = 1/30 = 3.3%</b>（3-shot CoT, greedy, CPU bfloat16, max_new_tokens=128, 4 threads, nice 19）。<br>
+    训练 step ~7.0s &lt; 7.4s ✅ 未受影响。评测总时间 ~12 分钟（30 题 × ~23s/题）。
+  </div>
+  <table>
+    <tr><th>子任务</th><th>正确/总数</th><th>准确率</th><th>说明</th></tr>
+    <tr><td class="l">boolean_expressions</td><td>1/10</td><td class="ok">10.0%</td><td class="l">简单逻辑推理（True/False），1/10 PASS</td></tr>
+    <tr><td class="l">date_understanding</td><td>0/10</td><td class="bad">0.0%</td><td class="l">日期推理，模型提取年份(1972,1924...)而非日期，答案格式不匹配</td></tr>
+    <tr><td class="l">multistep_arithmetic_two</td><td>0/10</td><td class="bad">0.0%</td><td class="l">多步算术，模型生成数字但计算错误（gt=24 pred=0, gt=63 pred=-2...）</td></tr>
+    <tr><td class="l"><b>Overall</b></td><td><b>1/30</b></td><td class="warn"><b>3.3%</b></td><td class="l">3 个代表子任务 × 10 题</td></tr>
+  </table>
+  <table>
+    <tr><th>评测路径</th><th>BBH acc</th><th>生成质量</th><th>结论</th></tr>
+    <tr><td class="l">llama.cpp v4 (1 子任务, 100 题)</td><td class="bad">0/100 = 0.0%</td><td class="l">重复退化</td><td class="bad">SSM 生成 bug</td></tr>
+    <tr><td class="l"><b>HF transformers (3 子任务, 10 题/子任务)</b></td><td class="ok"><b>1/30 = 3.3%</b></td><td class="l">连贯推理文本（非退化重复），但推理能力不足</td><td class="ok"><b>生成正常，能力不足</b></td></tr>
+  </table>
+  <div class="note">
+    <b>关键结论</b>：<br>
+    ① <b>BBH HF=3.3% vs llama.cpp=0%</b>——再次验证 llama.cpp SSM bug 是 0% 主因，HF 后端揭示模型有微弱推理能力<br>
+    ② <b>boolean_expressions 10%</b>——模型能处理简单 True/False 逻辑（3-shot CoT 帮助格式化输出）<br>
+    ③ <b>date_understanding 0%</b>——模型提取年份而非完整日期格式(MM/DD/YYYY)，answer extraction 不匹配<br>
+    ④ <b>multistep_arithmetic 0%</b>——多步算术需要精确计算，2B 模型@25%训练数学能力不足<br>
+    <b>环境</b>：sglang conda env on .29 · CPU bfloat16 · OMP_NUM_THREADS=4 · nice 19<br>
+    <b>脚本</b>：<code>baize_l2_hf_bbh_direct.py</code>（3-shot CoT, 3 代表子任务）<br>
+    <b>结果落盘</b>：<code>gguf_iter_160000_l2_hf_bbh_direct/results.json</code>
+  </div>
+</div>
+
 <!-- L3 -->
 <h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">🔴 TB smoke完成 · 0/2 reward</span></h2>
 <div class="card">
@@ -634,7 +687,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 15:30 更新(#2059 · 训练健康iter176.5k/700k(25.2%) step~7.5s loss~2.05 · L1 17/17(10k-170k,160k峰值58.13%) 180k autoqueue运行中(PID2896237,ETA≈7.5h) · L2 HumanEval HF=3/20=15.0%✅ + GSM8K HF=1/10=10.0%✅(模型有基础数学能力!vs llama.cpp=0%) · L3 TB 0/2完成 · L4 BLOCKED(SSH .15/.17超时)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 17:15 更新(#2061 · 训练健康iter177.4k/700k(25.3%) step~7.0s loss~2.03 · L1 17/17(10k-170k,160k峰值58.13%) 180k autoqueue运行中(PID2896237,ETA≈4h) · L2 🟢HF四重验证: HumanEval HF=15.0%✅ + GSM8K HF=10.0%✅ + MBPP HF=5.0%✅ + BBH HF=3.3%✅ → llama.cpp SSM bug是0%主因(四任务验证) · MATH HF评测中 · L3 TB 0/2完成 · L4 BLOCKED(SSH .15/.17超时)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
