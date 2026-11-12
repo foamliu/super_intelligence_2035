@@ -1491,3 +1491,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793779407315_s8mpi	xxchen	hfhds201	37	analog_context	parked		2026-11-12 12:51	Q&A investigation: StarRC runTrace metal-resistor hierarchy discrepancy (top vs sub-cell), not produce-task; .rep reports at /proj paths unreachable
 1793089586575_rs1eo	rose3wang	hfeg0pkn003	18	schematic_netlist	case	EDA-Eval-DesignFlow-TclAreaCsvAnnotate-001	2026-11-12 13:47	
 1788767715720_znoyb	rongjiez	hfeg0pkn014	25	analog_context	case	EDA-Eval-DesignFlow-MqaMd0PvtAggregate-001	2026-11-12 14:31	
+1793598753128_q2ccz	qilongw	hfeg0plg52	18	schematic_netlist	case	EDA-Eval-DesignFlow-PwrSpVSrcBitExpand-001	2026-11-12 16:21	
+1793771016430_o0tur	shanliny	hfeg0plg53	12	waveform	claimed		2026-11-12 16:20	
