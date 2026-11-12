@@ -1,8 +1,10 @@
 WAITING: 0
 
-> 🆕 **【wake #1078 · 2026-11-13 05:21】v9监控·SFT进展正常**：v9 RUNNING(PID1351796/etimes~1465s/进程健康)·SFT seed0 ep1/5 step~48/305·loss 6.67→0.22(avg 0.59@step40)·~30s/step·SFT ETA~2.2h·全实验ETA~8-9h(完成≈13:00-14:00)·log 18行更新正常(step40@1206s)·v8 MIXED确认·analyze_v9就绪·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·GPU 8×H100 95-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1079 · 2026-11-13 05:25】v9监控·SFT进展正常**：v9 RUNNING(PID1351796/etimes~1716s/进程健康)·SFT seed0 ep1/5 step~50/305·loss 6.67→0.22(avg 0.59@step40)·~30s/step·SFT ETA~2.1h·全实验ETA~8-9h(完成≈13:00-14:00)·log 18行(step40@1206s)·v8 MIXED确认·analyze_v9就绪·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·GPU 8×H100 95-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
 
-> 📦 **wake #1077 · 2026-11-13 05:10** v9监控+ETA修正·已fold(见wake#1078)。
+> 📦 **wake #1078 · 2026-11-13 05:21** v9监控·SFT进展正常·已fold(见wake#1079)。
+
+> 📦 **wake #1077 · 2026-11-13 05:10** v9监控+ETA修正·已fold。
 
 > 🆕 **【wake #1076 · 2026-11-13 04:56】v9实验启动**：v8分析完成(A=0%根因=格式问题:model生成推理文本而非A/B, B=45%真实性能, C=60% GRPO有效) → 设计v9(扩大SFT 200→500×5ep, eval 48→96, GRPO 15→30步, medium难度boost) → 修复qid递增bug(eval 72→91, SFT 152→484) → smoke通过 → **v9 full experiment launched** (3 seeds + control, ETA ~4h on CPU, log @ /tmp/v9_freqcmp.log) · 脚本: `vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py` + `run_v9_freqcmp.sh` + `analyze_v9_freqcmp.py` · **WAITING: 0**。
 
