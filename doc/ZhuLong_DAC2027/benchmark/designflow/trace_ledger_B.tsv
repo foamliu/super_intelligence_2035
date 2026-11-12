@@ -1359,4 +1359,4 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794398362877_7prw8	qiang3xu	hfeg0pkn005	881	spice_sim	case	EDA-Eval-DesignFlow-Sp2tVerilogaSwitch-001	2026-11-13 03:19	
 1792746486510_lrvvt	jiashengz	hfeg0plg92	136	spice_sim	case	EDA-Eval-DesignFlow-LvDpathCdlImport-001	2026-11-13 03:58	
 1792573529929_8exxf	zhukaic	hfeg0plg58	24	spice_sim	case	EDA-Eval-DesignFlow-OtaMa0SpecCheck-001	2026-11-13 04:33	
-1787646109879_mwyd9.messages.json	e0025730	hfeg0plg49	82	spice_sim	claimed		2026-11-13 04:52	
+1787646109879_mwyd9.messages.json	e0025730	hfeg0plg49	82	spice_sim	case	EDA-Eval-DesignFlow-SenseMarginAnalysis-001	2026-11-13 05:27	
