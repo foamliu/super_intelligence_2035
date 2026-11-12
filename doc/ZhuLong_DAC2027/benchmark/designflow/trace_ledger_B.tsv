@@ -1375,3 +1375,9 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1789462115306_x2l1c					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/aether, spice density <6%)
 1789883369982_reaxa					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/aether, spice density <6%)
 1792215350755_xusb9					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/aether, spice density <6%)
+1783316151876_bse5r	e0025730	hfeg0plg49	24	characterization	case	EDA-Eval-DesignFlow-LvlShftSoaSizing-001	2026-11-13 07:21	
+1794190541511_9xlnc					parked		2026-11-13 07:21	r476 peek: non-B or near-dup (9xlnc=skill-advice/1k7pk=stalled-slash/ed6ve=drc-dom/xliaq=virtuoso-cellview-C/fct93=e0025730 lvlshft dup-of-zy2q7)
+1792481875871_1k7pk					parked		2026-11-13 07:21	r476 peek: non-B or near-dup (9xlnc=skill-advice/1k7pk=stalled-slash/ed6ve=drc-dom/xliaq=virtuoso-cellview-C/fct93=e0025730 lvlshft dup-of-zy2q7)
+1794224136412_ed6ve					parked		2026-11-13 07:21	r476 peek: non-B or near-dup (9xlnc=skill-advice/1k7pk=stalled-slash/ed6ve=drc-dom/xliaq=virtuoso-cellview-C/fct93=e0025730 lvlshft dup-of-zy2q7)
+1793085517442_xliaq					parked		2026-11-13 07:21	r476 peek: non-B or near-dup (9xlnc=skill-advice/1k7pk=stalled-slash/ed6ve=drc-dom/xliaq=virtuoso-cellview-C/fct93=e0025730 lvlshft dup-of-zy2q7)
+1783666402453_fct93					parked		2026-11-13 07:21	r476 peek: non-B or near-dup (9xlnc=skill-advice/1k7pk=stalled-slash/ed6ve=drc-dom/xliaq=virtuoso-cellview-C/fct93=e0025730 lvlshft dup-of-zy2q7)
