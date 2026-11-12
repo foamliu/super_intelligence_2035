@@ -5,26 +5,20 @@
   "source_eval": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_cline-patched.json",
   "source_progress": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/progress_glm53_cline-patched.json",
   "totals": {
-    "attempted": 322,
-    "real_patches": 256,
-    "empty_patches": 66,
-    "evaluated": 259,
-    "resolved": 192,
-    "failed_real_patch": 61,
+    "attempted": 268,
+    "real_patches": 268,
+    "empty_patches": 0,
+    "evaluated": 274,
+    "resolved": 201,
+    "failed_real_patch": 66,
     "infra_or_quota_eval": 1,
-    "total_failures": 127
+    "total_failures": 66
   },
   "category_counts": {
-    "能力": 67,
-    "网关额度429": 44,
-    "超时": 15,
-    "上游5xx": 1
+    "能力": 66
   },
   "category_pct": {
-    "能力": 52.8,
-    "网关额度429": 34.6,
-    "超时": 11.8,
-    "上游5xx": 0.8
+    "能力": 100.0
   },
   "top3_samples": {
     "能力": [
@@ -37,82 +31,20 @@
         "reason": "real patch produced, eval tests FAILED (capability)"
       },
       {
+        "instance_id": "sympy__sympy-11618",
+        "wall_s": 1800.9,
+        "returncode": 0,
+        "stdout_tail": "modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 2190 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-11618.json\n[run_single] cleanup: git reset --hard 360290c4c401e386db60723ddb0109ed499c9f6e\n",
+        "stderr_tail": "",
+        "reason": "real patch produced, eval tests FAILED (capability)"
+      },
+      {
         "instance_id": "pydata__xarray-6461",
         "wall_s": 1800.8,
         "returncode": 0,
         "stdout_tail": "odules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 4038 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__pydata__xarray-6461.json\n[run_single] cleanup: git reset --hard 851dadeb0338403e5021c3fbe80cbc9127ee672d\n",
         "stderr_tail": "",
         "reason": "real patch produced, eval tests FAILED (capability)"
-      },
-      {
-        "instance_id": "sympy__sympy-13974",
-        "wall_s": 1800.8,
-        "returncode": 0,
-        "stdout_tail": "modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 2052 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-13974.json\n[run_single] cleanup: git reset --hard 84c125972ad535b2dfb245f8d311d347b45e5b8a\n",
-        "stderr_tail": "",
-        "reason": "real patch produced, eval tests FAILED (capability)"
-      }
-    ],
-    "上游5xx": [
-      {
-        "instance_id": "mwaskom__seaborn-3069",
-        "wall_s": 1800.6,
-        "returncode": 0,
-        "stdout_tail": "modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__mwaskom__seaborn-3069.json\n[run_single] cleanup: git reset --hard 54cab15bdacfaa05a88fbc5502a5b322d99f148e\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 上游5xx"
-      }
-    ],
-    "网关额度429": [
-      {
-        "instance_id": "pytest-dev__pytest-6197",
-        "wall_s": 456.9,
-        "returncode": 0,
-        "stdout_tail": "6-11-11T14:09:03.294Z\",\"type\":\"error\",\"message\":\"本次Token额度已用完，请等待1小时21分钟29秒后重试\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__pytest-dev__pytest-6197.json\n[run_single] cleanup: git reset --hard e856638ba086fcf5bebf1bebea32d5cf78de87b4\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 网关额度429"
-      },
-      {
-        "instance_id": "pytest-dev__pytest-7571",
-        "wall_s": 364.6,
-        "returncode": 0,
-        "stdout_tail": "\":\"2026-11-11T14:57:07.423Z\",\"type\":\"error\",\"message\":\"本次Token额度已用完，请等待34分钟后重试\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__pytest-dev__pytest-7571.json\n[run_single] cleanup: git reset --hard 422685d0bdc110547535036c1ff398b5e1c44145\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 网关额度429"
-      },
-      {
-        "instance_id": "psf__requests-1724",
-        "wall_s": 364.4,
-        "returncode": 0,
-        "stdout_tail": ".{\"ts\":\"2026-11-11T04:44:01.563Z\",\"type\":\"error\",\"message\":\"本次Token额度已用完，请等待47分钟后重试\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__psf__requests-1724.json\n[run_single] cleanup: git reset --hard 1ba83c47ce7b177efe90d5f51f7760680f72eda0\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 网关额度429"
-      }
-    ],
-    "超时": [
-      {
-        "instance_id": "scikit-learn__scikit-learn-13328",
-        "wall_s": 1800.8,
-        "returncode": 0,
-        "stdout_tail": "n/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__scikit-learn__scikit-learn-13328.json\n[run_single] cleanup: git reset --hard 37b0e66c871e8fb032a9c7086b2a1d5419838154\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 超时"
-      },
-      {
-        "instance_id": "scikit-learn__scikit-learn-13496",
-        "wall_s": 1800.8,
-        "returncode": 0,
-        "stdout_tail": "n/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__scikit-learn__scikit-learn-13496.json\n[run_single] cleanup: git reset --hard 3aefc834dce72e850bff48689bea3c7dff5f3fad\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 超时"
-      },
-      {
-        "instance_id": "scikit-learn__scikit-learn-15100",
-        "wall_s": 1800.8,
-        "returncode": 0,
-        "stdout_tail": "n/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__scikit-learn__scikit-learn-15100.json\n[run_single] cleanup: git reset --hard af8a6e592a1a15d92d77011856d5aa0ec4db4c6c\n",
-        "stderr_tail": "",
-        "reason": "empty patch -> 超时"
       }
     ]
   },
