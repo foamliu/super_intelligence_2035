@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake378（2026-11-13 R378: **5-run eval autocomplete launched** — run 2 of 5 code-gen 38/158 in progress (PID1109190); autocomplete script created+launched (PID1122770) waits for run2 then auto-runs 3-5+computes 5-run mean±std; run 1 results: Pass@1=6/158=3.8%）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-376✅;R376✅;R376b✅;R376c✅(DUAL Pass@1=3.8%vs1.3%);R377✅(5run eval script+run2 launched);R378✅(autocomplete script+run2 progress checked)
-- 当前动作: wake378 R378:①run 2 of 5 code-gen progress checked: 38/158 tasks done (120 remaining in queue), GPU6:8096 89%util, tunnel UP (8664/8665/8653/8669), 3 serves UP (8098+8097+8096), ETA ~23min code-gen + ~30min sandbox eval ②autocomplete script `baize_posttrain_5run_autocomplete.sh` created (bash -n✅): waits for run2 PID→runs 3,4,5 sequentially→computes 5-run mean±std→saves 5run_summary.json ③autocomplete LAUNCHED in background (PID1122770, ppid=1 daemon, waiting for run2 to finish) ④run 1 final results confirmed: Pass@1=6/158=3.8%, passed tasks: 003,046,067,096,127,153
-- 下一步: ①autocomplete auto-runs 3-5 after run2 finishes (~50min) ②check 5run_summary.json in next wake for mean±std ③McNemar/paired bootstrap vs 36% baseline ④Phase3 RL launch-ready待SFT配方最终判定
+- PHASE: posttrain-wake379（2026-11-13 R379: **5-run eval run 2 progress 46/158** — 37 success/0 fail/0 timeout, 8 workers active, autocomplete daemon waiting for run2 PID1109190; run 1: Pass@1=6/158=3.8%）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-376✅;R376✅;R376b✅;R376c✅(DUAL Pass@1=3.8%vs1.3%);R377✅(5run eval script+run2 launched);R378✅(autocomplete script+run2 progress checked);R379✅(run2 progress 46/158+infra verified+no stuck workers)
+- 当前动作: wake379 R379:①run 2 code-gen progress: 46/158 tasks dequeued(29%), stats: success=37/fail=0/timeout=0, 113 remaining in .task_queue, 8 cline workers active (max etime 1261s << 2500s timeout, no stuck workers) ②autocomplete daemon PID1122770 alive(ppid=1), still waiting for run2 PID1109190 ③3 serves UP: 8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final,89%util) all curl OK ④tunnel UP: PID618469 ssh -p3333→TUNNEL_OK(hfeg0tedaap02) ⑤git clean after pull --rebase(up to date 1a26447cf) ⑥MEMORY 29.5KB(under 32KB OK)
+- 下一步: ①autocomplete auto-runs 3-5 after run2 finishes(~50min) ②check 5run_summary.json in next wake for mean±std ③McNemar/paired bootstrap vs 36% baseline ④Phase3 RL launch-ready待SFT配方最终判定
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(run 2 of 5 running, runs 3-5 auto-queued)
-- 本轮新增产出: R378✅(autocomplete script baize_posttrain_5run_autocomplete.sh;run2 progress verified 38/158;autocomplete launched PID1122770)
-- 未完成指令: L4 2026-11-12(zhulong eval run 2/5 in progress, runs 3-5 auto-queued, designflow 0% done);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit 9296578eb wake377);本轮 commit pending(wake378)
+- 本轮新增产出: R379✅(run2 progress verified 46/158 37success;infra health check all green;no stuck workers confirmed)
+- 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run2/5, designflow 0% done+documented);13:40 SFT v39 eval→5-run eval IN PROGRESS
+- git: super_intelligence_2035(commit 1a26447cf wake379 pull);本轮 commit pending(wake379)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -216,6 +216,9 @@ WAITING: 0
 
 > 📦 wake377 流水已归档 → daily-memories-posttrain/2026-11-13.md（R377 5run eval script+run2 launched+dual Pass@1 in EXPERIMENTS）
 
+> 📦 wake378 流水已归档 → daily-memories-posttrain/2026-11-13.md（R378 autocomplete script+run2 progress 38/158+designflow 0% confirmed）
+
+[wake379 06:48] R379 **5-run eval run 2 progress+infra health check**:①run 2 code-gen(batch 2026_1113_062714):46/158 tasks dequeued(29%),stats:success=37/fail=0/timeout=0,113 remaining in .task_queue,8 cline workers active(worker_4 max etime 1261s<<2500s timeout,no stuck workers) ②autocomplete daemon PID1122770 alive(ppid=1,log shows "PID 1109190 still running...sleeping 60s",still waiting for run2) ③3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final,89%util) all curl /v1/models OK ④tunnel UP:PID618469 ssh -p3333→TUNNEL_OK(hfeg0tedaap02=10.251.36.15) ⑤git pull --rebase --autostash→fast-forward to 1a26447cf,git status -sb clean ⑥MEMORY 29.5KB(under 32KB OK),EXPERIMENTS 452KB ⑦run 1 results confirmed:step105 Pass@1=6/158=3.8%(003,046,067,096,127,153),step60 Pass@1=2/158=1.3%. R379✅.WAITING=0。
 [wake378 06:40] R378 **5-run eval autocomplete launched**:①run 2 of 5 code-gen progress checked: 38/158 tasks done(120 remaining in .task_queue),GPU6:8096 89%util,8 workers active,tunnel UP(8664/8665/8653/8669 PID618469),3 serves UP(8098+8097+8096 all curl OK),ETA ~23min code-gen+~30min sandbox eval ②run 1 final results confirmed:Pass@1=6/158=3.8%,passed:003,046,067,096,127,153,exec-fail:SyntaxErr17+AttrErr15+TypeErr13 ③autocomplete script `baize_posttrain_5run_autocomplete.sh` created(bash -n✅):waits for run2 PID1109190→runs 3,4,5 sequentially via baize_posttrain_5run_eval.sh→computes 5-run mean±std+always-pass/any-pass task analysis→saves 5run_summary.json ④autocomplete LAUNCHED in background(PID1122770,ppid=1 daemon,log:/tmp/posttrain_5run_autocomplete.log,waiting for run2 to finish) ⑤designflow L4 status confirmed:base+SFT v39 both 0% on designflow(0/5+0/30),DeepSeek also 0%→benchmark extremely hard,results already in EXPERIMENTS §L4.6f/§L4.10/§L4-DesignFlow ⑥git clean(commit 9296578eb wake377). R378✅.WAITING=0。
 
 
