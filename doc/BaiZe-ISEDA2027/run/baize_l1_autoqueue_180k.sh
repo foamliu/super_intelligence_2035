@@ -42,7 +42,7 @@ echo "$(ts) autoqueue started, polling for $CKPT_DIR" | tee "$LOG"
 WAITED=0
 while [ ! -d "$CKPT_DIR" ]; do
   sleep 300; WAITED=$((WAITED+300))
-  [ $WAITED -ge 21600 ] && { echo "$(ts) [TIMEOUT] giving up" | tee -a "$LOG"; exit 1; }
+  [ $WAITED -ge 64800 ] && { echo "$(ts) [TIMEOUT] giving up (18h limit)" | tee -a "$LOG"; exit 1; }
   local_pid=$(find_train_pid)
   local_iter=$(tail -1 /proc/$local_pid/fd/1 2>/dev/null | grep -oP 'iteration +\K[0-9]+' || echo "?")
   echo "$(ts) waiting for ckpt (train iter=$local_iter, ${WAITED}s)..." | tee -a "$LOG"
