@@ -1,12 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（wake#866·2026-11-12 14:23·**🔴 22:4x 令 + 11-07 两轴消融 ✅ 全部交付·done_all 等下一条指令**：30/30 ✅ + B_zh_r2 regrade ✅ 81.6% + B_zh_r3 重跑 ✅ 77.8%(123/158) + results JSON 回填 + cost 抽取 + 报告 §5.3 降级改写 ✅。✅ **30/30 落盘**：轴 A 15/15 ✅ 全 glm-5.2 恒定 + B_en 3/3 80.0±4.5% + B_zh 3/3 **81.2±3.2%** [r1 84.2·r2 81.6·**r3 重跑 77.8**] + B_es 3/3 80.8±0.3% + B_fr 3/3 76.2±2.6% + B_ru 3/3 79.3±2.5%。⚠️ **基座违规（wake#865 已纠正状态头）**：轴 B 仅 B_en_r1=glm-5.2，**其余 14 轮（含 zh_r3 重跑）= deepseek-v4-pro-cloud**（11-07 令禁用基座 + 不恒定）→ B 轴降级为描述性、不作语言间因果归因；轴 A 15/15 全 glm-5.2 ✅ 合规。报告 `report_zhulong_ablation_thinking_language_zh.html` 已原地覆盖（含基座违规 banner + §4.2 audit 抽查表 + §⑦ 降级结论）。旧 B_zh_r3 78.5% 标 SUPERSEDED 留档（results JSON index 20 + summary_superseded）。infra：真 loop PID 813663 proxy✅·orchestrator/gap-grabber 已退出·沙盒端口全宕（done_all 非阻塞）·/home 13G/97%·P0=CLOSED。本线 commits d8d599075/205af2b17 已 PUSHED·工作树干净。等下一条指令。）
+WAITING: 1（wake#867·2026-11-12 14:58·**🔴 22:4x 令 + 11-07 两轴消融 ✅ 全部交付·done_all 等下一条指令**：30/30 ✅ + B_zh_r2 regrade ✅ 81.6% + B_zh_r3 重跑 ✅ 77.8%(123/158) + results JSON 回填 + cost 抽取 + 报告 §5.3 降级改写 ✅。✅ **30/30 落盘**：轴 A 15/15 ✅ 全 glm-5.2 恒定 + B_en 3/3 80.0±4.5% + B_zh 3/3 **81.2±3.2%** [r1 84.2·r2 81.6·**r3 重跑 77.8**] + B_es 3/3 80.8±0.3% + B_fr 3/3 76.2±2.6% + B_ru 3/3 79.3±2.5%。⚠️ **基座违规（wake#865 已纠正状态头）**：轴 B 仅 B_en_r1=glm-5.2，**其余 14 轮（含 zh_r3 重跑）= deepseek-v4-pro-cloud**（11-07 令禁用基座 + 不恒定）→ B 轴降级为描述性、不作语言间因果归因；轴 A 15/15 全 glm-5.2 ✅ 合规。报告 `report_zhulong_ablation_thinking_language_zh.html` 已原地覆盖（含基座违规 banner + §4.2 audit 抽查表 + §⑦ 降级结论）。旧 B_zh_r3 78.5% 标 SUPERSEDED 留档（results JSON index 20 + summary_superseded）。infra：真 loop PID 813663 proxy✅·orchestrator/gap-grabber 已退出·沙盒端口全宕（done_all 非阻塞）·/home 13G/97%·P0=CLOSED。本线 commits d8d599075/205af2b17 已 PUSHED·工作树干净。等下一条指令。）
 
 - [2026-11-12 07:38 · wake#855·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:15 wake#856 归档]（状态同 wake#854 +35min·无实质变化·被 wake#856 取代：30/30 完成 + regrade 启动）。
 
 - [2026-11-12 08:15 · wake#856·B_ru_r3 ✅ DONE 79.7%·30/30 全完·regrade 自动启动 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:46 wake#857 归档]（30/30 完成 + regrade 启动·被 wake#857 取代：regrade 完成 81.6% + r3 重跑启动）。
 
 - [2026-11-12 11:44 · wake#862·**B_zh_r3 重跑🟠监控 do-nothing** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 12:19 wake#863 归档]（r3 etime 2h53m log21.3MB·被 wake#863 取代：r3 etime 3h28m log25.3MB）。
+
+- [2026-11-12 14:58 · wake#867·**done_all do-nothing·等下一条指令**] 🔴 22:4x 令⑥心跳：**轮次 30/30 ✅全完**·**编排器** 已退出（pgrep 无 run_cline_script/run_eval/regrade/zhulong_loop）·**B_ru 进度** ✅ 3/3=79.3±2.5%·**B_zh_r2 regrade 状态** ✅ DONE 81.6%·**B_zh_r3 重跑状态** ✅ DONE 77.8%。本轮操作：do-nothing（状态自 wake#866 14:23 无变化·results JSON 13:34·报告 13:42·本线 commits 7f1174cac/205af2b17/d8d599075 已 PUSHED·本线工作树干净 `## main...origin/main`）。infra：loop 未运行（done_all·无 eval）·orchestrator/gap-grabber 退出·沙盒端口全宕（done_all 非阻塞）·/home 13G/97% 紧非阻塞·P0=CLOSED。git：本线干净已推送；工作树 M/?? 文件全属别线（designflow/benchmark/posttrain/EDA-LiveFlow）非本线·🚫 不动别线在途改动。§7 PHASE=done_all·**WAITING=1**（22:4x 令全交付完，等下一条指令）。
 
 - [2026-11-12 14:23 · wake#866·**done_all do-nothing·等下一条指令**] 🔴 22:4x 令⑥心跳：**轮次 30/30 ✅全完**·**编排器** 已退出（pgrep 无 run_cline_script/run_eval/regrade）·**B_ru 进度** ✅ 3/3=79.3±2.5%·**B_zh_r2 regrade 状态** ✅ DONE 81.6%·**B_zh_r3 重跑状态** ✅ DONE 77.8%。本轮操作：do-nothing（状态自 wake#865 13:42 无变化·results JSON 13:34·报告 13:42·本线 commits d8d599075/205af2b17 已 PUSHED·本线工作树干净）。infra：真 loop PID 813663 proxy✅(https_proxy=172.19.92.23:13128·直核 /proc)·orchestrator/gap-grabber 退出·沙盒端口 8664/8665/8653/8669 全宕（done_all 非阻塞·无 eval 在跑）·/home 13G/97% 紧非阻塞·P0=CLOSED 11-05。git：本线干净已推送；`ahead 1/behind 1`=别线（designflow 未推+vision 新拉）非本线·🚫 不动别线在途改动。§7 PHASE=done_all·**WAITING=1**（22:4x 令全交付完，等下一条指令）。
 
@@ -26,25 +28,8 @@ WAITING: 1（wake#866·2026-11-12 14:23·**🔴 22:4x 令 + 11-07 两轴消融 �
 
 - [2026-11-12 08:46 · wake#857·**B_zh_r2 regrade ✅ DONE 81.6%·r3 重跑启动中** 已滚出] 原文见 `daily-memories/2026-11-12.md` §[wake#857]（regrade PID 3821059 08:03:31→08:44:56 rc=0·gap chance 1/3·闸门 n_tasks==158 PASS·129/158=81.6%·results JSON 原位回填·旧 r3 78.5% 标 SUPERSEDED·r3 重跑 PID 4037472 08:51 启动·被 wake#858 取代：r3 监控 do-nothing）。
 
-- [2026-11-12 07:03 · wake#854·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 08:15 wake#856 归档]（状态同 wake#855 -35min·无实质变化·被 wake#856 取代）。
+- [wake#845~856 已滚出·2026-11-12 01:37–08:15] 原文见 `daily-memories/2026-11-12.md`（B_ru_r2/r3 跑中监控 + regrade 启动 + 30/30 完成系列·12 条 do-nothing 心跳·均被后续 wake 取代·无实质状态留存）。
 
-- [2026-11-12 06:27 · wake#853·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 07:03 wake#854 归档]（状态同 wake#854 -36min·无实质变化·被 wake#854 取代）。
-
-- [2026-11-12 05:53 · wake#852·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 06:27 wake#853 归档]（状态同 wake#853 -34min·无实质变化·被 wake#853 取代）。
-
-- [2026-11-12 05:12 · wake#851·B_ru_r3 末轮跑中 round 30/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 05:53 wake#852 归档]（状态同 wake#852 -41min·无实质变化·被 wake#852 取代）。
-
-- [2026-11-12 04:13 · wake#850·B_ru_r2 评分中 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 05:1x wake#851 归档]（B_ru_r2 评分中·被 wake#851 取代：ru_r2 已收尾 76.6%·ru_r3 末轮起跑）。
-
-- [2026-11-12 03:59 · wake#849·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 05:1x wake#851 归档]（状态同 wake#850 -14min·无实质变化·被 wake#850 取代）。
-
-- [2026-11-12 02:13 · wake#846·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 03:59 wake#849 归档]（状态同 wake#848 -71min·无实质变化·被 wake#849 取代）。
-
-- [2026-11-12 01:37 · wake#845·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 02:47 wake#847 归档]（状态同 wake#846 -34min·无实质变化·被 wake#846 取代）。
-
-- [2026-11-12 03:24 · wake#848·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 03:59 wake#849 归档]（状态同 wake#849 -35min·无实质变化·被 wake#849 取代）。
-
-- [2026-11-12 02:47 · wake#847·B_ru_r2 跑中监控 round 29/30 已滚出] 原文见 `daily-memories/2026-11-12.md` §[rolled-out 03:59 wake#849 归档]（状态同 wake#848 -37min·无实质变化·被 wake#848 取代）。
 - [wake#841/842/844 已滚出·2026-11-11 23:1x ~ 11-12 01:0x] 原文见 `daily-memories/2026-11-11.md` 与 `daily-memories/2026-11-12.md`（3 条 B_ru_r1/r2 跑中监控 do-nothing 心跳·均被 wake#843/845/849 取代·gap-grabber chances_used=0/3·无实质状态变化）。
 
 - [2026-11-11 22:3x · opencode 96-trace 再抽样 已滚出] 原文见 `daily-memories/2026-11-11.md` §[rolled-out 23:1x]（96-trace 再抽样·en真切换/zh真切换/es未生效/fr部分生效·与 72KB 报告同向·自回滚 divergent overwrite·do-nothing）。
@@ -86,7 +71,7 @@ WAITING: 1（wake#866·2026-11-12 14:23·**🔴 22:4x 令 + 11-07 两轴消融 �
 | CONFIG | **两轴消融**：CLI_AGENT=cline / 基座=glm-5.2@/cloud/v1 key c2759d74 / maxTokens=16384 / reasoning 跟随 `--thinking` flag（providers.json reasoning.enabled=false 被 CLI flag 覆盖）。**轴 A** LANG_HINT=空, CLINE_THINKING∈{none,low,medium,high,xhigh}。**轴 B** CLINE_THINKING=medium, LANG_HINT∈{en,zh,es,fr,ru}。harness 3 处向后兼容改动（eda_fastmcp·off-by-default）：`.env` CLI_AGENT `${CLI_AGENT:-zhulong}` · `run_cli.sh` CLINE_THINKING/LANG_HINT 透传 · `run_cline_script.sh:40` EVAL_ROOT_DIR_OVERRIDE（batch→/nasdata）。EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework。 |
 | ROUND | **30/30 ✅ 全完 + B_zh_r2 regrade ✅ + B_zh_r3 重跑 ✅ + 报告 §5.3 ✅**。轴 A（glm-5.2 恒定 ✅）：none 79.5±2.6 Δ−3.8·low 84.2±1.1 Δ+0.9·medium 85.4±0.7 峰 Δ+2.1·high 85.4±2.7 Δ+2.1·xhigh 82.3±1.1 Δ−1.0（**倒 U 形**）。轴 B（thinking=medium·⚠️基座不恒定 en_r1=glm-5.2 余=deepseek-v4-pro-cloud）：en 80.0±4.5·**zh 81.2±3.2 [r1 84.2 / r2 81.6 / r3 重跑 77.8]**·es 80.8±0.3·fr 76.2±2.6·ru 79.3±2.5。旧 B_zh_r3 78.5% 标 SUPERSEDED 留档（index 20 + summary_superseded）。结果 JSON=`run/ablation_think_lang_results.json`（不入 git·31 rounds 含 1 SUPERSEDED）·trace=`/nasdata/.../ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/`（不入 git）·cost=`cost_B_zh_r3_rerun.json` 等。轴 B 注入核验 ✅ + audit 抽查（en真切换/zh confound/es未生效/fr部分生效/ru BLOCKED）已入报告 §4.2。 |
 | PHASE | `done_all`（**22:4x 令 + 11-07 两轴消融 ✅ 全部交付**：30/30 ✅ + B_zh_r2 regrade ✅ 81.6% + B_zh_r3 重跑 ✅ 77.8%(123/158) + results JSON 回填 + cost 抽取 + 报告 §5.3 降级改写 ✅。编排器/gap-grabber 已退出。报告 `report_zhulong_ablation_thinking_language_zh.html` 已原地覆盖含基座违规 banner + §4.2 audit 抽查表 + §⑦ 降级结论。等下一条指令） |
-| WAITING | 1（wake#863·2026-11-12 12:19·**B_zh_r3 重跑 🟠 跑中**：PID 4037472 etime 03:28m/12h cap≈29%·log /tmp/ABL_B_zh_r3_rerun.log 25.3MB 增长·中文思考片段=lang hint ✅·未见 pass/DONE=仍 Step3 cline batch 中段·trace 待轮末落盘。已完：30/30 ✅ + B_zh_r2 regrade ✅ 81.6%(129/158)。infra：真 loop PID 813663 proxy✅·orchestrator/gap-grabber 已退出·/home 13G/97% 紧非阻塞·P0=CLOSED 11-05·本线 HEAD==origin/main。§7 PHASE=running·r3 完成后→改报告·令⑥WAITING 不因抽检置 1） |
+| WAITING | 1（wake#867·2026-11-12 14:58·**done_all 等下一条指令**：22:4x 令 + 11-07 两轴消融 ✅ 全部交付完——30/30 ✅ + B_zh_r2 regrade ✅ 81.6%(129/158) + B_zh_r3 重跑 ✅ 77.8%(123/158·batch 2026_1112_085105·旧 78.5% 标 SUPERSEDED) + results JSON 回填 + cost 抽取 + 报告 §5.3 降级改写 ✅。编排器/gap-grabber 已退出·无 eval 在跑。infra：loop 未运行（done_all）·沙盒端口全宕（done_all 非阻塞）·/home 13G/97% 紧非阻塞·P0=CLOSED 11-05·本线 commits 7f1174cac/205af2b17/d8d599075 已 PUSHED·本线工作树干净 `## main...origin/main`。§7 PHASE=done_all·WAITING=1） |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-flash`（复测·运维令二十七②·✅HTTP 200 key 02_...c43c1f4a-03c6-4148-b722-f4c8604c78d3 + /v1·**maxTokens=16384 in providers.json**（≥8192·原记8192实际16384）修复 null-content 问题·reasoning.enabled=false 保持）|
