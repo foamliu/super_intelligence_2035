@@ -1,0 +1,8 @@
+
+=== Step 1: aggregate claude-code sympy__sympy-22456 ===
+  sympy__sympy-22456: RESOLVED
+  [14:13:24] claude-code: eval updated (resolved=212, failed=51, infra=2)
+
+=== Step 2: pi django__django-7530 ===
+  merged 241 real preds -> predictions_glm53/predictions_pi_glm53.json
+  [14:13:24] launching eval ...
