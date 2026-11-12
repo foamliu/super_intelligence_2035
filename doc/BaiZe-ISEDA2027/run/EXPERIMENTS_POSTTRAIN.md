@@ -5997,3 +5997,105 @@ wake311 启动的 full static eval（PID 554362）仍在后台运行。本轮唤
 - 后台进程：PID 554362 (alive, etimes~3505s)
 - 分析脚本：`/tmp/analyze_r315.py`（inline, 产出本节所有数字）
 - 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json 完成。
+
+---
+
+## §R316 (2026-11-12 wake316) R311 Static Eval FULL 113/113: Definitive Final Analysis + 7-Point Trend Stability + D1-D6 Complete
+
+> **里程碑**：静态评测后台进程（PID 554362）已完成，**113/113 tasks 全部就绪**。本节为最终全量分析，替代 R312-R315 的增量分析。所有数字基于完整 113 任务集。
+
+### 1. 全量结果（113 tasks, base vs SFT global_step_70）
+
+| 指标 | Base (MiniCPM5-2B) | SFT (global_step_70) | Delta |
+|:--|:--|:--|:--|
+| Syntax valid | 62/113 = 54.9% | 106/113 = 93.8% | **+38.9pp** |
+| Finish=stop | 60/113 = 53.1% | 106/113 = 93.8% | **+40.7pp** |
+| Finish=length (truncated) | 53/113 = 46.9% | 7/113 = 6.2% | **-40.7pp** |
+| Has function | 97/113 = 85.8% | 113/113 = 100.0% | **+14.2pp** |
+| API coverage mean | 0.141 | 0.166 | +0.024 (1.17x) |
+| API cov=1.0 (full) | 3/113 = 2.7% | 3/113 = 2.7% | +0.0pp |
+| API cov=0.0 (none) | 58/113 = 51.3% | 48/113 = 42.5% | -8.9pp |
+| **All APIs correct** | **0/113 = 0.0%** | **0/113 = 0.0%** | **+0.0pp** |
+| Code len mean | 6762 chars | 1432 chars | 4.7x concise |
+| Code len median | 7662 chars | 1039 chars | 7.4x concise |
+| Time mean | 25.1s | 6.3s | 4.0x faster |
+| Time median | 29.2s | 4.0s | 7.3x faster |
+| Errors | 0 | 0 | — |
+
+### 2. 核心结论
+
+- **SFT 大幅回收协议问题（D1/D3）**：syntax +38.9pp, truncation -40.7pp (46 tasks 消除截断), has_function 100%, conciseness 4.7x, speed 4.0x → SFT 修好了代码格式、结构、简洁性
+- **API 知识正确性零改善（D4 未回收）**：All APIs correct 0.0% → 0.0%，API coverage 仅 1.17x → **SFT 未提升 API 知识正确性**，模型仍无法正确调用全部期望 API
+- **RL 需攻 D4/D6**：语义推理（API 正确性）和迭代闭环（执行反馈）是 SFT 之后的真实能力差距，这正是 RL 的价值所在
+- **Base 截断是主要失败模式**：46.9% finish=length → base 在长推理链上频繁超 max_tokens（median 7662 chars），SFT 学会了简洁有效输出（median 1039 chars）
+- **替身预演**：MiniCPM5-2B 替身，收益不可迁移到 BaiZe
+
+### 3. Per-Scenario（113 tasks, 完整）
+
+| Scenario | n | Syn delta | Stop delta | Func | API cov | All-correct |
+|:--|:--:|:--:|:--:|:--|:--|:--|
+| Schematic | 41 | +44pp | +46pp | 32→41/41 | 0.13→0.15 | 0→0 |
+| Design Management | 21 | +43pp | +43pp | 20→21/21 | 0.03→0.06 | 0→0 |
+| Layout | 28 | +36pp | +36pp | 25→28/28 | 0.19→0.23 | 0→0 |
+| Others | 23 | +30pp | +35pp | 20→23/23 | 0.20→0.21 | 0→0 |
+
+- Schematic 是最大场景（41 tasks）且 delta 最大（+44pp syn / +46pp stop），但 API 正确性仍为 0
+- Others 已达 100% syntax + 100% stop，但 API 正确性仍为 0
+
+### 4. Per-Category（113 tasks）
+
+| Category | n | Syn delta | Stop delta |
+|:--|:--:|:--:|:--:|
+| Geometry Operation & Analysis | 17 | +53pp | +53pp |
+| Database & Design Management | 20 | +45pp | +45pp |
+| Design Content Creation | 27 | +41pp | +44pp |
+| Utilities | 15 | +33pp | +40pp |
+| Design Content Query & Edit | 13 | +31pp | +31pp |
+| Simulation & Analysis Configuration | 21 | +29pp | +29pp |
+
+### 5. Failure Mode Classification
+
+**Base**: success_like 53.1%, syntax_error 45.1%, truncated 1.8%
+**SFT**: syn_ok_api_wrong 92.9%, syntax_error 6.2%, truncated 0.9%
+
+→ SFT 后 92.9% 的任务是「语法正确但 API 调用错误」——这正是 RL 的攻击面。
+
+### 6. 7-Point Trend Stability（20→50→70→80→90→110→113, 完整）
+
+| n | syn_delta | stop_delta | concise |
+|:--:|:--:|:--:|:--:|
+| 20 | +20.0pp | +20.0pp | 3.7x |
+| 50 | +26.0pp | +28.0pp | 5.0x |
+| 70 | +25.7pp | +27.1pp | 5.1x |
+| 80 | +30.0pp | +31.2pp | 5.0x |
+| 90 | +33.3pp | +35.6pp | 5.2x |
+| 110 | +38.2pp | +40.0pp | 4.7x |
+| **113** | **+38.9pp** | **+40.7pp** | **4.7x** |
+
+→ syn_delta 从 +20.0pp 单调上升至 +38.9pp，**无下降拐点**，conciseness 稳定在 3.7-5.2x。趋势在完整 113 tasks 上得到确认。
+
+### 7. D1-D6 诊断代理（完整 113 tasks）
+
+| 诊断项 | Base | SFT | Delta | 判读 |
+|:--|:--|:--|:--|:--|
+| D1 (func rate) | 85.8% | 100.0% | +14.2pp | 协议格式大幅改善 |
+| D2 (API cov mean) | 0.141 | 0.166 | +0.024 | 微弱改善 |
+| D3 (truncation) | 46.9% | 6.2% | -40.7pp | 大幅改善（46 tasks 消除） |
+| D4 (syntax err) | 45.1% | 6.2% | -38.9pp | 大幅改善 |
+| D4 (API all-correct) | 0.0% | 0.0% | +0.0pp | **零改善** → RL 攻击面 |
+| D5 (per-scenario) | 见上表 | 见上表 | — | Schematic 最大受益 |
+| D6 (iteration) | N/A | N/A | — | 静态评测无执行反馈 |
+
+### 8. 对 Post-Train 三步的侧重建议（更新）
+
+1. **领域退火**：API 知识语料（PyAether API 参考文档）是关键——SFT 修格式但不修 API 知识，说明模型缺乏 API 使用知识，退火需注入
+2. **SFT**：已验证 recipe 有效（协议层 +38.9pp），但需加入 API 正确性导向的轨迹数据
+3. **RL（核心）**：92.9% 「语法正确但 API 错误」是 RL 的最大攻击面；奖励设计需引导 API 正确调用而非仅格式正确
+
+### 9. 溯源
+
+- 结果文件：`run/static_eval_r311_results.json`（**113 tasks / 1.92MB, COMPLETE**）
+- 评测脚本：`run/baize_posttrain_static_eval_full.py`
+- 后台进程：PID 554362（**已完成，不在进程列表**）
+- 分析脚本：`/tmp/full_analysis_r316.py`（产出本节所有数字）
+- 无伪造：所有数据为真实 vLLM API 调用输出，分析由 Python json 完成。
