@@ -62,7 +62,7 @@
   <h1>EDA-LiveFlow-Bench 论文改进建议 · shard B 视角</h1>
   <div class="meta">
     <span class="tag b">shard B · spice_sim / characterization</span>
-    <span class="tag">论文报告 v14</span> ·
+    <span class="tag">论文报告 v15</span> ·
     2026-11-12 ·
     视角：研究组成员（不是审稿人） ·
     论文目录 <code>doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/</code>（只读，未修改任何论文文件）
@@ -83,12 +83,12 @@
 
 <!-- ② 论文现状速览 -->
 <h2>① 论文现状速览（关键数字表）</h2>
-<p>以下数字来自论文正文与附录的当前状态。<strong>v14 复核（10:2x）</strong>：<code>main.tex \Ntasks=1157</code>（宏未变），但 4 shard jsonl 已 committed 总和 = A226+B273+C311+<strong>D348</strong> = <strong>1158</strong>——D shard r543（<code>5d058949</code>, 2026-11-12 10:14:06，CsvBackfillTableUpdate-001, schematic_netlist L1）把 D.jsonl 347→348，<strong>而 \Ntasks 宏与附录 A 硬编码仍 1157/D347，已落后 1</strong>。注意此 bump 发生在 v13 写作（10:05:47）之后仅 8 分钟——见 Q1 ③ 的 live-validation。<code>\Neval=696</code> 冻结快照 2026-11-09 未变。主 jsonl = 1135（merge 脚本 30 min 滞后，不可作 \Ntasks 源）。</p>
+<p>以下数字来自论文正文与附录的当前状态。<strong>v15 复核（10:3x）</strong>：4 shard jsonl committed 总和 = <strong>A227</strong>+B273+C311+D348 = <strong>1159</strong>——A shard r418 分两次 commit 把 <code>main.tex:43</code> 的 \Ntasks 宏 1157→<strong>1158</strong>（<code>24b193cf9</code>, 10:23:50）再把 A.jsonl 226→227（<code>bd464ed9</code>, 10:26:44，McuAsmGen-001, digital L1）。<strong>三处口径此刻全部不同</strong>：committed=<strong>1159</strong>、\Ntasks 宏=<strong>1158</strong>（落后 committed 1）、附录 A:54 per-shard 硬编码仍 "A: 226, D: 347"=<strong>1157</strong>（落后 committed 2、落后宏 1）。这是 r417（09:41 对齐 1157）以来<strong>第三次</strong>腐化、且首次出现「附录 &lt; 宏 &lt; committed」的<strong>三重漂移</strong>——见 Q1 ③ 的 live-v15-validation。<code>\Neval=696</code> 冻结快照 2026-11-09 未变。主 jsonl = 1135（merge 脚本 30 min 滞后，不可作 \Ntasks 源）。</p>
 
 <table>
   <caption class="figcap">表 1：论文关键数字（事实源：sections/*.tex + appendix/*.tex，行号为所读文件行号）</caption>
   <tr><th>项</th><th>值</th><th>出处</th></tr>
-  <tr><td>\Ntasks（活基准规模）</td><td class="num">1158</td><td>4 shard jsonl committed 总和（A226+B273+C311+D348）；<code>main.tex:43</code> 宏仍 1157，落后 1</td></tr>
+  <tr><td>\Ntasks（活基准规模）</td><td class="num">1159</td><td>4 shard jsonl committed 总和（A227+B273+C311+D348）；<code>main.tex:43</code> 宏 = 1158（落后 1）；附录 A:54 per-shard = 1157（落后 2）——三重漂移</td></tr>
   <tr><td>\Neval（冻结评测 run 数）</td><td class="num">696</td><td><code>main.tex:48</code>（2026-11-09 快照）</td></tr>
   <tr><td>Pass@1（头条数字）</td><td class="num">10.0%（62/620 decided）</td><td><code>sections/4_experiments.tex:58,66</code></td></tr>
   <tr><td>三种分母估计</td><td>10.0% / 9.9% / 8.9%</td><td><code>4_experiments.tex:66</code> 脚注（PASS+FAIL=620 / +ABSENT=626 / 全 696）</td></tr>
@@ -109,7 +109,7 @@
   <tr><td>characterization</td><td class="num">53</td><td class="num">28</td><td class="num">26</td><td class="num">5</td><td class="num">19.2%</td><td>1–2（浅）</td></tr>
   <tr><td><strong>B 合计</strong></td><td class="num"><strong>273 (23.6%)</strong></td><td class="num">132</td><td class="num">121</td><td class="num">13</td><td class="num">10.7%</td><td>跨 1–2 与 5</td></tr>
 </table>
-<p class="figcap">注：B 是 4 shard 中 case 数最多的（273/1158=23.6%），但两个子领域跨度极大——characterization 19.2%（浅接地，仅次于 pnr_signoff）与 spice_sim 8.4%（深接地，低于总体），<strong>2.3 倍差距落在同一个 shard 内</strong>。详见 Q3。</p>
+<p class="figcap">注：B 是 4 shard 中 case 数最多的（273/1159=23.6%），但两个子领域跨度极大——characterization 19.2%（浅接地，仅次于 pnr_signoff）与 spice_sim 8.4%（深接地，低于总体），<strong>2.3 倍差距落在同一个 shard 内</strong>。详见 Q3。</p>
 
 <!-- ③ 六个问题 -->
 <h2>② 六个问题的回答</h2>
@@ -131,6 +131,7 @@
 <blockquote>"As of 2026-11-12 the living build holds \Ntasks{} cases (A: 226, B: 273, C: 311, D: 347)"<span class="src">— appendix/A_benchmark_details.tex:53-54 (r417, 2026-11-12 09:37)</span></blockquote>
 <p>v12 写作时（09:37 前）这里还是 "A: 223, B: 270, C: 311, D: 341"=1145，而当时 \Ntasks=1155、jsonl 实际 A225/B273/C311/D346=1155，<strong>滞后 10 条</strong>。r417 刚把硬编码补到 226/273/311/347=1157 与 \Ntasks 对齐——但这恰恰证明了隐患：<strong>这是一个靠 4 个 shard agent 每轮手工同步、且历史上多次滞后 8–12 条的硬编码</strong>，下一次造题（A 或 D 再 +1）它又会立刻落后。审稿人若在两次造题之间读到论文，就会看到 \Ntasks 与附录加不上的不一致。修法不是「再补一次」，而是<strong>让附录 A 的 per-shard 数从 \Ntasks 自动派生</strong>（或干脆只写 \Ntasks 总数、把 per-shard 表移到会自动 regen 的日报/附录 B）。同时附录 A 仍有<strong>两处未完成的 TODO</strong>：<code>appendix/A:11</code>「[TODO: show one complete task]」（benchmark 论文没有完整 worked example 是硬伤），<code>appendix/A:64</code>「TODO(T12)：摘要/引言写 268 位工程师、42 台工作站，§2 写 698 台主机、224 位去重用户…三处口径需数据侧确认后统一」。这些是<strong>审稿人扫附录 5 分钟内必发现</strong>的扣分项。</p>
 <p><strong>（v14 live-validation）</strong>本节上述预言在本轮<strong>8 分钟内应验</strong>：v13 写作于 10:05:47，D shard commit <code>5d058949</code>（10:14:06，CsvBackfillTableUpdate-001）把 D.jsonl 347→348 ⇒ committed 总和 1158，但 <code>main.tex:43</code> 的 \Ntasks 宏与 <code>appendix/A_benchmark_details.tex:53-54</code> 的硬编码（"D: 347"）<strong>至今仍是 1157/D347，无人同步</strong>。即论文若此刻被审稿人读到，\Ntasks=1157 与附录 "D: 347" 加不上 4 shard 实际的 1158——<strong>正是 v13 预言的「下一次造题又会立刻落后」</strong>。这把 Q1 ③ 的性质从「结构性隐患」升级为<strong>「已观测到的复现性 bug」</strong>：r417（09:37）刚补齐到 1157，r543（10:14）立刻又落后 1，<strong>两小时内两次腐化</strong>。据此 P2/P3 中「per-shard 硬编码改为从 \Ntasks 自动派生」的优先级应<strong>上调</strong>——这不是「锦上添花」而是「止血」，否则每轮造题都在制造新的不一致窗口。根治建议进一步细化为：<code>\Ntasks</code> 宏本身也应由 build 脚本从 4 shard jsonl 行数自动生成（<code>wc -l</code> → 写入 main.tex），而非由某个 shard agent 手工 bump。</p>
+<p><strong>（v15 live-validation · 三重漂移）</strong>本节上述预言在本轮<strong>再次应验</strong>，且严重程度从「双重漂移」升级为「三重漂移」。A shard r418 用<strong>两个独立 commit</strong> 完成一次造题：先 <code>24b193cf9</code>（10:23:50）把 <code>main.tex:43</code> 的 \Ntasks 宏 1157→1158，再 <code>bd464ed9</code>（10:26:44）把 A.jsonl 226→227（McuAsmGen-001, digital L1）——<strong>宏领先 jsonl 3 分钟</strong>，且<strong>附录 A 的 per-shard 硬编码（"A: 226, D: 347"=1157）在 r418 中根本未被触碰</strong>。结果论文此刻同时存在<strong>三个不同的数</strong>：committed 总和 = <strong>1159</strong>、\Ntasks 宏 = <strong>1158</strong>、附录 A per-shard 加和 = <strong>1157</strong>，形成「附录 &lt; 宏 &lt; committed」的三重漂移。这是 r417（09:41 对齐到 1157）以来<strong>50 分钟内第三次腐化</strong>（r417 对齐 → r543 落后 1 → r418 落后 1+附录再落后 1），且首次出现「宏与附录彼此也不一致」——此前两次腐化中宏与附录至少同步落后，本轮<strong>附录比宏还要再落后 1</strong>，证明附录 per-shard 硬编码与 \Ntasks 宏是<strong>两条独立的手工同步链</strong>，任一漏改就互相发散。这进一步坐实 Q1 ③「复现性 bug」定性，并新增一条根治建议：<strong>附录 A per-shard 分解应直接从 \Ntasks 宏派生（或干脆删除 per-shard 文字、移到会自动 regen 的日报/附录 B 表）</strong>，否则两条链永远会各自漂移。</p>
 </div>
 
 <!-- Q2 -->
@@ -196,7 +197,7 @@
   <tr>
     <td>4</td><td><strong>A档/B档 trace 保真度披露 + 配对比较</strong></td>
     <td>保住「真实轨迹」核心卖点，预防保真度攻击</td>
-    <td>给 1158 条 case 打 <code>trace_fidelity</code> 标签（faithful/synthesized）；附录加 per-domain 比例表；在既有 faithful 与 synthesized 各抽 20 case 配对比较 Pass@1，检验合成是否系统性改变难度</td>
+    <td>给 1159 条 case 打 <code>trace_fidelity</code> 标签（faithful/synthesized）；附录加 per-domain 比例表；在既有 faithful 与 synthesized 各抽 20 case 配对比较 Pass@1，检验合成是否系统性改变难度</td>
     <td>~1 人日打标 + ~1 机器日配对跑（40 case）</td>
     <td>①各域「真实」比例多少？②合成 case 是否更易/更难？③「derived from real traces」的宣称在资产层面有多强？</td>
   </tr>
@@ -214,15 +215,15 @@
 <!-- Q5 -->
 <div class="kbox">
 <h4>Q5. benchmark 本身该怎么演进？</h4>
-<p><strong>① 1158 的分布：模拟偏重，但「反映真实使用」是 feature 不是 bug——需要补一个 macro-average 来对冲。</strong></p>
+<p><strong>① 1159 的分布：模拟偏重，但「反映真实使用」是 feature 不是 bug——需要补一个 macro-average 来对冲。</strong></p>
 <table>
-  <caption class="figcap">表 4：活集 1158 的领域分布（本人从 4 shard jsonl 实测，2026-11-12 10:2x r543 后）vs 696 评测快照</caption>
+  <caption class="figcap">表 4：活集 1159 的领域分布（本人从 4 shard jsonl 实测，2026-11-12 10:3x bd464ed9 后）vs 696 评测快照</caption>
   <tr><th>领域</th><th class="num">活集 case</th><th class="num">活集 %</th><th class="num">评测 run</th><th class="num">评测 %</th><th class="num">评测覆盖率</th></tr>
   <tr><td>spice_sim</td><td class="num">220</td><td class="num">19.0%</td><td class="num">104</td><td class="num">14.9%</td><td class="num">47%</td></tr>
   <tr><td>schematic_netlist</td><td class="num">199</td><td class="num">17.2%</td><td class="num">131</td><td class="num">18.8%</td><td class="num">66%</td></tr>
   <tr><td>physical_verify</td><td class="num">130</td><td class="num">11.2%</td><td class="num">73</td><td class="num">10.5%</td><td class="num">56%</td></tr>
   <tr><td>analog_context</td><td class="num">82</td><td class="num">7.1%</td><td class="num">55</td><td class="num">7.9%</td><td class="num">67%</td></tr>
-  <tr><td>digital</td><td class="num">77</td><td class="num">6.7%</td><td class="num">51</td><td class="num">7.3%</td><td class="num">66%</td></tr>
+  <tr><td>digital</td><td class="num">78</td><td class="num">6.7%</td><td class="num">51</td><td class="num">7.3%</td><td class="num">65%</td></tr>
   <tr><td>layout_aether</td><td class="num">73</td><td class="num">6.3%</td><td class="num">38</td><td class="num">5.5%</td><td class="num">52%</td></tr>
   <tr><td>waveform</td><td class="num">67</td><td class="num">5.8%</td><td class="num">47</td><td class="num">6.8%</td><td class="num">70%</td></tr>
   <tr><td>verification</td><td class="num">65</td><td class="num">5.6%</td><td class="num">38</td><td class="num">5.5%</td><td class="num">58%</td></tr>
@@ -232,7 +233,7 @@
   <tr><td>pg_layout</td><td class="num">44</td><td class="num">3.8%</td><td class="num">28</td><td class="num">4.0%</td><td class="num">64%</td></tr>
   <tr><td>pnr_signoff</td><td class="num">28</td><td class="num">2.4%</td><td class="num">25</td><td class="num">3.6%</td><td class="num">89%</td></tr>
 </table>
-<p>模拟/混合信号三域（spice_sim + schematic_netlist + analog_context）= 501/1158 = <strong>43.3%</strong>（r543 的 +1 落在 schematic_netlist，三域占比从 43.2%→43.3%）。论文 §5（<code>5_analysis.tex:134</code>）已诚实承认 "top three domains hold 44.3% [of eval]… may bias aggregate metrics toward analog-friendly capabilities"。<strong>这是 feature（反映真实使用），但 micro-average 10.0% 因此偏向模拟友好的能力</strong>。建议补一个 <strong>macro-average（13 域等权 Pass% 均值）</strong>作为对照——这零成本（已有数据），却能让读者看到「等权视角下」的数字，对冲偏科质疑。</p>
+<p>模拟/混合信号三域（spice_sim + schematic_netlist + analog_context）= 501/1159 = <strong>43.2%</strong>（r418 的 +1 落在 digital，三域占比从 43.3%→43.2%，被 digital +1 稀释）。论文 §5（<code>5_analysis.tex:134</code>）已诚实承认 "top three domains hold 44.3% [of eval]… may bias aggregate metrics toward analog-friendly capabilities"。<strong>这是 feature（反映真实使用），但 micro-average 10.0% 因此偏向模拟友好的能力</strong>。建议补一个 <strong>macro-average（13 域等权 Pass% 均值）</strong>作为对照——这零成本（已有数据），却能让读者看到「等权视角下」的数字，对冲偏科质疑。</p>
 
 <p><strong>② 13 域是否偏科？</strong>pnr_signoff 仅 28 case（2.4%），是<strong>唯一接近「样本不足」的域</strong>（论文 §4 表注未设最低 decided 数门槛）。pg_layout 44、characterization 53 也偏少。而 spice_sim 220 一域独大。论文 §7 future work（<code>7_conclusion.tex:18</code>）说 "supplement digital synthesis and verification tasks to balance the distribution"——但<strong>trace 数据显示数字工程师用 cline 少</strong>（§2 <code>2_benchmark.tex:86</code>「digital engineers use coding agents less frequently」），靠真 trace 补 digital 会撞供给瓶颈（A 线 mc≥15 已放宽仍不够）。更现实的均衡化路径：(a) macro-average 报告（上面）；(b) 对样本不足的域（pnr/pg_layout/char）在表注加「n &lt; 30，点估计不稳定」标记；(c) <strong>不要靠合成 digital case 凑数</strong>——那会稀释「真实轨迹」卖点。</p>
 
@@ -269,7 +270,7 @@
     <td><span class="pill p3">P3</span></td>
     <td><strong>grounding-depth 实测化（50-case 日志解析）+ 修附录数字不一致</strong></td>
     <td>~4 天（日志解析 + 相关分析 + 修 appendix A 的 3 处 TODO/滞后）</td>
-    <td><strong>救灵魂论断 + 清低级硬伤</strong>。depth 是论文核心解释变量却是手工标注（§5:46），循环论证风险最高（Q1 ②）。实测化把「设计选择」变「测量量」，是方法论升级。同时顺手修掉 appendix A 的 per-shard 硬编码脆弱性（<strong>v14 注：r543 10:14 把 D 347→348，\Ntasks 宏与附录硬编码再次落后 1——v13「下一轮造题又会落后」的预言 8 分钟内应验，r417→r543 两小时内两次腐化，此脆弱性已是「复现性 bug」而非「隐患」；根治法是让 \Ntasks 宏本身由 build 脚本从 4 shard jsonl <code>wc -l</code> 自动生成、附录 per-shard 从该宏派生</strong>）、TODO worked example、TODO(T12) 口径不统一——这些是审稿人扫附录 5 分钟必抓的扣分项。排第三是因为它比 P1/P2 费时，但两周内可完成。</td>
+    <td><strong>救灵魂论断 + 清低级硬伤</strong>。depth 是论文核心解释变量却是手工标注（§5:46），循环论证风险最高（Q1 ②）。实测化把「设计选择」变「测量量」，是方法论升级。同时顺手修掉 appendix A 的 per-shard 硬编码脆弱性（<strong>v15 注：r418（10:23–10:26）把 \Ntasks 宏 1157→1158、A.jsonl 226→227，但附录 A per-shard 硬编码仍 "A: 226"=1157——首次出现「附录 &lt; 宏 &lt; committed=1159」的三重漂移，r417→r543→r418 50 分钟内三次腐化，此脆弱性已是「复现性 bug」而非「隐患」；根治法是让 \Ntasks 宏本身由 build 脚本从 4 shard jsonl <code>wc -l</code> 自动生成、附录 per-shard 从该宏派生（或删 per-shard 文字移到自动 regen 表）</strong>）、TODO worked example、TODO(T12) 口径不统一——这些是审稿人扫附录 5 分钟必抓的扣分项。排第三是因为它比 P1/P2 费时，但两周内可完成。</td>
   </tr>
 </table>
 <p><strong>顺序逻辑</strong>：P1 防「数字不牢」（最显眼、最易被打）→ P2 防「身份不真」（最致命、性价比最高）→ P3 防「解释不硬 + 低级硬伤」（最重要但最费时）。两周 14 天，三件合计 ~12 天，留 2 天 buffer 写作整合。characterization 补评（Q4-3, 0.5 机器日）和 ERROR 修复（Q4-5）作为夹缝任务插入，不单独占 top-3。</p>
@@ -283,7 +284,7 @@
   <tr><td><span class="pill p1">P1</span></td><td>100-case 分层子集 + 多骨干×thinking 2×2 析因</td><td>eval 线（A 独占 eval_triage，需协调）</td><td>5 天</td><td>agi-gateway 多骨干 key 可用；子集分层脚本</td></tr>
   <tr><td><span class="pill p2">P2</span></td><td>A档/B档 trace_fidelity 打标 + 逐域披露表 + 40 case 配对比较</td><td>4 shard 造题线（各打自己的）+ eval 线跑配对</td><td>3 天</td><td>各 shard case 元数据可加字段；eval 子集</td></tr>
   <tr><td><span class="pill p3">P3</span></td><td>grounding-depth 实测化（50-case tool-call 计数 + 相关分析）</td><td>eval 线（trace_anatomy.py 扩展）</td><td>4 天</td><td>696 run session 日志留存（已确认）</td></tr>
-  <tr><td><span class="pill p2">P2</span></td><td>修 appendix A 三处硬伤：per-shard 硬编码改为从 \Ntasks 自动派生（<strong>v14 注：r543 已使 \Ntasks 宏再次落后 1，v13 预言 8 分钟内应验，治本自动化优先级上调——\Ntasks 宏本身也应 build 脚本自动生成</strong>）、TODO worked example、TODO(T12) 口径</td><td>论文线（A 主笔？需协调，避免 4 agent 抢同一文件）</td><td>0.5 天</td><td>确认谁有权改论文（当前 11-10 令：B/C/D 不碰 §5/appendix B）</td></tr>
+  <tr><td><span class="pill p2">P2</span></td><td>修 appendix A 三处硬伤：per-shard 硬编码改为从 \Ntasks 自动派生（<strong>v15 注：r418 已使 \Ntasks 宏落后 committed 1、附录 per-shard 落后 2，首次三重漂移「附录&lt;宏&lt;committed」，治本自动化优先级再上调——\Ntasks 宏本身 build 脚本自动生成 + 附录 per-shard 删除或从宏派生</strong>）、TODO worked example、TODO(T12) 口径</td><td>论文线（A 主笔？需协调，避免 4 agent 抢同一文件）</td><td>0.5 天</td><td>确认谁有权改论文（当前 11-10 令：B/C/D 不碰 §5/appendix B）</td></tr>
   <tr><td><span class="pill p3">P3</span></td><td>characterization 补评剩余 ~25 case，收紧 Wilson CI</td><td>eval 线</td><td>0.5 机器日</td><td>characterization 53 case 资产齐全</td></tr>
   <tr><td><span class="pill p3">P3</span></td><td>ERROR 59 资产缺失修复 + 重跑 + 正文加资产预检协议</td><td>造题线（谁造谁修）+ eval 线重跑</td><td>2 天</td><td>定位 59 个缺失 case 的 assets/</td></tr>
   <tr><td><span class="pill p4">P4</span></td><td>补 macro-average（13 域等权 Pass%）到 §4 表</td><td>论文线</td><td>0.2 天</td><td>已有 per-domain 数据，纯计算</td></tr>
@@ -338,7 +339,7 @@
 </div>
 
 <div class="foot">
-  <p><strong>报告说明</strong>：本报告由 shard B（spice_sim / characterization）以研究组成员视角撰写，基于 2026-11-12 10:2x 的论文状态（<code>main.tex \Ntasks=1157</code> 宏，但 4 shard jsonl committed 总和已 1158——D r543 10:14 把 D 347→348 未同步进宏；<code>\Neval=696</code> 冻结快照未变）。所有论文引用均给出 section 文件 + 行号或原句，未转述。所有未运行的实验标注「建议验证」，未称「已验证」。论文文件全部只读，未修改。<strong>本版 v14 相对 v13 的增量</strong>：D shard r543（10:14:06，v13 写作后 8 分钟）把 D.jsonl 347→348 ⇒ committed 总和 1158，而 \Ntasks 宏与附录 A 硬编码仍 1157/D347——<strong>v13 Q1 ③「下一轮造题又会立刻落后」的预言在 8 分钟内应验</strong>，本版据此把 Q1 ③ 从「结构性隐患」升级为「已观测到的复现性 bug」（r417→r543 两小时内两次腐化），P2/P3「per-shard 硬编码自动派生」优先级上调，并新增根治建议（\Ntasks 宏本身由 build 脚本从 4 shard jsonl <code>wc -l</code> 自动生成）；同步全部 1157→1158 引用、重算表 4 活集分布（schematic_netlist 198→199/17.1%→17.2%，模拟/混合信号三域 500→501/1158=43.3%）。v13 相对 v12 的增量：r417 commit（09:37）把 \Ntasks 1155→1157、附录 A per-shard 硬编码补齐到 226/273/311/347=1157，v12 未捕获此 bump，v13 同步所有 1155→1157 引用并重构 Q1 ③（隐患从「数字不一致」转为「手工硬编码脆弱性」，根治建议改为「自动派生」）。v12 相对 v11：Q5 新增 ⑤ 域内用户浓度（spice_sim top-1 tongfanl 9.1%/top-5 15.0%）。v11 相对 v10：2-peek 余量 spice≥10 top 全 REJECT（v9zug=kanban、2gxuy=vscode how-to）。</p>
+  <p><strong>报告说明</strong>：本报告由 shard B（spice_sim / characterization）以研究组成员视角撰写，基于 2026-11-12 10:3x 的论文状态（4 shard jsonl committed 总和 = A227+B273+C311+D348 = <strong>1159</strong>；<code>main.tex:43</code> 的 \Ntasks 宏 = 1158（落后 committed 1）；附录 A:54 per-shard 硬编码 = "A: 226, D: 347" = 1157（落后 committed 2）——<strong>三重漂移</strong>；<code>\Neval=696</code> 冻结快照未变）。所有论文引用均给出 section 文件 + 行号或原句，未转述。所有未运行的实验标注「建议验证」，未称「已验证」。论文文件全部只读，未修改。<strong>本版 v15 相对 v14 的增量</strong>：A shard r418 分两次 commit（<code>24b193cf9</code> 10:23:50 把 \Ntasks 宏 1157→1158；<code>bd464ed9</code> 10:26:44 把 A.jsonl 226→227，McuAsmGen-001, digital L1）使 committed 总和达 1159，而附录 A per-shard 硬编码（1157）在 r418 中未被触碰——<strong>首次出现「附录 &lt; 宏 &lt; committed」的三重漂移</strong>（committed 1159 / 宏 1158 / 附录 1157 三个数全不同），这是 r417（09:41 对齐 1157）以来 50 分钟内第三次腐化。本版据此新增 v15 live-validation 段（Q1 ③），并新增根治建议「附录 per-shard 删除或从 \Ntasks 宏派生（两条手工同步链各自漂移）」；同步全部 1158→1159 引用、重算表 4 活集分布（digital 77→78，覆盖率 66%→65%；模拟/混合信号三域 501/1159=43.2%，被 digital +1 稀释从 43.3%→43.2%）。v14 相对 v13 的增量：D shard r543（10:14:06，v13 写作后 8 分钟）把 D.jsonl 347→348 ⇒ committed 总和 1158，而 \Ntasks 宏与附录 A 硬编码仍 1157/D347——v13 Q1 ③「下一轮造题又会立刻落后」的预言在 8 分钟内应验，v14 把 Q1 ③ 从「结构性隐患」升级为「已观测到的复现性 bug」（r417→r543 两小时内两次腐化）。v13 相对 v12 的增量：r417 commit（09:37）把 \Ntasks 1155→1157、附录 A per-shard 硬编码补齐到 226/273/311/347=1157，v12 未捕获此 bump，v13 同步所有 1155→1157 引用并重构 Q1 ③（隐患从「数字不一致」转为「手工硬编码脆弱性」，根治建议改为「自动派生」）。v12 相对 v11：Q5 新增 ⑤ 域内用户浓度（spice_sim top-1 tongfanl 9.1%/top-5 15.0%）。v11 相对 v10：2-peek 余量 spice≥10 top 全 REJECT（v9zug=kanban、2gxuy=vscode how-to）。</p>
   <p><strong>触发与证据</strong>：本轮 mc-matrix（src=<code>designflow/summary_1105.tsv</code>）输出 mc10.fresh=0（pool 486 / touched 486 / fresh 0）⇒ 🟢 2026-11-11 用户令触发。B 域 42 条 genuine unledgered（rescan_1112_r417）无一满足 B 域过滤口径（spice 工具数 ≥10 ∧ 密度 ≥35%），最强候选 lvack hspice=8&lt;10。本轮对余量中仅有的两条 spice≥10 候选实测 peek：v9zug（hspice:14）实为 <code>.cline/apps/kanban/</code> 看板会话非编码会话；2gxuy（hspice:20，余量 spice 关键词最高）首条用户消息「怎么在当前服务器中打开 vscode」+ 工具链全 <code>list_allowed_files/search_codebase</code> 零仿真 ⇒ <strong>余量 spice 关键词最高的候选是 how-to 咨询</strong>，关键词计数系统性高估 spice 相关性。i8070（hspice:11）peek 因远端 ssh 超时未成，但过滤器显示 netlist:131 主导、密度 4.8% → 非 B 域。两条已 park 入 ledger。</p>
   <p><strong>B 线造题经验引用</strong>：Q3 ④⑤ 基于本人 273 条 B case 造题记录（273/273 断言清单达标，A 档几乎均不可行 → B 档合成；16 peek / 2 CLEAN / 最近 10 peek 0 CLEAN）。</p>
   <p><strong>未碰</strong>：board.md / 其他 shard .md / 主 jsonl / eval_triage / 论文任何文件（只读）。</p>
