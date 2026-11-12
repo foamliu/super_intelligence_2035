@@ -17,18 +17,19 @@
 > 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
 > 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
 
-### 🔴 用户令 · 2026-11-12 11:1x（**沙盒隧道已部署完成——请查阅本机 tunnel README 并恢复沙盒通路**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-12 11:2x（**沙盒隧道已启动——只用它 SSH 到 36.15 以访问 EDA 环境**）· 用户直令 · 最高优先 · 未完成
 
-> **用户原话**：「post-train：所需的隧道已经部署完成。请post-train查阅本机 /nas_data/app.e0031982/code/dual-nix-tunnel/README.md。」
+> **用户原话（第二轮，覆盖上一号令的细节）**：「沙盒隧道已启动，只要求它使用隧道 SSH 到 36.15，以进一步访问 EDA 环境即可。」
 
-**立即执行**（本轮首要任务，替代此前「沙盒 10.129.32.75 全端口 FILTERED」的阻塞判定）：
+**立即执行**（本轮首要任务；上一号令「自行建立隧道」之细节作废，隧道**已由外部启动好**）：
 
-1. **先读**本机 `.17` 上的 `cat /nas_data/app.e0031982/code/dual-nix-tunnel/README.md`，逐字理解隧道用法（入口地址、端口、认证、代理/转发方式、保持存活方式）。
-2. 按 README **建立/启用通往 EDA 沙盒的隧道**（或按文中给出的新入口地址直连），替换掉旧记忆里的 `SANDBOX_HOST=10.129.32.75` + `SANDBOX_ENDPOINTS=8664/8665/8653/8669` 那条失效通路。
-3. **实测连通性**：用 pyAether MCP 的 `run_code`（`probe=true` 或最小用例）验证沙盒端到端可达；把真实连接的 HOST/PORT/代理配置**更新进** `eda_fastmcp .env`、`MEMORY_POSTTRAIN.md` 的关键事实段、以及本任务书的隧道说明。
-4. 隧道打通后，回到 2026-11-10 计划主线：**拆 GPU5/6/7 占位 serve → 用 v11v38 语料重训 SFT → 评测验证 data gap coverage 改善 → baseline eval 5-run → RL R1-R4 起跑**（沙盒恢复后即可推进）。
-5. 若 README 里还有**新的凭证/密钥路径**，一律存仓库外、不入库不入日志（沿用「secret 不入库」纪律）。
-6. 完成后在 MEMORY_POSTTRAIN.md 报告：隧道是否真正打通（附 `run_code` 探测输出证据）、连通配置落盘位置、下一步动作，并保持 `WAITING=0` 继续执行主线。
+1. **先读**本机 `.17` 上的 `cat /nas_data/app.e0031982/code/dual-nix-tunnel/README.md`，理解如何使用这条**已就绪的隧道**（ssh 命令、端口/跳板参数、认证方式）。
+2. **通过隧道 SSH 到 36.15**（即 `10.251.36.15`，ZhuLong 那台），验证 `ssh` 可达并能登录。
+3. 在 36.15 上**进一步访问 EDA 环境**（pyAether Python+SWIG / Virtuoso SKILL 沙盒），用最小用例实测 `run_code` 端到端可达。
+4. 把实际可用的连通方式（走哪条 ssh 隧道、目标主机/端口）**更新进** `eda_fastmcp .env`、`MEMORY_POSTTRAIN.md` 关键事实段、以及本任务书隧道说明；替换旧的 `SANDBOX_HOST=10.129.32.75:8664/8665/8653/8669` 失效通路。
+5. 隧道打通后，回到 2026-11-10 计划主线：**拆 GPU5/6/7 占位 serve → 用 v11v38 语料重训 SFT → 评测验证 data gap coverage 改善 → baseline eval 5-run → RL R1-R4 起跑**。
+6. 凭证/密钥路径一律存仓库外、不入库不入日志（沿用「secret 不入库」纪律）。
+7. 完成后在 MEMORY_POSTTRAIN.md 报告：SSH 36.15 是否真正可达（附探测输出证据）、EDA 访问是否通、连通配置落盘位置、下一步动作，保持 `WAITING=0` 继续主线。
 
 ---
 
