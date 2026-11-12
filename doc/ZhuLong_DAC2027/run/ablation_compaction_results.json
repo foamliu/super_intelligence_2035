@@ -5,9 +5,9 @@
         "tag": "C_basic_r1",
         "batch": "2026_1112_224239",
         "n_tasks": 40,
-        "pass_rate_pct": null,
-        "passed": null,
-        "total": null,
+        "pass_rate_pct": 67.5,
+        "passed": 27,
+        "total": 40,
         "wall_sec_per_task_mean": 978.68,
         "batch_wall_h": 1.54,
         "prompt_tokens_total": 101639377,
@@ -22,7 +22,8 @@
         "converged_pct": 80.0,
         "timeout": 0,
         "gen_fail": 7,
-        "success": 33
+        "success": 33,
+        "eval_note": "scored via manual run_eval (eval batch 20261113_0214); 32 evaluated, 27 pass, 8 gen_fail (timeout)"
       },
       "tasks": [
         {
@@ -40,7 +41,8 @@
           "reasoning_tokens_est": 3428,
           "n_thinking_blocks": 10,
           "n_assistant_msgs": 10,
-          "total_tokens": 212836
+          "total_tokens": 212836,
+          "pass": 1
         },
         {
           "sid": "1794494575880_lawbk",
@@ -57,7 +59,8 @@
           "reasoning_tokens_est": 4720,
           "n_thinking_blocks": 29,
           "n_assistant_msgs": 29,
-          "total_tokens": 1261854
+          "total_tokens": 1261854,
+          "pass": 1
         },
         {
           "sid": "1794494575882_1th5b",
@@ -74,7 +77,8 @@
           "reasoning_tokens_est": 8992,
           "n_thinking_blocks": 25,
           "n_assistant_msgs": 25,
-          "total_tokens": 1055165
+          "total_tokens": 1055165,
+          "pass": 1
         },
         {
           "sid": "1794494575868_gl182",
@@ -91,7 +95,8 @@
           "reasoning_tokens_est": 3708,
           "n_thinking_blocks": 10,
           "n_assistant_msgs": 10,
-          "total_tokens": 282881
+          "total_tokens": 282881,
+          "pass": 1
         },
         {
           "sid": "1794494575871_m6d5a",
@@ -108,7 +113,8 @@
           "reasoning_tokens_est": 13158,
           "n_thinking_blocks": 20,
           "n_assistant_msgs": 20,
-          "total_tokens": 743277
+          "total_tokens": 743277,
+          "pass": 0
         },
         {
           "sid": "1794494575870_rbnrs",
@@ -125,7 +131,8 @@
           "reasoning_tokens_est": 12958,
           "n_thinking_blocks": 8,
           "n_assistant_msgs": 8,
-          "total_tokens": 206932
+          "total_tokens": 206932,
+          "pass": 1
         },
         {
           "sid": "1794494575882_tn9cb",
@@ -142,7 +149,8 @@
           "reasoning_tokens_est": 6833,
           "n_thinking_blocks": 15,
           "n_assistant_msgs": 15,
-          "total_tokens": 572580
+          "total_tokens": 572580,
+          "pass": 1
         },
         {
           "sid": "1794494575882_85b22",
@@ -159,7 +167,8 @@
           "reasoning_tokens_est": 17387,
           "n_thinking_blocks": 41,
           "n_assistant_msgs": 41,
-          "total_tokens": 2655720
+          "total_tokens": 2655720,
+          "pass": 1
         },
         {
           "sid": "1794494731322_ogvhd",
@@ -176,7 +185,8 @@
           "reasoning_tokens_est": 7036,
           "n_thinking_blocks": 19,
           "n_assistant_msgs": 19,
-          "total_tokens": 891861
+          "total_tokens": 891861,
+          "pass": 1
         },
         {
           "sid": "1794494746770_f3e6e",
@@ -193,7 +203,8 @@
           "reasoning_tokens_est": 4974,
           "n_thinking_blocks": 7,
           "n_assistant_msgs": 7,
-          "total_tokens": 167166
+          "total_tokens": 167166,
+          "pass": 1
         },
         {
           "sid": "1794494851441_ml2n5",
@@ -210,7 +221,8 @@
           "reasoning_tokens_est": 12329,
           "n_thinking_blocks": 20,
           "n_assistant_msgs": 20,
-          "total_tokens": 953556
+          "total_tokens": 953556,
+          "pass": 1
         },
         {
           "sid": "1794494866055_kmcrr",
@@ -227,7 +239,8 @@
           "reasoning_tokens_est": 7818,
           "n_thinking_blocks": 15,
           "n_assistant_msgs": 15,
-          "total_tokens": 605167
+          "total_tokens": 605167,
+          "pass": 1
         },
         {
           "sid": "1794494886589_erbar",
@@ -244,7 +257,8 @@
           "reasoning_tokens_est": 19105,
           "n_thinking_blocks": 26,
           "n_assistant_msgs": 26,
-          "total_tokens": 1268095
+          "total_tokens": 1268095,
+          "pass": 1
         },
         {
           "sid": "1794494897932_e67e5",
@@ -261,7 +275,8 @@
           "reasoning_tokens_est": 19546,
           "n_thinking_blocks": 38,
           "n_assistant_msgs": 38,
-          "total_tokens": 2180257
+          "total_tokens": 2180257,
+          "pass": 1
         },
         {
           "sid": "1794495047759_lhtnn",
@@ -278,7 +293,8 @@
           "reasoning_tokens_est": 18919,
           "n_thinking_blocks": 49,
           "n_assistant_msgs": 50,
-          "total_tokens": 3026166
+          "total_tokens": 3026166,
+          "pass": 1
         },
         {
           "sid": "1794495112408_wvpeh",
@@ -295,7 +311,8 @@
           "reasoning_tokens_est": 12511,
           "n_thinking_blocks": 31,
           "n_assistant_msgs": 31,
-          "total_tokens": 1055601
+          "total_tokens": 1055601,
+          "pass": 0
         },
         {
           "sid": "1794495117992_40guu",
@@ -312,7 +329,8 @@
           "reasoning_tokens_est": 15688,
           "n_thinking_blocks": 28,
           "n_assistant_msgs": 28,
-          "total_tokens": 1676643
+          "total_tokens": 1676643,
+          "pass": 1
         },
         {
           "sid": "1794495207318_skrv0",
@@ -329,7 +347,8 @@
           "reasoning_tokens_est": 12857,
           "n_thinking_blocks": 34,
           "n_assistant_msgs": 37,
-          "total_tokens": 2451899
+          "total_tokens": 2451899,
+          "pass": 1
         },
         {
           "sid": "1794495222677_rzaiv",
@@ -346,7 +365,8 @@
           "reasoning_tokens_est": 36783,
           "n_thinking_blocks": 44,
           "n_assistant_msgs": 48,
-          "total_tokens": 2405711
+          "total_tokens": 2405711,
+          "pass": 0
         },
         {
           "sid": "1794495447599_bktow",
@@ -363,7 +383,8 @@
           "reasoning_tokens_est": 20012,
           "n_thinking_blocks": 56,
           "n_assistant_msgs": 57,
-          "total_tokens": 3686745
+          "total_tokens": 3686745,
+          "pass": 0
         },
         {
           "sid": "1794495582194_f1tn3",
@@ -380,7 +401,8 @@
           "reasoning_tokens_est": 63681,
           "n_thinking_blocks": 109,
           "n_assistant_msgs": 109,
-          "total_tokens": 6117636
+          "total_tokens": 6117636,
+          "pass": 0
         },
         {
           "sid": "1794495726845_1tn6s",
@@ -397,7 +419,8 @@
           "reasoning_tokens_est": 67036,
           "n_thinking_blocks": 99,
           "n_assistant_msgs": 99,
-          "total_tokens": 5370500
+          "total_tokens": 5370500,
+          "pass": 0
         },
         {
           "sid": "1794495768851_xegae",
@@ -414,7 +437,8 @@
           "reasoning_tokens_est": 2197,
           "n_thinking_blocks": 7,
           "n_assistant_msgs": 7,
-          "total_tokens": 133506
+          "total_tokens": 133506,
+          "pass": 1
         },
         {
           "sid": "1794495873507_97zf7",
@@ -431,7 +455,8 @@
           "reasoning_tokens_est": 37796,
           "n_thinking_blocks": 71,
           "n_assistant_msgs": 71,
-          "total_tokens": 3448798
+          "total_tokens": 3448798,
+          "pass": 0
         },
         {
           "sid": "1794495886600_uhpwe",
@@ -448,7 +473,8 @@
           "reasoning_tokens_est": 62381,
           "n_thinking_blocks": 112,
           "n_assistant_msgs": 114,
-          "total_tokens": 6543735
+          "total_tokens": 6543735,
+          "pass": 1
         },
         {
           "sid": "1794495941376_yrsh9",
@@ -465,7 +491,8 @@
           "reasoning_tokens_est": 30913,
           "n_thinking_blocks": 223,
           "n_assistant_msgs": 229,
-          "total_tokens": 12152100
+          "total_tokens": 12152100,
+          "pass": 0
         },
         {
           "sid": "1794496331784_adoye",
@@ -482,7 +509,8 @@
           "reasoning_tokens_est": 44770,
           "n_thinking_blocks": 92,
           "n_assistant_msgs": 93,
-          "total_tokens": 5875697
+          "total_tokens": 5875697,
+          "pass": 0
         },
         {
           "sid": "1794496809246_n28a7",
@@ -499,7 +527,8 @@
           "reasoning_tokens_est": 13759,
           "n_thinking_blocks": 34,
           "n_assistant_msgs": 35,
-          "total_tokens": 2090404
+          "total_tokens": 2090404,
+          "pass": 1
         },
         {
           "sid": "1794497038411_i8rsj",
@@ -516,7 +545,8 @@
           "reasoning_tokens_est": 5975,
           "n_thinking_blocks": 15,
           "n_assistant_msgs": 15,
-          "total_tokens": 529277
+          "total_tokens": 529277,
+          "pass": 1
         },
         {
           "sid": "1794497318445_470b4",
@@ -533,7 +563,8 @@
           "reasoning_tokens_est": 33714,
           "n_thinking_blocks": 121,
           "n_assistant_msgs": 124,
-          "total_tokens": 7916688
+          "total_tokens": 7916688,
+          "pass": 0
         },
         {
           "sid": "1794497324629_min37",
@@ -550,7 +581,8 @@
           "reasoning_tokens_est": 11354,
           "n_thinking_blocks": 22,
           "n_assistant_msgs": 22,
-          "total_tokens": 1129659
+          "total_tokens": 1129659,
+          "pass": 1
         },
         {
           "sid": "1794497835829_hhwr8",
@@ -567,7 +599,8 @@
           "reasoning_tokens_est": 26467,
           "n_thinking_blocks": 55,
           "n_assistant_msgs": 55,
-          "total_tokens": 3330036
+          "total_tokens": 3330036,
+          "pass": 0
         },
         {
           "sid": "1794498204251_1ubpj",
@@ -584,7 +617,8 @@
           "reasoning_tokens_est": 12058,
           "n_thinking_blocks": 30,
           "n_assistant_msgs": 31,
-          "total_tokens": 1656475
+          "total_tokens": 1656475,
+          "pass": 0
         },
         {
           "sid": "1794498328051_943ih",
@@ -601,7 +635,8 @@
           "reasoning_tokens_est": 12670,
           "n_thinking_blocks": 41,
           "n_assistant_msgs": 41,
-          "total_tokens": 2663938
+          "total_tokens": 2663938,
+          "pass": 1
         },
         {
           "sid": "1794498348863_5ph7k",
@@ -618,7 +653,8 @@
           "reasoning_tokens_est": 80887,
           "n_thinking_blocks": 173,
           "n_assistant_msgs": 173,
-          "total_tokens": 8480589
+          "total_tokens": 8480589,
+          "pass": 0
         },
         {
           "sid": "1794498495534_cepmr",
@@ -635,7 +671,8 @@
           "reasoning_tokens_est": 23573,
           "n_thinking_blocks": 30,
           "n_assistant_msgs": 32,
-          "total_tokens": 1723953
+          "total_tokens": 1723953,
+          "pass": 1
         },
         {
           "sid": "1794498563399_so0un",
@@ -652,7 +689,8 @@
           "reasoning_tokens_est": 20328,
           "n_thinking_blocks": 28,
           "n_assistant_msgs": 28,
-          "total_tokens": 1636161
+          "total_tokens": 1636161,
+          "pass": 1
         },
         {
           "sid": "1794498638834_cu5fz",
@@ -669,7 +707,8 @@
           "reasoning_tokens_est": 7411,
           "n_thinking_blocks": 14,
           "n_assistant_msgs": 14,
-          "total_tokens": 577489
+          "total_tokens": 577489,
+          "pass": 1
         },
         {
           "sid": "1794498953824_d3ngk",
@@ -686,7 +725,8 @@
           "reasoning_tokens_est": 17030,
           "n_thinking_blocks": 32,
           "n_assistant_msgs": 34,
-          "total_tokens": 2039556
+          "total_tokens": 2039556,
+          "pass": 1
         },
         {
           "sid": "1794499046077_4fzde",
@@ -703,7 +743,8 @@
           "reasoning_tokens_est": 24262,
           "n_thinking_blocks": 44,
           "n_assistant_msgs": 45,
-          "total_tokens": 2683041
+          "total_tokens": 2683041,
+          "pass": 1
         }
       ]
     }
