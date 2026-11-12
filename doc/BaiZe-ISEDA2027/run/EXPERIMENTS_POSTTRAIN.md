@@ -5126,3 +5126,125 @@ vLLM serve `--max-model-len 32768`，每请求 `max_tokens=26009`。模型在单
 
 ---
 
+## §R305 — no_sandbox 模板运行失败根因：思维循环 + 工具调用格式分析（2026-11-12 wake305）
+
+### 1. 现象
+
+R304 已确认旧模板（`eval_sys_prompt_template_old.md`）运行 062640 因工具名不匹配（`run_pyAether_code_tool` vs `pyAether_MCP_server__run_code`）100% 失败。wake305 进一步调查 **no_sandbox 模板**（`.env` 配置 `EDA_PROMPT_TEMPLATE=eval_sys_prompt_template_no_sandbox.md`）运行 075714，发现**也产生 0 .py 文件**，但失败模式完全不同。
+
+- 运行 `2026_1112_075714`：EDA-Eval-PyAether-001 + 007 两任务，均 exit 1，0 .py 产出
+- 运行时长 ~463s（与 062640 的 1439-1697s 不同，075714 更短 → 非撞 token 上限）
+- trace 目录 `~/eda_code_eval/2026_1112_075714/trace/EDA-Eval-PyAether-001/` 有完整 cline session
+
+### 2. 根因：思维循环（Thinking Loop）
+
+分析 `1794441442907_10iu6.messages.json`（55 条消息）：
+
+| 指标 | 值 |
+|:---|:---|
+| 总消息数 | 55 |
+| assistant 消息数 | 27 |
+| 含 `<function>` 标签的 assistant 消息 | **0** |
+| 每条 assistant 消息长度 | 852–3762 字符 |
+| 消息模式 | user(系统提醒) → assistant(思维文本) → user(系统提醒) → … 循环 27 轮 |
+
+所有 27 条 assistant 消息均为**纯思维文本**（`cido` 标签内），内容模式："We need solve task. We are Cline, pyAether code engineer, tools include search_apis etc. Need produce code file..." → "We need respond with tool calls." → "We need continue." → 循环。
+
+系统每轮提醒："[SYSTEM] This run is not complete until you call one of these terminal completion tools: submit_and_exit."——模型**从未实际调用任何工具**（search_apis / get_api_details / submit_and_exit 均为零）。
+
+**结论**：模型陷入思维循环——不断规划"需要调用工具"但从不执行。这与 062640 的"工具名不匹配→退化循环→max-output-token"是**完全不同的失败模式**。
+
+### 3. 工具调用格式对比（base vs SFT）
+
+通过 curl 直连测试两个模型端点（**不经过 cline**，排除 cline 解析干扰）：
+
+#### 3.1 基础模型（:8098 minicpm5-2b）
+
+```
+curl http://localhost:8098/v1/chat/completions -d '{"model":"minicpm5-2b","messages":[...简单prompt...]}'
+```
+
+输出：
+```
+cidadelWe need to search for relevant pyAether APIs. The user wants to count unique bus bits... Let's do that.
+</think>
+
+<function name="search_apis"><param name="query">pyAether bus string unique bits</param></function>
+```
+
+- ✅ **能产生 `<function>` XML 工具调用**
+- vLLM `tool_calls` 字段为空（hermes parser 不解析 `<function>` XML 格式），但 `<function>` 标签在 `content` 中
+- cline 从 `content` 解析 `<function>` 标签 → 基础设施可用（R302/R303 已确认）
+
+#### 3.2 SFT 模型（:8096 minicpm5-sft）
+
+```
+curl http://localhost:8096/v1/chat/completions -d '{"model":"minicpm5-sft","messages":[...相同prompt...]}'
+```
+
+输出：
+```
+cidadel
+</think>
+
+Searching for pyAether bus-related APIs...
+```
+
+- ❌ **不能产生 `<function>` XML 工具调用**
+- 输出自然语言"Searching for..."而非结构化工具调用
+- 传 `tools` 参数 → 400 错误：`"auto" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set`
+
+**关键发现**：SFT 训练**降低了**基础模型的工具调用能力。基础模型原生支持 `<function>` XML 格式，但 SFT 后改为输出自然语言——SFT 语料中可能未包含 `<function>` 格式的工具调用示例。
+
+### 4. vLLM Serve 配置对比
+
+| 端点 | GPU | 模型 | `--enable-auto-tool-choice` | `--tool-call-parser` | `tools` 参数 |
+|:---|:---:|:---|:---:|:---|:---:|
+| :8098 | 4 | minicpm5-2b（base） | ✅ 有 | hermes | ✅ 接受（但不解析 XML） |
+| :8096 | 6 | minicpm5-sft | ❌ **无** | ❌ 无 | ❌ 400 错误 |
+
+SFT serve（PID 361115）启动命令缺少 tool-calling flag → 无法接受 OpenAI `tools` 参数。
+
+### 5. 模板复杂度分析
+
+`eval_sys_prompt_template_no_sandbox.md` 特征：
+
+- 60 行，~3000 中文字符
+- 8 个主要章节（核心职责/技术栈/工具清单/任务要点[函数检索+代码生成+自我评测]/要求规范/上下文退化防护/任务完成/用户新问题/参考技能）
+- 引用 4 个 Skill（eda-api-search-strategy / eda-command-family-selection / eda-swig-type-construction / eda-context-degradation-guard）
+- 包含 `{evolve_tools_section}` / `{memory_bank_section}` / `{user_query}` 模板变量
+- 自我评测章节含 6 条逐行推演规则 + 4 条禁止规则
+
+**假设**：该模板对 2B 模型过于复杂——模型被海量指令淹没，陷入"规划如何执行"的思维循环而非实际执行。curl 测试证明基础模型在**简单 prompt** 下能正常产生工具调用，复杂 prompt 导致退化。
+
+### 6. 两种失败模式对比
+
+| 维度 | 062640（旧模板） | 075714（no_sandbox 模板） |
+|:---|:---|:---|
+| 工具名 | `run_pyAether_code_tool`（不存在） | 模板含 `search_apis`/`get_api_details`（正确） |
+| 模型行为 | 尝试调用不存在的工具 → 退化循环 | 生成思维文本 → 从不调用工具 |
+| 失败模式 | max-output-token（26009 tok） | 思维循环 27 轮 → exit 1 |
+| 运行时长 | 1439–1697s | ~463s |
+| 工具调用数 | 17 次 `run_pyAether_code_tool`（全无效） | 0 次 |
+| 根因 | 工具名不匹配（prompt vs MCP 注册名） | 模板复杂 → 思维循环（模型能力不足） |
+
+### 7. 处置与建议
+
+1. **沙盒恢复后**：用默认模板 `eval_sys_prompt_template.md`（含 `run_code`）+ 基础模型（:8098）测 Phase1。确保 `.env` 不指向旧模板。
+2. **修复 SFT serve**：加 `--enable-auto-tool-choice --tool-call-parser hermes` 到 :8096 vLLM 启动命令。
+3. **修复 SFT 语料**：在 SFT 训练数据中加入 `<function>` 格式工具调用示例，恢复 SFT 模型的工具调用能力。
+4. **简化 no_sandbox 模板**：当前 60+ 行模板对 2B 模型过于复杂，建议精简至 ≤20 行核心指令。
+5. **沙盒仍阻塞**：10.129.32.75 全端口 FILTERED → 评分（run_on_sandbox.py）不可在 .17 执行。需运维/网络组解除 ACL。
+
+### 8. 溯源
+
+- 075714 trace：`~/eda_code_eval/2026_1112_075714/trace/EDA-Eval-PyAether-001/1794441442907_10iu6.messages.json`（55 条消息，27 assistant，0 tool calls）
+- curl 测试 base：`curl http://localhost:8098/v1/chat/completions` → content 含 `<function name="search_apis">`
+- curl 测试 SFT：`curl http://localhost:8096/v1/chat/completions` → content 为自然语言 "Searching for..."
+- SFT serve 命令：`ps -eo args= | grep 'port 8096'` → 缺 `--enable-auto-tool-choice`
+- no_sandbox 模板：`~/code/eda_fastmcp/prompts/eval_sys_prompt_template_no_sandbox.md`（60 行）
+- .env 配置：`EDA_PROMPT_TEMPLATE=eval_sys_prompt_template_no_sandbox.md`
+- 无伪造：所有数据为真实 cline session 文件 / curl 响应 / ps 输出。
+
+---
+
