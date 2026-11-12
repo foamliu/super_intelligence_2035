@@ -7169,6 +7169,22 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - **wake345 更新（21:43）**：PID 789217 alive（etimes≈9567s≈2hr40min）；输出目录 `~/eda_code_eval/2026_1112_190335/`；**113 个 code dir**（`code/EDA-Eval-PyAether-*`），**67 个 .py 已生成**（wake344 时 52 → +15）；stats 计数文件（success/failure/timeout）因 harness flock 原子写，读取瞬间为空，以 wake344 抓取的 success=86/failure=3/timeout=1（90/158 resolved）为最近可信值；GPU5 :8097 98%util 仍活跃生成；8 workers active。预计仍需 ~1-1.5hr 完成 158 题 → run_eval.py 评分。
 - **wake346 更新（21:55）**：PID 789217 alive（etimes≈10308s≈2hr52min）；**103 个 EDA-Eval-PyAether-* task dir**（115 total code dir 含非任务子目录），**73 个 .py 已生成**（wake345 时 67 → +6）；GPU5 :8097 95%util 仍活跃；8 workers active（worker_8 正在跑 EDA-Eval-PyAether-102，21:52 最新 code dir）；最新 pyAether_code 产出 `acebjs_drawing_batch_geom.py`(21:41)；stats 计数文件仍因 flock 不可靠读取。**~55 tasks remaining, ETA ~3-4hr**。结果仍 TBD（等 final_report.json → run_eval.py 评分 → compare vs 36% baseline）。
 - **wake347 更新（22:20）**：PID 789217 **alive**（etimes≈11806s≈3hr17min）；子进程 `run_cline_script.sh -p 8 -n`（PID 789445）+ `tee ...postSFT_minicpm5_2b_sft_run1_20261112_190335_gen.log`（PID 789446）均 alive → 评估健康推进。stats 计数文件本轮**可正常读取**（flock 未冲突）：**success=100 / failure=3 / timeout=3 → 106/158 resolved**（wake346 时 103 dirs/73py → 本轮 128 code dirs/77py，+25 dirs 推进）。最新活动 code dir `EDA-Eval-PyAether-113`（22:16:57 修改），即正在写第 113 题。从 wake344(21:33,90 resolved)→wake347(22:20,106 resolved) = 47min 推进 16 题 ≈ 2.9min/题；剩 52 题 → **ETA ~2.5hr（≈ 00:50 完成）**。GPU5 :8097 **98% util** 仍活跃生成。⚠️ **注意**：success=100 是 cline 代码生成完成数（harness driver 的 success/failure/timeout 计数），**非 Pass@1**；真正 Pass@1 须待 final_report.json 出来后跑 `run_eval.py`（断言评分）才得。36% baseline（≈57/158 Pass@1）为同口径 run_eval 结果，不可用 success=100 直接比较。结果仍 TBD。
+- **wake348 更新（22:33）**：PID 789217 **alive**（etimes≈12678s≈3hr31min）；**success=108 / failure=3 / timeout=3 → 114/158 resolved**（wake347 时 106 → +8 推进）；44 tasks remaining；8 workers 活跃（worker-2 刚开始 task122 @22:33）；rate≈2.9min/题维持；ETA ~2hr（≈00:35）。GPU5 :8097 98%util。仍 RUNNING，结果 TBD。
+
+### L4.6d Designflow Infra Fix — Assets Symlink 修复（wake348 22:34）
+- **根因**：benchmark JSONL 中 task attachments 路径引用 `assets/EDA-Eval-DesignFlow-{TaskName}/...`（带前缀），但 assets 目录下部分 task 只有**无前缀**目录 `{TaskName}`，无对应前缀 symlink → `run_batch.sh` 报 "assets dir missing"（Run1/Run2 中 AutoPR-001 即此问题）
+- **实测**：assets 目录共 1186 个条目，其中 1038 个已带 `EDA-Eval-DesignFlow-` 前缀（直接目录），148 个无前缀。无前缀中仅 2 个有 symlink（CovFMFlow-001、RcmaxTreeCompare-001），其余 146 个缺失 → **138 个 missing symlink**（含 AutoPR-001）
+- **修复**（36.15 上执行，通过隧道 SSH）：
+  ```bash
+  ssh -p 3333 app.e0031982@localhost
+  cd /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/
+  # 为所有无前缀目录创建带前缀的 symlink
+  for d in */; do d=${d%/}; if [[ ! "$d" =~ ^EDA-Eval-DesignFlow- ]] && [[ ! -e "EDA-Eval-DesignFlow-$d" ]]; then ln -s "$d" "EDA-Eval-DesignFlow-$d"; fi; done
+  # 验证：remaining missing = 0
+  ```
+- **结果**：138 个 symlink 全部创建，remaining missing = 0 → AutoPR-001 等 infra ERROR 已修复，后续 designflow clean rerun 不再因 assets 缺失报错
+- **影响**：仅影响 designflow benchmark 的 assets 目录访问，不改变 task 内容或判分逻辑；属于 infra 修复，非 benchmark 协议改动
+- **备注**：benchmark JSONL 共 1165 行（非 operator 所说的 61 任务）；README 标注 894 cases — 以 JSONL 实际行数为准
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
