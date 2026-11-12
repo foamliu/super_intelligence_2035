@@ -1,14 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1084 · 2026-11-13 06:03】v9监控·SFT ep2/5 step~137进展正常**：v9 RUNNING(PID1351796/etimes~4045s/进程健康/RN)·SFT seed0 ep2/5 step~137/305·loss 6.67→0.20(avg 0.2598@step120)·~30s/step·SFT剩余~168步≈1.4h·全实验ETA~8-9h(完成≈13:00-14:00)·log最新step120@3531s(下次step140@~4131s)·v8 MIXED确认·analyze_v9就绪·⚠️HTML报告`report_vision_cpu_rl_waveform_zh.html`不在盘上(EXPERIMENTS引用但git无记录→v9完成后需重新生成)·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull: Already up to date·GPU 8×H100 95-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1085 · 2026-11-13 06:10】v9监控·SFT ep3/5 step~150进展正常**：v9 RUNNING(PID1351796/etimes~4498s/进程健康/CPU1195%=12核)·SFT seed0 ep3/5 step~150/305·loss 6.67→0.16(avg 0.2518@step140)·~30s/step·SFT剩余~155步≈1.3h·全实验ETA~6-7h(完成≈12:30-13:30)·log最新step140@4105s·v8 MIXED确认(A=0%/B=45%/C=52.5%±6.1% McNemar p=0.0312)·analyze_v9就绪·⚠️HTML报告`report_vision_cpu_rl_waveform_zh.html`不在盘上(git无记录→v9完成后需重新生成)·research日报11-13 03:0x vision栏GPTQ三档量化对照(部署阶段·非wave RL·不action)·ops/inbox RUN_ID276(非vision·pretrain eval·不action)·git pull: Already up to date·GPU 8×H100 78-100% pretrain全占·体积TASK27KB/MEMORY 13KB均✓·**WAITING: 0**。
 
-> 📦 **wake #1083 · 2026-11-13 05:56** v9监控·SFT ep2/5 step120·已fold(见wake#1084)。
-
-> 📦 **wake #1082 · 2026-11-13 05:50** v9监控·SFT ep2/5 step~108/305·已fold(见wake#1084)。
-
-> 📦 **wake #1081 · 2026-11-13 05:3x** v9监控·SFT seed0 step~60/305·已fold(见wake#1084)。
-
-> 📦 **wake #1080 · 2026-11-13 05:30** v9监控·SFT进展正常·已fold(见wake#1081)。
+> 📦 **wake #1080~#1084 · 2026-11-13 05:10~06:03**（5轮）v9监控·SFT ep1→ep3 step20→140·已fold(见wake#1085)。
 
 > 📦 **wake #1079 · 2026-11-13 05:25** v9监控·SFT进展正常·已fold。
 
