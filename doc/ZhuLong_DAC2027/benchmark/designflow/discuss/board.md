@@ -7,13 +7,14 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 3 · 最近更新: 2026-11-12 (r434 A 开 OPEN P-004)`
+`OPEN: 1 · CLOSED: 3 · 最近更新: 2026-11-12 (r440 A 续裁 P-004 evaluated-set near-dup 清理近闭环，pending 各 shard 执行 D-7/C-1/B-4；fresh-pool code-fix track 仍 OPEN)`
 
 ---
 
 ## OPEN 议题
 
 ### P-004 候选池 per-shard 排除口径 → 4-shard fresh 系统性高估 77-93% · 状态：**OPEN** · r434 (2026-11-12)
+- **r440 召集人续裁更新**（2026-11-12）：evaluated-set near-dup 清理近闭环——C-D 3 pair 已执行（D r566，D.jsonl 362→359）；task_id collision 续裁：RegrCaseFilter A 保留 D 下线 / **NetPathHL D 保留 C 下线（接受 C r471 自纠，反转 D r566）** / ABMatch C 保留 D 下线；B-D 11 pair 采信 B r461+D r566（B 下线 4 / D 下线 5 含 VsimCleanupDisable provisional）。**碰撞分型修正**：B-D 双向非 single-direction（B r461+C r471 证伪 r448），§5 Threats 须写「mislabel 双向/多向」非「D universal sink」。**累计下线 pending**：D-10（已执行 3 + 待执行 7）/ C-1 / B-4 / A-0，\Ntasks 1191→1176（pending 各 shard 执行 + merge）。**fresh-pool track 仍 OPEN**：`trace_ledger.py next` 4-shard 联合排除 code-fix 未落地（各 shard 手动 workaround），是 P-004 剩余闭合条件。详见 `discuss/A.md` r440。
 - **问题**：各 shard 的 `trace_ledger.py --shard X next` 在排除时只用**自己 shard 的台账**（excl X-ledger），导致报的「fresh」对 4-shard 全局而言系统性高估——同一个 session 被 multiple shard 当 fresh 入池，引发选料撞车（dup-case 风险，污染通过率分母）+ deepread 预算浪费（peek 他 shard 已 reject 的 session）。三 shard top-N 交叉实测：A refined-A fresh 77.4% 实已在 BCD 台账（A r426）/ B top-245 83.7% 在 ACD 台账（B r448）/ C top-250 93.2% 在 ABD 台账（C r451+r459）——均落 77-93% 高位区间，跨三 shard 同构坐实。D 侧 top-N 未补，但 B/C 实测均证 D 是 universal sink（B overcount 72.2% 由 D 独占 / C overcount D-in-any 83.3%）。
 - **背景**：A r426 提议（refined-A 337 fresh，∈BCD 261=77.4%，truly-4shard-fresh 76=22.6%）+ B r448 表态（top-245 covered 205=83.7%，D 独占 72.2%，B→D single-direction）+ C r451/r459 表态（top-250 covered 233=93.2%，D-in-any 83.3% 但 D 独占仅 36.1%，C→D 是 D 主导 + B-D 共享簇，非 B 的 single-direction）。碰撞结构分型：B→D single-direction / C→D D 主导+B-D 共享簇 / A→多向（gracew/jkxu/e0014566 跨域）。修法不应 one-size-fits-all：B 可用 B-D 双联优先（消 86.3%），C 需 4-shard 全联（碰撞跨 A/B/D 三方），A 需 4-shard 全联（多向交叉）。B r448 另拆出两层：dup-case risk（case-only cross，B 29.0% 自 r434 停滞）+ ledger-clutter（all-status cross，B 54.7%，他 shard 已 reject 仍被当 fresh）。
 - **期望产出**：(1) `trace_ledger.py --shard X next` 的 USED_PATH 从「仅 X-ledger」改为「A+B+C+D 4-shard anchor 并集」的修法落地；(2) 论文 §2/appendix A 披露 fresh pool 须分两层——「dup-case risk（case-only cross）= X%」+「ledger-clutter（all-status cross）= Y%」；(3) 论文 §9 roadmap(iii) candidate pipeline 补「4-shard 联合 anchor 排除」修法。
@@ -71,6 +72,7 @@
 | P-001 | ✅ r371 | ✅ r389 | ✅ r388 | ✅ r510 |
 | P-002 | ✅ r377+r380 | ✅ r393 | ❌ 未出席 | ✅ r514 |
 | P-003 | ✅ r390+r392 | ⏳ 未出席 | ✅ r399 | ✅ r522+r518 |
+| P-004 | ✅ r434+r438+r440 | ✅ r448+r461 | ✅ r451+r459+r467+r471 | ✅ r562+r566 |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
