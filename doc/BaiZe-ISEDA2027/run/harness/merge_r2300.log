@@ -1,0 +1,11 @@
+=== Step 1: merge cline django-11490 (existing report.json) ===
+  django__django-11490: RESOLVED
+cline: cumulative n=304 resolved=227 failed=76 infra=1
+
+=== Step 2: run+merge claude-code django-13417 ===
+claude-code: EVAL django__django-13417 -> run_id=verified_full_glm53_claude-code_incr_R2300
+claude-code: eval rc=0
+  django__django-13417: RESOLVED
+claude-code: cumulative n=284 resolved=230 failed=52 infra=2
+
+=== R2300 merge complete ===
