@@ -7123,9 +7123,22 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - Log：`/tmp/designflow_baseline_5task_rerun_2700s.log`
 - Batch dir：`eval/run_batch_20261112_210026`
 - Status file：`eval/status_rerun_2700s.jsonl`
-- 状态：RUNNING（worker 1 started on ABMatchPlacementCheck-001, 2026-11-12 21:00）
+- 状态：RUNNING（worker 1 on ABMatchPlacementCheck-001, cline process started, ~12min elapsed, 0 done/pass/fail）
+  - wake342 更新：PID 3858541 alive on 36.15 (etimes=672s)，child 3858561 (xargs) → 3858562 (run_task ABMatchPlacementCheck-001)
+  - worker_1.log 确认：PreToolUse hook 部署✅ → workdir 创建✅ → leak 自检通过✅ → cline 启动中（model=minicpm5-2b, timeout=2700s）
+  - 5 tasks: ABMatchPlacementCheck-001, Analog-001, AnalogGroupCfgMergeDummy-001, AutoPR-001, BitcellMcSpGen-001
+  - progress: done=0, pass=0, fail=0（仍在第一题）
 - 预计耗时：worst case 5×2700s = 3.75hr，但多数任务应在 2700s 内完成
 - 结果：TBD（下轮 wake 检查）
+
+### L4.6c Post-SFT Eval Progress（wake342 监控）
+- PID 789217 alive on .17（etimes=7542s ≈ 2hr 5min）
+- 输出目录：`~/eda_code_eval/2026_1112_190335/`
+- 进度：~94/158 code dirs created, 51 .py files generated, stats/failure=3
+- 当前活跃任务：EDA-Eval-PyAether-083（newest file 21:10:52, ~10s ago at check time）
+- GPU5 :8097 (minicpm5-2b-sft) serving at 90% utilization — actively generating
+- 预计剩余：~1.5-2hr（~64 tasks remaining, 8 workers）
+- 结果：TBD（等 final_report.json）
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
