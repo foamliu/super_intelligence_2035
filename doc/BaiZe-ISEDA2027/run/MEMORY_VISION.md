@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1060 · 2026-11-13 03:0x】例行巡检·全交付态**：git pull fast-forward(ZhuLong designflow 3文件)·v8结果7目录在位(/nas_train/app.e0031982/datasets/baize-vision/out/:cpu_rl_v8_std_s{0,1,2}+ctrl_s0+smoke×3)·HTML报告45187B在位·EXPERIMENTS §v8在位·进程健康(vision loop PID669545 ppid=1 etimes~1.27M✓·ops_relay PID1032513 ppid=1 etimes~1.67M✓)·research日报11-13 vision栏"无"·体积TASK=27.0KB✓/MEMORY≈11.5KB✓·**WAITING: 0**。
+> 🆕 **【wake #1061 · 2026-11-13 02:5x】例行巡检·全交付态**：git pull fast-forward(designflow MEMORY 1文件)·v8结果7目录在位(cpu_rl_v8_std_s{0,1,2}+ctrl_s0+smoke×3)·HTML报告在位·EXPERIMENTS §v8在位·进程健康(vision loop PID669545 ppid=1 etimes~1.27M✓·ops_relay PID1032513 ppid=1 etimes~1.67M✓)·GPU 8×H100 100% pretrain全占·research日报11-13 vision栏"无"·体积TASK=27.0KB✓/MEMORY≈11.5KB✓·**WAITING: 0**。
+
+> 📦 **wake #1060 · 2026-11-13 03:0x** 例行巡检·全交付态·git pull fast-forward(ZhuLong 3文件)·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·research日报vision"无"·体积✓·已fold。
 
 > 📦 **wake #1059 · 2026-11-13 02:47** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 94-100% pretrain全占·research日报vision"无"·体积✓·已fold。
 
@@ -97,7 +99,7 @@ WAITING: 0
 | PHASE | 🔄 **波形 RL CPU 阶段2 · v8 完成(MIXED)**：v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS·nonzero-std 93.8%) · v7✅6/6 ALL PASS · **v8 MIXED(11-13 02:19完成)**：频率比较二分类·A=0%/B=45%/C=52.5%±6.1%(3seeds:60%/52.5%/45%)·McNemar(s0)p=0.0312✅·Control=45%=B NS·判据3/5通过(A~50%❌/B>60%❌/C>B✅/McNemar✅/3seed❌)·easy87.5%/hard68.8%/medium37.5%·triangle/sawtooth不再0%·cheat_rate=0·Qwen3.5-2B(1.88B)+LoRA r=16。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v8 频率比较实验✅(11-13, MIXED, C=52.5%±6.1% vs B=45%, McNemar p=0.0312)** · v7 sweep ALL 18/18轮✅(6/6 ALL PASS) · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断(PARTIAL) · 阶段1 SFT验收PASS · CPU端到端训练循环验证7/7 PASS · 数据泄漏验证+就绪报告HTML · GRPO CPU冒烟PASS · 2B文本骨干提取1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#1060 例行巡检**：全交付态·git pull fast-forward(ZhuLong 3文件)·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·research日报11-13 vision"无"·体积TASK=27.0KB✓/MEMORY≈11.5KB✓·fold wake#1059。 |
+| 当前动作 | **wake#1061 例行巡检**：全交付态·git pull fast-forward(designflow 1文件)·v8结果7目录在位·HTML报告在位·EXPERIMENTS §v8在位·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·GPU 8×H100 100% pretrain全占·research日报11-13 vision"无"·体积TASK=27.0KB✓/MEMORY≈11.5KB✓·fold wake#1060。 |
 | 下一步 | ①v8 MIXED→决定是否v9:增大eval set(40→96+)+增大SFT数据(200→500+)以提升B>60% ②A=0%异常→分析zero-shot失败原因(模型是否理解任务格式) ③medium难度37.5%最低→针对性生成medium难度训练数据 ④v8频率比较vs v5类型分类:不同任务不同判据,各自独立 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) ⑥research日报建议(VLM主干复用)非wave RL方向·参考不指令 |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
 | 更新 | **2026-11-13 03:0x (wake #1060)**：例行巡检·全交付态·git pull fast-forward(ZhuLong 3文件)·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康(vision loop PID669545✓·ops_relay PID1032513✓)·research日报11-13 vision"无"·体积TASK=27KB/MEMORY=11.5KB均✓·fold wake#1059·WAITING=0 |
