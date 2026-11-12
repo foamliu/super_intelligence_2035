@@ -1482,4 +1482,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793097371828_uozyg	e0023936	10.129.32.75	21	waveform	case	EDA-Eval-DesignFlow-WvWdfVerPathProc-001	2026-11-12 10:48	
 1793927167185_ayinb	dorisz	hfeg0plg98	59	waveform	case	EDA-Eval-DesignFlow-WvFsdbBatchOpenCmd-001	2026-11-12 11:35	
 1793328999007_61zln	rongtaoy	hfeg0pkn001	76	analog_context	case	EDA-Eval-DesignFlow-CslBlCouplingExtract-001	2026-11-12 11:50	
-1793178284228_y3h0j	yanxvwei	hfhds201		waveform	claimed		2026-11-12 12:14	waveform compare script: ldqpad0 vs exp_LDQ0.vec.tol, two backends (ddr5 divideTimeRange + new build_grid/segment_windows), --method/--seg
+1793178284228_y3h0j	yanxvwei	hfhds201		waveform	case	EDA-Eval-DesignFlow-WvLdqPadShiftCmp-001	2026-11-12 12:31	waveform compare script: ldqpad0 vs exp_LDQ0.vec.tol, two backends (ddr5 divideTimeRange + new build_grid/segment_windows), --method/--seg
