@@ -1,8 +1,10 @@
 WAITING: 0
 
-> 🆕 **【wake #1080 · 2026-11-13 05:30】v9监控·SFT进展正常**：v9 RUNNING(PID1351796/etimes~1930s/进程健康)·SFT seed0 ep1/5 step~60/305·loss 6.67→0.27(avg 0.27@step60)·~30s/step·SFT ETA~2h·全实验ETA~8-9h(完成≈13:00-14:00)·log 21行(step60@1790s)·v8 MIXED确认·analyze_v9就绪·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull ff(posttrain 2文件)·GPU 8×H100 96-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1081 · 2026-11-13 05:3x】v9监控·SFT进展正常**：v9 RUNNING(PID1351796/etimes~2133s/进程健康)·SFT seed0 ep1/5 step~60/305·loss 6.67→0.27(avg 0.27@step60)·~30s/step·全实验ETA~8-9h(完成≈13:00-14:00)·log 19行(step60@1790s)·v8 MIXED确认·analyze_v9就绪·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git fetch: HEAD=origin/main(up to date,unstaged=他线文件不碰)·GPU 8×H100 95-100% pretrain全占·体积TASK27KB/MEMORY 12KB均✓·**WAITING: 0**。
 
-> 📦 **wake #1079 · 2026-11-13 05:25** v9监控·SFT进展正常·已fold(见wake#1080)。
+> 📦 **wake #1080 · 2026-11-13 05:30** v9监控·SFT进展正常·已fold(见wake#1081)。
+
+> 📦 **wake #1079 · 2026-11-13 05:25** v9监控·SFT进展正常·已fold。
 
 > 📦 **wake #1078 · 2026-11-13 05:21** v9监控·SFT进展正常·已fold。
 
@@ -76,4 +78,4 @@ WAITING: 0
 | 当前动作 | **wake#1080 v9实验运行中**：PID1351796健康·SFT seed0 ep1/5 step~60/305·loss 6.67→0.27·~30s/step·ETA~8-9h(完成≈13:00-14:00)·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。 |
 | 下一步 | ①v9完成后(ETA≈13:00-14:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + HTML报告 ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 05:30 (wake #1080)**：v9 RUNNING监控·PID1351796健康·SFT seed0 ep1/5 step~60/305·loss 6.67→0.27(avg 0.27@step60)·~30s/step→ETA~8-9h(完成≈13:00-14:00)·v8 MIXED确认·analyze_v9就绪·research日报GPTQ(部署·不action)·ops/inbox非vision·git pull ff(posttrain 2文件)·GPU pretrain全占(8×H100 96-100%)·体积TASK27KB/MEMORY 12KB均✓·WAITING=0。 |
+| 更新 | **2026-11-13 05:3x (wake #1081)**：v9 RUNNING监控·PID1351796健康·SFT seed0 ep1/5 step~60/305·loss 6.67→0.27(avg 0.27@step60)·~30s/step→ETA~8-9h(完成≈13:00-14:00)·v8 MIXED确认·analyze_v9就绪·research日报GPTQ(部署·不action)·ops/inbox非vision·git fetch HEAD=origin/main·GPU pretrain全占(8×H100 95-100%)·体积TASK27KB/MEMORY 12KB均✓·WAITING=0。 |
