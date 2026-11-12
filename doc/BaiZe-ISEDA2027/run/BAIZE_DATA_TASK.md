@@ -1,5 +1,86 @@
 ﻿# BAIZE_DATA_TASK.md
 
+### 🔴 用户令 · 2026-11-12（**分析 stack-v3-train 里哪些数据最能提升 EDA 脚本能力，出中文 HTML 报告**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「安排 data 在 stack-v3-train 里分析一下，看哪些对于提升 EDA 脚本能力（PyAether、Tcl、SKILL等）帮助较大。写个中文HTML报告。」
+
+**目标**：不是再数一遍语言占比（`DATA_MAPPING.md §H.2` 已有：EDA 11 语言小计 23.4% / 978.5B tok），而是回答——**这 2TB 里哪些子集能直接提升 PyAether / Tcl / SKILL / Perl / SVRF / SPICE deck / Makefile 等 EDA 脚本能力，值多少，怎么取**。
+
+#### 0. 对象与事实（先读，别重复劳动）
+
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| 落盘 | `/nas_inference/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/` | §H |
+| 规模 | 4600 parquet / 1,987,930,402,327 B（1.85TiB）/ 0 incomplete | §H.4 |
+| schema | `repo_path, repo_id, commit_id, github_metadata{...}, num_files, files[]{content, language, size_bytes, is_vendor, file_path, ...}` | §H.1 |
+| 不能按语言挑 shard | 语言在 `files[].language` 列，shard 混合 | §H.1 |
+| 已有统计 | 全库语言表 §H.2；批 1-7 QC（vendor 1.0% / EDA 12.3% 等）§H.5-H.11 | 引用即可 |
+
+⚠️ 语言列**不等于**“EDA 脚本”：`Python` 里绝大多数是 Web/爬虫；`Tcl` 里也有大量非 EDA 的 Tk/Expect；SKILL 在 HF 语言分类里常被标成 `Python`/`Other`/`Tcl`。**必须做脚本级内容判定**，这是本报告的核心增量。
+
+#### 1. 分析设计（两阶段，成本可控）
+
+**阶段 A · 元数据全量扫描（不读 content，1.85TiB 也能跑）**
+
+- 用 parquet 列裁剪只读 `repo_id, repo_path, files.file_path, files.language, files.size_bytes, files.is_vendor`（DuckDB `read_parquet(..., union_by_name=true)` 或 pyarrow，`files` 用 `unnest`）。
+- 产出：`(language × 扩展名 × 路径关键词 × 是否 vendor)` 四维计数与字节分布，落 `stackv3_eda_meta_stats.tsv`。
+- 路径关键词表（可增补，需在报告里列全）：`skill|\.il$|tcl|\.sdc$|pyaether|virtuoso|innovus|icc2|dc_shell|pt_shell|primetime|calibre|svrf|lvs|drc|hspice|spectre|finesim|verdi|formality|tessent|vcs|xrun|questa|modelsim|spice|spectre|cdl|lef|def|gds|oasis|liberty|\.lib$`。
+
+**阶段 B · 内容分层抽样（判“是不是可用的 EDA 脚本”）**
+
+- 抽样：每个候选类别 **n=400**（固定 `seed=42`），按 shard 分层（保证覆盖 part-00000~04599），单文件 ≤1MB、`is_vendor=false`。
+- 判据（报告里要写清阈值）：
+  - **Tcl 脚本**：`create_clock|set_max_delay|set_input_delay|dbGet|get_db|get_pins|get_cells|report_timing|link_design|read_verilog|read_def|foreach_in_collection|redirect` 命中 ≥3 且 `proc |set ` 存在；
+  - **SKILL**：`dbCreate|dbGet|dbFind|dbLayer|geAdd|geGet|hiSet|hiGet|axl|sdb|rod|procedure\(|let\(` 命中 ≥3；
+  - **pyAether/Python-EDA**：`import pyaether|from pyaether|db::|dbCreate|virtuoso|spectre|hspice` + 非 Web/ML 特征（无 `django|flask|torch|numpy` 主导）；
+  - **Perl-EDA**：`.lis|\.log|report|parse|dbGet|\.sp` 上下文命中；
+  - **SVRF/DRC/LVS deck**：`LAYER|DRC|LVS|DEVICE|CONNECT|PORT|SIZE` 命中 ≥4；
+  - **SPICE/网表生成**：`.subckt|.param|.meas|.inc|.lib|.model` 命中 ≥3 且存在脚本化生成痕迹（f-string/模板/写文件）；
+  - **Makefile/shell flow**：`vcs|xrun|dc_shell|innovus|calibre|hspice|formality|primetime|verdi` 命令链。
+- 同时打 **“脚本 vs 数据 vs 文档 vs 日志”** 标签（扩展名 + 行数 + 关键字密度 + 是否 `README/golden/expected/regression log`）。
+- 置信度：n=400/类、p≈0.5 时 95% CI 约 ±4.9pp，报告要写出（不许写“大概”）。
+
+#### 2. 价值分层（报告主表）
+
+| 层 | 定义 | 判据 | 期望用途 |
+|:--|:--|:--|:--|
+| **V1 直接可用** | 真实 EDA 脚本（可直接用于 SFT / few-shot / 任务素材） | 命中对应语言判据且脚本化程度高（有 proc/def/函数、有输入输出、无大量注释块） | PyAether/Tcl/SKILL SFT、designflow 造题参考 |
+| **V2 可挖掘** | EDA 相关工具/解析器/flow 脚本，需转换 | Python/Perl/shell + EDA 命令或格式关键字 | SFT 数据增强、log parser 族 |
+| **V3 低价值** | 配置、日志、golden 数据、vendor、minified、纯文档 | 其余 | 不进训练（或仅按小比例做去污染负样本） |
+
+每层必须给：**文件数 / 字节 / token 估算（按 3.6T/11.5TB 比例折算并注明是估算）/ 典型路径 Top-20（脱敏到路径模式）/ 可支撑能力项**。
+
+#### 3. 报告（用户点名）
+
+**产出**：`reports/report_data_stackv3_eda_script_value_zh.html`
+- 中文、单文件自包含、内联 CSS、**零外链**、离线可开（沿用 `report_vision_textpair_sourcing_zh.html` 的规格）。
+- 结构（8 节 + 附录）：
+  1. 结论摘要（≤10 条，每条带数字）
+  2. 方法与口径（两阶段、抽样 seed、置信区间、判据阈值全表）
+  3. 元数据分布（语言 × 扩展名 × 路径关键词）
+  4. 脚本级判定结果（各语言“真脚本率” = 命中脚本 / 该语言抽样）
+  5. 价值分层主表（V1/V2/V3）
+  6. 能力映射：PyAether / Tcl / SKILL / Perl / SVRF / SPICE / Makefile 各自可用量与缺口
+  7. 取样建议（给 pretrain decay 的 code 成分、给 posttrain SFT、给 designflow 造题）——**要具体到路径模式 + 预计 token + 预估收益方向**
+  8. 风险与隔离（license ODC-By / vendor 剔除 / **评测集污染隔离**：EDA-Eval-PyAether、zhulong、designflow 相关 repo_path/关键字必须排除，并跑 13-gram 闸门）
+  附录：抽样清单 TSV、脚本路径、复现命令、Top 路径模式明细
+
+**纪律**：每个数字注明来源（parquet 文件/命令/脚本）；查不到写「未查到」，估算标「估算」；🚫 不许把猜测写成事实；🚫 不下载新数据、不改数据集本体、不动在跑的下载/分词任务。
+
+#### 4. 交付物与落盘
+
+1. `run/data/stackv3_eda_scan.py`（或 `.sh` + DuckDB）——两阶段可复跑，含 `--seed/--per-class-n/--shards` 参数；
+2. `run/data/stackv3_eda_meta_stats.tsv`、`run/data/stackv3_eda_value_summary.json`、`run/data/stackv3_eda_sample.tsv`（抽样清单，含标签与判据命中）；
+3. `reports/report_data_stackv3_eda_script_value_zh.html`；
+4. `run/data/DATA_MAPPING.md` 新增 **§H.12 EDA 脚本价值分析**（表 + 指针）；
+5. `MEMORY_DATA.md` 一行结论（V1/V2/V3 三行数 + 报告路径 + 建议一句话）；
+6. `git add` 本线文件 → commit → push。
+
+**验收**：报告可离线打开、0 外链、8 节齐全；主表三层数字自洽（文件数/字节/占比可复算）；抽样清单可复现（seed + 命令）；建议能直接被执行（路径模式 + token 预算）；污染隔离有实测证据（命中 0 或已剔除）。
+
+---
+
+
 ### 🔴 用户令 · 2026-11-12（**把 stack-v3-train 2TB 分词**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「Data：将 stack-v3-train 2TB 分词。」
