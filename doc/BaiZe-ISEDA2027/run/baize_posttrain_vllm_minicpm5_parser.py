@@ -12,6 +12,7 @@ CDATA-wrapped values for code with <, & or newlines:
 Registered as "minicpm5" in vLLM ToolParserManager.
 Usage: --tool-call-parser minicpm5
 """
+import ast
 import json
 import re
 from typing import Dict, List, Sequence, Union
@@ -54,6 +55,13 @@ def _convert_param_value(raw_value: str) -> object:
         try:
             return json.loads(raw_value)
         except json.JSONDecodeError:
+            pass
+        # Fallback: models often emit Python-style literals with single
+        # quotes (e.g. ['dbGetBitLabels']) which json.loads cannot parse.
+        # ast.literal_eval handles these safely.
+        try:
+            return ast.literal_eval(raw_value)
+        except (ValueError, SyntaxError):
             pass
     return raw_value
 
@@ -132,7 +140,11 @@ class MiniCPM5ToolParser(ToolParser):
     ) -> Union[DeltaMessage, None]:
         if "<function" not in current_text:
             return DeltaMessage(content=delta_text)
-        if "</function>" in delta_text or current_text.rstrip().endswith("</function>"):
+        # Only process NEW </function> closes (not re-trigger on every
+        # subsequent call where current_text still ends with </function>)
+        current_closes = current_text.count("</function>")
+        prev_closes = previous_text.count("</function>")
+        if current_closes > prev_closes:
             try:
                 tool_calls_raw = []
                 for match in FUNCTION_CALL_REGEX.finditer(current_text):
@@ -143,11 +155,30 @@ class MiniCPM5ToolParser(ToolParser):
                         "name": func_name,
                         "arguments": json.dumps(args, ensure_ascii=False)})
                 if tool_calls_raw:
-                    self.current_tool_id += 1
+                    self.current_tool_id = current_closes - 1  # 0-indexed
                     last_call = tool_calls_raw[-1]
+                    # Populate prev_tool_call_arr and streamed_args_for_tool
+                    # so vLLM's serving_chat.py finalization code can access them
+                    if len(self.prev_tool_call_arr) <= self.current_tool_id:
+                        self.prev_tool_call_arr.append({})
+                    if len(self.streamed_args_for_tool) <= self.current_tool_id:
+                        self.streamed_args_for_tool.append("")
+                    try:
+                        parsed_args = json.loads(last_call["arguments"])
+                    except (json.JSONDecodeError, TypeError):
+                        parsed_args = {}
+                    tool_call_id = f"chatcmpl-tool-{random_uuid()}"
+                    self.prev_tool_call_arr[self.current_tool_id] = {
+                        "name": last_call["name"],
+                        "arguments": parsed_args,
+                        "id": tool_call_id}
+                    self.streamed_args_for_tool[self.current_tool_id] = \
+                        last_call["arguments"]
                     return DeltaMessage(
                         tool_calls=[DeltaToolCall(
                             index=self.current_tool_id,
+                            id=tool_call_id,
+                            type="function",
                             function=DeltaFunctionCall(
                                 name=last_call["name"],
                                 arguments=last_call["arguments"]))])
