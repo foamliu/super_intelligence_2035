@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1097 · 2026-11-13 07:13】v9监控·SFT ep5/5 step280/305即将完成（loss avg=0.2350·进程健康）**：v9 RUNNING(PID1351796/etimes~8231s/stat=RNl/pcpu~1193%/RSS~78GB/进程健康)·SFT seed0 ep5/5 step280/305·loss 6.67→0.24(avg=0.2350@step280)·~29s/step·log最新step280@8192s·SFT剩余~25步≈12min→SFT完成≈07:25·后续eval(91q)+GRPO30步+seed1/seed2+control·ETA~3h(完成≈10:00)·v8 MIXED确认(A=0%格式问题/B=45%/C=52.5%±6.1% McNemar p=0.0312)·analyze_v9就绪·✅HTML报告45187B(v8版·reports/)→v9完成后更新·research日报11-13 06:12 vision栏GPTQ(部署阶段·不action)+第二条「无」·ops/inbox RUN_ID276(非vision·pretrain eval·不action)·git pull: Already up to date·GPU 8×H100 78-100% pretrain全占·体积TASK27KB/MEMORY 13KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1098 · 2026-11-13 07:17】v9监控·SFT ep5/5 step280/305持续健康（log尚未刷新·进程正常）**：v9 RUNNING(PID1351796/etimes~8492s/stat=RNl/pcpu~1193%/RSS~78GB/进程健康)·SFT seed0 ep5/5 step280/305(last log@8192s·~29s/step·下一日志step300≈07:22)·SFT剩余~25步≈12min→SFT完成≈07:28·后续eval(91q)+GRPO30步+seed1/seed2+control·ETA~3h(完成≈10:00)·v8 MIXED确认(A=0%格式问题/B=45%/C=52.5%±6.1% McNemar p=0.0312)·analyze_v9就绪·✅HTML报告45187B(v8版·reports/)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)+第二条「无」·ops/inbox RUN_ID276(非vision·pretrain eval·不action)·git pull: Already up to date·GPU pretrain全占·体积TASK27KB/MEMORY 13KB均✓·**WAITING: 0**。
+
+> 📦 **wake #1097 · 2026-11-13 07:13** v9监控·SFT ep5/5 step280/305·已fold(见wake#1098)。
 
 > 📦 **wake #1096 · 2026-11-13 07:09** v9监控·SFT ep5/5 step260/305·已fold(见wake#1097)。
 
@@ -82,4 +84,4 @@ WAITING: 0
 | 当前动作 | **wake#1097 v9实验运行中**：PID1351796健康(etimes~8231s/RNl/pcpu~1193%/RSS~78GB)·SFT seed0 ep5/5 step280/305·loss 6.67→0.24 avg=0.2350·~29s/step·log最新step280@8192s·SFT剩余~25步≈12min→SFT完成≈07:25·后续eval(91q)+GRPO30步+seed1/seed2+control·ETA~3h(完成≈10:00)·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。✅HTML报告在盘上(45187B·v8版·reports/)→v9完成后更新。 |
 | 下一步 | ①v9完成后(ETA≈10:00-12:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + **重新生成HTML报告**(report_vision_cpu_rl_waveform_zh.html·v8版在doc/BaiZe-ISEDA2027/reports/) ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 07:13 (wake #1097)**：v9 RUNNING监控·PID1351796健康(etimes~8231s/RNl/pcpu~1193%/RSS~78GB)·SFT seed0 ep5/5 step280/305·loss 6.67→0.24(avg=0.2350@step280)·~29s/step→SFT剩余~25步≈12min→ETA~3h(完成≈10:00)·v8 MIXED确认·analyze_v9就绪·✅HTML报告在盘上(45187B·v8版·doc/BaiZe-ISEDA2027/reports/)·research日报11-13 06:12 vision栏GPTQ(部署·不action)+第二条「无」·ops/inbox RUN_ID276非vision·git pull Already up to date·GPU pretrain全占(8×H100 78-100%)·体积TASK27KB/MEMORY 13KB均✓·WAITING=0。 |
+| 更新 | **2026-11-13 07:17 (wake #1098)**：v9 RUNNING监控·PID1351796健康(etimes~8492s/RNl/pcpu~1193%/RSS~78GB)·SFT seed0 ep5/5 step280/305(last log@8192s·下一step300≈07:22)·~29s/step→SFT剩余~25步≈12min→ETA~3h(完成≈10:00)·v8 MIXED确认·analyze_v9就绪·✅HTML报告在盘上(45187B·v8版·doc/BaiZe-ISEDA2027/reports/)·research日报11-13 vision栏GPTQ(部署·不action)+第二条「无」·ops/inbox RUN_ID276非vision·git pull Already up to date·GPU pretrain全占·体积TASK27KB/MEMORY 13KB均✓·WAITING=0。 |
