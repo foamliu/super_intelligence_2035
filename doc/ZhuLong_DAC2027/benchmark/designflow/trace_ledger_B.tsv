@@ -1335,3 +1335,5 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1790073773700_rwf2q.messages.json	bo1zhao	hfeg0plg11	13	spice_sim	parked		2026-11-12 08:24	RedHawk-SC PDF manual reading + web fetch, no SPICE sim, exploration not design-flow deliverable
 1793237833740_jlkql.messages.json	chentong	hfeg0plg49	11	spice_sim	parked		2026-11-12 08:24	STD_Check incomplete: ends ask_question (10 msgs), no task performed, aborted
 1790578411744_brrc3.messages.json	e0039602	hfeg0pkn002	49	spice_sim	parked		2026-11-12 08:24	AutoDebug code-reading+comparison report (V3 vs 0916), no SPICE/waveform sim, L1 docs
+1789106338537_v9zug					parked		2026-11-12 09:14	kanban app session (.cline/apps/kanban/), not cline coding session, REJECT peek r421
+1791445250037_2gxuy					parked		2026-11-12 09:14	consultation: how-to open vscode, hspice:20 kw but 0 sim, REJECT peek r421
