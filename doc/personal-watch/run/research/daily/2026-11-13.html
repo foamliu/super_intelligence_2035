@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第十七轮 67 篇 · 作者网 73 人）· research 线</title>
+<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第十八轮 71 篇 · 作者网 77 人）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,10 +54,10 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-13</h1>
-  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第十七轮累计 <b>67</b> 篇经典（必读清单 37/37 ＋ 补充 serving 侧）＋ 👥 作者网 <b>73</b> 人 ＋ 🗣 voice_ready <b>2</b> 条（V17＋V18）＋ ✉ 作者信本轮 <b>1</b> 封 / 今日 <b>4</b> 封 / 累计 <b>25</b> 封</div>
+  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第十八轮累计 <b>71</b> 篇经典（必读清单 37/37 ＋ 补充 EDA 流程 / 长上下文 / 存储）＋ 👥 作者网 <b>77</b> 人 ＋ 🗣 voice_ready <b>2</b> 条（V17＋V18）＋ ✉ 作者信 06:00 轮 <b>1</b> 封 / 今日 <b>5</b> 封 / 累计 <b>26</b> 封</div>
   <div class="meta">
     <span>数据源：arXiv API（公告批 2026-11-10，未刷新）</span>
-    <span>生成：2026-11-13 03:0x（03:00 时窗 · 补齐至 5/5）</span>
+    <span>生成：2026-11-13 06:1x（06:00 时窗 · A 轨复核 ＋ B 轨第十八轮）</span>
     <span>进度：<b>5 / 5</b>（已收口）</span>
     <span>出口：仅 HTML（🚫 不发日报邮件）</span>
   </div>
@@ -197,7 +197,7 @@
 </ul>
 </details>
 
-<h2 class="sec">🅱 B 轨 · 经典论文第十七轮（+4 → 67）</h2>
+<h2 class="sec">🅱 B 轨 · 经典论文第十七轮（03:00 轮，+4 → 67）</h2>
 <p style="font-size:13px;color:#59636e;">判据：被引 ≥500 / 奠基 / 方法论常青 / 本领域标志性（满足任一）。被引数为 <b>OpenAlex</b> 实测，查询日 <b>2026-11-13</b>；S2 未查，<b>不同来源不可跨源比较</b>。本轮 4 条：Chip Placement（AlphaChip 预印本；Nature 版 <b>704</b>、预印本 <b>274</b>）/ YaRN（<b>591</b>）/ Speculative Decoding（<b>354 ⚠️</b>，&lt;500，按「奠基」收录）/ GPTQ（<b>2,195</b>）。本轮首次系统补上 <b>serving 侧（解码加速 + 后训练量化）</b> 这条此前没有落点的线。</p>
 <table>
   <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献（节选）</th><th>服务线</th></tr>
@@ -212,7 +212,7 @@
 </table>
 <p style="font-size:13px;">完整 67 条（8 字段 + 影响层级 + 风险）见 <code>research/classic/PAPERS.md</code>；本轮 4 条的「与我们工作的关系」均点名到具体线与预注册判据（Chip Placement → designflow 布局题；YaRN → pretrain 长上下文；Spec-Dec / GPTQ → zhulong serving 成本）。</p>
 
-<h2 class="sec">👥 作者关系网（本轮 +4 → 73）</h2>
+<h2 class="sec">👥 作者关系网（03:00 轮 +4 → 73）</h2>
 <table>
   <tr><th>#</th><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
   <tr><td>66</td><td>Yizhong Wang</td><td>ByteDance Seed（X bio：2026 fall 起 UT Austin 助理教授）</td><td>Self-Instruct <code>2212.10560</code>（一作）</td><td>yizhongw01@gmail.com（主页 <code>mailto:</code>，200 / 26,625 B）</td><td><b>@yizhongwyz</b></td><td>已发信（中文 224 字）· X 待 follow</td></tr>
@@ -253,8 +253,67 @@
 ① 今日 <b>5/5</b> 收口（3 篇 00:00 + 2 篇 03:00，均为 <code>SEEN.md</code> 里 11-12 登记的强候补，非超窗凑数）；② 5 篇均实测 <code>HTTP 200</code> + <code>atom+xml</code> + 真实 <code>published</code>（<code>200 ≠ 有料</code> 已校验；第 5 篇 ≈71h，已在卡内与附录 A 标注）；③ 与 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> 0 重复（这 5 篇此前仅为「候选」状态，未作为推荐出现过）；④ 数字均指到摘要原句，未改写原题；⑤ B 轨 4 条均 8 字段 + 被引查询日，Chip Placement 双口径（Nature 704 / 预印本 274）分列、Spec-Dec 354⚠️ 显式标注；⑥ 作者网不猜 handle/邮箱（Kawin 主页 000、Elias Frantar 主页 000 且 X 无 bio、Dan Alistarh X 404 ⇒ 写「未找到」）；⑦ <code>voice_ready</code> 2 条均原文 + 链接 + 时间三件套齐（V17 两处核验、V18 推文页 <code>og:description</code> 全文核验）；⑧ 未发日报邮件、0 follow、未注册账号、未用未授权凭据；本轮唯一外发 = 1 封作者请教信（Dan Alistarh，草稿先入仓、台账已记）；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push。
 </div>
 
+<h2 class="sec">🔄 06:00 轮 · A 轨复核（批次未刷新 ⇒ 0 新收）</h2>
+<p style="font-size:13.5px;">当日额度 <b>5/5 已在 03:00 收口</b>，本轮按令做<b>重扫复核</b>，不超额、不凑数。单分类 5 查询 <b>5/5 <code>200</code> + <code>application/atom+xml; charset=utf-8</code></b>（1.21 / 1.14 / 1.26 / 1.15 / 1.46 s，串行间隔 ≥3.2 s）；<code>totalResults</code> = <b>125,187 / 213,062 / 298,685 / 212,409 / 30,986</b>，与 00:00 / 03:00 轮<b>逐字节同值</b> ⇒ 公告批仍为 <b>2026-11-10</b>，<b>本轮无新论文</b>。merged <b>303</b> / 与 <code>SEEN.md</code> 重复 <b>9</b> / 新候选 <b>294</b>；窗口内最晚 <code>published = 2026-11-10T18:59:54Z</code>。产物 <code>research/raw/2026-11-13-06h-candidates-r161.json</code>（脚本 <code>raw/candidates_r162.py</code>）。</p>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第十八轮（+4 → 71）：EDA 流程 / 长上下文 / 存储双基座</h2>
+<table>
+  <tr><th>#</th><th>论文（标题 · 年份 · 出处）</th><th>被引</th><th>一句话贡献</th><th>服务线</th></tr>
+  <tr><td>68</td><td>Toward an Open-Source Digital Flow: First Learnings from the OpenROAD Project（<b>DAC 2019</b>，DOI <code>10.1145/3316781.3326334</code>；<b>无 arXiv</b>）</td><td><b>216</b></td><td>开源端到端 silicon compiler 的 Alpha 计划：综合 / floorplan / 布局 / CTS / 全局与详细布线 + STA / 寄生提取 / 电源完整性 / 云部署，并给出「lessons learned」；<b>摘要无任何 PPA 数字</b>。</td><td>designflow · harness · zhulong · data</td></tr>
+  <tr><td>69</td><td>LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens（<b>arXiv 2024</b>，<code>2402.13753</code>）</td><td><b>302</b>⚠️</td><td>位置插值非均匀性搜索 + <b>渐进式两段扩展</b>（256k → 2048k）+ 8k 回校；≤256k 训练长度下至多 <b>1k 步微调</b>，免微调 8× 扩展；LLaMA2 / Mistral 实验。</td><td>pretrain · data · harness</td></tr>
+  <tr><td>70</td><td>Ramulator: A Fast and Extensible DRAM Simulator（<b>IEEE CAL 2015</b>，DOI <code>10.1109/LCA.2015.2414456</code>；<b>无 arXiv</b>）</td><td><b>799</b></td><td>「通用模板 + 标准细节」的周期精确 DRAM 模拟器：DDR3/4、LPDDR3/4、GDDR5、WIO、HBM + 学术提案；作者自报比次快模拟器快 <b>2.5×</b>，BSD。</td><td>zhulong · designflow · data</td></tr>
+  <tr><td>71</td><td>Flipping Bits in Memory Without Accessing Them（<b>ISCA 2014</b>，RowHammer；DOI <code>10.1145/2678373.2665726</code>；<b>无 arXiv</b>）</td><td><b>967</b> / 528⚠️</td><td>反复激活同一 DRAM 行会破坏邻近行：129 模块中 <b>110</b> 个被诱发错误、最少 <b>139K</b> 次访问、每 <b>1.7K</b> 单元最多 1 个易感；根因字线反复翻转。</td><td>data · designflow · zhulong · harness</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">被引数均为 <b>OpenAlex 实测（查询日 2026-11-13）</b>；S2 / Google Scholar 未查。⚠️ 302 / 216 两条 &lt;500，按「领域奠基 / 常青」收录并显式标注；RowHammer 在 OpenAlex 有 ACM / IEEE 双记录（967 / 528，同一篇），<b>取较高记录并注明拆分，未相加</b>。必读清单仍 <b>10/10 组、37/37 条目全覆盖</b>（本轮为补充）。</p>
+
+<div class="note"><b>为什么这 4 条现在收：</b>前几轮把「新论文 + 方法论常青」补齐后，仍缺三块<b>基座</b>——① <b>可复现的 EDA 流程</b>（OpenROAD，直接决定 designflow 的题能不能判）；② <b>长上下文的第二条路线</b>（LongRoPE，与 #65 YaRN 形成对照，避免单臂结论）；③ <b>存储域的模拟 + 可靠性源头</b>（Ramulator / RowHammer，服务 zhulong 的批量评测与 data 的领域语料）。这四条都<b>不是「老论文凑数」</b>：每条都在「与我们工作的关系」里点名了具体落点与预注册判据。</div>
+
+<h2 class="sec">🎯 06:00 轮 · 新增可执行建议（4 条，按线）</h2>
+<table>
+  <tr><th>线</th><th>可执行动作（命令 / 实验设计）</th><th>预注册判据</th></tr>
+  <tr><td><b>designflow</b></td><td>按 <b>OpenROAD（#68）</b> 建一个「最小可复现 flow」：固定工具 commit + PDK，5 个小设计跑「综合→布局→布线→STA」，落 WNS / TNS / area / power 四项。</td><td>同输入连跑两次任一指标漂移 <b>&gt;2%</b> ⇒ 判「不可复现」，🚫 不进判分基线；DRC / timing 报告不可解析 ⇒ 题目定义作废。</td></tr>
+  <tr><td><b>harness</b></td><td>给 flow 类题加三道<b>独立门</b>：DRC clean、timing 报告可解析、版图可 diff；判分只读门的结果，不读模型自述。</td><td>模型自述成功但三门任一不过 ⇒ 记失败；人工复核一致率 &lt;0.8 ⇒ 该门先不上线。</td></tr>
+  <tr><td><b>zhulong</b></td><td>用 <b>Ramulator（#70）</b> 做一次吞吐标定：固定 trace 单配置墙钟时间；再决定「LLM 出配置 → 模拟」闭环的搜索预算。</td><td>单次评测 <b>&gt;30s</b> ⇒ 先做代理模型 / 缩短 trace，🚫 直接上大搜索；标定与实测偏差 &gt;15% ⇒ 只做粗筛。</td></tr>
+  <tr><td><b>pretrain</b></td><td>按 <b>LongRoPE（#69）</b> 设计「YaRN 一步扩到 64k」vs「32k→64k 两段 + 8k 回校」同算力对照（2B 模型）。</td><td>64k 检索掉点 &gt;3pp 或短上下文回升 &lt;1pp ⇒ 只作推理期扩展，不进训练配方。</td></tr>
+  <tr><td><b>data</b></td><td>两件事：① 为长上下文对照准备长文档语料并单列<b>长度分布</b>；② 从 OpenROAD 脚本 / 日志 / 报告与 DRAM 规格文本抽「结构化领域文本」样本。</td><td>长文语料 &lt;1B token ⇒ 不做长上下文对照；8-gram 与评测集重叠即剔除。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮 4 条经典均不涉视觉；不凑数）。</td><td>—</td></tr>
+</table>
+
+<h2 class="sec">👥 作者关系网（第十八轮 +4 → 77；X 已核验 43）</h2>
+<table>
+  <tr><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>Andrew B. Kahng</b></td><td>UC San Diego（CSE / ECE 教授）</td><td>OpenROAD DAC 2019（资深作者）</td><td><code>abk@ucsd.edu</code>（UCSD 现行主页 <code>vlsicad.ucsd.edu/~abk/index.html</code>，<code>200</code>，页内 <code>mailto:</code> 逐字）</td><td><b>未找到</b>（<code>@AndrewKahng</code> <code>200</code> 但 0 followers / 无 bio ⇒ 不登记）</td><td><b>已发信</b>（06:09，英文 180 词）</td></tr>
+  <tr><td><b>Li Lyna Zhang</b></td><td>Microsoft Research Asia（X bio 自述）</td><td>LongRoPE（二作）</td><td><b>未找到</b>（MSR 个人页 <code>200</code> / 202,616 B，无 <code>mailto:</code>；不猜 <code>@microsoft.com</code>）</td><td><b><code>@LynaZhang</code></b>（<code>&lt;title&gt;</code> + <code>og:description</code> + 其「our LongRoPE2…」推文，三重一致）</td><td>待跟踪</td></tr>
+  <tr><td><b>Yoongu Kim</b></td><td>CMU（论文发表时；当前未核）</td><td>Ramulator（一作）· RowHammer（一作）</td><td><b>未找到</b>（Google Sites 个人页经代理跳登录页；Scholar 同样被拦；不猜）</td><td><b>未找到</b>（<code>@yoongukim</code> <code>200</code> 但 18 followers / 无 bio ⇒ 不登记）</td><td>待跟踪</td></tr>
+  <tr><td><b>Tutu Ajayi</b></td><td>University of Michigan（论文发表时；当前未核）</td><td>OpenROAD DAC 2019（一作）</td><td><b>未找到</b>（未核到个人主页；不猜）</td><td><b>未找到</b>（<code>@TutuAjayi</code> <code>200</code> 但 85 followers / 无 bio ⇒ 不登记）</td><td>待跟踪</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">X 侧实测本 shell <b>直连 <code>000</code></b>、显式 <code>--proxy http://127.0.0.1:7897</code> <b><code>200</code></b>（与既往一致）；profile 6/6 <code>200</code>，其中 <code>abkahng</code> / <code>llynazhang</code> 为 <b>404</b>（handle 不存在，属负证据）。<b>已 follow 仍为 0</b>（follow 需登录态 ⇒ 未假装执行；待 follow 清单已增至 <b>36 个 handle</b>）。完整 77 人档案见 <code>research/classic/AUTHORS.md</code>。</p>
+
+<h2 class="sec">✉ 作者信（06:00 轮 1 封，<code>SENT OK 2026-11-13 06:09:06</code>；今日累计 5 封 / 累计 26 封）</h2>
+<table>
+  <tr><th>对象</th><th>论文</th><th>语言 / 长度</th><th>三个问题（回填哪一步）</th></tr>
+  <tr><td><b>Andrew B. Kahng</b>（06:09:06）</td><td>OpenROAD DAC 2019（无 arXiv）</td><td>英文 · <b>180 词</b>（发送前 <code>wc -w</code> 已核）</td><td>① lessons learned 中哪些工具间接口 / 版本耦合最脆、agent 该依赖哪些不变量 → designflow 保真度；② 当评测基线的最小固定集（工具 commit / PDK / 设计集）+ 抓静默回归的 QC → harness 判分口径；③ agent 改脚本的最小护栏（DRC / timing / 指标门）与朴素自动化失败点 → zhulong 闭环</td></tr>
+</table>
+<div class="note">红线自查：单收件人、不群发、不催；不承诺合作 / 署名 / 资助；不透露未公开内部信息；不夸大；同论文 ≤1、同机构 ≤2 封/天（UCSD 今日 1 封）。草稿先入仓 <code>research/mail/drafts/openroad-dac19.md</code>，台账 <code>research/mail/发送记录.md</code> 已追加（<b>没写 = 没发</b>）。</div>
+
+<h2 class="sec">附录 A2 · 检索式与命中数（2026-11-13 06:0x · 可核验）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（06:00 轮）</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,187</td><td>1.21 s</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,062</td><td>1.14 s</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>298,685</td><td>1.26 s</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,409</td><td>1.15 s</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>30,986</td><td>1.46 s</td></tr>
+</table>
+<p style="font-size:13px;">5 个 <code>totalResults</code> 与 00:00 / 03:00 轮<b>逐字节同值</b> ⇒ 公告批仍 <b>2026-11-10</b>，<b>06:00 轮无新论文</b>；当日 5/5 已满 ⇒ <b>0 新收</b>。产物 <code>research/raw/2026-11-13-06h-candidates-r161.json</code>（脚本 <code>raw/candidates_r162.py</code>）。B 轨元数据：OpenAlex <b>2/2 精确检索 + 3/3 DOI 直查</b> 均 <code>200</code>；arXiv <code>id_list=2402.13753</code> <code>200</code> + atom（LongRoPE 首次提交 <code>2024-02-21T12:30:33Z</code>，8 位作者）。</p>
+
+<h2 class="sec">附录 B2 · 06:00 轮口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>、<code>totalResults</code> 与前两轮逐字节同值 ⇒ <b>0 新收</b>（当日 5/5 已满，不超额、不凑数）；② B 轨 4 条<b>均 8 字段</b>，被引数标查询日；两条 &lt;500（216 / 302）显式写「按奠基收」，RowHammer 双记录（967 / 528）<b>拆分说明、未相加</b>；③ <b>无 arXiv 的三条（OpenROAD / Ramulator / RowHammer）逐条标注「无 arXiv」</b>，未伪称 arXiv 一手；④ 作者网<b>不猜</b>：Kahng 邮箱取自现行 UCSD 主页 <code>mailto:</code>；<code>@AndrewKahng</code> / <code>@yoongukim</code> / <code>@TutuAjayi</code> 均「页面存在但无 bio」⇒ <b>不登记</b>；Li Lyna Zhang 三重核验后才登记；⑤ <code>voice_ready</code> 本期已满 2 条（V17＋V18）⇒ 本轮 <b>0 新增</b>；LongRoPE 作者近期推文 &gt;30 天 ⇒ 不采用；⑥ <code>news_ready</code> <b>0 条</b>（本轮无新论文，B 轨经典无「发布 / 开源 / 首次」事件点，不硬凑）；⑦ 本轮唯一外发 = 1 封作者请教信（草稿先入仓、台账已记、180 词已核）；⑧ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-13（03:00 时窗 · 5/5 收口）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 03:0x CST<br>
+  研究线 · 论文观察日报 · 2026-11-13（06:00 时窗 · A 轨复核 + B 轨第十八轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 06:1x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

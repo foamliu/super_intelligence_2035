@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **73** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**）｜已发信 **25**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh**）｜X 已核验 **42**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`**）｜X 未找到 / 未核验 **31**（73 人中 42 已核验；`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **18 条**（V1–V18；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，本期首发**；**V18 = Jason Wei 2026-11-12 原推（推文页 `og:description` 全文核验），本期采用**）
+**本轮快照**：累计 **77** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**）｜已发信 **26**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng**）｜X 已核验 **43**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`**）｜X 未找到 / 未核验 **34**（77 人中 43 已核验；`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **18 条**（V1–V18；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，本期首发**；**V18 = Jason Wei 2026-11-12 原推（推文页 `og:description` 全文核验），本期采用**）
 
 
 ---
@@ -979,6 +979,60 @@
 
 ---
 
+### 74. Andrew B. Kahng
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Andrew B. Kahng（非中文姓名 ⇒ 信按英文写） |
+| 机构 | **University of California, San Diego**（CSE 与 ECE 教授；主页自述 `Professor of CSE and ECE`）· OpenROAD / TILOS 项目核心 |
+| 代表论文 | Toward an Open-Source Digital Flow: First Learnings from the OpenROAD Project（DAC 2019，**21 位作者中的资深作者**，B 轨 #68）· 版图 / 布局布线方向长期工作（本轮未逐条核） |
+| 邮箱 | **abk@ucsd.edu**（来源：UCSD 现行主页 `https://vlsicad.ucsd.edu/~abk/index.html`，实测 `HTTP 200`，页内 `mailto:abk@ucsd.edu` 逐字；`cseweb.ucsd.edu/~abk/` 为指向同一主页的重定向页，亦含该地址。**非论文 PDF 旧地址**） |
+| 主页 | <https://vlsicad.ucsd.edu/~abk/>（实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com/AndrewKahng` 实测 `200` 但 `<title>` 仅 `andrewkahng (@andrewkahng) / X`、**0 followers / 无 bio / 2025-05 注册** ⇒ 身份不可证，按纪律**不登记**；🚫 不试猜其他 handle） |
+| 状态 | **已发信**（2026-11-13 06:1x `SENT OK`；英文，发送前 `wc -w` 已核）· X 未找到 |
+| 备注 | 信问三点：① OpenROAD「lessons learned」里哪些**工具间接口 / 版本耦合**最脆、agent 流程该依赖哪些不变量；② 把开源 flow 当**评测基线**时如何固定工具 + PDK 版本、用什么 QC 抓「静默回归」；③ agent 改脚本 / 约束时，接受改动前**最小护栏**是什么（DRC / timing / 指标门）。分别回填 designflow 造题与保真度、harness 判分口径、zhulong 闭环。 |
+
+### 75. Li Lyna Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Li Lyna Zhang（中文姓名 ⇒ 若发信按中文写；本轮无邮箱 ⇒ 未发） |
+| 机构 | **Microsoft Research Asia**（X bio 自述 `Principle Researcher at Microsoft Research Asia`） |
+| 代表论文 | LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens（arXiv `2402.13753`，**二作**，B 轨 #69）· 长上下文 / LLM self-play / reasoning 方向（X bio 自述） |
+| 邮箱 | **未找到**（MSR 个人页 `https://www.microsoft.com/en-us/research/people/lzhani/` 实测 `HTTP 200` / 202,616 B，页面**无 `mailto:` / 无明文邮箱**；🚫 不猜 `@microsoft.com` 地址） |
+| 主页 | <https://www.microsoft.com/en-us/research/people/lzhani/>（实测 `HTTP 200`） |
+| X 账号 | **@LynaZhang**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Li Lyna Zhang (@LynaZhang) / X`，`og:description` = `Principle Researcher at Microsoft Research Asia / Long context LLM, LLM self-play, Reasoning`；profile 内其 2025-10-10 推文自述 `our LongRoPE2…` ⇒ **姓名 + 机构 + 代表作三重一致**） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | 长上下文配方的**一手判断源**（LongRoPE / LongRoPE2 / rStar2-Agent 均为其参与工作）⇒ 与 pretrain 长上下文 + data 长文语料两条线直接相关。⚠️ 推文时间多为 2025 年，`voice_ready` 要求 ≤30 天 ⇒ 只作跟踪，不直接引用旧推。 |
+
+### 76. Yoongu Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yoongu Kim |
+| 机构 | 论文发表时 **Carnegie Mellon University**（RowHammer / Ramulator 均为 CMU 时期工作；**当前职位本轮未核**） |
+| 代表论文 | Ramulator: A Fast and Extensible DRAM Simulator（IEEE CAL 2015，**一作**，B 轨 #70）· Flipping Bits in Memory Without Accessing Them（ISCA 2014，**一作**，B 轨 #71） |
+| 邮箱 | **未找到**（个人页 `https://sites.google.com/view/yoongukim` 经代理实测 **跳到 Google 登录页**，取不到正文；Google Scholar 同样被登录页拦截 ⇒ 按纪律**不猜**） |
+| 主页 | 未核验（同上，登录墙） |
+| X 账号 | **未找到**（`x.com/yoongukim` 实测 `200`、`<title>` = `Yoongu Kim (@yoongukim) / X`，但 **18 followers / 无 bio** ⇒ 身份不可证，**不登记**） |
+| 状态 | **待跟踪**（无邮箱、无已核 X ⇒ 仅建档） |
+| 备注 | 两篇存储经典的**共同一作** ⇒ 一份关系覆盖「DRAM 模拟基座 + 可靠性」。同论文另两位作者中 Onur Mutlu 已发过信（Ramulator 2.0）⇒ 按「同作者 ≤1」不再追发，待其新主页 / 新论文挂联系方式再评估。 |
+
+### 77. Tutu Ajayi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tutu Ajayi |
+| 机构 | 论文发表时 **University of Michigan**（OpenAlex `authorships.institutions`；**当前职位本轮未核**） |
+| 代表论文 | Toward an Open-Source Digital Flow: First Learnings from the OpenROAD Project（DAC 2019，**一作**，B 轨 #68） |
+| 邮箱 | **未找到**（本轮未核到个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **未找到**（`x.com/TutuAjayi` 实测 `200`、`<title>` = `Tutu Ajayi (@TutuAjayi) / X`，但 **85 followers / 无 bio** ⇒ 身份不可证，**不登记**） |
+| 状态 | **待跟踪**（同论文已由资深作者 Andrew B. Kahng 覆盖，按「同论文 ≤1」不另发） |
+| 备注 | 一作视角对 OpenROAD 早期集成细节最熟；若后续挂出主页 / 邮箱，可追问「flow 复现的最小固定集」（工具版本 / PDK / 设计集）。 |
+
+---
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -1008,7 +1062,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 35 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 36 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -1047,9 +1101,10 @@
 | 33（**第十三轮新增**） | Onur Mutlu | `@_onurmutlu_` | <https://x.com/_onurmutlu_> | `200`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University; ... Computer Architect ... Group: @SAFARI_ETH_CMU`；handle 亦见于其 ETH 主页 `twitter.com/_onurmutlu_` | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）⇒ 与我们 CXMT 场景最贴的技术判断源 |
 | 34（**第十七轮新增**） | Azalia Mirhoseini | `@Azaliamirh` | <https://x.com/Azaliamirh> | `200`，`<title>` = `Azalia Mirhoseini (@Azaliamirh) / X`，bio = `Founder @RicursiveAI, Asst. Prof. of CS at Stanford. Prev: DeepMind, Anthropic, Brain. Co-Creator of MoEs, AlphaChip, Test Time Scaling.`；handle 亦见于其本人主页 `href` | AlphaChip / MoE 共同作者 + 现做「AI 设计芯片」 ⇒ **designflow 布局线的第一关系人** |
 | 35（**第十七轮新增**） | Jeffrey Quesnelle | `@theemozilla` | <https://x.com/theemozilla> | `200`，`<title>` = `emozilla (@theemozilla) / X`，bio = `catholic, ai researcher, co-founder/cto of @NousResearch`；核验链 = YaRN 代码仓库 `github.com/jquesnelle` 页外链 `twitter.com/theemozilla` | YaRN 二作 ⇒ 长上下文扩展的工程细节一手来源（⚠️ X 页不显示真名，按「机构 + 仓库归属」三方拼合登记） |
+| 36（**第十八轮新增**） | Li Lyna Zhang | `@LynaZhang` | <https://x.com/LynaZhang> | `200`，`<title>` = `Li Lyna Zhang (@LynaZhang) / X`，`og:description` = `Principle Researcher at Microsoft Research Asia / Long context LLM, LLM self-play, Reasoning`；其 2025-10-10 推文自述 `our LongRoPE2…` ⇒ **姓名 + 机构 + 代表作三重一致** | LongRoPE 二作 ⇒ 长上下文配方（渐进扩展 / 短上下文回校）的一手判断源；⚠️ 近期推文多 >30 天，`voice_ready` 需等新发言 |
 
 
-> **35 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**、**31–33 第十三轮 `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_`**、**34–35 第十七轮 `@Azaliamirh` / `@theemozilla`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio ⇒ **均拒绝登记**（见主表 #33 / #40）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮起按 27/28 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
+> **36 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**、**31–33 第十三轮 `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_`**、**34–35 第十七轮 `@Azaliamirh` / `@theemozilla`**、**36 第十八轮 `@LynaZhang`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio、`x.com/AndrewKahng` / `x.com/yoongukim` / `x.com/TutuAjayi` 虽 `200` 但**无 bio、身份不可证** ⇒ **均拒绝登记**（见主表 #33 / #40 / #74 / #76 / #77）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮按 36 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -1109,6 +1164,7 @@
 | 2026-11-12 18:06（**第十四轮**） | Nathan Lambert | `2310.16944` Zephyr | 本人站点 `interconnects.ai/about` 明文 `mail@interconnects.ai`（`200` / 196,029 B） | `SENT OK`（**英文 178 词**，发送前 `wc -w` 已核；⚠️ newsletter 公开信箱 ⇒ 30 天无回音记「通道未达」，不催） |
 
 | 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
+| 2026-11-13 06:09（**第十八轮**） | Andrew B. Kahng | OpenROAD DAC 2019（无 arXiv） | 本人现行 UCSD 主页 `vlsicad.ucsd.edu/~abk/index.html` 的 `mailto:abk@ucsd.edu`（`200`，页内逐字；`cseweb.ucsd.edu/~abk/` 为同页重定向） | `SENT OK`（`abk@ucsd.edu`，**英文 180 词**；🚦 发送前 `wc -w` 已核；UCSD 今日第 1 封。X 无 bio ⇒ 未登记） |
 
 ---
 

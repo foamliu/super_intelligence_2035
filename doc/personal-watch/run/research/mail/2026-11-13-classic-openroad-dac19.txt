@@ -1,0 +1,16 @@
+Dear Professor Kahng,
+
+I am Yang Liu, an engineer working on BaiZe (ISEDA 2027) and ZhuLong (DAC 2027), two projects that apply language models to chip design flows. We are re-reading "Toward an Open-Source Digital Flow: First Learnings from the OpenROAD Project" (DAC 2019) because we want to use an open, scriptable flow as a reproducible evaluation base instead of a proprietary one.
+
+Three questions:
+
+1. Among the "lessons learned", which tool-to-tool interfaces (synthesis, placement, CTS, routing, or timing and parasitic extraction) proved most brittle across tool versions? If an agent's actions must survive a version bump, which invariants should we depend on?
+
+2. To use the flow as a scoring baseline, what is the minimal fixed set you would pin (tool commit, PDK, design suite), and which QC checks catch silent regressions before metrics drift?
+
+3. When an agent edits scripts or constraints, what minimal guardrails did you find necessary before accepting a change (DRC clean, timing report parse, metric gates), and where did naive automation fail?
+
+Any pointers would directly shape our benchmark design.
+
+Thank you,
+Yang Liu
