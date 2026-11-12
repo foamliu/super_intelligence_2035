@@ -6640,3 +6640,46 @@ $HOME/code/verl_cu124_venv/bin/python baize_posttrain_r321_missing_api_coverage.
 - sandbox 10.129.32.75:8667 仍 CLOSED（poll #980, 123rd wake check）
 - sentinel 5 serve 全 UP（17:10 占位维持）
 - 无伪造：所有数字为真实语料分析 + MCP 查询结果脚本计算
+
+---
+
+## §R322 Data Gap SFT Synthesis Pipeline + PoC Batch（2026-11-12 wake322）
+
+### 目标
+R321 识别出 166 个「true data gap」API（NOT in SFT corpus）。本节构建从 MCP API 文档合成 SFT 训练对的 pipeline，并用 8 个 API 做 PoC 验证。
+
+### Pipeline 设计
+- **输入**：compact MCP docs JSON（api_name, api_type, signature, description, example）
+- **处理**：每个 API 生成 ≤2 个训练对
+  - doc pair：「请说明 pyAether 中 X API 的用法」→ 签名+说明+示例
+  - code pair：「用 pyAether 的 X 编写代码示例」→ 示例代码（仅有 example 时）
+- **输出**：Alpaca-style JSONL（{instruction, input, output}）
+- **污染预检**：name-level blocklist（eval entry_point 名称不作为训练目标）
+- **全量闸门**：baize_posttrain_contamination_gate.sh（13-gram ≥0.8 或 8-gram 兜底，536 任务黑名单）
+
+### PoC Batch 结果
+- 8 data gap APIs（EmyLPPHeader.getLayerNum/getMaskNum/getPacketName, GuCartPolyLine.getPointArray, MdeDcAnalysis.setSweepRange, MdeSweepRange.span, emyTransformF.invert/orient）
+- MCP get_api_details 获取文档 → 提取 compact 签名+描述+示例（裁剪 verbose 补充说明）
+- Synthesis：**8 APIs → 14 SFT pairs（8 doc + 6 code），7.5 KB，0 blocked**
+- Contamination gate：**PASS（14 scanned, 0 hit）**
+- Modules covered：EmyLPPHeader×3, GuCartPolyLine×1, MdeDcAnalysis×1, MdeSweepRange×1, emyTransformF×2
+
+### 关键结论
+1. **Pipeline 可用**：MCP docs → SFT pairs 的转换 pipeline 验证通过，输出格式正确，污染闸门 PASS。
+2. **API 参考文档允许入训练**（contam gate §1 规则）：函数签名/参数说明/示例是「来源材料」，不是评测任务的 prompt/entry_point/test。
+3. **PoC 规模**：8/166 APIs 覆盖，预估 full 166 → ~250-330 pairs（部分 API 仅有签名无示例 → 仅 doc pair）。
+4. **扩展计划**：fetch remaining 158 via MCP get_api_details → re-run pipeline → contam gate → 合并到 SFT v38 语料。
+5. **SFT 增强双路策略**（R321 结论确认）：
+   - data gap（166）→ MCP 文档合成训练对（本 pipeline）
+   - learning failure（178）→ 频率/质量提升 + RL R4 强化
+
+### 产物
+| 文件 | 说明 |
+|:--|:--|
+| baize_posttrain_r322_datagap_sft_synthesis.py | Synthesis pipeline script |
+| r322_datagap_api_docs.json | Compact MCP docs for 8 PoC APIs |
+| r322_datagap_sft_pairs.jsonl | 14 synthesized SFT training pairs |
+| r322_sft_synthesis_stats.json | Pipeline stats |
+
+### 无伪造声明
+所有数字为 MCP get_api_details 实际返回 + synthesis 脚本计算 + contamination gate 实跑结果。
