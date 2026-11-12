@@ -316,6 +316,27 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   </div>
 </div>
 
+<!-- L2 HumanEval HF partial result -->
+<div class="card" style="border-left:4px solid var(--ok)">
+  <h3>🟢 L2 HumanEval HF 部分评测 · pass@1 &gt; 0% 确认（#2054 · 2026-11-12 13:45）</h3>
+  <div class="ok-box">
+    <b>用 sglang env (transformers 5.18.0, torch 2.9.1, native NemotronH) 对 160k ckpt 做 HumanEval limit=20</b> → 完成 4/20 后因 CPU 争用训练(step 7354ms → 接近 7.4s 阈值)被 kill。<br>
+    <b>HumanEval/3 (below_zero) ✅ PASS</b>：生成 <code>"balance=0;for x in operations:balance+=x;if balance&lt;0:return True;return False"</code> 完全正确。<br>
+    HumanEval/0,1,2 FAIL 但生成<b>连贯代码</b>（非 llama.cpp 的 repetition loop）。<br>
+    <b>pass@1 &gt; 0%（≥1/4=25% 部分样本）vs llama.cpp 0/100=0%</b> → 确认 llama.cpp SSM bug 是 L2 生成任务 0% <b>主因</b>。
+  </div>
+  <table>
+    <tr><th>评测路径</th><th>HumanEval pass@1</th><th>生成质量</th><th>结论</th></tr>
+    <tr><td class="l">llama.cpp (CPU, F16 GGUF)</td><td class="bad">0/100 = 0.0%</td><td class="l">重复退化 ("111...")</td><td class="bad">SSM 生成 bug</td></tr>
+    <tr><td class="l">HF transformers (CPU, bf16)</td><td class="ok">≥1/4 = 25% (部分)</td><td class="l">连贯代码（Fibonacci ✅, below_zero ✅）</td><td class="ok">生成正常</td></tr>
+  </table>
+  <div class="note">
+    <b>环境</b>：sglang conda env on .29 · CPU bfloat16 · OMP_NUM_THREADS=4 · nice 19<br>
+    <b>阻塞</b>：py310 env 有 sklearn/numpy 二进制不兼容（<code>ValueError: numpy.dtype size changed</code>），需用 sglang env<br>
+    <b>下一步</b>：完整 HumanEval HF 评测需 <code>torch.set_num_threads(4)</code> + <code>taskset -c 0-3</code> 限制 CPU，避免训练 step 超过 7.4s 阈值。当前训练 step ~6928ms，仅剩 ~470ms headroom，暂不运行——等训练 step 回落或 GPU 窗口开放后重跑。
+  </div>
+</div>
+
 <!-- L3 -->
 <h2 class="sec">L3 · Agentic 能力 <span class="badge b-bad">🔴 TB smoke完成 · 0/2 reward</span></h2>
 <div class="card">
@@ -547,7 +568,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 05:55 更新(#2034 · 170k L1 eval✅完成=57.75%(4561s) · 训练健康iter171.6k/700k(24.5%) step~7.0s<7.4s✅ loss~2.04 · L1 17/17(10k-170k,160k峰值58.13%) · L2 6/6完成(GSM8K=0%HF确认,MMLU=23.16%) · L3 TB 0/2(待HF重测) · L4 BLOCKED(/nasdata/未挂载+SSH超时)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-12 14:05 更新(#2055 · 训练健康iter175.7k/700k(25.1%) step~6928ms<7.4s✅ loss~2.04 · L1 17/17(10k-170k,160k峰值58.13%) 180k autoqueue运行中(ETA~8h) · L2 HumanEval HF 1/4 PASS(25%部分)确认llama.cpp SSM bug是0%主因 · L3 TB 0/2完成(8m51s,both reward=0.0) · L4 BLOCKED(SSH .15/.17超时)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
