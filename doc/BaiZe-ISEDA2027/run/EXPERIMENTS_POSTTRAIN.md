@@ -7186,6 +7186,37 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - **影响**：仅影响 designflow benchmark 的 assets 目录访问，不改变 task 内容或判分逻辑；属于 infra 修复，非 benchmark 协议改动
 - **备注**：benchmark JSONL 共 1165 行（非 operator 所说的 61 任务）；README 标注 894 cases — 以 JSONL 实际行数为准
 
+### L4.6e Designflow Clean5 Rerun — Reference Symlink Fix + Launch（wake349 22:47）
+
+- **背景**：R348 修复了 assets 目录 138 个 missing symlink，但 reference 目录也有同类问题 → AutoPR-001 在 clean5 rerun 中报 `check.py missing`（rc=2）
+- **reference 修复**：
+  - `reference/EDA-Eval-DesignFlow-AutoPR-001` 不存在，只有 `reference/AutoPR-001/`（含 check.py + reference_submit.zip + negative/）
+  - 创建 symlink：`ln -sfn AutoPR-001 EDA-Eval-DesignFlow-AutoPR-001`
+  - 批量检查 1165 个 task：其余 task 均已有 prefixed reference dir（真实目录或已有 symlink）→ **AutoPR-001 是唯一缺失的**
+  - 结果：reference 目录 remaining missing = 0
+- **clean5 rerun 启动**（36.15 via tunnel，PID173737）：
+  ```bash
+  ssh -p 3333 app.e0031982@localhost
+  cd /nasdata/app.e0031982/code/EDA-Flow-Bench
+  setsid bash eval/run_batch.sh \
+    --model minicpm5-2b --workers 4 --limit 5 --timeout 2400 \
+    --status eval/status_minicpm5_clean5.jsonl \
+    > /tmp/designflow_clean5.log 2>&1 < /dev/null &
+  ```
+  - 5 tasks（=Run1 同款，便于对比）：ABMatchPlacementCheck-001, Analog-001, AnalogGroupCfgMergeDummy-001, AutoPR-001, BitcellMcSpGen-001
+  - batch dir: `eval/run_batch_20261112_224701`
+  - status file: `eval/status_minicpm5_clean5.jsonl`（独立于旧 status.jsonl）
+- **启动后即时状态**：
+  - 1/5 done：AutoPR-001 ERROR（"check.py missing" — 在 symlink 修复前已执行，现已修复，下次 rerun 不会再报此错）
+  - 4/5 RUNNING：worker logs 显示 cline 正在生成输出（workdir 有 `outputs/` + `cline_session.jsonl`，PreToolUse hook 已部署，leak check PASS，attachments 已复制）
+  - 这与 Run1/Run2 的 "no submit.zip produced (cline wrote nothing)" 形成对比 → cline 这次确实在工作
+- **model endpoint 验证**：
+  - 36.15 `providers.json`：`baseUrl http://127.0.0.1:8098/v1`, `model minicpm5-2b`, `apiKey dummy-key`
+  - SSH-L forward PID3716672 alive（etimes~7974s）
+  - `curl http://127.0.0.1:8098/v1/models` → returns `minicpm5-2b` (max_model_len 65536, owned_by vllm)
+- **待收**：4 tasks 完成后（~40min, 2400s timeout）收 `status_minicpm5_clean5.jsonl` → 出 designflow baseline Pass@1
+- **与 Run1/Run2 对比设计**：同 5 tasks、同 model（minicpm5-2b base, GPU4 :8098）、同 thinking=low，但 timeout 从 600s/2700s 统一为 2400s，且 infra 已修（assets + reference symlinks）→ 若仍 0% 则为真实能力差距（非 infra），若有 PASS 则证明 infra 是 Run1/Run2 0% 的主因
+
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
 - BaiZe ckpts 在 .29 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/hf_iter_*/`
