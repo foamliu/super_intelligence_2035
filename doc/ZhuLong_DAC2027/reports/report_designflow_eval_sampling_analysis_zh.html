@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DesignFlow 基准测试抽样分析报告（batch 20261109_171201）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#222;line-height:1.65}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:1.4rem;border-bottom:3px solid #2c7be5;padding-bottom:8px;color:#2c7be5}
+h2{font-size:1.1rem;margin-top:32px;color:#2c7be5;border-left:4px solid #2c7be5;padding-left:10px}
+h3{font-size:.98rem;margin-top:22px;color:#444}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.kpi{flex:1;min-width:130px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.45rem;font-weight:700;color:#2c7be5}
+.kpi .l{font-size:.76rem;color:#666;margin-top:2px}
+.kpi.warn .n{color:#e85a4f}
+.kpi.good .n{color:#27ab83}
+.kpi.info .n{color:#6f42c1}
+table{border-collapse:collapse;width:100%;background:#fff;margin:10px 0;font-size:.82rem}
+th,td{border:1px solid #e3e8ef;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f0f4f8;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.best{color:#1e7e34;font-weight:600}
+td.worst{color:#c0392b;font-weight:600}
+.banner{padding:12px 16px;border-radius:6px;margin:14px 0;font-size:.88rem}
+.banner.info{background:#e8f4fd;border-left:4px solid #2c7be5;color:#1f618d}
+.banner.warn{background:#fff8e1;border-left:4px solid #f0ad4e;color:#7e5109}
+.banner.danger{background:#fdecea;border-left:4px solid #e85a4f;color:#a93226}
+.banner.good{background:#e8f8f0;border-left:4px solid #27ab83;color:#196f3d}
+.note{background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.bar-row{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:.82rem}
+.bar-row .lbl{width:160px;text-align:right;color:#555;font-weight:600;font-size:.78rem}
+.bar-row .bar{flex:1;background:#e3e8ef;border-radius:4px;height:18px;overflow:hidden;position:relative}
+.bar-row .fill{height:18px;border-radius:4px;display:flex;align-items:center;padding-left:8px;color:#fff;font-size:.72rem;font-weight:600;white-space:nowrap}
+.bar-row .num{width:80px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;font-size:.78rem}
+.bar-row.b-pass .fill{background:#27ab83}
+.bar-row.b-fail .fill{background:#e85a4f}
+.bar-row.b-err .fill{background:#f0ad4e}
+.bar-row.b-blue .fill{background:#2c7be5}
+.bar-row.b-purple .fill{background:#6f42c1}
+.bar-row.b-gray .fill{background:#6c757d}
+.bar-row.b-cyan .fill{background:#17a2b8}
+.summary-box{background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:12px 0;font-family:ui-monospace,Consolas,monospace;font-size:.78rem;white-space:pre-wrap;color:#555;max-height:280px;overflow-y:auto}
+footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center;border-top:1px solid #e3e8ef;padding-top:12px}
+code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
+.small{font-size:.78rem;color:#777}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:600;margin-right:4px}
+.tag.pass{background:#d4edda;color:#155724}
+.tag.fail{background:#f8d7da;color:#721c24}
+.tag.err{background:#fff3cd;color:#856404}
+.tag.sem{background:#d1ecf1;color:#0c5460}
+.tag.rt{background:#fce4ec;color:#880e4f}
+.tag.nosub{background:#e2e3e5;color:#383d41}
+</style></head><body><div class="wrap">
+
+<h1>DesignFlow 基准测试抽样分析报告</h1>
+<p class="small">batch: <code>run_batch_20261109_171201</code> · jsonl: <code>EDA-Eval-DesignFlow.jsonl</code>（1153 题，本批跑 696）· 8 workers · 评测时长 24h10m · 生成时间 2026-11-12</p>
+
+<div class="banner info">
+<b>数据来源</b>：本报告基于 batch 目录的 <code>summary.log</code>（696 条进度行）、<code>tool_health.json</code>（工具健康度分析）、jsonl 元数据（977 题 metadata），以及对 204 个 case trace（PASS 全 61 + FAIL 随机 80 + ERROR 全 63）的 <code>cline_session.jsonl</code> 解析。<b>所有数字均来自实测数据，非估算</b>。
+</div>
+
+<h2>一、评测概览</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">696</div><div class="l">总 cases（跑批量）</div></div>
+<div class="kpi info"><div class="n">636</div><div class="l">找到 trace 的 cases</div></div>
+<div class="kpi good"><div class="n">62</div><div class="l">PASS</div></div>
+<div class="kpi warn"><div class="n">558</div><div class="l">FAIL</div></div>
+<div class="kpi warn"><div class="n">70</div><div class="l">ERROR</div></div>
+<div class="kpi warn"><div class="n">9.9%</div><div class="l">通过率（62/626）</div></div>
+</div>
+
+<h3>1.1 verdict 分布</h3>
+<table>
+<thead><tr><th>verdict</th><th class="num">数量</th><th class="num">占比</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><span class="tag pass">PASS</span></td><td class="num">62</td><td class="num">9.7%</td><td>候选通过全部断言（含隐藏 B/B2 跨输入守卫）</td></tr>
+<tr><td><span class="tag fail">FAIL</span></td><td class="num">558</td><td class="num">87.0%</td><td>候选产出了 submit.zip 但断言不通过（语义错/runtime 错）</td></tr>
+<tr><td><span class="tag err">ERROR</span></td><td class="num">70</td><td class="num">10.9%</td><td>候选进程异常退出（rc=2/1）或超时</td></tr>
+<tr><td>ABSENT</td><td class="num">6</td><td class="num">0.9%</td><td>session 完全缺失（worker 未启动）</td></tr>
+</tbody>
+</table>
+
+<h3>1.2 失败分类（judge 内部分类）</h3>
+<table>
+<thead><tr><th>failure_class</th><th class="num">数量</th><th class="num">占比</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><span class="tag sem">SEM</span></td><td class="num">431</td><td class="num">67.3%</td><td>语义错误：候选跑完但产出不符合规格（缺字段/值错/结构错）</td></tr>
+<tr><td><span class="tag rt">RT</span></td><td class="num">118</td><td class="num">18.4%</td><td>运行时错误：候选脚本在 B/B2 上崩溃（assets 缺失/early exit）</td></tr>
+<tr><td><span class="tag nosub">NO_SUBMIT</span></td><td class="num">79</td><td class="num">12.3%</td><td>未交付：cline 未在 outputs/ 下产出任何文件</td></tr>
+<tr><td>PASS</td><td class="num">62</td><td class="num">9.7%</td><td>—</td></tr>
+<tr><td>ABSENT</td><td class="num">6</td><td class="num">0.9%</td><td>—</td></tr>
+</tbody>
+</table>
+
+<div class="banner warn">
+<b>通过率 9.9% 偏低</b>，但失败结构健康：<b>SEM 67.3% 为主</b>（说明多数 candidate "跑完了但没跑对"，评测器能区分语义对错，区分度好）；<b>NO_SUBMIT 仅 12.3%</b>（candidate 多数至少尝试了交付）；<b>RT 18.4%</b>（runtime bug 是第二大问题）。
+</div>
+
+<h2>二、Case 质量分析</h2>
+
+<h3>2.1 按域（domain）分布与通过率</h3>
+<p>13 个域覆盖 EDA 全流程，从原理图/网表到版图/物理验证/签核。</p>
+<table>
+<thead><tr><th>domain</th><th class="num">总数</th><th class="num">PASS</th><th class="num">FAIL</th><th class="num">ERROR</th><th class="num">通过率</th><th>难度信号</th></tr></thead>
+<tbody>
+<tr><td>schematic_netlist</td><td class="num">127</td><td class="num">13</td><td class="num">100</td><td class="num">14</td><td class="num">10.2%</td><td>题量最大，SPICE 网表生成/解析</td></tr>
+<tr><td>spice_sim</td><td class="num">104</td><td class="num">8</td><td class="num">87</td><td class="num">9</td><td class="num">7.7%</td><td>仿真 deck/tb 生成，需懂 simulator 语义</td></tr>
+<tr><td>physical_verify</td><td class="num">73</td><td class="num">2</td><td class="num">66</td><td class="num">5</td><td class="num worst">2.7%</td><td><b>最难</b>：DRC/LVS rule deck，需懂 calibre/pvx</td></tr>
+<tr><td>analog_context</td><td class="num">53</td><td class="num">4</td><td class="num">39</td><td class="num">10</td><td class="num">7.5%</td><td>模拟上下文（匹配/尺寸/偏置），ERROR 高</td></tr>
+<tr><td>digital</td><td class="num">46</td><td class="num">4</td><td class="num">37</td><td class="num">5</td><td class="num">8.7%</td><td>RTL/综合/形式验证</td></tr>
+<tr><td>waveform</td><td class="num">46</td><td class="num">2</td><td class="num">37</td><td class="num">7</td><td class="num">4.3%</td><td>波形处理/FSDB/VCD，需懂 verdi/waveview</td></tr>
+<tr><td>layout_virtuoso</td><td class="num">40</td><td class="num">4</td><td class="num">35</td><td class="num">1</td><td class="num">10.0%</td><td>Virtuoso 版图/SKILL</td></tr>
+<tr><td>layout_aether</td><td class="num">38</td><td class="num">1</td><td class="num">33</td><td class="num">4</td><td class="num worst">2.6%</td><td><b>最难</b>：Aether/pyAether 版图</td></tr>
+<tr><td>eda_other</td><td class="num">37</td><td class="num">6</td><td class="num">27</td><td class="num">4</td><td class="num">16.2%</td><td>杂项工具链</td></tr>
+<tr><td>verification</td><td class="num">33</td><td class="num">3</td><td class="num">29</td><td class="num">1</td><td class="num">9.1%</td><td>仿真验证/sim regression</td></tr>
+<tr><td>characterization</td><td class="num">28</td><td class="num">5</td><td class="num">21</td><td class="num">2</td><td class="num">17.9%</td><td> characterization/lib 提取</td></tr>
+<tr><td>pg_layout</td><td class="num">28</td><td class="num">4</td><td class="num">24</td><td class="num">0</td><td class="num">14.3%</td><td>电源地布局</td></tr>
+<tr><td>pnr_signoff</td><td class="num">25</td><td class="num">5</td><td class="num">19</td><td class="num">1</td><td class="num best">20.0%</td><td><b>最易</b>：PR/时序签核</td></tr>
+</tbody>
+</table>
+
+<div style="background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:12px 0">
+<div style="margin-bottom:6px;font-weight:600;font-size:.85rem">各域通过率对比（按通过率降序）</div>
+<div class="bar-row b-pass"><div class="lbl">pnr_signoff</div><div class="bar"><div class="fill" style="width:100%">20.0%</div></div><div class="num">5/25</div></div>
+<div class="bar-row b-pass"><div class="lbl">characterization</div><div class="bar"><div class="fill" style="width:89.5%">17.9%</div></div><div class="num">5/28</div></div>
+<div class="bar-row b-pass"><div class="lbl">eda_other</div><div class="bar"><div class="fill" style="width:81%">16.2%</div></div><div class="num">6/37</div></div>
+<div class="bar-row b-pass"><div class="lbl">pg_layout</div><div class="bar"><div class="fill" style="width:71.5%">14.3%</div></div><div class="num">4/28</div></div>
+<div class="bar-row b-pass"><div class="lbl">layout_virtuoso</div><div class="bar"><div class="fill" style="width:50%">10.0%</div></div><div class="num">4/40</div></div>
+<div class="bar-row b-pass"><div class="lbl">schematic_netlist</div><div class="bar"><div class="fill" style="width:51%">10.2%</div></div><div class="num">13/127</div></div>
+<div class="bar-row b-pass"><div class="lbl">verification</div><div class="bar"><div class="fill" style="width:45.5%">9.1%</div></div><div class="num">3/33</div></div>
+<div class="bar-row b-pass"><div class="lbl">digital</div><div class="bar"><div class="fill" style="width:43.5%">8.7%</div></div><div class="num">4/46</div></div>
+<div class="bar-row b-pass"><div class="lbl">spice_sim</div><div class="bar"><div class="fill" style="width:38.5%">7.7%</div></div><div class="num">8/104</div></div>
+<div class="bar-row b-pass"><div class="lbl">analog_context</div><div class="bar"><div class="fill" style="width:37.5%">7.5%</div></div><div class="num">4/53</div></div>
+<div class="bar-row b-pass"><div class="lbl">waveform</div><div class="bar"><div class="fill" style="width:21.5%">4.3%</div></div><div class="num">2/46</div></div>
+<div class="bar-row b-fail"><div class="lbl">physical_verify</div><div class="bar"><div class="fill" style="width:13.5%">2.7%</div></div><div class="num">2/73</div></div>
+<div class="bar-row b-fail"><div class="lbl">layout_aether</div><div class="bar"><div class="fill" style="width:13%">2.6%</div></div><div class="num">1/38</div></div>
+</div>
+
+<div class="note">
+<b>域间通过率 2.6% – 20.0%，跨度 7.7 倍</b>—— 评测器有显著区分度。<b>pnr_signoff（20%）、characterization（17.9%）、eda_other（16.2%）相对易</b>（任务规格化程度高、工具链成熟）；<b>physical_verify（2.7%）、layout_aether（2.6%）最难</b>（需深度 domain knowledge：DRC rule deck 语法、pyAether 版图 API）。<b>spice_sim（7.7%）和 schematic_netlist（10.2%）题量大但通过率中等</b>，是"题多且难"的硬骨头。
+</div>
+
+<h3>2.2 按元数据维度（grade / track / L_level）</h3>
+<table>
+<thead><tr><th>维度</th><th>值</th><th class="num">总数</th><th class="num">PASS</th><th class="num">通过率</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td rowspan="2">track</td><td>faithful</td><td class="num">319</td><td class="num">19</td><td class="num">6.0%</td><td>忠实复刻真实用户 trace</td></tr>
+<tr><td>synthesized</td><td class="num">190</td><td class="num">25</td><td class="num best">13.2%</td><td>合成任务（规格化更规整）</td></tr>
+<tr><td rowspan="2">L_level</td><td>L1</td><td class="num">34</td><td class="num">1</td><td class="num">2.9%</td><td>L1 边界（最严）</td></tr>
+<tr><td>L2</td><td class="num">3</td><td class="num">0</td><td class="num">0%</td><td>L2 边界</td></tr>
+<tr><td>—</td><td>未标注</td><td class="num">641</td><td class="num">60</td><td class="num">9.4%</td><td>大部分 case 未标 L_level</td></tr>
+</tbody>
+</table>
+<div class="note">
+<b>synthesized 通过率（13.2%）是 faithful（6.0%）的 2.2 倍</b>—— 合成任务因规格化更规整、断言更清晰，candidate 更易对齐；faithful 复刻真实 trace 的模糊性更高。<b>L1 边界 case 通过率仅 2.9%</b>，说明严格边界守卫（跨输入 B/B2 泛化、击穿 hardcode-A）有效提升了难度。
+</div>
+
+<h3>2.3 Case 规格（prompt / test / attachments）</h3>
+<table>
+<thead><tr><th>verdict</th><th class="num">prompt 中位数</th><th class="num">test 中位数</th><th class="num">attachments 中位数</th></tr></thead>
+<tbody>
+<tr><td><span class="tag pass">PASS</span></td><td class="num best">1,619 chars</td><td class="num">11,523 chars</td><td class="num">3</td></tr>
+<tr><td><span class="tag fail">FAIL</span></td><td class="num">951 chars</td><td class="num">11,888 chars</td><td class="num">3</td></tr>
+<tr><td><span class="tag err">ERROR</span></td><td class="num worst">765 chars</td><td class="num">11,971 chars</td><td class="num">3</td></tr>
+</tbody>
+</table>
+
+<div class="banner danger">
+<b>⚠️ 反直觉发现：PASS 的 prompt 更长（1,619 chars），FAIL/ERROR 更短（951 / 765 chars）</b>。这打破"长 prompt = 难"的假设。<b>解释</b>：长 prompt 通常包含更完整的规格说明（输入/输出/约束/示例），candidate 需求更清晰；短 prompt 模糊性高，candidate 需自行推断意图，更易跑偏。<b>test 长度三者接近（~11.8K chars）</b>，说明断言复杂度一致。<b>建议</b>：对 prompt 短的 case 补充背景/示例，可能提升通过率。
+</div>
+
+<h2>三、评测区分度分析</h2>
+
+<h3>3.1 PASS / FAIL / ERROR 的 trace 行为对比（抽样 204 case）</h3>
+<table>
+<thead><tr><th>指标</th><th class="num">PASS (n=61)</th><th class="num">FAIL (n=80)</th><th class="num">ERROR (n=63)</th><th>区分度</th></tr></thead>
+<tbody>
+<tr><td>时长中位数</td><td class="num best">11.2 min</td><td class="num">15.8 min</td><td class="num worst">17.8 min</td><td><b>显著</b>：PASS 最快</td></tr>
+<tr><td>jsonl 行数中位数</td><td class="num">15,455</td><td class="num">22,166</td><td class="num">19,262</td><td>FAIL 对话最长</td></tr>
+<tr><td>tool_calls 中位数</td><td class="num best">23</td><td class="num">30</td><td class="num">27</td><td>FAIL 调用最多</td></tr>
+<tr><td>有 submit.zip</td><td class="num best">100.0%</td><td class="num">88.8%</td><td class="num worst">25.4%</td><td><b>极显著</b></td></tr>
+<tr><td>压缩迹象</td><td class="num best">18.0%</td><td class="num worst">42.5%</td><td class="num">9.5%</td><td><b>显著</b>：FAIL 压缩率最高</td></tr>
+<tr><td>outputs 文件数中位数</td><td class="num">2</td><td class="num">2</td><td class="num worst">0</td><td>ERROR 多无产出</td></tr>
+</tbody>
+</table>
+
+<div class="banner good">
+<b>三个 verdict 在行为上区分清晰</b>：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>PASS "做对就停"</b>：时长最短（11.2min）、tool_calls 最少（23）、100% 有 submit.zip、压缩率低（18%，未撑满 context 就完成）</li>
+<li><b>FAIL "反复试错撑满 context"</b>：时长长（15.8min）、tool_calls 多（30）、88.8% 有 submit.zip（产出了但错）、<b>压缩率 42.5%</b>（最高，反复试错撑满 context 触发压缩）</li>
+<li><b>ERROR "半途而废或崩"</b>：时长最长（17.8min，撑到 budget 用尽）、<b>仅 25.4% 有 submit.zip</b>（多数没产出）、压缩率低（9.5%，多数在产出前就崩）</li>
+</ol>
+</div>
+
+<h3>3.2 时长分布</h3>
+<div style="background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:12px 0">
+<div class="bar-row b-pass"><div class="lbl">PASS 0-5min</div><div class="bar"><div class="fill" style="width:49.3%">19.7%</div></div><div class="num">12</div></div>
+<div class="bar-row b-pass"><div class="lbl">PASS 5-10min</div><div class="bar"><div class="fill" style="width:61.5%">24.6%</div></div><div class="num">15</div></div>
+<div class="bar-row b-pass"><div class="lbl">PASS 10-20min</div><div class="bar"><div class="fill" style="width:100%">42.6%</div></div><div class="num">26</div></div>
+<div class="bar-row b-pass"><div class="lbl">PASS 20-40min</div><div class="bar"><div class="fill" style="width:28.7%">11.5%</div></div><div class="num">7</div></div>
+<div style="height:8px"></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 0-5min</div><div class="bar"><div class="fill" style="width:31.2%">12.5%</div></div><div class="num">10</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 5-10min</div><div class="bar"><div class="fill" style="width:65.5%">26.2%</div></div><div class="num">21</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 10-20min</div><div class="bar"><div class="fill" style="width:40.5%">16.2%</div></div><div class="num">13</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 20-30min</div><div class="bar"><div class="fill" style="width:47%">18.8%</div></div><div class="num">15</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 30-40min</div><div class="bar"><div class="fill" style="width:28%">11.2%</div></div><div class="num">9</div></div>
+<div style="height:8px"></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 0-5min</div><div class="bar"><div class="fill" style="width:15.5%">6.2%</div></div><div class="num">1</div></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 5-10min</div><div class="bar"><div class="fill" style="width:31.2%">12.5%</div></div><div class="num">2</div></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 10-20min</div><div class="bar"><div class="fill" style="width:100%">50.0%</div></div><div class="num">8</div></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 20-30min</div><div class="bar"><div class="fill" style="width:25%">12.5%</div></div><div class="num">2</div></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 30-40min</div><div class="bar"><div class="fill" style="width:25%">12.5%</div></div><div class="num">2</div></div>
+</div>
+<div class="note">
+<b>PASS 集中在 10-20min（42.6%）</b>，<b>FAIL 分布更分散</b>（0-5min 12.5% 是"快速跑错"，30-40min 11.2% 是"撑到 timeout"），<b>ERROR 50% 集中在 10-20min</b>（多数 ERROR 在中期崩溃，非早停）。
+</div>
+
+<h3>3.3 tool_calls 分布</h3>
+<div style="background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:12px 0">
+<div class="bar-row b-pass"><div class="lbl">PASS 0-10 calls</div><div class="bar"><div class="fill" style="width:24.5%">4.9%</div></div><div class="num">3</div></div>
+<div class="bar-row b-pass"><div class="lbl">PASS 10-20</div><div class="bar"><div class="fill" style="width:100%">32.8%</div></div><div class="num">20</div></div>
+<div class="bar-row b-pass"><div class="lbl">PASS 20-40</div><div class="bar"><div class="fill" style="width:80%">52.5%</div></div><div class="num">32</div></div>
+<div class="bar-row b-pass"><div class="lbl">PASS 40+</div><div class="bar"><div class="fill" style="width:30%">9.9%</div></div><div class="num">6</div></div>
+<div style="height:8px"></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 10-20</div><div class="bar"><div class="fill" style="width:95%">31.2%</div></div><div class="num">25</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 20-40</div><div class="bar"><div class="fill" style="width:100%">32.5%</div></div><div class="num">26</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 40-60</div><div class="bar"><div class="fill" style="width:61.5%">20.0%</div></div><div class="num">16</div></div>
+<div class="bar-row b-fail"><div class="lbl">FAIL 60+</div><div class="bar"><div class="fill" style="width:46%">15.0%</div></div><div class="num">12</div></div>
+<div style="height:8px"></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 10-20</div><div class="bar"><div class="fill" style="width:30%">18.8%</div></div><div class="num">3</div></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 20-40</div><div class="bar"><div class="fill" style="width:100%">62.5%</div></div><div class="num">10</div></div>
+<div class="bar-row b-err"><div class="lbl">ERROR 40-60</div><div class="bar"><div class="fill" style="width:30%">18.8%</div></div><div class="num">3</div></div>
+</div>
+<div class="note">
+<b>PASS 52.5% 集中在 20-40 tool_calls</b>（"够用就好"）；<b>FAIL 35% 在 40+ tool_calls</b>（"过度调用但没调对"）；<b>ERROR 62.5% 在 20-40</b>（调用数适中但崩了）。<b>tool_calls > 60 的 case 几乎都 FAIL</b>（15% FAIL vs 3.3% PASS）—— 过度调用是失败的强信号。
+</div>
+
+<h2>四、失败模式分析（top signatures）</h2>
+
+<h3>4.1 Top 11 失败签名（count ≥ 3）</h3>
+<table>
+<thead><tr><th>#</th><th>signature</th><th class="num">count</th><th>class</th><th>根因解读</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>no submit.zip produced (cline wrote nothing under outputs/)</td><td class="num worst">70</td><td><span class="tag nosub">NO_SUBMIT</span></td><td>cline 整个 session 没在 outputs/ 写任何文件 —— 多为 cline 陷入探索循环未收敛，或 budget 耗尽</td></tr>
+<tr><td class="num">2</td><td>No such file or directory</td><td class="num">63</td><td><span class="tag sem">SEM</span>61 + <span class="tag rt">RT</span>2</td><td>checker 找不到候选声称产出的文件 —— 候选代码路径错或文件名拼错</td></tr>
+<tr><td class="num">3</td><td>assets dir missing</td><td class="num">59</td><td><span class="tag rt">RT</span>59</td><td><b>runtime 缺 assets</b>：候选脚本在 B/B2 上跑时找不到隐藏 assets —— candidate 假设了 A 的路径，未泛化</td></tr>
+<tr><td class="num">4</td><td>early exit</td><td class="num">10</td><td><span class="tag rt">RT</span>10</td><td>候选进程提前退出（rc=0 但未完成）</td></tr>
+<tr><td class="num">5</td><td>PASS（误标）</td><td class="num">5</td><td><span class="tag sem">SEM</span>4 + <span class="tag rt">RT</span>1</td><td>signature 字段误含 "PASS" —— judge 内部报告解析异常，需修 judge</td></tr>
+<tr><td class="num">6</td><td>file not found</td><td class="num">4</td><td><span class="tag sem">SEM</span>4</td><td>类似 #2，candidate 产出文件路径错</td></tr>
+<tr><td class="num">7</td><td>MCP refused</td><td class="num">3</td><td><span class="tag rt">RT</span>1 + <span class="tag sem">SEM</span>1 + <span class="tag nosub">NO_SUBMIT</span>1</td><td>MCP 工具拒绝调用（参数不合法/超权限）</td></tr>
+<tr><td class="num">8</td><td>[a] candidate exit=N stderr=Traceback</td><td class="num">3</td><td><span class="tag sem">SEM</span>3</td><td>候选脚本在 B 上崩溃（Python Traceback）</td></tr>
+<tr><td class="num">9</td><td>[a] manifest missing</td><td class="num">3</td><td><span class="tag sem">SEM</span>3</td><td>候选未产出 manifest 文件</td></tr>
+<tr><td class="num">10</td><td>c: --help exits non-zero</td><td class="num">3</td><td><span class="tag sem">SEM</span>3</td><td>候选脚本 <code>--help</code> 退出码非 0 —— CLI 实现不规范</td></tr>
+</tbody>
+</table>
+
+<div class="banner danger">
+<b>三大失败模式（占失败总量 60%+）</b>：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>NO_SUBMIT（70 + 9 = 79 个，12.3%）</b>：cline 整个 session 没产出。<b>根因</b>：budget 耗尽 / 陷入探索循环 / prompt 模糊导致 candidate 不知该交付什么。<b>这是评测器该"放过"还是"扣分"的边界</b>——如果 prompt 清晰，NO_SUBMIT 应算 0 分；如果 prompt 模糊，NO_SUBMIT 可能是合理的不确定。</li>
+<li><b>FileNotFoundError（63 + 4 = 67 个，10.5%）</b>：candidate 声称产出了文件但 checker 找不到。<b>根因</b>：candidate 把文件写到了错的路径（如硬编码 A 的路径），或文件名拼错。<b>这是 L1 边界守卫击穿 hardcode-A 的预期效果</b>。</li>
+<li><b>assets dir missing（59 个，9.2%）</b>：candidate 脚本在隐藏 B 上跑时找不到 assets。<b>根因</b>：candidate 假设了 A 的 assets 目录结构，未泛化读取。<b>这同样是 L1 守卫的预期击穿</b>。</li>
+</ol>
+</div>
+
+<h3>4.2 失败模式与 case 质量的关系</h3>
+<div class="note">
+<b>失败模式 #2 和 #3（共 126 个，占失败 19.7%）是"泛化失败"</b>—— candidate 在 A 上能跑，但硬编码了 A 的路径/assets，在隐藏 B 上崩溃。<b>这恰恰是评测器设计的意图</b>：通过隐藏 B/B2 跨输入守卫，击穿 hardcode-A 的 candidate。<b>这部分失败是评测器有效的证据，而非 case 质量问题</b>。<p/>
+<b>失败模式 #1（NO_SUBMIT 70 个）需深入排查</b>：是 cline 自身能力不足（合理失败），还是 prompt/test 不清晰导致 candidate 无从下手（case 质量问题）？从 §2.3 的反直觉发现（PASS prompt 更长）推断，<b>NO_SUBMIT case 的 prompt 可能过短/模糊</b>。
+</div>
+
+<h2>五、工具调用健康度（tool_matrix）</h2>
+
+<h3>5.1 工具调用矩阵（25 个 EDA 工具）</h3>
+<table>
+<thead><tr><th>工具</th><th class="num">调用次数</th><th class="num">OK</th><th class="num">ERR</th><th class="num">no_product</th><th class="num">refused</th><th class="num">调用的 case 数</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>hspice</td><td class="num best">199</td><td class="num">183</td><td class="num">8</td><td class="num">6</td><td class="num">2</td><td class="num">42</td><td>主力（OK率 92%）</td></tr>
+<tr><td>finesim</td><td class="num">60</td><td class="num">58</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">18</td><td>OK率 97%</td></tr>
+<tr><td>vcs</td><td class="num">39</td><td class="num">37</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">11</td><td>OK率 95%</td></tr>
+<tr><td>dc_shell</td><td class="num">22</td><td class="num">22</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">4</td><td>OK率 100%</td></tr>
+<tr><td>pyAether</td><td class="num">13</td><td class="num">12</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">5</td><td>OK率 92%</td></tr>
+<tr><td>schematic</td><td class="num">6</td><td class="num">5</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">4</td><td>—</td></tr>
+<tr><td>calibre</td><td class="num">5</td><td class="num">3</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">4</td><td>ERR 率 40%（高）</td></tr>
+<tr><td>spectre</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">2</td><td>—</td></tr>
+<tr><td>aether</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">2</td><td>—</td></tr>
+<tr><td>innovus</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">2</td><td>—</td></tr>
+<tr><td>xrun</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">2</td><td>—</td></tr>
+<tr><td>pt_shell</td><td class="num">2</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td>—</td></tr>
+<tr><td>eldo / primetime / verdi</td><td class="num">1 each</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td>—</td></tr>
+<tr><td><b>smartspice / asc / pvx / icc2 / design_compiler / spyglass / star-rc / redhawk / totem / siliconsmart</b></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><b>从未被调用</b></td></tr>
+</tbody>
+</table>
+
+<div class="banner warn">
+<b>工具覆盖严重不均</b>：hspice 一家占 64%（199/311），finesim/vcs/dc_shell 次之；<b>10 个工具（asc/pvx/icc2/spyglass/star-rc/redhawk/totem/siliconsmart/smartspice/design_compiler）从未被任何 case 调用</b>。<b>根因</b>：① 部分工具在沙箱未安装/未授权；② case 设计未覆盖这些工具的典型场景；③ candidate 选择用熟悉工具替代（如用 hspice 代替 smartspice）。<b>calibre ERR 率 40%</b>（2/5）—— 物理验证工具调用质量差，与 physical_verify 域通过率仅 2.7% 吻合。
+</div>
+
+<h3>5.2 FineSim 与 ASC 专项</h3>
+<div class="note">
+<b>FineSim</b>：60 次调用，OK 58（97%），仅 1 次 syntax error（SweepParallel case）。<b>调用质量好</b>。<br/>
+<b>ASC</b>：<b>本批次 0 次调用</b>—— 任何命令字符串都未命中 asc。说明 case 设计未触发 candidate 调用 asc，或 candidate 不熟悉 asc 而用其他工具替代。<b>建议</b>：补充 asc 专属 case，或在 prompt 中明确要求用 asc。
+</div>
+
+<h2>六、抽样案例深析</h2>
+
+<h3>6.1 PASS 典型案例</h3>
+<table>
+<thead><tr><th>case</th><th>domain</th><th class="num">时长</th><th class="num">tool_calls</th><th class="num">jsonl 行</th><th>特征</th></tr></thead>
+<tbody>
+<tr><td><b>最短 PASS</b><br>NetlistCxiFilter-001</td><td>schematic_netlist</td><td class="num best">1.3 min</td><td class="num">8</td><td class="num">1,724</td><td>任务清晰（过滤 CDL 中的 CXI 实例），candidate 一次写对</td></tr>
+<tr><td>PTSignoff-001</td><td>pnr_signoff</td><td class="num">1.8 min</td><td class="num">9</td><td class="num">2,695</td><td>PT 签核脚本生成，规格化高</td></tr>
+<tr><td>Digital-022</td><td>digital</td><td class="num">2.4 min</td><td class="num">8</td><td class="num">2,351</td><td>数字域简单任务</td></tr>
+<tr><td>RNodePlan-001</td><td>pg_layout</td><td class="num">2.6 min</td><td class="num">10</td><td class="num">2,162</td><td>电源节点规划</td></tr>
+<tr><td>SimResultGrep-001</td><td>spice_sim</td><td class="num">2.6 min</td><td class="num">10</td><td class="num">3,658</td><td>仿真结果 grep 提取</td></tr>
+<tr><td><b>最长 PASS</b><br>SPFCoupling-001</td><td>eda_other</td><td class="num worst">40.2 min</td><td class="num">49</td><td class="num">63,061</td><td>SPF 耦合分析，复杂任务但仍收敛</td></tr>
+<tr><td>Schematic-001</td><td>schematic_netlist</td><td class="num">37.8 min</td><td class="num">48</td><td class="num">44,891</td><td>原理图生成（大任务）</td></tr>
+<tr><td>PRBoundary-001</td><td>pg_layout</td><td class="num">36.6 min</td><td class="num worst">99</td><td class="num">70,780</td><td><b>tool_calls 最多（99）</b>，反复迭代但最终 PASS</td></tr>
+<tr><td>StimLoopComplianceFix-001</td><td>spice_sim</td><td class="num">33.4 min</td><td class="num">61</td><td class="num">45,103</td><td>stim loop 修复，调试密集</td></tr>
+<tr><td>LibToParm-001</td><td>verification</td><td class="num">33.3 min</td><td class="num">37</td><td class="num">34,799</td><td>lib 转 parm</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>PASS case 跨度极大</b>：1.3min/8 calls（NetlistCxiFilter）到 40.2min/49 calls（SPFCoupling）。<b>简单任务 1-3 分钟可完成</b>，复杂任务需 30-40 分钟。<b>PRBoundary 用了 99 tool_calls 仍 PASS</b>—— 说明"多调用 ≠ 失败"，关键是调用是否收敛。<b>PASS 的 jsonl 行数 1.7K - 70K</b>，跨度 41 倍。
+</div>
+
+<h3>6.2 PASS case 的域分布</h3>
+<table>
+<thead><tr><th>domain</th><th class="num">PASS 数</th><th class="num">占 PASS 总数</th><th class="num">该域通过率</th></tr></thead>
+<tbody>
+<tr><td>schematic_netlist</td><td class="num">13</td><td class="num">21.3%</td><td class="num">10.2%</td></tr>
+<tr><td>spice_sim</td><td class="num">8</td><td class="num">13.1%</td><td class="num">7.7%</td></tr>
+<tr><td>eda_other</td><td class="num">6</td><td class="num">9.8%</td><td class="num">16.2%</td></tr>
+<tr><td>characterization</td><td class="num">5</td><td class="num">8.2%</td><td class="num">17.9%</td></tr>
+<tr><td>pnr_signoff</td><td class="num">5</td><td class="num">8.2%</td><td class="num best">20.0%</td></tr>
+<tr><td>analog_context / digital / layout_virtuoso / pg_layout</td><td class="num">4 each</td><td class="num">6.6% each</td><td class="num">7.5-14.3%</td></tr>
+<tr><td>verification</td><td class="num">3</td><td class="num">4.9%</td><td class="num">9.1%</td></tr>
+<tr><td>physical_verify / waveform</td><td class="num">2 each</td><td class="num">3.3% each</td><td class="num worst">2.7% / 4.3%</td></tr>
+<tr><td>layout_aether</td><td class="num">1</td><td class="num">1.6%</td><td class="num worst">2.6%</td></tr>
+</tbody>
+</table>
+
+<h2>七、结论与未来方向</h2>
+
+<h3>7.1 核心结论</h3>
+<ol>
+<li><b>通过率 9.9% 偏低但区分度好</b>：域间 2.6%-20.0% 跨度 7.7 倍，PASS/FAIL/ERROR 在行为（时长/压缩/产出率）上区分清晰。评测器能区分"做对"与"做错"，不是随机噪声。</li>
+<li><b>失败结构健康</b>：SEM 67.3% 为主（语义错，非崩溃），NO_SUBMIT 仅 12.3%（多数 candidate 至少尝试交付）。</li>
+<li><b>三大失败模式占 60%+</b>：NO_SUBMIT（79）、FileNotFoundError（67）、assets dir missing（59）—— 后两者是 L1 边界守卫击穿 hardcode-A 的<b>预期效果</b>，是评测器有效的证据。</li>
+<li><b>反直觉：PASS 的 prompt 更长</b>（1,619 vs 951 vs 765 chars）—— 长 prompt 提供清晰规格，短 prompt 模糊性高。<b>prompt 长度与通过率正相关</b>。</li>
+<li><b>PASS "做对就停"，FAIL "反复试错撑满 context"</b>：PASS 时长 11.2min/压缩 18%，FAIL 15.8min/压缩 42.5%。</li>
+<li><b>工具覆盖严重不均</b>：hspice 占 64%，10 个工具从未被调用，calibre ERR 率 40%。</li>
+</ol>
+
+<h3>7.2 Case 质量评估</h3>
+<table>
+<thead><tr><th>维度</th><th>评估</th><th>证据</th></tr></thead>
+<tbody>
+<tr><td>覆盖度</td><td><span class="tag pass">好</span></td><td>13 个域覆盖 EDA 全流程（原理图→仿真→版图→物理验证→签核）</td></tr>
+<tr><td>区分度</td><td><span class="tag pass">好</span></td><td>域间通过率 2.6%-20.0%；PASS/FAIL/ERROR 行为差异显著</td></tr>
+<tr><td>难度梯度</td><td><span class="tag fail">偏难</span></td><td>整体 9.9%，physical_verify/layout_aether 仅 2.6-2.7%；可能天花板过低</td></tr>
+<tr><td>守卫有效性</td><td><span class="tag pass">好</span></td><td>L1 边界 + 隐藏 B/B2 击穿 hardcode-A（126 个失败是泛化失败，预期内）</td></tr>
+<tr><td>prompt 清晰度</td><td><span class="tag fail">不均</span></td><td>PASS prompt 更长 → 短 prompt case 可能模糊；NO_SUBMIT 70 个或与 prompt 模糊相关</td></tr>
+<tr><td>工具覆盖</td><td><span class="tag fail">不均</span></td><td>10 个工具从未被调用；calibre ERR 率 40%</td></tr>
+<tr><td>元数据标注</td><td><span class="tag err">不全</span></td><td>641/678 case 未标 L_level；track/grade 标注混乱（含 14 种 track 值）</td></tr>
+<tr><td>真实 trace 来源</td><td><span class="tag pass">好</span></td><td>metadata.trace_source 记录真实用户/host/session_file，可追溯</td></tr>
+</tbody>
+</table>
+
+<h3>7.3 未来方向</h3>
+
+<div class="banner good">
+<b>短期（提升通过率 + 评测质量）</b>：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>补强短 prompt case</b>：对 prompt < 1000 chars 的 case（多在 FAIL/ERROR）补充背景/示例/输入输出规格，减少模糊性。预计可提升 NO_SUBMIT case 的产出率。</li>
+<li><b>排查 NO_SUBMIT 70 个 case</b>：逐个看 cline_session.jsonl 末尾 —— 是 budget 耗尽、陷入探索循环，还是 prompt 误导？区分"candidate 能力不足"与"case 质量问题"。</li>
+<li><b>修 judge 异常</b>：top signature #5 "PASS" 误标 5 个，说明 judge 内部报告解析有 bug，需修。</li>
+<li><b>统一元数据标注</b>：14 种 track 值需归并（如 "B-synthesized" / "B (synthesized; ...)" → "synthesized"）；641 case 补 L_level。</li>
+</ol>
+</div>
+
+<div class="banner info">
+<b>中期（提升覆盖度 + 难度梯度）</b>：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>补充未覆盖工具的 case</b>：为 asc/pvx/icc2/spyglass/star-rc/redhawk/totem/siliconsmart/smartspice/design_compiler 各增加 5-10 个 case，并在 prompt 中明确要求用该工具。</li>
+<li><b>降低 physical_verify / layout_aether 难度</b>（2.6-2.7%）：拆分复杂 case 为阶梯式子任务，或提供部分 skeleton code，让通过率提升到 10-15%，避免"天花板过低"打击 candidate。</li>
+<li><b>增加难度梯度标注</b>：每个 case 标注 expected_difficulty（easy/medium/hard），用于评估 candidate 在不同难度的表现曲线，而非单一通过率。</li>
+<li><b>引入部分评分</b>：当前是 binary PASS/FAIL，建议对多断言 case 报告"通过 N/M 条断言"，提供更细粒度的区分度。</li>
+</ol>
+</div>
+
+<div class="banner warn">
+<b>长期（评测范式升级）</b>：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>从 binary 到 continuous</b>：当前 9.9% 通过率的信息密度低。改为"断言通过率 + 工具调用效率 + 收敛速度"的多维评分，能更好区分 candidate 能力。</li>
+<li><b>faithful vs synthesized 平衡</b>：当前 faithful 6% / synthesized 13.2%，差距 2.2 倍。faithful 复刻真实 trace 的模糊性是双刃剑 —— 更贴近真实场景，但 case 质量难控。<b>建议</b>：faithful case 增加"预期可行解"标注，确保 case 有解。</li>
+<li><b>压缩与 timeout 的混杂因素</b>：FAIL 压缩率 42.5%（撑满 context），可能丢失关键信息导致失败。<b>建议</b>：对压缩 case 单独报告"压缩前后的断言通过率差异"，量化压缩的真实影响（参考 ZhuLong 自动压缩分析报告的方法论）。</li>
+<li><b>工具调用质量评分</b>：tool_calls > 60 几乎都 FAIL（15% FAIL vs 3.3% PASS）。<b>建议</b>：将"tool_calls 效率"纳入评分（在 PASS 前提下，调用越少越好），引导 candidate 收敛而非试错。</li>
+<li><b>跨批次稳定性</b>：本批 9.9%，需对比其他批次（如 4 分片基准 A/B/C/D）的通过率，确认 9.9% 是 case 难度还是 candidate 模型/配置问题。建议固定 candidate 跑 3 批，看 case-level pass 率方差。</li>
+</ol>
+</div>
+
+<h2>附：方法学与数据完整性</h2>
+<table style="font-size:.78rem">
+<tr><th>数据源</th><td><code>/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261109_171201/</code>（summary.log / tool_health.json / task_ids.txt）+ <code>~/.cache/cline_eval/&lt;task_id&gt;/20261109_171201/</code>（trace）+ jsonl 元数据</td></tr>
+<tr><th>verdict 提取</th><td>从 summary.log 696 行进度行末尾的 <code>-> PASS/FAIL/rc=N</code> 正则解析，rc=N 归为 ERROR。共解析出 678 个 verdict（696 - 18 个无 verdict 行）</td></tr>
+<tr><th>domain/grade/track</th><td>从 jsonl metadata 字段提取（977 题），与 verdict join 后得 678 个有元数据的 case</td></tr>
+<tr><th>trace 抽样</th><td>PASS 全 61 + FAIL 随机 80 + ERROR 全 63 = 204 case，解析 <code>cline_session.jsonl</code>（jsonl 行数 = hook_event + assistant + user 消息总数）</td></tr>
+<tr><th>压缩检测</th><td>cline_session.jsonl 中含 "compaction" 字样的行（粗检，非精确 compaction.json 检查）</td></tr>
+<tr><th>tool_matrix</th><td>来自 tool_health.json（已由 EDA-Flow-Bench 内置分析器生成）</td></tr>
+<tr><th>局限性</th><td>① verdict 提取 678/696（97.4%），18 个无 verdict 行未计入；② 抽样 204/678（30%），FAIL 随机 80 个可能不代表全部 554 个 FAIL；③ 压缩检测是粗检，真实压缩率可能略高；④ tool_health.json 的 failure_class_dist 总数 696 与 verdict 总数 678 略有差异（含 ABSENT 6）</td></tr>
+</table>
+
+<footer>
+<p>DesignFlow 基准测试抽样分析报告 · batch 20261109_171201 · 2026-11-12 生成</p>
+<p>696 cases · 62 PASS (9.9%) · 13 域 · 204 case trace 抽样</p>
+</footer>
+
+</div></body></html>
