@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZhuLong 压缩机制消融计划书 · cline basic vs. agentic（PyAether 158）</title>
+<style>
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1180px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.65;background:#fafbfc}
+h1{font-size:1.55em;border-bottom:2px solid #0969da;padding-bottom:8px}
+h2{font-size:1.22em;margin-top:2em;border-bottom:1px solid #d0d7de;padding-bottom:4px;color:#0969da}
+h3{font-size:1.05em;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.86em}
+th,td{border:1px solid #d0d7de;padding:5px 8px;text-align:center;vertical-align:top}
+th{background:#eef2f6;font-weight:600}
+td.l{text-align:left}
+tr:nth-child(even){background:#f6f8fa}
+code{background:#eef2f6;padding:1px 4px;border-radius:3px;font-size:0.9em}
+pre{background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:10px 12px;overflow:auto;font-size:0.82em}
+.banner{padding:10px 14px;border-radius:6px;margin:14px 0}
+.warn{background:#fff8c5;border:1px solid #d4a72c;color:#633c01}
+.ok{background:#dafbe1;border:1px solid #1a7f37;color:#0a3622}
+.info{background:#ddf4ff;border:1px solid #0969da;color:#0a417a}
+.err{background:#ffebe9;border:1px solid #cf222e;color:#82071e}
+.small{font-size:0.82em;color:#57606a}
+.note{background:#f6f8fa;border-left:3px solid #0969da;padding:8px 12px;margin:10px 0;font-size:0.9em}
+ul,ol{margin:6px 0}
+.tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:700}
+.t-p0{background:#ffebe9;color:#82071e}
+.t-p1{background:#fff8c5;color:#633c01}
+.t-p2{background:#ddf4ff;color:#0a417a}
+.t-tbd{background:#eef2f6;color:#57606a}
+</style></head><body>
+
+<h1>ZhuLong 压缩机制消融计划书：cline <code>basic</code> vs. <code>agentic</code></h1>
+
+<div class="banner info">
+<b>文档性质</b>：实验计划书（预注册）。本文件只写「怎么做、量什么、怎么判」，<b>结果区留空（TBD）</b>，跑完后由同一份 HTML 填入结果并另存为结果报告。<br>
+<b>版本</b>：v1 · 2026-11-12 · 作者：zhulong 线 · 适用：EDA-Eval-PyAether 158（DAC2027 消融评测）
+</div>
+
+<div class="banner warn">
+<b>一句话目标</b>：在同一基座、同一 cline 版本、同一评测协议下，比较 cline 的两套上下文压缩策略
+<code>basic</code>（规则化）与 <code>agentic</code>（LLM 语义摘要）在 PyAether 158 上的 Pass@1、成本与失败模式，
+回答一个决策问题：<b>是否值得把 agentic 设为默认</b>。
+</div>
+
+<h2>1. 背景：两种压缩机制到底差在哪</h2>
+
+<p class="small">来源：cline 源码 <code>compaction.ts</code> / <code>basic-compaction.ts</code> / <code>agentic-compaction.ts</code> 与 CLI <code>--compaction</code>（4.x）。本仓库已有 trace 分析：<code>reports/report_zhulong_auto_compaction_analysis_zh.html</code>。</p>
+
+<table>
+<thead><tr><th style="width:16%">维度</th><th style="width:42%">basic</th><th style="width:42%">agentic（当前默认）</th></tr></thead>
+<tbody>
+<tr><td class="l"><b>触发</b></td><td class="l" colspan="2">每个模型请求前 <code>prepareTurn</code> 钩子：估算 token ≥ <code>maxInputTokens × 0.9</code>（<code>COMPACTION_TRIGGER_RATIO</code>）即触发；<code>maxInputTokens</code> 默认 128K（仅给 contextWindow 时按 90% 折算）。实测触发点约 100K token。</td></tr>
+<tr><td class="l"><b>压缩目标</b></td><td class="l" colspan="2">目标 = 触发阈值 × 0.7（<code>DEFAULT_TARGET_RATIO</code>）；长会话（≥5 轮 user-assistant 且 maxTokens &lt; 预算）目标为预算的 50%。另用上一轮 provider 实际输入 token 修正估算偏差（上限 4×）。</td></tr>
+<tr><td class="l"><b>实现</b></td><td class="l">纯规则、<b>零额外 LLM 调用</b>；保留「最新 user prompt + 最近 3 条 assistant 回复」，其余折叠；<b>完全确定性</b></td><td class="l"><b>额外一次摘要 LLM 调用</b>；保留 <code>preserveRecentTokens</code> 尾部 + 结构化摘要（目标 / 当前状态 / 关键决策 / 下一步）；非确定性</td></tr>
+<tr><td class="l"><b>回退</b></td><td class="l">本身就是回退路径</td><td class="l">摘要调用失败或空 → 自动回退 basic</td></tr>
+<tr><td class="l"><b>溢出恢复</b></td><td class="l">✅ 唯一保证路径</td><td class="l">❌ 不用于溢出恢复（溢出永远走 basic）</td></tr>
+<tr><td class="l"><b>元数据</b></td><td class="l"><code>kind=compaction</code> + SYSTEM_NOTICE</td><td class="l"><code>kind=compaction_summary</code> + 结构化 details</td></tr>
+<tr><td class="l"><b>遥测事件</b></td><td class="l" colspan="2"><code>task.compaction_executed</code>：strategy / mode / messagesBefore-After-Removed / tokensBefore-After-Saved / triggerTokens / maxInputTokens / durationMs；另有 <code>task.compaction_skipped</code>、<code>task.compaction_budget_emergency</code></td></tr>
+<tr><td class="l"><b>开关</b></td><td class="l" colspan="2"><code>cline --compaction agentic|basic|off</code>（默认 <code>agentic</code>）；配置项 <code>compaction.enabled</code>。⚠️ 训练机现用 cline 3.0.51，<b>须先验证该 flag 是否存在</b>（见 §5 P0）。</td></tr>
+</tbody></table>
+
+<h3>1.1 为什么这个对比值得做（既有证据）</h3>
+<ul>
+<li>本仓库 6,162 个 session 中只有 <b>745（12.1%）触发过压缩</b>，压缩比中位数 <b>13.98%</b>，压缩主要发生在任务进度 <b>~88%</b> 处，压缩后平均再工作 19 条消息。</li>
+<li>压缩过的 session <b>TIMEOUT 率 11.1% vs 未压缩 0.04%</b>（相差两个数量级）——压缩与「长任务失败」高度相关，但无法区分是「任务本来就长」还是「压缩丢了状态」。</li>
+<li>因此：<b>压缩机制的价值只有在「触发压缩的长任务」上才能被看清</b>；全量 158 题会被 88% 未压缩任务稀释 → 亚组分析是必需的，不是可选项。</li>
+</ul>
+
+<h2>2. 研究问题与假设（预注册，先写死再跑）</h2>
+
+<table>
+<thead><tr><th style="width:8%">编号</th><th style="width:34%">研究问题</th><th style="width:36%">假设（方向性）</th><th style="width:22%">判据</th></tr></thead>
+<tbody>
+<tr><td>RQ1</td><td class="l">总体上，agentic 相对 basic 的 Pass@1 差多少？</td><td class="l"><b>H1</b>：agentic 更高，Δ ≥ <b>+3pp</b>（语义摘要保住目标/状态，减少「忘了做到哪」）</td><td class="l">3 轮均值；配对 McNemar 双侧 p&lt;0.05 <b>且</b> |Δ|≥3pp</td></tr>
+<tr><td>RQ2</td><td class="l">优势是否集中在长会话/触发过压缩的任务？</td><td class="l"><b>H2</b>：交互项为正——轨迹越长，agentic 相对 basic 的优势越大</td><td class="l">亚组（是否压缩 × 轨迹长度四分位）Δ 与 95% CI；交互项方向一致</td></tr>
+<tr><td>RQ3</td><td class="l">agentic 的额外摘要调用值得吗？</td><td class="l"><b>H3</b>：agentic 每题 token / 墙钟更高；<b>每 +1pp 的边际成本</b>低于团队可接受阈值（暂定：每 +1pp ≤ 3% 额外 token）</td><td class="l">tok/题、墙钟/题、batch 墙钟；增益/成本比表</td></tr>
+<tr><td>RQ4</td><td class="l">两臂的失败模式是否不同？</td><td class="l"><b>H4</b>：basic 的 <b>context-loss 型失败</b>占比更高；agentic 的失败更多是能力型（题目本身难）</td><td class="l">失败分类表 + 5 个可测信号（见 §4.3）</td></tr>
+<tr><td>RQ5</td><td class="l">压缩本身是否引入新风险？</td><td class="l"><b>H5</b>：agentic 摘要若质量差（缺 4 要素），其会话失败率不低于 basic</td><td class="l">摘要 4 要素覆盖率 × 通过率交叉表</td></tr>
+</tbody></table>
+
+<div class="banner err">
+<b>预注册纪律（防 p-hacking）</b>：<br>
+① <b>主终点唯一</b> = 3 轮 Pass@1 均值（全 158 题，ITT）；<br>
+② 亚组（压缩会话 / 长轨迹 / domain）<b>只作次要终点</b>，必须同时报效应量 + 95% CI + 样本量，不得用亚组结果替代主终点；<br>
+③ 所有轮次全部入表，<b>不许剔除</b>「异常轮」；确有 infra 故障须单列并说明，同时给「含/不含」两版；<br>
+④ 跑之前不改判据；要改必须在报告变更记录里写明「何时、为何、改前改后」。
+</div>
+
+<h2>3. 实验设计</h2>
+
+<h3>3.1 实验臂</h3>
+<table>
+<thead><tr><th>臂</th><th>cline 参数</th><th>轮数</th><th>题量</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>C-basic</b></td><td><code>--compaction basic</code></td><td>3</td><td>158/轮</td><td>规则化压缩；确定性；无额外 LLM 调用</td></tr>
+<tr><td><b>C-agentic</b></td><td><code>--compaction agentic</code></td><td>3</td><td>158/轮</td><td>当前默认；LLM 语义摘要（摘要模型 = 同一基座）</td></tr>
+<tr><td>C-off（可选对照）</td><td><code>--compaction off</code></td><td>1</td><td>158</td><td><b>仅作说明性对照</b>（预期大量 overflow → infra/timeout 激增，不入主结论）</td></tr>
+</tbody></table>
+
+<p class="small">共 6 轮主实验（+1 轮可选 off）。每轮全量 158 题、<code>-p 8 -n</code>、串行；两臂交替 <b>ABBA</b> 顺序，抵消时间漂移与额度窗口漂移（顺序：basic→agentic→agentic→basic→basic→agentic）。</p>
+
+<h3>3.2 控制变量（必须逐项记录到每轮元数据）</h3>
+<table>
+<thead><tr><th style="width:26%">变量</th><th style="width:44%">取值</th><th style="width:30%">记录方式</th></tr></thead>
+<tbody>
+<tr><td>基座模型</td><td class="l">与当前可用性一致，<b>两臂必须完全相同</b>（建议 deepseek-v4-pro-cloud；若 B_en_r1 重跑确认后统一，则以该 id 为准）</td><td class="l">每 session 的 <code>modelInfo.id/provider</code> + 轮级 env 快照</td></tr>
+<tr><td>cline 版本</td><td class="l">固定并记录（现网 3.0.51；若需升级以支持 <code>--compaction</code>，两臂同版本，且加做 10 题校准）</td><td class="l"><code>cline --version</code> 写进轮日志</td></tr>
+<tr><td>thinking</td><td class="l"><code>CLINE_THINKING=medium</code>（与轴 A/B 基线同档）</td><td class="l">env 快照</td></tr>
+<tr><td>语言提示</td><td class="l"><code>LANG_HINT</code> 空（不掺入轴 B 变量）</td><td class="l">env 快照</td></tr>
+<tr><td>并行/协议</td><td class="l"><code>-p 8 -n</code>，Pass@1 单次无 retry；<code>--auto-approve</code> 同既有</td><td class="l">启动命令落日志</td></tr>
+<tr><td>benchmark</td><td class="l"><code>benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl</code></td><td class="l">文件 sha256</td></tr>
+<tr><td>评测框架</td><td class="l"><code>EDA-Eval-Framework</code> 固定 commit（跑前 <code>git rev-parse HEAD</code>）</td><td class="l">commit hash</td></tr>
+<tr><td>沙盒</td><td class="l">端口池 8664/8665/8653/8669 全空闲；不与 designflow 并发</td><td class="l">起跑前探测输出</td></tr>
+<tr><td>额度</td><td class="l">每轮起跑前 quota probe 通过；429 时等待而非降并发</td><td class="l">probe 日志</td></tr>
+<tr><td>上下文窗口</td><td class="l"><code>maxInputTokens</code> 固定（记录实际解析值，避免 100K/128K 混用）</td><td class="l">轮级 env/modelInfo</td></tr>
+</tbody></table>
+
+<h3>3.3 样本量与功效</h3>
+<ul>
+<li><b>主分析（ITT）</b>：158 题配对。若 discordant 比例 ≈25%（basic 独过 12.5% / agentic 独过 12.5%），3 轮均值可检出 <b>~10pp</b> 差异（McNemar 双侧 α=0.05、power≈0.8）。<b>不足 3pp 的差异本设计不承诺可检出</b>——报告须如实说明。</li>
+<li><b>亚组（触发压缩的会话）</b>：按既有 12.1% 压缩率，单轮约 <b>19 题/臂</b>；3 轮合计约 <b>57 对</b>。若实际 &lt;60 对，<b>触发扩展预案</b>：每臂加跑到 5 轮（+2 轮 ≈ +7.5h）。</li>
+<li><b>不做事后加样</b>：扩展只在「亚组 n 不足」这一事先写明的条件下执行，并在报告中披露。</li>
+</ul>
+
+<h3>3.4 可选探索臂（非主结论）</h3>
+<div class="note">
+压缩事件天然稀缺。若想提高压缩发生率，可在 <b>exploratory</b> 臂里把触发阈值下调（如 <code>COMPACTION_TRIGGER_RATIO</code> 可配则设 0.5），制造「提前压缩」压力测试；<b>该臂结论单独标注 exploratory，不参与 RQ1 主判据</b>。若该常量不可配，则不做，不得改源码强改（会破坏跨版本可比性）。
+</div>
+
+<h2>4. 指标与测量</h2>
+
+<h3>4.1 主/次指标</h3>
+<table>
+<thead><tr><th style="width:16%">类别</th><th style="width:34%">指标</th><th style="width:50%">定义与来源</th></tr></thead>
+<tbody>
+<tr><td><b>主终点</b></td><td class="l">Pass@1（本轮 158 题通过率）</td><td class="l">EDA-Eval-Framework 评分产物；3 轮 mean ± std；逐题配对表保留</td></tr>
+<tr><td rowspan="5">次终点</td><td class="l">token 成本</td><td class="l">prompt / completion / reasoning / total，tok/题（<code>extract_cost.py</code>）</td></tr>
+<tr><td class="l">墙钟</td><td class="l">每题秒数、batch 总墙钟</td></tr>
+<tr><td class="l">稳定性</td><td class="l">converged / timeout / gen_fail / infra_fail 计数</td></tr>
+<tr><td class="l">压缩行为</td><td class="l">压缩次数、压缩比、触发进度、压缩后增量 turn（<code>*.compaction.json</code> + 遥测）</td></tr>
+<tr><td class="l">摘要质量</td><td class="l">4 要素覆盖率：目标 / 当前状态 / 关键决策 / 下一步（人工抽 30 份 + 关键词规则）</td></tr>
+</tbody></table>
+
+<h3>4.2 压缩事件怎么取（两路互证）</h3>
+<ul>
+<li><b>落盘</b>：每个 session 目录下 <code>*.compaction.json</code>（含 <code>metadata.kind</code> = <code>compaction</code> 或 <code>compaction_summary</code>、<code>source_message_count</code>、<code>messages[]</code>）；与 <code>*.messages.json</code> 并列。</li>
+<li><b>遥测</b>：<code>task.compaction_executed</code>（strategy/mode/messagesBefore-After/tokensBefore-After-Saved/triggerTokens/maxInputTokens/durationMs）。若 CLI 不吐遥测，则以 compaction.json 为准，并在报告标注「遥测不可用」。</li>
+<li><b>注意</b>：compaction.json 只保留<b>最后一次</b>快照（<code>userRunSpan</code>），多次压缩会低估次数；报告须写「观测下限」。</li>
+</ul>
+
+<h3>4.3 context-loss 失败信号（H4 的测量口径）</h3>
+<p class="small">从 trace（<code>messages.json</code> 的 tool_use / tool_result）自动统计，命中任一项记 1 分，≥2 分判为「context-loss 型失败」；同时保留人工抽检 20 例做校准。</p>
+<table>
+<thead><tr><th style="width:6%">#</th><th style="width:34%">信号</th><th style="width:60%">检测规则（示例）</th></tr></thead>
+<tbody>
+<tr><td>①</td><td class="l">重复读取同一文件且无新信息</td><td class="l">同路径 Read/read_files ≥3 次，且后续未基于其内容产生编辑</td></tr>
+<tr><td>②</td><td class="l">重跑已成功的命令</td><td class="l">完全相同的 command 字符串出现 ≥2 次，且第一次 exit=0</td></tr>
+<tr><td>③</td><td class="l">与已确认事实矛盾</td><td class="l">断言与之前 tool_result 中的输出相冲突（关键词/数值级比对）</td></tr>
+<tr><td>④</td><td class="l">遗忘已写入的文件</td><td class="l">对已创建文件再次 create（非编辑），或声明「文件不存在」但此前已 write</td></tr>
+<tr><td>⑤</td><td class="l">重复同一失败</td><td class="l">同一失败命令/断言连续 ≥3 次，中间无新信息</td></tr>
+</tbody></table>
+
+<h2>5. 执行计划</h2>
+
+<table>
+<thead><tr><th style="width:10%">阶段</th><th style="width:12%">预算</th><th style="width:44%">动作</th><th style="width:34%">通过条件（Gate）</th></tr></thead>
+<tbody>
+<tr><td><span class="tag t-p0">P0 预检</span></td><td>0.5h</td><td class="l">① <code>cline --version</code> + <code>cline --help | grep -- --compaction</code>；② 若不支持 → 升级到支持版本并记录；③ <code>run_cline_script.sh</code> 是否透传 <code>--compaction</code>（无则按附录 A 打 3 行补丁）；④ 两臂各 1 题 smoke；⑤ 沙盒 4 端口 + quota probe</td><td class="l">flag 存在；两臂 smoke 各出 1 个 session，且 <code>compaction.json</code> 的 <code>metadata.kind</code> 分别符合预期（basic=compaction / agentic=compaction_summary）</td></tr>
+<tr><td><span class="tag t-p1">P1 试点</span></td><td>1h</td><td class="l">固定子集 10 题（seed=42）× 两臂，各 1 轮</td><td class="l">无 infra fail；压缩事件可被脚本统计；单题耗时/成本落在预期区间（用于修正总预算）</td></tr>
+<tr><td><span class="tag t-p1">P2 全量</span></td><td>22–26h</td><td class="l">6 轮串行（ABBA），每轮 158 题，轮间 quota probe；每轮结束落 results/cost/trace</td><td class="l">6 轮全部 <code>pass_rate</code> 非 null；timeout/gen_fail 有分类记录</td></tr>
+<tr><td><span class="tag t-p2">P3 分析</span></td><td>2h</td><td class="l">配对统计 + 亚组 + 失败分类 + 摘要质量 + 报告</td><td class="l">报告自检 PASS（数字可复算、0 外链、结论明确）</td></tr>
+</tbody></table>
+
+<h3>5.1 启动命令模板（关键）</h3>
+<pre>cd /nasdata/app.e0031982/code/eda_fastmcp
+export CLI_AGENT=cline PARALLEL=8 CLINE_THINKING=medium LANG_HINT=
+export CLINE_COMPACTION=basic            # ← 本实验新增：basic | agentic
+export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+export EVAL_ROOT_DIR_OVERRIDE=/nasdata/app.e0031982/code/eda_code_eval
+export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
+unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+export PATH="/home/app.e0031982/.local/node-20/bin:$PATH"
+
+pgrep -f '^bash scripts/run_cline_script' && echo "BUSY -> abort" && exit 1
+setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 \
+  bash scripts/run_cline_script.sh -p 8 -n' \
+  > /tmp/COMP_${CLINE_COMPACTION}.log 2>&1 < /dev/null &</pre>
+
+<p class="small">编排脚本建议：<code>run/run_compaction_ablation.sh</code>（复制 <code>run_think_lang_ablation.sh</code>，去掉轴 A/B 循环，改为 6 轮 ABBA；每轮导出 <code>CLINE_COMPACTION</code> 并落 <code>ablation_compaction_results.json</code>）。</p>
+
+<h3>5.2 轮次清单（预排）</h3>
+<table>
+<thead><tr><th>#</th><th>臂</th><th>tag</th><th>预计墙钟</th><th>产物</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>C-basic</td><td><code>C_basic_r1</code></td><td>~3.7h</td><td rowspan="6" class="l">每轮：results 条目 + <code>cost_C_*_r*.json</code> + trace 归档 <code>trace_compaction_ablation/&lt;arm&gt;/&lt;batch&gt;/</code></td></tr>
+<tr><td>2</td><td>C-agentic</td><td><code>C_agentic_r1</code></td><td>~3.7h</td></tr>
+<tr><td>3</td><td>C-agentic</td><td><code>C_agentic_r2</code></td><td>~3.7h</td></tr>
+<tr><td>4</td><td>C-basic</td><td><code>C_basic_r2</code></td><td>~3.7h</td></tr>
+<tr><td>5</td><td>C-basic</td><td><code>C_basic_r3</code></td><td>~3.7h</td></tr>
+<tr><td>6</td><td>C-agentic</td><td><code>C_agentic_r3</code></td><td>~3.7h</td></tr>
+</tbody></table>
+
+<h2>6. 分析计划（跑之前定好）</h2>
+<ol>
+<li><b>描述统计</b>：每臂每轮 Pass@1、均值±std；逐题矩阵（158 × 6）落 TSV。</li>
+<li><b>主检验</b>：McNemar 精确检验（按轮配对后「题级多数票」；同时给「每轮各自配对」3 组结果，避免聚合口径争议）。</li>
+<li><b>置信区间</b>：按题 bootstrap 10,000 次，报 Δ 的 95% CI（配对重采样）；同时报 Wilson CI（单臂绝对通过率）。</li>
+<li><b>交互/亚组</b>：分层表（是否触发压缩 × 轨迹长度四分位 × domain）；如环境允许，拟合 <code>pass ~ arm * log1p(tool_calls) + (1|task)</code> 混合效应 logistic，报交互项。</li>
+<li><b>失败分类</b>：infra / timeout / context-loss / capability / format；两臂四格表 + 卡方或 Fisher。</li>
+<li><b>成本</b>：tok/题、墙钟/题、batch 墙钟；计算「每 +1pp 的边际 token 成本」。</li>
+<li><b>多重比较</b>：主终点单一不校正；次要终点 Holm；探索臂只报描述统计。</li>
+<li><b>可复现</b>：脚本 <code>analyze_compaction_ablation.py</code> + 原始 results/cost 一并入库；报告数字须能由脚本一键复算。</li>
+</ol>
+
+<div class="note"><b>报告必须正面回答的三个问题</b>：① agentic 是否带来 ≥3pp 的稳定增益？② 增益是否只存在于长会话？③ 综合 token/墙钟，默认策略应该选哪个？——三个问题都要给「是/否/证据不足」的明确结论，不许只列数字。</div>
+
+<h2>7. 风险与缓解</h2>
+<table>
+<thead><tr><th style="width:26%">风险</th><th style="width:10%">概率</th><th style="width:64%">缓解</th></tr></thead>
+<tbody>
+<tr><td class="l">cline 3.0.51 无 <code>--compaction</code></td><td>中</td><td class="l">P0 用 <code>--help</code> 验证；不支持则升级到支持版本（记录版本），<b>两臂同版本</b>，并加做 10 题校准确认与历史基线不冲突</td></tr>
+<tr><td class="l">agentic 摘要额外调用触发额度 429</td><td>中</td><td class="l">每轮前 quota probe；429 时等待恢复（不降并发）；摘要调用与主调用同基座，额度消耗计入成本表</td></tr>
+<tr><td class="l">压缩事件过少（12%）→ 亚组功效不足</td><td>高</td><td class="l">预注册扩展预案（亚组 &lt;60 对 → 每臂 5 轮）；主分析仍用 ITT；报告明确「压缩亚组为探索性」</td></tr>
+<tr><td class="l">非确定性（agentic 摘要每次不同）</td><td>高</td><td class="l">3 轮取均值 + 报 std；结论只在「跨轮方向一致」时下；不做单轮结论</td></tr>
+<tr><td class="l">多次压缩不可见（只留最后快照）</td><td>中</td><td class="l">以遥测累计为准；无遥测则报「观测下限」，不臆测次数</td></tr>
+<tr><td class="l">沙盒/端口被 designflow 占用</td><td>中</td><td class="l">起跑前探测 8664/8665/8653/8669；与 designflow 串行，不并发</td></tr>
+<tr><td class="l">基座/上下文窗口混用</td><td>中</td><td class="l">每轮记录 model id + maxInputTokens；两臂不一致则该轮作废重跑（并在报告说明）</td></tr>
+<tr><td class="l">与轴 A/B 实验互相干扰</td><td>低</td><td class="l">串行执行；<code>pgrep</code> 有 run_cline_script 则不起跑</td></tr>
+<tr><td class="l">与 benchmark 污染</td><td>低</td><td class="l">benchmark 文件 sha256 固定；不修改题库/评分器</td></tr>
+</tbody></table>
+
+<h2>8. 交付物与验收</h2>
+<table>
+<thead><tr><th style="width:28%">交付物</th><th style="width:38%">路径</th><th style="width:34%">验收</th></tr></thead>
+<tbody>
+<tr><td class="l">编排脚本</td><td class="l"><code>run/run_compaction_ablation.sh</code></td><td class="l">可断点续跑；6 轮 ABBA；每轮 env 快照落日志</td></tr>
+<tr><td class="l">harness 补丁</td><td class="l">EDA-Eval-Framework <code>scripts/run_cline_script.sh</code>（附录 A）</td><td class="l">3 行透传；无 flag 时向后兼容</td></tr>
+<tr><td class="l">结果 JSON</td><td class="l"><code>run/ablation_compaction_results.json</code></td><td class="l">6 条 round entry，字段与轴 A/B 同构</td></tr>
+<tr><td class="l">成本 JSON</td><td class="l"><code>run/cost_C_{basic,agentic}_r{1..3}.json</code></td><td class="l">prompt/completion/reasoning/total + tok/题</td></tr>
+<tr><td class="l">trace 归档</td><td class="l"><code>/nasdata/.../trace_compaction_ablation/&lt;arm&gt;/&lt;batch&gt;/</code></td><td class="l">含 messages.json + compaction.json；不删旧 batch</td></tr>
+<tr><td class="l"><b>中文 HTML 报告</b></td><td class="l"><code>reports/report_zhulong_compaction_basic_vs_agentic_zh.html</code></td><td class="l">单文件自包含、<b>0 外链</b>、8 节；数字可复算；明确三问结论</td></tr>
+<tr><td class="l">报告大纲</td><td class="l" colspan="2">① 摘要（三问结论）② 机制与口径 ③ 主结果（6 轮表+配对）④ 亚组（压缩/长轨迹/domain）⑤ 失败分类 ⑥ 成本-收益 ⑦ 摘要质量 ⑧ 结论与默认策略建议 + 附录（复现命令/字段/变更记录）</td></tr>
+</tbody></table>
+
+<div class="banner err">
+<b>红线</b>：① 不 kill 编排器/loop；② 不与 designflow 并发抢沙盒；③ 不改 benchmark/评分器；④ 不删旧结果与 trace；⑤ 不把单轮结论写成最终结论；⑥ 报告不得出现「大概/可能」而无数字支撑。
+</div>
+
+<h2>9. 预算与时间线</h2>
+<table>
+<thead><tr><th style="width:24%">项</th><th style="width:26%">估算</th><th style="width:50%">依据</th></tr></thead>
+<tbody>
+<tr><td class="l">单轮墙钟</td><td>~3.7h</td><td class="l">B_zh_r3 重跑 3.7h（158 题、-p 8、thinking=medium）</td></tr>
+<tr><td class="l">主实验 6 轮</td><td>~22h（纯跑）</td><td class="l">6 × 3.7h，串行</td></tr>
+<tr><td class="l">预检+试点+分析</td><td>~3.5h</td><td class="l">P0 0.5h + P1 1h + P3 2h</td></tr>
+<tr><td class="l"><b>总计</b></td><td><b>~26h（约 1.1 天）</b></td><td class="l">不含额度等待；若扩到 5 轮/臂 +7.5h</td></tr>
+<tr><td class="l">token 量级</td><td>~9×10⁸ prompt tok（6 轮）</td><td class="l">参照轴 B 单轮 ~1.5×10⁸；agentic 额外摘要调用约 +0.5–1% 输入</td></tr>
+</tbody></table>
+
+<h2>10. 决策规则（跑完怎么用）</h2>
+<table>
+<thead><tr><th style="width:38%">结果模式</th><th style="width:62%">结论与动作</th></tr></thead>
+<tbody>
+<tr><td class="l">Δ ≥ +3pp 且 p&lt;0.05，长会话亚组同向</td><td class="l"><b>agentic 设为默认</b>；论文/报告写「语义摘要保住任务状态，长会话收益最大」；保留 basic 作为溢出恢复路径</td></tr>
+<tr><td class="l">Δ 在 (−3,+3) 且 CI 跨 0</td><td class="l"><b>证据不足</b>；默认维持 agentic（成本可接受），报告写「未观测到显著增益」，不做宣传性表述</td></tr>
+<tr><td class="l">Δ ≤ −3pp</td><td class="l">查原因（摘要质量/额度抢占/非确定性）；建议 <b>basic 默认</b>，agentic 仅用于明确需要语义摘要的场景</td></tr>
+<tr><td class="l">亚组显著但总体不显著</td><td class="l">结论限定「长会话场景 agentic 更优」；给工程建议（按上下文占用率自适应切换），另开实验验证</td></tr>
+</tbody></table>
+
+<h2>附录 A · harness 透传补丁（3 行）</h2>
+<p class="small">先在 <code>EDA-Eval-Framework/scripts/run_cline_script.sh</code> 里定位 cline 调用行（含 <code>--thinking</code>），按以下模式加透传；无 flag 环境下必须保持原行为。</p>
+<pre># before
+cline ... --thinking "$CLINE_THINKING" ...
+
+# after
+COMPACT_FLAG=""
+if [[ -n "${CLINE_COMPACTION:-}" ]]; then COMPACT_FLAG="--compaction ${CLINE_COMPACTION}"; fi
+cline ... --thinking "$CLINE_THINKING" $COMPACT_FLAG ...</pre>
+
+<h2>附录 B · 结果 JSON 条目结构（与轴 A/B 对齐）</h2>
+<pre>{
+  "summary": {
+    "tag": "C_basic_r1", "arm": "basic", "round": 1,
+    "pass_rate_pct": null, "passed": null, "total": 158,
+    "tokens": {"prompt": null, "completion": null, "reasoning": null, "total": null},
+    "converged": null, "timeout": null, "gen_fail": null, "success": null,
+    "compaction": {"sessions": null, "events": null, "ratio_median": null},
+    "model_id": null, "cline_version": null, "max_input_tokens": null,
+    "batch": null, "wall_clock_s": null
+  },
+  "tasks": [{"id": "...", "pass": null, "tool_calls": null, "compacted": null,
+             "failure_type": null, "context_loss_signals": []}]
+}</pre>
+
+<h2>附录 C · 变更记录</h2>
+<table>
+<thead><tr><th style="width:18%">日期</th><th style="width:16%">版本</th><th style="width:66%">变更</th></tr></thead>
+<tbody>
+<tr><td>2026-11-12</td><td>v1</td><td class="l">初版：基于 cline <code>--compaction</code> 语义、既有 6,162-session 压缩 trace 分析（12.1% 触发率、13.98% 压缩比、压缩会话 TIMEOUT 11.1% vs 0.04%）制定预注册方案</td></tr>
+</tbody></table>
+
+<p class="small" style="margin-top:24px">生成：2026-11-12 · 单文件自包含（内联 CSS，零外链）· 结果区待 P3 填写。</p>
+
+
+
+
+
+
+</body></html>
