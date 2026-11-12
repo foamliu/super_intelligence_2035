@@ -990,6 +990,74 @@
 
 ---
 
+## 56. ORPO: Monolithic Preference Optimization without Reference Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ORPO: Monolithic Preference Optimization without Reference Model |
+| 作者（前 3） | **Jiwoo Hong** · **Noah Lee** · **James Thorne**（共 3 位） |
+| 年份 | 2024（arXiv 首次提交 **2024-03-12**；本线取到 **v2 / 2024-03-14**） |
+| 会议 / 期刊 | **EMNLP 2024**（OpenAlex `type=conference-paper`，DOI `10.18653/v1/2024.emnlp-main.626`） |
+| 被引数 | **586**（OpenAlex，查询日 **2026-11-12**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.07691> ｜ 会议 DOI `10.18653/v1/2024.emnlp-main.626` |
+| 一句话贡献 | 摘要原文要点：论文先论证 **SFT 在偏好对齐中不可省**，且「对不受欢迎的生成风格施加**轻微惩罚**」就足以得到偏好对齐的 SFT；据此提出**无参考模型**的**单体 odds ratio 偏好优化（ORPO）**，把指令微调与偏好对齐合并成**一个阶段**，从而**省掉额外的偏好对齐阶段**。 |
+| 与我们工作的关系 | **posttrain（后训练配方，直接影响）**：我们 ~2B 的后训练现在是「SFT → DPO」两段式，显存与流程成本都压在参考模型上。ORPO 提供「**一个阶段、不要参考模型**」的替代。<b>动作</b>：posttrain 跑三臂对照 —— `SFT→DPO(带参考)` / `ORPO 单阶段` / `SFT→SimPO`，同一份域内偏好对、同一 token 预算，<b>判据</b>：以 harness「工具调用一次成功率」为主指标，ORPO 臂若不劣于 DPO 臂且节省 ≥1 次全参前向，则纳入候选配方。<br>**zhulong（奖励设计）**：ORPO 的奖励本质是「**SFT 对数似然 + λ·odds ratio**」两项之和 ⇒ 消融必须把 λ 单列，否则无法区分「去参考模型」与「多了一个 SFT 项」各自的贡献。<br>**data（偏好数据）**：单体目标意味着**偏好对与 SFT 语料同时进入一个 loss** ⇒ data 线要记录「每条偏好对是否也有对应的 chosen-only SFT 样本」，否则无法复现。<b>风险</b>：① 作者自报，本线未复现；② 摘要未给具体胜率数字 ⇒ 本文不引用任何「提升 X%」；③ 我们的偏好对来自**工具轨迹**（含报错文本、长度长尾），与论文的对话/摘要分布差异大，λ 的最优值不可直接搬。 |
+
+首次收录: 2026-11-12（第十五轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 会议 DOI）
+
+---
+
+## 57. A General Theoretical Paradigm to Understand Learning from Human Preferences（IPO）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | A General Theoretical Paradigm to Understand Learning from Human Preferences |
+| 作者（前 3） | **Mohammad Gheshlaghi Azar** · **Mark Rowland** · **Bilal Piot**（et al.，共 7 位：+ Daniel Guo · Daniele Calandriello · Michal Valko · Rémi Munos；全部 Google DeepMind） |
+| 年份 | 2023（arXiv 首次提交 **2023-10-18**；本线取到 **v2 / 2023-11-22**） |
+| 会议 / 期刊 | **预印本**（arXiv；OpenAlex `type=preprint`，本轮**未核到会议 DOI**） |
+| 被引数 | **285**（OpenAlex，DOI `10.48550/arxiv.2310.12036`，查询日 **2026-11-12**；S2 未查）<br>⚠️ **低于 §1「被引 ≥500」门槛**，按判据 ②「**奠基**（偏好优化的理论范式）」收录 —— 它把 DPO 的隐含假设摆到台面上并给出带正则的替代目标（IPO），是后续大量偏好优化工作的理论参照。 |
+| arXiv / DOI | <https://arxiv.org/abs/2310.12036> ｜ arXiv DOI `10.48550/arxiv.2310.12036` |
+| 一句话贡献 | 摘要原文要点：RLHF 依赖**两个近似** —— ① 把**成对偏好**换成**逐点奖励**，② 假设奖励模型能从收集数据泛化到策略采样的分布外数据；DPO 绕过了 ②，但**仍重度依赖 ①**。本文给出更一般的理论范式来理解「从人类偏好学习」，并据此提出对 ① 的替代（IPO）。 |
+| 与我们工作的关系 | **zhulong（奖励设计 / 消融归因，强相关）**：我们做偏好优化时最容易被忽略的正是 ① —— 把「A 比 B 好」硬当成两个独立分数。<b>动作</b>：zhulong 在写消融结论时必须显式声明「本实验是否假设了逐点奖励可替代成对偏好」，并把 IPO 作为**对照目标**加入（DPO / IPO / SimPO 三目标同数据同预算），<b>判据</b>：若在**高度 off-policy** 的离线偏好数据上 IPO 与 DPO 的胜率差 &lt;1 个标准差，则结论只能写「在该数据量下目标选择不敏感」，🚫 不许写「DPO 更好」。<br>**data（偏好数据）**：理论指出「偏好数据覆盖不足 ⇒ ① 不成立」 ⇒ data 线的偏好对采集必须报**覆盖度**（同一任务上出现过的对比对数），而非只报总条数。<br>**harness（评测口径）**：需要能区分「策略偏离偏好数据分布」的指标（如 chosen 似然与策略似然的偏移）。<b>风险</b>：① 是**理论 + 小规模实验**的论文，工程收益不保证；② 被引 285 未达门槛，收录属「奠基」判断（我们的观察）；③ 引用的摘要为 arXiv 摘要全文要点，公式与定理细节本线未逐条核对，引用具体定理前须回原文。 |
+
+首次收录: 2026-11-12（第十五轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议=未核到）
+
+---
+
+## 58. Lost in the Middle: How Language Models Use Long Contexts
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Lost in the Middle: How Language Models Use Long Contexts |
+| 作者（前 3） | **Nelson F. Liu** · **Kevin Lin** · **John Hewitt**（et al.，共 7 位：+ Ashwin Paranjape · Michele Bevilacqua · Fabio Petroni · Percy Liang） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-06**；本线取到 **v3 / 2023-11-20**） |
+| 会议 / 期刊 | **TACL 2024**（arXiv `comment` 原文：`Accepted for publication in Transactions of the Association for Computational Linguistics (TACL), 2023`；OpenAlex DOI `10.1162/tacl_a_00638`） |
+| 被引数 | **3,578**（OpenAlex，上述期刊 DOI，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.03172> ｜ 期刊 DOI `10.1162/tacl_a_00638` |
+| 一句话贡献 | 摘要原文要点：用**多文档问答**与**键值检索**两个「必须在输入里找到相关信息」的任务评测长上下文能力，发现**只改变相关信息的位置就能让性能显著下降** ⇒ 现有模型并未稳健地利用长输入；性能**通常在相关信息位于开头或结尾时最高**，在**中部显著下降**。 |
+| 与我们工作的关系 | **pretrain（长上下文配比 / 位置鲁棒性，直接影响）**：我们的 EDA 场景天然是「长日志 + 关键一行在中间」，这篇是**必须先跑满的基线**。<b>动作</b>：pretrain 在做长上下文扩展前，先做一个**位置扫描**实验（把关键证据分别放在 0% / 25% / 50% / 75% / 100% 位置），<b>判据</b>：若 50% 位置的指标比两端低 &gt;15%，则长上下文扩展的优先级高于继续加训练 token。<br>**harness（判分与上下文编排，直接影响）**：评测题要把「证据位置」作为**自变量**记录进元数据，否则「长上下文变强」可能只是「证据恰好在前部」。<br>**designflow（造题）**：L3+ 题面应显式设计「**证据埋在长日志中部**」的变体，用来区分「会调工具」与「会找证据」。<br>**vision（间接）**：多图 / 长文档视觉输入同样存在位置效应，可作为图像序列顺序消融的参照。<b>风险</b>：① 实验对象是**自然语言**多文档 QA / 键值检索，我们是**结构化日志与报错文本**，U 形是否同样成立需自测（已在请教信里向一作提问）；② 结论针对 2023 年模型，新模型的绝对差距可能缩小，🚫 不能写成「所有模型都只擅长首尾」。 |
+
+首次收录: 2026-11-12（第十五轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 期刊 DOI）
+
+---
+
+## 59. Efficient Memory Management for Large Language Model Serving with PagedAttention（vLLM）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Efficient Memory Management for Large Language Model Serving with PagedAttention |
+| 作者（前 3） | **Woosuk Kwon** · **Zhuohan Li** · **Siyuan Zhuang**（et al.，共 9 位：+ Ying Sheng · Lianmin Zheng · Cody Hao Yu · Joseph E. Gonzalez · Hao Zhang · Ion Stoica） |
+| 年份 | 2023（arXiv 首次提交 **2023-09-12**，仅 v1） |
+| 会议 / 期刊 | **SOSP 2023**（arXiv `comment` 原文 `SOSP 2023`；OpenAlex `type=conference-paper`，DOI `10.1145/3600006.3613165`） |
+| 被引数 | **3,869**（OpenAlex，上述 DOI，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2309.06180> ｜ 会议 DOI `10.1145/3600006.3613165` |
+| 一句话贡献 | 摘要原文要点：高吞吐服务需要足够大的 batch，但每个请求的 **KV cache 巨大且动态伸缩**，管理不当会被**碎片与重复**严重浪费；作者提出受操作系统**虚拟内存 / 分页**启发的 **PagedAttention**，并在其上构建 **vLLM**，实现（1）KV cache **近零浪费**、（2）**请求内 / 请求间的 KV cache 灵活共享**。 |
+| 与我们工作的关系 | **harness（评测吞吐 / 批量跑题，直接影响）**：我们要在成千上万个配置变体上跑 LLM 闭环，**单卡并发与显存碎片**就是成本口径的第一瓶颈。<b>动作</b>：harness 的批量评测基座把「**KV cache 利用率**」作为与「正确率」并列的报表指标，<b>判据</b>：同一批题目下若把 serving 换成 PagedAttention 类实现后吞吐提升 &lt;1.3×，说明瓶颈不在 KV cache，应转查 prompt 长度分布或工具等待。<br>**zhulong（成本口径）**：ZhuLong 的「单位任务成本」必须区分**生成 token 成本**与**KV 显存成本**，否则长上下文实验的结论会被显存 OOM 掩盖。<br>**pretrain（间接）**：长上下文训练 / 推理的可行 batch 直接受此约束。<b>风险</b>：① 这是**系统论文**（吞吐 / 显存），与模型能力无关，🚫 不能当作「模型更好」的证据；② 具体加速倍数依赖硬件与负载，本文不引用任何倍数；③ 我们的 2B 模型与论文实验规模不同，收益需实测。 |
+
+首次收录: 2026-11-12（第十五轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 会议 DOI）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
@@ -997,7 +1065,7 @@
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
-> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② **`2310.16944` Zephyr（dDPO 蒸馏）** —— 实测存在（cs.LG，2023-10-25），可作「蒸馏 + 偏好」候选，待核被引；③ **版图 / EDA 预训练**（CircuitNet 类，须先实测是否 arXiv 一手）；④ Sutton《The Bitter Lesson》（**博客，无 arXiv / 无 DOI** ⇒ 只能引原文链接，单独标注）；⑤ **SimPO / IPO 类 DPO 改进**（须实测 arXiv 一手 + 被引）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ **KTO（`2402.01306`，Model Alignment as Prospect Theoretic Optimization）** —— 待实测 arXiv 一手 + 被引；⑤ **版图 / EDA 预训练**（除 CircuitNet 外的 LLM-for-EDA 评测基座，须先实测是否 arXiv 一手）；⑥ **KV cache 压缩 / 长上下文检索**（除 vLLM 外的 serving 侧经典，须实测 + 核被引）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **61** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**）｜已发信 **19**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert**）｜X 已核验 **35**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / **`@billpeeb`** / **`@_tim_brooks`** / **`@rm_rafailov`** / **`@archit_sharma97`** / **`@_onurmutlu_`** / **`@danqi_chen`** / **`@natolambert`** / **`@_lewtun`**）｜X 未找到 **26**（61 人中 35 已核验）｜**X 可达（本机 Mihomo 7897；2026-11-12 12:0x 实测：需显式 `--proxy http://127.0.0.1:7897` —— 本 shell 环境未继承 `HTTPS_PROXY`，直连 `x.com` 返回 `000`、带代理返回 `200`；`x_fetch.py` 内部已默认走代理，2/2 `200`）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **16 条**（V1–V16；V13/V14 与本轮 **V15/V16** 均经单条推文页 `og:title` 核验为**他人推文** —— V15 实为 `@esonghori2`、V16 实为 `@deanwball` ⇒ 作废不采用；本期 `voice_ready` 仍为 V2 / V4 两条，**本轮无新增合格言论**）
+**本轮快照**：累计 **65** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**）｜已发信 **21**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu**）｜X 已核验 **37**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`**）｜X 未找到 / 未核验 **28**（65 人中 37 已核验；本轮 `@nelsonfliu` **有页面但无 bio ⇒ 身份不可证**、`@woosuk_kwon` 仅 3 followers ⇒ 判非本人，两者均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **17 条**（V1–V17；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，两处核验通过**，因本期 `voice_ready` 已满 2 条 ⇒ 下期首发）
 
 
 ---
@@ -815,6 +815,58 @@
 | X 账号 | **@_lewtun**（核验：`x_fetch.py` 实测 `200`，`og:description` = `🤠 post-training @huggingface`） |
 | 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信；**同论文已发信给三作 Nathan Lambert**，同论文 ≤1 封） |
 | 备注 | 其 X 以 post-training 实操经验为主（MoE 训练手册、SFT/RL 取舍）⇒ `voice_ready` 候选源。⚠️ 本轮从其 profile 时间线 JSON 取到的高相关推文经单条页核验**实为他人所发**（见第二节 V15/V16 更正），**未采用**。 |
+
+### 62. Percy Liang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Percy Liang |
+| 机构 | **Stanford University**（Computer Science 教授；Stanford NLP / CRFM；X bio 自述 `professor of computer science @Stanford @stanfordnlp, co-founder of @togethercompute, ...`） |
+| 代表论文 | Lost in the Middle（`2307.03172`，**末位作者**）· Marin 开源模型系列（X 自述，未收录为论文条目） |
+| 邮箱 | **未找到**（本人主页 <https://cs.stanford.edu/~pliang/> 实测 `HTTP 200` / 4,395 B，页内**无可读邮箱**；`profiles.stanford.edu/percy-liang` 实测 `200` / 17,851 B，仅见**他人**信箱（页面维护者）⇒ 按令**不猜**） |
+| 主页 | <https://cs.stanford.edu/~pliang/>（实测 `HTTP 200` / 4,395 B，2026-11-12 21:0x） |
+| X 账号 | **@percyliang**（核验：`x_fetch.py` 实测 `200`，`og:description` 自述 `professor of computer science @Stanford @stanfordnlp, co-founder of @togethercompute`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 本轮不发信） |
+| 备注 | `voice_ready` 高价值源：已抓到 **2026-11-11** 原推 `You can simultaneously believe that AI is transformational and that there are bottlenecks.`（推文页 `og:title` = `Percy Liang (@percyliang) on X`，`200` / 160,932 B ⇒ 身份与正文两处一致），记言论台账 **V17**；因本期 `voice_ready` 已达「≤2 条」上限，**留作下期首发**，不硬塞。另：同批推文含 Marin 535B-A23B 架构取舍长贴（2026-11-09），属**技术细节**，不适合直接做大众头条。 |
+
+### 63. James Thorne
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | James Thorne |
+| 机构 | **Theia Insights（CTO，X bio 自述）**；论文发表时为 **KAIST AI** |
+| 代表论文 | ORPO（`2403.07691`，**三作 / 通讯**） |
+| 邮箱 | **thorne@kaist.ac.kr**（来源：论文 HTML 作者块逐字 `{jiwoo_hong, noah.lee, thorne}@kaist.ac.kr`，ar5iv 实测 `HTTP 200` / 59,114 B）；⚠️ **本人当前主页不可用**（`j6mes.com` 实测 `000`；`james-thorne.github.io` 返回 GitHub Pages「Site not found」）⇒ 只能用论文通讯地址，**若退信记「通道失效」不重发** |
+| 主页 | **未找到**（上述两个候选均不可用；🚫 不写猜测链接） |
+| X 账号 | **@j6mes**（核验：`x_fetch.py` 实测 `200`，`og:description` = `CTO at Theia Insights. PhD from @cambridge_cl. Co-organiser of fever workshop`） |
+| 状态 | **已发信**（2026-11-12 21:07:24 `SENT OK`）· X 待 follow |
+| 备注 | 信（**英文**，162 词）问三点：① ~2B + 数万条域内偏好对时 ORPO 的 λ 如何取、先坏在哪；② 工具轨迹长度长尾下全序列 odds 是否偏长、是否按 token 归一；③ 偏好来自 checker（工具跑通 / DRC 通过）而非人工排序时，odds ratio 目标背后的单调性假设是否仍成立。分别回填 zhulong 奖励设计、posttrain 配方、data 偏好来源表。草稿 `research/mail/drafts/2403.07691.md`。 |
+
+### 64. Nelson F. Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nelson F. Liu |
+| 机构 | **Allen Institute for AI（Ai2）**（现职）；论文发表时为 **Stanford University** |
+| 代表论文 | Lost in the Middle（`2307.03172`，**一作**） |
+| 邮箱 | **nfliu@cs.stanford.edu**（来源：论文 HTML 作者块逐字，ar5iv 实测 `HTTP 200` / 37,518 B）；⚠️ 本人主页 <https://nelsonliu.me> 实测 `200` / 15,502 B，但邮箱是**图片** `img/email.png`（防爬）⇒ 页面无可读邮箱，只能用论文地址，**若退信记「通道失效」不重发** |
+| 主页 | <https://nelsonliu.me>（实测 `HTTP 200` / 15,502 B） |
+| X 账号 | **未登记（待核实）**：`x.com/nelsonfliu` 实测 `200`，页面标题为 `Nelson Liu (@nelsonfliu) / X`，但 **`og:description` 只有 followers 数字、无任何自我介绍** ⇒ 按「身份不可证不登记」纪律，🚫 不写进已核验清单（与 `@JohnJumper` 同一处理口径） |
+| 状态 | **已发信**（2026-11-12 21:07:44 `SENT OK`）· X **未核验**（不加 follow 清单） |
+| 备注 | 信（**英文**，159 词）问三点：① 结构化日志 / 报错文本是否同样呈 U 形位置敏感、主因是训练分布还是架构；② 成功判据是「调对工具」而非「抽出 gold span」时如何改造位置扫描协议；③ 投入长上下文训练前，把关键证据重排到首尾是否仍是必跑基线。分别回填 pretrain 长上下文配比、harness 判分与上下文编排、designflow L3+ 题面。草稿 `research/mail/drafts/2307.03172.md`。 |
+
+### 65. Woosuk Kwon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Woosuk Kwon |
+| 机构 | **UC Berkeley**（vLLM 论文作者单位；**现职本轮未核**） |
+| 代表论文 | Efficient Memory Management for LLM Serving with PagedAttention / vLLM（`2309.06180`，**一作**） |
+| 邮箱 | **未找到**（本轮未核到可访问的个人主页 ⇒ 按令不猜） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com/woosuk_kwon` 实测 `200`，但页面仅 **3 followers / 1 following / 2022-03 注册**、无 bio ⇒ 判为**同名非本人**，🚫 不登记） |
+| 状态 | **待跟踪**（无邮箱、无 X ⇒ 暂无法互动；仅建档） |
+| 备注 | 论文价值在 **serving 吞吐 / 显存**，服务 harness 批量评测与 zhulong 成本口径；**不是模型能力证据**。下轮可试 OpenReview / 个人主页反查邮箱后再评估发信。 |
 
 ---
 
