@@ -127,25 +127,22 @@ def process_shard(args):
     try:
         pf = pq.ParquetFile(str(shard_path))
         # Read row-group by row-group to avoid ArrowNotImplementedError
-        # on nested columns with chunked arrays — use combine_chunks() to
-        # merge chunked arrays before to_pylist()
+        # on nested columns with chunked arrays.  We do NOT call
+        # combine_chunks() — to_pylist() works on single-chunk arrays
+        # returned by read_row_group (proven by stackv3_eda_scan.py Phase B
+        # which scanned 100 shards with zero errors using this approach).
         files_col = []
         try:
             for rg_idx in range(pf.num_row_groups):
                 tbl = pf.read_row_group(rg_idx, columns=["repo_path", "files"])
-                col = tbl.column("files")
-                if hasattr(col, 'combine_chunks'):
-                    col = col.combine_chunks()
-                files_col.extend(col.to_pylist())
+                files_col.extend(tbl.column("files").to_pylist())
         except Exception as arrow_err:
-            # Fallback: read entire file with pq.read_table (handles some
-            # nested-column cases that read_row_group cannot)
-            print(f"  [shard {shard_idx}] row-group read failed ({arrow_err}), trying pq.read_table fallback", flush=True)
-            tbl = pq.read_table(str(shard_path), columns=["repo_path", "files"])
-            col = tbl.column("files")
-            if hasattr(col, 'combine_chunks'):
-                col = col.combine_chunks()
-            files_col = col.to_pylist()
+            # Fallback 1: iter_batches — returns single-chunk RecordBatches
+            # which to_pylist() can handle even for deeply nested types.
+            print(f"  [shard {shard_idx}] row-group read failed ({arrow_err}), trying iter_batches fallback", flush=True)
+            files_col = []
+            for rb in pf.iter_batches(batch_size=500, columns=["repo_path", "files"]):
+                files_col.extend(rb.column("files").to_pylist())
         for repo_files in files_col:
             if not repo_files:
                 continue
@@ -234,6 +231,21 @@ def main():
     n_errors = sum(1 for s in all_stats if s.get('error'))
     n_skipped = sum(1 for s in all_stats if s.get('skipped'))
     print(f"\n{'='*60}\nDone: {total} shards in {total_time:.0f}s\n  Docs: {total_docs:,}  Tokens: {total_tokens:,}\n  Errors: {n_errors}  Skipped: {n_skipped}")
+
+    # Write failed shards list for rerun
+    failed_path = os.path.join(args.output_dir, "failed_shards.txt")
+    error_shards = [s for s in all_stats if s.get('error')]
+    if error_shards:
+        with open(failed_path, 'w') as f:
+            for s in sorted(error_shards, key=lambda x: x.get('shard_idx', 0)):
+                f.write(all_parquets[s['shard_idx']].as_posix() + "\n")
+        print(f"  Failed shards written to: {failed_path} ({len(error_shards)} shards)")
+    else:
+        # Clean up old failed file if no errors
+        if os.path.exists(failed_path):
+            os.remove(failed_path)
+        print("  No failed shards!")
+
     manifest_path = os.path.join(args.output_dir, "MANIFEST.json")
     manifest = {
         "tokenized_dir": args.output_dir, "download_dir": PARQUET_DIR,
