@@ -1,5 +1,5 @@
 WAITING: 0（11-12 19:4x **loop 1-case 轮 r450 · mc10.fresh=0(1105) 第 17 次确认 · A 仍未执行 11/09 换池(距 11-11 令 2 天，summary_stats.json.mc_matrix.src 仍 summary_1105.tsv，summary_1109.tsv 仍不存在) · 🟢 11-11 论文令触发: 报告 v21→v22 真实落盘(E8 第14数据点 lag-1→lag-2 重开 + v21 可检验预测精确命中 A+1不跟macro + v21「手动追平能控量级」被证伪 A加case却既不bump macro也不同步appendix + E14 vs working lag-4→lag-5 + A分项stale 1→2 + 1184/1186/1181/1161 四链两两不等) · 💬 discuss r449已清付(r448清付后 r449/r450 diff=1/2 未欠配额, due r452) · 0 case WAITING:0 DEBT:0**）：见下方「## 流水」本轮条目。
-📄 report: header=v22 mtime=19:49:51 size=176551B(真实落盘, 路径限定 git log -1 -- reports/...html 待 commit 后实测, title v22 ✓ — 反幻影第6次未复发, v21 r449 真实落盘后连续 v22 真实落盘)
+📄 report: header=v22 mtime=19:49:51 size=176551B(真实落盘, 路径限定 git log -1 -- reports/...html ⇒ commit 0d5ad51b 触及该文件 ✓, origin/master 0 0 sync ✓, title v22 ✓ — 反幻影第6次未复发, v21 r449 真实落盘(50ef3c7a)后连续 v22 真实落盘)
 
 ## 当前基线（每轮只更新这一行，不堆历史）
 `274 条 proper（with task_id spice_sim:131 · characterization:33 · legacy 110 · jsonl B 274 行 · ledger_B case 417·claimed 0·parked 939·total 1356）· cline_eval shard B 135 runs/15 PASS/10 ERROR（current 15/125=12.0%；冻结表 B 两域 132/13/9/2=13/121=10.7%）· test_rationale 断言清单 274/274 达标 · 目标通过率（B 档）20–30% · 本轮(19:4x r450)：0 case 交付(mc10.fresh=0 第 17 次确认) · 论文报告 v21→v22 真实落盘(E8 第14数据点 lag-1→lag-2 + v21预测命中 + E14 vs working lag-4→lag-5 + A分项stale 1→2) · discuss r449已清付本轮diff=2未欠 · DEBT:0`
