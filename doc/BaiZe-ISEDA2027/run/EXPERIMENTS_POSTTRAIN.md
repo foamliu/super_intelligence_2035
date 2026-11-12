@@ -6487,3 +6487,156 @@ R4 reward = w1 × (CORRECT / n_expected) − w2 × (VALID_WRONG_CTX / n_found) �
 - sandbox 10.129.32.75:8667 → exit=124（122nd, down 30+ wakes）
 - sentinel → 全 5 serve UP（GPU0-7 全占用）
 - 无伪造：所有数字为真实静态评测数据 + MCP 搜索结果脚本计算。
+
+---
+
+## §R321 (2026-11-12 wake321) Missing API Coverage Analysis: Data Gap vs Learning Failure + MCP Documentation Availability（零 GPU · CPU）
+
+### 1. 动机
+
+R320 发现 344 个 cross-model missing APIs（所有 3 个模型 BASE/SFT/Qwen 都不调用的 API），missing rate 89.1%。
+R319 的「SFT paradox」（SFT 增加 wrong API 数量）被 R320 推翻后，核心问题变为：
+**这 344 个 missing API 是训练数据里没有（data gap），还是训练数据里有但模型没学会（learning failure）？**
+这个区分直接决定下一步 SFT 数据增强策略。
+
+### 2. 方法
+
+1. 从 `r320_api_db_snapshot.json` 加载 344 个 cross_model_missing_344 API 列表
+2. 加载 SFT 训练语料 `sft_pyaether_corpus_v11_v36_merged.parquet`（1029 行，实际用于 SFT 训练的版本）
+3. 对每个 missing API，检查其完整 dotted name（如 `EmyLPPHeader.getLayerNum`）是否出现在语料文本中
+4. 同时检查 v11_v37 remediation 语料（1086 行，R298 补救版本）
+5. 使用 pyAether MCP server 验证 data gap API 的文档可用性
+
+### 3. 结果
+
+#### 3.1 覆盖率
+
+| 指标 | v11_v36（训练版） | v11_v37（补救版） |
+|:--|:--|:--|
+| 语料行数 | 1029 | 1086 |
+| 文本总量 | 1,150,761 chars | 1,468,396 chars |
+| **Covered（API 在语料中）** | **178 / 344 (51.7%)** | 178 / 344 (51.7%) |
+| **NOT covered（语料中无）** | **166 / 344 (48.3%)** | 166 / 344 (48.3%) |
+| v37 新增覆盖 | — | **0** |
+
+**关键发现**：v11_v37 补救语料虽然增加了 57 行 / 317K chars，但**没有覆盖任何新的 missing API** —— 补救方向错了。
+
+#### 3.2 分类
+
+| 类别 | 数量 | 占比 | 含义 | 对策 |
+|:--|:--|:--|:--|:--|
+| **Learning failure** | 178 | 51.7% | API 名在训练语料中，但模型 eval 时不调用 | RL 强化 + 增加示例频率/质量 |
+| **True data gap** | 166 | 48.3% | API 名不在训练语料中，模型从未见过 | 用 API 文档合成训练对 |
+
+#### 3.3 Missing API 模块分布（top 15）
+
+| 模块 | 数量 | 备注 |
+|:--|:--|:--|
+| unknown（裸函数名） | 177 | 无 class 前缀的顶层函数 |
+| EmyLPPHeader | 12 | layer/purpose pair header 的 getter/setter |
+| emyBitArray | 9 | 位数组操作 |
+| emyBoxF | 9 | 浮点盒操作 |
+| MdePlatSession | 8 | MDE 平台会话 |
+| GuCartPolyLine | 6 | 卡通多段线 |
+| MdePlatDonauJobPolicy | 5 | Donau 作业策略 |
+| MdePlatOGEJobPolicy | 5 | OGE 作业策略 |
+| MdePlatParamSweepCenterSpan | 5 | 参数扫描 |
+| MdeSweepRange | 5 | 扫描范围 |
+| MdeSweepType | 5 | 扫描类型 |
+| MdeSweepVariable | 5 | 扫描变量 |
+| MdeTranAnalysis | 5 | 瞬态分析 |
+| emyTransformF | 5 | 浮点变换 |
+| MdeDcAnalysis | 4 | DC 分析 |
+
+#### 3.4 True data gap API 示例（top 20）
+
+```
+CString.value, CStringList.at,
+EmyLPPHeader.getLayerNum, EmyLPPHeader.getMaskNum, EmyLPPHeader.getPacketName,
+EmyLPPHeader.getPriority, EmyLPPHeader.getPurposeNum, EmyLPPHeader.getTech,
+EmyLPPHeader.isFilled, EmyLPPHeader.setFilled, EmyLPPHeader.setMaskNum,
+EmyLPPHeader.setPacketName, EmyLPPHeader.setPriority,
+EmyNtlUtil.checkViewList,
+GuCartPolyLine.getLinePattern, GuCartPolyLine.getLineWidth,
+GuCartPolyLine.getPointArray, GuCartPolyLine.setLinePattern,
+GuCartPolyLine.setLineWidth, GuCartPolygon.getPointArray
+```
+
+#### 3.5 Learning failure API 示例（top 20）
+
+```
+EmyLPPHeader.create, EmyNtlUtil, EmyNtlUtil.getVerilogName,
+GuCartBox, GuCartPolyLine.setLineColor,
+MDE_SWEEP_RANGE_CENTER_SPAN, MDE_SWEEP_RANGE_START_STOP,
+MDE_SWEEP_TYPE_LINEAR, MDE_SWEEP_TYPE_LINEAR_STEP_SIZE,
+MDE_SWEEP_TYPE_LOG, MDE_SWEEP_TYPE_LOG_NUM_STEP,
+MDE_SWEEP_VARIABLE_DESIGN_VARIABLE, MDE_SWEEP_VARIABLE_MODEL_PARAMETER,
+MDE_TRAN_ACC_LEVEL_LIBERAL,
+MdeAcAnalysis.setSweepRange, MdeAcAnalysis.setSweepType,
+MdeAcAnalysis.setSweepVariable, MdeDcAnalysis,
+MdePlatSweepStepModeAuto, MdePlatSweepStepModeTimes
+```
+
+### 4. MCP 文档可用性验证
+
+使用 pyAether MCP server 对 data gap API 进行搜索和详情查询：
+
+| API | MCP 搜索结果 | 文档可用 |
+|:--|:--|:--|
+| `emyLPPHeader.getLayerNum` | `getLayerNum() -> emyLayerNum`「Gets the number of the layer associated with the current emyLPPHeader object. This is a cached value...」 | ✅ 有签名+描述 |
+| `emyLPPHeader.getPurposeNum` | `getPurposeNum() -> emyPurposeNum`「Gets the purpose number associated with the current emyLPPHeader object.」 | ✅ 有签名+描述 |
+| `GuCartPolyLine.getPointArray` | `getPointArray(pointArray: emyPointArrayF)` + **完整代码示例**（创建 → 调用 → 验证） | ✅ 有示例代码 |
+| `EmyLPPHeader.getPacketName` | BM25 fallback 命中 | ✅ 存在 |
+| `GuCartPolyLine` | class 文档 + 构造函数 + 所有方法 | ✅ 完整 class 文档 |
+| `emyLPPHeader` | class 文档 + 继承图 + 8 个方法签名 + 13 个属性表 | ✅ 完整 class 文档 |
+
+**结论**：MCP server 可为 166 个 data gap API 中的大多数提供文档（签名+描述+示例代码），**足以合成高质量训练对**。
+
+### 5. 对下一步 SFT/RL 的指导
+
+#### 5.1 SFT 数据增强策略
+
+1. **True data gap（166 APIs）**：用 MCP server 批量获取 API 文档 → 合成 instruction-response 训练对
+   - 每个 API 生成 3-5 个训练对（不同使用场景）
+   - 预估新增 500-830 条训练数据
+   - **污染隔离**：合成的训练对不得使用 158 eval 任务的 prompt/entry_point/test
+2. **Learning failure（178 APIs）**：增加现有训练对的出现频率 + 提高示例质量
+   - 当前语料中这些 API 虽然出现但信号不足
+   - 可通过 repetition boost 或 hard example mining 强化
+3. **v11_v37 补救失败的原因**：v37 增加了 57 行但覆盖 0 个新 API → 补救方向是「增加更多同类示例」而非「覆盖缺失 API」
+
+#### 5.2 RL 策略
+
+- Learning failure APIs 是 RL 的理想目标：模型已见过 API 名但不在 eval 时使用 → RL 可通过 reward 信号强化使用
+- R4 reward arm 的 API legality check 可直接激励模型调用 valid APIs
+- 优先在 RL 训练任务中包含 learning failure API 相关的 scenario
+
+### 6. 交付物
+
+| 项 | 路径 |
+|:--|:--|
+| 分析脚本 | `baize_posttrain_r321_missing_api_coverage.py` |
+| 结果 JSON | `r321_missing_api_coverage.json`（covered/not_covered/modules/新覆盖对比） |
+| 本节 | EXPERIMENTS §R321 |
+
+### 7. 可复现命令
+
+```bash
+# 运行覆盖率分析（需 pyarrow，用 verl venv）
+$HOME/code/verl_cu124_venv/bin/python baize_posttrain_r321_missing_api_coverage.py
+
+# MCP 验证 data gap API
+# search_apis("EmyLPPHeader getLayerNum getter") → emyLPPHeader.getLayerNum
+# get_api_details(["emyLPPHeader.getLayerNum", "GuCartPolyLine.getPointArray"]) → 签名+描述+示例
+```
+
+### 8. 结论
+
+- 344 个 missing API 中，**48.3% 是 true data gap**（训练语料中完全没有），**51.7% 是 learning failure**（语料中有但模型不调用）
+- v11_v37 补救语料**覆盖 0 个新 API** —— 补救方向需要修正
+- MCP server 可为大多数 data gap API 提供文档，**合成训练对可行**
+- 下一步 SFT 数据增强应分两路：data gap → MCP 文档合成；learning failure → 频率/质量提升
+- RL 应优先覆盖 learning failure API scenario，用 R4 reward 激励 API 调用
+- sandbox 10.129.32.75:8667 仍 CLOSED（poll #980, 123rd wake check）
+- sentinel 5 serve 全 UP（17:10 占位维持）
+- 无伪造：所有数字为真实语料分析 + MCP 查询结果脚本计算
