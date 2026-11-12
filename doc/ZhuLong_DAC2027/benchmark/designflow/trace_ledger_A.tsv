@@ -433,3 +433,4 @@
 1794208637739_ddprg	daiweilu	hfhds209	53	digital	parked		2026-11-12 20:20	r433 deepread: Q&A-only (3/3 user turns = resetfuse trigger-chain questions/confirm, agent 写 grep探针+markdown解释, 无 clean produce-task). B档 trigger-chain analyzer 理论可行但受资产可达性(/proj 9321-line testbench 私有)+时间约束, 本轮不做. P-002 复证: 512 A-dominant→top150→仅4fresh全weak.
 1793927996511_kdjt3.messages.json	e0039602	hfeg0pkn002	55	digital	case	EDA-Eval-DesignFlow-ResultMapEntryRemover-001	2026-11-12 21:28	
 1793069585233_vi5wa.messages.json	e0039602	hfeg0pkn002	541	digital	case	EDA-Eval-DesignFlow-NetlistModSplice-001	2026-11-12 22:24	
+1793967043660_sbaad	zmzhang	hfeg0plg98	122	digital	case	EDA-Eval-DesignFlow-SignalFileXref-001	2026-11-12 22:58	
