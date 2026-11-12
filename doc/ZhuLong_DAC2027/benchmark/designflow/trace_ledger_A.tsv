@@ -421,7 +421,7 @@
 1793945349500_bwdql	eric1ch	hfeg0pkn002	127	digital	case	EDA-Eval-DesignFlow-SvTaskReport-001	2026-11-12 12:39	
 1793608238791_s4my6	e0039102	hfeg0plg74	114	digital	case	EDA-Eval-DesignFlow-RunRegrCaselistAdapter-001	2026-11-12 12:23	
 1792634547955_wzkye	gracew	hfeg0pkn004	129	digital	case	EDA-Eval-DesignFlow-Bl6CompcodeMerge-001	2026-11-12 13:21	
-1793259975527_lilaj.messages.json	lorikx	hfeg0pkn004	58	digital	claimed		2026-11-12 13:50	
+1793259975527_lilaj.messages.json	lorikx	hfeg0pkn004	58	digital	parked		2026-11-12 21:11	dup of r424 lilaj (dir-form) XsCheckReportDiag-001; sid-suffix dedup bug
 1793259975527_lilaj					case	EDA-Eval-DesignFlow-XsCheckReportDiag-001	2026-11-12 14:15	
 1792842218809_1yo6b	jkxu	hfhds209	173	digital	case	EDA-Eval-DesignFlow-RegrRerunScriptGen-001	2026-11-12 14:47	
 1793771746058_2c126	gracew	hfeg0pkn004	70	digital	case	EDA-Eval-DesignFlow-TmPatternXref-001	2026-11-12 15:33	
@@ -431,3 +431,4 @@
 1792474615638_0mkow	yixiaow	10.129.2.14	26	eda_other	case	EDA-Eval-DesignFlow-QualibTclGen-001	2026-11-12 18:28	
 1793843123624_u65cq	e0047472	hfeg0plg53	189	pnr_signoff	case	EDA-Eval-DesignFlow-UpfIntentExtract-001	2026-11-12 19:43	
 1794208637739_ddprg	daiweilu	hfhds209	53	digital	parked		2026-11-12 20:20	r433 deepread: Q&A-only (3/3 user turns = resetfuse trigger-chain questions/confirm, agent 写 grep探针+markdown解释, 无 clean produce-task). B档 trigger-chain analyzer 理论可行但受资产可达性(/proj 9321-line testbench 私有)+时间约束, 本轮不做. P-002 复证: 512 A-dominant→top150→仅4fresh全weak.
+1793927996511_kdjt3.messages.json	e0039602	hfeg0pkn002	55	digital	case	EDA-Eval-DesignFlow-ResultMapEntryRemover-001	2026-11-12 21:28	
