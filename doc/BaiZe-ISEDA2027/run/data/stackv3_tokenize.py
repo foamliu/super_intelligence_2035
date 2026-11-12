@@ -112,18 +112,40 @@ def process_shard(args):
     skip_reasons = Counter()
     lang_counts = Counter()
 
+    # Clean up orphan .bin (partial write from previous failed run)
+    if os.path.exists(bin_path) and not os.path.exists(json_path):
+        try:
+            os.remove(bin_path)
+        except OSError:
+            pass
+    if os.path.exists(idx_path) and not os.path.exists(json_path):
+        try:
+            os.remove(idx_path)
+        except OSError:
+            pass
+
     try:
         pf = pq.ParquetFile(str(shard_path))
         # Read row-group by row-group to avoid ArrowNotImplementedError
         # on nested columns with chunked arrays — use combine_chunks() to
         # merge chunked arrays before to_pylist()
         files_col = []
-        for rg_idx in range(pf.num_row_groups):
-            tbl = pf.read_row_group(rg_idx, columns=["repo_path", "files"])
+        try:
+            for rg_idx in range(pf.num_row_groups):
+                tbl = pf.read_row_group(rg_idx, columns=["repo_path", "files"])
+                col = tbl.column("files")
+                if hasattr(col, 'combine_chunks'):
+                    col = col.combine_chunks()
+                files_col.extend(col.to_pylist())
+        except Exception as arrow_err:
+            # Fallback: read entire file with pq.read_table (handles some
+            # nested-column cases that read_row_group cannot)
+            print(f"  [shard {shard_idx}] row-group read failed ({arrow_err}), trying pq.read_table fallback", flush=True)
+            tbl = pq.read_table(str(shard_path), columns=["repo_path", "files"])
             col = tbl.column("files")
             if hasattr(col, 'combine_chunks'):
                 col = col.combine_chunks()
-            files_col.extend(col.to_pylist())
+            files_col = col.to_pylist()
         for repo_files in files_col:
             if not repo_files:
                 continue

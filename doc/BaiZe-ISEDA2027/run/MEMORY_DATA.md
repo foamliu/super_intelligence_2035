@@ -25,10 +25,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        stack-v3-train 过滤+分词阶段（EDA分析DONE+分词后台跑中） → WAITING=0
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB);✅stack-v3-train调研DONE;✅batch1-7全DONE(1,987,930,402,327B/4600parquet/0inc);✅2TB ROI复盘;✅vision图文对调研报告;✅EDA脚本价值分析(Phase A全扫+Phase B抽样+报告43KB/8节/0外链/DATA_MAPPING§H.13)
-当前动作:     唤醒1468(2026-11-12 23:5x):EDA脚本价值分析交付→①Phase A已完成(4600shard/4963s);②Phase B已完成(3200文件/9类);③改进报告生成器(修正输出路径+V1/V2/V3外推+Top-20路径+具体取样建议表+污染隔离实测);④报告落reports/report_data_stackv3_eda_script_value_zh.html(43KB);⑤DATA_MAPPING.md§H.13新增;⑥分词后台继续(975/4600shard,ETA~10h,rerun_failed 39/40)
-下一步:       ①等分词完成(~10h)→MANIFEST+INDEX.tsv+DATA_MAPPING.md更新;②分词完成后commit+WAITING=1;③EDA分析已交付,待用户验收
+PHASE:        stack-v3-train 分词阶段（EDA分析DONE+分词16workers后台跑中） → WAITING=0
+已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB);✅stack-v3-train调研DONE;✅batch1-7全DONE(1,987,930,402,327B/4600parquet/0inc);✅2TB ROI复盘;✅vision图文对调研报告;✅EDA脚本价值分析(Phase A全扫+Phase B抽样+报告43KB/8节/0外链/DATA_MAPPING§H.13);✅orphan .bin清理(35个);✅tokenize脚本修复(ArrowNotImplementedError fallback+orphan cleanup)
+当前动作:     分词后台运行中(PID891129 stackv3_tokenize.py --workers 16,nice19/ionice3)→~1038/4600shard(ETA~10h,59ERR~5.7%因资源竞争非代码缺陷,rerun可修复);rerun_failed(PID754800)39/40完成;输出目录1017 .json+1017 .bin(219GB)
+下一步:       ①等分词完成(~10h)→MANIFEST+INDEX.tsv+DATA_MAPPING.md更新;②分词完成后rerun残留failed shards;③全部完成后commit+WAITING=1;④EDA分析已交付,待用户验收
 阻塞:         无(分词后台跑中,WAITING=0短睡巡检)
 ERROR_COUNT:  11
 未完成指令:   有(stack-v3-train分词后台运行中)→WAITING=0
