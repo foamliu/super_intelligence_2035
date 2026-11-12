@@ -1499,3 +1499,21 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793877732979_qyroq	shanksw	10.129.32.75	21	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001	2026-11-12 19:20	
 1793243276846_85qew	qinqinl	10.129.2.12	25	analog_context	case	EDA-Eval-DesignFlow-SacapBlCouplingSummary-001	2026-11-12 19:58	
 1793347412273_nq8l2	zjqiao	10.129.32.80	98	schematic_netlist	parked	EDA-Eval-DesignFlow-HcellNetlistCheck-001	2026-11-12 20:52	dup of line258 (same session nq8l2, case delivered as HcellNetlistCheck-001, D.jsonl 362)
+1793934714366_2bnc8	sxdong	hfeg0plg50	83	analog_context	parked		2026-11-12 22:17	r560 peek: scenario-launch meta-task (want to replicate /scenario mechanism)
+1792724611414_ohuot	e0026027	hfeg0plg104	49	analog_context	parked		2026-11-12 22:17	r560 peek: Q&A 'how to evaluate CXSA circuits?'
+1790314530475_4auih	pjli	hfeg0pgn145	50	schematic_netlist	parked		2026-11-12 22:17	r560 peek: code-fix debug (RunTrace1 timing mismatch in signal_edge_tracer.py)
+1793944457855_1gfgc	rongjiez	hfeg0plg54	53	schematic_netlist	parked		2026-11-12 22:17	r560 peek: debug Q&A compare_wave_new.pl case analysis (DUP y3h0j family)
+1783653871879_3anqw	e0025730	hfeg0plg49	63	schematic_netlist	parked		2026-11-12 22:17	r560 peek: skill-launch /lvlshft --circuit
+1792563679865_57rrw	e0039602	hfeg0pkn002	60	schematic_netlist	parked		2026-11-12 22:17	r560 peek: Q&A read project config maxtoken tuning
+1793944946103_46wrm	rongjiez	hfeg0plg54	57	schematic_netlist	parked		2026-11-12 22:17	r560 peek: DUP of 1gfgc (same compare_wave_new.pl debug)
+1793929018140_trfp9	xiaoyu1d	hfeahpc501	40	waveform	parked		2026-11-12 22:17	r560 peek: how-to Q&A reuse probe signals across waveforms
+1793791322730_l2vvy	justind	hfeg0plg53	42	schematic_netlist	parked		2026-11-12 22:17	r560 peek: Q&A 'can you read circuits' + explain netlist
+1794208561548_1tymw	t0002616	hfeg0plg101	40	schematic_netlist	parked		2026-11-12 22:17	r560 peek: debug Q&A why fast/fastest .sp same wr_time
+1789115083875_tcqqs	sagequan	hfeg0pbn04	97	analog_context	parked		2026-11-12 22:17	r560 peek: debug SimDiag VPS fail count 0 vs 42 (code-fix)
+1789386764132_phgjl	sagequan	hfeg0pbn04	86	analog_context	parked		2026-11-12 22:17	r560 peek: skill-only simdiag skill launch
+1788757855111_k34i5	xinqiaoz	hfeg0pkn005	48	schematic_netlist	parked		2026-11-12 22:17	r560 peek: greeting + scenario-launch DRC/LVS (C-domain)
+1793077423218_8nqgg	e03179	hfeg0pkn002	48	schematic_netlist	parked		2026-11-12 22:17	r560 peek: skill-only vam-agent (same #554b sub-class)
+1793686764440_0vmow	e0017052	hfeg0pkn001	96	schematic_netlist	parked		2026-11-12 22:17	r560 peek: explain Q&A 'DQSOSC circuit detail' on verilog netlist
+1792493018233_3rdqj	jinhaoli	hfeg0pkn004	67	analog_context	parked		2026-11-12 22:17	r560 peek: NOFILE/timeout (unreachable)
+1790489156584_1bc9r	mike	hfhds206	61	analog_context	parked		2026-11-12 22:17	r560 peek: garbled/incomprehensible first turn
+1788831007337_cmr7h	sagequan	hfeg0pbn04	49	analog_context	parked		2026-11-12 22:17	r560 peek: continuation debug llm_cline.py code fix (A-domain tooling)
