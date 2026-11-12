@@ -1,0 +1,53 @@
+[incr-eval 06:05:22] === incr_eval R2336 start ===
+
+=== cline R2336 ===
+new instances: 1 ['django__django-14089']
+[incr-eval 06:05:22] cline: merged 1 new patches -> predictions_cline-patched_new_R2336.json
+[incr-eval 06:05:22] cline: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2336
+[incr-eval 06:05:52] cline: eval rc=0
+[incr-eval 06:05:52]   django__django-14089: RESOLVED
+[incr-eval 06:05:52] cline: cumulative n=307 resolved=232 failed=75 infra=0 -> eval_glm53_cline-patched.json
+
+=== codex R2336 ===
+new instances: 2 ['sympy__sympy-19954', 'sympy__sympy-20154']
+[incr-eval 06:05:52] codex: merged 2 new patches -> predictions_codex_new_R2336.json
+[incr-eval 06:05:52] codex: EVAL 2 instances -> run_id=verified_full_glm53_codex_incr_R2336
+[incr-eval 06:08:50] === incr_eval R2336 start ===
+[incr-eval 06:08:50] cline: 0 new instances, skip
+
+=== codex R2336 ===
+new instances: 2 ['sympy__sympy-19954', 'sympy__sympy-20154']
+[incr-eval 06:08:50] codex: merged 2 new patches -> predictions_codex_new_R2336.json
+[incr-eval 06:08:50] codex: EVAL 2 instances -> run_id=verified_full_glm53_codex_incr_R2336
+[incr-eval 06:09:26] === incr_eval R2336 start ===
+[incr-eval 06:09:26] cline: 0 new instances, skip
+
+=== codex R2336 ===
+new instances: 2 ['sympy__sympy-19954', 'sympy__sympy-20154']
+[incr-eval 06:09:26] codex: merged 2 new patches -> predictions_codex_new_R2336.json
+[incr-eval 06:09:26] codex: EVAL 2 instances -> run_id=verified_full_glm53_codex_incr_R2336
+[incr-eval 06:09:55] codex: eval rc=0
+[incr-eval 06:09:55]   sympy__sympy-19954: RESOLVED
+[incr-eval 06:09:55]   sympy__sympy-20154: RESOLVED
+[incr-eval 06:09:55] codex: cumulative n=138 resolved=89 failed=49 infra=0 -> eval_glm53_codex.json
+[incr-eval 06:09:55] opencode: 0 new instances, skip
+
+=== claude-code R2336 ===
+new instances: 1 ['sphinx-doc__sphinx-7757']
+[incr-eval 06:09:55] claude-code: merged 1 new patches -> predictions_claude-code_new_R2336.json
+[incr-eval 06:09:55] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2336
+[incr-eval 06:10:22] claude-code: eval rc=0
+[incr-eval 06:10:22]   sphinx-doc__sphinx-7757: RESOLVED
+[incr-eval 06:10:22] claude-code: cumulative n=296 resolved=242 failed=52 infra=2 -> eval_glm53_claude-code.json
+
+=== pi R2336 ===
+new instances: 2 ['sphinx-doc__sphinx-11510', 'sphinx-doc__sphinx-7462']
+[incr-eval 06:10:22] pi: merged 2 new patches -> predictions_pi_new_R2336.json
+[incr-eval 06:10:22] pi: EVAL 2 instances -> run_id=verified_full_glm53_pi_incr_R2336
+[incr-eval 06:11:13] pi: eval rc=0
+[incr-eval 06:11:13]   sphinx-doc__sphinx-11510: RESOLVED
+[incr-eval 06:11:13]   sphinx-doc__sphinx-7462: FAILED
+[incr-eval 06:11:13] pi: cumulative n=269 resolved=196 failed=71 infra=2 -> eval_glm53_pi.json
+[incr-eval 06:11:13] hermes: 0 new instances, skip
+[incr-eval 06:11:13] deepseek: 0 new instances, skip
+[incr-eval 06:11:13] === incr_eval R2336 done: 5 instances, +4resolved +1failed +0infra ===

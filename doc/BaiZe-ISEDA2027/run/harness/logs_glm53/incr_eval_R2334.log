@@ -1,0 +1,16 @@
+[incr-eval 05:43:53] === incr_eval R2334 start ===
+
+=== cline R2334 ===
+new instances: 1 ['django__django-14034']
+[incr-eval 05:43:53] cline: merged 1 new patches -> predictions_cline-patched_new_R2334.json
+[incr-eval 05:43:53] cline: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2334
+[incr-eval 05:43:57] cline: eval rc=0
+[incr-eval 05:43:57]   django__django-14034: FAILED
+[incr-eval 05:43:57] cline: cumulative n=306 resolved=231 failed=75 infra=0 -> eval_glm53_cline-patched.json
+[incr-eval 05:43:57] codex: 0 new instances, skip
+[incr-eval 05:43:57] opencode: 0 new instances, skip
+[incr-eval 05:43:58] claude-code: 0 new instances, skip
+[incr-eval 05:43:58] pi: 0 new instances, skip
+[incr-eval 05:43:58] hermes: 0 new instances, skip
+[incr-eval 05:43:58] deepseek: 0 new instances, skip
+[incr-eval 05:43:58] === incr_eval R2334 done: 1 instances, +0resolved +1failed +0infra ===
