@@ -1457,3 +1457,11 @@
 - **教训 #128（工具层 · 复验读数陷阱）**：当全部 zhipin 标签都已落 `bticket` 时，`node ~/hr_login_probe.js 'chat/index…'` 打印 **`no target`** —— 不是「登录有效」，而是**没有任何标签 URL 含 `chat/index`**（脚本按 URL 片段找目标）。⇒ 登录复验判据以 `python3 ~/hr_tabs.py list zhipin.com` 的**标题 + URL** 为准。
 - **离线产出**：`recruit/drafts/R56-登录恢复待发队列.md` 增 **§三 门槛版执行口径**（两条硬门槛 + 恢复窗三问模板 + 三态判定 + 队列 13 组逐人门槛状态），防止恢复窗用 2026-11-02 旧口径误发。
 - **恢复条件**：用户重登（VNC `127.0.0.1:5901` / `~/hr_login.sh`）⇒ 下一窗三点复验（≥30s 后仍 `chat/index`）⇒ 按 R56 §三 执行并补齐当日 全职 ≥2 + 实习 ≥2。
+
+## §五十七 · 2026-11-13 06:00 全职窗口（第 75 轮）：🔴 **Boss 登录失效连续第 3 窗（≈36h）⇒ 本窗 0 封 · 当日 全职 0/2 · 实习 0/2（缺 2+2）** · 维持 RED 报 blocker
+
+- **登录复验（三条判据全不过）**：ⓐ 新标签 `web/chat/index?r75a=1` **创建后即落** `web/user/?ka=bticket`（标题「【BOSS直聘注册登录】」、`hasList:false`、`items:0`）；ⓑ ≥30s 后 `hr_tabs.py list zhipin.com` = 3 个标签（`https://www.zhipin.com/` 标题空 / bticket / `shanghai/?seoRefer=index`）**无 `chat/index`**；ⓒ `hr_home_probe.js` 首页 **302 → `/shanghai/?seoRefer=index`**、正文含「验证码登录/注册 · APP扫码登录」。
+- **动作**：维持 RED、停手报 blocker（2026-10-23 令 ⑤ / 2026-11-02 令 ④）；🚫 未重登 / 未重启 Chrome / 未新建 context / 未清 cookie。本窗 **0 封邮件 · 0 文本 · 0 授权卡**；⛔ 0 约面 · 0 拒绝 · 无 `code=36`。
+- **SMTP 兜底对账（只认 `MAIL-R` 行）**：`~/hr_resumes/` 共 **191 份 PDF**，`2026-11-*` 逐份交叉 ⇒ **未发 = 0**；唯一无 MAIL 者 = `_quarantine/黄欣哲_MISMATCH_内容为谭平凡.pdf`（错配附件，不发）；`find -newermt '2026-11-11 12:00'` 无新增 PDF，无 `2026-11-12/`·`2026-11-13/` 目录。
+- **教训 #129（运维层 · 新）**：连续 ≥3 窗无登录态 ⇒ 每日 ≥2 封必然 0 封；正确动作 = 复验 → 维持 RED → **逐份对账证明「无可发」** → 明确报 blocker，🚫 不得用「补发历史」或「降门槛」粉饰指标；离线产能转向队列与口径编译（`recruit/drafts/R56-登录恢复待发队列.md` §三 已就绪）。旁证：Boss 首页标签**标题为空**也是登录态丢失的观测项。
+- **恢复条件**：用户重登（VNC `127.0.0.1:5901` + `~/hr_login.sh`）⇒ 下一窗三点复验（**≥30s 后仍 `chat/index` 且列表 DOM 真实存在**）⇒ 执行 R56 §三 门槛版口径（首句必问**本科院校**），补齐当日 全职 ≥2 + 实习 ≥2。
