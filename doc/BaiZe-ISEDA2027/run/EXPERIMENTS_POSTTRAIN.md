@@ -6950,3 +6950,91 @@ bash baize_posttrain_phase1_baseline.sh
 ### 6. 无伪造声明
 
 所有数字为 parquet read-back 实算 + dry-run 实跑结果。沙盒探测为 TCP timeout 实测。
+
+---
+
+## §R337 — Sandbox run_code e2e VERIFIED via Tunnel + Phase 3 RL Launch-Ready (wake337, 2026-11-12 20:08)
+
+**背景**：post-SFT eval 仍在后台运行（PID789217, 40/158 task dirs, 18 .py submitted, ~64min, no final_report.json）。
+本轮做**不与 eval 冲突**的 Phase 3 RL 就绪验证——sandbox 现已通过 SSH 隧道可达（11:2x 令），
+此前阻塞 Phase 3 RL R1-R4 的硬依赖（跨子网 ACL 42 wakes）已解锁。
+
+### 1. Sandbox run_code 端到端验证（11:2x deliverable #3 definitive proof）
+
+**命令**：
+```bash
+curl -s --max-time 45 -X POST http://localhost:8664/v1/run_code \
+  -H 'Content-Type: application/json' \
+  -d '{"code":"import pyAether as ae\nprint(type(ae))\nprint(\"SANDBOX_E2E_OK\")", "lang":"pyAether", "host":"aether"}'
+```
+
+**响应**：
+```json
+{"response":"The code execution was successful with output.","error_log":"","print_log":"<class 'module'>\nSANDBOX_E2E_OK\n","result":""}
+```
+
+**判读**：
+- `response` = "The code execution was successful" → 沙盒接受了请求并执行
+- `print_log` = `<class 'module'>` + `SANDBOX_E2E_OK` → **pyAether 库可导入**（`import pyAether as ae; type(ae)` = module），代码真正在远端 EDA 环境执行
+- **连通路径**：.17 localhost:8664 →（SSH -L 隧道 PID618469, port 3333 → 10.251.36.15）→ 10.129.32.75:8664
+- **结论**：sandbox run_code 端到端可达，pyAether 可用。这是 11:2x 令 deliverable #3 的**确定性证据**（此前 wake335 的证据来自 eval gen log 间接观测，本轮为直接 curl 实测）。
+
+**API 格式发现**：`host` 字段不是 IP，而是 EDA 工具名，取值 ∈ {aether, virtuoso, waveview, innovus}。
+错误响应 `body.host: Input should be 'aether', 'virtuoso', 'waveview' or 'innovus'` 揭示了这一点。
+
+### 2. RL surrogate 脚本 sandbox 默认值修复（R337）
+
+**文件**：`baize_posttrain_rl_grpo_surrogate.sh` L51-52
+
+**修改前**（stale，跨子网 ACL 阻塞期遗留）：
+```bash
+SANDBOX_HOST="${SANDBOX_HOST:-10.129.32.75}"   # 不可达
+SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8667}"       # 沙盒上已 dead
+```
+
+**修改后**（tunnel 路径，与 eda_fastmcp .env R325 一致）：
+```bash
+SANDBOX_HOST="${SANDBOX_HOST:-127.0.0.1}"      # via SSH -L tunnel
+SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
+```
+
+`bash -n` 通过。
+
+### 3. RL dry-run / sandbox-check / contam-check 全 PASS
+
+**dry-run recipe**（`--dry-run --reward-arm R2`）：
+| 项 | 值 |
+|:--|:--|
+| sft ckpt | sft_surrogate_runs/minicpm5_pyaether_v2_v11v38/global_step_90 ✅ |
+| framework | verl 0.4.0 GRPO via baize_posttrain_verl_wrapper.py |
+| rl data | rl_pyaether_synth_v2.parquet (3347 synthetic, NOT 158 eval) |
+| reward arm | R2 (exec+assertion_ratio, needs sandbox) |
+| hooks | 6 enabled (resilience/curriculum/rollout_scheduler/kl_scheduler/anti_cheat/early_stop) |
+| gpu | 4,5,6,7 (4×A40 FSDP) |
+| group_size | 8 (R140) |
+| total_steps | 3000 (~2-3 days) |
+| kl_coef / clip / lr / temp | 0.02 / 0.2 / 3.0e-6 / 0.7 |
+| sandbox | 127.0.0.1:8664 (tunnel) |
+
+**sandbox-check**：`[sandbox] OK TCP 8664 OPEN` ✅
+**contam-check**：`[gate] 闸门 PASS（0 命中）→ 可投料`，RL data isolated from 158 eval ✅
+**deps**：`[deps] verl main_ppo OK` + `RL data 3347 rows OK` ✅
+
+### 4. Phase 3 RL Launch-Ready 总结
+
+| 依赖 | 状态 | 证据 |
+|:--|:--|:--|
+| SFT ckpt | ✅ global_step_90 | find sft_surrogate_runs/.../global_step_90 |
+| Sandbox (R1-R4) | ✅ 127.0.0.1:8664 via tunnel | run_code e2e: pyAether import → SANDBOX_E2E_OK |
+| RL data | ✅ 3347 rows, contam PASS | contam-check 0 命中 |
+| verl framework | ✅ main_ppo import OK | deps check |
+| 6 hooks | ✅ config 落盘 | baize_posttrain_hooks_config.yaml |
+| anti-cheat | ✅ PreToolUse hook enabled | reward_functions R22 auto_fallback |
+
+**唯一剩余 gate**：① post-SFT eval 完成（确认 SFT 是否改善 vs 36% baseline）
+② 若改善 → teardown GPU4/5 serves 释放 GPU4-7 → launch Phase 3 RL
+③ 若未改善 → 先调查 hallucinated APIs（wake336 已发现 merge_bboxes garbage / is_polygon_clockwise empty）
+
+### 5. 无伪造声明
+
+所有数字为 curl 实测 + dry-run/sandbox-check/contam-check 实跑结果。run_code 响应为原始 JSON。

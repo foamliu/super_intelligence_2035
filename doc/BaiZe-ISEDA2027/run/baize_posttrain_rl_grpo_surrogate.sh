@@ -48,8 +48,12 @@ BASE_MODEL="/nas_data/app.e0031982/models/MiniCPM5-2B"
 CONFIG_FILE="$SCRIPT_DIR/baize_posttrain_rl_verl_config_v2.yaml"
 RL_DATA="$SCRIPT_DIR/rl_pyaether_synth_v2.parquet"
 HOOKS_CONFIG="$SCRIPT_DIR/baize_posttrain_hooks_config.yaml"
-SANDBOX_HOST="${SANDBOX_HOST:-10.129.32.75}"
-SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8667}"
+# R337 (2026-11-12): sandbox now reachable via SSH tunnel (dual-nix-tunnel port 3333
+#   → 10.251.36.15 → 10.129.32.75). .17 localhost:8664 is forwarded to sandbox.
+#   8667 is dead on sandbox; 8664 is the alive port (per eda_fastmcp .env R325).
+#   Old direct path 10.129.32.75:8667 was unreachable for 42 wakes (cross-subnet ACL).
+SANDBOX_HOST="${SANDBOX_HOST:-127.0.0.1}"
+SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"
 OUTPUT_DIR="$SCRIPT_DIR/rl_surrogate_runs/minicpm5_grpo_v1"
 LOG_FILE="/tmp/baize_posttrain_rl_grpo_surrogate.log"
 
