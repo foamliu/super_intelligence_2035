@@ -67,44 +67,49 @@ code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.85rem}
 
 <h2>二、五语言 Pass@1 对比</h2>
 
-<h3>2.1 均值 ± 标准差（N=3，按语言聚合）</h3>
+<h3>2.1 均值 ± 标准差（N=3，按语言聚合 · 含 token 成本列）</h3>
 <table>
-<thead><tr><th>语言</th><th>LANG_HINT 注入</th><th class="num">N</th><th class="num">Pass@1 均值</th><th class="num">标准差</th><th class="num">最低轮</th><th class="num">最高轮</th><th class="num">Δpp vs 基线</th><th>判定</th></tr></thead>
+<thead><tr><th>语言</th><th>LANG_HINT 注入</th><th class="num">N</th><th class="num">Pass@1 均值</th><th class="num">标准差</th><th class="num">最低轮</th><th class="num">最高轮</th><th class="num">Δpp vs 基线</th><th class="num">prompt tok</th><th class="num">completion tok</th><th class="num">reasoning tok</th><th class="num">total tok</th><th class="num">tok/题</th><th>判定</th></tr></thead>
 <tbody>
-<tr><td><b>中文 (zh)</b></td><td>请使用中文思考。</td><td class="num">3</td><td class="num best">81.2</td><td class="num">3.2</td><td class="num">77.8</td><td class="num">84.2</td><td class="num">−2.1</td><td>真切换（confound）</td></tr>
-<tr><td><b>西班牙语 (es)</b></td><td>Piensa en español.</td><td class="num">3</td><td class="num">80.8</td><td class="num best">0.3</td><td class="num">80.4</td><td class="num">81.0</td><td class="num">−2.5</td><td>⚠️ 未生效</td></tr>
-<tr><td><b>英语 (en)</b></td><td>Think in English.</td><td class="num">3</td><td class="num">80.0</td><td class="num">4.5</td><td class="num">75.3</td><td class="num">84.2</td><td class="num">−3.3</td><td>真切换</td></tr>
-<tr><td><b>俄语 (ru)</b></td><td>Думай по-русски.</td><td class="num">3</td><td class="num">79.3</td><td class="num">2.5</td><td class="num">76.6</td><td class="num">81.6</td><td class="num">−4.0</td><td>部分漂移</td></tr>
-<tr><td><b>法语 (fr)</b></td><td>Pensez en français.</td><td class="num">3</td><td class="num worst">76.2</td><td class="num">2.6</td><td class="num">74.1</td><td class="num">79.1</td><td class="num">−7.1</td><td>部分生效（偏弱）</td></tr>
+<tr><td><b>中文 (zh)</b></td><td>请使用中文思考。</td><td class="num">3</td><td class="num best">81.2</td><td class="num">3.2</td><td class="num">77.8</td><td class="num">84.2</td><td class="num">−2.1</td><td class="num">203.4M</td><td class="num">4.8M</td><td class="num">2.2M</td><td class="num">208.2M</td><td class="num">1318K</td><td>真切换（confound）</td></tr>
+<tr><td><b>西班牙语 (es)</b></td><td>Piensa en español.</td><td class="num">3</td><td class="num">80.8</td><td class="num best">0.3</td><td class="num">80.4</td><td class="num">81.0</td><td class="num">−2.5</td><td class="num">156.5M</td><td class="num">3.8M</td><td class="num">2.3M</td><td class="num">160.4M</td><td class="num">1015K</td><td>⚠️ 未生效</td></tr>
+<tr><td><b>英语 (en)</b></td><td>Think in English.</td><td class="num">3</td><td class="num">80.0</td><td class="num">4.5</td><td class="num">75.3</td><td class="num">84.2</td><td class="num">−3.3</td><td class="num">174.6M</td><td class="num">3.9M</td><td class="num">2.3M</td><td class="num">178.5M</td><td class="num">1130K</td><td>真切换</td></tr>
+<tr><td><b>俄语 (ru)</b></td><td>Думай по-русски.</td><td class="num">3</td><td class="num">79.3</td><td class="num">2.5</td><td class="num">76.6</td><td class="num">81.6</td><td class="num">−4.0</td><td class="num">155.9M</td><td class="num">3.7M</td><td class="num">2.2M</td><td class="num">159.6M</td><td class="num">1010K</td><td>部分漂移</td></tr>
+<tr><td><b>法语 (fr)</b></td><td>Pensez en français.</td><td class="num">3</td><td class="num worst">76.2</td><td class="num">2.6</td><td class="num">74.1</td><td class="num">79.1</td><td class="num">−7.1</td><td class="num">149.5M</td><td class="num">3.6M</td><td class="num">2.1M</td><td class="num">153.1M</td><td class="num">969K</td><td>部分生效（偏弱）</td></tr>
 </tbody>
 </table>
 <div class="note">
 <b>5 语言均低于基线 83.3%</b>（Δ −2.1 ~ −7.1pp）。<b>但此差异不可归因为「思维链语言效应」</b>（见 §四 audit + 基座违规）。<br>
-<b>稳定性</b>：es 最稳定（std=0.3%，3 轮 80.4/81.0/81.0 几乎不波动）；en 最不稳定（std=4.5%，r1=75.3 早停异常拖低）。
+<b>稳定性</b>：es 最稳定（std=0.3%，3 轮 80.4/81.0/81.0 几乎不波动）；en 最不稳定（std=4.5%，r1=75.3 早停异常拖低）。<br>
+<b>token 成本</b>：zh 最贵（208.2M total / 1318K/题），fr 最便宜（153.1M / 969K/题）。<b>zh 比 fr 多消耗 36% token</b>。reasoning tok 各语言相近（2.1~2.3M），差异主要在 prompt tok（zh 203.4M vs fr 149.5M，差 36%——中文 token 化效率低于西语系）。<br>
+<b>⚠️ B_en_r1 待重跑</b>：当前 en 均值含 r1=75.3%（glm-5.2 基座，与 r2/r3 的 dsv4-pro 基座不同）。11-12 15:4x 令已注入重跑 B_en_r1（默认基座对齐），跑完后本表 en 行数据将更新。
 </div>
 
-<h3>2.2 各语言 3 轮明细</h3>
+<h3>2.2 各语言 3 轮明细（含 token）</h3>
 <table>
-<thead><tr><th>语言</th><th>轮次</th><th class="num">Pass@1</th><th class="num">passed/total</th><th>batch</th><th class="num">gen-success</th><th class="num">gen-fail</th><th class="num">timeout</th><th class="num">converged</th></tr></thead>
+<thead><tr><th>语言</th><th>轮次</th><th class="num">Pass@1</th><th class="num">passed/total</th><th>batch</th><th class="num">gen-success</th><th class="num">gen-fail</th><th class="num">timeout</th><th class="num">converged</th><th class="num">prompt tok</th><th class="num">completion tok</th><th class="num">reasoning tok</th><th class="num">total tok</th><th class="num">tok/题</th></tr></thead>
 <tbody>
-<tr><td rowspan="3"><b>en</b></td><td>r1</td><td class="num">75.3</td><td class="num">—/158</td><td>2026_1109_084446</td><td class="num">134</td><td class="num">23</td><td class="num">1</td><td class="num">85.4%</td></tr>
-<tr><td>r2</td><td class="num">80.4</td><td class="num">—/158</td><td>2026_1109_104439</td><td class="num">147</td><td class="num">0</td><td class="num">11</td><td class="num">99.4%</td></tr>
-<tr><td>r3</td><td class="num">84.2</td><td class="num">—/158</td><td>2026_1109_171220</td><td class="num">148</td><td class="num">0</td><td class="num">10</td><td class="num">99.4%</td></tr>
-<tr><td rowspan="3"><b>zh</b></td><td>r1</td><td class="num best">84.2</td><td class="num">133/158</td><td>2026_1110_005204</td><td class="num">149</td><td class="num">0</td><td class="num">9</td><td class="num">99.4%</td></tr>
-<tr><td>r2</td><td class="num">81.6</td><td class="num">129/158</td><td>2026_1110_073833</td><td class="num">149</td><td class="num">0</td><td class="num">9</td><td class="num">99.4%</td></tr>
-<tr><td>r3（重跑）</td><td class="num worst">77.8</td><td class="num">123/158</td><td>2026_1112_085105</td><td class="num">146</td><td class="num">10</td><td class="num">2</td><td class="num">93.7%</td></tr>
-<tr style="color:#999"><td></td><td>r3（旧·SUPERSEDED）</td><td class="num">78.5</td><td class="num">—/158</td><td>2026_1110_161756</td><td class="num">138</td><td class="num">19</td><td class="num">1</td><td class="num">88.0%</td></tr>
-<tr><td rowspan="3"><b>es</b></td><td>r1</td><td class="num">81.0</td><td class="num">—/158</td><td>2026_1110_203542</td><td class="num">144</td><td class="num">14</td><td class="num">0</td><td class="num">91.1%</td></tr>
-<tr><td>r2</td><td class="num">80.4</td><td class="num">—/158</td><td>2026_1111_002251</td><td class="num">149</td><td class="num">9</td><td class="num">0</td><td class="num">93.7%</td></tr>
-<tr><td>r3</td><td class="num">81.0</td><td class="num">—/158</td><td>2026_1111_032900</td><td class="num">147</td><td class="num">11</td><td class="num">0</td><td class="num">93.0%</td></tr>
-<tr><td rowspan="3"><b>fr</b></td><td>r1</td><td class="num worst">74.1</td><td class="num">117/158</td><td>2026_1111_071240</td><td class="num">128</td><td class="num">29</td><td class="num">1</td><td class="num">80.4%</td></tr>
-<tr><td>r2</td><td class="num">75.3</td><td class="num">119/158</td><td>2026_1111_121250</td><td class="num">137</td><td class="num">20</td><td class="num">1</td><td class="num">84.8%</td></tr>
-<tr><td>r3</td><td class="num best">79.1</td><td class="num">125/158</td><td>2026_1111_173928</td><td class="num">142</td><td class="num">15</td><td class="num">1</td><td class="num">90.5%</td></tr>
-<tr><td rowspan="3"><b>ru</b></td><td>r1</td><td class="num best">81.6</td><td class="num">129/158</td><td>2026_1111_213434</td><td class="num">151</td><td class="num">6</td><td class="num">1</td><td class="num">95.6%</td></tr>
-<tr><td>r2</td><td class="num worst">76.6</td><td class="num">121/158</td><td>2026_1112_004932</td><td class="num">142</td><td class="num">16</td><td class="num">0</td><td class="num">89.2%</td></tr>
-<tr><td>r3</td><td class="num">79.7</td><td class="num">—/158</td><td>2026_1112_044128</td><td class="num">145</td><td class="num">12</td><td class="num">1</td><td class="num">91.8%</td></tr>
+<tr><td rowspan="3"><b>en</b></td><td>r1 ⚠️待重跑</td><td class="num">75.3</td><td class="num">—/158</td><td>2026_1109_084446</td><td class="num">134</td><td class="num">23</td><td class="num">1</td><td class="num">85.4%</td><td class="num">90.0M</td><td class="num">1.7M</td><td class="num">0.7M</td><td class="num">91.7M</td><td class="num">580K</td></tr>
+<tr><td>r2</td><td class="num">80.4</td><td class="num">—/158</td><td>2026_1109_104439</td><td class="num">147</td><td class="num">0</td><td class="num">11</td><td class="num">99.4%</td><td class="num">197.9M</td><td class="num">5.0M</td><td class="num">3.2M</td><td class="num">202.9M</td><td class="num">1284K</td></tr>
+<tr><td>r3</td><td class="num">84.2</td><td class="num">—/158</td><td>2026_1109_171220</td><td class="num">148</td><td class="num">0</td><td class="num">10</td><td class="num">99.4%</td><td class="num">235.9M</td><td class="num">5.1M</td><td class="num">3.1M</td><td class="num">241.0M</td><td class="num">1525K</td></tr>
+<tr><td rowspan="3"><b>zh</b></td><td>r1</td><td class="num best">84.2</td><td class="num">133/158</td><td>2026_1110_005204</td><td class="num">149</td><td class="num">0</td><td class="num">9</td><td class="num">99.4%</td><td class="num">217.9M</td><td class="num">4.9M</td><td class="num">2.3M</td><td class="num">222.8M</td><td class="num">1410K</td></tr>
+<tr><td>r2</td><td class="num">81.6</td><td class="num">129/158</td><td>2026_1110_073833</td><td class="num">149</td><td class="num">0</td><td class="num">9</td><td class="num">99.4%</td><td class="num">215.6M</td><td class="num">5.4M</td><td class="num">2.7M</td><td class="num">221.1M</td><td class="num">1399K</td></tr>
+<tr><td>r3（重跑）</td><td class="num worst">77.8</td><td class="num">123/158</td><td>2026_1112_085105</td><td class="num">146</td><td class="num">10</td><td class="num">2</td><td class="num">93.7%</td><td class="num">176.7M</td><td class="num">4.0M</td><td class="num">1.8M</td><td class="num">180.7M</td><td class="num">1144K</td></tr>
+<tr style="color:#999"><td></td><td>r3（旧·SUPERSEDED）</td><td class="num">78.5</td><td class="num">—/158</td><td>2026_1110_161756</td><td class="num">138</td><td class="num">19</td><td class="num">1</td><td class="num">88.0%</td><td class="num">189.6M</td><td class="num">3.9M</td><td class="num">1.7M</td><td class="num">193.5M</td><td class="num">1225K</td></tr>
+<tr><td rowspan="3"><b>es</b></td><td>r1</td><td class="num">81.0</td><td class="num">—/158</td><td>2026_1110_203542</td><td class="num">144</td><td class="num">14</td><td class="num">0</td><td class="num">91.1%</td><td class="num">159.6M</td><td class="num">3.9M</td><td class="num">2.4M</td><td class="num">163.5M</td><td class="num">1035K</td></tr>
+<tr><td>r2</td><td class="num">80.4</td><td class="num">—/158</td><td>2026_1111_002251</td><td class="num">149</td><td class="num">9</td><td class="num">0</td><td class="num">93.7%</td><td class="num">151.1M</td><td class="num">3.7M</td><td class="num">2.3M</td><td class="num">154.9M</td><td class="num">980K</td></tr>
+<tr><td>r3</td><td class="num">81.0</td><td class="num">—/158</td><td>2026_1111_032900</td><td class="num">147</td><td class="num">11</td><td class="num">0</td><td class="num">93.0%</td><td class="num">158.9M</td><td class="num">3.8M</td><td class="num">2.3M</td><td class="num">162.7M</td><td class="num">1030K</td></tr>
+<tr><td rowspan="3"><b>fr</b></td><td>r1</td><td class="num worst">74.1</td><td class="num">117/158</td><td>2026_1111_071240</td><td class="num">128</td><td class="num">29</td><td class="num">1</td><td class="num">80.4%</td><td class="num">120.6M</td><td class="num">3.0M</td><td class="num">1.9M</td><td class="num">123.7M</td><td class="num">783K</td></tr>
+<tr><td>r2</td><td class="num">75.3</td><td class="num">119/158</td><td>2026_1111_121250</td><td class="num">137</td><td class="num">20</td><td class="num">1</td><td class="num">84.8%</td><td class="num">165.5M</td><td class="num">3.8M</td><td class="num">2.2M</td><td class="num">169.3M</td><td class="num">1072K</td></tr>
+<tr><td>r3</td><td class="num best">79.1</td><td class="num">125/158</td><td>2026_1111_173928</td><td class="num">142</td><td class="num">15</td><td class="num">1</td><td class="num">90.5%</td><td class="num">162.4M</td><td class="num">4.0M</td><td class="num">2.3M</td><td class="num">166.4M</td><td class="num">1053K</td></tr>
+<tr><td rowspan="3"><b>ru</b></td><td>r1</td><td class="num best">81.6</td><td class="num">129/158</td><td>2026_1111_213434</td><td class="num">151</td><td class="num">6</td><td class="num">1</td><td class="num">95.6%</td><td class="num">149.6M</td><td class="num">3.8M</td><td class="num">2.2M</td><td class="num">153.4M</td><td class="num">971K</td></tr>
+<tr><td>r2</td><td class="num worst">76.6</td><td class="num">121/158</td><td>2026_1112_004932</td><td class="num">142</td><td class="num">16</td><td class="num">0</td><td class="num">89.2%</td><td class="num">162.8M</td><td class="num">3.7M</td><td class="num">2.1M</td><td class="num">166.4M</td><td class="num">1053K</td></tr>
+<tr><td>r3</td><td class="num">79.7</td><td class="num">—/158</td><td>2026_1112_044128</td><td class="num">145</td><td class="num">12</td><td class="num">1</td><td class="num">91.8%</td><td class="num">155.3M</td><td class="num">3.7M</td><td class="num">2.2M</td><td class="num">158.9M</td><td class="num">1006K</td></tr>
 </tbody>
 </table>
+<div class="note">
+<b>token 分布观察</b>：① <b>B_en_r1 token 异常低</b>（91.7M total / 580K/题，远低于 r2/r3 的 202.9M/241.0M）—— 因 glm-5.2 基座 + 早停（converged 仅 85.4%），重跑后此行将更新；② <b>zh 各轮 token 最高</b>（221~223M），中文 token 化效率低；③ <b>fr_r1 token 最低</b>（123.7M）但 gen-fail 29 最多——切换混乱致生成中断，token 没攒起来；④ reasoning tok 各语言各轮 0.7~3.2M，与 thinking=medium 档位一致。
+</div>
 
 <h3>2.3 Pass@1 条形图（5 语言均值）</h3>
 <div style="background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:12px 0">
