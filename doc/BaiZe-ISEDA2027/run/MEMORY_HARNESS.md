@@ -4,14 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2280 监控轮(自检PASS·eval caught up·重启3停滞orch→6/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 6/7 alive
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2279·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2279 incr_eval+监控+报告+ETA·R2280 监控(自检PASS+重启cc/hermes/opencode+kill 2 orphans+eval backlog=0)·总resolved 1653
-当前动作:     R2280: 监控轮·自检PASS(CPU load36/224=16%·无harness进程>80核·MEM OK)·gateway 200(curl实测real key)·eval全7路backlog=0(resolved1653不变)·cline+1新文件sympy-24539=empty(能力)·重启3停滞orch(claude-code276→PID3800614·hermes449→PID3805629·opencode495→PID3805957·全resume skip已预测)·kill 2 orphans(cc PID3496306 21.7h stuck django tests 0%CPU·opencode PID1950056 orphan)·6/7 alive(cline·codex·pi·cc·hermes·opencode)·dsh DONE·research日报2026-11-12建议(task书合规审计+pool mean/worst列)已阅未执行·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY+push ②predict向500推进(6路alive:cline288/cc276/hermes449/opencode495/pi251/codex126·dsh DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
-阻塞:         <各路尚未满500:cline288/cc276/hermes449/opencode495/pi251/codex126·§22:4x未全交付·dsh DONE>
+PHASE:        R2281 incr_eval轮(自检PASS·+3resolved·eval backlog=0·6/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 6/7 alive
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2281·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2280 incr_eval+监控+报告+ETA·R2280 监控(重启3停滞orch+kill 2 orphans+eval backlog=0)·R2281 incr_eval(+3resolved:cline sympy-24562+opencode django-12039+pytest-6197→总resolved 1656)+双报告REGEN R2281·总resolved 1656
+当前动作:     R2281: 自检PASS(CPU load38/224=17%·无harness进程>80核·MEM OK 788G/2015G)·gateway 200(curl实测real key GLM53_KEY)·incr_eval 3NEW全resolved(cline sympy-24562+opencode django-12039+opencode pytest-6197→1653→1656)·eval全7路backlog=0(detect_backlog_R2202.py验证)·predict 6/7 alive(cline289/codex127/opencode499/cc278/pi252/hermes449·dsh DONE 175=能力)·research日报2026-11-12已阅(harness建议:task书合规审计+pool mean/worst列·仅参考不构成新指令·纳入下轮)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY+push ②predict向500推进(opencode499即将满500·6路alive) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+阻塞:         <各路尚未满500:cline289/codex127/opencode499/cc278/pi252/hermes449·§22:4x未全交付·dsh DONE>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=30KB
- cline专项小结: predict_glm53=288files/281real/217resolved/7empty(gateway functional产real·C3 resume fix R1733仍有效·empty+1=sympy-24539=能力差)·C1:281real/288total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→288)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=7(能力差·非resume bug·gateway functional)·C5:报告R2278(cline special·217/281real=77.2%)·失败top1=能力差(real patch但tests fail)·opencode411/495=83.0%·gap=能力差
+ cline专项小结: predict_glm53=289files/282real/218resolved/7empty(gateway functional产real·C3 resume fix R1733仍有效·newest sympy-24562=REAL RESOLVED)·C1:282real/289total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→289)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=7(能力差·非resume bug·gateway functional)·C5:报告R2281(cline special·218/282real=77.3%)·失败top1=能力差(real patch但tests fail)·opencode413/497=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 

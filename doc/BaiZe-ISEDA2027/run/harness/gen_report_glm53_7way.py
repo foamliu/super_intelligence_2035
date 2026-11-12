@@ -309,8 +309,8 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>/data</td><td>7.0T</td><td>1.3T</td><td>5.8T</td><td>18%</td></tr>
 <tr><td>/</td><td>384G</td><td>13G</td><td>352G</td><td>4%</td></tr></table>
 
-<h2>8. research日报输入(2026-11-11)</h2>
-<div class="info"><p>research日报2026-11-11已查(mtime15:08)。harness advice:报告加6列(resolved_rate/continuous_score/workflow_calls_per_task/worker_invocations_per_workflow/tokens_main+tokens_worker/usd_per_task)·用现有trace回填不重跑·empty标EMPTY/QUOTA单列不算失败·ETA 2-3天。纳入下轮(用现有{total_resolved} resolved+{total_pred} files回填)。网关200·predict进行中。</p></div>
+<h2>8. research日报输入(2026-11-12)</h2>
+<div class="info"><p>research日报2026-11-12已查(mtime15:10)。harness advice(仅参考·不构成新指令·与本任务书冲突以本任务书为准):①任务书合规审计(论文2611.13709·把6份任务书显式指令改写成可判定检查·输出"始终遵守/从未遵守/无法判定"三列)·②报告pool表加mean/worst列。本轮纳入计划:已阅并记入心跳·①审计待§22:4x全交付后做·②mean/worst列待下轮用现有{total_resolved} resolved数据回填。网关{GW_NOTE_SHORT}·predict进行中。</p></div>
 
 <h2>9. ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
 <div class="info"><p><strong>① SWE-bench Verified(500题×7路)</strong>：{swe_eta_str}（预计 {swe_eta_date}）<br>

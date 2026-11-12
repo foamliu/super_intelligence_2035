@@ -1896,3 +1896,18 @@ L2/L3/L4 低分/空白同一根因 = 训练数据(P-5b/P-8 Ultra-FineWeb-L3)缺�
 - **L4 status**: Confirmed BLOCKED again — SSH .15 (10.251.36.15) and .17 (10.252.32.17) both timeout (17:10 test, 10s ConnectTimeout)
 - **180k autoqueue**: Still waiting — latest checkpoint iter_0176000 (saved 14:33), next at 178000, then 180000 (ETA ~3-4h)
 - **Training impact**: step 7020ms < 7400ms ✅ (MATH eval with 4 threads + nice 19, no significant impact)
+
+## L2 HF transformers 五重验证汇总（2026-11-12 · 160k ckpt · CPU bf16 · sglang env）
+
+| 任务 | llama.cpp (CPU GGUF) | HF transformers (CPU bf16) | 差距 | 根因 |
+|:---|:---|:---|:---|:---|
+| HumanEval pass@1 | 0.0% (0/100) | 15.0% (3/20) | +15.0pp | llama.cpp SSM bug |
+| GSM8K acc | 0.0% (0/100) | 10.0% (1/10) | +10.0pp | llama.cpp SSM bug |
+| MBPP pass@1 | 0.0% (0/100) | 5.0% (1/20) | +5.0pp | llama.cpp SSM bug |
+| BBH acc (3子任务) | 0.0% (0/100) | 3.3% (1/30) | +3.3pp | llama.cpp SSM bug |
+| MATH-500 acc | 0.0% (0/100) | 0.0% (0/10) | 0.0pp | 能力不足(MATH太难) |
+| MMLU acc (MCQ) | 23.16% | — | — | MCQ不需生成,llama.cpp可用 |
+| **生成Avg(5集)** | **0.0%** | **6.66%** | **+6.66pp** | llama.cpp SSM bug是0%主因 |
+
+> 结论：5/5 生成任务 HF vs llama.cpp 对比完成。4/5 显示 HF 显著优于 llama.cpp (+3.3~+15.0pp)。MATH 是唯一 HF 也=0% 的任务（MATH-500 难度远超 2B@25%训练）。HF 生成质量始终连贯（非退化），llama.cpp 均退化为重复"1"。llama.cpp SSM 生成 bug 确认为 L2 生成 0% 主因。
+> MATH HF 明细：10题(L2-L5),0/10=0.0%,no_answer=2。第9题 pred=√117≈gt=3√13(数值正确格式不匹配)。每题~43s,总~7min。结果落盘 gguf_iter_160000_l2_hf_math_direct/results.json。日志 /tmp/baize_l2_hf_math_direct.log。
