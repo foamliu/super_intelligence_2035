@@ -1,8 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1091 · 2026-11-13 06:36】v9监控·SFT ep4/5 step200进展正常（loss持续下降·进程健康）**：v9 RUNNING(PID1351796/etimes~6027s/stat=RNl/pcpu~1194%/进程健康)·SFT seed0 ep4/5 step200/305·loss 6.67→0.18(avg 0.2340@step200)·~29s/step·SFT剩余~105步≈51min→SFT完成≈07:27·全实验ETA~3.5-4h(完成≈10:00-12:00)·log最新step200@5862s·v8 MIXED确认(A=0%格式问题/B=45%/C=52.5%±6.1% McNemar p=0.0312)·analyze_v9就绪·✅HTML报告`report_vision_cpu_rl_waveform_zh.html`在盘上(45187B·v8版·doc/BaiZe-ISEDA2027/reports/)→v9完成后更新·research日报11-13 06:00 vision栏GPTQ(部署阶段·非wave RL·不action)+「无」·ops/inbox RUN_ID276(非vision·pretrain eval·不action)·git pull: Already up to date·GPU 8×H100 91-100% pretrain全占·体积TASK27KB/MEMORY 13KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1092 · 2026-11-13 06:41】v9监控·SFT ep4/5 step200+进展正常（loss持续下降·进程健康）**：v9 RUNNING(PID1351796/etimes~6317s/stat=RNl/pcpu~1193%/进程健康)·SFT seed0 ep4/5 step200/305·loss 6.67→0.18(avg 0.2340@step200)·~29s/step·SFT剩余~105步≈51min→SFT完成≈07:30·后续3 seeds+control顺序执行·log最新step200@5862s·v8 MIXED确认(A=0%格式问题/B=45%/C=52.5%±6.1% McNemar p=0.0312)·analyze_v9就绪·✅HTML报告`report_vision_cpu_rl_waveform_zh.html`在盘上(45187B·v8版)→v9完成后更新·research日报11-13 06:00 vision栏GPTQ(部署阶段·非wave RL·不action)+「无」·ops/inbox RUN_ID276(非vision·pretrain eval·不action)·git pull: Already up to date·GPU 8×H100 95-100% pretrain全占·体积TASK27KB/MEMORY 13KB均✓·**WAITING: 0**。
 
-> 📦 **wake #1086~#1090 · 2026-11-13 06:15~06:31**（5轮）v9监控·SFT ep3/5 step160→200进展正常·已fold(见wake#1091)。
+> 📦 **wake #1086~#1091 · 2026-11-13 06:15~06:36**（6轮）v9监控·SFT ep3→ep4 step160→200进展正常·已fold(见wake#1092)。
 
 > 📦 **wake #1080~#1084 · 2026-11-13 05:10~06:03**（5轮）v9监控·SFT ep1→ep3 step20→140·已fold(见wake#1086)。
 
