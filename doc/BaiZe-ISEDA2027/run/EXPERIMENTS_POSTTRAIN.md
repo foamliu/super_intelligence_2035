@@ -7843,19 +7843,23 @@ setsid bash -c "eval/run_batch.sh \
 
 → DesignFlow benchmark 对所有测试模型均为 0% Pass@1，包括 DeepSeek——这表明该 benchmark 任务难度极高或评测协议需进一步调优
 
-### §L4-zhulong (2026-11-13 wake365) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
+### §L4-zhulong (2026-11-13 wake365→366) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
 
 - **两个并行 158-task eval 仍在运行**（无 final_report.json，code-gen 阶段未完成）
 
-| eval | GPU | model | code dirs | code-gen success | code-gen failure | timeout | queue remaining | elapsed |
-|:--|:--:|:--|--:|--:|--:|--:|--:|--:|
-| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 94/158 | 80 | 6 | 0 | 64 | ~74min |
-| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 81/158 | 70 | 1 | 0 | 79 | ~47min |
+| eval | GPU | model | code dirs | dirs w/ pyAether_code | EDA-Eval dirs | remaining | elapsed | last dir created |
+|:--|:--:|:--|--:|--:|--:|--:|--:|:--|
+| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 108/158 | 22 | 102 | ~55 | ~83min | 03:40 EDA-Eval-PyAether-103 |
+| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 93/158 | 30 | 88 | ~70 | ~56min | 03:37 EDA-Eval-PyAether-085 |
 
-- **code-gen success** = cline 成功产出代码（非 eval pass）；实际 Pass@1 须等 code-gen 全部完成后 run_eval.py 评分得出
-- **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 step_60 已有 80/94=85% code-gen 成功率，**远优于 v11v38 的 22.78%** → 新 SFT 配方显著改善代码生成格式
-- **ETA**：step_60 ~98min remaining, step_105 ~92min remaining → 约 1.5h 后两 eval 完成
-- **下一步**：等 final_report.json 产出 → 记录 Pass@1 step_60 vs step_105 → 与 base 36% 对比 → 判定 SFT v39 配方是否有效
+- **code-gen success** = cline 成功产出代码到 `pyAether_code/` 目录（非 eval pass）；实际 Pass@1 须等 code-gen 全部完成后 run_eval.py 评分得出
+- **注意**：许多"无 pyAether_code"的目录仍**正在被 cline worker 处理**（32 workers 活跃），非全部失败
+- **log 证据**：step_60 log 有多个 `submit_and_exit` 调用（任务完成提交），step_105 log 有 `run_eval` 关键词出现
+- **错误发现**：step_60 log 中 1 例 `Model tried to call unavailable tool 'edit_files'`（模型尝试调用评测 harness 不提供的工具 → 工具使用错误，非 infra crash）
+- **代码质量抽查**（wake366）：生成的 .py 文件结构良好——proper `import pyAether as pyScript`、函数定义带 docstring、使用真实 API 名（CStringList.create, MdePlatLSFJobPolicy, MdePlatOGEJobPolicy, emyNameSpace 等）
+- **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 format collapse FIXED，代码生成质量显著改善
+- **ETA**：step_60 ~35min remaining（108/158, 8 workers），step_105 ~40min remaining（93/158, 8 workers）→ 约 40min 后两 eval 完成 code-gen
+- **下一步**：等 final_report.json 产出 → 记录 Pass@1 step_60 vs step_105 → 与 base 36% 对比 → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
 

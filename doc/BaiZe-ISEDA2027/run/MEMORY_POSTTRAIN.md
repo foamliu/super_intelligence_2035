@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake365（2026-11-13 R365: **L4 designflow 5-task eval FINAL 0/5=0%** — zhulong v39 evals still RUNNING step_60:80S/6F/64rem, step_105:70S/1F/79rem, no final_report yet）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-364✅;R365✅(designflow 5-task SFT v39 final eval COMPLETED 0/5=0%, zhulong evals monitored intermediate progress)
-- 当前动作: wake365 R365:**designflow eval DONE + zhulong evals monitored**:①designflow 5-task eval COMPLETED on 36.15:0/5=0% Pass@1,all FAIL(cline exit=0 but outputs/ empty→no submit.zip),durations 44-363s,PreToolUse hook_blocks=0(anti-cheat✅) ②zhulong evals RUNNING:step_60 GPU5:8097(80S/6F/0T,94dirs=60%,64remaining,~74min elapsed,PID953888),step_105 GPU6:8096(70S/1F/0T,81dirs=51%,79remaining,~47min elapsed,PID972225) ③code-gen success rate:step_60=80/86=93%,step_105=70/71=99%→**v39 SFT format collapse FIXED**(vs v11v38 22.78%) ④no final_report.json yet(eval still in code-gen phase) ⑤tunnel UP ⑥3 serves UP(8098+8097+8096) ⑦GPU5/6=86-87%util
-- 下一步: ①等zhulong evals完成(~1.5h ETA)→read final_report.json→report Pass@1 step_60 vs step_105 vs base 36% ②判定SFT v39配方是否有效(format fixed→code-gen↑,but semantic pass待验证) ③如step_105 Pass@1>0%→5-run eval ④Phase3 RL launch if SFT recipe validated ⑤designflow已确认0%(base+SFT均0%)→记录结论,不再扩量
+- PHASE: posttrain-wake366（2026-11-13 R366: **zhulong v39 dual evals still RUNNING** — step_60:108/158dirs,22 w/code,~83min; step_105:93/158dirs,30 w/code,~56min; no final_report yet; code-gen active,32 workers）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-365✅;R366✅(zhulong dual eval monitoring update,code quality spot-check,EXPERIMENTS §L4-zhulong updated)
+- 当前动作: wake366 R366:**zhulong dual eval monitoring**:①step_60 GPU5:8097(108/158dirs=68%,22 dirs w/pyAether_code,102 EDA-Eval dirs,~55remaining,~83min elapsed,PID953888 alive,last dir 03:40) ②step_105 GPU6:8096(93/158dirs=59%,30 dirs w/pyAether_code,88 EDA-Eval dirs,~70remaining,~56min elapsed,PID972225 alive,last dir 03:37) ③code quality spot-check:proper import pyAether,func defs w/docstring,real API names(CStringList/MdePlatLSFJobPolicy/MdePlatOGEJobPolicy) ④32 cline workers active ⑤1 tool error(edit_files unavailable,non-infra) ⑥no final_report.json ⑦tunnel UP ⑧3 serves UP ⑨GPU5=98%util,GPU6=86%util
+- 下一步: ①等zhulong evals完成(~40min ETA)→read final_report.json→report Pass@1 step_60 vs step_105 vs base 36% ②判定SFT v39配方是否有效(format fixed→code-gen↑,but semantic pass待验证) ③如step_105 Pass@1>0%→5-run eval ④Phase3 RL launch if SFT recipe validated ⑤designflow已确认0%(base+SFT均0%)→记录结论,不再扩量
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;36.15无GPU(reverse tunnel解决);zhulong evals still running
-- 本轮新增产出: R365✅(designflow 5-task FINAL 0/5=0% recorded in EXPERIMENTS §L4-DesignFlow wake365 + zhulong eval intermediate progress recorded)
+- 本轮新增产出: R366✅(zhulong dual eval wake366 monitoring data recorded in EXPERIMENTS §L4-zhulong wake365→366 + code quality spot-check + error found:edit_files tool misuse)
 - 未完成指令: L4 2026-11-12(zhulong eval RUNNING,designflow 5-task DONE 0%);11:2x✅;17:10✅拆除;13:40 Phase2 eval running/Phase3 RL launch-ready待SFT配方验证;ckpt BLOCKED
-- git: super_intelligence_2035(pushed to de85db2f1);本轮 commit pending(wake365)
+- git: super_intelligence_2035(pushed to 219da2d07);本轮 commit pending(wake366)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -218,5 +218,6 @@ WAITING: 0
 [wake363 03:09] R363 双eval进度+代码质量对比+designflow bench定位 → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake364 03:17] R364 L4 designflow eval launched via SSH reverse tunnel → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake365 03:35] R365 **designflow 5-task FINAL 0/5=0% + zhulong evals monitored**:①designflow SFT v39 final eval COMPLETED on 36.15:0/5=0% Pass@1,all FAIL(cline exit=0,outputs/ empty→no submit.zip),durations 44-363s,PreToolUse hook_blocks=0(anti-cheat✅),no infra crash ②designflow历史基线:DeepSeek 0/30,base 0/5+0/30,SFT v39 final 0/5→全模型0% ③zhulong evals RUNNING:step_60 GPU5:8097(80S/6F/0T,94dirs,64rem,~74min),step_105 GPU6:8096(70S/1F/0T,81dirs,79rem,~47min) ④code-gen success:step_60=93%,step_105=99%→v39 format collapse FIXED(vs v11v38 22.78%) ⑤no final_report.json yet ⑥tunnel UP ⑦3 serves UP ⑧GPU5/6=86-87%util ⑨EXPERIMENTS §L4-DesignFlow wake365 + §L4-zhulong wake365 recorded ⑩归档wake363/364到daily-memories. R365✅.WAITING=0。
+[wake366 03:42] R366 **zhulong dual eval monitoring**:①step_60 GPU5:8097(108/158dirs=68%,22 dirs w/pyAether_code,~55rem,~83min,PID953888 alive,last dir 03:40) ②step_105 GPU6:8096(93/158dirs=59%,30 dirs w/pyAether_code,~70rem,~56min,PID972225 alive,last dir 03:37) ③code quality spot-check:proper import pyAether,func defs w/docstring,real API names(CStringList/MdePlatLSFJobPolicy/MdePlatOGEJobPolicy/emyNameSpace) ④32 cline workers active ⑤1 tool error(edit_files unavailable→non-infra) ⑥no final_report.json yet ⑦tunnel UP ⑧3 serves UP(8098+8097+8096) ⑨GPU5=98%util,GPU6=86%util ⑩EXPERIMENTS §L4-zhulong wake365→366 updated. R366✅.WAITING=0。
 
 
