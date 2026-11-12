@@ -169,5 +169,4 @@ ERROR_COUNT:  0
 
 - **harness 源码**：`/nas_train/app.e0031982/harness/`（⚠️ **只读参考，不要改动上游代码**）
 - **产物目录**：`doc/BaiZe-ISEDA2027/run/harness/`
-- **共享工作副本**：`/nas_train/app.e0031982/code/super_intelligence_2035`（**多 agent 共用**，见 `AGENTS.md`）
-- **同级任务线**（🚫 不要碰）：`MEMORY_VISION.md` / `MEMORY_PRETRAI
+- **共享工作副本**：`/nas_train/app.e0031982/code/su
