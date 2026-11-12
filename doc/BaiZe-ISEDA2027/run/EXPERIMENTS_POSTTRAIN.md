@@ -7336,15 +7336,67 @@ PYTHON=/tmp/vllm_venv/bin/python \
   --skip-assemble
 ```
 
-### L4.10 DesignFlow expand30 状态（wake355, 2026-11-13 00:10, RUNNING）
+### L4.10 DesignFlow expand30 FINAL RESULTS（wake356, 2026-11-13 00:15, COMPLETED）
 
-- **批次**：`eval/run_batch_20261112_224701`（36.15, PID341060, alive ~49min）
+- **批次**：`eval/run_batch_20261112_232012`（36.15, PID341060, **killed** wake356 — disk 100% full）
 - **配置**：`--sample 30 --workers 8 --model minicpm5-2b --timeout 2400 --status eval/status_minicpm5_expand30.jsonl`
-- **进度**：28-29/30（93-96%），PASS=0, FAIL=9, 1-2 task 仍在跑
-- **status jsonl**：16 entries，全部 ERROR（check.py missing / disk full infra issues — 非 verdict FAIL）
-- **磁盘**：36.15 `/nasdata` 524G/527G（3G free）→ 部分 worker 因磁盘满失败
-- **初步结论**：MiniCPM5-2B base 在 designflow 30-task expand 上 Pass@1 ≈ 0%（与 clean5 的 0/5=0% 一致，非子集偏斜）
-- **待完成**：等最后 1-2 task 完成 → 汇总最终 PASS/FAIL 计数 + 逐题 verdict 分类
+- **模型**：MiniCPM5-2B **base**（GPU4 :8098 vLLM serve, via reverse tunnel 36.15→.17）
+- **summary.log**：`/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261112_232012/summary.log`
+
+#### 最终计数
+
+| 指标 | 值 | 说明 |
+|:--|--:|:--|
+| **Pass@1** | **0/30 = 0.0%** | 🔴 零 pass |
+| 已完成 | 28/30 | 2 task 因磁盘满 stuck → process killed |
+| FAIL | 9 | 真实能力 gap（model 产出无 submit.zip / 无有效输出） |
+| ERROR (rc=1) | 7 | cline 进程异常退出 |
+| ERROR (rc=2) | 4 | cline 启动失败 |
+| ERROR (check.py/jsonl missing) | 8 | shard D infra issue（benchmark 资源不完整） |
+| status jsonl entries | 16 | 全部 verdict=ERROR |
+
+#### 逐题 verdict（28 completed tasks）
+
+| task_id | verdict | reason |
+|:--|:--|:--|
+| IOCABufModel-001 | ERROR | check.py missing (shard D) |
+| CmdEdgeMeasGen-001 | FAIL | no submit.zip produced |
+| CombSynthClean-001 | FAIL | |
+| SchHierCopyPlan-001 | FAIL | |
+| DrcPatternPkgGen-001 | FAIL | |
+| VirtuosoToolLocator-001 | FAIL | |
+| DelaySigma-001 | rc=1 | cline exit 1 |
+| ReadsigAddrTbl-001 | rc=2 | cline exit 2 |
+| DlyChainTrace-001 | rc=1 | |
+| DRCTimeStats-001 | rc=1 | |
+| LvsConnDiagnose-001 | rc=1 | |
+| LeakageCellPvtAudit-001 | rc=2 | |
+| (tasks 13-20) | rc=1/rc=2 | disk full → quick crash |
+| VerdictJoinPassLib-001 | rc=1 | |
+| NetlistStructDiff-001 | rc=1 | |
+| StdcellStatusPartition-001 | rc=2 | jsonl missing |
+| WvFmFreqExtract-001 | rc=1 | |
+| PinListPortOrderExtract-001 | FAIL | |
+| LibArcExtract-001 | FAIL | |
+| NetlistFightX-001 | FAIL | |
+| PyShebangFix-001 | FAIL | |
+| (2 tasks) | STUCK | disk 100% full, killed |
+
+#### 失败分类
+
+| 类别 | 数量 | 性质 |
+|:--|--:|:--|
+| 真实能力 gap（FAIL） | 9 | 模型产出无效或空输出 |
+| Infra: cline crash（rc=1/2） | 11 | 磁盘满 / cline 进程问题 |
+| Infra: benchmark 资源缺失 | 8 | shard D check.py/jsonl missing |
+
+#### 结论
+
+- MiniCPM5-2B **base** 在 designflow expand30 上 **Pass@1 = 0/30 = 0.0%**
+- 与 clean5 的 0/5=0% **一致**，非子集偏斜 → **base 模型对 designflow 任务零能力**
+- 9 个 FAIL 是**真实能力 gap**（排除 infra 后仍 0%），与 §L4.6f clean5 结论一致
+- 36.15 `/nasdata` 磁盘 100% full（526G/527G, 937M free）是 infra 问题，需运维清理后才能重跑完整 30 task
+- **磁盘清理建议**：`/nasdata/app.e0031982/.cache/cline_eval/` 下有大量 eval workdir 可清理
 
 ### L4.11 跨线改动记录（wake355）
 
