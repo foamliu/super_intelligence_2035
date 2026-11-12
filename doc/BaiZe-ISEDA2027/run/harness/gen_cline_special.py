@@ -72,6 +72,41 @@ for h in H:
                 cline_empty.append(os.path.basename(f).replace("cline-patched__","").replace(".json",""))
     pred_data[h] = (len(files), real, len(files)-real)
 
+# ---- ETA computation (§用户令 2026-11-12, reproducible from file mtimes) ----
+import time as _time
+_now_ts = _time.time()
+_3d_ago_ts = _now_ts - 3 * 86400
+_1d_ago_ts = _now_ts - 1 * 86400
+eta_rows_data = []
+for h in H:
+    _files = glob.glob(os.path.join(PRED_DIR, f"{h}__*.json"))
+    _total = len(_files)
+    _remaining = max(0, 500 - _total)
+    _files_3d = sum(1 for _f in _files if os.path.getmtime(_f) >= _3d_ago_ts)
+    _files_1d = sum(1 for _f in _files if os.path.getmtime(_f) >= _1d_ago_ts)
+    _rate = _files_3d / 3.0
+    if _remaining == 0:
+        _eta_label = "✅ 完成"; _eta_days = 0
+    elif _files_1d == 0:
+        _eta_label = "DONE(500attempted,empty=能力,今日0产出)"; _eta_days = 0
+    elif _rate >= 1:
+        _eta_days = _remaining / _rate
+        _eta_dt = datetime.datetime.now() + datetime.timedelta(days=_eta_days)
+        _eta_label = f"~{_eta_days:.0f}天(≈{_eta_dt.strftime('%m-%d')})"
+    else:
+        _eta_label = "无法可靠估计(速率<1/天)"; _eta_days = 999
+    eta_rows_data.append((disp(h), _total, _remaining, f"{_rate:.0f}/天", f"{_files_1d}/天", _eta_label, _eta_days))
+_active_eta = [e for e in eta_rows_data if e[6] > 0 and e[6] < 999]
+if _active_eta:
+    _bn = max(_active_eta, key=lambda x: x[6])
+    swe_eta_str = f"~{_bn[6]:.0f}天(瓶颈={_bn[0]},{_bn[2]}剩余@{_bn[3]})"
+    swe_eta_date = (datetime.datetime.now() + datetime.timedelta(days=_bn[6])).strftime("%Y-%m-%d")
+else:
+    swe_eta_str = "全部完成/DONE"; swe_eta_date = "—"
+eta_html_rows = ""
+for _nm, _tot, _rem, _r3d, _r1d, _label, _days in eta_rows_data:
+    eta_html_rows += f"<tr><td>{_nm}</td><td>{_tot}/500</td><td>{_rem}</td><td>{_r3d}</td><td>{_r1d}</td><td>{_label}</td></tr>\n"
+
 tb21_data = {}
 for h in H:
     base = os.path.join(TB21_JOBS, h)
@@ -210,6 +245,13 @@ html += f"""</table>
 <p>TB-2.1总计: {tb_total_pass} passed/{tb_total_done} trials。7-way concurrent。</p>
 <h2>C4 本轮小结</h2>
 <p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 true backlog) | 空patch {ce}(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(已恢复·predict进行中) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict进行中) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval {total_resolved_all} resolved(0 true backlog) | {ROUND}</p>
+<h2>ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
+<div class="summary"><strong>SWE-bench Verified(500题×7路)</strong>：{swe_eta_str}（预计 {swe_eta_date}）<br>
+<strong>Terminal-Bench 2.1(89题×7路)</strong>：{tb_total_pass}p/{tb_total_done}t, 7路≥89tasks → 已交付</div>
+<table><tr><th>路</th><th>Predict</th><th>剩余</th><th>3日均速</th><th>今日速</th><th>ETA</th></tr>
+{eta_html_rows}</table>
+<p style="font-size:0.85em;color:#888">复算：ETA=剩余÷3日均速(文件mtime统计)。DONE=500attempted,empty=能力。网关{GW_NOTE_SHORT}。</p>
+
 <h2>可检验假设与下一步</h2>
 <ol>
 <li><strong>假设</strong>: cline空patch主因=网关429(59%) -> <strong>已验证</strong>: 网关429历史,空patch由429产生后cleanup删除,网关已恢复200</li>

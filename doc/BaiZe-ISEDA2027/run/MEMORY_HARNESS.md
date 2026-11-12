@@ -4,11 +4,11 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2278 ETA已给·incr_eval 1NEW(cline sympy-24213 RESOLVED→总resolved 1652→1653)·predict 4/7 alive·双报告REGEN R2278
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2278·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2277 incr_eval+监控+报告·R2278 incr_eval 1NEW(+1resolved:cline sympy-24213)+ETA已给(TB-2.1=已交付/SWE-bench Verified=~15天)·总resolved 1652→1653·双报告REGEN R2278
-当前动作:     ETA: TB-2.1=已交付(100passed/750trials·若需全89题全evaluated需重启rerun~半天)|SWE-bench Verified=~15天(瓶颈codex 375剩余@25/天≈11-27)·R2278-manual: 自检PASS(CPU 33/224~15%·无>8000%·MEM 1.1TB)+gateway functional(全200)+predict 4/7 alive(cline·codex·pi·cc)+incr_eval R2278(1NEW:cline sympy-24213 RESOLVED→1652→1653)+eval(cline217/291·codex80/125·opencode411/495·cc214/267·pi183/248·hermes407/453·dsh141/175)+双报告REGEN R2278+cline C4(287f/281r/217res/6empty·pass217/281=77.2%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 351G 4%)+未完成指令:有(§ETA+§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY+ETA+push ②predict向500推进(4路alive:cline287/cc276/pi250/codex125·opencode495 DONE·hermes500attempted DONE·dsh500attempted DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤dsh 500attempted DONE·325empty=能力·9093已200·不重启[CLOSED] ⑥hermes 500attempted DONE·51empty=能力·不重启[CLOSED] ⑦TB-2.1推进
-阻塞:         <各路尚未满500:cline287/cc276/pi250/codex125·§22:4x未全交付·hermes+dsh已500attempted DONE>
+PHASE:        R2279 ETA已交付(双报告补§9 ETA节)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 4/7 alive
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2279·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2278 incr_eval+监控+报告·R2279 ETA双报告补节(TB-2.1=已交付100p/750t·SWE-bench Verified=~15天瓶颈codex374剩余@25/天≈11-27)+生成器脚本更新(gen_report+gen_cline加ETA计算)·总resolved 1653
+当前动作:     ETA:①TB-2.1=已交付(100p/750t,7路≥89tasks) ②SWE-bench Verified=~15天(瓶颈codex374剩余@25/天,预计2026-11-27)·R2279: 双报告补§9 ETA节(可复算:ETA=剩余÷3日均速·文件mtime统计)+生成器脚本更新+TASK标记✅·自检PASS(CPU~15%·MEM1.1TB)+gateway 200(curl实测)+predict 4/7 alive(cline·codex·pi·cc)+eval(cline217/291·codex80/125·opencode411/495·cc214/267·pi183/248·hermes407/453·dsh141/175)+cline C4(287f/281r/217res/6empty·pass77.2%)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY+TASK+双报告+脚本+push ②predict向500推进(4路alive:cline287/cc276/pi251/codex126·opencode495 DONE·hermes449(51剩余)·dsh DONE) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤dsh 500attempted DONE·325empty=能力·不重启[CLOSED] ⑥TB-2.1已交付
+阻塞:         <各路尚未满500:cline287/cc276/pi251/codex126·§22:4x未全交付·hermes449(51剩余)·dsh DONE>
 ERROR_COUNT:  0
  体积: TASK=21KB / MEMORY=30KB
  cline专项小结: predict_glm53=287files/281real/217resolved/6empty(gateway functional产real·C3 resume fix R1733仍有效)·C1:281real/287total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→287)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=6(sympy-21930/22456/22714/23950/24066+1新empty·能力差·非resume bug·gateway functional)·C5:报告R2278(cline special·217/281real=77.2%)·失败top1=能力差(real patch但tests fail)·opencode411/495=83.0%·gap=能力差
@@ -17,7 +17,9 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
-> [16:48] R2278-manual: ETA: TB-2.1=已交付(100passed/750trials·若需全89题全evaluated需重启rerun~半天)|SWE-bench Verified=~15天(瓶颈codex 375剩余@25/天≈11-27)·自检PASS(CPU 33/224~15%·无>8000%·MEM 1.1TB)+gateway functional(全200)+predict 4/7 alive(cline·codex·pi·cc)+incr_eval R2278(1NEW:cline sympy-24213 RESOLVED→1652→1653)+eval(cline217/291·codex80/125·opencode411/495·cc214/267·pi183/248·hermes407/453·dsh141/175)+双报告REGEN R2278+cline C4(287f/281r/217res/6empty·pass77.2%·失败top1=能力差)+磁盘(/data 5.8T 18%·/ 351G 4%)+未完成指令:有(§ETA+§10:10+§22:4x)·W:0
+> [17:1x] R2279: ETA双报告补§9 ETA节(①TB-2.1=已交付100p/750t·②SWE-bench Verified=~15天瓶颈codex374剩余@25/天≈2026-11-27)+生成器脚本更新(gen_report_glm53_7way.py+gen_cline_special.py加ETA计算:ETA=剩余÷3日均速·文件mtime统计·可复算)+TASK标记§ETA✅已交付+自检PASS(CPU~15%·MEM1.1TB)+gateway 200(curl实测·脚本urllib probe超时显0但curl=200)+predict 4/7 alive(cline·codex·pi·cc)+eval 1653 resolved(0 true backlog)+cline C4(287f/281r/217res/6empty·pass77.2%)·未完成指令:有(§10:10+§22:4x)·W:0
+
+> 📦 R2278 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2278 ETA已给+incr_eval 1NEW(cline sympy-24213 RESOLVED→1653)+双报告REGEN。需要时再读。
 
 > 📦 R2277 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2277 监控轮(自检PASS·incr_eval 0NEW eval caught up·总resolved 1652不变·双报告R2275 fresh)。需要时再读。
 

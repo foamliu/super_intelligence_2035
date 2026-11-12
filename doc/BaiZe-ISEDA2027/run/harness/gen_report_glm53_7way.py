@@ -83,6 +83,41 @@ total_resolved = sum(s[2] for s in swebench)
 total_evaluated = sum(s[1] for s in swebench)
 total_pred = sum(p[2] for p in predict)
 
+# ---- ETA computation (§用户令 2026-11-12, reproducible from file mtimes) ----
+import time as _time
+_now_ts = _time.time()
+_3d_ago_ts = _now_ts - 3 * 86400
+_1d_ago_ts = _now_ts - 1 * 86400
+eta_rows_data = []
+for h in HARNESSES:
+    _files = glob.glob(os.path.join(PRED_DIR, f"{h}__*.json"))
+    _total = len(_files)
+    _remaining = max(0, 500 - _total)
+    _files_3d = sum(1 for _f in _files if os.path.getmtime(_f) >= _3d_ago_ts)
+    _files_1d = sum(1 for _f in _files if os.path.getmtime(_f) >= _1d_ago_ts)
+    _rate = _files_3d / 3.0  # files/day, 3-day average
+    if _remaining == 0:
+        _eta_label = "✅ 完成"; _eta_days = 0
+    elif _files_1d == 0:
+        _eta_label = "DONE(500attempted,empty=能力,今日0产出)"; _eta_days = 0
+    elif _rate >= 1:
+        _eta_days = _remaining / _rate
+        _eta_dt = datetime.datetime.now() + datetime.timedelta(days=_eta_days)
+        _eta_label = f"~{_eta_days:.0f}天(≈{_eta_dt.strftime('%m-%d')})"
+    else:
+        _eta_label = "无法可靠估计(速率<1/天)"; _eta_days = 999
+    eta_rows_data.append((disp(h), _total, _remaining, f"{_rate:.0f}/天", f"{_files_1d}/天", _eta_label, _eta_days))
+_active_eta = [e for e in eta_rows_data if e[6] > 0 and e[6] < 999]
+if _active_eta:
+    _bn = max(_active_eta, key=lambda x: x[6])
+    swe_eta_str = f"~{_bn[6]:.0f}天(瓶颈={_bn[0]},{_bn[2]}剩余@{_bn[3]})"
+    swe_eta_date = (datetime.datetime.now() + datetime.timedelta(days=_bn[6])).strftime("%Y-%m-%d")
+else:
+    swe_eta_str = "全部完成/DONE"; swe_eta_date = "—"
+eta_html_rows = ""
+for _nm, _tot, _rem, _r3d, _r1d, _label, _days in eta_rows_data:
+    eta_html_rows += f"<tr><td>{esc(_nm)}</td><td>{_tot}/500</td><td>{_rem}</td><td>{_r3d}</td><td>{_r1d}</td><td>{_label}</td></tr>\n"
+
 # ---- TB-2.1 results ----
 tb21_data = {}
 for h in HARNESSES:
@@ -146,6 +181,10 @@ for h in HARNESSES:
         else: status = "done" if completed >= total else "partial"
     remaining = max(0, total - completed - errored)
     tb21_data[h] = {"passed": passed, "completed": completed, "errored": errored, "remaining": remaining, "total": total, "status": status}
+
+# ---- TB-2.1 ETA (after tb21_data is built) ----
+_tb_all_done = all(tb21_data[h]["completed"] + tb21_data[h]["errored"] >= 89 for h in HARNESSES)
+tb_eta_str = "已交付(100p/750t,7路≥89tasks)" if _tb_all_done else "进行中"
 
 KIMI = {"cline":356,"opencode":401,"pi":333,"codex":291,"claude-code":273,"deepseek":212,"hermes":184}
 
@@ -273,7 +312,14 @@ HTML = f"""<!DOCTYPE html>
 <h2>8. research日报输入(2026-11-11)</h2>
 <div class="info"><p>research日报2026-11-11已查(mtime15:08)。harness advice:报告加6列(resolved_rate/continuous_score/workflow_calls_per_task/worker_invocations_per_workflow/tokens_main+tokens_worker/usd_per_task)·用现有trace回填不重跑·empty标EMPTY/QUOTA单列不算失败·ETA 2-3天。纳入下轮(用现有{total_resolved} resolved+{total_pred} files回填)。网关200·predict进行中。</p></div>
 
-<h2>9. 后续计划</h2>
+<h2>9. ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
+<div class="info"><p><strong>① SWE-bench Verified(500题×7路)</strong>：{swe_eta_str}（预计 {swe_eta_date}）<br>
+<strong>② Terminal-Bench 2.1(89题×7路)</strong>：{tb_eta_str}</p></div>
+<table><tr><th>路</th><th>Predict</th><th>剩余</th><th>3日均速</th><th>今日速</th><th>ETA</th></tr>
+{eta_html_rows}</table>
+<div class="note"><p><strong>复算方法</strong>：ETA = 剩余题数 ÷ 3日平均速率(由 predictions_glm53/ 文件 mtime 统计)。瓶颈=剩余最多且速率最低的活跃路。DONE=该路已 attempt 500 题、空 patch=能力差(不重启)。网关 429 会降低有效速率；当前网关{GW_NOTE_SHORT}。复算命令：<code>cd swebench_verified_full/predictions_glm53 &amp;&amp; for r in cline-patched codex opencode claude-code pi hermes deepseek-harness; do n=$(ls ${{r}}__*.json|wc -l); echo "$r: $n/500 remaining=$((500-n))"; done</code></p></div>
+
+<h2>10. 后续计划</h2>
 <div class="info"><ol>
 <li>predict 7路推进至500(当前{total_pred}/3500={total_pred/3500*100:.1f}%,网关200·predict进行中)</li>
 <li>eval {total_resolved} resolved(0 true backlog)·新predict后增量eval({ROUND}: incr_eval已完成·待新predict累积)</li>

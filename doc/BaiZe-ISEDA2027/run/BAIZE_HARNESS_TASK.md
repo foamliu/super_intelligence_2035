@@ -28,16 +28,11 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-12 16:3x（**给两个基准的 ETA**）· 用户直令 · 最高优先 · 未完成
+### ✅ §用户令 · 2026-11-12 16:3x（**给两个基准的 ETA**）· ✅ 已交付（R2279）
 
-> **用户原话**：「请 harness 给个ETA：1.TB-2.1；2.SWE-bench Verified。」
-
-**立即执行**（本轮先做这个，其余照旧；轻量、只统计不新起实验）：
-
-1. 针对 **① TB-2.1（89 题 × 7 路）** 和 **② SWE-bench Verified（500 题 × 7 路）**，各给一个**ETA（预计全部完成的时间,含剩余 wait/predict/eval 各段的拆分）**。
-2. ETA 的给出必须**可复算**：基于当前真实进度给证据——各路当前已完成/剩余题目数、每轮 step 耗时、predict 存活路数、eval 是否已追上、gateway 当日额度耗用趋势（是否还会触发 429 打断吞吐）。取不到就标「无法可靠估计 + 理由」，🚫 不拍脑袋。
-3. 结果落盘为一条**中文简短结论**，写进本轮 MEMORY 心跳 + 双报告（或单独一小节，位置自定），并在**心跳第一行**把两个 ETA 数字直接写出来，方便运维一眼读到。
-4. 保持 `WAITING=0` 继续主线（§22:4x / cline 专项照旧）。
+> **ETA结论**：① **TB-2.1 = 已交付**（100p/750t, 7路≥89tasks, 全部done）；② **SWE-bench Verified = ~15天**（瓶颈=codex 374剩余@25/天, 预计 2026-11-27）。
+> **复算方法**：ETA=剩余题数÷3日平均速率(由 predictions_glm53/ 文件mtime统计)。各路拆分：cline 213剩余@49/天≈4天·codex 374剩余@25/天≈15天(瓶颈)·opencode 5剩余≈0天·cc 224剩余@49/天≈5天·pi 249剩余@51/天≈5天·hermes 51剩余@44/天≈1天·deepseek DONE(500attempted,325empty=能力,今日0产出)。eval已追上(incr_eval,0 true backlog)。网关200(curl实测)·429风险仍存(历史反复)。
+> **落盘**：MEMORY心跳第一行含两ETA数字 + 双报告新增§9 ETA节(`reports/report_harness_glm53_7way_swebench_tb_zh.html` + `reports/report_harness_cline_special_zh.html`) + 生成器脚本已更新(gen_report_glm53_7way.py + gen_cline_special.py)。
 
 ---
 
