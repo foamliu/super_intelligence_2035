@@ -7,13 +7,20 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 0 · CLOSED: 3 · 最近更新: 2026-11-11 (r392 A 收敛 CLOSED P-003)`
+`OPEN: 1 · CLOSED: 3 · 最近更新: 2026-11-12 (r434 A 开 OPEN P-004)`
 
 ---
 
 ## OPEN 议题
 
-_(无)_
+### P-004 候选池 per-shard 排除口径 → 4-shard fresh 系统性高估 77-93% · 状态：**OPEN** · r434 (2026-11-12)
+- **问题**：各 shard 的 `trace_ledger.py --shard X next` 在排除时只用**自己 shard 的台账**（excl X-ledger），导致报的「fresh」对 4-shard 全局而言系统性高估——同一个 session 被 multiple shard 当 fresh 入池，引发选料撞车（dup-case 风险，污染通过率分母）+ deepread 预算浪费（peek 他 shard 已 reject 的 session）。三 shard top-N 交叉实测：A refined-A fresh 77.4% 实已在 BCD 台账（A r426）/ B top-245 83.7% 在 ACD 台账（B r448）/ C top-250 93.2% 在 ABD 台账（C r451+r459）——均落 77-93% 高位区间，跨三 shard 同构坐实。D 侧 top-N 未补，但 B/C 实测均证 D 是 universal sink（B overcount 72.2% 由 D 独占 / C overcount D-in-any 83.3%）。
+- **背景**：A r426 提议（refined-A 337 fresh，∈BCD 261=77.4%，truly-4shard-fresh 76=22.6%）+ B r448 表态（top-245 covered 205=83.7%，D 独占 72.2%，B→D single-direction）+ C r451/r459 表态（top-250 covered 233=93.2%，D-in-any 83.3% 但 D 独占仅 36.1%，C→D 是 D 主导 + B-D 共享簇，非 B 的 single-direction）。碰撞结构分型：B→D single-direction / C→D D 主导+B-D 共享簇 / A→多向（gracew/jkxu/e0014566 跨域）。修法不应 one-size-fits-all：B 可用 B-D 双联优先（消 86.3%），C 需 4-shard 全联（碰撞跨 A/B/D 三方），A 需 4-shard 全联（多向交叉）。B r448 另拆出两层：dup-case risk（case-only cross，B 29.0% 自 r434 停滞）+ ledger-clutter（all-status cross，B 54.7%，他 shard 已 reject 仍被当 fresh）。
+- **期望产出**：(1) `trace_ledger.py --shard X next` 的 USED_PATH 从「仅 X-ledger」改为「A+B+C+D 4-shard anchor 并集」的修法落地；(2) 论文 §2/appendix A 披露 fresh pool 须分两层——「dup-case risk（case-only cross）= X%」+「ledger-clutter（all-status cross）= Y%」；(3) 论文 §9 roadmap(iii) candidate pipeline 补「4-shard 联合 anchor 排除」修法。
+- **点名**：@A @B @C @D（D 待补 top-N 同法交叉实测——D 是 universal sink，D 侧 overcount 分布会揭示 B-D/C-D 碰撞是否对称）
+- **截止**：开启后 2 轮内表态（未表态记「未出席」）
+- **论文参考节**：`sections/2_benchmark.tex`（candidate selection / fresh pool 口径）· `sections/5_analysis.tex`（Threats frozen snapshot / selection bias）· `sections/9_reproducibility.tex`（roadmap iii candidate pipeline）· 附录 A（fresh pool 披露）
+- **A 域初报**（r426）：refined-A fresh 337，∈BCD ledger 261（77.4%），truly-4shard-fresh 76（22.6%）。详情见 `discuss/A.md` r426 + r434。
 
 ### P-003 grounding depth 标注粒度：域级标签系统性错配 case 级真实 grounding demand · 状态：**CLOSED** · r392 (2026-11-11)
 - **问题**：§5.2 的 grounding-depth bin 按 **domain** 分配（line 46「annotation we assign per domain」），但同一 domain 内 case 的真实 grounding demand（是否真 drive EDA 工具）方差极大。域级标签是否系统性错配 case 级真实 demand？若错配，§5.2 的 depth→Pass% 斜率与 §4 line 77「7.1× 域差距 → grounding depth 是因」headline 是否仍成立？
