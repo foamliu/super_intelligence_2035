@@ -7078,7 +7078,7 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
 - 命令：`curl -X POST http://10.129.32.75:8669/v1/run_code -d '{"code":"import pyAether as ae;print(type(ae));print(\"SANDBOX_OK\")","lang":"pyAether","host":"aether"}'`
 - 结果：`{"response":"The code execution was successful","print_log":"<class 'module'>\nSANDBOX_OK"}` ✅
 
-### L4.6 Minimal Baseline Eval（5 tasks, RUNNING）
+### L4.6 Minimal Baseline Eval — Run 1（5 tasks, COMPLETED, timeout=600s）
 - 命令：
   ```bash
   cd /nasdata/app.e0031982/code/EDA-Flow-Bench
@@ -7087,27 +7087,45 @@ SANDBOX_PORT="${SANDBOX_PORT_HTTP:-8664}"       # alive port (8667 dead)
     --model minicpm5-2b --workers 2 --limit 5 --timeout 600
   ```
 - Tasks（5）：ABMatchPlacementCheck-001 / Analog-001 / AnalogGroupCfgMergeDummy-001 / AutoPR-001 / BitcellMcSpGen-001
-- PID on 36.15：3723256
+- PID on 36.15：3723256（已完成）
 - Log：`/tmp/designflow_baseline_5task.log`
 - Batch dir：`eval/run_batch_20261112_203445`
-- 状态：PARTIAL（3/5 完成，2/5 仍在跑，2026-11-12 20:49 wake340 检查）
-- 结果（status.jsonl, model=minicpm5-2b, source=36.15 EDA-Flow-Bench/eval/status.jsonl）：
+- 状态：✅ COMPLETED（5/5 finished, 2026-11-12 ~21:00 wake341 确认）
+- 结果（batch summary, model=minicpm5-2b）：
   | # | Task | verdict | cline_exit | dur_sec | reason |
   |---|------|---------|------------|---------|--------|
   | 1 | ABMatchPlacementCheck-001 | FAIL | 137 | 615 | no submit.zip produced (cline wrote nothing under outputs/) |
   | 2 | Analog-001 | FAIL | 137 | 615 | no submit.zip produced (cline wrote nothing under outputs/) |
   | 3 | AutoPR-001 | ERROR | null | null | assets dir missing (infra issue, 非 model 能力) |
-  | 4 | AnalogGroupCfgMergeDummy-001 | RUNNING | — | — | — |
-  | 5 | BitcellMcSpGen-001 | RUNNING | — | — | — |
-- **Pass@1 (partial, 3 completed): 0/3 = 0%**
+  | 4 | BitcellMcSpGen-001 | FAIL | — | 562 | exception: AssertionError('[cond c] generator runs on B (exit 0, produces .sp)') |
+  | 5 | AnalogGroupCfgMergeDummy-001 | FAIL | 137 | 615 | no submit.zip produced (cline wrote nothing under outputs/) |
+- **Pass@1: 0/4 = 0.0%（1 ERROR excluded from denominator）**
 - **🔴 关键发现：600s timeout 远不足（infra-limited, 非 capability baseline）**
-  - cline_exit=137 = SIGKILL = 600s 超时杀掉 cline，模型来不及产出任何 output
+  - 3/4 FAIL = cline_exit=137 (SIGKILL) = 600s 超时杀掉 cline，模型来不及产出任何 output
+  - BitcellMcSpGen-001 在 562s 内完成但 AssertionError（model 产出了代码但逻辑错误）
   - 对照：DeepSeek (cloud) 跑 designflow 用 2700s timeout，很多任务仍需 2000+ s
   - MiniCPM5-2B 2B 模型经反向隧道（36.15→.17:8098）访问，额外网络延迟
   - **结论：当前 0% 是 infra-limited（timeout 太短），非真实 capability baseline**
   - **需重跑：timeout ≥ 1800s（建议 2700s 对齐 DeepSeek 口径），workers=1（减并发争抢）**
 - AutoPR-001 ERROR "assets dir missing" = benchmark 数据缺失（infra），与 model 无关
 - hook_blocks=0 for all → PreToolUse anti-cheat 未触发（模型未尝试泄题）
+
+### L4.6b Minimal Baseline Eval — Run 2（5 tasks, RUNNING, timeout=2700s, wake341）
+- 命令：
+  ```bash
+  cd /nasdata/app.e0031982/code/EDA-Flow-Bench
+  eval/run_batch.sh --jsonl benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl \
+    --model minicpm5-2b --workers 1 --limit 5 --timeout 2700 \
+    --status eval/status_rerun_2700s.jsonl
+  ```
+- 改进 vs Run 1：timeout 600→2700s（对齐 DeepSeek 口径），workers 2→1（减并发争抢）
+- PID on 36.15：3858541（setsid launched, wake341 21:00）
+- Log：`/tmp/designflow_baseline_5task_rerun_2700s.log`
+- Batch dir：`eval/run_batch_20261112_210026`
+- Status file：`eval/status_rerun_2700s.jsonl`
+- 状态：RUNNING（worker 1 started on ABMatchPlacementCheck-001, 2026-11-12 21:00）
+- 预计耗时：worst case 5×2700s = 3.75hr，但多数任务应在 2700s 内完成
+- 结果：TBD（下轮 wake 检查）
 
 ### L4.7 BaiZe Ckpt 可达性（BLOCKED）
 - `/nas_train` 未挂载于 .17（`mount | grep nas_train` → 空）
