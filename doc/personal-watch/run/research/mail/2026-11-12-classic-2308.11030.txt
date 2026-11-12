@@ -1,0 +1,14 @@
+Dear Professor Mutlu,
+
+I am Yang Liu, working on BaiZe-ISEDA2027 and ZhuLong-DAC2027, two projects that apply small language models to EDA and memory-systems workflows. Ramulator 2.0 is the simulator we keep returning to when comparing DRAM design choices, so I would like to check three points with you.
+
+1. Search loops rather than single studies: we want to evaluate thousands of short configuration and controller variants instead of a few full traces. Is the Ramulator 2.0 interface suitable for that pattern, and where does the abstraction break first: trace replay cost, warm-up, or statistics granularity?
+
+2. Fidelity knobs: when the goal is ranking design points rather than reporting absolute numbers, which modeled components matter most (bank-level parallelism, refresh, scheduling) and which can be simplified without changing the ranking?
+
+3. Reliability and power: how mature are the power/thermal and RowHammer-style reliability models relative to timing, and would you trust them for architecture-level screening?
+
+Any guidance on pitfalls would help us avoid over-fitting our own simulation harness. Thank you for the tool and your time.
+
+Best regards,
+Yang Liu

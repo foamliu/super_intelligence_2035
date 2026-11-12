@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **47** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **26** · vision **17** · harness **29** · data **27** · zhulong **33** · designflow **15**
+**本轮快照**：累计 **51** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **28** · vision **17** · harness **32** · data **29** · zhulong **36** · designflow **16**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -44,6 +44,12 @@
 >
 > **第十二轮核验证据（可复核）**：arXiv API `id_list=2406.12045,2401.14185` **`200` + `application/atom+xml; charset=utf-8`**（5,114 B）；`id_list=2507.20534` **`200` + atom**（14,399 B，v2，首发 2025-07-28 / 更新 2026-02-03）；OpenAlex `2406.12045` = **1,198**、`2507.20534` = **1,410**（查询日 2026-11-12）；TD-Gammon：Crossref `10.1145/203330.203343` **`200`**（CACM **38(3):58–68**，1995-03）、OpenAlex 同 DOI **1,680**，1994 姊妹篇 `10.1162/neco.1994.6.2.215` OpenAlex **823** 且取到**完整摘要**（本线只引摘要原文）；Sora：`openai.com/index/...` 与 `openai.com/research/...` 经代理与直连**均为 `403`**、Wayback `403`、`r.jina.ai` `401` ⇒ **正文未取到**，本条**不引任何数字**。
 > ⚠️ **第十二轮如实记（更正）**：任务书 §6.5 表格把「Kimi（月之暗面报告，如 … 2401.14185 Moonshot）」作为示例 —— 本线实测 **`2401.14185` = `TDFNet: An Efficient Audio-Visual Speech Separation Model with Top-down Fusion`（cs.SD，Samuel Pegg / Kai Li / Xiaolin Hu，2024-01-25，OpenAlex 被引 3）**，**与 Kimi / Moonshot 无关** ⇒ 🚫 不据此伪造条目，改用实测存在的 **Kimi K2 `2507.20534`**；建议 supervisor 更正任务书示例。
+>
+> 🆕 **第十三轮（2026-11-12 15:0x）新增 4 条 = 「偏好优化 / SSM 统一 / 注意力实现 / 存储模拟基座」**：DPO（把 KL 约束 RLHF 化成分类损失，RM-free 路线对照）→ **zhulong 奖励设计的第三条路**；Mamba-2 / SSD（注意力与 SSM 通过半可分矩阵统一，核心层快 2–8×）→ **pretrain 架构对照 + 吞吐口径**；FlashAttention-2（25–40% → 50–73% 理论峰值，225 TFLOPs/s / 72% MFU）→ **pretrain 的 MFU 标尺**；Ramulator 2.0（模块化 DRAM 模拟器，MIT 许可）→ **zhulong 批量评测基座 + designflow 保真度三分**。**必读清单：10/10 组、37/37 条目仍全覆盖**（本轮属「补充」，故为 B 轨第十三轮）。
+>
+> **第十三轮核验证据（可复核）**：arXiv API `id_list=2310.16944,2405.21060,2307.08691,2308.11030` 与 `id_list=2305.18290,2310.16944` 均 **`200` + `application/atom+xml; charset=utf-8`**（9,704 B / 5,938 B / 9,862 B 三次调用）；被引数 **OpenAlex 4/4 `200`**（DPO **3,123** · Mamba-2 **1,003** · FlashAttention-2 **1,844** · Ramulator 2.0 **185**，查询日 2026-11-12）；会议证据：DPO = OpenAlex `conference-paper` + NeurIPS 会场 DOI `10.52202/075280-2338`（pp. 53728–53741）、Mamba-2 = arXiv `comment` 原文 `ICML 2024`、FlashAttention-2 = **未核到会场**（如实记预印本）、Ramulator 2.0 = IEEE CAL DOI `10.1109/LCA.2023.3333759`（23(1):112–116）。
+> ⚠️ **第十三轮如实记（更正）**：候选池此前把 **DPO 记为 `2310.16944`** —— 本线实测该 ID = **`Zephyr: Direct Distillation of LM Alignment`（Tunstall et al., 2023-10-25, cs.LG）**，**不是 DPO**；DPO 的真实 ID 为 **`2305.18290`**（`v3`，2024-07-29）。⇒ 已按实测 ID 收录 #48，并**在此显式更正**，🚫 不沿用错误 ID。Zephyr 本身可作「dDPO 蒸馏」候选，但本轮**不凑数**、不收录。
+
 
 ---
 
@@ -846,6 +852,74 @@
 
 ---
 
+## 48. Direct Preference Optimization: Your Language Model is Secretly a Reward Model（DPO）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Direct Preference Optimization: Your Language Model is Secretly a Reward Model |
+| 作者（前 3） | Rafael Rafailov · Archit Sharma · Eric Mitchell（et al.，共 6 位：+ Stefano Ermon · Christopher D. Manning · Chelsea Finn） |
+| 年份 | 2023（arXiv 首次提交 **2023-05-29**；本线取到 **v3 / 2024-07-29**） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `type=conference-paper`、venue `neural information processing systems`，biblio pp. **53728–53741**，会场 DOI `10.52202/075280-2338`） |
+| 被引数 | **3,123**（OpenAlex，DOI `10.48550/arxiv.2305.18290`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.18290> ｜ DOI `10.48550/arxiv.2305.18290` |
+| 一句话贡献 | 摘要原文：给 RLHF 的奖励模型换一种参数化，使**最优策略可闭式解出**，于是「KL 约束下的 RLHF 目标」退化为**一个简单分类损失** —— DPO 训练稳定、无需在微调中从 LM 采样、也不必拟合独立奖励模型；摘要称在情感控制上超过 PPO 版 RLHF，在摘要与单轮对话上与 PPO 持平或更好，且实现与训练显著更简单。 |
+| 与我们工作的关系 | **zhulong（奖励设计：RM-free 路线对照）**：我们现在的路线是「可验证 checker 当奖励」，DPO 给的是第三条路 —— **不建 RM、不采样，直接用成对偏好做分类损失**。<b>动作</b>：zhulong 的奖励消融表加一档「DPO（仅离线成对偏好）」与「checker 奖励」「RM+PPO」并排，<b>判据</b>：在等标注预算下，若 DPO 档在留出任务上低于 checker 档 ≥5 绝对点，则离线偏好只当冷启动、不单独使用。<br>**data（偏好数据格式）**：DPO 只需要 `(prompt, chosen, rejected)` 三元组，比 RLHF 的「打分 + 在线采样」便宜 ⇒ data 线的偏好评测协议可直接按此格式预注册。<br>**harness（已知偏置）**：论文本身未系统处理**长度偏置**（DPO 被后续工作广泛报告会利用长度）⇒ harness 报分时必须单列长度统计，🚫 不看长度只看胜率。<br>**风险**：① 实验以 1B–7B 级与对话/摘要为主，**工具调用轨迹不在其评测范围**；② 「超过 PPO」是作者自报、基准自选；③ 离线数据分布偏移问题论文未解决（已在作者信中追问）。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；Crossref/OpenAlex 会场 DOI 已记）
+
+---
+
+## 49. Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality（Mamba-2 / SSD）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality |
+| 作者（前 3） | Tri Dao · Albert Gu（**共 2 位**） |
+| 年份 | 2024（arXiv 首次提交 **2024-05-31**，v1） |
+| 会议 / 期刊 | **ICML 2024**（据 arXiv `comment` 字段原文 `ICML 2024`；OpenAlex 仍只记 arXiv 预印本、无会场 DOI ⇒ **不写页码**） |
+| 被引数 | **1,003**（OpenAlex，DOI `10.48550/arxiv.2405.21060`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.21060> ｜ DOI `10.48550/arxiv.2405.21060` |
+| 一句话贡献 | 摘要原文：证明 SSM（如 Mamba）与注意力变体**通过半可分矩阵的多种分解紧密相关**，据此提出 **SSD** 框架，并设计 **Mamba-2** —— 其核心层是 Mamba 选择性 SSM 的改进，**快 2–8×**，同时在语言建模上**仍与 Transformer 有竞争力**。 |
+| 与我们工作的关系 | **pretrain（吞吐 + 架构对照）**：Mamba-2 的卖点是「同精度下更快」而不是「更强」⇒ 若要评估 SSM 替换 attention，必须按**等质量（loss/困惑度）比吞吐**，🚫 只比 tokens/s。<b>动作</b>：pretrain 的架构对照表新增 `Mamba-2` 一档，只跑 1B 级短跑（≤20B token），<b>判据</b>：等 loss 下吞吐提升 ≥30% 且长上下文（≥32k）不退化才进入 2B 候选。<br>**zhulong（消融基线）**：SSD 给出「注意力 ↔ SSM」的统一视角 ⇒ 消融里可把「线性注意力 / SSM / 混合」放进**同一个矩阵分解族**解释差异，而不是当成三个黑盒。<br>**harness（成本口径）**：2–8× 是**层内**加速，端到端收益取决于 attention 占比 ⇒ harness 报「每步耗时」必须同时给 `attention 时间占比`。<br>**风险**：① 2–8× 为作者自报、特定形状（chunk 大小 / 序列长）下成立；② 与 Mamba-1 共享作者，独立复现少；③ 「与 Transformer 有竞争力」限于摘要所述中小规模。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议据 arXiv `comment` 原文）
+
+---
+
+## 50. FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning |
+| 作者（前 3） | Tri Dao（**独著，共 1 位**） |
+| 年份 | 2023（arXiv 首次提交 **2023-07-17**，v1） |
+| 会议 / 期刊 | ⚠️ **预印本**（arXiv `comment` 字段为空；OpenAlex `type=preprint`、location 只有 arXiv ⇒ 本线**未核到会场记录**，🚫 不写 ICLR/页码） |
+| 被引数 | **1,844**（OpenAlex，DOI `10.48550/arxiv.2307.08691`，查询日 **2026-11-12**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.08691> ｜ DOI `10.48550/arxiv.2307.08691` |
+| 一句话贡献 | 摘要原文：FlashAttention-1 只达到理论最大 FLOPs/s 的 **25–40%**，原因是 thread block / warp 间**工作划分不佳**；FlashAttention-2 通过减少非 matmul FLOPs、**跨 block 并行单个 head**、warp 间再分工，得到**约 2× 加速**（相对 FlashAttention-1），在 A100 上达理论峰值的 **50–73%**；端到端训练 GPT 式模型可达 **225 TFLOPs/s per A100（72% MFU）**。 |
+| 与我们工作的关系 | **pretrain（吞吐口径，直接可用）**：`25–40%` 与 `50–73%` 这两个区间是**判断「我们的 attention 实现是否还有空间」的历史标尺**；`225 TFLOPs/s / 72% MFU` 是 A100 上的参照，我们在等模型规模上应报同一口径（MFU）而不是 tokens/s。<b>动作</b>：pretrain 训练脚本固定记录 `MFU` 与 `attention 占比`，把 FlashAttention-2 的 50–73% 当作「实现效率下限参照」，低于区间下沿先查 work partitioning 与 block 形状。<br>**harness（计费口径）**：报「训练成本」须写清 `是否用 FA-2 / head_dim / 序列长`，否则跨实验不可比。<br>**zhulong**：无直接消融价值（属实现层，不改模型），列为**基线实现要求**：消融实验统一用 FA-2，避免把工程差异算成方法差异。<br>**风险**：① 全部是 A100 上的数字，未给其它卡；② 2× 是相对 FA-1、不同形状下浮动；③ 作者自报、代码开源但本线未复现。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`；会议=未核到）
+
+---
+
+## 51. Ramulator 2.0: A Modern, Modular, and Extensible DRAM Simulator
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Ramulator 2.0: A Modern, Modular, and Extensible DRAM Simulator |
+| 作者（前 3） | Haocong Luo · Yahya Can Tuğrul · F. Nisa Bostancı（et al.，共 6 位：+ Ataberk Olgun · A. Giray Yağlıkçı · **Onur Mutlu**） |
+| 年份 | 2023（arXiv 首次提交 **2023-08-21**；本线取到 **v2 / 2023-11-29**） |
+| 会议 / 期刊 | **IEEE Computer Architecture Letters（CAL）** 23(1):**112–116**，DOI `10.1109/LCA.2023.3333759`（OpenAlex `type=article`，2026-11-12 实测） |
+| 被引数 | **185**（OpenAlex，DOI `10.48550/arxiv.2308.11030`，查询日 **2026-11-12**；S2 未查）<br>⚠️ **低于 §1「被引 ≥500」门槛**，按判据 ④「本领域（存储）标志性 / 方法论常青」收录 —— 它是 CMU SAFARI 组维护的**公开 DRAM 模拟器**（MIT 许可），持续被新一代存储 / RowHammer 论文当评测基座。 |
+| arXiv / DOI | <https://arxiv.org/abs/2308.11030> ｜ 期刊 DOI `10.1109/LCA.2023.3333759` ｜ 代码 <https://github.com/CMU-SAFARI/ramulator2> |
+| 一句话贡献 | 摘要原文：把 DRAM 系统的关键部件与交互**抽象成共享接口 + 独立实现**，用简洁可读的 DRAM 规格语法与**可复用的模板化 lambda**（建模 DRAM 命令功能）来快速支持新标准（**DDR5 / LPDDR5 / HBM3 / GDDR6**）；作者以**多种 RowHammer 缓解方案**为例展示「不改基线控制器代码即可模块化加实现」，并称经严格验证、保持相对现有周期级模拟器**较快的模拟速度**。 |
+| 与我们工作的关系 | **zhulong（实验基座 / 成本口径）**：如果要把「LLM 出配置 → 模拟器跑 → 回填指标」做成闭环，**模拟器本身必须是可脚本化、可批量、单次成本可控的**；Ramulator 2.0 的「规格语法 + 模块化控制器」正是把配置空间暴露成可搜参数的形态。<b>动作</b>：zhulong 在设计「批量短评测」pipeline 前，先用 Ramulator 2.0 做一次**吞吐标定**（单配置固定 trace 的墙钟时间），<b>判据</b>：若单次评测 &gt;30s，则闭环必须先做代理模型 / 缩短 trace，🚫 直接上 LLM 搜参。<br>**designflow（L1–L5 保真度分层）**：本文明确区分「timing / 功耗 / 可靠性」三类模型成熟度 ⇒ designflow 的保真度分层可参照此三分，而不是笼统一个「高/中/低」。<br>**data（存储领域语料）**：DRAM 规格语法（DDR5/LPDDR5/HBM3/GDDR6）是**结构化领域文本**的样本来源 ⇒ data 线可评估「规格文档 → 可执行配置」这类任务的语料形态。<b>风险</b>：① 被引 185 未达门槛，收录属「领域标志性」判断（我们的观察）；② 摘要未给具体加速倍数与验证误差，🚫 不写「快 N 倍」；③ 与我们 CXMT 内部模型/工具链无任何对接验证。 |
+
+首次收录: 2026-11-12（第十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200` + 期刊 DOI）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
@@ -853,7 +927,7 @@
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
-> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① **DPO `2310.16944`**（「无需显式 RM 的偏好优化」，与 #42/#43 构成「RM vs 直接偏好优化」对照，服务 zhulong）；② **Mamba-2 / FlashAttention-2**（若在研方向仍以 attention 变体为对照，服务 pretrain 吞吐口径）；③ **存储 / EDA 方向再补 1 条**（如版图预训练 / CircuitNet 类，需先实测是否为 arXiv 一手）；④ Sutton《The Bitter Lesson》（**博客，无 arXiv / 无 DOI** ⇒ 只能引原文链接，单独标注）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② **`2310.16944` Zephyr（dDPO 蒸馏）** —— 实测存在（cs.LG，2023-10-25），可作「蒸馏 + 偏好」候选，待核被引；③ **版图 / EDA 预训练**（CircuitNet 类，须先实测是否 arXiv 一手）；④ Sutton《The Bitter Lesson》（**博客，无 arXiv / 无 DOI** ⇒ 只能引原文链接，单独标注）；⑤ **SimPO / IPO 类 DPO 改进**（须实测 arXiv 一手 + 被引）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

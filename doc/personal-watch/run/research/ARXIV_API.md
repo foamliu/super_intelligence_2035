@@ -2276,3 +2276,13 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **X（只读）**：⚠️ **本 shell 未继承 `HTTP(S)_PROXY`** ⇒ 直连 `x.com` **`000`**、显式 `--proxy http://127.0.0.1:7897` **`200`**（`mihomo.service` active 23h）⇒ **不是 proxy_down**；`x_fetch.py` 抓 `billpeeb` / `_tim_brooks` **2/2 `200`**（bio 分别 `head of sora @openai` / `superintelligence @ Meta`）。
 - **`research.ibm.com/people/t/tesauro/` → `308` → `https://research.ibm.com/people`**（124,911 B，通用页无 `mailto:`、无 X 链接）⇒ Tesauro 邮箱与 X 均记「未找到」。
 - **发信**：Nisan Stiennon `SENT OK 12:04:55`；正文 `wc -w` = **212 词**（规格 ≤200，**超 12 词**）⇒ 已如实记账；纪律新增「发送前先 `wc -w`」。
+
+## §9.157 · 2026-11-12 15:00 CST（时窗轮 · A 轨重扫 + B 轨第十三轮 + 第 6/7 封信）
+
+- **批次仍未刷新**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（7.95s / 3.60s / 9.19s / 4.57s / 13.57s，串行间隔 ≥3.2s），`totalResults` = `cs.CL` **125,187** / `cs.CV` **213,062** / `cs.LG` **298,685** / `cs.AI` **212,409** / `cs.SE` **30,986** —— 与 §9.154 / §9.155 / §9.156 **逐字节同值** ⇒ 公告批仍 `2026-11-10`。
+- **A 轨结果**：merged **410** / seen **13** / fresh **397**；当日额度 5/5 已满 ⇒ **0 新收**；产物 `raw/2026-11-12-15h-candidates-r157.json`（脚本 `raw/candidates_r157.py`，日志 `/tmp/r157/cand.log`）。
+- **B 轨元数据（arXiv `id_list`）**：`2310.16944,2405.21060,2307.08691,2308.11030` → **`200` + atom**（9,704 B）；`2305.18290,2310.16944` → **`200` + atom**（5,938 B）；`2307.08691,2405.21060,2305.18290,2308.11030` → **`200` + atom**（9,862 B）。
+- **⚠️ 更正（候选池错误 ID）**：`2310.16944` 实测 = **`Zephyr: Direct Distillation of LM Alignment`**（Tunstall et al., 2023-10-25, cs.LG），**不是 DPO**；DPO 真实 ID = **`2305.18290`**（v3 / 2024-07-29）⇒ 已按实测收录，🚫 不沿用错误 ID。
+- **OpenAlex（查询日 2026-11-12，4/4 `200`）**：DPO **3,123**（conference-paper，NeurIPS 会场 DOI `10.52202/075280-2338`，pp. 53728–53741）· Mamba-2 `2405.21060` **1,003**（preprint；arXiv `comment` = `ICML 2024`）· FlashAttention-2 `2307.08691` **1,844**（preprint，无会场）· Ramulator 2.0 `2308.11030` **185**（article，IEEE CAL **23(1):112–116**，DOI `10.1109/LCA.2023.3333759`）。
+- **X（只读）**：直连 `x.com` **`000`** / 显式 `--proxy http://127.0.0.1:7897` **`200`**（代理在线）⇒ 3 个 profile **3/3 `200`**（`_onurmutlu_` / `archit_sharma97` / `rm_rafailov`）；**2 条拟引用推文经单条页 `og:title` 核验为他人推文**（`@koraykv` / `@Shalev_lif`）⇒ V13 / V14 **作废**；**0 follow**（写操作需登录态）。
+- **发信 2 封（均 `SENT OK 2026-11-12 15:03:05`）**：Archit Sharma（`2305.18290`，英文 **197 词**，`architsh@stanford.edu`）· Onur Mutlu（`2308.11030`，英文 **177 词**，`omutlu@gmail.com`）；**发送前 `wc -w` 均已核**（落实 12:00 教训）。
