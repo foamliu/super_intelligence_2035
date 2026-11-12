@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1075 · 2026-11-13 04:30】例行巡检·全交付态**：git pull Already up to date·v8结果7目录在位(cpu_rl_v8_{std_s0,std_s1,std_s2,ctrl_s0,smoke,smoke2,smoke3} @ /nas_train/app.e0031982/datasets/baize-vision/out/)·6个experiment_results.json在位(ctrl_s0+smoke+smoke3+std_s{0,1,2})·HTML报告45187B在位(@doc/BaiZe-ISEDA2027/reports/report_vision_cpu_rl_waveform_zh.html)·EXPERIMENTS §v8在位(line3067/3150lines)·进程健康(vision loop PID669545 ppid=1 etimes~1.28M✓·ops_relay_v2 PID1032513 ppid=1 etimes~1.67M✓)·GPU 8×H100 96-100% util ~75GB pretrain全占·ops/inbox.md有RUN_ID 276(pretrain eval·非vision指令·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·非wave RL·不action·无新增)·体积TASK=26.9KB✓/MEMORY≈11.4KB✓·**WAITING: 0**。
+> 🆕 **【wake #1076 · 2026-11-13 04:56】v9实验启动**：v8分析完成(A=0%根因=格式问题:model生成推理文本而非A/B, B=45%真实性能, C=60% GRPO有效) → 设计v9(扩大SFT 200→500×5ep, eval 48→96, GRPO 15→30步, medium难度boost) → 修复qid递增bug(eval 72→91, SFT 152→484) → smoke通过 → **v9 full experiment launched** (3 seeds + control, ETA ~4h on CPU, log @ /tmp/v9_freqcmp.log) · 脚本: `vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py` + `run_v9_freqcmp.sh` + `analyze_v9_freqcmp.py` · **WAITING: 0**。
+
+> 📦 **wake #1075 · 2026-11-13 04:30** 例行巡检·全交付态·v8结果在位·已fold。
 
 > 📦 **wake #1074 · 2026-11-13 04:2x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·6个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 94-100% pretrain全占·ops/inbox.md有RUN_ID 276(非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·不action·无新增)·体积✓·已fold。
 
@@ -60,10 +62,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **波形 RL CPU 阶段2 · v8 完成(MIXED)**：v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS·nonzero-std 93.8%) · v7✅6/6 ALL PASS · **v8 MIXED(11-13 02:19完成)**：频率比较二分类·A=0%/B=45%/C=52.5%±6.1%(3seeds:60%/52.5%/45%)·McNemar(s0)p=0.0312✅·Control=45%=B NS·判据3/5通过(A~50%❌/B>60%❌/C>B✅/McNemar✅/3seed❌)·easy87.5%/hard68.8%/medium37.5%·triangle/sawtooth不再0%·cheat_rate=0·Qwen3.5-2B(1.88B)+LoRA r=16。**WAITING: 0** |
+| PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING**：v8 MIXED完成(A=0%格式问题/B=45%/C=52.5%±6.1%/McNemar p=0.0312) → **v9 launched 2026-11-13 04:56**：SFT 200→500ex×5ep, eval 48→91, GRPO 15→30步, medium boost, 3 seeds + control, ETA~4h · v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS) · v7✅6/6 · v8 MIXED。**WAITING: 0** |
 | WAITING | 0 |
-| 已完成 | **v8 频率比较实验✅(11-13, MIXED, C=52.5%±6.1% vs B=45%, McNemar p=0.0312)** · v7 sweep ALL 18/18轮✅(6/6 ALL PASS) · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断(PARTIAL) · 阶段1 SFT验收PASS · CPU端到端训练循环验证7/7 PASS · 数据泄漏验证+就绪报告HTML · GRPO CPU冒烟PASS · 2B文本骨干提取1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 全链路 |
-| 当前动作 | **wake#1075 例行巡检**：全交付态·git pull Already up to date·v8结果7目录在位·6个result JSON在位(ctrl_s0+smoke+smoke3+std_s{0,1,2})·HTML报告45187B(@doc/BaiZe-ISEDA2027/reports/)·EXPERIMENTS §v8在位(line3067/3150lines)·进程健康(vision loop PID669545 ppid=1✓·ops_relay_v2 PID1032513 ppid=1✓)·GPU 8×H100 96-100% pretrain全占·ops/inbox.md有RUN_ID 276(pretrain eval·非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·非wave RL·不action·无新增)·体积TASK=26.9KB✓/MEMORY≈11.4KB✓·WAITING=0。 |
-| 下一步 | ①v8 MIXED→决定是否v9:增大eval set(40→96+)+增大SFT数据(200→500+)以提升B>60% ②A=0%异常→分析zero-shot失败原因(模型是否理解任务格式) ③medium难度37.5%最低→针对性生成medium难度训练数据 ④v8频率比较vs v5类型分类:不同任务不同判据,各自独立 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) ⑥research日报建议(VLM主干复用)非wave RL方向·参考不指令 |
+| 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
+| 当前动作 | **wake#1076 v9实验运行中**：v8分析→v9设计→bug修复→smoke通过→full experiment launched(3 seeds+control, SFT 500ex×5ep, eval 91 pairs, GRPO 30步, log @ /tmp/v9_freqcmp.log, PID 1351796, ETA~4h)。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。 |
+| 下一步 | ①v9完成后:运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + HTML报告 ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 04:30 (wake #1075)**：例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·6个result JSON在位(ctrl_s0+smoke+smoke3+std_s{0,1,2})·HTML报告45187B(@doc/BaiZe-ISEDA2027/reports/)·EXPERIMENTS §v8在位(line3067/3150lines·p=0.0009×6·p=0.0312×3·v8×8)·进程健康(vision loop PID669545✓·ops_relay_v2 PID1032513✓)·GPU 8×H100 96-100% pretrain全占·ops/inbox.md有RUN_ID 276(pretrain eval·非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·不action·无新增)·体积TASK=26.9KB/MEMORY≈11.4KB均✓·WAITING=0 |
+| 更新 | **2026-11-13 04:56 (wake #1076)**：v8分析(A=0%根因=格式问题,B=45%真实,C=60%GRPO有效)→v9设计(SFT 500ex×5ep/eval 91/GRPO 30步/medium boost)→qid bug修复(eval 72→91/SFT 152→484)→smoke通过→v9 full launched(3 seeds+control/ETA~4h/PID1351796/log@/tmp/v9_freqcmp.log)。体积TASK≈27KB/MEMORY≈12KB均✓·WAITING=0。 |

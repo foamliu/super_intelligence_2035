@@ -3148,3 +3148,40 @@ v8 是不同任务（频率比较 vs 类型分类），不直接可比。但关�
 - CPU 规模限制（15 steps, group_size=4, 200 SFT examples）→ 不外推 GPU
 
 **数字溯源**：`/nas_train/app.e0031982/datasets/baize-vision/out/cpu_rl_v8_std_s{0,1,2}/experiment_results.json` + `cpu_rl_v8_ctrl_s0/experiment_results.json` + `/tmp/v8_freqcmp_fix.log`（修复后完整 stdout）+ `run_v8_freqcmp.sh` + `cpu_rl_v8_freqcmp_experiment.py` + `analyze_v8_freqcmp.py`。CPU fp32 / nice19 / OMP16 / 零GPU / 未碰pretrain。
+
+## §v9 — Frequency Comparison Scaled-Up（2026-11-13 · CPU · 3 seeds + control · RUNNING）
+
+**背景**：v8 MIXED（C=52.5%±6.1% > B=45%, McNemar p=0.0312 for seed 0, control=45%=B）。GRPO 信号真实但 3/5 判据未通过：
+- A=0% = 格式问题（模型生成推理文本"To determine..."而非"A"/"B"，max_new_tokens=8 不够）
+- B=45% < 60% target = SFT 数据不足（200 examples × 3 epochs）
+- 3-seed 一致性失败（seed 2 C=B=45%）
+- eval set 仅 40 题 = 统计功效有限
+
+**v9 设计（预注册 2026-11-13 wake#1076）**：
+- 任务：frequency_comparison（同 v8，binary A/B，50% chance baseline）
+- **v9 改进（每项针对 v8 弱点）**：
+  1. SFT 数据：200 → 500 examples（medium 难度 boost: 150/500=30%）
+  2. SFT epochs：3 → 5
+  3. Eval set：48 → 91 pairs（n_per_category 8→16，实际 91 因部分 pair 被过滤）
+  4. GRPO steps：15 → 30
+  5. 同 v8：Qwen3.5-2B(1.88B) + LoRA r=16, group_size=4, batch_prompts=2, lr=5e-6, grpo_lr=1e-6
+  6. Bug fix: qid 递增（v8 当 gen_pair 返回 None 时 qid 不递增→同 seed 重复→数据量缩水；v9 修复后 eval 72→91, SFT 152→484）
+- 3 seeds：20261112 / 20261113 / 20261114
+- Control：random reward GRPO（同 seed=20261112）
+- cheat_rate：train/eval 用 disjoint RNG seeds → 无泄漏
+- **预注册判据（修订）**：
+  | 判据 | 预期 | v8 结果 |
+  |:---|:---|:---|
+  | B > 55% | 500ex×5ep 应推到 chance 以上 | v8 B=45% ❌ |
+  | C > B (mean) | GRPO 提升 | v8 C=52.5%>45% ✅ |
+  | McNemar p<0.05 (seed 0) | 显著 | v8 p=0.0312 ✅ |
+  | 3 seeds all C >= B | 一致性 | v8 2/3 ❌ |
+  | Control C <= B+10% | 随机奖励不提升 | v8 ctrl=45%=B ✅ |
+  - SUCCESS: ≥4/5 通过
+  - MIXED: 3/5 通过
+  - FAIL: ≤2/5 通过
+  - **注意**：A=0% 不再作为判据（已确认是格式问题，不是能力指标）
+
+**脚本**：`vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py`（~680行）+ `run_v9_freqcmp.sh` + `analyze_v9_freqcmp.py`。
+
+**v9 结果**：⏳ RUNNING (launched 2026-11-13 04:56, ETA ~4h on CPU, log @ /tmp/v9_freqcmp.log)
