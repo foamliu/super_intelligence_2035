@@ -1,0 +1,19 @@
+summary_1109.tsv build log
+==========================
+source: /home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv
+raw_sha256: a3a374ad5bcaa79f1b82ceeb3ab560e8a703450640b8ad4c11fc6fbb0bec3c07
+raw_lines (incl header): 38083
+input_rows (data, excl header): 38082
+skipped_non_session: 0
+skipped_non_numeric_mc: 0
+kept_rows (session rows): 38082
+dedup_sessions (slug-level, max mc): 3964
+mc>=10: 2882
+mc>=20: 2519
+mc>=30: 2247
+mc>=100: 1244
+
+schema: ip host user session_file match_count keywords tools (7 cols, same as summary_1105.tsv)
+dedup rule: by slug (session_file minus .messages.json/.messages.archive.json/.archive.json/.json suffix), keep row with max match_count
+filter rule: only keep session rows (session_file ends in .messages.json / .messages.archive.json / .archive.json / .json) — same as summary_1105.tsv
+build command (on .75): python3 _build_summary_1109.py

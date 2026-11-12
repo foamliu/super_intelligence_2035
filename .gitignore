@@ -24,3 +24,6 @@ hf_checkpoints/
 doc/sudo.txt
 # designflow 并发：staging 是临时产物（由 integrator 合并后即可丢弃）
 doc/ZhuLong_DAC2027/benchmark/designflow/cases_staging/
+
+# 2026-11-12 shard B 换池: 原始扫描快照是可从 .75 重生的中间产物, 不入库(sha256+行数记入 summary_1109_build.log)
+doc/ZhuLong_DAC2027/benchmark/designflow/_scan_*_raw.tsv
