@@ -36,6 +36,17 @@ code/baize-llm/
 │   ├── longctx_ladder.sh         # 32K→64K→128K 阶梯扩展（逐级门禁）
 │   ├── prune_ckpts.sh            # ckpt 保留策略清理（默认 dry-run）
 │   └── status.sh                 # 进程 / 显存 / 最新步数 / LR / TB 健康一览
+│   └── eval/                     # L1/L2 能力评测（2026-11-12 定稿版，详见 §4.6）
+│       ├── baize_l1_autoqueue_170k.sh   # L1 8 集：等 170k ckpt → HF→GGUF→llama-server 全评
+│       ├── baize_l1_autoqueue_180k.sh   # L1 8 集：同上，180k
+│       ├── baize_l2_hf_humaneval.sh     # L2 HumanEval（lm_eval --model hf, limit=20）
+│       ├── baize_l2_hf_humaneval_direct.sh  # 直跑版（sglang env，不依赖 lm_eval/sklearn）
+│       ├── baize_l2_hf_humaneval_direct.py
+│       ├── baize_l2_hf_humaneval_py310.py
+│       ├── baize_l2_hf_gsm8k_direct.py
+│       ├── baize_l2_hf_mbpp_direct.py
+│       ├── baize_l2_hf_bbh_direct.py
+│       └── baize_l2_hf_math_direct.py
 └── docs/
     ├── LAUNCHER_PATCH_EXP_DECAY.md   # 若 launcher 缺 --lr-decay-shape / --rotary-base 的补丁规格
     └── LONGCTX_ABF_PLAN.md           # 长上下文 ABF 准备方案（口径/阶梯/数据体检/评测矩阵）
@@ -267,6 +278,65 @@ python scripts/check_rope.py --hf-dir $EXP_ROOT/baize2b/hf_iter_2000
 
 ---
 
+## 4.6 能力评测（L1 / L2）
+
+> 2026-11-12 用户令：**把修好的 L1/L2 评测脚本收进本仓库**（原散落在 `doc/BaiZe-ISEDA2027/run/`），
+> 后续评测一律从 `scripts/eval/` 启动；本节即使用说明与口径。
+
+### 4.6.0 口径（为什么是现在这套）
+
+| 层 | 集 | 方式 | 说明 |
+|:--|:--|:--|:--|
+| L1 | ARC-e / ARC-c / BoolQ / HellaSwag / OBQA / PiQA / SciQ / Winogrande | HF 导出 → GGUF → `llama-server` + `lm_eval`（loglikelihood） | 8 集 0-shot；**不依赖生成**，因此不受 llama.cpp SSM 生成 bug 影响 |
+| L2 | GSM8K / MATH / MMLU / BBH / HumanEval / MBPP | **HF transformers 直跑**（`*_direct.py`） | Mamba2-hybrid 在 llama.cpp CPU 上的 token-by-token 生成会退化为重复串（PR #31703 相关）。**L2 一律走 HF 直跑**，llama.cpp 仅保留作对照，不作为判据 |
+
+⚠️ 小样本（HumanEval limit=20 等）只用于**趋势监控**，不可当论文最终数；论文口径需 ≥ limit=100 且多次重复。
+
+### 4.6.1 L1：8 集全评（自动等 ckpt）
+
+```bash
+# 等 iter_0170000 落盘 → HF 导出 → GGUF 转换 → llama-server → 8 集全评 → 刷新报告
+bash scripts/eval/baize_l1_autoqueue_170k.sh
+bash scripts/eval/baize_l1_autoqueue_180k.sh     # 180k 版
+```
+
+- 串行、单 ckpt、`-t 4`、`nice 19`、**纯 CPU**（不抢训练 GPU）。
+- 依赖（不在本仓库，位于训练代码侧）：
+  - `$BAIZE_TRAIN_CODE/convert_mcore_to_hf.py`、`pretrain_launcher.py`
+  - `doc/BaiZe-ISEDA2027/run/pretrain_cpu_eval_gguf/01_convert_hf_to_gguf.sh`
+  - `doc/BaiZe-ISEDA2027/run/gen_llamacpp_scaling_report.py`
+- 结果落 `$EXP_ROOT/baize2b/lm_eval_results/`；报告 `reports/report_pretrain_llamacpp_scaling_zh.html`。
+
+### 4.6.2 L2：HF 直跑（五集）
+
+```bash
+# HumanEval（lm_eval 版，py310 env）
+bash scripts/eval/baize_l2_hf_humaneval.sh
+
+# HumanEval（sglang env 直跑版；可传 model / limit）
+bash scripts/eval/baize_l2_hf_humaneval_direct.sh <HF_MODEL_DIR> <LIMIT>
+
+# 其余四集：直接调 *.py（同一 HF_MODEL_DIR / LIMIT 约定）
+python scripts/eval/baize_l2_hf_gsm8k_direct.py  --model_path <HF_MODEL_DIR> --limit 10
+python scripts/eval/baize_l2_hf_mbpp_direct.py   --model_path <HF_MODEL_DIR> --limit 20
+python scripts/eval/baize_l2_hf_bbh_direct.py    --model_path <HF_MODEL_DIR> --limit 10
+python scripts/eval/baize_l2_hf_math_direct.py   --model_path <HF_MODEL_DIR> --limit 10
+```
+
+- 全部 `CUDA_VISIBLE_DEVICES=""`、`OMP_NUM_THREADS=4`、`nice -n 19`，**CPU 跑，不影响训练**。
+- 依赖 sglang env（transformers 5.18.0 / pyarrow）；**不需要 lm_eval / sklearn**。
+- 数据集走离线 arrow 缓存（`HF_DATASETS_CACHE` / `HF_HOME` 见脚本头），首次需先在训练机缓存好。
+- 结果 JSON 落 `lm_eval_results/gguf_iter_<step>_l2_hf_*/`，同时用于刷新四层报告
+  `reports/report_pretrain_eval_4tier_zh.html`。
+
+### 4.6.3 已知坑
+
+1. **不要用 llama.cpp 判 L2 生成任务**：会得到 0%（重复串退化），会被误判为模型能力问题。
+2. `--limit` 太小（如 10/20）时，单个样本翻转就是 5–10pp，**只能看趋势**。
+3. HumanEval 必须 `HF_ALLOW_CODE_EVAL=1` 且执行沙箱可写 `/tmp`。
+4. 评测期间**不重启** `llama-server`（端口 8191/8083），否则同批结果口径不一致。
+
+---
 ## 5. 验收标准（每阶段）
 
 | 项 | 判据 |
