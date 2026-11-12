@@ -210,19 +210,36 @@ def main():
     ap.add_argument('--shard-list', default=None)
     args = ap.parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
+    # Always load the full sorted parquet list for correct index mapping
+    full_parquets = get_all_parquets()
+    path_to_idx = {str(p): i for i, p in enumerate(full_parquets)}
+
     if args.shard_list:
         with open(args.shard_list) as f:
-            all_parquets = [Path(l.strip()) for l in f if l.strip()]
+            shard_paths = [Path(l.strip()) for l in f if l.strip()]
+        # Look up ORIGINAL shard index for each path so output filenames match
+        tasks = []
+        for sp in shard_paths:
+            sp_str = str(sp)
+            idx = path_to_idx.get(sp_str)
+            if idx is None:
+                # Try resolved (absolute) path
+                idx = path_to_idx.get(str(sp.resolve()))
+            if idx is None:
+                print(f"WARNING: {sp} not found in full parquet list, skipping", flush=True)
+                continue
+            tasks.append((idx, sp_str, args.output_dir))
+        total = len(tasks)
+        print(f"Total parquets: {len(full_parquets)}, processing {total} (from shard-list), workers={args.workers}")
     else:
-        all_parquets = get_all_parquets()
-    start = args.shard_start
-    end = args.shard_end or (int(args.shards) if args.shards.isdigit() else len(all_parquets))
-    if args.shards == 'all':
-        end = len(all_parquets)
-    shard_list = all_parquets[start:end]
-    total = len(shard_list)
-    print(f"Total parquets: {len(all_parquets)}, processing {total} [{start}:{end}], workers={args.workers}")
-    tasks = [(start + i, str(sp), args.output_dir) for i, sp in enumerate(shard_list)]
+        start = args.shard_start
+        end = args.shard_end or (int(args.shards) if args.shards.isdigit() else len(full_parquets))
+        if args.shards == 'all':
+            end = len(full_parquets)
+        shard_list = full_parquets[start:end]
+        total = len(shard_list)
+        print(f"Total parquets: {len(full_parquets)}, processing {total} [{start}:{end}], workers={args.workers}")
+        tasks = [(start + i, str(sp), args.output_dir) for i, sp in enumerate(shard_list)]
     t0 = time.time()
     all_stats = []
     if args.workers <= 1:
@@ -253,7 +270,7 @@ def main():
     if error_shards:
         with open(failed_path, 'w') as f:
             for s in sorted(error_shards, key=lambda x: x.get('shard_idx', 0)):
-                f.write(all_parquets[s['shard_idx']].as_posix() + "\n")
+                f.write(full_parquets[s['shard_idx']].as_posix() + "\n")
         print(f"  Failed shards written to: {failed_path} ({len(error_shards)} shards)")
     else:
         # Clean up old failed file if no errors
