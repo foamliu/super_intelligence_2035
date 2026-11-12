@@ -1553,3 +1553,25 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794367188865_8v6w7	e0046913	hfeg0pkn003	53	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: e0046913 user = A-domain STA/history (hvfis r568 also A-domain), low-mc netlist kw but user-domain mismatch; parked; mc53
 1794464932663_5li8u	ghyang	hfeg0pkn003	59	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: unclassified-low-priority (not deep-read, budget), parked to close ledger gap; mc59
 1794202410355_ps4q9	yifansun	10.129.32.83	137	analog_context	case	EDA-Eval-DesignFlow-DpMuxSimRank-001	2026-11-13 03:31	
+1793967403860_ojko8	huifangg	hfeg0plg96	363	waveform	parked		2026-11-13 03:56	cap:Q&A '识别波形图吗' capability-check, no deliverable
+1793177580229_11fst	e0030760	hfeg0plg74	260	schematic_netlist	parked		2026-11-13 03:56	Solido MC stimulus debug+修正版; complex, Solido tool not in sandbox, /proj DUT asset risk
+1794203361928_17trm	e0039602	hfeg0plg103	458	schematic_netlist	parked		2026-11-13 03:56	netlist→SV stdcell conversion; borderline A-domain(verilog:606 dominant), very complex 691 cells
+1793952218730_ph95k	e0017832	hfeg0plg89	311	analog_context	parked		2026-11-13 03:56	how-to/setup Q&A (cdl抽取/glory安装/GDS导入), no produce-task
+1793949156546_i6kg9	t0002607	hfeg0plg98	288	analog_context	parked		2026-11-13 03:56	circuit-reading Q&A (512X8M4B2 spec verify), no deliverable
+1794217104209_s97ck	tongni	hfeg0plg63	27	schematic_netlist	parked		2026-11-13 03:56	netlist R1-R4 report PRODUCE-TASK but asset at /proj/dscqa (unreachable P-002)
+1793754060632_nnyxr	curryxu	hfeg0plg99	26	waveform	parked		2026-11-13 03:56	hspice .measure script PRODUCE-TASK but waveform/result.mt0.csv at /proj/m2701 (unreachable P-002)
+1791524223726_bgrlw	xrxiong	hfeg0plg74	38	schematic_netlist	parked		2026-11-13 03:56	netlist module-purpose explain Q&A (R_RfIPRHRadd/SecEnDly作用), no deliverable
+1793923081404_s6bse	e0030760	hfeg0plg74	39	schematic_netlist	parked		2026-11-13 03:56	desktop file-move task, non-EDA (hspice kw incidental)
+1791522635010_ikvky	clarawu	hfeg0plg106	40	schematic_netlist	parked		2026-11-13 03:56	.vimrc gvim config, non-EDA (schematic kw incidental)
+1793350203105_0l5zn	chentong	hfeg0plg76	37	schematic_netlist	parked		2026-11-13 03:56	greeting '你好', no task
+1794205389348_ina0a	thomasz	hfeg0plg92	40	waveform	parked		2026-11-13 03:56	debug /rundata log报错 + /rundata asset unreachable
+1792023179795_wpxqf	e0042624	hfeg0plg76	39	analog_context	parked		2026-11-13 03:56	'hi'+'create Schematic' vague, no concrete deliverable
+1794216750374_d5x87	hktklin	hfeg0plg87	332	analog_context	parked		2026-11-13 03:56	PCELL SKILL sed text-replace on /proj (unreachable) + interactive Virtuoso CDF
+1790229478830_bl77a	bensonh	hfeg0plg104	39	schematic_netlist	parked		2026-11-13 03:56	workspace rename, non-EDA
+1784077259904_98ha6	e0032903	hfeg0plg49	38	schematic_netlist	parked		2026-11-13 03:56	'hi'/'how to write skills' Q&A
+1793257049322_86wnu	yh1yang	hfeg0plg94	37	waveform	parked		2026-11-13 03:56	file-org/cleanup + plt pdf调整, non-EDA produce-task
+1794214637465_iqj11	shaoyou	hfeg0plg49	27	waveform	parked		2026-11-13 03:56	interactive WaveView GUI signal-display/bold, no file deliverable
+1791448973775_f8g40	rongjiez	hfeg0plg98	27	schematic_netlist	parked		2026-11-13 03:56	runModelQA.pl code-comparison Q&A + PPT summary, non-falsifiable
+1790731913166_ki1x0	chengk	hfeg0plg96	27	schematic_netlist	parked		2026-11-13 03:56	code-reading + flowchart (IddFlowCode), non-falsifiable comprehension
+1793692877234_xlzwr	ronghu	hfeg0plg93	27	analog_context	parked		2026-11-13 03:56	char hspice removal_hbm error debug '请分析原因', non-falsifiable explain
+1793778171219_tq83u	e0046686	hfeg0plg80	28	schematic_netlist	parked		2026-11-13 03:56	rev_cali GUI param-box feature dev, not D produce-task
