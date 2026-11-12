@@ -1,0 +1,25 @@
+[incr-eval 13:56:07] === incr_eval R2267 start ===
+[incr-eval 13:56:07] cline: 0 new instances, skip
+[incr-eval 13:56:07] codex: 0 new instances, skip
+[incr-eval 13:56:07] opencode: 0 new instances, skip
+
+=== claude-code R2267 ===
+new instances: 2 ['sympy__sympy-21847', 'sympy__sympy-21930']
+[incr-eval 13:56:07] claude-code: merged 2 new patches -> predictions_claude-code_new_R2267.json
+[incr-eval 13:56:07] claude-code: EVAL 2 instances -> run_id=verified_full_glm53_claude-code_incr_R2267
+[incr-eval 13:56:12] claude-code: eval rc=0
+[incr-eval 13:56:12]   sympy__sympy-21847: RESOLVED
+[incr-eval 13:56:12]   sympy__sympy-21930: FAILED
+[incr-eval 13:56:12] claude-code: cumulative n=264 resolved=211 failed=51 infra=2 -> eval_glm53_claude-code.json
+
+=== pi R2267 ===
+new instances: 2 ['django__django-17084', 'django__django-17087']
+[incr-eval 13:56:12] pi: merged 2 new patches -> predictions_pi_new_R2267.json
+[incr-eval 13:56:12] pi: EVAL 2 instances -> run_id=verified_full_glm53_pi_incr_R2267
+[incr-eval 13:57:11] pi: eval rc=0
+[incr-eval 13:57:11]   django__django-17084: RESOLVED
+[incr-eval 13:57:11]   django__django-17087: RESOLVED
+[incr-eval 13:57:11] pi: cumulative n=245 resolved=181 failed=64 infra=0 -> eval_glm53_pi.json
+[incr-eval 13:57:11] hermes: 0 new instances, skip
+[incr-eval 13:57:11] deepseek: 0 new instances, skip
+[incr-eval 13:57:11] === incr_eval R2267 done: 4 instances, +3resolved +1failed +0infra ===
