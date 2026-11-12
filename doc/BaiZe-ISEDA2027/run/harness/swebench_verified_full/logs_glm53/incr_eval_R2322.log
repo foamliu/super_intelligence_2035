@@ -23,4 +23,9 @@ Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_incr_R23
 pi: 266 real patches merged
 [Fri Nov 13 03:10:53 AM CST 2026] === pi eval START 4 NEW instances ===
 Running 4 instances...
-  0%|          | 0/4 [00:00<?, ?it/s] 25%|██▌       | 1/4 [00:28<01:24, 28.23s/it]1 ran successfully, 0 failed:  25%|██▌       | 1/4 [00:28<01:24, 28.23s/it]1 ran successfully, 0 failed:  50%|█████     | 2/4 [00:35<00:35, 17.95s/it]2 ran successfully, 0 failed:  50%|█████     | 2/4 [00:35<00:35, 17.95s/it]
+  0%|          | 0/4 [00:00<?, ?it/s] 25%|██▌       | 1/4 [00:28<01:24, 28.23s/it]1 ran successfully, 0 failed:  25%|██▌       | 1/4 [00:28<01:24, 28.23s/it]1 ran successfully, 0 failed:  50%|█████     | 2/4 [00:35<00:35, 17.95s/it]2 ran successfully, 0 failed:  50%|█████     | 2/4 [00:35<00:35, 17.95s/it]2 ran successfully, 0 failed:  75%|███████▌  | 3/4 [13:29<04:29, 269.90s/it]3 ran successfully, 0 failed:  75%|███████▌  | 3/4 [13:29<04:29, 269.90s/it]=== pi eval DONE Fri Nov 13 03:31:42 AM CST 2026 ===
+[merge-R2322 03:31:43] === merge R2322 START ===
+[merge-R2322 03:31:43]   cline: +1 resolved +0 failed +0 infra => total resolved=231
+[merge-R2322 03:31:43]   pi: +3 resolved +0 failed +1 infra => total resolved=195
+[merge-R2322 03:31:43] === merge R2322 DONE: +4 resolved +0 failed +1 infra ===
+=== merge R2322 DONE Fri Nov 13 03:31:43 AM CST 2026 ===
