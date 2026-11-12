@@ -1,5 +1,27 @@
 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🔴 **用户令 · 2026-11-12（换池：11/05 → 11/09，由 B 执行）· 用户直令 · 最高优先 · 未完成**
+>
+> **用户原话**：「DesignFlow 两个系统性阻塞：那就让 B 去换池（11/09 扫描）。」
+>
+> **背景**：11-11 令已要求把候选池从 11/05 快照换到 11/09 快照（`summary_stats.json.scan_path` 已指向 `ssh_eda_search_20261109_224902`），但 A 连续 ~2 天未执行（`mc_matrix.src` 仍是 `summary_1105.tsv`，`summary_1109.tsv` 不存在）⇒ **改由 B 接手执行**。A 不再做换池，只保留 board 维护与选料。
+>
+> **执行（一次做完并落盘提交，不要只写计划）**
+> 1. 取原始 11/09 扫描：`summary_stats.json.scan_path`（.75 上 `.../ssh_eda_search_20261109_224902/summary.tsv`，38082 行）；只读 scp 到 `designflow/_scan_1109_raw.tsv`，记录 sha256 与行数。
+> 2. 生成 `designflow/summary_1109.tsv`：**schema 与 `summary_1105.tsv` 完全一致**（7 列 `ip host user session_file match_count keywords tools`）；按 slug 去重（`session_file` 去 `.messages.json`/`.json` 后缀）保留 `match_count` 最大的一行；过滤规则与 1105 相同（只保留 session 行）。把「输入行数 / 保留行数 / dedup session 数 / mc10·20·30」写进 `designflow/summary_1109_build.log`。
+> 3. 复算矩阵（4 shard 全跑并留输出）：`python3 designflow/trace_ledger.py --shard A|B|C|D mc-matrix --src designflow/summary_1109.tsv --json`
+> 4. 更新 `summary_stats.json`：`mc_matrix.src="designflow/summary_1109.tsv"`、`computed_at`、mc5/10/15/20/30 的 fresh/touched/pool、`dedup_sessions`；note 写清命令与口径（1105 数值保留为历史对照）。
+> 5. 重建候选清单 `designflow/candidates_mc10.tsv`（脚本缺失则写 `build_candidates.py`：四 shard keyword 分类 + 4-shard ledger 排除；输出 slug/mc/domain/user/host）。
+> 6. **自检（必须给证据）**：a) 1105 的 5 个 slug 仍在新表且 mc 不减；b) 11/09 独有 5 个 slug 只在新表；c) 4-shard ledger 去重后 fresh 可复算（给 pool/touched/fresh 三数）；d) **B 域 mc≥10 fresh 是否 >0**（本次换池的直接目标）。
+> 7. 记录：`MEMORY_DESIGNFLOW_B.md` 顶部写 `POOL_SWITCH: 1105→1109 done`（mc10 pool / fresh(B) 新旧对照）；`daily-memories-designflow/daily_B_<date>.md` 追加一节；commit（只加 designflow 相关文件）→ push。
+>
+> **边界**：🚫 不改 `board.md`（A 维护）；🚫 不改 jsonl/case/论文；🚫 不删 `summary_1105.tsv` 与旧 ledger；🚫 不把换池写成讨论发言（这是运维动作，不是议题）。
+>
+> **验收**：`summary_1109.tsv` 在库且 schema 一致；`mc_matrix.src` 已切；4 shard mc-matrix 输出齐全；`candidates_mc10.tsv` 由 1109 池重建；B 域 fresh 增量有数字；commit 已推。
+>
+> ---
+>
+
 > 💬 **2026-11-11 用户令（第 2 版）：讨论区 `benchmark/designflow/discuss/`**
 >
 > 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」

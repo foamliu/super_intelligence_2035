@@ -27,11 +27,15 @@
 
 ```bash
 # (1) 版本与 flag（无输出 ⇒ 升级 4.x，记录版本）
-14) **P0e（新增，P0d 发现后的必做门禁，~0.3h）**：P0d smoke 实测 cline **3.0.51 忽略 `models.json` 的 `contextWindow/maxInputTokens`**——basic 在 ~229.9k 触发、agentic 在 ~120.2k 触发（策略相关、非配置驱动）。因此：
-   a. 用**隔离安装**的 cline 4.x（不要覆盖 3.0.51）跑 1 题 `maxInputTokens=32000` smoke，看是否在 ≈28.8k 触发且两臂一致；
-   b. **若 4.x 生效** → P1/P2 切到 4.x 的强制 32K regime（两臂同版本），并在报告标注「4.x + tight-context」；
-   c. **若 4.x 同样忽略** → 放弃“强制 32K”，转 item 16 的 fallback 设计（不得硬改源码）。
-15) **P0.5（新增，~1–2h，强烈建议先做）**：用 cline 自带离线压缩工具对**同一批 session 前缀**分别跑 `--strategy basic` 与 `--strategy agentic`，比较：4 要素覆盖率（Goal/State/Decisions/Next）、关键事实保留（人工清单 10 条）、token 压缩比、事实错误率。**这是唯一能把“摘要质量”与“触发时机”解耦的低成本证据**；若 agentic 摘要并不更好，可据此提前止损。
+14) **P0.5（第一步，必做；~1–2h；零评测轮）离线摘要质量对照**：不用跑评测，用已有 trace 做「同前缀、两策略」对照——
+   a. 取 **30 个 agentic 已压缩 session**（`*.compaction.json` 且 `metadata.kind=compaction_summary`），从 `messages.json` + `source_message_count/source_last_message_key` 还原**压缩前前缀**；
+   b. **basic 侧**：对同一前缀套用 basic 的确定性规则（保留最新 user prompt + 最近 3 条 assistant），生成 basic 摘要（零 LLM）；
+   c. **agentic 侧**：直接用 trace 里已记录的 agentic 摘要（`Context summary: ## Goal ## State ...`），无需重跑；
+   d. 对比指标：4 要素覆盖率（Goal/State/Decisions/Next）、**10 条关键事实保留率**（从前缀自动抽：改过的文件路径/关键命令/数值/失败原因/结论）、token 压缩比、事实错误/编造数；
+   e. 交付 `run/compaction_p0_5_summary_quality.json`（30 条逐条 + 汇总）+ 计划书 §12.3 填数；
+   f. **决策**：若 agentic 在「事实保留率」或「4 要素覆盖率」上不比 basic 高 ≥10pp ⇒ 直接写「机制证据不足」，A/B 只跑 **Top-15 × 3 轮**的部署效果确认；若明显更好 ⇒ 按 P0e 结果继续。
+   g. 若本机有 cline SDK 的 `compact-session`（`bun -F @cline/core test:compaction -- <session-dir> --strategy both`）可直接用；没有则按 a–c 自建，**不阻塞**。
+15) **P0e（第二步，~0.3h）4.x 隔离探测**：用**隔离安装**的 cline 4.x（不覆盖现网 3.0.51）跑 1 题 `maxInputTokens=32000`，看是否在 ≈28.8k 触发且两臂一致；生效 ⇒ 强制 regime（40 题 × 6 轮）；仍忽略 ⇒ 走 item 16 fallback（不硬改源码）。
 16) **Fallback 设计（若 32K 不可实现，替代 §11 的 regime）**：
    - 任务集改为 **Top-15~20 超长任务**（按历史 trace 总 token 排序，保证 basic 也能过 230k）；
    - 主终点 = **arm 级 ITT Pass@1**（即“按默认策略部署”的效果：agentic 更早压缩+语义摘要 vs basic 更晚压缩+逐字保留）；

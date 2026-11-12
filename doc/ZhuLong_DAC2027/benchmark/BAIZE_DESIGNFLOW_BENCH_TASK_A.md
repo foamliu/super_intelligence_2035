@@ -1,5 +1,10 @@
 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🔁 **换池职责变更 · 2026-11-12 用户令**：候选池 11/05 → 11/09 的切换**改由 B 执行**（见 `BAIZE_DESIGNFLOW_BENCH_TASK_B.md` 顶部令）。**A 不再执行 A1–A6 换池步骤**，也不再重复生成 `summary_1109.tsv`；A 继续负责 `board.md` 维护与选料，等 B 落盘 `summary_stats.json.mc_matrix.src=summary_1109.tsv` 后**直接使用新池**（不得再用 1105 的 fresh 数字做选料结论）。
+>
+> ---
+>
+
 > 💬 **2026-11-11 用户令（第 2 版）：讨论区 `benchmark/designflow/discuss/`**
 >
 > 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
