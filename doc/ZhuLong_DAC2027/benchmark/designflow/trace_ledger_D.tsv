@@ -1479,3 +1479,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793770960378_ewsdf	zhiguo1w	hfeg0plg76	56	analog_context	case		2026-11-12 08:21	CmpEmPolyThkCalc-001 analog_context, 14 asserts, self-verify PASS
 1793874126039_qvr6i	e0039602	hfeg0plg103	148	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistSvRulesReorg-001	2026-11-12 09:07	schematic_netlist, 16 asserts, self-verify PASS (ref 16/16 + no-op FAIL 10/16 + 3 fakes FAIL + 3-seed stable)
 1790044817313_ygz63	rongjiez	10.129.2.14	23	schematic_netlist	case	EDA-Eval-DesignFlow-CsvBackfillTableUpdate-001	2026-11-12 10:08	
+1793097371828_uozyg	e0023936	10.129.32.75	21	waveform	case	EDA-Eval-DesignFlow-WvWdfVerPathProc-001	2026-11-12 10:48	
