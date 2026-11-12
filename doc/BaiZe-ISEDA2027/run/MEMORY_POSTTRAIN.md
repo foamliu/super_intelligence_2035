@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake356（2026-11-13 R356: **designflow expand30 FINAL 0/30=0% COMPLETED + process killed** + post-SFT eval 0/158 confirmed + eval path-error diagnosed）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-355✅;R356✅(designflow expand30 FINAL 0/30 killed+EXPERIMENTS L4.10 updated+eval path-error found)
-- 当前动作: wake356 R356:①**designflow expand30 FINAL COMPLETED**:0/30=0.0%[28/30 done:9 FAIL(真实能力gap)+11 rc=1/2(cline crash,磁盘满)+8 ERROR(check.py/jsonl missing,shard D infra);2 stuck→PID341060 killed;36.15 /nasdata 100% full]→EXPERIMENTS L4.10 updated with逐题verdict ②**post-SFT eval path-error diagnosed**:eval script looked in /home/app.t0002147( wrong user)→{"error":"no report"};但completed_code_generation_2026_1112_190335.jsonl(158行)确认0/158=0% ③tunnel UP ④serves UP:GPU4:8098+GPU5:8097 ⑤GPU6/7 free ⑥BaiZe ckpt BLOCKED
-- 下一步: ①**SFT配方诊断**(主线):v11v38 step_90→36%→0%回归,需分析overfitting/forgetting/格式不匹配→调整SFT配方或换语料重训 ②36.15磁盘清理(.cache/cline_eval/)→重跑designflow完整30 task(可选,0%已确认) ③BaiZe ckpt:need pretrain export HF ④Phase3 RL launch-ready待SFT配方修复
-- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);SFT回归需诊断→surrogate SFT配方待重定;P3等pretrain ckpt;36.15磁盘满(designflow重跑需先清理)
-- 本轮新增产出: R356✅(designflow expand30 FINAL 0/30=0%+process killed+EXPERIMENTS L4.10逐题verdict+eval path-error diagnosed)
-- 未完成指令: L4 2026-11-12✅pipeline全完成(Run1/Run2/clean5/expand30/post-SFT all 0%);11:2x✅;17:10✅拆除;13:40 Phase2✅(eval 0%)/Phase3 RL launch-ready待SFT配方修复;ckpt BLOCKED
-- git: super_intelligence_2035(pulled to dbaaa0f2f);本轮 commit pending(wake356)
+- PHASE: posttrain-wake357（2026-11-13 R357: **SFT配方诊断完成** — 36%→0%回归根因=格式崩溃+工具协议遗忘+长上下文退化）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-356✅;R357✅(SFT配方诊断:EDA:Generic工具比1:949+SFT数据84.2%独立代码0%工具调用+诊断脚本+EXPERIMENTS §R357)
+- 当前动作: wake357 R357:**SFT配方诊断完成**:①eval gen log(58K行)工具统计:EDA专用(search_apis/get_api_details/run_code)=2次 vs 通用(run_commands/read_files/editor)=1898次→比率1:949→SFT模型完全遗忘EDA工具协议 ②SFT数据(v11v38,1344对)84.2%为独立代码格式,0%为工具调用格式→格式根本不匹配 ③'echo done'无意义命令125次→长上下文agentic推理退化 ④诊断脚本baize_posttrain_sft_diagnosis_r357.py✅+JSON落盘r357_sft_diagnosis.json ⑤EXPERIMENTS §R357 updated ⑥tunnel UP ⑦serves UP:GPU4:8098+GPU5:8097 ⑧GPU6/7 free ⑨BaiZe ckpt BLOCKED
+- 下一步: ①**SFT数据格式重构**(P0主线):doc_to_code→agentic_tool_call(多轮search_apis→get_api_details→run_code)+数据混合防遗忘(30%通用+20%agentic+50%PyAether工具调用)+训练强度调整(LR1e-5,步数40-60) ②早期ckpt对比(step_20/40/60/80已有) ③重训SFT→重评 ④Phase3 RL待SFT配方修复
+- 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);SFT配方需重构(格式不匹配确认);P3等pretrain ckpt;36.15磁盘满(designflow重跑需先清理)
+- 本轮新增产出: R357✅(SFT配方诊断完成:3大根因+诊断脚本+JSON证据+EXPERIMENTS §R357+修复方案4条)
+- 未完成指令: L4 2026-11-12✅pipeline全完成(all 0%);11:2x✅;17:10✅拆除;13:40 Phase2✅(eval 0%,根因已确诊)/Phase3 RL launch-ready待SFT配方修复;ckpt BLOCKED
+- git: super_intelligence_2035(pulled to dbaaa0f2f);本轮 commit pending(wake357)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -209,6 +209,7 @@ WAITING: 0
 [wake353 23:27] R353 monitoring both jobs healthy + designflow early FAIL corroborates clean5: ①**designflow expand30 RUNNING**(PID341060 alive on 36.15,~8min in):2/30 done—IOCBufModel-001 ERROR(shard-D check.py missing,known infra)+CmdEdgeMeasGen-001 FAIL("no submit.zip produced,cline wrote nothing under outputs/",exit=0,dur=401s)=**same real-capability-gap pattern as clean5**(base model produces nothing for designflow tasks);7 running(NetlistFightX/CombSynthClean/DelaySigma/PinListPortOrderExtract/DrcPatternPkgGen/LibArcExtract/VirtuosoToolLocator);batch=eval/run_batch_20261112_232012,progress pass=0/fail=1/done=2;ETA~42min ②**post-SFT eval 154/158**:task_queue has 4 left(155-158),all 8 workers active,code/ dir=171 entries,ETA~13-42min,Pass@1待final_report→run_eval.py ③tunnel UP ④serves UP:GPU4:8098+GPU5:8097 ⑤GPU6/7 free ⑥BaiZe ckpt BLOCKED.R353✅(both jobs monitored healthy+early designflow FAIL corroborates clean5+wake351 archived).WAITING=0。
 [wake354 23:48] R354 both jobs monitored + post-SFT eval near-complete + designflow 6/30 all FAIL → 原文已归档 daily-memories-posttrain/2026-11-12.md
 [wake356 00:15] R356 designflow expand30 FINAL 0/30=0% COMPLETED + process killed + post-SFT eval path-error diagnosed: ①**designflow expand30 FINAL**:0/30=0.0%[28/30 done:9 FAIL(真实能力gap)+11 rc=1/2(cline crash,磁盘满)+8 ERROR(check.py/jsonl missing,shard D);2 stuck→PID341060 killed;36.15 /nasdata 526G/527G=100% full]→EXPERIMENTS §L4.10 updated with逐题verdict table+失败分类 ②**post-SFT eval path-error**:eval script(run_eval.py)looked in /home/app.t0002147(wrong user)→{"error":"no report"};但completed_code_generation_2026_1112_190335.jsonl(158 lines)parsed→status:fail=117/success=36/timeout=5,Pass@1=0/158=0.0% confirmed ③tunnel UP ④serves UP:GPU4:8098+GPU5:8097 ⑤GPU6/7 free ⑥BaiZe ckpt BLOCKED.R356✅(designflow FINAL 0/30+process killed+EXPERIMENTS L4.10 updated+eval path-error diagnosed).下一步:SFT配方诊断(v11v38 step_90→36%→0%回归).WAITING=0。
+[wake357 01:30] R357 **SFT配方诊断完成** — 36%→0%回归三大根因确诊:①**格式崩溃**:SFT数据(v11v38,1344对)84.2%为独立代码格式(doc_to_code),0%为工具调用格式→训练后模型从agentic tool-calling退化为standalone code-generation ②**工具协议遗忘**:eval gen log(58K行)统计EDA专用工具(search_apis/get_api_details/run_code)=2次 vs 通用工具(run_commands/read_files/editor)=1898次→比率1:949→SFT模型完全遗忘EDA工具协议,run_code调用=0 ③**长上下文agentic推理退化**:'echo done'无意义命令125次,简单短prompt仍OK(2+2=4正确)但cline复杂多轮场景输出退化为碎片化文本 ④诊断脚本baize_posttrain_sft_diagnosis_r357.py✅+JSON证据r357_sft_diagnosis.json ⑤EXPERIMENTS §R357 updated with证据表+根因+修复方案 ⑥tunnel UP ⑦serves UP:GPU4:8098+GPU5:8097 ⑧GPU6/7 free ⑨BaiZe ckpt BLOCKED.**修复方案**:P0 SFT数据格式重构(doc_to_code→agentic_tool_call)+P1数据混合防遗忘(30%通用+20%agentic+50%PyAether工具调用)+P1训练强度调整(LR1e-5,步数40-60)+P2早期ckpt对比(step_20/40/60/80已有).R357✅.WAITING=0。
 
 
 

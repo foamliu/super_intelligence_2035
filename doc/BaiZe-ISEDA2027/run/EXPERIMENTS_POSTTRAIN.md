@@ -7403,3 +7403,74 @@ PYTHON=/tmp/vllm_venv/bin/python \
 | 文件 | 所属线 | 改动 | 原因 | 状态 |
 |:--|:--|:--|:--|:--|
 | `EDA-Eval-Framework/scripts/run_on_sandbox.py` L211-216 | harness | payload 加 `lang`+`host` | sandbox API 要求，否则 100% infra fail | ✅ 已改，需 harness 线确认 |
+
+### §R357 SFT 配方诊断 — 36%→0% 回归根因分析（2026-11-13 wake357）
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+**问题**：SFT (v11v38, step_90) 后模型 Pass@1 从 36% (base) 降到 0% (158 tasks)。
+
+**诊断脚本**：`baize_posttrain_sft_diagnosis_r357.py`（`--json` 输出落 `r357_sft_diagnosis.json`）
+
+#### 证据 1：工具使用模式崩溃
+
+从 eval gen log（58092 行）统计工具调用次数：
+
+| 工具类别 | 工具名 | 调用次数 |
+|:--|:--|--:|
+| **EDA 专用** | search_apis | 1 |
+| **EDA 专用** | get_api_details | 1 |
+| **EDA 专用** | run_code | **0** |
+| **EDA 专用合计** | | **2** |
+| 通用 cline | run_commands | 1536 |
+| 通用 cline | read_files | 284 |
+| 通用 cline | editor | 75 |
+| 通用 cline | search_codebase | 3 |
+| **通用合计** | | **1898** |
+| **EDA:Generic 比率** | | **1:949** |
+
+→ SFT 模型几乎完全不使用 EDA 专用工具（search_apis/get_api_details/run_code），
+转而使用 run_commands（1536 次！）/read_files/editor 等通用工具。
+通用工具无法与 EDA 沙盒交互 → 所有 158 任务失败。
+
+#### 证据 2：SFT 数据格式与评测格式根本不匹配
+
+| 指标 | 值 |
+|:--|--:|
+| SFT 训练对总数 | 1344 |
+| 独立代码格式 (standalone code) | 1131 (84.2%) |
+| 工具调用格式 (tool-call) | 0 (0%) |
+
+SFT 数据格式（doc_to_code）：
+- Prompt: "Read this API doc and write a Python function that calls pyAether.X"
+- Completion: "import pyAether as pyScript\ndef call_X(): pyScript.X(...)"
+
+评测格式（cline agentic）：
+- 模型必须通过 search_apis → get_api_details → run_code 工具调用链解决任务
+
+→ SFT 训练教模型写独立 Python 代码，评测要求 agentic 工具调用。格式根本不兼容。
+
+#### 证据 3：长上下文 agentic 推理退化
+
+- 'echo done' 无意义命令：125 次
+- 任务开始：62（含重试），任务完成：51
+- 在简单短 prompt 测试中，SFT 模型仍能产出连贯文本（2+2=4 正确）
+- 但在 cline 复杂多轮 agentic 场景中，输出退化为碎片化文本 + 无意义 run_commands
+
+#### 根因总结
+
+1. **格式崩溃**（Critical）：SFT 数据 84.2% 为独立代码格式，0% 为工具调用格式。
+   训练后模型从 agentic tool-calling 模式退化为 standalone code-generation 模式。
+2. **工具协议遗忘**（Critical）：EDA:Generic 工具调用比 = 1:949。
+   Base 模型知道用 search_apis/get_api_details/run_code，SFT 模型完全遗忘。
+3. **长上下文退化**（Important）：SFT 数据为短 doc_to_code 对，
+   训练后模型在 cline 的长上下文多轮 agentic 场景中推理退化。
+
+#### 修复方案
+
+| 优先级 | 方案 | 说明 |
+|:--|:--|:--|
+| P0 | SFT 数据格式重构 | doc_to_code → agentic_tool_call（多轮 search_apis→get_api_details→run_code） |
+| P1 | 数据混合防遗忘 | 30% 通用指令 + 20% agentic 工具调用 + 50% PyAether 工具调用 |
+| P1 | 训练强度调整 | LR 2e-5→1e-5，步数 90→40-60，考虑 LoRA |
+| P2 | 早期 ckpt 对比 | 测试 step_20/40/60/80 是否退化较轻（已有 ckpt） |
