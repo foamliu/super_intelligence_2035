@@ -4,10 +4,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2338 incr_eval轮(gateway 200·incr_eval 1new(+1resolved)·cleanup 2empty·eval 1752/2166·predict 4/7 alive·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2338·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2337 incr_eval+监控+报告+ETA·R2338 incr_eval(1new+1resolved)+cleanup(2empty)+双报告REGEN
-当前动作:     R2338: 自检PASS(load40/224~18%·无harness>8000%·MEM avail1.0Ti)·gateway 200(0.021s)·incr_eval 1new(cline django-14122 RESOLVED)·cleanup 2empty(codex sympy-20428·pi sphinx-7590 deleted→re-predict)·kill stuck R2322 eval container·eval cumulative:cline233/308·codex89/138·opencode414/498·cc244/298·pi196/269·hermes435/480·dsh141/175·总1752/2166·predict files:cline305·codex131·cc295·pi269·predict 4/7 alive(cline-patched idle·codex→sympy-20438·cc→sphinx-7985·pi→sphinx-7748·opencode498DONE·hermes480DONE·dsh175DONE)·磁盘OK(/data 5.8T 18%·/ 351G 4%)·research日报11-13:adapter契约建议(纳入参考非指令)·双报告REGEN(R2338·7way 12201B·cline special 9973B)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit+push ②下轮continue incr_eval+cleanup(predict flowing) ③predict 4/7向500推进(codex=瓶颈131/500@25/天≈15天·cc295·pi269·cline305) ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+PHASE:        R2339 监控轮(gateway 200·incr_eval 0new(全追上)·cleanup 0empty·eval 1752/2166·predict 4/7 alive·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2339·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2338 incr_eval+监控+报告+ETA·R2339 监控(0new+0cleanup·eval不变1752/2166)
+当前动作:     R2339: 自检PASS(load36/224~16%·无harness>8000%·MEM avail1.0Ti)·gateway 200(0.021s)·incr_eval 0new(全追上·7路均0unevaluated)·cleanup 0empty(0/7路均0empty)·eval cumulative:cline233/308·codex89/138·opencode414/498·cc244/298·pi196/269·hermes435/480·dsh141/175·总1752/2166·predict files:cline305·codex131·cc295·pi269·predict 4/7 alive(cline→django-14349·codex·cc·pi·opencode498DONE·hermes480DONE·dsh175DONE)·磁盘OK·research日报11-13:adapter契约+speculative decoding建议(纳入参考非指令)·报告无需REGEN(数据未变)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit+push ②下轮continue incr_eval+cleanup(predict flowing·新预测产出后eval) ③predict 4/7向500推进(codex=瓶颈131/500@25/天≈15天·cc295·pi269·cline305) ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
 阻塞:         <各路尚未满500:cline305/codex131/cc295/pi269·hermes480近满·§22:4x未全交付·opencode+dsh DONE·codex=瓶颈~15天>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=9KB(归档后·大幅瘦身)
@@ -18,7 +18,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
-> [06:4x] R2338: incr_eval轮·自检PASS(load40/224~18%·无harness>8000%·MEM avail1.0Ti)·gateway 200(0.021s)·incr_eval 1new(cline django-14122 RESOLVED)·cleanup 2empty(codex sympy-20428·pi sphinx-7590 deleted)·kill stuck R2322 eval container·eval cumulative:cline233/308·codex89/138·opencode414/498·cc244/298·pi196/269·hermes435/480·dsh141/175·总1752/2166·predict 4/7 alive(cline-patched idle·codex→sympy-20438·cc→sphinx-7985·pi→sphinx-7748)·research日报11-13:adapter契约建议(参考非指令)·双报告REGEN·未完成指令:有(§10:10+§22:4x)·W:0
+> [06:4x] R2339: 监控轮·自检PASS(load36/224~16%·无harness>8000%·MEM avail1.0Ti)·gateway 200(0.021s)·incr_eval 0new(7路均0unevaluated·全追上)·cleanup 0empty(7路均0empty)·eval cumulative:cline233/308·codex89/138·opencode414/498·cc244/298·pi196/269·hermes435/480·dsh141/175·总1752/2166·predict files:cline305·codex131·cc295·pi269·predict 4/7 alive(cline→django-14349·codex·cc·pi·opencode498DONE·hermes480DONE·dsh175DONE)·research日报11-13:adapter契约+speculative decoding建议(纳入参考非指令)·报告无需REGEN(数据未变)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2338 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2338 incr_eval(1new+1resolved)+cleanup(2empty)+双报告REGEN。需要时再读。
 > [06:2x] R2337: incr_eval轮·自检PASS(load37/224~17%·无harness>8000%·MEM avail1.0Ti)·gateway 200(0.019s)·incr_eval 2new(+2resolved):cc sphinx-7889+7910 RESOLVED·cleanup 0empty·eval cumulative:cline231/307·codex87/138·opencode414/498·cc244/298·pi195/269·hermes435/480·dsh141/175·总1747/2165·predict 4/7 alive(cline→django-14122·codex→sympy-20428·cc→sphinx-7985·pi→sphinx-7590)·research日报11-13:adapter契约建议(参考非指令)·双报告REGEN·未完成指令:有(§10:10+§22:4x)·W:0
 > 📦 R2336 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2336 incr_eval(5new+4resolved)+cleanup(2empty)+双报告REGEN。需要时再读。
 > 📦 R2334 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2334 incr_eval 1new(cline django-14034 FAILED)+cleanup 0empty+双报告REGEN。需要时再读。
