@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake308（2026-11-12 R308 上下文溢出修复[max-model-len 32768→65536 + --enforce-eager]→Phase1 context阻塞解除）
-- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-307✅；R308上下文溢出修复✅
-- 当前动作: wake308 ①发现MiniCPM5原生支持131072上下文(max_position_embeddings)→32768是人为设限 ②GPU4+GPU6 serve重启:max-model-len 65536 ③CUDA graph捕获OOM(37%死亡)→加--enforce-eager修复 ④nohup被工具超时SIGTERM杀→用setsid脱离进程组 ⑤base+SFT均curl验证tool_calls✅ ⑥5端点全UP+GPU 4/5/6/7全占位✅
-- 下一步: ①沙盒恢复后用minicpm5 parser+base模型+默认模板+65536 ctx测Phase1生成(工具名✅+context✅) ②修复SFT语料(加function格式工具调用示例) ③简化no_sandbox模板(≤20行) ④Phase3 RL待沙盒+GPU ⑤P3正式训练待pretrain ckpt(ETA≈2026-12-25)
-- 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(生成+评分双阻塞,112th wake)+.17缺framework+pyAether→Phase1全流程需沙盒侧机器;P3等pretrain ckpt
-- 本轮新增产出: R308✅(上下文溢出修复[max-model-len 65536+--enforce-eager]+CUDA graph OOM诊断+setsid进程分离+base/SFT tool_calls验证+5端点UP+GPU全占位+EXPERIMENTS §R308)
-- 未完成指令: 🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R308✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
-- git: wake308 R308待提交
+- PHASE: posttrain-wake309（2026-11-12 R309 极简no_sandbox模板[18行/2144B,减62%]+Phase1启动就绪清单[R306-R308汇总,模型侧5/8就绪,沙盒侧3项仍阻塞]）
+- 已完成: P3预备✅；P0✅；P1✅；P2✅；R1-R210✅；R280归档；wake281-308✅；R309极简模板✅
+- 当前动作: wake309 ①沙盒113th wake仍全FILTERED(python socket探10端口全30s超时+MCP run_code 60s超时) ②draft极简no_sandbox模板eval_sys_prompt_template_minimal_no_sandbox.md[18行/2144B,保留3 placeholder+工具/db*emy*/文件路径/submit_and_exit/无沙箱自测,删4 Skill引用+退化防护+参考技能] ③str.replace模拟验证:3 placeholder全替换0残留 ④Phase1就绪清单:模型侧5/8✅[parser R306+工具名 R307+context R308+5端点+极简模板 R309],沙盒侧3/8❌[ACL+framework+pyAether] ⑤边界:模板落run/未写入eda_fastmcp/prompts(跨线),启动时cp+设.env
+- 下一步: ①沙盒恢复后cp极简模板→eda_fastmcp/prompts+设EDA_PROMPT_TEMPLATE+用base:8098+65536 ctx测Phase1生成 ②SFT语料修复(R306结论:非必需,serve配置已修复;如需强化可加function格式示例) ③Phase3 RL待沙盒+GPU ④P3正式训练待pretrain ckpt(ETA≈2026-12-25) ⑤如沙盒持续阻塞,探索替代评分路径(本地pyAether install?framework手动部署?)
+- 阻塞: 🔴沙盒10.129.32.75全端口FILTERED(生成+评分双阻塞,113th wake)+.17缺framework+pyAether→Phase1全流程需沙盒侧机器;P3等pretrain ckpt
+- 本轮新增产出: R309✅(极简no_sandbox模板[18行/2144B/减62%/3 placeholder保留/str.replace验证✅]+Phase1启动就绪清单[8项状态表R306-R308汇总]+沙盒113th探测[全FILTERED]+EXPERIMENTS §R309)
+- 未完成指令: 🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R309✅/Phase1生成+评分需沙盒可达(待外部解锁,113th wake)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU
+- git: wake309 R309待提交
 
 
 
@@ -168,3 +168,5 @@ WAITING: 0
 [wake307 09:15] R307 工具名对齐实证[模型遵循tool schema全名pyAether_MCP_server__*而非prompt短名]+context溢出发现[32807>32768]+serve 5端点UP+sandbox 111th CLOSED+GPU全占位+git synced: 体积自检(MEMORY 32.2KB→归档wake299/300→daily→~29KB合规)→GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全占位→serve健康5端点✅(8095-8099全UP)→sandbox 111th wake 8 ports全FILTERED(阻塞持续)→①工具名对齐实证:curl base(:8098)+SFT(:8096)均输出全名pyAether_MCP_server__*tool_calls✅→模型遵循tool schema不遵循prompt短名 ②submit_and_exit=cline --yolo内置(非MCP) ③旧名run_pyAether_code_tool仅在old模板不受影响 ④新发现:context溢出(32807>32768 tok) ⑤Phase1仅剩沙盒一个阻塞项。本轮新增产出：R307✅(工具名对齐实证[curl base+SFT均输出全名]+submit_and_exit来源+context溢出发现+Phase1解锁条件更新+EXPERIMENTS §R307+wake299/300归档)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R307✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU ⇒ WAITING=0。
 
 [wake308 09:35] R308 上下文溢出修复[max-model-len 32768→65536 + --enforce-eager]+serve 5端点UP+sandbox 112th CLOSED+GPU全占位+git synced: 体积自检(MEMORY ~29.5KB合规)→GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全占位→serve健康5端点✅(8095-8099全UP)→sandbox 112th wake 7 ports全FILTERED(阻塞持续)→①发现MiniCPM5-2B原生max_position_embeddings=131072(128K)→32768是人为设限 ②GPU4(:8098 base)+GPU6(:8096 SFT) serve重启:max-model-len 32768→65536 ③首次65536不加--enforce-eager→CUDA graph捕获37%时OOM死亡→加--enforce-eager修复(跳过CUDA graph,eager模式) ④nohup &被工具超时SIGTERM杀→改用setsid脱离进程组→serve稳定 ⑤KV cache 31.89GiB,65536 tok最大并发12.15x,VRAM~38GB(与32768持平) ⑥curl验证:base+SFT均finish_reason=tool_calls+全名pyAether_MCP_server__search_apis✅ ⑦5端点全UP+GPU 4/5/6/7全占位✅ ⑧Phase1解锁条件:tool_calls空(✅wake306)+工具名(✅wake307)+context溢出(✅wake308)+沙盒(❌仍阻塞)。本轮新增产出：R308✅(上下文溢出修复[max-model-len 65536+--enforce-eager]+CUDA graph OOM诊断+setsid进程分离+base/SFT tool_calls验证+5端点UP+GPU全占位+baize_posttrain_serve_increase_ctx.sh+EXPERIMENTS §R308)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R308✅/Phase1生成+评分需沙盒可达(待外部解锁)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU ⇒ WAITING=0。
+
+[wake309 09:55] R309 极简no_sandbox模板+Phase1启动就绪清单+serve 5端点UP+sandbox 113th CLOSED+GPU全占位+git synced: 体积自检(MEMORY ~30.4KB合规)→GPU:0-3 root SGLang~45GB/4-7 vLLM各~38GB全占位→serve健康5端点✅(8095-8099全UP)→sandbox 113th wake python3 socket探10端口全30s超时+MCP run_code 60s超时(仍FILTERED)→①draft极简no_sandbox模板eval_sys_prompt_template_minimal_no_sandbox.md[18行/2144B,原63行/5583B减62%,保留3 placeholder{evolve_tools_section}/{memory_bank_section}/{user_query}+工具清单+db*emy*规则+文件路径+submit_and_exit+无沙箱自测,删4 Skill引用+退化防护整节+参考技能整节] ②str.replace模拟验证:3 placeholder全替换0残留无stray brace✅ ③Phase1启动就绪清单8项:模型侧5/8✅[R306 parser+R307工具名+R308 context 65536+5端点+R309极简模板],沙盒侧3/8❌[沙盒ACL+framework absent+pyAether NOT_INSTALLED] ④边界:模板落run/未写入eda_fastmcp/prompts(跨线),启动时cp+设.env ⑤SFT语料修复结论更新:R306已证非必需(serve配置问题非语料问题)。本轮新增产出：R309✅(极简no_sandbox模板[18行/2144B/减62%/3 placeholder保留/str.replace验证]+Phase1启动就绪清单[8项状态表R306-R308汇总]+沙盒113th探测[全FILTERED]+EXPERIMENTS §R309)。未完成指令：🔴17:10 GPU5/6/7全✅;🔴13:40 Phase2 SFT COMPLETE✅+R300-R309✅/Phase1生成+评分需沙盒可达(待外部解锁,113th wake)/Phase3 RL脚本+奖励就绪✅待沙盒+GPU ⇒ WAITING=0。

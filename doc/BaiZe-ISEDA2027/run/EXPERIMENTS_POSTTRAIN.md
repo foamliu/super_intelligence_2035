@@ -5505,3 +5505,80 @@ python3 -c "import json; c=json.load(open('/nas_data/app.e0031982/models/MiniCPM
 - curl 验证：base + SFT 均 `finish_reason: tool_calls` + 全名 tool_calls
 - nvidia-smi：GPU 4/5/6/7 全部 ~38-40 GB 占用
 - 无伪造：所有数据为真实 vLLM 日志 / curl 响应 / nvidia-smi 输出。
+
+---
+
+## §R309 — 极简 no_sandbox 模板 + Phase1 启动就绪清单（2026-11-12 wake309）
+
+### 1. 背景
+
+R305 §7.4 建议「简化 no_sandbox 模板至 ≤20 行核心指令」，理由是 63 行模板对 2B 模型过于复杂→思维循环。R306 纠正了 R305 的主因判断（思维循环主因是 hermes parser 不匹配 `<function>` XML + SFT serve 缺 `--enable-auto-tool-choice`，非模板复杂度），但 curl 实测仍证明 2B 模型在**简单 prompt** 下工具调用更干净（R305 §3.1）。故极简模板作为 belt-and-suspenders 优化仍值得做——为 2B 模型释放 context 预算、降低元指令干扰。
+
+### 2. 产物
+
+**`run/eval_sys_prompt_template_minimal_no_sandbox.md`**（18 行 / 2144 字节，原 63 行 / 5583 字节，**减 62%**）
+
+保留（不可删）：
+- 3 个 placeholder：`{evolve_tools_section}` / `{memory_bank_section}` / `{user_query}`（harness `format_eval_task.py::merge_prompt_template2task` 用 `str.replace` 替换，缺失则 no-op）
+- 工具清单（search_apis / search_apis_by_keyword / get_api_details）
+- db\* vs emy\* API 族选择 + positional-only 参数规则
+- 文件输出路径 `./pyAether_code/<func_name>.py`
+- submit_and_exit 终止指令（不调用则任务不结束）
+- 无沙箱内部推演自测规则（含反向验证、禁吞异常）
+
+删除（冗余/对 2B 无用）：
+- 4 个 Skill 引用（eda-api-search-strategy / eda-command-family-selection / eda-swig-type-construction / eda-context-degradation-guard）——`bare` 模板已先删，Skill 是「按需查阅」可选项
+- 重复的上下文退化防护整节（合并进规则段一句话）
+- 参考技能整节
+- 技术栈/核心职责独立小节（合并进首行）
+
+### 3. 验证
+
+```
+wc -l  → 18 行
+wc -c  → 2144 字节（原 5583，减 62%）
+grep '{' → 仅 3 处 placeholder（line 5/12/18），无 stray brace
+python3 str.replace 模拟 → 3 placeholder 全替换、0 残留、rendered 1110 chars、无 stray {
+```
+
+### 4. 边界与安装
+
+模板文件落在 `run/`（posttrain 线目录），**未直接写入 `eda_fastmcp/prompts/`**（harness 线仓库，跨线边界）。安装方式（Phase1 启动时）：
+- `cp run/eval_sys_prompt_template_minimal_no_sandbox.md ~/code/eda_fastmcp/prompts/`
+- `.env` 设 `EDA_PROMPT_TEMPLATE=eval_sys_prompt_template_minimal_no_sandbox.md`
+- 或在 `baize_posttrain_phase1_launch.sh` 中参数化 `EDA_PROMPT_TEMPLATE`（已有 `--generate` 模式可注入 env）
+
+### 5. Phase1 启动就绪清单（R306–R308 修复汇总）
+
+沙盒恢复后 Phase1 立即可跑的前置条件状态：
+
+| # | 条件 | 状态 | 修复 wake |
+|:--|:--|:--|:--|
+| 1 | tool_calls 不为空（parser 匹配 `<function>` XML） | ✅ | R306 自定义 minicpm5 parser |
+| 2 | 工具名对齐（schema 全名 `pyAether_MCP_server__*`） | ✅ | R307 实证模型遵循 schema |
+| 3 | 上下文不溢出（max-model-len 65536 + enforce-eager） | ✅ | R308 GPU4/GPU6 serve 重启 |
+| 4 | 5 端点 UP（8095–8099）+ GPU 4-7 占位 | ✅ | R306/R308 |
+| 5 | 极简 no_sandbox 模板就绪 | ✅ | **R309 本 wake** |
+| 6 | 沙盒 10.129.32.75 可达（8664 评分 + 8667 run_code） | ❌ | **仍阻塞（113th wake）** |
+| 7 | EDA-Eval-Framework（run_on_sandbox.py）在 .17 可用 | ❌ | R301 发现缺失，需沙盒侧机器 |
+| 8 | pyAether 在 .17 installed | ❌ | R301 发现 NOT_INSTALLED |
+
+**结论**：模型侧 5/8 就绪；剩余 3 项（沙盒 ACL + framework + pyAether）均为**沙盒侧机器**（10.129.32.75 子网）依赖，.17 本机无法解决，需运维/网络组解除跨子网 ACL 并提供沙盒侧运行环境。
+
+### 6. 本 wake 沙盒探测
+
+- python3 socket.connect_ex 探 10.129.32.75:22/80/443/3000/5000/8000/8080/8888/9000/11434 → 全 30s 超时（包丢弃，无 RST = firewall FILTERED）
+- 路由存在：`10.129.32.75 via 10.252.32.1 dev bond0 src 10.252.32.17`
+- MCP `pyAether_MCP_server__run_code` → `-32001` 60s 超时（同一阻塞资源）
+- 结论：沙盒仍 FILTERED，第 113 个 wake，与 wake301–308 一致
+
+### 7. 溯源
+
+- 极简模板：`run/eval_sys_prompt_template_minimal_no_sandbox.md`（18 行，2144 字节）
+- 原模板：`~/code/eda_fastmcp/prompts/eval_sys_prompt_template_no_sandbox.md`（63 行，5583 字节）
+- bare 模板（先例）：`~/code/eda_fastmcp/prompts/eval_sys_prompt_template_bare.md`（59 行，Nov 10 创建，已删 Skill 引用）
+- 模板加载：`eda_fastmcp/scripts/dev/test_memory_bank.py:216` → `open("./prompts/eval_sys_prompt_template.md").read()` + `str.replace`
+- placeholder 机制：`test_memory_bank.py:236` → `template.replace("{evolve_tools_section}", ...)`，缺失 no-op
+- 沙盒探测：`/tmp/sandbox_probe.py`（python3 socket，全超时）
+- 路由：`ip route get 10.129.32.75` → via 10.252.32.1
+- 无伪造：模板为真实新建文件、验证为真实命令输出、沙盒探测为真实 socket 结果。
