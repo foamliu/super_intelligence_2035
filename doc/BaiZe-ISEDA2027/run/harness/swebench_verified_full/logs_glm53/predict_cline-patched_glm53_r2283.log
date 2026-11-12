@@ -5,3 +5,5 @@
 [verified-full 18:09:02] [4/500] astropy__astropy-13398 SKIP (predicted, patch=0B)
 [verified-full 18:09:02] [5/500] astropy__astropy-13453 SKIP (predicted, patch=1514B)
 [verified-full 18:09:02] [6/500] PREDICT cline on astropy__astropy-13579
+[verified-full 18:18:04]   -> patch-produced (patch=5570B wall=541.8s)
+[verified-full 18:18:04] [7/500] PREDICT cline on astropy__astropy-13977
