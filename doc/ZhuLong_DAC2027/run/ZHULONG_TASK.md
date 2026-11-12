@@ -2,6 +2,9 @@
 
 [用户令 · 2026-11-12 21:2x · 最高优先 · 新实验（压缩机制消融）]
 用户原话："我想用 PyAether 158 评测 对比一下 cline 两个 压缩机制：basic vs. agentic 的效果。用中文HTML写个计划书。"
+**排期（最新）**：`[队列] 压缩机制消融` —— 前置条件 = **轴 B（思维链语言消融）全部收口**；轴 B 未收口前，本令只做零调用准备（脚本草稿/只读检查），不得起评测轮。心跳统一写 `COMPACTION: QUEUED (waiting axis-B closure)`。
+
+
 
 执行口径（严格按序）：
 1) **计划书已交付（只读，按它执行）**：`doc/ZhuLong_DAC2027/reports/plan_zhulong_compaction_basic_vs_agentic_zh.html`（28.9KB，10 节 + 3 附录，0 外链）。先通读 §3 设计 / §4 指标 / §5 执行 / §6 分析 / §10 决策规则，再起跑。
@@ -11,7 +14,7 @@
    b. 检查 `EDA-Eval-Framework/scripts/run_cline_script.sh` 是否把 `CLINE_COMPACTION` 透传成 `--compaction`；无则按计划书附录 A 打 **3 行补丁**（无 flag 时保持原行为）；
    c. 两臂各 1 题 smoke：确认 `*.compaction.json` 出现且 `metadata.kind` 分别为 `compaction`（basic）/ `compaction_summary`（agentic）；
    d. 沙盒端口 8664/8665/8653/8669 全空闲 + quota probe 通过 + `pgrep -f '^bash scripts/run_cline_script'` 无输出。
-4) **与 B_en_r1 重跑串行**：B_en_r1 收口（落盘+报告刷新+push）之前**不得**起本实验；两实验不并发（额度与沙盒都会互相污染）。
+4) **排期门禁（用户令 2026-11-12 明确）**：本实验**排在思维链语言消融（轴 B）全部收口之后**——即轴 B 15/15 轮全部完成（含 B_en_r1 基座对齐重跑落盘 idx31、trace 归档）+ 主报告与轴 B 独立报告刷新（token 列 + banner 改写）+ audit §5.3 标注 + commit/push 全部完成后，才允许进入本实验 P0。**在此之前不得起任何本实验的评测轮**（不得以「先跑一轮看看」为由插队）；等待期只允许零调用准备：读计划书、写 `run_compaction_ablation.sh` 草稿、`cline --version/--help` 只读检查、沙盒/额度探测。两实验不并发（额度与沙盒都会互相污染）。
 5) **P1 试点**：固定子集 10 题（seed=42）× 两臂各 1 轮，核对耗时/成本/压缩事件统计脚本可用 → 再开全量。
 6) **P2 全量**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION`），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。
 7) **P3 报告（用户点名要中文 HTML）**：`reports/report_zhulong_compaction_basic_vs_agentic_zh.html`——单文件自包含、内联 CSS、**0 外链**；8 节：摘要（三问结论）/机制口径/主结果（6 轮表+逐题配对）/亚组（是否触发压缩×轨迹长度×domain）/失败分类/成本-收益/摘要质量/结论与默认策略建议 + 附录。**主终点唯一 = 3 轮 Pass@1 均值（ITT）**；亚组只作次要终点，须报效应量+CI+n。
