@@ -7843,40 +7843,32 @@ setsid bash -c "eval/run_batch.sh \
 
 → DesignFlow benchmark 对所有测试模型均为 0% Pass@1，包括 DeepSeek——这表明该 benchmark 任务难度极高或评测协议需进一步调优
 
-### §L4-zhulong (2026-11-13 wake365→370) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
+### §L4-zhulong (2026-11-13 wake365→371) SFT v39 Post-SFT Eval — INTERMEDIATE PROGRESS (RUNNING)
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
 
 - **两个并行 158-task eval 仍在运行**（无 final_report.json，code-gen 阶段未完成）
+- **eval 目录**：step_60=`~/eda_code_eval/2026_1113_021445`，step_105=`~/eda_code_eval/2026_1113_024153`
 
-#### 进度表（wake370 = 04:14）
+#### 进度表（wake371 = 04:24）
 
-| eval | GPU | model | code dirs | .py in pyAether_code/ | code-gen rate | syntax valid | syntax valid/158 | queue rem | stuck workers | PID alive |
-|:--|:--:|:--|--:|--:|--:|--:|--:|--:|:--|:--|
-| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 127/158 (80%) | 50 | 20.9% | 32/50=64% | 20.3% | 31 | **3 stuck** (>2500s) | 953888 ✅ |
-| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 123/158 (78%) | 84 | 29.7% | 65/84=77% | 41.1% | 35 | 0 stuck | 972225 ✅ |
+| eval | GPU | model | code dirs | .py | syntax valid | syntax/158 | stats(succ+fail+timeout) | processed | rem | PID alive |
+|:--|:--:|:--|--:|--:|--:|--:|:--|--:|--:|:--|
+| step_60 | 5 (:8097) | minicpm5-2b-sft-v39 (global_step_60) | 137/158 (87%) | 64 | 38/64=59% | 24.1% | 119+8+2=129 | 82% | 29 | 953888 ✅ @8042s |
+| step_105 | 6 (:8096) | minicpm5-2b-sft-v39-final (global_step_105) | 128/158 (81%) | 93 | 69/93=73% | 43.7% | 109+7+2=118 | 75% | 40 | 972225 ✅ @6414s |
 
 - **stats 文件**（`~/eda_code_eval/<run>/stats/`）：`success`=cline exit 0（非 eval pass），`failure`=cline exit≠0，`timeout`=2500s 超时；实际 Pass@1 须等 run_eval.py 评分
-- **16 cline workers 进程存在**（8 per eval），但 **step_60 有 3 个 worker 卡在 >2500s**：
-  - PID 958613 (worker_5) @ 7051s — 远超 2500s timeout
-  - PID 994976 (worker_1) @ 4439s — 超时
-  - PID 1019914 (worker_4) @ 2951s — 超时
-  - → step_60 实际只有 5/8 workers 在推进；step_105 全部 8 workers 活跃
-  - GPU5=83%util, GPU6=87%util
-- **code-gen rate + syntax 对比**（wake370 full scan, pyAether_code/ only）：
-  - step_60: 50 .py files, 32 syntax valid (64%), 32/158=20.3% syntax-valid of total
-  - step_105: 84 .py files, 65 syntax valid (77%), 65/158=41.1% syntax-valid of total
-  - → **step_105 (final ckpt) generates ~1.7× more code files AND has higher syntax validity** → v39 format collapse significantly improved vs intermediate ckpt
+- **16 cline workers**（8 per eval）；step_60 PID958613@7719s 仍 stuck（>2500s timeout 未杀掉 cline 子进程）；step_105 全部 8 workers 活跃
+- **GPU5=100%, GPU6=98% util**；3 serves healthy（8098+8097+8096 curl /v1/models OK）；tunnel UP（ssh -p3333→hfeg0tedaap02）
+- **trend since wake370**：step_60 .py 50→64(+14), syntax 32→38(+6)；step_105 .py 84→93(+9), syntax 65→69(+4)
+- **关键趋势**：step_105 syntax-valid/158=43.7% >> step_60 24.1% → final ckpt ~1.8× better → v39 format collapse significantly improved（vs v11v38 §L4.9 22.78%）
 - **代码质量抽查**（wake367，5 个样本，详见 daily-memories-posttrain/2026-11-13.md）：
-  - step_60 `enforce_priority_limits.py`（056）：✅ 良好——proper import, correct API, 逻辑正确
-  - step_60 `create_wrapped_cstring_list.py`（074）：❌ 差——docstring 中文指令泄漏, API 误用
-  - step_105 `generate_balanced_policies.py`（058）：⚠️ 中等——构造正确但 API 可能不存在
-  - step_105 `check_library_access.py`（042）：❌ 差——传 None 可疑, 返回值逻辑混乱
-  - step_105 `create_wrapped_cstring_list.py`（074）：❌ 过度工程化
-- **wake369 新发现**：部分 step_105 文件仍含乱码（如 `net-primary_sh主动脉DB_logiccngb指挥部.py` 含中文函数名、`cdb2lib.py` 含 `return cdb2lib_lib[]` 语法错误）→ format collapse **大幅改善但未完全消除**
-- **wake370 新发现**：step_60 有 3 个 worker 卡在 >2500s（timeout 2500 应已 SIGTERM 但进程未退出，可能 cline 子进程未响应）→ step_60 有效 worker 数降至 5/8，吞吐减半；step_105 无此问题 → **step_105 可能先完成**（尽管启动更晚）
-- **结论**：v39 SFT 修复了格式崩溃（syntax-valid of total: 20%→41%, ~2× improvement），但**语义正确性仍不确定**——需 run_eval.py 判定实际 Pass@1
+  - step_60 `enforce_priority_limits.py`（056）：✅ 良好；step_60 `create_wrapped_cstring_list.py`（074）：❌ 差
+  - step_105 `generate_balanced_policies.py`（058）：⚠️ 中等；step_105 `check_library_access.py`（042）：❌ 差；step_105 `create_wrapped_cstring_list.py`（074）：❌ 过度工程化
+- **wake369 新发现**：部分 step_105 文件仍含乱码（中文函数名等）→ format collapse 大幅改善但未完全消除
+- **结论**：v39 SFT 修复了格式崩溃（syntax-valid of total: 20%→44%, ~2× improvement），但**语义正确性仍不确定**——需 run_eval.py 判定实际 Pass@1
 - **对比 §L4.9**（v11v38 step_90, 0/158=0%, code-gen 仅 22.78%）：v39 format collapse FIXED，代码生成质量显著改善
-- **ETA**（wake370）：step_60 31 remaining @ 5 effective workers, step_105 35 remaining @ 8 workers → step_105 likely completes first (~15-30min) → run_eval.py 产出 final_report.json
-- **下一步**：等 final_report.json 产出 → 记录 Pass@1 step_60 vs step_105 → 与 base 36% 对比 → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
+- **run_eval.py**：位于 `eda_fastmcp/scripts/run_eval.py`，用法 `python scripts/run_eval.py --latest N` 或 `--generations <jsonl>`，流程=assemble→sandbox→calculate Pass@1
+- **ETA**（wake371）：step_60 29rem @ ~5-8 workers, step_105 40rem @ 8 workers → ~20-30min → code-gen 完成 → run_eval.py → final_report.json
+- **下一步**：等 final_report.json → Pass@1 step_60 vs step_105 vs base 36% → 判定 SFT v39 配方是否有效 → 如 Pass@1>0% → 5-run eval
 

@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake370（2026-11-13 R370: **zhulong v39 dual evals still RUNNING** — step_60:127/158dirs(80%),50.py,32 syntax-valid(64%),3 STUCK workers(>2500s); step_105:123/158dirs(78%),84.py,65 syntax-valid(77%),8 workers all active; step_105 syntax-valid-of-158=41.1% >> step_60 20.3%; no final_report yet）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-369✅;R370✅(zhulong dual eval wake370 monitoring+full syntax scan+stuck worker diagnosis+EXPERIMENTS §L4-zhulong updated to wake370)
-- 当前动作: wake370 R370:**zhulong dual eval monitoring+stuck worker diagnosis**:①step_60 GPU5:8097(127/158dirs=80%,50 .py,32 syntax-valid=64%,32/158=20.3%,PID953888 alive) ②step_105 GPU6:8096(123/158dirs=78%,84 .py,65 syntax-valid=77%,65/158=41.1%,PID972225 alive) ③16 cline workers total BUT **3 step_60 workers STUCK** (PID958613@7051s,994976@4439s,1019914@2951s — all step_60 eval, all >2500s timeout→effectively only 5 step_60 workers active) ④step_105 all 8 workers active(none >2500s) ⑤GPU5=83%,GPU6=87%util ⑥no final_report.json yet ⑦tunnel UP(ssh -p3333→hfeg0tedaap02=TUNNEL_OK) ⑧3 serves UP(8098+8097+8096) ⑨**key finding**:step_105 syntax-valid-of-158=41.1% >> step_60 20.3%→final ckpt ~2× better→v39 format collapse significantly improved(vs v11v38 22.78%) ⑩**NEW**:step_60 has 3 stuck workers reducing throughput,step_105 has no stuck workers→step_105 may finish first despite starting later ⑪semantic Pass@1 still requires run_eval.py after code-gen completes
-- 下一步: ①等zhulong evals完成(~15-30min ETA,step_105 likely first)→read final_report.json→report Pass@1 step_60 vs step_105 vs base 36% ②判定SFT v39配方是否有效(syntax↑but semantic pass待run_eval.py验证) ③如step_105 Pass@1>0%→5-run eval ④Phase3 RL launch if SFT recipe validated ⑤designflow已确认0%(base+SFT均0%)→记录结论,不再扩量
+- PHASE: posttrain-wake371（2026-11-13 R371: **zhulong v39 dual evals still RUNNING** — step_60:137/158dirs(87%),64.py,38 syntax-valid(59%),stats 119succ+8fail+2timeout=129/158 processed(82%); step_105:128/158dirs(81%),93.py,69 syntax-valid(73%),stats 109succ+7fail+2timeout=118/158 processed(75%); no final_report yet; ETA ~20-30min）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-370✅;R371✅(zhulong dual eval wake371 monitoring+stats counters+syntax scan+EXPERIMENTS §L4-zhulong updated to wake371)
+- 当前动作: wake371 R371:**zhulong dual eval monitoring+live stats**:①step_60 GPU5:8097(137/158dirs=87%,64.py,38 syntax-valid=59%,38/158=24.1%,stats:119succ+8fail+2timeout=129/158=82% processed,29rem,PID953888 alive@8042s) ②step_105 GPU6:8096(128/158dirs=81%,93.py,69 syntax-valid=73%,69/158=43.7%,stats:109succ+7fail+2timeout=118/158=75% processed,40rem,PID972225 alive@6414s) ③16 cline workers(8 per eval),step_60 PID958613@7719s still stuck(>2500s timeout not killing) ④GPU5=100%,GPU6=98%util ⑤no final_report.json, no completed_code_generation JSONL yet ⑥tunnel UP(ssh -p3333→hfeg0tedaap02=TUNNEL_OK) ⑦3 serves UP(8098+8097+8096 all healthy) ⑧**trend**:step_105 syntax-valid/158=43.7% >> step_60 24.1%→final ckpt ~1.8× better→v39 format collapse significantly improved(vs v11v38 22.78%) ⑨step_60 .py 50→64(+14),step_105 .py 84→93(+9) since wake370 ⑩step_60 closer to finishing(29rem) but has stuck worker issue;step_105 has 40rem but all 8 workers active
+- 下一步: ①等zhulong evals完成(~20-30min ETA)→run_eval.py→final_report.json→Pass@1 step_60 vs step_105 vs base 36% ②判定SFT v39配方是否有效(syntax↑but semantic pass待run_eval.py验证) ③如step_105 Pass@1>0%→5-run eval ④Phase3 RL launch if SFT recipe validated ⑤designflow已确认0%(base+SFT均0%)→记录结论,不再扩量
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;36.15无GPU(reverse tunnel解决);zhulong evals still running
-- 本轮新增产出: R370✅(zhulong dual eval wake370 monitoring+full syntax scan(50→32valid/84→65valid)+stuck worker diagnosis(3 step_60 workers >2500s)+EXPERIMENTS §L4-zhulong updated to wake370)
+- 本轮新增产出: R371✅(zhulong dual eval wake371 monitoring+live stats counters(119succ/8fail/2timeout+109succ/7fail/2timeout)+syntax scan(64→38valid/93→69valid)+EXPERIMENTS §L4-zhulong updated to wake371)
 - 未完成指令: L4 2026-11-12(zhulong eval RUNNING,designflow 5-task DONE 0%);11:2x✅;17:10✅拆除;13:40 Phase2 eval running/Phase3 RL launch-ready待SFT配方验证;ckpt BLOCKED
-- git: super_intelligence_2035(pulled to cec13e439);本轮 commit pending(wake370)
+- git: super_intelligence_2035(pulled to 287bd0e7);本轮 commit pending(wake371)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -190,25 +190,7 @@ WAITING: 0
 
 > 📦 wake330–wake332 流水已归档 → daily-memories-posttrain/2026-11-12.md（R330 tunnel re-verify+run_code PASS+SFT final-epoch / R331 SFT v11v38 CONVERGED+serve GPU5 / R332 post-SFT eval LAUNCHED 158-task background）
 > 📦 wake334–wake336 流水已归档 → daily-memories-posttrain/2026-11-12.md（R334 GPU4 serve重启+eval progress / R335 31/158+11:2x全deliverable确认 / R336 29/158+SFT code quality 5 files）
-[wake337 20:08] R337 Sandbox run_code e2e VERIFIED + Phase 3 RL Launch-Ready → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake338 20:15] R338 Eval Progress 42/158 + Code Quality Spot-Check (7 files) → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake339 20:35] R339 L4 Designflow Baseline LAUNCHED on 36.15 + BaiZe Ckpt Inaccessibility Documented → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake340 20:50] R340 L4 Designflow Baseline PARTIAL 0/3 PASS (infra-limited) + Timeout Analysis → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake341 21:05] R341 L4 Designflow Run1 COMPLETE 0/4=0% infra-limited + Run2 launched(2700s) + post-SFT eval 51/158 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake342 21:12] R342 monitoring both jobs alive+progressing(Run2 task1 + eval ~94/158) → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake343 21:21] R343 monitoring both jobs + .env tunnel config verified → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake344 21:33] R344 monitoring Run2 2/5 done 0PASS + eval 90/158 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake345 21:43] R345 monitoring Run2 2/5 0PASS + duplicate launch found + eval 113dirs/67py → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake346 21:55] R346 monitoring Run2 4/5 done 0PASS 3FAIL 1ERROR + orphan KILLED + eval 103/158 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake347 22:20] R347 monitoring Run2 COMPLETED[batch dir cleaned,task5 verdict lost] + eval 106/158 RUNNING → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake348 22:33] R348 monitoring + designflow infra FIX → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake349 22:47] R349 designflow clean5 rerun LAUNCHED + reference symlink FIXED + eval 131/158 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake350 23:00] R350 monitoring both jobs + AutoPR-001 symlink VERIFIED + eval 128/158 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake351 23:05] R351 designflow clean5 FINAL 0/5=0% infra-fixed + eval 135/158 → 原文已归档 daily-memories-posttrain/2026-11-12.md（逐题verdict落EXPERIMENTS §L4.6f）
-[wake352 23:20] R352 designflow expand30 LAUNCHED + eval 141/158 → 原文已归档 daily-memories-posttrain/2026-11-13.md
-[wake353 23:27] R353 monitoring both jobs healthy + designflow early FAIL → 原文已归档 daily-memories-posttrain/2026-11-13.md
-[wake354 23:48] R354 both jobs monitored + eval near-complete + designflow 6/30 all FAIL → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake356 00:15] R356 designflow expand30 FINAL 0/30=0% + post-SFT eval path-error diagnosed → 原文已归档 daily-memories-posttrain/2026-11-13.md
+> 📦 wake337–wake356 流水已归档 → daily-memories-posttrain/2026-11-12.md / 2026-11-13.md（R337 sandbox e2e verified+RL launch-ready / R338-351 eval monitoring+designflow baseline 0/5=0% / R352-356 designflow expand30 0/30=0%+eval path-error diagnosed）
 [wake357 01:30] R357 SFT配方诊断完成 — 36%→0%回归三大根因确诊(格式崩溃+工具协议遗忘+长上下文退化) → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake358 01:00] R358 agentic SFT语料重构+训练启动(v39,2548条,52.7%PyAether+15.7%agentic+31.6%general) → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake359 01:29] R359 SFT FSDP2 GPU不均衡根因确诊(pretokenize修复,2GPU均衡100%,loss 2.41→2.17) → 原文已归档 daily-memories-posttrain/2026-11-13.md
@@ -221,6 +203,8 @@ WAITING: 0
 
 [wake369 04:08] R369 zhulong dual eval monitoring+full syntax scan → 原文已归档 daily-memories-posttrain/2026-11-13.md
 
-[wake370 04:14] R370 **zhulong dual eval monitoring+stuck worker diagnosis**:①step_60 GPU5:8097(127/158dirs=80%,50 .py in pyAether_code/,32 syntax-valid=64%,32/158=20.3%,PID953888 alive) ②step_105 GPU6:8096(123/158dirs=78%,84 .py in pyAether_code/,65 syntax-valid=77%,65/158=41.1%,PID972225 alive) ③16 cline workers total BUT **3 step_60 workers STUCK** (PID958613@7051s worker_5,994976@4439s worker_1,1019914@2951s worker_4 — all >2500s timeout→effectively only 5/8 step_60 workers active) ④step_105 all 8 workers active(none >2500s) ⑤GPU5=83%,GPU6=87%util ⑥no final_report.json yet ⑦tunnel UP(ssh -p3333→hfeg0tedaap02=TUNNEL_OK) ⑧3 serves UP(8098+8097+8096) ⑨**key finding**:full syntax scan:step_105 65/84=77% syntax-valid(65/158=41.1% of total) >> step_60 32/50=64%(32/158=20.3%)→final ckpt ~2× better at producing valid code→v39 format collapse significantly improved(vs v11v38 §L4.9 22.78%) ⑩**NEW**:step_60 has 3 stuck workers(>2500s)→reduced throughput,step_105 has 0 stuck→step_105 may finish first despite starting later ⑪step_60 code-gen rate 33/158=20.9% vs step_105 47/158=29.7%→final ckpt more likely to produce code at all ⑫semantic Pass@1 still requires run_eval.py after code-gen completes ⑬ETA:step_60 31rem@5effective workers,step_105 35rem@8workers→step_105 likely completes first(~15-30min) ⑭EXPERIMENTS §L4-zhulong updated to wake370. R370✅.WAITING=0。
+[wake370 04:14] R370 **zhulong dual eval monitoring+stuck worker diagnosis** → 原文已归档 daily-memories-posttrain/2026-11-13.md
+
+[wake371 04:24] R371 **zhulong dual eval monitoring+live stats counters**:①step_60 GPU5:8097(137/158dirs=87%,64.py,38 syntax-valid=59%,38/158=24.1%,stats:119succ+8fail+2timeout=129/158=82% processed,29rem,PID953888 alive@8042s) ②step_105 GPU6:8096(128/158dirs=81%,93.py,69 syntax-valid=73%,69/158=43.7%,stats:109succ+7fail+2timeout=118/158=75% processed,40rem,PID972225 alive@6414s) ③16 cline workers(8 per eval),step_60 PID958613@7719s still stuck(>2500s timeout not killing cline child) ④GPU5=100%,GPU6=98%util ⑤no final_report.json, no completed_code_generation JSONL yet ⑥tunnel UP(ssh -p3333→hfeg0tedaap02=TUNNEL_OK) ⑦3 serves UP(8098+8097+8096 all healthy, curl /v1/models OK) ⑧**trend since wake370**:step_60 .py 50→64(+14),syntax 32→38(+6);step_105 .py 84→93(+9),syntax 65→69(+4) ⑨step_105 syntax-valid/158=43.7% >> step_60 24.1%→final ckpt ~1.8× better→v39 format collapse significantly improved(vs v11v38 22.78%) ⑩step_60 closer to finishing(29rem@~82% done) but stuck worker reduces throughput;step_105 has 40rem@75% done but all 8 workers active ⑪run_eval.py located at eda_fastmcp/scripts/run_eval.py,takes --latest N or --generations JSONL→assemble→sandbox→calculate Pass@1 ⑫EXPERIMENTS §L4-zhulong updated to wake371. R371✅.WAITING=0。
 
 
