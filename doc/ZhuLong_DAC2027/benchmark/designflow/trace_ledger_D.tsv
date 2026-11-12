@@ -1529,3 +1529,12 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1790735307961_eu6x3					parked		2026-11-12 22:32	r561 mc10-15 1109 peek-reject: Q&A/debug/how-to/explain/scenario-launch/skill-query (non produce-task)
 1793790290871_pzzpz					parked		2026-11-12 22:32	r561 mc10-15 1109 peek-reject: Q&A/debug/how-to/explain/scenario-launch/skill-query (non produce-task)
 1790213602996_k7ihq					parked		2026-11-12 22:32	r561 mc10-15 1109 peek-reject: Q&A/debug/how-to/explain/scenario-launch/skill-query (non produce-task)
+1794395722321_y1r0z					parked		2026-11-12 23:57	dailylog-post1109 peek r568: waveform ref '波形在这' terse, mc10 schematic but hspice/virtuoso mixed, Q&A/scenario
+1794364028332_5op1x					parked		2026-11-12 23:57	dailylog-post1109 peek r568: 'presim-automation的skill定义了那些' skill Q&A
+1794362653913_28y3x					parked		2026-11-12 23:57	dailylog-post1109 peek r568: 'DDGOA的P2S的具体top电路模块名为什么' Q&A name lookup
+1794367334572_pecwt					parked		2026-11-12 23:57	dailylog-post1109 peek r568: '帮打开ivcc的电流' GUI WaveView open, no deliverable
+1794360127290_uwvz2					parked		2026-11-12 23:57	dailylog-post1109 peek r568: first msg=dir-listing tool result, no real user text, file-exploration
+1794360046090_n4jec					parked		2026-11-12 23:57	dailylog-post1109 peek r568: PRODUCE-TASK compare FS/DBC frontend trees+report(177msg,26 CSV) BUT source /home/lorikx + /proj Permission denied (asset-inaccessible, P-002 D pattern)
+1794379523217_nhu4n					parked		2026-11-12 23:57	dailylog-post1109 peek r568: '解释spice网表tran仿真控制语句怎么写'+'怎样看波形' explain/how-to Q&A
+1794387569294_u5vqi					parked		2026-11-12 23:57	dailylog-post1109 peek r568: first msg=policy-engine/dir-listing, no real user text, file-exploration
+1794362708761_hvfis					parked		2026-11-12 23:57	dailylog-post1109 peek r568: '根据log分析本次sta的情况' STA log analysis = A-domain verification, not D
