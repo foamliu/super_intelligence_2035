@@ -38,3 +38,5 @@
 [verified-full 17:35:46] [35/500] PREDICT claude-code on django__django-11138
 [verified-full 17:39:51]   -> no-patch (patch=0B wall=245.2s)
 [verified-full 17:39:51] [36/500] PREDICT claude-code on django__django-11141
+[verified-full 17:46:16]   -> patch-produced (patch=3455B wall=384.2s)
+[verified-full 17:46:16] [37/500] PREDICT claude-code on django__django-11149

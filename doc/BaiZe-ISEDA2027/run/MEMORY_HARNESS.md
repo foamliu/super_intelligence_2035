@@ -4,21 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2282 incr_eval轮(自检PASS·+3resolved·eval backlog=0·5/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 5/7 alive
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2282·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2281 incr_eval+监控+报告+ETA·R2281 incr_eval(+3resolved→1656)+双报告REGEN·R2282 incr_eval(+3resolved:opencode sympy-19346+cc django-11141+hermes django-13406全resolved→总resolved 1659)+双报告REGEN R2282·总resolved 1659
-当前动作:     R2282: 自检PASS(CPU load36/224=16%·无harness进程>80核·MEM OK 1080G avail)·gateway 200(curl实测real key GLM53_KEY)·incr_eval 3NEW全resolved(opencode sympy-19346+cc django-11141+hermes django-13406→1648→1659)·eval全7路backlog=0(detect_backlog_R2202.py验证)·predict 5/7 alive(cline290/codex127/cc280/pi253/hermes450·opencode500 DONE·dsh175 DONE=能力)·research日报2026-11-12已阅(mtime15:10·无18:00更新·harness建议同R2281·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit MEMORY+双报告+push ②predict向500推进(5路alive·opencode已满500) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
-阻塞:         <各路尚未满500:cline290/codex127/cc280/pi253/hermes450·§22:4x未全交付·opencode+dsh DONE>
+PHASE:        R2283 监控轮(自检PASS·eval backlog=0·cline predict重启PID3619039·5/7 alive)·TB-2.1=已交付/SWE-bench Verified=~15天(瓶颈codex)·predict 5/7 alive
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2283·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2282 incr_eval+监控+报告+ETA·R2282 incr_eval(+3resolved→1659)·R2283 监控(cline predict重启·eval backlog=0·双报告REGEN)·总resolved 1659
+当前动作:     R2283: 自检PASS(CPU load35/224=16%·无harness进程>80核·MEM OK 1081G avail)·gateway 200(curl实测glm-5.3-flash)·gw_proxy 9092=200·eval全7路backlog=0(detect_backlog_R2202验证)·cline predict orch死亡(日志r2053b止于07:12 task11 astropy-14365·约11h前)→重启PID3619039(setsid·r2283 log·SKIP前5·predict astropy-13579)·predict 5/7 alive(cline290/codex128/cc281/pi253/hermes450·opencode500 DONE·dsh175 DONE=能力)·双报告REGEN R2283(glm53_7way 12196B+cline_special 10269B)·research日报2026-11-12已阅(mtime15:10·无18:00更新·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit MEMORY+双报告+push ②cline predict向500推进(已重启) ③新real patch→incr_eval拾取→报告更新 ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+阻塞:         <各路尚未满500:cline290/codex128/cc281/pi253/hermes450·§22:4x未全交付·opencode+dsh DONE>
 ERROR_COUNT:  0
- 体积: TASK=22KB / MEMORY=30KB
- cline专项小结: predict_glm53=290files/282real/218resolved/8empty(gateway functional产real·C3 resume fix R1733仍有效·newest=+1 empty=能力)·C1:282real/290total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→290)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=8(能力差·非resume bug·gateway functional)·C5:报告R2282(cline special·218/282real=77.3%)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
+ 体积: TASK=22KB / MEMORY=31KB
+ cline专项小结: predict_glm53=290files/282real/218resolved/8empty(gateway functional产real·C3 resume fix R1733仍有效·8empty全sympy=能力)·C1:282real/290total(可复算:ls predictions_glm53/cline-patched__*.json|wc -l→290)·C2:failed=能力66/50.4%·429 44/33.6%·超时15/11.5%·5xx 1/0.8%(R2233分类)·C3:empty=8(全sympy·能力差·靐resume bug·gateway functional)·C5:报告R2283(cline special·218/282real=77.3%·10269B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+> [18:0x] R2283: 监控轮·自检PASS(CPU load35/224=16%·无harness进程>80核·MEM avail1081G)·gateway 200(curl实测glm-5.3-flash model)·gw_proxy 9092=200(alive)·eval全7路backlog=0(detect_backlog_R2202:7/7=0)·cline predict orch发现死亡(日志r2053b止于07:12 task11 astropy-14365·无进程·约11h前·astropy连续4empty=能力)→用codex进程env重启cline predict PID3619039(setsid·log r2283·SKIP前5·PREDICT astropy-13579)·predict 5/7 alive(cline290/codex128/cc281/pi253/hermes450·opencode500 DONE·dsh175 DONE)·eval stats unchanged(cline218/codex80/opencode414/cc215/pi183/hermes408/dsh141·总1659)·双报告REGEN R2283(gen_report_glm53_7way 12196B+gen_cline_special 10269B)·research日报2026-11-12已阅(mtime15:10·无18:00更新·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
 > [17:5x] R2282: incr_eval轮·自检PASS(CPU load36/224=16%·无harness进程>80核·MEM avail1080G)·gateway 200(curl实测real key GLM53_KEY)·detect_backlog_R2202发现3NEW real patch(opencode sympy-19346 plen1772+cc django-11141 plen3454+hermes django-13406 plen3546)·incr_eval_glm53_R2282.py(setsid detached·首轮nohup被cmd timeout杀掉·改setsid存活)·3NEW全RESOLVED(opencode→414·cc→215·hermes→408)·总resolved 1648→1659·eval全7路backlog=0(detect复验)·predict 5/7 alive(cline290/codex127/cc280/pi253/hermes450·opencode500 DONE·dsh175 DONE)·cline+1新文件=empty(能力·empty7→8)·双报告REGEN R2282(gen_report_glm53_7way 10559B+gen_cline_special 8962B)·research日报2026-11-12已阅(mtime15:10·无18:00更新·建议同R2281·仅参考)·未完成指令:有(§10:10+§22:4x)·W:0
-> [17:1x] R2280: 监控轮·自检PASS(CPU load36/224=16%·无harness进程>80核·MEM OK·pretrain 145%CPU40GB是别线不碰)·gateway 200(curl实测real key GLM53_KEY)·eval全7路backlog=0(check_backlog_R2240.py:total real=2021 resolved=1653 evaluated=2054·0 true backlog)·cline+1新文件sympy-24539=empty(能力·非resume bug·gateway functional)·重启3停滞predict orch(claude-code 276/500→PID3800614·hermes 449/500→PID3805629·opencode 495/500→PID3805957·全resume skip已预测)·kill 2 orphans(cc PID3496306 ppid=1 etimes=78288s 21.7h stuck django tests 0%CPU 3.6MB·opencode PID1950056 ppid=bash orphan)·6/7 alive(cline·codex·pi·cc·hermes·opencode)·dsh DONE(500attempted 325empty=能力)·research日报2026-11-12已阅(harness建议:task书合规审计+pool mean/worst列·仅参考未执行)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2280 流水已归档 → daily-memories-harness/2026-11-12.md。结论：监控轮·gateway 200·eval backlog=0·重启3停滞 predict orch·6/7 alive。需要时再读。
 
 > 📦 R2279 流水已归档 → daily-memories-harness/2026-11-12.md。结论：R2279 ETA双报告补§9 ETA节(TB-2.1=已交付·SWE-bench Verified=~15天瓶颈codex)+生成器脚本更新+cline 287f/281r/217res/6empty pass77.2%。需要时再读。
 
