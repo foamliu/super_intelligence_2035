@@ -1327,3 +1327,11 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1791954407908_szdav.messages.json					parked		2026-11-12 06:31	near-dup: jiangbaol strongarm slicer tuning, dup of delivered StrongarmFomSweep-001 (r73sm)
 1793176752981_ikfrw.messages.json	joeyl	hfeg0plg49	34	spice_sim	case	EDA-Eval-DesignFlow-C2cRfbCmStab-001	2026-11-12 07:55	spice_sim/L2/B-synthesized/k=14/c2c RFB cm stabilization/.75 selftest 9/9 PASS
 1791784036591_y9y0f.messages.json	joeyl	hfeg0plg53	34	spice_sim	case	EDA-Eval-DesignFlow-JitterTieRerun-001	2026-11-12 07:45	
+1790731913166_ki1x0.messages.json	chengk	hfeg0plg102	27	spice_sim	parked		2026-11-12 08:18	code-reading+flowchart task (IddFlowCode/test), no SPICE sim, L1 docs, not design-flow sim deliverable
+1792204849864_ly0mw.messages.json	e0039516	hfeg0plg76	19	spice_sim	parked		2026-11-12 08:19	ambiguous 'DDJOB Auto 315B' consultation, RAG search+ask_question, no SPICE sim, not design-flow deliverable
+1782803097375_exstf.messages.json	e0025730	hfeg0plg49	25	spice_sim	parked		2026-11-12 08:19	lvlshft skill sizing/code-reading on private devops tree, no real HSPICE run (only python soa_selector), not portable design-flow sim
+1792649502711_qrr6j.messages.json	thqu	hfeahpc503	14	spice_sim	parked		2026-11-12 08:21	IDD仿真激励怎么写 consultation/how-to, KB search+read scripts, no sim run, not design-flow deliverable
+1788751406721_c385l.messages.json	sophiaw	hfeg0plg09	36	spice_sim	parked		2026-11-12 08:21	AnasimPro benchmark pyAether sim-verification scenario (/rundata/ieda_agent_test), not real spice_sim, GUI automation
+1790073773700_rwf2q.messages.json	bo1zhao	hfeg0plg11	13	spice_sim	parked		2026-11-12 08:24	RedHawk-SC PDF manual reading + web fetch, no SPICE sim, exploration not design-flow deliverable
+1793237833740_jlkql.messages.json	chentong	hfeg0plg49	11	spice_sim	parked		2026-11-12 08:24	STD_Check incomplete: ends ask_question (10 msgs), no task performed, aborted
+1790578411744_brrc3.messages.json	e0039602	hfeg0pkn002	49	spice_sim	parked		2026-11-12 08:24	AutoDebug code-reading+comparison report (V3 vs 0916), no SPICE/waveform sim, L1 docs
