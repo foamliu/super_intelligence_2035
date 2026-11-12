@@ -42,6 +42,12 @@ ul,ol{margin:6px 0}
 回答一个决策问题：<b>是否值得把 agentic 设为默认</b>。
 </div>
 
+<div class="banner err">
+<b>⚠️ v2 修订（2026-11-12，用户质询「0.9×窗口才触发、只有 12% trace 压缩，效率是否太低」后）</b><br>
+v1 的「6 轮 × 158 题」在自然 128K 下：预期压缩暴露仅 ~19 题/臂/轮；若 agentic 在<b>压缩任务上真实增益 +10pp</b>，ITT 效应 = 0.121 × 10pp ≈ <b>+1.2pp</b>，低于预注册判据 3pp → <b>约 22h 算力大概率换来「证据不足」</b>（稀释偏倚，不是真无效）。
+因此执行以 <b>§11 v2</b> 为准：<b>强制压缩 regime（maxInputTokens 32K，pilot 校准）+ 40 题子集 + 2 臂 × 3 轮 ≈ 8–9h</b>；§3/§5/§9 中与之冲突的轮数与时长按 §11 覆盖，其余方法学（预注册、指标、失败分类、报告规格）不变。
+</div>
+
 <h2>1. 背景：两种压缩机制到底差在哪</h2>
 
 <p class="small">来源：cline 源码 <code>compaction.ts</code> / <code>basic-compaction.ts</code> / <code>agentic-compaction.ts</code> 与 CLI <code>--compaction</code>（4.x）。本仓库已有 trace 分析：<code>reports/report_zhulong_auto_compaction_analysis_zh.html</code>。</p>
@@ -271,6 +277,79 @@ setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 \
 <tr><td class="l">亚组显著但总体不显著</td><td class="l">结论限定「长会话场景 agentic 更优」；给工程建议（按上下文占用率自适应切换），另开实验验证</td></tr>
 </tbody></table>
 
+<h2>11. v2 效率修订（覆盖 §3 / §5 / §9 的规模）</h2>
+
+<h3>11.1 定量效率审计：v1 为什么不行</h3>
+<table>
+<thead><tr><th style="width:18%">项</th><th style="width:30%">v1（自然 128K，158 题 × 6 轮）</th><th style="width:30%">v2（强制 32K，40 题 × 6 轮）</th><th style="width:22%">说明</th></tr></thead>
+<tbody>
+<tr><td class="l">总 run 数</td><td>948（158×6）</td><td><b>240（40×6）</b></td><td class="l">题量 40/158 ≈ 25%</td></tr>
+<tr><td class="l">纯跑墙钟</td><td>~22h</td><td><b>~5.6h</b></td><td class="l">按 3.7h/158 题线性折算</td></tr>
+<tr><td class="l">预期压缩暴露</td><td>~19 题/臂/轮（12.1%）</td><td><b>≥28 题/臂/轮（≥70%，pilot 校准）</b></td><td class="l">暴露题 = 能回答机制问题的样本</td></tr>
+<tr><td class="l">若压题增益 +10pp 的 ITT Δ</td><td><b>≈ +1.2pp</b>（&lt; 判据 3pp）</td><td>≈ +7pp（≥70% 暴露）</td><td class="l">v1 被 88% 未压缩任务稀释</td></tr>
+<tr><td class="l">按 v1 判据的预计结论</td><td class="l" colspan="1"><b>「证据不足」</b>（即使机制有效）</td><td class="l"><b>可判定</b></td><td class="l">这才是 v1 的真问题：不是慢，是<b>系统性偏 null</b></td></tr>
+</tbody></table>
+
+<div class="note"><b>结论</b>：12% 触发率下，任何「全量 158 题 × 小轮数」的设计都在给 88% 无关任务付算力，且把机制效应稀释到判据以下。<b>必须提高“事件率”而不是提高轮数</b>。</div>
+
+<h3>11.2 v2 设计</h3>
+<table>
+<thead><tr><th style="width:18%">项</th><th style="width:82%">取值</th></tr></thead>
+<tbody>
+<tr><td class="l"><b>Regime</b></td><td class="l"><b>强制压缩</b>：把该模型的 <code>maxInputTokens</code> 从 128,000 调到 <b>32,000</b>（pilot 可下调至 24K/16K），则触发点 = 0.9 × 32K ≈ <b>28.8K</b>；两臂完全相同</td></tr>
+<tr><td class="l"><b>任务集</b></td><td class="l"><b>40 题“长轨迹倾向”子集</b>：从 PyAether 158 的历史 trace（30 轮、6,162 session）按「上下文峰值 / tool_calls / 是否曾触发压缩」排序取 Top-40，按 domain 分层；固定清单入仓库（<code>run/compaction_subset_40.txt</code>），两臂同一清单</td></tr>
+<tr><td class="l"><b>臂</b></td><td class="l"><code>--compaction basic</code> vs <code>--compaction agentic</code>（每臂 3 轮，ABBA 交替）</td></tr>
+<tr><td class="l"><b>暴露目标</b></td><td class="l">每臂每轮 ≥70% 任务至少触发 1 次压缩；否则按 §11.4 调档</td></tr>
+<tr><td class="l"><b>主终点</b></td><td class="l">该 regime 下 3 轮 Pass@1 均值（ITT；此时 ITT 已高暴露，不再被稀释）</td></tr>
+</tbody></table>
+
+<h3>11.3 可调旋钮（已在本机 cline 4.1.26 实证，不需改源码）</h3>
+<table>
+<thead><tr><th style="width:34%">旋钮</th><th style="width:36%">位置 / 用法</th><th style="width:30%">作用</th></tr></thead>
+<tbody>
+<tr><td class="l"><code>--compaction agentic|basic|off</code></td><td class="l">CLI 参数</td><td class="l">本实验自变量</td></tr>
+<tr><td class="l"><code>compactionStrategy</code> / <code>compactionEnabled</code></td><td class="l"><code>&lt;data-dir&gt;/settings/global-settings.json</code></td><td class="l">持久化默认值（可被 CLI flag 覆盖）</td></tr>
+<tr><td class="l"><b><code>maxInputTokens</code> / <code>contextWindow</code></b></td><td class="l"><code>&lt;data-dir&gt;/settings/models.json</code> 的 <code>providers[&lt;provider&gt;].models[&lt;id&gt;]</code></td><td class="l"><b>提高压缩事件率的关键旋钮</b>；生效预算 = min(maxInputTokens, contextWindow)</td></tr>
+<tr><td class="l"><code>--data-dir &lt;path&gt;</code></td><td class="l">CLI 参数</td><td class="l"><b>每臂独立配置目录</b>（两臂只差 strategy，其余文件完全一致，便于审计）</td></tr>
+</tbody></table>
+<div class="banner warn"><b>代价必须写进报告</b>：把窗口压到 32K 会改变任务难度与行为（更多压缩、可能更多失败），所以 v2 的结论是 <b>「tight-context regime 下的机制比较」</b>，不能直接外推为「128K 默认配置下 agentic 更好」。外部效度用 §11.7 的验证臂补。</div>
+
+<h3>11.4 Pilot 与自适应调档（P1）</h3>
+<table>
+<thead><tr><th style="width:26%">观测（8 题 × 2 臂）</th><th style="width:74%">动作</th></tr></thead>
+<tbody>
+<tr><td class="l">压缩率 &lt; 60%</td><td class="l">下调 <code>maxInputTokens</code>：32K → 24K → 16K（每次只动这一个数），直到 ≥70%</td></tr>
+<tr><td class="l">压缩率 &gt; 95% 且 Pass@1 &lt; 20%</td><td class="l">说明压得太狠（任务不可解）→ 回调到 48K，目标压缩率 60–80%</td></tr>
+<tr><td class="l">两臂压缩率差 &gt; 15pp</td><td class="l">检查是否 strategy 未生效（basic 的 kind 应为 <code>compaction</code>，agentic 为 <code>compaction_summary</code>）；未生效则先修配置再跑</td></tr>
+<tr><td class="l">pilot 全部通过</td><td class="l">锁档（把最终 <code>maxInputTokens</code> 写进轮级元数据），进入 P2</td></tr>
+</tbody></table>
+
+<h3>11.5 统计（v2）</h3>
+<ul>
+<li>40 题 × 3 轮 = 120 配对观测；≥70% 暴露 ≈ <b>84 暴露对</b>（v1 只有 ~57，且其中还混着“任务本来就更难”的选择偏倚）。</li>
+<li>主检验：McNemar（题级 3 轮多数票）；bootstrap 10k CI；报告每轮各自配对结果。</li>
+<li>次要：暴露题 subgroup（此时接近全体）、tool_calls 分位、domain、摘要 4 要素覆盖。</li>
+<li><b>功效声明</b>：84 对、discordant ≈30% 时，可检出 ~10pp（α=0.05, power≈0.8）；<b>不承诺检出 3pp</b>。</li>
+</ul>
+
+<h3>11.6 成本（v2）</h3>
+<table>
+<thead><tr><th>阶段</th><th>时长</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td class="l">P0 预检</td><td>0.5h</td><td class="l">flag/透传/两臂 smoke + <code>models.json</code> 改档</td></tr>
+<tr><td class="l">P1 试点（8 题×2 臂）</td><td>~0.6h</td><td class="l">含一次调档重跑余量</td></tr>
+<tr><td class="l">P2 主实验（40 题×6 轮）</td><td>~5.6h</td><td class="l">40/158 × 3.7h ≈ 0.94h/轮</td></tr>
+<tr><td class="l">P3 分析+报告</td><td>~2h</td><td class="l">含失败分类与摘要抽检</td></tr>
+<tr><td class="l"><b>合计</b></td><td><b>~8.7h</b></td><td class="l">v1 为 ~26h；且 v2 能判定、v1 大概率判不了</td></tr>
+</tbody></table>
+
+<h3>11.7 外部效度验证（可选，+1h）</h3>
+<p class="small">自然 128K regime 下取 <b>20 题</b>（同一 Top-40 清单的一半）× 2 臂 × 1 轮 ≈ 0.94h，只作<b>描述性</b>方向校验（不设判据）。用于回答「tight-context 的结论在默认配置下是否同向」；预期该臂压缩率仍 ~12%，不用于推断。</p>
+
+<h3>11.8 可选的零成本前置（P0.5，+0.5–1h）</h3>
+<p class="small">用 cline 自带离线压缩工具（<code>compact-session</code>）对已有 session 分别跑 <code>--strategy basic</code> 与 <code>--strategy agentic</code>，比较<b>摘要 4 要素覆盖率/token 压缩比/关键事实保留</b>。若 agentic 摘要质量并不优于 basic，可直接判定「不值得跑昂贵评测」，先止损。注意：离线压缩只回答 H5（摘要质量），不能回答 Pass@1。</p>
+
+
 <h2>附录 A · harness 透传补丁（3 行）</h2>
 <p class="small">先在 <code>EDA-Eval-Framework/scripts/run_cline_script.sh</code> 里定位 cline 调用行（含 <code>--thinking</code>），按以下模式加透传；无 flag 环境下必须保持原行为。</p>
 <pre># before
@@ -300,7 +379,7 @@ cline ... --thinking "$CLINE_THINKING" $COMPACT_FLAG ...</pre>
 <table>
 <thead><tr><th style="width:18%">日期</th><th style="width:16%">版本</th><th style="width:66%">变更</th></tr></thead>
 <tbody>
-<tr><td>2026-11-12</td><td>v1</td><td class="l">初版：基于 cline <code>--compaction</code> 语义、既有 6,162-session 压缩 trace 分析（12.1% 触发率、13.98% 压缩比、压缩会话 TIMEOUT 11.1% vs 0.04%）制定预注册方案</td></tr>
+<tr><td>2026-11-12</td><td>v1</td><td class="l">初版：基于 cline <code>--compaction</code> 语义、既有 6,162-session 压缩 trace 分析（12.1% 触发率、13.98% 压缩比、压缩会话 TIMEOUT 11.1% vs 0.04%）制定预注册方案</td></tr><tr><td>2026-11-12</td><td><b>v2</b></td><td class="l">用户质询触发效率修订：v1 自然 128K / 158 题 / 6 轮预期 ITT 效应仅 ≈+1.2pp（&lt;3pp 判据）→ 改为<b>强制压缩 regime</b>（<code>maxInputTokens</code> 32K，pilot 校准）+ <b>40 题长轨迹子集</b> + 2 臂 × 3 轮；成本 26h→8.7h，暴露对 57→84；新增 P0.5 离线摘要质量前置与可选自然 regime 验证臂；结论明确限定为 tight-context regime</td></tr>
 </tbody></table>
 
 <p class="small" style="margin-top:24px">生成：2026-11-12 · 单文件自包含（内联 CSS，零外链）· 结果区待 P3 填写。</p>

@@ -7,17 +7,19 @@
 
 
 执行口径（严格按序）：
-1) **计划书已交付（只读，按它执行）**：`doc/ZhuLong_DAC2027/reports/plan_zhulong_compaction_basic_vs_agentic_zh.html`（28.9KB，10 节 + 3 附录，0 外链）。先通读 §3 设计 / §4 指标 / §5 执行 / §6 分析 / §10 决策规则，再起跑。
-2) **实验本质**：同一基座、同一 cline 版本、同一协议（`-p 8 -n`、`CLINE_THINKING=medium`、`LANG_HINT` 空、158 题），只切换 `cline --compaction basic` vs `--compaction agentic`；每臂 3 轮（ABBA 顺序：B→A→A→B→B→A），共 6 轮。
+1) **计划书已交付（只读，按它执行）**：`doc/ZhuLong_DAC2027/reports/plan_zhulong_compaction_basic_vs_agentic_zh.html`（v2，10 节 + §11 效率修订 + 3 附录，0 外链）。**规模以 §11 为准**（不要按 §3/§5/§9 的旧 158 题 × 6 轮执行）；先通读 §1 机制 / §11 v2 / §4 指标 / §6 分析 / §10 决策规则，再起跑。
+2) **实验本质（v2）**：同一基座、同一 cline 版本、同一协议（`-p 8 -n`、`CLINE_THINKING=medium`、`LANG_HINT` 空），只切换 `cline --compaction basic` vs `--compaction agentic`；**强制压缩 regime**（`maxInputTokens` 128K→32K，pilot 校准到压缩率 ≥70%）+ **40 题长轨迹子集**（`run/compaction_subset_40.txt`，从 158 题历史 trace 按上下文峰值/工具调用数取 Top-40，两臂同一清单）；每臂 3 轮（ABBA：B→A→A→B→B→A），共 6 轮。
 3) **P0 预检（必须先做，未过不许起跑）**：
    a. `cline --version` + `cline --help | grep -- --compaction` —— 现网 3.0.51 若**不支持该 flag**，升级到支持版本（4.x，记录版本号），两臂同版本，并加做 10 题校准；
    b. 检查 `EDA-Eval-Framework/scripts/run_cline_script.sh` 是否把 `CLINE_COMPACTION` 透传成 `--compaction`；无则按计划书附录 A 打 **3 行补丁**（无 flag 时保持原行为）；
    c. 两臂各 1 题 smoke：确认 `*.compaction.json` 出现且 `metadata.kind` 分别为 `compaction`（basic）/ `compaction_summary`（agentic）；
    d. 沙盒端口 8664/8665/8653/8669 全空闲 + quota probe 通过 + `pgrep -f '^bash scripts/run_cline_script'` 无输出。
+   e. **调压缩事件率（v2 关键，最易漏）**：在该 `--data-dir` 的 `settings/models.json` 里把本 provider/model 的 `maxInputTokens` 从 `128000` 改为 **`32000`**（`contextWindow` 可保留 1M；生效预算 = min(两者) ⇒ 触发点 ≈ 0.9×32K ≈ 28.8K）。两臂用**各自独立** `--data-dir`，除 `compactionStrategy`/`--compaction` 外配置逐字节一致；改档后必须先用 pilot 确认压缩率 ≥70%，并把最终值写进每轮元数据。
+
 4) **排期门禁（用户令 2026-11-12 明确）**：本实验**排在思维链语言消融（轴 B）全部收口之后**——即轴 B 15/15 轮全部完成（含 B_en_r1 基座对齐重跑落盘 idx31、trace 归档）+ 主报告与轴 B 独立报告刷新（token 列 + banner 改写）+ audit §5.3 标注 + commit/push 全部完成后，才允许进入本实验 P0。**在此之前不得起任何本实验的评测轮**（不得以「先跑一轮看看」为由插队）；等待期只允许零调用准备：读计划书、写 `run_compaction_ablation.sh` 草稿、`cline --version/--help` 只读检查、沙盒/额度探测。两实验不并发（额度与沙盒都会互相污染）。
-5) **P1 试点**：固定子集 10 题（seed=42）× 两臂各 1 轮，核对耗时/成本/压缩事件统计脚本可用 → 再开全量。
-6) **P2 全量**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION`），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。
-7) **P3 报告（用户点名要中文 HTML）**：`reports/report_zhulong_compaction_basic_vs_agentic_zh.html`——单文件自包含、内联 CSS、**0 外链**；8 节：摘要（三问结论）/机制口径/主结果（6 轮表+逐题配对）/亚组（是否触发压缩×轨迹长度×domain）/失败分类/成本-收益/摘要质量/结论与默认策略建议 + 附录。**主终点唯一 = 3 轮 Pass@1 均值（ITT）**；亚组只作次要终点，须报效应量+CI+n。
+5) **P1 试点（v2）**：固定 8 题（seed=42，取 Top-40 清单前 8）× 两臂各 1 轮；量三个数：压缩率、Pass@1、单题耗时。**调档规则**：压缩率 <60% → `maxInputTokens` 32K→24K→16K（每次只动这一个数）；压缩率 >95% 且 Pass@1 <20% → 回调 48K；两臂压缩率差 >15pp → 先查 strategy 是否真生效（basic`kind=compaction` / agentic`kind=compaction_summary`）。锁定最终档位后再开全量。
+6) **P2 主实验（v2）**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION` + 独立 `--data-dir`），**40 题 × 2 臂 × 3 轮**（约 0.94h/轮，纯跑 ~5.6h），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。可选：自然 128K regime 用同清单前 20 题 × 2 臂 × 1 轮做描述性验证（+~0.9h，不设判据）。
+7) **P3 报告（用户点名要中文 HTML）**：`reports/report_zhulong_compaction_basic_vs_agentic_zh.html`——单文件自包含、内联 CSS、**0 外链**；8 节：摘要（三问结论）/机制口径/主结果（40 题 × 6 轮表 + 逐题配对 + regime 声明 tight-context）/亚组（是否触发压缩×轨迹长度×domain）/失败分类/成本-收益/摘要质量/结论与默认策略建议 + 附录。**主终点唯一 = 3 轮 Pass@1 均值（ITT）**；亚组只作次要终点，须报效应量+CI+n。
 8) **预注册纪律**：跑前不改判据；所有轮次全入表、不剔除；单轮不下结论；差异 <3pp 就写「证据不足」，不许包装成增益。
 9) **红线**：不 kill 编排器/loop；不与 designflow 并发抢沙盒；不改 benchmark/评分器；不删旧结果与 trace；不改别线文件。
 10) **心跳**：每轮写清 臂/轮次/PID/etime/log 大小/batch/已评题数；实验跑中 WAITING=1；6 轮完成 + 报告刷新 + commit/push 后写 done_all + WAITING=1。
