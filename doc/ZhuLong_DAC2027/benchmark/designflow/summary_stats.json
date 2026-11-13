@@ -16,7 +16,7 @@
   "hits_total": 38082,
   "hosts": 696,
   "mc10": 2517,
-  "mc100": 1244,
+  "mc100": 1130,
   "mc1000": 8,
   "mc15": 2684,
   "mc20": 2519,
@@ -197,7 +197,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-13 11:37",
+  "updated_at": "2026-11-13 12:10",
   "users_mc10": 444,
   "users_mc100": 182,
   "users_mc30": 401,
