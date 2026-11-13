@@ -8397,6 +8397,36 @@ Execution failure breakdown (53 tasks with exec errors out of 92 code_gen_fail):
 step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both code generation success rate and Pass@1. This is consistent with SFT convergence -- more training steps -> better tool-calling protocol adherence + API knowledge.
 
 **Caveat**: n=1 only. 5-run mean+-std needed for statistical significance (runs 2-5 in progress via autonomous pipeline).
+### §L4-zhulong (2026-11-13 wake405) Run 3 Codegen Progress — 127/158 resolved, NO stuck worker
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 3 Progress (as of wake405 ~12:44 CST)
+
+- **Batch**: `~/eda_code_eval/2026_1113_101852/` (label step105, SFT v39 final ckpt, GPU6 :8096)
+- **Stats counters** (`stats/{success,failure,timeout}`): success=119, failure=6, timeout=2 → **127/158 resolved (80.4%)**
+- **Code output**: 92 `*.py` files produced under `code/<task>/pyAether_code/` (depth-3; 27 success sessions wrote no `.py` — same "session-success ≠ code-delivered" pattern as runs 1-2)
+- **Remaining**: 12 in-flight + 19 queued = 31/158 tasks left for codegen
+- **Workers**: 8 cline workers all healthy, max etime 2376s < 2500s timeout → **NO stuck worker this wake** (contrast wake402/403/404 which each killed 1-2 stuck workers)
+- **Progress since wake404**: +7 success (112→119); +7 resolved (120→127)
+
+#### Pipeline Autonomy Status (all 3 layers alive, verified 12:44)
+
+1. **autocomplete daemon** (PID 1122770, etimes≈21566s ~6.0h): waiting on step105 runs, auto-chains runs 3→4→5
+2. **eval chain daemon** (PID 1161064, etimes≈15892s ~4.4h): will chain step60 runs2-5 → base runs1-5 → final 5-run analysis
+3. **run3 5run_eval** (PID 1217799, etimes≈8740s ~2.4h) → `run_cline_script.sh -p 8 -n` (PID 1217807)
+4. **Serves**: 8098 (base, GPU4) + 8097 (SFT step60, GPU5) + 8096 (SFT step105-final, GPU6, 97% util) all UP (`/v1/models` verified)
+5. **Tunnel**: `ssh -p3333` (PID 618469, TUNNEL_OK) + reverse 18096 (PID 1008898) + reverse 18098 (PID 1278889)
+
+#### GPU7 anomaly resolved (NOT posttrain)
+
+- GPU7 shows 24.7GB / 73% util from PID 1312207 = `vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py` (vision line R9 wave-RL, migrated to .17 on 2026-11-13). **Not a posttrain process — not touched** (boundary rule). MEMORY "GPU7 freed" (wake331) referred to posttrain's placeholder serve; vision reclaimed it afterward.
+
+#### Next
+
+- run3 codegen complete (~31 tasks, ~2-3h at 8 workers) → autocomplete daemon auto-runs sandbox `run_eval.py` → runs 4, 5 → eval_chain runs step60 runs2-5 → base runs1-5 → final `5run_analysis.py` (mean±std, n=5). No manual intervention needed unless a worker sticks past 2500s.
+
+
 
 ### §L4-designflow (2026-11-13 wake402) Base-Model Baseline on FIXED Harness — Confirms 0% + SFT Regression Signal
 
