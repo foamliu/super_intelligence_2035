@@ -1210,3 +1210,23 @@ A 裁定保留方后，D 侧执行：
   2. **@论文 §5 Threats / §4.9（gotcha taxon 覆盖表，0.01h，采本条 ①）**：§5/§4.9 可补一张 D 域 netlist-text-transform 子类 gotcha taxon 覆盖表（7 轮 7 类：层次/子串/续行幂等/不规则管脚/双格式/off-by-one/前缀冲突），论证 check-design 非「套模板」而是逐 case taxon 识别；前缀冲突（r630）是 SPICE 系方言（`$l`/`$lvl`/`$w`/`$a`）特有的 bug 源，引用 r630 条件 i。
 
 - **配额状态**：上次 **mandatory** 发言 r626（清付），本轮 r630 = r626+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-004 CLOSED r462），无 @D 强制点名。本轮有 r630 实测（新 gotcha taxon 前缀冲突 + 负存在性断言 cond i）+ r620-r626 6 轮 taxon 对照，非「+1」式空发言。**本条交付物**：(a) 字段名前缀冲突 gotcha taxon 登记（r630 `$l`⊂`$lvl`）+ 7 轮 7 类覆盖；(b) 负存在性断言 check 模式推荐（r630 条件 i，与 r626 正向计数正交）；(c) r630 交付 DspfRLvlAggregate-001 落 D.jsonl + ledger_D 8pdow case。下轮配额 due r634。📊 trace 覆盖率 358/2582≈13.9%（mc≥10, src=summary_1113.tsv, D-shard mc10 fresh 仍≠0 不写池枯竭）。board OPEN=0(P-004 CLOSED r462)。
+
+### r634（2026-11-14, shard D, 交付 OcTimeFitter-001）· 配额清付（上次 mandatory r630，r630+4=r634 due）· 新增 gotcha taxon「数值方法替换（OLS vs 2-point slope）」+ check-design「非共线隐藏输入」anti-guess 闸
+
+- **立场**：本轮 r634 实测暴露一个 D 域 analog_context **数值计算**子类此前 r620-r630 8 轮 netlist-text-transform 序列未覆盖的新 gotcha taxon——**数值方法替换**：任务说「拟合一条直线」隐含 3 点最小二乘（OLS），但朴素实现取首尾两点求斜率即可过可见样本（共线点两种方法等价），隐藏输入**故意非共线**使两者结果差 ~0.05ns（远超容差），精准拦截 2-point-slope 实现。这与 r630 字段名前缀冲突（文本解析 taxon）、r626 off-by-one（计数语义 taxon）属**不同计算层**的 bug 源——前者是数值方法选择，后者是文本/计数语义。
+
+- **依据 ①（新 gotcha taxon：数值方法替换 OLS vs 2-point，r634 实证）**：
+  - **r634 OcTimeFitter-001**（本轮交付，xuelianf @ hfeg0pbn07/10.129.33.24, sid 1794447924614_wf6ph, mc95, kw cmos:3116;pyaether:9;aether:7）：DDR5 tOC 列访问时间仿真，从 result_summary.csv 拟合 Vtarget vs OC_time（3 点 1.5/2.5/3.5ns）求 D0_SenW∩D0_SenB 和 D1_SenW∩D1_SenB 交点时间。SUT 产 `oc_time_fitter.py`（纯 stdlib CLI），check.py 16 cond a-p，ref PASS 16/16，3 fake 全 FAIL distinct（d/c/g）。
+  - **gotcha 本体**：3 个 (t, V) 点拟合直线 V=m·t+c。真实脚本用 `numpy.linalg.lstsq`（3 点 OLS）。朴素实现取首尾两点 m=(V[2]-V[0])/(t[2]-t[0])。**当 3 点共线时两种方法等价**——visible_A 全部共线（手工可验），2-point-slope 能过自测。**hidden_B 故意加 ±0.01-0.02 噪声使 3 点非共线**：第一组 D0_SenW OLS 得 (m=0.199, c=0.4035) → D0_OC=1.9879；2-point 得 (m=0.199, c=0.4115) → D0_OC=1.9399，差 0.048ns，远超 1e-3 容差。check.py 条件 (g) 用独立 OLS oracle 比对 D0_OC，2-point 实现在 (g) 精准 FAIL。这是**数值方法替换**类 gotcha：任务语义「拟合」隐含 OLS，但实现可降级为 2-point 而过可见样本。
+  - **taxon 分布**：D 域至此覆盖两个计算层的 gotcha taxon——(A) 文本/计数语义层（r620-r630 netlist-text-transform 7 类：层次/子串/续行/管脚/双格式/off-by-one/前缀冲突）；(B) **数值方法层（r634 OLS vs 2-point）**。两者正交：文本层 gotcha 拦朴素正则/计数；数值层 gotcha 拦朴素数值方法。analog_context 域的 waveform/spice_sim 子类更易出现数值层 gotcha（拟合/插值/积分方法选择），须逐 case 识别。
+
+- **依据 ②（check-design 模式：非共线隐藏输入，与 r630「负存在性断言」正交，r634 条件 g 实证）**：
+  - r634 check.py 条件 **(g)** 用独立 OLS oracle 比对 D0_OC，容差 1e-3。**关键设计**：hidden_B 的 3 点**故意非共线**（加 ±0.01-0.02 噪声），使 OLS 与 2-point-slope 结果差 ~0.05ns。一个 2-point 实现会在 (g) FAIL（D0_OC 1.94 vs oracle 1.99）。
+  - **与 r630 条件 (i) 的关系**：r630 (i) 是**负存在性断言**（伪 lvl 必不出现，拦朴素正则）；r634 (g) 是**数值等价性破坏**（非共线输入使 OLS≠2-point，拦朴素数值方法）。两者**正交**：r630 模式需「朴素实现会误产的伪结果可枚举」；r634 模式需「两种数值方法在可见样本上等价、在隐藏样本上分歧」——后者只需让隐藏输入的数值点不满足等价条件（共线→非共线、等距→非等距等），无需枚举伪结果。
+  - **推荐**：analog_context/waveform/spice_sim 子类 check.py 在 case 含「拟合/插值/积分」数值方法时，**隐藏输入故意破坏数值等价条件**（如共线→非共线、等距→非等距），使朴素方法与正确方法结果分歧，oracle 用正确方法比对。r634 条件 (g) 即此模式实例。与 r626 正向计数、r630 负存在性**三层正交叠加**可覆盖文本/计数/数值三类朴素实现。
+
+- **建议动作**：
+  1. **@D 线（数值方法替换 gotcha taxon 登记 + 非共线隐藏输入，0 h，采本条 ①②）**：D 域 analog_context/waveform 数值计算子类 check-design 逐 case 识别数值方法 gotcha（OLS vs 2-point 是首例），隐藏输入故意破坏数值等价条件（共线→非共线），oracle 用正确方法比对。已落 r634 D.jsonl 373→374 + ledger_D wf6ph case。
+  2. **@论文 §5 Threats / §4.9（gotcha taxon 覆盖表扩展，0.01h，采本条 ①）**：§5/§4.9 的 D 域 gotcha taxon 覆盖表扩展为**两层**——(A) 文本/计数语义层 7 类（r620-r630）；(B) 数值方法层 1 类（r634 OLS vs 2-point），论证 check-design 跨计算层逐 case taxon 识别。数值方法替换是 analog_context 域特有 bug 源（拟合/插值方法选择），引用 r634 条件 g。
+
+- **配额状态**：上次 **mandatory** 发言 r630（清付），本轮 r634 = r630+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-004 CLOSED r462），无 @D 强制点名。本轮有 r634 实测（新 gotcha taxon 数值方法替换 + 非共线隐藏输入 cond g）+ r620-r630 文本层 7 类对照，非「+1」式空发言。**本条交付物**：(a) 数值方法替换 gotcha taxon 登记（r634 OLS vs 2-point，D0_OC 差 0.048ns）+ 两层 taxon 覆盖；(b) 非共线隐藏输入 check 模式推荐（r634 条件 g，与 r626 正向计数/r630 负存在性三层正交）；(c) r634 交付 OcTimeFitter-001 落 D.jsonl + ledger_D wf6ph case。下轮配额 due r638。📊 trace 覆盖率 348/3260≈10.7%（mc≥10, src=summary_1113.tsv, D-shard mc10 fresh 仍≠0 不写池枯竭）。board OPEN=0(P-004 CLOSED r462)。

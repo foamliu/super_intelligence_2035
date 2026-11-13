@@ -2558,3 +2558,368 @@ cd "$TOOLS/llama.cpp"
 3. 更新 `zhulong_results.md` / `MEMORY_ZHULONG.md` 的对应行；commit 前缀 `zhulong paper-review:`。
 > 允许为验证关键点打断正在跑的 5-run（先落盘 + 记 MEMORY + 事后 regrade 补记）。**不得编造任何数字或文献**；凡"待补"必须写明怎么补。
 
+
+
+--- 归档块 · 2026-11-14 05:04（体积维护·从 ZHULONG_TASK.md 原文搬入·不改写）---
+
+### 📦 归档 · 2026-11-12 21:2x 压缩机制消融（basic vs agentic）·✅ 已交付 commit e09c7e238
+
+[用户令 · 2026-11-12 21:2x · 最高优先 · 新实验（压缩机制消融）]
+用户原话："我想用 PyAether 158 评测 对比一下 cline 两个 压缩机制：basic vs. agentic 的效果。用中文HTML写个计划书。"
+**排期/状态（2026-11-12 21:3x 更新）**：`[队列→执行] 压缩机制消融` —— **前置门禁已满足**（轴 B 15/15 收口，B_en_r1 重跑 78.5% 已落盘 idx31，报告/audit/独立报告已刷新，commit `a909fe482` 已推送）。**本轮唤醒直接进入 P0，不再等待、不再写 QUEUED**。若发现前置有缺项（例如 audit 标注未落盘），先补齐再起跑并如实写心跳。
+
+
+
+执行口径（严格按序）：
+1) **计划书已交付（只读，按它执行）**：`doc/ZhuLong_DAC2027/reports/plan_zhulong_compaction_basic_vs_agentic_zh.html`（v2，10 节 + §11 效率修订 + 3 附录，0 外链）。**规模以 §11 为准**（不要按 §3/§5/§9 的旧 158 题 × 6 轮执行）；先通读 §1 机制 / §11 v2 / §4 指标 / §6 分析 / §10 决策规则，再起跑。
+2) **实验本质（v2）**：同一基座、同一 cline 版本、同一协议（`-p 8 -n`、`CLINE_THINKING=medium`、`LANG_HINT` 空），只切换 `cline --compaction basic` vs `--compaction agentic`；**强制压缩 regime**（`maxInputTokens` 128K→32K，pilot 校准到压缩率 ≥70%）+ **40 题长轨迹子集**（`run/compaction_subset_40.txt`，从 158 题历史 trace 按上下文峰值/工具调用数取 Top-40，两臂同一清单）；每臂 3 轮（ABBA：B→A→A→B→B→A），共 6 轮。
+3) **P0 预检（必须先做，未过不许起跑）**：
+   a. `cline --version` + `cline --help | grep -- --compaction` —— 现网 3.0.51 若**不支持该 flag**，升级到支持版本（4.x，记录版本号），两臂同版本，并加做 10 题校准；
+   b. 检查 `EDA-Eval-Framework/scripts/run_cline_script.sh` 是否把 `CLINE_COMPACTION` 透传成 `--compaction`；无则按计划书附录 A 打 **3 行补丁**（无 flag 时保持原行为）；
+   c. 两臂各 1 题 smoke：确认 `*.compaction.json` 出现且 `metadata.kind` 分别为 `compaction`（basic）/ `compaction_summary`（agentic）；
+   d. 沙盒端口 8664/8665/8653/8669 全空闲 + quota probe 通过 + `pgrep -f '^bash scripts/run_cline_script'` 无输出。
+   e. **调压缩事件率（v2 关键，最易漏）**：在该 `--data-dir` 的 `settings/models.json` 里把本 provider/model 的 `maxInputTokens` 从 `128000` 改为 **`32000`**（`contextWindow` 可保留 1M；生效预算 = min(两者) ⇒ 触发点 ≈ 0.9×32K ≈ 28.8K）。两臂用**各自独立** `--data-dir`，除 `compactionStrategy`/`--compaction` 外配置逐字节一致；改档后必须先用 pilot 确认压缩率 ≥70%，并把最终值写进每轮元数据。
+
+4) **排期门禁（已满足，记录在案）**：门禁原文 = 轴 B 15/15 全部收口（含 B_en_r1 基座对齐重跑落盘 idx31 + trace 归档）+ 主报告/轴 B 独立报告/audit §5.3 刷新 + commit/push。**现状（2026-11-12 21:0x）**：B_en_r1 = 124/158 = **78.5%**（batch 2026_1112_161042，trace 332M/158 子目录），B_en 三轮均值 81.0±2.9%，轴 B 15/15 = dsv4-pro-cloud 恒定；报告/audit/独立报告已刷新并提交（`a909fe482`）。⇒ **门禁判定 PASS，本实验即刻可起跑**。仍不允许与 designflow 或其他评测并发（额度/沙盒互斥）。
+5) **P1 试点（v2）**：固定 8 题（seed=42，取 Top-40 清单前 8）× 两臂各 1 轮；量三个数：压缩率、Pass@1、单题耗时。**调档规则**：压缩率 <60% → `maxInputTokens` 32K→24K→16K（每次只动这一个数）；压缩率 >95% 且 Pass@1 <20% → 回调 48K；两臂压缩率差 >15pp → 先查 strategy 是否真生效（basic`kind=compaction` / agentic`kind=compaction_summary`）。锁定最终档位后再开全量。
+6) **P2 主实验（默认方案，可按 item 14 的自行判断替换）**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION` + 独立 `--data-dir`），**默认 40 题 × 2 臂 × 3 轮**（若你按 item 14 选了别的设计，以你的 decision 为准；约 0.94h/轮，纯跑 ~5.6h），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。可选：自然 128K regime 用同清单前 20 题 × 2 臂 × 1 轮做描述性验证（+~0.9h，不设判据）。
+7) **P3 报告（用户点名要中文 HTML）**：`reports/report_zhulong_compaction_basic_vs_agentic_zh.html`——单文件自包含、内联 CSS、**0 外链**；8 节：摘要（三问结论）/机制口径/主结果（40 题 × 6 轮表 + 逐题配对 + regime 声明 tight-context）/亚组（是否触发压缩×轨迹长度×domain）/失败分类/成本-收益/摘要质量/结论与默认策略建议 + 附录。**主终点唯一 = 3 轮 Pass@1 均值（ITT）**；亚组只作次要终点，须报效应量+CI+n。
+8) **预注册纪律**：跑前不改判据；所有轮次全入表、不剔除；单轮不下结论；差异 <3pp 就写「证据不足」，不许包装成增益。
+9) **红线**：不 kill 编排器/loop；不与 designflow 并发抢沙盒；不改 benchmark/评分器；不删旧结果与 trace；不改别线文件。
+10) **心跳**：每轮写清 臂/轮次/PID/etime/log 大小/batch/已评题数；实验跑中 WAITING=1；6 轮完成 + 报告刷新 + commit/push 后写 done_all + WAITING=1。
+11) **P0 可复制清单（按顺序执行，逐条留证到 /tmp/COMP_p0_*.log）**：
+
+```bash
+# (1) 版本与 flag（无输出 ⇒ 升级 4.x，记录版本）
+cline --version | tee /tmp/COMP_p0_version.log
+cline --help | grep -n -- '--compaction' | tee -a /tmp/COMP_p0_version.log
+
+# (2) 两臂独立 data-dir + maxInputTokens=32000（除策略外逐字节一致）
+BASE=~/.cline/data
+for arm in basic agentic; do
+  D=/nasdata/app.e0031982/compaction_ablation/$arm
+  rm -rf "$D"; mkdir -p "$D"; cp -a "$BASE/settings" "$D/settings"
+  python3 - "$D/settings/models.json" <<'PY'
+import json,sys
+p=sys.argv[1]; d=json.load(open(p))
+for prov in d.get('providers',{}).values():
+    for m in prov.get('models',{}).values():
+        m['maxInputTokens']=32000
+json.dump(d,open(p,'w'),ensure_ascii=False,indent=2)
+PY
+  python3 - "$D/settings/global-settings.json" "$arm" <<'PY'
+import json,sys
+p,arm=sys.argv[1],sys.argv[2]; d=json.load(open(p))
+d['compactionEnabled']=True; d['compactionStrategy']=arm
+json.dump(d,open(p,'w'),ensure_ascii=False,indent=2)
+PY
+  sha256sum "$D/settings/models.json" "$D/settings/global-settings.json" | tee -a /tmp/COMP_p0_cfg.log
+done
+
+# (3) 40 题子集（固定清单入库，两臂同一清单；脚本不存在则本轮先写，约 60 行：读 trace 排名 + 输出清单）
+python3 run/build_compaction_subset.py \
+  --traces /nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang \
+  --tasks  benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl \
+  --top 40 --seed 42 --out run/compaction_subset_40.txt
+wc -l run/compaction_subset_40.txt   # 必须 40
+
+# (4) 两臂各 1 题 smoke（用现有 harness 单题入口；或把子集截 1 题）
+#     判据：session 目录出现 *.compaction.json，且 metadata.kind
+#     basic ⇒ "compaction"；agentic ⇒ "compaction_summary"
+```
+> 若升级后 `--compaction` 仍不可用：改用 data-dir 内 `global-settings.json.compactionStrategy` 控制，并**必须**用 `compaction.json.metadata.kind` 验证生效；不得因此跳过验证。
+> 若 1 题 smoke 未触发压缩（正常）：以 pilot 8 题为准判断触发率，不要因单题未触发就改档。
+
+12) **P1 只做两件事**：8 题 × 2 臂，①确认触发（32K 路径：每臂 ≥70%；fallback 路径：15 题全部触发）②确认 `metadata.kind` 正确。结果落 `run/compaction_pilot.json`；**不再做 32K→24K→16K 的多档调档**（那个数不生效就没档可调，生效就不用调）。
+
+13) **收尾**：`run/compaction_p0_decision.md`（你的调查结论）+ `run/compaction_pilot.json` + `run/run_compaction_ablation.sh` + `run/ablation_compaction_results.json` + `run/cost_C_*_r*.json` + 报告，一并 `git add`（只加本线文件）→ commit → push；MEMORY 写一行总结（选定设计 / Δ / p / 一句话结论）。
+
+14) **实现路径由你决定（用户令 2026-11-12：不要替 agent 做主）**
+   目标只有一个：在**两臂相同预算**下让压缩真实发生（或证明做不到），从而回答 basic vs agentic 哪个好。
+   **你要自己查、自己定**：
+   a. 读 `EDA-Eval-Framework/scripts/run_cline_script.sh`：它怎么起 cline、有没有把 data-dir/env 传下去；
+   b. 读/实测 cline（现网 3.0.51）如何解析 `maxInputTokens` / `contextWindow`（`<data-dir>/settings/models.json`、`global-settings.json`）；P0d 的「不生效」到底是因为版本不读，还是因为配置没送到——**用 1 题最小实验给出证据**（`compaction.json.source_tokens` 与 `maxInputTokens` 的关系）；
+   c. 据此**自己选最简可行设计**并执行（能控预算 → 固定预算 + 两臂；控不了 → 换成超长任务做部署对比，**不要为了配置去升级/改源码**）；
+   d. 先写 `run/compaction_p0_decision.md`（结论 + 证据 + 选定设计 + 预计时长），再开跑；若判断另一条路更快，直接走另一条，不必等确认。
+15) **只约束这些，不约束实现细节**：同基座/同 cline 版本/同协议（`-p 8 -n`、thinking=medium、同一任务清单）；两臂**只差 compaction**；每臂 ≥3 轮；报告必须给 Pass@1（±std + 配对检验）+ tok/题 + 墙钟 + **每臂触发率与触发 token 中位数** + 失败分类；结论明确写「选 basic / 选 agentic / 证据不足」。**计划书里的 32K、补丁位置、fallback 阶梯都只是参考，不是命令。**
+
+
+
+
+
+### 📦 归档 · 2026-11-12 15:4x B_en_r1 基座对齐重跑·✅ done_all commit a909fe482
+
+[用户令 · 2026-11-12 15:4x · 最高优先 · 覆盖 done_all 等待状态 · 基座对齐补救]
+用户原话："既然你确定仅 B_en_r1 = glm-5.2，其余 14 轮（含 B_zh_r3 重跑）= deepseek-v4-pro-cloud，那就安排 zhulong agent 重新测试 B_en_r1；测完后刷新中文 HTML 报告，表格中加上 token 列。"
+
+执行口径（严格按序，不许改序）：
+1) **重跑 B_en_r1**：用与 B_en_r2/r3 完全相同的配置起新 batch 重跑 —— `thinking=medium`、`LANG_HINT="Think in English."`、**默认基座（deepseek-v4-pro-fp4/cloud，不强制 glm-5.2）**、`-p 8 -n`、158 题。目的：让轴 B 全部 15 轮基座一致（消除 wake#865 发现的基座违规），使 B 轴从「降级描述性」升级为「同基座可横比」。
+2) **启动方式**（参考 B_zh_r3 重跑 PID 4037472 的成功模式）：
+   ```bash
+   cd /nasdata/app.e0031982/code/eda_fastmcp
+   export CLI_AGENT=cline PARALLEL=8 CLINE_THINKING=medium LANG_HINT="Think in English."
+   export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+   export EVAL_ROOT_DIR_OVERRIDE=/nasdata/app.e0031982/code/eda_code_eval
+   export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+   export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+   export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
+   unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+   export PATH="/home/app.e0031982/.local/node-20/bin:$PATH"
+   setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_B_en_r1_rerun.log 2>&1' < /dev/null &
+   ```
+   ⚠️ 先 `pgrep -f '^bash scripts/run_cline_script'` 确认无其他评测在跑再起；沙盒端口 8664/8665/8653/8669 须全空闲（designflow 线不抢沙盒）。
+3) **旧 B_en_r1 留档**（idx 15, pass=75.3%, batch 2026_1109_084446, glm-5.2）：
+   - 在 `run/ablation_think_lang_results.json` 的 idx 15 summary 里加 `superseded_note` 字段，内容：`"2026-11-12 15:4x 令·基座对齐重跑·旧值 75.3% (glm-5.2) 留档不删·新 r1 完成后追加"`（参考 B_zh_r3 旧版 idx 20 的处理）。
+   - `run/cost_B_en_r1.json` 改名 `run/cost_B_en_r1_old_glm52.json` 留档；新 r1 的 cost 写进新的 `run/cost_B_en_r1.json`。
+4) **新 r1 落盘**（gen + score + cost 全完成后）：
+   - 新 summary 追加到 `ablation_think_lang_results.json` 末尾（新 entry，tag 仍 `B_en_r1`，batch 为新 batch id，含完整 pass_rate_pct/passed/total/tokens/converged/timeout/gen_fail/success 字段）。
+   - trace 存档到 `/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/<new_batch>/`（旧 batch 目录保留不删）。
+5) **刷新报告**（新 r1 落盘后必做）：
+   ```bash
+   cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+   python3 gen_report_zhulong_ablation_think_lang_zh.py
+   ```
+   - 主报告 `reports/report_zhulong_ablation_thinking_language_zh.html` 已含 token 列（prompt/completion/reasoning/total tok + tok/题），刷新后 B_en 行自动用新 r1 数据。
+   - **基座违规 banner 需改写**：B_en_r1 重跑后轴 B 全 15 轮基座一致（dsv4-pro-fp4），原 banner「仅 B_en_r1=glm-5.2，其余 14 轮=dsv4-pro」不再成立 → 改为「轴 B 15/15 轮 = dsv4-pro-fp4 ✅ 恒定合规（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）」；§⑦ 降级结论同步升级（B 轴可作同基座横比，但与基线 glm-5.2 的 Δpp 仍不可直接归因为语言效应，因基座不同）。
+   - audit 报告 `reports/report_zhulong_lang_switch_audit_zh.html` §5.3 的「修正建议」同步标注「B_en_r1 已重跑对齐，剩余 14 轮本就同基座 → 基座恒定条件已满足；基础 prompt 中性化 + 语言切换验证仍需做」。
+6) **B 轴独立报告** `reports/report_zhulong_ablation_axisB_language_zh.html`（11-12 15:34 生成）：
+   - 由编排 agent 重新生成（用与主报告相同的 results JSON 数据源）；如无现成生成器，手动更新该 HTML 的 §2.1/§2.2 表格：① B_en r1 行替换为新 pass 率 + 新 batch + 新 tokens；② §2.1/§2.2 主表**每行加 token 列**（prompt/completion/reasoning/total tok，与主报告口径一致）；③ 顶部红色「基座违规」banner 改写为「基座已对齐」绿色 banner；④ §七 降级结论同步升级。
+7) **心跳**：每轮写明 B_en_r1 重跑状态（PID / etime / log 大小 / batch / step）；WAITING=1（重跑跑中）；新 r1 落盘 + 报告刷新 + commit/push 完成后写 done_all + WAITING=1 等下一条指令。
+8) **红线**：不 kill 编排器/loop；不碰 trace 原文（旧 B_en_r1 batch 目录保留）；不占沙盒（designflow 线不抢）；不改别线；不 clean/reset/stash 别线未提交改动（designflow 线 dirty tree 非本线）。
+
+
+### 📦 归档 · 2026-11-11 22:4x RU+regrade+r3重跑 + 11-11 lang-audit·✅ 已交付
+
+[用户令 · 2026-11-11 22:4x · 已交付 · 降级为历史参照]
+用户原话："抽样的结果只做参考，跑完再说。不许因为抽检思维链漂回英文而停止评测。坚决把评测执行到底。RU之后，regrade zh r2.再之后重跑 zh r3"
+
+执行口径（严格按顺序，不许改序）：
+1) 评测不许停：B_ru_r1/r2/r3 必须全部跑完（30/30）。抽检报告只是参考；不得因 en/es/fr/ru 思维链漂回英文而 kill 编排器、暂停轮次、提前收口或改编排器；WAITING 不得因此置 1。
+2) 现有编排器 PID 3675162 继续跑；B_ru 三轮完成前不做任何会打断评测的动作（不抢沙盒、不改 trace、不重跑其他臂）。
+3) RU 三轮全部结束后，按此顺序执行：
+   - 先 regrade B_zh_r2：用已存 completed_code_generation_2026_1110_073833.jsonl 原地补分；补分后原位替换 run/ablation_think_lang_results.json 的 B_zh_r2（旧 pass=null）；原 batch/trace/日志保留不删。
+   - 再重跑 B_zh_r3：起新 batch；旧 r3（78.5%）标 SUPERSEDED 留档，不删；新 r3 完成后更新 results JSON 与 cost 字段。
+4) 重跑 r3 的配置：先按与 B_zh_r1/r3 相同的现有配置跑（不改 prompt、不改基座），保证可比；"基础 prompt 强制中文 / 基座不恒定"的修法另开令，不许在本次重跑里顺手改口径。
+5) 报告：30 轮 + regrade + 新 r3 全部落盘后，才按 report_zhulong_lang_switch_audit_zh.html §5.3 做降级改写；当前不动报告、不新增 divergent 产物。
+6) 每轮心跳必须写明：当前轮次/30、编排器 PID、B_ru 进度、B_zh_r2 regrade 状态、B_zh_r3 重跑状态；WAITING 不得因抽检结论置 1。
+7) 红线：不 kill 编排器/worker/gap-grabber（除明确的 regrade/重启流程）；不碰 trace 原文；不占沙盒；不改别线。
+
+
+> 🔍 **用户令 · 2026-11-11（最高优先 · 评测期间做）：抽查 B 轴 trace，验证思维链真的换了语言**
+>
+> **用户原话**：「让zhulong agent在评测过程中看看 思维链语言消融（B）的现有trace，抽查一下，看看思维链是否遵循prompt改成了指定语言。」
+>
+> ### 0. 为什么现在必须做（现有证据链是弱的）
+>
+> 本任务书本来就写着两条要求，但**从未真正执行**：
+> - §轴 B L98：「**抽 3~5 条 trace 核对思维链真的换了语言**。未生效 ⇒ 停下修注入」
+> - §4 P3 L115：「**每语言先抽 3 条 trace 核对语言真切换**」
+>
+> 而 MEMORY 里一路写的「lang hint 生效 ✅」，证据只有：
+> - ❌ 「log 里看到一句 `Piensa en español`」——**这只能证明 prompt 注入了，不能证明思维链是法语**
+> - ❌ 「1791 行重音字符」——**数量不能证明是法语思考，可能是复述 prompt**
+>
+> ⇒ **B 轴（en/zh/es/fr/ru 五语言）的全部结论目前建立在这个弱证据上。若思维链其实没换语言，B 轴 15 轮的结论全部作废。**
+>
+> ### 1. 抽查对象：直接读已存档的 trace
+>
+> 路径（已由 §3 Trace 保留机制落盘）：
+> ```
+> /nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/<batch>/
+> ```
+> 已有 TAG（截至 11-11 10:35）：`B_es_r1` `B_es_r2` `B_es_r3` `B_fr_r1`（跑中）· `B_zh_r1` `B_zh_r3`（`B_zh_r2` 待 regrade）· `A_*` 系列
+> 每轮 trace 应 ≥158 个（与题一一对应）；cline session 在 `~/.cline/data/**`
+>
+> 读之前先在 .75 上 `ls -dt .../trace_ablation_think_lang/*/` 确认真实目录名与体量。
+>
+> ### 2. 抽查方法（**每语言至少 5 条**，不足则如实记）
+>
+> 对 **es / fr / zh / en** 四个已完成的语言（ru 若已跑也加上）：
+>
+> 1. **从 trace 里抽出模型的 reasoning / thinking 段**（不是 prompt、不是最终答案）。
+>    - 若 trace 是 JSON：找 `reasoning_content` / `thinking` / `thought` 字段
+>    - 若是纯文本：定位 thinking 块的起止标记
+> 2. **逐条判定「思维链主体语言」**，四分类（不许只写"是/否"）：
+>    - `TARGET`：**主体**是目标语言（如 es 轮的思维链主体为西班牙语）
+>    - `ENGLISH`：主体是英语（**未遵循**，即使个别词是目标语言）
+>    - `MIXED`：两种语言实质混用（记大致比例，如「70% es / 30% en」）
+>    - `COPIED_PROMPT`：只是在复述/翻译 prompt 那句语言指令，其余思维链仍是英语
+> 3. **同时核一件事**：答案/代码部分是否仍是英语（预期：**是**，因为只要求思维链换语言；若答案也变成目标语言，说明注入影响了输出，需单独记）。
+>
+> ### 3. 判定阈值（写进报告）
+>
+> - **语言真切换**：≥5 条里 **≥4 条**为 `TARGET` 或 `MIXED`（且 MIXED 必须目标语言占多数）
+> - **部分生效**：≥5 条里 2–3 条 `TARGET`/`MIXED`
+> - **未生效**：≥5 条里 ≥4 条为 `ENGLISH` 或 `COPIED_PROMPT`
+> - ≥5 条里出现 `COPIED_PROMPT` ⇒ **必须在报告里点名**（这正是"以为生效其实没生效"的典型）
+>
+> ### 4. 交付
+>
+> **产出**：`reports/report_zhulong_lang_switch_audit_zh.html`（中文 · 单文件自包含 · 内联 CSS · 零外链）
+>
+> 必含 5 节：
+> ① **结论一句话**（每个语言：真切换 / 部分生效 / 未生效）
+> ② **抽查表**：`语言 | TAG | 样本数 | TARGET | MIXED | ENGLISH | COPIED_PROMPT | 判定 | trace 文件路径`
+> ③ **原文片段**：每语言贴 **≥2 段思维链原文**（截 80–150 字，标注来自哪个 trace 文件），让人能自己判断
+> ④ **答案部分核查**：答案/代码是否仍英语（避免把"输出变外语"误当"思维链变外语"）
+> ⑤ **影响评估**：若某语言判为「未生效」或「部分生效」，**明确写出 B 轴对应轮次的结论是否要作废**
+>
+> ### 5. 边界
+>
+> - 🚫 **不打断在跑的评测**（`B_fr_r1` 跑中）：只读已存档 trace，**不许 kill / 不许改编排器 / 不许抢沙盒**
+> - 🚫 **不改 trace 原文**，只读
+> - 🚫 不改论文、不改其他线产物
+> - 抽查用只读命令（`ls` / `cat` / `head` / `grep` / `python3` 读文件），**不许写 /nasdata 下的 trace 目录**
+> - 若某语言 trace 已不存在（被清）⇒ 记 `BLOCKED(trace_missing)`，**不许凭 MEMORY 里的旧描述当作已验证**
+>
+> ### 6. 与现有最高优先令的关系
+>
+> 本条**不取代**「轮间空档补 `B_zh_r2` regrade」令；两者并行：
+> - **regrade 优先**（有空档就跑）
+> - **本文抽查**在等空档的间隙做（只读，不占沙盒，可与 eval 并发）
+
+### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
+
+1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
+   `git add <本线文件>`（**不用 `-A`**，共享副本上别把别线在途改动卷进提交）→ `commit + push` →
+   `git status -sb` 应干净、`git log -1` 时间戳 = 本轮。
+2. **体积**：本任务书与 `MEMORY` 各自 **≤32KB**（40KB 为硬上限）；超了就把**已闭合**的段落原文搬进本线
+   `ARCHIVE_*.md`、留 1 行指针。**尚未交付的运维令留在正文**，搬完当轮继续把它做完。
+3. **报告**：默认维护既有报告（原地覆盖）；用户点名或里程碑才新增，产物落 `reports/`。
+4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
+5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
+
+> 🚨 **本轮最高优先（2026-11-10 21:3x 用户令，方式 A）：在「轮间空档」把 `B_zh_r2` regrade 跑掉。**
+> 取代 20:46 那版"趁 r3 跑中"的令（r3 已于 20:35:26 DONE=78.5%，编排器自动起了 `B_es_r1`）。
+> **不再等编排器整体退出**（那要 ~2 天），但也**不许**在轮内硬闯。
+>
+> **零、先算清楚可用窗口（这决定 A 成不成）**
+> 编排器 `run_think_lang_ablation.sh` 每轮 = `timeout 43200 bash scripts/run_cline_script.sh -p 8 -n`
+> **前台串行**；轮结束到下一轮开始之间只有：评分 grep + trace 拷贝（~430MB）+ `probe_quota`，
+> **通常几十秒**（quota 耗尽时 `probe_quota` 会 `sleep 300`，那是唯一的大窗口）。
+> ⇒ 所以 A 的实现必须是「**抢空档 + 一发现新轮起来就自动让路**」，不能是"排队等整轮跑完"。
+>
+> **一、改写手（唯一允许的改法；已有一版等编排器退出的，作废）**
+> 把 `run_B_zh_r2_regrade_wait.sh` 改成 `run_B_zh_r2_regrade_gap.sh`，逻辑：
+> 1. `while :; do`
+> 2. **空档判定**：`! pgrep -f '^bash scripts/run_cline_script'` 且 `! pgrep -f 'run_eval.py'`
+>    → 再 `sleep 20` 复验一次（20s 内没新轮才算真空档；**最多重试 3 次机会**）。
+> 3. **独占启动**：`bash run_B_zh_r2_regrade.sh`（`-p 2`，别用 -p 8）后台跑，记 PID。
+> 4. **避让守护**（关键）：每 60s 检查
+>    `pgrep -f '^bash scripts/run_cline_script'`。一旦出现（编排器起了下一轮）
+>    → **立刻 `kill -TERM <regrade_pid>`**，日志写 `ABORT: new round appeared at <ts>, gap too short`
+>    → 回到步骤 1 等下一个空档（计入已用机会数）。
+> 5. 3 次机会都没跑完 → **降级为 B**：改等编排器 PID 退出再跑（原 waiter 逻辑），
+>    并在 MEMORY 明确写 `upgraded-to-B: 3 gaps too short`。
+> 🚫 不许 `pkill -f run_cline_script`、不许 kill 编排器/worker、不许用 `exec -a` 之类
+>    伪装进程名去骗编排器的互斥检查（会被它自己的兜底 `pkill` 误杀，反而更乱）。
+>
+> **二、跑法与闸门（沿用 20:46 那版，不变）**
+> - regrade 脚本 = `run_B_zh_r2_regrade.sh`（复用 `run_A_none_r2_regrade.sh`，`GEN_FILE=completed_code_generation_2026_1110_073833.jsonl`）。
+> - 三个老坑：benchmark 文件名**小写 p**（`EDA-Eval-pyAether-158.jsonl`）、`run_eval.py` 读
+>   `EVAL_ROOT_DIR`（非 `_OVERRIDE`）、必须 `unset http_proxy` + 设 `NO_PROXY`。
+> - **闸门**：`n_tasks` 必须 == **158**；否则 BLOCKED，不许填数。
+> - 回填：`ablation_think_lang_results.json` 里 `tag=B_zh_r2` 的 null **原位替换**（`len(rounds)` 仍 20）；
+>   `extract_cost.py --batch <regrade batch> --log <log> --out cost_B_zh_r2.json`。
+> - 合理性：r2 应与 **r1=84.2% / r3=78.5%** 同量级；差 >15pp 先查 benchmark 选错。
+>   ⚠️ 现在有了 r3=78.5%，**r1/r3 已经差 5.7pp**，报告里必须按三轮均值±std 讲，别只报 r1。
+>
+> **三、收尾**
+> - MEMORY 进度 `21/30（r2=null 待 regrade）` → `22/30（r2 ✅ pass=X%）`，并记：用了几次空档、
+>   是否降级 B、regrade 实际耗时、n_tasks。
+> - commit 只含 `doc/ZhuLong_DAC2027/run`（脚本 + MEMORY + daily）；results json 被 gitignore。
+> - `WAITING` 保持 `1`（es_r1 仍在跑）。
+> - **本轮只做这一件**：不起新轮、不动报告生成器、不碰其他线。
+
+
+### 📦 归档 · 2026-11-07 08:3x 两轴消融 thinking×lang·✅ 30/30 已交付
+
+### 🔴 用户令 · 2026-11-07 08:3x（**两轴消融：cline `--thinking` 档位 × 思维链语言** · 测试集 **EDA-Eval-PyAether 158** · 中文 HTML 报告须含**分数 + 成本**（墙钟/token））· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「安排 zhulong agent 做如下消融实验：测试集 EDA-Eval-PyAether（158）。1. 变化 cline 的 thinking 参数：None、Low、Medium等。2. 变化 cline 思维链使用的语言：中文、英文、西班牙文、法文、俄文等，可以通过修改任务提示实现，比如：'请使用XX语言思考'。实验后生成中文 HTML 报告。包含对比表格，不光含不同变体的分数，还应包含成本，比如墙钟、token 等。」
+
+**基座（用户 2026-11-07 明确：GLM-5.3-Flash 或 GLM-5.2，二选一）** —— ⚠️ **两轴实验内必须恒定**（否则 thinking/语言效应被基座差异污染），报告首行写明实际用的哪个。
+
+| 选项 | `-m` | `cline auth`（key 可能过期，**开跑前先 `curl` 探针确认 HTTP 200**）| 既有同臂基线（PyAether 158） |
+|:--|:--|:--|:--|
+| **① GLM-5.3-Flash**（**首选**：额度新、速度稳、与 harness 线现行一致） | `glm-5.3-flash` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f -b http://agi-gateway.cxmt.com/v1 -m glm-5.3-flash` | `B.glm-5.3-flash` = **86.8 ± 1.6%**（5/5，cline CLI）← **本实验的天然对照锚点** |
+| **② GLM-5.2**（备选：①额度耗尽/不可用时改这个） | `glm-5.2` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` | `B.glm-5.2` = **83.3 ± 3.1%**（5/5，cline CLI） |
+
+> 🚫 **不用 `deepseek-v4-pro-fp4`**（额度已耗尽）。🚫 两轴之间不得换基座。🚫 若两个 GLM 都探针失败 ⇒ **报 blocker 停工**，不许擅自换第三个模型。
+> 💡 **优先选 ①**：`B.glm-5.3-flash = 86.8±1.6%` 是既有 cline×PyAether 的正式基线，跑出来的 thinking/语言变体能直接与它做 **Δpp + McNemar** 对照；选 ② 也有一致的基线可用。**选哪个都要在报告里把对应基线拉出来做差**，不能只报绝对值。
+
+**其余口径（不可改）**：测试集 = **EDA-Eval-PyAether 158 题**（`EDA-Scripting-Bench 449` 的 PyAether 子集；🚫 不跑 SKILL/Tcl）· harness = `cline` 3.0.51（🚫 不改版本）· 协议 = Pass@1 单次无 retry `-p 8 -n`（与既有消融同口径）· 环境 = `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`，启动 `setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &`，结束判据 `pgrep -f '^bash scripts/run_cline_script'` 无输出，打分 `$BASE_DIR/venv/bin/python scripts/run_eval.py --latest 1` · 每变体 **3 轮**（成本允许则 5 轮与既有臂对齐，报告写实际 n）。
+
+
+#### 1. 两轴设计 —— ⚠️ **一次只变一个轴，不做笛卡尔积**
+
+> 5 档 × 5 语言 × 3 轮 × 158 题 ≈ 上万次推理，成本不可控。设计 = **基线 + 单轴扫描**：先固定语言=英，扫完 thinking；再固定 thinking=medium，扫语言。若要交互项只补 2~3 个关键格（如 low×中文、high×中文）。
+
+**轴 A · thinking 档位**（`--thinking <level>`）：`A0 none`（若 cline 不接受 `none` 则**不传该 flag**）→ `A1 low` → `A2 medium`（=既有基线）→ `A3 high`（+ 若 `cline --help` 有第 4 档一并测）。
+> **P0（≤15min，先做）**：`cline --help | grep -i thinking` 查**真实枚举**，🚫 不许臆造档位名。`none` 若不被接受，用「不传 flag」代表并在报告**明确标注口径差异**。
+
+**轴 B · 思维链语言**（改 prompt 末尾追加一行，不动 harness）：基线 thinking 固定 `medium`。
+| 变体 | 注入后缀 |
+|:--|:--|
+| `B1 en` | `Think in English.` |
+| `B2 zh` | `请使用中文思考。` |
+| `B3 es` | `Piensa en español.` |
+| `B4 fr` | `Réfléchis en français.` |
+| `B5 ru` | `Думай по-русски.` |
+| （可选）`B6` 对照 | 不加任何语言指令（原样 prompt）= 真实基线 |
+
+> **注入实现**：在送进 cline 的 prompt **末尾追加**语言指令（不删改原题）。建议给 `run_cline_script.sh` 加 `LANG_HINT` 环境变量透传。
+> **⚠️ 必须核验**：①日志可见后缀确实进了 prompt ②**抽 3~5 条 trace 核对思维链真的换了语言**。未生效 ⇒ 停下修注入，🚫 别把无效变体跑满 3 轮；确属未生效则标注「该变体未生效」而非当有效数据。
+
+#### 2. 成本指标（用户明确要求，缺一不可 · 口径照抄 `PLAN_RETEST_READBACK_COST.md` §4）
+
+每变体每轮必报，最终给 `mean ± std`：**Pass@1(%)**（通过/158）· **墙钟·单题均值(s)**（逐题 Step3→Step6，**非** batch 总时长）· **Batch 墙钟(h)**（真实 elapsed）· **Token prompt/completion/reasoning/total**（从 cline session `~/.cline/data/**` 或 trace 聚合，给逐题均值 + 总消耗）· **Token/题**（total/158，横向比贵贱）· **¥（可选）**（有公开单价才换算，🚫 不许编造价）· **Timeout 数**（命中 2500s）· **Converged(%)** · **Gen-fail 数**。
+> 判据沿用既有十三：`timeout ≤10`、`0 infra`、`0 exec_err`；Pass@1 任何值有效，**不因低分重跑**。
+> **reasoning token 必须单独抽**（thinking 档位直接决定它，是解释「高分是否靠堆思考」的关键）。
+
+#### 3. Trace 保留（硬前置 —— 上次 `(N')` 成本就因 trace 被清而丢失）
+
+每轮结束、清理前：`DEST=/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/<batch>`；`cp -a "$OUT/<batch>" "$DEST"/`（`OUT=.../EDA-Eval-Framework/output_evaluation`），cline session 一并复制。验收：trace 文件数 ≥158（与题一一对应），`du -sh` 记进报告；**不删、不 `git add`**。
+
+#### 4. 执行顺序
+
+1. **P0**：查 thinking 枚举 + 记录基线档；`pgrep` 确认无在跑评测（有则等，🚫 不打断）。
+2. **P1 冒烟**：`A0/A2` 各跑 8 题子集（不支持子集则跳过）→ 确认 `--thinking` 真生效（trace 里 reasoning 长度差异）+ 成本抽取脚本跑通。
+3. **P2 轴 A 全量**：`A0→A1→A2→A3` 逐档 3 轮，**串行**，每轮即打分 + 落 trace。
+4. **P3 轴 B 全量**：固定 `medium`，`B1→B2→B3→B4→B5` 逐语言 3 轮，**每语言先抽 3 条 trace 核对语言真切换**。
+5. **P4 报告**。
+
+#### 5. 交付物
+
+- `doc/ZhuLong_DAC2027/reports/report_zhulong_ablation_thinking_language_zh.html` —— **中文单文件自包含，0 script 0 外链**（本线 10-24 常驻规程），必含：①**轴 A 对比表** 变体×{Pass@1, 墙钟/题, Batch 墙钟, prompt/completion/reasoning/total tok, ¥, timeout, converged, gen-fail}，全 `mean±std` ②**轴 B 对比表**（同结构）③**成本-分数象限图**（找性价比最优 / 堆 token 无收益者）④**口径校验节**（thinking 是否真生效 trace 证据 + 各语言是否真切换 trace 原文片段 + `none` 实际实现）⑤**失败归因**（infra/timeout/gen-fail/能力，**infra 单列**）⑥**与既有基线对照**：拉出所选基座的 `B.glm-5.3-flash 86.8±1.6%` 或 `B.glm-5.2 83.3±3.1%`（cline CLI / PyAether 158 / 5-run）做 **Δpp + 配对 McNemar**，逐变体一张小表 ⑦**结论**（边际收益、是否值得改生产配置）。
+- 生成器 `run/gen_report_zhulong_ablation_think_lang_zh.py` + 原始数据 `run/ablation_think_lang_results.json`（逐题分数+成本）+ `MEMORY_ZHULONG.md` 心跳 + `daily-memories/` 流水；完成后本行改 `✅ 已交付`。
+
+#### 6. 护栏
+
+🚫 一次只变一轴（两轴同变 ⇒ 效应不可归因）· 🚫 不改 cline 版本/主基座/题面语义（语言指令只追加末尾）· 🚫 不因低分重跑、不用 legacy 数字冒充、不插补缺失轮次 · 🚫 不删 trace，结果 JSON/trace 不入 git · 🚫 不打断其他线（pretrain S1 / vision / data / harness）与在跑评测 · 报告 infra 与能力**分栏**，无效变体必须标注而非丢弃。
+
+> **完成标记**：中文 HTML 报告交付（两表 + 成本列 + 口径校验）⇒ 改 `✅ 已交付`；任一轴未跑完 ⇒ `WAITING: 0`。
+
+---
+
+
+### 📦 归档 · 2026-11-05 19:2x P0 双盲裁定·✅ CLOSED
+
+### 🚨 用户裁定 · 2026-11-05 19:2x（**P0「双盲违规」不成立 —— 论文早已是匿名状态 · 立即闭合**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-05 19:1x）：「zhulong P0：早已是匿名状态了」
+
+**① 裁定**：撤销长期挂起的「P0 双盲违规仍 OPEN」，**不再等 RUN_ID 143**。运维本地核验（2026-11-05 19:1x，`doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`）：
+- `main.tex:1` = `\documentclass[anonymous, sigconf]{acmart}` → anonymous 模式生效（acmart 打印 “Anonymous Author(s)”，且第 54 行注释明确「双盲投稿跳过作者网格改造」）；
+- `reference.bib` / `software.bib` 无 `CXMT` / `ChangXin` / `长鑫` 等机构串；无本团队自引（无 `zhulong`/`ZhuLong` 条目）；`liu2025layoutcopilot` / `liu2026agentic` 系**第三方** Liu 姓作者，不构成身份泄露；
+- 全部 `.tex` 无 `acknowledg` / `\thanks{}` / `funded` / `grant` 字串。
+
+**② 本轮必做（15 分钟内，写成 1 条心跳）**
+1. 把 `MEMORY_ZHULONG.md` 里的 P0 条目改写为 **`CLOSED（2026-11-05 19:2x 用户裁定：早已匿名）`**，并删掉「待运维 RUN_ID 143」表述；§⑧ 跟踪同步改为已闭合。
+2. 复核上面 3 条证据仍成立（若 bib 近期有新条目，再扫一次 `CXMT|ChangXin|长鑫|zhulong`），结论 1 行写进心跳。
+3. ops inbox 若再出现关于 P0 / RUN_ID 143 的只读回执，只记「已知，已闭合」，不据此恢复阻塞。
+4. 若**确实**发现新的可识别信息（作者 / 单位 / 致谢 / 第一人称自引）→ 只做匿名化修正并重编译（`pdflatex×1 + bibtex + pdflatex×2`，ERR=0 / UNDEF=0，页数不变），**不重跑评测**。
+
+**③ 完成标记**：P0 标 CLOSED 且心跳含证据 ⇒ `WAITING: 1`（恢复空巡检）；若发现需改动且未改完 ⇒ `WAITING: 0`。
+
+

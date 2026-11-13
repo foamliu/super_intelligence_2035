@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>月度工作汇报 · 2026年11月 · 烛龙 / 白泽</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1100px; margin: 0 auto; padding: 24px; color: #1a1a1a; line-height: 1.7; background: #fafafa; }
+  h1 { font-size: 1.6em; border-bottom: 3px solid #2563eb; padding-bottom: 10px; }
+  h2 { font-size: 1.28em; color: #2563eb; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 2.2em; }
+  h3 { font-size: 1.1em; color: #444; margin-top: 1.6em; }
+  h4 { font-size: 1.0em; color: #555; margin: 1em 0 0.4em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+  th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
+  th { background: #2563eb; color: #fff; font-weight: 600; }
+  td.l { text-align: left; }
+  tr:nth-child(even) { background: #f5f5f5; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; font-weight: 600; }
+  .t-done { background: #d1fae5; color: #065f46; }
+  .t-plan { background: #fef3c7; color: #92400e; }
+  .t-block { background: #fee2e2; color: #991b1b; }
+  .t-info { background: #dbeafe; color: #1e40af; }
+  .banner { padding: 12px 16px; border-radius: 6px; margin: 1em 0; }
+  .banner.info { background: #eff6ff; border-left: 4px solid #2563eb; }
+  .banner.warn { background: #fffbeb; border-left: 4px solid #f59e0b; }
+  .banner.pass { background: #ecfdf5; border-left: 4px solid #10b981; }
+  .banner.fail { background: #fef2f2; border-left: 4px solid #ef4444; }
+  .small { font-size: 0.82em; color: #666; }
+  code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.88em; }
+  .metric { font-size: 1.55em; font-weight: 700; }
+  .m-blue { color: #1e40af; }
+  .m-green { color: #059669; }
+  .m-red { color: #991b1b; }
+  .m-amber { color: #b45309; }
+  .q-box { background: #fff; border: 2px solid #2563eb; border-radius: 8px; padding: 14px; margin: 1em 0; }
+  .q-box h3 { margin-top: 0; color: #2563eb; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; }
+  .card h4 { margin: 0 0 6px 0; color: #2563eb; }
+  .card .num { font-size: 1.5em; font-weight: 700; }
+  .toc { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 20px; margin: 1em 0 2em 0; }
+  .toc ol { margin: 6px 0; padding-left: 22px; }
+  .toc a { color: #2563eb; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  details summary { cursor: pointer; font-weight: 600; color: #2563eb; }
+  .scroll-x { overflow-x: auto; }
+  .pillrow { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .legend { font-size: 0.82em; color: #666; }
+  hr { border: 0; border-top: 1px solid #e5e7eb; margin: 2em 0; }
+</style>
+</head>
+<body>
+
+<h1>月度工作汇报 · 2026 年 11 月</h1>
+<p class="small">
+汇报人：EDA 大模型研发组 &nbsp;|&nbsp; 汇报周期：2026-11-01 ~ 2026-11-13（截至本周） &nbsp;|&nbsp;
+项目：<b>烛龙 ZhuLong</b>（DAC 2027）/ <b>白泽 BaiZe</b>（ISEDA 2027）
+</p>
+
+<div class="banner info">
+<b>白泽研发初衷</b>：通过大模型蒸馏与强化学习微调技术，构建一款可在 CPU 上实现高效推理的
+<b>2B 级 EDA 领域专属小模型（SLM）</b>。该模型将作为"大小模型协作架构"中专注于具体软件操作的
+<b>Subagent 底模</b>，旨在确保细分场景效果接近大模型的同时，显著缓解算力瓶颈问题。
+</div>
+
+<div class="toc">
+<b>本期目录</b>
+<ol>
+  <li><a href="#overview">本月工作总览</a></li>
+  <li><a href="#zhulong-bench">烛龙 Benchmark（zhulong / designflow）</a></li>
+  <li><a href="#zhulong-ablation">烛龙能力消融（harness / 思维链等级 / 思维链语言 / checkpoint / 压缩机制）</a></li>
+  <li><a href="#baize-pretrain">白泽模型 · Pretrain</a></li>
+  <li><a href="#baize-posttrain">白泽模型 · Post-train</a></li>
+  <li><a href="#baize-data">白泽模型 · Data</a></li>
+  <li><a href="#baize-vision">白泽模型 · Vision</a></li>
+  <li><a href="#risk">风险与瓶颈</a></li>
+  <li><a href="#next">下月计划</a></li>
+</ol>
+</div>
+
+<!-- ================================================================ -->
+<h2 id="overview">一、本月工作总览</h2>
+
+<p>本月围绕<b>两条主线、四项工作</b>推进：</p>
+<div class="grid2">
+  <div class="card">
+    <h4>① 烛龙 Benchmark</h4>
+    <p>题库快速扩张至 <b>1,206 题 / 13 个 EDA 领域</b>；DesignFlow 评测 696 题，Pass@1 ≈ 10%；
+    TB-2.1 七方横评中 opencode 以 <b>56.9%</b> 显著领先（cline 仅 11.4%）。</p>
+  </div>
+  <div class="card">
+    <h4>② 烛龙能力消融</h4>
+    <p>完成四轴消融矩阵中<b>三轴</b>（思维链等级 / 思维链语言 / 压缩机制），subagent 轴计划书就绪。
+    核心结论：thinking=<b>medium</b>、compaction=<b>basic</b> 为生产最优配置。</p>
+  </div>
+  <div class="card">
+    <h4>③ 白泽 Pretrain / Post-train</h4>
+    <p>Pretrain S1 进行中（ETA ~12-25）；四层评测发现 L2 生成全 0%，定位 SSM 生成 bug + 数据配比不足双重根因；
+    Post-train 确认 <b>SFT 仅修语法、API 正确率需 RL 突破</b>，三步训练计划成型。</p>
+  </div>
+  <div class="card">
+    <h4>④ 白泽 Vision</h4>
+    <p>CPU RL 波形实验 v1–v8 完成：v5/v7 取得显著正结果（SFT→RFT 53%，p=0.0009），
+    v6 突破 std=0 方差问题（nonzero-std 93.8%）；v8 频率比较任务 MIXED。</p>
+  </div>
+</div>
+
+<div class="banner pass">
+<b>本月关键产出</b>：题库 +742 题；四轴消融完成 3 轴；Vision RL 从连续 3 轮负结果突破到 6/6 PASS；
+Post-train 阶段数据调研（数学 / 代码 SFT / 长上下文 / agentic）锁定 P0 数据集清单。
+</div>
+
+<!-- ================================================================ -->
+<h2 id="zhulong-bench">二、烛龙 Benchmark（zhulong / designflow）</h2>
+
+<h3>2.1 题库与案例分布</h3>
+<div class="grid3">
+  <div class="card"><h4>累计题目</h4><div class="num m-blue">1,206 题</div><div class="legend">11/12 为 1,168 题，周增 +742</div></div>
+  <div class="card"><h4>候选题池（mc≥10）</h4><div class="num m-blue">3,260 题</div><div class="legend">远大于已评测数</div></div>
+  <div class="card"><h4>领域覆盖</h4><div class="num m-blue">13 个</div><div class="legend">EDA 领域</div></div>
+</div>
+<p class="small">4 分片均衡分发：A=232 / B=273 / C=311 / D=352；Trace 覆盖率 30.7%，仍有较大提升空间。</p>
+
+<h3>2.2 DesignFlow 评测结果（批次 20261109_171201）</h3>
+<table>
+<tr><th>指标</th><th>数值</th><th>说明</th></tr>
+<tr><td>评测题数</td><td><b>696</b></td><td class="l">单批次全量评测</td></tr>
+<tr><td>PASS / FAIL / ERROR / ABSENT</td><td>62 / 558 / 70 / 6</td><td class="l">FAIL 占主体</td></tr>
+<tr><td>Pass@1</td><td><b>9.9%–10.0%</b></td><td class="l">整体通过率</td></tr>
+<tr><td>失败类别</td><td>SEM 67.3% / RT 18.4% / NO_SUBMIT 12.3%</td><td class="l">语义错误（SEM）占 2/3</td></tr>
+</table>
+<p><b>领域通过率跨度 7.7×</b>：最高 pnr_signoff 20.0%、characterization 17.9%；最低 physical_verify 2.7%、layout_aether 2.6%。
+<b>改进方向</b>：聚焦 SEM 类语义对齐与短板领域（物理验证 / 版图生成）。</p>
+
+<h3>2.3 DesignFlow 工具健康度</h3>
+<div class="grid2">
+  <div class="card">
+    <h4>工具利用率</h4>
+    <div class="num m-amber">12 / 25（48%）</div>
+    <div class="legend">25 个 EDA 工具中 10 个从未被调用</div>
+  </div>
+  <div class="card">
+    <h4>主力 / 高错工具</h4>
+    <p class="small">主导：<code>hspice</code> 123 调用（117 ok）、<code>finesim</code> 43 调用（40 ok）<br>
+    高错误率：<code>calibre</code> 40% 错误率需排查</p>
+  </div>
+</div>
+
+<h3>2.4 TB-2.1 七方 Harness 横评</h3>
+<table>
+<tr><th>Agent</th><th>Pass@1</th><th>排名</th><th>备注</th></tr>
+<tr><td class="l"><b>opencode</b></td><td><b>56.9%（33/58）</b></td><td>1</td><td class="l">显著领先</td></tr>
+<tr><td class="l">deepseek</td><td>40.7%</td><td>2</td><td class="l">—</td></tr>
+<tr><td class="l">pi</td><td>31.4%</td><td>3</td><td class="l">—</td></tr>
+<tr><td class="l">codex</td><td>16.7%</td><td>4</td><td class="l">—</td></tr>
+<tr><td class="l">hermes</td><td>13.2%</td><td>5</td><td class="l">—</td></tr>
+<tr><td class="l">cline</td><td>11.4%</td><td>6</td><td class="l">与 opencode 差距约 5×</td></tr>
+<tr><td class="l">claude-code</td><td>0%</td><td>—</td><td class="l">未跑完</td></tr>
+</table>
+<p class="small">oracle 上限 5/5 表明任务本身可解，差距完全来自 agent 能力。</p>
+
+<!-- ================================================================ -->
+<h2 id="zhulong-ablation">三、烛龙能力消融</h2>
+
+<p>评测框架：<code>EDA-Eval-Framework</code>，benchmark = <code>EDA-Eval-pyAether-158.jsonl</code>（158 题）；
+Agent = cline 3.0.51，协议 <code>-p 8 -n</code>；统计采用 McNemar 配对检验 + bootstrap 10k CI，判据 Δ≥3pp。</p>
+
+<h3>3.1 四轴消融矩阵总览</h3>
+<table>
+<tr><th>轴</th><th>自变量</th><th>状态</th><th>关键结论</th></tr>
+<tr><td class="l"><b>A · 思维链等级</b></td><td>5 档强度 none/low/medium/high/xhigh</td><td><span class="tag t-done">✅ 完成</span></td><td class="l">倒 U 形，medium/high=85.4% 最优</td></tr>
+<tr><td class="l"><b>B · 思维链语言</b></td><td>5 语言 en/zh/es/fr/ru × 3 轮</td><td><span class="tag t-done">✅ 完成</span></td><td class="l">zh 81.2 ≈ en 81.0 ≈ es 80.8 > ru 79.3 > fr 76.2</td></tr>
+<tr><td class="l"><b>C · 压缩机制</b></td><td>basic vs agentic</td><td><span class="tag t-done">✅ 完成</span></td><td class="l">basic 69.2% >> agentic 59.2%（+10pp）</td></tr>
+<tr><td class="l"><b>D · Subagent</b></td><td>spawn 开/关 + 基座梯度 + maxIter</td><td><span class="tag t-plan">📋 计划书</span></td><td class="l">核心风险=主 agent 不调用；待 pilot go/no-go</td></tr>
+</table>
+
+<h3>3.2 轴 A — 思维链等级消融</h3>
+<p>基座 glm-5.2（15/15 轮恒定 ✅），基线 83.3±3.1%（omitted-thinking）。</p>
+<table>
+<tr><th>thinking</th><th>none</th><th>low</th><th>medium</th><th>high</th><th>xhigh</th></tr>
+<tr><td>Pass@1</td><td>79.5%</td><td>84.2%</td><td><b>85.4%</b></td><td><b>85.4%</b></td><td>82.3%</td></tr>
+</table>
+<div class="banner pass">
+<b>结论</b>：思维链强度呈<b>倒 U 形</b>。<b>medium/high 为最优平台（85.4%）</b>，比 none 高 +5.9pp，
+比 xhigh 高 +3.1pp——过强思考（xhigh）反而下降。
+</div>
+
+<h3>3.3 轴 B — 思维链语言消融</h3>
+<p>基座 deepseek-v4-pro-cloud（11/12 重跑后 15/15 轮恒定 ✅），thinking=medium。</p>
+<table>
+<tr><th>语言</th><th>zh 中文</th><th>en 英语</th><th>es 西语</th><th>ru 俄语</th><th>fr 法语</th></tr>
+<tr><td>Pass@1</td><td><b>81.2%</b></td><td>81.0%</td><td>80.8%</td><td>79.3%</td><td>76.2%</td></tr>
+<tr><td>Δpp vs 基线</td><td>−2.1</td><td>−2.3</td><td>−2.5</td><td>−4.0</td><td>−7.1</td></tr>
+<tr><td>token/题</td><td>131.8 万（最贵）</td><td>—</td><td>—</td><td>—</td><td>96.9 万（最便宜）</td></tr>
+</table>
+<div class="banner warn">
+<b>Audit 关键发现</b>：① 基础 prompt 已硬性强制"思考用中文"→ zh 注入 confound、es/fr/ru 部分被覆盖（es 仅 3/21 生效，标签应作废）；
+② 长难题在所有非英语语言里几乎必漂回英语（结构性失败模式）；③ 5 语言均低于基线，但基线基座（glm-5.2）+ thinking 模式（omitted）双重不同，
+<b>Δpp 不可单归因为语言效应</b>。需基础 prompt 中性化后重跑方可下因果结论。
+</div>
+
+<h3>3.4 轴 C — 压缩机制消融（basic vs agentic）</h3>
+<p>40 题长轨迹子集 × 3 轮 ABBA，强制压缩 regime（maxInputTokens 32K）。</p>
+<table>
+<tr><th>指标</th><th>basic</th><th>agentic</th></tr>
+<tr><td>Pass@1</td><td><b>69.2%</b></td><td>59.2%</td></tr>
+<tr><td>稳定差</td><td>—</td><td class="l">−10pp（稳定）</td></tr>
+<tr><td>McNemar Δ</td><td>—</td><td class="l">−12.5pp</td></tr>
+<tr><td>失败根因</td><td>—</td><td class="l">丢失精确 API/参数/坐标上下文</td></tr>
+</table>
+<div class="banner pass">
+<b>结论</b>：<b>basic 显著优于 agentic（+10pp 稳定）</b>。agentic 的 LLM 语义摘要会丢失精确 API/参数/坐标信息，
+对 EDA 代码生成有害。<b>建议默认采用 basic</b>，agentic 仅保留作溢出恢复路径。
+</div>
+
+<h4>自动压缩行为分析（6,162 session 统计）</h4>
+<div class="grid3">
+  <div class="card"><h4>触发压缩</h4><div class="num m-amber">12.1%</div><div class="legend">745 / 6,162</div></div>
+  <div class="card"><h4>压缩比中位数</h4><div class="num m-blue">13.98%</div><div class="legend">阈值 ~100K tokens</div></div>
+  <div class="card"><h4>TIMEOUT 率差</h4><div class="num m-red">~278×</div><div class="legend">压缩 11.1% vs 未压缩 0.04%</div></div>
+</div>
+<p class="small">压缩与长任务失败高度相关；xhigh thinking 档最易触发压缩（16.5%）。压缩事件天然稀缺（12%），全量评测会被稀释，亚组分析必需。</p>
+
+<h3>3.5 轴 D — Subagent 消融（计划书，未跑）</h3>
+<p>9 臂设计：A0 baseline / A1 spawn-on / B1–B5 基座梯度（同基座→dsv4-flash→doubao-pro→doubao-mini→doubao-lite）/ C1–C2 maxIter（5/15/30）。
+40 题子集（3 轮）+ 158 题全量（1 轮验证外部效度），预算 ~30h、~1656 runs。</p>
+<div class="banner info">
+<b>核心风险与价值</b>：前序 30 轮 + compaction 6 轮 trace 显示 <b>subagent 从未被主 agent 调用</b>——
+PyAether 158 是单函数生成任务，主 agent 倾向自己完成。P1 pilot 验证调用率，&lt;20% 升级为强制 spawn harness。
+若弱基座 subagent 成立，API 调研可用 flash/mini/lite（省 80%+ token），仅写代码用 pro 级——<b>降本路径</b>。
+subagent 的 <code>SpawnAgentOutput.usage</code> 可精确采集 token，首个能做"主/子 token 分拆"的实验。
+</div>
+
+<!-- ================================================================ -->
+<h2 id="baize-pretrain">四、白泽模型 · Pretrain</h2>
+
+<h3>4.1 架构与训练计划</h3>
+<table>
+<tr><th>维度</th><th>配置</th></tr>
+<tr><td class="l">架构</td><td class="l">Mamba2-hybrid 2.22B：4 GQA attn + 24 Mamba2 SSM + 28 MLP，共 56 层</td></tr>
+<tr><td class="l">精度 / 序列</td><td class="l">FP8 tensorwise · seq 16384 · vocab 129,281</td></tr>
+<tr><td class="l">算力</td><td class="l">2 节点 × 8×H100，WSD scheduler + 指数衰减</td></tr>
+<tr><td class="l">数据预算</td><td class="l">S1 + S2 + Decay 共 2.88T tokens</td></tr>
+<tr><td class="l">当前进度</td><td class="l">S1 跑在 .29，iter ~167k/700k，step ~7.1s，loss ~2.04，<b>ETA 收敛 ~2026-12-25</b></td></tr>
+</table>
+
+<h3>4.2 四层评测结果（eval_4tier）</h3>
+<div class="grid2">
+  <div class="card">
+    <h4>L1 基础语言</h4>
+    <div class="num m-green">58.13% @ 160k</div>
+    <div class="legend">达标</div>
+  </div>
+  <div class="card">
+    <h4>L2 生成任务</h4>
+    <div class="num m-red">全部 0%</div>
+    <div class="legend">GSM8K / BBH / MATH / HumanEval；MMLU=23.16%（MCQ 唯一非零）</div>
+  </div>
+</div>
+<div class="banner fail">
+<b>双重根因</b>：① <b>llama.cpp SSM 生成 bug</b>——recurrent state 坍缩导致重复输出"1"，生成通路异常；
+② <b>训练数据 code+math 占比仅 26%</b>，而 DeepSeek 最优为 60%，数据配比严重不足。
+</div>
+
+<h3>4.3 llama.cpp 扩展与 CPU 评测</h3>
+<ul>
+<li><b>上下文扩展</b>：60k → 100k，验证长上下文在 CPU 上的可行性。</li>
+<li><b>8 套基准 CPU 评测</b>：覆盖多任务，定位吞吐瓶颈。</li>
+<li><b>线程扩展性测速</b>：CPU 多线程 scaling，验证推理吞吐随核数扩展。</li>
+<li><b>加速优化</b>：CPU 推理 speedup 方案验证。</li>
+</ul>
+
+<h3>4.4 论文审计</h3>
+<p>84 项审计，发现 5 处需修改（含 52 处 Mamba2 命名错误）；ERR=0 / UNDEF=0，<b>论文一致性达标</b>。</p>
+
+<!-- ================================================================ -->
+<h2 id="baize-posttrain">五、白泽模型 · Post-train</h2>
+
+<h3>5.1 三模型基线对比（baseline_3model）</h3>
+<table>
+<tr><th>模型</th><th>API 正确率</th><th>备注</th></tr>
+<tr><td class="l">MC5-base</td><td>2.7%</td><td class="l">—</td></tr>
+<tr><td class="l">SFT</td><td>2.7%</td><td class="l">syntax +38.9pp，但 API 正确率无提升</td></tr>
+<tr><td class="l">Qwen-27B</td><td>2.7%</td><td class="l">—</td></tr>
+<tr><td class="l"><b>DeepSeek 参照</b></td><td><b>67.97% (codegen) / 94% (harness)</b></td><td class="l">目标差距</td></tr>
+</table>
+<div class="banner warn">
+<b>结论</b>：<b>API 正确率仅 2.7%，三模型持平 → 规模非瓶颈</b>。SFT 带来 syntax +38.9pp，但 API 正确率无提升，
+<b>需 RL 突破</b>。阻塞项：DeepSeek 沙盒 10.129.32.75 被 BLOCKED（119+ 次检查），Pass@1 评测受阻。
+</div>
+
+<h3>5.2 SFT 代理实验（sft_surrogate）</h3>
+<p>代理模型 = <b>MiniCPM5-2B（Llama 架构），非白泽本体</b>——结果不可直接迁移。SFT 70 步：loss 2.123 → 0.618；
+syntax +32.7pp；API +0pp。<b>确认 SFT 只修语法不修功能，RL 为下一阶段主攻方向。</b></p>
+
+<h3>5.3 三步训练计划</h3>
+<table>
+<tr><th>阶段</th><th>内容</th><th>目标</th></tr>
+<tr><td class="l">① 退火</td><td class="l">domain annealing（PyAether API 语料 ~4–5M tok）</td><td>M1: 36% → 50%</td></tr>
+<tr><td class="l">② SFT</td><td class="l">agentic 轨迹 SFT</td><td>M2 → M3: 50% → 65% → 75%</td></tr>
+<tr><td class="l">③ RL</td><td class="l">GRPO 四臂：R1 二值 / R2 部分分 / R3 R2+工具惩罚 / R4 R3+API 合法性</td><td>M4: 85%+</td></tr>
+</table>
+<p class="small">ETA：等 pretrain ckpt（~2026-12-25）后启动。</p>
+
+<h3>5.4 阶段数据调研核心结论</h3>
+<ol>
+<li><b>领域退火</b>：最后 10–30% 步切换高质量策展数据 + LR 衰减至峰值 1%；白泽拟用 PyAether API 语料（8463 个 API）+ 配比 Domain 30%/Web 50%/Code 12%/Math 8%，约 4000 步、8.4B tok。</li>
+<li><b>SFT agentic 轨迹</b>：58pp 差距最大可回收来源。DeepSeek-V3 SFT 用 1.5M 条；AgentTrove 170 万条（219 源）；<b>仅 10% 轨迹含"错误后恢复"决策</b>——白泽需补的"缺信号→重试→修正"链。</li>
+<li><b>RLVR 难度筛选</b>：对应 CPU GRPO advantage=0 无梯度问题。sGPO 用 8 样本 profiling 过滤全对/全错题，3x 效率。<b>建议白泽 RL 用 pass@8 取 1/8~7/8 区间</b>。</li>
+<li><b>奖励设计</b>：从二值 outcome → process reward + 工具惩罚演进；白泽四臂设计与前沿一致。</li>
+</ol>
+<div class="banner info">
+<b>3 周窗口优先补 2 项</b>：(a) PyAether API 语料合成 SFT 轨迹（~50–100K 条，回收 ~20pp M1→M2）；
+(b) RLVR 难度筛选（~2–5K 题，打磨 ~5–10pp M3）。
+</div>
+
+<!-- ================================================================ -->
+<h2 id="baize-data">六、白泽模型 · Data</h2>
+
+<h3>6.1 Stack-v3 EDA 脚本价值评估</h3>
+<div class="grid3">
+  <div class="card"><h4>规模</h4><div class="num m-blue">5.86 TiB</div><div class="legend">4600 shard</div></div>
+  <div class="card"><h4>Tcl EDA 命中率</h4><div class="num m-green">39.2%</div><div class="legend">通用 EDA 语料可用</div></div>
+  <div class="card"><h4>SKILL / PyAether</h4><div class="num m-red">0%</div><div class="legend">领域特定语料缺失</div></div>
+</div>
+<p><b>V1+V2 可用 token 仅 ~0.05B —— 极度稀缺，需外部合成补充。</b></p>
+
+<h3>6.2 长上下文 & Agentic 数据调研</h3>
+<p><b>现状瓶颈</b>：en_v1_4 中 ≥32K 文档仅占 2.52% token、≥128K 仅 0.03%；目标 ≥20% / ≥5%。
+调研 14 个候选数据集，重点：</p>
+<ul>
+<li><b>whole-books</b>（~25 GiB，gutenberg 87% tokens 在 ≥64K 书中）</li>
+<li><b>princeton-nlp/prolong-data-512K</b>（31B tokens，524K 子集 100% ≥128K）</li>
+<li><b>NExtLong</b>（按设计 100% 达目标长度）</li>
+<li><b>HuggingFaceCode/stack-v3-train</b>（15.9 TB，713 语言，4.9T tokens）</li>
+</ul>
+
+<h3>6.3 RL 数学数据调研</h3>
+<p>调研 20 个 RL/数学数据集；<b>P0 三件套</b>：OpenR1-Math-220k（11.78G）+ OpenCodeReasoning（9.06G）+ OpenMathInstruct-2（11.76G）。</p>
+
+<h3>6.4 复杂推理 & 代码 SFT 调研</h3>
+<div class="grid2">
+  <div class="card">
+    <h4>A 类 · 复杂推理 SFT（TOP-3）</h4>
+    <ol class="small">
+      <li>OpenR1-Math-220k（220K，R1 长链 CoT，Apache-2.0）</li>
+      <li>OpenThoughts-114k（114K 跨领域长链 CoT，下载 103K）</li>
+      <li>NuminaMath-CoT（860K，AIMO 冠军）</li>
+    </ol>
+    <div class="legend">共 17 候选，预计下载 ~16–25 GiB</div>
+  </div>
+  <div class="card">
+    <h4>B 类 · 代码 SFT（TOP-3）</h4>
+    <ol class="small">
+      <li>nvidia/OpenCodeInstruct（2.2M 指令-解答对）</li>
+      <li>nvidia/OpenCodeReasoning（1.7M 代码推理+CoT）</li>
+      <li>bigcode/commitpackft（GitHub commit 修复对）</li>
+    </ol>
+    <div class="legend">共 13 候选，预计下载 ~30–45 GiB</div>
+  </div>
+</div>
+<p class="small"><b>奖励信号成熟度排序</b>：数值精确匹配（数学）> 程序执行验证（竞赛编程）> 标签+proof 链 > LLM-as-judge > verified 标签。
+关键参照：DeepScaleR-1.5B 用 40K 奥赛数据 RL 后 AIME 2025 达 43.1%（超越 o1-preview）。</p>
+
+<!-- ================================================================ -->
+<h2 id="baize-vision">七、白泽模型 · Vision</h2>
+
+<h3>7.1 CPU RL 波形实验全流程（v1–v8）</h3>
+
+<h4>v1–v4：负结果（连续 3 轮无提升 → 按规则换方向）</h4>
+<p>周期数值回归任务，GRPO loss 近零、avgR 波动（group baseline std=0）。v2=6.2% < 9.2%；v3=25.0% < 34.0%；v4 RFT C=34.0% = B=34.0%（McNemar p=1.0）。</p>
+
+<h4>v5：正结果 ✅（4 类波形分类）</h4>
+<table>
+<tr><th>阶段</th><th>A 零样本</th><th>B SFT</th><th>C RFT</th><th>D 随机</th></tr>
+<tr><td>Pass@1</td><td>16%</td><td>37%</td><td><b>53%</b></td><td>32%</td></tr>
+</table>
+<p class="small">C vs B McNemar p=0.0009 ✅；C vs D 53% vs 32% ✅。B 逐类：square 84% / sine 16% / triangle 24% / sawtooth 24%。</p>
+
+<h4>v6：技术突破但 not sig</h4>
+<p>GRPO outcome-only 连续奖励（α=0.25, β=0.35），group_size=8。<b>nonzero-std = 93.8% ✅</b>——彻底解决 v1–v4 的 std=0 方差问题。
+C=40% vs B=35%，McNemar p=0.267 ❌；triangle 8%→32%（+24pp），但 sine 20%→4%（-16pp）。</p>
+
+<h4>v7：6/6 PASS ✅（迄今最大 CPU sweep，18 runs）</h4>
+<div class="grid2">
+  <div class="card">
+    <h4>Process Reward λ sweep</h4>
+    <div class="num m-green">49.3% ± 6.4%</div>
+    <div class="legend">λ=0.1 最佳（+9.3% vs v6），三组 λ 均超 baseline → 全 PASS</div>
+  </div>
+  <div class="card">
+    <h4>LoRA rank probe</h4>
+    <div class="num m-blue">r8 ≈ r16 ≈ r32</div>
+    <div class="legend">LoRA rank 非瓶颈</div>
+  </div>
+</div>
+<p class="small">局限：triangle/sawtooth 全线 0%（能力缺口，GRPO 无法弥补）；support@2/@3=2.1%（高方差）；eval 仅 48 题。</p>
+
+<h4>v8：MIXED（频率比较二分类）</h4>
+<p>A=0%（异常，低于 50% chance）；B(SFT)=45%；C(GRPO) mean=52.5%±6.1%（首次超 chance）。
+McNemar s0 p=0.0312 ✅，但仅 2/3 seeds 同方向 → 判定 MIXED（3/5 判据通过）。
+反直觉：hard(68.8%) > medium(37.5%)，因"不同波形类型"提供额外视觉线索。</p>
+
+<h3>7.2 Vision 论文结果</h3>
+<div class="grid2">
+  <div class="card"><h4>ViT-L/14</h4><div class="num m-blue">68.236%</div><div class="legend">linear probe</div></div>
+  <div class="card"><h4>MLLM（11 基准均值）</h4><div class="num m-amber">26.10%</div><div class="legend">下游增益不传导</div></div>
+</div>
+<p><b>关键发现</b>：编码器增益不传导下游——<b>224px 单 tile 为瓶颈</b>，需多 tile / 更高分辨率。</p>
+
+<h3>7.3 迁移工作计划</h3>
+<p>.12 → .17 环境迁移；v8–v10 频率比较 GRPO 负结果（C ≤ B）。WaveView 沙盒可用；GPU7 空闲。
+<b>v11 计划</b>：图像输入（PNG）+ GPU，突破 224px 单 tile 瓶颈。</p>
+
+<!-- ================================================================ -->
+<h2 id="risk">八、风险与瓶颈</h2>
+<table>
+<tr><th>风险项</th><th>影响</th><th>缓解措施</th></tr>
+<tr><td class="l">llama.cpp SSM 生成 bug（state 坍缩）</td><td>L2 生成全 0%</td><td class="l">修复生成通路 + 提升 code/math 数据占比</td></tr>
+<tr><td class="l">code+math 数据占比 26%（最优 60%）</td><td>生成能力不足</td><td class="l">引入 P0 数据集（数学 + 代码 SFT）</td></tr>
+<tr><td class="l">DeepSeek 沙盒 BLOCKED</td><td>Pass@1 评测受阻</td><td class="l">协调网络策略 / 旁路评测</td></tr>
+<tr><td class="l">EDA 领域语料稀缺（SKILL/PyAether=0%）</td><td>领域退火数据不足</td><td class="l">PyAether API 语料合成 SFT 轨迹</td></tr>
+<tr><td class="l">CPU GRPO advantage=0 无梯度</td><td>RL 无有效梯度</td><td class="l">pass@8 难度筛选（1/8~7/8 区间）</td></tr>
+<tr><td class="l">agentic 轨迹仅 10% 含错误恢复链</td><td>SFT 信号稀疏</td><td class="l">补"缺信号→重试→修正"链</td></tr>
+<tr><td class="l">Vision 224px 单 tile 瓶颈</td><td>编码器增益不传导下游</td><td class="l">v11 图像输入 + GPU 多 tile</td></tr>
+<tr><td class="l">subagent 主 agent 不调用风险</td><td>消融实验可能失败</td><td class="l">P1 pilot go/no-go，&lt;20% 强制 spawn</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2 id="next">九、下月计划</h2>
+
+<h3>烛龙</h3>
+<ul>
+<li><b>轴 D subagent 消融</b>：完成 P1 pilot，go/no-go 后跑 9 臂实验，补齐四轴完整消融矩阵。</li>
+<li><b>轴 B 语言重跑</b>：基础 prompt 中性化后重跑，澄清语言对 EDA 任务的因果效应。</li>
+<li><b>Benchmark 扩张</b>：trace 覆盖率从 30.7% 提升；补短板领域（physical_verify / layout_aether）。</li>
+<li><b>生产配置落地</b>：thinking=medium + compaction=basic + 基础 prompt 中文（暂保持）+ subagent 待验证。</li>
+</ul>
+
+<h3>白泽</h3>
+<ul>
+<li><b>Pretrain</b>：S1 收敛（ETA ~12-25）；修复 llama.cpp SSM 生成 bug；提升 code/math 数据占比。</li>
+<li><b>Post-train</b>：PyAether API 语料合成 SFT 轨迹（50–100K 条）；RLVR 难度筛选（pass@8，2–5K 题）。</li>
+<li><b>Vision</b>：v11 图像输入（PNG）+ GPU，突破 224px 单 tile 瓶颈；继续频率比较任务优化。</li>
+<li><b>Data</b>：下载 P0 三件套（数学）+ A/B 类 TOP-3（推理/代码 SFT），预计 ~46–70 GiB。</li>
+</ul>
+
+<hr>
+<p class="small">
+数据来源：BaiZe-ISEDA2027/reports · ZhuLong_DAC2027/reports · doc/reports · 生成日期 2026-11-13
+</p>
+
+</body>
+</html>
