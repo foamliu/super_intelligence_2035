@@ -23,15 +23,32 @@ def load_run_result(label, run_n):
         if os.path.exists(fpath):
             try:
                 data = json.load(open(fpath))
+                # Try top-level fields first (result_summary.json), then nested (final_report.json)
                 rate = data.get("pass_at_1_rate") or data.get("pass_rate") or data.get("pass@1")
+                if rate is None and isinstance(data.get("metrics"), dict):
+                    rate = data["metrics"].get("pass_rate") or data["metrics"].get("pass@1")
+                if rate is None and isinstance(data.get("summary"), dict):
+                    # final_report.json: total_correct_completions / total_problems_evaluated
+                    tc = data["summary"].get("total_correct_completions")
+                    tp = data["summary"].get("total_problems_evaluated")
+                    if tc is not None and tp is not None and tp > 0:
+                        rate = tc / tp
                 passed = data.get("passed_tasks", [])
+                # If no passed_tasks list, extract from details_per_task
+                if not passed and isinstance(data.get("details_per_task"), dict):
+                    # final_report.json: details_per_task is {task_id: {num_correct, pass_rate, ...}}
+                    passed = [tid for tid, tv in data["details_per_task"].items()
+                              if tv.get("num_correct", 0) > 0 or tv.get("pass_rate", 0) > 0]
+                elif not passed and isinstance(data.get("details_per_task"), list):
+                    passed = [t.get("task_id", t.get("id", "")) for t in data["details_per_task"]
+                              if t.get("pass", t.get("passed", t.get("correct", False))) is True]
                 return {
                     "run": run_n, "label": label,
                     "pass_at_1_rate": float(rate) if rate is not None else None,
                     "passed_tasks": set(passed) if isinstance(passed, list) else set(),
                     "source_file": fname,
                 }
-            except (json.JSONDecodeError, KeyError) as e:
+            except (json.JSONDecodeError, KeyError, TypeError) as e:
                 return {"run": run_n, "label": label, "error": str(e)}
     return {"run": run_n, "label": label, "error": "no result file found"}
 
@@ -60,7 +77,8 @@ def analyze_label(label):
     print("  [" + label + "] mean+/-std = " + summary["mean_pm_std"])
     for r in runs:
         n_passed = len(r.get("passed_tasks", set()))
-        print("    run" + str(r["run"]) + ": Pass@1=%.4f (%d/158 tasks passed)" % (r["pass_at_1_rate"], n_passed))
+        rate_str = "%.4f" % r["pass_at_1_rate"] if r["pass_at_1_rate"] is not None else "N/A"
+        print("    run" + str(r["run"]) + ": Pass@1=" + rate_str + " (" + str(n_passed) + "/158 tasks passed)")
     return summary
 
 
