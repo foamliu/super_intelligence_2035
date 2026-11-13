@@ -4,21 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2375 incr_eval1new(pi sympy-18189 RESOLVED)+cleanup2empty(codex1+cc1)+双报告REGEN(gateway 200·eval 1795resolved/2223total·predict 4/7 alive·cline317·cc316·pi281·codex135·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2375·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2374 incr_eval+监控+报告+ETA+cline根因修复·R2375 incr_eval1new+cleanup2empty+双报告REGEN
-当前动作:     R2375: 自检(CPU/mem OK·load31/224·无runaway)·gateway 200·incr_eval 1new(pi sympy-18189 RESOLVED→pi207)·cleanup2empty(codex1+cc1 deleted)·predict:cline317r·codex135r·cc316r·pi281r·4/7 alive·双报告REGEN(R2375 14:42·7way=12200B·cline=9972B)·research日报2026-11-13已读(建议主为designflow·无harness可执行项)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit+push ②cline predict继续向500推进(317→500) ③continue incr_eval(等新predict落地) ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
-阻塞:         <各路尚未满500:cline317/codex135/cc316/pi281·§22:4x未全交付·opencode+dsh+hermes DONE·codex=瓶颈~15天>
+PHASE:        R2376 incr_eval2new(cc +2 RESOLVED)+cleanup0empty(全7路0empty)+双报告REGEN(gateway 200·eval 1798resolved/2226total·predict 4/7 alive·cline318·cc318·pi281·codex135·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2376·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2375 incr_eval+监控+报告+ETA+cline根因修复·R2376 incr_eval2new+双报告REGEN
+当前动作:     R2376: 自检(CPU/mem OK·load33/224·无runaway)·gateway 200·incr_eval 2new(cc django-14238+14311 全RESOLVED→cc269)·cleanup0empty(全7路0empty)·predict:cline318r·codex135r·cc318r·pi281r·4/7 alive·双报告REGEN(R2376 14:54·7way=12103B·cline=9893B)·research日报2026-11-13已读(harness建议:adapter契约/可复用skill/speculative decoding·暂纳入待办)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit+push ②cline predict继续向500推进(318→500) ③continue incr_eval(等新predict落地) ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
+阻塞:         <各路尚未满500:cline318/codex135/cc318/pi281·§22:4x未全交付·opencode+dsh+hermes DONE·codex=瓶颈~15天>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=15KB（归档0KB）
-  cline专项小结: predict_glm53=317files/241resolved/0empty(全real·C3 fix确认有效·silent exit根因已修R2360·正确PRED_SUBDIR R2361+)·C1:317real·C2:failed=79(能力·real patch但tests fail)·C3:empty=0(已修·非resume bug·是build bug)·C4:241res/320eval=75.3%·C5:报告R2375(cline special·9972B)·失败top1=能力差(real patch但tests fail)·cc267/325=82.2%·opencode414/498=83.1%·gap=能力差
+  cline专项小结: predict_glm53=318files/242resolved/0empty(全real·C3 fix确认有效·silent exit根因已修R2360·正确PRED_SUBDIR R2361+)·C1:318real·C2:failed=79(能力·real patch但tests fail)·C3:empty=0(已修·非resume bug·是build bug)·C4:242res/321eval=75.4%·C5:报告R2376(cline special·9893B)·失败top1=能力差(real patch但tests fail)·cc269/327=82.3%·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
-> [14:42] R2375: 自检(CPU/mem OK·load31/224·无runaway)·gateway 200·incr_eval 1new(pi sympy-18189 RESOLVED→pi207)·cleanup2empty(codex1+cc1 deleted)·predict:cline317r·codex135r·cc316r·pi281r·4/7 alive·双报告REGEN(R2375 14:42·7way=12200B·cline=9972B)·research日报2026-11-13已读(建议主为designflow·无harness可执行项)·未完成指令:有(§10:10+§22:4x)·W:0
+> [14:54] R2376: 自检(CPU/mem OK·load33/224·无runaway)·gateway 200·incr_eval 2new(cc django-14238+14311 全RESOLVED→cc269)·cleanup0empty(全7路0empty)·predict:cline318r·codex135r·cc318r·pi281r·4/7 alive·双报告REGEN(R2376 14:54·7way=12103B·cline=9893B)·research日报2026-11-13已读(harness建议:adapter契约/可复用skill/speculative decoding·暂纳入待办)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2375 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2375 incr_eval1new(pi sympy-18189 RESOLVED)+cleanup2empty+双报告REGEN。需要时再读。
 > 📦 R2374 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2374 incr_eval0new+cleanup4empty+双报告REGEN。需要时再读。
 > 📦 R2373 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2373 incr_eval1new+cleanup5empty+双报告REGEN。需要时再读。
 > 📦 R2372 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2372 monitor(0new eval·0empty)+双报告REGEN。需要时再读。
