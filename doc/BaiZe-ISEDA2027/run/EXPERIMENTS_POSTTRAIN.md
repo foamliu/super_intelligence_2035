@@ -9876,3 +9876,28 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 1. 5-run eval ~13:00 完（autofire 链自动，无需人工）→ 查 `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci。
 2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（**平台化使此分支概率上升**）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。最终结论「MiniCPM5-2B 上 RL 能否显著提升 PyAether 脚本能力」本身就是交付物。
 3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
+
+## §R435 (wake435, 2026-11-14 01:37) — 5-run eval RUNNING 健康监控（纯监控 wake，eval 全自治，无人工动作）
+
+### A. eval 链健康实测
+
+- autofire chain `baize_posttrain_rl_eval_chain.sh` PID2322797（ppid=2322795）存活，etime≈4562s。
+- R2 serve GPU7:8095 vLLM PID2353393：`nvidia-smi --query-compute-apps` 实测占 39228MiB；`nvidia-smi --query-gpu` GPU7=39244MiB/89%util（R2 serve 活跃推理）。
+- 3 并发 serve 全稳：GPU4 base:8098=39246MiB、GPU6 step105-final:8096=39246MiB、GPU7 R2:8095=39244MiB；GPU5=3MiB/0%（空闲,wake433 OOM mitigation 后保持）。GPU0-3=root SGLang Qwen3.8-27B 不可动。3 并发 serve = OOM 安全。
+
+### B. run1 进度（batch_id `2026_1114_010813`，data dir `/home/app.e0031982/eda_code_eval/2026_1114_010813/`）
+
+- eval run1 PID2354141（`baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8095/v1 --model minicpm5-2b-grpo-R2-step200 --label grpo_R2_step200 --run 1`）存活，etime≈1770s（@01:08:13 起 ~29min）。
+- 8 cline worker active：`run_cline_script.sh -p 8 -n`（PID2354149）→ `run_cli.sh` 8 实例（PID2354163/2354331-2354344）→ `timeout 2500 cline --yolo ... worker_{0..8}`（worker_5 PID2354478、worker_8 PID2361904 等实测）。
+- `.task_queue` 158→130 行（~28 任务已出队，较 wake434 的 135 行 +5），`code/` 下 13 个 .py 已落盘，`batch_cline.log` 持续增长（@01:36:56 worker-3 完成 EDA-Eval-PyAether-024→开始 028）。
+- 错误扫描：`grep -icE 'Traceback|CUDA out of memory|Killed|Segmentation fault' cli_data/worker_*/data/logs/cline.log` = 0（无真实崩溃）；`batch_cline.log` 仅有预期 `WARNING ... 失败 (Exit Code: 1)`（= 模型能力不足的 task 失败，非 infra 错误）。
+
+### C. 红线与边界
+
+- §2/§5.3 冻结协议 eval 链复用既有 `baize_posttrain_5run_eval.sh`（158/Pass@1/2500s/单trace/5-run/-p8 -n，未改）；§5.2 anti-cheat hook 逐字一致（harness 复用，worker 隔离 providers.json 不读全局）。本轮纯监控，未编辑任何运行中脚本，未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链。kill_gpu_serve child-PID bug 待 chain 空闲时修（不编辑运行中脚本）。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### D. 下一步
+
+1. 5-run eval ~13:00 完（autofire 链自动，无需人工）→ 查 `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci。
+2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（**平台化使此分支概率上升**）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。最终结论「MiniCPM5-2B 上 RL 能否显著提升 PyAether 脚本能力」本身就是交付物。
+3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
