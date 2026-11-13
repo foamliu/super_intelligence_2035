@@ -74,9 +74,9 @@
   <tr><th>指标</th><th><span class="tag t-basic">basic</span></th><th><span class="tag t-agentic">agentic</span></th><th>Δ（agentic − basic）</th></tr>
   <tr><td class="l">Pass@1（3 轮均值，40 题）</td><td id="m-basic-pass">69.2%</td><td id="m-agentic-pass">58.8%</td><td id="m-delta-pass" style="color:#ef4444;font-weight:700;">-22.5pp</td></tr>
   <tr><td class="l">压缩触发率（触发题数 / 40）</td><td id="m-basic-trig">21.3/40 (53%)</td><td id="m-agentic-trig">22.5/40 (56%)</td><td id="m-delta-trig">+1.2pp（相近）</td></tr>
-  <tr><td class="l">Token 压缩率（均值）</td><td id="m-basic-cr" class="tbd">TBD</td><td id="m-agentic-cr" class="tbd">TBD</td><td id="m-delta-cr" class="tbd">TBD</td></tr>
-  <tr><td class="l">每题墙钟时间（均值，秒）</td><td id="m-basic-wall" class="tbd">TBD</td><td id="m-agentic-wall" class="tbd">TBD</td><td id="m-delta-wall" class="tbd">TBD</td></tr>
-  <tr><td class="l">总 Token 消耗（3 轮）</td><td id="m-basic-tok" class="tbd">TBD</td><td id="m-agentic-tok" class="tbd">TBD</td><td id="m-delta-tok" class="tbd">TBD</td></tr>
+  <tr><td class="l">Token 压缩率（均值）</td><td id="m-basic-cr">69.7%</td><td id="m-agentic-cr">89.2% (2 轮)</td><td id="m-delta-cr" style="color:#ef4444;">+19.5pp（agentic 压更狠）</td></tr>
+  <tr><td class="l">每题墙钟时间（均值，秒）</td><td id="m-basic-wall">1087</td><td id="m-agentic-wall">1223 (2 轮)</td><td id="m-delta-wall" style="color:#ef4444;">+136s（agentic 更慢 12.5%）</td></tr>
+  <tr><td class="l">总 Token 消耗（3 轮）</td><td id="m-basic-tok">266.9M</td><td id="m-agentic-tok">157.2M (2 轮) / ~235.8M (3 轮估)</td><td id="m-delta-tok">~0.88×/轮（agentic 省 ~12%）</td></tr>
 </table>
 
 <!-- ================================================================ -->
@@ -139,7 +139,7 @@
   <tr><td><b>basic 失败</b></td><td id="mc-agentic-only">1</td><td id="mc-both-fail">10</td><td id="mc-agentic-fail-total">21</td></tr>
   <tr><td><b>合计</b></td><td id="mc-agentic-pass-total">20</td><td colspan="2" id="mc-grand-total">40</td></tr>
 </table>
-<p>McNemar χ² = <span id="mc-chisq">7.11</span> · p = <span id="mc-p">0.015</span> · Δ Pass@1 = <span id="mc-delta" style="color:#ef4444;font-weight:700;">-22.5</span>pp · 95% bootstrap CI = [<span id="mc-ci-lo">−33.3</span>, <span id="mc-ci-hi">−5.6</span>]</p>
+<p>McNemar χ² = <span id="mc-chisq">5.82</span>（连续性校正）· p = <span id="mc-p">0.055</span>（近似；精确二项 p≈0.011）· Δ Pass@1 = <span id="mc-delta" style="color:#ef4444;font-weight:700;">-22.5</span>pp · 95% bootstrap CI = [<span id="mc-ci-lo">−37.5</span>, <span id="mc-ci-hi">−7.5</span>] · <span class="small">（基于 basic 3 轮 + agentic 2 轮多数票；agentic_r3 落地后会更新为对称 3 轮多数票）</span></p>
 
 <!-- ================================================================ -->
 <h2>④ 亚组分析</h2>
@@ -157,15 +157,20 @@
 <p class="small">按子集内原始 trace 工具调用数的中位数（153）分短/长两组。</p>
 <table>
   <tr><th>长度组</th><th>题数</th><th><span class="tag t-basic">basic</span> Pass@1</th><th><span class="tag t-agentic">agentic</span> Pass@1</th><th>Δ</th></tr>
-  <tr><td class="l">短轨迹（&lt; 153 工具调用）</td><td id="sg-short-n" class="tbd">TBD</td><td id="sg-short-basic" class="tbd">TBD</td><td id="sg-short-agentic" class="tbd">TBD</td><td id="sg-short-delta" class="tbd">TBD</td></tr>
-  <tr><td class="l">长轨迹（≥ 153 工具调用）</td><td id="sg-long-n" class="tbd">TBD</td><td id="sg-long-basic" class="tbd">TBD</td><td id="sg-long-agentic" class="tbd">TBD</td><td id="sg-long-delta" class="tbd">TBD</td></tr>
+  <tr><td class="l">短轨迹（&lt; 153 工具调用）</td><td id="sg-short-n">20</td><td id="sg-short-basic">90.0%</td><td id="sg-short-agentic">70.0%</td><td id="sg-short-delta" style="color:#ef4444;">−20.0pp</td></tr>
+  <tr><td class="l">长轨迹（≥ 153 工具调用）</td><td id="sg-long-n">20</td><td id="sg-long-basic">55.0%</td><td id="sg-long-agentic">30.0%</td><td id="sg-long-delta" style="color:#ef4444;">−25.0pp</td></tr>
 </table>
 
 <h3>4.3 题类亚组（6 类别）</h3>
 <div class="scroll-x">
 <table id="sg-category-table">
   <tr><th>类别</th><th>题数</th><th><span class="tag t-basic">basic</span> Pass@1</th><th><span class="tag t-agentic">agentic</span> Pass@1</th><th>Δ</th></tr>
-  <tr><td colspan="5" class="tbd">[待 P2 数据填充：6 类别行]</td></tr>
+  <tr><td class="l">Database &amp; Design Management</td><td>6</td><td>100.0%</td><td>83.3%</td><td style="color:#ef4444;">−16.7pp</td></tr>
+  <tr><td class="l">Design Content Creation</td><td>12</td><td>33.3%</td><td>16.7%</td><td style="color:#ef4444;">−16.6pp</td></tr>
+  <tr><td class="l">Design Content Query &amp; Edit</td><td>6</td><td>83.3%</td><td>16.7%</td><td style="color:#ef4444;">−66.6pp</td></tr>
+  <tr><td class="l">Geometry Operation &amp; Analysis</td><td>7</td><td>100.0%</td><td>71.4%</td><td style="color:#ef4444;">−28.6pp</td></tr>
+  <tr><td class="l">Simulation &amp; Analysis Configuration</td><td>5</td><td>60.0%</td><td>80.0%</td><td style="color:#16a34a;">+20.0pp</td></tr>
+  <tr><td class="l">Utilities</td><td>4</td><td>100.0%</td><td>75.0%</td><td style="color:#ef4444;">−25.0pp</td></tr>
 </table>
 </div>
 
@@ -174,13 +179,13 @@
 <p class="small">对两臂<b>不一致</b>的题（一臂过一臂挂）做失败归因，4 类：</p>
 <table>
   <tr><th>失败类型</th><th>定义</th><th><span class="tag t-basic">basic 独挂</span></th><th><span class="tag t-agentic">agentic 独挂</span></th></tr>
-  <tr><td class="l">① 交付形态/位置错</td><td class="l">生成了代码但文件名/路径/格式不符</td><td id="fc-1-basic" class="tbd">TBD</td><td id="fc-1-agentic" class="tbd">TBD</td></tr>
-  <tr><td class="l">② 前提缺失/上下文丢失</td><td class="l">压缩后丢失关键上下文（API 名、参数、设计规格）</td><td id="fc-2-basic" class="tbd">TBD</td><td id="fc-2-agentic" class="tbd">TBD</td></tr>
-  <tr><td class="l">③ 能力不足</td><td class="l">模型本身无法完成（与压缩无关）</td><td id="fc-3-basic" class="tbd">TBD</td><td id="fc-3-agentic" class="tbd">TBD</td></tr>
-  <tr><td class="l">④ 判分歧义</td><td class="l">判分器边界案例（与压缩无关）</td><td id="fc-4-basic" class="tbd">TBD</td><td id="fc-4-agentic" class="tbd">TBD</td></tr>
+  <tr><td class="l">① 交付形态/位置错</td><td class="l">生成了代码但文件名/路径/格式不符</td><td id="fc-1-basic">0</td><td id="fc-1-agentic">0</td></tr>
+  <tr><td class="l">② 前提缺失/上下文丢失</td><td class="l">压缩后丢失关键上下文（API 名、参数、设计规格）</td><td id="fc-2-basic">0</td><td id="fc-2-agentic" style="color:#ef4444;font-weight:700;">10</td></tr>
+  <tr><td class="l">③ 能力不足</td><td class="l">模型本身无法完成（与压缩无关）</td><td id="fc-3-basic">0</td><td id="fc-3-agentic">0</td></tr>
+  <tr><td class="l">④ 判分歧义</td><td class="l">判分器边界案例（与压缩无关）</td><td id="fc-4-basic">1</td><td id="fc-4-agentic">0</td></tr>
 </table>
 <div class="banner info" id="fc-summary">
-  <b>关键观察</b>：<span class="tbd">[②类失败（上下文丢失）的分布是压缩策略差异的核心证据——若 agentic 的②类显著少于 basic，说明 LLM 摘要更好地保住了任务状态]</span>
+  <b>关键观察</b>：<span>10 例 agentic 独挂全部归为 ②类（上下文丢失），basic 独挂仅 1 例且归为 ④类（判分歧义）——这与 H4 相反：agentic 的 LLM 摘要不仅没保住任务状态，反而成为<b>主要失败来源</b>；basic 的规则化折叠（保留原始 user_input）反而几乎不丢上下文。②类失败高度集中在 Design Content Query &amp; Edit 与 Design Content Creation 两类（含明确 API 名/坐标规格的题），说明 agentic 摘要在「精确数值/名称保留」上系统性失效。</span>
 </div>
 
 <!-- ================================================================ -->
@@ -196,7 +201,7 @@
 
 <h3>6.2 效率-效果象限</h3>
 <div class="banner info" id="ce-quadrant">
-  <b>成本-收益判定</b>：<span class="tbd">[待 P2 数据填充：若 agentic ΔPass@1 ≥ +3pp 且 Token 开销增幅 <20%，则「高效增益」；若增益 <3pp 但开销显著，则「得不偿失」]</span>
+  <b>成本-收益判定</b>：<span>「<b>得不偿失</b>」。agentic ΔPass@1 = −22.5pp（CI [−37.5, −7.5]，远低于 +3pp 判据），且每题墙钟 +12.5%、②类上下文丢失失败 10 例。其唯一优势是每轮 Token 省 ~12%（89.2% 压缩率 vs 69.7%），但省的 token 远不足以补偿 22.5pp 的 Pass@1 损失——按每通过一题的 token 单价算，agentic 反而更贵。</span>
 </div>
 
 <!-- ================================================================ -->
@@ -204,10 +209,14 @@
 <p class="small">对 agentic 臂的 compaction.json 做人工抽检（5 条），评估 LLM 生成摘要是否准确保留了关键任务状态。</p>
 <table>
   <tr><th>题号</th><th>压缩时消息数</th><th>摘要是否含 Goal</th><th>摘要是否含 State/Done</th><th>关键 API/参数是否保留</th><th>质量评级</th></tr>
-  <tr><td colspan="6" class="tbd">[待 P2 数据填充：5 条抽检]</td></tr>
+  <tr><td>EDA-Eval-PyAether-102</td><td>90</td><td>✓（## 目标）</td><td>✓（## 已完成）</td><td>✓（goaInit / goaLayerOr 等）</td><td>A</td></tr>
+  <tr><td>EDA-Eval-PyAether-140</td><td>93</td><td>✓（## 目标）</td><td>✓（## 已完成）</td><td>✓（goaInit / goaLayerSize 等）</td><td>A</td></tr>
+  <tr><td>EDA-Eval-PyAether-129</td><td>184</td><td>✓（## 目标）</td><td>✓（## 已完成）</td><td>✓（emyDesign / emyUnixNS 等）</td><td>A</td></tr>
+  <tr><td>EDA-Eval-PyAether-118</td><td>194</td><td>✓（## 目标）</td><td>✓（## 已完成）</td><td>✓（pyAether API 名全保留）</td><td>A</td></tr>
+  <tr><td>EDA-Eval-PyAether-128</td><td>155</td><td>✓（## 目标）</td><td>✓（## 已完成）</td><td>✗（未保留具体 API 名）</td><td>B</td></tr>
 </table>
 <div class="banner info" id="quality-summary">
-  <b>摘要质量结论</b>：<span class="tbd">[待 P2 数据填充]</span>
+  <b>摘要质量结论</b>：<span>5 条抽检中 4 条评级 A（Goal + State + API 名全保留），1 条评级 B（Goal/State 保留但未保留具体 API 名，text_len 3.1K）。摘要文本长度 1.7K–4.7K，平均 ~2.8K 字符。<b>结构性要素覆盖率</b>：Goal 5/5、State 5/5、API 名 4/5。<b>但需注意</b>：摘要质量「看起来不差」却仍导致 10 例 agentic 独挂——说明问题不在「摘要格式」而在「<b>精确数值/坐标/参数被语义化概括</b>」：agentic 把具体 layer/purpose 整数、坐标 tuple、assert 期望值等「精确状态」概括成「已绘制图形」「已创建 pin」之类的模糊表述，后续工具调用因参数不匹配而失败。这是 ②类上下文丢失的微观机制。</span>
 </div>
 
 <!-- ================================================================ -->
