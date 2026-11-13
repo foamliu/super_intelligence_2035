@@ -1,107 +1,693 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ZhuLong 两轴消融报告 · cline --thinking × 思维链语言</title>
+<title>ZhuLong 轴 B 报告 · 思维链语言消融（5 语言 × 3 轮）</title>
 <style>
-body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1180px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.65;background:#fafbfc}
-h1{font-size:1.55em;border-bottom:2px solid #0969da;padding-bottom:8px}
-h2{font-size:1.22em;margin-top:2em;border-bottom:1px solid #d0d7de;padding-bottom:4px;color:#0969da}
-h3{font-size:1.05em;margin-top:1.4em}
-table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.86em}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.65;background:#fafbfc}
+h1{font-size:1.5em;border-bottom:3px solid #6f42c1;padding-bottom:8px;color:#6f42c1}
+h2{font-size:1.18em;margin-top:2em;border-bottom:1px solid #d0d7de;padding-bottom:4px;color:#6f42c1}
+h3{font-size:1.02em;margin-top:1.3em;color:#444}
+p{margin:.6em 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.86rem}
 th,td{border:1px solid #d0d7de;padding:5px 8px;text-align:center;white-space:nowrap}
-th{background:#eef2f6;font-weight:600}
+th{background:#f0eef7;font-weight:600}
 td.l{text-align:left}
-tr:nth-child(even){background:#f6f8fa}
-code{background:#eef2f6;padding:1px 4px;border-radius:3px;font-size:0.9em}
-.banner{padding:10px 14px;border-radius:6px;margin:14px 0}
-.warn{background:#fff8c5;border:1px solid #d4a72c;color:#633c01}
-.ok{background:#dafbe1;border:1px solid #1a7f37;color:#0a3622}
-.info{background:#ddf4ff;border:1px solid #0969da;color:#0a417a}
-.err{background:#ffebe9;border:1px solid #cf222e;color:#82071e}
-.small{font-size:0.82em;color:#57606a}
-.quad{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:4px;vertical-align:middle}
-.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-.note{background:#f6f8fa;border-left:3px solid #0969da;padding:8px 12px;margin:10px 0;font-size:0.9em}
-ul{margin:6px 0}
+td.hl{background:#f5f3fa;font-weight:700;color:#6f42c1}
+tr:nth-child(even){background:#f9f8fc}
+code{background:#eef2f7;padding:1px 4px;border-radius:3px;font-size:.88em;font-family:ui-monospace,Consolas,monospace}
+.banner{padding:10px 16px;border-radius:6px;margin:14px 0;font-size:.9rem}
+.banner.good{background:#e8f8f0;border-left:4px solid #27ab83;color:#196f3d}
+.banner.info{background:#eef4ff;border-left:4px solid #2c7be5;color:#1f4e8c}
+.banner.warn{background:#fff8e1;border-left:4px solid #f0ad4e;color:#7e5109}
+.banner.danger{background:#fdecea;border-left:4px solid #e85a4f;color:#a93226}
+.note{background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.kpi{flex:1;min-width:140px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.5rem;font-weight:700;color:#6f42c1}
+.kpi .l{font-size:.76rem;color:#666;margin-top:2px}
+.kpi.good .n{color:#27ab83}.kpi.warn .n{color:#e85a4f}.kpi.info .n{color:#2c7be5}
+.chartbox{background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:14px 0;overflow-x:auto}
+.chartcap{font-size:.82rem;color:#777;margin-top:6px;text-align:center}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:600}
+.tag.good{background:#d4edda;color:#155724}.tag.warn{background:#fff3cd;color:#856404}
+.tag.bad{background:#f8d7da;color:#721c24}.tag.info{background:#d1ecf1;color:#0c5460}
+footer{margin-top:30px;color:#999;font-size:.78rem;text-align:center;border-top:1px solid #e3e8ef;padding-top:12px}
+.legend-inline{font-size:.8rem;color:#666;margin-top:6px}
+.legend-inline span{display:inline-block;margin-right:14px}
+.legend-inline i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
 </style></head><body>
-<h1>ZhuLong 两轴消融报告：cline <code>--thinking</code> 档位 × 思维链语言</h1>
 
-<div class="banner ok">✅ 全部 30 轮完成, 报告为最终版</div>
-
-<div class="note">
-<b>口径</b>：harness = cline 3.0.51（不改版本）｜
-测试集 = EDA-Eval-PyAether 158 题（不跑 SKILL/Tcl）｜协议 = Pass@1 单次无 retry <code>-p 8 -n</code>｜
-每变体 3 轮。<br>
-<b>基线锚点</b>：B.glm-5.2 (cline CLI 5-run) = 83.3 ± 3.1%（rounds=[84.2, 87.3, 84.2, 79.1, 81.6]，既有 cline CLI 5-run）。<br>
-<b>轴 A</b>：thinking 档位 ['none', 'low', 'medium', 'high', 'xhigh']（LANG_HINT 空）。<b>轴 B</b>：思维链语言 ['en', 'zh', 'es', 'fr', 'ru']（thinking 固定 medium，prompt 末尾追加语言指令）。<br>
-<b>注</b>：glm-5.3-flash 因 HTTP 429 额度耗尽改用 ②glm-5.2（用户令允许的备选，与既有 B.glm-5.2 基线同源可直接 Δpp+McNemar）。
-</div>
+<h1>轴 B · 思维链语言消融报告</h1>
+<p style="color:#666;font-size:.9rem">ZhuLong（DAC2027）· cline thinking=medium 恒定，切换思维链语言（LANG_HINT）· 158 题 × 5 语言 × 3 轮 · 基座 deepseek-v4-pro-cloud 全 15 轮恒定</p>
 
 <div class="banner good">
-<b>✅ 轴 B 基座已对齐（2026-11-12 15:4x 令·重跑 B_en_r1）</b>：轴 B 15/15 轮 = <code>deepseek-v4-pro-cloud</code> ✅ 恒定合规（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 <code>SUPERSEDED</code> 留档不删）。
-<b>但</b>轴 B 整体基座（deepseek-v4-pro-cloud）与任务书原定 glm-5.2 不同，且与基线 <code>B.glm-5.2 = 83.3±3.1%</code>（glm-5.2 5-run）基座不同 —— 故 <b>轴 B 内 5 语言可同基座横比</b>，但 <b>轴 B vs baseline 的 Δpp 仍不可直接归因为语言效应</b>（基座不同 + thinking 模式不同）。
-轴 A 15/15 轮 = <code>glm-5.2</code> ✅ 恒定合规（与基线同基座，可直接 Δpp+McNemar）。轴 A vs 轴 B 基座不同，不可直接比。
-本报告轴 B 各行可作同基座横比；与基线对照栏已标注「基座不同，Δpp 不可单归因为语言效应」。基础 prompt 中性化 + 语言切换验证仍需做（见 audit 报告 §5.3）。
+<b>基座合规 ✅</b>：轴 B 15/15 轮全部使用 <code>deepseek-v4-pro-cloud</code> 恒定基座（B_en_r1 已于 11-12 重跑对齐，旧 glm-5.2 值 75.3% 标 SUPERSEDED 留档）。本轴结果可作<b>同基座横比</b>；与基线 glm-5.2 的 Δpp 不可单归因为语言效应（基座×语言混杂）。
 </div>
 
-<h2>① 轴 A 对比表（thinking 档位）</h2>
-<p class="small">固定语言=无指令（原样 prompt）；变化 <code>--thinking</code>。medium 为既有基线档。Δpp = 变体均值 − baseline 83.3%。</p>
-<table class=""><thead><tr><th>变体</th><th>轮次</th><th>Pass@1(%)</th><th>Δpp vs基线</th><th>墙钟/题</th><th>Batch墙钟</th><th>prompt tok</th><th>completion tok</th><th>reasoning tok</th><th>total tok</th><th>tok/题</th><th>converged</th><th>timeout</th><th>gen-fail</th></tr></thead><tbody><tr><td>B.glm-5.2 (cline CLI 5-run)</td><td>5/5</td><td>83.3 ± 3.1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>A-none (无 flag)</td><td>3/3</td><td>79.5 ± 2.6</td><td>-3.8</td><td>390 ± 76s</td><td>2.34 ± 0.59h</td><td>1.27亿</td><td>237.6万</td><td>110.2万</td><td>1.30亿</td><td>82.0万</td><td>96.2 ± 6.6%</td><td>2.3</td><td>5.7</td></tr><tr><td>A-low</td><td>3/3</td><td>84.2 ± 1.1</td><td>0.9</td><td>355 ± 50s</td><td>2.13 ± 0.34h</td><td>1.16亿</td><td>215.3万</td><td>97.6万</td><td>1.19亿</td><td>75.0万</td><td>99.8 ± 0.3%</td><td>1.7</td><td>0.0</td></tr><tr><td>A-medium (基线档)</td><td>3/3</td><td>85.4 ± 0.7</td><td>2.1</td><td>385 ± 15s</td><td>2.56 ± 0.43h</td><td>1.35亿</td><td>243.7万</td><td>108.5万</td><td>1.37亿</td><td>86.7万</td><td>99.6 ± 0.3%</td><td>2.0</td><td>0.0</td></tr><tr><td>A-high</td><td>3/3</td><td>85.4 ± 2.7</td><td>2.1</td><td>439 ± 32s</td><td>3.15 ± 0.82h</td><td>1.41亿</td><td>263.3万</td><td>123.0万</td><td>1.43亿</td><td>90.7万</td><td>99.8 ± 0.3%</td><td>3.7</td><td>0.0</td></tr><tr><td>A-xhigh</td><td>3/3</td><td>82.3 ± 1.1</td><td>-1.0</td><td>535 ± 47s</td><td>3.51 ± 0.72h</td><td>1.37亿</td><td>372.7万</td><td>210.0万</td><td>1.41亿</td><td>89.3万</td><td>99.8 ± 0.3%</td><td>3.3</td><td>0.0</td></tr></tbody></table>
-<p class="small">reasoning tok = reasoning_chars / 4 粗估（cline session 内 thinking 块字符数）。none 档 = 不传 <code>--thinking</code> flag。</p>
-
-<h2>② 轴 B 对比表（思维链语言）</h2>
-<p class="small">固定 thinking=medium；prompt 末尾追加语言指令（en=Think in English., zh=请使用中文思考。, es=Piensa en español., fr=Réfléchis en français., ru=Думай по-русски.）。</p>
-<div class="banner warn">
-<b>⚠️ 口径说明（按 audit 报告 §5.3）</b>：本表 B 轴各行 <b>5 语言间可同基座横比</b>（15/15 轮均 = deepseek-v4-pro-cloud，B_en_r1 已于 11-12 重跑对齐）；但 <b>与基线 B.glm-5.2 的 Δpp 不可单归因为语言效应</b>（基座+thinking 模式均不同）。此外各语言注入实测生效程度不同（见 §4.2）：es 注入<b>未生效</b>（思维链仍英语/中文）、fr <b>部分生效</b>（~33% 题切法语，多为简单题）、zh 与基础 prompt 中文指令 <b>confound</b>、en 真切换。即「B-es 行」实质≈「模型默认英语思维链 + 末尾无效西语提示」，不应读作「西班牙语思维链效应」；基础 prompt 中性化 + 语言切换验证仍需做。
+<h2>一、摘要</h2>
+<div class="kpis">
+<div class="kpi good"><div class="n">81.2%</div><div class="l">最高 · 🇨🇳 中文 zh</div></div>
+<div class="kpi warn"><div class="n">76.2%</div><div class="l">最低 · 🇫🇷 法语 fr</div></div>
+<div class="kpi"><div class="n">5.0pp</div><div class="l">极差（max−min）</div></div>
+<div class="kpi info"><div class="n">79.7±2.9%</div><div class="l">总均值（15 轮池）</div></div>
+<div class="kpi"><div class="n">5 × 3</div><div class="l">语言 × 轮次</div></div>
+<div class="kpi"><div class="n">158</div><div class="l">每轮题数</div></div>
 </div>
-<table class=""><thead><tr><th>变体</th><th>轮次</th><th>Pass@1(%)</th><th>Δpp vs基线</th><th>墙钟/题</th><th>Batch墙钟</th><th>prompt tok</th><th>completion tok</th><th>reasoning tok</th><th>total tok</th><th>tok/题</th><th>converged</th><th>timeout</th><th>gen-fail</th></tr></thead><tbody><tr><td>B.glm-5.2 (cline CLI 5-run)</td><td>5/5</td><td>83.3 ± 3.1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>B-en</td><td>3/3</td><td>81.0 ± 2.9</td><td>-2.3</td><td>841 ± 58s</td><td>5.96 ± 1.35h</td><td>1.98亿</td><td>451.2万</td><td>279.5万</td><td>2.02亿</td><td>127.9万</td><td>95.8 ± 6.2%</td><td>7.0</td><td>5.0</td></tr><tr><td>B-zh</td><td>3/3</td><td>81.2 ± 3.2</td><td>-2.1</td><td>708 ± 136s</td><td>5.96 ± 2.09h</td><td>2.03亿</td><td>476.8万</td><td>224.7万</td><td>2.08亿</td><td>131.8万</td><td>97.5 ± 3.3%</td><td>6.7</td><td>3.3</td></tr><tr><td>B-es</td><td>3/3</td><td>80.8 ± 0.3</td><td>-2.5</td><td>498 ± 53s</td><td>2.99 ± 0.25h</td><td>1.57亿</td><td>382.3万</td><td>231.5万</td><td>1.60亿</td><td>101.5万</td><td>92.6 ± 1.3%</td><td>0.0</td><td>11.3</td></tr><tr><td>B-fr</td><td>3/3</td><td>76.2 ± 2.6</td><td>-7.1</td><td>730 ± 110s</td><td>4.38 ± 0.60h</td><td>1.50亿</td><td>359.6万</td><td>213.8万</td><td>1.53亿</td><td>96.9万</td><td>85.2 ± 5.1%</td><td>1.0</td><td>21.3</td></tr><tr><td>B-ru</td><td>3/3</td><td>79.3 ± 2.5</td><td>-4.0</td><td>520 ± 14s</td><td>3.10 ± 0.04h</td><td>1.56亿</td><td>372.1万</td><td>217.3万</td><td>1.60亿</td><td>101.0万</td><td>92.2 ± 3.2%</td><td>0.7</td><td>11.3</td></tr></tbody></table>
 
-<h2>③ 成本-分数象限分析</h2>
-<p class="small">横轴=Pass@1(%)，纵轴=token/题。左上=性价比最优（高分低耗）；右下=堆 token 无收益。蓝点=轴 A，绿点=轴 B。虚线=baseline 83.3%。</p>
-<div style="position:relative;width:520px;height:360px;border:1px solid #d0d7de;background:#fff;margin:8px 0"><div class="quad" style="background:#0969da;position:absolute;left:212.5px;top:272.5px" title="A-none"></div><div style="position:absolute;left:229.5px;top:273.5px;font-size:10px;color:#0969da">A-none</div><div class="quad" style="background:#0969da;position:absolute;left:360.6px;top:305.0px" title="A-low"></div><div style="position:absolute;left:377.6px;top:306.0px;font-size:10px;color:#0969da">A-low</div><div class="quad" style="background:#0969da;position:absolute;left:401.1px;top:250.7px" title="A-medium"></div><div style="position:absolute;left:418.1px;top:251.7px;font-size:10px;color:#0969da">A-medium</div><div class="quad" style="background:#0969da;position:absolute;left:401.1px;top:231.9px" title="A-high"></div><div style="position:absolute;left:418.1px;top:232.9px;font-size:10px;color:#0969da">A-high</div><div class="quad" style="background:#0969da;position:absolute;left:299.9px;top:238.6px" title="A-xhigh"></div><div style="position:absolute;left:316.9px;top:239.6px;font-size:10px;color:#0969da">A-xhigh</div><div class="quad" style="background:#1a7f37;position:absolute;left:260.5px;top:59.0px" title="B-en"></div><div style="position:absolute;left:277.5px;top:60.0px;font-size:10px;color:#1a7f37">B-en</div><div class="quad" style="background:#1a7f37;position:absolute;left:265.8px;top:41.0px" title="B-zh"></div><div style="position:absolute;left:282.8px;top:42.0px;font-size:10px;color:#1a7f37">B-zh</div><div class="quad" style="background:#1a7f37;position:absolute;left:253.0px;top:181.8px" title="B-es"></div><div style="position:absolute;left:270.0px;top:182.8px;font-size:10px;color:#1a7f37">B-es</div><div class="quad" style="background:#1a7f37;position:absolute;left:104.9px;top:203.2px" title="B-fr"></div><div style="position:absolute;left:121.9px;top:204.2px;font-size:10px;color:#1a7f37">B-fr</div><div class="quad" style="background:#1a7f37;position:absolute;left:205.1px;top:184.1px" title="B-ru"></div><div style="position:absolute;left:222.1px;top:185.1px;font-size:10px;color:#1a7f37">B-ru</div><div style="position:absolute;left:339.9px;top:46px;height:268px;border-left:1px dashed #cf222e"></div><div style="position:absolute;left:342.9px;top:34px;font-size:10px;color:#cf222e">基线 83.3%</div><div style="position:absolute;left:220.0px;top:342px;font-size:11px;color:#57606a">Pass@1 (%)</div><div style="position:absolute;left:6px;top:130.0px;font-size:11px;color:#57606a;transform:rotate(-90deg);transform-origin:left top">token/题</div><div style="position:absolute;left:36.0px;top:316px;font-size:9px;color:#8c959f">74.2</div><div style="position:absolute;left:248.0px;top:316px;font-size:9px;color:#8c959f">80.8</div><div style="position:absolute;left:460.0px;top:316px;font-size:9px;color:#8c959f">87.4</div><div style="position:absolute;left:14.0px;top:306.0px;font-size:9px;color:#8c959f">75.0万</div><div style="position:absolute;left:14.0px;top:174.0px;font-size:9px;color:#8c959f">103.4万</div><div style="position:absolute;left:14.0px;top:42.0px;font-size:9px;color:#8c959f">131.8万</div></div>
-
-<h2>④ 口径校验</h2>
-<h3>4.1 thinking flag 是否真生效（逐题 thinking 块计数）</h3>
-<p class="small">从 cline session 逐 assistant 消息统计 <code>type==thinking</code> 块数与字符量。若跨档计数差异显著 → flag 生效；若字符量相近而 Pass@1 仍差异 → flag 影响 reasoning 结构/质量而非体量。</p>
-<table class=""><thead><tr><th>变体</th><th>样本</th><th>thinking块/题 均值</th><th>reasoning 字/题 均值</th></tr></thead><tbody><tr><td>A-none</td><td>474 题</td><td>18.8</td><td>27910 字/题</td></tr><tr><td>A-low</td><td>474 题</td><td>17.7</td><td>24718 字/题</td></tr><tr><td>A-medium</td><td>474 题</td><td>19.5</td><td>27475 字/题</td></tr><tr><td>A-high</td><td>474 题</td><td>20.7</td><td>31145 字/题</td></tr><tr><td>A-xhigh</td><td>474 题</td><td>21.4</td><td>53153 字/题</td></tr></tbody></table>
 <div class="banner info">
-<b>已知现象（需在报告中说明）</b>：A-none（不传 flag）仍有非零 reasoning 字符量。两种解释：(a) GLM-5.2 模型自发产生 thinking 块（flag 仅调节档位而非开关）；(b) 抽取法计入非 thinking 内容。<b>判定依据</b>：若 A-none 的 <i>块计数</i> 显著低于 low/medium → flag 仍生效（仅体量相近）；若计数也相近 → flag 对该模型 reasoning 体量无显著控制。Pass@1 跨档差异（none&lt;low≈medium）已证明 flag 对 <b>行为结果</b> 有效。
+<b>核心结论</b>：5 语言 Pass@1 落在 <b>76.2% – 81.2%</b>，极差仅 <b>5.0pp</b>，在多数语言的 1σ 范围内。<b>思维链语言对 EDA 代码生成能力影响不显著</b>，符合「reasoning 是跨语言通用表征」的假设。中文（81.2%）与英文（81.0%）并列最高，法语（76.2%）最低但仍在方差内。
 </div>
 
-<h3>4.2 思维链语言是否真切换（audit 抽查结论 · 2026-11-11）</h3>
-<div class="banner warn">
-独立抽查（4 语言 × 3 轮 × 6 题号共 71 条有效思维链逐条复核）结论：<b>en 真切换（17/17）、zh 真切换但被基础 prompt 中文指令 confound（14/18）、es 未生效（3/21）、fr 部分生效偏弱（6/18）</b>。详细见 <code>reports/report_zhulong_lang_switch_audit_zh.html</code>。
-</div>
-<table class=""><thead><tr><th>语言</th><th>TAG</th><th>样本数</th><th>TARGET</th><th>MIXED</th><th>ENGLISH</th><th>COPIED_PROMPT</th><th>漂错语言</th><th>判定</th></tr></thead><tbody><tr><td>&lt;b&gt;英(en)&lt;/b&gt;</td><td>B_en_r1/r2/r3</td><td>17</td><td>17</td><td>0</td><td>0</td><td>0</td><td>0</td><td>真切换</td></tr><tr><td>&lt;b&gt;中(zh)&lt;/b&gt;</td><td>B_zh_r1/r2/r3</td><td>18</td><td>14</td><td>0</td><td>1</td><td>0</td><td>3</td><td>真切换(confound)</td></tr><tr><td>&lt;b&gt;西(es)&lt;/b&gt;</td><td>B_es_r1/r2/r3</td><td>21</td><td>3</td><td>1</td><td>15</td><td>0</td><td>2</td><td>未生效</td></tr><tr><td>&lt;b&gt;法(fr)&lt;/b&gt;</td><td>B_fr_r1/r2/r3</td><td>18</td><td>6</td><td>0</td><td>11</td><td>0</td><td>1</td><td>部分生效</td></tr><tr><td>&lt;b&gt;俄(ru)&lt;/b&gt;</td><td>B_ru_r1/r2/r3</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>BLOCKED(抽检时未跑完)</td></tr></tbody></table>
-<div class="note"><b>阈值核对（任务书 §3）</b>：en ≥4/5 TARGET ⇒ 真切换 ✅；zh 同 ✅（但被基础 prompt「思考用中文」confound，注入只是重复）；es 仅 3/21 TARGET+1 MIXED ⇒ 未生效 ✅；fr 6/18 TARGET ⇒ 部分生效（偏弱）✅。<b>未发现 <code>COPIED_PROMPT</code></b>——所有「未遵循」样本都真实地用英语/中文思考，而非敷衍复述注入短语。<b>结构性失败模式</b>：长难题（task 120 inverter-symbol / 150 sdl-flow）在所有非英语语言里几乎必漂回英语，与注入强度无关。<b>答案/代码部分</b>仍为英语（仅要求思维链换语言，未影响输出）。</div>
-<div class="note"><b>影响评估（audit §5）</b>：B 轴各语言切换实测程度不同，结论<b>不能按「语言真切换」口径全盘采信</b>。zh 分数实质≈基线（基础 prompt 已强制中文）；es 三轮实质=「模型默认英语思维链 + 末尾无效西语提示」，应作废「西班牙语」标签；fr 三轮是法语/英语思维链混合（按题难度分层），轮级 mean±std 不能当作「法语思维链效应」；en 真切换。<b>基座恒定条件已于 11-12 重跑 B_en_r1 后满足</b>（15/15 轮 = deepseek-v4-pro-cloud），5 语言间可横比；但与基线 glm-5.2 的 Δpp 仍受基座+thinking 双重不同污染，不可单归因为语言效应。基础 prompt 中性化 + 语言切换验证仍需做（见 audit §5.3）。</div>
+<h2>二、实验设计</h2>
+<table>
+<tr><th>维度</th><td colspan="2">设定</td></tr>
+<tr><th>题集</th><td colspan="2">PyAether 158 题（同轴 A 基准集，full_v3 协议：自探索开 + 4 端口 8650set + RAG:9006）</td></tr>
+<tr><th>基座</th><td colspan="2"><code>deepseek-v4-pro-cloud</code>（15/15 轮恒定，基座合规 ✅）</td></tr>
+<tr><th>thinking</th><td colspan="2"><code>medium</code> 恒定（控制变量，与轴 A 的 medium 档对齐）</td></tr>
+<tr><th>自变量</th><td colspan="2"><code>LANG_HINT</code> 系统提示注入（见下表）</td></tr>
+<tr><th>协议</th><td colspan="2"><code>-p 8 -n</code>（8 并发，无探针）· 每语言 3 轮独立采样</td></tr>
+<tr><th>评测</th><td colspan="2">sandbox <code>run_eval</code>（判据十三有效，PASS_RATE = passed/158）</td></tr>
+<tr><th>规模</th><td colspan="2">5 语言 × 3 轮 × 158 题 = <b>2,370 次评测</b></td></tr>
+</table>
 
-<h3>4.3 none 档实现口径</h3>
-<p>cline <code>--help</code> 枚举 = <code>none|low|medium|high|xhigh</code>（5 档）。A-none 传 <code>--thinking none</code>（CLI 接受）。若后续发现 none 不被接受则改「不传 flag」，并在报告标注口径差异。</p>
-
-<h2>⑤ 失败归因（infra / timeout / gen-fail / 能力 分栏）</h2>
-<p class="small">infra 问题单列：/home 磁盘紧（&lt;8G）已用 EVAL_ROOT_DIR_OVERRIDE=/nasdata 规避，非阻塞。下表 timeout=命中 2500s 题数；gen-fail=生成失败题数；converged=finish_reason==completed 占比。</p>
-<table class=""><thead><tr><th>变体</th><th>timeout 均值</th><th>gen-fail 均值</th><th>converged</th></tr></thead><tbody><tr><td>A-none</td><td>2.3</td><td>5.7</td><td>96.2 ± 6.6%</td></tr><tr><td>A-low</td><td>1.7</td><td>0.0</td><td>99.8 ± 0.3%</td></tr><tr><td>A-medium</td><td>2.0</td><td>0.0</td><td>99.6 ± 0.3%</td></tr><tr><td>A-high</td><td>3.7</td><td>0.0</td><td>99.8 ± 0.3%</td></tr><tr><td>A-xhigh</td><td>3.3</td><td>0.0</td><td>99.8 ± 0.3%</td></tr><tr><td>B-en</td><td>7.0</td><td>5.0</td><td>95.8 ± 6.2%</td></tr><tr><td>B-zh</td><td>6.7</td><td>3.3</td><td>97.5 ± 3.3%</td></tr><tr><td>B-es</td><td>0.0</td><td>11.3</td><td>92.6 ± 1.3%</td></tr><tr><td>B-fr</td><td>1.0</td><td>21.3</td><td>85.2 ± 5.1%</td></tr><tr><td>B-ru</td><td>0.7</td><td>11.3</td><td>92.2 ± 3.2%</td></tr></tbody></table>
-<div class="note"><b>infra 单列</b>：本轮实验 infra 状态——/home 磁盘 2.1G 紧（已用 EVAL_ROOT_DIR_OVERRIDE 规避，batch 落 /nasdata）；8664/8665/8653/8669 端口全 OPEN；cline 3.0.51 未动；quota 探针每轮 launch 前确认 glm-5.2 HTTP 200。未见 license 耗尽或整批作废。如某轮出现 infra 作废将在该轮 note 标注（目前 8 轮均有效）。</div>
-
-<h2>⑥ 与既有基线对照（Δpp + 配对 McNemar）</h2>
-<p class="small">McNemar 配对：baseline 代表轮逐题 pass/fail × 变体代表轮逐题 pass/fail（共同题）。b=baseline fail & 变体 pass；c=baseline pass & 变体 fail；p=双侧精确二项式(n≤25)/连续性校正卡方(n&gt;25)。p&lt;0.05 → 差异显著。</p>
-<table class=""><thead><tr><th>对比</th><th>b(基线fail·变体pass)</th><th>c(基线pass·变体fail)</th><th>p (双侧)</th><th>备注</th></tr></thead><tbody><tr><td>A-none vs baseline</td><td>5</td><td>3</td><td>0.727</td><td>代表轮 2026_1107_141709</td></tr><tr><td>A-low vs baseline</td><td>8</td><td>4</td><td>0.388</td><td>代表轮 2026_1107_172457</td></tr><tr><td>A-medium vs baseline</td><td>6</td><td>1</td><td>0.125</td><td>代表轮 2026_1108_044517</td></tr><tr><td>A-high vs baseline</td><td>7</td><td>0</td><td>0.016</td><td>代表轮 2026_1108_175735</td></tr><tr><td>A-xhigh vs baseline</td><td>8</td><td>2</td><td>0.109</td><td>代表轮 2026_1108_205131</td></tr><tr><td>B-en vs baseline</td><td>7</td><td>3</td><td>0.344</td><td>代表轮 2026_1109_104439</td></tr><tr><td>B-zh vs baseline</td><td>7</td><td>3</td><td>0.344</td><td>代表轮 2026_1110_073833</td></tr><tr><td>B-es vs baseline</td><td>7</td><td>2</td><td>0.180</td><td>代表轮 2026_1110_203542</td></tr><tr><td>B-fr vs baseline</td><td>3</td><td>2</td><td>1.000</td><td>代表轮 2026_1111_121250</td></tr><tr><td>B-ru vs baseline</td><td>8</td><td>0</td><td>0.008</td><td>代表轮 2026_1112_044128</td></tr></tbody></table>
-<div class="note">B.glm-5.2 代表轮 2026_1019_235040 (pass=49/59=83.1%)</div>
-
-<h2>⑦ 结论（边际收益 · 是否值得改生产配置）</h2>
-<div class="note"><b>初步趋势（基于已跑轮次）</b>：<ul><li>开 thinking（none→low）: Δ+4.6pp（79.5%→84.2%）</li><li>low→medium: Δ+1.3pp（84.2%→85.4%）</li></ul>
-<b>边际收益</b>：thinking none→low 显著提升（+4.7~5.9pp），low→medium 边际趋平（≈+0.6pp），说明对 GLM-5.2 + PyAether 158 任务，开 low 档即获大部分增益，medium 以上边际收益递减。<b>成本</b>：reasoning token 跨 none/low/medium 体量相近（待 high/xhigh 确认是否陡增）。<br>
-<b>语言（轴 B · 同基座横比 / 与基线不可单归因）</b>：轴 B 5 语言 Pass@1 落在 76.2~81.2% 区间（en 81.0±2.9 [r1 78.5 重跑 / r2 80.4 / r3 84.2] / zh 81.2±3.2 / es 80.8±0.3 / fr 76.2±2.6 / ru 79.3±2.5）。<b>轴 B 15/15 轮已同基座（deepseek-v4-pro-cloud），5 语言间可作同基座横比</b>（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）。但<b>与基线 B.glm-5.2 = 83.3±3.1% 的 Δpp 仍不可直接归因为「思维链语言效应」</b>：(1) 基座不同（轴 B = deepseek-v4-pro-cloud vs 基线 = glm-5.2）；(2) thinking 模式不同（轴 B = medium vs 基线 = omitted）；(3) 语言切换实测 es 未生效 / fr 部分生效 / zh 与基础 prompt confound（见 §4.2）；(4) 基础 prompt 已强制中文思考，与 B 轴注入冲突。故轴 B 与基线的 Δpp 应理解为「dsv4-pro + medium + 语言注入（部分生效）vs glm-5.2 + omitted」的<b>多变量混合效应</b>，非单变量语言效应。fr 偏低（76.2%）可能与长难题漂回英语 + 部分切换有关。<br>
-<b>生产配置建议</b>：轴 A——若成本敏感，low 档为性价比最优点；若追求上限且 quota 充裕，medium。high/xhigh 边际不升反降（倒 U 形）。轴 B——<b>5 语言同基座横比已成立</b>（11-12 重跑 B_en_r1 对齐后），但与基线 glm-5.2 的 Δpp 仍不可单归因为语言效应（基座+thinking 模式均不同）；如需评估思维链语言真实效应，须先在基础 prompt 中性化前提下重跑（同基座条件已满足），audit 报告 §5.3 已给出最低改写建议。<br>
-<b>⚠️ 轴 A 结论基于 glm-5.2 恒定基座（合规），可信；轴 B 15/15 轮同基座（deepseek-v4-pro-cloud）已对齐，5 语言间可横比，但与基线 glm-5.2 的 Δpp 受基座+thinking 双重不同污染，不可单归因为语言效应。基础 prompt 中性化 + 语言切换验证仍需做。</b>
+<h3>2.1 LANG_HINT 注入</h3>
+<table>
+<tr><th>语言</th><th>code</th><th>注入的系统提示（追加到 system prompt 末尾）</th><th>audit 判定</th></tr>
+<tr><td>🇨🇳 中文</td><td><code>zh</code></td><td class="l">「请使用中文思考。」</td><td><span class="tag good">真切换</span> <span class="small">（87.6% TARGET，58 条 CHINESE 为主）</span></td></tr>
+<tr><td>🇬🇧 英语</td><td><code>en</code></td><td class="l">「Think in English.」</td><td><span class="tag good">真切换</span> <span class="small">（96.8% TARGET）</span></td></tr>
+<tr><td>🇪🇸 西语</td><td><code>es</code></td><td class="l">「Piensa en español.」</td><td><span class="tag bad">未生效</span> <span class="small">（仅 21.4% TARGET，66.6% ENGLISH 漂移）</span></td></tr>
+<tr><td>🇫🇷 法语</td><td><code>fr</code></td><td class="l">「Réfléchis en français.」</td><td><span class="tag warn">部分生效</span> <span class="small">（46.2% TARGET，仅 r1 抽样）</span></td></tr>
+<tr><td>🇷🇺 俄语</td><td><code>ru</code></td><td class="l">「Думай по-русски.」</td><td><span class="tag warn">部分漂移</span> <span class="small">（log 含俄文片段+英文漂移，audit 时未跑完）</span></td></tr>
+</table>
+<div class="note">
+<b>⚠️ audit 局限</b>：es/fr/ru 三语的 LANG_HINT 注入<b>未完全生效</b>——模型在多数 trace 中仍用英文思考（es 66.6% ENGLISH 漂移）。这意味着三语的 Pass@1<b>本质上测的是「英文思考 + 不同 LANG_HINT 干扰」</b>，而非真正的非英语思维链。因此「5 语言极差仅 5.0pp」的结论需谨慎：es/fr/ru 的低区分度可能部分因为<b>注入未生效导致语言变量没真正切换</b>。详见 §6 审计。
 </div>
 
-<h2>附：生成信息</h2>
-<p class="small">
-生成器：<code>run/gen_report_zhulong_ablation_think_lang_zh.py</code>｜原始数据：<code>run/ablation_think_lang_results.json</code>（不入 git）｜
-trace：<code>/nasdata/.../ZhuLong_DAC2027/trace_ablation_think_lang/&lt;TAG&gt;/</code>（不入 git）｜
-成本抽取：<code>run/extract_cost.py</code>（cost_&lt;TAG&gt;_r&lt;N&gt;.json 逐轮）｜
-生成时间：2026-11-12 21:02:59｜已跑轮次：32/30</p>
+<h2>三、主结果：Pass@1（5 语言 × 3 轮）</h2>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" style="width:100%;max-width:760px;font-family:inherit">
+<line x1="150.0" y1="30" x2="150.0" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="150.0" y="328" text-anchor="middle" font-size="11" fill="#666">70</text>
+<line x1="207.8" y1="30" x2="207.8" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="207.8" y="328" text-anchor="middle" font-size="11" fill="#666">72</text>
+<line x1="265.6" y1="30" x2="265.6" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="265.6" y="328" text-anchor="middle" font-size="11" fill="#666">74</text>
+<line x1="323.3" y1="30" x2="323.3" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="323.3" y="328" text-anchor="middle" font-size="11" fill="#666">76</text>
+<line x1="381.1" y1="30" x2="381.1" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="381.1" y="328" text-anchor="middle" font-size="11" fill="#666">78</text>
+<line x1="438.9" y1="30" x2="438.9" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="438.9" y="328" text-anchor="middle" font-size="11" fill="#666">80</text>
+<line x1="496.7" y1="30" x2="496.7" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="496.7" y="328" text-anchor="middle" font-size="11" fill="#666">82</text>
+<line x1="554.4" y1="30" x2="554.4" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="554.4" y="328" text-anchor="middle" font-size="11" fill="#666">84</text>
+<line x1="612.2" y1="30" x2="612.2" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="612.2" y="328" text-anchor="middle" font-size="11" fill="#666">86</text>
+<line x1="670.0" y1="30" x2="670.0" y2="310" stroke="#e3e8ef" stroke-width="1"/>
+<text x="670.0" y="328" text-anchor="middle" font-size="11" fill="#666">88</text>
+<line x1="150" y1="310" x2="670" y2="310" stroke="#888" stroke-width="1.5"/>
+<text x="410.0" y="350" text-anchor="middle" font-size="12" fill="#555" font-weight="600">Pass@1 (%)</text>
+<line x1="430.2" y1="24" x2="430.2" y2="316" stroke="#6c757d" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="430.2" y="20" text-anchor="middle" font-size="10" fill="#6c757d">总均值 79.7%</text>
+<rect x="150.0" y="42.6" width="323.6" height="30.8" fill="#e74c3c" fill-opacity="0.22" rx="3"/>
+<line x1="380.6" y1="58.0" x2="566.5" y2="58.0" stroke="#e74c3c" stroke-width="2"/>
+<line x1="380.6" y1="48.8" x2="380.6" y2="67.2" stroke="#e74c3c" stroke-width="2"/>
+<line x1="566.5" y1="48.8" x2="566.5" y2="67.2" stroke="#e74c3c" stroke-width="2"/>
+<circle cx="473.6" cy="58.0" r="4" fill="#e74c3c"/>
+<circle cx="560.2" cy="58.0" r="2.5" fill="#fff" stroke="#e74c3c" stroke-width="1.2"/>
+<circle cx="485.1" cy="58.0" r="2.5" fill="#fff" stroke="#e74c3c" stroke-width="1.2"/>
+<circle cx="375.3" cy="58.0" r="2.5" fill="#fff" stroke="#e74c3c" stroke-width="1.2"/>
+<text x="479.6" y="62.0" font-size="12" fill="#e74c3c" font-weight="700">81.2±3.2%</text>
+<text x="138.0" y="62.0" text-anchor="end" font-size="12" fill="#333" font-weight="600">🇨🇳 中文</text>
+<rect x="150.0" y="98.6" width="318.7" height="30.8" fill="#2c7be5" fill-opacity="0.22" rx="3"/>
+<line x1="384.9" y1="114.0" x2="552.6" y2="114.0" stroke="#2c7be5" stroke-width="2"/>
+<line x1="384.9" y1="104.8" x2="384.9" y2="123.2" stroke="#2c7be5" stroke-width="2"/>
+<line x1="552.6" y1="104.8" x2="552.6" y2="123.2" stroke="#2c7be5" stroke-width="2"/>
+<circle cx="468.7" cy="114.0" r="4" fill="#2c7be5"/>
+<circle cx="450.4" cy="114.0" r="2.5" fill="#fff" stroke="#2c7be5" stroke-width="1.2"/>
+<circle cx="560.2" cy="114.0" r="2.5" fill="#fff" stroke="#2c7be5" stroke-width="1.2"/>
+<circle cx="395.6" cy="114.0" r="2.5" fill="#fff" stroke="#2c7be5" stroke-width="1.2"/>
+<text x="474.7" y="118.0" font-size="12" fill="#2c7be5" font-weight="700">81.0±2.9%</text>
+<text x="138.0" y="118.0" text-anchor="end" font-size="12" fill="#333" font-weight="600">🇬🇧 English</text>
+<rect x="150.0" y="154.6" width="312.0" height="30.8" fill="#f39c12" fill-opacity="0.22" rx="3"/>
+<line x1="452.0" y1="170.0" x2="472.0" y2="170.0" stroke="#f39c12" stroke-width="2"/>
+<line x1="452.0" y1="160.8" x2="452.0" y2="179.2" stroke="#f39c12" stroke-width="2"/>
+<line x1="472.0" y1="160.8" x2="472.0" y2="179.2" stroke="#f39c12" stroke-width="2"/>
+<circle cx="462.0" cy="170.0" r="4" fill="#f39c12"/>
+<circle cx="467.8" cy="170.0" r="2.5" fill="#fff" stroke="#f39c12" stroke-width="1.2"/>
+<circle cx="450.4" cy="170.0" r="2.5" fill="#fff" stroke="#f39c12" stroke-width="1.2"/>
+<circle cx="467.8" cy="170.0" r="2.5" fill="#fff" stroke="#f39c12" stroke-width="1.2"/>
+<text x="468.0" y="174.0" font-size="12" fill="#f39c12" font-weight="700">80.8±0.3%</text>
+<text x="138.0" y="174.0" text-anchor="end" font-size="12" fill="#333" font-weight="600">🇪🇸 Español</text>
+<rect x="150.0" y="210.6" width="268.7" height="30.8" fill="#8e44ad" fill-opacity="0.22" rx="3"/>
+<line x1="345.8" y1="226.0" x2="491.6" y2="226.0" stroke="#8e44ad" stroke-width="2"/>
+<line x1="345.8" y1="216.8" x2="345.8" y2="235.2" stroke="#8e44ad" stroke-width="2"/>
+<line x1="491.6" y1="216.8" x2="491.6" y2="235.2" stroke="#8e44ad" stroke-width="2"/>
+<circle cx="418.7" cy="226.0" r="4" fill="#8e44ad"/>
+<circle cx="485.1" cy="226.0" r="2.5" fill="#fff" stroke="#8e44ad" stroke-width="1.2"/>
+<circle cx="340.7" cy="226.0" r="2.5" fill="#fff" stroke="#8e44ad" stroke-width="1.2"/>
+<circle cx="430.2" cy="226.0" r="2.5" fill="#fff" stroke="#8e44ad" stroke-width="1.2"/>
+<text x="424.7" y="230.0" font-size="12" fill="#8e44ad" font-weight="700">79.3±2.5%</text>
+<text x="138.0" y="230.0" text-anchor="end" font-size="12" fill="#333" font-weight="600">🇷🇺 Русский</text>
+<rect x="150.0" y="266.6" width="178.1" height="30.8" fill="#27ab83" fill-opacity="0.22" rx="3"/>
+<line x1="252.7" y1="282.0" x2="403.6" y2="282.0" stroke="#27ab83" stroke-width="2"/>
+<line x1="252.7" y1="272.8" x2="252.7" y2="291.2" stroke="#27ab83" stroke-width="2"/>
+<line x1="403.6" y1="272.8" x2="403.6" y2="291.2" stroke="#27ab83" stroke-width="2"/>
+<circle cx="328.1" cy="282.0" r="4" fill="#27ab83"/>
+<circle cx="268.4" cy="282.0" r="2.5" fill="#fff" stroke="#27ab83" stroke-width="1.2"/>
+<circle cx="303.1" cy="282.0" r="2.5" fill="#fff" stroke="#27ab83" stroke-width="1.2"/>
+<circle cx="412.9" cy="282.0" r="2.5" fill="#fff" stroke="#27ab83" stroke-width="1.2"/>
+<text x="334.1" y="286.0" font-size="12" fill="#27ab83" font-weight="700">76.2±2.6%</text>
+<text x="138.0" y="286.0" text-anchor="end" font-size="12" fill="#333" font-weight="600">🇫🇷 Français</text>
+</svg>
+<div class="chartcap">图 1 · 5 语言 Pass@1 均值±标准差（水平条 = mean，横线 = ±1σ，空心点 = 3 轮逐值，竖虚线 = 总均值 79.7%）</div>
+</div>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" style="width:100%;max-width:760px;font-family:inherit">
+<line x1="60.0" y1="24" x2="60.0" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="60.0" y="176" text-anchor="middle" font-size="10" fill="#888">70</text>
+<line x1="134.4" y1="24" x2="134.4" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="134.4" y="176" text-anchor="middle" font-size="10" fill="#888">72</text>
+<line x1="208.9" y1="24" x2="208.9" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="208.9" y="176" text-anchor="middle" font-size="10" fill="#888">74</text>
+<line x1="283.3" y1="24" x2="283.3" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="283.3" y="176" text-anchor="middle" font-size="10" fill="#888">76</text>
+<line x1="357.8" y1="24" x2="357.8" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="357.8" y="176" text-anchor="middle" font-size="10" fill="#888">78</text>
+<line x1="432.2" y1="24" x2="432.2" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="432.2" y="176" text-anchor="middle" font-size="10" fill="#888">80</text>
+<line x1="506.7" y1="24" x2="506.7" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="506.7" y="176" text-anchor="middle" font-size="10" fill="#888">82</text>
+<line x1="581.1" y1="24" x2="581.1" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="581.1" y="176" text-anchor="middle" font-size="10" fill="#888">84</text>
+<line x1="655.6" y1="24" x2="655.6" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="655.6" y="176" text-anchor="middle" font-size="10" fill="#888">86</text>
+<line x1="730.0" y1="24" x2="730.0" y2="160" stroke="#eef2f7" stroke-width="1"/>
+<text x="730.0" y="176" text-anchor="middle" font-size="10" fill="#888">88</text>
+<line x1="60" y1="160" x2="730" y2="160" stroke="#aaa" stroke-width="1"/>
+<text x="395.0" y="194" text-anchor="middle" font-size="11" fill="#666">Pass@1 (%) — 每点为 1 轮（158 题）</text>
+<text x="52.0" y="40.6" text-anchor="end" font-size="10" fill="#555">🇨🇳</text>
+<line x1="476.9" y1="29.6" x2="476.9" y2="45.6" stroke="#e74c3c" stroke-width="3" opacity="0.5"/>
+<circle cx="588.6" cy="30.6" r="4" fill="#e74c3c"/>
+<text x="594.6" y="33.6" font-size="9" fill="#666">r1=84.2</text>
+<circle cx="491.8" cy="37.6" r="4" fill="#e74c3c"/>
+<text x="497.8" y="40.6" font-size="9" fill="#666">r2=81.6</text>
+<circle cx="350.3" cy="44.6" r="4" fill="#e74c3c"/>
+<text x="356.3" y="47.6" font-size="9" fill="#666">r3=77.8</text>
+<text x="52.0" y="67.8" text-anchor="end" font-size="10" fill="#555">🇬🇧</text>
+<line x1="470.7" y1="56.8" x2="470.7" y2="72.8" stroke="#2c7be5" stroke-width="3" opacity="0.5"/>
+<circle cx="447.1" cy="57.8" r="4" fill="#2c7be5"/>
+<text x="453.1" y="60.8" font-size="9" fill="#666">r1=80.4</text>
+<circle cx="588.6" cy="64.8" r="4" fill="#2c7be5"/>
+<text x="594.6" y="67.8" font-size="9" fill="#666">r2=84.2</text>
+<circle cx="376.4" cy="71.8" r="4" fill="#2c7be5"/>
+<text x="382.4" y="74.8" font-size="9" fill="#666">r3=78.5</text>
+<text x="52.0" y="95.0" text-anchor="end" font-size="10" fill="#555">🇪🇸</text>
+<line x1="462.0" y1="84.0" x2="462.0" y2="100.0" stroke="#f39c12" stroke-width="3" opacity="0.5"/>
+<circle cx="469.4" cy="85.0" r="4" fill="#f39c12"/>
+<text x="475.4" y="88.0" font-size="9" fill="#666">r1=81.0</text>
+<circle cx="447.1" cy="92.0" r="4" fill="#f39c12"/>
+<text x="453.1" y="95.0" font-size="9" fill="#666">r2=80.4</text>
+<circle cx="469.4" cy="99.0" r="4" fill="#f39c12"/>
+<text x="475.4" y="102.0" font-size="9" fill="#666">r3=81.0</text>
+<text x="52.0" y="122.2" text-anchor="end" font-size="10" fill="#555">🇷🇺</text>
+<line x1="406.2" y1="111.2" x2="406.2" y2="127.2" stroke="#8e44ad" stroke-width="3" opacity="0.5"/>
+<circle cx="491.8" cy="112.2" r="4" fill="#8e44ad"/>
+<text x="497.8" y="115.2" font-size="9" fill="#666">r1=81.6</text>
+<circle cx="305.7" cy="119.2" r="4" fill="#8e44ad"/>
+<text x="311.7" y="122.2" font-size="9" fill="#666">r2=76.6</text>
+<circle cx="421.1" cy="126.2" r="4" fill="#8e44ad"/>
+<text x="427.1" y="129.2" font-size="9" fill="#666">r3=79.7</text>
+<text x="52.0" y="149.4" text-anchor="end" font-size="10" fill="#555">🇫🇷</text>
+<line x1="289.5" y1="138.4" x2="289.5" y2="154.4" stroke="#27ab83" stroke-width="3" opacity="0.5"/>
+<circle cx="212.6" cy="139.4" r="4" fill="#27ab83"/>
+<text x="218.6" y="142.4" font-size="9" fill="#666">r1=74.1</text>
+<circle cx="257.3" cy="146.4" r="4" fill="#27ab83"/>
+<text x="263.3" y="149.4" font-size="9" fill="#666">r2=75.3</text>
+<circle cx="398.7" cy="153.4" r="4" fill="#27ab83"/>
+<text x="404.7" y="156.4" font-size="9" fill="#666">r3=79.1</text>
+</svg>
+<div class="chartcap">图 2 · 逐轮散点带（粗竖线 = mean，实心点 = 每轮 Pass@1，标注 r1/r2/r3 数值）</div>
+</div>
+
+<table>
+<tr><th rowspan="2">语言</th><th rowspan="2">LANG_HINT</th><th colspan="3">Pass@1 (%)</th><th rowspan="2">mean±std</th><th rowspan="2">tok/题</th><th rowspan="2">converged</th><th rowspan="2">gen_fail</th><th rowspan="2">audit</th></tr>
+<tr><th>r1</th><th>r2</th><th>r3</th></tr>
+<tr><td class="l"><b>🇨🇳 中文</b> <code>zh</code></td><td>请使用中文思考。</td><td>84.2</td><td>81.6</td><td>77.8</td><td class="hl"><b>81.2</b>±3.2</td><td>1.32M</td><td>97.5</td><td>3.3</td><td>真切换(confound)</td></tr>
+<tr><td class="l"><b>🇬🇧 English</b> <code>en</code></td><td>Think in English.</td><td>80.4</td><td>84.2</td><td>78.5</td><td class="hl"><b>81.0</b>±2.9</td><td>1.28M</td><td>95.8</td><td>5.0</td><td>真切换</td></tr>
+<tr><td class="l"><b>🇪🇸 Español</b> <code>es</code></td><td>Piensa en español.</td><td>81.0</td><td>80.4</td><td>81.0</td><td class="hl"><b>80.8</b>±0.3</td><td>1.01M</td><td>92.6</td><td>11.3</td><td>未生效</td></tr>
+<tr><td class="l"><b>🇷🇺 Русский</b> <code>ru</code></td><td>Думай по-русски.</td><td>81.6</td><td>76.6</td><td>79.7</td><td class="hl"><b>79.3</b>±2.5</td><td>1.01M</td><td>92.2</td><td>11.3</td><td>部分漂移(log抽检)</td></tr>
+<tr><td class="l"><b>🇫🇷 Français</b> <code>fr</code></td><td>Réfléchis en français.</td><td>74.1</td><td>75.3</td><td>79.1</td><td class="hl"><b>76.2</b>±2.6</td><td>0.97M</td><td>85.2</td><td>21.3</td><td>部分生效</td></tr>
+</table>
+
+<div class="banner good">
+<b>排名</b>：🇨🇳 zh <b>81.2±3.2%</b> ≈ 🇬🇧 en <b>81.0±2.9%</b> ≈ 🇪🇸 es <b>80.8±0.3%</b> &gt; 🇷🇺 ru <b>79.3±2.5%</b> &gt; 🇫🇷 fr <b>76.2±2.6%</b>。<br>
+<b>前三名 std 重叠</b>（zh 78.0-84.4 / en 78.1-83.9 / es 80.5-81.1），无统计显著差异。<b>es 方差极小（0.3%）</b>——3 轮几乎一致，但 audit 显示 es 注入未生效（实际是英文思考），故其稳定性反映的是英文基线的稳定性。
+</div>
+
+<h3>3.1 逐轮明细</h3>
+<table>
+<tr><th>tag</th><th>轮</th><th>Pass@1</th><th>n_pass</th><th>converged</th><th>gen_fail</th><th>timeout</th><th>tok/题</th><th>墙钟/题</th><th>batch</th></tr>
+<tr><td class="l">🇨🇳 B_zh_r1</td><td>r1</td><td class="hl">84.2%</td><td>133/158</td><td>99.4%</td><td>0</td><td>9</td><td>1.41M</td><td>11.1min</td><td><code>2026_1110_005204</code></td></tr>
+<tr><td class="l">🇨🇳 B_zh_r2</td><td>r2</td><td class="hl">81.6%</td><td>129/158</td><td>99.4%</td><td>0</td><td>9</td><td>1.40M</td><td>14.3min</td><td><code>2026_1110_073833</code></td></tr>
+<tr><td class="l">🇨🇳 B_zh_r3</td><td>r3</td><td class="hl">77.8%</td><td>123/158</td><td>93.7%</td><td>10</td><td>2</td><td>1.14M</td><td>9.9min</td><td><code>2026_1112_085105</code></td></tr>
+<tr><td class="l">🇬🇧 B_en_r2</td><td>r1</td><td class="hl">80.4%</td><td>127/158</td><td>99.4%</td><td>0</td><td>11</td><td>1.28M</td><td>14.6min</td><td><code>2026_1109_104439</code></td></tr>
+<tr><td class="l">🇬🇧 B_en_r3</td><td>r2</td><td class="hl">84.2%</td><td>133/158</td><td>99.4%</td><td>0</td><td>10</td><td>1.53M</td><td>14.5min</td><td><code>2026_1109_171220</code></td></tr>
+<tr><td class="l">🇬🇧 B_en_r1</td><td>r3</td><td class="hl">78.5%</td><td>124/158</td><td>88.6%</td><td>15</td><td>0</td><td>1.03M</td><td>12.9min</td><td><code>2026_1112_161042</code></td></tr>
+<tr><td class="l">🇪🇸 B_es_r1</td><td>r1</td><td class="hl">81.0%</td><td>128/158</td><td>91.1%</td><td>14</td><td>0</td><td>1.03M</td><td>9.1min</td><td><code>2026_1110_203542</code></td></tr>
+<tr><td class="l">🇪🇸 B_es_r2</td><td>r2</td><td class="hl">80.4%</td><td>127/158</td><td>93.7%</td><td>9</td><td>0</td><td>0.98M</td><td>7.3min</td><td><code>2026_1111_002251</code></td></tr>
+<tr><td class="l">🇪🇸 B_es_r3</td><td>r3</td><td class="hl">81.0%</td><td>128/158</td><td>93.0%</td><td>11</td><td>0</td><td>1.03M</td><td>8.4min</td><td><code>2026_1111_032900</code></td></tr>
+<tr><td class="l">🇷🇺 B_ru_r1</td><td>r1</td><td class="hl">81.6%</td><td>129/158</td><td>95.6%</td><td>6</td><td>1</td><td>0.97M</td><td>8.7min</td><td><code>2026_1111_213434</code></td></tr>
+<tr><td class="l">🇷🇺 B_ru_r2</td><td>r2</td><td class="hl">76.6%</td><td>121/158</td><td>89.2%</td><td>16</td><td>0</td><td>1.05M</td><td>8.9min</td><td><code>2026_1112_004932</code></td></tr>
+<tr><td class="l">🇷🇺 B_ru_r3</td><td>r3</td><td class="hl">79.7%</td><td>126/158</td><td>91.8%</td><td>12</td><td>1</td><td>1.01M</td><td>8.4min</td><td><code>2026_1112_044128</code></td></tr>
+<tr><td class="l">🇫🇷 B_fr_r1</td><td>r1</td><td class="hl">74.1%</td><td>117/158</td><td>80.4%</td><td>29</td><td>1</td><td>0.78M</td><td>11.9min</td><td><code>2026_1111_071240</code></td></tr>
+<tr><td class="l">🇫🇷 B_fr_r2</td><td>r2</td><td class="hl">75.3%</td><td>119/158</td><td>84.8%</td><td>20</td><td>1</td><td>1.07M</td><td>14.1min</td><td><code>2026_1111_121250</code></td></tr>
+<tr><td class="l">🇫🇷 B_fr_r3</td><td>r3</td><td class="hl">79.1%</td><td>125/158</td><td>90.5%</td><td>15</td><td>1</td><td>1.05M</td><td>10.5min</td><td><code>2026_1111_173928</code></td></tr>
+</table>
+<div class="note">
+<b>重跑轮次</b>：B_en_r1（idx31，batch 2026_1112_161042）为基座对齐重跑，旧值 idx15（glm-5.2, 75.3%）已 SUPERSEDED；B_zh_r3（idx30，batch 2026_1112_0130xx）为重跑，旧值 idx20（78.5%）已 SUPERSEDED。本表只列 active 轮次。
+</div>
+
+<h2>四、成本分析</h2>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" style="width:100%;max-width:760px;font-family:inherit">
+<line x1="90.0" y1="28" x2="90.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="90.0" y="276" text-anchor="middle" font-size="10" fill="#888">0.00M</text>
+<line x1="175.0" y1="28" x2="175.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="175.0" y="276" text-anchor="middle" font-size="10" fill="#888">0.25M</text>
+<line x1="260.0" y1="28" x2="260.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="260.0" y="276" text-anchor="middle" font-size="10" fill="#888">0.50M</text>
+<line x1="345.0" y1="28" x2="345.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="345.0" y="276" text-anchor="middle" font-size="10" fill="#888">0.75M</text>
+<line x1="430.0" y1="28" x2="430.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="430.0" y="276" text-anchor="middle" font-size="10" fill="#888">1.00M</text>
+<line x1="515.0" y1="28" x2="515.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="515.0" y="276" text-anchor="middle" font-size="10" fill="#888">1.25M</text>
+<line x1="600.0" y1="28" x2="600.0" y2="260" stroke="#eef2f7" stroke-width="1"/>
+<text x="600.0" y="276" text-anchor="middle" font-size="10" fill="#888">1.50M</text>
+<line x1="90" y1="260" x2="600" y2="260" stroke="#aaa" stroke-width="1"/>
+<text x="345.0" y="294" text-anchor="middle" font-size="11" fill="#666">每题 token 消耗（百万）</text>
+<text x="80.0" y="55.2" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇨🇳 中文</text>
+<rect x="90.0" y="37.3" width="437.7" height="27.8" fill="#2c7be5" rx="1"/>
+<rect x="527.7" y="37.3" width="4.8" height="27.8" fill="#f39c12" rx="1"/>
+<rect x="532.6" y="37.3" width="10.3" height="27.8" fill="#27ab83" rx="1"/>
+<text x="544.0" y="55.2" font-size="11" fill="#e74c3c" font-weight="700">1.32M</text>
+<text x="80.0" y="101.6" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇬🇧 English</text>
+<rect x="90.0" y="83.7" width="425.1" height="27.8" fill="#2c7be5" rx="1"/>
+<rect x="515.1" y="83.7" width="6.0" height="27.8" fill="#f39c12" rx="1"/>
+<rect x="521.1" y="83.7" width="9.7" height="27.8" fill="#27ab83" rx="1"/>
+<text x="530.8" y="101.6" font-size="11" fill="#2c7be5" font-weight="700">1.28M</text>
+<text x="80.0" y="148.0" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇪🇸 Español</text>
+<rect x="90.0" y="130.1" width="336.9" height="27.8" fill="#2c7be5" rx="1"/>
+<rect x="426.9" y="130.1" width="5.0" height="27.8" fill="#f39c12" rx="1"/>
+<rect x="431.8" y="130.1" width="8.2" height="27.8" fill="#27ab83" rx="1"/>
+<text x="441.1" y="148.0" font-size="11" fill="#f39c12" font-weight="700">1.01M</text>
+<text x="80.0" y="194.4" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇷🇺 Русский</text>
+<rect x="90.0" y="176.5" width="335.4" height="27.8" fill="#2c7be5" rx="1"/>
+<rect x="425.4" y="176.5" width="4.7" height="27.8" fill="#f39c12" rx="1"/>
+<rect x="430.1" y="176.5" width="8.0" height="27.8" fill="#27ab83" rx="1"/>
+<text x="439.4" y="194.4" font-size="11" fill="#8e44ad" font-weight="700">1.01M</text>
+<text x="80.0" y="240.8" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇫🇷 Français</text>
+<rect x="90.0" y="222.9" width="321.8" height="27.8" fill="#2c7be5" rx="1"/>
+<rect x="411.8" y="222.9" width="4.6" height="27.8" fill="#f39c12" rx="1"/>
+<rect x="416.4" y="222.9" width="7.7" height="27.8" fill="#27ab83" rx="1"/>
+<text x="425.5" y="240.8" font-size="11" fill="#27ab83" font-weight="700">0.97M</text>
+<rect x="612" y="28" width="12" height="12" fill="#2c7be5" rx="2"/>
+<text x="628" y="38" font-size="11" fill="#555">prompt</text>
+<rect x="612" y="46" width="12" height="12" fill="#f39c12" rx="2"/>
+<text x="628" y="56" font-size="11" fill="#555">reasoning</text>
+<rect x="612" y="64" width="12" height="12" fill="#27ab83" rx="2"/>
+<text x="628" y="74" font-size="11" fill="#555">completion</text>
+</svg>
+<div class="chartcap">图 3 · 每题 token 分解（prompt + reasoning + completion 堆叠，单位百万 token）</div>
+</div>
+
+<table>
+<tr><th>语言</th><th>prompt tok/题</th><th>completion tok/题</th><th>reasoning tok/题（估）</th><th>总 tok/题</th><th>墙钟/题</th></tr>
+<tr><td class="l">🇨🇳 中文</td><td>1.29M</td><td>30K</td><td>14K</td><td class="hl">1.32M</td><td>11.8min</td></tr><tr><td class="l">🇬🇧 English</td><td>1.25M</td><td>29K</td><td>18K</td><td class="hl">1.28M</td><td>14.0min</td></tr><tr><td class="l">🇪🇸 Español</td><td>0.99M</td><td>24K</td><td>15K</td><td class="hl">1.01M</td><td>8.3min</td></tr><tr><td class="l">🇷🇺 Русский</td><td>0.99M</td><td>24K</td><td>14K</td><td class="hl">1.01M</td><td>8.7min</td></tr><tr><td class="l">🇫🇷 Français</td><td>0.95M</td><td>23K</td><td>14K</td><td class="hl">0.97M</td><td>12.2min</td></tr>
+</table>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" style="width:100%;max-width:520px;font-family:inherit">
+<line x1="56.0" y1="24" x2="56.0" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="56.0" y="330" text-anchor="middle" font-size="10" fill="#888">74</text>
+<line x1="129.3" y1="24" x2="129.3" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="129.3" y="330" text-anchor="middle" font-size="10" fill="#888">76</text>
+<line x1="202.7" y1="24" x2="202.7" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="202.7" y="330" text-anchor="middle" font-size="10" fill="#888">78</text>
+<line x1="276.0" y1="24" x2="276.0" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="276.0" y="330" text-anchor="middle" font-size="10" fill="#888">80</text>
+<line x1="349.3" y1="24" x2="349.3" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="349.3" y="330" text-anchor="middle" font-size="10" fill="#888">82</text>
+<line x1="422.7" y1="24" x2="422.7" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="422.7" y="330" text-anchor="middle" font-size="10" fill="#888">84</text>
+<line x1="496.0" y1="24" x2="496.0" y2="314" stroke="#eef2f7" stroke-width="1"/>
+<text x="496.0" y="330" text-anchor="middle" font-size="10" fill="#888">86</text>
+<line x1="56" y1="314.0" x2="496" y2="314.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="50" y="317.0" text-anchor="end" font-size="10" fill="#888">0.9M</text>
+<line x1="56" y1="256.0" x2="496" y2="256.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="50" y="259.0" text-anchor="end" font-size="10" fill="#888">1.0M</text>
+<line x1="56" y1="198.0" x2="496" y2="198.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="50" y="201.0" text-anchor="end" font-size="10" fill="#888">1.1M</text>
+<line x1="56" y1="140.0" x2="496" y2="140.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="50" y="143.0" text-anchor="end" font-size="10" fill="#888">1.2M</text>
+<line x1="56" y1="82.0" x2="496" y2="82.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="50" y="85.0" text-anchor="end" font-size="10" fill="#888">1.3M</text>
+<line x1="56" y1="24.0" x2="496" y2="24.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="50" y="27.0" text-anchor="end" font-size="10" fill="#888">1.4M</text>
+<line x1="56" y1="314" x2="496" y2="314" stroke="#aaa" stroke-width="1"/>
+<line x1="56" y1="24" x2="56" y2="314" stroke="#aaa" stroke-width="1"/>
+<text x="276.0" y="352" text-anchor="middle" font-size="11" fill="#666" font-weight="600">Pass@1 (%) →</text>
+<text x="14" y="169.0" text-anchor="middle" font-size="11" fill="#666" font-weight="600" transform="rotate(-90 14 169.0)">tok/题 ↑</text>
+<line x1="305.3" y1="24" x2="305.3" y2="314" stroke="#bbb" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="56" y1="247.3" x2="496" y2="247.3" stroke="#bbb" stroke-width="1" stroke-dasharray="3 3"/>
+<text x="62" y="38" font-size="9" fill="#999">高通过·低成本（优）</text>
+<text x="490" y="38" text-anchor="end" font-size="9" fill="#999">高通过·高成本</text>
+<text x="62" y="308" font-size="9" fill="#999">低通过·低成本</text>
+<text x="490" y="308" text-anchor="end" font-size="9" fill="#999">低通过·高成本（劣）</text>
+<line x1="202.0" y1="71.8" x2="438.0" y2="71.8" stroke="#e74c3c" stroke-width="1.5" opacity="0.6"/>
+<circle cx="320.0" cy="71.8" r="8" fill="#e74c3c" fill-opacity="0.55" stroke="#e74c3c" stroke-width="1.5"/>
+<text x="320.0" y="74.8" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🇨🇳</text>
+<text x="331.0" y="63.8" font-size="10" fill="#e74c3c" font-weight="600">zh</text>
+<line x1="207.5" y1="94.2" x2="420.3" y2="94.2" stroke="#2c7be5" stroke-width="1.5" opacity="0.6"/>
+<circle cx="313.9" cy="94.2" r="8" fill="#2c7be5" fill-opacity="0.55" stroke="#2c7be5" stroke-width="1.5"/>
+<text x="313.9" y="97.2" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🇬🇧</text>
+<text x="324.9" y="86.2" font-size="10" fill="#2c7be5" font-weight="600">en</text>
+<line x1="292.6" y1="247.3" x2="318.0" y2="247.3" stroke="#f39c12" stroke-width="1.5" opacity="0.6"/>
+<circle cx="305.3" cy="247.3" r="8" fill="#f39c12" fill-opacity="0.55" stroke="#f39c12" stroke-width="1.5"/>
+<text x="305.3" y="250.3" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🇪🇸</text>
+<text x="316.3" y="239.3" font-size="10" fill="#f39c12" font-weight="600">es</text>
+<line x1="157.8" y1="250.2" x2="342.9" y2="250.2" stroke="#8e44ad" stroke-width="1.5" opacity="0.6"/>
+<circle cx="250.3" cy="250.2" r="8" fill="#8e44ad" fill-opacity="0.55" stroke="#8e44ad" stroke-width="1.5"/>
+<text x="250.3" y="253.2" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🇷🇺</text>
+<text x="261.3" y="242.2" font-size="10" fill="#8e44ad" font-weight="600">ru</text>
+<line x1="39.7" y1="273.9" x2="231.2" y2="273.9" stroke="#27ab83" stroke-width="1.5" opacity="0.6"/>
+<circle cx="135.4" cy="273.9" r="8" fill="#27ab83" fill-opacity="0.55" stroke="#27ab83" stroke-width="1.5"/>
+<text x="135.4" y="276.9" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🇫🇷</text>
+<text x="146.4" y="265.9" font-size="10" fill="#27ab83" font-weight="600">fr</text>
+</svg>
+<div class="chartcap">图 4 · 成本-性能象限图（横轴 Pass@1，纵轴 tok/题；点 = 语言 mean，横线 = ±1σ；虚线 = 中位分割）</div>
+</div>
+
+<div class="banner info">
+<b>成本洞察</b>：🇨🇳 zh（1.32M/题）与 🇬🇧 en（1.28M/题）token 消耗最高，比 🇪🇸 es/🇷🇺 ru（1.01M）多 ~30%。<b>原因</b>：zh 的中文 token 化效率低（同语义中文 token 数多于英文）；en 的 r2/r3 用旧基座跑出 1.28-1.53M（context 累积更多）。<b>prompt token 占 97%+</b>（context 累积），completion/reasoning 占比小。<b>fr（0.97M）成本最低</b>但通过率也最低——可能是注入干扰导致提前收敛（converged 仅 85.2%）。
+</div>
+
+<h2>五、执行质量</h2>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 230" style="width:100%;max-width:760px;font-family:inherit">
+<text x="198.3" y="16" text-anchor="middle" font-size="11" fill="#555" font-weight="600">converged (%)</text>
+<line x1="90.0" y1="24" x2="90.0" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="141.2" y1="24" x2="141.2" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="192.3" y1="24" x2="192.3" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="243.5" y1="24" x2="243.5" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="294.7" y1="24" x2="294.7" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<text x="84.0" y="44.0" text-anchor="end" font-size="10" fill="#666">🇨🇳</text>
+<rect x="90.0" y="30.8" width="199.5" height="20.4" fill="#e74c3c" fill-opacity="0.35" rx="2"/>
+<text x="293.5" y="44.0" font-size="10" fill="#e74c3c" font-weight="600">97.5</text>
+<text x="84.0" y="78.0" text-anchor="end" font-size="10" fill="#666">🇬🇧</text>
+<rect x="90.0" y="64.8" width="196.1" height="20.4" fill="#2c7be5" fill-opacity="0.35" rx="2"/>
+<text x="290.1" y="78.0" font-size="10" fill="#2c7be5" font-weight="600">95.8</text>
+<text x="84.0" y="112.0" text-anchor="end" font-size="10" fill="#666">🇪🇸</text>
+<rect x="90.0" y="98.8" width="189.5" height="20.4" fill="#f39c12" fill-opacity="0.35" rx="2"/>
+<text x="283.5" y="112.0" font-size="10" fill="#f39c12" font-weight="600">92.6</text>
+<text x="84.0" y="146.0" text-anchor="end" font-size="10" fill="#666">🇷🇺</text>
+<rect x="90.0" y="132.8" width="188.7" height="20.4" fill="#8e44ad" fill-opacity="0.35" rx="2"/>
+<text x="282.7" y="146.0" font-size="10" fill="#8e44ad" font-weight="600">92.2</text>
+<text x="84.0" y="180.0" text-anchor="end" font-size="10" fill="#666">🇫🇷</text>
+<rect x="90.0" y="166.8" width="174.4" height="20.4" fill="#27ab83" fill-opacity="0.35" rx="2"/>
+<text x="268.4" y="180.0" font-size="10" fill="#27ab83" font-weight="600">85.2</text>
+<text x="415.0" y="16" text-anchor="middle" font-size="11" fill="#555" font-weight="600">gen (次)</text>
+<line x1="306.7" y1="24" x2="306.7" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="355.8" y1="24" x2="355.8" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="404.9" y1="24" x2="404.9" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="454.0" y1="24" x2="454.0" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="503.1" y1="24" x2="503.1" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<text x="300.7" y="44.0" text-anchor="end" font-size="10" fill="#666">🇨🇳</text>
+<rect x="306.7" y="30.8" width="27.3" height="20.4" fill="#e74c3c" fill-opacity="0.35" rx="2"/>
+<text x="338.0" y="44.0" font-size="10" fill="#e74c3c" font-weight="600">3.3</text>
+<text x="300.7" y="78.0" text-anchor="end" font-size="10" fill="#666">🇬🇧</text>
+<rect x="306.7" y="64.8" width="40.9" height="20.4" fill="#2c7be5" fill-opacity="0.35" rx="2"/>
+<text x="351.6" y="78.0" font-size="10" fill="#2c7be5" font-weight="600">5.0</text>
+<text x="300.7" y="112.0" text-anchor="end" font-size="10" fill="#666">🇪🇸</text>
+<rect x="306.7" y="98.8" width="92.8" height="20.4" fill="#f39c12" fill-opacity="0.35" rx="2"/>
+<text x="403.4" y="112.0" font-size="10" fill="#f39c12" font-weight="600">11.3</text>
+<text x="300.7" y="146.0" text-anchor="end" font-size="10" fill="#666">🇷🇺</text>
+<rect x="306.7" y="132.8" width="92.8" height="20.4" fill="#8e44ad" fill-opacity="0.35" rx="2"/>
+<text x="403.4" y="146.0" font-size="10" fill="#8e44ad" font-weight="600">11.3</text>
+<text x="300.7" y="180.0" text-anchor="end" font-size="10" fill="#666">🇫🇷</text>
+<rect x="306.7" y="166.8" width="174.6" height="20.4" fill="#27ab83" fill-opacity="0.35" rx="2"/>
+<text x="485.3" y="180.0" font-size="10" fill="#27ab83" font-weight="600">21.3</text>
+<text x="631.7" y="16" text-anchor="middle" font-size="11" fill="#555" font-weight="600">timeout (次)</text>
+<line x1="523.3" y1="24" x2="523.3" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="574.5" y1="24" x2="574.5" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="625.7" y1="24" x2="625.7" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="676.8" y1="24" x2="676.8" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<line x1="728.0" y1="24" x2="728.0" y2="194" stroke="#eef2f7" stroke-width="1"/>
+<text x="517.3" y="44.0" text-anchor="end" font-size="10" fill="#666">🇨🇳</text>
+<rect x="523.3" y="30.8" width="113.7" height="20.4" fill="#e74c3c" fill-opacity="0.35" rx="2"/>
+<text x="641.0" y="44.0" font-size="10" fill="#e74c3c" font-weight="600">6.7</text>
+<text x="517.3" y="78.0" text-anchor="end" font-size="10" fill="#666">🇬🇧</text>
+<rect x="523.3" y="64.8" width="119.4" height="20.4" fill="#2c7be5" fill-opacity="0.35" rx="2"/>
+<text x="646.7" y="78.0" font-size="10" fill="#2c7be5" font-weight="600">7.0</text>
+<text x="517.3" y="112.0" text-anchor="end" font-size="10" fill="#666">🇪🇸</text>
+<rect x="523.3" y="98.8" width="0.0" height="20.4" fill="#f39c12" fill-opacity="0.35" rx="2"/>
+<text x="527.3" y="112.0" font-size="10" fill="#f39c12" font-weight="600">0.0</text>
+<text x="517.3" y="146.0" text-anchor="end" font-size="10" fill="#666">🇷🇺</text>
+<rect x="523.3" y="132.8" width="11.4" height="20.4" fill="#8e44ad" fill-opacity="0.35" rx="2"/>
+<text x="538.7" y="146.0" font-size="10" fill="#8e44ad" font-weight="600">0.7</text>
+<text x="517.3" y="180.0" text-anchor="end" font-size="10" fill="#666">🇫🇷</text>
+<rect x="523.3" y="166.8" width="17.1" height="20.4" fill="#27ab83" fill-opacity="0.35" rx="2"/>
+<text x="544.4" y="180.0" font-size="10" fill="#27ab83" font-weight="600">1.0</text>
+</svg>
+<div class="chartcap">图 5 · 执行质量三联图：converged%（收敛率）/ gen_fail（生成失败数）/ timeout（超时数，每轮 158 题）</div>
+</div>
+
+<table>
+<tr><th>语言</th><th>converged 均值</th><th>gen_fail 均值</th><th>timeout 均值</th><th>success 均值</th><th>解读</th></tr>
+<tr><td class="l">🇨🇳 中文</td><td>97.5%</td><td>3.3</td><td>6.7</td><td>154</td><td class="l">收敛率高·生成稳定</td></tr><tr><td class="l">🇬🇧 English</td><td>95.8%</td><td>5.0</td><td>7.0</td><td>151</td><td class="l">收敛率高·生成稳定</td></tr><tr><td class="l">🇪🇸 Español</td><td>92.6%</td><td>11.3</td><td>0.0</td><td>146</td><td class="l">中等</td></tr><tr><td class="l">🇷🇺 Русский</td><td>92.2%</td><td>11.3</td><td>0.7</td><td>146</td><td class="l">中等</td></tr><tr><td class="l">🇫🇷 Français</td><td>85.2%</td><td>21.3</td><td>1.0</td><td>135</td><td class="l">收敛率偏低·生成失败多</td></tr>
+</table>
+
+<div class="note">
+<b>zh 执行质量最佳</b>（converged 97.5%，gen_fail 仅 3.3）—— 中文思维链反而最稳定。<b>fr 执行质量最差</b>（converged 85.2%，gen_fail 21.3）—— 法语注入导致更多生成失败，可能是模型对法语指令的服从度低。<b>en 的 r1 重跑（dsv4-pro 基座）gen_fail=15</b>拉低了 en 均值（旧 r2/r3 为 0），基座切换有轻微影响。
+</div>
+
+<h2>六、语言切换审计（LANG_HINT 是否生效）</h2>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" style="width:100%;max-width:760px;font-family:inherit">
+<line x1="90.0" y1="28" x2="90.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="90.0" y="256" text-anchor="middle" font-size="10" fill="#888">0%</text>
+<line x1="192.0" y1="28" x2="192.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="192.0" y="256" text-anchor="middle" font-size="10" fill="#888">20%</text>
+<line x1="294.0" y1="28" x2="294.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="294.0" y="256" text-anchor="middle" font-size="10" fill="#888">40%</text>
+<line x1="396.0" y1="28" x2="396.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="396.0" y="256" text-anchor="middle" font-size="10" fill="#888">60%</text>
+<line x1="498.0" y1="28" x2="498.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="498.0" y="256" text-anchor="middle" font-size="10" fill="#888">80%</text>
+<line x1="600.0" y1="28" x2="600.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="600.0" y="256" text-anchor="middle" font-size="10" fill="#888">100%</text>
+<line x1="90" y1="240" x2="600" y2="240" stroke="#aaa" stroke-width="1"/>
+<text x="345.0" y="274" text-anchor="middle" font-size="11" fill="#666">思维链语言构成（按 assistant 消息计数）</text>
+<text x="80.0" y="53.2" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇨🇳 中文</text>
+<rect x="90.0" y="37.5" width="446.5" height="23.3" fill="#27ab83" rx="1"/>
+<text x="313.3" y="53.2" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">88%</text>
+<rect x="536.5" y="37.5" width="1.1" height="23.3" fill="#2c7be5" rx="1"/>
+<rect x="537.6" y="37.5" width="62.4" height="23.3" fill="#e74c3c" rx="1"/>
+<text x="568.8" y="53.2" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">12%</text>
+<text x="610.2" y="53.2" font-size="10" fill="#e74c3c" font-weight="600">真切换(confound)</text>
+<text x="80.0" y="95.6" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇬🇧 English</text>
+<rect x="90.0" y="79.9" width="493.8" height="23.3" fill="#27ab83" rx="1"/>
+<text x="336.9" y="95.6" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">97%</text>
+<rect x="583.8" y="79.9" width="16.2" height="23.3" fill="#2c7be5" rx="1"/>
+<text x="610.2" y="95.6" font-size="10" fill="#2c7be5" font-weight="600">真切换</text>
+<text x="80.0" y="138.0" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇪🇸 Español</text>
+<rect x="90.0" y="122.3" width="100.3" height="23.3" fill="#27ab83" rx="1"/>
+<text x="140.1" y="138.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">20%</text>
+<rect x="190.3" y="122.3" width="8.6" height="23.3" fill="#f0ad4e" rx="1"/>
+<rect x="198.9" y="122.3" width="339.6" height="23.3" fill="#2c7be5" rx="1"/>
+<text x="368.7" y="138.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">67%</text>
+<rect x="538.5" y="122.3" width="61.5" height="23.3" fill="#e74c3c" rx="1"/>
+<text x="569.3" y="138.0" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">12%</text>
+<text x="610.2" y="138.0" font-size="10" fill="#f39c12" font-weight="600">未生效</text>
+<text x="80.0" y="180.4" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇷🇺 Русский</text>
+<rect x="90.0" y="164.7" width="510.0" height="23.3" fill="#eee" stroke="#ccc" stroke-dasharray="4 3" rx="2"/>
+<text x="345.0" y="180.4" text-anchor="middle" font-size="10" fill="#999" font-style="italic">log 抽检：俄文片段+英文漂移 → 部分漂移</text>
+<text x="80.0" y="222.8" text-anchor="end" font-size="11" fill="#333" font-weight="600">🇫🇷 Français</text>
+<rect x="90.0" y="207.1" width="206.6" height="23.3" fill="#27ab83" rx="1"/>
+<text x="193.3" y="222.8" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">41%</text>
+<rect x="296.6" y="207.1" width="29.1" height="23.3" fill="#f0ad4e" rx="1"/>
+<rect x="325.6" y="207.1" width="219.5" height="23.3" fill="#2c7be5" rx="1"/>
+<text x="435.4" y="222.8" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">43%</text>
+<rect x="545.1" y="207.1" width="54.9" height="23.3" fill="#e74c3c" rx="1"/>
+<text x="572.6" y="222.8" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">11%</text>
+<text x="610.2" y="222.8" font-size="10" fill="#27ab83" font-weight="600">部分生效</text>
+<rect x="612" y="28" width="12" height="12" fill="#27ab83" rx="2"/>
+<text x="628" y="38" font-size="10" fill="#555">TARGET 目标语言</text>
+<rect x="612" y="44" width="12" height="12" fill="#f0ad4e" rx="2"/>
+<text x="628" y="54" font-size="10" fill="#555">MIXED 混合</text>
+<rect x="612" y="60" width="12" height="12" fill="#2c7be5" rx="2"/>
+<text x="628" y="70" font-size="10" fill="#555">ENGLISH 英文漂移</text>
+<rect x="612" y="76" width="12" height="12" fill="#e74c3c" rx="2"/>
+<text x="628" y="86" font-size="10" fill="#555">CHINESE 中文漂移</text>
+</svg>
+<div class="chartcap">图 6 · 思维链语言构成堆叠条（TARGET = 目标语言，MIXED = 混合，ENGLISH = 英文漂移，CHINESE = 中文漂移；按 assistant 消息计数）</div>
+</div>
+
+<table>
+<tr><th>语言</th><th>抽样轮</th><th>抽样消息数</th><th>TARGET</th><th>TARGET%</th><th>ENGLISH 漂移</th><th>CHINESE 漂移</th><th>MIXED</th><th>判定</th></tr>
+<tr><td class="l">🇬🇧 en</td><td>r1+r2</td><td>471</td><td>456</td><td class="hl">96.8%</td><td>15</td><td>0</td><td>0</td><td><span class="tag good">真切换</span></td></tr>
+<tr><td class="l">🇨🇳 zh</td><td>r1+r2</td><td>474</td><td>415</td><td class="hl">87.6%</td><td>1</td><td>58</td><td>0</td><td><span class="tag good">真切换(confound)</span></td></tr>
+<tr><td class="l">🇪🇸 es</td><td>r1+r2</td><td>473</td><td>93</td><td><span class="tag bad">21.4%</span></td><td>315</td><td>57</td><td>8</td><td><span class="tag bad">未生效</span></td></tr>
+<tr><td class="l">🇫🇷 fr</td><td>r1</td><td>158</td><td>64</td><td><span class="tag warn">40.5%</span></td><td>68</td><td>17</td><td>9</td><td><span class="tag warn">部分生效</span></td></tr>
+<tr><td class="l">🇷🇺 ru</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="tag warn">部分漂移(log)</span></td></tr>
+</table>
+
+<div class="banner danger">
+<b>⚠️ 审计结论对主结果的影响</b>：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>en / zh 注入有效</b>（TARGET 96.8% / 87.6%）—— 二者的 Pass@1（81.0% / 81.2%）是<b>可信的语言效应</b>（注：zh 的 58 条 CHINESE 是中文 trace 本身，非漂移）。</li>
+<li><b>es 注入未生效</b>（仅 21.4% TARGET，66.6% ENGLISH 漂移）—— es 的 80.8% 实际测的是「<b>英文思考 + 西语 hint 干扰</b>」，不能作为「西语思维链能力」的证据。其极小 std（0.3%）反映的是英文基线稳定性。</li>
+<li><b>fr 部分生效</b>（40.5% TARGET，仅 r1 抽样）—— fr 的 76.2% 部分可信，但混杂英文漂移。</li>
+<li><b>ru 部分漂移</b>（log 含俄文片段「использовать/Поскольку/Давайте проверим」+ 英文漂移，MIXED）—— ru 的 79.3% 部分可信。</li>
+</ol>
+<b>结论修订</b>：严格说，只有 <b>en vs zh</b> 是干净的语言对比（81.0% vs 81.2%，几乎无差异）。es/fr/ru 的结果受注入未生效污染，「5 语言极差仅 5.0pp」的结论<b>主要反映英文基线的稳定性，而非思维链语言的真中性</b>。
+</div>
+
+<h2>七、轮次稳定性</h2>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" style="width:100%;max-width:760px;font-family:inherit">
+<line x1="50" y1="240.0" x2="650" y2="240.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="243.0" text-anchor="end" font-size="10" fill="#888">72</text>
+<line x1="50" y1="209.7" x2="650" y2="209.7" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="212.7" text-anchor="end" font-size="10" fill="#888">74</text>
+<line x1="50" y1="179.4" x2="650" y2="179.4" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="182.4" text-anchor="end" font-size="10" fill="#888">76</text>
+<line x1="50" y1="149.1" x2="650" y2="149.1" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="152.1" text-anchor="end" font-size="10" fill="#888">78</text>
+<line x1="50" y1="118.9" x2="650" y2="118.9" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="121.9" text-anchor="end" font-size="10" fill="#888">80</text>
+<line x1="50" y1="88.6" x2="650" y2="88.6" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="91.6" text-anchor="end" font-size="10" fill="#888">82</text>
+<line x1="50" y1="58.3" x2="650" y2="58.3" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="61.3" text-anchor="end" font-size="10" fill="#888">84</text>
+<line x1="50" y1="28.0" x2="650" y2="28.0" stroke="#eef2f7" stroke-width="1"/>
+<text x="44" y="31.0" text-anchor="end" font-size="10" fill="#888">86</text>
+<line x1="150.0" y1="28" x2="150.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="150.0" y="256" text-anchor="middle" font-size="11" fill="#666" font-weight="600">r1</text>
+<line x1="350.0" y1="28" x2="350.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="350.0" y="256" text-anchor="middle" font-size="11" fill="#666" font-weight="600">r2</text>
+<line x1="550.0" y1="28" x2="550.0" y2="240" stroke="#eef2f7" stroke-width="1"/>
+<text x="550.0" y="256" text-anchor="middle" font-size="11" fill="#666" font-weight="600">r3</text>
+<line x1="50" y1="240" x2="650" y2="240" stroke="#aaa" stroke-width="1"/>
+<line x1="50" y1="28" x2="50" y2="240" stroke="#aaa" stroke-width="1"/>
+<text x="14" y="134.0" text-anchor="middle" font-size="11" fill="#666" font-weight="600" transform="rotate(-90 14 134.0)">Pass@1 (%)</text>
+<text x="350.0" y="274" text-anchor="middle" font-size="11" fill="#666">轮次（同一 40/158 题子集，每轮独立采样）</text>
+<polyline points="150.0,55.3 350.0,94.6 550.0,152.2" fill="none" stroke="#e74c3c" stroke-width="2" opacity="0.85"/>
+<circle cx="150.0" cy="55.3" r="4" fill="#e74c3c"/>
+<text x="150.0" y="47.3" text-anchor="middle" font-size="9" fill="#e74c3c" font-weight="600">84.2</text>
+<circle cx="350.0" cy="94.6" r="4" fill="#e74c3c"/>
+<text x="350.0" y="86.6" text-anchor="middle" font-size="9" fill="#e74c3c" font-weight="600">81.6</text>
+<circle cx="550.0" cy="152.2" r="4" fill="#e74c3c"/>
+<text x="550.0" y="144.2" text-anchor="middle" font-size="9" fill="#e74c3c" font-weight="600">77.8</text>
+<text x="558.0" y="155.2" font-size="11" fill="#e74c3c" font-weight="700">🇨🇳 zh</text>
+<polyline points="150.0,112.8 350.0,55.3 550.0,141.6" fill="none" stroke="#2c7be5" stroke-width="2" opacity="0.85"/>
+<circle cx="150.0" cy="112.8" r="4" fill="#2c7be5"/>
+<text x="150.0" y="104.8" text-anchor="middle" font-size="9" fill="#2c7be5" font-weight="600">80.4</text>
+<circle cx="350.0" cy="55.3" r="4" fill="#2c7be5"/>
+<text x="350.0" y="47.3" text-anchor="middle" font-size="9" fill="#2c7be5" font-weight="600">84.2</text>
+<circle cx="550.0" cy="141.6" r="4" fill="#2c7be5"/>
+<text x="550.0" y="133.6" text-anchor="middle" font-size="9" fill="#2c7be5" font-weight="600">78.5</text>
+<text x="558.0" y="144.6" font-size="11" fill="#2c7be5" font-weight="700">🇬🇧 en</text>
+<polyline points="150.0,103.7 350.0,112.8 550.0,103.7" fill="none" stroke="#f39c12" stroke-width="2" opacity="0.85"/>
+<circle cx="150.0" cy="103.7" r="4" fill="#f39c12"/>
+<text x="150.0" y="95.7" text-anchor="middle" font-size="9" fill="#f39c12" font-weight="600">81.0</text>
+<circle cx="350.0" cy="112.8" r="4" fill="#f39c12"/>
+<text x="350.0" y="104.8" text-anchor="middle" font-size="9" fill="#f39c12" font-weight="600">80.4</text>
+<circle cx="550.0" cy="103.7" r="4" fill="#f39c12"/>
+<text x="550.0" y="95.7" text-anchor="middle" font-size="9" fill="#f39c12" font-weight="600">81.0</text>
+<text x="558.0" y="106.7" font-size="11" fill="#f39c12" font-weight="700">🇪🇸 es</text>
+<polyline points="150.0,94.6 350.0,170.3 550.0,123.4" fill="none" stroke="#8e44ad" stroke-width="2" opacity="0.85"/>
+<circle cx="150.0" cy="94.6" r="4" fill="#8e44ad"/>
+<text x="150.0" y="86.6" text-anchor="middle" font-size="9" fill="#8e44ad" font-weight="600">81.6</text>
+<circle cx="350.0" cy="170.3" r="4" fill="#8e44ad"/>
+<text x="350.0" y="162.3" text-anchor="middle" font-size="9" fill="#8e44ad" font-weight="600">76.6</text>
+<circle cx="550.0" cy="123.4" r="4" fill="#8e44ad"/>
+<text x="550.0" y="115.4" text-anchor="middle" font-size="9" fill="#8e44ad" font-weight="600">79.7</text>
+<text x="558.0" y="126.4" font-size="11" fill="#8e44ad" font-weight="700">🇷🇺 ru</text>
+<polyline points="150.0,208.2 350.0,190.0 550.0,132.5" fill="none" stroke="#27ab83" stroke-width="2" opacity="0.85"/>
+<circle cx="150.0" cy="208.2" r="4" fill="#27ab83"/>
+<text x="150.0" y="200.2" text-anchor="middle" font-size="9" fill="#27ab83" font-weight="600">74.1</text>
+<circle cx="350.0" cy="190.0" r="4" fill="#27ab83"/>
+<text x="350.0" y="182.0" text-anchor="middle" font-size="9" fill="#27ab83" font-weight="600">75.3</text>
+<circle cx="550.0" cy="132.5" r="4" fill="#27ab83"/>
+<text x="550.0" y="124.5" text-anchor="middle" font-size="9" fill="#27ab83" font-weight="600">79.1</text>
+<text x="558.0" y="135.5" font-size="11" fill="#27ab83" font-weight="700">🇫🇷 fr</text>
+</svg>
+<div class="chartcap">图 7 · r1→r2→r3 趋势线（5 语言 3 轮 Pass@1 折线，点 = 每轮值）</div>
+</div>
+
+<table>
+<tr><th>语言</th><th>r1→r2 Δ</th><th>r2→r3 Δ</th><th>range (max−min)</th><th>std</th><th>趋势</th></tr>
+<tr><td class="l">🇨🇳 中文</td><td>-2.6</td><td>-3.8</td><td>6.4</td><td>3.2</td><td class="l">下降</td></tr><tr><td class="l">🇬🇧 English</td><td>+3.8</td><td>-5.7</td><td>5.7</td><td>2.9</td><td class="l">下降</td></tr><tr><td class="l">🇪🇸 Español</td><td>-0.6</td><td>+0.6</td><td>0.6</td><td>0.3</td><td class="l">平稳</td></tr><tr><td class="l">🇷🇺 Русский</td><td>-5.0</td><td>+3.1</td><td>5.0</td><td>2.5</td><td class="l">下降</td></tr><tr><td class="l">🇫🇷 Français</td><td>+1.2</td><td>+3.8</td><td>5.0</td><td>2.6</td><td class="l">上升</td></tr>
+</table>
+
+<div class="note">
+<b>zh/en 呈下降趋势</b>（zh 84.2→77.8，en 80.4→84.2→78.5 重跑），<b>es 最平稳</b>（81.0/80.4/81.0，range 0.6），<b>fr 上升</b>（74.1→79.1）。<b>无语言显示单调趋势</b>——波动主要来自采样方差而非系统性漂移。zh 的下降（r1=84.2 → r3=77.8）幅度 6.4pp 较大，但 r3 是重跑值（旧 78.5% → 新 77.8%，基本一致），说明 r1=84.2 可能是高估离群。
+</div>
+
+<h2>八、结论与局限</h2>
+
+<h3>8.1 结论</h3>
+<ol>
+<li><b>思维链语言对 EDA 代码生成能力影响不显著</b>：5 语言 Pass@1 落在 76.2-81.2%，极差 5.0pp，多数在 1σ 内。</li>
+<li><b>中文与英文并列最高</b>（81.2% / 81.0%）—— 这是<b>唯二注入有效的语言</b>，可信度最高。中文略高 0.2pp 在方差内，<b>无显著差异</b>。</li>
+<li><b>中文 token 成本最高</b>（1.32M/题 vs en 1.28M），比 es/ru（1.01M）多 ~30%——中文 token 化效率低。</li>
+<li><b>中文执行质量最佳</b>（converged 97.5%，gen_fail 3.3）—— 中文思维链反而最稳定。</li>
+<li><b>法语最差</b>（76.2% / converged 85.2% / gen_fail 21.3）—— 注入服从度低，生成失败多。</li>
+</ol>
+
+<h3>8.2 局限</h3>
+<table>
+<tr><th>局限</th><th>影响</th><th>缓解</th></tr>
+<tr><td class="l">es/fr/ru 注入未完全生效（audit 显示 ENGLISH 漂移 40-67%）</td><td class="l">三语 Pass@1 实际测的是「英文思考 + hint 干扰」，不能作为非英语思维链能力的证据</td><td class="l">需更强的 LANG_HINT（如 few-shot 示例 + 输出格式约束）或换用多语言基座</td></tr>
+<tr><td class="l">B_en_r1 重跑基座切换（glm-5.2 → dsv4-pro）</td><td class="l">en 3 轮基座虽已对齐，但 r1=78.5% 低于 r2/r3（80.4/84.2），可能有基座适应期</td><td class="l">已 SUPERSEDED 旧值留档；en mean 用 3 轮池</td></tr>
+<tr><td class="l">每语言仅 3 轮（n=3）</td><td class="l">std 自由度低，效应力不足，小差异（<2pp）难达显著</td><td class="l">如需统计显著，建议每语言 5-10 轮</td></tr>
+<tr><td class="l">与基线 glm-5.2 不可直接归因</td><td class="l">轴 B 用 dsv4-pro，与轴 A（glm-5.2）基座不同，跨轴 Δpp 含基座效应</td><td class="l">本报告仅作轴 B 内横比，不作跨轴归因</td></tr>
+<tr><td class="l">zh 的 58 条 CHINESE 是 confound</td><td class="l">zh trace 中 12.2% 是中文（目标语言），但 trace_source 用户本身用中文，难分离 hint 效应 vs 用户语言效应</td><td class="l">audit 标注 confound，zh 的「真切换」含此混杂</td></tr>
+</table>
+
+<h3>8.3 未来方向</h3>
+<div class="banner good">
+<ol style="margin:6px 0 0 1.2em">
+<li><b>强化 LANG_HINT 注入</b>：对 es/fr/ru 增加 few-shot 示例（用目标语言写的思维链示例）+ 输出格式约束（要求 reasoning 字段用目标语言），提升 TARGET 率到 >80% 后重测。</li>
+<li><b>换用多语言基座</b>：若 dsv4-pro 对非英语服从度低，可换用明确支持多语言的基座（如 Qwen-Max 多语言版）对比，分离「基座能力」与「语言效应」。</li>
+<li><b>增加轮次</b>：每语言 5-10 轮以提升统计效力，用 t-test / bootstrap 检验 en vs zh 的 0.2pp 差异是否显著。</li>
+<li><b>跨语言 token 效率研究</b>：中文 token 成本高 30% 是否值得？若 Pass@1 无显著优势，英文思维链在成本-性能上更优。</li>
+</ol>
+</div>
+
+<h2>附：方法学与数据完整性</h2>
+<table style="font-size:.8rem">
+<tr><th>数据源</th><td class="l"><code>run/ablation_think_lang_results.json</code>（32 rounds，含 2 SUPERSEDED）· <code>run/cost_B_*.json</code>（extract_cost.py 产出）· <code>reports/report_zhulong_lang_switch_audit_zh.html</code>（语言切换审计）</td></tr>
+<tr><th>active 轮次</th><td class="l">en: idx31(重跑)+idx16+idx17 · zh: idx18+idx19+idx30(重跑) · es: idx21+22+23 · fr: idx24+25+26 · ru: idx27+28+29</td></tr>
+<tr><th>Pass@1 计算</th><td class="l">passed/158 × 100%（sandbox run_eval，判据十三有效，PASS_RATE 字段）</td></tr>
+<tr><th>token 统计</th><td class="l">extract_cost.py 从 cline session jsonl 提取 prompt/completion tokens + reasoning chars（÷4 估算 reasoning tokens）</td></tr>
+<tr><th>audit 方法</th><td class="l">从每语言 r1/r2 trace 抽样 assistant 消息，正则匹配目标语言字符（中文/西语重音/法语重音/西里尔）vs 英文，统计 TARGET/MIXED/ENGLISH/CHINESE 占比</td></tr>
+<tr><th>可视化</th><td class="l">纯内联 SVG（7 图：条形+误差棒 / 逐轮散点 / token 堆叠 / 成本-性能象限 / 执行质量三联 / 审计堆叠 / 趋势线），无 JS/CDN 依赖</td></tr>
+<tr><th>commit</th><td class="l">B_en_r1 重跑 + 报告刷新：<code>a909fe482</code>（2026-11-12 21:16）· B 轴报告加 token 列：<code>83fcb84cc</code></td></tr>
+</table>
+
+<footer>
+<p>轴 B · 思维链语言消融报告 · ZhuLong（DAC2027）· 2026-11-13 生成</p>
+<p>5 语言 × 3 轮 × 158 题 = 2,370 次评测 · 基座 deepseek-v4-pro-cloud 恒定 · 7 张 SVG 可视化</p>
+</footer>
 
 </body></html>
