@@ -17,6 +17,23 @@
 > 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
 > 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
 
+### 🔴 用户令 · 2026-11-13 13:3x（**RL 不要再等 BaiZe 基模——直接在 MiniCPM5-2B 基础上跑 RL，追求显著提升**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「RL 在等 baize 基模吗，让它不要等了，直接在 MiniCPM5-2B的基础上RL，追求显著提升。」
+
+**核心变更**：解除 MEMORY 里「P3 等 pretrain S1 收敛 ckpt（ETA≈2026-12-25）」这条依赖。**RL 的起点从「BaiZe 自训基模」改为「MiniCPM5-2B」**（即你现在已 serve 的 `/tmp/models/MiniCPM5-2B/`，以及已 SFT 出的 `minicpm5-2b-sft-v39-final`）。
+
+**立即执行**（L4 zhulong 5-run eval 可继续后台跑完，但 RL 正式起跑从本轮开始，不再搁置）：
+
+1. **RL 基座**：以 MiniCPM5-2B → `minicpm5-2b-sft-v39-final`（step105）作为 RL 起点。可直接用 SFT 后的 ckpt 起 GRPO（先继承 SFT 成果），也可同时起一路「MiniCPM5-2B 裸基座直接 RL」作对照——二者择一为主即可，别铺太多臂。
+2. **复用已就绪资产，别再从头审计**：`run/baize_posttrain_rl_grpo.sh` / `baize_posttrain_rl_grpo_surrogate.sh`、`baize_posttrain_rl_verl_config_v3.yaml`（或 v2）、`rl_pyaether_synth_v2.parquet`（3347 records）、`baize_posttrain_eda_tool_v2.py` + `baize_posttrain_minicpm5_parser_patch.py`、奖励函数 `baize_posttrain_reward_functions.py`、cu124 venv `~/code/verl_cu124_venv/` 都已就绪（R9/R11/R70/R155/R173 均已 dry-run 过），**直接起，不要重做**。
+3. **严格口径照旧**：158 题污染隔离 + anti-cheat 全程开 + 报 cheat rate + 预注册判据 + 5-run mean±std。目标：在 zhulong 158 题（EDA-Eval-PyAether）Pass@1 上相对 SFT 基线（当前 base≈3.8%、SFT step105 待出）**显著提升**。
+4. **诚实负结果**：若 GRPO 无提升/退化（参考 vision 线 v10 教训：离散奖励 + 能力缺口方向 RL 常常无净增益），如实记录并换奖励/任务定义，不要为了「显著」挑软指标；最终结论「在 MiniCPM5-2B 上 RL 能否显著提升 PyAether 脚本能力」本身就是交付物。
+5. **更新记忆**：把 MEMORY_POSTTRAIN.md 里「P3 等 pretrain ckpt」「Q: post-train 现在能起训练吗 → 不能」等过时说法改成「RL 基座=MiniCPM5-2B（+SFT v39），不再依赖 BaiZe 基模」，并在状态头写清新 ETA（smoke 一步 / 全量 200 步 wall-clock）。
+6. 保持 `WAITING=0`，把 RL 起跑作为本轮首要动作；起跑后汇报：所用配置（ckpt 路径 / 配置文件 / G / ctx）、smoke 结果、主训 ETA。
+
+---
+
 ### 🔴 用户令 · 2026-11-12（**L4 领域评测改由 post-train 主责**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「既然后训练说『隧道第 4 次复验 OK』，那么 Pretrain 说的 L4 BLOCKED 就不成立了。这件事 Pretrain 不要管，由 Post-Train 负责。」
