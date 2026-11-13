@@ -173,11 +173,14 @@ def make_providers_json(arm_config):
 
 
 def make_global_settings():
-    """global-settings.json: compaction=basic (已选定为优)."""
+    """global-settings.json: compaction=basic (已选定为优) + enableSpawnAgent (act 预设已开, 显式兜底)."""
     src = os.path.join(BASE_SETTINGS, "global-settings.json")
     d = json.load(open(src))
     d["compactionEnabled"] = True
     d["compactionStrategy"] = "basic"
+    # 🔑 2026-11-13: 显式开 enableSpawnAgent. 主修复是 CLI_AGENT=cline (act 模式, 非 yolo),
+    # 但显式设置兜底防止意外落到 yolo 预设.
+    d["enableSpawnAgent"] = True
     return d
 
 
