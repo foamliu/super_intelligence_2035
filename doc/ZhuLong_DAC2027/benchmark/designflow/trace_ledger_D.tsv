@@ -1673,3 +1673,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794364976889_zrva7	e03101	hfeg0pkn003	530	schematic_netlist	parked		2026-11-13 16:57	Q&A/debug: U0=查看irun.log定位出错原因 + U5=网表中检索是否存在X; verilog:1774 dominant -> verification A-lean not D produce-task
 1793963596117_aftvk	jieran	hfeg0pkn004	966	schematic_netlist	parked		2026-11-13 16:57	wrong-domain: U1=根据netlist绘制版图layout_tet -> layout_aether C-domain; needs live Aether cellview infeasible
 1793872363785_ty6oq	chengleiy	hfeg0pkn005	613	schematic_netlist	parked		2026-11-13 16:57	wrong-domain: U0=整理pcell+QA脚本目录 -> pcell/innovus PDK A/C-domain not D; code-inventory task
+1794461397387_7ehdd	chengwen	hfeg0plg106	37	schematic_netlist	case	EDA-Eval-DesignFlow-VdleqCellHierExtract-001	2026-11-13 18:12	
