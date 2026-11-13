@@ -1,5 +1,11 @@
 WAITING: 0
 
+> 🆕 **【wake #1156 · 2026-11-13 22:38】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git·三条件齐备)·0 ahead/0 behind 已 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 核实无 vision 实验进程在跑(grep 命中仅本巡检自身 ls/ps/cat)。
+> - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1155 未刷新) 21:00 轮 vision 建议=「视觉塔纳入 GPTQ FP16/8-bit/4-bit 三档同评测」(B轨#67·line 164)——部署阶段权重量化·非本线活跃 wave-RL 线·vision CPU-only 无量化工具需求→不 action(沿用 wake#1151~#1155 一致判定)；18:00 轮 vision 显式「无」(line 584)。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
+> - ✅ **git 本轮窗口打开→成功提交**：`.git/index.lock` 不存在·无活跃 git 进程(仅 posttrain cline PID2141728 code-eval 阶段·非 git op)→三条件齐备(无 lock+无 competing staged+无活跃 git)。`git fetch`→**0 ahead/0 behind 已 up-to-date→无需 pull**(vision 工作树 CLEAN·仅 posttrain ?? outputs/ 不触)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途 untracked(outputs/)。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(MEMORY ~31.5KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+
+
 > 🆕 **【wake #1155 · 2026-11-13 22:27】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git 进程·三条件齐备)→ff pull(incoming 3 commit 非视觉)+add 明确路径+commit+push 本线 2 文件**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v10/run_v 真实命中·grep 命中仅 posttrain cline PID2141728 args 含\"v10\"字样误命中·非 vision)。
 > - 输入参考：research 日报 2026-11-13(index mtime 21:11) **21:00 轮** vision 建议=「视觉塔纳入 GPTQ FP16/8-bit/4-bit 三档同评测」(B轨#67·line 164)——**部署阶段权重量化·非本线活跃 wave-RL 线**·vision 当前 CPU-only 无量化工具需求→**不 action**(沿用 wake#1151~#1154 一致判定)；18:00 轮 vision 显式「无」(line 584)。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
