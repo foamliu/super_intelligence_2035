@@ -8700,3 +8700,63 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 - GPU7：用后已 kill 全部 smoke 进程 + ray 清理，GPU7=3 MiB 空闲；仅余 2 个无 GPU 占用的 Ray helper（DashboardAgent/RuntimeEnvAgent，会自行退出）。
 - 诚实负结果：1-GPU hybrid RL 起不来已精确定位（非调度死锁，是 init 握手死锁），与 wake409 结论一致但根因更准。RL 起跑待 ≥2 GPU。
 
+
+## §R411 — wake411 (2026-11-13 17:0x–17:5x): verl 0.4.0 GRPO 起跑——2-GPU 复现同一 init 死锁 + torchrun 多驱动 bug 修复 + NCCL 接口修复无效 → verl 路径结论性 BLOCKED
+
+> 🔴 用户令 2026-11-13 13:3x「RL 不再等 BaiZe 基模，直接在 MiniCPM5-2B 上 RL」。wake410 结论「RL 起跑待 ≥2 GPU」（1-GPU hybrid init 死锁）。本轮：释放 2 GPU（GPU5+GPU7），实测 ≥2 GPU 能否解除 verl 0.4.0 hybrid GRPO init 死锁。
+
+### 0. 资产就绪复检（全部 ✅，未重做）
+- 沙盒隧道：`curl http://127.0.0.1:8664/health` → `{"status":"ok"}` ✅；`ssh -p 3333 app.e0031982@localhost` → TUNNEL_OK（hfeg0tedaap02=10.251.36.15）✅。R1–R4 沙盒可达。
+- SGLang 已装于 verl venv（`site-packages/sglang`）✅。
+- RL 数据 `rl_pyaether_synth_v2.parquet` 3347 行 ✅；污染闸门 PASS（0 命中）✅。
+- SFT 起点 ckpt 自动检出 = `sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105`（= minicpm5-2b-sft-v39-final，用户令指定的 RL 起点）✅。
+- R-launch-fix2（wake410，绝对 --config-path）验证有效：项目配置（sdpa/hybrid/timeout/reward fn）真正加载，log 打印完整解析配置 ✅。
+
+### 1. 🔧 torchrun 多驱动 bug 修复（R-launch-fix3）— ✅ 已修
+**问题**：`baize_posttrain_rl_grpo_surrogate.sh` 用 `torchrun --nproc_per_node=$NGPU`。审计 verl 0.4.0 `main_ppo.py:33` 发现它是**单驱动**脚本——自己 `ray.init()`，用 Ray（非 torchrun/NCCL 进程组）跨 GPU 派生 colocated WorkerDict；`n_gpus_per_node` 来自**配置**。故 `--nproc_per_node` 必须=1。设为 $NGPU 会派生 $NGPU 个独立驱动，各起自己的 Ray 集群（实测 2-GPU 见两个 dashboard 8265/8266，争抢同一组 GPU）。1-GPU 时 nproc=1 恰好正确，>=2 GPU 静默坏掉。
+**修复**：L320 改 `--nproc_per_node=1`（注释 R-launch-fix3）。修复后 2-GPU 实测只见 1 个 Ray 实例 ✅。
+
+### 2. 2-GPU hybrid GRPO init 死锁——复现 wake410 同一签名（RSS 恒 682MB / GPU 恒 3MiB / wchan=hrtimer_nanosleep）
+配置：`baize_posttrain_rl_smoke_sglang_2gpu.yaml`（SGLang rollout, hybrid_engine:True, n_gpus_per_node:2, ctx 1024/1024, G=4, 5 步, no-KL, R0），GPUS=5,7，单驱动。进展比 1-GPU 更远：
+- ✅ Ray 起（1 实例 8265）→ TaskRunner(pid) 解析配置 → `[validate_config] All configuration checks passed` → `colocated worker base class` → 派生 2 个 WorkerDict（`_0:0`/`_0:1`，各占 1 GPU bundle）+ `WorkerGroupRegisterCenter`。
+- 🔴 随后 TaskRunner 卡在 `Waiting for register center actor <prefix>_register_center to be ready. Elapsed 0s out of 1800s`（base.py:371-384：`while elapsed<timeout: if actor_name in list_named_actors(): ...; time.sleep(1)`）。
+- 🔴 两个 WorkerDict 均卡在 `__init__`：RSS 恒 682520/680812 kB（4.5–6.7 min 不动），wchan=hretimer_nanosleep，GPU5/7 恒 3 MiB（未到 CUDA alloc / 模型加载）。
+- raylet state-dump：placement_group 2 bundle（GPU_group_0/GPU_group_1）资源**已分配**（available GPU=0）→ 非调度死锁；卡在 WorkerDict `__init__`/register-center 握手之后、模型加载之前。
+- **与 wake410 1-GPU 签名完全一致**（RSS 682MB / wchan hrtimer_nanosleep / GPU 3MiB / 资源已授）→ ≥2 GPU **不能**解除该死锁。wake410「RL 起跑待 ≥2 GPU」假设证伪。
+
+### 3. NCCL/gloo 接口修复（R-launch-fix4）— ❌ 无效
+**假设**：本机多网卡（bond0=10.252.32.17 + 多个 docker bridge 172.x），NCCL/gloo rendezvous 绑到不可达 docker-bridge IP → `init_process_group` 挂 → 表象同握手死锁。
+**修复**：脚本 export `NCCL_SOCKET_IFNAME=bond0`、`GLOO_SOCKET_IFNAME=bond0`、`NCCL_IB_DISABLE=1`、`NCCL_NET=Socket`（标准 torch.distributed-in-container 修复）。
+**实测**：重跑 2-GPU smoke，进展到同一 register-center 等待 + 2 WorkerDict（RSS 恒 682MB 118–166s+，wchan=hrtimer_nanosleep，GPU 恒 3MiB）→ 签名不变。**NCCL 接口非根因**。
+
+### 4. 根因定位（源码审计，无 root/ptrace 故无 Python 栈）
+- `worker.py:138-166` `WorkerDict.__init__`：读 env → `_configure_with_store`（worker.py:234-246，仅 set env，无 sleep/无 init_process_group）→ `fused_worker_dict={}`。**__init__ 内无 sleep、无 init_process_group**。
+- `worker.py:103-131` `_configure_before_init`（`__new__` 调）：rank0 `create_worker_group_register_center`（`register_center/ray.py`：`@ray.remote` 简单 actor，无 sleep）+ set env；rank>0 `ray.get_actor(name)`；末 `ray.get(register_center.set_worker_info.remote(...))`。无 sleep/重试循环。
+- `base.py:367-397`：TaskRunner 循环 `actor_name in list_named_actors()` 找 register_center。
+- **矛盾**：register_center 进程**存在**（`ray::WorkerGroupRegisterCenter`，RSS 481MB，ep_poll），但 TaskRunner 的 `list_named_actors()` **始终看不到**该命名 actor → 双方互等 → 死锁。
+- **定性**：verl 0.4.0 的 `list_named_actors()` 与本机 Ray 版本对命名 actor 可见性的行为不一致（命名 actor 已 `.options(name=).remote()` 创建，但跨 actor 的 `list_named_actors()` 不返回它）→ register-center 握手永不完成。属 **verl 0.4.0 + 本机 Ray 版本兼容性缺陷**，非配置/非 GPU 数/非 NCCL。
+- py-spy 取 Python 栈被拒（`/proc/sys/kernel/yama/ptrace_scope=1`，Ray actor 非 shell 直系子进程）→ 需 root 才能精确定位到具体阻塞行。
+
+### 5. 解除路径（按可行性，更新自 wake410）
+1. **换 RL 框架（推荐，脱离 verl Ray colocated 架构）**：trl `GRPOTrainer`（单进程 + accelerate，无 Ray 命名 actor 握手）或自写 rollout-loop（vLLM 生成 → 沙盒执行 → 奖励 → GRPO 更新）。trl **未装**于 verl_cu124_venv / vllm_venv（`ModuleNotFoundError`），需安装 + 奖励函数适配 + rollout 配置——属脚手架工作，下一 wake 起做。
+2. patch verl `base.py:371` 把 `list_named_actors()` 改成 `ray.get_actor(name, namespace=...)` 直接试取 + try/except——需先确认命名 actor 的 namespace（疑默认 "" 但本机 Ray 行为异），有风险。
+3. root 跑 py-spy 取 WorkerDict Python 栈精确定位。
+
+### 6. 本轮 GPU/eval 处置
+- 为腾 2 GPU，kill GPU5 的 step60 vLLM serve（PID 951091/951179）→ step60 5-run eval **延后**（eval_chain.sh 的 step60 阶段会因 8097 不在而快速失败，随后继续 base 阶段 GPU4/8098）。step105 run5（GPU6/8096，RL 起点 ckpt 的基线 eval）**未动、继续跑**。base serve（GPU4/8098）未动。
+- verl 路径结论性 BLOCKED 后，已在 GPU5 **重新 serve step60**（PID 1802143，端口 8097，curl /v1/models OK，39.1GB）→ eval chain 的 step60 阶段恢复可用。GPU7 空闲。
+- 未碰 GPU0-3（root SGLang）；未碰 158 任务数据；未 `git add -A`。
+
+### 7. 本轮产物
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 2-GPU SGLang smoke 配置 | `run/baize_posttrain_rl_smoke_sglang_2gpu.yaml` | ctx 1024/G=4/5步/no-KL/SGLang/n_gpus=2 |
+| torchrun 单驱动修复 R-launch-fix3 | `run/baize_posttrain_rl_grpo_surrogate.sh` L320 | `--nproc_per_node=1`（verl 单驱动）；多 GPU 起跑前提 |
+| NCCL 接口修复 R-launch-fix4 | `run/baize_posttrain_rl_grpo_surrogate.sh` L289-301 | NCCL/gloo pin bond0 + IB disable（实测无效，保留为标准加固） |
+| 本节诊断 | `EXPERIMENTS_POSTTRAIN.md` §R411 | 2-GPU 复现 + 源码审计根因 + 3 解除路径 |
+| smoke 日志 | `/tmp/wake411_rl_smoke_sglang_2gpu_v2.log`（无 NCCL 修复）、`_v3.log`（有 NCCL 修复） | 死锁证据（/tmp） |
+
+### 8. 诚实结论
+- **verl 0.4.0 GRPO 在本机环境结论性 BLOCKED**：1-GPU（wake409/410, 2x）、2-GPU（wake411）、NCCL 接口修复（wake411）三路均复现同一 WorkerDict init / register-center 握手死锁。根因=verl 0.4.0 `list_named_actors()` 与本机 Ray 命名 actor 可见性不兼容；需 root 才能精确定位。
+- RL 基座依赖已按用户令解除（= MiniCPM5-2B / SFT step105，不再等 BaiZe 基模）；**阻塞在 RL 框架（verl），非基座、非 GPU 数**。
+- 下一动作：换 trl GRPO 或自写 rollout-loop 起跑 RL（脚手架工作）。RL 真正起跑 ETA 待框架切换后重估（smoke 一步）。

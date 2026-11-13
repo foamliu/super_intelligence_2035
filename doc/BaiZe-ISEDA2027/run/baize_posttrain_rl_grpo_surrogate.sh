@@ -286,6 +286,19 @@ export HF_MODULES_CACHE="/tmp/hf_home/modules"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export TOKENIZERS_PARALLELISM=true
+# R-launch-fix4 (wake411, 2026-11-13): verl 0.4.0 hybrid GRPO WorkerDict.__init__
+# deadlocks AFTER Ray resource grant but BEFORE model load (RSS flat ~682 MB,
+# wchan=hrtimer_nanosleep, GPU never allocates) — reproducible on BOTH 1-GPU
+# (wake409/410, 2x) AND 2-GPU (wake411). The stall is inside WorkerDict.__init__
+# at torch.distributed.init_process_group rendezvous. This node exposes MANY
+# interfaces (bond0=10.252.32.17 + several docker bridges 172.x); NCCL/gloo
+# rendezvous silently binds to an unreachable docker-bridge IP → init hangs.
+# Pin NCCL+gloo to the real interface (bond0) and disable IB (none on this
+# node). Standard torch.distributed-in-container fix.
+export NCCL_SOCKET_IFNAME="${NCCL_SOCKET_IFNAME:-bond0}"
+export GLOO_SOCKET_IFNAME="${GLOO_SOCKET_IFNAME:-bond0}"
+export NCCL_IB_DISABLE="${NCCL_IB_DISABLE:-1}"
+export NCCL_NET="${NCCL_NET:-Socket}"
 export WANDB_MODE=disabled
 export SANDBOX_HOST="$SANDBOX_HOST"
 export SANDBOX_PORT_HTTP="$SANDBOX_PORT"
@@ -317,7 +330,15 @@ echo "[rl] config: $CONFIG_FILE" | tee -a "$LOG_FILE"
 echo "[rl] resume: $RESUME_MODEL" | tee -a "$LOG_FILE"
 echo "[rl] output: $OUTPUT_DIR" | tee -a "$LOG_FILE"
 
-"$VERL_TORCHRUN" --nproc_per_node="$NGPU" --master_addr=127.0.0.1 --master_port=29831 \
+# R-launch-fix3 (wake411, 2026-11-13): verl 0.4.0 main_ppo is a SINGLE-DRIVER
+# script — it calls ray.init() itself (main_ppo.py:33) and uses Ray (NOT a
+# torchrun/NCCL process group) to spawn colocated WorkerDict actors across GPUs.
+# `n_gpus_per_node` in the CONFIG controls how many GPUs Ray uses; torchrun's
+# --nproc_per_node must therefore be 1 (a single driver). Setting it to $NGPU
+# spawned $NGPU independent drivers, each starting its OWN Ray cluster (seen:
+# 2 Ray dashboards 8265/8266 on 2-GPU) → competing for the same GPUs → wrong.
+# For 1-GPU nproc=1 was accidentally correct; for >=2 GPU it broke silently.
+"$VERL_TORCHRUN" --nproc_per_node=1 --master_addr=127.0.0.1 --master_port=29831 \
   "$SCRIPT_DIR/baize_posttrain_verl_wrapper.py" \
   --config-path "$CFG_DIR" --config-name "$CFG_NAME" \
   data.train_files="$RL_DATA" \
