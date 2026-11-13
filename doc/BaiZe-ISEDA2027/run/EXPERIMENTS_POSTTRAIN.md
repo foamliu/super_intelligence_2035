@@ -9241,3 +9241,41 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 交付：R0 训练侧证据复核（A，重新计算验证 wake419）+ eval serve 路径 de-risk（B，验证等待后不会失败）+ 训练动力学 JSON 落盘（C）+ EXPERIMENTS §R420。
 - 下一步：① 等 chain PID2028723 出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083，含 McNemar + bootstrap CI）；② **R0 结论分流**：显著 > 0.0304 → 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化 → **诚实负结果**（A 训练侧已偏负支撑）+ 起 **R2+sandbox-exec**（wake419 selftest 全 PASS，待 GPU7 释放且不与 eval 争用）；③ RL 起跑汇报口径（用户令 2026-11-13 13:3x 第 6 条）：ckpt=global_step_200 / 配置=baize_posttrain_rl_grpo_loop.py(R0,G8B2,ctx512/384,kl0.02) / smoke=w412 3 步 ratio=1.000 / 主训=200 步 61.7min COMPLETED / eval=PENDING（ETA run2 完后 ~12-20h）。
 
+
+## §R421（wake421, 2026-11-13 21:1x）—— R2+sandbox-exec 臂端到端真实就绪复验（隧道+4端口监听+run_code+selftest ALL PASS+dry-run OK）+ sandbox 看门狗误报诊断
+
+> 唤醒背景：RL R0 200 步主训 COMPLETED；自治 eval 队列 run2(1962541,step60 run2 codegen 中)→R0 RL 5-run eval(2028723,等 run2 完后 serve global_step_200 于 GPU7:8095)→residual SFT(2030315) 全 ALIVE。GPU7 空闲(3MiB)预留待 R0 eval serve。本轮零 GPU（不可起第二臂争用 GPU7/沙盒），做「等 R0 eval 出数前能做的实质工作」：把用户令#4 的 R2+sandbox-exec 兜底臂从「venv selftest PASS」推进到「端到端真实就绪可一键起跑」，并诊断 sandbox 看门狗长期误报 CLOSED 的根因。
+
+### A. 隧道+沙盒端口真实可达复验（修正看门狗误报）
+- **隧道 SSH**：`ssh -p 3333 -o ConnectTimeout=8 app.e0031982@localhost` → `hfeg0tedaap02` + `TUNNEL_SSH_OK`（36.15 = 10.251.36.15 可达）。
+- **4 沙盒 HTTP 端口监听**：`ss -tlnp` 见 127.0.0.1:8664/8665/8653/8669 均 LISTEN（ssh pid 618469 转发）；`/v1/models` 返回 `{"detail":"Not Found"}`（FastAPI 路由存在，仅路径不同）。
+- **run_code 端点**：`POST 127.0.0.1:8664/v1/run_code` body 需 `host` 字段 → selftest 正确构造 → `print(2+2)` 返回 `print_log="4\n"`。
+- **🔴 看门狗误报根因**：`baize_posttrain_sandbox_watcher.sh`（PID 4109314 在跑）轮询 `SANDBOX_HOST=10.129.32.75:8667`（旧直连 IP，防火墙 CLOSED，已 CLOSED 1860+ polls）；**真实通路=隧道转发到 .17 localhost 的 8664/8665/8653/8669**（MEMORY 关键事实 L56 已记隧道已通，看门狗轮错端点）。看门狗 `--auto-eval` 不会误触发（其探测端口确实 CLOSED），但 CLOSED 日志是假阴性，不反映真实沙盒可用性。
+
+### B. R2+sandbox-exec 端到端真实就绪（cu124 venv）
+- **venv**：`~/code/verl_cu124_venv/bin/python`（3.10.22, pyarrow 25.0.1, torch 2.6.0+cu124, transformers 4.51.1）—— R0 主训同款 venv。
+- **sandbox_exec --selftest 全 PASS**（真实沙盒执行，非 import 级）：endpoint probe `print(2+2)`→`4`✅；assertion AST 插桩正确✅；PASS case exec_success=True 2/2 assert pass✅；PARTIAL(返回 42 非 bool) R2 partial=0.4000✅；CRASH exec_success=False stderr 捕获✅；reward 集成 R2 pass=1.0/partial=0.4/crash=0.0、R1 pass=1.0、无 exec→自动 fallback R0✅；终行 `ALL SELFTEST CHECKS PASSED`。
+- **grpo loop --reward-arm R2 --sandbox-exec --dry-run OK**（cu124 venv）：recipe 打印 reward_arm=R2/sandbox_exec=True/ports=8664,8665,8653,8669/timeout=60，`RL prompts loaded = 3347`，`DRY-RUN OK (no model loaded, no GPU)`。
+- **错误处理健壮**：`run_sandbox_code` 捕 `requests.Timeout`/通用 Exception → 返回 error dict（exec_success=False → 该 rollout fallback R0），隧道中途断不会崩 loop。
+
+### C. 起跑命令骨架（待 R0 eval 完 + GPU7 释放，不与 eval 争用沙盒）
+
+    cd run && CUDA_VISIBLE_DEVICES=7 nohup ~/code/verl_cu124_venv/bin/python baize_posttrain_rl_grpo_loop.py \
+      --reward-arm R2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669 --sandbox-timeout 60 \
+      --sft-ckpt sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105 \
+      --total-steps 200 --group-size 8 --batch-prompts 2 --save-freq 50 --lr 3e-6 --kl-coef 0.02 \
+      --output-dir rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step \
+      > /tmp/grpo_loop_R2_sandbox_200step.log 2>&1 &
+
+（R2=执行结果部分分：exec_success=0.2 + partial_assert=0.2/each + full_pass=1.0；与 R0 静态字符串匹配本质不同，能区分「能跑通」vs「跑对」，是 R0 若无信号时的真正换奖励/换任务定义方向，符合用户令#4。）
+
+### D. 不立即起 R2 的理由（纪律）
+- GPU7 预留给自治 R0 eval chain（2028723 将 serve global_step_200:8095 + 158题5-run）；现在起 R2 会抢 GPU7 并与 eval 争用沙盒端口 → 违反「先测后换」+ 评测协议冻结。
+- R2 是用户令#4 的「GRPO 无提升/退化→换奖励」兜底；触发条件=R0 5-run eval 出数且无提升/退化。先有 R0 真实数字（vs step105 0.0304±0.0083, McNemar+bootstrap）再决定是否起 R2，不为「显著」提前铺臂。
+- R0 训练侧证据已偏负（§R420：reward 平台+信号衰减+policy 不动），R2 真实就绪=为「诚实负结果 + 换方向」备好可执行下一步。
+
+### E. 红线复核
+§5.1 contam 0/3347 沿用；§5.2 R0 cheat=0/3200（R2 起跑后由 compute_score 继续报 cheat rate）；§2/§5.3 评测协议冻结未改；替身预演，收益不可迁移到 BaiZe。
+
+- 交付：R2+sandbox-exec 端到端真实就绪复验（A 隧道+端口+run_code + B selftest ALL PASS+dry-run OK + C 起跑命令骨架）+ sandbox 看门狗误报根因诊断（A）+ EXPERIMENTS §R421。
+- 下一步：① 等 chain 2028723 出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）；无提升/退化→诚实负结果（§R420 训练侧偏负支撑）+ 起 R2+sandbox-exec（C 命令骨架，待 GPU7 释放）；③ 若 R0 eval 长时间无产出（run2 卡死/chain 异常退出），排查 step60 run2 codegen 进度 + chain 2028723 存活。

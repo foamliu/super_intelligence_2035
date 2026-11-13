@@ -2,3 +2,7 @@
 sft_surrogate_runs/
 # Smoke test data duplicates (identical to main data dir, not needed in git)
 sft_surrogate_data/*_smoke*/
+# RL surrogate training checkpoints (large model weights ~15GB each, not for git;
+# small JSON artifacts under rl_surrogate_runs/<run>/ ARE tracked: metrics.jsonl,
+# cheat_rate.json, *_training_dynamics.json)
+rl_surrogate_runs/*/global_step_*/
