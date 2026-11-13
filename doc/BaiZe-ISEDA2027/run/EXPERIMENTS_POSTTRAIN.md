@@ -9197,3 +9197,47 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 
 - 交付：R0 proxy-饱和量化（A）+ R2 臂 venv selftest 全 PASS 复验（B）+ py3.8 selftest 健壮性修复并验证（C）+ EXPERIMENTS §R419。
 - 下一步：① 等 2028723 出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083）→ R0 结论分流；② 训练侧证据已偏负（A），若 5-run 无显著提升 → 诚实负结果报告 + 起 R2+sandbox-exec（B 已就绪）；③ 有提升则出里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）。
+
+
+## §R420（wake420, 2026-11-13 21:0x）—— R0 训练侧证据复核 + eval serve 路径 de-risk + 训练动力学落盘
+
+> 唤醒背景：RL R0 200 步主训已 COMPLETED（wake413-416）；自治 eval chain（PID2028723）正 180s 轮询等 run2（step60 run2, PID1962541）完成后 serve `global_step_200` 于 GPU7:8095 → 158 题 5-run + McNemar/paired-bootstrap vs step105 0.0304±0.0083。本轮零 GPU（GPU7 仍预留等 serve，不可起第二臂），做「等结果前能做的实质工作」：复核训练侧证据 + 验证 eval serve 路径不会在等待数小时后失败 + 把动力学数字落盘为可被报告消费的 artifact。
+
+### A. R0 训练侧证据复核（数据源 `metrics.jsonl` 200 行 + `cheat_rate.json`，重新计算验证 wake419 结论）
+
+- **训练配置（从 `baize_posttrain_rl_grpo_loop.py` argparse + rollout 计数反推）**：
+  - reward-arm=**R0**（静态字符串匹配，无沙盒执行）；base ckpt=`minicpm5-2b-sft-v39-final`(global_step_105)
+  - G=8, B=2（**3200 rollouts = 200 步 × 8 × 2** 反推确认 G=8；argparse 默认 G=4 但启动时覆盖为 8）
+  - lr=3e-6, kl_coef=0.02, clip_ratio=0.2, temperature=0.7, top_p=0.95
+  - max_prompt_len=512, max_response_len=384, ppo_epochs=1, save_freq=50 → ckpt 50/100/150/200
+  - wall=**61.7 min**（200 步）；grad_norm max=11.31（无爆炸）
+- **reward 分段（均值）**：s1-20=**0.6731** → s21-50=0.8874 → s51-100=**0.9201（峰）** → s101-150=0.9153 → s151-200=**0.911（平台/微降）**。reward first=0.3625 → last=0.8992。
+- **frac_positive_adv（学习信号）**：s1-20=**0.5625** → s51-100=0.3038 → s151-200=**0.2637**（持续衰减，~53% 下降）。
+- **frac_nonzero_reward（区分度）**：s1-20=0.9688 → s51-100=**1.0** → s151-200=0.9962（近饱和 → 区分度塌缩）。
+- **mean_ratio**：全程恒定 **1.0**（policy 对 reference 几乎不动 —— advantage 信号被压过，强负向指标）。
+- **KL**：0.0149 → 0.0717 → 0.0715（健康低位，无模式崩溃）。
+- **结论（与 wake419 一致，本轮重新算验证）**：reward↑ 是对 **proxy（静态字符串匹配）的拟合/饱和**，**非能力增长**。三条独立证据支撑：① reward 平台化（峰后微降）；② frac_positive_adv 衰减（信号消失）；③ mean_ratio=1.0（policy 不动）。训练侧证据**偏负/中性**，与 vision v10「离散奖励 + 能力缺口方向 RL 常无净增益」教训同构。真实裁判仍=158 题 5-run Pass@1（等 eval chain 出数）。
+
+### B. eval serve 路径 de-risk（验证等待数小时后 serve 不会失败）
+
+- **RL ckpt `global_step_200/config.json`**：valid `LlamaForCausalLM`（hidden 2048, 42 层, 16 head, 2 KV head, vocab 130560, bf16），架构与已在 GPU6 正常 serve 的 SFT step105 ckpt 同源 → vLLM 可加载。tokenizer.json/tokenizer_config.json/special_tokens_map.json 齐全。⚠️ config 字段 `transformers_version: 4.51.1` 仅为保存端元数据，vLLM serve venv（transformers 4.49.0）按架构字段加载不受影响（SFT ckpt 同法 serve 验证过）。
+- **serve 脚本 `baize_posttrain_sft_surrogate_serve.sh`**：接受 `--ckpt --gpu --port --name`（chain 传参 `--ckpt <global_step_200> --gpu 7 --port 8095 --name minicpm5-2b-grpo-R0-step200`）✅；含 `--status`/`--stop`/GPU 残留进程清理/transformers 版本检查。
+- **eval chain 脚本 `baize_posttrain_rl_eval_chain.sh`**：逻辑=等 GRPO PID 退出 → 取 latest global_step_* → 等旧 eval-chain PID 退出（providers.json 串行防 clobber）→ serve → 60×15s 健康检查 → 5-run eval（label=grpo_R0_step200）→ `5run_analysis.py --compare grpo_R0_step200 step105` → 输出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`。
+- **`5run_analysis.py`**：计算 mean±std + **McNemar**（b/c 不一致对、chi2、p）+ **paired bootstrap**（10k 重采样 95% CI）→ **满足红线 §5.3 配对检验要求**。
+- **实测**：chain PID2028723 ALIVE（20:31 起，180s 轮询，日志 `eval-chain still running`）；run2 PID1962541 ALIVE（19:42 起，codegen.log 持续写入至 21:00）；GPU7=3MiB 空闲；serve/analysis 路径均验证可跑。**de-risk 结论：等待数小时后 R0 eval 会自动正确执行，无需人工干预。**
+
+### C. 训练动力学 artifact 落盘
+
+- 新增 `rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/rl_R0_step200_training_dynamics.json`：含完整配置 + 分段统计 + cheat + 解读 + eval_status=PENDING。供后续里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html` 直接消费（报告待 5-run eval 出数后再建，不预填假数）。
+
+### D. 红线复核
+
+- §5.1 污染隔离：contam 0/3347（合成题生成时已过闸门，本轮未改）。
+- §5.2 反作弊：cheat_rate.json 终值 **0/3200 = 0.0**（anti-cheat 全程，本轮未改）。
+- §2/§5.3 评测协议冻结：158 任务 / Pass@1 / 2500s / 单 trace / 5-run / `-p 8 -n` 未改；chain 用同一 `baize_posttrain_5run_eval.sh`。
+
+### E. 本轮交付与下一步
+
+- 交付：R0 训练侧证据复核（A，重新计算验证 wake419）+ eval serve 路径 de-risk（B，验证等待后不会失败）+ 训练动力学 JSON 落盘（C）+ EXPERIMENTS §R420。
+- 下一步：① 等 chain PID2028723 出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083，含 McNemar + bootstrap CI）；② **R0 结论分流**：显著 > 0.0304 → 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化 → **诚实负结果**（A 训练侧已偏负支撑）+ 起 **R2+sandbox-exec**（wake419 selftest 全 PASS，待 GPU7 释放且不与 eval 争用）；③ RL 起跑汇报口径（用户令 2026-11-13 13:3x 第 6 条）：ckpt=global_step_200 / 配置=baize_posttrain_rl_grpo_loop.py(R0,G8B2,ctx512/384,kl0.02) / smoke=w412 3 步 ratio=1.000 / 主训=200 步 61.7min COMPLETED / eval=PENDING（ETA run2 完后 ~12-20h）。
+

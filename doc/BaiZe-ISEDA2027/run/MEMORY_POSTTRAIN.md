@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake419（2026-11-13 R419: **R0 训练动力学 proxy-饱和量化 + R2+sandbox-exec 臂 venv selftest 全 PASS 复验 + py3.8 selftest 健壮性修复**；R0 RL eval 仍 gated 于 step60 run2 未完，自治 eval 队列 run2→R0 5-run→residual SFT 排队运行中）
+- PHASE: posttrain-wake420（2026-11-13 R420: **R0 训练侧证据复核(重新计算验证 proxy-饱和) + eval serve 路径 de-risk(ckpt config valid/serve+analysis 脚本验证可跑) + 训练动力学 JSON 落盘**；R0 RL eval 仍 gated 于 step60 run2 未完，自治 eval 队列 run2→R0 5-run→residual SFT 排队运行中）
 - 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-418✅;R411✅(verl BLOCKED);R412✅(自写 GRPO loop smoke PASS);R413✅(全量主训起跑+OOM修复);R414✅(主训监控+cheat=0/800);R415✅(R1-R4 沙盒桥+主训 step165+cheat=0/2400);R416✅(R0 200步 COMPLETED+reward 动力学+eval chain 排队);R417✅(step105 5/5 0.0304±0.0083+JSONL 解析硬化);R418✅(eval 队列重排 R0 提前);R419✅(R0 proxy-饱和量化+R2 臂 venv selftest 全 PASS+py3.8 selftest 修复)
-- 当前动作: wake419 R419:**零 GPU 实质产出**（R0 RL eval gated 于 step60 run2 PID1962541 ~66min 未完，GPU7 空闲待 serve）。①**R0 训练动力学 proxy-饱和量化**：metrics.jsonl 200 行分段 reward s1-20=0.6731→s51-100=0.9201(峰)→s151-200=0.9110(平台/微降)；frac_positive_adv 均值 0.325→末20步 0.1375(信号衰减)；frac_nonzero_reward 0.9931(区分度塌缩)；mean_ratio=1.0 恒定；KL 0.065 健康 → **reward↑是对 proxy 拟合/饱和而非能力增长**，训练侧证据偏负（与 vision v10 教训同构）②**R2+sandbox-exec 臂 venv selftest 全 PASS**（运行时 cu124 venv py3.10 有 ast.unparse）：endpoint probe run_code 2+2=4 通；R2 pass=1.0/partial=0.4/crash=0.0；R1 pass=1.0；无 exec→fallback R0；ALL SELFTEST CHECKS PASSED → **R2 臂真实就绪**（待 GPU7 释放且不与 eval 争用即可起）③**py3.8 selftest 健壮性修复**：baize_posttrain_rl_sandbox_exec.py L193-207 ast.unparse 缺失→回退 astunparse→清晰 RuntimeError（系统 python 不再晦涩 traceback；venv 运行时行为不变）
+- 当前动作: wake420 R420:**零 GPU 实质产出**（R0 RL eval gated 于 step60 run2 PID1962541 19:42 起未完，GPU7 预留待 serve，本轮做"等结果前能做的实质工作"）。①**R0 训练侧证据复核**（数据源 metrics.jsonl 200 行+cheat_rate.json，重新计算验证 w419）：config=R0 arm/G8 B2/lr3e-6/kl0.02/ctx512+384/ppo1/save50，wall61.7min；reward 分段 s1-20=0.6731→s51-100=0.9201(峰)→s151-200=0.911(平台/微降)；**frac_positive_adv 0.5625→0.2637(信号衰减)**；**frac_nonzero_reward→1.0(区分度塌缩)**；**mean_ratio=1.0 恒定(policy 不动)**；KL 0.07 健康 → **reward↑=proxy 拟合/饱和非能力增长**，三条独立证据支撑，训练侧偏负（与 vision v10 同构）②**eval serve 路径 de-risk**：global_step_200/config.json valid LlamaForCausalLM(同 SFT step105 架构)→vLLM 可加载；serve 脚本接受 --ckpt/--gpu/--port/--name✅；chain 脚本逻辑(等GRPO退出→取latest ckpt→等旧chain退出→serve→5run eval→analysis)✅；5run_analysis.py 算 McNemar+paired bootstrap(满足红线§5.3)✅；chain PID2028723 ALIVE 180s 轮询，run2 ALIVE codegen 至 21:00，GPU7=3MiB → **等待数小时后 R0 eval 自动正确执行无需人工** ③**训练动力学 JSON 落盘** `rl_R0_step200_training_dynamics.json`(配置+分段+cheat+解读+eval_status=PENDING，供后续报告消费)
 - 下一步: ①**等 run2(1962541)完→RL eval chain(2028723)自动 serve global_step_200 于 GPU7:8095→158题5-run**→核 /tmp/posttrain_5run_eval/5run_rl_analysis.json(grpo_R0_step200 vs step105 0.0304±0.0083) ②**R0 结论分流**：显著>0.0304→报告 `reports/report_posttrain_rl_surrogate_zh.html`(里程碑,标「替身预演」)；无提升/退化→**诚实负结果**(训练侧 A 已偏负支撑)+起 **R2+sandbox-exec**(B 已就绪,`GPUS=7 ... --reward-arm R2 --sandbox-exec`,需 GPU7 释放且沙盒不与 eval 争用) ③R0=静态字符串匹配奖励,reward 0.36→0.92 平台化=proxy 饱和,真实裁判=158题5-run
 - 阻塞: ✅ **RL R0 主训 COMPLETED**(global_step_200)。RL 基座=MiniCPM5-2B/SFT step105(用户令解除 BaiZe 基模依赖)。**eval 队列**：run2(1962541,~1-1.5h 剩)→R0 RL 5-run eval(2028723,~12-20h)→residual SFT(2030315,step60-3/4/5+base-1..5)。verl 结论性 BLOCKED 不再尝试。GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(R0 eval serve 预留)。
-- 本轮新增产出: R419✅(R0 proxy-饱和量化[reward 平台+frac_positive_adv 衰减+frac_nonzero_reward 塌缩]+R2 臂 venv selftest 全 PASS 复验+py3.8 selftest 健壮性修复并验证+EXPERIMENTS §R419+MEMORY roll wake416)
-- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑——✅ smoke PASS(w412)+✅ 200步主训 COMPLETED(w413-416)+✅ eval 队列重排 R0 提前(w418)+✅ R0 训练侧 proxy-饱和量化+R2 臂就绪复验(w419)；下一动作=等 run2 完→RL eval chain(2028723)自动 158题5-run mean±std 配对检验→R0 真实数字(vs step105 0.0304±0.0083)→有提升出报告/无提升诚实负结果+起 R2+sandbox-exec；L4 2026-11-12(zhulong step105 ✅5/5 0.0304±0.0083;step60 run2 中[run3-5 已 defer 到 R0 eval 后];designflow base 5/5 DONE=0%)
-- git: super_intelligence_2035(behind 2,vision 在途文件不碰);本轮将交付(wake419: EXPERIMENTS §R419+MEMORY roll wake416+sandbox_exec.py 修复)
+- 本轮新增产出: R420✅(R0 训练侧证据复核重新计算验证[reward 平台+frac_positive_adv 0.56→0.26 衰减+frac_nonzero→1.0 塌缩+mean_ratio=1.0 policy 不动]+eval serve 路径 de-risk[ckpt config valid+serve/chain/analysis 脚本验证可跑+chain ALIVE]+训练动力学 JSON `rl_R0_step200_training_dynamics.json` 落盘+EXPERIMENTS §R420)
+- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑——✅ smoke PASS(w412)+✅ 200步主训 COMPLETED(w413-416)+✅ eval 队列重排 R0 提前(w418)+✅ R0 训练侧 proxy-饱和量化+R2 臂就绪复验(w419)+✅ R0 训练侧证据复核+eval serve 路径 de-risk+动力学 JSON 落盘(w420)；下一动作=等 run2 完→RL eval chain(2028723)自动 serve global_step_200→158题5-run mean±std 配对检验(McNemar+bootstrap)→R0 真实数字(vs step105 0.0304±0.0083)→有提升出里程碑报告/无提升诚实负结果+起 R2+sandbox-exec；L4 2026-11-12(zhulong step105 ✅5/5 0.0304±0.0083;step60 run2 中[run3-5 已 defer 到 R0 eval 后];designflow base 5/5 DONE=0%)
+- git: super_intelligence_2035(behind 2,vision 在途文件不碰);本轮将交付(wake420: EXPERIMENTS §R420+MEMORY wake420+rl_R0_step200_training_dynamics.json)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;venv 重建后需重打此patch
 - 🔧 **verl 0.4.0 GRPO 结论性 BLOCKED(wake411)→ ✅ wake412 换框架解除**:verl hybrid GRPO `list_named_actors()` 找不到已创建的 register_center 命名 actor→init 握手死锁;1-GPU/2-GPU/NCCL 修复均复现;根因=verl 0.4.0+本机 Ray 命名 actor 可见性不兼容。**wake412 解除**：弃用 verl 路径，新写自写单进程 GRPO loop `baize_posttrain_rl_grpo_loop.py`（纯 HF+torch，无 Ray/verl/torchrun），smoke 3 步 PASS(ratio=1.000)。verl surrogate 脚本保留但不再尝试。详见 EXPERIMENTS §R411/§R412
 - 🔧 **torchrun 单驱动修复 R-launch-fix3(wake411)**:`baize_posttrain_rl_grpo_surrogate.sh` L320 `--nproc_per_node=1`(verl main_ppo 单驱动,n_gpus 来自配置);原 $NGPU 派生多 Ray 集群→多 GPU 起跑前提修复
@@ -121,59 +121,8 @@ WAITING: 0
 
 > 📦 wake262 (R193) 已归档 → daily-memories-posttrain/2026-11-11.md（v23 db* lifecycle/traverse/geometry/transform/symbol-pin/coverage 67.1%/db*blind全清）。
 
-> 📦 wake263 已归档 → daily-memories-posttrain/2026-11-11.md（wake271 roll）。
-
-> 📦 wake265 已归档 → daily-memories-posttrain/2026-11-11.md（wake271 roll）。
-
-> 📦 wake266 已归档 → daily-memories-posttrain/2026-11-11.md（wake273 roll）。
-
-> 📦 wake267 已归档 → daily-memories-posttrain/2026-11-11.md（wake273 roll）。
-
-> 📦 wake268 已归档 → daily-memories-posttrain/2026-11-11.md（wake271 roll）。
-
-> 📦 wake271 (R202) 已归档 → daily-memories-posttrain/2026-11-11.md（wake279 roll）。
-
-> 📦 wake273 (R204) 已归档 → daily-memories-posttrain/2026-11-11.md（wake279 roll）。
-
-> 📦 wake274 (R205) 已归档 → daily-memories-posttrain/2026-11-11.md（wake280 roll）。
-
-> 📦 wake275 (R206) 已归档 → daily-memories-posttrain/2026-11-11.md（v11-v35 25files→943对merged JSONL+parquet+双重污染闸门PASS）。
-
-> 📦 wake276 (R207) 已归档 → daily-memories-posttrain/2026-11-11.md（surrogate SFT script parameterized+v11-v35 train/val split 849/94 ready）。
-> 📦 wake277 (R208) 已归档 → daily-memories-posttrain/2026-11-11.md（wake280 roll）。
-> 📦 wake278 (R209) 已归档 → daily-memories-posttrain/2026-11-11.md（wake280 roll）。
-> 📦 wake279 (R210) 已归档 → daily-memories-posttrain/2026-11-12.md（wake281 roll）。
-> 📦 wake280 (R280) 已归档 → daily-memories-posttrain/2026-11-12.md（wake283 roll）。
-> 📦 wake281 (R281) 已归档 → daily-memories-posttrain/2026-11-12.md（wake285 roll）。
-> 📦 wake282 (R282) 已归档 → daily-memories-posttrain/2026-11-12.md（wake292 roll）。
-> 📦 wake283 (R283) 已归档 → daily-memories-posttrain/2026-11-12.md（wake292 roll）。
-> 📦 wake284 (R284) 已归档 → daily-memories-posttrain/2026-11-12.md（wake292 roll）。
-> 📦 wake285 (R285) 已归档 → daily-memories-posttrain/2026-11-12.md（wake292 roll）。
-> 📦 wake296 (R296) 已归档 → daily-memories-posttrain/2026-11-12.md（wake303 roll）。
-> 📦 wake297 (R297) 已归档 → daily-memories-posttrain/2026-11-12.md（wake303 roll）。
-> 📦 wake287-wake301 (R287-R301) 流水已归档 → daily-memories-posttrain/2026-11-12.md（R287/R288/R290 例行；R291 全量113task静态分析COMPLETE+SFT语法95.6%vsBase62.8%+32.7pp/截断8.6x降低/函数100%/API+0.055/P0 D1-D6最终验证；R292 MEMORY归档roll+serve健康复检+sandbox CLOSED+GPU全占位；R293 Live生成烟测BASE vs SFT；R294 SFT v11v36训练动力学+报告校正；R295 扩展BASE vs SFT 15task实时对比；R296 3-model对比；R297 API级Gap分析；R299 v11-v37统一语料合并+parquet+SFT dry-run；R300 场景加权RL奖励设计[GRPO兼容/加性bonus]；R301 Phase1评测架构纵深调查+预检脚本）。
-> 📦 wake302–303 流水已归档 → daily-memories-posttrain/2026-11-12.md（R302 GPU4 vLLM重启+Phase1生成启动 / R303 tool-calling分布+退化循环发现）
-> 📦 wake304 流水已归档 → daily-memories-posttrain/2026-11-12.md（R304 Phase1生成100%失败根因[工具名不匹配+沙盒不可达→退化循环→max-output-token]+停止浪费运行）
-[wake305 08:15] R305 no_sandbox模板运行失败根因 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake306 08:50] R306 自定义minicpm5 vLLM tool-call parser → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake307 09:15] R307 工具名对齐实证+context溢出发现 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake308 09:35] R308 上下文溢出修复[max-model-len 65536+--enforce-eager] → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake309 09:55] R309 极简no_sandbox模板+Phase1启动就绪清单 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake310 03:10] R310 vLLM parser streaming 5-bug fix+cline CLI E2E test PASS → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake311 11:24] R311 full static eval launched+GPU4 base serve restarted → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake313 12:05] R313 static eval 80/113 full-metric analysis → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake314 12:12] R314 static eval 90/113 extended analysis → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake315 12:25] R315 static eval 110/113 near-complete+MEMORY归档 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake316 12:35] R316 FULL 113/113 definitive final analysis[D1-D6 complete] → 原文已归档 daily-memories-posttrain/2026-11-12.md
+> 📦 wake263-wake278 已归档 → daily-memories-posttrain/2026-11-11.md / 2026-11-12.md（多次 roll 合并指针；R-content 见 EXPERIMENTS 归档：R202/R204-R210，含 v11-v35 语料合并 943 对+双重污染闸门 PASS、surrogate SFT 脚本参数化+train/val 849/94 split）。
+> 📦 wake279-wake316 已归档 → daily-memories-posttrain/2026-11-12.md（R210-R316，多次 roll 合并指针；要点：R291 全量113task静态分析 SFT语法95.6%vsBase62.8%+32.7pp/截断8.6x降/P0 D1-D6终验；R294 SFT v11v36训练动力学；R297 API级Gap分析；R300 场景加权RL奖励[GRPO兼容]；R301 Phase1评测架构调查；R302-316 Phase1生成失败根因[工具名不匹配+沙盒不可达→退化循环]+自定义minicpm5 vLLM tool-call parser+上下文溢出修复[65536+enforce-eager]+R316 FULL 113/113 D1-D6 complete）。
 
 > 📦 wake320–wake326 流水已归档 → daily-memories-posttrain/2026-11-12.md（R320 API Validator+R4 reward / R321 missing API coverage 178/166 split / R322 PoC 8→14 pairs / R323 full 166→258 pairs 100% coverage / R324 v11-v38 corpus merge 1344 pairs / R325 v38 quality+SFT dry-run PASS / R326 SSH tunnel fixed+run_code 3 root cause fix+commit fe93de4）
 > 📦 wake327–wake329 流水已归档 → daily-memories-posttrain/2026-11-12.md（R327 隧道验证+拆GPU5/6/7+SFT起跑 / R328 SDPA fix+retrain / R329 gen pipeline+scoring verified）
@@ -197,7 +146,9 @@ WAITING: 0
 
 [wake418 20:3x] R418 eval 队列重排——R0 RL eval 提前到 step60-run2 之后（kill 旧 chain 1923203/1161064→新 RL eval chain PID2028723 等 run2→residual SFT chain PID2030315）→ 原文已归档 daily-memories-posttrain/2026-11-13.md
 
-[wake419 20:4x] R419 **R0 训练动力学 proxy-饱和量化 + R2+sandbox-exec 臂 venv selftest 全 PASS 复验 + py3.8 selftest 健壮性修复**（不空转：R0 RL eval 仍 gated 于 step60 run2 PID1962541 ~66min 未完，GPU7 空闲待 serve，本轮零 GPU 实质产出）：①**R0 proxy-饱和量化**（数据源 metrics.jsonl 200 行）：reward 分段 s1-20=0.6731→s21-50=0.8874→s51-100=0.9201(峰)→s101-150=0.9153→s151-200=0.9110(平台/微降)；**frac_positive_adv 均值 0.325→末20步 0.1375**（学习信号衰减）；**frac_nonzero_reward 0.9931**（区分度塌缩）；mean_ratio=1.0 恒定；KL 0.065 健康 → **reward↑是对 proxy 拟合/饱和而非能力增长**，训练侧证据偏负（与 vision v10「离散奖励+能力缺口方向 RL 无净增益」教训同构），为诚实负结果分支备好证据基 ②**R2+sandbox-exec 臂真实就绪复验**：运行时 python=cu124 venv `~/code/verl_cu124_venv/bin/python`(3.10.22, 有 ast.unparse)；**venv selftest 全 PASS**——endpoint probe run_code `print(2+2)`→`4`（tunnel 通）；assertion instrumentation 正确；PASS case exec_success=True 2/2 pass；PARTIAL(返回 42 非 bool) R2 partial=0.4000；CRASH exec_success=False；R1 pass=1.0；**无 exec→自动 fallback R0**（向后兼容）；终行 `ALL SELFTEST CHECKS PASSED` → R2 臂真实就绪（待 GPU7 释放且不与 eval 争用即可起 `--reward-arm R2 --sandbox-exec`）③**py3.8 selftest 健壮性修复**：发现系统 python3(3.8.10) 跑 `--selftest` 崩 `AttributeError: ast 无 unparse`（≥3.9 才有）；修复 `baize_posttrain_rl_sandbox_exec.py` L193-207：ast.unparse 缺失→回退 astunparse→清晰 RuntimeError 指引用 venv；验证①系统 python 现报清晰 RuntimeError②venv selftest 仍 ALL PASS③语法 OK；运行时行为不变 ④eval 链健康复核：run2(1962541)→RL eval chain(2028723,180s 轮询)→residual SFT(2030315)全 ALIVE；GPU7=3MiB 空闲；未碰 GPU0-3/4/5/6；红线未改(cheat=0/3200) ⑤MEMORY 体积 roll wake416→daily-memories。详见 EXPERIMENTS §R419。 Next:等 2028723 出 5run_rl_analysis.json(grpo_R0_step200 vs step105 0.0304±0.0083)→R0 结论分流(有提升出报告/无提升诚实负结果+起 R2+sandbox-exec)。 WAITING=0.
+[wake419 20:4x] R419 R0 训练动力学 proxy-饱和量化 + R2+sandbox-exec 臂 venv selftest 全 PASS 复验 + py3.8 selftest 健壮性修复 → 原文已归档 daily-memories-posttrain/2026-11-13.md
+
+[wake420 21:0x] R420 **R0 训练侧证据复核 + eval serve 路径 de-risk + 训练动力学 JSON 落盘**（不空转：R0 RL eval gated 于 step60 run2 PID1962541 19:42 起未完，GPU7 预留待 serve，本轮零 GPU 实质产出）：①**R0 训练侧证据复核**（数据源 metrics.jsonl 200 行+cheat_rate.json，重新计算验证 w419）：config=R0 arm/G8 B2(3200 rollouts=200×8×2)/lr3e-6/kl0.02/clip0.2/ctx512+384/ppo1/save50，wall61.7min，grad_norm max11.31；reward 分段 s1-20=0.6731→s21-50=0.8874→s51-100=0.9201(峰)→s101-150=0.9153→s151-200=0.911(平台/微降)；**frac_positive_adv 0.5625→0.2637(信号衰减~53%)**；**frac_nonzero_reward→1.0(区分度塌缩)**；**mean_ratio=1.0 恒定(policy 对 ref 不动)**；KL 0.0149→0.0717 健康 → **reward↑=proxy 拟合/饱和非能力增长**，三条独立证据(reward 平台+信号衰减+policy 不动)支撑，训练侧偏负（与 vision v10 同构）②**eval serve 路径 de-risk**：global_step_200/config.json valid LlamaForCausalLM(hidden2048/42L/16H/2KV/vocab130560/bf16,同 SFT step105 架构)→vLLM 可加载(tokenizer 齐全)；serve 脚本 baize_posttrain_sft_surrogate_serve.sh 接受 --ckpt/--gpu/--port/--name✅；chain 脚本逻辑(等GRPO退出→取latest global_step_*→等旧chain退出防 providers.json clobber→serve→60×15s健康检查→5run eval→analysis)✅；5run_analysis.py 算 mean±std+McNemar(b/c/chi2/p)+paired bootstrap(10k 95%CI)→**满足红线§5.3 配对检验**✅；实测 chain PID2028723 ALIVE(20:31 起 180s 轮询日志 eval-chain still running)，run2 PID1962541 ALIVE(codegen.log 写至 21:00)，GPU7=3MiB 空闲 → **等待数小时后 R0 eval 自动正确执行无需人工干预** ③**训练动力学 JSON 落盘** `rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/rl_R0_step200_training_dynamics.json`(完整配置+分段统计+cheat+解读+eval_status=PENDING，供后续里程碑报告 report_posttrain_rl_surrogate_zh.html 直接消费，报告待 5-run eval 出数后再建不预填假数) ④红线复核：§5.1 contam 0/3347；§5.2 cheat=0/3200；§2/§5.3 协议冻结未改 ⑤MEMORY 体积 roll wake419→daily-memories。详见 EXPERIMENTS §R420。 Next:等 chain 2028723 出 /tmp/posttrain_5run_eval/5run_rl_analysis.json(grpo_R0_step200 vs step105 0.0304±0.0083,McNemar+bootstrap)→R0 结论分流(显著提升出里程碑报告/无提升诚实负结果+起 R2+sandbox-exec)。 WAITING=0.
 
 
 
