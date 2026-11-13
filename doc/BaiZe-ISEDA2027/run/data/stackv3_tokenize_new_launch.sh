@@ -7,34 +7,43 @@
 set -euo pipefail
 
 PARQUET_DIR="/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/data"
+REPO_ROOT="/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train"
 OUTPUT_DIR="/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train"
 SCRIPT="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/stackv3_tokenize.py"
 LOG="/tmp/tokenize_stackv3_new.log"
-EXPECTED_FILES=8207   # total files in the HF repo (parquet + stats)
+EXPECTED_PARQUET=8192   # authoritative parquet count from HfApi (2026-11-13 audit)
 MAX_WAIT_HOURS=48
 
 echo "=== stackv3_tokenize_new_launch.sh started $(date) ==="
 echo "PARQUET_DIR=$PARQUET_DIR"
 echo "OUTPUT_DIR=$OUTPUT_DIR"
+echo "EXPECTED_PARQUET=$EXPECTED_PARQUET"
 echo "Waiting for hf download to complete (up to ${MAX_WAIT_HOURS}h)..."
 
 wait_start=$(date +%s)
 while true; do
+    # Count parquet files in data/ and incomplete files in entire repo (including .cache/)
+    n_parquet=$(find "$PARQUET_DIR" -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l)
+    n_incomplete=$(find "$REPO_ROOT" -name '*.incomplete' 2>/dev/null | wc -l)
+
     # Check if hf download process is still running
     if ! pgrep -f "hf download HuggingFaceCode/stack-v3-train" > /dev/null 2>&1; then
-        echo "$(date): hf download process not found — checking file count..."
-        n_parquet=$(find "$PARQUET_DIR" -name '*.parquet' 2>/dev/null | wc -l)
-        n_incomplete=$(find "$PARQUET_DIR" -name '*.incomplete' 2>/dev/null | wc -l)
-        echo "$(date): parquet=$n_parquet incomplete=$n_incomplete"
-        if [ "$n_incomplete" -eq 0 ]; then
-            echo "$(date): Download appears complete (no incomplete files, process gone)."
+        echo "$(date): hf download process not found — checking completion criteria..."
+        echo "$(date): parquet=$n_parquet/$EXPECTED_PARQUET incomplete=$n_incomplete"
+        # Guard: all three conditions must be met before starting tokenization
+        if [ "$n_incomplete" -eq 0 ] && [ "$n_parquet" -eq "$EXPECTED_PARQUET" ]; then
+            echo "$(date): Download verified complete (parquet=$n_parquet==$EXPECTED_PARQUET, incomplete=0, process gone)."
             break
+        elif [ "$n_incomplete" -eq 0 ] && [ "$n_parquet" -lt "$EXPECTED_PARQUET" ]; then
+            echo "$(date): WARNING: process gone but parquet=$n_parquet < expected=$EXPECTED_PARQUET and no incomplete files."
+            echo "$(date): This may indicate a crashed download. NOT starting tokenization. Aborting."
+            exit 1
+        else
+            echo "$(date): process gone but incomplete=$n_incomplete > 0. Waiting for incomplete files to clear..."
         fi
+    else
+        echo "$(date): Waiting... parquet=$n_parquet/$EXPECTED_PARQUET incomplete=$n_incomplete"
     fi
-
-    n_parquet=$(find "$PARQUET_DIR" -name '*.parquet' 2>/dev/null | wc -l)
-    n_incomplete=$(find "$PARQUET_DIR" -name '*.incomplete' 2>/dev/null | wc -l)
-    echo "$(date): Waiting... parquet=$n_parquet/$EXPECTED_FILES incomplete=$n_incomplete"
 
     elapsed=$(( $(date +%s) - wait_start ))
     if [ $elapsed -gt $((MAX_WAIT_HOURS * 3600)) ]; then

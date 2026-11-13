@@ -1,6 +1,8 @@
 ﻿# BAIZE_DATA_TASK.md
 
-### 🔴 用户令 · 2026-11-13 18:5x（**先确认 StepB 下载 ETA 的基数与算法：15.9TB vs 2.1TB/5297 文件对不上**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-13 18:5x（**先确认 StepB 下载 ETA 的基数与算法：15.9TB vs 2.1TB/5297 文件对不上**）· 用户直令 · 最高优先 · ✅ 已确认
+
+> **回执（唤醒1489, 2026-11-13 20:25）**：**已确认**。HfApi().dataset_info(files_metadata=True) 实测 repo 总计 8207 文件 / 3,545,765,800,565 B = **3.546 TB**（非 15.9TB！）；data/part-*.parquet = 8192 文件 / 3,545,762,968,481 B = 3.546 TB。15.9TB 出处 = stats/train/totals.json 的 total_bytes = 11.5TB（未压缩 content size）。已下 2.358 TB / 5455 parquet / 2 inc(.cache)。逐文件比对剩余 2737 文件 / 1,195,119,410,512 B = **1.195 TB**。实测速率（444s 窗口）：21.6 MB/s = 19.1 s/file（近期，下降 3.7 倍）；全程均速 79.3 MB/s = 5.46 s/file。**ETA 保守 ~14.7h（近期速率）/ ETA 乐观 ~4.2h（全程均速），取较大 → ~14.7h**。磁盘 /nas_user 可用 59.3TB >> 1.2TB → ✅。StepC 护栏已修复（旧脚本 incomplete 检查在 data/ 始终返回 0 + EXPECTED_FILES=8207 从未用于 break 条件 → 已修复：REPO_ROOT 含 .cache/ + EXPECTED_PARQUET=8192 + 三条件 + 崩溃 exit1）。落盘 /tmp/stackv3_size_audit.json。**结论：本次下载是 3.546TB 不是 15.9TB，剩余 1.195TB，ETA 保守 ~14.7h**。
 
 > **用户原话**：「data：下载ETA有问题。15-2=13TB，不可能在几小时下载完的吧。让它确认一下。」
 
