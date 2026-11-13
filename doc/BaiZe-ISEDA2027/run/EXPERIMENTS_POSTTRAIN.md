@@ -10679,3 +10679,12 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 边界:本轮仅读 stats/log/ps/nvidia-smi/curl,未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
 - Next:①5-run eval 5轮全完(autofire 链自动,run1 或~08:00 完→run2-5 各~5h)→5run_rl_analysis_R2.json→R2 Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告 reports/report_posttrain_rl_surrogate_zh.html(标替身预演,论证禁引 mean_ratio,改引 reward 曲线+Pass@1);负→诚实负结果+换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4) ③kill_gpu_serve bug 待 chain 空闲修。
 
+## §R468 (wake468, 2026-11-14 07:19) 5-run eval RUNNING 监控(心跳轮) run1 153/158
+
+- 实测(.17 s0pgpuap12, 07:19:07):autofire chain PID2322797 存活(etime≈6h57m);eval run1 PID2354141 存活(etime≈6h11m);cline worker 活跃(batch_cline.log 07:17 仍写,worker-4 完成 task144 timeout/worker-8 完成 task158 success,无死锁)。3 并发 serve 全稳:GPU4:8098(minicpm5-2b base)/GPU6:8096(minicpm5-2b-sft-v39-final)/GPU7:8095(minicpm5-2b-grpo-R2-step200,curl /v1/models 三端口均 200 OK);GPU7=90%util/39246MiB(PID2353393);GPU5=3MiB/0% 空闲(非本线不碰);GPU0-3=root SGLang(45GB/卡)不碰。
+- run1 进度(~/eda_code_eval/2026_1114_010813/stats):**success=92/failure=6/timeout=55 = 153/158**(较 wake467 149/158 +4:+2 success/+0 fail/+2 timeout);.task_queue 0 行空+~5 in-flight 收尾中;failed_task.log 6 行(023/045/053/065/082/124);timeout_task.log 55 行;total_time=171046s;final_report.json 未生成(run1 未完);5run_rl_analysis_R2.json 未出。run1 ETA~07:30-08:30(剩余 5 题多 timeout,收尾阶段)。
+- ⚠️口径:success/failure/timeout=code-gen 阶段计数(非 Pass@1);R2 真实 Pass@1 待 5-run 全完 5run_rl_analysis_R2.json(vs step105 0.0304±0.0083,McNemar+paired bootstrap)。
+- 本轮=纯监控心跳,无新增调研产出。理由:eval 自治链(autofire chain PID2322797)运行中,run1 收尾中,无可推进的阻塞动作;R2 RL 动力学指标重释已于 wake463 落盘(§R463)。保持预注册决策门纪律:R2 显著性判定必须等 5-run eval 真实 Pass@1,不预判。
+- 0 真实 infra 错误(chain log 仅 START;CUDA OOM=0;serve 三端口健康;batch_cline.log 持续写入,0 traceback)。
+- 边界:本轮仅读 stats/log/ps/nvidia-smi/curl,未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
+- Next:①run1 收尾(~5 in-flight,timeout 主导)→final_report.json→chain 自动 run2-5(各~5h)→5run_rl_analysis_R2.json→R2 Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告 reports/report_posttrain_rl_surrogate_zh.html(标替身预演,论证禁引 mean_ratio,改引 reward 曲线+Pass@1);负→诚实负结果+换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4) ③kill_gpu_serve bug 待 chain 空闲修。
