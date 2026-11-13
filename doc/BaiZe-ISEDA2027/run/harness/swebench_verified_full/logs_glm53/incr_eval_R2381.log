@@ -1,0 +1,44 @@
+=== incr_eval R2381 (3 new ids, 3 harnesses) START Fri Nov 13 04:10:20 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Fri Nov 13 04:10:20 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 321 real patches merged
+[Fri Nov 13 04:10:20 PM CST 2026] === cline-patched eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]=== incr_eval R2381 (3 new ids, 3 harnesses) START Fri Nov 13 04:11:01 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Fri Nov 13 04:11:01 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 321 real patches merged
+[Fri Nov 13 04:11:01 PM CST 2026] === cline-patched eval START 1 NEW instances ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 1
+Report written to cline-glm-5.3-flash.verified_full_glm53_cline-patched_incr_R2381.json
+[Fri Nov 13 04:11:05 PM CST 2026] === cline-patched eval DONE ===
+[Fri Nov 13 04:11:05 PM CST 2026] === merge claude-code predictions ===
+claude-code: 324 real patches merged
+[Fri Nov 13 04:11:05 PM CST 2026] === claude-code eval START 1 NEW instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to pi-glm-5.3-flash.verified_full_glm53_pi_incr_R2381.json
