@@ -7,12 +7,12 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake391（2026-11-13 R391: **run2 codegen 128/158(81%)+pipeline fully autonomous+all infra green**; step105 run1=3.8%,step60 run1=1.3%,5run_analysis n=1 each）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-390✅;R391✅(run2 128/158 monitoring+pipeline health verify+5run_analysis.json confirmed)
-- 当前动作: wake391 R391:①run2 zhulong codegen(batch 2026_1113_062714):128/158 completed(81%),31 remaining in queue,8 workers all active(etimes 194-2100s,NO stuck) ②GPU6=97%util(run2 codegen active),GPU0-5 serves loaded,GPU7 free ③autocomplete daemon PID1122770 alive(etimes=8418s)→waiting run2 done→auto-runs 3-5 ④eval chain daemon PID1161064 alive(etimes=2728s)→waiting autocomplete→step60 runs2-5→base runs1-5→analysis ⑤3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final) all /v1/models OK ⑥tunnel UP:ssh -p3333→36.15 TUNNEL_OK(hfeg0tedaap02) ⑦5run_analysis.json:step105=0.038(n=1),step60=0.013(n=1)→will update as runs complete ⑧run1 result_summary.json confirmed:step105 Pass@1=6/158=3.8%(passed:003,046,067,096,127,153),step60 Pass@1=2/158=1.3%
-- 下一步: ①run2 codegen complete(~31 tasks,ETA~15min)→sandbox eval(via tunnel→.15 pyAether)→autocomplete auto-runs 3-5 ②chain daemon auto-starts step60 runs2-5→base runs1-5→final 5run analysis ③designflow DELIVERED 0/5=0%(protocol mismatch)
+- PHASE: posttrain-wake392（2026-11-13 R392: **run2 codegen 137/158(87%)+2 stuck workers killed+pipeline autonomous**; step105 run1=3.8%,step60 run1=1.3%,5run_analysis n=1 each）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-391✅;R392✅(run2 137/158+2 stuck killed+infra health all green)
+- 当前动作: wake392 R392:①run2 zhulong codegen(batch 2026_1113_062714):137/158 code dirs,128 completed(success=109+failure=14+timeout=5),22 remaining in queue,8 workers active(etimes 27-2494s,NO stuck) ②killed 2 stuck workers(worker_7 etimes=2945s>2500s,worker_8 etimes=2811s>2500s;bun not responding to timeout SIGTERM)→workers auto-recovered to 8 ③GPU6=89%util(run2 codegen active),GPU0-5 serves loaded,GPU7 free ④autocomplete daemon PID1122770 alive(etimes=9398s)→waiting run2 done→auto-runs 3-5 ⑤eval chain daemon PID1161064 alive(etimes=3724s)→waiting autocomplete→step60 runs2-5→base runs1-5→analysis ⑥3 serves UP:8098+8097+8096 all /v1/models OK ⑦tunnel UP:ssh -p3333→36.15 TUNNEL_OK
+- 下一步: ①run2 codegen complete(~22 tasks,ETA~10min)→sandbox eval(via tunnel→.15 pyAether)→autocomplete auto-runs 3-5 ②chain daemon auto-starts step60 runs2-5→base runs1-5→final 5run analysis ③designflow DELIVERED 0/5=0%(protocol mismatch)
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(step105 run2/5→runs3-5 auto)
-- 本轮新增产出: R391✅(run2 128/158 monitoring+pipeline health all green+5run_analysis.json data confirmed+eval script flow verified)
+- 本轮新增产出: R392✅(run2 137/158+2 stuck workers killed+infra health all green+pipeline autonomous confirmed)
 - 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run2/5;designflow DELIVERED 0/5=0%);13:40 SFT v39 eval→5-run eval IN PROGRESS
 - git: super_intelligence_2035(clean);本轮 commit pending(MEMORY update)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
@@ -199,39 +199,8 @@ WAITING: 0
 [wake362 02:53] R362 双eval监控+生成质量验证 — 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake363 03:09] R363 双eval进度+代码质量对比+designflow bench定位 → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake364 03:17] R364 L4 designflow eval launched via SSH reverse tunnel → 原文已归档 daily-memories-posttrain/2026-11-13.md
-> 📦 wake365–wake368 流水已归档 → daily-memories-posttrain/2026-11-13.md（R365 designflow 0/5 FINAL / R366-367 dual eval monitoring+code quality / R368 dual eval monitoring+stats analysis）
+> 📦 wake365–wake391 流水已归档 → daily-memories-posttrain/2026-11-13.md（R365 designflow 0/5 FINAL / R369-376 dual eval monitoring+stuck worker kills / R377 5run eval script+run2 launched / R378 autocomplete script / R382 designflow BLOCKER resolved / R383 designflow 0/5+run2 57/158 / R384-391 run2 progress 64→128/158+pipeline autonomous+all infra green）
 
-[wake369 04:08] R369 zhulong dual eval monitoring+full syntax scan → 原文已归档 daily-memories-posttrain/2026-11-13.md
-
-[wake370 04:14] R370 **zhulong dual eval monitoring+stuck worker diagnosis** → 原文已归档 daily-memories-posttrain/2026-11-13.md
-
-> 📦 wake369–wake371 流水已归档 → daily-memories-posttrain/2026-11-13.md（R369 dual eval monitoring+full syntax scan / R370 stuck worker diagnosis / R371 live stats counters+syntax scan）
-
-> 📦 wake372 流水已归档 → daily-memories-posttrain/2026-11-13.md（R372 dual eval monitoring+stuck worker kill）
-> 📦 wake374 流水已归档 → daily-memories-posttrain/2026-11-13.md（R374 wake373 premature FINAL correction+step_105>step_60+"pass" root cause+SFT data 0 pass+5 stuck workers killed）
-
-> 📦 wake375 流水已归档 → daily-memories-posttrain/2026-11-13.md（R375 dual eval code-gen 97pct+step_105>step_60 all metrics+5 stuck workers killed）
-
-> 📦 wake376 流水已归档 → daily-memories-posttrain/2026-11-13.md（R376 dual eval code-gen 98%+syntax scan+empty-dir analysis:step_105>>step_60 all metrics）
-
-> 📦 wake377 流水已归档 → daily-memories-posttrain/2026-11-13.md（R377 5run eval script+run2 launched+dual Pass@1 in EXPERIMENTS）
-
-> 📦 wake378 流水已归档 → daily-memories-posttrain/2026-11-13.md（R378 autocomplete script+run2 progress 38/158+designflow 0% confirmed）
-
-> 📦 wake378–wake379 流水已归档 → daily-memories-posttrain/2026-11-13.md（R378 autocomplete script+run2 progress 38/158+designflow 0% confirmed / R379 run2 progress 46/158+infra health check all green）
-
-> 📦 wake380 流水已归档 → daily-memories-posttrain/2026-11-13.md（R380 run2 49/158+infra health+run1 Pass@1=6/158=3.8% confirmed）
-
-[wake382 07:22] R382 **designflow "check.py missing" BLOCKER RESOLVED + 5-task eval LAUNCHED** → 原文已归档 daily-memories-posttrain/2026-11-13.md
-
-[wake383 07:35] R383 **designflow 5-task eval VERIFIED COMPLETE 0/5=0% (protocol mismatch)+run2 zhulong codegen 57/158(36%)** → 原文已归档 daily-memories-posttrain/2026-11-13.md
-
-> 📦 wake384–wake387 流水已归档 → daily-memories-posttrain/2026-11-13.md（R384 run2 64/158+3 stuck killed+harness mode mismatch / R385 78/158+1 stuck killed / R386 82/158+eval chain daemon launched / R387 91/158+1 stuck killed+pipeline autonomous）
-
-> 📦 wake388–wake389 流水已归档 → daily-memories-posttrain/2026-11-13.md（R388 run2 111/158+2 stuck killed / R389 run2 124/158+no stuck+infra healthy）。
-
-> 📦 wake382–wake390 流水已归档 → daily-memories-posttrain/2026-11-13.md（R382 designflow BLOCKER resolved / R383 designflow 0/5+run2 57/158 / R388-390 run2 progress 111→116/158+failure breakdown）。
-
-[wake391 09:05] R391 **run2 codegen 128/158(81%)+pipeline fully autonomous+all infra green**:①run2 zhulong codegen(batch 2026_1113_062714):128/158 completed(81%),31 remaining in queue(tasks 127-158),8 workers all active(etimes 194-2100s,NO stuck) ②GPU6=97%util(run2 codegen active),GPU0-5 serves loaded,GPU7 free ③autocomplete daemon PID1122770 alive(etimes=8418s)→waiting run2 codegen driver PID1109190 done→auto-runs 3-5 ④eval chain daemon PID1161064 alive(etimes=2728s)→waiting autocomplete daemon→step60 runs2-5→base runs1-5→5run analysis ⑤3 serves UP:8098(GPU4 base minicpm5-2b)+8097(GPU5 step60 minicpm5-2b-sft-v39)+8096(GPU6 step105-final) all /v1/models OK ⑥tunnel UP:ssh -p3333→36.15 TUNNEL_OK(hfeg0tedaap02=10.251.36.15) ⑦5run_analysis.json confirmed:step105=0.038(n=1),step60=0.013(n=1)→will auto-update as runs complete ⑧run1 result_summary.json verified:step105 Pass@1=6/158=3.8%(passed:003,046,067,096,127,153;exec_failures:SynErr=17+AttrErr=15+TypeErr=13+AssertErr=3),step60 Pass@1=2/158=1.3% ⑨eval script flow verified:5run_eval.sh does codegen→sandbox eval(run_eval.py via tunnel→.15 pyAether)→final_report.json;5run_analysis.py reads final_report.json or result_summary.json fallback ⑩pipeline ETA:run2 codegen ~15min→sandbox eval→runs3-5 auto(~3h)→step60 runs2-5(~4h)→base runs1-5(~4h)→analysis. R391✅.WAITING=0。
+[wake392 09:18] R392 **run2 codegen 137/158(87%)+2 stuck workers killed+pipeline autonomous+all infra green**:①run2 zhulong codegen(batch 2026_1113_062714):137/158 code dirs,128 completed(success=109+failure=14+timeout=5),22 remaining in queue,8 workers active(etimes 27-2494s,NO stuck) ②killed 2 stuck workers(worker_7 PID1169405 etimes=2945s>2500s timeout,worker_8 PID1170654 etimes=2811s>2500s;bun/cline not responding to timeout SIGTERM)→workers auto-recovered to 8 ③GPU6=89%util(run2 codegen active),GPU0-5 serves loaded,GPU7 free ④autocomplete daemon PID1122770 alive(etimes=9398s)→waiting run2 done→auto-runs 3-5 ⑤eval chain daemon PID1161064 alive(etimes=3724s)→waiting autocomplete→step60 runs2-5→base runs1-5→analysis ⑥3 serves UP:8098+8097+8096 all /v1/models OK ⑦tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑧run1 confirmed:step105=6/158=3.8%,step60=2/158=1.3% ⑨pipeline ETA:run2 codegen ~10min(22 tasks left)→sandbox eval→runs3-5 auto→step60 runs2-5→base runs1-5→analysis. R392✅.WAITING=0。
 
 
