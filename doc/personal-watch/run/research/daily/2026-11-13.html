@@ -467,8 +467,87 @@
 ① A 轨 <b>5/5 <code>200</code> + atom</b>；<b>公告批已刷新</b>且如实记录「0 新收」的原因是<b>额度已满</b>（不是「无新增」），新候选 368 条已落盘待明日选取；② B 轨 4 条<b>均 8 字段</b>、被引数标查询日与记录来源；BERT 两条记录<b>明确不相加</b>；CLIP 未核到会场 ⇒ <b>不写 ICML</b>；R1 摘要无数值 ⇒ <b>不写准确率</b>；DRAMsim3 <b>372 &lt; 500</b> 已如实标注按「方法论常青」收；DRAMsim3 <b>无 arXiv</b>、R1 以 <b>Nature 正式版</b>计被引，均显式标注；③ 作者网<b>不猜</b>：4 位新作者中 <b>3 位无可用 X</b>（无 bio / 0 推文）、1 位邮箱为图片 ⇒ 均写「未找到」并注明判据；④ <code>voice_ready</code> <b>2 条满额</b>，均为<b>原文 + 原链接 + 时间</b>、单条推文页 <code>og</code> 核验；⑤ <code>news_ready</code> <b>0 条</b>（无新推荐 + B 轨无事件点，不硬凑）；⑥ 本轮外发 = <b>1 封</b>作者请教信（草稿先入仓、台账已记、词数 172 已核）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
 </div>
 
-<footer>
-  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 时窗 · A 轨复核 + B 轨第十八 / 第十九 / 第二十轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 12:2x CST<br>
+<h2 class="sec">🔄 15:00 轮 · A 轨复核（公告批再次刷新；当日 5/5 已满 ⇒ 0 新收）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（15:00 轮）</th><th>对比 12:00 轮</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,322</td><td>23.84 s</td><td>+83</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,258</td><td>12.52 s</td><td>+166</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>299,025</td><td>25.81 s</td><td>+200</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,730</td><td>31.91 s</td><td>+249</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>31,041</td><td>5.39 s</td><td>+26</td></tr>
+</table>
+<div class="note">
+五个 <code>totalResults</code> <b>再次全部上升</b>（12:00 轮之后又入批）⇒ arXiv 公告批持续刷新，新提交仍在 72h 窗内。合并去重：<b>merged 391 / SEEN 命中 2 / 新候选 389</b>，产物 <code>research/raw/2026-11-13-15h-candidates-r165.json</code>（脚本 <code>raw/candidates_r165.py</code>，串行 ≥3.2 s）。<br>
+<b>本轮仍 0 新收</b>：当日推荐额度 <b>5/5 已于 03:00 收口</b>，按「目标 5 篇、不超额、不凑数」不硬塞第 6 篇。12:00 轮的 368 条 + 本轮 389 条候选<b>均已落盘、未丢弃</b>，<b>明日 00:00 轮优先从中选 5 篇</b>（届时按 <code>published ≤ 72h</code> 重新筛）。
+</div>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第二十一轮（+4 → 83）：单卡微调 / 统一文本接口 / 检索记忆 / 工具自举</h2>
+<table>
+  <tr><th>#</th><th>论文（8 字段已入 <code>PAPERS.md</code>）</th><th>年份 / 出处</th><th>被引（OpenAlex，2026-11-13）</th><th>服务线（↔ 影响哪一步）</th></tr>
+  <tr><td>80</td><td><b>QLoRA: Efficient Finetuning of Quantized LLMs</b>（<code>2305.14314</code>）</td><td>2023 / NeurIPS 2023（DOI <code>10.52202/075280-0441</code>，pp. 10088–10115）</td><td><b>4,052</b></td><td><b>pretrain</b>（单卡 SFT 三臂对照）· <b>zhulong</b>（显存 / 耗时 / batch 三项记账）· <b>harness</b>（合并权重 vs 4-bit+adapter 不可混报）· <b>data</b>（5k/20k/50k 规模曲线）</td></tr>
+  <tr><td>81</td><td><b>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</b>（T5，<code>1910.10683</code>）</td><td>2020 / JMLR 21(140):1–67（OpenAlex <code>biblio</code>；<code>type</code> 仍记 <code>preprint</code>）</td><td><b>13,437</b></td><td><b>pretrain</b>（encoder-decoder 对照轴）· <b>data</b>（C4 式清洗最小对照）· <b>harness</b>（任务统一成文本→文本的评分接口）· <b>zhulong</b>（消融表模板）</td></tr>
+  <tr><td>82</td><td><b>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</b>（RAG，<code>2005.11401</code>）</td><td>2020 / NeurIPS 2020（仅 arXiv <code>comment</code> 证据，<b>无会场 DOI</b>）</td><td><b>6,188</b></td><td><b>harness</b>（不改模型即可换知识）· <b>data</b>（高频更新文档走索引、不进预训练）· <b>zhulong</b>（token 增量 + p95 延迟）</td></tr>
+  <tr><td>83</td><td><b>Toolformer: Language Models Can Teach Themselves to Use Tools</b>（<code>2302.04761</code>）</td><td>2023 / NeurIPS 2023（DOI <code>10.52202/075280-2997</code>，pp. 68539–68551）</td><td><b>3,245</b></td><td><b>harness</b>（工具能力后训练注入）· <b>data</b>（调用数据过滤准则可复算）· <b>zhulong</b>（小模型 + 工具 vs 放大参数）</td></tr>
+</table>
+<div class="note">
+核验：arXiv <code>id_list=2305.14314,1910.10683,2005.11401,2302.04761</code> <b><code>200</code> + <code>application/atom+xml</code></b>（4 条 entry / 10,900 B；作者数与首发时间已核）；OpenAlex <b>4/4 <code>200</code></b>（QLoRA 4,052 · T5 13,437 · RAG 6,188 · Toolformer 3,245）。⚠️ T5 的 JMLR 卷期取自 OpenAlex <code>biblio</code> 而 <code>type</code> 仍为 <code>preprint</code> ⇒ <b>并列记录、不相加</b>；RAG 未核到会场 DOI ⇒ <b>不写 DOI</b>。<b>必读清单仍 10/10 组、37/37 条目</b>（本轮属「补充」）。
+</div>
+
+
+<h2 class="sec">🎯 15:00 轮 · 新增可执行建议（4 条，按线）</h2>
+<table>
+  <tr><th>线</th><th>建议（可落地）</th><th>依据 / 预注册判据</th></tr>
+  <tr><td><b>pretrain</b></td><td>在 2B 上跑<b>单卡 SFT 三臂</b>：<code>16-bit LoRA</code> / <code>NF4 + LoRA</code> / <code>NF4 + double-quant + paged</code>。固定数据、步数、种子与 rank（64 / alpha 16），三臂都报「峰值显存 / 每步耗时 / 最大 batch」。</td><td>QLoRA（#80）。<b>判据</b>：下游 EDA 任务差距 &lt; 1 个绝对点才把 4-bit 设为常规；若吞吐下降 &gt; 30% 只作显存兜底。</td></tr>
+  <tr><td><b>data</b></td><td>域内 SFT 先做 <b>5k / 20k / 50k</b> 三档规模曲线（同一质量过滤脚本），并在网页语料清洗消融里加入 <b>C4 式规则</b>一臂作最小对照。</td><td>QLoRA「小高质量数据」+ T5 的 C4（#80/#81）。<b>判据</b>：50k 相对 20k 提升 &lt; 1 点即停止扩数据，把预算转去清洗。</td></tr>
+  <tr><td><b>harness</b></td><td>把「检索」与「工具调用」拆成两条独立评测：① RAG 三层（Recall@k / 引用正确率 / 端到端通过率）；② Toolformer 式自举数据「过滤前后」对照；报告须写明评测对象是<b>合并权重</b>还是 <b>4-bit + adapter</b>。</td><td>RAG / Toolformer / QLoRA（#82/#83/#80）。<b>判据</b>：检索 Recall@k 提升但端到端不升 ⇒ 停扩索引，先查生成；自举数据过滤后提升 &lt; 2 点 ⇒ 回到人工示例。</td></tr>
+  <tr><td><b>zhulong</b></td><td>成本表统一成「<b>显存 / 时间 / token 增量 / p95 延迟</b>」四列：QLoRA 类实验报前三列，RAG 类实验报后两列，禁止只报单一维度。</td><td>QLoRA + RAG（#80/#82）。<b>判据</b>：缺列的成本结论不进入对外报告。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮 4 篇均不涉及视觉编码器 / 图文对 / 视觉 RL）</td><td>—</td></tr>
+  <tr><td><b>designflow</b></td><td><b>无</b>（本轮 4 篇均不涉及造题 / 保真度分层 / EDA 判分）</td><td>—</td></tr>
+</table>
+
+<h2 class="sec">👥 作者关系网（第二十一轮 +4 → 90；X 已核验 50）</h2>
+<table>
+  <tr><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>Tim Dettmers</b></td><td>CMU（助理教授）/ Ai2</td><td>QLoRA（#80，一作）· bitsandbytes</td><td><code>dettmers@cmu.edu</code>（本人页反爬写法 <code>lastname@cmu.edu</code>，<code>200</code>）</td><td><b>@Tim_Dettmers</b>（主页 <code>twitter:site</code> + X bio 双核验）</td><td><b>已发信</b>（15:05:32，175 词）</td></tr>
+  <tr><td><b>Colin Raffel</b></td><td>Toronto / Vector / Hugging Face</td><td>T5（#81，一作）</td><td><b>未找到</b>（主页与 CV 均无 <code>mailto:</code> ⇒ 不猜）</td><td><b>未找到 X</b>（<code>x.com/colinraffel</code> = <code>404</code>）</td><td>待跟踪</td></tr>
+  <tr><td><b>Patrick Lewis</b></td><td>Cohere（RAG / tool-use / agents）</td><td>RAG（#82，一作）</td><td><b>未找到</b>（主页为模板占位 <code>hello.[first].[last] [at] gmail.com</code> ⇒ 不猜）</td><td><b>@PSH_Lewis</b>（主页链接 + X bio 双核验）</td><td>待跟踪</td></tr>
+  <tr><td><b>Timo Schick</b></td><td>Meta AI（FAIR，发表时）</td><td>Toolformer（#83，一作）</td><td><b>未找到</b>（个人页无邮箱文本 ⇒ 不猜）</td><td><b>@timo_schick</b>（主页链接 + X 页；bio 仅 <code>NLP Researcher</code> ⇒ 已注明）</td><td>待跟踪</td></tr>
+</table>
+<div class="note">
+X 探测（只读，显式 <code>-x http://127.0.0.1:7897</code>）：直连 <code>x.com</code> <b><code>000</code></b> / 代理 <b><code>200</code></b>；profile <b>3/3 <code>200</code></b>（<code>Tim_Dettmers</code> / <code>timo_schick</code> / <code>PSH_Lewis</code>），<code>colinraffel</code> <b><code>404</code></b>。新增 handle <b>3</b>、待 follow <b>43</b>、<b>0 follow</b>（写操作需登录态，<b>未假装</b>）。
+</div>
+
+
+<h2 class="sec">✉ 作者信（15:00 轮 1 封，<code>SENT OK 2026-11-13 15:05:32</code>；今日累计 9 封 / 累计 30 封）</h2>
+<div class="note">
+收件人 <b>Tim Dettmers</b>（QLoRA 一作）· 主题 <code>QLoRA at 2B scale: three questions on 4-bit finetuning</code> · 邮箱取自本人主页反爬写法（非论文 PDF 旧地址）· 英文 <b>175</b> 词（发送前 <code>wc -w</code> 已核）· 草稿 <code>research/mail/drafts/2305.14314.md</code> 先入仓、台账 <code>research/mail/发送记录.md</code> 已记（<b>没写 = 没发</b>）。同论文其余 3 位作者本轮不发（同论文 ≤1）。
+</div>
+
+<h2 class="sec">🗣 voice_ready · 本期已 2 条（12:00 轮满额），本轮 0 新增；<b>V21 已备好下期首发</b></h2>
+<div class="note">
+<b>V21（下期首发）</b>：Tim Dettmers <b>@Tim_Dettmers</b>（CMU / Ai2，QLoRA 一作）· <b>2026-10-18</b>（26 天前，&lt; 30 天）· 原文 “This is really cool work on our synthetic hospital benchmark. For patient diagnosis, this shows that small models + SFT + the right tools &gt; GPT-6 Luna. Interesting is that the tools help small models, but not big models. So gaps in capability can be replaced by tools” · 出处 <a href="https://x.com/Tim_Dettmers/status/2111767150532997458">x.com/Tim_Dettmers/status/2111767150532997458</a>（推文页 <code>200</code>，<code>og:title</code> = <code>Tim Dettmers (@Tim_Dettmers) on X</code>）。<b>本轮仍按「每期 ≤2」不超额</b>。<br>
+⚠️ 另：<code>x_fetch.py</code> 从 profile 内嵌 timeline 取到的 2026-11-05「Mochi 535B」条，经单条推文页核验 <code>og:title</code> = <b>David Hall (@dlwh)</b> ⇒ <b>判为他人推文、已丢弃</b>（沿用第十轮教训）。<br>
+<code>news_ready</code>：本轮 <b>0 条</b> —— A 轨 0 新收（无新推荐条目），B 轨 4 篇为历史/方法文献、无「发布 / 开源 / 首次」事件点，<b>不硬凑</b>。
+</div>
+
+<h2 class="sec">附录 A5 · 检索式与命中数（2026-11-13 15:0x · 可核验）</h2>
+<table>
+  <tr><th>项目</th><th>结果</th></tr>
+  <tr><td>arXiv 查询</td><td><b>5/5</b> <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>（串行 ≥3.2 s；23.84 / 12.52 / 25.81 / 31.91 / 5.39 s）</td></tr>
+  <tr><td>公告批</td><td><b>再次刷新</b>（5 个 <code>totalResults</code> 全部上升，较 12:00 轮 +83 / +166 / +200 / +249 / +26）</td></tr>
+  <tr><td>去重</td><td>merged <b>391</b> / SEEN 命中 <b>2</b> / 新候选 <b>389</b> ⇒ <code>raw/2026-11-13-15h-candidates-r165.json</code></td></tr>
+  <tr><td>B 轨元数据</td><td>arXiv <code>id_list</code> 4 ID <b><code>200</code> + atom</b>（10,900 B）；OpenAlex <b>4/4 <code>200</code></b></td></tr>
+  <tr><td>作者页</td><td><code>timdettmers.com</code> <code>200</code>/39,862 B · <code>timdettmers.com/about/</code> <code>200</code> · <code>timoschick.com</code> <code>200</code>/7,311 B · <code>patricklewis.io</code> <code>200</code>/26,895 B · <code>colinraffel.com</code> 直连超时 / 代理 <code>200</code>/2,635 B</td></tr>
+  <tr><td>X 只读</td><td>profile <b>3/3 <code>200</code></b> + <code>colinraffel</code> <code>404</code>；单条推文页 <b>2/2 <code>200</code></b>（V21 核验 + 1 条他人推文剔除）</td></tr>
+</table>
+
+<h2 class="sec">附录 B5 · 15:00 轮口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>；公告批再次刷新且如实记「0 新收」的原因是<b>额度已满</b>（不是「无新增」），389 条新候选已落盘待明日；② B 轨 4 条<b>均 8 字段</b>、被引数标查询日与来源；T5 的 JMLR 与 <code>preprint</code> 并列<b>不相加</b>、RAG 无会场 DOI ⇒ <b>不写 DOI</b>；③ 作者网<b>不猜</b>：3 位新作者无可核邮箱 ⇒ 均写「未找到」并注明判据，<code>@colinraffel</code> <code>404</code> ⇒ 未找到 X；④ <code>voice_ready</code> <b>本轮 0 新增</b>（本期已满 2），V21 已核验备下期；<b>已剔除 1 条他人推文</b>（David Hall）；⑤ <code>news_ready</code> <b>0</b>（无新推荐 + B 轨无事件点，不硬凑）；⑥ 本轮外发 = <b>1 封</b>作者请教信（草稿先入仓、台账已记、175 词已核）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
+
+  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 + 15:00 时窗 · A 轨复核 + B 轨第十八 / 第十九 / 第二十 / 第二十一轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 15:2x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

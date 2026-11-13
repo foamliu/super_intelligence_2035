@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **79** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **36** · vision **19** · harness **44** · data **42** · zhulong **50** · designflow **23**
+**本轮快照**：累计 **83** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **38** · vision **19** · harness **48** · data **45** · zhulong **53** · designflow **23**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -54,6 +54,10 @@
 > 🆕 **第十七轮（2026-11-13 03:0x）新增 4 条 = 「布局 RL 原点 + 长上下文扩展 + 解码加速 + 后训练量化」**：Chip Placement / AlphaChip（把布局写成 RL + 学一个奖励预测器当编码器 → designflow 的布局基线题、zhulong 的「代理模型只排序、真值归工具」）→ YaRN（少 10× token、2.5× 步数扩展上下文 → pretrain 长上下文的第一条低成本基线）→ Speculative Decoding（草稿 + 并行验证，输出分布不变，T5-XXL 2×–3×）→ GPTQ（175B 4 GPU 小时量化到 3–4 bit，单卡推理；2B 化后直接服务端侧/部署成本）。**必读清单：仍 10/10 组、37/37 条目全覆盖**（本轮属「补充」，且首次系统补上 **serving 侧（解码 / 量化）** 这条此前没有落点的线）。
 >
 > **第十七轮核验证据（可复核）**：arXiv API `id_list=2611.13925,2611.13543,2004.10746,2309.00071,2211.17192,2210.17323` → **`200` + `application/atom+xml; charset=utf-8`**（15,717 B / 6 条 entry）；被引数 **OpenAlex 4/4 `200`**（Chip Placement arXiv 版 **274** · YaRN **591** · Spec-Dec **354**⚠️ · GPTQ **2,195**，查询日 2026-11-13），另经 OpenAlex 精确标题检索核到 **Nature 版** `A graph placement methodology for fast chip design`（DOI `10.1038/s41586-021-03544-w`，**704**，2021）。⚠️ Spec-Dec **354 &lt; 500**、Chip Placement 预印本 **274 &lt; 500** ⇒ 均按「奠基」收录并显式标注；🚫 不把两个口径混算。
+
+> 🆕 **第二十一轮（2026-11-13 15:0x）新增 4 条 = 「小团队可落地的四条底座」**：QLoRA（4-bit 基座 + LoRA，65B 单卡 48GB 微调、Guanaco 24h 单卡）→ pretrain 的单卡 SFT 配方 / zhulong 的显存-时间记账；T5（一切任务写成 text-to-text，系统对比目标 × 架构 × 数据）→ harness 的统一评分接口 / data 的 C4 清洗对照 / pretrain 的 encoder-decoder 对照轴；RAG（参数化 + 非参数化记忆）→ harness 的「不改模型即可换知识」通道 / zhulong 的索引-延迟成本；Toolformer（自监督学会调 API）→ harness 的工具能力后训练注入 / data 的调用数据过滤准则。**必读清单：仍 10/10 组、37/37 条目全覆盖**（本轮属「补充」，且首次把「**检索**」与「**工具调用数据自举**」两条独立线补上）。
+>
+> **第二十一轮核验证据（可复核）**：arXiv API `id_list=2305.14314,1910.10683,2005.11401,2302.04761` → **`200` + `application/atom+xml; charset=utf-8`**（10,900 B / 4 条 entry；作者数与首发时间已核）；被引数 **OpenAlex 4/4 `200`**（QLoRA **4,052** · T5 **13,437** · RAG **6,188** · Toolformer **3,245**，查询日 2026-11-13）。会场：QLoRA / Toolformer = NeurIPS 2023（OpenAlex `conference-paper` + pp. 已核）；T5 = OpenAlex `biblio` 记 JMLR **21(140):1–67** 但 `type=preprint` ⇒ **如实并列、不混算**；RAG = 仅 arXiv `comment` 写 `Accepted at NeurIPS 2020`、OpenAlex 无会场 DOI ⇒ **不写 DOI**。
 
 ---
 
@@ -1405,6 +1409,74 @@
 ---
 
 
+## 80. QLoRA: Efficient Finetuning of Quantized LLMs
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | QLoRA: Efficient Finetuning of Quantized LLMs |
+| 作者（前 3） | **Tim Dettmers** · **Artidoro Pagnoni** · **Ari Holtzman**（et al.，共 **4** 位：+ **Luke Zettlemoyer**） |
+| 年份 | **2023**（arXiv 首次提交 **2023-05-23T17:50:33Z**，`v1`） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `type=conference-paper`，DOI `10.52202/075280-0441`，pp. 10088–10115） |
+| 被引数 | **4,052**（OpenAlex，DOI 直查，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.14314> ｜ 会场 DOI `10.52202/075280-0441` |
+| 一句话贡献 | 摘要原文要点：**冻结 4-bit 量化基座、只对 LoRA 适配器反传梯度**，使 **65B 模型能在单张 48GB GPU 上微调且保持 16-bit 全量微调的任务性能**；三个省显存件为 **(a) 4-bit NormalFloat（NF4，对正态权重信息论最优）**、**(b) double quantization（量化量化常数，进一步降平均占用）**、**(c) paged optimizers（应对显存尖峰）**；最佳模型族 **Guanaco 在 Vicuna 基准上达到 ChatGPT 的 99.3%**，单卡微调仅 **24 小时**；共微调 **1,000+** 模型，覆盖 **8** 个指令集与 LLaMA / T5 多尺度；并称 **GPT-4 评测是廉价合理的人评替代**、**当前 chatbot 基准不可信**。 |
+| 与我们工作的关系 | **pretrain（单卡 SFT 配方的直接对照）**：BaiZe 2B 的域内微调要回答「4-bit 基座 + 适配器」是否够用；<b>动作</b>：同数据、同步数跑 `16-bit LoRA` / `NF4 + LoRA` / `NF4 + double-quant + paged` 三臂，固定随机种子与 rank；<b>预注册判据</b>：三臂在下游 EDA 任务上的差距 &lt; 1 个绝对点才允许把 4-bit 路线用于常规实验，否则只在显存不足时启用。<br>**zhulong（成本口径）**：省显存 ≠ 省时间 —— 摘要只给「24 小时单卡」这一条，<b>动作</b>：把「峰值显存 / 每步耗时 / 可跑的最大 batch」三项并列记账，禁止只报显存；<b>判据</b>：若 4-bit 路径吞吐下降 &gt; 30%，则不作为成本优化项，只作为「能跑起来」的兜底。<br>**harness（评测口径）**：文中明确「**benchmark 不可信**」与「GPT-4 可替代人评」两条主张都属**作者观察**；<b>动作</b>：我们的判分仍以确定性验证器为主，LLM 裁判只作辅助并须报人评抽样一致率；评测对象须写明是**合并/反量化权重**还是**4-bit + adapter 路径**（两者不可混报）。<br>**data（小数据高质量）**：Guanaco 的核心经验是「**小的高质量数据集**」而非堆量；<b>动作</b>：域内 SFT 先做 5k / 20k / 50k 三档规模曲线，再决定是否扩数据。<b>风险</b>：① 99.3% 是 **Vicuna 基准 + 作者自评口径**，本线未复现；② 「信息论最优」是作者对 NF4 的论证，🚫 不引申为「4-bit 无损」；③ 2023 年的基座与今天不同，2B 上的结论须重测。 |
+
+首次收录: 2026-11-13（第二十一轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：4 作者、首发时间已核；OpenAlex DOI 直查 `200`：4,052、NeurIPS 2023 页码已核）；同轮已向一作 Tim Dettmers 发请教信
+
+---
+
+## 81. Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer（T5）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer |
+| 作者（前 3） | **Colin Raffel** · **Noam Shazeer** · **Adam Roberts**（et al.，共 **9** 位） |
+| 年份 | **2020**（arXiv 首次提交 **2019-10-23T17:37:36Z**，`v4` 更新 **2023-09-19**） |
+| 会议 / 期刊 | **JMLR 21(140):1–67（2020）**（OpenAlex `biblio` 字段；其 `type` 仍记 `preprint`、来源记 arXiv ⇒ 本线如实并列，不把两者混算） |
+| 被引数 | **13,437**（OpenAlex arXiv DOI 记录，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1910.10683> ｜ DOI `10.48550/arXiv.1910.10683` |
+| 一句话贡献 | 摘要原文要点：提出**统一框架把所有文本任务改写成 text-to-text 格式**，并在数十个语言理解任务上**系统对比预训练目标、架构、无标注数据集、迁移方式**等因素；结合规模与自建的 **C4（Colossal Clean Crawled Corpus）**，在摘要、问答、文本分类等大量基准上取得当时最好结果；**公开数据、预训练模型与代码**。 |
+| 与我们工作的关系 | **pretrain（架构与目标的对照轴）**：我们的 2B 是 decoder-only；T5 给出「encoder-decoder + span corruption」这一整条对照线；<b>动作</b>：在等参数预算下只做一次小规模对照（≤500M 代理实验），把「下游样本效率」而非「loss」当判据；<b>预注册判据</b>：若 encoder-decoder 在低资源（≤1k 标注）上领先 &lt; 3 点，则 2B 主线不切换架构。<br>**data（清洗配方的历史基线）**：C4 的启发式清洗（去重、去模板、按行过滤）仍是今天网页语料管线的**最小对照**；<b>动作</b>：data 线的清洗消融必须包含「C4 式规则」这一臂，否则无法说明自研清洗的增量。<br>**harness（统一接口降低适配成本）**：把所有任务写成 text-to-text，本质是把「任务适配」从代码层挪到**数据层**；<b>动作</b>：EDA 任务（RTL 生成 / 报告抽取 / 日志归类）统一成 `输入文本 → 目标文本` 的评分接口，判分器只依赖目标串，不依赖任务专用脚本。<br>**zhulong（多任务消融的记账）**：其系统对比表的组织方式（目标 × 架构 × 数据 × 迁移）可直接借为我们的消融模板。<b>风险</b>：① 2020 年的「SOTA」已过期，🚫 不得写成当前最好；② 最大模型 11B、语料为英文网页，**跨语言与领域外推须重测**；③ JMLR 卷期取自 OpenAlex `biblio`，正式排版页码未逐页核对。 |
+
+首次收录: 2026-11-13（第二十一轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：9 作者、首发/更新时间已核；OpenAlex `200`：13,437、`biblio` 21(140):1–67）；作者 Noam Shazeer 已在作者网（#4），本轮新增一作 Colin Raffel（未找到 X）
+
+---
+
+## 82. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks（RAG）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks |
+| 作者（前 3） | **Patrick Lewis** · **Ethan Perez** · **Aleksandra Piktus**（et al.，共 **12** 位） |
+| 年份 | **2020**（arXiv 首次提交 **2020-05-22T21:34:34Z**，`v4` 更新 **2021-04-12**） |
+| 会议 / 期刊 | **NeurIPS 2020**（arXiv `comment` 原文 `Accepted at NeurIPS 2020`；OpenAlex 记录为 `preprint`、**无会场 DOI** ⇒ 不写 DOI） |
+| 被引数 | **6,188**（OpenAlex arXiv DOI 记录，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2005.11401> ｜ DOI `10.48550/arXiv.2005.11401` |
+| 一句话贡献 | 摘要原文要点：把**参数化记忆（预训练 seq2seq）**与**非参数化记忆（Wikipedia 稠密向量索引 + 预训练神经检索器）**结合，给出通用 RAG 微调配方；比较两种形式 —— **整段生成共用同一批检索段落** vs **逐 token 可用不同段落**；在多个知识密集型任务上微调评测，在 **3 个开放域 QA** 上取得当时最好结果，超过纯参数化 seq2seq 与任务专用 retrieve-and-extract 架构；生成侧比纯参数基线**更具体、更多样、更符合事实**。 |
+| 与我们工作的关系 | **harness（工具与检索的接口范式）**：RAG 把「知识」外置成可替换索引，等于给 harness 一个**不改模型即可更新知识**的通道；<b>动作</b>：在 EDA agent 里把「规格 / 工艺文档 / 既往 issue」建成独立索引，检索器与生成器分开评测（命中率 / 引用正确率 / 端到端通过率三层）；<b>预注册判据</b>：若检索层 Recall@k 提升但端到端通过率不升，判定瓶颈在生成而非检索，不再扩索引。<br>**data（非参数化 vs 参数化）**：把「世界知识」放进参数还是索引，是数据线的**成本选择题**；<b>动作</b>：对更新频繁的文档（工具版本说明、PDK 规则）默认走索引，不进入预训练语料，避免「训完就过期」。<br>**zhulong（成本口径）**：索引规模、检索延迟、上下文长度三者互相牵制；<b>动作</b>：报 RAG 收益时必须同时报 **每查询 token 增量与 p95 延迟**，否则视为不完整。<br>**pretrain（间接）**：摘要未给数据配比与训练细节 ⇒ 只可引「范式成立」，🚫 不引超参。<b>风险</b>：① 2020 年的 Wikipedia 索引与今天的网页环境差异大；② 三种 QA 基准的「SOTA」已过期；③ 「更符合事实」为作者评测结论，非普遍保证，需自带判分复核。 |
+
+首次收录: 2026-11-13（第二十一轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：12 作者、首发/更新时间已核；OpenAlex `200`：6,188；会场仅据 arXiv `comment`，未核到会场 DOI ⇒ 如实标注）；本轮新增作者 Patrick Lewis（X `@PSH_Lewis` 已核验；主页邮箱为模板占位 ⇒ 不发信）
+
+---
+
+## 83. Toolformer: Language Models Can Teach Themselves to Use Tools
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Toolformer: Language Models Can Teach Themselves to Use Tools |
+| 作者（前 3） | **Timo Schick** · **Jane Dwivedi-Yu** · **Roberto Dessì**（et al.，共 **8** 位） |
+| 年份 | **2023**（arXiv 首次提交 **2023-02-09T16:49:57Z**，`v1`） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `type=conference-paper`，DOI `10.52202/075280-2997`，pp. 68539–68551） |
+| 被引数 | **3,245**（OpenAlex，DOI 直查，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2302.04761> ｜ 会场 DOI `10.52202/075280-2997` |
+| 一句话贡献 | 摘要原文要点：让语言模型**以自监督方式自学调用外部工具** —— 自己决定**调用哪个 API、何时调用、传什么参数、如何把结果并入后续 token 预测**，每个 API 只需**少量示例**；接入计算器、问答系统、**两个搜索引擎**、翻译系统、日历等工具后，在多种下游任务上**零样本性能显著提升，常可与更大模型竞争，且不牺牲核心语言建模能力**。 |
+| 与我们工作的关系 | **harness（工具调用的训练范式）**：agent 的工具能力可以**后训练注入**，不必全靠预训练；<b>动作</b>：为 EDA 工具集（综合 / 仿真 / 时序报告解析）各写 5–10 条示例，跑一版「自监督生成调用数据 → 过滤 → 微调」的小实验，与「纯 prompt 提示工具」对照；<b>预注册判据</b>：若自动生成的调用数据经过滤后，端到端任务通过率提升 &lt; 2 点，则回到人工示例路线。<br>**data（自举数据的质量控制）**：Toolformer 的关键不是「会不会调」，而是**过滤准则**（调用是否降低 loss）；<b>动作</b>：data 线把「工具调用样本的保留判据」写成可复算脚本并入 manifest，禁止手工挑样本后宣称自动。<br>**zhulong（小模型 + 工具）**：与我们的 2B 定位高度一致 —— 用工具补能力缺口而不是盲目放大参数；<b>动作</b>：消融里固定基座，只比较「工具集大小 / 调用轮数」，把参数规模当控制变量。<br>**pretrain（边界）**：本文属**后训练/推理期**方案，🚫 不可据此改动预训练目标。<b>风险</b>：① 2023 年的 API 集合固定（无代码执行、无现代检索 API），迁移需重选工具；② 「常可竞争更大模型」为作者在特定任务上的观察，非普遍结论；③ 自监督过滤阈值未在摘要给出 ⇒ 不引具体数值。 |
+
+首次收录: 2026-11-13（第二十一轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：8 作者、首发时间已核；OpenAlex DOI 直查 `200`：3,245、NeurIPS 2023 页码已核）；本轮新增作者 Timo Schick（X `@timo_schick` 经本人主页链接 + X 页双源；主页无邮箱 ⇒ 不发信）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
@@ -1412,7 +1484,7 @@
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
-> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ ~~版图布局（AlphaChip）/ 长上下文位置编码（YaRN）/ speculative decoding / 量化（GPTQ）~~ ⇒ **第十七轮已转正 #64–#67**；⑥ ~~**EDA 评测基座**（OpenROAD / ORFS 相关一手工作）~~ ⇒ **第十八轮已转正 #68**（OpenROAD DAC 2019，216）；⑦ ~~**长上下文续**（LongRoPE / 位置插值对照）~~ ⇒ **第十八轮已转正 #69**（LongRoPE `2402.13753`，302）；⑧ ~~**存储方向补充**（DRAM 模拟 / 近存计算）~~ ⇒ **第十八轮已转正 #70 Ramulator（799）/ #71 RowHammer（967 / 528 双记录）**；⑨ ~~**近存计算源头**（A Case for Intelligent RAM, Patterson et al. 1997，729）~~ ⇒ **第十九轮已转正 #75**（OpenAlex 摘要/作者/卷期已核）；⑨b **并行训练底座**（Megatron-LM `1909.08053`，3,281）⇒ **第十九轮已转正 #72**；⑨c **MoE 训练配方**（DeepSeek-V3 `2412.19437`，7,939）⇒ **第十九轮已转正 #73**；⑨d **通用 agent 基准**（GAIA `2311.12983`，526）⇒ **第十九轮已转正 #74**；⑩ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充）；⑪ ~~**DRAM 模拟对照**（DRAMsim3，2020，**372**，DOI `10.1109/LCA.2020.2973991`）~~ ⇒ **第二十轮已转正 #79**（OpenAlex 直查 372、卷期页码已核）；⑫ **量化微调**（QLoRA `2305.14314`，待核被引与作者邮箱）；⑬ **统一文本到文本框架**（T5 `1910.10683`，待核）；⑭ **检索增强生成**（RAG `2005.11401`，待核）；⑮ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充，不作主线）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ ~~版图布局（AlphaChip）/ 长上下文位置编码（YaRN）/ speculative decoding / 量化（GPTQ）~~ ⇒ **第十七轮已转正 #64–#67**；⑥ ~~**EDA 评测基座**（OpenROAD / ORFS 相关一手工作）~~ ⇒ **第十八轮已转正 #68**（OpenROAD DAC 2019，216）；⑦ ~~**长上下文续**（LongRoPE / 位置插值对照）~~ ⇒ **第十八轮已转正 #69**（LongRoPE `2402.13753`，302）；⑧ ~~**存储方向补充**（DRAM 模拟 / 近存计算）~~ ⇒ **第十八轮已转正 #70 Ramulator（799）/ #71 RowHammer（967 / 528 双记录）**；⑨ ~~**近存计算源头**（A Case for Intelligent RAM, Patterson et al. 1997，729）~~ ⇒ **第十九轮已转正 #75**（OpenAlex 摘要/作者/卷期已核）；⑨b **并行训练底座**（Megatron-LM `1909.08053`，3,281）⇒ **第十九轮已转正 #72**；⑨c **MoE 训练配方**（DeepSeek-V3 `2412.19437`，7,939）⇒ **第十九轮已转正 #73**；⑨d **通用 agent 基准**（GAIA `2311.12983`，526）⇒ **第十九轮已转正 #74**；⑩ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充）；⑪ ~~**DRAM 模拟对照**（DRAMsim3，2020，**372**，DOI `10.1109/LCA.2020.2973991`）~~ ⇒ **第二十轮已转正 #79**（OpenAlex 直查 372、卷期页码已核）；⑫ ~~**量化微调**（QLoRA `2305.14314`）~~ / ⑬ ~~**统一文本到文本框架**（T5 `1910.10683`）~~ / ⑭ ~~**检索增强生成**（RAG `2005.11401`）~~ ⇒ **第二十一轮已转正 #80–#82**；⑮ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充，不作主线）；⑯ **蒸馏源头**（Distilling the Knowledge in a Neural Network `1503.02531`，待核）；⑰ **分组查询注意力**（GQA `2305.13245`，待核）；⑱ **解释轨迹蒸馏**（Orca `2306.02707`，待核）；⑲ **滑窗注意力开源模型**（Mistral 7B `2310.06825`，待核）；⑳ ~~**工具自举**（Toolformer `2302.04761`）~~ ⇒ **第二十一轮已转正 #83**。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

@@ -2358,3 +2358,16 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **推文页核验（供 `voice_ready`）**：`Thom_Wolf/status/2118863053001531676` **`200`** / 160,196 B（`og:title` = `Thomas Wolf (@Thom_Wolf) on X`，正文两行已核）⇒ **V19 本期首发**；`_albertgu/status/2119206160410800219` **`200`** / 147,445 B（`og:title` = `Albert Gu (@_albertgu) on X`，`og:description` 全文可核）⇒ **V20 本期采用**。
 - **发信 1 封（`SENT OK`）**：Ankur Srivastava `12:05:50`（DRAMsim3，英文 **172** 词，发送前 `wc -w` 已核；邮箱取自**已迁移的新主页** `srivastava.umd.edu` `200` / 51,727 B 的 `mailto:ankurs@umd.edu`；旧页 `www.ece.umd.edu/~ankurs/` 仅 263 B 跳转 ⇒ 未采用）。今日累计 **8 封**、累计 **29 封**。
 - **作者网**：+4 → **86**（X 已核验 **47** 不变、待 follow **40**、已 follow **0**）；Ilya Sutskever 档案补记 CLIP 末位作者。
+
+
+## §9.165 · 2026-11-13 15:00 CST（时窗轮 · A 轨复核「批再次刷新」0 新收 + B 轨第二十一轮 + 第 30 封信）
+
+- **批次再次刷新**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（`cs.CL` 23.84s / `cs.CV` 12.52s / `cs.LG` 25.81s / `cs.AI` 31.91s / `cs.SE` 5.39s，串行间隔 ≥3.2s）；`totalResults` = **125,322 / 213,258 / 299,025 / 212,730 / 31,041**，较 12:00 轮（125,239 / 213,092 / 298,825 / 212,481 / 31,015）**全部上升**。
+- **A 轨结果**：合并去重 **merged 391 / SEEN 命中 2 / 新候选 389**（脚本 `raw/candidates_r165.py`，产物 `research/raw/2026-11-13-15h-candidates-r165.json`，`min_published=2026-11-10`）；当日 5/5 已收口 ⇒ **0 新收**（不超额、不凑数）。
+- **B 轨元数据（arXiv `id_list` 4 ID 一次）**：`2305.14314` QLoRA（首发 `2023-05-23T17:50:33Z`，4 作者）· `1910.10683` T5（首发 `2019-10-23T17:37:36Z`，v4 `2023-09-19`，9 作者）· `2005.11401` RAG（首发 `2020-05-22T21:34:34Z`，v4 `2021-04-12`，12 作者）· `2302.04761` Toolformer（首发 `2023-02-09T16:49:57Z`，8 作者）→ **`200` + atom**（10,900 B）。
+- **OpenAlex（查询日 2026-11-13，4/4 `200`）**：QLoRA **4,052**（`conference-paper`，DOI `10.52202/075280-0441`，pp. 10088–10115）· T5 **13,437**（`preprint`；`biblio` 21(140):1–67）· RAG **6,188**（`preprint`，无会场 DOI）· Toolformer **3,245**（`conference-paper`，DOI `10.52202/075280-2997`，pp. 68539–68551）。
+- **作者页（直连/代理）**：`timdettmers.com` **`200`** / 39,862 B（`twitter:site=@Tim_Dettmers`）· `timdettmers.com/about/` **`200`**（`lastname@cmu.edu`）· `timoschick.com` **`200`** / 7,311 B（`href=twitter.com/timo_schick`）· `patricklewis.io` **`200`** / 26,895 B（`href=twitter.com/PSH_Lewis`；邮箱为模板占位）· `colinraffel.com` 直连超时 / 代理 **`200`** / 2,635 B（无 `mailto:`）。
+- **X（只读，显式 `-x http://127.0.0.1:7897`）**：直连 `x.com` **`000`** / 代理 **`200`**；profile **3/3 `200`**（`Tim_Dettmers` bio `Creator of bitsandbytes. Professor @CarnegieMellon...`；`timo_schick` bio `NLP Researcher`；`PSH_Lewis` bio `London-based AI/NLP Research Scientist...`）· `colinraffel` **`404`**。新增 handle **3**。
+- **推文页核验**：`Tim_Dettmers/status/2111767150532997458` **`200`**，`og:title` = `Tim Dettmers (@Tim_Dettmers) on X` ⇒ 入账 **V21**（2026-10-18 10:31 UTC，下一期首发）；另一条 `2118418938317156731` 经核验 `og:title` = `David Hall (@dlwh) on X` ⇒ **判为他人推文、丢弃**（profile timeline 混入问题复现）。
+- **发信 1 封（`SENT OK`）**：Tim Dettmers `15:05:32`（QLoRA，英文 **175** 词，发送前 `wc -w` 已核；邮箱取自本人主页反爬写法）。今日累计 **9 封**、累计 **30 封**。
+- **作者网**：+4 → **90**（X 已核验 **50**、待 follow **43**、已 follow **0**）。
