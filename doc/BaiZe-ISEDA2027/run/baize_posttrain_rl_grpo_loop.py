@@ -66,6 +66,16 @@ import torch
 
 logger = logging.getLogger("grpo_loop")
 
+# R415: sandbox execution client for R1-R4 reward arms (optional; only imported
+# when --sandbox-exec is passed).  Import is lazy/guarded so R0 runs (no sandbox)
+# never depend on the tunnel being up.
+_SANDBOX_EXEC_OK = False
+try:
+    from baize_posttrain_rl_sandbox_exec import score_rollout as _sandbox_score_rollout
+    _SANDBOX_EXEC_OK = True
+except Exception as _e:  # pragma: no cover
+    logger.warning("sandbox_exec module unavailable: %s", _e)
+
 DATA_SOURCE = "pyaether_synth_v2"
 EPS_ADV = 1e-4
 
@@ -100,6 +110,10 @@ class Cfg:
     max_grad_norm: float = 1.0
     bf16: bool = True
     device: str = "cuda"
+    # R415: sandbox execution for R1-R4 reward arms (R0 needs no sandbox).
+    sandbox_exec: bool = False
+    sandbox_ports: str = "8664,8665,8653,8669"
+    sandbox_timeout: int = 60
 
     def smoke_defaults(self) -> None:
         if self.smoke:
@@ -296,6 +310,8 @@ def run_smoke_or_train(cfg: Cfg) -> None:
                                   cfg.top_p, cfg.device)
             rm = pr.get("reward_model", {})
             gt = rm.get("canonical_solution", "") or rm.get("test_code", "")
+            test_code = rm.get("test_code", "")
+            entry_point = rm.get("entry_point", "")
             for gi in range(full.shape[0]):
                 resp = full[gi, pids.numel():]
                 t_ids = resp.tolist()
@@ -305,7 +321,16 @@ def run_smoke_or_train(cfg: Cfg) -> None:
                         stop = k + 1
                         break
                 text = tokenizer.decode(t_ids[:stop], skip_special_tokens=True)
-                score = compute_score(DATA_SOURCE, text, gt, rm, arm=cfg.reward_arm,
+                # R415: for R1-R4 arms with --sandbox-exec, execute the generated
+                # code in the EDA sandbox to obtain exec_success + assert_results,
+                # then feed them into compute_score (else R1-R4 auto-fallback to R0).
+                extra = rm
+                if (cfg.sandbox_exec and cfg.reward_arm != "R0"
+                        and _SANDBOX_EXEC_OK and test_code):
+                    extra = dict(rm)
+                    extra.update(_sandbox_score_rollout(
+                        text, test_code, entry_point, timeout=cfg.sandbox_timeout))
+                score = compute_score(DATA_SOURCE, text, gt, extra, arm=cfg.reward_arm,
                                       api_database=cfg.api_database,
                                       auto_fallback=cfg.auto_fallback,
                                       step=global_step)
@@ -476,6 +501,11 @@ def parse_args() -> Cfg:
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--contam-check", action="store_true")
+    ap.add_argument("--sandbox-exec", action="store_true",
+                    help="execute rollouts in EDA sandbox for R1-R4 reward arms")
+    ap.add_argument("--sandbox-ports", default="8664,8665,8653,8669",
+                    help="comma-separated tunnel-forwarded sandbox ports")
+    ap.add_argument("--sandbox-timeout", type=int, default=60)
     args = ap.parse_args()
     cfg = Cfg(
         sft_ckpt=args.sft_ckpt, rl_data=args.rl_data,
@@ -489,7 +519,9 @@ def parse_args() -> Cfg:
         max_prompt_len=args.max_prompt_len,
         max_response_len=args.max_response_len, ppo_epochs=args.ppo_epochs,
         grad_checkpointing=not args.no_grad_checkpointing, seed=args.seed,
-        smoke=args.smoke, dry_run=args.dry_run, contam_check=args.contam_check)
+        smoke=args.smoke, dry_run=args.dry_run, contam_check=args.contam_check,
+        sandbox_exec=args.sandbox_exec, sandbox_ports=args.sandbox_ports,
+        sandbox_timeout=args.sandbox_timeout)
     cfg.smoke_defaults()
     return cfg
 
@@ -500,6 +532,18 @@ def main() -> None:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%H:%M:%S")
     cfg = parse_args()
+
+    # R415: configure sandbox endpoint env for the execution client (only
+    # relevant when --sandbox-exec is passed for R1-R4 arms).
+    if cfg.sandbox_exec:
+        os.environ["SANDBOX_HOST"] = os.environ.get("SANDBOX_HOST", "127.0.0.1")
+        os.environ["SANDBOX_PORTS"] = cfg.sandbox_ports
+        os.environ["SANDBOX_TIMEOUT_RL"] = str(cfg.sandbox_timeout)
+        if not _SANDBOX_EXEC_OK:
+            logger.warning("--sandbox-exec given but sandbox_exec module failed "
+                           "to import; R1-R4 will auto-fallback to R0")
+        logger.info("sandbox_exec ENABLED (arm=%s ports=%s timeout=%d)",
+                    cfg.reward_arm, cfg.sandbox_ports, cfg.sandbox_timeout)
 
     if cfg.dry_run:
         logger.info("DRY-RUN recipe:")

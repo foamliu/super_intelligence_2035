@@ -8882,3 +8882,114 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 - 若有提升→报告 `reports/report_posttrain_rl_surrogate_zh.html`（里程碑）；若 ns/退化→诚实负结果落 EXPERIMENTS + 报告（用户令点 4）。
 - R1-R4 接沙盒（隧道已通）：rollout 后注入 exec_success/assert_results → compute_score 切 R2-R4 第二段 RL（待 R0 全量结论后）。
 
+
+## §R415 — wake415 (2026-11-13 19:2x–19:4x): R1-R4 沙盒执行客户端落地 + GRPO loop 集成 + 主训 step165/200 健康监控
+
+> 检索词：`R415`, `sandbox execution client`, `R1-R4 reward arms`, `assert instrumentation`, `baize_posttrain_rl_sandbox_exec`
+> **替身预演，收益不可迁移到 BaiZe**
+
+### 1. 动机
+
+R0 主训（静态分析奖励，无沙盒）已在 GPU7 跑到 step165/200（ETA≈19:51）。R0 是 wake412 设计的
+skeleton-mode fallback：当沙盒结果缺失时 compute_score 自动回退到 R0，保证 GRPO 有非零梯度信号。
+但 R0 奖励升 ≠ Pass@1 升（用户令点 4 / vision v10 教训）——真正的裁判是 158 题 5-run 配对检验
+（自治 eval chain PID1923203 已在后台 wait）。
+
+**下一步**是 R1-R4 接沙盒：rollout 后把生成的 EDA 代码送进沙盒执行，拿到 exec_success +
+assert_results，注入 compute_score 的 extra_info，从而点亮 R1（二值）/R2（部分分）/R3（+工具惩罚）/R4
+（+API 合法性）四臂。本轮完成这条桥的**实现 + 沙盒端到端验证 + GRPO loop 集成**（不占 GPU，纯 CPU）。
+
+### 2. 沙盒连通性确认（隧道 UP）
+
+- 隧道 PID 618469（`ssh -p 3333 -L 8664..8669:10.129.32.75:8664..8669`）存活，etime≈98289s。
+- 沙盒 run_code HTTP 端点 `http://127.0.0.1:8664/v1/run_code` 实测可达：
+  - `print(2+2)` → `{response:"...successful...", error_log:"", print_log:"4\n"}` ✅
+  - assert 通过 → error_log 空 ✅
+  - assert 失败 → error_log 含 `AssertionError` ✅
+  - 语法错 → error_log 含 `SyntaxError` ✅
+- eda_fastmcp `.env`：`SANDBOX_HOST=127.0.0.1`，`SANDBOX_ENDPOINTS=8664/8665/8653/8669`（4 端口独立 workdir，真并行无污染）。
+
+### 3. 新增交付物：`baize_posttrain_rl_sandbox_exec.py`（372 行, py_compile ✅）
+
+沙盒执行客户端，为 GRPO loop 的 R1-R4 臂提供 exec_success + assert_results。核心组件：
+
+| 组件 | 功能 |
+|:--|:--|
+| `SandboxEndpointPool` | 4 端口 round-robin（8664/8665/8653/8669），避免单端口排队 |
+| `run_sandbox_code(code)` | HTTP POST 到 run_code，返回 raw response（超时/连接错→error_log，never raises）|
+| `extract_generated_code(text)` | 从模型输出提取 fenced code block（fallback 到首个 def/import）|
+| `_AssertInstrumenter` | AST 变换：把 check() 内每个 `assert` 改写成 try/except 收集器 |
+| `instrument_test_code(tc)` | 返回 (header+变换body, footer-print-marker)；单次沙盒调用拿全 per-assert 结果 |
+| `build_test_script(gen, tc, ep)` | 组装：候选函数定义 → check() 定义 → **check(ep) 调用** → 结果打印（顺序关键）|
+| `parse_exec_result(resp)` | raw response → {exec_success, returncode, stdout, stderr, assert_results, tool_results} |
+| `score_rollout(text, tc, ep)` | 顶层管线：build → POST → parse → 返回 compute_score 的 extra_info |
+
+**关键设计**：R2 部分分需要 per-assertion pass/fail，但沙盒延迟是瓶颈（~1-3s/call）。为避免 N 次沙盒
+往返，用 AST 把 check() 内的 assert 改写成 try/except 收集器，在**单次**沙盒调用里跑完全部 assert
+并打印 JSON 标记 `BAIZE_ASSERT_RESULTS_JSON::[...]`，从 print_log 抓取。assert 之外的异常（如候选
+函数调错 API 崩溃）不被 try/except 包住 → 正常传播 → exec_success=False → reward=0。
+
+**红线**：§5.1 此模块只*执行*生成代码，不把 eval-task 代码喂进训练数据（RL parquet 已过污染闸门 0/3347）；
+§5.2 anti-cheat 由 compute_score 处理，本模块不加作弊面。
+
+### 4. 沙盒端到端自测（`--selftest`，真实沙盒执行）
+
+测试任务：`check(candidate)` 含 2 条 assert（非 None + 类型 bool）。
+
+| 用例 | 候选函数 | exec_success | assert_results | R2 分 | R1 分 |
+|:--|:--|:--:|:--|--:|--:|
+| PASS | `return True` | True | [pass, pass] | **1.0000** | 1.0000 |
+| PARTIAL | `return 42` | True | [pass(assert_0), **fail**(assert_1)] | **0.4000** | 0.0000 |
+| CRASH | `raise AttributeError` | **False** | (未捕获) | **0.0000** | 0.0000 |
+| 无沙盒(no exec) | `return True` | — | — | 0.0000(auto_fb=False) | — |
+
+**关键结论**：
+- R2 部分分**生效**：PARTIAL（42 不是 bool）得 0.4 > CRASH 0.0 < PASS 1.0 ——模型可沿梯度从「对了 API
+  但错逻辑」获得部分信用，这正是 R3 调研推荐的 R2 起步依据。
+- R1 二值正确：PARTIAL→0.0（非全过=0）。
+- CRASH（候选函数本身崩溃）→ exec_success=False → reward=0（代码坏了，不是断言问题）。
+- 语义清晰：instrumented 下 exec_success=True 表示「代码跑通了」，真正 pass/fail 由 assert_results 区分。
+
+**数据溯源**：`baize_posttrain_rl_sandbox_exec.py --selftest` 实测输出（4 端口 pool、3 用例真实沙盒执行、
+reward 函数集成）。无伪造。
+
+### 5. GRPO loop 集成（`baize_posttrain_rl_grpo_loop.py`）
+
+向后兼容地接入沙盒执行（默认关，R0 路径不变）：
+
+| 改动 | 说明 |
+|:--|:--|
+| Cfg 新增 | `sandbox_exec:bool=False`, `sandbox_ports:str`, `sandbox_timeout:int=60` |
+| args 新增 | `--sandbox-exec`, `--sandbox-ports`, `--sandbox-timeout` |
+| import | guarded `from baize_posttrain_rl_sandbox_exec import score_rollout`（失败只 warning）|
+| reward hook | arm≠R0 且 sandbox_exec 且 test_code 存在 → `extra = dict(rm); extra.update(score_rollout(...))` → compute_score 拿到 exec_success/assert_results |
+| main() | sandbox_exec 时 set SANDBOX_HOST/PORTS/TIMEOUT env + log |
+
+**验证**：`py_compile` ✅；`--dry-run` ✅（recipe 打印 sandbox_exec=False，R0 路径不变）；
+运行中的 R0 主训（PID1887597）不受影响（Python 进程启动时已加载旧代码到内存，改文件不波及运行中进程）。
+
+**R1-R4 起跑命令（待 GPU7 释放 + R0 eval 结论后）**：
+```bash
+GPUS=7 bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --total-steps 200 \
+  --group-size 8 --batch-prompts 2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669
+```
+⚠️ 沙盒执行增加延迟（每 rollout +1-3s），吞吐会下降；建议 smoke 3 步先验证再全量。
+
+### 6. 主训监控（step165/200，未受影响）
+
+- step 165/200 RUNNING，~20s/step，ETA≈19:51；ratio=1.000 KL 0.04-0.09 gn 非零 健康。
+- ckpt：global_step_{50,100,150} 已保存；cheat_rate.json（step150）= **0/2400 rate=0.0**（红线§5.2 ✅）。
+- reward 动力学：first10_mean=0.6119 → last10_mean≈0.928（R0 静态奖励；reward 升≠Pass@1 升）。
+- 自治 eval chain（PID1923203）仍在 wait GRPO PID1887597 退出。
+- 未碰 GPU0-3/4/5/6；仅 GPU7 训练。
+
+### 7. 下一步
+- 主训完→自治 chain 自动 serve global_step_200→158题5-run mean±std vs step105（McNemar/bootstrap）。
+- R0 结论（有提升/无提升）出来后：起 R2+sandbox-exec 第二段 RL（本轮已就绪，待 GPU7）。
+- 若 R0 无提升：诚实负结果 + 直接试 R2（沙盒执行反馈可能比静态奖励更有信号）。
+
+### 8. 边界与纪律
+- 仅写本线文件（`baize_posttrain_rl_sandbox_exec.py` 新增 + `baize_posttrain_rl_grpo_loop.py` 集成 +
+  EXPERIMENTS §R415 + MEMORY 心跳 + daily）。
+- 红线：不碰 GPU 0-3；不碰 158 任务数据；不 `git add -A`；不杀健康训练。
+- 沙盒执行为只读 HTTP POST（执行模型生成代码），不修改 eval 数据或沙盒配置。
