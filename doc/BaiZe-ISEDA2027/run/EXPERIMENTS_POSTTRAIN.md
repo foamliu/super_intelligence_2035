@@ -10515,3 +10515,16 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 速率校准诚实读数：wake454→455（~9min）99→102（+3，~0.33/min，success+1/timeout+2）← **速率继续放缓且 timeout 占主导**（剩余批次多为难题/长任务，timeout 增多属预期）；剩余 ~56 任务（48 queue+~8 in-flight）；run1 或 ~06:30-08:30 完（不编造精确 ETA，待下一 wake 校准）。
 - 本轮动作：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5（已自行退出）；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake454 已归档指针化（体积维护）。
 - **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
+
+## §R456 — wake456 (2026-11-14 05:25) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+**实测** 2026-11-14 05:25（hostname s0pgpuap12=.17）：
+- eval 链健康：autofire chain PID2322797 存活（etime≈18177s≈5h03m，ppid 经 setsid）；eval run1 run_cline_script.sh PID2354149 存活（etime≈15385s≈4h16m）；父 PID2354141（ppid=2322797）；8 cline worker active（`-p 8`，.task_queue 45 行 queue+~8 in-flight=53 待跑；batch_cline.log 05:24 worker-7 任务 111 成功 46s→开始 113，worker-3 开始 112）。
+- 3 并发 serve 全稳 curl /v1/models 各返回预期 id[GPU4 base:8098→minicpm5-2B/GPU6 step105-final:8096→minicpm5-2b-sft-v39-final/GPU7 R2:8095→minicpm5-2b-grpo-R2-step200]；GPU7=39246MiB/90%util；GPU4/GPU6=0%util serve 待命。
+- 🟢 GPU5=3MiB/0%util 空闲（非本线，不碰）。
+- run1 进度（dir ~/eda_code_eval/2026_1114_010813）：stats **success=66/failure=5/timeout=34 = 105/158**（较 wake455 的 102 +3：success+1/fail+0/timeout+2）；code/ 116 目录(最新 -113)；total_time=107621s；final_report.json 未生成；5run_rl_analysis_R2.json 未出。⚠️ success/failure/timeout=code-gen 阶段计数（非 Pass@1，Pass@1 由 run_eval.py run 完后产 final_report.json）。
+- 0 真实 infra 错误：chain log 仅 START+pre-teardown 行无错误；CUDA OOM=0；batch_cline.log 健康推进。
+- 速率校准诚实读数：wake455→456（~13min）102→105（+3，~0.23/min，success+1/timeout+2）← **速率继续放缓且 timeout 占主导**（剩余批次多为难题/长任务，timeout 增多属预期）；剩余 ~53 任务（45 queue+~8 in-flight）；run1 或 ~06:30-08:30 完（不编造精确 ETA，待下一 wake 校准）。
+- 本轮 git 状态修复：唤醒首步 `git pull --rebase --autostash` 因 NFS「unable to write index file」中断→进入 detached HEAD（rebase-apply 残留）；`git rebase --abort` + `git checkout main` + `rm -f .git/index.lock` + `git fetch origin` 后 main 与 origin/main 重新同步（vision 线 a8173a1ac / harness 线 32a1ce22e 分叉自愈，未碰他线提交，仅 reattach 本地 main）。
+- 本轮动作：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake455 已归档指针化（体积维护）。
+- **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
