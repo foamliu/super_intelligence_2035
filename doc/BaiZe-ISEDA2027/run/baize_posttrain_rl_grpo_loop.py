@@ -338,6 +338,12 @@ def run_smoke_or_train(cfg: Cfg) -> None:
             attn_mask[i, :real_len] = 1
             loss_mask[i, plen:real_len] = 1
 
+        # Free generation KV/activation footprint before the memory-heavy
+        # logprob pass. logits.float()+log_softmax over (Gtot x L x V) is the
+        # peak; generation leaves a large allocator footprint that must be
+        # released so the loss pass fits a 48GB A40 at G=8 B=2 (R413 OOM fix).
+        torch.cuda.empty_cache()
+
         with torch.no_grad():
             old_logp = _logprobs_from_logits(policy, full_batch, attn_mask,
                                              loss_mask, cfg.device, grad=False)
@@ -385,6 +391,9 @@ def run_smoke_or_train(cfg: Cfg) -> None:
                 "grad_norm": float(gn.item()),
                 "mean_ratio": float(masked_mean(ratio.detach(), m).item()),
             }
+
+        # Release loss-pass activations before the next step's generation.
+        torch.cuda.empty_cache()
 
         global_step += 1
         rarr = rewards.detach().cpu().numpy()

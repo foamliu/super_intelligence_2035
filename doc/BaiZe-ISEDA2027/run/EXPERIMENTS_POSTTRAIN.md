@@ -8801,3 +8801,51 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 - 全量 200 步主训（R0 起步，G=8，B=4，ctx 512/384，kl_coef=0.02，save_freq=50）wall-clock 预估：smoke 18s/step(G=4) → G=8 约 35s/step → 200 步 ≈ 2h。可在 GPU7 单卡起。
 - R1-R4 需沙盒执行结果注入 extra_info（沙盒隧道已通 wake327），下一步接入沙盒 rollout。
 - 诚实口径：RL ckpt 产出后跑 EDA-Eval-PyAether 158 题 5-run mean±std，与 SFT step105 基线配对检验；若无提升/退化如实记录（vision v10 教训）。
+
+## §R413 — wake413 (2026-11-13 18:2x–18:4x): 全量 200 步 GRPO 主训起跑 + OOM 诊断/修复（empty_cache + max_resp 收缩）
+
+> 用户令 2026-11-13 13:3x「RL 直接在 MiniCPM5-2B 上跑，追求显著提升」——wake412 smoke PASS 后，本轮执行「下一步=全量 200 步主训」。**RL 基座=MiniCPM5-2B/SFT step105（替身预演，收益不可迁移到 BaiZe）**。
+
+### 1. 起跑前预检（全 PASS）
+- SFT ckpt `sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105` 存在（model safetensors 4.5GB + tokenizer）✅
+- venv `~/code/verl_cu124_venv`：torch 2.6.0+cu124, cuda True, transformers 4.51.1 ✅
+- `--contam-check`（红线 §5.1，重跑）：`contam gate PASS: 0/3347 RL prompts overlap 158 eval tasks` ✅
+- smoke 产物复盘（`rl_surrogate_runs/minicpm5_grpo_loop_v1/`）：metrics.jsonl 3 步 ratio=1.000 / reward 0.32–0.82；cheat_rate.json total=24 cheat=0 rate=0.0（红线 §5.2 ✅）
+
+### 2. OOM 诊断与修复（关键）
+- **首次起跑**：G=8 B=4（snapshot「下一步」配方），max_resp=384 → **OOM** 于 `_logprobs_from_logits` 的 `torch.log_softmax(logits.float(), dim=-1)`：
+  `torch.OutOfMemoryError: Tried to allocate 5.25 GiB. GPU 0 has 44.55 GiB total, 5.04 GiB free; process 39.50 GiB in use`。
+- **降一档**：G=8 B=2（16 rollouts），max_resp=384 → **仍 OOM** 于同一行（39.5GB in use + 5.25GB alloc）。
+- **根因**：MiniCPM5-2B **vocab_size=130560（极大）** → loss-pass 峰值 = `logits.float()`(Gtot×L×V×4) + `log_softmax`(×4) + `logits bf16`(×2)；且 `model.generate` 在 loss-pass 前留下 ~22GB allocator 占用（max_resp=384 时），二者叠加超 46GB。snapshot 原「G=8 B=4 ctx512/384」配方在此大词表模型上**不可行**。
+- **修复（两处）**：
+  1. `baize_posttrain_rl_grpo_loop.py` 在 loss-pass 前加 `torch.cuda.empty_cache()`（释放 generation KV/activation 占用）+ 每 step optim 后再加一次 empty_cache。
+  2. 收缩 `--max-response-len 384 → 256`（smoke 已证 256 足以产出可判分的 R0 代码，reward 0.32–0.82）；保留 **G=8 B=2**（16 rollouts/step，2 组×8）以兼顾 GRPO group size 与 memory。
+  3. 附加 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`（减碎片，错误信息建议）。
+- **内存核算**：G=8 B=2 max_resp=256，Gtot=16，L≈627（实际 response ~115 tok）→ loss-pass ~13GB + models 8GB + 残留 ~19GB(empty_cache 后) ≈ 峰值 **39.9GB**（nvidia-smi 实测），<46GB，6GB 余量 ✅。smoke(G=4 B=2 max_resp=256) 峰值 36GB 为对照。
+
+### 3. 全量 200 步主训起跑（GPU7，RUNNING）
+- 命令：`PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True GPUS=7 nohup bash baize_posttrain_rl_grpo_loop.sh --reward-arm R0 --total-steps 200 --group-size 8 --batch-prompts 2 --save-freq 50 --kl-coef 0.02 --lr 3.0e-6 --max-prompt-len 512 --max-response-len 256 --output-dir rl_surrogate_runs/minicpm5_grpo_loop_R0_200step > /tmp/grpo_loop_R0_200step.log 2>&1 &`（PID 1887597）
+- 配方：R0 静态分析奖励（auto-fallback，无沙盒），G=8 B=2，ctx 512/256，kl_coef=0.02，lr=3e-6，ppo_epochs=1，grad_checkpointing on，save_freq=50（step 50/100/150/200 出 ckpt）。
+- **前 6 步实测（健康）**：
+  - step1 reward=0.3625±0.2984 nz=0.75 posadv=0.50 ratio=1.000 gn=3.09 20.6s
+  - step2 reward=0.3821±0.2279 nz=1.00 posadv=0.25 ratio=1.000 gn=2.81 21.0s
+  - step3 reward=0.7725±0.3057 nz=1.00 posadv=0.19 ratio=1.000 gn=2.84 20.1s
+  - step4 reward=0.7113±0.2361 nz=1.00 posadv=0.56 ratio=1.000 gn=2.97 20.0s
+  - step5 reward=0.5773±0.3513 nz=1.00 posadv=0.44 ratio=1.000 gn=2.92 20.5s
+  - step6 reward=0.2750±0.2239 nz=0.88 posadv=0.31 ratio=1.000 gn=2.97 21.2s
+  - GPU7 峰值 39940 MiB（<46GB ✅），util 100%。
+- **吞吐/ETA**：~20.5 s/step × 200 ≈ 68 min ≈ 1.13h，ETA ≈ 19:47（起跑 18:39）。
+- **GRPO 正确性**：ratio=1.000 是 ppo_epochs=1 下 old_logp==new_logp（同模型同参数 epoch 0）的**预期**值——loss 值 ≈0（adv 组内归一化均值 0），但**梯度非零**（grad_norm ~3 证实）：等价于「GRPO 组归一化优势的 policy gradient + KL(reg) 正则」，clip 在 epoch 1 惰性。这是有效的（保守）GRPO，非空转。
+
+### 4. 红线 / 边界
+- 污染隔离（§5.1）：起跑前 contam gate 0/3347 PASS ✅；RL 数据 `rl_pyaether_synth_v2.parquet` 与 158 eval 零重叠。
+- 反作弊（§5.2）：compute_score 内 update_cheat_rate；save_freq 窗口写 cheat_rate.json（smoke 已证 0/24）；主训首个 ckpt(step50) 将再核。
+- 未碰 GPU0-3（root SGLang）、GPU4/5/6（L4 eval serve，eval_chain/step105-run5 全程存活）；仅用 GPU7。
+- 诚实口径：RL ckpt 产出后跑 158 题 5-run mean±std vs SFT step105 基线配对检验；**若无提升/退化如实记录**（vision v10 教训，用户令点 4）。
+- 标注：**替身预演，收益不可迁移到 BaiZe**。
+
+### 5. 风险与下一步
+- **OOM 残余风险**：峰值 39.9GB / 46GB，余 6GB；若某 step 命中满长 response(L→768) 批次可能触顶。若 step<50 OOM → relaunch G=8 B=1（Gtot=8，峰值 ~30GB，保 G=8 group）；若 step≥50 OOM → 从最近 ckpt resume。
+- 下一步①：主训跑完取 `global_step_200`（或最新 ckpt）→ vLLM serve → 158 题 5-run mean±std（GPU6 :8096 端口可复用，或新端口）→ vs SFT step105 base≈3.8% 配对检验（McNemar/bootstrap）。
+- 下一步②：R1-R4 接沙盒（隧道已通 wake327）：rollout 后注入 exec_success/assert_results 到 extra_info → compute_score 切 R2-R4，第二段 RL。
+- 下一步③：主训 reward 曲线 / cheat_rate 趋势落 EXPERIMENTS + 报告 `reports/report_posttrain_rl_surrogate_zh.html`（里程碑，标「替身预演」）。
