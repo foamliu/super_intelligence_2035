@@ -9456,3 +9456,26 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 红线 §5.1 contam 0/3347；§5.2 cheat 0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
 - 交付：run2 进度 143/158~90.5%（A）+ global_step_200 ckpt 完整性实证（B）+ R0 eval 链路接线复核（C）+ R2 launch-readiness 重申（D）+ EXPERIMENTS §R426 + MEMORY wake426。
 - 下一步：① 等 run2 完(~30-40min,ETA~23:10-23:20)→chain 2028723 自动 serve global_step_200→158题5-run(~12h)→`5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流（决策框架 §R425 C）：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化→**诚实负结果**（§R420/B 训练侧偏负支撑）+起 R2+sandbox-exec（D 已 launch-ready，待 GPU7 释放）；③ 监控 run2 是否 ~23:20 内完成，若卡死 kill stuck worker+续跑。
+
+## §R427 (wake427, 2026-11-13 22:5x) — run2 收尾阶段实测 153/158~96.8%（.task_queue 已空）+ 自治 eval 链路即触发确认 + 全链路健康复检
+
+### A. run2 收尾阶段进度实测（22:52）
+- batch `~/eda_code_eval/2026_1113_194219/` stats 计数器：`success=128` / `failure=7` / `timeout=18` = **153/158（96.8%）resolved**（较 wake426 的 143/158~90.5% 推进 10）；`.task_queue` **已空**（最后 1 题 EDA-Eval-PyAether-158 worker-1 22:52:12 处理完毕）。
+- code=163 / full_tasks=158 / `.task_queue`=0 → **codegen 阶段收尾**，仅剩 1962541 进程内 scoring(run_eval.py)+5run_analysis 收尾后即退出。
+- 8 cline worker 全 alive；GPU5（step60 :8097）=96%util 健康；GPU7=3MiB 空闲（R0 eval serve 预留）。
+- 队列全 ALIVE：run2(1962541,11362s)→RL eval chain(2028723,8395s,180s 轮询,log 持续 `eval-chain still running`)→residual SFT(2030315,8315s,120s 轮询)。
+
+### B. R0 eval 自治链路「即触发」确认
+- 1962541 = `baize_posttrain_5run_eval.sh --label step60 --run 2`（单 run）；run2 codegen+scoring+analysis 完成后 1962541 **退出** → chain 2028723 检测到 eval-chain-pid 1962541 不在 → 自动 serve global_step_200 于 GPU7:8095 → 158 题 5-run（~12h）→ `5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）。
+- 链路接线 wake426 已 file-level 复核正确（L57-60/L117-120/L122-135/L148-149）；ckpt 完整可 serve；baseline 锁定 → **run2 退出即可 instant-fire，无需人工**。
+
+### C. 关键资产复确认（未变，仅复检）
+- global_step_200 ckpt 完整（2 safetensors 4.50+0.53GB + config + tokenizer），cheat=0/3200（红线 §5.2 ✓）。
+- dynamics：reward 0.3625→0.8992 平台 / mean_ratio==1.0 policy 不动 / frac_nonzero_reward~1.0 塌缩 → 训练侧偏负（proxy 拟合非能力增长，与 vision v10 一致）→ R0 eval 真实数字大概率落在决策框架「分支2 负」侧，但**仍须 5-run mean±std 配对检验实证**（预注册先定后测，不以训练侧启发式替代 eval）。
+- R2+sandbox-exec（真实沙盒 reward=「追求显著提升」主战场）launch-ready，阻塞 GPU7（R0 eval serve 预留，ETA≈13h 释放）。
+
+### 结论与下一步
+- 本轮零 GPU、未碰任何进程；纯收尾进度实测 + 自治链路即触发确认 + 健康复检（非空转：把 wake426「ETA~23:10-23:20」实测修正为「codegen 已收尾、链路即触发」）。
+- 红线 §5.1 contam 0/3347；§5.2 cheat 0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
+- 下一步：① 1962541 退出→2028723 自动起 R0 5-run eval（~12h）→`5run_rl_analysis.json`；② R0 结论按决策框架 §R425 C 分流（分支1 显著→里程碑报告；分支2 负→诚实负结果+起 R2[launch-ready,待 GPU7 释放]）；③ 期间监控 2028723 是否成功 serve GPU7:8095（log `/tmp/posttrain_rl_eval_chain.log`），若 serve 失败/卡死排查 vLLM 启动。
+- WAITING=0。
