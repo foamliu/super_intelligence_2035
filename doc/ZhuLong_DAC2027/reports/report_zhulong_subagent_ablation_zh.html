@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong · Subagent 消融评测报告（负结果）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222c; --border:#2a2f3a;
+    --txt:#e6e8ee; --mut:#9aa0ad; --acc:#5b9dff; --ok:#3fb950; --warn:#d29922;
+    --bad:#f85149; --badbg:rgba(248,81,73,.12); --okbg:rgba(63,185,80,.12);
+    --code:#1b1e26; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 80px}
+  h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:.5px}
+  h2{font-size:1.25rem;margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);
+    color:var(--acc)}
+  h3{font-size:1.06rem;margin:22px 0 8px;color:var(--txt)}
+  .sub{color:var(--mut);font-size:.88rem;margin:0 0 18px}
+  p{margin:0 0 12px}
+  code{font-family:var(--mono);background:var(--code);padding:1px 5px;border-radius:4px;font-size:.86em;color:#c8d3e6}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;
+    font-family:var(--mono);font-size:.82rem;color:#c8d3e6}
+  pre code{background:none;padding:0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.84rem}
+  th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--txt);font-weight:600;position:sticky;top:0}
+  tr:nth-child(even){background:rgba(255,255,255,.015)}
+  .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.76rem;font-weight:600;letter-spacing:.3px}
+  .b-bad{background:var(--badbg);color:var(--bad);border:1px solid rgba(248,81,73,.4)}
+  .b-warn{background:rgba(210,153,34,.12);color:var(--warn);border:1px solid rgba(210,153,34,.4)}
+  .b-ok{background:var(--okbg);color:var(--ok);border:1px solid rgba(63,185,80,.4)}
+  .b-mut{background:rgba(154,160,173,.12);color:var(--mut);border:1px solid rgba(154,160,173,.35)}
+  .banner{border-radius:10px;padding:16px 18px;margin:18px 0;border:1px solid}
+  .banner-bad{background:var(--badbg);border-color:rgba(248,81,73,.45)}
+  .banner-warn{background:rgba(210,153,34,.10);border-color:rgba(210,153,34,.4)}
+  .banner-ok{background:var(--okbg);border-color:rgba(63,185,80,.4)}
+  .banner strong{font-size:1.02rem}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:14px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .kpi{display:flex;flex-direction:column;gap:2px}
+  .kpi .v{font-size:1.5rem;font-weight:700}
+  .kpi .l{font-size:.78rem;color:var(--mut)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .v-bad{color:var(--bad)} .v-ok{color:var(--ok)} .v-warn{color:var(--warn)}
+  ul,ol{margin:6px 0 12px;padding-left:22px}
+  li{margin:3px 0}
+  .small{font-size:.8rem;color:var(--mut)}
+  .tag{font-family:var(--mono);font-size:.78rem;color:var(--acc)}
+  .hr{height:1px;background:var(--border);border:0;margin:28px 0}
+  .toc{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:18px 0}
+  .toc a{color:var(--acc);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .qbox{border-left:3px solid var(--acc);padding:10px 14px;background:var(--panel2);border-radius:0 8px 8px 0;margin:10px 0}
+  details{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin:10px 0}
+  summary{cursor:pointer;color:var(--acc);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ZhuLong · Subagent 消融评测报告</h1>
+<p class="sub">
+  EDA-Eval-PyAether 158 · harness = cline 3.0.51 · 基座 = deepseek-v4-pro-cloud · 协议 <code>-p 8 -n · thinking=medium · compaction=basic</code><br>
+  报告类型：<span class="badge b-bad">负结果（NO-GO）</span> &nbsp; 生成时间：2026-11-14 · 自包含 / 0 外链
+</p>
+
+<div class="banner banner-bad">
+  <strong>🔴 核心结论：实验无法成立。</strong>
+  P1 pilot（8 臂 × 8 题 × 1 轮）trace 审计发现 <b>subagent 实际执行成功率 = 0%</b>（所有臂所有 spawn 调用全部 <code>finishReason=error</code>、<code>usage=0/0</code>、subagent session <code>n_msgs=0</code>）。
+  subagent 工具被调用率 100%，但 subagent 从未真正运行 LLM；所有 Pass@1 全是主 agent 独立完成。<b>H1/H2/H3 均无法检验</b>。按预注册判据判 <b>NO-GO，不进 P2</b>。
+</div>
+
+<div class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">摘要（三问结论）</a></li>
+    <li><a href="#s2">实验机制与 P0 验证盲区</a></li>
+    <li><a href="#s3">主结果表（P1 pilot）</a></li>
+    <li><a href="#s4">调用率 vs 执行率（关键发现）</a></li>
+    <li><a href="#s5">根因分析（含 cline 源码证据）</a></li>
+    <li><a href="#s6">成本-性能（主/子 token 分拆）</a></li>
+    <li><a href="#s7">失败分类</a></li>
+    <li><a href="#s8">结论与默认策略建议</a></li>
+    <li><a href="#s9">附录：证据索引与可复现性</a></li>
+  </ol>
+</div>
+
+<!-- ===================== 1. 摘要 ===================== -->
+<h2 id="s1">一、摘要（三问结论）</h2>
+
+<div class="kpis">
+  <div class="kpi card"><span class="v v-bad">0%</span><span class="l">subagent 执行成功率</span></div>
+  <div class="kpi card"><span class="v v-warn">100%</span><span class="l">subagent 工具被调用率</span></div>
+  <div class="kpi card"><span class="v v-bad">0 / 0</span><span class="l">subagent token (in/out)</span></div>
+  <div class="kpi card"><span class="v v-bad">NO-GO</span><span class="l">go/no-go 决策</span></div>
+</div>
+
+<p>本实验旨在检验 cline 的 <b>configured-agent（subagent）机制</b>对 EDA 代码生成任务的影响，预注册了三个假设（H1 消融对比 / H2 基座梯度 / H3 迭代上限）。起跑前 P0 预检（17:20）通过三项：doubao key 连通、configured agent 工具注册可见、主 agent 调用了 subagent 工具。</p>
+
+<p>P1 pilot 完成后对 trace 做深度审计，发现 P0 的三项验证均停留在「工具注册 + 被调用」层面，<b>未验证 subagent 是否真正执行了 LLM</b>（messages 非空 / usage&gt;0 / finishReason=completed）。实际 trace 显示 subagent 100% 报错、0 token、session 0 消息——subagent 从未运行。</p>
+
+<div class="qbox">
+  <b>三问结论：</b>
+  <ul style="margin:6px 0 0">
+    <li><b>Q1 — subagent 机制在当前 harness 下是否可用？</b> &nbsp;<span class="badge b-bad">否</span>。cline 3.0.51 的 delegated-agent 消息流存在缺陷：相同 provider 配置下，主 agent 正常运行而 subagent 向网关发送空 <code>messages</code> 数组，被网关拒（<code>messages must not be empty</code>）。</li>
+    <li><b>Q2 — H1/H2/H3 是否可检验？</b> &nbsp;<span class="badge b-bad">否</span>。三个假设全部依赖 subagent 真正执行并消耗 token；0% 执行率下 P2（9 臂 × 40 题 × 3 轮 ≈16h）只会产出无意义数据，违反「不许包装成增益」「真实裁判=Pass@1」红线。</li>
+    <li><b>Q3 — 默认策略建议？</b> &nbsp;在 cline 3.0.51 下 <b>不应启用 configured subagent</b>（启用后仅增加 spawn 开销与报错噪声，无任何执行产出）。若要检验 H1/H2/H3，需先解除 harness 版本锁定（升级 cline 或修补源码），见 §8。</li>
+  </ul>
+</div>
+
+<!-- ===================== 2. 机制与 P0 盲区 ===================== -->
+<h2 id="s2">二、实验机制与 P0 验证盲区</h2>
+
+<h3>2.1 实验设计（9 臂）</h3>
+<table>
+  <tr><th>臂</th><th>配置</th><th>researcher.yaml</th><th>目的</th></tr>
+  <tr><td><span class="tag">A0</span></td><td>baseline（spawn 关闭）</td><td>—</td><td>复用 compaction basic r1–r3（40 题 3 轮均值）作为无 subagent 锚点</td></tr>
+  <tr><td><span class="tag">A1</span></td><td>spawn-on，无 configured agent</td><td>无</td><td>仅开 enableSpawnAgent，主 agent 自主决定是否 spawn</td></tr>
+  <tr><td><span class="tag">B1</span></td><td>cfg-same（同基座）</td><td>providerId=openai-compatible · modelId=deepseek-v4-pro-cloud · maxIter=15</td><td>subagent 与主 agent 同基座，隔离「spawn 行为」效应</td></tr>
+  <tr><td><span class="tag">B2</span></td><td>cfg-dsv4-flash</td><td>providerId=openai-compatible · modelId=deepseek-v4-flash · maxIter=15</td><td>弱基座 subagent</td></tr>
+  <tr><td><span class="tag">B3</span></td><td>cfg-doubao-pro</td><td>providerId=doubao-pro · modelId=doubao-seed-2.0-pro-cloud · maxIter=15</td><td>不同厂商弱基座</td></tr>
+  <tr><td><span class="tag">B4</span></td><td>cfg-doubao-mini</td><td>providerId=doubao-mini · modelId=doubao-seed-2.0-mini-cloud · maxIter=15</td><td>更弱基座</td></tr>
+  <tr><td><span class="tag">B5</span></td><td>cfg-doubao-lite</td><td>providerId=doubao-lite · modelId=doubao-seed-2.0-lite-cloud · maxIter=15</td><td>最弱基座（基座梯度末端）</td></tr>
+  <tr><td><span class="tag">C1</span></td><td>cfg-iter5</td><td>providerId=openai-compatible · modelId=deepseek-v4-flash · maxIter=5</td><td>紧迭代上限</td></tr>
+  <tr><td><span class="tag">C2</span></td><td>cfg-iter30</td><td>providerId=openai-compatible · modelId=deepseek-v4-flash · maxIter=30</td><td>松迭代上限</td></tr>
+</table>
+<p class="small">全臂恒定：<code>--compaction basic</code>、<code>CLINE_THINKING=medium</code>、<code>LANG_HINT</code> 空、<code>-p 8 -n</code>、主基座 <code>deepseek-v4-pro-cloud</code>。A0 直接复用 compaction basic r1–r3，不重跑。每臂独立 cline <code>--data-dir</code>（<code>/nasdata/app.e0031982/subagent_ablation/&lt;arm&gt;</code>），除 researcher.yaml 与 providers.json 外逐字节一致。</p>
+
+<h3>2.2 P0 验证（17:20 声称 PASS）与盲区</h3>
+<div class="card">
+  <p><b>P0 验证的三项（均已通过）：</b></p>
+  <ol>
+    <li>doubao pro/mini/lite 三 key <code>curl</code> 探针 HTTP 200 ✅</li>
+    <li>configured agent 工具 <code>subagent_researcher</code> 出现在工具列表（第 19 号）✅</li>
+    <li>主 agent 在 pilot 中调用了 subagent 工具 ✅</li>
+  </ol>
+  <p><b>但 P0 未验证（盲区）：</b> subagent 是否真正执行了 LLM —— 即 subagent session 的 messages 是否非空、usage 是否 &gt;0、finishReason 是否为 <code>completed</code>。</p>
+  <p class="small">工具「注册 + 被调用」≠ subagent「真正运行」。这正是 P1 pilot 该抓却没在 P0 抓的度量。本报告将「执行率」作为关键修正指标补入判据。</p>
+</div>
+
+<div class="banner banner-warn">
+  <strong>⚠️ 预注册判据的修正。</strong>
+  计划书 §六 预注册的 go/no-go 判据只度量「subagent 调用率 ≥30%」。字面调用率 = 100% ≥ 30% → 字面判 GO。但实质执行率 = 0% &lt; 20% → 实质判 NO-GO。
+  本次按<b>实质执行率</b>裁决（理由：H1/H2/H3 全依赖 subagent 真正执行 + 消耗 token，0% 执行率下 P2 无法判任何假设）。预注册判据漏度量「执行」，属 P0 设计缺陷，已在判据中如实标注，<b>未事后篡改判据阈值</b>。
+</div>
+
+<!-- ===================== 3. 主结果表 ===================== -->
+<h2 id="s3">三、主结果表（P1 pilot · 8 臂 × 8 题 × 1 轮）</h2>
+
+<table>
+  <tr>
+    <th>臂</th><th>配置</th><th>spawn 调用</th><th>spawn 执行成功</th>
+    <th>子 token (in/out)</th><th>Pass@1（子集）</th><th>墙钟 (s)</th><th>主 token (total)</th>
+  </tr>
+  <tr><td><span class="tag">A0</span></td><td>baseline (spawn off)</td><td>—</td><td>—</td><td>—</td><td>69.2%（40 题）</td><td>—</td><td>—</td></tr>
+  <tr><td><span class="tag">A1</span></td><td>spawn-on 无 cfg agent</td><td>0</td><td>—</td><td>0 / 0</td><td>87.5%（7/8）</td><td>2516</td><td>5.39M</td></tr>
+  <tr><td><span class="tag">B1</span></td><td>cfg-same dsv4-pro</td><td>17</td><td><span class="v-bad"><b>0（17 error）</b></span></td><td>0 / 0</td><td>62.5%（5/8）</td><td>5276</td><td>7.10M</td></tr>
+  <tr><td><span class="tag">B2</span></td><td>cfg-dsv4-flash</td><td>18</td><td><span class="v-bad"><b>0（18 error）</b></span></td><td>0 / 0</td><td>87.5%（7/8）</td><td>3509</td><td>5.40M</td></tr>
+  <tr><td><span class="tag">B3</span></td><td>cfg-doubao-pro</td><td>9</td><td><span class="v-bad"><b>0（9 error）</b></span></td><td>0 / 0</td><td>85.71%（6/7）</td><td>5489</td><td>8.11M</td></tr>
+  <tr><td><span class="tag">B4</span></td><td>cfg-doubao-mini</td><td>9</td><td><span class="v-bad"><b>0（9 error）</b></span></td><td>0 / 0</td><td>87.5%（7/8）</td><td>3613</td><td>6.82M</td></tr>
+  <tr><td><span class="tag">B5</span></td><td>cfg-doubao-lite</td><td>8</td><td><span class="v-bad"><b>0（8 error）</b></span></td><td>0 / 0</td><td>87.5%（7/8）</td><td>5149</td><td>7.95M</td></tr>
+  <tr><td><span class="tag">C1</span></td><td>cfg-iter5 dsv4-flash</td><td>20*</td><td>—</td><td>0 / 0</td><td>null（6/8 ok）</td><td>2694</td><td>7.92M</td></tr>
+  <tr><td><span class="tag">C2</span></td><td>cfg-iter30 dsv4-flash</td><td>18</td><td><span class="v-bad"><b>0（18 error）</b></span></td><td>0 / 0</td><td>75.0%（6/8）</td><td>2625</td><td>3.46M</td></tr>
+</table>
+<p class="small">* C1 cost JSON 报 spawn=20，但该 batch trace 扫描找到 0 个 subagent tool_use（batch 路径/结构差异，待核；不影响结论）。<br>
+A0 = 40 题 3 轮均值（复用 compaction basic，非本次 8 题子集），与其它臂题量不同，仅作方向性参照。</p>
+
+<div class="banner banner-bad">
+  <strong>🔴 Pass@1 不可解读为 subagent 效应。</strong>
+  所有臂的 Pass@1（B1 62.5 / B2 87.5 / B3 85.71 / B4 87.5 / B5 87.5 / C2 75.0）<b>全部是主 agent 在 subagent spawn 报错后独立完成</b>。subagent 既未执行 LLM 也未消耗 token，因此各臂 Pass@1 差异反映的是「主 agent 在不同（失效）subagent 配置下的行为噪声」，<b>不是</b> subagent 能力差异。<b>不据此对 H1/H2/H3 下任何结论</b>。
+</div>
+
+<p>逐题配对：由于 subagent 0% 执行，逐题配对比较（A0 vs A1/B1、B1 vs B2–B5）在机制层面无意义——比较的两侧中「subagent 侧」实际等价于「主 agent 独立作业 + 一次失败 spawn」。完整的逐题 pass/fail 明细已落盘 <code>ablation_subagent_results.json</code>，本报告不展示无意义配对表。</p>
+
+<!-- ===================== 4. 调用率 vs 执行率 ===================== -->
+<h2 id="s4">四、调用率 vs 执行率（关键发现）</h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3>字面「调用率」= 100%</h3>
+    <p>主 agent 在 B1/B2/B3/B4/B5/C2 各臂的 8 题中均触发了 <code>subagent_researcher</code> 工具调用，调用率 1.0。字面判据（≥30% → GO）通过。</p>
+    <p class="small">这正是 P0「工具被调用」验证所看到的，也是 02:20 那条过早 GO 判定的依据。</p>
+  </div>
+  <div class="card">
+    <h3>实质「执行率」= 0%</h3>
+    <p>扫描各 batch <code>trace/**/*.messages.json</code>，收集 <code>subagent_researcher</code> 的 tool_use → tool_result，统计 <code>finishReason</code> 与 <code>usage</code>：</p>
+    <ul>
+      <li>dsv4 臂（B1/B2/C2）：100% <code>finishReason=error</code>，错误串 <code>"Invalid prompt: messages must not be empty"</code>，usage = 0/0</li>
+      <li>doubao 臂（B3/B4/B5）：100% <code>finishReason=error</code>，错误串 <code>"Unknown or disabled provider \"doubao-{pro,mini,lite}\"."</code>，usage = 0/0</li>
+      <li>所有 subagent session 文件 <code>agent_*.messages.json</code>：<code>n_msgs=0</code>（task 从未成为 user message 持久化）</li>
+    </ul>
+  </div>
+</div>
+
+<table>
+  <tr><th>臂</th><th>subagent 调用数</th><th>执行成功</th><th>error</th><th>子 tok in/out</th><th>session n_msgs</th><th>error 样例</th></tr>
+  <tr><td>B1</td><td>17</td><td>0</td><td>17</td><td>0 / 0</td><td>0</td><td><code>Invalid prompt: messages must not be empty</code></td></tr>
+  <tr><td>B2</td><td>18</td><td>0</td><td>18</td><td>0 / 0</td><td>0</td><td><code>Invalid prompt: messages must not be empty</code></td></tr>
+  <tr><td>B3</td><td>9</td><td>0</td><td>9</td><td>0 / 0</td><td>0</td><td><code>Unknown or disabled provider "doubao-pro".</code></td></tr>
+  <tr><td>B4</td><td>9</td><td>0</td><td>9</td><td>0 / 0</td><td>0</td><td><code>Unknown or disabled provider "doubao-mini".</code></td></tr>
+  <tr><td>B5</td><td>8</td><td>0</td><td>8</td><td>0 / 0</td><td>0</td><td><code>Unknown or disabled provider "doubao-lite".</code></td></tr>
+  <tr><td>C2</td><td>18</td><td>0</td><td>18</td><td>0 / 0</td><td>0</td><td><code>Invalid prompt: messages must not be empty</code></td></tr>
+</table>
+
+<!-- ===================== 5. 根因分析 ===================== -->
+<h2 id="s5">五、根因分析（含 cline 3.0.51 源码证据）</h2>
+
+<p>两类根因，均位于 cline 3.0.51 内部，非快速配置可修。</p>
+
+<h3>5.1 根因 A（dsv4 臂 B1/B2/C2）：<code>messages must not be empty</code></h3>
+<div class="card">
+  <p><b>现象：</b>provider 解析成功（<code>providerId: openai-compatible</code> 是真 provider 类型，与主 agent 相同），但 subagent session 文件 <code>agent_*.messages.json</code> 全部 <code>n_msgs=0</code>——task 从未成为 user message 持久化。首次 LLM 调用 <code>messages</code> 数组为空 → OpenAI-compatible 网关拒绝。</p>
+  <p><b>源码定位：</b></p>
+  <pre><code>// configured-agent-tool.ts:198
+const result: AgentResult = await subAgent.run(input.prompt);  // input.prompt 非空（trace 已核实）
+
+// session-runtime-orchestrator.ts:938-950  （executeRunInternal）
+if (effectiveUserMessage !== undefined) {
+  const content = await buildUserTurnContent(effectiveUserMessage, ...);
+  this.conversation.appendMessage({ id, role: "user", content });   // ← 应注入 user 消息
+}
+// :1003-1005
+const initialMessages = messagesToAgentMessages(this.conversation.getMessages());
+// :1080
+runResult = await runtime.run("");   // 空串：按注释，靠 initialMessages 作为种子</code></pre>
+  <p>代码路径<b>确实</b>追加了 user 消息并以 <code>initialMessages</code> 种子化运行时，但网关仍收到空 <code>messages</code>。<b>"messages must not be empty" 字符串在 cline 源码中不存在</b>（全文检索确认）→ 该错误来自网关，证明 HTTP 请求体的 <code>messages</code> 数组确实为空。</p>
+  <p><b>关键证据（证明是代码 bug 而非配置问题）：</b>将 B1 subagent 臂的 <code>providers.json</code> 与 compaction-basic（主 agent <b>正常工作</b>、在本批同任务上完成评分）的 <code>providers.json</code> 逐字节比对——<b>完全一致</b>：</p>
+  <pre><code>lastUsedProvider: openai-compatible
+  profile=openai-compatible:
+    provider   = openai-compatible
+    model      = deepseek-v4-pro-cloud
+    baseUrl    = http://agi-gateway.cxmt.com/cloud/v1
+    apiKey     = 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37...（同一把 key）</code></pre>
+  <p>同一 provider、同一 key、同一 model、同一 baseUrl——主 agent 正常运行而 subagent 发空 messages。唯一差异是<b>代码路径</b>：主 agent 走 primary session runtime；subagent 走 <code>createDelegatedAgent → new SessionRuntime(config) → run(prompt)</code> 的 delegated-agent 消息流。<b>定位为 cline 3.0.51 delegated-agent 消息初始化缺陷</b>，非配置可修。</p>
+</div>
+
+<h3>5.2 根因 B（doubao 臂 B3/B4/B5）：<code>Unknown or disabled provider</code></h3>
+<div class="card">
+  <p><b>现象：</b><code>providers.json</code> 中 <code>doubao-lite</code> 等是<b>命名 profile</b>（key=<code>doubao-lite</code>，其 <code>settings.provider</code> 实为 <code>"openai-compatible"</code>，同 baseURL/apiKey、仅 model 不同）。</p>
+  <p><b>源码定位：</b></p>
+  <pre><code>// configured-agent-tool.ts:133-143  buildAgentRuntimeConfig
+return {
+  ...base,                                    // 继承父 runtime 的 apiKey/baseUrl
+  providerId: agent.providerId ?? base.providerId,   // ← researcher.yaml 的 providerId 覆盖
+  modelId:   agent.modelId   ?? base.modelId,
+  maxIterations: agent.maxIterations ?? base.maxIterations,
+};</code></pre>
+  <p>researcher.yaml 写 <code>providerId: doubao-lite</code>（profile key），被 subagent 的 provider 解析当作 provider <b>类型</b>查 → 注册表无此类型 → <code>"Unknown or disabled provider"</code>。主 agent 用 <code>lastUsedProvider</code>（profile-key 查找路径）能跑；subagent 走 <code>buildAgentRuntimeConfig</code> 覆盖 <code>providerId</code> 为命名 profile → 解析失败。</p>
+  <p><b>为何不可简单修复：</b>即便把 researcher.yaml 改为 <code>providerId: openai-compatible</code>，<code>buildAgentRuntimeConfig</code> 只覆盖 providerId/modelId/maxIterations，<b>不覆盖 apiKey/baseUrl</b>——subagent 仍继承父 agent 的 dsv4-pro key，而 doubao 模型需各自独立 key。researcher.yaml 的 frontmatter schema（<code>configured-agent-config.ts:8-16</code>）<b>不含 apiKey/baseUrl 字段</b>，无法在 agent 级别指定连接凭证。需 cline 源码支持命名 profile 解析或 per-agent 凭证。</p>
+  <p class="small">注：根因 B 在根因 A 修复前<b>无实际意义</b>——核心臂 B1/B2/C2（同基座 / dsv4-flash / 迭代上限）全部受根因 A 阻塞，即便 doubao 臂修好也无法检验 H1/H2/H3。</p>
+</div>
+
+<!-- ===================== 6. 成本-性能 ===================== -->
+<h2 id="s6">六、成本-性能（主/子 token 分拆）</h2>
+
+<p>由于 subagent 0% 执行，<b>子 token 全部为 0</b>；所有 token 消耗来自主 agent。下表为主 agent token + 墙钟，仅说明「启用失效 subagent 的额外开销」，<b>不</b>作为能力对比。</p>
+
+<table>
+  <tr><th>臂</th><th>主 tok input</th><th>主 tok output</th><th>主 tok total</th><th>墙钟 (s)</th><th>spawn 调用</th><th>相对 A1 开销</th></tr>
+  <tr><td><span class="tag">A1</span>（spawn-on 无 cfg）</td><td>5.26M</td><td>0.13M</td><td>5.39M</td><td>2516</td><td>0</td><td>基准</td></tr>
+  <tr><td><span class="tag">B1</span></td><td>6.90M</td><td>0.20M</td><td>7.10M</td><td>5276</td><td>17</td><td><span class="v-bad">+31.7% tok · +109.7% 墙钟</span></td></tr>
+  <tr><td><span class="tag">B2</span></td><td>5.24M</td><td>0.16M</td><td>5.40M</td><td>3509</td><td>18</td><td>+0.2% tok · +39.5% 墙钟</td></tr>
+  <tr><td><span class="tag">B3</span></td><td>7.90M</td><td>0.21M</td><td>8.11M</td><td>5489</td><td>9</td><td><span class="v-bad">+50.5% tok · +118.2% 墙钟</span></td></tr>
+  <tr><td><span class="tag">B4</span></td><td>6.65M</td><td>0.17M</td><td>6.82M</td><td>3613</td><td>9</td><td>+26.5% tok · +43.6% 墙钟</td></tr>
+  <tr><td><span class="tag">B5</span></td><td>7.71M</td><td>0.23M</td><td>7.95M</td><td>5149</td><td>8</td><td><span class="v-bad">+47.4% tok · +104.7% 墙钟</span></td></tr>
+  <tr><td><span class="tag">C1</span></td><td>7.73M</td><td>0.19M</td><td>7.92M</td><td>2694</td><td>20</td><td>+46.9% tok · +7.1% 墙钟</td></tr>
+  <tr><td><span class="tag">C2</span></td><td>3.32M</td><td>0.13M</td><td>3.46M</td><td>2625</td><td>18</td><td>−35.8% tok · +4.3% 墙钟</td></tr>
+</table>
+<p class="small">开销 = 主 agent 在 subagent 报错后自行重试 / 补全 API 探索所产生的额外 token 与墙钟。B1/B3/B5 墙钟翻倍，说明失效 spawn 显著拖慢主 agent（spawn 等待 + 报错后重新规划）。<b>这是「启用失效 subagent」的纯负开销，无任何执行产出</b>。</p>
+
+<!-- ===================== 7. 失败分类 ===================== -->
+<h2 id="s7">七、失败分类</h2>
+
+<p>subagent 调用失败 100%，分两类（与根因 A/B 对应）：</p>
+
+<table>
+  <tr><th>类别</th><th>影响臂</th><th>错误串</th><th>次数</th><th>根因</th><th>可配置修?</th></tr>
+  <tr><td><span class="badge b-bad">① 消息空</span></td><td>B1 / B2 / C2</td><td><code>Invalid prompt: messages must not be empty</code></td><td>17 / 18 / 18</td><td>A · delegated-agent 消息流缺陷</td><td><span class="badge b-bad">否</span>（同配置主 agent 正常）</td></tr>
+  <tr><td><span class="badge b-bad">② provider 未注册</span></td><td>B3 / B4 / B5</td><td><code>Unknown or disabled provider "doubao-{pro,mini,lite}"</code></td><td>9 / 9 / 8</td><td>B · providerId 当类型查而非 profile key</td><td><span class="badge b-warn">部分</span>（改 openai-compatible 仍受 apiKey 继承限制）</td></tr>
+</table>
+
+<p><b>主 agent 侧无 infra / timeout / gen_fail 归因失败</b>：所有臂 <code>cline_success=8</code>、<code>cline_failed=0</code>、<code>timed_out=0</code>、<code>completion_rate=100%</code>。即主 agent 始终健康完成 8 题，失败仅集中在 subagent 子系统。这进一步印证：问题不在评测基础设施或主 agent 能力，而在 cline 3.0.51 的 subagent 执行路径。</p>
+
+<!-- ===================== 8. 结论与默认策略 ===================== -->
+<h2 id="s8">八、结论与默认策略建议</h2>
+
+<div class="banner banner-bad">
+  <strong>结论：cline 3.0.51 当前配置下 configured subagent 机制不可用，H1/H2/H3 无法检验。</strong>
+  证据等级：高（8 臂 × 共 79 次 spawn 调用 100% error、源码定位 + 同配置主 agent 正常的对照证据）。
+</div>
+
+<h3>8.1 预注册假设的状态</h3>
+<table>
+  <tr><th>假设</th><th>内容</th><th>状态</th><th>理由</th></tr>
+  <tr><td>H1</td><td>A0 vs A1/B1 McNemar discordant ≥6:6 且方向一致</td><td><span class="badge b-mut">无法检验</span></td><td>subagent 0% 执行，B1 的 subagent 从未运行，无配对意义</td></tr>
+  <tr><td>H2</td><td>B1 vs B2–B5 Δ≥3pp 且 bootstrap CI 不跨 0、梯度 R²&gt;0.7</td><td><span class="badge b-mut">无法检验</span></td><td>基座梯度无执行产出，子 token 全 0，梯度曲线不可画</td></tr>
+  <tr><td>H3</td><td>完成率差 ≥10pp ⇒ maxIter=5 过紧</td><td><span class="badge b-mut">无法检验</span></td><td>subagent 完成率全 0%（全 error），迭代上限无从生效</td></tr>
+</table>
+<p class="small">按预注册纪律：差异 &lt;3pp 写「证据不足」；此处为更强的「机制不可用」，如实标注，<b>不包装成任何增益或负增益</b>。</p>
+
+<h3>8.2 默认策略建议</h3>
+<ol>
+  <li><b>生产配置</b>：在 cline 3.0.51 下 <b>不应启用 configured subagent</b>。启用后仅增加 spawn 开销与报错噪声（B1/B3/B5 墙钟翻倍），无执行产出。当前 compaction=basic、thinking=medium、主基座 dsv4-pro-cloud 的单 agent 配置仍是该 harness 下的合理默认。</li>
+  <li><b>P0 验证规范（修正）</b>：今后凡验证「subagent / delegated-agent / teammate」类机制，P0 必须<b>额外</b>验证 subagent 真正执行：1 题 smoke 后检查 subagent session <code>n_msgs&gt;0</code> + <code>usage&gt;0</code> + <code>finishReason=completed</code>。「工具注册 + 被调用」不等于「机制可用」。</li>
+</ol>
+
+<h3>8.3 若要使本实验成立（需解除红线，需用户/运维裁决）</h3>
+<p>本实验受任务书红线约束 <code>harness=cline 3.0.51 🚫 不改版本</code> 与 <code>🚫 不改源码</code>。根因 A 非配置可修，要使 subagent 真正运行，需二选一（均跨红线，故本报告未自行执行）：</p>
+<div class="grid2">
+  <div class="card">
+    <h3>路径① 升级 cline 版本</h3>
+    <p>升级到 delegated-agent 消息流已修复的版本，两臂同版本重跑 P1（8 题 smoke 确认 <code>n_msgs&gt;0</code> + <code>usage&gt;0</code>）再进 P2。</p>
+    <p class="small">代价：subagent 消融<b>内部</b>对比仍有效（全臂同版本）；但与 think×lang / compaction 基线（3.0.51）的<b>跨实验</b>对比需加版本差异注释。</p>
+  </div>
+  <div class="card">
+    <h3>路径② 原地修补 3.0.51 源码</h3>
+    <p>保留 3.0.51 版本号，修补 <code>session-runtime-orchestrator.ts</code> 约 :1080 <code>runtime.run("")</code> 路径，确保 <code>initialMessages</code> 真正送达网关。保留版本可比性但改动 harness 源码。</p>
+    <p class="small">代价：跨红线「不改源码」；需回归测试主 agent 行为不受影响。</p>
+  </div>
+</div>
+<p>无论走哪条，修复后<b>必须先 1 题 smoke</b> 确认 subagent session <code>n_msgs&gt;0</code> + <code>usage&gt;0</code> + <code>finishReason=completed</code>，再重跑 P1 8 题，方可进 P2。</p>
+
+<!-- ===================== 9. 附录 ===================== -->
+<h2 id="s9">九、附录：证据索引与可复现性</h2>
+
+<h3>9.1 数据产物索引</h3>
+<table>
+  <tr><th>产物</th><th>路径</th><th>说明</th></tr>
+  <tr><td>go/no-go 决策书</td><td><code>run/subagent_pilot_go_nogo.md</code></td><td>决策 + 证据 + root cause + 下一步</td></tr>
+  <tr><td>结果 JSON</td><td><code>run/ablation_subagent_results.json</code></td><td>9 臂 pilot + go_nogo + subagent_execution_audit（per-arm 100% error）</td></tr>
+  <tr><td>cost JSON</td><td><code>run/cost_S_{A1,B1,B2,B3,B4,B5,C1,C2}_r1.json</code></td><td>每臂 spawn 调用 / 主子 token / 墙钟 / 完成率</td></tr>
+  <tr><td>臂 data-dir 生成器</td><td><code>run/setup_subagent_arm_dirs.py</code></td><td>9 臂独立 cline --data-dir + researcher.yaml + providers.json</td></tr>
+  <tr><td>编排脚本</td><td><code>run/run_subagent_ablation.sh</code></td><td>逐臂串行 pilot 编排</td></tr>
+  <tr><td>子集清单</td><td><code>run/subagent_pilot8.txt</code></td><td>8 题 pilot 子集（compaction_subset_40 前 8 行）</td></tr>
+  <tr><td>trace</td><td><code>/tmp/zhulong_subagent_eval/&lt;batch&gt;/trace/</code></td><td>每臂 batch 的 subagent tool_use→tool_result + agent_*.messages.json（n_msgs=0）</td></tr>
+</table>
+
+<h3>9.2 cline 源码证据</h3>
+<pre><code>/nasdata/app.e0031982/code/cline/sdk/packages/core/src/extensions/tools/team/
+  configured-agent-tool.ts   :133-143 buildAgentRuntimeConfig（仅覆盖 providerId/modelId/maxIter）
+                            :198      subAgent.run(input.prompt)
+  configured-agent-config.ts :8-16    frontmatter schema（无 apiKey/baseUrl 字段）
+  delegated-agent.ts         :149-158 createDelegatedAgent → new SessionRuntime(config)
+  subagent-prompts.ts        :23-41   buildSubAgentSystemPrompt
+/nasdata/.../runtime/orchestration/session-runtime-orchestrator.ts
+                            :721-736  run(userMessage)
+                            :938-950  appendMessage(user)  ← 应注入 user 消息
+                            :1003-1005 initialMessages = messagesToAgentMessages(getMessages())
+                            :1080     runtime.run("")     ← 空串，靠 initialMessages 种子</code></pre>
+
+<h3>9.3 关键对照证据（根因 A = 代码 bug 的决定性证据）</h3>
+<pre><code># B1 subagent 臂 providers.json  vs  compaction-basic（主 agent 正常）providers.json —— 逐字节一致
+lastUsedProvider: openai-compatible
+  profile=openai-compatible:
+    provider   = openai-compatible
+    model      = deepseek-v4-pro-cloud
+    baseUrl    = http://agi-gateway.cxmt.com/cloud/v1
+    apiKey     = 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37...（同一把 key）
+# 同 provider / 同 key / 同 model / 同 baseUrl：主 agent 正常，subagent 发空 messages
+# → 缺陷在 delegated-agent 代码路径，非配置</code></pre>
+
+<h3>9.4 红线遵守情况</h3>
+<table>
+  <tr><th>红线</th><th>状态</th></tr>
+  <tr><td>不改 benchmark / 评分器</td><td><span class="badge b-ok">遵守</span></td></tr>
+  <tr><td>不删旧结果与 trace</td><td><span class="badge b-ok">遵守</span>（trace 全留存）</td></tr>
+  <tr><td>不与 designflow 并发抢沙盒</td><td><span class="badge b-ok">遵守</span>（沙盒全 FREE，无并发）</td></tr>
+  <tr><td>不 kill 编排器 / loop</td><td><span class="badge b-ok">遵守</span>（loop/relay 未运行）</td></tr>
+  <tr><td>不把 proxy/reward 当能力（真实裁判=Pass@1）</td><td><span class="badge b-ok">遵守</span></td></tr>
+  <tr><td>不擅自升级 cline / 改源码（3.0.51 锁定）</td><td><span class="badge b-ok">遵守</span>（仅调查只读，未改动）</td></tr>
+  <tr><td>不包装成增益（差异&lt;3pp 写「证据不足」）</td><td><span class="badge b-ok">遵守</span>（如实写「机制不可用」）</td></tr>
+</table>
+
+<hr class="hr">
+<p class="small">本报告由 ZhuLong 推进 agent 生成（2026-11-14）。负结果报告——cline 3.0.51 configured subagent 机制不可用，H1/H2/H3 无法检验。如需解除 harness 版本红线以重跑，请下达新令。</p>
+
+</div>
+</body>
+</html>
