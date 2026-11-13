@@ -249,8 +249,16 @@ CLI 解析 bug 1 题 | <strong>真能力差仅 5 题</strong> (其中 3 题所�
 <p><strong>交叉对照</strong>: cline 失败但 pi/opencode 通过的 31 题中, <strong>28 题 (90%)</strong>
 = cline 全部 trial 均额度耗尽 (零机会), 仅 2 题为真能力差。</p>
 <p><strong>根因链</strong>: cline 适配器无 retry/backoff → 网关额度耗尽 → cline 收到错误退出 →
-verifier 无输出文件 → reward=0。cline 在 10 小时集中跑完 89 题 (11:51-21:39), 时间窗与额度耗尽期
+verifier 无输出文件 → reward=0。cline 在 10 小时集中跑完 89 题 (12:08-21:40), 时间窗与额度耗尽期
 高度重叠; 而 opencode 跨 40 小时、pi 跨 31 小时且有 167 次重试 → 额度有补充窗口。</p>
+<table style="margin:8px 0;font-size:0.9em"><tr><th>路</th><th>总results</th><th>unique tasks</th><th>rerun factor</th><th>quota hits</th><th>unique pass%</th></tr>
+<tr><td>cline</td><td>90</td><td>90</td><td><strong>1.0x (无重试)</strong></td><td>65</td><td>10/90=11.1%</td></tr>
+<tr><td>pi</td><td>180</td><td>91</td><td><strong>2.0x (每题重跑)</strong></td><td>17</td><td>27/91=29.7%</td></tr>
+<tr><td>opencode</td><td>120</td><td>91</td><td><strong>1.3x (部分重跑)</strong></td><td>31</td><td>33/91=36.3%</td></tr>
+</table>
+<p style="font-size:0.85em">↑ rerun factor = 总results / unique tasks。cline <strong>从不重试</strong> (1.0x),
+pi <strong>每题跑2次</strong> (2.0x, 89/91题有rerun), opencode <strong>29题重跑</strong> (1.3x)。
+pi/opencode 在额度恢复后重跑成功 → pass率高; cline 无重试 → 额度耗尽即永久失败。</p>
 <p><strong>与 SWE-bench Verified 74.8% 一致</strong>: SWE-bench 跨多天跑 323 题, 额度有补充;
 TB-2.1 集中 10 小时, 额度无补充 → 同模型不同额度环境。</p>
 <p><strong>修复建议</strong>: ① cline 适配器增加 quota-error retry-with-backoff;

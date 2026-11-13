@@ -1,16 +1,16 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 R2385 2026-11-13 17:37</title><style>body{font-family:"Microsoft YaHei",sans-serif;margin:20px;max-width:960px}h1{color:#1a237e}h2{color:#283593;border-bottom:2px solid #e0e0e0;padding-bottom:4px}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #bbb;padding:6px 10px;text-align:left}th{background:#e3f2fd}.green{color:#2e7d32;font-weight:bold}.red{color:#c62828}.summary{background:#f5f5f5;padding:12px;border-radius:6px;margin:10px 0}code{background:#f5f5f5;padding:2px 4px;border-radius:3px}</style></head><body>
-<h1>cline 专项报告 R2385 2026-11-13 17:37</h1>
-<div class="summary"><strong>TL;DR</strong>: cline SWE-bench Verified eval = <span class="green">244/326 = 74.8%</span> (eval全量完成,0 backlog)。predict 323/500, real 323/323=100.0%, empty=<span class="red">0</span>(0.0%,cleanup后)。网关200(正常), infra=0。空patch已cleanup删除(R2062分类:59%网关429,非resume bug)。cline vs opencode差距=8.3%=能力差(opencode=498/414=83.1%)。TB-2.1:740trials/100passed。eval全量完成:7/7 DONE(cline→codex→opencode→cc→pi→hermes→dsh,1808 resolved)。</div>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline 专项报告 R2386 2026-11-13 17:49</title><style>body{font-family:"Microsoft YaHei",sans-serif;margin:20px;max-width:960px}h1{color:#1a237e}h2{color:#283593;border-bottom:2px solid #e0e0e0;padding-bottom:4px}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #bbb;padding:6px 10px;text-align:left}th{background:#e3f2fd}.green{color:#2e7d32;font-weight:bold}.red{color:#c62828}.summary{background:#f5f5f5;padding:12px;border-radius:6px;margin:10px 0}code{background:#f5f5f5;padding:2px 4px;border-radius:3px}</style></head><body>
+<h1>cline 专项报告 R2386 2026-11-13 17:49</h1>
+<div class="summary"><strong>TL;DR</strong>: cline SWE-bench Verified eval = <span class="green">244/326 = 74.8%</span> (eval全量完成,0 backlog)。predict 325/500, real 324/325=99.7%, empty=<span class="red">1</span>(0.3%,cleanup后)。网关200(正常), infra=0。空patch已cleanup删除(R2062分类:59%网关429,非resume bug)。cline vs opencode差距=8.3%=能力差(opencode=498/414=83.1%)。TB-2.1:740trials/100passed。eval全量完成:7/7 DONE(cline→codex→opencode→cc→pi→hermes→dsh,1808 resolved)。</div>
 <h2>C1 独立统计</h2>
 <table><tr><th>指标</th><th>数值</th><th>说明</th></tr>
-<tr><td>predict 总数</td><td>323/500</td><td>64.6%</td></tr>
-<tr><td>real patch</td><td>323</td><td><span class="green">100.0%</span></td></tr>
-<tr><td>empty patch</td><td>0</td><td><span class="red">0.0%</span> (none)</td></tr>
+<tr><td>predict 总数</td><td>325/500</td><td>65.0%</td></tr>
+<tr><td>real patch</td><td>324</td><td><span class="green">99.7%</span></td></tr>
+<tr><td>empty patch</td><td>1</td><td><span class="red">0.3%</span> (django__django-13568)</td></tr>
 <tr><td>eval resolved</td><td>244</td><td>已通过(eval全量完成)</td></tr>
 <tr><td>eval evaluated</td><td>326</td><td>326/326 real patches全部评测完成</td></tr>
 <tr><td>eval pass rate</td><td>74.8%</td><td>244/326</td></tr>
 <tr><td>TB-2.1 done</td><td>89</td><td>10 passed=11.2%</td></tr></table>
-<p>复算命令: <code>ls predictions_glm53/cline-patched__*.json|wc -l</code> -> 323; <code>python3 -c "import json; d=json.load(open('reports/eval_glm53_cline-patched.json')); print(len(d['resolved']),'/',d['n'])"</code> -> 244/326</p>
+<p>复算命令: <code>ls predictions_glm53/cline-patched__*.json|wc -l</code> -> 325; <code>python3 -c "import json; d=json.load(open('reports/eval_glm53_cline-patched.json')); print(len(d['resolved']),'/',d['n'])"</code> -> 244/326</p>
 <h2>C2 失败原因分类 (§10:10 · 7类 · 占比和=100%)</h2>
 <table><tr><th>类别</th><th>数量</th><th>占比</th><th>说明</th></tr>
 <tr><td>能力</td><td>66</td><td>100.0%</td><td>real patch但eval测试未通过 / agent未生成有效patch(能力差距)</td></tr>
@@ -37,14 +37,14 @@
 [run_single] cleanup: git reset --hard 851dadeb0338403e5021c3fbe80cbc9127ee672d
 </code></td></tr></table>
 <h2>C3 resume 修复确认</h2>
-<p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">0.0%</span>(0/323,cleanup后)。剩余空patch主因为网关额度429历史(R2062分类),<strong>非resume bug</strong>。网关200(正常),predict进行中。根因: 网关quota耗尽(59%)+超时(15%)+能力/适配器(26%),非resume判定问题。前8个空patch实例: none。</p>
+<p>R1733 resume fix(size>50B->model_patch非空)已生效。空patch从51.5%降至<span class="red">0.3%</span>(1/325,cleanup后)。剩余空patch主因为网关额度429历史(R2062分类),<strong>非resume bug</strong>。网关200(正常),predict进行中。根因: 网关quota耗尽(59%)+超时(15%)+能力/适配器(26%),非resume判定问题。前8个空patch实例: django__django-13568。</p>
 <h2>cline与其他路对比 (SWE-bench Verified glm-5.3-flash)</h2>
 <table><tr><th>Route</th><th>Resolved</th><th>Evaluated</th><th>Pass%</th><th>Predict</th><th>Real%</th></tr>
 <tr><td>hermes</td><td>435</td><td>480</td><td>90.6%</td><td>480</td><td>100.0%</td></tr>
 <tr><td>opencode</td><td>414</td><td>498</td><td>83.1%</td><td>498</td><td>100.0%</td></tr>
 <tr><td>claude-code</td><td>275</td><td>334</td><td>82.3%</td><td>327</td><td>100.0%</td></tr>
 <tr><td>deepseek</td><td>141</td><td>175</td><td>80.6%</td><td>175</td><td>100.0%</td></tr>
-<tr><td>cline</td><td>244</td><td>326</td><td>74.8%</td><td>323</td><td>100.0%</td></tr>
+<tr><td>cline</td><td>244</td><td>326</td><td>74.8%</td><td>325</td><td>99.7%</td></tr>
 <tr><td>pi</td><td>209</td><td>286</td><td>73.1%</td><td>291</td><td>99.7%</td></tr>
 <tr><td>codex</td><td>90</td><td>142</td><td>63.4%</td><td>136</td><td>99.3%</td></tr></table>
 <p><strong>差距分析</strong>: cline(74.8%) vs opencode(83.1%)=8.3%。<strong>eval全量完成</strong>(cline 326条 vs opencode 414条,均已全量eval),pass%可直接对比。归因红线: ① eval infra=1(infra=0,无infra干扰) ② 空patch已cleanup(网关429历史产生后删除,非能力) ③ cline eval 326条real patches已全量评测 ④ 81条有real patch未resolve=能力差 -> <strong>pass rate差距=8.3%为能力差(p=6.27e-08,R1685)</strong>。eval 1808 resolved(0 true backlog·网关200(正常)·predict进行中)。</p>
@@ -67,8 +67,16 @@ CLI 解析 bug 1 题 | <strong>真能力差仅 5 题</strong> (其中 3 题所�
 <p><strong>交叉对照</strong>: cline 失败但 pi/opencode 通过的 31 题中, <strong>28 题 (90%)</strong>
 = cline 全部 trial 均额度耗尽 (零机会), 仅 2 题为真能力差。</p>
 <p><strong>根因链</strong>: cline 适配器无 retry/backoff → 网关额度耗尽 → cline 收到错误退出 →
-verifier 无输出文件 → reward=0。cline 在 10 小时集中跑完 89 题 (11:51-21:39), 时间窗与额度耗尽期
+verifier 无输出文件 → reward=0。cline 在 10 小时集中跑完 89 题 (12:08-21:40), 时间窗与额度耗尽期
 高度重叠; 而 opencode 跨 40 小时、pi 跨 31 小时且有 167 次重试 → 额度有补充窗口。</p>
+<table style="margin:8px 0;font-size:0.9em"><tr><th>路</th><th>总results</th><th>unique tasks</th><th>rerun factor</th><th>quota hits</th><th>unique pass%</th></tr>
+<tr><td>cline</td><td>90</td><td>90</td><td><strong>1.0x (无重试)</strong></td><td>65</td><td>10/90=11.1%</td></tr>
+<tr><td>pi</td><td>180</td><td>91</td><td><strong>2.0x (每题重跑)</strong></td><td>17</td><td>27/91=29.7%</td></tr>
+<tr><td>opencode</td><td>120</td><td>91</td><td><strong>1.3x (部分重跑)</strong></td><td>31</td><td>33/91=36.3%</td></tr>
+</table>
+<p style="font-size:0.85em">↑ rerun factor = 总results / unique tasks。cline <strong>从不重试</strong> (1.0x),
+pi <strong>每题跑2次</strong> (2.0x, 89/91题有rerun), opencode <strong>29题重跑</strong> (1.3x)。
+pi/opencode 在额度恢复后重跑成功 → pass率高; cline 无重试 → 额度耗尽即永久失败。</p>
 <p><strong>与 SWE-bench Verified 74.8% 一致</strong>: SWE-bench 跨多天跑 323 题, 额度有补充;
 TB-2.1 集中 10 小时, 额度无补充 → 同模型不同额度环境。</p>
 <p><strong>修复建议</strong>: ① cline 适配器增加 quota-error retry-with-backoff;
@@ -88,17 +96,17 @@ trace 含「本次Token额度已用完」原文 + iterations=1/0 tokens; 对照 
 <tr><td>claude-code</td><td>0</td><td>89</td><td>0.0%</td></tr></table>
 <p>TB-2.1总计: 100 passed/740 trials。7-way concurrent。</p>
 <h2>C4 本轮小结</h2>
-<p>predict 323/500(323r/0e=100.0%real) | eval 244/326(74.8%,real patches全量评测,0 true backlog) | 空patch 0(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(正常·predict进行中) | 失败top1=能力差(real patch但tests fail,81条) | 7路alive(predict进行中) | TB-2.1 740trials/100pass | eval 1808 resolved(0 true backlog) | R2385</p>
+<p>predict 325/500(324r/1e=99.7%real) | eval 244/326(74.8%,real patches全量评测,0 true backlog) | 空patch 1(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(正常·predict进行中) | 失败top1=能力差(real patch但tests fail,81条) | 7路alive(predict进行中) | TB-2.1 740trials/100pass | eval 1808 resolved(0 true backlog) | R2386</p>
 <h2>ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
-<div class="summary"><strong>SWE-bench Verified(500题×7路)</strong>：~19天(瓶颈=codex,364剩余@19/天)（预计 2026-12-02）<br>
+<div class="summary"><strong>SWE-bench Verified(500题×7路)</strong>：~20天(瓶颈=codex,364剩余@19/天)（预计 2026-12-03）<br>
 <strong>Terminal-Bench 2.1(89题×7路)</strong>：100p/740t, 7路≥89tasks → 已交付</div>
 <table><tr><th>路</th><th>Predict</th><th>剩余</th><th>3日均速</th><th>今日速</th><th>ETA</th></tr>
-<tr><td>cline</td><td>323/500</td><td>177</td><td>47/天</td><td>41/天</td><td>~4天(≈11-17)</td></tr>
-<tr><td>codex</td><td>136/500</td><td>364</td><td>19/天</td><td>20/天</td><td>~19天(≈12-02)</td></tr>
-<tr><td>opencode</td><td>498/500</td><td>2</td><td>41/天</td><td>1/天</td><td>~0天(≈11-13)</td></tr>
-<tr><td>claude-code</td><td>327/500</td><td>173</td><td>56/天</td><td>65/天</td><td>~3天(≈11-16)</td></tr>
+<tr><td>cline</td><td>325/500</td><td>175</td><td>47/天</td><td>43/天</td><td>~4天(≈11-17)</td></tr>
+<tr><td>codex</td><td>136/500</td><td>364</td><td>19/天</td><td>20/天</td><td>~20天(≈12-03)</td></tr>
+<tr><td>opencode</td><td>498/500</td><td>2</td><td>41/天</td><td>0/天</td><td>DONE(500attempted,empty=能力,今日0产出)</td></tr>
+<tr><td>claude-code</td><td>327/500</td><td>173</td><td>55/天</td><td>64/天</td><td>~3天(≈11-16)</td></tr>
 <tr><td>pi</td><td>291/500</td><td>209</td><td>48/天</td><td>48/天</td><td>~4天(≈11-18)</td></tr>
-<tr><td>hermes</td><td>480/500</td><td>20</td><td>41/天</td><td>31/天</td><td>~0天(≈11-14)</td></tr>
+<tr><td>hermes</td><td>480/500</td><td>20</td><td>40/天</td><td>30/天</td><td>~0天(≈11-14)</td></tr>
 <tr><td>deepseek</td><td>175/500</td><td>325</td><td>9/天</td><td>0/天</td><td>DONE(500attempted,empty=能力,今日0产出)</td></tr>
 </table>
 <p style="font-size:0.85em;color:#888">复算：ETA=剩余÷3日均速(文件mtime统计)。DONE=500attempted,empty=能力。网关200(正常)。</p>
@@ -108,5 +116,5 @@ trace 含「本次Token额度已用完」原文 + iterations=1/0 tokens; 对照 
 <li><strong>假设</strong>: cline空patch主因=网关429(59%) -> <strong>已验证</strong>: 网关429历史,空patch由429产生后cleanup删除,网关已恢复200</li>
 <li><strong>结论</strong>: cline eval pass rate 74.8%为稳态值(eval 326条real patches全量评测,0 true backlog) -> cline vs opencode差距=8.3%为能力差(p=6.27e-08)</li>
 <li><strong>进行中</strong>: predict 7路推进至500(网关200(正常)·predict进行中) + TB-2.1 7路推进 + incr_eval R2124(15 instances增量eval)</li></ol>
-<hr><p style="color:#888;font-size:0.85em">报告生成: 2026-11-13 17:37 | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | R2385: 网关200(正常)+predict 323/500+eval 244/326(全量完成)+空patch 0(cleanup后)+TB-2.1 100/740+eval 1808 resolved(0 true backlog)</p>
+<hr><p style="color:#888;font-size:0.85em">报告生成: 2026-11-13 17:49 | 口径: SWE-bench Verified 500 backbone=glm-5.3-flash 7-way | TB-2.1/89tasks/7way concurrent<br>命名纪律: 正文一律写cline | R2386: 网关200(正常)+predict 325/500+eval 244/326(全量完成)+空patch 1(cleanup后)+TB-2.1 100/740+eval 1808 resolved(0 true backlog)</p>
 </body></html>

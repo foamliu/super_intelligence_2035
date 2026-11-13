@@ -28,19 +28,10 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-13 15:5x（**排查 TB-2.1 cline 低分根因**）· 用户直令 · 最高优先 · 未完成
+### ✅ §用户令 · 2026-11-13 15:5x（**排查 TB-2.1 cline 低分根因**）· ✅ 已交付（R2386）
 
-> **用户原话**：「harness：TB-2.1 cline分数这么低吗，安排harness去排查一下，看看根因。」
-
-**背景（先读，别重复统计）**：TB-2.1 7 路里 cline 只有 **10/89 = 11.2%**（已完成），而同 backbone（glm-5.3-flash）的 pi=36p、opencode=35p、deepseek=11p，cline 明显偏低、与它在 **SWE-bench Verified 上的 74.8% 高度不一致**。这个「用 cline harness 跑 TB 反而垫底」的反常，是本轮要查的核心。
-
-**立即执行**：
-
-1. **先确认分母与口径**：核实 cline 在 TB-2.1 的 10/89 里，89 题是否全部真跑满（有无 eval 缺口 / /tmp 被清理导致 Evaluated<89）；对照 pi/opencode 的 36/35 是否同口径、同题集、同 verifier。若口径不可比，先把不可比性说清楚，别急着归因「能力」。
-2. **逐题归因**：对 cline 的 10 个 passed 之外的失败题，按「适配器/工具链 infra · 网关 429 · 超时 · 空 patch（模型选择不生成）· 真能力（生成 patch 但 verifier 判 fail）· docker/环境」逐条分类，留下 trace 证据 + top3 样本原文。**特别查**：提前已知的坑——`launcher 缺 export TB_API_KEY`、`codex tb 84err=适配器(wire_api)`、`cc docker down`，看 cline 是否踩了同类 infra 坑而没被当成「能力差」。
-3. **对照 pi/opencode 的成功 trace**：抽 cline 失败的若干题，看 pi/opencode 在这些题上是怎么过的，差异在 harness 调用方式 / 环境 / 提交内容，给出**可检验假设**（如：cline adapter 对 Terminal-Bench 的 workspace/shell 语义不兼容、或 cline 的 auto-approve 导致 patch 未落盘）。
-4. **不要改评测协议、不要重跑全量**：先定位、给出根因结论与修复建议（是否值得 rerun cline 一路）；结论要能追到 trace 文件路径。
-5. **落盘**：`MEMORY_HARNESS.md` 心跳第一行写 cline TB-2.1 根因结论一句话 + 双报告（或 cline special 报告）增补 TB-2.1 归因小节；保持 `WAITING=0`。
+> **根因结论**：cline TB-2.1 = 10/89 = 11.2% 低分 **非模型能力**。主因 = **网关 Token 额度耗尽**（「本次Token额度已用完，请等待X分钟后重试」）占 80 失败中 **65 题 (81%)**，cline run_result finishReason=error / iterations=1 / tokens=0 → 零工作 → reward=0。**cline 适配器无 retry/backoff**（rerun factor=1.0x），而 pi=2.0x（每题重跑）、opencode=1.3x（部分重跑）→ 额度恢复后重跑成功。公平通过率 10/25=40%。修复建议：① 适配器加 quota-error retry-with-backoff；② 额度充足时单独 rerun（预计 ~30-40%）。**值得 rerun**。
+> **证据**：`/tmp/tb21_glm53_jobs/cline-patched/` 下 90 个 result.json 逐题分析；trace 含「本次Token额度已用完」原文；rerun factor 对照 pi/opencode。双报告已增补 TB-2.1 归因小节（含 rerun factor 对比表）。
 
 ---
 
