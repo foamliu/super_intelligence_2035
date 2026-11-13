@@ -8642,3 +8642,61 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 - 诚实负结果：符合用户令第 4 条「若 GRPO 无提升/退化…如实记录…最终结论本身就是交付物」。本轮结论 = **当前 env 下 verl 0.4.0 1-GPU hybrid RL 起不来**，已定位根因与解除路径。
 
 **数据溯源**：8 份 /tmp smoke 日志 + 2 个 ray session 日志（`/tmp/ray/session_2026-11-13_14-42-47_*`[已清理] / `session_2026-11-13_15-25-42_*`[已清理]）+ `nvidia-smi` 实测 + `pip list` 实测 + verl 源码（`fsdp_workers.py` L384-469 / `main_ppo.py` L70 / `vllm_utils.py` L51 / `naive_rollout.py`）。无伪造。
+
+
+---
+
+## §R410 — wake410 (2026-11-13 16:0x–16:3x): 1-GPU hybrid RL 根因精确定位 + config-path bug 修复
+
+> 🔴 用户令 2026-11-13 13:3x「RL 不再等 BaiZe 基模，直接在 MiniCPM5-2B 上 RL」。wake409 报 RL BLOCKED（1-GPU hybrid colocated init 挂死，8 次 smoke）。本轮目标：精确定位 1-GPU 挂死根因，尝试解除。
+
+### 1. 🔧 config-path bug 修复（R-launch-fix2）— ✅ 已修并验证
+
+**问题**：wake409 的 8 次 smoke 全部用 verl 内建 `ppo_trainer` 默认配置（`--config-name ppo_trainer`），项目配置（`smoke_hf.yaml` / `v2_merged`，含 `attn_implementation: sdpa`、`hybrid_engine` 等）**从未被加载**。wake409 末尾加的 R-launch-fix 改成 `--config-path "$CFG_DIR" --config-name "$CFG_NAME"`，但当 `--config` 传**相对路径**时 `CFG_DIR="."`，而 Hydra 把相对 `--config-path` 解析到 `@hydra.main` 装饰器的 package 目录（`pkg://verl.trainer`）而非 CWD → `Cannot find primary config 'baize_posttrain_rl_smoke_hf'`（16:02 尝试即此错，24s 快速失败）。
+
+**修复**：`baize_posttrain_rl_grpo_surrogate.sh` L303 改 `CFG_DIR="$(cd "$(dirname "$CONFIG_FILE")" && pwd)"`（强制绝对路径）。
+
+**验证**：重跑 smoke，log 显示 `--config-path /nas_data/.../run`（绝对），TaskRunner 内打印完整解析后的项目配置（含 `attn_implementation: sdpa`、`ray_wait_register_center_timeout: 1800`、`total_training_steps: 10`、reward fn 路径）→ 项目配置**确实加载成功**。这是**任何后续 RL 起跑（含 2-GPU）的前提修复**：不修则 verl 退回 flash_attention_2 默认 → FSDP init 在 CPU meta tensor 上崩溃 → worker 静默退出 → 表象同「register-center 挂死」。
+
+### 2. 1-GPU hybrid 挂死根因（精确，2 次复现）— 🔴 verl 0.4.0 1-GPU hybrid GRPO 不可行
+
+两次 smoke（GPU7，HF/NaiveRollout，sdpa，ctx 512/256，batch 8，G=4，10 步）均复现同一挂死：
+
+| 运行 | 配置 | WorkerDict PID | 现象 | 持续 |
+|:--|:--|:--|:--|:--|
+| run1 (with-KL) | use_kl_loss=True | 1651543 | RSS 恒 682568 kB、wchan=hrtimer_nanosleep、GPU7 恒 3 MiB、TaskRunner 卡 "Waiting for register center ... Elapsed 0s" | 302s+（被 kill） |
+| run2 (no-KL) | use_kl_loss=False | 1693790 | RSS 恒 681764 kB、wchan=hrtimer_nanosleep、GPU7 恒 3 MiB、同样卡 register-center | 215s+（被 kill） |
+
+**关键证据（raylet state-dump）**：`/tmp/ray/session_latest/logs/raylet.out` 的 state-dump 显示 WorkerDict 的 Ray 资源**已分配**（`available: {GPU: 0, GPU_group_*: 0}` = 已被 worker 占用）→ **不是 Ray 调度死锁**。WorkerDict 持有 GPU 资源，但 `__init__` 卡在「资源授予之后、模型加载之前」：RSS 仅 ~682 MB（torch+verl 已 import，4.7 GB 模型未加载），GPU 显存 0（未到 CUDA alloc），主线程睡在 `hrtimer_nanosleep`（某个 `time.sleep` 轮询/重试循环）。
+
+**挂死位置**：`verl/single_controller/ray/base.py` register-center 等待循环（`while time.time()-start < timeout: list_named_actors(); time.sleep(1)`）+ WorkerDict `__init__` 内的握手。register-center actor **已创建**（`ray::WorkerGroupRegisterCenter` 存在），但 TaskRunner 的 `list_named_actors()` 一直找不到 / WorkerDict 一直未完成注册 → 双方互等 → 1-GPU 单 colocated 进程下的握手死锁。
+
+**排除的假设**：
+- ❌ 「慢 NFS init」（wake410 早起假设）：RSS 5+ 分钟恒定不动，且 Ray 资源已授予——不是在慢加载，是真的卡死。
+- ❌ 「KL ref policy 招致第 2 个 GPU bundle」（本轮假设）：no-KL 运行**同样**卡死，2 次 raylet dump 都见 `GPU_group` + `GPU_group_0` 两组（colocated WorkerDict 自身分配 2 bundle，与 KL 无关）。`main_ppo.py:131` 的 ref-policy 路径不是根因。
+- ❌ 「flash_attention_2 崩溃」：本轮已加载 sdpa 配置，仍卡死——崩溃说不成立（且无 traceback）。
+
+**结论**：**verl 0.4.0 hybrid engine 在单 GPU（n_gpus_per_node=1）下 GRPO 不可行**——colocated WorkerDict 的 register-center / 进程组握手在 1-GPU 单进程下死锁。`py-spy dump` 因 ptrace 权限被拒（`Permission Denied`），未能取到 Python 栈精确定位到具体 `time.sleep` 行，但 wchan + RSS + raylet dump 已足够定性。
+
+### 3. 解除路径（按可行性）
+
+1. **≥2 GPU（最稳，推荐）**：等 L4 eval 跑完释放 GPU4/5/6 之一 → 用 2 GPU（如 GPU6+GPU7）跑 `hybrid_engine: True`（2 bundle 可满足）或非 hybrid。**R-launch-fix2 已就位，2 GPU 起跑即用本项目配置（sdpa）。**
+2. 修 1-GPU hybrid 握手：需 root 跑 py-spy 取 WorkerDict Python 栈，定位 `__init__` 内具体卡点（疑 `init_process_group` world_size=1 路径或 register-center `list_named_actors` namespace 问题），工作量大。
+3. 换 RL 框架（trl GRPO / 自写 rollout-loop，脱离 verl ray colocated 架构）。
+
+### 4. 本轮产物
+
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| config-path 修复 | `run/baize_posttrain_rl_grpo_surrogate.sh` L303（R-launch-fix2） | `CFG_DIR` 强制绝对路径；RL 起跑前提修复 |
+| smoke_hf.yaml 更新 | `run/baize_posttrain_rl_smoke_hf.yaml` L74（use_kl_loss:False + wake410 诊断注释）、L~149（ray_wait_register_center_timeout:1800 + wake410 slow-init 假设注释） | no-KL 测试结果 + 根因记录 |
+| 本节诊断 | `EXPERIMENTS_POSTTRAIN.md` §R410 | 2 次复现 + raylet dump 证据 + 排除假设 |
+| smoke 日志 | `/tmp/wake410_rl_smoke_hf.log`（with-KL）、`/tmp/wake410_rl_smoke_nokl.log`（no-KL） | 失败证据（/tmp） |
+
+### 5. 边界与纪律
+
+- 仅写本线文件（surrogate 脚本 + smoke_hf.yaml + EXPERIMENTS §R410 + MEMORY + daily）。
+- 红线：未碰 GPU0-3；未碰 158 任务数据；未拆 eval serve（GPU4/5/6 L4 eval 在跑，step105 run4/5）；未 `git add -A`。
+- GPU7：用后已 kill 全部 smoke 进程 + ray 清理，GPU7=3 MiB 空闲；仅余 2 个无 GPU 占用的 Ray helper（DashboardAgent/RuntimeEnvAgent，会自行退出）。
+- 诚实负结果：1-GPU hybrid RL 起不来已精确定位（非调度死锁，是 init 握手死锁），与 wake409 结论一致但根因更准。RL 起跑待 ≥2 GPU。
+

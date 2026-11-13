@@ -45,7 +45,7 @@ SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 VERL_PY="$HOME/code/verl_cu124_venv/bin/python"
 VERL_TORCHRUN="$HOME/code/verl_cu124_venv/bin/torchrun"
 BASE_MODEL="/nas_data/app.e0031982/models/MiniCPM5-2B"
-CONFIG_FILE="$SCRIPT_DIR/baize_posttrain_rl_verl_config_v2.yaml"
+CONFIG_FILE="$SCRIPT_DIR/baize_posttrain_rl_verl_config_v2_merged.yaml"
 RL_DATA="$SCRIPT_DIR/rl_pyaether_synth_v2.parquet"
 HOOKS_CONFIG="$SCRIPT_DIR/baize_posttrain_hooks_config.yaml"
 # R337 (2026-11-12): sandbox now reachable via SSH tunnel (dual-nix-tunnel port 3333
@@ -291,7 +291,24 @@ export SANDBOX_HOST="$SANDBOX_HOST"
 export SANDBOX_PORT_HTTP="$SANDBOX_PORT"
 
 HOOKS_FLAG=""
-if [ $HOOKS = 1 ]; then HOOKS_FLAG="trainer.hooks_config_path=$HOOKS_CONFIG"; fi
+if [ $HOOKS = 1 ]; then HOOKS_FLAG="+trainer.hooks_config_path=$HOOKS_CONFIG"; fi
+
+# R-launch-fix (2026-11-13): Load the project config (v2/v3) as the Hydra PRIMARY
+# config instead of verl's built-in `ppo_trainer.yaml`. The built-in default lacks
+# structured keys (e.g. custom_reward_function.reward_kwargs) so Hydra struct-mode
+# rejects CLI overrides like `custom_reward_function.reward_kwargs.arm=R0`. The
+# project configs are complete standalone configs (no `defaults:` list), so they can
+# serve as the primary config directly. CONFIG_FILE was previously set but never
+# passed to verl — this feeds it via --config-path/--config-name.
+# R-launch-fix2 (wake410): Hydra resolves a RELATIVE --config-path against the
+# @hydra.main decorator's package dir (verl.trainer), NOT the CWD — so a relative
+# CFG_DIR="." makes the primary config unfindable ("Cannot find primary config").
+# Force an ABSOLUTE path so the project config (with sdpa / hybrid_engine / etc.)
+# is actually loaded. Without this, verl silently falls back to its built-in
+# ppo_trainer.yaml (flash_attention_2 → crashes on CPU meta tensor during FSDP
+# init → colocated worker exits silently → looks like a "register-center hang").
+CFG_DIR="$(cd "$(dirname "$CONFIG_FILE")" && pwd)"
+CFG_NAME="$(basename "$CONFIG_FILE" .yaml)"
 
 echo ""
 echo "===== Surrogate RL/GRPO START @ $(date '+%F %T') reward=$REWARD_ARM =====" | tee "$LOG_FILE"
@@ -302,8 +319,9 @@ echo "[rl] output: $OUTPUT_DIR" | tee -a "$LOG_FILE"
 
 "$VERL_TORCHRUN" --nproc_per_node="$NGPU" --master_addr=127.0.0.1 --master_port=29831 \
   "$SCRIPT_DIR/baize_posttrain_verl_wrapper.py" \
-  --config-name ppo_trainer \
+  --config-path "$CFG_DIR" --config-name "$CFG_NAME" \
   data.train_files="$RL_DATA" \
+  data.val_files="$RL_DATA" \
   custom_reward_function.path="$SCRIPT_DIR/baize_posttrain_reward_functions.py" \
   custom_reward_function.name=compute_score \
   custom_reward_function.reward_kwargs.arm="$REWARD_ARM" \
@@ -323,7 +341,7 @@ echo "[rl] output: $OUTPUT_DIR" | tee -a "$LOG_FILE"
   trainer.project_name=baize_posttrain_rl_surrogate \
   trainer.experiment_name=minicpm5_grpo_v1 \
   trainer.default_local_dir="$OUTPUT_DIR" \
-  trainer.seed="$SEED" \
+  +trainer.seed="$SEED" \
   $HOOKS_FLAG \
   2>&1 | tee -a "$LOG_FILE"
 

@@ -7,16 +7,17 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake409（2026-11-13 R409: **RL smoke 起跑 8 次全失败→根因=verl 0.4.0 1-GPU hybrid colocated-worker init 挂死(非 rollout 引擎;sglang+hf 同构挂死)→RL 全量 BLOCKED;vLLM 未装(torch 冲突);2-GPU 绕路与在跑 L4 eval serve 冲突→诚实负结果**;L4 eval 后台继续 step105 run4/5）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-408✅;R409✅(RL smoke 8-attempt 根因诊断+smoke_hf.yaml+v2_merged 注释+EXPERIMENTS §R409)
-- 当前动作: wake409 R409:①**RL smoke 起跑 8 次全失败**(gpu7..gpu7g[sglang,前序 wake]+gpu7h[vllm]+gpu7b[hf])②**根因=verl 0.4.0 1-GPU hybrid colocated-worker init 挂死**:sglang(gpu7g)与 hf(gpu7b)用不同 rollout 引擎但在同一阶段(verl `Waiting for register center actor`)同构挂死(GPU 恒 3MiB 不分配、log 停长、进程存活、300s 超时不触发、colocated worker 无 .out 日志、ray `CoreWorker Exit 2`、bundle 已 Commit 但 worker init 中退出)⇒阻塞点在 colocated worker ray actor init 非 rollout 引擎 ③**vLLM rollout 不可行**:verl_cu124_venv 无 vllm/msgspec(vllm 0.7.3 需 torch2.5.1 与 venv torch2.6.0+cu124 冲突) ④**2-GPU 绕路**:SFT R170/R172 在 2 GPU FSDP2 成功⇒2 GPU 可绕过;但 GPU4/5/6 在跑 L4 eval serve(eval_chain step105→step60→base),拆即停 eval 违反 L4 指令;GPU7 唯一空闲 ⑤**RL 全量 BLOCKED**直到 1-GPU hybrid init 修复或 eval 完成释放 GPU ⑥smoke_hf.yaml(hf rollout,prompt512/resp256/batch8)创建+v2_merged L88 注释更新 ⑦cleanup:kill 全部 smoke 进程+ray stop+清 /tmp/ray session,GPU7=3MiB 空,3 serves UP(8098/8097/8096),eval pipeline 完整(autocomplete PID1122770+eval_chain PID1161064+recover_run4 PID1359141)
-- 下一步: ①等 L4 eval 跑完(step105/step60/base 全 5-run)释放 GPU→用 2 GPU 跑非 hybrid RL(hybrid_engine:False)绕过 1-GPU colocated init 挂死[最稳] ②或深入 verl fsdp_workers+ray actor init 加 verbose 日志定位 worker 退出点 ③zhulong 5-run eval final numbers when pipeline completes
-- 阻塞: 🔴 **RL 全量训练 BLOCKED**(verl 0.4.0 1-GPU hybrid colocated-worker init 挂死,8 次 smoke 证实,详见 EXPERIMENTS §R409);BaiZe ckpt inaccessible(在 .29/.nas_train,.17 未挂载);zhulong 5-run eval IN PROGRESS(step105 run4/5)
-- 本轮新增产出: R409✅(RL smoke 8-attempt 根因诊断[sglang+vllm+hf]+smoke_hf.yaml[hf rollout 配置]+v2_merged L88 BLOCKED 注释+EXPERIMENTS §R409[honest negative result]+MEMORY 更新+GPU7/ray cleanup)
-- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑(BLOCKED on 1-GPU hybrid init,见 §R409 下一步);L4 2026-11-12(zhulong 5-run eval IN PROGRESS run4/5;designflow base 5/5 DONE=0% delivered);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit 8347a5ae8 wake408 at origin/main,clean);本轮将交付(wake409: smoke_hf.yaml+v2_merged 注释+EXPERIMENTS §R409+MEMORY+daily)
+- PHASE: posttrain-wake410（2026-11-13 R410: **1-GPU hybrid RL 根因精确定位=verl 0.4.0 1-GPU hybrid GRPO init 握手死锁(非调度死锁,2 次复现)+config-path bug 修复(R-launch-fix2,项目配置 sdpa 现真正加载)→RL 起跑待 ≥2 GPU**;L4 eval 后台继续 step105 run4/5）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-409✅;R410✅(config-path 修复 R-launch-fix2+1-GPU 根因 2 次复现+raylet dump 证据+EXPERIMENTS §R410)
+- 当前动作: wake410 R410:①**config-path bug 修复(R-launch-fix2)**:`baize_posttrain_rl_grpo_surrogate.sh` L303 `CFG_DIR` 强制绝对路径;之前 R-launch-fix 传相对 `--config-path .` 被 Hydra 解析到 `pkg://verl.trainer`→`Cannot find primary config`;且 wake409 8 次 smoke 全用 verl 默认 ppo_trainer(flash_attn2)而非项目配置(sdpa)→修复后 log 确认项目配置真正加载(sdpa/timeout1800/reward fn)②**1-GPU hybrid 挂死 2 次复现**(GPU7,HF rollout,sdpa):with-KL(run1,PID1651543,RSS 恒682MB 302s)+no-KL(run2,PID1693790,RSS 恒681MB 215s),均 wchan=hrtimer_nanosleep,GPU7 恒3MiB,TaskRunner 卡 register-center ③**raylet state-dump 证据**:WorkerDict Ray 资源已分配(available GPU=0)→非调度死锁;卡在 __init__ 资源授予后/模型加载前(RSS 仅682MB,GPU 显存0) ④**排除假设**:慢NFS init(RSS 5min 恒定)/KL ref 2nd bundle(no-KL 同样卡)/flash_attn2 崩溃(已 sdpa 仍卡,无 traceback)均排除 ⑤py-spy dump 因 ptrace 权限被拒 ⑥cleanup:kill 全部 smoke+ray,GPU7=3MiB,eval pipeline 未动
+- 下一步: ①等 L4 eval 跑完释放 GPU4/5/6 之一→用 2 GPU(GPU6+GPU7)跑 hybrid(2 bundle 可满足)绕过 1-GPU init 死锁[最稳,R-launch-fix2 已就位] ②或 root 跑 py-spy 取 WorkerDict Python 栈定位 init 卡点 ③zhulong 5-run eval final numbers when pipeline completes
+- 阻塞: 🔴 **RL 全量训练 BLOCKED**(verl 0.4.0 1-GPU hybrid GRPO init 握手死锁,2 次复现,详见 EXPERIMENTS §R410);需 ≥2 GPU,当前 GPU4/5/6=L4 eval serve(在跑),GPU7=唯一空闲但 1-GPU 不可行;BaiZe ckpt inaccessible(.17 未挂载 /nas_train);zhulong 5-run eval IN PROGRESS(step105 run4/5)
+- 本轮新增产出: R410✅(config-path 修复 R-launch-fix2[RL 起跑前提]+1-GPU 根因 2 次复现[with/no-KL 同构]+raylet dump[非调度死锁,是 init 握手死锁]+排除 3 假设+smoke_hf.yaml use_kl_loss:False+诊断注释+EXPERIMENTS §R410+MEMORY 更新+GPU7/ray cleanup)
+- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑(BLOCKED on 1-GPU hybrid init 死锁,待 ≥2 GPU,见 §R410 下一步);L4 2026-11-12(zhulong 5-run eval IN PROGRESS run4/5;designflow base 5/5 DONE=0% delivered);13:40 SFT v39 eval→5-run eval IN PROGRESS
+- git: super_intelligence_2035(wake409 未提交:b3b9cf1e2 vision@15:57 是最新 origin/main);本轮将交付(wake410: surrogate 脚本 R-launch-fix2+smoke_hf.yaml+EXPERIMENTS §R410+MEMORY+daily)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;venv 重建后需重打此patch
-- 🔧 **RL 1-GPU hybrid 阻塞(wake409)**:verl 0.4.0 GRPO `hybrid_engine:True`+1 GPU,colocated worker(actor+ref+rollout 同 ray actor)init 在 register-center 阶段挂死(GPU 永不分配,worker 在 import/load 4.7GB ckpt 阶段退出,300s 超时不触发);sglang/hf rollout 均同构复现;解法=2 GPU 非 hybrid 或修 colocated init;详见 EXPERIMENTS §R409
+- 🔧 **RL 1-GPU hybrid 死锁(wake410 精确定位)**:verl 0.4.0 GRPO `hybrid_engine:True`+n_gpus_per_node=1,colocated WorkerDict `__init__` 在 Ray 资源授予后、模型加载前卡死(register-center 握手/进程组,wchan=hrtimer_nanosleep,RSS 恒~682MB,GPU 显存恒0);2 次复现(with/no-KL 同构)→KL 非根因;raylet dump 证资源已分配→非调度死锁;解法=≥2 GPU(hybrid 2 bundle 可满足)或修 init 握手;详见 EXPERIMENTS §R410
+- 🔧 **config-path 修复 R-launch-fix2(wake410)**:`baize_posttrain_rl_grpo_surrogate.sh` L303 `CFG_DIR="$(cd "$(dirname "$CONFIG_FILE")" && pwd)"`;Hydra 把相对 `--config-path` 解析到 `@hydra.main` package 目录而非 CWD→项目配置(sdpa/hybrid/timeout)不加载→verl 退回 flash_attn2 默认;**任何 RL 起跑(含 2-GPU)前提修复**
 
 
 
@@ -62,7 +63,7 @@ WAITING: 0
 
 ## 运维问答（常驻）
 
-- Q: post-train 现在能起训练吗？→ A: **RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。但 🔴 **RL 全量训练 BLOCKED**：verl 0.4.0 GRPO 1-GPU hybrid colocated-worker init 挂死（8 次 smoke 证实，sglang+hf 同构，详见 EXPERIMENTS §R409）；vLLM rollout 需 vllm+msgspec 未装（torch 冲突）；2-GPU 绕路与在跑 L4 eval serve 冲突。解法=等 eval 完释放 GPU 用 2 GPU 非 hybrid，或修 colocated init。SFT（替身 v39）已完成；L4 eval 在跑。
+- Q: post-train 现在能起训练吗？→ A: **RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。但 🔴 **RL 全量训练 BLOCKED**：verl 0.4.0 GRPO **1-GPU hybrid 不可行**——colocated WorkerDict `__init__` 在 Ray 资源授予后、模型加载前死锁（register-center 握手，wchan=hrtimer_nanosleep，RSS 恒~682MB，GPU 显存恒 0），2 次复现（with/no-KL 同构→KL 非根因），raylet dump 证资源已分配→非调度死锁（详见 EXPERIMENTS §R410）。✅ **config-path bug 已修（R-launch-fix2）**：项目配置（sdpa）现真正加载（之前 8 次 smoke 误用 verl flash_attn2 默认）。解法=**≥2 GPU**（hybrid 2 bundle 可满足），待 L4 eval 释放 GPU4/5/6 之一。SFT（替身 v39）已完成；L4 eval 在跑。
 - Q: 用哪台机器？→ A: post-train 线在 `10.252.32.17`（8×A40，CUDA 12.4 max）。GPU0-3=root SGLang(不可动)；GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(本轮 RL smoke 用后已清理)。
 - Q: 评测怎么接入 BaiZe？→ A: vLLM/SGLang 暴露 OpenAI-compatible endpoint → `cline auth -p openai -k <KEY> -b <BASE_URL> -m <MODEL_ID>`，harness 不改。
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
