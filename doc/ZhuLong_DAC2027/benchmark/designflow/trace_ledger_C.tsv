@@ -715,3 +715,6 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793781389038_g6wy0	cliu	hfhds209	313	physical_verify	parked		2026-11-13 10:24	r508 peek REJECT: skill-invoke tb_family+simulation on stdcells, drc/lvs keywords incidental from SV lib
 1785745498995_8c5jw	t0002638	hfeg0plg49	290	layout_aether	parked		2026-11-13 10:24	r508 peek REJECT: env-dep pyAether screenshot API exploration, sandbox unavailable
 1793005551647_i6pnk	jkxu	hfhds209	247	physical_verify	parked		2026-11-13 10:24	r508 peek REJECT: DDR5 testbench timing Q&A (A-domain verification), drc keywords incidental from tb content
+1785821933914_r0a7b	t0002638	hfeg0plg49	277	layout_aether	parked		2026-11-13 10:55	r509 peek: env-dep API exploration (pyAether print Hello debug sandbox conn)
+1793846610746_z9zx7	cliu	hfhds209	267	physical_verify	parked		2026-11-13 10:55	r509 peek: skill-invoke+sim (stdcell AC testbench, drc/lvs kw from lib content not tool exec, D-shard)
+1793002485489_j9ycq	xxchen	hfeg0pkn001	288	physical_verify	parked		2026-11-13 10:55	r509 peek: continuation (compaction_summary verify_decomp.py code-edit, not fresh produce-task)
