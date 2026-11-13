@@ -9786,3 +9786,68 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 2. 下次唤醒查 `5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / bootstrap ci。
 3. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（**平台化使此分支概率上升**）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。
 
+
+## §R433 (wake433, 2026-11-14 01:0x) — R2 200步主训 COMPLETED + 全200步奖励动力学(平台后回落) + OOM mitigation 手动 teardown GPU5(kill_gpu_serve child-PID bug) + R2 serve GPU7:8095 READY + 5-run eval RUNNING
+
+### A. R2 200步主训 COMPLETED (@01:05:36)
+
+- PID2314192 已退出(@01:05:36)；GPU7 释放 3MiB。全 200 步 log 0 OOM/error/traceback/nan/contam；~16s/step，总墙钟 ~53min。
+- log 末 3 行：
+  - `01:05:36 [INFO] grpo_loop: cheat_rate: total=1600 cheat=0 rate=0.0`
+  - `01:05:36 [INFO] grpo_loop: checkpoint saved -> .../global_step_200`
+  - `01:05:36 [INFO] grpo_loop: DONE. surrogate pre-experiment, gains NOT transferable to BaiZe. metrics -> .../metrics.jsonl`
+- metrics.jsonl 200 行落盘；首行 step1 (reward=0.0, nz=0.0, gn=0.146)；末行 step200 (reward=0.165, nz=0.75, posadv=0.75, gn=6.31, mean_ratio=1.0, ploss≈0)。
+
+### B. 全 200 步奖励动力学（grep+awk 实算，诚实读数）
+
+- 逐 25 步窗口 mean_reward：
+  - step1-25: 0.0428 (nz=0.560)
+  - step26-50: 0.0638 (nz=0.560)
+  - step51-75: 0.1033 (nz=0.600)
+  - step76-100: **0.1195 峰值** (nz=0.600)
+  - step101-125: 0.1133 (nz=0.560)  ← 平台
+  - step126-150: 0.0990 (nz=0.520)  ← 回落
+  - step151-175: 0.0993 (nz=0.520)
+  - step176-200: **0.0798** (nz=0.480)  ← 继续回落
+- overall：mean_reward=0.0901，nz=0.550（200 步）。
+- 84/200 步 posadv>0 (42%)；86/200 步 gn>1 (43%) ⇒ 真实信号 + 梯度在有信号处流动。
+- **诚实结论**：训练侧 = 真实信号 + 梯度流动（vs R0 proxy nz=0.97 塌缩 mean_ratio==1.0 ploss=0 卡死），但 reward step100 后平台/回落。**显著 eval 提升概率降低**（仍须先定后测 §5；reward↑≠Pass@1↑）。
+- 表层签名 ratio=1.000/ploss≈0 同 R0，但 grad norm 区分（R0 gn 恒 ~0.1 塌缩；R2 信号步 gn 3-8）+ lr=3e-6 小步 ⇒ R2 policy 真有微移动，R0 不动。
+
+### C. 红线绿终值
+
+- cheat_rate.json 最终：total_rollouts=1600, cheat_detected=0, cheat_rate=0.0 (n-gram8), cheat_examples=[]。
+  - 三次中间落盘：@step50 0/400、@step100 0/800、@step150 0/1200。
+- §5.1 污染 contam 0/3347（训练侧已验）。
+
+### D. global_step_200 ckpt 完整性
+
+- `global_step_200/`：model-00001-of-00002.safetensors (4.50GB) + model-00002-of-00002.safetensors (0.53GB) + model.safetensors.index.json + optimizer.pt (10.07GB) + config.json + generation_config.json + tokenizer.json + tokenizer_config.json + special_tokens_map.json。可 serve。
+- 连同 global_step_50/100/200 共 4 个 ckpt（save-freq=50 + 末步强制保存）。
+
+### E. 🔴 OOM mitigation 手动完成 + kill_gpu_serve child-PID bug 实证
+
+- autofire chain（PID2322797）@01:06:26 检测 GRPO DONE，找到 global_step_200 为 latest ckpt，eval-chain-pid 999999 sentinel 立即 skip，进入 pre-teardown GPU5。
+- **bug**：`kill_gpu_serve`（L102-118）用 `nvidia-smi --query-compute-apps=pid -i 5` 取 GPU5 占用 PID = 1802292，但其 cmd = `python -c from multiprocessing.spawn import spawn_m...`（vLLM serve 的 multiprocessing 子进程），不含 `vllm.entrypoints.openai.api_server` ⇒ 误判 skip。真正的 serve 父进程 1802143（port 8097）未被杀。
+- **后果**：GPU5 step60 serve 未被 teardown ⇒ 若不干预将出现 4 并发 serve（GPU4 base/GPU5 step60/GPU6 step105/GPU7 R2）= wake429 OOM 风险。
+- **手动修复**：`kill -TERM 1802143; sleep 5; kill -9 1802143 1802292` → GPU5 释放（39246→3MiB），port 8097 down。验证：`nvidia-smi -i 5` 无 compute-apps；`curl localhost:8097` 无响应；`ss -tlnp | grep 8097` 无 listener。
+- **bug 修法（待 chain 空闲，不编辑运行中脚本）**：取到子 PID 后 walk `ps -o ppid=` 到根沿路径 grep vllm serve；或改用 `pgrep -f 'vllm.entrypoints.openai.api_server.*--port <PORT>'`。已记入 MEMORY 🔧 区。
+
+### F. R2 serve GPU7:8095 READY + 5-run eval RUNNING
+
+- autofire chain @01:08 起 vLLM serve on GPU7 port 8095：`--model .../global_step_200 --served-model-name minicpm5-2b-grpo-R2-step200 --max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 --enable-auto-tool-choice --max-num-seqs 4`，PID2353244。
+- @01:08 curl `localhost:8095/v1/models` 实测返回 model id=minicpm5-2b-grpo-R2-step200，root=global_step_200，max_model_len=65536。GPU7=39138 MiB。
+- @01:08:13 5-run eval START：label=grpo_R2_step200，endpoint=http://127.0.0.1:8095/v1，protocol 158 tasks Pass@1 2500s -p 8 -n。run1 code-gen 已起 run_cli worker（PIDs 2354163/2354331-2354334）。
+- 完成后自动：`5run_analysis.py --compare grpo_R2_step200 step105`（McNemar + 10k paired bootstrap）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`。ETA ~13:00（~12h）。
+- 当前 3 并发 serve（GPU4 base/GPU6 step105-final baseline/GPU7 R2）= OOM 安全。
+
+### G. 红线与边界
+
+- §5.2 反作弊 cheat=0/1600 绿终值；§5.1 contam 0/3347 绿；§2/§5.3 冻结协议 eval 链复用既有 5run_eval.sh（158/Pass@1/2500s/单trace/5-run/-p8 -n，未改）。
+- 边界：本轮仅手动 kill GPU5 step60 serve（完成 chain 未竟的 OOM mitigation，该 serve 在 MEMORY 标「孤立,eval 链将 teardown」）；未编辑任何运行中脚本；未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/R2 主训进程。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### H. 下一步
+
+1. 5-run eval ~13:00 完（autofire 链自动，无需人工）→ 查 `5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / bootstrap ci。
+2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（**平台化使此分支概率上升**）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。最终结论「MiniCPM5-2B 上 RL 能否显著提升 PyAether 脚本能力」本身就是交付物。
+3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
