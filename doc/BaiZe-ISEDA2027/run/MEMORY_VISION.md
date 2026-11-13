@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🆕 **【wake #1108 · 2026-11-13 08:10】v9监控·seed0 COMPLETE(NO CHANGE: A=0% B=49.5% C=49.5% p=1.0)·seed1 GRPO起步**：seed0全量完成→**VERDICT: NO CHANGE**(C=B=49.5%·McNemar p=1.0·n_disc=0·GRPO对准确率零效果)·GRPO nz_std_summary=75%(step-by-step后期=100%但前几步有zero-std组)·reward区间0.375~0.875·**seed1(seed=20261113)RUNNING**(PID2771513/etimes~86s/Phase3 GRPO起步/复用seed0 SFT adapter)·剩余seed1(~36min)+seed2(~36min)+control(~36min)·ETA全完成≈10:00·analyze_v9就绪(待全量)·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK(behind1→up to date)·GPU 8×H100 94-100% pretrain全占·体积✓(MEMORY 13.8KB/TASK 27KB)·**WAITING: 0**。
+> 🆕 **【wake #1109 · 2026-11-13 08:17】v9监控·seed1 GRPO step7/30·进展正常**：seed1(seed=20261113)GRPO step7/30(503s/etimes~525s)·nz_std=50%@step7(step1-4=100%)·reward=0.125@step7(波动正常)·剩余seed1(~25min GRPO+~3min eval)+seed2(~45min)+control(~45min)·ETA全完成≈10:20·seed0结果在盘(NO CHANGE A=0% B=49.5% C=49.5% p=1.0)·analyze_v9就绪·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK·GPU 8×H100 100% pretrain全占·体积✓(MEMORY 13.4KB/TASK 27KB)·**WAITING: 0**。
+
+> 📦 **wake #1108 · 2026-11-13 08:10** v9监控·seed0 COMPLETE(NO CHANGE: A=0% B=49.5% C=49.5% p=1.0)·seed1 GRPO起步·已fold(见wake#1109)。
 
 > 📦 **wake #1107 · 2026-11-13 08:05** v9监控·seed0 GRPO 30/30 DONE·Eval C进行中·已fold(见wake#1108)。
 
@@ -82,10 +84,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING (seed1/3)**：seed0 COMPLETE→**NO CHANGE**(A=0% B=49.5% C=49.5% McNemar p=1.0 n_disc=0)·GRPO对准确率零效果(有reward信号nz_std=75%但未转化为acc提升)·seed1 RUNNING(PID2771513 Phase3 GRPO起步)·剩余seed1+seed2+control ETA≈10:00 · v5✅显著(p=0.0009) · v6✅(NS) · v7✅6/6 · v8 MIXED(p=0.0312)。**WAITING: 0** |
+| PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING (seed1/3)**：seed0 COMPLETE→**NO CHANGE**(A=0% B=49.5% C=49.5% McNemar p=1.0 n_disc=0)·GRPO对准确率零效果(有reward信号nz_std=75%但未转化为acc提升)·seed1 RUNNING(PID2771513 GRPO step7/30)·剩余seed1+seed2+control ETA≈10:20 · v5✅显著(p=0.0009) · v6✅(NS) · v7✅6/6 · v8 MIXED(p=0.0312)。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
-| 当前动作 | **wake#1108 v9实验运行中(seed1/3)**：seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **VERDICT: NO CHANGE**(GRPO有reward信号nz_std=75%但未转化为准确率提升)·seed1(seed=20261113)RUNNING(PID2771513/etimes~86s/Phase3 GRPO起步/复用seed0 SFT adapter)·剩余seed1(~36min)+seed2(~36min)+control(~36min)·ETA≈10:00·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。✅HTML报告在盘上(v8版45187B)→v9全量后更新。 |
+| 当前动作 | **wake#1109 v9实验运行中(seed1/3)**：seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **VERDICT: NO CHANGE**(GRPO有reward信号nz_std=75%但未转化为准确率提升)·seed1(seed=20261113)RUNNING(PID2771513/GRPO step7/30/复用seed0 SFT adapter)·剩余seed1(~25min)+seed2(~45min)+control(~45min)·ETA≈10:20·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。✅HTML报告在盘上(v8版45187B)→v9全量后更新。 |
 | 下一步 | ①v9完成后(ETA≈10:00-12:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + **重新生成HTML报告**(report_vision_cpu_rl_waveform_zh.html·v8版在doc/BaiZe-ISEDA2027/reports/) ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 08:10 (wake #1108)**：v9 RUNNING监控·seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **NO CHANGE**(GRPO有reward信号nz_std=75%但未转化为acc提升)·seed1(seed=20261113)RUNNING(PID2771513 Phase3 GRPO起步·复用seed0 SFT)·剩余seed1+seed2+control ETA≈10:00·analyze_v9就绪(待全量)·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK(behind1→up to date)·GPU 8×H100 94-100% pretrain全占·体积✓(MEMORY 13.8KB/TASK 27KB)·WAITING=0。 |
+| 更新 | **2026-11-13 08:17 (wake #1109)**：v9 RUNNING监控·seed1 GRPO step7/30(503s)·nz_std=50%@step7·seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **NO CHANGE**·剩余seed1+seed2+control ETA≈10:20·analyze_v9就绪·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK·GPU 8×H100 100% pretrain全占·体积✓(MEMORY 13.4KB/TASK 27KB)·WAITING=0。 |
