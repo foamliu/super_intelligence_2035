@@ -20,7 +20,7 @@ MODEL="glm-5.2"                     # 编排模型（deepseek-v4-pro-fp4 额度�
 #   背景：多条线共用 ~/.cline/data/globalState.json，谁改了 openAiBaseUrl 就会影响别人
 #         （.29 曾因此让 pretrain 的 cline 被指到 gw_proxy → 静默停摆）。
 #   隔离目录已由 ops 建好：含 globalState.json + secrets.json + settings/（base=agi-gateway …/cloud/v1）。
-DATA_DIR="/nas_train/app.e0031982/.cline_vision"
+DATA_DIR="/nas_data/app.e0031982/.cline_vision"
 LLM_DATA_DIR="$DATA_DIR"            # 让 llm_rotate.sh 把 openAiBaseUrl 写进【本线隔离目录】
 
 # 🔑 glm-5.2 key
