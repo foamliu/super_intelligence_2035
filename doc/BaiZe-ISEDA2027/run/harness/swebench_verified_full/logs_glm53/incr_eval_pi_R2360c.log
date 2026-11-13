@@ -1,0 +1,18 @@
+2 instances already run, skipping...
+No instances to run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report writteeval done rc=0 in 4.1s
+  sympy__sympy-12096: failed
+  sympy__sympy-12489: failed
+pi eval: resolved=199 failed=73 infra=2

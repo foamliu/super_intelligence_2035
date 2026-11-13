@@ -1,0 +1,22 @@
+Warning: Missing predictions for 1 instance IDs.
+
+[stderr]
+Traceback (most recent call last):
+  File "/nas_train/app.e00[10:47:44] pi: eval done rc=1
+  sympy__sympy-12096: no report.json (infra)
+  sympy__sympy-12489: no report.json (infra)
+[10:47:49] pi: eval report updated (resolved=199, failed=71, infra=4)
+=== incr_eval_pi_R2360 done in 8.6s ===
+_code
+    exec(code, run_globals)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 863, in <module>
+    main(**vars(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 756, in main
+    full_dataset = load_instances(dataset_name, split, instance_ids, task_repo)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 528, in load_instances
+    return load_swebench_dataset(dataset_name, split, instance_ids)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/utils.py", line 178, in load_swebench_dataset
+    raise ValueError(
+ValueError: Some instance IDs not found in dataset!
+Missing IDs:
+sympy__sympy-12096,sympy__sympy-12489
