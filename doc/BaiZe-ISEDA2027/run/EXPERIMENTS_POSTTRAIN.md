@@ -8993,3 +8993,58 @@ GPUS=7 bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --total-steps 200 \
   EXPERIMENTS §R415 + MEMORY 心跳 + daily）。
 - 红线：不碰 GPU 0-3；不碰 158 任务数据；不 `git add -A`；不杀健康训练。
 - 沙盒执行为只读 HTTP POST（执行模型生成代码），不修改 eval 数据或沙盒配置。
+
+## §R416 — wake416 (2026-11-13 19:5x): RL R0 主训 200 步 **COMPLETED** + reward 动力学终值 + 自治 eval chain 已排队待发
+
+> 用户令 2026-11-13 13:3x（RL 不等 BaiZe 基模，直接在 MiniCPM5-2B 上 RL）的**主训交付节点**：
+> R0 全量 200 步 GRPO 主训**跑完**，ckpt `global_step_200` 落盘，自治 post-RL eval chain 已正确检测到主训结束并排队等 SFT eval chain 释放 providers.json 后自动起 158 题 5-run。
+
+### 1. 主训终态（实测，`rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/`）
+
+- **进程**：PID1887597 已退出（`kill -0` 失败）；`metrics.jsonl` 共 **200 行**（step 1–200 完整）。
+- **wall-clock**：200 步合计 **61.7 min**（~18.5 s/step），起 ~18:57 / 终 ~19:46。
+- **ckpt**：`global_step_{50,100,150,200}` 全部落盘；`global_step_200/` 含 `model-0000{1,2}-of-00002.safetensors`（4.50+0.53 GB）+ `optimizer.pt`(10.07 GB) + tokenizer/config —— **可直 serve**。
+- **GRPO 正确性**：全程 `mean_ratio=1.0`（importance ratio 健康，无 off-policy 崩溃）；`kl_loss` 稳在 0.04–0.09（无 KL 坍塌/爆炸）。
+
+### 2. reward 动力学（R0 = 静态字符串匹配奖励）
+
+| step 段 | reward_mean | kl_mean | frac_nonzero_reward |
+|:--|--:|--:|--:|
+| 1–50 | 0.8017 | 0.0351 | 0.983 |
+| 51–100 | **0.9201**（峰值） | 0.0717 | 1.000 |
+| 101–150 | 0.9153 | 0.0829 | 0.994 |
+| 151–200 | 0.9110 | 0.0715 | 0.996 |
+| 190–200 | 0.9012 | 0.0824 | 1.000 |
+
+- step1=**0.3625**（冷启动低）→ 前 50 步快速升至 0.80 → 51–100 达峰 0.92 → **之后平台/微降至 0.90**。
+- **🔴 诚实负结果预警（用户令点 4 / vision v10 教训）**：R0 奖励是**静态字符串匹配**（`check_format`+API 名命中），**reward↑ ≠ Pass@1↑**。
+  平台化（0.92→0.90）说明模型已把「字符串匹配 proxy」优化到饱和，**但 EDA-Eval-PyAether 真实 Pass@1 是否提升只能由 158 题 5-run eval 判定**，不能由 reward 数字判。
+  这是预注册判据（先定后测）的体现：结论以 5-run mean±std + 配对检验为准，不挑软指标。
+
+### 3. 红线核验
+
+- **§5.2 反作弊**：`cheat_rate.json` 终值 = **0/3200 = 0.0**（ngram=8，cheat_examples=[]）—— anti-cheat 全程开，零作弊。✅
+- **§5.1 污染隔离**：沿用 `rl_pyaether_synth_v2.parquet` 3347 records contam gate 0/3347（合成题与 158 任务按 API 名/函数签名隔离）。✅
+- **§2 评测协议冻结**：自治 eval chain 用 `baize_posttrain_5run_eval.sh`（158 任务 / Pass@1 / 2500s / 5-run / `-p 8 -n`），未改协议。✅
+
+### 4. 自治 post-RL eval chain 状态（`baize_posttrain_rl_eval_chain.sh`, PID1923203）
+
+- 19:48 检测到 GRPO PID1887597 退出 → GPU7 `memory.used=3MiB`（已释放）→ 选定 `global_step_200`（label=`grpo_R0_step200`，served-name=`minicpm5-2b-grpo-R0-step200`）。
+- **当前在等**：SFT eval chain（PID1161064）释放 36.15 上 `providers.json`（cline 单例配置，并发 eval 会互相 clobber → 必须串行）。
+  - SFT eval chain 现状：step105 3/5 DONE（mean±std=0.0274±0.0097，即 RL 的对比基线）→ 已转 step60 run2（19:42 起）；剩 step60 run3-5 + base run1-5。
+  - 即 RL eval 将在 SFT chain 全部跑完后**自动** serve global_step_200 于 GPU7:8095 → 5-run eval → `5run_analysis.py --compare grpo_R0_step200 step105`（McNemar + paired bootstrap）→ `/tmp/posttrain_5run_eval/5run_rl_analysis.json`。
+- **GPU7 现空闲且为本轮 RL eval 预留**：不在此卡起新训练（避免与 eval chain 抢卡）；GPU0-3=root、GPU4/5/6=L4 eval serve，均不动。
+
+### 5. 下一步（依用户令点 4「诚实负结果」+ 点 6「起跑后汇报」）
+
+1. **等自治 chain 出 R0 真实 5-run 数字**（无需人工，chain 自动）→ 核 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`。
+2. **R0 结论分流**：
+   - 有提升（Pass@1 显著 > step105 0.0274）→ 报告 `reports/report_posttrain_rl_surrogate_zh.html`（里程碑，标「替身预演，收益不可迁移到 BaiZe」）。
+   - 无提升/退化 → **诚实负结果**记录 + 直接起 **R2+sandbox-exec** 第二段 RL（wake415 已就绪：`GPUS=7 bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --total-steps 200 --group-size 8 --batch-prompts 2 --sandbox-exec`，沙盒执行反馈可能比 R0 静态奖励更有信号）。
+3. R2 起跑前提：RL eval chain 用完 GPU7（serve+eval 结束）后释放，或 SFT chain 仍在跑时**不抢** GPU7。
+
+### 6. 边界与纪律
+
+- 仅写本线文件（EXPERIMENTS §R416 + MEMORY 心跳/快照更新 + wake415 roll→daily + daily）。
+- 未碰 GPU 0-3/4/5/6；GPU7 留给自治 eval chain；不杀健康训练/eval；不 `git add -A`。
+- 无新增脚本（复用 wake412–415 资产）；本轮为**监控+记录+归档**轮。
