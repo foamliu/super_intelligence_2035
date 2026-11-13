@@ -1,9 +1,12 @@
 WAITING: 0
 
-> 🆕 **【wake #1184 · 2026-11-14 04:5x】v11 监控·seed20261115 DONE(负结果)·seed20261116 RUNNING(augment SFT)·autofinish watcher 在等·commit seed20261115 产物+心跳·WAITING:0**：
-> - **v11 进度**：smoke DONE·seed20261114 DONE 负结果(direct22.9%/augment20.8%/synthesis14.6%·McNemar p=1.0/0.4807)·**seed20261115 DONE(04:38) 负结果**：direct=22.9%/augment=20.8%/synthesis=12.5%·McNemar augment-vs-direct p=1.0 n_disc=7·synthesis-vs-direct p=0.3323 n_disc=17·bootstrap CI 含 0·**VERDICT: NO GENERATIVE ADVANTAGE**（与 seed20261114 高度一致：direct/augment 两 seed 完全相同 22.9%/20.8%）。·**seed20261116 RUNNING**：`run_v11_seeds_only.sh`(PID2498228)+`cpu_rl_v11_regen_experiment.py --seed 20261116`(PID2528837)，现处 augment 臂 SFT ep1 ~step100/250，direct 臂已 DONE(acc=20.8%)。ETA ~15-20min。·autofinish watcher `/tmp/v11_autofinish.sh`(PID2529751)轮询 `SEEDS-ONLY DONE`→自动跑 analyze_v11_regen.py+gen_v11_regen_report.py→v11_summary.json+HTML。
-> - ✅ **git 本轮**：无 index.lock·无活跃 git 二进制(仅本巡检自身 fetch/status)→窗口打开。fetch→`git rev-list HEAD...origin/main`=0/0 已 up-to-date→无需 pull。`git add --` 明确路径(seed20261115 eval_questions+experiment_results+MEMORY+daily)→commit(`vision rl:`)→push。**不 add** seed20261116(在跑·仅 eval_questions.json 无 experiment_results)/outputs/(posttrain)。体积✓(MEMORY≤32KB/TASK 26.9KB)。
-> - **结论预判**：2/3 seed 一致负结果（generative 路线无优势），seed20261116 即便翻盘也难达统计显著。下轮待 autofinish 出 v11_summary.json+HTML+EXPERIMENTS §v11 收尾→交付「本期不做生成式路线」诚实结论。**WAITING: 0**（实验运行中·不擅自 kill 不打断）。
+> 🆕 **【wake #1185 · 2026-11-14 04:59】v11 ALL COMPLETE·3 seed 一致负结果(0/6 判据)·NO GENERATIVE ADVANTAGE·autofinish 收尾出 v11_summary.json+HTML+EXPERIMENTS §v11·commit 全部 v11 产物·WAITING:0**：
+> - **v11 完结**：seed20261116 DONE(04:59)——direct=20.8%/augment=20.8%/synthesis=12.5%。**3 seed mean**：direct 22.2%±1.0% · augment 20.8%±0.0% · synthesis 13.2%±1.0%。判据 **0/6 FAIL**（direct 低于预期 30-40%·两生成臂均 <direct·McNemar 0/3 sig·aug −1.4pp/syn −9.0pp CI 含 0）。**VERDICT: NO GENERATIVE ADVANTAGE**。cheat_rate=0(disjoint RNG)。3 seed 高度一致(augment 跨 seed 完全相同 20.8%)。
+> - ✅ **autofinish 收尾**：orchestrator 04:59:12 写 `SEEDS-ONLY DONE`→watcher(04:59:25)自动跑 analyze_v11_regen.py(exit0)→`v11_summary.json`(558B)+gen_v11_regen_report.py(exit0)→`reports/report_vision_cpu_rl_waveform_zh.html`(10205B,3/3 seeds)。v11 进程已全部退出(ps 0 命中)。
+> - ✅ **git 本轮**：无 index.lock·无他线 git op(posttrain cline 跑 code-eval 非 git 阶段)→窗口打开。fetch→0/0 up-to-date→无需 pull。`git add --` 明确路径(v11_summary.json + seed20261116 experiment_results.json + EXPERIMENTS_VISION.md + ../reports/report_vision_cpu_rl_waveform_zh.html + MEMORY + daily)→commit(`vision rl:`)→push。**不 add** outputs/(posttrain 在途)。体积✓(MEMORY≤32KB/TASK 26.9KB)。
+> - **结论**：生成式路线(augment/synthesis)在 CPU/A40 规模**不优于**直接回归做周期估计——诚实负结果「本期不做生成式路线」(已写入 EXPERIMENTS §v11 + HTML)。v5 仍是唯一统计显著正结果(typecls C=53%>B=37%>A=16% p=0.0009)；v6–v11 连续 6 轮无提升，方向已穷尽，**待运维/用户下达下一方向令**。**WAITING: 0**。
+
+> 📦 **wake #1184 · 2026-11-14 04:5x** v11 监控·seed20261115 DONE 负结果·seed20261116 RUNNING·commit seed20261115 产物+心跳·已fold(见 wake#1185·详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1183 · 2026-11-14 04:2x** 🔧 修正陈旧记忆(wake#1181 误报 idle-spin/无实验·实则 v11 已于 03:58 启动)·seed20261114 DONE 负结果·seed20261115 RUNNING·commit seed20261114 产物+脚本+pull/push·idle-spin 告警撤销·已fold(见 wake#1184)。
 > 📦 **wake #1181 · 2026-11-14 03:41** 例行巡检·**记忆已过时**(称 idle-spin/无实验，实则 v11 已于 03:58 启动，见 wake#1183 纠正)·已fold。

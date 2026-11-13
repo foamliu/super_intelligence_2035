@@ -3236,3 +3236,51 @@ v8 是不同任务（频率比较 vs 类型分类），不直接可比。但关�
 **结论**：v10 是**诚实的负/零结果**。机制 bug（n_disc=0）已修复并验证，但「让 GRPO 改变预测」并不等于「让 GRPO 提升准确率」。在当前 CPU 规模（91 eval 题、500 SFT 例、50 GRPO 步、2B+LoRA）下，frequency_comparison 任务上 RL 相对 SFT 无统计显著的净增益。下一步方向（待定，不本轮执行）：① 增大 eval set 提升统计功效（91 题 McNemar 功效有限）；② 重新审视奖励/任务定义（连续 reward 或更可判定的中间任务）；③ 等 GPU 做更大规模验证。
 
 **产物**：`vision/wave_rl/v10_results/`（smoke + std_s{0,1,2} + ctrl_s0 + `v10_summary.json`）·`vision/wave_rl/analyze_v10_freqcmp.py`·log @ `/tmp/v10_freqcmp.log`。
+
+---
+
+## §v11 — Regression vs Generation · 三臂对照（2026-11-14 · .17 GPU5 · Qwen3.5-2B + LoRA · 3 seeds · ✅ COMPLETE · 负结果）
+
+**背景（换方向）**：v6–v10 连续 5 轮在 frequency_comparison 方向无提升（v10 NOT SIGNIFICANT 2/6），已超任务书护栏「连续 3 轮无提升必须换方向」阈值。根因：freqcmp（2-class A/B）在 ~55% 饱和、离散 A/B 奖励 advantage 方差近零（gs4/gs8 诊断的原始瓶颈）。按 2026-11-14 research-daily vision 建议项「波形任务的『回归 vs 生成』先做三臂小对照」（依任务书规则「若本线建议有相关条目 -> 纳入本轮计划」），**回到原始难题 PERIOD REGRESSION**（v2–v4 天花板 ~34%），检验**生成式路线是否优于直接回归**。本轮**不起 GRPO**（GRPO 在这些任务上反复失败），三臂均为 SFT。
+
+**v11 设计（预注册 2026-11-14 wake#1180，先写后跑；脚本 docstring §41–49）**：
+- 任务：period regression（16 个电压样本估基波周期 μs，rel_err<0.15 为正确）
+- **三臂（固定数据 & 预算）**：
+  1. `direct`（直接回归）：SFT 直接输出周期数值
+  2. `augment`（回归 + 生成式增广）：direct + 用程序化波形生成器（参数化生成模型，作为 diffusion 的轻量代理，diffusion 在 CPU/单 A40 上对 2B 不可行）在更密频率网格上合成增广训练数据
+  3. `synthesis`（生成后取统计量 / analysis-by-synthesis）：SFT 输出紧凑生成式规格 `type,freq`，周期 = 1/freq 程序化计算
+- 模型：Qwen3.5-2B（用户指定）+ LoRA r=16（1.5M 可训参数），GPU5（.17 空闲 A40）
+- 规模：400 base + 400 aug 训练例、5 SFT epochs、48 eval（4 类型 × 12）、batch_size 8、3 seeds（20261114/20261115/20261116）
+- cheat_rate：train/eval 用 disjoint RNG seeds → overlap=0，无泄漏
+- **预注册判据（脚本 docstring，先写后跑）**：
+  | 判据 | 预期 | v11 结果 |
+  |:---|:---|:---|
+  | Arm1 direct ∈ [30,40%] | 已知 SFT 天花板 | 22.2% ❌ |
+  | augment > direct (mean) | 生成式增广补覆盖 | 20.8% vs 22.2% ❌ |
+  | synthesis > direct (mean) | type+freq 分解更易 | 13.2% vs 22.2% ❌ |
+  | augment McNemar p<0.05 seeds | 显著 | 0/3 ❌ |
+  | synthesis McNemar p<0.05 seeds | 显著 | 0/3 ❌ |
+  | ≥1 生成臂 +≥5pp & sig | SUCCESS 口径 | aug −1.4pp / syn −9.0pp ❌ |
+  - SUCCESS：≥1 生成臂（2 或 3）以 ≥5pp + McNemar p<0.05 跨 3 seed 一致地超 Arm1；FAIL = 负结果（同等有价值）
+
+**脚本**：`vision/wave_rl/cpu_rl_v11_regen_experiment.py`（~700 行）+ `run_v11_seeds_only.sh` + `analyze_v11_regen.py` + `gen_v11_regen_report.py`。
+
+**v11 结果（2026-11-14 04:59 ALL DONE · autofinish watcher 自动收尾）**：
+| seed | direct | augment | synthesis | aug McNemar | syn McNemar |
+|:---|:---|:---|:---|:---|:---|
+| 20261114 | 22.9% | 20.8% | 14.6% | p=1.0 nd=7 | p=0.4807 nd=18 |
+| 20261115 | 22.9% | 20.8% | 12.5% | p=1.0 nd=7 | p=0.3323 nd=17 |
+| 20261116 | 20.8% | 20.8% | 12.5% | p=1.0 nd=12 | p=0.4240 nd=14 |
+
+- **Mean（3 seeds）**：direct **22.2% ± 1.0%**（mre=0.632）· augment **20.8% ± 0.0%**（mre=0.492）· synthesis **13.2% ± 1.0%**（mre=4.557）
+- 判据通过 **0/6 → NO GENERATIVE ADVANTAGE**
+- augment-vs-direct mean Δ=−1.4pp（bootstrap CI 含 0）· synthesis-vs-direct mean Δ=−9.0pp（CI 含 0）
+- cheat_rate=0（disjoint RNG，无泄漏）
+
+**关键诊断（诚实）**：
+- ❌ **Arm1 direct=22.2% 低于预注册 30–40% 预期**（也低于 v2–v4 ~34% 天花板）——即使用 Qwen3.5-2B，period regression 仍然难。
+- ❌ **生成臂更差而非更好**：augment −1.4pp（更密频率网格增广未带来覆盖收益）、synthesis −9.0pp（type+freq 分解**更难**而非更易——mre=4.557 极高，说明模型常产出无效 freq，经 1/freq 放大误差）。
+- ✅ **3 seed 高度一致**：augment 跨 3 seed 完全相同 20.8% ± 0.0%；McNemar 全 p=1.0/0.4x；0/3 显著。
+- **结论**：在当前 CPU/A40 规模（400 训练例、48 eval、2B+LoRA、5ep SFT）下，生成式路线（augment/synthesis）**不优于**直接回归做周期估计。诚实负结果——「本期不做生成式路线」。下一步（待定，不本轮执行）：① 增大 eval set 提升统计功效（48 题 McNemar 功效有限）；② 重新审视 synthesis 表示（freq 直接输出可能比 type,freq 更稳）；③ 等 GPU 做更大规模 / 真 diffusion 验证。
+
+**产物**：`vision/wave_rl/v11_results/`（smoke + std_s{20261114,20261115,20261116}，各含 `eval_questions.json` + `experiment_results.json`）+ `v11_summary.json`(558B)·`reports/report_vision_cpu_rl_waveform_zh.html`(10205B, 3/3 seeds)·log @ `/tmp/v11_regen.log`。

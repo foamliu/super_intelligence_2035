@@ -1,513 +1,103 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>视觉波形 RL · CPU 实验报告 v3→v10（2026-11-13 更新）</title>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe Vision · CPU RL 波形理解 · v11 回归 vs 生成 三臂对照报告</title>
 <style>
-body { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #333; }
-h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }
-h2 { color: #283593; border-bottom: 1px solid #ccc; padding-bottom: 6px; margin-top: 36px; }
-h3 { color: #3949ab; margin-top: 24px; }
-table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; }
-th { background: #e8eaf6; text-align: left; padding: 8px; }
-td { padding: 6px 8px; }
-tr:nth-child(even) { background: #f5f5f5; }
-code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
-.summary { background: #e3f2fd; padding: 16px; border-radius: 8px; margin: 16px 0; }
-</style>
-</head>
-<body>
-<h1>视觉波形 RL · CPU 实验报告 v3→v10</h1>
-<p><strong>生成时间</strong>：2026-11-12 03:30（v3-v5 原始报告 2026-11-07） · <strong>作者</strong>：vision wake#856→#1031 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 2rem auto; max-width: 1000px; color: #222; line-height: 1.6; }
+h1 { border-bottom: 2px solid #336; color: #336; }
+h2 { border-left: 5px solid #336; padding-left: 8px; margin-top: 2rem; }
+h3 { color: #44a; }
+table { border-collapse: collapse; margin: 0.5rem 0; }
+th, td { text-align: left; }
+th { background: #eef; }
+code { background: #f4f4f4; padding: 1px 4px; border-radius: 3px; }
+.summary { background: #f0f8ff; border: 1px solid #ace; padding: 10px 14px; border-radius: 6px; }
+.footer { color: #888; font-size: 0.85em; margin-top: 2rem; border-top: 1px solid #ddd; padding-top: 8px; }
+</style></head><body>
+<h1>BaiZe Vision · CPU RL 波形理解</h1>
+<p><b>v11：回归 vs 生成 三臂对照（period regression）</b> · vision wake#1182 · 生成时间 2026-11-14 04:59 · 已载入 seed 数：3/3</p>
+
+<h2 id="sum">一、结论速览</h2>
 <div class="summary">
-<p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（负结果）。<strong>v4</strong> 改用 RFT/STaR → C=34.0%=B=34.0%（NULL，无提升）。<strong>v5</strong> 连续 3 轮无提升后换方向：改任务为波形类型分类 + 改输入为 16 采样点直接入 prompt → <strong>✅ 显著提升：A=16.0% → B(SFT)=37.0% → C(RFT)=53.0%，McNemar C-vs-B p=0.0009，Bootstrap Δ=+16% CI=[+7%,+25%]，C-vs-D(随机控制)p=0.0003。所有预注册判据全部满足。</strong> <strong>v6</strong> GRPO outcome-only 连续奖励(α=0.25,β=0.35) → C=40% vs B=35%, p=0.267 NOT SIG，但 <strong>nonzero-std=93.8% 彻底解决 v1-v4 的 std=0 方差问题</strong>。<strong>v7</strong> 加 process reward λ sweep + LoRA rank probe（18 runs, 3 seeds × 6 组）→ <strong>✅ 6/6 ALL PASS（预注册判据: meanΔ&gt;1sd AND 3seed同方向&gt;v6 baseline 40%），C=47-49% vs v6 40%，nonzero-std=100%</strong>。</p>
-<p><strong>数据集调研</strong>：HF/GitHub/arXiv 三源均无波形 VQA 评测集，ngspice 合成波形+QA 是正确路线。</p>
-<p><strong>技术栈</strong>：LLaMA-Factory 与 Qwen3.5 架构互斥 → 退回 HF+peft 直训（已验证可行，69.7M LoRA）。</p>
+<p><b>任务</b>：基波周期回归（相对误差 &lt; 0.15 判定正确）。<b>三臂对照</b>：直接回归 / 生成式增广 / 生成后取统计量。</p>
+<p><b>规模</b>：Qwen3.5-2B + LoRA r=16，base 400 / aug +400 例，SFT 5 ep，eval 48 题×3 难度，3 seed。CPU-pilot 规模，结论不外推 GPU 大规模。</p>
+<p><b>最终判定</b>：NO GENERATIVE ADVANTAGE (negative result: do not pursue generative route this period)</p>
+<table border="1" cellpadding="6">
+<tr><th>臂</th><th>平均准确率</th><th>平均相对误差</th></tr>
+<tr><td>臂1 直接回归 (direct)</td><td>22.2%</td><td>0.632</td></tr><tr><td>臂2 生成式增广 (augment)</td><td>20.8%</td><td>0.492</td></tr><tr><td>臂3 生成后取统计量 (synthesis)</td><td>13.2%</td><td>4.557</td></tr>
+</table>
+<p>臂2 vs 臂1: -1.4pp；臂3 vs 臂1: -9.0pp。</p>
 </div>
 
-<h2 id="ds">一、数据集调研（用户要求：hf.co / GitHub / arXiv 检索波形 VQA 评测集）</h2>
-<p><strong>调研方法</strong>：通过 HuggingFace Hub API（经代理）检索 0 个关键词，
-包括 waveform / oscilloscope / chartqa / plotqa / figureqa / signal classification / EDA circuit / spice simulation 等。
-检索日期 2026-11-07。</p>
-<h3>1.1 核心发现</h3>
-<div style="background:#fff3cd;padding:12px;border-radius:6px;margin:12px 0;">
-<p><strong>NO image-based electronic/analog waveform VQA dataset exists on ANY of the three sources (HF / GitHub / arXiv). The closest domain match is WaveformQA (arXiv 2607.20638) but it is TEXT-based (VCD/event-time JSON) over DIGITAL waveforms, not images — usable as related-work + methodology reference, not directly as our image benchmark. No oscilloscope-screenshot QA, no SPICE-analog-waveform image VQA, no signal-chart-understanding image dataset was found. Conclusion (wake#855, HF-only) is now validated and extended across all 3 sources.</strong></p>
-</div>
-<h3>1.2 最接近的图表 VQA 数据集（可用于迁移参考）</h3>
+<h2 id="design">二、为什么换方向 &amp; 实验设计（预注册，先写后跑）</h2>
+<h3>2.1 为什么换方向（v6-v10 已 5 轮无提升）</h3>
 <table border="1" cellpadding="6">
-<tr><th>数据集 ID</th><th>下载量</th><th>License</th><th>波形适用性</th></tr>
-<tr><td>ahmed-masry/ChartQA</td><td>8090</td><td>GPL-3.0</td><td>LOW - contains data visualization charts (bar/line/pie), not electronic waveforms. Could be used for transfer learning to teach general chart understanding.</td></tr>
-<tr><td>achang/plot_qa</td><td>2196</td><td>CC</td><td>LOW - contains data plots, not electronic waveforms. Same transfer learning potential as ChartQA.</td></tr>
-<tr><td>vikhyatk/figureqa</td><td>883</td><td>—</td><td>LOW - contains general figures, not waveforms.</td></tr>
+<tr><th>版本</th><th>任务/方法</th><th>结果</th><th>判定</th></tr>
+<tr><td>v5</td><td>波形类型 4 分类 + RFT</td><td>A16%→B37%→C53% p=0.0009</td><td>✅ 显著（唯一成功）</td></tr>
+<tr><td>v6</td><td>类型分类 + GRPO</td><td>无提升</td><td>❌</td></tr>
+<tr><td>v7</td><td>超参 sweep</td><td>无提升</td><td>❌</td></tr>
+<tr><td>v8</td><td>频率比较(A/B)</td><td>B=45% &lt; 机会</td><td>❌ 损坏</td></tr>
+<tr><td>v9</td><td>频率比较扩大</td><td>n_disc=0 NO CHANGE</td><td>❌</td></tr>
+<tr><td>v10</td><td>频率比较 + Qwen3.5-2B</td><td>C=51.6% &lt; B=54.9% NOT SIGNIFICANT(2/6)</td><td>❌</td></tr>
 </table>
-<h3>1.3 EDA/电路相关数据集</h3>
+<p>根因：频率比较(2 分类 A/B) 天花板≈55%，headroom 极小；离散 A/B 奖励 advantage 方差近零（gs4/gs8 诊断的同一瓶颈）。GRPO 在低 headroom + 离散奖励下学不动 ⇒ 触发任务书护栏「连续 3 轮无提升必须换方向」。</p>
+<h3>2.2 新任务：周期回归（回到原始难题）</h3>
+<p>输入：1µs 窗口内 16 个等间距电压采样（单周期波形）。目标：估计基波周期(µs)。判定：相对误差 |pred−true|/true &lt; 0.15 ⇒ correct。这是 v2-v4 未能突破的硬任务（SFT 天花板≈34%）。</p>
+<h3>2.3 三臂（固定数据 &amp; 预算；全部 SFT，不用 GRPO）</h3>
+<p>为何不用 GRPO：v2/v3/v6/v10 已反复证明 GRPO 在这些波形任务上无效。本轮科学问题是「生成式路线是否优于直接回归」，与 RL 无关，故全部用 SFT 控变量。</p>
 <table border="1" cellpadding="6">
-<tr><th>数据集 ID</th><th>下载量</th><th>License</th><th>波形适用性</th></tr>
-<tr><td>SKLP-EDA-LAB/CircuitNet3.0</td><td>1506</td><td>Apache-2.0</td><td>NONE - focuses on circuit design artifacts (RTL/netlist/layout), not waveform analysis or visualization.</td></tr>
+<tr><th>臂</th><th>做法</th><th>对应 research 日报条目</th></tr>
+<tr><td>臂1 direct</td><td>SFT 直接输出周期数字</td><td>「直接回归」</td></tr>
+<tr><td>臂2 augment</td><td>臂1 + 参数化生成器在更密/更广周期网格上合成额外训练数据</td><td>「回归 + 生成式数据增广」</td></tr>
+<tr><td>臂3 synthesis</td><td>SFT 输出紧凑生成式规格 type,freq；周期=1/freq 程序化计算</td><td>「扩散生成后取统计量」</td></tr>
 </table>
-<h3>1.4 信号处理类数据集（均非 VQA）</h3>
+<p><b>关于「扩散」的诚实说明</b>：完整扩散模型训练在 CPU/单卡 A40 上对 2B 模型做 pilot 不可行。参数化波形生成器本身是一种生成式模型（给定参数→生成波形），以其作为生成式组件的有原则的轻量代理。科学问题（生成式路线是否降低周期误差 vs 直接回归）被完整保留；仅生成器实现从「扩散」换为「参数化程序」。若臂2/臂3 有效，后续可在 GPU 上把生成器升级为扩散模型复验；若无效，则「本期不做生成式路线」结论同样成立。</p>
+<h3>2.4 预注册判据（跑前写定，不许事后改）</h3>
 <table border="1" cellpadding="6">
-<tr><th>数据集</th></tr>
-<tr><td>mstz/waveform_noise_v1 (52 dl) - noise waveforms, not VQA</td></tr>
-<tr><td>SongyangGao/earthquake-waveforms-timeseries (45 dl) - earthquake data, not VQA</td></tr>
-<tr><td>lucky9-cyou/MIMIC-IV-Waveform (132 dl) - medical waveforms, not VQA</td></tr>
-<tr><td>rokaijano/extracel_waveforms (11303 dl) - extracellular waveforms, not VQA</td></tr>
-<tr><td>subatomic-telemetry-lab/tpc-raw-waveform-dumps (495 dl) - raw waveform dumps, not VQA</td></tr>
-</table>
-<h3>1.5 综合判断</h3>
-<div style="background:#e8f5e9;padding:12px;border-radius:6px;margin:12px 0;">
-<p><strong>能否直接使用？</strong> <span style="color:red;font-weight:bold;">不能。</span>
-No ready-made IMAGE-BASED electronic/analog waveform VQA dataset exists on any of HF/GitHub/arXiv (validated across 3 sources in wake#860, extending wake#855&#x27;s HF-only result). The single closest DOMAIN match is WaveformQA (arXiv 2607.20638, IEEE ICLAD 2026): 360 questions / 8 categories over DIGITAL waveforms — but it is TEXT-based (VCD/event-time JSON), not images, so it cannot serve as our vision benchmark. ChartQA/PlotQA/FigureQA/ChartBench/ChartX and the recent arXiv chart-VQA papers (ChartQAPro/ChartMind/ChartNet etc.) are all data-visualization charts (bar/line/pie), none electronic waveforms. The current approach of synthesizing analog waveforms with ngspice and creating image-based QA pairs remains the correct and only viable path for an image-grounded waveform-recognition benchmark.</p>
-<p><strong>建议</strong>：Continue with ngspice-based analog waveform image synthesis (validated: no off-the-shelf alternative exists). NEW actionable additions from wake#860: (1) Cite WaveformQA (arXiv 2607.20638) as the closest related-work benchmark and adapt its 8-category QA template structure (single-signal value / multi-signal correlation / event ordering) to our image modality — this strengthens our benchmark design and situates it in the literature; (2) adopt WaveformQA&#x27;s finding that a structured intermediate representation (event-time JSON) helps LLMs — analog: consider whether a structured text hint alongside the image aids our 2B model; (3) ChartQA/ChartX (image+text, permissive licenses) are the best transfer-pretraining candidates for general chart/plot reading before waveform fine-tuning, if a chart-reading warmup is desired; (4) the ~1.3K oscilloscope ImageNet images are a marginal real-image supplement only.</p>
-</div>
-
-
-<h2 id="design">二、新 RL 设计（v3：为什么这次能 work 而上次不行）</h2>
-<h3>2.1 失败根因回顾（v1 离散奖励 → v2 方向翻转但不显著 → v3 统计增强）</h3>
-<table border="1" cellpadding="6">
-<tr><th>版本</th><th>奖励</th><th>目标</th><th>n_eval</th><th>GRPO步数</th><th>group_size</th><th>结果</th></tr>
-<tr><td>v1 (11-06)</td><td>离散5档</td><td>5目标全上</td><td>30</td><td>50</td><td>4</td><td>❌ C=6.2% &lt; B=9.2%</td></tr>
-<tr><td>v2 (11-07)</td><td>连续 exp(-err/τ)</td><td>period+2判别</td><td>45 (3×15)</td><td>15</td><td>4</td><td>⚠️ C=11.1%&gt;B=6.7% 但 p=0.625 不显著</td></tr>
-<tr><td><strong>v3 (本实验)</strong></td><td><strong>连续 exp(-err/τ)</strong></td><td><strong>仅 period</strong></td><td><strong>100</strong></td><td><strong>40</strong></td><td><strong>8</strong></td><td>❌ C=25.0% &lt; B=34.0%（负结果）</td></tr>
-</table>
-<h3>2.2 v3 三项关键改进（预注册 2026-11-07 wake#854）</h3>
-<table border="1" cellpadding="6">
-<tr><th>改进项</th><th>v2 问题</th><th>v3 修复</th><th>理由</th></tr>
-<tr><td><strong>统计功效</strong></td><td>n=45 太小，McNemar 仅 4 个 discordant</td><td>n=100 period-only</td><td>period 是唯一有信号的目标(B=20%,C=33.3%)，集中评测提高 discordant 数</td></tr>
-<tr><td><strong>训练量</strong></td><td>15 步 GRPO 不足</td><td>40 步</td><td>v2 quick eval 证明 15 步不够(C≈B=32%,p=0.50)</td></tr>
-<tr><td><strong>advantage 估计</strong></td><td>group_size=4，std=0 占 78.7%</td><td>group_size=8</td><td>gs8 诊断显示 std=0 降至 73%，period std>0 达 78.3%</td></tr>
-</table>
-<h3>2.3 连续奖励设计</h3>
-<p><strong>R_main = exp(-|rel_err| / τ)</strong>, τ=0.15（与 v2 相同，已验证有效）</p>
-<table border="1" cellpadding="6">
-<tr><th>rel_err</th><th>R_main (τ=0.15)</th><th>离散5档等价</th></tr>
-<tr><td>0%</td><td>1.000</td><td>1.0</td></tr>
-<tr><td>5%</td><td>0.717</td><td>0.7</td></tr>
-<tr><td>10%</td><td>0.513</td><td>0.4</td></tr>
-<tr><td>25%</td><td>0.189</td><td>0.1</td></tr>
-<tr><td>50%+</td><td>0.036</td><td>0.0</td></tr>
-</table>
-<p><strong>为什么连续奖励解决 v1 根因</strong>：离散 5 档时同 group 全落同一档 → advantage=0 → 梯度消失。
-连续奖励下即使两个 rollout 都"大致正确"(rel_err=5% vs 8%)，奖励也有差异(0.72 vs 0.59) → advantage≠0 → 有效梯度。</p>
-<h3>2.4 证伪设计（四条件）</h3>
-<table border="1" cellpadding="6">
-<tr><th>条件</th><th>说明</th><th>作用</th></tr>
-<tr><td>A — 基线</td><td>base model 零样本（v2 已知 ~0%，v3 跳过）</td><td>下界参照</td></tr>
-<tr><td>B — SFT only</td><td>Stage-1W SFT LoRA (69.7M, step3000)</td><td>SFT 基线</td></tr>
-<tr><td>C — SFT+GRPO（连续奖励）</td><td>40 步 GRPO, τ=0.15, period-only</td><td><strong>实验组</strong></td></tr>
-<tr><td>D — SFT+GRPO（随机奖励）</td><td>同 C 但 reward=random(-0.5,1.5)</td><td><strong>控制组</strong>：排除"任何参数更新都能提升"</td></tr>
-</table>
-<div style="background:#e8f5e9;padding:12px;border-radius:6px;margin:12px 0;">
-<p><strong>主判据</strong>：C > B 且 McNemar p&lt;0.05 且 bootstrap 95% CI 下界&gt;0。</p>
-<p><strong>控制判据</strong>：C > D（提升来自奖励设计而非随机参数更新）。</p>
-<p><strong>诚实口径</strong>：C≤B 或 p≥0.05 → 「未显著提升」，如实报告。</p>
-</div>
-
-
-<h2 id="stack">三、技术栈可行性（LLaMA-Factory + KTransformers + LoRA + Qwen3.5-2B）</h2>
-<h3>3.1 三步冒烟结论（wake#853）</h3>
-<table border="1" cellpadding="6">
-<tr><th>步骤</th><th>结论</th><th>详情</th></tr>
-<tr><td>S1 环境</td><td>✅ 可装</td><td>llamafactory 0.9.3 + ktransformers 0.5.3 经 proxy pip 可装，建议独立 env</td></tr>
-<tr><td>S2 单步训练</td><td>✅ 可行（退路方案）</td><td>LLaMA-Factory 与 Qwen3.5 模型类互斥 → 退回 HF+peft 直训（已有 69.7M LoRA 成功先例）</td></tr>
-<tr><td>S3 后端角色</td><td>⚠️ 非必需</td><td>KTransformers 是 CPU 推理加速后端（非训练后端），2B 规模下 HF transformers 足够</td></tr>
-</table>
-<h3>3.2 诚实评估</h3>
-<div style="background:#e3f2fd;padding:12px;border-radius:6px;margin:12px 0;">
-<p><strong>核心发现</strong>：LLaMA-Factory 不支持 Qwen3.5 架构，KTransformers 在 2B 规模下无显著加速收益。
-本实验 v3 沿用已验证的 <strong>HF transformers + peft LoRA + ngspice gym</strong> 方案。</p>
-<p><strong>科学结论不依赖 LLaMA-Factory/KTransformers</strong>。二者是工程优化工具，GPU 训练阶段或 7B+ 规模时再评估。</p>
-</div>
-
-
-<h2 id="exp">四、CPU 实验结果（before/after 对照 + 统计检验 + cheat rate）</h2>
-<p><span style="background:#4caf50;color:white;padding:2px 8px;border-radius:4px;">✅ 完成</span></p>
-<p><strong>配置</strong>：CPU (OMP=16, nice=19) · 2B text backbone (Qwen3.5-2B text-extracted) · LoRA r=16 (69.7M) · ngspice gym · <strong>period-only</strong> · n_eval=100题 · n_grpo_steps=40 · group_size=8 · lr=5e-06 · τ=0.15</p>
-<h3>4.1 准确率对照表</h3>
-<table border="1" cellpadding="6"><tr><th>条件</th><th>准确率</th><th>说明</th></tr>
-<tr style=""><td>A — 基线（零样本）</td><td>0.0%</td><td>未训练 base model（v2 已知 ~0%, 跳过）</td></tr>
-<tr style=""><td>B — SFT only</td><td>34.0%</td><td>Stage-1W SFT LoRA (69.7M, step3000)</td></tr>
-<tr style="background:#c8e6c9;font-weight:bold;"><td>C — SFT + GRPO（连续奖励）</td><td>25.0%</td><td>v3 连续奖励 τ=0.15, 40步, gs=8, lr=5e-06</td></tr>
-<tr style=""><td>D — SFT + GRPO（随机奖励控制）</td><td>1.0%</td><td>random reward control</td></tr>
+<tr><th>判据</th><th>预期 / 阈值</th></tr>
+<tr><td>臂1 direct</td><td>~30-40%（v2-v4 已知 SFT 天花板）</td></tr>
+<tr><td>臂2 augment &gt; 臂1</td><td>当且仅当生成式增广提供有用的周期覆盖</td></tr>
+<tr><td>臂3 synthesis &gt; 臂1</td><td>当且仅当「先 type+freq 再 1/freq」是更易学的表示</td></tr>
+<tr><td><b>成功</b></td><td>≥1 个生成式臂较臂1 提升 ≥5pp，McNemar p&lt;0.05，3 seed 一致</td></tr>
+<tr><td><b>负结果（同等有价值）</b></td><td>两个生成式臂均未降低周期误差 ⇒ 「本期不做生成式路线」</td></tr>
+<tr><td>控制</td><td>3 seed 一致性；train/eval 用不相交 RNG seed（cheat_rate=0，无泄漏）</td></tr>
 </table>
 
-<h3>4.2 版本对比（v1 → v2 → v3）</h3>
+<h2 id="res">三、CPU 实验结果（3 seed × 3 臂 + 统计检验 + cheat rate）</h2>
+<h3>3.1 逐 seed 准确率与 McNemar（相对 direct）</h3>
 <table border="1" cellpadding="6">
-<tr><th>版本</th><th>B (SFT)</th><th>C (GRPO)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
-<tr><td>v1 (离散5档)</td><td>9.2%</td><td>6.2%</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
-<tr><td>v2 (连续, n=45)</td><td>6.7%</td><td>11.1%</td><td>4.4%</td><td>0.625</td><td>⚠️ C&gt;B 但不显著</td></tr>
-<tr style="background:#e8eaf6;"><td><strong>v3 (连续, n=100)</strong></td><td>34.0%</td><td>25.0%</td><td>1.0%</td><td>0.063568115234375</td><td><strong>NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C&gt;D)</strong></td></tr>
+<tr><th>seed</th><th>臂1 direct</th><th>臂2 augment</th><th>臂3 synthesis</th><th>该 seed 判定</th></tr>
+<tr><td>20261114</td><td>22.9%</td><td>20.8% (p=1.0000, n_disc=7)</td><td>14.6% (p=0.4807, n_disc=18)</td><td>NO GENERATIVE ADVANTAGE (negative result: do not p</td></tr><tr><td>20261115</td><td>22.9%</td><td>20.8% (p=1.0000, n_disc=7)</td><td>12.5% (p=0.3323, n_disc=17)</td><td>NO GENERATIVE ADVANTAGE (negative result: do not p</td></tr><tr><td>20261116</td><td>20.8%</td><td>20.8% (p=1.0000, n_disc=12)</td><td>12.5% (p=0.4240, n_disc=14)</td><td>NO GENERATIVE ADVANTAGE (negative result: do not p</td></tr>
 </table>
+<h3>3.2 跨 seed 汇总（mean ± std）</h3>
+<p>见「一、结论速览」表（由 analyze_v11_regen.py 写入 v11_summary.json）。McNemar 检验在每个 seed 内、臂 vs direct 的逐题对错向量上做。</p>
+<h3>3.4 Cheat Rate / 数据泄漏检查</h3>
+<p>train RNG seed 基=TRAIN_SEED_BASE+，eval RNG seed 基=EVAL_SEED_BASE+，二者不相交 ⇒ overlap=0，cheat_rate=0，无泄漏。augment 臂额外数据用 TRAIN_SEED_BASE+500000，亦与 eval 不相交。</p>
+<h3>3.3 冒烟测试（pipeline 校验，n=24/2ep）</h3><p>direct=0.0% / augment=0.0% / synthesis=0.0%；mean_rel_err direct=5.6944857608498305 synthesis=0.50023307086742。冒烟规模过小，0% 准确率属预期，仅验证流水线通畅。</p>
 
-<h3>4.2b 判定结论</h3>
-<div style="background:#fff3cd;padding:12px;border-radius:6px;">
-<p><strong>VERDICT: NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C&gt;D)</strong></p>
-<p>C>B: ❌ | C>D: ✅ | McNemar p<0.05: ❌</p></div>
-<h3>4.3 GRPO 训练曲线</h3>
+<h2 id="hist">四、版本历史（v2 → v11，诚实口径）</h2>
 <table border="1" cellpadding="6">
-<tr><th>条件</th><th>step</th><th>loss</th><th>avg reward</th></tr>
-<tr><td>C (连续奖励)</td><td>1/40</td><td>0.000000</td><td>-0.5000</td></tr>
-<tr><td>C (连续奖励)</td><td>5/40</td><td>-0.000124</td><td>0.0660</td></tr>
-<tr><td>C (连续奖励)</td><td>10/40</td><td>-0.000444</td><td>0.2789</td></tr>
-<tr><td>C (连续奖励)</td><td>15/40</td><td>-0.000043</td><td>0.3205</td></tr>
-<tr><td>C (连续奖励)</td><td>20/40</td><td>-0.000047</td><td>0.1505</td></tr>
-<tr><td>C (连续奖励)</td><td>25/40</td><td>0.000038</td><td>-0.0430</td></tr>
-<tr><td>C (连续奖励)</td><td>30/40</td><td>-0.000219</td><td>0.3979</td></tr>
-<tr><td>C (连续奖励)</td><td>35/40</td><td>-0.001175</td><td>0.0330</td></tr>
-<tr><td>C (连续奖励)</td><td>40/40</td><td>0.000038</td><td>0.1075</td></tr>
-<tr><td>D (随机奖励)</td><td>1/40</td><td>0.001552</td><td>0.6179</td></tr>
-<tr><td>D (随机奖励)</td><td>5/40</td><td>-0.000568</td><td>0.4759</td></tr>
-<tr><td>D (随机奖励)</td><td>10/40</td><td>-0.000178</td><td>0.4361</td></tr>
-<tr><td>D (随机奖励)</td><td>15/40</td><td>0.000157</td><td>0.3012</td></tr>
-<tr><td>D (随机奖励)</td><td>20/40</td><td>0.000013</td><td>0.4523</td></tr>
-<tr><td>D (随机奖励)</td><td>25/40</td><td>-0.000485</td><td>0.6659</td></tr>
-<tr><td>D (随机奖励)</td><td>30/40</td><td>-0.000597</td><td>0.4121</td></tr>
-<tr><td>D (随机奖励)</td><td>35/40</td><td>-0.000983</td><td>0.4919</td></tr>
-<tr><td>D (随机奖励)</td><td>40/40</td><td>-0.000031</td><td>0.6583</td></tr>
+<tr><th>版本</th><th>任务/方法</th><th>关键结果</th><th>判定</th></tr>
+<tr><td>v2-v4</td><td>周期/任务回归 + GRPO/RFT</td><td>SFT 天花板≈34%，RL 无净增益</td><td>❌</td></tr>
+<tr><td>v5</td><td>波形类型 4 分类 + RFT</td><td>A16%→B37%→C53%，McNemar p=0.0009</td><td>✅ 显著（唯一成功）</td></tr>
+<tr><td>v6</td><td>类型分类 + GRPO</td><td>无提升</td><td>❌</td></tr>
+<tr><td>v7</td><td>超参 sweep</td><td>无提升</td><td>❌</td></tr>
+<tr><td>v8</td><td>频率比较(A/B)</td><td>B=45% &lt; 机会</td><td>❌ 损坏</td></tr>
+<tr><td>v9</td><td>频率比较扩大</td><td>n_disc=0 NO CHANGE</td><td>❌</td></tr>
+<tr><td>v10</td><td>频率比较 + Qwen3.5-2B + 修复 n_disc</td><td>C=51.6%±3.1% &lt; B=54.9%，McNemar p=1.0，2/6 NOT SIGNIFICANT</td><td>❌</td></tr>
+<tr><td>v11</td><td>周期回归 三臂对照（direct/augment/synthesis，全 SFT）</td><td>见上文 §三</td><td>见上文 §一</td></tr>
 </table>
-<p>C 的 avg reward 若从负值上升 → 连续奖励提供有效梯度信号。D 的 reward 应无趋势（随机）。</p><h3>4.4 统计检验</h3>
-<table border="1" cellpadding="6">
-<tr><th>检验</th><th>统计量</th><th>p 值</th><th>n_discordant</th><th>显著性</th></tr>
-<tr><td>McNemar C vs B</td><td>19.0</td><td>0.0636</td><td>19</td><td>❌ 不显著</td></tr>
-<tr><td>Bootstrap 95% CI (C-B)</td><td>Δ=-9.0%</td><td colspan="2">CI=[-18.0%,-1.0%]</td><td>❌</td></tr>
-<tr><td>McNemar C vs D (控制)</td><td>20.346153846153847</td><td>0.0000</td><td>26</td><td>✅ C>D</td></tr>
-<tr><td>Bootstrap 95% CI (C-D)</td><td>Δ=+24.0%</td><td colspan="2">CI=[+16.0%,+33.0%]</td><td>✅</td></tr>
-</table>
-<h3>4.5 Cheat Rate / 数据泄漏检查</h3><p>train seed=20261105+8000, eval seed=990100+, overlap=0, rate=0.0. train and eval use disjoint RNG seed ranges -&gt; no data leakage</p>
-<h3>4.6 规模与算力标注</h3>
-<p>单台 CPU (224核, OMP限16, nice=19) · 2B text backbone (工具交互模式) · 100题 period-only · 40步 GRPO · <strong>结论不外推为 GPU 结论</strong>。</p>
+<p>口径：每轮有对照，≥3 seed 给 mean±std；负结果如实记录，禁止挑好看的 run。CPU-pilot 结论不外推 GPU 大规模。</p>
 
-
-<h2 id="v4">四-B、v4 实验：Rejection Sampling FT（RFT / STaR）</h2>
-<div class="summary">
-<p><strong>v4 设计动机</strong>：v3 GRPO 在 CPU 上 loss 近零、avgR 波动大（group baseline 导致 std=0 仍未根除）。
-v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 SFT 模型采样 → 过滤奖励 &gt; 0.3 的 rollout → 标准 CE 损失训练。
-<strong>核心优势</strong>：无 group baseline → 无 std=0 问题；标准 CE 损失 → 稳定梯度；采集与训练解耦 → 更高效。</p>
-<p><strong>预注册判据</strong>（wake#861，运行前写入）：C(RFT) &gt; B(SFT) 且 C &gt; D(随机控制)，McNemar p&lt;0.05 + bootstrap CI 排除 0。</p>
-</div>
-<h3>4.5 v4 结果汇总</h3>
-<table border="1" cellpadding="6">
-<tr><th>条件</th><th>准确率</th><th>说明</th></tr>
-<tr style="background:#c8e6c9;font-weight:bold;"><td>B — SFT only</td><td>34.0%</td><td>Stage-1W SFT LoRA (69.7M, step3000)，与 v3 同题同 ckpt</td></tr>
-<tr style="background:#c8e6c9;font-weight:bold;"><td>C — SFT + RFT（奖励过滤）</td><td>34.0%</td><td>v4 RFT: 60×4 rollout, threshold=0.3, 3 epoch CE</td></tr>
-<tr style=""><td>D — SFT + RFT（随机过滤控制）</td><td>33.0%</td><td>random filter control（同数据量，排除"任何数据都能提升"）</td></tr>
-</table>
-<p><strong>v4 判定</strong>：NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C&gt;D) </p>
-
-<h3>4.7 v4 采样统计</h3>
-<table border="1" cellpadding="6">
-<tr><th>指标</th><th>值</th></tr>
-<tr><td>总 rollout 数</td><td>240</td></tr>
-<tr><td>成功 rollout（reward &gt; 0.3）</td><td>161</td></tr>
-<tr><td>成功率</td><td>67.1%</td></tr>
-<tr><td>奖励阈值</td><td>0.3</td></tr>
-</table>
-<h3>4.8 v4 RFT 训练曲线</h3>
-<table border="1" cellpadding="6">
-<tr><th>条件</th><th>Epoch</th><th>Loss</th></tr>
-<tr><td>C</td><td>1</td><td>0.279208</td></tr>
-<tr><td>C</td><td>2</td><td>0.249798</td></tr>
-<tr><td>C</td><td>3</td><td>0.247256</td></tr>
-<tr><td>D</td><td>1</td><td>0.275689</td></tr>
-<tr><td>D</td><td>2</td><td>0.242109</td></tr>
-<tr><td>D</td><td>3</td><td>0.236163</td></tr>
-</table>
-<h3>4.9 v4 统计检验</h3>
-<table border="1" cellpadding="6">
-<tr><th>检验</th><th>统计量</th><th>p 值</th><th>判定</th></tr>
-<tr><td>McNemar C vs B</td><td>n_disc=16</td><td>1.0</td><td>❌ 不显著</td></tr>
-<tr><td>Bootstrap C-B</td><td>0.0%</td><td>CI=[-8.0%, 8.0%]</td><td>❌ CI含0</td></tr>
-<tr><td>McNemar C vs D</td><td>n_disc=15</td><td>1.0</td><td>❌</td></tr></table>
-<h3>4.10 v4 数据泄漏检查</h3>
-<p><strong>训练种子范围</strong>：20261105+8000 · <strong>评测种子范围</strong>：990100+ · <strong>重叠</strong>：0 (0.0%) · train and eval use disjoint RNG seed ranges -&gt; no data leakage</p>
-<h3>4.11 v4 规模与算力标注</h3>
-<p>单台 CPU (224核) · 2B text backbone · 60×4=240 rollout 采集 · 3 epoch RFT · <strong>结论不外推为 GPU 结论</strong>。</p>
-
-
-<h2 id="v5">五、v5 实验：波形类型分类（方向转换 · 连续 3 轮无提升后换路线）</h2>
-<div class="summary">
-<p><strong>v5 设计动机</strong>：v1-v4 连续 3 轮无提升（v2=6.2%&lt;9.2% / v3=25.0%&lt;34.0% / v4=34.0%=34.0%），按任务书「连续 3 轮无提升必须换方向」规则，<strong>彻底改变任务定义</strong>：</p>
+<h2 id="scale">五、规模、算力与可复现</h2>
 <ul>
-<li><strong>改任务</strong>：period 数值回归 → <strong>4 类波形分类</strong>（sine/square/triangle/sawtooth）。分类比回归本质上更容易。</li>
-<li><strong>改输入</strong>：工具调用摘要统计 → <strong>16 个等距采样点直接放入 prompt</strong>。模型能"看到"波形形状。</li>
-<li><strong>保留方法</strong>：RFT（STaR/ReST），v4 已证明稳定。分类任务有更多正确 rollout → 更多训练信号。</li>
+<li><b>模型</b>：Qwen3.5-2B（用户指定）+ LoRA r=16（可训参数 ~1.5M）。</li>
+<li><b>算力</b>：单卡 A40（.12 GPU5，posttrain 占 0-4/6/7，GPU5 空闲）。Qwen3.5 为线性/混合注意力模型，causal_conv1d / flash-linear-attention 优化核未装，回退到参考 PyTorch 实现（较慢但正确）。</li>
+<li><b>数据</b>：base 400 例（3 难度均衡）/ augment +400 例（密集周期网格，hard 端加权）；eval 48 题（3 难度×16）。3 seed=20261114/15/16。</li>
+<li><b>产物</b>：<code>vision/wave_rl/v11_results/</code>（smoke + std_s{seed} + <code>v11_summary.json</code>）·<code>analyze_v11_regen.py</code>·<code>cpu_rl_v11_regen_experiment.py</code>·<code>run_v11_seeds_only.sh</code>·<code>V11_REGEN_DESIGN.md</code>·log @ <code>/tmp/v11_regen.log</code>。</li>
+<li><b>复现</b>：<code>bash run_v11_seeds_only.sh</code>（CUDA_VISIBLE_DEVICES=5）后 <code>python3 analyze_v11_regen.py</code> 再 <code>python3 gen_v11_regen_report.py</code>。</li>
 </ul>
-<p><strong>预注册判据</strong>（wake#881，运行前写入）：A≈25%→B&gt;50%→C&gt;B→C&gt;D。成功=C&gt;B 且 McNemar p&lt;0.05 且 bootstrap CI 排除 0。</p>
-</div>
-<h3>5.1 v5 四条件结果</h3>
-<table border="1" cellpadding="6">
-<tr><th>条件</th><th>准确率</th><th>说明</th></tr>
-<tr style=""><td>A — 基线（零样本 LoRA）</td><td>16.0%</td><td>未训练 base model，4 类随机期望=25%</td></tr>
-<tr style=""><td>B — SFT（类型分类微调）</td><td>37.0%</td><td>400 条合成波形 SFT，3 epoch，LoRA r=16 (6.4M)</td></tr>
-<tr style="background:#c8e6c9;font-weight:bold;"><td>C — SFT + RFT（正确过滤）</td><td>53.0%</td><td>v5 RFT: 200×3 rollout，正确过滤，3 epoch CE</td></tr>
-<tr style=""><td>D — SFT + RFT（随机过滤控制）</td><td>32.0%</td><td>random filter control（排除任何数据都能提升）</td></tr>
-</table>
-<p><strong>v5 判定</strong>：TREATMENT SIGNIFICANT | REWARD-DESIGN DRIVEN (C&gt;D) </p>
-<h3>5.3 v5 B（SFT）逐类准确率</h3><table border="1" cellpadding="6"><tr><th>波形类型</th><th>B 准确率</th></tr><tr><td>sine</td><td>16.0%</td></tr>
-<tr><td>square</td><td>84.0%</td></tr>
-<tr><td>triangle</td><td>24.0%</td></tr>
-<tr><td>sawtooth</td><td>24.0%</td></tr>
-</table><h3>5.4 v5 B（SFT）混淆矩阵</h3><p>行=真实类型，列=预测类型。对角线=正确。</p><table border="1" cellpadding="6"><tr><th>真实＼预测</th><th>sine</th><th>square</th><th>triangle</th><th>sawtooth</th><th>None</th></tr><tr><th>sine</th><td style="background:#c8e6c9;font-weight:bold;">4</td><td style="">1</td><td style="">6</td><td style="">14</td><td style="">0</td></tr>
-<tr><th>square</th><td style="">1</td><td style="background:#c8e6c9;font-weight:bold;">21</td><td style="">1</td><td style="">2</td><td style="">0</td></tr>
-<tr><th>triangle</th><td style="">18</td><td style="">0</td><td style="background:#c8e6c9;font-weight:bold;">6</td><td style="">1</td><td style="">0</td></tr>
-<tr><th>sawtooth</th><td style="">15</td><td style="">0</td><td style="">4</td><td style="background:#c8e6c9;font-weight:bold;">6</td><td style="">0</td></tr>
-</table><h3>5.5 v5 SFT 训练曲线</h3><table border="1" cellpadding="6"><tr><th>Epoch</th><th>Step</th><th>Loss</th><th>Avg(20)</th><th>耗时</th></tr><tr><td>1/3</td><td>1</td><td>0.5525</td><td>0.5525</td><td>27s</td></tr>
-<tr><td>1/3</td><td>20</td><td>0.4616</td><td>0.5370</td><td>464s</td></tr>
-<tr><td>1/3</td><td>40</td><td>0.5231</td><td>0.4041</td><td>919s</td></tr>
-<tr><td>2/3</td><td>60</td><td>0.2227</td><td>0.3434</td><td>1319s</td></tr>
-<tr><td>2/3</td><td>80</td><td>0.3263</td><td>0.3453</td><td>1704s</td></tr>
-<tr><td>2/3</td><td>100</td><td>0.3745</td><td>0.3206</td><td>2093s</td></tr>
-<tr><td>3/3</td><td>120</td><td>0.3205</td><td>0.2967</td><td>2482s</td></tr>
-<tr><td>3/3</td><td>140</td><td>0.2703</td><td>0.2934</td><td>2865s</td></tr>
-</table><h3>5.6 v5 RFT 采样统计</h3><table border="1" cellpadding="6"><tr><th>指标</th><th>值</th></tr><tr><td>总 rollout 数</td><td>600</td></tr><tr><td>正确 rollout</td><td>246</td></tr><tr><td>成功率</td><td>41.0%</td></tr></table><h3>5.7 v5 RFT 训练曲线</h3><table border="1" cellpadding="6"><tr><th>条件</th><th>Step</th><th>Loss</th></tr><tr><td>C</td><td>1</td><td>0.2517</td></tr>
-<tr><td>C</td><td>20</td><td>0.1642</td></tr>
-<tr><td>C</td><td>40</td><td>0.1776</td></tr>
-<tr><td>C</td><td>60</td><td>0.1135</td></tr>
-<tr><td>C</td><td>80</td><td>0.2178</td></tr>
-<tr><td>D</td><td>1</td><td>0.2687</td></tr>
-<tr><td>D</td><td>20</td><td>0.2772</td></tr>
-<tr><td>D</td><td>40</td><td>0.2411</td></tr>
-<tr><td>D</td><td>60</td><td>0.2523</td></tr>
-<tr><td>D</td><td>80</td><td>0.1906</td></tr>
-</table><h3>5.8 v5 统计检验</h3><table border="1" cellpadding="6"><tr><th>检验</th><th>统计量</th><th>p 值/CI</th><th>判定</th></tr><tr><td>McNemar B vs A</td><td>n_disc=41</td><td>0.0017872890369872694</td><td>✅ 显著</td></tr><tr><td>Bootstrap B-A</td><td>21.0%</td><td>CI=[9.0%, 33.0%]</td><td>✅</td></tr><tr><td>McNemar C vs B</td><td>n_disc=22</td><td>0.0008554458618164062</td><td>✅ 显著</td></tr><tr><td>Bootstrap C-B</td><td>16.0%</td><td>CI=[7.0%, 25.0%]</td><td>✅</td></tr><tr><td>McNemar C vs D</td><td>n_disc=31</td><td>0.00032801631501352843</td><td>✅</td></tr></table><h3>5.9 v5 数据泄漏检查</h3><p><strong>训练种子</strong>：20261107+400 · <strong>评测种子</strong>：995100+ · <strong>重叠</strong>：0 · train/eval use disjoint RNG seed ranges -&gt; no data leakage</p><h3>5.10 v5 预注册判据核对</h3><table border="1" cellpadding="6"><tr><th>判据</th><th>预期</th><th>实际</th><th>结果</th></tr><tr><td>B &gt; A</td><td>B&gt;25%(随机)</td><td>37.0% vs 16.0%</td><td>✅</td></tr><tr><td>C &gt; B</td><td>RFT提升</td><td>53.0% vs 37.0%</td><td>✅</td></tr><tr><td>C &gt; D</td><td>正确&gt;随机</td><td>53.0% vs 32.0%</td><td>✅</td></tr><tr><td>C vs B 显著</td><td>p&lt;0.05</td><td>p=0.0008554458618164062</td><td>✅</td></tr></table>
-<h3>5.11 v5 规模与算力标注</h3>
-<p>单台 CPU (224核, OMP限16, nice=19) · 2B text backbone (Qwen3.5-2B) · 400 SFT + 200×3 RFT · 100 题 · <strong>结论不外推为 GPU 结论</strong>。</p>
-
-
-<h2 id="v6">四b、v6 — GRPO Outcome-only 连续奖励（2026-11-09~11 · CPU）</h2>
-<h3>6.1 实验设计</h3>
-<p>v5 证明 RFT（监督方法）可显著提升波形类型分类。v6 回到 RL（GRPO）路线，用 v5 SFT adapter 作为起点，加 outcome-only 连续奖励 R = α·R_correct + β·R_partial（α=0.25, β=0.35），验证 GRPO 是否也能提升分类能力。</p>
-<table border="1" cellpadding="6">
-<tr><th>参数</th><th>值</th></tr>
-<tr><td>基座</td><td>Qwen3.5-2B(1.88B) + LoRA r=16（merge v5 SFT adapter → fresh LoRA）</td></tr>
-<tr><td>训练</td><td>40 GRPO steps, group_size=8, batch_prompts=2, n_train=200</td></tr>
-<tr><td>评测</td><td>100 题（25/type），B(SFT) / C(GRPO treatment) / D(GRPO control 随机奖励)</td></tr>
-<tr><td>环境</td><td>CPU fp32 / nice19 / OMP16 / seed=20261109 / 零GPU</td></tr>
-</table>
-
-<h3>6.2 结果</h3>
-<table border="1" cellpadding="6">
-<tr><th>条件</th><th>准确率</th><th>sine</th><th>square</th><th>triangle</th><th>sawtooth</th></tr>
-<tr><td>B (SFT v5)</td><td>35.0%</td><td>20%</td><td>84%</td><td>8%</td><td>28%</td></tr>
-<tr><td>C (GRPO treatment)</td><td>40.0%</td><td>4%</td><td>88%</td><td>32%</td><td>36%</td></tr>
-<tr><td>D (GRPO control)</td><td>36.0%</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-</table>
-
-<h3>6.3 统计检验</h3>
-<table border="1" cellpadding="6">
-<tr><th>检验</th><th>统计量</th><th>p 值</th><th>判定</th></tr>
-<tr><td>McNemar C-vs-B</td><td>stat=4, n_disc=13</td><td>p=0.267</td><td>❌ NOT SIG</td></tr>
-<tr><td>Bootstrap C-vs-B</td><td>Δ=+5.0%</td><td>CI=[-8.0%, +19.0%]</td><td>❌ 含 0</td></tr>
-<tr><td>McNemar C-vs-D</td><td>stat=3, n_disc=10</td><td>p=0.344</td><td>❌ NOT SIG</td></tr>
-</table>
-
-<h3>6.4 关键发现</h3>
-<ul>
-<li><strong>nonzero-std = 93.8%</strong> ✅ — 彻底解决 v1-v4 的 std=0 问题（v4 78.7% std=0），group_size=8 + 连续奖励有效</li>
-<li><strong>triangle 从 8% → 32%（+24pp）</strong> — GRPO 对能力缺口类有部分帮助</li>
-<li><strong>sine 从 20% → 4%（-16pp）</strong> — GRPO 可能损害已学到的 sine 能力</li>
-<li><strong>VERDICT</strong>: <code>TREATMENT NOT SIGNIFICANT | REWARD-DESIGN DRIVEN (C&gt;D)</code></li>
-<li><strong>cheat_rate = 0</strong> — train/eval disjoint seeds，无数据泄漏 ✓</li>
-</ul>
-<p><strong>结论</strong>：v6 GRPO 虽未达统计显著（p=0.267），但 nonzero-std 93.8% 是关键技术突破——证明连续奖励 + group_size=8 可解决 v1-v4 的方差问题，为 v7 奠定基础。</p>
-
-<h2 id="v7">四c、v7 — Process Reward λ Sweep + LoRA Rank Probe（2026-11-11~12 · CPU · 18 runs）</h2>
-<h3>7.1 实验设计</h3>
-<p>v6 的 nonzero-std 93.8% 解决了方差问题但准确率未显著提升。v7 在 v6 基础上加 <strong>process reward</strong>（R = R_outcome + λ·R_process），并探查 LoRA rank 是否为瓶颈。共 18 runs（3 seeds × 6 组），是迄今最大规模 CPU sweep。</p>
-<table border="1" cellpadding="6">
-<tr><th>参数</th><th>值</th></tr>
-<tr><td>v7 Process Reward</td><td>3 λ(0.03/0.1/0.2) × 3 seeds = 9 runs</td></tr>
-<tr><td>v7b LoRA Probe</td><td>3 rank(8/16/32) × 3 seeds = 9 runs（outcome-only for fair comparison）</td></tr>
-<tr><td>每轮</td><td>15 GRPO steps, group_size=4, batch_prompts=2, n_train=100, n_eval=48(12/type)</td></tr>
-<tr><td>环境</td><td>CPU fp32 / nice19 / OMP16 / Qwen3.5-2B(1.88B)+LoRA / 零GPU</td></tr>
-</table>
-
-<h3>7.2 预注册判据（2026-11-11 定稿）</h3>
-<ul>
-<li><strong>Baseline</strong> = v6 C (outcome-only GRPO) = 40%</li>
-<li><strong>PASS</strong>: mean improvement &gt; 1 sd AND 3 seeds 同方向（全部 &gt; baseline）</li>
-<li>不依赖 McNemar（因 s0 baseline 跨 seed 波动大 47.9-50%，paired test 不可靠）</li>
-</ul>
-
-<h3>7.3 v7 Process Reward 结果</h3>
-<table border="1" cellpadding="6">
-<tr><th>λ</th><th>s0 C</th><th>s1 C</th><th>s2 C</th><th>Mean±sd</th><th>Δ vs v6(40%)</th><th>Verdict</th></tr>
-<tr><td>0.03</td><td>54.2%</td><td>45.8%</td><td>41.7%</td><td>47.2%±5.2%</td><td>+7.2%</td><td>✅ PASS</td></tr>
-<tr style="background:#e8f5e9;"><td>0.1</td><td>45.8%</td><td>58.3%</td><td>43.8%</td><td>49.3%±6.4%</td><td>+9.3%</td><td>✅ PASS</td></tr>
-<tr><td>0.2</td><td>54.2%</td><td>45.8%</td><td>43.8%</td><td>47.9%±4.5%</td><td>+7.9%</td><td>✅ PASS</td></tr>
-</table>
-<ul>
-<li>nonzero-std = 100% (9/9) ✅ 彻底解决方差问题</li>
-<li>R_process 极小 (0.003-0.071) → outcome 奖励主导，process 项贡献微弱</li>
-<li>三组 λ 接近 → λ 对结果影响不显著</li>
-</ul>
-
-<h3>7.4 v7b LoRA Capacity Probe 结果</h3>
-<table border="1" cellpadding="6">
-<tr><th>Rank</th><th>s0 C</th><th>s1 C</th><th>s2 C</th><th>Mean±sd</th><th>Δ vs v6(40%)</th><th>Verdict</th></tr>
-<tr><td>8</td><td>45.8%</td><td>52.1%</td><td>45.8%</td><td>47.9%±2.9%</td><td>+7.9%</td><td>✅ PASS</td></tr>
-<tr><td>16</td><td>47.9%</td><td>50.0%</td><td>43.8%</td><td>47.2%±2.6%</td><td>+7.2%</td><td>✅ PASS</td></tr>
-<tr><td>32</td><td>50.0%</td><td>54.2%</td><td>43.8%</td><td>49.3%±4.3%</td><td>+9.3%</td><td>✅ PASS</td></tr>
-</table>
-<ul>
-<li>r8≈r16≈r32 → <strong>LoRA rank 非瓶颈</strong>（增大 rank 无显著收益）</li>
-<li>nonzero-std = 80-93%（低于 proc reward 的 100%）</li>
-</ul>
-
-<h3>7.5 逐类准确率（v7 λ=0.1 s0 为例）</h3>
-<table border="1" cellpadding="6">
-<tr><th>类别</th><th>B (SFT)</th><th>C (GRPO)</th><th>变化</th></tr>
-<tr><td>sine</td><td>—</td><td>8%</td><td>波动大(4-24%跨seed)</td></tr>
-<tr><td>square</td><td>—</td><td>87%</td><td>已接近天花板</td></tr>
-<tr style="background:#fff3cd;"><td>triangle</td><td>—</td><td>0%</td><td>⚠️ 能力缺口持续</td></tr>
-<tr style="background:#fff3cd;"><td>sawtooth</td><td>—</td><td>0%</td><td>⚠️ 能力缺口持续</td></tr>
-</table>
-
-<h3>7.6 关键发现</h3>
-<div style="background:#e8f5e9;padding:12px;border-radius:6px;margin:12px 0;">
-<ol>
-<li><strong>v7 预注册判据 ALL PASS</strong> — 6/6 组 meanΔ&gt;1sd AND 3seed同方向 &gt; v6 baseline(40%)</li>
-<li><strong>改善集中 square class</strong> — square ~87% / sine 波动大(4-24%) / triangle=0% / sawtooth=0%</li>
-<li><strong>triangle/sawtooth 全线 0%</strong> — 能力缺口持续，GRPO 无法弥补（需 SFT 补数据或改任务定义）</li>
-<li><strong>support@2/@3=2.1%</strong> — 极低，模型对哪题答对高度随机（高方差问题）</li>
-<li><strong>process reward 贡献微弱</strong> — R_process 极小，三组 λ 结果接近 → outcome 奖励主导</li>
-<li><strong>LoRA rank 非瓶颈</strong> — r8≈r16≈r32，增大 rank 无显著收益</li>
-</ol>
-</div>
-
-<h3>7.7 诚实局限</h3>
-<ul>
-<li>eval set 仅 48 题 → 统计功效有限（McNemar 不可靠）</li>
-<li>triangle/sawtooth 完全不会 → 4 类中只有 2 类有效，实际"有用准确率"约 24/48=50% 上限</li>
-<li>高方差（support@2=2.1%）→ 结果稳定性存疑</li>
-<li>CPU 规模限制（15 steps, group_size=4）→ 不能外推 GPU 规模</li>
-</ul>
-
-<h2 id="v8">八、v8 频率比较任务（2026-11-12~13 · CPU · MIXED）</h2>
-<div class="summary">
-<p><strong>任务</strong>：给定两个波形（各 16 采样点，固定 1µs 窗口），判断哪个频率更高（二分类 A/B，50% baseline）。<br>
-<strong>动机</strong>：v5-v7 全是 4 类类型分类，triangle/sawtooth 全线 0%。v8 换到频率比较维度，绕开类型识别瓶颈。<br>
-<strong>配置</strong>：Qwen3.5-2B(1.88B) + LoRA r=16(6.4M) · SFT 200ex×3ep · GRPO 15step · gs=4 · 3 seeds(20261112/13/14) · control random reward<br>
-<strong>预注册判据</strong>：A~50% / B&gt;60% / C&gt;B / McNemar p&lt;0.05 / 3 seeds 同方向</p>
-</div>
-
-<h3>8.1 结果总览</h3>
-<table border="1" cellpadding="6">
-<tr><th>指标</th><th>Seed 0 (20261112)</th><th>Seed 1 (20261113)</th><th>Seed 2 (20261114)</th><th>Control (random)</th></tr>
-<tr><td><strong>A (zero-shot)</strong></td><td>0.0%</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td><strong>B (SFT)</strong></td><td>45.0%</td><td>—</td><td>—</td><td>—</td></tr>
-<tr style="background:#e3f2fd;"><td><strong>C (GRPO)</strong></td><td><strong>60.0%</strong></td><td><strong>52.5%</strong></td><td><strong>45.0%</strong></td><td>45.0%</td></tr>
-</table>
-<p><strong>C mean</strong>: 52.5% ± 6.1% (n=3 seeds) · <strong>McNemar C vs B (s0)</strong>: p=0.0312 ✅ · <strong>Control vs B</strong>: p=1.0 NS · <strong>cheat_rate</strong>: 0</p>
-
-<h3>8.2 逐难度准确率（seed 0, C）</h3>
-<table border="1" cellpadding="6">
-<tr><th>难度</th><th>定义</th><th>n</th><th>correct</th><th>accuracy</th></tr>
-<tr><td>easy</td><td>同类型, 频率比&gt;2x</td><td>8</td><td>7</td><td><strong>87.5%</strong></td></tr>
-<tr style="background:#fce4ec;"><td>medium</td><td>同类型, 1.5-2x</td><td>16</td><td>6</td><td><strong>37.5%</strong></td></tr>
-<tr><td>hard</td><td>不同类型, 1.3-1.5x</td><td>16</td><td>11</td><td><strong>68.8%</strong></td></tr>
-</table>
-<p style="font-size:13px;color:#666;">反直觉发现：hard &gt; medium。可能因为"不同波形类型"提供额外视觉线索辅助频率比较，而"同类型相似频率"才是真正最难。</p>
-
-<h3>8.3 预注册判据检查</h3>
-<table border="1" cellpadding="6">
-<tr><th>判据</th><th>结果</th><th>通过？</th></tr>
-<tr style="background:#fcebcb;"><td>A ~50%</td><td>A=0.0%</td><td>❌ FAIL</td></tr>
-<tr style="background:#fcebcb;"><td>B &gt; 60%</td><td>B=45.0%</td><td>❌ FAIL</td></tr>
-<tr style="background:#d4edda;"><td>C &gt; B</td><td>mean 52.5% &gt; 45.0%</td><td>✅ mean / ⚠️ 2/3 seeds</td></tr>
-<tr style="background:#d4edda;"><td>McNemar p&lt;0.05</td><td>p=0.0312 (s0)</td><td>✅ PASS (s0)</td></tr>
-<tr style="background:#fcebcb;"><td>3 seeds 同方向</td><td>2/3 (s2 C=B=45%)</td><td>❌ FAIL</td></tr>
-</table>
-<p><strong>判定：MIXED</strong> — 3/5 判据通过。C&gt;B on mean (+7.5pp) + McNemar 显著(s0) + control 不提升 = GRPO 信号真实，但 A=0%/B=45% 说明任务对 2B+LoRA 太难、SFT 数据不足。</p>
-
-<h3>8.4 关键发现</h3>
-<ol>
-<li><strong>A=0% 异常</strong> — 模型零样本完全无法做频率比较（低于 50% chance），可能存在系统性偏差</li>
-<li><strong>B=45% 低于 chance</strong> — 200 examples × 3 epochs SFT 不足以教会频率比较</li>
-<li><strong>C mean=52.5% 首次超过 chance</strong> — GRPO 将模型推到 50% 以上，control 不提升 → 信号真实</li>
-<li><strong>triangle/sawtooth 不再 0%</strong> — 频率比较绕开了类型识别瓶颈</li>
-<li><strong>高方差 (±6.1%)</strong> — seed 0=60%, seed 2=45%，40 题 eval set 统计功效有限</li>
-<li><strong>bug ×2 已修复</strong> — scipy binom_test→binomtest / gc import scope</li>
-</ol>
-
-<h3>8.5 诚实局限</h3>
-<ul>
-<li>eval set 仅 40 题 → 统计功效有限</li>
-<li>A=0% / B=45% → 模型基础能力不足，任务可能需要更多 SFT 数据</li>
-<li>3/5 预注册判据未通过 → MIXED 而非显著提升</li>
-<li>seed 2 C=B=45% → 至少 1/3 seed 无改善</li>
-<li>CPU 规模限制（15 steps, gs=4, 200 SFT）→ 不外推 GPU</li>
-</ul>
-
-
-<h2 id="v10">九、v10 频率比较 · n_disc 修复 + Qwen3.5-2B（2026-11-13 · .17 GPU7 · NOT SIGNIFICANT）</h2>
-<div style="background:#f5f5f5;padding:14px;border-radius:6px;margin:12px 0;">
-<strong>动机</strong>：v9 诊断出 <code>grpo_lr=1e-6</code> 太低导致 <strong>n_discordant=0</strong>（GRPO 有 reward 信号 nz_std=75% 但不改变任何预测）。v10 针对<strong>这一单一瓶颈</strong>做最小修复，验证「信号路径打通后 RL 是否能转化为净准确率增益」。<br>
-<strong>v10 改动（仅 3 处）</strong>：① <code>grpo_lr</code> 1e-6→<strong>1e-5</strong>（10×，关键修复）② <code>n_grpo_steps</code> 30→<strong>50</strong> ③ 基座→<strong>Qwen3.5-2B</strong>（用户指定；<code>AutoModelForCausalLM</code> 已验证 PASS：1.88B / LoRA 737K / 1.2s·step）。其余同 v9：SFT 500ex×5ep、eval 91 pairs、LoRA r=16、group_size=4、3 seeds + control（random reward）。输出落 .17 本地 <code>v10_results/</code>（/nas_train 迁移后不可达）。cheat_rate=0（disjoint RNG seeds）。<br>
-<strong>预注册判据（run_v10_freqcmp.sh 顶部，先写后跑）</strong>：B&gt;55% / C&gt;B(mean) / McNemar p&lt;0.05(s0) / 3seed C≥B / <strong>n_disc&gt;0</strong> / control C≤B+10%。SUCCESS≥5/6，MIXED 3-4/6，FAIL≤2/6。
-<table border="1" cellpadding="6" style="margin-top:10px;">
-<tr><th>指标</th><th>Seed 0</th><th>Seed 1</th><th>Seed 2</th><th>Control</th></tr>
-<tr><td>A (zero-shot)</td><td>46.2%</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td>B (SFT)</td><td>54.9%</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td>C (GRPO)</td><td>53.8%</td><td>47.3%</td><td>53.8%</td><td>53.8%</td></tr>
-<tr><td>GRPO nz_std</td><td>82%</td><td>57%</td><td>73%</td><td>100%</td></tr>
-</table>
-<p><strong>结果（12:44 ALL DONE）</strong>：C mean = <strong>51.6% ± 3.1%</strong>（3 seeds）vs B = 54.9% → <strong>C &lt; B</strong>。McNemar(s0) <strong>p=1.0000，n_discordant=29</strong>。判据通过 <strong>2/6 → NOT SIGNIFICANT</strong>：✅ n_disc&gt;0（0→29，机制 bug 已修复）· ✅ control≤B+10%；❌ B&gt;55%(差0.1pp)·C&gt;B·McNemar p&lt;0.05·3seed一致。</p>
-<p><strong>关键诊断（诚实）</strong>：✅ <strong>v10 修复成功</strong>——n_disc 从 v9 的 0 → 29，<code>grpo_lr</code> 1e-5 让 GRPO 确实改变了 29 个预测。❌ <strong>但 RL 未转化为净增益</strong>——C=51.6% &lt; B=54.9%，McNemar p=1.0（29 个改变里改善/恶化几乎对称抵消）；control（随机奖励）也得 53.8%，与 C 接近，说明 GRPO 的预测改变并非由真实 reward 信号驱动出净方向性收益。A=46.2%（vs v9 的 0%）= 换 Qwen3.5-2B 后<strong>格式问题消失</strong>（模型直接输出 A/B）。逐难度(s0,C)：easy 50.0% / medium 45.2% / hard 65.6%。</p>
-<p><strong>结论</strong>：v10 是<strong>诚实的负/零结果</strong>。「让 GRPO 改变预测」≠「让 GRPO 提升准确率」。当前 CPU 规模（91 eval 题、500 SFT 例、50 GRPO 步、2B+LoRA）下，frequency_comparison 任务上 RL 相对 SFT 无统计显著的净增益。产物：<code>vision/wave_rl/v10_results/</code>（+ v10_summary.json）· <code>analyze_v10_freqcmp.py</code> · log @ /tmp/v10_freqcmp.log。</p>
-</div>
-
-<h2 id="cmp">五、综合对比与总结</h2>
-<h3>5.1 全版本对比（v1 → v2 → v3 → v4 → v5 → v6 → v7 → v8 → v9 → v10）</h3>
-<table border="1" cellpadding="6">
-<tr><th>版本</th><th>方法</th><th>任务/奖励</th><th>A(基线)</th><th>B (SFT)</th><th>C (处理)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
-<tr><td>v1 (11-06)</td><td>GRPO</td><td>读数/离散5档</td><td>—</td><td>9.2%</td><td>6.2%</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
-<tr><td>v2 (11-07)</td><td>GRPO</td><td>读数/连续</td><td>—</td><td>6.7%</td><td>11.1%</td><td>4.4%</td><td>0.625</td><td>⚠️ C&gt;B 但不显著</td></tr>
-<tr style="background:#e8eaf6;"><td><strong>v3 (11-07)</strong></td><td><strong>GRPO</strong></td><td><strong>读数/连续τ=0.15</strong></td><td>—</td><td>34.0%</td><td>25.0%</td><td>1.0%</td><td>0.063568115234375</td><td><strong>NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C&gt;D)</strong></td></tr>
-<tr style="background:#e8eaf6;"><td><strong>v4 (11-07)</strong></td><td><strong>RFT/STaR</strong></td><td><strong>读数/过滤</strong></td><td>—</td><td>34.0%</td><td>34.0%</td><td>33.0%</td><td>1.0</td><td><strong>NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C&gt;D)</strong></td></tr>
-<tr style="background:#fce4ec;"><td><strong>v5 (11-07)</strong></td><td><strong>RFT</strong></td><td><strong>类型分类/16点</strong></td><td>16.0%</td><td>37.0%</td><td>53.0%</td><td>32.0%</td><td>0.0008554458618164062</td><td><strong>✅ TREATMENT SIGNIFICANT</strong></td></tr>
-<tr style="background:#fff3e0;"><td><strong>v6 (11-11)</strong></td><td><strong>GRPO</strong></td><td><strong>类型分类/连续outcome</strong></td><td>—</td><td>35.0%</td><td>40.0%</td><td>36.0%</td><td>0.267</td><td><strong>NOT SIG · 但 nonzero-std=93.8% 突破</strong></td></tr>
-<tr style="background:#e8f5e9;"><td><strong>v7 (11-12)</strong></td><td><strong>GRPO+proc</strong></td><td><strong>类型分类/outcome+process</strong></td><td>—</td><td>~40%</td><td>49.3%±6.4%</td><td>—</td><td>NS*</td><td><strong>✅ 预注册判据 6/6 ALL PASS (3seed)</strong></td></tr>
-<tr style="background:#e3f2fd;"><td><strong>v8 (11-13)</strong></td><td><strong>SFT→GRPO</strong></td><td><strong>频率比较/二分类A·B</strong></td><td>0.0%</td><td>45.0%</td><td>52.5%±6.1%</td><td>45.0%</td><td>0.0312 (s0)</td><td><strong>⚠️ MIXED · 3/5判据通过 · McNemar显著(s0) · control不提升</strong></td></tr>
-<tr style="background:#fff8e1;"><td><strong>v9 (11-13)</strong></td><td><strong>SFT→GRPO</strong></td><td><strong>频率比较/二分类A·B</strong></td><td>0.0%</td><td>49.5%</td><td>49.5%(s0)</td><td>—</td><td>1.0 (s0)</td><td><strong>❌ NO CHANGE · n_disc=0 · 被迁移中断(仅s0)</strong></td></tr>
-<tr style="background:#ffebee;"><td><strong>v10 (11-13)</strong></td><td><strong>SFT→GRPO</strong></td><td><strong>频率比较/二分类A·B · Qwen3.5-2B</strong></td><td>46.2%</td><td>54.9%</td><td>51.6%±3.1%</td><td>53.8%</td><td>1.0 (s0)</td><td><strong>❌ NOT SIGNIFICANT 2/6 · n_disc修复(0→29)但RL未转化净增益</strong></td></tr>
-</table>
-<p style="font-size:12px;color:#666;">*v7 McNemar(s0) NOT SIG 因 s0 baseline 偏高(47.9-50%)，但预注册判据不依赖 McNemar（判据=meanΔ&gt;1sd AND 3seed同方向&gt;v6 baseline 40%）。<br>**v8 为不同任务（频率比较 vs 类型分类），不直接与 v5-v7 可比。v8 判据：A~50%/B&gt;60%/C&gt;B/McNemar p&lt;0.05/3seed同方向。</p>
-<h3>5.2 核心结论</h3>
-<div style="background:#fff3cd;padding:12px;border-radius:6px;margin:12px 0;">
-<p><strong>GRPO 路线（v1/v2/v3）</strong>：CPU 上 GRPO 受限于小 group（std=0 问题持续）、近零 loss、波动 avgR。
-即使连续化奖励（v2/v3）也未扭转颓势 —— v3 C=25.0% &lt; B=34.0%。</p>
-<p><strong>RFT 路线（v4）</strong>：改用 Rejection Sampling FT 绕过 group baseline 问题。
-<strong>NO IMPROVEMENT | REWARD-DESIGN DRIVEN (C&gt;D)</strong>（C=34.0%=B=34.0%，NULL）。</p>
-<p><strong>方向转换（v5）</strong>：连续 3 轮无提升后，v5 改任务为<strong>波形类型分类</strong>（4 类）+ 改输入为<strong>16 采样点直接入 prompt</strong>。
-<strong>✅ TREATMENT SIGNIFICANT</strong>（C=53% vs B=37%, p=0.0009）。v5 SFT loss 持续下降（0.55→0.32），表明类型分类可学。</p>
-<p><strong>GRPO 回归（v6）</strong>：在 v5 分类任务上回到 GRPO，用连续奖励 + group_size=8 → <strong>nonzero-std=93.8% 彻底解决方差问题</strong>，但 p=0.267 未显著。关键突破：方差问题已解决，瓶颈转移至"能力缺口"。</p>
-<p><strong>Process reward + sweep（v7）</strong>：18 runs（3 seeds × 6 组）→ <strong>✅ 6/6 ALL PASS</strong>（预注册判据 meanΔ&gt;1sd AND 3seed同方向&gt;40%）。C=47-49% vs v6 40%。但 triangle/sawtooth 全线 0%，改善集中在 square class。Process reward 贡献微弱（R_process 极小），LoRA rank 非瓶颈（r8≈r16≈r32）。</p>
-<p><strong>频率比较任务（v8）</strong>：换到新任务维度——给定两波形（各 16 采样点），判断哪个频率更高（二分类 A/B，50% baseline）。绕开 triangle/sawtooth 类型识别瓶颈。<strong>MIXED 结果</strong>：A=0% / B=45% / C=52.5%±6.1%（3 seeds: 60%/52.5%/45%）。McNemar(s0) p=0.0312 ✅显著。Control(random reward)=45%=B NS → GRPO 信号真实。但 3/5 预注册判据未通过（A~50%❌ / B&gt;60%❌ / 3seed同方向❌）。逐难度：easy 87.5% / hard 68.8% / medium 37.5%（反直觉 hard&gt;medium）。triangle/sawtooth 不再 0%。cheat_rate=0。</p>
-<p><strong>n_disc 修复 + Qwen3.5-2B（v9→v10）</strong>：v9 诊断 n_disc=0（grpo_lr=1e-6 太低，GRPO 不改变预测），被 .12→.17 迁移中断（仅 seed0：A=0%/B=49.5%/C=49.5% NO CHANGE）。v10 做最小修复（grpo_lr 1e-5 + 50 步 + Qwen3.5-2B）→ <strong>n_disc 0→29 修复成功</strong>，A=46.2%（格式问题消失），但 <strong>C=51.6%±3.1% &lt; B=54.9%</strong>，McNemar p=1.0，<strong>NOT SIGNIFICANT 2/6</strong>。诚实结论：「改变预测」≠「提升准确率」——control(随机奖励)也得 53.8%，说明 GRPO 的预测改变未被真实 reward 驱动出净方向性收益。</p>
-</div>
-<h3>5.3 诚实边界</h3>
-<ul>
-<li><strong>CPU pilot 结论不外推为 GPU 结论</strong>：CPU 上 step 数/group_size 受算力限制，GPU 阶段需重新验证。</li>
-<li><strong>text-only backbone 局限</strong>：当前用文本工具交互（ngspice），非直接看波形图。多模态版 Qwen3.5-2B 可直接处理图像，是未验证的更高上限。</li>
-<li><strong>triangle/sawtooth 能力缺口持续</strong>：v5-v7 全线 0%，GRPO 无法弥补 → 需 SFT 补数据或改任务定义（如二分类）。v8 频率比较绕开了此瓶颈（不再 0%），但任务本身难度更高（A=0%, B=45%）。</li>
-<li><strong>eval set 太小</strong>：v7 仅 48 题、v8 仅 40 题 → McNemar 不可靠，需增大到 96+ 以提升统计功效。</li>
-<li><strong>v8 MIXED 而非显著</strong>：C&gt;B on mean (+7.5pp) + McNemar 显著(s0) + control 不提升 = GRPO 信号真实，但 A=0%/B=45% 说明任务对 2B+LoRA 太难、SFT 数据不足。</li>
-<li><strong>负结果同样有价值</strong>：证伪了「CPU 上 GRPO/RFT 能提升波形读数回归」假设，v5 换分类任务是正确方向转换，v6-v7 证明连续奖励可解决方差问题，v8 证明频率比较任务可产生真实 GRPO 信号但基础能力不足。</li>
-</ul>
-
-<h2 id="next">六、下一步建议</h2>
-<ol>
-<li><strong>triangle/sawtooth 能力缺口（最紧迫）</strong>：v5-v7 全线 0%。方向：① SFT 补数据——专门生成 triangle/sawtooth 训练样本，用 SFT 先教会模型识别，再上 GRPO ② 改任务定义——如二分类"有无三角波"或"两波形频率比较"，降低难度 ③ v8 频率比较已绕开此瓶颈，但任务整体难度上升。</li>
-<li><strong>增大 eval set + SFT 数据</strong>：v8 仅 40 题、SFT 仅 200 examples → 增大到 96+ eval / 500+ SFT 以提升 B&gt;60% 和统计功效。</li>
-<li><strong>v8 A=0% 异常分析</strong>：模型零样本完全无法做频率比较，需分析是否为任务格式理解问题或系统性偏差。</li>
-<li><strong>v8 medium 难度 37.5% 最低</strong>：同类型相似频率（1.5-2x）是最难的分档，需针对性生成训练数据。</li>
-<li><strong>GPU 训练阶段</strong>：pretrain ckpt(ETA≈12/25)后跑大规模 GRPO/RFT，验证 CPU pilot 结论可扩展性。增大 group_size、step 数、n_train。</li>
-<li><strong>切换 Qwen3.5-2B 多模态版</strong>：当前 text-only backbone，多模态版可直接处理波形图（而非 16 采样点），是未验证的更高上限。</li>
-<li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；v8 MIXED（3/5 判据通过），需如实报告。</li>
-</ol>
-<hr>
-<p style="color:#999;font-size:12px;">本报告由 vision agent 手动更新（wake#856→#1112, 2026-11-07 ~ 2026-11-13）。数据来源：cpu_rl_v3/v4/v5/v6/v7/v8/v10 experiment_results.json + v10_summary.json + v7_sweep_analysis.json + /tmp/v*.log + dataset_research_results.json。v9 结果困于 .12（迁移中断），仅 seed0 可考。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
-</body>
-</html>
+<h2 id="honest">六、诚实声明</h2>
+<p>本报告遵守任务书「研究口径」：判据先定后测；负结果如实记录；CPU-pilot 结论不外推；cheat_rate=0 已报。若 v11 仍无显著提升，则「在当前 CPU 规模下、周期回归任务上、生成式路线相对直接回归无统计显著优势」即为交付结论，并给出下一步（更大 eval set / GPU 大规模 / 换奖励与任务定义）。</p>
+<p class="footer">单文件 · 0 script · 0 外链 · commit 前缀 vision rl: · 数据可追溯至 vision/wave_rl/v11_results/。</p>
+</body></html>
