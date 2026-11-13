@@ -1,9 +1,12 @@
 WAITING: 0
 
-> 🆕 **【wake #1175 · 2026-11-14 02:08】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock·无活跃 git·posttrain cline PID2405403 跑 pyAether code-eval 非 git 阶段)→behind1 ff pull+add 明确路径+commit+push 本线 2 文件**：
-> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：vision/wave_rl/v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·criteria 2/6·verdict NOT SIGNIFICANT)✓。`ps` 核实无 vision 实验进程在跑(grep freqcmp/wave_rl/v10/run_v/cpu_rl 真实命中=0·grep 命中仅本巡检自身 ls/ps/cat·非 vision)。
-> - 输入参考：research 日报 2026-11-14(index mtime 00:12·自 wake#1170 未刷新·2026-11-14.html line181)vision 栏=**①波形「回归 vs 生成」三臂小对照+②冻结 SAM 特征+轻量头作下界**——与 wake#1170~#1174 同·**无新增 wave-RL 可执行项**→不 action(全交付态/WAITING:0/无新令驱动·留待运维/用户拍板)。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·grep vision 无命中·非 vision)→不 action。
-> - ✅ **git 本轮成功提交**：无 `.git/index.lock`·无活跃 git 进程(posttrain cline PID2405403 code-eval 阶段·非 git)→三条件齐备。`git fetch`→behind 1→`git pull --no-rebase --no-edit` **ff 成功**(HEAD 7509d62d0→7826359dd·2 files·incoming=harness R2436 MEMORY_HARNESS.md+daily-memories-harness 经 `git log --name-only` 核实=**非视觉·不触 vision 文件**⇒ ff 安全·无需 autostash·未动 posttrain 在途 M MEMORY_POSTTRAIN.md+?? outputs/)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-14.md`(明确路径不用 -A·不触 posttrain 在途)→commit→push。GPU(.17 8×A40) posttrain RL 占卡·vision CPU-only 不冲突。体积✓(fold wake#1174·MEMORY ~31.5KB/TASK 26.3KB·均≤32KB)。**WAITING: 0**。
+> 🆕 **【wake #1177 · 2026-11-14 02:26】例行巡检·全交付态·零异常·无新增·✅ git 0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警上报运维**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：vision/wave_rl/v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·criteria 2/6·verdict NOT SIGNIFICANT)✓。`ps` 核实无 vision 实验进程在跑(grep freqcmp/wave_rl/v10/run_v/cpu_rl 真实命中=0·命中仅本巡检自身 ls/ps/cat 子壳·非 vision)。
+> - 输入参考：research 日报 2026-11-14(index mtime 00:12·自 wake#1170 未刷新·2026-11-14.html line181)vision 栏=**①波形「回归 vs 生成」三臂小对照+②冻结 SAM 特征+轻量头作下界**——与 wake#1170~#1175 同·**无新增 wave-RL 可执行项**→不 action(全交付态/WAITING:0/无新令驱动·需新奖励/任务设计+预注册判据·留待运维/用户拍板)。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·grep vision 无命中·非 vision)→不 action。
+> - ✅ **git 本轮成功提交**：无 `.git/index.lock`·无活跃 git 进程(仅本巡检自身 git fetch·posttrain cline 跑 code-eval 非 git 阶段)→三条件齐备。`git fetch`→**0 ahead/0 behind 已 up-to-date→无需 pull**(vision 工作树 CLEAN·仅 posttrain 在途 ?? outputs/ 不触)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-14.md`(明确路径不用 -A·不触 posttrain 在途)→commit→push。GPU(.17 8×A40) posttrain RL 占卡·vision CPU-only 不冲突。体积✓(fold wake#1175·MEMORY ~31.5KB/TASK 26.3KB·均≤32KB)。**WAITING: 0**。
+> - ⚠️ **idle-spin 告警（上报运维/用户拍板）**：本线 2026-11-14 已连续 **13 轮**(wake#1165~#1177)例行巡检**零新增·零产物变化**，每轮仅心跳+commit，纯耗 token。根因=**当前方向已穷尽**：v5 获统计显著正结果(A16%→B37%→C53% p=0.0009)后，v6~v10 连续 5 轮无提升(v10 NOT SIGNIFICANT 2/6·McNemar p=1.0)，已远超任务书护栏「连续 3 轮无提升必须换方向」阈值。两条用户令(2026-11-07)均 ✅ 已交付。research 日报建议的「回归 vs 生成 三臂对照」需新奖励/任务设计+预注册判据，**不应自动起**（需运维/用户拍板）。**建议**：①运维下达下一方向令(或批准三臂对照)→本线即起实验；或②运维停掉 `baize_vision_loop.sh`(PID1236761@.12)以止 token 空转（停时可顺手照 `baize_pretrain_loop.sh` 新版修 WAITING 正则+git pull 缺陷，见 AGENTS.md §3）。本 agent 不擅自 kill loop（属运维决策·且 kill 自身父进程有风险）。**WAITING: 0**。
+
+> 📦 **wake #1175 · 2026-11-14 02:08** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→behind1 ff pull+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1177·详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1174 · 2026-11-14 01:58** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0/0 up-to-date 无需 pull)→add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1175·详情 daily-memories-vision/2026-11-14.md)。
 
@@ -37,12 +40,7 @@ WAITING: 0
 
 > 📦 **wake #1161 · 2026-11-13 23:24** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 1 非视觉)+commit --only 本线 2 文件(避让 posttrain staged)+push 成功·已fold(见 wake#1162·详情 daily-memories-vision/2026-11-13.md)。
 
-
-> 📦 **wake #1160 · 2026-11-13 23:16** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 4 commit 非视觉)+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1162·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1159 · 2026-11-13 23:07** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 1 commit 非视觉)+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1160·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1158 · 2026-11-13 23:00** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 3 commit 非视觉)+add 明确路径+commit+push 本线 2 文件·v10_summary.json NFS 属性缓存不一致已自愈·已fold(见 wake#1162·详情 daily-memories-vision/2026-11-13.md)。
+> 📦 **wake #1158~#1160 · 2026-11-13 23:00~23:16** 例行巡检·全交付态·零异常·无新增·均 add 明确路径+commit+push 本线 2 文件·已fold 详情见 daily-memories-vision/2026-11-13.md。
 
 
 > 📦 **wake #1157 · 2026-11-13 22:44** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 5 commit 非视觉)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1159·详情 daily-memories-vision/2026-11-13.md)。
