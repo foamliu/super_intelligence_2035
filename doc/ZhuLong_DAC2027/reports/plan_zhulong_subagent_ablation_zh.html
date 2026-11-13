@@ -87,7 +87,8 @@ ConfiguredAgentFrontmatterSchema = z.object({
 <tr><td>spawn_agent 工具</td><td>已注入 act preset</td><td class="l"><code>presets.ts</code> act 模式默认</td></tr>
 <tr><td>.cline/agents/ 预配置</td><td><b>无</b>（未配置任何预定义 agent）</td><td class="l"><code>ls .cline/agents/</code> 为空</td></tr>
 <tr><td>主 agent 基座</td><td><code>deepseek-v4-pro-cloud</code></td><td class="l">models.json defaultModelId</td></tr>
-<tr><td>可用弱基座</td><td><code>deepseek-v4-flash</code> / <code>deepseek-v4-pro-fp4</code></td><td class="l">models.json providers</td></tr>
+<tr><td>可用弱基座（deepseek 系）</td><td><code>deepseek-v4-flash</code> / <code>deepseek-v4-pro-fp4</code></td><td class="l">models.json providers</td></tr>
+<tr><td>可用弱基座（doubao 系）</td><td><code>doubao-seed-2.0-pro-cloud</code> / <code>doubao-seed-2.0-mini-cloud</code> / <code>doubao-seed-2.0-lite-cloud</code></td><td class="l">agi-gateway（3 个独立 API key，需注册 3 个 provider entry）</td></tr>
 <tr><td>158 题特征</td><td>prompt 401-3405 chars（med 948），num_unique_apis 1-41（med 5）</td><td class="l">EDA-Eval-pyAether-158.jsonl</td></tr>
 </table>
 
