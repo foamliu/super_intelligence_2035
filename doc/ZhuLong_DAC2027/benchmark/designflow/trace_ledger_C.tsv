@@ -757,7 +757,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794357676593_s5o5k					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793192893935_poa8g					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1791425862447_ytr6l					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1794468352049_l35g8	t0002038	hfeg0pkn003	90	layout_aether	claimed		2026-11-14 01:10	
+1794468352049_l35g8	t0002038	hfeg0pkn003	90	layout_aether	case	EDA-Eval-DesignFlow-FreeTrackFinder-001	2026-11-14 01:27	
 1792998643161_19e3k	jcgu	10.129.32.236	542		parked		2026-11-14 02:30	r538 peek REJECT (skill-orch: skill-creator)
 1786615396051_enh4y	e0014566	10.129.35.82	690		parked		2026-11-14 02:30	r538 peek REJECT (run-existing: rscalc flow read prompt_flow.md)
 1785994889000_x5tcq	e0014566	10.129.35.82	561		parked		2026-11-14 02:30	r538 peek REJECT (run-existing: rscalc flow read prompt_flow.md)
