@@ -1637,3 +1637,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791857560392_2idx0	e0042624	hfeg0plg76	26	analog_context	parked		2026-11-13 12:33	r612 peek: pretty-format a raw json file (data format, not D-domain produce)
 1793847734856_th4j1	e0044587	hfeg0plg99	25	waveform	parked		2026-11-13 12:33	r612 peek: NOTFOUND on .75 (session file missing)
 1788936531561_ss3yk	sophiaw	hfeg0plg49	24	schematic_netlist	parked		2026-11-13 12:33	r612 peek: ssh timeout (could not read session)
+1793793264370_yr754	reedchen	hfeg0plg93	36	analog_context	case	EDA-Eval-DesignFlow-VmMcStatOrganize-001	2026-11-13 13:18	
