@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **91** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **42** · vision **21** · harness **54** · data **50** · zhulong **59** · designflow **26**
+**本轮快照**：累计 **95** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **43** · vision **24** · harness **56** · data **53** · zhulong **60** · designflow **27**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -1612,6 +1612,74 @@
 | 与我们工作的关系 | **zhulong（延迟分布 vs 平均吞吐，直接）**：TPU 的论证是「**p99 才是线上指标**」，与 LLM / agent 推理的成本讨论同构；<b>动作</b>：zhulong 的推理成本表增加 `p50 / p99 latency` 与「每任务端到端秒数」，🚫 只报 tokens/s 平均值。<b>预注册判据</b>：若某配置 p99 > 2× p50，先做调度 / 批处理优化，暂不换模型或加卡。<br>**designflow（专用硬件 vs 通用工具）**：论文的价值在「**按负载特征定制**」；对应我们的 agent 负载里最慢的一环往往是 EDA 工具（综合 / 仿真 / DRC）而非模型本身；<b>动作</b>：先测一条完整设计流程中各工具调用的耗时分布，再决定优化预算落在模型还是工具封装。<br>**harness（负载代表性）**：论文用 MLP / CNN / LSTM 代表 **95%** 的推理需求来选基准；<b>动作</b>：harness 定义我们自己的「覆盖 95% 调用量」的最小任务集，并写清选取依据与统计窗口。<br>**风险**：① 2017 年**推理-only、8-bit** 口径，🚫 不能把 15–30× 外推到今天的训练或新时代加速器；② 对比对象是同机房 Haswell / K80，属**同期同环境**对照；③ 92 TOPS / 28 MiB 是硬件规格，不代表实际利用率（摘要亦承认部分应用利用率低）。 |
 
 首次收录: 2026-11-13（第二十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**75** 作者、首发时间已核；OpenAlex `200`：**1,572**）；第 4 作者 David A. Patterson 已在作者网（#74，此前 IRAM 轮已发信）
+
+---
+
+## 92. Proximal Policy Optimization Algorithms
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Proximal Policy Optimization Algorithms |
+| 作者（前 3） | **John Schulman** · **Filip Wolski** · **Prafulla Dhariwal**（et al.，共 **5** 位，含 Alec Radford、Diederik Kingma） |
+| 年份 | **2017**（arXiv 首次提交 **2017-07-20T02:32:33Z**，`v1`；`v2` 2017-08-28） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`；arXiv `comment` 为空，**未核到会场 DOI** ⇒ 不写会议） |
+| 被引数 | **31,326**（OpenAlex arXiv DOI `10.48550/arxiv.1707.06347` 直查，查询日 **2026-11-14**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1707.06347> ｜ DOI `10.48550/arXiv.1707.06347` |
+| 一句话贡献 | 摘要原文要点：给出一族策略梯度方法，交替「与环境交互采样」与「随机梯度上升优化代理目标」；与标准策略梯度**每个样本只做一次梯度更新**不同，新目标允许**多次小批量 epoch 更新**；作者称 PPO 具备 TRPO 的部分好处，但**更易实现、更通用、样本复杂度更好**，并在仿真机器人运动与 Atari 上优于其他在线策略梯度方法，在样本复杂度 / 实现简单 / 墙钟时间之间取得较好平衡。 |
+| 与我们工作的关系 | **zhulong（RL 训练器基线，直接）**：zhulong 的消融臂要跑 RL 迭代，PPO 的**三个旋钮**（clip 比例 / 每批数据 epoch 数 / minibatch 大小）就是最先要固定下来的口径。<b>动作</b>：在启动 P2 前先做一组小网格（clip ∈ {0.1,0.2,0.3} × epoch ∈ {3,10}），只作为内部配方、**不进论文**。<b>预注册判据</b>：若三组配置的 Pass@1 差异 &lt; 2 个绝对点，则固定默认值、不再搜；差异主要来自 epoch 数 ⇒ 说明瓶颈在数据复用而非目标函数。<br>**vision（波形 RL，直接）**：vision 线用 RL 做波形参数回归，奖励已连续化；PPO 的 clip 机制决定了「奖励尺度变化时更新幅度是否失控」——<b>动作</b>：把奖励归一化方式（除以滑动标准差 vs 固定尺度）作为一臂对照，观察 rise_time / duty_cycle 的误差曲线是否出现塌陷。<br>**harness（训练与判分解耦）**：PPO 的「多 epoch 复用同批采样」意味着<b>同一条轨迹会被多次计分</b>；评测时必须用独立 rollout，不能复用训练采样。<b>动作</b>：harness 的成功率统计明确写「评测 rollout 与训练采样不共享」；缺此说明的结果不进对外对比。<br>**风险**：① 摘要只给「优于其他在线策略梯度」的定性结论，**无逐任务数字**；② 2017 年的实验环境（MuJoCo / Atari）与 LLM 的 RL 场景差异大，🚫 不能把「样本效率更好」直接外推到 token 级 RL；③ 论文未讨论 KL 约束的具体实现细节（那在 TRPO / 后续工作里）。 |
+
+首次收录: 2026-11-14（第二十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**5** 作者、首发时间已核；OpenAlex `200`：**31,326**）；一作 John Schulman 已进作者网（`@johnschulman2`，无邮箱 ⇒ 未发信）
+
+---
+
+## 93. Denoising Diffusion Probabilistic Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Denoising Diffusion Probabilistic Models |
+| 作者（前 3） | **Jonathan Ho** · **Ajay Jain** · **Pieter Abbeel**（共 **3** 位） |
+| 年份 | **2020**（arXiv 首次提交 **2020-06-19T17:24:44Z**，`v1`；`v2` 2020-12-16） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`；arXiv `comment` 为空，**未核到会场 DOI** ⇒ 不写会议） |
+| 被引数 | **11,034**（OpenAlex arXiv DOI `10.48550/arxiv.2006.11239` 直查，查询日 **2026-11-14**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2006.11239> ｜ DOI `10.48550/arXiv.2006.11239` |
+| 一句话贡献 | 摘要原文要点：用扩散概率模型（受非平衡热力学启发的隐变量模型）做高质量图像合成；最佳结果来自一个**加权变分下界**，其权重由「扩散模型 ↔ 去噪分数匹配 + Langevin 动力学」的新联系导出；模型天然支持**渐进式有损解压**（可看作自回归解码的推广）；CIFAR-10 无条件生成 **IS 9.46 / FID 3.17**，256×256 LSUN 上与 ProgressiveGAN 相当。 |
+| 与我们工作的关系 | **vision（合成数据，间接但明确）**：vision 线当前是「波形 → 参数」的回归任务，标注贵、长尾重；DDPM 提供的是**从分布采样**的能力，适合生成「罕见的异常波形 / 缺陷形态」。<b>动作</b>：先做三臂小对照 —— ① 纯直接回归（现状）② 扩散生成后取统计量 ③ 回归 + 扩散增广；固定数据与训练预算。<b>预注册判据</b>：若生成臂在 held-out 上**没有降低** period / rise_time / duty_cycle 的绝对误差，则本期不投入生成式路线（不因「方法新」而上）。<br>**designflow（造题 / 稀有场景）**：L4–L5 的题面需要「真实但稀缺」的设计场景；用扩散模型在**版图截图 / 波形轨迹**上做受控增广，比人工造题便宜。<b>动作</b>：增广样本必须与真实样本**分开标注来源**，且每条题面注明 `synthetic=true`。<br>**data（保真度检查）**：论文的核心是**训练目标**（加权 VLB），不是「生成得像」；我们的合成数据验收不能只看视觉相似。<b>动作</b>：沿用「关键统计量 vs 真实参照集」的对照（见同日 A 轨 CADET），把 FID 类指标降为辅助。<br>**风险**：① FID / IS 是图像指标，**不能**直接衡量 1-D 波形或版图的功能正确性；② 论文的加权重构是为自然图像调的，换到信噪比分布不同的信号需重新推导（本线已就此向三作 Abbeel 发信请教）；③ 摘要未给采样步数与推理成本，落地前须实测。 |
+
+首次收录: 2026-11-14（第二十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**3** 作者、首发时间已核；OpenAlex `200`：**11,034**）；三作 Pieter Abbeel 已进作者网（`@pabbeel` + `pabbeel@cs.berkeley.edu`，**已发信** 2026-11-14）
+
+---
+
+## 94. ZeRO: Memory Optimizations Toward Training Trillion Parameter Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ZeRO: Memory Optimizations Toward Training Trillion Parameter Models |
+| 作者（前 3） | **Samyam Rajbhandari** · **Jeff Rasley** · **Olatunji Ruwase**（et al.，共 **4** 位，含 Yuxiong He） |
+| 年份 | **2019**（arXiv 首次提交 **2019-10-04T17:29:39Z**，`v1`；`v3` 2020-05-13） |
+| 会议 / 期刊 | **SC 2020**（OpenAlex `type=conference-paper`，DOI `10.1109/sc41405.2020.00024`） |
+| 被引数 | **1,432**（OpenAlex arXiv DOI `10.48550/arxiv.1910.02054` 直查，查询日 **2026-11-14**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1910.02054> ｜ DOI `10.48550/arXiv.1910.02054`；会场 DOI `10.1109/sc41405.2020.00024` |
+| 一句话贡献 | 摘要原文要点：提出 **ZeRO（Zero Redundancy Optimizer）**，消除数据并行与模型并行中的**显存冗余**（优化器状态 / 梯度 / 参数分片），同时保持低通信量与高计算粒度，使模型规模可随设备数线性扩展；分析称今天硬件上可扩到 **1 万亿参数**；实测在 **400 GPU** 上训练 **&gt;100B** 参数模型，吞吐 **15 Petaflops**、超线性加速，模型规模 **8×**、可达性能 **10×**；且无需模型并行即可训练 **13B** 级模型（大于 Megatron GPT 8.3B / T5 11B）。 |
+| 与我们工作的关系 | **pretrain（2B 训练的显存与并行口径，直接）**：BaiZe 是 ~2B 主干，显存瓶颈可能来自**优化器状态**（Adam 的 fp32 master weights + 动量）而非参数本身；ZeRO 的分层（stage-1 优化器状态 / stage-2 梯度 / stage-3 参数）正好给出「先分片哪一块」的优先序。<b>动作</b>：在训练配置表里新增三列 <code>zero_stage</code> / <code>opt_state_sharded</code> / <code>param_sharded</code>，任何吞吐对比必须三列齐全。<b>预注册判据</b>：若 stage-2 已能把单卡显存压到 &lt;70%，则不上 stage-3（通信开销换显存的收益递减）；若 stage-3 后 step time 上升 &gt;20%，则优先调 micro-batch 而非继续加 stage。<br>**data（吞吐预算）**：数据加载与 tokenize 吞吐必须与训练 step time 同框记录，否则「训练变快但数据供不上」会被误读成并行收益。<b>动作</b>：data 线的 shard 产出速率（tokens/s）写进同一张表。<br>**风险**：① 论文的 15 Petaflops / 8× 是 **2020 年 V100 集群**口径，🚫 不能外推到今天的卡型与互联；② 13B 与 2B 的通信/计算比不同，stage 选择的最优点会移动；③ 摘要未给「Zero-3 在长序列上的额外通信成本」。 |
+
+首次收录: 2026-11-14（第二十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**4** 作者、首发时间已核；OpenAlex `200`：**1,432**，`conference-paper`）；4 位作者均为 Microsoft Research ⇒ 未找到可核验个人主页邮箱，本轮**未进作者网**
+
+---
+
+## 95. Segment Anything
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Segment Anything |
+| 作者（前 3） | **Alexander Kirillov** · **Eric Mintun** · **Nikhila Ravi**（et al.，共 **12** 位，含 Hanzi Mao） |
+| 年份 | **2023**（arXiv 首次提交 **2023-04-05T17:59:46Z**，`v1`） |
+| 会议 / 期刊 | **ICCV 2023**（OpenAlex `type=conference-paper`，DOI `10.1109/iccv51070.2023.00371`） |
+| 被引数 | **16,904**（OpenAlex arXiv DOI `10.48550/arxiv.2304.02643` 直查，查询日 **2026-11-14**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2304.02643> ｜ DOI `10.48550/arXiv.2304.02643`；会场 DOI `10.1109/iccv51070.2023.00371` |
+| 一句话贡献 | 摘要原文要点：提出 **SA 项目**（新任务 + 模型 + 数据集）；用高效模型构成**数据收集闭环**，建成当时最大的分割数据集 —— **1B+ mask、11M 张**有授权且隐私合规的图像；模型被设计成**可提示（promptable）**，从而能零样本迁移到新的图像分布与任务；作者称零样本表现常与既有全监督结果相当甚至更好，并开源 SAM 与 SA-1B。 |
+| 与我们工作的关系 | **vision（缺陷 / 版图分割基线，直接）**：我们的视觉任务里「区域级」标注（缺陷区域、版图图层）比整图分类更贵；SAM 提供**先出 mask、再人工接受/拒绝**的半自动路径。<b>动作</b>：先在 held-out 缺陷图上跑「冻结 SAM + 轻量头」作为下界，固定权重版本与 prompt 策略（点 / 框）。<b>预注册判据</b>：若冻结 SAM 距全量微调 ≤ 2 个绝对点（IoU 或任务指标），则本期不自训分割编码器，把预算让给标注。<br>**data（数据引擎）**：论文真正的工程贡献是「模型辅助标注闭环」——先标一部分、训模型、用模型预标、人工只做接受/拒绝。<b>动作</b>：data 线选一个小任务试点，记录「初标接受率」与「每 100 个样本的人时」；<b>预注册判据</b>：人时节省 &lt;30% 或接受率 &lt;70% ⇒ 停试点，回到纯人工。<br>**harness（分割指标口径）**：promptable 模型的评测依赖**提示策略**，不同提示会给出不同分。<b>动作</b>：评测表固定写死 prompt 生成规则与随机种子，禁止「挑一个能过的点」。<br>**风险**：① 训练语料是自然图像，SEM / 版图属**分布外**，零样本结论不可直接引用；② 摘要只给「常与全监督相当或更好」的定性说法，**无逐项数字**；③ 1B mask 的规模对我们不现实，只能借「闭环」方法而非其规模。 |
+
+首次收录: 2026-11-14（第二十四轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**12** 作者、首发时间已核；OpenAlex `200`：**16,904**，`conference-paper`）；一作 Alexander Kirillov 主页 `404`、候选 `@akirillov` 判非本人 ⇒ 邮箱与 X **均未找到，不登记**
 
 ---
 

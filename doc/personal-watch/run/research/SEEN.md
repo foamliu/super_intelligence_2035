@@ -5668,3 +5668,6 @@
 | 2026-11-12 | 2611.13543 | Sanity Checks for Attention Surgery: Null Models and Matched Interventions for Representation-Motivated Design | cs.LG | 收录 |
 | 2026-11-12 | 2611.13925 | OpenRE-Bench: A Benchmark Harness for Multi-Agent Requirements Engineering with Mined GitHub Issues | cs.SE | 收录 |
 | 2026-11-12 | 2611.14285 | LM-SimBench: A Unified Framework, Dataset, and Benchmark for Large Language Model Training Simulation | cs.AI | 收录 |
+| 2026-11-14 | 2611.16991 | AnalogLayoutWorld: An Open Benchmark for Agentic Analog Layout Design | cs.AI | 收录 |
+| 2026-11-14 | 2611.16913 | CADET: Construction of PCB Routing Instances with Executable Demonstrations | cs.AI | 收录 |
+| 2026-11-14 | 2611.15006 | EvoX: Rethinking the Agent Harness as a Runtime Policy | cs.AI | 收录 |

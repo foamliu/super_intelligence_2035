@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-14（早报 3/5 ＋ B 轨第二十四轮 95 篇 · 作者网 97 人）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-b { background:#fff1d6; color:#7a4b00; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  details { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 16px; margin:14px 0; }
+  summary { cursor:pointer; font-weight:700; color:var(--primary); }
+  .muted { color:var(--muted); }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); font-size:12.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-14</h1>
+  <div class="sub">早报 <b>3 篇「借鉴」</b>（进度 <b>3/5</b>）＋ 🅱 B 轨第二十四轮累计 <b>95</b> 篇 ＋ 👥 作者网 <b>97</b> 人 ＋ ✉ 作者信累计 <b>33</b> 封</div>
+  <div class="meta">
+    <span>数据源：arXiv API（单分类 5 查询 · 5/5 <code>200</code> + atom）</span>
+    <span>生成：2026-11-14 00:08（00:00 时窗 · A 轨新批 ＋ B 轨第二十四轮 ＋ 作者信）</span>
+    <span>进度：<b>3 / 5</b>（晚报补齐 2 篇）</span>
+    <span>出口：仅 HTML（🚫 不发日报邮件）</span>
+  </div>
+  <div class="disc">⚠️ 推荐 = 待读线索，<b>非结论</b>；所有数字均为论文作者自报，本线未复现；「对各线的可执行建议」为基于论文的推断，非指令。</div>
+</header>
+
+<div class="note">
+  <b>本轮索引确实动了</b>：5 个 <code>totalResults</code> 与 11-13 各轮<b>逐值相同</b>（125,322 / 213,258 / 299,025 / 212,730 / 31,041），但窗口内最晚 <code>published</code> 已从 <code>2026-11-10T18:59:54Z</code> 前进到 <code>2026-11-12T18:59:55Z</code> ⇒ <b>「总数不变 ≠ 索引没动」</b>。本轮以 <code>published</code> 实测为准；新候选 368 条（<code>SEEN.md</code> 命中 0），3 篇当日收口。
+</div>
+
+<h2 class="sec">☀️ 今日推荐 · 3 篇「借鉴」（早报 3/5）<span class="badge b-jz">借鉴</span></h2>
+
+<div class="card">
+  <h3><span class="no">1</span>AnalogLayoutWorld: An Open Benchmark for Agentic Analog Layout Design</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">给「agent 做<b>模拟电路版图</b>」搭了一个开源基准：<b>40 个专家复核任务</b>（输入固定晶体管级网表，输出端到端 GDS），配<b>集成设计环境 + 独立物理验证 + 后仿电学验证 + 客观版图质量指标</b>。在 <b>13 个 model–harness 配置</b>上，<b>91.1%</b> 的尝试能产出 GDS，但<b>只有 23.0% 通过验收</b>；作者内部系统 Novara 综合分最高，并把差距归因于<b>固定预算下的 test-time scaling</b>（推理效率 + 有效利用验证反馈）。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">AnalogLayoutWorld: An Open Benchmark for Agentic Analog Layout Design</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">NovaSilicon Team（arXiv 作者字段仅 <b>1 条团队署名</b>；个人作者与机构<b>未从 PDF 核验</b>，不以印象补）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-12</b>（<code>published=2026-11-12T15:56:13Z</code>，<code>updated</code> 同值）· 距本轮唤醒 <b>≈32h</b>（在 72h 内）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-jz">借鉴</span> · 关键词：EDA / 模拟版图 / agent benchmark / 长程物理约束 / 独立验证</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.16991">https://arxiv.org/abs/2611.16991</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · designflow / zhulong / harness 三线直接对口）</b>
+    <ol>
+      <li><b>「能产出」与「能过验收」被拆成两个数：91.1% vs 23.0%</b>。这正是造题时最容易自欺的地方 —— 只看「有没有输出文件」，agent 看起来很行；一旦加上独立物理验证 + 后仿电学验证，通过率掉到四分之一。designflow 的 L3–L5 可直接抄这个口径：<b>产出率</b>与<b>验收率</b>必须分开报。</li>
+      <li><b>验证器是独立组件，不是判分脚本的一部分</b>：物理验证与电学验证分开跑，质量指标由版图专家共同设计。我们的 harness 最容易把「判分」写成「读 agent 自己的日志」；这里应把验证器做成 <b>agent 不可写、不可读内部状态</b>的独立进程。</li>
+      <li><b>差距归因落到「test-time scaling + 验证反馈利用」</b>，而不是换更大模型 —— 与 zhulong 正在做的 subagent 消融同构：固定预算下比较的是<b>每一步把预算花在哪</b>。</li>
+    </ol>
+    <b>建议动作</b>：designflow 先在现有 L3 题里抽 5 题，补两列 <code>artifact_produced</code>（是否产出终态文件）与 <code>acceptance_passed</code>（独立验证器通过）；预注册判据：若两列差距 &gt;3×，则后续只报验收率、产出率降为诊断项。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">2</span>CADET: Construction of PCB Routing Instances with Executable Demonstrations</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">指出公开 PCB 布线数据<b>只有终态、没有 EDA 引擎动作的可执行演示</b>，于是<b>联合生成合成板与演示</b>：<b>RouteDemos</b> 给出 <b>100,000 块零 DRV 合成板</b>及逐步演示，17 项统计量分布贴近 <b>142 块真实参考板</b>；在其上先行为克隆再 RL 微调，真实测试板的「完全无 DRV 布线率」从 RL-only 基线 <b>38.0% → 67.2%</b>，与开源自动布线器 FreeRouting 相当、优于其余基线（含 GPT-6 Astra）。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">CADET: Construction of PCB Routing Instances with Executable Demonstrations</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Hyungseok Song · Won-Seok Choi · Seohui Bae · Han-Seul Jeong · Junseok Park · Youngjoon Park · Soonyoung Lee（共 7 位；机构未从 PDF 核验，代码仓库属 LGAI-Research）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-12</b>（<code>published=2026-11-12T15:03:50Z</code>，<code>updated</code> 同值）· 距本轮唤醒 <b>≈33h</b>（在 72h 内）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-jz">借鉴</span> · 关键词：EDA / PCB 布线 / 可执行演示 / 数据合成 / BC + RL</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.16913">https://arxiv.org/abs/2611.16913</a> ｜ 代码 <a href="https://github.com/LGAI-Research/CADET">github.com/LGAI-Research/CADET</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · data / designflow / zhulong 直接对口）</b>
+    <ol>
+      <li><b>它解决的是「数据里没有动作」的问题，不是「数据不够多」</b>：真实布线数据的终态板学不到「第 3 步为什么这样走」。我们 zhulong 的 trace 也一样 —— 只有最终网表/日志的样本，无法训练过程策略。CADET 的做法是<b>用引擎本身生成演示</b>（不是人工标注），这条路线可以照搬到「综合脚本调优 / 时序修复」的演示合成。</li>
+      <li><b>合成数据的验收标准写得很克制：17 项统计量 vs 142 块真实板</b>。这是一个可复用、可预注册的「合成数据保真度」检查清单，而不是笼统说「分布接近」。data 线能给每条合成数据产出一条这样的对照表。</li>
+      <li><b>38.0% → 67.2% 的增益来自「先 BC 再 RL」，而非纯 RL</b>。这对 zhulong 的 RL 排期是直接证据：在有可执行演示时，<b>先把演示学会再加 RL</b> 比直接 RL 更省样本；但摘要未给两臂的样本量与训练步数，不能据此下定论。</li>
+    </ol>
+    <b>建议动作</b>：data 线先对现有 trace 数据做一次「17 项统计量 vs 真实参照集」的分布对照（选 3 个最关键统计量起），预注册判据：任一关键统计量偏离 &gt;2 个标准差 ⇒ 该批合成数据不进 SFT 训练集。
+  </div>
+</div>
+
+
+
+<div class="card">
+  <h3><span class="no">3</span>EvoX: Rethinking the Agent Harness as a Runtime Policy</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把 harness 当成与模型语义策略互补的<b>运行策略（Operational Policy）</b>：用 <b>Action Realization</b>（动作落地）、<b>Execution Continuity</b>（流程不中断）、<b>Outcome Grounding</b>（完成声明必须有证据）三个确定性机制，解决「模型决策看起来对、执行却失败」（工具调用失配 / 流程中断 / 无根据的完成声明）；并提出 <b>Contrast</b> 评测框架（公平约束 + provider 侧请求核验 + 证据裁定）。在 <b>5 个基准 / 6 个基座 / 6 个 harness、691 个共同 task–model 对</b>上成功率 <b>56.2%</b> 最高，比其余 5 个 harness 均值高约 <b>3.0 个百分点</b>（GLM-5.3 +10.7、Kimi K3 +7.9）。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">EvoX: Rethinking the Agent Harness as a Runtime Policy</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Haoyang Zhang · Qumeng Sun · Xiao Zhang · Xiang Liu · Zhidong Fan · Junjie Wang（共 6 位；机构未从 PDF 核验）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-11</b>（<code>published=2026-11-11T04:05:54Z</code>，<code>updated</code> 同值）· 距本轮唤醒 <b>≈44h</b>（在 72h 内）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-jz">借鉴</span> · 关键词：agent harness / 运行时策略 / 工具调用失配 / 完成声明核验</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.15006">https://arxiv.org/abs/2611.15006</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · harness / zhulong 直接对口）</b>
+    <ol>
+      <li><b>「Outcome Grounding」正是我们评分表缺的那一条</b>：agent 说「已修复」但网表没变、DRC 没跑 —— 这类失败在我们 TB-2.1 / zhulong 的失败集里占比不低。可落地做法：<b>凡是「完成」类声明，必须绑定一个可复算的证据文件</b>（时间戳 + 命令 + 退出码 + 产物哈希），否则该步记 <code>unverified_claim</code>，不进成功计数。</li>
+      <li><b>「Execution Continuity」把中断当一等公民</b>：我们的工具链（综合 / 仿真）经常超时或被 OOM 杀掉，当前口径容易把「基础设施故障」计入模型能力。EvoX 的做法是把「恢复」写成运行时策略，与模型解耦 ⇒ 可直接对齐 harness 的额度失败 vs 能力失败归因纪律。</li>
+      <li><b>Contrast 的「provider 侧请求核验 + 证据裁定」值得抄成评测协议</b>：它防的是「harness 偷偷替模型补 prompt / 重试 / 改判分」。我们的 7 路对比里，各 harness 的隐式重试策略还没被固定下来。</li>
+    </ol>
+    <b>建议动作</b>：harness 在 TB-2.1 rerun 的合并脚本里加一列 <code>claim_verified</code>（成功声明是否绑定产物证据），并单独统计 <code>unverified_claim</code> 数量；预注册判据：若该列导致通过率变化 &gt;5 个百分点，则历史 7 路结果需标注「口径不同、不可直接比较」。
+  </div>
+</div>
+
+<details class="news-ready">
+<summary>📰 news_ready · 可发头条（1 条 · 对应 #1 AnalogLayoutWorld）</summary>
+<ul>
+  <li><b>大众标题</b>：AI 画模拟电路版图：91% 能画完，只有 23% 合格</li>
+  <li><b>一句话事实</b>：NovaSilicon 团队发布开源基准 AnalogLayoutWorld，40 个专家复核任务考 agent 从网表直接产出模拟版图；13 个配置下 91.1% 能产出 GDS，仅 23.0% 通过独立验证。</li>
+  <li><b>可用数字</b>：40 个任务 → 摘要；13 个 model–harness 配置 → 摘要；91.1% 产出 GDS → 摘要；23.0% 通过验收 → 摘要（均为<b>作者自报，未复现</b>）</li>
+  <li><b>配图</b>：本轮<b>未下载 PDF</b>，未核图号；如需配图，请 news 线取 arXiv PDF 后注明「图：NovaSilicon Team, AnalogLayoutWorld, arXiv 2611.16991」</li>
+  <li><b>一手信源</b>：NovaSilicon Team ｜ arXiv <a href="https://arxiv.org/abs/2611.16991">2611.16991</a></li>
+  <li><b>话题点</b>：AI 写代码已不稀奇，但「AI 能不能把芯片版图画对」是普通人能理解的硬约束场景 —— 差在最后那 68 个百分点。</li>
+  <li><b>不适合发的理由</b>：领域偏窄（模拟版图），且作者为团队署名、无法核对个人身份；若 news 要做，建议只引用「产出率 vs 验收率」这一对比，不引申为「AI 已能替代版图工程师」。</li>
+</ul>
+</details>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第二十四轮（+4 → 95 篇）<span class="badge b-b">经典</span></h2>
+<table>
+  <tr><th>#</th><th>论文（年份 / 出处）</th><th>被引</th><th>一句话贡献</th><th>影响我们的哪一层</th></tr>
+  <tr><td>92</td><td><b>Proximal Policy Optimization Algorithms</b><br><code>1707.06347</code>（2017 · arXiv 预印本）</td><td><b>31,326</b></td><td>用<b>截断的代理目标</b>把「信赖域式」更新变成一阶可实现的多次小批量更新，兼顾样本效率 / 实现简单 / 墙钟时间（摘要自报：在模拟机器人运动与 Atari 上优于其他在线策略梯度方法）。</td><td><b>zhulong</b>（RL 训练器基线：clip 比例、epoch 数、batch 大小）· <b>vision</b>（波形 RL 的更新口径）· <b>harness</b>（训练与判分解耦）</td></tr>
+  <tr><td>93</td><td><b>Denoising Diffusion Probabilistic Models</b><br><code>2006.11239</code>（2020 · arXiv 预印本）</td><td><b>11,034</b></td><td>把扩散模型训练化为<b>加权变分下界</b>，并给出与去噪分数匹配（+ Langevin 动力学）的联系；CIFAR-10 无条件生成 FID <b>3.17</b>、Inception score <b>9.46</b>。</td><td><b>vision</b>（合成波形的备选生成路线）· <b>designflow</b>（造题 / 稀有场景增广）· <b>data</b>（小样本增广）</td></tr>
+  <tr><td>94</td><td><b>ZeRO: Memory Optimizations Toward Training Trillion Parameter Models</b><br><code>1910.02054</code>（SC 2020 · DOI <code>10.1109/sc41405.2020.00024</code>）</td><td><b>1,432</b></td><td>把优化器状态 / 梯度 / 参数<b>分片</b>到各设备，消除数据与模型并行的内存冗余，保持低通信量与高计算粒度；摘要自报 400 GPU 上训练 &gt;100B 参数、15 Petaflops、模型规模 8×/性能 10×。</td><td><b>pretrain</b>（2B 训练的显存与并行策略口径）· <b>data</b>（数据加载与吞吐预算）</td></tr>
+  <tr><td>95</td><td><b>Segment Anything</b><br><code>2304.02643</code>（ICCV 2023 · DOI <code>10.1109/iccv51070.2023.00371</code>）</td><td><b>16,904</b></td><td>promptable 分割 + <b>数据引擎</b>（模型辅助标注闭环）产出 <b>11M 图 / 1B mask</b>，零样本迁移到新图像分布与任务（摘要自报常与全监督结果相当或更好）。</td><td><b>vision</b>（缺陷 / 版图分割基线）· <b>data</b>（半自动标注流水线）· <b>harness</b>（分割指标口径）</td></tr>
+</table>
+<div class="note">
+  被引数来源 = <b>OpenAlex</b>（按 arXiv DOI 直查，查询日 <b>2026-11-14</b>，4/4 <code>200</code>）；S2 与 Google Scholar 本机不可达 ⇒ <b>未查</b>，不写估算。元数据 = arXiv <code>id_list</code> 一次请求 <code>200</code> + atom（8,918 B）。<br>
+  ⚠️ <b>PPO / DDPM</b> 的 OpenAlex 记录类型为 <code>preprint</code>、无会场 DOI ⇒ 本表<b>不写会议</b>（即便社区普遍认为它们发表于 NeurIPS 2020 / 2017，本线只写可核验的证据）。必读清单仍 <b>10/10 组、37/37 条目</b>（本轮属「补充」）。
+</div>
+
+<h2 class="sec">👥 作者关系网（+2 → 97 人；X 已核验 57）</h2>
+<table>
+  <tr><th>姓名 / 机构</th><th>代表论文</th><th>邮箱</th><th>主页</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>John Schulman</b><br>Thinking Machines（X bio 自述）</td><td>PPO <code>1707.06347</code>（一作）· TRPO</td><td><b>未找到</b>（<code>http://joschu.net</code> <code>200</code> / 5,889 B，页内无邮箱；<code>https://</code> 直连 <code>000</code>）</td><td><a href="http://joschu.net">joschu.net</a></td><td><b>@johnschulman2</b>（<code>og:title</code> = John Schulman (@johnschulman2) / X；bio = @thinkymachines. Interested in reinforcement learning, alignment, birds, jazz music）</td><td><b>待跟踪</b>（无邮箱 ⇒ 不发信）</td></tr>
+  <tr><td><b>Pieter Abbeel</b><br>UC Berkeley EECS（Jim Gray Chair）</td><td>DDPM <code>2006.11239</code>（三作）· apprenticeship learning</td><td><b>pabbeel@cs.berkeley.edu</b>（<code>contact.html</code> 页面明文 pabbeel AT cs.berkeley.edu，按页面规则还原）</td><td><a href="https://people.eecs.berkeley.edu/~pabbeel/">people.eecs.berkeley.edu/~pabbeel/</a></td><td><b>@pabbeel</b>（<code>og:title</code> = Pieter Abbeel (@pabbeel) / X；bio = Berkeley &amp; Amazon）</td><td><b>已发信</b>（2026-11-14 00:08，第 33 封）</td></tr>
+  <tr><td><b>Jonathan Ho</b><br>（DDPM 一作）</td><td>DDPM <code>2006.11239</code></td><td><b>未找到</b>（主页 <code>200</code> / 5,867 B 无邮箱）</td><td><a href="https://www.jonathanho.me/">jonathanho.me</a></td><td><b>未找到 X</b></td><td><b>未登记</b>（不猜；同论文已由 Abbeel 覆盖）</td></tr>
+  <tr><td><b>Alexander Kirillov</b><br>（SAM 一作）</td><td>Segment Anything <code>2304.02643</code></td><td><b>未找到</b>（<code>alexanderkirillov.github.io</code> <code>404</code> / <code>kirillov.ai</code> <code>000</code>）</td><td>—</td><td><b>未找到</b>（候选 <code>@akirillov</code> <b>0 followers</b>、bio 仅关注计数 ⇒ 判非本人）</td><td><b>未登记</b></td></tr>
+</table>
+<div class="note">X 只读探测：<code>x.com</code> 自检 <code>200</code>（显式 <code>-x http://127.0.0.1:7897</code>）；profile <b>5/5 <code>200</code></b>（<code>pabbeel</code> / <code>johnschulman2</code> / <code>akirillov</code> / <code>karpathy</code> / <code>ilyasut</code>）。<b>0 follow</b> —— follow 需登录态，未假装执行；待 follow 清单累计 <b>47</b> 条（含本轮新增 2 条）。</div>
+
+
+<h2 class="sec">✉️ 作者请教信（1 封 · 累计 33 封）</h2>
+<table>
+  <tr><th>对象 / 机构</th><th>论文</th><th>邮箱来源（非 PDF 旧地址）</th><th>结果</th></tr>
+  <tr><td><b>Pieter Abbeel</b>（UC Berkeley EECS）</td><td>DDPM <code>2006.11239</code></td><td><code>contact.html</code>（<code>200</code>）页内 <code>pabbeel AT cs.berkeley.edu</code> ⇒ 还原为 <code>pabbeel@cs.berkeley.edu</code></td><td><b>SENT OK 2026-11-14 00:08</b>：英文 <b>187 词</b>（发送前 <code>wc -w</code> 已核）；三个问题回填 vision（波形回归 vs 生成式）、designflow/data（合成数据保真度检查）、pretrain（噪声日程 / 加权重构）。</td></tr>
+</table>
+<div class="note">同论文其余作者（Jonathan Ho / Ajay Jain）本轮<b>不发</b>（同论文 ≤1）；UC Berkeley 今日第 1 封（未超同机构 ≤2/天）。草稿 <code>research/mail/drafts/2006.11239.md</code>、正文 <code>research/mail/2026-11-14-classic-2006.11239.txt</code>、台账已追加（<b>没写台账 = 没发</b>）。</div>
+
+<h2 class="sec">🗣 voice_ready（本期无）与投料纪律</h2>
+<div class="note">
+  <b>本期 voice_ready = 0 条</b>。候选 3 条（John Schulman 2026-11-06 <code>Inkling 2 Small</code>、Karpathy 2026-11-07、Abbeel 2026-10-21 人形控制）经推文页 <code>og:description</code> 与 <code>cdn.syndication.twimg.com/tweet-result</code> 两条只读路径抓取，<b>正文均在半句处截断</b>（syndication 的 <code>display_text_range</code> 止于同一位置）⇒ 按「原文必须完整 + 双源一致」纪律，本期<b>不出</b>，🚫 不拿二手转述充原文。
+</div>
+
+<h2 class="sec">🎯 00:00 轮 · 对各线的可执行建议（6 条，逐线覆盖）</h2>
+<table>
+  <tr><th>线</th><th>建议（可落地：命令 / 实验设计）</th><th>依据 / 预注册判据</th></tr>
+  <tr><td><b>pretrain</b></td><td>① 在 L2 评测脚本里补一列 <code>parse_fail</code>（输出无法解析的比例），与准确率<b>分开报</b>；GSM8K 1.52% 先按此排查。<br>② 2B 训练的显存/并行记录表加入 <code>opt_state_sharded</code>（是否分片优化器状态）字段，便于对齐 ZeRO 口径。</td><td>ZeRO（#94）+ pretrain 任务书「先查 L2 异常」。<b>判据</b>：若 parse_fail &gt;5% 且准确率异常低，先修解析、不改训练；显存表缺该字段的 run 不进对比。</td></tr>
+  <tr><td><b>vision</b></td><td>① 波形任务的「回归 vs 生成」先做<b>三臂小对照</b>：直接回归 / 扩散生成后取统计量 / 回归 + 生成式数据增广，固定数据与预算。<br>② 分割类缺陷任务先跑<b>冻结 SAM 特征 + 轻量头</b>作下界（固定权重与预处理版本）。</td><td>DDPM（#93）· SAM（#95）。<b>判据</b>：若扩散臂的 FID/统计量优势在 held-out 上未转化为 period/rise_time/duty 的误差下降，则本期不做生成式路线；冻结 SAM 距全量微调 ≤2 点 ⇒ 不自训编码器。</td></tr>
+  <tr><td><b>harness</b></td><td>① 在 TB-2.1 rerun 合并脚本加 <code>claim_verified</code> 列：成功声明须绑定（命令 + 退出码 + 产物哈希），否则记 <code>unverified_claim</code>。<br>② 7 路对比表补「隐式重试策略」字段（重试次数上限 / 是否改 prompt / 是否重判分）。</td><td>EvoX（A 轨 #3）· WebArena 既有口径。<b>判据</b>：<code>claim_verified</code> 使通过率变化 &gt;5 个百分点 ⇒ 历史 7 路结果标注「口径不同、不可直接比较」。</td></tr>
+  <tr><td><b>data</b></td><td>① 对现有 trace / 合成数据做「关键统计量 vs 真实参照集」对照表（先 3 项：长度分位、工具调用次数、失败率）。<br>② 标注侧试点<b>模型辅助闭环</b>：先用现成模型出初标，人工只做接受/拒绝，记录每人时产出。</td><td>CADET（#2）· SAM 数据引擎（#95）。<b>判据</b>：任一关键统计量偏离 &gt;2σ ⇒ 该批不进 SFT；辅助标注若人时节省 &lt;30% 或初标接受率 &lt;70% ⇒ 停试点。</td></tr>
+  <tr><td><b>zhulong</b></td><td>① P1 pilot 的 8 臂结果表增列「<b>动作落地失败</b>」与「<b>完成声明无证据</b>」两类失败计数（从 trace 里按工具调用结果解析）。<br>② RL 训练器先固定 PPO 的三个旋钮（clip 比例 / epoch 数 / minibatch）做一组小网格，不作为论文内容。</td><td>EvoX（#3）· PPO（#92）。<b>判据</b>：若两类失败合计占失败样本 &gt;30%，则 P2 主实验前先加运行时校验，不加 subagent 臂。</td></tr>
+  <tr><td><b>designflow</b></td><td>① L3 题补两列 <code>artifact_produced</code> / <code>acceptance_passed</code>（独立验证器判定，agent 不可读写其内部状态）。<br>② 造题时按 CADET 思路生成「<b>可执行演示</b>」而非只存终态：每步记录工具调用 + 前后状态差异。</td><td>AnalogLayoutWorld（#1）· CADET（#2）。<b>判据</b>：两列差距 &gt;3× ⇒ 只报验收率；若某题无法写出确定性验收函数，降级人工评审、不进主榜。</td></tr>
+</table>
+
+<h2 class="sec">附录 A · 检索式与命中数（2026-11-14 00:0x · 可核验）</h2>
+<table>
+  <tr><td>A 轨</td><td>单分类 5 查询（<code>cs.CL / cs.CV / cs.LG / cs.AI / cs.SE</code>，各取最新 100 条，<code>sortBy=submittedDate</code>）⇒ <b>5/5 <code>200</code> + atom</b>；<code>totalResults</code> = 125,322 / 213,258 / 299,025 / 212,730 / 31,041（与 11-13 逐值相同，但 <code>published</code> 上界已推进 ⇒ 索引已换批）</td></tr>
+  <tr><td>去重</td><td>merged <b>368</b> / SEEN 命中 <b>0</b> / 新候选 <b>368</b> ⇒ <code>raw/2026-11-14-00h-candidates-r168.json</code>（684,162 B）</td></tr>
+  <tr><td>B 轨元数据</td><td>arXiv <code>id_list=1707.06347,2006.11239,1910.02054,2304.02643</code> ⇒ <b><code>200</code> + atom</b>（8,918 B，4 条 entry）；OpenAlex <b>4/4 <code>200</code></b></td></tr>
+  <tr><td>作者页</td><td><code>http://joschu.net</code> <code>200</code> / 5,889 B（无邮箱）· <code>people.eecs.berkeley.edu/~pabbeel/contact.html</code> <code>200</code>（明文 <code>pabbeel AT cs.berkeley.edu</code>）· <code>jonathanho.me</code> <code>200</code> / 5,867 B（无邮箱 / 无 X）· <code>alexanderkirillov.github.io</code> <code>404</code></td></tr>
+  <tr><td>X 只读</td><td><code>x.com</code> 自检 <b><code>200</code></b>；profile <b>5/5 <code>200</code></b>（<code>pabbeel</code> / <code>johnschulman2</code> / <code>akirillov</code> / <code>karpathy</code> / <code>ilyasut</code>）；<code>akirillov</code> 判非本人（0 followers）</td></tr>
+</table>
+
+<h2 class="sec">附录 B · 口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>、3 篇均在 72h 内且 <code>published</code> 齐全；② <b>「<code>totalResults</code> 不变 ≠ 索引没动」</b>已如实记录并改用 <code>published</code> 实测；③ B 轨 4 条均 8 字段、被引数标来源与查询日，<b>PPO / DDPM 无会场 DOI ⇒ 不写会议</b>；④ 作者网<b>不猜</b>：Jonathan Ho / Alexander Kirillov 均写「未找到」，<code>@akirillov</code> 判非本人不登记；⑤ <code>voice_ready</code> 本期 <b>0（正文截断，不硬凑）</b>，<code>news_ready</code> <b>1</b>；⑥ 本轮外发 = <b>1 封</b>（草稿先入仓、台账已记、187 词已核）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
+<footer>
+  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 · A 轨新批 3 篇 ＋ B 轨第二十四轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-14 00:08 CST<br>
+  ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
+</footer>
+</div>
+</body>
+</html>
+

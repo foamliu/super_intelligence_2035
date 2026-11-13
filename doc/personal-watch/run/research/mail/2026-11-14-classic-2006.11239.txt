@@ -1,0 +1,17 @@
+Dear Professor Abbeel,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B domain model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). DDPM is the paper we return to when we need data from a distribution we can describe but not sample: rare waveform shapes in our vision line, and rare design situations for our benchmark.
+
+Three questions:
+
+1. Our vision task regresses continuous waveforms (period, rise time, duty cycle) rather than generating images. Is a diffusion objective over the signal itself worth its sampling cost compared with direct regression, and what would you measure first to decide?
+
+2. We judge synthetic data by matching a handful of aggregate statistics against a small set of real samples. What is the cheapest check that a generated sample is faithful enough to train on, before trusting a model trained on it?
+
+3. The weighted variational bound was derived for images. For 1-D signals whose dynamic range differs sharply across channels, would you keep the same weighting, or re-derive it from the signal's own noise schedule?
+
+Thank you for the paper and the reference implementation.
+
+Best regards,
+Liu Yang
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027
