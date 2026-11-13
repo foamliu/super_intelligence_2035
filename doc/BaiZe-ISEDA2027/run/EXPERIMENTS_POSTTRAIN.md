@@ -10569,3 +10569,17 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 由 run_eval.py run 完后产 final_report.json）。
 - 边界遵守：本轮未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake458 已归档指针化（体积维护）。
 - Next：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html（标替身预演）/负则诚实负结果+换奖励（§用户令#4，平台化使负分支概率上升）。
+
+## §R460 (wake460, 2026-11-14 05:57) — 5-run eval 健康监控（纯监控 wake）
+
+- 上下文：R2 200 步主训 COMPLETED（cheat=0/1600，global_step_200 ckpt serve GPU7:8095），5-run eval autofire chain（PID2322797）自治运行中，本轮=纯监控无人工动作。
+- 实测（.17 s0pgpuap12, date 05:56:58）：
+  - chain PID2322797 存活 etime≈5h36m（etime=20462s）；eval run1 PID2354149 存活 etime≈4h49m（etime=17370s）；父 PID2354141(ppid=2322797)；8 cline worker active（`-p 8`）。
+  - .task_queue 36 行 queue+~8 in-flight≈44 待跑；code/ 126 目录（最新 -122）。
+  - 3 并发 serve 全稳：GPU4 base:8098→minicpm5-2B / GPU6 step105-final:8096→minicpm5-2b-sft-v39-final / GPU7 R2:8095→minicpm5-2b-grpo-R2-step200[root=global_step_200]；GPU7=89%util/39246MiB；GPU4/GPU6=0%util 待命；GPU5=3MiB/0%util 空闲（非本线，不碰）。
+  - run1（dir ~/eda_code_eval/2026_1114_010813）：stats **success=69/failure=5/timeout=40 = 114/158**（较 wake459 112 +2：success+1/fail+0/timeout+1）；total_time=128735s；final_report.json 未生成；5run_rl_analysis_R2.json 未出。
+  - 速率校准：wake459→460（~9min）112→114（+2，~0.22/min，success+1/timeout+1）← timeout 仍占主导但 success 恢复+1；剩余 ~44 任务（36 queue+~8 in-flight）；run1 或 ~06:00-09:00 完（不编造精确 ETA）。
+  - 0 真实 infra 错误（chain log 仅 START+pre-teardown；CUDA OOM=0）。
+- 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 由 run_eval.py run 完后产 final_report.json）。
+- 边界遵守：本轮未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake459 已归档指针化（体积维护）。
+- Next：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html（标替身预演）/负则诚实负结果+换奖励（§用户令#4，平台化使负分支概率上升）。
