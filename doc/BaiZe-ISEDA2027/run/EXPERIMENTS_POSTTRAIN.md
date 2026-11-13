@@ -9731,3 +9731,58 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 2. 下次唤醒查 `5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / bootstrap ci。
 3. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化 → 诚实负结果 + 换奖励/任务定义（§用户令#4）。
 
+## §R432 (wake432, 2026-11-14 00:5x) — R2 主训监控(step151/200)+奖励**平台期诚实修正**+cheat=0/1200+step150 ckpt+eval chain 健康等待
+
+### A. R2 主训健康监控（实测 @00:51）
+
+- PID2314192（父 2314188 setsid，detached）仍 RUNNING，etimes~2580s（~43min）。GPU7=28.6GB/64%util（nvidia-smi 实测）。~15.7s/step 稳定。
+- 当前 **step 151/200**（@00:51:37），剩 49 步 ×~15.7s ≈ 770s ⇒ **ETA ≈ 01:04**。
+- log（`/tmp/grpo_loop_R2_sandbox_200step.log`，158+ 行）全程 0 OOM / 0 error / 0 traceback / 0 nan / 0 contam。
+- RAM 充裕（无 OOM 风险）。
+
+### B. 🔴 奖励**平台期诚实修正**（关键，纠正 wake431「单调上升」表述）
+
+> wake431 §D 称「去稀疏化单调趋势：mean_nz 0.14→0.29→0.42→0.53 四窗口单调↑」。该结论**仅在 step1–100 成立**；step100 后**已平台化并轻微回落**。诚实更新如下（grep+awk 实算，147 步样本）：
+
+| 窗口(25步) | mean_reward | mean_nz | n | 趋势 |
+|:--|:--:|:--:|:--:|:--|
+| steps 1–25 | 0.0428 | 0.140 | 25 | ↑ |
+| steps 26–50 | 0.0638 | 0.290 | 25 | ↑ |
+| steps 51–75 | 0.1033 | 0.415 | 25 | ↑ |
+| steps 76–100 | 0.1195 | 0.526 | 25 | ↑（峰值） |
+| steps 101–125 | 0.1133 | 0.516 | 25 | **平台/微降** |
+| steps 126–150 | 0.1050 | 0.478 | 22 | **回落** |
+
+- **诚实判读**：reward 在 step1–100 单调上升（0.043→0.120），step76–100 达峰值（~0.12），**step100 后进入平台期并轻微回落**（101–125=0.113、126–150=0.105）。**「单调上升」不再成立**——这是对 wake431 表述的必要修正。
+- **但仍为真实信号**（与 R0 proxy 本质区别）：147 步中 **84 步非零 reward（57%）**、**65 步 posadv>0（44%）**；grad norm 在 posadv>0 步 ~3.x–4.4（step151 gn=4.41）、在无信号步 ~0.1 ⇒ **梯度在有信号处流动**（vs R0 nz=0.97 塌缩、mean_ratio==1.0、ploss=0 全程卡死）。
+- **保留警惕（沿用 wake431）**：ratio=1.000 / ploss≈0 表层签名仍同 R0「policy 不动」，但 gn 区分 + lr=3e-6 小步 ⇒ 真实 policy 移动幅度小（ratio 仅 3 位精度打印为 1.000）。reward 平台化 ⇒ 若持续到 step200，**5-run eval 出正向显著的概率降低**（但仍须先定后测，§5）。
+- **结论**：训练侧证据从 wake431 的「单调上升=最强证据」**下修为「真实信号+梯度流动，但已平台化」**。reward↑ 是必要非充分条件，平台化使真实判据更依赖 5-run eval（吸取 R0/vision v10 教训：reward↑≠Pass@1↑，平台化更不等于）。
+
+### C. 红线 cheat_rate 实测（step50/100/150 三次落盘）
+
+- `cheat_rate.json` 三次落盘（log grep 实证）：
+  - @step50（00:23）：total=400 cheat=0 rate=0.0（n-gram8）
+  - @step100（00:37）：total=800 cheat=0 rate=0.0
+  - @step150（00:51）：total=1200 cheat=0 rate=0.0
+- §5.2 反作弊**全程绿**（0/1200，cheat_examples=[]）；§5.1 污染 contam 0/3347（训练侧已验）。
+
+### D. step150 ckpt 完整性实证
+
+- `global_step_150/` 于 00:51:21 落盘（log 实证），与 step50/100 同结构（safetensors 5.03GB + optimizer.pt 10.07GB + config/index/tokenizer，可 serve）。连同 global_step_50/100 共 3 个 ckpt。
+
+### E. R2 eval autofire chain 仍健康等待
+
+- PID2322797（ppid=1，detached）仍 RUNNING，log 最近一条 @00:50:26「GRPO still running... sleeping 120s」，每 120s 探测未误判退出。
+- GRPO ~01:04 完后自动：teardown GPU5 step60 serve → serve R2 global_step_200 于 GPU7:8095 → 158 题 5-run eval（3 并发 serve 避 OOM）→ `5run_analysis.py --compare grpo_R2_step200 step105`（McNemar + 10k paired bootstrap）→ `5run_rl_analysis_R2.json`。
+
+### F. 红线与边界
+
+- §5.2 反作弊 cheat=0/1200 绿；§5.1 contam 0/3347 绿；§2/§5.3 冻结协议 eval 链复用既有 5run_eval.sh（158/Pass@1/2500s/单trace/5-run/-p8 -n，未改）。
+- 边界：本轮纯监控，未编辑任何脚本、未碰 R2 主训进程/GPU0-3/GPU4-6 既有 serve/eval 链。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### G. 下一步
+
+1. R2 主训 ~01:04 完 → autofire 链自动 serve R2 ckpt + 158 题 5-run eval（无需人工）。
+2. 下次唤醒查 `5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / bootstrap ci。
+3. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（**平台化使此分支概率上升**）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。
+
