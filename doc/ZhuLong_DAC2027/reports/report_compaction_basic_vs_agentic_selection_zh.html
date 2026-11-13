@@ -250,15 +250,22 @@ footer{margin-top:30px;color:#999;font-size:.78rem;text-align:center;border-top:
 
 <h2>五、为什么 agentic 看起来省 token 但实际不省</h2>
 
+<div class="banner danger">
+<b>⚠️ agentic 压缩的 LLM 调用 token 未被统计（数据盲区）</b><br/>
+agentic 每次压缩需调用一次 LLM 生成摘要（input = 压缩前全部 ~140 条消息 ≈ 280K+ token，output = summary ≈ 700 token）。这部分 token <b>未被计入</b> <code>session.usage</code>（usage 只累加 agent 对话的逐 message metrics，压缩调用不产生 agent message），<code>compaction.json</code> 也<b>没有 token 字段</b>。<code>messages.json</code>（唯一能逐条核实的地方）已被编排器清理，<b>无法回溯</b>。<br/>
+<b>粗估漏计规模</b>：22 次压缩/轮 × ~280K input + ~700 output ≈ <b>6.2M input + 15K output/轮未被统计</b>，分摊到 40 题 ≈ <b>155K token/题额外</b>。agentic 的真实 tok/题可能从统计的 1.92M 升至 ~2.08M，与 basic 2.22M 的差距从 15% 缩小到 ~6%。<b>这进一步强化了选 basic 的结论</b>——agentic 的 token "优势"比纸面更小，且 basic 的规则折叠<b>零额外 LLM 成本</b>。
+</div>
+
 <div class="banner warn">
-<b>agentic 的 token 陷阱</b>：agentic 每题 token 更低（1.92M vs basic 2.22M，省 15%），但这<b>不是因为 agentic 更高效，而是因为它压缩率更高（94% vs 49%）导致 context 更短</b>。然而：
+<b>agentic 的 token 陷阱</b>：agentic 每题 token 统计值更低（1.92M vs basic 2.22M，省 15%），但这<b>不是因为 agentic 更高效，而是因为它压缩率更高（94% vs 49%）导致 context 更短</b>。然而：
 <ol style="margin:6px 0 0 1.2em">
+<li><b>压缩 LLM 调用 token 漏计</b>（见上方红框）—— agentic 每次压缩额外消耗 ~280K+ input token，未被统计，真实成本更高</li>
 <li><b>per pass token 基本持平</b>（3.21M vs 3.24M）—— agentic 省的 token 被更多失败题（gen_fail 11 vs 6.7）抵消</li>
 <li><b>per pass 墙钟高 29%</b>（5.2min vs 3.7min）—— agentic 每通过一题花更多时间（重新探索）</li>
 <li><b>6 轮总墙钟多 1 小时</b>（6.20h vs 5.17h）—— agentic 的超时题拖慢整体</li>
-<li><b>LLM summary 本身有额外推理成本</b>（agentic 每次压缩调用一次 LLM 生成摘要，basic 是纯规则折叠零 LLM 成本）—— 这部分 token 未计入 task token，但实际消耗了 API quota</li>
+<li><b>basic 规则折叠零 LLM 成本</b> —— basic 是纯规则操作（折叠旧消息），不调用 LLM；agentic 每次压缩都是一次 LLM 推理（额外 API quota + 延迟）</li>
 </ol>
-<b>结论</b>：agentic 的 token 优势是表面的，<b>综合成本（墙钟 + API quota + 失败重试）反而更高</b>。
+<b>结论</b>：agentic 的 token 优势是表面的，<b>综合成本（墙钟 + API quota + 压缩 LLM 漏计 + 失败重试）反而更高</b>。
 </div>
 
 <h2>六、工程师选型建议</h2>
@@ -295,6 +302,7 @@ footer{margin-top:30px;color:#999;font-size:.78rem;text-align:center;border-top:
 <tr><th>局限 1</th><td class="l">40 题子集选的是长轨迹题（选择偏倚），结论适用于"会触发压缩的长轨迹任务"，不适用于短轨迹</td></tr>
 <tr><th>局限 2</th><td class="l">单基座（deepseek-v4-pro-cloud），未在 glm-5.2 / 其他基座上复现</td></tr>
 <tr><th>局限 3</th><td class="l">agentic 的 LLM summary 质量可能随基座不同而变化（更好的基座可能生成更高质量摘要，减少信息丢失）</td></tr>
+<tr><th>局限 4</th><td class="l"><b>agentic 压缩 LLM 调用 token 未被统计</b>：compaction.json 无 token 字段，session.usage 不含压缩调用，messages.json 已清理。agentic 真实 token 成本被低估（粗估 +155K/题漏计）</td></tr>
 <tr><th>外部效度</th><td class="l">natural-128K regime 下的结论，不直接外推 forced-32K tight-context（后者未在本实验中实现）</td></tr>
 </table>
 
