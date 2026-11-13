@@ -9320,3 +9320,34 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 
 - 交付：R0 RL eval 全链路端到端 de-risk（B ckpt+serve+baseline+分析实跑 dry-run / C chain 接线 / D providers.json 单例纪律 / E 队列健康）+ EXPERIMENTS §R422 + MEMORY wake422（roll wake421→daily-memories）。
 - 下一步：① 等 run2 完(~3h)→chain 2028723 自动 serve global_step_200→158题5-run→`5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）；无提升/退化→诚实负结果（§R420 训练侧偏负支撑）+ 起 R2+sandbox-exec（wake421 已就绪，待 GPU7 释放）；③ 监控 run2 是否真在 ~3h 内完成，若卡死则排查 codegen worker。
+
+---
+
+## R423 — wake423 (2026-11-13 21:5x): run2 codegen 进度实测修正 + ETA 下修(3h→~1h) + 卡死检测 + 健康复检
+
+**背景**：R0 RL eval 仍 gated 于 step60 run2(PID1962541) codegen；wake422 用 `pyAether_code` 文件数估 ~37%/ETA~3h。本轮复检发现该估计**低估**。
+
+### A. run2 真实进度（stats counters，非文件数）
+- batch dir `~/eda_code_eval/2026_1113_194219`(19:42 起)；`stats/` 计数器：`success=101 / failure=7 / timeout=11` → **119/158 (~75%) 已 resolved**，剩 39。
+- wake422 的 ~37% 来自 `pyAether_code` .py 文件数(58→64)，但 cline 输出**分布在 8 个 worker 的 `cli_data/worker_N/data/pyAether_code/`**，文件数 ≠ 任务完成数（部分 cline run 完成但未落 .py）。真实完成数看 `stats/` 计数器。
+- 速率：134 min / 119 tasks = ~0.89 task/min(聚合,8 并行) → 剩 39 → **ETA ~1h(~23:00)**，较 wake422 的 ~3h **下修**。
+
+### B. 卡死检测（next-step 指令「~3h 后未完则排查 worker」）
+- 8 worker etimes：16/308/350/481/581/1425/1721/1755 s，**max 1755s < 2500s timeout → 无卡死**。
+- GPU5(step60 serve :8097)=90%util 健康；`curl /v1/models` 正常返回 `minicpm5-2b-sft-v39`(root=global_step_60,max_model_len 65536)。
+- 8 worker 全 ALIVE。
+
+### C. 队列健康
+- run2(1962541,ALIVE,7957s)→RL eval chain(2028723,ALIVE,180s 轮询 sleep,log 持续 `eval-chain still running`)→residual SFT(2030315,ALIVE,120s 轮询,log `step105 daemon still running`)。
+- GPU0-3=root SGLang(不动)；GPU4=MiniCPM5-2B(:8098)；GPU5=SFT step60(:8097,90%util 跑 run2)；GPU6=SFT step105-final(:8096)；GPU7=3MiB 空闲(R0 eval serve 预留)。
+
+### D. R0 ckpt 复核
+- `global_step_200/` 完整(du 15G,含 optimizer.pt；vLLM serve 只需 config.json+2 shard safetensors+tokenizer)；`cheat_rate.json`=0/3200（红线 §5.2 ✓）；末步 metrics：reward 0.899, mean_ratio 1.0, KL 0.0706, frac_nonzero_reward 1.0, frac_positive_adv 0.4375。
+
+### E. 结论
+- RL eval chain 将在 run2 完成后(~23:00,**比 wake422 预期早 ~2h**)自动 serve global_step_200 于 GPU7:8095→158题5-run→`/tmp/posttrain_5run_eval/5run_rl_analysis.json`(grpo_R0_step200 vs step105 0.0304±0.0083,McNemar+10k paired bootstrap)。
+- 本轮零 GPU、未碰任何进程；纯监控+ETA 修正(非空转：修正了 materially wrong 的 3h→1h ETA,影响下一唤醒/运维的 R0 结果就绪预期)。
+- 红线 §5.1 contam 0/3347；§5.2 cheat=0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
+
+- 交付：run2 进度修正(37%→75%)+ETA 下修(3h→~1h)+卡死检测(无)+健康复检 + EXPERIMENTS §R423 + MEMORY wake423。
+- 下一步：① 等 run2 完(~1h)→chain 2028723 自动 serve global_step_200→158题5-run→5run_rl_analysis.json；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`；无提升/退化→诚实负结果(§R420 训练侧偏负支撑)+起 R2+sandbox-exec(wake421 已就绪,待 GPU7 释放)。
