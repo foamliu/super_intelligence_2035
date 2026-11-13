@@ -4,20 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2380 incr_eval(pi+1RESOLVED·cline+1·cc+3→总1803/2234)+cleanup0empty(全7路0empty)+双报告REGEN(gateway200·1803resolved/2234total·predict 4/7 alive·cline320·codex135·cc324·pi283·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2380·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2379 incr_eval+监控+报告+ETA+cline根因修复·R2380 incr_eval+双报告REGEN
-当前动作:     R2380: 自检(CPU/mem OK·load33/224·无runway)·gateway 200·incr_eval(pi+1RESOLVED+cline+1+cc+3→总1803/2234)·cleanup0empty(全7路0empty)·predict:cline320·codex135·cc324·pi283·4/7 alive·双报告REGEN(R2380 16:00·7way=12199B·cline=9971B)·research日报11-13有harness建议(adapter契约草案·方法论·不急)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit+push ②cline predict继续向500推进(320→500) ③incr_eval新落地 ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
-阻塞:         <各路尚未满500:cline320/codex135/cc324/pi283·§22:4x未全交付·opencode+hermes DONE·deepseek stalled·codex=瓶颈~15天>
+PHASE:        R2381 incr_eval(cc+2RESOLVED·cline+1FAILED·pi+1FAILED→总1805)+cleanup5empty(1codex+3cc+1cline)+双报告REGEN(gateway OK·1805resolved·predict 4/7 alive·cline322·codex135·cc324·pi284·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2381·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2380 incr_eval+监控+报告+ETA+cline根因修复·R2381 incr_eval+cleanup+双报告REGEN
+当前动作:     R2381: 自检(CPU/mem OK·load32/224·无runway)·gateway OK·incr_eval(4new:cc django-14534 RESOLVED+cc django-14559 RESOLVED+cline django-13297 FAILED+pi sympy-18763 FAILED→+2resolved总1805)·cleanup5empty(1codex+3cc+1cline)·predict:cline322·codex135·cc324·pi284·4/7 alive·双报告REGEN(R2381 16:17)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit+push ②cline predict继续向500推进(322→500) ③incr_eval新落地 ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
+阻塞:         <各路尚未满500:cline322/codex135/cc324/pi284·§22:4x未全交付·opencode+hermes DONE·deepseek stalled·codex=瓶颈~15天>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=16KB（归档0KB）
-  cline专项小结: predict_glm53=320files/243resolved/0empty·C1:320real·C2:failed=79(能力·real patch但tests fail)·C3:empty=0(无新出现·R2379 cleanup后归零保持)·C4:243res/323eval=75.2%·C5:报告R2380(cline special·9971B)·失败top1=能力差(real patch但tests fail)·cc272/331=82.2%·opencode414/498=83.1%·gap=能力差
+  cline专项小结: predict_glm53=322files/243resolved/0empty·C1:322real·C2:failed=80(能力·real patch但tests fail)·C3:empty=0(cleanup后归零保持)·C4:243res/323eval=75.2%·C5:报告R2381(cline special·8667B)·失败top1=能力差(real patch但tests fail)·cc274/329=83.3%·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
+> [16:17] R2381: 自检(CPU/mem OK·load32/224·无runway)·gateway OK·incr_eval(4new:cc django-14534 RESOLVED+cc django-14559 RESOLVED+cline django-13297 FAILED+pi sympy-18763 FAILED→+2resolved总1805)·cleanup5empty(1codex+3cc+1cline→全7路0empty)·predict:cline322·codex135·cc324·pi284·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2381 16:17)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2380 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2380 incr_eval(pi+1RESOLVED+cline+1+cc+3→总1803/2234)+cleanup0empty+双报告REGEN。需要时再读。
 > [16:00] R2380: 自检(CPU/mem OK·load33/224·无runaway)·gateway 200·incr_eval(pi+1RESOLVED+cline+1+cc+3→总1803/2234)·cleanup0empty(全7路0empty)·predict:cline320·codex135·cc324·pi283·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2380 16:00·7way=12199B·cline=9971B)·research日报11-13提到harness(adapter契约草案建议·方法论·不急)·未完成指令:有(§10:10+§22:4x)·W:0
 > 📦 R2379 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2379 incr_eval2new(全2FAILED)+cleanup7empty+双报告REGEN。需要时再读。
 > 📦 R2378 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2378 incr_eval3new(全3 RESOLVED)+5empty+双报告REGEN。需要时再读。
