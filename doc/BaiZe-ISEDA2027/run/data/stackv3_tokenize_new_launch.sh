@@ -3,8 +3,11 @@
 # Step C: Wait for hf download to complete, then tokenize new shards (skip already-tokenized).
 # Auto-skip: stackv3_tokenize.py checks if .json/.bin/.idx already exist → SKIP.
 # Usage: setsid bash stackv3_tokenize_new_launch.sh > /tmp/tokenize_stackv3_new.log 2>&1 < /dev/null &
-
-set -euo pipefail
+#
+# ⚠️ Robustness fix (2026-11-14): removed `set -euo pipefail` from the monitoring
+# loop — NFS transient errors on `find` were killing the wait process.  Only the
+# tokenization command itself uses `set -e` so a genuine tokenize failure still
+# surfaces.
 
 PARQUET_DIR="/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/data"
 REPO_ROOT="/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train"
@@ -23,8 +26,9 @@ echo "Waiting for hf download to complete (up to ${MAX_WAIT_HOURS}h)..."
 wait_start=$(date +%s)
 while true; do
     # Count parquet files in data/ and incomplete files in entire repo (including .cache/)
-    n_parquet=$(find "$PARQUET_DIR" -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l)
-    n_incomplete=$(find "$REPO_ROOT" -name '*.incomplete' 2>/dev/null | wc -l)
+    # `|| true` guards against NFS transient errors that previously killed the script
+    n_parquet=$(find "$PARQUET_DIR" -maxdepth 1 -name '*.parquet' 2>/dev/null | wc -l || echo 0)
+    n_incomplete=$(find "$REPO_ROOT" -name '*.incomplete' 2>/dev/null | wc -l || echo 0)
 
     # Check if hf download process is still running
     if ! pgrep -f "hf download HuggingFaceCode/stack-v3-train" > /dev/null 2>&1; then
@@ -55,8 +59,14 @@ done
 
 echo ""
 echo "=== Download complete. Starting tokenization at $(date) ==="
-n_parquet=$(find "$PARQUET_DIR" -name '*.parquet' 2>/dev/null | wc -l)
+n_parquet=$(find "$PARQUET_DIR" -name '*.parquet' 2>/dev/null | wc -l || echo 0)
 echo "Total parquets: $n_parquet"
+
+# Ensure tokenizer dependencies are on PATH
+export PATH="/nas_train/app.e0031982/miniforge3/envs/py310/bin:$PATH"
+
+# Re-enable strict mode for tokenization so genuine failures surface
+set -e
 
 # Run tokenization: --shards all → script will auto-skip already-tokenized shards
 nice -n 19 ionice -c3 python3 "$SCRIPT" \
