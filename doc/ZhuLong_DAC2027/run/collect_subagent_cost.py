@@ -1,10 +1,21 @@
 #!/usr/bin/env python3
-"""collect_subagent_cost.py — 从 round log + batch dir 收集 subagent 消融的 cost/调用率/Pass@1.
+"""collect_subagent_cost.py — collect subagent-ablation cost / spawn-rate / Pass@1 / tokens.
 
-P1 pilot 用: 采 spawn 调用率 / Pass@1 / 墙钟 / doubao 连通.
-P2 主实验会扩展 token 采集 (从 cline session usage).
+Scans a finished batch dir produced by run_cline_script.sh:
+  <batch>/cli_data/worker_*/data/sessions/*/*.messages.json   <- cline session traces
+  <batch>/stats/{success,failure,timeout,total_time}           <- harness counters
+  <batch>/logs/batch_cline.log                                 <- worker->task map + wall
+
+For each worker session it counts:
+  - subagent_researcher tool_use blocks  (spawn calls by main agent)
+  - assistant message metrics.{input,output,cacheRead,cacheWrite}Tokens  (main-agent tokens)
+  - tool_result of subagent_researcher may carry subagent usage (best-effort)
+
+Outputs one JSON per (arm, round) with: spawn_calls, spawn_call_rate (tasks-with-spawn / n_tasks),
+pass_rate_pct, passed/total, wall_sec, tokens{main,sub,total}, timeout, completion_rate.
 """
-import argparse, json, os, re, sys, glob
+import argparse, json, os, re, glob
+
 
 def parse_args():
     p = argparse.ArgumentParser()
@@ -16,88 +27,161 @@ def parse_args():
     p.add_argument("--out", required=True)
     return p.parse_args()
 
+
+def read_int(path):
+    try:
+        return int(open(path).read().strip())
+    except Exception:
+        return None
+
+
+def scan_session(path):
+    """Return dict for one cline session messages.json: spawn_calls, tokens, tool histogram."""
+    try:
+        d = json.load(open(path, errors="replace"))
+    except Exception:
+        return None
+    msgs = d.get("messages") if isinstance(d, dict) else None
+    if not isinstance(msgs, list):
+        return None
+    spawn = 0
+    tool_hist = {}
+    in_tok = out_tok = cache_r = cache_w = 0
+    sub_in = sub_out = 0
+    n_assistant = 0
+    for m in msgs:
+        if not isinstance(m, dict):
+            continue
+        role = m.get("role")
+        # assistant metrics -> main-agent tokens
+        if role == "assistant":
+            n_assistant += 1
+            mt = m.get("metrics") or {}
+            in_tok += int(mt.get("inputTokens", 0) or 0)
+            out_tok += int(mt.get("outputTokens", 0) or 0)
+            cache_r += int(mt.get("cacheReadTokens", 0) or 0)
+            cache_w += int(mt.get("cacheWriteTokens", 0) or 0)
+        # tool_use blocks (assistant content is a list of blocks)
+        c = m.get("content")
+        if isinstance(c, list):
+            for blk in c:
+                if isinstance(blk, dict) and blk.get("type") == "tool_use":
+                    name = blk.get("name", "")
+                    tool_hist[name] = tool_hist.get(name, 0) + 1
+                    if name == "subagent_researcher":
+                        spawn += 1
+        # tool_result blocks may contain subagent usage (best-effort parse)
+        if isinstance(c, list):
+            for blk in c:
+                if isinstance(blk, dict) and blk.get("type") == "tool_result":
+                    cont = blk.get("content")
+                    s = cont if isinstance(cont, str) else json.dumps(cont, ensure_ascii=False)
+                    um = re.search(r'"?usage"?\s*:\s*\{[^}]*"inputTokens"\s*:\s*(\d+)[^}]*"outputTokens"\s*:\s*(\d+)', s)
+                    if um and "subagent" in s.lower():
+                        sub_in += int(um.group(1)); sub_out += int(um.group(2))
+    return {
+        "spawn_calls": spawn,
+        "n_assistant_msgs": n_assistant,
+        "tokens_main": {"input": in_tok, "output": out_tok, "cacheRead": cache_r, "cacheWrite": cache_w},
+        "tokens_sub": {"input": sub_in, "output": sub_out},
+        "tool_hist": tool_hist,
+    }
+
+
+def worker_task_map(log_text):
+    """From batch_cline.log build worker -> [task_id, ...] in start order."""
+    wm = {}
+    for m in re.finditer(r'\[worker-(\d+)\]\s*开始任务\s+(\S+)', log_text):
+        w, t = m.group(1), m.group(2)
+        wm.setdefault(w, []).append(t)
+    return wm
+
+
 def main():
     a = parse_args()
-    log_text = ""
-    if os.path.isfile(a.log):
-        with open(a.log, errors="replace") as f:
-            log_text = f.read()
-
-    # spawn 调用率: 数 [subagent_researcher] 工具调用次数 (主 agent 调 subagent)
-    spawn_calls = len(re.findall(r'\[subagent_researcher\]', log_text))
-    # spawn 完成: 数 SpawnAgentOutput / subagent.*complet
-    spawn_completed = len(re.findall(r'(?i)subagent.{0,20}(complet|finish|return|done)', log_text))
-    # subagent 内部的 search_apis / get_api_details 调用 (subagent 做了研究)
-    sub_search = len(re.findall(r'\[pyAether_MCP_server__search_apis\]', log_text))
-    sub_details = len(re.findall(r'\[pyAether_MCP_server__get_api_details\]', log_text))
-
-    # Pass@1: 从 log grep 'pass (xx.x%)' 或 'PASS_RATE' 或 'passed'
-    pass_rate = None
-    passed = None
-    total = None
-    m = re.search(r'pass\s*\(([\d.]+)%\)', log_text)
-    if m:
-        pass_rate = float(m.group(1))
-    m2 = re.search(r'(?i)passed[:\s]+(\d+)\s*/\s*(\d+)', log_text)
-    if m2:
-        passed = int(m2.group(1)); total = int(m2.group(2))
-    # harness run_eval 输出: "通过: X/Y" 或 "pass_rate: Z%"
-    m3 = re.search(r'(?i)(通过|pass_rate|PASS_RATE)[:\s]+(\d+(?:\.\d+)?)\s*%?', log_text)
-    if m3 and pass_rate is None:
-        pass_rate = float(m3.group(2))
-
-    # 墙钟: 从 log 首末时间戳估算 (粗)
-    wall_sec = None
-    ts = re.findall(r'\[(\d{2}:\d{2}:\d{2})\]', log_text)
-    if len(ts) >= 2:
-        def to_s(t):
-            h, mi, s = map(int, t.split(":")); return h * 3600 + mi * 60 + s
-        wall_sec = to_s(ts[-1]) - to_s(ts[0])
-        if wall_sec < 0: wall_sec += 86400
-
-    # token: 从 session usage 采 (P2 扩展; P1 先扫 batch trace 里的 ui_messages.json)
-    prompt_tok = 0; completion_tok = 0; reasoning_tok = 0; total_tok = 0
+    log_text = open(a.log, errors="replace").read() if os.path.isfile(a.log) else ""
     batch = os.path.basename(a.batch_dir)
-    trace_dir = os.path.join(a.batch_dir, "trace")
-    usage_files = glob.glob(os.path.join(a.batch_dir, "**", "ui_messages.json"), recursive=True)
-    for uf in usage_files:
-        try:
-            data = json.load(open(uf, errors="replace"))
-            # ui_messages 可能含 usage 字段; 尽力采集
-            if isinstance(data, list):
-                for msg in data:
-                    u = msg.get("usage") or msg.get("tokenUsage") if isinstance(msg, dict) else None
-                    if isinstance(u, dict):
-                        prompt_tok += u.get("inputTokens", u.get("prompt_tokens", 0)) or 0
-                        completion_tok += u.get("outputTokens", u.get("completion_tokens", 0)) or 0
-                        reasoning_tok += u.get("reasoningTokens", 0) or 0
-        except Exception:
-            pass
-    total_tok = prompt_tok + completion_tok + reasoning_tok
 
-    # timeout / gen_fail / converged (从 log)
-    timeout_n = len(re.findall(r'(?i)timeout|超时', log_text))
-    gen_fail = len(re.findall(r'(?i)(gen.?fail|生成失败|exit code: [^0])', log_text))
+    # scan all session messages.json under cli_data/
+    sessions = []
+    for mf in sorted(glob.glob(os.path.join(a.batch_dir, "cli_data", "worker_*", "data", "sessions", "*", "*.messages.json"))):
+        # worker id from path
+        wm = re.search(r'worker_(\d+)', mf)
+        worker = wm.group(1) if wm else "?"
+        s = scan_session(mf)
+        if s:
+            s["worker"] = worker
+            s["session_file"] = mf
+            sessions.append(s)
+
+    # spawn call rate: tasks (sessions) with >=1 spawn / n_tasks
+    n_spawn_sessions = sum(1 for s in sessions if s["spawn_calls"] > 0)
+    total_spawn = sum(s["spawn_calls"] for s in sessions)
+    n_tasks = a.n_tasks or len(sessions)
+    spawn_call_rate = round(n_spawn_sessions / n_tasks, 4) if n_tasks else None
+
+    # tokens aggregate (main + sub)
+    main_in = sum(s["tokens_main"]["input"] for s in sessions)
+    main_out = sum(s["tokens_main"]["output"] for s in sessions)
+    main_cache_r = sum(s["tokens_main"]["cacheRead"] for s in sessions)
+    main_cache_w = sum(s["tokens_main"]["cacheWrite"] for s in sessions)
+    sub_in = sum(s["tokens_sub"]["input"] for s in sessions)
+    sub_out = sum(s["tokens_sub"]["output"] for s in sessions)
+
+    # tool histogram aggregate
+    agg_hist = {}
+    for s in sessions:
+        for k, v in s["tool_hist"].items():
+            agg_hist[k] = agg_hist.get(k, 0) + v
+
+    # Pass@1 / completion from stats/
+    succ = read_int(os.path.join(a.batch_dir, "stats", "success")) or 0
+    fail = read_int(os.path.join(a.batch_dir, "stats", "failure")) or 0
+    tmo = read_int(os.path.join(a.batch_dir, "stats", "timeout")) or 0
+    total_done = succ + fail + tmo
+    pass_rate = round(100.0 * succ / total_done, 2) if total_done else None
+    completion_rate = round(100.0 * (succ + fail) / total_done, 2) if total_done else None  # exclude timeout
+
+    # wall from stats/total_time (sec) — fallback to log timestamp delta
+    wall = read_int(os.path.join(a.batch_dir, "stats", "total_time"))
+    if wall is None:
+        ts = re.findall(r'\[(\d{2}:\d{2}:\d{2})\]', log_text)
+        if len(ts) >= 2:
+            def to_s(t):
+                h, mi, s = map(int, t.split(":")); return h * 3600 + mi * 60 + s
+            wall = to_s(ts[-1]) - to_s(ts[0])
+            if wall < 0: wall += 86400
+
+    # doubao connectivity: count HTTP 200 / errors in log
+    http_200 = len(re.findall(r'200', log_text))
+    http_err = len(re.findall(r'(?i)(http (4\d\d|5\d\d)|ECONNREFUSED|ETIMEDOUT|doubao.*error)', log_text))
 
     cost = {
-        "arm": a.arm, "round": a.round, "batch": batch,
-        "n_tasks": a.n_tasks,
-        "spawn_calls": spawn_calls,
-        "spawn_completed": spawn_completed,
-        "spawn_call_rate": round(spawn_calls / a.n_tasks, 3) if a.n_tasks else None,
-        "subagent_search_apis_calls": sub_search,
-        "subagent_get_api_details_calls": sub_details,
+        "arm": a.arm, "round": a.round, "batch": batch, "n_tasks": n_tasks,
+        "spawn_calls_total": total_spawn,
+        "spawn_sessions": n_spawn_sessions,
+        "spawn_call_rate": spawn_call_rate,
         "pass_rate_pct": pass_rate,
-        "passed": passed, "total": total,
-        "wall_sec": wall_sec,
-        "tokens": {"prompt": prompt_tok, "completion": completion_tok,
-                   "reasoning": reasoning_tok, "total": total_tok},
-        "timeout": timeout_n, "gen_fail": gen_fail,
+        "passed": succ, "failed": fail, "timed_out": tmo, "total_done": total_done,
+        "completion_rate_pct": completion_rate,
+        "wall_sec": wall,
+        "tokens_main": {"input": main_in, "output": main_out, "cacheRead": main_cache_r, "cacheWrite": main_cache_w,
+                        "total": main_in + main_out},
+        "tokens_sub": {"input": sub_in, "output": sub_out, "total": sub_in + sub_out},
+        "tokens_grand_total": main_in + main_out + sub_in + sub_out,
+        "tool_histogram": agg_hist,
+        "n_sessions_scanned": len(sessions),
+        "doubao_http_200_hits": http_200, "doubao_http_err_hits": http_err,
+        "per_session": [{"worker": s["worker"], "spawn_calls": s["spawn_calls"],
+                         "main_in_tok": s["tokens_main"]["input"], "main_out_tok": s["tokens_main"]["output"],
+                         "n_assistant": s["n_assistant_msgs"]} for s in sessions],
         "log": a.log,
     }
     json.dump(cost, open(a.out, "w"), ensure_ascii=False, indent=2)
-    print(f"cost saved: {a.out} | arm={a.arm} r={a.round} spawn={spawn_calls}/{a.n_tasks} "
-          f"(rate={cost['spawn_call_rate']}) pass={pass_rate}% wall={wall_sec}s")
+    print(f"cost saved: {a.out} | arm={a.arm} r={a.round} "
+          f"spawn={total_spawn} calls in {n_spawn_sessions}/{n_tasks} sessions (rate={spawn_call_rate}) "
+          f"pass={pass_rate}% ({succ}/{total_done}) wall={wall}s main_tok={main_in+main_out}")
+
 
 if __name__ == "__main__":
     main()
