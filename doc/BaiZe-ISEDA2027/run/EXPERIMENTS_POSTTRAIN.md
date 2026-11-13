@@ -8347,3 +8347,54 @@ All 3 automation layers alive:
 | base | 8098 | 4 | 0/5 | -- (36% was full-harness, different mode) | chain daemon -> runs 1-5 |
 
 
+#### Run 1 Detailed Failure Breakdown (wake390, 2026-11-13 08:53)
+
+> **Source**: `/tmp/posttrain_5run_eval/step105/run1/result_summary.json` + `step60/run1/result_summary.json`
+> **Context**: Run 1 of 5-run eval (frozen protocol: 158 tasks, Pass@1, 2500s, single-trace, `-p 8 -n`)
+
+**step105 (SFT v39 final, global_step_105, GPU6 :8096)**:
+
+| Metric | Value |
+|:--|:--|
+| code_gen_success | 62/158 (39.2%) |
+| code_gen_fail | 92/158 |
+| code_gen_timeout | 4/158 |
+| **Pass@1** | **6/158 = 3.8%** |
+| Passed tasks | 003, 046, 067, 096, 127, 153 |
+
+Execution failure breakdown (53 tasks with exec errors out of 92 code_gen_fail):
+
+| Error type | Count | % of exec failures |
+|:--|--:|--:|
+| SyntaxError | 17 | 32.1% |
+| AttributeError | 15 | 28.3% |
+| TypeError | 13 | 24.5% |
+| AssertionError | 3 | 5.7% |
+| NameError | 2 | 3.8% |
+| IndentationError | 2 | 3.8% |
+| ModuleNotFoundError | 1 | 1.9% |
+
+**Key insight**: API misuse (AttributeError + TypeError = 28/53 = 52.8%) is the dominant execution failure mode, exceeding syntax errors (SyntaxError + IndentationError = 19/53 = 35.8%). Only 3 AssertionError = very few semantic/logic errors caught by assertions. This aligns with D4 diagnosis: execution errors >> assertion failures -> **API/domain knowledge problem** -> SFT domain corpus (PyAether API reference) is the correct lever, not more code syntax training.
+
+**step60 (SFT v39, global_step_60, GPU5 :8097)**:
+
+| Metric | Value |
+|:--|:--|
+| code_gen_success | 42/158 (26.6%) |
+| code_gen_fail | 111/158 |
+| code_gen_timeout | 5/158 |
+| **Pass@1** | **2/158 = 1.3%** |
+
+(No exec_failures breakdown available for step60 run1 -- result_summary.json did not include that field.)
+
+**step105 vs step60 comparison (run1 only, n=1)**:
+
+| Metric | step105 | step60 | Delta |
+|:--|:--|:--|:--|
+| code_gen_success | 62 (39.2%) | 42 (26.6%) | +47.6% |
+| Pass@1 | 6 (3.8%) | 2 (1.3%) | +2.9x |
+
+step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both code generation success rate and Pass@1. This is consistent with SFT convergence -- more training steps -> better tool-calling protocol adherence + API knowledge.
+
+**Caveat**: n=1 only. 5-run mean+-std needed for statistical significance (runs 2-5 in progress via autonomous pipeline).
+
