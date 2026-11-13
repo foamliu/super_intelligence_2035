@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "tag": "compaction_pilot",
+    "description": "Retroactive pilot record from completed compaction ablation (6 rounds, 40-task subset, 2 arms)",
+    "created": "2026-11-13",
+    "retroactive": true,
+    "source": "ablation_compaction_results.json (all 6 rounds complete)"
+  },
+  "design": {
+    "benchmark": "EDA-Eval-pyAether-158",
+    "subset": "compaction_subset_40.txt (40 long-trajectory tasks, median 153 tool calls, 6 categories, seed=42)",
+    "base_model": "deepseek-v4-pro-cloud",
+    "cline_version": "3.0.51",
+    "arms": ["basic", "agentic"],
+    "rounds_per_arm": 3,
+    "total_rounds": 6,
+    "order": "ABBA: basic_r1 -> agentic_r1 -> agentic_r2 -> basic_r2 -> basic_r3 -> agentic_r3",
+    "parallelism": 8,
+    "protocol": "-p 8 -n, CLINE_THINKING=medium, LANG_HINT empty",
+    "compaction_trigger_note": "cline 3.0.51 trigger is strategy-dependent: basic ~230K tokens, agentic ~120K tokens. models.json contextWindow=32000 is IGNORED. Plan v2's 32K tight-context regime not implementable on 3.0.51."
+  },
+  "results": {
+    "per_round_pass_pct": {
+      "C_basic_r1": 67.5, "C_agentic_r1": 57.5,
+      "C_agentic_r2": 60.0, "C_basic_r2": 70.0,
+      "C_basic_r3": 70.0, "C_agentic_r3": 60.0
+    },
+    "arm_mean_pass_pct": {"basic": 69.2, "agentic": 59.2},
+    "per_round_delta_pp": {"r1": -10.0, "r2": -10.0, "r3": -10.0},
+    "mcnemar_3round_majority": {
+      "both_pass": 23, "basic_only": 6, "agentic_only": 1, "both_fail": 10,
+      "chisq": 2.29, "p_approx": 0.32, "delta_pp": -12.5,
+      "bootstrap_ci_95": [-25.0, 0.0]
+    },
+    "compression_rate_mean_pct": {"basic": 69.7, "agentic": 89.9},
+    "wall_sec_per_task_mean": {"basic": 1087, "agentic": 1187},
+    "total_tokens_3rounds": {"basic": 266.9e6, "agentic": 230.1e6},
+    "gen_fail_mean": {"basic": 6.7, "agentic": 11.0},
+    "subgroup_trajectory": {
+      "median_split": 153, "short_n": 20, "long_n": 20,
+      "short_delta_pp": -10.0, "long_delta_pp": -15.0
+    },
+    "subgroup_category_worst": "Design Content Query & Edit (delta=-33.3pp, n=6)",
+    "subgroup_category_best": "Simulation & Analysis Configuration (delta=+20.0pp, n=5, only category where agentic helps)",
+    "failure_classification_discordant": {
+      "n_discordant": 7, "basic_only_fail": 1, "agentic_only_fail": 6,
+      "agentic_only_by_type": {"context_loss": 6, "format": 0, "capability": 0, "judge": 0},
+      "basic_only_by_type": {"context_loss": 0, "format": 0, "capability": 0, "judge": 1}
+    }
+  },
+  "conclusions": {
+    "Q1_agentic_3pp_gain": "No. -10pp stable decline every round. McNemar delta=-12.5pp, CI[-25,0].",
+    "Q2_long_session_only": "No gain anywhere. Negative effect larger on long trajectories (delta=-15pp vs -10pp short).",
+    "Q3_default_recommendation": "basic. Higher Pass@1 (+10pp), fewer gen_fails (-64%), no extra LLM summary call. agentic saves 14% tokens but +20% wall-clock and 6 context-loss failures.",
+    "one_line": "agentic compaction causes stable -10pp Pass@1 decline on PyAether long-trajectory tasks; LLM summary loses precise context. Default: basic."
+  },
+  "deliverables": {
+    "plan": "reports/plan_zhulong_compaction_basic_vs_agentic_zh.html",
+    "subset": "run/compaction_subset_40.txt",
+    "orchestration": "run/run_compaction_ablation.sh",
+    "results_json": "run/ablation_compaction_results.json",
+    "cost_jsons": "run/cost_C_{basic,agentic}_r{1,2,3}.json",
+    "report": "reports/report_zhulong_compaction_basic_vs_agentic_zh.html",
+    "analysis": "run/report_tbd_values.json",
+    "smoke": "run/compaction_smoke_p0d.json"
+  }
+}
