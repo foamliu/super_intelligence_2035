@@ -1,16 +1,10 @@
 WAITING: 0
 
-> 🆕 **【wake #1106 · 2026-11-13 08:00】v9监控·GRPO Phase3 step25/30·nz_std=100%持续·reward=0.500·seed0接近完成**：v9 RUNNING(PID1351796/etimes~11016s/stat=RNl/pcpu~1244%/RSS~67GB/进程健康)·**Phase3 GRPO进展**:step25/30 reward=**0.500** std=**0.433** nz_std=**100%**(持续全信号)·step22 reward=0.750·step19 reward=0.500·step16 reward=0.750·step13 reward=0.750·step10 reward=0.875·**Eval A=0.0%**(zero-shot✓)·**Eval B=49.5%**(SFT✓优于v8 45%)·剩余:seed0 GRPO~5步(~5min→~08:06)+EvalC(~3min)+seeds1-2(复用SFT·各~33min)+control(~33min)·ETA完成≈09:40-10:10·v8 MIXED(A=0%/B=45%/C=52.5%±6.1%/p=0.0312)·analyze_v9就绪·✅HTML报告45187B(v8版)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision·不action)·git pull: Already up to date·GPU pretrain全占·体积TASK27KB/MEMORY 14KB均✓·**WAITING: 0**。
+> 🆕 **【wake #1107 · 2026-11-13 08:05】v9监控·seed0 GRPO 30/30 DONE·Eval C进行中(12/91 acc=50.0%)·nz_std=100%全程持续**：v9 RUNNING(PID1351796/etimes~11373s/stat=RNl/pcpu~1251%/RSS~67GB/进程健康)·**GRPO全部30步完成**:step30 reward=0.375 std=0.467 nz_std=**100%**·全程reward区间0.375~0.875·nz_std从step13起=100%(持续全信号·远优于v8)·**Eval C开始**:12/91 acc=**50.0%**(首批)·**Eval A=0.0%**(zero-shot✓)·**Eval B=49.5%**(SFT✓优于v8 45%)·剩余:EvalC全量(~3min)+seeds1-2(复用SFT·各~36min)+control(~36min)·ETA完成≈09:50-10:10·analyze_v9就绪·✅HTML报告(v8版)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276(非vision)·git pull Already up to date·GPU pretrain全占·体积✓·**WAITING: 0**。
 
-> 📦 **wake #1105 · 2026-11-13 07:58** v9监控·GRPO step22/30·nz_std=100%持续·已fold(见wake#1106)。
+> 📦 **wake #1106 · 2026-11-13 08:00** v9监控·GRPO step25/30·nz_std=100%持续·已fold(见wake#1107)。
 
-> 📦 **wake #1104 · 2026-11-13 07:58** v9监控·GRPO step16/30·nz_std=100%持续·已fold(见wake#1105)。
-
-> 📦 **wake #1103 · 2026-11-13 07:53** v9监控·GRPO step13/30·nz_std=100%全信号·已fold(见wake#1105)。
-
-> 📦 **wake #1102 · 2026-11-13 07:42** v9监控·GRPO step7/30信号转正·已fold(见wake#1103)。
-
-> 📦 **wake #1101 · 2026-11-13 07:33** v9监控·Eval A/B完成→GRPO起步(step1/30)·已fold(见wake#1102)。
+> 📦 **wake #1101~#1105 · 2026-11-13 07:33~07:58**（5轮）v9监控·GRPO step1→25·nz_std=100%持续·已fold(见wake#1106)。
 
 > 📦 **wake #1096~#1100 · 2026-11-13 07:09~07:27**（5轮）v9监控·SFT完成→Eval A/B进行→GRPO起步·已fold(见wake#1101)。
 
@@ -86,10 +80,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING**：v8 MIXED完成(A=0%格式问题/B=45%/C=52.5%±6.1%/McNemar p=0.0312) → **v9 launched 2026-11-13 04:56**：SFT 500ex×5ep(305步)DONE → **Eval A=0.0%(zero-shot✓) · Eval B=49.5%(SFT✓优于v8 45%)** → **Phase3 GRPO step25/30进行中**(reward=0.500·std=0.433·**nz_std=100%**·持续全信号远优于v8) → seed0接近完成·后续Eval C+seed1/2(复用SFT)+control · **ETA~09:40-10:10** · v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS) · v7✅6/6 · v8 MIXED。**WAITING: 0** |
+| PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING**：v8 MIXED完成(A=0%格式问题/B=45%/C=52.5%±6.1%/McNemar p=0.0312) → **v9 launched 2026-11-13 04:56**：SFT 500ex×5ep(305步)DONE → **Eval A=0.0%(zero-shot✓) · Eval B=49.5%(SFT✓优于v8 45%)** → **Phase3 GRPO 30/30 DONE**(reward=0.375~0.875·**nz_std=100%**全程持续·远优于v8) → **Eval C进行中**(12/91 acc=50.0%首批)·后续seed1/2(复用SFT)+control · **ETA~09:50-10:10** · v5✅显著(A=16%→B=37%→C=53%·p=0.0009) · v6✅(p=0.267 NS) · v7✅6/6 · v8 MIXED。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
-| 当前动作 | **wake#1106 v9实验运行中**：PID1351796健康(etimes~11016s/RNl/pcpu~1244%/RSS~67GB)·**Eval A DONE**:91/91 acc=0.0%(zero-shot✓)·**Eval B(SFT) DONE**:91/91 acc=**49.5%**(优于v8 45%)·**Phase3 GRPO进行中**:step25/30 reward=0.500 std=0.433 **nz_std=100%**(持续全信号·远优于v8)·剩余~5步(~5min)+EvalC(~3min)+seeds1-2(复用SFT·各~33min)+control(~33min)·ETA完成≈09:40-10:10·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。✅HTML报告在盘上(45187B·v8版·reports/)→v9完成后更新。 |
+| 当前动作 | **wake#1107 v9实验运行中**：PID1351796健康(etimes~11373s/RNl/pcpu~1251%/RSS~67GB)·**Eval A DONE**:91/91 acc=0.0%(zero-shot✓)·**Eval B(SFT) DONE**:91/91 acc=**49.5%**(优于v8 45%)·**GRPO 30/30 DONE**:全程reward=0.375~0.875 **nz_std=100%**(从step13起持续全信号·远优于v8)·**Eval C进行中**:12/91 acc=50.0%(首批)·剩余EvalC全量(~3min)+seeds1-2(复用SFT·各~36min)+control(~36min)·ETA完成≈09:50-10:10·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。✅HTML报告在盘上(v8版)→v9完成后更新。 |
 | 下一步 | ①v9完成后(ETA≈10:00-12:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + **重新生成HTML报告**(report_vision_cpu_rl_waveform_zh.html·v8版在doc/BaiZe-ISEDA2027/reports/) ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 08:00 (wake #1106)**：v9 RUNNING监控·PID1351796健康(etimes~11016s/RNl/pcpu~1244%/RSS~67GB)·**Eval A DONE**(91/91 acc=0.0% zero-shot✓)·**Eval B(SFT) DONE**(91/91 acc=**49.5%** 优于v8 45%)·**Phase3 GRPO进行中**(step25/30 reward=0.500 std=0.433 **nz_std=100%**·持续全信号·远优于v8)·剩余~5步+EvalC+seeds1-2(复用SFT)+control·ETA≈09:40-10:10·analyze_v9就绪·✅HTML报告在盘上(45187B·v8版)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276非vision·git pull Already up to date·GPU pretrain全占·体积TASK27KB/MEMORY 14KB均✓·WAITING=0。 |
+| 更新 | **2026-11-13 08:05 (wake #1107)**：v9 RUNNING监控·PID1351796健康(etimes~11373s/RNl/pcpu~1251%/RSS~67GB)·**Eval A DONE**(91/91 acc=0.0% zero-shot✓)·**Eval B(SFT) DONE**(91/91 acc=**49.5%** 优于v8 45%)·**GRPO 30/30 DONE**(全程reward=0.375~0.875 **nz_std=100%**从step13起持续全信号·远优于v8)·**Eval C进行中**(12/91 acc=50.0%首批)·剩余EvalC+seeds1-2(复用SFT)+control·ETA≈09:50-10:10·analyze_v9就绪·✅HTML报告在盘上(v8版)→v9完成后更新·research日报11-13 vision栏GPTQ(部署·不action)·ops/inbox RUN_ID276非vision·git pull Already up to date·GPU pretrain全占·体积✓·WAITING=0。 |
