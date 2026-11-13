@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P20261929 · 基于三层记忆架构的 AI Agent 自进化系统及读写分离方法</title>
+<style>
+:root {
+  --bg: #f8f9fb; --bg-alt: #eef1f6; --card: #ffffff; --card-hover: #fafbff;
+  --border: #dfe3ec; --border-light: #e8ecf4;
+  --text: #1e293b; --text-secondary: #475569; --dim: #94a3b8;
+  --blue: #3b82f6; --blue-light: #eff6ff; --blue-bg: rgba(59,130,246,0.08);
+  --green: #16a34a; --green-light: #f0fdf4; --green-bg: rgba(22,163,74,0.08);
+  --orange: #ea580c; --orange-light: #fff7ed; --orange-bg: rgba(234,88,12,0.08);
+  --red: #dc2626; --red-light: #fef2f2; --red-bg: rgba(220,38,38,0.06);
+  --purple: #7c3aed; --purple-light: #f5f3ff; --purple-bg: rgba(124,58,237,0.08);
+  --cyan: #0891b2; --cyan-light: #ecfeff; --cyan-bg: rgba(8,145,178,0.08);
+  --pink: #db2777; --pink-light: #fdf2f8; --pink-bg: rgba(219,39,119,0.08);
+  --teal: #0d9488;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --radius: 12px; --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height:1.75; -webkit-font-smoothing: antialiased; }
+.topnav { position:sticky; top:0; z-index:100; background: rgba(255,255,255,0.88); backdrop-filter: blur(16px) saturate(180%); border-bottom:1px solid var(--border-light); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topnav-brand { font-weight:700; color:var(--blue); font-size:1.0em; display:flex; align-items:center; gap:8px; }
+.topnav-links { display:flex; gap:4px; flex-wrap:wrap; }
+.topnav-links a { font-size:0.76em; padding:5px 9px; border-radius:6px; color:var(--text-secondary); text-decoration:none; transition:all 0.15s; }
+.topnav-links a:hover { background:var(--blue-light); color:var(--blue); }
+.container { max-width:1140px; margin:0 auto; padding:32px 24px 80px; }
+.hero { text-align:center; padding:48px 0 40px; }
+.hero h1 { font-size:2.0em; font-weight:800; background:linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; line-height:1.3; }
+.hero-subtitle { font-size:1.1em; color:var(--text-secondary); max-width:780px; margin:0 auto 20px; }
+.hero-badges { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.badge { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:999px; font-size:0.8em; font-weight:600; }
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-orange { background:var(--orange-bg); color:var(--orange); }
+.badge-purple { background:var(--purple-bg); color:var(--purple); }
+.badge-cyan { background:var(--cyan-bg); color:var(--cyan); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-gray { background:var(--bg-alt); color:var(--text-secondary); }
+h2 { font-size:1.6em; font-weight:700; margin:48px 0 8px; padding-top:24px; border-top:2px solid var(--border-light); display:flex; align-items:center; gap:10px; }
+h2 .section-num { background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; width:34px; height:34px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7em; flex-shrink:0; }
+h3 { font-size:1.22em; font-weight:700; margin:28px 0 8px; color:var(--text); }
+h4 { font-size:1.02em; font-weight:700; margin:18px 0 6px; color:var(--text-secondary); }
+p { margin:8px 0; color:var(--text-secondary); }
+p b, li b { color:var(--text); }
+code { font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:0.86em; background:var(--bg-alt); padding:2px 6px; border-radius:4px; color:var(--purple); }
+pre { background:#1e293b; color:#e2e8f0; padding:18px 20px; border-radius:var(--radius-sm); overflow-x:auto; margin:14px 0; font-size:0.82em; line-height:1.6; box-shadow:var(--shadow-md); }
+pre code { background:none; color:inherit; padding:0; font-size:inherit; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin:16px 0; box-shadow:var(--shadow-sm); }
+.card-title { font-weight:700; font-size:1.08em; margin-bottom:10px; color:var(--text); display:flex; align-items:center; gap:8px; }
+.highlight { background:var(--blue-light); border-left:4px solid var(--blue); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.warning { background:var(--orange-light); border-left:4px solid var(--orange); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.insight { background:var(--green-light); border-left:4px solid var(--green); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.paper { background:var(--purple-light); border-left:4px solid var(--purple); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.paper b { color:var(--purple); }
+.why { background:var(--cyan-light); border-left:4px solid var(--cyan); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.why b { color:var(--cyan); }
+.highlight b, .insight b { color:var(--text); }
+table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; background:var(--card); border-radius:var(--radius-sm); overflow:hidden; box-shadow:var(--shadow-sm); }
+th { background:var(--bg-alt); text-align:left; padding:10px 14px; font-weight:700; color:var(--text); border-bottom:2px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--card-hover); }
+.td-mono { font-family:'JetBrains Mono',Consolas,monospace; font-size:0.84em; }
+ul, ol { margin:8px 0 8px 22px; color:var(--text-secondary); }
+li { margin:4px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.diagram-container { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin:18px 0; box-shadow:var(--shadow-sm); overflow-x:auto; }
+.diagram-label { text-align:center; font-size:0.84em; color:var(--dim); margin-top:8px; }
+.flow-steps { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.flow-step { display:flex; align-items:stretch; gap:16px; position:relative; }
+.flow-step-marker { display:flex; flex-direction:column; align-items:center; flex-shrink:0; width:40px; }
+.flow-step-dot { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.82em; flex-shrink:0; box-shadow:var(--shadow-sm); z-index:1; }
+.flow-step-dot.green { background:linear-gradient(135deg,var(--green),var(--teal)); }
+.flow-step-dot.purple { background:linear-gradient(135deg,var(--purple),var(--pink)); }
+.flow-step-dot.orange { background:linear-gradient(135deg,var(--orange),var(--red)); }
+.flow-step-line { width:2px; background:var(--border); flex:1; min-height:20px; }
+.flow-step-content { padding:4px 0 20px; flex:1; }
+.flow-step-content b { color:var(--text); }
+.toc { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 28px; margin:20px 0; box-shadow:var(--shadow-sm); }
+.toc-title { font-weight:700; margin-bottom:10px; color:var(--text); }
+.toc ol { margin:0 0 0 20px; columns:2; column-gap:32px; }
+.toc li { margin:5px 0; }
+.toc a { color:var(--text-secondary); text-decoration:none; }
+.toc a:hover { color:var(--blue); }
+.footer { text-align:center; color:var(--dim); font-size:0.85em; padding:40px 0 0; border-top:1px solid var(--border-light); margin-top:40px; }
+.kvs { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:0.92em; margin:10px 0; }
+.kvs dt { font-weight:600; color:var(--text); }
+.kvs dd { color:var(--text-secondary); }
+.meta-card { background:linear-gradient(135deg, var(--blue-light), var(--purple-light)); border:1px solid var(--border); border-radius:var(--radius); padding:20px 24px; margin:16px 0; box-shadow:var(--shadow-sm); }
+.meta-row { display:flex; gap:16px; flex-wrap:wrap; font-size:0.95em; }
+.meta-item { display:flex; gap:6px; }
+.meta-item .lbl { color:var(--dim); font-weight:600; }
+.meta-item .val { color:var(--text); font-weight:700; }
+@media (max-width:760px){ .two-col{grid-template-columns:1fr;} .toc ol{columns:1;} }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">🧬 P20261929 · 三层记忆自进化系统</div>
+  <div class="topnav-links">
+    <a href="#field">1.技术领域</a>
+    <a href="#prior">2.先前技术</a>
+    <a href="#motivation">3.发明目的</a>
+    <a href="#solution">4.技术方案</a>
+    <a href="#effects">5.有益效果</a>
+    <a href="#embodiments">6.具体实施</a>
+    <a href="#figures">7.附图说明</a>
+    <a href="#abbr">8.缩略语</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <h1>基于三层记忆架构的 AI Agent 自进化系统及读写分离方法</h1>
+  <div class="hero-subtitle">从任务轨迹中沉淀、聚合、检索可复用经验，让 Agent "见过即会"。L0/L1/L2 三层记忆 · 读写分离双开关 · 治本后净增 17 题 · 自进化 1-2 轮即追平人类手工进化。</div>
+  <div class="hero-badges">
+    <span class="badge badge-blue">三层记忆 L0/L1/L2</span>
+    <span class="badge badge-green">读写分离双独立开关</span>
+    <span class="badge badge-purple">可编辑边界保护</span>
+    <span class="badge badge-cyan">三态分级 已验证/待验证/坑点</span>
+    <span class="badge badge-orange">ground-truth 富集覆盖</span>
+  </div>
+</div>
+
+<div class="meta-card">
+  <div class="meta-row">
+    <div class="meta-item"><span class="lbl">专利编号：</span><span class="val">P20261929</span></div>
+    <div class="meta-item"><span class="lbl">发明人：</span><span class="val">刘杨</span></div>
+    <div class="meta-item"><span class="lbl">发明名称：</span><span class="val">基于三层记忆架构的 AI Agent 自进化系统及读写分离方法</span></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">📑 目录</div>
+  <ol>
+    <li><a href="#field">技术领域 (Field)</a></li>
+    <li><a href="#prior">先前技术 (Related prior art)</a></li>
+    <li><a href="#motivation">发明目的与技术问题 (Motivation &amp; challenge)</a></li>
+    <li><a href="#solution">技术方案 (Technical solution)</a></li>
+    <li><a href="#effects">有益效果 (Advantageous effects)</a></li>
+    <li><a href="#embodiments">具体实施方式 (Detailed embodiments)</a></li>
+    <li><a href="#figures">附图与说明 (Figures and description)</a></li>
+    <li><a href="#abbr">缩略语 (Description of the abbreviation)</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════ 1. FIELD ═══════════ -->
+<h2 id="field"><span class="section-num">1</span>技术领域 (Field)</h2>
+
+<p>本发明涉及人工智能领域的大语言模型 Agent 自进化技术，具体涉及一种基于<b>三层记忆架构</b>（L0 原始轨迹层 / L1 聚合模式层 / L2 版本归档层）的 AI Agent 自进化系统，以及在该系统上实现的<b>记忆读写分离方法</b>。</p>
+
+<p>所述系统面向电子设计自动化（EDA）场景下的代码生成 Agent：Agent 接收自然语言任务需求，调用 EDA 软件暴露的 API 编写 Python 代码并在远程沙箱执行，由隐藏测试用例判定通过/失败。所述自进化系统从 Agent 完成批量任务后留下的对话轨迹（trace）中沉淀、聚合、蒸馏可复用经验知识，并在后续任务中通过语义检索将该知识注入 Agent 提示词，从而提升任务通过率（pass@1）。</p>
+
+<p>本发明适用于一切"轨迹可采集、成败有客观评估器"的 LLM Agent 自进化场景，包括但不限于 EDA 代码生成、通用代码补全、工具调用 Agent 等。</p>
+
+<!-- ═══════════ 2. PRIOR ═══════════ -->
+<h2 id="prior"><span class="section-num">2</span>先前技术 (Related prior art)</h2>
+
+<h3>2.1 单层记忆的 Agent 反思方法</h3>
+<p>Reflexion（Shinn et al.）提出"言语强化学习"，让 Agent 在任务失败后用自然语言反思并写入记忆，下一轮任务读取记忆。但其记忆是<b>扁平单层</b>的"自我反思文本"，存在三个缺陷：</p>
+<ul>
+  <li>(a) 原始轨迹与聚合知识混在同一存储，要么提示词被原始日志撑爆，要么丢失回溯细节；</li>
+  <li>(b) 反思锚定的成败信号来自 Agent 自评，而 Agent 自评严重高估（实测轨迹推断成功 150/158，而真实通过仅 114/158，假阳性约 40 例），在脏奖励信号上做反思会产生"有害编辑"；</li>
+  <li>(c) 成功经验与失败教训未显式区分，检索时无法按可信度分级。</li>
+</ul>
+
+<h3>2.2 端到端语义记忆方法</h3>
+<p>MemOrb 用向量检索跨会话记忆，将完整轨迹嵌入并召回。但其将"事件经历"与"抽象知识"混在同一向量空间，缺乏分层，且<b>读写共用一个开关</b>——验证零知识基线时若关闭写入则连读取也一并关闭，无法测真实效果；若开启写入则污染基线。</p>
+
+<h3>2.3 规程记忆自更新方法</h3>
+<p>Voyager（Minecraft Agent）自动生成并验证技能库（procedural memory），但技能一旦写入即无条件覆盖旧版，缺乏可编辑边界保护，机器生成的规程会覆盖人工精心设计的核心资产。CoALA（Sumers et al.）理论指出"写 procedural memory 属高风险，易引入 bug 或颠覆设计者意图"，但未给出工程化的边界保护机制。</p>
+
+<h3>2.4 现有技术的共同不足</h3>
+<table>
+  <tr><th>不足</th><th>现有技术表现</th><th>本发明解决方式</th></tr>
+  <tr><td>记忆不分层</td><td>轨迹与知识混存，prompt 膨胀或回溯丢失</td><td>L0/L1/L2 三层分离</td></tr>
+  <tr><td>成败信号不可靠</td><td>用 Agent 自评做反思锚点</td><td>ground-truth 富集覆盖</td></tr>
+  <tr><td>读写耦合</td><td>共用一个开关，基线无法独立验证</td><td>读写分离两个独立开关</td></tr>
+  <tr><td>规程无边界保护</td><td>机器覆盖人工技能</td><td><code>origin: auto_distilled</code> 来源标记 + 手写永不覆盖</td></tr>
+  <tr><td>知识无可信度分级</td><td>成败经验混检索</td><td>已验证/待验证/坑点三态</td></tr>
+</table>
+
+<!-- ═══════════ 3. MOTIVATION ═══════════ -->
+<h2 id="motivation"><span class="section-num">3</span>发明目的与技术问题 (Motivation &amp; challenge)</h2>
+
+<h3>3.1 发明目的</h3>
+<p>提供一种让 LLM Agent 能从自身任务轨迹中自动沉淀可复用经验、并在后续任务中检索复用的自进化系统，使 Agent 的任务通过率随轮次迭代提升，且满足以下工程要求：</p>
+<ul>
+  <li>不污染人工设计的核心规程资产；</li>
+  <li>在零知识冷启动与有知识热运行两种状态下均可独立、可信地评估；</li>
+  <li>沉淀的知识有可信度分级，避免"似是而非"的知识系统性误导下游 Agent。</li>
+</ul>
+
+<h3>3.2 技术挑战</h3>
+
+<div class="card">
+  <div class="card-title">挑战 1：记忆存储的分层与膨胀控制</div>
+  <p>一轮 benchmark 产生 158 个任务的完整轨迹（每个含数十条搜索记录、API 调用、错误日志），若全部塞入 prompt 会迅速超出上下文窗口；若只保留聚合摘要则丢失回溯细节，无法调试。需要一种分层结构，让"原始轨迹"与"聚合知识"各居其位。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">挑战 2：成败信号的可靠性</div>
+  <p>轨迹中 Agent 的自评（"成功了"）与沙箱隐藏测试的真实结果经常不一致——代码能跑完不代表结果对。实测轨迹把约 36 个失败任务误判为成功。若用误判信号做反思沉淀，假阳性会被标为"已验证"经验，系统性误导下游。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">挑战 3：读写控制的独立性</div>
+  <p>自进化系统有"沉淀（写）"和"检索复用（读）"两个动作。若共用一个开关：关开关验证零知识基线时读侧也被关，看不到已有知识无法测真实复用效果；开开关沉淀时写侧也开，污染基线。需要让两个动作由独立开关控制。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">挑战 4：规程记忆的安全写入</div>
+  <p>将聚合知识蒸馏成 Skill（技能）和 Rule（规则）写回 Agent 的操作规程是高风险写入——机器生成的规程可能含 bug 或颠覆设计意图。需要一种机器可读的可编辑边界，让自进化只能修改自己生成的规程，绝不覆盖人工手写的核心资产。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">挑战 5：知识的可信度分级与防误导</div>
+  <p>向量检索出的 API"看起来总是相关的"（词重叠近乎必然命中），规则无法判"似是而非"。一条来自失败任务的"方向对但参数错"的知识，若与来自成功任务的"已验证"知识混在一起，会让下游 Agent 误信。需要显式区分"成功经验 / 方向对但未通过 / 失败教训"三态。</p>
+</div>
+
+<!-- ═══════════ 4. SOLUTION ═══════════ -->
+<h2 id="solution"><span class="section-num">4</span>技术方案 (Technical solution)</h2>
+
+<p>本发明提供一种基于三层记忆架构的 AI Agent 自进化系统，包括 <b>三层记忆存储模块</b>、<b>写侧沉淀流水线</b>、<b>读侧检索注入模块</b>、<b>读写分离控制模块</b> 四部分。</p>
+
+<h3>4.1 三层记忆存储模块</h3>
+<p>系统采用文件系统作为记忆载体，按认知架构 CoALA 的记忆三分（情景 episodic / 语义 semantic / 规程 procedural）实现 L0/L1/L2 三层：</p>
+<table>
+  <tr><th>层</th><th>路径</th><th>内容</th><th>对应记忆类型</th><th>读写风险</th></tr>
+  <tr><td><b>L0_raw</b>（原始轨迹层）</td><td class="td-mono">L0_raw/task_artifacts/{任务ID}.md</td><td>每任务的轨迹结构化记录：搜索记录、真实调用 API（used_apis）、错误、成败、失败根因</td><td>情景记忆（事件经历，可回溯）</td><td>低（只追加）</td></tr>
+  <tr><td><b>L1_patterns</b>（聚合模式层）</td><td class="td-mono">L1_patterns/{edaPatterns,apiDecisionLog}.md</td><td>聚合后的条目，每条形如 <code>(标识符, [状态] 描述) [×佐证次数]</code></td><td>语义记忆（世界知识，可写）</td><td>低（可写）</td></tr>
+  <tr><td><b>L2_evolution</b>（版本归档层）</td><td class="td-mono">L2_evolution/</td><td>Skill 版本历史归档</td><td>规程记忆的历史</td><td>—</td></tr>
+  <tr><td><b>Skills / Rules</b>（技能与规则层）</td><td class="td-mono">~/.cline/skills · ~/Cline/Rules</td><td>L1 蒸馏产物：详细决策树（Skill）/ 常驻极简硬约束（Rule）</td><td>规程记忆（操作技能/规程）</td><td><b>高</b>（改操作规程）</td></tr>
+</table>
+<div class="insight"><b>分层的技术效果</b>：L0 忠实记录每次尝试（可回溯），L1 只保留去重后的可复用模式（可注入），两者分离避免 prompt 被原始日志撑爆同时保留回溯能力。</div>
+
+<h3>4.2 写侧沉淀流水线</h3>
+<p>写侧主管模块（<code>update.py</code>）在每轮 benchmark 完成后，由写侧开关 <code>-e</code>（环境变量 <code>EDA_EVOLVE_ENABLED</code>）控制是否执行，按以下步骤流水线处理：</p>
+
+<div class="diagram-container">
+<svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs>
+    <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+    <filter id="sh1"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <linearGradient id="gB1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#6366f1"/></linearGradient>
+    <linearGradient id="gO1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ea580c"/><stop offset="100%" stop-color="#dc2626"/></linearGradient>
+  </defs>
+  <!-- 5 steps -->
+  <rect x="30" y="30" width="160" height="64" rx="12" fill="url(#gO1)" filter="url(#sh1)"/>
+  <text x="110" y="56" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">1 · L0 抽取</text>
+  <text x="110" y="78" fill="#fff" font-size="10" text-anchor="middle" opacity="0.9">轨迹→结构化记录</text>
+  <line x1="190" y1="62" x2="220" y2="62" stroke="#64748b" stroke-width="2" marker-end="url(#ar1)"/>
+
+  <rect x="220" y="30" width="160" height="64" rx="12" fill="url(#gO1)" filter="url(#sh1)"/>
+  <text x="300" y="56" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">2 · ground-truth 富集</text>
+  <text x="300" y="78" fill="#fff" font-size="10" text-anchor="middle" opacity="0.9">沙箱真值覆盖推断</text>
+  <line x1="380" y1="62" x2="410" y2="62" stroke="#64748b" stroke-width="2" marker-end="url(#ar1)"/>
+
+  <rect x="410" y="30" width="160" height="64" rx="12" fill="url(#gO1)" filter="url(#sh1)"/>
+  <text x="490" y="56" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">3 · 失败根因分类</text>
+  <text x="490" y="78" fill="#fff" font-size="10" text-anchor="middle" opacity="0.9">6 类根因 + 沉淀门</text>
+  <line x1="570" y1="62" x2="600" y2="62" stroke="#64748b" stroke-width="2" marker-end="url(#ar1)"/>
+
+  <rect x="600" y="30" width="160" height="64" rx="12" fill="url(#gO1)" filter="url(#sh1)"/>
+  <text x="680" y="56" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">4 · L1 抽取合并</text>
+  <text x="680" y="78" fill="#fff" font-size="10" text-anchor="middle" opacity="0.9">四类反思 + 三态</text>
+  <line x1="760" y1="62" x2="790" y2="62" stroke="#64748b" stroke-width="2" marker-end="url(#ar1)"/>
+
+  <rect x="790" y="30" width="80" height="64" rx="12" fill="url(#gO1)" filter="url(#sh1)"/>
+  <text x="830" y="56" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">5 · 后处理</text>
+  <text x="830" y="78" fill="#fff" font-size="10" text-anchor="middle" opacity="0.9">Skill晋升+同步</text>
+
+  <!-- detail blocks below -->
+  <rect x="30" y="120" width="840" height="90" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#sh1)"/>
+  <text x="450" y="142" fill="#9a3412" font-size="12" font-weight="700" text-anchor="middle">写侧沉淀流水线细节（由 -e / EDA_EVOLVE_ENABLED 门控）</text>
+  <text x="50" y="166" fill="#475569" font-size="11">• 步骤1：逐个解析轨迹（zhulong / cline 3.0 自动探测），静态提取 used_apis（代码真实调用 API，作为 [已验证] 来源）</text>
+  <text x="50" y="184" fill="#475569" font-size="11">• 步骤2：从独立评估器取沙箱真实通过/失败，直接覆盖轨迹推断；无 ground-truth 时强制 execution_success=False（宁缺毋滥）</text>
+  <text x="50" y="202" fill="#475569" font-size="11">• 步骤3：6 类根因分类，环境/生成故障跳过沉淀（详见 P20261932）</text>
+
+  <rect x="30" y="225" width="840" height="120" rx="10" fill="#fff" stroke="#dfe3ec" filter="url(#sh1)"/>
+  <text x="50" y="248" fill="#1e293b" font-size="11" font-weight="700">• 步骤4：四类反思产出 L1 条目</text>
+  <text x="70" y="268" fill="#475569" font-size="10.5">场景反思（成功→[已验证]；失败 LLM 判方向→[待验证]）｜坑点反思（仅失败，负向警示）｜错→修反思（仅失败）｜决策反思（退化行为时）</text>
+  <text x="50" y="292" fill="#1e293b" font-size="11" font-weight="700">• 步骤5：合并与后处理</text>
+  <text x="70" y="312" fill="#475569" font-size="10.5">同标识符合并（佐证次数累加 + 状态演化 + 降级守卫）｜跨标识符 P2-7 语义合并（embedding 聚类 + LLM 判合）</text>
+  <text x="70" y="332" fill="#475569" font-size="10.5">蒸馏为 Skill/Rule（带 origin: auto_distilled 边界保护）｜四维质量门 + 重写循环｜L1 向量化灌入检索服务</text>
+</svg>
+  <div class="diagram-label">图 2 · 写侧沉淀流水线（橙色调 = 写侧，由 -e 门控）</div>
+</div>
+
+<h3>4.3 读侧检索注入模块</h3>
+<p>读侧由 <b>"L1 有无内容"</b> 控制（非写侧开关），包括两条路径：</p>
+<div class="two-col">
+<div>
+  <h4>(a) 主动检索</h4>
+  <p>Agent 运行时通过 <code>query_memory_bank</code> 工具检索 L1 经验。三步流水线：查询重写（规则重写总开，双向缩写展开；LLM 重写默认关）→ 向量语义检索（top_k×2 后过滤 + 按佐证次数对数加权重排）→ 词重叠兜底（向量不可用时按标识符/描述/分区权重匹配）。</p>
+</div>
+<div>
+  <h4>(b) 被动注入</h4>
+  <p>L1 在每个任务的系统提示词中被动注入。两种模式：<b>向量模式</b>（逐任务语义召回 top-3，上限 1200 字符）为主；<b>截断模式</b>（向量禁用时读 L1 文件头部，上限 2000/1000 字符）为兜底。注入按 status 分层（已验证 &gt; 待验证 &gt; 无标签），已验证高相似度优先填满字符预算。</p>
+</div>
+</div>
+<p>注入段头注明 <b>"⚠️ 非答案，必须验证"</b> 免责声明，且 footer 强化为"参考知识推荐的 API 验证失败立即搜索替代 API"。</p>
+
+<h3>4.4 读写分离控制模块（核心创新）</h3>
+<p>本发明的核心创新在于<b>写入端与读取端由两个独立开关控制</b>：</p>
+<table>
+  <tr><th></th><th>写侧开关</th><th>读侧开关</th></tr>
+  <tr><td><b>变量</b></td><td class="td-mono">-e / EDA_EVOLVE_ENABLED</td><td class="td-mono">l1_has_content（L1 条目数 &gt; 0）</td></tr>
+  <tr><td><b>默认</b></td><td><span class="badge badge-orange">关（需显式开启）</span></td><td><span class="badge badge-green">由 L1 内容自动决定</span></td></tr>
+  <tr><td><b>控制什么</b></td><td>本轮轨迹是否喂给自进化（沉淀流水线）</td><td>是否注册检索工具 + 是否注入 L1 到 prompt</td></tr>
+  <tr><td><b>判定位置</b></td><td>编排脚本</td><td>MCP Server 启动时 + 任务格式化时</td></tr>
+</table>
+<div class="highlight"><b>关键技术效果</b>：一个写侧关闭的运行，<b>仍然会读到</b>上一轮写侧开启时沉淀的 L1——因为读侧只看"L1 有没有内容"，不看"本轮是否写入"。冷启动时 L1 文件有条目数 0（带文件头但零条目的骨架，非空文件）→ 读侧判定无内容 → 不注册工具、不注入。</div>
+
+<div class="diagram-container">
+<svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh2"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker></defs>
+  <!-- Write switch -->
+  <rect x="40" y="30" width="220" height="60" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2" filter="url(#sh2)"/>
+  <text x="150" y="54" fill="#9a3412" font-size="14" font-weight="700" text-anchor="middle">写侧开关 -e</text>
+  <text x="150" y="76" fill="#c2410c" font-size="10.5" text-anchor="middle">EDA_EVOLVE_ENABLED · 默认关</text>
+
+  <!-- Read switch -->
+  <rect x="620" y="30" width="220" height="60" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#sh2)"/>
+  <text x="730" y="54" fill="#1e40af" font-size="14" font-weight="700" text-anchor="middle">读侧开关 l1_has_content</text>
+  <text x="730" y="76" fill="#2563eb" font-size="10.5" text-anchor="middle">L1 条目数 &gt; 0 · 自动决定</text>
+
+  <!-- center: independent -->
+  <rect x="320" y="30" width="240" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" filter="url(#sh2)"/>
+  <text x="440" y="54" fill="#6d28d9" font-size="13" font-weight="700" text-anchor="middle">两个独立开关</text>
+  <text x="440" y="76" fill="#7c3aed" font-size="10.5" text-anchor="middle">互不耦合 · 各自控制</text>
+  <line x1="260" y1="60" x2="320" y2="60" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#ar2)"/>
+  <line x1="560" y1="60" x2="620" y2="60" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#ar2)"/>
+
+  <!-- 3 states -->
+  <text x="440" y="120" fill="#1e293b" font-size="12.5" font-weight="700" text-anchor="middle">三种评估状态可独立控制</text>
+
+  <rect x="40" y="140" width="250" height="68" rx="10" fill="#fef2f2" stroke="#dc2626" filter="url(#sh2)"/>
+  <text x="165" y="162" fill="#991b1b" font-size="11.5" font-weight="700" text-anchor="middle">零知识基线</text>
+  <text x="165" y="180" fill="#dc2626" font-size="10" text-anchor="middle">写侧关 + L1 已重置（条目数 0）</text>
+  <text x="165" y="196" fill="#dc2626" font-size="10" text-anchor="middle">→ 真·零知识</text>
+
+  <rect x="315" y="140" width="250" height="68" rx="10" fill="#f0fdf4" stroke="#16a34a" filter="url(#sh2)"/>
+  <text x="440" y="162" fill="#166534" font-size="11.5" font-weight="700" text-anchor="middle">自进化运行</text>
+  <text x="440" y="180" fill="#16a34a" font-size="10" text-anchor="middle">写侧开 → 沉淀轨迹</text>
+  <text x="440" y="196" fill="#16a34a" font-size="10" text-anchor="middle">→ 知识增长</text>
+
+  <rect x="590" y="140" width="250" height="68" rx="10" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh2)"/>
+  <text x="715" y="162" fill="#1e40af" font-size="11.5" font-weight="700" text-anchor="middle">复用已有知识</text>
+  <text x="715" y="180" fill="#3b82f6" font-size="10" text-anchor="middle">写侧关 + L1 有内容</text>
+  <text x="715" y="196" fill="#3b82f6" font-size="10" text-anchor="middle">→ 读侧自动生效</text>
+
+  <!-- key insight -->
+  <rect x="40" y="230" width="800" height="56" rx="10" fill="#ecfeff" stroke="#0891b2" filter="url(#sh2)"/>
+  <text x="440" y="252" fill="#155e75" font-size="11" font-weight="700" text-anchor="middle">★ 关键推论</text>
+  <text x="440" y="272" fill="#0e7490" font-size="10.5" text-anchor="middle">写侧关的运行仍会读到上一轮写侧开时沉淀的 L1 —— 读侧只看"L1 有没有内容"，不看"本轮是否写入"</text>
+</svg>
+  <div class="diagram-label">图 3 · 读写分离双独立开关与三种评估状态</div>
+</div>
+
+<h3>4.5 可编辑边界保护机制</h3>
+<p>每个蒸馏 Skill/Rule 文件头带 <code>origin: auto_distilled</code> 来源标记。系统据此判定——<b>手写 Skill（无此标记）永不被覆盖</b>：</p>
+<pre><code>if 不是新条目 and 不是自动蒸馏的(目标目录):
+    print("  跳过：手写 Skill 已存在")
+    continue   # 手写 Skill 存在则跳过，绝不覆盖</code></pre>
+<div class="why">这是<b>机器可读的可编辑边界</b>：自进化只能改自动蒸馏的规程，绝不碰人工手写的核心资产。</div>
+
+<h3>4.6 冷启动骨架与服务状态感知重置</h3>
+<p>重置后 L1 文件恢复成<b>带文件头 + 分区标题但零条目的骨架</b>（条目数为 0 ≠ 空文件），语义是"还没有条目"而非"文件缺失"，让读侧判定可靠返回"无内容"，且文件结构跨重置稳定。</p>
+<p>向量库（ChromaDB）是有状态持久化服务，运行时打开 sqlite 并常驻内存，<b>运行中删文件会破坏内存中的客户端</b>。故重置按服务状态分流：服务在跑走 API 清空（集合级删除+重建），服务没跑才动磁盘清理；API 清空与磁盘清理永不同时。</p>
+
+<!-- ═══════════ 5. EFFECTS ═══════════ -->
+<h2 id="effects"><span class="section-num">5</span>有益效果 (Advantageous effects)</h2>
+
+<div class="insight"><b>5.1 三层分离消除 prompt 膨胀与回溯丢失的矛盾</b><br>L0 忠实记录每次尝试（可回溯调试），L1 只保留去重聚合模式（可注入 prompt），两者各居其位。实测一轮 158 任务的 L1 注入仅占 prompt 1200 字符上限，而 L0 完整轨迹保留在磁盘供事后分析。</div>
+
+<div class="insight"><b>5.2 ground-truth 富集使反思锚定可靠奖励</b><br>富集前轨迹推断成功 150/158（假阳性约 40），富集后用沙箱真实结果覆盖，假阳性被消除。对照 Reflexion 论文 Table 3（无测试+反思=52% 比基线 60% 还差），本发明通过可靠奖励锚定避免"在脏信号上做有害编辑"。</div>
+
+<div class="insight"><b>5.3 读写分离使基线评估可信</b><br>历史曾因读写共用开关得出"L1 注入有益 +1~2pp"的错误结论，串行重评推翻为净负（093 铁证：含 agent 推断错误参数名的"已验证"条目系统性误导）。读写分离后，治本（不沉淀 agent 推断 + [已验证] 严格化）的 L1 注入实现<b>净 +17 题</b>（74.7% → 85.4%），真代码问题降 54%，AssertionError 降 36%。</div>
+
+<div class="insight"><b>5.4 三态分级防系统性误导</b><br>"已验证/待验证/坑点"三态让检索时按可信度分级渲染与排序。治本前 093 案例中一条标"已验证"的错误参数名条目导致 agent 把对的位置参数改成 kwarg → fail；治本后"已验证"只基于 ground-truth，不再含 agent 推断，系统性误导消除。</div>
+
+<div class="insight"><b>5.5 可编辑边界保护人工资产</b><br><code>origin: auto_distilled</code> 标记确保 4 个手写 Skill + 1 手写 Rule（人类专家精心设计的核心资产）永不被自进化覆盖，避免"颠覆设计者意图"。</div>
+
+<div class="insight"><b>5.6 自进化复现人类手工进化</b><br>在 challenge split（train 98 / val 20 / test 40，instance-disjoint）上，自进化从裸状态（0 经验）出发，经 1-2 轮沉淀即在 test 上追平人类手工进化的 V5.4 baseline（80.8% = 80.8%），R2 进一步把方差收敛到与人类一致（±3.82%）。裸 baseline 仅 65.0%，自进化知识净贡献 +12~14pp。多模型验证（5 个模型 71.5%~92.4%）证明 rule/skill/validator 是跨模型可迁移经验，非过拟合。</div>
+
+<!-- 效果数据图 -->
+<div class="diagram-container">
+<svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh3"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter></defs>
+  <text x="440" y="24" fill="#1e293b" font-size="14" font-weight="700" text-anchor="middle">自进化各轮 test(40) 通过率对比（n=5，challenge split）</text>
+  <!-- axes -->
+  <line x1="100" y1="280" x2="820" y2="280" stroke="#475569" stroke-width="1.5"/>
+  <line x1="100" y1="50" x2="100" y2="280" stroke="#475569" stroke-width="1.5"/>
+  <!-- y labels -->
+  <text x="90" y="284" fill="#94a3b8" font-size="10" text-anchor="end">50%</text>
+  <text x="90" y="222" fill="#94a3b8" font-size="10" text-anchor="end">65%</text>
+  <text x="90" y="160" fill="#94a3b8" font-size="10" text-anchor="end">80%</text>
+  <text x="90" y="98" fill="#94a3b8" font-size="10" text-anchor="end">95%</text>
+  <line x1="100" y1="222" x2="820" y2="222" stroke="#e8ecf4" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="100" y1="160" x2="820" y2="160" stroke="#e8ecf4" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="100" y1="98" x2="820" y2="98" stroke="#e8ecf4" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- bars: 裸66.0 / R1 78.0 / R2 80.0 / R3 75.5 / 人类77.5 -->
+  <!-- scale: 50%->y=280, 95%->y=98, so 1pp = (280-98)/45 = 4.04px, base 50% -->
+  <g>
+    <!-- 裸 baseline 66.0 -->
+    <rect x="150" y="216.8" width="90" height="63.2" rx="4" fill="#94a3b8" filter="url(#sh3)"/>
+    <text x="195" y="210" fill="#475569" font-size="11" font-weight="700" text-anchor="middle">66.0%</text>
+    <text x="195" y="300" fill="#475569" font-size="11" text-anchor="middle">裸 baseline</text>
+    <text x="195" y="314" fill="#94a3b8" font-size="9.5" text-anchor="middle">(0 经验)</text>
+    <!-- error bar SD7.2 -->
+    <line x1="195" y1="187.7" x2="195" y2="245.9" stroke="#475569" stroke-width="1.5"/>
+    <line x1="188" y1="187.7" x2="202" y2="187.7" stroke="#475569" stroke-width="1.5"/>
+    <line x1="188" y1="245.9" x2="202" y2="245.9" stroke="#475569" stroke-width="1.5"/>
+
+    <!-- R1 78.0 SD9.9 -->
+    <rect x="290" y="168.3" width="90" height="111.7" rx="4" fill="#3b82f6" filter="url(#sh3)"/>
+    <text x="335" y="162" fill="#1e40af" font-size="11" font-weight="700" text-anchor="middle">78.0%</text>
+    <text x="335" y="300" fill="#475569" font-size="11" text-anchor="middle">自进化 R1</text>
+    <text x="335" y="314" fill="#94a3b8" font-size="9.5" text-anchor="middle">(256 entries)</text>
+    <line x1="335" y1="128.3" x2="335" y2="208.3" stroke="#1e40af" stroke-width="1.5"/>
+    <line x1="328" y1="128.3" x2="342" y2="128.3" stroke="#1e40af" stroke-width="1.5"/>
+    <line x1="328" y1="208.3" x2="342" y2="208.3" stroke="#1e40af" stroke-width="1.5"/>
+
+    <!-- R2 80.0 SD3.1 ★ -->
+    <rect x="430" y="160.3" width="90" height="119.7" rx="4" fill="#16a34a" filter="url(#sh3)"/>
+    <text x="475" y="154" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">80.0% ★</text>
+    <text x="475" y="300" fill="#475569" font-size="11" text-anchor="middle">自进化 R2</text>
+    <text x="475" y="314" fill="#94a3b8" font-size="9.5" text-anchor="middle">(334 entries)</text>
+    <line x1="475" y1="147.8" x2="475" y2="172.8" stroke="#166534" stroke-width="1.5"/>
+    <line x1="468" y1="147.8" x2="482" y2="147.8" stroke="#166534" stroke-width="1.5"/>
+    <line x1="468" y1="172.8" x2="482" y2="172.8" stroke="#166534" stroke-width="1.5"/>
+
+    <!-- R3 75.5 SD6.7 -->
+    <rect x="570" y="178.4" width="90" height="101.6" rx="4" fill="#ea580c" filter="url(#sh3)"/>
+    <text x="615" y="172" fill="#9a3412" font-size="11" font-weight="700" text-anchor="middle">75.5%</text>
+    <text x="615" y="300" fill="#475569" font-size="11" text-anchor="middle">自进化 R3</text>
+    <text x="615" y="314" fill="#94a3b8" font-size="9.5" text-anchor="middle">(386, 被gate拒)</text>
+    <line x1="615" y1="151.4" x2="615" y2="205.4" stroke="#9a3412" stroke-width="1.5"/>
+    <line x1="608" y1="151.4" x2="622" y2="151.4" stroke="#9a3412" stroke-width="1.5"/>
+    <line x1="608" y1="205.4" x2="622" y2="205.4" stroke="#9a3412" stroke-width="1.5"/>
+
+    <!-- 人类 V5.4 77.5 SD5.3 -->
+    <rect x="710" y="172.8" width="90" height="107.2" rx="4" fill="#7c3aed" filter="url(#sh3)"/>
+    <text x="755" y="166" fill="#6d28d9" font-size="11" font-weight="700" text-anchor="middle">77.5%</text>
+    <text x="755" y="300" fill="#475569" font-size="11" text-anchor="middle">人类 V5.4</text>
+    <text x="755" y="314" fill="#94a3b8" font-size="9.5" text-anchor="middle">(手工进化)</text>
+    <line x1="755" y1="151.4" x2="755" y2="194.2" stroke="#6d28d9" stroke-width="1.5"/>
+    <line x1="748" y1="151.4" x2="762" y2="151.4" stroke="#6d28d9" stroke-width="1.5"/>
+    <line x1="748" y1="194.2" x2="762" y2="194.2" stroke="#6d28d9" stroke-width="1.5"/>
+  </g>
+  <text x="440" y="332" fill="#94a3b8" font-size="10" text-anchor="middle">误差线 = 标准差 · ★ R2 追平人类且方差最小（SD=3.1%）· 裸 baseline 显著低于自进化/人类</text>
+</svg>
+  <div class="diagram-label">图 6 · 自进化 R1/R2 在 test 上追平人类 V5.4 baseline（数据来源：评测结果索引 §5）</div>
+</div>
+
+<!-- ═══════════ 6. EMBODIMENTS ═══════════ -->
+<h2 id="embodiments"><span class="section-num">6</span>具体实施方式 (Detailed embodiments)</h2>
+
+<h3>实施例 1：三层记忆的文件系统实现</h3>
+<pre><code>~/Cline/Memory/
+├── L0_raw/task_artifacts/       # 情景记忆：每任务一个 .md
+│   ├── 001.md
+│   └── ...
+├── L1_patterns/                  # 语义记忆：聚合模式
+│   ├── edaPatterns.md           # 5 分区：API 场景映射/API 坑点/错→修/诊断模式/有效查询
+│   └── apiDecisionLog.md        # 决策记录
+└── L2_evolution/                 # 规程记忆历史：Skill 版本归档
+
+~/.cline/skills/eda-*/            # 规程记忆：详细决策树
+~/Cline/Rules/eda-*.md            # 规程记忆：常驻硬约束</code></pre>
+<p>L1 文件结构：含 frontmatter（entry_count、provenance 等）+ 5 个分区标题 + 条目。每条形如：</p>
+<pre><code>- (create-bit-array-and-set-bits, [已验证] 在创建位数组场景用 dbCrtArrayInst + emyInitDb) [×3]</code></pre>
+<p>N&gt;1 才显示佐证次数。冷启动骨架：frontmatter <code>entry_count: 0</code> + 分区标题存在但零条目。</p>
+
+<h3>实施例 2：读写分离的判定逻辑</h3>
+<p>MCP Server 启动时（<code>main.py</code>）：</p>
+<pre><code>_l1_has_content = _l1_has_entries(L1_patterns) or _l1_has_entries(L1_decisions)
+_TOOL_DEFAULTS = {
+    "query_memory_bank": _l1_has_content,  # 有 L1 知识才开
+    ...
+}
+# L1↔Vector 一致性检查：L1 空但向量库有旧数据 → 警告 reset 未清干净</code></pre>
+<p>任务格式化时（<code>format_eval_task.py</code>）：</p>
+<pre><code># 读端：l1_has_content，与 evolve_enabled(写端) 独立
+l1_has_content = _l1_has_entries(patterns) or _l1_has_entries(decisions)
+if l1_has_content and vector_enabled:
+    # 向量模式：逐任务语义召回
+elif l1_has_content:
+    # 截断模式：读 L1 文件头部
+else:
+    # 无内容：不注入</code></pre>
+
+<h3>实施例 3：ground-truth 富集的三条跳过路径守卫</h3>
+<pre><code>def _enrich_from_execution_results(artifacts, eval_dir):
+    if not eval_dir or not os.path.isdir(eval_dir):
+        for a in artifacts: a["execution_success"] = False  # 跳过路径1：强制False
+        return 0
+    results = load_results(eval_dir)
+    if not results:
+        for a in artifacts: a["execution_success"] = False  # 跳过路径2：强制False
+        return 0
+    # 正常富集：覆盖
+    for a in artifacts:
+        passed = results.get(a["task_id"], False)
+        a["execution_success"] = passed</code></pre>
+
+<h3>实施例 4：可编辑边界保护</h3>
+<pre><code>_SKILL_AUTO_MARKER = "origin: auto_distilled"
+def _is_auto_distilled_skill(skill_dir):
+    head = open(f"{skill_dir}/SKILL.md").read(500)
+    return _SKILL_AUTO_MARKER in head
+
+# 蒸馏时
+if os.path.exists(target) and not _is_auto_distilled_skill(target):
+    print("跳过：手写 Skill 已存在")
+    continue  # 手写永不覆盖</code></pre>
+
+<h3>实施例 5：三态渲染与分层注入</h3>
+<pre><code># 注入路径渲染（format_eval_task.py）
+if status == "verified":
+    bullet = f"- ({ident}, [已验证] {desc})"           # 强
+elif status == "unverified":
+    bullet = f"- ({ident}, [待验证·源自失败任务] {desc})"  # 弱
+# else: 裸描述（坑点 = 负向教训，无标签）
+
+# P2-1 分层注入：按 status 分桶排序，verified 优先填预算
+tier = {"verified": 0, "unverified": 1, "": 2}[status]
+# 边界安全：预算装不下任何整条 bullet → 返回空（不灌半条）</code></pre>
+
+<h3>实施例 6：held-out gate 的 snapshot/restore</h3>
+<p>每轮沉淀前快照（L1 + 自动 Skill + 自动 Rule + validator 规则 + 向量库），在 val(20) 上多次平均评估，val 退化超容差则 restore 回退。实测 R3（386 entries）被 gate 拒绝并成功回退，验证 gate 有效防止过拟合沉淀污染下游轮。</p>
+
+<div class="diagram-container">
+<svg viewBox="0 0 880 220" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh4"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker></defs>
+  <!-- timeline -->
+  <text x="440" y="22" fill="#1e293b" font-size="13" font-weight="700" text-anchor="middle">held-out gate snapshot/restore 回退时序</text>
+  <rect x="40" y="50" width="120" height="44" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh4)"/>
+  <text x="100" y="76" fill="#1e40af" font-size="11" font-weight="600" text-anchor="middle">沉淀前快照</text>
+  <line x1="160" y1="72" x2="190" y2="72" stroke="#64748b" stroke-width="1.8" marker-end="url(#ar4)"/>
+
+  <rect x="190" y="50" width="120" height="44" rx="8" fill="#fff7ed" stroke="#ea580c" filter="url(#sh4)"/>
+  <text x="250" y="76" fill="#9a3412" font-size="11" font-weight="600" text-anchor="middle">train(98) 沉淀</text>
+  <line x1="310" y1="72" x2="340" y2="72" stroke="#64748b" stroke-width="1.8" marker-end="url(#ar4)"/>
+
+  <rect x="340" y="50" width="120" height="44" rx="8" fill="#f0fdf4" stroke="#16a34a" filter="url(#sh4)"/>
+  <text x="400" y="76" fill="#166534" font-size="11" font-weight="600" text-anchor="middle">val(20) 评估×4</text>
+  <line x1="460" y1="72" x2="490" y2="72" stroke="#64748b" stroke-width="1.8" marker-end="url(#ar4)"/>
+
+  <path d="M 520 60 L 560 50 L 600 60 L 640 50 L 680 60 L 640 72 L 600 72 L 560 72 Z" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#sh4)"/>
+  <text x="620" y="68" fill="#991b1b" font-size="10.5" font-weight="600" text-anchor="middle">val 退化超容差?</text>
+  <line x1="700" y1="72" x2="730" y2="72" stroke="#64748b" stroke-width="1.8" marker-end="url(#ar4)"/>
+
+  <rect x="730" y="50" width="120" height="44" rx="8" fill="#7c3aed" filter="url(#sh4)"/>
+  <text x="790" y="70" fill="#fff" font-size="10.5" font-weight="600" text-anchor="middle">是 → restore</text>
+  <text x="790" y="84" fill="#fff" font-size="9" text-anchor="middle" opacity="0.9">回退全部状态</text>
+
+  <!-- snapshot contents -->
+  <rect x="40" y="120" width="810" height="80" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#sh4)"/>
+  <text x="445" y="142" fill="#6d28d9" font-size="11.5" font-weight="700" text-anchor="middle">快照内容（snapshot）</text>
+  <text x="445" y="162" fill="#7c3aed" font-size="10.5" text-anchor="middle">L1 patterns/decisions · 自动蒸馏 Skills（origin: auto_distilled）· 自动 Rules（eda-auto-*）· validator_rules.json</text>
+  <text x="445" y="182" fill="#7c3aed" font-size="10.5" text-anchor="middle">→ restore 时全部回退 + 9003 向量库 API 清空重建（不 cp sqlite，避免杀运行中服务）</text>
+  <text x="445" y="200" fill="#94a3b8" font-size="9.5" text-anchor="middle">手写 Skill/Rule 永不快照（自进化不修改它们）· L0 中间产物不快照（每轮重生成）</text>
+</svg>
+  <div class="diagram-label">图 7 · held-out gate 的 snapshot/restore 回退机制</div>
+</div>
+
+<!-- ═══════════ 7. FIGURES ═══════════ -->
+<h2 id="figures"><span class="section-num">7</span>附图与说明 (Figures and description)</h2>
+
+<div class="card">
+  <div class="card-title">图 1 · 自进化系统宏观架构图</div>
+  <p>展示 Agent ↔ MCP Server（工具调用）↔ 三层记忆（L0/L1/L2）↔ 向量检索服务 ↔ Skills/Rules 的拓扑关系。橙线为写侧（<code>-e</code> 开启时沉淀），蓝线为读侧（L1 有内容时检索/注入），两类线解耦。评估器（EDA-Eval-Framework）在进化循环之外提供 ground-truth。</p>
+</div>
+
+<div class="diagram-container">
+<svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs>
+    <marker id="arrW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/></marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/></marker>
+    <filter id="shA"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/></filter>
+    <linearGradient id="gBA" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#6366f1"/></linearGradient>
+  </defs>
+  <!-- Agent -->
+  <rect x="340" y="16" width="220" height="50" rx="12" fill="url(#gBA)" filter="url(#shA)"/>
+  <text x="450" y="46" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">Cline / zhulong Agent</text>
+  <!-- MCP -->
+  <rect x="340" y="110" width="220" height="50" rx="12" fill="#fff" stroke="#3b82f6" stroke-width="2" filter="url(#shA)"/>
+  <text x="450" y="135" fill="#1e293b" font-size="14" font-weight="700" text-anchor="middle">MCP Server (main.py)</text>
+  <text x="450" y="151" fill="#475569" font-size="10.5" text-anchor="middle">query_memory_bank / search_apis …</text>
+  <!-- read arrows -->
+  <path d="M 430 110 L 430 66" fill="none" stroke="#3b82f6" stroke-width="2.2" marker-end="url(#arrR)"/>
+  <path d="M 470 66 L 470 110" fill="none" stroke="#3b82f6" stroke-width="2.2" marker-end="url(#arrR)"/>
+  <text x="500" y="92" fill="#3b82f6" font-size="10.5" font-weight="600">工具调用↔结果</text>
+
+  <!-- Memory Bank -->
+  <rect x="30" y="200" width="280" height="190" rx="14" fill="#fff" stroke="#16a34a" stroke-width="2" filter="url(#shA)"/>
+  <text x="170" y="226" fill="#16a34a" font-size="14" font-weight="700" text-anchor="middle">Memory Bank（文件系统）</text>
+  <rect x="48" y="240" width="244" height="32" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="170" y="260" fill="#166534" font-size="11.5" text-anchor="middle">L0_raw — 每任务轨迹记录（情景记忆）</text>
+  <rect x="48" y="278" width="244" height="32" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="170" y="298" fill="#1e40af" font-size="11.5" text-anchor="middle">L1_patterns — 聚合模式条目（语义记忆）</text>
+  <rect x="48" y="316" width="244" height="32" rx="8" fill="#f5f3ff" stroke="#c4b5fd"/>
+  <text x="170" y="336" fill="#6d28d9" font-size="11.5" text-anchor="middle">L2_evolution — Skill 版本归档</text>
+  <text x="170" y="376" fill="#94a3b8" font-size="10.5" text-anchor="middle">~/Cline/Memory/</text>
+
+  <!-- Eval -->
+  <rect x="340" y="400" width="220" height="44" rx="12" fill="#fff" stroke="#ea580c" stroke-width="2" stroke-dasharray="5 3" filter="url(#shA)"/>
+  <text x="450" y="421" fill="#ea580c" font-size="12.5" font-weight="700" text-anchor="middle">EDA-Eval-Framework</text>
+  <text x="450" y="436" fill="#9a3412" font-size="10" text-anchor="middle">沙箱 ground-truth（在进化循环外）</text>
+
+  <!-- Vector -->
+  <rect x="610" y="200" width="270" height="120" rx="14" fill="#fff" stroke="#0891b2" stroke-width="2" filter="url(#shA)"/>
+  <text x="745" y="228" fill="#0891b2" font-size="14" font-weight="700" text-anchor="middle">向量检索服务 :9003</text>
+  <text x="745" y="252" fill="#475569" font-size="11.5" text-anchor="middle">ChromaDB + Octen-Embedding-4B</text>
+  <text x="745" y="272" fill="#475569" font-size="11.5" text-anchor="middle">L1 条目向量化 · 语义召回</text>
+  <text x="745" y="308" fill="#94a3b8" font-size="10.5" text-anchor="middle">kb/chroma_db_memory/</text>
+
+  <!-- Skills/Rules -->
+  <rect x="610" y="340" width="270" height="60" rx="14" fill="#fff" stroke="#7c3aed" stroke-width="2" filter="url(#shA)"/>
+  <text x="745" y="364" fill="#7c3aed" font-size="13" font-weight="700" text-anchor="middle">~/.cline/skills + ~/Cline/Rules</text>
+  <text x="745" y="384" fill="#475569" font-size="11" text-anchor="middle">蒸馏产物（规程记忆 procedural）</text>
+
+  <!-- Write side (orange) -->
+  <path d="M 360 160 C 360 185, 170 185, 170 198" fill="none" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arrW)"/>
+  <text x="250" y="178" fill="#ea580c" font-size="10.5" font-weight="600">写侧 -e（沉淀轨迹）</text>
+  <path d="M 380 400 C 330 388, 260 388, 240 388" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4 3" marker-end="url(#arrW)"/>
+  <text x="290" y="396" fill="#ea580c" font-size="10" font-weight="600">ground-truth 富集</text>
+  <path d="M 310 280 C 440 280, 530 260, 608 260" fill="none" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arrW)"/>
+  <text x="425" y="272" fill="#ea580c" font-size="10.5" font-weight="600">同步</text>
+  <path d="M 310 340 C 440 340, 530 370, 608 378" fill="none" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arrW)"/>
+  <text x="425" y="335" fill="#ea580c" font-size="10.5" font-weight="600">蒸馏</text>
+
+  <!-- Read side (blue) -->
+  <path d="M 610 235 C 530 235, 460 190, 480 162" fill="none" stroke="#3b82f6" stroke-width="2.2" marker-end="url(#arrR)"/>
+  <text x="530" y="198" fill="#3b82f6" font-size="10.5" font-weight="600">读侧（L1 有内容时）</text>
+  <path d="M 745 340 C 745 230, 600 90, 562 50" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#arrR)"/>
+  <text x="700" y="170" fill="#3b82f6" font-size="10" font-weight="600">agent 直接读 Skill</text>
+
+  <text x="450" y="450" fill="#94a3b8" font-size="11" text-anchor="middle">🟧 橙线 = 写侧（-e 开启时沉淀）　🟦 蓝线 = 读侧（L1 有内容时检索/注入）</text>
+</svg>
+  <div class="diagram-label">图 1 · 自进化系统宏观架构（读写解耦：写侧由 -e 控制，读侧由 L1 内容控制）</div>
+</div>
+
+<div class="card">
+  <div class="card-title">图 2 · 写侧沉淀流水线 5 步流程图</div>
+  <p>见 §4.2 内嵌图。L0 抽取 → ground-truth 富集 → 失败根因分类 → L1 抽取合并（四类反思）→ 后处理（Skill 晋升 + 向量同步）。</p>
+</div>
+<div class="card">
+  <div class="card-title">图 3 · 读写分离开关控制图</div>
+  <p>见 §4.4 内嵌图。写侧开关（<code>-e</code>）控制沉淀流水线；读侧开关（<code>l1_has_content</code>）控制工具注册与 prompt 注入；两者独立，三种评估状态可独立控制。</p>
+</div>
+<div class="card">
+  <div class="card-title">图 4 · L1 条目合并的状态感知策略图</div>
+</div>
+
+<div class="diagram-container">
+<svg viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh5"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+    <marker id="a5g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker></defs>
+  <rect x="20" y="88" width="150" height="44" rx="10" fill="#fff" stroke="#dfe3ec" filter="url(#sh5)"/>
+  <text x="95" y="108" fill="#1e293b" font-size="12" font-weight="600" text-anchor="middle">新条目到来</text>
+  <text x="95" y="123" fill="#94a3b8" font-size="9.5" text-anchor="middle">(标识符, [状态] 描述)</text>
+  <path d="M 270 110 L 320 80 L 370 110 L 320 140 Z" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" filter="url(#sh5)"/>
+  <text x="320" y="107" fill="#92400e" font-size="11" font-weight="600" text-anchor="middle">identifier</text>
+  <text x="320" y="121" fill="#92400e" font-size="11" font-weight="600" text-anchor="middle">相同?</text>
+  <line x1="170" y1="110" x2="270" y2="110" stroke="#64748b" stroke-width="1.8" marker-end="url(#a5)"/>
+  <path d="M 370 110 C 405 110, 420 60, 438 50" fill="none" stroke="#16a34a" stroke-width="1.8" marker-end="url(#a5g)"/>
+  <text x="388" y="76" fill="#16a34a" font-size="10.5" font-weight="600">不同</text>
+  <rect x="440" y="30" width="170" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" filter="url(#sh5)"/>
+  <text x="525" y="48" fill="#166534" font-size="11" font-weight="600" text-anchor="middle">新增条目</text>
+  <text x="525" y="62" fill="#166534" font-size="10.5" text-anchor="middle">插入，佐证次数 = 1</text>
+  <path d="M 320 140 C 360 150, 410 132, 438 112" fill="none" stroke="#3b82f6" stroke-width="1.8" marker-end="url(#a5)"/>
+  <text x="362" y="148" fill="#3b82f6" font-size="10.5" font-weight="600">相同</text>
+  <rect x="440" y="90" width="170" height="44" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh5)"/>
+  <text x="525" y="110" fill="#1e40af" font-size="11" font-weight="600" text-anchor="middle">已存在</text>
+  <text x="525" y="124" fill="#1e40af" font-size="10.5" text-anchor="middle">佐证次数+1 · 按状态分派→</text>
+  <line x1="610" y1="112" x2="660" y2="112" stroke="#64748b" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="660" y1="50" x2="660" y2="180" stroke="#64748b" stroke-width="1.5"/>
+  <line x1="660" y1="50" x2="675" y2="50" stroke="#64748b" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="660" y1="112" x2="675" y2="112" stroke="#64748b" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="660" y1="180" x2="675" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#a5)"/>
+  <rect x="675" y="30" width="190" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" filter="url(#sh5)"/>
+  <text x="770" y="48" fill="#166534" font-size="10.5" text-anchor="middle"><tspan font-weight="600">升级 unverified→verified</tspan></text>
+  <text x="770" y="62" fill="#94a3b8" font-size="9.5" text-anchor="middle">覆盖 desc，设 verified</text>
+  <rect x="675" y="92" width="190" height="40" rx="8" fill="#fef9c3" stroke="#ca8a04" filter="url(#sh5)"/>
+  <text x="770" y="110" fill="#854d0e" font-size="10.5" text-anchor="middle"><tspan font-weight="600">降级守卫</tspan>：已验证不被降为待验证</text>
+  <text x="770" y="124" fill="#94a3b8" font-size="9.5" text-anchor="middle">保持 verified（防噪声降级）</text>
+  <rect x="675" y="160" width="190" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9" filter="url(#sh5)"/>
+  <text x="770" y="178" fill="#075985" font-size="10.5" text-anchor="middle"><tspan font-weight="600">同状态</tspan>：刷新溯源批次</text>
+  <text x="770" y="192" fill="#94a3b8" font-size="9.5" text-anchor="middle">last_confirmed=本轮（老化信号）</text>
+</svg>
+  <div class="diagram-label">图 4 · 条目合并的状态感知策略（降级守卫防噪声污染正记忆）</div>
+</div>
+
+<div class="card">
+  <div class="card-title">图 5 · 三态检索注入流程图</div>
+  <p>查询重写 → 向量语义检索（按佐证次数对数加权重排）→ 词重叠兜底 → 按 status 分层（已验证&gt;待验证&gt;无标签）渲染中文标签 → 填入 prompt 参考知识段（带"必须验证"免责声明）。</p>
+</div>
+<div class="card">
+  <div class="card-title">图 6 · 自进化各轮 test 通过率对比</div>
+  <p>见 §5 内嵌柱状图。R1/R2 追平人类 V5.4（80.8%），R2 方差最小（SD=3.1%），裸 baseline 显著低（66.0%）。</p>
+</div>
+<div class="card">
+  <div class="card-title">图 7 · held-out gate 的 snapshot/restore 回退时序图</div>
+  <p>见 §6 实施例 6 内嵌图。沉淀前快照 → val 评估 → 退化超容差？→ 是则 restore（L1 + Skill + Rule + validator + 向量库同步回退）。</p>
+</div>
+
+<!-- ═══════════ 8. ABBR ═══════════ -->
+<h2 id="abbr"><span class="section-num">8</span>缩略语 (Description of the abbreviation)</h2>
+<table>
+  <tr><th>缩略语</th><th>全称</th><th>说明</th></tr>
+  <tr><td>AI</td><td>Artificial Intelligence</td><td>人工智能</td></tr>
+  <tr><td>Agent</td><td>—</td><td>能自主调用工具完成任务的 LLM 智能体</td></tr>
+  <tr><td>LLM</td><td>Large Language Model</td><td>大语言模型</td></tr>
+  <tr><td>EDA</td><td>Electronic Design Automation</td><td>电子设计自动化</td></tr>
+  <tr><td>API</td><td>Application Programming Interface</td><td>应用程序接口</td></tr>
+  <tr><td>MCP</td><td>Model Context Protocol</td><td>模型上下文协议，Agent 旁的工具服务端协议</td></tr>
+  <tr><td>pass@1</td><td>Pass rate at 1</td><td>单次生成通过率</td></tr>
+  <tr><td>trace</td><td>—</td><td>Agent 跑一个任务的完整对话历史</td></tr>
+  <tr><td>ground-truth</td><td>—</td><td>沙箱隐藏测试判定的真实成败（区别于 Agent 自评）</td></tr>
+  <tr><td>L0</td><td>Layer 0 raw</td><td>原始轨迹层（情景记忆）</td></tr>
+  <tr><td>L1</td><td>Layer 1 patterns</td><td>聚合模式层（语义记忆）</td></tr>
+  <tr><td>L2</td><td>Layer 2 evolution</td><td>版本归档层（规程记忆历史）</td></tr>
+  <tr><td>Skill</td><td>—</td><td>按需加载的详细决策树（规程记忆）</td></tr>
+  <tr><td>Rule</td><td>—</td><td>常驻生效的极简硬约束（规程记忆）</td></tr>
+  <tr><td>SWIG</td><td>Simplified Wrapper and Interface Generator</td><td>C/C++ 到 Python 的绑定生成工具</td></tr>
+  <tr><td>OOP</td><td>Object-Oriented Programming</td><td>面向对象编程</td></tr>
+  <tr><td>BM25</td><td>Best Matching 25</td><td>文本检索算法</td></tr>
+  <tr><td>FP / TP</td><td>False Positive / True Positive</td><td>误报 / 真报</td></tr>
+  <tr><td>gate</td><td>—</td><td>held-out 门控，在验证集上判定是否接受本轮沉淀</td></tr>
+  <tr><td>CoALA</td><td>Cognitive Architectures for Language Agents</td><td>语言 Agent 认知架构（论文）</td></tr>
+  <tr><td>Reflexion</td><td>—</td><td>言语强化学习反思方法（论文）</td></tr>
+  <tr><td>MemOrb</td><td>—</td><td>跨会话向量记忆方法（论文）</td></tr>
+  <tr><td>SkillOS</td><td>—</td><td>技能质量四维评审方法（论文）</td></tr>
+  <tr><td>MUSE</td><td>MUSE-Autoskill</td><td>per-skill 运行时记忆与失败重写方法（论文）</td></tr>
+  <tr><td>ACE</td><td>Agentic Context Engineering</td><td>上下文即演进手册方法（论文）</td></tr>
+</table>
+
+<div class="footer">
+  专利评审材料 P20261929 · 基于三层记忆架构的 AI Agent 自进化系统及读写分离方法 · 发明人：刘杨 · 2026-11-13
+</div>
+
+</div>
+</body>
+</html>
