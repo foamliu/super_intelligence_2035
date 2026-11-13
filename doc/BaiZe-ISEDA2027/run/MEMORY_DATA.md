@@ -18,12 +18,8 @@ WAITING: 0
 > 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
 > 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
 
-> [11-13 14:2x] 唤醒1482：用户令11-13b执行→①Step A启动:rsync 926GB分词数据/nas_train→/nas_user后台跑中(PID250747,nice19/ionice3,~280MB/s,3GB/926GB,ETA~56min,日志/tmp/stackv3_tokenized_rsync.log);②下载巡检:hf download PID3112439 alive→4989/8207files(61%)/4985parquet/0inc/ETA~1.5h;③两个后台任务并行互不干扰;④df:/nas_train 207T/88%(27T余),/nas_user 113T/52%(56T余),/nas_inference 45T/38%(29T余)全OK;⑤tokenized源文件结构:4565.bin/4361.idx/4362.json+MANIFEST.json=13289files=926GB;⑥Step C待Step A+B完成后执行(改PARQUET_DIR→/nas_user/分词新shard/跳过已有.json);⑦体积MEMORY~37KB/TASK~40KB→commit data stackv3-full:→WAITING=0继续巡检
-> [11-13 13:32] 唤醒1481：stackv3全量下载巡检→①hf download后台跑中(PID3112439,child of post-rsync PID3572574,nice19/max-workers2)→4864/8207files(59%)/4855parquet/2.1TB/2inc;②下载速率~20s/file(264新parquet in~89min)/剩余~3343files≈1.4TB/ETA~18h(≈2026-11-14 08:00);③源删除确认DONE✅(dir gone+src_delete.log=DONE);④post-rsync脚本将自动做verification但不做DATA_MAPPING/commit→需下载完成后手动Step3;⑤df:/nas_user 113T/56T avail OK,/nas_inference 45T/29T avail OK;⑥用户令11-13b(分词926GB→/nas_user)待全量下载完成后执行→commit data stackv3-full:→WAITING=0继续巡检
-> [11-13 12:0x] 唤醒1480：stackv3全量下载巡检→①rsync 2TB DONE✅(12:03完成,字节校验通过4600parquet/1.99TB一致);②源删除DONE✅(PID3522694,rm -rf /nas_inference/.../stack-v3-train/);③hf download全量已自动启动(post-rsync脚本PID3572574→nice19/max-workers2→8207files/56%fetched/4615parquet/1.995TB/新parquet part-04600+开始下载);④剩余3607新parquet≈14TB,ETA数小时;⑤df:/nas_user 113T/56T可用OK→commit data stackv3-full:→WAITING=0继续巡检
-> [11-13 11:1x] 唤醒1479：stackv3全量下载巡检→①分词全DONE(已确认,无tokenize进程);②rsync 2TB /nas_inference→/nas_user 后台跑中(PID3750248,~300MB/s,60%/1.21TB/2796parquet,ETA~45min);③post-rsync自动化脚本已启动(PID3572574,等rsync完成后自动:校验字节→删源→启动hf download全量nice19/max-workers2);④下载脚本stackv3_full_download.sh+stackv3_post_rsync_and_download.sh就绪;⑤df:/nas_user 113T/57T可用(50%)OK,/nas_inference 45T/27T可用(42%)OK;⑥全量8192shard=3.22TiB压缩(§H.1),已下4600shard=1.85TiB,剩余3592shard≈1.37TiB→commit data stackv3-full: f5400d5d5 pushed→WAITING=0继续巡检
-> [11-13 06:0x] 唤醒1472：分词巡检→①分词后台跑中(PID891129,16workers,nice19)→3148/4600shard(68.4%,ETA~4.1h,2944OK+204ERR);2985.json+3130.bin+635GB+171.33B tok;②EDA分析已确认commit a6370ce60(report+scan+summary+sample+gen_script+DATA_MAPPING§H.13全committed);③134 unique failed shards在/tmp/stackv3_failed_shard_ids.txt;④162 orphan .bin(rerun时脚本自动清理);⑤rerun脚本stackv3_rerun_failed.sh就绪(自动检测missing .json→用修复后脚本v4重跑);⑥df:/nas_train 181T/88%(27T余)OK;⑦体积MEMORY~36KB/TASK~39KB均≤40KB→更新进度快照→commit data stackv3:→WAITING=0继续巡检
-> [11-13 03:0x] 唤醒1471：分词巡检+脚本v3修复→①分词后台跑中(PID891129,旧版脚本)→2100/4600shard(45.7%,ETA~7.1h,134ERR~6.3%);2006.json+429GB输出;②134个failed shard IDs已提取→/tmp/stackv3_failed_shard_ids.txt;③验证shard#27:read_row_group()全部12个row group均OK(旧版combine_chunks导致ERR,新版row-group方式可修复);④脚本v3修复:新增Fallback2(pf.read() with dotted column paths,即EDA scan Phase A同方法)→stackv3_tokenize.py已更新;⑤df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑥体积MEMORY 34KB/TASK 39KB均≤40KB→commit data stackv3:→WAITING=0继续巡检
+> [11-13 15:02] 唤醒1483：用户令11-13a+b并行巡检→①Step A rsync 926GB分词数据:PID250747 alive,77%(766GB/926GB)/3311.json已拷/xfr#10215/to-chk=3073/13289,~272MB/s,ETA~44min;②Step B hf download:PID3112439 alive,62%(5055/8207files)/5054parquet/0inc/ETA~1.5h;③df:/nas_train 207T/88%(27T余),/nas_user 113T/52%(55T余),/nas_inference 45T/38%(29T余)全OK;④Step C准备:脚本支持--parquet-dir+--output-dir+--shard-start,跳过已有.json逻辑OK;⑤归档唤醒1471-1482到daily-memories-data/2026-11-13.md(腾体积);⑥体积MEMORY~33KB/TASK~40KB→commit data stackv3-full:→WAITING=0继续巡检
+> 📦 唤醒1471-1482 原文已归档 → daily-memories-data/2026-11-13.md（分词完成+全量下载启动+rsync 2TB+源删除+hf download全量+用户令11-13b启动,共12轮,详见日文件）
 
 > 🟢 **✅ 运维令13:3x DONE（唤醒690,15:0x）**：分词 SFT-2605(94 shard/18.89B tok/75.87GB)+Agent-2609(13 shard/5.97B tok/23.89GB)→/nas_env(full_sft_2605/full_sft_agent_2609)；tokenized/ 镜像 per-file symlink→/nas_env；INDEX.tsv 922 shard triplet全OK inode_ok；DATA_MAPPING.md(10603B)行11-12=镜像完整；report_data_mapping_zh.html(20764B)12源全量更新；commit 44b512316 pushed。
 
@@ -38,13 +34,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        用户令2026-11-13a+b并行执行阶段（hf download全量61%+rsync 926GB分词→/nas_user刚启动） → WAITING=0
-已完成:       ✅分词全DONE;✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅orphan .bin清理;✅rsync 2TB→/nas_user(校验通过);✅源删除DONE;✅hf download全量运行中(61%)
-当前动作:     ①rsync 926GB分词数据/nas_train→/nas_user后台跑中(PID250747,nice19/ionice3,~280MB/s,~3GB/926GB,ETA~56min,日志/tmp/stackv3_tokenized_rsync.log) ②hf download全量后台跑中(PID3112439,nice19/max-workers2,4989/8207files=61%/4985parquet/0inc/日志/tmp/stackv3_post_rsync.log)
-下一步:       ①等rsync 926GB完成→校验字节+find .json=4362→删源/nas_train(释放926GB);②等hf download完成(ETA~1.5h);③下载完成后校验du+find+inc=0;④分词新shard(改PARQUET_DIR→/nas_user,跳过已有.json);⑤更新DATA_MAPPING+MEMORY+commit
+PHASE:        用户令2026-11-13a+b并行执行阶段（rsync 926GB分词77%+hf download全量62%） → WAITING=0
+已完成:       ✅分词全DONE;✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅rsync 2TB→/nas_user(校验通过);✅源删除DONE;✅hf download全量运行中(62%);✅rsync 926GB分词→/nas_user运行中(77%)
+当前动作:     ①rsync 926GB分词数据/nas_train→/nas_user后台跑中(PID250747,nice19/ionice3,77%=766GB/926GB,~272MB/s,ETA~44min,日志/tmp/stackv3_tokenized_rsync.log) ②hf download全量后台跑中(PID3112439,nice19/max-workers2,5055/8207files=62%/5054parquet/0inc/ETA~1.5h/日志/tmp/stackv3_post_rsync.log)
+下一步:       ①等rsync 926GB完成→校验字节+find .json→删源/nas_train(释放926GB);②等hf download完成(ETA~1.5h);③下载完成后校验du+find+inc=0;④分词新shard(--parquet-dir /nas_user --output-dir /nas_user --shard-start 4600,跳过已有.json);⑤更新DATA_MAPPING+MEMORY+commit
 阻塞:         无(两个后台任务并行跑中,WAITING=0短睡巡检)
 ERROR_COUNT:  0
-未完成指令:   有(stack-v3-train全量下载61%+分词搬迁进行中)→WAITING=0
+未完成指令:   有(stack-v3-train全量下载62%+分词搬迁77%)→WAITING=0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
