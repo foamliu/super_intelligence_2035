@@ -1419,4 +1419,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794460481537_xr6sg	yunfat	10.129.33.28	35	spice_sim	case	EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001	2026-11-13 23:39	
 1794470581748_fgq87	jiangbaol	hfeg0pkn004	147	spice_sim	parked		2026-11-13 23:45	dup of existing SlicerSweepFomOpt-001 (same jiangbaol DDR4 DFE slicer doubletail sweep); skipped r395
 1794474138453_xbl88					parked		2026-11-13 23:46	L1 Python GUI agent to drive FineSim submit (stimulus_manager.py interactive), not spice_sim produce-task; skipped r395
-1794531433701_x86s7	curryxu	hfeg0pkn002	109	spice_sim	case	EDA-Eval-DesignFlow-DutyWeightScale-001	2026-11-13 23:59	
+1794531433701_x86s7	curryxu	hfeg0pkn002	109	spice_sim	case	EDA-Eval-DesignFlow-DutyWeightScale-001	2026-11-13 23:59	CROSS-SHARD COLLISION r505: shard D 同时独立造同 case DutyWeightScale-001 (commit bb3bd65c 23:58 直写 main jsonl+assets+ref, 字节级同 B 档内容). B 已撤回 _B.jsonl 重复行(302 保持), case 仍计 D 交付; B ledger mark case 保留(覆盖率分子).
