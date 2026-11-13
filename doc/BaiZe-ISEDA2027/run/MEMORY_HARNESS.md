@@ -4,21 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2358 监控+重启轮(gateway 200·incr_eval 0new·cleanup 19empty·cline+cc predict RESTARTED·eval 1762/2177·predict 4/7 alive·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2358·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2357 incr_eval+监控+报告+ETA·R2358 监控(0new eval+19empty cleanup+cline+cc predict RESTARTED)+双报告REGEN
-当前动作:     R2358: 自检(CPU/mem OK·load40/224·无runaway)·gateway 200(models端点200)·incr_eval 0new(all caught up)·cleanup 19empty(9cline-patched+7codex+3pi deleted·1in-flight kept:codex/django-11848)·cline-patched predict RESTARTED(PID172783)+claude-code predict RESTARTED(PID172784)·eval:cline236/312·codex90/139·opencode414/498·cc247/301·pi199/272·hermes435/480·dsh141/175·总1762/2177(不变)·predict:cline312r·codex133r·cc299r·pi272r·opencode498DONE·hermes480DONE·dsh175DONE·predict 4/7 alive(cline+cc+codex+pi·opencode/hermes/dsh DONE)·双报告REGEN(10:13:glm53_7way=12286B+cline_special=10289B)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit+push ②continue incr_eval+cleanup ③predict 4/7向500推进(codex=瓶颈133/500@25/天≈15天·cline312·cc299·pi272) ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
-阻塞:         <各路尚未满500:cline312/codex133/cc299/pi272·§22:4x未全交付·opencode+dsh+hermes DONE·codex=瓶颈~15天>
+PHASE:        R2359 监控+cleanup轮(gateway 200·incr_eval 0new·cleanup 68empty·eval 1762/2177不变·predict 4/7 alive·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2359·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2358 incr_eval+监控+报告+ETA·R2359 监控(0new eval+68empty cleanup)+双报告REGEN
+当前动作:     R2359: 自检(CPU/mem OK·load39/224·无runaway)·gateway 200(models端点200)·incr_eval 0new(all caught up)·cleanup 68empty deleted+36kept(in-flight)·eval:cline236/312·codex90/139·opencode414/498·cc247/301·pi199/272·hermes435/480·dsh141/175·总1762/2177(不变)·predict:cline309r·codex132r·cc298r·pi272r·opencode498DONE·hermes480DONE·dsh175DONE·predict 4/7 alive(cline+cc+codex+pi·opencode/hermes/dsh DONE)·双报告REGEN(10:27:glm53_7way=12291B+cline_special=10382B)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit+push ②continue incr_eval+cleanup ③predict 4/7向500推进(codex=瓶颈132/500@25/天≈15天·cline309·cc298·pi272) ④各路满500后§22:4x两基准7路全交付 ⑤TB-2.1已交付
+阻塞:         <各路尚未满500:cline309/codex132/cc298/pi272·§22:4x未全交付·opencode+dsh+hermes DONE·codex=瓶颈~15天>
 ERROR_COUNT:  0
- 体积: TASK=22KB / MEMORY=12KB(归档后)
-  cline专项小结: predict_glm53=312real/236resolved/0empty(cleaned·C3 resume fix R1733仍有效)·C1:312real·C2:failed=75(能力·real patch但tests fail)+1infra·C3:empty=0(cleaned)·C4:236res/312real=75.6%·C5:报告R2358(cline special·10289B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
+ 体积: TASK=22KB / MEMORY=13KB
+  cline专项小结: predict_glm53=309real/236resolved/31empty(in-flight kept·C3 resume fix R1733仍有效)·C1:309real·C2:failed=76(能力·real patch但tests fail)+0infra·C3:empty=31(in-flight·非resume bug)·C4:236res/309real=76.4%·C5:报告R2359(cline special·10382B)·失败top1=能力差(real patch但tests fail)·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
-> [10:13] R2358: 监控+重启轮·自检(CPU/mem OK·load40/224·无runaway)·gateway 200(models端点200)·incr_eval 0new(all caught up)·cleanup 19empty(9cline-patched+7codex+3pi deleted·1in-flight kept:codex/django-11848)·cline-patched predict RESTARTED(PID172783·已skip已完成·正在predict django-11087)+claude-code predict RESTARTED(PID172784)·eval:cline236/312·codex90/139·opencode414/498·cc247/301·pi199/272·hermes435/480·dsh141/175·总1762/2177(不变)·predict:cline312r·codex133r·cc299r·pi272r·opencode498DONE·hermes480DONE·dsh175DONE·predict 4/7 alive(cline+cc+codex+pi)·双报告REGEN(10:13:glm53_7way=12286B+cline_special=10289B)·未完成指令:有(§10:10+§22:4x)·W:0
+> [10:27] R2359: 监控+cleanup轮·自检(CPU/mem OK·load39/224·无runaway)·gateway 200(models端点200)·incr_eval 0new(all caught up·all real patches已eval)·cleanup 68empty deleted(cline-patched47+codex6+cc4+pi1+小文件10)+36kept(in-flight·<5min)·eval:cline236/312·codex90/139·opencode414/498·cc247/301·pi199/272·hermes435/480·dsh141/175·总1762/2177(不变)·predict:cline309r·codex132r·cc298r·pi272r·opencode498DONE·hermes480DONE·dsh175DONE·predict 4/7 alive(cline+cc+codex+pi)·双报告REGEN(10:27:glm53_7way=12291B+cline_special=10382B)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2358 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2358 监控(0new eval+19empty cleanup+cline+cc predict RESTARTED)+双报告REGEN。需要时再读。
 > 📦 R2357 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2357 监控(0new eval+7empty cleanup+cline+cc predict DIED)+双报告REGEN。需要时再读。
 > 📦 R2356 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2356 监控(0new eval+10empty cleanup)+双报告REGEN。需要时再读。
 > 📦 R2355 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2355 监控(0new eval+89empty cleanup)+双报告REGEN。需要时再读。
