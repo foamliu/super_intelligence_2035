@@ -1406,3 +1406,6 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794398936151_55a3n					parked		2026-11-13 17:03	weak: vague first msg 'PLL' + wnyu has 4 PLL cases (PFDdeadZone/DivSelDuty/CpIcpChar/VcoKvcoChar) high dup-risk
 1794444643468_c5rnp	e0030760	hfeg0pkn004	114	spice_sim	case	EDA-Eval-DesignFlow-SnmSquareValidator-001	2026-11-13 17:32	
 1794452932656_i7nlb	joeyl	hfeg0pkn004	165	spice_sim	case	EDA-Eval-DesignFlow-DelvtoInjector-001	2026-11-13 18:05	
+1794474582550_btfno.messages.json	wnyu	hfeahpc502	134	spice_sim	case	EDA-Eval-DesignFlow-LpfAnomalyDetect-001	2026-11-13 18:33	
+1794537950075_2903j.messages.json					parked		2026-11-13 18:19	r495 peek debug-Q&A + near-dup g0x1k(r485)
+1794451028204_c2len.messages.json					parked		2026-11-13 18:19	r495 peek P-004 near-dup h3vpf CmlDividerSweepTbGen-001(r484)
