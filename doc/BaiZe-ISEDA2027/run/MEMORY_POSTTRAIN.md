@@ -7,16 +7,16 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake408（2026-11-13 R408: **5run_eval 脚本 3-bug 修复(grep -a / $VENV_PYTHON 启动 / .env-EVAL_FW_DIR 搜索) + run3 eval 恢复 Pass@1=2.53%(4/158); step105 3/5 runs mean±std=0.0274±0.0097; run4 recovery 后台 PID1359141 --wait; run5+ 全自动**; GPU7=vision not mine）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-407✅;R408✅(5run_eval 3bug修复+run3 eval恢复+recovery脚本+run4后台recover)
-- 当前动作: wake408 R408:①**5run_eval.sh 3-bug 修复**(A:grep无-a致binary codegen.log不解析→JSONL丢;B:bare `python`不存在(rc=127)致run_eval.py不启动;C:find $HOME/eda_code_eval错目录致final_report永找不到→改为grep -a/$VENV_PYTHON启动/.env读EVAL_FW_DIR搜output_evaluation) ②**run3 eval 恢复**(run_eval.py纯打分~2s不重跑沙盒→Pass@1=2.53% 4/158,final_report.json入run3/) ③**recovery脚本** baize_posttrain_recover_eval.sh(可复用,--wait轮询) ④**run4后台recover** PID1359141 /tmp/posttrain_recover_run4.log ⑤step105 3/5 mean±std=0.0274±0.0097(run1=0.038 run2=0.019 run3=0.0253) ⑥pipeline:autocomplete PID1122770(run4 codegen中)+eval_chain PID1161064(等step105完→step60→base→5run_analysis)+recover_run4 PID1359141 ⑦3 serves UP:8098(base)+8097(SFT step60)+8096(SFT step105)
-- 下一步: ①run4 codegen完→recover PID1359141自动eval→run5(fixed脚本全自动)→autocomplete summary→eval_chain step60 runs2-5→base runs1-5→final 5run_analysis(mean±std n=5) ②L4 designflow DELIVERED(0% all models,fixed harness) ③zhulong 5-run eval final numbers when pipeline completes
-- 阻塞: BaiZe ckpt inaccessible;P3等pretrain ckpt;zhulong 5-run eval IN PROGRESS(step105 run4/5 pending)
-- 本轮新增产出: R408✅(5run_eval 3bug修复[run/baize_posttrain_5run_eval.sh]+run3 eval恢复[Pass@1=2.53%]+recovery脚本[run/baize_posttrain_recover_eval.sh]+run4后台recover[PID1359141]+EXPERIMENTS §L4-zhulong wake408+MEMORY更新)
-- 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run4/5;designflow base 5/5 DONE=0% delivered);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit ae01f83a3 at origin/main,clean rebase-free sync);本轮已交付(wake407)→本轮将交付(wake408: 5run_eval.sh fix+recover_eval.sh+EXPERIMENTS+MEMORY+daily)
-- 🔧 **5run_eval 3-bug (wake408 修复)**:A)grep须带-a(codegen.log含ANSI→binary→"Binary file matches"丢路径);B)须用$VENV_PYTHON启动(本机无bare python,run_eval.py用$PYTHON env起assemble/calculate子进程,需tqdm仅venv有);C)final_report在$EVAL_FW_DIR/output_evaluation/(.env L222)非$HOME/eda_code_eval
-- 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
+- PHASE: posttrain-wake409（2026-11-13 R409: **RL smoke 起跑 8 次全失败→根因=verl 0.4.0 1-GPU hybrid colocated-worker init 挂死(非 rollout 引擎;sglang+hf 同构挂死)→RL 全量 BLOCKED;vLLM 未装(torch 冲突);2-GPU 绕路与在跑 L4 eval serve 冲突→诚实负结果**;L4 eval 后台继续 step105 run4/5）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-408✅;R409✅(RL smoke 8-attempt 根因诊断+smoke_hf.yaml+v2_merged 注释+EXPERIMENTS §R409)
+- 当前动作: wake409 R409:①**RL smoke 起跑 8 次全失败**(gpu7..gpu7g[sglang,前序 wake]+gpu7h[vllm]+gpu7b[hf])②**根因=verl 0.4.0 1-GPU hybrid colocated-worker init 挂死**:sglang(gpu7g)与 hf(gpu7b)用不同 rollout 引擎但在同一阶段(verl `Waiting for register center actor`)同构挂死(GPU 恒 3MiB 不分配、log 停长、进程存活、300s 超时不触发、colocated worker 无 .out 日志、ray `CoreWorker Exit 2`、bundle 已 Commit 但 worker init 中退出)⇒阻塞点在 colocated worker ray actor init 非 rollout 引擎 ③**vLLM rollout 不可行**:verl_cu124_venv 无 vllm/msgspec(vllm 0.7.3 需 torch2.5.1 与 venv torch2.6.0+cu124 冲突) ④**2-GPU 绕路**:SFT R170/R172 在 2 GPU FSDP2 成功⇒2 GPU 可绕过;但 GPU4/5/6 在跑 L4 eval serve(eval_chain step105→step60→base),拆即停 eval 违反 L4 指令;GPU7 唯一空闲 ⑤**RL 全量 BLOCKED**直到 1-GPU hybrid init 修复或 eval 完成释放 GPU ⑥smoke_hf.yaml(hf rollout,prompt512/resp256/batch8)创建+v2_merged L88 注释更新 ⑦cleanup:kill 全部 smoke 进程+ray stop+清 /tmp/ray session,GPU7=3MiB 空,3 serves UP(8098/8097/8096),eval pipeline 完整(autocomplete PID1122770+eval_chain PID1161064+recover_run4 PID1359141)
+- 下一步: ①等 L4 eval 跑完(step105/step60/base 全 5-run)释放 GPU→用 2 GPU 跑非 hybrid RL(hybrid_engine:False)绕过 1-GPU colocated init 挂死[最稳] ②或深入 verl fsdp_workers+ray actor init 加 verbose 日志定位 worker 退出点 ③zhulong 5-run eval final numbers when pipeline completes
+- 阻塞: 🔴 **RL 全量训练 BLOCKED**(verl 0.4.0 1-GPU hybrid colocated-worker init 挂死,8 次 smoke 证实,详见 EXPERIMENTS §R409);BaiZe ckpt inaccessible(在 .29/.nas_train,.17 未挂载);zhulong 5-run eval IN PROGRESS(step105 run4/5)
+- 本轮新增产出: R409✅(RL smoke 8-attempt 根因诊断[sglang+vllm+hf]+smoke_hf.yaml[hf rollout 配置]+v2_merged L88 BLOCKED 注释+EXPERIMENTS §R409[honest negative result]+MEMORY 更新+GPU7/ray cleanup)
+- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑(BLOCKED on 1-GPU hybrid init,见 §R409 下一步);L4 2026-11-12(zhulong 5-run eval IN PROGRESS run4/5;designflow base 5/5 DONE=0% delivered);13:40 SFT v39 eval→5-run eval IN PROGRESS
+- git: super_intelligence_2035(commit 8347a5ae8 wake408 at origin/main,clean);本轮将交付(wake409: smoke_hf.yaml+v2_merged 注释+EXPERIMENTS §R409+MEMORY+daily)
+- 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;venv 重建后需重打此patch
+- 🔧 **RL 1-GPU hybrid 阻塞(wake409)**:verl 0.4.0 GRPO `hybrid_engine:True`+1 GPU,colocated worker(actor+ref+rollout 同 ray actor)init 在 register-center 阶段挂死(GPU 永不分配,worker 在 import/load 4.7GB ckpt 阶段退出,300s 超时不触发);sglang/hf rollout 均同构复现;解法=2 GPU 非 hybrid 或修 colocated init;详见 EXPERIMENTS §R409
 
 
 
@@ -62,8 +62,8 @@ WAITING: 0
 
 ## 运维问答（常驻）
 
-- Q: post-train 现在能起训练吗？→ A: 不能。等 pretrain S1 收敛 ckpt（ETA≈2026-12-25）。现在做 P0/P1/P2/P3预备（零 GPU）。
-- Q: 用哪台机器？→ A: post-train 线在 `10.252.32.17`。P0/P1/P2/P3预备 纯 CPU/IO 在本机 `.17` 跑；正式训练的 GPU 待 pretrain 完成或运维协调分卡。
+- Q: post-train 现在能起训练吗？→ A: **RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。但 🔴 **RL 全量训练 BLOCKED**：verl 0.4.0 GRPO 1-GPU hybrid colocated-worker init 挂死（8 次 smoke 证实，sglang+hf 同构，详见 EXPERIMENTS §R409）；vLLM rollout 需 vllm+msgspec 未装（torch 冲突）；2-GPU 绕路与在跑 L4 eval serve 冲突。解法=等 eval 完释放 GPU 用 2 GPU 非 hybrid，或修 colocated init。SFT（替身 v39）已完成；L4 eval 在跑。
+- Q: 用哪台机器？→ A: post-train 线在 `10.252.32.17`（8×A40，CUDA 12.4 max）。GPU0-3=root SGLang(不可动)；GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(本轮 RL smoke 用后已清理)。
 - Q: 评测怎么接入 BaiZe？→ A: vLLM/SGLang 暴露 OpenAI-compatible endpoint → `cline auth -p openai -k <KEY> -b <BASE_URL> -m <MODEL_ID>`，harness 不改。
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
 
@@ -203,6 +203,10 @@ WAITING: 0
 [wake405 12:44] R405 → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake406 12:5x] R406 → 原文已归档 daily-memories-posttrain/2026-11-13.md
 [wake407 13:0x] R407 **run3 codegen 155/158 resolved NO stuck worker 4th consecutive + pipeline fully autonomous**:①zhulong run3 codegen(batch 2026_1113_101852,step105 SFT v39 final,GPU6:8096)stats success=143/failure=6/timeout=6=155/158 resolved(98.1%),102 .py produced,3 left,1 cline worker active PID1331303 etime168s<<2500s→NO stuck worker 4th consecutive(wake405/406/407) ②progress since wake406:+9 success(134→143)+1 timeout(5→6)+10 resolved(145→155) ③failed6(024/010/017/055/046/091)+timeout6(062/098/118/119/121/126) ④pipeline autonomy 3 layers alive:autocomplete daemon PID1122770(~6.4h)+eval_chain PID1161064(~4.8h)+run3 5run_eval PID1217799(~2.8h)→run_cline_script PID1217807 ⑤3 serves UP:8098(base GPU4)+8097(SFT step60 GPU5)+8096(SFT step105 GPU6 100%util) ⑥tunnel UP(ssh -p3333 TUNNEL_OK hfeg0tedaap02)+reverse 18096+18098 ⑦GPU7=vision/wave_rl NOT posttrain not touched ⑧designflow base 5/5 FAIL=0% FINAL delivered(wake404) ⑨run2 eval pass_rate=0.0190(3/158) ⑩EXPERIMENTS §L4-zhulong wake407 updated+MEMORY rolled wake402/403→daily. Next:run3 codegen complete(~3 tasks<30min)→auto eval→runs4-5→step60→base→final 5run mean±std. WAITING=0.
+
+[wake408 13:3x] R408 **5run_eval.sh 3-bug fix + run3 eval recovered (Pass@1=2.53%) + run4 background recover** → 原文已归档 daily-memories-posttrain/2026-11-13.md（5run_eval grep-a/$VENV_PYTHON/.env-EVAL_FW_DIR 三 bug 修复；run3 eval Pass@1=2.53%(4/158)；step105 3/5 mean±std=0.0274±0.0097）
+
+[wake409 15:xx] R409 **RL smoke 起跑 8 次全失败→根因 verl 0.4.0 1-GPU hybrid colocated-worker init 挂死（诚实负结果）**:①**用户令 2026-11-13 13:3x**：RL 不再等 BaiZe 基模，直接在 MiniCPM5-2B(+SFT v39 step105)上跑 RL ②**8 次 smoke 全失败**（GPU7,R0,G=4,10步,ckpt=step105）：gpu7..gpu7d[sglang 早期 config 错]+gpu7e[sglang `loss_agg_mode` ConfigAttributeError→v2_merged 继承 ppo_trainer 默认修复]+gpu7f[sglang ActorUnavailableError actor 死]+gpu7g[sglang register-center 挂死]+gpu7h[vllm `No module 'msgspec'`+`No module 'vllm'`]+gpu7b[hf register-center 挂死] ③**根因=verl 0.4.0 1-GPU hybrid colocated-worker init 挂死**：sglang(gpu7g)与 hf(gpu7b)不同 rollout 引擎但同构挂死（verl `Waiting for register center actor`阶段，GPU 恒 3MiB 不分配、log 停长、进程存活、300s 超时不触发、colocated worker 无 .out、ray `CoreWorker Exit 2`、bundle 已 Commit 但 worker init 中退出）⇒阻塞在 colocated worker ray actor init（import torch/verl + NFS 加载 4.7GB ckpt + FSDP shard，与 128 prestart worker 争资源）非 rollout 引擎 ④**vLLM rollout 不可行**：verl_cu124_venv 无 vllm/msgspec（vllm 0.7.3 需 torch2.5.1 与 venv torch2.6.0+cu124 冲突；外部 /tmp/vllm_venv 是 torch2.5.1 独立 venv） ⑤**2-GPU 绕路**：SFT R170/R172 在 2 GPU FSDP2 成功⇒2 GPU 非 hybrid 可绕过；但 GPU4/5/6 在跑 L4 eval serve(eval_chain step105→step60→base)，拆即停 eval 违反 L4 指令「不得因此停 SFT eval」；GPU7 唯一空闲 ⑥**RL 全量 BLOCKED**至 1-GPU hybrid init 修复或 eval 完释放 GPU ⑦交付：smoke_hf.yaml(hf rollout,继承 ppo_trainer,prompt512/resp256/batch8,hydra compose 验证 PASS)+v2_merged L88 BLOCKED 注释+EXPERIMENTS §R409(8-attempt 时间线+根因+绕路不可行+下一步) ⑧cleanup：kill 全部 smoke+ray stop+清 /tmp/ray session，GPU7=3MiB 空，3 serves UP(8098/8097/8096)，eval pipeline 完整(autocomplete PID1122770+eval_chain PID1161064+recover_run4 PID1359141)，未碰 GPU0-3/vision/158 任务 ⑨符合用户令第 4 条「诚实负结果」。 Next:等 L4 eval 完释放 GPU→2 GPU 非 hybrid RL[最稳]，或深入 verl fsdp_workers 定位 colocated init 退出点。 WAITING=0.
 
 
 

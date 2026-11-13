@@ -8574,3 +8574,71 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 **L4 designflow deliverable**: ✅ Baseline re-confirmed 0% on fixed harness (base & SFT), base row corrected (old rows infra-blocked), SFT-regression signal documented, reproduce commands + reverse-tunnel infra (18098) established. **wake404: base5 finalized 5/5 FAIL (0%) — AnalogGroupCfgMergeDummy-001 dur=1697s FAIL "no submit.zip" confirmed from `/tmp/df_base_*.log` on 36.15** (status_minicpm5_base5.jsonl stays empty due to concurrent-flock append issue after `rm -f`; all 5 verdicts preserved in worker logs). No further action unless output protocol changes.
 > ⚠️ `status_minicpm5_base5.jsonl` was empty at record time (concurrent-flock append issue after `rm -f`); 4 completed records preserved in `/tmp/df_base_*.log` worker logs on 36.15. 1 still-running task (AnalogGroupCfgMergeDummy) appends on completion — next wake `cat` status file + worker logs to finalize 5/5. (wake403 update: Analog-001 FAIL dur=701s confirmed from df_base log; 4/5 now done, all FAIL "no submit.zip".)
 
+
+---
+
+## §R409 (2026-11-13 wake409) RL GRPO smoke launch — verl 0.4.0 1-GPU hybrid colocated-worker init HANG (honest negative result)
+
+> **背景**：2026-11-13 13:3x 用户令「RL 不要再等 BaiZe 基模——直接在 MiniCPM5-2B 基础上跑 RL」。RL 起点 = SFT v39 final (`sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105`)，已在 GPU6:8096 serve。复用就绪资产（`baize_posttrain_rl_grpo_surrogate.sh` / `baize_posttrain_rl_verl_config_v2_merged.yaml` / `rl_pyaether_synth_v2.parquet`(3347) / 奖励函数 / `~/code/verl_cu124_venv/`）。本节记录 smoke 起跑的工程阻塞与根因诊断。
+>
+> **结论（诚实负结果，符合用户令第 4 条）**：verl 0.4.0 GRPO 在 **1-GPU hybrid engine（colocated worker）** 下，colocated worker 初始化在 ray register-center 阶段 **挂死**，与 rollout 引擎无关（sglang 与 hf 均在同一阶段挂死，GPU 从不分配，300s 超时不触发，无 error 日志）。8 次 smoke 全部失败。2-GPU 工作绕路（SFT R170/R172 在 2 GPU 上成功）与在跑的 L4 eval serve（GPU4/5/6）冲突，按 L4 指令「不得因此停 SFT eval」不可拆。**RL 全量训练 BLOCKED，直至 1-GPU hybrid 初始化问题被修复或获得不冲突的第 2 张 GPU。**
+
+### 1. 8 次 smoke 尝试时间线（GPU7，SFT step105 ckpt，R0 skeleton 奖励，G=4，10 步）
+
+| 尝试 | 时间 | rollout | 失败模式 | 证据 |
+|:--|:--|:--|:--|:--|
+| gpu7..gpu7d | 13:55–14:12 | sglang | 早期 config/import 错（被前序 wake 逐步修） | `/tmp/baize_posttrain_rl_smoke_gpu7{,b,c,d}.log` |
+| gpu7e | 14:17 | sglang | `omegaconf.errors.ConfigAttributeError: Key 'loss_agg_mode' is not in struct`（v2 standalone 缺 verl 0.4.0 新增 struct 键） | gpu7e.log L295+；cheat report total_rollouts=0 |
+| gpu7f | 14:40 | sglang(v2_merged) | `ray.exceptions.ActorUnavailableError: actor is unavailable: RpcError: Socket closed`（rollout actor 死） | gpu7f.log L355+ |
+| gpu7g | 14:42 | sglang(v2_merged) | **register-center 挂死**：`Waiting for register center actor to be ready` 起于 14:45:25，>300s 超时未触发，GPU7 恒 3 MiB，log 停止增长，进程 state=S 存活 | gpu7g.log L318；ray session `session_2026-11-13_14-42-47_*`；colocated worker 无 .out 日志 |
+| gpu7h | 15:02 | vllm(v2_merged 改 name=vllm) | `ModuleNotFoundError: No module named 'msgspec'`（`verl/utils/vllm_utils.py:51 from msgspec import field`，仅当 rollout.name==vllm 时由 main_ppo.py:71 导入）→ 进而 `No module named 'vllm'` | gpu7h.log L298+ |
+| gpu7b(hf) | 15:25 | **hf**(smoke_hf.yaml) | **register-center 挂死**（与 gpu7g 完全同构）：起于 15:28:14，进程存活 ~10 min，GPU7 恒 3 MiB，300s 超时未触发 | gpu7b.log L313；ray session `session_2026-11-13_15-25-42_*` |
+
+### 2. 根因定位：colocated worker 初始化挂死（非 rollout 引擎）
+
+**关键交叉证据**：sglang（gpu7g）与 hf（gpu7b）使用**完全不同的 rollout 引擎**，但都在**同一阶段**（verl `Waiting for register center actor to be ready`）以**同一形态**挂死（GPU 从不分配、log 停止增长、进程存活、300s 超时不触发）。⇒ 阻塞点在 **colocated worker 的 ray actor 初始化**，而非 sglang/vllm/hf 任一 rollout 引擎本身。
+
+**ray 侧证据**（gpu7b session `session_2026-11-13_15-25-42_673500_1569926`，hf 跑）：
+- `Started a local Ray instance` ✅；placement bundle `PrepareBundleResources`/`CommitBundleResources` 各 1 次 ✅（bundle 已提交，1 GPU 已分配）；`RequestWorkerLease - 3 total (0 active)` ✅（3 个 worker 已 lease，mean 16.5s = NFS 慢导入）；`Number of spilled unschedulable leases: 0`（资源充足，非调度不足）；`process_failed_runtime_env_setup_failed: 0`（非 runtime_env 失败）。
+- `CoreWorkerService.grpc_client.Exit - 2 total`（2 个 worker 进程 Exit）⇒ colocated worker 进程启动后在 init 中退出/未注册，register center 永久等待。
+- **colocated worker 的 worker-*.out 始终未出现**（仅 TaskRunner config dump + WorkerGroupRegisterCenter 55B）⇒ worker 在产生任何日志前即卡在 init（import torch/verl/transformers + 从 NFS 加载 4.7GB SFT ckpt + FSDP shard），与 128 个 prestart python worker 争 NFS/资源。
+- GPU7 全程 3 MiB ⇒ 模型从未上 GPU，即卡在 import/load 阶段，未到 FSDP-to-GPU。
+
+**对照**：Phase 2 SFT（R170/R172）用 **GPU6+GPU7（2 GPU，`--nproc_per_node=2`）FSDP2** 成功完成（72 步，rc=0）。⇒ verl ray + FSDP2 在 2 GPU 上工作正常；**1-GPU hybrid colocated worker（actor+ref+rollout 同一 ray actor）init 挂死**是 RL 特有路径的阻塞。
+
+### 3. vLLM rollout 工作绕路为何不可行
+
+- `verl_cu124_venv`：sglang 0.4.6 ✅、torch 2.6.0+cu124、verl 0.4.0，但 **无 vllm、无 msgspec**（`pip list` 实测）。
+- vLLM rollout 需 `vllm`+`msgspec`（`verl/utils/vllm_utils.py` 顶层 `from msgspec import field` + `from vllm.lora...`）。外部 `/tmp/vllm_venv/` 有 vllm 0.7.3+msgspec 0.22.0，但那是 **torch 2.5.1** 的独立 venv（供 3 个 serve 用）；vllm 0.7.3 编译针对 torch 2.5.1，装入 torch 2.6.0 venv 会有 C++ ABI 冲突风险，且可能拖垮精心构建的 verl venv（违反「复用资产、不要重做」）。
+- 装 torch-2.6 兼容的 vllm（0.8.5+）是大改 venv 依赖，风险高、非本轮可稳妥完成。
+
+### 4. 2-GPU 工作绕路为何与 L4 eval 冲突
+
+- RL（非 hybrid，actor 与 rollout 分离）需 **2 GPU**。当前 post-train 4 卡：GPU4(:8098 base)/GPU5(:8097 step60)/GPU6(:8096 step105) 全部 **在跑 L4 zhulong 5-run eval 的 serve**（eval_chain PID1161064 串行 step105→step60→base），GPU7 唯一空闲。
+- 拆任一 eval serve 即停掉对应 eval（step105 为 PRIMARY，3/5 已完成 runs4/5 在跑；step60/base 待跑）⇒ 违反 2026-11-12 L4 指令「不得因此停 SFT eval」。
+- ⇒ 本轮无法在不破坏 eval 的前提下获得第 2 张 GPU。
+
+### 5. 本轮交付物
+
+| Item | Path | 说明 |
+|:--|:--|:--|
+| HF-rollout smoke 配置 | `run/baize_posttrain_rl_smoke_hf.yaml` | 继承 verl `ppo_trainer` 默认（保留 loss_agg_mode 等 struct 键），rollout.name=hf，prompt 512/response 256/batch 8（NaiveRollout token-by-token 不可用于全量，仅 pipeline smoke） |
+| v2_merged 注释更新 | `run/baize_posttrain_rl_verl_config_v2_merged.yaml` L88 | 记录 sglang 1-GPU hybrid init DEADLOCK + vLLM 未装 + 全量 BLOCKED 状态 |
+| 本节诊断 | `EXPERIMENTS_POSTTRAIN.md` §R409 | 8 次尝试时间线 + 根因 + 工作绕路不可行性 |
+| 8 份 smoke 日志 | `/tmp/baize_posttrain_rl_smoke_gpu7{,b..h}.log` + `/tmp/baize_posttrain_rl_smoke_hf_gpu7{,b}.log` | 失败证据（保留在 /tmp） |
+
+### 6. 下一步（解除阻塞的路径，按可行性排序）
+
+1. **等 L4 eval 跑完后释放 GPU**：eval_chain 完成 step105/step60/base 全部 5-run（预计数小时）后，GPU4/5/6 serve 可拆 → 用 2 GPU（如 GPU6+GPU7）跑非 hybrid RL（`hybrid_engine: False`，actor 与 rollout 分离各占 1 GPU），绕过 1-GPU colocated init 挂死。**最稳妥，不破坏 eval。**
+2. **修复 1-GPU hybrid colocated worker init**：深入 `verl/workers/fsdp_workers.py` + ray actor init，加 verbose 日志定位 worker 在 import/load 哪一步退出；可能需调 `num_prestart_python_workers`、runtime_env、或 FSDP2 world_size=1 路径。**工作量大，非本轮可完成。**
+3. **装 torch-2.6 兼容 vllm 到 verl venv**：使 vLLM rollout 可用（仍受 1-GPU hybrid colocated init 挂死约束，除非同时走路径 2）。
+4. **换 RL 框架**：如 trl GRPO / 自写 rollout-loop（脱离 verl ray colocated 架构）。
+
+### 7. 边界与纪律
+
+- 仅写本线文件（smoke_hf.yaml + v2_merged 注释 + EXPERIMENTS §R409 + MEMORY + daily）。
+- 红线：未碰 GPU0-3；未碰 158 任务数据；未启动全量训练；未拆 eval serve；未 `git add -A`。
+- GPU7 边界：wake405/407 记 GPU7 曾被 vision/wave_rl（PID1312207）占用；本轮检查 GPU7=3 MiB 空闲（vision 进程已不在），RL smoke 用 GPU7 后已全部 kill + ray 清理，未触碰任何 vision 进程。
+- 诚实负结果：符合用户令第 4 条「若 GRPO 无提升/退化…如实记录…最终结论本身就是交付物」。本轮结论 = **当前 env 下 verl 0.4.0 1-GPU hybrid RL 起不来**，已定位根因与解除路径。
+
+**数据溯源**：8 份 /tmp smoke 日志 + 2 个 ray session 日志（`/tmp/ray/session_2026-11-13_14-42-47_*`[已清理] / `session_2026-11-13_15-25-42_*`[已清理]）+ `nvidia-smi` 实测 + `pip list` 实测 + verl 源码（`fsdp_workers.py` L384-469 / `main_ppo.py` L70 / `vllm_utils.py` L51 / `naive_rollout.py`）。无伪造。
