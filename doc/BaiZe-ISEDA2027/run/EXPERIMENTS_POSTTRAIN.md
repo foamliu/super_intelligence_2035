@@ -10163,3 +10163,36 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 1. 5-run eval 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci。
 2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（平台化使此分支概率上升）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。
 3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
+
+## R445 (wake445, 2026-11-14 03:25) — 5-run eval RUNNING 健康监控（纯监控 wake，eval 全自治，无人工动作）
+
+### A. eval 链健康实测（@03:25:05，run1 起 01:08:13 → 已 ~2.28h）
+
+- autofire chain **PID2322797** 存活（etime≈11005s，ppid=2322795=setsid 守护）；eval run1 **PID2354141** 存活（etime≈8213s）。
+- 3 并发 serve 全稳（curl /v1/models 各返回预期 model id）：GPU4 base:8098 `minicpm5-2b` / GPU6 step105-final:8096 `minicpm5-2b-sft-v39-final` / GPU7 R2:8095 `minicpm5-2b-grpo-R2-step200`(root=global_step_200)。
+- GPU 占用：GPU0-3=root SGLang(44-45GB,0%util,不动)；GPU4=39246MiB；**GPU5=3MiB 空闲**（step60 serve 已 teardown）；GPU6=39246MiB；**GPU7=39246MiB/90%util**（compute-apps PID2353393=39230MiB）。
+- 8 cline worker active（`timeout 2500 cline --yolo` 进程 8 个，etime 34s+ 持续回收非卡死）。
+
+### B. run1 进度（batch_id 2026_1114_010813）
+
+- stats counters：**success=37 / failure=3 / timeout=18 = 58/158 已完成**（较 wake444 的 55 +3：success+1、timeout+2，failure 不变）。
+- `.task_queue` 158→92 行（差 66=58 完成 + 8 worker in-flight，一致）。
+- code/ 69 文件（最新 EDA-Eval-PyAether-066 + pyAether_code/PyAether_code 目录）。
+- total_time=57048s（8 worker 累计，÷8≈7131s≈1.98h 与 elapsed 量级一致）。
+- final_report.json 尚未生成（run1 未完）。
+
+### C. 红线 / infra
+
+- 0 infra 错误：worker `cli_data` grep `Traceback|CUDA out of memory|Killed` 命中仅 task EDA-Eval-PyAether-042（模型自生成代码沙盒执行 `SyntaxError: unmatched ']' (<string>, line 8)`，模型能力不足非 infra）；worker cline.log grep=0（无真实 Python/CUDA/Killed）。
+- §2/§5.3 冻结协议 eval 链复用既有 `baize_posttrain_5run_eval.sh`（未改）；§5.2 anti-cheat hook 逐字一致。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### D. 速率校准（逐 wake 实算，非编造）
+
+- wake443→444（~8min）：52→55（+3，0.38/min，全 timeout+3）
+- **wake444→445（~11min）：55→58（+3，0.27/min，success+1/timeout+2）** ← 速率仍偏低，剩余 100 任务（92 queue + 8 in-flight）偏难占比高（2500s 超时占住 worker）。
+- 读数：chain 标 ETA~13:00 仍偏乐观；run1 实际或 ~05:00-09:00 完，全 5-run 或延至 2026-11-14 晚~11-15。不编造精确 ETA，待下一 wake 再校准。
+
+### E. 本轮动作 / 下一步
+
+- 本轮=纯监控，未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链；kill_gpu_serve child-PID bug 待 chain 空闲时修。
+- 下一步：5-run eval 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci → 显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）/ 负则诚实负结果 + 换奖励（§用户令#4，平台化使负分支概率上升）。
