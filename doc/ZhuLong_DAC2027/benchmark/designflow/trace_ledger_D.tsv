@@ -1570,7 +1570,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1790229478830_bl77a	bensonh	hfeg0plg104	39	schematic_netlist	parked		2026-11-13 03:56	workspace rename, non-EDA
 1784077259904_98ha6	e0032903	hfeg0plg49	38	schematic_netlist	parked		2026-11-13 03:56	'hi'/'how to write skills' Q&A
 1793257049322_86wnu	yh1yang	hfeg0plg94	37	waveform	parked		2026-11-13 03:56	file-org/cleanup + plt pdf调整, non-EDA produce-task
-1794214637465_iqj11	shaoyou	hfeg0plg49	27	waveform	parked		2026-11-13 03:56	interactive WaveView GUI signal-display/bold, no file deliverable
+1794214637465_iqj11	shaoyou	hfeg0plg49	27	waveform	parked		2026-11-13 11:22	r608 peek: interactive WaveView signal-display not produce-task
 1791448973775_f8g40	rongjiez	hfeg0plg98	27	schematic_netlist	parked		2026-11-13 03:56	runModelQA.pl code-comparison Q&A + PPT summary, non-falsifiable
 1790731913166_ki1x0	chengk	hfeg0plg96	27	schematic_netlist	parked		2026-11-13 03:56	code-reading + flowchart (IddFlowCode), non-falsifiable comprehension
 1793692877234_xlzwr	ronghu	hfeg0plg93	27	analog_context	parked		2026-11-13 03:56	char hspice removal_hbm error debug '请分析原因', non-falsifiable explain
@@ -1588,3 +1588,8 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794445991004_godra	williang	hfeg0pkn002	387	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: Q&A inventory (find RCPC cells), non-falsifiable comprehension
 1794481677275_ojm4q	yuanlong	hfeg0pkn003	385	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: asset-inaccessible /proj (genuine produce-task SPF W/L compare blocked by private wall)
 1793882229682_mk098	yazhuok	hfeg0plg37	21	analog_context	case	EDA-Eval-DesignFlow-FinesimLisOrganize-001	2026-11-13 11:06	
+1794107992133_1zrp7	sxdong	hfeg0pkn001	17	analog_context	parked		2026-11-13 11:22	r608 peek: workflow-controller /wf_state.json Q&A not produce-task
+1794107100324_f3abw	sxdong	hfeg0pkn001	17	analog_context	parked		2026-11-13 11:22	r608 peek: workflow-controller /wf_state.json Q&A not produce-task
+1793934795764_snqni	cong3li	hfeg0pkn004	21	analog_context	parked		2026-11-13 11:22	r608 peek: circuit-conn-check Q&A (FBCC straping) not produce-task
+1794224570631_afkmz	zjqiao	hfeg0pgn043	20	analog_context	parked		2026-11-13 11:22	r608 peek: sim_setup folder analysis Q&A not produce-task
+1794215078177_pawzp	zlhou	hfeg0pjn200	33	analog_context	parked		2026-11-13 11:22	r608 peek: file-view exploration Q&A not produce-task
