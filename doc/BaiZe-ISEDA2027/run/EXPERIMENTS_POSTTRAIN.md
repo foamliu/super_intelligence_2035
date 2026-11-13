@@ -9426,3 +9426,33 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 红线 §5.1 contam 0/3347；§5.2 cheat=0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
 - 交付：R0 eval serve-step 复核（A）+ R2 臂 launch-readiness file-level 复验（B）+ run2 健康复检+ETA（C）+ EXPERIMENTS §R424 + MEMORY wake424。
 - 下一步：① 等 run2 完(~44min)→chain 2028723 自动 serve global_step_200→158题5-run(~12h)→`5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化→**诚实负结果**（§R420 训练侧偏负支撑：reward 平台+信号衰减+policy 不动）+ 起 R2+sandbox-exec（B 已 launch-ready）；③ 监控 run2 是否真在 ~44min 内完成，若卡死则排查 codegen worker（kill stuck + 续跑）。
+
+## §R426 (wake426, 2026-11-13 22:40) — R0 eval 自治链路完整性复核 + run2 进度 143/158~90.5% + global_step_200 ckpt 完整性实证
+
+### A. run2 进度实测（22:40）
+- batch `~/eda_code_eval/2026_1113_194219`（19:42 起，~178min）：stats `success=118 / failure=7 / timeout=18` → **143/158(~90.5%) resolved**（较 wake425 的 129/158 推进 14 题），剩 15；task_queue 余 7（152-158）。
+- 8 cline worker 全 alive（`timeout 2500 cline --yolo --data-dir .../worker_i/data`），max etime=1624s < 2500s → **无卡死**。
+- 速率 ~14 题/18min → **ETA ~23:10-23:20**（~30-40min）。
+- GPU5（step60 :8097）=87%util 健康；GPU7=3MiB 空闲（R0 eval serve 预留）。
+- 队列全 ALIVE：run2(1962541,10676s)→RL eval chain(2028723,7709s,180s 轮询)→residual SFT(2030315,7629s,120s 轮询)。
+
+### B. global_step_200 ckpt 完整性实证
+- `rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/global_step_200/`：config.json + model-00001-of-00002.safetensors(4.50GB) + model-00002-of-00002.safetensors(0.53GB) + model.safetensors.index.json + tokenizer.json + generation_config.json → **ckpt 完整可 serve**。
+- cheat_rate.json：total_rollouts=3200, cheat_detected=0, cheat_rate=0.0 → 红线 §5.2 ✓。
+- rl_R0_step200_training_dynamics.json：reward 0.3625→0.8992（s51-100 峰值 0.9201，s151-200 回落 0.911）；frac_positive_adv 0.5625→0.2637（信号衰减）；frac_nonzero_reward~1.0（区分度塌缩）；mean_ratio==1.0（policy 几乎不动）；KL 0.0149→0.0715 健康。interpretation=「proxy 拟合/饱和，非能力增长」→ 训练侧证据偏负/中性，与 vision v10 教训一致。
+
+### C. R0 eval 自治链路接线复核（file-level）
+- `baize_posttrain_rl_eval_chain.sh`：① L57-60 pick highest `global_step_*`（=200）→ STEP_N=200, RL_LABEL=grpo_R0_step200；② L117-120 serve on GPU7:8095 via baize_posttrain_sft_surrogate_serve.sh；③ L122-135 wait serve health（15s×60=15min 上限）；④ L148-149 `5run_analysis.py --compare grpo_R0_step200 step105`（McNemar + paired bootstrap）→ `/tmp/posttrain_5run_eval/5run_rl_analysis.json`。
+- step105 baseline locked：5run_analysis.json = 0.0304±0.0083（5 runs: 3.80/1.90/2.53/3.16/3.80%）。
+- 链路结论：**R0 eval 全自治、接线正确、ckpt 可 serve、baseline 锁定**；run2 完后自动起跑，无需人工介入。
+
+### D. R2（真实沙盒 reward）launch-readiness 重申
+- R2 是「追求显著提升」主战场（R0 静态 reward ↑≠Pass@1↑；R2 真实沙盒执行 reward 才有真信号）。
+- 起跑命令骨架（§R421 C）：`GPUS=7 VENV_PY=~/code/verl_cu124_venv/bin/python bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669 --sandbox-timeout 60 --total-steps 200 --init-from sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105 ...`
+- **阻塞**：R2 需 GPU7（单进程 GRPO loop 1 GPU）；GPU7 现预留给 R0 eval serve（run2 完后起，~12h 5-run eval）。R2 须等 R0 eval 完 + GPU7 释放（ETA ≈ 13h），不与 eval 争用 providers.json/沙盒。
+
+### 结论与下一步
+- 本轮零 GPU、未碰任何进程；纯进度监测 + ckpt 完整性实证 + 链路接线 file-level 复核（非空转：确认 R0 测量链路从「paper ready」到「ckpt 落盘完整+接线正确+baseline 锁定」，run2 完后可 instant-fire 出 R0 真实数字）。
+- 红线 §5.1 contam 0/3347；§5.2 cheat 0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
+- 交付：run2 进度 143/158~90.5%（A）+ global_step_200 ckpt 完整性实证（B）+ R0 eval 链路接线复核（C）+ R2 launch-readiness 重申（D）+ EXPERIMENTS §R426 + MEMORY wake426。
+- 下一步：① 等 run2 完(~30-40min,ETA~23:10-23:20)→chain 2028723 自动 serve global_step_200→158题5-run(~12h)→`5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流（决策框架 §R425 C）：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化→**诚实负结果**（§R420/B 训练侧偏负支撑）+起 R2+sandbox-exec（D 已 launch-ready，待 GPU7 释放）；③ 监控 run2 是否 ~23:20 内完成，若卡死 kill stuck worker+续跑。
