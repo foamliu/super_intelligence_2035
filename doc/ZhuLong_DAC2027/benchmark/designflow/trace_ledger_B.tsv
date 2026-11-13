@@ -1388,3 +1388,5 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794448818017_fppmi.messages.json	witterfu	hfeg0pkn005	372	spice_sim	case	EDA-Eval-DesignFlow-DeckConsistencyCheck-001	2026-11-13 09:51	
 1794459781454_dgo3h.messages.json					parked		2026-11-13 09:29	non-B mislabel: PDK HL_hspice model library usage guide + example deck gen, hspice kw=355 from reading .lib files not sim run, no run_approved_command, list_allowed_files+read_files+editor only (r481 peek)
 1794488730591_9lfys	e0024852	hfeg0pkn003	205	spice_sim	case	EDA-Eval-DesignFlow-PexStimulusBuild-001	2026-11-13 10:35	
+1794481033621_h3vpf	joeyl	hfeg0pkn004	131	spice_sim	case	EDA-Eval-DesignFlow-CmlDividerSweepTbGen-001	2026-11-13 11:46	
+1794466529228_2397x	e0015056	hfeg0pkn002	610	spice_sim	claimed		2026-11-13 11:47	
