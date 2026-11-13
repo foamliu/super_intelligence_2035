@@ -1,0 +1,25 @@
+{
+  "round": "rerun-cline-quota",
+  "generated": "2026-11-14 07:20:16",
+  "source_jobs": "/tmp/tb21_glm53_jobs/cline-patched",
+  "rule": "best_reward<1.0 AND all trials stdout contains 额度已用完/Token额度",
+  "summary": {
+    "unique_tasks": 1,
+    "trials_total": 0,
+    "passed": 0,
+    "failed": 1,
+    "quota_lost_tasks": 1,
+    "non_quota_failed_tasks": 0,
+    "pass_rate": 0.0
+  },
+  "rerun_tasks": [
+    "train-fasttext"
+  ],
+  "detail": {
+    "train-fasttext": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    }
+  }
+}
