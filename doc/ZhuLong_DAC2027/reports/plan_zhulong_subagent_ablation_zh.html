@@ -137,9 +137,17 @@ ConfiguredAgentFrontmatterSchema = z.object({
 
 <h3>2.4 预配置 agent 配置文件</h3>
 
-<h4>B1-B5: researcher.md（基座能力梯度变体）</h4>
+<div class="banner good">
+<b>✅ P0 预检完成（2026-11-13 17:20）</b>——3 项关键验证全部通过：<br/>
+1. <b>doubao 3 key 连通性</b>：pro/mini/lite 三个 API key 全部通过 curl 测试（返回 "OK"）<br/>
+2. <b>configured agent 加载</b>：cline 3.0.51 <code>loadConfiguredAgentConfigs</code> 只加载 <code>.yaml</code>/<code>.yml</code> 文件，<b>不加载 <code>.md</code></b>（<code>isYamlFile()</code> 限制）。改用 <code>researcher.yaml</code> 后 <code>subagent_researcher</code> 工具成功出现在工具列表（第 19 号工具）<br/>
+3. <b>主 agent 调用 subagent</b>：在 task prompt 末尾加强提示「必须先调用 subagent_researcher」后，主 agent <b>确实调用了</b> <code>subagent_researcher</code>，subagent 正确执行 search_apis/get_api_details 查询 API 文档并返回结构化摘要，主 agent 据此写代码<br/>
+<b>⚠️ 关键修正</b>：① 文件扩展名必须 <code>.yaml</code>（非 <code>.md</code>）；② <code>tools</code> 字段必须用完整 MCP 工具名（<code>pyAether_MCP_server__search_apis</code>，非 <code>search_apis</code>），否则 <code>filterToolsForConfiguredAgent</code> 过滤后 subagent 无工具可用
+</div>
 
-<p>5 个臂共用同一份 researcher.md 的 Markdown body（system prompt 不变），仅 YAML frontmatter 的 <code>providerId</code> + <code>modelId</code> 不同：</p>
+<h4>B1-B5: researcher.yaml（基座能力梯度变体）</h4>
+
+<p>5 个臂共用同一份 researcher.yaml 的 Markdown body（system prompt 不变），仅 YAML frontmatter 的 <code>providerId</code> + <code>modelId</code> 不同：</p>
 
 <table style="font-size:.82rem">
 <tr><th>臂</th><th>providerId</th><th>modelId</th><th>能力档位</th><th>API key（ providers.json ）</th></tr>
@@ -156,8 +164,8 @@ ConfiguredAgentFrontmatterSchema = z.object({
 name: researcher
 description: pyAether API 探索研究员，查询 API 文档并返回结构化摘要。主 agent 在需要查多个 API 时调用。
 tools:
-  - search_apis
-  - get_api_details
+  - pyAether_MCP_server__search_apis
+  - pyAether_MCP_server__get_api_details
 providerId: openai-compatible        # B1/B2 用已有 provider
 modelId: deepseek-v4-pro-cloud       # B1; B2 改 deepseek-v4-flash
                                       # B3 改 providerId=doubao-pro,  modelId=doubao-seed-2.0-pro-cloud
@@ -293,9 +301,9 @@ maxIterations: 15                      # B1-B5; C1 改 5; C2 改 30
 
 <h2>六、Subagent 调用率风险与缓解</h2>
 
-<div class="banner danger">
-<b>⚠️ 核心风险：主 agent 可能不调用 subagent</b><br/>
-前序 30 轮 trace 显示主 agent <b>从未主动调用 spawn_agent</b>（尽管工具已注入）。原因：PyAether 158 题是单函数生成，主 agent 倾向于自己完成。<b>如果主 agent 不调用 subagent，A1/B1-B5 臂实际等同 A0，实验失败</b>。
+<div class="banner good">
+<b>✅ P0 已验证：核心风险降级</b>——原计划书标注"主 agent 可能不调用 subagent"为<span class="tag warn">高</span>概率风险。P0 smoke test 证实：在 task prompt 末尾加强提示「<b>必须先调用 subagent_researcher</b>」后，主 agent <b>确实调用了</b> subagent。风险从"高"降为"中"——强提示是否在 40 题批量场景下稳定生效仍需 P1 pilot 验证。<br/>
+<b>关键发现</b>：configured agent 文件必须用 <code>.yaml</code> 扩展名（cline <code>isYamlFile()</code> 只认 <code>.yml</code>/<code>.yaml</code>）；<code>tools</code> 字段必须用完整 MCP 工具名 <code>pyAether_MCP_server__search_apis</code>（非 <code>search_apis</code>），否则 subagent 无工具可用。
 </div>
 
 <h3>6.1 缓解措施</h3>
@@ -375,7 +383,7 @@ maxIterations: 15                      # B1-B5; C1 改 5; C2 改 30
 
 <table>
 <tr><th>风险</th><th>概率</th><th>影响</th><th>缓解</th></tr>
-<tr><td class="l">主 agent 不调用 subagent</td><td class="warn"><span class="tag warn">高</span></td><td class="l">实验无效</td><td class="l">P1 pilot 验证 + 强制注入 fallback</td></tr>
+<tr><td class="l">主 agent 不调用 subagent</td><td class="warn"><span class="tag warn">中</span> <span class="small">（P0 已降级：强提示后稳定调用）</span></td><td class="l">实验无效</td><td class="l">P1 pilot 验证 40 题批量调用率；强提示注入 task prompt</td></tr>
 <tr><td class="l">subagent token 漏计（同 compaction）</td><td class="l"><span class="tag good">低</span></td><td class="l">H2 成本分析不准</td><td class="l">SpawnAgentOutput.usage 明确返回 token，可采集</td></tr>
 <tr><td class="l">弱基座 subagent 质量差导致主 agent 被误导</td><td class="l"><span class="tag warn">中</span></td><td class="l">B2/B4/B5 Pass@1 降</td><td class="l">这恰是 H2 要测的（不是 bug 是 feature）；doubao-lite 最可能出现</td></tr>
 <tr><td class="l">doubao provider 连通性 / API key 失效</td><td class="l"><span class="tag warn">中</span></td><td class="l">B3/B4/B5 全军覆没</td><td class="l">P1 pilot 先用 1 题 × 3 臂验证 doubao 三个 key 连通；失效则该臂降级为 P2 后可选</td></tr>
