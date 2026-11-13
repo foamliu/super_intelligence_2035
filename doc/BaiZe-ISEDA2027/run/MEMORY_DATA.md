@@ -11,6 +11,8 @@ WAITING: 0
 
 > 🟢 **✅ stack-v3-train 2TB下载全DONE（唤醒1422,03:56）**：batch7 FINISH@03:46:06→4600parquet/1,987,930,402,327B(1.85TiB)/0inc；2TB ROI复盘:token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值→停止下载进入过滤+分词。
 
+> 🟢 **✅ stack-v3-train 分词全DONE（唤醒1478,2026-11-13 10:1x）**：主跑4600/4600shard完成(47068s/173M docs/245.8B tok/279ERR);rerun 40shard完成(4492s/3.4B tok/0ERR);二次rerun确认40shard全SKIP(已有tokenized);tokenized输出926GB@/nas_train/.../tokenized/HuggingFaceCode/stack-v3-train/;无tokenize进程在跑→分词完全结束。
+
 > 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
 > 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
 
@@ -30,19 +32,19 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        stack-v3-train 分词阶段（EDA分析DONE+分词16workers后台跑中~89%+251ERR待rerun） → WAITING=0
-已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB);✅stack-v3-train调研DONE;✅batch1-7全DONE(1,987,930,402,327B/4600parquet/0inc);✅2TB ROI复盘;✅vision图文对调研报告;✅EDA脚本价值分析(Phase A全扫+Phase B抽样+报告43KB/8节/0外链/DATA_MAPPING§H.13,commit a6370ce60);✅orphan .bin清理(35个);✅tokenize脚本修复v3(新增Fallback2:dotted column paths full-read);✅tokenize脚本修复v4(修复--shard-list索引映射bug)
-当前动作:     分词后台运行中(PID891129 stackv3_tokenize.py --workers 16,nice19/ionice3,旧版脚本在内存)→4114/4600shard(89.4%,ETA~1.4h,3863OK+251ERR);输出3893.json+4087.bin+831GB+~220B tok;rerun脚本stackv3_rerun_failed.sh就绪(自动检测missing .json→用修复后脚本v4重跑)
-下一步:       ①等分词主跑完成(~1.4h);②用stackv3_rerun_failed.sh重跑failed shards(--workers 4,用修复后脚本v4+Fallback1/2);③全部4600shard完成后→清理orphan .bin+MANIFEST+INDEX.tsv+DATA_MAPPING.md+report_data_mapping_zh.html更新;④commit+push;⑤EDA分析已交付,待用户验收
-阻塞:         无(分词后台跑中,WAITING=0短睡巡检)
-ERROR_COUNT:  12
-未完成指令:   有(stack-v3-train分词后台运行中)→WAITING=0
+PHASE:        stack-v3-train 全量下载到/nas_user阶段（分词DONE+rsync 2TB→/nas_user后台跑中+全量下载待启动） → WAITING=0
+已完成:       ✅分词全DONE(4600/4600主跑+40/40 rerun,0 ERR,926GB tokenized,245.8B+3.4B=249.2B tok);✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅orphan .bin清理
+当前动作:     rsync 2TB /nas_inference→/nas_user 后台跑中(PID3750250,~200MB/s,~15GB已传/1.85TiB,ETA~2.5h);下载脚本stackv3_full_download.sh就绪
+下一步:       ①等rsync完成;②校验字节一致(find=4600+du -sb一致);③删/nas_inference源;④启动hf download全量剩余~13.9TB(nice19/max-workers2/proxy);⑤更新DATA_MAPPING+MEMORY;⑥commit
+阻塞:         无(rsync后台跑中,WAITING=0短睡巡检)
+ERROR_COUNT:  0
+未完成指令:   有(stack-v3-train全量下载+rsync进行中)→WAITING=0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [11-13 16:0x] 唤醒1477：分词巡检→①git fetch origin(代理,0ahead/0behind,运维无新令);②research日报11-13(06:12)已阅:无新增data建议;③分词后台跑中(PID891129,16workers,nice19/ionice3,旧版脚本在内存)→4114/4600shard(89.4%,3863OK+251ERR~5.5%,ETA~1.4h);输出3893.json+4087.bin(194orphan)+831GB+~220.5B tok(from log sum);④134 unique failed shards在/tmp/stackv3_failed_shard_ids.txt;⑤脚本v4已修复在磁盘,运行中进程用旧版→rerun时用新版;⑥rerun脚本stackv3_rerun_failed.sh就绪;⑦df:/nas_train 181T/88%(27T余);⑧体积MEMORY~38.5KB/TASK~39.7KB均≤40KB→更新进度快照→commit data stackv3:→WAITING=0继续巡检
+> [11-13 10:1x] 唤醒1478：分词DONE确认+全量下载启动→①分词主跑DONE(4600/4600,47068s,245.8B tok,279ERR)+rerun DONE(40/40,0ERR,3.4B tok)→无tokenize进程在跑;②用户令11-13执行中:Step1 rsync 2TB /nas_inference→/nas_user后台启动(PID3750250,~200MB/s,ETA~2.5h);③下载脚本stackv3_full_download.sh就绪(nice19/max-workers2/proxy/hf download自动跳已存在);④df:/nas_user 113T/56T/57T(50%)≥5T OK;/nas_inference 45T/19T/27T(42%);⑤tokenized输出926GB确认;⑥体积MEMORY~36KB/TASK~39.7KB均≤40KB→更新进度快照→commit data stackv3-full:→WAITING=0继续巡检
 > 📦 唤醒1474-1476 原文已归档 → daily-memories-data/2026-11-13.md（分词巡检73.8%→89.4%,共3轮,详见日文件）
 > [11-13 08:0x] 唤醒1473：分词巡检+脚本v4修复→①分词后台跑中(PID891129/891130,16workers,nice19/ionice3,旧版脚本在内存)→2875/4600shard(62.5%,2686OK+189ERR~6.6%,ETA~4.9h);输出2726.json+2856.bin+582GB;②发现关键bug:stackv3_tokenize.py的--shard-list选项给failed shard分配0,1,2...索引→rerun时会覆盖成功shard的.bin/.json;③修复v4:--shard-list时从full sorted parquet list查找原始索引→输出文件名正确匹配(stackv3_s{original_idx:05d});④py_compile验证SYNTAX OK;⑤stackv3_rerun_failed.sh已就绪(检查missing .json→写shard-list→调用修复后脚本);⑥df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑦体积MEMORY~35KB/TASK~39KB均≤40KB→commit data stackv3:→WAITING=0继续巡检
 > [11-12 23:5x] 唤醒1468：EDA脚本价值分析交付→①git pull(Already up to date);②Phase A已完成:4600shard全扫/97M repos/1.28B files/5.86TiB/vendor1.3%/4963s/1.1s/shard;③Phase B已完成:100shard分层抽样/9类×400/seed=42→V1=18(Tcl8+Perl8+SVRF2)/V2=149(Tcl-maybe)/V3=3033;④Tcl唯一显著EDA命中(39.2%),SKILL在HF分类未检出(pool=0),PyAether/SPICE/Makeflow/Verilog-SV/EDA-path-kw均0命中;⑤改进gen_report_stackv3_eda_zh.py:修正REPORT_DIR(../../reports→doc/BaiZe-ISEDA2027/reports/)+§5新增外推文件数/字节/token估算+Top-20路径模式+§7新增具体路径模式表(P0-P3优先级+token估算+SFT样本量+designflow造题表)+§8新增污染隔离实测(3200文件搜索eda-eval/pyaether/zhulong/designflow/baize→命中0);⑥报告落reports/report_data_stackv3_eda_script_value_zh.html(43781B/8节+附录/0 script/0 href/0 src);⑦DATA_MAPPING.md§H.13新增(Phase A/B表+价值分层表+关键发现+污染隔离);⑧分词后台继续(PID891130,975/4600,ETA~10h;rerun_failed PID754800,39/40)→commit data eda:→WAITING=0
