@@ -1,0 +1,26 @@
+[incr-eval 13:22:13] === incr_eval R2368 start ===
+[incr-eval 13:22:13] cline: 0 new instances, skip
+[incr-eval 13:22:13] codex: 0 new instances, skip
+[incr-eval 13:22:13] opencode: 0 new instances, skip
+
+=== claude-code R2368 ===
+new instances: 4 ['django__django-13810', 'django__django-13820', 'django__django-13821', 'django__django-13837']
+[incr-eval 13:22:13] claude-code: merged 4 new patches -> predictions_claude-code_new_R2368.json
+[incr-eval 13:22:13] claude-code: EVAL 4 instances -> run_id=verified_full_glm53_claude-code_incr_R2368
+[incr-eval 13:22:47] claude-code: eval rc=0
+[incr-eval 13:22:47]   django__django-13810: RESOLVED
+[incr-eval 13:22:47]   django__django-13820: RESOLVED
+[incr-eval 13:22:47]   django__django-13821: RESOLVED
+[incr-eval 13:22:47]   django__django-13837: NO report.json -> infra
+[incr-eval 13:22:47] claude-code: cumulative n=321 resolved=263 failed=54 infra=4 -> eval_glm53_claude-code.json
+[incr-eval 13:22:47] pi: 0 new instances, skip
+[incr-eval 13:22:47] hermes: 0 new instances, sk[incr-eval 13:23:12] claude-code: eval rc=0
+[incr-eval 13:23:12]   django__django-13810: RESOLVED
+[incr-eval 13:23:12]   django__django-13820: RESOLVED
+[incr-eval 13:23:12]   django__django-13821: RESOLVED
+[incr-eval 13:23:12]   django__django-13837: RESOLVED
+[incr-eval 13:23:12] claude-code: cumulative n=325 resolved=267 failed=54 infra=4 -> eval_glm53_claude-code.json
+[incr-eval 13:23:12] pi: 0 new instances, skip
+[incr-eval 13:23:12] hermes: 0 new instances, skip
+[incr-eval 13:23:12] deepseek: 0 new instances, skip
+[incr-eval 13:23:12] === incr_eval R2368 done: 6 instances, +5resolved +1failed +0infra ===
