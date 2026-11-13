@@ -9981,3 +9981,29 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（平台化使此分支概率上升）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。
 3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
 
+
+## §R439 — wake439 (2026-11-14 02:26) — 5-run eval RUNNING 健康监控（纯监控 wake，eval 全自治，无人工动作）
+
+### A. 实测
+
+- 时间 02:26:44；autofire eval chain `PID2322797` 存活（etime≈7503s，ppid=2322795）；eval run1 `PID2354141`（etime≈4711s，ppid=2322797）@01:08:13 起 ~78min。
+- GPU：`nvidia-smi` GPU0-3=root SGLang(44-45GB,0%util);GPU4=base serve 39246MiB;GPU5=3MiB(空闲);GPU6=step105-final serve 39246MiB;GPU7=R2 serve 39246MiB/**100%util**(eval 正在跑)。
+- 3 并发 serve 健康：`curl /v1/models` 8098=`minicpm5-2b` / 8096=`minicpm5-2b-sft-v39-final` / 8095=`minicpm5-2b-grpo-R2-step200` 全 200。
+- run1 进度（`/home/app.e0031982/eda_code_eval/2026_1114_010813`）：`stats/` counters `success=33`/`failure=2`/`timeout=7`/`total_time=28363` = **42/158 已完成**；`.task_queue` 158→108 行（较 wake438 的 114 行 +6，8 worker in-flight ≈8）；`code/` 53 文件。
+- 0 真实 infra 错误：`grep -rilE 'Traceback|CUDA out of memory|Killed|Segmentation' cli_data/*/data/logs/cline.log`=0；`/tmp/posttrain_r2_eval_chain.log` grep Traceback/OOM/Killed=0。failed/timeout=模型能力不足 task 失败（Exit Code:1 / 超时 2500s），非 infra 错误。
+- `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json` 尚未生成（eval 仍在 run1，5-run 串行 ~12h ETA~13:00）。
+
+### B. 健康判读
+
+- eval 链全自治健康：autofire chain + R2 serve + 8 cline worker + 3 并发 serve 全稳，GPU5 空闲避 4 并发 OOM（wake433 mitigation 生效）。0 真实 traceback/OOM/Killed。run1 进度 +5/14min（wake438→439：37→42），速率健康。
+- 本轮=纯监控，无人工动作：未编辑任何运行中脚本，未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链。kill_gpu_serve child-PID bug 待 chain 空闲时修（不编辑运行中脚本）。
+
+### C. 红线
+
+- §2/§5.3 冻结协议 eval 链复用既有 `baize_posttrain_5run_eval.sh`（未改）；§5.2 anti-cheat hook 逐字一致。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### D. 下一步
+
+1. 5-run eval ~13:00 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci。
+2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（平台化使此分支概率上升）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。
+3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
