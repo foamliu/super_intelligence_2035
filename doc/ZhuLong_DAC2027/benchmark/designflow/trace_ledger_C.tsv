@@ -406,7 +406,7 @@
 1791967362296_kxqt7	yzwang	hfeg0pkn001	177	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleTimeRank-001	2026-11-08 15:06	
 1793685353350_ydezg	leozhao	hfeg0plg36	117	physical_verify	case	EDA-Eval-DesignFlow-WlAdjacentPairParse-001	2026-11-08 15:52	
 1793017242561_zdwid.messages.json	ziyuny	hfeg0pkn005	141	physical_verify	case	EDA-Eval-DesignFlow-SvrfPvrsRuleTranslate-001	2026-11-08 15:54	
-1793607379592_t4gfl	joyc	hfeg0pkn005	270	physical_verify	case	EDA-Eval-DesignFlow-SaqpIntAngleEqSplit-001	2026-11-08 16:27	
+1793607379592_t4gfl	joyc	hfeg0pkn005	270	physical_verify	case	EDA-Eval-DesignFlow-SaqpIntAngleEqSplit-001	2026-11-14 04:02	r543 unpeeked NFS-access-failed: home /home/joyc inconsistent across 10.129.2.10/10.129.35.69 (ls showed files then test-f MISS); archive profile drc:1839;calibre:1030;pyAether suggests DRC deck task, retry next round
 1793776902021_xvnac	laryu	hfeg0pkn001	139	physical_verify	case	EDA-Eval-DesignFlow-VssPunchRuleGen-001	2026-11-08 17:05	
 1791963569790_794ce	lipingy	hfeg0pkn003	179	physical_verify	case	EDA-Eval-DesignFlow-RectAspectRuleCheck-001	2026-11-08 17:52	
 1793167986392_7bqnr	oshen	hfeg0plg36	125	pg_layout	parked		2026-11-08 18:31	env-recon: user asks '启动aether吗' how-to question, not a提出需求 design task; gold=prose guidance not runnable deliverable, violates §4.2; oshen NEW user but no seed; parked r247 (r246 judged non-seed but only claimed)
@@ -555,7 +555,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792480534403_xgfip	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-handoff
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-empty
 1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked		2026-11-10 13:42	completed-non-EDA-vim-NERDtree-troubleshoot
-1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked		2026-11-10 01:48	r298 REJECT: status=failed exit_code=1 (A rule4 no accepted gold), verilog:140 mixing
+1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked		2026-11-14 04:01	r543 reject Q&A/setup: U#1=禁用virtuoso layout鼠标拖动器件功能cdsenv=config howto, not produce-task
 1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked		2026-11-10 02:20	r299: how-to Q&A (pcell instance array), idle, prose gold, §4.2/4.3 fail
 1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked		2026-11-10 02:20	r299: failed, wrong-shard web-dev (HTML UI export for PV platform), calibre kw from HTML content
 1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked		2026-11-10 02:20	r299: cancelled, trivial prompt=你好, A-rule2 fail
@@ -799,3 +799,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1786535933950_lj2gw	e0014566	hfeg0plg58	395	layout_virtuoso	case	EDA-Eval-DesignFlow-RscalcLabel-001	2026-11-14 02:23	
 1794389800331_qvnvw	xxchen	10.129.35.69	427	layout_aether	case	EDA-Eval-DesignFlow-LabelFlattenTop-001	2026-11-14 02:51	
 1794396010329_k7jjm.messages.json	xxchen	hfeg0pkn001	322	physical_verify	case	EDA-Eval-DesignFlow-ExcludeRegionRowLayout-001	2026-11-14 03:26	
+1794448098712_cs1zr	e0047695	hfeg0pkn003	298	physical_verify	parked		2026-11-14 04:01	r543 reject run-existing: U#1=帮我检查drc不关注chip=run calibre DRC check report, not produce-task
