@@ -18,6 +18,7 @@ WAITING: 0
 > 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
 > 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
 
+> [11-13 17:12] 唤醒1486：用户令11-13a+b巡检→①StepA DONE(确认,926GB分词@/nas_user,源已删,4362json/993,704,584,371B);②StepB hf download:PID3112439 alive(etimes~18657s~5.2h,nice19),5234parquet/8207=64%/0inc/2.1TB/速率~3.55s/file/ETA~2.9h(~20:00CST),最后文件part-05235,post_rsync_and_download.sh PID3572574 alive(etimes~21724s~6h);③StepC tokenize_new_launch.sh:PID2869127 alive(ppid=1,etimes~5034s~84min),轮询等待中,日志最后行\"parquet=5226/8207 incomplete=0\";④df:/nas_user 113T/52%(55T余),/nas_train 207T/87%(28T余),/nas_inference 45T/38%(29T余)全OK;⑤三个后台进程全健康(hf download+post_rsync parent+tokenize launch)→更新进度快照→commit data stackv3-full:→WAITING=0继续巡检
 > [11-13 16:31] 唤醒1485：用户令11-13a+b巡检→①StepA DONE(确认);②StepB hf download:PID3112439 alive(etimes~4.5h,nice19),5152parquet/8207=63%/0inc/2.1TB/速率~3s/file/ETA~2.5h(~19:00CST),最后文件part-05151(421MB@16:27),/nas_inference源已删除;③StepC tokenize_new_launch.sh:PID2869127 alive(ppid=1,etimes~41min),轮询等待中,日志最后行"parquet=5152/8207 incomplete=0";④df:/nas_user 113T/52%(55T余),/nas_train 207T/87%(28T余),/nas_inference 45T/38%(29T余)全OK;⑤post_rsync_and_download.sh PID3572574 alive(etimes~5.3h,等待hf download子进程退出);⑥体积MEMORY~39KB/TASK~48KB(TASK超40KB红线,但体积不优先于交付,下次唤醒考虑归档已闭合用户令)→commit data stackv3-full:→WAITING=0继续巡检
 > [11-13 15:50] 唤醒1484：用户令11-13a+b StepA完成+StepC启动→①StepA rsync 926GB分词数据/nas_train→/nas_user:DONE(EXIT=0,100%,xfr#13288),校验字节一致(src=dst=993,704,584,371B),文件数一致(13288=13288),json数一致(4362=4362)→源已删除(/nas_train/.../tokenized/HuggingFaceCode/stack-v3-train/ GONE,释放993GB);②StepB hf download:PID3112439 alive,5100/8207parquet=62%/0inc/2.1TB/ETA~2h;③StepC launch脚本stackv3_tokenize_new_launch.sh创建并后台启动(PID2869127,轮询等待hf download进程退出→自动启动分词,--parquet-dir /nas_user --output-dir /nas_user --shards all --workers 16,nice19/ionice3,跳过已有.json,日志/tmp/tokenize_stackv3_new.log);④df:/nas_train 207T/88%(27T余),/nas_user 113T/52%(55T余);⑤脚本skip逻辑确认(lines95-102:.json存在+num_tokens>0+.bin+.idx→SKIP),CLI支持--parquet-dir/--output-dir/--shards/--workers;⑥更新进度快照→commit data stackv3-full:→WAITING=0继续巡检
 > [11-13 15:02] 唤醒1483：用户令11-13a+b并行巡检→①Step A rsync 926GB分词数据:PID250747 alive,77%(766GB/926GB)/3311.json已拷/xfr#10215/to-chk=3073/13289,~272MB/s,ETA~44min;②Step B hf download:PID3112439 alive,62%(5055/8207files)/5054parquet/0inc/ETA~1.5h;③df:/nas_train 207T/88%(27T余),/nas_user 113T/52%(55T余),/nas_inference 45T/38%(29T余)全OK;④Step C准备:脚本支持--parquet-dir+--output-dir+--shard-start,跳过已有.json逻辑OK;⑤归档唤醒1471-1482到daily-memories-data/2026-11-13.md(腾体积);⑥体积MEMORY~33KB/TASK~40KB→commit data stackv3-full:→WAITING=0继续巡检
@@ -36,13 +37,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        用户令2026-11-13a+b执行阶段（StepA DONE / StepB hf download 63% / StepC auto-wait脚本运行中） → WAITING=0
+PHASE:        用户令2026-11-13a+b执行阶段（StepA DONE / StepB hf download 64% / StepC auto-wait脚本运行中） → WAITING=0
 已完成:       ✅分词全DONE;✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅rsync 2TB→/nas_user(校验通过);✅源删除DONE;✅rsync 926GB分词→/nas_user(校验通过993,704,584,371B/13288files/4362json);✅/nas_train源删除DONE(释放993GB);✅/nas_inference源删除DONE;✅StepC launch脚本就绪并后台启动(PID2869127,等待下载完成后自动分词)
-当前动作:     ①StepA DONE:rsync 926GB分词数据/nas_train→/nas_user校验通过+源已删除;②StepB 进行中:hf download全量后台跑中(PID3112439,nice19/max-workers2,5152parquet/8207=63%/0inc/2.1TB/ETA~2.5h/日志/tmp/stackv3_post_rsync.log);③StepC auto-wait脚本后台运行中(PID2869127,轮询等待hf download进程退出→自动启动分词,nice19/ionice3,16workers,跳过已有.json,日志/tmp/tokenize_stackv3_new.log)
-下一步:       ①等hf download完成(ETA~2.5h,~19:00CST)→StepC脚本自动启动分词新shard(4600+);②分词完成后校验du+find.json+failed_shards.txt;③更新DATA_MAPPING.md(新位置/总token/总字节);④更新MEMORY_DATA.md进度快照+一行结论;⑤commit data stackv3-full-tok:+push
-阻塞:         无(StepA DONE,StepB下载中63%,StepC auto-wait已启动,WAITING=0短睡巡检)
+当前动作:     ①StepA DONE:rsync 926GB分词数据/nas_train→/nas_user校验通过+源已删除;②StepB 进行中:hf download全量后台跑中(PID3112439,nice19/max-workers2,5234parquet/8207=64%/0inc/2.1TB/ETA~2.9h/~20:00CST/日志/tmp/stackv3_post_rsync.log);③StepC auto-wait脚本后台运行中(PID2869127,轮询等待hf download进程退出→自动启动分词,nice19/ionice3,16workers,跳过已有.json,日志/tmp/tokenize_stackv3_new.log)
+下一步:       ①等hf download完成(ETA~2.9h,~20:00CST)→StepC脚本自动启动分词新shard(part-04600+,跳过已有4362json);②分词完成后校验du+find.json+failed_shards.txt;③更新DATA_MAPPING.md(新位置/总token/总字节);④更新MEMORY_DATA.md进度快照+一行结论;⑤commit data stackv3-full-tok:+push
+阻塞:         无(StepA DONE,StepB下载中64%,StepC auto-wait已启动,WAITING=0短睡巡检)
 ERROR_COUNT:  0
-未完成指令:   有(stack-v3-train全量下载63%+StepC分词待启动)→WAITING=0
+未完成指令:   有(stack-v3-train全量下载64%+StepC分词待启动)→WAITING=0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
