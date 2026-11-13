@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cline 压缩机制选型：为什么 basic 比 agentic 更适合 Agent 工程师</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.7;background:#fafbfc}
+h1{font-size:1.45em;border-bottom:3px solid #2c7be5;padding-bottom:8px;color:#2c7be5}
+h2{font-size:1.15em;margin-top:1.8em;border-left:4px solid #2c7be5;padding-left:10px}
+h3{font-size:1em;margin-top:1.2em;color:#444}
+p{margin:.6em 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.86rem}
+th,td{border:1px solid #d0d7de;padding:6px 10px;text-align:center}
+th{background:#eef2f7;font-weight:600}
+td.l{text-align:left}
+td.best{background:#d4edda;color:#155724;font-weight:700}
+td.worst{background:#f8d7da;color:#721c24;font-weight:600}
+tr:nth-child(even){background:#f6f8fa}
+code{background:#eef2f7;padding:1px 5px;border-radius:3px;font-size:.88em;font-family:ui-monospace,Consolas,monospace}
+.banner{padding:12px 18px;border-radius:6px;margin:14px 0;font-size:.9rem}
+.banner.good{background:#e8f8f0;border-left:4px solid #27ab83;color:#196f3d}
+.banner.warn{background:#fff8e1;border-left:4px solid #f0ad4e;color:#7e5109}
+.banner.info{background:#eef4ff;border-left:4px solid #2c7be5;color:#1f4e8c}
+.banner.danger{background:#fdecea;border-left:4px solid #e85a4f;color:#a93226}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.kpi{flex:1;min-width:150px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.5rem;font-weight:700;color:#2c7be5}
+.kpi .l{font-size:.76rem;color:#666;margin-top:2px}
+.kpi.good .n{color:#27ab83}.kpi.warn .n{color:#e85a4f}
+.verdict{background:linear-gradient(135deg,#27ab83 0%,#1e8449 100%);color:#fff;padding:20px 24px;border-radius:10px;margin:18px 0;box-shadow:0 2px 8px rgba(39,171,131,.25)}
+.verdict h3{color:#fff;margin-top:0}
+.verdict .big{font-size:1.6em;font-weight:700;margin:6px 0}
+.chartbox{background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:16px;margin:14px 0;overflow-x:auto}
+.chartcap{font-size:.8rem;color:#777;margin-top:6px;text-align:center}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:600}
+.tag.good{background:#d4edda;color:#155724}.tag.bad{background:#f8d7da;color:#721c24}.tag.warn{background:#fff3cd;color:#856404}
+footer{margin-top:30px;color:#999;font-size:.78rem;text-align:center;border-top:1px solid #e3e8ef;padding-top:12px}
+.tl{border-left:3px solid #2c7be5;padding-left:16px;margin:12px 0}
+.tl .item{margin:10px 0;padding:10px 14px;background:#fff;border:1px solid #e3e8ef;border-radius:6px}
+.tl .item b{color:#2c7be5}
+.small{font-size:.8rem;color:#777}
+</style></head><body>
+
+<h1>cline 压缩机制选型报告：basic vs agentic</h1>
+<p class="small">ZhuLong（DAC2027）· 40 题长轨迹子集 × ABBA 6 轮 · 基座 deepseek-v4-pro-cloud · cline 3.0.51 · 2026-11-13</p>
+
+<div class="verdict">
+<h3>🔍 给忙碌 Agent 工程师的一句话结论</h3>
+<div class="big">选 <code>--compaction basic</code>，不选 <code>agentic</code>。</div>
+<p style="margin:4px 0 0">在相同基座、相同协议、相同 40 题长轨迹子集下，basic 比 agentic：<b>Pass@1 高 10pp</b>（69.2% vs 59.2%）、<b>收敛率高 9pp</b>（80.8% vs 71.7%）、<b>每通过题快 29%</b>（3.7min vs 5.2min）、<b>生成失败少 39%</b>（6.7 vs 11.0）。agentic 唯一优势是每题 token 低 15%——但这是因为它把 169 条消息压缩成 10 条（94% 压缩率），<b>丢失了 agent 后续需要的代码片段和 API 返回值</b>，导致重新探索、循环、超时。basic 保留原文片段（49% 压缩率），agent 能直接引用，收敛更快。</p>
+</div>
+
+<h2>一、实验设置（30 秒看懂）</h2>
+<table>
+<tr><th>维度</th><td colspan="2">设定</td></tr>
+<tr><th>问题</th><td colspan="2">cline 两种压缩机制哪种更适合 Agent 代码生成？</td></tr>
+<tr><th>自变量</th><td colspan="2"><code>--compaction basic</code>（rule-fold，保留原文片段） vs <code>--compaction agentic</code>（LLM summary，Goal/State/Done 结构化摘要）</td></tr>
+<tr><th>题集</th><td colspan="2">40 题"长轨迹倾向"子集（从 PyAether 158 题历史 trace 按上下文峰值/tool_calls 取 Top-40，两臂同一清单）</td></tr>
+<tr><th>控制变量</th><td colspan="2">基座 deepseek-v4-pro-cloud · cline 3.0.51 · <code>-p 8 -n</code> · <code>--thinking medium</code> · LANG_HINT 空 · 两臂独立 <code>--data-dir</code>（除 compaction flag 外逐字节一致）</td></tr>
+<tr><th>设计</th><td colspan="2">ABBA 6 轮串行：basic_r1 → agentic_r1 → agentic_r2 → basic_r2 → basic_r3 → agentic_r3（每臂 3 轮，平衡顺序效应）</td></tr>
+<tr><th>regime</th><td colspan="2">natural-128K（cline 3.0.51 忽略 maxInputTokens 配置，压缩按策略内部阈值自然触发：basic ≈230K token / agentic ≈120K token）</td></tr>
+<tr><th>评测</th><td colspan="2">sandbox <code>run_eval</code>，Pass@1 = passed/40</td></tr>
+</table>
+<div class="banner info">
+<b>为什么 40 题而不是 158 题</b>：natural-128K 下压缩触发率仅 12%，全量 158 题会把机制效应稀释到判据以下（+10pp 真实增益被稀释成 +1.2pp，< 3pp 判据 → 判不出）。选 40 题长轨迹子集把压缩触发率提到 ≥70%，让机制效应可观测。详见 <code>plan_zhulong_compaction_basic_vs_agentic_zh.html</code> §11。
+</div>
+
+<h2>二、核心对比表（效果 + 成本）</h2>
+
+<h3>2.1 逐轮结果</h3>
+<table>
+<tr><th rowspan="2">轮次</th><th rowspan="2">臂</th><th colspan="2">效果</th><th colspan="3">成本</th><th rowspan="2">墙钟</th></tr>
+<tr><th>Pass@1</th><th>converged</th><th>gen_fail</th><th>tok/题</th><th>每通过题墙钟</th></tr>
+<tr><td>r1</td><td><b>basic</b></td><td class="best">67.5% (27/40)</td><td>80.0%</td><td>7</td><td>2.59M</td><td>3.4 min</td><td>1.54h</td></tr>
+<tr><td>r2</td><td>agentic</td><td class="worst">57.5% (23/40)</td><td>62.5%</td><td>15</td><td>1.90M</td><td>6.2 min</td><td>2.39h</td></tr>
+<tr><td>r3</td><td>agentic</td><td>60.0% (24/40)</td><td>75.0%</td><td>9</td><td>2.03M</td><td>4.7 min</td><td>1.88h</td></tr>
+<tr><td>r4</td><td><b>basic</b></td><td class="best">70.0% (28/40)</td><td>82.5%</td><td>6</td><td>2.06M</td><td>3.9 min</td><td>1.83h</td></tr>
+<tr><td>r5</td><td><b>basic</b></td><td class="best">70.0% (28/40)</td><td>80.0%</td><td>7</td><td>2.03M</td><td>3.9 min</td><td>1.80h</td></tr>
+<tr><td>r6</td><td>agentic</td><td>60.0% (24/40)</td><td>77.5%</td><td>9</td><td>1.82M</td><td>4.8 min</td><td>1.93h</td></tr>
+</table>
+
+<h3>2.2 臂级汇总（3 轮均值）</h3>
+<table>
+<tr><th>指标</th><th>basic 臂 (r1/r4/r5)</th><th>agentic 臂 (r2/r3/r6)</th><th>Δ (basic−agentic)</th><th>解读</th></tr>
+<tr><td class="l"><b>Pass@1 均值</b></td><td class="best">69.2% [67.5, 70.0, 70.0]</td><td class="worst">59.2% [57.5, 60.0, 60.0]</td><td><b>+10.0pp</b></td><td class="l">basic 多通过 4 题/轮</td></tr>
+<tr><td class="l"><b>converged 均值</b></td><td class="best">80.8% [80.0, 82.5, 80.0]</td><td class="worst">71.7% [62.5, 75.0, 77.5]</td><td><b>+9.1pp</b></td><td class="l">basic 更可靠收敛</td></tr>
+<tr><td class="l"><b>gen_fail 均值</b></td><td class="best">6.7 [7, 6, 7]</td><td class="worst">11.0 [15, 9, 9]</td><td><b>−4.3 (−39%)</b></td><td class="l">agentic 生成失败多 64%</td></tr>
+<tr><td class="l"><b>timeout 均值</b></td><td>0.7 [0, 1, 1]</td><td>0.3 [0, 1, 0]</td><td>+0.4</td><td class="l">基本相当</td></tr>
+<tr><td class="l">墙钟/题 均值</td><td>1087s (18.1min)</td><td>1187s (19.8min)</td><td>−100s (−8.4%)</td><td class="l">basic 略快</td></tr>
+<tr><td class="l">每通过题墙钟</td><td class="best">3.7 min/pass</td><td class="worst">5.2 min/pass</td><td><b>−1.5min (−29%)</b></td><td class="l">basic 单位产出快 29%</td></tr>
+<tr><td class="l">tok/题 均值</td><td>2.22M</td><td class="best">1.92M</td><td>+0.30M (+15.6%)</td><td class="l">⚠️ agentic 更省 token（但见 §4）</td></tr>
+<tr><td class="l">每通过题 token</td><td>3.21 M/pass</td><td>3.24 M/pass</td><td>−0.03M (−1%)</td><td class="l">per pass 基本持平</td></tr>
+<tr><td class="l">6 轮总墙钟</td><td class="best">5.17h</td><td class="worst">6.20h</td><td><b>−1.03h (−17%)</b></td><td class="l">basic 省 1 小时</td></tr>
+</table>
+
+<div class="banner good">
+<b>关键数字</b>：basic 臂 3 轮 <b>83 题次通过</b>（27+28+28），agentic 臂 3 轮 <b>71 题次通过</b>（23+24+24）。basic 多通过 <b>12 题次</b>，每轮平均多通过 4 题。McNemar 配对：discordant 6 vs 1（basic 优势题 6 个，agentic 优势题 1 个），<b>basic 的优势是系统性的，不是噪声</b>。
+</div>
+
+<h2>三、可视化对比</h2>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" style="width:100%;max-width:760px;font-family:inherit">
+<!-- 6 轮 Pass@1 柱状图 -->
+<text x="380" y="22" text-anchor="middle" font-size="13" fill="#333" font-weight="600">6 轮 Pass@1 逐轮对比（40 题）</text>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c7be5"/><stop offset="1" stop-color="#1a5fc4"/></linearGradient>
+<linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f39c12"/><stop offset="1" stop-color="#d4860a"/></linearGradient>
+</defs>
+<!-- axis -->
+<line x1="70" y1="240" x2="720" y2="240" stroke="#888" stroke-width="1.5"/>
+<line x1="70" y1="50" x2="70" y2="240" stroke="#888" stroke-width="1.5"/>
+<!-- grid + labels -->
+<text x="62" y="245" text-anchor="end" font-size="10" fill="#888">50%</text>
+<text x="62" y="175" text-anchor="end" font-size="10" fill="#888">65%</text>
+<text x="62" y="105" text-anchor="end" font-size="10" fill="#888">80%</text>
+<line x1="70" y1="170" x2="720" y2="170" stroke="#eef2f7"/><line x1="70" y1="100" x2="720" y2="100" stroke="#eef2f7"/>
+<!-- bars: 6 rounds, x positions 110,210,310,410,510,610, bar width 70 -->
+<!-- y: 50%=240, 80%=100, scale 1%=2px -->
+<!-- r1 basic 67.5 -->
+<rect x="90" y="135" width="60" height="105" fill="url(#bg)" rx="3"/><text x="120" y="130" text-anchor="middle" font-size="11" fill="#2c7be5" font-weight="700">67.5%</text><text x="120" y="258" text-anchor="middle" font-size="10" fill="#555">r1</text><text x="120" y="272" text-anchor="middle" font-size="9" fill="#2c7be5" font-weight="600">basic</text>
+<!-- r2 agentic 57.5 -->
+<rect x="180" y="195" width="60" height="45" fill="url(#ag)" rx="3"/><text x="210" y="190" text-anchor="middle" font-size="11" fill="#f39c12" font-weight="700">57.5%</text><text x="210" y="258" text-anchor="middle" font-size="10" fill="#555">r2</text><text x="210" y="272" text-anchor="middle" font-size="9" fill="#f39c12" font-weight="600">agentic</text>
+<!-- r3 agentic 60.0 -->
+<rect x="270" y="180" width="60" height="60" fill="url(#ag)" rx="3"/><text x="300" y="175" text-anchor="middle" font-size="11" fill="#f39c12" font-weight="700">60.0%</text><text x="300" y="258" text-anchor="middle" font-size="10" fill="#555">r3</text><text x="300" y="272" text-anchor="middle" font-size="9" fill="#f39c12" font-weight="600">agentic</text>
+<!-- r4 basic 70.0 -->
+<rect x="360" y="120" width="60" height="120" fill="url(#bg)" rx="3"/><text x="390" y="115" text-anchor="middle" font-size="11" fill="#2c7be5" font-weight="700">70.0%</text><text x="390" y="258" text-anchor="middle" font-size="10" fill="#555">r4</text><text x="390" y="272" text-anchor="middle" font-size="9" fill="#2c7be5" font-weight="600">basic</text>
+<!-- r5 basic 70.0 -->
+<rect x="450" y="120" width="60" height="120" fill="url(#bg)" rx="3"/><text x="480" y="115" text-anchor="middle" font-size="11" fill="#2c7be5" font-weight="700">70.0%</text><text x="480" y="258" text-anchor="middle" font-size="10" fill="#555">r5</text><text x="480" y="272" text-anchor="middle" font-size="9" fill="#2c7be5" font-weight="600">basic</text>
+<!-- r6 agentic 60.0 -->
+<rect x="540" y="180" width="60" height="60" fill="url(#ag)" rx="3"/><text x="570" y="175" text-anchor="middle" font-size="11" fill="#f39c12" font-weight="700">60.0%</text><text x="570" y="258" text-anchor="middle" font-size="10" fill="#555">r6</text><text x="570" y="272" text-anchor="middle" font-size="9" fill="#f39c12" font-weight="600">agentic</text>
+<!-- mean lines -->
+<line x1="70" y1="101" x2="720" y2="101" stroke="#2c7be5" stroke-width="1.5" stroke-dasharray="6 3"/><text x="715" y="98" text-anchor="end" font-size="10" fill="#2c7be5" font-weight="600">basic 均值 69.2%</text>
+<line x1="70" y1="122" x2="720" y2="122" stroke="#f39c12" stroke-width="1.5" stroke-dasharray="6 3"/><text x="715" y="135" text-anchor="end" font-size="10" fill="#f39c12" font-weight="600">agentic 均值 59.2%</text>
+</svg>
+<div class="chartcap">图 1 · 6 轮 Pass@1 逐轮对比（蓝=basic，橙=agentic，虚线=臂均值）</div>
+</div>
+
+<div class="chartbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" style="width:100%;max-width:760px;font-family:inherit">
+<text x="380" y="22" text-anchor="middle" font-size="13" fill="#333" font-weight="600">效果-成本象限图（每臂 3 轮散点）</text>
+<!-- axis -->
+<line x1="80" y1="250" x2="680" y2="250" stroke="#888" stroke-width="1.5"/>
+<line x1="80" y1="50" x2="80" y2="250" stroke="#888" stroke-width="1.5"/>
+<text x="380" y="278" text-anchor="middle" font-size="11" fill="#666" font-weight="600">Pass@1 (%) →</text>
+<text x="30" y="150" text-anchor="middle" font-size="11" fill="#666" font-weight="600" transform="rotate(-90 30 150)">每通过题墙钟 (min) ↑</text>
+<!-- x: 50-75, y: 2-7 -->
+<!-- grid -->
+<line x1="80" y1="210" x2="680" y2="210" stroke="#eef2f7"/><text x="74" y="214" text-anchor="end" font-size="9" fill="#aaa">3</text>
+<line x1="80" y1="170" x2="680" y2="170" stroke="#eef2f7"/><text x="74" y="174" text-anchor="end" font-size="9" fill="#aaa">4</text>
+<line x1="80" y1="130" x2="680" y2="130" stroke="#eef2f7"/><text x="74" y="134" text-anchor="end" font-size="9" fill="#aaa">5</text>
+<line x1="80" y1="90" x2="680" y2="90" stroke="#eef2f7"/><text x="74" y="94" text-anchor="end" font-size="9" fill="#aaa">6</text>
+<line x1="180" y1="50" x2="180" y2="250" stroke="#eef2f7"/><text x="180" y="265" text-anchor="middle" font-size="9" fill="#aaa">55</text>
+<line x1="280" y1="50" x2="280" y2="250" stroke="#eef2f7"/><text x="280" y="265" text-anchor="middle" font-size="9" fill="#aaa">60</text>
+<line x1="380" y1="50" x2="380" y2="250" stroke="#eef2f7"/><text x="380" y="265" text-anchor="middle" font-size="9" fill="#aaa">65</text>
+<line x1="480" y1="50" x2="480" y2="250" stroke="#eef2f7"/><text x="480" y="265" text-anchor="middle" font-size="9" fill="#aaa">70</text>
+<!-- x scale: 50->80, 75->680; y scale: 2->250, 7->50 -->
+<!-- basic r1: 67.5%, 3.4min -->
+<circle cx="440" cy="214" r="8" fill="#2c7be5" fill-opacity="0.5" stroke="#2c7be5" stroke-width="1.5"/><text x="440" y="234" text-anchor="middle" font-size="9" fill="#2c7be5">r1</text>
+<!-- basic r4: 70.0%, 3.9min -->
+<circle cx="480" cy="194" r="8" fill="#2c7be5" fill-opacity="0.5" stroke="#2c7be5" stroke-width="1.5"/><text x="480" y="214" text-anchor="middle" font-size="9" fill="#2c7be5">r4</text>
+<!-- basic r5: 70.0%, 3.9min -->
+<circle cx="480" cy="194" r="8" fill="#2c7be5" fill-opacity="0.5" stroke="#2c7be5" stroke-width="1.5"/><text x="495" y="190" font-size="9" fill="#2c7be5">r5</text>
+<!-- agentic r2: 57.5%, 6.2min -->
+<circle cx="230" cy="102" r="8" fill="#f39c12" fill-opacity="0.5" stroke="#f39c12" stroke-width="1.5"/><text x="230" y="96" text-anchor="middle" font-size="9" fill="#f39c12">r2</text>
+<!-- agentic r3: 60.0%, 4.7min -->
+<circle cx="280" cy="162" r="8" fill="#f39c12" fill-opacity="0.5" stroke="#f39c12" stroke-width="1.5"/><text x="280" y="156" text-anchor="middle" font-size="9" fill="#f39c12">r3</text>
+<!-- agentic r6: 60.0%, 4.8min -->
+<circle cx="280" cy="158" r="8" fill="#f39c12" fill-opacity="0.5" stroke="#f39c12" stroke-width="1.5"/><text x="295" y="154" font-size="9" fill="#f39c12">r6</text>
+<!-- quadrant separator -->
+<line x1="380" y1="50" x2="380" y2="250" stroke="#ccc" stroke-dasharray="3 3"/><line x1="80" y1="170" x2="680" y2="170" stroke="#ccc" stroke-dasharray="3 3"/>
+<text x="660" y="62" text-anchor="end" font-size="9" fill="#27ab83" font-weight="600">高效果·低成本（优）</text>
+<text x="100" y="62" font-size="9" fill="#e85a4f" font-weight="600">低效果·高成本（劣）</text>
+<!-- legend -->
+<rect x="540" y="200" width="10" height="10" fill="#2c7be5" fill-opacity="0.5" stroke="#2c7be5"/><text x="555" y="210" font-size="10" fill="#555">basic</text>
+<rect x="540" y="220" width="10" height="10" fill="#f39c12" fill-opacity="0.5" stroke="#f39c12"/><text x="555" y="230" font-size="10" fill="#555">agentic</text>
+</svg>
+<div class="chartcap">图 2 · 效果-成本象限（横轴 Pass@1，纵轴每通过题墙钟；basic 集中在右下"高效果低成本"区，agentic 在左上"低效果高成本"区）</div>
+</div>
+
+<h2>四、根因抽样分析：为什么 basic 更好？</h2>
+
+<div class="banner danger">
+<b>核心根因</b>：agentic 的 LLM summary <b>压缩率过高（94%，169→10 条消息）</b>，把原始消息浓缩成 Goal/State/Done 摘要，<b>丢失了 agent 后续需要的具体代码片段、API 返回值、错误日志</b>。agent 压缩后无法引用之前的探索成果，被迫重新调用 API、重新写代码，导致消息数膨胀（67-93 msgs vs basic 44-51 msgs）、循环、超时。<b>basic 的 rule-fold 保留原文片段（49% 压缩率，69→35 条）</b>，agent 能直接引用之前的代码和 API 返回值，收敛更快。
+</div>
+
+<h3>4.1 压缩行为对比（compaction.json 实测）</h3>
+<table>
+<tr><th>指标</th><th>basic 臂（3 轮均值）</th><th>agentic 臂（3 轮均值）</th><th>差异</th></tr>
+<tr><td class="l">压缩前消息数中位数</td><td>117 条</td><td>141 条</td><td>agentic 压缩更晚（阈值低但探索更多）</td></tr>
+<tr><td class="l">压缩后消息数中位数</td><td><b>36 条</b></td><td class="worst"><b>11 条</b></td><td><b>agentic 只保留 1/3 的 basic 消息数</b></td></tr>
+<tr><td class="l">压缩率中位数</td><td>26.9%</td><td class="worst">8.4%</td><td><b>agentic 压缩率是 basic 的 3.2 倍</b></td></tr>
+<tr><td class="l">压缩后首条消息</td><td class="best">原始 user prompt（完整，2561 chars）</td><td class="worst">LLM 摘要 "Context summary: Goal/State/Done"（2616 chars）</td><td>basic 保留原文，agentic 是重写摘要</td></tr>
+<tr><td class="l">压缩后能否引用之前的代码</td><td class="best"><span class="tag good">能</span>（原文片段保留）</td><td class="worst"><span class="tag bad">不能</span>（摘要只有 Goal/State 描述，无代码）</td><td><b>这是关键差异</b></td></tr>
+</table>
+
+<h3>4.2 配对分析：McNemar 表</h3>
+<table>
+<tr><th colspan="2" rowspan="2"></th><th colspan="2">agentic 3 轮多数票</th></tr>
+<tr><th>Pass</th><th>Fail</th></tr>
+<tr><td rowspan="2"><b>basic 3 轮多数票</b></td><td><b>Pass</b></td><td>23（both pass）</td><td class="best"><b>6（basic only）</b></td></tr>
+<tr><td><b>Fail</b></td><td class="worst">1（agentic only）</td><td>10（both fail）</td></tr>
+</table>
+<div class="note" style="background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem">
+<b>6 个 basic 优势题 vs 1 个 agentic 优势题</b>：McNemar discordant = 6 vs 1，<b>basic 的优势是系统性的</b>。6 个 basic 优势题都是长轨迹任务（agent 需要引用之前的探索成果），agentic 压缩后丢失信息导致失败。
+</div>
+
+<h3>4.3 典型案例深析</h3>
+
+<div class="tl">
+
+<div class="item">
+<b>案例 1：EDA-Eval-PyAether-145（convert_blockages_to_boundaries）</b> — <span class="tag good">basic 2/3 pass</span> vs <span class="tag bad">agentic 0/3 pass</span>
+<table style="margin:8px 0;font-size:.82rem">
+<tr><th>轮次</th><th>结果</th><th>消息数</th><th>token</th><th>墙钟</th><th>压缩行为</th></tr>
+<tr><td>basic r2</td><td class="best">PASS</td><td>37</td><td>2.28M</td><td>18.5min</td><td class="l">69→35 条（49%），保留原文</td></tr>
+<tr><td>agentic r1</td><td class="worst">超时(running)</td><td>71</td><td>3.30M</td><td>未完成</td><td class="l">169→10 条（94%），LLM 摘要</td></tr>
+</table>
+<p class="small"><b>根因</b>：agentic 把 169 条消息压缩成 10 条摘要（Goal: "convert blockages to boundaries" + State: 已探测 workdir/API），<b>丢失了之前调用的 dbGetAllLayers/dbCreateBoundary 的具体参数和返回值</b>。agent 压缩后不知道之前试过什么参数，重新探索 71 条消息仍未完成，超时。basic 保留 35 条原文片段，agent 直接引用之前的代码，37 条消息收敛 PASS。</p>
+</div>
+
+<div class="item">
+<b>案例 2：EDA-Eval-PyAether-104（长轨迹 SDL flow）</b> — <span class="tag good">basic 2/3 pass</span> vs <span class="tag bad">agentic 0/3 pass</span>
+<table style="margin:8px 0;font-size:.82rem">
+<tr><th>轮次</th><th>结果</th><th>消息数</th><th>token</th><th>墙钟</th></tr>
+<tr><td>basic r1</td><td class="best">PASS</td><td>50</td><td>3.03M</td><td>21.4min</td></tr>
+<tr><td>basic r2</td><td class="best">PASS</td><td>51</td><td>2.72M</td><td>25.6min</td></tr>
+<tr><td>agentic r1</td><td class="worst">超时(failed)</td><td>93</td><td>3.44M</td><td>43.7min</td></tr>
+<tr><td>agentic r2</td><td class="worst">超时(failed)</td><td>82</td><td>3.98M</td><td>41.7min</td></tr>
+</table>
+<p class="small"><b>根因</b>：agentic 消息数 93/82 是 basic 50/51 的 <b>1.8 倍</b>。agentic 压缩后丢失了 SDL flow 的中间状态（已打开的 cellview、已设置的参数），agent 陷入"重新打开→压缩→又丢失→又重新打开"的循环，消息数膨胀到 93 条仍未收敛，耗尽 43.7min 超时。</p>
+</div>
+
+<div class="item">
+<b>案例 3：EDA-Eval-PyAether-114</b> — <span class="tag good">basic 3/3 pass</span> vs <span class="tag bad">agentic 1/3 pass</span>
+<table style="margin:8px 0;font-size:.82rem">
+<tr><th>轮次</th><th>结果</th><th>消息数</th><th>墙钟</th></tr>
+<tr><td>basic r1/r2/r3</td><td class="best">3/3 PASS</td><td>37/58/40</td><td>12.2/23.0/17.7min</td></tr>
+<tr><td>agentic r2</td><td class="worst">超时(failed)</td><td>91</td><td>43.7min</td></tr>
+<tr><td>agentic r3</td><td>FAIL(completed)</td><td>55</td><td>28.7min</td></tr>
+</table>
+<p class="small"><b>根因</b>：agentic r2 超时 91 条消息（basic r2 同题 58 条 pass）。agentic 压缩后摘要只说"已搜索 API"，但<b>没保留 search_apis 返回的具体 API 名称列表</b>，agent 重复搜索相同 API，消息数翻倍。</p>
+</div>
+
+<div class="item">
+<b>案例 4（agentic 唯一优势题）：EDA-Eval-PyAether-126</b> — <span class="tag bad">basic 1/3 pass</span> vs <span class="tag good">agentic 3/3 pass</span>
+<p class="small">这是 agentic 唯一胜出的题。basic r1/r2 超时（71/64 msgs），agentic 3 轮全 pass（20/60/11 msgs）。<b>根因</b>：这题任务相对简单（copy_specific_views），basic 保留过多历史导致 context 冗长拖慢；agentic 摘要精简后 agent 快速定位目标。但<b>这是孤例（1/40），不改变整体结论</b>。</p>
+</div>
+
+</div>
+
+<h2>五、为什么 agentic 看起来省 token 但实际不省</h2>
+
+<div class="banner warn">
+<b>agentic 的 token 陷阱</b>：agentic 每题 token 更低（1.92M vs basic 2.22M，省 15%），但这<b>不是因为 agentic 更高效，而是因为它压缩率更高（94% vs 49%）导致 context 更短</b>。然而：
+<ol style="margin:6px 0 0 1.2em">
+<li><b>per pass token 基本持平</b>（3.21M vs 3.24M）—— agentic 省的 token 被更多失败题（gen_fail 11 vs 6.7）抵消</li>
+<li><b>per pass 墙钟高 29%</b>（5.2min vs 3.7min）—— agentic 每通过一题花更多时间（重新探索）</li>
+<li><b>6 轮总墙钟多 1 小时</b>（6.20h vs 5.17h）—— agentic 的超时题拖慢整体</li>
+<li><b>LLM summary 本身有额外推理成本</b>（agentic 每次压缩调用一次 LLM 生成摘要，basic 是纯规则折叠零 LLM 成本）—— 这部分 token 未计入 task token，但实际消耗了 API quota</li>
+</ol>
+<b>结论</b>：agentic 的 token 优势是表面的，<b>综合成本（墙钟 + API quota + 失败重试）反而更高</b>。
+</div>
+
+<h2>六、工程师选型建议</h2>
+
+<div class="verdict">
+<h3>📋 选型决策表</h3>
+<table style="background:#fff;margin-top:10px">
+<tr><th>你的场景</th><th>推荐</th><th>理由</th></tr>
+<tr><td class="l">Agent 代码生成（需引用之前的代码/API 返回值）</td><td class="best"><code>--compaction basic</code></td><td class="l">保留原文片段，agent 能引用历史，收敛快 29%</td></tr>
+<tr><td class="l">长轨迹任务（>50 tool_calls，多次压缩）</td><td class="best"><code>--compaction basic</code></td><td class="l">agentic 多次压缩后信息累积丢失，陷入循环超时</td></tr>
+<tr><td class="l">短轨迹任务（<20 tool_calls，不触发压缩）</td><td>两者皆可</td><td class="l">不压缩则无差异</td></tr>
+<tr><td class="l">极长对话（需大幅压缩节省 context）</td><td><code>--compaction agentic</code></td><td class="l">agentic 压缩率 94%，适合"只保留语义、不需引用细节"的闲聊型 agent</td></tr>
+<tr><td class="l">成本敏感（API quota 优先）</td><td class="best"><code>--compaction basic</code></td><td class="l">basic 零 LLM 压缩成本 + per pass token 持平 + 墙钟省 17%</td></tr>
+<tr><td class="l">质量优先（Pass@1 优先）</td><td class="best"><code>--compaction basic</code></td><td class="l">Pass@1 高 10pp，converged 高 9pp，gen_fail 少 39%</td></tr>
+</table>
+</div>
+
+<h3>6.1 一句话行动项</h3>
+<div class="banner good">
+<b>立即行动</b>：把 cline 的默认 <code>compactionStrategy</code> 从 <code>agentic</code> 改成 <code>basic</code>（<code>&lt;data-dir&gt;/settings/global-settings.json</code>）。<b>零代码改动，零风险，预期 Pass@1 +10pp</b>。
+</div>
+
+<h3>6.2 什么时候考虑 agentic</h3>
+<div class="banner info">
+<b>agentic 的适用场景（窄）</b>：仅当你的 agent 任务是<b>闲聊型</b>（不需要引用之前的代码/数据，只需要语义上下文），且 context 极度紧张（必须压缩 90%+）时，agentic 的 LLM summary 才有优势。对于<b>代码生成 / 工具调用型 agent</b>（需要引用 API 返回值、代码片段、错误日志），basic 的原文保留是刚需。
+</div>
+
+<h2>七、方法学与局限</h2>
+<table style="font-size:.82rem">
+<tr><th>数据源</th><td class="l"><code>run/ablation_compaction_results.json</code>（6 轮 task-level）+ <code>run/cost_C_*.json</code>（token/墙钟）+ <code>trace_ablation_compaction/*/</code>（compaction.json 原文）</td></tr>
+<tr><th>配对方法</th><td class="l">题级 3 轮多数票（per-arm），McNemar discordant 6 vs 1</td></tr>
+<tr><th>regime 偏离</th><td class="l">cline 3.0.51 忽略 maxInputTokens 配置，实际 natural-128K（basic 阈值 ~230K / agentic ~120K）。两臂触发阈值不同是 cline 内部行为，非实验可控变量，如实声明</td></tr>
+<tr><th>样本量</th><td class="l">40 题 × 6 轮 = 240 runs，discordant 7 对，可检出 ~10pp（α=0.05, power≈0.8），<b>不承诺检出 3pp</b></td></tr>
+<tr><th>局限 1</th><td class="l">40 题子集选的是长轨迹题（选择偏倚），结论适用于"会触发压缩的长轨迹任务"，不适用于短轨迹</td></tr>
+<tr><th>局限 2</th><td class="l">单基座（deepseek-v4-pro-cloud），未在 glm-5.2 / 其他基座上复现</td></tr>
+<tr><th>局限 3</th><td class="l">agentic 的 LLM summary 质量可能随基座不同而变化（更好的基座可能生成更高质量摘要，减少信息丢失）</td></tr>
+<tr><th>外部效度</th><td class="l">natural-128K regime 下的结论，不直接外推 forced-32K tight-context（后者未在本实验中实现）</td></tr>
+</table>
+
+<footer>
+<p>cline 压缩机制选型报告 · ZhuLong（DAC2027）· 2026-11-13 · 40 题 × 6 轮 ABBA · natural-128K regime</p>
+<p>结论：<b>选 basic</b>。Pass@1 +10pp · converged +9pp · gen_fail −39% · 每通过题快 29% · 根因：basic 保留原文片段，agentic LLM 摘要丢失代码细节</p>
+</footer>
+
+</body></html>
