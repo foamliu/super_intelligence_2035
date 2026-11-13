@@ -70,10 +70,20 @@ json.dump(cfg, open('$PROVIDERS_JSON','w'), indent=2)
   cp "$run_dir/providers.json.bak" "$PROVIDERS_JSON"
   echo "[run $run_n] providers.json restored"
 
-  # 4. Find JSONL
+  # 4. Find JSONL (run_cline_script.sh creates its own timestamp-based batch dir,
+  #    ignoring the BATCH_ID env var — so we need multiple fallbacks)
   local jsonl="$HOME/eda_code_eval/completed_code_generation_${batch_id}.jsonl"
+  # fallback 1: try label_run prefix glob
   [ ! -f "$jsonl" ] && jsonl=$(ls -t "$HOME/eda_code_eval/completed_code_generation_${LABEL}_run${run_n}_"*.jsonl 2>/dev/null | head -1)
-  if [ -z "$jsonl" ]; then echo "[run $run_n] FATAL: no JSONL"; return 1; fi
+  # fallback 2: parse codegen.log for the "输出文件:" line (most reliable)
+  if [ ! -f "$jsonl" ]; then
+    jsonl=$(grep -oP '输出文件: \K\S+' "$run_dir/codegen.log" 2>/dev/null | head -1)
+  fi
+  # fallback 3: most recent completed_code_generation_*.jsonl (risky if overlapping runs, but last resort)
+  if [ ! -f "$jsonl" ]; then
+    jsonl=$(ls -t "$HOME/eda_code_eval/completed_code_generation_"*.jsonl 2>/dev/null | head -1)
+  fi
+  if [ -z "$jsonl" ] || [ ! -f "$jsonl" ]; then echo "[run $run_n] FATAL: no JSONL"; return 1; fi
   cp "$jsonl" "$run_dir/completed_code_generation.jsonl"
   echo "[run $run_n] JSONL: $jsonl"
 
