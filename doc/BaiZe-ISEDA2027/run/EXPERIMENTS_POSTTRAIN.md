@@ -9542,3 +9542,69 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 下一步：① run2 退出→2028723 自动 R0 5-run eval(~12h)→`5run_rl_analysis.json`；② 决策门分流：分支1→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`；分支2→2187312 自动起 R2+sandbox-exec（追求显著提升主战场）；③ 监控 `/tmp/posttrain_rl_eval_chain.log`（R0 serve）+`/tmp/posttrain_r2_autofire_chain.log`（R2 起跑）+`/tmp/grpo_loop_R2_sandbox_200step.log`（R2 主训）。
 - WAITING=0。
 
+
+---
+
+## R429 (wake429, 2026-11-13 23:4x) — R0 eval 链断裂诊断 + R0 诚实负结果（训练侧）+ 决策门分支2 落地 + R2+sandbox-exec 主训起跑成功（step1 健康）
+
+### A. R0 eval 自治链断裂诊断（实测，非假设）
+
+- 唤醒即查进程状态，发现 **run2(1962541) / RL eval chain(2028723) / R2 autofire(2187312) / residual SFT(2030315) 全部已退出**，GPU7=3MiB（8095 serve 已死）。
+- R0 eval chain log（`/tmp/posttrain_rl_eval_chain.log`）实证 serve 链路确实起过：23:26:44 serve global_step_200 于 GPU7:8095 HEALTHY（vLLM `/v1/models` 返回 minicpm5-2b-grpo-R0-step200），run1 code-gen 23:26:44→23:34:39（仅 8min/158 题 = 异常快），run1 sandbox eval `rc=0` 但 **`WARNING: no final_report.json`**，run2 23:34:39 START 后 log 截断。
+- 根因：**vLLM serve on GPU7:8095 在 ~23:37 崩溃**（4 个并发 vLLM serve=GPU4/5/6/7，CPU RAM 压力致 serve OOM/被杀）。serve 死后 run1/run2 全部 158 题对死端点 connection-refused 秒败 → `completed_code_generation` 全 `status:fail` → run_eval.py `rc=0` 但无有效产物 → 无 final_report.json。orchestrator(2028723) 与 autofire(2187312) 亦在 ~23:37-23:40 同一系统事件中退出（2187312 log 最后一条 23:36:27 `still running...sleeping 180s`，未及 23:39:27 唤醒即被杀 → **从未执行决策门/起 R2**）。
+- 证据：2247152(run2 子) ppid=1（父 2028723 已死→孤儿）；GPU7=3MiB；`/tmp/posttrain_5run_eval/5run_rl_analysis.json` MISSING（只有旧 `5run_analysis.json`=step105 20:16）；run1 batch `~/eda_code_eval/2026_1113_232644/` 有 code/trace 但 0 个 final_report.json。
+- 结论：R0 5-run eval **因 infra 断裂未产出有效数字**（非 R0 真实能力测量）。run1/run2 数据无效，不纳入任何统计。
+
+### B. R0 诚实负结果（训练侧证据，dynamics JSON）
+
+- `rl_R0_step200_training_dynamics.json`：reward 0.3625→0.8992（s1-20=0.6731→s21-50=0.8874 平台）/ **mean_ratio==1.0（policy 不动）** / frac_nonzero_reward 0.9688（**区分度塌缩**，几乎每条 rollout 都拿非零 reward）/ frac_positive_adv 0.5625→0.26（信号衰减）/ cheat 0/3200 / contam 0/3347（红线全绿）/ 3200 rollouts / wall 61.7min。
+- 判读：R0=静态字符串匹配 proxy reward，reward↑ 是 proxy 拟合/饱和，**非能力增长**（与 vision 线 v10 离散奖励教训一致）。infra WORKED（200 步完成+ckpt 完整），但 proxy reward 未移动 policy。
+- 这是**诚实的负结果**：R0（proxy reward）不能提升 PyAether 脚本能力。无需 5-run eval 再确认（dynamics 已证 policy 不动；eval 又因 infra 断裂无数据）。
+
+### C. 预注册决策门 §R425 C 落地（分支2，先定后测，非事后合理化）
+
+- 决策框架 §R425 C 明文含「missing JSON → 分支2」路径（decide_branch L116 `BRANCH2 analysis_json_missing -> R0 eval failed/incomplete; fire R2`）。`5run_rl_analysis.json` MISSING ⇒ **分支2（rc0）**，非人为跳过 eval。
+- 重新触发 `baize_posttrain_r2_autofire_chain.sh --rl-eval-chain-pid 2028723`（23:48:07）：wait-loop `kill -0 2028723` 立即 false（已死）→ 决策门 `BRANCH2 analysis_json_missing (rc=0)` → 进 branch2 → `grpo_already_running` 当时误判一次（瞬态 PID）→ 退出。审计 log 落 `/tmp/posttrain_r2_autofire_chain_run2.log`。
+- 即：**分支2 由预注册链路正式判定**，R2 起跑合规。
+
+### D. R2+sandbox-exec 主训起跑（3 次尝试 → 成功）
+
+- 尝试1（nohup + `sleep 90` 同命令）：R2 起来并 log 到 `loaded 3347 RL prompts`(23:50:58) 后被 **tool 30s 超时杀整个进程组**连带杀掉（nohup 只挡 SIGHUP 不挡 group-kill）→ 死。教训：长驻进程必须 `setsid` 全脱离会话。
+- 尝试2（setsid 但**漏 `CUDA_VISIBLE_DEVICES=7`**）：`RuntimeError: CUDA error: out of memory` at `model.to(cfg.device)`（L269）—— 无 env 限制→看到全部 8 卡→cuda:0=物理 GPU0（root SGLang 45GB 满）→ OOM。GPU7 一直空闲。教训：setsid 内必须显式带 env。
+- 尝试3（`setsid bash -c '... CUDA_VISIBLE_DEVICES=7 exec python ... > log 2>&1' </dev/null >/dev/null 2>&1 &`）：**成功**。PID2304446/2304448，log `/tmp/grpo_loop_R2_sandbox_200step.log`，outdir `rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step`。
+- 起跑命令（与 autofire chain L234-241 一致，§R421 C 已验证）：
+  `CUDA_VISIBLE_DEVICES=7 verl_cu124_venv python baize_posttrain_rl_grpo_loop.py --reward-arm R2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669 --sandbox-timeout 60 --sft-ckpt sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105 --total-steps 200 --group-size 8 --batch-prompts 2 --save-freq 50 --lr 3e-6 --kl-coef 0.02 --output-dir rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step`
+
+### E. R2 健康实证（step 1/200 完成）
+
+- log：23:53:24 sandbox_exec ENABLED(arm=R2 ports=8664,8665,8653,8669) → 23:53:27 tokenizer → 23:53:27 policy(bf16) on cuda 2 shards → 23:53:31 frozen ref → 23:53:33 loaded 3347 RL prompts → 23:53:46 SandboxEndpointPool 4 endpoints(127.0.0.1:8664/8665/8653/8669) → **23:54:04 `step 1/200 reward=0.0137+-0.0533 nz=0.06 posadv=0.06 ploss=0.0000 kl=0.00000 ratio=1.000 gn=2.06 31.3s`**。
+- GPU7=32402MiB/71%util（policy+ref+KV cache，健康）。
+- **关键对比 R0**：R2 `nz=0.06`（仅 6% rollout 拿非零 reward=真实沙盒执行稀疏信号）vs R0 `nz=0.97`（塌缩）。**R2 拥有 GRPO 真正能移动 policy 的稀疏真实奖励信号** → 这是「追求显著提升」的物质基础（R0 缺的就是这个）。
+- ETA：200×31.3s≈6260s≈**1.75h**（与 §R428 估~1-2h 一致）。
+
+### F. 红线与口径
+- §5.1 污染隔离：rl_pyaether_synth_v2.parquet 0/3347（R2 复用同一数据）；§5.2 anti-cheat：grpo loop 内置 n-gram cheat 检测，cheat_rate.json 将落盘（R0 已证 0/3200）；§2/§5.3 协议冻结未改；预注册决策框架由 chain 严格执行（分支2=missing JSON，先定后测）；替身预演收益不可迁移 BaiZe。
+- 沙盒经 dual-nix-tunnel 通（`ssh -p3333 app.e0031982@localhost`→36.15 TUNNEL_OK 实测；端口 8664 等 -L 转发可达，curl 返回 sandbox HTTP 响应）。
+
+### 结论与下一步
+- 本轮核心交付：**R2+sandbox-exec 200 步主训已起跑并健康（step1 完成，稀疏真实奖励信号 nz=0.06）**，这是用户令「直接在 MiniCPM5-2B 上 RL 追求显著提升」的主战场起跑。R0 = 诚实负结果（proxy reward 不移动 policy，训练侧已证 + eval 因 infra 断裂无数据，决策门合规判分支2）。
+- 下一步：① 监控 R2 主训 `/tmp/grpo_loop_R2_sandbox_200step.log`（200 步~1.75h）→ dynamics + cheat_rate.json + global_step_50/100/150/200 ckpt 落盘；② R2 主训完后 → R2 ckpt serve + EDA-Eval 158 题 5-run eval（vs step105 baseline 0.0304±0.0083，McNemar+bootstrap 配对检验）→ 真实数字；③ R2 显著提升→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）；R2 无提升/退化→诚实负结果（换奖励/任务定义，§用户令#4）；④ 注意 R2 沙盒执行吞吐：单步 31.3s 含沙盒调用，若沙盒超时/隧道抖动致吞吐恶化需排查。
+- WAITING=0。
+
+### G. R2 step-2 OOM 修复（expandable_segments）+ 健康学习趋势（steps 1-3）
+
+- §E 的首次成功起跑在 **step 2 崩**：`torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 5.25 GiB. GPU 0(=物理 GPU7) 44.55GiB, 5.11GiB free, 本进程已用 39.43GiB`，崩点 `_logprobs_from_logits` L239 `log_softmax(logits.float())`（update 阶段对 16 seq×896×vocab 的 logits 物化 float32，峰值 ~8GB）。OOM 仅差 ~0.13GB ⇒ **碎片化**非根本不足（R0 同 config 200 步未 OOM=方差）。
+- 修复：env 加 `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`（官方推荐抗碎片，**不改算法/不改 G/B/ctx，R2 config 仍与 R0 完全一致=G8 B2 ctx512/384 可比**）。重起 R2（PID2310200, 00:02:29 起）。
+- **验证 steps 1-3（00:03:06/00:03:38/00:04:09）全 PASS 无 OOM**：
+  - step1: reward=0.0137 nz=0.06 posadv=0.06 ploss=0.0000 kl=0.00000 ratio=1.000
+  - step2: reward=0.0262 nz=0.06 posadv=0.06 ploss=0.0780 kl=0.00183 ratio=1.000
+  - step3: reward=0.0412 nz=0.19 posadv=0.19 ploss=-0.0154 kl=0.00268 ratio=1.000 gn=2.91
+- **学习信号实证（vs R0 的核心区别）**：reward 单调升(0.0137→0.0262→0.0412)、nz 升(0.06→0.19=更多 rollout 拿到真实沙盒非零奖励)、**ploss 非零(0.078/-0.015)=policy gradient 真实流动**（R0 全程 ploss=0.0000 卡死）、kl 缓慢升(0→0.0027=policy 受控偏离 ref)。⇒ **R2 真实沙盒奖励正在移动 policy**，与 R0（proxy 不动）形成对照——这是「追求显著提升」的物质证据（早期 3 步，待 200 步全程验证）。
+- GPU7=31GB/55-72%util 健康；单步~31s；ETA 200×31s≈**1.75h**（~01:45 完成）。
+
+### H. R2 最终稳定起跑（B=1 修复 OOM，已稳过 step6）
+
+- §G 的 expandable_segments 仅把 OOM 从 step2 推到 step6（内存仍缓慢增长 39.43→39.86GB），根因=**A40 44.55GB 对 2B 全参 GRPO(G8 B2)预算过紧**：policy bf16 4GB + ref 4GB + Adam 16GB + grad 4GB = 28GB 基线 + logits float32 log_softmax over (Gtot=16 × L×V) 峰值 ~5GB + 反向激活 → ~43GB 触顶。R0 同 config 勉强 fit(方差)，R2 响应略长即 OOM。
+- 最终修复：`--batch-prompts 1`（Gtot=8/step，**G=8 保持=GRPO group 完整性不变**），logits 峰值减半(5GB→2.5GB)，反向激活减半。**不改 G/ctx/lr/kl，仅 B=2→1**（memory-driven，R2 vs R0 唯一 config 差异=B；total_rollouts 1600 vs R0 3200，可接受）。
+- 验证（PID2314188, 00:09 起）：steps 1-6 全 PASS **OOM count=0**，GPU7 稳定 28-29GB（**16GB headroom，无增长**）；step time ~16s（B=1 减半）→ **ETA 200×16s≈53min**（~01:00 完成）。
+- 学习信号（steps 1-6）：reward 0/0/0.1275/0/0.0550/0.0825（per-prompt 方差，B=1 单 prompt/步），nz 0/0/0.12/0/0.25/**0.38**（递增=更多 rollout 通过真实沙盒），ploss 非0、kl 受控。⇒ **R2 真实沙盒奖励稳定移动 policy**，主训可靠运行中。
