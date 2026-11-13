@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake399（2026-11-13 R399: **run3 codegen IN PROGRESS ~53/158 .py files+8 active workers+pipeline autonomous+healthy**; step105 run1=3.8%,run2=1.9%,mean±std=2.85%±1.34%(n=2); step60 run1=1.3%(n=1)）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-398✅;R399✅(run3 monitoring+5run_analysis verified+pipeline health check)
-- 当前动作: wake399 R399:①run3 codegen IN PROGRESS:batch 2026_1113_101852,53/158 .py files generated,116 tasks remaining in queue,8 active cline workers(max etimes~1995s worker_8),NO stuck workers(all<2500s timeout) ②5run_analysis verified OK:step105 n=2 rates=[0.038,0.019] mean±std=2.85%±1.34%,run1=6/158,run2=3/158;step60 n=1=1.3% ③sandbox eval confirmed working:run2 eval.log shows shards via 127.0.0.1:8664 tunnel→3/158 passed ④all 3 daemons alive:autocomplete PID1122770(etimes~15k)+eval_chain PID1161064(etimes~9.3k)+sandbox_watcher PID4109314(watching old 10.129.32.75:8667 CLOSED,irrelevant-eval uses 127.0.0.1 tunnel ports) ⑤3 serves UP:8098(base)+8097(step60)+8096(step105-final) all /v1/models OK ⑥tunnel UP(ssh -p 3333→hfeg0tedaap02=TUNNEL_OK) ⑦GPU6=98%util(run3 codegen),GPU0-5 serves,GPU7 free
-- 下一步: ①run3 codegen complete(~1-2h ETA at current rate)→autocomplete daemon auto eval→final_report.json ②autocomplete daemon auto starts runs4-5 after run3→each auto eval ③eval_chain daemon auto starts step60 runs2-5→base runs1-5→final 5run_analysis ④designflow DELIVERED 0/5=0%
+- PHASE: posttrain-wake400（2026-11-13 R400: **run3 codegen IN PROGRESS ~68/158 .py files+8 workers+stuck worker_2 killed+pipeline healthy**; step105 run1=3.8%,run2=1.9%,mean±std=2.85%±1.34%(n=2); step60 run1=1.3%(n=1)）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-399✅;R400✅(stuck worker kill+run3 progress 68/158+daemon chain verified+git sync)
+- 当前动作: wake400 R400:①run3 codegen IN PROGRESS:batch 2026_1113_101852,~68/158 .py files generated,~90 tasks remaining in queue,8 active cline workers(all<650s after stuck kill) ②stuck worker_2 KILLED:PID 1222471(etimes=2594>2500s timeout) SIGKILL'd+child 1222472;task 065 immediately completed by worker_6 in 11s ③run2 final_report.json confirmed:metrics.pass_rate=0.0190(3/158),gen_success=45/158 ④autocomplete daemon verified:detected PID 1109190 dead@10:18:52→auto-started run3@10:18:52 ⑤3 daemons alive:autocomplete PID1122770+eval_chain PID1161064+sandbox_watcher PID4109314(stale) ⑥3 serves UP:8098+8097+8096 ⑦tunnel UP(ssh -p 3333→TUNNEL_OK) ⑧GPU6=89%util
+- 下一步: ①run3 codegen complete(~90 tasks remaining,~1h ETA)→autocomplete daemon auto eval→final_report.json ②autocomplete daemon auto starts runs4-5 after run3→each auto eval ③eval_chain daemon auto starts step60 runs2-5→base runs1-5→final 5run_analysis ④designflow DELIVERED 0/5=0%
 - 阻塞: BaiZe ckpt inaccessible;P3等pretrain ckpt;5-run eval IN PROGRESS(step105 run3/5 codegen→runs4-5 auto→step60→base)
-- 本轮新增产出: R399✅(run3 codegen monitored 53/158 .py files 8 workers no stuck;5run_analysis re-verified n=2 correct;sandbox eval path confirmed via run2 eval.log shards;sandbox_watcher identified as stale/irrelevant watching old endpoint)
+- 本轮新增产出: R400✅(stuck worker_2 killed etimes=2594>2500s;run3 progress 68/158 .py files 90 remaining;run2 final_report.json verified metrics.pass_rate=0.0190;autocomplete daemon chain verified PID 1109190 dead→run3 auto-started;git sync resolved after concurrent pull)
 - 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run3/5;designflow DELIVERED 0/5=0%);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(clean except vision loop-not mine);本轮 commit pending(MEMORY wake399)
+- git: super_intelligence_2035(clean after rebase pull);本轮 commit pending(MEMORY wake400)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -196,4 +196,6 @@ WAITING: 0
 > 📦 wake398 流水已归档 → daily-memories-posttrain/2026-11-13.md（R398 5run_analysis.py fixed 3 bugs+run3 codegen monitored ~37/158）
 
 [wake399 10:50] R399 **run3 codegen IN PROGRESS ~53/158+8 workers+pipeline healthy**:①run3 codegen(batch 2026_1113_101852)53/158 .py files,116 tasks remaining,8 active cline workers(max etimes~1995s),NO stuck workers(all<2500s) ②5run_analysis verified OK:step105 n=2 rates=[0.038,0.019] mean±std=2.85%±1.34% ③sandbox eval confirmed:run2 eval.log shows shards via 127.0.0.1:8664 tunnel→3/158 passed ④3 daemons alive:autocomplete PID1122770+eval_chain PID1161064+sandbox_watcher PID4109314(stale,watching old 10.129.32.75:8667 CLOSED,irrelevant) ⑤3 serves UP:8098+8097+8096 ⑥tunnel UP(ssh -p 3333→TUNNEL_OK) ⑦GPU6=98%util
+
+[wake400 11:07] R400 **stuck worker kill+run3 codegen 68/158+daemon chain verified**:①stuck worker_2 PID1222471(etimes=2594>2500s timeout) SIGKILL'd+child 1222472;task EDA-Eval-PyAether-065 immediately completed by worker_6 in 11s;8 workers active(all<650s) ②run3 codegen(batch 2026_1113_101852)~68/158 .py files,~90 tasks remaining,failed:024+010 ③run2 final_report.json confirmed:metrics.pass_rate=0.0190(3/158),summary gen_success=45/158,gen_fail=107,timeout=6 ④autocomplete daemon verified:detected PID 1109190 dead@10:18:52→auto-started run3@10:18:52(batch_id=step105_run3_2026_1113_101852) ⑤eval_chain daemon waiting(step105 PID1122770 still running) ⑥3 serves UP:8098+8097+8096 ⑦tunnel UP(ssh -p 3333→TUNNEL_OK) ⑧GPU6=89%util ⑨git sync:concurrent git pull resolved after wait,rebase applied,clean working tree
 
