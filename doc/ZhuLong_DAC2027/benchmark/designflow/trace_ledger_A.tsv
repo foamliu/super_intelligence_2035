@@ -472,3 +472,4 @@
 1789708302199_on45q	bensonh	hfeg0plg104	49	digital	case	EDA-Eval-DesignFlow-NetlistSigNameRename-001	2026-11-14 00:57	
 1794395853966_tef8l	yinyus	hfeg0plg66	894	digital	parked		2026-11-14 01:34	cross-shard dup: C=NicapNetlistPivot-001(physical_verify, same pivot task) + D=NetlistCsvExtract-001(schematic_netlist, 4-token extract) already cover this session [11/13]; A claim 11/14 was mistaken (4-shard excl stale). DEBT cleared, no A synthesis.
 1792132881360_7oclp	simplec	10.129.2.11	10	pnr_signoff	case	EDA-Eval-DesignFlow-SpfRcSummaryGen-001	2026-11-14 02:14	
+1794554531094_eyiut	han1li	hfeg0pkn001	30	pnr_signoff	case	EDA-Eval-DesignFlow-SpfNetCapDiff-001	2026-11-14 03:12	
