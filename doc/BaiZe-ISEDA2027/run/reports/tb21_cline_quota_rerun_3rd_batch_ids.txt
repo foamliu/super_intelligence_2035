@@ -10,5 +10,3 @@ financial-document-processor
 fix-code-vulnerability
 fix-git
 fix-ocaml-gc
-caffe-cifar-10
-chess-best-move
