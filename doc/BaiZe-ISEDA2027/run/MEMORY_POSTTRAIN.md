@@ -65,7 +65,7 @@ WAITING: 0
 
 ## 运维问答（常驻）
 
-- Q: post-train 现在能起训练吗？→ A: **RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。但 🔴 **RL 全量训练 BLOCKED**：verl 0.4.0 GRPO **1-GPU hybrid 不可行**——colocated WorkerDict `__init__` 在 Ray 资源授予后、模型加载前死锁（register-center 握手，wchan=hrtimer_nanosleep，RSS 恒~682MB，GPU 显存恒 0），2 次复现（with/no-KL 同构→KL 非根因），raylet dump 证资源已分配→非调度死锁（详见 EXPERIMENTS §R410）。✅ **config-path bug 已修（R-launch-fix2）**：项目配置（sdpa）现真正加载（之前 8 次 smoke 误用 verl flash_attn2 默认）。解法=**≥2 GPU**（hybrid 2 bundle 可满足），待 L4 eval 释放 GPU4/5/6 之一。SFT（替身 v39）已完成；L4 eval 在跑。
+- Q: post-train 现在能起训练吗？→ A: **RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。但 🔴 **RL 起跑 BLOCKED on verl 0.4.0 框架**（非基座、非 GPU 数）：verl hybrid GRPO `list_named_actors()` 找不到已创建的 register_center 命名 actor→TaskRunner 与 WorkerDict 互等→init 握手死锁；**1-GPU(2x)+2-GPU+NCCL 接口修复三路均复现同一签名**（RSS 恒~682MB，GPU 显存恒 0，wchan=hrtimer_nanosleep，资源已分配→非调度死锁；详见 EXPERIMENTS §R410/§R411）。✅ 已修：config-path(R-launch-fix2)、torchrun 单驱动(R-launch-fix3)、NCCL 接口(R-launch-fix4，无效但保留)。❌ wake410「≥2 GPU 解法」已证伪（wake411 2-GPU 复现同一死锁）。**解法=换 RL 框架**（trl GRPO 单进程 / 自写 rollout-loop，脱离 verl Ray colocated；trl 未装需安装）——下一 wake 起做。GPU 现充足（GPU5/7 可用）。SFT（替身 v39）已完成；L4 eval 在跑（step105 run5 + step60/base 待 chain）。
 - Q: 用哪台机器？→ A: post-train 线在 `10.252.32.17`（8×A40，CUDA 12.4 max）。GPU0-3=root SGLang(不可动)；GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(本轮 RL smoke 用后已清理)。
 - Q: 评测怎么接入 BaiZe？→ A: vLLM/SGLang 暴露 OpenAI-compatible endpoint → `cline auth -p openai -k <KEY> -b <BASE_URL> -m <MODEL_ID>`，harness 不改。
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
