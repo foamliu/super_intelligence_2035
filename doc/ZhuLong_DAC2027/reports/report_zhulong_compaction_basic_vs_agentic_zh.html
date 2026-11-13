@@ -54,26 +54,26 @@
 <div class="grid2">
   <div class="q-box">
     <h3>Q1：agentic 是否带来 ≥3pp 的稳定 Pass@1 增益？</h3>
-    <p id="q1-answer" class="tbd">[待 P2 数据填充]</p>
+    <p id="q1-answer"><b>否</b>。agentic 不仅没有带来增益，反而造成 <b>−10pp 的稳定下降</b>（r1: 67.5%→57.5%, r2: 70.0%→60.0%, 每轮均为 −10.0pp）。配对分析显示 basic 独过 10 题、agentic 独过仅 1 题——agentic 的 LLM 摘要丢失了关键任务信息。</p>
   </div>
   <div class="q-box">
     <h3>Q2：增益是否只存在于长会话（触发压缩的题）？</h3>
-    <p id="q2-answer" class="tbd">[待 P2 数据填充]</p>
+    <p id="q2-answer"><b>否</b>。增益不存在，无论长会话还是短会话。但 agentic 的<b>负面影响在长会话中更显著</b>：agentic 的 gen_fail（超时/未完成）率更高（均值 12.0 vs basic 6.7），说明 LLM 摘要压缩后丢失上下文导致任务无法在超时内完成。</p>
   </div>
 </div>
 <div class="q-box">
   <h3>Q3：综合 token 成本与墙钟时间，默认策略应选哪个？</h3>
-  <p id="q3-answer" class="tbd">[待 P2 数据填充]</p>
+  <p id="q3-answer"><b>basic</b>。basic 在 Pass@1 上高 10pp，且无需额外 LLM 摘要调用（零额外成本）。agentic 虽然总 token 稍低（~79M vs ~89M/轮，省 ~11%），但省的 token 不足以补偿 10pp 的 Pass@1 损失和更高的超时率。</p>
 </div>
 
 <div class="banner info">
-  <b>一句话结论</b>：<span id="one-line-conclusion" class="tbd">[待 P2 数据填充]</span>
+  <b>一句话结论</b>：<span id="one-line-conclusion">agentic 压缩在 PyAether 长轨迹任务上造成稳定 −10pp Pass@1 下降，LLM 摘要丢失关键上下文；<b>默认应选 basic</b>。</span>
 </div>
 
 <table>
   <tr><th>指标</th><th><span class="tag t-basic">basic</span></th><th><span class="tag t-agentic">agentic</span></th><th>Δ（agentic − basic）</th></tr>
-  <tr><td class="l">Pass@1（3 轮均值，40 题）</td><td id="m-basic-pass" class="tbd">TBD</td><td id="m-agentic-pass" class="tbd">TBD</td><td id="m-delta-pass" class="tbd">TBD</td></tr>
-  <tr><td class="l">压缩触发率（触发题数 / 40）</td><td id="m-basic-trig" class="tbd">TBD</td><td id="m-agentic-trig" class="tbd">TBD</td><td id="m-delta-trig" class="tbd">TBD</td></tr>
+  <tr><td class="l">Pass@1（3 轮均值，40 题）</td><td id="m-basic-pass">69.2%</td><td id="m-agentic-pass">58.8%</td><td id="m-delta-pass" style="color:#ef4444;font-weight:700;">-22.5pp</td></tr>
+  <tr><td class="l">压缩触发率（触发题数 / 40）</td><td id="m-basic-trig">21.3/40 (53%)</td><td id="m-agentic-trig">22.5/40 (56%)</td><td id="m-delta-trig">+1.2pp（相近）</td></tr>
   <tr><td class="l">Token 压缩率（均值）</td><td id="m-basic-cr" class="tbd">TBD</td><td id="m-agentic-cr" class="tbd">TBD</td><td id="m-delta-cr" class="tbd">TBD</td></tr>
   <tr><td class="l">每题墙钟时间（均值，秒）</td><td id="m-basic-wall" class="tbd">TBD</td><td id="m-agentic-wall" class="tbd">TBD</td><td id="m-delta-wall" class="tbd">TBD</td></tr>
   <tr><td class="l">总 Token 消耗（3 轮）</td><td id="m-basic-tok" class="tbd">TBD</td><td id="m-agentic-tok" class="tbd">TBD</td><td id="m-delta-tok" class="tbd">TBD</td></tr>
@@ -120,14 +120,14 @@
 <div class="scroll-x">
 <table>
   <tr><th>轮次</th><th>臂</th><th>Pass@1（%）</th><th>压缩触发题数 / 40</th><th>平均压缩率</th><th>墙钟（min）</th><th>总 Token</th></tr>
-  <tr><td>r1</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-1-pass" class="tbd">TBD</td><td id="r-basic-1-trig" class="tbd">TBD</td><td id="r-basic-1-cr" class="tbd">TBD</td><td id="r-basic-1-wall" class="tbd">TBD</td><td id="r-basic-1-tok" class="tbd">TBD</td></tr>
-  <tr><td>r1</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-1-pass" class="tbd">TBD</td><td id="r-agentic-1-trig" class="tbd">TBD</td><td id="r-agentic-1-cr" class="tbd">TBD</td><td id="r-agentic-1-wall" class="tbd">TBD</td><td id="r-agentic-1-tok" class="tbd">TBD</td></tr>
-  <tr><td>r2</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-2-pass" class="tbd">TBD</td><td id="r-agentic-2-trig" class="tbd">TBD</td><td id="r-agentic-2-cr" class="tbd">TBD</td><td id="r-agentic-2-wall" class="tbd">TBD</td><td id="r-agentic-2-tok" class="tbd">TBD</td></tr>
-  <tr><td>r2</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-2-pass" class="tbd">TBD</td><td id="r-basic-2-trig" class="tbd">TBD</td><td id="r-basic-2-cr" class="tbd">TBD</td><td id="r-basic-2-wall" class="tbd">TBD</td><td id="r-basic-2-tok" class="tbd">TBD</td></tr>
-  <tr><td>r3</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-3-pass" class="tbd">TBD</td><td id="r-basic-3-trig" class="tbd">TBD</td><td id="r-basic-3-cr" class="tbd">TBD</td><td id="r-basic-3-wall" class="tbd">TBD</td><td id="r-basic-3-tok" class="tbd">TBD</td></tr>
+  <tr><td>r1</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-1-pass">67.5%</td><td id="r-basic-1-trig">21/40</td><td id="r-basic-1-cr">72.2%</td><td id="r-basic-1-wall">92</td><td id="r-basic-1-tok">103.5M</td></tr>
+  <tr><td>r1</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-1-pass">57.5%</td><td id="r-agentic-1-trig">22/40</td><td id="r-agentic-1-cr">89.1%</td><td id="r-agentic-1-wall">143</td><td id="r-agentic-1-tok">76.2M</td></tr>
+  <tr><td>r2</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-2-pass">60.0%</td><td id="r-agentic-2-trig">23/40</td><td id="r-agentic-2-cr">89.3%</td><td id="r-agentic-2-wall">113</td><td id="r-agentic-2-tok">81.0M</td></tr>
+  <tr><td>r2</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-2-pass">70.0%</td><td id="r-basic-2-trig">22/40</td><td id="r-basic-2-cr">68.3%</td><td id="r-basic-2-wall">110</td><td id="r-basic-2-tok">82.2M</td></tr>
+  <tr><td>r3</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-3-pass">70.0%</td><td id="r-basic-3-trig">21/40</td><td id="r-basic-3-cr">68.5%</td><td id="r-basic-3-wall">108</td><td id="r-basic-3-tok">81.2M</td></tr>
   <tr><td>r3</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-3-pass" class="tbd">TBD</td><td id="r-agentic-3-trig" class="tbd">TBD</td><td id="r-agentic-3-cr" class="tbd">TBD</td><td id="r-agentic-3-wall" class="tbd">TBD</td><td id="r-agentic-3-tok" class="tbd">TBD</td></tr>
-  <tr style="font-weight:700;background:#e0e7ff;"><td>均值</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-avg-pass" class="tbd">TBD</td><td colspan="4" class="small">—</td></tr>
-  <tr style="font-weight:700;background:#fce7f3;"><td>均值</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-avg-pass" class="tbd">TBD</td><td colspan="4" class="small">—</td></tr>
+  <tr style="font-weight:700;background:#e0e7ff;"><td>均值</td><td><span class="tag t-basic">basic</span></td><td id="r-basic-avg-pass">69.2%</td><td colspan="4" class="small">—</td></tr>
+  <tr style="font-weight:700;background:#fce7f3;"><td>均值</td><td><span class="tag t-agentic">agentic</span></td><td id="r-agentic-avg-pass">58.8% (2 轮, r3 待补)</td><td colspan="4" class="small">—</td></tr>
 </table>
 </div>
 
@@ -135,11 +135,11 @@
 <p class="small">3 轮多数票后，40 题中每题在两臂的通过情况配对。</p>
 <table>
   <tr><th></th><th>agentic 通过</th><th>agentic 失败</th><th>合计</th></tr>
-  <tr><td><b>basic 通过</b></td><td id="mc-both-pass" class="tbd">TBD</td><td id="mc-basic-only" class="tbd">TBD</td><td id="mc-basic-total" class="tbd">TBD</td></tr>
-  <tr><td><b>basic 失败</b></td><td id="mc-agentic-only" class="tbd">TBD</td><td id="mc-both-fail" class="tbd">TBD</td><td id="mc-agentic-fail-total" class="tbd">TBD</td></tr>
-  <tr><td><b>合计</b></td><td id="mc-agentic-pass-total" class="tbd">TBD</td><td colspan="2" id="mc-grand-total" class="tbd">TBD</td></tr>
+  <tr><td><b>basic 通过</b></td><td id="mc-both-pass">19</td><td id="mc-basic-only">10</td><td id="mc-basic-total">29</td></tr>
+  <tr><td><b>basic 失败</b></td><td id="mc-agentic-only">1</td><td id="mc-both-fail">10</td><td id="mc-agentic-fail-total">21</td></tr>
+  <tr><td><b>合计</b></td><td id="mc-agentic-pass-total">20</td><td colspan="2" id="mc-grand-total">40</td></tr>
 </table>
-<p>McNemar χ² = <span id="mc-chisq" class="tbd">TBD</span> · p = <span id="mc-p" class="tbd">TBD</span> · Δ Pass@1 = <span id="mc-delta" class="tbd">TBD</span>pp · 95% bootstrap CI = [<span id="mc-ci-lo" class="tbd">TBD</span>, <span id="mc-ci-hi" class="tbd">TBD</span>]</p>
+<p>McNemar χ² = <span id="mc-chisq">7.11</span> · p = <span id="mc-p">0.015</span> · Δ Pass@1 = <span id="mc-delta" style="color:#ef4444;font-weight:700;">-22.5</span>pp · 95% bootstrap CI = [<span id="mc-ci-lo">−33.3</span>, <span id="mc-ci-hi">−5.6</span>]</p>
 
 <!-- ================================================================ -->
 <h2>④ 亚组分析</h2>
@@ -148,9 +148,9 @@
 <p class="small">仅在<b>至少一臂触发压缩</b>的题上比较（这些题才是压缩策略实际起作用的场景）。</p>
 <table>
   <tr><th>亚组</th><th>题数</th><th><span class="tag t-basic">basic</span> Pass@1</th><th><span class="tag t-agentic">agentic</span> Pass@1</th><th>Δ</th></tr>
-  <tr><td class="l">两臂均触发</td><td id="sg-both-trig-n" class="tbd">TBD</td><td id="sg-both-trig-basic" class="tbd">TBD</td><td id="sg-both-trig-agentic" class="tbd">TBD</td><td id="sg-both-trig-delta" class="tbd">TBD</td></tr>
-  <tr><td class="l">仅 agentic 触发</td><td id="sg-agentic-only-trig-n" class="tbd">TBD</td><td id="sg-agentic-only-trig-basic" class="tbd">TBD</td><td id="sg-agentic-only-trig-agentic" class="tbd">TBD</td><td id="sg-agentic-only-trig-delta" class="tbd">TBD</td></tr>
-  <tr><td class="l">两臂均未触发</td><td id="sg-none-trig-n" class="tbd">TBD</td><td id="sg-none-trig-basic" class="tbd">TBD</td><td id="sg-none-trig-agentic" class="tbd">TBD</td><td id="sg-none-trig-delta" class="tbd">TBD</td></tr>
+  <tr><td class="l">两臂均触发</td><td id="sg-both-trig-n">18</td><td id="sg-both-trig-basic">44.4%</td><td id="sg-both-trig-agentic">27.8%</td><td id="sg-both-trig-delta" style="color:#ef4444;">−16.7pp</td></tr>
+  <tr><td class="l">仅 agentic 触发</td><td id="sg-agentic-only-trig-n">4</td><td id="sg-agentic-only-trig-basic">75.0%</td><td id="sg-agentic-only-trig-agentic">50.0%</td><td id="sg-agentic-only-trig-delta" style="color:#ef4444;">−25.0pp</td></tr>
+  <tr><td class="l">两臂均未触发</td><td id="sg-none-trig-n">15</td><td id="sg-none-trig-basic">93.3%</td><td id="sg-none-trig-agentic">86.7%</td><td id="sg-none-trig-delta" style="color:#ef4444;">−6.7pp</td></tr>
 </table>
 
 <h3>4.2 轨迹长度亚组</h3>
@@ -188,10 +188,10 @@
 <h3>6.1 Token 成本</h3>
 <table>
   <tr><th>指标</th><th><span class="tag t-basic">basic</span></th><th><span class="tag t-agentic">agentic</span></th><th>比值（agentic/basic）</th></tr>
-  <tr><td class="l">总输入 Token（3 轮）</td><td id="cb-basic-in-tok" class="tbd">TBD</td><td id="cb-agentic-in-tok" class="tbd">TBD</td><td id="cb-ratio-in" class="tbd">TBD</td></tr>
-  <tr><td class="l">总输出 Token（3 轮）</td><td id="cb-basic-out-tok" class="tbd">TBD</td><td id="cb-agentic-out-tok" class="tbd">TBD</td><td id="cb-ratio-out" class="tbd">TBD</td></tr>
-  <tr><td class="l">压缩摘要额外 Token</td><td id="cb-basic-compact-tok" class="tbd">0（规则折叠无额外调用）</td><td id="cb-agentic-compact-tok" class="tbd">TBD</td><td>—</td></tr>
-  <tr><td class="l">总墙钟时间（3 轮，min）</td><td id="cb-basic-wall" class="tbd">TBD</td><td id="cb-agentic-wall" class="tbd">TBD</td><td id="cb-ratio-wall" class="tbd">TBD</td></tr>
+  <tr><td class="l">总输入 Token（3 轮）</td><td id="cb-basic-in-tok">261.6M</td><td id="cb-agentic-in-tok">153.8M (2轮)</td><td id="cb-ratio-in">0.88/轮</td></tr>
+  <tr><td class="l">总输出 Token（3 轮）</td><td id="cb-basic-out-tok">5.3M</td><td id="cb-agentic-out-tok">3.4M (2轮)</td><td id="cb-ratio-out">0.88/轮</td></tr>
+  <tr><td class="l">压缩摘要额外 Token</td><td id="cb-basic-compact-tok" class="tbd">0（规则折叠无额外调用）</td><td id="cb-agentic-compact-tok">含在 completion 内（摘要 LLM 调用）</td><td>—</td></tr>
+  <tr><td class="l">总墙钟时间（3 轮，min）</td><td id="cb-basic-wall">5.17h (3轮)</td><td id="cb-agentic-wall">4.27h (2轮)</td><td id="cb-ratio-wall" style="color:#ef4444;">1.24/轮（agentic 更慢）</td></tr>
 </table>
 
 <h3>6.2 效率-效果象限</h3>
@@ -215,9 +215,9 @@
 
 <div class="banner pass" id="conclusion-box">
   <h3 style="margin-top:0">三问明确结论</h3>
-  <p><b>Q1（≥3pp 增益？）</b>：<span id="conclusion-q1" class="tbd">[是 / 否 / 证据不足 + 数字]</span></p>
-  <p><b>Q2（只存在于长会话？）</b>：<span id="conclusion-q2" class="tbd">[是 / 否 / 证据不足 + 数字]</span></p>
-  <p><b>Q3（默认策略推荐？）</b>：<span id="conclusion-q3" class="tbd">[basic / agentic / 无偏好 + 理由]</span></p>
+  <p><b>Q1（≥3pp 增益？）</b>：<span id="conclusion-q1"><b>否</b>——agentic 造成 −10pp 稳定下降（r1: −10.0pp, r2: −10.0pp, 配对 McNemar χ²=7.11, p≈0.015）</span></p>
+  <p><b>Q2（只存在于长会话？）</b>：<span id="conclusion-q2"><b>否</b>——无增益。但负面效应在长会话更显著：agentic gen_fail 均值 12.0 vs basic 6.7（+80%），说明摘要丢失上下文导致超时</span></p>
+  <p><b>Q3（默认策略推荐？）</b>：<span id="conclusion-q3"><b>basic</b>——Pass@1 高 10pp、gen_fail 少 80%、无需额外 LLM 摘要调用。agentic 省的 ~11% token 不足以补偿</span></p>
 </div>
 
 <h3>默认策略建议</h3>
@@ -227,7 +227,7 @@
   <tr><td class="l">Δ ∈ (−3, +3) 且 CI 跨 0</td><td class="l"><b>证据不足</b>；默认维持 agentic（成本可接受），写「未观测到显著增益」，不做宣传性表述</td></tr>
   <tr><td class="l">Δ ≤ −3pp</td><td class="l"><b>basic 设为默认</b>；agentic 的摘要 LLM 调用引入噪声或丢信息，得不偿失</td></tr>
 </table>
-<p id="conclusion-final" class="tbd">[待 P2 数据填充：最终落在哪一行]</p>
+<p id="conclusion-final">最终落在第 3 行（Δ ≤ −3pp）：<b>basic 设为默认</b>。agentic 的 LLM 摘要丢失关键 API 名/参数/设计规格，导致任务无法完成或判分失败。</p>
 
 <!-- ================================================================ -->
 <h2>附录</h2>
