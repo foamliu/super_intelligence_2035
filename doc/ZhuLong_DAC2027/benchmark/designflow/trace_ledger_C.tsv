@@ -723,3 +723,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1789606383622_laidd	xinqiaoz	hfeg0pkn005	199	physical_verify	parked		2026-11-13 12:02	r512 fresh peek: USER#0=9-step DRC issue-handler workflow injection (system-prompt setup, real issue in later turns => continuation-prone); not fresh produce-task
 1794538757522_mku3e	e0047488	hfeg0plg97	603	physical_verify	case	EDA-Eval-DesignFlow-DrcQaAutoPipe-001	2026-11-13 15:49	
 1793878425402_0aniq	kenwang	hfeg0plg16	111	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckUpdateQa-001	2026-11-13 16:55	
+1794395853966_tef8l	yinyus	hfeg0plg66	894	physical_verify	case	EDA-Eval-DesignFlow-NicapNetlistPivot-001	2026-11-13 17:35	
