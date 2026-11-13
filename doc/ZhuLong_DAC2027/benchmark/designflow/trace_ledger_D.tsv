@@ -1669,3 +1669,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793325832974_kyxd0	e0039602	hfeg0pkn005	44	schematic_netlist	parked		2026-11-13 15:35	r617 peek: Q&A/analysis not produce-task
 1791445453510_x9i8x	johnl	hfeg0pkn001	44	schematic_netlist	parked		2026-11-13 15:35	r617 peek: Q&A/analysis not produce-task
 1793174136126_dfv2z	clarawu	hfeg0pkn003	39	analog_context	parked		2026-11-13 16:22	dup: same sid 1793174136126_dfv2z already consumed as RonMismatchExtract-001 (2026-11-05); fresh-filter missed due to session_file fmt mismatch (.messages.json vs bare)
+1793952138224_b2l64	t0003117	hfeg0pkn001	473	schematic_netlist	claimed		2026-11-13 16:57	
+1794364976889_zrva7	e03101	hfeg0pkn003	530	schematic_netlist	parked		2026-11-13 16:57	Q&A/debug: U0=查看irun.log定位出错原因 + U5=网表中检索是否存在X; verilog:1774 dominant -> verification A-lean not D produce-task
+1793963596117_aftvk	jieran	hfeg0pkn004	966	schematic_netlist	parked		2026-11-13 16:57	wrong-domain: U1=根据netlist绘制版图layout_tet -> layout_aether C-domain; needs live Aether cellview infeasible
+1793872363785_ty6oq	chengleiy	hfeg0pkn005	613	schematic_netlist	parked		2026-11-13 16:57	wrong-domain: U0=整理pcell+QA脚本目录 -> pcell/innovus PDK A/C-domain not D; code-inventory task
