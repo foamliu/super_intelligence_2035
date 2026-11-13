@@ -10555,3 +10555,17 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 由 run_eval.py run 完后产 final_report.json）。
 - 边界遵守：本轮未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。
 - Next：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html（标替身预演）/负则诚实负结果+换奖励（§用户令#4，平台化使负分支概率上升）。
+
+## §R459 (wake459, 2026-11-14 05:48) — 5-run eval 健康监控（纯监控 wake）
+
+- 上下文：R2 200 步主训 COMPLETED（cheat=0/1600，global_step_200 ckpt serve GPU7:8095），5-run eval autofire chain（PID2322797）自治运行中，本轮=纯监控无人工动作。
+- 实测（.17 s0pgpuap12, date 05:48:07）：
+  - chain PID2322797 存活 etime≈5h27m（etime=19604s）；eval run1 PID2354149 存活 etime≈4h40m（etime=16812s）；父 PID2354141(ppid=2322797)；8 cline worker active（`-p 8`）。
+  - .task_queue 38 行 queue+~8 in-flight≈46 待跑；batch_cline.log 05:48 worker-4 task109 超时 2500s→worker-6 task119 起→worker-4 task120 起 健康轮转。
+  - 3 并发 serve 全稳：GPU4 base:8098→minicpm5-2B / GPU6 step105-final:8096→minicpm5-2b-sft-v39-final / GPU7 R2:8095→minicpm5-2b-grpo-R2-step200[root=global_step_200]；GPU7=97%util/39246MiB；GPU4/GPU6=0%util 待命；GPU5=3MiB/0%util 空闲（非本线，不碰）。
+  - run1（dir ~/eda_code_eval/2026_1114_010813）：stats **success=68/failure=5/timeout=39 = 112/158**（较 wake458 111 +1：success+0/fail+0/timeout+1）；code/ 122 目录（最新 -120）；final_report.json 未生成；5run_rl_analysis_R2.json 未出。
+  - 速率校准：wake458→459（~3min，05:45 commit→05:48 实测）+1 ~0.1/min，success/fail 停滞 timeout+1 ← timeout 占主导且 success 停滞（剩余批次多为难题/长任务）；剩余 ~46 任务（38 queue+~8 in-flight）；run1 或 ~06:00-09:00 完（不编造精确 ETA）。
+  - 0 真实 infra 错误（chain log 仅 START+pre-teardown；CUDA OOM=0；worker 轮转正常）。
+- 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 由 run_eval.py run 完后产 final_report.json）。
+- 边界遵守：本轮未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake458 已归档指针化（体积维护）。
+- Next：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html（标替身预演）/负则诚实负结果+换奖励（§用户令#4，平台化使负分支概率上升）。
