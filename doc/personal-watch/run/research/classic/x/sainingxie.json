@@ -1,0 +1,81 @@
+{
+ "handle": "sainingxie",
+ "name": "Saining Xie (@sainingxie) / X",
+ "bio": "cofounder &amp; chief science officer at @amilabs | faculty @nyu_courant | prev: @googledeepmind @meta (fair) @ucsandiego | ynwa",
+ "tweets": [
+  {
+   "id": "2112239537271476251",
+   "created_at": "2026-10-19 17:48 UTC",
+   "created_at_ms": 1792432123000,
+   "text": "congrats @jang_yoel and the team! \\\nwhat a time to be dreaming",
+   "url": "https://x.com/sainingxie/status/2112239537271476251",
+   "handle_guess": "sainingxie"
+  },
+  {
+   "id": "2112230668805828801",
+   "created_at": "2026-10-19 17:13 UTC",
+   "created_at_ms": 1792430009000,
+   "text": "Today, Dream Labs is coming out of stealth with Dream-1, a robot foundation model that controls bimanual robots it has never seen, on tasks it was never shown, in places it has never been, from $3/hour.\\\n\\\nDream API is live for everyone, today. 🧵 https://t.co/MB1snhUOAJ",
+   "url": "https://x.com/sainingxie/status/2112230668805828801",
+   "handle_guess": "dreamlabs_ai"
+  },
+  {
+   "id": "2092720774268301417",
+   "created_at": "2026-08-26 21:08 UTC",
+   "created_at_ms": 1787778488000,
+   "text": "great to see RAE extending to video!",
+   "url": "https://x.com/sainingxie/status/2092720774268301417",
+   "handle_guess": "sainingxie"
+  },
+  {
+   "id": "2090796120842686716",
+   "created_at": "2026-08-21 13:40 UTC",
+   "created_at_ms": 1787319614000,
+   "text": "🚀 What if video generators could build on representations that already understand the visual world?\\\n\\\nWe are excited to introduce V-RAE: Rethinking Video Latent Spaces for Generation.\\\n\\\nRecent progress in image generation has begun to move beyond conventional VAE latents, https://t.co/wMAQflHott",
+   "url": "https://x.com/sainingxie/status/2090796120842686716",
+   "handle_guess": "MinghuiGuo77"
+  },
+  {
+   "id": "2073953877800419652",
+   "created_at": "2026-07-06 02:15 UTC",
+   "created_at_ms": 1783304111000,
+   "text": "see you at ICML in Seoul and the AMI × SBVA mixer on thursday evening! looking forward to meeting everyone :) \\\nhttps://t.co/O8vjcGweEv",
+   "url": "https://x.com/sainingxie/status/2073953877800419652",
+   "handle_guess": "sainingxie"
+  },
+  {
+   "id": "2067723465243631873",
+   "created_at": "2026-06-18 21:37 UTC",
+   "created_at_ms": 1781818665000,
+   "text": "🫡 taste in founder mode",
+   "url": "https://x.com/sainingxie/status/2067723465243631873",
+   "handle_guess": "sainingxie"
+  },
+  {
+   "id": "2067670842016989643",
+   "created_at": "2026-06-18 18:08 UTC",
+   "created_at_ms": 1781806118000,
+   "text": "@scaling01 i actually filmed and edited the video myself 😅 also implemented the 3d visualization technical deep dive, it all runs in a browser in realtime!",
+   "url": "https://x.com/sainingxie/status/2067670842016989643",
+   "handle_guess": "DavidSHolz"
+  },
+  {
+   "id": "2062581689260396886",
+   "created_at": "2026-06-04 17:06 UTC",
+   "created_at_ms": 1780592770000,
+   "text": "Congrats @thegautamkamath!!",
+   "url": "https://x.com/sainingxie/status/2062581689260396886",
+   "handle_guess": "sainingxie"
+  },
+  {
+   "id": "2062525936830939474",
+   "created_at": "2026-06-04 13:24 UTC",
+   "created_at_ms": 1780579477000,
+   "text": "Honoured that our 2016 paper, Robust Estimators in High Dimensions without the Computational Intractability, w/ Ilias Diakonikolas, Daniel Kane, Jerry Li, Ankur Moitra, Alistair Stewart, was awarded the 2026 Gödel Prize\\\n\\\nThis is the highest award for papers in theoretical CS. 1/7 https://t.co/OV5H7BT83f",
+   "url": "https://x.com/sainingxie/status/2062525936830939474",
+   "handle_guess": "thegautamkamath"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-14 03:01:23"
+}

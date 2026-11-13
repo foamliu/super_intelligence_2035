@@ -1,0 +1,19 @@
+Subject: Masked autoencoding in hindsight: three questions from a ~2B chip-design project
+
+Dear Professor Xie,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B chip-design domain model) and ZhuLong-DAC2027 (an EDA agent harness). We are choosing how to pretrain a vision tower for semiconductor layout and waveform images.
+
+Your MAE paper is our reference, and your recent "Unbundling Multimodal Vision Encoding" sharpened the question. Three points:
+
+1. The 75% mask ratio was tuned on natural images. Ours have large uniform regions and very thin metal lines, so redundancy differs. Which measurable data property should set the mask ratio, and is structured (block or stripe) masking worth testing against random masking?
+
+2. For dense targets such as defect segmentation, how much does MAE's shallow decoder matter compared with encoder capacity? Would you keep that asymmetry in a new domain?
+
+3. In the unbundling paper, a jointly trained encoder matched a pretrained visual prior. With limited in-domain image-text pairs, should we still pretrain the vision tower with MAE first, or train it jointly with the backbone?
+
+The answers would shape our pretraining pipeline and evaluation protocol. Thank you.
+
+Best regards,
+Liu Yang
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027

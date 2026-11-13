@@ -5671,3 +5671,5 @@
 | 2026-11-14 | 2611.16991 | AnalogLayoutWorld: An Open Benchmark for Agentic Analog Layout Design | cs.AI | 收录 |
 | 2026-11-14 | 2611.16913 | CADET: Construction of PCB Routing Instances with Executable Demonstrations | cs.AI | 收录 |
 | 2026-11-14 | 2611.15006 | EvoX: Rethinking the Agent Harness as a Runtime Policy | cs.AI | 收录 |
+| 2026-11-14 | 2611.17334 | Unbundling Multimodal Vision Encoding | cs.CV | 收录 |
+| 2026-11-14 | 2611.17304 | Where LLM Agents Get Stuck Debugging Databases: Access More Than Reasoning | cs.SE | 收录 |

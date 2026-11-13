@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-14（早报 3/5 ＋ B 轨第二十四轮 95 篇 · 作者网 97 人）· research 线</title>
+<title>论文观察日报 · 2026-11-14（今日 5/5 ＋ B 轨第二十五轮 99 篇 · 作者网 99 人）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,11 +53,11 @@
 <div class="wrap">
 <header class="hero">
   <h1>论文观察日报 · 2026-11-14</h1>
-  <div class="sub">早报 <b>3 篇「借鉴」</b>（进度 <b>3/5</b>）＋ 🅱 B 轨第二十四轮累计 <b>95</b> 篇 ＋ 👥 作者网 <b>97</b> 人 ＋ ✉ 作者信累计 <b>33</b> 封</div>
+  <div class="sub">今日 <b>5 篇「借鉴」</b>（进度 <b>5/5</b>）＋ 🅱 B 轨第二十五轮累计 <b>99</b> 篇 ＋ 👥 作者网 <b>99</b> 人 ＋ ✉ 作者信累计 <b>34</b> 封</div>
   <div class="meta">
     <span>数据源：arXiv API（单分类 5 查询 · 5/5 <code>200</code> + atom）</span>
-    <span>生成：2026-11-14 00:08（00:00 时窗 · A 轨新批 ＋ B 轨第二十四轮 ＋ 作者信）</span>
-    <span>进度：<b>3 / 5</b>（晚报补齐 2 篇）</span>
+    <span>生成：2026-11-14 03:02（03:00 时窗 · A 轨补 2 篇 ＋ B 轨第二十五轮 ＋ 作者信）</span>
+    <span>进度：<b>5 / 5</b>（早报 3 ＋ 03:00 补 2）</span>
     <span>出口：仅 HTML（🚫 不发日报邮件）</span>
   </div>
   <div class="disc">⚠️ 推荐 = 待读线索，<b>非结论</b>；所有数字均为论文作者自报，本线未复现；「对各线的可执行建议」为基于论文的推断，非指令。</div>
@@ -67,7 +67,7 @@
   <b>本轮索引确实动了</b>：5 个 <code>totalResults</code> 与 11-13 各轮<b>逐值相同</b>（125,322 / 213,258 / 299,025 / 212,730 / 31,041），但窗口内最晚 <code>published</code> 已从 <code>2026-11-10T18:59:54Z</code> 前进到 <code>2026-11-12T18:59:55Z</code> ⇒ <b>「总数不变 ≠ 索引没动」</b>。本轮以 <code>published</code> 实测为准；新候选 368 条（<code>SEEN.md</code> 命中 0），3 篇当日收口。
 </div>
 
-<h2 class="sec">☀️ 今日推荐 · 3 篇「借鉴」（早报 3/5）<span class="badge b-jz">借鉴</span></h2>
+<h2 class="sec">☀️ 今日推荐 · 5 篇「借鉴」（早报 3 ＋ 03:00 补 2）<span class="badge b-jz">借鉴</span></h2>
 
 <div class="card">
   <h3><span class="no">1</span>AnalogLayoutWorld: An Open Benchmark for Agentic Analog Layout Design</h3>
@@ -125,6 +125,42 @@
   </div>
 </div>
 
+<div class="card">
+  <h3><span class="no">4</span>Unbundling Multimodal Vision Encoding</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">把多模态模型的视觉编码器拆成<b>三个可分离的设计选择</b>（上游预训练带来的<b>视觉先验</b> / <b>专用视觉容量</b> / <b>融合前放置</b>），在同一数据、<b>匹配的 lifetime compute</b> 下全部从头预训练做控制对照：<b>视觉先验并非必需</b>（联合从零训练的编码器与预训练编码器持平）；真正起作用的是<b>专用视觉容量</b>（无编码器模型即使把骨干按编码器参数量加大仍落后）；该容量也不必前置，<b>在骨干早期层「融合中加入」视觉模块</b>表现相当，并可降低首 token 时延。结论在骨干规模变化、把编码器预训练视为免费、以及从预训练语言模型出发时均成立。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Unbundling Multimodal Vision Encoding</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Ellis Brown · Chris Hoang · Shengyi Qian · Shang-Wen Li · Mike Lewis · Marjan Ghazvininejad · Luke Zettlemoyer · Lucas Beyer · Mengye Ren · Jakob Verbeek · Saining Xie · Hu Xu（共 <b>12 位</b>；机构<b>未从 PDF 核验</b>，不以印象补）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-12</b>（<code>published=2026-11-12T18:59:54Z</code>，<code>updated</code> 同值）· 距本轮唤醒 <b>≈32h</b>（在 72h 内）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CV</code> · <span class="badge b-jz">借鉴</span> · 关键词：视觉编码器 / 视觉先验 / 融合位置 / 控制变量 / 首 token 时延</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.17334">https://arxiv.org/abs/2611.17334</a> ｜ 项目页 <a href="https://unbundling.github.io">unbundling.github.io</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · vision / pretrain 直接对口）</b>
+    <ol>
+      <li><b>它回答的正是我们视觉塔选型的核心分歧</b>：预训练视觉先验到底值不值得单独一个阶段。把「数据 / 架构 / 算力」拉到同一水平后，先验的收益消失、<b>专用容量</b>才是主因 —— 这直接支持「先把容量给够，再谈初始化」。</li>
+      <li><b>「融合中加入」可以省首 token 时延</b>：如果视觉模块放进骨干早期层仍能打平前置编码器，我们的多模态链路可少一段串行前处理（对在线 EDA 工具调用场景是实打实的延迟收益）。</li>
+      <li><b>「把编码器预训练视为免费」这一臂很关键</b>：它把「训练成本」与「结构收益」分开，避免用「预训练很贵」来解释结果 —— 这是消融设计里最容易混掉的一条。</li>
+    </ol>
+    <b>建议动作</b>：vision / pretrain 联合做三臂对照（预训练编码器 / 从零联合训练 / 融合中加入视觉模块），固定总 lifetime compute 与评测集。预注册判据：若「从零联合」在视觉问答与语言基准上均不低于「预训练编码器」且训练总时长 ≤1.2×，则本期取消单独视觉预训练阶段；若「融合中加入」首 token 时延下降 ≥20% 且指标不降，则纳入在线推理链路。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>Where LLM Agents Get Stuck Debugging Databases: Access More Than Reasoning</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">对 Claude Code 诊断生产消息派发引擎 <b>8 起数据库事故</b>的现场观察：<b>5 起依赖运行时并发的事故全部存在「状态访问缺口」</b>（缺实时锁视图、未截断的死锁报告、只读执行、显式环境上下文），其中 1 起只缺访问、4 起叠加推理错误；<b>3 起非并发事故无需额外访问</b>即可解决。agent 的错误假设与其可见证据一致，<b>不是编造</b>。作者主张下一步是<b>取证层</b>：安全查询 API + 锁/死锁飞行记录器 + 生产回放 harness。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Where LLM Agents Get Stuck Debugging Databases: Access More Than Reasoning</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Gustavo Pinto（<b>单作者</b>；机构<b>未从 PDF 核验</b>）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-12</b>（<code>published=2026-11-12T18:56:22Z</code>，<code>updated</code> 同值）· 距本轮唤醒 <b>≈32h</b>（在 72h 内）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.SE</code> · <span class="badge b-jz">借鉴</span> · 关键词：agent 调试 / 运行时状态访问 / 失败分类 / 取证层 / 生产回放</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.17304">https://arxiv.org/abs/2611.17304</a></div></div>
+  <div class="reason"><b>推荐理由（借鉴 · harness / zhulong 直接对口）</b>
+    <ol>
+      <li><b>把「能力失败」与「访问失败」分开归因</b>：我们复盘 agent 失败时最容易写成「模型推理不行」，但这条观察说清楚 —— 在有并发/运行时状态的任务里，<b>看不到状态</b>才是主因。这要求 harness 在失败样本上记录「当时 agent 能读到什么」。</li>
+      <li><b>「错误假设与可见证据一致、不是编造」</b>：这为我们的失败分类增加一档 —— 不是幻觉，而是<b>证据不足下的合理猜测</b>；对应处置是补访问，不是加 critic。</li>
+      <li><b>取证层的三件套可直接映射到 EDA</b>：安全查询 API（只读工具）/ 飞行记录器（工具调用与状态快照）/ 生产回放 harness（可复现的失败现场）—— 正好是 zhulong trace 与我们 harness 判分之间缺的那层。</li>
+    </ol>
+    <b>建议动作</b>：harness 在 TB-2.1 rerun 的失败样本上增加 <code>access_gap</code> 标（缺失的关键状态/工具：只读查询、完整日志、环境上下文），与 <code>reasoning_error</code> 分开统计。预注册判据：若 <code>access_gap</code> 占失败样本 &gt;30%，则下轮优先补工具权限与日志，不调模型。
+  </div>
+</div>
+
 <details class="news-ready">
 <summary>📰 news_ready · 可发头条（1 条 · 对应 #1 AnalogLayoutWorld）</summary>
 <ul>
@@ -138,40 +174,47 @@
 </ul>
 </details>
 
-<h2 class="sec">🅱 B 轨 · 经典论文第二十四轮（+4 → 95 篇）<span class="badge b-b">经典</span></h2>
+<h2 class="sec">🅱 B 轨 · 经典论文第二十五轮（+4 → 99 篇）<span class="badge b-b">经典</span></h2>
 <table>
   <tr><th>#</th><th>论文（年份 / 出处）</th><th>被引</th><th>一句话贡献</th><th>影响我们的哪一层</th></tr>
   <tr><td>92</td><td><b>Proximal Policy Optimization Algorithms</b><br><code>1707.06347</code>（2017 · arXiv 预印本）</td><td><b>31,326</b></td><td>用<b>截断的代理目标</b>把「信赖域式」更新变成一阶可实现的多次小批量更新，兼顾样本效率 / 实现简单 / 墙钟时间（摘要自报：在模拟机器人运动与 Atari 上优于其他在线策略梯度方法）。</td><td><b>zhulong</b>（RL 训练器基线：clip 比例、epoch 数、batch 大小）· <b>vision</b>（波形 RL 的更新口径）· <b>harness</b>（训练与判分解耦）</td></tr>
   <tr><td>93</td><td><b>Denoising Diffusion Probabilistic Models</b><br><code>2006.11239</code>（2020 · arXiv 预印本）</td><td><b>11,034</b></td><td>把扩散模型训练化为<b>加权变分下界</b>，并给出与去噪分数匹配（+ Langevin 动力学）的联系；CIFAR-10 无条件生成 FID <b>3.17</b>、Inception score <b>9.46</b>。</td><td><b>vision</b>（合成波形的备选生成路线）· <b>designflow</b>（造题 / 稀有场景增广）· <b>data</b>（小样本增广）</td></tr>
   <tr><td>94</td><td><b>ZeRO: Memory Optimizations Toward Training Trillion Parameter Models</b><br><code>1910.02054</code>（SC 2020 · DOI <code>10.1109/sc41405.2020.00024</code>）</td><td><b>1,432</b></td><td>把优化器状态 / 梯度 / 参数<b>分片</b>到各设备，消除数据与模型并行的内存冗余，保持低通信量与高计算粒度；摘要自报 400 GPU 上训练 &gt;100B 参数、15 Petaflops、模型规模 8×/性能 10×。</td><td><b>pretrain</b>（2B 训练的显存与并行策略口径）· <b>data</b>（数据加载与吞吐预算）</td></tr>
-  <tr><td>95</td><td><b>Segment Anything</b><br><code>2304.02643</code>（ICCV 2023 · DOI <code>10.1109/iccv51070.2023.00371</code>）</td><td><b>16,904</b></td><td>promptable 分割 + <b>数据引擎</b>（模型辅助标注闭环）产出 <b>11M 图 / 1B mask</b>，零样本迁移到新图像分布与任务（摘要自报常与全监督结果相当或更好）。</td><td><b>vision</b>（缺陷 / 版图分割基线）· <b>data</b>（半自动标注流水线）· <b>harness</b>（分割指标口径）</td></tr>
+  <tr><td>96</td><td><b>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</b>（<b>GRPO 出处</b>）<br><code>2402.03300</code>（2024 · arXiv 预印本）</td><td><b>11,153</b></td><td>在 code base 上继续预训练 <b>120B 数学 token</b>；提出 <b>GRPO</b>（PPO 变体）：用<b>同组采样的均值/标准差</b>作基线、<b>去掉 value model</b>，在提升推理的同时降低 PPO 显存；7B 在 MATH 上 <b>51.7%</b>（无工具/投票），64 样本自洽 <b>60.9%</b>。</td><td><b>zhulong</b>（RL 算法选型：无 critic 路线）· <b>data</b>（数据选择 pipeline）· <b>pretrain</b>（领域继续预训练配方）</td></tr>
+  <tr><td>97</td><td><b>Masked Autoencoders Are Scalable Vision Learners</b><br><code>2111.06377</code>（CVPR 2022 · DOI <code>10.1109/cvpr52688.2022.01553</code>，pp. 15979–15988）</td><td><b>10,217</b></td><td><b>随机遮 75% patch + 非对称编解码器</b>（编码器只看可见 patch，轻量解码器重建）；带来 <b>≥3× 训练加速</b>，ViT-H 在仅用 ImageNet-1K 的方法中达 <b>87.8%</b>。</td><td><b>vision</b>（视觉塔自监督预训练 / 缺陷分割初始化）· <b>data</b>（无标注图像可用）· <b>designflow</b>（掩码重建辅助任务）</td></tr>
+  <tr><td>98</td><td><b>Efficiently Modeling Long Sequences with Structured State Spaces</b>（S4）<br><code>2111.00396</code>（ICLR 2022 Outstanding Paper HM）</td><td><b>2,741</b></td><td>SSM 新参数化（状态矩阵 <b>低秩修正</b> → 稳定对角化 → Cauchy kernel），线性时间/显存建模超长序列；sequential CIFAR-10 <b>91%</b>、生成 <b>快 60×</b>、<b>Long Range Arena 全 SoTA</b>（含 16k 的 Path-X）。</td><td><b>pretrain</b>（长序列架构对照轴：Transformer vs SSM 的吞吐-精度）· <b>zhulong</b>（长轨迹建模）</td></tr>
+  <tr><td>99</td><td><b>Mastering Diverse Domains through World Models</b>（DreamerV3）<br><code>2301.04104</code>（Nature 2025 · 640(8059):647–653 · DOI <code>10.1038/s41586-025-08744-2</code>）</td><td><b>1,962</b></td><td><b>单一配置</b>在 <b>150+ 任务</b>上超过专用方法：学环境模型并在<b>想象中</b>改进策略；靠归一化/平衡/变换实现跨域稳定；<b>首个从零、无人类数据</b>在 Minecraft 采到钻石。</td><td><b>zhulong</b>（model-based RL / 世界模型：少调真工具）· <b>vision</b>（latent dynamics）· <b>designflow</b>（仿真器内规划与预算）</td></tr>
 </table>
 <div class="note">
-  被引数来源 = <b>OpenAlex</b>（按 arXiv DOI 直查，查询日 <b>2026-11-14</b>，4/4 <code>200</code>）；S2 与 Google Scholar 本机不可达 ⇒ <b>未查</b>，不写估算。元数据 = arXiv <code>id_list</code> 一次请求 <code>200</code> + atom（8,918 B）。<br>
-  ⚠️ <b>PPO / DDPM</b> 的 OpenAlex 记录类型为 <code>preprint</code>、无会场 DOI ⇒ 本表<b>不写会议</b>（即便社区普遍认为它们发表于 NeurIPS 2020 / 2017，本线只写可核验的证据）。必读清单仍 <b>10/10 组、37/37 条目</b>（本轮属「补充」）。
+  被引数来源 = <b>OpenAlex</b>（按 arXiv DOI 直查，查询日 <b>2026-11-14</b>，本轮 4/4 <code>200</code>）；S2 与 Google Scholar 本机不可达 ⇒ <b>未查</b>，不写估算。元数据 = arXiv <code>id_list</code> 一次请求 <code>200</code> + atom（<b>15,365 B / 6 条 entry</b>）。<br>
+  ⚠️ <b>S4 / DeepSeekMath</b> 的 OpenAlex 记录类型为 <code>preprint</code> ⇒ 本表<b>不写会议</b>；DreamerV3 的 arXiv 版与 Nature 版为<b>同一工作两版</b>，被引数只取 Nature 记录、<b>不相加</b>。必读清单仍 <b>10/10 组、37/37 条目</b>（本轮属「补充」）。<br>
+  ⚠️ <b>更正</b>：任务书候选写的「S4 = <code>2110.13985</code>」经实测为 <b>LSSL</b>（NeurIPS 2021），<b>S4 真 ID = <code>2111.00396</code></b>；本线按实测 ID 收录，🚫 不沿用错误 ID。
 </div>
 
-<h2 class="sec">👥 作者关系网（+2 → 97 人；X 已核验 57）</h2>
+<h2 class="sec">👥 作者关系网（+2 → 99 人；X 已核验 59）</h2>
 <table>
   <tr><th>姓名 / 机构</th><th>代表论文</th><th>邮箱</th><th>主页</th><th>X</th><th>状态</th></tr>
   <tr><td><b>John Schulman</b><br>Thinking Machines（X bio 自述）</td><td>PPO <code>1707.06347</code>（一作）· TRPO</td><td><b>未找到</b>（<code>http://joschu.net</code> <code>200</code> / 5,889 B，页内无邮箱；<code>https://</code> 直连 <code>000</code>）</td><td><a href="http://joschu.net">joschu.net</a></td><td><b>@johnschulman2</b>（<code>og:title</code> = John Schulman (@johnschulman2) / X；bio = @thinkymachines. Interested in reinforcement learning, alignment, birds, jazz music）</td><td><b>待跟踪</b>（无邮箱 ⇒ 不发信）</td></tr>
   <tr><td><b>Pieter Abbeel</b><br>UC Berkeley EECS（Jim Gray Chair）</td><td>DDPM <code>2006.11239</code>（三作）· apprenticeship learning</td><td><b>pabbeel@cs.berkeley.edu</b>（<code>contact.html</code> 页面明文 pabbeel AT cs.berkeley.edu，按页面规则还原）</td><td><a href="https://people.eecs.berkeley.edu/~pabbeel/">people.eecs.berkeley.edu/~pabbeel/</a></td><td><b>@pabbeel</b>（<code>og:title</code> = Pieter Abbeel (@pabbeel) / X；bio = Berkeley &amp; Amazon）</td><td><b>已发信</b>（2026-11-14 00:08，第 33 封）</td></tr>
   <tr><td><b>Jonathan Ho</b><br>（DDPM 一作）</td><td>DDPM <code>2006.11239</code></td><td><b>未找到</b>（主页 <code>200</code> / 5,867 B 无邮箱）</td><td><a href="https://www.jonathanho.me/">jonathanho.me</a></td><td><b>未找到 X</b></td><td><b>未登记</b>（不猜；同论文已由 Abbeel 覆盖）</td></tr>
-  <tr><td><b>Alexander Kirillov</b><br>（SAM 一作）</td><td>Segment Anything <code>2304.02643</code></td><td><b>未找到</b>（<code>alexanderkirillov.github.io</code> <code>404</code> / <code>kirillov.ai</code> <code>000</code>）</td><td>—</td><td><b>未找到</b>（候选 <code>@akirillov</code> <b>0 followers</b>、bio 仅关注计数 ⇒ 判非本人）</td><td><b>未登记</b></td></tr>
+  <tr><td><b>Saining Xie（谢赛宁）</b><br>NYU Courant · AMI Labs（联合创始人 &amp; CSO）</td><td>MAE <code>2111.06377</code>（三作）· 亦为 A 轨 <code>2611.17334</code> 作者</td><td><b>saining.xie@nyu.edu</b>（本人主页 <code>data-user</code> / <code>data-domain</code> 按页面规则拼装；同页另给 <code>saining@amilabs.xyz</code>）</td><td><a href="https://www.sainingxie.com/">sainingxie.com</a></td><td><b>@sainingxie</b>（bio = cofounder &amp; CSO @amilabs | faculty @nyu_courant…）</td><td><b>已发信</b>（2026-11-14 03:02，第 34 封）</td></tr>
+  <tr><td><b>Danijar Hafner</b><br>（DreamerV3 一作）</td><td>DreamerV3 <code>2301.04104</code>（一作）</td><td><b>未找到</b>（<code>danijar.com</code> <code>200</code> / 31,778 B，无 <code>mailto</code>；<code>/contact/</code> <code>404</code>）</td><td><a href="https://danijar.com/">danijar.com</a></td><td><b>@danijarh</b>（bio = Building general agents for the physical world. Prev @GoogleDeepMind @UCBerkeley @UofT）</td><td><b>待跟踪</b>（无邮箱 ⇒ 不发信）</td></tr>
 </table>
-<div class="note">X 只读探测：<code>x.com</code> 自检 <code>200</code>（显式 <code>-x http://127.0.0.1:7897</code>）；profile <b>5/5 <code>200</code></b>（<code>pabbeel</code> / <code>johnschulman2</code> / <code>akirillov</code> / <code>karpathy</code> / <code>ilyasut</code>）。<b>0 follow</b> —— follow 需登录态，未假装执行；待 follow 清单累计 <b>47</b> 条（含本轮新增 2 条）。</div>
+<div class="note">X 只读探测：<code>x.com</code> 自检 <code>200</code>（显式 <code>-x http://127.0.0.1:7897</code>）；03:00 轮 profile <b>4/4 <code>200</code></b>（<code>_albertgu</code> / <code>danijarh</code> / <code>sainingxie</code> / <code>giffmana</code>）、推文页 <b>5/5 <code>200</code></b>（逐条核 <code>og:title</code>：1 条为他人推文、2 条上下文依赖、2 条为已用旧条）。<b>0 follow</b> —— follow 需登录态，未假装执行；待 follow 清单累计 <b>49</b> 条（含本轮新增 2 条）。</div>
 
 
-<h2 class="sec">✉️ 作者请教信（1 封 · 累计 33 封）</h2>
+<h2 class="sec">✉️ 作者请教信（2 封 · 累计 34 封）</h2>
 <table>
   <tr><th>对象 / 机构</th><th>论文</th><th>邮箱来源（非 PDF 旧地址）</th><th>结果</th></tr>
-  <tr><td><b>Pieter Abbeel</b>（UC Berkeley EECS）</td><td>DDPM <code>2006.11239</code></td><td><code>contact.html</code>（<code>200</code>）页内 <code>pabbeel AT cs.berkeley.edu</code> ⇒ 还原为 <code>pabbeel@cs.berkeley.edu</code></td><td><b>SENT OK 2026-11-14 00:08</b>：英文 <b>187 词</b>（发送前 <code>wc -w</code> 已核）；三个问题回填 vision（波形回归 vs 生成式）、designflow/data（合成数据保真度检查）、pretrain（噪声日程 / 加权重构）。</td></tr>
+  <tr><td><b>Pieter Abbeel</b>（UC Berkeley EECS）</td><td>DDPM <code>2006.11239</code></td><td><code>contact.html</code>（<code>200</code>）页内 <code>pabbeel AT cs.berkeley.edu</code> ⇒ 还原为 <code>pabbeel@cs.berkeley.edu</code></td><td><b>SENT OK 2026-11-14 00:08</b>：英文 <b>194 词</b>（发送前 <code>wc -w</code> 已核）；三个问题回填 vision（波形回归 vs 生成式）、designflow/data（合成数据保真度检查）、pretrain（噪声日程 / 加权重构）。</td></tr>
+  <tr><td><b>Saining Xie（谢赛宁）</b>（NYU Courant · AMI Labs）</td><td>MAE <code>2111.06377</code></td><td>本人主页 <code>data-user="saining.xie"</code> / <code>data-domain="nyu.edu"</code> ⇒ 拼装为 <code>saining.xie@nyu.edu</code></td><td><b>SENT OK 2026-11-14 03:02</b>：英文 <b>197 词</b>（发送前 <code>wc -w</code> 已核）；三个问题回填 vision（掩码比例 / 解码器深度）、pretrain / vision（是否仍先做 MAE 预训练）。</td></tr>
 </table>
-<div class="note">同论文其余作者（Jonathan Ho / Ajay Jain）本轮<b>不发</b>（同论文 ≤1）；UC Berkeley 今日第 1 封（未超同机构 ≤2/天）。草稿 <code>research/mail/drafts/2006.11239.md</code>、正文 <code>research/mail/2026-11-14-classic-2006.11239.txt</code>、台账已追加（<b>没写台账 = 没发</b>）。</div>
+<div class="note">同论文其余作者（Abbeel 信：Jonathan Ho / Ajay Jain；Xie 信：Kaiming He / Xinlei Chen 等 5 位）<b>不发</b>（同论文 ≤1）；UC Berkeley 1 封 · NYU 1 封（均未超同机构 ≤2/天）。草稿与正文见 <code>research/mail/drafts/</code> 与 <code>research/mail/2026-11-14-classic-*.txt</code>，台账已追加（<b>没写台账 = 没发</b>）。</div>
 
 <h2 class="sec">🗣 voice_ready（本期无）与投料纪律</h2>
 <div class="note">
-  <b>本期 voice_ready = 0 条</b>。候选 3 条（John Schulman 2026-11-06 <code>Inkling 2 Small</code>、Karpathy 2026-11-07、Abbeel 2026-10-21 人形控制）经推文页 <code>og:description</code> 与 <code>cdn.syndication.twimg.com/tweet-result</code> 两条只读路径抓取，<b>正文均在半句处截断</b>（syndication 的 <code>display_text_range</code> 止于同一位置）⇒ 按「原文必须完整 + 双源一致」纪律，本期<b>不出</b>，🚫 不拿二手转述充原文。
+  <b>本期 voice_ready = 0 条</b>。00:00 轮候选 3 条（John Schulman 2026-11-06 <code>Inkling 2 Small</code>、Karpathy 2026-11-07、Abbeel 2026-10-21 人形控制）经推文页 <code>og:description</code> 与 <code>cdn.syndication.twimg.com/tweet-result</code> 两条只读路径抓取，<b>正文均在半句处截断</b>（syndication 的 <code>display_text_range</code> 止于同一位置）⇒ 按「原文必须完整 + 双源一致」纪律，本期<b>不出</b>。<br>
+  03:00 轮再核 5 条推文页：<code>@sainingxie</code> 时间线内 1 条经 <code>og:title</code> 实为 <b>Dream Labs (@dreamlabs_ai)</b> 的推文（<b>作者不符 ⇒ 作废</b>，见 AUTHORS V23）；<code>@giffmana</code> 2 条为本人但均为<b>上下文依赖的短回复</b>（脱离上文易误读 ⇒ 不采用，V24）；<code>@_albertgu</code> / <code>@RichardSSutton</code> 2 条作者可核但<b>已用于 11-12 期</b>（V20 / V4），不重复；<code>@danijarh</code> 最新原推为 <b>2026-09-10</b>（&gt;30 天 ⇒ 降级）。⇒ <b>宁缺勿滥，本期 0 条</b>；🚫 不拿二手转述充原文。
 </div>
 
 <h2 class="sec">🎯 00:00 轮 · 对各线的可执行建议（6 条，逐线覆盖）</h2>
@@ -185,6 +228,17 @@
   <tr><td><b>designflow</b></td><td>① L3 题补两列 <code>artifact_produced</code> / <code>acceptance_passed</code>（独立验证器判定，agent 不可读写其内部状态）。<br>② 造题时按 CADET 思路生成「<b>可执行演示</b>」而非只存终态：每步记录工具调用 + 前后状态差异。</td><td>AnalogLayoutWorld（#1）· CADET（#2）。<b>判据</b>：两列差距 &gt;3× ⇒ 只报验收率；若某题无法写出确定性验收函数，降级人工评审、不进主榜。</td></tr>
 </table>
 
+<h2 class="sec">🎯 03:00 补篇 · 对各线的增量建议（6 条，逐线覆盖 · 不重复上午）</h2>
+<table>
+  <tr><th>线</th><th>建议（可落地：命令 / 实验设计）</th><th>依据 / 预注册判据</th></tr>
+  <tr><td><b>pretrain</b></td><td>① 架构选型表新增 <b>SSM 轴</b>（Transformer / 混合 / 纯 SSM），固定 token 预算与评测集，只比「每 token 墙钟 / 峰值显存 / ≥32k 检索精度」。<br>② 记录表增列 <code>critic_present</code>（PPO vs GRPO），与显存峰值并列。</td><td>S4（#98）· GRPO（#96）。<b>判据</b>：纯 SSM 若在 ≥32k 检索不劣于 Transformer 且吞吐 ≥1.5× ⇒ 长上下文实验优先混合架构；否则维持位置扩展。</td></tr>
+  <tr><td><b>vision</b></td><td>① 视觉塔初始化三臂对照：<b>预训练编码器 / 从零联合训练 / 融合中加入视觉模块</b>，固定总 lifetime compute。<br>② MAE 预训练先用<b>小规模无标注版图图像</b>跑通，掩码比例做 {50%, 75%, 90%} 三点。</td><td>Unbundling（A 轨 #4）· MAE（#97）。<b>判据</b>：从零联合若不低于预训练编码器且训练时长 ≤1.2× ⇒ 取消单独视觉预训练；「融合中加入」若首 token 时延降 ≥20% 且指标不降 ⇒ 纳入在线链路。</td></tr>
+  <tr><td><b>harness</b></td><td>① TB-2.1 rerun 失败样本增加 <code>access_gap</code> 标（缺失的只读查询 / 完整日志 / 环境上下文），与 <code>reasoning_error</code> 分开统计。<br>② 每个失败样本附「当时 agent 可读到的状态快照」，供复盘。</td><td>数据库调试观察（A 轨 #5）。<b>判据</b>：<code>access_gap</code> 占失败样本 &gt;30% ⇒ 下轮优先补工具权限与日志，不调模型。</td></tr>
+  <tr><td><b>data</b></td><td>① 复盘数据选择 pipeline 三段式（召回 → 质量筛 → 配比），先做 1B token 小规模对照。<br>② 无标注版图 / 波形图像单独建清单（数量 + 分辨率 + 来源），供 MAE 预训练估算 token 成本。</td><td>GRPO / DeepSeekMath（#96）· MAE（#97）。<b>判据</b>：若 1B token 对照的相对增益 &lt;1%，则暂缓扩大领域继续预训练。</td></tr>
+  <tr><td><b>zhulong</b></td><td>① 在 PPO 基线上加 <b>GRPO 对照臂</b>（G ∈ {4, 8}，固定总 rollout 预算），比显存峰值 / 每步墙钟 / 成功率。<br>② 选一个确定性仿真器做「latent dynamics + 模型内规划 vs 真工具 trial-and-error」小实验。</td><td>GRPO（#96）· DreamerV3（#99）。<b>判据</b>：GRPO 成功率不降且显存峰值降 ≥30% ⇒ RL 主实验改 GRPO；模型内规划若同等工具调用预算下提升 &lt;5 点 ⇒ 不投入世界模型。</td></tr>
+  <tr><td><b>designflow</b></td><td>① 失败样本增加「证据充分性」字段（agent 是否拿到判定所需的全部状态），与「推理错误」分开。<br>② 造题时把「取证层」写进题面：只读查询 API / 状态快照 / 可回放现场。</td><td>数据库调试观察（A 轨 #5）· DreamerV3（#99）。<b>判据</b>：若某题在补足只读状态访问后通过率提升 &gt;10 点，则该题保留但标注「访问依赖」；否则视为题目信息不足、回炉。</td></tr>
+</table>
+
 <h2 class="sec">附录 A · 检索式与命中数（2026-11-14 00:0x · 可核验）</h2>
 <table>
   <tr><td>A 轨</td><td>单分类 5 查询（<code>cs.CL / cs.CV / cs.LG / cs.AI / cs.SE</code>，各取最新 100 条，<code>sortBy=submittedDate</code>）⇒ <b>5/5 <code>200</code> + atom</b>；<code>totalResults</code> = 125,322 / 213,258 / 299,025 / 212,730 / 31,041（与 11-13 逐值相同，但 <code>published</code> 上界已推进 ⇒ 索引已换批）</td></tr>
@@ -192,15 +246,29 @@
   <tr><td>B 轨元数据</td><td>arXiv <code>id_list=1707.06347,2006.11239,1910.02054,2304.02643</code> ⇒ <b><code>200</code> + atom</b>（8,918 B，4 条 entry）；OpenAlex <b>4/4 <code>200</code></b></td></tr>
   <tr><td>作者页</td><td><code>http://joschu.net</code> <code>200</code> / 5,889 B（无邮箱）· <code>people.eecs.berkeley.edu/~pabbeel/contact.html</code> <code>200</code>（明文 <code>pabbeel AT cs.berkeley.edu</code>）· <code>jonathanho.me</code> <code>200</code> / 5,867 B（无邮箱 / 无 X）· <code>alexanderkirillov.github.io</code> <code>404</code></td></tr>
   <tr><td>X 只读</td><td><code>x.com</code> 自检 <b><code>200</code></b>；profile <b>5/5 <code>200</code></b>（<code>pabbeel</code> / <code>johnschulman2</code> / <code>akirillov</code> / <code>karpathy</code> / <code>ilyasut</code>）；<code>akirillov</code> 判非本人（0 followers）</td></tr>
+  <tr><td>03:00 元数据</td><td>arXiv <code>id_list=2611.17334,2611.17304,2111.00396,2301.04104,2402.03300,2111.06377</code> ⇒ <b><code>200</code> + atom</b>（<b>15,365 B / 6 条 entry</b>；另单独复核 <code>2111.00396</code> <code>200</code> / 3,303 B）；OpenAlex <b>4/4 <code>200</code></b>（S4 2,741 · DreamerV3 1,962 · DeepSeekMath 11,153 · MAE 10,217）</td></tr>
+  <tr><td>03:00 作者页</td><td><code>https://www.sainingxie.com/</code> <code>200</code> / 106,060 B（<code>data-user="saining.xie"</code> / <code>data-domain="nyu.edu"</code> + <code>x.com/sainingxie</code>）· <code>danijar.com</code> <code>200</code> / 31,778 B（无邮箱；<code>/contact/</code> <code>404</code>）· <code>albertgu.com</code> <code>200</code> 但为<b>域名停放页</b>（3071 B，非本人主页）· <code>cs.stanford.edu/~albertgu/</code> <code>403</code> · <code>www.cs.cmu.edu/~albertgu/</code> <code>404</code> · <code>kaiminghe.com</code> <code>404</code></td></tr>
+  <tr><td>03:00 X 只读</td><td>profile <b>4/4 <code>200</code></b>（<code>_albertgu</code> / <code>danijarh</code> / <code>sainingxie</code> / <code>giffmana</code>）；推文页 <b>5/5 <code>200</code></b>，<code>og:title</code> 逐条核：<code>sainingxie/status/2112230668805828801</code> ⇒ <b>Dream Labs (@dreamlabs_ai)</b>（他人推文，作废）；<code>giffmana/status/2121290350069424421</code>、<code>.../2121180408121274816</code> ⇒ 本人但上下文依赖；<code>_albertgu/status/2119206160410800219</code>、<code>RichardSSutton/status/2119142310894334262</code> ⇒ 作者可核但已用（V20 / V4）</td></tr>
 </table>
 
 <h2 class="sec">附录 B · 口径自检</h2>
 <div class="ok-box">
-① A 轨 <b>5/5 <code>200</code> + atom</b>、3 篇均在 72h 内且 <code>published</code> 齐全；② <b>「<code>totalResults</code> 不变 ≠ 索引没动」</b>已如实记录并改用 <code>published</code> 实测；③ B 轨 4 条均 8 字段、被引数标来源与查询日，<b>PPO / DDPM 无会场 DOI ⇒ 不写会议</b>；④ 作者网<b>不猜</b>：Jonathan Ho / Alexander Kirillov 均写「未找到」，<code>@akirillov</code> 判非本人不登记；⑤ <code>voice_ready</code> 本期 <b>0（正文截断，不硬凑）</b>，<code>news_ready</code> <b>1</b>；⑥ 本轮外发 = <b>1 封</b>（草稿先入仓、台账已记、187 词已核）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
+① A 轨 <b>5/5 <code>200</code> + atom</b>、5 篇均在 72h 内且 <code>published</code> 齐全（00:00 轮 3 篇 + 03:00 轮 2 篇）；② <b>「<code>totalResults</code> 不变 ≠ 索引没动」</b>已如实记录并改用 <code>published</code> 实测；③ B 轨 4 条均 8 字段、被引数标来源与查询日，<b>S4 / DeepSeekMath 无会场 DOI ⇒ 不写会议</b>，DreamerV3 两版被引<b>不相加</b>；④ 作者网<b>不猜</b>：Danijar Hafner 邮箱写「未找到」，Albert Gu 域名停放页<b>不当作主页</b>；⑤ <code>voice_ready</code> 本期 <b>0（正文截断 / 作者不符 / 上下文依赖 / 已用过，均不硬凑）</b>，<code>news_ready</code> <b>1</b>（03:00 两篇四问不过 ⇒ 不新增）；⑥ 本轮外发 = <b>2 封</b>（0:08 Abbeel 194 词、3:02 Xie 197 词，草稿先入仓、台账已记）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
+<h2 class="sec">📝 03:00 补篇变更说明（00:00 → 03:00）</h2>
+<div class="ok-box">
+① <b>进度 3/5 → 5/5</b>：新增 #4 <code>2611.17334</code>（视觉编码器受控解耦，vision / pretrain）与 #5 <code>2611.17304</code>（数据库调试现场观察，harness / zhulong），两篇均取自 00:00 轮已抓的 368 条新候选，<b>未重复请求 arXiv 列表接口</b>，仅对 ID 做元数据复核。<br>
+② <b>B 轨 95 → 99</b>：新增 GRPO / DeepSeekMath（#96）· MAE（#97）· S4（#98）· DreamerV3（#99）；选文依据从「上午的 RL / 生成 / 显存 / 分割」转为<b>「RL 算法（去 critic）+ 视觉自监督 + 长序列架构 + 世界模型」</b>四条此前无落点的轴。<br>
+③ <b>作者网 97 → 99</b>：Saining Xie（已发信）· Danijar Hafner（无邮箱，待跟踪）；X 已核验 57 → 59，待 follow 47 → 49。<br>
+④ <b>作者信 1 → 2 封</b>（累计 33 → 34）：新增 MAE 三作 Saining Xie（英文 197 词，<code>SENT OK 03:02:54</code>）。<br>
+⑤ <b>更正 1 处</b>：任务书候选的「S4 = <code>2110.13985</code>」经实测为 <b>LSSL</b>；S4 真 ID 为 <code>2111.00396</code>，已按实测收录。<br>
+⑥ <b>更正 1 处（本线自查）</b>：00:00 轮曾把 Abbeel 信的词数写成 187，实际正文为 <b>194 词</b>（发送记录与心跳均为 194）⇒ 本页与 <code>research/2026-11-14.md</code> 已改为 194。<br>
+⑦ <b>未变</b>：<code>voice_ready</code> 仍为 <b>0</b>（03:00 候选均不满足「原文完整 + 作者可核 + 非断章取义」）；<code>news_ready</code> 仍为 <b>1</b>；0 follow；未发日报邮件。
 </div>
 
 <footer>
-  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 · A 轨新批 3 篇 ＋ B 轨第二十四轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-14 00:08 CST<br>
+  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 A 轨 3 篇 ＋ 03:00 时窗补 2 篇 ＋ B 轨第二十五轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-14 03:02 CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>
