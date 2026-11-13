@@ -10454,3 +10454,38 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 **本轮动作**：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5 进程；kill_gpu_serve child-PID bug 待 chain 空闲时修。
 
 **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
+
+## §R453 (2026-11-14 wake453) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+> 续 §R452。本轮=纯监控 wake，eval 链全自治，无人工动作。
+
+**实测时间**：2026-11-14 04:50-04:51（autofire chain PID2322797 etime≈04:29h；run1 PID2354149 etime≈03:42h）。
+
+**eval 链健康**：
+- autofire chain PID2322797 存活（etime≈15580s≈04:29h，ppid=1 经 setsid）。
+- eval run1 `run_cline_script.sh` PID2354149 存活（etime≈03:42h，run1 已跑 ~3h42m）；父 PID2354141 同 etime（ppid=2322797）。
+- 8 cline worker active（`-p 8`），`.task_queue` 56 行 queue + 8 in-flight = 64 待跑。
+
+**serve 健康**（3 并发 curl /v1/models 全返回预期 id）：
+- GPU4 base:8098 → minicpm5-2B ✅
+- GPU6 step105-final:8096 → minicpm5-2b-sft-v39-final ✅
+- GPU7 R2:8095 → minicpm5-2b-grpo-R2-step200（root=global_step_200）✅
+- GPU7=39246MiB/89%util；GPU4/GPU6=0%util serve 待命。
+
+**GPU5 状态**：GPU5=28922MiB/100%util，被 **vision 线 R9** 占用（cpu_rl_v11_regen_experiment.py --seed 20261116）。本线不碰 vision 进程（边界纪律）。
+
+**run1 进度**（batch_id grpo_R2_step200_run1_2026_1114_010813，dir ~/eda_code_eval/2026_1114_010813）：
+- stats **success=60/failure=5/timeout=29 = 94/158 已完成**（较 wake452 的 88 +6：success+4/fail+0/timeout+2）。
+- `.task_queue` 158→56（56 queue + 8 in-flight）。
+- code/ 102 EDA-Eval 目录（最新 -102）。
+- total_time=99269s（worker 累计）。
+- final_report.json 未生成，5run_rl_analysis_R2.json 未出。
+- ⚠️ 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 沙盒断言评分由 run_eval.py run 完后产 final_report.json）。
+
+**0 真实 infra 错误**：chain log（/tmp/posttrain_r2_eval_chain.log）仅 START 行 + pre-teardown 行无错误；CUDA OOM=0。
+
+**速率校准诚实读数**：wake452→453（~9min）88→94（+6，~0.67/min，success+4/fail+0/timeout+2）← **速率继续回升，success 持续增长**（队列推进到新任务批次，success+4 为本轮最大单次 success 增量）；剩余 ~64 任务（56 queue+8 in-flight）；run1 实际或 ~06:30-07:30 完，全 5-run 或延至 11-15（不编造精确 ETA，待下一 wake 校准）。
+
+**本轮动作**：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5 进程；kill_gpu_serve child-PID bug 待 chain 空闲时修。
+
+**Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
