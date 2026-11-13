@@ -8426,6 +8426,31 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 
 - run3 codegen complete (~31 tasks, ~2-3h at 8 workers) → autocomplete daemon auto-runs sandbox `run_eval.py` → runs 4, 5 → eval_chain runs step60 runs2-5 → base runs1-5 → final `5run_analysis.py` (mean±std, n=5). No manual intervention needed unless a worker sticks past 2500s.
 
+### §L4-zhulong (2026-11-13 wake406) Run 3 Codegen Progress — 145/158 resolved, NO stuck worker, pipeline fully autonomous
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 3 Progress (as of wake406 ~12:52 CST)
+
+- **Batch**: `~/eda_code_eval/2026_1113_101852/` (label step105, SFT v39 final ckpt, GPU6 :8096)
+- **Stats counters** (`stats/{success,failure,timeout}`): success=134, failure=6, timeout=5 → **145/158 resolved (91.8%)**
+- **Code output**: 97 `*.py` files produced under `code/<task>/pyAether_code/` (155/158 code dirs created)
+- **Remaining**: 8 in-flight + 5 queued = 13/158 tasks left for codegen (workers on tasks 126,130,142,144,145,148,149,151)
+- **Workers**: 8 cline workers all healthy, max etime 2063s (worker_8 on task 126) < 2500s timeout → **NO stuck worker this wake** (3rd consecutive wake with no kill needed: wake405, wake406)
+- **Progress since wake405**: +8 success (119→134); +3 timeout (2→5); +18 resolved (127→145)
+
+#### Pipeline Autonomy Status (all 3 layers alive, verified 12:52)
+
+1. **autocomplete daemon** (PID 1122770, etimes≈22236s ~6.2h): waiting on step105 runs, auto-chains runs 3→4→5
+2. **eval chain daemon** (PID 1161064, etimes≈16562s ~4.6h): will chain step60 runs2-5 → base runs1-5 → final 5-run analysis
+3. **run3 5run_eval** (PID 1217799, etimes≈9149s ~2.5h) → `run_cline_script.sh -p 8 -n` (PID 1217807)
+4. **Serves**: 8098 (base, GPU4) + 8097 (SFT step60, GPU5) + 8096 (SFT step105-final, GPU6, 89% util) all UP (`/v1/models` verified)
+5. **Tunnel**: `ssh -p3333` (TUNNEL_OK, hostname hfeg0tedaap02=36.15) + reverse 18096 + reverse 18098
+
+#### Next
+
+- run3 codegen complete (~13 tasks, ~1-2h at 8 workers) → autocomplete daemon auto-runs sandbox `run_eval.py` → runs 4, 5 → eval_chain runs step60 runs2-5 → base runs1-5 → final `5run_analysis.py` (mean±std, n=5). No manual intervention needed unless a worker sticks past 2500s.
+
 
 
 ### §L4-designflow (2026-11-13 wake402) Base-Model Baseline on FIXED Harness — Confirms 0% + SFT Regression Signal
