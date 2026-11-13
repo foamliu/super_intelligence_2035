@@ -8406,17 +8406,17 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 
 **Setup**: Model `minicpm5-2b` base on .17 GPU4 :8098 → 36.15 via **new reverse tunnel `ssh -p3333 -fN -R 18098:localhost:8098`** (PID 1278889 .17). cline providers.json on 36.15 swapped to `baseUrl http://127.0.0.1:18098/v1 model minicpm5-2b` (backup `providers.json.bak.sft18096`), **restored to SFT 18096** after clines connected. Harness `eval/run_one.sh <task> --model minicpm5-2b --thinking low --timeout 2400 --provider openai-compatible --status eval/status_minicpm5_base5.jsonl`, 5 parallel. PreToolUse hook, 0 blocks. Workdirs `/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-<task>/20261113_114246/`, logs `/tmp/df_base_*.log` on 36.15.
 
-**Results (3/5 completed at record time; 2 still running to 2400s timeout)**:
+**Results (4/5 completed at wake403 record; 1 still running to 2400s timeout)** — wake402 had 3/5; wake403 confirmed Analog-001 FAIL:
 
 | # | task_id | dur_sec | cline_exit | verdict | reason |
 |:--|:--|--:|--:|:--|:--|
 | 1 | EDA-Eval-DesignFlow-BitcellMcSpGen-001 | 171 | 0 | FAIL | no submit.zip (cline wrote nothing under outputs/) |
 | 2 | EDA-Eval-DesignFlow-ChPulseRespGen-001 | 125 | 0 | FAIL | no submit.zip |
 | 3 | EDA-Eval-DesignFlow-AutoPR-001 | 272 | 0 | FAIL | no submit.zip |
-| 4 | EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001 | running ~592s+ | — | — | — |
-| 5 | EDA-Eval-DesignFlow-Analog-001 | running ~351s+ | — | — | — |
+| 4 | EDA-Eval-DesignFlow-Analog-001 | 701 | 0 | FAIL | no submit.zip (wake403 confirmed) |
+| 5 | EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001 | running ~1500s+ | — | — | — (will timeout/FAIL) |
 
-→ **Base (fixed harness) = 0/3 confirmed (0%), 2 pending**. cline ran `exit=0`, did extensive `eda_flow__*` MCP work (AutoPR session 25MB/4448 lines, "Now I have the full picture. Let me summarize"), wrote **nothing to `outputs/`** → "no submit.zip". **Capability/protocol failure, NOT infra** (cline clean, hook 0 blocks, EDA backend reachable).
+→ **Base (fixed harness) = 0/4 confirmed (0%), 1 pending** (AnalogGroupCfgMergeDummy still in cline step-3 at wake403). cline ran `exit=0`, did extensive `eda_flow__*` MCP work (AutoPR session 25MB/4448 lines, "Now I have the full picture. Let me summarize"), wrote **nothing to `outputs/`** → "no submit.zip". **Capability/protocol failure, NOT infra** (cline clean, hook 0 blocks, EDA backend reachable).
 
 **Base vs SFT v39 (same 5 tasks, fixed harness)**:
 
@@ -8432,7 +8432,7 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 | Model | Tasks | Pass@1 | Harness | Source |
 |:---|---:|---:|:--|:---|
 | DeepSeek-V4-Pro (cloud) | 30 | 0% | (per §L4.10) | expand30 |
-| MiniCPM5-2B **base** | 5 | 0% (0/3 conf + 2 pend) | **fixed** | wake402 status_minicpm5_base5.jsonl |
+| MiniCPM5-2B **base** | 5 | 0% (0/4 conf + 1 pend) | **fixed** | wake402/403 status_minicpm5_base5.jsonl + /tmp/df_base_*.log |
 | MiniCPM5-2B **SFT v39 final** | 5 | 0% (0/5) | fixed | wake382/383 status_minicpm5_sft_v39_5task.jsonl |
 | ~~MiniCPM5-2B base (clean5/expand30)~~ | 5/30 | — | **un-fixed (infra ERROR "check.py missing")** | superseded — not a real measurement |
 
@@ -8441,5 +8441,5 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 **Reproduce** (from 36.15, base via reverse tunnel 18098): `cd /nasdata/app.e0031982/code/EDA-Flow-Bench` then for each task `timeout -k 30 2500 bash eval/run_one.sh <task> --model minicpm5-2b --thinking low --timeout 2400 --provider openai-compatible --status eval/status_minicpm5_base5.jsonl &` (providers.json → `http://127.0.0.1:18098/v1` + `minicpm5-2b`; tunnel `ssh -p3333 -fN -R 18098:localhost:8098 app.e0031982@localhost` from .17).
 
 **L4 designflow deliverable**: ✅ Baseline re-confirmed 0% on fixed harness (base & SFT), base row corrected (old rows infra-blocked), SFT-regression signal documented, reproduce commands + reverse-tunnel infra (18098) established. No further action unless output protocol changes.
-> ⚠️ `status_minicpm5_base5.jsonl` was empty at record time (concurrent-flock append issue after `rm -f`); 3 completed records preserved in `/tmp/df_base_*.log` worker logs on 36.15. 2 still-running tasks append on completion — next wake `cat` status file + worker logs to finalize 5/5.
+> ⚠️ `status_minicpm5_base5.jsonl` was empty at record time (concurrent-flock append issue after `rm -f`); 4 completed records preserved in `/tmp/df_base_*.log` worker logs on 36.15. 1 still-running task (AnalogGroupCfgMergeDummy) appends on completion — next wake `cat` status file + worker logs to finalize 5/5. (wake403 update: Analog-001 FAIL dur=701s confirmed from df_base log; 4/5 now done, all FAIL "no submit.zip".)
 
