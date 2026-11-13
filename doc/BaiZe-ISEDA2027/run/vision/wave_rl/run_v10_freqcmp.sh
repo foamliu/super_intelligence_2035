@@ -29,6 +29,11 @@ set -u
 cd /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/wave_rl
 
 export OMP_NUM_THREADS=16
+# CRITICAL: hide GPUs from PyTorch — experiment code sets device=cpu (line 567),
+# but PEFT's load_peft_weights -> safe_load_file internally tries CUDA when
+# GPUs are visible, causing OOM on .17's A40s. CUDA_VISIBLE_DEVICES="" forces
+# all PyTorch/PEFT/safetensors ops to CPU (matches "CPU-based RL" design).
+export CUDA_VISIBLE_DEVICES=""
 LOG=/tmp/v10_freqcmp.log
 MODEL_PATH=/nas_data/app.e0031982/models/Qwen3.5-2B
 OUT_BASE=/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/wave_rl/v10_results

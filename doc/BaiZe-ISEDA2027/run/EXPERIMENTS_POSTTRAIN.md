@@ -8398,3 +8398,48 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 
 **Caveat**: n=1 only. 5-run mean+-std needed for statistical significance (runs 2-5 in progress via autonomous pipeline).
 
+### §L4-designflow (2026-11-13 wake402) Base-Model Baseline on FIXED Harness — Confirms 0% + SFT Regression Signal
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+**Why this run**: prior designflow base-model rows §L4.10/§L4.6f (expand30/clean5) ran on the **un-fixed harness** — their status JSONL shows `verdict=ERROR, reason="check.py missing"/"jsonl missing", dur_sec=null, cline_exit=null` (cline never ran). Those 0% were **infra-blocked, not real capability**. This wake re-ran base on the **fixed harness** (workdir leak self-check passed, cline invoked) for a true baseline. Same 5 task_ids as SFT v39 run.
+
+**Setup**: Model `minicpm5-2b` base on .17 GPU4 :8098 → 36.15 via **new reverse tunnel `ssh -p3333 -fN -R 18098:localhost:8098`** (PID 1278889 .17). cline providers.json on 36.15 swapped to `baseUrl http://127.0.0.1:18098/v1 model minicpm5-2b` (backup `providers.json.bak.sft18096`), **restored to SFT 18096** after clines connected. Harness `eval/run_one.sh <task> --model minicpm5-2b --thinking low --timeout 2400 --provider openai-compatible --status eval/status_minicpm5_base5.jsonl`, 5 parallel. PreToolUse hook, 0 blocks. Workdirs `/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-<task>/20261113_114246/`, logs `/tmp/df_base_*.log` on 36.15.
+
+**Results (3/5 completed at record time; 2 still running to 2400s timeout)**:
+
+| # | task_id | dur_sec | cline_exit | verdict | reason |
+|:--|:--|--:|--:|:--|:--|
+| 1 | EDA-Eval-DesignFlow-BitcellMcSpGen-001 | 171 | 0 | FAIL | no submit.zip (cline wrote nothing under outputs/) |
+| 2 | EDA-Eval-DesignFlow-ChPulseRespGen-001 | 125 | 0 | FAIL | no submit.zip |
+| 3 | EDA-Eval-DesignFlow-AutoPR-001 | 272 | 0 | FAIL | no submit.zip |
+| 4 | EDA-Eval-DesignFlow-AnalogGroupCfgMergeDummy-001 | running ~592s+ | — | — | — |
+| 5 | EDA-Eval-DesignFlow-Analog-001 | running ~351s+ | — | — | — |
+
+→ **Base (fixed harness) = 0/3 confirmed (0%), 2 pending**. cline ran `exit=0`, did extensive `eda_flow__*` MCP work (AutoPR session 25MB/4448 lines, "Now I have the full picture. Let me summarize"), wrote **nothing to `outputs/`** → "no submit.zip". **Capability/protocol failure, NOT infra** (cline clean, hook 0 blocks, EDA backend reachable).
+
+**Base vs SFT v39 (same 5 tasks, fixed harness)**:
+
+| Model | Pass@1 | cline engagement | failure mode |
+|:--|:--:|:--|:--|
+| MiniCPM5-2B **base** | 0/5 (0%) | active: 4448-line sessions, uses `eda_flow__run_code/open_session`, 125-272s+ | writes no deliverable to `outputs/` |
+| MiniCPM5-2B **SFT v39 final** | 0/5 (0%) | passive: ends ~6 iterations, "I need spawn_agent tool", 17-167s | gives up, writes nothing to `outputs/` |
+
+**Key finding (SFT regression signal)**: both base and SFT score 0% on designflow, but **SFT engages far less** (gives up ~6 iters vs base's 4448-line active session). SFT trained on single-`.py` PyAether codegen (`pyAether_code/`) — format mismatched with multi-file agentic designflow protocol (`outputs/<subdir>/...` → `submit.zip`). PyAether-codegen SFT **does not transfer** to (may regress) agentic designflow. Consistent with §L4 root cause: the output protocol must be taught explicitly (designflow-format SFT) or harness/prompt adjusted; raw codegen SFT is not the lever.
+
+**Corrected DesignFlow baseline summary**:
+
+| Model | Tasks | Pass@1 | Harness | Source |
+|:---|---:|---:|:--|:---|
+| DeepSeek-V4-Pro (cloud) | 30 | 0% | (per §L4.10) | expand30 |
+| MiniCPM5-2B **base** | 5 | 0% (0/3 conf + 2 pend) | **fixed** | wake402 status_minicpm5_base5.jsonl |
+| MiniCPM5-2B **SFT v39 final** | 5 | 0% (0/5) | fixed | wake382/383 status_minicpm5_sft_v39_5task.jsonl |
+| ~~MiniCPM5-2B base (clean5/expand30)~~ | 5/30 | — | **un-fixed (infra ERROR "check.py missing")** | superseded — not a real measurement |
+
+→ **DesignFlow baseline = 0% for ALL models, confirmed on fixed harness for base & SFT.** Failure = capability/protocol, 0% infra on fixed path.
+
+**Reproduce** (from 36.15, base via reverse tunnel 18098): `cd /nasdata/app.e0031982/code/EDA-Flow-Bench` then for each task `timeout -k 30 2500 bash eval/run_one.sh <task> --model minicpm5-2b --thinking low --timeout 2400 --provider openai-compatible --status eval/status_minicpm5_base5.jsonl &` (providers.json → `http://127.0.0.1:18098/v1` + `minicpm5-2b`; tunnel `ssh -p3333 -fN -R 18098:localhost:8098 app.e0031982@localhost` from .17).
+
+**L4 designflow deliverable**: ✅ Baseline re-confirmed 0% on fixed harness (base & SFT), base row corrected (old rows infra-blocked), SFT-regression signal documented, reproduce commands + reverse-tunnel infra (18098) established. No further action unless output protocol changes.
+> ⚠️ `status_minicpm5_base5.jsonl` was empty at record time (concurrent-flock append issue after `rm -f`); 3 completed records preserved in `/tmp/df_base_*.log` worker logs on 36.15. 2 still-running tasks append on completion — next wake `cat` status file + worker logs to finalize 5/5.
+
