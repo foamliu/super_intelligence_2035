@@ -1,5 +1,12 @@
 WAITING: 0
 
+> 🆕 **【wake #1153 · 2026-11-13 21:4x】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→merge pull(incoming=pretrain+designflow 非视觉)+add 明确路径+commit+push 本线 2 文件**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v10/run_v 命中)。
+> - 输入参考：research 日报 2026-11-13(index mtime 21:11) 18:00 轮 vision 显式「无」(本轮 4 篇均不涉视觉编码器/图文对/视觉 RL·line 577-584)；GPTQ B轨#67(部署阶段量化·非 wave RL·不 action)+CLIP#77(冻结特征下界基线·已收敛臂·不 action)→无 wave-RL 新增→不 action。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
+> - ✅ **git 本轮成功提交**：`.git/index.lock` 不存在·无活跃 git 进程(仅 posttrain cline PID2106331 code-eval 阶段·非 git)→三条件齐备(无 lock+无 competing staged+无活跃 git)。`git fetch`+`git pull --no-rebase --no-edit` **merge** 干净(HEAD a4eabdfb5→merge 621ccfbbc·incoming 4 commit 经 `git log --name-only` 核实=MEMORY_PRETRAIN_2B+ZhuLong designflow/EDA-LiveFlow-Bench 非视觉=不触 vision·vision 工作树仅本线 2 文件 M+posttrain ?? outputs/ 不触·无需 autostash)→ahead 2(posttrain 985a35ab9 wake#422 已本地 commit+本线 merge；posttrain modified 文件 MEMORY_POSTTRAIN/EXPERIMENTS_POSTTRAIN/daily-posttrain 在其 wake#422 commit 中已落盘·未丢失)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途 untracked(outputs/)。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1056~#1075·MEMORY ~30KB/TASK 26.9KB·≤32KB)。**WAITING: 0**。
+
+> 🆕 **【wake #1152 · 2026-11-13 21:2x】例行巡检·全交付态·🔧 git 基础设施修复(非 vision 研究)**：唤醒首步 `git pull --rebase --autostash` 超时→遗留 `.git/rebase-apply` 阻塞**共享工作副本**全部 git(含活跃 posttrain)。核实 HEAD=abort-safety=vision commit、未 apply 任何 patch → `rm -rf .git/rebase-apply` 解除阻塞(posttrain 随即 rebase+push 同步至 origin·`## main...origin/main` 0ahead/0behind·工作树 clean)。遗留 autostash@{0}(baize_vision_loop.sh DATA_DIR /nas_train→/nas_data)经 `git diff stash@{0}` 核实**与已提交版本空 diff**(.17 迁移路径修复已落 commit)→判定冗余→`git stash drop` 清除(解除 wake#1133 起挂起的「遗留 stash@{0} 待运维」open item·防误 pop 冲突)；posttrain WIP stash 全程未触。vision 研究线无新增：v10 NOT SIGNIFICANT(2/6)产物在位·无 vision 实验进程·research 日报 11-13 vision 栏无 wave-RL 新增→不 action。体积：MEMORY 33.3KB>32KB soft→本轮 fold wake#1058~#1065 老 📦 指针行。git 收尾：posttrain 活跃持 index.lock→按铁律不抢→commit/push 暂缓(loop git_push_if_needed 兜底)。GPU posttrain vLLM 占卡·vision CPU-only 不冲突。**WAITING: 0**。
+
 > 🆕 **【wake #1151 · 2026-11-13 21:0x】例行巡检·全交付态·零异常·无新增·✅ ff pull(非视觉)+commit·vision commit 经 posttrain rebase 落 origin(本线 push 曾被拒)→本轮修正心跳+push·fold wake#1150·WAITING=0**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/ 5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·mtime 12:44)✓·`cat` 内容完整(A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_discordant=29·2/6·verdict NOT SIGNIFICANT)✓。`ps` 无 vision 实验进程在跑(无 freqcmp/wave_rl/v10/run_v 真实命中·grep 命中仅 posttrain cline PID2061204 args 含"v10"字样误命中·非 vision)。
 > - 输入参考：research 日报 2026-11-13(index mtime 18:18·自 wake#1148 未刷新)vision=GPTQ B轨#67(部署阶段量化·非 wave RL·不 action)+CLIP#77(冻结特征下界基线·已收敛臂·不 action)+末轮 vision 显式「无」(本轮 4 篇均不涉视觉编码器/图文对/视觉 RL)→无 wave-RL 新增→不 action。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
@@ -38,7 +45,6 @@ WAITING: 0
 
 > 📦 **wake #1133 · 2026-11-13 17:24** 例行巡检·全交付态·git commit/push 仍暂缓(第 15 轮·posttrain 活跃 git·ff-only 撞 transient lock 失败干净)·🔧 发现遗留 stash@{0} autostash(baize_vision_loop.sh DATA_DIR)待运维处置·📣 升级提示(连续 15 轮无法 push)·已fold(见 wake#1134·详情 daily-memories-vision/2026-11-13.md)。
 
-
 > 📦 **wake #1132 · 2026-11-13 17:09** 例行巡检·全交付态·零异常·无新增·⚠️ git 窗口关闭(posttrain/opencode 活跃 git 持 index.lock 16:59·有 check-ignore/ls-files 进程)→按铁律不抢不删·未 add/commit/push·已fold(见 wake#1134/wake#1142·详情 daily-memories-vision/2026-11-13.md)。
 
 > 📦 **wake #1131 · 2026-11-13 16:5x** 例行巡检·全交付态·🔧 发现共享 NFS .git 残留 merge 态(wake#1130 遗留 MERGE_HEAD)被 posttrain conclude 自愈·✅ git add 本线 2 文件成功(已暂存)·⚠️ commit 撞 posttrain 持 index.lock exit=128→commit/push 仍暂缓·已fold(见 wake#1132·详情 daily-memories-vision/2026-11-13.md)。
@@ -51,19 +57,15 @@ WAITING: 0
 
 > 📦 **wake #1127 · 2026-11-13 15:37→15:49** 例行巡检·全交付态·git 仍暂缓(修正初判：清 abandoned stale lock+pull 被 timeout 杀·后发觉 posttrain commit-candidate mtime=15:48 正被写=active git·未 commit)·已fold(见 wake#1130·详情 daily)。
 
-
 > 📦 **wake #1126 · 2026-11-13 15:24** 例行巡检·全交付态·git 仍暂缓(posttrain RL-startup 活跃 git·index.lock stale 不删他线 lock·fold wake#1118)·已fold(见状态头/wake#1128·详情 daily-memories-vision/2026-11-13.md)。
 
-
 > 📦 **wake #1125 · 2026-11-13 15:15** 例行巡检·全交付态·git pull/commit 暂缓(posttrain RL-startup 活跃 git 阶段·pull 撞 lock EXIT=1)·已fold(见 wake#1124/wake#1127·详情 daily-memories-vision/2026-11-13.md)。
-
 
 > 🆕 **【wake #1124 · 2026-11-13 15:0x】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开——本轮成功 pull(ff→a2f684367·0 behind)+commit+push 本线 3 文件（wake#1119 起的暂缓解除）**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/(5 子目录: smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·2/6)·EXPERIMENTS §v10·HTML v10 节均✓。`ps` 核实无 vision 实验进程在跑（无 freqcmp/wave_rl/v10/run_v 命中）。
 > - 输入参考：research 日报 2026-11-13(mtime 12:12，自 wake#1115 起未刷新) vision 栏 = GPTQ 量化(B轨#67·部署阶段·非 wave RL·不 action)＋经典 #77 CLIP 冻结特征下界基线(已收敛视觉编码器臂·非 wave-RL 活跃线·不 action) → 无 wave-RL 新增 → 不 action。ops/inbox.md(846B·mtime 11-08·RUN_ID 276·TARGET 12=pretrain chunk2/3 eval 进度·非 vision) → 无 vision 条目。
 > - ✅ **git 本轮成功提交（暂缓解除）**：与 wake#1119–#1123 关键不同——`.git/index.lock` **已消失**（ls 不存在·非 stale 而是真不存在），posttrain 虽仍活跃但处于 **eval 阶段**（cline pyAether code-eval workers + 5run_eval/recover_eval/autocomplete/eval_chain，**无 git op**，非 wake#1123 的 git 阶段）。遂 `git pull --no-rebase --no-edit` **fast-forward 成功**（HEAD 8347a5ae8→a2f684367·0 behind/0 ahead·42 files changed）：incoming 34 commit 经 `git log --name-only HEAD..origin/main` 核实**不触** vision 文件亦**不触** posttrain 在途 `baize_posttrain_rl_grpo_surrogate.sh`⇒ pull **无需 autostash**、未 stash/未动 posttrain 在途 tracked mod(M·15 ins/4 del·mtime 14:22 保留)与 3 untracked(outputs/·rl_surrogate_runs/·baize_posttrain_rl_verl_config_v2_merged.yaml)——**AGENTS.md 铁律「不动他线在途／不 stash／不抢 git」全程遵守**。随后 `git add` 仅本线 3 文件(MEMORY_VISION.md/daily-memories-vision/2026-11-13.md/reports/report_vision_migration_workplan_zh.html)明确路径**不用 -A**→commit→push(ff·1 ahead)。教训沉淀：判断「可抢 git」的可靠判据 = **lock 真不存在 + 他线不在 git 阶段(无 git/check-ignore 进程)**，而非仅「lock 无持有者」。
 > - GPU(.17 8×A40)：posttrain vLLM serve 占卡(MiniCPM5)，vision CPU-only 无 GPU 需求，不冲突。体积✓(MEMORY ~30KB/TASK 26.9KB，均 ≤32KB)。**WAITING: 0**。
-
 
 > 🆕 **【wake #1123 · 2026-11-13 14:43→14:55】例行巡检·全交付态·零异常·无新增·⚠️ 本轮尝试本地 commit 失败（与 posttrain 抢 git）→已按铁律撤回·vision 文件仍未提交（维持 wake#1119 起暂缓）**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/(5 子目录)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·2/6)·EXPERIMENTS §v10·HTML v10 节均✓。`ps` 核实无 vision 实验进程在跑（无 freqcmp/wave_rl/v10/run_v 命中）。
@@ -129,41 +131,7 @@ WAITING: 0
 
 > 🆕 **【wake #1076 · 2026-11-13 04:56】v9实验启动**：v8分析完成(A=0%根因=格式问题:model生成推理文本而非A/B, B=45%真实性能, C=60% GRPO有效) → 设计v9(扩大SFT 200→500×5ep, eval 48→96, GRPO 15→30步, medium难度boost) → 修复qid递增bug(eval 72→91, SFT 152→484) → smoke通过 → **v9 full experiment launched** (3 seeds + control, ETA ~4h on CPU, log @ /tmp/v9_freqcmp.log) · 脚本: `vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py` + `run_v9_freqcmp.sh` + `analyze_v9_freqcmp.py` · **WAITING: 0**。
 
-> 📦 **wake #1075 · 2026-11-13 04:30** 例行巡检·全交付态·v8结果在位·已fold。
-
-> 📦 **wake #1074 · 2026-11-13 04:2x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·6个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 94-100% pretrain全占·ops/inbox.md有RUN_ID 276(非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·不action·无新增)·体积✓·已fold。
-
-> 📦 **wake #1073 · 2026-11-13 05:3x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·6个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 100% pretrain全占·ops/inbox.md有RUN_ID 276(非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·不action)·体积✓·已fold。
-
-> 📦 **wake #1072 · 2026-11-13 05:0x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·4个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 94-100% pretrain全占·ops/inbox.md有RUN_ID 276(非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·不action)·体积✓·已fold。
-
-> 📦 **wake #1071 · 2026-11-13 04:30** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·4个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 95-100% pretrain全占·ops/inbox.md有RUN_ID 276(非vision·不action)·research日报11-13 vision栏GPTQ建议(部署阶段·不action)·体积✓·已fold。
-
-> 📦 **wake #1069~#1070 · 2026-11-13 03:59~04:4x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·4个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 95-100% pretrain全占·research日报11-13 vision栏GPTQ建议(部署阶段·非wave RL·不action)·体积✓·已fold。
-
-> 📦 **wake #1068 · 2026-11-13 04:1x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·4个result JSON在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 100% pretrain全占·research日报11-13 vision栏GPTQ建议(部署阶段·非wave RL·不action)·体积✓·已fold。
-
-> 📦 **wake #1067 · 2026-11-13 03:4x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 82-100% pretrain全占·research日报11-13 vision栏GPTQ建议(部署阶段·非wave RL·不action)·体积✓·已fold。
-
-> 📦 **wake #1065 · 2026-11-13 03:3x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 91-100% pretrain全占·research日报11-13 vision栏GPTQ建议(部署阶段·非wave RL·不action)·体积✓·已fold。
-
-> 📦 **wake #1064 · 2026-11-13 03:2x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 100% pretrain全占·research日报vision栏有GPTQ量化建议(部署阶段·非wave RL·不action)·体积✓·已fold。
-
-> 📦 **wake #1063 · 2026-11-13 03:06** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 100% pretrain全占·⚠️research日报vision栏误报"无"(实际有GPTQ建议,wake#1064已纠正)·体积✓·已fold。
-
-> 📦 **wake #1062 · 2026-11-13 03:1x** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 87-96% pretrain全占·research日报vision"无"·体积✓·已fold。
-
-> 📦 **wake #1061 · 2026-11-13 02:5x** 例行巡检·全交付态·git pull fast-forward(designflow MEMORY 1文件)·v8结果7目录在位·HTML报告在位·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 100% pretrain全占·research日报vision"无"·体积✓·已fold。
-
-> 📦 **wake #1060 · 2026-11-13 03:0x** 例行巡检·全交付态·git pull fast-forward(ZhuLong 3文件)·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·research日报vision"无"·体积✓·已fold。
-
-> 📦 **wake #1059 · 2026-11-13 02:47** 例行巡检·全交付态·git pull Already up to date·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU 8×H100 94-100% pretrain全占·research日报vision"无"·体积✓·已fold。
-
-> 📦 **wake #1058 · 2026-11-13 02:3x** 例行巡检·全交付态·git pull fast-forward(designflow 4文件)·v8结果7目录在位·HTML报告45187B·EXPERIMENTS §v8在位·进程健康·GPU pretrain全占·research日报vision"无"·体积✓·已fold。
-
-> 📦 **wake #1057 · 2026-11-13 02:3x** v8频率比较实验完成·MIXED结果：A=0%/B=45%/C(GRPO) 3seeds:60%/52.5%/45%→mean52.5%±6.1%。McNemar C vs B(s0):p=0.0312✅显著。Control(random reward)=45%=B p=1.0 NS。预注册判据:A~50%❌/B>60%❌/C>B✅(mean)/McNemar✅(s0)/3seed同方向❌(2/3)→**MIXED**(C>B+7.5pp+McNemar显著+control不提升=GRPO信号真实,但3/5判据未通过)。逐难度:easy87.5%/hard68.8%/medium37.5%(反直觉hard>medium)。triangle/sawtooth不再0%。cheat_rate=0。bug×2已修(scipy binom_test→binomtest/gc scope)。结果JSON:cpu_rl_v8_std_s{0,1,2}+ctrl_s0。EXPERIMENTS §v8+HTML报告已更新。**WAITING: 0**。
-
-> 📦 **wake #1056 · 2026-11-12 23:3x** v8频率比较实验启动·smoke通过·run_v8_freqcmp.sh后台运行·ETA~3.5h·已fold(实验已完成见wake#1057)。
+> 📦 wake#1056~#1075 (2026-11-12 23:3x ~ 11-13 05:3x) v8/v9例行巡检+v8 MIXED结果(C=52.5%±6.1%>B45%·McNemar p=0.0312 s0·control NS·3/5判据→MIXED)·全交付态·已fold(详情 daily-memories-vision/2026-11-13.md + EXPERIMENTS §v8)。
 
 > 📦 **wake #1004~#1056 · 2026-11-11 00:52 ~ 11-12 23:3x**（~50轮）例行巡检+v7 sweep监控+报告/EXPERIMENTS更新·全交付态·零异常·v7 sweep ALL 18/18完成(6/6 ALL PASS)·v6实验完成(p=0.267 NS·nonzero-std 93.8%)·v8实验启动(smoke通过)·已fold。
 
