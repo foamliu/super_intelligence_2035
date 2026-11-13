@@ -10301,3 +10301,41 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 
 - 本轮=纯监控，未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链；kill_gpu_serve child-PID bug 待 chain 空闲时修。
 - 下一步：5-run eval 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci → 显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）/ 负则诚实负结果 + 换奖励（§用户令#4，平台化使负分支概率上升）。
+## §R449 (2026-11-14 wake449) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+> 续 R448。本轮=纯监控 wake：autofire eval 链全自治运行，agent 仅观测健康 + 进度，无人工动作、未编辑运行中脚本、未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链、未碰 vision GPU5 进程。
+
+### A. eval 链 / serve / GPU 健康（实测 04:03）
+
+- autofire chain PID2322797 存活（etime≈03:41:20）；eval run1 `run_cline_script.sh` PID2354149 存活（etime≈02:56:25，run1 已跑 ~2h56m）。
+- in-flight worker：`timeout 2500 cline` 进程 10 个（`-p 8` 8 worker + 任务交接期 2 个过渡，正常）。
+- 3 并发 serve 全稳 curl /v1/models 各返回预期 id：GPU4 base:8098→minicpm5-2b / GPU6 step105-final:8096→minicpm5-2b-sft-v39-final / GPU7 R2:8095→minicpm5-2b-grpo-R2-step200(root=global_step_200)。
+- GPU7=39246MiB/86%util（R2 serve + eval 推理）；GPU4/GPU6=39246MiB/0%util（serve 待命）。
+- 🔵 **GPU5 状态变更**：GPU5 现=28916MiB/96%util，被 **vision 线 R9** 占用（PID2498238 `python3 cpu_rl_v11_regen_experiment.py --mode standard --model_path /nas_data/app.e0031982/models/Qwen3.5-2B --out_dir .../vision/wave_rl/v11_results/cpu_rl_v11_std_s20261114 --seed 20261114`，etime≈05:25）。按 AGENTS.md vision R9 已迁入 .17（2026-11-13），GPU5 不再是 post-train 空闲卡。**本线不碰 vision 进程**（边界纪律）。
+
+### B. run1 进度（实测，非估）
+
+- stats 计数（stats/success=52 + stats/failure=4 + stats/timeout=23）：**success=52/failure=4/timeout=23 = 79/158 已完成**（较 wake448 的 76 +3：success+3/fail+0/timeout+0）。
+- `.task_queue` 158→71 行（剩余 ~79 待跑：71 queue + ~8 in-flight）。
+- code/ 89 个 EDA-Eval 任务目录（最新 EDA-Eval-PyAether-087）。
+- total_time=78683s（÷8≈2.7h wallclock）。
+- final_report.json 尚未生成（run1 未完）；`/tmp/posttrain_5run_eval/grpo_R2_step200/` 已建但 `5run_rl_analysis_R2.json` 未出。
+- ⚠️ 口径诚实：success/failure/timeout=code-gen 阶段计数（cline worker 报「成功完成」=已生成 .py），非 Pass@1；Pass@1（沙盒断言评分）由 run_eval.py 在 run 完成后产出，载于 final_report.json。
+
+### C. 红线 / infra
+
+- 0 infra 错误：batch_cline.log grep Traceback=0；CUDA OOM/Killed grep=0。
+- §2/§5.3 冻结协议 eval 链复用既有 `baize_posttrain_5run_eval.sh`（未改）；§5.2 anti-cheat hook 逐字一致。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### D. 速率校准（逐 wake 实算，非编造）
+
+- wake446→447（~10min）：64→70（+6，0.6/min）
+- wake447→448（~8min）：70→76（+6，~0.75/min，success+4/timeout+2）
+- **wake448→449（~10min）：76→79（+3，~0.3/min，success+3/timeout+0）** ← 速率明显放缓：success 增速 +4→+3、timeout 停增（23 不变），符合「剩余任务偏难、2500s 超时占住 worker」预期。
+- 读数：剩余 ~79 任务（71 queue + ~8 in-flight）偏难占比高（timeout 已 23 个占住 worker）；run1 实际或 ~05:30-07:30 完，全 5-run 或延至 2026-11-14 晚~11-15。不编造精确 ETA，待下一 wake 再校准。
+
+### E. 本轮动作 / 下一步
+
+- 本轮=纯监控，未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5 进程；kill_gpu_serve child-PID bug 待 chain 空闲时修。
+- 下一步：5-run eval 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci → 显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）/ 负则诚实负结果 + 换奖励（§用户令#4，平台化使负分支概率上升）。
+
