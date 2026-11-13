@@ -35,7 +35,7 @@ WAITING: 0
 ```
 PHASE:        stack-v3-train 全量下载到/nas_user阶段（分词DONE+rsync 2TB→/nas_user后台跑中~46%+全量下载脚本就绪待启动） → WAITING=0
 已完成:       ✅分词全DONE(4600/4600主跑+40/40 rerun,0 ERR,926GB tokenized,245.8B+3.4B=249.2B tok);✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅orphan .bin清理
-当前动作:     rsync 2TB /nas_inference→/nas_user 后台跑中(PID3750248,~300MB/s,~1TB已传/1.99TB,~2350/4600parquet,ETA~50min);post-rsync自动化脚本已启动(PID3572574,等rsync完成后自动校验+删源+启动hf download全量)
+当前动作:     rsync 2TB DONE(校验通过✅4600parquet/1.99TB字节一致);源未删(分词仍在跑→安全保留);hf download全量已启动(8207files,56%fetched,新parquet开始下载part-04600+,nice19/max-workers2,日志/tmp/stackv3_post_rsync.log)
 下一步:       ①等rsync完成(~1h);②校验字节一致(find=4600+du -sb一致);③删/nas_inference源;④启动hf download全量剩余~13.9TB(nice19/max-workers2/proxy);⑤更新DATA_MAPPING+MEMORY;⑥commit
 阻塞:         无(rsync后台跑中,WAITING=0短睡巡检)
 ERROR_COUNT:  0
