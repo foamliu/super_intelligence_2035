@@ -1,0 +1,1 @@
+# 2026-11-14 07:20:16 sg docker -c nice -n 19 harbor run -p /tmp/tb21_cline_quota_s1keimbm --agent terminalbench.agents.cline_patched:ClinePatched -k 1 --n-concurrent 1 --extra-docker-compose /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml --jobs-dir /tmp/tb21_glm53_jobs/cline-patched_rerun_20261114_0720
