@@ -1,0 +1,16 @@
+Dear Dr. Wolf,
+
+I am Yang Liu, an engineer working on BaiZe (ISEDA 2027) and ZhuLong (DAC 2027), two projects that apply language models to chip design flows. We are building an agent benchmark for that domain and keep returning to GAIA (arXiv 2311.12983) — especially its insistence that questions stay conceptually simple for humans while remaining hard for assistants.
+
+Three questions:
+
+1. You release the questions but hold back answers to 300 of them. Beyond preventing overfitting, what did that split change in practice, and how do you handle questions that later become ambiguous because the web changed?
+
+2. GAIA's answers are unambiguous strings rather than LLM-judged. For a domain with structured outputs (netlists, timing reports, logs), how far would you push deterministic checking before it starts rewarding the wrong behavior?
+
+3. Your recent note that "same open model, different harness => very different results" matches what we see. In the harness leaderboard, how much of the spread comes from scaffolding versus tool access and permissions — and what should a small team fix first?
+
+Any pointers would directly shape our benchmark and harness design.
+
+Thank you,
+Yang Liu

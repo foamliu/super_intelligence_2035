@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **71** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **33** · vision **18** · harness **38** · data **37** · zhulong **46** · designflow **22**
+**本轮快照**：累计 **75** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **35** · vision **18** · harness **41** · data **39** · zhulong **48** · designflow **22**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -1266,6 +1266,76 @@
 
 ---
 
+## 72. Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism |
+| 作者（前 3） | **Mohammad Shoeybi** · **Mostofa Patwary** · **Raul Puri**（et al.，共 **6** 位：+ Patrick LeGresley、Jared Casper、**Bryan Catanzaro**） |
+| 年份 | **2019**（arXiv 首次提交 **2019-09-17T19:42:54Z**；v2 更新 2020-03-13） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`，venue 记 arXiv；🚫 不写 NeurIPS/ICML —— 未核到正式会场） |
+| 被引数 | **3,281**（OpenAlex，DOI `10.48550/arxiv.1909.08053`，查询日 **2026-11-13**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1909.08053> ｜ DOI `10.48550/arxiv.1909.08053` ｜ 代码 <https://github.com/NVIDIA/Megatron-LM> |
+| 一句话贡献 | 摘要原文要点：提出**层内（intra-layer）模型并行** —— 把 Transformer 的 attention / MLP 按列、按行切到多卡，**不需要新编译器或改库**，在原生 PyTorch 里插几个通信算子即可，且与流水并行正交；用 512 张 GPU 训到 **8.3B** 参数，整机持续 **15.1 PetaFLOPs**、相对单卡强基线（39 TFLOPs，峰值 30%）的**扩展效率 76%**；并指出 **BERT 类模型在放大时 layer-norm 的放置位置至关重要**（这一条比 PPL 数字更可迁移）。 |
+| 与我们工作的关系 | **pretrain（2B 训练的并行底座，直接对口）**：我们做 2B 级训练时最先撞到的是**显存而非算力** —— 本文给出的「层内切分 + 与流水并行正交」是最小改动路径。<b>动作</b>：在 2B 上做「纯数据并行（梯度累积）」vs「数据并行 + 层内张量并行 TP=2/4」两组对照，固定全局 batch 与 token 数，只比**有效吞吐（tokens/s/卡）与显存峰值**；<b>预注册判据</b>：若 TP 组相对 DP 组的有效吞吐提升 **&lt;15%**，或通信开销使 MFU 下降，则该并行度不进默认配方（我们的观察：2B 规模下 TP 的收益随互联带宽剧烈变化）。<br>**harness（成本口径）**：本文的「15.1 PFLOPs + 76% 扩展效率」是**整机口径**，提醒我们评测/成本表必须同时报**峰值占比与扩展效率**，否则不同并行配置的训练成本不可比。<br>**zhulong（动作-代价模型）**：并行度是可配置动作，其代价（通信 / 重算 / 显存）应进 zhulong 的「动作 → 成本」映射，而不是当常量。<b>风险</b>：① 2019 年、V100 时代数字，**不可外推到 H800 / 2B 规模**；② 8.3B 与 76% 均为作者自报，未给完整超参表；③ LN 位置结论只在 BERT 类（post-LN）上验证过，GPT 类（pre-LN）需另测。 |
+
+首次收录: 2026-11-13（第十九轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 73. DeepSeek-V3 Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DeepSeek-V3 Technical Report |
+| 作者（前 3） | **DeepSeek-AI**（机构作者）· **Aixin Liu** · **Bei Feng**（et al.；arXiv 作者表极长，含 Wenfeng Liang 等，本表不逐一列举） |
+| 年份 | **2024**（arXiv 首次提交 **2024-12-27T04:03:16Z**；v2 更新 2025-02-18） |
+| 会议 / 期刊 | **arXiv 预印本**（技术报告；OpenAlex `type=preprint`；🚫 不写正式会场） |
+| 被引数 | **7,939**（OpenAlex，DOI `10.48550/arxiv.2412.19437`，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2412.19437> ｜ DOI `10.48550/arxiv.2412.19437` ｜ 权重 <https://github.com/deepseek-ai/DeepSeek-V3> |
+| 一句话贡献 | 摘要原文要点：**MoE 架构，总参 671B / 每 token 激活 37B**；沿用 **MLA + DeepSeekMoE**（V2 已验证），并首次采用 **auxiliary-loss-free 负载均衡**与**多 token 预测（MTP）**训练目标；预训练 **14.8T tokens** 后再做 SFT + RL；全程训练仅 **2.788M H800 GPU 小时**，且**训练全程未出现不可恢复的 loss spike、未做任何回滚**。 |
+| 与我们工作的关系 | **pretrain（MoE 路由稳定性，最有价值的一条）**：2B 级做 MoE 时，auxiliary loss 会与主损失抢梯度、系数难调；本文的 **aux-loss-free 负载均衡**是可直接试的替代。<b>动作</b>：在 2B 稠密基线之上加一组「同激活参数量的小 MoE」，分别用 aux-loss 与 aux-loss-free 路由，对比**专家负载熵 / 路由抖动 / 验证损失**；<b>预注册判据</b>：若 aux-loss-free 组在固定 token 预算下验证损失劣于稠密基线 **&gt;2%**，或专家负载熵在训练后 20% 区间持续下降（塌缩），则该路由方案不进主配方。<br>**data（token 预算锚点）**：14.8T tokens 作为「大厂 MoE 的预算量级」，提醒我们 2B 的 token 预算讨论要**先对齐 token 数再谈配方**，不能拿不同 token 数的曲线互相比较。<br>**zhulong（成本口径）**：2.788M H800 小时 = **可直接换算的「一次完整训练」成本单位**，可作 zhulong 动作成本表的参照量级（注意那是 671B 模型，🚫 不得线性缩放到 2B 当结论）。<br>**harness（评测口径）**：报告以「对比闭源前沿模型」为结论口径，我们在引用时只能写「作者自报」，🚫 不当作独立复现结论。<b>风险</b>：① 671B / 37B 与 2B 规模差 2 个数量级，**任何超参都不能照搬**；② 摘要**未给** FP8 / 通信重叠等正文细节，引用须回原文；③ 7,939 次引用含大量二手转述，被引数只反映关注度、不反映正确性。 |
+
+首次收录: 2026-11-13（第十九轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+
+## 74. GAIA: a benchmark for General AI Assistants
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GAIA: a benchmark for General AI Assistants |
+| 作者（前 3） | **Grégoire Mialon** · **Clémentine Fourrier** · **Craig Swift**（et al.，共 **6** 位：+ **Thomas Wolf**、Yann LeCun、Thomas Scialom） |
+| 年份 | **2023**（arXiv 首次提交 **2023-11-21T20:34:47Z**，仅 v1） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`；🚫 不写正式会场） |
+| 被引数 | **526**（OpenAlex，DOI `10.48550/arxiv.2311.12983`，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2311.12983> ｜ DOI `10.48550/arxiv.2311.12983` ｜ 榜单 <https://huggingface.co/gaia-benchmark> |
+| 一句话贡献 | 摘要原文要点：提出面向通用助手的 GAIA 基准，题目要求**推理 + 多模态 + 网页浏览 + 工具使用**组合能力，**对人类概念上简单、对当前 AI 很难** —— 人类作答 **92%** vs 带插件的 GPT-4 **15%**；与「越难越好」的基准潮流相反，其立场是 **AGI 的标志是在日常问题上表现出接近普通人的稳健性**；共设计 **466 题**，公开题目但**保留 300 题答案**用于榜单。 |
+| 与我们工作的关系 | **harness（判分可验证性 + 反「刷榜」设计，直接对口）**：GAIA 的两个设计值得照抄 —— ① **答案唯一且可自动判**（不靠 LLM 当裁判），② **留出 300 题答案不公开**以抑制过拟合。<b>动作</b>：把 designflow / EDA agent 题的答案库按「公开题面 + 私有判据」拆分，私有部分只进评测机；<b>预注册判据</b>：若某题型的判据无法写成**确定性检查器**（只能人工看），则该题降级为「探索题」，🚫 不进主榜。<br>**harness（人机差作为难度标尺）**：92% vs 15% 的差距说明「对人类简单」不等于「对模型简单」；我们造 EDA 题时可先测**领域工程师的正确率**，把「工程师能做对、模型做不对」作为选题优先级，而不是一味加难。<br>**zhulong（工具使用能力轴）**：题目要求多步工具调用 ⇒ 与 zhulong 的「工具轨迹」评测同构，可借用其**多能力组合**的题型分层。<b>风险</b>：① 作者自报数字（92% / 15%），且 GPT-4 是 2023 年配置，**今日不可直接对比**；② 526 次引用里大量是二手引用，被引数只代表关注度；③ 题目内容涉网页浏览，**2026 年已有大量题目因网页变化而失效**（我们的观察）⇒ 引用其方法论而非题目本身。 |
+
+首次收录: 2026-11-13（第十九轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + `application/atom+xml`；OpenAlex `200`）
+
+---
+
+## 75. A Case for Intelligent RAM（IRAM）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | A Case for Intelligent RAM |
+| 作者（前 3） | **David A. Patterson** · **Thomas E. Anderson** · **Neal Cardwell**（et al.，共 **8** 位：+ Richard Fromm、Kimberly Keeton、Christos Kozyrakis、R. Thomas、Katherine Yelick） |
+| 年份 | **1997**（IEEE Micro **17(2):34–44**，3–4 月号） |
+| 会议 / 期刊 | **IEEE Micro**（DOI `10.1109/40.592312`） |
+| 被引数 | **729**（OpenAlex，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | **无 arXiv 版本**（1997 年）⇒ <https://doi.org/10.1109/40.592312> |
+| 一句话贡献 | 摘要原文要点：指出把 CPU 与 DRAM 分在不同晶圆线上制造的做法正被两个趋势动摇 —— **处理器与 DRAM 的速度差每年扩大 50%**，而**单颗 DRAM 的容量与组织方式越来越难用、容量却每年增长 60%**；主张 **IRAM（Intelligent RAM）= 把处理与存储合到一颗芯片**，以**降低访存延迟、提高带宽、改善能效**，并让容量/组织选择更灵活、节省板级面积；文末给出**三种 IRAM 设计**的性能与能效估算。 |
+| 与我们工作的关系 | **zhulong（架构-成本论证的模板，间接但真实）**：「把两个层级合成一个」的论证结构（差距在扩大 → 合并能省什么 → 三种设计估算）可以直接搬到我们的「推理栈哪里该合并」讨论（如 KV cache 与计算、预取与调度）。<b>动作</b>：用同一结构写一页「2B 推理的合并候选」：列出 3 个候选合并点、各自能省的延迟/带宽/能耗、以及**必须付出的代价**（容量灵活性、良率、编程模型）；<b>预注册判据</b>：任一候选若省下的带宽 &lt; 20% 而引入新失效模式（如容量不可配），则不立项。<br>**data（存储域一手语料）**：这类「趋势数字 + 设计权衡」文本是**架构判断题**的优质语料锚点（题目须引用原文数字，🚫 不外推）。<br>**方法论迁移（我们的观察）**：1997 年的「速度差每年 50%」这类趋势论证，今天换成了「HBM 带宽 vs 计算」的同类论证 —— 读经典的价值在于**论证结构**而非当时的数字。<b>风险</b>：① 1997 年数字（50% / 60%）**只对当时成立**，🚫 当今日常数；② IRAM 商业上未成为主流（HBM + chiplet 走了另一条路），引用时须说明「论证成立 ≠ 路线胜出」；③ 本文是**杂志文章（IEEE Micro）**而非完整会议论文，实验细节有限。 |
+
+首次收录: 2026-11-13（第十九轮）｜ 状态: 元数据已核验（OpenAlex `200`；**无 arXiv ⇒ 如实标注**）
+
+---
+
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
@@ -1273,7 +1343,7 @@
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
-> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ ~~版图布局（AlphaChip）/ 长上下文位置编码（YaRN）/ speculative decoding / 量化（GPTQ）~~ ⇒ **第十七轮已转正 #64–#67**；⑥ ~~**EDA 评测基座**（OpenROAD / ORFS 相关一手工作）~~ ⇒ **第十八轮已转正 #68**（OpenROAD DAC 2019，216）；⑦ ~~**长上下文续**（LongRoPE / 位置插值对照）~~ ⇒ **第十八轮已转正 #69**（LongRoPE `2402.13753`，302）；⑧ ~~**存储方向补充**（DRAM 模拟 / 近存计算）~~ ⇒ **第十八轮已转正 #70 Ramulator（799）/ #71 RowHammer（967 / 528 双记录）**；⑨ **近存计算源头**（A Case for Intelligent RAM, Patterson et al. 1997，OpenAlex 命中 **729**，DOI `10.1109/40.592312`，待核一手元数据）；⑩ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充）；⑪ **DRAM 模拟对照**（DRAMsim3，2020，**372**，DOI `10.1109/LCA.2020.2973991`，待核是否 arXiv 一手）。
+> **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ ~~版图布局（AlphaChip）/ 长上下文位置编码（YaRN）/ speculative decoding / 量化（GPTQ）~~ ⇒ **第十七轮已转正 #64–#67**；⑥ ~~**EDA 评测基座**（OpenROAD / ORFS 相关一手工作）~~ ⇒ **第十八轮已转正 #68**（OpenROAD DAC 2019，216）；⑦ ~~**长上下文续**（LongRoPE / 位置插值对照）~~ ⇒ **第十八轮已转正 #69**（LongRoPE `2402.13753`，302）；⑧ ~~**存储方向补充**（DRAM 模拟 / 近存计算）~~ ⇒ **第十八轮已转正 #70 Ramulator（799）/ #71 RowHammer（967 / 528 双记录）**；⑨ ~~**近存计算源头**（A Case for Intelligent RAM, Patterson et al. 1997，729）~~ ⇒ **第十九轮已转正 #75**（OpenAlex 摘要/作者/卷期已核）；⑨b **并行训练底座**（Megatron-LM `1909.08053`，3,281）⇒ **第十九轮已转正 #72**；⑨c **MoE 训练配方**（DeepSeek-V3 `2412.19437`，7,939）⇒ **第十九轮已转正 #73**；⑨d **通用 agent 基准**（GAIA `2311.12983`，526）⇒ **第十九轮已转正 #74**；⑩ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充）；⑪ **DRAM 模拟对照**（DRAMsim3，2020，**372**，DOI `10.1109/LCA.2020.2973991`，待核是否 arXiv 一手）。
 
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

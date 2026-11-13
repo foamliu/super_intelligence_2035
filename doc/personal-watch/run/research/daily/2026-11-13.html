@@ -312,8 +312,69 @@
 ① A 轨 <b>5/5 <code>200</code> + atom</b>、<code>totalResults</code> 与前两轮逐字节同值 ⇒ <b>0 新收</b>（当日 5/5 已满，不超额、不凑数）；② B 轨 4 条<b>均 8 字段</b>，被引数标查询日；两条 &lt;500（216 / 302）显式写「按奠基收」，RowHammer 双记录（967 / 528）<b>拆分说明、未相加</b>；③ <b>无 arXiv 的三条（OpenROAD / Ramulator / RowHammer）逐条标注「无 arXiv」</b>，未伪称 arXiv 一手；④ 作者网<b>不猜</b>：Kahng 邮箱取自现行 UCSD 主页 <code>mailto:</code>；<code>@AndrewKahng</code> / <code>@yoongukim</code> / <code>@TutuAjayi</code> 均「页面存在但无 bio」⇒ <b>不登记</b>；Li Lyna Zhang 三重核验后才登记；⑤ <code>voice_ready</code> 本期已满 2 条（V17＋V18）⇒ 本轮 <b>0 新增</b>；LongRoPE 作者近期推文 &gt;30 天 ⇒ 不采用；⑥ <code>news_ready</code> <b>0 条</b>（本轮无新论文，B 轨经典无「发布 / 开源 / 首次」事件点，不硬凑）；⑦ 本轮唯一外发 = 1 封作者请教信（草稿先入仓、台账已记、180 词已核）；⑧ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push。
 </div>
 
+<h2 class="sec">🔄 09:00 轮 · A 轨复核（公告批未刷新 ⇒ 0 新收）</h2>
+<p style="font-size:13.5px;">当日额度 <b>5/5 已在 03:00 收口</b>，本轮继续做<b>重扫复核</b>。单分类 5 查询 <b>5/5 <code>200</code> + <code>application/atom+xml; charset=utf-8</code></b>（2.36 / 2.06 / 1.47 / 3.74 / 1.94 s，串行间隔 ≥3.2 s）；<code>totalResults</code> = <b>125,187 / 213,062 / 298,685 / 212,409 / 30,986</b>，与 00:00 / 03:00 / 06:00 三轮<b>逐字节同值</b> ⇒ 公告批仍为 <b>2026-11-10</b>，<b>本轮无新论文</b>。merged <b>303</b> / 与 <code>SEEN.md</code> 重复 <b>9</b> / 新候选 <b>294</b>。产物 <code>research/raw/2026-11-13-09h-candidates-r163.json</code>（脚本 <code>raw/candidates_r163.py</code>）。</p>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第十九轮（+4 → 75）：训练底座 / 通用 agent 基准 / 近存计算源头</h2>
+<table>
+  <tr><th>#</th><th>论文（标题 · 年份 · 出处）</th><th>被引</th><th>一句话贡献</th><th>服务线</th></tr>
+  <tr><td>72</td><td>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism（<b>arXiv 2019</b>，<code>1909.08053</code>）</td><td><b>3,281</b></td><td>层内模型并行（按列 / 按行切 attention 与 MLP），不改编译器、原生 PyTorch + 几个通信算子，与流水并行正交；<b>8.3B</b> 参数 / 512 GPU、<b>15.1 PFLOPs</b>、<b>76%</b> 扩展效率；BERT 类模型放大时 <b>layer-norm 放置</b>是关键。</td><td>pretrain · harness · zhulong</td></tr>
+  <tr><td>73</td><td>DeepSeek-V3 Technical Report（<b>arXiv 2024</b>，<code>2412.19437</code>）</td><td><b>7,939</b></td><td>MoE 总参 <b>671B</b> / 每 token 激活 <b>37B</b>；MLA + DeepSeekMoE；<b>auxiliary-loss-free 负载均衡</b> + <b>MTP</b> 目标；<b>14.8T tokens</b> 预训练；全程 <b>2.788M H800 GPU 小时</b>，<b>无不可恢复 loss spike、无回滚</b>。</td><td>pretrain · data · zhulong · harness</td></tr>
+  <tr><td>74</td><td>GAIA: a benchmark for General AI Assistants（<b>arXiv 2023</b>，<code>2311.12983</code>）</td><td><b>526</b></td><td>面向通用助手的基准：推理 + 多模态 + 网页浏览 + 工具使用；<b>人类 92% vs 带插件 GPT-4 15%</b>；<b>466 题</b>、公开题面但<b>保留 300 题答案</b>用于榜单。</td><td>harness · zhulong</td></tr>
+  <tr><td>75</td><td>A Case for Intelligent RAM（<b>IEEE Micro 1997</b>，DOI <code>10.1109/40.592312</code>；<b>无 arXiv</b>）</td><td><b>729</b></td><td>处理器-DRAM 速度差<b>每年扩大 50%</b>、DRAM 容量<b>每年增 60%</b> ⇒ 主张 IRAM（处理 + 存储同片）降低访存延迟 / 提高带宽 / 改善能效，并给出<b>三种设计</b>的性能与能效估算。</td><td>zhulong · data</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">被引数均为 <b>OpenAlex 实测（查询日 2026-11-13）</b>；S2 / Google Scholar 未查。⚠️ Megatron / DeepSeek-V3 / GAIA 三条 <b>OpenAlex 均记 <code>preprint</code></b> ⇒ 本页<b>不写</b> NeurIPS / ICML 等会场；IRAM 为 1997 年 IEEE Micro <b>杂志文章</b>，无 arXiv。必读清单仍 <b>10/10 组、37/37 条目全覆盖</b>（本轮属「补充」）。</p>
+
+<div class="note"><b>为什么这 4 条现在收：</b>① <b>Megatron-LM</b> 补上「2B 训练怎么切分显存」的工程底座 —— 我们缺的不是算力论证，而是<b>并行度这个可配置动作的代价表</b>；② <b>DeepSeek-V3</b> 给出 2024–2026 最常被引的 <b>MoE 稳定性配方</b>（aux-loss-free + MTP）与<b>单次训练成本量级</b>；③ <b>GAIA</b> 是 harness 线唯一「判分可验证 + 留出答案」双设计的经典样本；④ <b>IRAM</b> 把存储侧「差距在扩大 → 合并能省什么」的<b>论证结构</b>留成模板，供 zhulong 的架构-成本页直接套用。四条都点名了具体落点与预注册判据，<b>不是「老论文凑数」</b>。</div>
+
+<h2 class="sec">🎯 09:00 轮 · 新增可执行建议（3 条，按线）</h2>
+<table>
+  <tr><th>线</th><th>可执行动作（命令 / 实验设计）</th><th>预注册判据</th></tr>
+  <tr><td><b>pretrain</b></td><td>2B 上做「纯数据并行（梯度累积）」vs「DP + 层内张量并行 TP=2/4」两组对照（Megatron-LM #72），固定全局 batch 与 token 数，只比 <b>tokens/s/卡</b> 与<b>显存峰值</b>；再叠一组「aux-loss vs aux-loss-free 路由」的小 MoE 臂（DeepSeek-V3 #73），记录<b>专家负载熵</b>与路由抖动。</td><td>TP 组有效吞吐提升 <b>&lt;15%</b> 或 MFU 下降 ⇒ 该并行度不进默认配方；aux-loss-free 组验证损失劣于稠密基线 <b>&gt;2%</b>、或负载熵在训练后 20% 区间持续下降（塌缩）⇒ 该路由方案不进主配方。</td></tr>
+  <tr><td><b>harness</b></td><td>把 designflow / EDA agent 题的答案库按 GAIA（#74）拆成「公开题面 + <b>私有判据</b>」，私有部分只进评测机；同时给 flow 类题加「DRC clean / timing 可解析 / 版图可 diff」三道独立门。</td><td>某题型判据写不成<b>确定性检查器</b>（只能人工看）⇒ 降级为「探索题」，🚫 不进主榜；模型自述成功但任一门不过 ⇒ 记失败。</td></tr>
+  <tr><td><b>zhulong</b></td><td>用 IRAM（#75）的论证结构写一页「2B 推理的合并候选」：列 3 个候选合并点（KV cache 与计算 / 预取与调度 / 存储与算子），各自省下的延迟 / 带宽 / 能耗 + 必须付出的代价；并行度（#72）与路由（#73）的通信/重算开销进「动作 → 成本」映射。</td><td>任一候选省下带宽 <b>&lt;20%</b> 却引入新失效模式（如容量不可配）⇒ 不立项；成本表缺峰值占比与扩展效率两项 ⇒ 该表不可用于跨配置比较。</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;"><b>vision / data / designflow：本轮无新增建议</b>（A 轨无新论文；B 轨 4 条中 data 与 designflow 的落点已分别并入上文 pretrain / harness 行的动作，不另立条目 —— 按令不凑数）。</p>
+
+
+<h2 class="sec">👥 作者关系网（第十九轮 +5 → 82；X 已核验 47；待 follow 40）</h2>
+<table>
+  <tr><th>人物</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>Thomas Wolf</b></td><td>Hugging Face（联合创始人 &amp; CSO）</td><td>GAIA（#74）</td><td><code>thomaswolfcontact@gmail.com</code>（本人主页 <code>thomwolf.io</code>，<code>200</code> / 27,239 B，去混淆写法）</td><td><b>@Thom_Wolf</b>（bio = <code>co-founder @HuggingFace</code>）</td><td><b>已发信</b> · 待 follow</td></tr>
+  <tr><td><b>David A. Patterson</b></td><td>UC Berkeley（EECS 荣休）</td><td>A Case for Intelligent RAM（#75）</td><td><code>pattrsn@cs.berkeley.edu</code>（<b>EECS 院系现行页</b> <code>200</code> / 249,647 B；旧个人页自述「not kept up」⇒ 未用）</td><td><b>未找到</b>（<code>@DavePatterson</code> 实为牙科营销账号，2010–2012 推文 ⇒ 判非本人）</td><td><b>已发信</b></td></tr>
+  <tr><td><b>Bryan Catanzaro</b></td><td>NVIDIA（VP, Applied DL Research）</td><td>Megatron-LM（#72，末位）</td><td><b>未找到</b>（不猜 <code>@nvidia.com</code>）</td><td><b>@ctnzr</b>（bio 自证职位）</td><td>待跟踪</td></tr>
+  <tr><td><b>Clémentine Fourrier</b></td><td>Hugging Face</td><td>GAIA（#74，二作）</td><td><b>未找到</b>（个人站 <code>200</code> 但无 <code>mailto:</code>）</td><td><b>@clefourrier</b>（bio = <code>@HuggingFace</code>）</td><td>待跟踪</td></tr>
+  <tr><td><b>DeepSeek-AI</b>（机构）</td><td>深度求索</td><td>DeepSeek-V3（#73）</td><td><b>未找到</b>（机构无公开个人邮箱）</td><td><b>@deepseek_ai</b>（官方机构号）</td><td>待跟踪（不发信）</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">X 探测：直连 <code>x.com</code> <b><code>000</code></b>、显式 <code>-x http://127.0.0.1:7897</code> <b><code>200</code></b>，出口 IP <code>178.249.213.185</code>；profile <b>5/5 <code>200</code></b>，其中 <code>@DavePatterson</code> <b>内容与身份不符 ⇒ 不登记</b>。<b>已 follow 仍为 0</b>（follow 需登录态 ⇒ 未假装；待 follow 清单已增至 <b>40 个 handle</b>）。完整 82 人档案见 <code>research/classic/AUTHORS.md</code>。</p>
+
+<h2 class="sec">✉ 作者信（09:00 轮 2 封，<code>SENT OK 2026-11-13 09:06:34 / :36</code>；今日累计 7 封 / 累计 28 封）</h2>
+<table>
+  <tr><th>对象</th><th>论文</th><th>语言 / 长度</th><th>三个问题（回填哪一步）</th></tr>
+  <tr><td><b>David A. Patterson</b>（09:06:34）</td><td>A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）</td><td>英文 · <b>180 词</b>（发送前 <code>wc -w</code> 已核）</td><td>① 「速度差年增 50%」哪部分被 HBM / chiplet 推翻、哪部分仍成立 → zhulong 架构论证；② 今天重述该主张的<b>最小可信实验</b>（保真度 / 基线 / 指标）→ harness 判分口径；③ IRAM 未成主流的主因与新项目应先解哪个 → zhulong 立项取舍</td></tr>
+  <tr><td><b>Thomas Wolf</b>（09:06:36）</td><td>GAIA（<code>2311.12983</code>）</td><td>英文 · <b>190 词</b>（发送前 <code>wc -w</code> 已核）</td><td>① 公开题面 + 私有答案的分割在实践中改变了什么、网页漂移如何处理 → harness 题目维护；② 有结构输出的领域里确定性判据推到多深 → designflow 判分；③ 「同模型换 harness 结果差很多」中脚手架 vs 工具权限各占多少 → harness 排序实验</td></tr>
+</table>
+<div class="note">红线自查：单收件人、不群发、不催；不承诺合作 / 署名 / 资助；不透露未公开内部信息；不夸大；同论文 ≤1、同机构 ≤2 封/天（UC Berkeley 1、Hugging Face 1）。草稿先入仓 <code>research/mail/drafts/iram-ieee-micro-1997.md</code> 与 <code>drafts/2311.12983.md</code>，台账 <code>research/mail/发送记录.md</code> 已追加（<b>没写 = 没发</b>）。</div>
+
+<h2 class="sec">附录 A3 · 检索式与命中数（2026-11-13 09:0x · 可核验）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（09:00 轮）</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,187</td><td>2.36 s</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,062</td><td>2.06 s</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>298,685</td><td>1.47 s</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,409</td><td>3.74 s</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>30,986</td><td>1.94 s</td></tr>
+</table>
+<p style="font-size:13px;">5 个 <code>totalResults</code> 与 00:00 / 03:00 / 06:00 三轮<b>逐字节同值</b> ⇒ 公告批仍 <b>2026-11-10</b>，<b>09:00 轮无新论文</b>（当日 5/5 已满 ⇒ 0 新收）。B 轨元数据：arXiv <code>id_list=1909.08053,2412.19437,2311.12983</code> <b><code>200</code> + atom</b>（Megatron 首发 <code>2019-09-17T19:42:54Z</code> 6 作者；DeepSeek-V3 首发 <code>2024-12-27T04:03:16Z</code>；GAIA 首发 <code>2023-11-21T20:34:47Z</code> 6 作者）；OpenAlex <b>4/4 <code>200</code></b>（含 IRAM DOI 直查，729）。⚠️ 首次请求 GAIA 遇 <code>429</code>，间隔 ~5 分钟后重试成功 ⇒ <b>未据此写任何结论</b>。</p>
+
+<h2 class="sec">附录 B3 · 09:00 轮口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>、<code>totalResults</code> 与前三轮逐字节同值 ⇒ <b>0 新收</b>（不超额、不凑数）；② B 轨 4 条<b>均 8 字段</b>，被引数标查询日；GAIA <b>526</b> 刚过 500，Megatron 3281 / DeepSeek-V3 7939 / IRAM 729 均 ≥500；三条 OpenAlex 记 <code>preprint</code> ⇒ <b>不写正式会场</b>；③ IRAM <b>无 arXiv</b> 已显式标注，未伪称 arXiv 一手；④ 作者网<b>不猜</b>：Patterson 邮箱取自<b>现行院系页</b>而非旧个人页；<code>@DavePatterson</code> 因<b>内容明显非本人</b>而拒绝登记；DeepSeek-AI 标为机构账号、<b>不发信</b>；⑤ <code>voice_ready</code>：本期已满 2 条（V17＋V18）⇒ 本轮 <b>0 新增</b>；Thomas Wolf 2026-11-07 原推已核验入 <b>V19</b>，<b>下期首发</b>；⑥ <code>news_ready</code> <b>0 条</b>（本轮无新论文；B 轨经典无「发布 / 开源 / 首次」事件点，不硬凑）；⑦ 本轮外发 = 2 封作者请教信（草稿先入仓、台账已记、词数已核）；⑧ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑨ 单文件 &lt;5MB；⑩ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-13（06:00 时窗 · A 轨复核 + B 轨第十八轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 06:1x CST<br>
+  研究线 · 论文观察日报 · 2026-11-13（06:00 时窗 + 09:00 时窗 · A 轨复核 + B 轨第十八 / 第十九轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 09:1x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

@@ -2336,3 +2336,14 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **X（只读，显式 `-x http://127.0.0.1:7897`）**：直连 `x.com` **`000`** / 代理 **`200`**；profile 探测 6 个 —— `AndrewKahng` `200`（0 followers / 无 bio ⇒ 不登记）· `abkahng` **`404`** · `llynazhang` **`404`** · `LynaZhang` **`200`**（`<title>` = `Li Lyna Zhang (@LynaZhang) / X`，bio 自述 MSR Asia / Long context，且其推文自述 `our LongRoPE2…` ⇒ 三重一致，**登记**）· `yoongukim` `200`（18 followers / 无 bio ⇒ 不登记）· `TutuAjayi` `200`（85 followers / 无 bio ⇒ 不登记）。
 - **发信 1 封（`SENT OK`）**：Andrew B. Kahng `06:09:06`（OpenROAD，英文 **180** 词，发送前 `wc -w` 已核；邮箱取自现行 UCSD 主页 `vlsicad.ucsd.edu/~abk/index.html` `200` 的 `mailto:abk@ucsd.edu`）。今日累计 **5 封**、累计 **26 封**。
 
+
+## §9.163 · 2026-11-13 09:00 CST（时窗轮 · A 轨复核 0 新收 + B 轨第十九轮 + 第 27/28 封信）
+
+- **批次仍未刷新**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（`cs.CL` 2.36s / `cs.CV` 2.06s / `cs.LG` 1.47s / `cs.AI` 3.74s / `cs.SE` 1.94s，串行间隔 ≥3.2s）；`totalResults` = 125,187 / 213,062 / 298,685 / 212,409 / 30,986，与 00:00 / 03:00 / 06:00 三轮**逐字节同值**。
+- **A 轨结果**：当日 5/5 已于 03:00 收口 ⇒ **0 新收**；merged **303** / seen **9** / fresh **294**；产物 `research/raw/2026-11-13-09h-candidates-r163.json`（脚本 `raw/candidates_r163.py`）。
+- **B 轨元数据（arXiv `id_list`，3 ID 一次）**：`1909.08053` Megatron-LM（首发 `2019-09-17T19:42:54Z`，v2 `2020-03-13`，**6** 作者）· `2412.19437` DeepSeek-V3（首发 `2024-12-27T04:03:16Z`，v2 `2025-02-18`，机构 + 个人混合作者表）· `2311.12983` GAIA（首发 `2023-11-21T20:34:47Z`，**6** 作者）→ **`200` + atom**；首次请求 GAIA 遇 **`429`**，间隔约 5 分钟后重试成功（如实记）。
+- **OpenAlex（查询日 2026-11-13，4/4 `200`）**：Megatron-LM **3,281**（`type=preprint`）· DeepSeek-V3 **7,939**（`type=preprint`）· GAIA **526**（`type=preprint`）· A Case for Intelligent RAM DOI `10.1109/40.592312` **729**（`type=article`，IEEE Micro 17(2):34–44, 1997，8 位作者；摘要经 `abstract_inverted_index` 复原用于条目写作）。
+- **X（只读，显式 `-x http://127.0.0.1:7897`）**：直连 `x.com` **`000`** / 代理 **`200`**（出口 IP `178.249.213.185`）；profile 探测 5 个 —— `Thom_Wolf` `200`（bio `co-founder @HuggingFace`）· `ctnzr` `200`（bio `VP, Applied Deep Learning Research @ NVIDIA`）· `clefourrier` `200`（bio `@HuggingFace`）· `deepseek_ai` `200`（官方机构号）· `DavePatterson` `200` 但 **bio 与推文为牙科营销（2010–2012）⇒ 明确非本人、不登记**。
+- **推文页核验（供 `voice_ready`）**：`Thom_Wolf/status/2118863053001531676` **`200`** / 160,196 B，`og:title` = `Thomas Wolf (@Thom_Wolf) on X`，`og:description` 全文 = `same open model, different harness => very different results / Joël set out to find which harness actually gets the most out of open models in November 2026` ⇒ 入账 **V19**（本期已满 2 条，**下期首发**）；另一条 `2118432475730882627` 亦作者可核（MoE / 800k GPU 小时），本轮不采用。
+- **发信 2 封（均 `SENT OK`）**：David A. Patterson `09:06:34`（IRAM，英文 **180** 词，发送前 `wc -w` 已核；邮箱取自 **EECS 院系现行页** `200` / 249,647 B，旧个人页自述「not been kept up」未用）· Thomas Wolf `09:06:36`（GAIA，英文 **190** 词，邮箱取自主页 `thomwolf.io` `200` / 27,239 B 的去混淆写法）。今日累计 **7 封**、累计 **28 封**。
+- **作者网**：+5 → **82**（X 已核验 **47**、待 follow **40**、已 follow **0**）。
