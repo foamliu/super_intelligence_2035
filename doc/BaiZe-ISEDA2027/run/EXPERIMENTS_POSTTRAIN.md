@@ -10583,3 +10583,23 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 由 run_eval.py run 完后产 final_report.json）。
 - 边界遵守：本轮未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake459 已归档指针化（体积维护）。
 - Next：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html（标替身预演）/负则诚实负结果+换奖励（§用户令#4，平台化使负分支概率上升）。
+
+## §R461 (wake461, 2026-11-14 06:04) — 5-run eval 监控 + 分析管线健壮性修复（fsync）
+
+- 上下文：R2 200 步主训 COMPLETED（cheat=0/1600，global_step_200 serve GPU7:8095），5-run eval autofire chain（PID2322797）自治运行中。本轮=监控 + 分析管线预防性修复。
+- 实测（.17 s0pgpuap12, date 06:04:45）：
+  - chain PID2322797 存活（etime≈5h43m=20584s）；eval run1 PID2354149 存活（etime≈4h56m=17792s）；父 PID2354141(ppid=2322797)；11 cline bun 进程（8 worker + run_cline_script + chain + 本 agent）。
+  - batch_cline.log 最新活动 06:05:51：worker-3 任务 112 超时(2500s)→开始任务 123；worker-4 任务 120 成功(235s)→开始 122；worker-8 任务 110 超时→开始 121。worker 活跃，无死锁。
+  - run1（dir ~/eda_code_eval/2026_1114_010813）：stats **success=69/failure=5/timeout=40 = 114/158**（与 wake460 持平；stats 文件 mtime 05:52，06:05 起 worker-3 又完成 1 timeout→应已 115，计数器待下次刷新）；.task_queue 36 行 queue+~8 in-flight≈44 待跑；code/ 124 目录；total_time=128735s；final_report.json 未生成；5run_rl_analysis_R2.json 未出。
+  - 3 并发 serve 全稳 curl /v1/models：GPU4 base:8098→minicpm5-2B / GPU6 step105-final:8096→minicpm5-2b-sft-v39-final / GPU7 R2:8095→minicpm5-2b-grpo-R2-step200；GPU7=89%util/39246MiB；GPU4/GPU6=0%util 待命；GPU5=3MiB/0%util 空闲（非本线，不碰）。
+  - 0 真实 infra 错误（chain log 仅 START+pre-teardown；CUDA OOM=0；batch_cline.log 0 traceback）。
+- **本轮新增产出：分析管线健壮性修复**（预防 25h+ eval 终点 JSON 丢失）：
+  - 发现 `baize_posttrain_5run_analysis.py` L175 `json.dump(all_summaries, open(out_path,'w'), indent=2)` **文件句柄未关闭**→进程被中断时终点 JSON 可能不完整/未落盘。该脚本正是 R2 5-run eval 跑完后的最终产物生成器（chain L210-211 `--compare grpo_R2_step200 step105 --output /tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`），是整条 25h+ eval 链的唯一数字出口。
+  - 修复：改为 `with open(out_path,'w') as _f: json.dump(...); _f.flush(); os.fsync(_f.fileno())`，确保终点 JSON 可靠落盘。
+  - **验证（dry-run，不碰运行中 eval）**：① `--label step105` 单标签→输出 `mean+/-std = 0.0304+/-0.0083`，5 run rates=[0.038,0.019,0.0253,0.0316,0.038]，与 locked baseline 完全一致✅；文件 321 字节立即可读（fsync 生效）✅。② `--compare step105 step105` 自比→McNemar b=0/c=0 chi2=0 p=1.0 ns，bootstrap observed_diff=0.0 CI=[0,0]✅（自比 sanity 通过，McNemar/bootstrap 逻辑正确）。
+  - **step105 baseline 真实数字复核**（5 个 final_report.json 均在 /tmp/posttrain_5run_eval/step105/run{1..5}/）：run1=6/158=0.0380, run2=3/158=0.0190, run3=4/158=0.0253, run4=5/158=0.0316, run5=6/158=0.0380 → mean=0.03038 std=0.00825 → **0.0304±0.0083 锁定值真实可追**✅。R2 比较基线稳固。
+  - R2 run1 仍在 code-gen（/tmp/posttrain_5run_eval/grpo_R2_step200/run1/ 仅 codegen.log+providers.json.bak，无 final_report.json）；run2-5 未起。chain `for run_n in 1 2 3 4 5` 顺序执行 5 轮全量 158 题。
+- 口径诚实：success/failure/timeout=code-gen 阶段计数（非 Pass@1）；R2 真实 Pass@1 待 5 run 全完 + run_eval.py 评分。
+- 边界遵守：本轮编辑的 `baize_posttrain_5run_analysis.py` **当前未在运行**（chain 处于 eval-run 阶段，analysis 在 5 run 全完后才执行 L210），编辑安全；未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。
+- **git 事件**：唤醒时发现仓库处于 `.git/rebase-apply` 中（06:02 由别线 `git pull --rebase --autostash origin main` 中断残留，rebase main[vision 1b8e1adce] onto eae30e73b[designflow shard A,已 in origin]）。实测无 git 进程在跑→ stale。`git rebase --abort` 清理（安全：eae30e73b 在 origin，1b8e1adce 保留在 main），但 abort 的 reset --hard 误丢本轮未提交工作树改动→已全部重建（analysis.py fsync+EXPERIMENTS§R461+daily-memories+MEMORY）。教训：rebase 中勿在未提交工作树上编辑；先 commit 再 rebase。
+- Next：5-run eval 5 轮全完（autofire 链自动，run1 或 ~08:00-09:00 完，5 轮全量 wall-clock 待校准）→5run_rl_analysis_R2.json（已验证可可靠落盘）→R2 Pass@1 vs step105 0.0304±0.0083（McNemar+bootstrap）→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html（标替身预演）/负则诚实负结果+换奖励（§用户令#4，奖励平台化使负分支概率上升）。

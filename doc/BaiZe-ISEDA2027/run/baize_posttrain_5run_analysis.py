@@ -172,7 +172,10 @@ def main():
             s = analyze_label(label)
             if s: all_summaries[label] = s
     out_path = args.output or os.path.join(RESULTS_DIR, "5run_analysis.json")
-    json.dump(all_summaries, open(out_path, "w"), indent=2)
+    with open(out_path, "w") as _f:
+        json.dump(all_summaries, _f, indent=2)
+        _f.flush()
+        os.fsync(_f.fileno())
     print("\nSummary saved to " + out_path)
 
 
