@@ -9142,3 +9142,58 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 等 run2(1962541) 完 → 新 RL eval chain(2028723) 自动 serve+5-run → 核 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083）。
 - R0 数字分流（§R416 §5）：显著>0.0304 → 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化 → 诚实负结果 + 起 R2+sandbox-exec（wake415 已就绪，需 GPU7 释放且沙盒不与 eval 争用）。
 - 🔴 诚实预警沿用：R0=静态字符串匹配奖励，reward↑≠Pass@1↑，平台化=proxy 饱和；真实裁判=158题5-run（用户令点4 / vision v10 教训）。
+
+## §R419 — wake419 (2026-11-13 20:4x): R0 训练动力学 proxy-饱和量化分析 + R2+sandbox-exec 臂真实就绪复验 + py3.8 selftest 健壮性修复
+
+> 背景：R0 RL eval 仍 gated 于 step60 run2(PID1962541)未完（~66min in，codegen 中）；本轮无 GPU7 可用、R0 5-run 数字未出。按反空转条款做两项零 GPU 实质产出：(A) 量化 R0 训练动力学的 proxy-饱和证据（为诚实负结果分支备好证据基）；(B) 复验 R2+sandbox-exec 臂的真实就绪性并修一个 selftest 健壮性 bug。
+
+### A. R0 训练动力学 proxy-饱和量化（数据源 `rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/metrics.jsonl`，200 行完整）
+
+按 50-步分段聚合 `rewards_mean`：
+
+| 段 | reward_mean |
+|:--|--:|
+| s1-20 | 0.6731 |
+| s21-50 | 0.8874 |
+| s51-100 | 0.9201（峰值段）|
+| s101-150 | 0.9153 |
+| s151-200 | 0.9110（平台/微降）|
+
+- reward 轨迹：first=0.3625 → peak=1.0200 → final=0.8992。**s51 起进入 ≥0.91 平台**，s101-200 微降（0.9153→0.9110），典型 proxy 奖励饱和形态。
+- **学习信号衰减（关键）**：`frac_positive_adv` 全程均值=0.325，**末 20 步=0.1375**（<均值一半）→ 多数 rollout 已无正优势 → GRPO 梯度信号趋零。
+- **奖励区分度塌缩**：`frac_nonzero_reward` 均值=0.9931（min=0.75）→ 几乎所有 rollout 都拿非零奖励，奖励几乎不再区分好坏。
+- `mean_ratio` 全程=1.0000（min=max=1.0）→ 重要性采样比恒定，策略位移极小，与「奖励饱和+优势衰减」一致。
+- KL 健康：mean=0.0653 / min=-0.0011 / max=0.1356（无坍塌，区间与 §R416 一致）。
+- wall：总计 61.7min，均 18.5s/step。
+
+**判读（诚实）**：R0 奖励=静态字符串匹配 proxy。reward 0.36→0.92 的爬升伴随 `frac_positive_adv` 与 `frac_nonzero_reward` 双衰减，是**对 proxy 的拟合/饱和**而非任务能力增长——与 vision v10「离散奖励+能力缺口方向 RL 无净增益」教训同构。**reward↑≠Pass@1↑** 的先验在训练侧已得数值支撑；最终裁判仍待 158 题 5-run（vs step105 0.0304±0.0083），但训练侧证据已偏负。
+
+### B. R2+sandbox-exec 臂真实就绪复验（数据源 selftest 实跑）
+
+- **运行时 python = cu124 venv `~/code/verl_cu124_venv/bin/python`（3.10.22）**，`baize_posttrain_rl_grpo_loop.sh` L18 `VENV_PY` 默认即此。该 venv **有 `ast.unparse`** → assertion instrumentation 在真实训练时可用。
+- **venv selftest 全 PASS**（实跑输出）：
+  - endpoint probe：`print(2+2)`→`print_log="4\n"`（tunnel→36.15→10.129.32.75 run_code 通）；
+  - assertion instrumentation：per-assert try/except 包裹 + `BAIZE_ASSERT_RESULTS_JSON::` marker 正确；
+  - PASS case：`exec_success=True`，2/2 assert pass；
+  - PARTIAL case（candidate 返回 42 非 bool）：`assert_results=[assert_0 pass, assert_1 fail]` → **R2 partial=0.4000**（pass=1.0/partial=0.4/crash=0.0）；
+  - CRASH case：`exec_success=False`、returncode=1；
+  - reward 集成：R1 pass=1.0000；**R2 无 exec → 自动 fallback R0**（pass=0.0000，向后兼容确认）；
+  - 终行 `ALL SELFTEST CHECKS PASSED`。
+- **结论**：R2+sandbox-exec 臂**真实就绪**（此前 MEMORY「wake415 已就绪」在 venv 运行时成立）。起跑命令骨架（待 GPU7 释放且不与 eval 争用时）：
+  `GPUS=7 VENV_PY=~/code/verl_cu124_venv/bin/python bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --sandbox-exec --total-steps 200 --init-from sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105 ...`
+
+### C. py3.8 selftest 健壮性修复（`baize_posttrain_rl_sandbox_exec.py` L193-207）
+
+- **发现**：用系统 `python3`(3.8.10) 跑 `--selftest` 时 `instrument_test_code` 崩 `AttributeError: module 'ast' has no attribute 'unparse'`（`ast.unparse` 需 ≥3.9）。运行时 venv(3.10) 不受影响，但 selftest 文档化「PASS」若误用系统 python 会报晦涩 traceback。
+- **修复**：`ast.unparse` 缺失时先回退 `astunparse` backport，再缺失则 `raise RuntimeError(...)` 给出明确指引「Run via the cu124 venv: ~/code/verl_cu124_venv/bin/python」。运行时行为不变（venv 有 `ast.unparse` 走原路径）。
+- **验证**：① 系统 python selftest 现报清晰 RuntimeError（非 AttributeError）；② venv selftest 仍 `ALL SELFTEST CHECKS PASSED`；③ `ast.parse` 语法检查 OK。
+
+### D. eval 链健康复核（本轮 20:43-20:48）
+
+- run2(step60, PID1962541, ~66min) codegen 中；RL eval chain(PID2028723, 994s) 每 180s 轮询 `eval-chain still running`；residual SFT chain(PID2030315, 914s) 等 RL eval 完。GPU7=3MiB 空闲待 serve。GPU0-3/4/5/6 不动。providers.json 严格串行无 clobber。队列：run2(~1-1.5h 剩)→R0 RL 5-run eval(~12-20h)→residual SFT(step60-3/4/5+base-1..5)。
+- 红线未改：cheat_rate.json 终值 0/3200=0.0（§5.2）；contam 0/3347（§5.1）；评测协议冻结未改（§2/§5.3）。
+
+### E. 本轮交付与下一步
+
+- 交付：R0 proxy-饱和量化（A）+ R2 臂 venv selftest 全 PASS 复验（B）+ py3.8 selftest 健壮性修复并验证（C）+ EXPERIMENTS §R419。
+- 下一步：① 等 2028723 出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083）→ R0 结论分流；② 训练侧证据已偏负（A），若 5-run 无显著提升 → 诚实负结果报告 + 起 R2+sandbox-exec（B 已就绪）；③ 有提升则出里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）。

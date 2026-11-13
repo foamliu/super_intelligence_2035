@@ -190,7 +190,21 @@ def instrument_test_code(test_code):
         return None
     new_tree = _AssertInstrumenter().visit(tree)
     ast.fix_missing_locations(new_tree)
-    instrumented = ast.unparse(new_tree)
+    # ast.unparse requires Python >= 3.9; the GRPO loop runs under the cu124
+    # venv (Python 3.10) so this is available at runtime.  Guard anyway so a
+    # selftest run under an older system python (e.g. 3.8) reports a clear,
+    # actionable message instead of a cryptic AttributeError, and fall back to
+    # the `astunparse` backport if it happens to be installed.
+    unparse = getattr(ast, "unparse", None)
+    if unparse is None:
+        try:
+            from astunparse import unparse  # type: ignore
+        except ImportError:
+            raise RuntimeError(
+                "instrument_test_code needs ast.unparse (Python>=3.9) or the "
+                "`astunparse` backport. Run via the cu124 venv: "
+                "~/code/verl_cu124_venv/bin/python")
+    instrumented = unparse(new_tree)
     header = "_baize_results = []\n"
     footer = ('import json as _baize_json\n'
               'print("' + _ASSERT_MARKER + '" + _baize_json.dumps(_baize_results))\n')
