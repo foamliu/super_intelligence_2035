@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🔴 **用户令 2026-11-13**：把 stack-v3-train **全量**（~15.9TB train split）下载到 `/nas_user/app.e0031982/datasets/`；已下载的 2TB（4600 parquet @ `/nas_inference`）搬过去不重下。执行顺序：①等分词主跑+rerun完成 ②rsync 2TB→/nas_user + 校验字节 ③hf download 全量剩余（自动跳已存在）④更新 DATA_MAPPING ⑤commit。纪律：nice19/max-workers2/不挤S1/不碰分词产物。
+
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 

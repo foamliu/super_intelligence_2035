@@ -1,5 +1,64 @@
 ﻿# BAIZE_DATA_TASK.md
 
+### 🔄 用户令 · 2026-11-13（**把 stack-v3-train 全量下载到 /nas_user，已下的 2TB 挪过去不重下**）· 用户直令 · 最高优先 · 进行中
+
+> **用户原话**：「安排 data 把 stackv3 全部下载，放在 /nas_user/app.e0031982/datasets 下。已经下载 2TB 挪过去，不要重复下载。」
+
+#### 0. 现状（先读，别重复劳动）
+
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| 已下载 | 4600 parquet / 1,987,930,402,327 B（1.85TiB）/ 0 incomplete | §H + MEMORY_DATA |
+| 当前位置 | `/nas_inference/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/`（`data/` 4600 parquet + `stats/train/` 5 json） | 实测 |
+| 全量 train split | **~15.9TB**（`HuggingFaceCode/stack-v3-train` 仅 train，🚫 full 113.7TB） | §H |
+| 目标位置 | `/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/` | 用户指定 |
+| `/nas_user` 余量 | 113T 总 / 56T 已用 / **57T 可用**（50%）→ 放 15.9TB 充裕 | 实测 df |
+| `/nas_inference` 余量 | 45T / 19T 已用 / 27T 可用（42%）→ 挪走 2TB 后释放空间 | 实测 df |
+
+#### 1. 执行顺序
+
+**Step 1 · 搬迁已下载的 2TB（优先，不阻塞分词）**
+- 用 `rsync -a --info=progress2` 把 `/nas_inference/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/` 整目录搬到 `/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/`
+- **搬完校验**：`find <dst>/data -name '*.parquet' | wc -l` = 4600 且 `du -sb <dst>` 与源字节一致后才删源
+- `rsync` 而非 `mv`：NFS 跨盘 `mv` = copy+delete，不可靠；`rsync -a` 保权限/时间戳，校验通过后再 `rm -rf <src>`
+- 🚫 删源前必须确认 rsync 字节级一致；🚫 不要碰正在分词的 `baize-data/tokenized/` 产物（分词读的是 `/nas_inference` 源 parquet → 搬迁期间分词可能还在跑，**等分词主跑完成后再搬**，或先 `cp -a`（保留源直到分词结束再删）)
+- **重要**：如果分词仍在运行并读取 `/nas_inference` 的 parquet 源文件，**先等分词主跑+rerun 全部完成**再执行搬迁删源；可以先把目标目录建好、开始 rsync（rsync 不影响源读取），但 `rm -rf <src>` 必须等分词完全结束
+
+**Step 2 · 下载剩余 ~13.9TB**
+- 用 `huggingface-cli download HuggingFaceCode/stack-v3-train --repo-type dataset --local-dir /nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/` 下载全量 train split
+- `hf download` 会自动跳过已存在的文件（断点续传），所以 Step 1 搬过去的 4600 parquet **不会被重下**
+- 走代理：`HTTPS_PROXY=http://172.19.92.25:13128 HTTP_PROXY=http://172.19.92.25:13128`
+- `setsid` 后台 + 日志 `/tmp/stackv3_full_download.log`
+- `nice -n 19` + `--max-workers 2`（🚫 不挤 S1 带宽；分词如果还在跑，下载让位分词）
+- 批次粒度：每 ~500GB 报一次进度（已下 parquet 数 / 总估计数 / 当前字节 / ETA / 磁盘余量）
+- 🚫 `/nas_user` 余量红线 ≥ 5T，不足则暂停报运维
+
+**Step 3 · 完成后**
+- `du -sb` 实测总字节 + `find | wc -l` parquet 总数
+- 更新 `DATA_MAPPING.md`（源/字节/文件数/新位置/证据命令）
+- 更新 `MEMORY_DATA.md` 进度快照 + 一行结论
+- commit `data stackv3-full:` + push
+
+#### 2. 纪律
+
+- 🚫 不挤 S1（pretrain 训练在 `.29` 跑，下载 `nice 19` + `--max-workers 2`）
+- 🚫 不碰 `/nas_inference` 上其他数据集
+- 🚫 不动 `baize-data/tokenized/` 分词产物
+- ✅ 搬迁用 `rsync -a`，校验字节一致才删源
+- ✅ 下载用 `hf download`（自动跳已存在文件）
+- ✅ 分词完成前不删 `/nas_inference` 源 parquet
+- ✅ 每轮报进度（parquet 数 / 字节 / ETA / 磁盘余量）
+
+#### 3. 验收
+
+- `/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/data/` 包含全量 train split parquet
+- `du -sh` ≈ 15.9TB（与 HF 标注一致或接近，偏差有解释）
+- `/nas_inference` 原位置已清理（0 残留）
+- `DATA_MAPPING.md` 更新
+- 分词产物不受影响
+
+---
+
 ### ✅ 用户令 · 2026-11-12（**分析 stack-v3-train 里哪些数据最能提升 EDA 脚本能力，出中文 HTML 报告**）· 用户直令 · 最高优先 · ✅ 已交付（Phase A全扫4600shard/97M repos/1.28B files/4963s + Phase B分层抽样3200文件/9类/seed=42 → V1~828文件/~0.01B tok, V2~6854文件/~0.04B tok, V3~139518文件；Tcl唯一显著EDA命中39.2%/SKILL未检出/PyAether 0命中；报告report_data_stackv3_eda_script_value_zh.html 43KB 8节+附录 0外链 0script；DATA_MAPPING.md §H.13新增；commit a6370ce60）
 
 > **用户原话**：「安排 data 在 stack-v3-train 里分析一下，看哪些对于提升 EDA 脚本能力（PyAether、Tcl、SKILL等）帮助较大。写个中文HTML报告。」
