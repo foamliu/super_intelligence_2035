@@ -1397,3 +1397,10 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794460479085_wqh78	joeyl	hfeg0pkn004	235	spice_sim	case	EDA-Eval-DesignFlow-CmlDivOscDiag-001	2026-11-13 15:13	
 1794449548577_09v9h	declanzh	hfeg0pkn002	196	spice_sim	case	EDA-Eval-DesignFlow-Mt0MeasureStat-001	2026-11-13 15:49	
 1794461147267_g4ixv	fan1yang	hfeg0plg104	41	spice_sim	case	EDA-Eval-DesignFlow-SpfMeasDiag-001	2026-11-13 16:31	
+1794532305061_szlie					parked		2026-11-13 17:03	P-004 DUP of SpiceParamSweepGen-001 (same user vincentz, same mixbest_V1_RBL_95_no_probe_I.sp base, same Sanadj/Sapadj/R_BL sweep task)
+1794470859980_aiusb					parked		2026-11-13 17:03	P-004 DUP of DcaStimSweepGen-001 r486 (same user curryxu, same PLL_GDCA circuit, same .sp stimulus 6GHz P<2:0> sweep task)
+1794450917162_lot4l					parked		2026-11-13 17:03	weak: Q&A session comparing 2_DFF/2_CLC CDL pin-classify py scripts + concept questions (.alter vs flat, error isolation), no produce-task
+1794447681936_gx89q					parked		2026-11-13 17:03	weak: debug-Q&A (why FuseAnalog skill cannot invoke), flow-driving not spice produce-task
+1794444510031_m0ezp					parked		2026-11-13 17:03	weak: Q&A (SRAM racing check what to look at), knowledge question not produce-task
+1794457028667_07yj8					parked		2026-11-13 17:03	weak: GUI debug (cdl verification no response, gui_pipeline.py _worker_chain), flow-driving
+1794398936151_55a3n					parked		2026-11-13 17:03	weak: vague first msg 'PLL' + wnyu has 4 PLL cases (PFDdeadZone/DivSelDuty/CpIcpChar/VcoKvcoChar) high dup-risk
