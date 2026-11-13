@@ -1,9 +1,11 @@
 WAITING: 0
 
-> 🆕 **【wake #1170 · 2026-11-14 01:19】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0/0 up-to-date 无需 pull·无 index.lock·无活跃 git·posttrain 跑 run_cline_script.sh eval 非 git 阶段)→add 明确路径+commit+push 本线 2 文件**：
+> 🆕 **【wake #1171 · 2026-11-14 01:26】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock·无活跃 git·posttrain 跑 pyAether code-eval 非 git 阶段)→ff pull(incoming 1 designflow 非视觉)+add 明确路径+commit+push 本线 2 文件**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：vision/wave_rl/v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·criteria 2/6·verdict NOT SIGNIFICANT)✓。`ps` 核实无 vision 实验进程在跑(grep freqcmp/wave_rl/v10/run_v/cpu_rl 真实命中=0·仅本巡检自身 ls/cat/ps)。
-> - 输入参考：research 日报 2026-11-14(index mtime 00:12·自 wake#1166 未刷新·最新一期 2026-11-14.html line181)vision 栏=**① 波形任务「回归 vs 生成」三臂小对照+② 分割类缺陷任务冻结 SAM 特征+轻量头作下界**——与 wake#1166/#1168/#1169 同·**无新增 wave-RL 可执行项**→不 action(本线全交付态/WAITING:0/无新令驱动·留待运维/用户拍板)。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·非 vision·无 vision 条目)→不 action。
-> - ✅ **git 本轮**：`git fetch`→`git rev-list --left-right --count HEAD...origin/main`=0/0→**已 up-to-date 无需 pull**(vision 工作树 CLEAN·仅 posttrain `?? outputs/`+`?? rl_surrogate_runs/` 不触)。无 `.git/index.lock`·无活跃 git 进程(posttrain PID2354149 跑 run_cline_script.sh eval·非 git 阶段)→三条件齐备。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-14.md`(明确路径不用 -A·不触 posttrain ??)→commit→push。GPU(.17 8×A40) posttrain RL 占卡·vision CPU-only 不冲突。体积✓(fold wake#1169·MEMORY ~30.4KB/TASK 26.3KB·均≤32KB)。**WAITING: 0**。
+> - 输入参考：research 日报 2026-11-14(index mtime 00:12·自 wake#1170 未刷新·最新一期 2026-11-14.html line181)vision 栏=**① 波形任务「回归 vs 生成」三臂小对照+② 分割类缺陷任务冻结 SAM 特征+轻量头作下界**——与 wake#1170 同·**无新增 wave-RL 可执行项**→不 action(本线全交付态/WAITING:0/无新令驱动·留待运维/用户拍板)。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·非 vision·无 vision 条目)→不 action。
+> - ✅ **git 本轮**：`git fetch`→behind 1(35db50cf6 designflow shard B #r508·经 git log --name-only 核实=MEMORY_DESIGNFLOW_B.md+daily_B+report_designflow_paper·**均非视觉·不触 vision 文件**⇒ ff 安全)→`git pull --no-rebase` ff 成功(e02edf0eb→35db50cf6·3 files·未动 posttrain 在途 M MEMORY_POSTTRAIN.md+?? outputs/)。无 `.git/index.lock`·无活跃 git 进程(posttrain cline PID2354149 pyAether code-eval·非 git)→三条件齐备。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-14.md`(明确路径不用 -A·不触 posttrain 在途)→commit→push。GPU(.17 8×A40) posttrain RL eval 占卡·vision CPU-only 不冲突。体积✓(fold wake#1170·MEMORY ~30.5KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+
+> 📦 **wake #1170 · 2026-11-14 01:19** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0/0 up-to-date 无需 pull)→add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1171·详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1169 · 2026-11-14 01:08** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock·posttrain RL eval 非 git 阶段)→ff(共享 NFS 并发 agent 先 ff 至 3b4539d09·Already up-to-date)+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1170·详情 daily-memories-vision/2026-11-14.md)。
 
