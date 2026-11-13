@@ -1422,3 +1422,18 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794531433701_x86s7	curryxu	hfeg0pkn002	109	spice_sim	case	EDA-Eval-DesignFlow-DutyWeightScale-001	2026-11-13 23:59	CROSS-SHARD COLLISION r505: shard D 同时独立造同 case DutyWeightScale-001 (commit bb3bd65c 23:58 直写 main jsonl+assets+ref, 字节级同 B 档内容). B 已撤回 _B.jsonl 重复行(302 保持), case 仍计 D 交付; B ledger mark case 保留(覆盖率分子).
 1794383143913_xd3b4	e0018590	hfeg0pkn005	29	spice_sim	parked		2026-11-14 00:27	r506: trace file removed from host 10.129.2.14 (find/ls 证实 /home/e0018590/.cline/data/sessions/ 无 xd3b4/hie89, 11/13 scan stale); near-dup pair hie89 同 user/host/kw 也 stale
 1794486098997_xziue	joeyl	hfeg0pkn004	111	spice_sim	parked		2026-11-14 00:27	r506: P-004 repeat — joeyl WCK CML divider tuning (U0 'WCK整体链路...前三级cml没优化好' + HANDOFF_CML_divider_v3.md 同 r484 CmlDividerSweepTbGen-001 progenitor + r505 joeyl opamp/CML P-004 cluster). hspice:193/pdk:181/opamp:29. 217msgs/114user. Archetype 已饱和不重造
+1794559963037_mjde5	e0044131	hfeg0pkn003	641	spice_sim	parked		2026-11-14 01:01	context-paste SRAM building summary, first msg not a task
+1794557926672_b3z68	e0039816	hfeg0pkn001	405	spice_sim	parked		2026-11-14 01:01	context-setting 'answer in Chinese', schematic/pyAether dominant
+1794549576348_3c37v	jerrygu	hfeg0pkn003	542	spice_sim	parked		2026-11-14 01:01	Q&A 'analyze SCmosCtrl module function', C-domain schematic/calibre
+1794551102851_uvwbt	yangyli	hfeg0pkn003	45	spice_sim	parked		2026-11-14 01:01	empty input '1', not a task
+1794559210459_ct4gh	alexli	hfeg0pkn004	1649	spice_sim	parked		2026-11-14 01:01	interactive job-polling/monitoring (cluster PEND), not produce-task
+1794551024957_jc45u	e0044979	hfeg0pkn003	459	spice_sim	parked		2026-11-14 01:01	Q&A diagnosis conly resistor instance PEX netlist issue, C-domain
+1794549248472_sjaal	e0024852	hfeg0pkn005	971	spice_sim	parked		2026-11-14 01:01	Q&A inspection 'look at CH336_FS post-pe netlist', not produce-task
+1794548454276_0xbsc	jiangbaol	hfeg0pkn004	1569	spice_sim	parked		2026-11-14 01:01	Q&A debug duplicated-subckt-defn error fix; jiangbaol P-004 cluster
+1794551152849_i2ubt	joeyl	hfeg0pkn004	630	spice_sim	parked		2026-11-14 01:01	P-004 joeyl WCK cluster sibling
+1794547133373_7uaan	e0046913	hfeg0pkn003	83	spice_sim	parked		2026-11-14 01:01	Q&A diagnosis PrimeTime/LSF lsb_init config error, A-domain STA
+1794555552139_myisk	joeyl	hfeg0pkn004	356	spice_sim	parked		2026-11-14 01:01	P-004 joeyl WCK bias (ngrdc sibling, ratio0.956 same netlist194+hspice194)
+1794557266556_79wy5	e0039816	hfeg0pkn001	107	spice_sim	parked		2026-11-14 01:01	context-setting 'answer in Chinese', schematic/pyAether
+1794547075294_ad825	joeyl	hfeg0pkn004	367	spice_sim	parked		2026-11-14 01:01	P-004 joeyl WCK cluster sibling
+1794550148719_diznh	jiangbaol	hfeg0pkn004	838	spice_sim	parked		2026-11-14 01:01	jiangbaol P-004 cluster sibling (0xbsc)
+1794557484096_ngrdc	joeyl	hfeg0pkn004	369	spice_sim	parked		2026-11-14 01:01	P-004 joeyl WCK bias variation sizing, same cluster as CmlDividerSweepTbGen-001; interactive tuning + /rundata perm risk
