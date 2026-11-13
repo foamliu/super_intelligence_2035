@@ -14,7 +14,7 @@ WAITING: 0
 - 阻塞: BaiZe ckpt inaccessible;P3等pretrain ckpt;zhulong 5-run eval IN PROGRESS(step105 run3/5)
 - 本轮新增产出: R402✅(designflow base-model fixed-harness baseline 0/3 confirmed + 18098 reverse tunnel infra + SFT-regression signal documented in EXPERIMENTS §L4-designflow wake402 + providers.json restored to SFT)
 - 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run3/5;designflow base 2/5 pending auto-complete);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035;本轮 commit pending(EXPERIMENTS §L4-designflow wake402 + MEMORY wake402)
+- git: super_intelligence_2035(commit a38d0c1b1 PUSHED to origin/main,rebased clean 0/1 ahead);本轮已交付(EXPERIMENTS §L4-designflow wake402 + MEMORY wake402 + daily)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
