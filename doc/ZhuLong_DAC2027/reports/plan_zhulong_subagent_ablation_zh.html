@@ -39,7 +39,7 @@ footer{margin-top:30px;color:#999;font-size:.78rem;text-align:center;border-top:
 <p class="small">ZhuLong（DAC2027）· cline 3.0.51 · PyAether 158 题 · 基座 deepseek-v4-pro-cloud · 2026-11-13</p>
 
 <div class="banner purple">
-<b>实验目标</b>：量化 cline subagent 机制对 EDA 代码生成的影响——单 agent 包打一切 vs 主 agent 自主 spawn subagent；主/子同基座 vs 子用弱基座；并探索其它维度（subagent 数量上限、工具子集、maxIterations）。
+<b>实验目标</b>：量化 cline subagent 机制对 EDA 代码生成的影响——单 agent 包打一切 vs 主 agent 自主 spawn subagent；主/子同基座 vs 子用 <b>4 档弱基座梯度</b>（dsv4-flash / doubao-pro / doubao-mini / doubao-lite）；并探索其它维度（subagent 数量上限、工具子集、maxIterations）。
 </div>
 
 <h2>一、背景：cline 的 subagent 能力（代码核实）</h2>
@@ -102,7 +102,7 @@ ConfiguredAgentFrontmatterSchema = z.object({
 <table>
 <tr><th>#</th><th>问题</th><th>自变量</th><th>假设</th><th>判据</th></tr>
 <tr><td class="l"><b>H1</b></td><td class="l">单 agent 包打一切 vs 主 agent 自主 spawn subagent</td><td class="l">spawn_agent 工具 开/关</td><td class="l">H1a: 有 subagent 反而降（拆分开销 > 收益，单函数任务不需拆分）<br/>H1b: 复杂题（API>10）有 subagent 升（探索并行化）</td><td class="l">ΔPass@1 ≥ 3pp（全量）；复杂题亚组 Δ ≥ 5pp</td></tr>
-<tr><td class="l"><b>H2</b></td><td class="l">主/子同基座 vs 子用弱基座</td><td class="l">configured agent 的 modelId: same vs weak</td><td class="l">H2a: 弱基座 subagent 降 Pass@1（能力不足）<br/>H2b: 弱基座省成本，per pass token 降 ≥20%</td><td class="l">ΔPass@1 ≥ 3pp；Δtok/pass ≥ 20%</td></tr>
+<tr><td class="l"><b>H2</b></td><td class="l">主/子同基座 vs 子用弱基座（<b>5 点能力梯度</b>）</td><td class="l">configured agent 的 modelId: same / dsv4-flash / doubao-pro / doubao-mini / doubao-lite</td><td class="l">H2a: 弱基座 subagent 降 Pass@1（能力不足），呈剂量-反应<br/>H2b: 弱基座省成本，per pass token 降 ≥20%<br/>H2c: 存在拐点——低于某能力阈值后 Pass@1 急剧下降</td><td class="l">ΔPass@1 ≥ 3pp；Δtok/pass ≥ 20%；梯度回归 R² > 0.7</td></tr>
 <tr><td class="l"><b>H3</b></td><td class="l">subagent maxIterations 限制</td><td class="l">maxIterations: 5 / 15 / 30</td><td class="l">H3: maxIter=5 过紧（subagent 未收敛）；maxIter=30 持平 unlimited</td><td class="l">subagent 收敛率差 ≥10pp（5 vs 30）</td></tr>
 </table>
 
@@ -111,8 +111,11 @@ ConfiguredAgentFrontmatterSchema = z.object({
 <tr><th>臂</th><th>spawn</th><th>configured agents</th><th>主基座</th><th>子基座</th><th>maxIter</th><th>含义</th></tr>
 <tr><td class="l"><b>A0: baseline</b></td><td><span class="tag bad">off</span></td><td>无</td><td>dsv4-pro-cloud</td><td>—</td><td>—</td><td class="l">单 agent 包打一切（当前默认）</td></tr>
 <tr><td class="l"><b>A1: spawn-on</b></td><td><span class="tag good">on</span></td><td>无</td><td>dsv4-pro-cloud</td><td>继承父</td><td>默认</td><td class="l">主 agent 自主决策是否 spawn（同基座）</td></tr>
-<tr><td class="l"><b>B1: cfg-same</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>dsv4-pro-cloud</b></td><td>15</td><td class="l">预配置 subagent，主子同基座</td></tr>
-<tr><td class="l"><b>B2: cfg-weak</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>dsv4-flash</b></td><td>15</td><td class="l">预配置 subagent，子用弱基座</td></tr>
+<tr><td class="l"><b>B1: cfg-same</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>dsv4-pro-cloud</b></td><td>15</td><td class="l">预配置 subagent，主子同基座（梯度最强端）</td></tr>
+<tr><td class="l"><b>B2: cfg-dsv4-flash</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>dsv4-flash</b></td><td>15</td><td class="l">子用 deepseek flash 级</td></tr>
+<tr><td class="l"><b>B3: cfg-doubao-pro</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>doubao-seed-2.0-pro-cloud</b></td><td>15</td><td class="l">子用 doubao pro 级（跨厂家强基座对照）</td></tr>
+<tr><td class="l"><b>B4: cfg-doubao-mini</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>doubao-seed-2.0-mini-cloud</b></td><td>15</td><td class="l">子用 doubao mini 级（中等）</td></tr>
+<tr><td class="l"><b>B5: cfg-doubao-lite</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td><b>doubao-seed-2.0-lite-cloud</b></td><td>15</td><td class="l">子用 doubao lite 级（梯度最弱端）</td></tr>
 <tr><td class="l"><b>C1: cfg-iter5</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td>dsv4-flash</td><td><b>5</b></td><td class="l">maxIterations=5（严限）</td></tr>
 <tr><td class="l"><b>C2: cfg-iter30</b></td><td>on</td><td>1 个 researcher</td><td>dsv4-pro-cloud</td><td>dsv4-flash</td><td><b>30</b></td><td class="l">maxIterations=30（宽松）</td></tr>
 </table>
@@ -134,7 +137,19 @@ ConfiguredAgentFrontmatterSchema = z.object({
 
 <h3>2.4 预配置 agent 配置文件</h3>
 
-<h4>B1/B2: researcher.md（同基座/弱基座）</h4>
+<h4>B1-B5: researcher.md（基座能力梯度变体）</h4>
+
+<p>5 个臂共用同一份 researcher.md 的 Markdown body（system prompt 不变），仅 YAML frontmatter 的 <code>providerId</code> + <code>modelId</code> 不同：</p>
+
+<table style="font-size:.82rem">
+<tr><th>臂</th><th>providerId</th><th>modelId</th><th>能力档位</th><th>API key（ providers.json ）</th></tr>
+<tr><td class="l">B1</td><td><code>openai-compatible</code></td><td><code>deepseek-v4-pro-cloud</code></td><td>同基座（最强）</td><td class="l">已有 key（compaction 实验同款）</td></tr>
+<tr><td class="l">B2</td><td><code>openai-compatible</code></td><td><code>deepseek-v4-flash</code></td><td>deepseek flash</td><td class="l">同上（同一 provider entry）</td></tr>
+<tr><td class="l">B3</td><td><code>doubao-pro</code></td><td><code>doubao-seed-2.0-pro-cloud</code></td><td>doubao pro</td><td class="l"><code>02_088E...c15f</code></td></tr>
+<tr><td class="l">B4</td><td><code>doubao-mini</code></td><td><code>doubao-seed-2.0-mini-cloud</code></td><td>doubao mini</td><td class="l"><code>02_088E...b90f</code></td></tr>
+<tr><td class="l">B5</td><td><code>doubao-lite</code></td><td><code>doubao-seed-2.0-lite-cloud</code></td><td>doubao lite（最弱）</td><td class="l"><code>02_088E...67fe</code></td></tr>
+</table>
+
 <div class="chartbox">
 <pre style="font-size:.78rem;line-height:1.5;margin:0;white-space:pre-wrap">
 ---
@@ -143,9 +158,12 @@ description: pyAether API 探索研究员，查询 API 文档并返回结构化�
 tools:
   - search_apis
   - get_api_details
-providerId: openai-compatible
-modelId: deepseek-v4-pro-cloud   # B1; B2 改为 deepseek-v4-flash
-maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
+providerId: openai-compatible        # B1/B2 用已有 provider
+modelId: deepseek-v4-pro-cloud       # B1; B2 改 deepseek-v4-flash
+                                      # B3 改 providerId=doubao-pro,  modelId=doubao-seed-2.0-pro-cloud
+                                      # B4 改 providerId=doubao-mini, modelId=doubao-seed-2.0-mini-cloud
+                                      # B5 改 providerId=doubao-lite, modelId=doubao-seed-2.0-lite-cloud
+maxIterations: 15                      # B1-B5; C1 改 5; C2 改 30
 ---
 
 你是 pyAether API 探索研究员。主 agent 会给你一个或多个 API 名称，
@@ -168,6 +186,57 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 </pre>
 </div>
 
+<h4>doubao provider 注册（providers.json + models.json）</h4>
+
+<div class="banner warn">
+<b>注意</b>：doubao 三档走同一 gateway（<code>http://agi-gateway.cxmt.com/cloud/v1</code>）但 <b>API key 各异</b>，cline 的 provider entry 以 apiKey 为粒度，因此需注册 <b>3 个独立 provider entry</b>（<code>doubao-pro</code> / <code>doubao-mini</code> / <code>doubao-lite</code>），每个 entry 在 models.json 里注册自己的 model。
+</div>
+
+<div class="chartbox">
+<pre style="font-size:.76rem;line-height:1.5;margin:0;white-space:pre-wrap">
+// providers.json 新增 3 个 entry（片段）
+"doubao-pro": {
+  "settings": {
+    "provider": "openai-compatible",
+    "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+    "maxTokens": 16384,
+    "timeout": 30000,
+    "reasoning": { "enabled": false }
+  }
+},
+"doubao-mini": {
+  "settings": {
+    "provider": "openai-compatible",
+    "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_caa8bffa-b976-47f5-acc3-4141f6c5b90f",
+    "model": "doubao-seed-2.0-mini-cloud",
+    "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+    "maxTokens": 16384, "timeout": 30000, "reasoning": { "enabled": false }
+  }
+},
+"doubao-lite": {
+  "settings": {
+    "provider": "openai-compatible",
+    "apiKey": "02_088EE9051AAE4BF0ABFC7130331BF697_78b81092-7e90-436e-aa8a-5ab8510567fe",
+    "model": "doubao-seed-2.0-lite-cloud",
+    "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+    "maxTokens": 16384, "timeout": 30000, "reasoning": { "enabled": false }
+  }
+}
+
+// models.json providers 新增 3 个 entry（每个 1 个 model）
+"doubao-pro": {
+  "provider": { "name": "Doubao Pro", "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1", "defaultModelId": "doubao-seed-2.0-pro-cloud" },
+  "models": {
+    "doubao-seed-2.0-pro-cloud": { "id": "doubao-seed-2.0-pro-cloud", "name": "doubao-seed-2.0-pro-cloud", "contextWindow": 128000, "maxInputTokens": 32000, "capabilities": ["streaming","tools"] }
+  }
+},
+"doubao-mini": { /* 同结构，model=doubao-seed-2.0-mini-cloud */ },
+"doubao-lite": { /* 同结构，model=doubao-seed-2.0-lite-cloud */ }
+</pre>
+</div>
+
 <h2>三、为什么选 40 题子集 + 158 题全量双轨</h2>
 
 <div class="banner info">
@@ -181,15 +250,15 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 <table>
 <tr><th>阶段</th><th>臂</th><th>题数</th><th>轮数</th><th>runs</th><th>墙钟估</th><th>说明</th></tr>
 <tr><td class="l">P0 预检</td><td>—</td><td>2</td><td>1</td><td>8</td><td>0.5h</td><td class="l">spawn_agent 工具可用性 + configured agent 加载 + subagent trace 事件核验</td></tr>
-<tr><td class="l">P1 pilot</td><td>A0/A1/B1/B2</td><td>8</td><td>1</td><td>32</td><td>1h</td><td class="l">4 臂 × 8 题，验证 subagent 是否被调用 + 是否产生 trace 事件</td></tr>
-<tr><td class="l">P2 主实验（40 题）</td><td>A0/A1/B1/B2/C1/C2</td><td>40</td><td>3</td><td>720</td><td>~12h</td><td class="l">6 臂 × 40 题 × 3 轮（A0/A1 复用 compaction 实验的 basic r1-r3 数据，省 3×40=120 runs）</td></tr>
-<tr><td class="l">P3 全量验证</td><td>A0/B1/B2</td><td>158</td><td>1</td><td>474</td><td>~8h</td><td class="l">3 臂 × 158 题 × 1 轮（A0 复用轴 A medium 数据，省 158 runs）</td></tr>
+<tr><td class="l">P1 pilot</td><td>A0/A1/B1-B5</td><td>8</td><td>1</td><td>64</td><td>1.5h</td><td class="l">8 臂 × 8 题，验证 subagent 是否被调用 + doubao provider 连通性 + trace 事件</td></tr>
+<tr><td class="l">P2 主实验（40 题）</td><td>A0/A1/B1-B5/C1/C2</td><td>40</td><td>3</td><td>960</td><td>~16h</td><td class="l">9 臂 × 40 题 × 3 轮（A0 复用 compaction basic r1-r3，省 120 runs）</td></tr>
+<tr><td class="l">P3 全量验证</td><td>A0/B1/B3/B5</td><td>158</td><td>1</td><td>632</td><td>~10h</td><td class="l">4 臂 × 158 题 × 1 轮（A0 复用轴 A medium，省 158 runs；B1同基座/B3 doubao-pro/B5 doubao-lite 验证梯度两端+中点）</td></tr>
 <tr><td class="l">P4 分析+报告</td><td>—</td><td>—</td><td>—</td><td>—</td><td>2h</td><td class="l">配对分析 + subagent 调用率 + 成本-性能 + 报告</td></tr>
-<tr><td class="l"><b>合计</b></td><td>—</td><td>—</td><td>—</td><td>~1234</td><td><b>~23.5h</b></td><td class="l">复用已有数据省 ~278 runs</td></tr>
+<tr><td class="l"><b>合计</b></td><td>—</td><td>—</td><td>—</td><td>~1656</td><td><b>~29.5h</b></td><td class="l">复用已有数据省 ~278 runs；实际新增 ~1378 runs</td></tr>
 </table>
 
 <div class="banner warn">
-<b>成本优化</b>：A0（baseline = 单 agent）的 40 题 × 3 轮可<b>直接复用 compaction 实验的 basic r1/r2/r3 数据</b>（同基座、同协议、同题集、compaction=basic），省 120 runs。A0 的 158 题可复用轴 A medium 数据，省 158 runs。实际新增 runs ≈ 956，墙钟 ≈ 18h。
+<b>成本优化</b>：A0（baseline = 单 agent）的 40 题 × 3 轮可<b>直接复用 compaction 实验的 basic r1/r2/r3 数据</b>（同基座、同协议、同题集、compaction=basic），省 120 runs。A0 的 158 题可复用轴 A medium 数据，省 158 runs。实际新增 runs ≈ 1378，墙钟 ≈ 24h。doubao 三档（B3/B4/B5）新增 3 臂但都是 subagent 调用（token 量小，API 调研远比写代码省），增量成本可控。
 </div>
 
 <h2>五、指标与统计</h2>
@@ -215,7 +284,8 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 <h3>5.3 统计方法</h3>
 <table>
 <tr><th>检验</th><th>用途</th><th>功效声明</th></tr>
-<tr><td class="l">McNemar（题级 3 轮多数票）</td><td class="l">H1: A0 vs A1 / B1; H2: B1 vs B2</td><td class="l">40 题 × 3 轮，discordant ≈30% 时可检出 ~10pp（α=0.05, power≈0.8）</td></tr>
+<tr><td class="l">McNemar（题级 3 轮多数票）</td><td class="l">H1: A0 vs A1 / B1; H2: B1 vs B2-B5（两两配对）</td><td class="l">40 题 × 3 轮，discordant ≈30% 时可检出 ~10pp（α=0.05, power≈0.8）</td></tr>
+<tr><td class="l"><b>基座能力梯度回归</b></td><td class="l">H2: Pass@1 ~ 基座能力序号（B1→B3→B2→B4→B5）</td><td class="l">5 点梯度，logistic 回归 R² > 0.7 → 剂量-反应关系成立；可定位能力拐点</td></tr>
 <tr><td class="l">bootstrap 10k CI</td><td class="l">所有 Δ 的 95% CI</td><td class="l">—</td></tr>
 <tr><td class="l">亚组分析（API ≤5 vs >10）</td><td class="l">H1b: 复杂题 subagent 是否有正效应</td><td class="l">158 题全量分 API 数亚组</td></tr>
 <tr><td class="l">subagent 调用率 95% CI</td><td class="l">H1 前提验证</td><td class="l">如果 < 20%，实验 underpowered</td></tr>
@@ -225,14 +295,14 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 
 <div class="banner danger">
 <b>⚠️ 核心风险：主 agent 可能不调用 subagent</b><br/>
-前序 30 轮 trace 显示主 agent <b>从未主动调用 spawn_agent</b>（尽管工具已注入）。原因：PyAether 158 题是单函数生成，主 agent 倾向于自己完成。<b>如果主 agent 不调用 subagent，A1/B1/B2 臂实际等同 A0，实验失败</b>。
+前序 30 轮 trace 显示主 agent <b>从未主动调用 spawn_agent</b>（尽管工具已注入）。原因：PyAether 158 题是单函数生成，主 agent 倾向于自己完成。<b>如果主 agent 不调用 subagent，A1/B1-B5 臂实际等同 A0，实验失败</b>。
 </div>
 
 <h3>6.1 缓解措施</h3>
 <table>
 <tr><th>措施</th><th>适用臂</th><th>方法</th><th>风险</th></tr>
 <tr><td class="l"><b>强制注入 system prompt 提示</b></td><td>A1</td><td class="l">在主 agent system prompt 末尾加：「遇到 API 数 >5 的任务，<b>必须先 spawn researcher subagent 查询 API 文档</b>，再自己写代码」</td><td class="l">提示可能被忽略</td></tr>
-<tr><td class="l"><b>configured agent 工具描述</b></td><td>B1/B2/C1/C2</td><td class="l">researcher.md 的 description 写「<b>必须</b>在写代码前调用此 agent 查询 API」，cline 会把 description 放进工具列表</td><td class="l">主 agent 仍可能跳过</td></tr>
+<tr><td class="l"><b>configured agent 工具描述</b></td><td>B1-B5/C1/C2</td><td class="l">researcher.md 的 description 写「<b>必须</b>在写代码前调用此 agent 查询 API」，cline 会把 description 放进工具列表</td><td class="l">主 agent 仍可能跳过</td></tr>
 <tr><td class="l"><b>P1 pilot 验证</b></td><td>全部</td><td class="l">P1 跑 8 题 × 4 臂，统计 subagent 调用率；如果 < 20%，<b>升级到强制注入</b>（改 system prompt 加硬性要求）</td><td class="l">—</td></tr>
 <tr><td class="l"><b>最坏情况：强制 spawn</b></td><td>全部</td><td class="l">如果 P1 调用率 < 20%，在 harness 层注入「任务开始时自动 spawn researcher，查完 API 后主 agent 才开始写代码」</td><td class="l">失去主 agent 自主性，变成"强制流水线"</td></tr>
 </table>
@@ -270,7 +340,7 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 <b>在看到数据前，预先声明判据</b>（避免 p-hacking）：
 <ol style="margin:6px 0 0 1.2em">
 <li><b>H1</b>：A0 vs A1/B1，McNemar discordant ≥ 6 vs 6（40 题），方向一致 → "subagent 有显著效应"；否则 → "无显著差异"。如果 A1（自主 spawn）调用率 < 30%，H1 结论改为 "主 agent 不会自主使用 subagent，需强制注入"。</li>
-<li><b>H2</b>：B1 vs B2，McNemar Δ ≥ 3pp 且 bootstrap CI 不跨 0 → "弱基座有显著影响"；B2 per pass token 降 ≥ 20% → "弱基座省成本"。</li>
+<li><b>H2</b>：B1 vs B2/B3/B4/B5 两两 McNemar，Δ ≥ 3pp 且 bootstrap CI 不跨 0 → "该弱基座有显著影响"；<b>5 点梯度回归</b> R² > 0.7 → "基座能力与 Pass@1 呈剂量-反应"；梯度中最弱端（B5 lite）per pass token 降 ≥ 20% → "弱基座省成本"。如果 B3（doubao-pro）与 B1（同基座）无显著差异 → "subagent API 调研对基座能力不敏感，可用任意 pro 级模型"。</li>
 <li><b>H3</b>：C1 vs C2，subagent 完成率差 ≥ 10pp → "maxIter=5 过紧"；C2 vs B2（maxIter=30 vs 15）无差异 → "maxIter=15 足够"。</li>
 <li><b>实验无效判据</b>：P1 pilot subagent 调用率 < 20% 且强制注入后仍 < 30% → "cline 3.0.51 subagent 机制不适用于 PyAether 单函数任务，需换多步骤任务集"。</li>
 </ol>
@@ -281,15 +351,15 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 <table>
 <tr><th>阶段</th><th>时长</th><th>产出</th><th>依赖</th></tr>
 <tr><td class="l">P0 预检</td><td>0.5h</td><td class="l">spawn_agent 可用 + configured agent 加载 + trace 事件验证</td><td class="l">—</td></tr>
-<tr><td class="l">P1 pilot</td><td>1h</td><td class="l">4 臂 × 8 题，subagent 调用率报告，go/no-go 决策</td><td class="l">P0</td></tr>
-<tr><td class="l">P2 主实验</td><td>~12h</td><td class="l">6 臂 × 40 题 × 3 轮，cost JSON + results JSON + trace</td><td class="l">P1 go</td></tr>
-<tr><td class="l">P3 全量验证</td><td>~8h</td><td class="l">3 臂 × 158 题 × 1 轮，外部效度</td><td class="l">P2</td></tr>
-<tr><td class="l">P4 分析+报告</td><td>2h</td><td class="l">中文 HTML 报告（含 subagent 调用率 + 配对分析 + 成本-性能 + 亚组）</td><td class="l">P2+P3</td></tr>
-<tr><td class="l"><b>合计</b></td><td><b>~23.5h</b></td><td class="l">—</td><td class="l">—</td></tr>
+<tr><td class="l">P1 pilot</td><td>1.5h</td><td class="l">8 臂 × 8 题，subagent 调用率报告 + doubao 连通性验证，go/no-go 决策</td><td class="l">P0</td></tr>
+<tr><td class="l">P2 主实验</td><td>~16h</td><td class="l">9 臂 × 40 题 × 3 轮，cost JSON + results JSON + trace</td><td class="l">P1 go</td></tr>
+<tr><td class="l">P3 全量验证</td><td>~10h</td><td class="l">4 臂 × 158 题 × 1 轮（B1/B3/B5 梯度两端+中点），外部效度</td><td class="l">P2</td></tr>
+<tr><td class="l">P4 分析+报告</td><td>2h</td><td class="l">中文 HTML 报告（含 subagent 调用率 + 配对分析 + <b>基座能力梯度曲线</b> + 成本-性能 + 亚组）</td><td class="l">P2+P3</td></tr>
+<tr><td class="l"><b>合计</b></td><td><b>~30h</b></td><td class="l">—</td><td class="l">—</td></tr>
 </table>
 
 <div class="banner good">
-<b>可并行</b>：P2 的 6 臂可串行（避免抢沙盒），也可 2 臂并行（如果沙盒容量允许）。<b>建议串行</b>（参考 compaction 实验的 ABBA 串行模式，每臂 ~2h，6 臂 ~12h）。P3 可在 P2 完成后立即启动。<b>总体 ETA：~24h（1 天）</b>。
+<b>可并行</b>：P2 的 9 臂可串行（避免抢沙盒），也可 2 臂并行（如果沙盒容量允许）。<b>建议串行</b>（参考 compaction 实验的 ABBA 串行模式，每臂 ~1.5h，9 臂 ~16h）。P3 可在 P2 完成后立即启动。<b>总体 ETA：~30h（1.5 天）</b>。
 </div>
 
 <h2>十一、与已有实验的关系</h2>
@@ -307,7 +377,8 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 <tr><th>风险</th><th>概率</th><th>影响</th><th>缓解</th></tr>
 <tr><td class="l">主 agent 不调用 subagent</td><td class="warn"><span class="tag warn">高</span></td><td class="l">实验无效</td><td class="l">P1 pilot 验证 + 强制注入 fallback</td></tr>
 <tr><td class="l">subagent token 漏计（同 compaction）</td><td class="l"><span class="tag good">低</span></td><td class="l">H2 成本分析不准</td><td class="l">SpawnAgentOutput.usage 明确返回 token，可采集</td></tr>
-<tr><td class="l">弱基座 subagent 质量差导致主 agent 被误导</td><td class="l"><span class="tag warn">中</span></td><td class="l">B2 Pass@1 降</td><td class="l">这恰是 H2 要测的（不是 bug 是 feature）</td></tr>
+<tr><td class="l">弱基座 subagent 质量差导致主 agent 被误导</td><td class="l"><span class="tag warn">中</span></td><td class="l">B2/B4/B5 Pass@1 降</td><td class="l">这恰是 H2 要测的（不是 bug 是 feature）；doubao-lite 最可能出现</td></tr>
+<tr><td class="l">doubao provider 连通性 / API key 失效</td><td class="l"><span class="tag warn">中</span></td><td class="l">B3/B4/B5 全军覆没</td><td class="l">P1 pilot 先用 1 题 × 3 臂验证 doubao 三个 key 连通；失效则该臂降级为 P2 后可选</td></tr>
 <tr><td class="l">subagent 超时（5min timeoutMs）</td><td class="l"><span class="tag warn">中</span></td><td class="l">复杂 API 查询未完成</td><td class="l">P1 pilot 看 subagent 完成率；如 < 80% 考虑调 timeout</td></tr>
 <tr><td class="l">沙盒资源竞争（subagent 也调 EDA 沙盒）</td><td class="l"><span class="tag warn">中</span></td><td class="l">subagent 和主 agent 抢沙盒</td><td class="l">researcher 只有 search/get_api 工具（不调沙盒），避免竞争</td></tr>
 <tr><td class="l">/nasdata 磁盘满</td><td class="l"><span class="tag warn">中</span></td><td class="l">trace 写入失败</td><td class="l">eval 路由 /tmp（参考 compaction 实验方案）</td></tr>
@@ -319,7 +390,7 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 <ol style="margin:6px 0 0 1.2em">
 <li><b>填补空白</b>：前序 30 轮 + compaction 6 轮 trace 显示 subagent <b>从未被使用</b>——这是 cline 能力栈里唯一未被验证的维度。</li>
 <li><b>工程价值</b>：如果 subagent 有正效应（尤其复杂题），意味着 EDA agent 应该用"主 agent 写代码 + subagent 查 API"的分工模式；如果无效应或负效应，说明单 agent 足够，省去 subagent 复杂度。</li>
-<li><b>成本价值</b>：H2（弱基座 subagent）如果成立，意味着 API 调研可以用 flash 级模型（省 80%+ token），只有写代码用 pro 级——这是生产部署的降本路径。</li>
+<li><b>成本价值</b>：H2（弱基座 subagent）如果成立，意味着 API 调研可以用 flash/mini/lite 级模型（省 80%+ token），只有写代码用 pro 级——这是生产部署的降本路径。doubao 三档（pro/mini/lite）提供跨厂家验证，避免"只有 deepseek flash 省钱"的单厂家结论。</li>
 <li><b>方法学价值</b>：subagent 的 <code>SpawnAgentOutput.usage</code> 可精确采集 token（不像 compaction 漏计），是首个能做"主/子 token 分拆"的实验。</li>
 <li><b>DAC 论文素材</b>：subagent 消融 + compaction 消融 + thinking 消融 + 语言消融 = 4 轴完整消融矩阵，覆盖 cline 全部可调维度。</li>
 </ol>
@@ -341,7 +412,7 @@ maxIterations: 15                 # B1/B2; C1 改 5; C2 改 30
 
 <footer>
 <p>ZhuLong Subagent 消融实验计划书 · 2026-11-13 · cline 3.0.51 · PyAether 158 题</p>
-<p>H1 单agent vs subagent · H2 同基座 vs 弱基座 · H3 maxIterations · 6 臂 × 40 题 × 3 轮 + 3 臂 × 158 题 × 1 轮</p>
+<p>H1 单agent vs subagent · H2 同基座 vs 4 档弱基座梯度（dsv4-flash / doubao-pro / doubao-mini / doubao-lite）· H3 maxIterations · 9 臂 × 40 题 × 3 轮 + 4 臂 × 158 题 × 1 轮</p>
 </footer>
 
 </body></html>
