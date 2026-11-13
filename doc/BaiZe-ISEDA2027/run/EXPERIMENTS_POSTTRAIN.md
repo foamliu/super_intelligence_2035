@@ -9673,3 +9673,61 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 2. R2 主训完（~01:11）→ autofire 链自动 teardown GPU5 → serve R2 ckpt → 158 题 5-run eval → `5run_rl_analysis_R2.json`。
 3. R2 显著提升（vs step105 0.0304±0.0083，McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化 → 诚实负结果 + 换奖励/任务定义（§用户令#4）。
 
+## §R431 (wake431, 2026-11-14 00:3x) — R2 主训监控(step100/200)+去稀疏化单调趋势实测+cheat=0/400 红线绿+step50 ckpt 完整
+
+### A. R2 主训健康监控（实测 @00:35）
+
+- 进程：PID2314192（父 2314188=setsid wrapper，ppid→1 detached）仍 RUNNING，etimes~1640s（~27min）。`baize_posttrain_rl_grpo_loop.py --reward-arm R2 --sandbox-exec --sft-ckpt global_step_105 --total-steps 200 --group-size 8 --batch-prompts 1 --save-freq 50 --lr 3e-6 --kl-coef 0.02`。
+- GPU：`nvidia-smi -i 7` = 35564 MiB / 46068 MiB，util **100%**。GPU0-3=root SGLang(不可动)，GPU4=base serve(39.2G)，GPU5=step60 serve(39.2G，孤立，eval 链将 teardown)，GPU6=step105-final baseline serve(39.2G)。
+- 日志 `/tmp/grpo_loop_R2_sandbox_200step.log`：**step 100/200** @00:35:40，~15.7s/step → 剩余 100 步 ≈ 1570s ≈ **ETA ~01:02 CST**。
+- 健康复检：`grep -iE 'oom|error|traceback|cuda out of memory|killed|exception'` log = **0 命中**（100 步无异常）。
+- RAM：`free -g` total 755G，**available 671G**，swap used 17G ⇒ 极充裕，无 OOM 风险（wake429 OOM 教训已防）。
+
+### B. 红线 cheat_rate 实测（step50 落盘）
+
+- `rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step/cheat_rate.json`（@00:22 落盘，step50 时）：
+  ```
+  total_rollouts=400  cheat_detected=0  cheat_rate=0.0  ngram_size=8  cheat_examples=[]
+  ```
+- log 实证 `cheat_rate: total=400 cheat=0 rate=0.0`（@00:23:02）。
+- §5.2 反作弊红线：**绿**（n-gram 8 cheat 检测，0/400）。训练侧 cheat 已报；eval 侧 cline harness PreToolUse hook 逐字一致（复用既有 5run_eval.sh）。
+- §5.1 污染隔离：rl_pyaether_synth_v2.parquet 训练侧 contam 0/3347（R0 验过，R2 同数据），红线绿。
+
+### C. step50 ckpt 完整性实证
+
+- `global_step_50/`：config.json + generation_config.json + **model-00001-of-00002.safetensors(4.50GB) + model-00002-of-00002.safetensors(0.53GB)** + model.safetensors.index.json + **optimizer.pt(10.07GB)** + special_tokens_map.json（总 ~15GB，2B 全参 + Adam 状态完整）。
+- ⇒ step50 ckpt 可 serve（eval 链 serve global_step_200，但 step50 作为中间断点保险已落盘）。末步 global_step_200 也会存（save-freq=50 + 末步）。
+
+### D. R2 去稀疏化单调趋势实测（100 步 dynamics，关键证据）
+
+逐 25 步窗口统计（`grep + python` 实算，非估）：
+
+| 窗口 | mean_reward | mean_nz(非零reward占比) | mean_gn(梯度) |
+|:--|--:|--:|--:|
+| steps 1-25 | 0.0428 | 0.140 | 1.939 |
+| steps 26-50 | 0.0638 | 0.290 | 1.842 |
+| steps 51-75 | 0.1033 | 0.415 | 1.798 |
+| steps 76-100 | 0.1195 | 0.526 | 1.487 |
+| **overall(100)** | **0.0824** | **0.343** | — |
+
+- **关键发现**：mean_reward（0.043→0.064→0.103→0.120）与 mean_nz（0.14→0.29→0.42→0.53）**四个窗口单调上升** ⇒ policy 正持续学会产出能过真实沙盒的 rollout。这是迄今**最强训练侧证据**：R2（sandbox-exec 真实 reward）有真实区分度且区分度在增长（vs R0 proxy nz=0.97 一开始就塌缩、mean_ratio==1.0 policy 不动）。
+- 58/100 步有非零 reward（vs R0 几乎每步都非零=区分度丢失）；27/100 步 reward>0.15（高奖励步集中在近期窗口）。
+- grad norm：有奖励步 ~3.x（step61=2.94/step62=3.53/step73=4.09 近期峰值），无奖励步 ~0.1 ⇒ **梯度在有信号处流动**（vs R0 ploss=0 全程卡死）。
+- **保留警惕（诚实）**：ratio=1.000 / ploss≈0 表层签名仍同 R0「policy 不动」，但 gn 区分 + lr=3e-6 小步 ⇒ 真实 policy 移动幅度小（ratio 仅 4 位精度打印为 1.000）。**真实判据仍须 step200 后 5-run eval**（先定后测，红线 §5），不以训练侧 reward 上升断言能力增长（吸取 R0/vision v10 教训：reward 上升≠Pass@1 上升）。reward 上升是必要非充分条件。
+
+### E. R2 eval autofire chain 仍在等待（健康）
+
+- PID2322797（ppid=1，detached，etimes~855s）仍 RUNNING，log `/tmp/posttrain_r2_eval_chain.log` 实证 "Waiting for GRPO training (PID 2314192) to finish... sleeping 120s"（最近一条 @00:35:41）。
+- 链路健康：每 120s 探测 GRPO 存活，未误判退出。GRPO ~01:02 完后会自动：teardown GPU5 step60 serve → serve R2 global_step_200 于 GPU7:8095 → 158 题 5-run eval（3 并发 serve 避 OOM）→ `5run_analysis.py --compare grpo_R2_step200 step105`（McNemar + 10k paired bootstrap）→ `5run_rl_analysis_R2.json`。
+
+### F. 红线与边界
+
+- §5.2 反作弊：cheat=0/400 绿；§5.1 污染：contam 0/3347 绿；§2/§5.3 冻结协议：eval 链复用既有 5run_eval.sh（158/Pass@1/2500s/单trace/5-run/-p8 -n，未改）。
+- 边界：本轮纯监控，未编辑任何脚本、未碰 R2 主训进程/GPU0-3/GPU4-6 既有 serve/eval 链。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### G. 下一步
+
+1. R2 主训 ~01:02 完 → autofire 链自动 serve R2 ckpt + 158 题 5-run eval（无需人工）。
+2. 下次唤醒查 `5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / bootstrap ci。
+3. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化 → 诚实负结果 + 换奖励/任务定义（§用户令#4）。
+
