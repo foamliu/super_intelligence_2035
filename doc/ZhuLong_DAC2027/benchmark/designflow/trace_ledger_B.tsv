@@ -1414,3 +1414,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794459639804_2692p.messages.json	e0030760	hfeg0pkn004	105	spice_sim	case	EDA-Eval-DesignFlow-McLisSnmExtractor-001	2026-11-13 19:54	
 1794379471399_jp83r	t0002614	10.129.2.13	105	spice_sim	case	EDA-Eval-DesignFlow-CxsaDcSweepDeckGen-001	2026-11-13 20:21	
 1794465241456_ua9tu	clarawu	hfeg0pkn003	29	spice_sim	case	EDA-Eval-DesignFlow-RonCurveSmoothness-001	2026-11-13 20:57	
+1794453941272_vxf3o	shanliny	hfeg0pkn005	175	characterization	case	EDA-Eval-DesignFlow-RcVizTreeAnalyzer-001	2026-11-13 22:04	
