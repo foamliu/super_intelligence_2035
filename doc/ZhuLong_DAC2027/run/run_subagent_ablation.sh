@@ -19,7 +19,7 @@ set -euo pipefail
 REPO_RUN="/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run"
 BASE_DIR="/nasdata/app.e0031982/code/eda_fastmcp"
 EVAL_FW="/nasdata/app.e0031982/code/EDA-Eval-Framework"
-PYTHON="${PYTHON:-/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python}"
+export PYTHON="${PYTHON:-/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python}"
 
 EVAL_ROOT_OVERRIDE="/tmp/zhulong_subagent_eval"   # /nasdata 100% 满; 用 /tmp (24G), 每轮清理
 TRACE_BASE="/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_subagent"
