@@ -476,3 +476,7 @@
 1794386548710_l4tre	xinqiaoz	hfeg0pkn002	575	pnr_signoff	parked		2026-11-14 06:17	false-positive: genReleaseNote.py Python script maintenance (HTML/backup/empty-field), no real calibre/LVS/DRC execution; L1 not L2/L3
 1794206548447_artkz					parked		2026-11-14 06:21	false-positive: pure Q&A about post-LVS/DRC signoff flow via AskEDA skill (model disabled), no real EDA tool execution; voltus/aether keywords from skill references
 1794466237270_iyyzq	jerrychu	hfeg0pkn003	15	eda_other	parked		2026-11-14 06:23	false-positive: sed text-processing of PDK corner names (ssgnp_0p675v_0c -> ssgnp_mos_varactor_dbc/TYPICAL/0.675/0); innovus/calibre/lvs keywords from file-dir listings, no real EDA tool execution
+1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	parked		2026-11-14 07:07	r496 peek: USER#0 tell me where setup/hold tis defined+give datapath, analysis Q&A, REJECT produce-task
+1793343472817_6tswp	e0039602	hfeg0plg95	119	digital	parked		2026-11-14 07:07	r496 peek: USER#0 read project+tell me truth-table-check principle+compare v1.4 vs v1.4.1, analysis Q&A, REJECT
+1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	parked		2026-11-14 07:07	r496 peek: USER#0 read project+tell me what the review prompt is, analysis Q&A, REJECT
+1794382021638_eadk1	alanji	hfeg0plg99	107	digital	parked		2026-11-14 07:07	r496 peek: USER#0 analyze why pattern reports DMI pin compare error, debug/analysis, REJECT
