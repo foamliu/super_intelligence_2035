@@ -1724,3 +1724,10 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793947531660_s4fee					parked		2026-11-14 06:06	Aether env startup env-dep
 1794461721254_24dje	dsgao	10.129.2.10	183	waveform	case	EDA-Eval-DesignFlow-GrDecPwrMeasure-001	2026-11-14 06:38	
 1794361270744_y1yqm	e0039120	hfeg0plg99	12	schematic_netlist	parked		2026-11-14 07:09	Q&A code-parse: USER#1='请帮我解析一下GUI_5csl.py这个文件' = explain-a-file Q&A not produce-task; env-dep (needs GUI_5csl.py); mc12 netlist:17/.def:8 but task is code-reading; 52msgs/1-real-user-turn
+1794445820477_f4smw	mhyu	hfeahpc502	91	schematic_netlist	parked		2026-11-14 07:28	r638 netlist-compare Q&A
+1794447908266_uxnxd	e07435	hfeg0plg55	70	schematic_netlist	parked		2026-11-14 07:28	r638 netlist-analysis Q&A
+1793176301340_bme92	my7li	hfeg0pkn004	10	schematic_netlist	parked		2026-11-14 07:28	r638 dqtool-capability Q&A
+1794460854642_r3xw8	e02141	hfeg0pkn005	88	analog_context	parked		2026-11-14 07:28	r638 TCAD wrong-subdomain Q&A
+1794367209347_6sbnc	tongni	hfeg0pkn004	10	waveform	parked		2026-11-14 07:28	r638 waveview-bridge debug Q&A
+1793694775768_lw8dg	rongjiez	hfeg0pkn005	11	waveform	parked		2026-11-14 07:28	r638 compare_wave.pl env-dep
+1794468905617_ojs6x	m1wang	hfeg0plg79	16	waveform	parked		2026-11-14 07:28	r638 DFT-pattern Q&A
