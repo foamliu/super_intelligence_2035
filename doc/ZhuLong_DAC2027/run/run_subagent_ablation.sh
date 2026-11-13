@@ -24,13 +24,13 @@ PYTHON="${PYTHON:-/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python}"
 EVAL_ROOT_OVERRIDE="/tmp/zhulong_subagent_eval"   # /nasdata 100% 满; 用 /tmp (24G), 每轮清理
 TRACE_BASE="/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_subagent"
 RESULTS_JSON="$REPO_RUN/ablation_subagent_results.json"
-SUBSET_FILE="$REPO_RUN/compaction_subset_40.txt"  # 复用 compaction 40 题子集
+SUBSET_FILE="${SUBSET_FILE:-$REPO_RUN/compaction_subset_40.txt}"  # 复用 compaction 40 题子集; P1 pilot 覆盖为 8 题
 MASTER_LOG="/tmp/zhulong_subagent_ablation.log"
 
 ARM_DIR_ROOT="/nasdata/app.e0031982/subagent_ablation"
 
 PARALLEL=8
-ROUNDS=3
+ROUNDS="${ROUNDS:-3}"
 DS_MODEL="deepseek-v4-pro-cloud"
 
 # 强提示: 要求主 agent 先调 subagent_researcher
@@ -61,11 +61,24 @@ run_round() {
     return 1
   fi
 
-  # 验证 providers.json (cline auto-migration 可能重置)
+  # ⚠️ 关键: cline auto-migration 会覆盖 providers.json, 每轮前重新写入
+  # 用 compaction basic 的验证过的模板 + doubao provider (如果该臂需要)
+  python3 "$REPO_RUN/setup_subagent_arm_dirs.py" --arm "$ARM" --providers-only 2>>"$MASTER_LOG" || {
+    log "  ⚠️ providers.json 修复失败, 用 inline python 修复"
+    python3 -c "
+import json, os, copy
+template = json.load(open('/nasdata/app.e0031982/compaction_ablation/basic/settings/providers.json'))
+p = '$ARM_DIR/settings/providers.json'
+json.dump(template, open(p, 'w'), ensure_ascii=False, indent=2)
+print('providers.json reset from compaction basic template')
+"
+  }
+
+  # 验证 providers.json
   local prov="$ARM_DIR/settings/providers.json"
-  if ! python3 -c "import json; d=json.load(open('$prov')); assert 'openai-compatible' in d['providers']" 2>/dev/null; then
-    log "⚠️ providers.json 被重置, 重新 setup..."
-    python3 "$REPO_RUN/setup_subagent_arm_dirs.py" 2>&1 | tail -3
+  if ! grep -q '/cloud/v1' "$prov" 2>/dev/null || ! grep -q 'deepseek-v4-pro-cloud' "$prov" 2>/dev/null; then
+    log "  ❌ $ARM providers.json 修复后仍不对, 跳过此轮"
+    return 1
   fi
 
   # 设置环境变量

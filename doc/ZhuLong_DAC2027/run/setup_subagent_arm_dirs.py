@@ -142,17 +142,14 @@ def make_models_json(arm_config):
 
 
 def make_providers_json(arm_config):
-    """providers.json: 主基座 + doubao provider (如果该臂的 researcher 用 doubao)."""
-    src = os.path.join(BASE_SETTINGS, "providers.json")
-    d = json.load(open(src))
+    """providers.json: 用 compaction basic 的验证过的模板作为基础, 追加 doubao provider.
+    ⚠️ 不能从 ~/.cline/data/settings/providers.json 构建 (那里是别线的 minicpm5-2b);
+    必须用 compaction basic 的模板 (已验证能跑 cline)."""
+    template_path = "/nasdata/app.e0031982/compaction_ablation/basic/settings/providers.json"
+    d = json.load(open(template_path))
     d["lastUsedProvider"] = "openai-compatible"
-    d["providers"]["openai-compatible"] = {
-        "settings": MAIN_PROVIDER_SETTINGS,
-        "updatedAt": "2026-11-13T18:00:00.000Z",
-        "tokenSource": "subagent-ablation-setup",
-    }
 
-    # 如果该臂用 doubao subagent, 注册 doubao provider
+    # 如果该臂用 doubao subagent, 追加 doubao provider
     if arm_config["researcher"]:
         r = arm_config["researcher"]
         pid = r["providerId"]
@@ -165,6 +162,8 @@ def make_providers_json(arm_config):
                     "model": db["model"],
                     "maxTokens": 16384,
                     "baseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+                    "headers": {},
+                    "timeout": 30000,
                     "reasoning": {"enabled": False},
                 },
                 "updatedAt": "2026-11-13T18:00:00.000Z",
@@ -204,6 +203,8 @@ def main():
                 shutil.copy(s, os.path.join(dest, fn))
 
         # 生成差异化设置文件
+        # ⚠️ providers.json: 不能从 BASE_SETTINGS 复制再改 (cline auto-migration 会覆盖)；
+        #    必须直接写入完整的评测基座配置
         json.dump(make_models_json(arm_config),
                   open(os.path.join(dest, "settings", "models.json"), "w"),
                   ensure_ascii=False, indent=2)
