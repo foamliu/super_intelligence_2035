@@ -10528,3 +10528,16 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 本轮 git 状态修复：唤醒首步 `git pull --rebase --autostash` 因 NFS「unable to write index file」中断→进入 detached HEAD（rebase-apply 残留）；`git rebase --abort` + `git checkout main` + `rm -f .git/index.lock` + `git fetch origin` 后 main 与 origin/main 重新同步（vision 线 a8173a1ac / harness 线 32a1ce22e 分叉自愈，未碰他线提交，仅 reattach 本地 main）。
 - 本轮动作：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake455 已归档指针化（体积维护）。
 - **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
+
+## §R457 — wake457 (2026-11-14 05:31) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+**实测** 2026-11-14 05:31:22（hostname s0pgpuap12=.17）：
+- eval 链健康：autofire chain PID2322797 存活（etime≈18582s≈5h09m，ppid 经 setsid）；eval run1 run_cline_script.sh PID2354149 存活（etime≈15790s≈4h23m）；父 PID2354141（ppid=2322797）；8 cline worker active（`-p 8`，.task_queue 42 行 queue+~8 in-flight=50 待跑；batch_cline.log 05:25-05:26 worker-7 任务 113 成功 41s→开始 114，worker-5 任务 100 超时 2500s→开始 115，worker-2 任务 101 超时 2500s→开始 116，worker-3 任务 096 超时 2500s→开始 112）。
+- 3 并发 serve 全稳 curl /v1/models 各返回预期 id[GPU4 base:8098→minicpm5-2B/GPU6 step105-final:8096→minicpm5-2b-sft-v39-final/GPU7 R2:8095→minicpm5-2b-grpo-R2-step200]；GPU7=39246MiB/98%util（PID2353393）；GPU4/GPU6=0%util serve 待命。
+- 🟢 GPU5=3MiB/0%util 空闲（非本线，不碰）。
+- run1 进度（dir ~/eda_code_eval/2026_1114_010813）：stats **success=67/failure=5/timeout=36 = 108/158**（较 wake456 的 105 +3：success+1/fail+0/timeout+2）；code/ 118 目录(最新 -116)；total_time=117708s；final_report.json 未生成；5run_rl_analysis_R2.json 未出。⚠️ success/failure/timeout=code-gen 阶段计数（非 Pass@1，Pass@1 由 run_eval.py run 完后产 final_report.json）。
+- 0 真实 infra 错误：chain log 仅 START+pre-teardown 行无错误；CUDA OOM=0；batch_cline.log 健康推进（worker 轮转正常，超时任务正常回收 worker 接新任务）。
+- 速率校准诚实读数：wake456→457（~6min，05:25→05:31）105→108（+3，~0.5/min，success+1/timeout+2）← timeout 仍占主导（剩余批次多为难题/长任务，timeout 增多属预期；本轮 3 个超时 2500s 并发回收使瞬时计数跳 +3）；剩余 ~50 任务（42 queue+~8 in-flight）；run1 或 ~06:30-09:00 完（不编造精确 ETA，待下一 wake 校准）。
+- 本轮动作：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake456 已归档指针化（体积维护）。
+- **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
+
