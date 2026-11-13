@@ -114,10 +114,7 @@ WAITING: 0
 
 > 📦 **wake #1116 · 2026-11-13 13:2x** 例行巡检·全交付态·零异常·无新增·已fold(见状态头/wake#1117)。
 
-> 📦 **wake #1115 · 2026-11-13 13:2x** 例行巡检·全交付态·零异常·无新增·已fold(见状态头/wake#1116)。
-> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物在位：v10_results/(5 子目录)·v10_summary.json·EXPERIMENTS §v10·HTML 报告 v10 节均✓。无 vision 实验进程在跑（`ps` 无 freqcmp/wave_rl/v10/run_v 命中）。
-> - research 日报 2026-11-13(mtime 12:12 早报版) vision 栏 =「本轮无新增建议」（vision/data/designflow 三线均无）→ 不 action。ops/inbox RUN_ID 276 = TARGET 12（pretrain chunk2/3 eval 进度·非 vision）→ 不 action。
-> - git pull：Already up to date·无冲突·未触他人在途文件。体积✓(MEMORY ~15.6KB/TASK 27KB)。**WAITING: 0**。
+> 📦 **wake #1115 · 2026-11-13 13:2x** 例行巡检·全交付态·零异常·无新增·已fold(见 daily-memories-vision/2026-11-13.md)。
 
 > 📦 **wake #1114 · 2026-11-13 13:08** 例行巡检·全交付态·零异常·无新增·已fold(见状态头/wake#1115)。
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物在位：v10_results/(5 子目录)·v10_summary.json·EXPERIMENTS §v10·HTML 报告 v10 节均✓。无 vision 实验进程在跑（`ps` 无 freqcmp/wave_rl/v10/run_v 命中，v10 已完成）。
