@@ -1,5 +1,10 @@
 WAITING: 0
 
+> 🆕 **【wake #1159 · 2026-11-13 23:07】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 1 commit 非视觉)+add 明确路径+commit+push 本线 2 文件**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)✓·v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 无 vision 实验进程在跑(仅 vision loop PID1236761 自身·非实验)。
+> - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1158 未刷新)21:00 轮 vision=GPTQ#67(部署阶段权重量化·非本线活跃 wave-RL·不 action·沿用 wake#1151~#1158 一致判定)+18:00 轮 vision 显式「无」→不 action。ops/inbox.md 当前不存在(无 vision 条目)→不 action。
+> - ✅ **git 本轮成功提交**：无 `.git/index.lock`+无活跃 git 进程→三条件齐备。`git pull --no-rebase --no-edit` **ff 成功**(HEAD bb2bc0ae3→5202d2d12·incoming 1 commit=harness R2414·仅触 MEMORY_HARNESS+daily-harness·**不触 vision**⇒ ff 安全·未动 posttrain 在途 ?? outputs/)→`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)+commit+push。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(MEMORY ~32KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+
 > 🆕 **【wake #1158 · 2026-11-13 23:00】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git·三条件齐备)→ff pull(incoming 3 commit 非视觉)+add 明确路径+commit+push 本线 2 文件**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·verdict NOT SIGNIFICANT)✓。⚠️ NFS 属性缓存不一致：shell `cat`/python `open` 报 No such file(已知 wake#1145/#1146 自愈型)·但 `stat`=647B + read_files 逐字读出内容完整(A=0.4615/B=0.5495/C=0.5165±0.0311·control=0.5385·mcnemar p=1.0·n_disc=29·2/6)✓。`ps` 核实无 vision 实验进程在跑(grep 命中仅本巡检自身 ls/ps/cat/python)。
 > - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1157 未刷新) 21:00 轮 vision 建议=「视觉塔纳入 GPTQ FP16/8-bit/4-bit 三档同评测」(B轨#67·line 164)——部署阶段权重量化·非本线活跃 wave-RL 线·vision CPU-only 无量化工具需求→不 action(沿用 wake#1151~#1157 一致判定)；18:00 轮 vision 显式「无」(line 584)；经典 #77 CLIP(冻结特征下界·已收敛臂·不 action)。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
@@ -12,10 +17,7 @@ WAITING: 0
 > - ✅ **git 本轮窗口打开→成功提交**：`.git/index.lock` 不存在·无活跃 git 进程(仅 posttrain cline PID2159543 code-eval 阶段·非 git op)→三条件齐备(无 lock+无 competing staged+无活跃 git)。`git fetch`→behind 5→`git pull --no-rebase --no-edit` **ff 成功**(HEAD cdde0b4dd→5b68a1218·15 files·incoming 5 commit 经 `git log --name-only HEAD..origin/main` 核实=designflow shard B/C(ZhuLong)+harness R2412+data stackv3-fix=**均非视觉·不触 vision 文件**⇒ ff 安全·无需 autostash·未动 posttrain 在途 M EXPERIMENTS_POSTTRAIN.md + M daily-memories-posttrain + ?? outputs/)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1151~#1153·MEMORY ~30KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
 
 
-> 🆕 **【wake #1156 · 2026-11-13 22:38】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git·三条件齐备)·0 ahead/0 behind 已 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件**：
-> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 核实无 vision 实验进程在跑(grep 命中仅本巡检自身 ls/ps/cat)。
-> - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1155 未刷新) 21:00 轮 vision 建议=「视觉塔纳入 GPTQ FP16/8-bit/4-bit 三档同评测」(B轨#67·line 164)——部署阶段权重量化·非本线活跃 wave-RL 线·vision CPU-only 无量化工具需求→不 action(沿用 wake#1151~#1155 一致判定)；18:00 轮 vision 显式「无」(line 584)。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
-> - ✅ **git 本轮窗口打开→成功提交**：`.git/index.lock` 不存在·无活跃 git 进程(仅 posttrain cline PID2141728 code-eval 阶段·非 git op)→三条件齐备(无 lock+无 competing staged+无活跃 git)。`git fetch`→**0 ahead/0 behind 已 up-to-date→无需 pull**(vision 工作树 CLEAN·仅 posttrain ?? outputs/ 不触)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途 untracked(outputs/)。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(MEMORY ~31.5KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+> 📦 **wake #1156 · 2026-11-13 22:38** 例行巡检·全交付态·零异常·0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·v10 NOT SIGNIFICANT 产物在位·GPTQ#67(部署阶段·非 wave RL)不 action·已fold(见 wake#1158·详情 daily-memories-vision/2026-11-13.md)。
 
 
 > 🆕 **【wake #1155 · 2026-11-13 22:27】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git 进程·三条件齐备)→ff pull(incoming 3 commit 非视觉)+add 明确路径+commit+push 本线 2 文件**：
