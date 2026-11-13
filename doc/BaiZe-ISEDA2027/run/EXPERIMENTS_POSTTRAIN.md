@@ -8221,3 +8221,56 @@ This is the **same pattern** as wake370-376 and wake384: `timeout 2500` sends SI
 2. 🔴 Launch base model 5-run eval on GPU4:8098 (same pipeline) for proper comparison
 3. 📊 Compute 5-run mean±std + McNemar/paired bootstrap (SFT vs base, same pipeline)
 
+### §L4-zhulong (2026-11-13 wake386) Run 2 Progress + Eval Chain Daemon + Analysis Script
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 2 Progress (as of wake386 ~08:15 CST)
+
+- **Stats counters**: success=73, failure=5, timeout=4 → 82/158 tasks processed (51.9%)
+- **Task queue remaining**: 68/158 (90 dequeued, 8 in-progress by 8 active workers)
+- **NO stuck workers**: all 8 workers active, max elapsed=1824s (worker-1, well within 2500s timeout)
+- **Autocomplete daemon** (PID1122770): still waiting for run2 PID1109190, will auto-run runs 3-5
+- **Run 2 ETA**: ~68 tasks remaining + 8 in-progress → ~1 hour more for codegen, then sandbox eval
+
+#### New: Eval Chain Daemon Launched (PID 1161064)
+
+Created `baize_posttrain_eval_chain.sh` — a background daemon that autonomously chains the remaining eval phases:
+
+1. **Wait** for step105 autocomplete daemon (PID 1122770) to finish (all step105 5 runs done)
+2. **step60 runs 2-5** (GPU5 port 8097, model minicpm5-2b-sft-v39) — run 1 already done (1.3%)
+3. **base model runs 1-5** (GPU4 port 8098, model minicpm5-2b) — not yet started
+4. **Final analysis** via `baize_posttrain_5run_analysis.py` → `/tmp/posttrain_5run_eval/5run_final_analysis.json`
+
+Log: `/tmp/posttrain_eval_chain.log`
+
+This eliminates the need for the agent to wake between each eval phase. The entire 3x5=15-run pipeline (step105x5 + step60x5 + basex5) runs sequentially without intervention, constrained by the shared providers.json (each run saves/restores it).
+
+#### New: 5-Run Analysis Script (baize_posttrain_5run_analysis.py)
+
+Created analysis script that computes:
+- **Per-label**: 5-run mean+/-std (Pass@1 rate)
+- **McNemar test**: paired comparison between two labels (same 158-task set), with continuity correction
+- **Paired bootstrap**: 10,000 resamples, 95% CI for Pass@1 difference
+
+Tested with existing run1 data:
+- step105 run1: Pass@1=0.038 (6/158 tasks passed: 003, 046, 067, 096, 127, 153)
+- step60 run1: Pass@1=0.013 (2/158 tasks passed, no passed_tasks list in summary)
+
+#### Current Eval Status Summary
+
+| Label | Endpoint | GPU | Runs Done | Pass@1 (run1) | Autopilot |
+|:--|:--|:--:|:--:|:--:|:--|
+| step105 | 8096 | 6 | 1/5 (run2 in progress 82/158) | 3.8% (6/158) | autocomplete daemon -> runs 3-5 |
+| step60 | 8097 | 5 | 1/5 | 1.3% (2/158) | chain daemon -> runs 2-5 |
+| base | 8098 | 4 | 0/5 | -- (36% was full-harness, different mode) | chain daemon -> runs 1-5 |
+
+#### Key Insight: providers.json Conflict Resolution
+
+Workers have their **own** providers.json in --data-dir (e.g., cli_data/worker_N/data/settings/providers.json), copied at startup from the global one. Once workers are running, modifying the global providers.json does NOT affect them. However, the eval script's save/restore cycle on the global providers.json means two eval runs cannot overlap during the **setup phase** (worker spawning). The chain daemon ensures sequential execution to avoid this race.
+
+#### Next Steps
+1. step105 run2 finishing (~1h), then autocomplete daemon runs 3-5 (~6-9h total)
+2. chain daemon auto-starts step60 runs 2-5, then base runs 1-5
+3. chain daemon auto-runs final analysis (mean+/-std + McNemar + bootstrap)
+
