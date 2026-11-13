@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第二十二轮 87 篇 · 作者网 93 人）· research 线</title>
+<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第二十三轮 91 篇 · 作者网 95 人）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,10 +54,10 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-13</h1>
-  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第二十二轮累计 <b>87</b> 篇经典（必读清单 37/37 ＋ 补充蒸馏 / KV 分组 / 推理轨迹 / 滑窗开源）＋ 👥 作者网 <b>93</b> 人 ＋ 🗣 voice_ready <b>6</b> 条（V17–V22）＋ ✉ 作者信 18:00 轮 <b>1</b> 封 / 今日 <b>10</b> 封 / 累计 <b>31</b> 封</div>
+  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第二十三轮累计 <b>91</b> 篇经典（必读清单 37/37 ＋ 补充视觉 token 化 / 无监督视觉特征 / 功能正确性判分 / 延迟分布）＋ 👥 作者网 <b>95</b> 人 ＋ 🗣 voice_ready <b>6</b> 条（V17–V22）＋ ✉ 作者信 21:00 轮 <b>1</b> 封 / 今日 <b>11</b> 封 / 累计 <b>32</b> 封</div>
   <div class="meta">
     <span>数据源：arXiv API（公告批<b>已刷新</b>，新批首发集中 2026-11-11；本轮 0 新收，当日额度 5/5 已满）</span>
-    <span>生成：2026-11-13 18:2x（18:00 时窗 · A 轨复核 ＋ B 轨第二十二轮 ＋ 晚报变更说明）</span>
+    <span>生成：2026-11-13 21:1x（21:00 时窗 · A 轨复核 ＋ B 轨第二十三轮 ＋ 作者信）</span>
     <span>进度：<b>5 / 5</b>（已收口）</span>
     <span>出口：仅 HTML（🚫 不发日报邮件）</span>
   </div>
@@ -655,8 +655,80 @@ X 探测（只读，显式 <code>-x http://127.0.0.1:7897</code>）：<code>x.co
 </div>
 
 
+<h2 class="sec">🔄 21:00 轮 · A 轨复核（索引仍未变动；当日 5/5 已满 ⇒ 0 新收）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（21:00 轮）</th><th>对比 18:00 轮</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,322</td><td>4.56 s</td><td><b>±0</b></td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,258</td><td>25.95 s</td><td><b>±0</b></td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>299,025</td><td>4.26 s</td><td><b>±0</b></td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,730</td><td>15.24 s</td><td><b>±0</b></td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>31,041</td><td>17.83 s</td><td><b>±0</b></td></tr>
+</table>
+<div class="note">
+五个 <code>totalResults</code> 与 18:00 轮<b>逐值相同</b> ⇒ 本时窗<b>索引没动</b>（≠「无新提交」；两者口径不同）。合并去重：<b>merged 391 / SEEN 命中 2 / 新候选 389</b>，产物 <code>research/raw/2026-11-13-21h-candidates-r167.json</code>（脚本 <code>raw/candidates_r167.py</code>，串行 ≥3.2 s）。<br>
+<b>本轮仍 0 新收</b>：当日额度 <b>5/5 已收口</b>，按「目标 5 篇、不超额、不凑数」不硬塞第 6 篇。候选池已累计 <b>368（12:00）+ 389（15:00）+ 389（18:00）+ 389（21:00，同批）</b>，<b>明日 00:00 轮优先从中按 <code>published ≤ 72h</code> 重筛 5 篇</b>。
+</div>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第二十三轮（+4 → 91）：视觉 token 化 / 无监督视觉特征 / 功能正确性判分 / 延迟分布</h2>
+<table>
+  <tr><th>#</th><th>论文（8 字段已入 <code>PAPERS.md</code>）</th><th>年份 / 出处</th><th>被引（OpenAlex，2026-11-13）</th><th>服务线（↔ 影响哪一步）</th></tr>
+  <tr><td>88</td><td><b>An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</b>（ViT，<code>2010.11929</code>）</td><td>2020 / ICLR 2021（arXiv <code>comment</code> 自证 camera-ready；<b>无会场 DOI</b>）</td><td><b>51,264</b></td><td><b>vision</b>（patch × 分辨率 3×2 预注册对照）· <b>pretrain</b>（预训练数据规模须单列，不把「架构」与「数据」混成一个结论）· <b>data</b>（记 <code>pretrain_corpus</code> / <code>in-domain labels</code> 两个数）</td></tr>
+  <tr><td>89</td><td><b>DINOv2: Learning Robust Visual Features without Supervision</b>（<code>2304.07193</code>）</td><td>2023 / arXiv 预印本（<b>未核到会场 DOI</b>）</td><td><b>7,783</b></td><td><b>vision</b>（冻结特征 + 线性探针作域内基线）· <b>data</b>（curated vs uncurated 小规模对照）· <b>harness</b>（新增固定 <code>frozen_dinov2_linear_probe</code> 行）· <b>designflow</b>（L1–L2 先用冻结特征跑通判分链路）</td></tr>
+  <tr><td>90</td><td><b>WebArena: A Realistic Web Environment for Building Autonomous Agents</b>（<code>2307.13854</code>）</td><td>2023 / arXiv 预印本（<b>无会场 DOI</b>）</td><td><b>1,438</b> ⚠️</td><td><b>harness</b>（终态功能正确性判分）· <b>zhulong</b>（长程任务成功率分三档）· <b>designflow</b>（环境冻结三列）· <b>data</b>（答案不入 agent 可读区）</td></tr>
+  <tr><td>91</td><td><b>In-Datacenter Performance Analysis of a Tensor Processing Unit</b>（TPU，<code>1704.04760</code>）</td><td>2017 / ISCA 2017（ACM SIGARCH CAN；<b>无会场 DOI</b>）</td><td><b>1,572</b></td><td><b>zhulong</b>（p50 / p99 延迟与端到端秒数入成本表）· <b>designflow</b>（先测工具链路耗时分布，再定优化预算）· <b>harness</b>（定义覆盖 95% 调用量的最小任务集）</td></tr>
+</table>
+<div class="note">
+核验：arXiv <code>id_list=2010.11929,2304.07193,2307.13854,1704.04760</code> <b><code>200</code> + <code>application/atom+xml</code></b>（4 条 entry / 16,852 B；作者数与首发时间已核）；OpenAlex <b>4/4 <code>200</code></b>（ViT 51,264 · DINOv2 7,783 · WebArena 1,438 · TPU 1,572）。⚠️ <b>WebArena 的 OpenAlex 记录标题仍是旧名 <code>Autonomous Tester Agent Benchmark</code></b>（DOI 一致）⇒ 被引数按 DOI 归并引用，已在 <code>PAPERS.md</code> 与页面同步注明。DINOv2 / WebArena / TPU <b>无会场 DOI ⇒ 不写 DOI</b>，只给 arXiv DOI。<b>必读清单仍 10/10 组、37/37 条目</b>（本轮属「补充」）。
+</div>
+
+<h2 class="sec">👥 作者关系网（第二十三轮 +2 → 95；X 已核验 55；待 follow 48）</h2>
+<table>
+  <tr><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>Lucas Beyer</b></td><td>Meta（现；X bio 自述 <code>now: Meta</code>，ex OpenAI / DeepMind / Brain / RWTH Aachen）</td><td>ViT（#88，二作）</td><td><b>未找到</b>（<code>giffmana.github.io</code> <code>404</code> · <code>lucasbeyer.net</code> <code>000</code> · <code>github.com/lucasbeyer</code> <code>404</code> ⇒ 不猜、不发信）</td><td><b>@giffmana</b>（<code>x.com/giffmana</code> <code>200</code> / 180,056 B；<code>og:title</code> = <code>Lucas Beyer (bl16) (@giffmana) on X</code>；bio 履历自证）</td><td>待跟踪（X 已核验）</td></tr>
+  <tr><td><b>Graham Neubig</b></td><td>CMU · LTI（副教授）· OpenHands 联合创始人 / 首席科学家（X bio 自述）</td><td>WebArena（#90，末位）</td><td><code>gneubig@cs.cmu.edu</code>（<b>LTI 现行页</b> <code>200</code> / 277,777 B，页内反爬写法 <code>gneubig(through)cs.cmu.edu</code>，按页面规则还原）</td><td><b>@gneubig</b>（<code>x.com/gneubig</code> <code>200</code> / 172,138 B；<code>og:title</code> = <code>Graham Neubig (@gneubig) on X</code>；bio 含 <code>@LTIatCMU</code> + <code>@OpenHandsDev</code>）</td><td><b>已发信</b>（21:04:55，英文 191 词）</td></tr>
+</table>
+<div class="note">
+X 探测（只读，显式 <code>-x http://127.0.0.1:7897</code>）：<code>x.com</code> 自检 <b><code>200</code></b>（代理在线）；profile <b>2/2 <code>200</code></b>（<code>giffmana</code> / <code>gneubig</code>）；另一个候选 <code>xiaohua_zhai</code> 实测 <b><code>404</code></b> ⇒ <b>不登记、不猜</b>。新增 handle <b>2</b>、待 follow <b>48</b>、<b>0 follow</b>（写操作需登录态，<b>未假装</b>）。
+</div>
+
+
+<h2 class="sec">✉ 作者信（21:00 轮 1 封，<code>SENT OK 2026-11-13 21:04:55</code>；今日累计 11 封 / 累计 32 封）</h2>
+<div class="note">
+收件人 <b>Graham Neubig</b>（WebArena 末位作者）· 主题 <code>WebArena's judging design, applied to a chip-design agent — three questions</code> · 邮箱取自 <b>LTI 现行页</b>（非论文 PDF 旧地址）· 英文 <b>191</b> 词（发送前 <code>wc -w</code> 已核）· 草稿 <code>research/mail/drafts/2307.13854.md</code>、正文副本 <code>research/mail/2026-11-13-classic-2307.13854.txt</code>、台账 <code>research/mail/发送记录.md</code> 已记（<b>没写 = 没发</b>）。同论文其余 11 位作者本轮不发（<b>同论文 ≤1</b>）；本封按「经典论文」口径：<b>先说明我们在做 2B EDA 模型 + agent harness，再问 WebArena 的判分 / 环境冻结 / 失败归因三件事在我们场景下的适用边界</b>。CMU 今日第 2 封（15:05 Dettmers 亦 CMU）⇒ 未超「同机构 ≤2/天」。
+</div>
+
+<h2 class="sec">🗣 voice_ready · 本期已 2 条（上限 2），21:00 轮 0 新增</h2>
+<div class="note">
+本期 V21（Tim Dettmers）＋ V22（Jeff Dean）已满额 ⇒ <b>本轮不新增</b>；本轮新核验的两个 handle（<code>@giffmana</code> / <code>@gneubig</code>）近期推文与 BaiZe / ZhuLong 无直接技术观点，<b>不硬凑</b>。<code>news_ready</code> 亦为 <b>0</b>（A 轨 0 新收；B 轨 4 篇为历史 / 方法文献，无「发布 / 开源 / 首次」事件点）。
+</div>
+
+<h2 class="sec">🎯 21:00 轮 · 新增可执行建议（5 条，按线；pretrain 本轮显式写「无」）</h2>
+<table>
+  <tr><th>线</th><th>建议（可落地：命令 / 实验设计）</th><th>依据 / 预注册判据</th></tr>
+  <tr><td><b>vision</b></td><td>① 视觉塔 token 成本 3×2 对照：<code>patch ∈ {8,14,16}</code> × <code>边长 ∈ {224,448}</code>，<b>固定视觉 token 总预算</b>，只比域内 held-out 缺陷分类 / 线宽回归。<br>② 先跑「冻结 DINOv2 + 线性探针」基线（固定权重版本与预处理），再决定是否自训编码器。</td><td>ViT（#88）· DINOv2（#89）。<b>判据</b>：小 patch + 高分辨率在 held-out 新图层 &lt; +2 绝对点 ⇒ 维持 16×16；冻结特征距全量微调 ≤ 2 点 ⇒ 本期不投自监督预训练算力。</td></tr>
+  <tr><td><b>data</b></td><td>① 图像池「按规则筛选 vs 全量」小规模对照，固定下游探针与预算。<br>② 视觉实验元数据最小集：<code>pretrain_corpus</code> / <code>in-domain labels</code> / <code>image_resolution</code> 三列必填。</td><td>DINOv2（#89）· ViT（#88）。<b>判据</b>：筛选臂增益 &lt; 1 点 ⇒ 停止投入筛选脚本；缺三列元数据的实验不进对外对比表。</td></tr>
+  <tr><td><b>harness</b></td><td>① 判分改「终态检查函数 + 允许副作用」：网表 / 时序报告 / DRC 日志按内容判定，文本输出只作日志。<br>② 评测表新增 <code>frozen_dinov2_linear_probe</code> 固定行 + <code>env_image_digest</code> / <code>reset_protocol</code> / <code>n_trials</code> 三列。</td><td>WebArena（#90）· DINOv2（#89）。<b>判据</b>：终态检查写不成确定性函数的题降级人工评审、不进自动榜；三列缺一 ⇒ 该题不算可复现。</td></tr>
+  <tr><td><b>zhulong</b></td><td>① 推理成本表增加 <code>p50 / p99 latency</code> 与「每任务端到端秒数」。<br>② 闭环评测拆「单步正确率 / 10 步内完成率 / 全任务成功率」三档，并单列「工具错误恢复率」。</td><td>TPU ISCA 2017（#91）· WebArena（#90）。<b>判据</b>：p99 &gt; 2× p50 时先做调度优化，不换模型 / 不加卡；只报全任务成功率的结果不进选型。</td></tr>
+  <tr><td><b>designflow</b></td><td>① L1–L2 任务先用冻结 DINOv2 特征跑通「造题 → 判分 → 复现」全链路，再替换为自研编码器。<br>② L3–L5 题面补 <code>env_image_digest</code> / <code>reset_protocol</code> / <code>n_trials</code>，并把 ground-truth 终态放进 agent 不可读的判分容器。</td><td>DINOv2（#89）· WebArena（#90）。<b>判据</b>：无法冻结环境的题一律不进 L3+；泄漏自检未通过的题作废。</td></tr>
+  <tr><td><b>pretrain</b></td><td><b>无</b>（本轮 4 篇均不涉及 2B 主干的训练配方 / 并行策略 / 长上下文；不凑数）</td><td>—</td></tr>
+</table>
+
+<h2 class="sec">附录 A7 · 检索式与命中数（2026-11-13 21:0x · 可核验）</h2>
+<table>
+  <tr><td>A 轨</td><td>单分类 5 查询（<code>cs.CL / cs.CV / cs.LG / cs.AI / cs.SE</code>，各取最新 100 条，<code>sortBy=submittedDate</code>）⇒ <b>5/5 <code>200</code> + atom</b>；<code>totalResults</code> = 125,322 / 213,258 / 299,025 / 212,730 / 31,041，与 18:00 轮<b>逐值相同</b> ⇒ <b>索引未动</b></td></tr>
+  <tr><td>去重</td><td>merged <b>391</b> / SEEN 命中 <b>2</b> / 新候选 <b>389</b> ⇒ <code>raw/2026-11-13-21h-candidates-r167.json</code></td></tr>
+  <tr><td>B 轨元数据</td><td>arXiv <code>id_list</code> 4 ID <b><code>200</code> + atom</b>（16,852 B）；OpenAlex <b>4/4 <code>200</code></b></td></tr>
+  <tr><td>作者页</td><td><code>www.lti.cs.cmu.edu/people/faculty/neubig-graham.html</code> <code>200</code> / 277,777 B（页内 <code>gneubig(through)cs.cmu.edu</code>）；Lucas Beyer 三个候选主页 <code>404 / 000 / 404</code> ⇒ 邮箱<b>未找到</b></td></tr>
+  <tr><td>X 只读</td><td><code>x.com</code> 自检 <b><code>200</code></b>；profile <b>2/2 <code>200</code></b>（<code>giffmana</code> / <code>gneubig</code>）；<code>xiaohua_zhai</code> <b><code>404</code></b> ⇒ 不登记</td></tr>
+</table>
+
+<h2 class="sec">附录 B7 · 21:00 轮口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>；<code>totalResults</code> 与上一轮<b>完全相同</b>，如实写「索引未动」，并说明 0 新收的真实原因是<b>额度已满</b>；② B 轨 4 条<b>均 8 字段</b>、被引数标来源与查询日；<b>WebArena 的 OpenAlex 旧标题</b>已如实标注；DINOv2 / WebArena / TPU <b>无会场 DOI ⇒ 不写 DOI</b>；③ 作者网<b>不猜</b>：Lucas Beyer 无可核验邮箱 ⇒ 写「未找到」且不发信；<code>xiaohua_zhai</code> <code>404</code> 不登记；④ <code>voice_ready</code> 本期已满 2 条 ⇒ <b>0 新增</b>，<code>news_ready</code> <b>0</b>（不硬凑）；⑤ 本轮外发 = <b>1 封</b>作者请教信（草稿先入仓、台账已记、191 词已核）；⑥ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑦ 单文件 &lt; 5MB；⑧ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 + 15:00 + 18:00 时窗 · A 轨复核 + B 轨第十八至第二十二轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 18:2x CST<br>
+  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 + 15:00 + 18:00 + 21:00 时窗 · A 轨复核 + B 轨第十八至第二十三轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 21:1x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

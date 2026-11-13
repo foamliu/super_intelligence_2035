@@ -1,0 +1,81 @@
+{
+ "handle": "giffmana",
+ "name": "Lucas Beyer (bl16) (@giffmana) / X",
+ "bio": "Researcher (now: Meta. ex:  OpenAI, DeepMind, Brain, RWTH Aachen), Gamer, Hacker, Belgian. Anon feedback: https://t.co/xe2XUqkKit\n✗DMs → email",
+ "tweets": [
+  {
+   "id": "2121180408121274816",
+   "created_at": "2026-11-13 09:56 UTC",
+   "created_at_ms": 1794563793000,
+   "text": "Maybe they should try using a non-copilot model to help debug this.",
+   "url": "https://x.com/giffmana/status/2121180408121274816",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "2121031935010951521",
+   "created_at": "2026-11-13 00:06 UTC",
+   "created_at_ms": 1794528394000,
+   "text": "The servers we returned to service can become unresponsive again once they receive traffic; we're analyzing diagnostic data to determine what's triggering the behavior. In parallel, we're temporarily limiting which types of traffic can reach the affected infrastructure in some",
+   "url": "https://x.com/giffmana/status/2121031935010951521",
+   "handle_guess": "MSFT365Status"
+  },
+  {
+   "id": "2121000116765266263",
+   "created_at": "2026-11-12 22:00 UTC",
+   "created_at_ms": 1794520808000,
+   "text": "Wait, hold on. Forget about the Jensen thing(s).\\\nI'm more curious about this?",
+   "url": "https://x.com/giffmana/status/2121000116765266263",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "2120995865842053129",
+   "created_at": "2026-11-12 21:43 UTC",
+   "created_at_ms": 1794519795000,
+   "text": "stay tuned 👀 https://t.co/MS3ER2gPJH",
+   "url": "https://x.com/giffmana/status/2120995865842053129",
+   "handle_guess": "choang333"
+  },
+  {
+   "id": "2120962215595458783",
+   "created_at": "2026-11-12 19:29 UTC",
+   "created_at_ms": 1794511772000,
+   "text": "https://t.co/oRlrpfzEB6",
+   "url": "https://x.com/giffmana/status/2120962215595458783",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "2120935439603294294",
+   "created_at": "2026-11-12 17:43 UTC",
+   "created_at_ms": 1794505388000,
+   "text": "JENSEN HUANG HAS HIRED LAW FIRM PAUL WEISS AFTER HIS EXIT FROM NVIDIA: NYT",
+   "url": "https://x.com/giffmana/status/2120935439603294294",
+   "handle_guess": "wallstengine"
+  },
+  {
+   "id": "2120877426079334502",
+   "created_at": "2026-11-12 13:52 UTC",
+   "created_at_ms": 1794491557000,
+   "text": "guys... https://t.co/6a0pxEfqFv",
+   "url": "https://x.com/giffmana/status/2120877426079334502",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "1570152923233144832",
+   "created_at": "2022-09-14 20:50 UTC",
+   "created_at_ms": 1663188603000,
+   "text": "My Transformer tutorial slides are now available at https://t.co/aYfnVKPDjT\\\n\\\nI'll append recordings to this thread as I get them.\\\n\\\nIf you want to use some of the slides for your lecture, you may, as long as you credit me.\\\n\\\nIf you'd like me to give the lecture: maybe; e-mail me. https://t.co/uaNpWqEt2S",
+   "url": "https://x.com/giffmana/status/1570152923233144832",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "1568991708028837890",
+   "created_at": "2022-09-11 15:55 UTC",
+   "created_at_ms": 1662911748000,
+   "text": "Giving a lecture introducing the Transformer architecture in all gory details at @M2lSchool tomorrow. Also got permission to publish slides and will share recording if/when I get one.\\\n\\\nIt's a pretty cool set of slides, largely thanks to @_basilM for inspiration!",
+   "url": "https://x.com/giffmana/status/1568991708028837890",
+   "handle_guess": "giffmana"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 21:02:04"
+}

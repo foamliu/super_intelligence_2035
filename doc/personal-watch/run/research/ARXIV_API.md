@@ -2385,3 +2385,16 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **作者网**：+3 → **93**；**更正** Arthur Mensch 的 X（`@arthurmensch`）。X 已核验 **53**、待 follow **46**、已 follow **0**。
 - **投料**：`voice_ready` **2 条**（V21 / V22）；`news_ready` **0**（A 轨 0 新收 + B 轨无事件点，不硬凑）。
 - **交付**：`daily/2026-11-13.html` **117,085 B**（div 128/128、table 32/32、tr 183/183、td 684/684、th 145/145、h2 45/45、details 5/5、footer 1/1、0 `<script>`、0 残留 `**`；并补上历史遗留的 `<footer>` 开标签）+ `daily/index.html`（87 篇 / 93 人 / 31 封 / 114.3 KB）；`PAPERS.md` **87**、`AUTHORS.md` **93**。
+
+## §9.167 · 2026-11-13 21:00 CST（时窗轮 · A 轨复核「索引仍未动」0 新收 + B 轨第二十三轮 + 第 32 封信）
+
+- **批次仍未变动**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（4.56 / 25.95 / 4.26 / 15.24 / 17.83 s，串行 ≥3.2s）；`totalResults` = **125,322 / 213,258 / 299,025 / 212,730 / 31,041**，与 06:00 / 09:00 / 12:00 / 15:00 / 18:00 轮中 12:00 之后的<b>逐值相同</b> ⇒ **索引没动**（≠「无新提交」）。
+- **A 轨结果**：合并去重 **merged 391 / SEEN 命中 2 / 新候选 389**（脚本 `raw/candidates_r167.py`，产物 `research/raw/2026-11-13-21h-candidates-r167.json`，`min_published=2026-11-10`）；当日 5/5 已收口 ⇒ **0 新收**。
+- **B 轨元数据（arXiv `id_list` 4 ID 一次）**：`2010.11929` ViT（首发 `2020-10-22T17:55:59Z`，12 作者）· `2304.07193` DINOv2（首发 `2023-04-14T15:12:19Z`，26 作者）· `2307.13854` WebArena（首发 `2023-07-25T22:59:32Z`，12 作者）· `1704.04760` TPU（首发 `2017-04-16T12:07:54Z`，75 作者）；`HTTP 200` + atom（16,852 B）。
+- **OpenAlex（查询日 2026-11-13，4/4 `200`）**：ViT **51,264**（`preprint`）· DINOv2 **7,783**（`preprint`）· WebArena **1,438**（`preprint`；⚠️ **记录标题仍为旧名 `Autonomous Tester Agent Benchmark`**，按 DOI 归并 ⇒ 引用须注明）· TPU **1,572**（`article`，ACM SIGARCH CAN）。
+- **作者页**：`www.lti.cs.cmu.edu/people/faculty/neubig-graham.html` **`200`** / 277,777 B，页内 `<span class="protect hidden">gneubig(through)cs.cmu.edu</span>`（该页以 `(through)` 代替 `@` 反爬）⇒ 还原为 `gneubig@cs.cmu.edu`；Lucas Beyer 三个候选主页 `giffmana.github.io` `404` / `lucasbeyer.net` `000` / `github.com/lucasbeyer` `404` ⇒ 邮箱未找到。
+- **X（只读，显式 `-x http://127.0.0.1:7897`）**：`x.com` 自检 **`200`**；profile **2/2 `200`**（`giffmana`：`og:title` = `Lucas Beyer (bl16) (@giffmana) on X`，bio 含 `now: Meta`；`gneubig`：`og:title` = `Graham Neubig (@gneubig) on X`，bio = `Associate professor @LTIatCMU. Co-founder/chief scientist @OpenHandsDev...`）；`xiaohua_zhai` **`404`** ⇒ 不登记、不猜。
+- **发信 1 封（`SENT OK`）**：Graham Neubig `21:04:55`（WebArena，英文 **191** 词，发送前 `wc -w` 已核；邮箱取自 LTI 现行页，非论文 PDF 旧地址）。今日累计 **11 封**、累计 **32 封**；CMU 今日第 2 封（15:05 Dettmers 亦 CMU）⇒ 未超「同机构 ≤2/天」。
+- **作者网**：+2 → **95**（Lucas Beyer `@giffmana` · Graham Neubig `@gneubig`）；X 已核验 **55**、待 follow **48**、已 follow **0**。
+- **投料**：`voice_ready` **0 新增**（本期已满 2：V21 / V22）；`news_ready` **0**（A 轨 0 新收 + B 轨 4 篇无事件点，不硬凑）。
+- **交付**：`daily/2026-11-13.html` **130,510 B**（div 134/134、table 37/37、tr 209/209、td 774/774、th 165/165、h2 53/53、details 5/5、footer 1/1、0 `<script>`、0 残留 `**`）+ `daily/index.html`（91 篇 / 95 人 / 32 封 / 127.5 KB）；`PAPERS.md` **91** / `AUTHORS.md` **95**。

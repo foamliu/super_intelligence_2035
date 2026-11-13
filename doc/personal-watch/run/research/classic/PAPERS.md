@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **87** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **41** · vision **19** · harness **51** · data **48** · zhulong **57** · designflow **23**
+**本轮快照**：累计 **91** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`）｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **42** · vision **21** · harness **54** · data **50** · zhulong **59** · designflow **26**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -1546,6 +1546,74 @@
 
 ---
 
+
+## 88. An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale（ViT）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale |
+| 作者（前 3） | **Alexey Dosovitskiy** · **Lucas Beyer** · **Alexander Kolesnikov**（et al.，共 **12** 位） |
+| 年份 | **2020**（arXiv 首次提交 **2020-10-22T17:55:59Z**，`v1`；`v2` 2021-06-03） |
+| 会议 / 期刊 | **ICLR 2021**（arXiv `comment` 原文写明 `ICLR camera-ready version…`；OpenAlex 记 arXiv 版 `type=preprint`，未另记会场 DOI） |
+| 被引数 | **51,264**（OpenAlex arXiv DOI 直查，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2010.11929> ｜ DOI `10.48550/arXiv.2010.11929` |
+| 一句话贡献 | 摘要原文要点：不必依赖 CNN —— 把图像切成 **16×16 patch 序列**、直接喂标准 Transformer（ViT），在**大规模预训练**后迁移到 ImageNet / CIFAR-100 / VTAB 等中小基准，取得与当时最好 CNN 相当或更好的结果，且训练所需算力显著更少。 |
+| 与我们工作的关系 | **vision（视觉塔的「token 化」基线，直接）**：ViT 把「分辨率 × patch 大小」变成「视觉 token 数」，这正是我们工业图像（版图 / SEM / 波形）进 2B 主干时的成本开关。<b>动作</b>：预注册 `patch ∈ {8, 14, 16}` × `输入边长 ∈ {224, 448}` 的 3×2 对照，**固定视觉 token 总预算**（超出则降 batch），只比较域内 held-out 的缺陷分类 / 线宽回归。<b>预注册判据</b>：只有「更小 patch + 更高分辨率」在 held-out 新图层上绝对提升 ≥ 2 点，才接受其翻倍的视觉算力；否则按 16×16 基线。<br>**pretrain（预训练规模 > 归纳偏置）**：摘要的核心结论是「数据够大时，纯 Transformer 不需要卷积先验」；<b>动作</b>：视觉塔选型表里把「预训练数据规模」单列一列，🚫 不得把「架构更好」与「预训练数据更多」混成一个结论。<br>**data（域内数据少时的迁移口径）**：ViT 的强项建立在**大规模（自然图像）预训练**上，而我们的域内标注远小于此；<b>动作</b>：data 线记录每个视觉实验的 `pretrain_corpus` 与 `in-domain labels` 两个数，作为可复现的最小元数据。<br>**风险**：① 论文的基准是自然图像分类，🚫 不能把 ImageNet 的提升直接外推到版图 / SEM 缺陷；② 「算力更少」是与 2019–2020 年的 CNN 训练口径比，不是与今天的配方比；③ 16×16 在 224 输入下只有 196 个 token，高分辨率工业图直接套用会丢细节。 |
+
+首次收录: 2026-11-13（第二十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**12** 作者、首发时间已核；OpenAlex `200`：**51,264**）；二作 Lucas Beyer 本轮进作者网（#94，`@giffmana`）
+
+---
+
+## 89. DINOv2: Learning Robust Visual Features without Supervision
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DINOv2: Learning Robust Visual Features without Supervision |
+| 作者（前 3） | **Maxime Oquab** · **Timothée Darcet** · **Théo Moutakanni**（et al.，共 **26** 位） |
+| 年份 | **2023**（arXiv 首次提交 **2023-04-14T15:12:19Z**，`v1`；`v2` 2024-02-02） |
+| 会议 / 期刊 | **arXiv 预印本**（无 `journal_ref` / `comment`；OpenAlex 记 `type=preprint`，本轮**未核到会场 DOI** ⇒ 不写会议） |
+| 被引数 | **7,783**（OpenAlex arXiv DOI 直查，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2304.07193> ｜ DOI `10.48550/arXiv.2304.07193` |
+| 一句话贡献 | 摘要原文要点：**自监督**预训练也能产出「通用视觉特征」—— 前提是**用自动流水线构建多样、经过筛选（curated）的图像数据**，并把训练在数据与模型规模上放大（训练细节多为加速 / 稳定化）；作者训练 **1B 参数 ViT** 再**蒸馏**成一系列小模型，摘要称在图像级与像素级多数基准上超过当时最好的通用特征 **OpenCLIP**。 |
+| 与我们工作的关系 | **vision（无标注工业图，直接）**：我们的缺陷 / 版图样本标注贵、类别长尾，DINOv2 的「无监督通用特征」正好是**先冻结当基线**的路线。<b>动作</b>：视觉线先跑「冻结 DINOv2 特征 + 线性探针」作为 held-out 基线，再决定是否自训编码器。<b>预注册判据</b>：若冻结特征在域内 held-out 上距全量微调 ≤ 2 个绝对点，则本期**不投入**自监督预训练算力，把预算让给数据清洗。<br>**data（curated > uncurated）**：论文把「自动筛选流水线」当作与模型同等重要的贡献；<b>动作</b>：data 线做一组小规模对照 —— 同一图像池「按规则筛选 vs 全量」，固定下游探针与预算，检验筛选是否同样带来增益。<br>**harness（固定冻结基线）**：冻结特征 + 线性探针是**低成本、可复现**的评测行，适合放进 harness 作为「视觉能力地板」。<b>动作</b>：评测表新增一行 `frozen_dinov2_linear_probe`，固定权重版本与预处理，禁止随任务调参。<br>**designflow（L1–L2 保真度）**：图像级缺陷 / 版图截图分类可先复用该特征；<b>动作</b>：L1–L2 任务先以冻结特征跑通判分链路，再换成自研编码器对照。<br>**风险**：① 训练语料是自然图像，SEM / 版图属**分布外**，零样本结论不可直接引用；② 摘要只给「多数基准超过 OpenCLIP」的定性结论，**无逐项数字**；③ 1B 教师 → 小模型的蒸馏配方未在摘要给出，复现需读全文与代码。 |
+
+首次收录: 2026-11-13（第二十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**26** 作者、首发时间已核；OpenAlex `200`：**7,783**）；一作 Maxime Oquab 本轮**未找到可核验 X / 邮箱** ⇒ 未进作者网
+
+---
+
+## 90. WebArena: A Realistic Web Environment for Building Autonomous Agents
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | WebArena: A Realistic Web Environment for Building Autonomous Agents |
+| 作者（前 3） | **Shuyan Zhou** · **Frank F. Xu** · **Hao Zhu**（et al.，共 **12** 位；末位 **Graham Neubig**） |
+| 年份 | **2023**（arXiv 首次提交 **2023-07-25T22:59:32Z**，`v1`；`v4` 2024-04-16） |
+| 会议 / 期刊 | **arXiv 预印本**（`comment` 只给 `webarena.dev` 复现资源，未写会场；本轮**未核到会场 DOI** ⇒ 不写会议） |
+| 被引数 | **1,438**（OpenAlex arXiv DOI `10.48550/arxiv.2307.13854` 直查，查询日 **2026-11-13**；⚠️ **该记录标题仍是旧标题 `Autonomous Tester Agent Benchmark`**，计数按 DOI 归并 ⇒ 引用时须连同此注记；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2307.13854> ｜ DOI `10.48550/arXiv.2307.13854` |
+| 一句话贡献 | 摘要原文要点：搭一个**高保真、可复现**的 web 环境 —— 四个常见域（电商 / 社交论坛 / 协作软件开发 / 内容管理）的**功能完整站点**，外加地图类工具与用户手册等外部知识；基准题**按任务完成的功能正确性判分**，题目多样、长程；摘要报告最好的 GPT-4 agent **端到端成功率 14.41%**，远低于人类 **78.24%**。 |
+| 与我们工作的关系 | **harness（判分范式，直接）**：WebArena 用「**功能正确性 / 终态判定**」而不是文本相似度，这正是 EDA agent 需要的口径（网表、时序报告、DRC 日志是否真的对）。<b>动作</b>：harness 的判分表把每个任务写成「终态检查函数 + 允许的执行副作用」，文本输出只作日志不作分数；<b>预注册判据</b>：若某任务的终态检查无法写成确定性函数，则该题降级为人工评审，🚫 不进自动榜。<br>**zhulong（长程任务的现实基线）**：14.41% vs 78.24% 说明「多步、带工具、状态会变」的任务远未解决；<b>动作</b>：zhulong 的闭环评测拆「单步正确率 / 10 步内完成率 / 全任务成功率」三档，🚫 只报最后一档会掩盖失败模式。<br>**designflow（造题）**：四域自托管 + 统一重置 =「题目冻结、环境冻结」；<b>动作</b>：designflow 的 L3–L5 题面附 `env_image_digest`、`reset_protocol`、`n_trials` 三列，缺一列不算可复现。<br>**data（不做数据泄漏）**：环境自托管使「题目答案」可被 agent 读到；<b>动作</b>：我们造题时把 ground-truth 终态放在 agent 不可读的判分容器内，并记录一次泄漏自检。<br>**风险**：① 动作空间是浏览器 DOM / a11y 树，与我们 CLI / 工具调用差异大，🚫 不可照搬动作设计；② 14.41% 是 2023 年 GPT-4 口径、单次运行成功率，未给 `pass^k`；③ OpenAlex 记录标题异常，引用被引数时必须注明。 |
+
+首次收录: 2026-11-13（第二十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**12** 作者、首发时间已核；OpenAlex `200`：**1,438**，标题旧名已如实标注）；末位作者 Graham Neubig 本轮进作者网（#95，`@gneubig`，已发信）
+
+---
+
+## 91. In-Datacenter Performance Analysis of a Tensor Processing Unit（TPU, ISCA 2017）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | In-Datacenter Performance Analysis of a Tensor Processing Unit |
+| 作者（前 3） | **Norman P. Jouppi** · **Cliff Young** · **Nishant Patil**（et al.，共 **75** 位；第 4 作者 **David Patterson**） |
+| 年份 | **2017**（arXiv 首次提交 **2017-04-16T12:07:54Z**） |
+| 会议 / 期刊 | **ISCA 2017**（arXiv `comment` 原文 `To appear at the 44th International Symposium on Computer Architecture (ISCA)…`；OpenAlex 记 `ACM SIGARCH Computer Architecture News`、`type=article`） |
+| 被引数 | **1,572**（OpenAlex arXiv DOI 直查，查询日 **2026-11-13**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1704.04760> ｜ DOI `10.48550/arXiv.1704.04760` |
+| 一句话贡献 | 摘要原文要点：评估 2015 年起部署在数据中心的 **TPU（推理 ASIC）**—— 核心是 **65,536 个 8-bit MAC** 的矩阵乘单元（峰值 **92 TOPS**）+ **28 MiB** 软件管理片上存储；作者强调其**确定性执行模型**更匹配应用的 **99 分位响应时间**，而 CPU/GPU 的缓存、乱序、多线程等动态优化更利于平均吞吐；与同期 Haswell CPU / K80 GPU 比，平均快 **15–30×**、**TOPS/W 高 30–80×**（摘要自报）。 |
+| 与我们工作的关系 | **zhulong（延迟分布 vs 平均吞吐，直接）**：TPU 的论证是「**p99 才是线上指标**」，与 LLM / agent 推理的成本讨论同构；<b>动作</b>：zhulong 的推理成本表增加 `p50 / p99 latency` 与「每任务端到端秒数」，🚫 只报 tokens/s 平均值。<b>预注册判据</b>：若某配置 p99 > 2× p50，先做调度 / 批处理优化，暂不换模型或加卡。<br>**designflow（专用硬件 vs 通用工具）**：论文的价值在「**按负载特征定制**」；对应我们的 agent 负载里最慢的一环往往是 EDA 工具（综合 / 仿真 / DRC）而非模型本身；<b>动作</b>：先测一条完整设计流程中各工具调用的耗时分布，再决定优化预算落在模型还是工具封装。<br>**harness（负载代表性）**：论文用 MLP / CNN / LSTM 代表 **95%** 的推理需求来选基准；<b>动作</b>：harness 定义我们自己的「覆盖 95% 调用量」的最小任务集，并写清选取依据与统计窗口。<br>**风险**：① 2017 年**推理-only、8-bit** 口径，🚫 不能把 15–30× 外推到今天的训练或新时代加速器；② 对比对象是同机房 Haswell / K80，属**同期同环境**对照；③ 92 TOPS / 28 MiB 是硬件规格，不代表实际利用率（摘要亦承认部分应用利用率低）。 |
+
+首次收录: 2026-11-13（第二十三轮）｜ 状态: 元数据已核验（arXiv `id_list` `200` + atom：**75** 作者、首发时间已核；OpenAlex `200`：**1,572**）；第 4 作者 David A. Patterson 已在作者网（#74，此前 IRAM 轮已发信）
+
+---
 
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 

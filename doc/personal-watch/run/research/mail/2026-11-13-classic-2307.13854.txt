@@ -1,0 +1,17 @@
+Dear Professor Neubig,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). WebArena is the paper we point to whenever someone proposes scoring an agent on its text output, because you made the environment and task completion the unit of evaluation.
+
+Three questions:
+
+1. WebArena judges functional correctness through the final state. For EDA tasks the artifacts are netlists, timing reports and DRC logs. How far do you push deterministic terminal-state checks before they start rewarding accidental correctness or rejecting legitimate alternative solutions?
+
+2. Self-hosting was central to reproducibility. Our tools are heavy (synthesis, simulation) and slow to build. Which parts of an environment must be pinned (image digest, tool versions, seeds), and which can be mocked without invalidating the benchmark?
+
+3. Your best GPT-4 agent reached 14.41% versus 78.24% for humans. How much of that gap is planning, and how much is recovery from tool errors? We are deciding whether to invest first in a planner or in error-recovery scaffolding.
+
+Thank you for making the benchmark and environments public.
+
+Best regards,
+Liu Yang
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027
