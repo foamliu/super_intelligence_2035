@@ -10721,3 +10721,11 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 0 真实 infra 错误(chain log 仅 START;CUDA OOM=0;serve 三端口健康;0 traceback)。
 - 边界:本轮仅读 stats/log/ps/nvidia-smi/curl/eval_chain.sh,未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
 - Next:①run1 1 in-flight 收尾(~3min)→final_report.json→chain 自动 run2-5(各~5h)→5run_rl_analysis_R2.json→R2 Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告 reports/report_posttrain_rl_surrogate_zh.html(标替身预演,论证禁引 mean_ratio,改引 reward 曲线+Pass@1);负→诚实负结果+换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4) ③kill_gpu_serve bug 待 chain 空闲修。
+
+### §R471 补充 — run1 COMPLETED 实测 Pass@1 + run2 自动起跑(07:46 实测,本轮收尾时获取)
+
+- **run1 COMPLETED @ 07:46:07**:final_report.json 已生成(`/tmp/posttrain_5run_eval/grpo_R2_step200/run1/final_report.json`,59487 bytes)。
+- **run1 真实 Pass@1(评分后,非 code-gen 计数)= 1/158 = 0.63%**(pass_rate=0.006329,total_correct_completions=1,total_problems_evaluated=158)。
+- **关键对比**:R2 run1 Pass@1=0.63% **低于** step105 baseline 5-run mean=3.04%±0.83%(单 run,非 5-run mean,不预判显著性)。code-gen success R2 run1=93(vs step105 run1=62)提升,但 timeout=58/158=36.7%(vs step105 run1=4)激增→长轨迹超时侵蚀实际通过数→**RL 后模型产出更长/tool-call 更多但实际正确率反降**的初步信号。
+- **链路实证**:run1 完成→chain 自动起 run2(`baize_posttrain_5run_eval.sh --run 2`,PID2684698,START @ 07:46:07),`for run_n 1 2 3 4 5` 自治循环 empirically confirmed。run2 batch_id=grpo_R2_step200_run2_2026_1114_074607,code-gen starting。
+- **预注册决策门纪律(重申)**:R2 显著性判定必须等 5-run mean±std + McNemar/bootstrap vs step105,**不据 run1 单点预判**。若 5-run mean 仍 < step105 → 走诚实负结果路径(§用户令#4:换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮)。run1 timeout 主导的负信号已记,但 5-run 方差覆盖前不下结论。
