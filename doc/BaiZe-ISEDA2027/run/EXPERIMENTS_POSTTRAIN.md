@@ -9351,3 +9351,34 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 
 - 交付：run2 进度修正(37%→75%)+ETA 下修(3h→~1h)+卡死检测(无)+健康复检 + EXPERIMENTS §R423 + MEMORY wake423。
 - 下一步：① 等 run2 完(~1h)→chain 2028723 自动 serve global_step_200→158题5-run→5run_rl_analysis.json；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`；无提升/退化→诚实负结果(§R420 训练侧偏负支撑)+起 R2+sandbox-exec(wake421 已就绪,待 GPU7 释放)。
+
+## §R424（wake424, 2026-11-13 22:0x）—— R0 eval 全链路 serve-step 复核 + R2 臂 launch-readiness file-level 复验 + run2 健康复检（ETA 维持 ~22:50）
+
+> 唤醒背景：RL R0 200 步主训 COMPLETED（global_step_200, cheat=0/3200）；自治 eval 队列 run2(1962541,step60 run2 codegen 中)→R0 RL 5-run eval(2028723,等 run2 完后 serve global_step_200 于 GPU7:8095)→residual SFT(2030315) 全 ALIVE。GPU7 空闲(3MiB)预留待 R0 eval serve。本轮零 GPU（不可起第二臂争用 GPU7/沙盒/providers.json 单例），做「R0 出数前最后一道 file-level 复核」，使 R0 出数后两分支（里程碑报告 / 诚实负结果+R2）可 instant-fire。
+
+### A. R0 eval serve-step 复核（global_step_200 ckpt + chain 接线）
+- **ckpt 可 serve 性**：`rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/global_step_200/` 含 config.json（architectures=LlamaForCausalLM, model_type=llama, hidden_size 2048）+ model-00001-of-00002.safetensors(4.50GB)+model-00002-of-00002.safetensors(0.53GB)+model.safetensors.index.json+tokenizer.json/tokenizer_config.json/special_tokens_map.json/generation_config.json。optimizer.pt(10GB)仅训练用，serve 不需。**结论：完整可 serve**。
+- **chain 接线**（`baize_posttrain_rl_eval_chain.sh`）：L29-31 serve/eval/analysis 脚本指针正确；L37 PORT=8095；L85 等 GRPO pid 结束+GPU 释放；L105 RL_LABEL=`grpo_R0_step${STEP_N}`；L117-120 serve launch via `baize_posttrain_sft_surrogate_serve.sh`；L122-135 60×15s health 轮询（15min 超时 FATAL）；L148-150 `5run_analysis.py --compare $RL_LABEL $BASE_LABEL --output /tmp/posttrain_5run_eval/5run_rl_analysis.json`（McNemar + 10k paired bootstrap）。**结论：端到端接线正确，wake422 dry-run 已验证 5run_analysis --compare/--output 实跑出 JSON**。
+- **红线**：cheat_rate.json = `{total_rollouts:3200, cheat_detected:0, cheat_rate:0.0}`（红线 §5.2 ✓）；§5.1 contam 0/3347（RL 训练数据集，wake410 闸门）。
+
+### B. R2+sandbox-exec 臂 launch-readiness file-level 复验（cu124 venv）
+- `baize_posttrain_rl_grpo_loop.py`：`py_compile` OK（cu124 venv `~/code/verl_cu124_venv/bin/python`）。
+- `baize_posttrain_rl_grpo_loop.sh`：`bash -n` OK。
+- `baize_posttrain_rl_sandbox_exec.py`：`py_compile` OK。
+- **起跑命令骨架**（§R421 C，待 R0 eval 完 + GPU7 释放，不与 eval 争用沙盒/providers.json）：
+  `GPUS=7 VENV_PY=~/code/verl_cu124_venv/bin/python bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669 --sandbox-timeout 60 --total-steps 200 --init-from sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105 ...`
+- **结论**：R2+sandbox-exec 臂 launch-ready（file-level 复核通过；wake421 已端到端真实就绪：隧道+4端口监听+run_code+selftest ALL PASS+dry-run OK）。
+
+### C. run2 健康复检 + ETA
+- batch `~/eda_code_eval/2026_1113_194219`（19:42 起，~134min）：stats `success=101 / failure=7 / timeout=11` → **119/158(~75%) resolved**，剩 39。
+- 8 cline worker 全 alive（`timeout 2500 cline --yolo`），max etime=2470s < 2500s timeout → **无卡死**。
+- GPU5（step60 :8097）=95%util 健康；`/v1/models` 返回 minicpm5-2b-sft-v39。
+- 速率 ~0.89 task/min → **ETA ~22:50**（~44min）。较 wake423 的 ~23:00 维持一致。
+- 队列全 ALIVE：run2(1962541,8739s)→RL eval chain(2028723,180s 轮询)→residual SFT(2030315,120s 轮询)。
+- GPU：0-3=root SGLang；4/5/6=L4 eval serve；7=空闲(R0 eval serve 预留)。
+
+### 结论与下一步
+- 本轮零 GPU、未碰任何进程；纯 file-level 复核+复验（非空转：把 R0 测量链路 + R2 兜底臂从「paper ready」推进到「实跑前最后一道 file-level 复核」，R0 出数后两分支可 instant-fire）。
+- 红线 §5.1 contam 0/3347；§5.2 cheat=0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
+- 交付：R0 eval serve-step 复核（A）+ R2 臂 launch-readiness file-level 复验（B）+ run2 健康复检+ETA（C）+ EXPERIMENTS §R424 + MEMORY wake424。
+- 下一步：① 等 run2 完(~44min)→chain 2028723 自动 serve global_step_200→158题5-run(~12h)→`5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化→**诚实负结果**（§R420 训练侧偏负支撑：reward 平台+信号衰减+policy 不动）+ 起 R2+sandbox-exec（B 已 launch-ready）；③ 监控 run2 是否真在 ~44min 内完成，若卡死则排查 codegen worker（kill stuck + 续跑）。
