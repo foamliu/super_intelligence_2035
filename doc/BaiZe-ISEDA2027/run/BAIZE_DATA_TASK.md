@@ -1,8 +1,69 @@
 ﻿# BAIZE_DATA_TASK.md
 
-### 🔄 用户令 · 2026-11-13（**把 stack-v3-train 全量下载到 /nas_user，已下的 2TB 挪过去不重下**）· 用户直令 · 最高优先 · 进行中
+### 🔄 用户令 · 2026-11-13b（**分词数据搬到 /nas_user + 下载完成后立即分词新数据**）· 用户直令 · 最高优先 · 进行中
 
-> **用户原话**：「安排 data 把 stackv3 全部下载，放在 /nas_user/app.e0031982/datasets 下。已经下载 2TB 挪过去，不要重复下载。」
+> **用户原话**：「让 data 把第一批 2TB 的分词数据也搬运到 /nas_user，等下载完立即分词（已分词的部分跳过）。」
+
+#### 0. 现状（先读，别重复劳动）
+
+| 项 | 值 | 来源 |
+|:--|:--|:--|
+| 已分词数据 | 4600 shard / 926GB / 249.2B tokens | MEMORY_DATA 唤醒1478 |
+| 分词产物位置 | `/nas_train/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train/`（.12 上，13288 文件 = 4600×3 `.bin/.idx/.json` + MANIFEST.json） | 实测 ssh .12 |
+| 源 parquet（已搬走） | 原 `/nas_inference/.../stack-v3-train/` 2TB 已 rsync 到 `/nas_user/.../stack-v3-train/`，源删除中 | MEMORY_DATA 唤醒1480 |
+| 全量下载 | 🔄 `hf download` 后台跑中（8207 files / 56% / 4615 parquet / 1.995TB / nice19 / max-workers2） | MEMORY_DATA 唤醒1480 |
+| 分词脚本 | `run/data/stackv3_tokenize.py`（`PARQUET_DIR` 硬编码 `/nas_inference/...`，`OUTPUT_DIR` 硬编码 `/nas_train/.../tokenized/...`，支持 `--output-dir` + `--shard-list` 参数） | 实测 |
+| `/nas_user` 余量 | 113T / 57T 可用 | 实测 df |
+
+#### 1. 执行顺序
+
+**Step A · 搬迁已分词数据 926GB → /nas_user（立即执行，与下载并行）**
+- `rsync -a --info=progress2 /nas_train/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train/ /nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train/`
+- 后台 `setsid` + 日志 `/tmp/stackv3_tokenized_rsync.log` + `nice -n 19` + `ionice -c3`
+- 搬完校验：`find <dst> -name '*.json' | wc -l` = 4600（每 shard 一个 .json）且 `du -sb <dst>` 与源一致
+- **校验通过后删源**：`rm -rf /nas_train/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train/`（释放 `/nas_train` 926GB）
+- 🚫 删源前必须确认 rsync 字节级一致
+- ⚠️ `/nas_train` 是 pretrain 训练盘，删 926GB 后确认不影响训练（pretrain 用的 baize-llm 模型/ckpt 不在此路径）
+
+**Step B · 等全量下载完成（当前 hf download 后台跑中）**
+- 监控 `/tmp/stackv3_post_rsync.log`（或 hf download 日志）
+- 完成标志：`find /nas_user/.../stack-v3-train/data/ -name '*.parquet' | wc -l` 达到全量 shard 数（预计 ~8200），无 `.incomplete` 文件
+
+**Step C · 立即分词新下载的 shard（跳过已分词的 4600）**
+- 分词脚本 `stackv3_tokenize.py` 需改 `PARQUET_DIR` 指向新位置：`/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/data`
+- `OUTPUT_DIR` 指向 `/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train/`（与搬迁目标一致）
+- **跳过已分词**：脚本已支持 `--shard-list` 参数 → 传入新 shard ID 列表（part-04600 起）；或脚本检测 `.json` 已存在则 SKIP
+- 先用 3 shard 试分词（验证 tokenizer 加载、EOD 语义、新路径读写 OK）→ PASS 后全量并行
+- `setsid` 后台 + `nice -n 19` + `ionice -c3` + 日志 `/tmp/tokenize_stackv3_new.log`
+- 并行度：16 workers（同第一批，nice 19 不挤 S1）
+- 每轮报进度（已完成 shard 数 / 失败数 / ETA / 吞吐 tokens/s / 磁盘余量）
+
+**Step D · 完成后**
+- `du -sb` 实测分词总字节 + `find -name '*.json' | wc -l` shard 总数
+- 更新 `DATA_MAPPING.md`（分词产物新位置 / 总 token / 总字节）
+- 更新 `MEMORY_DATA.md` 进度快照 + 一行结论
+- commit `data stackv3-full-tok:` + push
+
+#### 2. 纪律
+
+- 🚫 不挤 S1（pretrain 训练在 `.29` 跑，分词 `nice 19` + `ionice -c3`）
+- 🚫 不碰 `/nas_train` 上非 stack-v3 的文件
+- ✅ rsync 搬迁用 `-a`，校验字节一致才删源
+- ✅ 分词跳过已有 `.json` 的 shard（不重复分词）
+- ✅ 每轮报进度
+- 🚫 `/nas_user` 余量红线 ≥ 5T；分词产物 926GB + 新增预计 ~2-3TB → 总需 ~3.5TB，57T 可用充裕
+
+#### 3. 验收
+
+- `/nas_user/.../tokenized/HuggingFaceCode/stack-v3-train/` 包含全量 shard 的 `.bin/.idx/.json` + MANIFEST.json
+- `/nas_train` 原分词位置已清理（0 残留）
+- `DATA_MAPPING.md` 更新（新位置 / 总 token / 总字节）
+- 已分词的 4600 shard 未被重跑
+- 新 shard 全部分词完成（`failed_shards.txt` 为空或已逐一说明）
+
+---
+
+### 🔄 用户令 · 2026-11-13a（**把 stack-v3-train 全量下载到 /nas_user，已下的 2TB 挪过去不重下**）· 用户直令 · 最高优先 · 进行中
 
 #### 0. 现状（先读，别重复劳动）
 

@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🔴 **用户令 2026-11-13**：把 stack-v3-train **全量**（~15.9TB train split）下载到 `/nas_user/app.e0031982/datasets/`；已下载的 2TB（4600 parquet @ `/nas_inference`）搬过去不重下。执行顺序：①等分词主跑+rerun完成 ②rsync 2TB→/nas_user + 校验字节 ③hf download 全量剩余（自动跳已存在）④更新 DATA_MAPPING ⑤commit。纪律：nice19/max-workers2/不挤S1/不碰分词产物。
+> 🔴 **用户令 2026-11-13a**：把 stack-v3-train **全量**（~15.9TB train split）下载到 `/nas_user/app.e0031982/datasets/`；已下载的 2TB（4600 parquet @ `/nas_inference`）搬过去不重下。执行顺序：①等分词主跑+rerun完成 ②rsync 2TB→/nas_user + 校验字节 ③hf download 全量剩余（自动跳已存在）④更新 DATA_MAPPING ⑤commit。纪律：nice19/max-workers2/不挤S1/不碰分词产物。
+
+> 🔴 **用户令 2026-11-13b**：把第一批 2TB 的**分词数据**（926GB @ `/nas_train/.../tokenized/HuggingFaceCode/stack-v3-train/`）也搬到 `/nas_user`；等全量下载完成后**立即分词新 shard**（已分词的 4600 跳过）。执行顺序：①rsync 926GB→/nas_user+校验+删源 ②等 hf download 完成 ③分词脚本改 PARQUET_DIR/OUTPUT_DIR 指向 /nas_user ④只分词新 shard（part-04600+）⑤更新 DATA_MAPPING ⑥commit。纪律：nice19/ionice3/不挤S1/跳过已有.json。
 
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
