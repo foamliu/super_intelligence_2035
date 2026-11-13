@@ -1690,3 +1690,35 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794482557324_gjb90	hairuizh	10.129.2.10	95	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistGateInventory-001	2026-11-14 04:51	
 1794447924614_wf6ph.messages.json	xuelianf	hfeg0pbn07	95	analog_context	case	EDA-Eval-DesignFlow-OcTimeFitter-001	2026-11-14 05:02	r634 wf6ph clean produce OC time fitter (linear-fit + line intersection)
 1794403308911_7iv5n.messages.json	xdwang	hfeg0pkn005	130	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellCatalogGen-001	2026-11-14 05:35	
+1794473890903_7aypg					parked		2026-11-14 06:06	GUI-agent finesim, not portable
+1794484782925_5ityn					parked		2026-11-14 06:06	NO FILE
+1794371774848_p5qd0					parked		2026-11-14 06:06	verilog irun.log analysis Q&A (A-lean)
+1794386849475_29zy1					parked		2026-11-14 06:06	schematic CMD-decode analysis Q&A + waveview GUI
+1794484723187_hgkn6					parked		2026-11-14 06:06	signal location Q&A
+1794384191469_131q5					parked		2026-11-14 06:06	schematic analysis Q&A + waveview GUI (near-dup 29zy1)
+1794383888042_yvlcb					parked		2026-11-14 06:06	tokenizer/NLP meta Q&A
+1794532032531_sd44n					parked		2026-11-14 06:06	near-dup r622 UlvtDelvtoReducer (same user joeyl/task)
+1794535620076_2qn6y					parked		2026-11-14 06:06	near-dup r622 (same kw as sd44n)
+1794537217851_4nnhs					parked		2026-11-14 06:06	circuit device-type analysis Q&A
+1794448471152_wiocz					parked		2026-11-14 06:06	netlist FIFO inspection Q&A
+1794461415971_4on6p					parked		2026-11-14 06:06	TCAD Sentaurus physics Q&A (not design-flow)
+1794377992905_h1qiv					parked		2026-11-14 06:06	Aether GUI how-to Q&A
+1793242667594_smzfi					parked		2026-11-14 06:06	SKILL source-locating Q&A env-dep
+1794296365532_wivn8					parked		2026-11-14 06:06	waveview GUI trivial (draw sin/fourier)
+1794382001446_2r1ji					parked		2026-11-14 06:06	live schematic edit env-dep (add inverter)
+1794474077262_ui0hu					parked		2026-11-14 06:06	CML divider live sim env-dep (near-dup q3nek)
+1794473481100_4wleh					parked		2026-11-14 06:06	CML divider live sim (near-dup q3nek)
+1794380309786_h6cl3					parked		2026-11-14 06:06	SPF device inspection Q&A env-dep
+1793934244119_hnzff					parked		2026-11-14 06:06	layout/schematic AB-match analysis env-dep
+1794468674593_rjyxb					parked		2026-11-14 06:06	task-doc driven env-dep
+1794382596033_jrawb					parked		2026-11-14 06:06	CMD decode analysis Q&A (near-dup 29zy1)
+1794362681809_cdx3g					parked		2026-11-14 06:06	IDD current grab env-dep + how-to
+1794462287927_x9ykf					parked		2026-11-14 06:06	stimulus regen env-dep (140k-row CSV + inaccessible note + protocol-knowledge)
+1792475021825_nn4my					parked		2026-11-14 06:06	skill Q&A + DRC inspection
+1785416993717_zmqok					parked		2026-11-14 06:06	task-doc driven
+1794484700419_2ntgh					parked		2026-11-14 06:06	verilog irun.log analysis Q&A
+1794447975330_6qrva					parked		2026-11-14 06:06	verilog sim + waveform dump env-dep
+1794469775699_96p8z					parked		2026-11-14 06:06	verilog specdef analysis Q&A
+1794460939678_by0hv					parked		2026-11-14 06:06	circuit analysis + KB gen env-dep
+1789451853998_lmg4r					parked		2026-11-14 06:06	business-scenario env-dep
+1793947531660_s4fee					parked		2026-11-14 06:06	Aether env startup env-dep
