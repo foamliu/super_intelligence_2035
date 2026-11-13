@@ -19,7 +19,7 @@ round: 544（r544 CASE DELIVERED QaDrcAutoCheck-001 physical_verify L2-boundary 
 📊 trace 覆盖率：326/3260=10.0%（mc≥10, src=summary_1113.tsv；ledger_C case 328·parked 474；jsonl_C 328；la 79·lv 65·pg 41·pv 136；pool 口径换 1113 后 target=3260）
 🎯 通过率: shard C 累计 328 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%；r544 +1 case QaDrcAutoCheck-001）
 🧾 断言: k_rationale=14 ≤ k_check=14 ≥ 8 ✓（r544 QaDrcAutoCheck-001 k_check=14(a-n) 最近 case 断言闸门 PASS；存量 328/328 断言闸门 k≥8 PASS）
-🛠 DEBT: 0（r544 1-case 交付 QaDrcAutoCheck-001 已落库 jsonl_C 327→328 ledger_C case 328→329；check.py __main__ bug 已修）
+🛠 DEBT: 0（r544 1-case 交付 QaDrcAutoCheck-001 已落库 jsonl_C 327→328 ledger_C case→328；check.py __main__ bug 已修）
 omission 覆盖: C-authored tracked 116/310=37.4%（r531 无 omission）；file 口径（含跨 shard）119/310=38.4%；per-domain(file 口径) layout_aether 25/73=34.2%·layout_virtuoso 28/63=44.4%·pg_layout 28/44=63.6%·physical_verify 37/131=28.2%。最近：r516 SkillMenuRoute-001 layout_virtuoso cond (g)。更早 r347-r515 共 66 条 omission 详各轮流水/归档批次 MEMORY_C_archive.md。
 📦 体积：TASK_C≈31.7KB / MEMORY_C≈32.1KB（r534 归档压缩 r533/r532 详行→archive + 新增 r534 详行，红线 40KB 内 ✓）/ MEMORY_C_archive≈1.14MB
 - r206-r318（113 轮历史：选料筛选饱和期 + 13 条 case 交付 r319-r335 + omission 推广 r339-r345 + schema 归一 r338）详细指针已归档 MEMORY_C_archive.md（归档批次 r357）；各轮详述见 daily-memories-designflow/daily_C_*.md 与 designflow/MEMORY_C_archive.md
