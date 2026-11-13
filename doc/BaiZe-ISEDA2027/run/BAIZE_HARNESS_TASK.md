@@ -28,6 +28,47 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-14 08:0x（**TB-2.1 七路「网关 Token 额度耗尽」诊断 + 按需重跑（含 other-6 路与 synthetic 假结果）**）· 未完成
+
+> **用户原话**：「安排 harness 查一下，cline 和其他 harness 是否仍然有（网关 token 额度耗尽）导致失败的 Case，有则重跑。现在是周末。」
+
+- **下发时的现状（08:0x 复核，勿重复劳动）**：cline 侧 `quota_lost` 已 = **0**（R2460：main+2nd+3rd+4th-batch ALL MERGED，cline=38/90=42.2%）；R2460 另发现 **8 个 synthetic placeholder**（2nd-batch 来源 `rerun_2nd_batch_synthetic`、`has_run_result=false`、`stdout=0` ⇒ **agent 从未真跑**）已起 5th-batch。**⇒ cline 的「额度」问题已闭环，本令剩余价值只在两处：① 其他 6 路从未做过额度口径归因；② 用同一口径复核「假结果/未真跑」是否也存在于其他路。**
+- **范围（勿扩大）**：只做 **TB-2.1 / 89 题 / 7 路**。**SWE-bench 侧不查不跑**（cline 专项 C2 已证：网关额度 429 = 0 题 0.0%，66 个失败 100% 能力）。
+
+**A. 诊断（必做，只读）— 覆盖全部 7 路，而不是只有 cline**
+
+1. 新建 `run/harness/terminalbench/audit_tb21_quota_7way.py`：对 **7 路**逐路扫 `/tmp/tb21_glm53_jobs/<harness>/` 的 dated 子目录 `result.json`（过滤口径同 `gen_report_tb21_7way.py::count_route`：`"/20" in str(f)`）。
+2. 判定口径**逐字复用** `rerun_tb21_cline_quota.py::classify` 与 `gen_report_tb21_7way.py::_cline_attrtribution`：stdout 含 `额度已用完` 或 `Token额度` ⇒ quota trial；**task 级 `best_reward<1.0` 且全部 trial 均 quota ⇒ `quota_only`**。
+3. 关键新增（R2460 教训）：额外标出 **`synthetic_or_never_ran`** —— `agent_result.metadata` 无 `run_result`（或 `stdout` 长度=0 / `"run_result"` 不在 stdout）且 reward<1.0 的 trial → 这**不是能力，也不能算额度**，是「**假结果/未真跑**」，需单列并进重跑队列。
+4. 每路四桶 + 一标记，落 `run/reports/tb21_quota_audit_7way_<tag>.json`：`quota_only_tasks` / `mixed_fail_tasks`（不重跑）/ `ability_fail_tasks` / `synthetic_or_never_ran` / `not_evaluated`（89−evaluated，**先补跑非重跑**）。
+5. MEMORY 心跳写一行汇总：`7路 quota_only: cline=0 · pi=? · opencode=? · deepseek=? · hermes=? · codex=? · cc=? | synthetic: <各数> | evaluated: <各值>/89`。
+
+**B. 重跑（只跑 A 里非空的桶；空的就记「0」不跑）**
+
+1. 前置：`curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9092/v1/models` = 200；确认**无 SWE-bench predict 抢同一额度池**（周末窗口独占）；S1 训练（10.239.2.29 pretrain）不挤；`df`/`nvidia-smi` 自检照常。
+2. 排队顺序：**5th-batch（8 synthetic）先跑完** → 再跑本次审计新增的 `quota_only`/`synthetic` 题；**逐路串行，一路 merge 完再起下一路**（避免 R2454 踩过的 cline-hub 冲突）。
+3. cline 路：沿用 `rerun_tb21_cline_quota.py --launch`（判定口径不许改）。
+4. 其他路：把 `rerun_tb21_cline_quota.py::launch()` 的 `HARNESS`/`AGENT` **参数化**（新增 `--harness <name>`，或另建 `rerun_tb21_quota_7way.py`，**沿用其 judge/merge/落盘逻辑**），agent 映射照抄 `launch_tb21_glm53_7way.sh:67-73`：`codex=terminalbench.agents.codex:CodexTB` · `hermes=…hermes:HermesTB` · `opencode=…opencode:OpenCodeTB` · `claude-code=…claude_code:ClaudeCodeTB` · `deepseek-harness=…deepseek_harness:DeepseekHarnessTB` · `pi=…pi:PiTB`。
+5. 参数不得放宽：`-k 1`、`--n-concurrent 1`、`nice -n 19`、`TB_AGENT_TIMEOUT=3600`、`sg docker` 兜底、jobs-dir=/tmp。
+6. 跑完：`--merge /tmp/tb21_glm53_jobs/<harness>_rerun_<tag>` → `gen_report_tb21_7way.py` + `../gen_cline_special.py` REGEN → commit（`harness:` 前缀，只 add 本线路径）。
+
+**C. 报告口径修正（本轮必做）**
+
+- `gen_report_tb21_7way.py`：① 额度归因从 cline 单路扩为 **7 路表**；② 顶部「结论一句话」改**数据驱动**（合计 0 时写「无额度失败；失败=timeout/ability/假结果」）；③ 旧文字「主因=额度耗尽…原始 10/89=11.2%…公平 40%」加「~~作废~~ 见 R<本轮>」时点戳，并补 R2460 后的 38/90=42.2% 现口径。
+- `report_harness_cline_special_zh.html` 的 TB-2.1 段（仍写「65 题 81%…公平 40%」）同步改「已清 0 + 现 38/90」。
+- 🚫 不手改 HTML，改生成器后 REGEN。
+
+**D. 判据**：重跑前后 `quota_lost` 与 `synthetic` 题数、各路 passed/fair-pass **同框**写进心跳；重跑后仍 0 分的题必须给**非额度证据**（iterations/exception_info/finishReason），否则不得下能力结论；`synthetic` 重跑后若仍无 run_result ⇒ 报 infra bug，禁写「模型不会」。
+
+**E. 红线**：🚫 不改 SWE-bench 口径/数字；🚫 额度失败≠能力、假结果≠能力（三者必须分开记账）；🚫 同题多 trial 只按 unique task 计一次；🚫 不放宽 timeout/并发刷分；🚫 无实测 `http_code`+trial 证据不得断言「额度已恢复」。
+
+**F. 落盘**：`run/reports/tb21_quota_audit_7way_<tag>.json` + `run/reports/tb21_quota_rerun_7way_<tag>.json` + `run/harness/terminalbench/traces/tb21_quota_rerun_7way_<tag>.log` + MEMORY 心跳 + 双报告。
+
+**G. 节奏**：本轮先做 **A+C**（诊断+口径，纯只读/生成器），把 7 路清单落盘；**同轮内网关 200 且无 predict 竞争就顺势进 B**（周末额度补充窗口，别拖到工作日）。不能跑就写 `BLOCKED: <原因> + 清单已落盘`，不许空转。
+**H. 体积提示**：本令下发时 `MEMORY_HARNESS.md` 已 31.4KB（贴 32KB 上限）⇒ 本轮先按 §工作约定 把已闭合的 R24xx 流水 fold 到 `daily-memories-harness/`，再写心跳。
+
+---
+
 ### 🔴 用户令 · 2026-11-13 18:2x（**TB-2.1 cline「网关 Token 额度耗尽」失败重跑**）· 未完成
 
 > **用户原话**：「harness：回顾一下 cline 失败的 case，如果是【网关 Token 额度耗尽】就重跑。」
