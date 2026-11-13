@@ -1411,3 +1411,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794451028204_c2len.messages.json					parked		2026-11-13 18:19	r495 peek P-004 near-dup h3vpf CmlDividerSweepTbGen-001(r484)
 1794540366981_p3c57.messages.json	jiangbaol	hfeg0pkn004	208	spice_sim	case	EDA-Eval-DesignFlow-SlicerSweepFomOpt-001	2026-11-13 19:03	
 1794538929064_fpq19.messages.json					parked		2026-11-13 19:03	near-dup of p3c57 (same user/host, mc202 vs 208, same netlist:1073/hspice:211 profile, P-004)
+1794459639804_2692p.messages.json	e0030760	hfeg0pkn004	105	spice_sim	case	EDA-Eval-DesignFlow-McLisSnmExtractor-001	2026-11-13 19:54	
