@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake384（2026-11-13 R384: **run2 codegen 64/158(40.5%)+3 stuck workers killed+harness mode mismatch analysis(3.8% single-turn vs 36% full-harness NOT comparable)**; step105 run1=3.8%, step60 run1=1.3%）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-383✅;R383✅(designflow 0/5 verified+protocol mismatch);R384✅(run2 progress+stuck worker cleanup+harness mismatch analysis)
-- 当前动作: wake384 R384:①run2 zhulong codegen(batch 2026_1113_062714):64/158 tasks processed(40.5%),success=59/fail=2/timeout=3,task_queue remaining 87/158,5 workers active(3 stuck killed:>2500s elapsed) ②autocomplete daemon PID1122770 alive,waiting for run2 PID1109190→auto-runs 3-5 ③3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final,98%util) ④tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑤🔴KEY FINDING:3.8%(SFT single-turn code-gen)vs 36%(base full-harness interactive)are DIFFERENT harness modes→need base model eval on same single-turn pipeline for proper comparison(providers.json shared,must wait for step105 5-run to finish) ⑥git clean
+- PHASE: posttrain-wake385（2026-11-13 R385: **run2 codegen 78/158(49.4%)+1 stuck worker-7 killed(task052,2526s>2500s)+all 8 workers reactivated**; step105 run1=3.8%, step60 run1=1.3%）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-384✅;R384✅(run2 progress+stuck worker cleanup+harness mismatch analysis);R385✅(run2 progress update 78/158+stuck worker-7 kill+EXPERIMENTS wake385)
+- 当前动作: wake385 R385:①run2 zhulong codegen(batch 2026_1113_062714):78/158 tasks processed(49.4%),success=70/fail=5/timeout=3,task_queue remaining 72/158,8 workers all active(worker-7 killed+restarted on task086) ②autocomplete daemon PID1122770 alive,waiting for run2 PID1109190→auto-runs 3-5 ③3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final) ④tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑤stuck worker pattern recurring(timeout SIGTERM ignored by bun,kill -9 needed) ⑥git clean
 - 下一步: ①wait step105 5-run eval complete(autocomplete daemon handles runs 3-5) ②🔴launch base model 5-run eval on GPU4:8098(same single-turn pipeline)for proper SFT-vs-base comparison ③compute 5-run mean±std+McNemar/paired bootstrap ④designflow baseline DELIVERED 0/5=0%
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(run 2 of 5);base model eval BLOCKED on providers.json conflict until step105 5-run done
-- 本轮新增产出: R384✅(run2 progress update 64/158+3 stuck workers killed+harness mode mismatch critical analysis:3.8% single-turn vs 36% full-harness are NOT comparable,need base model eval on same pipeline;documented in EXPERIMENTS §L4-zhulong wake384)
+- 本轮新增产出: R385✅(run2 progress update 78/158(49.4%)+1 stuck worker-7 killed(task052,2526s>2500s,kill -9 on timeout+bun)+all 8 workers reactivated+EXPERIMENTS §L4-zhulong wake385 updated)
 - 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run2/5;designflow DELIVERED 0/5=0%);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit f7df56340 wake383);本轮 commit pending(wake384)
+- git: super_intelligence_2035(commit d67242837 wake384);本轮 commit pending(wake385)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -227,5 +227,7 @@ WAITING: 0
 [wake383 07:35] R383 **designflow 5-task eval VERIFIED COMPLETE 0/5=0% (protocol mismatch)+run2 zhulong codegen 57/158(36%)** → 原文已归档 daily-memories-posttrain/2026-11-13.md
 
 [wake384 07:45] R384 **run2 codegen 64/158(40.5%)+3 stuck workers killed+harness mode mismatch analysis**:①run2 codegen:64/158 tasks(success=59/fail=2/timeout=3),87 remaining,5 workers active after killing 3 stuck(>2500s elapsed,timeout cmd failed) ②autocomplete daemon alive,waiting for run2→auto-runs 3-5 ③3 serves UP+tunnel OK ④🔴CRITICAL:3.8%(SFT single-turn code-gen,no sandbox feedback)vs 36%(base full-harness interactive w/sandbox)are DIFFERENT harness modes→NOT comparable→need base model eval on SAME single-turn pipeline(providers.json shared,must wait step105 5-run done) ⑤EXPERIMENTS updated §L4-zhulong wake384 ⑥git clean. R384✅.WAITING=0。
+
+[wake385 08:00] R385 **run2 codegen 78/158(49.4%)+1 stuck worker-7 killed(task052,2526s)+all 8 workers reactivated**:①run2 codegen:78/158 tasks(success=70/fail=5/timeout=3),72 remaining,8 workers all active after killing worker-7(task052,elapsed 2526s>2500s timeout,kill -9 on timeout PID1135722+bun PID1135723,worker-7 logged Exit Code 137+restarted on task086) ②autocomplete daemon alive,waiting for run2 PID1109190→auto-runs 3-5 ③3 serves UP+tunnel OK ④stuck worker pattern recurring(timeout SIGTERM ignored by bun,same as wake370-376/wake384) ⑤EXPERIMENTS updated §L4-zhulong wake385 ⑥git clean. R385✅.WAITING=0。
 
 

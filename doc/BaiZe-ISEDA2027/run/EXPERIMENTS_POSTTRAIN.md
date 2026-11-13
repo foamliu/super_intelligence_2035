@@ -8197,3 +8197,27 @@ From `worker_1.log` and `worker_3.log` on 36.15:
 3. 📊 Compute 5-run mean±std + McNemar/paired bootstrap (SFT vs base, same pipeline)
 4. 📝 Update baseline report with proper comparison
 
+### §L4-zhulong (2026-11-13 wake385) Run 2 Progress Update + Stuck Worker-7 Cleanup
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 2 Progress (as of wake385 ~08:00 CST)
+
+- **Stats counters**: success=70, failure=5, timeout=3 → 78/158 tasks processed (49.4%)
+- **Task queue remaining**: 72/158 (86 dequeued, 8 in-progress by 8 active workers)
+- **1 stuck worker killed**: PID 1135722/1135723 (worker-7, elapsed=2526s on task EDA-Eval-PyAether-052) — exceeded 2500s timeout but `timeout` command SIGTERM was ignored by bun/cline process. Killed with `kill -9` on both `timeout` parent (1135722) and `bun` child (1135723). Worker-7 logged failure (Exit Code 137) and immediately picked up next task (086). New worker-7 PID=1155358 (elapsed=34s).
+- **All 8 workers active** (elapsed times at check): 2308s, 1228s, 761s, 583s, 471s, 291s, 289s, 34s — all within 2500s limit
+- **Autocomplete daemon** (PID1122770): still waiting for run2 PID1109190, will auto-run runs 3-5 + 5-run summary
+- **Run 2 ETA**: ~72 tasks remaining ÷ 8 workers × ~2min/task ≈ ~18min more for codegen → then sandbox eval (~10-15min) → run2 complete ~08:30, then runs 3-5 auto-start
+
+#### Stuck Worker Pattern (recurring)
+
+This is the **same pattern** as wake370-376 and wake384: `timeout 2500` sends SIGTERM after 2500s, but the bun/cline process ignores it and keeps running. The `timeout` command (without `--kill-after`) only sends SIGTERM once and then waits indefinitely. Root cause: bun runtime doesn't propagate SIGTERM to the JS event loop.
+
+**Mitigation**: Manual `kill -9` on both the `timeout` parent PID and the `bun` child PID. The parent script (`run_cline_script.sh`) correctly detects the worker exit (Exit Code 137) and restarts the worker on the next task.
+
+#### Next Steps (unchanged from wake384)
+1. ⏳ Wait for step105 5-run eval to complete (autocomplete daemon handles runs 3-5)
+2. 🔴 Launch base model 5-run eval on GPU4:8098 (same pipeline) for proper comparison
+3. 📊 Compute 5-run mean±std + McNemar/paired bootstrap (SFT vs base, same pipeline)
+
