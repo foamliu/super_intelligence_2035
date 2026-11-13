@@ -134,12 +134,28 @@ def main():
         for k, v in s["tool_hist"].items():
             agg_hist[k] = agg_hist.get(k, 0) + v
 
-    # Pass@1 / completion from stats/
+    # Pass@1 (real, from run_eval Step 7.1 in round log): parse the pyAether_aether runtime line
+    #   "运行时 pyAether_aether (lang=pyAether, host=aether): 任务=8 样本=8 正确=5 指标={'pass_rate': 0.625}"
+    # or the summary "PASS_RATE=0.6250" for pyAether_aether.
+    pass_rate = None
+    passed = None
+    total = None
+    m = re.search(r'运行时 pyAether_aether[^:]*: 任务=(\d+) 样本=(\d+) 正确=(\d+)', log_text)
+    if m:
+        total = int(m.group(1))
+        passed = int(m.group(3))
+        if total:
+            pass_rate = round(100.0 * passed / total, 2)
+    if pass_rate is None:
+        m2 = re.search(r'pyAether_aether\s*\(.*?\)\s*:\s*PASS_RATE=([\d.]+)', log_text)
+        if m2:
+            pass_rate = round(float(m2.group(1)) * 100, 2)
+
+    # completion (cline exit-0) from stats/ — NOT Pass@1
     succ = read_int(os.path.join(a.batch_dir, "stats", "success")) or 0
     fail = read_int(os.path.join(a.batch_dir, "stats", "failure")) or 0
     tmo = read_int(os.path.join(a.batch_dir, "stats", "timeout")) or 0
     total_done = succ + fail + tmo
-    pass_rate = round(100.0 * succ / total_done, 2) if total_done else None
     completion_rate = round(100.0 * (succ + fail) / total_done, 2) if total_done else None  # exclude timeout
 
     # wall from stats/total_time (sec) — fallback to log timestamp delta
@@ -162,7 +178,8 @@ def main():
         "spawn_sessions": n_spawn_sessions,
         "spawn_call_rate": spawn_call_rate,
         "pass_rate_pct": pass_rate,
-        "passed": succ, "failed": fail, "timed_out": tmo, "total_done": total_done,
+        "passed": passed, "total_eval": total,
+        "cline_success": succ, "cline_failed": fail, "timed_out": tmo, "total_done": total_done,
         "completion_rate_pct": completion_rate,
         "wall_sec": wall,
         "tokens_main": {"input": main_in, "output": main_out, "cacheRead": main_cache_r, "cacheWrite": main_cache_w,
@@ -180,7 +197,7 @@ def main():
     json.dump(cost, open(a.out, "w"), ensure_ascii=False, indent=2)
     print(f"cost saved: {a.out} | arm={a.arm} r={a.round} "
           f"spawn={total_spawn} calls in {n_spawn_sessions}/{n_tasks} sessions (rate={spawn_call_rate}) "
-          f"pass={pass_rate}% ({succ}/{total_done}) wall={wall}s main_tok={main_in+main_out}")
+          f"Pass@1={pass_rate}% ({passed}/{total}) cline_ok={succ}/{total_done} wall={wall}s main_tok={main_in+main_out}")
 
 
 if __name__ == "__main__":
