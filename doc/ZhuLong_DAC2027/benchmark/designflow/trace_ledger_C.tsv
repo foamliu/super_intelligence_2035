@@ -711,3 +711,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793356890947_umhrd	kenwang	hfeg0plg16		physical_verify	parked		2026-11-12 20:29	r460 PARKED: dup scenario of r405 DrcRuleFromDesc-001 (same kenwang Calibre DRC rule-dev trace); 0 case
 1789097271183_hsrb5	davidwu	hfeg0pjn200	231	layout_aether	parked		2026-11-12 20:51	dup PlacePersistAudit-001(xx7by)+APRRoutePrecondDiag-001(pb4ei): same davidwu/test2/AF_PPRCntEnd/cwd/tool-family; USER#0 core failure (no effective layout view on disk)=PlacePersistAudit-001 same mode; USER#0 gives root-cause+fix(per-step named layout view for debug)=A-disqualified; status=failed 8.6M tok debug saga; gold live Aether+/proj private
 1793758047628_xyaxc	adaml	hfeg0pkn002	98	physical_verify	parked		2026-11-13 10:00	r507 deep-read REJECT: pure skill-curation Q&A, no produce-task
+1793069381553_sy1se	xxchen	hfeg0pkn001	318	physical_verify	parked		2026-11-13 10:24	r508 peek REJECT: continuation/task-resume, GDS pattern via bridging fix, context-summary first msg
+1793781389038_g6wy0	cliu	hfhds209	313	physical_verify	parked		2026-11-13 10:24	r508 peek REJECT: skill-invoke tb_family+simulation on stdcells, drc/lvs keywords incidental from SV lib
+1785745498995_8c5jw	t0002638	hfeg0plg49	290	layout_aether	parked		2026-11-13 10:24	r508 peek REJECT: env-dep pyAether screenshot API exploration, sandbox unavailable
+1793005551647_i6pnk	jkxu	hfhds209	247	physical_verify	parked		2026-11-13 10:24	r508 peek REJECT: DDR5 testbench timing Q&A (A-domain verification), drc keywords incidental from tb content
