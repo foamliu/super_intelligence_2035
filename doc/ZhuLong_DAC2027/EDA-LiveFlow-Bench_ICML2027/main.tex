@@ -44,7 +44,9 @@
 % 2026-11-13 r461 造题: +NetlistHierTracer-001 (1236h, verification) => A:260->261, sum 1210->1211.
 % 2026-11-13 r463 造题: +SvPackedFlatten-001 (vjcll, digital) => A:261->262.
 % 2026-11-13 r464 造题: +RegrCheckMacroMap-001 (udmg8, verification) => A:262->263. \Ntasks 1211->1218 (catch-up A262/263 + B/C/D increments; truth A263+B289+C310+D356=1218).
-\newcommand{\Ntasks}{1218}
+% 2026-11-13 r490 造题: B 1113-pool 切换后 r485-r490 连产 6 case => B:289->291. r615/r616 D 1113-pool 2 case => D:356->357. A/C 不变. \Ntasks 1218->1221 (truth A263+B291+C310+D357=1221).
+% 2026-11-13 r466 造题: +CaselistPerlDriverGen-001 (gaekj, digital) => A:263->264. \Ntasks 1221->1222 (truth A264+B291+C310+D357=1222).
+\newcommand{\Ntasks}{1222}
 % 冻结评测快照：2026-11-09 run_batch_20261109_171201 = 696 runs
 %   （62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT；见 §4 与附录 B）
 %   ⚠️ 所有"结果/通过率"句子必须用 \Neval{}，不要用 \Ntasks{}，两者不是同一个数：
