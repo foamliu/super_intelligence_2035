@@ -15,13 +15,13 @@
   "generated": "2026-11-06T08:40:00+08:00",
   "hits_total": 38082,
   "hosts": 696,
-  "mc10": 2256,
-  "mc100": 281,
+  "mc10": 2882,
+  "mc100": 1244,
   "mc1000": 8,
   "mc15": 2684,
   "mc20": 2519,
   "mc25": 2376,
-  "mc30": 1126,
+  "mc30": 2247,
   "mc300": 317,
   "mc5": 3210,
   "mc500": 281,
@@ -103,7 +103,7 @@
     "to": "designflow/summary_1109.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
-  "prev_sessions": 3964,
+  "prev_sessions": 2776,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
   "scansync": {
     "date": "2026-11-12",
@@ -113,7 +113,7 @@
     "scan_dir": "ssh_eda_search_20261109_224902",
     "total_rows": 38082
   },
-  "sessions": 2776,
+  "sessions": 3964,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -197,7 +197,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-13 10:09",
+  "updated_at": "2026-11-13 10:35",
   "users_mc10": 444,
   "users_mc100": 182,
   "users_mc30": 401,
