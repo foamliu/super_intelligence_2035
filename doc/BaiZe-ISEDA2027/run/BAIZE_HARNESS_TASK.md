@@ -28,6 +28,22 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-13 18:2x（**TB-2.1 cline「网关 Token 额度耗尽」失败重跑**）· 未完成
+
+> **用户原话**：「harness：回顾一下 cline 失败的 case，如果是【网关 Token 额度耗尽】就重跑。」
+
+- **范围（已核对，勿扩大）**：SWE-bench 侧 cline 295/295 real、0 empty，C2 66 个失败 **100% 能力**（R2300 报告）⇒ **无额度失败可重跑**；重跑只针对 **TB-2.1**：R2386 已结案 10/89=11.2%，80 个失败 trial 里 **65 个（81%）** 是网关额度耗尽（stdout「本次Token额度已用完」/iterations=1），公平通过率 10/25=40%。
+- **工具**：`run/harness/terminalbench/rerun_tb21_cline_quota.py`（判定口径与 `gen_report_tb21_7way.py::_cline_attrtribution` 完全一致：best_reward<1.0 且**全部** trial 命中额度 ⇒ 重跑；有任一非额度 trial 的题不动）。
+- **执行**：
+  1. `cd run/harness/terminalbench && python3 rerun_tb21_cline_quota.py`（dry-run，落 `run/reports/tb21_cline_quota_rerun_ids.txt` + `run/reports/tb21_cline_quota_rerun_<tag>.json`）
+  2. 确认网关 200（`curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9092/v1/models` = 200）后：`python3 rerun_tb21_cline_quota.py --launch`
+  3. 跑完：`python3 rerun_tb21_cline_quota.py --merge /tmp/tb21_glm53_jobs/cline-patched_rerun_<tag>` → `python3 gen_report_tb21_7way.py` + `python3 ../gen_cline_special.py` 双报告重生成。
+- **判据**：重跑前后 `quota_lost` 题数、cline TB-2.1 passed（基线 10/89）与 fair pass（40%）同框写进 MEMORY 心跳一行；重跑后仍 0 分的题必须给**非额度证据**（iterations/exception_info），否则不得下能力结论。
+- **红线**：🚫 不得改 SWE-bench 口径/数字；🚫 不得把额度失败记成能力；🚫 同一题多 trial 只按 unique task 计一次。
+- **落盘**：`run/reports/tb21_cline_quota_rerun_<tag>.json` + `run/harness/terminalbench/traces/tb21_cline_quota_rerun_<tag>.log` + MEMORY + 双报告。
+
+---
+
 ### ✅ §用户令 · 2026-11-13 15:5x（**排查 TB-2.1 cline 低分根因**）· ✅ 已交付（R2386）
 
 > **根因结论**：cline TB-2.1 = 10/89 = 11.2% 低分 **非模型能力**。主因 = **网关 Token 额度耗尽**（「本次Token额度已用完，请等待X分钟后重试」）占 80 失败中 **65 题 (81%)**，cline run_result finishReason=error / iterations=1 / tokens=0 → 零工作 → reward=0。**cline 适配器无 retry/backoff**（rerun factor=1.0x），而 pi=2.0x（每题重跑）、opencode=1.3x（部分重跑）→ 额度恢复后重跑成功。公平通过率 10/25=40%。修复建议：① 适配器加 quota-error retry-with-backoff；② 额度充足时单独 rerun（预计 ~30-40%）。**值得 rerun**。
