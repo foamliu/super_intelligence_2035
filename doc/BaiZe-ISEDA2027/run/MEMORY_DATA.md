@@ -28,10 +28,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        stack-v3-train 分词阶段（EDA分析DONE+分词16workers后台跑中~79%+237ERR待rerun） → WAITING=0
+PHASE:        stack-v3-train 分词阶段（EDA分析DONE+分词16workers后台跑中~84%+243ERR待rerun） → WAITING=0
 已完成:       ✅85M;✅10-31报告;✅09:4x报告;✅09:2x长上下文10/10(249.48GiB);✅13:2x#2 RL报告;✅13:2x#1 B类12/12(78.73GiB);✅11-07 ROI 8源DONE(25.14GB);✅stack-v3-train调研DONE;✅batch1-7全DONE(1,987,930,402,327B/4600parquet/0inc);✅2TB ROI复盘;✅vision图文对调研报告;✅EDA脚本价值分析(Phase A全扫+Phase B抽样+报告43KB/8节/0外链/DATA_MAPPING§H.13,commit a6370ce60);✅orphan .bin清理(35个);✅tokenize脚本修复v3(新增Fallback2:dotted column paths full-read);✅tokenize脚本修复v4(修复--shard-list索引映射bug)
-当前动作:     分词后台运行中(PID891129 stackv3_tokenize.py --workers 16,nice19/ionice3,旧版脚本在内存)→3648/4600shard(79.3%,ETA~2.7h,3411OK+237ERR);输出3454.idx+3449.json+3627.bin+736GB+~198B tok;rerun脚本stackv3_rerun_failed.sh就绪(自动检测missing .json→用修复后脚本v4重跑)
-下一步:       ①等分词主跑完成(~2.7h);②用stackv3_rerun_failed.sh重跑failed shards(--workers 4,用修复后脚本v4+Fallback1/2);③全部4600shard完成后→清理orphan .bin+MANIFEST+INDEX.tsv+DATA_MAPPING.md+report_data_mapping_zh.html更新;④commit+push;⑤EDA分析已交付,待用户验收
+当前动作:     分词后台运行中(PID891129 stackv3_tokenize.py --workers 16,nice19/ionice3,旧版脚本在内存)→3881/4600shard(84.4%,ETA~2h,3637OK+243ERR);输出3677.json+3861.bin+784GB+~207B tok;rerun脚本stackv3_rerun_failed.sh就绪(自动检测missing .json→用修复后脚本v4重跑)
+下一步:       ①等分词主跑完成(~2h);②用stackv3_rerun_failed.sh重跑failed shards(--workers 4,用修复后脚本v4+Fallback1/2);③全部4600shard完成后→清理orphan .bin+MANIFEST+INDEX.tsv+DATA_MAPPING.md+report_data_mapping_zh.html更新;④commit+push;⑤EDA分析已交付,待用户验收
 阻塞:         无(分词后台跑中,WAITING=0短睡巡检)
 ERROR_COUNT:  12
 未完成指令:   有(stack-v3-train分词后台运行中)→WAITING=0
@@ -40,6 +40,7 @@ ERROR_COUNT:  12
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
+> [11-13 14:0x] 唤醒1476：分词巡检→①git fetch origin(代理,0ahead/0behind,运维无新令);②research日报11-13(06:12)已阅:data建议=Self-Instruct EDA指令扩增(100-200人工种子)+YaRN长文档语料准备,均为训练实验设计非数据准备→待ops,本轮不执行;③分词后台跑中(PID891129,16workers,nice19/ionice3,旧版脚本在内存)→3881/4600shard(84.4%,3637OK+243ERR~5.3%,ETA~2h);输出3677.json+3861.bin+784GB+~207B tok(from log sum);④134 unique failed shards在/tmp/stackv3_failed_shard_ids.txt;⑤脚本v4已修复在磁盘(Fallback1:iter_batches+Fallback2:dotted column paths+--shard-list索引映射fix),运行中进程用旧版→rerun时用新版;⑥rerun脚本stackv3_rerun_failed.sh就绪;⑦df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑧体积MEMORY~38KB/TASK~40KB均≤40KB→更新心跳→commit data stackv3:→WAITING=0继续巡检
 > [11-13 12:0x] 唤醒1475：分词巡检→①分词后台跑中(PID891129/891130,16workers,nice19/ionice3,旧版脚本在内存)→3648/4600shard(79.3%,3411OK+237ERR~6.5%,ETA~2.7h);输出3454.idx+3449.json+3627.bin+736GB+~198B tok(from manifests);②EDA分析已确认DONE(commit a6370ce60);③脚本v4已修复在磁盘(Fallback1:iter_batches+Fallback2:dotted column paths full-read+--shard-list索引映射fix),但运行中进程用旧版→rerun时用新版;④rerun脚本stackv3_rerun_failed.sh就绪(自动检测missing .json→用修复后脚本v4重跑);⑤df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑥体积MEMORY~37KB/TASK~40KB均≤40KB→更新进度快照→commit data stackv3:→WAITING=0继续巡检
 > [11-13 10:0x] 唤醒1474：分词巡检+TASK.md状态更新→①分词后台跑中(PID891129/891130,16workers,nice19/ionice3,旧版脚本在内存)→3396/4600shard(73.8%,3177OK+219ERR~6.5%,ETA~3.4h);输出3214.json+3373.bin+686GB;②EDA分析已确认DONE(报告43KB/8节/0外链/commit a6370ce60)→TASK.md标记✅已交付;③tokenization标记🔄进行中(73.8%);④134 unique failed shards待主跑完成后用stackv3_rerun_failed.sh重跑;⑤df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑥体积MEMORY~36KB/TASK~39KB均≤40KB→更新进度快照→commit data stackv3:→WAITING=0继续巡检
 > [11-13 08:0x] 唤醒1473：分词巡检+脚本v4修复→①分词后台跑中(PID891129/891130,16workers,nice19/ionice3,旧版脚本在内存)→2875/4600shard(62.5%,2686OK+189ERR~6.6%,ETA~4.9h);输出2726.json+2856.bin+582GB;②发现关键bug:stackv3_tokenize.py的--shard-list选项给failed shard分配0,1,2...索引→rerun时会覆盖成功shard的.bin/.json;③修复v4:--shard-list时从full sorted parquet list查找原始索引→输出文件名正确匹配(stackv3_s{original_idx:05d});④py_compile验证SYNTAX OK;⑤stackv3_rerun_failed.sh已就绪(检查missing .json→写shard-list→调用修复后脚本);⑥df:/nas_train 181T/88%(27T余)/nas_inference 19T/42%(27T余);⑦体积MEMORY~35KB/TASK~39KB均≤40KB→commit data stackv3:→WAITING=0继续巡检
