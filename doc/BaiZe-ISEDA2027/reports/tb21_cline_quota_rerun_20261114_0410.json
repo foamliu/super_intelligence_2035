@@ -1,0 +1,91 @@
+{
+  "round": "rerun-cline-quota",
+  "generated": "2026-11-14 04:10:24",
+  "source_jobs": "/tmp/tb21_glm53_jobs/cline-patched",
+  "rule": "best_reward<1.0 AND all trials stdout contains 额度已用完/Token额度",
+  "summary": {
+    "unique_tasks": 12,
+    "trials_total": 0,
+    "passed": 0,
+    "failed": 12,
+    "quota_lost_tasks": 12,
+    "non_quota_failed_tasks": 0,
+    "pass_rate": 0.0
+  },
+  "rerun_tasks": [
+    "distribution-search",
+    "dna-assembly",
+    "dna-insert",
+    "extract-elf",
+    "extract-moves-from-video",
+    "feal-differential-cryptanalysis",
+    "feal-linear-cryptanalysis",
+    "filter-js-from-html",
+    "financial-document-processor",
+    "fix-code-vulnerability",
+    "fix-git",
+    "fix-ocaml-gc"
+  ],
+  "detail": {
+    "distribution-search": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "dna-assembly": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "dna-insert": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "extract-elf": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "extract-moves-from-video": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "feal-differential-cryptanalysis": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "feal-linear-cryptanalysis": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "filter-js-from-html": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "financial-document-processor": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "fix-code-vulnerability": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "fix-git": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "fix-ocaml-gc": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    }
+  }
+}
