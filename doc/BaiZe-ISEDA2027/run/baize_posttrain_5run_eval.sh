@@ -75,12 +75,27 @@ json.dump(cfg, open('$PROVIDERS_JSON','w'), indent=2)
   local jsonl="$HOME/eda_code_eval/completed_code_generation_${batch_id}.jsonl"
   # fallback 1: try label_run prefix glob
   [ ! -f "$jsonl" ] && jsonl=$(ls -t "$HOME/eda_code_eval/completed_code_generation_${LABEL}_run${run_n}_"*.jsonl 2>/dev/null | head -1)
-  # fallback 2: parse codegen.log for the "输出文件:" line (most reliable)
+  # fallback 2: parse codegen.log for the actual "生成代码文件:" line.
+  #   run_cline_script.sh logs e.g. "[INFO] 生成代码文件:   code_generation_2026_1113_131353.jsonl"
+  #   but the on-disk completed file is "completed_code_generation_<ts>.jsonl" — map the name.
+  #   (The old grep for "输出文件:" never matched the real log line → run4 dropped, R408 bug.)
   if [ ! -f "$jsonl" ]; then
-    jsonl=$(grep -oP '输出文件: \K\S+' "$run_dir/codegen.log" 2>/dev/null | head -1)
+    local cg_ts
+    cg_ts=$(grep -oP '生成代码文件:\s+\Kcode_generation_\S+\.jsonl' "$run_dir/codegen.log" 2>/dev/null | head -1 \
+            | sed 's/code_generation_//; s/\.jsonl//')
+    [ -n "$cg_ts" ] && jsonl="$HOME/eda_code_eval/completed_code_generation_${cg_ts}.jsonl"
+    # secondary: also try the legacy "输出文件:" line in case the log format differs
+    if [ ! -f "$jsonl" ]; then
+      jsonl=$(grep -oP '输出文件: \K\S+' "$run_dir/codegen.log" 2>/dev/null | head -1)
+    fi
   fi
   # fallback 3: most recent completed_code_generation_*.jsonl (risky if overlapping runs, but last resort)
   if [ ! -f "$jsonl" ]; then
+    jsonl=$(ls -t "$HOME/eda_code_eval/completed_code_generation_"*.jsonl 2>/dev/null | head -1)
+  fi
+  # guard: reject the bare no-suffix name (a stale recovery artifact) so assemble never reads the wrong batch
+  if [ -n "$jsonl" ] && [ "$(basename "$jsonl")" = "completed_code_generation.jsonl" ]; then
+    echo "[run $run_n] WARNING: resolved to bare completed_code_generation.jsonl — discarding, trying fallback 3"
     jsonl=$(ls -t "$HOME/eda_code_eval/completed_code_generation_"*.jsonl 2>/dev/null | head -1)
   fi
   if [ -z "$jsonl" ] || [ ! -f "$jsonl" ]; then echo "[run $run_n] FATAL: no JSONL"; return 1; fi

@@ -9048,3 +9048,49 @@ GPUS=7 bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --total-steps 200 \
 - 仅写本线文件（EXPERIMENTS §R416 + MEMORY 心跳/快照更新 + wake415 roll→daily + daily）。
 - 未碰 GPU 0-3/4/5/6；GPU7 留给自治 eval chain；不杀健康训练/eval；不 `git add -A`。
 - 无新增脚本（复用 wake412–415 资产）；本轮为**监控+记录+归档**轮。
+
+## §R417 — wake417 (2026-11-13 20:1x): step105 基线 5-run 修复（3/5→5/5）+ 5run_eval JSONL 解析硬化
+
+> R0 主训已 COMPLETED（§R416），自治 eval chain 排队中。本轮**不空转**：发现并修复 SFT step105 基线只 3/5 有效 final_report（违反 §5.3 5-run 红线），把 RL R0 对比基线补成 5/5，并硬化 eval 脚本防止 R0/step60/base 后续 run 同样掉落。
+
+### 1. 问题（实测 `/tmp/posttrain_5run_eval/step105/`）
+
+- `5run_analysis.json` 旧值：step105 num_runs=3，mean±std=0.0274±0.0097（run2/3/5 有 final_report，run1/run4 缺）。
+- **run1**：从未跑 eval（run1 是 wake376b 早于 5run_eval harness 的 autocomplete daemon run，只有 `result_summary.json` + codegen jsonl，无 `eval.log`）。
+- **run4**：有一次 `.recover_eval_start` 恢复尝试，但传给 `run_eval.py --generations` 的是裸名 `completed_code_generation.jsonl`（不存在）→ assemble 回退默认路径 → `ERROR 生成的代码文件未找到` → 无 final_report。
+- 两 run 的**原始 codegen batch jsonl 都在** `~/eda_code_eval/completed_code_generation_{2026_1113_024153,2026_1113_131353}.jsonl`，可安全重跑 eval（assemble→sandbox→calculate）。
+
+### 2. 修复（安全窗口内执行：step60 run2 仍在 codegen，eval 数小时后才起，无 config/providers.json 争用）
+
+- **run1 恢复**：`cd eda_fastmcp && PYTHON=.venv/bin/python .venv/bin/python scripts/run_eval.py --generations completed_code_generation_2026_1113_024153.jsonl` → sandbox 4-shard(8664/8665/8653/8669) 执行 62 脚本 → `6/158 pass (3.8%)`，final_report 落 `output_evaluation/20261113_2012_*/final_report.json` → cp 到 `step105/run1/final_report.json`。
+- **run4 恢复**：同法 `--generations completed_code_generation_2026_1113_131353.jsonl` → 51 脚本 → `5/158 pass (3.2%)` → `step105/run4/final_report.json`。
+- **5-run 重算**（`baize_posttrain_5run_analysis.py --label step105`）：
+
+  | run | Pass@1 | passed |
+  |:--|--:|--:|
+  | 1 | 0.0380 | 6/158 |
+  | 2 | 0.0190 | 3/158 |
+  | 3 | 0.0253 | 4/158 |
+  | 4 | 0.0316 | 5/158 |
+  | 5 | 0.0380 | 6/158 |
+  | **5-run mean±std** | **0.0304±0.0083** | **5/5** ✅ |
+
+- `/tmp/posttrain_5run_eval/5run_analysis.json` 已更新为 5/5。**这是 R0 RL 的对比基线**（RL eval chain 末尾 `5run_analysis.py --compare grpo_R0_step200 step105` 会自动读 run1–5 final_report，现在 5/5 正确）。
+
+### 3. 5run_eval.sh JSONL 解析硬化（`baize_posttrain_5run_eval.sh` L78–99）
+
+- 旧 fallback 2 grep `输出文件: \S+` **从不命中**（run_cline_script.sh 实际日志行是 `生成代码文件: code_generation_<ts>.jsonl`）→ 实际靠 fallback 3「最近 completed_code_generation_*.jsonl」工作，恢复尝试时便会误取裸名/错误 batch（run4 即如此）。
+- 新 fallback 2：解析 `生成代码文件:\s+code_generation_<ts>.jsonl` → 映射到 `~/eda_code_eval/completed_code_generation_<ts>.jsonl`（确定性，不靠「最近」glob）；保留旧 `输出文件:` 作 secondary。
+- 新增 guard：若解析出裸名 `completed_code_generation.jsonl`（无 batch 后缀，陈旧恢复残留）则丢弃并回退 fallback 3，确保 assemble 永不读错 batch。
+- `bash -n` 通过。此修对运行中的 step60 run2（已在 codegen，eval 时会重读脚本）及后续 R0/base run 均生效，降低掉 run 风险。
+
+### 4. 红线 / 边界
+
+- §5.3 5-run：step105 由 3/5 修复为 **5/5**，红线恢复。✅
+- 未碰 GPU 0-3/4/5/6/7；未杀任何 chain（SFT eval chain PID1161064 + step60 run2 PID1962541 + RL eval chain PID1923203 全程 ALIVE 未受扰）；config.yaml eval 后已 restore（`generations_file: ''`）。
+- 仅写本线文件（`baize_posttrain_5run_eval.sh` + EXPERIMENTS §R417 + MEMORY 快照/心跳）。
+
+### 5. 下一步
+
+- 自治 chain 继续：等 SFT eval chain 跑完 step60 run2-5 + base run1-5 → RL eval chain 自动 serve `global_step_200` 于 GPU7:8095 → R0 5-run → `5run_rl_analysis.json`（R0 vs step105 0.0304±0.0083，McNemar/bootstrap）。
+- R0 数字出后分流（§R416 §5）：有提升→里程碑报告；无提升→诚实负结果 + 起 R2+sandbox-exec。
