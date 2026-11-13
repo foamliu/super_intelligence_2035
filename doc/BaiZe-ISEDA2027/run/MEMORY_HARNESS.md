@@ -4,9 +4,9 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2364 incr_eval(5new:+5resolved)+cleanup4empty+双报告REGEN(gateway 200·eval 1777/2199·0empty·predict 4/7 alive·cline239/313·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2364·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2363 incr_eval+监控+报告+ETA+cline根因修复·R2364 incr_eval5new+5resolved+cleanup4empty+双报告REGEN
-当前动作:     R2364: 自检(CPU/mem OK·load44/224·无runaway)·gateway 200·incr_eval R2364(5new:cline django-11087 FAILED+cc django-12273✅django-12276✅+pi sympy-13757✅sympy-13852 infra→总+5resolved+1failed+2infra)·cleanup4empty(cc django-13121+pi sympy-13877/13878/13974)·eval:cline239/316·codex90/141·opencode414/498·cc255/311·pi203/278·hermes435/480·dsh141/175·总1777/2199·predict:cline313r(PID1681149 alive57min)·codex134r·cc306r·pi276r·opencode/hermes/dsh DONE·predict 4/7 alive·**0empty all harnesses**·双报告REGEN(glm53_7way=12201B+cline_special=9973B)·未完成指令:有(§10:10+§22:4x)·W:0
+PHASE:        R2365 monitor+cleanup1empty(gateway 200·eval 1777/2199·0empty·0unevaluated·predict 4/7 alive·cline239/313·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2365·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2364 incr_eval+监控+报告+ETA+cline根因修复·R2365 monitor+cleanup1empty
+当前动作:     R2365: 自检(CPU/mem OK·load44/224·无runaway)·gateway 200·cleanup1empty(codex django-12965 empty patch deleted)·0unevaluated(all caught up)·eval不变1777/2199·predict:cline313r(PID1681149 alive62min)·codex134r(PID2779695 alive217min)·cc306r(PID172784 alive139min)·pi276r(PID1162108 alive58h)·opencode/hermes/dsh DONE·4/7 alive·**0empty all harnesses**·双报告未变(R2364 12:24)·未完成指令:有(§10:10+§22:4x)·W:0
 下一步:       ①本轮commit+push ②cline predict继续向500推进(313→500) ③continue incr_eval ④codex=瓶颈134/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
 阻塞:         <各路尚未满500:cline313/codex134/cc306/pi276·§22:4x未全交付·opencode+dsh+hermes DONE·codex=瓶颈~15天>
 ERROR_COUNT:  0
@@ -18,7 +18,8 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
-> [12:24] R2364: incr_eval+cleanup轮·自检(CPU/mem OK·load44/224·无runaway)·gateway 200·incr_eval R2364(5new:cline django-11087 FAILED+cc django-12273✅django-12276✅+pi sympy-13757✅sympy-13852 infra→总+5resolved+1failed+2infra)·cleanup4empty(cc django-13121+pi sympy-13877/13878/13974)·eval:cline239/316·codex90/141·opencode414/498·cc255/311·pi203/278·hermes435/480·dsh141/175·总1777/2199·predict:cline313r(PID1681149 alive57min)·codex134r·cc306r·pi276r·opencode/hermes/dsh DONE·4/7 alive·**0empty all harnesses**·双报告REGEN(glm53_7way=12201B+cline_special=9973B)·未完成指令:有(§10:10+§22:4x)·W:0
+> [12:30] R2365: monitor+cleanup1empty轮·自检(CPU/mem OK·load44/224·无runaway)·gateway 200·cleanup1empty(codex django-12965 empty patch deleted)·0unevaluated(all caught up)·eval不变1777/2199·predict:cline313r·codex134r·cc306r·pi276r·4/7 alive·**0empty all harnesses**·双报告未变(R2364 12:24)·未完成指令:有(§10:10+§22:4x)·W:0
+> 📦 R2364 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2364 incr_eval5new+5resolved+cleanup4empty+双报告REGEN。需要时再读。
 > 📦 R2363 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2363 incr_eval3new+3resolved+cleanup1empty+双报告REGEN。需要时再读。
 > 📦 R2362 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2362 incr_eval3new+3resolved+cleanup3empty+双报告REGEN。需要时再读。
 > 📦 R2361 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2361 incr_eval5new+2resolved+cline-patched RESTART(predictions_glm53)+cleanup1empty+kill2stuck容器+双报告REGEN。需要时再读。
