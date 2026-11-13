@@ -1,1 +1,229 @@
 # 2026-11-14 04:10:24 sg docker -c nice -n 19 harbor run -p /tmp/tb21_cline_quota_r9g5_ef0 --agent terminalbench.agents.cline_patched:ClinePatched -k 1 --n-concurrent 1 --extra-docker-compose /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml --jobs-dir /tmp/tb21_glm53_jobs/cline-patched_rerun_20261114_0410
+⠋  5/12 Mean: 0.400 ━━━━━━━━━━━━━━━━╸                        1:13:32 -:--:--
+⠋ 0:13:48 feal-differential-cryptanalysis__NUkCigh: running verifier...05:23:59 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 1/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 2.1s
+05:23:59 - LiteLLM:WARNING: get_model_cost_map.py:672 - LiteLLM: Failed to fetch remote model cost map from https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable. Falling back to local backup.
+05:24:01 - LiteLLM:WARNING: get_model_cost_map.py:315 - LiteLLM: model cost map fetch attempt 2/3 failed (ConnectError fetching https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json: [Errno 101] Network is unreachable); retrying in 4.3s
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/cli/jobs.py:1947 in start                                            │
+│                                                                              │
+│   1944 │   options.apply_defaults()                                          │
+│   1945 │   try:                                                              │
+│   1946 │   │   config = build_job_config(**options.arguments)                │
+│ ❱ 1947 │   │   return _execute_job(                                          │
+│   1948 │   │   │   config,                                                   │
+│   1949 │   │   │   diff_sources=options.arguments["diff_sources"],           │
+│   1950 │   │   │   print_config=options.arguments["print_config"],           │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/cli/jobs.py:2266 in _execute_job                                     │
+│                                                                              │
+│   2263 │   # (when --upload is set) so everything stays on one event loop.   │
+│        See                                                                   │
+│   2264 │   # the long comment in `HarborHubUploadPlugin.on_job_end` for why  │
+│        this matters.                                                         │
+│   2265 │   try:                                                              │
+│ ❱ 2266 │   │   job, job_result = run_async(_run_job())                       │
+│   2267 │   except DATASET_RESOLUTION_ERRORS as exc:                          │
+│   2268 │   │   abort_dataset_resolution(console, exc, "No job was started.") │
+│   2269                                                                       │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/cli/utils.py:111 in run_async                                        │
+│                                                                              │
+│   108 │   │   return asyncio.run(                                            │
+│   109 │   │   │   with_async_cleanup(coro),                                  │
+│       loop_factory=asyncio.ProactorEventLoop                                 │
+│   110 │   │   )                                                              │
+│ ❱ 111 │   return asyncio.run(with_async_cleanup(coro))                       │
+│   112                                                                        │
+│   113                                                                        │
+│   114 def parse_kwargs(kwargs_list: list[str] | None) -> dict[str, Any]:     │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/li │
+│ b/python3.14/asyncio/runners.py:205 in run                                   │
+│                                                                              │
+│   202 │   │   │   "asyncio.run() cannot be called from a running event       │
+│       loop")                                                                 │
+│   203 │                                                                      │
+│   204 │   with Runner(debug=debug, loop_factory=loop_factory) as runner:     │
+│ ❱ 205 │   │   return runner.run(main)                                        │
+│   206                                                                        │
+│   207                                                                        │
+│   208 def _cancel_all_tasks(loop):                                           │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/li │
+│ b/python3.14/asyncio/runners.py:128 in run                                   │
+│                                                                              │
+│   125 │   │                                                                  │
+│   126 │   │   self._interrupt_count = 0                                      │
+│   127 │   │   try:                                                           │
+│ ❱ 128 │   │   │   return self._loop.run_until_complete(task)                 │
+│   129 │   │   except exceptions.CancelledError:                              │
+│   130 │   │   │   if self._interrupt_count > 0:                              │
+│   131 │   │   │   │   uncancel = getattr(task, "uncancel", None)             │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/li │
+│ b/python3.14/asyncio/base_events.py:719 in run_until_complete                │
+│                                                                              │
+│    716 │   │   if not future.done():                                         │
+│    717 │   │   │   raise RuntimeError('Event loop stopped before Future      │
+│        completed.')                                                          │
+│    718 │   │                                                                 │
+│ ❱  719 │   │   return future.result()                                        │
+│    720 │                                                                     │
+│    721 │   def stop(self):                                                   │
+│    722 │   │   """Stop running the event loop.                               │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/utils/async_cleanup.py:20 in with_async_cleanup                      │
+│                                                                              │
+│   17 │   async with AsyncExitStack() as stack:                               │
+│   18 │   │   token = _exit_stack.set(stack)                                  │
+│   19 │   │   try:                                                            │
+│ ❱ 20 │   │   │   return await coro                                           │
+│   21 │   │   finally:                                                        │
+│   22 │   │   │   _exit_stack.reset(token)                                    │
+│   23                                                                         │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/cli/jobs.py:2223 in _run_job                                         │
+│                                                                              │
+│   2220 │   │   │   )                                                         │
+│   2221 │   │   │   await hub_plugin.on_job_start(job)                        │
+│   2222 │   │                                                                 │
+│ ❱ 2223 │   │   job_result = await job.run()                                  │
+│   2224 │   │                                                                 │
+│   2225 │   │   # Print the run summary BEFORE plugin and Harbor Hub finalize │
+│        so users                                                              │
+│   2226 │   │   # see results even if downstream operations fail.             │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/job.py:1076 in run                                                   │
+│                                                                              │
+│   1073 │   │   │   │   │   │   completed=n_existing,                         │
+│   1074 │   │   │   │   │   )                                                 │
+│   1075 │   │   │   │   │                                                     │
+│ ❱ 1076 │   │   │   │   │   trial_results = await                             │
+│        self._run_trials_with_queue(                                          │
+│   1077 │   │   │   │   │   │   loading_progress, progress_task,              │
+│        running_progress                                                      │
+│   1078 │   │   │   │   │   )                                                 │
+│   1079                                                                       │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages │
+│ /harbor/job.py:1226 in _run_trials_with_queue                                │
+│                                                                              │
+│   1223 │   │                                                                 │
+│   1224 │   │   coros =                                                       │
+│        self._trial_queue.submit_batch(self._remaining_trial_configs)         │
+│   1225 │   │                                                                 │
+│ ❱ 1226 │   │   async with asyncio.TaskGroup() as tg:                         │
+│   1227 │   │   │   tasks = [tg.create_task(coro) for coro in coros]          │
+│   1228 │   │                                                                 │
+│   1229 │   │   return [t.result() for t in tasks]                            │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/li │
+│ b/python3.14/asyncio/taskgroups.py:72 in __aexit__                           │
+│                                                                              │
+│    69 │   async def __aexit__(self, et, exc, tb):                            │
+│    70 │   │   tb = None                                                      │
+│    71 │   │   try:                                                           │
+│ ❱  72 │   │   │   return await self._aexit(et, exc)                          │
+│    73 │   │   finally:                                                       │
+│    74 │   │   │   # Exceptions are heavy objects that can have object        │
+│    75 │   │   │   # cycles (bad for GC); let's not keep a reference to       │
+│                                                                              │
+│ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/li │
+│ b/python3.14/asyncio/taskgroups.py:174 in _aexit                             │
+│                                                                              │
+│   171 │   │   │   │   self._parent_task.uncancel()                           │
+│   172 │   │   │   │   self._parent_task.cancel()                             │
+│   173 │   │   │   try:                                                       │
+│ ❱ 174 │   │   │   │   raise BaseExceptionGroup(                              │
+│   175 │   │   │   │   │   'unhandled errors in a TaskGroup',                 │
+│   176 │   │   │   │   │   self._errors,                                      │
+│   177 │   │   │   │   ) from None                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+
+╭────────────────────────────── Sub-exception #1 ──────────────────────────────╮
+│ ╭─────────────────── Traceback (most recent call last) ────────────────────╮ │
+│ │ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-pack │ │
+│ │ ages/harbor/trial/queue.py:242 in _run_trial                             │ │
+│ │                                                                          │ │
+│ │   239 │   async def _run_trial(self, trial_config: TrialConfig) ->       │ │
+│ │       TrialResult:                                                       │ │
+│ │   240 │   │   """Execute a single trial, acquiring the semaphore for     │ │
+│ │       concurrency control."""                                            │ │
+│ │   241 │   │   async with self._semaphore:                                │ │
+│ │ ❱ 242 │   │   │   return await                                           │ │
+│ │       self._execute_trial_with_retries(trial_config)                     │ │
+│ │   243 │                                                                  │ │
+│ │   244 │   def submit(self, trial_config: TrialConfig) -> Coroutine[Any,  │ │
+│ │       Any, TrialResult]:                                                 │ │
+│ │   245 │   │   """                                                        │ │
+│ │                                                                          │ │
+│ │ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-pack │ │
+│ │ ages/harbor/trial/queue.py:203 in _execute_trial_with_retries            │ │
+│ │                                                                          │ │
+│ │   200 │   │   for attempt in range(self._retry_config.max_retries + 1):  │ │
+│ │   201 │   │   │   trial = await Trial.create(trial_config)               │ │
+│ │   202 │   │   │   self._setup_hooks(trial)                               │ │
+│ │ ❱ 203 │   │   │   result = await trial.run()                             │ │
+│ │   204 │   │   │                                                          │ │
+│ │   205 │   │   │   if result.exception_info is None:                      │ │
+│ │   206 │   │   │   │   return result                                      │ │
+│ │                                                                          │ │
+│ │ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-pack │ │
+│ │ ages/harbor/trial/trial.py:515 in run                                    │ │
+│ │                                                                          │ │
+│ │    512 │   │   │   await self._recover_outputs()                         │ │
+│ │    513 │   │   finally:                                                  │ │
+│ │    514 │   │   │   try:                                                  │ │
+│ │ ❱  515 │   │   │   │   await self._finalize()                            │ │
+│ │    516 │   │   │   finally:                                              │ │
+│ │    517 │   │   │   │   try:                                              │ │
+│ │    518 │   │   │   │   │   self._scrub_jobs_dir()                        │ │
+│ │                                                                          │ │
+│ │ /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-pack │ │
+│ │ ages/harbor/trial/trial.py:557 in _finalize                              │ │
+│ │                                                                          │ │
+│ │    554 │   │   finally:                                                  │ │
+│ │    555 │   │   │   await self._stop_agent_environment()                  │ │
+│ │    556 │   │   self.result.finished_at = self._now()                     │ │
+│ │ ❱  557 │   │                                                             │ │
+│ │        self.paths.result_path.write_text(self.result.model_dump_json(ind │ │
+│ │        ent=4))                                                           │ │
+│ │    558 │   │   await self._emit(TrialEvent.END)                          │ │
+│ │    559 │                                                                 │ │
+│ │    560 │   def _record_exception(self, exc: BaseException) -> None:      │ │
+│ │                                                                          │ │
+│ │ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gn │ │
+│ │ u/lib/python3.14/pathlib/__init__.py:809 in write_text                   │ │
+│ │                                                                          │ │
+│ │    806 │   │   if not isinstance(data, str):                             │ │
+│ │    807 │   │   │   raise TypeError('data must be str, not %s' %          │ │
+│ │    808 │   │   │   │   │   │   │   data.__class__.__name__)              │ │
+│ │ ❱  809 │   │   with self.open(mode='w', encoding=encoding,               │ │
+│ │        errors=errors, newline=newline) as f:                             │ │
+│ │    810 │   │   │   return f.write(data)                                  │ │
+│ │    811 │                                                                 │ │
+│ │    812 │   _remove_leading_dot = operator.itemgetter(slice(2, None))     │ │
+│ │                                                                          │ │
+│ │ /home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gn │ │
+│ │ u/lib/python3.14/pathlib/__init__.py:771 in open                         │ │
+│ │                                                                          │ │
+│ │    768 │   │   """                                                       │ │
+│ │    769 │   │   if "b" not in mode:                                       │ │
+│ │    770 │   │   │   encoding = io.text_encoding(encoding)                 │ │
+│ │ ❱  771 │   │   return io.open(self, mode, buffering, encoding, errors,   │ │
+│ │        newline)                                                          │ │
+│ │    772 │                                                                 │ │
+│ │    773 │   def read_bytes(self):                                         │ │
+│ │    774 │   │   """                                                       │ │
+│ ╰──────────────────────────────────────────────────────────────────────────╯ │
+│ FileNotFoundError: [Errno 2] No such file or directory:                      │
+│ '/tmp/tb21_glm53_jobs/cline-patched_rerun_20261114_0410/2026-11-14__04-10-25 │
+│ /feal-differential-cryptanalysis__NUkCigh/result.json'                       │
+╰──────────────────────────────────────────────────────────────────────────────╯

@@ -1,0 +1,55 @@
+{
+  "round": "rerun-cline-quota",
+  "generated": "2026-11-14 05:28:16",
+  "source_jobs": "/tmp/tb21_glm53_jobs/cline-patched",
+  "rule": "best_reward<1.0 AND all trials stdout contains 额度已用完/Token额度",
+  "summary": {
+    "unique_tasks": 6,
+    "trials_total": 0,
+    "passed": 0,
+    "failed": 6,
+    "quota_lost_tasks": 6,
+    "non_quota_failed_tasks": 0,
+    "pass_rate": 0.0
+  },
+  "rerun_tasks": [
+    "train-fasttext",
+    "tune-mjcf",
+    "video-processing",
+    "vulnerable-secret",
+    "winning-avg-corewars",
+    "write-compressor"
+  ],
+  "detail": {
+    "train-fasttext": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "tune-mjcf": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "video-processing": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "vulnerable-secret": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "winning-avg-corewars": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "write-compressor": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    }
+  }
+}
