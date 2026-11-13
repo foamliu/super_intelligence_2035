@@ -1,6 +1,10 @@
 WAITING: 0
 
-> 🆕 **【wake #1109 · 2026-11-13 08:17】v9监控·seed1 GRPO step7/30·进展正常**：seed1(seed=20261113)GRPO step7/30(503s/etimes~525s)·nz_std=50%@step7(step1-4=100%)·reward=0.125@step7(波动正常)·剩余seed1(~25min GRPO+~3min eval)+seed2(~45min)+control(~45min)·ETA全完成≈10:20·seed0结果在盘(NO CHANGE A=0% B=49.5% C=49.5% p=1.0)·analyze_v9就绪·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK·GPU 8×H100 100% pretrain全占·体积✓(MEMORY 13.4KB/TASK 27KB)·**WAITING: 0**。
+> 🆕 **【wake #1110 · 2026-11-13 11:0x】🔴迁移后首次唤醒(.17)·v9结果困在.12·v10已启动**：
+> - **基础设施断裂**：vision 09:12 由 .12 迁至 .17。.17 上 `/nas_train`→`/H100_train`(空)、`/nas_data` 有 code+models 但**无 `datasets/` 目录**、`/nas_inference` 不存在、SSH 到 .12/.29 超时(异网段)。v9 实验跑在 .12 的 `/nas_train/...datasets/baize-vision/out/`→**结果困在 .12 不可达**。
+> - **v9 seed0 诊断**：NO CHANGE(A=0% B=49.5% C=49.5% p=1.0 **n_disc=0**)。根因=`grpo_lr=1e-6` 太低→GRPO 有 reward 信号(nz_std=75%)但**零 discordant cases**(策略不改变预测)。v8 MIXED(C=52.5%±6.1%>B=45%,McNemar p=0.0312 s0)但 v9 scale-up(SFT 500×5ep/GRPO 30步)**未修复 n_disc=0**。
+> - **v10 启动**(修复 v9 瓶颈)：① 基座=qwen3vl_2b_text_extracted→**Qwen3.5-2B**(用户指定,`.17` 可用,`AutoModelForCausalLM` 已验证 PASS:s2_fallback 1.88B/LoRA 737K/1.2s·step)② `grpo_lr` 1e-6→**1e-5**(10x,关键修复)③ `n_grpo_steps` 30→**50** ④ 输出→本地 `wave_rl/v10_results/`。预注册判据(先写后跑)：A~0-50%·B>55%·C>B·D≤B·**n_disc>0**(新增诊断)·SUCCESS: C>B(mean)+McNemar p<0.05+3seed一致+n_disc>0。smoke 跑中(PID 1263529,log@/tmp/v10_freqcmp.log),smoke PASS→全自动 3seed+control(ETA~5h CPU)。脚本 `run_v10_freqcmp.sh`+复用 `cpu_rl_v9_freqcmp_experiment.py`(`--model_path`+`--grpo_lr` CLI)。
+> - git pull OK(autostash 有他线在途,非vision)。research 日报11-13 vision栏 GPTQ(部署阶段·非wave RL·不action)。ops/inbox RUN_ID276(pretrain eval·非vision)。GPU 8×A40 空卡(vision 空卡但实验 CPU-only)。体积✓(MEMORY 13.5KB/TASK 27KB)。**WAITING: 0**。
 
 > 📦 **wake #1108 · 2026-11-13 08:10** v9监控·seed0 COMPLETE(NO CHANGE: A=0% B=49.5% C=49.5% p=1.0)·seed1 GRPO起步·已fold(见wake#1109)。
 
