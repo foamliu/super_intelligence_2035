@@ -1,0 +1,653 @@
+{
+  "config": {
+    "model_path": "/nas_data/app.e0031982/models/Qwen3.5-2B",
+    "out_dir": "v11_results/cpu_rl_v11_smoke",
+    "mode": "smoke",
+    "seed": 20261114,
+    "n_base": 24,
+    "n_aug": 24,
+    "sft_epochs": 2,
+    "n_eval_per_cat": 4,
+    "lr": 5e-06,
+    "batch_size": 4,
+    "max_new_tokens": 16,
+    "lora_r": 16,
+    "arms": "direct,augment,synthesis"
+  },
+  "stats": {
+    "mode": "smoke",
+    "seed": 20261114,
+    "arms": [
+      "direct",
+      "augment",
+      "synthesis"
+    ],
+    "tol": 0.15,
+    "accuracy": {
+      "direct": 0.0,
+      "augment": 0.0,
+      "synthesis": 0.0
+    },
+    "mean_rel_err": {
+      "direct": 5.6944857608498305,
+      "augment": 5.561344712454805,
+      "synthesis": 0.50023307086742
+    },
+    "breakdown": {
+      "direct": {
+        "difficulty": {
+          "easy": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "hard": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "medium": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          }
+        },
+        "type": {
+          "sawtooth": {
+            "n": 1,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "sine": {
+            "n": 5,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "square": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "triangle": {
+            "n": 2,
+            "correct": 0,
+            "accuracy": 0.0
+          }
+        }
+      },
+      "augment": {
+        "difficulty": {
+          "easy": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "hard": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "medium": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          }
+        },
+        "type": {
+          "sawtooth": {
+            "n": 1,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "sine": {
+            "n": 5,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "square": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "triangle": {
+            "n": 2,
+            "correct": 0,
+            "accuracy": 0.0
+          }
+        }
+      },
+      "synthesis": {
+        "difficulty": {
+          "easy": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "hard": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "medium": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          }
+        },
+        "type": {
+          "sawtooth": {
+            "n": 1,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "sine": {
+            "n": 5,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "square": {
+            "n": 4,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "triangle": {
+            "n": 2,
+            "correct": 0,
+            "accuracy": 0.0
+          }
+        }
+      }
+    },
+    "lora_config": {
+      "r": 16,
+      "alpha": 32
+    },
+    "cheat_rate": {
+      "train_seed": "20261114+",
+      "eval_seed": "995100+",
+      "overlap": 0,
+      "note": "disjoint RNG seeds -> no leakage"
+    },
+    "mcnemar_augment_vs_direct": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_discordant": 0
+    },
+    "bootstrap_augment_vs_direct": {
+      "point_delta": 0.0,
+      "ci_lo": 0.0,
+      "ci_hi": 0.0
+    },
+    "mcnemar_synthesis_vs_direct": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_discordant": 0
+    },
+    "bootstrap_synthesis_vs_direct": {
+      "point_delta": 0.0,
+      "ci_lo": 0.0,
+      "ci_hi": 0.0
+    },
+    "verdict": "NO GENERATIVE ADVANTAGE (negative result: do not pursue generative route this period)"
+  },
+  "results": {
+    "direct": [
+      {
+        "qid": 0,
+        "arm": "direct",
+        "type": "square",
+        "difficulty": "easy",
+        "true_period": 0.3581516531486059,
+        "pred_period": 0.125,
+        "rel_err": 0.6509858354663676,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.125"
+      },
+      {
+        "qid": 1,
+        "arm": "direct",
+        "type": "square",
+        "difficulty": "easy",
+        "true_period": 0.446967623090583,
+        "pred_period": 1.0,
+        "rel_err": 1.237298516356606,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 2,
+        "arm": "direct",
+        "type": "sine",
+        "difficulty": "easy",
+        "true_period": 0.18509334913629055,
+        "pred_period": 0.0625,
+        "rel_err": 0.6623325457578753,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.0625"
+      },
+      {
+        "qid": 3,
+        "arm": "direct",
+        "type": "sine",
+        "difficulty": "easy",
+        "true_period": 0.4048245966824797,
+        "pred_period": 1.0,
+        "rel_err": 1.470205635218209,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 4,
+        "arm": "direct",
+        "type": "sine",
+        "difficulty": "medium",
+        "true_period": 0.11086711720200294,
+        "pred_period": 1.0,
+        "rel_err": 8.019807001727775,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 5,
+        "arm": "direct",
+        "type": "square",
+        "difficulty": "medium",
+        "true_period": 0.109302915435323,
+        "pred_period": 0.25,
+        "rel_err": 1.2872216994791017,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.250"
+      },
+      {
+        "qid": 6,
+        "arm": "direct",
+        "type": "sine",
+        "difficulty": "medium",
+        "true_period": 0.09749401257151631,
+        "pred_period": 1.0,
+        "rel_err": 9.257040136351494,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 7,
+        "arm": "direct",
+        "type": "sawtooth",
+        "difficulty": "medium",
+        "true_period": 0.09681752387721836,
+        "pred_period": 1.0,
+        "rel_err": 9.328708687780281,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 8,
+        "arm": "direct",
+        "type": "sine",
+        "difficulty": "hard",
+        "true_period": 0.05999487967445817,
+        "pred_period": 1.0,
+        "rel_err": 15.66808910070593,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 9,
+        "arm": "direct",
+        "type": "square",
+        "difficulty": "hard",
+        "true_period": 0.05755263546580439,
+        "pred_period": 0.125,
+        "rel_err": 1.1719248647487273,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.125"
+      },
+      {
+        "qid": 10,
+        "arm": "direct",
+        "type": "triangle",
+        "difficulty": "hard",
+        "true_period": 0.09098889112592247,
+        "pred_period": 1.0,
+        "rel_err": 9.990352642237037,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 11,
+        "arm": "direct",
+        "type": "triangle",
+        "difficulty": "hard",
+        "true_period": 0.09442993271769808,
+        "pred_period": 1.0,
+        "rel_err": 9.589862464368565,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      }
+    ],
+    "augment": [
+      {
+        "qid": 0,
+        "arm": "augment",
+        "type": "square",
+        "difficulty": "easy",
+        "true_period": 0.3581516531486059,
+        "pred_period": 0.125,
+        "rel_err": 0.6509858354663676,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.125"
+      },
+      {
+        "qid": 1,
+        "arm": "augment",
+        "type": "square",
+        "difficulty": "easy",
+        "true_period": 0.446967623090583,
+        "pred_period": 0.125,
+        "rel_err": 0.7203376854554243,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.125"
+      },
+      {
+        "qid": 2,
+        "arm": "augment",
+        "type": "sine",
+        "difficulty": "easy",
+        "true_period": 0.18509334913629055,
+        "pred_period": 0.0625,
+        "rel_err": 0.6623325457578753,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.0625"
+      },
+      {
+        "qid": 3,
+        "arm": "augment",
+        "type": "sine",
+        "difficulty": "easy",
+        "true_period": 0.4048245966824797,
+        "pred_period": 1.0,
+        "rel_err": 1.470205635218209,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 4,
+        "arm": "augment",
+        "type": "sine",
+        "difficulty": "medium",
+        "true_period": 0.11086711720200294,
+        "pred_period": 1.0,
+        "rel_err": 8.019807001727775,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 5,
+        "arm": "augment",
+        "type": "square",
+        "difficulty": "medium",
+        "true_period": 0.109302915435323,
+        "pred_period": 1.0,
+        "rel_err": 8.148886797916406,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 6,
+        "arm": "augment",
+        "type": "sine",
+        "difficulty": "medium",
+        "true_period": 0.09749401257151631,
+        "pred_period": 1.0,
+        "rel_err": 9.257040136351494,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 7,
+        "arm": "augment",
+        "type": "sawtooth",
+        "difficulty": "medium",
+        "true_period": 0.09681752387721836,
+        "pred_period": 1.0,
+        "rel_err": 9.328708687780281,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 8,
+        "arm": "augment",
+        "type": "sine",
+        "difficulty": "hard",
+        "true_period": 0.05999487967445817,
+        "pred_period": 1.0,
+        "rel_err": 15.66808910070593,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 9,
+        "arm": "augment",
+        "type": "square",
+        "difficulty": "hard",
+        "true_period": 0.05755263546580439,
+        "pred_period": 0.125,
+        "rel_err": 1.1719248647487273,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.125"
+      },
+      {
+        "qid": 10,
+        "arm": "augment",
+        "type": "triangle",
+        "difficulty": "hard",
+        "true_period": 0.09098889112592247,
+        "pred_period": 1.0,
+        "rel_err": 9.990352642237037,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n1.000"
+      },
+      {
+        "qid": 11,
+        "arm": "augment",
+        "type": "triangle",
+        "difficulty": "hard",
+        "true_period": 0.09442993271769808,
+        "pred_period": 0.25,
+        "rel_err": 1.6474656160921415,
+        "correct": false,
+        "raw": "<think>\n\n</think>\n\n0.250"
+      }
+    ],
+    "synthesis": [
+      {
+        "qid": 0,
+        "arm": "synthesis",
+        "type": "square",
+        "difficulty": "easy",
+        "true_period": 0.3581516531486059,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 1,
+        "arm": "synthesis",
+        "type": "square",
+        "difficulty": "easy",
+        "true_period": 0.446967623090583,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 2,
+        "arm": "synthesis",
+        "type": "sine",
+        "difficulty": "easy",
+        "true_period": 0.18509334913629055,
+        "pred_period": 0.0625,
+        "rel_err": 0.6623325457578753,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform based on 16"
+      },
+      {
+        "qid": 3,
+        "arm": "synthesis",
+        "type": "sine",
+        "difficulty": "easy",
+        "true_period": 0.4048245966824797,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to analyze a set of voltage samples to identify the"
+      },
+      {
+        "qid": 4,
+        "arm": "synthesis",
+        "type": "sine",
+        "difficulty": "medium",
+        "true_period": 0.11086711720200294,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 5,
+        "arm": "synthesis",
+        "type": "square",
+        "difficulty": "medium",
+        "true_period": 0.109302915435323,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 6,
+        "arm": "synthesis",
+        "type": "sine",
+        "difficulty": "medium",
+        "true_period": 0.09749401257151631,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 7,
+        "arm": "synthesis",
+        "type": "sawtooth",
+        "difficulty": "medium",
+        "true_period": 0.09681752387721836,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 8,
+        "arm": "synthesis",
+        "type": "sine",
+        "difficulty": "hard",
+        "true_period": 0.05999487967445817,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to analyze a set of voltage samples to identify the"
+      },
+      {
+        "qid": 9,
+        "arm": "synthesis",
+        "type": "square",
+        "difficulty": "hard",
+        "true_period": 0.05755263546580439,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 10,
+        "arm": "synthesis",
+        "type": "triangle",
+        "difficulty": "hard",
+        "true_period": 0.09098889112592247,
+        "pred_period": null,
+        "rel_err": null,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform and estimate its funda"
+      },
+      {
+        "qid": 11,
+        "arm": "synthesis",
+        "type": "triangle",
+        "difficulty": "hard",
+        "true_period": 0.09442993271769808,
+        "pred_period": 0.0625,
+        "rel_err": 0.33813359597696463,
+        "correct": false,
+        "raw": "<think>\nThe user wants me to identify a periodic waveform based on 16"
+      }
+    ]
+  },
+  "training": {
+    "direct": [
+      5.060453414916992,
+      5.18457555770874,
+      5.207022190093994,
+      5.264177322387695,
+      5.304861068725586,
+      5.167879104614258,
+      5.185260772705078,
+      5.149741172790527,
+      5.016574859619141,
+      5.184842109680176,
+      5.106790542602539,
+      5.053332805633545
+    ],
+    "augment": [
+      5.2886786460876465,
+      5.068841934204102,
+      5.0173540115356445,
+      5.1975250244140625,
+      5.049510955810547,
+      5.175623893737793,
+      5.168890476226807,
+      5.164997100830078,
+      5.279645919799805,
+      5.086071968078613,
+      5.145966529846191,
+      5.063560485839844,
+      5.003376483917236,
+      4.93457555770874,
+      4.917629241943359,
+      4.978085517883301,
+      4.846902370452881,
+      4.935211181640625,
+      4.838515758514404,
+      4.784201622009277,
+      4.711165428161621,
+      4.678957939147949,
+      4.629220008850098,
+      4.622125148773193
+    ],
+    "synthesis": [
+      4.300146579742432,
+      3.4953715801239014,
+      3.8389434814453125,
+      3.9362950325012207,
+      4.111349105834961,
+      3.8218162059783936,
+      3.8703694343566895,
+      3.9322381019592285,
+      3.6161532402038574,
+      4.18222713470459,
+      3.690850019454956,
+      3.671534538269043
+    ]
+  }
+}
