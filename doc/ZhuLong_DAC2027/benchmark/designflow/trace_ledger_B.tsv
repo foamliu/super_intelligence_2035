@@ -1442,3 +1442,19 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794445370497_0ox36	alexli	10.129.2.13	111	spice_sim	case	EDA-Eval-DesignFlow-NetlistLibdefsTrap-001	2026-11-14 03:46	
 1794483960840_mhqy7.messages.json	joeyl	hfeg0pkn004	163	spice_sim	case	EDA-Eval-DesignFlow-ULVTDelvtoNetlistMod-001	2026-11-14 04:30	
 1794463632688_fj41f	jerrychu	10.129.2.12	110	characterization	case	EDA-Eval-DesignFlow-StcCrfGenerator-001	2026-11-14 04:59	
+1794471512316_g860c					parked		2026-11-14 05:16	dup of SpiceMeasInjector-001 (g0x1k, jiangbaol same .sp measure-inject task)
+1794386493060_bvbbm					parked		2026-11-14 05:20	joeyl:dup of ULVTDelvtoNetlistMod-001 (r515 mhqy7, same ulvt_delvto Bias netlist vth=-0.2)
+1794382869159_h23wf					parked		2026-11-14 05:20	joeyl:dup of ULVTDelvtoNetlistMod-001 (same delvto task)
+1794453725522_twknv					parked		2026-11-14 05:20	alexli:Q&A code-comprehension (r502 已判, csv/sp 作用解释)
+1794382119688_xhb7v					parked		2026-11-14 05:20	zhililu:Q&A diagnosis (比较器2mV误差原因, r514 已判)
+1794461037123_hxrml					parked		2026-11-14 05:20	e0030760:Q&A code-comprehension (mc_snm_analyzer.py 逻辑, r511 已判)
+1794479681958_s1ogl					parked		2026-11-14 05:20	joeyl:Q&A+P004 (CML divider swing opinion + overlap DutySkewAvg/CML cases)
+1794532519466_3qout					parked		2026-11-14 05:20	joeyl:file gone (r516 已判)
+1794538116856_7s3gj					parked		2026-11-14 05:20	joeyl:file not found on .75
+1794452678607_zb2ak					parked		2026-11-14 05:20	xrxiong:Q&A comprehension (csv/sp 作用+时长解释)
+1794452019381_tu06u					parked		2026-11-14 05:20	ypzheng:Q&A analysis (testmode 作用+hierarchy 指引)
+1794360438141_jocu6					parked		2026-11-14 05:20	zoeyr:Q&A explanation (.inc 解释+pin 复制+Nomachine IT)
+1794452215952_6w5tu					parked		2026-11-14 05:20	zhililu:Q&A diagnosis (运放钳位 0.1mV 误差原因)
+1794531171412_btp20					parked		2026-11-14 05:20	chjh07:IT troubleshooting (csh set/module load 卡住)
+1794374152243_0bhj0					parked		2026-11-14 05:20	bensonh:waveform GUI viewing (打开 vgrden 波形)
+1794374820094_yuumj					parked		2026-11-14 05:20	kaixuanx:waveform viewing+Q&A (打开 i(vdd) 分析功耗)
