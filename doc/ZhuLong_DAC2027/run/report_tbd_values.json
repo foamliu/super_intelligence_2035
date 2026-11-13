@@ -7,9 +7,10 @@
       "C_agentic_r1",
       "C_agentic_r2",
       "C_basic_r2",
-      "C_basic_r3"
+      "C_basic_r3",
+      "C_agentic_r3"
     ],
-    "agentic_r3_present": false
+    "agentic_r3_present": true
   },
   "per_round": {
     "C_basic_r1": {
@@ -62,7 +63,16 @@
       "total_tokens": 81200730,
       "n_tasks": 40
     },
-    "C_agentic_r3": null
+    "C_agentic_r3": {
+      "arm": "agentic",
+      "pass_rate_pct": 60.0,
+      "compaction_triggers": 21,
+      "compaction_trigger_rate_pct": 52.5,
+      "cr_mean_pct": 91.2,
+      "wall_sec_mean": 1115.5,
+      "total_tokens": 72897985,
+      "n_tasks": 40
+    }
   },
   "arm_summary": {
     "basic": {
@@ -74,12 +84,12 @@
       "tokens_per_round_mean": 89.0
     },
     "agentic": {
-      "n_rounds": 2,
-      "pass_rate_mean": 58.8,
-      "cr_mean": 89.2,
-      "wall_mean": 1223.0,
-      "total_tokens_sum": 157208748,
-      "tokens_per_round_mean": 78.6
+      "n_rounds": 3,
+      "pass_rate_mean": 59.2,
+      "cr_mean": 89.9,
+      "wall_mean": 1187.2,
+      "total_tokens_sum": 230106733,
+      "tokens_per_round_mean": 76.7
     }
   },
   "sg_trajectory": {
@@ -87,14 +97,14 @@
     "short": {
       "n": 20,
       "basic": 90.0,
-      "agentic": 70.0,
-      "delta": -20.0
+      "agentic": 80.0,
+      "delta": -10.0
     },
     "long": {
       "n": 20,
       "basic": 55.0,
-      "agentic": 30.0,
-      "delta": -25.0
+      "agentic": 40.0,
+      "delta": -15.0
     }
   },
   "sg_category": {
@@ -107,20 +117,20 @@
     "Design Content Creation": {
       "n": 12,
       "basic": 33.3,
-      "agentic": 16.7,
-      "delta": -16.6
+      "agentic": 25.0,
+      "delta": -8.3
     },
     "Design Content Query & Edit": {
       "n": 6,
       "basic": 83.3,
-      "agentic": 16.7,
-      "delta": -66.6
+      "agentic": 50.0,
+      "delta": -33.3
     },
     "Geometry Operation & Analysis": {
       "n": 7,
       "basic": 100.0,
-      "agentic": 71.4,
-      "delta": -28.6
+      "agentic": 85.7,
+      "delta": -14.3
     },
     "Simulation & Analysis Configuration": {
       "n": 5,
@@ -142,7 +152,7 @@
     },
     "2": {
       "basic": 0,
-      "agentic": 10
+      "agentic": 6
     },
     "3": {
       "basic": 0,
@@ -160,29 +170,25 @@
     "agentic_only_fail": [
       "EDA-Eval-PyAether-001",
       "EDA-Eval-PyAether-063",
-      "EDA-Eval-PyAether-080",
       "EDA-Eval-PyAether-104",
       "EDA-Eval-PyAether-114",
       "EDA-Eval-PyAether-128",
-      "EDA-Eval-PyAether-139",
-      "EDA-Eval-PyAether-144",
-      "EDA-Eval-PyAether-145",
-      "EDA-Eval-PyAether-151"
+      "EDA-Eval-PyAether-145"
     ],
-    "n_discordant": 11
+    "n_discordant": 7
   },
   "mcnemar_3round": {
-    "both_pass": 19,
-    "basic_only": 10,
+    "both_pass": 23,
+    "basic_only": 6,
     "agentic_only": 1,
     "both_fail": 10,
-    "discordant": 11,
-    "chisq": 5.82,
-    "p_approx": 0.0545,
-    "delta_pp": -22.5
+    "discordant": 7,
+    "chisq": 2.29,
+    "p_approx": 0.3189,
+    "delta_pp": -12.5
   },
   "bootstrap_ci": [
-    -37.5,
-    -7.5
+    -25.0,
+    0.0
   ]
 }
