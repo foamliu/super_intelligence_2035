@@ -9279,3 +9279,44 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 
 - 交付：R2+sandbox-exec 端到端真实就绪复验（A 隧道+端口+run_code + B selftest ALL PASS+dry-run OK + C 起跑命令骨架）+ sandbox 看门狗误报根因诊断（A）+ EXPERIMENTS §R421。
 - 下一步：① 等 chain 2028723 出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）；无提升/退化→诚实负结果（§R420 训练侧偏负支撑）+ 起 R2+sandbox-exec（C 命令骨架，待 GPU7 释放）；③ 若 R0 eval 长时间无产出（run2 卡死/chain 异常退出），排查 step60 run2 codegen 进度 + chain 2028723 存活。
+
+## §R422（wake422, 2026-11-13 21:3x）—— R0 RL eval 全链路端到端 de-risk 复验（实跑分析 dry-run 闭环验证）
+
+> 不空转：R0 RL eval 仍 gated 于 step60 run2（PID1962541）codegen 中，GPU7=3MiB 预留待 serve，本轮零 GPU 实质产出。本轮对「R0 RL eval 从 ckpt→serve→5-run→统计比较」整条链做端到端 de-risk，且**实跑分析 dry-run 闭环验证**（非纸面检查）。
+
+### A. run2 进度实测（R0 eval 的前置门）
+- batch dir：`~/eda_code_eval/2026_1113_194219`（2026-11-13 19:42 起，已跑 ~1.9h）
+- 8 并行 cline worker：`timeout 2500 cline --yolo --data-dir .../worker_N/data`（每任务 2500s 上限，-p 8）
+- `code/` 目录已产 ~58 个 `.py` / 158（~37%），GPU5=90%util 健康
+- step60 输出退化（codegen.log 多为 degenerate token）但任务在推进，ETA ~3h
+- `.task_queue` 持续更新（3440B），无卡死
+
+### B. R0 RL eval 链路端到端 de-risk（实跑验证）
+1. **ckpt 可 serve**：`rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/global_step_200/` 完整——`config.json`(LlamaForCausalLM, 同 SFT step105 架构) + `model-0000{1,2}-of-00002.safetensors`(4.5G+0.5G≈5G) + `model.safetensors.index.json` + `tokenizer.json` + `tokenizer_config.json` + `generation_config.json`，共 6.1G（含 optimizer.pt 10G，serve 不用）。→ vLLM 可加载。
+2. **serve 脚本**：`baize_posttrain_sft_surrogate_serve.sh` `bash -n` SYNTAX_OK（已用于 SFT step105/step60 serve，同款）。
+3. **step105 基线完整完好**：`/tmp/posttrain_5run_eval/5run_analysis.json` —— `step105`：num_runs=5, rates=[0.0380, 0.0190, 0.0253, 0.0316, 0.0380], mean=0.0304, std=0.0083, mean_pm_std="0.0304+/-0.0083"。per-run final_report.json 均可解析（run1=6/158, run2=3/158, run3=4/158, run4=5/158, run5=6/158）。
+4. **分析脚本实跑 dry-run**（关键，防 argparse 缺失致最后一步崩）：
+   ```
+   python3 baize_posttrain_5run_analysis.py --compare step105 step105 --output /tmp/de-risk_test.json
+   ```
+   → 输出正常：5/5 runs rates=[0.038,0.019,0.0253,0.0316,0.038] mean+/-std=0.0304+/-0.0083；McNemar b=0 c=0 chi2=0 p=1.0；Paired bootstrap(10k) observed_diff=0.0 CI=[0,0]；JSON 写入成功。
+   → `--output` 与 `--compare` 均受支持（argparse 第 151-153 行确认）→ **R0 eval 收尾的 `--compare grpo_R0_step200 step105 --output 5run_rl_analysis.json` 不会因参数缺失而崩**。dry-run 产物已清。
+
+### C. chain 接线确认（rl_eval_chain.sh L120-152）
+- 等 run2(1962541) 完 → serve global_step_200 于 GPU7:8095（`baize_posttrain_sft_surrogate_serve.sh --ckpt ... --gpu 7 --port 8095 --name minicpm5-2b-grpo-R0-step200`）
+- serve health：`curl /v1/models` 60×15s 轮询，命中 SERVED_NAME 才进 eval
+- 5-run eval：`baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8095/v1 --model minicpm5-2b-grpo-R0-step200 --label grpo_R0_step200 --run {1..5}`
+- 分析：`5run_analysis.py --compare grpo_R0_step200 step105 --output /tmp/posttrain_5run_eval/5run_rl_analysis.json`（McNemar + 10k paired bootstrap）
+- 产物：`/tmp/posttrain_5run_eval/5run_rl_analysis.json` + per-run `grpo_R0_step200/run*/final_report.json`
+
+### D. providers.json 单例纪律（为何不并行起 R0 eval）
+- `rl_eval_chain.sh` 注释明确：providers.json 是共享单例，`5run_eval.sh` 每轮重写 → 并发 eval 互相 clobber → RL eval **必须**串行在 run2 之后，不可借 GPU7 空闲并行。
+- 本轮**不并行**起 R0 eval（会 corrupt run2 的模型路由），序列化设计正确。GPU7 空闲(3MiB)保留给 chain serve。
+
+### E. 队列健康
+- run2(1962541, ALIVE, 6878s) → RL eval chain(2028723, ALIVE, 180s 轮询 sleep) → residual SFT(2030315, ALIVE, 120s 轮询)
+- GPU0-3=root SGLang(不动)；GPU4=MiniCPM5-2B(:8098)；GPU5=SFT step60(:8097, 90%util 跑 run2)；GPU6=SFT step105-final(:8096)；GPU7=空闲(预留)
+- 未碰任何 GPU/进程；红线 §5.1 contam 0/3347；§5.2 cheat=0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
+
+- 交付：R0 RL eval 全链路端到端 de-risk（B ckpt+serve+baseline+分析实跑 dry-run / C chain 接线 / D providers.json 单例纪律 / E 队列健康）+ EXPERIMENTS §R422 + MEMORY wake422（roll wake421→daily-memories）。
+- 下一步：① 等 run2 完(~3h)→chain 2028723 自动 serve global_step_200→158题5-run→`5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083, McNemar+bootstrap）；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）；无提升/退化→诚实负结果（§R420 训练侧偏负支撑）+ 起 R2+sandbox-exec（wake421 已就绪，待 GPU7 释放）；③ 监控 run2 是否真在 ~3h 内完成，若卡死则排查 codegen worker。
