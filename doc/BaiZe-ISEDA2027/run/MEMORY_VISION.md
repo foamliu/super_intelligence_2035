@@ -1,10 +1,9 @@
 WAITING: 0
 
-> 🆕 **【wake #1111 · 2026-11-13 12:2x】v10监控·run1/3 GRPO 43/50·GPU加速3.5s/step·reward信号强(nz_std≈100%)**：
-> - **v10 健康运行中**（PID1292574 bash + PID1294920 python，etimes≈795s）。Phase0 smoke PASS(A=58.3% B=58.3% C=58.3% n_disc=0·smoke仅3步预期)。Phase1 run1/3(seed=20261112)=std_s0 RUNNING：**A=46.2%(vs v9的0%→格式问题已修) B=54.9%**→GRPO step43/50·reward 0.25~1.0·**nz_std 多为100%(v9仅75%且n_disc=0)**→grpo_lr 1e-5 修复信号路径在望。
-> - **关键加速**：run_v10_freqcmp.sh 设 `CUDA_VISIBLE_DEVICES=7`(.17 唯一空 A40，posttrain 占 0-6)→GRPO **~3.5s/step(vs v9 CPU 503s/step，144x加速)**。run1 GRPO ETA≈25s，全量(3seed+control)ETA≈15-20min。
-> - **待 run1 完成**：Eval C→run2/3(seed 20261113/14,复用 sft_ckpt+--skip_baseline_eval)→control(随机奖励)。脚本：`run_v10_freqcmp.sh`+复用 `cpu_rl_v9_freqcmp_experiment.py`。分析脚本 `analyze_v9_freqcmp.py` 就绪。
-> - git pull fast-forward(他线)。v10_results 暂未提交(run1 进行中，待全量完成)。体积✓(MEMORY 14.4KB/TASK 27KB)。**WAITING: 0**。
+> 🆕 **【wake #1111 · 2026-11-13 12:2x】v10监控·run1 COMPLETE(n_disc=29修复v9瓶颈·C<B NO IMPROVEMENT)·run2/3 RUNNING**：
+> - **v10 run1/3(std_s0,seed20261112)COMPLETE**：**A=46.2%(vs v9的0%→格式问题已修) B=54.9% C=53.8% McNemar p=1.0 n_disc=29 VERDICT: NO IMPROVEMENT**。🔑**关键诊断**：n_disc=29(vs v9 n_disc=0)→**grpo_lr 1e-6→1e-5 修复成功**(GRPO 现在改变 29 个预测)，但 C≤B(策略改变方向未带来 acc 提升)。诚实结果：信号路径已通，但 RL 未转化为净增益。
+> - **run2/3(seed20261113)=std_s1 RUNNING**：GRPO step25/50(复用 std_s0 sft_adapter，--skip_sft --skip_baseline_eval)·~3.5s/step·GPU7 加速。剩余 run2(~90s)+run3(seed20261114)+control·ETA≈10-15min。脚本 `run_v10_freqcmp.sh`+`cpu_rl_v9_freqcmp_experiment.py`+`analyze_v9_freqcmp.py`。
+> - **下一步**(v10 ALL DONE 后)：运行 analyze_v9_freqcmp.py 汇总 3seed+control→更新 EXPERIMENTS §v10→重生成 HTML 报告。git pull fast-forward(他线)。v10_results 暂未提交(实验进行中)。体积✓(MEMORY 15.5KB/TASK 27KB)。**WAITING: 0**。
 
 > 📦 **wake #1110 · 2026-11-13 11:0x** 🔴迁移后首次唤醒(.17)·v9结果困在.12·v10已启动·已fold(见wake#1111)。
 > - **基础设施断裂**：vision 09:12 由 .12 迁至 .17。.17 上 `/nas_train`→`/H100_train`(空)、`/nas_data` 有 code+models 但**无 `datasets/` 目录**、`/nas_inference` 不存在、SSH 到 .12/.29 超时(异网段)。v9 实验跑在 .12 的 `/nas_train/...datasets/baize-vision/out/`→**结果困在 .12 不可达**。
