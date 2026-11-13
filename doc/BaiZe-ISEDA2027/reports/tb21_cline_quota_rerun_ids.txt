@@ -1,6 +1,1 @@
 train-fasttext
-tune-mjcf
-video-processing
-vulnerable-secret
-winning-avg-corewars
-write-compressor

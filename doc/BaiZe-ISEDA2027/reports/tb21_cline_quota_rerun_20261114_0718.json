@@ -1,0 +1,1530 @@
+{
+  "round": "rerun-cline-quota",
+  "generated": "2026-11-14 07:18:39",
+  "source_jobs": "/tmp/tb21_glm53_jobs/cline-patched",
+  "rule": "best_reward<1.0 AND all trials stdout contains 额度已用完/Token额度",
+  "summary": {
+    "unique_tasks": 90,
+    "trials_total": 212,
+    "passed": 38,
+    "failed": 52,
+    "quota_lost_tasks": 0,
+    "non_quota_failed_tasks": 52,
+    "pass_rate": 0.4222
+  },
+  "rerun_tasks": [],
+  "detail": {
+    "2026-11-09": {
+      "category": "non_quota",
+      "best_reward": 0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22",
+          "reward": 0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "adaptive-rejection-sampler": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/adaptive-rejection-sampler__UBqxsiY",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "bn-fit-modify": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/bn-fit-modify__WCBNVbx",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 18,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 742282
+        }
+      ]
+    },
+    "build-pmars": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/build-pmars__Ty4LuZV",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "caffe-cifar-10": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/caffe-cifar-10__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 9,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 2844857
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/caffe-cifar-10__j7dirWk",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 9,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 2454832
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/caffe-cifar-10__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "chess-best-move": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/chess-best-move__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 19,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 1105282
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/chess-best-move__EHH9fwE",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1346
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/chess-best-move__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "cobol-modernization": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/cobol-modernization__ADH6rJG",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 13,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 2350160
+        }
+      ]
+    },
+    "compile-compcert": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/compile-compcert__gsaxaub",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 71,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 2000678
+        }
+      ]
+    },
+    "configure-git-webserver": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/configure-git-webserver__dUfMYM2",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 29,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 1871450
+        }
+      ]
+    },
+    "dna-assembly": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/dna-assembly__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/dna-assembly__AekzsAq",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/dna-assembly__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__04-10-25_rerun_20261114_0410/dna-assembly__rerun_20261114_0410",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "extract-elf": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/extract-elf__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/extract-elf__tCEse3S",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1358
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/extract-elf__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__04-10-25_rerun_20261114_0410/extract-elf__rerun_20261114_0410",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 8,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 1808664
+        }
+      ]
+    },
+    "extract-moves-from-video": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/extract-moves-from-video__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/extract-moves-from-video__WjurFiA",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1350
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/extract-moves-from-video__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__04-10-25_rerun_20261114_0410/extract-moves-from-video__rerun_20261114_0410",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 36
+        }
+      ]
+    },
+    "feal-differential-cryptanalysis": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/feal-differential-cryptanalysis__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/feal-differential-cryptanalysis__jynXcoi",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1362
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/feal-differential-cryptanalysis__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "feal-linear-cryptanalysis": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/feal-linear-cryptanalysis__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/feal-linear-cryptanalysis__3kG2BsA",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/feal-linear-cryptanalysis__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "filter-js-from-html": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/filter-js-from-html__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/filter-js-from-html__dwFztPM",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/filter-js-from-html__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "financial-document-processor": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/financial-document-processor__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/financial-document-processor__j5LcQHj",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1362
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/financial-document-processor__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "fix-code-vulnerability": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/fix-code-vulnerability__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/fix-code-vulnerability__4t2DDjX",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/fix-code-vulnerability__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "fix-git": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/fix-git__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/fix-git__oZD3Trp",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/fix-git__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "fix-ocaml-gc": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/fix-ocaml-gc__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/fix-ocaml-gc__zsmwHQM",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/fix-ocaml-gc__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "gcode-to-text": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/gcode-to-text__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/gcode-to-text__2CfUqSa",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1358
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/gcode-to-text__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "git-multibranch": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/git-multibranch__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 31,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 3986780
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/git-multibranch__EGCpPwz",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/git-multibranch__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "gpt2-codegolf": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/gpt2-codegolf__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/gpt2-codegolf__GPh8ci4",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1362
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/gpt2-codegolf__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "install-windows-3.11": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/install-windows-3.11__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 46,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 3118194
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/install-windows-3.11__QWqomr3",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/install-windows-3.11__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "largest-eigenval": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/largest-eigenval__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/largest-eigenval__MZFBdLg",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/largest-eigenval__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "make-doom-for-mips": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/make-doom-for-mips__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/make-doom-for-mips__Xxwszqr",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1362
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/make-doom-for-mips__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "make-mips-interpreter": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/make-mips-interpreter__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/make-mips-interpreter__Um9Fb7T",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1350
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/make-mips-interpreter__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "model-extraction-relu-logits": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/model-extraction-relu-logits__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/model-extraction-relu-logits__pFhmYZK",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/model-extraction-relu-logits__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "mteb-leaderboard": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/mteb-leaderboard__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 11,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 18419937
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/mteb-leaderboard__gbn7M6H",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/mteb-leaderboard__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "mteb-retrieve": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/mteb-retrieve__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/mteb-retrieve__WeywkeU",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/mteb-retrieve__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "nginx-request-logging": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/nginx-request-logging__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 14,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 533948
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/nginx-request-logging__xdX35HU",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1350
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/nginx-request-logging__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "path-tracing-reverse": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/path-tracing-reverse__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 28,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 8357282
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/path-tracing-reverse__K9KXCNV",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/path-tracing-reverse__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "polyglot-c-py": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/polyglot-c-py__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1666
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/polyglot-c-py__fAWrLse",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/polyglot-c-py__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "polyglot-rust-c": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/polyglot-rust-c__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 8,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 3066023
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/polyglot-rust-c__5tMoMem",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1350
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/polyglot-rust-c__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "protein-assembly": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/protein-assembly__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/protein-assembly__sypm6wt",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1350
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/protein-assembly__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "pytorch-model-cli": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/pytorch-model-cli__No4g4td",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "pytorch-model-recovery": {
+      "category": "non_quota",
+      "best_reward": 0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/pytorch-model-recovery__g5CyTTD",
+          "reward": 0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "RuntimeError",
+          "exit_code": 1,
+          "has_run_result": false,
+          "stdout_len": 1421
+        }
+      ]
+    },
+    "qemu-alpine-ssh": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/qemu-alpine-ssh__njxeDXF",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "qemu-startup": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/qemu-startup__uanVkdN",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "query-optimize": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/query-optimize__xngAksj",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "raman-fitting": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/raman-fitting__cM7GNad",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "regex-chess": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/regex-chess__U7XoLhc",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 19110903
+        }
+      ]
+    },
+    "regex-log": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/regex-log__EpFsv7G",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "sam-cell-seg": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261114_0409/sam-cell-seg__rerun_20261114_0409",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 71,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 4935230
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/sam-cell-seg__ZVvmPWq",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/sam-cell-seg__rerun_20261113_1920",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "sanitize-git-repo": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/sanitize-git-repo__ibwHzfH",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/sanitize-git-repo__rerun_20261113_1920",
+          "reward": 0,
+          "quota": false,
+          "iterations": 18,
+          "exc_type": "RewardFileNotFoundError",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 629331
+        }
+      ]
+    },
+    "schemelike-metacircular-eval": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/schemelike-metacircular-eval__Y3Scmsz",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/schemelike-metacircular-eval__rerun_20261113_1920",
+          "reward": 0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "RuntimeError",
+          "exit_code": -9,
+          "has_run_result": false,
+          "stdout_len": 12514336
+        }
+      ]
+    },
+    "torch-pipeline-parallelism": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/torch-pipeline-parallelism__M9UmV5b",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1362
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/torch-pipeline-parallelism__rerun_20261113_1920",
+          "reward": 0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "torch-tensor-parallelism": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/torch-tensor-parallelism__7eH7rpS",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1362
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-13__19-09-34_rerun_20261113_1920/torch-tensor-parallelism__rerun_20261113_1920",
+          "reward": 0,
+          "quota": false,
+          "iterations": 27,
+          "exc_type": "RewardFileNotFoundError",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 2897955
+        }
+      ]
+    },
+    "train-fasttext": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/train-fasttext__fjutZgr",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__05-28-17_rerun_20261114_0530/train-fasttext__rerun_20261114_0530",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 43,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 659805
+        }
+      ]
+    },
+    "tune-mjcf": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/tune-mjcf__8645a3s",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__05-28-17_rerun_20261114_0530/tune-mjcf__rerun_20261114_0530",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    },
+    "video-processing": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/video-processing__KRakEBB",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__05-28-17_rerun_20261114_0530/video-processing__rerun_20261114_0530",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 68,
+          "exc_type": "",
+          "exit_code": 0,
+          "has_run_result": true,
+          "stdout_len": 16734244
+        }
+      ]
+    },
+    "winning-avg-corewars": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/winning-avg-corewars__dDs5TnD",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1354
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__05-28-17_rerun_20261114_0530/winning-avg-corewars__rerun_20261114_0530",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": 4,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 19268759
+        }
+      ]
+    },
+    "write-compressor": {
+      "category": "non_quota",
+      "best_reward": 0.0,
+      "trials": [
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-09__19-51-22/write-compressor__phvasXb",
+          "reward": 0.0,
+          "quota": true,
+          "iterations": 1,
+          "exc_type": "",
+          "exit_code": 1,
+          "has_run_result": true,
+          "stdout_len": 1366
+        },
+        {
+          "dir": "/tmp/tb21_glm53_jobs/cline-patched/2026-11-14__05-28-17_rerun_20261114_0530/write-compressor__rerun_20261114_0530",
+          "reward": 0.0,
+          "quota": false,
+          "iterations": -1,
+          "exc_type": "AgentTimeoutError",
+          "exit_code": null,
+          "has_run_result": false,
+          "stdout_len": 0
+        }
+      ]
+    }
+  }
+}
