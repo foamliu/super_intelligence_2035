@@ -124,81 +124,113 @@
     },
     "B3": {
       "label": "cfg-doubao-pro",
-      "batch": "2026_1114_004021",
-      "spawn_calls": 0,
-      "spawn_rate": 0.0,
-      "pass_rate_pct": null,
-      "passed": null,
-      "total_eval": null,
-      "cline_success": 0,
+      "batch": "2026_1114_010620",
+      "spawn_calls": 9,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": 85.71,
+      "passed": 6,
+      "total_eval": 7,
+      "cline_success": 8,
       "completion_rate_pct": 100.0,
-      "wall_sec": 248,
-      "tokens_total": 0,
+      "wall_sec": 5489,
+      "tokens_total": 8111174,
       "tokens_main": {
-        "input": 0,
-        "output": 0,
+        "input": 7900865,
+        "output": 210309,
         "cacheRead": 0,
         "cacheWrite": 0,
-        "total": 0
+        "total": 8111174
       },
       "tokens_sub": {
         "input": 0,
         "output": 0,
         "total": 0
       },
-      "tool_histogram": {}
+      "tool_histogram": {
+        "run_commands": 23,
+        "subagent_researcher": 9,
+        "pyAether_MCP_server__search_apis": 27,
+        "pyAether_MCP_server__search_apis_by_keyword": 36,
+        "pyAether_MCP_server__get_api_details": 29,
+        "pyAether_MCP_server__run_code": 95,
+        "editor": 7,
+        "read_files": 12,
+        "search_codebase": 5,
+        "search_apis": 2
+      }
     },
     "B4": {
       "label": "cfg-doubao-mini",
-      "batch": "2026_1114_004116",
-      "spawn_calls": 0,
-      "spawn_rate": 0.0,
-      "pass_rate_pct": null,
-      "passed": null,
-      "total_eval": null,
-      "cline_success": 0,
+      "batch": "2026_1114_013550",
+      "spawn_calls": 9,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": 87.5,
+      "passed": 7,
+      "total_eval": 8,
+      "cline_success": 8,
       "completion_rate_pct": 100.0,
-      "wall_sec": 248,
-      "tokens_total": 0,
+      "wall_sec": 3613,
+      "tokens_total": 6823105,
       "tokens_main": {
-        "input": 0,
-        "output": 0,
+        "input": 6654213,
+        "output": 168892,
         "cacheRead": 0,
         "cacheWrite": 0,
-        "total": 0
+        "total": 6823105
       },
       "tokens_sub": {
         "input": 0,
         "output": 0,
         "total": 0
       },
-      "tool_histogram": {}
+      "tool_histogram": {
+        "run_commands": 22,
+        "subagent_researcher": 9,
+        "pyAether_MCP_server__search_apis": 27,
+        "pyAether_MCP_server__search_apis_by_keyword": 32,
+        "pyAether_MCP_server__get_api_details": 31,
+        "pyAether_MCP_server__run_code": 83,
+        "editor": 9,
+        "read_files": 12,
+        "search_codebase": 3,
+        "eda_flow__open_session": 3
+      }
     },
     "B5": {
       "label": "cfg-doubao-lite",
-      "batch": "2026_1114_004211",
-      "spawn_calls": 0,
-      "spawn_rate": 0.0,
-      "pass_rate_pct": null,
-      "passed": null,
-      "total_eval": null,
-      "cline_success": 0,
+      "batch": "2026_1114_015525",
+      "spawn_calls": 8,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": 87.5,
+      "passed": 7,
+      "total_eval": 8,
+      "cline_success": 8,
       "completion_rate_pct": 100.0,
-      "wall_sec": 248,
-      "tokens_total": 0,
+      "wall_sec": 5149,
+      "tokens_total": 7945734,
       "tokens_main": {
-        "input": 0,
-        "output": 0,
+        "input": 7711325,
+        "output": 234409,
         "cacheRead": 0,
         "cacheWrite": 0,
-        "total": 0
+        "total": 7945734
       },
       "tokens_sub": {
         "input": 0,
         "output": 0,
         "total": 0
       },
-      "tool_histogram": {}
+      "tool_histogram": {
+        "run_commands": 27,
+        "subagent_researcher": 8,
+        "pyAether_MCP_server__search_apis": 27,
+        "pyAether_MCP_server__search_apis_by_keyword": 42,
+        "pyAether_MCP_server__get_api_details": 30,
+        "pyAether_MCP_server__run_code": 92,
+        "search_codebase": 7,
+        "read_files": 14,
+        "editor": 10
+      }
     },
     "C1": {
       "label": "cfg-iter5 (maxIter=5, dsv4-flash)",
