@@ -10615,3 +10615,28 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 边界:未碰 GPU0-3/4/6 既有 serve/eval 链/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(L102-118)。
 - 体积维护:MEMORY 归档 wake461 指针化(35143B→24649B,≤32KB✅)。
 - Next:5-run eval 5 轮全完(autofire 链自动,run1 或~08:00-09:00 完→run2-5 各~5h)→5run_rl_analysis_R2.json→R2 Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap)→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html(标替身预演)/负则诚实负结果+换奖励。
+
+## R463 (wake463, 2026-11-14 06:38) 5-run eval 监控 run1 137/158 + R2 RL 动力学指标重释（mean_ratio==1.0 / policy_loss≈0 为结构性 logging artifact 的实证）
+
+- 实测(.17 s0pgpuap12, 06:36:33):autofire chain PID2322797 存活(etime≈6h15m);eval run1 PID2354149 存活(etime≈5h28m);8 cline worker 活跃(batch_cline.log 06:36 仍写,无死锁)。
+- serve:3 并发全稳(GPU4:8098/GPU6:8096/GPU7:8095);GPU7=89%util/39246MiB;GPU5=3MiB/0%util 空闲(非本线不碰);GPU0-3=root 不碰。
+- run1 进度(~/eda_code_eval/2026_1114_010813):stats **success=83/failure=6/timeout=48 = 137/158**(较 wake462 128/158 +9:+7 success/+0 fail/+2 timeout);.task_queue 13 行+~8 in-flight≈21 待跑;code/147 目录;total_time=151247s;failed_task.log 6 行(023/045/053/065/082/124);final_report.json 未生成(run_eval.py 待 code-gen 全完);5run_rl_analysis_R2.json 未出。run1 或 ~07:30-08:30 完。
+- 口径诚实:success/failure/timeout=code-gen 阶段计数(非 Pass@1)。
+
+- 🔴 **本轮新增产出：R2 RL 动力学指标重释（corrects MEMORY 自 wake416 起的 "mean_ratio==1.0 policy 不动" 误判）**。
+  - **事实**：R2 metrics.jsonl 全 200 步 `mean_ratio==1.0`（唯一值, n=1）、`policy_loss≈0`（−0.00000 ~ −0.00062）。此前（wake416 R0 / wake433 R2）解读为 "policy 不移动" 的证据。**此解读错误**。
+  - **根因（代码实证 `baize_posttrain_rl_grpo_loop.py`）**：
+    1. L104 `ppo_epochs: int = 1` + L126 smoke override 也 `=1` → R0/R2 均单 epoch。
+    2. L373 `old_logp = _logprobs_from_logits(policy, ...)` 在每步**用当前 policy（已含上一步更新）**重算 old_logp（`torch.no_grad`）。
+    3. L393-400 epoch 0：`new_logp` 来自同一 policy 同一输入 → `new_logp == old_logp` → `ratio = exp(0) = 1.0` **结构必然**。
+    4. L385 adv 每 group 归一化为均值 0 → L405 `policy_loss = -masked_mean(min(surr1,surr2))`，ratio=1 时 surr1=surr2=ratio*adv=adv，`masked_mean(adv)≈0`（零均值）→ **policy_loss≈0 亦结构必然**。
+    5. L403-404 PPO clip `clamp(ratio,1±0.2)`：ratio 恒 1 → **clip 从不激活**，surr1==surr2 恒成立。
+    6. 结论：**ppo_epochs=1 下本 loop 等价于 REINFORCE-with-baseline（单 epoch、ratio=1、无 off-policy 修正、无 clip），不是 PPO**。mean_ratio==1.0 / policy_loss≈0 都是 logging artifact，**不能**作为 "policy 不动" 的证据。
+  - **真正的 policy-movement 证据**：`grad_norm`（L410 clip 后）非零——R2 全程均值 1.65（seg1-50=1.89 / seg51-100=1.64 / seg101-150=1.07 / seg151-200=2.01），`optimizer.step()`(L412)每步执行 → policy 权重**每步都在更新**。
+  - **R2 真实动力学（修正后）**：reward 信号真实存在（frac_nonzero_reward>0 在 110/200 步, frac_positive_adv>0 在 84/200 步）；rewards_mean 分段均值 seg1-50=0.053 → seg51-100=0.111（升）→ seg101-150=0.106（平台）→ seg151-200=0.090（回落），overall 0.0901。即 **reward 升至 ~step100 后平台/回落，无单调改善**——这才是诚实负结果的可信依据（而非 mean_ratio）。
+  - **对 R0 误判的回溯修正**：MEMORY/wake416 把 R0 "诚实负结果" 部分挂在 "mean_ratio==1.0 policy 不动" 上——该依据**无效**。R0 负结果应只挂在 "proxy reward 不产生有方向信号"（R0 rewards_mean 全程≈0 / frac_nonzero_reward≈0 / nz 0.97 塌缩即几乎所有 rollout 零奖励→group std≈0→adv≈0→无梯度方向），而非 mean_ratio。R2 用 sandbox-exec 真 reward，信号非零，与 R0 本质不同。
+  - **对交付物的影响**：未来里程碑报告 report_posttrain_rl_surrogate_zh.html 的 "诚实负结果" 论证**不得**引用 mean_ratio==1.0 / policy_loss≈0 作为 policy 不动的证据；应改引 (a) reward 平台/回落曲线 (b) 5-run eval Pass@1 无显著提升（待 5run_rl_analysis_R2.json）。同时应在报告 "方法局限" 节注明 ppo_epochs=1 使 clip 失效、实为 REINFORCE-with-baseline。
+  - **可选改进（不在本轮做, 记入下一步候选）**：把 ppo_epochs 提到 ≥2（v3 yaml 已写 2 但 loop 硬编码 1 未生效）并修复 old_logp 应在 epoch 0 前冻结一次（而非每步重算），才能让 ratio 真正反映 off-policy 偏离、clip 真正起作用。这是 "换奖励/任务定义" 之外的另一条 RL 改进臂。
+
+- 边界:未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修。本轮仅读 metrics.jsonl + 源码静态分析,未编辑运行中脚本/未碰运行中 eval。
+- Next:①5-run eval 5 轮全完→5run_rl_analysis_R2.json→R2 Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告(论证引用修正后依据);负→诚实负结果+换奖励/或修 ppo_epochs+old_logp 冻结使 clip 生效再跑一轮 ③kill_gpu_serve bug 待 chain 空闲修。
