@@ -8313,4 +8313,37 @@ All 3 automation layers alive:
 | step60 | 8097 | 5 | 1/5 | 1.3% (2/158) | chain daemon -> runs 2-5 |
 | base | 8098 | 4 | 0/5 | -- (36% was full-harness, different mode) | chain daemon -> runs 1-5 |
 
+### §L4-zhulong (2026-11-13 wake388) Run 2 Progress + 2 Stuck Workers Cleanup
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 2 Progress (as of wake388 ~08:35 CST)
+
+- **Code dir count**: 111/158 EDA-Eval-PyAether task dirs completed (70.3%)
+- **Remaining**: 47/158 tasks in queue (8 workers all active)
+- **Run 2 ETA**: ~47 tasks remaining → ~15-20 min more for codegen, then sandbox eval
+
+#### 2 Stuck Workers Cleanup
+
+- **Worker-1** (PID 1148644 timeout / 1148645 bun): elapsed 2706s > 2500s timeout
+- **Worker-2** (PID 1150953 timeout / 1150954 bun): elapsed 2528s > 2500s timeout
+- Same recurring pattern: `timeout 2500` SIGTERM ignored by bun runtime
+- Kill applied: `kill -9` on both timeout parents + bun children
+- Both workers respawned immediately (new PIDs visible in ps)
+- **Root cause (unchanged from wake370-387)**: `timeout 2500` without `--kill-after` → SIGTERM not propagated by bun → stuck past timeout
+
+#### Pipeline Autonomy Status (all 3 layers alive)
+
+1. **run_cline_script.sh** (PID 1109206, etimes=7492s ~2h5m): main codegen driver, 8 workers
+2. **autocomplete daemon** (PID 1122770, etimes=6558s): waiting for run2 PID 1109190 → will auto-run runs 3-5
+3. **eval chain daemon** (PID 1161064, etimes=884s): waiting for step105 daemon → will chain step60 runs2-5 → base runs1-5 → analysis
+
+#### Updated Eval Status Summary
+
+| Label | Endpoint | GPU | Runs Done | Pass@1 (run1) | Autopilot |
+|:--|:--|:--:|:--:|:--:|:--|
+| step105 | 8096 | 6 | 1/5 (run2 in progress 111/158) | 3.8% (6/158) | autocomplete daemon -> runs 3-5 |
+| step60 | 8097 | 5 | 1/5 | 1.3% (2/158) | chain daemon -> runs 2-5 |
+| base | 8098 | 4 | 0/5 | -- (36% was full-harness, different mode) | chain daemon -> runs 1-5 |
+
 

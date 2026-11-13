@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake387（2026-11-13 R387: **run2 codegen 91/158(57.6%)+1 stuck worker-4 killed+pipeline autonomous**; step105 run1=3.8%, step60 run1=1.3%）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-386✅;R387✅(run2 91/158+stuck worker cleanup+pipeline monitoring)
-- 当前动作: wake387 R387:①run2 zhulong codegen(batch 2026_1113_062714):91/158 tasks(success=81/fail=6/timeout=4),60 remaining,8 workers all active ②1 stuck worker-4 killed(task067,2624s,Exit137→restarted task099) ③autocomplete daemon PID1122770 alive→auto-runs 3-5 ④eval chain daemon PID1161064 alive→step60 runs2-5→base runs1-5→analysis ⑤3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final) ⑥tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑦git clean
-- 下一步: ①wait run2 codegen complete→sandbox eval→autocomplete auto-runs 3-5 ②chain daemon auto-starts step60 runs2-5→base runs1-5→final analysis ③check /tmp/posttrain_eval_chain.log ④designflow baseline DELIVERED 0/5=0%
+- PHASE: posttrain-wake388（2026-11-13 R388: **run2 codegen 111/158(70.3%)+2 stuck workers killed+pipeline autonomous**; step105 run1=3.8%, step60 run1=1.3%）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-387✅;R388✅(run2 111/158+2 stuck worker cleanup+pipeline monitoring)
+- 当前动作: wake388 R388:①run2 zhulong codegen(batch 2026_1113_062714):111/158 tasks completed(70.3%),47 remaining,8 workers all active ②2 stuck workers killed:PIDs 1148644(2706s)+1150953(2528s),both >2500s timeout,kill -9 on timeout parent+bun child,workers respawned ③autocomplete daemon PID1122770 alive→auto-runs 3-5 ④eval chain daemon PID1161064 alive→step60 runs2-5→base runs1-5→analysis ⑤3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final) ⑥tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑦git pending
+- 下一步: ①wait run2 codegen complete(~47 tasks,ETA~20min)→sandbox eval→autocomplete auto-runs 3-5 ②chain daemon auto-starts step60 runs2-5→base runs1-5→final analysis ③check /tmp/posttrain_eval_chain.log ④designflow baseline DELIVERED 0/5=0%
 - 阻塞: BaiZe ckpt inaccessible(/nas_train not mounted);P3等pretrain ckpt;5-run eval IN PROGRESS(step105 run2/5)
-- 本轮新增产出: R387✅(stuck worker cleanup+run2 progress 91/158+anti-cheat l1_injection check+EXPERIMENTS §L4-zhulong wake387+MEMORY archive wake384-386)
+- 本轮新增产出: R388✅(2 stuck worker cleanup+run2 progress 111/158+MEMORY archive wake384-387+progress snapshot update)
 - 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run2/5;designflow DELIVERED 0/5=0%);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit pending wake387);本轮 commit pending
+- git: super_intelligence_2035(commit pending wake388);本轮 commit pending
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 
@@ -226,12 +226,8 @@ WAITING: 0
 
 [wake383 07:35] R383 **designflow 5-task eval VERIFIED COMPLETE 0/5=0% (protocol mismatch)+run2 zhulong codegen 57/158(36%)** → 原文已归档 daily-memories-posttrain/2026-11-13.md
 
-[wake384 07:45] R384 **run2 codegen 64/158(40.5%)+3 stuck workers killed+harness mode mismatch analysis** → 原文已归档 daily-memories-posttrain/2026-11-13.md
+> 📦 wake384–wake387 流水已归档 → daily-memories-posttrain/2026-11-13.md（R384 run2 64/158+3 stuck killed+harness mode mismatch / R385 78/158+1 stuck killed / R386 82/158+eval chain daemon launched / R387 91/158+1 stuck killed+pipeline autonomous）
 
-[wake385 08:00] R385 **run2 codegen 78/158(49.4%)+1 stuck worker-7 killed(task052,2526s)+all 8 workers reactivated** → 原文已归档 daily-memories-posttrain/2026-11-13.md
-
-[wake386 08:15] R386 **run2 codegen 82/158(51.9%)+NO stuck workers+eval chain daemon launched(PID1161064)+5run analysis script created** → 原文已归档 daily-memories-posttrain/2026-11-13.md
-
-[wake387 08:25] R387 **run2 codegen 91/158(57.6%)+1 stuck worker-4 killed(task067,2624s)+all 8 workers reactivated+pipeline autonomous**:①run2 codegen(batch 2026_1113_062714):91/158 tasks(success=81/fail=6/timeout=4),60 remaining in queue,8 workers all active ②1 stuck worker killed:worker-4 PID1145126/1145127(task EDA-Eval-PyAether-067,elapsed 2624s>2500s timeout,timeout cmd SIGTERM ignored by bun);kill -9 on both timeout parent(1145126)+orphaned bun child(1145127);worker-4 logged Exit Code 137+restarted on task099 ③autocomplete daemon PID1122770 alive,waiting for run2 PID1109190→auto-runs 3-5 ④eval chain daemon PID1161064 alive,waiting for step105 daemon→then step60 runs2-5→base runs1-5→analysis ⑤3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final) all curl OK ⑥tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑦anti-cheat l1_injection.json:0/158 tasks got L1(mode=no memory bank data,expected for single-turn codegen) ⑧EXPERIMENTS updated §L4-zhulong wake387 ⑨MEMORY archived wake384-386 to daily-memories ⑩git clean. R387✅.WAITING=0。
+[wake388 08:35] R388 **run2 codegen 111/158(70.3%)+2 stuck workers killed+pipeline autonomous**:①run2 zhulong codegen(batch 2026_1113_062714):111/158 EDA-Eval-PyAether tasks completed(70.3%),47 remaining,8 workers all active ②2 stuck workers killed:worker PIDs 1148644/1148645(etimes=2706s>2500s)+1150953/1150954(etimes=2528s>2500s),same pattern as before(timeout SIGTERM ignored by bun);kill -9 on both timeout parents+bun children;workers respawned immediately ③autocomplete daemon PID1122770 alive,waiting for run2 PID1109190→auto-runs 3-5 ④eval chain daemon PID1161064 alive,waiting for step105 daemon→then step60 runs2-5→base runs1-5→analysis ⑤3 serves UP:8098(GPU4 base)+8097(GPU5 step60)+8096(GPU6 step105-final) all curl OK ⑥tunnel UP:ssh -p3333→36.15 TUNNEL_OK ⑦5run analysis:step105 run1=3.8%,step60 run1=1.3%(n=1 each,waiting for runs2-5) ⑧MEMORY archived wake384-387 to daily-memories+progress snapshot updated ⑨git pending. R388✅.WAITING=0。
 
 
