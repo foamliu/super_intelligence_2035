@@ -1,6 +1,12 @@
 WAITING: 0
 
-> 🆕 **【wake #1110 · 2026-11-13 11:0x】🔴迁移后首次唤醒(.17)·v9结果困在.12·v10已启动**：
+> 🆕 **【wake #1111 · 2026-11-13 12:2x】v10监控·run1/3 GRPO 43/50·GPU加速3.5s/step·reward信号强(nz_std≈100%)**：
+> - **v10 健康运行中**（PID1292574 bash + PID1294920 python，etimes≈795s）。Phase0 smoke PASS(A=58.3% B=58.3% C=58.3% n_disc=0·smoke仅3步预期)。Phase1 run1/3(seed=20261112)=std_s0 RUNNING：**A=46.2%(vs v9的0%→格式问题已修) B=54.9%**→GRPO step43/50·reward 0.25~1.0·**nz_std 多为100%(v9仅75%且n_disc=0)**→grpo_lr 1e-5 修复信号路径在望。
+> - **关键加速**：run_v10_freqcmp.sh 设 `CUDA_VISIBLE_DEVICES=7`(.17 唯一空 A40，posttrain 占 0-6)→GRPO **~3.5s/step(vs v9 CPU 503s/step，144x加速)**。run1 GRPO ETA≈25s，全量(3seed+control)ETA≈15-20min。
+> - **待 run1 完成**：Eval C→run2/3(seed 20261113/14,复用 sft_ckpt+--skip_baseline_eval)→control(随机奖励)。脚本：`run_v10_freqcmp.sh`+复用 `cpu_rl_v9_freqcmp_experiment.py`。分析脚本 `analyze_v9_freqcmp.py` 就绪。
+> - git pull fast-forward(他线)。v10_results 暂未提交(run1 进行中，待全量完成)。体积✓(MEMORY 14.4KB/TASK 27KB)。**WAITING: 0**。
+
+> 📦 **wake #1110 · 2026-11-13 11:0x** 🔴迁移后首次唤醒(.17)·v9结果困在.12·v10已启动·已fold(见wake#1111)。
 > - **基础设施断裂**：vision 09:12 由 .12 迁至 .17。.17 上 `/nas_train`→`/H100_train`(空)、`/nas_data` 有 code+models 但**无 `datasets/` 目录**、`/nas_inference` 不存在、SSH 到 .12/.29 超时(异网段)。v9 实验跑在 .12 的 `/nas_train/...datasets/baize-vision/out/`→**结果困在 .12 不可达**。
 > - **v9 seed0 诊断**：NO CHANGE(A=0% B=49.5% C=49.5% p=1.0 **n_disc=0**)。根因=`grpo_lr=1e-6` 太低→GRPO 有 reward 信号(nz_std=75%)但**零 discordant cases**(策略不改变预测)。v8 MIXED(C=52.5%±6.1%>B=45%,McNemar p=0.0312 s0)但 v9 scale-up(SFT 500×5ep/GRPO 30步)**未修复 n_disc=0**。
 > - **v10 启动**(修复 v9 瓶颈)：① 基座=qwen3vl_2b_text_extracted→**Qwen3.5-2B**(用户指定,`.17` 可用,`AutoModelForCausalLM` 已验证 PASS:s2_fallback 1.88B/LoRA 737K/1.2s·step)② `grpo_lr` 1e-6→**1e-5**(10x,关键修复)③ `n_grpo_steps` 30→**50** ④ 输出→本地 `wave_rl/v10_results/`。预注册判据(先写后跑)：A~0-50%·B>55%·C>B·D≤B·**n_disc>0**(新增诊断)·SUCCESS: C>B(mean)+McNemar p<0.05+3seed一致+n_disc>0。smoke 跑中(PID 1263529,log@/tmp/v10_freqcmp.log),smoke PASS→全自动 3seed+control(ETA~5h CPU)。脚本 `run_v10_freqcmp.sh`+复用 `cpu_rl_v9_freqcmp_experiment.py`(`--model_path`+`--grpo_lr` CLI)。
@@ -91,7 +97,7 @@ WAITING: 0
 | PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING (seed1/3)**：seed0 COMPLETE→**NO CHANGE**(A=0% B=49.5% C=49.5% McNemar p=1.0 n_disc=0)·GRPO对准确率零效果(有reward信号nz_std=75%但未转化为acc提升)·seed1 RUNNING(PID2771513 GRPO step7/30)·剩余seed1+seed2+control ETA≈10:20 · v5✅显著(p=0.0009) · v6✅(NS) · v7✅6/6 · v8 MIXED(p=0.0312)。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
-| 当前动作 | **wake#1109 v9实验运行中(seed1/3)**：seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **VERDICT: NO CHANGE**(GRPO有reward信号nz_std=75%但未转化为准确率提升)·seed1(seed=20261113)RUNNING(PID2771513/GRPO step7/30/复用seed0 SFT adapter)·剩余seed1(~25min)+seed2(~45min)+control(~45min)·ETA≈10:20·log @ /tmp/v9_freqcmp.log。脚本: cpu_rl_v9_freqcmp_experiment.py + run_v9_freqcmp.sh + analyze_v9_freqcmp.py。✅HTML报告在盘上(v8版45187B)→v9全量后更新。 |
+| 当前动作 | **wake#1111 v10实验运行中(run1/3)**：v10(基座Qwen3.5-2B+grpo_lr 1e-5+n_grpo_steps 50+GPU7加速)run1/3(seed20261112)=std_s0 RUNNING：A=46.2%(格式问题已修) B=54.9%→GRPO step43/50·~3.5s/step·reward 0.25~1.0·nz_std≈100%(vs v9 n_disc=0)·ETA全量≈15-20min·log @ /tmp/v10_freqcmp.log。脚本: run_v10_freqcmp.sh + cpu_rl_v9_freqcmp_experiment.py + analyze_v9_freqcmp.py。✅HTML报告在盘(v8版45187B)→v10全量后更新。 |
 | 下一步 | ①v9完成后(ETA≈10:00-12:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + **重新生成HTML报告**(report_vision_cpu_rl_waveform_zh.html·v8版在doc/BaiZe-ISEDA2027/reports/) ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
 | 更新 | **2026-11-13 08:17 (wake #1109)**：v9 RUNNING监控·seed1 GRPO step7/30(503s)·nz_std=50%@step7·seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **NO CHANGE**·剩余seed1+seed2+control ETA≈10:20·analyze_v9就绪·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK·GPU 8×H100 100% pretrain全占·体积✓(MEMORY 13.4KB/TASK 27KB)·WAITING=0。 |
