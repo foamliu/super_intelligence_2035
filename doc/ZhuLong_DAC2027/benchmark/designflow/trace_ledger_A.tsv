@@ -448,3 +448,4 @@
 1793172758983_0kv56.messages.json	jascperc	hfeg0pkn001	160	digital	parked		2026-11-13 07:20	DUPLICATE-TRACE DOWNLINE r454: same session 0kv56 as PatStatSpeed-001 (ledger line 171, built 2026-11-07); r451 re-claimed 0kv56 w/o .messages.json suffix evading ledger anchor; case removed from A.jsonl + assets/reference deleted
 1793756588980_8gijt	stevenh	hfeg0pgn145	35	digital	case	EDA-Eval-DesignFlow-SvCaseArithFold-001	2026-11-13 07:45	
 1793770878003_s8h5s	lorikx	hfeg0pkn013	18	digital	case	EDA-Eval-DesignFlow-SramStructAnalyze-001	2026-11-13 08:20	
+1793265549716_ykb7a.messages.json	e0039602	hfeg0pkn002	76	digital	case	EDA-Eval-DesignFlow-VerilogPowerPinConsist-001	2026-11-13 09:32	
