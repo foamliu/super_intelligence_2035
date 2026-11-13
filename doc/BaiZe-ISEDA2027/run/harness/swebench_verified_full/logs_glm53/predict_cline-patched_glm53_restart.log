@@ -1,0 +1,13 @@
+[verified-full 11:23:18] resume: loaded 500 existing results
+[verified-full 11:23:18] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2166B)
+[verified-full 11:23:18] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3264B)
+[verified-full 11:23:18] [3/500] astropy__astropy-13236 SKIP (predicted, patch=2110B)
+[verified-full 11:23:18] [4/500] astropy__astropy-13398 SKIP (predicted, patch=10194B)
+[verified-full 11:23:18] [5/500] astropy__astropy-13453 SKIP (predicted, patch=2264B)
+[verified-full 11:23:18] [6/500] astropy__astropy-13579 SKIP (predicted, patch=0B)
+[verified-full 11:23:18] [7/500] astropy__astropy-13977 SKIP (predicted, patch=0B)
+[verified-full 11:23:18] [8/500] astropy__astropy-14096 SKIP (predicted, patch=3207B)
+[verified-full 11:23:18] [9/500] astropy__astropy-14182 SKIP (predicted, patch=0B)
+[verified-full 11:23:18] [10/500] astropy__astropy-14309 SKIP (predicted, patch=0B)
+[verified-full 11:23:18] [11/500] astropy__astropy-14365 SKIP (predicted, patch=0B)
+[verified-full 11:23:18] [12/500] PREDICT cline on astropy__astropy-14369
