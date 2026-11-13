@@ -1,10 +1,13 @@
 WAITING: 0
 
-> 🆕 **【wake #1185 · 2026-11-14 04:59】v11 ALL COMPLETE·3 seed 一致负结果(0/6 判据)·NO GENERATIVE ADVANTAGE·autofinish 收尾出 v11_summary.json+HTML+EXPERIMENTS §v11·commit 全部 v11 产物·WAITING:0**：
-> - **v11 完结**：seed20261116 DONE(04:59)——direct=20.8%/augment=20.8%/synthesis=12.5%。**3 seed mean**：direct 22.2%±1.0% · augment 20.8%±0.0% · synthesis 13.2%±1.0%。判据 **0/6 FAIL**（direct 低于预期 30-40%·两生成臂均 <direct·McNemar 0/3 sig·aug −1.4pp/syn −9.0pp CI 含 0）。**VERDICT: NO GENERATIVE ADVANTAGE**。cheat_rate=0(disjoint RNG)。3 seed 高度一致(augment 跨 seed 完全相同 20.8%)。
-> - ✅ **autofinish 收尾**：orchestrator 04:59:12 写 `SEEDS-ONLY DONE`→watcher(04:59:25)自动跑 analyze_v11_regen.py(exit0)→`v11_summary.json`(558B)+gen_v11_regen_report.py(exit0)→`reports/report_vision_cpu_rl_waveform_zh.html`(10205B,3/3 seeds)。v11 进程已全部退出(ps 0 命中)。
-> - ✅ **git 本轮**：无 index.lock·无他线 git op(posttrain cline 跑 code-eval 非 git 阶段)→窗口打开。fetch→0/0 up-to-date→无需 pull。`git add --` 明确路径(v11_summary.json + seed20261116 experiment_results.json + EXPERIMENTS_VISION.md + ../reports/report_vision_cpu_rl_waveform_zh.html + MEMORY + daily)→commit(`vision rl:`)→push。**不 add** outputs/(posttrain 在途)。体积✓(MEMORY≤32KB/TASK 26.9KB)。
-> - **结论**：生成式路线(augment/synthesis)在 CPU/A40 规模**不优于**直接回归做周期估计——诚实负结果「本期不做生成式路线」(已写入 EXPERIMENTS §v11 + HTML)。v5 仍是唯一统计显著正结果(typecls C=53%>B=37%>A=16% p=0.0009)；v6–v11 连续 6 轮无提升，方向已穷尽，**待运维/用户下达下一方向令**。**WAITING: 0**。
+> 🆕 **【wake #1186 · 2026-11-14 05:16】例行巡检·全交付态·零异常·无新增·✅ git fetch→0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警持续(第 18 轮空转·待运维/用户下达下一方向令或停 loop)**：
+> - **状态**：v11 ALL COMPLETE(3 seed 一致负结果·NO GENERATIVE ADVANTAGE)产物复核在位——`vision/wave_rl/v11_results/v11_summary.json`(558B)+`reports/report_vision_cpu_rl_waveform_zh.html`(10205B·3/3 seeds)+EXPERIMENTS §v11+v11_results/(4 子目录:smoke/std_s20261114/15/16)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v11/run_v/autofinish 命中)。v5 仍是唯一统计显著正结果(typecls C=53%>B=37%>A=16% p=0.0009)；v6–v11 连续 6 轮无提升，方向已穷尽。
+> - **输入参考**：research 日报 2026-11-14(mtime 03:11) vision 栏 = ①「回归 vs 生成 三臂小对照」即 v11 已执行完毕(负结果·本期不做生成式路线)→无新可执行项；②视觉塔初始化三臂对照(MAE 预训练)属已收敛视觉编码器臂·非 wave-RL 活跃线→不 action。ops/inbox.md 不存在/无 vision 条目→不 action。
+> - ✅ **git 本轮**：`git fetch origin main`→`git rev-list --left-right --count HEAD...origin/main`=0/0 已 up-to-date→无需 pull(仅 posttrain 在途 `?? outputs/` 不触 vision·不用 -A 不卷入)。无 `.git/index.lock`·无他线 git 进程(仅 gitlab-runner 常驻 + posttrain cline 跑 pyAether code-eval 非 git 阶段)→窗口打开。`git add --` 明确路径(MEMORY_VISION.md + daily-memories-vision/2026-11-14.md)→commit(`vision rl:`)→push。
+> - **⚠️ idle-spin 告警(第 5 次重申·上报运维/用户拍板)**：本线 2026-11-14 已连续 18 轮(wake#1165~#1186)例行巡检零新增·零产物变化，每轮仅心跳+commit，纯耗 token。根因=方向已穷尽(见上)·远超任务书护栏「连续 3 轮无提升必须换方向」阈值。两条 2026-11-07 用户令均 ✅ 已交付。建议：①运维下达下一方向令(或批准新奖励/任务三臂)→本线即起实验；或②运维停掉 baize_vision_loop.sh 以止 token 空转(停时可顺手照 baize_pretrain_loop.sh 新版修 WAITING 正则+git pull 缺陷，见 AGENTS.md §3)。本 agent 不擅自 kill loop(属运维决策·且 kill 自身父进程有风险)。
+> - **GPU/体积**：.17 8×A40 posttrain RL 占卡·vision CPU-only/GPU5 已释放·不冲突。MEMORY ~30.6KB/TASK 26.9KB·均≤32KB✓。fold wake#1185。**WAITING: 0**。
+
+> 📦 **wake #1185 · 2026-11-14 04:59** v11 ALL COMPLETE·3 seed 一致负结果(0/6 判据·NO GENERATIVE ADVANTAGE)·autofinish 收尾出 v11_summary.json(558B)+HTML(10205B)+EXPERIMENTS §v11·commit 全部 v11 产物·cheat_rate=0·v6–v11 连续 6 轮无提升方向已穷尽·已fold(见 wake#1186·详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1184 · 2026-11-14 04:5x** v11 监控·seed20261115 DONE 负结果·seed20261116 RUNNING·commit seed20261115 产物+心跳·已fold(见 wake#1185·详情 daily-memories-vision/2026-11-14.md)。
 
