@@ -8274,3 +8274,43 @@ Workers have their **own** providers.json in --data-dir (e.g., cli_data/worker_N
 2. chain daemon auto-starts step60 runs 2-5, then base runs 1-5
 3. chain daemon auto-runs final analysis (mean+/-std + McNemar + bootstrap)
 
+### §L4-zhulong (2026-11-13 wake387) Run 2 Progress + Stuck Worker-4 Cleanup
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 2 Progress (as of wake387 ~08:25 CST)
+
+- **Stats counters**: success=81, failure=6, timeout=4 → 91/158 tasks processed (57.6%)
+- **Task queue remaining**: 60/158 (98 dequeued, 7 in-progress by 8 active workers)
+- **Code dir**: 105 entries (103 task dirs + 2 non-task files: eda-swig-type-construction.md, pyAether_code)
+- **Run 2 ETA**: ~60 tasks remaining + 7 in-progress → ~45-60 min more for codegen, then sandbox eval
+
+#### Stuck Worker-4 Cleanup (recurring pattern)
+
+- **Worker-4** (PID 1145126 timeout / 1145127 bun) stuck on task EDA-Eval-PyAether-067
+- Elapsed: 2624s (>2500s timeout) — `timeout 2500` sent SIGTERM but bun runtime ignored it (same pattern as wake370-376/wake384/wake385)
+- Kill applied: `kill -9 1145126` (timeout parent) + `kill -9 1145127` (orphaned bun child, ppid=1 after parent killed)
+- Worker-4 logged Exit Code 137 (SIGKILL) and immediately restarted on task EDA-Eval-PyAether-099
+- **Root cause (confirmed)**: `timeout 2500` (without `--kill-after`) sends SIGTERM once, then waits indefinitely. bun/cline runtime does not propagate SIGTERM to the JS event loop → worker hangs past timeout. Fix would require `timeout --kill-after=5 2500` but this is in the eval harness script (run_cline_script.sh) which is shared infrastructure (eda_fastmcp), not post-train's to modify.
+
+#### Anti-Cheat Check
+
+- `l1_injection.json`: 0/158 tasks got L1 injection, mode="no memory bank data", vector_enabled=true
+- Expected for single-turn codegen pipeline (no sandbox feedback during generation, no memory bank to inject from)
+
+#### Pipeline Autonomy Status
+
+All 3 automation layers alive:
+1. **run_cline_script.sh** (PID 1109206, etimes=6917s ~1h55m): main codegen driver, 8 workers
+2. **autocomplete daemon** (PID 1122770, etimes=6191s): waiting for run2 PID 1109190 → will auto-run runs 3-5
+3. **eval chain daemon** (PID 1161064, etimes=517s): waiting for step105 daemon → will chain step60 runs2-5 → base runs1-5 → analysis
+
+#### Updated Eval Status Summary
+
+| Label | Endpoint | GPU | Runs Done | Pass@1 (run1) | Autopilot |
+|:--|:--|:--:|:--:|:--:|:--|
+| step105 | 8096 | 6 | 1/5 (run2 in progress 91/158) | 3.8% (6/158) | autocomplete daemon -> runs 3-5 |
+| step60 | 8097 | 5 | 1/5 | 1.3% (2/158) | chain daemon -> runs 2-5 |
+| base | 8098 | 4 | 0/5 | -- (36% was full-harness, different mode) | chain daemon -> runs 1-5 |
+
+
