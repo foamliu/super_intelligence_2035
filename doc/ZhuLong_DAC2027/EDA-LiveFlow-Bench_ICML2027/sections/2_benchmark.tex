@@ -5,11 +5,11 @@
 \label{sec:data-source}
 % \subsection{数据来源：真实用户交互轨迹}
 
-Unlike synthetic benchmarks constructed by task authors, \bench{} is built from \emph{real user interaction traces}---actual multi-turn sessions where IC design engineers used the Cline~\cite{cline2026} coding agent to solve design-flow problems in a production environment. We systematically scanned 698 engineering workstations, identified sessions containing EDA-related tool interactions, and curated tasks from the most representative ones.
-% 与由任务作者构造的合成基准不同，\bench{} 构建于"真实用户交互轨迹"之上——即 IC 设计工程师在生产环境中使用 Cline 编程智能体解决设计流问题的真实多轮会话。我们系统性地扫描了 698 台工程工作站，识别出包含 EDA 相关工具交互的会话，并从中挑选最具代表性的部分整理为任务。
+Unlike synthetic benchmarks constructed by task authors, \bench{} is built from \emph{real user interaction traces}---actual multi-turn sessions where IC design engineers used a coding agent~\cite{cline2026} to solve design-flow problems in a production environment. We systematically scanned engineering workstations, identified sessions containing EDA-related tool interactions, and curated tasks from the most representative ones.
+% 与由任务作者构造的合成基准不同，\bench{} 构建于"真实用户交互轨迹"之上——即 IC 设计工程师在生产环境中使用编程智能体解决设计流问题的真实多轮会话。我们系统性地扫描了工程工作站，识别出包含 EDA 相关工具交互的会话，并从中挑选最具代表性的部分整理为任务。
 
-\textbf{Scan pipeline.} We grep session files for EDA-keyword matches (hspice, spectre, calibre, virtuoso, aether, innovus, pt\_shell, dc\_shell, netlist, schematic, etc.) and rank sessions by \emph{match-count} (mc)---the number of lines hitting any EDA keyword. Sessions with mc $\geq 30$ yield 1{,}511 candidates from 224 unique users. A two-stage prefilter (rule-based + 0.8B LLM classifier) filters non-design-flow sessions (Q\&A, permission-denied, tool-not-found), with 0\% rejection rate---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
-% \textbf{扫描流程。} 我们对会话文件进行 EDA 关键词匹配（hspice、spectre、calibre、virtuoso、aether、innovus、pt\_shell、dc\_shell、netlist、schematic 等），并按"匹配计数"(mc)——命中任意 EDA 关键词的行数——对会话排序。mc $\geq 30$ 的会话从 224 位去重用户中产出 1,511 个候选。一个两级预筛器（基于规则 + 0.8B LLM 分类器）过滤掉非设计流会话（问答、权限被拒、工具未找到），拒绝率为 0\%——印证了 mc $\geq 30$ 的会话几乎全都是真实的 EDA 工作。
+\textbf{Scan pipeline.} We grep session files for EDA-keyword matches (hspice, spectre, calibre, virtuoso, aether, innovus, pt\_shell, dc\_shell, netlist, schematic, etc.) and rank sessions by \emph{match-count} (mc)---the number of lines hitting any EDA keyword. A two-stage prefilter (rule-based + 0.8B LLM classifier) filters non-design-flow sessions (Q\&A, permission-denied, tool-not-found), with 0\% rejection rate on the mc $\geq 30$ pool---confirming that high-mc sessions are almost universally genuine EDA work.
+% \textbf{扫描流程。} 我们对会话文件进行 EDA 关键词匹配（hspice、spectre、calibre、virtuoso、aether、innovus、pt\_shell、dc\_shell、netlist、schematic 等），并按"匹配计数"(mc)——命中任意 EDA 关键词的行数——对会话排序。一个两级预筛器（基于规则 + 0.8B LLM 分类器）过滤掉非设计流会话（问答、权限被拒、工具未找到），在 mc $\geq 30$ 池上拒绝率为 0\%——印证了高 mc 会话几乎全都是真实的 EDA 工作。
 
 \textbf{Trace attribution.} Each task records \texttt{trace\_source} (host, user, session\_file, session\_msgs, real\_task\_summary), enabling trace-back to the original engineer's workflow. User identifiers are preserved (not hashed) for reproducibility, with only API keys/tokens masked.
 % \textbf{轨迹溯源。} 每个任务记录 \texttt{trace\_source}（主机、用户、会话文件、会话消息数、真实任务摘要），可回溯至原始工程师的工作流。用户标识保留（不做哈希）以保证可复现性，仅对 API 密钥/令牌进行脱敏。
@@ -74,14 +74,33 @@ Steps & 1--3 tool calls & 5--20+ tool calls \\
     % \textbf{原理图 / 网表 / 模拟}：schematic\_netlist、waveform、analog\_context
 \end{itemize}
 
-The living benchmark currently holds \Ntasks{} curated cases; all results in
+The living benchmark currently holds \Ntasks{} curated cases (the \emph{Full set}); all results in
 Sections~\ref{sec:experiments}--\ref{sec:analysis} are reported on a \emph{frozen
 evaluation snapshot} of \Neval{} runs (2026-11-09), whose domain mix is shown in
 Figure~\ref{fig:domain-distribution}. Freezing the snapshot is what makes the
 per-domain table, the failure analysis and any future re-run comparable.
-% 活基准当前含 \Ntasks{} 个已整理案例；第~\ref{sec:experiments}--\ref{sec:analysis}~节的
+% 活基准当前含 \Ntasks{} 个已整理案例（\emph{Full 集}）；第~\ref{sec:experiments}--\ref{sec:analysis}~节的
 % 全部结果都报告在一个 \emph{冻结的评测快照}（2026-11-09，\Neval{} 个 run）上，其领域构成见
 % 图~\ref{fig:domain-distribution}。冻结快照是逐域表格、失败分析与将来重跑可比性的前提。
+
+\textbf{Lite set.} To enable efficient daily evaluation and external reproduction,
+we release a \emph{Lite set} of \LiteSet{} tasks selected from the Full set along
+three dimensions: (i) \emph{domain balance}---stratified sampling across all 13
+EDA domains so that no single domain exceeds 15\% of the Lite set; (ii)
+\emph{difficulty calibration}---retaining tasks whose reference pass rate under
+the frozen snapshot falls in the 5--25\% band, so that the Lite set is neither
+trivially easy nor uniformly impossible; and (iii) \emph{releaseability}---tasks
+whose underlying design assets have been approved for external publication are
+prioritized, so that the Lite set can be fully released without confidentiality
+constraints. The Lite set is intended as the default evaluation surface for new
+agents; the Full set remains available for organizations that can access the
+full asset inventory.
+% \textbf{Lite 集}。为支持高效的日常评测与外部复现，我们从 Full 集中按三个维度筛选
+% \LiteSet{} 个任务作为 \emph{Lite 集}：(i) 领域均衡——在 13 个 EDA 领域上分层抽样，
+% 任一领域不超过 Lite 集的 15\%；(ii) 难度校准——保留冻结快照下参考通过率在 5--25\% 区间的任务，
+% 使 Lite 集既非 trivial 也非 uniformly impossible；(iii) 可释放性——优先选择底座设计资产
+% 已获对外发布批准的任务，使 Lite 集可在无保密约束下完整发布。Lite 集是新智能体评测的默认入口；
+% Full 集仍可供能访问完整资产清单的组织使用。
 
 The distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design accounts for the largest share), while digital synthesis and PNR signoff are comparatively underrepresented---not because they are less important, but because digital engineers use coding agents less frequently (they work in IDEs and command-line flows). We revisit the implications of this imbalance in Section~\ref{sec:threats}.
 % 该分布反映了真实工程实践：原理图/网表与 SPICE 仿真占主导（模拟/混合信号设计占比最大），而数字综合与 PNR 签核相对偏少——并非因为它们不重要，而是因为数字工程师较少使用编程智能体（他们多在 IDE 和命令行流程中工作）。我们在第~\ref{sec:threats}~节重新讨论这种失衡的影响。

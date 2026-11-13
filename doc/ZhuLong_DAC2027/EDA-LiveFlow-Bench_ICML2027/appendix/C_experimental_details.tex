@@ -11,7 +11,7 @@
 \textbf{Version.} Cline v3.0.51~\cite{cline2026}, open-source.
 % \textbf{鐗堟湰銆倉 Cline v3.0.51锛屽紑婧愩€?
 
-\textbf{Thinking budget.} \texttt{thinking=low} (default). We chose low over medium/high to control token cost across \Ntasks{} tasks; the trade-off is reduced reasoning depth. A thinking-budget ablation is planned for the camera-ready version.
+\textbf{Thinking budget.} \texttt{thinking=low} (default). We chose low over medium/high to control token cost across \Ntasks{} tasks; the trade-off is reduced reasoning depth. A separate context-compaction ablation (basic vs.\ agentic summarization, \texttt{thinking=medium}, 40-task subset) is reported in Appendix~\ref{sec:compaction-ablation}; a full thinking-budget sweep is planned for the camera-ready version.
 % \textbf{鎬濊€冮绠椼€倉 \texttt{thinking=low}锛堥粯璁わ級銆傛垜浠€?low 鑰岄潪 medium/high锛屼互鍦?\Ntasks{} 涓换鍔′笂鎺у埗 token 鎴愭湰锛涗唬浠锋槸鎺ㄧ悊娣卞害闄嶄綆銆俢amera-ready 鐗堟湰璁″垝鍋氭€濊€冮绠楁秷铻嶃€?
 
 \textbf{Auto-approve.} All tool calls auto-approved (no human-in-the-loop). The agent may iterate freely within the 2400s timeout.

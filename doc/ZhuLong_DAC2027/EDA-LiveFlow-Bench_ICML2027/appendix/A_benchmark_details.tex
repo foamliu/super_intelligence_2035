@@ -15,11 +15,11 @@
 \label{sec:scan-pipeline}
 % \subsection{扫描流程细节}
 
-We surveyed 698 engineering workstations (2{,}850 users, 52{,}698 session files; 24{,}085 with IC/EDA matches) and scanned 42 active workstations in production, yielding 5{,}822 sessions from 268 users (mc $\geq 15$). Sessions are ranked by match-count (mc)---the number of lines hitting any EDA keyword. The mc $\geq 30$ threshold yields 1{,}511 candidate sessions from 224 unique users.
-% 我们调研了 698 台工程工作站（2,850 个用户、52,698 个会话文件；其中 24,085 个含 IC/EDA 命中），并对生产环境中 42 台活跃工作站进行扫描，从 268 位用户中产出 5,822 个会话（mc $\geq 15$）。会话按匹配计数（mc）——命中任意 EDA 关键词的行数——排序。mc $\geq 30$ 的阈值从 224 位去重用户中产出 1,511 个候选会话。
+We surveyed the engineering workstation fleet and scanned active production machines, yielding several thousand sessions with EDA keyword matches (mc $\geq 15$). Sessions are ranked by match-count (mc)---the number of lines hitting any EDA keyword. The mc $\geq 30$ threshold yields the high-quality candidate pool from which all \Ntasks{} Full-set tasks are curated. The exact workstation count, user count, and raw session inventory are company-internal and omitted here; the curation methodology is fully described so that another organization with comparable trace access can replicate the pipeline.
+% 我们调研了工程工作站集群并扫描了生产环境中的活跃机器，产出数千个含 EDA 关键词命中的会话（mc $\geq 15$）。会话按匹配计数（mc）——命中任意 EDA 关键词的行数——排序。mc $\geq 30$ 的阈值产出高质量候选池，所有 \Ntasks{} 个 Full 集任务均从中整理。确切的工作站数、用户数与原始会话清单属公司内部信息，此处略去；整理方法论已完整描述，使另一家具有可比 trace 访问权限的组织可以复现该流程。
 
-\textbf{Two-stage prefilter.} A rule-based stage rejects sessions with $< 3$ EDA tool invocations or $> 50\%$ permission-denied lines. A 0.8B LLM classifier (Qwen3.5-0.8B-Q8\_0, CPU) performs a binary is\_design\_flow classification. End-to-end cost is $\sim$1.1s/call at 73 tok/s. On the full 1{,}511-session candidate pool, the prefilter rejects 0\%---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
-% \textbf{两级预筛器。} 规则级拒绝 EDA 工具调用 $< 3$ 次或权限被拒行 $> 50\%$ 的会话。一个 0.8B LLM 分类器（Qwen3.5-0.8B-Q8\_0，CPU）执行二分类 is\_design\_flow 判定。端到端开销约 1.1 秒/次，73 tok/s。在完整的 1,511 个会话候选池上，预筛器拒绝率为 0\%——印证了 mc $\geq 30$ 的会话几乎全为真实 EDA 工作。
+\textbf{Two-stage prefilter.} A rule-based stage rejects sessions with $< 3$ EDA tool invocations or $> 50\%$ permission-denied lines. A 0.8B LLM classifier (Qwen3.5-0.8B-Q8\_0, CPU) performs a binary is\_design\_flow classification. End-to-end cost is $\sim$1.1s/call at 73 tok/s. On the full candidate pool, the prefilter rejects 0\%---confirming that mc $\geq 30$ sessions are almost universally genuine EDA work.
+% \textbf{两级预筛器。} 规则级拒绝 EDA 工具调用 $< 3$ 次或权限被拒行 $> 50\%$ 的会话。一个 0.8B LLM 分类器（Qwen3.5-0.8B-Q8\_0，CPU）执行二分类 is\_design\_flow 判定。端到端开销约 1.1 秒/次，73 tok/s。在完整的候选池上，预筛器拒绝率为 0\%——印证了 mc $\geq 30$ 的会话几乎全为真实 EDA 工作。
 
 \subsection{Domain Keyword Filters}
 \label{sec:keyword-filters}
@@ -61,8 +61,8 @@ the camera-ready version because the host inventory is company-internal.
 % D: 354），全部取自第~\ref{sec:scan-pipeline}~节描述的轨迹池；第~\ref{sec:experiments}~节的
 % 评测使用 2026-11-09 冻结的 \Neval{}-run 快照（表~\ref{tab:full-domain-results}）。
 % 各分片计数在基准仓库中维护；完整的用户/主机分布表推迟到 camera-ready，因为主机清单属公司内部信息。
-% TODO(T12)：摘要/引言写 268 位工程师、42 台工作站，§2 写 698 台主机扫描、224 位去重用户（mc>=30）。
-% 三处口径需数据侧确认后统一（或在正文分别加定语说明），本版未擅自改动数字。
+% T12 resolved 2026-11-13：正文中所有工作站/用户/会话级 infra 数字已模糊处理，
+% 仅保留方法论描述；Full/Lite 集叙事替代具体扫描统计。
 
 \subsection{Task Schema Specification}
 \label{sec:task-schema-spec}

@@ -137,9 +137,9 @@ statistics, not outcome attributions, and they are not extrapolated to the
 \textbf{Single backbone.} All \Neval{} runs use one backbone (DeepSeek-V4-Pro). Claims about ``the best'' or about model scaling are therefore not supported by our own data; RQ3 is reported as an open question (Section~\ref{sec:model-scaling}).
 % \textbf{单一骨干。} \Neval{} 个 run 全部使用同一骨干（DeepSeek-V4-Pro）。因此"最优模型"或"模型扩展"的论断不由我们自己的数据支撑；RQ3 作为开放问题报告。
 
-\textbf{Frozen snapshot.} Results are tied to the 2026-11-09 snapshot of \Neval{} runs, while the living benchmark already holds \Ntasks{} cases. Adding cases changes the domain mix and the achievable score; comparisons across snapshots are not valid unless the snapshot is pinned.
-% \textbf{冻结快照。} 结果绑定在 2026-11-09 的 \Neval{}-run 快照上，而活基准已含 \Ntasks{} 个案例。
-% 新增案例会改变领域构成与可达分数；除非固定快照，跨快照比较无效。
+\textbf{Frozen snapshot.} Results are tied to the 2026-11-09 snapshot of \Neval{} runs over the Full set, which has since grown to \Ntasks{} cases. Adding cases changes the domain mix and the achievable score; comparisons across snapshots are not valid unless the snapshot is pinned. The Lite set (\LiteSet{} tasks, Appendix) is fixed to support reproducible daily evaluation.
+% \textbf{冻结快照。} 结果绑定在 2026-11-09 的 \Neval{}-run 快照上（基于 Full 集），而 Full 集已增长至 \Ntasks{} 个案例。
+% 新增案例会改变领域构成与可达分数；除非固定快照，跨快照比较无效。Lite 集（\LiteSet{} 个任务，见附录）已固定，以支持可复现的日常评测。
 
 \textbf{Trace sample bias.} The behavioural statistics in Section~\ref{sec:trace-anatomy} come from 47 archived pilot logs, not from the \Neval{}-run batch: archived traces are those that survived local retention, and 11 of them are truncated. They describe mechanics (effort, tool mix, termination), not pass rates.
 % \textbf{轨迹样本偏差。} 第~\ref{sec:trace-anatomy}~节的行为学统计来自 47 份归档 pilot 日志，而非 \Neval{}-run 批次：

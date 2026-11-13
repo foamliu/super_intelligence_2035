@@ -147,3 +147,70 @@ are retained and will be aggregated with the same parser
 % 约 13:1 的 input:output 比是长时程智能体回路的特征——每轮迭代都要重发上下文，这也是流程编排的主要成本来源。
 % 全量 \Neval{}-run 批次的逐任务 token/成本表待补：批次摘要只记录终态与墙钟，逐 run 会话日志已留存，
 % 将在 camera-ready 用同一解析器（eval_triage/trace_anatomy.py）聚合给出。
+
+\subsection{Context-Compaction Ablation}
+\label{sec:compaction-ablation}
+% \subsection{上下文压缩消融}
+
+Long-horizon agent loops accumulate context until the coding agent's compaction
+mechanism must summarize earlier turns to fit the context window. Cline offers
+two compaction strategies: \emph{basic} (a structured summarization that
+preserves tool-call I/O verbatim) and \emph{agentic} (an LLM-generated free-form
+summary). Because compaction is triggered deep into a run and its effect is
+entangled with task difficulty, we isolate it with an ABBA-designed ablation on
+a fixed 40-task subset of the Lite set, holding everything else constant
+(DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=medium}, 2400s timeout, single
+trace per task). The ABBA order (basic, agentic, agentic, basic, basic, agentic)
+balances position effects across six rounds.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Context-compaction ablation (ABBA, 6 rounds, 40-task subset). Pass\% is
+PASS/40. Basic compaction consistently outperforms agentic by ${\sim}10$pp while
+keeping wall-clock time lower, suggesting that preserving tool-call I/O verbatim
+is more valuable than a lossy semantic summary for EDA flow orchestration.}
+\label{tab:compaction-ablation}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+\textbf{Round} & \textbf{Variant} & \textbf{Pass\%} & \textbf{PASS/40} & \textbf{Wall (h)} & \textbf{Tok/task (M)} \\
+\midrule
+r1 & basic   & 67.5 & 27 & 1.54 & 2.59 \\
+r1 & agentic & 57.5 & 23 & 2.39 & 1.90 \\
+r2 & agentic & 60.0 & 24 & 1.88 & 2.03 \\
+r2 & basic   & 70.0 & 28 & 1.83 & 2.06 \\
+r3 & basic   & 70.0 & 28 & 1.80 & 2.03 \\
+r3 & agentic & 60.0 & 24 & 1.93 & 1.82 \\
+\midrule
+\multicolumn{2}{l}{basic mean}   & 69.2 & 27.7 & 1.72 & 2.23 \\
+\multicolumn{2}{l}{agentic mean} & 59.2 & 23.7 & 2.07 & 1.92 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Across the three basic rounds the pass rate is 67.5/70.0/70.0 (mean 69.2\%) and
+across the three agentic rounds 57.5/60.0/60.0 (mean 59.2\%), a stable
+${\sim}10$pp gap in favour of basic compaction. The ABBA design rules out a
+pure ordering artifact, and the gap is consistent in direction across all three
+round pairs. Interestingly, basic compaction is also \emph{faster} (1.72\,h vs
+2.07\,h mean batch wall time) despite consuming slightly more tokens (2.23\,M vs
+1.92\,M per task): the agentic summarizer spends extra iterations re-deriving
+information that the basic summarizer keeps verbatim. We interpret this as
+evidence that in EDA flow orchestration the high-value context is tool-call I/O
+(exact commands, exact tool responses, exact file paths), which a free-form
+semantic summary tends to lose. The ablation uses \texttt{thinking=medium}
+rather than the \texttt{thinking=low} of the main evaluation, so the absolute
+pass rates are not directly comparable to Table~\ref{tab:full-domain-results};
+the relative comparison between the two compaction strategies is the point.
+% 长时程智能体回路不断累积上下文，直到编程智能体的压缩机制必须摘要早期轮次以适配上下文窗口。
+% Cline 提供两种压缩策略：\emph{basic}（保留工具调用 I/O 原文的结构化摘要）与 \emph{agentic}
+% （LLM 生成的自由式摘要）。由于压缩在 run 深处触发且其效果与任务难度耦合，我们用 ABBA 设计的消融
+% 在 Lite 集的固定 40 任务子集上隔离该因素，其余保持恒定（DeepSeek-V4-Pro、Cline v3.0.51、
+% \texttt{thinking=medium}、2400s 超时、每任务单轨迹）。ABBA 顺序（basic, agentic, agentic, basic,
+% basic, agentic）在六轮间平衡位置效应。三轮 basic 的通过率为 67.5/70.0/70.0（均值 69.2\%），
+% 三轮 agentic 为 57.5/60.0/60.0（均值 59.2\%），basic 稳定优 ${\sim}10$pp。ABBA 设计排除了纯顺序假象，
+% 且三轮对的方向一致。有趣的是 basic 同时更快（均值 1.72h vs 2.07h）但略多耗 token（2.23M vs 1.92M/任务）：
+% agentic 摘要器需额外迭代重新推导 basic 摘要器保留为原文的信息。我们将此解读为：在 EDA 流程编排中，
+% 高价值上下文是工具调用 I/O（精确命令、精确工具响应、精确文件路径），自由式语义摘要倾向于丢失这些。
+% 该消融使用 \texttt{thinking=medium} 而非主评测的 \texttt{thinking=low}，故绝对通过率与
+% 表~\ref{tab:full-domain-results} 不可直接比较；两种压缩策略的相对比较才是重点。
