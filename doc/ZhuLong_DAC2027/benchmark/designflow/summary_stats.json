@@ -15,46 +15,42 @@
   "generated": "2026-11-06T08:40:00+08:00",
   "hits_total": 38082,
   "hosts": 696,
-  "mc10": 2517,
+  "mc10": 3260,
   "mc100": 1133,
   "mc1000": 8,
-  "mc15": 2684,
-  "mc20": 2220,
+  "mc15": 3047,
+  "mc20": 2820,
   "mc25": 2376,
-  "mc30": 1980,
+  "mc30": 2540,
   "mc300": 317,
-  "mc5": 3210,
+  "mc5": 3609,
   "mc500": 281,
   "mc_matrix": {
-    "computed_at": "2026-11-12",
-    "dedup_sessions": 3964,
     "mc10": {
-      "fresh": 518,
-      "pool": 2882,
-      "touched": 2364
+      "fresh": 737,
+      "pool": 3260,
+      "touched": 2523
     },
     "mc15": {
-      "fresh": 407,
-      "pool": 2684,
-      "touched": 2277
+      "fresh": 621,
+      "pool": 3047,
+      "touched": 2426
     },
     "mc20": {
-      "fresh": 320,
-      "pool": 2519,
-      "touched": 2199
+      "fresh": 536,
+      "pool": 2869,
+      "touched": 2333
     },
     "mc30": {
-      "fresh": 193,
-      "pool": 2247,
-      "touched": 2054
+      "fresh": 403,
+      "pool": 2575,
+      "touched": 2172
     },
     "mc5": {
-      "fresh": 798,
-      "pool": 3210,
-      "touched": 2412
-    },
-    "note": "2026-11-12 用户令(换池 1105->1109, shard B 执行): mc_matrix 切到 summary_1109.tsv。矩阵基于 11/09 全量扫描 summary_1109.tsv (38082 数据行 -> 3964 slug 去重 session, slug 级去重取最大 mc) 本地复算; 复算命令: python3 designflow/trace_ledger.py [--shard A|B|C|D] mc-matrix --src designflow/summary_1109.tsv --json (4 shard 输出 留 designflow/mc_matrix_1109_{A,B,C,D,ALL}.txt)。pool=池总量 touched=已动过(4 shard ledger, 2864 个 sid: case/seeded=693, parked=1913) fresh=未动过(真正可做)。口径: 本矩阵=slug 去重(3964 session); 顶层 mcN/dedup_sessions=5999 仍为 raw 1109 session_file 去重(两源口径不同, 勿混用)。1105 旧值见 mc_matrix_1105_hist。B 域 mc>=10 fresh: 1105(现台账)=0 -> 1109=22 (换池直接目标达成)",
-    "src": "designflow/summary_1109.tsv"
+      "fresh": 1034,
+      "pool": 3609,
+      "touched": 2575
+    }
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -90,21 +86,19 @@
   "note": "r384: scansync (11/09 still latest, no new scan) + stale-candidates-file finding (candidates_mc10.tsv=11/05, gyja8 gone) + 4 fresh A-dominant peeked from 11/09 direct (xinm9/y7550/5szsv/ux82s all weak/not-viable, 0 case). A.jsonl 210 unchanged. PIVOT (a/b/c/d) still awaits user decision.",
   "note_mc30": "顶层 mcN 现统一取自 11/09 全量扫描 raw summary.tsv (38082 行 / 5999 dedup session by session_file). mc_matrix.* 仍基于 11/05 curated summary_1105.tsv (1928 shard-A-keyword dedup, slug 级取最大 mc) 用于 ledger fresh 复算; 两源口径不同, 勿混用. target_mc=10 时覆盖率分母取 mc_matrix.mc10.pool=1929 (与 ledger 同源).",
   "pool_switch": {
-    "by": "shard B",
-    "done_at": "2026-11-12T23:44+08:00",
-    "from": "designflow/summary_1105.tsv",
-    "mc10_fresh_B_new_1109": 22,
-    "mc10_fresh_B_old_1105": 0,
-    "note": "2026-11-12 用户直令: A 连续~2天未换池, 改由 B 接手执行(一次做完并落盘提交)",
-    "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
-    "scan_rows": 38082,
-    "scan_sha256": "a3a374ad5bcaa79f1b82ceeb3ab560e8a703450640b8ad4c11fc6fbb0bec3c07",
-    "summary_1109_dedup_sessions": 3964,
-    "to": "designflow/summary_1109.tsv"
+    "by": "ops_directive",
+    "done_at": "2026-11-13T13:30+08:00",
+    "from": "designflow/summary_1109.tsv",
+    "note": "2026-11-13 ops directive: trigger new full scan (1113), pool switch 1109->1113, fresh mc10 518->737 (+219, +42%)",
+    "scan_path": "/home/t0002965/log/ssh_eda_search_20261113_131349/summary.tsv",
+    "scan_rows": 41409,
+    "to": "designflow/summary_1113.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 3325,
-  "scan_path": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv",
+  "scan_path": "ssh_eda_search_20261113_131349",
+  "scan_rows": 41409,
+  "scan_sha256": "(pending)",
   "scansync": {
     "date": "2026-11-12",
     "dedup_sessions": 5999,
@@ -121,6 +115,7 @@
     "D": 10
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
+  "summary_1113_dedup_sessions": 4418,
   "target_mc": 10,
   "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6",
   "threshold_eval_shardA": {
@@ -197,8 +192,8 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-13 13:18",
-  "users_mc10": 444,
+  "updated_at": "2026-11-13 14:12",
+  "users_mc10": 560,
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
