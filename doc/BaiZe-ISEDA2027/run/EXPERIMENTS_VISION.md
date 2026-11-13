@@ -3184,4 +3184,55 @@ v8 是不同任务（频率比较 vs 类型分类），不直接可比。但关�
 
 **脚本**：`vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py`（~680行）+ `run_v9_freqcmp.sh` + `analyze_v9_freqcmp.py`。
 
-**v9 结果**：⏳ RUNNING (launched 2026-11-13 04:56, ETA ~4h on CPU, log @ /tmp/v9_freqcmp.log)
+**v9 结果**：⚠️ **被迁移中断**。seed0 (2026-11-13) COMPLETE → **NO CHANGE**：A=0%（格式问题，max_new_tokens=8 不足，模型生成推理文本而非 A/B）·B=49.5%·C=49.5%·McNemar p=1.0·**n_discordant=0**（GRPO 有 reward 信号 nz_std=75% 但零 discordant cases——策略不改变预测）。seed1 GRPO 起步时 vision 由 .12 迁至 .17（09:12），**v9 结果困在 .12 的 `/nas_train/.../out/` 不可达**，后续 seed1/seed2/control 未在 .17 完成。诊断结论：`grpo_lr=1e-6` 太低 → n_disc=0。→ v10 据此修复。
+
+---
+
+## §v10 — Frequency Comparison · n_disc 修复 + Qwen3.5-2B（2026-11-13 · .17 GPU7 · 3 seeds + control · ✅ COMPLETE）
+
+**背景**：v9 诊断出 `grpo_lr=1e-6` 太低导致 n_disc=0（GRPO 不改变任何预测）。v10 针对**这一单一瓶颈**做最小修复，验证「信号路径打通后 RL 是否能转化为净准确率增益」。
+
+**v10 设计（预注册 2026-11-13 wake#1110，先写后跑）**：
+- 任务：frequency_comparison（同 v8/v9，binary A/B，50% chance baseline）
+- **v10 改动（仅 3 处，针对 v9 n_disc=0）**：
+  1. `grpo_lr`：1e-6 → **1e-5**（10×，关键修复，让策略实际移动）
+  2. `n_grpo_steps`：30 → **50**（更多策略更新）
+  3. 基座：qwen3vl_2b_text_extracted → **Qwen3.5-2B**（用户指定；.17 可用；`AutoModelForCausalLM` 已验证 PASS：1.88B 参数 / LoRA 737K / 1.2s·step，见 `lf_smoke/s2_fallback_result.json`）
+- 其余同 v9：SFT 500ex×5ep、eval 91 pairs、LoRA r=16、group_size=4、batch_prompts=2、3 seeds (20261112/20261113/20261114) + control (random reward, seed=20261112)
+- 输出落 .17 本地 `vision/wave_rl/v10_results/`（`/nas_train` 迁移后不可达）
+- cheat_rate：train/eval 用 disjoint RNG seeds → overlap=0，无泄漏
+- **预注册判据（run_v10_freqcmp.sh 顶部，先写后跑）**：
+  | 判据 | 预期 | v10 结果 |
+  |:---|:---|:---|
+  | B > 55% | SFT 推到 chance 以上 | B=54.9% ❌（差 0.1pp） |
+  | C > B (mean) | RL 提升 | C=51.6% < B=54.9% ❌ |
+  | McNemar p<0.05 (s0) | 显著 | p=1.0000 ❌ |
+  | 3 seeds all C≥B | 一致性 | 53.8%/47.3%/53.8% vs B=54.9% ❌ |
+  | **n_disc>0 (s0)** | GRPO 改变预测（v9=0 的修复） | **n_disc=29 ✅** |
+  | Control C≤B+10% | 随机奖励不提升 | ctrl=53.8%≤64.9% ✅ |
+  - SUCCESS: ≥5/6；MIXED: 3-4/6；FAIL: ≤2/6
+
+**脚本**：`vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py`（复用，加 `--model_path`/`--grpo_lr` CLI）+ `run_v10_freqcmp.sh` + `analyze_v10_freqcmp.py`（新，指向本地 v10_results）。
+
+**v10 结果（2026-11-13 12:44 ALL DONE）**：
+| 指标 | Seed 0 | Seed 1 | Seed 2 | Control |
+|:---|:---|:---|:---|:---|
+| A (zero-shot) | 46.2% | — | — | — |
+| B (SFT) | 54.9% | — | — | — |
+| C (GRPO) | 53.8% | 47.3% | 53.8% | 53.8% |
+| GRPO nz_std | 82% | 57% | 73% | 100% |
+
+- **C mean = 51.6% ± 3.1%**（3 seeds）vs **B = 54.9%** → C < B
+- McNemar C-vs-B (s0)：**p=1.0000，n_discordant=29**
+- 判据通过 **2/6 → NOT SIGNIFICANT**
+- cheat_rate=0（无泄漏）
+
+**关键诊断（诚实）**：
+- ✅ **v10 修复成功**：n_disc 从 v9 的 0 → **29**——`grpo_lr` 1e-5 让 GRPO 现在确实改变了 29 个预测，信号路径打通。
+- ❌ **但 RL 未转化为净增益**：C=51.6% < B=54.9%，且 McNemar p=1.0（29 个改变里改善与恶化几乎对称抵消）。Control（随机奖励）也得 53.8%，与 C 接近——说明 GRPO 的预测改变并非由真实 reward 信号驱动出净方向性收益。
+- A=46.2%（vs v9 的 0%）= 换 Qwen3.5-2B 后**格式问题消失**（模型直接输出 A/B），不再是格式伪 0%。
+- 逐难度（s0, C）：easy 50.0% / medium 45.2% / hard 65.6%（hard 反超，同 v8 反直觉现象）。
+
+**结论**：v10 是**诚实的负/零结果**。机制 bug（n_disc=0）已修复并验证，但「让 GRPO 改变预测」并不等于「让 GRPO 提升准确率」。在当前 CPU 规模（91 eval 题、500 SFT 例、50 GRPO 步、2B+LoRA）下，frequency_comparison 任务上 RL 相对 SFT 无统计显著的净增益。下一步方向（待定，不本轮执行）：① 增大 eval set 提升统计功效（91 题 McNemar 功效有限）；② 重新审视奖励/任务定义（连续 reward 或更可判定的中间任务）；③ 等 GPU 做更大规模验证。
+
+**产物**：`vision/wave_rl/v10_results/`（smoke + std_s{0,1,2} + ctrl_s0 + `v10_summary.json`）·`vision/wave_rl/analyze_v10_freqcmp.py`·log @ `/tmp/v10_freqcmp.log`。

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>视觉波形 RL · CPU 实验报告 v3→v8（2026-11-13 更新）</title>
+<title>视觉波形 RL · CPU 实验报告 v3→v10（2026-11-13 更新）</title>
 <style>
 body { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #333; }
 h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }
@@ -18,7 +18,7 @@ code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 13p
 </style>
 </head>
 <body>
-<h1>视觉波形 RL · CPU 实验报告 v3→v7</h1>
+<h1>视觉波形 RL · CPU 实验报告 v3→v10</h1>
 <p><strong>生成时间</strong>：2026-11-12 03:30（v3-v5 原始报告 2026-11-07） · <strong>作者</strong>：vision wake#856→#1031 · <strong>用户令</strong>：2026-11-07「用 CPU 设计有效 RL，证明显著提升 Qwen3.5-2B 波形理解」</p>
 <div class="summary">
 <p><strong>一句话总结</strong>：v1 离散 5 档奖励 → GRPO 负结果(6.2%&lt;9.2%)。v2 连续奖励方向翻转但不显著(n=45,p=0.625)。<strong>v3</strong> 聚焦 period-only(n=100)+40步+gs=8 连续奖励 GRPO → C=25.0%&lt;B=34.0%（负结果）。<strong>v4</strong> 改用 RFT/STaR → C=34.0%=B=34.0%（NULL，无提升）。<strong>v5</strong> 连续 3 轮无提升后换方向：改任务为波形类型分类 + 改输入为 16 采样点直接入 prompt → <strong>✅ 显著提升：A=16.0% → B(SFT)=37.0% → C(RFT)=53.0%，McNemar C-vs-B p=0.0009，Bootstrap Δ=+16% CI=[+7%,+25%]，C-vs-D(随机控制)p=0.0003。所有预注册判据全部满足。</strong> <strong>v6</strong> GRPO outcome-only 连续奖励(α=0.25,β=0.35) → C=40% vs B=35%, p=0.267 NOT SIG，但 <strong>nonzero-std=93.8% 彻底解决 v1-v4 的 std=0 方差问题</strong>。<strong>v7</strong> 加 process reward λ sweep + LoRA rank probe（18 runs, 3 seeds × 6 组）→ <strong>✅ 6/6 ALL PASS（预注册判据: meanΔ&gt;1sd AND 3seed同方向&gt;v6 baseline 40%），C=47-49% vs v6 40%，nonzero-std=100%</strong>。</p>
@@ -441,8 +441,25 @@ v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 
 </ul>
 
 
+<h2 id="v10">九、v10 频率比较 · n_disc 修复 + Qwen3.5-2B（2026-11-13 · .17 GPU7 · NOT SIGNIFICANT）</h2>
+<div style="background:#f5f5f5;padding:14px;border-radius:6px;margin:12px 0;">
+<strong>动机</strong>：v9 诊断出 <code>grpo_lr=1e-6</code> 太低导致 <strong>n_discordant=0</strong>（GRPO 有 reward 信号 nz_std=75% 但不改变任何预测）。v10 针对<strong>这一单一瓶颈</strong>做最小修复，验证「信号路径打通后 RL 是否能转化为净准确率增益」。<br>
+<strong>v10 改动（仅 3 处）</strong>：① <code>grpo_lr</code> 1e-6→<strong>1e-5</strong>（10×，关键修复）② <code>n_grpo_steps</code> 30→<strong>50</strong> ③ 基座→<strong>Qwen3.5-2B</strong>（用户指定；<code>AutoModelForCausalLM</code> 已验证 PASS：1.88B / LoRA 737K / 1.2s·step）。其余同 v9：SFT 500ex×5ep、eval 91 pairs、LoRA r=16、group_size=4、3 seeds + control（random reward）。输出落 .17 本地 <code>v10_results/</code>（/nas_train 迁移后不可达）。cheat_rate=0（disjoint RNG seeds）。<br>
+<strong>预注册判据（run_v10_freqcmp.sh 顶部，先写后跑）</strong>：B&gt;55% / C&gt;B(mean) / McNemar p&lt;0.05(s0) / 3seed C≥B / <strong>n_disc&gt;0</strong> / control C≤B+10%。SUCCESS≥5/6，MIXED 3-4/6，FAIL≤2/6。
+<table border="1" cellpadding="6" style="margin-top:10px;">
+<tr><th>指标</th><th>Seed 0</th><th>Seed 1</th><th>Seed 2</th><th>Control</th></tr>
+<tr><td>A (zero-shot)</td><td>46.2%</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>B (SFT)</td><td>54.9%</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>C (GRPO)</td><td>53.8%</td><td>47.3%</td><td>53.8%</td><td>53.8%</td></tr>
+<tr><td>GRPO nz_std</td><td>82%</td><td>57%</td><td>73%</td><td>100%</td></tr>
+</table>
+<p><strong>结果（12:44 ALL DONE）</strong>：C mean = <strong>51.6% ± 3.1%</strong>（3 seeds）vs B = 54.9% → <strong>C &lt; B</strong>。McNemar(s0) <strong>p=1.0000，n_discordant=29</strong>。判据通过 <strong>2/6 → NOT SIGNIFICANT</strong>：✅ n_disc&gt;0（0→29，机制 bug 已修复）· ✅ control≤B+10%；❌ B&gt;55%(差0.1pp)·C&gt;B·McNemar p&lt;0.05·3seed一致。</p>
+<p><strong>关键诊断（诚实）</strong>：✅ <strong>v10 修复成功</strong>——n_disc 从 v9 的 0 → 29，<code>grpo_lr</code> 1e-5 让 GRPO 确实改变了 29 个预测。❌ <strong>但 RL 未转化为净增益</strong>——C=51.6% &lt; B=54.9%，McNemar p=1.0（29 个改变里改善/恶化几乎对称抵消）；control（随机奖励）也得 53.8%，与 C 接近，说明 GRPO 的预测改变并非由真实 reward 信号驱动出净方向性收益。A=46.2%（vs v9 的 0%）= 换 Qwen3.5-2B 后<strong>格式问题消失</strong>（模型直接输出 A/B）。逐难度(s0,C)：easy 50.0% / medium 45.2% / hard 65.6%。</p>
+<p><strong>结论</strong>：v10 是<strong>诚实的负/零结果</strong>。「让 GRPO 改变预测」≠「让 GRPO 提升准确率」。当前 CPU 规模（91 eval 题、500 SFT 例、50 GRPO 步、2B+LoRA）下，frequency_comparison 任务上 RL 相对 SFT 无统计显著的净增益。产物：<code>vision/wave_rl/v10_results/</code>（+ v10_summary.json）· <code>analyze_v10_freqcmp.py</code> · log @ /tmp/v10_freqcmp.log。</p>
+</div>
+
 <h2 id="cmp">五、综合对比与总结</h2>
-<h3>5.1 全版本对比（v1 → v2 → v3 → v4 → v5 → v6 → v7 → v8）</h3>
+<h3>5.1 全版本对比（v1 → v2 → v3 → v4 → v5 → v6 → v7 → v8 → v9 → v10）</h3>
 <table border="1" cellpadding="6">
 <tr><th>版本</th><th>方法</th><th>任务/奖励</th><th>A(基线)</th><th>B (SFT)</th><th>C (处理)</th><th>D (控制)</th><th>McNemar C-B p</th><th>判定</th></tr>
 <tr><td>v1 (11-06)</td><td>GRPO</td><td>读数/离散5档</td><td>—</td><td>9.2%</td><td>6.2%</td><td>—</td><td>—</td><td>❌ C&lt;B 负结果</td></tr>
@@ -453,6 +470,8 @@ v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 
 <tr style="background:#fff3e0;"><td><strong>v6 (11-11)</strong></td><td><strong>GRPO</strong></td><td><strong>类型分类/连续outcome</strong></td><td>—</td><td>35.0%</td><td>40.0%</td><td>36.0%</td><td>0.267</td><td><strong>NOT SIG · 但 nonzero-std=93.8% 突破</strong></td></tr>
 <tr style="background:#e8f5e9;"><td><strong>v7 (11-12)</strong></td><td><strong>GRPO+proc</strong></td><td><strong>类型分类/outcome+process</strong></td><td>—</td><td>~40%</td><td>49.3%±6.4%</td><td>—</td><td>NS*</td><td><strong>✅ 预注册判据 6/6 ALL PASS (3seed)</strong></td></tr>
 <tr style="background:#e3f2fd;"><td><strong>v8 (11-13)</strong></td><td><strong>SFT→GRPO</strong></td><td><strong>频率比较/二分类A·B</strong></td><td>0.0%</td><td>45.0%</td><td>52.5%±6.1%</td><td>45.0%</td><td>0.0312 (s0)</td><td><strong>⚠️ MIXED · 3/5判据通过 · McNemar显著(s0) · control不提升</strong></td></tr>
+<tr style="background:#fff8e1;"><td><strong>v9 (11-13)</strong></td><td><strong>SFT→GRPO</strong></td><td><strong>频率比较/二分类A·B</strong></td><td>0.0%</td><td>49.5%</td><td>49.5%(s0)</td><td>—</td><td>1.0 (s0)</td><td><strong>❌ NO CHANGE · n_disc=0 · 被迁移中断(仅s0)</strong></td></tr>
+<tr style="background:#ffebee;"><td><strong>v10 (11-13)</strong></td><td><strong>SFT→GRPO</strong></td><td><strong>频率比较/二分类A·B · Qwen3.5-2B</strong></td><td>46.2%</td><td>54.9%</td><td>51.6%±3.1%</td><td>53.8%</td><td>1.0 (s0)</td><td><strong>❌ NOT SIGNIFICANT 2/6 · n_disc修复(0→29)但RL未转化净增益</strong></td></tr>
 </table>
 <p style="font-size:12px;color:#666;">*v7 McNemar(s0) NOT SIG 因 s0 baseline 偏高(47.9-50%)，但预注册判据不依赖 McNemar（判据=meanΔ&gt;1sd AND 3seed同方向&gt;v6 baseline 40%）。<br>**v8 为不同任务（频率比较 vs 类型分类），不直接与 v5-v7 可比。v8 判据：A~50%/B&gt;60%/C&gt;B/McNemar p&lt;0.05/3seed同方向。</p>
 <h3>5.2 核心结论</h3>
@@ -466,6 +485,7 @@ v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 
 <p><strong>GRPO 回归（v6）</strong>：在 v5 分类任务上回到 GRPO，用连续奖励 + group_size=8 → <strong>nonzero-std=93.8% 彻底解决方差问题</strong>，但 p=0.267 未显著。关键突破：方差问题已解决，瓶颈转移至"能力缺口"。</p>
 <p><strong>Process reward + sweep（v7）</strong>：18 runs（3 seeds × 6 组）→ <strong>✅ 6/6 ALL PASS</strong>（预注册判据 meanΔ&gt;1sd AND 3seed同方向&gt;40%）。C=47-49% vs v6 40%。但 triangle/sawtooth 全线 0%，改善集中在 square class。Process reward 贡献微弱（R_process 极小），LoRA rank 非瓶颈（r8≈r16≈r32）。</p>
 <p><strong>频率比较任务（v8）</strong>：换到新任务维度——给定两波形（各 16 采样点），判断哪个频率更高（二分类 A/B，50% baseline）。绕开 triangle/sawtooth 类型识别瓶颈。<strong>MIXED 结果</strong>：A=0% / B=45% / C=52.5%±6.1%（3 seeds: 60%/52.5%/45%）。McNemar(s0) p=0.0312 ✅显著。Control(random reward)=45%=B NS → GRPO 信号真实。但 3/5 预注册判据未通过（A~50%❌ / B&gt;60%❌ / 3seed同方向❌）。逐难度：easy 87.5% / hard 68.8% / medium 37.5%（反直觉 hard&gt;medium）。triangle/sawtooth 不再 0%。cheat_rate=0。</p>
+<p><strong>n_disc 修复 + Qwen3.5-2B（v9→v10）</strong>：v9 诊断 n_disc=0（grpo_lr=1e-6 太低，GRPO 不改变预测），被 .12→.17 迁移中断（仅 seed0：A=0%/B=49.5%/C=49.5% NO CHANGE）。v10 做最小修复（grpo_lr 1e-5 + 50 步 + Qwen3.5-2B）→ <strong>n_disc 0→29 修复成功</strong>，A=46.2%（格式问题消失），但 <strong>C=51.6%±3.1% &lt; B=54.9%</strong>，McNemar p=1.0，<strong>NOT SIGNIFICANT 2/6</strong>。诚实结论：「改变预测」≠「提升准确率」——control(随机奖励)也得 53.8%，说明 GRPO 的预测改变未被真实 reward 驱动出净方向性收益。</p>
 </div>
 <h3>5.3 诚实边界</h3>
 <ul>
@@ -488,6 +508,6 @@ v4 改用 <strong>Rejection Sampling FT</strong>（STaR/ReST 范式）：先用 
 <li><strong>诚实边界</strong>：CPU pilot 结论不外推为 GPU 结论；v8 MIXED（3/5 判据通过），需如实报告。</li>
 </ol>
 <hr>
-<p style="color:#999;font-size:12px;">本报告由 vision agent 手动更新（wake#856→#1057, 2026-11-07 ~ 2026-11-13）。数据来源：cpu_rl_v3/v4/v5/v6/v7/v8 experiment_results.json + v7_sweep_analysis.json + /tmp/v*.log + dataset_research_results.json。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
+<p style="color:#999;font-size:12px;">本报告由 vision agent 手动更新（wake#856→#1112, 2026-11-07 ~ 2026-11-13）。数据来源：cpu_rl_v3/v4/v5/v6/v7/v8/v10 experiment_results.json + v10_summary.json + v7_sweep_analysis.json + /tmp/v*.log + dataset_research_results.json。v9 结果困于 .12（迁移中断），仅 seed0 可考。单文件自包含，0 script, 0 外链。负结果同样有价值，如实报告。</p>
 </body>
 </html>

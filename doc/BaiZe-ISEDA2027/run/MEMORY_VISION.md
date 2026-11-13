@@ -1,9 +1,13 @@
 WAITING: 0
 
-> 🆕 **【wake #1111 · 2026-11-13 12:2x】v10监控·run1 COMPLETE(n_disc=29修复v9瓶颈·C<B NO IMPROVEMENT)·run2/3 RUNNING**：
-> - **v10 run1/3(std_s0,seed20261112)COMPLETE**：**A=46.2%(vs v9的0%→格式问题已修) B=54.9% C=53.8% McNemar p=1.0 n_disc=29 VERDICT: NO IMPROVEMENT**。🔑**关键诊断**：n_disc=29(vs v9 n_disc=0)→**grpo_lr 1e-6→1e-5 修复成功**(GRPO 现在改变 29 个预测)，但 C≤B(策略改变方向未带来 acc 提升)。诚实结果：信号路径已通，但 RL 未转化为净增益。
-> - **run2/3(seed20261113)=std_s1 RUNNING**：GRPO step25/50(复用 std_s0 sft_adapter，--skip_sft --skip_baseline_eval)·~3.5s/step·GPU7 加速。剩余 run2(~90s)+run3(seed20261114)+control·ETA≈10-15min。脚本 `run_v10_freqcmp.sh`+`cpu_rl_v9_freqcmp_experiment.py`+`analyze_v9_freqcmp.py`。
-> - **下一步**(v10 ALL DONE 后)：运行 analyze_v9_freqcmp.py 汇总 3seed+control→更新 EXPERIMENTS §v10→重生成 HTML 报告。git pull fast-forward(他线)。v10_results 暂未提交(实验进行中)。体积✓(MEMORY 15.5KB/TASK 27KB)。**WAITING: 0**。
+> 🆕 **【wake #1112 · 2026-11-13 12:4x】v10 ALL COMPLETE·NOT SIGNIFICANT(2/6)·n_disc 修复成功但 RL 未转化为净增益**：
+> - **v10 全量完成**（3 seeds + control，12:44 ALL DONE）：A=46.2%(格式问题已修)·B=54.9%·**C mean=51.6%±3.1%**(53.8%/47.3%/53.8%)·**C < B**·McNemar(s0) p=1.0 **n_disc=29**·control=53.8%·cheat_rate=0。
+> - **判据 2/6 → NOT SIGNIFICANT**：✅ n_disc>0(0→29，v9 机制 bug 已修复)·✅ control≤B+10%；❌ B>55%(差0.1pp)·C>B·McNemar p<0.05·3seed一致。
+> - **诚实结论**：v10 修复了 v9 的 n_disc=0（grpo_lr 1e-6→1e-5 让 GRPO 现在改变 29 个预测），但「改变预测」≠「提升准确率」——29 个改变里改善/恶化对称抵消，control(随机奖励)也得 53.8%，说明 GRPO 的预测改变未被真实 reward 驱动出净方向性收益。A=46.2%(vs v9 0%)=换 Qwen3.5-2B 后格式问题消失。
+> - **本轮交付**：analyze_v10_freqcmp.py 跑通→v10_summary.json·EXPERIMENTS §v10 已写(诚实负结果)·HTML 报告 v10 节已追加·v10_results 提交。
+> - **下一步**（待定，不本轮执行）：① 增大 eval set 提升 McNemar 功效 ② 重审奖励/任务定义(连续 reward/更可判定中间任务) ③ 等 GPU 大规模验证。体积✓(MEMORY 16KB/TASK 27KB)。**WAITING: 0**。
+
+> 📦 **wake #1111 · 2026-11-13 12:2x** v10监控·run1 COMPLETE(n_disc=29修复v9瓶颈·C<B NO IMPROVEMENT)·run2/3 RUNNING·已fold(见wake#1112)。
 
 > 📦 **wake #1110 · 2026-11-13 11:0x** 🔴迁移后首次唤醒(.17)·v9结果困在.12·v10已启动·已fold(见wake#1111)。
 > - **基础设施断裂**：vision 09:12 由 .12 迁至 .17。.17 上 `/nas_train`→`/H100_train`(空)、`/nas_data` 有 code+models 但**无 `datasets/` 目录**、`/nas_inference` 不存在、SSH 到 .12/.29 超时(异网段)。v9 实验跑在 .12 的 `/nas_train/...datasets/baize-vision/out/`→**结果困在 .12 不可达**。
@@ -93,10 +97,10 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔄 **波形 RL CPU 阶段2 · v9 RUNNING (seed1/3)**：seed0 COMPLETE→**NO CHANGE**(A=0% B=49.5% C=49.5% McNemar p=1.0 n_disc=0)·GRPO对准确率零效果(有reward信号nz_std=75%但未转化为acc提升)·seed1 RUNNING(PID2771513 GRPO step7/30)·剩余seed1+seed2+control ETA≈10:20 · v5✅显著(p=0.0009) · v6✅(NS) · v7✅6/6 · v8 MIXED(p=0.0312)。**WAITING: 0** |
+| PHASE | 🔄 **波形 RL CPU 阶段2 · v10 COMPLETE (NOT SIGNIFICANT 2/6)**：v10 全量(3seed+control)完成→A=46.2%·B=54.9%·C=51.6%±3.1%·C<B·McNemar p=1.0 n_disc=29·诚实负结果：n_disc 修复成功(0→29)但 RL 未转化为净准确率增益·v5✅显著(p=0.0009) · v6✅(NS) · v7✅6/6 · v8 MIXED(p=0.0312) · v9 被迁移中断(n_disc=0) · v10 NOT SIGNIFICANT(2/6)。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
-| 当前动作 | **wake#1111 v10实验运行中(run1/3)**：v10(基座Qwen3.5-2B+grpo_lr 1e-5+n_grpo_steps 50+GPU7加速)run1/3(seed20261112)=std_s0 RUNNING：A=46.2%(格式问题已修) B=54.9%→GRPO step43/50·~3.5s/step·reward 0.25~1.0·nz_std≈100%(vs v9 n_disc=0)·ETA全量≈15-20min·log @ /tmp/v10_freqcmp.log。脚本: run_v10_freqcmp.sh + cpu_rl_v9_freqcmp_experiment.py + analyze_v9_freqcmp.py。✅HTML报告在盘(v8版45187B)→v10全量后更新。 |
-| 下一步 | ①v9完成后(ETA≈10:00-12:00):运行analyze_v9_freqcmp.py分析结果 ②更新EXPERIMENTS §v9 + **重新生成HTML报告**(report_vision_cpu_rl_waveform_zh.html·v8版在doc/BaiZe-ISEDA2027/reports/) ③若v9 SIGNIFICANT:更新MEMORY状态头+commit ④若v9 MIXED/NS:分析原因设计v10 ⑤GPU训练阶段待pretrain释放(ETA≈12/24-25) |
+| 当前动作 | **wake#1112 v10 ALL DONE**：v10(基座Qwen3.5-2B+grpo_lr 1e-5+n_grpo_steps 50+GPU7)3 seeds+control COMPLETE→NOT SIGNIFICANT(2/6)。analyze_v10_freqcmp.py 跑通→v10_summary.json。EXPERIMENTS §v10 已写(诚实负结果)。HTML 报告 v10 节已追加。脚本: run_v10_freqcmp.sh + cpu_rl_v9_freqcmp_experiment.py + analyze_v10_freqcmp.py。✅HTML 报告在盘(v10 版, doc/BaiZe-ISEDA2027/reports/report_vision_cpu_rl_waveform_zh.html)。 |
+| 下一步 | ① v10 已交付(诚实负结果)。② 待定方向(不本轮执行)：增大 eval set 提升 McNemar 功效 / 重审奖励·任务定义(连续 reward/更可判定中间任务) / 等 GPU(ETA≈12/24-25)大规模验证。③ 体积维护：MEMORY/TASK ≤32KB。 |
 | 阻塞 | .12+.29 GPU全占（8×H100 100% util / ~75GB，pretrain baize2b ETA≈12/24-25）→ GPU验证待pretrain释放 ·.17+.75 SSH不可达 |
-| 更新 | **2026-11-13 08:17 (wake #1109)**：v9 RUNNING监控·seed1 GRPO step7/30(503s)·nz_std=50%@step7·seed0 COMPLETE→A=0% B=49.5% C=49.5% McNemar p=1.0 **NO CHANGE**·剩余seed1+seed2+control ETA≈10:20·analyze_v9就绪·✅HTML报告在盘(v8版45187B)→v9全量后更新·git pull OK·GPU 8×H100 100% pretrain全占·体积✓(MEMORY 13.4KB/TASK 27KB)·WAITING=0。 |
+| 更新 | **2026-11-13 12:45 (wake #1112)**：v10 ALL COMPLETE(3seed+control)→NOT SIGNIFICANT(2/6)·A=46.2%·B=54.9%·C=51.6%±3.1%·C<B·McNemar p=1.0 n_disc=29·诚实负结果(n_disc 修复成功但 RL 未转化净增益)·analyze_v10_freqcmp.py+v10_summary.json·EXPERIMENTS §v10·HTML v10 节·v10_results 提交·git pull OK·GPU 7(A40)已释放·体积✓(MEMORY 16KB/TASK 27KB)·WAITING=0。 |
