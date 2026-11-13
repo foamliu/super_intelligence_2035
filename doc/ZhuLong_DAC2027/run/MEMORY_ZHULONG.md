@@ -1,6 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（wake#900·2026-11-13 14:02·**✅ standby 核验通过·压缩机制消融全部完成·无待办**：wake#898 已 done_all。本轮复检：git 0ahead/0behind·ZhuLong run/ 干净·无 eval/loop 运行·无新用户令·research 日报 11-13 已读。距 wake#899 同口径核验仅 ~1h，状态无变化。§7 PHASE=done(compaction)·**WAITING=1** 待命。）
+WAITING: 1（wake#901·2026-11-13 14:35·**✅ standby 核验通过·压缩机制消融全部完成·无待办**：wake#898 已 done_all。本轮复检：git 0ahead/0behind·ZhuLong run/ 干净·无 eval/loop 运行·无新用户令·research 日报 11-13 zhulong 建议同 wake#899 已读(KV20%/成本5列/GPTQ4-bit/sanity 预注册·无新令→不动作)。距 wake#900 同口径核验仅 ~33min，状态无变化。§7 PHASE=done(compaction)·**WAITING=1** 待命。）
+
+- [2026-11-13 14:35 · wake#901·**✅ standby 核验通过·do-nothing·无待办**] wake#900 后 ~33min 复检：① git `origin/main...HEAD`=0/0 同步 ② ZhuLong run/ git 干净（HEAD=5567393b2 wake#900 commit）③ `pgrep run_cline_script|zhulong_loop` 净（无 eval/loop/编排器·沙盒 8664/8665/8653/8669 全 FREE）④ 压缩机制消融 6/6 + 报告(25.7KB) + 计划书(41.6KB) + p0_decision + pilot JSON + subset 40 + results JSON + 6×cost JSON + 6 trace dirs 均在盘 ⑤ loop PID813663 https_proxy✅（常驻自检通过）⑥ /home 98%(11G) 同前非阻塞 ⑦ research 日报 2026-11-13 zhulong 建议同 wake#899 已读、无新用户令→不动作。无新令、无待办→do-nothing。**PHASE=done(compaction)·WAITING=1 待命，下轮续主线或等新令。**
 
 - [2026-11-13 14:02 · wake#900·**✅ standby 核验通过·do-nothing·无待办**] wake#899 后 ~1h 复检：① git `origin/main...HEAD`=0/0 同步 ② ZhuLong run/ git 干净（HEAD=b33c96431 wake#899 commit）③ `pgrep run_cline_script|zhulong_loop` 净（无 eval/loop/编排器）④ 压缩机制消融 6/6 + 报告 + 计划书均 on disk（wake#899 已核 intact）⑤ research 日报 2026-11-13 zhulong 建议已于 wake#899 读过（KV20%预算/成本5列/GPTQ4-bit/sanity-checks 预注册·无新用户令→不动作）。无新用户令、无待办→do-nothing。**PHASE=done(compaction)·WAITING=1 待命，下轮续主线或等新令。**
 
