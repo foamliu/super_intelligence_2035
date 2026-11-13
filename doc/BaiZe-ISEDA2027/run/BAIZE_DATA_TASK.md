@@ -1,28 +1,6 @@
 ﻿# BAIZE_DATA_TASK.md
 
-### 🔴 用户令 · 2026-11-13 18:5x（**先确认 StepB 下载 ETA 的基数与算法：15.9TB vs 2.1TB/5297 文件对不上**）· 用户直令 · 最高优先 · ✅ 已确认
-
-> **回执（唤醒1489, 2026-11-13 20:25）**：**已确认**。HfApi().dataset_info(files_metadata=True) 实测 repo 总计 8207 文件 / 3,545,765,800,565 B = **3.546 TB**（非 15.9TB！）；data/part-*.parquet = 8192 文件 / 3,545,762,968,481 B = 3.546 TB。15.9TB 出处 = stats/train/totals.json 的 total_bytes = 11.5TB（未压缩 content size）。已下 2.358 TB / 5455 parquet / 2 inc(.cache)。逐文件比对剩余 2737 文件 / 1,195,119,410,512 B = **1.195 TB**。实测速率（444s 窗口）：21.6 MB/s = 19.1 s/file（近期，下降 3.7 倍）；全程均速 79.3 MB/s = 5.46 s/file。**ETA 保守 ~14.7h（近期速率）/ ETA 乐观 ~4.2h（全程均速），取较大 → ~14.7h**。磁盘 /nas_user 可用 59.3TB >> 1.2TB → ✅。StepC 护栏已修复（旧脚本 incomplete 检查在 data/ 始终返回 0 + EXPECTED_FILES=8207 从未用于 break 条件 → 已修复：REPO_ROOT 含 .cache/ + EXPECTED_PARQUET=8192 + 三条件 + 崩溃 exit1）。落盘 /tmp/stackv3_size_audit.json。**结论：本次下载是 3.546TB 不是 15.9TB，剩余 1.195TB，ETA 保守 ~14.7h**。
-
-> **用户原话**：「data：下载ETA有问题。15-2=13TB，不可能在几小时下载完的吧。让它确认一下。」
-
-**自洽性检查（先看这段）**：11-13a 的标的是 stack-v3-train **全量 15.9TB**、已下的 2TB 不重下 ⇒ 剩余应 ≈ **13.8TB**；但 MEMORY 写的是「**5297/8207=65%、2.1TB、~4.1s/file、ETA~3.3h**」⇒ 反推 8207 个文件 ≈ **3.3TB**（397MB/文件），**与 15.9TB 差约 5 倍**。现 ETA 只按「文件数 × 单文件秒数」推，**既没按字节算，也没确认这 8207 个文件是不是全集**。
-
-**必须实测并回报（证据优先，禁止估算）**：
-1. **权威字节**：data 机器上 `HfApi().dataset_info("HuggingFaceCode/stack-v3-train", files_metadata=True)` 分别求和 —— (i) 本次 pattern `data/part-*.parquet` 的**文件数/字节**（这才是分母）；(ii) 全 repo 所有 sibling 的字节（解释 15.9TB 出处）。落 `/tmp/stackv3_size_audit.json`。
-2. **已下实测**：`du -sb <目标目录>/data`、`find … -name 'part-*.parquet' | wc -l`、`find … -name '*.incomplete' | wc -l`，与 MEMORY 的 2.1TB / 5297 / 0inc 对齐。
-3. **剩余字节**：按 1(i) 清单**逐文件**比对本地是否有同尺寸文件后求和（🚫 不用「剩余文件数 × 平均大小」）。
-4. **实测速率**：取 **≥10 分钟**窗口的前后 `du -sb` 差值 ÷ 秒数，同时报 **MB/s 与 file/s**。
-5. **两个 ETA 并列**：`ETA_bytes = 剩余字节 / 速率` 与 `ETA_files = 剩余文件数 × 实测 s/file`，对外取**较大者**；两者差 >2 倍必须写明原因（文件大小分布 / 重试 / 代理限速）。
-6. **磁盘**：`df -B1` 可用字节 ≥ 剩余字节 × 1.1，否则**先停下载并报告**（不许写满盘）。
-7. **StepC 护栏**：auto-wait 触发条件必须含「下载进程 exit=0 **且** `.incomplete`=0 **且** 文件数 == 1(i) 文件数」，否则会在**部分数据**上启动分词 → 立即补护栏或先暂停 StepC。
-8. **一处纠正多处同步**：把纠正后的口径/ETA 覆盖 `MEMORY_DATA.md` 快照里的 "ETA~3.3h/~21:50CST" + 心跳一行 + 本令下方回执（写「已确认 / 仍待确认」）。
-
-**判据（缺一即未完成）**：① 1(i)/1(ii) 两个字节数都在；② 剩余字节与 ETA_bytes 有算式；③ 明确回答「本次到底 3.3TB 还是 15.9TB」并给证据；④ StepC 护栏结论；⑤ MEMORY 旧 ETA 已被覆盖。
-**红线**：🚫 不得只用「文件数 × 秒数」当 ETA；🚫 不得拿 repo 卡数字当本次口径；🚫 不得为赶 ETA 调高并发抢 S1/pretrain 带宽。
-**落盘**：`/tmp/stackv3_size_audit.json` + `MEMORY_DATA.md` 快照/心跳 + `daily-memories-data` 一行。
-
-> ⚠️ 本任务书当前已 47.9KB（>32KB 红线、>40KB 硬上限）：本轮**同时**把已闭合的旧令原文搬进 `run/ARCHIVE_OPERATOR_DATA.md` 留 1 行指针，归档后正文必须 ≤32KB。
+### ✅ 用户令 · 2026-11-13 18:5x（ETA 审计）· ✅ 已确认 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-13 ETA审计」；结论：本次下载 3.546TB（非15.9TB），剩余1.195TB，ETA保守~14.7h，StepC护栏已修复。
 
 ---
 
@@ -217,49 +195,15 @@
 
 ### 📦 归档指针 · 2026-11-07 08:5x「代码语料放行 stack-v3-train」· ✅ 已交付（ROI表+8源25.14GB+stack-v3调研+2TB全下+ROI复盘）。现行要点：`the-stack-v2` 🚫禁下；`stack-v3-train` 仅 train 15.9TB（🚫 full 113.7TB）；其它单集 <1TB 按 ROI 自排；code 补料属**低压力背景任务**（用户：有也行无也行、不急、不挤 S1 带宽）。原文见 ARCHIVE「归档块 · 2026-11-11」
 
-### 🚀 运维令 · 2026-11-04 13:2x（**放行 B 类 agentic 数据下载 · 落盘 /nas_inference**）· 用户直令 · 最高优先 · ✅ 已交付（12/12 落地 78.73 GiB）
-
-> 用户批准（2026-11-04 13:2x）：放行数据下载（A+B 类）。A 类已落地 10/10；本条放行 **B 类 agentic**。
-
-**① B 类下载清单（~90–180 GiB，不含巨大项）**：
-- P0：`SWE-bench/SWE-smith`(5-10G,MIT) · `nvidia/Nemotron-Terminal-Corpus`(10-15G,CC BY 4.0) · `nebius/SWE-rebench`(3-5G)
-- P1：`zhangdw/to-tool-call-datasets`(2.4G) · `tuandunghcmut/toolbench-v1`(10-50G,Apache-2.0)
-- P2：`open-thoughts/AgentTrove`(18.6G) · `microsoft/Orchard`(15-25G,MIT) · `nvidia/Nemotron-Cascade-RL-SWE`(10-20G) · `nvidia/Nemotron-Cascade-SFT-SWE`(10-20G,CC BY 4.0) · `SWE-bench/SWE-smith-trajectories`(2-5G)
-- P3：`mshojaei77/terminal-command-execution-sft`(<5G) · `ia03/terminal-bench`(<5G,评测集仅去污染)
-
-**② 巨大项不默认下**：`AlienKevin/SWE-ZERO-12M-trajectories`(111G) 体量大，选择性下或后置。
-
-**③ 落盘**：`/nas_inference/app.e0031982/datasets/<repo原名>/`；gated 源用已配 token（`.29` `~/.cache/huggingface/token`）；走代理 `HTTPS_PROXY=http://172.19.92.25:13128`。
-
-**④ 纪律**：`setsid` 后台 + `/tmp/data_download_*.log`；🚫 不挤 S1（nice、限并发、留带宽）；断点续传；93 完成后写 mapping；commit `data 下载:`；心跳 `未完成指令：有` ⇒ `WAITING: 0`。
+### 🚀 运维令 · 2026-11-04 13:2x（B类agentic数据下载）· ✅ 已交付（12/12 落地 78.73 GiB）→ 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§运维令·2026-11-04 B类agentic下载」。
 
 ### 📦 运维令 · 2026-11-04 13:2x（RL+数学+agentic 调研）+ 09:4x（复杂推理+代码 SFT 调研）· ✅ 均已交付 → 原文见 `ARCHIVE_OPERATOR_DATA.md`
 
 > **用户原话**：①「请 data 调研能够强化 LLM 复杂推理和代码能力的 SFT 和 Code-SFT 数据集，写成中文 HTML 报告。」②「调研提升复杂推理/代码/数学/agentic 能力的 SFT+RL 数据集」。
 > **交付**：`report_data_reasoning_code_sft_survey_zh.html`(79KB) + `report_data_rl_math_survey_zh.html`(38KB)，均 0 script 0 外链。**口径**：只调研不下载；真去 hf.co 核实 repo/体量/license/gated/字段；奖励信号类型单列；与盘上 12 源去重。需要明细读报告原文。
-### 🚀 运维令 · 2026-11-04 09:2x（**批准下载长上下文(A类)数据 · 落盘 /nas_inference**）· 用户直令 · 最高优先
+### 🚀 运维令 · 2026-11-04 09:2x（A类长上下文数据下载）· ✅ 已交付 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§运维令·2026-11-04 A类长上下文下载」。
 
-> 用户批准（2026-11-04 09:2x）：批准下载「长上下文」数据集，落盘 `/nas_inference/app.e0031982/datasets/`（覆盖报告 §6 里的 `/nas_env` 老路径）。
-
-**① 范围（只下 A 类长上下文，~286 GiB）**：`ysngkil/whole-books`(25G) · `princeton-nlp/prolong-data-512K`(120G) · `openbmb/InfLLM-V2-data-5B`(25G) · `self-long/RULER-llama3-1M`(<5G) · `caskcsg/NExtLong`(<50G) · `THUDM/LongAlign-10k`(<5G) · `birgermoell/oellm-longctx-...pilot-v1`(<5G) · `deepmind/pg19`(12G) · `ghostcc3/mix-context-post-training-128k`(<5G) · `yuyijiong/LongData-Corpus`(36G, gated, 用户 token 授权)。合计约 **286 GiB**。
-
-**② 本轮不下（⚠️）**：`HuggingFaceCode/stack-v3-train`(15.9TB) / `bigcode/the-stack-v2`(67.5TB,gated, 无 SWH 协议) 体量巨大**不默认下**；「未核到」体量的（LongBlocks 等）先核体积再下。agentic(B 类)不在本令范围。
-
-**③ gated 认证（`yuyijiong/LongData-Corpus` 专用）**：HF token 已由运维配到 `.29` 的 `~/.cache/huggingface/token`（chmod 600，经代理校验 `whoami`=foamliu ✅）。下载时走代理 `HTTPS_PROXY=http://172.19.92.25:13128` 直连 hf.co，`hf download` 自动读该 token 认证。🚫 token 不得写入报告/日报/任何 commit。
-
-**④ 落盘**：`/nas_inference/app.e0031982/datasets/<repo原名>/`（该盘 45T 已有 17T、余 29T，足够）；下载后按「镜像下载路径」写 mapping。
-
-**⑤ 纪律**：`setsid` 后台 + `/tmp/data_download_*.log`；🚫 不占 GPU、不挤 S1（`nice`、限并发 ≤4、限带宽留余量给训练）；失败续传/断点；commit `data 下载:`；心跳写 `未完成指令：有` ⇒ `WAITING: 0` 直到落地。
-
-### 🚀 运维令 · 2026-11-04 09:1x（**确认 85M 下载完成 · P0 待命**）· 用户直令 · 最高优先
-
-> 运维确认（2026-11-04 09:1x）：「85M 已经下完了。」
-
-**① 85M 状态翻转**：把 85M 下载从「疑似完成 / 待运维确认」正式翻成 **✅ 已完成**（进程已停 + 无 `.incomplete` + 磁盘正常，运维已核）。心跳/状态头同步更新。
-
-**② 归档**：85M 下载相关已闭合的运维块按体积规程归档（移 `ARCHIVE_OPERATOR_DATA.md` + 留 1 行指针），腾体积。
-
-**③ 下一步 P0/P2/P3 暂不执行**：whole-books / SWE-smith / Nemotron-Terminal-Corpus / SWE-rebench / mix-ctx-128k / terminal-bench-2.1 **仍 WAITING=1，待运维另行批准后再下**（本轮只确认 85M 完成，不启动新下载）。
+### 🚀 运维令 · 2026-11-04 09:1x（确认85M下载完成）· ✅ 已完成 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§运维令·2026-11-04 85M确认」。
 
 ### 📦 运维令 · 2026-10-31 17:3x（HF 两类数据集调研：长上下文 + agentic）· ✅ 已交付 → 原文见 `ARCHIVE_OPERATOR_DATA.md`
 

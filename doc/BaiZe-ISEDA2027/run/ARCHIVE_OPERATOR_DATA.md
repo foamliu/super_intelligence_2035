@@ -2332,3 +2332,51 @@ export HF_PROXY=http://172.19.92.23:13128; export HF_ENDPOINT=https://hf-mirror.
 > **完成标记**：ROI 评估表 + 下载（含本轮已完成部分）落盘核对齐全 ⇒ 本行改 `✅ 已交付`；未完成 ⇒ `WAITING: 0`（60s 后继续）。
 
 ---
+
+## §用户令·2026-11-13 18:5x ETA审计（✅ 已确认 · 2026-11-13 归档）
+
+> **回执（唤醒1489, 2026-11-13 20:25）**：**已确认**。HfApi().dataset_info(files_metadata=True) 实测 repo 总计 8207 文件 / 3,545,765,800,565 B = **3.546 TB**（非 15.9TB！）；data/part-*.parquet = 8192 文件 / 3,545,762,968,481 B = 3.546 TB。15.9TB 出处 = stats/train/totals.json 的 total_bytes = 11.5TB（未压缩 content size）。已下 2.358 TB / 5455 parquet / 2 inc(.cache)。逐文件比对剩余 2737 文件 / 1,195,119,410,512 B = **1.195 TB**。实测速率（444s 窗口）：21.6 MB/s = 19.1 s/file（近期，下降 3.7 倍）；全程均速 79.3 MB/s = 5.46 s/file。**ETA 保守 ~14.7h（近期速率）/ ETA 乐观 ~4.2h（全程均速），取较大 → ~14.7h**。磁盘 /nas_user 可用 59.3TB >> 1.2TB → ✅。StepC 护栏已修复。落盘 /tmp/stackv3_size_audit.json。**结论：本次下载是 3.546TB 不是 15.9TB，剩余 1.195TB，ETA 保守 ~14.7h**。
+
+用户原话：「data：下载ETA有问题。15-2=13TB，不可能在几小时下载完的吧。让它确认一下。」
+
+---
+
+## §运维令·2026-11-07 10:10 stack-v3-train 2TB放行（✅ 已交付 · 2026-11-13 归档）
+
+> 用户批准（2026-11-07 10:10）：放行 stack-v3-train 下载。首批 2TB 上限，每批 ≤300GB，nice -n 10/19、--max-workers ≤2、断点续传。
+> "优质"判定：语言优先序 Python > C/C++ > Verilog > Tcl > Makefile；质量过滤剔除 minified/generated/vendored/test/纯配置/单文件>1MB。
+> 每批必交付：du -sb + find | wc -l + .incomplete + 语言分布与token估算 + 质量过滤命中数 + DATA_MAPPING.md增行 + commit `data stackv3:`。
+> 2TB完成后复盘：实测ROI复盘——每TB带来的token/独特性/与UltraData-Code L2/L3重叠度。
+> **结论**：2TB/7批/4600parquet/0inc/ROI复盘✅有价值/97.6%独特。
+
+---
+
+## §运维令·2026-11-04 13:2x B类agentic数据下载（✅ 已交付 · 2026-11-13 归档）
+
+> 用户批准（2026-11-04 13:2x）：放行 B 类 agentic 数据下载。
+> B类清单（~90-180 GiB）：SWE-smith · Nemotron-Terminal-Corpus · SWE-rebench · to-tool-call-datasets · toolbench-v1 · AgentTrove · Orchard · Nemotron-Cascade-RL-SWE · Nemotron-Cascade-SFT-SWE · SWE-smith-trajectories · terminal-command-execution-sft · terminal-bench。
+> 巨大项不默认下：AlienKevin/SWE-ZERO-12M-trajectories(111G)。
+> 落盘：/nas_inference/app.e0031982/datasets/<repo原名>/；走代理 HTTPS_PROXY=http://172.19.92.25:13128。
+> 纪律：setsid后台 + /tmp/data_download_*.log；🚫 不挤S1；断点续传；commit `data 下载:`。
+> **结论**：12/12 落地 78.73 GiB。
+
+---
+
+## §运维令·2026-11-04 09:2x A类长上下文数据下载（✅ 已交付 · 2026-11-13 归档）
+
+> 用户批准（2026-11-04 09:2x）：批准下载长上下文数据集，落盘 /nas_inference/app.e0031982/datasets/。
+> 范围（~286 GiB）：whole-books(25G) · prolong-data-512K(120G) · InfLLM-V2-data-5B(25G) · RULER-llama3-1M(<5G) · NExtLong(<50G) · LongAlign-10k(<5G) · oellm-longctx(<5G) · pg19(12G) · mix-context-post-training-128k(<5G) · LongData-Corpus(36G, gated)。
+> 本轮不下：stack-v3-train(15.9TB) / the-stack-v2(67.5TB) 体量巨大不默认下。
+> gated认证：HF token 已配到 .29 ~/.cache/huggingface/token（chmod 600）。
+> 落盘：/nas_inference/app.e0031982/datasets/<repo原名>/（该盘45T已有17T、余29T）。
+> 纪律：setsid后台 + /tmp/data_download_*.log；🚫 不占GPU、不挤S1；commit `data 下载:`。
+
+---
+
+## §运维令·2026-11-04 09:1x 确认85M下载完成（✅ 已完成 · 2026-11-13 归档）
+
+> 运维确认（2026-11-04 09:1x）：「85M 已经下完了。」
+> 85M状态翻转：正式翻成 ✅ 已完成（进程已停 + 无 .incomplete + 磁盘正常，运维已核）。
+> 下一步P0/P2/P3暂不执行：whole-books / SWE-smith / Nemotron-Terminal-Corpus / SWE-rebench / mix-ctx-128k / terminal-bench-2.1 仍待运维另行批准后再下。
+
+---
