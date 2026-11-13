@@ -7,14 +7,15 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake407（2026-11-13 R407: **zhulong run3 155/158 resolved (success143+fail6+timeout6), 3 left, 1 worker etime168s NO stuck worker; designflow base 5/5 FAIL=0% FINALIZED delivered**; GPU7=vision R9 wave-RL not mine）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-406✅;R407✅(run3 155/158 healthy no stuck worker 4th consecutive+pipeline fully autonomous)
-- 当前动作: wake407 R407:①**zhulong run3 codegen**(batch 2026_1113_101852,success143/fail6/timeout6=155 resolved,102 .py,3 left,1 worker etime168s NO stuck worker) ②**designflow base 5/5 FAIL=0% FINAL delivered**(wake404) ③run2 eval pass_rate=0.0190(3/158) ④pipeline 3 layers alive:autocomplete PID1122770+eval_chain PID1161064+run3 PID1217799 ⑤3 serves UP:8098(base)+8097(SFT step60)+8096(SFT step105 100%util) ⑥tunnel UP(ssh -p3333→TUNNEL_OK)+18096+18098 ⑧GPU7=vision/wave_rl NOT posttrain not touched
-- 下一步: ①run3 codegen complete(3 left)→autocomplete daemon auto eval→runs4-5 auto→eval_chain step60 runs2-5→base runs1-5→final 5run_analysis ②L4 designflow DELIVERED(0% all models base+SFT+DeepSeek,fixed harness) ③zhulong 5-run eval final numbers when pipeline completes
-- 阻塞: BaiZe ckpt inaccessible;P3等pretrain ckpt;zhulong 5-run eval IN PROGRESS(step105 run3/5)
-- 本轮新增产出: R407✅(run3 155/158 healthy no stuck worker 4th consecutive+pipeline fully autonomous confirmed+EXPERIMENTS §L4-zhulong wake407 updated+MEMORY rolled wake403→daily)
-- 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run3/5;designflow base 5/5 DONE=0% delivered);13:40 SFT v39 eval→5-run eval IN PROGRESS
-- git: super_intelligence_2035(commit f1f5daa8b at origin/main,clean rebase-free sync);本轮已交付(wake406 EXPERIMENTS §L4-zhulong+MEMORY+daily)→本轮将交付(wake407 EXPERIMENTS §L4-zhulong+MEMORY+daily)
+- PHASE: posttrain-wake408（2026-11-13 R408: **5run_eval 脚本 3-bug 修复(grep -a / $VENV_PYTHON 启动 / .env-EVAL_FW_DIR 搜索) + run3 eval 恢复 Pass@1=2.53%(4/158); step105 3/5 runs mean±std=0.0274±0.0097; run4 recovery 后台 PID1359141 --wait; run5+ 全自动**; GPU7=vision not mine）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-407✅;R408✅(5run_eval 3bug修复+run3 eval恢复+recovery脚本+run4后台recover)
+- 当前动作: wake408 R408:①**5run_eval.sh 3-bug 修复**(A:grep无-a致binary codegen.log不解析→JSONL丢;B:bare `python`不存在(rc=127)致run_eval.py不启动;C:find $HOME/eda_code_eval错目录致final_report永找不到→改为grep -a/$VENV_PYTHON启动/.env读EVAL_FW_DIR搜output_evaluation) ②**run3 eval 恢复**(run_eval.py纯打分~2s不重跑沙盒→Pass@1=2.53% 4/158,final_report.json入run3/) ③**recovery脚本** baize_posttrain_recover_eval.sh(可复用,--wait轮询) ④**run4后台recover** PID1359141 /tmp/posttrain_recover_run4.log ⑤step105 3/5 mean±std=0.0274±0.0097(run1=0.038 run2=0.019 run3=0.0253) ⑥pipeline:autocomplete PID1122770(run4 codegen中)+eval_chain PID1161064(等step105完→step60→base→5run_analysis)+recover_run4 PID1359141 ⑦3 serves UP:8098(base)+8097(SFT step60)+8096(SFT step105)
+- 下一步: ①run4 codegen完→recover PID1359141自动eval→run5(fixed脚本全自动)→autocomplete summary→eval_chain step60 runs2-5→base runs1-5→final 5run_analysis(mean±std n=5) ②L4 designflow DELIVERED(0% all models,fixed harness) ③zhulong 5-run eval final numbers when pipeline completes
+- 阻塞: BaiZe ckpt inaccessible;P3等pretrain ckpt;zhulong 5-run eval IN PROGRESS(step105 run4/5 pending)
+- 本轮新增产出: R408✅(5run_eval 3bug修复[run/baize_posttrain_5run_eval.sh]+run3 eval恢复[Pass@1=2.53%]+recovery脚本[run/baize_posttrain_recover_eval.sh]+run4后台recover[PID1359141]+EXPERIMENTS §L4-zhulong wake408+MEMORY更新)
+- 未完成指令: L4 2026-11-12(zhulong 5-run eval IN PROGRESS run4/5;designflow base 5/5 DONE=0% delivered);13:40 SFT v39 eval→5-run eval IN PROGRESS
+- git: super_intelligence_2035(commit ae01f83a3 at origin/main,clean rebase-free sync);本轮已交付(wake407)→本轮将交付(wake408: 5run_eval.sh fix+recover_eval.sh+EXPERIMENTS+MEMORY+daily)
+- 🔧 **5run_eval 3-bug (wake408 修复)**:A)grep须带-a(codegen.log含ANSI→binary→"Binary file matches"丢路径);B)须用$VENV_PYTHON启动(本机无bare python,run_eval.py用$PYTHON env起assemble/calculate子进程,需tqdm仅venv有);C)final_report在$EVAL_FW_DIR/output_evaluation/(.env L222)非$HOME/eda_code_eval
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;root cause:flash_attn crashes on CPU meta tensor during FSDP2 init→RANK0 segfault→RANK1 NCCL deadlock;backup `.bak.flash_attn`;venv重建后需重打此patch
 
 

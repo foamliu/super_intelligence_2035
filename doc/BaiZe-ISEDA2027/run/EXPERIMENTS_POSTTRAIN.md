@@ -8482,6 +8482,53 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 
 
 
+### §L4-zhulong (2026-11-13 wake408) 5run_eval script 3-bug fix + run3 eval recovered (Pass@1=2.53%)
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+**Problem found this wake**: the step105 5-run eval pipeline was silently dropping runs. run3 codegen had COMPLETED (155/158, JSONL `~/eda_code_eval/completed_code_generation_2026_1113_101852.jsonl`, 158 lines) but `baize_posttrain_5run_eval.sh` reported `FATAL: no JSONL` and never ran `run_eval.py`, so run3 had NO `final_report.json`. Root cause = **3 bugs in `baize_posttrain_5run_eval.sh`** that each broke the eval step AFTER the (expensive ~3h) codegen succeeded, orphaning every run's codegen output (run1/run2/run3 all had to be hand-recovered by prior wakes):
+
+| # | Bug | Line (old) | Mechanism | Fix |
+|:--|:--|:--|:--|:--|
+| A | grep without `-a` | 80 | `grep -oP '输出文件: \K\S+' codegen.log` — codegen.log has ANSI escapes → grep treats it as **binary**, prints "Binary file … matches" instead of the path → JSONL path never captured | `grep -a -oP …` (binary-safe) |
+| B | bare `python` launcher | 92 | `python scripts/run_eval.py` — `command -v python` is empty on this host (only `python3` + venv) → run_eval.py never launches (rc=127) → no eval, no report | launch with `"$VENV_PYTHON"`; keep `PYTHON="$VENV_PYTHON"` env (run_eval.py uses it for assemble/calculate subprocesses which need tqdm, only in venv) |
+| C | wrong report search dir | 96 | `find "$HOME/eda_code_eval" -name 'final_report*.json'` — but run_eval.py writes to `$EVAL_FW_DIR/output_evaluation/<ts>/final_report.json` (EVAL_FW_DIR from `eda_fastmcp/.env` line 222 = `/home/app.e0031982/code/EDA-Eval-Framework`); `$HOME/eda_code_eval` NEVER contains final_report.json → every run hit "WARNING: no final_report.json" | read `EVAL_FW_DIR` from `.env`, `find "$eval_fw_dir/output_evaluation" -name 'final_report*.json' -newer "$eval_marker"` |
+
+**Verification of fixes**: `bash -n` rc=0; `grep -a` now extracts the path from run3's binary codegen.log; `EVAL_FW_DIR` extraction from `.env` → `/home/app.e0031982/code/EDA-Eval-Framework` (output_evaluation exists); `--dry-run` prints protocol and exits clean.
+
+**run3 eval recovered (no re-codegen)**: `run_eval.py` is PURE SCORING — it reads pre-executed results baked into the codegen JSONL (assemble + calculate, ~2 s), does NOT re-execute in the sandbox and does NOT call the LLM endpoint. So run3 was salvaged by running `run_eval.py` on its existing JSONL (safe, no contention with the concurrently-running run4 codegen):
+```
+cd /home/app.e0031982/code/eda_fastmcp
+PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
+  /home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
+  scripts/run_eval.py --generations ~/eda_code_eval/completed_code_generation_2026_1113_101852.jsonl
+# → 1113: 4/158 pass (2.5%) | generated: 39 ok, 113 fail
+# final_report.json (metrics.pass_rate=0.02531645…) → /tmp/posttrain_5run_eval/step105/run3/final_report.json
+```
+
+**step105 5-run status after fix (authoritative `baize_posttrain_5run_analysis.py --label step105`)**:
+
+| run | result file | Pass@1 | passed/158 | source |
+|:--|:--|:--|:--|:--|
+| 1 | result_summary.json (fallback) | 0.0380 | 6 | wake376b/376c dual eval (manual) |
+| 2 | final_report.json | 0.0190 | 3 | R397 (manual eval) |
+| 3 | final_report.json | 0.0253 | 4 | **wake408 recovered** (this wake) |
+| 4 | — | IN PROGRESS | — | codegen running (old in-memory script → will need recover) |
+| 5 | — | pending | — | will use FIXED script (autonomous) |
+
+→ **3/5 runs: mean±std = 0.0274±0.0097** (run4/run5 pending). `5run_analysis.py` correctly handles both `result_summary.json` (`pass_at_1_rate`) and `final_report.json` (`metrics.pass_rate` / `summary.total_correct_completions`).
+
+**run4 recovery**: run4 was already mid-codegen with the OLD in-memory (buggy) script, so its eval step will fail the same way. Since run_eval.py is pure scoring (safe to run concurrently with run5's codegen), a reusable recovery script `baize_posttrain_recover_eval.sh` was added and launched in the background (`--wait` polls for run4's codegen JSONL, then runs `run_eval.py` + copies `final_report.json`). PID 1359141, log `/tmp/posttrain_recover_run4.log`. This ensures step105 reaches 5/5.
+
+**Impact on pipeline autonomy**: with bugs A/B/C fixed, run5 and ALL subsequent runs (step60 runs 2-5, base runs 1-5) now produce `final_report.json` AUTOMATICALLY — no manual recovery needed. The eval_chain daemon's final `baize_posttrain_5run_analysis.py` is the authoritative 5-run output (the autocomplete daemon's intermediate `5run_summary.json` uses a simpler extractor that under-counts `final_report.json` runs, but it is not the deliverable).
+
+**Reproduce / commands of record**:
+- Bug fix: `run/baize_posttrain_5run_eval.sh` (grep -a, $VENV_PYTHON launcher, .env-derived EVAL_FW_DIR search).
+- Recovery (any run): `bash run/baize_posttrain_recover_eval.sh --label step105 --run <N> [--wait]`.
+- Authoritative 5-run numbers: `python3 run/baize_posttrain_5run_analysis.py --label step105` (reads `/tmp/posttrain_5run_eval/step105/run{1..5}/{final_report,result_summary}.json`).
+
+
+
 ### §L4-designflow (2026-11-13 wake402) Base-Model Baseline on FIXED Harness — Confirms 0% + SFT Regression Signal
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.

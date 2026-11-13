@@ -87,17 +87,32 @@ json.dump(cfg, open('$PROVIDERS_JSON','w'), indent=2)
   cp "$jsonl" "$run_dir/completed_code_generation.jsonl"
   echo "[run $run_n] JSONL: $jsonl"
 
-  # 5. Sandbox eval
+  # 5. Sandbox eval (pure scoring: reads pre-executed results from codegen, ~2s;
+  #    no sandbox re-execution, no LLM-endpoint contention).
+  # NOTE: launch with $VENV_PYTHON — bare 'python' does NOT exist on this host
+  # (command -v python == empty), so the old `python scripts/run_eval.py` failed
+  # silently with rc=127 and produced no final_report.json (R408 bug B).
+  # run_eval.py reads $PYTHON env var to launch its assemble/calculate subprocesses
+  # (assemble needs tqdm, which only the venv has, not system python3).
   echo "[run $run_n] sandbox eval starting..."
-  PYTHON="$VENV_PYTHON" python scripts/run_eval.py --generations "$jsonl" > "$run_dir/eval.log" 2>&1
+  local eval_marker="$run_dir/.eval_start"; touch "$eval_marker"
+  PYTHON="$VENV_PYTHON" "$VENV_PYTHON" scripts/run_eval.py --generations "$jsonl" > "$run_dir/eval.log" 2>&1
   echo "[run $run_n] eval done (rc=$?) $(date '+%F %T')"
 
-  # 6. Copy final report
-  local fr=$(find "$HOME/eda_code_eval" -name 'final_report*.json' -newer "$jsonl" 2>/dev/null | head -1)
+  # 6. Copy final report — run_eval.py writes to
+  #    $EVAL_FW_DIR/output_evaluation/<ts>/final_report.json (EVAL_FW_DIR from $EDA_BASE/.env,
+  #    loaded by run_eval's dotenv). The old code searched $HOME/eda_code_eval which NEVER
+  #    contains final_report.json → every run hit "WARNING: no final_report.json" (R408 bug C).
+  local eval_fw_dir
+  eval_fw_dir=$(grep -E '^EVAL_FW_DIR=' "$EDA_BASE/.env" 2>/dev/null | tail -1 | cut -d= -f2-)
+  eval_fw_dir="${eval_fw_dir:-/home/app.e0031982/code/EDA-Eval-Framework}"
+  local eval_fw_out="$eval_fw_dir/output_evaluation"
+  local fr
+  fr=$(find "$eval_fw_out" -name 'final_report*.json' -newer "$eval_marker" 2>/dev/null | head -1)
   if [ -n "$fr" ]; then
     cp "$fr" "$run_dir/final_report.json"
-    echo "[run $run_n] Pass@1: $(python3 -c "import json;d=json.load(open('$run_dir/final_report.json'));print(d.get('pass_rate',d.get('pass@1','N/A')))" 2>/dev/null || echo N/A)"
-  else echo "[run $run_n] WARNING: no final_report.json"; fi
+    echo "[run $run_n] Pass@1: $(python3 -c "import json;d=json.load(open('$run_dir/final_report.json'));m=d.get('metrics',{});print(m.get('pass_rate', d.get('pass_rate', d.get('pass@1','N/A'))))" 2>/dev/null || echo N/A)"
+  else echo "[run $run_n] WARNING: no final_report.json (checked $eval_fw_out)"; fi
   echo "[run $run_n] === END ==="
   return 0
 }
