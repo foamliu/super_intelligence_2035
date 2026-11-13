@@ -236,6 +236,29 @@ html += f"""</table>
 <tr><td>passed</td><td>{ctp}</td><td>{ctp/max(ctd,1)*100:.1f}%</td></tr>
 <tr><td>oracle</td><td>5/5</td><td>verifier正常</td></tr></table>
 <p>口径: TB-2.1/89 tasks/7-way concurrent(与TB4不可比)。</p>
+<h3>TB-2.1 cline 低分根因 (2026-11-13 用户令排查)</h3>
+<div class="summary" style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px">
+<p><strong>结论</strong>: cline TB-2.1 = 10/89 = 11.2% 的低分 <strong>非模型能力问题</strong>。
+主因 = <strong>网关 Token 额度耗尽</strong>（「本次Token额度已用完，请等待X分钟后重试」），
+占 80 个失败题中的 <strong>65 题 (81%)</strong>。cline run_result finishReason=error,
+iterations=1, inputTokens=0, outputTokens=0 → <strong>零工作 → reward=0</strong>。</p>
+<p><strong>逐题归因</strong>: 额度耗尽 65 题 (81%) | 超时 8 题 (10%) | ECONNRESET 2 题 |
+CLI 解析 bug 1 题 | <strong>真能力差仅 5 题</strong> (其中 3 题所有路均失败=真难题)。</p>
+<p><strong>公平通过率</strong>: 排除额度耗尽后 cline 在 25 题上通过 10 题 = <strong>40%</strong>
+(vs 原始 11.2%)，与 pi (31.4%)、opencode (56.9%) 可比。</p>
+<p><strong>交叉对照</strong>: cline 失败但 pi/opencode 通过的 31 题中, <strong>28 题 (90%)</strong>
+= cline 全部 trial 均额度耗尽 (零机会), 仅 2 题为真能力差。</p>
+<p><strong>根因链</strong>: cline 适配器无 retry/backoff → 网关额度耗尽 → cline 收到错误退出 →
+verifier 无输出文件 → reward=0。cline 在 10 小时集中跑完 89 题 (11:51-21:39), 时间窗与额度耗尽期
+高度重叠; 而 opencode 跨 40 小时、pi 跨 31 小时且有 167 次重试 → 额度有补充窗口。</p>
+<p><strong>与 SWE-bench Verified 74.8% 一致</strong>: SWE-bench 跨多天跑 323 题, 额度有补充;
+TB-2.1 集中 10 小时, 额度无补充 → 同模型不同额度环境。</p>
+<p><strong>修复建议</strong>: ① cline 适配器增加 quota-error retry-with-backoff;
+② cline 单独 rerun (额度充足时), 预计可达 ~30-40%。<strong>值得 rerun</strong>。</p>
+<p style="font-size:0.85em;color:#888">证据: /tmp/tb21_glm53_jobs/cline-patched/ 下 90 个 result.json 逐题分析;
+trace 含「本次Token额度已用完」原文 + iterations=1/0 tokens; 对照 pi/opencode 同题 trace。
+归因红线: 网关额度耗尽 ≠ 模型能力 (§10:10 归因红线)。</p>
+</div>
 <h2>TB-2.1全7路对比</h2>
 <table><tr><th>Route</th><th>Passed</th><th>Done</th><th>Pass%</th></tr>"""
 for nm,(done,passed) in sorted(tb21_data.items(), key=lambda x:-x[1][1]):

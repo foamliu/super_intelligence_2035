@@ -60,12 +60,127 @@ def count_route(h):
     return upass, len(tasks), trials, errors
 
 
+# ---------------------------------------------------------------------------
+# §cline TB-2.1 根因归因 (2026-11-13 用户令)
+# ---------------------------------------------------------------------------
+
+def _cline_attrtribution():
+    """逐题归因 cline TB-2.1 失败，返回 (cats_dict, fair_passed, fair_attempted,
+    quota_lost_tasks, cross_fail_detail)."""
+    import re
+    d = JOBS / "cline-patched"
+    if not d.exists():
+        return {}, 0, 0, [], []
+    # collect per-task best result + failure category
+    task_data = {}  # task -> list of trial dicts
+    for f in d.rglob("result.json"):
+        if "/20" not in str(f):
+            continue
+        try:
+            r = json.loads(f.read_text())
+        except Exception:
+            continue
+        vr = r.get("verifier_result") or {}
+        rew = vr.get("rewards", {}).get("reward", 0)
+        ei = r.get("exception_info") or {}
+        exc_type = ei.get("exception_type", "")
+        ar = r.get("agent_result") or {}
+        meta = ar.get("metadata") or {}
+        stdout = meta.get("stdout", "") or ""
+        exit_code = meta.get("exit_code")
+        has_run_result = '"run_result"' in stdout
+        quota = "额度已用完" in stdout or "Token额度" in stdout
+        econn = "ECONNRESET" in stdout
+        iter_match = re.search(r'"iterations":(\d+)', stdout)
+        iterations = int(iter_match.group(1)) if iter_match else -1
+        tn = str(f.parent.name).split("__")[0]
+        task_data.setdefault(tn, []).append({
+            "reward": rew, "exc_type": exc_type, "exit_code": exit_code,
+            "has_run_result": has_run_result, "quota": quota, "econn": econn,
+            "iterations": iterations, "stdout_len": len(stdout),
+        })
+
+    cats = {"quota_exhausted": 0, "timeout": 0, "econnreset": 0,
+            "cli_parse_bug": 0, "real_ability": 0, "passed": 0}
+    fair_passed = 0
+    fair_attempted = 0
+    quota_lost = []
+    for tn, trials in task_data.items():
+        best = max(t["reward"] for t in trials)
+        if best == 1.0:
+            cats["passed"] += 1
+            fair_passed += 1
+            fair_attempted += 1
+            continue
+        # classify failure
+        all_quota = all(t["quota"] for t in trials)
+        has_timeout = any(t["exc_type"] == "AgentTimeoutError" for t in trials)
+        has_econn = any(t["econn"] and not t["quota"] for t in trials)
+        has_cli_bug = any(
+            t["exit_code"] == 1 and not t["has_run_result"]
+            and "unknown option" in (t.get("stdout", "") or "").lower()
+            for t in trials
+        )
+        if all_quota:
+            cats["quota_exhausted"] += 1
+            quota_lost.append(tn)
+        elif has_timeout and not has_econn:
+            cats["timeout"] += 1
+        elif has_econn:
+            cats["econnreset"] += 1
+        elif has_cli_bug:
+            cats["cli_parse_bug"] += 1
+        else:
+            cats["real_ability"] += 1
+        # fair = tasks where cline got at least one non-quota trial
+        if not all_quota:
+            fair_attempted += 1
+
+    # cross-fail: cline fail but pi/opencode pass
+    pi_tasks = _peer_passed("pi")
+    oc_tasks = _peer_passed("opencode")
+    cross = []
+    for tn, trials in task_data.items():
+        best = max(t["reward"] for t in trials)
+        if best == 1.0:
+            continue
+        if tn not in pi_tasks and tn not in oc_tasks:
+            continue
+        all_quota = all(t["quota"] for t in trials)
+        cross.append({
+            "task": tn, "pi": tn in pi_tasks, "oc": tn in oc_tasks,
+            "quota": all_quota,
+        })
+    return cats, fair_passed, fair_attempted, quota_lost, cross
+
+
+def _peer_passed(h):
+    """Return set of unique task names that passed for harness h."""
+    d = JOBS / h
+    passed = set()
+    if d.exists():
+        for f in d.rglob("result.json"):
+            if "/20" not in str(f):
+                continue
+            try:
+                r = json.loads(f.read_text())
+            except Exception:
+                continue
+            vr = r.get("verifier_result") or {}
+            rew = vr.get("rewards", {}).get("reward", 0)
+            if rew == 1.0:
+                tn = str(f.parent.name).split("__")[0]
+                passed.add(tn)
+    return passed
+
+
 def esc(s):
     return (str(s).replace("&", "&amp;").replace("<", "&lt;")
             .replace(">", "&gt;").replace('"', "&quot;"))
 
 
-def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now):
+def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
+                attr_data=None):
     css = ("body{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;"
            "max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}"
            "h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}"
@@ -121,6 +236,89 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now):
              "(exception_info 非空, 非能力). 网关 ALL 200, 非 429. "
              "reward=0 且无 exception = 能力差 (真实做错).</p>"
              "<p><strong>7 路纪律</strong>: 7 路不得替换/合并 (§15:2x 铁律).</p></div>")
+    # ---- §cline TB-2.1 根因归因 (2026-11-13 用户令) ----
+    if attr_data:
+        cats, fair_p, fair_a, quota_lost, cross = attr_data
+        total_fail = sum(cats.values()) - cats["passed"]
+        H.append("<h2>cline TB-2.1 低分根因归因 (2026-11-13 用户令)</h2>")
+        H.append(f"<div class='caveat'><p><strong>结论一句话</strong>: "
+                 f"cline TB-2.1 = 10/89 = 11.2% 的低分 "
+                 f"<strong>非模型能力问题</strong>，主因 = "
+                 f"<strong>网关 Token 额度耗尽</strong>（本次Token额度已用完）"
+                 f"占失败 {cats['quota_exhausted']}/{total_fail} = "
+                 f"{cats['quota_exhausted']/max(total_fail,1)*100:.0f}%。"
+                 f"排除额度耗尽后 cline 公平通过率 = "
+                 f"{fair_p}/{fair_a} = "
+                 f"{fair_p/max(fair_a,1)*100:.0f}%，与同 backbone 同路（pi/opencode）"
+                 f"可比。</p></div>")
+        H.append("<table><tr><th>失败类别</th><th>题数</th><th>占比(失败)</th>"
+                 "<th>说明</th></tr>")
+        cat_desc = {
+            "quota_exhausted": "网关返回「本次Token额度已用完，请等待X分钟后重试」; "
+                               "cline run_result finishReason=error, iterations=1, "
+                               "inputTokens=0, outputTokens=0 → 零工作 → reward=0. "
+                               "归因红线: 网关额度耗尽 ≠ 模型能力.",
+            "timeout": "AgentTimeoutError (900s 超时), cline 挂起无响应; "
+                       "可能与网关无响应相关.",
+            "econnreset": "网关 ECONNRESET (连接中断), cline 已做部分工作但被截断.",
+            "cli_parse_bug": "cline CLI 将 task instruction (以 '-' 开头) 解析为 "
+                             "未知选项 → 适配器/CLI 解析 bug, 非能力.",
+            "real_ability": "cline 真正运行了 (有 run_result, 有 token 消耗) 但 "
+                            "verifier 判 fail = 真能力差.",
+            "passed": "verifier reward=1.0 (通过).",
+        }
+        for k in ["passed", "quota_exhausted", "timeout", "econnreset",
+                  "cli_parse_bug", "real_ability"]:
+            v = cats.get(k, 0)
+            pct = f"{v/max(total_fail,1)*100:.0f}%" if k != "passed" else "—"
+            cls = "pass" if k == "passed" else ("fail" if k == "real_ability" else "warn")
+            H.append(f"<tr><td class='{cls}'>{k}</td><td>{v}</td><td>{pct}</td>"
+                     f"<td style='font-size:0.9em'>{esc(cat_desc.get(k,''))}</td></tr>")
+        H.append("</table>")
+        H.append(f"<p><strong>公平分析</strong>: 排除全部 trial 均为额度耗尽的 "
+                 f"{cats['quota_exhausted']} 题后, cline 在剩余 {fair_a} 题上通过 "
+                 f"{fair_p} 题 = <strong>{fair_p/max(fair_a,1)*100:.0f}%</strong> "
+                 f"(vs 原始 10/89=11.2%)。与 pi (27/86=31.4%)、opencode (33/58=56.9%) "
+                 f"的差距大幅缩小。</p>")
+        if cross:
+            quota_cross = sum(1 for c in cross if c["quota"])
+            real_cross = sum(1 for c in cross if not c["quota"])
+            H.append(f"<p><strong>交叉对照 (cline 失败但 pi/opencode 通过)</strong>: "
+                     f"共 {len(cross)} 题, 其中 <strong>{quota_cross} 题</strong>"
+                     f"= cline 全部 trial 均额度耗尽 (零机会), "
+                     f"仅 {real_cross} 题为 cline 真正运行后失败。</p>")
+            H.append("<details><summary>交叉对照明细 (点击展开)</summary>"
+                     "<table><tr><th>题目</th><th>cline</th><th>pi</th>"
+                     "<th>opencode</th><th>额度耗尽?</th></tr>")
+            for c in cross[:20]:
+                H.append(f"<tr><td>{esc(c['task'])}</td><td class='fail'>FAIL</td>"
+                         f"<td class='{'pass' if c['pi'] else 'fail'}'>"
+                         f"{'PASS' if c['pi'] else '—'}</td>"
+                         f"<td class='{'pass' if c['oc'] else 'fail'}'>"
+                         f"{'PASS' if c['oc'] else '—'}</td>"
+                         f"<td class='{'warn' if c['quota'] else ''}'>"
+                         f"{'是(零机会)' if c['quota'] else '否'}</td></tr>")
+            if len(cross) > 20:
+                H.append(f"<tr><td colspan=5>... 还有 {len(cross)-20} 题</td></tr>")
+            H.append("</table></details>")
+        H.append("<div class='info'><p><strong>根因链</strong>: "
+                 "cline 适配器无重试机制 → 网关额度耗尽时 cline "
+                 "收到「额度已用完」错误 → 产生 run_result(finishReason=error, "
+                 "iterations=1, 0 tokens) → 适配器检测到 run_result 让 verifier "
+                 "评分 → verifier 发现无输出文件 → reward=0。"
+                 "<br><strong>为何 cline 受影响远大于 pi/opencode</strong>: "
+                 "① cline 在 10 小时内集中跑完 89 题 (11:51-21:39), "
+                 "而 opencode 跨 40 小时 (2+ 天)、pi 跨 31 小时且有 167 次 trial "
+                 "(含重试) → cline 时间窗与额度耗尽期高度重叠; "
+                 "② cline 适配器无 retry/backoff, 每题仅一次机会; "
+                 "③ 7 路 + SWE-bench Verified 共享同一网关 key → 同一额度池。</p>"
+                 "<p><strong>与 SWE-bench Verified 74.8% 的一致性</strong>: "
+                 "cline SWE-bench 跑了 323 题跨越多天, 额度有补充窗口; "
+                 "TB-2.1 集中 10 小时爆发, 额度无补充 → 同一模型, 不同额度环境。</p>"
+                 "<p><strong>修复建议</strong>: ① cline 适配器增加 "
+                 "quota-error retry-with-backoff (等待网关提示的时间后重试); "
+                 "② 或 cline 单独 rerun (网关额度充足时), 预计可达 ~30-40%。"
+                 "值得 rerun 以获得干净的 cline TB-2.1 数字。</p></div>")
     H.append(f"<hr><p style='text-align:center;color:#7f8c8d;font-size:0.9em'>"
              f"BaiZe Harness TB-2.1 7way {now} | glm-5.3-flash | 正文写 cline | "
              f"数据源: /tmp/tb21_glm53_jobs (gen_report_tb21_7way.py)</p>")
@@ -147,7 +345,9 @@ def main():
     total_trials = sum(r[3] for r in rows)
     total_eval = sum(r[2] for r in rows)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
-    _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now)
+    attr_data = _cline_attrtribution()
+    _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
+                attr_data=attr_data)
 
 
 if __name__ == "__main__":
