@@ -1593,3 +1593,33 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793934795764_snqni	cong3li	hfeg0pkn004	21	analog_context	parked		2026-11-13 11:22	r608 peek: circuit-conn-check Q&A (FBCC straping) not produce-task
 1794224570631_afkmz	zjqiao	hfeg0pgn043	20	analog_context	parked		2026-11-13 11:22	r608 peek: sim_setup folder analysis Q&A not produce-task
 1794215078177_pawzp	zlhou	hfeg0pjn200	33	analog_context	parked		2026-11-13 11:22	r608 peek: file-view exploration Q&A not produce-task
+1791503922175_spcmy	e02141	hfeg0pkn001	220	analog_context	parked		2026-11-13 12:10	r611 peek: study/summarize sentaurus deck examples (analysis, not produce)
+1790148708525_q8hpz	xinqiaoz	hfeg0pkn005	218	analog_context	parked		2026-11-13 12:10	r611 peek: handoff skill resume from HANDOFF doc (continuation, not standalone produce)
+1792041599361_ls9i0	xxchen	hfeg0pkn001	196	analog_context	parked		2026-11-13 12:10	r611 peek: handoff 续接备注 QA_Pattern_tool line_end_space (continuation, not produce)
+1793954724282_taaak	e0039102	hfeg0plg74	179	analog_context	parked		2026-11-13 12:10	r611 peek: Q&A 能在这个路径下启动Aether吗 (not produce)
+1793948491553_gorts	e0039102	hfeg0plg74	178	analog_context	parked		2026-11-13 12:10	r611 peek: Q&A same as taaak (start Aether, not produce)
+1792991967986_5ze4m	miccao	hfeg0plg37	153	waveform	parked		2026-11-13 12:10	r611 peek: skill-driven calibre-drc-log-analysis workflow (skill-driven, not clean produce)
+1791636307671_wiglh	jason17w	hfeg0pnd002	141	analog_context	parked		2026-11-13 12:10	r611 peek: run-regression run_step2_2 with uvs (verification/A-domain, not D)
+1793338749855_38gcn	e0027537	hfeg0pgn145	128	analog_context	parked		2026-11-13 12:10	r611 peek: Q&A 当前路径是什么 (pure Q&A)
+1794189131752_fe4fr	e0039102	hfeg0plg74	114	analog_context	parked		2026-11-13 12:10	r611 peek: meta task 找到并总结/压缩对话 (analysis, not produce)
+1793849976585_cw8k2	adaml	hfeg0pkn002	112	schematic_netlist	parked		2026-11-13 12:10	r611 peek: skill-driven calibre-lvs workflow (skill-driven, not clean produce)
+1793709033851_abprg	e0017906	hfeg0plg49	161	analog_context	parked		2026-11-13 12:10	r611 peek: SKILL.md step-execution cm1_fc_WrApFIFO signal analysis (user drives steps, not clean produce)
+1793878065459_mpszz				analog_context	parked		2026-11-13 12:10	r611 peek: session NOT FOUND on .75 at expected path
+1786589935783_6u6yk				analog_context	parked		2026-11-13 12:10	r611 peek: session NOT FOUND on .75 at expected path
+1793944646737_eb49z		hfeg0plg(172.16.8.190)		analog_context	parked		2026-11-13 12:10	r611 peek: ssh to 172.16.8.190 timed out, could not peek
+1791602523481_i33cs	rongtaoy	hfeg0pkn002	92	schematic_netlist	parked		2026-11-13 12:11	r611 peek: Q&A 解释 coupling_compare 脚本都干啥 (analysis, not produce)
+1792546653992_vwgeo	deniss	hfeg0plg91	74	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A @gen_run.py 分析文件功能 (analysis, not produce)
+1791983748341_mx4t6	colinxu	hfeg0plg55	69	layout_aether	parked		2026-11-13 12:11	r611 peek: CLEAN produce (add TOP label to open cell+save) BUT view=and2Lx1/layout = layout_aether (shard C), wrong domain for D
+1785807430385_n4nt5	t0002638	hfeg0plg49	64	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 172.16.8.106:64657 端口是不是通的 (not produce)
+1792388192011_xy2jx	colinxu	hfeg0plg55	63	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 解释 zhulong agent policy destructivePatterns 作用 (analysis)
+1793611847118_481m5	sinanz	hfeg0pkn005	60	schematic_netlist	parked		2026-11-13 12:11	r611 peek: D-domain schematic rename I_nand2 PinB/netB to input1_ZL BUT original incomplete (investigation only, no save) + skill-learning preamble + needs live Aether cell asset (not feasible parser-pattern in time)
+1793955202675_c4bja	e0039102	hfeg0plg74	58	analog_context	parked		2026-11-13 12:11	r611 peek: handoff 对话卡住了找到并接着执行 (continuation, not produce)
+1792066077921_ccxtr	colinxu	hfeg0plg55	55	schematic_netlist	parked		2026-11-13 12:11	r611 peek: Q&A 查看当前电路信息 (analysis, not produce)
+1786524631640_pi18b	e0014566	hfeg0pkn001	53	schematic_netlist	parked		2026-11-13 12:11	r611 peek: debug 为啥 view 被 lock 能否释放 (diagnostic, no clear artifact deliverable)
+1792113562815_feok1	adaml	hfeg0pkn002	33	schematic_netlist	parked		2026-11-13 12:11	r611 peek: skill-driven EDA Agent 自动化 DomainSkill (skill-driven, not clean produce)
+1792655347922_nb078	hongl	hfeg0plg76	30	analog_context	parked		2026-11-13 12:11	r611 peek: 打开VIRTUOSO (open app, not produce)
+1785985110283_10ne1	e0014566	hfeg0pkn001	24	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 看下版图的情况都包含什么 (analysis, not produce)
+1793958513330_5svkc	e0039102	hfeg0plg74	26	analog_context	parked		2026-11-13 12:11	r611 peek: handoff 对话卡住了找到并继续 (continuation, not produce)
+1789647055494_9imo1	rongjiez	hfeg0plg54	45	schematic_netlist	parked		2026-11-13 12:11	r611 peek: debug pyaether 脚本结果不一致,先不要修改 (explicit no-modify debug)
+1791714944861_r8u7j	e0014566	hfeg0pkn001	38	schematic_netlist	parked		2026-11-13 12:11	r611 peek: first turn nihao greeting (no produce task in first turn)
+1792571639391_fowlb	dorswu	hfeg0pkn004	30	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 分析 SA 版图列出可修改的地方 (analysis, not produce)
