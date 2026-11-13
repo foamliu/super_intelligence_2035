@@ -727,3 +727,6 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794485932332_drf0r	e0047488	hfeg0pkn003	268	physical_verify	case	EDA-Eval-DesignFlow-JsonGdsDrcPipe-001	2026-11-13 18:16	
 1794485932332_ef68k					parked		2026-11-13 18:01	near-dup of drf0r (same kw/user)
 1794484297578_vvdk8					parked		2026-11-13 18:01	near-dup of drf0r (same kw/user)
+1789621916894_m8ndm	ellawu	10.129.2.14	97	layout_aether	parked		2026-11-13 18:39	r527 peek REJECT: code-review Q&A (pinyin 'zhegejiaobenyoushenmewentima' on attached IMCleFillImplantDrc.py), not produce-task
+1792981991715_yaddy	xinqiaoz	10.129.2.14	277	physical_verify	parked		2026-11-13 18:39	r527 peek REJECT: agent-infra design (handoff/flight-recorder mechanism for zhulong), not EDA produce-task; drc/pdk kw from codebase
+1793604943151_j1mi3	e0047488	10.129.2.10	38	physical_verify	parked		2026-11-13 18:39	r527 peek REJECT: zhulong LLM-adapter integration (llm_adapter.py/agent.py/_patch_llm.py), software infra not C-domain EDA produce-task
