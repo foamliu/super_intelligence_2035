@@ -38,12 +38,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-  <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 181k+/700k, ~760B tokens）</div>
+        <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 194.6k/700k, ~816B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-12</span>
+    <span>📅 2026-11-14</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈181.4k / 700k(25.9%) · step~7.2s · loss~2.02 · 0NaN/0skip · lr-decay-iters=0(stable段) · GPU 8×100%/75GB · ✅ 170k L1 eval 完成(57.75%) · 180k eval 运行中(~65min, llama-server PID1673374 + lm_eval PID1682068)</span>
-    <span>📊 L1: 17 ckpt ✅(160k=58.13%峰值,170k=57.75%) · 180k eval运行中(~65min) | L2: 🟢<b>HF transformers 五重验证全部完成</b>: HumanEval HF=15.0%(3/20)✅ + GSM8K HF=10.0%(1/10)✅ + MBPP HF=5.0%(1/20)✅ + BBH HF=3.3%(1/30)✅ + <b>MATH HF=0.0%(0/10)✅</b> → <b>llama.cpp SSM bug是0%主因(五任务验证)</b> · MMLU=23.16%(≈随机,MCQ) | L3: 🔴TB smoke 0/2(pipeline✅,生成退化致agent无法编辑文件) | L4: 🟦<b>HANDOFF→post-train</b>(2026-11-12用户令·隧道4次复验OK·不再做SSH/资源调查)</span>
+    <span>🔥 训练 iter≈194.64k / 700k(27.8%) · step~7.0s · loss~2.01 · 0NaN/0skip · lr-decay-iters=0(stable段) · GPU 8×88-100%/75GB · ✅ L1 19/20 ckpt done(190k=58.13%) · 200k autoqueue RUNNING(PID850714, ETA~13:35)</span>
+    <span>📊 L1: 19 ckpt ✅(160k=58.13%峰值,190k=58.13%,180k=57.25%) · 200k autoqueue运行中 | L2: 🟢<b>HF transformers 五重验证全部完成</b>: HumanEval HF=15.0%(3/20)✅ + GSM8K HF=10.0%(1/10)✅ + MBPP HF=5.0%(1/20)✅ + BBH HF=3.3%(1/30)✅ + <b>MATH HF=0.0%(0/10)✅</b> → <b>llama.cpp SSM bug是0%主因(五任务验证)</b> · MMLU=23.16%(≈随机,MCQ) | L3: 🔴TB smoke 0/2(pipeline✅,生成退化致agent无法编辑文件) | L4: 🟦<b>HANDOFF→post-train</b>(2026-11-12用户令·隧道4次复验OK·不再做SSH/资源调查)</span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
