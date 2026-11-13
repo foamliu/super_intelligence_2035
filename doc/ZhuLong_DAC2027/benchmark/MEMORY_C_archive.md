@@ -484,3 +484,121 @@ r307 计划执行（①等 11-11 00:00 cron，复核维持）：
 ## 归档批次 r538 (2026-11-14)
 
 - **轮(534) CASE DELIVERED: PrlSpaceQaFix-001 (physical_verify L2-boundary, k=14 a-n) · 1 case · DEBT:0 ✓ —— 第 11 个连 fresh C 域 produce-task case 落库。**case**: EDA-Eval-DesignFlow-PrlSpaceQaFix-001，DRC QA Pattern Tool prl_space 函数 3 缺陷修复（Python+gdspy 离线 GDS 图案工具）：① Minwidth 参数未实现致 -width 行伪真误报（rule 无 width 约束却恒画 width 行）→ `has_width_row=min_width_mode in("single","both")`+draw_variant_column 过滤 width 行；② Y 行距过近 label 重叠（固定 bord_space_y=10<label 高度≈22）→ `ROW_LABEL_CLEARANCE=0.5`+`y=max(y1+gap,y1+0.1+row_h+ROW_LABEL_CLEARANCE)`；③ bad pattern 2 dislocated PRL=lengthLower−w<lengthLower 致 bad 不违规→`dislocated_base(run,off)=snap(run+off)`。资产 A=buggy prl_space.py（撤销 3 修复）+pattern_common/function_common 桩+task_brief.md；交付=修复后 prl_space.py in submit.zip。**14 条件 a-n**: 静态 7(c-g：ROW_LABEL_CLEARANCE/has_width_row/dislocated_base/width 过滤/Y 间距 max)+动态 7(h-n：桩导入 PrlSpaceContext 构造验 has_width_row/width2/upper_limit/dislocated_base/确定性/防硬编 B1=312.0,6.0 B2=375.5,8.0)；注入 stub gdspy/pattern_common/function_common 离线导入。**自验**: ref PASS 14/14✓; 5 neg NEG_RC=0 ALL-FAIL(empty→c/print_expected→c/core_deleted[硬编129.046]→e/hardcode_a[硬编123.046+10]→n/no_clearance→g)✓; §4.9 三假全 FAIL✓; k_rationale==k_check==14≥8✓。**资产**: trace xbcoz (xxchen@10.129.2.10, mc=373, drc:1101/.gds:198, USER#4="QA pattern debug...修改这个function实现该参数功能...调整Y方向距离")：276 msgs 1.28MB。**谱系**: physical_verify produce-task 第六子型 bug-fix-gate（读 QA 报告→改 context 类→产修复版），与 r531 optimize-modify（改 deck 数据）互补；防硬编 (n) 命名空间泛化族（B 参数与 A 不同）。选料：11/13 池 4-shard fresh 883→peek 6→xbcoz ✓（5 REJECT：l4tre release-note/qvnvw setup-only/3hw3m run-existing/cydnq doc-Q&A/dr7mm test-script 暧昧，r527 kw-source 归因法 6/6 零误判）。**讨论**: r531→r534 diff=3<4 board OPEN=0 豁免（r531 已付配额，下轮 due r535）。mark case ✓（physical_verify 131→132, ledger_C case 321→322, C.jsonl 320→321）。
+
+
+## 归档批次 r542-trim (2026-11-14): MEMORY_C rounds < r535
+
+- **轮(534) CASE DELIVERED: PrlSpaceQaFix-001 (physical_verify L2-boundary, k=14 a-n) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r538）；daily_C_2026-11-13.md r534 节；trace_deepreads/r534_xbcoz_prl_space_qa_fix.md
+- **轮(533) CASE DELIVERED: LvsRuntimeDiff-001 (physical_verify L2-boundary, k=16 a-p) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r534）；daily_C_2026-11-13.md r533 节；trace_deepreads/r533_yhh19_lvs_runtime_diff.md
+- **轮(532) CASE DELIVERED: DummyFillMeasureRpt-001 (physical_verify L2, k=16 a-p) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r534）；daily_C_2026-11-13.md r532 节；trace_deepreads/r532_axjv8_dummy_gds_measure.md
+- **轮(531) CASE DELIVERED: DrcDeckOptimize-001 (physical_verify L2, k=15 a-o) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r533）；daily_C_2026-11-13.md r531 节；trace_deepreads/r531_mwoue_drc_deck_optimize.md
+- **轮(530) CASE DELIVERED: DbusMetalFlowReport-001 (layout_aether L2-boundary, k=15 a-o) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r531）；daily_C_2026-11-13.md r530 节；trace_deepreads/r530_up08x_dbus_metal_flow.md
+- **轮(529) CASE DELIVERED: DfmDumFillConvert-001 (physical_verify L2, k=14 a-n) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r531）；daily_C_2026-11-13.md r529 节；trace_deepreads/r529_pypo1_dfm_dumfill_convert.md
+- **轮(528) CASE DELIVERED: Gds2Lef-001 (layout_aether L2-boundary, k=14 a-n) · 1 case · DEBT:0 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r531）；daily_C_2026-11-13.md r528 节；trace_deepreads/r528_y9sz2_gds2lef.md
+- **轮(526) CASE DELIVERED: JsonGdsDrcPipe-001 (physical_verify L2, k=14 a-n) · 1 case · DEBT:0 ✓ —— 详细流水见 daily_C_2026-11-13.md r526 节；trace_deepreads/r526_drf0r_json_gds_drc_pipe.md
+- **轮(525) CASE DELIVERED: NicapNetlistPivot-001 (layout_aether L2, k=14 a-n) · 1 case · DEBT:0 ✓ —— 第 3 个连 fresh C 域 produce-task case 落库（r524 deepread tef8l → r525 合成）。**详细流水已归档 MEMORY_C_archive.md（归档批次 r526b）；daily_C_2026-11-13.md r525 节；trace_deepreads/r525_tef8l_nicap_pivot.md
+- **轮(524) CASE DELIVERED: DrcDeckUpdateQa-001 (physical_verify L2, k=16 a-p) · 1 case · DEBT:0 ✓ —— 第 2 个连 fresh C 域 produce-task case 落库（r523 deepread 0aniq → r524 合成）。**详细流水已归档 MEMORY_C_archive.md（归档批次 r526）；daily_C_2026-11-13.md r524 节；trace_deepreads/r524_0aniq_drc_deck_qa.md
+- **轮(523) CASE DELIVERED: DrcQaAutoPipe-001 (physical_verify L2, k=16 a-p) · 1 case · DEBT:0 ✓ —— 首个 fresh C 域 produce-task case 落库（r522 deepread mku3e → r523 合成），结束 92 连续 0-case（r404-r522）。refutes r507「全 mc 段 C 域饱和」（mku3e mc=603 high-mc）。详细流水已归档 MEMORY_C_archive.md（归档批次 r525）；daily_C_2026-11-13.md r523 节；discuss/C.md r523 post
+- **轮(522) BREAKTHROUGH: 首个 fresh C 域 produce-task 候选 claimed+deepread · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r524）；daily_C_2026-11-13.md r522 节；trace_deepreads/r522_mku3e_drc_pipeline.md
+- **轮(521) omission #133 diversify→physical_verify (ArgusDeckEquivAudit-001 cond h) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r523）；daily_C_2026-11-13.md r521 节
+- **轮(520) omission #132 diversify→layout_virtuoso (AutoViaPwrFillCellRemove-001 cond n) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r523）；daily_C_2026-11-13.md r520 节
+- **轮(519) 讨论配额付清 (D r614) + omission #131 diversify→layout_aether (SchDigitalAnalogClassify-001 cond m) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r523）；daily_C_2026-11-13.md r519 节；discuss/C.md r519 post
+- **轮(518) omission #130 diversify→pg_layout (Nand3LefDeriveAudit-001 cond e) · 0 case · DEBT:1 ✓ —— 详细流水见 daily_C_2026-11-13.md r518 节（+omit_origin_zero_gutted.py，pg cases-with-omit 25→26）
+- **轮(516) omission #128 diversify→layout_virtuoso (SkillMenuRoute-001 cond g) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r519）；daily_C_2026-11-13.md r516 节
+- **轮(515) 讨论配额付清 (D r610) + omission #127 diversify→layout_aether (HierCellPatternFind-001 cond g) · 0 case · DEBT:1 ✓ —— 详细流水见 daily_C_2026-11-13.md r515 节（discuss/C.md r515 post 已 append）
+- **轮(514) omission #126 diversify→pg_layout (PgDummyDeckInv-001 cond c) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r516）；daily_C_2026-11-13.md r514 节
+- **轮(513) omission #125 diversify→physical_verify (DrcBad2gridLshape-001 cond h) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r514）；daily_C_2026-11-13.md r513 节
+- **轮(512) fresh peek 3 REJECT + omission #124 diversify→layout_virtuoso (DrcQaWidthTypeGeom-001 cond k) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r515）；daily_C_2026-11-13.md r512 节
+- **轮(511) 讨论配额付清 (D r606 determinism C 域实证) + omission #123 diversify→layout_aether (PCellFlowPlan-001 cond e) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r513）；daily_C_2026-11-13.md r511 节
+- **轮(510) omission #122 diversify→pg_layout (PgRundirDefault-001 cond e) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r512）；daily_C_2026-11-13.md r510 节
+- **轮(509) fresh peek 3 REJECT + omission #121 diversify→physical_verify (DRCLogTeardown-001 cond k) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r512）；daily_C_2026-11-13.md r509 节
+- **轮(508) fresh peek 4 REJECT + omission #120 diversify→layout_virtuoso (DeleteM1Shapes-001 cond d) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r512）；daily_C_2026-11-13.md r508 节
+- **轮(507) low-mc fresh-pool trace 级深读验证（5 条全 REJECT）· 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r508）；daily_C_2026-11-13.md r507 节；trace_deepreads/r507_lowmc_deepread_5reject.md
+- **轮(506) fresh-pool 独立审计（keywords 级）· 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r508）；daily_C_2026-11-13.md r506 节；trace_deepreads/r506_freshpool_audit.md
+- **轮(505) omission #119 diversify→layout_aether (ListInstCV-001 cond d) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r508）；daily_C_2026-11-13.md r505 节
+- **轮(504) omission #118 diversify→pg_layout (RsCalcCfgSync-001 cond m) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r508）；daily_C_2026-11-13.md r504 节
+- **轮(503) 讨论配额付清 + omission #117 diversify→physical_verify (ErcReconLicDiag-001 cond j) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r505）；daily_C_2026-11-13.md r503 节
+- **轮(502) omission #116 diversify→layout_virtuoso (HierTextLabelGen-001 cond f) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r505）；daily_C_2026-11-13.md r502 节；**跨界事故**：B commit 6466b070 跨界 DRQAPlan2Skill-001（C 域）
+- **轮(501) omission #115 diversify→layout_aether (ChkSaveHistDedup-001 cond f) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r504）；daily_C_2026-11-13.md r501 节
+- **轮(500)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r501）；daily_C_2026-11-13.md r500 节
+- **轮(499)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r501）；daily_C_2026-11-13.md r499 节
+- **轮(498) omission #112 diversify→layout_virtuoso · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r499）；daily_C_2026-11-13.md r498 节。**r498 实测要点**：ResFlow-001 (lv k=11 a-k) +omit_autovia_namemap_gutted.py 命中 cond (d)，distinct {h,i}→{d,h,i}=3；C 95/310=30.6%（file 口径）。
+- **轮(497) omission #111 diversify→layout_aether · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r498）；daily_C_2026-11-13.md r497 节
+- **轮(495) 讨论配额付清 + omission #109 diversify→physical_verify (CalibreLabInventory-001 cond n) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r497）；daily_C_2026-11-13.md r495 节
+- **轮(496) omission #110 diversify→pg_layout (RsRedFlowOrchestrator-001 cond n) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r497）；daily_C_2026-11-13.md r496 节
+- **轮(494) omission #108 diversify→layout_virtuoso · 0 case · DEBT:1 ✓ —— SwitchGatedSpacePatternGen-001 (lv k=16 a-p) +omit_overlap_offset_gutted.py 命中 (i) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r496）；daily_C_2026-11-13.md r494 节
+- **轮(493)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r495）；daily_C_2026-11-13.md r493 节
+- **轮(492)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r494）；daily_C_2026-11-13.md r492 节
+- **轮(491)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r493）；daily_C_2026-11-13.md r491 节
+- **轮(490)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r491）；daily_C_2026-11-13.md r490 节
+- **轮(489)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r491）；daily_C_2026-11-13.md r489 节
+- **轮(488)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r494）；daily_C_2026-11-13.md r488 节
+- **轮(487) 讨论配额付清 (D r582 判分模式谱 C 域修正) + omission #101 diversify→physical_verify · 0 case · DEBT:1 ✓ —— DrcLegacyFallback-001 (pv k=16 a-p) +omit_goodexisting_default_gutted.py 命中 (i) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r489b）；daily_C_2026-11-13.md r487 节
+- **轮(486)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r487）；daily_C_2026-11-13.md r486 节
+- **轮(485)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r487）；daily_C_2026-11-13.md r485 节
+- **轮(484) omission #98 diversify→pg_layout · 0 case · DEBT:1 ✓ —— PwrFillAgentGen-001 (pg_layout k=12 a-l) +omit_genpath_injection_gutted.py 命中 (f) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r486）；daily_C_2026-11-13.md r484 节
+- **轮(483) 讨论配额付清 + omission #97 diversify→physical_verify · 0 case · DEBT:1 ✓ —— DrcCloseOpenSwap-001 (pv k=10 a-j) +omit_unmatched_warning_gutted.py 命中 (j) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r489）；daily_C_2026-11-13.md r483 节
+- **轮(482) omission #96 diversify→layout_virtuoso · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r483）；daily_C_2026-11-13.md r482 节
+- **轮(481) omission #95 diversify→layout_aether · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r483）；daily_C_2026-11-13.md r481 节
+- **轮(480) omission #94 diversify→pg_layout · 0 case · DEBT:1 ✓ —— 详细流水已归档 daily_C_2026-11-13.md r480 节
+- **轮(478) fresh peek 11 REJECT(hit-rate 0%)→回退 omission #92 diversify→lv + DRCPatPlan-001 污染修复 · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r482）；daily_C_2026-11-13.md r478 节；trace_deepreads/r478_freshpeek_11reject.md
+- **轮(477) mc≥10 fresh-pool 首次可靠核查 + 6 peek 全 REJECT · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r478）；daily_C_2026-11-13.md r477 节；trace_deepreads/r477_freshpool_mc10_audit.md
+- **轮(476) 维护轮 · omission #91 diversify→layout_aether · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r478）；daily_C_2026-11-13.md r476 节
+- **轮(475) 讨论配额付清 (P-004 fresh-pool 1109 复测) + omission #90 diversify→pg_layout · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r478）；daily_C_2026-11-13.md r475 节
+- **轮(474) NetPathHL-001 下线执行(A r440 裁定) + omission #89 diversify→physical_verify · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r478）；daily_C_2026-11-13.md r474 节
+- **轮(473) 维护轮 · omission #88 diversify→layout_virtuoso · 0 case · DEBT:1 ✓ —— LayoutEditDiag-001 (lv k=16 a-p) +omit_help_handler_gutted.py 命中 cond (b) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r474）；daily_C_2026-11-13.md r473 节
+- **轮(472) 维护轮 · omission #87 diversify→layout_aether · 0 case · DEBT:1 ✓ —— LayoutAnalyzeReport-001 (la k=18) +omit_unique_layers_no_dedupe.py 命中 (l) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r473）；daily_C_2026-11-13.md r472 节
+- **轮(471) 维护轮 · omission #86 diversify→pg_layout + 讨论配额付清 · 0 case · DEBT:1 ✓ —— OALibReadinessReport-001 (pg_layout k=15 a-o) +omit_title_gutted.py 命中 cond (d) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r472）；daily_C_2026-11-12.md r471 节
+- **轮(470) 维护轮 · omission #85 diversify→physical_verify · 0 case · DEBT:1 ✓ —— WlAdjacentPairParse-001 (physical_verify k=18) +omit_rows_unsorted_gutted.py 命中 cond (h) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r471）；daily_C_2026-11-12.md r470 节
+- **轮(469)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r501）；daily_C_2026-11-13.md r469 节
+- **轮(468) 维护轮 · omission #83 diversify→layout_aether · 0 case · DEBT:1 ✓ —— CentroidPlaceAudit-001 (layout_aether k=16 a-p) +omit_balanced_report_gutted.py 命中 cond (k) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r470）；daily_C_2026-11-12.md r468 节
+- **轮(467) 讨论配额付清 (P-004 evaluated-set near-dup C 侧逐对复核) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r470）；daily_C_2026-11-12.md r467 节
+- **轮(466) 维护轮 · omission #82 diversify→pg_layout · 0 case · DEBT:1 ✓ —— RTextChkPlan-001 (pg_layout k=16 ①-⑯) +omit_per_net_counts_gutted.py 命中 cond (⑦) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r469）；daily_C_2026-11-12.md r466 节
+- **轮(465) 维护轮 · omission #81 diversify→physical_verify · 0 case · DEBT:1 ✓ —— DrcQaMergeBloatDiagnose-001 (physical_verify k=18 a-r) +omit_baseline_intersection.py 命中 cond (k) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r468）；daily_C_2026-11-12.md r465 节
+- **轮(464)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r467）；daily_C_2026-11-12.md r464 节
+- **轮(463)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r467）；daily_C_2026-11-12.md r463 节
+- **轮(462) 维护轮 · omission #78 · 0 case · DEBT:1 ✓ —— PaCfgMigrate-001 (pg_layout k=18) +migrate_omit_autovia_outcellname.py 命中 cond (9) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r463）；daily_C_2026-11-12.md r462 节
+- **轮(461) 维护轮 · omission #77 · 0 case · DEBT:1 ✓ —— DRCReportIpAudit-001 (physical_verify) +omit_dummy_layers_extract.py 命中 cond (l) + selftest WORKDIR bug 修复 —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r462）；daily_C_2026-11-12.md r461 节
+- **轮(460) 选料轮 · 0 case · DEBT:1 ✓ —— fresh+ C-dominant 池 863 条，top-5 peek 全 REJECT（kenwang umhrd dup r405 DrcRuleFromDesc），davidwu hsrb5 layout_aether auto P&R parked for r461/r462 —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r461）；commit 2344a1825
+- **轮(459) 讨论配额付清 (P-004 C 侧 per-shard 碰撞结构 + 答 A r430 + D r554) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r462b）；daily_C_2026-11-12.md r459 节
+- **轮(458) 维护轮 · omission #76 · 0 case · DEBT:1 ✓ —— SchPinPlanAudit-001 (layout_virtuoso) +omit_term_name_unique_report.py 命中 cond (g) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r462b）；daily_C_2026-11-12.md r458 节
+- **轮(457) 维护轮 · omission-negative 推广第 75 条 · 0 case · DEBT:1 ✓ —— SchematicPinAdd-001 (layout_aether k=15 a-o) +omit_termcount_reverify.py 命中 cond (j) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r459）；daily_C_2026-11-12.md r457 节
+- **轮(456) 维护轮 · omission-negative 推广第 74 条 · 0 case · DEBT:1 ✓ —— PpFlowSetupGen-001 (pg_layout k=17 a-q) +omit_no_ldpreload_scrub.py 命中 cond (n) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r458）；daily_C_2026-11-12.md r456 节
+- **轮(455) 讨论配额付清 (B r443 appendix per-shard v19 后恶化 + D r550 selection-cost C 侧 chosen-0-case 修正) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r457）；daily_C_2026-11-12.md r455 节
+- **轮(454) 维护轮 · omission-negative 推广第 73 条 · 0 case · DEBT:1 ✓ —— HcellPairGen-001 (physical_verify k=18 a-r) +omit_missing_input_exit0.py 命中 cond (r) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r456）；daily_C_2026-11-12.md r454 节
+- **轮(453)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r454）；daily_C_2026-11-12.md r453 节
+- **轮(452) 维护轮 · omission-negative 推广第 71 条 · 0 case · DEBT:1 ✓ —— PlacePersistAudit-001 (layout_aether k=17 a-q) +omit_sdl_baseline 命中 cond (h) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r453）；daily_C_2026-11-12.md r452 节
+- **轮(451) 讨论配额付清 (P-004 C-side audit) · 0 case · DEBT:1 ✓ —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r456）；daily_C_2026-11-12.md r451 节
+- **轮(450) 维护轮 · omission-negative 推广第 70 条 · 0 case · DEBT:1 ✓ —— InnovusViaCutDiag-001 (pg_layout k=16 a-p) +omit_rec_addndr_submit.zip 命中 cond (j)；diversify 避 r449 pv/r448 lv/r446 pv → pg_layout；初选 (k) 做完 surgical 验证后发现 shard B 已先提交同 case (k)（commit 02bf2073 越界 pg_layout）→ revert 改选 (j) add_ndr-rec-present（UNHIT∩{b,h,l,k} disjoint）；gold line 156-159 add_ndr rec block→注释，(j) first-fail missing rec；surgical (j) no-op→omit PASS 62/16 无级联，6 existing neg（含 shard B）FAIL 不变；7 neg ALL-FAIL selftest NEG_RC=0；git 仅 +omit_rec_addndr_submit.zip +M _build_negatives.py —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r452）；daily_C_2026-11-12.md r450 节
+- **轮(449)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r450）；daily_C_2026-11-12.md r449 节
+- **轮(448)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r450）；daily_C_2026-11-12.md r448 节
+- **轮(447)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r449）；daily_C_2026-11-12.md r447 节
+- **轮(446)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r448）；daily_C_2026-11-12.md r446 节
+- **轮(415) 维护轮 + 讨论配额付清 · 0 case · DEBT:1 ✓ —— 配额发言轮(r415 帖: 2D fixability 轴 production×verification-drive) + 中 mc[40,120] C-affinity 饱和复验(10th) —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r417）；daily_C_2026-11-12.md r415 节
+- **轮(414) 维护轮 · 0 case · DEBT:1 ✓ —— 11/09 low-mc[10,40] C-dominant peek 8 全 REJECT（2×2 矩阵完成）—— 详细流水已归档 MEMORY_C_archive.md（归档批次 r415）；daily_C_2026-11-12.md r414 节
+- **轮(413) 维护轮 · 0 case · DEBT:1 ✓ —— 11/09 scan top fresh-against-all-4 C-domain-dominant 高 mc peek 4 全 REJECT（8th 独立复验质量饱和）—— 详细流水已归档 MEMORY_C_archive.md（归档批次 r414）；daily_C_2026-11-12.md r413 节
+- **轮(412) 维护轮 · 0 case · DEBT:1 ✓ —— 体积归档维护（MEMORY_C 58KB→29KB，11 entries r397-r404+r406+r407+r402-prior 原文搬入 designflow/MEMORY_C_archive.md 归档批次 r412，留 1 行指针）—— 详细流水见 daily_C_2026-11-12.md r412 节。**背景**：r410 收尾建议选项 (b)（MEMORY_C ≈56KB 超 32KB 红线）；pool 6 连续维护轮饱和（r404-r410 peek 33+ 全 REJECT 覆盖全 mc 段），shard A 尚未换池 11/05→11/09（mc_matrix.src 仍=summary_1105.tsv），无讨论配额（r411→r412 diff=1<4，board OPEN=0，豁免），故本轮做体积维护。**归档操作**：designflow/MEMORY_C_archive.md append 归档批次 r412（11 entries 全文 23.8KB），MEMORY_C 11 条详细行→1 行指针（r397-r404/r406/r407/r402-prior），修正 r409 批次注记「r404/r406/r407 已在各自归档批次」的不一致（此前实际未搬出，本轮补齐）。**保留详细**：r405（最近交付 case RsCalcFlowOrchestrator-001）/ r408-r411（最近 4 轮）。**体积自检**：TASK=17KB / MEMORY_C=29.0KB（红线 32KB）✓。mc-matrix（summary_1105.tsv）：mc≥10 fresh=268≠0（按用户令 rule 4 不写池耗尽）。ledger_C 698 行不变，jsonl_C 308 不变。无讨论配额（r411→r412 diff=1<4，下轮 due r415）。**
+- **轮(411) 维护轮 + 讨论配额付清 · 0 case · DEBT:1 ✓ —— 配额发言轮 + 维护确认（r411 帖补 C 域 P-002 出席 + r407 binding-drive 验证保真度 3 档子轴修正）—— 详细流水已归档 MEMORY_C_archive.md（归档批次 r413）；daily_C_2026-11-12.md r411 节
+- **轮(410) 维护轮 · 0 case · DEBT:1 ✓ —— 11/05 低 mc 段[10,40] peek 3 全 REJECT（6th 复验覆盖全 mc 段；技术发现 cline session 实为 <slug>/<slug>.messages.json 子目录）—— 详细流水已归档 MEMORY_C_archive.md（归档批次 r417）；daily_C_2026-11-12.md r410 节
+- **轮(409) 维护轮 · 0 case · DEBT:1 ✓ —— 选料筛选轮（11/05 官方池 fresh-against-C C-keyword 959 候选，peek top 3 全 REJECT，方法学发现：11/05 keyword line 不可靠，r404-r408 实 peek 法更优）—— 详细流水见 daily_C_2026-11-12.md r409 节。**
+- **轮(408) 维护轮 · 0 case · DEBT:1 ✓ —— 11/05 fresh-against-all-4 peek 10 全 REJECT + e0014566 layout_virtuoso 簇 4 session 全 near-dup 2 existing case 确证饱和 —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r409）；daily_C_2026-11-12.md r408 节。**
+- **轮(407) 维护轮 + 讨论配额付清 · 0 case · DEBT:1 ✓ —— actual_tool_demand audit + 重用户 peek 确证饱和** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-12.md r407 节
+- **轮(406)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-12.md r406 节
+- **轮(405) 已交付 RsCalcFlowOrchestrator-001 (e0014566/hfeg0pkn001 pg_layout L2 synthesized/B-synthesized k=17 a-q, jsonl_C 307→308) ✓ —— 第三十二条 B档 synthesized** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r425）；daily_C_2026-11-12.md r405 节
+- **轮(404) 维护轮 · 0 case · DEBT:1 ✓ —— 选料筛选轮（11/09 mc≥10 fresh C-keyword 池 744，peek 19 全 REJECT，饱和确证）** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-12.md r404 节
+- **轮(403)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r403 节
+- **轮(402) 已交付 DrcSwitchSweepOpt-001 (junwangt physical_verify L1-boundary synthesized k=15 a-o, jsonl_C 305→306) ✓ —— 第三十条 B档** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r402 节
+- **轮(401)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r401 节
+- **轮(400)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r400 节
+- **轮(399)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r399 节
+- **轮(398)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r398 节
+- **轮(397)** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r412）；daily_C_2026-11-11.md r397 节
+- **轮(335) 已交付 AntMetalThkPathFix-001 (xinqiaoz/cs27h physical_verify L1 synthesized k=11 a-k, jsonl_C 288→289) ✓ —— 第十三条 B档 synthesized · antMetalThk dispatch 路径分离+ldrSheet 传递 code-fix** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r337）；trace_deepreads/1792979233831_cs27h_xinqiaoz_ant_metal_thk.md
+- **轮(334) 选料筛选轮 · 0 case · DEBT:2 ✓ —— 20 fresh 候选 peek 全 REJECT · fresh 池正式耗尽** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r337）；rescan_1110_1837_r334.md
+- **轮(333) 选料筛选轮 · 0 case · DEBT:1 ✓ —— mc≥30 池耗尽 + mc≥15 widen 复核 + 11-10 trace fresh 全 wrong-shard/non-seed** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r337）；rescan_1110_1830.md
+- **轮(332) 已交付 LvsReportAnalyze-001 (fhwang/erhym physical_verify L1 faithful k=20 a-r, jsonl_C 287→288) ✓ —— 第十二条 A档 faithful** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r337）；trace_deepreads/1792223414540_erhym_fhwang_lvs_report_analyze.md
+- **轮(331) 已交付 DrcCloseOpenSwap-001 (weizhao/h5wfp physical_verify L1 faithful k=10 a-j, jsonl_C 286→287) ✓ —— 第十一条 A档 faithful** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r337）；trace_deepreads/h5wfp_drc_close_open_swap.md
+- **轮(330) 已交付 TvfSetlayerExpl-001 (ellawu/goryy pg_layout L1 faithful k=12 a-l, jsonl_C 285→286) ✓ —— 第十条 A档 faithful · pg_layout 再下一城** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r337）；trace_deepreads/1792497033564_goryy_tvf_setlayer.md
+- **轮(329) 已交付 DrcMetalOptGen-001 (kenwang/uhir2 physical_verify L1 faithful k=12 a-l, jsonl_C 284→285) ✓ —— physical_verify 再下一城 · 第九条 A档 faithful** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r330）；trace_deepreads/1789520291803_uhir2_kenwang_drc_metalopt_gen.md
+- **轮(328) 已交付 RunsetPairCmpGen-001 (gokuguo/k9nnk layout_virtuoso L1 faithful k=14 a-n, jsonl_C 283→284) ✓ —— 第八条 A档 faithful** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r329）；trace_deepreads/1794191825241_k9nnk_gokuguo_runset_pair_cmp.md
+- **轮(327) 已交付 LayerSoloBindkeyGen-001 (hybeaml/0pfvw layout_aether L1 faithful k=14 a-n, jsonl_C 282→283) ✓ —— layout-affinity 第九城 · 第七条 A档 faithful · mc≥15 widen top-400 fresh** —— 详细流水已归档 MEMORY_C_archive.md（归档批次 r328）；trace_deepreads/1793795067989_0pfvw_hybeaml_layer_solo_bindkey.md

@@ -798,3 +798,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793004131427_spkav	xinqiaoz	10.129.2.11	542		parked		2026-11-14 02:30	r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem cluster)
 1786535933950_lj2gw	e0014566	hfeg0plg58	395	layout_virtuoso	case	EDA-Eval-DesignFlow-RscalcLabel-001	2026-11-14 02:23	
 1794389800331_qvnvw	xxchen	10.129.35.69	427	layout_aether	case	EDA-Eval-DesignFlow-LabelFlattenTop-001	2026-11-14 02:51	
+1794396010329_k7jjm.messages.json	xxchen	hfeg0pkn001	322	physical_verify	case	EDA-Eval-DesignFlow-ExcludeRegionRowLayout-001	2026-11-14 03:26	
