@@ -29,11 +29,13 @@ set -u
 cd /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/wave_rl
 
 export OMP_NUM_THREADS=16
-# CRITICAL: hide GPUs from PyTorch — experiment code sets device=cpu (line 567),
-# but PEFT's load_peft_weights -> safe_load_file internally tries CUDA when
-# GPUs are visible, causing OOM on .17's A40s. CUDA_VISIBLE_DEVICES="" forces
-# all PyTorch/PEFT/safetensors ops to CPU (matches "CPU-based RL" design).
-export CUDA_VISIBLE_DEVICES=""
+# Use GPU 7 (only free A40 on .17; GPUs 0-6 occupied by posttrain).
+# Qwen3.5-2B uses linear attention (gated delta rule) — without optimized
+# kernels (causal_conv1d / flash-linear-attention) the CPU fallback is
+# ~10x+ slower for training. GPU 7 has 46GB free, plenty for a 2B model.
+# bf16 dtype halves memory vs fp32 (model ~4GB, activations ~18GB, total ~22GB).
+export CUDA_VISIBLE_DEVICES=7
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 LOG=/tmp/v10_freqcmp.log
 MODEL_PATH=/nas_data/app.e0031982/models/Qwen3.5-2B
 OUT_BASE=/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/wave_rl/v10_results

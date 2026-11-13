@@ -564,7 +564,8 @@ def main():
         print("  CONTROL MODE: random reward GRPO", flush=True)
 
     os.environ.setdefault("OMP_NUM_THREADS", "16"); torch.set_num_threads(16)
-    device = torch.device('cpu'); dtype = torch.float32
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
     os.makedirs(args.out_dir, exist_ok=True)
     random.seed(args.seed); np.random.seed(args.seed)
     print(f"  CPU threads=16, mode={args.mode}, seed={args.seed}", flush=True)
@@ -592,7 +593,7 @@ def main():
         model_sft.save_pretrained(sft_save)
         print(f"  SFT adapter saved to {sft_save}", flush=True)
         sft_ckpt_path = sft_save
-        del model_sft; gc.collect()
+        del model_sft; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
     else:
         print("=" * 60, "\n[Phase 1] SFT SKIPPED (using existing adapter)", flush=True)
         tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
@@ -609,14 +610,14 @@ def main():
         acc_a = sum(r["correct"] for r in res_a) / len(res_a)
         bd_a = eval_breakdown(res_a)
         print(f"  A (zero-shot) accuracy: {acc_a:.1%}", flush=True)
-        del model_a; gc.collect()
+        del model_a; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
         print("  Evaluating B (SFT)...", flush=True)
         model_b = build_model(args.model_path, device, dtype, lora_r=args.lora_r, sft_ckpt=sft_ckpt_path)
         res_b = evaluate_condition(model_b, tokenizer, eval_qs, device, dtype, "B-sft", args.max_new_tokens)
         acc_b = sum(r["correct"] for r in res_b) / len(res_b)
         bd_b = eval_breakdown(res_b)
         print(f"  B (SFT) accuracy: {acc_b:.1%}", flush=True)
-        del model_b; gc.collect()
+        del model_b; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
     else:
         print("=" * 60, "\n[Phase 2] Skipping A+B eval (reuse from first seed)", flush=True)
 
@@ -641,7 +642,7 @@ def main():
     acc_c = sum(r["correct"] for r in res_c) / len(res_c)
     bd_c = eval_breakdown(res_c)
     print(f"  C (GRPO) accuracy: {acc_c:.1%}", flush=True)
-    del model_c; gc.collect()
+    del model_c; gc.collect(); torch.cuda.empty_cache() if torch.cuda.is_available() else None
 
     # Phase 5: Statistics
     print("=" * 60, "\n[Phase 5] Statistics", flush=True)
