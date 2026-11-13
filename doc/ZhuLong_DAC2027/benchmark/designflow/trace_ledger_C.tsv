@@ -802,3 +802,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794448098712_cs1zr	e0047695	hfeg0pkn003	298	physical_verify	parked		2026-11-14 04:01	r543 reject run-existing: U#1=帮我检查drc不关注chip=run calibre DRC check report, not produce-task
 1794485888809_ef68k	e0047488	hfeg0pkn003	268	physical_verify	case	EDA-Eval-DesignFlow-QaDrcAutoCheck-001	2026-11-14 04:46	
 1794377619890_0194w	e0047600	hfeg0plg95	220	pg_layout	case	PgRailLabelReplace-001	2026-11-14 06:07	r545 case; pg_layout B档 mock-behavioral; k=14 a-n; ref PASS + 4 neg FAIL; appended EDA-Eval-DesignFlow_C.jsonl L329
+1792135522206_9lnqe	xinqiaoz	10.129.2.11	226	physical_verify	case		2026-11-14 06:42	DummyMvFracCfg-001 delivered; A-faithful physical_verify; 14 assert; k_check==k_rationale==14; self-verify 10/10 + E2E 2/2
