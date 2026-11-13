@@ -20,7 +20,8 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "summary_1109.tsv")
+# 2026-11-13: src 可由 argv[1] 指定（换池 1109->1113 后默认改 1113）；不传则回退 1109。
+SRC = os.path.join(HERE, sys.argv[1] if len(sys.argv) > 1 else "summary_1109.tsv")
 OUT = os.path.join(HERE, "candidates_mc10_classified.tsv")
 MIN_MC = 10
 

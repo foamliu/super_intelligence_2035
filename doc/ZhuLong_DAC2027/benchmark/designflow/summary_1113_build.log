@@ -1,0 +1,42 @@
+summary_1113.tsv build log
+==========================
+source: /home/t0002965/log/ssh_eda_search_20261113_131349/summary.tsv (.75, latest scan)
+raw_sha256: 3b859496024516381c55d9429c26d239e741bb94fa1bb6686550dcb92d011dea
+raw_lines (incl header): 41409
+curated_sha256: c9ebb9f86f9881d854a9d2bc06770463adbdd1161240427f943dfe7a7e1e3efa
+curated_rows (data, excl header): 4418
+dedup_sessions (slug-level, max mc): 4418   (slug-level dup check: 0 duplicates — already dedup'd)
+mc>=10: 3260
+mc>=15: 3047
+mc>=20: 2869
+mc>=30: 2575
+
+schema: ip host user session_file match_count keywords tools (7 cols, same as summary_1105.tsv / summary_1109.tsv)
+dedup rule: by slug (session_file minus .messages.json/.messages.archive.json/.archive.json/.json suffix), keep row with max match_count
+filter rule: only keep session rows (session_file ends in .messages.json / .messages.archive.json / .archive.json / .json) — same as summary_1105.tsv / summary_1109.tsv
+
+context (2026-11-12 用户令换池 1105→1109, shard B 执行):
+  - 1109 工件 (summary_1109.tsv + _scan_1109_raw.tsv + summary_1109_build.log + mc_matrix_1109_*.txt) 已由 B 落盘, 满足 11/12 令步骤 1-3/5.
+  - 但 1109 复算后 B 域 mc>=10 fresh=0 (台账自 11/12 推进至 3053 touched, 消化了 1109 的 B fresh), 不满足 11/12 令直接目标「B 域 mc>=10 fresh>0」.
+  - 2026-11-13 13:30 ops/A 已触发更新全量扫描 (ssh_eda_search_20261113_131349, 41409 行) 并记录 pool_switch 1109->1113 (summary_stats.json.pool_switch).
+  - 1113 复算 B 域 mc>=10 fresh=76 >0, 满足 11/12 令直接目标; 且为最新快照, 优于回退 1109.
+  - 裁定: mc_matrix.src 切到 summary_1113.tsv (而非 1109), 1109 工件保留为中间产物/历史对照, 不回退已上线的 1113 池.
+
+mc-matrix (ALL, src=summary_1113.tsv, ledger touched=3053):
+  mc>=5  pool=3609 touched=2649 fresh=960
+  mc>=10 pool=3260 touched=2597 fresh=663
+  mc>=15 pool=3047 touched=2493 fresh=554
+  mc>=20 pool=2869 touched=2398 fresh=471
+  mc>=30 pool=2575 touched=2228 fresh=347
+
+mc-matrix (shard B, src=summary_1113.tsv):
+  mc>=5  pool=977  touched=871 fresh=106
+  mc>=10 pool=917  touched=841 fresh=76   ← 直接目标满足
+  mc>=15 pool=851  touched=781 fresh=70
+  mc>=20 pool=807  touched=738 fresh=69
+  mc>=30 pool=705  touched=646 fresh=59
+
+复算命令:
+  python3 designflow/trace_ledger.py [--shard A|B|C|D] mc-matrix --src designflow/summary_1113.tsv --json
+  python3 designflow/trace_ledger.py mc-matrix --src designflow/summary_1113.tsv --emit-candidates --emit-candidates-mc 10
+  python3 designflow/build_candidates.py summary_1113.tsv

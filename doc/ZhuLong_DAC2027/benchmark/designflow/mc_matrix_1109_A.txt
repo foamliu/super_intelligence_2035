@@ -1,14 +1,14 @@
 # 扫描快照: designflow/summary_1109.tsv
 # 数据行 = 3964（跳过表头 1 行）→ 去重 session = 2918（shard A keywords 过滤后）
-# 台账已动过 session = 2864（case/seeded=693, parked=1913）
+# 台账已动过 session = 3052（case/seeded=747, parked=2081）
 
 阈值                池总量        已动过    未动过(可做)
 --------------------------------------------
-mc>=5            2616       2032        584
-mc>=10           2414       1992        422
-mc>=15           2267       1924        343
-mc>=20           2137       1863        274
-mc>=30           1935       1753        182
+mc>=5            2616       2111        505
+mc>=10           2414       2071        343
+mc>=15           2267       1993        274
+mc>=20           2137       1922        215
+mc>=30           1935       1797        138
 
 # 可直接喂 refresh 的 JSON 片段：
-{"target_mc": 10, "shard_mc": {"A": 10, "B": 10, "C": 10, "D": 10}, "mc_matrix": {"mc5": {"pool": 2616, "touched": 2032, "fresh": 584}, "mc10": {"pool": 2414, "touched": 1992, "fresh": 422}, "mc15": {"pool": 2267, "touched": 1924, "fresh": 343}, "mc20": {"pool": 2137, "touched": 1863, "fresh": 274}, "mc30": {"pool": 1935, "touched": 1753, "fresh": 182}}, "mc5": 2616, "mc10": 2414, "mc15": 2267, "mc20": 2137, "mc30": 1935}
+{"target_mc": 10, "shard_mc": {"A": 10, "B": 10, "C": 10, "D": 10}, "mc_matrix": {"mc5": {"pool": 2616, "touched": 2111, "fresh": 505}, "mc10": {"pool": 2414, "touched": 2071, "fresh": 343}, "mc15": {"pool": 2267, "touched": 1993, "fresh": 274}, "mc20": {"pool": 2137, "touched": 1922, "fresh": 215}, "mc30": {"pool": 1935, "touched": 1797, "fresh": 138}}, "mc5": 2616, "mc10": 2414, "mc15": 2267, "mc20": 2137, "mc30": 1935}
