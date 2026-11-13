@@ -480,3 +480,4 @@
 1793343472817_6tswp	e0039602	hfeg0plg95	119	digital	parked		2026-11-14 07:07	r496 peek: USER#0 read project+tell me truth-table-check principle+compare v1.4 vs v1.4.1, analysis Q&A, REJECT
 1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	parked		2026-11-14 07:07	r496 peek: USER#0 read project+tell me what the review prompt is, analysis Q&A, REJECT
 1794382021638_eadk1	alanji	hfeg0plg99	107	digital	parked		2026-11-14 07:07	r496 peek: USER#0 analyze why pattern reports DMI pin compare error, debug/analysis, REJECT
+1794449150836_cdrm1	daiweilu	hfeg0pgn145	107	verification	parked		2026-11-14 07:30	analysis Q&A: 8-turn testmode verification guidance (RingOscCP90Sel/CrackMonEn/VintReadSel/ChipID/BCCheckbit/KillPPRDis), user asks which-signal-to-look-at/how-to-verify, not produce-task. r497 independent peek
