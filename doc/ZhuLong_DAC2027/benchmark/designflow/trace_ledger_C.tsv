@@ -724,3 +724,6 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794538757522_mku3e	e0047488	hfeg0plg97	603	physical_verify	case	EDA-Eval-DesignFlow-DrcQaAutoPipe-001	2026-11-13 15:49	
 1793878425402_0aniq	kenwang	hfeg0plg16	111	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckUpdateQa-001	2026-11-13 16:55	
 1794395853966_tef8l	yinyus	hfeg0plg66	894	physical_verify	case	EDA-Eval-DesignFlow-NicapNetlistPivot-001	2026-11-13 17:35	
+1794485932332_drf0r	e0047488	hfeg0pkn003	268	physical_verify	case	EDA-Eval-DesignFlow-JsonGdsDrcPipe-001	2026-11-13 18:16	
+1794485932332_ef68k					parked		2026-11-13 18:01	near-dup of drf0r (same kw/user)
+1794484297578_vvdk8					parked		2026-11-13 18:01	near-dup of drf0r (same kw/user)
