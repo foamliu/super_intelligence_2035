@@ -78,8 +78,9 @@ def should_skip(file_path, language, size_bytes, is_vendor):
     return False, ''
 
 
-def get_all_parquets():
-    return sorted(Path(PARQUET_DIR).glob("*.parquet"))
+def get_all_parquets(parquet_dir=None):
+    d = parquet_dir if parquet_dir else PARQUET_DIR
+    return sorted(Path(d).glob("*.parquet"))
 
 
 def process_shard(args):
@@ -207,11 +208,12 @@ def main():
     ap.add_argument('--shard-end', type=int, default=None)
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--output-dir', default=OUTPUT_DIR)
+    ap.add_argument('--parquet-dir', default=None, help='Override default PARQUET_DIR')
     ap.add_argument('--shard-list', default=None)
     args = ap.parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
     # Always load the full sorted parquet list for correct index mapping
-    full_parquets = get_all_parquets()
+    full_parquets = get_all_parquets(args.parquet_dir)
     path_to_idx = {str(p): i for i, p in enumerate(full_parquets)}
 
     if args.shard_list:
