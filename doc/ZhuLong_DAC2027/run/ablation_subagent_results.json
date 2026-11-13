@@ -1,6 +1,7 @@
 {
   "experiment": "zhulong_subagent_ablation",
-  "phase": "P1_pilot",
+  "phase": "P1_pilot_complete_NO_GO",
+  "pilot_completed_at": "2026-11-14 02:19 (B5 last arm done)",
   "dataset": "EDA-Eval-PyAether-158 (subset=8)",
   "base_model": "deepseek-v4-pro-cloud",
   "harness": "cline 3.0.51",
@@ -310,15 +311,30 @@
     }
   },
   "go_nogo": {
-    "decision": "GO",
-    "avg_spawn_rate": 1.0,
-    "arms_checked": [
-      "B1",
-      "B2",
-      "C1",
-      "C2"
-    ],
-    "criterion": "调用率 <20% 且强提示后仍 <30% ⇒ 判无效; 否则 GO",
-    "note": "B1/B2/C1/C2 均有 spawn rate 1.0 → 机制生效 → GO"
+    "decision": "NO-GO",
+    "decided_at": "2026-11-14 02:30 wake#914",
+    "tool_call_rate": 1.0,
+    "subagent_execution_success_rate": 0.0,
+    "criterion_literal": "调用率 <20% 且强提示后仍 <30% ⇒ 判无效; 否则 GO",
+    "criterion_substantive": "subagent 真正执行 LLM 的成功率 (finishReason=completed 且 usage>0)",
+    "rationale": "字面「调用率」(工具被调用/任务数)=100%≥30% 字面判 GO; 但 subagent 实际执行成功率=0%(所有臂所有 spawn 全部 finishReason=error, usage=0/0, subagent session n_msgs=0)。预注册判据只度量工具是否被调用, 没度量 subagent 是否真正执行 —— P0 验证盲区。按实验目的(H1/H2/H3 全依赖 subagent 真正执行+消耗 token), 0% 执行率下 P2 无法判任何假设 → NO-GO, 不进 P2。",
+    "note": "决策详见 run/subagent_pilot_go_nogo.md"
+  },
+  "subagent_execution_audit": {
+    "scanned_at": "2026-11-14 02:25 wake#914",
+    "method": "扫描各 batch trace/**/*.messages.json: 收集 subagent_researcher tool_use id → 找对应 tool_result → 统计 finishReason/usage; 并查 agent_*.messages.json subagent session 的 n_msgs",
+    "summary": "所有臂(subagent tool 被调用者)的 subagent 调用 100% error, 0 sub token, subagent session 全部 n_msgs=0",
+    "per_arm": {
+      "B1": {"sub_calls": 17, "ok": 0, "err": 17, "finishReasons": {"error": 17}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Invalid prompt: messages must not be empty", "root_cause": "A"},
+      "B2": {"sub_calls": 18, "ok": 0, "err": 18, "finishReasons": {"error": 18}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Invalid prompt: messages must not be empty", "root_cause": "A"},
+      "B3": {"sub_calls": 9, "ok": 0, "err": 9, "finishReasons": {"error": 9}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Unknown or disabled provider \"doubao-pro\".", "root_cause": "B"},
+      "B4": {"sub_calls": 9, "ok": 0, "err": 9, "finishReasons": {"error": 9}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Unknown or disabled provider \"doubao-mini\".", "root_cause": "B"},
+      "B5": {"sub_calls": 8, "ok": 0, "err": 8, "finishReasons": {"error": 8}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Unknown or disabled provider \"doubao-lite\".", "root_cause": "B"},
+      "C2": {"sub_calls": 18, "ok": 0, "err": 18, "finishReasons": {"error": 18}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Invalid prompt: messages must not be empty", "root_cause": "A"}
+    },
+    "root_cause_A": "dsv4 臂(B1/B2/C2): providerId=openai-compatible(真类型)解析成功, 但 SessionRuntime.run(task) 路径下首次 LLM 调用 messages 数组为空(subagent session n_msgs=0, task 未注入为首条 user message) → OpenAI API 拒 'messages must not be empty'. cline 3.0.51 delegated-agent 消息初始化 bug.",
+    "root_cause_B": "doubao 臂(B3/B4/B5): researcher.yaml providerId=doubao-{pro,mini,lite} 是 providers.json 里的命名 profile(其 settings.provider 实为 openai-compatible), 但 subagent provider 解析按 provider 类型查 → 注册表无此类型 → 'Unknown or disabled provider'. 需 cline 源码支持命名 profile 解析, 或 researcher.yaml providerId 改 openai-compatible + 另设 doubao model/baseURL.",
+    "p0_gap": "P0(17:20 PASS)只验证工具注册+被调用, 没验证 subagent LLM 真正执行(messages 非空/usage>0/finishReason=completed). 工具『注册+被调用』≠ subagent『真正运行』.",
+    "pass1_interpretation": "所有臂 Pass@1(B1 62.5/B2 87.5/B3 85.71/B4 87.5/B5 87.5/C2 75.0) 全是主 agent 独立完成 —— subagent 调用全 error 后主 agent 自行继续. 不能解读为 subagent 效应."
   }
 }
