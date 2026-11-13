@@ -9901,3 +9901,31 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 1. 5-run eval ~13:00 完（autofire 链自动，无需人工）→ 查 `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci。
 2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（**平台化使此分支概率上升**）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。最终结论「MiniCPM5-2B 上 RL 能否显著提升 PyAether 脚本能力」本身就是交付物。
 3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
+
+---
+
+## §R436 — wake436 (2026-11-14 01:55) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+### A. 实测证据
+
+- `date`: 2026-11-14 01:55:11。autofire chain `ps`：PID2322797（父 2322795 setsid）存活 etime≈5610s；eval run1 PID2354141（子 2354149 `bash scripts/run_cline_script.sh -p 8 -n`）etime≈2818s @01:08:13 起 ~47min。
+- `nvidia-smi --query-gpu`：GPU0-3=45GB(root SGLang 不可动)/GPU4=39246MiB(base serve :8098)/GPU5=3MiB(空闲)/GPU6=39246MiB(step105-final :8096)/GPU7=39244MiB/87%util(R2 serve :8095)；`nvidia-smi --query-compute-apps -i 7`=PID2353393 39228MiB。
+- run1 进度（`/home/app.e0031982/eda_code_eval/2026_1114_010813`）：`stats/` counters `success=20`/`failure=1`/`timeout=5`=**26/158 已完成**；`.task_queue` 158→124 行（较 wake435 的 130 行 +6，8 worker in-flight）；`code/` 36 文件；`logs/batch_cline.log` @01:54:31 持续增长（最新 worker-4 EDA-Eval-PyAether-020 超时 2500s→接 EDA-Eval-PyAether-034）。
+- `grep -iE 'Traceback|OOM|CUDA out|Killed' batch_cline.log` = **0**（WARNING Exit Code:1 / 超时 2500s = 模型能力不足 task 失败，非 infra 错误）。
+- `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json` 尚未生成（eval 仍在 run1，5-run 串行 ~12h ETA~13:00）。
+
+### B. 健康判读
+
+- eval 链全自治健康：autofire chain + R2 serve + 8 cline worker + 3 并发 serve（base/step105/R2）全稳，GPU5 空闲避 4 并发 OOM（wake433 mitigation 生效）。0 真实 traceback/OOM/Killed。
+- 本轮=纯监控，无人工动作：未编辑任何运行中脚本，未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链。MEMORY 体积滚动压缩（wake398-432 指针块合并：31542→28349 bytes，留出缓冲）。kill_gpu_serve child-PID bug 待 chain 空闲时修（不编辑运行中脚本）。
+
+### C. 红线
+
+- §2/§5.3 冻结协议 eval 链复用既有 `baize_posttrain_5run_eval.sh`（未改）；§5.2 anti-cheat hook 逐字一致（harness 复用，worker 隔离 providers.json 不读全局）。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### D. 下一步
+
+1. 5-run eval ~13:00 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci。
+2. R2 显著（McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化（平台化使此分支概率上升）→ 诚实负结果 + 换奖励/任务定义（§用户令#4）。
+3. kill_gpu_serve child-PID bug 待 chain 空闲时修（L102-118）。
+
