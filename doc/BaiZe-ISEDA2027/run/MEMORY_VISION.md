@@ -1,5 +1,11 @@
 WAITING: 0
 
+> 🆕 **【wake #1155 · 2026-11-13 22:27】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git 进程·三条件齐备)→ff pull(incoming 3 commit 非视觉)+add 明确路径+commit+push 本线 2 文件**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v10/run_v 真实命中·grep 命中仅 posttrain cline PID2141728 args 含\"v10\"字样误命中·非 vision)。
+> - 输入参考：research 日报 2026-11-13(index mtime 21:11) **21:00 轮** vision 建议=「视觉塔纳入 GPTQ FP16/8-bit/4-bit 三档同评测」(B轨#67·line 164)——**部署阶段权重量化·非本线活跃 wave-RL 线**·vision 当前 CPU-only 无量化工具需求→**不 action**(沿用 wake#1151~#1154 一致判定)；18:00 轮 vision 显式「无」(line 584)。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
+> - ✅ **git 本轮成功提交**：`.git/index.lock` 不存在·无活跃 git 进程(仅 posttrain cline PID2141728 code-eval 阶段·非 git)→三条件齐备。`git fetch`→behind 3→`git pull --no-rebase --no-edit` **ff 成功**(HEAD 1301537ef→38a3c9754·16 files·incoming 3 commit 经 `git log --name-only` 核实=designflow shard D(ZhuLong)+news auto-commit(personal-watch)+pretrain wake#2137=**均非视觉·不触 vision 文件**⇒ ff 安全·无需 autostash·未动 posttrain 在途 M EXPERIMENTS_POSTTRAIN.md + ?? outputs/)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1150~#1135·MEMORY ~30KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+
+
 > 🆕 **【wake #1154 · 2026-11-13 22:18】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0 ahead/0 behind 已 up-to-date·无需 pull)·vision 工作树 CLEAN→add 明确路径+commit+push 本线 2 文件**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v10/run_v 真实命中·grep 命中仅本巡检自身 ls/ps)。
 > - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1153 未刷新) 18:00 轮 vision 显式「无」(本轮 4 篇均不涉视觉编码器/图文对/视觉 RL·line 577-584)；GPTQ B轨#67(部署阶段量化·非 wave RL·不 action)+CLIP#77(冻结特征下界基线·已收敛臂·不 action)→无 wave-RL 新增→不 action。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
@@ -18,34 +24,7 @@ WAITING: 0
 > - 输入参考：research 日报 2026-11-13(index mtime 18:18·自 wake#1148 未刷新)vision=GPTQ B轨#67(部署阶段量化·非 wave RL·不 action)+CLIP#77(冻结特征下界基线·已收敛臂·不 action)+末轮 vision 显式「无」(本轮 4 篇均不涉视觉编码器/图文对/视觉 RL)→无 wave-RL 新增→不 action。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
 > - ✅ **git ff pull+commit·vision commit 经 posttrain rebase 落 origin·本轮修正心跳+push**：窗口打开→`git pull --no-rebase --no-edit` ff 干净(HEAD aa383a232→3596423cc·19 files·incoming=harness/designflow/ZhuLong 非视觉=ff 安全·不触 posttrain ??)→`git add` 仅本线 2 文件→commit 0b0a1418b。**本线 `git push` 被拒(远端前进 3)**；随后 posttrain `git pull --rebase --autostash` 把本线 commit rebase 为 87ccf3d41+其 8eaecd27f 一并 push ⇒ **本线 vision commit 已落 origin(经 posttrain rebase·非本线直推)**。初版心跳误判"posttrain eval 非 git 阶段"且预写"push 成功"——实 posttrain 随即转 active git(rebase+push)；本轮已修正心跳。窗口重开(posttrain 已 commit 8eaecd27f·其 tracked 树 clean·无 lock/无活跃 git 进程·commit-candidate 非 fresh M)→`git add` 修正后本线 2 文件→commit→push ff⇒修正记录发布。教训:posttrain RL 高频 commit 阶段本线 push 易被拒(可被其 rebase 带上)·心跳勿预判 push 结果·判窗口须看 posttrain commit-candidate 是否 fresh M(同 wake#1127)。不触 posttrain 在途(仅其 ?? untracked RL outputs)。🔧 stash@{0} 沿用。GPU posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1150·MEMORY ~32.1KB/TASK 26.9KB·≤40KB)。**WAITING: 0**。
 
-> 📦 **wake #1150 · 2026-11-13 20:52** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming=harness+designflow 非视觉)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1151·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1149 · 2026-11-13 20:45** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock+无活跃 git+已 up-to-date 0 ahead/0 behind)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1150·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1148 · 2026-11-13 20:36** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock+up-to-date 0 ahead/0 behind+posttrain 非 git 阶段)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1149·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1147 · 2026-11-13 20:2x** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming=data+designflow 非视觉)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1148·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1146 · 2026-11-13 20:16** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功·v10_summary.json NFS 属性缓存不一致已自愈·已fold(见 wake#1147·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1145 · 2026-11-13 20:05** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(已 up-to-date 无需 pull)+add 明确路径+commit+push 本线 2 文件成功·⚠️ v10_summary.json NFS 属性缓存不一致再现(已自愈)·已fold(见 wake#1146·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1144 · 2026-11-13 19:55** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1145·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1143 · 2026-11-13 19:40** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1144·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1142 · 2026-11-13 19:13** 例行巡检·全交付态·零异常·无新增·✅ git 窗口重开(posttrain pull --rebase 推至 94f54b569·0 ahead/0 behind)→add 明确路径+commit+push 本线 2 文件·⚠️ 记 wake#1141 未提交心跳被 posttrain autostash 流失(教训:未提交心跳必须当轮 commit)·已fold(见 wake#1143·详情 daily-memories-vision/2026-11-13.md)。
-> 📦 **wake #1140 · 2026-11-13 18:45** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1142·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1139 · 2026-11-13 18:39** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1140·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1138 · 2026-11-13 18:33** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1139·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1137 · 2026-11-13 18:16** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(stale index.lock 24min 无持有者+posttrain eval 阶段无 git 进程→判真 stale 清除·判据升级三条件)→ff pull+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1138·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1136 · 2026-11-13 18:0x** 例行巡检·全交付态·✅ v10_summary.json NFS 缓存不一致自愈(cat 成功)·⚠️ git 窗口关闭(pull ff fetch OK 但 merge 撞 transient index.lock·8 behind+lock 在·posttrain RL 活跃·按铁律不抢不删)→未 commit/push·已fold(见 wake#1137·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1135 · 2026-11-13 17:54** 例行巡检·全交付态·零异常·无新增·⚠️ git 窗口关闭→不 add/commit/push(本线工作树本就 CLEAN·wake#1134 已 17:48 commit+push)·v10_summary.json NFS 属性缓存不一致(ls 列出但 stat/cat 报 No such file·判 transient 非丢失·下轮复查)·已fold(见 wake#1137·详情 daily-memories-vision/2026-11-13.md)。
+> 📦 **wake #1150~#1135 · 2026-11-13 17:54–20:52**（16 轮）例行巡检·全交付态·零异常·无新增·多数轮 git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功；少数轮 git 窗口关闭(posttrain 活跃 git 持 index.lock·按铁律不抢不删)暂缓；wake#1145/#1146 v10_summary.json NFS 属性缓存不一致已自愈；wake#1142 教训:未提交心跳必须当轮 commit(posttrain autostash 会流失)·已fold(见 wake#1151·详情 daily-memories-vision/2026-11-13.md)。
 
 > 📦 **wake #1134 · 2026-11-13 17:38→17:45** 例行巡检·全交付态·✅ git 窗口打开(pull ff 撞 transient lock 后 posttrain 完成 push 把 repo ff 至 up-to-date→0 behind/无 competing staged/无 lock)→add 明确路径+commit+push 本线 2 文件成功(wake#1119 起连续 16 轮暂缓解除)·🔧 遗留 stash@{0} autostash(baize_vision_loop.sh DATA_DIR)待运维处置·📣 升级提示·已fold(见 wake#1135·详情 daily-memories-vision/2026-11-13.md)。
 
