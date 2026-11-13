@@ -1405,3 +1405,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794457028667_07yj8					parked		2026-11-13 17:03	weak: GUI debug (cdl verification no response, gui_pipeline.py _worker_chain), flow-driving
 1794398936151_55a3n					parked		2026-11-13 17:03	weak: vague first msg 'PLL' + wnyu has 4 PLL cases (PFDdeadZone/DivSelDuty/CpIcpChar/VcoKvcoChar) high dup-risk
 1794444643468_c5rnp	e0030760	hfeg0pkn004	114	spice_sim	case	EDA-Eval-DesignFlow-SnmSquareValidator-001	2026-11-13 17:32	
+1794452932656_i7nlb	joeyl	hfeg0pkn004	165	spice_sim	case	EDA-Eval-DesignFlow-DelvtoInjector-001	2026-11-13 18:05	
