@@ -55,8 +55,18 @@
 
 <header>
   <h1>EDA-LiveFlow-Bench 论文下一步改进建议</h1>
-  <div class="meta">视角：spice_sim / characterization 域（shard B）· 撰写于 2026-11-13 · 状态：内部研究组建议稿（未做项标「建议验证」）</div>
+  <div class="meta">视角：spice_sim / characterization 域（shard B）· 撰写于 2026-11-13 · 更新于 2026-11-14 (r508) · 状态：内部研究组建议稿（未做项标「建议验证」）</div>
 </header>
+
+<div class="callout info">
+<b>r508 更新说明（2026-11-14）</b>：本轮为 0-case 触发轮（B 域 mc≥10 fresh 全部 peek 后无 CLEAN produce-task，触发 2026-11-11 论文报告令）。本次为<b>数据刷新</b>非重写——分析框架与六问回答保持不变，仅更新已过期的数字与池饱和实证：
+<ul style="margin:6px 0 0 0">
+<li><b>活基准规模</b>：\Ntasks 1193 → <b>1264</b>（A254/B278/C310/D353 → A277/B301/C321/D365，+71 case，<code>main.tex:62</code>）。冻结评测快照 \Neval=696 与 Pass@1=10.0% (62/620) <b>未变</b>（评测冻结，benchmark 增长不回灌已跑结果）。</li>
+<li><b>主 jsonl 实测</b>：1175 → <b>1251 case</b>；与 \Ntasks 宏 1264 仍有 13 行差距（merge 脚本 lag），不一致问题持续存在。</li>
+<li><b>§5.3 池饱和实证升级</b>：1109 池「r476 后归零」→ 1113 池「mc≥10 fresh=64，r506+r507 累计 peek 80 fresh 全质量饱和、0 clean produce-task」——池饱和从「单次快照现象」升级为「跨两次快照（1109+1113）反复复现的结构性饱和」，论点更强。</li>
+<li><b>评测 run/Pass% 列未变</b>（来自冻结 696 快照，§4_experiments 不随 benchmark 增长变动）。</li>
+</ul>
+</div>
 
 <!-- ① 一句话结论 -->
 <h2>① 一句话结论</h2>
@@ -65,7 +75,7 @@
 <!-- ② 论文现状速览 -->
 <h2>② 论文现状速览（关键数字表）</h2>
 <div class="kpi">
-  <div class="card"><div class="n">1193</div><div class="l">活基准 case 数 \Ntasks（A254/B278/C310/D353）</div></div>
+  <div class="card"><div class="n">1264</div><div class="l">活基准 case 数 \Ntasks（A277/B301/C321/D365）</div></div>
   <div class="card"><div class="n">696</div><div class="l">冻结评测 run 数 \Neval（2026-11-09）</div></div>
   <div class="card"><div class="n">10.0%</div><div class="l">Pass@1（62/620 decided，Wilson CI [7.9,12.6]）</div></div>
   <div class="card"><div class="n">13</div><div class="l">EDA 领域数（4 个领域组）</div></div>
@@ -75,7 +85,7 @@
 
 <table>
 <tr><th>维度</th><th>论文现状</th><th>来源（section + 行）</th></tr>
-<tr><td>活基准规模</td><td>\Ntasks = 1193 cases（截至 2026-11-13）</td><td><code>main.tex:43</code> <code>\newcommand{\Ntasks}{1193}</code></td></tr>
+<tr><td>活基准规模</td><td>\Ntasks = 1264 cases（截至 2026-11-14，主 jsonl 实测 1251）</td><td><code>main.tex:62</code> <code>\newcommand{\Ntasks}{1264}</code></td></tr>
 <tr><td>评测快照</td><td>\Neval = 696 run（冻结 2026-11-09），62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT</td><td><code>4_experiments.tex:34,58</code></td></tr>
 <tr><td>分母口径</td><td>headline = 62/620 = 10.0%；计 ABSENT 为失败 9.9%；计 ERROR 为失败 8.9%；三者相差 ≤1.1pp</td><td><code>4_experiments.tex:66</code> 脚注</td></tr>
 <tr><td>骨干</td><td>单一 DeepSeek-V4-Pro；GLM-5.2/Kimi-K2.6/V4-Flash/Doubao-Seed-2.0-Pro 已配置未跑完</td><td><code>4_experiments.tex:22</code></td></tr>
@@ -124,7 +134,7 @@
 <p>论文把 characterization 归 depth 1–2（19.2%，top-3），spice_sim 归 depth 5（8.4%，中段）（<code>5_analysis.tex:52,56</code>）。<b>同一 shard、同一套判分协议、同一批 case-maker</b>产出的两个域，Pass@1 差 2.3×。这本身<b>支持</b>「交付件越偏脚本模板越好做、越需要真跑仿真越难」的直觉。<b>但论文没有利用这个内部对照</b>——它只在域级聚合里提了一句，没有把「同 shard 跨 depth bin」当作一个 mini-controlled comparison 来论证。建议在 §5.2 补一个小节：「同源异 depth：spice_sim vs characterization」作为 grounding-depth 的域内佐证。</p>
 
 <h4>3.2 characterization 的域内案例存在<b>扫描词汇盲点</b>导致的覆盖不足</h4>
-<p>我的造题实测（见 MEMORY_DESIGNFLOW_B r467）发现：<b>SiliconSmart / custom_sim 在全量 38082 行扫描里 grep 命中为 0</b>。论文的扫描关键词表（附录 A Table 1，<code>appendix/A_benchmark_details.tex:42</code>）SPICE/char 组只有 <code>hspice, finesim, siliconsmart, spectre, ngspice, simulator, spice</code>——<b>custom_sim 不在列</b>，而真实 lib-characterization 工作流大量走 custom_sim + SiliconSmart 的 .lib 流程。后果：活基准里 characterization 仅 52 case（4.4%），spice_sim 216 case（18.4%），<b>char 被结构性低估</b>。这直接削弱了 §2「distribution reflects real engineering practice」（<code>2_benchmark.tex:86</code>）的论断——分布反映的是「能被关键词扫到的实践」，而非完整实践。</p>
+<p>我的造题实测（见 MEMORY_DESIGNFLOW_B r467）发现：<b>SiliconSmart / custom_sim 在全量 38082 行扫描里 grep 命中为 0</b>。论文的扫描关键词表（附录 A Table 1，<code>appendix/A_benchmark_details.tex:42</code>）SPICE/char 组只有 <code>hspice, finesim, siliconsmart, spectre, ngspice, simulator, spice</code>——<b>custom_sim 不在列</b>，而真实 lib-characterization 工作流大量走 custom_sim + SiliconSmart 的 .lib 流程。后果：活基准里 characterization 仅 53 case（4.2%），spice_sim 239 case（19.1%），<b>char 被结构性低估</b>。这直接削弱了 §2「distribution reflects real engineering practice」（<code>2_benchmark.tex:86</code>）的论断——分布反映的是「能被关键词扫到的实践」，而非完整实践。</p>
 <div class="callout warn"><b>可落地修复</b>：扫描关键词表补 <code>custom_sim, SiliconSmart, liberty, .lib, char_flow, lcc, alib</code>；对 698 机重扫一次 post-1109 窗口量化 char 增量。这是 benchmark 演进里性价比最高的一条（见 Q5）。</div>
 
 <h4>3.3 断言强度与判分口径：≥8 闸门达标，但 eval 时反硬编码信号缺失</h4>
@@ -189,16 +199,16 @@
 
 <!-- Q5 -->
 <h3><span class="seq">5</span>benchmark 本身该怎么演进</h3>
-<h4>5.1 1175 case 的分布是否合理？13 域有没有偏科？</h4>
-<p>活基准主 jsonl 实测 1175 case（A254/B278/C310/D353，与附录 A <code>appendix/A_benchmark_details.tex:54</code> 的 1193 略有出入，应是近期增删未同步 \Ntasks 宏——<b>这本身是个要修的不一致</b>）。分布高度偏斜：</p>
+<h4>5.1 1251 case 的分布是否合理？13 域有没有偏科？</h4>
+<p>活基准主 jsonl 实测 1251 case（A277/B301/C321/D365，与附录 A <code>appendix/A_benchmark_details.tex:54</code> 及 \Ntasks 宏 1264 仍有 13 行出入，应是近期增删未同步 merge/宏——<b>这本身是个要修的不一致</b>）。分布高度偏斜：</p>
 <table>
 <tr><th>域</th><th>case 数</th><th>占比</th><th>评测 run</th><th>评测 Pass%</th><th>备注</th></tr>
-<tr><td>spice_sim</td><td>216</td><td>18.4%</td><td>104</td><td>8.4%</td><td>B 主力，但 high-mc 段已结构性 mined-out（见 MEMORY_B r465–r476）</td></tr>
-<tr><td>schematic_netlist</td><td>199</td><td>16.9%</td><td>131</td><td>11.5%</td><td>最大评测域</td></tr>
-<tr><td>physical_verify</td><td>129</td><td>11.0%</td><td>73</td><td>2.9%</td><td>depth 7+，最难</td></tr>
-<tr><td>digital</td><td>97</td><td>8.3%</td><td>51</td><td>11.1%</td><td>数字前端偏少（工程师少用 cline）</td></tr>
-<tr><td>characterization</td><td>52</td><td>4.4%</td><td>28</td><td>19.2%</td><td><b>被扫描词汇盲点低估</b>（见 Q3.2）</td></tr>
-<tr><td>pnr_signoff</td><td>30</td><td>2.6%</td><td>25</td><td>20.8%</td><td>最高通过率但 n 最小</td></tr>
+<tr><td>spice_sim</td><td>239</td><td>19.1%</td><td>104</td><td>8.4%</td><td>B 主力，但 high-mc 段已结构性 mined-out（见 MEMORY_B r465–r507）</td></tr>
+<tr><td>schematic_netlist</td><td>210</td><td>16.8%</td><td>131</td><td>11.5%</td><td>最大评测域</td></tr>
+<tr><td>physical_verify</td><td>139</td><td>11.1%</td><td>73</td><td>2.9%</td><td>depth 7+，最难</td></tr>
+<tr><td>digital</td><td>112</td><td>9.0%</td><td>51</td><td>11.1%</td><td>数字前端偏少（工程师少用 cline）</td></tr>
+<tr><td>characterization</td><td>53</td><td>4.2%</td><td>28</td><td>19.2%</td><td><b>被扫描词汇盲点低估</b>（见 Q3.2）</td></tr>
+<tr><td>pnr_signoff</td><td>31</td><td>2.5%</td><td>25</td><td>20.8%</td><td>最高通过率但 n 最小</td></tr>
 </table>
 <p><b>偏科是真实的</b>（reflects real usage，<code>2_benchmark.tex:86</code>），但带来两个统计问题：(a) pnr_signoff 仅 25 run 却是 headline「最高域」，CI [9.2,40.5] 极宽；(b) 评测快照 696 run 里前 3 域占 44.3%（<code>5_analysis.tex:134</code>），聚合指标偏向模拟友好能力。<b>建议</b>：活基准保留自然分布（保真），但<b>另出一个平衡评测子集</b>（每域等 n，如各 30）作为 headline 报告口径——既给每域足够统计力，又让 7.1× 这类比值不再被小 n 主导。</p>
 
@@ -209,7 +219,7 @@
 </ul>
 
 <h4>5.3 增长轨迹与池饱和</h4>
-<p>B shard 的实测：1109 池 mc≥10 fresh 在 r476 后归零（6 个 fresh 全 peek 完，非数量枯竭而是 filter-quality 饱和——loose keyword filter 放进跨域噪声）。这指向一个 benchmark 级风险：<b>基于单次快照的 trace 池会饱和</b>。论文 §5 threats 提了「Frozen snapshot, adding cases changes the mix」（<code>5_analysis.tex:140</code>），但没提「池本身会枯竭需周期性重扫」。建议补 roadmap：周期性全量重扫 698 机 + post-snapshot 新用户靶向扫描（B r470 已实证 7prw8 来自 post-1109 session）。</p>
+<p>B shard 的实测（r465–r507 跨两次快照反复复现）：1109 池 mc≥10 fresh 在 r476 后归零（6 个 fresh 全 peek 完）；ops 11-13 13:30 触发新全量扫描 <code>ssh_eda_search_20261113_131349</code>（41409 行）换池到 1113，B 域 mc≥10 fresh 回弹到 76，但 r506（1113 池 65 fresh 全 peek）+ r507（post-1113 daily-log 再挖 15 fresh 全 peek）累计 <b>80 fresh 全部质量饱和、0 clean produce-task</b>——非数量枯竭（fresh≠0，§4 规则下不得报池枯竭），而是 <b>filter-quality 饱和</b>：loose keyword filter 放进跨域噪声（waveview/innovus/verilog-dominant 被误纳为 B）、Q&A/inspection/diagnosis（非 produce-task）、P-004 cross-shard near-dup（joeyl WCK CML / jiangbaol StrongARM 反复出现）。这把池饱和从「单次快照现象」升级为<b>跨两次快照（1109+1113）反复复现的结构性饱和</b>，论点更强。这指向一个 benchmark 级风险：<b>基于单次快照的 trace 池会饱和，且换池只能短暂回弹</b>。论文 §5 threats 提了「Frozen snapshot, adding cases changes the mix」（<code>5_analysis.tex:140</code>），但没提「池本身会枯竭需周期性重扫 + filter 精化」。建议补 roadmap：(1) 周期性全量重扫 698 机（已实证有效：1109→1113 回弹 76 fresh）；(2) <b>filter 精化</b>——把 B-keyword filter 从「spice 词命中」收紧为「spice 工具计数/总工具计数 ≥35% 且 spice≥10」（B 线原口径），压掉跨域噪声；(3) post-snapshot 新用户靶向扫描（B r470 已实证 7prw8 来自 post-1109 session，r507 post-1113 daily-log 挖掘亦解锁 15 fresh，但需 filter 精化才能转 case）。</p>
 
 <!-- Q6 -->
 <h3><span class="seq">6</span>如果只有两周，先做哪三件事？</h3>
@@ -245,7 +255,7 @@
 <tr><td><span class="tag p2">P2</span></td><td>逐断言 pass-rate 热图</td><td>判分器维护岗</td><td>1.5 人日</td><td>check runner 改造输出 per-assertion</td><td>断言类型 × 域热图 → §5.1 诊断</td></tr>
 <tr><td><span class="tag p2">P2</span></td><td>扫描关键词补 custom_sim/SiliconSmart/liberty + 重扫</td><td>ops（扫描属 A/ops）</td><td>1 人日 + 1 扫描轮</td><td>698 机只读权限</td><td>characterization 候选增量 → §2 覆盖修复</td></tr>
 <tr><td><span class="tag p2">P2</span></td><td>平衡评测子集（每域等 n）</td><td>benchmark 维护岗</td><td>1 人日</td><td>—</td><td>balanced-headline 口径 → §4 双口径报告</td></tr>
-<tr><td><span class="tag p2">P2</span></td><td>修 \Ntasks 宏与实际 jsonl 不一致（1193 vs 1175）</td><td>论文编辑（A）</td><td>0.2 人日</td><td>—</td><td>数字一致性</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>修 \Ntasks 宏与实际 jsonl 不一致（1264 vs 1251，merge lag）</td><td>论文编辑（A）</td><td>0.2 人日</td><td>—</td><td>数字一致性</td></tr>
 <tr><td><span class="tag p2">P2</span></td><td>附录 A Task Example [TODO] 补完</td><td>case 维护（任选一中等 schematic_netlist case）</td><td>0.5 人日</td><td>—</td><td>完整 case 展示 → 附录 A</td></tr>
 </table>
 
