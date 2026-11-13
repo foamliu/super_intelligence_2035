@@ -2371,3 +2371,17 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **推文页核验**：`Tim_Dettmers/status/2111767150532997458` **`200`**，`og:title` = `Tim Dettmers (@Tim_Dettmers) on X` ⇒ 入账 **V21**（2026-10-18 10:31 UTC，下一期首发）；另一条 `2118418938317156731` 经核验 `og:title` = `David Hall (@dlwh) on X` ⇒ **判为他人推文、丢弃**（profile timeline 混入问题复现）。
 - **发信 1 封（`SENT OK`）**：Tim Dettmers `15:05:32`（QLoRA，英文 **175** 词，发送前 `wc -w` 已核；邮箱取自本人主页反爬写法）。今日累计 **9 封**、累计 **30 封**。
 - **作者网**：+4 → **90**（X 已核验 **50**、待 follow **43**、已 follow **0**）。
+
+## §9.166 · 2026-11-13 18:00 CST（时窗轮 · A 轨复核「索引未动」0 新收 + B 轨第二十二轮 + 第 31 封信）
+
+- **批次未再变动**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（4.69 / 1.93 / 3.64 / 6.42 / 2.67 s，串行 ≥3.2s）；`totalResults` = **125,322 / 213,258 / 299,025 / 212,730 / 31,041**，与 15:00 轮（125,322 / 213,258 / 299,025 / 212,730 / 31,041）**逐值相同** ⇒ **索引未再入新批**（口径 = 「索引没动」，≠「无新提交」）。
+- **A 轨结果**：合并去重 **merged 391 / SEEN 命中 2 / 新候选 389**（脚本 `raw/candidates_r166.py`，产物 `research/raw/2026-11-13-18h-candidates-r166.json`，`min_published=2026-11-10`）；当日 5/5 已收口 ⇒ **0 新收**（不超额、不凑数）。
+- **B 轨元数据（arXiv `id_list` 4 ID 一次）**：`1503.02531` Distilling the Knowledge（首发 `2015-03-09T15:44:49Z`，3 作者）· `2305.13245` GQA（首发 `2023-05-22T17:16:38Z`，v3 `2023-12-23`，6 作者）· `2306.02707` Orca（首发 `2023-06-05T08:58:39Z`，6 作者）· `2310.06825` Mistral 7B（首发 `2023-10-10T17:54:58Z`，18 作者）→ **`200` + atom**（10,007 B）。⚠️ **`http://export.arxiv.org` 本轮返回 `301`（0 B）⇒ 改 `https://` 后 `200`**，已记入流程。
+- **OpenAlex（查询日 2026-11-13，4/4 `200`）**：蒸馏 **26,232**（`preprint`，无会场 DOI）· GQA **1,522**（`conference-paper`，DOI `10.18653/v1/2023.emnlp-main.298`，pp. 4895–4901）· Orca **622**（`preprint`）· Mistral 7B **10,625**（`preprint`）。
+- **作者页**：`www.cs.toronto.edu/~hinton/` **`200`** / 30,693 B，页内明文 `Email: geoffrey [dot] hinton [at] gmail [dot] com` ⇒ 还原为 `geoffrey.hinton@gmail.com`；`mistral.ai/team/` 与 `microsoft.com/en-us/research/people/...` 超时 / `404` ⇒ 不登记。
+- **X（只读，显式 `-x http://127.0.0.1:7897`）**：`x.com` 自检 **`200`**；profile **3/3 `200`**（`geoffreyhinton` bio `deep learning`；`JeffDean` bio `Co-founder & CEO of Discovery Loop. Former Chief Scientist, Google...`；`arthurmensch` bio `Co-founder and CEO @MistralAI`）；单条推文页 **2/2 `200`**。
+- **推文页核验**：`Tim_Dettmers/status/2111767150532997458` **`200`**（`og:title` / `og:description` 与 profile 一致）⇒ **V21 本期首发**；`JeffDean/status/2118554350859813374` **`200`**（`og:title` = `Jeff Dean (@JeffDean) on X`，`og:description` 全文）⇒ **V22 本期采用**。
+- **发信 1 封（`SENT OK`）**：Geoffrey Hinton `18:05:17`（Distilling the Knowledge，英文 **186** 词，发送前 `wc -w` 已核；邮箱取自本人当前主页）。今日累计 **10 封**、累计 **31 封**。
+- **作者网**：+3 → **93**；**更正** Arthur Mensch 的 X（`@arthurmensch`）。X 已核验 **53**、待 follow **46**、已 follow **0**。
+- **投料**：`voice_ready` **2 条**（V21 / V22）；`news_ready` **0**（A 轨 0 新收 + B 轨无事件点，不硬凑）。
+- **交付**：`daily/2026-11-13.html` **117,085 B**（div 128/128、table 32/32、tr 183/183、td 684/684、th 145/145、h2 45/45、details 5/5、footer 1/1、0 `<script>`、0 残留 `**`；并补上历史遗留的 `<footer>` 开标签）+ `daily/index.html`（87 篇 / 93 人 / 31 封 / 114.3 KB）；`PAPERS.md` **87**、`AUTHORS.md` **93**。

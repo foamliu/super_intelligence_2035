@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第十八轮 71 篇 · 作者网 77 人）· research 线</title>
+<title>论文观察日报 · 2026-11-13（5/5 收口 ＋ B 轨第二十二轮 87 篇 · 作者网 93 人）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -54,10 +54,10 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-13</h1>
-  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第二十轮累计 <b>79</b> 篇经典（必读清单 37/37 ＋ 补充预训练范式 / 视觉语言对齐 / RL 推理 / 内存成本）＋ 👥 作者网 <b>86</b> 人 ＋ 🗣 voice_ready <b>4</b> 条（V17–V20）＋ ✉ 作者信 12:00 轮 <b>1</b> 封 / 今日 <b>8</b> 封 / 累计 <b>29</b> 封</div>
+  <div class="sub">今日 <b>5 篇「借鉴」收口（5/5）</b>＋ 🅱 B 轨第二十二轮累计 <b>87</b> 篇经典（必读清单 37/37 ＋ 补充蒸馏 / KV 分组 / 推理轨迹 / 滑窗开源）＋ 👥 作者网 <b>93</b> 人 ＋ 🗣 voice_ready <b>6</b> 条（V17–V22）＋ ✉ 作者信 18:00 轮 <b>1</b> 封 / 今日 <b>10</b> 封 / 累计 <b>31</b> 封</div>
   <div class="meta">
     <span>数据源：arXiv API（公告批<b>已刷新</b>，新批首发集中 2026-11-11；本轮 0 新收，当日额度 5/5 已满）</span>
-    <span>生成：2026-11-13 12:2x（12:00 时窗 · A 轨复核 ＋ B 轨第二十轮）</span>
+    <span>生成：2026-11-13 18:2x（18:00 时窗 · A 轨复核 ＋ B 轨第二十二轮 ＋ 晚报变更说明）</span>
     <span>进度：<b>5 / 5</b>（已收口）</span>
     <span>出口：仅 HTML（🚫 不发日报邮件）</span>
   </div>
@@ -547,7 +547,116 @@ X 探测（只读，显式 <code>-x http://127.0.0.1:7897</code>）：直连 <co
 </div>
 
 
-  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 + 15:00 时窗 · A 轨复核 + B 轨第十八 / 第十九 / 第二十 / 第二十一轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 15:2x CST<br>
+<h2 class="sec">🔄 18:00 轮 · A 轨复核（公告批未再刷新；当日 5/5 已满 ⇒ 0 新收）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（18:00 轮）</th><th>对比 15:00 轮</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,322</td><td>4.69 s</td><td><b>±0</b></td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,258</td><td>1.93 s</td><td><b>±0</b></td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>299,025</td><td>3.64 s</td><td><b>±0</b></td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,730</td><td>6.42 s</td><td><b>±0</b></td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>31,041</td><td>2.67 s</td><td><b>±0</b></td></tr>
+</table>
+<div class="note">
+五个 <code>totalResults</code> 与 15:00 轮<b>逐值相同</b> ⇒ 本时窗<b>无新公告批入索引</b>（不是「无新提交」，而是「索引没动」——两者口径不同，已分开记录）。合并去重：<b>merged 391 / SEEN 命中 2 / 新候选 389</b>，产物 <code>research/raw/2026-11-13-18h-candidates-r166.json</code>（脚本 <code>raw/candidates_r166.py</code>，串行 ≥3.2 s）。<br>
+<b>本轮仍 0 新收</b>：当日推荐额度 <b>5/5 已收口</b>，按「目标 5 篇、不超额、不凑数」不硬塞第 6 篇。今日累计落盘候选 <b>368（12:00）+ 389（15:00）+ 389（18:00，与前轮同批）</b>，<b>明日 00:00 轮优先从中选 5 篇</b>（届时按 <code>published ≤ 72h</code> 重新筛）。
+</div>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第二十二轮（+4 → 87）：蒸馏源头 / KV 分组 / 推理轨迹蒸馏 / 滑窗开源</h2>
+<table>
+  <tr><th>#</th><th>论文（8 字段已入 <code>PAPERS.md</code>）</th><th>年份 / 出处</th><th>被引（OpenAlex，2026-11-13）</th><th>服务线（↔ 影响哪一步）</th></tr>
+  <tr><td>84</td><td><b>Distilling the Knowledge in a Neural Network</b>（<code>1503.02531</code>）</td><td>2015 / NIPS 2014 Deep Learning Workshop（<b>无会场 DOI</b>）</td><td><b>26,232</b></td><td><b>pretrain</b>（教师规模 vs 蒸馏时长 2×2）· <b>data</b>（软标签作可复用数据资产、单独 manifest）· <b>zhulong</b>（教师离线成本必须入账）· <b>harness</b>（生成式判分须先固定解码参数）</td></tr>
+  <tr><td>85</td><td><b>GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints</b>（<code>2305.13245</code>）</td><td>2023 / EMNLP 2023（DOI <code>10.18653/v1/2023.emnlp-main.298</code>，pp. 4895–4901）</td><td><b>1,522</b></td><td><b>zhulong</b>（MHA / GQA-8 / GQA-4 / MQA 四臂）· <b>pretrain</b>（uptrain 的 5% 是「相对原预训练算力」）· <b>harness</b>（质量与 tokens/s 必须同表）</td></tr>
+  <tr><td>86</td><td><b>Orca: Progressive Learning from Complex Explanation Traces of GPT-4</b>（<code>2306.02707</code>）</td><td>2023 / arXiv 预印本（<b>无会场 DOI</b>）</td><td><b>622</b></td><td><b>data</b>（推理轨迹是数据形态，不是提示技巧）· <b>harness</b>（判分须查中间产物，防「学风格」）· <b>zhulong</b>（渐进式训练顺序作消融轴）</td></tr>
+  <tr><td>87</td><td><b>Mistral 7B</b>（<code>2310.06825</code>）</td><td>2023 / arXiv 技术报告（Apache 2.0，<b>无会场 DOI</b>）</td><td><b>10,625</b></td><td><b>pretrain</b>（SWA 窗口长度作预注册消融轴）· <b>zhulong</b>（同机 7B 开源基线计入成本表）· <b>data</b>（配比未公开 ⇒ 不得倒推）</td></tr>
+</table>
+<div class="note">
+核验：arXiv <code>id_list=1503.02531,2305.13245,2306.02707,2310.06825</code> <b><code>200</code> + <code>application/atom+xml</code></b>（4 条 entry / 10,007 B；作者数与首发时间已核；<b>http 端点返回 <code>301</code> ⇒ 已改走 https</b>）；OpenAlex <b>4/4 <code>200</code></b>（蒸馏 26,232 · GQA 1,522 · Orca 622 · Mistral 7B 10,625）。⚠️ 蒸馏论文与 Orca / Mistral 7B 均<b>无会场 DOI</b> ⇒ <b>不写 DOI</b>，只给 arXiv DOI；GQA 的 EMNLP DOI 与页码取自 OpenAlex <code>type=conference-paper</code> + <code>biblio</code>。<b>必读清单仍 10/10 组、37/37 条目</b>（本轮属「补充」）。
+</div>
+
+
+<h2 class="sec">🎯 18:00 轮 · 新增可执行建议（5 条，按线；vision / designflow 本轮显式写「无」）</h2>
+<table>
+  <tr><th>线</th><th>建议（可落地：命令 / 实验设计）</th><th>依据 / 预注册判据</th></tr>
+  <tr><td><b>pretrain</b></td><td>① 蒸馏预算 2×2 小实验：<code>教师 2B / 8B</code> × <code>蒸馏 1× / 3× 步数</code>，学生固定（同参数量、同数据、同 token 预算），四项都报「域内留出集 / 通用集」两列。<br>② 若 2B 已训到中途要改 KV 头数，先按 GQA 的「<b>原预训练算力的 5%</b>」预注册 uptrain 预算（写清是否含 warmup、是否重跑数据加载），再动。<br>③ SWA 窗口长度三档（4K / 8K / 16K）作为预注册消融轴。</td><td>蒸馏（#84）· GQA（#85）· Mistral 7B（#87）。<b>判据</b>：8B 教师相对 2B 教师在留出集上领先 &lt; 1.5 点 ⇒ 不再为蒸馏扩大教师；uptrain 后质量差 &gt; 2 点 ⇒ 保留 MHA；SWA 在「整份时序报告」类任务掉点 &gt; 2 点 ⇒ 只作推理期选项。</td></tr>
+  <tr><td><b>data</b></td><td>① 软标签入库：把「教师版本 / 温度 / 生成日期 / 覆盖样本 id」写进独立 manifest，与原始文本分开存，<b>禁止</b>把「软标签训过的学生」和「硬标签学生」混在同一张对比表。<br>② 推理轨迹数据：人工 100 条 EDA「分析→结论」轨迹（时序报告读法 / 违例归因）打底，再用强模型扩到 5k，按「是否含可验证中间步骤」过滤。</td><td>蒸馏（#84）· Orca（#86）。<b>判据</b>：轨迹数据相对「答案 Only」数据提升 &lt; 3 点 ⇒ 停止扩写、回补人工种子；软标签实验若未记教师版本 ⇒ 结果不进对外报告。</td></tr>
+  <tr><td><b>harness</b></td><td>① 判分器加「中间产物检查」：Orca 式的失败模式是「学会报告格式但推理错」⇒ 对关键路径 / 违例归因类题目，判分须读中间字段，不能只看最终字符串。<br>② 吞吐与质量同表：GQA 四臂与推理服务压测都同时报「质量 / KV 显存 / tokens·s⁻¹ / p95」。</td><td>Orca（#86）· GQA（#85）。<b>判据</b>：只报单一维度的成本结论不进入对外报告；中间产物检查若与最终分结论冲突 &gt; 5% 的样本 ⇒ 该题型标「判分不稳」。</td></tr>
+  <tr><td><b>zhulong</b></td><td>① 成本表加一行「同机部署 7B 开源模型（Apache 2.0）」的 tokens/s 与显存占用，作为 2B 自研模型的外部参照。<br>② 蒸馏类实验把「教师离线生成成本」单列一列（每千样本的教师前向成本），与「学生推理成本」并列。</td><td>Mistral 7B（#87）· 蒸馏（#84）。<b>判据</b>：缺「教师离线成本」列的蒸馏结论不进入选型；7B 基线吞吐低于 2B 自研 &lt; 1.3× ⇒ 自研模型的效率优势不足以单独作为立项理由。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮 4 篇均不涉及视觉编码器 / 图文对 / 视觉 RL；不凑数）</td><td>—</td></tr>
+  <tr><td><b>designflow</b></td><td><b>无</b>（本轮 4 篇均不涉及造题 / L1–L5 保真度 / EDA 判分；不凑数）</td><td>—</td></tr>
+</table>
+
+<h2 class="sec">👥 作者关系网（第二十二轮 +3 → 93；X 已核验 53 ＋ 更正 1）</h2>
+<table>
+  <tr><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>Geoffrey Hinton</b></td><td>University of Toronto（荣休）</td><td>Distilling the Knowledge（#84，一作）</td><td><code>geoffrey.hinton@gmail.com</code>（本人主页明文 <code>geoffrey [dot] hinton [at] gmail [dot] com</code>，<code>200</code> / 30,693 B）</td><td><b>@geoffreyhinton</b>（<code>og:title</code> 自证 + bio <code>deep learning</code>）</td><td><b>已发信</b>（18:05:17，英文 186 词）</td></tr>
+  <tr><td><b>Jeff Dean</b></td><td>Discovery Loop（联合创始人 &amp; CEO；bio 自述前 Google 首席科学家）</td><td>Distilling the Knowledge（#84，三作）</td><td><b>未找到</b>（不猜）</td><td><b>@JeffDean</b>（<code>og:title</code> + bio 含 <code>Former Chief Scientist, Google</code>）</td><td>待跟踪（同论文本轮只发一作）</td></tr>
+  <tr><td><b>Joshua Ainslie</b></td><td>Google Research（论文时；未从现行页核验）</td><td>GQA（#85，一作）</td><td><b>未找到</b>（<code>research.google</code> 直连两次超时）</td><td><b>未找到 X</b>（不猜）</td><td>待跟踪</td></tr>
+  <tr><td><b>Arthur Mensch</b>（更正）</td><td>Mistral AI（联创 &amp; CEO）</td><td>Mistral 7B（#87，三作）· Chinchilla（三作）</td><td>未找到</td><td><b>@arthurmensch</b>（bio = <code>Co-founder and CEO @MistralAI</code>）</td><td>待跟踪（此前记「未找到 X」⇒ 已更正）</td></tr>
+</table>
+<div class="note">
+X 探测（只读，显式 <code>-x http://127.0.0.1:7897</code>）：<code>x.com</code> 自检 <b><code>200</code></b>（代理在线）；profile <b>3/3 <code>200</code></b>（<code>geoffreyhinton</code> / <code>JeffDean</code> / <code>arthurmensch</code>）。新增 handle <b>3</b>、待 follow <b>46</b>、<b>0 follow</b>（写操作需登录态，<b>未假装</b>）。<b>不猜 handle</b>：Joshua Ainslie 没有可核验入口 ⇒ 写「未找到 X」。
+</div>
+
+<h2 class="sec">✉ 作者信（18:00 轮 1 封，<code>SENT OK 2026-11-13 18:05:17</code>；今日累计 10 封 / 累计 31 封）</h2>
+<details class="voice-ready" open>
+<summary>🗣 voice_ready · 本期 2 条（上限 2）—— V21「小模型 + SFT + 对的工具 &gt; 大模型」＋ V22「开放科学被算力价格挡住」</summary>
+<ul>
+  <li><b>人物</b>：Tim Dettmers <code>@Tim_Dettmers</code>（CMU 助理教授 / Allen Institute for AI；QLoRA 一作、bitsandbytes 作者）</li>
+  <li><b>言论</b>：<span class="orig">"This is really cool work on our synthetic hospital benchmark. For patient diagnosis, this shows that small models + SFT + the right tools &gt; GPT-6 Luna. Interesting is that the tools help small models, but not big models. So gaps in capability can be replaced by tools"</span><br><b>中文翻译</b>：「这是我们那个合成医院基准上很酷的工作。就病人诊断而言，它说明 <b>小模型 + SFT + 合适的工具 &gt; GPT-6 Luna</b>。有意思的是，工具帮到了小模型，却没帮到大模型。所以能力上的缺口是可以用工具来补的。」</li>
+  <li><b>时间</b>：2026-10-18 10:31 UTC（26 天，<b>未超 30 天</b>）</li>
+  <li><b>出处</b>：<a href="https://x.com/Tim_Dettmers/status/2111767150532997458">https://x.com/Tim_Dettmers/status/2111767150532997458</a>（推文页 <code>200</code> / 155,397 B；<code>og:title</code> = <code>Tim Dettmers (@Tim_Dettmers) on X</code>；<code>og:description</code> 与 profile <code>full_text</code> 逐字一致）</li>
+  <li><b>话题点</b>：「小模型 + 工具能打赢大模型」是普通人最能感知的一句话——它决定了 AI 会不会只属于买得起大算力的人。</li>
+  <li><b>风险</b>：① 「&gt; GPT-6 Luna」是<b>在其自家合成医院基准上</b>的对比，🚫 不得外推为通用结论；② 推文提到「our synthetic hospital benchmark」⇒ <b>作者自述自家基准</b>；③ 「工具帮不到大模型」是该基准上的观察，🚫 不得写成「大模型不需要工具」。</li>
+</ul>
+<p style="margin:14px 0 4px;font-weight:700;color:#0b3d6e;">— 第 2 条 —</p>
+<ul>
+  <li><b>人物</b>：Jeff Dean <code>@JeffDean</code>（Discovery Loop 联合创始人 &amp; CEO；bio 自述前 Google 首席科学家；蒸馏论文三作）</li>
+  <li><b>言论</b>：<span class="orig">"I'm delighted to partner with @LaudeInstitute (along with my @Sanjay_Ghemawat, John Hennessy, Dave Patterson, Ben Gomes and @andykonwinski) to support funding of open science moonshots!"</span><br><b>中文翻译</b>：「很高兴与 @LaudeInstitute 合作（同行的还有 Sanjay Ghemawat、John Hennessy、Dave Patterson、Ben Gomes 和 Andy Konwinski），去资助<b>开放科学的『登月』项目</b>！」</li>
+  <li><b>时间</b>：2026-11-06 04:01 UTC（7 天，<b>未超 30 天</b>）</li>
+  <li><b>出处</b>：<a href="https://x.com/JeffDean/status/2118554350859813374">https://x.com/JeffDean/status/2118554350859813374</a>（推文页 <code>200</code> / 162,986 B；<code>og:title</code> = <code>Jeff Dean (@JeffDean) on X</code>；<code>og:description</code> 全文已取）</li>
+  <li><b>话题点</b>：前沿研究的算力价格正在把多数团队挡在门外——「谁来为开放科学买单」第一次有了具体人选。</li>
+  <li><b>风险</b>：① 这是<b>资助计划公告 + 个人表态</b>，🚫 不得写成「该计划已产出成果」；② 推文<b>未披露金额、评审机制、申请入口</b> ⇒ 不引任何数字；③ 名单中出现 John Hennessy / Dave Patterson 等，属推文原文，🚫 不得据此推断机构关系。</li>
+</ul>
+</details>
+
+<h2 class="sec">附录 A6 · 检索式与命中数（2026-11-13 18:0x · 可核验）</h2>
+<table>
+  <tr><th>项目</th><th>结果</th></tr>
+  <tr><td>arXiv 查询</td><td><b>5/5</b> <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>（串行 ≥3.2 s；4.69 / 1.93 / 3.64 / 6.42 / 2.67 s）</td></tr>
+  <tr><td>公告批</td><td><b>与 15:00 轮逐值相同</b>（125,322 / 213,258 / 299,025 / 212,730 / 31,041）⇒ <b>索引未再变动</b></td></tr>
+  <tr><td>去重</td><td>merged <b>391</b> / SEEN 命中 <b>2</b> / 新候选 <b>389</b> ⇒ <code>raw/2026-11-13-18h-candidates-r166.json</code></td></tr>
+  <tr><td>B 轨元数据</td><td>arXiv <code>id_list</code> 4 ID <b><code>200</code> + atom</b>（10,007 B；⚠️ <code>http://</code> 端点 <b><code>301</code></b> ⇒ 改 <code>https://</code> 后 <code>200</code>）；OpenAlex <b>4/4 <code>200</code></b></td></tr>
+  <tr><td>作者页</td><td><code>www.cs.toronto.edu/~hinton/</code> <code>200</code> / 30,693 B（页内明文 <code>Email: geoffrey [dot] hinton [at] gmail [dot] com</code>）；<code>mistral.ai/team/</code> 与 <code>microsoft.com/en-us/research/people/...</code> 超时 / <code>404</code> ⇒ 不登记</td></tr>
+  <tr><td>X 只读</td><td><code>x.com</code> 自检 <b><code>200</code></b>；profile <b>3/3 <code>200</code></b>（<code>geoffreyhinton</code> / <code>JeffDean</code> / <code>arthurmensch</code>）；单条推文页 <b>2/2 <code>200</code></b>（V21 / V22 全文核验）</td></tr>
+</table>
+
+<h2 class="sec">附录 B6 · 18:00 轮口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>；<code>totalResults</code> 与上一轮<b>完全相同</b>，如实区分「索引未动」与「无新提交」，并记「0 新收」的真实原因是<b>额度已满</b>；② B 轨 4 条<b>均 8 字段</b>、被引数标查询日与来源；蒸馏 / Orca / Mistral 7B <b>无会场 DOI ⇒ 不写 DOI</b>，GQA 的 EMNLP DOI + 页码取自 OpenAlex；③ 作者网<b>不猜</b>：Joshua Ainslie 无邮箱 / 无 X ⇒ 写「未找到」并注明判据；Arthur Mensch 由「未找到 X」<b>更正</b>为 <code>@arthurmensch</code>（bio 自证）；④ <code>voice_ready</code> <b>2 条满额</b>，均<b>原文 + 原链接 + 时间</b>三件套齐、推文页 <code>og:title</code> / <code>og:description</code> 已核，风险条写明「不得外推 / 不得代填数字」；⑤ <code>news_ready</code> <b>0 条</b>（A 轨 0 新收；B 轨 4 篇为历史/方法文献，无「发布 / 开源 / 首次」事件点，<b>不硬凑</b>）；⑥ 本轮外发 = <b>1 封</b>作者请教信（草稿先入仓、台账已记、186 词已核）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
+<h2 class="sec">🌙 晚报变更说明（AM → PM）</h2>
+<table>
+  <tr><th>项</th><th>早报（AM，截至 15:00 轮）</th><th>晚报（PM，18:00 轮）</th><th>改了什么 / 为什么</th></tr>
+  <tr><td>今日推荐</td><td>5/5 已收口（03:00 完成）</td><td><b>仍 5/5</b>，0 新收</td><td><b>不改</b>：额度已满且本时窗索引未动；若硬塞第 6 篇即违反「目标 5 篇、不超额」。候选已落盘，留待明日按 72h 重筛。</td></tr>
+  <tr><td>B 轨经典</td><td>83 篇</td><td><b>87 篇</b>（+4）</td><td>按令「每轮新增 2–4 条」补 4 条，全部来自上一轮候选池（蒸馏源头 / GQA / Orca / Mistral 7B），并<b>当场实测</b> arXiv 元数据 + OpenAlex 被引，不留「待核」。</td></tr>
+  <tr><td>作者网</td><td>90 人 / X 核验 50 / 待 follow 43</td><td><b>93 人</b> / X 核验 <b>53</b> / 待 follow <b>46</b></td><td>+3 人（Hinton / Dean / Ainslie），并<b>更正</b> Arthur Mensch 的 X 状态（此前「未找到」）；更正写进条目备注，<b>不删旧记录</b>。</td></tr>
+  <tr><td>作者信</td><td>今日 9 封 / 累计 30 封</td><td>今日 <b>10</b> 封 / 累计 <b>31</b> 封</td><td>+1 封（Hinton，186 词）；本轮 ≤3 额度内只用 1 封，其余候选<b>没有可核验邮箱</b> ⇒ 宁缺勿凑。</td></tr>
+  <tr><td>voice_ready</td><td>4 条（V17–V20）</td><td><b>6 条</b>（+V21 / +V22）</td><td>V21 为上一轮已核验备稿、本轮首发；V22 本轮新抓（Jeff Dean 2026-11-06 原推）。两条都<b>不是二手转述</b>。</td></tr>
+  <tr><td>可执行建议</td><td>4 条（pretrain / data / harness / zhulong）</td><td><b>5 条</b>（同上 + 拆分）</td><td>按「每期 ≥2 条」超额满足；vision / designflow 本轮<b>显式写「无」</b>（不凑数）。</td></tr>
+</table>
+<div class="note">
+⚠️ 修版说明（如实记）：本页此前存在一个<b>没有开标签的 <code>&lt;/footer&gt;</code></b>（历史遗留），本轮补上 <code>&lt;footer&gt;</code> 开标签，并同步更新页头与页脚时窗说明。除此之外<b>未改动任何上午条目</b>的正文、数字与链接。
+</div>
+
+
+<div class="note">
+收件人 <b>Geoffrey Hinton</b>（蒸馏论文一作）· 主题 <code>Distillation in hindsight: three questions from a ~2B domain model project</code> · 邮箱取自<b>本人当前主页</b>的明文反爬写法（非论文 PDF 旧地址）· 英文 <b>186</b> 词（发送前 <code>wc -w</code> 已核）· 草稿 <code>research/mail/drafts/1503.02531.md</code>、正文副本 <code>research/mail/2026-11-13-classic-1503.02531.txt</code>、台账 <code>research/mail/发送记录.md</code> 已记（<b>没写 = 没发</b>）。同论文其余 2 位作者（Vinyals / Dean）本轮不发（<b>同论文 ≤1</b>）；本封内容按「经典论文」口径写：<b>我们先说在做什么（2B EDA 模型 + agent harness），再问对方经典结论在我们场景下的适用边界</b>，不是请教新论文细节。
+</div>
+
+
+<footer>
+  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 + 15:00 + 18:00 时窗 · A 轨复核 + B 轨第十八至第二十二轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 18:2x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>

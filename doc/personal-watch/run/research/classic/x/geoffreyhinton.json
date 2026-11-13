@@ -1,0 +1,49 @@
+{
+ "handle": "geoffreyhinton",
+ "name": "Geoffrey Hinton (@geoffreyhinton) / X",
+ "bio": "deep learning",
+ "tweets": [
+  {
+   "id": "2111096101520412774",
+   "created_at": "2026-10-16 14:05 UTC",
+   "created_at_ms": 1792159507000,
+   "text": "Penguin has moved up the publication date of my new book with Patchen Barss called \\",
+   "url": "https://x.com/geoffreyhinton/status/2111096101520412774",
+   "handle_guess": "geoffreyhinton"
+  },
+  {
+   "id": "2106122709285368061",
+   "created_at": "2026-10-02 20:42 UTC",
+   "created_at_ms": 1790973758000,
+   "text": "The idea of an intelligence explosion caused by recursive self improvement has been around for a long time but until very recently it did not seem imminent. Now many leading researchers think it may happen quite soon. You can read our paper about it here:\\\nhttps://t.co/sgUpugjpRY",
+   "url": "https://x.com/geoffreyhinton/status/2106122709285368061",
+   "handle_guess": "geoffreyhinton"
+  },
+  {
+   "id": "2086105351967948994",
+   "created_at": "2026-08-08 15:00 UTC",
+   "created_at_ms": 1786201248000,
+   "text": "I am finishing a book with @patchenbarss that gives a non-technical explanation of how AI works and explains why it is dangerous and what we should do about it.\\\n@VikingBooks @VikingBooksUK \\\nhttps://t.co/VKBk5bzqYg",
+   "url": "https://x.com/geoffreyhinton/status/2086105351967948994",
+   "handle_guess": "geoffreyhinton"
+  },
+  {
+   "id": "2071270000065671514",
+   "created_at": "2026-06-28 16:30 UTC",
+   "created_at_ms": 1782664225000,
+   "text": "I just watched an amazingly good lecture by Adam Brown about the future impact of AI on physics\\\nhttps://t.co/EjiKpoiKZr",
+   "url": "https://x.com/geoffreyhinton/status/2071270000065671514",
+   "handle_guess": "geoffreyhinton"
+  },
+  {
+   "id": "2050267300826157074",
+   "created_at": "2026-05-01 17:33 UTC",
+   "created_at_ms": 1777656791000,
+   "text": "I just had my first ride with HOVR, a Canadian alternative to Uber. They are cheaper and pay their drivers more. They already have over 3000 drivers in the Greater Toronto Area. You can download HOVR in App Store and Google Play using this link 📷 https://t.co/2hYMXAWGw6",
+   "url": "https://x.com/geoffreyhinton/status/2050267300826157074",
+   "handle_guess": "geoffreyhinton"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 18:01:54"
+}

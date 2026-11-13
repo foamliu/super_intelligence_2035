@@ -1,0 +1,17 @@
+Dear Professor Hinton,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). "Distilling the Knowledge in a Neural Network" is still the paper we cite whenever we ask whether a small model can inherit a large one's behaviour, and the temperature argument is the part we keep re-deriving from scratch.
+
+Three questions:
+
+1. When teacher and student are close in capacity (say 2B to 0.5B), does the soft-target gain come mainly from the temperature-scaled gradients on near-zero logits, or from a label-smoothing effect? This decides whether we buy a larger teacher or a longer distillation run.
+
+2. For a narrow domain (RTL, timing reports) with far less data than the teacher saw in pretraining, the teacher is often overconfident. Would you still distill the full soft distribution, or restrict to the top-k classes? This sets our domain data pipeline.
+
+3. At this scale, is per-token KL or sequence-level distillation the more robust default?
+
+Thank you for the idea that started this whole line of work.
+
+Best regards,
+Liu Yang
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027
