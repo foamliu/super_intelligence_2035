@@ -1,5 +1,41 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🔴 用户令 · 2026-11-13 21:2x（**启动 subagent 消融**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「启动 subagent 消融」
+
+**执行口径**：严格按已交付计划书 `reports/plan_zhulong_subagent_ablation_zh.html`（P0 已于 2026-11-13 17:20 PASS）。全臂恒定：`--compaction basic`、`CLINE_THINKING=medium`、`LANG_HINT` 空、`-p 8 -n`、主基座 `deepseek-v4-pro-cloud`；**A0 直接复用 compaction basic r1–r3**（不重跑），A0 的 158 题复用轴 A medium。
+
+**① 起跑前复核（10 分钟，任一不过先修再跑）**
+- `researcher.yaml`（**必须 .yaml，不是 .md**）在 `.cline/agents/`；tools 用完整 MCP 名 `pyAether_MCP_server__search_apis / __get_api_details`；工具列表里能看到 `subagent_researcher`（P0 时为第 19 号工具）
+- doubao pro/mini/lite 三 key 连通（P0 已 curl OK，重测 1 次）
+- 沙盒 8664/8665/8653/8669 全 FREE + `pgrep -f '^bash scripts/run_cline_script'` 无输出 + 不与 designflow eval 并发；harness TB-2.1 rerun 在跑（Docker/gateway），若争用则排队并写心跳
+- **磁盘**：/home 99%（6.6G）先 `df`；`EVAL_ROOT_DIR=/tmp/zhulong_subagent_eval` 每轮清理；trace 落 `/nasdata/.../trace_ablation_subagent/`，`/nasdata` 若满改落 /tmp 并按轮归档；可用 <5G 先清再跑
+
+**② P1 pilot（现在起跑：8 臂 × 8 题 × 1 轮，~1.5h）**
+
+```bash
+head -8 run/compaction_subset_40.txt > run/subagent_pilot8.txt
+SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_subagent_ablation.sh > /tmp/subagent_pilot_master.log 2>&1 &
+```
+
+- 产出：每臂 subagent 调用率 / doubao 三臂连通 / 每臂 Pass@1 / 墙钟
+- **go/no-go（预注册）**：调用率 `<20%` 且强提示后仍 `<30%` ⇒ **判无效**，停 P2，直接出负结果报告；否则进 P2。单轮不得解释为结论。
+
+**③ P2 主实验（P1 go 后自动进：9 臂 × 40 题 × 3 轮 ≈16h）**
+- 串行（避免抢沙盒）；每轮前 quota probe；429 等待不降并发；每轮落 `cost_S_<arm>_r<n>.json` + `ablation_subagent_results.json` 条目 + trace 归档
+- **起跑前必须补的工程缺口**：现 `run_subagent_ablation.sh` 的 cost 收集是 TODO 空壳（只写 arm/round/batch）⇒ 必须先实现：从 trace/session 采 `SpawnAgentOutput.usage.{inputTokens,outputTokens}`、spawn 次数与完成率（`finishReason=completed`）、主/子消息数、wall_sec；否则 H2/H3 无法判
+
+**④ P3 全量（P2 完成后：4 臂 A0/B1/B3/B5 × 158 题 × 1 轮 ≈10h）+ P4 报告（2h）**
+- 报告：`reports/report_zhulong_subagent_ablation_zh.html`（新文件=里程碑，中文/自包含/**0 外链**）：摘要 / 机制与 P0 修正 / 主结果表+逐题配对 / 调用率 / 基座梯度曲线 / 成本-性能（主 vs 子 token 分拆）/ 亚组 / 失败分类 / 结论与默认策略
+
+**判据（预注册，不许事后改）**：主终点 = 3 轮 Pass@1 均值（ITT）；**H1** A0 vs A1/B1 McNemar discordant ≥6:6 且方向一致；**H2** B1 vs B2–B5 Δ≥3pp 且 bootstrap CI 不跨 0、梯度回归 R²>0.7、B5 per-pass token 降 ≥20%；**H3** 完成率差 ≥10pp ⇒ maxIter=5 过紧。差异 <3pp 一律写「证据不足」。
+**红线**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不与 designflow 并发抢沙盒；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。
+**心跳**：每轮写 臂/轮/PID/etime/log 大小/batch/已评题数/调用率；跑中 WAITING=1；P2+P3 完 + 报告 + commit（`zhulong subagent:`）后 done_all。
+**体积**：本任务书 52.7KB（>40KB 硬上限）⇒ 本轮**同时**把已闭合旧令原文搬去 `run/ARCHIVE_ZHULONG_TASK.md` 留 1 行指针，归档后 ≤32KB。
+
+---
+
 [用户令 · 2026-11-12 21:2x · 最高优先 · 新实验（压缩机制消融）]
 用户原话："我想用 PyAether 158 评测 对比一下 cline 两个 压缩机制：basic vs. agentic 的效果。用中文HTML写个计划书。"
 **排期/状态（2026-11-12 21:3x 更新）**：`[队列→执行] 压缩机制消融` —— **前置门禁已满足**（轴 B 15/15 收口，B_en_r1 重跑 78.5% 已落盘 idx31，报告/audit/独立报告已刷新，commit `a909fe482` 已推送）。**本轮唤醒直接进入 P0，不再等待、不再写 QUEUED**。若发现前置有缺项（例如 audit 标注未落盘），先补齐再起跑并如实写心跳。
