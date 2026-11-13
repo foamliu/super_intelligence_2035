@@ -1,6 +1,6 @@
 {
   "experiment": "zhulong_subagent_ablation",
-  "phase": "P1_pilot_complete_NO_GO",
+  "phase": "P4_negative_report_delivered",
   "pilot_completed_at": "2026-11-14 02:19 (B5 last arm done)",
   "dataset": "EDA-Eval-PyAether-158 (subset=8)",
   "base_model": "deepseek-v4-pro-cloud",
@@ -325,16 +325,91 @@
     "method": "扫描各 batch trace/**/*.messages.json: 收集 subagent_researcher tool_use id → 找对应 tool_result → 统计 finishReason/usage; 并查 agent_*.messages.json subagent session 的 n_msgs",
     "summary": "所有臂(subagent tool 被调用者)的 subagent 调用 100% error, 0 sub token, subagent session 全部 n_msgs=0",
     "per_arm": {
-      "B1": {"sub_calls": 17, "ok": 0, "err": 17, "finishReasons": {"error": 17}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Invalid prompt: messages must not be empty", "root_cause": "A"},
-      "B2": {"sub_calls": 18, "ok": 0, "err": 18, "finishReasons": {"error": 18}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Invalid prompt: messages must not be empty", "root_cause": "A"},
-      "B3": {"sub_calls": 9, "ok": 0, "err": 9, "finishReasons": {"error": 9}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Unknown or disabled provider \"doubao-pro\".", "root_cause": "B"},
-      "B4": {"sub_calls": 9, "ok": 0, "err": 9, "finishReasons": {"error": 9}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Unknown or disabled provider \"doubao-mini\".", "root_cause": "B"},
-      "B5": {"sub_calls": 8, "ok": 0, "err": 8, "finishReasons": {"error": 8}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Unknown or disabled provider \"doubao-lite\".", "root_cause": "B"},
-      "C2": {"sub_calls": 18, "ok": 0, "err": 18, "finishReasons": {"error": 18}, "sub_tok_in": 0, "sub_tok_out": 0, "err_sample": "Invalid prompt: messages must not be empty", "root_cause": "A"}
+      "B1": {
+        "sub_calls": 17,
+        "ok": 0,
+        "err": 17,
+        "finishReasons": {
+          "error": 17
+        },
+        "sub_tok_in": 0,
+        "sub_tok_out": 0,
+        "err_sample": "Invalid prompt: messages must not be empty",
+        "root_cause": "A"
+      },
+      "B2": {
+        "sub_calls": 18,
+        "ok": 0,
+        "err": 18,
+        "finishReasons": {
+          "error": 18
+        },
+        "sub_tok_in": 0,
+        "sub_tok_out": 0,
+        "err_sample": "Invalid prompt: messages must not be empty",
+        "root_cause": "A"
+      },
+      "B3": {
+        "sub_calls": 9,
+        "ok": 0,
+        "err": 9,
+        "finishReasons": {
+          "error": 9
+        },
+        "sub_tok_in": 0,
+        "sub_tok_out": 0,
+        "err_sample": "Unknown or disabled provider \"doubao-pro\".",
+        "root_cause": "B"
+      },
+      "B4": {
+        "sub_calls": 9,
+        "ok": 0,
+        "err": 9,
+        "finishReasons": {
+          "error": 9
+        },
+        "sub_tok_in": 0,
+        "sub_tok_out": 0,
+        "err_sample": "Unknown or disabled provider \"doubao-mini\".",
+        "root_cause": "B"
+      },
+      "B5": {
+        "sub_calls": 8,
+        "ok": 0,
+        "err": 8,
+        "finishReasons": {
+          "error": 8
+        },
+        "sub_tok_in": 0,
+        "sub_tok_out": 0,
+        "err_sample": "Unknown or disabled provider \"doubao-lite\".",
+        "root_cause": "B"
+      },
+      "C2": {
+        "sub_calls": 18,
+        "ok": 0,
+        "err": 18,
+        "finishReasons": {
+          "error": 18
+        },
+        "sub_tok_in": 0,
+        "sub_tok_out": 0,
+        "err_sample": "Invalid prompt: messages must not be empty",
+        "root_cause": "A"
+      }
     },
     "root_cause_A": "dsv4 臂(B1/B2/C2): providerId=openai-compatible(真类型)解析成功, 但 SessionRuntime.run(task) 路径下首次 LLM 调用 messages 数组为空(subagent session n_msgs=0, task 未注入为首条 user message) → OpenAI API 拒 'messages must not be empty'. cline 3.0.51 delegated-agent 消息初始化 bug.",
     "root_cause_B": "doubao 臂(B3/B4/B5): researcher.yaml providerId=doubao-{pro,mini,lite} 是 providers.json 里的命名 profile(其 settings.provider 实为 openai-compatible), 但 subagent provider 解析按 provider 类型查 → 注册表无此类型 → 'Unknown or disabled provider'. 需 cline 源码支持命名 profile 解析, 或 researcher.yaml providerId 改 openai-compatible + 另设 doubao model/baseURL.",
     "p0_gap": "P0(17:20 PASS)只验证工具注册+被调用, 没验证 subagent LLM 真正执行(messages 非空/usage>0/finishReason=completed). 工具『注册+被调用』≠ subagent『真正运行』.",
     "pass1_interpretation": "所有臂 Pass@1(B1 62.5/B2 87.5/B3 85.71/B4 87.5/B5 87.5/C2 75.0) 全是主 agent 独立完成 —— subagent 调用全 error 后主 agent 自行继续. 不能解读为 subagent 效应."
+  },
+  "report": {
+    "path": "reports/report_zhulong_subagent_ablation_zh.html",
+    "delivered_at": "2026-11-14 wake#915 (opencode agent)",
+    "type": "negative-result (NO-GO)",
+    "summary": "cline 3.0.51 configured subagent 机制不可用 (delegated-agent 消息流缺陷, 同配置主 agent 正常而 subagent 发空 messages), H1/H2/H3 无法检验. 默认策略: 3.0.51 下不启用 configured subagent. 若要重跑需解除版本/源码红线.",
+    "size_bytes": 33270,
+    "self_contained": true,
+    "external_links": 0
   }
 }
