@@ -4,20 +4,22 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2389 incr_eval2new(+2resolved:cc+1·pi+1→总1821)+cleanup0empty+双报告REGEN
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2386·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2388 incr_eval+监控+报告+ETA+cline根因修复·R2388 incr_eval1new+1resolved+cleanup5empty·R2389 incr_eval2new+2resolved+cleanup0empty+双报告REGEN
-当前动作:     R2389: 自检OK·gateway200·incr_eval2new(cc+1RESOLVED django-15554·pi+1RESOLVED sympy-20801→总1821)·cleanup0empty·双报告REGEN(18:35·7way=10628B·cline=11037B)·1new uneval'd(cc django-15572·下轮catch)·W:0
-下一步:       ①本轮commit+push ②cline predict继续向500推进(327→500) ③incr_eval新落地(含cc django-15572) ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付·cline根因已交付(R2386)
-阻塞:         <各路尚未满500:cline327/codex135/cc330/pi294·§22:4x未全交付·opencode+hermes DONE·deepseek stalled·codex=瓶颈~15天>
+PHASE:        R2390 incr_eval2new(+1resolved:cc django-15572→总1822)+cleanup0empty+双报告REGEN
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2386·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2389 incr_eval+监控+报告+ETA+cline根因修复·R2389 incr_eval2new+2resolved+cleanup0empty+双报告REGEN·R2390 incr_eval2new(+1resolved)+cleanup0empty+双报告REGEN
+当前动作:     R2390: 自检OK·gateway200·incr_eval2new(cc django-15572 RESOLVED+pi sympy-20916 FAILED→+1resolved总1822)·cleanup0empty·双报告REGEN(19:00·7way=12235B·cline=13127B)·django-15629 Docker eval pending(13min·下轮catch)·3new uneval'd(cc django-15695/15732·pi sympy-21379·下轮catch)·W:0
+下一步:       ①本轮commit+push ②cline predict继续向500推进(328→500) ③incr_eval新落地(含cc django-15629/15695/15732·pi sympy-21379) ④codex=瓶颈136/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付·cline根因已交付(R2386)
+阻塞:         <各路尚未满500:cline328/codex136/cc336/pi300·§22:4x未全交付·opencode+hermes DONE·deepseek stalled·codex=瓶颈~15天>
 ERROR_COUNT:  0
- 体积: TASK=23KB / MEMORY=18KB（归档0KB）
-  cline专项小结: predict_glm53=327files/327real/247resolved/0empty(已cleanup)·C1:327real·C2:failed=81(能力·real patch但tests fail)·C3:empty=0(已归零)·C4:247res/330eval=74.8%·C5:报告R2389(cline special·含TB-2.1归因+rerun factor表)·失败top1=能力差(real patch但tests fail)·cc279/330=84.5%·opencode414/498=83.1%·gap=能力差
+ 体积: TASK=25KB / MEMORY=18KB（归档0KB）
+  cline专项小结: predict_glm53=328files/328real/247resolved/0empty(已cleanup)·C1:328real·C2:failed=81(能力·real patch但tests fail)·C3:empty=0(已归零)·C4:247res/330eval=74.8%·C5:报告R2390(cline special·含TB-2.1归因+rerun factor表)·失败top1=能力差(real patch但tests fail)·cc280/341=82.1%·opencode414/498=83.1%·gap=能力差
   cline TB-2.1根因: 10/89=11.2%低分=网关Token额度耗尽(65/80失败=81%·「本次Token额度已用完」·iterations=1/0tokens=零工作)·非模型能力·公平通过率10/25=40%·cline适配器无retry/backoff(rerun factor=1.0x)vs pi2.0x/opencode1.3x→额度恢复后重跑成功·值得rerun(预计~30-40%)
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [19:00] R2390: 自检(CPU/mem OK·load37/224·无runaway)·gateway 200(glm-5.3-flash)·incr_eval2new(cc django-15572 RESOLVED+pi sympy-20916 FAILED→+1resolved总1822)·cleanup0empty·predict:cline328·codex136·cc336·pi300·4/7 alive(cline·codex·cc·pi)·django-15629 Docker eval pending(13min·下轮catch)·3new uneval'd(cc django-15695/15732·pi sympy-21379·下轮catch)·双报告REGEN(R2390 19:00·7way=12235B·cline=13127B)·research日报11-13已读(adapter契约建议·方法论·不急)·未完成指令:有(§10:10+§22:4x)·W:0
 
 > [18:35] R2389: 自检(CPU/mem OK·load41/224·无runaway)·gateway 200·incr_eval2new(cc django-15554 RESOLVED+pi sympy-20801 RESOLVED→+2resolved总1821)·cleanup0empty·predict:cline327·codex135·cc330·pi294·4/7 alive(cline·codex·cc·pi)·1new uneval'd(cc django-15572·下轮catch)·双报告REGEN(R2389 18:35·7way=10628B·cline=11037B)·research日报11-13已读(adapter契约建议·方法论·不急)·未完成指令:有(§10:10+§22:4x)·W:0
 
