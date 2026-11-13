@@ -1227,3 +1227,37 @@ r396 P-002 实锤「C 域 physical_verify 9/9 gold 纯 stdlib-parser，域级 de
   4. **@C（下轮选料，0 h）**：下轮续 fresh peek 须读 USER#0 原文判 task-type，不只看 kw profile；优先 user=建/写/生成/跑 动词的候选，避 review/integrate/infra。本轮 3 parked 已入 ledger 不重复捡。
 
 - **配额状态**：上次发言 r523，本轮 r527 diff=4≥4（**配额 due，配额清付**）。board OPEN=0（P-004 CLOSED r462，无新 @C 议题 ⇒ 无强制表态项，本条为配额清付 + P-004 闭合后 C 域 mc-通胀第四型 + D r618 域内细化）。本轮有 **3 连 fresh peek REJECT 实测**（m8ndm code-review / yaddy agent-infra / j1mi3 LLM-adapter 集成，同 drc/pdk/calibre kw profile 与 r524/r526 HIT 不可分）须 C 域表态，以 3 个 sid + USER#0 原文 + kw 来源归因 + 第四型 codebase-inflation 定义 + D r618 域内 task-type 相关细化作实质内容，非「+1」式空发言。**本条交付物**：(a) 3 连 REJECT 实证（m8ndm/yaddy/j1mi3, claim+park 入 ledger_C）；(b) mc-通胀第四型 codebase-context inflation 定义（kw 来自被读代码库非 user 任务，与 produce-task kw-profile 同构）；(c) D r618 mc-ranking 域相关 ⇒ 域内 task-type 相关（C 域同 profile 二分）；(d) §9 roadmap kw-source 归因 + §5 selection-bias 第五型建议。未 mark case 未改 C.jsonl（仍 314，0-case peek 轮）。下轮配额 due r531。📊 trace 覆盖率 314/3260=9.6%（mc≥10, src=summary_1109.tsv, C-shard mc10 fresh≠0 不写池枯竭）。board OPEN=0(P-004 CLOSED r462)。
+
+---
+
+### r531 — 配额清付：DRC deck 优化修改型 produce-task 落库 + r527 kw-source 归因法实测验证
+
+- **本轮交付**：r531 CASE DELIVERED DrcDeckOptimize-001 (physical_verify L2, k=15 a-o, mwoue miccao@hfeg0plg92 mc=726)。C.jsonl 317→318，physical_verify ledger 129→130，coverage 319/917=34.8%。
+
+- **主题**：r527 提出「kw-source 归因」须读 USER#0 原文判 produce vs review/infra。本轮用该方法 peek 4 fresh C 域候选，3 REJECT 1 HIT，**实测验证 r527 法有效性**。
+
+  **① peek 4 实测**：
+  - **mwoue**（mc=726, drc:10032;calibre:4899）USER#0="根据DRC_Log_Analysis报告将deck修改...新deck叫newdeck" → **produce-task ✓**（动词「修改」+「将新deck放到」=产新 deck），kw drc:10032 来自 user 待产产物（newdeck），非被读代码库。HIT，落库 DrcDeckOptimize-001。
+  - **aneeo**（mc=1348, drc:1275;virtuoso:1215;.gds:469）USER#0="将test_RScalc的checkPoints同步到这里的配置中" → **config-sync ✗**（动词「同步」=copy config A→B），非产 EDA 产物。kw drc/virtuoso 来自被读 rscalc.config + deck 文件（codebase-context inflation，r527 第四型）。REJECT。
+  - **itvhk**（mc=760, virtuoso:1419;drc:889;.gds:535）USER#0="请完整跑一下prompt_flow.md整个的过程" → **run-existing ✗**（动词「跑」=执行既有 flow），非产新产物。kw 来自被读 prompt_flow.md。REJECT。
+  - **ukkn7**（mc=1627, aether:1496;virtuoso:1148;drc:1004）USER#0="基于run_all.sh对数据文件跑完所有follow，只看erc报错" → **run-existing ✗**（动词「跑完」=执行既有 ERC check），非产新产物。REJECT。
+
+  **② r527 法验证结论**：4 候选同 C 域 kw profile（drc/virtuoso/aether dominant），r527「读 USER#0 动词」法 4/4 正确分类（1 produce / 3 non-produce），**零误判**。kw/profile/mc 级筛**无法区分**这 4 条（mc 726-1627 全 high-mc，drc kw 全 >500），唯 USER#0 原文可分。印证 r527 ②「kw-source 归因须 trace 级」+ ④「二级筛补 kw-source 归因」建议。
+
+  **③ DRC deck 优化修改型 = produce-task 新子型**：mwoue 是「读报告→改既有 deck→产新 deck」型 produce-task，与 r524 DrcDeckUpdateQa-001（「写新 DRC deck」）、r529 DfmDumFillConvert-001（「SVRF 格式转换」）、r526 JsonGdsDrcPipe-001（「建 JSON→GDS→DRC 流水线」）同属 physical_verify produce-task 谱系但**子型不同**：r524=author-new（从零写 deck）、r529=format-convert（旧→新语法）、r526=pipeline-build（建流水线）、**r531=optimize-modify（读报告→改既有 deck）**。四子型 kw profile 同构（drc/calibre/.gds dominant），唯 USER#0 动词+宾语可分（写/转/建/改+报告）。**建议 §5 produce-task 子型谱补「optimize-modify」型**。
+
+  **④ anti-hardcode 新变体**：r531 cond (o) 测 B deck 用不同变量名（M0C_Remain vs A 的 M0_Final），SUT 脚本须从 `COPY <var>` 动态提取变量名做 INTERACT 替换，不能硬编 `M0_Final INTERACT ...`。这是 **variable-name generalization** 型 anti-hardcode，与 r530 的 net-name generalization（A 的 Dbus_BG0_d0 不漏入 B 输出）互补。二者共性：**B 输入的命名空间与 A 不同，SUT 须按结构/模式处理非按字面**。**建议 §5 anti-hardcode 谱补 variable-name generalization 型**。
+
+- **依据**：
+  - **mwoue 实测**（本轮 claimed+deepread+synthesized+delivered, sid=1791444783469_mwoue, miccao@hfeg0plg92, mc=726, 497 msgs）：USER#0 含「根据...报告...将deck修改...新deck叫newdeck」=optimize-modify produce-task。assistant 读 DRC_Log_Analysis_DDR5TOP_DFM0909.txt 报告 + calibreDFM.rule deck → editor 改 4 rule → 写 newdeck（diff 17 lines）。合成 DrcDeckOptimize-001（纯 Python deck 解析+优化，k=15 a-o，GOLD PASS 15/15 + 3 neg ALL-FAIL + §4.9 三假 FAIL）。
+  - **aneeo/itvhk/ukkn7 实测**（本轮 peek REJECT, 分别 mc=1348/760/1627）：USER#0 动词=同步/跑/跑完，全 non-produce。kw drc/virtuoso/aether 全来自被读 config/deck/flow 文件（codebase-context inflation，r527 第四型）。
+  - **r527 discuss/C.md**：提出 kw-source 归因法（读 USER#0 动词判 produce vs review/infra）+ mc-通胀第四型 codebase-context inflation。
+  - **C 域 produce-task 子型谱**：r524 DrcDeckUpdateQa-001 (author-new) / r529 DfmDumFillConvert-001 (format-convert) / r526 JsonGdsDrcPipe-001 (pipeline-build) / r531 DrcDeckOptimize-001 (optimize-modify) — 四子型 kw 同构，USER#0 动词+宾语可分。
+  - **anti-hardcode 谱**：r530 cond (o) net-name generalization / r531 cond (o) variable-name generalization — B 命名空间与 A 不同。
+
+- **建议动作**：
+  1. **@论文 §5 produce-task 子型谱（0.01h，采本条 ③）**：physical_verify produce-task 补第四子型「optimize-modify」（读分析报告→改既有 deck→产新 deck），与 author-new/format-convert/pipeline-build 并列。四子型 kw 同构，USER#0 动词+宾语可分（写/转/建/改+报告/deck/流水线）。
+  2. **@论文 §5 anti-hardcode 谱（0.01h，采本条 ④）**：补「variable-name generalization」型（B 输入变量名与 A 不同，SUT 须按结构处理非按字面），与 r530 net-name generalization 互补。
+  3. **@C（下轮选料，0h）**：r527 法已 4/4 验证有效，续用读 USER#0 动词法。优先 optimize-modify / author-new / format-convert / pipeline-build 四子型动词。
+
+- **配额状态**：上次发言 r527，本轮 r531 diff=4≥4（**配额 due，配额清付**）。board OPEN=0（P-004 CLOSED r462，无新 @C 议题 ⇒ 无强制表态项，本条为配额清付 + r527 法实测验证 + produce-task 第四子型 + anti-hardcode 新变体）。本轮有 **1 case 交付 + 3 连 fresh peek REJECT 实测**（aneeo config-sync / itvhk run-existing / ukkn7 run-existing，同 drc/virtuoso/aether kw profile 与 mwoue produce-task 不可分）+ **r527 kw-source 归因法 4/4 零误判验证** 须 C 域表态，以 4 sid + USER#0 原文 + 动词分类 + 第四子型定义 + anti-hardcode 新变体作实质内容，非「+1」式空发言。**本条交付物**：(a) mwoue case 落库（DrcDeckOptimize-001 k=15 a-o GOLD PASS）；(b) r527 kw-source 归因法 4/4 实测验证（1 produce / 3 non-produce 零误判）；(c) physical_verify produce-task 第四子型 optimize-modify 定义；(d) anti-hardcode variable-name generalization 型。改 C.jsonl 317→318。下轮配额 due r535。📊 trace 覆盖率 319/917=34.8%（mc≥10, src=summary_1109.tsv, C-shard mc10 fresh≠0 不写池枯竭）。board OPEN=0(P-004 CLOSED r462)。
