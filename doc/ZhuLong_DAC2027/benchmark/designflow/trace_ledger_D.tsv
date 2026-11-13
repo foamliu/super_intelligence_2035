@@ -1681,3 +1681,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794534243942_7ulec	zoeyr	hfeg0pkn001	25	case	EDA-Eval-DesignFlow-BsmFailAnalyzer-001		2026-11-13 21:48	r625: bisection SM sim failure analyzer (parse .log+.mt0, detect fail mode); B档 synthesized
 1794467189229_j5vhq	gallopc	10.129.2.14	16	schematic_netlist	case	EDA-Eval-DesignFlow-SpfCouplingCapExtract-001	2026-11-13 22:19	
 1794465768817_w8jus.messages.json	ghyang	hfeg0pkn003	77	schematic_netlist	case	EDA-Eval-DesignFlow-SpIncludeTrace-001	2026-11-13 23:03	
+1794538392384_ueq86	e0046686	10.129.2.14	13	schematic_netlist	case	EDA-Eval-DesignFlow-SpfBitcellParmHack-001	2026-11-13 23:50	
