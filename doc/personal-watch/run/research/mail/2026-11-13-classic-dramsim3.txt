@@ -1,0 +1,16 @@
+Dear Professor Srivastava,
+
+I am Yang Liu, an engineer working on BaiZe (ISEDA 2027) and ZhuLong (DAC 2027), two projects that apply language models to chip design and memory-systems analysis. We are evaluating DRAMsim3 as a fixed memory-cost baseline for our accelerator-level studies, precisely because a cycle-accurate, thermal-capable simulator makes numbers comparable across runs.
+
+Three questions:
+
+1. For HBM3-class configurations, which parameters dominate bandwidth error against measured hardware, and what is the cheapest calibration protocol — trace, metrics, tolerance — that keeps you within a few percent?
+
+2. When does the thermal model actually change a conclusion? For LLM-decode-like traffic (long read bursts, low row locality, many concurrent streams), is steady-state thermal modeling sufficient, or does transient behavior matter?
+
+3. If DRAMsim3 is frozen as a baseline for agent-generated analysis code, which configuration invariants should be pinned, and which output metrics are most easily misread (for example, row-buffer hit rate under multi-stream access)?
+
+Answers would directly shape how we report memory cost and how we audit generated experiments.
+
+Thank you,
+Yang Liu

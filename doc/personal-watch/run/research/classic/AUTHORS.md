@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **82** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**）｜已发信 **28**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson**）｜X 已核验 **47**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`**）｜X 未找到 / 未核验 **35**（82 人中 47 已核验；`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **19 条**（V1–V19；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，本期首发**；**V18 = Jason Wei 2026-11-12 原推（推文页 `og:description` 全文核验），本期采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），下期首发**）
+**本轮快照**：累计 **86** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**；**第二十轮 +4：Ankur Srivastava（`ankurs@umd.edu` 已核、已发信；X 未找到）/ Bruce Jacob（邮箱在页面上是图片 ⇒ 不猜；X 未找到）/ Jacob Devlin（`@jacobdevlin` 7 followers、无身份信息 ⇒ 判非本人）/ Ming-Wei Chang（`@mingweichang` 4 followers、0 推文 ⇒ 不登记）**）｜已发信 **29**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson** · **Ankur Srivastava**）｜X 已核验 **47**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`**）｜X 未找到 / 未核验 **39**（86 人中 47 已核验；`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **21 条**（V1–V20；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，已采用**；**V18 = Jason Wei 2026-11-12 原推，已采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），本期首发**；**V20 = Albert Gu 2026-11-07 原推（`og:description` 全文核验），本期采用**）
 
 
 ---
@@ -331,7 +331,7 @@
 |:--|:--|
 | 姓名 | Ilya Sutskever（按英文写） |
 | 机构 | **SSI**（Safe Superintelligence Inc.，联合创始人；seq2seq 发表时 Google） |
-| 代表论文 | seq2seq（arXiv `1409.3215`，一作）· AlexNet（2012，二作）· GPT 系列早期工作 |
+| 代表论文 | seq2seq（arXiv `1409.3215`，一作）· AlexNet（2012，二作）· **CLIP（arXiv `2103.00020`，末位作者，B 轨 #77）** · GPT 系列早期工作 |
 | 邮箱 | **未找到**（无公开个人主页 / 未见 `mailto:` ⇒ 按纪律不猜、不发信） |
 | 主页 | 未找到（无公开个人站；机构站无个人页） |
 | X 账号 | **@ilyasut**（核验：`x.com/ilyasut` 实测 `200`，`name` = `Ilya Sutskever (@ilyasut) / X`，`bio` = `SSI @SSI`） |
@@ -1097,6 +1097,59 @@
 | 备注 | 一手发布源（模型 / 推理框架 / harness 工具），适合跟踪**开源节奏与配方变化**。⚠️ 发布帖为**营销口径**，技术结论须回到技术报告原文；`voice_ready` 不收企业宣传语。 |
 
 
+### 83. Ankur Srivastava
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ankur Srivastava（按英文写） |
+| 机构 | University of Maryland, College Park（ECE；VLSI / EDA / 存储系统方向） |
+| 代表论文 | DRAMsim3（IEEE CAL 19(2):106–109, 2020，B 轨 #79，第 4 作者） |
+| 邮箱 | **`ankurs@umd.edu`**（来源：课题组现行主页 `http://srivastava.umd.edu`，`HTTP 200` / 51,727 B，`mailto:` 明文 3 处；旧页 `www.ece.umd.edu/~ankurs/` 仅 263 B 跳转 ⇒ **采用新页**） |
+| 主页 | <http://srivastava.umd.edu>（`200`） |
+| X 账号 | **未找到**（`x.com/ankurs` 实测 `200`，但 bio 仅 `61 followers · 426 following. London, United Kingdom` ⇒ **无身份信息、地点不符 ⇒ 判非本人，不登记**） |
+| 状态 | **已发信**（2026-11-13 12:05:50，DRAMsim3，英文 172 词）；X 待跟踪（无 handle） |
+| 备注 | DRAMsim3 是**内存成本固定基线**的候选工具（`zhulong` 口径 / `harness` 复现性）；信里只问**标定、热模型边界、冻结不变量**，不问未公开数据。 |
+
+### 84. Bruce Jacob
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bruce Jacob（按英文写） |
+| 机构 | United States Naval Academy（Cyber Science，Full Professor）· University of Maryland ECE（荣休） |
+| 代表论文 | DRAMsim3（IEEE CAL 2020，B 轨 #79，末位作者）；DRAMsim 系列早期工作（DRAMsim2 等，**本轮未逐条核**） |
+| 邮箱 | **未找到**（个人页 `E-mail:` 后为 `<img src="/~blj/email.gif">` ⇒ **邮箱是图片，🚫 不猜、不做 OCR 猜测**） |
+| 主页 | <https://user.eng.umd.edu/~blj/>（`200` / 133,603 B） |
+| X 账号 | **未找到**（`x.com/blj` 实测 `200`，`25 followers · 92 following`、**0 推文、无 bio** ⇒ 身份不可证，不登记） |
+| 状态 | 待跟踪（无可用邮箱 ⇒ 不发信） |
+| 备注 | 存储模拟器的「长周期维护者」样本：DRAMsim 系列跨十余年，适合观察**工具如何跟硬件世代**；若后续从其新版论文拿到现行邮箱再补发。 |
+
+### 85. Jacob Devlin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jacob Devlin（按英文写） |
+| 机构 | BERT 发表时为 Google AI Language（**当前机构本轮未核**） |
+| 代表论文 | BERT（arXiv `1810.04805`，NAACL 2019，B 轨 #76，一作） |
+| 邮箱 | **未找到**（个人域名 `jacobdevlin.com` 为**停放页** `This site is under development` ⇒ 无有效主页） |
+| 主页 | 未找到（同上，停放页不算主页） |
+| X 账号 | **未找到**（`x.com/jacobdevlin` 实测 `200`，但 bio 仅 `7 followers · 0 following. Joined Oct 2009` ⇒ **无身份信息 ⇒ 判非本人，不登记**） |
+| 状态 | 待跟踪（无邮箱、无 X ⇒ 本轮不发信） |
+| 备注 | 必读清单第 5 组（GPT 系）与 BERT 的**同一代预训练范式**；找不到联系方式时**只登记学术坐标**，🚫 不拿 `first.last@google.com` 之类推断地址试发。 |
+
+### 86. Ming-Wei Chang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ming-Wei Chang（按英文写；中文汉字写法**未核实 ⇒ 不写**） |
+| 机构 | BERT 发表时为 Google AI Language（**当前机构本轮未核**） |
+| 代表论文 | BERT（arXiv `1810.04805`，NAACL 2019，B 轨 #76，二作） |
+| 邮箱 | **未找到**（`www.mingweichang.com` 直连 `000`、代理未取到有效页 ⇒ 不作为邮箱来源） |
+| 主页 | 未找到（同上） |
+| X 账号 | **未找到**（`x.com/mingweichang` 实测 `200`，bio 仅 `4 followers · 22 following`、**0 推文** ⇒ 不登记） |
+| 状态 | 待跟踪（无邮箱、无 X ⇒ 本轮不发信） |
+| 备注 | 与 #85 同组；若日后从 OpenReview / 顶会个人页拿到现行邮箱，再按「同论文 ≤1」补 1 封（BERT 组目前**尚未发信**）。 |
+
+
 ---
 
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
@@ -1196,7 +1249,8 @@
 | V14（**第十三轮核验后作废**） | （拟 Rafael Rafailov `@rm_rafailov`） | 2026-09-24 17:46 UTC | 拟用文 `We are approaching cyber-superintelligence. But our systems aren't ready. We must secure our model weights and infrastructure against three new threats: sabotage, escape, and theft…`（profile 抓取截断） | <https://x.com/rm_rafailov/status/2103179354163536228> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Shalev Lifshitz (@Shalev_lif) on X`** ⇒ 同上；**不采用**（此条亦说明：知名研究者时间线里**转发/引用他人**占比高，profile 解析必须先核作者） |
 | V17（**第十五轮新增 · 第十六轮首发**） | Percy Liang `@percyliang` | 2026-11-11 04:51 UTC | "You can simultaneously believe that AI is transformational and that there are bottlenecks." | <https://x.com/percyliang/status/2120378748457607431> | ✅ **本期（2026-11-13）`voice_ready` 首发**：推文页 `200` / 160,932 B，`og:title` = `Percy Liang (@percyliang) on X`，`og:description` 与 profile `full_text` **逐字一致**；话题点 = 「既相信 AI 是变革性的，也相信存在瓶颈」；风险 = **观点句**，无上下文，🚫 不得写成「证明 scaling 到顶」或「瓶颈已定位」 |
 | V18（**第十七轮新增**） | Jason Wei `@_jasonwei` | 2026-11-12 17:49 UTC | "Turns out my initial version missed a lot of evals. Claude searched harder and found 36% more mentions of benchmarks: https://t.co/ONtgbBuwEs — It still misses blog posts with fancy UI elements, long PDFs, etc. Guess we need a benchmark for creating benchmark benchmark..." | <https://x.com/_jasonwei/status/2120937085515510234> | ✅ **本期（2026-11-13）`voice_ready` 采用**：推文页 `200` / 169,476 B，`og:title` = `Jason Wei on X: "Turns out my initial version missed a lot of evals..."`，`og:description` 与 profile `full_text` 一致（换行处已按原文保留）；话题点 = 「衡量 AI 的榜单本身也会漏项：一个 agent 多搜一轮就多找出 36% 的评测提及」；风险 = ① 36% 是**他自己那次 agent 搜索的增量**、不是所有榜单的普适误差；② 推文自嘲「需要 benchmark 的 benchmark」，🚫 不得写成「评测体系崩塌」；③ 属作者个人观察，非同行评审结论 |
-| V19（**第十九轮新增 · 下期首发候选**） | Thomas Wolf `@Thom_Wolf` | 2026-11-07 00:28 UTC | "same open model, different harness => very different results / Joël set out to find which harness actually gets the most out of open models in November 2026"（推文页 `og:description` 全文，原文为换行分隔，此处以 `/` 标出断行） | <https://x.com/Thom_Wolf/status/2118863053001531676> | 🕓 **下期（2026-11-14）`voice_ready` 首发候选**：推文页 `200` / 160,196 B，`og:title` = `Thomas Wolf (@Thom_Wolf) on X`（作者可核）；话题点 = 「同一个开源模型，换一套 harness 结果差很多 —— 有人跑了 28,849 次试验排 harness」；风险 = ① 「very different」在本推文里没有量化数字，🚫 不得代填幅度；② 单条推文非同行评审；③ 其附带的 harness 排行榜属第三方工作，引用须回原榜 |
+| V19（**第十九轮新增 · 本期首发**） | Thomas Wolf `@Thom_Wolf` | 2026-11-07 00:28 UTC | "same open model, different harness => very different results / Joël set out to find which harness actually gets the most out of open models in November 2026"（推文页 `og:description` 全文，原文为换行分隔，此处以 `/` 标出断行） | <https://x.com/Thom_Wolf/status/2118863053001531676> | 本期 `voice_ready` 第 1 条（11-13 12:00 轮发布）：推文页 `200` / 160,196 B，`og:title` = `Thomas Wolf (@Thom_Wolf) on X`（作者可核）；话题点 = 「同一个开源模型，换一套 harness 结果差很多 —— 有人跑了 28,849 次试验排 harness」；风险 = ① 「very different」在本推文里没有量化数字，🚫 不得代填幅度；② 单条推文非同行评审；③ 其附带的 harness 排行榜属第三方工作，引用须回原榜 |
+| V20（**第二十轮新增 · 本期采用**） | Albert Gu `@_albertgu` | 2026-11-07 23:11 UTC | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling"（推文页 `og:description` 全文） | <https://x.com/_albertgu/status/2119206160410800219> | 本期 `voice_ready` 第 2 条：推文页 `200` / 147,445 B，`og:title` = `Albert Gu (@_albertgu) on X`（作者可核，bio = `assistant prof @mldcmu. chief scientist @cartesia`）；话题点 = 「苦 bitter lesson 被误读成『无脑堆 transformer』—— 算法原语的创新同样能放大规模效率」；风险 = ① 观点性表述，**无数值、无实验**，🚫 不得当作结论引用；② 与 Sutton《The Bitter Lesson》原意的对照属**我们的解读**，须标明；③ 6 天前的推文，符合 ≤30 天口径 |
 
 
 
@@ -1238,6 +1292,7 @@
 | 2026-11-13 06:09（**第十八轮**） | Andrew B. Kahng | OpenROAD DAC 2019（无 arXiv） | 本人现行 UCSD 主页 `vlsicad.ucsd.edu/~abk/index.html` 的 `mailto:abk@ucsd.edu`（`200`，页内逐字；`cseweb.ucsd.edu/~abk/` 为同页重定向） | `SENT OK`（`abk@ucsd.edu`，**英文 180 词**；🚦 发送前 `wc -w` 已核；UCSD 今日第 1 封。X 无 bio ⇒ 未登记） |
 | 2026-11-13 09:06（**第十九轮**） | David A. Patterson | A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv） | **EECS 院系现行页** `www2.eecs.berkeley.edu/Faculty/Homepages/patterson.html` 明文 `pattrsn@cs.berkeley.edu`（`200` / 249,647 B）；⚠️ 旧个人页自述「not been kept up」⇒ 未采用 | `SENT OK`（`pattrsn@cs.berkeley.edu`，**英文 180 词**；🚦 发送前 `wc -w` 已核；UC Berkeley 今日第 1 封） |
 | 2026-11-13 09:06（**第十九轮**） | Thomas Wolf | `2311.12983` GAIA | 本人主页 `thomwolf.io` 去混淆写法 `thomaswolfcontact [at] gmail [dot] com`（`200` / 27,239 B） | `SENT OK`（`thomaswolfcontact@gmail.com`，**英文 190 词**；🚦 发送前 `wc -w` 已核；Hugging Face 今日第 1 封） |
+| 2026-11-13 12:05（**第二十轮**） | Ankur Srivastava | DRAMsim3（IEEE CAL 19(2):106–109, 2020，**无 arXiv**） | 课题组现行主页 `http://srivastava.umd.edu` 的 `mailto:ankurs@umd.edu`（`200` / 51,727 B；旧页 `www.ece.umd.edu/~ankurs/` 仅 263 B 跳转 ⇒ 未采用） | `SENT OK`（`ankurs@umd.edu`，**英文 172 词**；🚦 发送前 `wc -w` 已核；UMD 今日第 1 封。X `@ankurs` 判非本人 ⇒ 未登记） |
 
 ---
 

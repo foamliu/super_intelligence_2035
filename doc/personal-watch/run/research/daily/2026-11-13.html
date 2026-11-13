@@ -373,8 +373,102 @@
 </div>
 
 
+<h2 class="sec">🔄 12:00 轮 · A 轨复核（<b>公告批已刷新</b>，但当日 5/5 已满 ⇒ 0 新收）</h2>
+<table>
+  <tr><th>#</th><th>检索式（arXiv API）</th><th>HTTP / Content-Type</th><th>totalResults</th><th>耗时（12:00 轮）</th><th>对比 09:00 轮</th></tr>
+  <tr><td>1</td><td><code>cat:cs.CL</code>（取最新 100 条）</td><td><code>200</code> / <code>application/atom+xml; charset=utf-8</code></td><td>125,239</td><td>2.44 s</td><td>+52</td></tr>
+  <tr><td>2</td><td><code>cat:cs.CV</code></td><td><code>200</code> / 同上</td><td>213,092</td><td>1.81 s</td><td>+30</td></tr>
+  <tr><td>3</td><td><code>cat:cs.LG</code></td><td><code>200</code> / 同上</td><td>298,825</td><td>1.41 s</td><td>+140</td></tr>
+  <tr><td>4</td><td><code>cat:cs.AI</code></td><td><code>200</code> / 同上</td><td>212,481</td><td>2.53 s</td><td>+72</td></tr>
+  <tr><td>5</td><td><code>cat:cs.SE</code></td><td><code>200</code> / 同上</td><td>31,015</td><td>3.95 s</td><td>+29</td></tr>
+</table>
+<div class="note">
+五个 <code>totalResults</code> <b>全部大于</b> 09:00 轮（此前 00:00/03:00/06:00/09:00 四轮逐字节同值）⇒ <b>arXiv 公告批已刷新</b>（新批首次提交集中在 <code>2026-11-11</code>，仍在 72h 窗内）。合并去重结果：<b>merged 373 / 已收录（SEEN 命中）5 / 新候选 368</b>，产物 <code>research/raw/2026-11-13-12h-candidates-r164.json</code>（脚本 <code>raw/candidates_r164.py</code>，串行 ≥3.2 s）。
+<b>本轮仍 0 新收</b>：当日推荐额度 <b>5/5 已于 03:00 收口</b>，按「目标 5 篇、不超额、不凑数」的口径不硬塞第 6 篇 —— 新批 <b>不丢弃</b>，已完整落盘，<b>明日 00:00 轮优先从这 368 条候选里选 5 篇</b>（届时以第一批「published ≤ 72h」为准）。
+</div>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第二十轮（+4 → 79）：预训练范式 / 视觉语言对齐 / 纯 RL 推理 / 内存成本基座</h2>
+<table>
+  <tr><th>#</th><th>论文（8 字段已入 <code>PAPERS.md</code>）</th><th>年份 / 出处</th><th>被引（OpenAlex，2026-11-13）</th><th>服务线（↔ 影响哪一步）</th></tr>
+  <tr><td>76</td><td><b>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</b>（<code>1810.04805</code>）</td><td>2018 / NAACL 2019（DOI <code>10.18653/v1/N19-1423</code>）</td><td><b>76,688</b>（arXiv 记录）／ <b>57,751</b>（NAACL 记录，<b>不相加</b>）</td><td><b>pretrain</b>（编码器对照基线）· <b>data</b>（同 token 预算下固定「下游样本量」这条轴）</td></tr>
+  <tr><td>77</td><td><b>Learning Transferable Visual Models From Natural Language Supervision</b>（CLIP，<code>2103.00020</code>）</td><td>2021 / arXiv 预印本（正式会场<b>本轮未核到</b> ⇒ 不写）</td><td><b>19,245</b></td><td><b>vision</b>（冻结特征下界 + 零样本口径）· <b>data</b>（图文对「文本侧可判别性」）· <b>harness</b>（冻结 prompt 集）</td></tr>
+  <tr><td>78</td><td><b>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL</b>（<code>2501.12948</code>）</td><td>2025 / <b>Nature 645(8081):633–638</b>（DOI <code>10.1038/s41586-025-09422-z</code>）</td><td><b>16,824</b></td><td><b>zhulong</b>（RL-only vs SFT 同预算对照）· <b>harness</b>（判分器覆盖率 = RL 门禁）· <b>data</b>（摘要无配方 ⇒ 不引超参）</td></tr>
+  <tr><td>79</td><td><b>DRAMsim3: A Cycle-Accurate, Thermal-Capable DRAM Simulator</b>（无 arXiv）</td><td>2020 / IEEE CAL <b>19(2):106–109</b>（DOI <code>10.1109/LCA.2020.2973991</code>）</td><td><b>372</b>（⚠️ &lt; 500 ⇒ 按「方法论常青 / 工具基座」收，<b>不以高引为由</b>）</td><td><b>zhulong</b>（内存成本固定尺：配置入仓 + 钉 commit）· <b>harness</b>（配置哈希纳入元数据）· <b>designflow</b>（L4 真值参照）</td></tr>
+</table>
+<div class="note">
+核验：arXiv <code>id_list=1810.04805,2103.00020,2501.12948</code> <b><code>200</code> + <code>application/atom+xml</code></b>（BERT 4 作者 / 首发 <code>2018-10-11</code>；CLIP 12 作者 / <code>2021-02-26</code>；R1 200 作者 / <code>2025-01-22</code>）；OpenAlex <b>5/5 <code>200</code></b>（含 BERT NAACL DOI 与 DRAMsim3 DOI 直查）。<b>必读清单仍 10/10 组、37/37 条目</b>（本轮属「补充」）。⚠️ BERT 的两条 OpenAlex 记录（arXiv 76,688 / NAACL 57,751）是<b>同一工作的两种计法</b>，本线<b>不相加、不混算</b>。
+</div>
+
+<h2 class="sec">🎯 12:00 轮 · 新增可执行建议（4 条，按线）</h2>
+<table>
+  <tr><th>线</th><th>建议（可落地）</th><th>依据 / 预注册判据</th></tr>
+  <tr><td><b>pretrain</b></td><td>在 2B 上补一组「编码器 vs decoder-only」的<b>样本效率对照</b>：固定 token 预算，下游标注量取 {100, 300, 1k, 3k}，只跑 EDA 文本类任务（报错日志归类 / 报告抽取）。</td><td>BERT（#76）。<b>判据</b>：若编码器在 ≤1k 样本下领先 &lt; 3 点，<b>不</b>新增双塔训练栈。</td></tr>
+  <tr><td><b>vision</b></td><td>先跑「CLIP 冻结特征 + 线性头」作为<b>下界基线</b>（版图截图 / 波形图 / 报告表格图三组），再决定是否训自研塔；把<b>prompt 模板集</b>冻结进版本号。</td><td>CLIP（#77）。<b>判据</b>：自研塔领先 &lt; 5 点时先查数据与对齐目标、不加参数；prompt 变动须重跑基线。</td></tr>
+  <tr><td><b>harness</b></td><td>把「配置哈希」写入实验元数据：工具 / 模拟器 commit、PDK 版本、prompt 模板、判分器版本；缺哈希的报告标 <code>non-reproducible</code>，不进主表。</td><td>DRAMsim3（#79）+ GAIA（#74）。<b>判据</b>：缺四项之一即降级为「探索记录」。</td></tr>
+  <tr><td><b>zhulong</b></td><td>设「RL-only vs SFT」同基座、同 token 预算对照，<b>只收可自动判题</b>；先统计判分器对候选任务集的<b>覆盖率</b>，再定 RL 立项规模。</td><td>DeepSeek-R1（#78）。<b>判据</b>：覆盖率 &lt; 60% 不启动 RL 训练；2B 上须先复现「RL 有增益」最小实验（不默认迁移）。</td></tr>
+  <tr><td><b>data</b></td><td><b>无</b>（相关建议已并入 pretrain / vision 两条，不重复计数）</td><td>—</td></tr>
+  <tr><td><b>designflow</b></td><td><b>无</b>（DRAMsim3 的保真度建议已归入 harness 条；L1–L5 分级本轮无新证据）</td><td>—</td></tr>
+</table>
+
+<h2 class="sec">👥 作者关系网（第二十轮 +4 → 86；X 已核验 47；待 follow 40）</h2>
+<table>
+  <tr><th>姓名</th><th>机构</th><th>代表论文</th><th>邮箱 / 来源</th><th>X</th><th>状态</th></tr>
+  <tr><td><b>Ankur Srivastava</b></td><td>Univ. of Maryland（ECE）</td><td>DRAMsim3（#79）</td><td><code>ankurs@umd.edu</code>（<code>srivastava.umd.edu</code> <code>200</code> / 51,727 B，<code>mailto:</code> 明文；旧页仅 263 B 跳转 ⇒ 未用）</td><td><b>未找到</b>（<code>@ankurs</code> bio 为 London、61 followers ⇒ 判非本人）</td><td><b>已发信</b></td></tr>
+  <tr><td><b>Bruce Jacob</b></td><td>US Naval Academy · UMD（荣休）</td><td>DRAMsim3（#79，末位）</td><td><b>未找到</b>（页面邮箱为 <code>email.gif</code> 图片 ⇒ 不猜）</td><td><b>未找到</b>（<code>@blj</code> 0 推文、无 bio）</td><td>待跟踪</td></tr>
+  <tr><td><b>Jacob Devlin</b></td><td>BERT 时为 Google AI Language（现职未核）</td><td>BERT（#76，一作）</td><td><b>未找到</b>（<code>jacobdevlin.com</code> 为停放页）</td><td><b>未找到</b>（<code>@jacobdevlin</code> 7 followers、无身份信息）</td><td>待跟踪</td></tr>
+  <tr><td><b>Ming-Wei Chang</b></td><td>BERT 时为 Google AI Language（现职未核）</td><td>BERT（#76，二作）</td><td><b>未找到</b>（个人域名直连 <code>000</code>）</td><td><b>未找到</b>（<code>@mingweichang</code> 4 followers、0 推文）</td><td>待跟踪</td></tr>
+</table>
+<p style="font-size:13px;color:#59636e;">X 探测：<code>x.com</code> 直连 <b><code>000</code></b>（本 shell 不继承代理）、显式 <code>-x http://127.0.0.1:7897</code> <b><code>200</code></b>；本轮 7 个 profile <b>全部 <code>200</code></b>。<b>新增 handle 0 个</b>（4 个候选全部因「无 bio / 0 推文 / 身份不可证」被拒 ⇒ 按令不猜）。Ilya Sutskever 档案补记 <b>CLIP 末位作者</b>（#77）。<b>已 follow 仍为 0</b>（需登录态）。完整 86 人档案见 <code>research/classic/AUTHORS.md</code>。</p>
+
+<h2 class="sec">✉ 作者信（12:00 轮 1 封，<code>SENT OK 2026-11-13 12:05:50</code>；今日累计 8 封 / 累计 29 封）</h2>
+<table>
+  <tr><th>对象</th><th>论文</th><th>语言 / 长度</th><th>三个问题（回填哪一步）</th></tr>
+  <tr><td><b>Ankur Srivastava</b></td><td>DRAMsim3（IEEE CAL 2020，无 arXiv）</td><td>英文 · <b>172 词</b>（发送前 <code>wc -w</code> 已核）</td><td>① HBM3 类配置的带宽误差主导参数 + 最便宜标定协议 → <b>zhulong</b> 成本口径；② 热模型在 LLM decode 类流量下何时改变结论 → <b>zhulong</b> 稳健性；③ 冻结基线的必需不变量 / 最易误读指标 → <b>harness</b> 复现与判分</td></tr>
+</table>
+<div class="note">红线自查：单收件人、不群发、不催；不承诺合作 / 署名 / 资助；不透露未公开内部信息；不夸大；同论文 ≤1（DRAMsim3 其余 4 位作者本轮不发）、同机构 ≤2 封/天（UMD 1）。草稿先入仓 <code>research/mail/drafts/dramsim3-ieee-cal-2020.md</code>，台账 <code>research/mail/发送记录.md</code> 已追加（<b>没写 = 没发</b>）。</div>
+
+<h2 class="sec">🗣 voice_ready · 研究者言论（本期 2 条）</h2>
+<details class="voice-ready">
+<summary>🗣 voice_ready 1/2 · Thomas Wolf（harness 与开源评测）</summary>
+<ul>
+  <li><b>人物</b>：Thomas Wolf <b>@Thom_Wolf</b>（Hugging Face 联合创始人 &amp; CSO；GAIA 作者，B 轨 #74）</li>
+  <li><b>言论</b>：英文原文 —— “same open model, different harness =&gt; very different results / Joël set out to find which harness actually gets the most out of open models in November 2026”<br>中文翻译 —— 「同一个开源模型，换一套 harness，结果会差很多。Joël 在 2026 年 11 月专门去找：到底哪套 harness 能把开源模型的潜力发挥得最多。」</li>
+  <li><b>时间</b>：<b>2026-11-07</b> 00:28 UTC（6 天前，&lt; 30 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/Thom_Wolf/status/2118863053001531676">x.com/Thom_Wolf/status/2118863053001531676</a>（推文页 <code>200</code> / 160,196 B，<code>og:title</code> = <code>Thomas Wolf (@Thom_Wolf) on X</code>）</li>
+  <li><b>话题点</b>：大家以为「模型定了，结果就定了」，其实外面那层工具脚手架同样决定成败 —— 这正是我们 harness 线在做的事。</li>
+  <li><b>风险</b>：① 原推<b>没有量化幅度</b>（「very different」≠ 具体百分比），🚫 不得代填；② 单条推文非同行评审；③ 其提到的 harness 排行榜属第三方工作，引用须回原榜，<b>不能把别人的名次当本推文的结论</b>。</li>
+</ul>
+</details>
+<details class="voice-ready">
+<summary>🗣 voice_ready 2/2 · Albert Gu（SSM / 架构原语）</summary>
+<ul>
+  <li><b>人物</b>：Albert Gu <b>@_albertgu</b>（CMU 助理教授 · Cartesia 首席科学家；Mamba 一作，B 轨 #4）</li>
+  <li><b>言论</b>：英文原文 —— “it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling”<br>中文翻译 —— 「很多人把『苦涩的教训』理解成只要把 transformer 无限堆大就行，这挺好笑。那个教训讲的是规模，但<b>算法原语上的创新</b>同样能带来更高效的规模化。」</li>
+  <li><b>时间</b>：<b>2026-11-07</b> 23:11 UTC（6 天前，&lt; 30 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/_albertgu/status/2119206160410800219">x.com/_albertgu/status/2119206160410800219</a>（推文页 <code>200</code> / 147,445 B，<code>og:title</code> = <code>Albert Gu (@_albertgu) on X</code>）</li>
+  <li><b>话题点</b>：「算力堆到底」与「换算法」之争，是普通读者也能接住的一句话；对做小模型的一方尤其有共鸣。</li>
+  <li><b>风险</b>：① 纯观点、<b>无数值无实验</b>，🚫 不得当作结论；② 与 Sutton《The Bitter Lesson》原意的对照属<b>我们的解读</b>，引用时须标明是转述而非原文；③ 6 天前推文符合时效口径。</li>
+</ul>
+</details>
+<p style="font-size:13px;color:#59636e;">口径：每期 ≤2 条（本期 2 条 = 满额）；必须原文 + 原链接，🚫 不二手转述当原文、🚫 不断章取义。<code>news_ready</code>：本轮 <b>0 条</b> —— A 轨 0 新收（无新推荐条目），B 轨 4 篇均为历史/方法文献、无「发布/开源/首次」事件点，<b>不硬凑</b>。</p>
+
+<h2 class="sec">附录 A4 · 检索式与命中数（2026-11-13 12:0x · 可核验）</h2>
+<table>
+  <tr><th>项目</th><th>结果</th></tr>
+  <tr><td>arXiv 查询</td><td><b>5/5</b> <code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code>（串行 ≥3.2 s；2.44 / 1.81 / 1.41 / 2.53 / 3.95 s）</td></tr>
+  <tr><td>公告批</td><td><b>已刷新</b>（5 个 <code>totalResults</code> 全部上升；新批首次提交集中于 <code>2026-11-11</code>）</td></tr>
+  <tr><td>去重</td><td>merged <b>373</b> / SEEN 命中 <b>5</b> / 新候选 <b>368</b> ⇒ 已落盘 <code>raw/2026-11-13-12h-candidates-r164.json</code></td></tr>
+  <tr><td>B 轨元数据</td><td>arXiv <code>id_list</code> 3 ID <b><code>200</code> + atom</b>；OpenAlex <b>5/5 <code>200</code></b>（含 BERT NAACL DOI 与 DRAMsim3 DOI 直查）</td></tr>
+  <tr><td>X 只读</td><td>profile <b>7/7 <code>200</code></b>（ilyasut / jacobdevlin / mingweichang / tri_dao / ShunyuYao12 / _albertgu / natolambert）+ 单条推文页 <b>2/2 <code>200</code></b>；新增 handle <b>0</b></td></tr>
+</table>
+
+<h2 class="sec">附录 B4 · 12:00 轮口径自检</h2>
+<div class="ok-box">
+① A 轨 <b>5/5 <code>200</code> + atom</b>；<b>公告批已刷新</b>且如实记录「0 新收」的原因是<b>额度已满</b>（不是「无新增」），新候选 368 条已落盘待明日选取；② B 轨 4 条<b>均 8 字段</b>、被引数标查询日与记录来源；BERT 两条记录<b>明确不相加</b>；CLIP 未核到会场 ⇒ <b>不写 ICML</b>；R1 摘要无数值 ⇒ <b>不写准确率</b>；DRAMsim3 <b>372 &lt; 500</b> 已如实标注按「方法论常青」收；DRAMsim3 <b>无 arXiv</b>、R1 以 <b>Nature 正式版</b>计被引，均显式标注；③ 作者网<b>不猜</b>：4 位新作者中 <b>3 位无可用 X</b>（无 bio / 0 推文）、1 位邮箱为图片 ⇒ 均写「未找到」并注明判据；④ <code>voice_ready</code> <b>2 条满额</b>，均为<b>原文 + 原链接 + 时间</b>、单条推文页 <code>og</code> 核验；⑤ <code>news_ready</code> <b>0 条</b>（无新推荐 + B 轨无事件点，不硬凑）；⑥ 本轮外发 = <b>1 封</b>作者请教信（草稿先入仓、台账已记、词数 172 已核）；⑦ 未发日报邮件、<b>0 follow</b>、未注册账号、未用未授权凭据；⑧ 单文件 &lt; 5MB；⑨ 收尾：心跳 + 流水 + commit &amp; push。
+</div>
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-13（06:00 时窗 + 09:00 时窗 · A 轨复核 + B 轨第十八 / 第十九轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 09:1x CST<br>
+  研究线 · 论文观察日报 · 2026-11-13（06:00 + 09:00 + 12:00 时窗 · A 轨复核 + B 轨第十八 / 第十九 / 第二十轮）｜ 数据源 arXiv API ｜ 生成时间 2026-11-13 12:2x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>
