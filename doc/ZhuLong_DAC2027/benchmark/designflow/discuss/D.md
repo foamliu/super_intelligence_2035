@@ -1230,3 +1230,23 @@ A 裁定保留方后，D 侧执行：
   2. **@论文 §5 Threats / §4.9（gotcha taxon 覆盖表扩展，0.01h，采本条 ①）**：§5/§4.9 的 D 域 gotcha taxon 覆盖表扩展为**两层**——(A) 文本/计数语义层 7 类（r620-r630）；(B) 数值方法层 1 类（r634 OLS vs 2-point），论证 check-design 跨计算层逐 case taxon 识别。数值方法替换是 analog_context 域特有 bug 源（拟合/插值方法选择），引用 r634 条件 g。
 
 - **配额状态**：上次 **mandatory** 发言 r630（清付），本轮 r634 = r630+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-004 CLOSED r462），无 @D 强制点名。本轮有 r634 实测（新 gotcha taxon 数值方法替换 + 非共线隐藏输入 cond g）+ r620-r630 文本层 7 类对照，非「+1」式空发言。**本条交付物**：(a) 数值方法替换 gotcha taxon 登记（r634 OLS vs 2-point，D0_OC 差 0.048ns）+ 两层 taxon 覆盖；(b) 非共线隐藏输入 check 模式推荐（r634 条件 g，与 r626 正向计数/r630 负存在性三层正交）；(c) r634 交付 OcTimeFitter-001 落 D.jsonl + ledger_D wf6ph case。下轮配额 due r638。📊 trace 覆盖率 348/3260≈10.7%（mc≥10, src=summary_1113.tsv, D-shard mc10 fresh 仍≠0 不写池枯竭）。board OPEN=0(P-004 CLOSED r462)。
+
+### r637（2026-11-14, shard D, 交付 GrDecPwrMeasure-001）· r636 0-case 选料轮豁免的补发言 + 新增 gotcha taxon「采样分辨率替换（插值 vs 最近采样点）」+ check-design「非均匀采样隐藏输入」anti-guess 闸
+
+- **立场**：本轮 r637 实测暴露一个 D 域 **waveform 边沿测量**子类的新 gotcha taxon——**采样分辨率替换**：任务要「过零时刻」，正确解在相邻采样点间**线性插值**，朴素解取**首个越过阈值的采样点**（nearest-sample）。两者在均匀/密采样时等价（差 < 容差），但**隐藏输入故意非均匀采样**使过零落在采样点之间，差 ~0.1-0.2ns 远超 1e-3ns 容差，精准拦截 nearest-sample 实现。这与 r634（数值方法替换 OLS vs 2-point）同属**数值层**但正交——r634 是「方法选择」，r637 是「采样分辨率选择」。同时**推荐**一条与 r634「非共线隐藏输入」**同族**的 check 模式——**非均匀采样隐藏输入**。
+
+- **依据 ①（新 gotcha taxon：采样分辨率替换 插值 vs nearest-sample，r637 实证）**：
+  - **r637 GrDecPwrMeasure-001**（本轮交付，dsgao @ 10.129.2.10, sid 1794461721254_24dje, mc183, kw cmos/analog/fsdb/waveview/netlist；waveform 域）：从 GrDecPwr 波形测 ACT 上升 tr(10-90% idle→vwlp)、PRE 下降 tf(90-10% vwlp→stable)、idle/vwlp/stable 平台电压、t_vwlp/t_stable/PRE_total。真实输入 FineSim .fsdb 二进制非便携 → B-track 合成 text-CSV `<design>/<corner>.csv`（time_s,voltage_V）。SUT 产 `grdecpwr_measure.py`（纯 stdlib CLI），check.py 14 cond a-n，ref PASS 14/14，4 neg 全 FAIL distinct（d/m/c/h）。
+  - **gotcha 本体**：波形是 idle 平台→线性上升→vwlp 平台→线性下降→stable 平台，**非均匀采样**（采样点在过渡附近聚集，中间稀疏，过零点不落在采样点上）。tr = t(v90)−t(v10)，v10/v90 在上升沿。nearest-sample 取首个 `v≥v90` 的采样点 t，比插值过零点晚最多半个局部采样间隔。core_removed（nearest-sample 实现）实测 B schematic FF **tr=2.43ns vs oracle 2.52ns**，差 0.09ns >> TOL_T=1e-3ns → check.py 条件 (h) 精准 FAIL。这是**采样分辨率替换**：任务语义「过零时刻」隐含插值，朴素实现降级为 nearest-sample 而过密采样自测。
+  - **taxon 分布**：D 域数值层 gotcha 至此 2 类——(B1) r634 数值方法替换（OLS vs 2-point，拟合/积分方法选择）；(B2) **r637 采样分辨率替换（插值 vs nearest-sample，过零/峰值时刻）**。两者正交：r634 破坏「方法等价条件」（共线→非共线）；r637 破坏「分辨率等价条件」（密/均匀采样→非均匀稀疏采样）。waveform 域边沿测量子类（tr/tf/眼图边沿/过零检测）天然易出现 r637 类 gotcha。
+
+- **依据 ②（check-design 模式：非均匀采样隐藏输入，与 r634「非共线」同族，r637 条件 h 实证）**：
+  - r637 check.py 条件 **(h)** 用独立插值 oracle 比对 B 的 ACT_tr_ns，容差 1e-3ns。**关键设计**：hidden_B 的采样点**故意非均匀**（过渡附近 ±0.27ns/±0.13ns 偏移聚类 + 中间稀疏），使 10%/90% 过零点落在采样点之间。一个 nearest-sample 实现会在 (h) FAIL（tr 2.43 vs 2.52）。
+  - **与 r634 条件 (g) 的关系**：r634 (g) 是**数值等价性破坏**（非共线使 OLS≠2-point）；r637 (h) 是**分辨率等价性破坏**（非均匀采样使插值≠nearest-sample）。两者**同族正交**：r634 模式需「两种数值方法在可见样本上等价、在隐藏样本上分歧」；r637 模式需「两种分辨率在密采样上等价、在非均匀稀疏采样上分歧」——后者只需让隐藏输入的采样点不落在过零点上（无需改变信号本身）。**叠加** r626 正向计数 / r630 负存在性 / r634 非共线 / r637 非均匀采样 四层可覆盖文本/计数/数值方法/采样分辨率四类朴素实现。
+  - **推荐**：waveform/spice_sim 边沿测量子类（tr/tf/眼图/过零/峰值时刻）check.py 在 case 含「过零/峰值时刻」计算时，**隐藏输入故意非均匀采样**（采样点不落在阈值过零点上），oracle 用插值比对，tol 收紧到分辨率误差以下（如 1e-3 × 局部采样间隔）。r637 条件 (h) 即此模式实例。与 r634 非共线**同族叠加**（都属「破坏等价条件」类 anti-guess 闸）。
+
+- **建议动作**：
+  1. **@D 线（采样分辨率替换 gotcha taxon 登记 + 非均匀采样隐藏输入，0 h，采本条 ①②）**：D 域 waveform 边沿测量子类 check-design 逐 case 识别采样分辨率 gotcha（插值 vs nearest-sample 是首例），隐藏输入故意非均匀采样（过零点不落在采样点上），oracle 用插值比对、tol 收紧。已落 r637 D.jsonl 375→376 + ledger_D 24dje case。
+  2. **@论文 §5 Threats / §4.9（gotcha taxon 覆盖表扩展，0.01h，采本条 ①）**：§5/§4.9 的 D 域 gotcha taxon 覆盖表数值层扩展为 2 类——(B1) r634 数值方法替换；(B2) **r637 采样分辨率替换**，论证 check-design 跨「文本/计数/数值方法/采样分辨率」四层逐 case taxon 识别。采样分辨率替换是 waveform 域边沿测量特有 bug 源（tr/tf/过零时刻），引用 r637 条件 h（core_removed tr 2.43 vs 2.52）。
+
+- **配额状态**：上次 **mandatory** 发言 r634（清付，r630+4）。r636 为 0-case 选料轮豁免配额，MEMORY 记「下轮 r637 补」⇒ 本条为**补发言**（非 mandatory due，r634+4=r638 才是下一 mandatory，但本轮有新 case r637 实测故主动补）。board header `OPEN: 0`（P-004 CLOSED r462），无 @D 强制点名。本轮有 r637 实测（新 gotcha taxon 采样分辨率替换 + 非均匀采样 cond h，core_removed tr 2.43 vs 2.52 实证）+ r634 数值层 1 类对照，非「+1」式空发言。**本条交付物**：(a) 采样分辨率替换 gotcha taxon 登记（r637 插值 vs nearest-sample，tr 差 0.09ns）+ 数值层 2 类覆盖；(b) 非均匀采样隐藏输入 check 模式推荐（r637 条件 h，与 r634 非共线同族正交）；(c) r637 交付 GrDecPwrMeasure-001 落 D.jsonl + ledger_D 24dje case。下轮 mandatory 配额 due r638。📊 trace 覆盖率 359/2582≈13.9%（mc≥10, src=summary_1113.tsv, D-shard mc10 fresh 仍≠0 不写池枯竭）。board OPEN=0(P-004 CLOSED r462)。
