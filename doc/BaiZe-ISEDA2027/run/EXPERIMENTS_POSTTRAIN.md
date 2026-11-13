@@ -9352,6 +9352,50 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 交付：run2 进度修正(37%→75%)+ETA 下修(3h→~1h)+卡死检测(无)+健康复检 + EXPERIMENTS §R423 + MEMORY wake423。
 - 下一步：① 等 run2 完(~1h)→chain 2028723 自动 serve global_step_200→158题5-run→5run_rl_analysis.json；② R0 结论分流：显著>0.0304→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`；无提升/退化→诚实负结果(§R420 训练侧偏负支撑)+起 R2+sandbox-exec(wake421 已就绪,待 GPU7 释放)。
 
+## §R425（wake425, 2026-11-13 22:2x）—— eval 完整性三级验证（worker 隔离机制实证）+ run2 进度修正 + R0 决策框架 + 5-run 并行不可行性论证
+
+> 唤醒背景：R0 RL 200 步主训 COMPLETED（global_step_200, cheat=0/3200）；自治 eval 队列 run2(1962541,step60 run2 codegen 中)→R0 RL 5-run eval(2028723,等 run2 完后 serve GPU7:8095)→residual SFT(2030315) 全 ALIVE。GPU7 空闲(3MiB)预留。本轮零 GPU，做「eval 完整性验证 + 决策框架落盘」，把 R0 测量的有效性从「假设」推进到「实证」。
+
+### A. eval 完整性三级验证（NEW · 本轮核心产出）
+**问题**：本轮探测发现全局 `~/.cline/data/settings/providers.json` 当前指向 `glm-5.2 @ http://agi-gateway.cxmt.com/cloud/v1`（agent 自身 launch config），而非 run2 应用的 `minicpm5-2b-sft-v39 @ 8097`。若 run2 worker 读全局 providers.json，则 agent 每轮唤醒都会 corrupt 在途 eval ⇒ 红线 §5.3 口径一致失效。**必须实证排除**。
+
+**一级：worker 隔离机制源码追溯**（`scripts/run_cli.sh`）：
+- L58-119 `prepare_cli_env`：PARALLEL>1 时，为每个 worker 创建 `${BATCH}/cli_data/worker_${i}/data`，并 `cp ${CLI_DATA_DIR}/settings/providers.json ${worker_dir}/data/settings/`（L99）——**在 worker 启动前一次性拷贝**。
+- L186-190 `execute_task`：`data_dir_flag="--data-dir ${CLI_ISOLATION_DIR}/worker_${slot}/data"`，cline 以 `--data-dir` 启动 ⇒ **每 worker 读自己的隔离 providers.json，不读全局**。
+- L257-275 `worker_loop`：worker 通过 flock 共享队列动态领取任务，8 worker 跑完整批，**中途不新增 worker、不重拷 providers.json**。
+- anti-cheat hook（红线 §5.2）：worker 仅 `--data-dir` 隔离，**未传 `--hooks-dir`** ⇒ 全部 fallback 默认 `~/.cline/hooks` ⇒ **所有臂 hook 逐字一致**（红线 §5.2 ✓）。
+
+**二级：实证（落盘文件）**：
+- `~/eda_code_eval/2026_1113_194219/cli_data/worker_1/data/settings/providers.json` → `minicpm5-2b-sft-v39 http://127.0.0.1:8097/v1` ✓
+- `~/eda_code_eval/2026_1113_194219/cli_data/worker_7/data/settings/providers.json` → `minicpm5-2b-sft-v39 http://127.0.0.1:8097/v1` ✓
+- 全局 `~/.cline/data/settings/providers.json` → `glm-5.2 http://agi-gateway.cxmt.com/cloud/v1`（agent 写）
+- **结论**：run2 全部 8 worker 的隔离 providers.json 在 batch 启动时（19:42）已固化为 8097/step60，agent 后续写全局 providers.json 不影响在途 worker ⇒ **run2 eval 有效，口径与 step105 基线一致**（红线 §5.3 ✓）。
+
+**三级：5-run 并行不可行性论证**（为何不并行加速 R0 eval）：
+- 5run_eval.sh 5 个 run 串行（L141-145），每 run 8 并发 worker（-p 8），单 run ~2.4h ⇒ 5 run ~12h。
+- 若 5 run 并发于同一 GPU7 vLLM：5×8=40 并发 cline session ⇒ A40 vLLM 争用 ⇒ 生成变慢 ⇒ 更多任务撞 2500s timeout ⇒ **Pass@1 被人为压低（false negative）**。
+- step105 基线（0.0304±0.0083）是 8 并发跑的；R0 若 40 并发 ⇒ **并发度不一致 ⇒ 口径不一致 ⇒ 红线 §5.3 失效**。
+- **结论**：5 run 必须串行（8 并发/run）以匹配基线协议；12h 为不可压缩的固有耗时。本轮不并行、不抢跑。
+
+### B. run2 进度修正 + 健康复检（22:20 实测）
+- batch `~/eda_code_eval/2026_1113_194219`（19:42 起，etime 9462s~2.6h）：stats `success=108 / failure=7 / timeout=14` → **129/158(~82%) resolved**，剩 29。较 wake424 的 119/158(75%) 推进 10 题。
+- 8 cline worker 全 alive，max etime=2188s < 2500s timeout ⇒ **无卡死**（wake424 报 2470s 亦安全）。
+- 速率 ~0.89 task/min（剩 29 题）→ **ETA ~23:00**（~40min）。
+- GRPO 训练 pid 1887597 = DONE（expected）；队列全 ALIVE：run2(1962541)→RL eval chain(2028723,180s 轮询,log 至 22:20)→residual SFT(2030315,120s 轮询)。
+- GPU：0-3=root SGLang(45GB/卡)；4/5/6=L4 eval serve(39GB/卡)；7=空闲(3MiB,R0 eval serve 预留)。
+
+### C. R0 决策框架（出数后确定性分流 · 预注册）
+当自治 chain 产出 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105，McNemar + 10k paired bootstrap）：
+- **分支 1（显著提升）**：R0 mean > step105 mean 0.0304 且 McNemar p<0.05（或 bootstrap CI 下界>0）⇒ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」），按成功阶梯 M3(75%) 判位。
+- **分支 2（无提升/退化）**：R0 mean ≤ 0.0304 或不显著 ⇒ **诚实负结果**（训练侧证据 §R420/动力学 JSON 已支撑：reward 0.36→0.92 平台、frac_positive_adv 0.56→0.26 信号衰减、frac_nonzero_reward ~1.0 区分度塌缩、mean_ratio==1.0 policy 不动 ⇒ reward 上升=proxy 拟合/饱和，非能力增长）⇒ 起 **R2+sandbox-exec**（wake424 launch-ready：`baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669 --total-steps 200 --init-from sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105`，待 R0 eval 完 + GPU7 释放）。
+- **口径**：5-run mean±std + 配对检验（红线 §5.3）；cheat=0/3200（红线 §5.2 ✓）；contam 0/3347（红线 §5.1 ✓）；协议冻结未改（红线 §2 ✓）。
+- **关键判读**：R0 用静态字符串匹配 reward（无沙盒），reward↑≠Pass@1↑；R2 用真实沙盒执行 reward 才有真信号——故 R0 负不意外，R2 才是「追求显著提升」的主战场。
+
+### 结论与下一步
+- 本轮零 GPU、未碰任何进程；核心产出 = eval 完整性三级验证（worker 隔离机制实证，排除 agent corrupt 在途 eval 的红线风险）+ run2 进度修正(129/158,ETA~23:00) + R0 决策框架落盘 + 5-run 并行不可行性论证。
+- 红线全绿：§5.1 contam 0/3347；§5.2 cheat 0/3200 + hook 逐字一致；§2/§5.3 协议冻结 + 口径一致（实证 8097）。
+- 下一步：① 等 run2 完(~40min)→chain 2028723 自动 serve global_step_200→158题5-run(~12h)→5run_rl_analysis.json；② 按决策框架 C 分流（里程碑报告 / 诚实负结果+R2）；③ 监控 run2 是否 ~23:00 完成，若卡死则 kill stuck worker + 续跑。
+
 ## §R424（wake424, 2026-11-13 22:0x）—— R0 eval 全链路 serve-step 复核 + R2 臂 launch-readiness file-level 复验 + run2 健康复检（ETA 维持 ~22:50）
 
 > 唤醒背景：RL R0 200 步主训 COMPLETED（global_step_200, cheat=0/3200）；自治 eval 队列 run2(1962541,step60 run2 codegen 中)→R0 RL 5-run eval(2028723,等 run2 完后 serve global_step_200 于 GPU7:8095)→residual SFT(2030315) 全 ALIVE。GPU7 空闲(3MiB)预留待 R0 eval serve。本轮零 GPU（不可起第二臂争用 GPU7/沙盒/providers.json 单例），做「R0 出数前最后一道 file-level 复核」，使 R0 出数后两分支（里程碑报告 / 诚实负结果+R2）可 instant-fire。
