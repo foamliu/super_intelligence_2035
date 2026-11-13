@@ -36,18 +36,30 @@ RL_RUN_DIR="$SCRIPT_DIR/rl_surrogate_runs/minicpm5_grpo_loop_R0_200step"
 GPU="7"
 PORT="8095"
 BASE_LABEL="step105"
+# Label prefixes (parameterized so R0/R2/R3 arms don't clobber each other).
+# Defaults preserve the original R0 behavior.
+RL_LABEL_PREFIX="grpo_R0_step"
+SERVED_NAME_PREFIX="minicpm5-2b-grpo-R0-step"
+# OOM mitigation (wake429 lesson): before serving the RL ckpt, tear down the
+# vLLM serve on this GPU (frees a card -> fewer concurrent serves). Empty=skip.
+PRE_TEARDOWN_GPU=""
+ANALYSIS_OUTPUT="/tmp/posttrain_5run_eval/5run_rl_analysis.json"
 DRY_RUN=0; STATUS_ONLY=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --dry-run)        DRY_RUN=1 ;;
-    --status)         STATUS_ONLY=1 ;;
-    --grpo-pid)       GRPO_PID="$2"; shift ;;
-    --eval-chain-pid) EVAL_CHAIN_PID="$2"; shift ;;
-    --rl-run-dir)     RL_RUN_DIR="$2"; shift ;;
-    --gpu)            GPU="$2"; shift ;;
-    --port)           PORT="$2"; shift ;;
-    --base-label)     BASE_LABEL="$2"; shift ;;
+    --dry-run)            DRY_RUN=1 ;;
+    --status)             STATUS_ONLY=1 ;;
+    --grpo-pid)           GRPO_PID="$2"; shift ;;
+    --eval-chain-pid)     EVAL_CHAIN_PID="$2"; shift ;;
+    --rl-run-dir)         RL_RUN_DIR="$2"; shift ;;
+    --gpu)                GPU="$2"; shift ;;
+    --port)               PORT="$2"; shift ;;
+    --base-label)         BASE_LABEL="$2"; shift ;;
+    --rl-label-prefix)    RL_LABEL_PREFIX="$2"; shift ;;
+    --served-name-prefix) SERVED_NAME_PREFIX="$2"; shift ;;
+    --pre-teardown-gpu)   PRE_TEARDOWN_GPU="$2"; shift ;;
+    --analysis-output)    ANALYSIS_OUTPUT="$2"; shift ;;
     *) echo "unknown: $1"; exit 1 ;;
   esac
   shift
@@ -76,11 +88,49 @@ echo "  rl-run-dir=$RL_RUN_DIR  gpu=$GPU  port=$PORT  base-label=$BASE_LABEL"
 
 if [ $DRY_RUN -eq 1 ]; then
   echo "[dry-run] Would: wait GRPO PID $GRPO_PID -> wait eval-chain PID $EVAL_CHAIN_PID ->"
-  echo "[dry-run]   serve latest ckpt from $RL_RUN_DIR on GPU${GPU}:${PORT} ->"
-  echo "[dry-run]   run 5-run eval (label=grpo_R0_step<N>) ->"
-  echo "[dry-run]   compare vs $BASE_LABEL (McNemar + paired bootstrap)."
+  [ -n "$PRE_TEARDOWN_GPU" ] && echo "[dry-run]   pre-teardown vLLM serve on GPU${PRE_TEARDOWN_GPU} (OOM mitigation, wake429 lesson) ->"
+  echo "[dry-run]   serve latest ckpt from $RL_RUN_DIR on GPU${GPU}:${PORT} (served-name=${SERVED_NAME_PREFIX}<N>) ->"
+  echo "[dry-run]   run 5-run eval (label=${RL_LABEL_PREFIX}<N>) ->"
+  echo "[dry-run]   compare vs $BASE_LABEL (McNemar + paired bootstrap) -> $ANALYSIS_OUTPUT"
   exit 0
 fi
+
+# ---- helpers ---------------------------------------------------------------
+
+# Kill any vLLM api_server serve occupying GPU<g> (frees the card + its RAM).
+# Mirrors baize_posttrain_r2_autofire_chain.sh::kill_gpu_serve.
+kill_gpu_serve() {
+  local g="$1"
+  local pids
+  pids=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits -i "$g" 2>/dev/null | tr -d ' ')
+  [ -z "$pids" ] && { echo "[chain] GPU${g} already free (no compute-apps)."; return 0; }
+  for pid in $pids; do
+    local cmd
+    cmd=$(ps -o args= -p "$pid" 2>/dev/null)
+    if echo "$cmd" | grep -q "vllm.entrypoints.openai.api_server"; then
+      echo "[chain] pre-teardown: killing vLLM serve PID $pid on GPU${g}..."
+      kill -TERM "$pid" 2>/dev/null || true; sleep 4
+      kill -9 "$pid" 2>/dev/null || true
+    else
+      echo "[chain] pre-teardown: GPU${g} PID $pid is not vLLM serve (skip): ${cmd:0:70}"
+    fi
+  done
+}
+
+wait_gpu_free() {
+  local g="$1" i
+  for i in $(seq 1 40); do
+    local used
+    used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i "$g" 2>/dev/null | tr -d ' ')
+    if [ -z "$used" ] || [ "$used" -lt 1000 ]; then
+      echo "[chain] GPU${g} free (memory.used=${used}MiB) after ${i}x6s"
+      return 0
+    fi
+    sleep 6
+  done
+  echo "[chain] WARN: GPU${g} still not free after 4min (will attempt serve anyway)"
+  return 0
+}
 
 # 1. Wait for GRPO training to finish (GPU7 must free before serve).
 echo "[chain] Waiting for GRPO training (PID $GRPO_PID) to finish..."
@@ -102,8 +152,8 @@ if [ -z "$CKPT" ] || [ ! -d "$CKPT" ]; then
   exit 2
 fi
 STEP_N="$(basename "$CKPT" | sed 's/global_step_//')"
-RL_LABEL="grpo_R0_step${STEP_N}"
-SERVED_NAME="minicpm5-2b-grpo-R0-step${STEP_N}"
+RL_LABEL="${RL_LABEL_PREFIX}${STEP_N}"
+SERVED_NAME="${SERVED_NAME_PREFIX}${STEP_N}"
 echo "[chain] Latest RL ckpt: $CKPT  (step=$STEP_N, label=$RL_LABEL)"
 
 # 3. Wait for the existing SFT eval chain to finish (serialize providers.json).
@@ -113,6 +163,17 @@ while kill -0 "$EVAL_CHAIN_PID" 2>/dev/null; do
   sleep 180
 done
 echo "[chain] eval-chain finished at $(date '+%F %T') - providers.json now free."
+
+# 3b. OOM mitigation (wake429 lesson: 4 concurrent vLLM serves + 8-parallel
+#     cline eval workers crashed the R0 serve in CPU RAM). If requested, tear
+#     down the vLLM serve on PRE_TEARDOWN_GPU (an orphaned/superseded serve,
+#     e.g. the step60 SFT serve once step105-final is the baseline) BEFORE
+#     bringing up the RL serve -> stays at 3 concurrent serves.
+if [ -n "$PRE_TEARDOWN_GPU" ]; then
+  echo "[chain] === Pre-teardown vLLM serve on GPU${PRE_TEARDOWN_GPU} (OOM mitigation) @ $(date '+%F %T') ==="
+  kill_gpu_serve "$PRE_TEARDOWN_GPU"
+  wait_gpu_free "$PRE_TEARDOWN_GPU"
+fi
 
 # 4. Serve the RL ckpt on GPU7:8095 via the (parameterized) SFT serve script.
 echo "[chain] === Serving RL ckpt on GPU${GPU}:${PORT} @ $(date '+%F %T') ==="
@@ -147,9 +208,9 @@ done
 # 7. Analysis: 5-run mean+-std + paired comparison vs SFT baseline (McNemar + bootstrap).
 echo "[chain] === Running 5-run analysis (compare $RL_LABEL vs $BASE_LABEL) @ $(date '+%F %T') ==="
 python3 "$ANALYSIS_SCRIPT" --compare "$RL_LABEL" "$BASE_LABEL" \
-  --output "/tmp/posttrain_5run_eval/5run_rl_analysis.json" 2>&1
+  --output "$ANALYSIS_OUTPUT" 2>&1
 echo "[chain] === Analysis complete @ $(date '+%F %T') ==="
-echo "[chain] Results: /tmp/posttrain_5run_eval/5run_rl_analysis.json"
+echo "[chain] Results: $ANALYSIS_OUTPUT"
 echo "[chain] Per-run: /tmp/posttrain_5run_eval/${RL_LABEL}/run*/final_report.json"
 echo "[chain] === Post-RL eval chain DONE ==="
 

@@ -9608,3 +9608,68 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 最终修复：`--batch-prompts 1`（Gtot=8/step，**G=8 保持=GRPO group 完整性不变**），logits 峰值减半(5GB→2.5GB)，反向激活减半。**不改 G/ctx/lr/kl，仅 B=2→1**（memory-driven，R2 vs R0 唯一 config 差异=B；total_rollouts 1600 vs R0 3200，可接受）。
 - 验证（PID2314188, 00:09 起）：steps 1-6 全 PASS **OOM count=0**，GPU7 稳定 28-29GB（**16GB headroom，无增长**）；step time ~16s（B=1 减半）→ **ETA 200×16s≈53min**（~01:00 完成）。
 - 学习信号（steps 1-6）：reward 0/0/0.1275/0/0.0550/0.0825（per-prompt 方差，B=1 单 prompt/步），nz 0/0/0.12/0/0.25/**0.38**（递增=更多 rollout 通过真实沙盒），ploss 非0、kl 受控。⇒ **R2 真实沙盒奖励稳定移动 policy**，主训可靠运行中。
+
+---
+
+## §R430 (wake430, 2026-11-14 00:2x) — R2 主训监控(step48/200)+R2 eval autofire chain 落地(OOM 修复版)
+
+### A. R2 主训健康监控（实测 @00:21）
+
+- 进程：`ps` PID2314192（父 2314188=setsid wrapper，ppid 链→1），`baize_posttrain_rl_grpo_loop.py --reward-arm R2 --sandbox-exec --sft-ckpt global_step_105 --total-steps 200 --group-size 8 --batch-prompts 1 --save-freq 50`。
+- GPU：`nvidia-smi -i 7` = 28130 MiB / 46068 MiB，util 100%。GPU0-3=root SGLang(不可动)，GPU4=base serve，GPU5=step60 serve(孤立)，GPU6=step105-final baseline serve。
+- 日志 `/tmp/grpo_loop_R2_sandbox_200step.log`：step 48/200 @00:21:40，~15.6s/step（B=1）→ ETA 200 步 ≈ 01:11。
+- **健康复检**：`grep -iE 'oom|error|traceback|cuda out of memory|killed|exception'` log = **0 命中**；`grep -iE 'cheat|contam'` log = 0 命中（cheat_rate.json 待 step50 落盘）。
+- output dir `rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step/`：空（首 ckpt @step50，save-freq=50；末步 global_step_200 也会存）。
+
+### B. R2 学习信号诚实读数（48 步 dynamics）
+
+- reward 稀疏真实：mean nz=0.20（48 步）vs **R0 nz=0.97 塌缩**（区分度丢失）⇒ R2 有真实区分度。
+- **关键去稀疏化趋势**（早期→近期）：
+  - step 1-10：nz 多为 0.00，零星 0.12/0.25/0.38。
+  - step 43-48：step44 **nz=0.88 reward=0.1925（全程最高）**、step45/46/48 nz=0.62、step43 nz=0.38。
+  - ⇒ 近期 5 步 nz 多在 0.38–0.88，**policy 正学会产出能过真实沙盒的 rollout**——「追求显著提升」物质证据增强（vs R0 proxy 拟合）。
+- grad norm：有奖励步稳定 ~3.x（step3=3.69/step10=3.67/step44=2.58/step45=3.58），无奖励步 ~0.1 ⇒ **梯度在有信号处流动**（vs R0 ploss=0 全程卡死）。
+- **保留警惕（诚实）**：ratio=1.000 / ploss≈0（-0.0000/0.0000）表层签名同 R0「policy 不动」，但 gn 区分（真实梯度在流动）+ lr=3e-6 小步 ⇒ 真实 policy 移动幅度小（ratio 仅 4 位精度打印为 1.000）。**真实判据仍须 step200 后 5-run eval**（先定后测，红线 §5），不以训练侧 reward 上升断言能力增长（吸取 R0/vision v10 教训）。
+
+### C. R2 eval autofire chain 落地（wake429 OOM 教训修复）
+
+**问题**：wake429 R0 eval chain 因 **4 并发 vLLM serve（GPU4/5/6/7）+ 8 并发 cline eval worker** CPU RAM 瞬时尖峰 → GPU7:8095 serve ~23:37 OOM 崩 → orchestrator+autofire 同事件退出 → 5run_rl_analysis.json MISSING → R0 eval 无有效数据。R2 完成后若直接 serve R2 ckpt 于 GPU7 会**重蹈 4-serve 覆辙**。
+
+**修复（向后兼容参数化 `baize_posttrain_rl_eval_chain.sh`）**：
+- 新增 args：`--rl-label-prefix`（默认 `grpo_R0_step`）、`--served-name-prefix`（默认 `minicpm5-2b-grpo-R0-step`）、`--pre-teardown-gpu`（默认空=跳过）、`--analysis-output`（默认 `…/5run_rl_analysis.json`）。**默认值保留原 R0 行为**，不影响既有调用。
+- 新增 helper `kill_gpu_serve`/`wait_gpu_free`（镜像 r2_autofire_chain 的同名函数）。
+- 新增步骤 3b：若 `--pre-teardown-gpu` 非空，serve 前先 teardown 该 GPU 的 vLLM serve 并等显存释放。
+
+**R2 eval 链启动**（setsid，fire-and-forget）：
+```
+setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
+  --grpo-pid 2314192 --eval-chain-pid 999999 \
+  --rl-run-dir rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step \
+  --gpu 7 --port 8095 --base-label step105 \
+  --rl-label-prefix grpo_R2_step --served-name-prefix minicpm5-2b-grpo-R2-step \
+  --pre-teardown-gpu 5 --analysis-output /tmp/posttrain_5run_eval/5run_rl_analysis_R2.json \
+  > /tmp/posttrain_r2_eval_chain.log 2>&1' < /dev/null &
+```
+- PID2322797（ppid=1，detached）。log `/tmp/posttrain_r2_eval_chain.log` 已实证 "Waiting for GRPO training (PID 2314192) to finish... sleeping 120s"。
+- **OOM 防护链路**：等 GRPO 退出 → teardown 孤立 GPU5 step60 serve（residual SFT chain 2030315 已死，无活跃 eval 用 step60；step105-final baseline 在 GPU6 仍在）→ 3 并发 serve（GPU4 base / GPU6 step105-final / GPU7 R2）→ serve R2 ckpt GPU7:8095 → 158 题 5-run eval → `5run_analysis.py --compare grpo_R2_step200 step105`（McNemar + 10k paired bootstrap）→ `5run_rl_analysis_R2.json`。
+- 验证：`bash -n` ✅；`--dry-run` ✅（recipe 正确：pre-teardown GPU5→serve R2→5-run→compare→R2.json）；`--status` ✅（GRPO RUNNING / no ckpt yet / GPU7:8095 not serving）。
+- eval-chain-pid=999999（死 PID）使既有 eval-chain 串行 wait 成为 no-op（当前无 eval chain 在跑，providers.json 空闲）。
+
+### D. RAM 复测（修正 wake429 OOM 归因）
+
+- `free -g`：total 755G，**available 676G**，swap 32G(used 17G)。⇒ 当前 RAM 极充裕。
+- 推断：wake429「4 并发 vLLM serve OOM」更可能是 **8 并发 cline eval worker（各 node+python sandbox）+ 4 vLLM serve 瞬时尖峰**，非纯 vLLM serve 数量。但 teardown GPU5→3 并发仍是稳妥卫生（减少一途 RAM 峰值 + 释放一卡），保留作为防御措施。
+
+### E. 红线与边界
+
+- §5.1 污染隔离：rl_pyaether_synth_v2.parquet 训练侧已验 contam 0/3347（R0 验过，R2 同数据）。
+- §5.2 反作弊：R2 grpo loop 内置 n-gram cheat 检测，cheat_rate.json 待 step50 落盘后报；eval 侧 cline harness PreToolUse hook 逐字一致（复用既有 5run_eval.sh）。
+- §2/§5.3 冻结协议：eval 链复用既有 `baize_posttrain_5run_eval.sh`（158 任务 / Pass@1 / 2500s / 单 trace / 5-run / -p 8 -n，未改）。
+- 边界：本轮仅编辑 rl_eval_chain.sh + 起新守护链；未碰 R2 主训进程、GPU0-3、GPU4/5/6 既有 serve。report 口径=替身预演，收益不可迁移到 BaiZe。
+
+### F. 下一步
+
+1. 监控 R2 主训 → step50 ckpt + cheat_rate.json 落盘 + dynamics（验证去稀疏化趋势是否持续）。
+2. R2 主训完（~01:11）→ autofire 链自动 teardown GPU5 → serve R2 ckpt → 158 题 5-run eval → `5run_rl_analysis_R2.json`。
+3. R2 显著提升（vs step105 0.0304±0.0083，McNemar p<0.05 或 bootstrap ci_low>0）→ 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）；负/退化 → 诚实负结果 + 换奖励/任务定义（§用户令#4）。
+

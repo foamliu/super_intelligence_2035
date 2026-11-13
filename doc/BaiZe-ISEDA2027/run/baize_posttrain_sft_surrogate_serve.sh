@@ -35,7 +35,8 @@ GPU="${GPU:-6}"
 PORT="${PORT:-8096}"
 SERVED_NAME="${SERVED_NAME:-minicpm5-sft}"
 GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.85}"
-MAX_MODEL_LEN="${MAX_MODEL_LEN:-32768}"
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-65536}"
+MAX_NUM_SEQS="${MAX_NUM_SEQS:-4}"
 CKPT=""
 
 # ============ arg parsing ============
@@ -175,6 +176,9 @@ cat <<EOF
   served-model-name : ${SERVED_NAME}
   gpu-mem-util    : ${GPU_MEM_UTIL}
   max-model-len   : ${MAX_MODEL_LEN}
+  max-num-seqs    : ${MAX_NUM_SEQS}
+  enforce-eager   : yes
+  auto-tool-choice: yes (--tool-call-parser minicpm5)
   vllm venv       : ${VLLM_VENV}
   transformers    : ${TF_VER}
   log file        : ${LOG_FILE}
@@ -203,6 +207,10 @@ CUDA_VISIBLE_DEVICES="$GPU" \
   --trust-remote-code \
   --gpu-memory-utilization "$GPU_MEM_UTIL" \
   --max-model-len "$MAX_MODEL_LEN" \
+  --enforce-eager \
+  --max-num-seqs "$MAX_NUM_SEQS" \
+  --enable-auto-tool-choice \
+  --tool-call-parser minicpm5 \
   > "$LOG_FILE" 2>&1 &
 
 SERVE_PID=$!
