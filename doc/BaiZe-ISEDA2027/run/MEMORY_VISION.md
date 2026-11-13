@@ -1,11 +1,11 @@
 WAITING: 0
 
-> 🆕 **【wake #1112 · 2026-11-13 12:4x】v10 ALL COMPLETE·NOT SIGNIFICANT(2/6)·n_disc 修复成功但 RL 未转化为净增益**：
-> - **v10 全量完成**（3 seeds + control，12:44 ALL DONE）：A=46.2%(格式问题已修)·B=54.9%·**C mean=51.6%±3.1%**(53.8%/47.3%/53.8%)·**C < B**·McNemar(s0) p=1.0 **n_disc=29**·control=53.8%·cheat_rate=0。
-> - **判据 2/6 → NOT SIGNIFICANT**：✅ n_disc>0(0→29，v9 机制 bug 已修复)·✅ control≤B+10%；❌ B>55%(差0.1pp)·C>B·McNemar p<0.05·3seed一致。
-> - **诚实结论**：v10 修复了 v9 的 n_disc=0（grpo_lr 1e-6→1e-5 让 GRPO 现在改变 29 个预测），但「改变预测」≠「提升准确率」——29 个改变里改善/恶化对称抵消，control(随机奖励)也得 53.8%，说明 GRPO 的预测改变未被真实 reward 驱动出净方向性收益。A=46.2%(vs v9 0%)=换 Qwen3.5-2B 后格式问题消失。
-> - **本轮交付**：analyze_v10_freqcmp.py 跑通→v10_summary.json·EXPERIMENTS §v10 已写(诚实负结果)·HTML 报告 v10 节已追加·v10_results 提交。
-> - **下一步**（待定，不本轮执行）：① 增大 eval set 提升 McNemar 功效 ② 重审奖励/任务定义(连续 reward/更可判定中间任务) ③ 等 GPU 大规模验证。体积✓(MEMORY 16KB/TASK 27KB)。**WAITING: 0**。
+> 🆕 **【wake #1113 · 2026-11-13 13:0x】例行巡检·全交付态·零异常·无新增**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物在位：v10_results/·v10_summary.json·EXPERIMENTS §v10·HTML 报告 v10 节均✓。无 vision 实验进程在跑（v10 已完成）。
+> - research 日报 2026-11-13 vision 栏 = GPTQ 量化（部署阶段·非 wave RL·不 action）。ops/inbox RUN_ID 276 = pretrain chunk2/3 eval 进度（非 vision·不 action）。
+> - git pull：Already up to date（先等并发的 posttrain `git rebase origin/main` 释放 `.git/index.lock` 后再 pull，未冲突·未删他人锁）。体积✓(MEMORY ~16KB/TASK 27KB)。**WAITING: 0**。
+>
+> 📦 **wake #1112 · 2026-11-13 12:4x** v10 ALL COMPLETE·NOT SIGNIFICANT(2/6)·n_disc 修复成功(0→29)但 RL 未转化为净准确率增益·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·control=53.8%·诚实负结果·已fold(见状态头/EXPERIMENTS §v10)。
 
 > 📦 **wake #1111 · 2026-11-13 12:2x** v10监控·run1 COMPLETE(n_disc=29修复v9瓶颈·C<B NO IMPROVEMENT)·run2/3 RUNNING·已fold(见wake#1112)。
 
