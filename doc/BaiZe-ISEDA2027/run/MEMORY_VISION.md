@@ -1,9 +1,11 @@
 WAITING: 0
 
-> 🆕 **【wake #1149 · 2026-11-13 20:45】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock+无活跃 git+0 ahead/0 behind·已 up-to-date)→add 明确路径+commit+push 本线 2 文件成功**：
+> 🆕 **【wake #1150 · 2026-11-13 20:52】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock+无活跃 git+posttrain 非 git 阶段)→ff pull(incoming=harness+designflow 非视觉)+add 明确路径+commit+push 本线 2 文件成功**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：`ls` v10_results/ 5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)+v10_summary.json(647B·mtime 12:44)✓·`cat` 成功内容完整(A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·2/6)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v10/run_v 命中·仅 posttrain cline PID2042942 eval 阶段·非 git)。
 > - 输入参考：research 日报 2026-11-13(index mtime 18:18·自 wake#1148 未刷新)vision=GPTQ B轨#67(部署阶段量化·非 wave RL·不 action)+CLIP#77(冻结特征下界基线·已收敛臂·不 action)；18:00 轮 vision 显式「无」(本轮 4 篇均不涉视觉编码器/图文对/视觉 RL)→无 wave-RL 新增→不 action。ops/inbox RUN_ID276=TARGET12(pretrain chunk2/3 eval·非 vision·mtime 11-08 未变)→不 action。
-> - ✅ **git 本轮窗口打开→add 明确路径+commit+push**：`.git/index.lock` 不存在 + 无活跃 git 进程(仅 posttrain cline PID2042942 eval 阶段·非 git op)+`git fetch`→**0 ahead/0 behind(已 up-to-date·无需 pull·无 incoming)**→三条件齐备。`git status -sb` vision 工作树 CLEAN(仅 posttrain `?? outputs/`+`?? rl_surrogate_runs/` untracked·不触)→`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。🔧 遗留 stash@{0} autostash(baize_vision_loop.sh DATA_DIR)待运维处置(沿用·agent 不擅自 apply/drop)。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1148·MEMORY ~31.0KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+> - ✅ **git 本轮窗口打开→ff pull+add 明确路径+commit+push**：`.git/index.lock` 不存在 + 无活跃 git 进程(仅 posttrain cline PID2042942 eval 阶段·非 git op)→三条件齐备(无 lock+无 competing staged+无活跃 git)。`git pull --no-rebase --no-edit` fast-forward 干净(HEAD dba44b548→127581c97·incoming 经 `git log --name-only` 核实=harness MEMORY_HARNESS/daily + designflow trace_deepreads/report_benchmark 非视觉=ff 安全·vision 工作树 CLEAN·仅 posttrain M/?? 不触·无需 autostash)→0 ahead/0 behind。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。🔧 遗留 stash@{0} autostash(baize_vision_loop.sh DATA_DIR)待运维处置(沿用·agent 不擅自 apply/drop)。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1149·MEMORY ~31.4KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+
+> 📦 **wake #1149 · 2026-11-13 20:45** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock+无活跃 git+已 up-to-date 0 ahead/0 behind)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1150·详情 daily-memories-vision/2026-11-13.md)。
 
 > 📦 **wake #1148 · 2026-11-13 20:36** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 lock+up-to-date 0 ahead/0 behind+posttrain 非 git 阶段)+add 明确路径+commit+push 本线 2 文件成功·已fold(见 wake#1149·详情 daily-memories-vision/2026-11-13.md)。
 
