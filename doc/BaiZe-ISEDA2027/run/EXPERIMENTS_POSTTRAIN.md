@@ -8453,6 +8453,35 @@ step105 (final SFT ckpt) clearly outperforms step60 (intermediate ckpt) on both 
 
 
 
+### §L4-zhulong (2026-11-13 wake407) Run 3 Codegen Progress — 155/158 resolved, NO stuck worker, pipeline fully autonomous
+
+> 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
+
+#### Run 3 Progress (as of wake407 ~13:05 CST)
+
+- **Batch**: `~/eda_code_eval/2026_1113_101852/` (label step105, SFT v39 final ckpt, GPU6 :8096)
+- **Stats counters** (`stats/{success,failure,timeout}`): success=143, failure=6, timeout=6 → **155/158 resolved (98.1%)**
+- **Code output**: 102 `*.py` files produced (recursive count under batch dir; 155/158 code dirs created)
+- **Remaining**: 3/158 tasks left for codegen (task_queue nearly drained; 1 cline worker active PID 1331303 etime=168s)
+- **Workers**: NO stuck worker — max etime 168s << 2500s timeout → **4th consecutive wake with no kill needed** (wake405, 406, 407)
+- **Progress since wake406**: +9 success (134→143); +1 timeout (5→6); +10 resolved (145→155)
+- **Failed tasks** (6): EDA-Eval-PyAether-024, 010, 017, 055, 046, 091
+- **Timeout tasks** (6): EDA-Eval-PyAether-062, 098, 118, 119, 121, 126
+
+#### Pipeline Autonomy Status (all 3 layers alive, verified 13:05)
+
+1. **autocomplete daemon** (PID 1122770, etimes≈23027s ~6.4h): waiting on step105 runs, auto-chains runs 3→4→5
+2. **eval chain daemon** (PID 1161064, etimes≈17353s ~4.8h): will chain step60 runs2-5 → base runs1-5 → final 5-run analysis
+3. **run3 5run_eval** (PID 1217799, etimes≈9940s ~2.8h) → `run_cline_script.sh -p 8 -n` (PID 1217807)
+4. **Serves**: 8098 (base, GPU4) + 8097 (SFT step60, GPU5) + 8096 (SFT step105-final, GPU6, 100% util) all UP (`/v1/models` verified)
+5. **Tunnel**: `ssh -p3333` (TUNNEL_OK, hostname hfeg0tedaap02=36.15) + reverse 18096 + reverse 18098
+
+#### Next
+
+- run3 codegen nearly complete (~3 tasks, <30min at 1 worker) → autocomplete daemon auto-runs sandbox `run_eval.py` → runs 4, 5 → eval_chain runs step60 runs2-5 → base runs1-5 → final `5run_analysis.py` (mean±std, n=5). No manual intervention needed unless a worker sticks past 2500s.
+
+
+
 ### §L4-designflow (2026-11-13 wake402) Base-Model Baseline on FIXED Harness — Confirms 0% + SFT Regression Signal
 
 > 替身预演声明：MiniCPM5-2B is BaiZe surrogate; gains/losses not transferable to BaiZe.
