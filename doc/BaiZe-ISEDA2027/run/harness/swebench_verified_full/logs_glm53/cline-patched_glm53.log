@@ -1,242 +1,74 @@
-[verified-full 10:10:52] resume: loaded 500 existing results
-[verified-full 10:10:52] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2144B)
-[verified-full 10:10:52] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3293B)
-[verified-full 10:10:52] [3/500] astropy__astropy-13236 SKIP (predicted, patch=1644B)
-[verified-full 10:10:52] [4/500] astropy__astropy-13398 SKIP (predicted, patch=0B)
-[verified-full 10:10:52] [5/500] astropy__astropy-13453 SKIP (predicted, patch=1514B)
-[verified-full 10:10:52] [6/500] astropy__astropy-13579 SKIP (predicted, patch=5570B)
-[verified-full 10:10:52] [7/500] astropy__astropy-13977 SKIP (predicted, patch=6190B)
-[verified-full 10:10:52] [8/500] astropy__astropy-14096 SKIP (predicted, patch=1807B)
-[verified-full 10:10:52] [9/500] astropy__astropy-14182 SKIP (predicted, patch=3819B)
-[verified-full 10:10:52] [10/500] astropy__astropy-14309 SKIP (predicted, patch=2282B)
-[verified-full 10:10:52] [11/500] astropy__astropy-14365 SKIP (predicted, patch=2262B)
-[verified-full 10:10:52] [12/500] PREDICT cline on astropy__astropy-14369
-[verified-full 10:10:57]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:11:02]   -> no-patch (patch=0B wall=4.7s)
-[verified-full 10:11:02] [13/500] astropy__astropy-14508 SKIP (predicted, patch=2209B)
-[verified-full 10:11:02] [14/500] astropy__astropy-14539 SKIP (predicted, patch=2258B)
-[verified-full 10:11:02] [15/500] PREDICT cline on astropy__astropy-14598
-[verified-full 10:11:07]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:11:11]   -> no-patch (patch=0B wall=4.6s)
-[verified-full 10:11:11] [16/500] astropy__astropy-14995 SKIP (predicted, patch=2518B)
-[verified-full 10:11:11] [17/500] astropy__astropy-7166 SKIP (predicted, patch=2475B)
-[verified-full 10:11:11] [18/500] astropy__astropy-7336 SKIP (predicted, patch=1411B)
-[verified-full 10:11:11] [19/500] astropy__astropy-7606 SKIP (predicted, patch=1034B)
-[verified-full 10:11:11] [20/500] astropy__astropy-7671 SKIP (predicted, patch=1884B)
-[verified-full 10:11:11] [21/500] astropy__astropy-8707 SKIP (predicted, patch=2767B)
-[verified-full 10:11:11] [22/500] PREDICT cline on astropy__astropy-8872
-[verified-full 10:11:17]   -> silent exit (rc=0, patch=0, wall=5.2s), retrying once...
-[verified-full 10:11:22]   -> no-patch (patch=0B wall=4.7s)
-[verified-full 10:11:22] [23/500] django__django-10097 SKIP (predicted, patch=1765B)
-[verified-full 10:11:22] [24/500] django__django-10554 SKIP (predicted, patch=0B)
-[verified-full 10:11:22] [25/500] PREDICT cline on django__django-10880
-[verified-full 10:11:27]   -> silent exit (rc=0, patch=0, wall=5.3s), retrying once...
-[verified-full 10:11:32]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:11:32] [26/500] django__django-10914 SKIP (predicted, patch=4106B)
-[verified-full 10:11:32] [27/500] django__django-10973 SKIP (predicted, patch=6786B)
-[verified-full 10:11:32] [28/500] django__django-10999 SKIP (predicted, patch=1363B)
-[verified-full 10:11:32] [29/500] django__django-11066 SKIP (predicted, patch=3152B)
-[verified-full 10:11:32] [30/500] PREDICT cline on django__django-11087
-[verified-full 10:11:37]   -> silent exit (rc=0, patch=0, wall=4.7s), retrying once...
-[verified-full 10:11:42]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:11:42] [31/500] django__django-11095 SKIP (predicted, patch=5382B)
-[verified-full 10:11:42] [32/500] django__django-11099 SKIP (predicted, patch=1944B)
-[verified-full 10:11:42] [33/500] django__django-11119 SKIP (predicted, patch=1408B)
-[verified-full 10:11:42] [34/500] django__django-11133 SKIP (predicted, patch=1752B)
-[verified-full 10:11:42] [35/500] PREDICT cline on django__django-11138
-[verified-full 10:11:47]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:11:52]   -> no-patch (patch=0B wall=5.0s)
-[verified-full 10:11:52] [36/500] django__django-11141 SKIP (predicted, patch=2828B)
-[verified-full 10:11:52] [37/500] django__django-11149 SKIP (predicted, patch=4310B)
-[verified-full 10:11:52] [38/500] django__django-11163 SKIP (predicted, patch=1163B)
-[verified-full 10:11:52] [39/500] django__django-11179 SKIP (predicted, patch=1074B)
-[verified-full 10:11:52] [40/500] django__django-11206 SKIP (predicted, patch=1586B)
-[verified-full 10:11:52] [41/500] django__django-11211 SKIP (predicted, patch=2919B)
-[verified-full 10:11:52] [42/500] django__django-11239 SKIP (predicted, patch=3173B)
-[verified-full 10:11:52] [43/500] django__django-11265 SKIP (predicted, patch=4480B)
-[verified-full 10:11:52] [44/500] django__django-11276 SKIP (predicted, patch=20443B)
-[verified-full 10:11:52] [45/500] django__django-11292 SKIP (predicted, patch=9121B)
-[verified-full 10:11:52] [46/500] django__django-11299 SKIP (predicted, patch=2852B)
-[verified-full 10:11:52] [47/500] django__django-11333 SKIP (predicted, patch=2030B)
-[verified-full 10:11:52] [48/500] PREDICT cline on django__django-11400
-[verified-full 10:11:57]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
-[verified-full 10:12:02]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:12:02] [49/500] django__django-11433 SKIP (predicted, patch=2921B)
-[verified-full 10:12:02] [50/500] django__django-11451 SKIP (predicted, patch=2090B)
-[verified-full 10:12:02] [51/500] django__django-11477 SKIP (predicted, patch=2123B)
-[verified-full 10:12:02] [52/500] django__django-11490 SKIP (predicted, patch=8006B)
-[verified-full 10:12:02] [53/500] django__django-11532 SKIP (predicted, patch=2649B)
-[verified-full 10:12:02] [54/500] django__django-11551 SKIP (predicted, patch=4610B)
-[verified-full 10:12:02] [55/500] django__django-11555 SKIP (predicted, patch=3342B)
-[verified-full 10:12:02] [56/500] django__django-11603 SKIP (predicted, patch=6141B)
-[verified-full 10:12:02] [57/500] django__django-11728 SKIP (predicted, patch=2596B)
-[verified-full 10:12:02] [58/500] django__django-11734 SKIP (predicted, patch=0B)
-[verified-full 10:12:02] [59/500] django__django-11740 SKIP (predicted, patch=4311B)
-[verified-full 10:12:02] [60/500] PREDICT cline on django__django-11749
-[verified-full 10:12:07]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:12:12]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:12:12] [61/500] django__django-11790 SKIP (predicted, patch=2025B)
-[verified-full 10:12:12] [62/500] django__django-11815 SKIP (predicted, patch=4293B)
-[verified-full 10:12:12] [63/500] django__django-11820 SKIP (predicted, patch=1277B)
-[verified-full 10:12:12] [64/500] django__django-11848 SKIP (predicted, patch=3090B)
-[verified-full 10:12:12] [65/500] django__django-11880 SKIP (predicted, patch=1511B)
-[verified-full 10:12:12] [66/500] django__django-11885 SKIP (predicted, patch=6616B)
-[verified-full 10:12:12] [67/500] django__django-11951 SKIP (predicted, patch=1888B)
-[verified-full 10:12:12] [68/500] django__django-11964 SKIP (predicted, patch=3886B)
-[verified-full 10:12:12] [69/500] django__django-11999 SKIP (predicted, patch=2439B)
-[verified-full 10:12:12] [70/500] django__django-12039 SKIP (predicted, patch=3403B)
-[verified-full 10:12:12] [71/500] django__django-12050 SKIP (predicted, patch=1307B)
-[verified-full 10:12:12] [72/500] django__django-12125 SKIP (predicted, patch=13272B)
-[verified-full 10:12:12] [73/500] django__django-12143 SKIP (predicted, patch=2606B)
-[verified-full 10:12:12] [74/500] django__django-12155 SKIP (predicted, patch=2036B)
-[verified-full 10:12:12] [75/500] django__django-12193 SKIP (predicted, patch=2506B)
-[verified-full 10:12:12] [76/500] django__django-12209 SKIP (predicted, patch=4974B)
-[verified-full 10:12:12] [77/500] django__django-12262 SKIP (predicted, patch=5298B)
-[verified-full 10:12:12] [78/500] django__django-12273 SKIP (predicted, patch=6112B)
-[verified-full 10:12:12] [79/500] django__django-12276 SKIP (predicted, patch=1699B)
-[verified-full 10:12:12] [80/500] django__django-12304 SKIP (predicted, patch=1393B)
-[verified-full 10:12:12] [81/500] django__django-12308 SKIP (predicted, patch=1928B)
-[verified-full 10:12:12] [82/500] django__django-12325 SKIP (predicted, patch=2503B)
-[verified-full 10:12:12] [83/500] django__django-12406 SKIP (predicted, patch=5616B)
-[verified-full 10:12:12] [84/500] PREDICT cline on django__django-12419
-[verified-full 10:12:17]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:12:22]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:12:22] [85/500] PREDICT cline on django__django-12663
-[verified-full 10:12:27]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:12:32]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:12:32] [86/500] PREDICT cline on django__django-12708
-[verified-full 10:12:37]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:12:42]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:12:42] [87/500] PREDICT cline on django__django-12713
-[verified-full 10:12:47]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:12:52]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:12:52] [88/500] PREDICT cline on django__django-12741
-[verified-full 10:12:57]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:13:02]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:13:02] [89/500] PREDICT cline on django__django-12754
-[verified-full 10:13:07]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
-[verified-full 10:13:12]   -> no-patch (patch=0B wall=4.6s)
-[verified-full 10:13:12] [90/500] PREDICT cline on django__django-12774
-[verified-full 10:13:17]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:13:22]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:13:22] [91/500] PREDICT cline on django__django-12858
-[verified-full 10:13:27]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:13:32]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:13:32] [92/500] PREDICT cline on django__django-12965
-[verified-full 10:13:37]   -> silent exit (rc=0, patch=0, wall=4.7s), retrying once...
-[verified-full 10:13:42]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:13:42] [93/500] django__django-13012 SKIP (predicted, patch=3514B)
-[verified-full 10:13:42] [94/500] django__django-13023 SKIP (predicted, patch=1365B)
-[verified-full 10:13:42] [95/500] django__django-13028 SKIP (predicted, patch=4953B)
-[verified-full 10:13:42] [96/500] PREDICT cline on django__django-13033
-[verified-full 10:13:47]   -> silent exit (rc=0, patch=0, wall=4.8s), retrying once...
-[verified-full 10:13:52]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:13:52] [97/500] django__django-13089 SKIP (predicted, patch=2459B)
-[verified-full 10:13:52] [98/500] django__django-13109 SKIP (predicted, patch=4785B)
-[verified-full 10:13:52] [99/500] PREDICT cline on django__django-13112
-[verified-full 10:13:57]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:14:02]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:14:02] [100/500] django__django-13121 SKIP (predicted, patch=8274B)
-[verified-full 10:14:02] [101/500] PREDICT cline on django__django-13128
-[verified-full 10:14:07]   -> silent exit (rc=0, patch=0, wall=4.8s), retrying once...
-[verified-full 10:14:12]   -> no-patch (patch=0B wall=5.0s)
-[verified-full 10:14:12] [102/500] PREDICT cline on django__django-13158
-[verified-full 10:14:17]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:14:21]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:14:21] [103/500] PREDICT cline on django__django-13195
-[verified-full 10:14:26]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:14:31]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:14:31] [104/500] PREDICT cline on django__django-13212
-[verified-full 10:14:36]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:14:41]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:14:41] [105/500] django__django-13279 SKIP (predicted, patch=2692B)
-[verified-full 10:14:41] [106/500] PREDICT cline on django__django-13297
-[verified-full 10:14:47]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
-[verified-full 10:14:51]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:14:51] [107/500] django__django-13315 SKIP (predicted, patch=3477B)
-[verified-full 10:14:51] [108/500] django__django-13343 SKIP (predicted, patch=3783B)
-[verified-full 10:14:51] [109/500] django__django-13344 SKIP (predicted, patch=9211B)
-[verified-full 10:14:51] [110/500] django__django-13346 SKIP (predicted, patch=5204B)
-[verified-full 10:14:51] [111/500] django__django-13363 SKIP (predicted, patch=3478B)
-[verified-full 10:14:51] [112/500] django__django-13401 SKIP (predicted, patch=4828B)
-[verified-full 10:14:51] [113/500] django__django-13406 SKIP (predicted, patch=13892B)
-[verified-full 10:14:51] [114/500] django__django-13410 SKIP (predicted, patch=753B)
-[verified-full 10:14:51] [115/500] django__django-13417 SKIP (predicted, patch=1147B)
-[verified-full 10:14:51] [116/500] PREDICT cline on django__django-13449
-[verified-full 10:14:56]   -> silent exit (rc=0, patch=0, wall=4.8s), retrying once...
-[verified-full 10:15:01]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:15:01] [117/500] django__django-13512 SKIP (predicted, patch=2416B)
-[verified-full 10:15:01] [118/500] PREDICT cline on django__django-13513
-[verified-full 10:15:06]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:15:11]   -> no-patch (patch=0B wall=4.7s)
-[verified-full 10:15:11] [119/500] django__django-13516 SKIP (predicted, patch=2005B)
-[verified-full 10:15:11] [120/500] PREDICT cline on django__django-13551
-[verified-full 10:15:16]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:15:21]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:15:21] [121/500] PREDICT cline on django__django-13568
-[verified-full 10:15:26]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:15:31]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:15:31] [122/500] PREDICT cline on django__django-13569
-[verified-full 10:15:36]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:15:41]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:15:41] [123/500] PREDICT cline on django__django-13590
-[verified-full 10:15:46]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:15:50]   -> no-patch (patch=0B wall=4.6s)
-[verified-full 10:15:50] [124/500] PREDICT cline on django__django-13658
-[verified-full 10:15:55]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:16:00]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:16:00] [125/500] django__django-13670 SKIP (predicted, patch=1242B)
-[verified-full 10:16:00] [126/500] django__django-13741 SKIP (predicted, patch=2942B)
-[verified-full 10:16:00] [127/500] django__django-13786 SKIP (predicted, patch=1797B)
-[verified-full 10:16:00] [128/500] PREDICT cline on django__django-13794
-[verified-full 10:16:05]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:16:10]   -> no-patch (patch=0B wall=5.0s)
-[verified-full 10:16:10] [129/500] django__django-13807 SKIP (predicted, patch=4118B)
-[verified-full 10:16:10] [130/500] django__django-13809 SKIP (predicted, patch=3057B)
-[verified-full 10:16:10] [131/500] django__django-13810 SKIP (predicted, patch=2688B)
-[verified-full 10:16:10] [132/500] django__django-13820 SKIP (predicted, patch=2443B)
-[verified-full 10:16:10] [133/500] django__django-13821 SKIP (predicted, patch=3952B)
-[verified-full 10:16:10] [134/500] PREDICT cline on django__django-13837
-[verified-full 10:16:15]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:16:20]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:16:20] [135/500] PREDICT cline on django__django-13925
-[verified-full 10:16:25]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
-[verified-full 10:16:30]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:16:30] [136/500] PREDICT cline on django__django-13933
-[verified-full 10:16:35]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:16:40]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:16:40] [137/500] PREDICT cline on django__django-13964
-[verified-full 10:16:45]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:16:50]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:16:50] [138/500] PREDICT cline on django__django-14007
-[verified-full 10:16:55]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
-[verified-full 10:17:00]   -> no-patch (patch=0B wall=5.0s)
-[verified-full 10:17:00] [139/500] PREDICT cline on django__django-14011
-[verified-full 10:17:05]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:17:10]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:17:10] [140/500] PREDICT cline on django__django-14017
-[verified-full 10:17:15]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
-[verified-full 10:17:20]   -> no-patch (patch=0B wall=4.8s)
-[verified-full 10:17:20] [141/500] django__django-14034 SKIP (predicted, patch=4775B)
-[verified-full 10:17:20] [142/500] PREDICT cline on django__django-14053
-[verified-full 10:17:25]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:17:30]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:17:30] [143/500] django__django-14089 SKIP (predicted, patch=956B)
-[verified-full 10:17:30] [144/500] django__django-14122 SKIP (predicted, patch=1862B)
-[verified-full 10:17:30] [145/500] django__django-14140 SKIP (predicted, patch=2886B)
-[verified-full 10:17:30] [146/500] django__django-14155 SKIP (predicted, patch=3384B)
-[verified-full 10:17:30] [147/500] django__django-14170 SKIP (predicted, patch=6568B)
-[verified-full 10:17:30] [148/500] django__django-14238 SKIP (predicted, patch=2034B)
-[verified-full 10:17:30] [149/500] django__django-14311 SKIP (predicted, patch=2035B)
-[verified-full 10:17:30] [150/500] django__django-14315 SKIP (predicted, patch=1996B)
-[verified-full 10:17:30] [151/500] PREDICT cline on django__django-14349
-[verified-full 10:17:35]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
-[verified-full 10:17:40]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:17:40] [152/500] django__django-14351 SKIP (predicted, patch=1702B)
-[verified-full 10:17:40] [153/500] django__django-14373 SKIP (predicted, patch=2388B)
-[verified-full 10:17:40] [154/500] django__django-14376 SKIP (predicted, patch=791B)
-[verified-full 10:17:40] [155/500] PREDICT cline on django__django-14404
-[verified-full 10:17:45]   -> silent exit (rc=0, patch=0, wall=4.9s), retrying once...
-[verified-full 10:17:50]   -> no-patch (patch=0B wall=4.9s)
-[verified-full 10:17:50] [156/500] django__django-14434 SKIP (predicted, patch=2241B)
-[verified-full 10:17:50] [157/500] PREDICT cline on django__django-14493
+[verified-full 10:45:25] resume: loaded 500 existing results
+[verified-full 10:45:25] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2144B)
+[verified-full 10:45:25] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3293B)
+[verified-full 10:45:25] [3/500] astropy__astropy-13236 SKIP (predicted, patch=1644B)
+[verified-full 10:45:25] [4/500] PREDICT cline on astropy__astropy-13398
+[verified-full 10:45:31]   -> silent exit (rc=0, patch=0, wall=5.1s), retrying once...
+[verified-full 10:45:36]   -> no-patch (patch=0B wall=4.9s)
+[verified-full 10:45:36] [5/500] astropy__astropy-13453 SKIP (predicted, patch=1514B)
+[verified-full 10:45:36] [6/500] astropy__astropy-13579 SKIP (predicted, patch=5570B)
+[verified-full 10:45:36] [7/500] astropy__astropy-13977 SKIP (predicted, patch=6190B)
+[verified-full 10:45:36] [8/500] astropy__astropy-14096 SKIP (predicted, patch=1807B)
+[verified-full 10:45:36] [9/500] astropy__astropy-14182 SKIP (predicted, patch=3819B)
+[verified-full 10:45:36] [10/500] astropy__astropy-14309 SKIP (predicted, patch=2282B)
+[verified-full 10:45:36] [11/500] astropy__astropy-14365 SKIP (predicted, patch=2262B)
+[verified-full 10:45:36] [12/500] astropy__astropy-14369 SKIP (predicted, patch=0B)
+[verified-full 10:45:36] [13/500] astropy__astropy-14508 SKIP (predicted, patch=2209B)
+[verified-full 10:45:36] [14/500] astropy__astropy-14539 SKIP (predicted, patch=2258B)
+[verified-full 10:45:36] [15/500] astropy__astropy-14598 SKIP (predicted, patch=0B)
+[verified-full 10:45:36] [16/500] astropy__astropy-14995 SKIP (predicted, patch=2518B)
+[verified-full 10:45:36] [17/500] astropy__astropy-7166 SKIP (predicted, patch=2475B)
+[verified-full 10:45:36] [18/500] astropy__astropy-7336 SKIP (predicted, patch=1411B)
+[verified-full 10:45:36] [19/500] astropy__astropy-7606 SKIP (predicted, patch=1034B)
+[verified-full 10:45:36] [20/500] astropy__astropy-7671 SKIP (predicted, patch=1884B)
+[verified-full 10:45:36] [21/500] astropy__astropy-8707 SKIP (predicted, patch=2767B)
+[verified-full 10:45:36] [22/500] astropy__astropy-8872 SKIP (predicted, patch=0B)
+[verified-full 10:45:36] [23/500] django__django-10097 SKIP (predicted, patch=1765B)
+[verified-full 10:45:36] [24/500] PREDICT cline on django__django-10554
+[verified-full 10:45:41]   -> silent exit (rc=0, patch=0, wall=5.2s), retrying once...
+[verified-full 10:45:46]   -> no-patch (patch=0B wall=4.9s)
+[verified-full 10:45:46] [25/500] django__django-10880 SKIP (predicted, patch=0B)
+[verified-full 10:45:46] [26/500] django__django-10914 SKIP (predicted, patch=4106B)
+[verified-full 10:45:46] [27/500] django__django-10973 SKIP (predicted, patch=6786B)
+[verified-full 10:45:46] [28/500] django__django-10999 SKIP (predicted, patch=1363B)
+[verified-full 10:45:46] [29/500] django__django-11066 SKIP (predicted, patch=3152B)
+[verified-full 10:45:46] [30/500] django__django-11087 SKIP (predicted, patch=0B)
+[verified-full 10:45:46] [31/500] django__django-11095 SKIP (predicted, patch=5382B)
+[verified-full 10:45:46] [32/500] django__django-11099 SKIP (predicted, patch=1944B)
+[verified-full 10:45:46] [33/500] django__django-11119 SKIP (predicted, patch=1408B)
+[verified-full 10:45:46] [34/500] django__django-11133 SKIP (predicted, patch=1752B)
+[verified-full 10:45:46] [35/500] django__django-11138 SKIP (predicted, patch=0B)
+[verified-full 10:45:46] [36/500] django__django-11141 SKIP (predicted, patch=2828B)
+[verified-full 10:45:46] [37/500] django__django-11149 SKIP (predicted, patch=4310B)
+[verified-full 10:45:46] [38/500] django__django-11163 SKIP (predicted, patch=1163B)
+[verified-full 10:45:46] [39/500] django__django-11179 SKIP (predicted, patch=1074B)
+[verified-full 10:45:46] [40/500] django__django-11206 SKIP (predicted, patch=1586B)
+[verified-full 10:45:46] [41/500] django__django-11211 SKIP (predicted, patch=2919B)
+[verified-full 10:45:46] [42/500] django__django-11239 SKIP (predicted, patch=3173B)
+[verified-full 10:45:46] [43/500] django__django-11265 SKIP (predicted, patch=4480B)
+[verified-full 10:45:46] [44/500] django__django-11276 SKIP (predicted, patch=20443B)
+[verified-full 10:45:46] [45/500] django__django-11292 SKIP (predicted, patch=9121B)
+[verified-full 10:45:46] [46/500] django__django-11299 SKIP (predicted, patch=2852B)
+[verified-full 10:45:46] [47/500] django__django-11333 SKIP (predicted, patch=2030B)
+[verified-full 10:45:46] [48/500] django__django-11400 SKIP (predicted, patch=0B)
+[verified-full 10:45:46] [49/500] django__django-11433 SKIP (predicted, patch=2921B)
+[verified-full 10:45:46] [50/500] django__django-11451 SKIP (predicted, patch=2090B)
+[verified-full 10:45:46] [51/500] django__django-11477 SKIP (predicted, patch=2123B)
+[verified-full 10:45:46] [52/500] django__django-11490 SKIP (predicted, patch=8006B)
+[verified-full 10:45:46] [53/500] django__django-11532 SKIP (predicted, patch=2649B)
+[verified-full 10:45:46] [54/500] django__django-11551 SKIP (predicted, patch=4610B)
+[verified-full 10:45:46] [55/500] django__django-11555 SKIP (predicted, patch=3342B)
+[verified-full 10:45:46] [56/500] django__django-11603 SKIP (predicted, patch=6141B)
+[verified-full 10:45:46] [57/500] django__django-11728 SKIP (predicted, patch=2596B)
+[verified-full 10:45:46] [58/500] PREDICT cline on django__django-11734
+[verified-full 10:45:52]   -> silent exit (rc=0, patch=0, wall=5.0s), retrying once...
+[verified-full 10:58:15] resume: loaded 500 existing results
+[verified-full 10:58:15] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2144B)
+[verified-full 10:58:15] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3293B)
+[verified-full 10:58:15] [3/500] astropy__astropy-13236 SKIP (predicted, patch=1644B)
+[verified-full 10:58:15] [4/500] PREDICT cline on astropy__astropy-13398
+[verified-full 11:01:12] resume: loaded 500 existing results
+[verified-full 11:01:12] [1/500] astropy__astropy-12907 SKIP (predicted, patch=2144B)
+[verified-full 11:01:12] [2/500] astropy__astropy-13033 SKIP (predicted, patch=3293B)
+[verified-full 11:01:12] [3/500] astropy__astropy-13236 SKIP (predicted, patch=1644B)
+[verified-full 11:01:12] [4/500] PREDICT cline on astropy__astropy-13398
