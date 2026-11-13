@@ -167,7 +167,7 @@ def make_providers_json(arm_config):
                     "reasoning": {"enabled": False},
                 },
                 "updatedAt": "2026-11-13T18:00:00.000Z",
-                "tokenSource": "subagent-ablation-setup",
+                "tokenSource": "manual",  # 🔑 2026-11-14: must be "manual"|"oauth"|"migration" (Zod schema); "subagent-ablation-setup" → schema fail → whole providers.json reset to gpt-4o
             }
     return d
 
@@ -184,26 +184,62 @@ def make_global_settings():
     return d
 
 
+def make_global_state():
+    """globalState.json: 🔑 2026-11-14 修复 — 不从 ~/.cline/data 复制 (那里是别线的 dsv4-flash@/v1,
+    会触发 cline auto-migration 把主模型改成 dsv4-flash+错endpoint → Forbidden).
+    写入与 providers.json 一致的最小 globalState: openai-compatible / dsv4-pro-cloud / /cloud/v1 / act 模式."""
+    return {
+        "actModeApiProvider": "openai-compatible",
+        "planModeApiProvider": "openai-compatible",
+        "actModeOpenAiModelId": "deepseek-v4-pro-cloud",
+        "planModeOpenAiModelId": "deepseek-v4-pro-cloud",
+        "openAiBaseUrl": "http://agi-gateway.cxmt.com/cloud/v1",
+        "mode": "act",
+        "yoloModeToggled": False,
+        "welcomeViewCompleted": True,
+        "isNewUser": False,
+        "autoApprovalSettings": {},
+        "workspaceRoots": [],
+        "primaryRootIndex": 0,
+        "globalWorkflowToggles": {},
+        "globalClineRulesToggles": {},
+        "remoteRulesToggles": {},
+        "remoteWorkflowToggles": {},
+        "actModeThinkingBudgetTokens": 0,
+        "planModeThinkingBudgetTokens": 0,
+        "telemetrySetting": "off",
+        "clineVersion": "3.0.51",
+    }
+
+
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--arm", help="只 setup 指定臂 (默认全部)")
+    ap.add_argument("--providers-only", action="store_true", help="只重写 providers.json/models.json, 不 wipe 目录")
+    args = ap.parse_args()
+
+    arms_to_setup = ARMS if not args.arm else {k: v for k, v in ARMS.items() if k == args.arm}
+    if args.arm and args.arm not in ARMS:
+        print(f"❌ 未知臂: {args.arm}", file=sys.stderr); sys.exit(1)
+
     log_lines = []
-    for arm_name, arm_config in ARMS.items():
+    for arm_name, arm_config in arms_to_setup.items():
         dest = os.path.join(DEST_ROOT, arm_name)
-        if os.path.exists(dest):
-            shutil.rmtree(dest)
-        os.makedirs(os.path.join(dest, "settings"))
+        if args.providers_only:
+            # 只重写 providers.json + models.json + globalState.json (每轮前调用)
+            os.makedirs(os.path.join(dest, "settings"), exist_ok=True)
+        else:
+            if os.path.exists(dest):
+                shutil.rmtree(dest)
+            os.makedirs(os.path.join(dest, "settings"))
 
-        # 复制不变的设置文件
-        for fn in ["cline_mcp_settings.json"]:
-            s = os.path.join(BASE_SETTINGS, fn)
-            if os.path.exists(s):
-                shutil.copy(s, os.path.join(dest, "settings", fn))
-
-        # secrets.json / globalState.json
-        data_root = os.path.expanduser("~/.cline/data")
-        for fn in ["secrets.json", "globalState.json"]:
-            s = os.path.join(data_root, fn)
-            if os.path.exists(s):
-                shutil.copy(s, os.path.join(dest, fn))
+        if not args.providers_only:
+            # 复制不变的设置文件
+            for fn in ["cline_mcp_settings.json"]:
+                s = os.path.join(BASE_SETTINGS, fn)
+                if os.path.exists(s):
+                    shutil.copy(s, os.path.join(dest, "settings", fn))
 
         # 生成差异化设置文件
         # ⚠️ providers.json: 不能从 BASE_SETTINGS 复制再改 (cline auto-migration 会覆盖)；
@@ -217,9 +253,13 @@ def main():
         json.dump(make_global_settings(),
                   open(os.path.join(dest, "settings", "global-settings.json"), "w"),
                   ensure_ascii=False, indent=2)
+        # globalState.json 每次都写 (providers-only 模式也要, 防止 auto-migration 回退)
+        json.dump(make_global_state(),
+                  open(os.path.join(dest, "globalState.json"), "w"),
+                  ensure_ascii=False, indent=2)
 
-        # 生成 researcher.yaml (如果该臂有 configured agent)
-        if arm_config["researcher"]:
+        # 生成 researcher.yaml (如果该臂有 configured agent) — providers-only 模式跳过 (已存在)
+        if arm_config["researcher"] and not args.providers_only:
             agents_dir = os.path.join(dest, "agents")
             os.makedirs(agents_dir, exist_ok=True)
             yaml_content = make_researcher_yaml(arm_config)

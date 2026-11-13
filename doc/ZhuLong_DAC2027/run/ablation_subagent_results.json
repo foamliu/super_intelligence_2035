@@ -1,0 +1,292 @@
+{
+  "experiment": "zhulong_subagent_ablation",
+  "phase": "P1_pilot",
+  "dataset": "EDA-Eval-PyAether-158 (subset=8)",
+  "base_model": "deepseek-v4-pro-cloud",
+  "harness": "cline 3.0.51",
+  "protocol": "-p 8 -n, thinking=medium, compaction=basic",
+  "arms": {
+    "A0": {
+      "label": "baseline (spawn off) — 复用 compaction basic r1-r3",
+      "source": "reuse compaction basic r1-r3",
+      "pass_rate_pct": 69.2,
+      "note": "复用 compaction basic 3 轮均值 (40 题)"
+    },
+    "A1": {
+      "label": "spawn-on (自主 spawn, 无 configured agent)",
+      "batch": "2026_1114_005143",
+      "spawn_calls": 0,
+      "spawn_rate": 0.0,
+      "pass_rate_pct": 87.5,
+      "passed": 7,
+      "total_eval": 8,
+      "cline_success": 8,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 2516,
+      "tokens_total": 5389597,
+      "tokens_main": {
+        "input": 5263994,
+        "output": 125603,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5389597
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {
+        "run_commands": 19,
+        "pyAether_MCP_server__search_apis": 26,
+        "pyAether_MCP_server__get_api_details": 26,
+        "pyAether_MCP_server__search_apis_by_keyword": 25,
+        "pyAether_MCP_server__run_code": 55,
+        "editor": 9,
+        "read_files": 11,
+        "search_codebase": 1,
+        "fetch_web_content": 2
+      }
+    },
+    "B1": {
+      "label": "cfg-same (同基座 dsv4-pro-cloud)",
+      "batch": "2026_1113_224721",
+      "spawn_calls": 17,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": 62.5,
+      "passed": 5,
+      "total_eval": 8,
+      "cline_success": 8,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 5276,
+      "tokens_total": 7099932,
+      "tokens_main": {
+        "input": 6902931,
+        "output": 197001,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 7099932
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {
+        "subagent_researcher": 17,
+        "pyAether_MCP_server__search_apis": 22,
+        "pyAether_MCP_server__get_api_details": 34,
+        "pyAether_MCP_server__search_apis_by_keyword": 52,
+        "pyAether_MCP_server__run_code": 65,
+        "run_commands": 20,
+        "editor": 9,
+        "read_files": 13,
+        "search_codebase": 7,
+        "eda_flow__open_session": 2
+      }
+    },
+    "B2": {
+      "label": "cfg-dsv4-flash",
+      "batch": "2026_1113_231642",
+      "spawn_calls": 18,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": 87.5,
+      "passed": 7,
+      "total_eval": 8,
+      "cline_success": 8,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 3509,
+      "tokens_total": 5399450,
+      "tokens_main": {
+        "input": 5235303,
+        "output": 164147,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5399450
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {
+        "subagent_researcher": 18,
+        "run_commands": 20,
+        "pyAether_MCP_server__search_apis": 31,
+        "pyAether_MCP_server__search_apis_by_keyword": 31,
+        "pyAether_MCP_server__get_api_details": 30,
+        "pyAether_MCP_server__run_code": 54,
+        "editor": 9,
+        "read_files": 9,
+        "eda_flow__open_session": 2,
+        "search_codebase": 7
+      }
+    },
+    "B3": {
+      "label": "cfg-doubao-pro",
+      "batch": "2026_1114_004021",
+      "spawn_calls": 0,
+      "spawn_rate": 0.0,
+      "pass_rate_pct": null,
+      "passed": null,
+      "total_eval": null,
+      "cline_success": 0,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 248,
+      "tokens_total": 0,
+      "tokens_main": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 0
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {}
+    },
+    "B4": {
+      "label": "cfg-doubao-mini",
+      "batch": "2026_1114_004116",
+      "spawn_calls": 0,
+      "spawn_rate": 0.0,
+      "pass_rate_pct": null,
+      "passed": null,
+      "total_eval": null,
+      "cline_success": 0,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 248,
+      "tokens_total": 0,
+      "tokens_main": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 0
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {}
+    },
+    "B5": {
+      "label": "cfg-doubao-lite",
+      "batch": "2026_1114_004211",
+      "spawn_calls": 0,
+      "spawn_rate": 0.0,
+      "pass_rate_pct": null,
+      "passed": null,
+      "total_eval": null,
+      "cline_success": 0,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 248,
+      "tokens_total": 0,
+      "tokens_main": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 0
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {}
+    },
+    "C1": {
+      "label": "cfg-iter5 (maxIter=5, dsv4-flash)",
+      "batch": "2026_1113_232857",
+      "spawn_calls": 20,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": null,
+      "passed": null,
+      "total_eval": null,
+      "cline_success": 6,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 2694,
+      "tokens_total": 7920024,
+      "tokens_main": {
+        "input": 7727858,
+        "output": 192166,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 7920024
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {
+        "run_commands": 19,
+        "subagent_researcher": 20,
+        "pyAether_MCP_server__search_apis": 33,
+        "pyAether_MCP_server__search_apis_by_keyword": 26,
+        "pyAether_MCP_server__get_api_details": 30,
+        "pyAether_MCP_server__run_code": 92,
+        "editor": 9,
+        "read_files": 11,
+        "search_codebase": 4,
+        "search_apis": 1,
+        "search_apis_by_keyword": 1
+      }
+    },
+    "C2": {
+      "label": "cfg-iter30 (maxIter=30, dsv4-flash)",
+      "batch": "2026_1114_004314",
+      "spawn_calls": 18,
+      "spawn_rate": 1.0,
+      "pass_rate_pct": 75.0,
+      "passed": 6,
+      "total_eval": 8,
+      "cline_success": 8,
+      "completion_rate_pct": 100.0,
+      "wall_sec": 2625,
+      "tokens_total": 3460549,
+      "tokens_main": {
+        "input": 3329192,
+        "output": 131357,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 3460549
+      },
+      "tokens_sub": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "tool_histogram": {
+        "subagent_researcher": 18,
+        "pyAether_MCP_server__search_apis": 25,
+        "pyAether_MCP_server__search_apis_by_keyword": 35,
+        "run_commands": 23,
+        "pyAether_MCP_server__get_api_details": 28,
+        "pyAether_MCP_server__run_code": 33,
+        "editor": 8,
+        "read_files": 10,
+        "search_codebase": 4,
+        "search_apis": 1,
+        "search_apis_by_keyword": 1
+      }
+    }
+  },
+  "go_nogo": {
+    "decision": "GO",
+    "avg_spawn_rate": 1.0,
+    "arms_checked": [
+      "B1",
+      "B2",
+      "C1",
+      "C2"
+    ],
+    "criterion": "调用率 <20% 且强提示后仍 <30% ⇒ 判无效; 否则 GO",
+    "note": "B1/B2/C1/C2 均有 spawn rate 1.0 → 机制生效 → GO"
+  }
+}
