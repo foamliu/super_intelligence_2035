@@ -4,20 +4,21 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2383 cleanup1empty(codex)+0new eval(总1807不变)+双报告REGEN(gateway OK·1807resolved·predict 4/7 alive·cline321·codex135·cc326·pi285·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2383·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2382 incr_eval+监控+报告+ETA+cline根因修复·R2383 cleanup+双报告REGEN
-当前动作:     R2383: 自检(CPU/mem OK·load33/224·无runaway)·gateway 200·cleanup1empty(codex django-13279)·0new eval(全7路0new→总1807不变)·predict:cline321·codex135·cc326·pi285·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2383 16:37·7way=12200B·cline=9972B)·未完成指令:有(§10:10+§22:4x)·W:0
-下一步:       ①本轮commit+push ②cline predict继续向500推进(321→500) ③incr_eval新落地 ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
-阻塞:         <各路尚未满500:cline321/codex135/cc326/pi285·§22:4x未全交付·opencode+hermes DONE·deepseek stalled·codex=瓶颈~15天>
+PHASE:        R2384 incr_eval3new(cline+1RESOLVED+1FAILED·pi+1RESOLVED→总1808)+cleanup4empty(codex1·cc3)+双报告REGEN(gateway OK·1808resolved·predict 4/7 alive·cline323·codex135·cc325·pi286·TB-2.1=已交付/SWE-bench Verified=~15天瓶颈codex)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5 R1785-R2384·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7DONE·R1804双报告交付·R1969-R2383 incr_eval+监控+报告+ETA+cline根因修复·R2384 incr_eval3+cleanup4+双报告REGEN
+当前动作:     R2384: 自检(CPU/mem OK·load30/224·无runaway)·gateway 200·incr_eval3new(cline django-13551 RESOLVED+django-13513 FAILED·pi sympy-19346 RESOLVED→+2resolved总1808)·cleanup4empty(codex django-13297·cc django-14771/14787/15098)·predict:cline323·codex135·cc325·pi286·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2384 17:19·7way=12200B·cline=9972B)·未完成指令:有(§10:10+§22:4x)·W:0
+下一步:       ①本轮commit+push ②cline predict继续向500推进(323→500) ③incr_eval新落地 ④codex=瓶颈135/500@25/天≈15天 ⑤各路满500后§22:4x两基准7路全交付 ⑥TB-2.1已交付
+阻塞:         <各路尚未满500:cline323/codex135/cc325/pi286·§22:4x未全交付·opencode+hermes DONE·deepseek stalled·codex=瓶颈~15天>
 ERROR_COUNT:  0
  体积: TASK=22KB / MEMORY=16KB（归档0KB）
-  cline专项小结: predict_glm53=321files/243resolved/0empty·C1:321real·C2:failed=80(能力·real patch但tests fail)·C3:empty=0(cleanup后归零保持)·C4:243res/323eval=75.2%·C5:报告R2383(cline special·9972B)·失败top1=能力差(real patch但tests fail)·cc275/334=82.3%·opencode414/498=83.1%·gap=能力差
+  cline专项小结: predict_glm53=323files/244resolved/0empty·C1:323real·C2:failed=81(能力·real patch但tests fail)·C3:empty=0(cleanup后归零保持)·C4:244res/325eval=75.1%·C5:报告R2384(cline special·9972B)·失败top1=能力差(real patch但tests fail)·cc275/325=84.6%·opencode414/498=83.1%·gap=能力差
 
 > 📦 Gen7 pilot(7×5) + Oracle check(R473) 已归档 → daily-memories-harness/2026-10-28.md。结论：cline/pi=100%,codex/opencode=60%,hermes/deepseek/claude-code=0%;oracle 15/15 mean=0.733(11/15可解)。需要时再读。
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
+> [17:19] R2384: 自检(CPU/mem OK·load30/224·无runaway)·gateway 200·incr_eval3new(cline django-13551 RESOLVED+django-13513 FAILED·pi sympy-19346 RESOLVED→+2resolved总1808)·cleanup4empty(codex django-13297·cc django-14771/14787/15098)·predict:cline323·codex135·cc325·pi286·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2384 17:19·7way=12200B·cline=9972B)·未完成指令:有(§10:10+§22:4x)·W:0
 > [16:37] R2383: 自检(CPU/mem OK·load33/224·无runaway)·gateway 200·cleanup1empty(codex django-13279)·0new eval(全7路0new→总1807不变)·predict:cline321·codex135·cc326·pi285·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2383 16:37·7way=12200B·cline=9972B)·未完成指令:有(§10:10+§22:4x)·W:0
 > [16:28] R2382: 自检(CPU/mem OK·load33/224·无runaway)·gateway 200·incr_eval(2new:cc django-14580 RESOLVED+pi sympy-19040 RESOLVED→+2resolved总1807)·cleanup0empty(全7路0empty)·predict:cline321·codex135·cc325·pi285·4/7 alive(cline·codex·cc·pi)·双报告REGEN(R2382 16:28·7way=12103B·cline=9893B)·未完成指令:有(§10:10+§22:4x)·W:0
 > 📦 R2381 流水已归档 → daily-memories-harness/2026-11-13.md。结论：R2381 incr_eval(cc+2RESOLVED·cline+1FAILED·pi+1FAILED→总1805)+cleanup5empty+双报告REGEN。需要时再读。
