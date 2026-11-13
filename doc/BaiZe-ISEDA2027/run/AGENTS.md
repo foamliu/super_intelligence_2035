@@ -3,7 +3,7 @@
 > **用途**：`run/` 下有多个 `*_loop.sh` 与多个 `MEMORY*.md`，但**真正活跃的 agent 只有 5 个**。
 > 本文件是**唯一权威**的"谁在跑"清单，避免数错。
 >
-> 最后更新：2026-11-06
+> 最后更新：2026-11-13
 
 ---
 
@@ -13,7 +13,7 @@
 |:---|:--|:---|:---|:---|:---|:---|:---|
 | **pretrain** | `10.239.2.29` | `baize_pretrain_loop.sh` | `BAIZE_PRETRAIN_2B_TASK.md` | `MEMORY_PRETRAIN_2B.md` | `daily-memories/` | 预训练 R2 P-1~P-8（训练在 `.29`） | ✅ 运行中 |
 | **harness** | `10.239.2.29` | `baize_harness_loop.sh` | `BAIZE_HARNESS_TASK.md` | `MEMORY_HARNESS.md` | `daily-memories-harness/` | **H-A** SWE-bench 横评 · **H-B** harness 源码分析（从 cline 起） | ⬜ 待 ops 启动 |
-| **vision** | `10.239.2.12` | `baize_vision_loop.sh` | `BAIZE_VISION_TASK.md` | `MEMORY_VISION.md` | `daily-memories-vision/` | 视觉编码器 R2~R8（已收敛，待运维处置）+ **R9**（训练在 `.12`） | ⏹ 收敛/待派 |
+| **vision** | `10.252.32.17` | `baize_vision_loop.sh` | `BAIZE_VISION_TASK.md` | `MEMORY_VISION.md` | `daily-memories-vision/` | 视觉编码器 R2~R8（已收敛，待运维处置）+ **R9** 波形 RL（**2026-11-13 由 `.12` 迁至 `.17`**，空卡） | ⏹ 待启动 |
 | **data** | `10.239.2.12` | `baize_data_loop.sh` | `BAIZE_DATA_TASK.md` | `MEMORY_DATA.md` | `daily-memories-data/` | 数据准备 phase0~phase6 + R2/R3 调研 | ✅ 运行中 |
 | **posttrain** 🆕 | `10.252.32.17` | `baize_posttrain_loop.sh` | `BAIZE_POSTTRAIN_TASK.md` | `MEMORY_POSTTRAIN.md` | `daily-memories-posttrain/` | Stage(ii) 领域退火/SFT/RLVR-GRPO + EDA-Eval 评测；**当前零 GPU 预研**（P0 诊断 D1–D6 / P1 数据盘点 / P2 方案书 / P3 脚本骨架），正式训练等 pretrain ckpt（ETA≈2026-12-25） | ⬜ 待 ops 启动 |
 
@@ -123,8 +123,8 @@ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 | 机器 | 上跑的 agent | 备注 |
 |:--|:--|:--|
 | `10.239.2.29` | pretrain · harness | 8×H100；pretrain 占 GPU，harness 不占 GPU |
-| `10.239.2.12` | vision · data | 8×H100；vision 占 GPU，data 多为 CPU/IO |
-| `10.252.32.17` | posttrain | 8×A40（本机）；**2026-11-09（周一）起分配 4 张给 post-train**，当前零 GPU 预研 |
+| `10.239.2.12` | data | 8×H100；data 多为 CPU/IO |
+| `10.252.32.17` | posttrain · vision | 8×A40；**2026-11-09（周一）起分配 4 张给 post-train**；**2026-11-13 vision 迁入（空卡）** |
 | `10.251.36.15` | zhulong · designflow | ZhuLong 项目（独立于 BaiZe） |
 
 ## 6. 📉 记忆体量维护（**2026-10-03 运维新增**）

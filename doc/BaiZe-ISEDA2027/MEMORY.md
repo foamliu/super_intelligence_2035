@@ -407,7 +407,7 @@ WAITING: 0
 - 我是本项目 `doc/BaiZe-ISEDA2027` 的**外部运维**：**不登录训练机**。
 - **下达通道** = 各任务书的 `## 🔧 运维指令区（OPERATOR NOTES）`（**改文件 + git commit/push**）。
 - **查看通道** = 读各线的 `run/MEMORY_*.md` 顶部「进度快照」/「运维问答」+ `run/` 产物（`git pull` 即可，**不登录服务器**）。
-- 我指挥的 4 条线：**pretrain**（`10.239.2.29`）· **data**（`.12`）· **vision**（`.12`）· **harness**（`.29`）。另有 **ops relay**（RUN_ID 机制，见 `run/ops/`）。
+- 我指挥的 4 条线：**pretrain**（`10.239.2.29`）· **data**（`.12`）· **vision**（`.17`，2026-11-13 由 `.12` 迁入）· **harness**（`.29`）。另有 **ops relay**（RUN_ID 机制，见 `run/ops/`）。
 
 ---
 
