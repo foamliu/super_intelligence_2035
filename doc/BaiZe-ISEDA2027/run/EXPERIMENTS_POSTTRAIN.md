@@ -9094,3 +9094,51 @@ GPUS=7 bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --total-steps 200 \
 
 - 自治 chain 继续：等 SFT eval chain 跑完 step60 run2-5 + base run1-5 → RL eval chain 自动 serve `global_step_200` 于 GPU7:8095 → R0 5-run → `5run_rl_analysis.json`（R0 vs step105 0.0304±0.0083，McNemar/bootstrap）。
 - R0 数字出后分流（§R416 §5）：有提升→里程碑报告；无提升→诚实负结果 + 起 R2+sandbox-exec。
+
+## §R418 — wake418 (2026-11-13 20:3x): eval 队列重排——R0 RL eval 提前到 step60-run2 之后
+
+### 1. 背景 / 问题
+
+- 用户令 2026-11-13 13:3x：「RL 不要再等 BaiZe 基模——直接在 MiniCPM5-2B 基础上 RL，追求显著提升」，要点 6「保持 WAITING=0，把 RL 起跑作为本轮首要动作」。
+- R0 主训 200 步已于 wake416 COMPLETED（global_step_200 ckpt 落盘，cheat=0/3200，reward 0.36→0.92→0.90 平台）。
+- **瓶颈发现**：原自治 RL eval chain（PID1923203, `baize_posttrain_rl_eval_chain.sh`）把 R0 5-run eval 串行排在 SFT eval chain（PID1161064, `baize_posttrain_eval_chain.sh`）的 step60-run2-5 + base-run1-5 之后。step60 run2 codegen 单 run ~3.5h，剩 step60 run3-5 + base 1-5 ≈ 8 run × ~3.5h ≈ **~30h**，R0 真实 Pass@1 数字要等 ~30h 才出 → 违反「RL 不再搁置」。
+- **关键事实**：RL 真正对照锚点 = SFT step105 final ckpt，已 5/5 DONE = 0.0304±0.0083（§R417）。step60（中间 ckpt）+ base（裸 MiniCPM5-2B）是 SFT 动力学补充曲线，**非 RL 关键路径**，可延后不丢失。
+
+### 2. 处置（eval 队列重排，零浪费、零 clobber）
+
+| 步骤 | 动作 | 安全性 |
+|:--|:--|:--|
+| ① | `kill 1923203`（旧 RL eval chain，纯 sleep waiter，GPU 未占） | 安全：未占 GPU、未持 providers.json |
+| ② | `kill 1161064`（SFT eval chain 父进程，停在 run2 之后） | run2 子 PID1962541 ppid→1 继续 codegen（不浪费已跑 ~46min），结束时 5run_eval.sh 自行 `cp providers.json.bak` restore |
+| ③ | 起新 RL eval chain **PID2028723**：`baize_posttrain_rl_eval_chain.sh --grpo-pid 1887597(已死→跳过) --eval-chain-pid 1962541 --rl-run-dir rl_surrogate_runs/minicpm5_grpo_loop_R0_200step --gpu 7 --port 8095 --base-label step105` | 等 run2(1962541) 完→serve global_step_200 于 GPU7:8095→158题 5-run eval→`/tmp/posttrain_5run_eval/5run_rl_analysis.json`（vs step105 0.0304±0.0083, McNemar/bootstrap） |
+| ④ | 起 residual SFT chain **PID2030315**：`baize_posttrain_eval_chain.sh --step105-pid 2028723` | 等 RL eval chain(2028723) 完→跑 step60-run3-5（run2 已存 final_report.json 会 SKIP）+ base-run1-5 → 补充 eval 不丢失，仅延后 |
+
+### 3. 安全性论证
+
+- **providers.json 严格串行**：RL eval chain 等 run2 restore 完才 serve+eval；residual SFT chain 等 RL eval chain 完才跑 → 任意时刻只有一个 5run_eval 写 providers.json，无 clobber。
+- **GPU 无冲突**：GPU7 = 3MiB 空闲，仅 R0 eval serve 使用；GPU4(8098 base)/5(8097 step60)/6(8096 step105) serve 仍在跑，未碰 GPU0-3(root)。
+- **不浪费**：run2 已跑 ~46min codegen 保留，run2 结束自然产出 step60 run2 final_report。
+- **不丢失**：step60-run3-5 + base-1-5 由 residual chain 在 R0 eval 后自动补跑（baize_posttrain_eval_chain.sh 内置 final_report.json SKIP 逻辑）。
+- **红线未改**：§5.1 contam 0/3347、§5.2 cheat=0/3200（§R416 终值）、§5.3 5-run mean±std、§2 评测协议冻结均沿用。
+
+### 4. 新 eval 队列
+
+```
+run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SFT(2030315: step60-3/4/5 + base-1..5)
+```
+
+### 5. 验证证据
+
+- `kill -0 1887597` → rc=1（GRPO 训练已死，新 chain 跳过 GRPO wait）。
+- `kill -0 1962541` → rc=0（run2 alive, ppid=1 孤儿继续）。
+- `kill -0 1161064` → rc=1（SFT chain 父已死）。
+- `kill -0 1923203` → rc=1（旧 RL eval chain 已死）。
+- 新 RL eval chain 日志 `/tmp/posttrain_rl_eval_chain.log`：`grpo-pid=1887597  eval-chain-pid=1962541` → `GRPO training finished` → `GPU7 memory.used=3MiB` → `Latest RL ckpt: .../global_step_200 (label=grpo_R0_step200)` → `Waiting for existing eval chain (PID 1962541) to finish... sleeping 180s` ✅。
+- residual 日志 `/tmp/posttrain_eval_chain_residual.log`：`step105 autocomplete daemon PID=2028723` → `Waiting ... sleeping 120s` ✅。
+- `nvidia-smi`：GPU7=3MiB（空闲待 serve）；GPU5=100% util（run2 codegen 中）。
+
+### 6. 下一步
+
+- 等 run2(1962541) 完 → 新 RL eval chain(2028723) 自动 serve+5-run → 核 `/tmp/posttrain_5run_eval/5run_rl_analysis.json`（grpo_R0_step200 vs step105 0.0304±0.0083）。
+- R0 数字分流（§R416 §5）：显著>0.0304 → 里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演，收益不可迁移到 BaiZe」）；无提升/退化 → 诚实负结果 + 起 R2+sandbox-exec（wake415 已就绪，需 GPU7 释放且沙盒不与 eval 争用）。
+- 🔴 诚实预警沿用：R0=静态字符串匹配奖励，reward↑≠Pass@1↑，平台化=proxy 饱和；真实裁判=158题5-run（用户令点4 / vision v10 教训）。

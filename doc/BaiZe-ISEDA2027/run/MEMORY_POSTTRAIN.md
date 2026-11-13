@@ -7,14 +7,14 @@ WAITING: 0
 
 ## 进度快照
 
-- PHASE: posttrain-wake417（2026-11-13 R417: **step105 基线 5-run 修复 3/5→5/5（0.0304±0.0083）+ 5run_eval JSONL 解析硬化**；R0 主训 200 步 ckpt 落盘待自治 eval chain 取数；自治 eval chain 排队等 SFT chain 释放 providers.json）
-- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-412✅;R411✅(verl 结论性 BLOCKED);R412✅(自写 GRPO loop smoke PASS);R413✅(全量主训起跑+OOM修复);R414✅(主训监控+红线 cheat=0/800+reward 动力学+自治 eval chain);R415✅(R1-R4 沙盒执行客户端+GRPO loop 集成+主训 step165 监控+红线 cheat=0/2400);R416✅(RL R0 主训 200 步 COMPLETED+reward 动力学终值+自治 eval chain 排队待发);R417✅(step105 基线 5/5 修复 0.0304±0.0083+5run_eval JSONL 解析硬化防掉 run)
-- 当前动作: wake417 R417:①**step105 基线 5-run 修复** 旧 3/5(0.0274±0.0097)→新 5/5(0.0304±0.0083)：run1 从未跑 eval、run4 恢复尝试传裸名→assemble 失败；两 run 原 batch jsonl 在，安全窗口(step60 run2 codegen 中)内重跑 run_eval.py(run1=6/158=3.8%,run4=5/158=3.2%)→final_report 补齐→5run_analysis.py 重算 5/5 ②**5run_eval.sh 硬化** L78-99:fallback2 改解析实际日志行`生成代码文件:code_generation_<ts>.jsonl`→映射 completed_code_generation_<ts>.jsonl(确定性,不靠最近 glob)+裸名 guard,bash -n PASS ③**自治 chain 全程未受扰** SFT eval chain PID1161064+step60 run2 PID1962541+RL eval chain PID1923203 均 ALIVE;config.yaml eval 后已 restore ④红线 §5.3 5-run 恢复 ⑤未碰 GPU0-3/4/5/6/7
-- 下一步: ①**等自治 chain 出 R0 真实 5-run 数字**(无需人工,chain 自动)→核 /tmp/posttrain_5run_eval/5run_rl_analysis.json(grpo_R0_step200 vs step105 **0.0304±0.0083**) ②**R0 结论分流**：有提升(Pass@1 显著>0.0304)→报告 `reports/report_posttrain_rl_surrogate_zh.html`(里程碑,标「替身预演」)；无提升/退化→**诚实负结果**记录+直接起 **R2+sandbox-exec** 第二段 RL(wake415 已就绪:`GPUS=7 bash baize_posttrain_rl_grpo_loop.sh --reward-arm R2 --total-steps 200 --group-size 8 --batch-prompts 2 --sandbox-exec`,待 GPU7 释放) ③R2 沙盒执行反馈可能比 R0 静态奖励更有信号
-- 阻塞: ✅ **RL R0 主训已 COMPLETED**(wake416 global_step_200 落盘)。RL 基座=MiniCPM5-2B/SFT step105(用户令解除 BaiZe 基模依赖)。自治 eval chain 排队待 SFT eval chain 释放 providers.json。verl 路径结论性 BLOCKED 不再尝试。R1-R4 沙盒桥已就绪待 R0 eval 结论。GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(留给本轮 RL eval serve)。
-- 本轮新增产出: R417✅(EXPERIMENTS §R417 step105 基线 5-run 修复 3/5→5/5[run1/run4 eval 重跑+5run 重算 0.0304±0.0083]+5run_eval.sh JSONL 解析硬化[生成代码文件行解析+裸名 guard]+5run_analysis.json 更新+snapshot/心跳更新)
-- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑——✅ smoke PASS(wake412)+✅ 全量主训 200 步 COMPLETED(wake413-416 global_step_200)，下一动作=等自治 chain 自动 158题5-run mean±std 配对检验→R0 真实数字(vs step105 0.0304±0.0083)→有提升出报告/无提升诚实负结果+起 R2+sandbox-exec(本轮自治化,待 SFT chain 释放 providers.json)；L4 2026-11-12(zhulong step105 ✅5/5 DONE mean±std=0.0304±0.0083[R417 修复];step60 run2 中;designflow base 5/5 DONE=0% delivered)
-- git: super_intelligence_2035(behind 2,vision 在途文件不碰);本轮将交付(wake417: EXPERIMENTS §R417+baize_posttrain_5run_eval.sh 硬化+snapshot/心跳更新)
+- PHASE: posttrain-wake418（2026-11-13 R418: **eval 队列重排——R0 RL eval 提前到 step60-run2 之后**[原排在 step60-run3-5+base 5-run 之后≈30h]，R0 主训 200 步 ckpt 已落盘待 eval 取数）
+- 已完成: P3预备✅;P0✅;P1✅;P2✅;R1-R210✅;R280归档;wake281-417✅;R411✅(verl BLOCKED);R412✅(自写 GRPO loop smoke PASS);R413✅(全量主训起跑+OOM修复);R414✅(主训监控+cheat=0/800);R415✅(R1-R4 沙盒桥+主训 step165+cheat=0/2400);R416✅(R0 200步 COMPLETED+reward 动力学+eval chain 排队);R417✅(step105 5/5 0.0304±0.0083+JSONL 解析硬化);R418✅(eval 队列重排 R0 提前)
+- 当前动作: wake418 R418:**eval 队列重排**。原自治 RL eval chain(PID1923203)把 R0 5-run eval 排在 step60-run3-5+base-1-5（≈30h）之后，违反用户令「RL 不再搁置」。本轮：①kill 旧 RL eval chain 1923203（纯 waiter，GPU 未占）②kill SFT eval chain 父 PID1161064（停在 run2 之后；run2 子 PID1962541 ppid→1 继续 codegen，结束时自行 restore providers.json）③起新 RL eval chain **PID2028723** `--eval-chain-pid 1962541`：等 run2 完→serve global_step_200 于 GPU7:8095→5-run eval→5run_rl_analysis.json（vs step105 0.0304±0.0083）④起 residual SFT chain **PID2030315** `--step105-pid 2028723`：等 RL eval 完→跑 step60-run3-5+base-1-5（run2 已存 final_report 会 SKIP）。无 providers.json clobber（串行），GPU7 空闲待 serve，未碰 GPU0-3/4/5/6。
+- 下一步: ①**等 run2(1962541)完→新 RL eval chain(2028723)自动 serve+5-run**→核 /tmp/posttrain_5run_eval/5run_rl_analysis.json(grpo_R0_step200 vs step105 0.0304±0.0083) ②**R0 结论分流**：显著>0.0304→报告 `reports/report_posttrain_rl_surrogate_zh.html`(里程碑,标「替身预演」)；无提升/退化→**诚实负结果**+起 **R2+sandbox-exec**(wake415 已就绪,`GPUS=7 ... --reward-arm R2 --sandbox-exec`,需 GPU7 释放且沙盒不与 eval 争用) ③R0=静态字符串匹配奖励,reward 0.36→0.92 平台化=proxy 饱和,真实裁判=158题5-run
+- 阻塞: ✅ **RL R0 主训 COMPLETED**(global_step_200)。RL 基座=MiniCPM5-2B/SFT step105(用户令解除 BaiZe 基模依赖)。**新 eval 队列**：run2→R0 RL eval(2028723)→residual SFT eval(2030315)。verl 结论性 BLOCKED 不再尝试。GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(R0 eval serve 预留)。
+- 本轮新增产出: R418✅(eval 队列重排：kill 旧 chain 1923203/1161064→新 RL eval chain PID2028723 等 run2→residual SFT chain PID2030315 等 RL eval；EXPERIMENTS §R418+snapshot/心跳更新)
+- 未完成指令: 🔴 2026-11-13 13:3x RL 起跑——✅ smoke PASS(w412)+✅ 200步主训 COMPLETED(w413-416)+✅ eval 队列重排 R0 提前(w418)；下一动作=等 run2 完→新 RL eval chain(2028723)自动 158题5-run mean±std 配对检验→R0 真实数字(vs step105 0.0304±0.0083)→有提升出报告/无提升诚实负结果+起 R2+sandbox-exec；L4 2026-11-12(zhulong step105 ✅5/5 0.0304±0.0083;step60 run2 中[run3-5 已 defer 到 R0 eval 后];designflow base 5/5 DONE=0%)
+- git: super_intelligence_2035(behind 2,vision 在途文件不碰);本轮将交付(wake418: EXPERIMENTS §R418+snapshot/心跳更新)
 - 🔧 **SDPA patch**(wake328):verl fsdp_sft_trainer.py L199 `attn_implementation="flash_attention_2"`→`"sdpa"`;venv 重建后需重打此patch
 - 🔧 **verl 0.4.0 GRPO 结论性 BLOCKED(wake411)→ ✅ wake412 换框架解除**:verl hybrid GRPO `list_named_actors()` 找不到已创建的 register_center 命名 actor→init 握手死锁;1-GPU/2-GPU/NCCL 修复均复现;根因=verl 0.4.0+本机 Ray 命名 actor 可见性不兼容。**wake412 解除**：弃用 verl 路径，新写自写单进程 GRPO loop `baize_posttrain_rl_grpo_loop.py`（纯 HF+torch，无 Ray/verl/torchrun），smoke 3 步 PASS(ratio=1.000)。verl surrogate 脚本保留但不再尝试。详见 EXPERIMENTS §R411/§R412
 - 🔧 **torchrun 单驱动修复 R-launch-fix3(wake411)**:`baize_posttrain_rl_grpo_surrogate.sh` L320 `--nproc_per_node=1`(verl main_ppo 单驱动,n_gpus 来自配置);原 $NGPU 派生多 Ray 集群→多 GPU 起跑前提修复
@@ -31,7 +31,7 @@ WAITING: 0
 | 4 | 8098 | minicpm5-2b | vLLM MiniCPM5-2B（Phase1评测用,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 **--enable-auto-tool-choice** --max-num-seqs 4） | 39.1GB | ✅ wake334 restarted(PID553793 was dead→new PID799523,+no_proxy env) |
 | 5 | 8097 | minicpm5-2b-sft-v39 | vLLM SFT v39 step60 ckpt serve(--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 --enable-auto-tool-choice --max-num-seqs 4) | 39.1GB | ✅ wake411 re-serve(PID1802143,曾为 2-GPU RL smoke 腾卡而 kill,verl BLOCKED 后恢复 eval chain) |
 | 6 | 8096 | minicpm5-2b-sft-v39-final | **vLLM SFT v39 final ckpt serve**(wake360,global_step_105,--max-model-len 65536 --enforce-eager --tool-call-parser minicpm5 **--enable-auto-tool-choice** --max-num-seqs 4,PID962854) | 39.2GB | ✅ wake361 parallel eval RUNNING(GPU6=81%util,step_105 eval PID972225) |
-| 7 | — | — | **空闲**(同GPU6,SFT converged) | 3 MiB | ⬜ freed(wake331) |
+| 7 | — | — | **空闲**(R0 RL eval serve 预留,待 run2 完后 PID2028723 serve global_step_200 于 :8095) | 3 MiB | ⬜ wake418 reserved |
 
 > vLLM venv: `/tmp/vllm_venv/bin/python`（transformers 4.49.0, vLLM 0.7.3）；日志: `/tmp/vllm_gpu{5,6,7}.log`
 > ⚠️ vLLM venv 在 `/tmp`，重启机器后丢失需重建
@@ -65,8 +65,8 @@ WAITING: 0
 
 ## 运维问答（常驻）
 
-- Q: post-train 现在能起训练吗？→ A: **✅ 能，且已跑完。RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。**wake412 RL 起跑成功**（弃用 verl 0.4.0 结论性 BLOCKED，新写自写单进程 GRPO loop `baize_posttrain_rl_grpo_loop.py`，纯 HF+torch 单 GPU 无 Ray/verl）。**wake413-416 R0 全量 200 步主训 COMPLETED**（G=8 B=2 ctx512/256 kl=0.02，wall 61.7min，global_step_200 ckpt 落盘，全程 mean_ratio=1.0 KL 0.04-0.09 健康，cheat=0/3200 红线§5.2）。reward 0.36→0.92(峰值)→0.90 平台（R0 静态字符串匹配，reward↑≠Pass@1↑）。**自治 post-RL eval chain PID1923203 已排队**：等 SFT eval chain(PID1161064)释放 providers.json→自动 serve global_step_200 于 GPU7:8095→158题5-run mean±std 配对检验(McNemar/bootstrap) vs step105 0.0274→/tmp/posttrain_5run_eval/5run_rl_analysis.json。**下一动作=等自治 chain 出 R0 真实数字**：有提升→报告；无提升/退化→诚实负结果+起 R2+sandbox-exec（wake415 已就绪待 GPU7 释放）。GPU0-3=root；GPU4/5/6=L4 eval serve；GPU7=空闲(留给本轮 RL eval serve)。
-- Q: 用哪台机器？→ A: post-train 线在 `10.252.32.17`（8×A40，CUDA 12.4 max）。GPU0-3=root SGLang(不可动)；GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(本轮 RL smoke 用后已清理)。
+- Q: post-train 现在能起训练吗？→ A: **✅ 能，且已跑完。RL 基座=MiniCPM5-2B（+SFT v39 step105），不再依赖 BaiZe 基模**（2026-11-13 用户令解除 pretrain 依赖）。**wake412 RL 起跑成功**（弃用 verl 0.4.0 结论性 BLOCKED，新写自写单进程 GRPO loop `baize_posttrain_rl_grpo_loop.py`，纯 HF+torch 单 GPU 无 Ray/verl）。**wake413-416 R0 全量 200 步主训 COMPLETED**（G=8 B=2 ctx512/256 kl=0.02，wall 61.7min，global_step_200 ckpt 落盘，全程 mean_ratio=1.0 KL 0.04-0.09 健康，cheat=0/3200 红线§5.2）。reward 0.36→0.92(峰值)→0.90 平台（R0 静态字符串匹配，reward↑≠Pass@1↑）。**wake418 eval 队列重排**：原 RL eval chain(1923203)把 R0 5-run 排在 step60-run3-5+base-1-5(≈30h)之后；本轮 kill 1923203+SFT chain 父 1161064（run2 子 1962541 ppid→1 继续）→起新 RL eval chain **PID2028723** 等 run2(1962541)完→serve global_step_200 于 GPU7:8095→158题5-run mean±std 配对检验 vs step105 0.0304±0.0083→/tmp/posttrain_5run_eval/5run_rl_analysis.json→residual SFT chain **PID2030315** 跑 step60-run3-5+base-1-5。**下一动作=等 run2 完→2028723 自动出 R0 真实数字**：有提升→报告；无提升/退化→诚实负结果+起 R2+sandbox-exec（wake415 已就绪）。GPU0-3=root；GPU4/5/6=L4 eval serve；GPU7=空闲(R0 eval serve 预留)。
+- Q: 用哪台机器？→ A: post-train 线在 `10.252.32.17`（8×A40，CUDA 12.4 max）。GPU0-3=root SGLang(不可动)；GPU4/5/6=L4 eval serve(在跑)；GPU7=空闲(R0 eval serve 预留,待 run2 完后 2028723 serve)。
 - Q: 评测怎么接入 BaiZe？→ A: vLLM/SGLang 暴露 OpenAI-compatible endpoint → `cline auth -p openai -k <KEY> -b <BASE_URL> -m <MODEL_ID>`，harness 不改。
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
 
@@ -151,21 +151,7 @@ WAITING: 0
 > 📦 wake285 (R285) 已归档 → daily-memories-posttrain/2026-11-12.md（wake292 roll）。
 > 📦 wake296 (R296) 已归档 → daily-memories-posttrain/2026-11-12.md（wake303 roll）。
 > 📦 wake297 (R297) 已归档 → daily-memories-posttrain/2026-11-12.md（wake303 roll）。
-[wake287 02:00] R287 02:00 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake288 02:30] R288 02:30 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-
-[wake290 02:50] R290 02:50 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake291 03:05] R291 全量113task静态分析最终结果COMPLETE+SFT语法95.6%vsBase62.8%+32.7pp/截断8.6x降低/函数100%/API+0.055→RL核心区/P0 D1-D6最终验证 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake292 03:20] R292 MEMORY归档roll(wake282-285→daily)+serve健康复检+sandbox 97st CLOSED+GPU全占位 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake293 03:20] R293 Live生成烟测BASE vs SFT → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake294 03:40] R294 SFT v11v36训练动力学分析+报告校正 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake295 03:40] R295 扩展BASE vs SFT 15task实时生成对比 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake296 04:10] R296 3-model对比 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake297 04:30] R297 API级Gap分析 → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake299 05:15] R299 v11-v37统一语料合并+parquet+SFT dry-run → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake300 05:45] R300场景加权RL奖励设计[GRPO兼容/加性bonus] → 原文已归档 daily-memories-posttrain/2026-11-12.md
-[wake301 05:55] R301 Phase1评测架构纵深调查+预检脚本 → 原文已归档 daily-memories-posttrain/2026-11-12.md
+> 📦 wake287-wake301 (R287-R301) 流水已归档 → daily-memories-posttrain/2026-11-12.md（R287/R288/R290 例行；R291 全量113task静态分析COMPLETE+SFT语法95.6%vsBase62.8%+32.7pp/截断8.6x降低/函数100%/API+0.055/P0 D1-D6最终验证；R292 MEMORY归档roll+serve健康复检+sandbox CLOSED+GPU全占位；R293 Live生成烟测BASE vs SFT；R294 SFT v11v36训练动力学+报告校正；R295 扩展BASE vs SFT 15task实时对比；R296 3-model对比；R297 API级Gap分析；R299 v11-v37统一语料合并+parquet+SFT dry-run；R300 场景加权RL奖励设计[GRPO兼容/加性bonus]；R301 Phase1评测架构纵深调查+预检脚本）。
 > 📦 wake302–303 流水已归档 → daily-memories-posttrain/2026-11-12.md（R302 GPU4 vLLM重启+Phase1生成启动 / R303 tool-calling分布+退化循环发现）
 > 📦 wake304 流水已归档 → daily-memories-posttrain/2026-11-12.md（R304 Phase1生成100%失败根因[工具名不匹配+沙盒不可达→退化循环→max-output-token]+停止浪费运行）
 [wake305 08:15] R305 no_sandbox模板运行失败根因 → 原文已归档 daily-memories-posttrain/2026-11-12.md
@@ -206,6 +192,10 @@ WAITING: 0
 > 📦 wake415 流水已归档 → daily-memories-posttrain/2026-11-13.md（R415 R1-R4 沙盒执行客户端 `baize_posttrain_rl_sandbox_exec.py`(--selftest 真实沙盒 PASS R2部分分生效) + GRPO loop `--sandbox-exec` 集成(向后兼容) + 主训 step165/200 监控 + 红线 cheat=0/2400）。
 
 [wake416 19:5x] R416 **RL R0 主训 200 步 COMPLETED + 自治 eval chain 排队待发**：①**主训跑完** PID1887597 退出，`metrics.jsonl` 200 行完整，wall 61.7min(~18.5s/step)，`global_step_200` ckpt 落盘(5GB model+10GB optim，可直 serve) ②**GRPO 健康** 全程 mean_ratio=1.0 KL 0.04-0.09 无坍塌 ③**reward 动力学** step1=0.3625→峰值 0.9201(step51-100)→平台/微降 0.8992(step200)；**🔴 诚实预警**：R0=静态字符串匹配奖励，reward↑≠Pass@1↑，平台化=proxy 饱和，真实裁判=158题5-run(用户令点4/vision v10 教训) ④**红线 ✅** §5.2 cheat_rate.json 终值=0/3200=0.0；§5.1 contam 0/3347 沿用；§5.2 评测协议冻结未改 ⑤**自治 eval chain**(PID1923203) 19:48 检测主训完→GPU7=3MiB 释放→选 global_step_200(label=grpo_R0_step200)→**现等** SFT eval chain(PID1161064,step60 run2 中,剩 step60 run3-5+base 5-run)释放 providers.json→自动 serve GPU7:8095→5-run eval→McNemar/bootstrap vs step105 0.0274→/tmp/posttrain_5run_eval/5run_rl_analysis.json ⑥GPU7 空闲且为本轮 RL eval 预留(不抢卡起新训练)；GPU0-3/4/5/6 不动 ⑦SFT step105 基线 3/5 mean±std=0.0274±0.0097。详见 EXPERIMENTS §R416。 Next:等自治chain出 R0 真实5-run数字→有提升出报告/无提升诚实负结果+起 R2+sandbox-exec(wake415已就绪待GPU7释放)。 WAITING=0.
+
+[wake417 20:1x] R417 step105 基线 5-run 修复 3/5→5/5(0.0304±0.0083)+5run_eval.sh JSONL 解析硬化 → 原文已归档 daily-memories-posttrain/2026-11-13.md
+
+[wake418 20:3x] R418 **eval 队列重排——R0 RL eval 提前**：发现原自治 RL eval chain(PID1923203)把 R0 5-run eval 串行排在 SFT chain(PID1161064)的 step60-run3-5+base-1-5（≈30h）之后，违反用户令「RL 不再搁置」（step105 基线=RL 真正对照锚点已 5/5 DONE，step60/base 为补充曲线，非关键路径）。本轮处置：①kill 旧 RL eval chain 1923203（纯 waiter，GPU 未占，安全）②kill SFT eval chain 父 PID1161064（停在 run2 之后；run2 子 PID1962541 ppid→1 继续 codegen，结束时自行 cp providers.json.bak restore，不浪费已跑 ~46min）③起新 RL eval chain **PID2028723** `baize_posttrain_rl_eval_chain.sh --grpo-pid 1887597(已死,跳过) --eval-chain-pid 1962541`：等 run2(1962541)完→serve global_step_200 于 GPU7:8095→158题5-run eval→`5run_rl_analysis.json`(vs step105 0.0304±0.0083) ④起 residual SFT chain **PID2030315** `baize_posttrain_eval_chain.sh --step105-pid 2028723`：等 RL eval 完→跑 step60-run3-5(run2 已存 final_report 会 SKIP)+base-1-5（补充 eval 不丢失，仅延后）。**安全性**：providers.json 严格串行（RL eval 等 run2 restore→residual 等 RL eval），无 clobber；GPU7 空闲(3MiB)待 serve，不与 GPU4/5/6 冲突；未碰 GPU0-3。红线未改（cheat=0/3200 沿用 §R416）。**新队列**：run2(~2.5h 剩)→R0 RL 5-run eval(~20h)→residual SFT(step60-3/4/5+base-1..5)。Next:等 2028723 出 5run_rl_analysis.json→R0 结论分流。 WAITING=0.
 
 
 
