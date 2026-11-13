@@ -1,15 +1,18 @@
 WAITING: 0
 
+> 🆕 **【wake #1163 · 2026-11-13 23:44】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git·三条件齐备)→ff pull(incoming 3 commit 非视觉)+add 明确路径+commit+push 本线 2 文件**：
+> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)✓·v10_summary.json(647B·本轮 `cat` 读取成功 A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·criteria 2/6·verdict NOT SIGNIFICANT)✓。`ps` 核实无 vision 实验进程在跑(仅 vision loop PID1236761 自身·非实验)。
+> - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1158 未刷新·无 23:00 新轮)21:00 轮 vision=GPTQ#67(部署阶段权重量化·非本线活跃 wave-RL·vision CPU-only 无量化工具需求→不 action·沿用 wake#1151~#1162 一致判定)；18:00 轮 vision 显式「无」。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·非 vision·无 vision 条目)→不 action。
+> - ✅ **git 本轮窗口打开→成功提交**：无 `.git/index.lock`+无 `/usr/bin/git` 进程(仅 gitlab-runner)→三条件齐备。`git fetch`→behind 3→`git pull --no-rebase --no-edit` **ff 成功**(HEAD 7a0f21280→874970a76·12 files·incoming 3 commit=designflow shard A + harness R2418 + designflow shard A#479·经 `git diff --name-only` 核实=MEMORY_HARNESS/daily-harness+ZhuLong designflow 文件=**均非视觉·不触 vision**⇒ ff 安全·无需 autostash·未动 posttrain 在途 M baize_posttrain_sft_surrogate_serve.sh + ?? outputs/)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1161·MEMORY ~30.5KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+
+
 > 🆕 **【wake #1162 · 2026-11-13 23:34】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git·三条件齐备)→0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件**：
 > - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)✓·v10_summary.json(`ls`=647B mtime 12:44·内容以历史读出为准 A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·2/6)✓。`ps` 核实无 vision 实验进程在跑(仅 vision loop PID1236761 自身·非实验)。
 > - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1158 未刷新·无 23:00 新轮)21:00 轮 vision=GPTQ#67(部署阶段权重量化·非本线活跃 wave-RL·不 action·沿用 wake#1151~#1161 一致判定)；18:00 轮 vision 显式「无」。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·非 vision·无 vision 条目)→不 action。
 > - ✅ **git 本轮窗口打开→成功提交**：无 `.git/index.lock`+无 `/usr/bin/git` 进程(仅 gitlab-runner)→三条件齐备(无 lock+无 competing vision staged+无活跃 git)。`git fetch`→0 ahead/0 behind 已 up-to-date→无需 pull(vision 工作树 CLEAN·仅 posttrain ?? outputs/ 不触)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(明确路径不用 -A)→commit→push。不触 posttrain 在途 untracked(outputs/)。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1160/#1158·MEMORY ~31.4KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
 
 
-> 🆕 **【wake #1161 · 2026-11-13 23:24】例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock+无活跃 git·三条件齐备)→ff pull(incoming 1 commit 非视觉)+commit --only 本线 2 文件(避让 posttrain 已 staged)+push 成功**：
-> - v10 ALL DONE(NOT SIGNIFICANT 2/6)产物复核在位：v10_results/5 子目录(smoke/std_s0/std_s1/std_s2/ctrl_s0)✓·v10_summary.json(`ls`=647B mtime 12:44·`cat`/read_files 撞 NFS 属性缓存 ENOENT 已知自愈型 wake#1145/#1146·内容以历史读出为准 A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·n_disc=29·2/6)✓。`ps` 核实无 vision 实验进程在跑(仅 vision loop PID1236761 自身·非实验)。
-> - 输入参考：research 日报 2026-11-13(index mtime 21:11·自 wake#1158 未刷新)21:00 轮 vision=GPTQ#67(部署阶段权重量化·非本线活跃 wave-RL·不 action·沿用 wake#1151~#1160 一致判定)；18:00 轮 vision 显式「无」。ops/inbox.md(846B·mtime 11-08·RUN_ID276=TARGET12 pretrain chunk2/3 eval·非 vision·无 vision 条目)→不 action。
-> - ✅ **git 本轮窗口打开→成功提交**：无 `.git/index.lock`+无 `/usr/bin/git` 进程(仅 gitlab-runner)→三条件齐备。`git fetch`→behind 1→`git pull --no-rebase --no-edit` **ff 成功**(HEAD 866d187c1→23432e083·2 files·incoming 1 commit=harness R2416·仅触 MEMORY_HARNESS+1 txt=**不触 vision**⇒ ff 安全·无需 autostash)。⚠️ pull 后 posttrain 已 `git add` 4 文件 staged(M EXPERIMENTS_POSTTRAIN/M MEMORY_POSTTRAIN/A baize_posttrain_r2_autofire_chain/M daily-memories-posttrain + ?? outputs/)→为避让「把 posttrain staged 卷进 vision commit」(AGENTS.md 铁律)，本轮改用 `git commit --only -- MEMORY_VISION.md daily-memories-vision/2026-11-13.md`(**只提交本线 2 文件·posttrain staged 原样保留不动**)→push ff 成功。GPU(.17 8×A40) posttrain vLLM 占卡·vision CPU-only 不冲突。体积✓(fold wake#1159·MEMORY ~31KB/TASK 26.9KB·均≤32KB)。**WAITING: 0**。
+> 📦 **wake #1161 · 2026-11-13 23:24** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 1 非视觉)+commit --only 本线 2 文件(避让 posttrain staged)+push 成功·已fold(见 wake#1162·详情 daily-memories-vision/2026-11-13.md)。
 
 
 > 📦 **wake #1160 · 2026-11-13 23:16** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 4 commit 非视觉)+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1162·详情 daily-memories-vision/2026-11-13.md)。
