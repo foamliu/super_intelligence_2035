@@ -9479,3 +9479,66 @@ run2(1962541, ~2.5h 剩)  →  R0 RL 5-run eval(2028723, ~20h)  →  residual SF
 - 红线 §5.1 contam 0/3347；§5.2 cheat 0/3200；§2/§5.3 协议冻结未改；替身预演收益不可迁移 BaiZe。
 - 下一步：① 1962541 退出→2028723 自动起 R0 5-run eval（~12h）→`5run_rl_analysis.json`；② R0 结论按决策框架 §R425 C 分流（分支1 显著→里程碑报告；分支2 负→诚实负结果+起 R2[launch-ready,待 GPU7 释放]）；③ 期间监控 2028723 是否成功 serve GPU7:8095（log `/tmp/posttrain_rl_eval_chain.log`），若 serve 失败/卡死排查 vLLM 启动。
 - WAITING=0。
+
+---
+
+## §R428 (wake428, 2026-11-13 23:1x) — R2+sandbox-exec 自动起跑链落地 + 预注册决策门实测全 PASS + R0 失败模式实证
+
+> 唤醒背景：R0 RL 200 步主训 COMPLETED（global_step_200, cheat=0/3200, contam 0/3347）；自治 eval 队列 run2(1962541,codegen 收尾 153/158~96.8%)→R0 RL 5-run eval(2028723,等 run2 完后 serve GPU7:8095)→residual SFT(2030315) 全 ALIVE。GPU7 空闲(3MiB)预留待 R0 eval serve。本轮零 GPU（不可起第二臂争用 GPU7），按用户令 2026-11-13 #4「换奖励/任务定义」+「追求显著提升」做「R0 eval 出数前能做的最高价值零 GPU 实质产出」：把 R2+sandbox-exec 从「launch-ready（待人工起跑）」推进到「自治自动起跑（决策门驱动，零 idle）」，并实证 R0 失败模式。
+
+### A. R0 失败模式实证（rl_R0_step200_training_dynamics.json）
+
+- R0 = 静态字符串匹配奖励（无沙盒），组件 syntax0.10/API0.30/entry0.20/structure0.20/test_align0.20。
+- 5 段动力学（s1-20…s151-200）：
+  | segment | reward | frac_positive_adv | frac_nonzero_reward | kl | mean_ratio |
+  |:--|--:|--:|--:|--:|--:|
+  | s1-20 | 0.6731 | 0.5625 | 0.9688 | 0.0149 | 1.0 |
+  | s21-50 | 0.8874 | 0.4125 | 0.9917 | 0.0486 | 1.0 |
+  | s51-100 | 0.9201 | 0.3038 | 1.0 | 0.0717 | 1.0 |
+  | s101-150 | 0.9153 | 0.26 | 0.9938 | 0.0829 | 1.0 |
+  | s151-200 | 0.911 | 0.2637 | 0.9962 | 0.0715 | 1.0 |
+- 判读：reward 0.3625→0.8992 后平台（s51-100 峰 0.9201，s151-200 回落 0.911）；**frac_nonzero_reward 饱和~1.0**（静态分析给几乎所有 rollout 部分分 ⇒ 区分度塌缩）；**mean_ratio==1.0 全程**（policy 几乎不偏离 reference ⇒ 无实质更新）；frac_positive_adv 0.56→0.26 信号衰减；grad_norm_max 11.31。
+- 结论：reward↑ = proxy 拟合/饱和，**非能力增长**（与 vision v10「离散奖励+能力缺口 RL 常无净增益」一致）。⇒ R0 eval 真实数字大概率落决策框架「分支2 负」侧，但**仍须 5-run 配对检验实证**（预注册先定后测，红线 §5，不以训练侧启发式替代 eval）。
+- 红线全绿：§5.1 contam 0/3347；§5.2 cheat 0/3200（cheat_rate.json）。
+
+### B. R2+sandbox-exec 自动起跑链（baize_posttrain_r2_autofire_chain.sh）设计 + 落地
+
+- **动机**：R0 eval chain（rl_eval_chain.sh L154）serve global_step_200 于 GPU7:8095 后**不拆 serve**即退出 ⇒ GPU7 被残留 vLLM 占用；R2（追求显著提升主战场）若等人工 wake 起跑则有 idle。本链把「R0 eval 完→决策→起 R2」自动化，零 idle，且**严格按预注册决策框架执行**（避免未来 wake 重新解释⇒事后合理化风险）。
+- **流程**：① 等 R0 eval chain（--rl-eval-chain-pid 2028723）退出（180s 轮询，30h 安全帽防卡死）→ ② 读 `/tmp/posttrain_5run_eval/5run_rl_analysis.json` → ③ **决策门 decide_branch()**（python3 解析）→ ④ 分支2：杀 GPU7:8095 残留 vLLM serve（kill_gpu_serve，仅杀 vllm.entrypoints.openai.api_server，不碰非 vLLM）→ wait_gpu_free → 起 R2 200步主训；分支1：不起 R2，留待 agent 写里程碑报告。
+- **决策判据（与 §R425 C 一致）**：
+  - baseline = SFT step105 5-run mean（JSON 内 step105.mean，缺省 0.0304）。
+  - 分支1 = R0_mean > base_mean 且（McNemar p<0.05 且 b>c  或  bootstrap ci_low>0）→ rc=10。
+  - 否则（含 R0_mean≤base / 不显著 / 退化 / JSON 缺失 / 解析失败 / 无 comparison）→ rc=0（分支2，起 R2，不再搁置）。
+  - 注：bootstrap observed_diff = R0 - baseline，ci_low>0 即 R0 显著更好；McNemar b=R0 pass&base fail，c=base pass&R0 fail，b>c 即 R0 净更好。
+- **R2 起跑命令（§R421 C，已就绪）**：
+  `CUDA_VISIBLE_DEVICES=7 ~/code/verl_cu124_venv/bin/python baize_posttrain_rl_grpo_loop.py --reward-arm R2 --sandbox-exec --sandbox-ports 8664,8665,8653,8669 --sandbox-timeout 60 --sft-ckpt sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105 --total-steps 200 --group-size 8 --batch-prompts 2 --save-freq 50 --lr 3e-6 --kl-coef 0.02 --output-dir rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step`
+  （R2 从 SFT step105 起，与 R0 同基座 ⇒ 独立臂，不被 R0 非学习混淆；R2=执行结果部分分 exec_success0.2+partial_assert0.2/each+full_pass1.0，能区分「能跑通」vs「跑对」，是 R0 无信号时的真正换奖励/换任务定义方向。）
+- **并发安全**：R2=GPU7(HF 直载 policy，无 vLLM serve)+沙盒(隧道)；residual SFT eval=GPU4(:8098 base)+GPU5(:8097 step60)+providers.json，不碰 GPU7/沙盒 ⇒ 可并发无争用（5run_eval.sh L105 注：sandbox eval 纯打分读 codegen 结果，无沙盒 re-exec ⇒ residual eval 亦不争沙盒）。
+- **幂等护栏**：grpo_already_running() 检测已有 GRPO loop 则跳过；不碰 GPU0-3（root）。
+
+### C. 决策门实测全 PASS（合成 JSON）
+
+| 用例 | r0_mean | base_mean | McNemar(b,c,p) | boot ci_low | 期望 | 实测 |
+|:--|--:|--:|:--|--:|:--|:--|
+| BRANCH1 显著 | 0.06 | 0.0304 | (8,1,0.04) | 0.01 | rc=10 不起 R2 | rc=10 ✅ |
+| BRANCH2 退化 | 0.025 | 0.0304 | (1,3,0.48) | -0.02 | rc=0 起 R2 | rc=0 ✅ |
+| missing JSON | — | 0.0304 | — | — | rc=0（R0 eval 失败） | rc=0 ✅ |
+| 全零 R0（无 comparison） | 0.0 | 0.0304 | (0,0,None) | None | rc=0 | rc=0 ✅ |
+
+- `bash -n`✅；`--dry-run`✅（打印 recipe）；`--status`✅（显示 R0 eval chain/analysis json/GPU serve/R2 loop/decision）；VENV(~/code/verl_cu124_venv/bin/python→python3.10)✅；--sft-ckpt global_step_105 目录存在✅；grpo loop 存在✅。
+
+### D. chain 已启动
+
+- `nohup bash baize_posttrain_r2_autofire_chain.sh --rl-eval-chain-pid 2028723 --gpu 7 --port 8095 > /tmp/posttrain_r2_autofire_chain.log 2>&1 &` → **PID 2187312**（父 2187304），log 显示 "Waiting for R0 eval chain (PID 2028723) to finish..."，ALIVE。
+- 触发链：run2(1962541)退出 → 2028723 serve global_step_200 GPU7:8095 → 158题5-run(~12h) → 5run_rl_analysis.json → 2028723 退出 → **2187312 检测→决策门→分支2 自动起 R2**（~1-2h 主训）→ R2 dynamics/cheat_rate.json 落盘 → 后续 R2 eval（待续）。
+
+### E. run2 健康复检（非卡死）
+
+- 实测（23:0x）：2 个 in-flight cline worker 在 `timeout 2500` 下运行（worker_5 etimes2316s→~3min 到顶，worker_4 etimes1456s→~17min 到顶），均正常计时非卡死；stats success=128/fail=7/timeout=20=155/158，3 in-flight；`.task_queue` 已空；codegen.log 仍写入(23:05)。⇒ run2 ~23:22 退出 → 2028723 自动 serve。无需 kill stuck worker。
+
+### 结论与下一步
+- 本轮零 GPU、未碰任何在跑进程（仅起新守护链 2187312）；核心产出 = R2 自动起跑链落地（B）+ 决策门实测全 PASS（C）+ R0 失败模式实证（A）+ chain 启动（D）。
+- 红线 §5.1 contam 0/3347；§5.2 cheat 0/3200；§2/§5.3 协议冻结未改；预注册决策框架先定后测（§R425 C）由 chain 严格执行，非事后合理化；替身预演收益不可迁移 BaiZe。
+- 下一步：① run2 退出→2028723 自动 R0 5-run eval(~12h)→`5run_rl_analysis.json`；② 决策门分流：分支1→里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`；分支2→2187312 自动起 R2+sandbox-exec（追求显著提升主战场）；③ 监控 `/tmp/posttrain_rl_eval_chain.log`（R0 serve）+`/tmp/posttrain_r2_autofire_chain.log`（R2 起跑）+`/tmp/grpo_loop_R2_sandbox_200step.log`（R2 主训）。
+- WAITING=0。
+
