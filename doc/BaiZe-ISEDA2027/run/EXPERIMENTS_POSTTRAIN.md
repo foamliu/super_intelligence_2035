@@ -8849,3 +8849,36 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 - 下一步①：主训跑完取 `global_step_200`（或最新 ckpt）→ vLLM serve → 158 题 5-run mean±std（GPU6 :8096 端口可复用，或新端口）→ vs SFT step105 base≈3.8% 配对检验（McNemar/bootstrap）。
 - 下一步②：R1-R4 接沙盒（隧道已通 wake327）：rollout 后注入 exec_success/assert_results 到 extra_info → compute_score 切 R2-R4，第二段 RL。
 - 下一步③：主训 reward 曲线 / cheat_rate 趋势落 EXPERIMENTS + 报告 `reports/report_posttrain_rl_surrogate_zh.html`（里程碑，标「替身预演」）。
+
+---
+
+## §R414 — wake414 (2026-11-13 19:0x)：主训 RUNNING 健康监控 + 红线核验 + reward 动力学 + 自治 post-RL eval chain 落地
+
+### 1. 主训状态（step 76/200 @ 19:08，GPU7 RUNNING，PID 1887597）
+- 健康：ratio=1.000（ppo_epochs=1 预期），reward 0.85–1.02 稳态，nz=1.00，KL 0.04–0.10（健康正则），gn=0.1–8（梯度非零=有效 policy gradient），~20.3 s/step。
+- ETA：剩 124 步 × ~20.3s ≈ 42min → ~19:50 完成。峰值 39940MiB < 46GB（余 6GB，无 OOM）。
+- ckpt：save_freq=50 → step50 已落盘（HF safetensors + optimizer.pt，14.7GB）；step100/150/200 待出。
+
+### 2. 红线核验（§5.1 / §5.2）
+- **反作弊 §5.2 ✅**：`rl_surrogate_runs/minicpm5_grpo_loop_R0_200step/cheat_rate.json` = `total_rollouts=800, cheat_detected=0, cheat_rate=0.0`（step50 窗口，ngram_size=8，cheat_examples=[]）。主训首个 ckpt 红线 PASS。
+- **污染隔离 §5.1 ✅**：起跑前 contam gate 0/3347（wake413 已验），RL 数据与 158 eval 零重叠；本轮未改训练数据。
+
+### 3. reward 动力学（R0 静态分析/format 奖励，auto-fallback 无沙盒）
+- 76 步统计：first10_mean=**0.6119** → last10_mean=**0.9085** → overall_mean=**0.8412**。曲线：step1–2=0.36–0.38（低起点）→ step3–10 升至 0.28–0.89 → step11–20=0.51–0.96 → step21+ 稳态 0.85–1.02。**reward 上升真实**（非退化：cheat=0、nz=1.00、KL 缓升）。
+- ⚠️ **诚实口径（用户令点 4 / vision v10 教训）**：R0 reward = **格式/静态分析合规**，**不是** 158 题 Pass@1（代码正确性）。reward 升 ≠ EDA 能力升。**真正裁判 = 158 题 5-run mean±std vs SFT step105 配对检验**，本轮已把该 eval chain 自治化（见 §4）。若 GRPO 无 Pass@1 提升/退化，如实记录。
+
+### 4. 自治 post-RL eval chain 落地（本轮新增交付物）
+- 新建 `run/baize_posttrain_rl_eval_chain.sh`（bash -n PASS + --dry-run PASS + --status PASS）。
+- 流程：① wait GRPO PID 1887597 退出（GPU7 释放）② 取 `rl_run_dir` 下最高 `global_step_*` ckpt ③ wait 现有 eval chain PID 1161064 退出（**providers.json 是 5run_eval.sh 每轮重写的单例 → 并发 eval 会互相 clobber，必须串行**）④ `baize_posttrain_sft_surrogate_serve.sh --ckpt <RL> --gpu 7 --port 8095 --name minicpm5-2b-grpo-R0-step<N>` serve ⑤ wait /v1/models 健康 ⑥ 5-run eval（label=grpo_R0_step<N>，冻结协议 158/Pass@1/2500s/-p8 -n）⑦ `baize_posttrain_5run_analysis.py --compare grpo_R0_step<N> step105`（McNemar + paired bootstrap）→ `/tmp/posttrain_5run_eval/5run_rl_analysis.json`。
+- **已后台启动**（PID 1923203，log=/tmp/posttrain_rl_eval_chain.log）：当前在 "Waiting for GRPO training" 阶段。fire-and-forget：训练 ~19:50 完 → 自动 serve+eval+配对检验，无需再唤醒人工触发。
+- SFT step105 基线（配对对照）：3/5 runs done，mean±std=**0.0274±0.0097**（2.74%）；run4/5 由 eval_chain 1161064 续跑中。
+
+### 5. 边界 / 未碰
+- 未碰 GPU0-3（root SGLang）、GPU4/5/6（L4 eval serve）；仅 GPU7 训练。RL eval chain 将在 GPU7 训练结束后复用 GPU7。
+- 标注：**替身预演，收益不可迁移到 BaiZe**。
+
+### 6. 下一步（交由自治 chain + 下轮核）
+- 自治 chain 跑完后下轮核：`/tmp/posttrain_5run_eval/5run_rl_analysis.json` 取 grpo_R0_step200 mean±std + McNemar p + bootstrap CI vs step105。
+- 若有提升→报告 `reports/report_posttrain_rl_surrogate_zh.html`（里程碑）；若 ns/退化→诚实负结果落 EXPERIMENTS + 报告（用户令点 4）。
+- R1-R4 接沙盒（隧道已通）：rollout 后注入 exec_success/assert_results → compute_score 切 R2-R4 第二段 RL（待 R0 全量结论后）。
+
