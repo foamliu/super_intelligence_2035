@@ -10417,3 +10417,40 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 本轮=纯监控，未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5 进程；kill_gpu_serve child-PID bug 待 chain 空闲时修。
 - 下一步：5-run eval 完（autofire 链自动）→ `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`：R2 Pass@1 5-run mean±std vs step105 0.0304±0.0083，McNemar p / 10k bootstrap ci → 显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标替身预演）/ 负则诚实负结果 + 换奖励（§用户令#4，平台化使负分支概率上升）。
 
+
+## §R452 (2026-11-14 wake452) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+> 续 §R451。本轮=纯监控 wake，eval 链全自治，无人工动作。
+
+**实测时间**：2026-11-14 04:41-04:42（autofire chain PID2322797 etime≈04:19h；run1 PID2354149 etime≈03:33h）。
+
+**eval 链健康**：
+- autofire chain PID2322797 存活（etime≈15580s≈04:19h，ppid=1 经 setsid）。
+- eval run1 `run_cline_script.sh` PID2354149 存活（etime≈12788s≈03:33h，run1 已跑 ~3h33m）；父 PID2354141 同 etime（ppid=2322797）。
+- 8 cline worker active（`-p 8`），`.task_queue` 62 行 queue + 8 in-flight = 70 待跑。
+
+**serve 健康**（3 并发 curl /v1/models 全返回预期 id）：
+- GPU4 base:8098 → minicpm5-2B ✅
+- GPU6 step105-final:8096 → minicpm5-2b-sft-v39-final ✅
+- GPU7 R2:8095 → minicpm5-2b-grpo-R2-step200（root=global_step_200）✅
+- GPU7=39246MiB/90%util；GPU4/GPU6=0%util serve 待命。
+
+**GPU5 状态**：GPU5=28062MiB/96%util，被 **vision 线 R9** 占用（**新 run** PID2528838 cpu_rl_v11_regen_experiment.py --model_path /nas_data/app.e0031982/models/Qwen3.5-2B --seed 20261116，etime≈3min；前 run PID2498238 已结束）。按 AGENTS.md vision R9 在 .17，GPU5 非本线资源，本线不碰 vision 进程（边界纪律）。
+
+**run1 进度**（batch_id grpo_R2_step200_run1_2026_1114_010813，dir ~/eda_code_eval/2026_1114_010813）：
+- stats **success=56/failure=5/timeout=27 = 88/158 已完成**（较 wake451 的 83 +5：success+3/fail+0/timeout+2）。
+- `.task_queue` 158→62（62 queue + 8 in-flight）。
+- code/ 96 EDA-Eval 目录（最新 -096）。
+- total_time=91992s（worker 累计）。
+- final_report.json 未生成，5run_rl_analysis_R2.json 未出。
+- ⚠️ 口径诚实：success/failure/timeout=code-gen 阶段计数（cline 报「成功完成」=已生成 .py），非 Pass@1（Pass@1 沙盒断言评分由 run_eval.py run 完后产 final_report.json）。
+
+**0 真实 infra 错误**：chain log（/tmp/posttrain_r2_eval_chain.log）仅 START 行 + pre-teardown 行无错误；CUDA OOM=0。
+
+**速率校准诚实读数**：wake451→452（~13min）83→88（+5，~0.38/min，success+3/fail+0/timeout+2）← **速率回升且 success 恢复增长**（wake450→451 的 success 停滞 53/5 为暂时现象，队列推进到新任务批次后 success 再次移动）；剩余 ~70 任务（62 queue+8 in-flight）；run1 实际或 ~07:30-08:30 完，全 5-run 或延至 11-15（不编造精确 ETA，待下一 wake 校准）。
+
+**观察**：codegen.log 中可见模型自生成文本里出现 `[submit_and_exit]` 伪工具调用 + `error: Invalid input: expected boolean, received undefined → at verified`——属 MiniCPM5 模型在 eval 下的生成行为（模型把 prompt 里的工具调用格式抄进自由文本），非 infra 异常、非本 agent 的 submit_and_exit。
+
+**本轮动作**：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5 进程；kill_gpu_serve child-PID bug 待 chain 空闲时修。
+
+**Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
