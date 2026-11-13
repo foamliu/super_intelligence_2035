@@ -37,6 +37,7 @@ import argparse
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -178,6 +179,22 @@ def _gateway_ok(timeout=6):
         return False
 
 
+def _docker_ok():
+    """Check if the current process can access the Docker socket directly.
+
+    The agent's shell session (launched via ``env -u ... cline``) often lacks the
+    ``docker`` supplementary group even though ``usermod -aG docker`` was done —
+    group membership is evaluated at login time.  When that happens, harbor fails
+    with "Docker daemon is not running".  The fix is to wrap harbor in
+    ``sg docker -c '...'`` so the child picks up the group.
+    """
+    try:
+        r = subprocess.run(["docker", "ps"], capture_output=True, timeout=10)
+        return r.returncode == 0
+    except Exception:
+        return False
+
+
 def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False):
     if not tasks:
         print("[launch] 无 quota_lost 题，跳过")
@@ -227,12 +244,23 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False):
     for k in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY"):
         env.pop(k, None)
 
-    cmd = [
+    harbor_cmd = [
         "nice", "-n", "19", "harbor", "run", "-p", str(subset),
         "--agent", AGENT, "-k", "1", "--n-concurrent", str(n_concurrent),
         "--extra-docker-compose", str(OVERLAY), "--jobs-dir", str(jobs_dir),
     ]
-    print(f"[launch] tasks={len(tasks)} jobs_dir={jobs_dir}")
+    # The agent's shell session often lacks the docker supplementary group
+    # (group membership is evaluated at login time, but the loop starts cline
+    # via `env -u ... cline` which inherits a stripped environment).  Wrap
+    # harbor in `sg docker -c '...'` so the child picks up the group and can
+    # reach /var/run/docker.sock.
+    if _docker_ok():
+        cmd = harbor_cmd
+        docker_wrap = False
+    else:
+        cmd = ["sg", "docker", "-c", " ".join(shlex.quote(c) for c in harbor_cmd)]
+        docker_wrap = True
+    print(f"[launch] tasks={len(tasks)} jobs_dir={jobs_dir} docker_wrap={docker_wrap}")
     print("[launch] " + " ".join(cmd))
     if dry:
         return jobs_dir
