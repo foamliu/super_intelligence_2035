@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **99** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**；**第二十轮 +4：Ankur Srivastava（`ankurs@umd.edu` 已核、已发信；X 未找到）/ Bruce Jacob（邮箱在页面上是图片 ⇒ 不猜；X 未找到）/ Jacob Devlin（`@jacobdevlin` 7 followers、无身份信息 ⇒ 判非本人）/ Ming-Wei Chang（`@mingweichang` 4 followers、0 推文 ⇒ 不登记）**；**第二十一轮 +4：Tim Dettmers `@Tim_Dettmers`（`dettmers@cmu.edu` 取自本人页 `lastname@cmu.edu` 反爬写法，已发信）/ Colin Raffel（无邮箱、`@colinraffel` 404 ⇒ 未找到 X）/ Patrick Lewis `@PSH_Lewis`（主页邮箱为模板占位 ⇒ 不发信）/ Timo Schick `@timo_schick`（主页无邮箱 ⇒ 不发信）**；**第二十二轮 +3：Geoffrey Hinton `@geoffreyhinton`（邮箱取自本人主页 `Email: geoffrey [dot] hinton [at] gmail [dot] com`，已发信）/ Jeff Dean `@JeffDean`（无个人邮箱 ⇒ 不发信）/ Joshua Ainslie（邮箱与 X 均未找到）；另**更正** Arthur Mensch 补上 `@arthurmensch`（bio 自证 Mistral CEO）**；**第二十三轮 +2：Lucas Beyer `@giffmana`（ViT 二作；X bio 自述 `now: Meta`；**邮箱未找到 ⇒ 不发信**）/ Graham Neubig `@gneubig`（CMU LTI 副教授 / `@OpenHandsDev` 联合创始人；邮箱取自 LTI 现行页反爬写法 `gneubig(through)cs.cmu.edu` ⇒ 按页面规则还原，**已发信**）**；**第二十四轮 +2：John Schulman `@johnschulman2`（PPO 一作；`joschu.net` 无邮箱 ⇒ 不发信）· Pieter Abbeel `@pabbeel`（DDPM 三作；`pabbeel@cs.berkeley.edu` 取自 contact 页 ⇒ 已发信）**）｜已发信 **34**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson** · **Ankur Srivastava** · **Geoffrey Hinton** · **Graham Neubig** · **Pieter Abbeel** · **Saining Xie**）｜X 已核验 **59**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`** · **`@Tim_Dettmers`** · **`@PSH_Lewis`** · **`@timo_schick`** · **`@geoffreyhinton`** · **`@JeffDean`** · **`@arthurmensch`** · **`@giffmana`** · **`@gneubig`** · **`@sainingxie`** · **`@danijarh`**）｜X 未找到 / 未核验 **40**（99 人中 59 已核验；`@colinraffel` **404**、`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **24 条**（V1–V24；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，已采用**；**V18 = Jason Wei 2026-11-12 原推，已采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），本期首发**；**V20 = Albert Gu 2026-11-07 原推（`og:description` 全文核验），本期采用**；**V21 = Tim Dettmers 2026-10-18 原推（推文页 `og:title` = `Tim Dettmers (@Tim_Dettmers) on X`，`og:description` 全文已取），下一期首发**；**V22 = Jeff Dean 2026-11-06 原推（`og:title` + `og:description` 全文核验），本期采用**；**V23 / V24 = 第二十五轮候选，均不采用（V23 实为他人推文、V24 为上下文依赖短句）**）
+**本轮快照**：累计 **106** 人（第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**；**第二十轮 +4：Ankur Srivastava（`ankurs@umd.edu` 已核、已发信；X 未找到）/ Bruce Jacob（邮箱在页面上是图片 ⇒ 不猜；X 未找到）/ Jacob Devlin（`@jacobdevlin` 7 followers、无身份信息 ⇒ 判非本人）/ Ming-Wei Chang（`@mingweichang` 4 followers、0 推文 ⇒ 不登记）**；**第二十一轮 +4：Tim Dettmers `@Tim_Dettmers`（`dettmers@cmu.edu` 取自本人页 `lastname@cmu.edu` 反爬写法，已发信）/ Colin Raffel（无邮箱、`@colinraffel` 404 ⇒ 未找到 X）/ Patrick Lewis `@PSH_Lewis`（主页邮箱为模板占位 ⇒ 不发信）/ Timo Schick `@timo_schick`（主页无邮箱 ⇒ 不发信）**；**第二十二轮 +3：Geoffrey Hinton `@geoffreyhinton`（邮箱取自本人主页 `Email: geoffrey [dot] hinton [at] gmail [dot] com`，已发信）/ Jeff Dean `@JeffDean`（无个人邮箱 ⇒ 不发信）/ Joshua Ainslie（邮箱与 X 均未找到）；另**更正** Arthur Mensch 补上 `@arthurmensch`（bio 自证 Mistral CEO）**；**第二十三轮 +2：Lucas Beyer `@giffmana`（ViT 二作；X bio 自述 `now: Meta`；**邮箱未找到 ⇒ 不发信**）/ Graham Neubig `@gneubig`（CMU LTI 副教授 / `@OpenHandsDev` 联合创始人；邮箱取自 LTI 现行页反爬写法 `gneubig(through)cs.cmu.edu` ⇒ 按页面规则还原，**已发信**）**；**第二十四轮 +2：John Schulman `@johnschulman2`（PPO 一作；`joschu.net` 无邮箱 ⇒ 不发信）· Pieter Abbeel `@pabbeel`（DDPM 三作；`pabbeel@cs.berkeley.edu` 取自 contact 页 ⇒ 已发信）**；**第二十五轮 +2：Saining Xie `@sainingxie`（MAE 三作；`saining.xie@nyu.edu` 取自本人页 `data-user`/`data-domain` ⇒ 已发信）· Danijar Hafner `@danijarh`（DreamerV3 一作；`danijar.com` 无邮箱 ⇒ 不发信）**；**第二十六轮 +7：Ian Goodfellow `@goodfellow_ian`（GAN 一作；无邮箱）/ Diederik P. Kingma（Adam 一作；`diederikkingma.com` `000` ⇒ 无邮箱；`@diederikkingma` 17 followers 无 bio ⇒ 不登记）/ Jimmy Ba（Adam 二作 + DreamerV3 三作；主页无邮箱；`@jimmyba` 无账号信息）/ Sergey Ioffe / Christian Szegedy（BN 两作者；均未找到主页与 X）/ David Z. Pan（DREAMPlace 末位；`dpan@ece.utexas.edu` 取自 UT Austin 现行页 ⇒ 已发信）· Jim Fan `@DrJimFan`（Voyager 作者之一；无邮箱）**）｜已发信 **35**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson** · **Ankur Srivastava** · **Geoffrey Hinton** · **Graham Neubig** · **Pieter Abbeel** · **Saining Xie** · **David Z. Pan**）｜X 已核验 **61**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`** · **`@Tim_Dettmers`** · **`@PSH_Lewis`** · **`@timo_schick`** · **`@geoffreyhinton`** · **`@JeffDean`** · **`@arthurmensch`** · **`@giffmana`** · **`@gneubig`** · **`@sainingxie`** · **`@danijarh`** · **`@goodfellow_ian`** · **`@DrJimFan`**）｜X 未找到 / 未核验 **45**（106 人中 61 已核验；`@colinraffel` **404**、`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **24 条**（V1–V24；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，已采用**；**V18 = Jason Wei 2026-11-12 原推，已采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），本期首发**；**V20 = Albert Gu 2026-11-07 原推（`og:description` 全文核验），本期采用**；**V21 = Tim Dettmers 2026-10-18 原推（推文页 `og:title` = `Tim Dettmers (@Tim_Dettmers) on X`，`og:description` 全文已取），下一期首发**；**V22 = Jeff Dean 2026-11-06 原推（`og:title` + `og:description` 全文核验），本期采用**；**V23 / V24 = 第二十五轮候选，均不采用（V23 实为他人推文、V24 为上下文依赖短句）**；**第二十六轮 0 新增**：`@goodfellow_ian` 时间线首条为 pinned 玩笑（GAN-dalf，2026-08-14）、`@DrJimFan` GR00T 2 两条（2026-11-10 / 11）推文页**无 `og:description`**（只有 `og:title` + 页面正文）⇒ 不满足「双源一致」⇒ 均不采用）
 
 
 ---
@@ -1305,6 +1305,111 @@
 
 ---
 
+### 98. Ian Goodfellow
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ian J. Goodfellow（英文写信） |
+| 机构 | **Aisle**（AI 安全研究实验室，本人 X bio 自述 `Co-founder of stealth startup`；论文时期为 **Université de Montréal**，OpenAlex authorships） |
+| 代表论文 | Generative Adversarial Networks（arXiv `1406.2661`，**一作**，B 轨 **#102**） |
+| 邮箱 | **未找到**（无公开个人主页 / CV；未擅自用论文 PDF 上的旧地址） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **@goodfellow_ian**（核验：`x.com/goodfellow_ian` `HTTP 200`，`og:title` = `Ian Goodfellow (@goodfellow_ian) on X`，bio = `Co-founder of stealth startup. Inventor of GANs…` ⇒ 身份自证） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；无邮箱 ⇒ 本轮不发信） |
+| 备注 | GAN 源头作者；近期言论集中在 **AI 安全 / 漏洞发现**（AISLE 宣称一年发现 500+ CVE 零日），与 harness 的 agent 评测、code agent 风险口径有交集。时间线首条 pinned 是玩笑（GAN-dalf）⇒ 🚫 不作 `voice_ready`。 |
+
+---
+
+### 99. Diederik P. Kingma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Diederik P. Kingma（英文写信） |
+| 机构 | OpenAlex authorships 记为 **OpenAI (United States) · University of Amsterdam**（论文时期机构；**现职本轮未核**，不写猜测） |
+| 代表论文 | Adam: A Method for Stochastic Optimization（arXiv `1412.6980`，**一作**，B 轨 **#100**） |
+| 邮箱 | **未找到**（`https://www.diederikkingma.com/` 实测 `000`（DNS 不通）⇒ 无可用公开邮箱） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（`@diederikkingma` 页面 `og:title` = `diederik (@diederikkingma) on X`，但 **bio 为空、17 followers** ⇒ 无身份信息，按纪律**不登记**） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | Adam 是 2B 预训练的默认对照优化器；若后续找到现行主页邮箱，信的三问按 PAPER #100 的「对照表 / spike / 显存」口径写。 |
+
+---
+
+### 100. Jimmy Ba
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jimmy Ba（arXiv 署名 `Jimmy Ba`；OpenAlex 记 `Jimmy Lei Ba`） |
+| 机构 | **University of Toronto**（OpenAlex authorships） |
+| 代表论文 | Adam（arXiv `1412.6980`，**二作**，B 轨 **#100**）· DreamerV3（arXiv `2301.04104`，**三作**，B 轨 **#98**） |
+| 邮箱 | **未找到**（`cs.toronto.edu/~jba/` `HTTP 200` 但仅 486 B，是**跳转页** → `jimmylba.github.io` `HTTP 200` / 25,853 B，页内**无 mailto / 邮箱**） |
+| 主页 | <https://jimmylba.github.io>（实测 `HTTP 200` / 25,853 B） |
+| X 账号 | **未找到 X**（`x.com/jimmyba` 页面 `og:title` = `X`、无账号信息 ⇒ 不猜、不登记） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | 一位作者同时覆盖「优化器（Adam）」与「model-based RL（DreamerV3）」两条线 ⇒ 关系网里价值高于单篇作者。 |
+
+---
+
+### 101. Sergey Ioffe
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sergey Ioffe（英文写信） |
+| 机构 | **Google**（OpenAlex authorships；现职本轮未核） |
+| 代表论文 | Batch Normalization（arXiv `1502.03167`，**一作**，ICML 2015，B 轨 **#101**） |
+| 邮箱 | **未找到**（无公开个人主页；未用论文旧地址） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（未从任何可访问页面读到 handle） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | BN 的机制解释（internal covariate shift）后续有争议 ⇒ 引用时按 PAPER #101 的风险条处理。 |
+
+---
+
+### 102. Christian Szegedy
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Christian Szegedy（英文写信） |
+| 机构 | **Google**（OpenAlex authorships；现职本轮未核） |
+| 代表论文 | Batch Normalization（arXiv `1502.03167`，**二作**，B 轨 **#101**） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（未从任何可访问页面读到 handle） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | 与 Ioffe 同一篇；同论文只发 1 封（若日后拿到 Ioffe 邮箱，Szegedy 不重复发）。 |
+
+---
+
+### 103. David Z. Pan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Z. Pan（OpenAlex 记 `David Zhigang Pan`；UT Austin 教授，EDA 方向） |
+| 机构 | **The University of Texas at Austin, ECE**（OpenAlex authorships） |
+| 代表论文 | DREAMPlace（DAC 2019，DOI `10.1145/3316781.3317803`，**末位作者**，B 轨 **#103**） |
+| 邮箱 | **dpan@ece.utexas.edu**（来源：本人现行主页 `https://users.ece.utexas.edu/~dpan/` 实测 `HTTP 200` / 55,267 B，页内明文 `dpan at ece.utexas.edu` ⇒ 按页面规则还原；**未用论文 PDF 旧地址**） |
+| 主页 | <https://users.ece.utexas.edu/~dpan/>（实测 `HTTP 200` / 55,267 B） |
+| X 账号 | **未找到 X**（`@davidzpan` 页面 `og:title` = `davidzpan (@davidzpan) on X`，但 **0 followers、bio 空** ⇒ 无身份信息，不登记） |
+| 状态 | **已发信**（2026-11-14 06:08 CST，经典论文请教信第 35 封）· X 待 follow（需登录态） |
+| 备注 | 三问直指 designflow / zhulong：① macro 密集设计上 >30× 里 kernel 与优化器的占比（决定砍预算砍哪）② 多 rollout 下最保序的廉价设置（预注册保真度判据）③ 可微松弛在 legalization 前后的失效点与质量差距。 |
+
+---
+
+### 104. Jim Fan（Linxi Fan）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jim Fan（arXiv 署名 `Linxi Fan`） |
+| 机构 | **NVIDIA**（X bio：`NVIDIA Director of Robotics & Distinguished Scientist. Co-Lead of GEAR lab. Solving Physical AGI`） |
+| 代表论文 | Voyager: An Open-Ended Embodied Agent with Large Language Models（arXiv `2305.16291`，**第 7 作者**；本轮只核了 arXiv `id_list` 元数据，未收进 B 轨清单） |
+| 邮箱 | **未找到**（无公开个人主页邮箱） |
+| 主页 | **未找到现行个人主页**（仅 X） |
+| X 账号 | **@DrJimFan**（核验：`x.com/DrJimFan` `HTTP 200`，`og:title` = `Jim Fan (@DrJimFan) on X`，bio 与 NVIDIA 职务一致） |
+| 状态 | **待跟踪**（X 待 follow；无邮箱 ⇒ 不发信） |
+| 备注 | VLA / 具身方向的言论密度高（2026-11-10–11 连发 GR00T 2：端侧运行、权重开源）。⚠️ 这两条推文页**无 `og:description`**，只有 `og:title` + 页面正文 ⇒ 按「双源一致」纪律 **本期不作 `voice_ready`**，等有 `og:description` 或本人博客原文再用。 |
+
+---
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -1335,7 +1440,7 @@
 
 **落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
 
-### 待 follow 清单（请用户手动执行 · 49 个 handle 已在 X 侧二次核验）
+### 待 follow 清单（请用户手动执行 · 51 个 handle 已在 X 侧二次核验）
 
 | # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
 |:--|:--|:--|:--|:--|:--|
@@ -1392,6 +1497,9 @@
 | 47（**第二十四轮新增**） | Pieter Abbeel | `@pabbeel` | <https://x.com/pabbeel> | `200`，`og:title` = `Pieter Abbeel (@pabbeel) / X`，bio = `Berkeley &amp; Amazon` | DDPM 三作；机器人/生成式数据与半自动标注 |
 | 48（**第二十五轮新增**） | Saining Xie（谢赛宁） | `@sainingxie` | <https://x.com/sainingxie> | `200`，bio = `cofounder &amp; chief science officer at @amilabs \| faculty @nyu_courant \| prev: @googledeepmind @meta (fair) @ucsandiego \| ynwa` | MAE 三作（视觉自监督）+ A 轨视觉编码器解耦新文作者 ⇒ **vision / pretrain 两条线的同一交点** |
 | 49（**第二十五轮新增**） | Danijar Hafner | `@danijarh` | <https://x.com/danijarh> | `200`，bio = `Building general agents for the physical world. Prev @GoogleDeepMind @UCBerkeley @UofT` | DreamerV3 一作 ⇒ 世界模型 / model-based RL 的一手来源（zhulong 路线） |
+
+| 50（**第二十六轮新增**） | Ian Goodfellow | `@goodfellow_ian` | <https://x.com/goodfellow_ian> | `200`，`og:title` = `Ian Goodfellow (@goodfellow_ian) on X`，bio = `Co-founder of stealth startup. Inventor of GANs…` | GAN 一作；近期言论集中在 AI 安全 / 漏洞发现 |
+| 51（**第二十六轮新增**） | Jim Fan（Linxi Fan） | `@DrJimFan` | <https://x.com/DrJimFan> | `200`，`og:title` = `Jim Fan (@DrJimFan) on X`，bio = `NVIDIA Director of Robotics &amp; Distinguished Scientist…` | Voyager 作者之一；VLA / 具身方向言论密度高 |
 
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
@@ -1471,6 +1579,8 @@
 
 | 2026-11-14 00:08（**第二十四轮**） | Pieter Abbeel | `2006.11239` DDPM | 主页 frameset `people.eecs.berkeley.edu/~pabbeel/`（`200` / 702 B）→ `contact.html`（`200`）页内明文 `pabbeel AT cs.berkeley.edu`（按页面规则还原；**未用论文 PDF 旧地址**） | `SENT OK`（`pabbeel@cs.berkeley.edu`，**英文 194 词**；🚦 发送前 `wc -w` 已核；UC Berkeley 当日第 1 封；同论文其余 2 位作者不发） |
 | 2026-11-14 03:02（**第二十五轮**） | Saining Xie（谢赛宁） | `2111.06377` MAE | 本人现行主页 `https://www.sainingxie.com/`（`200` / 106,060 B）页内 `<span class="email" data-user="saining.xie" data-domain="nyu.edu">` ⇒ 按页面规则拼装为 `saining.xie@nyu.edu`（同页另给 `saining@amilabs.xyz`；**未用论文 PDF 旧地址**） | `SENT OK`（`saining.xie@nyu.edu`，**英文 197 词**；🚦 发送前 `wc -w` 已核；NYU 当日第 1 封；同论文其余 5 位作者不发） |
+
+| 2026-11-14 06:08（**第二十六轮**） | David Z. Pan | DREAMPlace（DAC 2019，**无 arXiv**，DOI `10.1145/3316781.3317803`） | 本人现行主页 `https://users.ece.utexas.edu/~dpan/`（`200` / 55,267 B）页内明文 `dpan at ece.utexas.edu` ⇒ 按页面规则还原；**未用论文 PDF 旧地址** | `SENT OK`（`dpan@ece.utexas.edu`，**英文 190 词**；🚦 发送前 `wc -w` 已核；UT Austin 当日第 1 封） |
 
 ---
 
