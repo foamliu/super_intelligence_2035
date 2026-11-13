@@ -482,7 +482,15 @@ def reward_r300_scene_weighted(r4_score: float, tool_calls: List[str],
 
     enhanced = r4_score + bonus - penalty
     return max(0.0, min(enhanced, 1.2))
-    """Check if the response follows expected format."""
+
+
+def check_format(solution_str):
+    """Check if the response follows expected format.
+
+    R412 FIX (2026-11-13): this function's ``def`` header was previously lost
+    (its body sat orphaned after ``reward_r300_scene_weighted``'s return), so
+    ``reward_r0_skeleton`` raised NameError on ``check_format``. Restored here.
+    """
     if not solution_str or len(solution_str.strip()) < 10:
         return False
     return len(extract_code_blocks(solution_str)) > 0 or len(extract_tool_calls(solution_str)) > 0

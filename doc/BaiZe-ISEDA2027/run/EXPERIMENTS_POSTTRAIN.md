@@ -8760,3 +8760,44 @@ PYTHON=/home/app.e0031982/code/eda_fastmcp/.venv/bin/python \
 - **verl 0.4.0 GRPO 在本机环境结论性 BLOCKED**：1-GPU（wake409/410, 2x）、2-GPU（wake411）、NCCL 接口修复（wake411）三路均复现同一 WorkerDict init / register-center 握手死锁。根因=verl 0.4.0 `list_named_actors()` 与本机 Ray 命名 actor 可见性不兼容；需 root 才能精确定位。
 - RL 基座依赖已按用户令解除（= MiniCPM5-2B / SFT step105，不再等 BaiZe 基模）；**阻塞在 RL 框架（verl），非基座、非 GPU 数**。
 - 下一动作：换 trl GRPO 或自写 rollout-loop 起跑 RL（脚手架工作）。RL 真正起跑 ETA 待框架切换后重估（smoke 一步）。
+
+## §R412 — wake412 (2026-11-13 18:0x–18:2x): RL 框架切换——自写单进程 GRPO loop 起跑成功（脱离 verl/Ray）+ reward check_format bug 修复
+
+> 🔴 用户令 2026-11-13 13:3x「RL 不再等 BaiZe 基模，直接在 MiniCPM5-2B 上 RL」。wake411 结论：verl 0.4.0 GRPO 结论性 BLOCKED（list_named_actors 命名 actor 可见性死锁，1-GPU/2-GPU/NCCL 三路复现），解法=换框架。本轮执行：写自写单进程 GRPO loop（纯 HF+torch，无 Ray/无 verl/无 torchrun），smoke 3 步起跑成功。
+
+### 0. 决策：自写 rollout-loop（而非 trl）
+- trl GRPOTrainer 未装于两 venv，安装需联网+奖励函数适配+rollout 配置，属额外不确定路径。
+- **自写 loop** 完全脱离 verl Ray colocated 架构（死锁根因），单进程单 GPU，纯 HF transformers + torch，无命名 actor 握手。复用已有 `baize_posttrain_reward_functions.compute_score`（R0 静态自动 fallback）+ `rl_pyaether_synth_v2.parquet`（3347 行）+ SFT step105 ckpt。**最解耦、零联网依赖**。
+
+### 1. 产物
+| 产物 | 路径 | 说明 |
+|:--|:--|:--|
+| 自写 GRPO loop | `run/baize_posttrain_rl_grpo_loop.py`（502 行） | 单进程 GRPO：policy+ref(bf16) → generate G rollouts → compute_score(R0) → 分组优势 → PPO-clipped loss+KL → AdamW → ckpt。--dry-run/--contam-check/--smoke/--reward-arm 等参数化 |
+| 启动脚本 | `run/baize_posttrain_rl_grpo_loop.sh` | CUDA_VISIBLE_DEVICES=GPUS(默认7) + cu124 venv + NCCL/gloo 加固（R-launch-fix4 保留）+ offline env；**取代** verl 路径 `baize_posttrain_rl_grpo_surrogate.sh` |
+| reward check_format bug 修复 | `run/baize_posttrain_reward_functions.py` L487 | `check_format` 的 `def` 头此前丢失（函数体孤立在 `reward_r300_scene_weighted` 的 return 之后）→ `reward_r0_skeleton` L693 调用 raise NameError；**verl 从未跑到此处（死锁在前）故未暴露**。本轮 R0 路径首次执行即触发，已补回 `def check_format(solution_str):` |
+
+### 2. 验证（全部 PASS，证据落盘）
+- `--dry-run`：3347 RL prompts 加载，reward module import OK，配方打印正确 ✅
+- `--contam-check`（红线 §5.1）：`contam gate PASS: 0/3347 RL prompts overlap 158 eval tasks` ✅
+- `--smoke`（GPU7，R0，G=4，B=2，ctx 512/256，3 步，no-KL）：
+  - step1 reward=0.3200±0.2069 nz=0.75 posadv=0.62 **ratio=1.000** gn=5.03 18.7s
+  - step2 reward=0.4625±0.2316 nz=1.00 posadv=0.25 **ratio=1.000** gn=3.00 18.4s
+  - step3 reward=0.4050±0.1326 nz=1.00 posadv=0.38 **ratio=1.000** gn=4.28 17.9s
+  - ckpt `global_step_3` 保存（model safetensors 5GB + optimizer.pt 10GB + tokenizer）✅
+  - `metrics.jsonl` 3 行落盘 ✅；`cheat_rate.json` total=24 cheat=0 rate=0.0（红线 §5.2 ✅）
+  - DONE: "surrogate pre-experiment, gains NOT transferable to BaiZe" ✅
+- **ratio=1.000 证实 old_logp==new_logp（epoch 0 模型未变），GRPO 重要性采样正确**。
+
+### 3. 调试中发现并修复的关键 bug（attn_mask vs loss_mask）
+- 首次 smoke ratio=35791（异常）→ 根因：`_logprobs_from_logits` 用 `prompt_len = full_ids.shape[1] - resp_mask.shape[1]`，而 `mask_batch` 是全长 L（非仅 response 段）→ prompt_len=0 → attention mask 把**prompt 也置 0** → old_logp 在无 prompt 上下文下计算（logprob≈-10.5）；而 update forward 未传 attention_mask（全 attend）→ new_logp≈0 → ratio=exp(0-(-10.5))=36316≈35791。
+- **修复**：分离 `attn_mask`（1=所有真实 token[prompt+response]，0=pad，传给 model forward）与 `loss_mask`（1=仅 response token，选 GRPO loss）；old_logp/ref_logp/update 三处 forward 统一传 `attn_mask`。修复后 ratio=1.000 ✅。
+
+### 4. 资源 / 边界
+- GPU7 单卡（48GB A40）跑 policy(2B bf16 ~4GB)+ref(~4GB)+AdamW states(~8GB)+grads+KV cache，峰值 ~36GB（nvidia-smi 36018MiB），未 OOM ✅
+- 未碰 GPU0-3（root SGLang）；未碰 GPU4/5/6（L4 eval serve，eval_chain/autocomplete/step105-run5 全程存活）；未碰 158 任务数据；未 `git add -A`。
+- smoke 完成后 GPU7=3MiB 释放 ✅
+
+### 5. 下一步（RL 真正起跑）
+- 全量 200 步主训（R0 起步，G=8，B=4，ctx 512/384，kl_coef=0.02，save_freq=50）wall-clock 预估：smoke 18s/step(G=4) → G=8 约 35s/step → 200 步 ≈ 2h。可在 GPU7 单卡起。
+- R1-R4 需沙盒执行结果注入 extra_info（沙盒隧道已通 wake327），下一步接入沙盒 rollout。
+- 诚实口径：RL ckpt 产出后跑 EDA-Eval-PyAether 158 题 5-run mean±std，与 SFT step105 基线配对检验；若无提升/退化如实记录（vision v10 教训）。
