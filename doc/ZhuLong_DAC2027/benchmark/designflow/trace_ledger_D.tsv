@@ -1638,3 +1638,27 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793847734856_th4j1	e0044587	hfeg0plg99	25	waveform	parked		2026-11-13 12:33	r612 peek: NOTFOUND on .75 (session file missing)
 1788936531561_ss3yk	sophiaw	hfeg0plg49	24	schematic_netlist	parked		2026-11-13 12:33	r612 peek: ssh timeout (could not read session)
 1793793264370_yr754	reedchen	hfeg0plg93	36	analog_context	case	EDA-Eval-DesignFlow-VmMcStatOrganize-001	2026-11-13 13:18	
+1792635784586_cew35.messages.json					parked		2026-11-13 13:46	Q&A+codegen: write VerilogA model for DRAM Sense Amp + html doc; from-knowledge no real data file; produce-flavored but weak (L1 codegen not D-produce)
+1793279210844_2hwg3.messages.json					parked		2026-11-13 13:46	Q&A/analysis: analyze mxGraphModel + verilog tap register + lint check on chip_top; not produce
+1793761663299_60z68.messages.json					parked		2026-11-13 13:46	produce-flavored weak: generate HTML drawing 1T1C structure; generic diagram no real EDA data; L1 codegen
+1792978277405_b6wpy.messages.json					parked		2026-11-13 13:46	debug/Q&A: analyze why load_mode_cw/load_mode_cancel update without load modetask (verilog ddr5_timing.sv); not produce
+1789709883198_pozwy.messages.json					parked		2026-11-13 13:46	Q&A: analyze sim.sp smoke test meaning; not produce
+1790063832361_8ncdq.messages.json					parked		2026-11-13 13:46	shell-command: delete T_mBistOsc string in si.inp across dirs (sed one-liner); not D-produce
+1792031706151_kx5aa.messages.json					parked		2026-11-13 13:46	Q&A/config: analyze compare_wave.pl + bsub + launch.json vscode perl debug; not produce
+1792205299313_nvi22.messages.json					parked		2026-11-13 13:46	debug: fix task3_src code errors (util::deck::GenDeck invalid cmd); code-fix not D-produce
+1792212480655_m3k7v.messages.json					parked		2026-11-13 13:46	Q&A: 阅读项目告诉我功能 (project overview); not produce
+1793155078036_mlh1r.messages.json					parked		2026-11-13 13:46	doc-gen: write CDC requirement spec + 整理CDC rpt; doc/template not D-produce
+1791874949334_xqqou.messages.json					parked		2026-11-13 13:46	code-edit Qt C++: modify mainwindow.cpp on_spfMonitor_triggered to read spf.csv; not D-domain
+1793779025630_y6sbk.messages.json					parked		2026-11-13 13:46	single-tool-invocation: open input.fsdb in WaveView; not produce
+1790163512292_nc7lj.messages.json					parked		2026-11-13 13:46	Q&A: 分析桶形移位器功能 from netlist attachments; analysis not produce
+1790556728641_71h31.messages.json					parked		2026-11-13 13:46	code-edit Qt C++: mpqaviewer checkbox Actual Size * shrink; not D-domain
+1793779929975_qx7gd.messages.json					parked		2026-11-13 13:46	single-tool-invocation: open input.fsdb in WaveView (same as y6sbk pattern); not produce
+1793599569505_7865p.messages.json					parked		2026-11-13 13:46	Q&A+doc-edit: read project logic, check docs vs code, modify reports; not D-produce
+1792809428023_ssf1v.messages.json					parked		2026-11-13 13:46	debug/Q&A: check drive_cmdcycle task, rd output delay before mrw (verilog); not produce
+1789460091466_4t4t5.messages.json					parked		2026-11-13 13:46	env/config interactive: simdiag dashboard ssh/launch (27 turns setup); not produce
+1790648107611_n5hh7.messages.json					parked		2026-11-13 13:46	Q&A: explain dumpFSDB.pl/getcsv.pl/vec2verilog.pl/runsim.pl + xrun.log error; not produce
+1791960561119_hmdk2.messages.json					parked		2026-11-13 13:46	produce-flavored borderline: analyze PN_shmoo finesim sim + optimize gen_echarts.py report flow; ask=分析+优化流程 not clean 整理数据; /rundata real data but flow-opt not produce
+1793948261444_w11zv.messages.json					parked		2026-11-13 13:46	code-edit/debug: test compare_wave_new.pl + Chinese->English conversion + find_best_shift; modify-existing not produce
+1793166736510_qirdo.messages.json					parked		2026-11-13 13:46	NOTEXTRACT nturns=0 (tool_result wrapped user text); parked, cannot classify
+1793063065741_mp5ii.messages.json					parked		2026-11-13 13:46	NOTEXTRACT nturns=0 (tool_result wrapped user text); parked, cannot classify
+1793274210459_161pg.messages.json					parked		2026-11-13 13:46	Q&A: explain update_timingarc.py + verilog netlist timing; not produce
