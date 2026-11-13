@@ -804,3 +804,12 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794377619890_0194w	e0047600	hfeg0plg95	220	pg_layout	case	PgRailLabelReplace-001	2026-11-14 06:07	r545 case; pg_layout B档 mock-behavioral; k=14 a-n; ref PASS + 4 neg FAIL; appended EDA-Eval-DesignFlow_C.jsonl L329
 1792135522206_9lnqe	xinqiaoz	10.129.2.11	226	physical_verify	case		2026-11-14 06:42	DummyMvFracCfg-001 delivered; A-faithful physical_verify; 14 assert; k_check==k_rationale==14; self-verify 10/10 + E2E 2/2
 1794480004581_z6z4t	yu23z	hfeg0plg89	158	layout_aether	case	EDA-Eval-DesignFlow-NicapPcellParamExtract-001	2026-11-14 07:25	
+1790218039885_fqzjj	e0041123	hfeg0pjn049	122	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1793929785105_2nezk	xxchen	hfeg0pkn001	133	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1790233170014_92cla	lizwen	hfeg0pkn003	167	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1794386908289_3hd5b	yanxvwei	hfeg0pkn002	136	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1792053544813_f0yt9	panruan	hfeg0plg52	111	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1791768354807_ytvn2	thomasz	hfeg0pkn002	97	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1792115466563_n1b1u	gokuguo	hfeg0plg53	119	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1793877875513_bcf10	ryanr	hfeg0pkn001	101	layout_aether	parked		2026-11-14 07:46	r548 peek reject (non-produce)
+1791946991037_9io52	yan1zh	hfeg0pkn005	108	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
