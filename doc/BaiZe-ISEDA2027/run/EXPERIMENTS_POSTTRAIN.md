@@ -10489,3 +10489,17 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 **本轮动作**：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5 进程；kill_gpu_serve child-PID bug 待 chain 空闲时修。
 
 **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.
+
+---
+
+## §R454 — wake454 (2026-11-14 05:01) 5-run eval RUNNING 健康监控（纯监控，eval 全自治，无人工动作）
+
+**实测** 2026-11-14 05:01:05（hostname s0pgpuap12=.17）：
+- eval 链健康：autofire chain PID2322797 存活（etime≈04:39h）；eval run1 run_cline_script.sh PID2354149 存活（etime≈03:52h）；父 PID2354141（ppid=2322797）；batch_cline.log 见 worker-1/2/6 active（`-p 8`）；.task_queue 51 行（158→51）。
+- 3 并发 serve 全稳：GPU4 base:8098→minicpm5-2B / GPU6 step105-final:8096→minicpm5-2b-sft-v39-final / GPU7 R2:8095→minicpm5-2b-grpo-R2-step200；GPU7=39246MiB/88%util；GPU4/GPU6=0%util serve 待命。
+- 🟢 GPU5=3MiB/0%util（**vision 线 R9 已退出**，GPU5 重新空闲——非本线动作，本线不碰）。
+- run1 进度（dir ~/eda_code_eval/2026_1114_010813）：stats **success=64/failure=5/timeout=30 = 99/158**（较 wake453 的 94 +5：success+4/fail+0/timeout+1）；code/ 110 EDA-Eval 目录(最新 -110)；total_time=102501s；final_report.json 未生成；5run_rl_analysis_R2.json 未出。⚠️ success/failure/timeout=code-gen 阶段计数，非 Pass@1。
+- 0 真实 infra 错误：chain log 仅 START+pre-teardown 行无错误；CUDA OOM=0；batch_cline.log 最新 04:59 worker-6 开始任务 107 健康推进。
+- 速率校准：wake453→454（~11min）94→99（+5，~0.45/min，success+4/timeout+1）← success 继续增长；剩余 ~59 任务（51 queue+~8 in-flight）；run1 或 ~06:30-08:00 完（不编造精确 ETA）。
+- 本轮动作：未编辑运行中脚本/未碰 GPU0-3/GPU4/GPU6 既有 serve/eval 链/未碰 vision GPU5（已自行退出）；kill_gpu_serve child-PID bug 待 chain 空闲时修。wake453 已归档指针化（体积维护）。
+- **Next**：5-run eval 完（autofire 链自动）→5run_rl_analysis_R2.json→R2 Pass@1（vs step105 0.0304±0.0083，McNemar+bootstrap）→显著则里程碑报告 `reports/report_posttrain_rl_surrogate_zh.html`（标「替身预演」）/负则诚实负结果+换奖励（§用户令#4）。WAITING=0.

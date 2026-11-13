@@ -1,0 +1,19 @@
+{
+  "version": "v11",
+  "n_seeds_loaded": 3,
+  "mean_acc": {
+    "direct": 0.2222222222222222,
+    "augment": 0.20833333333333334,
+    "synthesis": 0.13194444444444445
+  },
+  "mean_rel_err": {
+    "direct": 0.6324482594507147,
+    "augment": 0.49241247566763796,
+    "synthesis": 4.557303818925203
+  },
+  "gain_augment_vs_direct": -0.013888888888888867,
+  "gain_synthesis_vs_direct": -0.09027777777777776,
+  "sig_aug_seeds": 0,
+  "sig_syn_seeds": 0,
+  "final_verdict": "NO GENERATIVE ADVANTAGE (negative result: do not pursue generative route this period)"
+}
