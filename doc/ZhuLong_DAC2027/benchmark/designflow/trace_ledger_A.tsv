@@ -535,3 +535,5 @@
 1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	18	digital	parked		2026-11-14 11:55	r509 doc-gen Q&A: summarize perl script acc_auto_connect.pl functionality+validation+common-issues. rtl:43;verilog:30 keyword假阳, user明示'总结'非produce-task
 1792717840232_bx87p.messages.json	adaml	hfeg0pkn002	18	eda_other	parked		2026-11-14 11:55	r509 usage Q&A: check python packages for data-analysis/plotting. rtl:34 keyword假阳, env-inspection非produce-task
 1794394549939_ia08o.messages.json	xy1zhang	hfeg0pgn145	24	verification	parked		2026-11-14 11:55	r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但user明示'分析退出原因'非produce-task
+1791266472578_d7u53.messages.json	adminai	hfeg0pkn004	29	eda_other	parked		2026-11-14 12:39	r512 peek: ObsidianVault 运维项目 scaffolding + mwxi 账号可见 file-perm, infra/doc-gen non-EDA, rtl kw from workspace
+1792046360526_bbflu.messages.json	e0046686	hfeg0pkn005	22	eda_other	parked		2026-11-14 12:39	r512 peek: README 3.1 代码块 markdown 渲染优化, doc-gen non-EDA, verilog kw from workspace
