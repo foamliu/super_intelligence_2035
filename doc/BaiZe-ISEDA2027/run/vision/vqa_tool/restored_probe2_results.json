@@ -1,0 +1,368 @@
+{
+ "probe": "preliminary VQA capability on designflow-restored waveview cases (round 2: a1/b8/b11)",
+ "scope_note": "regenerated faithful PNGs from documented params; NOT the official #3 comparison",
+ "vqa_server": "http://127.0.0.1:30001",
+ "model": "Qwen3.5-2B (native VL)",
+ "baseline_textonly": "0/3 cases FAIL (designflow r650/r653/r655: 2B text-only, no submit.zip)",
+ "cases": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "tag": "a1",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/restored_probe_images/eye_sweep_A.png",
+   "oracle": {
+    "optimal_vref": 100.0,
+    "aperture_width_ps": 56.99,
+    "skew_ps": 5.38,
+    "height_mV": 180.0
+   },
+   "tolerances": {
+    "optimal_vref": 0.0,
+    "aperture_width_ps": 3.0,
+    "skew_ps": 2.0,
+    "height_mV": 15.0
+   },
+   "baseline_textonly": "FAIL (designflow r650: 2B text-only, no submit.zip)",
+   "results": [
+    {
+     "key": "optimal_vref",
+     "question": "This figure has 3 stacked panels vs VREF: top=max_width(ps), middle=eye_height(mV) with a dashed threshold at 100, bottom=skew(ps) with a dashed threshold at 15. A valid VREF requires skew<=15 AND eye_height>=100. Among the VALID VREF points, which VREF gives the MAX width? Just the number.",
+     "answer": "We are given three stacked plots vs VREF (in mV):\n\n- **Top plot**: `max_width(ps)` — blue line with circles.\n- **Middle plot**: `eye_height(mV)` — red line with squares. There’s a **dashed threshold at 100 mV**.",
+     "elapsed_s": 2.088,
+     "ok": true,
+     "gold": 100.0,
+     "got": 100.0,
+     "tol": 0.0,
+     "pass": true
+    },
+    {
+     "key": "aperture_width_ps",
+     "question": "At that optimal valid VREF, what is the max_width (aperture) value in ps shown on the top panel? Just the number.",
+     "answer": "Looking at the top panel of the plot titled “Eye aperture sweep vs VREF”, we are to find the **max_width (ps)** value at the **optimal valid VREF**.\n\nFrom the middle panel (“eye_height (mV)”), we can see that the red line (which likely corresponds to max",
+     "elapsed_s": 2.034,
+     "ok": true,
+     "gold": 56.99,
+     "got": null,
+     "tol": 3.0,
+     "pass": false
+    },
+    {
+     "key": "skew_ps",
+     "question": "At that optimal valid VREF, what is the skew value in ps shown on the bottom panel? Just the number.",
+     "answer": "Looking at the bottom panel (skew vs VREF), we can see that the skew value reaches its minimum at VREF = 100 mV, where the green triangle marker is at approximately **5 ps**.\n\nThis is the lowest point on the curve, indicating the optimal valid VREF for minimizing skew",
+     "elapsed_s": 2.065,
+     "ok": true,
+     "gold": 5.38,
+     "got": 100.0,
+     "tol": 2.0,
+     "pass": false
+    },
+    {
+     "key": "height_mV",
+     "question": "At that optimal valid VREF, what is the eye_height value in mV shown on the middle panel? Just the number.",
+     "answer": "Looking at the middle panel (eye_height vs VREF), we can see that the red line peaks at VREF = 100 mV, where the eye_height value is approximately **180 mV**.\n\nThe question asks for the eye_height value at that optimal valid VREF — which is clearly",
+     "elapsed_s": 2.027,
+     "ok": true,
+     "gold": 180.0,
+     "got": 100.0,
+     "tol": 15.0,
+     "pass": false
+    }
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "tag": "b8",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/restored_probe_images/wv_sigs_A.png",
+   "oracle": {
+    "clk_type": "periodic",
+    "clk_n_transitions": 10,
+    "clk_period_ns": 2.0,
+    "clk_duty": 0.2,
+    "rst_n_type": "reset",
+    "rst_n_n_transitions": 1,
+    "data_type": "bus",
+    "data_n_levels": 4,
+    "vref_type": "ramp",
+    "vref_vmax": 1.0,
+    "sel_type": "pulse",
+    "sel_n_pulses": 2
+   },
+   "tolerances": {
+    "clk_n_transitions": 1,
+    "clk_period_ns": 0.25,
+    "clk_duty": 0.12,
+    "rst_n_n_transitions": 0,
+    "data_n_levels": 0,
+    "vref_vmax": 0.07,
+    "sel_n_pulses": 0
+   },
+   "baseline_textonly": "FAIL (designflow r653: 2B text-only, no submit.zip)",
+   "results": [
+    {
+     "key": "clk_type",
+     "question": "Look at the top subplot labeled 'clk'. Is it 'periodic', 'reset', 'bus', 'ramp', or 'pulse'? One word.",
+     "answer": "pulse",
+     "elapsed_s": 0.482,
+     "ok": true,
+     "gold": "periodic",
+     "pass": false
+    },
+    {
+     "key": "clk_n_transitions",
+     "question": "In the top 'clk' subplot over [0,10ns], how many rising+falling transitions (edges) are there? Just the integer.",
+     "answer": "To count the **rising + falling transitions** (edges) in the `clk` signal over [0, 10 ns], we look at how many times the signal changes from 0→1 or 1→0.\n\nLooking at the `clk` trace:\n\n- From t=0 to t",
+     "elapsed_s": 2.197,
+     "ok": true,
+     "gold": 10,
+     "got": 0.0,
+     "tol": 1,
+     "pass": false
+    },
+    {
+     "key": "clk_period_ns",
+     "question": "In the top 'clk' subplot, what is the period in ns? Just the number.",
+     "answer": "Looking at the top subplot labeled **clk**:\n\n- The clock signal is a square wave.\n- It goes from high (1.0) to low (0.0) at approximately **t = 0.5 ns**.\n- It returns to high (1.0) at approximately **t =",
+     "elapsed_s": 2.167,
+     "ok": true,
+     "gold": 2.0,
+     "got": 1.0,
+     "tol": 0.25,
+     "pass": false
+    },
+    {
+     "key": "clk_duty",
+     "question": "In the top 'clk' subplot, what is the duty cycle (fraction high, 0 to 1)? Just the number.",
+     "answer": "0.5",
+     "elapsed_s": 0.551,
+     "ok": true,
+     "gold": 0.2,
+     "got": 0.5,
+     "tol": 0.12,
+     "pass": false
+    },
+    {
+     "key": "rst_n_type",
+     "question": "Look at the subplot labeled 'rst_n'. Is it 'periodic', 'reset', 'bus', 'ramp', or 'pulse'? One word.",
+     "answer": "reset",
+     "elapsed_s": 0.491,
+     "ok": true,
+     "gold": "reset",
+     "pass": true
+    },
+    {
+     "key": "rst_n_n_transitions",
+     "question": "In the 'rst_n' subplot, how many transitions (edges) are there? Just the integer.",
+     "answer": "Looking at the 'rst_n' subplot (second from top):\n\n- The signal starts at 0.0.\n- At approximately **t = 1 ns**, it transitions from 0.0 to 1.0 → **1st transition**\n- It remains at 1.0 until about",
+     "elapsed_s": 2.286,
+     "ok": true,
+     "gold": 1,
+     "got": 0.0,
+     "tol": 0,
+     "pass": false
+    },
+    {
+     "key": "data_type",
+     "question": "Look at the subplot labeled 'data'. Is it 'periodic', 'reset', 'bus', 'ramp', or 'pulse'? One word.",
+     "answer": "pulse",
+     "elapsed_s": 0.491,
+     "ok": true,
+     "gold": "bus",
+     "pass": false
+    },
+    {
+     "key": "data_n_levels",
+     "question": "In the 'data' subplot, how many distinct voltage levels does the signal take? Just the integer.",
+     "answer": "Looking at the 'data' subplot:\n\n- The signal starts at approximately **0.3** (low level).\n- Then it jumps to **1.0** (high level).\n- Then it drops back to **0.0** (low level).\n- Then it rises again to about **",
+     "elapsed_s": 2.164,
+     "ok": true,
+     "gold": 4,
+     "got": 0.3,
+     "tol": 0,
+     "pass": false
+    },
+    {
+     "key": "vref_type",
+     "question": "Look at the subplot labeled 'vref'. Is it 'periodic', 'reset', 'bus', 'ramp', or 'pulse'? One word.",
+     "answer": "ramp",
+     "elapsed_s": 0.513,
+     "ok": true,
+     "gold": "ramp",
+     "pass": true
+    },
+    {
+     "key": "vref_vmax",
+     "question": "In the 'vref' subplot, what is the maximum voltage in Volts? Just the number.",
+     "answer": "Looking at the 'vref' subplot:\n\n- The y-axis ranges from 0.0 to 1.0.\n- The red line (vref) starts at 0.0 and increases linearly to 1.0 at time = 10 ns.\n- Therefore, the maximum",
+     "elapsed_s": 2.188,
+     "ok": true,
+     "gold": 1.0,
+     "got": 0.0,
+     "tol": 0.07,
+     "pass": false
+    },
+    {
+     "key": "sel_type",
+     "question": "Look at the subplot labeled 'sel'. Is it 'periodic', 'reset', 'bus', 'ramp', or 'pulse'? One word.",
+     "answer": "pulse",
+     "elapsed_s": 0.496,
+     "ok": true,
+     "gold": "pulse",
+     "pass": true
+    },
+    {
+     "key": "sel_n_pulses",
+     "question": "In the 'sel' subplot, how many pulses (high windows) are there? Just the integer.",
+     "answer": "Looking at the 'sel' subplot (bottom panel), we observe a purple waveform that is high (1.0) during specific time intervals and low (0.0) otherwise.\n\nThe high windows (pulses) occur at approximately:\n\n- From ~1.5 ns to ~2.5 ns →",
+     "elapsed_s": 2.303,
+     "ok": true,
+     "gold": 2,
+     "got": 1.0,
+     "tol": 0,
+     "pass": false
+    }
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "tag": "b11",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/restored_probe_images/sim_fail_A.png",
+   "oracle": {
+    "fail_time_ns": 1363.0,
+    "root_cause": "Q_force_x_stuck_high",
+    "edge_signal": "test_violation_clk",
+    "edge_count": 4,
+    "Q_valid_at_fail": 0.0,
+    "Q_force_x_at_fail": 1.0,
+    "test_op_type_at_fail": 4.0,
+    "test_violation_pos_at_fail": 0.0
+   },
+   "tolerances": {
+    "fail_time_ns": 1.0,
+    "edge_count": 0,
+    "Q_valid_at_fail": 0.0,
+    "Q_force_x_at_fail": 0.0,
+    "test_op_type_at_fail": 0.0,
+    "test_violation_pos_at_fail": 0.0
+   },
+   "baseline_textonly": "FAIL (designflow r655: 2B text-only, no submit.zip)",
+   "results": [
+    {
+     "key": "fail_time_ns",
+     "question": "Look at the 'Q_valid' subplot. At what time (in ns) does Q_valid drop from 1 to 0 (the failure time)? Just the number.",
+     "answer": "Looking at the 'Q_valid' subplot:\n\n- The signal starts at 1.0 (valid) from time ≈ 1340 ns.\n- It remains at 1.0 until approximately **1363 ns**.\n- At **1363 ns**, it drops to",
+     "elapsed_s": 2.344,
+     "ok": true,
+     "gold": 1363.0,
+     "got": 1.0,
+     "tol": 1.0,
+     "pass": false
+    },
+    {
+     "key": "Q_valid_at_fail",
+     "question": "At the failure time, what is the value of Q_valid (0 or 1)? Just the integer.",
+     "answer": "1",
+     "elapsed_s": 0.641,
+     "ok": true,
+     "gold": 0.0,
+     "got": 1.0,
+     "tol": 0.0,
+     "pass": false
+    },
+    {
+     "key": "Q_force_x_at_fail",
+     "question": "Look at the 'Q_force_x' subplot. At the failure time, what is its value (0 or 1)? Just the integer.",
+     "answer": "1",
+     "elapsed_s": 0.608,
+     "ok": true,
+     "gold": 1.0,
+     "got": 1.0,
+     "tol": 0.0,
+     "pass": true
+    },
+    {
+     "key": "test_op_type_at_fail",
+     "question": "Look at the 'test_op_type' subplot. At the failure time, what is its value? Just the number.",
+     "answer": "1",
+     "elapsed_s": 0.605,
+     "ok": true,
+     "gold": 4.0,
+     "got": 1.0,
+     "tol": 0.0,
+     "pass": false
+    },
+    {
+     "key": "test_violation_pos_at_fail",
+     "question": "Look at the 'test_violation_pos' subplot. At the failure time, what is its value? Just the number.",
+     "answer": "0.0",
+     "elapsed_s": 0.68,
+     "ok": true,
+     "gold": 0.0,
+     "got": 0.0,
+     "tol": 0.0,
+     "pass": true
+    },
+    {
+     "key": "edge_signal",
+     "question": "Which signal is a periodic square wave (clock) with multiple rising edges across the window: 'Q_valid', 'test_op_type', 'Q_force_x', 'test_violation_pos', 'test_violation_clk', 'BYP_eff', or 'test_mode'? One word.",
+     "answer": "test_violation_clk",
+     "elapsed_s": 0.713,
+     "ok": true,
+     "gold": "test_violation_clk",
+     "pass": true
+    },
+    {
+     "key": "edge_count",
+     "question": "In that periodic clock subplot, how many rising edges are there in the window? Just the integer.",
+     "answer": "Looking at the subplot labeled `test_violation_clk`, we can observe a periodic square wave.\n\nRising edges occur when the signal transitions from 0.0 to 1.0.\n\nLet’s count them:\n\n- From ~1342 to ~1346: rising edge at",
+     "elapsed_s": 2.295,
+     "ok": true,
+     "gold": 4,
+     "got": 0.0,
+     "tol": 0,
+     "pass": false
+    },
+    {
+     "key": "root_cause",
+     "question": "The root cause is the signal that changes AT the failure time and stays changed. Is it 'Q_force_x_stuck_high' or 'test_violation_pos_asserted'? One phrase.",
+     "answer": "Q_force_x_stuck_high",
+     "elapsed_s": 0.762,
+     "ok": true,
+     "gold": "Q_force_x_stuck_high",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "summary": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "tag": "a1",
+   "n_qty": 4,
+   "correct": 1,
+   "acc": 0.25,
+   "baseline": "FAIL (0 deliverable)"
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "tag": "b8",
+   "n_qty": 12,
+   "correct": 3,
+   "acc": 0.25,
+   "baseline": "FAIL (0 deliverable)"
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "tag": "b11",
+   "n_qty": 8,
+   "correct": 4,
+   "acc": 0.5,
+   "baseline": "FAIL (0 deliverable)"
+  }
+ ],
+ "overall": {
+  "n_cases": 3,
+  "n_qty": 24,
+  "correct": 8,
+  "acc": 0.3333
+ }
+}

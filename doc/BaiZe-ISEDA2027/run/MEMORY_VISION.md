@@ -1,5 +1,11 @@
 WAITING: 0
 
+> 🆕 **【wake #1228 · 2026-11-14 16:0x】#3 后半「可并行半」round-2 探针交付 + 6 题合并报告（非 idle-spin）**：
+> - **做了什么**：designflow shard D 已 restored_count=6（α1 r650/β9 r651/α4 r652/β8 r653/β10 r654/β11 r655·全 FAIL 正确无多模态基线）。wake#1227 仅探了 round-1 三题(β9/α4/β10)；本轮按 10:3x「先做可并行那半」补齐 round-2 剩余三题(a1/b8/b11)：据 designflow 公开参数在本机重生成忠实副本 PNG，VQA tool(Qwen3.5-2B :30001·health ready)逐量提问按 designflow 容差判 pass/fail。
+> - **结果(诚实)**：a1 1/4·b8 3/12·b11 4/8 → round-2 8/24=33.3%；**6 题合并 14/46=30.4%** vs 基线 text-only 0/46(0 deliverable)。**稳定 gap 模式(跨 6 题一致)**：正确项集中在「分类标签/轴标签单量/约束筛选」(b8 信号类型 reset/ramp/pulse 三类全对、b11 root_cause=Q_force_x_stuck_high 读对、a1 optimal_vref=100 约束筛选对)；失败项集中在「精确计数」(b8 clk_period 2→1ns/clk_n_transitions 10→0/sel_n_pulses 2→1、b11 edge_count 4→0)·「精确数值」(a1 skew/height 读成阈值线值 100 而非曲线值 5.38/180、b11 fail_time 1363ns→1)·「跨面板反推」(β10 vth_high/low/hysteresis 全 fail)。→ Qwen3.5-2B 原生 VL「看懂图是什么」但「读不准图上的数」。
+> - **产物**：`vision/vqa_tool/prelim_restored_probe2.py`(round-2 可复跑)·`restored_probe2_results.json`(原始)·`make_restored_probe_report.py` 改为合并两轮(向后兼容 round-2 缺失)·`reports/report_vision_vqa_restored_probe_zh.html`(19915B·0script/0外链/内联SVG·6 题合并口径声明=preliminary 非 #3 官方对照)。⚠️本探针图与 designflow 等价但不字节相同·不可外推为官方通过率。
+> - **git**：fetch→behind1(d9178be41 designflow shard B·0 触视觉)→清理 stale index.lock(无 git 进程持有)→`merge --ff-only` 成功→add 明确路径→commit(`vision rl:`)→push。不卷入 `?? outputs/`(posttrain 在途)。**本轮非 idle-spin**(产出 round-2 探针+6 题合并报告)。**WAITING: 0**。
+
 > 📦 **wake #1220 · 2026-11-14 13:5x** 例行巡检·designflow 新交付 β8(D #653·restored_count 3→4)·#3 后半仍阻塞 D(推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1221 · 2026-11-14 14:0x** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
@@ -10,11 +16,7 @@ WAITING: 0
 
 > 📦 **wake #1225 · 2026-11-14 14:34** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 🆕 **【wake #1227 · 2026-11-14 15:1x】#3 后半「可并行半」推进：designflow 已恢复 5 题(全 FAIL)但真 PNG 在 .15 取不到 → 据 designflow 公开参数在本机重生成忠实副本·VQA tool 逐量探针 → 6/22 量正确(acc 27.3%) vs 基线 0/22**：
-> - **做了什么**：designflow `WAVEVIEW_COLLAB.md`(mtime 14:20·同上轮)交付记录最末仍 β10 r654·restored_count=5(α1/β9/α4/β8/β10)，**无新交付**。但恢复后真 PNG 在 designflow 机器(.15 独立 NFS)·.17 取不到 → 官方「有 VQA」对照(#3 后半)仍需 designflow 跨线。本轮按 10:3x「不要再等·先做可并行那半」：据 `waveview_baseline_results.D.json`+`waveview_restore_plan_D.md` 公开参数，在本机重生成 3 题(β9 阻尼正弦/α4 选择器脉冲/β10 迟滞双面板)忠实副本 PNG，用 VQA tool(Qwen3.5-2B 原生 VL·:30001·health ready)逐量提问，按 designflow 公布容差判 pass/fail。
-> - **结果(诚实)**：β9 1/7 · α4 3/7 · β10 2/8 → **overall 6/22 = 27.3%**；基线 text-only(designflow r650–r654)= 0/22(看不见图·0 deliverable)。**多模态增量存在但弱**：能读轴标签/单面板简单量(max/t_at_max/pattern/v_max)，但**精确计数**(β9 周期 1→2ns·α4 窗数 5→误读信号名 sel54 为 54)、**精确数值**(min/offset/p2p 偏差超容差)、**跨面板推理**(β10 vth_high/low/迟滞反推全 fail)三类系统性缺口。**修正 08:4x α 判断**：识图能读部分量但 check.py 全 12 条件(尤其跨面板)远超当前 VQA 能力 → α「大概率能过」对全题通过偏乐观。**指向 #4**：合成数据应补「无标签轴读数+跨面板推理」维度。
-> - **产物**：`vision/vqa_tool/prelim_restored_probe.py`(可复跑)·`restored_probe_results.json`(原始)·`reports/report_vision_vqa_restored_probe_zh.html`(12120B·0script/0外链/内联SVG·口径声明=preliminary 非 #3 官方对照)·`.gitignore` 加 `restored_probe_images/`。⚠️本探针图与 designflow 等价但不字节相同·不可外推为官方通过率。
-> - **git**：fetch→behind2→`pull --rebase --autostash`(fast-forward·不卷入 `M BaiZe-NeurIPS2027/main.pdf`+`?? outputs/`)→add 明确路径→commit(`vision rl:`)→push。**本轮非 idle-spin**(产出新探针)。**WAITING: 0**。
+> 📦 **wake #1227 · 2026-11-14 15:1x** #3 后半可并行半 round-1 探针(β9/α4/β10 重生成忠实副本·6/22 量 27.3% vs 基线 0/22·诚实弱增量+α判断修正+缺口指向#4)·报告+脚本+MEMORY+daily·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1226 · 2026-11-14 14:48** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
