@@ -1740,3 +1740,13 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794443509716_lqshz	e0046686	hfeg0plg74	38	schematic_netlist	parked		2026-11-14 08:24	r641 skill-driven file-organization (structured-file-output skill) not produce
 1794377900782_v2lci	shanliny	hfeg0plg78	47	schematic_netlist	parked		2026-11-14 08:24	r641 continuation rc_viz->xlsx env-dep + near-dup user shanliny=r624
 1793070301949_21ltn	thomasz	hfeg0pkn002	17	schematic_netlist	parked		2026-11-14 08:24	r641 Q&A run.py waveform-usage inspection not produce
+1793775784925_ps0zi	rongjiez	hfeg0pkn005	13	schematic_netlist	parked		2026-11-14 08:45	thin script edit (remove 1 sed line in testcase_copy.sh) + near-dup user rongjiez/compare_wave family (r640); too thin for 8+ check conds
+1793686972994_l9sqg	rongjiez	hfeg0pkn005	12	waveform	parked		2026-11-14 08:45	code comparison Q&A (compare_wave new vs old skip handling) + near-dup user rongjiez/compare_wave (r640); Q&A non-produce
+1793082430174_aihrj	amberh	hfeg0plg67	28	schematic_netlist	parked		2026-11-14 08:45	how-to Q&A 'aether如何点亮电路中的线'; non-produce
+1791972643413_0uitr	thomasz	hfeg0pkn002	29	analog_context	parked		2026-11-14 08:45	debug Q&A '看下为啥报错了' ESD log; non-produce
+1793675048268_3j9q3	t0003117	hfeg0pkn001	11	schematic_netlist	parked		2026-11-14 08:45	GUI trivial '打开ddcpb_top-LP5TOP-schematic'; non-produce single-open
+1794462985990_5wkof	t0002912	hfeg0pkn003	39	schematic_netlist	parked		2026-11-14 08:45	onboarding chat '新手什么都不会'; non-produce intro session
+1789976010780_vx8hm	liyingw	hfeg0plg07	78	analog_context	parked		2026-11-14 08:45	unparseable head (msgs after 140KB), cmos:984+synopsys:97 likely TCAD/Q&A; non-portable
+1793584084303_053hy	mwxi	hfhds228	11	schematic_netlist	parked		2026-11-14 08:45	system disk diagnostics infra (diag_disk_101 ssh root /var/log/messages); wrong domain non-EDA
+1794531688278_q3i8d	curryxu	hfeg0pkn002	11	schematic_netlist	parked		2026-11-14 08:45	skill-path paste '/home/adaml/.cline/skills/virtuoso-sch-editor'; skill-load non-produce
+1793601917510_4rd17	e0027673	hfeg0pkn001	10	waveform	parked		2026-11-14 08:45	skill-creator driven ('/model' + skill_instructions skill-creator); skill-infra non-user-produce
