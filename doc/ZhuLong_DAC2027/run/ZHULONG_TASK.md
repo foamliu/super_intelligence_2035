@@ -183,6 +183,38 @@ grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_<TAG>_r<N>.log | tail -5
 
 ### 步骤 0（PHASE=init）
 1. infra 三项校验（见运维指令区）：`/home` 磁盘 ≥~8G + 8664/8665/8653/8669 全 OPEN + `run_code` 可执行。
+
+### 🔴 用户令 · 2026-11-14 10:2x（**取消所有「红线」——那些是运维助手加戏加出来的，不是用户要求**）· 未完成 · 最高优先
+
+> **用户原话**：「zhulong：没有红线，都是运维助手加戏加出来的。全部去掉。」
+
+**一、处置**
+
+1. **删除「红线」这一提法**：本任务书里所有标注「红线」的条目（含 §P1/P2/P3 的 `**红线**：` 段、§代理自检的 `**红线**：` 段等），把标题词去掉。
+2. **其中真正的操作纪律，改称为「纪律」并保留内容**（这些本身是对的，不是加戏）：
+   - 不改 benchmark / 评分器
+   - 不删旧结果与 trace
+   - 不 kill 编排器 / loop
+   - 不把 proxy / reward 当能力（真实裁判 = Pass@1）
+3. **🚫 取消「不与 designflow 并发抢沙盒」这条阻塞**：
+   - 现状是它把本线**卡死**了——wake#922 已查明 subagent 完全可跑（smoke 3074b：`n_msgs=15`、`finishReason=completed`、`in/out tokens=92836/2026`），两个根因都是**配置级**（`-p 8` 并发竞态 / `providerId` 误用），却因为「等沙盒空闲」一直没跑 confirmatory smoke。
+   - **处理方式**：沙盒端口/资源**冲突时自行协调或换端口/排队**，而不是无限期等待。允许与 designflow 并行，只要不互相破坏（各用各的端口、各自 data-dir）。
+4. **同步清理 MEMORY 与 reanalysis 文档里的「红线」措辞**（`MEMORY_ZHULONG.md`、`run/subagent_reanalysis_findings.md` 中「红线内可修」「守红线」「红线复检」等），改为「纪律」或直接陈述事实。
+
+**二、立即执行的实质工作（去掉红线后不该再有理由拖延）**
+
+1. **跑 confirmatory smoke**：验证「降并发（`-p 1`/`-p 2`）」或「per-task data-dir 隔离」能否复现 smoke 3074b 的成功。
+2. 若 smoke 通过 → **修根因 B**（`researcher.yaml` 的 `providerId` 改为 `openai-compatible` + doubao model/key 配置），再验 doubao 三臂。
+3. 两处都通过 → 按预注册判据进 P1 重跑，给出调用率与 Pass@1。
+
+**三、不变的部分**
+
+- **判据不许事后改**（预注册的 H1/H2/H3、go/no-go 阈值保持原样）。
+- 心跳、成本记录、trace 归档照旧。
+- 🚫 删除「红线」不等于允许破坏：**不删旧结果、不改评分器、不 kill loop** 仍然有效——只是不叫红线。
+
+---
+
    - 不满足 → `WAITING=1` 原地等，退出（下轮复检）。
 2. canary：故意触发一次应被拒的调用，确认反作弊 PreToolUse hook 生效；**未被拒 → 立即停，本批作废**。
 3. 切 `S1.omega_low` → 启动 r1 → `PHASE=running`、`WAITING=1`。
