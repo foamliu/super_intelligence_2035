@@ -94,12 +94,12 @@ whose underlying design assets have been approved for external publication are
 prioritized, so that the Lite set can be fully released without confidentiality
 constraints. The Lite set is intended as the default evaluation surface for new
 agents; the Full set remains available for organizations that can access the
-full asset inventory.
+full asset inventory. The releaseability filter is applied per domain: waveform/eye-diagram tasks whose original intent requires unreleasable private figures are included only in their restorable surrogate form (sandbox-regenerated figures, Section~\ref{sec:repro-details}); layout-domain mock-behavioral fixtures are releasable as pure-Python assets; and spice/characterization tasks with foundry-PDK dependency are included via sanitized model-library copies where release is approved.
 % \textbf{Lite 集}。为支持高效的日常评测与外部复现，我们从 Full 集中按三个维度筛选
 % \LiteSet{} 个任务作为 \emph{Lite 集}：(i) 领域均衡——在 13 个 EDA 领域上分层抽样，
 % 任一领域不超过 Lite 集的 15\%；(ii) 难度校准——保留冻结快照下参考通过率在 5--25\% 区间的任务，
 % 使 Lite 集既非 trivial 也非 uniformly impossible；(iii) 可释放性——优先选择底座设计资产
-% 已获对外发布批准的任务，使 Lite 集可在无保密约束下完整发布。Lite 集是新智能体评测的默认入口；
+% 已获对外发布批准的任务，使 Lite 集可在无保密约束下完整发布。可释放性筛选按域区分：原始意图需要不可释放私有图形的波形/眼图任务仅以可恢复替身版入集（沙盒重生图形，第~\ref{sec:repro-details}~节）；版图域 mock-behavioral fixture 作为纯 Python 资产可释放；依赖代工 PDK 的 spice/characterization 任务在发布获批时以脱敏模型库副本入集。Lite 集是新智能体评测的默认入口；
 % Full 集仍可供能访问完整资产清单的组织使用。
 
 The distribution reflects real engineering practice: schematic/netlist and SPICE simulation dominate (analog/mixed-signal design accounts for the largest share), while digital synthesis and PNR signoff are comparatively underrepresented---not because they are less important, but because digital engineers use coding agents less frequently (they work in IDEs and command-line flows). We revisit the implications of this imbalance in Section~\ref{sec:threats}.

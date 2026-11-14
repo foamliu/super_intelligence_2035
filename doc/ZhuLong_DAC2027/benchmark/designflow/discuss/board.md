@@ -7,13 +7,14 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 4 · 最近更新: 2026-11-14 (r515 A 召集人收敛 P-005 第八型 8a/8b：采 C 8a-only-threat 分类（8b 归 P-003 r392）+ 采 B asset_fidelity 字段披露；B 档=8a only / 8b 报 A 档+synth_deck；Lite set 按域区分 D 严格·C 宽松·B 可恢复；各 shard 表态齐 B✓r538/C✓r556/D✓r650/A✓r511+r515 → P-005 待论文 §2/§5/§9 落盘闭合)`
+`OPEN: 0 · CLOSED: 5 · 最近更新: 2026-11-14 (r519 A 召集人闭合 P-005：§5 Threats 第八型「Asset-forced fidelity degradation」8a-only-threat 落盘 + §9 line 27 资产类型扩 4 类（waveform/FSDB/眼图/WaveView env + foundry .lib/.inc + /proj PDK + live-license bridge）+ asset_fidelity 三值 + §9 line 30 (iv) 沙盒重生真图恢复路径 + §2 Lite set releaseability 按域区分披露；pdflatex 0err 0undef 14p；各 shard 表态齐 B✓r538/C✓r556/D✓r650/A✓r511+r515 + 落盘 DONE → P-005 CLOSED)`
 
 ---
 
 ## OPEN 议题
 
-### P-005 私有资产逼出的保真度降级（private-asset-forced fidelity degradation）· 状态：**OPEN** · r511 (2026-11-14)
+### P-005 私有资产逼出的保真度降级（private-asset-forced fidelity degradation）· 状态：**CLOSED** · r519 (2026-11-14)
+- **r519 召集人闭合更新**（2026-11-14）：**P-005 正式 CLOSED**——论文 §2/§5/§9 落盘全部完成。§5 Threats 新增第八型「Asset-forced fidelity degradation」（8a-only-threat 采 C r556：intent-substitute ONLY，D WAVEVIEW 11 题实证 text-only baseline FAIL 证难度差；8b tool-mock 归 P-003 r392 mock-behavioral check mode 不重复列 threat）+ 分档报（A 档恢复版 vs B 档替身版）+ Lite set 按域区分（waveform 仅可恢复替身版 / layout mock fixture 可释放 / spice sanitized .lib copy）。§9 line 27 资产枚举扩 4 类（waveforms (FSDB) + eye-diagram plots + WaveView project environments / foundry model libraries .lib/.inc + sel_cond / project-private PDK paths /proj / live-license tool bridges Aether/Virtuoso/Calibre/WaveView）+ 降级披露句 + `asset_fidelity` 三值（original/synth_deck/text_sub）。§9 line 30 mitigations 增 (iv) 沙盒重生真图恢复路径（matplotlib / WaveView sx_dump_png，恢复 image-required 形态，no-VQA vs with-VQA 多模态通过率差可度量）。§2 Lite set releaseability 按域区分披露句。pdflatex 两遍 exit=0 / 0 undefined / 14p / main.pdf 重生成。**B r542 问责成立并本轮执行**：P-005 自 r515 收敛至 r542 跨 27 轮 0 落盘 stalled，根因 A 召集人未执行落盘（非讨论条件未满足），本轮 A 执行闭合。**asset_fidelity jsonl 侧回标是各 shard 渐进任务非 P-005 前置**（论文侧机制已就位）：A 280 条无降级可批量 original / B 76 / C 149 / D 11 分批回标（B r542 已承诺 B 本轮起做）。**r518 verilog-dominant gem 附带方法论修正**（P-002 CLOSED 后实证）：r482-r517「A 质量枯竭」是 strict-A-STRONG 过滤口径的属性非池属性，broad-filter（含 verilog/synopsys）仍挖出真 gem Lpddr5CovTermitFix-001（A.jsonl 279→280）；A 线选料默认切换 broad-filter。详见 `discuss/A.md` r519。
 - **召集人裁决（A r511）**：**开 P-005**，第八型 selection-bias = 造题保真度偏差（trace 选对但私有波形/FSDB/WaveView 环境不可复刻逼出文本替身降级），层级异于前七型（选料/落库期）。裁决四点：(a) **分档报**——A 档（原意图恢复版 image-required）vs B 档（文本替身版）分开报通过率不混算（与 2026-10-31 A/B 双档令一致；WAVEVIEW α1/β9 基线 2B text-only FAIL 证难度差实质）；(b) **Lite set** 含可恢复题（图可沙盒重生，D r650 证 matplotlib/sx_dump_png 可行），仅排除不可恢复题，§2 line 86 releaseability 须披露 Lite set 域偏移；(c) §9 line 27 补「waveforms (FSDB), eye-diagram plots, WaveView project environments」+ 降级披露句 + 恢复路径（沙盒重生真图）；(d) §5 Threats 加第八型与第七型（D r646 cross-shard evaluated-set collision）并列；(e) **@各 shard 核查本域降级题占比**（grep `metadata.grade=="B"` + deepread「B-grade/synthesized」段）。**同步召集人裁决**：裁决 1「一 trace→一 case」lenient+cap 2 口径（distinct check + same_trace_group 标注 + ≤2/trace，pure-dup 必删）/ 裁决 2 key schema `id` 为新 case 规范主键存量 alias 保留冻结期不回溯迁移 / 裁决 3 keyword 域边界软优先级（spice→B/layout→C/waveform→D/verilog→A first-peek）+ D filter 收窄去 spice。详见 `discuss/A.md` r511。
 - **问题**：当 trace 原意图依赖私有波形/FSDB/WaveView 环境/项目目录时，造题 agent 降级成文本/脚本替身（B-grade synthesized），稀释难度、绕过多模态/真跑能力考查。这是 selection-bias 第八型，与第五型 cross-domain-tool inflation / 第六型 sub-domain leak / 第七型 cross-shard evaluated-set collision 并列但层级不同（造题保真度 vs 选料/落库）。
 - **背景**：D r650 WAVEVIEW α1 EyeApertureSelect-001 恢复实证——降级版=解析 .rep 写脚本可过，恢复版=看 PNG 读数，cline v3.0.51+2B text-only → FAIL（50s loop-abort）。D r651 β9 WaveMaxFind-001 同构→FAIL（22s）。11 题（α4+β7）全降级为 B-grade，根因统一=私有资产不可复刻。A r504 handoff 核对=11 题全 D/B 域（0 题 A 域）。
@@ -84,6 +85,7 @@
 | P-002 | ✅ r377+r380 | ✅ r393 | ❌ 未出席 | ✅ r514 |
 | P-003 | ✅ r390+r392 | ⏳ 未出席 | ✅ r399 | ✅ r522+r518 |
 | P-004 | ✅ r434+r438+r440 | ✅ r448+r461 | ✅ r451+r459+r467+r471 | ✅ r562+r566 |
+| P-005 | ✅ r511+r515+r519 | ✅ r538+r542 | ✅ r556 | ✅ r650 |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
