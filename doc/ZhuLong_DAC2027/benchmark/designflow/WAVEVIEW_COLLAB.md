@@ -2,7 +2,7 @@
 
 > **发起**：vision 线 | **承接**：designflow shard A/B/C/D（任一空闲 shard 认领）
 > **依据**：用户令 2026-11-14 09:1x #2/#3 + 09:5x 口径变更（「需要多模态的题不要降级，没有多模态能力就让它们 fail；像要求合格 DE 一样要求 agent」）
-> **状态**：⬜ 未认领 ｜ 🟡 进行中（任务1 ✅ 收官：D 8 + B 2 = 10 题恢复+基线全 FAIL 正确 · failure_mode_tier A/B/C 已落 D.json+B.json · 任务2 VQA 对照：A r529 解阻 + r530 试跑——机制层 ✅ research.vqa 读图正确 / SUT 层 ✗ 2B SFT tool-call 不可靠，β10 未翻转，需 vision 决策 SUT 模型口径）｜ ⬜ 已交付
+> **状态**：⬜ 未认领 ｜ 🟡 进行中（任务1 ✅ 收官：D 8 + B 2 = 10 题恢复+基线全 FAIL 正确 · failure_mode_tier A/B/C 已落 D.json+B.json · 任务2 VQA 对照：A r529 解阻 + r530 试跑——机制层 ✅ research.vqa 读图正确 / SUT 层 ✗ 2B SFT tool-call 不可靠，β10 未翻转 · **B r560 实测可达性 = BLOCKED**（评测机+.75 对 .17 的 22/30001/30002 全超时 ICMP 通）⇒ task2 infra-blocked · **vision wake#1232 已回复**：①判 toolCallCount=0 = hint 措辞诱导回归（基线无 hint 7 个真 tool_use 证 SUT 能调用）→ 强烈推荐 Tier 1=去括号示例/仅中性 nudge、保持 10 题基线可比（Tier 2a 换 SUT 需重跑基线 / 2b 联合增益兜底）；②端点本轮仍在线实测答对 β8「5 路」、端口 0.0.0.0 LISTEN，但 vision 无 passwordless sudo 不能自改 .17 防火墙 ⇒ **需 ops/网管放行 .17 入站 TCP 30002 给评测机**，designflow 可并行预备 Tier 1 hint）｜ ⬜ 已交付
 
 ---
 
@@ -318,3 +318,73 @@ vision 侧若不便改 10.252.32.17 防火墙，**替代方案**：把 `qwen35_v
 - 本轮交付物：本可达性测试报告（评测机 + .75 双源 × 多端口 × ICMP 对照，证据完整）。
 - **不与 A 冲突**：A r530 已认领 task2 试跑（用 research.vqa），但 vision wake#1231 已明确 research.vqa 非 #3 口径 ⇒ A r530 试跑结果不可作 task2 正式结果，需用 Qwen3.5-2B 重跑。本轮 B 仅做可达性测试（vision 明确要求的「designflow 侧下一步」第一步），未改 harness/cline config，不触碰 A 的 task2 执行权。可达性 OPEN 后由谁跑 task2 全 10 题，建议召集人 A 裁定（A 持 harness 改动权 + 已有 VQA hint 骨架；B 可承接 B 域 2 题）。
 > — shard B，r560（2026-11-14 18:2x）
+---
+
+## vision 回复 · r530 SUT tool-call 决策点（vision wake#1232 · 2026-11-14 18:2x）
+
+> **触发**：A r530 task2 试跑交付——机制层 ✅（research.vqa 读 thresh_char_A.png → 1.2V 正确）/ SUT 层 ✗（2B SFT `minicpm5-2b-sft-v39-final` toolCallCount=0、emit XML-as-text、β10 FAIL→FAIL 未翻转）；并提请 vision 决策两点：(1) VQA 后端模型口径；(2) **SUT 模型选择**——2B SFT tool-call 不可靠混杂度量，建议指定 tool-call 可靠 text-only SUT 或确认「tool-call+vision 联合增益」可接受。vision 现正式回答，并给出**分层解阻方案**。
+
+### 0 · 先确认 vision 侧端点仍在线（本轮刚验，2026-11-14 18:2x，本机 .17）
+
+| 检查 | 命令 | 结果 |
+|:--|:--|:--|
+| HTTP 健康 | `curl http://10.252.32.17:30001/health` | `{"ok":true,"model":"Qwen3.5-2B","ready":true,"load_s":2.8}` |
+| MCP 握手（外部 IP） | `curl -X POST http://10.252.32.17:30002/mcp … initialize` | `serverInfo{name=qwen35-vqa, version=1.30.0}` + tools 能力 |
+| 真实读图答题 | `POST :30001/vqa` β8 `wv_sigs_A.png` "How many signal traces are stacked?" | **"5 distinct signal traces: clk/rst_n/data/vref/sel ✅ Final Answer: 5"**（elapsed 3.70s，与 oracle 5 路一致） |
+
+→ **Qwen3.5-2B VQA 端点（HTTP :30001 / MCP :30002）本轮仍端到端可用**，cline 可直连（配置见 wake#1231 节）。**可达性已被 B r560 实测 = BLOCKED**（见上一节：评测机 `10.251.36.15` + `.75` 对 `10.252.32.17` 的 TCP 22/30001/30002 全超时，仅 ICMP 通）——不是端点问题，是 `.17` 入站 TCP 被拦。vision 本轮在 `.17` 上确认三端口均 `0.0.0.0` LISTEN（`ss -tlnp` 见 30001/30002/22），但**无 passwordless sudo**（`app.e0031982` 在 sudo 组但需密码）⇒ **vision 无法自读/自改主机防火墙（iptables/nft）**，解阻需 ops/网管（见 §3）。
+
+### 1 · 点 (1) VQA 后端 = Qwen3.5-2B（重申，口径不变）
+
+承 wake#1231：**核心 #3 指标必须用 Qwen3.5-2B**（用户令 #3/#4 点名；#4 要强化**基模**，research.vqa 后端不透明且不可训练 → #4 强化前后增益不可度量）。r530 试跑用的是 research.vqa（验机制用，合理），**但正式 task2（出 #3 对比报告的那一轮）必须把 MCP url 换成 `qwen35_vqa@http://10.252.32.17:30002/mcp`**。research.vqa 那一轮可保留作「upper-bound reference」（明确标注「非 #3 核心口径」），用于判断「翻不了 = 基模能力天花板 vs 题目本身无解」，**不替代** Qwen3.5-2B 那轮。
+
+### 2 · 点 (2) SUT tool-call 决策 —— vision 给分层方案，**强烈推荐 Tier 1**
+
+**关键判读（vision 的核心贡献）**：r530 的「toolCallCount=0」**不是 SUT 不能调用工具的固有上限，而是 VQA hint 措辞诱导的回归**。证据就在 r530 自己的对照里——
+
+| 臂 | VQA hint | 真 tool_use block | engagement |
+|:--|:--|:--|:--|
+| 基线 β10（r654，无 hint） | 无 | **7 个**（read_files×2 / run_commands×2 / eda_flow×4） | 8 iter, engaged-but-incapable |
+| +VQA β10（r530，有 hint） | 有（CLI_PROMPT 加 `research_vqa__vqa(image_path=…, query=…)` 用法） | **0 个**（emit XML-as-text） | 1 iter, 退化 |
+
+**同一个 2B SUT，无 hint 时能稳定 emit 7 个 native tool_use**——这说明模型**有能力**发 native tool_use block；加 hint 后反退化到 0，**变量 = hint 措辞**（`research_vqa__vqa(image_path=…, query=…)` 这种带括号参数的用法示例，被 2B 模型逐字 parrot 成 XML 文本，而非触发 tool_use）。⇒ **这是 hint 写法的 artifact，不是 SUT 能力天花板**。designflow r530「需换 tool-call 可靠 SUT」的结论**在本证下为时过早**。
+
+据此 vision 给**三层方案**，按成本/科学干净度排序：
+
+#### ✅ Tier 1（vision 强烈推荐 · 最便宜 · 保持 10 题基线可比）
+
+**改 hint 措辞，不改 SUT**。具体：
+1. **不要**在 CLI_PROMPT 里写带括号参数的用法示例（`research_vqa__vqa(image_path=…, query=…)` 就是诱导 XML-as-text 的元凶）。
+2. cline 注册了 MCP `qwen35_vqa`（autoApprove 仅 `vqa`）后，**该 tool 会自动出现在模型的 tool list 里**（cline 原生呈现 tool schema）——这本身已足够让模型知道有 `vqa` 工具。**首选：完全不在 CLI_PROMPT 加 VQA 用法示例**，仅靠 MCP tool 注册。
+3. 若模型仍需一句 nudge，**只加一行中性提示，不带语法示例**，例如：
+   > 「You have a `vqa` tool to read values/shapes from image files you cannot otherwise see. When a question requires reading the waveform PNG, call `vqa` as a tool with the image's absolute path and your question.」
+   （关键是**不给 `vqa(image_path=…, query=…)` 括号示例**，让 cline 的 tool-schema 呈现去规范调用格式。）
+4. 用**同一个 SUT**（minicpm5-2b-sft-v39-final）+ Tier-1 hint 重跑 β10，验 `toolCallCount > 0` 且模型确实调了 `vqa`。
+
+**为什么 Tier 1 科学最干净**：SUT 不变 ⇒ task1 的 10 题基线（全 FAIL）**直接可比**，唯一变量 = cline 能否调 VQA（=看图能力）⇒ 这正是 #3 要量的「text-only vs +VQA capability gain」。换 SUT（Tier 2a）会让已落盘的 10 题基线作废、需用新 SUT 重跑基线，工作量与混杂都更大。
+
+#### 🟡 Tier 2a（Tier 1 仍 toolCallCount=0 时再考虑 · 需重跑基线）
+
+若 Tier 1（无括号示例 / 仅中性 nudge）下 2B SUT **仍** toolCallCount=0，才说明该 SUT 对「新工具」的 native tool-call 确实不可靠。此时换一个 **tool-call 可靠的 text-only SUT**（如 designflow 提的 deepseek-v4-pro-cloud，需先确认评测机可达；或更强 SFT）——**但必须用新 SUT 把 task1 的 10 题基线也重跑一遍**（当前基线是 minicpm5-2b），否则 baseline vs +VQA 不可比。vision 仅在 Tier 1 失败后才走此路。
+
+#### 🟡 Tier 2b（兜底 · 科学最弱 · 需明确 caveat）
+
+若换 SUT 也不可行，则接受「tool-call + vision 联合增益」口径，**但报告必须显式声明**：测的是「加 VQA tool 后 SUT 能否走通『调工具→读图→产答案』整链」的**联合能力**，而非纯视觉增益；翻转率 = 联合链路翻转率 ≠ vision-capability 翻转率。vision 把它当 last resort。
+
+### 3 · 执行顺序建议（可达性已 BLOCKED，需 ops/网管介入；designflow 侧 harness 改动可并行预备）
+
+> **B r560 已实测可达性 = BLOCKED**（评测机 + .75 对 `.17` 的 22/30001/30002 全超时，ICMP 通）。vision 的 path (b)「评测机本机跑 wrapper 转发到 30001」**不成立**——B r560 实测评测机→30001 同样 BLOCKED。`.75` 中继亦 BLOCKED 且违反「698 机只读」纪律。**唯一可行路径 = 在 `10.252.32.17` 上对评测机 `10.251.36.15` 放行入站 TCP 30002（建议，cline 直连 MCP，无需本地 wrapper）。** vision 已在 `.17` 确认端口 `0.0.0.0` LISTEN，但无 passwordless sudo 不能自改防火墙 ⇒ **需 ops/网管执行放行**（vision 已在 MEMORY/daily 记录此 infra-blocker 待 ops 处置）。
+
+1. **【需 ops/网管】放行 `.17` 入站 TCP 30002**（给 `10.251.36.15`，可选 `.75`）：放行后 designflow 评测机 `nc -w3 10.252.32.17 30002` 应 OPEN、`curl initialize` 返回 serverInfo。**若放行 30002 不可行**，备选：放行 30001 + 评测机本机跑 wrapper（`qwen35_vqa_mcp_server.py --host 127.0.0.1 --port 30002 --vqa-server http://10.252.32.17:30001`）；**若两端口都放不了**，则需把 Qwen3.5-2B VQA 端点迁到评测机可达的某台 GPU 机（vision 待 ops 确认哪台 GPU 机对评测机 TCP 可达后再迁）。
+2. **【designflow 可并行预备】改 hint 措辞（Tier 1）**：cline_mcp_settings.json 加 `qwen35_vqa`（autoApprove 仅 `vqa`）；CLI_PROMPT **去掉** `vqa(image_path=…, query=…)` 括号示例，最多加一行中性 nudge（见 §2 Tier 1）。此步不依赖可达性，可先做好。
+3. **可达性 OPEN 后**：重跑 β10 验 `toolCallCount > 0` 且调了 `vqa` → 证明 Tier 1 修好 tool-call 回归。
+4. **跑全 10 题**（D8 α1/α3/α4/β6/β8/β9/β10/β11 + B2 α2/β7），同 jsonl/check.py/hidden-B/SUT，唯一变量 = +VQA。翻转结果落 `waveview_baseline_results.<shard>.json` task2 段 + 本文件「交付记录」一行。
+5. （可选 upper-bound）用 research.vqa 另跑一轮作 oracle 参考，明确标注非核心口径。
+
+### 4 · vision 据此做什么
+
+- task2（Tier 1 + Qwen3.5-2B）10 题结果一落盘，vision **即出 #3 中文 HTML 对比报告**：task1 基线 vs task2 +VQA 同表并列，逐题标翻转/未翻转+原因，并**按 D r659 failure_mode_tier 分层报翻转率**（分母全 10 / C 档 2 / C+B 档 4，避免 A 档结构性 0 稀释）。
+- **task2b（#4 真实 EDA 增益）**：task2 完跑后，vision 换上 v2-RFT 强化 adapter（合成 60→90, p=0.0156）起 task2b 端点，designflow 用**同一批 10 题**再跑一遍 → 量「基模-VQA vs 强化-VQA」真实 WAVEVIEW 增益（#4 在真实 EDA 的判据；合成集结论不可外推）。task2b 串行于 task2，不阻塞。
+
+> — vision wake#1232（2026-11-14 18:2x）
+
