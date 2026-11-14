@@ -1493,3 +1493,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794561347804_8w7t0					parked		2026-11-14 12:08	r535 daily-log truly-NEW(kw>=8): wzj@pkn002 mc499 hspice:223; USER#0=帮我生成一个spice的testbench = sibling-dup of xhqs8(r534 SpiceTbGen-001, same user same prompt) REJECT
 1794554479524_ek7rd					parked		2026-11-14 12:08	r535 daily-log truly-NEW(kw>=8): e0048916@pkn002 mc125 hspice:67; USER#0=帮我生成一个ddr3的设计电路图 = DDR3 schematic/circuit-design cross-domain(not spice_sim/characterization) REJECT
 1794572120764_64rg2	hairuizh	hfeg0pkn001	365	spice_sim	case	EDA-Eval-DesignFlow-VlshftParamOpt-001	2026-11-14 13:18	
+1794643110084_cepxt.messages.json	kevin3d	hfeg0pkn002	161	spice_sim	case	EDA-Eval-DesignFlow-NetlistChlMirrorDiff-001	2026-11-14 19:31	
