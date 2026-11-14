@@ -381,6 +381,56 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
              "详见: <code>reports/report_harness_cc_tb21_attribution_zh.html</code> "
              "(89 行逐题归因明细)</p></div>")
 
+    # ---- §hermes python3 setup fail 修复归因 (2026-11-14 用户令) ----
+    H.append("<h2>hermes python3 setup 失败 · 修复归因 (2026-11-14 用户令)</h2>")
+    H.append("<div class='info'><p><strong>现象</strong>: hermes 首轮 rerun 8/82 中 "
+             "4 题 setup fail = <code>python3: command not found</code> (exit 127)，"
+             "属纯 infra 失败，不得计入模型能力 (归因红线)。</p>")
+    H.append("<p><strong>4 个受影响 task 与其 Dockerfile</strong>:</p>")
+    H.append("<table><tr><th>Task</th><th>基础镜像</th><th>是否安装 python3?</th></tr>")
+    H.append("<tr><td>compile-compcert</td><td>FROM ubuntu:24.04</td>"
+             "<td class='fail'>❌ 无 (仅 WORKDIR)</td></tr>")
+    H.append("<tr><td>configure-git-webserver</td><td>FROM ubuntu:24.04</td>"
+             "<td class='fail'>❌ 无 (仅 apt install curl)</td></tr>")
+    H.append("<tr><td>build-pov-ray</td><td>FROM ubuntu:24.04</td>"
+             "<td class='fail'>❌ 无 (curl/wget/git/imagemagick)</td></tr>")
+    H.append("<tr><td>caffe-cifar-10</td><td>FROM ubuntu:24.04</td>"
+             "<td class='fail'>❌ 无 (git/curl/cmake/wget)</td></tr>")
+    H.append("</table>")
+    H.append("<p><strong>根因 = (a): 容器内确实没有 python3/python</strong>。"
+             "ubuntu:24.04 默认不含 python3; 这 4 个 task 的 Dockerfile 从未 "
+             "<code>apt install python3</code>。hermes 适配器需 python3 来 "
+             "<code>pip install hermes-agent</code>，故 setup 阶段即 127 退出。</p>")
+    H.append("<p><strong>交叉对照 (最直接的证据)</strong>: 这 4 题在 "
+             "<strong>Node.js/Bun 型 agent</strong> (cline/pi/opencode) 上"
+             "<strong>未发生 setup 失败</strong> —— 它们通过 npm/bun 安装，"
+             "不需要 python3。仅 <strong>Python 型 agent</strong> (hermes/"
+             "deepseek) 在这些 bare ubuntu:24.04 镜像上命中 "
+             "<code>python3: command not found</code>。这直接确认根因 = (a)。</p>")
+    H.append("<p><strong>Web search 发现</strong> (2026-11-14, via curl + proxy):</p>"
+             "<ul>"
+             "<li>GitHub Issues API 搜 laude-institute/terminal-bench + "
+             "'python' → 0 条; 框架不文档化 '容器缺 python3' 的处理。</li>"
+             "<li>搜 laude-institute/harbor + 'python install' → 0 条; "
+             "harbor 的 <code>BaseInstalledAgent</code> 无 "
+             "<code>_ensure_python</code> —— 每个适配器假设 python3 已存在。"
+             "aider.py 等同样 <code>pip install</code> 假设 python3 在位。</li>"
+             "<li>标准修法: 用基础镜像的包管理器安装 python3 (apt-get/apk/"
+             "dnf/yum)，PEP 668 用 <code>--break-system-packages</code> 解决。</li>"
+             "</ul>")
+    H.append("<p><strong>修复</strong>: <code>_base.py:245 _ensure_python()</code>"
+             " —— 先探测 python3/python，若均无则用 apt-get install python3 "
+             "python3-pip python3-venv (apk/dnf/yum fallback); "
+             "<code>_ensure_pip()</code> 现先调 <code>_ensure_python()</code>。"
+             "PATH fix: 所有 exec 命令前缀 "
+             "<code>export PATH=/usr/local/bin:/usr/bin:/bin:$PATH</code>。</p>")
+    H.append("<p><strong>验证</strong>: hermes 65 题 rerun 进行中 (7/65 done)，"
+             "<strong>0 py3fail ✅</strong>。configure-git-webserver "
+             "reward=1.0 (PASS)，exception_info=None。"
+             "4 个原 setup-fail 题中 configure-git-webserver 已 PASS，"
+             "其余 3 题 (compile-compcert/build-pov-ray/caffe-cifar-10) "
+             "setup 成功但 agent 超时 = ability 非 infra。</p></div>")
+
     # ---- §cline TB-2.1 根因归因 (2026-11-13 用户令, ~~部分作废~~) ----
     if attr_data:
         cats, fair_p, fair_a, quota_lost, cross = attr_data

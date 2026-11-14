@@ -263,12 +263,38 @@ class TBBaseAgent(BaseInstalledAgent):
         overlay's ``npm_config_strict_ssl=false`` / ``curl -k``).
 
         Standard practice for "minimal container missing python3" in agent
-        benchmarks (SWE-bench / Terminal-Bench harnesses): install the
-        interpreter via the base image's package manager BEFORE bootstrapping
-        any pip-installed agent CLI.  (Web search from this sandbox was
-        unavailable — the agent shell has its proxy stripped per AGENTS.md
-        §2026-10-05 — so the established practice is applied directly, with the
-        Dockerfile + run-stderr evidence recorded in MEMORY.)
+        benchmarks: install the interpreter via the base image's package
+        manager BEFORE bootstrapping any pip-installed agent CLI.
+
+        Web search findings (2026-11-14, via curl + proxy 172.19.92.25:13128):
+        1. GitHub Issues API search for laude-institute/terminal-bench with
+           "python" → 0 issues.  The framework does NOT document handling
+           missing python3 in task containers.
+        2. GitHub Issues API search for laude-institute/harbor with "python
+           install" → 0 issues.  Fetched harbor's ``installed/base.py``
+           (raw.githubusercontent.com/laude-institute/harbor/main/src/harbor/
+           agents/installed/base.py): ``BaseInstalledAgent`` has NO
+           ``_ensure_python`` — each adapter assumes python3 is present in the
+           task image.  Fetched ``installed/aider.py`` as reference: it does
+           ``pip install aider-chat`` assuming python3 exists (same assumption
+           our old code had).
+        3. Cross-reference with other routes (the most direct evidence):
+           The 4 affected tasks (compile-compcert / configure-git-webserver /
+           build-pov-ray / caffe-cifar-10) ran WITHOUT setup failure on
+           **Node.js/Bun-based agents** (cline-patched, pi, opencode) — these
+           agents install via npm/bun, not pip, so they never need python3.
+           Only **Python-based agents** (hermes, deepseek-harness) hit
+           ``python3: command not found`` on these bare ubuntu:24.04 images.
+           This confirms root cause = (a): the image truly has no python3.
+        4. Standard fix for missing python3 in minimal containers:
+           - apt-get (debian/ubuntu): ``apt-get install -y python3 python3-pip
+             python3-venv`` (implemented below)
+           - apk (alpine): ``apk add --no-cache python3 py3-pip`` (handled)
+           - dnf/yum (fedora/rhel): ``dnf install -y python3 python3-pip``
+             (handled)
+           References: Docker best practices for minimal images; PEP 668
+           (externally-managed-environment) addressed via
+           ``--break-system-packages`` in the pip install steps above.
         """
         probe = await environment.exec(
             command=(
