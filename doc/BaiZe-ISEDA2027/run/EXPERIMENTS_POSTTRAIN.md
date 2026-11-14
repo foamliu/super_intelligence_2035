@@ -11448,3 +11448,36 @@ python3 复算：
 - **未碰** GPU0-7 / 未碰运行中 eval / 未碰别线文件 / 未改 benchmark/check.py/题面/loop.py 源码。
 - 归因 Task A/B 仍 run-ready 仅 GPU/serve 阻塞（不变）。
 - **Next**：① R2 5-run 完 → `5run_rl_analysis_R2.json`（vs step105 0.0304±0.83%, McNemar+bootstrap）→ 负则诚实负结果报告 + 用本节 R3 launcher 起 R3（ppo_epochs=2）再跑一轮；② 36.15 5-run 完 → 新基线报告；③ eval 空槽 → 归因 Task A/B。
+
+## §R-Attribution-T6 (wake505, 2026-11-14 22:4x) — T6 工具格式归因表 + 今夜计划填妥 + 36.15 隧道 HARD BLOCKED
+
+> 用户令 2026-11-14 21:5x: 「让 post-train 出计划后直接执行, 不用等运维批复, 明早看结果.」本节 = 计划填妥 + CPU 可做的 T6 归因已交付 + 须在 36.15 跑的两项被隧道阻塞的诚实记录.
+
+### 1. 交付物
+- `POSTTRAIN_PLAN_NEXT.md` — 计划填妥 (时间表/判据/预算/回滚 + §5 执行结果与阻塞).
+- `bpt_attribution_t6_report.py` — T6 归因表 + HTML 报告生成器 (只读 run1 落盘数据, 可复算).
+- `attribution_t6_table.json` — T6 归因表 (机器可读).
+- `reports/report_posttrain_attribution_t6_zh.html` — 中文报告 (9639B, 3 内联 SVG 饼图, 0 script, 0 外链, 单文件自包含).
+
+### 2. T6 归因表核心数字 (复算: python3 bpt_attribution_t6_report.py)
+- **漏斗** (对账 attribution_3615_run1/final_report.json): 158 → gen_success 36 → passed 30 → overall **18.99%**; post-gen pass rate **83.33%**. 瓶颈 = 代码生成完成率 22.8%, 非判分能力.
+- **六类分型** (attribution_3615_run1_perquest_profile.json): PASS 30 / T6_tool_format_genfail **121 (76.6%)** / T4_assertion_insufficient 5 / T5_timeout 1 / T3_api_misuse 1. T6 一类独占.
+- **1304 次拒绝** (rejected_total): 按原因 missing-required-field **527** / other-type-error 378 / string-not-array 321 / unavailable-tool 41 / wrong-type-boolean 37; 按工具 **run_commands 1051 (80.6%)** 独大, read_files 104, get_api_details 41, submit_and_exit 37.
+- **T6 gen-fail 再分** (genfail_deep_dive): 121 = **76 拒绝致死** (≥1 拒绝耗尽 turn) + **45 静默未生成** (零拒绝, 从未成功调工具); 拒绝次数桶 0→45 / 1-2→38 / 3-5→19 / 6-10→7 / 11+→12; gen-fail 任务 used_search_apis=0 / used_run_code=0 → **从未进入「检索→执行」回路**.
+
+### 3. P0 可消比例 + 预期回收 (预注册估算, 非定论)
+- P0 补丁 (attribution_prompt_p0_toolfmt.md) 对每类拒绝的可消率: string-not-array 90% / missing-required-field 70% / wrong-type-boolean 80% / other-type-error 40% / unavailable-tool 50%.
+- **合计 P0 可消 ≈ 859/1304 = 65.9%**.
+- 预期回收: 目标 76 拒绝致死任务, P0 砍 run_commands 拒绝 ~60% → 乐观救回 38 (38×0.833=32 pass → **+20.0pp**) / 保守救回 25 (25×0.833=21 pass → **+13.4pp**).
+- **上限警告**: aggregate_tool_calls 中大量乱码工具名 (如 `submitdata/app.e_and003_exit1982`) → vLLM minicpm5 tool-call parser 把模型输出解析成垃圾工具名, **非 prompt 可解**, 是 infra/parser 层; P0 只回收「格式可指导」部分, 45 静默未生成任务 P0 不直接覆盖. 最终数字须 36.15 单变量实测 + McNemar.
+
+### 4. ❌ HARD BLOCKED: A1/A3 + P0 dev 前后对比
+- **两项须在 36.15 跑** (15:4x 用户令: 评测必须在 36.15, 该机有 RAG+沙盒 MCP). 在 .17 跑会复现 3.04% 错误口径, 违反口径统一.
+- **卡点**: 36.15 隧道 DOWN. dual-nix-tunnel 需 **Windows 中继 172.19.195.133 运行 tunnel.ps1**; .17 端口 3333 未监听 / 无 ssh -p3333 进程; 直连 36.15:22 被防火墙阻 (仅 ICMP 互通). run1 21:15 完成时隧道尚通, ~1.5h 前中继掉线.
+- **谁在卡**: 运维/infra (须在 Windows 中继重启 tunnel.ps1); **无法从 .17 单侧修复** (Windows 桌面机, .17 不可触达; ping/ssh 均无响应).
+- **ETA**: 未知 (取决于运维). 隧道恢复后 A1+A3 ~4-5h, P0 dev eval ~2-3h.
+- **已就绪等待**: .17 GPU6:8096 step105-final 健康 (urllib 实测 id=minicpm5-2b-sft-v39-final); GPU7:8095 R2-step200 监听中; 补丁模板/split/runner 全 --dry-run 通过. 隧道一恢复即 `ssh -p3333 -fN -R 18096:localhost:8096 app.e0031982@localhost` 起跑.
+
+### 5. 边界
+- 只读 attribution_3615_run1 落盘数据 + perquest_profile; 未改 benchmark/check.py/题面; 未碰 GPU0-7 / 运行中 eval / 别线文件; 未引用未跑完 run.
+- commit 前缀 posttrain attribution:.
