@@ -2,6 +2,23 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-14 19:4x — 用户令 vision 自测 WaveView 10 题（±VQA MCP）
+
+用户原话：「请 vision 自己做一下 waveview 的题目看看通过率。然后给自己配置 Qwen3.5-2B 的 VQA 作为 MCP，再做一遍，看看通过率能否有提升。」
+
+运维摸清的现状（写进规格，agent 不必重查）：
+- 题集：designflow 已恢复原形态的 **10 题**（α4 + β7；D 8 + B 2），全部 `track=synthesized-image-restored`，自带 `check.py`（k≥12 断言）；designflow 用 `minicpm5-2b-sft` 跑过，**10/10 FAIL（正确基线）**，`failure_mode_tier` 已落 D.json/B.json。
+- vision 侧已有 `vision/vqa_tool/qwen35_vqa_server.py`（HTTP, GPU5:30001）+ 新增 `qwen35_vqa_mcp_server.py`（18:30 建的 MCP 封装）+ `test_vqa_mcp_client.py`。
+- vision 线 SUT 底座 = `glm-5.2`（`baize_vision_loop.sh` L17，文本模型）。
+
+落地：
+1. 新建 `run/VISION_WAVEVIEW_SELFTEST_SPEC.md`：**V0（无 VQA MCP）vs V1（有）**，唯一变量、10 题同参数、顺序随机化；判分只读调用 designflow 的 `check.py`。
+2. **作弊防线是本案核心**（答案就藏在 PNG 里）：禁 PIL/opencv/tesseract/OCR、禁 base64 解图、禁调 30001、禁按 case_id 搜答案、禁读 `.rep/.vec/.csv`；逐题扫 trace，命中判 cheat 作废。
+3. 统计力先声明：n=10，McNemar 需 ≥6 不一致对；主结论用翻转表 + 逐题 verdict，p 值注明样本不足，扩样另开。
+4. `BAIZE_VISION_TASK.md` 顶部加 🔴 令指向规格。
+
+口径：**这是「换 SUT 的补充实验」，不是 designflow 那 10/10 的重做**，两份结果分表写；谁都不许为了让数字好看去动 check 或挑题。
+
 ## 2026-11-14 19:2x — 用户追问「5× 跳升从哪来」→ 下发归因规格（posttrain）
 
 用户原话：「请 posttrain 分析一下这 ≈5 倍跳升从何而来。既然 MCP 工具一样，难道差异仅仅来自于系统 PROMPT 的差异吗？如果系统 PROMPT 差异这么大，那么看看 trace，是否还能继续优化系统 PROMPT 来提分？」

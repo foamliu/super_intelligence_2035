@@ -1,5 +1,17 @@
 # BAIZE_VISION_TASK.md
 
+> 🔴 **用户直令 · 2026-11-14 19:4x — WaveView 10 题自测（±VQA MCP）（最高优先，压过例行巡检）**
+>
+> **用户原话**：「请 vision 自己做一下 waveview 的题目看看通过率。然后给自己配置 Qwen3.5-2B 的 VQA 作为 MCP，再做一遍，看看通过率能否有提升。」
+>
+> **完整规格 → `run/VISION_WAVEVIEW_SELFTEST_SPEC.md`（先读完再动手）**。要点：
+> 1. **SUT = vision 自己**（cline + `glm-5.2` 文本底座），不是 designflow 的 minicpm5-2b；与 designflow 已交付的 10/10 FAIL 基线**分表写，不许混**。
+> 2. **两臂唯一变量 = 有没有 VQA MCP**：V0（不含）vs V1（加 `qwen35_vqa_mcp_server.py`），10 题、同参数、顺序随机化。
+> 3. **判分只读调用 designflow 自带的 `check.py`**，🚫 不改 check/题面/assets、不挑题；资产不可达标 `asset_unavailable`，不计入分母。
+> 4. **🚫 作弊防线（最关键）**：禁止用 PIL/opencv/tesseract/OCR、禁止 base64 解码图片、禁止调 `localhost:30001`、禁止按 case_id 搜源码/答案、禁止读 `.rep/.vec/.csv` 替身；V1 只能经 VQA 工具读图。逐题扫 trace，命中即判 cheat 并作废。
+> 5. **n=10 统计力弱**：主结论用翻转表 + 逐题 verdict，p 值注明样本不足；要统计结论须另开扩样（不得用合成集冒充 WaveView）。
+> 6. 产物：`vision/vqa_tool/waveview_selftest/{V0,V1}/` + 中文 HTML 报告 + `EXPERIMENTS_VISION.md` 新节；commit 前缀 `vision waveview-selftest:`。
+
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
 1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
