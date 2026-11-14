@@ -553,3 +553,5 @@
 1791686047150_w4uy2	jason17w	hfeg0pnd002	169	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793348917218_h8pcp	jinhaoli	hfeg0plg107	156	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1794385786325_gaekj	e0039102	hfeg0plg74	154	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
+1794550682017_axn69	zhengc	hfeg0pgn145	273	verification	parked		2026-11-14 19:03	load-balancer unreachable: 10.129.35.244 routes to different backend, file missing on 2nd+ ssh conn (r498 same issue)
+1794645333888_2lkdh	jkxu	hfhds201	288	digital	case	EDA-Eval-DesignFlow-VerilogPatternMerge-001	2026-11-14 19:14	
