@@ -145,6 +145,56 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-14 09:1x（**四件事：NeurIPS §6 刷新 / 协调 designflow 评 waveview / Qwen3.5-2B 封装 VQA tool 对比 / 强化波形识图能力**）· 未完成 · 最高优先
+
+> **用户原话（逐字，共 4 条）**：
+> 1.「刷新 `doc/BaiZe-ISEDA2027/BaiZe-NeurIPS2027`，特别是第六节。期望：有想象力&创造力（提醒：它有 cimi-search 这个网搜工具，善用）。」
+> 2.「协调空闲的 designflow shard agent(A/B/C/D) 帮忙评测这些 waveview 相关用例」
+> 3.「协调空闲的 designflow shard agent(A/B/C/D)，把 Qwen3.5-2B 封装成 vqa tool 给 cline 后，再次评测，写报告对比二者。」
+> 4.「在 #3 基础上强化 VQA 工具读懂波形图的能力，使用合成数据/SFT/RL 各种手段，提升基模（Qwen3.5-2B），争取通过率得到显著提升。」
+
+> ⚠️ **本令优先于 idle-spin 处置**：先做这四件，停不停 loop 另议。
+> ⚠️ **#2/#3 需要跨线协调**：designflow 是独立线（`doc/ZhuLong_DAC2027/benchmark/`，4 个 shard 共用同一 git 工作区，有严格同步纪律）。**协调方式由你与 designflow 线对接确定**（写协作请求到其任务书/ops 通道，或自行按 `designflow_bench_loop_shard.sh` 口径起评测），**不要违反其「不 clean/reset/stash 别人改动」铁律**。
+
+---
+
+#### ① NeurIPS2027 论文刷新（尤其第六节）
+
+- **文件**：`doc/BaiZe-ISEDA2027/BaiZe-NeurIPS2027/NeurIPS2027/6_domain_rl.tex`（当前 `\section{Semiconductor Domain Adaptation}`，结果仍是 `\textbf{[TBD]}`）；其余 0–7 各节亦在刷新范围。
+- **用户要的是「想象力 + 创造力」**，不是把现有文字润色一遍。
+- **善用 cimi-search 网搜工具**（用户点名提醒）：检索 2026 年 NeurIPS/ICML/ICLR 相关工作、最新 benchmark、领域适配/偏好学习/波形多模态的前沿方法与可引用数据，把**外部证据**带进正文（每条引用必须真实可查，🚫 不许编造文献）。
+- **第六节必须脱掉 [TBD]**：用你已有的真实结果填（waveview 37 题/30 failed/α 13.3%、v5 typecls C=53%>B=37%>A=16% p=0.0009、v6–v11 负结果、Qwen3.5-2B 现状），**负结果也照实写**。
+- 判据：编译 0 error；引用可查；无 `[TBD]` 残留（或明确列出仍缺哪些数据、需要什么补）。
+
+#### ② 协调 designflow 评 waveview 用例
+
+- 你已有 waveview 筛选结果（37 题 / 30 failed），**把这份清单作为评测输入**交接给 designflow shard。
+- 目标：由 designflow（有 pi_debug 与真实 EDA 环境）**跑一遍这些用例**，拿到**基准口径下的当前通过率**，作为 #3 的对照底数。
+- 交付：评测清单 + 环境/口径说明 + 结果表；交接过程与结果写进 MEMORY。
+
+#### ③ Qwen3.5-2B 封装为 VQA tool 给 cline，二次评测并对比
+
+- 把 **Qwen3.5-2B** 封装成「看图答波形问题」的 **VQA tool**（供 cline 调用；模型已在用，见 `run/launch_qwen35_server.sh` 与 `run/longctx_eval_results/`）。
+- 由 designflow shard 用**同一批 waveview 用例**再评一遍（**唯一变量 = 有没有 VQA tool**）。
+- 交付：**对比报告（中文 HTML）**——两次评测同表并列，明确「哪些题靠 VQA tool 翻转了」，以及**未翻转的为什么**。
+- 纪律：两次评测的题目、环境、判据必须一致，否则不可比。
+
+#### ④ 强化 VQA tool 读波形图的能力（合成数据 / SFT / RL）
+
+- 在 #3 的 VQA tool 基础上提升基模（Qwen3.5-2B）的波形识图能力。
+- **手段自选**：合成数据、SFT、RL 皆可（你任务书已指定 LLaMA-Factory + KTransformers + LoRA 栈，CPU 可跑，不必等 GPU）。
+- **判据（用户明确要）**：**通过率得到显著提升** —— 必须有**对照**（pre / post 同口径、≥3 run，给 mean±std）与**显著性**；负结果照实记录，🚫 不许挑好看的 run 上报。
+- 交付：中文 HTML 报告（做了什么 / 数据怎么造 / 训练配置 / 对照结果 / 哪些题翻转过来了 / 下一步）。
+
+---
+
+**统一纪律**
+- 所有数字可复算（路径 + 命令）；取不到的标 `TODO/BLOCKED`，🚫 不许估、不许编。
+- 报告一律中文 HTML、单文件自包含、0 外链、0 script。
+- #1 完成即可先出；#2→#3→#4 是依赖链，按序推进，每步完成即写 MEMORY 心跳。
+
+---
+
 ### 🔴 用户令 · 2026-11-14 08:4x（**分析 designflow 评测中的 waveview 用例：哪些 failed 在「有波形图识图能力」下大概率能过**）· 未完成 · 优先于 idle-spin 告警
 
 > **用户原话**：「vision：看下 designflow 做的评测，先筛出 waveview 相关的用例，然后出一份数据分析报告（中文 HTML）。哪些 waveview 相关的 failed case，在有波形图多模态识图能力的情况下，大概率能过。这个比例有多大，请做出有想象力创造力的分析报告。」
