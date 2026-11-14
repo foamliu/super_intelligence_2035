@@ -2,6 +2,19 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-14 18:0x — 放行 designflow A 主动全量扫描（698 机）
+
+用户原话：「designflow A 要开新全量扫描就开吧，随他。」
+
+背景：A 在 r528 纠正了长期误诊——r514–r527 连续 43 轮判「A-core 质量枯竭」是错的，真实原因是 **11/13 的 scan 快照过期 + fresh 会话文件被 cline rotation 删掉**。换 strict-A-dominant 过滤后有 95 条 fresh，但 14/14 跨 11 台机抽查全是 NOFILE（文件已蒸发）。A 自己写明「解锁 = 新全量 `ssh_eda_search`，但 §9 默认被动只读，需确认」，所以卡在等令。
+
+落地（`BAIZE_DESIGNFLOW_BENCH_TASK_A.md`）：
+1. 文件顶部新增 🟢 运维令：**A 可自行发起主动全量扫描（698 机），不必再逐次请示**；§9「是否允许主动扫描」一条已改为「已确认：允许」。
+2. 四条护栏同时生效（避免「随他」被理解成无限量）：**每日 ≤1 次**（补扫 ≤2 须写理由、扫前记录上次 scan 目录与 mtime、同池不重复扫）· **只读低影响**（仅 ls/stat/head/grep，不写远端/不 chmod/不删/不跑长命令，并发与 nice/ionice 沿用既有脚本）· **扫完必须闭环**（新 summary → 刷 mc_matrix.src/summary_stats → 按 r462/r501 POOL_SWITCH 落盘，旧快照留 `_hist`，MEMORY 记 scan 目录/行数/mtime/耗时）· **异常即停**（Permission denied / 超时 / 不可达 >20% ⇒ 停手报运维）。
+3. 明确要求：扫完前两轮**不得再用「枯竭」措辞**，必须用活跃会话数说话。
+
+影响面：A 承担全 4 shard 的每日 scansync，所以这次扫描会**同时刷新 B/C/D 的候选池**——若 B/C/D 近期「fresh=0」的判断也建立在 1113 旧快照上，扫完后需一并复核。
+
 ## 2026-11-14 13:0x — 用户告知：Boss 直聘昨晚已重登 → 招聘线解除 RED 的条件已具备
 
 用户原话：「招聘线，昨晚boss直聘已登录」。
