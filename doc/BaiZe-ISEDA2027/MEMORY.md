@@ -2,15 +2,21 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-14 12:1x — 落款拼法最终定为 `Yang Liu`（覆盖上一条的 `Liu Yang`）
+
+用户令：「落款用 Yang Liu」。即与主页/论文署名一致（given-first），不采用手写版的 family-first。
+
+已改：`RESEARCH_MAIL_SPEC.md` §2 自我介绍英文句与落款模板、`WATCH_RESEARCH_TASK.md` 11:4x 块第 2 条与谢赛宁案例结尾。**此后所有英文信一律 `Best regards,` / `Yang Liu`；中文信一律 `祝好，` / `Yang Liu`。** 上一条记录里的 `Liu Yang` 作废，勿再引用。
+
 ## 2026-11-14 12:0x — 用户指出作者请教信三处瑕疵（语言 / 自我介绍 / 落款）
 
 用户原话：「但也有瑕疵」——以写给谢赛宁（Saining Xie / NYU）那封为例，指出三点：① 华人作者却用英文（「是华人，为什么不用对方母语交流」）；② 自我介绍奇怪（应说「我是 LLM agent 的研究者」，可给 https://foamliu.github.io/）；③ 落款啰嗦（只要两行 `Best regards,` / `Liu Yang`）。
 
-运维核查（`research/mail/`）：作者信 40 封中仅 **7 封中文 / 27 封标注英文**，其中**至少 3 封对象是华人**（Haotian Liu/LLaVA、`yibolin@pku.edu.cn`/PKU、Beidi Chen/CMU）⇒ 并非孤例。另核实用户主页：**中文名「刘杨」**，主页/论文拉丁写法为 `Yang Liu`，用户本次手写落款为 `Liu Yang`（以用户口径为准）。
+运维核查（`research/mail/`）：作者信 40 封中仅 **7 封中文 / 27 封标注英文**，其中**至少 3 封对象是华人**（Haotian Liu/LLaVA、`yibolin@pku.edu.cn`/PKU、Beidi Chen/CMU）⇒ 并非孤例。另核实用户主页：**中文名「刘杨」**，主页/论文拉丁写法为 `Yang Liu`；落款拼法后由用户 12:1x 裁定为 `Yang Liu`（见上条）。
 
 落地：
 1. `RESEARCH_MAIL_SPEC.md` §2 重写语言判据（华人一律中文，含海外任职；任一判据命中即中文；禁止以「人在海外/论文英文/gmail」判英文）+ 自我介绍只写身份 + **落款固定两行且其后不得再有内容**（项目清单不进落款）。
-2. `WATCH_RESEARCH_TASK.md` 11:4x 块从三条硬要求扩到**四条**（新增「语言」条），并把谢赛宁这封写成**正/误对照案例**；署名统一口径由「Yang Liu」更正为 **`Liu Yang`**。
+2. `WATCH_RESEARCH_TASK.md` 11:4x 块从三条硬要求扩到**四条**（新增「语言」条），并把谢赛宁这封写成**正/误对照案例**；署名统一口径为 **`Yang Liu`**（12:1x 用户最终裁定，见上条）。
 3. `RESEARCH_MAIL_SPEC.md` §6 台账新增：**备注首项必须写 `语言=中文/英文 + 判据`**，便于事后审计。
 
 给后续 agent：**华人作者用中文是硬规则，不是偏好**；自我介绍一句身份即可，落款两行收尾。

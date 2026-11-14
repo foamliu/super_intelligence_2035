@@ -34,15 +34,15 @@
   - 真判不出来（判据全落空）⇒ 英文；**但只要有一条命中，就必须中文**。
   - 篇幅：英文 **≤200 词** / 中文 **≤300 字**。
 - **四段式**：
-  1. **一句自我介绍（只写身份，不铺项目清单）**：英文 `I am Liu Yang, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.`；中文 `我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。`。项目名（BaiZe / ZhuLong）如需出现，放第 2 段一句带过，**🚫 不塞进自我介绍**；🚫 不建议在信里报雇主（§8）。
+  1. **一句自我介绍（只写身份，不铺项目清单）**：英文 `I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.`；中文 `我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。`。项目名（BaiZe / ZhuLong）如需出现，放第 2 段一句带过，**🚫 不塞进自我介绍**；🚫 不建议在信里报雇主（§8）。
   2. **为什么读你这篇**（点出与我们在研问题的关系）。
   3. **2–3 个具体问题**（**技术细节**，须**能回填研发决策**；逐条写明「答复会改进哪一步」）。
   4. 致谢 + **落款固定两行，其后不得再有任何一行**：
      ```
      Best regards,
-     Liu Yang
+     Yang Liu
      ```
-     中文信落款：`祝好，` + `Liu Yang`。🚫 `Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027` 一句**禁止出现在落款里**（2026-11-14 用户令：落款要简洁两行）。
+     中文信落款：`祝好，` + `Yang Liu`。🚫 `Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027` 一句**禁止出现在落款里**（2026-11-14 用户令：落款要简洁两行）。
 - **问题质量（硬）**：🚫 不问摘要里已有的内容；🚫 不问泛泛的「能否分享代码」（除非确需）；须**具体到方法 / 超参 / 失败模式 / 复现细节**。
 - **草稿先落盘（入 git，供监督）**：`doc/personal-watch/run/research/mail/drafts/<arXiv_ID>.md`。
 
