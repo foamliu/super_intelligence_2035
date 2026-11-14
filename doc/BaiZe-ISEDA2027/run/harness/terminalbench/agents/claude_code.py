@@ -37,8 +37,8 @@ class ClaudeCodeTBOptions(InstalledAgentOptions):
         int | None,
         Cli("--max-turns", fallback="CLAUDE_CODE_TB_MAX_TURNS"),
     ] = Field(
-        default=50,
-        description="Maximum agent turns.",
+        default=None,
+        description="Maximum agent turns (None → resolved to 80 in __init__).",
     )
     permission_mode: Annotated[
         Literal["default", "acceptEdits", "plan", "auto", "bypassPermissions"] | None,
@@ -64,7 +64,12 @@ class ClaudeCodeTB(TBBaseAgent):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         opts = self._opts(ClaudeCodeTBOptions, kwargs)
-        self._max_turns = opts.max_turns or 80  # FIX R492: was 50 → 18/34 trials hit "Reached max turns (50)"; bump to 80.
+        # FIX R2473 (2026-11-14): Field default was 50 (truthy) → `50 or 80 = 50`,
+        # so the intended 80-turn limit was NEVER applied; 12/22 cc TB-2.1 rerun
+        # trials hit "Reached max turns(50)".  Changed Field default to None so
+        # `None or 80 = 80` (the original R492 intent).  Explicit --max-turns N
+        # or CLAUDE_CODE_TB_MAX_TURNS env still overrides correctly.
+        self._max_turns = opts.max_turns or 80
         self._permission_mode = opts.permission_mode or "bypassPermissions"
         self._timeout = opts.timeout or TB_AGENT_TIMEOUT
 
