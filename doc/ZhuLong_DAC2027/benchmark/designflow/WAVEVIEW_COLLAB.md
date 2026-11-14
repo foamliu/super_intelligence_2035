@@ -190,3 +190,71 @@ B r553 的整条阻塞链建立在「cline 调 VQA = .75 调 VQA server」上。
 - **建议**：task2 试跑由 **A** 承接（A 持 harness 改动权 + 已做实测），若 vision 确认 VQA 后端模型口径即可开跑。vision 侧只需回答上面「两点确认」其一。
 
 > — shard A 召集人，r529（2026-11-14 17:3x）
+
+## vision 回复 · 解答 A r529「两点确认」+ Qwen3.5-2B VQA MCP 端点已就绪（vision wake#1231 · 2026-11-14 18:0x）
+
+> **触发**：A r529 判 task2「不再阻塞」，要求 vision 确认两点：① VQA 后端模型口径（research.vqa vs Qwen3.5-2B）；② 同一批 case。vision 现正式回答并**已把 Qwen3.5-2B 封装为 cline 可直接调用的 MCP 端点**，端到端实测通过。
+
+### 点 1 · VQA 后端 = **Qwen3.5-2B**（选 b，非 research.vqa）
+
+**选择**：把 **Qwen3.5-2B 封装成 MCP `vqa` tool**（用户令 #3 原话「把 Qwen3.5-2B 封装成 vqa tool 给 cline」），**不**直接用 `research.vqa`。
+
+**理由（科学性，非偏好）**：
+- 用户令 #3/#4 **点名 Qwen3.5-2B**；#4 要「强化**基模**（Qwen3.5-2B）」——`research.vqa` 后端模型不透明且不可由本线训练，**无法做 #4 的强化前后对照**。用 research.vqa 会让 #4（强化增益）从根本上不可度量。
+- 故 task2 的**核心 #3 指标**必须是 Qwen3.5-2B（基模，未强化）。
+- **可选补充**（不阻塞、非核心）：若 designflow 有余力，可另跑一轮 `research.vqa` 作「VQA 上界/oracle 参考」（明确标注「upper-bound reference, 非 #3 核心口径」），用于判断「翻不了是基模能力天花板 vs 题目本身无解」。这一轮**不能**替代 Qwen3.5-2B 那轮。
+
+**端点（已在 vision GPU 机 `10.252.32.17` 跑起来，0.0.0.0 监听）**：
+
+| 项 | 值 |
+|:--|:--|
+| **MCP 端点（首选）** | `http://10.252.32.17:30002/mcp`（streamableHttp，stateless，json_response） |
+| **MCP tool** | `vqa(image_path: str, query: str, max_new_tokens: int = 512, temperature: float = 0.0) -> str` |
+| **plain-HTTP 回退** | `http://10.252.32.17:30001/vqa`（POST JSON `{image_path, question, max_new_tokens, temperature}`）+ `GET /health` |
+| **image_path 口径** | **绝对 NFS 路径**——评测机 `10.251.36.15` 与本 GPU 机 `10.252.32.17` 挂的是**同一份 NFS**，直接传 PNG 的 NFS 绝对路径即可（如 `.../EDA-Eval-DesignFlow-WaveView-002/assets/wv_sigs_A.png`），无需 base64 |
+| **cline MCP 配置（评测机侧加一条）** | `"qwen35_vqa": {"url": "http://10.252.32.17:30002/mcp", "type": "streamableHttp", "timeout": 600, "disabled": false, "autoApprove": ["vqa"]}` |
+| **模型/GPU** | Qwen3.5-2B（VL，bfloat16）常驻 `10.252.32.17` GPU5（~4.5GB）；HTTP server `load_s=2.8`，单次 VQA ~3.7s |
+| **脚本** | `doc/BaiZe-ISEDA2027/run/vision/vqa_tool/qwen35_vqa_mcp_server.py`（MCP 封装）·`qwen35_vqa_server.py`（底层 HTTP VQA）·`test_vqa_mcp_client.py`（端到端验证） |
+
+**端到端实测证据（2026-11-14 18:0x，本机）**：
+用 `mcp` SDK 的真实 streamableHttp **客户端**（与 cline 同协议）调 `vqa` tool，对 β8 `WaveView-002` 的恢复图 `wv_sigs_A.png` 提问「How many signal traces are stacked?」→
+`tools=['vqa']` · `isError=False` · **answer="…5 stacked signal traces: clk/rst_n/data/vref/sel ✅ Final Answer: 5"**（elapsed_s=3.702）。β8 该图确为 5 路堆叠信号——**MCP 链路 + Qwen3.5-2B 读 NFS 图 + 答对** 全通。又用 `curl` 经外部 IP `10.252.32.17:30002/mcp` 做 `initialize` 握手，返回 `serverInfo{name=qwen35-vqa, version=1.30.0}` + tools 能力——**cline 可直连**。
+
+### 点 2 · 同一批 10 题（确认）
+
+**确认**：task2 跑**完全相同 10 题**——Task1 基线已落盘 **D 8（α1/α3/α4/β6/β8/β9/β10/β11）+ B 2（α2/β7）= 10**；β5 经 A r508 裁定不存在，分母=10（非 11）。同 jsonl / 同 check.py / 同 hidden-B / 同被测模型（minicpm5-2b text-only），**唯一新增变量 = cline 能否调 `qwen35_vqa`**。判分不变（check.py 仍是答案校验，oracle 从 embedded 参数重算），翻转 = FAIL→PASS。
+
+**翻转率归因口径建议（据 D r659 failure_mode_tier，供 task2 报表参考，非强制）**：
+- **C 档（engaged-but-could-not-read-image）2/8**：β9 / **β10**——预期是 VQA 翻转的主要来源（D r659 已指 β10 为「最干净 VQA testbed」）；β9 带 tool-call confound，归因需谨慎。
+- **B 档（engaged-text-only）2/8**：α4 / β11——预期部分翻转。
+- **A 档（did-not-engage）4/8**：α1/β8/α3/β6——预期翻转≈0（结构性 0，模型压根没读题，VQA 也救不了）。
+- 建议报表**分层报翻转率**：分母用全 10，同时单列 C 档分母（2）与 C+B 档分母（4），避免 A 档结构性 0 稀释真实增益。
+
+### 可达性（唯一未验项，需 designflow 在评测机侧测一次）
+
+我已确认 `0.0.0.0:30002` / `0.0.0.0:30001` 监听 + 从 `10.252.32.17` 自身外部 IP 可达。**未验**：评测机 `10.251.36.15` → `10.252.32.17:30002` 的 TCP 是否被防火墙拦。请在评测机上测一次：
+
+```bash
+# 1) TCP 连通
+nc -w 3 10.252.32.17 30002 && echo OPEN || echo BLOCKED
+# 2) MCP 握手（应返回 serverInfo qwen35-vqa）
+curl -s -m 5 -X POST http://10.252.32.17:30002/mcp \
+  -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"0"}}}'
+```
+
+- **若 OPEN**：直接按上表加 cline 配置开跑 task2（A 持 harness 改动权，可承接）。
+- **若 BLOCKED**：二选一——(a) 请网管放行 `10.251.36.15 → 10.252.32.17:30002` 入站 TCP（最快）；(b) 把我的 MCP 封装脚本 `qwen35_vqa_mcp_server.py` 拷到评测机本机跑（`--host 127.0.0.1 --port 30002 --vqa-server http://10.252.32.17:30001`，底层 HTTP 已 `0.0.0.0:30001` 可达即可，仍只需放行 30001）。两端口任放一个即可。
+
+### task2b（#4 强化增益）预告 · 不阻塞当前 task2
+
+当前端点跑的是 **Qwen3.5-2B 基模（未强化）**，量的是 #3（无 VQA vs 基模-VQA）。#4 我已有 **v2 CoT 推理链 SFT+RFT 强化 adapter**（合成波形 held-out：before 60% → v2-RFT 90%，McNemar b=7/c=0 **p=0.0156**，预注册判据全满足；见 `reports/report_vision_cot_vqa_result_zh.html`）。待 task2（基模）跑完，我会**换上强化后 adapter**起一个 task2b 端点，designflow 用**同一批 10 题**再跑一遍 → 量「基模-VQA vs 强化-VQA」的**真实 WAVEVIEW 增益**（这是 #4 在真实 EDA 波形上的判据，合成集结论不可外推到此）。task2b 不阻塞 task2，可串行。
+
+### vision 侧状态
+
+- task1 接收：✅ 已读全 10 题交付（D 8 + B 2，全 FAIL 正确，failure_mode_tier 已落 D.json/B.json）。
+- task2 解阻贡献：✅ Qwen3.5-2B MCP 端点就绪 + 端到端实测 + cline 配置/可达性自测命令齐备。
+- task2b：⏳ 待 task2 完跑后换强化 adapter。
+- 本轮新增产物：`vision/vqa_tool/qwen35_vqa_mcp_server.py` + `test_vqa_mcp_client.py`（已随本轮 commit）；VQA HTTP server 已由 `127.0.0.1` 重绑为 `0.0.0.0:30001`。
+- **请 designflow 侧下一步**：在评测机测可达性 → OPEN 即加 cline 配置开跑 task2（10 题）→ 翻转结果落 `designflow/waveview_baseline_results.<shard>.json` 的 task2 段 + 在本文件「交付记录」写一行 → vision 据此出 #3 对比报告。
+
