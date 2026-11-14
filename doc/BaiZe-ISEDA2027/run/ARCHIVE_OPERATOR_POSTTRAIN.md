@@ -236,3 +236,131 @@
 
 ---
 
+
+## 📦 归档：2026-11-12 11:2x 隧道令 / 2026-11-10 17:10 占位令 / 2026-11-06 P0-P3 令 原文（运维 2026-11-14 wake501 搬入，因任务书超 32KB 软限；三块均已闭合/前提消失，结论见任务书指针）
+
+> 搬迁说明：① 11:2x 隧道令——dual-nix-tunnel 已通（TUNNEL_OK 实测、run_code e2e PASS），连通配置已落 `.env`+MEMORY 关键事实段；② 17:10 占位令——前提「沙盒未通」已消失，GPU5 现为 vision R9、GPU6/7 为 eval serve；③ 11-06 P0-P3 令——P0/P1/P2/P3预备 全部 ✅ 交付，P3 正式训练 ⏻ 等 pretrain ckpt（ETA≈2026-12-25），已在任务书「阻塞项」单列。原文如下，未改写。
+
+---
+
+### 🔴 用户令 · 2026-11-12 11:2x（**沙盒隧道已启动——只用它 SSH 到 36.15 以访问 EDA 环境**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话（第二轮，覆盖上一号令的细节）**：「沙盒隧道已启动，只要求它使用隧道 SSH 到 36.15，以进一步访问 EDA 环境即可。」
+
+**立即执行**（本轮首要任务；上一号令「自行建立隧道」之细节作废，隧道**已由外部启动好**）：
+
+1. **先读**本机 `.17` 上的 `cat /nas_data/app.e0031982/code/dual-nix-tunnel/README.md`，理解如何使用这条**已就绪的隧道**（ssh 命令、端口/跳板参数、认证方式）。
+2. **通过隧道 SSH 到 36.15**（即 `10.251.36.15`，ZhuLong 那台），验证 `ssh` 可达并能登录。
+3. 在 36.15 上**进一步访问 EDA 环境**（pyAether Python+SWIG / Virtuoso SKILL 沙盒），用最小用例实测 `run_code` 端到端可达。
+4. 把实际可用的连通方式（走哪条 ssh 隧道、目标主机/端口）**更新进** `eda_fastmcp .env`、`MEMORY_POSTTRAIN.md` 关键事实段、以及本任务书隧道说明；替换旧的 `SANDBOX_HOST=10.129.32.75:8664/8665/8653/8669` 失效通路。
+5. 隧道打通后，回到 2026-11-10 计划主线：**拆 GPU5/6/7 占位 serve → 用 v11v38 语料重训 SFT → 评测验证 data gap coverage 改善 → baseline eval 5-run → RL R1-R4 起跑**。
+6. 凭证/密钥路径一律存仓库外、不入库不入日志（沿用「secret 不入库」纪律）。
+7. 完成后在 MEMORY_POSTTRAIN.md 报告：SSH 36.15 是否真正可达（附探测输出证据）、EDA 访问是否通、连通配置落盘位置、下一步动作，保持 `WAITING=0` 继续主线。
+
+---
+
+---
+
+### 🔴 用户令 · 2026-11-10 17:10（**sandbox 未通前用 serve 占住 GPU5-7，防止被挪用**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「既然阻塞（隧道未通），让post-train先随便起一些长任务把后三卡占用起来（比如也serve MiniCPM5，否则被挪用）。」
+
+**立即执行**：
+1. 在 GPU 5/6/7 上各启动一个 vLLM serve MiniCPM5-2B（复用已有 venv 和配置），端口分别 8097/8096/8095。
+2. 命令模板（直接跑）：
+```bash
+CUDA_VISIBLE_DEVICES=<N> HF_HOME=/tmp/hf_home TRANSFORMERS_CACHE=/tmp/hf_home HF_MODULES_CACHE=/tmp/hf_home/modules \
+  nohup /tmp/vllm_venv/bin/python -m vllm.entrypoints.openai.api_server \
+  --model /nas_data/app.e0031982/models/MiniCPM5-2B \
+  --served-model-name minicpm5-2b-gpu<N> --host 0.0.0.0 --port <PORT> \
+  --trust-remote-code --gpu-memory-utilization 0.85 --max-model-len 32768 \
+  > /tmp/vllm_gpu<N>.log 2>&1 &
+```
+3. 启动后验证：`curl -s http://localhost:<PORT>/v1/models` 有响应 + `nvidia-smi -i <N>` 显存占用 ~37GB。
+4. **注意**：transformers 必须是 4.49（不是 5.x），否则 tokenizer 报错。如果 `import transformers; print(transformers.__version__)` 不是 4.49，先 `uv pip install --python /tmp/vllm_venv/bin/python "transformers>=4.45,<4.50"` 降级再启动。
+5. **注意**：启动前先 `nvidia-smi --query-compute-apps=pid,used_memory --format=csv -i <N>` 确认 GPU 无残留进程，有则 `kill -9` 清理。
+6. 占住后在 MEMORY_POSTTRAIN.md 记录端口映射表，并保持 WAITING=0 继续做其它可做的事（归档 EXPERIMENTS、准备 SFT 脚本等）。
+
+---
+
+---
+
+### 🆕 2026-11-06 运维直令：建立 post-train 线 · 先做 P0 诊断 + 数据/方案预研（不启训练）
+
+> 这是本线**第一条**指令。post-train 线**新建**，从零起步。
+> ⚠️ **当前阶段（架构实验期末尾 → 正式训练前）**：pretrain S1 仍在 `.29` 跑（iter~101320/700000，ETA≈2026-12-25），**post-train 的正式训练依赖 pretrain 收敛 ckpt**。
+> ⇒ **本线现在不启任何训练**，先做**零成本/低成本的准备 + 预研**，等 pretrain ckpt 就绪后再起。
+> ⏱️ ISEDA 2027 投稿截止 ≈ 2027-02-01，倒推 post-train 正式训练窗口 ≈ **2026-12 下 → 2027-01 中**（约 3 周）。
+
+**P0（本轮起，零 GPU，必须先做）—— §7.0 诊断清单 D1–D6**
+
+> 出处：项目总纲 `README.md` §7.0。这六项**不花任何 GPU**，但直接决定 post-train 该往哪使劲。
+> 数据来源：`~/eda_code_eval/*/final_report.json` 的 `details_per_task`（**数据已在手，无需重跑**）。
+> 36% 是 MiniCPM5-2B 在 full harness 下已测的 Pass@1（与 94.0% 同口径）；58 pp 差距里有多少是「协议问题（可回收）」vs「真实能力差距」，全靠这六项判。
+
+| # | 诊断项 | 判读 |
+|:--|:--|:--|
+| D1 | 工具调用合法率（格式合法 tool_call / 总数） | <90% → 协议问题，SFT 可大幅回收 |
+| D2 | 工具调用频次（每任务平均调用次数，vs DeepSeek 的） | 显著偏低 → 模型不「用工具」、纯靠回忆 → SFT 可修 |
+| D3 | 超上下文/截断比例 | 高 → 长上下文适配是 post-train 的前置项 |
+| D4 | 失败类型分解（执行报错 vs 断言失败） | 报错多 → API/领域知识问题（SFT 领域语料）；断言失败多 → 语义推理问题（RL 价值更大） |
+| D5 | per-scenario 通过率（Layout 64 / Schematic 47 / Design Mgmt 24 / Others 23） | 决定 SFT 数据的配比 |
+| D6 | 平均迭代轮数（Φ）分布 | 显著低于 DeepSeek → 模型不会用执行反馈闭环 |
+
+**交付**：
+1. 从 `~/eda_code_eval/*/final_report.json` 提取 D1–D6 六项统计（MiniCPM5-2B 的那次 36% 运行；若有 DeepSeek 94% 的对照运行则一并列出做 diff）。
+2. 若 `final_report.json` 字段不足以算某项，**如实标注「字段缺失」**并写明需要补抓什么；🚫 禁止编造。
+3. 产出中文 HTML 报告 `reports/report_posttrain_diagnose_d1d6_zh.html`（自包含、0 script、0 外链、≥8 节：摘要 + 六项各一节 + 结论「58 pp 里多少是协议可回收」初步判断 + 对 post-train 三步的侧重建议）。
+4. 同步把六项数值写进 `EXPERIMENTS_POSTTRAIN.md` §D（新建）。
+5. commit 前缀 `posttrain diag:`。
+
+**P1（P0 完成后，零/低 GPU，并行可做）—— 数据盘点 + 方案预研**
+
+> post-train 正式训练需要的数据**部分已就绪**，部分需补。先盘清。
+
+| 项 | 内容 | 现状（已知） |
+|:--|:--|:--|
+| P1-a | **SFT 通用指令集** `UltraData-SFT-2605`（319G / 1504 JSONL / 20.97B tok） | ✅ 已分词镜像（`DATA_MAPPING.md` L11） |
+| P1-b | **SFT agentic 指令集** `UltraData-SFT-Agent-2609`（51G / 50 shard） | ✅ 已分词（`DATA_MAPPING.md` L12） |
+| P1-c | **B 类 agentic 数据**（`to-tool-call-datasets`/`AgentTrove`/`Nemotron-Cascade-SFT-SWE`/`terminal-command-execution-sft` 等，落 `/nas_inference`） | ⏳ 已下载未分词（`DATA_MAPPING.md` §F） |
+| P1-d | **PyAether 领域语料**（API 参考 / EDA 工具文档 / HDL 源码，供领域退火 + SFT 合成） | ⚠️ **待确认来源** —— `eda_fastmcp` 的 API 知识库能否导出为纯文本？见总纲 §9 待确认项 |
+| P1-e | **EDA-Eval-PyAether 158 任务污染隔离规则**（§5.1 红线） | ⚠️ 必须在合成任何 PyAether 训练对之前定稿 |
+
+**P1 交付**：
+1. 盘点 P1-a~P1-c 的**实际可用性**（路径存在 / 字节数 / 是否已分词为 mcore 格式 / token 数），写成 `EXPERIMENTS_POSTTRAIN.md` §Data 表。
+2. **P1-d 调研**：`eda_fastmcp` 的 API 知识库（`/nasdata/app.e0031982/code/eda_fastmcp`）能否导出为纯文本文档？能导出多少？格式？→ 写成 `EXPERIMENTS_POSTTRAIN.md` §PyAether-corpus 节 + 在报告里给「领域退火语料组装方案」（来源/配比/预估 token 数）。
+3. **P1-e 污染隔离规则草案**：按 API 名 / 函数签名做隔离，确保 158 任务的答案与断言不泄漏；写出可执行的隔离脚本骨架（即使现在不跑，也要先把规则定下来）。🚨 这是红线，违反则整节作废（总纲 §5.1）。
+4. 产出中文 HTML 报告 `reports/report_posttrain_data_inventory_zh.html`（自包含、≥10KB）。
+5. commit 前缀 `posttrain data:`。
+
+**P2（P1 完成后，零 GPU，纯设计）—— 三步训练方案书**
+
+> 依据 P0 诊断 + P1 数据盘点，写 post-train 三步的**完整方案书**（不启训练，只设计）。
+
+1. **领域退火**：复用 Stage(i) 的 WSD 机制；退火语料配比（通用/code/PyAether）、退火步数、与「仅 SFT」对照组的隔离设计（总纲 §4 Stage(ii) 步骤 0）。
+2. **SFT**：数据混合（agentic / +code / +math / +PyAether API 语料）；CoT+工具轨迹 vs 纯代码；LoRA vs 全参；**上下文长度 4096 vs 8192 vs 16384**（总纲 §4 步骤 1，⚠️ agentic 轨迹极易超长，长上下文适配是前置项）。
+3. **RL（核心）**：RLVR + GRPO；**奖励设计 4 臂**（R1 二值 / R2 部分分 / R3 R2+工具调用惩罚 / R4 R3+API 合法性，见 `5_llm_posttrain.tex` Table\ref{tab:reward}）；🚨 **Reward hacking 是最大风险** —— anti-cheat + 单独报告 cheat rate；⚠️ **预算口径换算**：带沙盒执行时是沙盒时延 bound，按「沙盒并发数 × 墙钟」规划，不沿用 GPU-hour（总纲 §4 步骤 2）。
+4. **评测**：backbone × harness 网格（总纲 §4 步骤 3）；**预注册成功阶梯 M1–M4**（36%→50%→65%→75%→85%，先定后测，避免事后合理化，总纲 §4 步骤 4）。
+5. **预注册判定阈值**：点估计 + 配对检验（McNemar / paired bootstrap）显著性 + 成本比 —— **必须先定后测**（总纲 §9 待确认项）。
+
+**P2 交付**：中文 HTML 报告 `reports/report_posttrain_plan_zh.html`（自包含、≥15KB、覆盖三步 + 评测 + 成功阶梯 + 预注册阈值 + 时间线 + 风险）。
+commit 前缀 `posttrain plan:`。
+
+**P3（pretrain ckpt 就绪后，需 GPU，正式训练）—— ⬜ 等 pretrain 收敛**
+
+> ⚠️ **依赖**：pretrain S1 ETA≈2026-12-25（iter 700000）。P3 在此之前**不启动**。
+> P3 的具体子任务（退火起跑 / SFT 起跑 / RL 起跑 / 评测起跑）将在 pretrain ckpt 就绪后由运维另行下发。
+> 现在只做：把 P0/P1/P2 的方案落实到「可执行脚本骨架」（不跑，只写好 `run/baize_posttrain_*.sh` 系列 + 配方文件），等 ckpt 一到即可起。
+
+**P3 预备（本轮可做，零 GPU）**：
+1. 参照 `baize_xmodel25_decay_v2.sh` / `baize_p8_train.sh` 的结构，写 `run/baize_posttrain_anneal.sh`（领域退火配方骨架，从 pretrain ckpt resume，换数据 blend）。
+2. 写 `run/baize_posttrain_sft.sh`（SFT 配方骨架，从 anneal ckpt 或 pretrain ckpt 起）。
+3. 写 `run/baize_posttrain_rl_grpo.sh`（RLVR+GRPO 配方骨架；奖励 4 臂用配置开关切换；沙盒并发参数化）。
+4. 写 `run/baize_posttrain_eval.sh`（EDA-Eval-PyAether 评测脚本骨架，5-run、reshuffle、fresh context、2500s timeout，接入 OpenAI-compatible endpoint）。
+5. 每个脚本写好后做**语法检查**（`bash -n`）+ **dry-run 打印配方**（不真跑），把输出贴进 `EXPERIMENTS_POSTTRAIN.md` §Scripts。
+6. commit 前缀 `posttrain scaffold:`。
+
+---
+
+---
+
