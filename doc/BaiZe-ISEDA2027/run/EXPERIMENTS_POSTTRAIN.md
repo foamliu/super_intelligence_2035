@@ -11791,3 +11791,23 @@ $ bash bpt_attribution_manual_rescue.sh --arm A1
 **R2 5-run run5**：codegen RUNNING@03:33:34（.17 43/158 task~27%, stats success24/fail0/timeout10, GPU7:8095 serve 健康 minicpm5-2b-grpo-R2-step200, eval chain PID2322797 活）。4-run mean 0.475% << step105 3.04%±0.83 趋势负。run5 诚实 ETA~09:30（超 09:00 截止；R2 5-run 属独立交付项，非 09:00 归因及格线；负则诚实负结果 + McNemar/bootstrap）。
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；编辑仅限本线记忆文件。MEMORY 35.1KB（<40KB 硬限）。WAITING=0。
+
+## §R524-chain-monitor（wake524, 2026-11-15 05:3x）— postmortem 十七度复核 + 归因夜链健康监控 + MEMORY 体积归档
+
+**最高优先令（隧道复盘）状态**：已闭合（wake507）。报告 `reports/report_infra_tunnel_postmortem_zh.html`（commit 375e11bf7，20496B，0 script/0 iframe/0 外链）在位。隧道三命令 05:3x 实测全 PASS：`ss -ltnp|grep 3333`→LISTEN 127.0.0.1:3333；`ssh -p3333 app.e0031982@localhost`→hostname=hfeg0tedaap02；三隧道进程 618469(-L 沙盒)/1008898(-R 18096)/1278889(-R 18098) 活。本令无新动作。
+
+**归因夜链数据核验（36.15 经隧道 ssh 取证）**：
+- A1（no_sandbox 提示 + 基线 MCP/沙盒开）rescued `final_report_rescued.json`（/tmp/posttrain_attribution_ablation/A1/，mtime 04:34）：`metrics.pass_rate=0.0`（0/158→40 子集 0/40），`summary.generation_statistics`={success:6, failure:0, timeout:1, fail:151}，gen_success_rate=0.0380。rescue_complete.log = complete_code_generation 总 158 成功 6 失败 151 超时 1。**A1=0/40 确认**（manual rescue helper 恢复；relaunch515b 链内 auto-rescue 因 binary-grep bug 跳过，chain 报 0.12658 为 ZhuLong DeepSeek 交叉污染，已排除）。
+- A3（no_sandbox 提示 + 沙盒关/移除 eda_flow）rescued `final_report_rescued.json`（/tmp/posttrain_attribution_ablation/A3/，mtime 05:15:08）：`metrics.pass_rate=0.012658`（2/158→40 子集 2/40=5%），gen success10/fail148，gen_success_rate=0.0633。**A3=2/40 确认**（manual rescue helper @05:15 落盘；链内 auto-rescue missing-slash bug 致 cp 跳过，已由 helper 恢复）。
+- model_name=zhulong_deepseek_v32 = config.yaml 陈旧标签（非实际模型），实际评测经反向隧道 18096 调 .17:8096=minicpm5-2b-sft-v39-final（wake500 已证 active_model 标签陈旧）。
+- P0base RUNNING：PID1479907（ppid=700233 relaunch 编排器），`bpt_attribution_prompt_dev_eval.sh --patch baseline --split dev --skip-status-gate`，79 task；codegen.log 15257 行@05:31 fresh（218 submit_and_exit markers，8 worker run_cli.sh，GPU6:8096 经 18096 97%util）。ETA codegen~05:54 + rescue+eval→~06:00。
+- P0p0：待 P0base 后自动起（relaunch515b PID700233 串行）→ ETA~06:40。
+- **P0base auto-rescue 去风险已坐实**：36.15 dev-eval 脚本 mtime=04:42=fix 版——L139 `case "$RD" in */) ;; *) RD="$RD/" ;; esac`（尾斜杠修复）、L122/L138 `grep -aoE`（二进制安全）、L99 `rm -f` 清陈旧 final_report、L113-117 pre/post 目录差集定位本 patch 产出、L119-136 RESCUE 块。P0base 起跑 05:14 > fix 04:42 ⇒ bash 读新脚本 ⇒ auto-rescue 应正常（09:00「至少一条补丁 dev 前后对比」交付去风险）。
+
+**R2 5-run eval（.17 GPU7:8095）**：run1=0.63%(1/158)/run2=1.27%(2/158)/run3=0.0%/run4=0.0% DONE；run5 codegen RUNNING@03:33:34（PID3721173，etime~2h，GPU7 90%util，serve minicpm5-2b-grpo-R2-step200 健康，eval chain PID2322797 活）。4-run mean 0.475% << step105 3.04%±0.83 趋势负（待 run5 + 5run_rl_analysis_R2.json McNemar/bootstrap，负则诚实负结果）。
+
+**MEMORY 体积归档（本轮实质）**：wake476-wake522 指针压缩为 1 行 + 杂散指针（wake506/507/481-485）清理，MEMORY 35479B→30847B（<32KB 软限，<40KB 硬限）。
+
+**09:00 及格线在轨**：A1=0/40✅ + A3=2/40✅ + T6✅（attribution_t6_table.json + report_posttrain_attribution_t6_zh.html）+ P0base/P0p0 ETA~06:40 + 报告/EXPERIMENTS 待 P0 数据齐（~06:40+）下一 wake 汇总 McNemar + 报告更新。
+
+**纪律**：`git pull --rebase --autostash` clean（fast-forward 至 1dba824e1）；0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线 MEMORY + daily + EXPERIMENTS。WAITING=0。

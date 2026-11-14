@@ -77,64 +77,11 @@ WAITING: 0
 
 ## 本唤醒流水
 
-> 📦 wake476–wake484 已归档（基线 RCA v1+v2 报告交付+逐项复算校验+36.15 重测起跑+A/B 之争 trace 实证[裁决 A]，commit 25eb93f0a/4de1f8058/67337d708/e434f6def/1bca8e2da；3.04%±0.83% 复核通过；v2 RCA 37415B/0script/0外链）→ 详见 daily-memories-posttrain/2026-11-14.md。
+> 📦 wake476–wake522（R476-R522）已归档 → daily-memories-posttrain/2026-11-{14,15}.md（基线 RCA v1+v2 交付+3.04%±0.83% 复核+36.15 重测起跑+A/B 裁决 A+归因链 path-bug 根因+rescue 三脚本修复[grep -a/绝对 benchmark/case 尾斜杠]+独立 helper bpt_attribution_manual_rescue.sh+A1 干净 0/40 恢复[12.66% 交叉污染排除]+postmortem 复核一至十五度 PASS+隧道恢复+归因链起跑 A1 23:30+复盘报告交付 commit 375e11bf7；详见 EXPERIMENTS §R485-§R522/§R-Attribution-overnight 各节）。
 
-> 📦 wake485-wake488（R485-R488）已归档 → daily-memories-posttrain/2026-11-14.md（v2 RCA 多轮复验+stale 0.158 勘误+A/B trace 复算；详见 EXPERIMENTS §R485-§R488）。
-> 📦 wake489（R489 监控心跳:v2 RCA终验+A/B裁决A+双eval进度）已归档 → daily-memories-posttrain/2026-11-14.md。
-
-> 📦 wake490（R490 监控心跳:v2 RCA终验PASS+双eval实测+MEMORY归档）已归档 → daily-memories-posttrain/2026-11-14.md。
-> 📦 wake491（R491 监控心跳:v2 RCA终验PASS+36.15重测run1=15.82%[~5x跳升重大发现]+双eval健康+MEMORY归档）已归档 → daily-memories-posttrain/2026-11-14.md。
-> 📦 wake492（R492 唤醒核验:16:3x v2 RCA全维度执行级复验PASS+双eval健康+git跨线WAVEVIEW UU判定不push）已归档 → daily-memories-posttrain/2026-11-14.md。
-
-> 📦 wake493 已归档 → daily-memories-posttrain/2026-11-14.md（v2 RCA 多轮复验+三项硬证+双eval健康；详见 EXPERIMENTS §R493/§R494）。
-
-> 📦 wake494 已归档 → daily-memories-posttrain/2026-11-14.md（v2 RCA 多轮复验+三项硬证+双eval健康；详见 EXPERIMENTS §R493/§R494）。
-
-
-
-
-> 📦 wake495–wake496（R495/R496）已归档 → daily-memories-posttrain/2026-11-14.md（三项用户令复核+36.15 run1漏斗拆解+5x归因trace分析+Task A/B scaffold；详见 EXPERIMENTS §R495/§R-Attribution）。
-
-> 📦 wake497（R497）已归档 → daily-memories-posttrain/2026-11-14.md（Task A 前置：40 题分层抽样 + ablation runner run-ready；详见 EXPERIMENTS §R-Attribution-update）。
-> 📦 wake498（R498）已归档 → daily-memories-posttrain/2026-11-14.md（Task B 前置：79/79 train/dev 拆分 + P0-tool-format 补丁模板 + dev-eval runner run-ready；详见 EXPERIMENTS §R-Attribution-update2）。
-> 📦 wake499（R499）已归档 → daily-memories-posttrain/2026-11-14.md（归因前提核验+36.15 run1 逐题画像[**部分副本口径**，wake500 订正]；详见 EXPERIMENTS §R-Attribution-update3）。
-> 📦 wake500（R500）已归档 → daily-memories-posttrain/2026-11-14.md（36.15 run1 口径订正 15.82%→18.99% + per-题画像/六类分型；详见 EXPERIMENTS §R-Attribution-update4）。
-> 📦 wake501（R501 任务书归档+双eval心跳）已归档 → daily-memories-posttrain/2026-11-14.md（详见 EXPERIMENTS §R-Attribution-update4 收尾）。
-> 📦 wake502（R502 V1 系统提示差异实证 + 18.99% 权威复算）已归档 → daily-memories-posttrain/2026-11-14.md（详见 EXPERIMENTS §R-Attribution-update5）。
-> 📦 wake503（R503 Task B 补丁模板全量起草 P1/P2/P3 + dev-eval runner 去阻塞 + dry-run 验证）已归档 → daily-memories-posttrain/2026-11-14.md（详见 EXPERIMENTS §R-Attribution-update6）。
-> 📦 wake504/wake505 已归档 → daily-memories-posttrain/2026-11-14.md（R504 PPO clip 诊断+R3 prep / R505 计划填妥+T6归因表+隧道HARD BLOCKED；详见 EXPERIMENTS §R504/§R-Attribution-T6）。
-
-> 📦 wake508/wake509（R508/R509 postmortem 复核+双链监控）已归档 → daily-memories-posttrain/2026-11-15.md（隧道三命令全 PASS、归因链 A1 RUNNING、R2 5-run run4 RUNNING；详见 EXPERIMENTS §R508-monitor）。
-
-> 📦 wake510 已归档 → daily-memories-posttrain/2026-11-15.md（postmortem 三度复核 PASS + 隧道三命令 00:47 PASS + 归因夜链 A1 RUNNING + R2 run4 RUNNING + MEMORY 归档 wake504/505；详见 EXPERIMENTS §R508-monitor）。
-
-> 📦 wake511 已归档 → daily-memories-posttrain/2026-11-15.md（postmortem 四度复核 PASS + 归因夜链 A1 DONE 12.66%/A3 RUNNING + R2 run4 RUNNING；详见 EXPERIMENTS §R508-monitor）。
-> 📦 wake512（R512 归因夜链有效性审计+postmortem 五度复核）已归档 → daily-memories-posttrain/2026-11-15.md（提示机制真生效实证[A1 no_sandbox/A3 +eda_flow移除/P0base old/P0p0 p0_toolfmt 单变量设计 de-risk]+§R512-attribution-audit）。
-> 📦 wake513/wake514 已归档 → daily-memories-posttrain/2026-11-15.md（六/七度复核+跨机纠偏；详见 EXPERIMENTS §R513/§R514/§R515）。
-> 📦 wake515 已归档 → daily-memories-posttrain/2026-11-15.md（归因链 path-bug 根因+rescue 修复+A1=0/40 交叉污染排除+干净重跑 relaunch515b 02:55 起；详见 EXPERIMENTS §R515-attribution-rescue）。
-> 📦 wake516 已归档 → daily-memories-posttrain/2026-11-15.md（双链监控+postmortem 九度复核 PASS+rescue 内嵌验证 grep RESCUE=5/5；详见 EXPERIMENTS §R513-monitor）。
-> 📦 wake517 已归档 → daily-memories-posttrain/2026-11-15.md（双链监控+重复链排查+R2 run4 DONE+postmortem 十度复核 PASS；详见 EXPERIMENTS §R513-monitor）。
-> 📦 wake518 已归档 → daily-memories-posttrain/2026-11-15.md（双链监控+postmortem 十一度复核 PASS+relaunch515b A1 codegen RUNNING+R2 run5 起；详见 EXPERIMENTS §R513-monitor）。
-> 📦 wake519 已归档 → daily-memories-posttrain/2026-11-15.md（rescue 双 bug 修复[grep -a+绝对 benchmark]+A1 干净 0/40 恢复+12.66% 确为 ZhuLong DeepSeek 交叉污染排除；详见 EXPERIMENTS §R519-rescue-fix）。
-> 📦 wake520 已归档 → daily-memories-posttrain/2026-11-15.md（rescue RD 路径拼接 bug 修复[三脚本 case 尾斜杠]+独立 helper bpt_attribution_manual_rescue.sh 落地+A1 复算 0/40+A3 auto-rescue 失效预警；详见 EXPERIMENTS §R520-rescue-slashfix）。
-> 📦 wake521 已归档 → daily-memories-posttrain/2026-11-15.md（postmortem 十四度复核+MEMORY 体积归档+A3 rescue 后台启动+双链监控；详见 EXPERIMENTS §R521-postmortem-arch）。
-> 📦 wake522 已归档 → daily-memories-posttrain/2026-11-15.md（postmortem 十五度复核+双链健康+A3 rescue poll 延长+A3 done@05:13:57 clean 2/40+P0base RUNNING@05:14:04；详见 EXPERIMENTS §R522-chain-monitor）。
 > wake523 R523（2026-11-15 05:2x）: **postmortem（🔴最高优先）十六度复核 PASS + 归因夜链数据核验 + 双链监控**。①postmortem 十六度复核 PASS：报告 `reports/report_infra_tunnel_postmortem_zh.html`(commit 375e11bf7 origin/main,0 script/0 外链)+隧道三命令 05:2x 实测全 PASS[3333 LISTEN 127.0.0.1 / ssh -p3333→hfeg0tedaap02 TUNNEL_OK / 三隧道进程活 618469/1008898/1278889]。最高优先令已闭合，无新动作。②**归因夜链数据核验（本轮实质，36.15 经隧道）**：A1 rescued `final_report.json` metrics.pass_rate=**0.0**（0/158，40 子集 0/40，gen success6/fail151/timeout1，干净复算确认）/ A3 rescued metrics.pass_rate=**0.012658**（2/158，40 子集 2/40，rescued@05:15:08 fresh）/ P0base RUNNING（PID1479907,etime 7min,`--patch baseline --split dev`,codegen.log 449KB@05:23 fresh,214 submit_and_exit markers）/ P0p0 待 P0base 后。**P0base auto-rescue 去风险已坐实**：36.15 dev-eval 脚本 mtime=04:42=fix 版（L139 case 尾斜杠/L122,138 grep -aoE 二进制安全/L99 清陈旧/L113-117 pre-post 目录差集/L119-136 RESCUE 块）⇒auto-rescue 应正常。③R2 5-run run5 codegen RUNNING@03:33:34（.17 GPU7:8095 88%util,serve minicpm5-2b-grpo-R2-step200 健康,eval chain PID2322797 活）；run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE,4-run mean 0.475%<<step105 3.04%±0.83 趋势负。④09:00 及格线在轨：A1=0/40✅+A3=2/40✅+T6✅(attribution_t6_table.json)+P0base/P0p0 ETA~07:00（codegen~40min/臂,串行单 serve）+报告/EXPERIMENTS 待 P0 数据齐(~07:00+)汇总。0 infra,未碰 GPU0-5/运行中 eval/别线/隧道进程。→ 详见 daily 2026-11-15 与 EXPERIMENTS §R523-chain-monitor。
 
-
-
-
-> 📦 wake507 已归档 → daily-memories-posttrain/2026-11-15.md（隧道事故复盘报告交付：报告 report_infra_tunnel_postmortem_zh.html + commit 375e11bf7 + MEMORY 顶部结论行；隧道恢复后接回 A1/A3+P0dev）。
-
-> 📦 wake506 已归档 → daily-memories-posttrain/2026-11-15.md（隧道恢复+runner 缺陷修复[run_cline_script.sh 不读 MCP_CFG/SANDBOX_ON→按臂 stage CLI_DATA_DIR 改 cline_mcp_settings.json]+归因链起跑 A1 23:30；详见 EXPERIMENTS §R-Attribution-overnight）。
-
-
-
-
-> 📦 wake481–wake485（R481–R485）已归档（36.15 环境核实+启动脚本+SMOKE+A/B 之争 trace 实证/v2 RCA 交付核验/36.15 重测起跑/wake485 监控心跳+stale 0.158 勘误；详见 daily-memories-posttrain/2026-11-14.md）→ 原文已搬，此处留指针。
-
-
-
+> wake524 R524（2026-11-15 05:3x）: **postmortem 十七度复核 PASS + 归因夜链健康监控 + MEMORY 体积归档**。①postmortem（🔴最高优先）十七度复核 PASS：报告 report_infra_tunnel_postmortem_zh.html 在位（commit 375e11bf7 origin/main）+隧道三命令 05:3x 实测全 PASS[3333 LISTEN 127.0.0.1 / ssh -p3333→hfeg0tedaap02 / 三隧道进程 618469/1008898/1278889 活]。最高优先令已闭合。②归因夜链（36.15 经隧道 ssh 取证）：A1 rescued=0/40✅(final_report_rescued.json@04:34 metrics.pass_rate=0.0,gen success6/fail151/timeout1)/A3 rescued=2/40✅(@05:15 metrics.pass_rate=0.012658,gen success10/fail148)——双臂干净数字已落盘（manual rescue helper 恢复，model_name 陈旧标签非实际模型=minicpm5-2b-sft-v39-final 经反向隧道 18096）。P0base RUNNING（PID1479907,--patch baseline --split dev,79 task,codegen.log 15257行@05:31,218 submit_and_exit markers,8 worker,GPU6:8096 经 18096 97%util）/P0p0 待 P0base 后自动起（relaunch515b PID700233 串行）。dev-eval 脚本 fix 版确认在位（L139 case 尾斜杠）⇒P0base/P0p0 auto-rescue 应正常。③R2 5-run run5 codegen RUNNING@03:33:34（.17 GPU7:8095 90%util,serve minicpm5-2b-grpo-R2-step200 健康,eval chain PID2322797 活）；run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE,4-run mean 0.475%<<step105 3.04%±0.83 趋势负。④09:00 及格线在轨：A1=0/40✅+A3=2/40✅+T6✅+P0base/P0p0 ETA~06:40（codegen~40min/臂 串行）+报告/EXPERIMENTS 待 P0 数据齐(~06:40+)汇总 McNemar。⑤本轮实质=MEMORY 体积归档（wake476-522 指针压缩+杂散指针清理）+双链健康核验。0 infra,未碰 GPU0-5/运行中 eval/别线/隧道进程。→ 详见 daily 2026-11-15 与 EXPERIMENTS §R524-chain-monitor。
 
 > 📦 wake1–wake186 (R1–R139) 已归档 → daily-memories-posttrain/2026-11-{06,07,08,09,10}.md（P0/P1/P2/SDPA/cu124 venv/verl/SGLang/Parquet/内存预算/500题/反作弊/替身RL预演/吞吐量等全量调研；R-content 详见 EXPERIMENTS 归档）。
 
