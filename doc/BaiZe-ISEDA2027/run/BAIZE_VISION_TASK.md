@@ -28,6 +28,16 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-15 07:4x（**🚫 不要自己写日报/周期性汇报 HTML；报告一律按需**）· 常驻 · 最高优先
+
+> **用户原话**：「report_benchmark_11_15.html 是谁写的，不是说不用写日报了吗。很费token。以后我会按需请相关agent出报告。」
+
+1. 🚫 **不再新建任何「巡检汇总/日报/进度汇报」类 HTML**。日常进度写 `MEMORY_VISION.md` 一行 + `daily-memories-vision/<日期>.md` 即可，**不要再为了汇报而生成 HTML**。
+2. **用户点名的报告照写**（如 `report_vision_cot_vqa_result_zh.html`、`report_vision_waveview_selftest_agent_zh.html`）；**按需出，不按周期出**；已有报告**原地覆盖**，不要按日期新开文件。
+3. 报告体积控制：单文件 ≤200KB，0 外链 0 script 内联 SVG；🚫 不把 trace/JSON 原文塞进 HTML。
+4. 你认为某报告有必要 → **先问，不要直接生成**。
+
+
 ### 🔴 用户裁令 · 2026-11-15 07:2x（**解掉两条「真阻塞」：① 走 SSH 自建 VQA 通道 ② 自行 SSH 去 36.15 取 WaveView 真题**）· 最高优先 · 未完成
 
 > **用户原话**：「vision：目前隧道只保证 10.251.36.15 <-> .17 SSH 畅通，30002 不能保证，需要基于SSH，自己（vision在.17）想办法。关于【缺 >10 道 WaveView 真题】，放行vision自行SSH到36.15，检查designflow放置case的目录，自行检出。」

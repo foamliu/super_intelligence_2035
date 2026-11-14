@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""merge_shards.py — 合并 4 个 shard jsonl → 主 jsonl + regen 日报
+"""merge_shards.py — 合并 4 个 shard jsonl → 主 jsonl
 
 用法：python3 designflow/merge_shards.py
-做两件事：
+只做一件事：
   1. 把 EDA-Eval-DesignFlow_{A,B,C,D}.jsonl 合并到 EDA-Eval-DesignFlow.jsonl（按 task_id 去重，按 domain 排序）
-  2. 调 gen_daily_report.py 重新生成日报
+
+🔴 2026-11-15 用户令：**不再自动生成日报**（原第 2 步已停用，理由见 regen_report 的 docstring）。
 """
 import json
 import os
@@ -49,15 +50,18 @@ def merge():
 
 
 def regen_report():
-    report_py = os.path.join(HERE, "gen_daily_report.py")
-    if not os.path.exists(report_py):
-        print("  gen_daily_report.py not found, skip report")
-        return
-    r = subprocess.run([sys.executable, report_py], capture_output=True, text=True, cwd=HERE)
-    if r.returncode == 0:
-        print("  → report regenerated")
-    else:
-        print("  ⚠ report gen failed: %s" % r.stderr[:200])
+    """🔴 2026-11-15 用户令：**已停用自动日报**。
+
+    用户原话：「report_benchmark_11_15.html 是谁写的，不是说不用写日报了吗。很费token。
+    以后我会按需请相关agent出报告。」
+
+    历史：日报由本函数在每次 merge_shards 后自动调用 gen_daily_report.py 重写
+    （单文件达 3MB，且各 shard 每 ~25 分钟 commit 一次 ⇒ 反复重写+反复提交，token 与仓库双浪费）。
+    脚本保留在原位（历史档，需要时手动 `python3 designflow/gen_daily_report.py` 仍可用），
+    但**不再自动调用**。如需恢复，须有用户明确指令。
+    """
+    print("  ⏭  日报自动生成已停用（2026-11-15 用户令）· 需要时手动跑 gen_daily_report.py")
+    return
 
 
 def main():
