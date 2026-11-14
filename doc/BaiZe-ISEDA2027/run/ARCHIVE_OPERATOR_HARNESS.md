@@ -1876,3 +1876,23 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 ### ✅ §用户令·2026-11-07 08:1x（评测脚本代际审计）· ✅ 已交付（R1739）
 
 > **结论**：代际矩阵报告已交付(17.8KB)·oracle=1.0×3(verifier正常)·TB4全0=429+合理失败(运维预判overlay根因=错误)·resume bug已修(size>50B→model_patch非空)·空patch 51.5%→6.9%。
+
+---
+
+## 归档 · 2026-11-14 10:0x（TASK 体积维护 R2467：搬入 08:4x + 08:2x 已闭合块）
+
+### ✅ 用户令 · 2026-11-14 08:4x（解释审计结果的「自相矛盾」：claude-code Q0/S0 却 0 passed）· ✅ 已交付（R2462）
+
+> **结论**：claude-code 0/89 = 100% infra（88 ConnectionRefused + 1 CLI bug·模型从未运行·tokens=0·iterations=-1）·真正"模型跑过且答错"=0题·详见 reports/report_harness_cc_tb21_attribution_zh.html。
+> **用户原话**：「把【你观察到的『自相矛盾』的审计结果】也派发给 harness，让它给出解释。」
+> **矛盾点**：claude-code Q0/S0/89evaluated/0passed 是唯一"干净却全零"样本。其他6路：codex Q0/S5/1p·cline Q0/S8/38p·opencode Q15/S23/33p·pi Q0/S45/27p·hermes Q39/S43/7p·deepseek Q0/S48/11p。
+> **交付**：逐题89行明细表+归因分类（88 ConnRefused+1 CLI bug）+一句话结论（真正"模型跑过且答错"=0题）+双报告措辞修正。
+> **红线**：🚫 不许写「claude-code 能力差」除非给出 iterations>1 且 token>0 的证据；🚫 不许再出现"待分析"。
+
+### ✅ 用户令 · 2026-11-14 08:2x（报告 report_harness_glm53_7way_swebench_tb_zh.html 整改 · 用户判定「不合格」）· ✅ 已交付（R2462）
+
+> **结论**：4条整改已交付：①kimi分母统一说明 ②TB4降附录 ③cc0p归因=100%infra(88ConnRefused+1CLIbug)+重跑 ④§1§2合并为「SWE-bench Verified·7路结果」。
+> **用户原话4条**：①kimi分母500 vs glm53分母不一致（"千奇百怪"）②TB4已闭合为何还在正文 ③TB-2.1 cc全零为何不排查 ④predict与eval分开对读者无意义。
+> **涉及文件**：reports/report_harness_glm53_7way_swebench_tb_zh.html + 生成器 gen_report_glm53_7way.py。
+> **交接边界**：下发方无原始数据，禁止推断结论；所有事实核对/口径决定/数字复算由 harness 在服务器上用原始数据完成。
+> **纪律**：🚫 手改HTML；🚫 拿「中间值/进行中」搪塞；改动须可复算。

@@ -114,79 +114,13 @@
 
 ---
 
-### ✅ 用户令 · 2026-11-14 08:4x（**解释审计结果的「自相矛盾」**：claude-code Q0/S0 却 0 passed）· ✅ 已交付（R2462）
-
-> **用户原话**：「把【你观察到的『自相矛盾』的审计结果】也派发给 harness，让它给出解释。」
-
-- **要你解释的现象（用你自己的 R2461 审计数据）**：
-  | 路 | 额度失败 Q | 假结果 S | Evaluated | TB-2.1 passed |
-  |:--|:--:|:--:|:--:|:--:|
-  | **claude-code** | **0** | **0** | 89 | **0** |
-  | codex | 0 | 5 | 89 | 1 |
-  | cline | 0 | 8 | 89 | 38 |
-  | opencode | 15 | 23 | 89 | 33 |
-  | pi | 0 | 45 | 89 | 27 |
-  | hermes | 39 | 43 | 89 | 7 |
-  | deepseek | 0 | 48 | 89 | 11 |
-- **矛盾点**：claude-code = **0 额度失败 + 0 假结果 + 89 已评测**，却 **0 passed**。按你审计的口径，这 89 题的失败**既不能归因额度、也不能归因假结果**，那么它们**必须**落到"真跑过但失败"或"从未启动但被记成已评测"之一。**这两者含义完全不同，报告至今没有区分，也没有任何一处解释。**
-- **对照放大**：同样 S=0 的只有 claude-code 一路；pi（S45）、deepseek（S48）虽有大量假结果，仍有 27/11 passed。**唯一"干净却全零"的样本就是 claude-code —— 这本身是强异常信号，不该被一句「cc 0p 待分析」带过。**
-- **要交付（本轮必须出结论，不许留白）**：
-  1. **逐题 89 行明细**（可折叠表格）：`task | reward | exception_type | iterations | input/output tokens | stdout 前 80 字 | 归因类别`；
-  2. **归因分类饼图/堆叠表**，至少分：①docker/镜像未起 ②适配器异常（鉴权/CLI 解析/SSE）③AgentTimeoutError ④模型有输出但 verifier 判错（真能力）⑤其他；
-  3. **一句话结论**：这 89 题里**真正"模型跑过且答错"有几题**？——只有这个数才是 claude-code 的能力结论，其余一律是 infra；
-  4. 若判定为 infra，**先重跑再用重跑结果更新报告**；重跑不了就写清 `BLOCKED` 原因与所需资源。
-- **同时修正**：`report_harness_tb21_7way_zh.html` 与 `report_harness_cline_special_zh.html` 里所有「cc 0p 待分析」「claude-code 0p」措辞，替换为上面的归因结论 + 证据路径；并在 7 路归因表里给 claude-code 补一列「失败构成」。
-- **红线**：🚫 不许写「claude-code 能力差」除非给出 iterations>1 且 token>0 的证据；🚫 不许再出现"待分析"。
+> 📦 §用户令·2026-11-14 08:4x（解释cc Q0/S0/0p自相矛盾）**✅ 已交付（R2462）** → ARCHIVE；**结论**：cc 0/89=100%infra(88ConnRefused+1CLIbug·模型从未运行·tokens=0)·真正"模型跑过且答错"=0题·详见 `reports/report_harness_cc_tb21_attribution_zh.html`。需要时再读。
 
 ---
 
-### ✅ 用户令 · 2026-11-14 08:2x（**报告 `report_harness_glm53_7way_swebench_tb_zh.html` 整改** · 用户判定「不合格」）· ✅ 已交付（R2462）
-
-> **用户原话（逐字转述，共 4 条）**：
->
-> 「harness 呈现的报告：`report_harness_glm53_7way_swebench_tb_zh.html` 不合格
-> 1.【3. 与 kimi-k2.6-cloud 对照】表格为什么 kimi 的分母是 500，而 glm-5.3 的分母千奇百怪？
-> 2.【TB4 — 已闭合】为什么还放在报告里？
-> 3.【TB-2.1 — 进行中】这是最新的结果吗？claude-code 只有零分，难道 harness 自己对此完全没有疑问吗？为什么不排查？
-> 4.【1. SWE-bench Verified · 7 路 Predict】&【2. SWE-bench Verified · 7 路 Eval 矩阵】为什么把 predict 和 eval 分开，这对于报告的阅读者有任何意义吗？」
-
-> ⚠️ **交接边界（用户 2026-11-14 明确要求）**：下发方（运维/Windows 侧）**没有 tb21 jobs、predictions、eval 的原始数据**，无法复核任何一个数字，**禁止**由下发方推断结论。以下只转述问题；**所有事实核对、口径决定、数字复算，必须由 harness 自己在服务器上用原始数据完成**，并把证据（路径/命令/行号）写进报告与 MEMORY。
-
-- **涉及文件**：`reports/report_harness_glm53_7way_swebench_tb_zh.html`；生成器 `run/harness/gen_report_glm53_7way.py`（模板 L246+、kimi 行 L215-220、`KIMI` 常量 L189、§1/§2/§4 结构 L260-286）。
-- **纪律**：🚫 手改 HTML；🚫 拿「中间值/进行中」搪塞；改动须可复算。
-
-**问题 1 · kimi 对照表分母不一致**
-
-- 用户质疑：kimi 分母恒 500，glm-5.3 一路一个分母（"千奇百怪"）。
-- 现状（L215-220）：`k_rate=k_resolved/500` vs `g_rate=resolved/n`（n=该路已评题数）。
-- 落地其一：a) 统一同分母并写清定义；b) 拆成「已评 N 题 pass%」与「按 500 折算」两列各自标注；c) 确不可比则不做除法比较，并列陈述+说明。
-- 自查 `KIMI={...}`（L189）是**硬编码**：核实来源/时点/口径并注明，否则是拿两个基准做除法。
-- 交付：表头写清两边分母 + 复算命令 + 一句话结论（该表能否跨行比大小）。
-
-**问题 2 · 已闭合的 TB4 仍在正文**
-
-- TB4 从正文移附录或删，仅留 1 行历史指针（如「R1770 被 TB-2.1 取代，66×7=462 全 reward=0，详见 `run/ARCHIVE_OPERATOR_HARNESS.md`」）。
-- 判据：正文 Terminal-Bench 章不再有 TB4 独立小节。
-
-**问题 3 · TB-2.1 是否最新 + claude-code 全零为何不排查**
-
-- 用户对工作态度的直接批评：**0 分不是"已知结论"，是必须归因的异常**。
-- ① 复核各路 completed/passed/errored/remaining 是否最新（数据时点、扫描命令、`/tmp` 是否被清理）；② **专查 claude-code**：`/tmp/tb21_glm53_jobs/claude-code/` 逐 trial 看 `result.json`/`exception_info`/`agent_result.metadata`（`run_result`、`iterations`、`stdout`），按 ①从未启动(docker/镜像) ②适配器 bug ③429 ④超时 ⑤真能力差 逐题归类，**每类给证据**；③ infra 判定则**必须重跑并并回**，能力判定则给 iterations/token 证据；④ 一并体检 codex（报告自称 err=适配器）与 hermes（7/53）。
-- 判据：该节必须有「claude-code = 0p 归因=<类别> + 证据 <路径>」一行 + MEMORY 心跳；🚫 不许留「0p 待分析」。
-- 同时修措辞矛盾：§4.2「claude-code 0p待分析」、§5/§6「已恢复 HTTP 200」与「网关429(历史)」并存。
-
-**问题 4 · predict 与 eval 分作两节，对读者无意义**
-
-- **合并成一节「SWE-bench Verified · 7 路结果」**，列：`Harness | Predict(attempt/500) | Real | Empty | Eval N | Resolved | Pass%(resolved/N) | 状态`；中间态用一行注释，不单开节。
-- 顺带清理暴露的矛盾/冗余：§2「各路predict推进中(网关429 blocking)」与页首「网关 HTTP 200」冲突；§8 research 日报输入、§7 硬盘体检是否该留在正式报告（用户未点名，同属"读者无意义"，请判断并给取舍理由）。
-
-**统一交付（4 条一次 REGEN）**
-
-1. 改生成器 → REGEN → 体积/0外链/0script 自检；2. 每条结论可追到原始文件（路径+复算命令）；3. MEMORY 心跳一行：`报告整改 R2462: ①kimi分母=X ②TB4降附录 ③cc0p归因=Y(证据Z)+重跑N ④§1§2合并`；4. 做不到就写 `BLOCKED: <原因> + 需求`，🚫 不许糊。
-5. **体积**：本轮先按 §工作约定 把已闭合的 §运维令/流水块 fold 进 `run/ARCHIVE_OPERATOR_HARNESS.md`，再做整改。
+> 📦 §用户令·2026-11-14 08:2x（报告整改4条·用户判「不合格」）**✅ 已交付（R2462）** → ARCHIVE；**结论**：①kimi分母统一说明 ②TB4降附录 ③cc0p归因=100%infra+重跑 ④§1§2合并。需要时再读。
 
 ---
-
 
 ### 🟡 用户令 · 2026-11-14 08:0x（**TB-2.1 七路「网关 Token 额度耗尽」诊断 + 按需重跑（含 other-6 路与 synthetic 假结果）**）· A+C ✅ / B 脚本就绪待跑
 
@@ -231,36 +165,15 @@
 
 ---
 
-### ✅ 用户令 · 2026-11-13 18:2x（**TB-2.1 cline「网关 Token 额度耗尽」失败重跑**）· ✅ 已交付（R2460）
-
-> **结论**：cline TB-2.1 额度重跑已完成——main+2nd+3rd+4th-batch ALL MERGED·quota_lost=65→**0**✅·cline=**38/89=42.7%**（原始 10/89=11.2%→公平 10/25=40%→现 38/89=42.7%）。8 synthetic placeholder tasks 已起 5th-batch（chained after train-fasttext）。**已被 11-14 08:0x 七路令取代**（A+C 已扩为 7 路口径）。
-
-> **用户原话**：「harness：回顾一下 cline 失败的 case，如果是【网关 Token 额度耗尽】就重跑。」
-
-- **范围（已核对，勿扩大）**：SWE-bench 侧 cline 295/295 real、0 empty，C2 66 个失败 **100% 能力**（R2300 报告）⇒ **无额度失败可重跑**；重跑只针对 **TB-2.1**：R2386 已结案 10/89=11.2%，80 个失败 trial 里 **65 个（81%）** 是网关额度耗尽（stdout「本次Token额度已用完」/iterations=1），公平通过率 10/25=40%。
-- **工具**：`run/harness/terminalbench/rerun_tb21_cline_quota.py`（判定口径与 `gen_report_tb21_7way.py::_cline_attrtribution` 完全一致：best_reward<1.0 且**全部** trial 命中额度 ⇒ 重跑；有任一非额度 trial 的题不动）。
-- **执行**：
-  1. `cd run/harness/terminalbench && python3 rerun_tb21_cline_quota.py`（dry-run，落 `run/reports/tb21_cline_quota_rerun_ids.txt` + `run/reports/tb21_cline_quota_rerun_<tag>.json`）
-  2. 确认网关 200（`curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9092/v1/models` = 200）后：`python3 rerun_tb21_cline_quota.py --launch`
-  3. 跑完：`python3 rerun_tb21_cline_quota.py --merge /tmp/tb21_glm53_jobs/cline-patched_rerun_<tag>` → `python3 gen_report_tb21_7way.py` + `python3 ../gen_cline_special.py` 双报告重生成。
-- **判据**：重跑前后 `quota_lost` 题数、cline TB-2.1 passed（基线 10/89）与 fair pass（40%）同框写进 MEMORY 心跳一行；重跑后仍 0 分的题必须给**非额度证据**（iterations/exception_info），否则不得下能力结论。
-- **红线**：🚫 不得改 SWE-bench 口径/数字；🚫 不得把额度失败记成能力；🚫 同一题多 trial 只按 unique task 计一次。
-- **落盘**：`run/reports/tb21_cline_quota_rerun_<tag>.json` + `run/harness/terminalbench/traces/tb21_cline_quota_rerun_<tag>.log` + MEMORY + 双报告。
+> 📦 §用户令·2026-11-13 18:2x（cline额度耗尽重跑）**✅ 已交付（R2460）** → ARCHIVE；**结论**：cline TB-2.1 quota_lost=65→0✅·cline=38/89=42.7%·8synthetic待5th-batch·已被11-14 08:0x七路令取代。需要时再读。
 
 ---
 
-### ✅ §用户令 · 2026-11-13 15:5x（**排查 TB-2.1 cline 低分根因**）· ✅ 已交付（R2386）
-
-> **根因结论**：cline TB-2.1 = 10/89 = 11.2% 低分 **非模型能力**。主因 = **网关 Token 额度耗尽**（「本次Token额度已用完，请等待X分钟后重试」）占 80 失败中 **65 题 (81%)**，cline run_result finishReason=error / iterations=1 / tokens=0 → 零工作 → reward=0。**cline 适配器无 retry/backoff**（rerun factor=1.0x），而 pi=2.0x（每题重跑）、opencode=1.3x（部分重跑）→ 额度恢复后重跑成功。公平通过率 10/25=40%。修复建议：① 适配器加 quota-error retry-with-backoff；② 额度充足时单独 rerun（预计 ~30-40%）。**值得 rerun**。
-> **证据**：`/tmp/tb21_glm53_jobs/cline-patched/` 下 90 个 result.json 逐题分析；trace 含「本次Token额度已用完」原文；rerun factor 对照 pi/opencode。双报告已增补 TB-2.1 归因小节（含 rerun factor 对比表）。
+> 📦 §用户令·2026-11-13 15:5x（cline低分根因）**✅ 已交付（R2386）** → ARCHIVE；**结论**：cline 10/89=11.2%低分非能力·主因=网关额度耗尽(65/80=81%)·公平10/25=40%·值得rerun。需要时再读。
 
 ---
 
-### ✅ §用户令 · 2026-11-12 16:3x（**给两个基准的 ETA**）· ✅ 已交付（R2279）
-
-> **ETA结论**：① **TB-2.1 = 已交付**（100p/750t, 7路≥89tasks, 全部done）；② **SWE-bench Verified = ~15天**（瓶颈=codex 374剩余@25/天, 预计 2026-11-27）。
-> **复算方法**：ETA=剩余题数÷3日平均速率(由 predictions_glm53/ 文件mtime统计)。各路拆分：cline 213剩余@49/天≈4天·codex 374剩余@25/天≈15天(瓶颈)·opencode 5剩余≈0天·cc 224剩余@49/天≈5天·pi 249剩余@51/天≈5天·hermes 51剩余@44/天≈1天·deepseek DONE(500attempted,325empty=能力,今日0产出)。eval已追上(incr_eval,0 true backlog)。网关200(curl实测)·429风险仍存(历史反复)。
-> **落盘**：MEMORY心跳第一行含两ETA数字 + 双报告新增§9 ETA节(`reports/report_harness_glm53_7way_swebench_tb_zh.html` + `reports/report_harness_cline_special_zh.html`) + 生成器脚本已更新(gen_report_glm53_7way.py + gen_cline_special.py)。
+> 📦 §用户令·2026-11-12 16:3x（两基准ETA）**✅ 已交付（R2279）** → ARCHIVE；**结论**：TB-2.1已交付·SWE-bench Verified~15天(codex瓶颈@25/天)。需要时再读。
 
 ---
 
