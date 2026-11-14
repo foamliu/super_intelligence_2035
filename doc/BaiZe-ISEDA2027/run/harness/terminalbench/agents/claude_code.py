@@ -185,6 +185,20 @@ class ClaudeCodeTB(TBBaseAgent):
             "ANTHROPIC_API_KEY": TB_DUMMY_KEY,
             "OPENAI_API_KEY": TB_DUMMY_KEY,
             "OPENAI_BASE_URL": TB_GW_PROXY_URL,
+            # FIX (2026-11-15, root-cause analysis): The original 11-09 TB-2.1
+            # run had 88/89 ConnectionRefused — but ALL other 6 routes (incl.
+            # opencode/pi which use the same 127.0.0.1:9092 gw_proxy URL) had 0.
+            # Root cause: transient gw_proxy outage during the ~13 min window
+            # when claude-code ran (19:38-19:51).  Reruns since 11-14 show 0
+            # ConnRefused with the same env.  The container inherits
+            # http_proxy=http://172.19.92.25:13128 from the overlay; _env_for_harness
+            # already sets no_proxy to include 127.0.0.1, and the current claude.exe
+            # binary respects it.  We redundantly pin no_proxy here (matching pi.py)
+            # as a belt-and-suspenders measure: if a future claude.exe update
+            # breaks no_proxy handling, the explicit value here ensures the SDK
+            # still bypasses the MITM proxy for the local gw_proxy.
+            "no_proxy": "127.0.0.1,localhost,10.239.*,172.19.*,agi-gateway.cxmt.com",
+            "NO_PROXY": "127.0.0.1,localhost,10.239.*,172.19.*,agi-gateway.cxmt.com",
             # claude runs as user "agent" -> its $HOME is /home/agent (created by
             # useradd -m in install).  Pin HOME so config/cache land there.
             "HOME": "/home/agent",
