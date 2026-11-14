@@ -14,69 +14,25 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-14 08:4x（**暂停 RL，转为深入分析 MiniCPM5-2B 基线在 EDA-Eval-PyAether(158) 的 3.04% + trace 逐题归因报告**）· 未完成 · 最高优先
+### 🔴 用户令 · 2026-11-14 09:0x（**暂停 RL，改为分析 MiniCPM5-2B 基线在 EDA-Eval-PyAether(158) 的 3.04% 与 trace**）· 未完成 · 最高优先
 
 > **用户原话**：「post-train 先花时间分析基线 MiniCPM5-2B 在 EDA-Eval-PyAether（158）跑出的 3.04% 的结果和 trace，暂时不忙做 RL。把失败逐个统计和归因，绘制饼图和表格，挨个类别提出 fix 方案。先给出这份中文 HTML 报告来。」
 
-**一、暂停项（明确）**
-- **RL 相关工作全部让位**：5-run eval 链**不要 kill**（它自动跑，产出照常归档），但 **不要再起新的 RL 轮次、不要做 RL 调参、不要写 RL 论证**。R2 负信号（run1 Pass@1 0.63% vs 基线 3.04%）暂不处置，等这份基线分析出来再说。
-- 现在**唯一交付物 = 1 份中文 HTML 报告**，先出报告，其它一律延后。
+> ⚠️ **归类方式由你定**：失败分成哪几类，**由你基于 158 题的实际情况（结果 + trace 原文）自行提炼**，不要套用任何预设分类表。下发方不预设类别、不预设数量。
 
-**二、分析对象（用原始数据，不许估）**
-- 基线：**MiniCPM5-2B**（SFT step105 或对应 baseline ckpt，请写明用的是哪个 ckpt 与 serve 配置）。
-- 数据集：**EDA-Eval-PyAether，158 题**。
-- 已知结果：**Pass@1 = 3.04%**（≈ 4–5 题通过，请用原始 JSON 逐题核对并写出准确分子/分母）。
-- 规则来源：原始逐题结果 + trace 全在服务器上（跑评的 `final_report.json` / 逐题 `result` / `trace`），由你从原始文件统计。**下发方无此数据，不做任何推断。**
-
-**三、必做内容（报告的五个组成部分）**
-
-1. **逐题总表**（158 行，可折叠）：`# | task_id | 类别 | Pass/Fail | 耗时 | 迭代数 | tokens | 失败阶段(plan/code/run/verify) | 一句话失败摘要`
-2. **失败归因分类（这张是核心）**——请**自己定义并统计**，建议至少覆盖：
-   - ① 环境/沙箱类（pyAether 未装、import 失败、license、路径）
-   - ② 工具调用/协议类（函数名错、参数 schema 错、超参幻觉、多轮状态丢失）
-   - ③ 代码语义类（API 用错、约束漏读、单位/坐标错、精度/收敛设置错）
-   - ④ 输出格式类（未按模板、多余解释、截断、未写文件）
-   - ⑤ 推理/规划类（步骤缺漏、过早放弃、循环重试）
-   - ⑥ 超时/预算类（迭代耗尽、token 耗尽）
-   - ⑦ 其它
-   **每类必须给：题数、占比、3 个典型 trace 片段（原文摘引 + 文件路径）**
-3. **图表**：
-   - **饼图**（失败类别占比）——中文 HTML **单文件自包含**，用**内联 SVG**（🚫 外链 CDN / 🚫 外部 JS；可用内联 `<style>` 画饼图或用 Python 生成 SVG 字符串嵌入）
-   - **表格**：类别 × 子类 × 题数 × 占比 × 典型题
-   - 可另加：失败阶段条形图、每类平均迭代数、pass 题的共性（**4–5 道通过的题凭什么过？**这类正向样本对 fix 方案最有价值）
-4. **逐类 fix 方案**（每类一节，必须可执行）：
-   - 定位根因 → 给出**具体改动点**（数据侧：补哪类 SFT 样本/prompt 模板；推理侧：工具 schema 校验、重试策略、上下文管理；评测侧：沙箱镜像、超时预算）
-   - 每条 fix 标注：**预期提升**（保守估计，说明依据）、**实施成本**（人时/机时）、**优先级 P0/P1/P2**
-   - 最后给一张 **"先做这 3 件"** 的排序建议（按 ROI）
-5. **结论与下一步**：3.04% 这个数**主要卡在哪一层**（能力/工具/环境/格式），一句话说透；并回答"若只修一件事，修哪件"。
-
-**四、纪律**
-- 所有数字**必须可复算**：每张表下给 `路径 + 复算命令`；
-- 不确定的**标 TODO**，🚫 不许估、不许编 trace 原文；
-- 报告落 `reports/report_posttrain_baseline_pyaether_rca_zh.html`（**中文、单文件自包含、0 外链、0 script**，饼图用内联 SVG）；
-- 完成后 MEMORY 心跳一行：`基线RCA: 158题 pass=N(3.04%复核) 失败分类=①a②b③c④d⑤e⑥f 主因=<层> top3fix=<...>`。
+- **暂停**：不再起新 RL 轮次/调参/写 RL 论证；5-run eval 链不 kill（自动跑、结果照常归档），R2 负信号暂不处置。
+- **唯一交付物**：一份中文 HTML 报告，落 `reports/report_posttrain_baseline_pyaether_rca_zh.html`（单文件自包含、0 外链、0 script、图表用内联 SVG）。
+- **必须包含**：
+  1. 基线口径（哪个 ckpt / serve 配置）+ **158 题逐题结果**，pass 数用原始文件核对（与 3.04% 对账）；
+  2. **失败逐个统计与归因**：类别由你提炼，每个类别给题数、占比、**trace 原文摘引 + 文件路径**；
+  3. **饼图 + 表格**；
+  4. **逐类别 fix 方案**：根因 → 具体改动点 → 预期提升（说明依据）→ 成本 → 优先级，最后给"先做哪几件"的排序；
+  5. 结论：3.04% 主要卡在哪一层。
+- **纪律**：所有数字可复算（路径 + 命令）；取不到就标 `TODO`，🚫 不许估、不许编 trace 原文。
+- **完成后** MEMORY 心跳一行写结论。
 
 ---
 
-> 本区为运维下发指令；agent 只读、不写（除「归档搬迁」这一唯一例外，见下方体积规程）。
-> 新指令置顶；已闭合块按体积规程原文搬入 `run/ARCHIVE_OPERATOR_POSTTRAIN.md`、留 1 行指针。
-
-### 🔴 用户令 · 2026-11-13 13:3x（**RL 不要再等 BaiZe 基模——直接在 MiniCPM5-2B 基础上跑 RL，追求显著提升**）· 用户直令 · 最高优先 · 未完成
-
-> **用户原话**：「RL 在等 baize 基模吗，让它不要等了，直接在 MiniCPM5-2B的基础上RL，追求显著提升。」
-
-**核心变更**：解除 MEMORY 里「P3 等 pretrain S1 收敛 ckpt（ETA≈2026-12-25）」这条依赖。**RL 的起点从「BaiZe 自训基模」改为「MiniCPM5-2B」**（即你现在已 serve 的 `/tmp/models/MiniCPM5-2B/`，以及已 SFT 出的 `minicpm5-2b-sft-v39-final`）。
-
-**立即执行**（L4 zhulong 5-run eval 可继续后台跑完，但 RL 正式起跑从本轮开始，不再搁置）：
-
-1. **RL 基座**：以 MiniCPM5-2B → `minicpm5-2b-sft-v39-final`（step105）作为 RL 起点。可直接用 SFT 后的 ckpt 起 GRPO（先继承 SFT 成果），也可同时起一路「MiniCPM5-2B 裸基座直接 RL」作对照——二者择一为主即可，别铺太多臂。
-2. **复用已就绪资产，别再从头审计**：`run/baize_posttrain_rl_grpo.sh` / `baize_posttrain_rl_grpo_surrogate.sh`、`baize_posttrain_rl_verl_config_v3.yaml`（或 v2）、`rl_pyaether_synth_v2.parquet`（3347 records）、`baize_posttrain_eda_tool_v2.py` + `baize_posttrain_minicpm5_parser_patch.py`、奖励函数 `baize_posttrain_reward_functions.py`、cu124 venv `~/code/verl_cu124_venv/` 都已就绪（R9/R11/R70/R155/R173 均已 dry-run 过），**直接起，不要重做**。
-3. **严格口径照旧**：158 题污染隔离 + anti-cheat 全程开 + 报 cheat rate + 预注册判据 + 5-run mean±std。目标：在 zhulong 158 题（EDA-Eval-PyAether）Pass@1 上相对 SFT 基线（当前 base≈3.8%、SFT step105 待出）**显著提升**。
-4. **诚实负结果**：若 GRPO 无提升/退化（参考 vision 线 v10 教训：离散奖励 + 能力缺口方向 RL 常常无净增益），如实记录并换奖励/任务定义，不要为了「显著」挑软指标；最终结论「在 MiniCPM5-2B 上 RL 能否显著提升 PyAether 脚本能力」本身就是交付物。
-5. **更新记忆**：把 MEMORY_POSTTRAIN.md 里「P3 等 pretrain ckpt」「Q: post-train 现在能起训练吗 → 不能」等过时说法改成「RL 基座=MiniCPM5-2B（+SFT v39），不再依赖 BaiZe 基模」，并在状态头写清新 ETA（smoke 一步 / 全量 200 步 wall-clock）。
-6. 保持 `WAITING=0`，把 RL 起跑作为本轮首要动作；起跑后汇报：所用配置（ckpt 路径 / 配置文件 / G / ctx）、smoke 结果、主训 ETA。
-
----
 
 ### 🔴 用户令 · 2026-11-12（**L4 领域评测改由 post-train 主责**）· 用户直令 · 最高优先 · 未完成
 
