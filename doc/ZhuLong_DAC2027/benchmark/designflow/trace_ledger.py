@@ -103,6 +103,19 @@ def load():
     return _load_file(LEDGER)
 
 
+def load_all_shards():
+    """聚合全部 4 shard 台账（不论当前 --shard 是什么）。
+
+    r549 code-fix (r548 mandate): `next --shard A` 旧实现只排除 A 台账，B/C/D
+    已 ledger 的 session 仍呈"fresh" → r547 jt7be 跨 shard dup 事故的直接根因。
+    选料的 *排除集* 必须用 4-shard 并集；per-shard 仅用于 *候选 keyword 过滤*。
+    """
+    rows = []
+    for s in ("A", "B", "C", "D"):
+        rows.extend(_load_file(os.path.join(HERE, "trace_ledger_%s.tsv" % s)))
+    return rows
+
+
 def save(rows):
     tmp = LEDGER + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
@@ -289,8 +302,20 @@ def cmd_next(args):
     #   导致 .json 后缀的已台账 session（如 fi203.json/31lou.json）漏过排除集 → 假 fresh。
     #   现统一剥 \.(messages\.)?json$ 后缀。
     _SF_SUFFIX = re.compile(r'\.(messages\.)?json$')
+    # r549 code-fix (r548 mandate): 排除集必须用 4-shard 并集，否则 B/C/D 已
+    # ledger 的 session 会呈"fresh" → 跨 shard dup 事故（r547 jt7be 同 session
+    # 在 A/D 双案均未互斥）。per-shard 仅用于候选 keyword 过滤，不缩小排除集。
+    used_src = load_all_shards() if _shard else load()
     used = [_SF_SUFFIX.sub("", r["session_file"])
-            for r in load() if r["session_file"]]
+            for r in used_src if r["session_file"]]
+    # 去重 + 保持顺序（4-shard 并集会有跨 shard 重复 slug）
+    seen_slugs = set()
+    used_uniq = []
+    for u in used:
+        if u not in seen_slugs:
+            seen_slugs.add(u)
+            used_uniq.append(u)
+    used = used_uniq
     st = load_stats()
     # per-shard mc 阈值: summary_stats.json.shard_mc → SHARD_MC → target_mc → DEFAULT_MC
     shard_mc_cfg = st.get("shard_mc", {}) if isinstance(st.get("shard_mc"), dict) else {}
@@ -335,7 +360,8 @@ def cmd_next(args):
     print("python3 designflow/trace_ledger.py%s mark --session <session_file> --status case "
           "--case-id <EDA-Eval-DesignFlow-XXX>"
           % (" --shard %s" % _shard if _shard else ""))
-    print("# 台账已有 %d 条，均已从候选中排除。" % len(used))
+    print("# 台账已有 %d 条（4-shard 并集，r549 修：跨 shard 互斥）。本 shard 台账 %d 条。"
+          % (len(used), len(load())))
 
 
 def cmd_claim(args):
