@@ -11614,3 +11614,31 @@ python3 复算：
 ### 5. 跨线与边界
 - ZhuLong subagent A2（PID2886626→3805045）走云 agi-gateway 不占 GPU6，未碰。
 - 本轮仅只读取证（curl/ssh/ss/ps/grep/cat/wc/sed），未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark / 隧道进程 / loop.py 源码，0 infra。
+
+## §R514-monitor — postmortem 七度复核 + 归因夜链跨机核验纠偏 + 双链监控（wake514 · 2026-11-15 02:0x）
+
+### A. postmortem（用户令 23:4x 最高优先）七度复核
+- 报告 `reports/report_infra_tunnel_postmortem_zh.html`（20496B）在位；commit 375e11bf7 在 origin/main；首屏三句话（坏过现已恢复 / 故障域=中继侧 tunnel.ps1 短时掉线 / 非本线造成亦非本线修复）齐备。
+- 隧道三命令 02:05 实测全 PASS：
+  - `ss -ltn | grep 3333` → `LISTEN 127.0.0.1:3333` ✅
+  - `ssh -p 3333 -o ConnectTimeout=10 app.e0031982@localhost 'hostname; echo TUNNEL_OK'` → `hfeg0tedaap02 / TUNNEL_OK` ✅
+  - `curl -s http://127.0.0.1:8096/v1/models` → `id=minicpm5-2b-sft-v39-final, root=.../global_step_105` ✅
+- 三隧道进程活：PID618469（正向 -L 8664..8668）、PID1008898（反向 -R 18096:8096）、PID1278889（反向 -R 18098:8098）。
+- 结论不变：隧道坏过（20:41:50 最后通 → 22:4x wake505 首断 → 23:26 wake506 恢复），故障域=中继侧（Windows 172.19.195.133 tunnel.ps1 短时掉线），非本线造成/修复。
+
+### B. 归因夜链跨机核验纠偏（本轮关键发现）
+- `bpt_attribution_ablation.sh` 头部：`EDA_BASE=/nasdata/...`、`MODEL_URL=http://127.0.0.1:18096/v1`（36.15 侧反向隧道端点）⇒ **A1/A3 在 36.15 跑**，/tmp 产物与 PID3707027 都在 36.15 侧。
+- 前几轮（wake511-513）在 **.17** 上 `ps -p 3707027` 报 NOT_RUNNING、查 .17 `/tmp/posttrain_attribution_*` 空，曾被误读为「链死亡/产物缺失」——实为查错机器。经隧道 `ssh -p3333` 复核 36.15：
+  - `ps -p 3707027` → 存活，ELAPSED=9719s（~2h41m），cmd=`bash bpt_attribution_overnight_chain.sh` ✅
+  - chain.log：`<<< [A1_40q] rc=0` / `[arm A3] done (rc=0) 2026-11-15 01:56:48` + `[arm A3] WARNING: 无 final_report` / `>>> [P0_base_dev] 2026-11-15 01:56:48` / `[baseline_dev] code-gen+eval starting...`
+- A1 产物：36.15 `/tmp/posttrain_attribution_ablation/A1/final_report.json`（73618B），`pass_rate=0.12658`（20/158 correct，gen success 23 / fail 135；runtime pyAether_aether 20/23=86.96%）。model_name=zhulong_deepseek_v32 为陈旧 config.yaml 标签，非实际模型（实际 = minicpm5-2b-sft-v39-final via 18096）。
+- **A3 gap**：36.15 `/tmp/posttrain_attribution_ablation/A3/` 仅 codegen.log（1.42MB），无 final_report.json；codegen.log 正常收尾（生成 code_generation_2026_1115_004854.jsonl + 已清理临时过滤目录）。eval 未产出 final_report ⇒ 嫌疑：A3（no_sandbox+移除 eda_flow）生成 0 成功致 eval 无可评 / 或 eval 抓取路径问题。**下一 wake 须落地查因**（不阻塞链，但 09:00 及格线需 A1+A3 两臂）。
+
+### C. sandbox_watcher CLOSED 不矛盾
+- `baize_posttrain_sandbox_watcher.sh`（PID4109314，~93h）`probe_sandbox()` 用 `/dev/tcp/$SANDBOX_HOST/$SANDBOX_PORT` 探 **直连** 10.129.32.75:8667；该直连路径被防火墙 CLOSED 是预期（隧道正是把它暴露到 .17 localhost:8667 的替代）。watcher 的 CLOSED 是 legacy 探针误报，与隧道健康不矛盾。
+
+### D. R2 5-run eval
+- run1=0.63% / run2=1.27% / run3=0.0% DONE；run4 RUNNING@20:49:52 code-gen（PID3344389，GPU7=90%，~5h16m）；run5 pending。3 run<3.04% step105 趋势负（单 run 不预判，待 5-run mean+McNemar+bootstrap）。
+
+### E. 纪律
+- 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark；0 infra。MEMORY 体积维护：wake512 全文→指针（31842B→<32KB ✓）。
