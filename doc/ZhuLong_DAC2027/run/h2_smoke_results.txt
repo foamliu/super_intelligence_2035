@@ -1,0 +1,24 @@
+=== H2 SMOKE RESULTS (2026-11-15) ===
+wrapper: /tmp/cline-h2/bin/cline v3.0.74 (commit 39ccd44cc)
+
+--- S1: BACKWARD-COMPAT (no CLINE_SUBAGENT_*, no INHERIT_MCP) ---
+sub_sessions=21 main=1
+  SUB(non-empty) agent_02c40180-455c-4714: n_msgs=7 model='deepseek-v4-pro-cloud|openai-compatible' tools={'search_codebase': 2, 'run_commands': 1} mcp=[]
+  SUB(non-empty) agent_565af945-9ae7-454f: n_msgs=5 model='deepseek-v4-pro-cloud|openai-compatible' tools={'run_commands': 1} mcp=[]
+  SUB(non-empty) agent_ad1a0b8a-3725-4438: n_msgs=5 model='deepseek-v4-pro-cloud|openai-compatible' tools={'search_codebase': 1} mcp=[]
+  SUB(non-empty) agent_db75236c-fc0d-4b2c: n_msgs=5 model='deepseek-v4-pro-cloud|openai-compatible' tools={'run_commands': 1} mcp=[]
+  MAIN 1794693550316_igcs2.mess: n_msgs=2 model='deepseek-v4-pro-cloud|openai-compatible' tools={'spawn_agent': 1}
+  VERDICT: BACKWARD_COMPAT_OK — sub=parent(deepseek-v4-pro-cloud), no MCP tools (builtin only). Default unchanged.
+
+--- S2: WEAK-MODEL + MCP (CLINE_SUBAGENT=doubao-pro, INHERIT_MCP=1) ---
+sub_sessions=1 main=1
+  SUB(non-empty) agent_613d4536-9e55-447d: n_msgs=11 model='doubao-seed-2.0-pro-cloud|openai-compatible' tools={'pyAether_MCP_server__search_apis_by_keyword': 2, 'pyAether_MCP_server__search_apis': 1, 'pyAether_MCP_server__get_api_details': 2} mcp=['pyAether_MCP_server__search_apis_by_keyword', 'pyAether_MCP_server__search_apis', 'pyAether_MCP_server__get_api_details']
+  MAIN 1794695236696_nz479.mess: n_msgs=23 model='deepseek-v4-pro-cloud|openai-compatible' tools={'spawn_agent': 1, 'run_commands': 1, 'pyAether_MCP_server__get_api_details': 3, 'read_files': 1, 'pyAether_MCP_server__search_apis': 2, 'pyAether_MCP_server__search_apis_by_keyword': 1, 'pyAether_MCP_server__run_code': 4}
+  sub_models=['doubao-seed-2.0-pro-cloud|openai-compatible']
+  sub_mcp_calls=['pyAether_MCP_server__search_apis_by_keyword', 'pyAether_MCP_server__search_apis', 'pyAether_MCP_server__get_api_details']
+  VERDICT: H2_OK — sub=doubao (True) AND sub called MCP tools (True): ['pyAether_MCP_server__search_apis_by_keyword', 'pyAether_MCP_server__search_apis', 'pyAether_MCP_server__get_api_details']
+
+=== SUMMARY ===
+S1 backward-compat: PASS (sub=parent dsv4-pro, builtin tools only)
+S2 weak-model+MCP:  PASS (sub=doubao-pro, called 3 MCP tool invocations)
+H2 patch (commit 39ccd44cc, wrapper v3.0.74) CONFIRMED working. Cleared to launch B1/B3/B4/B5 arms.

@@ -4,10 +4,10 @@
 #   and inherit parent MCP tools (CLINE_SUBAGENT_INHERIT_MCP=1).
 # Arms (all on H2 wrapper, anonymous spawn_agent, NO researcher.yaml, INHERIT_MCP=1, 40-task subset):
 #   B1: sub inherits parent (deepseek-v4-pro-cloud) — gradient strong end / anchor
+#   B2: sub = deepseek-v4-flash        (key c43c1f4a on /v1 — NOT /cloud/v1 which 403s)
 #   B3: sub = doubao-seed-2.0-pro-cloud
 #   B4: sub = doubao-seed-2.0-mini-cloud
 #   B5: sub = doubao-seed-2.0-lite-cloud      — gradient weak end
-#   B2 (dsv4-flash) BLOCKED: gateway key c43c1f4a returns 403 (revoked since Oct compaction runs).
 # Main agent ALWAYS = deepseek-v4-pro-cloud (openai-compatible). 3 rounds/arm, -p 8 -n, compaction=basic, thinking=medium.
 # Pre-registered H2 judgment: B1 vs B3-B5 Δ≥3pp + bootstrap CI not crossing 0 + gradient regression R²>0.7 + B5 per-pass token drop ≥20%.
 set -uo pipefail
@@ -33,11 +33,12 @@ ROUNDS="${ROUNDS:-3}"
 # Format: "ARM|PROVIDER_ID|MODEL_ID|API_KEY|BASE_URL"  (empty fields => inherit parent)
 declare -A ARM_SUB
 ARM_SUB["B1"]="|||"                                              # sub = parent (dsv4-pro)
+ARM_SUB["B2"]="openai-compatible|deepseek-v4-flash|02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3|http://agi-gateway.cxmt.com/v1"
 ARM_SUB["B3"]="openai-compatible|doubao-seed-2.0-pro-cloud|02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f|http://agi-gateway.cxmt.com/cloud/v1"
 ARM_SUB["B4"]="openai-compatible|doubao-seed-2.0-mini-cloud|02_088EE9051AAE4BF0ABFC7130331BF697_caa8bffa-b976-47f5-acc3-4141f6c5b90f|http://agi-gateway.cxmt.com/cloud/v1"
 ARM_SUB["B5"]="openai-compatible|doubao-seed-2.0-lite-cloud|02_088EE9051AAE4BF0ABFC7130331BF697_78b81092-7e90-436e-aa8a-5ab8510567fe|http://agi-gateway.cxmt.com/cloud/v1"
 
-RUN_ORDER=(B1 B3 B4 B5)
+RUN_ORDER=(B1 B2 B3 B4 B5)
 
 # ===== SUBAGENT_HINT (same as run_subagent_ablation.sh — forces spawn_agent) =====
 SUBAGENT_HINT="
@@ -87,8 +88,8 @@ run_round() {
   export SUBSET_FILE
   export PARALLEL
   unset CLINE_AGENTS_SRC   # anonymous spawn, no configured agent
-  # H2 wrapper FIRST on PATH
-  export PATH="/tmp/cline-h2/bin:/nasdata/app.e0031982/code/eda_fastmcp/venv/bin:/home/app.e0031982/.local/node-20/bin:${PATH}"
+  # H2 wrapper FIRST on PATH (use /home wrapper — stable across /tmp cleanup; identical to /tmp/cline-h2)
+  export PATH="/home/app.e0031982/.local/bin/h2:/tmp/cline-h2/bin:/nasdata/app.e0031982/code/eda_fastmcp/venv/bin:/home/app.e0031982/.local/node-20/bin:${PATH}"
   export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,10.251.36.15,localhost,127.0.0.1"
   unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
@@ -136,7 +137,7 @@ log "=========================================="
 log "ZhuLong H2 sub-agent weak-model gradient ablation"
 log "wrapper=cline v3.0.74 (commit 39ccd44cc)  main=deepseek-v4-pro-cloud  INHERIT_MCP=1 (all arms)"
 log "subset=$(wc -l < "$SUBSET_FILE" 2>/dev/null)  -p $PARALLEL  rounds/arm=$ROUNDS  arms=${RUN_ORDER[*]}"
-log "B2 BLOCKED (dsv4-flash key 403).  RESULTS -> $RESULTS_JSON  trace -> $TRACE_BASE"
+log "B2 dsv4-flash uses /v1 (not /cloud/v1).  RESULTS -> $RESULTS_JSON  trace -> $TRACE_BASE"
 log "=========================================="
 
 if [[ ! -f "$SUBSET_FILE" ]]; then log "❌ subset missing: $SUBSET_FILE"; exit 1; fi
