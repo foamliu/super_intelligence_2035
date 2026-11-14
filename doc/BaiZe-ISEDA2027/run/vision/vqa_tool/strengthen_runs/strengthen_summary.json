@@ -1,0 +1,134 @@
+{
+  "stage": "report",
+  "pre_baseline": {
+    "n": 30,
+    "accuracy": 0.6,
+    "mean_reward": 0.6137
+  },
+  "sft": {
+    "n_seeds": 3,
+    "acc_mean": 0.6444,
+    "acc_std": 0.0157,
+    "reward_mean": 0.6932,
+    "per_seed": [
+      {
+        "seed": 11,
+        "acc": 0.6333,
+        "mean_reward": 0.6896
+      },
+      {
+        "seed": 22,
+        "acc": 0.6333,
+        "mean_reward": 0.6832
+      },
+      {
+        "seed": 33,
+        "acc": 0.6667,
+        "mean_reward": 0.7068
+      }
+    ]
+  },
+  "rft": {
+    "accuracy": 0.7333,
+    "mean_reward": 0.7663,
+    "accepted": 148
+  },
+  "mcnemar_pre_vs_sft": [
+    {
+      "seed": 11,
+      "b_improved": 4,
+      "c_regressed": 3,
+      "p_value": 1.0
+    },
+    {
+      "seed": 22,
+      "b_improved": 4,
+      "c_regressed": 3,
+      "p_value": 1.0
+    },
+    {
+      "seed": 33,
+      "b_improved": 4,
+      "c_regressed": 2,
+      "p_value": 0.6875
+    }
+  ],
+  "mcnemar_sft_vs_rft": {
+    "best_sft_seed": 33,
+    "b_improved": 2,
+    "c_regressed": 0,
+    "p_value": 0.5
+  },
+  "skill_agg": {
+    "type_classification": {
+      "pre_acc": 0.6,
+      "sft_acc_mean": 1.0,
+      "sft_acc_std": 0.0,
+      "rft_acc": 1.0
+    },
+    "cycle_count": {
+      "pre_acc": 0.8,
+      "sft_acc_mean": 0.6667,
+      "sft_acc_std": 0.0943,
+      "rft_acc": 1.0
+    },
+    "amplitude_read": {
+      "pre_acc": 0.4,
+      "sft_acc_mean": 0.2,
+      "sft_acc_std": 0.0,
+      "rft_acc": 0.4
+    },
+    "freq_comparison": {
+      "pre_acc": 0.8,
+      "sft_acc_mean": 1.0,
+      "sft_acc_std": 0.0,
+      "rft_acc": 1.0
+    },
+    "duty_cycle": {
+      "pre_acc": 0.0,
+      "sft_acc_mean": 0.0,
+      "sft_acc_std": 0.0,
+      "rft_acc": 0.0
+    },
+    "rise_edge": {
+      "pre_acc": 1.0,
+      "sft_acc_mean": 1.0,
+      "sft_acc_std": 0.0,
+      "rft_acc": 1.0
+    }
+  },
+  "flipped_items_pre_to_best_sft": [
+    {
+      "id": "q2",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "pre_pred": "triangle",
+      "post_pred": "sawtooth"
+    },
+    {
+      "id": "q3",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "pre_pred": "triangle",
+      "post_pred": "sawtooth"
+    },
+    {
+      "id": "q12",
+      "skill": "amplitude_read",
+      "gt": "7",
+      "pre_pred": "4",
+      "post_pred": "7"
+    },
+    {
+      "id": "q15",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "pre_pred": "A",
+      "post_pred": "B"
+    }
+  ],
+  "n_heldout": 30,
+  "leakage_check": "eval seed=20261115 != train seed=20261114 -> cheat_rate=0 by construction",
+  "preregistered_criteria": "success: post-RL >= post-SFT + 5pp, McNemar p<0.05, >=3 seeds, cheat_rate=0",
+  "ts": "2026-11-14T12:15:02"
+}
