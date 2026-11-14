@@ -914,3 +914,15 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794555150323_1m1dn	jerrygu	hfeg0plg93	81	physical_verify	parked		2026-11-15 00:10	r575 peek: jerrygu USER#0 analysis-Q&A analyze-module-function, not produce-task
 1794475750838_fbuxz	ywli	hfeg0plg91	79	layout_aether	parked		2026-11-15 00:10	r575 peek: ywli USER#0 capability-Q&A can-modify-layout, not produce-task
 1792390124324_rf6en	hswang	hfeg0plg94	79	physical_verify	parked		2026-11-15 00:10	r575 peek: hswang USER#0 debug-Q&A traceback analyze-error, not produce-task
+1792386923801_1lote	hongyuy	hfeg0plg73	78	physical_verify	parked		2026-11-15 00:42	Q&A how-to CMP M1A/M2A/M3A r576
+1794449024377_ezpne	yinxingj	hfeg0plg13	76	layout_aether	parked		2026-11-15 00:42	Q&A how-to make a tool r576
+1790663852783_u29lu	cwei	hfeg0plg93	76	layout_aether	parked		2026-11-15 00:42	skill-loading Spice_Agent r576
+1794211804231_rx7i7	zhi3wang	hfeg0plg86	75	layout_aether	parked		2026-11-15 00:42	Q&A synchronous Zoom sync debug r576
+1793950360162_s0yfe	jcgu	hfeg0plg81	73	layout_aether	parked		2026-11-15 00:42	skill-meta+Q&A Stamp Layer explain r576
+1789647274009_jz2at	joelchen	hfeg0plg89	73	physical_verify	parked		2026-11-15 00:42	skill-meta upload/register skill r576
+1794553523442_0b2zv	t0002609	hfeg0plg76	72	physical_verify	parked		2026-11-15 00:42	Q&A+doc-gen LVS QA flow summary r576
+1792405579910_v7jqb	thomasz	hfeg0plg92	79	physical_verify	parked		2026-11-15 00:42	debug-Q&A drcoa ESD log error r576
+1794378405719_bv2aa	hktklin	hfeg0plg87	68	layout_virtuoso	parked		2026-11-15 00:42	text-sub tap_p→lacaa_common known-reject r555 r576
+1792141858109_fy3k2	colinxu	hfeg0plg81	68	layout_aether	parked		2026-11-15 00:42	Q&A check cell properties r576
+1790212962899_ge5tf	e0041123	hfeg0plg104	67	physical_verify	parked		2026-11-15 00:42	skill-loading+run-existing drc-pattern DNW testpattern PyQt5 fail r576
+1792651065355_6ty3f	thomasz	hfeg0plg92	66	physical_verify	parked		2026-11-15 00:42	debug-Q&A drcoa ESD stuck log compare r576
