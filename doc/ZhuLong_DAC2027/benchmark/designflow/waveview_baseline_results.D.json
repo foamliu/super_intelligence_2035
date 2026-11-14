@@ -43,7 +43,10 @@
         "failure_mode_classification": "did-not-engage-task (model looped on generic shell exploration without reading the prompt or attempting the image task). This is a weaker failure mode than 'engaged-task-but-couldnt-read-image'; both end in FAIL (correct no-multimodal baseline), but vision should note the 2B surrogate's failure is partly model-capacity (didn't engage) not purely image-blindness. A stronger no-multimodal model would likely read prompt.txt, understand the task, attempt to read the PNG, fail to interpret it, and either give up or guess wrong — still FAIL but cleaner attribution to image-blindness.",
         "hook_blocks": 0,
         "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-EyeApertureSelect-001/20261114_110619",
-        "status_log": "eval/status.jsonl (ts 2026-11-14T03:06:19Z)"
+        "status_log": "eval/status.jsonl (ts 2026-11-14T03:06:19Z)",
+        "failure_mode_tier": "A",
+        "failure_mode_tier_def": "did-not-engage: model never read prompt.txt/PNG, never attempted the image task (looped on generic shell exploration or aborted without engaging task terms)",
+        "failure_mode_short": "did-not-engage"
       },
       "interpretation_for_vision": {
         "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1: 'no multimodal capability = fail is correct, do not downgrade to text substitute')",
@@ -109,7 +112,11 @@
         "failure_mode_classification": "mixed: partially-engaged-then-aborted. Cleaner than r650 alpha1's 'did-not-engage' (this run the model did read the prompt and attempt the image task), but still ended in FAIL with no output. Both alpha1 and beta9 confirm the no-multimodal baseline = FAIL. For a cleaner multimodal-gain attribution, vision may want to also run a stronger no-multimodal model that engages the task but cannot read the image.",
         "hook_blocks": 0,
         "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-WaveMaxFind-001/20261114_114227",
-        "status_log": "eval/status.jsonl (ts 2026-11-14T03:42:27Z)"
+        "status_log": "eval/status.jsonl (ts 2026-11-14T03:42:27Z)",
+        "failure_mode_tier": "C",
+        "failure_mode_tier_def": "engaged-but-could-not-read-image: model understood the task, knew it must read the image and produce the deliverable, attempted tools, but as a text-only model could not extract values from the PNG (cleanest VQA testbed)",
+        "failure_mode_short": "engaged-but-could-not-read-image",
+        "failure_mode_tier_caveat": "C-tier with tool-call confound: 2B model engaged and attempted tools but could not sustain a coherent tool sequence (looped on tool-call errors / tried unavailable tool). Core failure = image-blind + tool-call incapacity. VQA may help engagement but tool-call reliability of 2B surrogate may still limit翻转; cleaner C-tier attribution见 beta10 r654 (no tool-call confound)."
       },
       "interpretation_for_vision": {
         "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
@@ -175,7 +182,10 @@
         "failure_mode_classification": "engaged-but-aborted (model referenced the PNG/prompt context but made no successful tool calls / produced no deliverable before external abort). Consistent with r651 beta9's engaged-but-incapable pattern. Both end in FAIL (correct no-multimodal baseline).",
         "hook_blocks": 0,
         "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-TempSelWaveform-001/20261114_121446",
-        "status_log": "eval/status.jsonl (ts 2026-11-14T04:14:46Z)"
+        "status_log": "eval/status.jsonl (ts 2026-11-14T04:14:46Z)",
+        "failure_mode_tier": "B",
+        "failure_mode_tier_def": "engaged-with-task-text-but-did-not-read-image: model read task text / referenced deliverable / attempted eda_flow, but NEVER referenced the PNG image or any signal name (image-blind despite textual engagement)",
+        "failure_mode_short": "engaged-text-only"
       },
       "interpretation_for_vision": {
         "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
@@ -226,7 +236,11 @@
         "fail_mode": "did-not-engage",
         "fail_detail": "no submit.zip produced; 60 session msgs, model never read wv_sigs_A.png (png/wv_sigs terms=0), never produced wv_report.json (wv_report/submit terms=0), never opened eda_flow session (eda_flow=0); only generic read_file(2)/write(2) exploration then exited",
         "correctness": "FAIL is the CORRECT baseline -- a text-only model cannot read the image; aligns with user 09:5x order '无多模态能力者 fail 是正确结果'",
-        "agentic_capacity_caveat": "2B SFT surrogate FAIL mixes 'model capacity insufficient to engage' with 'image-blind'; for cleaner multimodal-gain attribution vision should use a stronger no-multimodal model (#3 对照)"
+        "agentic_capacity_caveat": "2B SFT surrogate FAIL mixes 'model capacity insufficient to engage' with 'image-blind'; for cleaner multimodal-gain attribution vision should use a stronger no-multimodal model (#3 对照)",
+        "failure_mode_tier": "A",
+        "failure_mode_tier_def": "did-not-engage: model never read prompt.txt/PNG, never attempted the image task (looped on generic shell exploration or aborted without engaging task terms)",
+        "failure_mode_short": "did-not-engage",
+        "failure_mode": "did-not-engage"
       },
       "restored_count_running": 4,
       "restored_so_far": [
@@ -282,7 +296,10 @@
         "verdict": "FAIL",
         "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
         "failure_mode": "engaged-but-incapable: 2B model ENGAGED with the task (session mentions thresh_char=254, png=252, task_brief=300, prompt.txt=226, vth_high=201, v(temp)=9, thresh_report=8, submit.zip=3, eda_flow=19) -- it understood it must read the image and produce thresh_report.json with vth_high/etc., but as a text-only model could not extract values from the PNG and did not produce a valid submit.zip. Cleaner attribution than r650 alpha1 did-not-engage (model here clearly engaged but was image-blind).",
-        "image_required": true
+        "image_required": true,
+        "failure_mode_tier": "C",
+        "failure_mode_tier_def": "engaged-but-could-not-read-image: model understood the task, knew it must read the image and produce the deliverable, attempted tools, but as a text-only model could not extract values from the PNG (cleanest VQA testbed)",
+        "failure_mode_short": "engaged-but-could-not-read-image"
       }
     },
     {
@@ -342,7 +359,10 @@
         "failure_mode_classification": "engaged-but-image-blind (cleaner attribution to image-blindness than r650). The 2B text-only surrogate read the prompt, understood it needed to produce diagnosis.json, and tried eda_flow tooling, but without multimodal capability it could not extract root_cause/fail_time/edge_count from the PNG, so no valid diagnosis was produced. This is the correct no-multimodal baseline behaviour per WAVEVIEW_COLLAB.md task 1.",
         "hook_blocks": 0,
         "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-SimFailFsdbProbe-001/20261114_145544",
-        "status_log": "designflow/cline_eval_status_D.jsonl (ts 2026-11-14T06:55:44Z)"
+        "status_log": "designflow/cline_eval_status_D.jsonl (ts 2026-11-14T06:55:44Z)",
+        "failure_mode_tier": "B",
+        "failure_mode_tier_def": "engaged-with-task-text-but-did-not-read-image: model read task text / referenced deliverable / attempted eda_flow, but NEVER referenced the PNG image or any signal name (image-blind despite textual engagement)",
+        "failure_mode_short": "engaged-text-only"
       },
       "interpretation_for_vision": {
         "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
@@ -376,7 +396,10 @@
         "reason": "no submit.zip produced",
         "failure_mode": "did-not-engage (5KB session, 0 task-term mentions, 0 PNG read)",
         "correct": true,
-        "note": "2B text-only cannot read PNG -> fail is correct baseline"
+        "note": "2B text-only cannot read PNG -> fail is correct baseline",
+        "failure_mode_tier": "A",
+        "failure_mode_tier_def": "did-not-engage: model never read prompt.txt/PNG, never attempted the image task (looped on generic shell exploration or aborted without engaging task terms)",
+        "failure_mode_short": "did-not-engage"
       },
       "structure_conversion": "removed text CSV/netlist替身; converted L2 candidate-script-on-hidden-B -> answer-validation; original text form in pre-r657 git history"
     },
@@ -399,11 +422,36 @@
         "reason": "no submit.zip produced",
         "failure_mode": "did-not-engage (49KB session, 0 mentions of wave_cmp/png/verdict/pulse/edge/vdd/corner; submit=49 generic task_brief refs; outputs/ empty)",
         "correct": true,
-        "note": "2B text-only cannot read PNG -> fail is correct baseline (WAVEVIEW task1)"
+        "note": "2B text-only cannot read PNG -> fail is correct baseline (WAVEVIEW task1)",
+        "failure_mode_tier": "A",
+        "failure_mode_tier_def": "did-not-engage: model never read prompt.txt/PNG, never attempted the image task (looped on generic shell exploration or aborted without engaging task terms)",
+        "failure_mode_short": "did-not-engage"
       },
       "structure_conversion": "removed .tbl text surrogates (pass_tbl_A.tbl/fail_tbl_A.tbl/hidden/*.tbl/hidden_manifest.json); converted L1 candidate-writes-wave_cmp.py-CLI-on-.tbl -> answer-validation image-required; pure-Python (numpy+zlib, no matplotlib) generated wave_cmp_A.png + hidden/wave_cmp_B.png (anti-hardcode provenance: pass vdd=0.9/4 pulses/8 edges, fail vdd=1.5/4 pulses/8 edges shifted, verdict GRAY); original text form in pre-r658 git history"
     }
   ],
-  "last_updated": "2026-11-14T09:25:42Z",
-  "restored_count": 8
+  "last_updated": "2026-11-14T09:35:00Z (r659 failure_mode_tier sync)",
+  "restored_count": 8,
+  "failure_mode_tier_schema": "A=did-not-engage / B=engaged-text-only / C=engaged-but-could-not-read-image (per A r527 stratification proposal for WAVEVIEW Task2 VQA gain measurement; D r659 sync per A r527 action 2 + B r554 action 2)",
+  "failure_mode_tier_distribution": {
+    "A_did_not_engage": 4,
+    "B_engaged_text_only": 2,
+    "C_engaged_but_could_not_read_image": 2,
+    "total": 8,
+    "A_cases": [
+      "alpha1 EyeApertureSelect-001 r650",
+      "beta8 WaveView-002 r653",
+      "alpha3 DqReadPathWaveDebug-001 r657",
+      "beta6 WaveCmpWrap-001 r658"
+    ],
+    "B_cases": [
+      "alpha4 TempSelWaveform-001 r652",
+      "beta11 SimFailFsdbProbe-001 r655"
+    ],
+    "C_cases": [
+      "beta9 WaveMaxFind-001 r651 (tool-call confound)",
+      "beta10 TempThreshChar-001 r654 (cleanest C)"
+    ],
+    "note": "D r659 sync per A r527 action 2 + B r554 action 2. Distribution: A=4/8 (50%), B=2/8 (25%), C=2/8 (25%). did-not-engage is the majority in D域. Only C-tier is the clean VQA-capability-gain testbed (per A r527)."
+  }
 }

@@ -2,7 +2,7 @@
 
 > **发起**：vision 线 | **承接**：designflow shard A/B/C/D（任一空闲 shard 认领）
 > **依据**：用户令 2026-11-14 09:1x #2/#3 + 09:5x 口径变更（「需要多模态的题不要降级，没有多模态能力就让它们 fail；像要求合格 DE 一样要求 agent」）
-> **状态**：⬜ 未认领 ｜ 🟡 进行中（shard D 任务1 全 8 题恢复+基线 DONE · shard B 任务1 全 2 题 DONE）｜ ⬜ 已交付
+> **状态**：⬜ 未认领 ｜ 🟡 进行中（shard D 任务1 全 8 题恢复+基线 DONE · failure_mode_tier A/B/C 已落 D.json+B.json 供 task2 机械分层 · shard B 任务1 全 2 题 DONE · task2 VQA 对照受基础设施阻塞见 B r553）｜ ⬜ 已交付
 
 ---
 
@@ -68,6 +68,7 @@
 | 2026-11-14 16:5x | D | 任务1（α3 恢复+基线·r657） | **α3 DqReadPathWaveDebug-001 原形态恢复完成 + 基线 FAIL（正确）**，并修好 r656 后遗留的半恢复破损态（前轮已 commit PNG 但未写 check.py/jsonl/prompt，case 不可运行）。α3 实际**已落库** D.jsonl（2026-11-09 造的 B-grade 文本 CSV/netlist case，非交底清单原标的「未落库」——交底估计与 D 实际落库不符，本条即恢复该已落库文本 case）。原为 L2 candidate-script-on-hidden-B（候选写 dq_waveform_debug.py 解析 CSV+网表→diagnosis.json，check.py 真跑候选在隐藏 B 上判分 15 条件）——纯文本可写脚本通过，**不服务多模态度量**，恢复为 image-required answer-deliverable 形态（原文本形态保留在 r657 前 git 历史）。移除文本 CSV/网表替身，改用纯-Python（numpy+zlib，无 matplotlib）生成的真数据图 PNG（dq_readpath_A.png 1400×1500 28KB：5 面板=5 级 DQ 读路径流水线 pattern_buf→rd_gate→slice_mux→read_mux→pad_driver，蓝=golden/红=actual 阶梯线 16-cycle，**无数据标签**；hidden/dq_readpath_B.png 同构异值 29KB provenance+反硬编码）。A: bug=gate_disable@rd_gate, actual 在 burst1(cyc4-7) 拉 0 而 golden 保持 80；B(hidden): bug=bit_swap@slice_mux, nibble-swap，与 A 全反。check.py 重写 13 条件 (a)-(m) answer-validation **每条独立可 FAIL**——oracle subprocess 从 embedded A_PARAMS 重建 A 波形推导（§4.2 真跑）+ 读图容差±8 + 反硬编码 B kind-keyword/数值/mismatch长度 + 跨字段自洽。自验全过（REF PASS 13/13 / 10 negative 全 FAIL NEG_RC=0, distinct first_fail b/c/e/f/g/j / §4.9 退化全 FAIL）。k_rationale==k_check==13 ✓。基线：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only 无多模态）→ **FAIL（正确）**（22s, exit=0, 未产出 submit.zip, hook_blocks=0, leak 自检通过）。**失败模式=did-not-engage**（session 5KB, 0 处任务词提及——2B 从未读 prompt/PNG）。**无多模态 fail 是正确基线**。D.jsonl 仍 378（恢复=替换非新增）。**restored_count=7（α1+β9+α4+β8+β10+β11+α3）——D 域 7 题已落库 case 全部恢复完毕**。剩余 D 域仅 β6（3qe6x 真未落库，需先造 case 再恢复）。副产品：run_one_D.sh MODEL/THINKING/PROVIDER 改 env-overridable。**注意**：r656 前 commit 曾误把 β7（B 域）PNG 提交进 assets（D 越域），D 本轮未碰 β7（B r551 已恢复 β7）。 | `designflow/waveview_baseline_results.D.json`（α3 段追加, restored_count=7）· `designflow/waveview_restore_plan_D.md` §六 · EDA-Flow-Bench assets/reference/D.jsonl 已更新 |
 | 2026-11-14 17:2x | D | 任务1（β6 恢复+基线·r658） | **β6 WaveCmpWrap-001 原形态恢复完成 + 基线 FAIL（正确）—— D 域 WAVEVIEW 任务1 全部交付完毕（8 题恢复 + 8 基线全 FAIL，DEBT 清零）**。**订正**：交底清单 + restore_plan_D §二标 β6「3qe6x 未落库，需先造 case」，实测 3qe6x **已落库** D.jsonl（2026-11-07 造的 B-grade L1 文本 case `EDA-Eval-DesignFlow-WaveCmpWrap-001`，candidate 写 wave_cmp.py CLI 解析 .tbl 文本快照，check.py 真跑候选在隐藏 B/B2 .tbl 上判分 16 条件）——交底估计与 D 实际落库不符，本条即恢复该已落库文本 case（非新造）。原 L1 纯文本可写脚本通过（无需看图），**不服务多模态度量**，恢复为 image-required answer-deliverable 形态（原文本形态保留在 r658 前 git 历史）。移除 .tbl 文本替身（pass_tbl_A.tbl/fail_tbl_A.tbl/hidden/*.tbl/hidden_manifest.json），改用纯-Python（numpy+zlib，无 matplotlib 依赖）生成的真数据图 PNG（wave_cmp_A.png 1200×900 16KB：**2 路堆叠面板**共享时间轴 ns——上面板=pass corner 波形 vdd=1.2V/3 脉冲/6 边沿，下面板=fail corner 波形 vdd=1.0V/2 脉冲/4 边沿，蓝色方波阶梯线，**无数据标签/无阈值线/无脉冲计数标注**，需从坐标轴读脉冲数/边沿数/周期/脉宽/首沿时刻/vdd；hidden/wave_cmp_B.png 同构异值 provenance+反硬编码：pass vdd=0.9V/4 脉冲/8 边沿，fail vdd=1.5V/4 脉冲/8 边沿偏移+2ns，verdict=GRAY）。VQA 验证图可读（pass 3 脉冲@110-120/140-150/170-180ns 高1.2，fail 2 脉冲@~115-130/~155-170ns 高1.0）。check.py 重写 13 条件 (a)-(m) answer-validation **每条独立可 FAIL**——oracle subprocess 从 embedded A_PARAMS 重建 A 波形数值推导（§4.2 真跑）+ 读图容差±4 + 反硬编码 B-token guard（verdict=GRAY/vdd 0.9,1.5/period 20/first_rise 60,62/n_edges_pass 8/n_pulses_pass 4 各字段精确匹配）+ 跨字段自洽（n_edges==n_rise+n_fall==2×n_pulses；DIFFERENT⇒n_edges_pass≠n_edges_fail；vdd_pass≠vdd_fail）。自验全过（REF PASS 13/13 / 15 negative 全 FAIL NEG_RC=0, **distinct first_fail a-m 全 13 条件覆盖** / §4.9 退化全 FAIL）。断言闸门 k_rationale==k_check==13 ✓。基线：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only 无多模态）→ **FAIL（正确）**（55s, exit=0, 未产出 submit.zip, hook_blocks=0, leak 自检通过）。**失败模式=did-not-engage**（49KB session, wave_cmp/png/verdict/pulse/edge/vdd/corner 提及全 0——2B 从未读 PNG、从未提及任务词，outputs/ 空）。**无多模态 fail 是正确基线**。D.jsonl 仍 378（恢复=替换非新增）。**restored_count=8（α1+β9+α4+β8+β10+β11+α3+β6）——D 域 WAVEVIEW 全部 8 题恢复完毕，无遗留**。 | `designflow/waveview_baseline_results.D.json`（β6 段追加, restored_count=8）· `designflow/waveview_restore_plan_D.md` §六 · EDA-Flow-Bench assets/reference/D.jsonl 已更新 |
 | 2026-11-14 17:0x | B | 任务1（β7 基线·r552） | **β7 FsdbWrDqMeas-001 基线 FAIL（正确）—— B 域 WAVEVIEW 任务1 全部交付完毕（2 题恢复 + 2 基线全 FAIL，DEBT 清零）**。**β7 基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only 无多模态, eval/run_one.sh --shard B --model minicpm5-2b-sft-v39-final --thinking low --timeout 600）→ **FAIL（正确）**（354s, exit=0, 未产出 submit.zip, hook_blocks=0, leak 自检通过）。**失败模式=engaged-but-could-not-read-image（tool-confusion 变体）**——与 α2 r551 的 did-not-engage（20s）不同：本次 1752 events 模型**确实启动**了（读了 prompt、尝试调用工具），但 15 个工具调用全部偏题：read_files×3（全 `/dev/null`，从未读 wr_dq_A.png）+ run_commands×6（全 `echo NOTICE` 空操作）+ search_codebase×2（`_NO_MATCH_`）+ eda_flow__open_session×1（**幻觉了错误的 task_id `IO-RVV-001`**，非本任务）+ ask_question×3（**全部 FAILED**：invalid input, expected string/array received undefined）。png_read=False（从未尝试读真图），1752 events 中 write_time/DQ/rising/falling/wr_dq_report/submit 等任务关键词**提及全 0**，outputs/ 空未产 wr_dq_report.json。模型因无多模态读不了波形 PNG，迷失在无关工具调用中，最终未产出交付件。**无多模态 fail 是正确基线**——engagement 不改变 verdict：模型无法从图提取 WRITE 时刻 / DQ 边沿，故无法产出答案 json。**B 域 WAVEVIEW 任务1 收官**：α2（r550 恢复 + r551 基线 FAIL did-not-engage）+ β7（r551 恢复 + r552 基线 FAIL engaged-but-could-not-read-image），restored_count=2，baseline_count=2，两基线均为正确 FAIL，可供 vision 度量多模态增益。DEBT:0。 | `designflow/waveview_baseline_results.B.json`（β7 基线 DONE, baseline_count=2）· EDA-Flow-Bench eval/status.jsonl 已追加 |
+| 2026-11-14 17:4x | D | 任务1配套（failure_mode_tier 同步·r659） | **D.json failure_mode_tier A/B/C 全 8 条落盘——task2（VQA 对照）输入条件就绪**。承 A r527 action 2 + B r554 action 2 直接 @D「D.json 7 条基线仍用 free-text，建议同步加 failure_mode_tier A/B/C 枚举字段，B 已做表率」。本轮把 `waveview_baseline_results.D.json` 全 8 条 run 的 baseline_run/baseline 子 dict 加 `failure_mode_tier`（"A"/"B"/"C"）+ `failure_mode_tier_def` + `failure_mode_short`；顶层加 `failure_mode_tier_schema`（与 B.json 同字符串）+ `failure_mode_tier_distribution`（A=4/B=2/C=2 + 案例清单 + note）。vision 现可对 D+B 共 10 条基线机械分层报翻转率，无需 grep free-text。**D 域 8 基线三档分布**：A 档 did-not-engage 4/8=50%（α1 r650·50s / β8 r653·9s / α3 r657·22s / β6 r658·55s）；B 档 engaged-text-only 2/8=25%（α4 r652·11s / β11 r655·31s）；C 档 engaged-but-could-not-read-image 2/8=25%（β9 r651·22s 带 tool-call confound caveat / β10 r654·23s 最干净 C 无 confound）。**D 域反证 B r554 duration 粗筛**：B r554 提议「<60s=>A 档」，但 D 域 C 档 β9/β10（22-23s）duration **短于** A 档 α1/β6（50-55s）——粗筛会把 C 档误判为 A 档（误剔 VQA 干净 testbed）。建议改用 task-term mention count 作粗筛（A=0/C=high），duration 仅作极端值方向性辅助。**对 Task2 含义**：D 域 Task2 翻转率分母建议=C 档 2 条（β9/β10）非全 8；A 档 4 条预期≈0 翻转（结构性 0）；C 档内 β9（tool-call confound）/ β10（clean C）建议分子报，**β10 TempThreshChar-001 是 D 域最干净 VQA gain 单 case testbed**。task1 D 域 8/8 已于 r658 收官，本轮为配套收尾（无新 case 落库，D.jsonl 378 不变）。详见 `discuss/D.md` r659 + `MEMORY_DESIGNFLOW_D.md` r659。 | `designflow/waveview_baseline_results.D.json`（failure_mode_tier 落盘 8 条 + schema + distribution）· `discuss/D.md` r659 |
 
 ---
 
@@ -134,3 +135,58 @@ cline（被测 SUT）的 shell 命令经 MCP `eda_flow__run_commands` 在 **.75�
 - B 仍 0-case（mc10.fresh=0，1113 池 r531 13/13 peek 闭合；.75 daily-log `eda_trace_20261114.log`=480951B 与 r539 一致无增长，无新 ssh_eda_search 扫描）。
 - 本轮 0-case 交付物：本阻塞说明 + §4.4 negative_selftest 抽查（VlshftParamOpt-001 4 neg 全 FAIL ✓）。
 > — shard B，r553（2026-11-14 17:0x）
+
+## 召集人裁定 · task2 解阻路径（shard A · 2026-11-14 r529）
+
+> **触发**：B r553 判 task2「基础设施阻塞」，列 4 条解阻路径但均标「需 infra/vision 配合，非单 shard 可解」，vision 已 idle-spin 30+ 轮。A 作为召集人 + 持 harness 知识的 shard，对 B 的 path #3（VQA 注册为 cline MCP server）做了**实测复核**，结论：**path #3 现在就可执行，无需开防火墙、无需 .75 GPU、无需 vision 额外配合**——B r553 因「评测机无 GPU」误判此路径不可行，但遗漏了评测机上**已有一个可用的 VQA MCP**。
+
+### 核心纠正：cline 的 MCP client 在评测机，不在 .75
+
+B r553 的整条阻塞链建立在「cline 调 VQA = .75 调 VQA server」上。这是**对 eda_flow 的误解**：
+- cline 进程跑在**评测机** `hfeg0tedaap02`（`10.251.36.15`），即跑 `run_one.sh` 的机器。
+- cline 的 MCP client（`~/.cline/data/settings/cline_mcp_settings.json`）经 **URL** 连 MCP server。现有两条：`eda_flow` → `http://127.0.0.1:18891/mcp`（评测机本地，再 proxy 到 .75）、`pyAether_MCP_server` → `http://10.251.36.15:8090/mcp`（评测机本机）。
+- `.75` 只在 cline 调 `eda_flow__run_commands` 时才介入（那是一条**沙盒 shell 执行**通道，不是 cline 访问外界网络的唯一出口）。cline 调别的 MCP（如 VQA）**完全不经过 .75**。
+- 故 B 实测「.75 → 30001 timed out」测的是**错误方向**。正确要问的是：**评测机（10.251.36.15）能否到达一个 VQA MCP？**——能，且已在跑。
+
+### 实测证据（2026-11-14 17:3x，评测机本机）
+
+| 检查 | 命令 | 结果 |
+|:--|:--|:--|
+| 评测机有 VQA MCP 在跑？ | `ss -tlnp \| grep 8092` | **LISTEN 0.0.0.0:8092**（pid 167944）—— 即 opencode 的 `research` MCP（`tools.research.vqa`），配置在 `~/.config/opencode/opencode.json`：`"research":{"url":"http://10.251.36.15:8092/mcp"}` |
+| VQA MCP 端点活？ | `curl 127.0.0.1:8092/mcp` | 响应（streamableHttp，需 Accept header）|
+| VQA 真能读 WAVEVIEW 图？ | `research.vqa(image_path=…/WaveMaxFind-001/wave_vb_A.png, query="peak value?")` | ✅ **正确答 1.0 V**（阻尼正弦首点峰值，从 y 轴读出）——端到端可用 |
+| 评测机本机有 GPU？ | `nvidia-smi` | 无（`command not found`） |
+| 评测机本机有 torch？ | `import torch` | 无 |
+
+**关键点**：评测机**无 GPU / 无 torch**，但 `research.vqa` **照样工作**——research MCP 后端把 VQA 请求转发到远端 GPU 服务（vision/text_to_image 同理走 doubao）。故 B r553「评测机无 GPU ⇒ path #3 仍需 vision 配合」**不成立**：VQA 计算不在评测机本地，评测机只当一个 MCP 转发客户端，GPU 在 research 后端已就绪。
+
+### task2 可执行架构（最小改动，designflow 自闭环）
+
+1. **cline config 加一条 VQA MCP**（`~/.cline/data/settings/cline_mcp_settings.json`）：
+   ```json
+   "research_vqa": {
+     "url": "http://127.0.0.1:8092/mcp",
+     "type": "streamableHttp",
+     "timeout": 600,
+     "disabled": false,
+     "autoApprove": ["vqa"]
+   }
+   ```
+   （只 autoApprove `vqa`，不给 cline `cimi_search`/`text_to_image` 等，保持「唯一变量 = 看图能力」。)
+2. **run_one.sh CLI_PROMPT 加一句**：告知 cline 有 `research_vqa__vqa` 工具，用法 `vqa(image_path=<PNG 绝对路径>, query=<问题>)`，图在 `assets/` 下，读完图把答案写进 outputs 交付件。
+3. **用 Task1 同一批已恢复 case 重跑**：同 jsonl / 同 check.py / 同 hidden B / 同模型（minicpm5-2b text-only）——唯一新增变量 = cline 能调 VQA。
+4. **判分不变**：check.py 仍是答案校验（oracle 从 embedded 参数重算），不看 cline 怎么得到答案。Task1 baseline（无 VQA，全 FAIL）vs Task2（有 VQA）同表并列，**翻转 = FAIL→PASS**。
+
+### 受控实验的两点需 vision 确认（不阻塞架构，只影响归因口径）
+
+1. **VQA 后端模型**：`research.vqa` 后端是哪个模型（描述未写明）？vision 原意是 Qwen3.5-2B。若 research.vqa 后端 ≠ Qwen3.5-2B，则 Task2 量的是「有某种 VQA vs 无 VQA」，不是严格的「Qwen3.5-2B 增益」。vision 二选一：(a) 直接用 research.vqa（最快，零额外部署）；(b) 把 Qwen3.5-2B 包成 MCP 挂到评测机可达的端口（架构同上，换 url 即可）。
+2. **同一批 case**：Task1 基线已落盘 D 8 + B 2 = 10 题（α1/α2/α3/α4/β6/β7/β8/β9/β10/β11；β5 经 r508 裁定不存在）。Task2 应跑**完全相同 10 题**。
+
+### A 侧状态与下一步
+
+- **task1**：✅ 收官（D 8 + B 2 = 10 题恢复 + 基线全 FAIL 正确；β5 不存在）。A 无 A-domain handoff（11 题全 D/B 域），召集人裁定 r508 已落地。
+- **task2**：**不再阻塞**。架构 + 实测 + harness 改动点已齐。A 可在下一轮（或任一空闲 shard）执行 task2 试跑：改 cline_mcp_settings.json + run_one.sh CLI_PROMPT + 重跑 1 题验翻转。
+- **A 造题**：仍 blocked（11/13 scan stale + fresh session 文件蒸发，r528 诊断；等用户决策是否主动全量重扫 698 机）。故 A 本轮 0-case，转做 task2 解阻 convenor 工作。
+- **建议**：task2 试跑由 **A** 承接（A 持 harness 改动权 + 已做实测），若 vision 确认 VQA 后端模型口径即可开跑。vision 侧只需回答上面「两点确认」其一。
+
+> — shard A 召集人，r529（2026-11-14 17:3x）
