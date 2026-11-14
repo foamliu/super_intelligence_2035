@@ -424,12 +424,26 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
              "<code>_ensure_pip()</code> 现先调 <code>_ensure_python()</code>。"
              "PATH fix: 所有 exec 命令前缀 "
              "<code>export PATH=/usr/local/bin:/usr/bin:/bin:$PATH</code>。</p>")
-    H.append("<p><strong>验证</strong>: hermes 65 题 rerun 进行中 (7/65 done)，"
-             "<strong>0 py3fail ✅</strong>。configure-git-webserver "
-             "reward=1.0 (PASS)，exception_info=None。"
-             "4 个原 setup-fail 题中 configure-git-webserver 已 PASS，"
-             "其余 3 题 (compile-compcert/build-pov-ray/caffe-cifar-10) "
-             "setup 成功但 agent 超时 = ability 非 infra。</p></div>")
+    H.append("<p><strong>验证</strong>: hermes 65 题 rerun 进行中 (60/65 done，5 仍在跑)，"
+             "<strong>0 py3fail ✅</strong> (setup_fail 4→0，判据满足)。"
+             "当前 rerun 结果: <strong>26 PASS</strong> / 27 FAIL / 7 NA。"
+             "4 个原 setup-fail 题中: configure-git-webserver=PASS、"
+             "compile-compcert=PASS、caffe-cifar-10=FAIL(超时=能力)、"
+             "build-pov-ray=NA(超时=infra) — 4 题 setup 全部成功，python3 修复生效。</p>"
+             "<p><strong>7 NA 逐题归因</strong> (非 py3、非能力): "
+             "<table><tr><th>Task</th><th>类别</th><th>原因</th></tr>"
+             "<tr><td>build-pov-ray</td><td>timeout</td><td>3600s 超时 (infra)</td></tr>"
+             "<tr><td>financial-document-processor</td><td>timeout</td><td>1200s agent 超时 (infra)</td></tr>"
+             "<tr><td>mteb-leaderboard</td><td>BLOCKED</td><td>hermes-agent 不在容器 PyPI 镜像 (infra BLOCKED, 非能力)</td></tr>"
+             "<tr><td>mteb-retrieve</td><td>BLOCKED</td><td>同上</td></tr>"
+             "<tr><td>qemu-alpine-ssh</td><td>Py3.9 bug</td><td>get-pip.py 要求 Py3.10+，容器为 Py3.9 → R2499 已修 (_ensure_pip 先用包管理器装 pip + legacy get-pip.py 3.9)</td></tr>"
+             "<tr><td>qemu-startup</td><td>Py3.9 bug</td><td>同上</td></tr>"
+             "<tr><td>(unnamed)</td><td>empty</td><td>无 exception_info，待 rerun 完成</td></tr>"
+             "</table>"
+             "<strong>R2499 Py3.9 修复</strong>: _base.py _ensure_pip() 新增包管理器安装 pip "
+             "(apt-get/apk/dnf/yum python3-pip) 在 get-pip.py fallback 之前，"
+             "并对 Py&lt;3.10 用 legacy get-pip.py (bootstrap.pypa.io/pip/3.9/)。"
+             "当前 harbor 进程缓存旧模块 → qemu 2 题需 post-rerun 用新码重跑。</p></div>")
 
     # ---- §cline TB-2.1 根因归因 (2026-11-13 用户令, ~~部分作废~~) ----
     if attr_data:

@@ -31,9 +31,9 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-14 10:0x（**排查/修复 hermes 重跑的 `python3 not found` setup 失败；善用 web search 参考他人做法**）· 未完成 · 最高优先
+### 🟡 用户令 · 2026-11-14 10:0x（**排查/修复 hermes 重跑的 `python3 not found` setup 失败；善用 web search 参考他人做法**）· ✅ 核心修复已交付 (R2464-R2500) · 仅剩 qemu Py3.9 post-rerun re-run + hermes rerun 完成 merge
 
-> **用户原话**：「harness：python3 not found 的 setup 失败需要排查/修复。请 harness 善用 web search，看看这种类型的问题别人是怎么处理的。」
+> **✅ 交付结论 (R2500)**：根因=(a) 容器内确实无 python3（ubuntu:24.04 bare 镜像）· web search DONE（GitHub Issues 0 条 + harbor BaseInstalledAgent 无 _ensure_python + 交叉对照 Node.js/Bun agent 不受影响 = 最直接证据）· 修复=`_base.py:245 _ensure_python()`（apt-get/apk/dnf/yum install python3）+ `_base.py:342 _ensure_pip()` 先调 _ensure_python + R2499 Py3.9 fix（包管理器装 pip + legacy get-pip.py 3.9）· 冒烟=OK · **hermes rerun 60/65 done: 26PASS/27FAIL/7NA · setup_fail 4→0 ✅（判据满足）**· 4 原 setup-fail 题 setup 全部成功（configure-git-webserver=PASS · compile-compcert=PASS · caffe-cifar-10=FAIL(超时=能力) · build-pov-ray=NA(超时=infra)）· 7NA 逐题归因: 2timeout+2mteb(BLOCKED:hermes-agent not in PyPI)+2qemu(Py3.9 get-pip.py→R2499 FIX·harbor cached old module→post-rerun re-run)+1empty · 报告 `report_harness_tb21_7way_zh.html` infra 归因节已 REGEN（18503 bytes）· **剩余**: ①hermes rerun 5 题完成→merge→REGEN ②qemu 2 题 post-rerun 用 fixed _ensure_pip 重跑 ③mteb 2 题=infra BLOCKED（非能力·非 py3）
 
 **一、现象（你 R2463 自己的心跳）**
 - `hermes rerun 8/82`，其中 **4 题 setup fail = `python3 not found`**，另 4 题 ability fail。
