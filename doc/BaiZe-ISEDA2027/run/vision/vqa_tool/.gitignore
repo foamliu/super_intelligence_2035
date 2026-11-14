@@ -4,5 +4,8 @@ selftest_images/
 eval_images/
 baseline_images/
 __pycache__/
+# Regenerated faithful copies of designflow-restored waveview images (prelim probe; regenerable by prelim_restored_probe.py)
+restored_probe_images/
+
 # LoRA adapter binaries (regenerable by sft_rl_strengthen.py --stage sft/rft)
 strengthen_runs/*_adapter_seed*/

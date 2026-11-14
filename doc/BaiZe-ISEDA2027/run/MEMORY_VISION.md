@@ -10,12 +10,13 @@ WAITING: 0
 
 > 📦 **wake #1225 · 2026-11-14 14:34** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 🆕 **【wake #1226 · 2026-11-14 14:48】例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)**：
-> - **designflow 进展**：本轮**无新交付**——`git fetch` 见 `rev-list --left-right --count HEAD...origin/main`=0/0 up-to-date 无需 pull。`WAVEVIEW_COLLAB.md`(mtime 14:20·同上轮)交付记录最末仍为 14:1x β10 r654，无新行。D 仍恢复 **restored_count=5(α1+β9+α4+β8+β10)**，剩 3 D 域题(β11 已落库 + α3/β6 未落库)待恢复。**#3 后半(无VQA vs 有VQA 对照)仍阻塞 D**——不空等不编造。
-> - **输入参考**：research 日报 2026-11-14(mtime 12:17·同上轮) vision 栏=「Unbundling Multimodal Vision Encoding」属已收敛视觉编码器臂(R2–R14)·非 wave-RL 活跃线→不 action(同 wake#1186/#1212~#1225)。ops/inbox.md=RUN_ID 276 TARGET .12(chunk2/3 eval 进度·非 vision)→不 action。
-> - **状态**：4 个 2026-11-14 用户令全交付(#1 §6✅/#2 交底✅/#3 前半 VQA tool✅/#4 强化✅诚实负向 p=0.5 判据未达/08:4x 分析报告✅/09:5x 口径✅/10:3x 通道✅)；唯一未完成=#3 后半(阻塞 D)。`ps` 仅 loop 守护 PID1236761 ppid=1 + VQA server PID2806068(gpu5·port30001·#3 前半产物常驻)无新 vision 实验进程。
-> - **git**：fetch→0/0 up-to-date 无需 pull(无 incoming·不撞 lock)。不卷入 `M BaiZe-NeurIPS2027/main.pdf`(wake#1207 遗留·未暂存)·`?? outputs/`(posttrain 在途)。add 明确路径(MEMORY+daily)→commit(`vision rl:`)→push。
-> - **体积**：fold wake#1225 详细块→one-liner + 加 wake#1226 详细块；MEMORY ~30.5KB/TASK 27127B·均≤32KB✓。⚠️idle-spin 持续(#3 后半阻塞 designflow 跨线依赖·非方向穷尽)。**WAITING: 0**。
+> 🆕 **【wake #1227 · 2026-11-14 15:1x】#3 后半「可并行半」推进：designflow 已恢复 5 题(全 FAIL)但真 PNG 在 .15 取不到 → 据 designflow 公开参数在本机重生成忠实副本·VQA tool 逐量探针 → 6/22 量正确(acc 27.3%) vs 基线 0/22**：
+> - **做了什么**：designflow `WAVEVIEW_COLLAB.md`(mtime 14:20·同上轮)交付记录最末仍 β10 r654·restored_count=5(α1/β9/α4/β8/β10)，**无新交付**。但恢复后真 PNG 在 designflow 机器(.15 独立 NFS)·.17 取不到 → 官方「有 VQA」对照(#3 后半)仍需 designflow 跨线。本轮按 10:3x「不要再等·先做可并行那半」：据 `waveview_baseline_results.D.json`+`waveview_restore_plan_D.md` 公开参数，在本机重生成 3 题(β9 阻尼正弦/α4 选择器脉冲/β10 迟滞双面板)忠实副本 PNG，用 VQA tool(Qwen3.5-2B 原生 VL·:30001·health ready)逐量提问，按 designflow 公布容差判 pass/fail。
+> - **结果(诚实)**：β9 1/7 · α4 3/7 · β10 2/8 → **overall 6/22 = 27.3%**；基线 text-only(designflow r650–r654)= 0/22(看不见图·0 deliverable)。**多模态增量存在但弱**：能读轴标签/单面板简单量(max/t_at_max/pattern/v_max)，但**精确计数**(β9 周期 1→2ns·α4 窗数 5→误读信号名 sel54 为 54)、**精确数值**(min/offset/p2p 偏差超容差)、**跨面板推理**(β10 vth_high/low/迟滞反推全 fail)三类系统性缺口。**修正 08:4x α 判断**：识图能读部分量但 check.py 全 12 条件(尤其跨面板)远超当前 VQA 能力 → α「大概率能过」对全题通过偏乐观。**指向 #4**：合成数据应补「无标签轴读数+跨面板推理」维度。
+> - **产物**：`vision/vqa_tool/prelim_restored_probe.py`(可复跑)·`restored_probe_results.json`(原始)·`reports/report_vision_vqa_restored_probe_zh.html`(12120B·0script/0外链/内联SVG·口径声明=preliminary 非 #3 官方对照)·`.gitignore` 加 `restored_probe_images/`。⚠️本探针图与 designflow 等价但不字节相同·不可外推为官方通过率。
+> - **git**：fetch→behind2→`pull --rebase --autostash`(fast-forward·不卷入 `M BaiZe-NeurIPS2027/main.pdf`+`?? outputs/`)→add 明确路径→commit(`vision rl:`)→push。**本轮非 idle-spin**(产出新探针)。**WAITING: 0**。
+
+> 📦 **wake #1226 · 2026-11-14 14:48** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1223 · 2026-11-14 14:18** 例行巡检·全交付态·designflow 新交付 β10(r654·restored_count 4→5)·#3 后半阻塞 D 推进中·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
