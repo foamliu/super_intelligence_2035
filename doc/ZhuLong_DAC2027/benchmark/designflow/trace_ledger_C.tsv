@@ -968,3 +968,18 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794188992025_i08ak	e0017906	hfeg0plg96	46	layout_aether	parked		2026-11-15 03:31	Q&A context-check which hierarchy
 1794474500124_wi1gw	junweiw	hfeg0plg67	44	layout_aether	parked		2026-11-15 03:31	Q&A how-to batch-pcell-param (framed as question)
 1791795810095_rnuul	lizwen	hfeg0plg89	63	layout_aether	parked		2026-11-15 03:31	Q&A how-to continuous-copy skill
+1794551883020_5hfp3	krystall			physical_verify	parked		2026-11-15 04:03	r582 peek REJECT: Q&A DRCOA YDEC module design analysis (U#0 请帮忙分析DRCOA YDEC模块设计原理), not produce-task
+1792034997613_2t683	hayleyz			physical_verify	parked		2026-11-15 04:03	r582 peek REJECT: data/log analysis+plotting from sim log (U#0 分析数据文件按PVT分组输出表格 + U#1 绘图), not EDA produce-task
+1792223495728_jgek9	rechealz			layout_virtuoso	parked		2026-11-15 04:03	r582 peek REJECT: Q&A how-to (U#0 virtuoso load cdf command + U#1 how to change language), not produce-task
+1792983503146_agccr	dxkong			physical_verify	parked		2026-11-15 04:03	r582 peek REJECT: Q&A DRC rule (U#0 how about fullchip moscap rule), not produce-task
+1792053244466_5hdsl	eunicef			physical_verify	parked		2026-11-15 04:03	r582 peek REJECT: Q&A LVS error understanding + thin ITF construct (U#3 此lvs报错信息如何理解 + U#4 构建via1的itf语句), Q&A dominant not produce-task
+1792031854472_4v6rb	wenjiez			layout_aether	parked		2026-11-15 04:04	r582 peek REJECT: debug-Q&A analog sim (U#0 仿真发现vdly amp低温电流低为什么), not produce-task
+1791964211480_r9jxw	bqchen			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: Q&A SVRF (U#1 in svrf what is difference STAMP BY and CONNECT), not produce-task
+1791444301737_g0or5	jiaheli			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: debug-Q&A Verilog compilation error (U#0 分析报错 + U#1-4 Verilog code), A-domain digital verification not C-domain produce
+1793155140658_8ciyv	sherlock			layout_virtuoso	parked		2026-11-15 04:04	r582 peek REJECT: Q&A how-to (U#0 怎样在电路中一次性给多个Pin加前缀字符), not produce-task
+1794450761269_flb0n	hongl			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: conceptual Q&A DRC bad pattern (U#0 查space大于多少的图形时bad pattern为什么画两个矩形), not produce-task
+1791944596389_h9kyu	e13zhang			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: meta/analysis Q&A patent ideas (U#4 分析验证环境有没有值得写专利的点), not produce-task
+1793098650308_1tdh8	michael1l			layout_aether	parked		2026-11-15 04:04	r582 peek REJECT: meta+Q&A (U#0-2 hi + U#3 aether里有漏孔检查吗), not produce-task
+1794357827042_myiqd	peterch			layout_virtuoso	parked		2026-11-15 04:04	r582 peek REJECT: setup+Q&A (U#0 访问DEJOA项目 + U#2 virtuoso下怎么看hierachy), not produce-task
+1793849646244_6kk7g	adaml			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: run-existing-skill calibre-lvs (U#0 calibre-lvs skill invocation), not produce-task
+1793588497814_536nj	yuqingc			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: file-operation (U#0 export CSV to local machine), not EDA produce-task
