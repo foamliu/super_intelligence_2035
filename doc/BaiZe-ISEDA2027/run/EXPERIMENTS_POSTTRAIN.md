@@ -10918,3 +10918,31 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 36.15 5-run 完成 → 新基线（标环境差异：旧 .17 no-sandbox-prompt+本地 MCP:18888/隧道 vs 新 36.15 sandbox-prompt+原生 RAG:8090/沙盒:18891）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
 - R2 5-run 完成 → 5run_rl_analysis_R2.json（vs step105 0.0304±0.0083，McNemar+bootstrap）→ 显著则里程碑报告 / 负则诚实负结果 + 换奖励或修 ppo_epochs≥2+old_logp 冻结
 - kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）
+
+---
+
+## §R491 — wake491 监控心跳（2026-11-14 18:3x）
+
+### 1. 本轮动作
+- **16:3x v2 RCA 终验**（执行级核验）：`reports/report_posttrain_pyaether_rca_v2_zh.html` size=37415B；H2=5（①口径与数据 ②工具调用画像 ③失败归因 ④图表汇总 ⑤提分意见）；SVG=8；script=0；外链(src/href http)=0；git-tracked+committed(e434f6def)。旧报告 `report_posttrain_baseline_pyaether_rca_zh.html` line39 含「已被 v2 取代」指针。→ **16:3x 用户令：已完成**。
+- **16:1x A/B 裁决**：沿用 verdict=A（trace_toolcount_3p04_baseline.json：5run sa1918+kw1739+ga1887+rc507=5544 RAG检索 + 507 sandbox；tools_registered=pyAether_MCP_server@127.0.0.1:18888/sse）。→ **已完成**。
+- **36.15 重测(15:4x)**：SSH 经隧道（`ssh -p 3333 app.e0031982@localhost`→hfeg0tedaap02）实证 PID1229657 `bash /nasdata/app.e0031982/bpt_eval.sh --run-all` 存活(etime~7961s~2.2h)。**run1 final_report = 25/158 = 15.82%**（summary: total_correct_completions=25, overall_sample_accuracy=0.1582, generation_statistics={success:29, failure:0, timeout:1, fail:128}）。
+- **.17 R2 5-run eval**：chain PID2322797 存活(~64958s~18h)；run1 final_report=1/158(0.63%)、run2=2/158(1.27%)、run3 RUNNING(code-gen phase, batch 2026_1114_141842)；serve GPU7:8095 /v1/models=minicpm5-2b-grpo-R2-step200 正常。
+- **MEMORY 归档**：wake489/490 原文搬入 daily-memories-posttrain/2026-11-14.md，MEMORY 28286B→26328B（≤32KB ✓）。
+
+### 2. 重大发现：36.15 run1 = 15.82%
+- 同一模型（minicpm5-2b-sft-v39-final，step105），同一数据集（158 题），同一判据（Pass@1）。
+- 环境差异：旧 .17 = no-sandbox-prompt(`eval_sys_prompt_template_no_sandbox.md`) + 本地非原生 MCP(:18888) + 隧道沙盒；新 36.15 = sandbox-prompt + 原生 RAG(:8090) + 原生沙盒 MCP(:18891)。
+- run1 单次 25/158=15.82% vs 旧 .17 5-run mean 3.04%±0.83% → **约 5 倍跳升**。强证 .17 环境（no-sandbox-prompt + 非原生 MCP）是主要限制因子，验证 15:4x 用户假设。
+- 注意：仅 run1，尚不能定新基线（需 5-run mean±std）；但量级差异已远超 run 间方差，方向性结论稳。
+- 与 A/B 裁决不矛盾：A=「.17 上工具确实被调用且成功」（3.04% trace 有 search_apis/run_code）；15:4x=「.17 环境配置（prompt 矛盾 + 非原生 MCP）抑制了模型发挥」。两者互补：工具有但环境/prompt 抑制 → 换对环境即大幅释放。
+
+### 3. 红线 / 纪律
+- 158 任务未进任何训练集（污染隔离）；数字均来自落盘 trace/eval 文件可复算。
+- read-only 监控 + MEMORY 归档：未编辑运行中脚本/未碰 GPU0-3/4/6/vision GPU5/未碰 36.15 运行中 eval。
+- 0 infra 错误；eval 全自治无人工动作。
+
+### 4. Next
+- 36.15 5-run 完成 → 新基线（标环境差异）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
+- R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs step105 0.0304±0.83%）→ 显著则里程碑报告 / 负则诚实负结果
+- kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）
