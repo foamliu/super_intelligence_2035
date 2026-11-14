@@ -6,6 +6,28 @@
 > ⚠️ 口径变更：该审计是在「把视觉判断降级为文本/Tcl」的基准版本下做的；09:5x 起基准已纠正——下列「原意图需看图」用例应**恢复原形态**，无多模态能力的系统**应当 fail**，并以「基线 fail → 上 VQA 后 pass」的差值度量多模态增益。
 > 纪律：本清单只做交底，数字可追到上述报告与 designflow `trace_deepreads/` 笔记；🚫 不编造。
 
+## 🔧 勘误（2026-11-14 · vision 线，wake#1210）
+
+> designflow 召集人 shard A 裁定（r508，2026-11-14，见 `WAVEVIEW_COLLAB.md`「召集人裁定」节）：
+
+1. **β5 `FsdbNetToggleDiag-001` 案例不存在**：对 4 shard jsonl（A/B/C/D）全量 `grep FsdbNet` / `FsdbNetToggleDiag` = **0 命中**；仅有深读笔记 `trace_deepreads/1793078405436_t0aom_finesim_fsdb_netlist_diag.md`（trace t0aom）。⇒ **vision 误抄**：把「有深读笔记」当成「有已落库 case」。β5 **不是「已降级可恢复」的 case，而是从未造题**，不在 Task1「恢复原形态」范围内。若需 β5，应走常规造题流程（t0aom → D 或 B 域新造），非 WAVEVIEW 恢复流程。
+2. **基线分母订正**：designflow 侧核实的「真·降级文本替身可恢复」分母 = **4**（非本清单原写的 11）。本清单原 11 = α4 + β7，其中 β5 不存在、另有若干为「B-grade 计划/未落库」（如 α3 DQ-readpath、β6 WaveCompare 为 B-grade 计划，β8 WaveView-002 当时 DEFERRED）——这些**不是已落库的降级文本替身**，不应计入「可恢复」分母。vision 接受此订正：**度量多模态增益的基线分母以 designflow 实际恢复并落盘的 case 数为准**（截至本轮 D 已恢复 α1/β9/α4 共 3 题，见下方进展跟踪），而非本清单的交底估计。
+3. **β8 `WaveView-002` 归属**：召集人核实 `EDA-Eval-DesignFlow-WaveView-002` **仅存在于 D.jsonl**（1 条，domain=waveform），A/B/C 0 命中 ⇒ 干净归属 D，无跨 shard 冲突（此前疑「A/B/D 同名」是 D 的 WaveView-002 与 B 的 `WaveViewPanel-001` 不同题混淆）。
+
+> 影响范围：本勘误订正的是「交底清单」的可恢复分母口径；`reports/report_vision_waveview_failed_analysis_zh.html` 的 α/β/γ 分类基于 trace 深读笔记（β5 当时即标「未评测·仅深读笔记」），其 α=4/β=7/γ=26 的**分类口径不变**，但应补注「β5 案例未落库（convener r508 核实）」——该报告勘误留作下一轮，本轮先在交底清单落地。
+
+## designflow 恢复进展跟踪（vision 侧记录 · 来源 `WAVEVIEW_COLLAB.md` 交付记录）
+
+| 时间 | shard·轮次 | case | 恢复 | 无多模态基线 | 失败模式 |
+|:--|:--|:--|:--|:--|:--|
+| 2026-11-14 10:2x | D·r649 | 11 题素材可得性核查 | 方案完成，未恢复 | — | — |
+| 2026-11-14 11:0x | D·r650 | α1 EyeApertureSelect-001 | ✅ 移除 .rep 文本替身→真眼图 PNG（3-panel VREF sweep） | **FAIL（正确）** | did-not-engage（2B surrogate 循环 generic ls/find，未读 prompt/PNG） |
+| 2026-11-14 11:4x | D·r651 | β9 WaveMaxFind-001 | ✅ 移除波形文本替身→真数据图 PNG（阻尼正弦 v(vb)） | **FAIL（正确）** | engaged-but-incapable（读了 prompt、开 eda_flow session，tool-call 错误循环 abort） |
+| 2026-11-14 12:1x | D·r652 | α4 TempSelWaveform-001 | ✅ 移除 .tbl 文本替身→真数据图 PNG（温度选择器梯形脉冲） | **FAIL（正确）** | engaged-but-aborted（接触了图/prompt，2B SFT surrogate tool-call 不可靠，abort 前未产出） |
+
+> **小结**：D 已恢复 3 题（α1/β9/α4），无多模态基线均 **FAIL = 正确行为**（与用户 09:5x 令一致）。剩余 D 域题（β10/β11/β8 已落库 + α3/β6 未落库）下轮起恢复。**#3 后半（无 VQA vs 有 VQA 对照）依赖链正在解锁**：待 D 恢复完毕并跑出完整新基线后，vision 把 Qwen3.5-2B VQA tool（#3 前半已交付·`vision/vqa_tool/`）接入 designflow 再跑同一批题。
+> ⚠️ **归因注意（designflow 提示）**：当前 2B text-only surrogate 的 FAIL 混有「模型容量不足未 engage」成分，非纯「image-blind」。为更干净的多模态增益归因，#3 对照宜用「能 engage 任务但读不了图」的更强无多模态模型作基线（vision 侧留意）。
+
 ## 交底目标
 
 请 designflow 据本清单判断**恢复哪些用例的原（需看图）形态**，并在恢复后跑出**新基线通过率**（预期：这些用例在无多模态时大量 fail）。vision 侧待 designflow 恢复后重新统计 α/β/γ 与新基线。
@@ -23,7 +45,7 @@
 
 | # | 题名 | case_id | 深读笔记（trace_deepreads/） | 评测状态 | 原意图 / 识图作用 |
 |:--|:--|:--|:--|:--|:--|
-| 5 | FSDB 信号翻转诊断（stuck/active） | EDA-Eval-DesignFlow-FsdbNetToggleDiag-001 | 1793078405436_t0aom_finesim_fsdb_netlist_diag.md | 未评测 | 从 FSDB 识别 stuck(从不翻转)/unexpected-active 信号+netlist 交叉对照。识图可目测 stuck 线，脚本读 transition 更严谨。 |
+| 5 | ~~FSDB 信号翻转诊断（stuck/active）~~ | ~~EDA-Eval-DesignFlow-FsdbNetToggleDiag-001~~ | 1793078405436_t0aom_finesim_fsdb_netlist_diag.md | **案例不存在** | ⚠️ **勘误（convener r508 核实）**：4 shard jsonl 全量 grep `FsdbNet` = 0 命中，仅有深读笔记（trace t0aom），**从未造题**。vision 误把「有深读笔记」当「有已落库 case」。不计入可恢复分母；若需此题走常规造题流程。 |
 | 6 | 波形对比 CLI（边沿序列 diff） | —（3qe6x, B-grade 计划） | 3qe6x_wavecmp_wrap.md | 未评测 | WaveCompare 两波形边沿序列对比判 EQUIVALENT/DIFFERENT/GRAY。识图可看分叉，但 corner VDD 不同致视觉叠加歧义，算法更可靠。 |
 | 7 | Write→DQ 边沿间隔测量 | EDA-Eval-DesignFlow-WrDqMeas-001 | 4v4nf_fsdb_wr_dq_meas.md | 未评测 | 测 write 命令到 DQ 第一上升/下降沿间隔。识图可估读时序，精确测量需脚本读 .vec 边沿。 |
 | 8 | FSDB 信号类型/功能分析器 | EDA-Eval-DesignFlow-WaveView-002 | as67p_waveview_ace_fsdb_signal_extractor.md | DEFERRED | 读 FSDB 判数字/模拟、边沿/脉冲/过零并说明功能。功能说明偏视觉推理；pi 预算不足未跑。 |
@@ -33,12 +55,14 @@
 
 ## 汇总
 
-- 原意图需看图（交底给 designflow 恢复）：**α 4 + β 7 = 11 题**（占 37 题的 29.7%）。
+- 原意图需看图（交底给 designflow 恢复）：**α 4 + β 7 = 11 题**（占 37 题的 29.7%）——此为**交底估计**（基于 trace 深读笔记）。
+- ⚠️ **分母订正（convener r508）**：其中 β5 案例不存在（误抄），α3/β6 为 B-grade 计划（未落库），β8 当时 DEFERRED —— designflow 侧核实「真·降级文本替身可恢复」分母 = **4**。**度量多模态增益的基线分母以 designflow 实际恢复并落盘的 case 数为准**（截至 2026-11-14 D 已恢复 α1/β9/α4 共 3 题，均 FAIL = 正确无多模态基线）。
 - γ 26 题为脚本/环境/语法类，**不应恢复为看图形态**（与多模态无关）。
 - 已评测 PASS 的 7 题全为 γ（此前因降级而通过；若其中含「原意图需看图」者应一并复查——当前 7 题均判定为 γ，故不在本交底清单内）。
 
-## 下一步（依赖链）
+## 下一步（依赖链 · 进度更新 2026-11-14 wake#1210）
 
-1. designflow 据本清单恢复 11 题原形态 → 跑出新基线（无多模态）通过率。
-2. vision 把 Qwen3.5-2B 封装为 VQA tool（#3）→ designflow 用同一批题再评 → 对比报告「哪些题靠 VQA 翻转」。
-3. vision 用合成数据/SFT/RL 强化 VQA tool 识图能力（#4）→ 再评 → 证明显著提升（对照 + 显著性）。
+1. designflow 据本清单恢复原形态 → 跑出新基线（无多模态）通过率。**进度**：D 已恢复 α1/β9/α4（3 题，全 FAIL 正确），剩余 D 域题下轮起恢复。
+2. ~~vision 把 Qwen3.5-2B 封装为 VQA tool（#3）~~ **✅ 已交付**（`vision/vqa_tool/`：原生多模态 VL server + client，单题样例跑通）→ 待 D 恢复完毕后 designflow 用同一批题再评 → 对比报告「哪些题靠 VQA 翻转」（#3 后半，依赖 D）。
+3. ~~vision 用合成数据/SFT/RL 强化 VQA tool 识图能力（#4）~~ **✅ 已交付**（`vision/vqa_tool/sft_rl_strengthen.py`：合成波形 held-out 60→64.4%→73.3%，McNemar p=0.5 未达预注册判据，诚实负向；报告 `reports/report_vision_vqa_strengthen_zh.html`）。scope 限合成波形，不可外推到真实 EDA 波形，需 #3 跨线对照。
+4. **本轮新增**：接受 convener r508 订正（β5 不存在 / 分母=4 / β8 归 D），交底清单已勘误；`report_vision_waveview_failed_analysis_zh.html` 的 β5 补注留作下一轮。
