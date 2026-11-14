@@ -1,0 +1,348 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>MiniCPM5-2B 基线 EDA-Eval-PyAether(158) RCA 报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:0 auto;padding:24px;color:#222;background:#fafafa;line-height:1.6}
+h1{font-size:24px;border-bottom:3px solid #c0392b;padding-bottom:8px}
+h2{font-size:19px;margin-top:34px;border-left:5px solid #c0392b;padding-left:10px;background:#f0f0f0;padding:6px 10px}
+h3{font-size:16px;margin-top:22px;color:#c0392b}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;background:#fff}
+th,td{border:1px solid #ddd;padding:5px 7px;text-align:left}
+th{background:#e8e8e8}
+tr:nth-child(even){background:#f7f7f7}
+td.tid{font-family:monospace;font-size:12px}
+td.pass{color:#1a7d1a;font-weight:700}
+td.fail{color:#c0392b}
+.box{background:#fff;border:1px solid #ddd;border-radius:6px;padding:14px 18px;margin:12px 0}
+.meta{background:#fff7e6;border:1px solid #f0c36d}
+.key{background:#fdecea;border:1px solid #e74c3c}
+.kpi{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0}
+.kpi div{flex:1;min-width:150px;background:#fff;border:1px solid #ddd;border-radius:6px;padding:10px;text-align:center}
+.kpi .n{font-size:24px;font-weight:700;color:#c0392b}
+.kpi .l{font-size:12px;color:#666}
+.snip{background:#1e1e1e;color:#eee;border-radius:5px;padding:10px 12px;font-family:monospace;font-size:12px;white-space:pre-wrap;overflow-x:auto;margin:6px 0}
+.snip .path{color:#7fbfff;font-size:11px}
+.snip .q{color:#9ccc65}
+.tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;color:#fff}
+.p0{background:#c0392b}.p1{background:#e67e22}.p2{background:#27ae60}
+details{margin:8px 0}
+summary{cursor:pointer;font-weight:600;padding:6px;background:#e8e8e8;border:1px solid #ddd;border-radius:4px}
+.tbd{color:#888;font-style:italic}
+.chart{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+</style></head><body>
+<h1>MiniCPM5-2B（SFT step105）基线在 EDA-Eval-PyAether(158) 的 3.04% 逐题归因报告</h1>
+<p style='color:#666'>后训练线 · 基线根因分析 (RCA) · 2026-11-14 · 单文件自包含 / 0 外链 / 0 script / 内联 SVG</p>
+<div class='box meta'><h3>一、分析对象与口径（原始数据，可复算）</h3>
+<ul><li><b>基线 ckpt</b>：<code>minicpm5-2b-sft-v39-final</code>（SFT step105；替身 MiniCPM5-2B，v11–v38 语料 1344 对）</li><li><b>Serve 配置</b>：vLLM，GPU6，endpoint <code>http://127.0.0.1:8096/v1</code>，served-model-name <code>minicpm5-2b-sft-v39-final</code></li><li><b>数据集</b>：EDA-Eval-PyAether-v20260311_fixed.jsonl，158 题（Layout 64 / Schematic 47 / Design Management 24 / Others 23）</li><li><b>评测协议</b>：cline harness + pyAether MCP 工具（search_apis/get_api_details），沙盒经 dual-nix-tunnel，2500s 超时，单 trace，5-run，Pass@1 口径</li><li><b>结果复核</b>：5 run Pass@1 = 6/158, 3/158, 4/158, 5/158, 6/158 → <b>mean = 3.04% ± 0.83%</b>（分子 4.8/158，与 3.04% 一致）</li><li><b>数据来源</b>：<code>/tmp/posttrain_5run_eval/step105/run{1..5}/final_report.json</code> + 逐题 <code>~/eda_code_eval/&lt;batch&gt;/trace/</code> + <code>output_evaluation/20261113_2012/execution_results.jsonl</code></li></ul></div>
+<div class='kpi'><div><div class='n'>3.04%</div><div class='l'>5-run mean Pass@1</div></div><div><div class='n'>4.8/158</div><div class='l'>平均通过题数</div></div><div><div class='n'>22</div><div class='l'>至少 1 run 通过的题（并集）</div></div><div><div class='n'>61.9%</div><div class='l'>失败样本=未产出文件</div></div><div><div class='n'>307/421</div><div class='l'>未产出却 verified=true</div></div></div>
+<div class='box key'><h3>二、一句话结论（先看这个）</h3>
+<p>3.04% 主要<b>卡在 agentic 执行层（推理/规划 + 工具协议），而非代码正确性层</b>。790 个 (任务,run) 样本里 <b>489（61.9%）</b>是「模型根本没把 .py 写到 <code>pyAether_code/</code>」——其中 307 例模型以 <code>submit_and_exit verified=true</code> 自证完成（幻觉式过早终止）；另有 <b>54</b> 例调用<b>不存在的 API</b>（API 名称幻觉）。真正「写了代码但逻辑错」的只占少数。<b>若只修一件事</b>：修掉「未产出文件就 submit」的幻觉终止 + 强制写文件闸门（详见 §5 ⑤的 P0 fix）。</p></div>
+<h2>三、逐题总表（158 行，可折叠）</h2>
+<details><summary>展开/收起 158 题逐题表（# / task_id / 场景 / 类别 / Pass x/5 / 平均会话数 / 平均耗时(s) / tokens / 失败阶段 / 一句话摘要）</summary>
+<table><thead><tr><th>#</th><th>task_id</th><th>场景</th><th>类别</th><th>Pass</th><th>会话数</th><th>耗时(s)</th><th>tokens</th><th>失败阶段</th><th>一句话失败摘要</th></tr></thead><tbody>
+<tr><td>1</td><td class='tid'>EDA-Eval-PyAether-001</td><td>Schematic</td><td>Utilities</td><td class='fail'>0/5</td><td>11.6</td><td>9667</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>2</td><td class='tid'>EDA-Eval-PyAether-002</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>1.0</td><td>254</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>3</td><td class='tid'>EDA-Eval-PyAether-003</td><td>Others</td><td>Utilities</td><td class='pass'>1/5</td><td>1.0</td><td>64</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>4</td><td class='tid'>EDA-Eval-PyAether-004</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.6</td><td>22</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>5</td><td class='tid'>EDA-Eval-PyAether-005</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>727</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>6</td><td class='tid'>EDA-Eval-PyAether-006</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.2</td><td>749</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>7</td><td class='tid'>EDA-Eval-PyAether-007</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>1232</td><td>N/A</td><td>CODE</td><td>代码生成超时 (&gt;2500s)</td></tr>
+<tr><td>8</td><td class='tid'>EDA-Eval-PyAether-008</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>233</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>9</td><td class='tid'>EDA-Eval-PyAether-009</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.4</td><td>17</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>10</td><td class='tid'>EDA-Eval-PyAether-010</td><td>Schematic</td><td>Design Content Creation</td><td class='pass'>1/5</td><td>1.0</td><td>588</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>11</td><td class='tid'>EDA-Eval-PyAether-011</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.6</td><td>397</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>12</td><td class='tid'>EDA-Eval-PyAether-012</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>100</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>13</td><td class='tid'>EDA-Eval-PyAether-013</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>132</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>14</td><td class='tid'>EDA-Eval-PyAether-014</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>669</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>15</td><td class='tid'>EDA-Eval-PyAether-015</td><td>Design Management</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>293</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>16</td><td class='tid'>EDA-Eval-PyAether-016</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.6</td><td>507</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>17</td><td class='tid'>EDA-Eval-PyAether-017</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>1140</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>18</td><td class='tid'>EDA-Eval-PyAether-018</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.2</td><td>2104</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>19</td><td class='tid'>EDA-Eval-PyAether-019</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='pass'>1/5</td><td>1.0</td><td>91</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>20</td><td class='tid'>EDA-Eval-PyAether-020</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>192</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>21</td><td class='tid'>EDA-Eval-PyAether-021</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>110</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>22</td><td class='tid'>EDA-Eval-PyAether-022</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>299</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>23</td><td class='tid'>EDA-Eval-PyAether-023</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='pass'>1/5</td><td>1.0</td><td>199</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>24</td><td class='tid'>EDA-Eval-PyAether-024</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='pass'>2/5</td><td>0.8</td><td>185</td><td>N/A</td><td>PART</td><td>部分通过 2/5</td></tr>
+<tr><td>25</td><td class='tid'>EDA-Eval-PyAether-025</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>197</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>26</td><td class='tid'>EDA-Eval-PyAether-026</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>284</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>27</td><td class='tid'>EDA-Eval-PyAether-027</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>367</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>28</td><td class='tid'>EDA-Eval-PyAether-028</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>601</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>29</td><td class='tid'>EDA-Eval-PyAether-029</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>463</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>30</td><td class='tid'>EDA-Eval-PyAether-030</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>499</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>31</td><td class='tid'>EDA-Eval-PyAether-031</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>221</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>32</td><td class='tid'>EDA-Eval-PyAether-032</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>146</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>33</td><td class='tid'>EDA-Eval-PyAether-033</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>352</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>34</td><td class='tid'>EDA-Eval-PyAether-034</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>561</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>35</td><td class='tid'>EDA-Eval-PyAether-035</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>311</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>36</td><td class='tid'>EDA-Eval-PyAether-036</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>1219</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>37</td><td class='tid'>EDA-Eval-PyAether-037</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>317</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>38</td><td class='tid'>EDA-Eval-PyAether-038</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>1.0</td><td>1222</td><td>N/A</td><td>CODE</td><td>代码生成超时 (&gt;2500s)</td></tr>
+<tr><td>39</td><td class='tid'>EDA-Eval-PyAether-039</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>1.0</td><td>388</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>40</td><td class='tid'>EDA-Eval-PyAether-040</td><td>Others</td><td>Utilities</td><td class='pass'>1/5</td><td>1.2</td><td>196</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>41</td><td class='tid'>EDA-Eval-PyAether-041</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>689</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>42</td><td class='tid'>EDA-Eval-PyAether-042</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>935</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>43</td><td class='tid'>EDA-Eval-PyAether-043</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>660</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>44</td><td class='tid'>EDA-Eval-PyAether-044</td><td>Design Management</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>374</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>45</td><td class='tid'>EDA-Eval-PyAether-045</td><td>Design Management</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>1411</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>46</td><td class='tid'>EDA-Eval-PyAether-046</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>1/5</td><td>1.0</td><td>1288</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>47</td><td class='tid'>EDA-Eval-PyAether-047</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>1/5</td><td>1.0</td><td>229</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>48</td><td class='tid'>EDA-Eval-PyAether-048</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>0.8</td><td>280</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>49</td><td class='tid'>EDA-Eval-PyAether-049</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>1/5</td><td>1.0</td><td>108</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>50</td><td class='tid'>EDA-Eval-PyAether-050</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>1/5</td><td>1.0</td><td>434</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>51</td><td class='tid'>EDA-Eval-PyAether-051</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>0.8</td><td>56</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>52</td><td class='tid'>EDA-Eval-PyAether-052</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>626</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>53</td><td class='tid'>EDA-Eval-PyAether-053</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>872</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>54</td><td class='tid'>EDA-Eval-PyAether-054</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>0.8</td><td>596</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>55</td><td class='tid'>EDA-Eval-PyAether-055</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>0.8</td><td>222</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>56</td><td class='tid'>EDA-Eval-PyAether-056</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>1.0</td><td>449</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>57</td><td class='tid'>EDA-Eval-PyAether-057</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>530</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>58</td><td class='tid'>EDA-Eval-PyAether-058</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.2</td><td>1290</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>59</td><td class='tid'>EDA-Eval-PyAether-059</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>1.0</td><td>190</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>60</td><td class='tid'>EDA-Eval-PyAether-060</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>0.8</td><td>59</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>61</td><td class='tid'>EDA-Eval-PyAether-061</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>446</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>62</td><td class='tid'>EDA-Eval-PyAether-062</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>740</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>63</td><td class='tid'>EDA-Eval-PyAether-063</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>156</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>64</td><td class='tid'>EDA-Eval-PyAether-064</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>122</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>65</td><td class='tid'>EDA-Eval-PyAether-065</td><td>Others</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>1/5</td><td>1.0</td><td>521</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>66</td><td class='tid'>EDA-Eval-PyAether-066</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>0.8</td><td>147</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>67</td><td class='tid'>EDA-Eval-PyAether-067</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>1/5</td><td>1.0</td><td>685</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>68</td><td class='tid'>EDA-Eval-PyAether-068</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>135</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>69</td><td class='tid'>EDA-Eval-PyAether-069</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>626</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>70</td><td class='tid'>EDA-Eval-PyAether-070</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>192</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>71</td><td class='tid'>EDA-Eval-PyAether-071</td><td>Others</td><td>Utilities</td><td class='pass'>1/5</td><td>1.0</td><td>147</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>72</td><td class='tid'>EDA-Eval-PyAether-072</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>97</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>73</td><td class='tid'>EDA-Eval-PyAether-073</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='pass'>2/5</td><td>1.0</td><td>80</td><td>N/A</td><td>PART</td><td>部分通过 2/5</td></tr>
+<tr><td>74</td><td class='tid'>EDA-Eval-PyAether-074</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>0.6</td><td>53</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>75</td><td class='tid'>EDA-Eval-PyAether-075</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.2</td><td>255</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>76</td><td class='tid'>EDA-Eval-PyAether-076</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>738</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>77</td><td class='tid'>EDA-Eval-PyAether-077</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>388</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>78</td><td class='tid'>EDA-Eval-PyAether-078</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>326</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>79</td><td class='tid'>EDA-Eval-PyAether-079</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>432</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>80</td><td class='tid'>EDA-Eval-PyAether-080</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>49</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>81</td><td class='tid'>EDA-Eval-PyAether-081</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>1009</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>82</td><td class='tid'>EDA-Eval-PyAether-082</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.6</td><td>137</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>83</td><td class='tid'>EDA-Eval-PyAether-083</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>380</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>84</td><td class='tid'>EDA-Eval-PyAether-084</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>1.0</td><td>640</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>85</td><td class='tid'>EDA-Eval-PyAether-085</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>521</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>86</td><td class='tid'>EDA-Eval-PyAether-086</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>259</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>87</td><td class='tid'>EDA-Eval-PyAether-087</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>186</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>88</td><td class='tid'>EDA-Eval-PyAether-088</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>270</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>89</td><td class='tid'>EDA-Eval-PyAether-089</td><td>Others</td><td>Utilities</td><td class='fail'>0/5</td><td>0.8</td><td>345</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>90</td><td class='tid'>EDA-Eval-PyAether-090</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>529</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>91</td><td class='tid'>EDA-Eval-PyAether-091</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>475</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>92</td><td class='tid'>EDA-Eval-PyAether-092</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>569</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>93</td><td class='tid'>EDA-Eval-PyAether-093</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>229</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>94</td><td class='tid'>EDA-Eval-PyAether-094</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>102</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>95</td><td class='tid'>EDA-Eval-PyAether-095</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='pass'>1/5</td><td>1.0</td><td>388</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>96</td><td class='tid'>EDA-Eval-PyAether-096</td><td>Others</td><td>Utilities</td><td class='pass'>1/5</td><td>1.0</td><td>207</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>97</td><td class='tid'>EDA-Eval-PyAether-097</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>662</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>98</td><td class='tid'>EDA-Eval-PyAether-098</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>1345</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>99</td><td class='tid'>EDA-Eval-PyAether-099</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>630</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>100</td><td class='tid'>EDA-Eval-PyAether-100</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='pass'>1/5</td><td>1.0</td><td>440</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>101</td><td class='tid'>EDA-Eval-PyAether-101</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='pass'>1/5</td><td>0.6</td><td>112</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>102</td><td class='tid'>EDA-Eval-PyAether-102</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>762</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>103</td><td class='tid'>EDA-Eval-PyAether-103</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>147</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>104</td><td class='tid'>EDA-Eval-PyAether-104</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>0.8</td><td>160</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>105</td><td class='tid'>EDA-Eval-PyAether-105</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>219</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>106</td><td class='tid'>EDA-Eval-PyAether-106</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>388</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>107</td><td class='tid'>EDA-Eval-PyAether-107</td><td>Schematic</td><td>Database &amp; Design Management</td><td class='pass'>1/5</td><td>1.0</td><td>699</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>108</td><td class='tid'>EDA-Eval-PyAether-108</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>221</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>109</td><td class='tid'>EDA-Eval-PyAether-109</td><td>Schematic</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>230</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>110</td><td class='tid'>EDA-Eval-PyAether-110</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>649</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>111</td><td class='tid'>EDA-Eval-PyAether-111</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.6</td><td>83</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>112</td><td class='tid'>EDA-Eval-PyAether-112</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>1155</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>113</td><td class='tid'>EDA-Eval-PyAether-113</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>1058</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>114</td><td class='tid'>EDA-Eval-PyAether-114</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>110</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>115</td><td class='tid'>EDA-Eval-PyAether-115</td><td>Others</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>293</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>116</td><td class='tid'>EDA-Eval-PyAether-116</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>813</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>117</td><td class='tid'>EDA-Eval-PyAether-117</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>830</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>118</td><td class='tid'>EDA-Eval-PyAether-118</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>1128</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>119</td><td class='tid'>EDA-Eval-PyAether-119</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>839</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>120</td><td class='tid'>EDA-Eval-PyAether-120</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>431</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>121</td><td class='tid'>EDA-Eval-PyAether-121</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>1169</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>122</td><td class='tid'>EDA-Eval-PyAether-122</td><td>Layout</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>338</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>123</td><td class='tid'>EDA-Eval-PyAether-123</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>888</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>124</td><td class='tid'>EDA-Eval-PyAether-124</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>699</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>125</td><td class='tid'>EDA-Eval-PyAether-125</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>747</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>126</td><td class='tid'>EDA-Eval-PyAether-126</td><td>Schematic</td><td>Simulation &amp; Analysis Configuration</td><td class='fail'>0/5</td><td>1.0</td><td>1022</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>127</td><td class='tid'>EDA-Eval-PyAether-127</td><td>Others</td><td>Design Content Creation</td><td class='pass'>1/5</td><td>1.0</td><td>250</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>128</td><td class='tid'>EDA-Eval-PyAether-128</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>407</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>129</td><td class='tid'>EDA-Eval-PyAether-129</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>494</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>130</td><td class='tid'>EDA-Eval-PyAether-130</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>564</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>131</td><td class='tid'>EDA-Eval-PyAether-131</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>156</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>132</td><td class='tid'>EDA-Eval-PyAether-132</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>178</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>133</td><td class='tid'>EDA-Eval-PyAether-133</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='pass'>1/5</td><td>1.0</td><td>260</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>134</td><td class='tid'>EDA-Eval-PyAether-134</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>189</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>135</td><td class='tid'>EDA-Eval-PyAether-135</td><td>Layout</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>79</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>136</td><td class='tid'>EDA-Eval-PyAether-136</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>980</td><td>N/A</td><td>RUN</td><td>Unknown Failure</td></tr>
+<tr><td>137</td><td class='tid'>EDA-Eval-PyAether-137</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>1.0</td><td>223</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>138</td><td class='tid'>EDA-Eval-PyAether-138</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>47</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>139</td><td class='tid'>EDA-Eval-PyAether-139</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>205</td><td>N/A</td><td>RUN</td><td>语法错误 (SyntaxError/IndentationError)</td></tr>
+<tr><td>140</td><td class='tid'>EDA-Eval-PyAether-140</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>298</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>141</td><td class='tid'>EDA-Eval-PyAether-141</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>392</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>142</td><td class='tid'>EDA-Eval-PyAether-142</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>955</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>143</td><td class='tid'>EDA-Eval-PyAether-143</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>919</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>144</td><td class='tid'>EDA-Eval-PyAether-144</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>369</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>145</td><td class='tid'>EDA-Eval-PyAether-145</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>335</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>146</td><td class='tid'>EDA-Eval-PyAether-146</td><td>Schematic</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>0.8</td><td>472</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>147</td><td class='tid'>EDA-Eval-PyAether-147</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>487</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>148</td><td class='tid'>EDA-Eval-PyAether-148</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>778</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>149</td><td class='tid'>EDA-Eval-PyAether-149</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>447</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>150</td><td class='tid'>EDA-Eval-PyAether-150</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>0.8</td><td>132</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>151</td><td class='tid'>EDA-Eval-PyAether-151</td><td>Schematic</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>773</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>152</td><td class='tid'>EDA-Eval-PyAether-152</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>972</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>153</td><td class='tid'>EDA-Eval-PyAether-153</td><td>Layout</td><td>Design Content Creation</td><td class='pass'>1/5</td><td>1.0</td><td>215</td><td>N/A</td><td>PART</td><td>部分通过 1/5</td></tr>
+<tr><td>154</td><td class='tid'>EDA-Eval-PyAether-154</td><td>Layout</td><td>Design Content Creation</td><td class='fail'>0/5</td><td>1.0</td><td>402</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>155</td><td class='tid'>EDA-Eval-PyAether-155</td><td>Layout</td><td>Design Content Query &amp; Edit</td><td class='fail'>0/5</td><td>1.0</td><td>491</td><td>N/A</td><td>RUN</td><td>运行时错 (TypeError/NameError/AttributeError)</td></tr>
+<tr><td>156</td><td class='tid'>EDA-Eval-PyAether-156</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>478</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>157</td><td class='tid'>EDA-Eval-PyAether-157</td><td>Design Management</td><td>Database &amp; Design Management</td><td class='fail'>0/5</td><td>0.8</td><td>409</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+<tr><td>158</td><td class='tid'>EDA-Eval-PyAether-158</td><td>Layout</td><td>Geometry Operation &amp; Analysis</td><td class='fail'>0/5</td><td>1.0</td><td>168</td><td>N/A</td><td>CODE</td><td>未产出 .py（幻觉 submit）</td></tr>
+</tbody></table></details>
+<p class='tbd'>注：tokens 列标注 N/A——cline session 元数据未逐消息记录 usage，无原始值可取（按纪律不估）。会话数=trace 中 session .json 数；耗时=单次 cline run 墙钟秒。</p>
+<h2>四、失败归因分类（核心）</h2>
+<p>以 790 个 (任务,run) 样本为口径，按<b>根因</b>归入 7 类（与运维建议的分类法对齐）。每类附题数、占比、3 个典型 trace 片段（原文摘引 + 路径）。</p>
+<table><thead><tr><th>类别</th><th>题数(样本)</th><th>占比</th><th>说明</th></tr></thead><tbody>
+<tr><td><b>⑤ 推理/规划</b></td><td>489</td><td>61.9%</td><td>代码生成阶段未产出有效 .py 文件（模型幻觉 submit_and_exit verified=true 即放弃）</td></tr>
+<tr><td><b>③ 代码语义</b></td><td>171</td><td>21.6%</td><td>产出了代码但执行失败：语法错 / 类型/参数错 / 断言失败（54 个 API属性幻觉已单列②）</td></tr>
+<tr><td><b>② 工具调用/协议</b></td><td>54</td><td>6.8%</td><td>调用不存在的 API/属性（AttributeError &#x27;module has no attribute&#x27;），API 名称幻觉</td></tr>
+<tr><td><b>⑥ 超时/预算</b></td><td>45</td><td>5.7%</td><td>代码生成超过 2500s 预算被杀</td></tr>
+<tr><td><b>① 环境/依赖</b></td><td>7</td><td>0.9%</td><td>ModuleNotFoundError / ImportError（pyAether 子模块路径错）</td></tr>
+<tr><td><b>✓ 通过</b></td><td>24</td><td>3.0%</td><td>执行通过断言测试</td></tr>
+</tbody></table>
+<p><b>③ 代码语义 细分</b>：语法(SyntaxError/IndentationError) 86；运行时(TypeError/NameError/KeyError/ValueError) 68；API属性幻觉(AttributeError，已单列②) 54；断言/逻辑(AssertionError) 14；其它(Unknown) 3。</p>
+<h2>五、图表</h2>
+<div class='chart'><div><svg width="420" height="300" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="失败类别占比饼图"><path d="M150,150 L150.00,40.00 A110,110 0 1,1 75.21,230.66 Z" fill="#c0392b" stroke="#fff" stroke-width="1.5"/><path d="M150,150 L75.21,230.66 A110,110 0 0,1 55.47,93.74 Z" fill="#2980b9" stroke="#fff" stroke-width="1.5"/><path d="M150,150 L55.47,93.74 A110,110 0 0,1 87.49,59.49 Z" fill="#8e44ad" stroke="#fff" stroke-width="1.5"/><path d="M150,150 L87.49,59.49 A110,110 0 0,1 123.15,43.33 Z" fill="#e67e22" stroke="#fff" stroke-width="1.5"/><path d="M150,150 L123.15,43.33 A110,110 0 0,1 129.13,42.00 Z" fill="#16a085" stroke="#fff" stroke-width="1.5"/><path d="M150,150 L129.13,42.00 A110,110 0 0,1 150.00,40.00 Z" fill="#27ae60" stroke="#fff" stroke-width="1.5"/><circle cx="150" cy="150" r="50.6" fill="#fff"/><text x="150" y="144" text-anchor="middle" font-size="15" font-weight="700" fill="#222">失败 766</text><text x="150" y="164" text-anchor="middle" font-size="11" fill="#666">/ 790 样本</text><rect x="285" y="30" width="14" height="14" fill="#c0392b"/><text x="305" y="42" font-size="12" fill="#333">⑤ 推理/规划 489 (61.9%)</text><rect x="285" y="54" width="14" height="14" fill="#2980b9"/><text x="305" y="66" font-size="12" fill="#333">③ 代码语义 171 (21.6%)</text><rect x="285" y="78" width="14" height="14" fill="#8e44ad"/><text x="305" y="90" font-size="12" fill="#333">② 工具调用/协议 54 (6.8%)</text><rect x="285" y="102" width="14" height="14" fill="#e67e22"/><text x="305" y="114" font-size="12" fill="#333">⑥ 超时/预算 45 (5.7%)</text><rect x="285" y="126" width="14" height="14" fill="#16a085"/><text x="305" y="138" font-size="12" fill="#333">① 环境/依赖 7 (0.9%)</text><rect x="285" y="150" width="14" height="14" fill="#27ae60"/><text x="305" y="162" font-size="12" fill="#333">✓ 通过 24 (3.0%)</text></svg></div><div><svg width="460" height="114" xmlns="http://www.w3.org/2000/svg"><rect x="150" y="4" width="300" height="18" fill="#c0392b"/><text x="145" y="18" text-anchor="end" font-size="12" fill="#333">代码生成未产出</text><text x="456" y="18" font-size="12" fill="#333">489 (61.9%)</text><rect x="150" y="30" width="142" height="18" fill="#2980b9"/><text x="145" y="44" text-anchor="end" font-size="12" fill="#333">执行失败</text><text x="298" y="44" font-size="12" fill="#333">232 (29.4%)</text><rect x="150" y="56" width="28" height="18" fill="#e67e22"/><text x="145" y="70" text-anchor="end" font-size="12" fill="#333">超时</text><text x="184" y="70" font-size="12" fill="#333">45 (5.7%)</text><rect x="150" y="82" width="15" height="18" fill="#27ae60"/><text x="145" y="96" text-anchor="end" font-size="12" fill="#333">通过</text><text x="171" y="96" font-size="12" fill="#333">24 (3.0%)</text></svg></div></div>
+<p style='font-size:12px;color:#666'>左：失败类别占比饼图（内联 SVG）。右：失败阶段条形图（代码生成未产出 489 / 执行失败 232 / 超时 45 / 通过 24）。</p>
+<h3>5.1 按场景的通过率</h3><table><thead><tr><th>场景</th><th>题数</th><th>并集通过</th><th>通过样本数</th><th>样本通过率</th></tr></thead><tbody><tr><td>Layout</td><td>64</td><td>6</td><td>7</td><td>2.2%</td></tr>
+<tr><td>Schematic</td><td>47</td><td>8</td><td>9</td><td>3.8%</td></tr>
+<tr><td>Design Management</td><td>24</td><td>1</td><td>1</td><td>0.8%</td></tr>
+<tr><td>Others</td><td>23</td><td>7</td><td>7</td><td>6.1%</td></tr></tbody></table>
+<h3>5.2 按类别的通过率</h3><table><thead><tr><th>类别</th><th>题数</th><th>并集通过</th><th>通过样本数</th><th>样本通过率</th></tr></thead><tbody><tr><td>Database &amp; Design Management</td><td>25</td><td>2</td><td>2</td><td>1.6%</td></tr>
+<tr><td>Design Content Creation</td><td>46</td><td>3</td><td>3</td><td>1.3%</td></tr>
+<tr><td>Design Content Query &amp; Edit</td><td>25</td><td>2</td><td>2</td><td>1.6%</td></tr>
+<tr><td>Geometry Operation &amp; Analysis</td><td>26</td><td>4</td><td>5</td><td>3.8%</td></tr>
+<tr><td>Simulation &amp; Analysis Configuration</td><td>21</td><td>7</td><td>8</td><td>7.6%</td></tr>
+<tr><td>Utilities</td><td>15</td><td>4</td><td>4</td><td>5.3%</td></tr></tbody></table>
+<h3>5.3 各失败类别平均耗时/会话数</h3><table><thead><tr><th>类别</th><th>样本</th><th>平均会话数</th><th>平均墙钟(s)</th></tr></thead><tbody>
+<tr><td>C5</td><td>479</td><td>1.9</td><td>393</td></tr>
+<tr><td>C3_runtime</td><td>122</td><td>2.0</td><td>358</td></tr>
+<tr><td>C3_syntax</td><td>86</td><td>2.3</td><td>482</td></tr>
+<tr><td>C6</td><td>45</td><td>2.2</td><td>2579</td></tr>
+<tr><td>PASS</td><td>24</td><td>2.1</td><td>237</td></tr>
+<tr><td>C3_assert</td><td>14</td><td>2.1</td><td>376</td></tr>
+<tr><td>C1</td><td>7</td><td>2.0</td><td>216</td></tr>
+</tbody></table><p class='tbd'>会话数为 trace 文件计数/2（每 session 含 .json+.messages.json 两文件）。超时类平均 2579s≈触及 2500s 上限。</p>
+<h3>5.4 通过题的共性（22 题并集，正向样本）</h3><div class='box'>
+<ul><li><b>场景</b>：Others 6.1% &gt; Schematic 3.8% &gt; Layout 2.2% &gt; Design Management 0.8%。Others（工具/仿真配置类）最易。</li><li><b>类别</b>：Simulation & Analysis Configuration 7.6% &gt; Utilities 5.3% &gt; Geometry 3.8%；Design Content Creation（46 题）仅 1.3% 最难。</li><li><b>API</b>：通过的题集中在<b>简单、高频的 db*/emyPoint* 基础 API</b>（dbOpenCVByType、dbCloseCV、dbGetAllLibs、dbCreateLib、emyPoint、emyPointArray），即「单个高层操作」类任务。</li><li><b>代码量</b>：参考解 lines_of_code 集中在 1–10 行（短函数）；长程/批量创建类（schematic 体系）几乎全失败。</li><li><b>结论</b>：通过=「API 易检索 + 单步操作 + 短代码」。失败=「API 难检索 + 多步/批量 + 需 SWIG positional 细节」。</li></ul></div>
+<h2>六、各类典型 trace 片段（原文摘引 + 路径）</h2>
+<h3>⑤ 推理/规划（未产出文件 + 幻觉 submit）</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-002 / run1]</span>
+<span class="path">路径: ~/eda_code_eval/2026_1113_024153/trace/EDA-Eval-PyAether-002/1794508916752_k92xl.messages.json</span>
+模型声称: &quot;I created the file `pyAether_code/dbOpenCV.py` with full docstring, type checks, and kwargs validation. Verified it&#x27;s at the correct path inside the `pyAether_code` directory.&quot; 随后 16 次重复 &quot;## summary / I completed the task by calling submit_and_exit. / ## verified / True&quot;。
+实际: code/EDA-Eval-PyAether-002/ 目录为空——未写任何 .py 文件。harness 记录 completion=&quot;pass&quot;, status=&quot;fail&quot;。
+<span class="q">证据: ls code/EDA-Eval-PyAether-002/ =&gt; 空（无 pyAether_code 目录）</span></div><div class="snip"><span class="path">[EDA-Eval-PyAether-001 / run1]</span>
+<span class="path">路径: ~/eda_code_eval/2026_1113_024153/trace/EDA-Eval-PyAether-001/</span>
+模型在 1 个 cline 会话内调用 search_apis/get_api_details 共 ~243 次，反复得到 &quot;All detail checks returned no useful result&quot;，最终 &quot;I&#x27;ll complete the work&quot; → submit_and_exit verified=true。9 个 session 文件，code 目录空。
+根因: 任务规范 API emyStringGetNumUniqueBits 模型未能通过 MCP 检索定位，陷入搜索循环后放弃。
+<span class="q">证据: 会话数=9 (异常 looping), code/EDA-Eval-PyAether-001/ 空</span></div><div class="snip"><span class="path">[规模统计 / 全部 5 run]</span>
+<span class="path">路径: 421 个 degenerate (task,run) 样本中，submit_and_exit 的 verified 字段: true=307 (72.9%), false=26, 未捕获=88。</span>
+即 ~73% 的&quot;未产出文件&quot;失败里，模型以 verified=true 自证完成——典型的幻觉式过早终止 (hallucinated completion)。
+<span class="q">证据: python3 /tmp/rca_snip2.py  # verified 分布</span></div>
+<h3>② 工具调用/协议（API 名称幻觉）</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-017 / run1]</span>
+<span class="path">路径: output_evaluation/20261113_2012_app.e0031982/execution_results.jsonl</span>
+stdout: FAIL: AttributeError: module &#x27;pyAether&#x27; has no attribute &#x27;enListAObject&#x27;
+<span class="q">证据: 模型幻觉了一个不存在的 API 名 enListAObject</span></div><div class="snip"><span class="path">[EDA-Eval-PyAether-157 / run1]</span>
+<span class="path">路径: execution_results.jsonl (同上)</span>
+stdout: FAIL: AttributeError: module &#x27;pyAether&#x27; has no attribute &#x27;dbgetdbsrc&#x27;
+<span class="q">证据: dbgetdbsrc 不是真实 API（真实为 dbGetDb... 类）</span></div><div class="snip"><span class="path">[EDA-Eval-PyAether-021 / run1]</span>
+<span class="path">路径: execution_results.jsonl (同上)</span>
+stdout: FAIL: AttributeError: module &#x27;pyAether&#x27; has no attribute &#x27;dbInstall&#x27;
+<span class="q">证据: API 名称幻觉 dbInstall</span></div>
+<h3>③ 代码语义—语法</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-106 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: SyntaxError: invalid character &#x27;，&#x27; (U+FF0C)
+<span class="q">证据: 代码中混入全角中文逗号（tokenizer/编码问题）</span></div><div class="snip"><span class="path">[EDA-Eval-PyAether-114 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: SyntaxError: invalid syntax
+<span class="q">证据: 生成代码语法不完整</span></div>
+<h3>③ 代码语义—运行时/SWIG 参数</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-061 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: TypeError: has_matching_enclosure() takes 0 positional arguments but 5 were given
+<span class="q">证据: SWIG positional-only API 用 kwargs/位置参数传错（prompt 已警告但仍犯）</span></div><div class="snip"><span class="path">[EDA-Eval-PyAether-042 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: TypeError: __init__() got an unexpected keyword argument &#x27;lib_name&#x27;
+<span class="q">证据: 构造函数参数名幻觉 lib_name</span></div>
+<h3>③ 代码语义—断言/逻辑</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-006 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: AssertionError: Test Case 1 Failed: Asymmetric values
+<span class="q">证据: 逻辑/约束漏读：对称性要求未满足</span></div><div class="snip"><span class="path">[EDA-Eval-PyAether-024 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: AssertionError: Failed on overlapping boxes
+<span class="q">证据: 几何重叠判定逻辑错</span></div>
+<h3>① 环境/依赖</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-010 / run1]</span>
+<span class="path">路径: execution_results.jsonl</span>
+stdout: FAIL: ModuleNotFoundError: No module named &#x27;pyAether.emyString&#x27;
+<span class="q">证据: 误把 emyString 当子模块 import（应作属性访问）</span></div>
+<h3>⑥ 超时/预算</h3><div class="snip"><span class="path">[EDA-Eval-PyAether-0xx / 5 run 汇总]</span>
+<span class="path">路径: final_report.json summary</span>
+45 个 (task,run) 样本 generation_statuses=timeout，平均 wall≈2579s（触及 2500s 预算上限被杀），未产出代码。
+<span class="q">证据: gen timeout 计数 = error_types &quot;Generation timeout&quot; = 45</span></div>
+<h2>七、逐类 fix 方案（可执行）</h2>
+<h3>⑤ 推理/规划（未产出文件 + 幻觉终止）— 占失败 64%</h3>
+<p><b>根因</b>：模型在 API 检索受挫后，不调用写文件工具、直接 <code>submit_and_exit verified=true</code> 幻觉式自证完成；harness 无「文件存在」闸门，照单全收为 fail。</p>
+<table><thead><tr><th>具体改动点</th><th>预期提升</th><th>实施成本</th><th>优先级</th></tr></thead><tbody>
+<tr><td>评测侧：harness 增加 PreSubmit 闸门——submit_and_exit 前校验 pyAether_code/&lt;entry_point&gt;.py 存在且非空，否则拒绝并强制继续（最直接回收）</td><td>保守 +8~15pp（把&#x27;幻觉 submit&#x27;转成真实产出）</td><td>2 人时（改 run_cline_script.sh + cline 工具层）</td><td><span class='tag p0'>P0</span></td></tr>
+<tr><td>推理侧：在系统 prompt 注入硬约束「必须先 write_to_file 再 submit；verified=true 前读取文件确认存在」+ 失败重试策略（搜索 5 次未中则用关键词补路/列举 API 族）</td><td>+5~10pp</td><td>1 人时</td><td><span class='tag p0'>P0</span></td></tr>
+<tr><td>数据侧：补「检索失败→兜底编码」正样本 SFT（API 搜不到时基于已知 API 族直接写骨架），抑制放弃行为</td><td>+3~6pp</td><td>8 机时（造 200~400 对）</td><td><span class='tag p1'>P1</span></td></tr>
+</tbody></table>
+<h3>② 工具调用/协议（API 名称幻觉）— 54 样本</h3>
+<p><b>根因</b>：模型编造不存在的 API 名（enListAObject / dbgetdbsrc / dbInstall）。MCP search_apis 已可用但模型未检索确认即编码。</p>
+<table><thead><tr><th>具体改动点</th><th>预期提升</th><th>实施成本</th><th>优先级</th></tr></thead><tbody>
+<tr><td>推理侧：编码前强制 get_api_details 校验每个 API 名存在；不存在的禁止使用（工具 schema 校验 hook）</td><td>+3~5pp</td><td>2 人时</td><td><span class='tag p0'>P0</span></td></tr>
+<tr><td>数据侧：SFT 增补「API 名幻觉→纠正」负样本 + 完整 API 名表注入上下文</td><td>+2~4pp</td><td>6 机时</td><td><span class='tag p1'>P1</span></td></tr>
+</tbody></table>
+<h3>③ 代码语义（语法/运行时/断言）— 171 样本</h3>
+<p><b>根因</b>：SWIG positional-only 误用 kwargs（takes 0 positional arguments but 5 were given）、全角字符混入、构造参数名幻觉、几何/对称约束漏读。</p>
+<table><thead><tr><th>具体改动点</th><th>预期提升</th><th>实施成本</th><th>优先级</th></tr></thead><tbody>
+<tr><td>数据侧：SFT 增补 SWIG positional-only 正样本 + 全角字符清洗 + emy*.create 族参数签名对照表</td><td>+4~7pp</td><td>10 机时</td><td><span class='tag p1'>P1</span></td></tr>
+<tr><td>推理侧：沙盒执行反馈闭环——run 失败后把 traceback 喂回模型自纠一轮（当前无沙盒执行反馈，仅脑内推演）</td><td>+3~6pp</td><td>需沙盒，4 人时</td><td><span class='tag p1'>P1</span></td></tr>
+<tr><td>数据侧：针对断言失败类补「约束逐条核对」CoT 样本（对称/重叠/边界）</td><td>+1~3pp</td><td>6 机时</td><td><span class='tag p2'>P2</span></td></tr>
+</tbody></table>
+<h3>⑥ 超时/预算 — 45 样本</h3>
+<p><b>根因</b>：搜索循环（task 001 单 session 243 次检索）耗尽 2500s。与 ⑤ 同源（搜索不收敛）。</p>
+<table><thead><tr><th>具体改动点</th><th>预期提升</th><th>实施成本</th><th>优先级</th></tr></thead><tbody>
+<tr><td>推理侧：检索次数硬上限 + 命中即停策略 + 超时降级为&#x27;基于已有结果编码&#x27;</td><td>+1~2pp</td><td>1 人时</td><td><span class='tag p1'>P1</span></td></tr>
+<tr><td>评测侧：评估是否对&#x27;搜索循环&#x27;单独计为协议失败而非能力失败（口径透明化）</td><td>0pp（口径）</td><td>0.5 人时</td><td><span class='tag p2'>P2</span></td></tr>
+</tbody></table>
+<h3>① 环境/依赖 — 7 样本</h3>
+<p><b>根因</b>：<code>import pyAether.emyString</code> 误把属性当子模块。属代码语义边缘，并入 ③ 数据侧修。</p>
+<h3>「先做这 3 件」排序建议（按 ROI）</h3>
+<table><thead><tr><th>#</th><th>动作</th><th>预期提升</th><th>成本</th></tr></thead><tbody>
+<tr><td>1</td><td><b>PreSubmit 文件存在闸门 + 系统prompt硬约束「先写文件再 submit」</b>（⑤，P0）</td><td>+8~15pp</td><td>3 人时</td></tr>
+<tr><td>2</td><td><b>编码前强制 get_api_details 校验 API 名存在</b>（②，P0）</td><td>+3~5pp</td><td>2 人时</td></tr>
+<tr><td>3</td><td><b>SFT 增补 SWIG positional-only + API 名纠正 + 兜底编码正样本</b>（②③⑤，P1）</td><td>+5~10pp</td><td>~24 机时</td></tr>
+</tbody></table>
+<p>三者合计保守预期 <b>+16~30pp</b>，即从 3.04% 推到 ~19~33%（对应预注册阶梯 M1 50% 仍需 RL，但先回收这层'协议/执行'损失是前提）。</p>
+<h2>八、结论与下一步</h2>
+<div class='box key'>
+<p><b>3.04% 主要卡在哪一层</b>：<b>agentic 执行层（推理/规划 + 工具协议）</b>，而非代码语义层。790 样本中 489（61.9%）是「根本没写出文件」、54 是「调用不存在的 API」——二者合计 ~69% 的失败是<b>协议/执行可回收损失</b>，与 R0 诊断 D1（工具调用合法率低）一致。真正的「写了代码但逻辑错」（③ 去除 ② 后约 117 样本，14.8%）才是纯能力差距。</p>
+<p><b>若只修一件事</b>：修「未产出文件就 submit_and_exit verified=true」——加 PreSubmit 文件存在闸门 + prompt 硬约束。这是 ROI 最高、成本最低（3 人时）、且不依赖 GPU 的一刀。</p>
+<p><b>下一步</b>：① 落地 P0 两件（文件闸门 + API 名校验）后重跑 5-run baseline，验证「协议可回收」能拿回多少 pp；② 再决定 RL（R2 已显负信号，先回收协议层再 RL 更可能产生正向增益）；③ SFT 语料按 ②③⑤ 比例补样本。</p>
+</div>
+<h2>附录：复算命令（所有数字可追到落盘文件）</h2>
+<div class='snip'># 5-run mean
+cat /tmp/posttrain_5run_eval/5run_analysis.json
+# 单 run 逐题
+python3 -c "import json;d=json.load(open('/tmp/posttrain_5run_eval/step105/run1/final_report.json'));print(d['metrics'],d['summary'])"
+# 790 样本 (gen,exec,error_types) 分布
+python3 rca_baseline_aggregate.py && python3 rca_baseline_enrich.py
+# 执行 traceback（run1）
+cat ~/code/EDA-Eval-Framework/output_evaluation/20261113_2012_app.e0031982/execution_results.jsonl
+# degenerate submit verified 分布
+python3 /tmp/rca_snip2.py
+# 任务场景/类别
+python3 -c "import json,collections;[print(collections.Counter(json.loads(l)['metadata']['scenario'] for l in open('~/code/EDA-Eval-Framework/benchmarks/v20260602/EDA-Eval-PyAether-v20260311_fixed.jsonl'.replace('~','/home/app.e0031982'))))]"
+</div>
+<p class='tbd'>数据口径声明：①②③⑥① 的样本计数来自 5 run 的 final_report.json details_per_task.error_types（精确）；②「has no attribute」占比 93% 来自 run1 execution_results 抽查（14/15），用于定性而非改变桶计数；trace 片段均原文摘自上述路径，未编造。</p>
+<p style='color:#999;margin-top:30px'>— 报告结束 · posttrain 线 RCA · 2026-11-14 —</p>
+</body></html>
