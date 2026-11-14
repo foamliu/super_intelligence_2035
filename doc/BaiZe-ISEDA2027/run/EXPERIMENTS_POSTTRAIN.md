@@ -11583,3 +11583,34 @@ python3 复算：
 ### 7. 跨线与边界
 - ZhuLong subagent A2（PID2886626 → run_cline_script PID3805045）在 36.15 跑全 158 题，走云 agi-gateway，不占 GPU6:8096。非本线，未碰。
 - 本轮仅只读取证（curl/ssh/grep/ps/cat/stat），未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark / 隧道进程，0 infra 改动。
+
+## §R513-monitor — postmortem 六度复核 + 归因夜链/双链健康监控（wake513 · 2026-11-15 01:5x）
+
+**本轮性质**：GPU-free 只读取证监控轮（postmortem 最高优先已交付后的复核 + 09:00 归因夜链 de-risk）。无 infra 改动。
+
+### 1. postmortem（用户令 23:4x 最高优先）六度复核
+- 报告 `reports/report_infra_tunnel_postmortem_zh.html`(20496B) 在位；commit `375e11bf7` 在 origin/main（`git branch -r --contains` = origin/main）。
+- 隧道三命令 01:5x 实测：
+  - `ss -ltn|grep 3333` → `LISTEN 127.0.0.1:3333` ✅
+  - `ssh -p3333 app.e0031982@localhost hostname` → `hfeg0tedaap02`（=10.251.36.15）+ `TUNNEL_OK` ✅
+  - `curl -s http://127.0.0.1:8096/v1/models`（.17 本地 serve）→ `minicpm5-2b-sft-v39-final` ✅
+  - 注：`curl 127.0.0.1:18096` 自 .17 返回空属预期——18096 是 `ssh -R 18096:localhost:8096` 的 remote-forward，监听点在 36.15 侧而非 .17 侧；36.15 上 `curl localhost:18096` 才是该通道的正确探测点（wake512 已实测 PASS）。
+
+### 2. 归因夜链（用户令 21:5x，09:00 及格线）进度
+- 36.15 setsid 链 `bpt_attribution_overnight_chain.sh` PID3707027 存活（etimes≈8988s≈2h29m）。
+- **A1**（40q，baseline MCP 全开+沙盒开）：DONE @ 00:48:54，chain.log 权威 `pass_rate=0.12658227848101267`=**12.66%**；final_report → `/tmp/posttrain_attribution_ablation/A1/final_report.json`。
+- **A3**（40q，no_sandbox + eda_flow 移除=沙盒真关）：RUNNING @ 00:48:54（PID4176287≈67min，8 worker，run_cline_script PID4176307，GPU6=99%）。staged mcp 核验：`cline_mcp_settings.json` 仅 pyAether_MCP_server(:8090)，eda_flow 已移除 ✅。
+- **P0base / P0p0**（79q dev 前后对比）：pending 串行。
+- 全链 ETA ~04:30-05:00 < 09:00。下一 wake（链完成后）做汇总 + McNemar + 报告更新。
+- ⚠️ final_report 交叉核验（PLAN §5 要求）：A2 ZhuLong subagent（DeepSeek 云）同写 output_evaluation/，本臂 runner 用 `comm -13` pre/post 差集选目录；下一 wake 须按 codegen 批次时间戳复核未误抓 A2 报告。
+
+### 3. R2 5-run eval（独立轨）
+- run1=0.63% / run2=1.27% / run3=0.0% DONE（final_report.json 齐备）；run4 RUNNING @ 20:49:52 code-gen（PID3344389，GPU7=90%）；run5 pending。
+- 3 run < step105 5-run mean 3.04%±0.83%，趋势负；单 run 不预判，待 5-run mean + McNemar/bootstrap。
+
+### 4. 体积维护
+- MEMORY_POSTTRAIN.md 35025B → 31842B（<32KB 目标 ✓）：精简 stale wake504「当前动作/本轮新增产出」两超长行（内容已归档 daily 2026-11-14/15），代以 wake513 监控心跳；新增 wake513 流水指针。
+
+### 5. 跨线与边界
+- ZhuLong subagent A2（PID2886626→3805045）走云 agi-gateway 不占 GPU6，未碰。
+- 本轮仅只读取证（curl/ssh/ss/ps/grep/cat/wc/sed），未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark / 隧道进程 / loop.py 源码，0 infra。
