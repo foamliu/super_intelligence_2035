@@ -1473,3 +1473,16 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794452394823_i8rar					parked		2026-11-14 09:55	r530 peek msg0=修改输入法 non-EDA system Q&A REJECT
 1794536566955_ccahc					parked		2026-11-14 09:55	r530 peek msg0=帮我check项目读额配置和log verb=check=analysis Q&A drc:1419 dominant C-domain REJECT
 1794460931114_s25rs					parked		2026-11-14 09:55	r530 peek msg0=把本地git该提交的都提交了 non-EDA git workflow Q&A REJECT
+1794379807802_lj7x9					parked		2026-11-14 10:18	r531 peek msg0=将工作目录修改到/home/pdk/zhiguo/agent chdir flow-driving; calibre:538;pdk:328 dominant C-domain DRC REJECT
+1794535889484_t59qe					parked		2026-11-14 10:18	r531 peek session file gone on pkn004 (joeyl P-004 cluster) REJECT
+1794474528744_qy45g					parked		2026-11-14 10:18	r531 peek msg0=批量抓取layout中pcell参数 produce but layout pcell=C-domain not B REJECT
+1794377720602_xga08					parked		2026-11-14 10:18	r531 peek msg0=virtuoso load()报错 debug Q&A A/C-domain REJECT
+1794376691015_9ms8b					parked		2026-11-14 10:18	r531 peek msg0=帮我打开v(blafarsec25) pinyin how-to Q&A D-domain waveview REJECT
+1794378612133_vj8cu					parked		2026-11-14 10:18	r531 peek msg0=我要配置一个新模型该怎么配置 how-to config Q&A (steveny@pnd001=s25rs same user) REJECT
+1794374321689_fnay5					parked		2026-11-14 10:18	r531 peek msg0=打开waveview打开vgrden电流电压波形 D-domain waveview how-to REJECT
+1794375114226_o778n					parked		2026-11-14 10:18	r531 peek msg0=测量dout下降沿到sel上升沿skew D-domain waveview measurement (curryxu D-cluster) REJECT
+1794367864572_tk5lp					parked		2026-11-14 10:18	r531 peek msg0=打开par(vdb(...)) D-domain waveview how-to (alleng D-cluster) REJECT
+1794367456770_s3hec					parked		2026-11-14 10:18	r531 peek msg0=probe D-domain waveview how-to REJECT
+1794446582345_uu6ie					parked		2026-11-14 10:18	r531 peek msg0=FSDB skill存在吗 D-domain waveview/FSDB skill-existence Q&A (t0003060) REJECT
+1794374158955_pqigp					parked		2026-11-14 10:18	r531 peek msg0=打开sapen信号 D-domain waveview how-to REJECT
+1794291315469_iqvfi					parked		2026-11-14 10:18	r531 peek msg0=why I cant switch input language non-EDA system Q&A REJECT (sfeng@pkn003)
