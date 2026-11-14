@@ -11642,3 +11642,39 @@ python3 复算：
 
 ### E. 纪律
 - 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark；0 infra。MEMORY 体积维护：wake512 全文→指针（31842B→<32KB ✓）。
+
+
+## §R515-attribution-rescue（wake515 · 2026-11-15 02:5x）— 归因链 path-bug 根因 + rescue 修复 + 真实数字恢复 + 干净重跑
+
+### A. postmortem（最高优先·用户令 23:4x）— 八度复核 PASS
+- 报告 `reports/report_infra_tunnel_postmortem_zh.html`(20496B) 在位 + commit `375e11bf7` 在 origin/main。
+- 隧道三命令 02:5x 实测全 PASS：`ss -ltnp|grep 3333` LISTEN / `ssh -p3333 app.e0031982@localhost`→`hfeg0tedaap02` TUNNEL_OK / `curl :18096/v1/models`→`minicpm5-2b-sft-v39-final`。
+- 结论（wake507 既定，未变）：坏过现已恢复；最后通点 20:41:50 / 首断点 22:4x wake505 / 故障域=中继侧①+② / 非本线造成亦非本线修复。
+
+### B. 归因链 path-bug 根因定位（wake514 的 A1=12.66% 与 A3 无 final_report 同源）
+- **根因**：ablation/dev-eval runner 调 `run_cline_script.sh`，cline 把代码写到 `code/<task>/pyAether_code/`，但 `format_cline_cli_output.py`(eda_fastmcp/pyAether-eval/script/, line166) 只读 `code/<task>/ws/pyAether_code/`（ws/ 空）→ `Done: 0 tasks to jsonl` → 0 脚本 → eval 跑空 → final_report=0/158 或缺失。
+- 三臂全中（A1/A3/P0_base_dev）；与提示无关（old.md 与 no_sandbox.md 都指示 `./pyAether_code`；run1 走 bpt_eval.sh 写 ws/ 故 36/158 正常）。手动 format 实测：A3 原路径=0 tasks，归一化后=21 tasks。
+- **A1=12.66% 是交叉污染**（坐实）：runner `comm -13|head -1` 抓到并发 ZhuLong DeepSeek 158 题 eval dir `20261114_2343`：`final_report.json` = `model_name: zhulong_deepseek_v32`、`total_correct: 20/158`、`generations_file: completed_code_generation_2026_1114_210739.jsonl`（生成 21:07 早于 A1 起跑 23:30）。20/158=0.12658 是 DeepSeek 的数，非 A1(minicpm5) 真实结果。A3 窗口无并发目录→正确报「无 final_report」。
+
+### C. rescue 实测恢复真实数字（已生成代码有效，仅路径错位）
+- 操作：`code/<task>/pyAether_code/` → `code/<task>/ws/pyAether_code/`，重跑 format+complete_code_generation+run_eval（沙盒 4 端口分片 8664/8665/8653/8669，秒级执行）。
+- A1（no_sandbox 提示 + 基线 MCP 沙盒开）：5 gen / 0 correct → **0/158 = 0/40 = 0%**。产物 `/tmp/posttrain_attribution_ablation/A1/final_report_rescued.json`。
+- A3（no_sandbox 提示 + 沙盒关[移除 eda_flow]）：18 gen / 3 correct → **3/158 = 1.9%；3/40 = 7.5%；3/18=16.7%**。产物 `/tmp/posttrain_attribution_ablation/A3/final_report_rescued.json`。
+- 代码内容核验有效（A3 task007 `create_eda_library.py` = 完整 `import pyAether as ae; def create_eda_library(library_name)->bool`）。
+- **caveat**：恢复数字来自 path-bug 条件下生成的代码（cline 无法回读自验，可能扰动行为）→ 下界/可能混淆，需 path-fix 后干净重跑去混淆。
+
+### D. 修复（posttrain 本线，未碰跨线 eda_fastmcp）
+- `bpt_attribution_ablation.sh` + `bpt_attribution_prompt_dev_eval.sh` 在 code-gen 后加 rescue 块：grep codegen.log `输出目录:` 定位 batch dir → 归一化 pyAether_code→ws/pyAether_code → 重跑 format+complete+run_eval → 用 rescued final_report（grep `唯一输出目录:` 精确抓本臂产物，规避 comm-13 误抓）覆盖 final_report.json。
+- commit `3c5700a48`(prompt_dev_eval) + `8e4c5d699`(ablation)，push origin/main。36.15 已确认 rescue 块在位（grep RESCUE=5/5）。`bash -n` 通过。
+
+### E. 干净重跑已起
+- 36.15 `setsid bash /tmp/relaunch515b.sh`（A1→A3→P0base_dev→P0_p0_dev 串行，rescue 内嵌，日志 `/tmp/posttrain_attribution_relaunch_515b.log`）。
+- A1 02:55:41 起跑（no_sandbox 提示 + 基线 MCP），GPU6:8096 经 18096 独占（ZhuLong 502399 走云 DeepSeek 不占 GPU6）。ETA A1~04:00/A3~05:00/P0base~06:00/P0p0~07:00 → 全链 ~07:00 < 09:00。
+- 排错记录：首次 relaunch515 因 base64 单字符腐致 `bpt_attribmtion_ablation`（u→m）使 A1 行失败；改 relaunch515b 并在 launch 前 grep 校验文件名，已修复。
+
+### F. R2 5-run eval
+- run1=0.63%/run2=1.27%/run3=0.0% DONE；run4 RUNNING@20:49 code-gen（GPU7=90%）；run5 pending。3 run<3.04% step105 趋势负（待 5-run mean+McNemar）。
+
+### G. 纪律
+- 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark；0 infra。kill 仅作用本线归因链（PID3707027 tree + relaunch515 A3）于诊断+重跑前，未碰 ZhuLong 502399(云)/vision R9/GPU0-5。MEMORY 32.4KB（略超 32KB 软限，<40KB 硬限，下轮归档 wake514 流水）。WAITING=0。
+
