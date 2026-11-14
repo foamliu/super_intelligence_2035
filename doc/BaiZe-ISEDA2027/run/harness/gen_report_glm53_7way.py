@@ -283,7 +283,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="info"><p>口径：TB-2.1/89题/7-way（与TB4不可比）。Oracle 5/5 ✅。§15:2x判据MET ✅</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
-<div class="note"><p>TB-2.1进行中:7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。codex err=适配器(infra),claude-code 0p待分析。</p></div>
+<div class="note"><p>TB-2.1进行中:7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。codex err=适配器(infra),claude-code 0p=100%infra(88 ConnectionRefused+1 CLI解析bug,模型从未运行,详见 reports/report_harness_cc_tb21_attribution_zh.html)。</p></div>
 
 <h2>5. cline 专项（§10:10 C1-C5）</h2>
 <table><tr><th>指标</th><th>值</th><th>判据</th></tr>

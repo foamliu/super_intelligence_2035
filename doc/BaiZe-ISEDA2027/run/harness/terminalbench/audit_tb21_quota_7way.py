@@ -96,11 +96,16 @@ def scan_trials(root: Path):
         m = re.search(r'"iterations":(\d+)', stdout)
         econn = "ECONNRESET" in stdout
         task = str(f.parent.name).split("__")[0]
+        conn_refused = "ConnectionRefused" in stdout
+        cli_bug = ("unknown option" in stdout.lower() and meta.get("exit_code") == 1
+                   and '"run_result"' not in stdout)
         task_data.setdefault(task, []).append({
             "dir": str(f.parent),
             "reward": reward,
             "quota": quota,
             "econn": econn,
+            "conn_refused": conn_refused,
+            "cli_bug": cli_bug,
             "iterations": int(m.group(1)) if m else -1,
             "exc_type": ei.get("exception_type", ""),
             "exit_code": meta.get("exit_code"),
@@ -116,6 +121,7 @@ def classify_route(task_data, all_tasks):
         "passed": [],
         "quota_only": [],
         "mixed_fail": [],
+        "connection_refused": [],
         "ability_fail": [],
         "synthetic_or_never_ran": [],
         "not_evaluated": [],
@@ -131,10 +137,13 @@ def classify_route(task_data, all_tasks):
 
         all_quota = all(t["quota"] for t in trials)
         any_quota = any(t["quota"] for t in trials)
+        all_conn_refused = all(t.get("conn_refused") for t in trials)
+        any_conn_refused = any(t.get("conn_refused") for t in trials)
         all_synthetic = all(
             (not t["has_run_result"]) and t["stdout_len"] < 50
             for t in trials
         )
+        has_cli_bug = any(t.get("cli_bug") for t in trials)
         has_proper_evidence = any(
             t["iterations"] > 1
             or t["has_run_result"]
@@ -143,7 +152,11 @@ def classify_route(task_data, all_tasks):
             for t in trials
         )
 
-        if all_synthetic:
+        if all_conn_refused:
+            cat = "connection_refused"
+        elif has_cli_bug and not any_quota:
+            cat = "connection_refused"  # CLI parse bug = adapter issue, same infra bucket
+        elif all_synthetic:
             cat = "synthetic_or_never_ran"
         elif all_quota:
             cat = "quota_only"
@@ -209,11 +222,13 @@ def main():
             "passed": passed,
             "quota_only": len(buckets["quota_only"]),
             "mixed_fail": len(buckets["mixed_fail"]),
+            "connection_refused": len(buckets["connection_refused"]),
             "ability_fail": len(buckets["ability_fail"]),
             "synthetic_or_never_ran": len(buckets["synthetic_or_never_ran"]),
             "pass_rate": round(passed / max(evaluated, 1), 4),
             "rerun_targets": sorted(
                 set(buckets["quota_only"]) | set(buckets["synthetic_or_never_ran"])
+                | set(buckets["connection_refused"])
             ),
             "agent": AGENT_MAP.get(h, ""),
         }
@@ -230,6 +245,7 @@ def main():
             f"pass={passed:3d} ({route_summary['pass_rate']*100:.1f}%) | "
             f"quota_only={route_summary['quota_only']:2d} "
             f"mixed={route_summary['mixed_fail']:2d} "
+            f"conn_refused={route_summary['connection_refused']:2d} "
             f"ability={route_summary['ability_fail']:2d} "
             f"synthetic={route_summary['synthetic_or_never_ran']:2d} "
             f"not_eval={route_summary['not_evaluated']:2d} "
@@ -249,7 +265,7 @@ def main():
     parts = []
     for h in HARNESSES:
         s = result["harnesses"][h]["summary"]
-        parts.append(f"{DISP[h]}:Q={s['quota_only']}/S={s['synthetic_or_never_ran']}/E={s['evaluated']}")
+        parts.append(f"{DISP[h]}:Q={s['quota_only']}/S={s['synthetic_or_never_ran']}/CR={s['connection_refused']}/E={s['evaluated']}")
     print("[audit] MEMORY line: " + " | ".join(parts))
 
     return 0

@@ -4,13 +4,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2461 §14-08:4x cc归因DONE: 88/89=ConnectionRefused+1/89=CLI bug·0能力·train-fasttext DONE(AgentTimeout)·hermes rerun RUNNING·7路审计A+C+cc归因ALL DONE
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A DONE+报告口径C DONE·audit_tb21_quota_7way.py+gen_report更新+双报告REGEN)
-当前动作:     R2461: **08:4x cc归因DONE**: audit_cc_tb21.py→reports/report_harness_cc_tb21_attribution_zh.html(89行逐题)·**结论**: 88/89=ConnectionRefused(网关连接失败·模型从未运行)+1/89=CLI解析bug·**真正能力=0题**·gen_report增cc归因修正节·双报告REGEN✅·train-fasttext DONE(08:30·AgentTimeout·reward=0)·5th-batch pending·hermes rerun RUNNING(PID247919·correct agent=HermesTB)·W:0
-下一步:       ①5th-batch 8synthetic auto-rerun→merge→REGEN ②hermes rerun完成→merge→REGEN ③**08:4x cc重跑**: 修复网关连接后重跑claude-code 89题 ④**08:2x 报告整改**: report_harness_glm53_7way_swebench_tb_zh.html 4条整改 ⑤B重跑: opencode38→pi45→deepseek48逐路串行 ⑥commit+mark §08:4x done
+PHASE:        R2461 §14-08:4x cc归因修正落入7路审计表(connection_refused列)·count_route修正(evaluated=89)·"待分析"全清·双报告+glm53报告REGEN✅·hermes rerun RUNNING·5th-batch RUNNING
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因修正DONE: connection_refused新桶+失败构成列+count_route修正+待分析全清)
+当前动作:     R2461: **cc归因修正REGEN**: audit_tb21_quota_7way.py增connection_refused桶(claude-code 89/89=CR)+CLI bug检测·gen_report_tb21_7way.py增conn_refused列+失败构成列+count_route修正(evaluated=89非0)·gen_report_glm53_7way.py删"待分析"→替换cc归因结论·gen_cline_special.py增cc归因修正节·三报告REGEN✅·hermes rerun RUNNING(PID247919)·5th-batch RUNNING·W:0
+下一步:       ①hermes rerun完成→merge→REGEN ②5th-batch完成→merge→REGEN ③**cc重跑BLOCKED**: claude-code适配器ConnectionRefused(容器内127.0.0.1:9092不可达·需修复适配器网络配置) ④**08:2x 报告整改**: report_harness_glm53_7way_swebench_tb_zh.html 4条整改 ⑤B重跑: opencode38→pi46→deepseek48逐路串行 ⑥commit+mark §08:4x done
 ERROR_COUNT:  0
  体积: TASK=32KB / MEMORY=32KB（归档183KB）
-  7路额度审计: cline:Q=0/S=8/E=89 | codex:Q=0/S=5/E=89 | opencode:Q=15/S=23/E=89 | claude-code:Q=0/S=0/E=89 | pi:Q=0/S=45/E=89 | hermes:Q=39/S=43/E=89 | deepseek:Q=0/S=48/E=89 | rerun_targets=226
+  7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
+  cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
   cline TB-2.1根因: 原始10/89=11.2%=网关额度耗尽(65/80=81%)·**RERUN DONE**(quota_lost=65→0·cline=**38/89=42.7%**)·8synthetic待5th-batch·**7路审计发现**: opencode仍有Q15·hermes仍有Q39(从未rerun)·pi/deepseek大量synthetic(45/48=未真跑)
 
@@ -18,6 +19,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [08:58] R2461 cc归因修正: **connection_refused新桶**→audit_tb21_quota_7way.py(claude-code 89/89=CR·CLI bug检测)·gen_report_tb21_7way.py增conn_refused列+失败构成列(claude-code="连接拒绝89")·**count_route修正**: 之前verifier_result=None就skip→claude-code显示0 evaluated·现修正为按result.json存在计evaluated=89·gen_report_glm53_7way.py删"0p待分析"→替换"0p=100%infra(88 ConnectionRefused+1 CLI bug)"·gen_cline_special.py增cc归因修正节·**三报告REGEN✅**·"待分析"全清(grep验证0处)·audit JSON落盘tb21_quota_audit_7way_20261114_0858.json·cc重跑BLOCKED(适配器ConnectionRefused需修复网络配置)·W:0
 
 > [08:22] R2461 cont: **B 启动**·rerun_tb21_cline_quota.py 增 --harness/--agent 参数(7way agent映射)·**hermes rerun LAUNCHED**(82tasks·AGENT=terminalbench.agents.hermes:HermesTB·jobs-dir=hermes_rerun_7way_20261114_0820_hermes·PID247906)·hermes env issue: python3 not found in task image(正在retry with PATH fix)·train-fasttext RUNNING(61min·超3600s timeout但cline agent仍在容器内工作)·5th-batch waiting·W:0
 

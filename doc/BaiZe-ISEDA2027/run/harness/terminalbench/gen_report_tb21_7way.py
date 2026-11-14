@@ -43,18 +43,20 @@ def count_route(h):
                 r = json.loads(f.read_text())
             except Exception:
                 continue
-            vr = r.get("verifier_result")
-            if not vr:
-                continue
             trials += 1
             if r.get("exception_info"):
                 errors += 1
             p = str(f.parent.name)
             tn = p.split("__")[0] if "__" in p else p
-            rew = vr.get("rewards", {}).get("reward", 0)
-            if rew == 1.0:
-                tasks[tn] = True
+            vr = r.get("verifier_result")
+            if vr:
+                rew = vr.get("rewards", {}).get("reward", 0)
+                if rew == 1.0:
+                    tasks[tn] = True
+                else:
+                    tasks.setdefault(tn, False)
             else:
+                # No verifier_result = agent failed before verification (infra)
                 tasks.setdefault(tn, False)
     upass = sum(1 for v in tasks.values() if v)
     return upass, len(tasks), trials, errors
@@ -211,11 +213,12 @@ def _quota_audit_7way():
                 "passed": passed,
                 "quota_only": len(buckets["quota_only"]),
                 "mixed_fail": len(buckets["mixed_fail"]),
+                "connection_refused": len(buckets["connection_refused"]),
                 "ability_fail": len(buckets["ability_fail"]),
                 "synthetic_or_never_ran": len(buckets["synthetic_or_never_ran"]),
                 "not_evaluated": len(buckets["not_evaluated"]),
                 "pass_rate": round(passed / max(evaluated, 1), 4),
-                "rerun_targets": len(buckets["quota_only"]) + len(buckets["synthetic_or_never_ran"]),
+                "rerun_targets": len(buckets["quota_only"]) + len(buckets["synthetic_or_never_ran"]) + len(buckets["connection_refused"]),
             },
             "buckets": buckets,
         }
@@ -284,8 +287,14 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
         H.append("<h2>TB-2.1 七路额度归因 (2026-11-14 用户令)</h2>")
         total_quota = sum(a["summary"]["quota_only"] for a in audit_7way.values())
         total_synth = sum(a["summary"]["synthetic_or_never_ran"] for a in audit_7way.values())
+        total_conn_refused = sum(a["summary"]["connection_refused"] for a in audit_7way.values())
         total_rerun = sum(a["summary"]["rerun_targets"] for a in audit_7way.values())
-        if total_quota == 0 and total_synth > 0:
+        if total_conn_refused > 0:
+            conclusion = (f"七路合计 connection_refused = <strong>{total_conn_refused}</strong> (适配器无法连接网关, 需修复后重跑), "
+                          f"quota_only = <strong>{total_quota}</strong>, "
+                          f"synthetic = <strong>{total_synth}</strong>; "
+                          f"rerun_targets = <strong>{total_rerun}</strong>")
+        elif total_quota == 0 and total_synth > 0:
             conclusion = (f"七路合计 quota_only = <strong>{total_quota}</strong> (额度耗尽已清零), "
                           f"但仍有 <strong>{total_synth}</strong> 个 synthetic/未真跑结果需重跑; "
                           f"失败主因 = synthetic 假结果 + timeout/ability")
@@ -298,8 +307,10 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
                           f"失败 = timeout/ability (无额度/假结果因素)")
         H.append(f"<div class='info'><p><strong>结论一句话 (数据驱动)</strong>: {conclusion}</p></div>")
         H.append("<table><tr><th>Harness</th><th>Pass</th><th>Eval</th>"
-                 "<th>quota_only</th><th>mixed</th><th>ability</th>"
-                 "<th>synthetic</th><th>not_eval</th><th>rerun_targets</th></tr>")
+                 "<th>quota_only</th><th>mixed</th><th>conn_refused</th>"
+                 "<th>ability</th>"
+                 "<th>synthetic</th><th>not_eval</th><th>失败构成</th>"
+                 "<th>rerun</th></tr>")
         for h in HARNESSES:
             if h not in audit_7way:
                 continue
@@ -307,29 +318,49 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
             name = DISP[h]
             q_cls = "warn" if s["quota_only"] > 0 else ""
             syn_cls = "warn" if s["synthetic_or_never_ran"] > 0 else ""
+            cr_cls = "fail" if s["connection_refused"] > 0 else ""
+            # 失败构成 summary
+            fail_parts = []
+            if s["quota_only"]:
+                fail_parts.append(f"额度{s['quota_only']}")
+            if s["mixed_fail"]:
+                fail_parts.append(f"混合{s['mixed_fail']}")
+            if s["connection_refused"]:
+                fail_parts.append(f"<span style='color:#e74c3c'>连接拒绝{s['connection_refused']}</span>")
+            if s["ability_fail"]:
+                fail_parts.append(f"能力{s['ability_fail']}")
+            if s["synthetic_or_never_ran"]:
+                fail_parts.append(f"假结果{s['synthetic_or_never_ran']}")
+            if s["not_evaluated"]:
+                fail_parts.append(f"未评{s['not_evaluated']}")
+            fail_summary = " + ".join(fail_parts) if fail_parts else "—"
             H.append(f"<tr><td><strong>{esc(name)}</strong></td>"
                      f"<td class='pass'>{s['passed']}</td>"
                      f"<td>{s['evaluated']}</td>"
                      f"<td class='{q_cls}'>{s['quota_only']}</td>"
                      f"<td>{s['mixed_fail']}</td>"
+                     f"<td class='{cr_cls}'>{s['connection_refused']}</td>"
                      f"<td class='fail'>{s['ability_fail']}</td>"
                      f"<td class='{syn_cls}'>{s['synthetic_or_never_ran']}</td>"
                      f"<td>{s['not_evaluated']}</td>"
+                     f"<td style='font-size:0.85em'>{fail_summary}</td>"
                      f"<td><strong>{s['rerun_targets']}</strong></td></tr>")
         H.append(f"<tr style='font-weight:bold;background:#d5e8d4'>"
                  f"<td>合计</td><td>{sum(a['summary']['passed'] for a in audit_7way.values())}</td>"
                  f"<td>—</td><td class='{ 'warn' if total_quota else ''}'>{total_quota}</td>"
-                 f"<td>—</td><td>—</td>"
+                 f"<td>—</td><td class='fail'>{total_conn_refused}</td>"
+                 f"<td>—</td>"
                  f"<td class='{ 'warn' if total_synth else ''}'>{total_synth}</td>"
-                 f"<td>—</td><td>{total_rerun}</td></tr>")
+                 f"<td>—</td><td></td><td>{total_rerun}</td></tr>")
         H.append("</table>")
-        H.append("<div class='caveat'><p><strong>五桶定义</strong>: "
+        H.append("<div class='caveat'><p><strong>六桶定义</strong>: "
                  "<strong>quota_only</strong> = 全部 trial 命中网关额度耗尽 (零机会, 需重跑) | "
                  "<strong>mixed_fail</strong> = 部分额度+部分非额度 (不重跑) | "
-                 "<strong>ability_fail</strong> = 无额度, 有 proper 证据 (iterations>1/run_result/exception) = 能力差 | "
+                 "<strong>connection_refused</strong> = 适配器无法连接 API 网关 (ConnectionRefused, infra, 需修复后重跑) | "
+                 "<strong>ability_fail</strong> = 无额度/连接问题, 有 proper 证据 (iterations>1/run_result) = 能力差 | "
                  "<strong>synthetic_or_never_ran</strong> = 无 run_result, stdout 极短 = 假结果/未真跑 (需重跑) | "
                  "<strong>not_evaluated</strong> = 89 题中未出现在 result.json (需补跑)</p>"
-                 "<p><strong>归因红线</strong>: 额度耗尽 ≠ 能力, 假结果 ≠ 能力 (三者分开记账)</p></div>")
+                 "<p><strong>归因红线</strong>: 额度耗尽 ≠ 能力, 假结果 ≠ 能力, 连接拒绝 ≠ 能力 (四者分开记账)</p></div>")
 
     # ---- §claude-code 归因修正 (2026-11-14 08:4x 用户令) ----
     H.append("<h2>claude-code TB-2.1 归因修正 (2026-11-14 08:4x 用户令)</h2>")

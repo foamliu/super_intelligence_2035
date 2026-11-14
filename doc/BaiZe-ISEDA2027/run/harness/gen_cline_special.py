@@ -274,6 +274,12 @@ for nm,(done,passed) in sorted(tb21_data.items(), key=lambda x:-x[1][1]):
 
 html += f"""</table>
 <p>TB-2.1总计: {tb_total_pass} passed/{tb_total_done} trials。7-way concurrent。</p>
+<div class="summary" style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px">
+<p><strong>claude-code 0p 归因 (2026-11-14 用户令)</strong>: claude-code TB-2.1 = 0/89 = 0% 的失败 <strong>100% 是 infra/适配器问题，非模型能力</strong>。
+88/89 (98.9%) = <strong>ConnectionRefused</strong> (claude-code 适配器无法连接 API 网关, <code>API Error: Unable to connect to API (ConnectionRefused)</code>, 模型从未运行, tokens=0, iterations=-1);
+1/89 (1.1%) = CLI 解析 bug (task instruction 以 "-" 开头被解析为未知选项)。
+<strong>真正"模型跑过且答错" = 0 题</strong>。详见: <code>reports/report_harness_cc_tb21_attribution_zh.html</code> (89 行逐题归因明细)。
+归因红线: 🚫 不得将 ConnectionRefused 记为能力差。claude-code 的真实能力 <strong>无法从本批数据中评估</strong> (模型从未成功连接网关)。需修复网关连接后重跑才能获得能力数字。</p></div>
 <h2>C4 本轮小结</h2>
 <p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 true backlog) | 空patch {ce}(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(已恢复·predict进行中) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict进行中) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval {total_resolved_all} resolved(0 true backlog) | {ROUND}</p>
 <h2>ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
