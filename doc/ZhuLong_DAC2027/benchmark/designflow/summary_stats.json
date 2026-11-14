@@ -15,49 +15,19 @@
   "generated": "2026-11-06T08:40:00+08:00",
   "hits_total": 38082,
   "hosts": 696,
-  "mc10": 2585,
-  "mc100": 1113,
+  "mc10": 3416,
+  "mc100": 1423,
   "mc1000": 8,
   "mc15": 3047,
   "mc20": 2287,
   "mc25": 2376,
-  "mc30": 2061,
+  "mc30": 2575,
   "mc300": 317,
   "mc5": 3609,
   "mc500": 281,
   "mc_matrix": {
-    "computed_at": "2026-11-13T21:20+08:00",
-    "dedup_sessions": 4418,
-    "mc10": {
-      "fresh": 663,
-      "pool": 3260,
-      "touched": 2597
-    },
-    "mc15": {
-      "fresh": 554,
-      "pool": 3047,
-      "touched": 2493
-    },
-    "mc20": {
-      "fresh": 471,
-      "pool": 2869,
-      "touched": 2398
-    },
-    "mc30": {
-      "fresh": 347,
-      "pool": 2575,
-      "touched": 2228
-    },
-    "mc5": {
-      "fresh": 960,
-      "pool": 3609,
-      "touched": 2649
-    },
-    "note": "2026-11-12 用户令换池 1105->1109 (shard B 执行): 1109 工件已落盘 (summary_1109.tsv/_scan_1109_raw.tsv/summary_1109_build.log/mc_matrix_1109_*.txt/candidates 由 1109 重建). 但 1109 复算后 B 域 mc>=10 fresh=0 (台账自 11/12 推进至 3053 touched, 消化 1109 的 B fresh), 不满足直接目标. 2026-11-13 13:30 ops/A 触发新全量扫描 ssh_eda_search_20261113_131349 (41409 行) 并记录 pool_switch 1109->1113. 1113 复算 B 域 mc>=10 fresh=76>0, 满足直接目标且为最新快照. 裁定 mc_matrix.src 切到 summary_1113.tsv (不回退 1109). 复算: python3 designflow/trace_ledger.py [--shard X] mc-matrix --src designflow/summary_1113.tsv --json. 口径: pool=池总量 touched=已动过(4-shard ledger) fresh=未动过(可做); slug 级去重取最大 mc. 1105 数值保留在 mc_matrix_1105_hist; 1109 数值保留在 mc_matrix_1109_hist (均为历史对照, 勿用于 fresh/pool).",
-    "scan": "ssh_eda_search_20261113_131349",
-    "scan_rows": 41409,
-    "scan_sha256": "3b859496024516381c55d9429c26d239e741bb94fa1bb6686550dcb92d011dea",
-    "src": "designflow/summary_1113.tsv"
+    "note": "raw dedup=6754 unique sessions; local summary_1113.tsv=4418 (filtered subset, mc10=3260); 154 extra loose-A-domain are rc->drc C-domain false positives; 156 strict-A-STRONG all in 4-shard ledger fresh=0",
+    "src": "ssh_eda_search_20261113_131349/summary.tsv (raw dedup by session_file)"
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -140,7 +110,7 @@
     "to": "designflow/summary_1113.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
-  "prev_sessions": 3172,
+  "prev_sessions": 4088,
   "scan_path": "ssh_eda_search_20261113_131349",
   "scan_rows": 41409,
   "scan_sha256": "(pending)",
@@ -152,7 +122,7 @@
     "scan_dir": "ssh_eda_search_20261109_224902",
     "total_rows": 38082
   },
-  "sessions": 4088,
+  "sessions": 6754,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -237,8 +207,8 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-14 09:23",
-  "users_mc10": 560,
+  "updated_at": "2026-11-14 13:32",
+  "users_mc10": 499,
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
