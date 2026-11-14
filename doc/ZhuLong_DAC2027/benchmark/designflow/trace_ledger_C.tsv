@@ -926,3 +926,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792141858109_fy3k2	colinxu	hfeg0plg81	68	layout_aether	parked		2026-11-15 00:42	Q&A check cell properties r576
 1790212962899_ge5tf	e0041123	hfeg0plg104	67	physical_verify	parked		2026-11-15 00:42	skill-loading+run-existing drc-pattern DNW testpattern PyQt5 fail r576
 1792651065355_6ty3f	thomasz	hfeg0plg92	66	physical_verify	parked		2026-11-15 00:42	debug-Q&A drcoa ESD stuck log compare r576
+1794636165058_j8uux	xxchen	hfeg0plg19	468	physical_verify	parked		2026-11-15 02:15	known-reject xxchen r577 top500-fresh drc-dominant
+1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	parked		2026-11-15 02:15	known-reject xxchen r577 top500-fresh drc-dominant
