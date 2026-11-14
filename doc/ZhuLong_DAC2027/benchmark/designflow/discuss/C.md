@@ -1735,3 +1735,31 @@ C.jsonl 339 行 track 字段分布（`grep -o '"track"[^,}]*' | sort | uniq -c`�
   3. **@论文 §5（0.01h，采本条 ②+依据 4）**：§5 Threats selection-bias 若补 archetype-exhaustion 分型，C 域 9 连 0-case + ~60 peek 0 produce-task 是实证素材（binding constraint = archetype 非 threshold 非 freshness，三段坐证）。
 
 - **配额状态**：上次 mandatory 发言 r577。本轮 r581 = r577+4，**配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @C 强制点名 ⇒ 走配额制。本条有 3 点实质表态（反对 thin-produce 降 bar + 9 连枯竭 archetype 量化 + 维持 bar 改等新扫描）+ 难度校准红线/L2 硬规/P-005 第八型复发风险三段依据 + §5 archetype-exhaustion 分型建议，非「+1」空发言。本轮 0-case（9 连枯竭 r571→r581，15-peek 15 REJECT，binding constraint = archetype 非 threshold 非 freshness）。下轮 mandatory due r585。📊 trace 覆盖率 355/3504=10.1%（mc≥10, src=ssh_eda_search_20261115_013654, 0-case 轮 covered 不变）。board OPEN=0。DEBT:0。
+
+---
+
+## r585 (2026-11-15 07:0x) · 配额 due · 1 case 交付打破 9 连枯竭 + SPF_RCC 电容改注 per-group oracle 设计教训
+
+- **议题**：board OPEN=0（P-001~P-005 全 CLOSED），配额 due（上次 mandatory 发言 r581，本轮 r585 = r581+4）。无 OPEN 议题点名 @C，走配额制。本轮**有 case 交付**（SpfRccCmod-001，physical_verify，k=12 a-l），打破 r571→r581 的 9 连 0-case 枯竭。本条报交付 + 对 r581「archetype-exhaustion」分型提案的反向实证 + per-group oracle 设计教训。
+
+- **表态**：**r581 提的「archetype-level exhaustion 第三型」分型需加限定——枯竭是 top-mc 池属性非全池属性**，next-tier mc 中段（mc 40-80）仍有 produce-task author-new-script gem，本轮 cyzhu (mc=45) 即证。三点：
+
+  **① next-tier 池打破枯竭的实证**：r581 报 9 连枯竭基于 top-250 by mc 全 ledgered + 15-peek top/mid-range 全 REJECT。本轮换口径——拉 next-tier 228 候选（summary.tsv rows 250-478，mc 10-79）做 normalized 4-shard ledger 去重（3432 anchors 去后缀），得 17 fresh，14 C-fit。peek fresh C-fit 首用户轮，**14 中 1 达 bar**（cyzhu 1794206311310_xqvcu，USER#5「读取文件并按照下面规则修改spf_RCC：1.搜索tBLfar<251>和tBLfar<252>…2.修改对应的cap，并命名C_M0A_cap 3.每对cap里面…按照对应的个数除…4.保存文件另存为」= produce-task author-new-script，10 用户轮多步演进）。hit rate 1/14（7%）远低于 r319-r335 黄金期（~30%），但**非零**——证 archetype 枯竭是 top-mc 池属性（被 Q&A/setup/run-existing 占据），next-tier 仍有 gem。r581「binding constraint = archetype」应修正为「binding constraint = archetype **at top-mc**，next-tier mc 40-80 仍有 produce-task 但密度降至 ~7%」。
+
+  **② SPF_RCC 电容改注 case 的 B 档 reframe（采 P-005 asset_fidelity=synthesized）**：cyzhu 原意图=读真实 `/proj/drgqa/V0/ver/pex/xuelianf/REVC_edge_T1_Edge_POR_0911/lpe/edge_T/edge_T_modify_1112.spf_RCC`（项目私有 PEX 产物，P-005 §9 line 27 第四类「project-private PDK paths /proj」）改注 tBL*far 相邻对耦合电容。私有 .spf_RCC 不可复刻 → B 档 synthesized：`_build_spf(counts)` 程序化生成合成 SPF_RCC text fixture（5 相邻对 251-256 + tBLfar/tBLbfar 通配 + 不相邻/非 far/命名网三类干扰电容），per-group oracle 内嵌 check.py。asset_fidelity=synthesized 落 metadata，与 P-005 r519 闭合的 8a-only-threat（intent-substitute ONLY）一致——算法语义（分组计数+除法+保留原名+加引号+saveas）全保真，仅资产替身。**与 D 域 WAVEVIEW 11 题同构**（私有资产→文本替身，难度差由 mock-behavioral check mode 承接非丢难度）。
+
+  **③ per-group vs per-value oracle 设计教训**：本 case check.py 初版用 per-value Counter（数 'C_M0A_cap/N' 出现次数==N）作 (g)/(k) 条件，gold selftest B2 FAIL。根因：B2 分组计数 [3,5,2,4,3] 有**两组共享 count=3**（group0 与 group4），per-value Counter[3]=6≠3，误判。修正为 `_verify_groups` 按相邻索引对 frozenset 分组校验（每组行数==count 且值=='C_M0A_cap/<count>'），与值无关。**教训**：分组均分类 case 的 oracle 必须 per-group 不能 per-value，否则当两组计数巧合相等时 oracle 自身错误（gold 也过不了）。这条对后续 DRC deck grouping / LVS net pairing 类 case 通用——凡「按 key 分组+组内均分」结构都适用。
+
+- **依据**：
+  1. **本轮选料数字**：11/15 池 src=ssh_eda_search_20261115_013654 sessions=6959 mc10=3504。normalized 4-shard ledger anchors=3432（去 .messages.json/.archive 后缀）。top-250 by mc 全 ledgered（0 fresh）。next-tier 228 候选 → 17 fresh → 14 C-fit → 1 达 bar（cyzhu mc=45）。hit rate 1/14=7%。
+  2. **cyzhu case 交付记录**（C.jsonl 356→357，ledger_C case 357→358）：SpfRccCmod-001 physical_verify k=12 a-l，12 条件=结构1(a:zip含modify_tblfar_caps.py+py_compile+B运行exit0产出输出)+B 8(b保留原名/ c节点序保留/ d只改第4字段'C_M0A_cap/N'+目标行数==各组计数和/ e不相邻251&253不改/ f tBLbfar通配命中/ g B分组均分[5,2,4,3,6]per-group/ h单引号/ i干扰电容tBL<5>+NETX不改/ j saveas输入未改)+B2反硬编1(k:B2计数[3,5,2,4,3]per-group全对且≠B)+确定性1(l:重跑字节一致)。B_COUNTS=[5,2,4,3,6] B2_COUNTS=[3,5,2,4,3] 故意含重复 count=3 测 per-group oracle。gold selftest PASS / 7 neg(3 produce-flawed + 3 §4.9 fake + 1 hardcode)全 FAIL。
+  3. **r581 archetype-exhaustion 提案原文**（C.md r581 节「建议动作 2」+「依据 2」）：「binding constraint = archetype（produce-task author-new-script 稀缺）非 threshold 非 freshness」+ 建议 A 在 board 记 pool archetype-exhaustion + §5 Threats 补第三型。本条 ① 对此加 next-tier 限定。
+  4. **P-005 r519 闭合记录**（board.md P-005）：§9 line 27 资产枚举第四类「project-private PDK paths /proj」+ asset_fidelity 三值（original/synth_deck/text_sub）+ 8a-only-threat intent-substitute ONLY。本 case .spf_RCC 落第四类，asset_fidelity=synthesized。
+  5. **TASK §5 难度校准**：mock-behavioral check mode 属 L2（subprocess 真跑候选脚本），本 case k=12 双隐藏 B/B2 防硬编 + per-group oracle，维持 C 域 bar 基线（与 r545 PgRailLabelReplace k=14 / r549 OpcModelExtract k=15 / r554 PinAccessScore k=18 同档）。
+
+- **建议动作**：
+  1. **@C 线（0h，本轮已执行）**：SpfRccCmod-001 交付，DEBT:0，WAITING:0。下轮续 peek next-tier remaining 13 C-fit fresh（去 cyzhu 已 case）或等 A 触发新全量扫描。维持 bar 不降（承 r581 表态）。
+  2. **@论文 §5（0.01h，采本条 ①+依据 1/3）**：若纳 r581 提的 archetype-exhaustion 分型，**须加 next-tier 限定**——枯竭是 top-mc 池属性（Q&A/setup/run-existing 占据），next-tier mc 40-80 仍有 produce-task gem 但密度从黄金期 ~30% 降至 ~7%（1/14 实证）。建议分型写「top-mc archetype saturation」非全池 exhaustion，否则与 next-tier gem 存在矛盾。
+  3. **@各线造题 agent（0.01h，采本条 ③）**：分组均分类 case（DRC deck grouping / LVS net pairing / cap annotation division）的 oracle 必须 per-group（按分组 key 校验组内行数+值）不能 per-value（数出现次数），否则当两组计数巧合相等时 oracle 误判 gold 也过不了。本 case B2_COUNTS 故意含重复 count=3 即为测此。
+
+- **配额状态**：上次 mandatory 发言 r581。本轮 r585 = r581+4，**配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @C 强制点名 ⇒ 走配额制。本条有 3 点实质表态（next-tier 打破枯竭对 r581 archetype-exhaustion 加限定 + SPF_RCC B 档 reframe 采 P-005 asset_fidelity + per-group oracle 设计教训）+ 5 依据（选料数字/case 交付记录/r581 原文/P-005 r519/§5 校准），非「+1」空发言。本轮 1 case 交付（SpfRccCmod-001，打破 9 连枯竭 r571→r581）。下轮 mandatory due r589。📊 trace 覆盖率 358/942=38.0%（mc≥10, src=ssh_eda_search_20261115_013654；ledger_C case 358·parked 635·total 993；jsonl_C 357；la 90·lv 68·pg 42·pv 150）。board OPEN=0。DEBT:0。
