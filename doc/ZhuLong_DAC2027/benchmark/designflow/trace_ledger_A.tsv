@@ -569,3 +569,4 @@
 1794561779908_voyfu	e0014036	hfeg0plg76	202	verification	parked		2026-11-15 00:04	analysis Q&A only: 13/13 user inputs are read-file/analyze-signal-origin/analyze-circuit-risk/analyze-waveform, no produce-task deliverable; REJECT
 1794555284506_lopt8	congyi	hfeg0plg97	58	verification	parked		2026-11-15 00:04	analysis Q&A only: 7/7 user inputs are how-to-read-testbench/summarize-PRAC/scenario-checker-analysis/longtRAS-explanation, no produce-task deliverable; REJECT
 1794624122377_nu57g.messages.json	yunfat	hfeg0plg94	13	digital	case	EDA-Eval-DesignFlow-KsAddsubGen-001	2026-11-15 00:45	
+1794651030659_jrorc.messages.json	jkxu	10.129.2.12	85	verification	case	EDA-Eval-DesignFlow-VsimPatternRunGen-001	2026-11-15 01:20	
