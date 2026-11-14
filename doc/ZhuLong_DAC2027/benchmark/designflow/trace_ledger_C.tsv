@@ -890,3 +890,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794549309183_d8s4u	yinyus	hfeg0plg66	574	layout_aether	parked		2026-11-14 21:00	out-of-domain: schematic construction (dbCrtSchPin/schematic view/symbol inst) = D domain, not C layout; abandoned r568
 1794539053522_qu4o5	joyc	hfeg0plg16	156	physical_verify	case	EDA-Eval-DesignFlow-QaPatternWidthSpace-001	2026-11-14 21:10	
 1794552037720_3dv1o	youmingz	10.129.8.225	266	layout_aether	case	EDA-Eval-DesignFlow-NetMetalLayerTrace-001	2026-11-14 21:54	
+1794651030659_jrorc	jkxu	hfhds201	85	layout_aether	parked		2026-11-14 22:03	r570 peek: jkxu USER#0 comprehension/QA/debug, not A-档 produce-task
+1794557520651_qrcw5	e04201	hfeg0plg18	90	physical_verify	parked		2026-11-14 22:03	r570 peek: e04201 USER#0 comprehension/QA/debug, not A-档 produce-task
+1794550161116_20kqp	e0014036	hfeg0pkn001	137	physical_verify	parked		2026-11-14 22:03	r570 peek: e0014036 USER#0 comprehension/QA/debug, not A-档 produce-task
+1793845744498_7n2w3	e0039602	hfeg0pkn003	87	physical_verify	parked		2026-11-14 22:03	r570 peek: e0039602 USER#0 comprehension/QA/debug, not A-档 produce-task
