@@ -284,7 +284,7 @@ print("body1 ready", file=__import__("sys").stderr)
 
 # Section: failure attribution
 H.append("<h2>四、失败归因分类（核心）</h2>")
-H.append("<p>以 790 个 (任务,run) 样本为口径，按<b>根因</b>归入 7 类（与运维建议的分类法对齐）。每类附题数、占比、3 个典型 trace 片段（原文摘引 + 路径）。</p>")
+H.append("<p>以 790 个 (任务,run) 样本为口径，按<b>根因</b>归入 6 类（5 类失败 + 通过；由 158 题实际结果 + trace 原文自行提炼，未套用预设分类表）。每类附题数、占比、典型 trace 片段（原文摘引 + 路径）。</p>")
 H.append("<table><thead><tr><th>类别</th><th>题数(样本)</th><th>占比</th><th>说明</th></tr></thead><tbody>")
 order = ["C5", "C3", "C2", "C6", "C1", "PASS"]
 for k in order:
