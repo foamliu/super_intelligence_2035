@@ -1,5 +1,11 @@
 WAITING: 0
 
+> 🆕 **【wake #1233 · 2026-11-14 19:2x】#3 接收 designflow B r562 post_vqa_prediction + infra-blocker 复核不变（非 idle-spin·commit 暂缓 posttrain 持 index.lock）**：
+> - **接收**：designflow shard B r562 在 `waveview_baseline_results.B.json` 加 `post_vqa_failure_mode_prediction`（α2/β7 per-case）+ `post_vqa_status{state:infra-blocked}`——**全是 PREDICTION 非实测**，因 r560 起评测机+.75→.17 TCP 30001/30002 全 BLOCKED 无法跑 task2；据 baseline_run + A r531 hint-induced tool-call collapse + B r554 did-not-engage flip-rate=0 + B r558 C-tier abort 异质性推断，待 infra 解阻验证。shard D r661 交付 RcVizTool-001（常规 case·非 WAVEVIEW）+ D r660 task1 收官确认 + 可达性独立复核（双源印证 B r560 BLOCKED）。
+> - **vision 关键综合（本线独有贡献）**：designflow r562 预测的是 **end-to-end 翻转**（cline+SUT+VQA 产 submit.zip），而 vision 既有探针（wake#1227/#1228·6 D 域题·自再生等价 PNG·**14/46=30.4%** vs 基线 0/46）量的是 **VQA-capability 天花板**（VQA 直读图答对率·end-to-end 的上界）。两者互补：① **A 档（α1/β8/α3/β6·cline did-not-engage）**=end-to-end 翻转预测≈0（结构性·模型没读题·VQA 救不了）即使 VQA 能读部分值（探针 α1 1/4·β8 3/12）——vision 实测证实 designflow「A 档 flip=0」预测的机制=engagement 缺失而非 VQA 盲；② **C 档（β9/β10·engaged-but-could-not-read-image）**=真正翻转源·VQA 天花板在此才有意义。⇒ infra 解阻后 vision 出 #3 报告将「VQA 天花板(探针)」与「end-to-end 翻转(designflow task2)」双口径并列，避免混淆。
+> - **infra-blocker 复核不变**：本轮 .17 实测端点仍在线（`curl :30001/health`→`{ok,model:Qwen3.5-2B,ready}`·`:30002/mcp initialize`→`serverInfo qwen35-vqa v1.30.0`·`POST :30001/vqa` β8 wv_sigs_A.png「How many signal traces?」→「5 distinct clk/rst_n/data/vref/sel」3.7s·pid 3213592/3216569 GPU5）；`sudo -n true`=需密码（无 passwordless sudo）⇒ **vision 不能自改 .17 防火墙**；根目录 MEMORY.md 无 ops 放行 30002 记录⇒ **infra-blocker 仍待 ops/网管**。又证：真 designflow PNG 在 `/nasdata/app.e0031982/code/EDA-Flow-Bench`（.17 不可达·独立挂载·仅 β8 在 git 副本）⇒ vision 自再生等价 PNG 探针仍是「可并行那半」唯一可行法。
+> - **git**：本轮 fetch→`pull --rebase --autostash` 已整合（vision wake#1232 commit ee6506127 + 3 posttrain commit 仍 local 未 push·sandwich·behind 7·7 behind 不触视觉文件）。**posttrain 活跃持 `.git/index.lock`**（eval chain+loop+watcher 在跑）⇒ **commit/push 暂缓**（铁律·不抢不删 lock）；待 posttrain git 周期完成自然 push（vision commit 交错在其 local branch 会随之一并 push）。体积：MEMORY 31086B→trim 7 patrol one-liner(wake#1213~#1219→1 行指针)+加本心跳⇒≤32KB✓。**本轮非 idle-spin**（接收 r562 预测+VQA 天花板 vs end-to-end 双口径综合+infra 复核+端点再验）。**WAITING: 0**。
+
 > 🆕 **【wake #1232 · 2026-11-14 18:2x】#3 task2 试跑 r530 接收 + 回复 designflow SUT tool-call 决策点（非 idle-spin）**：
 > - **背景**：fetch→behind3→ff-only 至 `bf0827f4d`（designflow 3 commit：B #559 task1 收官 + A #r530 task2 试跑 + A ws）。查 `WAVEVIEW_COLLAB.md`——designflow shard A #r530 跑了 **task2 试跑**（β10 TempThreshChar-001，唯一新增变量 `VQA_MCP=1`）：**机制层 ✅**（research.vqa 读 thresh_char_A.png → 1.2V 正确，与 oracle vmax=1.20 一致）；**SUT 层 ✗**（cline 12s 1 iter，**hadToolCalls=false toolCallCount=0**，2B SFT `minicpm5-2b-sft-v39-final` 把 tool-call 以纯文本 XML 吐出未触发真 tool_use，outputs/ 空，β10 FAIL→FAIL 未翻转）。**关键反差**：基线 β10 r654（无 VQA hint）23s 8 iter **7 个真 tool_use**；加 hint 后反退化到 0。designflow 判「SUT tool-call 不可靠，非 harness 问题」，提请 vision 决策：(1) VQA 后端口径；(2) **SUT 模型选择**——建议换 tool-call 可靠 text-only SUT 或接受联合增益。
 > - **vision 核心判读**：toolCallCount=0 **不是 SUT 固有上限，是 VQA hint 措辞诱导的回归**——同一 SUT 无 hint 时能发 7 个 native tool_use（r530 自己的对照即证据），变量 = hint 里 `research_vqa__vqa(image_path=…, query=…)` 带括号用法示例被 2B 逐字 parrot 成 XML-text。⇒ designflow「需换 SUT」结论在本证下**为时过早**。
@@ -38,15 +44,7 @@ WAITING: 0
 > - **产物**：`vision/vqa_tool/prelim_restored_probe2.py`(round-2 可复跑)·`restored_probe2_results.json`(原始)·`make_restored_probe_report.py` 改为合并两轮(向后兼容 round-2 缺失)·`reports/report_vision_vqa_restored_probe_zh.html`(19915B·0script/0外链/内联SVG·6 题合并口径声明=preliminary 非 #3 官方对照)。⚠️本探针图与 designflow 等价但不字节相同·不可外推为官方通过率。
 > - **git**：fetch→behind1(d9178be41 designflow shard B·0 触视觉)→清理 stale index.lock(无 git 进程持有)→`merge --ff-only` 成功→add 明确路径→commit(`vision rl:`)→push。不卷入 `?? outputs/`(posttrain 在途)。**本轮非 idle-spin**(产出 round-2 探针+6 题合并报告)。**WAITING: 0**。
 
-> 📦 **wake #1220 · 2026-11-14 13:5x** 例行巡检·designflow 新交付 β8(D #653·restored_count 3→4)·#3 后半仍阻塞 D(推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1221 · 2026-11-14 14:0x** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1222 · 2026-11-14 14:08** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1224 · 2026-11-14 14:2x** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1225 · 2026-11-14 14:34** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
+> 📦 wake#1220~#1225（2026-11-14 13:5x~14:34，5 轮）例行巡检 patrol one-liners 已归档原文 → daily-memories-vision/2026-11-14.md（designflow β8/β10 渐次交付·restored_count 3→5·#3 后半阻塞 D 推进中）。需要时再读。
 
 > 📦 **wake #1227 · 2026-11-14 15:1x** #3 后半可并行半 round-1 探针(β9/α4/β10 重生成忠实副本·6/22 量 27.3% vs 基线 0/22·诚实弱增量+α判断修正+缺口指向#4)·报告+脚本+MEMORY+daily·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
@@ -54,19 +52,7 @@ WAITING: 0
 
 > 📦 **wake #1223 · 2026-11-14 14:18** 例行巡检·全交付态·designflow 新交付 β10(r654·restored_count 4→5)·#3 后半阻塞 D 推进中·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 📦 **wake #1219 · 2026-11-14 13:4x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1218 · 2026-11-14 13:36** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1217 · 2026-11-14 13:27** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1216 · 2026-11-14 13:2x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1215 · 2026-11-14 13:1x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1214 · 2026-11-14 13:0x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1213 · 2026-11-14 12:5x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
+> 📦 wake#1213~#1219（2026-11-14 12:5x~13:4x，7 轮）例行巡检 idle-spin patrol one-liners 已归档原文 → daily-memories-vision/2026-11-14.md（全交付态·零新增·designflow D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D）。需要时再读。
 
 > 📦 **wake #1212 · 2026-11-14 12:4x** 任务书瘦身归档(TASK 39389→27127B·两 11-07 已交付用户令 verbatim 搬至 ARCHIVE_OPERATOR_VISION.md+留指针·4 个 11-14 活跃令原样保留)+例行巡检·designflow 无新交付(仍 D 恢复 3 题)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
