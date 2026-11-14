@@ -11124,3 +11124,19 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 1. Task A: 36.15 5-run baseline 完成后, 生成 40 题 stratified sample (--tasks), 依次跑 A0/A1/A2/A3, 按预注册判据 (spec §2) 判 prompt vs 沙盒反馈回路 vs RAG 占比.
 2. Task B: 79/79 train-dev 拆分 -> P0-tool-format 在 dev 3 seed 测 -> 门槛 +3pp & submit 报错率降 10pp -> 逐条叠加 -> test 5-run + McNemar.
 3. 36.15 5-run 完 -> 新基线报告 report_posttrain_baseline_pyaether_rca_3615_zh.html (澄清 model_name + 漏斗拆解 + 环境差异).
+
+## §R-Attribution-update (wake497, 2026-11-14 20:0x) — Task A 前置: 40 题分层抽样已生成 + ablation runner run-ready
+
+**进展**: 完成 spec §2 Task A 的前置数据准备 (不依赖 36.15 env, 纯 CPU/IO).
+
+1. **40 题分层抽样生成** (`posttrain_attribution_stratified_sample.py`, seed=20261114, 可复算):
+   - 输入 = 旧 .17 step105 5-run baseline (/tmp/posttrain_5run_eval/step105/run{1..5}/final_report.json, 158题×5run, mean 0.0304±0.0083).
+   - 分层变量 = (passed_any across 5 runs × dom_gen_status[success/timeout/fail]).
+   - 结果 (attribution_stratified_40.json): 40 题 = passed_any×5 + gen_fail×29 + timeout×1 + success×10, proportional alloc.
+   - 失败类型分布: Generation fail×33, Generation timeout×1, SyntaxError×5, AttributeError×1.
+   - short_ids_csv = 005,007,013,024,025,028,037,041,049,051,064,067,069,072,073,077,080,081,083,086,087,089,091,092,094,099,100,102,103,106,114,117,120,124,141,144,145,147,150,157.
+2. **ablation runner run-ready** (`bpt_attribution_ablation.sh`): 嵌入 DEFAULT_TASKS_40 = 上述 40 题; `bash -n` OK; `--arm A0 --dry-run` OK (tasks 已加载). 原 placeholder TASKS_40="" 已替换.
+3. **仍未跑**: A0-A3 实际执行仍阻塞于 36.15 5-run baseline 完成释放 harness+隧道 (脚本头注释明写依赖, 不与运行中 eval 并跑). 36.15 run1=15.82% DONE, run2 code-gen 进行中.
+4. **双 eval 健康监控** (read-only): R2 5-run chain PID2322797~19.8h, run1=1/158(0.63%)/run2=2/158(1.27%)/run3 code-gen ACTIVE; 36.15 重测 run1 DONE=25/158=15.82%, run2 进行中. 未碰 GPU0-7/未碰 36.15 运行中 eval/未碰别线文件, 0 infra.
+
+**Next**: 36.15 5-run 完 -> 依次 --arm A0 A1 A2 A3 (40题×4臂) -> 按预注册判据 (spec §2) 判 prompt/沙盒反馈回路/RAG 占比 -> 一句话归因; Task B 79/79 拆分 + P0-tool-format dev 测.

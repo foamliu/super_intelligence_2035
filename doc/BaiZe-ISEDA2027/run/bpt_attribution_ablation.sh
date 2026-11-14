@@ -13,8 +13,11 @@ DATASET="EDA-Eval-PyAether-v20260311_fixed.jsonl"
 RESULTS_DIR="/tmp/posttrain_attribution_ablation"
 MODEL_URL="http://127.0.0.1:18096/v1"   # 反向隧道 -> .17 GPU6:8096
 MODEL_ID="minicpm5-2b-sft-v39-final"
-# 40 题分层抽样 (按 旧5-run 是否至少通过1次 × 失败类型, 种子固定). 占位: 待从 158 题用 stratified sample 脚本生成.
-TASKS_40=""  # 例: "001,002,016,028,038,059,063,076,080,..." 共 40 个
+# 40 题分层抽样 (按 旧5-run 是否至少通过1次 × 失败类型, 种子固定).
+# 生成器: posttrain_attribution_stratified_sample.py (seed=20261114, 可复算) -> attribution_stratified_40.json
+# 分层结果: 40 题 = passed_any×5 + gen_fail×29 + timeout×1 + success×10 (proportional alloc).
+DEFAULT_TASKS_40="005,007,013,024,025,028,037,041,049,051,064,067,069,072,073,077,080,081,083,086,087,089,091,092,094,099,100,102,103,106,114,117,120,124,141,144,145,147,150,157"
+TASKS_40="$DEFAULT_TASKS_40"
 ARM=""; DRY_RUN=0; STATUS_ONLY=0
 while [ $# -gt 0 ]; do
   case "$1" in
