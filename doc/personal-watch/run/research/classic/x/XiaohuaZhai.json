@@ -1,0 +1,65 @@
+{
+ "handle": "XiaohuaZhai",
+ "name": "Xiaohua Zhai (@XiaohuaZhai) / X",
+ "bio": "Researcher at Meta (previously at OpenAI Zürich, Google DeepMind)",
+ "tweets": [
+  {
+   "id": "1968799682097758582",
+   "created_at": "2025-09-18 22:09 UTC",
+   "created_at_ms": 1758233397000,
+   "text": "Want test‑time quality gains from a simple LLM architectural tweak? Try Recursive INference Scaling (RINS) — our #NeurIPS2025 work done at GDM.\\\n\\\nRINS trains by splitting a block into A+B and reusing A r times with shared weights. Params and pre‑training compute stay the same. https://t.co/yU9y0Sd2rV",
+   "url": "https://x.com/XiaohuaZhai/status/1968799682097758582",
+   "handle_guess": "XiaohuaZhai"
+  },
+  {
+   "id": "1957183797717557670",
+   "created_at": "2025-08-17 20:52 UTC",
+   "created_at_ms": 1755463954000,
+   "text": "Love the Global Trio illustration! It reminds me of Guan Yu, Liu Bei and Zhang Fei from the classic Romance of the Three Kingdoms⚔️ https://t.co/MNesbvBgqH",
+   "url": "https://x.com/XiaohuaZhai/status/1957183797717557670",
+   "handle_guess": "XiaohuaZhai"
+  },
+  {
+   "id": "1957155168417378687",
+   "created_at": "2025-08-17 18:58 UTC",
+   "created_at_ms": 1755457128000,
+   "text": "This is why i love working with @XiaohuaZhai and @__kolesnikov__:\\\n\\\nwithin just a month, while waiting for new resource allocation, we:\\\n- wrote an entirely new codebase\\\n- in an entirely new (to us) framework\\\n- ran over 1000 experiments\\\n- on just six H100's the 3 of us share\\\n- https://t.co/ifbjzDtd7s",
+   "url": "https://x.com/XiaohuaZhai/status/1957155168417378687",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "1938303850085052806",
+   "created_at": "2025-06-26 18:30 UTC",
+   "created_at_ms": 1750962624000,
+   "text": "Exciting times! Can’t wait to dive into this next chapter together.",
+   "url": "https://x.com/XiaohuaZhai/status/1938303850085052806",
+   "handle_guess": "XiaohuaZhai"
+  },
+  {
+   "id": "1938299990922674352",
+   "created_at": "2025-06-26 18:15 UTC",
+   "created_at_ms": 1750961704000,
+   "text": "hey all, couple quick notes:\\\n1) yes, we will be joining Meta.\\\n2) no, we did not get 100M sign-on, that's fake news.\\\n\\\nExcited about what's ahead though, will share more in due time!\\\n\\\ncc @__kolesnikov__ and @XiaohuaZhai.",
+   "url": "https://x.com/XiaohuaZhai/status/1938299990922674352",
+   "handle_guess": "giffmana"
+  },
+  {
+   "id": "1892830768197751107",
+   "created_at": "2025-02-21 06:56 UTC",
+   "created_at_ms": 1740120996000,
+   "text": "Introducing SigLIP2: now trained with additional captioning and self-supervised losses!\\\n\\\nStronger everywhere: \\\n- multilingual\\\n- cls. / ret.\\\n- localization\\\n- ocr\\\n- captioning / vqa\\\n\\\nTry it out, backward compatible!\\\n\\\nModels: https://t.co/3hOdqcy9QD\\\n\\\nPaper: https://t.co/Tp4D8Syld8 https://t.co/U2FC06iDIj",
+   "url": "https://x.com/XiaohuaZhai/status/1892830768197751107",
+   "handle_guess": "XiaohuaZhai"
+  },
+  {
+   "id": "1707327109331362008",
+   "created_at": "2023-09-28 09:31 UTC",
+   "created_at_ms": 1695893478000,
+   "text": "📢📢We release the SigLIP models to big_vision, pre-trained on WebLI, before our ICCV trip to Paris.\\\n\\\nA SigLIP Base model achieves 79% 0-shot acc. on ImageNet, a Large model achieves 82% 0-shot acc. on ImageNet.\\\n\\\nDemo: https://t.co/wse3u14wxp\\\nArxiv: https://t.co/nK4YuFRK7t\\\n\\\n👇🧵 https://t.co/xgxJe7VNoe",
+   "url": "https://x.com/XiaohuaZhai/status/1707327109331362008",
+   "handle_guess": "XiaohuaZhai"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-14 22:37:47"
+}

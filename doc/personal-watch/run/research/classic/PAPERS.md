@@ -2015,6 +2015,74 @@
 
 ---
 
+## 116. GPT-4 Technical Report（**「能力 + 可预测性 + 局限」报告体例的模板**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GPT-4 Technical Report |
+| 作者（前 3） | **OpenAI**（机构署名）· **Josh Achiam** · **Steven Adler**（arXiv API 计 **281** 条作者/机构署名，逐字取自 atom） |
+| 年份 | **2023**（arXiv v1 `2023-03-15`，v6 `2024-03-04`） |
+| 会议 / 期刊 | **预印本**（arXiv `2303.08774`，`cs.CL`）；本线**未核到正式会场版本** ⇒ 不写「某会录用」 |
+| 被引数 | **38,329**（OpenAlex DOI 直查 `10.48550/arXiv.2303.08774`，查询日 **2026-11-14**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.08774> ｜ DOI `10.48550/arXiv.2303.08774` |
+| 一句话贡献 | 摘要原文要点：报告 GPT-4 —— 可接受**图像与文本**输入、输出文本的大规模多模态模型；在多项专业与学术基准上达「人类水平」，包括模拟律师资格考试约**前 10%**；明确自述「在真实世界许多场景仍不如人类」；核心工程点是**跨规模可预测**的基础设施与优化方法，可用不超过 GPT-4 **1/1,000** 计算量训练的模型预测其部分能力。 |
+| 与我们工作的关系 | **pretrain（主目标 · 规模外推纪律）**：报告把「小规模代理实验 → 大模型能力」写成可预测关系 ⇒ <b>动作</b>：2B 配方每次改动先在 350M/600M 上跑「代理点」，只把方向一致的改动推到大模型，并在 MEMORY 记录代理点与大点的同向性。<br>**harness（报告体例）**：能力表 + 明确局限，而不是单一 SOTA 句 ⇒ <b>动作</b>：我们的评测报表固定三块「能力 / 失败模式 / 不可比说明」，缺一块不对外。<br>**zhulong（成本口径）**：算力—性能曲线的外推必须标「代理点算力占比」⇒ <b>动作</b>：成本表加 `proxy_scale_ratio` 列。<br>**data（弱相关）**：报告不披露数据配比 ⇒ 不据此写任何数据结论。<br>**风险**：① **未公开架构、参数量、数据与训练细节** ⇒ 任何「GPT-4 用了 X」都是**推测**，🚫 写成事实；② 38,329 为 OpenAlex **预印本**口径；③ 「前 10%」是模拟考试成绩，🚫 泛化成「达到人类专家」。 |
+
+首次收录: 2026-11-14（第三十轮）｜ 状态: 元数据 + 被引已核（arXiv API `200` + `atom`，281 条署名逐字；OpenAlex `200`，`type=preprint`，无卷期；摘要取自 arXiv `summary`）
+
+---
+
+## 117. Roofline: An Insightful Visual Performance Model for Multicore Architectures（**成本三分法的源头**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Roofline: An Insightful Visual Performance Model for Multicore Architectures |
+| 作者（前 3） | **Samuel Williams** · **Andrew Waterman** · **David Patterson**（共 **3** 位；UC Berkeley Parallel Computing Laboratory，Crossref 机构字段已核） |
+| 年份 | **2009**（CACM `issued` 2009-04） |
+| 会议 / 期刊 | **Communications of the ACM 52(4):65–76**（DOI `10.1145/1498765.1498785`；Crossref `200`） |
+| 被引数 | **2,165**（Crossref 该 DOI 的 `is-referenced-by-count`，查询日 **2026-11-14**；另有一条 LBNL 技术报告 DOI `10.2172/1407078` 记 **85**，**两条不相加**；OpenAlex 未查 —— 本轮该 IP 的免费额度已用尽） |
+| arXiv / DOI | **无 arXiv** ｜ DOI `10.1145/1498765.1498785`（⚠️ 曾误记为 `10.1145/1340771.1340803`，Crossref 返回 `404` ⇒ 已按实测更正） |
+| 一句话贡献 | 摘要原文（Crossref JATS，仅一句）：**Roofline 模型提供关于如何改进软硬件性能的洞见**。模型以「**可达性能 vs 运算强度**」为坐标，把**计算峰值**与**内存带宽**画成两条「屋顶线」，从而一眼看出某内核是**受计算限制**还是**受带宽限制**。 |
+| 与我们工作的关系 | **zhulong（主目标 · 成本口径）**：这正是我们「计算受限 / 搬移受限」二分法的**一手出处** ⇒ <b>动作</b>：成本报表每个 kernel 必须给 `ops/byte`（运算强度）与命中的屋顶线，缺一项判 `不可比`；PIM / 近存类方案单列一档（见 #115）。<br>**pretrain（吞吐排障）**：attention / FFN 的算术强度决定优化方向（换 kernel 还是减搬移）⇒ <b>动作</b>：吞吐回退时先算 `ops/byte`，再决定查 kernel 还是查内存。<br>**harness（可比性）**：性能对比必须落在同一 roofline 点 ⇒ <b>动作</b>：benchmark 记录硬件峰值与带宽，跨机型只比「相对屋顶线的百分比」。<br>**风险**：① 原文面向**多核 CPU 浮点**，GPU 与低精度（BF16/FP8）需换算峰值，🚫 直接套用；② 2165 为 Crossref 单条记录，不等于全口径被引；③ 摘要只有一句 ⇒ 本表「一句话贡献」的第二句是**我们的观察**，非原文。 |
+
+首次收录: 2026-11-14（第三十轮）｜ 状态: 元数据 + 被引已核（Crossref DOI 直查 `200`，标题 / 刊名 / 卷期页码 / 3 位作者 / 机构逐项一致）；⚠️ OpenAlex 本轮额度耗尽 ⇒ 只用 Crossref
+
+---
+
+## 118. Sigmoid Loss for Language Image Pre-Training（**SigLIP · 视觉塔损失与 batch 的解耦**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Sigmoid Loss for Language Image Pre-Training |
+| 作者（前 3） | **Xiaohua Zhai** · **Basil Mustafa** · **Alexander Kolesnikov**（共 **4** 位，末位 **Lucas Beyer**；arXiv atom 逐字核） |
+| 年份 | **2023**（arXiv v1 `2023-03-27`，v4 `2023-09-27`） |
+| 会议 / 期刊 | **ICCV 2023（Oral）**，pp. **11941–11952**（OpenAlex `type=conference-paper` 记录）；arXiv 主分类 `cs.CV` |
+| 被引数 | **1,884**（OpenAlex DOI 直查 `10.48550/arXiv.2303.15343`，查询日 **2026-11-14**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.15343> ｜ DOI `10.48550/arXiv.2303.15343` |
+| 一句话贡献 | 摘要原文要点：提出 **pairwise sigmoid loss**，只作用于图像—文本对，**不需要全局相似度归一化**（去掉 softmax 的 all-pairs 视野）；因此**既可把 batch 继续放大，又在小 batch 下更好**；配合 Locked-image Tuning 仅 **4 块 TPUv4、2 天** 得到 **84.5%** ImageNet zero-shot；把 batch 推到 **1M** 后发现收益很快饱和，**32k 已足够**。 |
+| 与我们工作的关系 | **vision（主目标 · 损失与 batch）**：视觉塔对比学习是否必须 all-gather 全局负例，直接影响通信与可扩展性 ⇒ <b>动作</b>：视觉塔预训练加一组 `sigmoid vs softmax` 对照（固定图文对与 token 预算），预注册判据 = 检索 R@1 不低于 softmax 基线且单卡显存峰值下降。<br>**data（配比与去重）**：sigmoid 把「负例」变成显式的对级判定 ⇒ batch 内**互译/近重复图文对会被当负例**；<b>动作</b>：图文对入库前做跨语种近似去重，报表给「重复对占比」。<br>**pretrain（并行开销）**：去掉全局归一化可减少跨卡 all-gather ⇒ <b>动作</b>：在多模态阶段记录通信占比前后对比。<br>**风险**：① 84.5% 与 32k 均为**作者自报**，未复现；② v1→v4 数字与模型档位有变（v4 才补 Base / Large / Shape-Optimized 400M）⇒ 引用必须标版本；③ 1,884 为 OpenAlex **ICCV** 记录口径。 |
+
+首次收录: 2026-11-14（第三十轮）｜ 状态: 元数据 + 被引已核（arXiv API `id_list` `200` + `atom`，4 作者逐字、`cs.CV`；OpenAlex `200`，ICCV 页码一致；摘要取自 arXiv `summary`）；⚠️ 本轮据此给一作 **Xiaohua Zhai** 发中文请教信（草稿 `research/mail/drafts/2303.15343.md`）
+
+---
+
+## 119. Deduplicating Training Data Makes Language Models Better（**训练集去重：记忆化与评测污染的一手证据**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deduplicating Training Data Makes Language Models Better |
+| 作者（前 3） | **Katherine Lee** · **Daphne Ippolito** · **Andrew Nystrom**（共 **7** 位，末位 **Nicholas Carlini**；ACL Anthology `citation_author` 逐条核） |
+| 年份 | **2021**（arXiv v1 `2021-07-14`，v2 `2022-03-24`）；**ACL 2022** |
+| 会议 / 期刊 | **ACL 2022（Long Papers）**，pp. **8424–8445**，DOI `10.18653/v1/2022.acl-long.577`（Crossref `200`） |
+| 被引数 | **226**（Crossref 该 DOI 的 `is-referenced-by-count`，查询日 **2026-11-14**；OpenAlex 上另有**预印本**记录 **357**，**两条不相加**） |
+| arXiv / DOI | <https://arxiv.org/abs/2107.06499> ｜ DOI `10.18653/v1/2022.acl-long.577` |
+| 一句话贡献 | 摘要原文要点：现有语言建模数据集含大量**近重复样本与长重复子串**，导致**超过 1%** 的无提示输出**逐字复制**训练数据；作者给出两种去重工具（例：从 C4 中删掉一句重复 **60,000+** 次的 61 词英文句子），去重后**记忆化输出减少十倍**、达到同等或更好精度所需**步数更少**；并指出标准数据集的验证集中**超过 4%** 与训练集重叠，去重可降低 train-test 泄漏、让评测更准。 |
+| 与我们工作的关系 | **data（主目标 · 去重）**：把「去重」从卫生习惯变成有数字的评测问题 ⇒ <b>动作</b>：语料入库流水线固定两级去重（精确子串 + 近似），报表给「重复 token 占比 / 跨 split 重叠率」。<br>**harness（污染）**：>4% 验证集重叠说明**公开基准分数可能虚高** ⇒ <b>动作</b>：我们自建留出集必须与训练语料做跨源近重复检索（n-gram + 向量），命中率进报表。<br>**pretrain（效率）**：去重后更少步数达同等精度 ⇒ <b>动作</b>：把「去重率」列为配方变体的一等超参，记录与 token 效率的关系。<br>**风险**：① 结论基于 **C4 等英文语料**，中文 / 代码需重测，🚫 直接外推；② 「十倍」只指**记忆化文本频率**，不是通用能力十倍；③ 226（ACL）与 357（预印本）是两条记录，**不相加**。 |
+
+首次收录: 2026-11-14（第三十轮）｜ 状态: 元数据 + 被引已核（arXiv API `200` + `atom`，7 作者；ACL Anthology 页 `200` / 42,877 B，`citation_*` 逐条一致；Crossref DOI `200`，页码 8424–8445 一致）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 

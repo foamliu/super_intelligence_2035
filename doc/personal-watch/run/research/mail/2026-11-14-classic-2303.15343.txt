@@ -1,0 +1,16 @@
+Subject: SigLIP 的 sigmoid 损失：小规模图文对与多语数据下的两个细节
+
+翟老师，您好。
+
+想请教 SigLIP 两个细节。我是刘杨，做 LLM agent，主页 https://foamliu.github.io/。
+
+你们用 pairwise sigmoid 替代 softmax，batch 推到 32k 乃至 1M 后收益饱和；v4 补了 Shape-Optimized 400M，这关系到视觉塔取舍。
+
+1. 温度 t 与偏置 b 的初值：v3 专门澄清了 t 与 t'。千万级图文对时，b 的初值会让 sigmoid 近似退回 softmax 吗？
+2. 多语图文对中互译样本会被当成负例，SigLIP2 靠采样还是去重缓解？
+3. 224 输入下，Shape-Optimized 400M 该加宽还是加分辨率？
+
+谢谢！
+
+祝好，
+Yang Liu
