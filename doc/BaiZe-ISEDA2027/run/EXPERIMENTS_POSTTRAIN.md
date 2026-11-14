@@ -11481,3 +11481,38 @@ python3 复算：
 ### 5. 边界
 - 只读 attribution_3615_run1 落盘数据 + perquest_profile; 未改 benchmark/check.py/题面; 未碰 GPU0-7 / 运行中 eval / 别线文件; 未引用未跑完 run.
 - commit 前缀 posttrain attribution:.
+
+---
+
+## §R-Attribution-overnight（wake506 · 2026-11-14 23:30 · 隧道恢复 + runner 修复 + 归因链起跑）
+
+> 用户令 21:5x「出计划后直接执行，明早看结果」。wake505 因隧道 DOWN 标 HARD BLOCKED；wake506 隧道恢复后修复 runner 缺陷、释放被占 serve、起跑自治归因链。
+
+### 1. 隧道恢复（23:00 前）
+- wake505 记的 36.15 隧道 DOWN 已恢复：Windows 中继 `172.19.195.133` 的 `tunnel.ps1` 重新在线。`.17` 实测：端口 3333 监听；`ssh -p3333 app.e0031982@localhost` → 落地 `hfeg0tedaap02`(=10.251.36.15)；反向隧道 PID 1008898 (`-R 18096:localhost:8096`) + 正向沙盒隧道 PID 618469 (8664-8668) 均活；36.15 上 `curl localhost:18096/v1/models` → `minicpm5-2b-sft-v39-final` ✅。
+
+### 2. runner 缺陷修复（关键，否则 A3 无效）
+- **发现**：`run_cline_script.sh` **不读** `MCP_CFG`/`SANDBOX_ON` env（grep 全文无引用）——原 `bpt_attribution_ablation.sh` 的 `export MCP_CFG/SANDBOX_ON` 是 no-op。cline 的 MCP 来自 `CLI_DATA_DIR/settings/cline_mcp_settings.json`，`run_cli.sh` L37 读 `CLI_DATA_DIR` env、L85-101 把该 settings 复制进每个并行 worker 隔离目录。⇒ 原 runner 下 **A3（沙盒关）= A1（沙盒开）**，消融无效。
+- **修复**：ablation runner 改为按臂 stage 独立 `CLI_DATA_DIR`（`/tmp/posttrain_attribution_ablation/cli_data_<ARM>/settings/`），cp 基线 4 个 settings 文件后用 python3 改写 `cline_mcp_settings.json`：A0/A1=基线全开不改；**A3=`d.mcpServers.pop('eda_flow')`（沙盒真正关闭，保留 RAG:8090）**；A2=pyAether URL→`127.0.0.1:18888`。36.15 实测 A3 staged mcp：eda_flow 已移除、pyAether_MCP_server 保留 ✅。
+- **`-t` ID 格式核验**：`run_cline_script.sh` 的 `step_format_tasks` 用 `grep -oE '[0-9]+$'` 提取末尾数字 + `printf %03d` 补零 → bare `007` 与 full `EDA-Eval-PyAether-007` **均可用**。ablation 用 bare 40 IDs、dev-eval 用 split 的 full IDs，两者均兼容。
+- **并发 final_report 抓错防护**：36.15 上并发 ZhuLong subagent eval（写同 `EDA-Eval-Framework/output_evaluation/`）。两 runner 把 `ls -dt .../final_report.json|head -1`（newest，会抓错）改为 **pre/post 目录差集** `comm -13 <(PRE) <(POST)` 精确定位本臂产出目录。
+
+### 3. 资源冲突处置（按任务书「最新令优先」）
+- 36.15 baseline 5-run `bpt_eval.sh --run-all`（PID 1229657, 7h）正串行 run2→run5，独占 GPU6:8096（经 18096）。run2（PID 2747266）因 minicpm5 tool-call parser 乱码 → 大量 2500s 超时，2.7h 仅 41/158 出 .py，全程需 ~10h（ETA ~07:00）。
+- 21:5x 令（A1/A3+P0dev，最高优先）与 15:4x 令（5-run baseline）争同一 4-seq serve；并发会污染单变量消融数据（pass 率被争用压低，非变量效应）。
+- 按「最新用户令优先」+ run1=18.99% 已确立基线（5-run mean 可后补）：
+  - **kill `bpt_eval --run-all` chainer（PID 1229657）** → run3-5 不再启动；
+  - **kill run2 进程树**（2747266 timeout + 2747267 run_cline_script + 9 个 run_cli.sh workers + `pkill -f eda_code_eval/2026_1114_204151` 的 cline 子进程）释放 serve；
+  - **未碰** ZhuLong subagent A2（PID 2886626，providers.json 实测 `baseUrl=http://agi-gateway.cxmt.com/cloud/v1 model=deepseek-v4-pro-cloud`，走云不占 GPU6）。
+- 验证：run2 PID DEAD、无 204151 cline 残留、A2_ALIVE、GPU6 释放后由 A1 独占。
+
+### 4. 归因链起跑（自治，36.15 后台）
+- `bpt_attribution_overnight_chain.sh`（PID 3707027, setsid）—— wait-gate（poll `kill -0 2747266`，run2 死后通过）串行：**A1(40q) → A3(40q) → P0-baseline-dev(79q) → P0-p0-dev(79q)**，全 `-p 8 -n`，结果落 36.15 `/tmp/posttrain_attribution_{ablation,prompt}/`，log `/tmp/posttrain_attribution_overnight_chain.log`。
+- A1 已 23:30 起跑（run_cline_script PID 3728419，`-t 005,007,...,157` 40 IDs，staged MCP=基线全开 RAG+eda_flow，codegen.log 实见 task 005 生成 `is_polygon_convex` 真实代码），GPU6=98%（A1 独占）。
+- 预注册判据（spec §2，跑前定）：A3≈3% 且 A1≥12% ⇒「prompt 非主因，反馈回路是」；A1≤8% ⇒「prompt 是主因」；A1/A2 都降 ⇒ prompt×沙盒交互。P0 dev 门槛：≥+3pp 且 submit 报错率降 ≥10pp。
+- **ETA**：A1~00:15 / A3~01:15 / P0-base-dev~02:45 / P0-p0-dev~04:30 → 全链 ~05:00，远早于 09:00。结果由下一 wake 汇总 + 更新报告 + McNemar/bootstrap。
+
+### 5. 边界
+- 只在 36.15 上跑归因臂 + dev-eval；未改 benchmark/check.py/题面/不挑题；反作弊钩子随 cline harness 常开。
+- kill 的仅本线 baseline 5-run 进程（最新令优先，run1 基线已立）；未碰 GPU0-3 root / GPU4 base / GPU5 vision R9 / GPU7 R2 eval chain / ZhuLong subagent / 别线文件。
+- commit 前缀 posttrain attribution:。下一 wake 待链完读 36.15 `/tmp/posttrain_attribution_*/{A1,A3,baseline_dev,p0_dev}/final_report.json` 汇总。

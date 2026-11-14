@@ -52,15 +52,36 @@ chk "$CLI_DATA_DIR/settings/providers.json"; chk "$EDA_BASE/pyAether-eval/origin
 curl -s --max-time 8 "$MODEL_URL/models" >/dev/null 2>&1 || { echo "[FATAL] 模型端点 18096 不可达"; exit 1; }
 ARM_DIR="$RESULTS_DIR/$ARM"; mkdir -p "$ARM_DIR"
 export EDA_PROMPT_TEMPLATE_PYAETHER="$PROMPT_TPL"   # run_cline_script.sh L26 读此 env
-export CLI_DATA_DIR MCP_CFG SANDBOX_ON PYTHON="$VENV_PYTHON" EVAL_FW_DIR
+# --- per-arm MCP 暂存 (wake506 修复) ---
+# run_cline_script.sh 不读 MCP_CFG/SANDBOX_ON env; cline 的 MCP 来自 CLI_DATA_DIR/settings/cline_mcp_settings.json,
+# run_cli.sh L85-101 会把该文件复制进每个并行 worker 的隔离目录. 故按臂 stage 一个独立 CLI_DATA_DIR:
+#   A0/A1 = 基线 MCP(RAG:8090 + eda_flow:18891 全开, 不改); A2 = RAG->本地:18888; A3 = 移除 eda_flow(沙盒关).
+STAGE_DIR="$RESULTS_DIR/cli_data_${ARM}"
+rm -rf "$STAGE_DIR"; mkdir -p "$STAGE_DIR/settings"
+cp -f "$CLI_DATA_DIR/settings/cline_mcp_settings.json" "$STAGE_DIR/settings/" 2>/dev/null
+cp -f "$CLI_DATA_DIR/settings/providers.json"           "$STAGE_DIR/settings/" 2>/dev/null
+cp -f "$CLI_DATA_DIR/settings/models.json"              "$STAGE_DIR/settings/" 2>/dev/null
+cp -f "$CLI_DATA_DIR/settings/global-settings.json"     "$STAGE_DIR/settings/" 2>/dev/null
+MCP_FILE="$STAGE_DIR/settings/cline_mcp_settings.json"
+case "$ARM" in
+  A0|A1) : ;;  # 基线 MCP 全开, 不改
+  A2) python3 -c "import json,sys; p=sys.argv[1]; d=json.load(open(p)); d.setdefault('mcpServers',{})['pyAether_MCP_server']['url']='http://127.0.0.1:18888/mcp'; json.dump(d,open(p,'w'),indent=2,ensure_ascii=False)" "$MCP_FILE" ;;
+  A3) python3 -c "import json,sys; p=sys.argv[1]; d=json.load(open(p)); d.setdefault('mcpServers',{}).pop('eda_flow',None); json.dump(d,open(p,'w'),indent=2,ensure_ascii=False)" "$MCP_FILE" ;;
+esac
+echo "[arm $ARM] staged MCP ($MCP_FILE):"; cat "$MCP_FILE"
+export CLI_DATA_DIR="$STAGE_DIR" MCP_CFG SANDBOX_ON PYTHON="$VENV_PYTHON" EVAL_FW_DIR
 export PATH="$HOME/.local/bin:$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH"
 cd "$EDA_BASE"
 echo "[arm $ARM] code-gen+eval starting..."
+PRE_EVAL_DIRS=$(ls -d "$EVAL_FW_DIR/output_evaluation/"*/ 2>/dev/null | sort)
 BATCH_ID="attribution_${ARM}_$(date '+%Y_%m%d_%H%M%S')" \
   timeout --signal=TERM --kill-after=120 72000 \
   bash scripts/run_cline_script.sh -p 8 -n -b "$DATASET" -t "$TASKS_40" > "$ARM_DIR/codegen.log" 2>&1
 echo "[arm $ARM] done (rc=$?) $(date '+%F %T')"
-fr=$(ls -dt "$EVAL_FW_DIR/output_evaluation/"*/final_report.json 2>/dev/null | head -1)
-[ -n "$fr" ] && cp "$fr" "$ARM_DIR/final_report.json" && echo "[arm $ARM] final_report -> $ARM_DIR/final_report.json"
+# 36.15 上可能并发其它 eval (如 ZhuLong subagent) 写同目录; 用 pre/post 目录差集精确定位本臂产出的 final_report
+POST_EVAL_DIRS=$(ls -d "$EVAL_FW_DIR/output_evaluation/"*/ 2>/dev/null | sort)
+NEW_EVAL_DIR=$(comm -13 <(printf '%s\n' "$PRE_EVAL_DIRS") <(printf '%s\n' "$POST_EVAL_DIRS") | head -1)
+fr="${NEW_EVAL_DIR}final_report.json"
+[ -n "$NEW_EVAL_DIR" ] && [ -f "$fr" ] && cp "$fr" "$ARM_DIR/final_report.json" && echo "[arm $ARM] final_report -> $ARM_DIR/final_report.json (from $NEW_EVAL_DIR)"
 [ -f "$ARM_DIR/final_report.json" ] && grep -oE '\"pass_rate\"[: ]*[0-9.]+' "$ARM_DIR/final_report.json" | head -1 | sed "s/^/[arm $ARM] /" || echo "[arm $ARM] WARNING: 无 final_report"
 echo "===== arm $ARM done @ $(date '+%F %T') ====="

@@ -104,11 +104,15 @@ echo "  prompt_template=$DEPLOYED_TPL  model=$MODEL_ID @ $MODEL_URL  tasks=$NTAS
 [ $DRY_RUN = 1 ] && { echo "[dry-run] 不执行. tasks=$TASKS_CSV"; echo "[dry-run] 提示: 依次 --patch baseline --split dev (3 seed) 与 --patch p0 --split dev (3 seed) 对比; 门槛 +3pp & submit 报错率降 10pp."; exit 0; }
 cd "$EDA_BASE"
 echo "[$LABEL] code-gen+eval starting..."
+PRE_EVAL_DIRS=$(ls -d "$EVAL_FW_DIR/output_evaluation/"*/ 2>/dev/null | sort)
 BATCH_ID="attnprompt_${LABEL}_$(date '+%Y_%m%d_%H%M%S')" \
   timeout --signal=TERM --kill-after=120 72000 \
   bash scripts/run_cline_script.sh -p 8 -n -b "$DATASET" -t "$TASKS_CSV" > "$ARM_DIR/codegen.log" 2>&1
 echo "[$LABEL] done (rc=$?) $(date '+%F %T')"
-fr=$(ls -dt "$EVAL_FW_DIR/output_evaluation/"*/final_report.json 2>/dev/null | head -1)
-[ -n "$fr" ] && cp "$fr" "$ARM_DIR/final_report.json" && echo "[$LABEL] final_report -> $ARM_DIR/final_report.json"
+# 36.15 上可能并发其它 eval; 用 pre/post 目录差集精确定位本 patch 产出的 final_report
+POST_EVAL_DIRS=$(ls -d "$EVAL_FW_DIR/output_evaluation/"*/ 2>/dev/null | sort)
+NEW_EVAL_DIR=$(comm -13 <(printf '%s\n' "$PRE_EVAL_DIRS") <(printf '%s\n' "$POST_EVAL_DIRS") | head -1)
+fr="${NEW_EVAL_DIR}final_report.json"
+[ -n "$NEW_EVAL_DIR" ] && [ -f "$fr" ] && cp "$fr" "$ARM_DIR/final_report.json" && echo "[$LABEL] final_report -> $ARM_DIR/final_report.json (from $NEW_EVAL_DIR)"
 [ -f "$ARM_DIR/final_report.json" ] && grep -oE '\"pass_rate\"[: ]*[0-9.]+' "$ARM_DIR/final_report.json" | head -1 | sed "s/^/[$LABEL] /" || echo "[$LABEL] WARNING: 无 final_report"
 echo "===== $LABEL done @ $(date '+%F %T') ====="

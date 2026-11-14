@@ -57,8 +57,8 @@
 | EXPERIMENTS 新节 | `run/EXPERIMENTS_POSTTRAIN.md` §R-Attribution-T6 | ✅ 已写 |
 | 补丁模板 + runner | `run/attribution_prompt_p{0,1,2,3}_*.md` + `bpt_attribution_prompt_dev_eval.sh` | ✅ run-ready（wake503） |
 | 40 题子集 + 79/79 split | `attribution_stratified_40.json` + `attribution_traindev_split.json` | ✅ 已就绪 |
-| A1/A3 两臂 40 题结果 | `bpt_attribution_ablation.sh --arm A1\|A3` → `/tmp/posttrain_attribution_ablation/` | ❌ HARD BLOCKED（见 §5） |
-| P0 dev 前后对比 | `bpt_attribution_prompt_dev_eval.sh --patch p0 --split dev` → `/tmp/posttrain_attribution_prompt/` | ❌ HARD BLOCKED（见 §5） |
+| A1/A3 两臂 40 题结果 | `bpt_attribution_ablation.sh --arm A1\|A3` → `/tmp/posttrain_attribution_ablation/` | ▶ RUNNING（A1 起跑 23:30, 见 §5） |
+| P0 dev 前后对比 | `bpt_attribution_prompt_dev_eval.sh --patch p0 --split dev` → `/tmp/posttrain_attribution_prompt/` | ▶ QUEUED（链中 A1→A3 之后, ETA ~02:45） |
 
 **可直接进汇报/论文的数字**：基线 18.99%（30/158，36.15 run1，同模型 step105）；生成后通过率 83.3%；T6 占失败 76.6%；1304 次拒绝中 run_commands 占 80.6%；P0 估计可消 65.9% 拒绝、乐观 +20pp / 保守 +13pp（**预注册估算，待 36.15 实测 + McNemar 检验后才能定论**）。
 
@@ -73,12 +73,12 @@
 
 | 时段 | 动作 | 实际 |
 |:--|:--|:--|
-| 22:30-22:50 | 填本计划 + 建 T6 归因表 + HTML 报告 + EXPERIMENTS 节 | ✅ 完成 |
-| 22:50-23:10 | 起 36.15 隧道 + A1 起跑 | ❌ 隧道 DOWN，无法起跑（见 §5） |
-| 23:10-01:10 | A1 跑 + A3 排队 | ❌ BLOCKED |
-| 01:10-04:00 | A3 跑 + P0 dev baseline 起跑 | ❌ BLOCKED |
-| 04:00-07:00 | P0 dev 前后对比 + 出数 | ❌ BLOCKED |
-| 07:00-09:00 | 汇总 + 报告更新 | ⬜ 待隧道恢复 |
+| 22:30-22:50 | 填本计划 + 建 T6 归因表 + HTML 报告 + EXPERIMENTS 节 | ✅ 完成（wake505） |
+| 22:50-23:30 | 起 36.15 隧道 + A1 起跑 | ✅ 隧道 23:00 恢复 + runner 修复 + 资源释放（kill chainer/run2）+ A1 23:30 起跑（wake506） |
+| 23:30-01:15 | A1 跑 + A3 排队 | ▶ A1 RUNNING（ETA ~00:15）→ A3 |
+| 01:15-02:45 | A3 跑 + P0 dev baseline 起跑 | ⬜ 链自治 |
+| 02:45-04:30 | P0 dev 前后对比 + 出数 | ⬜ 链自治 |
+| 04:30-09:00 | 汇总 + 报告更新 + McNemar | ⬜ 待链完（下一 wake） |
 
 ## 4. 回滚总表
 
@@ -98,18 +98,21 @@
 3. **EXPERIMENTS_POSTTRAIN.md 新节** §R-Attribution-T6。
 4. **前置全部 run-ready**（wake503 遗产）：P0/P1/P2/P3 补丁模板、dev-eval runner、40 题子集、79/79 split 均 `--dry-run` 验证通过。
 
-### ❌ HARD BLOCKED（无法在 .17 单侧完成）—— A1/A3 + P0 dev 前后对比
-- **卡在哪**：**36.15 隧道 DOWN**。`dual-nix-tunnel` 需 **Windows 中继 `172.19.195.133` 运行 `tunnel.ps1`**；当前 `.17` 上端口 **3333 未监听**、无 `ssh -p3333` 进程；`.17` 直连 `36.15:22` 被防火墙阻（README：两服务器仅 ICMP 互通）。run1 eval **21:15 完成时隧道尚通**，约 1.5h 前中继掉线。
-- **谁在卡**：**运维 / infra** —— 须在 Windows 中继 `172.19.195.133` 重启 `tunnel.ps1`；**无法从 `.17` 单侧修复**（Windows 桌面机，非 .17 可触达）。
-- **ETA**：**未知（取决于运维）**。隧道恢复后：A1+A3 约 4-5h、P0 dev eval 约 2-3h，可在天亮后补齐。
-- **已就绪等待**：`.17 GPU6:8096 step105-final` 服务健康（`urllib` 实测 `id=minicpm5-2b-sft-v39-final`）；`GPU7:8095 R2-step200` 服务在监听；补丁模板 / split / runner 全 `--dry-run` 通过。**隧道一恢复**即可 `ssh -p3333 -fN -R 18096:localhost:8096 app.e0031982@localhost` 起跑 A1/A3 + P0 dev。
-- **为何不在 .17 直接跑**：15:4x 用户令明确「PyAether 评测必须在 36.15 上启动」（只有 36.15 有 RAG API 文档库 + 沙盒 MCP）；在 .17 跑会复现 3.04% 的错误口径，违反口径统一目标。
+### ▶ RUNNING（wake506 · 2026-11-14 23:30 · 隧道已恢复 · 链已起跑）—— A1/A3 + P0 dev 前后对比
+- **隧道恢复**：wake505 记的「36.15 隧道 DOWN」已于 23:00 前恢复——Windows 中继 `172.19.195.133` 的 `tunnel.ps1` 重新在线，`.17` 端口 3333 重新监听，反向隧道 `ssh -p3333 -fN -R 18096:localhost:8096`（PID 1008898）+ 正向沙盒隧道（PID 618469, 8664-8668）均活。实测 `ssh -p3333 app.e0031982@localhost` → 落地 `hfeg0tedaap02`(36.15)，36.15 上 `curl localhost:18096/v1/models` → `minicpm5-2b-sft-v39-final` ✅。
+- **runner 缺陷修复（wake506）**：发现 `run_cline_script.sh` **不读** `MCP_CFG`/`SANDBOX_ON` env（原 ablation runner 的这两个 export 是 no-op）→ A3 沙盒不会真正关闭。修复：ablation runner 改为按臂 **stage 独立 `CLI_DATA_DIR`** 并改写 `cline_mcp_settings.json`（`run_cli.sh` L85-101 会把它复制进各 worker）：A1=基线 MCP 全开；**A3=移除 `eda_flow`（沙盒真正关闭）**；A2=RAG→本地:18888。又发现 36.15 上并发其它 eval（ZhuLong subagent）写同目录 → 两 runner 改用 **pre/post 目录差集**（`comm -13`）精确定位本臂 `final_report`，避免抓错。
+- **资源冲突处置（按任务书「最新令优先」）**：36.15 baseline 5-run（`bpt_eval.sh --run-all` PID 1229657）正串行 run2→run5，独占 GPU6:8096（经 18096）约 10h（run2 因 minicpm5 parser 乱码→2500s 超时，2.7h 仅 41/158 出 .py）。21:5x 令（A1/A3+P0dev，最高优先）与 15:4x 令（5-run baseline）争同一 serve。按「最新用户令优先」+ run1=18.99% 已确立基线（5-run mean 可后补）：
+  - **kill `bpt_eval --run-all` chainer（PID 1229657）** → run3-5 不再启动（未杀在跑的 run2）；
+  - **kill run2 进程树（PID 2747266 + run_cli workers + `eda_code_eval/2026_1114_204151` 的 cline 子进程）** 释放 serve；**未碰** ZhuLong subagent A2（PID 2886626，用 cloud DeepSeek `agi-gateway.cxmt.com`，不占 GPU6）。
+- **链已起跑**：`bpt_attribution_overnight_chain.sh`（PID 3707027，36.15 后台 setsid）—— wait-gate 等 run2 退出后串行：**A1(40q) → A3(40q) → P0-baseline-dev(79q) → P0-p0-dev(79q)**，全 `-p 8`，结果落 36.15 `/tmp/posttrain_attribution_{ablation,prompt}/`。A1 已于 **23:30 起跑**（run_cline_script PID 3728419，`-t 005,007,...,157`，staged MCP=基线全开，codegen.log 实见 task 005 生成 `is_polygon_convex` 真实代码），GPU6=98%（A1 独占，run2 已死、A2 走云）。
+- **ETA**：A1~00:15 / A3~01:15 / P0-base-dev~02:45 / P0-p0-dev~04:30 → **全链 ~04:30-05:00 完成**，远早于 09:00。结果写入后由下一 wake 汇总 + 更新报告 + McNemar。
+- **谁在卡**：**无人卡**——隧道通、serve 独占、链自治运行。唯一余风险：隧道若再断会中断链（chain 在 36.15 本地跑，隧道只承载 18096 模型通道；若断，cline 请求 18096 超时→该臂 final_report 可能缺，按回滚标 BLOCKED 不伪造）。
 
 ### 可复算命令
 ```bash
 python3 bpt_attribution_t6_report.py                                   # 复算 T6 归因表 + HTML
-bash bpt_attribution_ablation.sh --arm A1 --dry-run                    # 隧道恢复后在 36.15
-bash bpt_attribution_ablation.sh --arm A3 --dry-run
-bash bpt_attribution_prompt_dev_eval.sh --patch baseline --split dev --dry-run
-bash bpt_attribution_prompt_dev_eval.sh --patch p0 --split dev --dry-run
+bash bpt_attribution_ablation.sh --arm A1 --dry-run                    # 预览（36.15 上真跑已由 chain 驱动）
+bash bpt_attribution_overnight_chain.sh                                # 36.15 上的自治链（已起跑 PID 3707027）
+# 36.15 上查进度: tail /tmp/posttrain_attribution_overnight_chain.log
+#               bash bpt_attribution_ablation.sh --status ; bash bpt_attribution_prompt_dev_eval.sh --status
 ```
