@@ -11765,3 +11765,15 @@ $ bash bpt_attribution_manual_rescue.sh --arm A1
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程。MEMORY 39.1KB（<40KB 硬限，下轮归档 wake517/518 降体积）。WAITING=0。
 
+
+## §R521-postmortem-arch（wake521, 2026-11-15 04:5x）— postmortem 十四度复核 + MEMORY 体积归档 + A3 rescue 后台启动
+
+**postmortem（🔴最高优先）**：报告 `reports/report_infra_tunnel_postmortem_zh.html` 在位（commit 375e11bf7 origin/main）。十四度复核 PASS：纪律实测 0 script / 0 外链 / 20496B；首屏三句话结论齐全（坏没坏=坏过已恢复 / 怎么坏=中继侧 tunnel.ps1 短时掉线 / 谁修=中继侧自愈非本线）；chips=最后通点 20:41:50 / 首断点 22:4x wake505 / 故障域 中继侧①+②。隧道三命令 04:5x 实测全 PASS：V1 `ss -ltnp|grep 3333`=LISTEN 127.0.0.1:3333；V2 `ssh -p3333`→hfeg0tedaap02+TUNNEL_OK；V3 反向隧道 18096→`minicpm5-2b-sft-v39-final`。三隧道进程活 618469/1008898/1278889。
+
+**MEMORY 体积维护**：wake515-520 内联长条（行 114-119）改为 1 行指针（原文已在 daily-memories-2026-11-15.md）⇒ MEMORY 39.1KB→33.3KB（<40KB 硬限）。归档不改结论。
+
+**A3 rescue 后台启动**：A3 bash(PID1040673, 03:56:37 起)持有旧脚本(pre-fix)⇒auto-rescue 必跳过。起后台 poll-and-rescue `/tmp/a3_rescue_poll.sh`(PID3787607, nohup)：每 75s 探测 relaunch515b.log `[A3] done`，命中后自动 `bash bpt_attribution_manual_rescue.sh --arm A3`（helper 幂等，已就位 36.15）。A3 codegen ETA~05:04。A3 干净数字待 rescue 完成记录。
+
+**R2 5-run**：run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE；run5 codegen RUNNING（38/158, GPU7:8095 健康, eval chain PID2322797 活）；4-run mean 0.475% << step105 3.04%±0.83 趋势负。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程。WAITING=0。
