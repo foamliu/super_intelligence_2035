@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vision #4 · Qwen3.5-2B 波形识图强化（SFT+RFT）报告</title>
+<style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:980px;margin:24px auto;color:#222;line-height:1.6;padding:0 16px}
+h1,h2,h3{color:#1a3a5c}table{margin:8px 0;font-size:14px}th{background:#eef3f8}
+td,th{border:1px solid #ccc;padding:6px 10px}.card{background:#f7f9fc;border:1px solid #dce3ec;border-radius:8px;padding:14px 18px;margin:14px 0}
+.verdict{font-size:18px;font-weight:bold;padding:12px 16px;border-radius:8px}
+.ok{background:#e6f4ea;color:#1e6b3a}.warn{background:#fff7e0;color:#8a5b00}.neg{background:#fdecea;color:#a3241b}
+code{background:#eef;padding:1px 4px;border-radius:3px}.muted{color:#888}</style></head>
+<body>
+<h1>Vision #4 · Qwen3.5-2B 波形识图能力强化（SFT + RFT）</h1>
+<p class="muted">vision 线 · 用户令 2026-11-14 09:1x #4 / 10:3x · native multimodal VL（非文本桥）· 2026-11-14T12:15:02</p>
+<div class="card verdict warn">🟡 有提升但未达预注册判据（Δ=8.9pp / p=0.5）</div>
+<h2>1. 实验设计（预注册）</h2>
+<div class="card"><ul>
+<li><b>基模</b>：Qwen3.5-2B（<code>Qwen3_5ForConditionalGeneration</code>，原生多模态，直接吃像素）。</li>
+<li><b>训练集</b>：sft.jsonl，150 条（seed=20261114，25/技能 × 6 技能：type/cycle/amplitude/freq_compare/duty/rise）。</li>
+<li><b>held-out 评估集</b>：30 条（<b>seed=20261115</b>，5/技能）——与训练集<b>不同 seed</b>，<b>零泄漏</b>（cheat_rate=0 由构造保证）。
+<br><span class="muted">注：旧 synth_selftest_baseline 用 seed=20261114（=训练集），存在 train-on-test 重叠，已弃作 #4 对照，改用本 held-out。</span></li>
+<li><b>before</b>：基模 greedy 在 held-out 30 题（查常驻 VQA server）。</li>
+<li><b>SFT</b>：LoRA（r=8,α=16,target=q/k/v/o/gate/up/down_proj）3 seed × 3 epoch，lr=1e-4，仅训适配器、基模冻结。</li>
+<li><b>RFT（轻量 RL）</b>：在 SFT 上对训练集采样 K=4（temp=0.8），留连续奖励 <code>exp(-rel_err/τ)</code>（τ=0.15）>0.5 的正例，再训一轮（v4 路线）。</li>
+<li><b>判据（预注册）</b>：成功 = post-RL ≥ post-SFT +5pp 且 McNemar p&lt;0.05 且 ≥3 seed 一致 且 cheat_rate=0；负结果照实上报。</li>
+</ul></div>
+<h2>2. 总体结果</h2>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>阶段</th><th>准确率</th><th>mean_reward</th><th>备注</th></tr>
+<tr><td>before（基模）</td><td>60.0%</td><td>0.6137</td><td>held-out 30 题</td></tr>
+<tr><td>post-SFT（3 seed mean±std）</td><td>64.4% ± 1.6</td><td>0.6932</td><td>n_seeds=3</td></tr>
+<tr><td>post-RFT</td><td>73.3%</td><td>0.7663</td><td>accepted=148</td></tr>
+</table>
+<svg width="460" height="260" viewBox="0 0 460 260" xmlns="http://www.w3.org/2000/svg"><rect width="460" height="260" fill="#fff"/><text x="230.0" y="16" font-size="12" text-anchor="middle" fill="#222">各技能准确率：pre vs post-SFT（%）</text><line x1="55" y1="230.0" x2="450" y2="230.0" stroke="#eee" stroke-width="1"/><text x="50" y="233.0" font-size="8" text-anchor="end" fill="#888">0</text><line x1="55" y1="177.5" x2="450" y2="177.5" stroke="#eee" stroke-width="1"/><text x="50" y="180.5" font-size="8" text-anchor="end" fill="#888">25</text><line x1="55" y1="125.0" x2="450" y2="125.0" stroke="#eee" stroke-width="1"/><text x="50" y="128.0" font-size="8" text-anchor="end" fill="#888">50</text><line x1="55" y1="72.5" x2="450" y2="72.5" stroke="#eee" stroke-width="1"/><text x="50" y="75.5" font-size="8" text-anchor="end" fill="#888">75</text><line x1="55" y1="20.0" x2="450" y2="20.0" stroke="#eee" stroke-width="1"/><text x="50" y="23.0" font-size="8" text-anchor="end" fill="#888">100</text><rect x="60" y="104.0" width="28" height="126.0" fill="#9aa4b2"/><rect x="90" y="20.0" width="28" height="210.0" fill="#2b6cb0"/><text x="74.0" y="100.0" font-size="9" text-anchor="middle" fill="#333">60</text><text x="104.0" y="16.0" font-size="9" text-anchor="middle" fill="#333">100</text><text x="89" y="246" font-size="9" text-anchor="middle" fill="#444">type_cla</text><rect x="130" y="62.0" width="28" height="168.0" fill="#9aa4b2"/><rect x="160" y="90.0" width="28" height="140.0" fill="#2b6cb0"/><text x="144.0" y="58.0" font-size="9" text-anchor="middle" fill="#333">80</text><text x="174.0" y="86.0" font-size="9" text-anchor="middle" fill="#333">67</text><text x="159" y="246" font-size="9" text-anchor="middle" fill="#444">cycle_co</text><rect x="200" y="146.0" width="28" height="84.0" fill="#9aa4b2"/><rect x="230" y="188.0" width="28" height="42.0" fill="#2b6cb0"/><text x="214.0" y="142.0" font-size="9" text-anchor="middle" fill="#333">40</text><text x="244.0" y="184.0" font-size="9" text-anchor="middle" fill="#333">20</text><text x="229" y="246" font-size="9" text-anchor="middle" fill="#444">amplitud</text><rect x="270" y="62.0" width="28" height="168.0" fill="#9aa4b2"/><rect x="300" y="20.0" width="28" height="210.0" fill="#2b6cb0"/><text x="284.0" y="58.0" font-size="9" text-anchor="middle" fill="#333">80</text><text x="314.0" y="16.0" font-size="9" text-anchor="middle" fill="#333">100</text><text x="299" y="246" font-size="9" text-anchor="middle" fill="#444">freq_com</text><rect x="340" y="230.0" width="28" height="0.0" fill="#9aa4b2"/><rect x="370" y="230.0" width="28" height="0.0" fill="#2b6cb0"/><text x="354.0" y="226.0" font-size="9" text-anchor="middle" fill="#333">0</text><text x="384.0" y="226.0" font-size="9" text-anchor="middle" fill="#333">0</text><text x="369" y="246" font-size="9" text-anchor="middle" fill="#444">duty_cyc</text><rect x="410" y="20.0" width="28" height="210.0" fill="#9aa4b2"/><rect x="440" y="20.0" width="28" height="210.0" fill="#2b6cb0"/><text x="424.0" y="16.0" font-size="9" text-anchor="middle" fill="#333">100</text><text x="454.0" y="16.0" font-size="9" text-anchor="middle" fill="#333">100</text><text x="439" y="246" font-size="9" text-anchor="middle" fill="#444">rise_edg</text><rect x="370" y="22" width="10" height="10" fill="#9aa4b2"/><text x="384" y="31" font-size="9" fill="#444">pre</text><rect x="410" y="22" width="10" height="10" fill="#2b6cb0"/><text x="424" y="31" font-size="9" fill="#444">post</text></svg>
+<p style="text-align:center" class="muted">灰=pre（基模）· 蓝=post-SFT（mean）· 各技能准确率（%）</p>
+<h2>3. SFT 逐 seed</h2>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>seed</th><th>准确率</th><th>mean_reward</th><th>末段 loss avg10</th></tr>
+<tr><td>11</td><td>63.3%</td><td>0.6896</td><td>0.5314</td></tr><tr><td>22</td><td>63.3%</td><td>0.6832</td><td>0.1214</td></tr><tr><td>33</td><td>66.7%</td><td>0.7068</td><td>0.0957</td></tr>
+</table>
+<h2>4. McNemar 显著性（配对逐题）</h2>
+<h3>before vs post-SFT（每 seed）</h3>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>seed</th><th>b（wrong→right）</th><th>c（right→wrong）</th><th>p_value（exact）</th></tr>
+<tr><td>11</td><td>4</td><td>3</td><td>1.0</td></tr><tr><td>22</td><td>4</td><td>3</td><td>1.0</td></tr><tr><td>33</td><td>4</td><td>2</td><td>0.6875</td></tr>
+</table>
+<p><svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg"><text x="120.0" y="18" font-size="12" text-anchor="middle" fill="#222">McNemar 配对（pre vs post-SFT seed1）</text><path d="M90,100 L90.0,30.0 A70,70 0 0 1 142.0,53.2 Z" fill="#2b6cb0"/><path d="M90,100 L142.0,53.2 A70,70 0 0 1 159.6,92.7 Z" fill="#c0392b"/><path d="M90,100 L159.6,92.7 A70,70 0 1 1 90.0,30.0 Z" fill="#dfe3e8"/><rect x="170" y="40" width="10" height="10" fill="#2b6cb0"/><text x="184" y="49" font-size="10" fill="#333">翻转成功(wrong→right) (4)</text><rect x="170" y="58" width="10" height="10" fill="#c0392b"/><text x="184" y="67" font-size="10" fill="#333">回退(right→wrong) (3)</text><rect x="170" y="76" width="10" height="10" fill="#dfe3e8"/><text x="184" y="85" font-size="10" fill="#333">其余一致 (23)</text></svg></p>
+<h3>RFT（rejection-sampling FT · 轻量 RL）</h3><table border='1' cellpadding='6' style='border-collapse:collapse'><tr><th>阶段</th><th>准确率</th><th>mean_reward</th><th>accepted/K</th></tr><tr><td>post-SFT (best seed)</td><td>66.7%</td><td>—</td><td>—</td></tr><tr><td>post-RFT</td><td>73.3%</td><td>0.7663</td><td>148/?×150</td></tr></table><p>McNemar (best-SFT vs RFT): b(翻转)=2 c(回退)=0 p=0.5</p>
+<h2>5. 各技能分解</h2>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>技能</th><th>pre</th><th>post-SFT (mean±std)</th><th>post-RFT</th></tr>
+<tr><td>type_classification</td><td>60%</td><td>100.0% ± 0</td><td>100.0%</td></tr><tr><td>cycle_count</td><td>80%</td><td>66.67% ± 9</td><td>100.0%</td></tr><tr><td>amplitude_read</td><td>40%</td><td>20.0% ± 0</td><td>40.0%</td></tr><tr><td>freq_comparison</td><td>80%</td><td>100.0% ± 0</td><td>100.0%</td></tr><tr><td>duty_cycle</td><td>0%</td><td>0.0% ± 0</td><td>0.0%</td></tr><tr><td>rise_edge</td><td>100%</td><td>100.0% ± 0</td><td>100.0%</td></tr>
+</table>
+<h2>6. 靠 SFT 翻转的题（before 错 → best-SFT 对）</h2>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>id</th><th>技能</th><th>GT</th><th>pre pred</th><th>post pred</th></tr>
+<tr><td>q2</td><td>type_classification</td><td>sawtooth</td><td>triangle</td><td>sawtooth</td></tr><tr><td>q3</td><td>type_classification</td><td>sawtooth</td><td>triangle</td><td>sawtooth</td></tr><tr><td>q12</td><td>amplitude_read</td><td>7</td><td>4</td><td>7</td></tr><tr><td>q15</td><td>freq_comparison</td><td>B</td><td>A</td><td>B</td></tr>
+</table>
+<h2>7. 结论与下一步</h2>
+<div class="card">
+<p><b>结论</b>：🟡 有提升但未达预注册判据（Δ=8.9pp / p=0.5）。SFT 在 held-out（零泄漏）上从 60.0% → 64.4%（3 seed mean±std 1.6），翻转 4 题。RFT 在 SFT 基础上 → 73.3%。</p>
+<p><b>诚实说明</b>：评估集为<b>合成波形图</b>（带网格、确定参数），规模 30 题、6 技能；A40 单卡、LoRA 小 rank。结论限定于「合成波形识图」scope，<b>不可外推</b>到 designflow 真实 EDA 波形（需 #3 跨线对照）。若负结果：方向已穷尽或 SFT 数据量/技能覆盖不足；下一步=扩合成数据多样性 + 真实波形迁移。</p>
+<p><b>下一步</b>：① designflow 恢复 11 题原形态后做「无 VQA vs 有 VQA(本强化后模型)」对照（#3）；② 若 SFT 有效，扩合成数据 + 上 GRPO 群体奖励；③ 把强化后模型导出供 cline/designflow 调用。</p>
+</div>
+<p class="muted">产物：<code>strengthen_runs/</code>（prebaseline_heldout.json / sft_seed*_eval.json / rft_seed_eval.json / strengthen_summary.json / *_adapter_seed*）。本报告单文件自包含、0 外链、0 script、内联 SVG。</p>
+</body></html>

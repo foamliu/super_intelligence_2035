@@ -1,5 +1,13 @@
 WAITING: 0
 
+> 🆕 **【wake #1209 · 2026-11-14 12:1x】用户令 09:1x #4 强化波形识图能力 ✅ 已交付（SFT+RFT，合成波形 held-out，诚实结果：有提升但未达预注册判据）**：
+> - **做了什么**：`vision/vqa_tool/sft_rl_strengthen.py`（LoRA r=8/α=16，3 seed×3 epoch SFT + rejection-sampling FT 轻量 RL）。训练集 150 条（seed=20261114，25/技能×6 技能）；**held-out 评估集 30 条 seed=20261115≠训练 seed → cheat_rate=0 由构造保证**（旧 synth_selftest_baseline 用训练 seed 有重叠，已弃作对照）。
+> - **结果（同口径 before/SFT/RFT）**：before 60.0%(n=30) → post-SFT 64.4%±1.6(3 seed: 63.3/63.3/66.7) → post-RFT 73.3%(accepted=148)。**McNemar 逐题配对**：pre-vs-SFT b=4/c=3 p=1.0(seed11,22)、b=4/c=2 p=0.6875(seed33)；SFT-vs-RFT b=2/c=0 p=0.5。**判据（预注册 post-RL≥post-SFT+5pp 且 p<0.05 且 ≥3seed 且 cheat=0）**：🟡 Δ=8.9pp 达 +5pp 但 **p=0.5 不显著 → 未达判据**，诚实负向结果上报。
+> - **技能分解**：type_cls 60→100、freq_cmp 80→100、rise 100→100（已饱和）；cycle 80→66.7(SFT)→100(RFT·RFT 修复)；amplitude 40→20（SFT 反降）、duty 0→0（能力缺口未解）。**SFT 翻转 4 题**（q2/q3 sawtooth、q12 amplitude=7、q15 freq=B）。
+> - **产物**：`vision/vqa_tool/strengthen_runs/`（prebaseline_heldout/sft_seed{11,22,33}_eval/rft_seed_eval/sft_summary/strengthen_summary JSON + *_adapter）✅ 已随 a6a05112 提交；**中文 HTML 报告** `reports/report_vision_vqa_strengthen_zh.html`（单文件/0外链/0script/内联SVG）本轮提交。结论限定「合成波形识图」scope，**不可外推**到 designflow 真实 EDA 波形（需 #3 跨线对照）。
+> - **#3 进展**：origin 新增 designflow shard D commit a32ac0d62「WAVEVIEW α4 TempSelWaveform-001 image-required restore（PNG 替换 .tbl 文本替身，baseline FAIL no-multimodal）」——**#2 依赖链开始解锁**，designflow 已在恢复原形态。#3 后半（无VQA vs 有VQA 对照）待 designflow 跑完 11 题新基线后接上。
+> - **git**：fetch→ahead1/behind3→`pull --rebase --autostash`（不卷入 `?? outputs/` posttrain 在途与 `M BaiZe-NeurIPS2027/main.pdf` wake#1207 论文遗留）→add 明确路径(报告+MEMORY+daily)→commit(`vision rl:`)→push。**WAITING: 0**。
+
 > 🆕 **【wake #1208 · 2026-11-14 11:1x】用户令 10:3x「立即可做」两项交付：#3 VQA tool 封装 + #4 合成数据管线/自测基线**：
 > - **#3 前半（✅ 已交付·已验证）**：Qwen3.5-2B 封装为 VQA tool（原生多模态 VL，**非**文本桥）。`vision/vqa_tool/`：`qwen35_vqa_server.py`（HTTP 常驻，GPU5:30001，已 live·health ready·load 2.6s）+ `qwen35_vqa_client.py`（cline 薄 CLI）+ `baseline_waveform_vqa.py`（手作基线 n=9 acc=0.5556）+ README。**单题样例跑通**：`qwen35_vqa_client.py --image sine_2cyc.png -q 'how many cycles?'` → `{"ok":true,"answer":"2","elapsed_s":0.202}`。
 > - **#4（✅ 管线+自测基线已交付）**：新增 `vision/vqa_tool/synth_waveform_qa.py`——确定性（seed 固定）合成管线：6 识图技能(type/cycle/amplitude/freq_compare/duty/rise)×带网格图→`sft.jsonl`(150 条 Qwen3.5-2B VL 多模态 chat 记录)+`dataset_meta.json`；RL 奖励预注册(回归 exp(-rel_err/tau) τ=0.15 + 二值 + group_std 零信号检测 + 预注册判据 post-RL≥post-SFT+5pp/McNemar p<0.05/3seed/cheat_rate=0)。**自测基线** `synth_selftest_baseline.json`：n=12 acc=0.5833 mean_reward=0.6257——type/freq/rise 1.0✅，cycle 0.5🟠，amplitude 0.0/duty 0.0🔳（缺口稳定可复现，与手作基线一致，正是 #4 SFT/RL 要攻的）。图像可由脚本再生→gitignore。
@@ -7,13 +15,7 @@ WAITING: 0
 > - **#3 后半/#4 训练（⏳ 依赖链·未完成）**：需 designflow 恢复 11 题原形态跑无多模态新基线（designflow shard D 已认领，见 origin commit ed318ff40/3186781be）→ 再上 VQA 对比；#4 SFT/RL 强化待起（合成数据+奖励已就绪，LoRA 栈已验过）。
 > - **git**：behind20(designflow/pretrain 活跃)→pull --rebase --autostash→add 明确路径(vqa_tool 新文件+README+MEMORY+daily)→commit(`vision vqa:`)→push。不卷入 `?? outputs/`(posttrain 在途)与 `M BaiZe-NeurIPS2027/main.pdf`(wake#1207 论文遗留)。**WAITING: 0**。
 
-> 🆕 **【wake #1207 · 2026-11-14 09:5x】用户令 09:1x 四件事之 #1 NeurIPS §6 刷新已交付 + 09:5x 口径变更已并入 + #2 交底清单已出**：
-> - **#1 论文刷新（✅ 已交付·已编译验证）**：重写 `BaiZe-NeurIPS2027/NeurIPS2027/6_domain_rl.tex`（§Semiconductor Domain Adaptation → §Domain Adaptation: Waveform Understanding as a Probe Skill），**脱掉 [TBD]**，填入真实结果——v5 typecls A16%→B37%→C53% McNemar p=0.0009（唯一显著正结果）+ v6(40% NS)/v7(49.3%±6.4% 6/6判据但McNemar NS)/v8(52.5%±6.1% MIXED)/v9(no change)/v10(NS)/v11(NO GENERATIVE ADVANTAGE 负结果) 七轮表 + advantage 方差诊断(73%全同档=无信号根因) + waveview 审计(37题/30failed/α=4(13.3%)/α+β≈36%)。同步更新 0_abstract/1_intro/3_architecture(status: design→CPU pilot)/7_conclusion 去 [TBD]。新增真实可查引用(LoRA 2106.09685 / DeepSeekMath-GRPO 2402.03300 / STaR 2203.14465 / ReST 2312.06585)。**编译 0 error·0 [TBD]·0 undefined cite/ref·6 页 PDF**（pdflatex×3+bibtex 全 exit 0）。未编造文献；cimi-search 网搜在本 shell 不可用，故只引已验证基础方法，未杜撰 2026 前沿。
-> - **09:5x 口径变更已并入**：读 BAIZE_VISION_TASK.md 09:5x 令（designflow 不再降级多模态题，需看图题恢复原形态，无多模态能力者 fail 是正确行为，以「基线fail→上VQA后pass」差值度量增益）。据此**修订 §6「Where vision would actually help」段**：原「ceiling is modest」前提（基于降级版）已过时，改为「图像通道天花板须在纠正后基准上重测，α/β 用例为多模态增益度量基底」。🚫 不再基于降级后数据下结论。
-> - **#2 交底清单（✅ 已出）**：`reports/waveview_need_image_handoff.md`——从 waveview 报告提取 α4+β7=**11 题「原意图需看图」**用例（含 case_id + trace_deepreads 笔记路径 + 原意图 + 为何需看图），交底给 designflow 据此恢复原形态并跑新基线。γ 26 题不恢复。
-> - **#3/#4（依赖链·未完成·已排队）**：#3 封装 Qwen3.5-2B 为 VQA tool 给 cline + designflow 二次评测对比；#4 合成/SFT/RL 强化识图。二者依赖 #2 designflow 恢复结果，且 #4 的「显著提升」核心（v5 p=0.0009）已有先验。本 session 单 agent 无法跨线驱动 designflow 实跑，已记为下一步；不擅自改 designflow 任务书（按边界铁律，跨线只在本线 MEMORY 记一行+交底清单）。
-> - **git**：fetch→behind11→`pull --rebase --autostash` 撞他线 stale rebase-apply（posttrain cline 活跃）→他线并发已把 HEAD ff 至 origin/main(4eb378828) 并清掉 rebase-apply→0/0 up-to-date，本线论文改动保留为 unstaged。本轮 add 明确路径（论文 6 tex+bib+pdf + handoff + MEMORY + daily）→commit(`vision rl:`)→push。
-> - **⚠️ idle-spin 告警解除**：本轮有实质交付（§6 刷新+交底清单），非空转。**WAITING: 0**。
+> 📦 **wake #1207 · 2026-11-14 09:5x** 用户令 09:1x #1 NeurIPS §6 刷新✅(脱[TBD]·填真实结果·编译0error/6页)+09:5x口径变更并入+#2交底清单✅(α4+β7=11题)·已fold(见 wake#1209·详情 daily-memories-vision/2026-11-14.md)。
 
 > 🆕 **【wake #1206 · 2026-11-14 08:5x】waveview failed 识图可解性分析报告已交付（用户令 2026-11-14 08:4x）**：
 > - **waveview分析**: 相关=37题 failed=30 · α=4(13.3%) β=7 γ=19 · 结论=识图可解比例 α/N=13.3%（保守10%~乐观43%）· 报告已出。
