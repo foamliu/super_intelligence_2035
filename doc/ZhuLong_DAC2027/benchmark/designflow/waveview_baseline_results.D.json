@@ -191,8 +191,52 @@
         "beta6 (D, unbanked, build case then restore)",
         "B-domain alpha2/beta7 -> handoff to shard B"
       ]
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+      "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+      "shard": "D",
+      "date": "2026-11-14",
+      "round": "r653",
+      "restoration_summary": {
+        "original_degradation": "B-grade synthesized tool-scripting task: agent wrote a WaveView ACE Tcl script that programmatically classifies FSDB signals (digital/analog/edges/histogram) -- a text/tool-scripting task a text-only model can pass without any image; the original visual-reasoning intent (look at waveform, classify + explain function by eye) was lost",
+        "restored_form": "SUT reads wv_sigs_A.png (5 stacked mixed-signal traces: clk periodic square / rst_n reset / data multi-level bus / vref analog ramp / sel selector pulses, no data labels), classifies each signal (type/n_transitions/function/period_ns/duty/vmin/vmax/n_pulses/n_levels) FROM THE IMAGE, delivers wv_report.json",
+        "text_substitute_removed": [
+          "signals_A.txt (signal name list)",
+          "hidden/hidden_manifest.json",
+          "FSDB path + Tcl-script deliverable (replaced by image-answer deliverable)"
+        ],
+        "image_assets_added": [
+          "wv_sigs_A.png (1500x1200, 41KB, visible A, matplotlib on .75 from known waveform params)",
+          "hidden/wv_sigs_B.png (1500x1200, 39KB, hidden B: clk period 1.25ns/duty 0.2, rst_n rise @2.5ns, data 5 levels, vref ramp 0.2->0.8, sel 3 pulses; anti-hardcode provenance)"
+        ],
+        "figure_generation": "matplotlib (Agg) on .75 sandbox (eda_flow run_commands), 5 stacked subplots shared time axis [0,10ns], step+ramp drawing, no data labels (read from axes); 1500x1200 @150dpi",
+        "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess reconstructing the A waveform from embedded params and numerically measuring transitions/period/duty/levels (satisfies §4.2 真跑) + read-tolerances (n_trans ±1, period ±0.25ns, duty ±0.12, vmin/vmax ±0.07, n_pulses/n_levels exact) + anti-hardcode-B-token guard (reject B's period 1.25/vmin 0.2/vmax 0.8/n_pulses 3/n_levels 5) + cross-field self-consistency (vmin<vmax, clk n_trans even, rst_n n_trans<=2, data n_levels>=2); k_rationale==k_check==12",
+        "self_verification": "REF PASS 12/12; 14 negatives all FAIL (NEG_RC=0, 11 distinct fake_* first_fails covering b-l); §4.9 degradation (empty/stub-allzero/core-deleted) all FAIL",
+        "contract_adaptation": "answer-deliverable design replaces §4.1/§4.2 candidate-script-runs-on-hidden-B with oracle-recomputed-via-subprocess + anti-hardcode-B guard + self-consistency; hidden B image kept for provenance, NOT in SUT sandbox; L2 tool-scripting form (real wv subprocess) preserved in git history pre-r653",
+        "note": "β8 WaveView-002 was structurally an L2 wv-subprocess tool-scripting case; restoration to image-required form converts it to answer-deliverable per WAVEVIEW collaboration goal (measure multimodal gain). A text-only model CAN pass the old form (writes Tcl, no image) so it did not serve multimodal measurement; restored form forces image reading."
+      },
+      "baseline": {
+        "harness": "cline v3.0.51",
+        "model": "minicpm5-2b-sft-v39-final (2B text-only SFT surrogate, NO multimodal)",
+        "thinking": "low",
+        "dur_sec": 9,
+        "cline_exit": 0,
+        "verdict": "FAIL",
+        "fail_mode": "did-not-engage",
+        "fail_detail": "no submit.zip produced; 60 session msgs, model never read wv_sigs_A.png (png/wv_sigs terms=0), never produced wv_report.json (wv_report/submit terms=0), never opened eda_flow session (eda_flow=0); only generic read_file(2)/write(2) exploration then exited",
+        "correctness": "FAIL is the CORRECT baseline -- a text-only model cannot read the image; aligns with user 09:5x order '无多模态能力者 fail 是正确结果'",
+        "agentic_capacity_caveat": "2B SFT surrogate FAIL mixes 'model capacity insufficient to engage' with 'image-blind'; for cleaner multimodal-gain attribution vision should use a stronger no-multimodal model (#3 对照)"
+      },
+      "restored_count_running": 4,
+      "restored_so_far": [
+        "α1 EyeApertureSelect-001",
+        "β9 WaveMaxFind-001",
+        "α4 TempSelWaveform-001",
+        "β8 WaveView-002"
+      ]
     }
   ],
-  "last_updated": "2026-11-14 r651",
-  "restored_count": 2
+  "last_updated": "2026-11-14 r653",
+  "restored_count": 4
 }

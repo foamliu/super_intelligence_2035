@@ -130,5 +130,19 @@ check.py 无法直接验「agent 看了图」，只能验 deliverable 文本答�
 - **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。结果落 eval/status.jsonl + designflow/waveview_baseline_results.D.json（α4 段追加）。
 - **判分隔离**：SUT workdir 只放 prompt.txt + sel_wave_A.png + task_brief.md（PreToolUse hook 验证无 check.py/reference/hidden 泄漏, hook_blocks=0）；判分在独立 judge dir 跑。
 
+### β8 WaveView-002 — ✅ 已恢复原形态 + 基线已跑（r653, 2026-11-14）
+
+- **恢复完成**：移除原 L2 工具脚本形态（FSDB 路径 + signals_A.txt 信号清单 + Tcl-script 交付件 + hidden/hidden_manifest.json），改用 matplotlib 在 .75 沙盒从已知波形参数生成的真数据图 PNG（wv_sigs_A.png：5 路堆叠混合信号 [0,10ns]——clk 周期方波(period 2.0ns/duty 0.2/n_trans 10) / rst_n 复位(n_trans 1) / data 多电平总线(n_trans 3/n_levels 4) / vref 模拟斜坡(vmin 0/vmax 1.0) / sel 选择器脉冲(n_trans 4/n_pulses 2)，无数据标签，需从坐标轴读数；hidden/wv_sigs_B.png 同构异值——clk period 1.25ns/duty 0.2, rst_n rise@2.5ns, data 5 levels, vref ramp 0.2→0.8, sel 3 pulses，39KB，provenance + 反硬编码）。
+- **结构转换说明**：β8 原为 L2 wv-subprocess 工具脚本 case（候选写 WaveView ACE Tcl 脚本，check.py 真跑 wv 在隐藏 FSDB B 上分类信号）——纯文本模型可写 Tcl 通过，**不服务于多模态增益度量**。恢复为 image-required answer-deliverable 形态（WAVEVIEW 协作目标），原 L2 形态保留在 r653 之前的 git 历史。
+- **prompt 改写**：要求 agent 直接看图对 5 个信号逐个判断 type/n_transitions/function/period_ns/duty/vmin/vmax/n_pulses/n_levels，交付 wv_report.json（不再是 Tcl 脚本）。明示"不要尝试用脚本解析图中的原始数据点"。
+- **check.py 重写**：12 条件 (a)-(l)，answer-validation 设计——oracle 由 subprocess 从 embedded A 波形参数重建波形并数值测量 transitions/period/duty/levels（满足 §4.2 真跑）；值条件 (d)-(k) 用读图容差（n_trans ±1, period ±0.25ns, duty ±0.12, vmin/vmax ±0.07, n_pulses/n_levels 精确）；(l) 反硬编码拒 B 特征字面量(period 1.25/vmin 0.2/vmax 0.8/n_pulses 3/n_levels 5) + 跨字段自洽(vmin<vmax、clk n_trans 偶数、rst_n n_trans≤2、data n_levels≥2)。
+- **契约适配（metadata.restoration_notes 记录）**：answer-deliverable 设计下 §4.1/§4.2 candidate-script-on-hidden-B 替换为 oracle-recomputed-via-subprocess + anti-hardcode-B-token guard + cross-field self-consistency；hidden B 图保留作 provenance + 反硬编码。
+- **自验**：REF PASS 12/12；14 negative 全 FAIL（NEG_RC=0，11 个 fake_* first_fail 覆盖 b-l 各异）；§4.9 退化回归(empty/stub_allzero/core-deleted)全 FAIL。
+- **断言闸门**：k_rationale==k_check==12 ≥ 8 ✓。
+- **jsonl 更新**：EDA-Eval-DesignFlow_D.jsonl 中该 case 替换为 restored form（attachments=[wv_sigs_A.png, task_brief.md], image_required=true, track=synthesized-image-restored, restoration notes, k=12, check_sha=c9ed69e6b4）。D.jsonl 仍 377 条（恢复=替换非新增）。
+- **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。结果 9s, exit=0, **FAIL（正确）**：未产出 submit.zip；60 session msgs，模型从未读 wv_sigs_A.png（png/wv_sigs terms=0）、从未产出 wv_report.json、从未开 eda_flow session，仅 generic read_file/write 探索后退出 → **did-not-engage** 失败模式。**无多模态 fail 是正确基线**。结果落 designflow/cline_eval_status_D.jsonl + designflow/waveview_baseline_results.D.json（β8 段追加, restored_count=4: α1+β9+α4+β8）。
+- **判分隔离**：SUT workdir 只放 prompt.txt + wv_sigs_A.png + task_brief.md（PreToolUse hook + run_one.sh leak 自检验证无 check.py/reference/hidden 泄漏）；判分在独立 judge dir 跑。
+
 ### 待恢复（下轮起）
-β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 2 题）+ β8 WaveView-002（D 域已落库, r508 召集人 A 裁定归属 D）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 5 题。B 域 α2/β7 移交 shard B；β5 未落库（vision 误抄, 非恢复范围）。
+β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 2 题）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 4 题。B 域 α2/β7 移交 shard B；β5 未落库（vision 误抄, 非恢复范围）。
+> ⚠️ **β10 TempThreshChar-001 已知半恢复破损态**：commit 754f8fd6（shard D, 2026-11-14 12:59）已把 assets 替换为 PNG（thresh_char_A.png + hidden/thresh_char_B.png）并删旧文本资产，但 D.jsonl test 字段仍是旧 FineSim subprocess 形态、reference/ 无 check.py、negative/ 为空——**当前 case 不可运行**。下轮恢复 β10 时需：写 image-form check.py + 更新 D.jsonl test/prompt/attachments + 建 negatives，且需重新生成 PNG（现 PNG 无生成参数记录，oracle 不可写）或反推参数。
