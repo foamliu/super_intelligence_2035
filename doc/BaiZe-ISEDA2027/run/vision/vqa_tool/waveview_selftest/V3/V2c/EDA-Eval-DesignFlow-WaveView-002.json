@@ -1,0 +1,231 @@
+{
+ "arm": "V2c",
+ "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+ "tag": "β8",
+ "tier": "C",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+ "verdict": "FAIL",
+ "k_pass": 9,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "clk_type",
+   "pass": true,
+   "got": "digital_square",
+   "gold": "digital_square",
+   "tol": 0
+  },
+  {
+   "name": "clk_period",
+   "pass": false,
+   "got": 10.0,
+   "gold": 1.0,
+   "tol": 0.25
+  },
+  {
+   "name": "clk_duty",
+   "pass": false,
+   "got": 0.75,
+   "gold": 0.5,
+   "tol": 0.12
+  },
+  {
+   "name": "rst_n_type",
+   "pass": true,
+   "got": "digital_reset",
+   "gold": "digital_reset",
+   "tol": 0
+  },
+  {
+   "name": "data_type",
+   "pass": true,
+   "got": "digital_bus",
+   "gold": "digital_bus",
+   "tol": 0
+  },
+  {
+   "name": "data_n_levels",
+   "pass": false,
+   "got": 2.0,
+   "gold": 3,
+   "tol": 0
+  },
+  {
+   "name": "vref_type",
+   "pass": true,
+   "got": "analog_ramp",
+   "gold": "analog_ramp",
+   "tol": 0
+  },
+  {
+   "name": "vref_vmin",
+   "pass": true,
+   "got": 0.2,
+   "gold": 0.2,
+   "tol": 0.07
+  },
+  {
+   "name": "vref_vmax",
+   "pass": true,
+   "got": 0.8,
+   "gold": 0.8,
+   "tol": 0.07
+  },
+  {
+   "name": "sel_type",
+   "pass": false,
+   "got": "digital_square",
+   "gold": "selector",
+   "tol": 0
+  },
+  {
+   "name": "sel_n_pulses",
+   "pass": true,
+   "got": 2.0,
+   "gold": 2,
+   "tol": 0
+  },
+  {
+   "name": "vref_range",
+   "pass": true,
+   "got": null,
+   "gold": "vref_vmin<vref_vmax",
+   "tol": 0
+  },
+  {
+   "name": "clk_duty_range",
+   "pass": true,
+   "got": null,
+   "gold": "clk_duty in [0,1]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "clk_type": "digital_square",
+  "clk_period": "10",
+  "clk_duty": "0.75",
+  "rst_n_type": "digital_reset",
+  "data_type": "digital_bus",
+  "data_n_levels": "2",
+  "vref_type": "analog_ramp",
+  "vref_vmin": "0.2",
+  "vref_vmax": "0.8",
+  "sel_type": "digital_square",
+  "sel_n_pulses": "2"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "clk_type",
+   "question": "Look at the TOP trace (clk). Is it a 'digital_square', 'digital_reset', 'digital_bus', 'analog_ramp' or 'selector'? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "digital_square",
+   "ok": true,
+   "elapsed_s": 0.532
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "clk_period",
+   "question": "What is the period of the clk trace in ns? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "The x-axis label is \"time (ns)\" so the unit is nanoseconds. There is no explicit scale factor shown on the axis, so the scale factor is 1. The tick near the axis label is at 10 ns, so the mantissa is 10. Full value = 10 x 1 = 10 ns. The period of the clk trace is 10 ns. Final Answer: 10",
+   "ok": true,
+   "elapsed_s": 4.067
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "clk_duty",
+   "question": "What is the duty cycle of the clk trace (fraction high, 0 to 1)? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "The x-axis label is \"time (ns)\" with no explicit scale offset near the axis. The tick marks are at 0, 2, 4, 6, 8, 10 ns, so the scale factor is 1 ns per tick. The clk trace is high (1.0) for 75 percent of each 2 ns period, so the duty cycle is 0.75. Final Answer: 0.75",
+   "ok": true,
+   "elapsed_s": 4.388
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "rst_n_type",
+   "question": "Look at the 2nd trace (rst_n). Is it a 'digital_reset', 'digital_square', 'digital_bus', 'analog_ramp' or 'selector'? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "digital_reset",
+   "ok": true,
+   "elapsed_s": 0.536
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "data_type",
+   "question": "Look at the 3rd trace (data). Is it a 'digital_bus', 'digital_square', 'digital_reset', 'analog_ramp' or 'selector'? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "digital_bus",
+   "ok": true,
+   "elapsed_s": 0.537
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "data_n_levels",
+   "question": "How many distinct voltage levels does the data trace have? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "The x-axis label is \"time (ns)\" with no visible scale offset markers like x1e6 or 1e6. The tick marks are at 0, 2, 4, 6, 8, 10 ns, so the scale factor is 1. The data trace has two distinct voltage levels: 0.00 and 0.75. Final Answer: 2",
+   "ok": true,
+   "elapsed_s": 3.901
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "vref_type",
+   "question": "Look at the 4th trace (vref). Is it an 'analog_ramp', 'digital_square', 'digital_reset', 'digital_bus' or 'selector'? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "analog_ramp",
+   "ok": true,
+   "elapsed_s": 0.616
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "vref_vmin",
+   "question": "What is the minimum voltage of the vref trace in Volts? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "The x-axis label is \"time (ns)\" with no additional scale markers like x1e6 or 1e6. The tick marks are at 0, 2, 4, 6, 8, 10 ns. The vref trace starts near 0.2 on the y-axis. Since the x-axis unit is nanoseconds and the question asks for voltage, and there's no conversion factor provided, I'll assume the y-axis is in volts as per the plot's scale (0.2 to 0.8). The minimum value of vref is 0.2. Final Answer: 0.2",
+   "ok": true,
+   "elapsed_s": 5.983
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "vref_vmax",
+   "question": "What is the maximum voltage of the vref trace in Volts? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "The x-axis label is \"time (ns)\" with no visible scale offset markers like x1e6 or 1e6. The tick marks are at 0, 2, 4, 6, 8, 10 ns. The vref trace's maximum value is near the right edge of the plot, which corresponds to 10 ns. The y-axis for vref ranges from 0.2 to 0.8. The maximum tick on the vref plot is 0.8. Since the x-axis unit is ns and the question asks for voltage in Volts, and no conversion factor is provided, we assume the y-axis values are already in Volts (as is standard in such plots unless specified otherwise). The maximum vref value is 0.8 V.\n\nFinal Answer: 0.8",
+   "ok": true,
+   "elapsed_s": 7.597
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "sel_type",
+   "question": "Look at the 5th (bottom) trace (sel). Is it a 'selector', 'digital_square', 'digital_reset', 'digital_bus' or 'analog_ramp'? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "digital_square",
+   "ok": true,
+   "elapsed_s": 0.532
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "sel_n_pulses",
+   "question": "How many pulse windows does the sel trace have? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+   "raw": "The x-axis label is \"time (ns)\" with no visible scale offset markers like x1e6 or 1e6. The tick marks are at 0, 2, 4, 6, 8, 10 ns, so the scale factor is 1. The sel trace has two pulse windows: one from 2 ns to 3 ns and another from 6 ns to 7 ns. Counting these gives 2 pulse windows. Final Answer: 2",
+   "ok": true,
+   "elapsed_s": 4.642
+  }
+ ],
+ "n_tool_calls": 11,
+ "duration_s": 33.84
+}
