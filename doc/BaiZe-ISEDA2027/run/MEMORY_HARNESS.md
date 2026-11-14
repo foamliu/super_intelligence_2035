@@ -4,10 +4,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2463 §14-08:0x B重跑监控·hermes rerun 8/82 RUNNING·5th-batch 3/8 RUNNING·任务清单已备(opencode38/pi46/deepseek48)
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因DONE)·R2462(08:2x报告整改+08:4x cc归因已交付)·R2463(08:0x B重跑监控+任务清单准备+.gitignore修复+reports/JSON清理)
-当前动作:     R2463: hermes rerun 8/82(4 setup fail=python3 not found·4 ability fail=reward0)·5th-batch 3/8(reward0=ability)·gateway200·无predict竞争·.gitignore修复(manifests/traces路径)·audit JSON清出reports/→manifests/·opencode/pi/deepseek任务清单已落盘manifests/·W:0
-下一步:       ①hermes rerun完成→merge→REGEN→起opencode(38tasks) ②5th-batch完成→merge→REGEN ③opencode→pi(46)→deepseek(48)逐路串行 ④cc重跑BLOCKED(ConnectionRefused) ⑤TASK归档(39.6KB→≤32KB)
+PHASE:        R2463 §14-09:3x cc修复+重跑LAUNCHED·smoke OK·cc89题RUNNING·hermes rerun 13/82·5th-batch RUNNING
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因DONE)·R2462(08:2x报告整改+08:4x cc归因已交付)·R2463(08:0x B重跑监控+任务清单准备+.gitignore修复+reports/JSON清理+09:3x cc修复smoke OK+cc89题重跑LAUNCHED)
+当前动作:     R2463: **cc修复+重跑LAUNCHED**·smoke test OK(claude.exe ANTHROPIC_BASE_URL=http://127.0.0.1:9092/v1·exit0 stdout有内容·无ConnectionRefused)·cc 89题重跑RUNNING(PID2702743·第一题adaptive-rejection-sampler agent执行中)·hermes rerun 13/82(1pass)·5th-batch RUNNING·gateway200·无predict竞争·.gitignore修复+reports/JSON清理+任务清单已备·W:0
+下一步:       ①cc 89题重跑完成→merge→REGEN双报告 ②hermes rerun完成→merge→REGEN ③5th-batch完成→merge→REGEN ④opencode38→pi46→deepseek48逐路串行 ⑤TASK归档(39.6KB→≤32KB)
 ERROR_COUNT:  0
  体积: TASK=39.6KB / MEMORY=31.8KB（归档183KB）
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [09:55] R2463 **09:3x cc修复+重跑**: **根因定位**: claude_code.py适配器L164-182注入ANTHROPIC_BASE_URL=http://127.0.0.1:9092→容器内127.0.0.1指向容器自身·但overlay-network-host.yml已设network_mode:host(L17注释"Host networking REQUIRED")→容器内127.0.0.1=宿主127.0.0.1·gw_proxy监听宿主9092→应可达·**smoke test验证**: harbor run break-filter-js-from-html(1题·claude-code)→claude.exe exit0·stdout有XSS bypass内容·无ConnectionRefused·**修复**: 适配器代码不变(overlay的network_mode:host已覆盖)·smoke成功说明原89题失败可能是那批运行时overlay未生效/容器网络异常·**cc 89题重跑LAUNCHED**(PID2702743·rerun_tb21_cline_quota.py --harness claude-code·第一题adaptive-rejection-sampler agent执行中)·同时hermes rerun 13/82并行RUNNING·gateway200·W:0
 
 > [10:00] R2463 **08:0x B重跑监控**: 自检(CPU load28/224=pretrain·无harness runaway·disk/data5.8T18%·gateway200·无predict竞争)·hermes rerun 8/82done(4setup fail=python3 not found in container·4ability fail=reward0 with agent stdout evidence)·5th-batch 3/8done(reward0=agent ran ability fail)·filter-js-from-html RUNNING(5th)·cobol-modernization RUNNING(hermes)·**.gitignore修复**(manifests/traces路径缺doc/BaiZe-ISEDA2027/前缀→已修)·audit JSON 5个+cline rerun JSON 1个从reports/移至manifests/(reports/现已0 JSON✅)·**后续路由任务清单已落盘**: opencode38tasks/pi46tasks/deepseek48tasks→manifests/tb21_7way_rerun_*_20261114_0858.txt·cc=BLOCKED(89/89 ConnectionRefused)·W:0
 
