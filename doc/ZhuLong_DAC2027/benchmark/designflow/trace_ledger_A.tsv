@@ -489,3 +489,32 @@
 1794291542588_oh5bd	e0039102	hfeg0pbn16	129	verification	parked		2026-11-14 09:17	r501 PEEK: duplicate of 5u1j9 (same user msgs, ~17min apart). run_regr framework analysis. REJECT.
 1793180163442_wz7gy	e03179	hfeg0plg15	281	eda_other	parked		2026-11-14 09:36	r502: infra-block(load-balancer NOFILE 6/6 MISSDIR, same as r498 p0fqe) + D-domain-dominant(netlist:996/waveview:215/schematic:100/analog:188, verilog:460/synopsys:182 secondary) non-A-produce
 1792052491292_p5laa	xinqiaoz	hfeg0plg15	267	pnr_signoff	parked		2026-11-14 09:36	r502: re-confirm r497 peek C-domain(drc:1876/pdk:873/calibre:295) non-A-produce; fresh-not-claimed closure
+1790824372525_3f13i	sophiaw	hfeg0plg09	17	eda_other	parked		2026-11-14 10:10	r503: fried-rice recipe + TCP/network infra, non-EDA wrong-domain
+1791771378239_ceyvq	e0042624	hfeg0pkn003	15	eda_other	parked		2026-11-14 10:10	r503: git-graph vsix install + editor-tool meta, infra not produce-task
+1794363187550_713t3	miccao	hfeg0plg37	40	eda_other	parked		2026-11-14 10:10	r503: calibre DFM command summary to desktop, analysis/doc-output (C-domain) not produce-task
+1793675227759_8mmd6	junwangt	hfeg0plg07	32	eda_other	parked		2026-11-14 10:10	r503: speed-up previous script vague optimize, no self-contained task
+1791947206474_jhsi9	tongfanl	hfhds206	23	eda_other	parked		2026-11-14 10:10	r503: tck文件夹干啥的/怎么用/eda_agent有哪些 pure Q&A exploration
+1792485371006_tma34	claire1l	hfeg0pkn004	129	eda_other	parked		2026-11-14 10:10	r503: Ansys HFSS PDF->techfile csv/xml/html doc-gen, wrong-domain(EM) + analysis
+1794190756187_ipil7	jasminej	hfeg0plg52	22	eda_other	parked		2026-11-14 10:10	r503: parse spf file vague Q&A (C/pex domain)
+1791960224780_tj1kl	hengbow	hfeg0plg94	21	eda_other	parked		2026-11-14 10:10	r503: finesim sim-flow analysis + ECharts report optimize (B-domain) not produce
+1791769075277_w7us0	e0017906	hfeg0plg96	21	eda_other	parked		2026-11-14 10:10	r503: session-id/hi meta Q&A no task
+1793272345438_5avgh	gokuguo	hfeg0plg53	20	eda_other	parked		2026-11-14 10:10	r503: LEF QA-script consultative (tell-me-what-to-QA), C-domain + analysis-first
+1791960240913_4drpt	hengbow	hfeg0plg94	21	eda_other	parked		2026-11-14 10:10	r503: dup of tj1kl finesim analysis (B-domain)
+1793156257609_xqkry	daiweilu	hfeg0pgn145	62	digital	parked		2026-11-14 10:10	r503: lpddr5 TB regression snippet Q&A (只跑了一个pattern吗) analysis not produce
+1794453586384_srob6	jason17w	hfeg0pnd002	77	digital	parked		2026-11-14 10:10	r503: empty user_input (image/file-only) cannot synthesize
+1794539090854_vqpd5	wenfeiz	hfeg0pkn004	64	digital	parked		2026-11-14 10:10	r503: lpddr5 TB learn->generate doc (structure/run/basiccheck) doc-gen not produce-task
+1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	parked		2026-11-14 10:10	r503: sim log problem debug Q&A + cache-clear infra question
+1794446207194_gaopz	ericw	hfhds201	90	digital	parked		2026-11-14 10:10	r503: 激励exp值compare相关东西吗 single Q&A analysis
+1794445729302_9kc99	e0039602	hfeg0pkn005	77	digital	parked		2026-11-14 10:10	r503: 阅读目录告诉我项目在做什么/TB怎么构建 pure analysis Q&A
+1794397613511_dwr4p	guomings	hfeg0pkn003	70	digital	parked		2026-11-14 10:10	r503: nihao/nij greetings no task
+1792569513787_jq6lq	mwxi	hfhds228	85	eda_other	parked		2026-11-14 10:10	r503: crontab/file-sync (hfds<->shds) infra debug not EDA produce
+1789453406100_p28m8	e0017484	hfeg0plg54	75	digital	parked		2026-11-14 10:10	r503: 启动业务场景仿真与验证/分析TM在仿真中的作用 analysis Q&A
+1793867092418_uemp5	e0039602	hfeg0pkn005	66	digital	parked		2026-11-14 10:10	r503: verilog-lib-trans tool retrieval-logic Q&A (LLM tooling meta)
+1793873301625_fg7hf	e0039602	hfeg0pkn005	56	digital	parked		2026-11-14 10:10	r503: LLM-conversion-model评审prompt/stdcell相似匹配 Q&A (tooling meta)
+1794482509558_n7ot5	szcao	hfeg0pgn145	55	digital	parked		2026-11-14 10:10	r503: gen_pattern_files.pl tweak (fill cmlist->test.run) dependent-on-existing-files weak verifiability
+1791854347080_pits0	johnl	hfeg0pkn001	52	digital	parked		2026-11-14 10:10	r503: 看下仿真激励在哪里 analysis Q&A
+1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	parked		2026-11-14 10:10	r503: 分析log error怎么导致 debug Q&A
+1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	parked		2026-11-14 10:10	r503: 三个版本项目有什么不同 version-diff analysis Q&A
+1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	parked		2026-11-14 10:10	r503: sim-path+pattern-path debug (truncated) debug pattern
+1789975587201_fniqj	alanji	hfeg0pjn100	36	digital	parked		2026-11-14 10:10	r503: write python script add keyword vague + netlist-diff analysis
+1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	parked		2026-11-14 10:10	r503: workspace have what infra Q&A
