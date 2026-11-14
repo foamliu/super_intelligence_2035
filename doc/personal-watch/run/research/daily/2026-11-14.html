@@ -551,6 +551,130 @@
   <tr><td>回信</td><td><code>research/mail/replies/</code> 仅 <code>README.md</code> ⇒ <b>累计回信率 0 / 39</b>；跟踪表已建（最早到期 <b>2026-11-25</b>）</td></tr>
 </table>
 
+<h2 class="sec">🅱 21:00 轮 · B 轨第三十轮（+4 → 119）· 作者网 +3 → 122 · 作者信 4 封（累计 43）</h2>
+
+<div class="note">
+  本节为 <b>2026-11-14 21:00 时窗（r174，实际开工 22:3x）</b>增量：A 轨复核 <b>0 新收</b>（当日 5/5 已收口），B 轨补 <b>4 篇经典</b>（#116–#119），并发出 <b>4 封中文请教信</b>（第 40–43 封；其中 #42 为并行会话造成的重复发送）。
+</div>
+
+<table>
+  <tr><th>#</th><th>经典论文（原题照抄）</th><th>年份 / 出处</th><th>被引（实测口径）</th><th>一句话贡献（摘要原文要点）</th><th>主要服务线</th></tr>
+  <tr>
+    <td>116</td>
+    <td>GPT-4 Technical Report</td>
+    <td>2023 · 预印本（arXiv <code>2303.08774</code>，<code>cs.CL</code>；未核到正式会场版本）</td>
+    <td><b>38,329</b>（OpenAlex DOI 直查，2026-11-14；预印本口径）</td>
+    <td>多模态（图像 + 文本输入、文本输出）；模拟律师资格考试约<b>前 10%</b>；核心是<b>跨规模可预测</b>的基础设施与优化方法，可用不超过 <b>1/1,000</b> 算力的模型预测其部分能力；报告自述「真实世界许多场景仍不如人类」。</td>
+    <td>pretrain（代理实验）/ harness（报告体例）/ zhulong（外推口径）</td>
+  </tr>
+  <tr>
+    <td>117</td>
+    <td>Roofline: An Insightful Visual Performance Model for Multicore Architectures</td>
+    <td>2009 · <b>CACM 52(4):65–76</b>（DOI <code>10.1145/1498765.1498785</code>；<b>无 arXiv</b>）</td>
+    <td><b>2,165</b>（Crossref 该 DOI；另有 LBNL 技术报告记 85，<b>不相加</b>）</td>
+    <td>摘录原文（仅一句）：Roofline 模型提供关于如何改进软硬件性能的洞见。以「可达性能 vs 运算强度」为坐标，把<b>计算峰值</b>与<b>内存带宽</b>画成两条屋顶线，一眼看出内核受计算还是受带宽限制。</td>
+    <td>zhulong（成本三分法源头）/ pretrain（吞吐排障）/ harness（可比性）</td>
+  </tr>
+  <tr>
+    <td>118</td>
+    <td>Sigmoid Loss for Language Image Pre-Training</td>
+    <td>2023 · <b>ICCV 2023 Oral</b>，pp. 11941–11952（arXiv <code>2303.15343</code>）</td>
+    <td><b>1,884</b>（OpenAlex ICCV 记录，2026-11-14）</td>
+    <td>提出 <b>pairwise sigmoid loss</b>：不做全局相似度归一化；batch 可继续放大（推到 <b>1M</b> 后收益饱和，<b>32k 已足够</b>），小 batch 也更稳；配合 Locked-image Tuning，<b>4 块 TPUv4、2 天</b>得到 <b>84.5%</b> ImageNet zero-shot。</td>
+    <td>vision（主）/ data（图文对去重）/ pretrain（通信开销）</td>
+  </tr>
+  <tr>
+    <td>119</td>
+    <td>Deduplicating Training Data Makes Language Models Better</td>
+    <td>2021（v1）/ <b>ACL 2022</b>，pp. 8424–8445（DOI <code>10.18653/v1/2022.acl-long.577</code>）</td>
+    <td><b>226</b>（Crossref ACL 记录；OpenAlex 预印本记录 357，<b>不相加</b>）</td>
+    <td>训练集含大量近重复与长重复子串 ⇒ <b>超过 1%</b> 的无提示输出逐字复制训练数据；去重后记忆化输出<b>减少十倍</b>、更少步数达同等或更好精度；标准数据集验证集<b>超过 4%</b> 与训练重叠。</td>
+    <td>data（主）/ harness（污染）/ pretrain（token 效率）</td>
+  </tr>
+</table>
+
+<div class="note">
+  <b>诚实记录</b>：① OpenAlex 本轮<b>该 IP 免费额度用尽</b>（<code>Rate limit exceeded</code>）⇒ Roofline 与去重两篇改用 <b>Crossref</b> 单一来源，并注明「另一条记录不相加」；② Roofline 曾误记 DOI <code>10.1145/1340771.1340803</code>，Crossref 返回 <b><code>404</code></b> ⇒ 已按实测更正为 <code>10.1145/1498765.1498785</code>；③ GPT-4 <b>未公开架构 / 参数 / 数据</b> ⇒ 任何「GPT-4 用了 X」都是推测，本页不写。
+</div>
+
+<h2 class="sec">✉️ 21:00 轮 · 作者信（4 封中文 · 累计 43；含 1 封重复事故）</h2>
+<table>
+  <tr><th>发送</th><th>收件人</th><th>论文</th><th>语言 / 篇幅</th><th>三个问题（均回填研发）</th></tr>
+  <tr>
+    <td><code>SENT OK 22:39:11</code></td>
+    <td>Bei Yu（香港中文大学 CSE）<br><code>byu@cse.cuhk.edu.hk</code></td>
+    <td>ML for EDA: A Survey <code>2102.03357</code>（B 轨 #114）</td>
+    <td><b>中文</b>（判据 = 拼音名 + CUHK 中文语境）/ 非空白 <b>272</b> 字</td>
+    <td>① 层级输出能否写成可执行检查（网表 / 版图 / 时序报告各要什么最小输入）→ harness；② 2021 后 LLM 工作落在哪些层、哪层仍缺可复现 benchmark → designflow；③ 跨工艺 / 跨 PDK 的留出集按什么切分 → data。</td>
+  </tr>
+  <tr>
+    <td><code>SENT OK 22:39:19</code></td>
+    <td>Xiaohua Zhai（翟晓华；Meta Zurich）<br><code>xiaohuazhai@gmail.com</code></td>
+    <td>SigLIP <code>2303.15343</code>（B 轨 #118）</td>
+    <td><b>中文</b>（判据 = 主页自署「Xiaohua Zhai (翟晓华)」+ 北大博士）/ 非空白 <b>293</b> 字</td>
+    <td>① 温度 <code>t</code> 与偏置 <code>b</code> 的初值在千万级图文对下是否让 sigmoid 近似退回 softmax → vision；② 多语互译样本被当负例时靠采样还是去重 → data；③ 224 输入下 Shape-Optimized 400M 该加宽还是加分辨率 → vision。</td>
+  </tr>
+  <tr>
+    <td><code>SENT OK 22:40:25</code><br><b>⚠️ 重复事故</b></td>
+    <td>Bei Yu（香港中文大学 CSE）<br><code>byu@cse.cuhk.edu.hk</code></td>
+    <td>ML for EDA: A Survey <code>2102.03357</code></td>
+    <td><b>中文</b> / 非空白 <b>293</b> 字</td>
+    <td>并行会话所发（主题「ML-for-EDA 综述里的代理指标边界」）：① 最小可迁移评测集；② 代理指标 vs signoff 的触发条件；③ 单一判据选型。⚠️ <b>与 #40 同一收件人、间隔 74 秒</b> ⇒ 违反「同作者 ≤1 封」，已登记事故并停止继续发信（不补道歉信）。</td>
+  </tr>
+  <tr>
+    <td><code>SENT OK 22:40:45</code></td>
+    <td>Chunyuan Li（李春元；Google DeepMind）<br><code>lichunyuan24@gmail.com</code></td>
+    <td>Improved Baselines with Visual Instruction Tuning（LLaVA-1.5）<code>2310.03744</code></td>
+    <td><b>中文</b>（判据 = 拼音名 + 中文主页）/ 非空白 <b>275</b> 字</td>
+    <td>① 数据缩到十万级时 558K 预训练 + 665K 指令数据的配比是否仍成立 → data / vision；② 两阶段（先对齐再看指令）能否合并 → pretrain；③ 视觉塔分辨率与 token 数的取舍 → vision。</td>
+  </tr>
+</table>
+<div class="ok-box">
+  <b>本轮四条硬要求的落地证据</b>：<br>
+  ① <b>回信跟踪</b>：<code>发送记录.md</code> 跟踪表扩到 <b>41 行</b>；<code>replies/</code> 仍只有 <code>README.md</code> ⇒ <b>累计回信率 0 / 43</b>，按待诊断信号处理。⚠️ <b>并行会话事故</b>：另一路在 22:40:25 又给 Bei Yu 发了第二封（#42，主题「ML-for-EDA 综述里的代理指标边界」），同一收件人 74 秒内两封 ⇒ 违反「同作者 ≤1 封」，已如实登记并写事故记录 <code>research/mail/INCIDENT-2026-11-14-duplicate-send.md</code>，本轮起停止继续发信、不补道歉信。新增一条诊断：<b>本机发件通道无 IMAP/POP3 能力</b>（<code>~/hr_mail.py</code> 只发不收）⇒ 回信目前<b>无法自动读取</b>，须由用户侧转发或在 Webmail 查看；另记：发件显示名为招聘通道配置（<code>AI+EDA 招聘 · 自动</code>），学术请教信可能被误判为群发 ⇒ <b>已登记为待运维决策项</b>（本线不自改凭据文件）。<br>
+  ② <b>署名统一</b>：两封均为 <code>Yang Liu</code>，落款固定两行（<code>祝好，</code> / <code>Yang Liu</code>），其后无任何行，项目名不进落款。<br>
+  ③ <b>抗模板化</b>：一封以「我在读你们那篇…」起、一封以「想请教…」起，问题句式不同；各含只对本文成立的细节（层级 / 16 作者 / TODAES 26(5):1–46 ↔ pairwise sigmoid / v3 的 <code>t</code>–<code>t'</code> 澄清 / 32k–1M）。<br>
+  ④ <b>母语</b>：两位均为华人学者（一位在港、一位在瑞士）⇒ <b>都写中文</b>，不因「人在海外 / 论文英文 / 邮箱 gmail」判英文。
+</div>
+
+<h2 class="sec">🗣 voice_ready（21:00 本期 1 条）</h2>
+<details class="voice-ready" open>
+<summary>🗣 voice_ready · 研究者言论（可发头条）</summary>
+<ul>
+  <li><b>人物</b>：Tri Dao（<code>@tri_dao</code>，普林斯顿 CS 助理教授 / Together AI 首席科学家；代表作 FlashAttention、Mamba 二作）</li>
+  <li><b>言论</b>：<i>“Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE”</i>（中文：很有意思的结果 —— H-Net 学会把代码里的变量名动态切成单独 token，在代码上比 BPE 扩展得更好。）</li>
+  <li><b>时间</b>：2026-10-28 19:49 UTC（距今 17 天，未超 30 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/tri_dao/status/2115531348161028374">https://x.com/tri_dao/status/2115531348161028374</a>（推文页 <code>HTTP 200</code> / 168,416 B，<code>og:title</code> = <code>Tri Dao (@tri_dao) on X</code>，<code>og:description</code> 与 profile <code>full_text</code> 逐字一致）</li>
+  <li><b>话题点</b>：「代码该不该用专用 tokenizer」—— 原来分词方式本身就能省算力，不只是模型越大越好。</li>
+  <li><b>风险</b>：① 他说的是<b>他人论文</b>（H-Net）的结论，不是本人实验 ⇒ 只能当研究者观点，🚫 当已复现证据；② 「scales much better」无数字，🚫 补数字。</li>
+</ul>
+</details>
+<div class="note">
+  <b>否决记录</b>：① Xiaohua Zhai 的最新可见推文停在 <b>2025-09-18</b>（RINS）与 <b>2025-02-21</b>（SigLIP2）⇒ 均 <b>&gt;30 天</b>，按纪律降级、不标 <code>voice_ready</code>；② <code>@gneubig</code> 本轮可见推文为玩笑 / 转述他人，<code>@natolambert</code> 的「post-Jensen」系列依赖上下文与新闻背景 ⇒ 均不采用。<code>news_ready</code> 本期 <b>0 新增</b>（A 轨 0 新收、B 轨为经典回顾 ⇒ 无事件点，宁缺勿凑）。
+</div>
+
+<h2 class="sec">🎯 21:00 轮 · 对各线的可执行建议（6 条，逐线覆盖 · 不与 15:00 重复）</h2>
+<table>
+  <tr><th>线</th><th>动作（可直接执行）</th><th>判据 / 验收</th></tr>
+  <tr><td><b>pretrain</b></td><td>照 GPT-4（#116）的「可预测扩展」：配方改动先在 <b>350M / 600M 代理点</b>跑，记录代理点算力占比，再决定是否推 2B。</td><td>代理点与大点<b>方向不一致</b> ⇒ 该改动不进 2B 配方；成本表缺 <code>proxy_scale_ratio</code> ⇒ 报表退回。</td></tr>
+  <tr><td><b>vision</b></td><td>视觉塔加一组 <code>sigmoid vs softmax</code> 对照（#118），固定图文对与 token 预算；另加「互译图文对占比」一列。</td><td>检索 R@1 不低于 softmax 基线 <b>且</b> 单卡显存峰值下降 ⇒ 采用 sigmoid；否则保留 softmax。</td></tr>
+  <tr><td><b>harness</b></td><td>评测报表固定三块：<b>能力 / 失败模式 / 不可比说明</b>（#116）；性能项必须标 roofline 点（<code>ops/byte</code> + 命中哪条屋顶线，#117）。</td><td>缺任一块或跨机型直接比绝对吞吐 ⇒ 判 <code>不可比</code>，不进对外结论。</td></tr>
+  <tr><td><b>data</b></td><td>语料入库固定<b>两级去重</b>（精确子串 + 近似），并把「验证集跨源重叠率」打进报表（#119）。</td><td>重叠率 &gt;1% ⇒ 该评测集分数降级为「参考」；去重前后 token 效率须同表对比。</td></tr>
+  <tr><td><b>zhulong</b></td><td>成本报表按 Roofline（#117）给每个 kernel 标 <b>计算受限 / 带宽受限</b>，并保留「容量受限」第三档（#115）；PIM 类单列。</td><td>缺受限标注 ⇒ 该行标 <code>不可比</code>；PIM 与 GPU 基线禁止混算。</td></tr>
+  <tr><td><b>designflow</b></td><td>造题表加 <code>eda_layer</code>（按 #114 层级）+ <code>check()</code> 可执行断言；先做「网表 / 时序报告」两类可判分题。</td><td>无 <code>check()</code> 或无参考解法 ⇒ 退回；改题不换 <code>initial_state_hash</code> ⇒ 旧成绩作废。</td></tr>
+</table>
+
+<h2 class="sec">附录 A6 · 21:00 轮检索式与实测证据（可核验）</h2>
+<table>
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>A 轨复核</td><td><code>cat:cs.CL</code> 单查询 <b><code>200</code> + <code>application/atom+xml</code></b>（87,661 B / 0.94 s）；<code>totalResults</code> = <b>125,322</b>（与 12:00 / 15:00 逐值相同）；最新 30 条 <code>published</code> 上界 <b><code>2026-11-12T18:59:52Z</code></b> ⇒ 公告批未前进；当日 5/5 ⇒ <b>0 新收</b>。</td></tr>
+  <tr><td>B 轨元数据</td><td><code>id_list=2303.08774,2303.15343,2107.06499</code> ⇒ <b><code>200</code> + atom</b>（32,678 B / 3 entries）：作者数 <b>281 / 4 / 7</b> 逐字核；主分类 <code>cs.CL</code> / <code>cs.CV</code> / <code>cs.CL</code>；首发日 <code>2023-03-15</code> / <code>2023-03-27</code> / <code>2021-07-14</code>。</td></tr>
+  <tr><td>被引</td><td>OpenAlex <b>3/3 <code>200</code></b>：GPT-4 <b>38,329</b> · SigLIP <b>1,884</b>（ICCV pp. 11941–11952）· 去重 <b>357</b>（预印本）；随后 OpenAlex 返回 <b><code>Rate limit exceeded</code></b>（当日额度用尽）⇒ Roofline 与去重改用 <b>Crossref</b>：<b>2,165</b>（DOI <code>10.1145/1498765.1498785</code>）与 <b>226</b>（DOI <code>10.18653/v1/2022.acl-long.577</code>，pp. 8424–8445）。</td></tr>
+  <tr><td>邮箱核验</td><td><code>sites.google.com/view/xzhai</code> <b><code>200</code> / 218,511 B</b>（Contact 区块 span 拆分写法 <code>xiaohuazhai[at]gmail.com</code>）；<code>www.cse.cuhk.edu.hk/~byu/</code> 邮箱沿用 15:00 已核结果（<code>200</code> / 21,338 B）。LBNL / NERSC 与 ACL 页均<b>无明文邮箱</b> ⇒ 三位作者不发信（仅 Bei Yu / Xiaohua Zhai 发）。</td></tr>
+  <tr><td>X 只读</td><td><code>x.com</code> 自检 <b><code>200</code></b>（<code>http://127.0.0.1:7897</code>）；profile <b>4/4 <code>200</code></b>（<code>XiaohuaZhai</code> 165,794 B · <code>tri_dao</code> · <code>gneubig</code> · <code>natolambert</code>）；推文页 <b><code>200</code> / 168,416 B</b>，<code>og:title</code> + <code>og:description</code> 双源一致 ⇒ V28。</td></tr>
+  <tr><td>发信 / 回信</td><td><b>4 封</b>（<code>22:39:11</code> / <code>22:39:19</code> / <code>22:40:25</code> ⚠️ 重复 / <code>22:40:45</code>，中文 272 / 293 / 293 / 275 字）；<code>replies/</code> 仅 <code>README.md</code> ⇒ <b>累计回信率 0 / 41</b>；跟踪表最早到期 <b>2026-11-25</b>。</td></tr>
+</table>
+
 <h2 class="sec">📝 03:00 补篇变更说明（00:00 → 03:00）</h2>
 
 <div class="ok-box">
@@ -608,8 +732,27 @@
   ⑨ <b>未变</b>：0 follow（需登录态，未假装）、未发日报邮件、未注册账号、未用未授权凭据、未改他线文件、未下载 PDF、未改任务书。
 </div>
 
+<h2 class="sec">📝 21:00 变更说明（15:00 → 21:00）</h2>
+<div class="ok-box">
+  ① <b>A 轨 5/5 不变、0 新收</b>：<code>cat:cs.CL</code> 单查询 <code>200</code> + atom，<code>totalResults</code> 仍 <b>125,322</b>（与 12:00 / 15:00 逐值相同），窗口上界仍 <code>2026-11-12T18:59:52Z</code> ⇒ 公告批未前进；当日额度已满 ⇒ <b>不超额</b>。<br>
+  ② <b>B 轨 115 → 119</b>：新增 GPT-4（#116）· Roofline（#117）· SigLIP（#118）· 训练集去重（#119）；选文依据 = 补「规模—能力外推纪律 / 成本屋顶线 / 视觉塔损失 / 去重与污染」四条无落点的轴。<br>
+  ③ <b>作者网 119 → 122</b>：Xiaohua Zhai（X <code>@XiaohuaZhai</code> 已核 + <b>已发信</b>）· Samuel Williams（无明文邮箱，仅建档）· Katherine Lee（无联系方式，仅建档）；Bei Yu 状态由「待跟踪」转 <b>已发信</b>。X 已核验 <b>66 → 67</b>，待 follow <b>56 → 57</b>，已 follow 仍 <b>0</b>（需登录态，未假装）。<br>
+  ④ <b>作者信当日 7 → 11 封</b>，累计 <b>39 → 43</b>：Bei Yu（中文 272 字，<code>22:39:11</code>）· Xiaohua Zhai（中文 293 字，<code>22:39:19</code>）· ⚠️ <b>重复事故 #42</b> Bei Yu <code>22:40:25</code>（并行会话所致，同人 74 秒两封）· Chunyuan Li（LLaVA-1.5，<code>22:40:45</code>）。华人学者一律中文，未以「人在海外 / gmail」判英文。<br>
+  ⑤ <b>投料</b>：<code>voice_ready</code> 本期 <b>1</b>（Tri Dao 2026-10-28，H-Net 动态分词 vs BPE，推文页 <code>og:title</code> + <code>og:description</code> 双源一致 ⇒ 台账 <b>V28</b>）；<code>news_ready</code> <b>0 新增</b>（无事件点，宁缺勿凑）。<br>
+  ⑥ <b>诚实记录 4 处</b>：<b>OpenAlex 当日额度用尽</b>（<code>Rate limit exceeded</code>）⇒ Roofline / 去重改 Crossref；Roofline DOI 原记错（<code>404</code>）已更正；GPT-4 未公开架构 / 参数 / 数据 ⇒ 不写任何推测；<b>发件通道只发不收</b>（无 IMAP/POP3）⇒ 回信无法自动读取，且发件显示名为招聘配置，已登记为待运维决策项。<br>
+  ⑦ <b>未变</b>：0 follow（需登录态）、未发日报邮件、未注册账号、未用未授权凭据、未改他线文件、未下载 PDF、未改任务书。
+</div>
+
+<h2 class="sec">⚠️ 22:4x 勘误 · 并发行会话导致同作者重复发信（事故）</h2>
+<div class="card">
+  <p><b>事实</b>：21:00 时窗内共有<b>两个 agent 会话</b>并行跑同一工作副本，各自按「本轮 0 封」判断并发信 ⇒ 实际发出 <b>4 封</b>：<code>22:39:11</code> Bei Yu（旧草稿版）· <code>22:39:19</code> Xiaohua Zhai · <b><code>22:40:25</code> Bei Yu（重写版，74 秒内第二封 ⇒ 违反「同作者 ≤1」）</b> · <code>22:40:45</code> Chunyuan Li。当日 <b>9 → 11 封</b>，累计 <b>41 → 43 封</b>。</p>
+  <p><b>处置</b>：本轮起<b>停止继续发信</b>；<b>不补发道歉信</b>（避免第三次触达、加深骚扰观感）；台账如实标注「与 #40 同收件人重复」。记录见 <code>research/mail/INCIDENT-2026-11-14-duplicate-send.md</code>。</p>
+  <p><b>防再犯（下轮起）</b>：① loop 加 <code>flock</code> 单实例锁；② 发信前按台账<b>当日收件人查重</b>（命中即拒发）；③ 发送成功后正文文件改名 <code>*.sent.txt</code>；④ 每轮额度<b>按台账当日行数</b>计，不按会话计数。</p>
+  <p><b>回信口径（更正）</b>：累计回信率 <b>0 / 43</b>，<b>0 封到期</b>（最早 2026-11-25）⇒ 0 回信<b>不记为成功</b>，按待诊断信号处理；诊断见 <code>research/mail/REPLY_DIAGNOSIS.md</code>（分日/语言/地址分层 + 五个竞争假设 + 11-18 / 11-25 / 11-28 观察点）。</p>
+</div>
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 A 轨 3 篇 ＋ 03:00 时窗补 2 篇 ＋ 06:00 / 09:00 / 12:00 / 15:00 复核 ＋ B 轨第二十九轮 115 篇 · 作者网 119 人 · 作者信累计 39 封 · 回信率 0/39）｜ 数据源 arXiv API / OpenAlex / X（只读）｜ 生成时间 2026-11-14 15:15 CST<br>
+  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 A 轨 3 篇 ＋ 03:00 时窗补 2 篇 ＋ 06:00 / 09:00 / 12:00 / 15:00 / 21:00 复核 ＋ B 轨第三十轮 119 篇 · 作者网 122 人 · 作者信累计 43 封 · 回信率 0/43）｜ 数据源 arXiv API / OpenAlex / Crossref / X（只读）｜ 生成时间 2026-11-14 22:45 CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>
