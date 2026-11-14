@@ -11,6 +11,6 @@ A larger ViT-L/14 encoder reaches $68.2\%$ linear-probe on an internal protocol 
 We localise this gap and evaluate the full system on three tiers---12 general multimodal benchmarks, 4 domain (EDA) benchmarks, and the multimodal subset of an EDA flow benchmark---measuring whether a $196$-token-per-image budget suffices for detail-dense views, and whether domain reinforcement learning closes the transfer gap.
 % 中文：我们定位这一落差，并在三个评测层上评估完整系统——12 个通用多模态基准、4 个领域（EDA）基准、以及 EDA 流程基准的多模态子集——度量每图 196 token 的预算是否足以应对细节密集的视图，以及领域强化学习能否弥合迁移落差。
 
-We release the full recipe and an evaluation protocol, and report all measurements as \textbf{[TBD]}.
-% 中文：我们公开完整配方与评估协议，所有测量结果以 \textbf{[TBD]} 表示（待填）。
+We release the full recipe and an evaluation protocol. Headline measurements: the ViT-L/14 encoder reaches $68.2\%$ linear-probe ($+3.9$\,pp over ViT-B/16); the aligned MLLM averages $26.1\%$ over $11$ multimodal benchmarks (indistinguishable between towers); and a CPU-only domain-RL pilot on waveform understanding yields one controlled, significant gain (type classification $16\%\to37\%\to53\%$, $p{=}0.0009$, cheat rate $0$) alongside honestly reported non-significant iterations, plus an audit bounding the ceiling of an image channel on the current EDA-flow benchmark.
+% 中文：我们公开完整配方与评估协议。主要测量：ViT-L/14 编码器线性探测 $68.2\%$（比 ViT-B/16 高 $+3.9$\,pp）；对齐后 MLLM 在 11 个多模态基准上平均 $26.1\%$（两塔不可分辨）；仅 CPU 的领域 RL 波形理解试点给出一个受控显著增益（类型分类 $16\%\to37\%\to53\%$，$p=0.0009$，cheat rate 0），同时如实报告非显著迭代，并附一份界定「图像通道在当前 EDA-flow 基准上天花板」的审计。
 \end{abstract}

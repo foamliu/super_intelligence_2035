@@ -25,8 +25,8 @@ We show that encoder-quality gains do \emph{not} transfer downstream: the larger
 % 中文：我们发现编码器质量的增益并未迁移到下游：更大的塔在 11 个基准上平均 $26.1\%$，与小塔不可分辨；我们把落差定位到 224 像素单块设定与对齐架构。
 
 \item \textbf{Domain adaptation.}
-A final reinforcement-learning stage adapts the multimodal model to proprietary semiconductor practice, learning team conventions that no public benchmark measures.
-% 中文：领域适配。最后一个强化学习阶段把多模态模型适配到专有半导体实践，学习任何公开基准都无从衡量的团队约定。
+A final reinforcement-learning stage adapts the multimodal model to proprietary semiconductor practice. We instantiate it as a CPU-only pilot on \emph{waveform understanding}---a verifiable probe skill where vision matters most---with pre-registered, falsifiable criteria (control arm, McNemar, bootstrap CI, cheat rate), and report one significant gain together with honestly documented negative iterations and an audit of where an image channel would actually help on a real EDA-flow benchmark.
+% 中文：领域适配。最后一个强化学习阶段把多模态模型适配到专有半导体实践。我们以仅 CPU 的「波形理解」试点来实例化它——这是视觉最起作用的可验证探针技能——配以预注册、可证伪的判据（控制臂、McNemar、bootstrap CI、cheat rate），并报告一个显著增益、如实记录的负向迭代，以及对「图像通道在真实 EDA-flow 基准上究竟何处有用」的审计。
 
 \item \textbf{Three-tier evaluation.}
 We evaluate end-to-end on 12 general multimodal benchmarks, 4 domain (EDA) benchmarks, and the multimodal subset of an EDA flow benchmark, under a single frozen execution-based protocol.

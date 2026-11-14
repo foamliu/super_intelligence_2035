@@ -1,16 +1,19 @@
 WAITING: 0
 
+> 🆕 **【wake #1207 · 2026-11-14 09:5x】用户令 09:1x 四件事之 #1 NeurIPS §6 刷新已交付 + 09:5x 口径变更已并入 + #2 交底清单已出**：
+> - **#1 论文刷新（✅ 已交付·已编译验证）**：重写 `BaiZe-NeurIPS2027/NeurIPS2027/6_domain_rl.tex`（§Semiconductor Domain Adaptation → §Domain Adaptation: Waveform Understanding as a Probe Skill），**脱掉 [TBD]**，填入真实结果——v5 typecls A16%→B37%→C53% McNemar p=0.0009（唯一显著正结果）+ v6(40% NS)/v7(49.3%±6.4% 6/6判据但McNemar NS)/v8(52.5%±6.1% MIXED)/v9(no change)/v10(NS)/v11(NO GENERATIVE ADVANTAGE 负结果) 七轮表 + advantage 方差诊断(73%全同档=无信号根因) + waveview 审计(37题/30failed/α=4(13.3%)/α+β≈36%)。同步更新 0_abstract/1_intro/3_architecture(status: design→CPU pilot)/7_conclusion 去 [TBD]。新增真实可查引用(LoRA 2106.09685 / DeepSeekMath-GRPO 2402.03300 / STaR 2203.14465 / ReST 2312.06585)。**编译 0 error·0 [TBD]·0 undefined cite/ref·6 页 PDF**（pdflatex×3+bibtex 全 exit 0）。未编造文献；cimi-search 网搜在本 shell 不可用，故只引已验证基础方法，未杜撰 2026 前沿。
+> - **09:5x 口径变更已并入**：读 BAIZE_VISION_TASK.md 09:5x 令（designflow 不再降级多模态题，需看图题恢复原形态，无多模态能力者 fail 是正确行为，以「基线fail→上VQA后pass」差值度量增益）。据此**修订 §6「Where vision would actually help」段**：原「ceiling is modest」前提（基于降级版）已过时，改为「图像通道天花板须在纠正后基准上重测，α/β 用例为多模态增益度量基底」。🚫 不再基于降级后数据下结论。
+> - **#2 交底清单（✅ 已出）**：`reports/waveview_need_image_handoff.md`——从 waveview 报告提取 α4+β7=**11 题「原意图需看图」**用例（含 case_id + trace_deepreads 笔记路径 + 原意图 + 为何需看图），交底给 designflow 据此恢复原形态并跑新基线。γ 26 题不恢复。
+> - **#3/#4（依赖链·未完成·已排队）**：#3 封装 Qwen3.5-2B 为 VQA tool 给 cline + designflow 二次评测对比；#4 合成/SFT/RL 强化识图。二者依赖 #2 designflow 恢复结果，且 #4 的「显著提升」核心（v5 p=0.0009）已有先验。本 session 单 agent 无法跨线驱动 designflow 实跑，已记为下一步；不擅自改 designflow 任务书（按边界铁律，跨线只在本线 MEMORY 记一行+交底清单）。
+> - **git**：fetch→behind11→`pull --rebase --autostash` 撞他线 stale rebase-apply（posttrain cline 活跃）→他线并发已把 HEAD ff 至 origin/main(4eb378828) 并清掉 rebase-apply→0/0 up-to-date，本线论文改动保留为 unstaged。本轮 add 明确路径（论文 6 tex+bib+pdf + handoff + MEMORY + daily）→commit(`vision rl:`)→push。
+> - **⚠️ idle-spin 告警解除**：本轮有实质交付（§6 刷新+交底清单），非空转。**WAITING: 0**。
+
 > 🆕 **【wake #1206 · 2026-11-14 08:5x】waveview failed 识图可解性分析报告已交付（用户令 2026-11-14 08:4x）**：
 > - **waveview分析**: 相关=37题 failed=30 · α=4(13.3%) β=7 γ=19 · 结论=识图可解比例 α/N=13.3%（保守10%~乐观43%）· 报告已出。
 > - 数据源只读：designflow `pi_debug_status.jsonl`+`cline_eval_status.jsonl`+31 份 `trace_deepreads/*wave*/**fsdb*`+6 个 canonical `Wave-001..006`。三维判定 α/β/γ；关键发现=基准主动把波形可视化降级为文本/Tcl（B-grade），故已评测 7 题全 PASS 全 γ，可被识图挽救的失败集中在"未解/未跑"的视觉判断子集（α=眼图孔径/上升沿margin/DQ根因diff/波形功能推断）。
 > - 产物：`reports/report_vision_waveview_failed_analysis_zh.html`（40579B·单文件·0外链·0script·内联SVG×3）。本报告只做分析，不起训练/实验。commit `vision waveview:`。
 
-> 🆕 **【wake #1205 · 2026-11-14 08:26】例行巡检·全交付态·零异常·无新增·✅ git fetch→behind3(3 incoming=harness TB-2.1 rerun 脚本+ARCHIVE_OPERATOR_HARNESS/任务书更新+pretrain MEMORY+daily-memories· 0 触视觉)→ff pull→0/0 up-to-date(无 index.lock·工作区仅 posttrain 在途 ?? outputs/·不用 -A 不卷入·loop 守护 PID1236761·ppid=1 etimes≈78k)→窗口打开→fold wake#1204+add 明确路径+commit+push 本线 2 文件**：
-> - **状态**：v11 ALL COMPLETE(3 seed 一致负结果·NO GENERATIVE ADVANTAGE)产物复核在位——`vision/wave_rl/v11_results/v11_summary.json`(558B·mtime05:05·mean direct22.2/augment20.8/synth13.2·0/6 判据)+`doc/BaiZe-ISEDA2027/reports/report_vision_cpu_rl_waveform_zh.html`(10205B·mtime05:10)+EXPERIMENTS §v11+v11_results/(4 子目录:smoke/std_s20261114/15/16)✓。`ps` 核实无 vision 实验进程在跑(仅 loop 守护 PID1236761·ppid=1 etimes≈78k·posttrain cline 非本线·无 wave_rl/freqcmp/v11/run_v 命中)。v5 仍是唯一统计显著正结果(typecls C=53%>B=37%>A=16% p=0.0009)；v6–v11 连续 6 轮无提升，方向已穷尽。
-> - **输入参考**：research 日报 2026-11-14(mtime 06:19·与上轮同·未刷新)vision 栏均不 action——①Unbundling 视觉塔三臂对照(MAE 预训练)=已收敛视觉编码器臂·非 wave-RL 活跃线→不 action；②GAN vs DDPM 合成对照=合成数据路线·非 wave-RL 活跃线·且本线 v11 已证生成式路线无优势(负结果)→不 action。ops/inbox.md 不存在→无 vision 条目→不 action。
-> - ✅ **git 本轮**：`git fetch origin main`→behind3→`git pull --ff-only` 成功(incoming=harness TB-2.1 rerun 脚本+ARCHIVE_OPERATOR_HARNESS/任务书更新+pretrain MEMORY+daily-memories· 0 触视觉)→0/0 up-to-date。无 `.git/index.lock`→窗口打开。工作区仅 posttrain 在途(`?? outputs/`·不触 vision·不用 -A 不卷入)。`git add -- MEMORY_VISION.md daily-memories-vision/2026-11-14.md`→commit(`vision rl:`)→push。
-> - **⚠️ idle-spin 告警(第 24 次重申·上报运维/用户拍板)**：本线 2026-11-14 已连续 37 轮(wake#1165~#1205)例行巡检零新增·零产物变化，每轮仅心跳+commit，纯耗 token。根因=方向已穷尽(v6–v11 连续 6 轮无提升)·远超任务书护栏「连续 3 轮无提升必须换方向」阈值。两条 2026-11-07 用户令均 ✅ 已交付。建议：①运维下达下一方向令(或批准新奖励/任务三臂)→本线即起实验；或②运维停掉 baize_vision_loop.sh 以止 token 空转(停时可顺手照 baize_pretrain_loop.sh 新版修 WAITING 正则+git pull 缺陷，见 AGENTS.md §3)。本 agent 不擅自 kill loop(属运维决策·且 kill 自身父进程有风险)。
-> - **GPU/体积**：.17 8×A40 posttrain RL 占卡·vision CPU-only/不冲突。本轮体积维护：fold wake#1204→MEMORY ~29.0KB/TASK 26.9KB·均≤32KB✓。**WAITING: 0**。
+> 📦 **wake #1205 · 2026-11-14 08:26** 例行巡检·全交付态·零异常·无新增·✅ git fetch behind3(0 触视觉)→ff pull 0/0+fold wake#1204+commit+push·⚠️idle-spin 第 37 轮·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1204 · 2026-11-14 08:17** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind5(designflow shard A ws-shardA + shard C r549 + harness 任务书/报告更新· 0 触视觉)→ff pull→0/0 up-to-date+fold wake#1203+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 第 36 轮·已fold(见 wake#1205·详情 daily-memories-vision/2026-11-14.md)。
 

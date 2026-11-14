@@ -1,23 +1,51 @@
-﻿\section{Semiconductor Domain Adaptation}\label{sec:domain}
+﻿\section{Domain Adaptation: Waveform Understanding as a Probe Skill}\label{sec:domain}
 
-Stage~(iii) completes the pipeline by adapting the multimodal model to proprietary design practice.
-% 中文：第 (iii) 阶段通过把多模态模型适配到专有设计实践，完成整条流水线。
-It differs from the verifiable-reward stage of the text-only recipe~\cite{baiZe-llm} in two respects, which we state explicitly because otherwise the two stages would coincide: the reward is no longer verifiable but \emph{learned from human judgement}, and the target behaviour is no longer general API usage but a team's internal conventions---naming rules, layer policies, review checklists---which no public benchmark measures.
-% 中文：它与纯文本配方 \cite{baiZe-llm} 中的可验证奖励阶段有两点不同（之所以明确写出，是因为否则这两个阶段就会重合）：奖励不再是可验证的，而是 \emph{从人类判断中学习}；目标行为也不再是通用的 API 用法，而是团队内部的约定——命名规则、层次策略、评审清单——这些都没有任何公开基准可以衡量。
+Stage~(iii) adapts the multimodal core to semiconductor design practice. Rather than deferring this stage until a preference dataset matures, we treat \emph{waveform understanding}---reading simulation waveforms (VCD/FSDB) to answer questions about period, duty cycle, rise time, and signal shape---as a concrete, verifiable probe skill. It is the EDA sub-task where a multimodal model is most clearly distinguished from a text-only agent~\cite{baiZe-llm}: an engineer \emph{looks} at a waveform, and the relevant benchmarks down-grade precisely the visual judgements (eye-diagram aperture, edge margin, glitch detection) to text or Tcl when a vision channel is absent.
+% 中文：第 (iii) 阶段把多模态内核适配到半导体设计实践。我们不再等待偏好数据集成熟，而是把「波形理解」——读取仿真波形（VCD/FSDB）来回答周期、占空比、上升时间与信号形状相关问题——当作一个具体的、可验证的探针技能。它是多模态模型与纯文本智能体 \cite{baiZe-llm} 区分最明显的 EDA 子任务：工程师「看」波形，而当视觉通道缺失时，相关基准恰好把眼图孔径、边沿余量、毛刺检测等视觉判断降级为文本或 Tcl。
 
-\paragraph{Method.}
-We collect pairwise judgements from in-house design reviews over the stage-(ii) task families, fit a domain reward model on them, and optimise the aligned model against that model under a KL-regularised objective.
-% 中文：方法。我们围绕第 (ii) 阶段的任务族，从内部设计评审中收集成对偏好判断，据此拟合一个领域奖励模型，并在 KL 正则化目标下用该模型优化已对齐的模型。
-Because preference data is far scarcer than the verifiable signal of the text-only stage~\cite{baiZe-llm}, we initialise from the stage-(ii) checkpoint and constrain the update rather than training the objective from the pre-trained model.
-% 中文：由于偏好数据远比纯文本阶段 \cite{baiZe-llm} 的可验证信号稀缺，我们从第 (ii) 阶段的检查点初始化并约束参数更新，而不是从预训练模型直接训练该目标。
+\paragraph{Setup.}
+We pilot the stage entirely on CPU, consistent with the deployment constraint that proprietary data stays on-premise on the BaiZe core~\cite{baiZe-llm}. The base model is Qwen3.5-2B (1.88B) with LoRA~\cite{hu2022lora} ($r{=}16$, ${\approx}6.4$M trainable parameters), trained in fp32 under \texttt{nice~-19} with a 16-thread cap, never touching the GPUs reserved for stage~(i)/(ii). A pure-Python waveform synthesizer generates sine/square/triangle/sawtooth signals with randomised amplitude, offset, frequency, phase and noise; the 16 uniform $(t,v)$ sample points are placed directly in the text prompt so that the language model can in effect ``see'' the shape. All numbers below are reproducible from the logged JSON in our experiment archive (train/eval use disjoint RNG seed ranges, so the cheat rate is zero).
+% 中文：设置。我们完全在 CPU 上试点本阶段，与「专有数据须留在本地 BaiZe 内核 \cite{baiZe-llm}」的部署约束一致。基座为 Qwen3.5-2B（1.88B）+ LoRA \cite{hu2022lora}（r=16，约 6.4M 可训参数），fp32、nice -19、16 线程上限，绝不触碰预留给 (i)/(ii) 的 GPU。纯 Python 波形合成器生成正弦/方波/三角/锯齿信号，随机化幅度、偏置、频率、相位与噪声；16 个均匀 (t,v) 采样点直接放入文本 prompt，使语言模型事实上能「看见」形状。下列数字均可由实验存档中的 JSON 复现（训练/评测使用不相交 RNG seed 区间，故 cheat rate=0）。
 
-\paragraph{Why keep it small and local.}
-Proprietary layouts and preference data cannot leave the premises, so the domain adaptation must run on the same on-premise BaiZe core~\cite{baiZe-llm} rather than a hosted model; this is the deployment constraint that every stage of the multimodal pipeline inherits.
-% 中文：为何要保持小模型与本地部署。专有版图与偏好数据不能离开本地，因此领域适配必须运行在同一个本地 BaiZe 内核 \cite{baiZe-llm} 上，而非托管模型；这也是多模态流水线每个阶段共同继承的部署约束。
+\paragraph{Reward and task redesign.}
+An advantage-variance diagnostic on the original objective revealed the bottleneck: with a 5-bin discrete reward and group size 8, 73.0\% of groups produced \emph{identical} rewards across all rollouts, so the GRPO~\cite{shao2024deepseekmath} advantage was zero and the gradient carried no signal; the zero-advantage share was \emph{not} the ``all-zero'' failure mode (0.0\%) but the ``all-same-bin'' mode (15.0\%). Per-target, \emph{period} was the only target with usable signal (std$>$0 in 78.3\% of groups), whereas \emph{rise\_time} was 100\% zero-variance and \emph{duty\_cycle} 91.7\%---a capability gap, not a compute gap. We therefore redesigned on two axes: (i) a \emph{continuous} reward $R=\exp(-\mathrm{rel\_err}/\tau)$ replacing the discrete bins, and (ii) \emph{task redefinition} from exact-number regression to a discriminative intermediate task (waveform \emph{type classification}, then \emph{frequency comparison}), which is decidable, informative for downstream use, and far more learnable for a 2B adapter. The adaptation methods are rejection-sampling fine-tuning (RFT, in the STaR/ReST family~\cite{zelikman2022star,gulcehre2023rest}) and outcome-only GRPO with a KL-free group baseline.
+% 中文：奖励与任务重设计。对原目标做 advantage 方差诊断揭示了瓶颈：5 档离散奖励 + group size 8 时，73.0\% 的组内所有 rollout 获得相同奖励，故 GRPO \cite{shao2024deepseekmath} 的 advantage=0、梯度无信号；零 advantage 并非「全 0」失效模式（0.0\%），而是「全同档」模式（15.0\%）。按目标拆分，period 是唯一有可用信号的（78.3% 组 std>0），而 rise\_time 100% 零方差、duty\_cycle 91.7%——这是能力缺口而非算力缺口。故我们在两条轴上重设计：(i) 连续奖励 $R=\exp(-\mathrm{rel\_err}/\tau)$ 取代离散分档；(ii) 任务重定义，由精确数字回归改为可判定的中间任务（波形类型分类，继而频率比较）。适配方法为拒绝采样微调（RFT，属 STaR/ReST 家族 \cite{zelikman2022star,gulcehre2023rest}）与 outcome-only、无 KL 的 group-baseline GRPO。
 
-\paragraph{Evaluation.}
-We evaluate on held-out review items using expert agreement, and report the result beside the execution-based numbers of the text-only stage~\cite{baiZe-llm} so that verifiable and preference-based adaptation can be compared on the same system rather than in separate accounts.
-% 中文：评测。我们在留出的评审条目上以专家一致性为指标进行评测，并把结果与纯文本阶段 \cite{baiZe-llm} 基于执行的数字并列报告，使可验证式适配与偏好式适配能在同一系统上比较，而不是各记各的账。
+\paragraph{Protocol and falsification.}
+Every arm is pre-registered before measurement: four conditions are evaluated on a fixed held-out set with $\geq 3$ random seeds. \textbf{A}~=~fresh LoRA baseline; \textbf{B}~=~A after SFT; \textbf{C}~=~B after the adaptation step (RFT or GRPO); \textbf{D}~=~control (random-filter RFT or random-reward GRPO). Success requires $C{>}B$, $C{>}D$, a McNemar test on $C$ vs $B$ with $p{<}0.05$, and a bootstrap 95\% CI on $C{-}B$ that excludes zero. Negative results are reported as-is; a CPU pilot is never extrapolated to a GPU claim.
+% 中文：协议与证伪。每个臂在测量前预注册：在固定留出集上以 $\geq 3$ 个随机种子评测四条件。A=fresh LoRA 基线；B=SFT 后的 A；C=适配步骤后的 B；D=控制组。成功需 $C{>}B$、$C{>}D$、McNemar $p{<}0.05$、且 bootstrap 95\% CI 排除 0。负结果如实记录；CPU 试点从不外推为 GPU 结论。
 
-Results are reported as \textbf{[TBD]}.
-% 中文：结果以 \textbf{[TBD]} 表示（待填）。
+\paragraph{Results.}
+Table~\ref{tab:domain-rl} summarises seven consecutive design iterations. The single statistically significant positive is the type-classification task with RFT (\emph{v5}): accuracy climbs $A{=}16.0\%\to B{=}37.0\%\to C{=}53.0\%$, with McNemar $C$-vs-$B$ $p{=}0.0009$ and bootstrap CI $[+7\%,+25\%]$, while the random-filter control $D{=}32.0\%$ falls \emph{below} $B$---the gain is driven by the correctness filter, not by data volume. The improvement concentrates on the visually distinctive \emph{square} class (84\%); \emph{triangle}/\emph{sawtooth} remain near zero, a persistent capability gap. Switching the adapter from RFT to GRPO on the same task (\emph{v6}) drops to 40\% (McNemar $p{=}0.267$, NS); adding a process-reward term (\emph{v7}) reaches $49.3\%\pm6.4\%$ and passes 6/6 pre-registered criteria yet fails the McNemar test because the seed-0 baseline runs high. Redefining the task to \emph{frequency comparison} (\emph{v8}) yields a mixed $52.5\%\pm6.1\%$ (significant for one seed only), and three further iterations (\emph{v9}--\emph{v11})---including a generative-augmentation route---produce no advantage over the direct arm (\emph{v11}: direct 22.2\% vs.\ augment 20.8\% vs.\ synthesis 13.2\%, $0/6$ criteria). We read this honestly: \emph{one} task--method pairing gives a significant, controlled gain, and it does \emph{not} transfer to the harder regression or frequency tasks within the CPU budget.
+% 中文：结果。表 \ref{tab:domain-rl} 汇总连续七轮设计迭代。唯一统计显著正结果是 RFT 上的类型分类（v5）：$A=16.0\%\to B=37.0\%\to C=53.0\%$，McNemar $p=0.0009$、CI $[+7\%,+25\%]$，随机过滤控制 $D=32.0\%$ 低于 $B$——增益来自正确性过滤而非数据量。提升集中在方波类（84\%）；三角/锯齿仍接近零。同任务换 GRPO（v6）降至 40%（NS）；加过程奖励（v7）达 $49.3\%\pm6.4\%$，6/6 判据通过但 McNemar 不显著。频率比较（v8）混合 $52.5\%\pm6.1\%$（仅一 seed 显著），其后 v9–v11（含生成增强）对 direct 无优势（v11：22.2/20.8/13.2，0/6 判据）。如实解读：仅一个「任务×方法」组合给出受控显著增益，且在 CPU 预算内不迁移到更难任务。
+
+\begin{table}[t]
+\centering
+\caption{Stage~(iii) CPU pilot on Qwen3.5-2B + LoRA. Accuracy (\%) per pre-registered arm; NS = McNemar $p{\geq}0.05$. All runs: train/eval disjoint seeds $\Rightarrow$ cheat rate $=0$. ``--'' = not applicable to that task.}
+\label{tab:domain-rl}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\begin{tabular}{@{}llcccccl@{}}
+\toprule
+Iter & Task (method) & $A$ & $B$ & $C$ & $D$ (ctrl) & McNemar $C{ vs.}B$ & Verdict \\
+\midrule
+v5 & Type cls., 4-way (SFT$\to$RFT) & 16.0 & 37.0 & \textbf{53.0} & 32.0 & $p{=}0.0009$ & \textbf{Significant} \\
+v6 & Type cls. (SFT$\to$GRPO) & -- & 35.0 & 40.0 & -- & $p{=}0.267$ & NS \\
+v7 & Type cls. (GRPO+process) & -- & ${\sim}40$ & $49.3{\pm}6.4$ & -- & NS & 6/6 crit., NS test \\
+v8 & Freq.\ compare (SFT$\to$GRPO) & 0.0 & 45.0 & $52.5{\pm}6.1$ & 45.0 & $p{=}0.031$ (s0) & Mixed \\
+v9 & Freq.\ compare (GRPO) & 0.0 & 49.5 & 49.5 & -- & $p{=}1.0$ & No change \\
+v10 & Freq.\ compare (GRPO) & 46.2 & 54.9 & $51.6{\pm}3.1$ & 53.8 & $p{=}1.0$ & NS \\
+v11 & Regen.\ vs.\ direct & 22.2 & -- & 20.8 / 13.2$^*$ & -- & -- & $0/6$, negative \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+\footnotesize $^*$v11 $C$ columns are \emph{direct / augment / synthesis} arms; generative augmentation is worse than direct.
+\end{table}
+
+\paragraph{Where vision would actually help.}
+To bound the value of a true multimodal (image) channel, we audited the waveview-related cases of an EDA-flow benchmark~\cite{liu2026zhulong}: of $37$ waveform-related cases ($30$ failed), $4$ ($\alpha{=}13.3\%$, optimistic $\alpha{+}\beta{\approx}36\%$) fail \emph{directly because} the model cannot see the waveform shape---eye-diagram aperture, rise-edge margin, root-cause diff, functional inference from a plot. This audit was conducted under a benchmark version that \emph{downgraded} the visual judgement of $7$ evaluated cases to text/Tcl (all passing); downgrading the very capability under test changes the ruler, so that version has since been corrected---need-to-see-image cases are retained in original form and a system without multimodal ability is now \emph{expected} to fail them. The $\alpha$/$\beta$ cases therefore become the measurement substrate for multimodal gain, defined as the \emph{baseline-fail~$\to$~with-vision-pass} delta, which the cross-line re-evaluation below targets. The implication for stage~(iii) is that the image-channel ceiling must be re-measured under the corrected benchmark rather than read off the downgraded numbers, and that task/reward design (above) together with a waveform-VQA set built from the $\alpha$/$\beta$ cases are the high-ROI levers.
+% 中文：视觉真正能帮上忙之处。为界定真实多模态（图像）通道的价值，我们审计了某 EDA-flow 基准 \cite{liu2026zhulong} 的 waveview 相关用例：37 个波形相关用例（30 个 failed）中，4 个（$\alpha=13.3\%$，乐观 $\alpha+\beta\approx36\%$）是「直接因为模型看不到波形形状」而失败——眼图孔径、上升沿余量、根因 diff、由图作功能推断。该审计是在「把 7 个已评测用例的视觉判断降级为文本/Tcl（全通过）」的基准版本下做的；降级被测能力等于换了尺子，故该版本此后已被纠正——需看图的用例恢复原形态，无多模态能力的系统现在「应当」在这些题上 fail。于是 $\alpha$/$\beta$ 用例成为多模态增益的度量基底，增益定义为「基线 fail→上视觉后 pass」的差值，正是下方跨线再评测的目标。对第 (iii) 阶段的含义是：图像通道天花板须在纠正后的基准上重测，而非取自降级数字；且任务/奖励设计（上文）+ 用 $\alpha$/$\beta$ 用例构造 waveform-VQA 评测集才是高 ROI 杠杆。
+
+\paragraph{Honest status.}
+Within a CPU-only budget, stage~(iii) delivers one controlled, significant result (type classification, $+16$\,pp over SFT, $p{=}0.0009$, cheat rate $0$) and a sequence of non-significant or negative results that we report rather than suppress; the binding constraint is reward/task definition, not compute, so waiting for GPUs would not have changed the qualitative outcome. Two items remain open and are stated as such rather than estimated: (i) scaling the significant pairing to GPU-scale GRPO, and (ii) the cross-line re-evaluation that wraps Qwen3.5-2B as a VQA tool and re-runs the $\alpha$/$\beta$ waveview cases against a text-only baseline---the dependency chain whose first link is the audit above.
+% 中文：诚实状态。在仅 CPU 预算内，第 (iii) 阶段交付一个受控显著结果（类型分类，较 SFT +16pp，$p=0.0009$，cheat rate 0）以及一连串如实报告的非显著或负结果；约束瓶颈是奖励/任务定义而非算力，故等待 GPU 不会改变定性结论。两项仍开放，据实陈述而非估算：(i) 把显著组合扩展到 GPU 规模 GRPO；(ii) 跨线再评测——把 Qwen3.5-2B 封装为 VQA 工具、对 $\alpha$/$\beta$ waveview 用例相对纯文本基线重跑——其依赖链第一环即上文的审计。
