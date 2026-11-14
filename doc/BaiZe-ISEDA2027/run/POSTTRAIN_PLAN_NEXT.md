@@ -107,6 +107,7 @@
 - **链已起跑**：`bpt_attribution_overnight_chain.sh`（PID 3707027，36.15 后台 setsid）—— wait-gate 等 run2 退出后串行：**A1(40q) → A3(40q) → P0-baseline-dev(79q) → P0-p0-dev(79q)**，全 `-p 8`，结果落 36.15 `/tmp/posttrain_attribution_{ablation,prompt}/`。A1 已于 **23:30 起跑**（run_cline_script PID 3728419，`-t 005,007,...,157`，staged MCP=基线全开，codegen.log 实见 task 005 生成 `is_polygon_convex` 真实代码），GPU6=98%（A1 独占，run2 已死、A2 走云）。
 - **ETA**：A1~00:15 / A3~01:15 / P0-base-dev~02:45 / P0-p0-dev~04:30 → **全链 ~04:30-05:00 完成**，远早于 09:00。结果写入后由下一 wake 汇总 + 更新报告 + McNemar。
 - **谁在卡**：**无人卡**——隧道通、serve 独占、链自治运行。唯一余风险：隧道若再断会中断链（chain 在 36.15 本地跑，隧道只承载 18096 模型通道；若断，cline 请求 18096 超时→该臂 final_report 可能缺，按回滚标 BLOCKED 不伪造）。
+- **⚠️ final_report 交叉核验要求（下一 wake 必做）**：36.15 上并发的 ZhuLong subagent A2（PID 2886626，DeepSeek 云，**同** `EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework`）会把它的 final_report 也写进 `output_evaluation/`。我的 runner 用 `comm -13|head -1` 选本臂新目录，但若 A2 在我某臂窗口内完成且目录名排序更靠前，可能误抓 A2 的 final_report（DeepSeek pass 率与 minicpm5 量级不同→可检出）。**下一 wake 须**：对每个臂，把 chain log 里记录的 `from $NEW_EVAL_DIR` 路径，与该臂 `codegen.log` 的 `attribution_<ARM>_` BATCH 时间戳交叉核对；若不符，从 `output_evaluation/` 按该臂 codegen 批次重选正确目录（数据全保留，可复算）。
 
 ### 可复算命令
 ```bash
