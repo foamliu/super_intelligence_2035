@@ -928,3 +928,19 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792651065355_6ty3f	thomasz	hfeg0plg92	66	physical_verify	parked		2026-11-15 00:42	debug-Q&A drcoa ESD stuck log compare r576
 1794636165058_j8uux	xxchen	hfeg0plg19	468	physical_verify	parked		2026-11-15 02:15	known-reject xxchen r577 top500-fresh drc-dominant
 1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	parked		2026-11-15 02:15	known-reject xxchen r577 top500-fresh drc-dominant
+1792484214005_w1dp0	zqzhan	hfeg0pkn002	77	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT debug-sim off-domain D (primesim/fsdb LSBATCH log)
+1794381807398_hcd0c	hktklin	hfeg0plg87	65	layout_virtuoso	parked		2026-11-15 02:05	r578 peek REJECT text-sub tap_p->lacaa_common on SKILL files (generic file manipulation, not EDA produce)
+1789973566279_0cjq2	davidwu	hfeg0pgn019	61	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT run-existing auto-placement step3 (dup pb4ei r538 reject; user dumps P&R skill spec then asks execute step3)
+1794223587428_daqqm	zhukais	hfeg0plg54	60	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT debug Q&A panel-delete reason
+1794475569524_zdrpw	jinyuli	hfeg0plg52	63	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT Q&A how-to highlight layout net from schematic
+1794380117784_3tv6m	e0047722	hfeg0plg75	57	layout_virtuoso	parked		2026-11-15 02:05	r578 peek REJECT debug virtuoso bridge service startup error (No suitable Python)
+1794366524360_puc1n	e0045260	hfeg0plg104	63	layout_virtuoso	parked		2026-11-15 02:05	r578 peek REJECT Q&A virtuoso hotkey/pin-popup how-to config
+1782390514668_65lrn	e03179	hfeg0plg15	61	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT meta-chat(9msgs hello/who/model) + thin produce pin-list SKILL extraction below family bar
+1791272615348_sgzbs	mwxi	hfhds228	61	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT DevOps crontab ledger+Obsidian page off-domain (rsync/sync infra)
+1793842989021_kkzyd	cliu	hfeg0pkn002	61	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT run-existing sim skill on DUT off-domain D
+1793063311378_y31m0	yuhzhu	hfeg0plg66	60	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT meta(hello layout eng) + thin produce cell-list->one-view below family bar
+1789700694389_u0w9t	jiaqis	hfeg0plg76	59	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT comprehension/doc-gen markdown of project scripts
+1791954600423_5g0nl	colinxu	hfeg0plg55	72	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT Q&A+run-existing delete opened lib/cell via aeDelLib/aeDelCell
+1789090361589_54h58	e0044455	hfeg0pkn004	66	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT meta scenario-loading DRC/LVS + which-AI chat
+1794380399121_8dkdw	claire1l	hfeg0plg76	70	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT comprehension/doc layer_setup syntax summary->md->pdf
+1794449589306_y3azi	yohannw	hfeg0pnd001	72	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT DevOps agent-policy allowedScriptRoots config off-domain (zl framework)
