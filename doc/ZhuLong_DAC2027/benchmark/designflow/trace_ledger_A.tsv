@@ -574,3 +574,4 @@
 1794550196398_kqydq	e02141	hfeg0pkn005	133	eda_other	parked		2026-11-15 02:29	r541 peeked B-domain (synopsys-dominant bandgap/mosfet hspice); r545 park (r541 forgot); first-kw synopsys but B-domain content
 1794550071403_m8srw	e02141	hfeg0pkn005	122	eda_other	parked		2026-11-15 02:29	r541 peeked B-domain (synopsys-dominant); r545 park (r541 forgot); same e02141 bandgap cluster as kqydq
 1792671863382_ibrpp	jkxu	hfhds206	11	verification	parked		2026-11-15 02:29	r545 peek: 18msgs/4 user inputs all analysis Q&A (你是什么模型/xrun手册/evcd/evcd产生testbench吗); jkxu but not produce-task unlike jrorc/tlrtw
+1794191874918_jt7be	e0039602	hfeg0pkn003	311	digital	claimed		2026-11-15 02:54	r546 fresh-confirmed strict-A verilog (e0039602, mc311, verilog:987/netlist:692/lvs:544); NOT in 4-shard union; infra-blocked peek (load-balancer NOFILE all 4 backends, p0fqe-class); pending deepread next round
