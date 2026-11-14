@@ -1,17 +1,18 @@
-WAITING: 0（11-15 00:46 **r572 0-case 复核收尾轮 · 1114 池 mc10.fresh(B)=0 重验 + .75 增量 0 新 B 域 session（连续复核）** · mc-matrix `pool=942/touched=942/fresh=0` ✓(承 r569 5/5 完毕, r570/r571/r572 重验持续 fresh=0) · .75 增量: `find /home/*/.cline/data/sessions/ -name '*.messages.json' -newermt '2026-11-14 18:49:38'` ⇒ 仅 1 新 session(jkxu jrorc, gen_pattern_files.py review = digital/verification ∉ B 域, 同 r571) · 无 1115 新扫描(.75 log 最新=ssh_eda_search_20261114_184938; eda_trace_20261115.log=492838B 日常 trace 非全量扫描) · discuss 未到期(r570→r574 due, 本轮 r572 diff=2<4, board OPEN=0 豁免) · 论文报告 r532 current · WAVEVIEW task1 收官 task2 A 已试跑(2B SUT tool-call 瓶颈) · board OPEN=0 · DEBT:0 · 顶部换池令=r462 已完成(推进到 1113/1114, summary_stats.json mc_matrix.src 已切 1114, stale 旗标不重做) · r566/r566b 原文见 ARCHIVE 批次 r567-mem-shrink。
+WAITING: 0（11-15 00:56 **r573 0-case 复核收尾轮 · 1114 池 mc10.fresh(B)=0 重验 + .75 增量 0 新 B 域 session（连续复核 r570-r573）** · mc-matrix `pool=942/touched=942/fresh=0` ✓(承 r569 5/5 完毕, r570-r573 重验持续 fresh=0) · .75 增量: `find /home/*/.cline/data/sessions/ -name '*.messages.json' -newermt '2026-11-14 18:49:38'` ⇒ 仅 1 新 session(jkxu jrorc, gen_pattern_files.py review = digital/verification ∉ B 域, 同 r571/r572) · daily-trace hspice sessions(ad3nu/fdrqq 等)grep 确认已在 1114 summary.tsv(54 命中, 非新增) · 无 1115 新扫描(.75 log 最新=ssh_eda_search_20261114_184938; eda_trace_20261115.log=492838B 日常 trace 非全量扫描, mtime 11-15 00:01 与 r572 一致) · discuss 未到期(r570 last mandatory, r574 next due, 本轮 r573 diff=3<4, board OPEN=0 豁免) · 论文报告 r532 current · WAVEVIEW task1 收官 task2 A 已试跑(2B SUT tool-call 瓶颈) · board OPEN=0 · DEBT:0 · 顶部换池令=r462 已完成(推进到 1113/1114, summary_stats.json mc_matrix.src 已切 1114, stale 旗标不重做) · r566/r566b 原文见 ARCHIVE 批次 r567-mem-shrink。
 POOL_SWITCH: 1105→1109 done @ r462 (2026-11-12) → 1113 (ops 11-13 13:30, r490+ B 续用) → **r501 对账落盘**: mc_matrix.src 此前缺失/rows.src=1105、mc_matrix 块 stale(84/917/833) ⇒ 切到 summary_1113.tsv + 1113 工件(build log/matrix_1113_*/candidates 由 1113 重建) + 1105/1109 保留为 mc_matrix_1105_hist/1109_hist · mc10 fresh(B): 1109=0 → 1113=76 ✓ 直接目标满足 · ALL mc10 fresh 416(1109)→663(1113)
 📄 report: header=v30 mtime=22:4x size=253726B（r461 无报告增量——本轮做 B-D 裁定非报告增量；报告维持 v30 不动，待下轮据 A 执行回响/D relabel/论文脚注进展再增量）· **r508 论文报告刷新**: report_designflow_paper_next_steps_zh.html 32KB→35KB, 加 r508 更新说明 callout + 数字刷新(\Ntasks 1193→1264 / 主jsonl 1175→1251) + §5.3 池饱和实证升级(1109+1113 跨两次快照结构性饱和) · **r532 论文报告再刷新**: 35KB→37KB, 加 r532 更新说明 callout + 数字刷新(\Ntasks 1264→1278 / 主jsonl 1251→1279 / B 301→309 / shard A279/B309/C335/D377) + §5.3 池饱和实证再升级(r531 完整覆盖 peek 13/13 ⇒ 跨两次快照复现+同快照完整覆盖无遗漏 闭合) + P2 不一致口径更新(1278/1279/1300 三数)
 
 ## 当前基线（每轮只更新这一行，不堆历史）
-`319 条 proper（with task_id spice_sim:260 · characterization:59 · legacy 110 · jsonl B 319 行 · ledger_B case 467·parked 1045·total 1512 · asset_fidelity 回标 75/316=23.7% DONE · WAVEVIEW α2/β7 image-required 恢复+基线 FAIL r550-r552 [track=synthesized-image-restored, 2/2 B 域完毕, baseline_count=2] · task2 A 已试跑 r560(r659): 机制层✅ harness/MCP plumbing 正确 / SUT 层✗ 2B SUT tool-call 不可靠(0 真 tool_use) · r562 post_vqa_failure_mode_prediction 落 B.json[2/2 cases, PREDICTION 非 actual, 待解阻验证]）· test_rationale 断言清单 319/319 达标 · 目标通过率（B 档）20–30% · 本轮(00:46 r572)：0-case 复核收尾轮(1114 池 mc10.fresh(B)=0 重验 + .75 增量 0 新 B 域 session, 连续复核) · B jsonl 319 行`
-`📊 trace 覆盖率（mc>=10, src=summary_1114.tsv[1114 工件 r563 建, summary_stats.json mc_matrix.src 已切 ssh_eda_search_20261114_184938], 1114 池 r563 首用）：covered 467 / target 942(B) = 49.6% · ledger_B case 467·parked 1045·total 1512 · 1114 池 sessions=942(B-keyword) mc10=942(B) / ALL mc10=3345 · mc10.fresh(B)=0(1114池 r569 5/5 完毕 + r570/r571/r572 重验 fresh=0 ✓) · 📦 MEMORY_B 31.0KB(本轮 r572 无新增) · 🦾 断言 319/319 · 🎯 cline_eval 137/15/12.2% current(r552 β7 基线 FAIL, 本轮 0-case 无新 case)`
-`💬 discuss: r570 mandatory due 清付（r566→r570 diff=4≥4, board OPEN=0 走配额制）。发言 = 关键词域过滤三判据对账：① 反驳 A r539 复合判据（首位∈本域 AND 占比≥阈值）对 u4uxo 型 low-ratio gem 仍误杀（u4uxo 首位=schematic∉B + spice-ratio=0.0025，两闸门都不过，但真为 characterization L2）⇒ B 维持 r566 三级口径，复合判据只作 flag 不作 gate；② 区分 C r573 keyword-pair 适用域（C 跨域歧义 pyaether∈layout∪schematic 有效 / B 域内子分类 spice_sim vs characterization 无效，B 子分类靠 peek 产出形态）；③ 正式接受 D r659 duration 粗筛反证（B r554 粗筛作废，B 域 2 条 fit 粗筛是小样本巧合，D 域 8 条反证更强），补 B 域 duration 语义（synthesized assets 无真 sim runtime，duration 只反映 agent 行为）。下轮 mandatory due r574（r570+4）。本轮 r572 diff=2<4 未到期豁免。
+`319 条 proper（with task_id spice_sim:260 · characterization:59 · legacy 110 · jsonl B 319 行 · ledger_B case 467·parked 1045·total 1512 · asset_fidelity 回标 75/316=23.7% DONE · WAVEVIEW α2/β7 image-required 恢复+基线 FAIL r550-r552 [track=synthesized-image-restored, 2/2 B 域完毕, baseline_count=2] · task2 A 已试跑 r560(r659): 机制层✅ harness/MCP plumbing 正确 / SUT 层✗ 2B SUT tool-call 不可靠(0 真 tool_use) · r562 post_vqa_failure_mode_prediction 落 B.json[2/2 cases, PREDICTION 非 actual, 待解阻验证]）· test_rationale 断言清单 319/319 达标 · 目标通过率（B 档）20–30% · 本轮(00:56 r573)：0-case 复核收尾轮(1114 池 mc10.fresh(B)=0 重验 + .75 增量 0 新 B 域 session, 连续复核 r570-r573) · B jsonl 319 行`
+`📊 trace 覆盖率（mc>=10, src=summary_1114.tsv[1114 工件 r563 建, summary_stats.json mc_matrix.src 已切 ssh_eda_search_20261114_184938], 1114 池 r563 首用）：covered 467 / target 942(B) = 49.6% · ledger_B case 467·parked 1045·total 1512 · 1114 池 sessions=942(B-keyword) mc10=942(B) / ALL mc10=3345 · mc10.fresh(B)=0(1114池 r569 5/5 完毕 + r570/r571/r572/r573 重验 fresh=0 ✓) · 📦 MEMORY_B 17.3KB(r573 归档瘦身 r552-r410+ 滚入 ARCHIVE, 保 r553-r573 共 22 条) · 🦾 断言 319/319 · 🎯 cline_eval 137/15/12.2% current(r552 β7 基线 FAIL, 本轮 0-case 无新 case)`
+`💬 discuss: r570 mandatory due 清付（r566→r570 diff=4≥4, board OPEN=0 走配额制）。发言 = 关键词域过滤三判据对账：① 反驳 A r539 复合判据（首位∈本域 AND 占比≥阈值）对 u4uxo 型 low-ratio gem 仍误杀（u4uxo 首位=schematic∉B + spice-ratio=0.0025，两闸门都不过，但真为 characterization L2）⇒ B 维持 r566 三级口径，复合判据只作 flag 不作 gate；② 区分 C r573 keyword-pair 适用域（C 跨域歧义 pyaether∈layout∪schematic 有效 / B 域内子分类 spice_sim vs characterization 无效，B 子分类靠 peek 产出形态）；③ 正式接受 D r659 duration 粗筛反证（B r554 粗筛作废，B 域 2 条 fit 粗筛是小样本巧合，D 域 8 条反证更强），补 B 域 duration 语义（synthesized assets 无真 sim runtime，duration 只反映 agent 行为）。下轮 mandatory due r574（r570+4）。本轮 r573 diff=3<4 未到期豁免。
 `⏳ DEBT: 0（β7 WrDqMeas-001 基线 run 已清付 r552；post_vqa actual run 待 task2 infra 解阻）。
-`🧾 断言: 本轮 r572 0-case(无新 case) · 存量 319/319 达标 · k_rationale==k_check 一致率 319/319 ✓``
+`🧾 断言: 本轮 r573 0-case(无新 case) · 存量 319/319 达标 · k_rationale==k_check 一致率 319/319 ✓``
 `⚠️ cross-shard dedup 缺口(r434)：trace_ledger.py dedup 只对本 shard ledger ⇒ fresh 高估。本轮手动对 4 shard ledger+main jsonl 三式去重。修法待 CI 守门。`
 `⚠️ 11-05 dedup bug：bare/full/+.messages.json 三式匹配（已修，本轮 la00c archive 仍漏 1 条因 .messages.archive.json 未覆盖第四式）。`
 
 ## 流水（最新在上）
+- [r573] 2026-11-15 00:56 **0-case 复核收尾轮 · 1114 池 mc10.fresh(B)=0 重验 + .75 增量 0 新 B 域 session（连续复核 r570-r573）** · mc-matrix `--shard B mc-matrix --src designflow/summary_1114.tsv` ⇒ pool=942/touched=942/fresh=0 ✓ · .75 增量: `find ... -newermt '2026-11-14 18:49:38'` ⇒ 仅 1 新 session(jkxu jrorc, first_user=`gen_pattern_files.py review` TM_TEST = digital/verification ∉ B, 同 r571/r572) · daily-trace hspice sessions(ad3nu/fdrqq 等) grep 确认已在 1114 summary.tsv(54 命中 非新增) · 无 1115 新扫描(eda_trace_20261115.log mtime 11-15 00:01 与 r572 一致) · discuss 未到期(r570→r574 due, r573 diff=3<4, board OPEN=0) · close_session ✓ · jsonl_B 319 不变 · 📊 覆盖率 467/942=49.6% · DEBT:0 · 证据链: fresh=0 + 1 新 session 非 B + hspice sessions 已在池 + 无新扫描
 - [r572] 2026-11-15 00:46 **0-case 复核收尾轮 · 1114 池 mc10.fresh(B)=0 重验 + .75 增量 0 新 B 域 session（连续复核）** · mc-matrix `python3 designflow/trace_ledger.py --shard B mc-matrix --src designflow/summary_1114.tsv` ⇒ pool=942/touched=942/fresh=0 ✓(承 r569 5/5 完毕, r570/r571 持续) · .75 增量核查: open_session(shardB-poolcheck-r572) → `find /home/*/.cline/data/sessions/ -name '*.messages.json' -newermt '2026-11-14 18:49:38'` ⇒ 仅 1 新 session(jkxu jrorc, 同 r571, digital/verification ∉ B 域) · .75 log 最新扫描=ssh_eda_search_20261114_184938(无 1115 新扫描; eda_trace_20261115.log=492838B 日常 trace 非全量) · summary_stats.json mc_matrix.src 已切 ssh_eda_search_20261114_184938/summary.tsv(顶部换池令 r462 完成 stale 旗标不重做) · discuss 未到期(r570 last mandatory, r574 next due, 本轮 r572 diff=2<4, board OPEN=0 豁免) · close_session ✓ · jsonl_B 319 不变(0-case) · 📊 trace 覆盖率 467/942=49.6%(1114池) · DEBT:0 · 0-case 证据链: mc-matrix fresh=0 + .75 增量 1 新 session 非 B 域 + 无新扫描
 - [r571] 2026-11-15 00:3x **0-case 复核收尾轮 · 1114 池 mc10.fresh(B)=0 重验 + .75 增量核查 0 新 B 域 session** · mc-matrix `python3 designflow/trace_ledger.py --shard B mc-matrix --src designflow/summary_1114.tsv` ⇒ pool=942/touched=942/fresh=0 ✓(承 r569 5/5 完毕) · .75 增量核查: open_session(shardB-poolcheck) → `find /home/*/.cline/data/sessions/ -name '*.messages.json' -newermt '2026-11-14 18:49:38'` ⇒ 仅 1 新 session(jkxu jrorc 582KB 148 msgs, 首条 user msg=gen_pattern_files.py review = digital/verification TM_TEST cm_1, ∉ B 域 spice_sim/characterization) · .75 log 最新扫描=ssh_eda_search_20261114_184938(无 1115 新扫描) · discuss 未到期(r570 last mandatory, r574 next due, 本轮 r571 diff=1<4, board OPEN=0 走配额制) · close_session ✓ · jsonl_B 319 不变(0-case) · 📊 trace 覆盖率 467/942=49.6%(1114池) · DEBT:0 · 0-case 证据链: mc-matrix fresh=0 + .75 增量 1 新 session 非 B 域 + 无新扫描
 - [r570] 2026-11-15 00:2x **0-case 配额清付轮 · discuss r570 mandatory due 清付（关键词域过滤三判据对账）** · 1114 池 mc10.fresh(B)=0(r569 5/5 完毕) ⇒ 本轮 mc-matrix 重验 pool=942/touched=942/fresh=0 ✓ 0-case 证据齐 · board OPEN=0 走配额制(r566→r570 diff=4 due) · 发言三点实质表态: ① 反驳 A r539 复合判据对 u4uxo 误杀(u4uxo McVoltMarginSummary-001 首位=schematic∉B + spice-ratio=0.0025 两闸门都不过但真为 characterization L2) ⇒ B 维持 r566 三级口径(二进制 keyword gate + ratio flag + peek 兜底), 复合判据只作 flag 不作 gate; ② C r573 keyword-pair 对 C 跨域歧义有效对 B 域内子分类无效(B spice_sim vs characterization 靠 peek 产出形态: 写 deck/脚本 vs 数据提取, 引 r568/r567/r569 spice_sim + r566b/r565/r529 characterization 实证); ③ 正式接受 D r659 duration 粗筛反证(B r554 粗筛作废, 补 B 域 duration 语义: synthesized assets 无真 sim runtime duration 只反映 agent 行为) · 建议动作: @A code-fix gate 层只二进制 keyword + @C keyword-pair 跨域 flag + @D 闭合确认 + @论文§9 binary gate+multi-flag+peek 三层 · discuss/B.md 追加 r570 条 · jsonl_B 319 不变(0-case 无新 case) · 📊 trace 覆盖率 467/942=49.6%(1114池) · DEBT:0
@@ -33,91 +34,4 @@ POOL_SWITCH: 1105→1109 done @ r462 (2026-11-12) → 1113 (ops 11-13 13:30, r49
 - [r555] 2026-11-14 0-case 复核收尾轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r562-mem-shrink
 - [r554] 2026-11-14 17:3x 0-case 配额清付轮 · discuss r554 + failure_mode_tier A/B/C 落 B.json. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r555-mem-shrink
 - [r553] 2026-11-14 17:0x **0-case WAVEVIEW task2(VQA 对照)基础设施阻塞核查轮** · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r553-mem-shrink
-- [r552] 2026-11-14 17:0x WAVEVIEW β7 基线 FAIL 轮 · B 域 WAVEVIEW 任务1 收官. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r555-mem-shrink
-- [r551] 2026-11-14 16:3x WAVEVIEW α2 基线 FAIL + β7 image-required 恢复轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r553-mem-shrink
-- [r550] 2026-11-14 16:0x WAVEVIEW α2 image-required 恢复轮 + discuss r550 配额清付. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r553-mem-shrink
-- [r548] 2026-11-14 (0-case 复核/asset_fidelity 轮) · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r552-mem-shrink
-- [r547] 2026-11-14 (0-case 复核/asset_fidelity 轮) · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r552-mem-shrink
-- [r546] 2026-11-14 (0-case 复核/asset_fidelity 轮) · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r552-mem-shrink
-- [r545] 2026-11-14 (0-case 复核/asset_fidelity 轮) · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r552-mem-shrink
-- [r544] 2026-11-14 14:3x 0-case asset_fidelity 回标推进轮 · 52 题标 synth_deck(累计 57/311) · surgical 仅 tagged 行 re-serialize, diff 52/52 非-af=0 ✓. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r545-mem-shrink
-- [r542] 2026-11-14 14:1x 0-case 讨论清付轮 + asset_fidelity 回标启动 · 5 题标 synth_deck, P-005 落盘停滞实证 + B 字段执行缺口自查. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r545-mem-shrink
-- [r541] 2026-11-14 14:0x 0-case 复核轮 · mc-matrix fresh=0 + .75 无增量(eda_trace_20261114.log=480951B 与 r540 一致). 原文见 daily_B_2026-11-14.md [r541]
-- [r540] 2026-11-14 13:5x 0-case 复核轮 + §4.4 negative_selftest 抽查(SpfAutosimSetup-001 REF 12/12 + 3 negs 全 FAIL ⇒ 判分质量无回归) · fresh=0 持续有证据. 原文见 daily_B_2026-11-14.md [r540]
-- [r539] 2026-11-14 13:4x 0-case 复核轮 · .75 增量复核无变化 · fresh=0 持续有证据. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r541-mem-shrink
-- [r538] 2026-11-14 13:3x 0-case 讨论清付轮 · P-005 @B 强制表态 + 配额清付 r538 · B 域第八型降级占比全量核查. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r541-mem-shrink
-- [r537] 2026-11-14 13:1x DEBT:1 清付造题轮 · 64rg2→VlshftParamOpt-001 交付(spice_sim L2 hspice 真跑 k=12, synthesized LEVEL=1 deck, .75 REF PASS 12/12 + NEG 4/4 FAIL), jsonl_B 310→311, ledger_B 64rg2 mark case. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r539-mem-shrink
-- [r536] 2026-11-14 12:2x daily-log 增量挖掘(broad spice≥10) · 1 truly-NEW CLEAN=64rg2 → claim+deepread+deck 提取 · DEBT:1 下轮交付. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r539-mem-shrink
-- [r535] 2026-11-14 12:0x 0-case 质量饱和轮 · daily-log 续挖 strict kw≥8 · 2 truly-NEW 全 REJECT park(8w7t0 sibling-dup xhqs8 / ek7rd DDR3 cross-domain). 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r538-mem-shrink
-- [r534] 2026-11-14 11:4x 造题轮 DEBT:1 清付 xhqs8→SpiceTbGen-001 交付(spice_sim L2 hspice 真跑 k=14, A=3级反相器链 B=NAND2+缓冲 cross-input guard, .75 REF PASS 14/14 + NEG_RC=0), jsonl_B 309→310, ledger_B xhqs8 mark case, 新 archetype spice_sim testbench-generation. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r535-mem-shrink
-- [r532] 2026-11-14 10:4x 0-case 论文报告再刷新轮(35KB→37KB, \Ntasks 1264→1278, §5.3 r531 完整覆盖 peek 13/13 强化). 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r538-mem-shrink
-- [r531] 2026-11-14 0-case 池枯竭实证(完整覆盖): 13/13 fresh peek 全跨域 ⇒ 1113 池 B-keyword fresh 真枯竭. 原文见 ARCHIVE 批次 r538-mem-shrink。
-- [r530] 2026-11-14 0-case 质量饱和 + discuss 配额清付 r530. 原文见 ARCHIVE 批次 r538-mem-shrink。
-- [r529] 2026-11-14 造题轮 cli7p→VrefStepMeasure-001 交付(characterization L2 k=16, Vref_DQ DAC 阶梯波), selftest PASS, jsonl_B 308→309. 原文见 ARCHIVE 批次 r531-mem-shrink。
-- [r528] 2026-11-14 0-case 质量饱和轮 peek 2 top fresh 全 REJECT park 3; ⚠️运维自纠: 误跑 refresh 覆盖 summary_stats.json 已 git checkout 还原(r528 教训: B 非配置 owner 勿跑 refresh). 原文见 ARCHIVE 批次 r531-mem-shrink。
-- [r527] 2026-11-14 造题轮 5ityn→FinesimLaunchAgent-001 交付(spice_sim L2 k=17, GUI→CLI sim-launch), jsonl_B 307→308. 原文见 ARCHIVE 批次 r531-mem-shrink。
-- [r526] 2026-11-14 0-case 质量饱和 + discuss 配额清付 r526(自纠 r522 ratio-filter 假阴性, 第五型通胀补「低 ratio 双义»). 原文见 ARCHIVE 批次 r529-mem-shrink。
-- [r525] 2026-11-14 造题轮 qcrl8→SpfAutosimSetup-001 交付(characterization L2 k=12), jsonl_B 306→307. 原文见 ARCHIVE 批次 r529-mem-shrink。
-- [r524] 2026-11-14 🔴修正七连 0-case 误判(qcrl8 实为 B域 characterization, claim+deepread, DEBT:1→r525). 原文见 ARCHIVE 批次 r525。
-- [r523] 2026-11-14 0-case 质量饱和轮(r517-r523 七连). 原文见 ARCHIVE 批次 r524。
-- [r522] 2026-11-14 0-case + discuss 配额清付轮(mc-通胀第五型 cross-domain-tool inflation; r524 修正 qcrl8 判误). 原文见 ARCHIVE 批次 r524。
-- [r521] 2026-11-14 0-case 质量饱和轮(r517-r521 五连). 原文见 ARCHIVE 批次 r527-mem-shrink。
-- [r520] 2026-11-14 0-case 质量饱和轮(r517-r520 四连, fresh=41 spice-ratio 全分布 0 满足 B 严格过滤). 原文见 ARCHIVE 批次 r523。
-- [r519] 2026-11-14 0-case 质量饱和轮(r517-r519 三连, fresh=41 与 mc-matrix 一致). 原文见 ARCHIVE 批次 r522。
-- [r518] 2026-11-14 0-case + discuss 配额清付轮(r514→r518 diff=4 due): pulse-decay 模型 + P-004 sibling-dup 衰减期单 shard 复发. 原文见 ARCHIVE 批次 r522。
-- [r517] 2026-11-14 0-case 质量饱和轮(peek 11 fresh 全 Q&A/dup/cross-domain, parked 16, fresh 56→41). 原文见 ARCHIVE 批次 r523。
-- [r516] 2026-11-14 04:4x 造题轮 fj41f→StcCrfGenerator-001 交付(characterization, L2, k=14). 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r527-mem-shrink
-- [r515] 2026-11-14 04:0x 造题轮 mhqy7→ULVTDelvtoNetlistMod-001 交付 · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r517
-- [r514] 2026-11-14 03:2x 造题轮 0ox36→NetlistLibdefsTrap-001 交付 · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r517
-- [r513] 2026-11-14 02:39 造题轮 0wqbh→VtscRefR5Logic-001 交付(打破 r506-r512 八连 0-case) · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r517
-- [r512] 2026-11-14 02:2x **0-case 质量饱和轮(第8连 r506-r512) · 1113 池续做(fresh=63, 与 r511 一致) · 顶部换池令(11/05→11/09 由 B 执行)核验=r462 已完成且推进到 1113, 任务书"未完成"旗标为 stale 不重做** · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r519
-- [r511] 2026-11-14 02:0x **0-case 质量饱和轮(第7连 r506-r511) · 1113 池续做(fresh=64→63) · 顶部换池令(11/05→11/09 由 B 执行)核验=r462 已完成且推进到 1113, 任务书"未完成"旗标为 stale 不重做** · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r519
-- [r510] 2026-11-14 01:3x **0-case 质量饱和轮 + discuss 配额清付轮（非造题轮）· 1113 池续做(fresh=64) · 顶部换池令(11/05→11/09 由 B 执行)核验=r462 已完成且推进到 1113 不重做, 任务书"未完成"旗标为 stale** · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r519
-- [r509] 2026-11-14 01:2x **0-case 质量饱和轮（非造题轮）· 1113 池续做(fresh=64) · 顶部换池令(11/05→11/09 由 B 执行)核验=r462 已完成且推进到 1113 不重做, 任务书"未完成"旗标为 stale** · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r519
-- [r508] 2026-11-14 01:1x **换池令核验轮 + 论文报告刷新轮（触发 2026-11-11 论文报告令, 非造题轮）· 1113 池续做(fresh=64) · 报告 report_designflow_paper_next_steps_zh.html 32KB→35KB(\Ntasks 1193→1264, §5.1 分布表, §5.3 池饱和升级 1109+1113 跨快照结构性) · 换池令核验 r462 已完成**。原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r512。
-- [r507] 2026-11-14 00:3x **post-1113 daily-log 挖掘轮 + 质量饱和实证轮（非造题轮）· 1113 池续做(fresh=65) · mine eda_trace_1113+1114 → 473 spice → 15 truly-NEW 全 fresh → 逐条 peek 0 clean(6 Q&A/4 context/5 P-004) · 15 claim+park(parked 974→989)**。原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r512。
-- [r506] 2026-11-14 00:1x 配额清付 + 选料质量饱和实证轮（非造题轮）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r511。
-- [r505] 2026-11-13 23:5x 造题轮(撞车 D, curryxu x86s7 DutyWeightScale-001 计 D 交付) · 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r511。
-- [归档] 2026-11-13 23:0x **(归档批次 r510)** r504 交付 EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001 轮（spice_sim k=12, yunfat xr6sg mc35）。原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r510。
-- [r503] (已归档到 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 批次 r505)
-- [r502] (已归档到 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 批次 r505)
-- [r501] (已归档到 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 批次 r505)
-- [r500] (已归档到 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 批次 r505)
-- [r499] 2026-11-13 CxsaDcSweepDeckGen-001 交付. 原文见 ARCHIVE 批次 r500。
-- [r498] 2026-11-13 McLisSnmExtractor-001 交付. 原文见 ARCHIVE 批次 r500。
-- [r497] 2026-11-13 SlicerSweepFomOpt-001 交付. 原文见 ARCHIVE 批次 r500。
-- [r496] 2026-11-13 LpfAnomalyDetect-001 交付. 原文见 ARCHIVE 批次 r500。
-- [r495] 2026-11-13 DelvtoInjector-001 交付. 原文见 ARCHIVE 批次 r500。
-- [r494] 2026-11-13 SnmSquareValidator-001 交付. 原文见 ARCHIVE 批次 r500。
-- [r492] 2026-11-13 造题轮 g4ixv→SpfMeasDiag-001 交付(spice_sim). 原文见 ARCHIVE 批次 r493。
-- [r491] 2026-11-13 造题轮 09v9h→Mt0MeasureStat-001 交付(spice_sim). 原文见 ARCHIVE 批次 r493。
-- [r490] 2026-11-13 造题轮 wqh78→CmlDivOscDiag-001 交付(spice_sim, 1113 池首开). 原文见 ARCHIVE 批次 r493。
-- [r489] 2026-11-13 造题轮 xsocp→RonCurveEvaluator-001 交付(spice_sim, 清 r488 DEBT). 原文见 ARCHIVE 批次 r493。
-- [r488] 2026-11-13 配额清付轮 + post-1109 daily-log peek→deepread, DEBT:1. 原文见 ARCHIVE 批次 r493。
-- [r481-r487] (已归档到 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 批次 r507) — post-1109 daily-log 造题轮 r483/r484/r484-2/r485/r486/r487 + r481 扫描轮 + r482/r489/r490/r491/r492 交付。
-- [r484-2] 2026-11-13 11:3x 造题轮 2397x→NetlistModSummary-001 交付(spice_sim, parse_netlist_modules.py, k=10, selftest GREEN), jsonl_B 284→285. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r507。
-- [归档 r480] 交付 DelayCornerIdent-001  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r479] 交付 Mt0GroupedStatsGen-001 + post-1109 首扫  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r477] 论文报告轮 交付 report_designflow_paper_next_steps_zh.html  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r476] 交付 LvlShftSoaSizing-001  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r475] 交付 LvlShftSpecCompliance-001  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r474] 交付 IddIpfSignalEm-001  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r473]  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档] 2026-11-13 05:2x **(归档批次 r475)** r473-ops 轮。原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r472] 交付 EDA-Eval-DesignFlow-OtaMa0SpecCheck-001  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r471] 交付 EDA-Eval-DesignFlow-LvDpathCdlImport-001  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r470] 交付轮 7prw8 Sp2tVerilogaSwitch-001 case 交付+post-1109 新用户 unlock 实证  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r469] 靶向 post-1109 扫描轮  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r468] 0-case 轮（非池枯竭）  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r467] 0-case 轮 · characterization 域 scan 词汇盲点(SiliconSmart/custom_sim grep=0 全 38082 行+daily log,53 char case 全经 spice kw 非 lib-char 工作流) · 根因分型 spice=high-mc mined-out / char=vocab blind spot+交互式盲区 · discuss r467 · WAITING:0 DEBT:0  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r466] 0-case 轮 · fresh=15 独立复算闭合(cross-shard+main+_norm_sid=15,非r434假象) · relabel 第4路径排除(10 borderline B-share≤24%) · 新扫描机会量化(post-1109 ~11.5K session+~5.4K B-signal) · discuss r466 · WAITING:0 DEBT:0  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r465] 0-case 轮 · mc10.fresh=15>0(与r464一致) · 6/6 high-mc hspice/spectre-dominant session(f0vya/s2f9d/2ka5p/ws2bi/l36g5/i5slk)全 ledgered(4 case+2 parked) ⇒ B 强 signal high-mc 段结构性 mined-out · B 两层枯竭定型(high-mc mined-out + low-mc filter 误纳) · dedup code-fix 必要不充分 · 解锁三选一(新扫描/filter-主导/接受饱和) · B-4 下线 pending @A 实测(4 case 仍在 B.jsonl=275) · discuss r465 · WAITING:0 DEBT:0  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r464] 0-case 轮 · mc10.fresh=16>0 但 17/17 fresh 全种群 kw 非 B-dominant + 8ifjh deepread 跨域 · 5/5 deepread 全跨域 · P-004 禁造 mislabel ⇒ 0 case · 8ifjh parked · fresh 16→15 · filter-quality 根因升种群级 · discuss r464 发言 · WAITING:0 DEBT:0  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r463] 0-case 轮 · mc10.fresh=20>0 但 4/4 deepread 跨域 · P-004 禁造 mislabel ⇒ 0 case · 4 parked · fresh 20→16 · discuss r463 filter-quality 根因立论 · WAITING:0 DEBT:0  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档 r462] 换池后首条 case 交付 EDA-Eval-DesignFlow-DdrVecgenDQSELH-001 (spice_sim L2 k=14, 1109 池 B fresh=22 首次开张, zm0zw mc=92, 14 断言, 自验全过) · WAITING:0 DEBT:0  轮. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
-- [归档] 2026-11-12 23:44 **(归档批次 2057)** POOL_SWITCH 1105→1109 执行轮 (用户直令 2026-11-12, A 未执行改由 B) · 一次做完落盘 · summary_1109.tsv 生成 + 4 shard mc-matrix 复算 + summary_stats.json 切换 + candidates_mc10.tsv 重建 + B 域 mc≥10 fresh 0→22 · WAITING:0 轮。原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（摘要亦见 summary_stats.json pool_switch 字段）。
-- [归档批次 2024–2041 · 2026-11-12 10:0x–18:5x] r424–r447 共 ~24 轮 11-12 中段流水（论文报告 v13→v25 迭代 + 幻影落盘事故 v10–v19 序列 + E8/E14 三重漂移 + P-004 cross-shard near-dup + 0-case 证据链）已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_B.md，此处折叠为单行指针。
-- [归档批次 2031–222 · 2026-11-12 06:1x–10:0x] r410–r423 共 14 轮 11-12 早段流水（论文报告 v6→v13 迭代 + 1109 rescan + 8/11-peek 0-CLEAN + VwlpPumpReport/VsimFinesimAdapt/JitterTieRerun/C2cRfbCmStab 交付 + dedup 后缀 bug 发现 + B 域 filter precision 定性→定量）已折叠，原文详见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 2031–222。
-- 2026-11-11 18:37 **loop 1-case 轮 · mc10.fresh=26 非0 · 30 候选 peek 0 viable genuinely-fresh B-domain L2/L3 CLEAN · ledger 对账 seed 141 缺失 case 标记 · 不交付 case 不做论文报告(触发条件不满足) · WAITING:0** 详见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 214。
-- [归档批次 195–214 · 2026-11-10 10:2x ~ 2026-11-11 18:37] 共 ~50 轮 11-10/11-11 era 流水 one-liners 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_B.md，此处折叠为单行指针。
-- [归档批次 2039 · 2026-11-12 18:0x] 2026-11-10 10:2x ~ 23:4x 共 34 条 11-10 era 流水 one-liners 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_B.md。
+- [归档 r552 及更早] 2026-11-14 及之前流水(r552-r410+)已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_B.md，此处折叠为单行指针。本轮 r573 归档批次 r573-mem-shrink。
