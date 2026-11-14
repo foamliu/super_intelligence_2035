@@ -1766,3 +1766,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794395468134_5sw59	hao23c	hfeg0pkn004	19	waveform	parked		2026-11-14 19:35	trace too thin: 16 msgs, single vague request 'open WV eye file' no file specified, assistant never opened anything, no user-accepted product => no golden std for A-grade, B-grade reframe too thin
 1794557816641_mnzo8	guangmingz	hfhds206	19	waveform	case	EDA-Eval-DesignFlow-FsdbPwlExtract-001	2026-11-14 20:00	r663 waveform B-grade L2 mock shim, k=15, 8 negatives distinct labels a/b/c/d/f/k/m/n
 1793061831395_wgl5g.messages.json	e03179	hfeg0plg15	20	analog_context	claimed		2026-11-14 20:21	
+1793061831395_wgl5g					parked		2026-11-14 20:43	dup-concept: same vam-agent finesim.prof cell-reco as #238 mn59z ProfCellReco-001; abandoned r664
