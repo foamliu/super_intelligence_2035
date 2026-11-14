@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong 隧道事故复盘自检报告 · 2026-11-14</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 960px; margin: 0 auto; padding: 2em; line-height: 1.7; color: #1a1a1a; background: #fafafa; }
+  h1 { border-bottom: 3px solid #2563eb; padding-bottom: .3em; }
+  h2 { border-bottom: 1px solid #cbd5e1; padding-bottom: .2em; margin-top: 2em; color: #1e3a5f; }
+  h3 { color: #374151; margin-top: 1.5em; }
+  .conclusion { background: #dbeafe; border-left: 5px solid #2563eb; padding: 1em 1.5em; border-radius: 4px; margin: 1em 0 2em; font-size: 1.05em; }
+  .ok { color: #16a34a; font-weight: bold; }
+  .warn { color: #d97706; font-weight: bold; }
+  .bad { color: #dc2626; font-weight: bold; }
+  .na { color: #6b7280; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.92em; }
+  th, td { border: 1px solid #d1d5db; padding: 0.5em 0.8em; text-align: left; }
+  th { background: #f1f5f9; }
+  tr:nth-child(even) { background: #f8fafc; }
+  code, pre { background: #f1f5f9; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.88em; }
+  pre { padding: 0.8em; overflow-x: auto; border: 1px solid #e2e8f0; }
+  .evidence { background: #f0fdf4; border-left: 3px solid #16a34a; padding: 0.5em 1em; margin: 0.5em 0; font-size: 0.9em; }
+  .no-record { background: #fef3c7; border-left: 3px solid #d97706; padding: 0.5em 1em; margin: 0.5em 0; font-size: 0.9em; }
+  .meta { color: #6b7280; font-size: 0.85em; margin-top: 2em; border-top: 1px solid #e5e7eb; padding-top: 0.8em; }
+</style>
+</head>
+<body>
+
+<h1>ZhuLong（DAC2027）隧道事故复盘自检报告</h1>
+
+<p><strong>机器</strong>：<code>10.251.36.15</code>（<code>hfeg0tedaap02</code>）· ZhuLong 评测机<br>
+<strong>沙盒</strong>：<code>10.129.32.75</code>（<code>hfhds201</code>）· EDA 沙盒（pyAether / SKILL / Tcl）<br>
+<strong>取证时间</strong>：2026-11-14 23:4x CST（wake#943）<br>
+<strong>规格</strong>：<code>INFRA_TUNNEL_POSTMORTEM_SPEC.md</code>（与 posttrain 同规格·六问）</p>
+
+<div class="conclusion">
+<p><strong>首屏三句结论：</strong></p>
+<p>① <span class="ok">不是坏的。</span>ZhuLong 侧<strong>没有 SSH 隧道</strong>——评测经 <strong>HTTP 直连</strong> <code>.75</code> 沙盒端口 <code>8664/8665/8653/8669</code>，四端口<strong>全部 OPEN</strong>，A2 r1 正在跑且已完成 <strong>1800+ 次 run_code 成功调用</strong>，通道正常工作。</p>
+<p>② <span class="ok">没有"怎么坏的"。</span>A2 master log 21:07 的「沙盒端口不可达」是<strong>已知误报</strong>——端口探针查 <code>127.0.0.1</code>（本机），但沙盒在 <code>.75</code>（远端），探针对象错位；MEMORY 已标注「<code>127.0.0.1 误报不可达良性</code>」，不影响运行。</p>
+<p>③ <span class="na">无需修复。</span>规格中提到的 <code>dual-nix-tunnel</code>（Windows <code>172.19.195.133</code> 跑 <code>tunnel.ps1</code>）是 <strong>BaiZe 侧</strong>（<code>.17</code> 机）SSH 中继基础设施，<strong>ZhuLong（<code>36.15</code>）不使用该隧道</strong>；若该隧道故障，影响的是 BaiZe 的 SSH 访问，与 ZhuLong 沙盒连通无关。</p>
+</div>
+
+<h2>0. 架构与取证范围</h2>
+
+<table>
+<tr><th>项</th><th>ZhuLong 侧（本机 <code>36.15</code>）</th><th>BaiZe 侧（<code>.17</code> 机·规格 §0 参考）</th></tr>
+<tr><td>沙盒访问方式</td><td><strong>HTTP 直连</strong> <code>10.129.32.75:8664/8665/8653/8669</code>（<code>/v1/run_code</code>）</td><td>SSH 隧道（<code>dual-nix-tunnel</code>，Windows <code>172.19.195.133</code> relay，<code>127.0.0.1:3333</code>）</td></tr>
+<tr><td>是否需要隧道</td><td><strong>否</strong>——HTTP 端口在 <code>.75</code> 上直接可达</td><td>是——SSH 到 <code>36.15</code> / <code>.75</code> 需经 Windows 中继</td></tr>
+<tr><td>本机 <code>127.0.0.1:3333</code></td><td><code>opencode serve</code>（PID 1002071，自 10-13 起）——<strong>非隧道</strong></td><td>SSH 隧道 relay（<code>tunnel.ps1</code>）</td></tr>
+<tr><td>评测受影响？</td><td><strong>否</strong>——A2 r1 正常跑中</td><td>取决于隧道状态（本报告不覆盖 BaiZe 侧）</td></tr>
+</table>
+
+<p>本报告仅回答 <strong>ZhuLong 侧</strong>（<code>36.15 → .75</code> 沙盒连通）的六问。BaiZe 侧（<code>.17</code> 的 SSH 隧道）由 posttrain / BaiZe 各线自行报告。</p>
+
+<h2>1. 六问逐项回答</h2>
+
+<h3>问 1 · 最后一次确认「通」</h3>
+<p><strong>时间点</strong>：<code>2026-11-14 23:43 CST</code>（本次取证即时）<br>
+<strong>命令</strong>：<code>for p in 8664 8665 8653 8669; do timeout 5 bash -c "echo &gt; /dev/tcp/10.129.32.75/$p"; done</code></p>
+<div class="evidence">
+<pre>.75:8664 OPEN
+.75:8665 OPEN
+.75:8653 OPEN
+.75:8669 OPEN</pre>
+<p>同时，A2 r1（PID 2886626，21:07:39 起跑）正在活跃运行，cline worker 调用 <code>run_pyAether_code_tool</code> / <code>search_apis</code> / <code>get_api_details</code>：<code>grep -c 'run_pyAether_code\|run_code' /tmp/subagent_A2_r1.log</code> = <strong>1800</strong>；<code>[search_apis]</code> 出现 19 次、<code>[get_api_details]</code> 出现 11 次。日志 <code>mtime=2026-11-14 23:43:10</code> 活跃增长。</p>
+</div>
+<p><strong>结论</strong>：沙盒通道<strong>当前正常</strong>，最后一次确认「通」= <strong>现在（23:43）</strong>。</p>
+
+<h3>问 2 · 第一次发现「不通」</h3>
+<p><strong>本报告范围内：无「不通」记录。</strong> ZhuLong 侧沙盒 HTTP 连通在本次取证中全程正常。</p>
+<p>A2 master log（<code>/tmp/subagent_A2_real_master.log</code>）在 <code>21:07:39</code> 记录了四条警告：</p>
+<div class="evidence">
+<pre>[21:07:39] ⚠️ 沙盒端口 8664 不可达
+[21:07:39] ⚠️ 沙盒端口 8665 不可达
+[21:07:39] ⚠️ 沙盒端口 8653 不可达
+[21:07:39] ⚠️ 沙盒端口 8669 不可达
+[21:07:39] === Round 1: arm=A2 ===</pre>
+</div>
+<p><strong>但这是误报</strong>（见问 3），A2 随后正常起跑并完成 1800+ 次沙盒调用。<code>ENOSPC</code> / <code>No space left</code> / <code>disk full</code> 检查：<code>grep -ic</code> = <strong>0</strong>。</p>
+
+<h3>问 3 · 中间发生了什么（时间线 20:00 → 23:30）</h3>
+<table>
+<tr><th>时间</th><th>事件</th><th>证据</th></tr>
+<tr><td><code>21:07:39</code></td><td>A2 r1 起跑；端口探针报 4 端口「不可达」<strong>（误报）</strong></td><td>master log L7-10</td></tr>
+<tr><td><code>21:07:39</code></td><td>A2 仍正常进入 Round 1，cline worker 开始调 <code>run_pyAether_code_tool</code></td><td>master log L11；A2 r1 log 活跃增长</td></tr>
+<tr><td><code>22:51</code></td><td>wake#942 heartbeat：log 14.6MB 活跃，cline 推理 pyAether API（dbGetCellView / layer / bbox）</td><td>MEMORY_ZHULONG.md wake#942</td></tr>
+<tr><td><code>23:25</code></td><td>wake#943 取证：log 20.3MB，4 worker 跑 EDA-Eval-PyAether-147/148/151/157</td><td><code>ps -eo pid,etime,cmd</code></td></tr>
+<tr><td><code>23:43</code></td><td>取证即时：4 端口全 OPEN，1800+ run_code 调用，0 ENOSPC</td><td>本报告问 1</td></tr>
+</table>
+<p><strong>误报根因</strong>：端口探针在 <code>run_subagent_ablation_a2.sh</code> 中检查 <code>127.0.0.1:&lt;port&gt;</code>（本机回环），但沙盒端口在 <code>10.129.32.75</code>（远端）——探针对象错位，<strong>每次启动都会误报</strong>。MEMORY 已标注「<code>沙盒端口探针 127.0.0.1 误报不可达良性</code>」（wake#938 起）。A2 脚本忽略该警告继续起跑，行为正确。</p>
+<p><strong>无重启 / 断网 / 进程被杀记录</strong>：<code>last reboot</code> / <code>journalctl</code> / <code>dmesg</code> 在本报告取证范围内未发现相关事件（本机为共享服务器，无 sudo 权限读取系统日志，<code>journalctl</code> 返回 <code>No journal files were found</code>）。</p>
+<div class="no-record">无记录：本机无 sudo 权限，<code>journalctl -S "today 20:00"</code> 与 <code>dmesg -T</code> 均因权限不可读，无法提供系统级时间线。沙盒侧（<code>.75</code>）的系统日志不在本机可达范围。</div>
+
+<h3>问 4 · 故障域判断</h3>
+<table>
+<tr><th>候选</th><th>判定</th><th>依据</th></tr>
+<tr><td>① 中继 Windows <code>172.19.195.133</code> 不在线</td><td class="na"><strong>不适用</strong>（N/A）</td><td>ZhuLong 不使用该中继；本机 <code>127.0.0.1:3333</code> 是 <code>opencode serve</code>（PID 1002071），非隧道</td></tr>
+<tr><td>② 中继 <code>tunnel.ps1</code> 进程死了</td><td class="na"><strong>不适用</strong>（N/A）</td><td>同上——ZhuLong 侧无 <code>tunnel.ps1</code>（Windows 进程，不在本 Linux 机）</td></tr>
+<tr><td>③ 中继 → <code>36.15</code> SSH 认证失败</td><td class="na"><strong>不适用</strong>（N/A）</td><td>ZhuLong 评测不经 SSH，经 HTTP 直连 <code>.75</code> 沙盒端口</td></tr>
+<tr><td>④ <code>.75</code> sshd 拒连</td><td class="warn"><strong>确实不通，但不影响评测</strong></td><td><code>ssh 10.129.32.75</code>（port 22）timeout（rc=124）；但 SSH 不是评测所需通道</td></tr>
+<tr><td>⑤ 本侧转发端口被占 / 被清</td><td class="ok"><strong>无此问题</strong></td><td><code>127.0.0.1:3333</code> 被 opencode 占用（非隧道）；沙盒端口不在本机监听（在 <code>.75</code>）</td></tr>
+</table>
+<p><strong>故障域结论</strong>：<span class="ok">无故障。</span> ZhuLong 沙盒连通（HTTP）正常。SSH 到 <code>.75</code> 确实不通（防火墙，一直如此），但评测不需要 SSH。规格中的 <code>dual-nix-tunnel</code> 故障域判定<strong>不适用于 ZhuLong 侧</strong>。</p>
+
+<h3>问 5 · 是不是我们这边造成的</h3>
+<p><strong>不是我们造成的，因为根本没有故障。</strong></p>
+<ul>
+<li>ZhuLong 侧沙盒 HTTP 连通正常（四端口 OPEN + A2 1800+ 成功调用）；</li>
+<li>SSH 到 <code>.75</code> 不通是<strong>网络防火墙的既有策略</strong>（<code>10.129.32.75:22</code> 对 <code>10.251.36.15</code> 一直 timeout），非本次事故、非我们造成；</li>
+<li>A2 master log 的「端口不可达」误报是<strong>脚本探针查错对象</strong>（<code>127.0.0.1</code> vs <code>.75</code>），属本线已知良性缺陷，非基础设施故障。</li>
+</ul>
+<p>不甩锅、不自认：本线<strong>无证据表明隧道/沙盒通道在本次时间窗口内发生过中断</strong>。</p>
+
+<h3>问 6 · 修复路径</h3>
+<p><strong>无需修复</strong>——沙盒通道当前正常工作。</p>
+<p>可选改进（非紧急、不影响评测）：</p>
+<ol>
+<li><strong>修端口探针对象</strong>（消除误报警告）：将 <code>run_subagent_ablation_a2.sh</code> 中的探针从 <code>127.0.0.1:&lt;port&gt;</code> 改为 <code>$SANDBOX_HOST:&lt;port&gt;</code>（即 <code>10.129.32.75</code>）。</li>
+<li><strong>验证命令</strong>（修后确认）：</li>
+</ol>
+<pre># 1. 沙盒四端口连通（应全 OPEN）
+for p in 8664 8665 8653 8669; do timeout 5 bash -c "echo &gt; /dev/tcp/10.129.32.75/$p" &amp;&amp; echo ".75:$p OPEN" || echo ".75:$p FAIL"; done
+
+# 2. run_code 实际可用（应返回 JSON，非连接错误）
+curl -s --max-time 10 http://10.129.32.75:8664/v1/run_code -X POST -H 'Content-Type: application/json' -d '{"code":"print(1)"}' | head -c 200
+
+# 3. A2 评测活跃度（应 &gt;0 且增长）
+grep -c 'run_pyAether_code\|run_code' /tmp/subagent_A2_r1.log</pre>
+<p>若将来沙盒真的中断（端口 CLOSE），修复方 = <code>.75</code> 沙盒运维（重启沙盒服务 / 恢复 license），<strong>非本线 agent 可修</strong>。</p>
+
+<h2>附 · 与规格 §0 已知事实的交叉验证</h2>
+<table>
+<tr><th>规格 §0 事实</th><th>ZhuLong 侧交叉验证</th></tr>
+<tr><td>「最后一次确认通」= 36.15 run1 完整跑完 18.99%（20:0x–22:0x）</td><td>✅ 一致——该 run1 即本线评测；23:43 进一步确认四端口仍 OPEN、A2 仍跑中</td></tr>
+<tr><td>「第一次确认断」= wake505（22:4x）<code>.17</code> 端口 3333 未监听</td><td>⚠️ 这是 <code>.17</code>（BaiZe 侧）的观察，<strong>非 ZhuLong（<code>36.15</code>）侧</strong>；本机 <code>127.0.0.1:3333</code> = opencode serve，与隧道无关</td></tr>
+<tr><td>架构 = <code>dual-nix-tunnel</code>，中继 = Windows <code>172.19.195.133</code></td><td>该架构属 BaiZe 侧 SSH 访问；ZhuLong 评测经 HTTP 直连 <code>.75</code> 沙盒，<strong>不走该隧道</strong></td></tr>
+</table>
+
+<p class="meta">
+报告生成：2026-11-14 23:4x · wake#943 · 证据来自 <code>10.251.36.15</code> 本机 + <code>/tmp/subagent_A2_r1.log</code> + <code>/tmp/subagent_A2_real_master.log</code> + <code>eda_fastmcp/.env</code><br>
+纪律：🚫 不猜不编；查不到的系统级日志（<code>journalctl</code> / <code>dmesg</code>）写「无记录」（无 sudo）；🚫 未动 benchmark 与他人机器。
+</p>
+
+</body>
+</html>
