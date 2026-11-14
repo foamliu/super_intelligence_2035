@@ -1,4 +1,6 @@
-# deepread: 1791963281932_4a852 (NetlistLibCellMap-001)
+# deepread: 1791963281932_4a852 — ❌ ABORTED (red-line #1: same-trace collision)
+
+> **ABORT**: trace 4a852 already has case `EDA-Eval-DesignFlow-NetCellMap-001` in **A.jsonl** (digital, 2026-11-04, mc=661). Also B parked (2026-11-08), C mid-flight (commit ae8984e8 06:12:59). D claimed 4a852 (ledger claim only checks own shard — P-004 gap) → built full case → **caught red-line #1 pre-append** via cross-shard ledger grep → aborted, D.jsonl unchanged, 4a852 → parked. The synthesized check.py/REF/negs were git-rm'd (swept into HEAD by concurrent B bench auto-sweep ec2cc921 06:34, then removed). Case NOT delivered.
 
 - **trace**: e0039602 @ hfeg0plg95, mc=688, 555 msgs, act mode, multi-turn
 - **domain**: schematic_netlist (netlist:2752 / lvs:164 / schematic:44 / verilog:94)
