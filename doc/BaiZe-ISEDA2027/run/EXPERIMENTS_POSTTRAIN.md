@@ -11866,3 +11866,36 @@ $ bash bpt_attribution_manual_rescue.sh --arm A1
 A1=0/40✅ + A3=2/40✅ + T6✅ + 合并 HTML 报告✅（P0 节 pending）+ EXPERIMENTS 新节✅（§R526）。**唯一未闭环 = P0 dev 前后对比**：P0base 仍在 codegen，ETA ~10:00-11:30（或略过 09:00），**throughput 限（parser 乱码→2500s 超时）非 infra 非阻塞，无人卡**。下一 wake P0base+P0p0 `final_report_rescued.json` 齐后：`python3 bpt_attribution_p0_dev_compare.py --baseline-report <baseline_dev>/final_report_rescued.json --patch-report <p0_dev>/final_report_rescued.json --task-ids-key dev_ids --baseline-log <baseline_dev>/codegen.log --patch-log <p0_dev>/codegen.log --output /tmp/posttrain_attribution_prompt/p0_dev_compare.json` 出判定 ⇒ 更新 `report_posttrain_attribution_overnight_zh.html` §4 + EXPERIMENTS §R527。
 
 **纪律**：0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线脚本+EXPERIMENTS+MEMORY+daily。MEMORY 体积：wake523 压缩为指针，wake526 入流水。WAITING=0。
+
+## §R527-eta-correction（wake527, 2026-11-15 06:3x）— postmortem 二十度复核 + 报告 §4 ETA 诚实修正 + 双链监控
+
+### 1. postmortem（🔴最高优先）二十度复核 PASS
+报告 `reports/report_infra_tunnel_postmortem_zh.html` 在位（commit 375e11bf7 origin/main）。隧道三命令 06:37 实测全 PASS：`ss -ltnp|grep 3333`→LISTEN 127.0.0.1:3333；`ssh -p3333 app.e0031982@localhost 'hostname'`→hfeg0tedaap02（TUNNEL_OK）；三条 ssh 隧道进程活——618469（正向沙盒 8664-8668，etime 2-14:31:48）/ 1008898（反向 18096→.17:8096，etime 2-03:22:40）/ 1278889（反向 18098→.17:8098，etime 1-18:57:20）。最高优先令仍闭合，无新动作。
+
+### 2. 本轮实质 = 报告 §4 ETA 诚实修正（wake526 记的 ETA≈10:00-11:30 与报告旧文 ETA≈06:40「远早于 09:00」不一致 → 报告误导晨阅 → 修正）
+- `reports/report_posttrain_attribution_overnight_zh.html` 首屏③ + 09:00 banner + §4 + 时间戳四处同步修正为 wake527 实测态：
+  - **P0baseline** PID1479907 仍在 codegen（etime 01:24:13，06:37 时 codegen.log **65121 行 / 259 submit_and_exit markers**，8 worker，GPU6:8096 经 18096 独占，进程健康、log mtime=06:37 fresh）。
+  - 慢因 = minicpm5 tool-call parser 乱码 → 部分任务命中 2500s 超时（冻结协议不可改）⇒ 79 题单臂 codegen ~2-3h。
+  - **P0 前后对比 ETA≈10:00-11:00，或略过 09:00**——属 codegen 吞吐限，**非 infra、非阻塞、无人卡**。
+  - rescue 去风险坐实：A1/A3 `final_report_rescued.json` 已在盘（74255B/74237B，A1=0/40、A3=2/40，经 `bpt_attribution_manual_rescue.sh` 幂等复算确认）；chain 内 auto-rescue 对二进制日志可能跳过，**手动 helper 为可靠兜底**。
+  - baseline_dev codegen.log 经 `file` 确认 = `Unicode text, UTF-8`（非 binary），但 `输出目录` 行尚未出现（该行在 codegen 结束时由 run_cline_script.sh 打印，A1/A3 完成后均有）⇒ baseline_dev 完成后 auto-rescue 应能定位 batch dir；若不行用手动 helper。
+- 09:00 及格线 5 项：A1=0/40✅ + A3=2/40✅ + T6✅ + 中文 HTML✅（§4 ETA 已诚实修正，P0 前后对比数字仍 pending）+ EXPERIMENTS✅（§R527）。**唯一未闭环 = P0 dev 前后对比**，触发条件 = P0baseline+P0patch `final_report_rescued.json` 齐。
+
+### 3. 双链监控
+- **P0 dev 链**（36.15 经隧道）：relaunch515b PID700233 活（etime 03:42:35）→ baseline_dev RUNNING（PID1479907）→ p0_dev 排队。链自治，单 serve GPU6:8096 经 18096。
+- **R2 5-run eval**（.17 GPU7:8095）：run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE；**run5 codegen RUNNING@03:33:34**（PID3721157/3721173，etime 03:05:37，serve minicpm5-2b-grpo-R2-step200 健康，eval chain PID2322797 活，run4 耗时 20:49→03:33≈6.7h ⇒ run5 ETA≈10:00-10:30）。**4-run mean 0.475% << step105 3.04%±0.83 趋势 decisively 负**（独立交付项，待 run5 + chain 自动产 `5run_rl_analysis_R2.json` McNemar/bootstrap；不预判单 run，4-run 趋势已稳健）。
+
+### 4. 下一 wake 动作（触发条件已写明）
+P0baseline+P0patch `final_report_rescued.json` 齐后（若 auto-rescue 跳过则先跑 `bpt_attribution_manual_rescue.sh --arm baseline_dev` / `--arm p0_dev`）：
+```
+python3 bpt_attribution_p0_dev_compare.py \
+  --baseline-report /tmp/posttrain_attribution_prompt/baseline_dev/final_report_rescued.json \
+  --patch-report    /tmp/posttrain_attribution_prompt/p0_dev/final_report_rescued.json \
+  --task-ids-key dev_ids \
+  --baseline-log /tmp/posttrain_attribution_prompt/baseline_dev/codegen.log \
+  --patch-log    /tmp/posttrain_attribution_prompt/p0_dev/codegen.log \
+  --output /tmp/posttrain_attribution_prompt/p0_dev_compare.json
+```
+⇒ 出 delta_pp + McNemar + submit 报错率降幅 + 预注册判定 ⇒ 更新报告 §4 前后对比表 + EXPERIMENTS + MEMORY。R2 run5 完后读 chain 产出的 `5run_rl_analysis_R2.json` ⇒ 显著则里程碑报告 / 负则诚实负结果报告。
+
+**纪律**：0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线报告+EXPERIMENTS+MEMORY+daily。MEMORY 32705B（<40KB 硬限）。WAITING=0。
