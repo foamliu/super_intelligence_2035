@@ -57,3 +57,53 @@ wake#915 的 go_nogo note §五 自承「P0 没验证 subagent 是否真正执�
 - ▶ confirmatory smoke **未跑的唯一原因是本线自检未做**（不是沙盒冲突）；与 designflow 沙盒无关，可直接开跑
 - ✅ 守纪律：未改 benchmark/评分器、未删旧结果/trace、未 kill loop、未碰 cline 源码/版本
 - 待办（下一 wake 沙盒空闲）：跑 smoke-A → smoke-B → 通过则重跑 P1
+
+---
+
+## 六、2026-11-14 wake#923 opencode 直令·**🔴 推翻 root cause A + 发现真正双根因**
+
+> 用户直令（opencode 非 loop）跑 confirmatory smoke。本节用**实测证据**推翻 wake#922 的 root cause A（-p 8 并发竞态），定位**两个真正的根因**。
+
+### 起跑前复核（全 PASS）
+- 沙盒 10.129.32.75:8664/8665/8653/8669 全 OPEN；eda_fastmcp MCP 18890 UP；doubao-pro key curl ✅；cline 3.0.51；designflow eval PID3183742 GONE；run_cline_script 无在跑；loop PID813663 带代理✅；/tmp 23G。
+
+### 实测 1：harness -p 1 smoke-A（旧 .cline/agents/ 路径）→ ❌ FAIL
+- B1 config, 1 题, -p 1, fresh /tmp/subagent_smoke_A。harness 37s 退出。
+- 主 session tool_result: `AI_NoSuchToolError: Model tried to call unavailable tool 'subagent_researcher'. Available tools: ...无 spawn_agent/subagent_researcher`
+- **configured agent 根本没注册**。且 -p 1 时 harness 不传 --data-dir → 用默认 config（model=minicpm5-2b 非 dsv4-pro）→ 此 smoke 引入第二变量，**无效**。
+
+### 实测 2：直接 cline CLI（cwd/agents/ 路径）→ ✅ PASS
+- /tmp/subagent_smoke_A_direct/agents/researcher.yaml（B1 config），`cline -c $dir --thinking medium --compaction basic`。
+- `spawn_agent` 注册 + 调用成功；子 session agent_*.messages.json n_msgs=12, metrics.inputTokens=2381, model=minicpm5-2b（默认 config，无 --data-dir）。
+- **结论：cline 从 `cwd/agents/` 加载 configured agent，非 `cwd/.cline/agents/`**。
+
+### 🔴 真正根因 A（推翻 wake#922）：agent 注入路径错误
+- `run_cli.sh:201` 把 researcher.yaml 放 `$ws_dir/.cline/agents/`，但 cline 从 `$ws_dir/agents/` 加载 → spawn_agent 永不注册 → P1 全臂 0%。
+- **与 -p 8 并发无关**（wake#922 root cause A 错误）。-p 8 只是 P1 的条件，非病因。
+- **修复**：`run_cli.sh:201` `.cline/agents/` → `agents/`（已改 eda_fastmcp）。
+
+### 实测 3：harness -p 8 smoke-A（路径修复后）→ ⚠️ 注册✅ 但执行❌
+- B1 config, 1 题, -p 8（传 --data-dir → model=dsv4-pro-cloud ✅）, /tmp/subagent_smoke_A2。
+- `spawn_agent` **注册成功**（无 NoSuchToolError）→ 路径修复有效 ✅
+- 但 spawn_agent 调用返回 `{"error":"undefined is not an object (evaluating 'e.trim')"}` → 子 agent 未执行（0 个 agent_*.messages.json）
+
+### 实测 4：直接 cline + --data-dir（B1 config）→ ✅ PASS
+- /tmp/subagent_smoke_A3/（agents/ + settings/ 同一 dir），`cline -c $dir --data-dir $dir`。
+- spawn_agent 成功，子 session agent_*.messages.json 创建 ✅。model=dsv4-pro-cloud。
+
+### 🔴 真正根因 A2（新发现）：harness 里 cwd ≠ --data-dir，spawn_agent 执行报 e.trim
+- 直接调用：cwd = --data-dir（同一 dir 有 agents/ + settings/）→ ✅
+- harness：cwd=$ws_dir（agents/），--data-dir=$worker_dir/data（settings/ + agents/）→ cwd ≠ data-dir → spawn_agent 注册✅但执行❌ e.trim
+- **已尝试修复**：把 agents/ 也复制到 $worker_dir/data/agents/（run_cli.sh worker 循环新增 cp）。实测 3（smoke-A3 dual-fix）仍报 e.trim → **data-dir/agents/ 复制未解决**。
+- **待查**：e.trim 可能与 (a) cwd≠data-dir 路径解析 (b) 并行 tool calls（model 同时调 spawn_agent+search_apis）(c) 长任务 prompt 有关。需下一 wake 用「直接 cline + cwd≠data-dir」最小复现定位。
+
+### run_cli.sh 改动（eda_fastmcp 仓库外，不入 super_intelligence_2035 git）
+1. L201: `$ws_dir/.cline/agents/` → `$ws_dir/agents/`（cwd 路径修复）
+2. worker 循环新增：`cp CLINE_AGENTS_SRC/*.yaml → $worker_dir/data/agents/`（data-dir 路径，未解决 e.trim 但保留）
+- 纪律：只改 harness 编排，未碰 benchmark/评分器/cline 源码。
+
+### 结论与下一步
+- **wake#922 root cause A（-p 8 并发）错误**；真因 = agent 路径 bug（已修）+ e.trim 执行 bug（待定位）。
+- spawn_agent 在 cline 3.0.51 **机制可用**（直接调用✅），问题在 harness 编排层。
+- 下一步：① 最小复现 e.trim（直接 cline + cwd≠data-dir + B1 config）② 若是 cwd≠data-dir → harness 改为 cwd=data-dir 或 spawn 用 configured agent 而非 anonymous ③ smoke-B（doubao root cause B 仍有效）④ 通过则重跑 P1
+- P4 负报告仍保留为历史档。
