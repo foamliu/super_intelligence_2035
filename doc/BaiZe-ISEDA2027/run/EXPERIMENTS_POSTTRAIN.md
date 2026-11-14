@@ -11811,3 +11811,25 @@ $ bash bpt_attribution_manual_rescue.sh --arm A1
 **09:00 及格线在轨**：A1=0/40✅ + A3=2/40✅ + T6✅（attribution_t6_table.json + report_posttrain_attribution_t6_zh.html）+ P0base/P0p0 ETA~06:40 + 报告/EXPERIMENTS 待 P0 数据齐（~06:40+）下一 wake 汇总 McNemar + 报告更新。
 
 **纪律**：`git pull --rebase --autostash` clean（fast-forward 至 1dba824e1）；0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线 MEMORY + daily + EXPERIMENTS。WAITING=0。
+
+## §R525-overnight-report（wake525, 2026-11-15 05:5x）— 归因夜报 HTML 交付（3/5 项）+ P0base 仍在 codegen
+
+**本轮实质**：交付 09:00 及格线 5 项中的 3 项为一份**合并归因夜报 HTML**（`reports/report_posttrain_attribution_overnight_zh.html`，13718B，0 script/0 iframe/0 外链，单文件自包含，内联 SVG 饼图）：
+- ① **基线口径**：36.15 run1 = 18.99%（30/158），同模型 minicpm5-2b-sft-v39-final/global_step_105（model_name 陈旧标签已注明），gen 36/fail 121/timeout 1，生成后通过率 83.33%。旧 .17=3.04% 标「不可直接比」。
+- ② **T6 工具格式归因**（已落盘 `attribution_t6_table.json`）：1304 次拒绝（run_commands 80.6% 独大），P0 可消 859（65.9%）；T6 占 121 gen-fail=76.6%；76 拒绝致死 + 45 静默未生成；P0 预期 +20pp/+13.4pp（待实测）。
+- ③ **A1/A3 单变量消融**（40 题分层子集，经 manual rescue helper 幂等复算确认）：
+  - A1（no_sandbox 提示 + 沙盒 ON/基线 MCP）= **0/40 = 0%**（gen 6/151）
+  - A3（no_sandbox 提示 + 沙盒 OFF/移除 eda_flow）= **2/40 = 5%**（gen 10/148，pass_rate 0.012658）
+  - 预注册判据：A 判据未命中（A1=0%≪12%）；B 判据形式命中（A1≤8%）；观察 A3>A1 提示「提示-环境一致性」是因子。
+  - **诚实 caveat 写入报告**：路径 bug 混淆（cline 写 pyAether_code/，harness 读 ws/pyAether_code/，cline 无法回读自验→下界/可能混淆，非干净消融；bug 在跨线 eda_fastmcp 未改）；40 题≠158 不可直比基线；单 seed 无 5-run；gen_success 被路径 bug 压低≠模型不会写。结论标 caveated，须路径修复后干净重跑方可定论。
+- ④ **P0 dev 前后对比**：▶ 采集中（P0base PID1479907 仍在 codegen @43min，codegen.log 1.97MB@05:57 fresh，无 final_report；P0p0 排队 ETA 待 P0base 完）。报告 §4 标 pending + ETA + 下一 wake 补 McNemar。
+- ⑤ 隧道复盘（最高优先令）已闭合，报告 §5 引用 commit 375e11bf7。
+
+**P0base 进度核验（36.15 经隧道）**：`bpt_attribution_prompt_dev_eval.sh --patch baseline --split dev`（79 dev 题，8 worker，GPU6:8096 经 18096 独占）。chain log 仅见 `[baseline_dev] code-gen+eval starting...`，无 done/RESCUE 行 ⇒ 仍在 codegen。codegen 耗时 >40min 估算（minicpm5 parser 乱码→部分任务 2500s 超时，与 run2 同因）。dev-eval 脚本 mtime=04:42=fix 版（尾斜杠 case + grep -aoE + 清陈旧）⇒ P0base 起跑 05:14 读新脚本 ⇒ auto-rescue 应正常（去风险坐实）。
+
+**R2 5-run eval（.17 GPU7:8095）**：run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE；run5 codegen RUNNING@03:33:34（PID3721173，etime~2.4h，GPU7 89%util，serve minicpm5-2b-grpo-R2-step200 健康，eval chain PID2322797 活）。4-run mean 0.475% << step105 3.04%±0.83 趋势负（独立交付项，非 09:00 归因及格线；待 run5 + McNemar/bootstrap）。
+
+**09:00 及格线状态**：A1=0/40✅ + A3=2/40✅ + T6✅ + 合并 HTML 报告✅（P0 节 pending）+ EXPERIMENTS 新节✅（§R-Attribution-overnight/§R524/§R525）。**唯一未闭环 = P0 dev 前后对比**（P0base 仍在 codegen，无人卡，ETA 取决于超时任务数；下一 wake P0 数据齐后补 §4 + McNemar + 判定 P0 是否进累积组合）。缓冲：05:57→09:00 余 3h。
+
+**纪律**：`git pull --rebase --autostash` clean；0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线报告+EXPERIMENTS+MEMORY+daily。WAITING=0。
+
