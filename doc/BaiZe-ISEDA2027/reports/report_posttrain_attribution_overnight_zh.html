@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>白泽 Stage(ii) 归因夜报 — 2026-11-15（posttrain attribution overnight）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:980px;margin:0 auto;padding:24px;line-height:1.65;color:#222;background:#fafafa}
+h1{font-size:1.5em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+h2{font-size:1.2em;margin-top:1.8em;border-left:5px solid #2c3e50;padding-left:10px}
+h3{font-size:1.05em;margin-top:1.4em;color:#34495e}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.92em;background:#fff}
+th,td{border:1px solid #ccc;padding:7px 9px;text-align:left}
+th{background:#2c3e50;color:#fff}
+tr:nth-child(even){background:#f4f6f7}
+code{background:#eef;padding:1px 5px;border-radius:3px;font-size:0.9em}
+.box{padding:14px 18px;border-radius:8px;margin:14px 0}
+.verdict{background:#fdf2e9;border-left:6px solid #e67e22}
+.ok{background:#eafaf1;border-left:6px solid #27ae60}
+.pending{background:#eaf2f8;border-left:6px solid #2980b9}
+.caveat{background:#fdedec;border-left:6px solid #c0392b}
+.lead{font-size:1.05em;background:#fff;border:2px solid #c0392b;padding:16px 20px;border-radius:8px}
+.kpi{display:inline-block;background:#2c3e50;color:#fff;border-radius:6px;padding:6px 12px;margin:4px 6px 4px 0;font-size:0.95em}
+.small{font-size:0.85em;color:#666}
+svg{display:block;margin:14px auto}
+ul{margin:6px 0}
+</style>
+</head>
+<body>
+
+<h1>白泽 Stage(ii) · 归因夜报（2026-11-15 凌晨）</h1>
+<p class="small">posttrain 线 · 提交前缀 <code>posttrain attribution:</code> · 单文件自包含 · 0 外链 · 0 script · 数据可复算（路径见各节）</p>
+
+<div class="lead">
+<strong>首屏三句话：</strong>
+① <strong>口径已钉死</strong>——36.15 run1 基线 = <strong>18.99%（30/158）</strong>，同模型 <code>minicpm5-2b-sft-v39-final / global_step_105</code>（<code>final_report.model_name=zhulong_deepseek_v32</code> 为 config 陈旧标签，非实际模型，已 curl 核实）；
+② <strong>损失大头不在「会不会写」，而在「会不会按 MCP 协议调工具/提交」</strong>——T6 工具格式问题占 121 个生成失败的 <strong>100%</strong>（占全 158 题 76.6%），全局被拒 <strong>1304 次</strong>，其中 <code>run_commands</code> 占 80.6%；
+③ <strong>P0 工具格式补丁的 dev 前后对比仍在采集</strong>（P0baseline 评测中，P0patch 排队，ETA≈06:40），A1/A3 单变量消融与 T6 归因表已落盘，详见下文。
+</div>
+
+<div class="box pending">
+<strong>09:00 及格线交付状态（5 项）：</strong>
+<span class="kpi">A1/A3 两臂 40 题 ✅</span>
+<span class="kpi">T6 归因表 ✅</span>
+<span class="kpi">P0 dev 前后对比 ▶ 采集中（ETA 06:40）</span>
+<span class="kpi">中文 HTML 报告 ✅（本文件，P0 节待补）</span>
+<span class="kpi">EXPERIMENTS 新节 ✅（§R-Attribution-overnight / §R524）</span>
+</div>
+
+<h2>1. 基线口径（起点，已订正）</h2>
+<table>
+<tr><th>项</th><th>值</th><th>来源 / 可复算</th></tr>
+<tr><td>评测环境</td><td>36.15（有 RAG:8090 + 沙盒 MCP:18891 + 沙盒端口可达）</td><td><code>eda_fastmcp</code> on 10.251.36.15</td></tr>
+<tr><td>模型</td><td>minicpm5-2b-sft-v39-final（global_step_105）</td><td>.17 GPU6:8096 经反向隧道 18096 → 36.15</td></tr>
+<tr><td>整体 Pass@1</td><td><strong>18.99%（30/158）</strong></td><td>36.15 run1 <code>final_report.json</code> pass_rate=0.18987</td></tr>
+<tr><td>生成成功 / 失败 / 超时</td><td>36 / 121 / 1</td><td>同上 generation_statistics</td></tr>
+<tr><td>生成后通过率</td><td><strong>83.33%</strong>（30/36）</td><td>写得出代码的大多能过 → 瓶颈在「能不能写出/调通工具」</td></tr>
+</table>
+<p class="small">旧 <code>.17</code> 测法 = 3.04%（无 RAG/无沙盒 MCP）；两者同模型、不同环境，<strong>不可直接比</strong>。本报告所有归因以 36.15 口径为准。</p>
+
+<h2>2. T6 工具格式归因（最高 ROI · 已交付）</h2>
+<p>详细表见 <code>run/attribution_t6_table.json</code> + <code>reports/report_posttrain_attribution_t6_zh.html</code>。要点：</p>
+<table>
+<tr><th>拒绝原因</th><th>次数</th><th>占比</th><th>P0 可消率</th><th>P0 可消数</th></tr>
+<tr><td>missing-required-field</td><td>527</td><td>40.4%</td><td>70%</td><td>369</td></tr>
+<tr><td>other-type-error</td><td>378</td><td>29.0%</td><td>40%</td><td>151</td></tr>
+<tr><td>string-not-array</td><td>321</td><td>24.6%</td><td>90%</td><td>289</td></tr>
+<tr><td>unavailable-tool</td><td>41</td><td>3.1%</td><td>50%</td><td>20</td></tr>
+<tr><td>wrong-type-boolean</td><td>37</td><td>2.8%</td><td>80%</td><td>30</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>1304</strong></td><td>100%</td><td>—</td><td><strong>859（65.9%）</strong></td></tr>
+</table>
+<ul>
+<li>按工具：<code>run_commands</code> 1051 次（<strong>80.6%</strong>）独大；<code>string-not-array</code> 321 中 262（81.7%）属 run_commands（多条命令拼成一个字符串）。</li>
+<li>T6 生成失败 121 个 = <strong>76 拒绝致死</strong>（≥1 次被拒耗尽 turn）+ <strong>45 静默未生成</strong>（零拒绝，从未成功调工具）；gen-fail 任务 <code>used_search_apis=0</code>/<code>used_run_code=0</code> → 从未进入「检索→执行」回路。</li>
+<li>P0 补丁（<code>attribution_prompt_p0_toolfmt.md</code>）预期回收：乐观 <strong>+20pp</strong> / 保守 <strong>+13.4pp</strong>（预注册估算，<strong>待 dev 实测 + McNemar 检验</strong>）。</li>
+</ul>
+<svg width="360" height="260" viewBox="0 0 360 260" aria-label="拒绝原因分布饼图">
+<circle cx="110" cy="130" r="90" fill="#fff" stroke="#ccc"/>
+<path d="M110,130 L110,40 A90,90 0 0,1 196.5,162.6 Z" fill="#c0392b"/>
+<path d="M110,130 L196.5,162.6 A90,90 0 0,1 71.5,210.6 Z" fill="#e67e22"/>
+<path d="M110,130 L71.5,210.6 A90,90 0 0,1 23.5,118.3 Z" fill="#2980b9"/>
+<path d="M110,130 L23.5,118.3 A90,90 0 0,1 33.0,84.6 Z" fill="#27ae60"/>
+<path d="M110,130 L33.0,84.6 A90,90 0 0,1 110,40 Z" fill="#8e44ad"/>
+<text x="240" y="60" font-size="13" fill="#c0392b">■ missing-field 40.4%</text>
+<text x="240" y="90" font-size="13" fill="#e67e22">■ other-type 29.0%</text>
+<text x="240" y="120" font-size="13" fill="#2980b9">■ string-not-array 24.6%</text>
+<text x="240" y="150" font-size="13" fill="#27ae60">■ unavailable-tool 3.1%</text>
+<text x="240" y="180" font-size="13" fill="#8e44ad">■ wrong-boolean 2.8%</text>
+<text x="110" y="235" font-size="12" fill="#666" text-anchor="middle">1304 次拒绝分布（数据源 attribution_t6_table.json）</text>
+</svg>
+
+<h2>3. A1/A3 单变量消融（40 题分层子集 · 已落盘）</h2>
+<p>驱动：<code>bpt_attribution_ablation.sh --arm A1|A3</code>，40 题分层子集 <code>attribution_stratified_40.json</code>（seed=20261114）。每臂只改一项，其余与 36.15 逐字节一致。结果落 36.15 <code>/tmp/posttrain_attribution_ablation/{A1,A3}/</code>，经 manual rescue helper 复算（chain 内 auto-rescue 因旧脚本二进制 grep + 尾斜杠双 bug 跳过，已由 <code>bpt_attribution_manual_rescue.sh</code> 恢复，幂等复算确认）。</p>
+<table>
+<tr><th>臂</th><th>提示</th><th>沙盒/MCP</th><th>生成成功</th><th>通过（40 子集）</th><th>pass_rate(158 基)</th><th>产物</th></tr>
+<tr><td><strong>A1</strong></td><td>no_sandbox</td><td>基线全开（沙盒 ON）</td><td>6/40</td><td><strong>0/40 = 0%</strong></td><td>0.0</td><td>A1/final_report_rescued.json</td></tr>
+<tr><td><strong>A3</strong></td><td>no_sandbox</td><td>沙盒关（移除 eda_flow）</td><td>10/40</td><td><strong>2/40 = 5%</strong></td><td>0.012658</td><td>A3/final_report_rescued.json</td></tr>
+</table>
+
+<h3>预注册判据核对（写在跑之前，见 POSTTRAIN_PLAN_NEXT.md §1①）</h3>
+<div class="box verdict">
+<ul>
+<li>判据 A：「若 A3≈3% 且 A1≥12% ⇒ prompt 不是主因，反馈回路才是」→ <strong>未命中</strong>（A1=0% 远低于 12%）。</li>
+<li>判据 B：「若 A1≤8% ⇒ prompt 是主因」→ <strong>形式命中</strong>（A1=0% ≤ 8%）。</li>
+<li>观察：A3（提示与沙盒一致 = 都不用沙盒）= 5% &gt; A1（提示说不用沙盒但沙盒实际开着 = 矛盾态）= 0%。<strong>「提示与环境的一致性」比单一因素更影响生成</strong>。</li>
+</ul>
+</div>
+
+<div class="box caveat">
+<strong>⚠️ 诚实 caveat（不可当干净定论）：</strong>
+<ol>
+<li><strong>路径 bug 混淆</strong>：cline 把代码写到 <code>code/&lt;task&gt;/pyAether_code/</code>，而 harness 的 <code>format_cline_cli_output.py</code> 只读 <code>code/&lt;task&gt;/ws/pyAether_code/</code>（ws/ 为空）→ cline 无法回读/自验自己写的代码，可能扰动其多轮行为（重试、turn 浪费）。rescue 块事后归一化路径重跑 format+eval 恢复数字，故这些是<strong>下界 / 可能混淆</strong>，非干净消融。该 bug 在跨线 <code>eda_fastmcp</code>，本线未改（边界纪律），仅用 rescue 规避。</li>
+<li><strong>40 题分层硬子集 ≠ 158</strong>：A1/A3 在 40 题上跑，与基线 18.99%（158 题）<strong>不可直接比</strong>；只能比 A1 vs A3（同子集、同条件除沙盒外）。</li>
+<li><strong>单 seed</strong>：每臂仅 1 次运行，无 5-run mean±std，方差大；生成成功仅 6–10/40，样本极小。</li>
+<li><strong>gen_success 本身被路径 bug 压低</strong>：6–10/40 的生成成功远低于基线 36/158（22.8%），主因是 cline 困在「写了读不回」的循环，<strong>不等于模型不会写</strong>。</li>
+</ol>
+<strong>结论（caveated）</strong>：在路径 bug 下，no_sandbox 提示把 40 题通过率压到 0–5%；A1（矛盾态）&lt; A3（一致态）提示「提示-环境一致性」是显著因子。但<strong>绝对数字受 harness 路径 bug 严重压制，须路径修复后干净重跑方可定论</strong>。
+</div>
+<h2>4. P0 补丁 dev 前后对比（▶ 采集中）</h2>
+<div class="box pending">
+<strong>状态：采集中，ETA≈06:40（远早于 09:00）。</strong>
+<ul>
+<li><strong>P0baseline</strong>（<code>eval_sys_prompt_template_old.md</code>，79 dev 题）：36.15 <code>bpt_attribution_prompt_dev_eval.sh --patch baseline --split dev</code> RUNNING（PID1479907，codegen 进行中 ~35/40min，32417 行 codegen.log，232 submit_and_exit markers，8 worker，GPU6:8096 经 18096 独占）。</li>
+<li><strong>P0patch</strong>（<code>attribution_prompt_p0_toolfmt.md</code>，79 dev 题）：P0baseline 后自动起（relaunch515b PID700233 串行），ETA≈06:40。</li>
+<li><strong>判据（预注册）</strong>：dev 上 ≥+3pp 且 submit 报错率降 ≥10pp 才进下一轮；不达门槛记负结果，不事后调门槛。</li>
+<li><strong>去风险已坐实</strong>：dev-eval 脚本 mtime=04:42=fix 版（尾斜杠 <code>case</code> + 二进制安全 <code>grep -aoE</code> + 清陈旧 final_report），P0base 起跑 05:14 &gt; 04:42 ⇒ bash 读新脚本 ⇒ auto-rescue 应正常。</li>
+</ul>
+<strong>下一 wake（P0 数据齐后）</strong>：填入 P0baseline vs P0patch 的 dev Pass@1 + submit 报错率前后对比 + McNemar 配对检验，更新本节，并据此判定 P0 是否进累积组合。
+</div>
+
+<h2>5. 隧道事故复盘（最高优先令 · 已闭合）</h2>
+<div class="box ok">
+<strong>结论（wake507）</strong>：隧道<strong>坏过现已恢复</strong>。最后通点 <strong>20:41:50</strong>（36.15 run1 落盘 18.99%）/ 首断点 <strong>22:4x wake505</strong>（.17:3333 未监听 + 直连 36.15:22 超时）/ 恢复确认 <strong>23:26 wake506</strong>（中继 tunnel.ps1 重新在线）/ 故障域 = <strong>中继侧①+②</strong>（排除 SSH 认证 / 36.15 sshd / .17 端口重启）/ <strong>非本线造成亦非本线修复</strong>。报告 <code>reports/report_infra_tunnel_postmortem_zh.html</code>（commit 375e11bf7）。
+</div>
+
+<h2>6. 可复算命令</h2>
+<pre style="background:#fff;border:1px solid #ccc;padding:12px;border-radius:6px;font-size:0.85em;overflow-x:auto">
+# T6 归因表 + HTML（本机）
+python3 bpt_attribution_t6_report.py
+# A1/A3 干净复算（36.15 经隧道，幂等）
+ssh -p 3333 app.e0031982@localhost 'bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/bpt_attribution_manual_rescue.sh --arm A1'
+ssh -p 3333 app.e0031982@localhost 'bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/bpt_attribution_manual_rescue.sh --arm A3'
+# P0 dev 链进度（36.15）
+ssh -p 3333 app.e0031982@localhost 'tail -30 /tmp/posttrain_attribution_relaunch_515b.log'
+# 隧道健康三命令
+ss -ltnp | grep 3333
+ssh -p 3333 -o ConnectTimeout=10 app.e0031982@localhost 'hostname'
+ps -eo pid,etime,cmd | grep -E '618469|1008898|1278889' | grep -v grep
+</pre>
+
+<h2>7. 纪律自检</h2>
+<ul>
+<li>🚫 未改 benchmark / check.py / 题面；未挑题；未引用未跑完的 run（P0 标 pending）。</li>
+<li>单变量 · 预注册判据 · train/dev 79:79 分离 · 先 dev 后 test。</li>
+<li>反作弊 PreToolUse hook 常开（各臂逐字一致）。</li>
+<li>所有数字可追到落盘文件（路径见各节）；取不到的标 pending / caveat，不估不编。</li>
+<li>0 infra 改动；未碰 GPU0-5 / 运行中 eval / 别线文件 / 隧道进程。</li>
+</ul>
+
+<p class="small">报告生成：2026-11-15 05:5x（wake525）· posttrain 线 · 数据截止同刻 · P0 节待下一 wake（~06:40）补齐前后对比 + McNemar。</p>
+</body>
+</html>
