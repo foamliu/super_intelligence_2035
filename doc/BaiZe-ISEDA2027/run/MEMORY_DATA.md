@@ -18,6 +18,8 @@ WAITING: 0
 > 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
 > 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
 
+> [11-14 13:35] 唤醒1506：巡检→①StepB下载进度：7917/8192parquet=96.6%/3.2TB/0inc in data(2inc in .cache)/PID3112439 alive(etimes~91647s≈25.5h);②下载日志ETA：96% 7919/8207 [25:27:24<55:32,11.57s/it]→剩余~288files×11.57s≈55min→预计~14:30CST Nov14完成;③StepC auto-wait ALIVE(PID3548419,etimes~53367s≈14.8h,每5min check,最后13:28CST "parquet=7907/8192 incomplete=2");④StepA仍DONE：tokenized 926GB/4362json/4565bin@/nas_user/源已删;⑤磁盘/nas_user可用53T(53%used)/nas_train可用28T(87%used)/nas_inference可用29T(38%used)→✅;⑥git pull成功(vision MEMORY更新);⑦research日报11-14已生成(12:11):data建议=trace/合成数据统计量对照表(先3项:长度分位/工具调用次数/失败率)+标注侧模型辅助闭环+数据选择pipeline三段式1B小规模对照+无标注版图/波形图像清单→记为future work,不阻塞当前stack-v3下载分词;⑧下一步：等下载完成(ETA~55min→~14:30CST)→StepC自动分词新shard(跳过已有4362json)→StepD更新DATA_MAPPING+commit
+
 > [11-14 11:29] 唤醒1505：巡检→①StepB下载进度：7557/8192parquet=92.1%/3.0TB/1inc in data/PID3112439 alive(etimes~84347s≈23.4h);②下载日志ETA：92% 7557/8207 [23:24:34<2:00:48,11.15s/it]→剩余~650files×11.15s≈2.0h→预计~13:30CST Nov14完成;③StepC auto-wait ALIVE(PID3548419,etimes~46067s≈12.8h,每5min check,最后11:27CST "parquet=7550/8192 incomplete=2");④StepA仍DONE：tokenized 926GB/4362json/4565bin/4361idx@/nas_user/源/nas_train已删(0json实测)/源/nas_inference已清除(0parquet实测);⑤磁盘/nas_user可用54T(53%used)/nas_train可用28T(87%used)/nas_inference可用29T(38%used)→✅;⑥git pull成功(up-to-date,无新提交);⑦research日报11-14尚未生成;⑧下一步：等下载完成(ETA~13:30CST)→StepC自动分词新shard(跳过已有4362json)→StepD更新DATA_MAPPING+commit
 
 > [11-14 10:09] 唤醒1504：巡检→①StepB下载进度：7320parquet/8192=89.3%/3.169TB/0inc in data(2 inc in .cache)/PID3112439 alive;②下载日志ETA：89% 7324/8207 [22:05:09<2:39:45,10.86s/it]→剩余~883files×10.86s≈2.66h→预计~12:50CST Nov14完成;③StepC auto-wait ALIVE(PID3548419,每5min check,最后10:06CST "parquet=7312/8192 incomplete=2");④StepA仍DONE：tokenized 4362json/4565bin@/nas_user/源/nas_train已删(0json实测)/源/nas_inference已清除(0parquet实测);⑤磁盘/nas_user可用54T(53%used)/nas_train可用28T(87%used)/nas_inference可用29T(38%used)→✅;⑥git stash+pull+pop成功(up-to-date,无新提交);⑦WAITING修复：顶部WAITING:1→WAITING:0(上一轮漏改);⑧下一步：等下载完成(ETA~12:50CST)→StepC自动分词新shard(跳过已有4362json)→StepD更新DATA_MAPPING+commit
@@ -61,13 +63,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        用户令2026-11-13a+b执行阶段（StepA DONE / StepB hf download 92.1% / StepC auto-wait ALIVE PID3548419） → WAITING=0
+PHASE:        用户令2026-11-13a+b执行阶段（StepA DONE / StepB hf download 96.6% / StepC auto-wait ALIVE PID3548419） → WAITING=0
 已完成:       ✅分词全DONE;✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅rsync 2TB→/nas_user(校验通过);✅源删除DONE;✅rsync 926GB分词→/nas_user(校验通过,926GB/4362json/4565bin/4361idx);✅/nas_train源删除DONE(0json实测);✅/nas_inference源删除DONE(0parquet实测);✅StepC launch脚本就绪;✅ETA审计完成;✅StepC护栏修复;✅StepC二次修复(移除set -euo pipefail);✅任务书归档(38KB→30.5KB);✅WAITING行修复(1→0)
-当前动作:     ①StepA DONE;②StepB 进行中:hf download全量后台跑中(PID3112439,nice19/max-workers2,7557/8192parquet=92.1%/3.0TB/1inc in data);③StepC auto-wait ALIVE(PID3548419,每5min check,最后11:27CST "parquet=7550/8192 incomplete=2")
-下一步:       ①等hf download完成(ETA~2h@11.15s/it→预计~13:30CST Nov14)→StepC脚本自动启动分词新shard(跳过已有4362json);②分词完成后校验du+find.json+failed_shards.txt;③更新DATA_MAPPING.md(新位置/总token/总字节);④commit data stackv3-full-tok:+push
-阻塞:         无(StepA DONE,StepB下载中92%,StepC auto-wait ALIVE,WAITING=0短睡巡检)
+当前动作:     ①StepA DONE;②StepB 进行中:hf download全量后台跑中(PID3112439,nice19/max-workers2,7917/8192parquet=96.6%/3.2TB/0inc in data);③StepC auto-wait ALIVE(PID3548419,每5min check,最后13:28CST "parquet=7907/8192 incomplete=2")
+下一步:       ①等hf download完成(ETA~55min@11.57s/it→预计~14:30CST Nov14)→StepC脚本自动启动分词新shard(跳过已有4362json);②分词完成后校验du+find.json+failed_shards.txt;③更新DATA_MAPPING.md(新位置/总token/总字节);④commit data stackv3-full-tok:+push
+阻塞:         无(StepA DONE,StepB下载中96.6%,StepC auto-wait ALIVE,WAITING=0短睡巡检)
 ERROR_COUNT:  0
-未完成指令:   有(stack-v3-train全量下载92%+StepC分词待自动启动)→WAITING=0
+未完成指令:   有(stack-v3-train全量下载96.6%+StepC分词待自动启动)→WAITING=0
 ```
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
