@@ -157,7 +157,6 @@ check.py 无法直接验「agent 看了图」，只能验 deliverable 文本答�
 - **判分隔离**：SUT workdir 只放 prompt.txt + thresh_char_A.png + task_brief.md（PreToolUse hook + run_one.sh leak 自检验证无 check.py/reference/hidden 泄漏）。
 
 ### β11 SimFailFsdbProbe-001 — ✅ 已恢复原形态 + 基线已跑（r655, 2026-11-14）
-
 - **恢复完成**：β11 原为 L2 wv-subprocess 工具脚本 case（候选写 WaveView ACE Tcl `probe_fsdb.tcl`，check.py 跑 `waveview_mock.tcl` 在隐藏 `spec_b.json` 上判分）——纯文本模型可写 Tcl 通过，**不服务于多模态增益度量**。恢复为 image-required answer-deliverable 形态（原 L2 形态保留在 r655 前 git 历史）。
 - **图生成**：.75 沙盒 python3+matplotlib(Agg) 生成 sim_fail_A.png（7 路堆叠子图共享时间轴 ns，时窗 [1340,1370]ns，fail_time=1363ns：Q_valid 在 fail_time 跌 1→0（Q 变 x）、test_op_type 1→4@1350ns（TEST write-through）、Q_force_x 在 fail_time 0→1 并保持（**root_cause=Q_force_x_stuck_high**）、test_violation_pos 全程 0、test_violation_clk 周期 8ns 方波（上升沿 1342/1350/1358/1366 = **4 个**）、BYP_eff 全程 0、test_mode 全程 1；1500×1800@150dpi 77929 字节，**无数据标签/无阈值线/无标注**，需从坐标轴读 fail_time/各信号快照 + 数 test_violation_clk 上升沿）+ hidden/sim_fail_B.png（同构异值：时窗 [730,760]ns，fail_time=742ns，test_violation_pos 在 fail_time 翻高（**root_cause=test_violation_pos_asserted**）、Q_force_x 全程 0、test_violation_clk 周期 5ns（**6 个**上升沿）；79411 字节，反硬编码 provenance）。
 - **资产替换**：删旧文本替身 spec.json/sim_fail.log/json.tcl/waveview_mock.tcl/hidden/spec_b.json/hidden/hidden_manifest.json，改用 PNG + task_brief.md；prompt 改写要求看图读 fail_time_ps/root_cause(4 候选)/edge_signal/edge_count(数上升沿)/signal_snapshot/window/evidence_summary(自己话描述读到什么)，交付 diagnosis.json（明示"不要尝试用脚本解析图中原始数据点"）。
@@ -172,3 +171,23 @@ check.py 无法直接验「agent 看了图」，只能验 deliverable 文本答�
 ### 待恢复（下轮起）
 α3 / β6（D 域未落库 2 题，需先从 h8pcp / 3qe6x trace 造 case 再恢复为 image-required 形态）。B 域 α2/β7 移交 shard B；β5 未落库（vision 误抄, 非恢复范围, 召集人 A r508 裁定）。
 > D 域 6 题已落库 case 已全部恢复完毕（α1/β9/α4/β8/β10/β11），restored_count=6。剩余 D 域 α3/β6 未落库，需先造 case 再恢复。
+
+### α3 DqReadPathWaveDebug-001 — ✅ 已恢复原形态 + 基线已跑（r657, 2026-11-14）
+
+> **更新**：α3 实际**已落库**（D.jsonl 1 条，2026-11-09 造的 B-grade 文本 CSV/netlist case，非交底清单原标的「未落库」——交底清单基于早期 trace_deepreads 估计，与 D 实际落库情况不符；本条即恢复该已落库文本 case）。r657 修好 r656 后遗留的半恢复破损态（前轮已 commit PNG 但未写 check.py/jsonl/prompt，case 不可运行）。
+
+- **恢复完成**：移除文本 CSV/网表替身（golden_trace_A.csv / actual_trace_A.csv / dq_readpath_A.v + hidden/golden_trace_B.csv / hidden/actual_trace_B.csv / hidden/dq_readpath_B.v / hidden/expected_diagnosis_B.json / hidden/hidden_manifest.json 全删），改用纯-Python（numpy+zlib，无 matplotlib 依赖）生成的真数据图 PNG（dq_readpath_A.png 1400×1500 28KB：5 路堆叠面板 = 5 级 DQ 读路径流水线 pattern_buf→rd_gate→slice_mux→read_mux→pad_driver，每面板共享 16-cycle 时间轴，蓝=golden 阶梯线/红=actual 阶梯线，**无数据标签**，需从坐标轴读数；hidden/dq_readpath_B.png 同构异值 20-cycle/5-burst 29KB provenance+反硬编码）。覆盖前轮 r656 commit 的孤儿 138KB PNG（无参数记录，重新生成以掌控 oracle）。
+- **结构转换**：原为 L2 candidate-script-on-hidden-B case（候选写 dq_waveform_debug.py 解析 CSV+网表→diagnosis.json，check.py 真跑候选在隐藏 B 上判分，15 条件）——纯文本模型可写脚本通过，**不服务多模态增益度量**。恢复为 image-required answer-deliverable 形态（原文本形态保留在 r657 前 git 历史）。
+- **prompt 改写**：要求 agent 看图读出根因诊断（first_diverge_stage/failing_stage/root_cause_kind/mismatch_cycles/golden_value_at_diverge/actual_value_at_diverge/data_intact/num_diverge_stages/divergence_pattern），交付 diagnosis.json。明示"不要尝试用脚本去解析图中的原始数据点"。
+- **A 参数（oracle 源）**：A_NCYC=16, 4 bursts×4 cyc, A_BURST_VALS=[50,80,60,70], bug=gate_disable@rd_gate(stage1), actual 在 burst1(cyc4-7) 拉到 0 而 golden 保持 80。oracle = first_diverge=rd_gate / failing=rd_gate / root_cause_kind=gate_disable / mismatch_cycles=[4,5,6,7] / golden@div=80 / actual@div=0 / data_intact=True / num_diverge_stages=4。
+- **B 参数（hidden 反硬编码）**：B_NCYC=20, 5 bursts, B_BURST_VALS=[35,95,42,88,115], bug=bit_swap@slice_mux(stage2), actual=nibble-swap(golden)（反硬编码：与 A 的 gate_disable/drop-to-zero 形态、stage、kind、values 全不同）。
+- **check.py 重写**：13 条件 (a)-(m) answer-validation，**每条独立可 FAIL**——oracle 由 subprocess 从 embedded A_PARAMS 重建 A 波形数值推导（满足 §4.2 真跑）；值条件 (g)/(h) 读图容差 ±8；反硬编码 (l) 拒 B 专属 kind 关键词(bit_swap/nibble_swap/nibble) + B 数值(95/42/88/115/245/162/133/55) + B mismatch 长度(>10)；跨字段自洽 (m) first_diverge==failing 且 mismatch 非空 且 golden≠actual 且 data_intact⇒num_diverge<5。
+- **契约适配**：answer-deliverable 设计下 §4.1/4.2 candidate-script-on-hidden-B 替换为 oracle-recomputed-via-subprocess + anti-hardcode-B-token guard + cross-field self-consistency；hidden B 图保留 provenance + 反硬编码；metadata.restoration_notes 记录。
+- **自验**：REF PASS 13/13；10 negative（empty/hardcode_b/wrong_stage/wrong_kind/wrong_values/incoherent/wrong_mm/wrong_ndiv/stub/core_deleted）全 FAIL（NEG_RC=0，distinct first_fail labels b/c/e/f/g/j 覆盖各条件独立）；§4.9 退化回归（empty/stub/core_deleted）全 FAIL。
+- **断言闸门**：k_rationale==k_check==13 ≥ 8 ✓。
+- **jsonl 更新**：EDA-Eval-DesignFlow_D.jsonl 该 case 替换为 restored form（attachments=[dq_readpath_A.png, task_brief.md], image_required=true, track=synthesized-image-restored, restoration notes, k=13）。D.jsonl 仍 378（恢复=替换非新增）。
+- **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）→ **FAIL（正确）**（22s, exit=0, 未产出 submit.zip, hook_blocks=0, leak 自检通过）。**失败模式=did-not-engage**：session 仅 5KB，0 处提及 dq_readpath/png/prompt.txt/diagnosis/rd_gate/gate_disable/eda_flow（模型从未读 prompt/PNG、从未产出 diagnosis、从未开 eda_flow，仅 generic 探索后退出）——2B text-only 读不了 PNG。**无多模态 fail 是正确基线**。结果落 designflow/cline_eval_status_D.jsonl + designflow/waveview_baseline_results.D.json（α3 段追加, restored_count=7: α1+β9+α4+β8+β10+β11+α3）。
+- **判分隔离**：SUT workdir 只放 prompt.txt + dq_readpath_A.png + task_brief.md（PreToolUse hook + run_one_D leak 自检验证无 check.py/reference/hidden 泄漏）；判分在独立 judge dir 跑。
+- **run_one_D.sh 改进**：MODEL/THINKING/PROVIDER 改为 env-overridable（`${VAR:-default}`，向后兼容），便于 WAVEVIEW 基线用 2B surrogate 覆盖。
+
+> **D 域 WAVEVIEW 恢复总结（r657 收尾）**：D 域 7 题（α1/β9/α4/β8/β10/β11/α3）已**全部恢复原形态 + 跑出无多模态基线（全 FAIL = 正确）**，restored_count=7。剩余 D 域仅 β6（3qe6x, 真未落库，需先造 case 再恢复）。B 域 α2/β7 由 shard B 处理（α2 已恢复 r550, β7 DEBT）。**注意**：r656 前 commit 曾误把 β7 FsdbWrDqMeas-001（B 域 case）的 PNG 提交进 assets（D 越域），D 本轮未碰 β7，留待 shard B 处理。

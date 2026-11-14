@@ -44,9 +44,9 @@ WORKDIR=$WORKDIR_ROOT/$TASK_ID/$TS
 JUDGE=/nasdata/app.e0031982/.cache/judge_${TASK_ID}_${TS}_$$
 
 CLINE=~/.local/bin/cline
-MODEL=deepseek-v4-pro-cloud
-THINKING=medium
-PROVIDER=openai-compatible
+MODEL="${MODEL:-deepseek-v4-pro-cloud}"
+THINKING="${THINKING:-medium}"
+PROVIDER="${PROVIDER:-openai-compatible}"
 REC_TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 DUR=""; CLINE_EXIT=""
 

@@ -356,8 +356,31 @@
         "B-domain alpha2 RiseEdgeMargin-001 + beta7 WrDqMeas-001 remain shard B's responsibility",
         "beta5 FsdbNetToggleDiag ruled out of restore scope by convener (case never existed; vision miscopy)"
       ]
+    },
+    {
+      "case": "alpha3",
+      "task_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+      "round": "r657",
+      "restored": true,
+      "image_required": true,
+      "form": "answer-validation (5-panel golden-vs-actual DQ read-path step chart PNG, no data labels)",
+      "oracle": "subprocess recompute from embedded A_PARAMS (gate_disable@rd_gate, mismatch[4,5,6,7], golden80/actual0)",
+      "k_check": 13,
+      "self_verify": "REF PASS 13/13, 10 negatives NEG_RC=0 (distinct first_fail b/c/e/f/g/j), §4.9 degenerate all FAIL",
+      "baseline": {
+        "model": "minicpm5-2b-sft-v39-final",
+        "thinking": "low",
+        "dur_sec": 22,
+        "cline_exit": 0,
+        "verdict": "FAIL",
+        "reason": "no submit.zip produced",
+        "failure_mode": "did-not-engage (5KB session, 0 task-term mentions, 0 PNG read)",
+        "correct": true,
+        "note": "2B text-only cannot read PNG -> fail is correct baseline"
+      },
+      "structure_conversion": "removed text CSV/netlist替身; converted L2 candidate-script-on-hidden-B -> answer-validation; original text form in pre-r657 git history"
     }
   ],
-  "last_updated": "2026-11-14 r655 (beta11 SimFailFsdbProbe-001 restored + baseline FAIL)",
-  "restored_count": 6
+  "last_updated": "2026-11-14T08:51:21Z",
+  "restored_count": 7
 }
