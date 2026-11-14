@@ -1467,3 +1467,9 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794375714680_dx87n					parked		2026-11-14 08:48	r528 deepread 22msgs: sch->netlist extract P2STopM5 but msg21 pyAether sandbox conn-refused no netlist produced=INCOMPLETE trace; existing archetype#2; heavy Aether-license L2; alexli@pkn004=P-004 cluster host REJECT
 1794377551087_9mc97					parked		2026-11-14 08:48	r527 peek msg0=建22nm CMOS sentaurus sprocess deck=TCAD process sim Sentaurus未装非B spice_sim REJECT (r527 peek未park, r528补park)
 1794378329165_cli7p	alenxu	hfeg0pkn134	21	characterization	case	EDA-Eval-DesignFlow-VrefStepMeasure-001	2026-11-14 09:38	
+1794314899739_8dr7s					parked		2026-11-14 09:52	r529 peek verb=分析 Q&A not produce-task REJECT (r529 park未落盘, r530补park)
+1794379025377_s6w4t					parked		2026-11-14 09:52	r529 peek how-to Q&A not produce-task REJECT (r529 park未落盘, r530补park)
+1794382769075_hie89					parked		2026-11-14 09:52	r529 peek session gone on host (r529 park未落盘, r530补park)
+1794452394823_i8rar					parked		2026-11-14 09:55	r530 peek msg0=修改输入法 non-EDA system Q&A REJECT
+1794536566955_ccahc					parked		2026-11-14 09:55	r530 peek msg0=帮我check项目读额配置和log verb=check=analysis Q&A drc:1419 dominant C-domain REJECT
+1794460931114_s25rs					parked		2026-11-14 09:55	r530 peek msg0=把本地git该提交的都提交了 non-EDA git workflow Q&A REJECT
