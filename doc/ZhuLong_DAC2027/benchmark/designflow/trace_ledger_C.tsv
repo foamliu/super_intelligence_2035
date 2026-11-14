@@ -905,3 +905,12 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794453555751_gklsl	pdsong	hfeg0plg74	129	physical_verify	parked		2026-11-14 23:06	r566 peek: pdsong analysis Q&A
 1794478125354_p7xx6	dsgao	hfhds201	106	physical_verify	parked		2026-11-14 23:06	r568 peek: dsgao Q&A capability patron EM sim
 1794296395393_0qbbv	yzwang	hfeg0plg55	68	layout_virtuoso	case	EDA-Eval-DesignFlow-PatternPortOpcMark-001	2026-11-14 23:32	
+1794535679588_rk2g7	chapinc	hfeg0plg96	93	layout_aether	parked		2026-11-15 00:10	r575 peek: chapinc USER#0 context-summary continuation, not produce-task
+1794562625468_67snx	cuij	hfeg0plg86	89	physical_verify	parked		2026-11-15 00:10	r575 peek: cuij USER#0 debug-Q&A analyze-why-missing, not produce-task
+1794554327128_bqjsi	e0047488	hfeg0plg97	91	layout_aether	parked		2026-11-15 00:10	r575 peek: e0047488 USER#0-6 conceptual Q&A+doc-summary, not produce-task
+1794395067104_4koby	xrxiong	hfeg0plg74	85	layout_aether	parked		2026-11-15 00:10	r575 peek: xrxiong USER#1 install skill meta/setup, not produce-task
+1788413551469_rysn2	jason17w	hfeg0pnd002	95	physical_verify	parked		2026-11-15 00:10	r575 peek: jason17w USER#0 run-regression run-existing, not produce-task
+1791355109862_g2ys9	adminai	hfeg0plg107	83	physical_verify	parked		2026-11-15 00:10	r575 peek: adminai USER#0-4 debug-Q&A/setup db-config, not produce-task
+1794555150323_1m1dn	jerrygu	hfeg0plg93	81	physical_verify	parked		2026-11-15 00:10	r575 peek: jerrygu USER#0 analysis-Q&A analyze-module-function, not produce-task
+1794475750838_fbuxz	ywli	hfeg0plg91	79	layout_aether	parked		2026-11-15 00:10	r575 peek: ywli USER#0 capability-Q&A can-modify-layout, not produce-task
+1792390124324_rf6en	hswang	hfeg0plg94	79	physical_verify	parked		2026-11-15 00:10	r575 peek: hswang USER#0 debug-Q&A traceback analyze-error, not produce-task
