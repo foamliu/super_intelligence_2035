@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **115** 条（**第二十九轮 2026-11-14 15:0x 补 4 条**：phi-1 `2306.11644`（**1,104**，2023，预印本）/ OSWorld `2404.07972`（**686**，NeurIPS 2024，pp. 52040–52094）/ ML for EDA Survey `2102.03357`（**388**，TODAES 26(5):1–46）/ A Modern Primer on PIM `2012.03112`（**92**，2020，综述）；**第二十八轮 2026-11-14 12:0x 补 4 条**：Genie `2402.15391` / Hitting the Memory Wall（1995） / Deep Learning（Nature 2015） / AlexNet（CACM 2017）；首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023）；**第二十五轮 2026-11-14 03:0x 补 4 条** DeepSeekMath / GRPO `2402.03300`（11,153）/ MAE `2111.06377`（10,217，CVPR 2022）/ S4 `2111.00396`（2,741，ICLR 2022 Outstanding HM）/ DreamerV3 `2301.04104`（1,962，Nature 2025）；**第二十六轮 2026-11-14 06:0x 补 4 条** Adam `1412.6980`（101,807，ICLR 2015）/ Batch Normalization `1502.03167`（34,937，ICML 2015 PMLR 37:448–456）/ GAN `1406.2661`（9,668 预印本记录，NeurIPS 2014）/ DREAMPlace（DAC 2019，177；TCAD 版 205，**无 arXiv**）；**第二十七轮 2026-11-14 09:0x 补 4 条** Latent Diffusion `2112.10752`（**20,670**，CVPR 2022；⚠️ 候选池旧 ID `2207.11240` 实为 Discrete Key-Value Bottleneck ⇒ 已更正）/ MuZero `1911.08265`（Nature 2020 588:604–609，**2,075**）/ AutoDMP（ISPD 2023，**67**，无 arXiv）/ DREAM-GAN（ISPD 2023，**16**，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **49** · vision **30** · harness **62** · data **63** · zhulong **72** · designflow **39**
+**本轮快照**：累计 **123** 条（**第三十一轮 2026-11-15 00:0x 补 4 条**：Codex / HumanEval `2107.03374`（**12,170**，2021 预印本）/ HELM `2211.09110`（**2,295**，TMLR 2023）/ The Pile `2101.00027`（**3,021**，2020 预印本）/ FLAN `2109.01652`（**3,471**，2021 预印本）；**第三十轮 2026-11-14 22:3x 补 4 条**：GPT-4 `2303.08774`（38,329）/ Roofline（CACM 52(4):65–76，2,165）/ SigLIP `2303.15343`（1,884，ICCV'23）/ 训练集去重 `2107.06499`（ACL 2022，226）；**第二十九轮 2026-11-14 15:0x 补 4 条**：phi-1 `2306.11644`（**1,104**，2023，预印本）/ OSWorld `2404.07972`（**686**，NeurIPS 2024，pp. 52040–52094）/ ML for EDA Survey `2102.03357`（**388**，TODAES 26(5):1–46）/ A Modern Primer on PIM `2012.03112`（**92**，2020，综述）；**第二十八轮 2026-11-14 12:0x 补 4 条**：Genie `2402.15391` / Hitting the Memory Wall（1995） / Deep Learning（Nature 2015） / AlexNet（CACM 2017）；首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023）；**第二十五轮 2026-11-14 03:0x 补 4 条** DeepSeekMath / GRPO `2402.03300`（11,153）/ MAE `2111.06377`（10,217，CVPR 2022）/ S4 `2111.00396`（2,741，ICLR 2022 Outstanding HM）/ DreamerV3 `2301.04104`（1,962，Nature 2025）；**第二十六轮 2026-11-14 06:0x 补 4 条** Adam `1412.6980`（101,807，ICLR 2015）/ Batch Normalization `1502.03167`（34,937，ICML 2015 PMLR 37:448–456）/ GAN `1406.2661`（9,668 预印本记录，NeurIPS 2014）/ DREAMPlace（DAC 2019，177；TCAD 版 205，**无 arXiv**）；**第二十七轮 2026-11-14 09:0x 补 4 条** Latent Diffusion `2112.10752`（**20,670**，CVPR 2022；⚠️ 候选池旧 ID `2207.11240` 实为 Discrete Key-Value Bottleneck ⇒ 已更正）/ MuZero `1911.08265`（Nature 2020 588:604–609，**2,075**）/ AutoDMP（ISPD 2023，**67**，无 arXiv）/ DREAM-GAN（ISPD 2023，**16**，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **51** · vision **30** · harness **64** · data **66** · zhulong **74** · designflow **39**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -2080,6 +2080,74 @@
 | 与我们工作的关系 | **data（主目标 · 去重）**：把「去重」从卫生习惯变成有数字的评测问题 ⇒ <b>动作</b>：语料入库流水线固定两级去重（精确子串 + 近似），报表给「重复 token 占比 / 跨 split 重叠率」。<br>**harness（污染）**：>4% 验证集重叠说明**公开基准分数可能虚高** ⇒ <b>动作</b>：我们自建留出集必须与训练语料做跨源近重复检索（n-gram + 向量），命中率进报表。<br>**pretrain（效率）**：去重后更少步数达同等精度 ⇒ <b>动作</b>：把「去重率」列为配方变体的一等超参，记录与 token 效率的关系。<br>**风险**：① 结论基于 **C4 等英文语料**，中文 / 代码需重测，🚫 直接外推；② 「十倍」只指**记忆化文本频率**，不是通用能力十倍；③ 226（ACL）与 357（预印本）是两条记录，**不相加**。 |
 
 首次收录: 2026-11-14（第三十轮）｜ 状态: 元数据 + 被引已核（arXiv API `200` + `atom`，7 作者；ACL Anthology 页 `200` / 42,877 B，`citation_*` 逐条一致；Crossref DOI `200`，页码 8424–8445 一致）
+
+---
+
+## 120. Evaluating Large Language Models Trained on Code（Codex / HumanEval）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Evaluating Large Language Models Trained on Code |
+| 作者（前 3） | Mark Chen · Jerry Tworek · Heewoo Jun（共 **54** 位；arXiv 作者字段逐字核，OpenAlex 把一作误并成 `Mark I-Cheng Chen` ⇒ **以 arXiv 为准**） |
+| 年份 | **2021**（arXiv v1 `2021-07-07`，v2 `2021-07-14`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`，无会场记录；本轮未核到一手会场页 ⇒ 不写会议） |
+| 被引数 | **12,170**（OpenAlex `10.48550/arxiv.2107.03374`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2107.03374> ｜ DOI `10.48550/arxiv.2107.03374` |
+| 一句话贡献 | 在**公开 GitHub 代码**上微调 GPT 系列模型，把「函数级代码生成」变成可测任务：提出 **HumanEval**（164 道手写 Python 题，含单元测试）与 **pass@k** 的无偏估计，并报告「单次采样 → 重复采样」的收益随采样数上升。 |
+| 与我们工作的关系 | **harness（直接）**：`pass@k` 与「题 + 可执行单测」的判分口径，是今天所有代码 agent 评测的祖本 ⇒ <b>动作</b>：我们的代码题集必须自带可执行测试，且同时报 pass@1 与 pass@k，避免只报一次采样。<br>**data（直接）**：训练语料 = 公开 GitHub 代码，说明「代码能力主要来自公开代码预训练」这一路线在 2021 年已可复现 ⇒ <b>动作</b>：代码语料入库时记录「许可证 / 去重 / 与评测集重叠」三列，作为 pass@k 可信度的前置条件。<br>**zhulong（间接）**：单测通过 ≠ 需求满足（本文只测函数级正确性）⇒ <b>动作</b>：agent 任务的判分不得把「测试通过」当成需求验收，须另有规格项。<br>**风险**：① HumanEval 仅 164 题、Python 单语言，**已被后续工作大量用作训练数据** ⇒ 分数不再可比；② 本文非同行评审；③ 12,170 是 OpenAlex 预印本口径。 |
+
+首次收录: 2026-11-15（第三十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + `atom`，54 作者；OpenAlex `200`）
+
+---
+
+## 121. Holistic Evaluation of Language Models（HELM）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Holistic Evaluation of Language Models |
+| 作者（前 3） | Percy Liang · Rishi Bommasani · Tony Lee（共 **50** 位，CRFM/Stanford；arXiv 作者字段逐字核） |
+| 年份 | **2022**（v1 `2022-11-16`，v2 `2023-10-01`） |
+| 会议 / 期刊 | **TMLR 2023**（arXiv `journal_ref` 原文：`Published in Transactions on Machine Learning Research (TMLR), 2023`） |
+| 被引数 | **2,295**（OpenAlex `10.48550/arxiv.2211.09110`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2211.09110> ｜ DOI `10.48550/arxiv.2211.09110` ｜ 项目页 <https://crfm.stanford.edu/helm/v1.0> |
+| 一句话贡献 | 提出**整体评测**框架：在统一条件下把「场景 × 模型 × 指标」排成矩阵，指标固定为 **accuracy / calibration / robustness / fairness / bias / toxicity / efficiency** 七类，并要求**同时报多指标**而不是单一分数；配套开源可复现的评测栈。 |
+| 与我们工作的关系 | **harness（主目标）**：七类指标清单可直接当我们评测报表的**列模板** ⇒ <b>动作</b>：任何「某模型更强」的结论必须附 efficiency 与 robustness 两列，缺列即降级为「未评测」。<br>**zhulong（成本口径）**：把 efficiency 当一等信息 ⇒ <b>动作</b>：消融表固定加「每任务成本 / 每正确回答成本」两列，与准确率同表。<br>**data（次要）**：多场景矩阵暴露出「某场景高分来自数据泄漏」的风险 ⇒ <b>动作</b>：自建留出集按场景分层做污染检查。<br>**风险**：① 评测对象是**基座/API 模型**，不是 agent 轨迹，不能直接套到 harness 的 agent 评测；② 矩阵式评测成本高，2B 级自测需缩表，缩表后**不可与原文分数横比**；③ 2,295 为 OpenAlex 口径。 |
+
+首次收录: 2026-11-15（第三十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + `atom`，50 作者；`journal_ref` = TMLR 2023）
+
+---
+
+## 122. The Pile: An 800GB Dataset of Diverse Text for Language Modeling
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Pile: An 800GB Dataset of Diverse Text for Language Modeling |
+| 作者（前 3） | Leo Gao · Stella Biderman · Sid Black（共 **12** 位，EleutherAI；arXiv 作者字段逐字核） |
+| 年份 | **2020**（`published=2020-12-31`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`；无会场记录 ⇒ 不写会议） |
+| 被引数 | **3,021**（OpenAlex `10.48550/arxiv.2101.00027`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2101.00027> ｜ DOI `10.48550/arxiv.2101.00027` |
+| 一句话贡献 | 把 **800GB、22 个子数据集**的英文语料合成一个**公开可比**的预训练集合，逐个子集给出来源、许可证与去重处理，并证明「多样性」本身是配方的一部分（在同等困惑度下下游任务更好）。 |
+| 与我们工作的关系 | **data（主目标）**：子数据集清单本身就是一份**配比模板**（网页 / 论文 / 代码 / 对话 / 百科 / 法律…）⇒ <b>动作</b>：我们的配比表按「子集 × 许可证 × 是否去重 × token 占比」四列建账，先对齐再谈调优。<br>**pretrain（可复现性）**：公开数据集 + 固定版本 = 可复现的基线 ⇒ <b>动作</b>：BaiZe 预训练报告里必须写明语料快照日期与哈希，否则跨版本 loss 不可比。<br>**zhulong（消融）**：多样性收益需要**按子集 ablation**，不能只报「加/不加 Pile」⇒ <b>动作</b>：至少做「去掉代码」「去掉论文」两条单因素消融。<br>**风险**：① 语料以**英文**为主，中文与代码配比不可直接外推；② 2020 年的许可证与今天不同，**必须重新核许可**；③ 「同等困惑度下更好」不能推广成「多样性永远更好」。 |
+
+首次收录: 2026-11-15（第三十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + `atom`，12 作者；OpenAlex `200`）
+
+---
+
+## 123. Finetuned Language Models Are Zero-Shot Learners（FLAN）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Finetuned Language Models Are Zero-Shot Learners |
+| 作者（前 3） | Jason Wei · Maarten Bosma · Vincent Y. Zhao（共 **9** 位；arXiv 作者字段逐字核） |
+| 年份 | **2021**（v1 `2021-09-03`，v5 `2022-02-08`） |
+| 会议 / 期刊 | **预印本**（arXiv 无 `journal_ref` / `doi`；OpenAlex `type=preprint`；**本轮未核到一手会场页 ⇒ 不写 ICLR 等会议名**） |
+| 被引数 | **3,471**（OpenAlex `10.48550/arxiv.2109.01652`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2109.01652> ｜ DOI `10.48550/arxiv.2109.01652` |
+| 一句话贡献 | 提出**指令微调**范式：把大量已有 NLP 数据集改写成「指令 + 输入 → 输出」的统一格式，按**任务簇**组织并在留出的任务簇上评测，证明指令微调后的模型在**未见任务**上零样本可用（即「指令」本身可迁移）。 |
+| 与我们工作的关系 | **data（主目标）**：核心变量不是数据量而是**任务簇的划分**（留出簇 = 泛化检验）⇒ <b>动作</b>：指令数据表必须带 `task_cluster` 列，训练/评测按簇切分，禁止同簇跨 split。<br>**pretrain（次要）**：137B 级模型上指令微调才显现强零样本能力 ⇒ <b>动作</b>：2B 级做同类实验时把「基座规模」当显式变量，不假设结论可下推。<br>**zhulong（能力保留）**：指令微调会改变输出风格与长度 ⇒ <b>动作</b>：能力消融须同时报「目标任务分」与「通用基准分」，防「指令跟随变好、能力退化」被单表掩盖。<br>**风险**：① 任务簇划分与模板由作者设定，**模板措辞本身影响结果**（后续工作反复验证）；② 模型为 LaMDA-PT 系列，未必可外推到 decoder-only 中文模型；③ 3,471 为 OpenAlex 口径。 |
+
+首次收录: 2026-11-15（第三十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + `atom`，9 作者；OpenAlex `200`）
 
 ---
 
