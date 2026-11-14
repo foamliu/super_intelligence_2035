@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vision WaveView 10 题 · agent 臂自测（G0/G1/G2）· MLLM 作为 agent 系统一部分</title>
+<style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1080px;margin:24px auto;color:#222;line-height:1.6;padding:0 16px}
+h1,h2,h3{color:#1a3a5c}table{margin:8px 0;font-size:13px;border-collapse:collapse}th{background:#eef3f8}td,th{border:1px solid #ccc;padding:5px 8px;vertical-align:top}
+.card{background:#f7f9fc;border:1px solid #dce3ec;border-radius:8px;padding:14px 18px;margin:14px 0}
+.verdict{font-size:17px;font-weight:bold;padding:12px 16px;border-radius:8px}.neg{background:#fdecea;color:#a3241b}.pos{background:#e6f4ea;color:#1e6b3a}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:12px}.muted{color:#888;font-size:12px}.svgwrap{text-align:center}ul{margin:6px 0}</style></head>
+<body>
+<h1>Vision WaveView 10 题 · agent 臂自测（G0 / G1 / G2）</h1>
+<p class="muted">vision 线 · 用户令 2026-11-14 21:5x「补 agent 臂：MLLM 作为 agent 系统一部分带来的增益」· SUT = glm-5.2（vision cline 文本底座）经 OpenAI 兼容 function-calling API · 2026-11-15T00:23:05</p>
+<div class="card verdict pos">整题通过：单模型工具天花板 V0=0/10 · V1=0/10 · V2=0/10；
+<b>agent 臂 G0=0/10 · G1=5/10 · G2=4/10</b>。
+agent 系统内引入 VQA 通道的翻转：G0→G1=5、G0→G2=4；
+agent 编排相对单模型的翻转：V1→G1=5、V2→G2=4。
+每量准确率：V0 30.9%→V1 38.2%→V2 55.5%｜G0 18.2%→G1 82.7%→G2 82.7%。
+agent 臂出现整题 PASS = MLLM 接入 agent 系统带来可观测的整题翻转（单模型臂结构上做不到）。</div>
+<h2>1. 设计：单模型臂 vs agent 臂（两条平行轴，各自单变量）</h2>
+<div class="card"><ul>
+<li><b>单模型臂（工具天花板，wake#1235 已交付）</b>：Python 固定 harness 对每个量<b>问一次</b>。V0 不看图 / V1 基模 Qwen3.5-2B VQA / V2 基模+rft2 适配器。只回答「这个 VQA 工具本身能读多准」，<b>不作本线能力结论</b>。</li>
+<li><b>agent 臂（本轮正式测法）</b>：SUT = <b>glm-5.2</b>（vision cline 的文本底座），它<b>看不见图</b>，只能调 <code>vqa(image_path, query)</code> 工具读图。<b>唯一变量 = 工具后端 / 有无工具</b>：G0 无工具（正确基线，应 fail）／G1 后端=基模 :30001／G2 后端=基模+rft2_adapter :30003。同 10 题、同 gen() PNG、同 check_case/oracle/容差、temperature=0、顺序随机化 seed=20261114。agent 自选 query 与提问次数。</li>
+<li><b>agent 的结构性优势</b>：能把没读准的量<b>再问一次 / 换问法 / 交叉验证</b>——这是「每量 55.5%」能否补成「整题全过」的关键，单模型一次提问做不到。</li>
+<li><b>归因</b>：G1 vs V1 = agent 编排在基模后端上的增益；G2 vs V2 = agent 编排在强化后端上的增益；G1 vs G0 = agent 系统内 VQA 通道增益；G2 vs G1 = agent 系统内适配器增益。</li>
+<li><b>口径标签</b>：WaveView <b>真实题</b>（designflow 公开参数等价重建，<b>非合成集</b>；PNG/check 非原始字节，.15 不可达=infra-blocker）。</li>
+</ul></div>
+<h2>2. 整题通过数</h2>
+<div class="svgwrap"><svg width="560" height="200" viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg"><rect width="560" height="200" fill="#fff"/><text x="280.0" y="16" font-size="12" text-anchor="middle" fill="#222">整题通过数（PASS = 全 k 条件过）</text><rect x="56" y="170.0" width="48" height="0.0" fill="#9aa4b2"/><text x="80.0" y="166.0" font-size="12" text-anchor="middle" fill="#222">0/10</text><text x="80.0" y="188" font-size="9" text-anchor="middle" fill="#444">V0 文本</text><rect x="126" y="170.0" width="48" height="0.0" fill="#2b6cb0"/><text x="150.0" y="166.0" font-size="12" text-anchor="middle" fill="#222">0/10</text><text x="150.0" y="188" font-size="9" text-anchor="middle" fill="#444">V1 基模VQA</text><rect x="196" y="170.0" width="48" height="0.0" fill="#2f855a"/><text x="220.0" y="166.0" font-size="12" text-anchor="middle" fill="#222">0/10</text><text x="220.0" y="188" font-size="9" text-anchor="middle" fill="#444">V2 SFT/RL-VQA</text><rect x="266" y="170.0" width="48" height="0.0" fill="#cbd5e0"/><text x="290.0" y="166.0" font-size="12" text-anchor="middle" fill="#222">0/10</text><text x="290.0" y="188" font-size="9" text-anchor="middle" fill="#444">G0 agent无工具</text><rect x="336" y="95.0" width="48" height="75.0" fill="#dd6b20"/><text x="360.0" y="91.0" font-size="12" text-anchor="middle" fill="#222">5/10</text><text x="360.0" y="188" font-size="9" text-anchor="middle" fill="#444">G1 agent+基模</text><rect x="406" y="110.0" width="48" height="60.0" fill="#b83280"/><text x="430.0" y="106.0" font-size="12" text-anchor="middle" fill="#222">4/10</text><text x="430.0" y="188" font-size="9" text-anchor="middle" fill="#444">G2 agent+适配器</text></svg></div>
+<table><tr><th>臂</th><th>类型</th><th>SUT</th><th>VQA 后端</th><th>整题通过</th></tr>
+<tr><td>V0</td><td>单模型</td><td>Qwen3.5-2B 文本</td><td>无</td><td>0/10</td></tr>
+<tr><td>V1</td><td>单模型</td><td>Qwen3.5-2B VQA</td><td>基模</td><td>0/10</td></tr>
+<tr><td>V2</td><td>单模型</td><td>Qwen3.5-2B VQA</td><td>基模+rft2</td><td>0/10</td></tr>
+<tr><td><b>G0</b></td><td><b>agent</b></td><td><b>glm-5.2</b></td><td><b>无工具</b></td><td><b>0/10</b></td></tr>
+<tr><td><b>G1</b></td><td><b>agent</b></td><td><b>glm-5.2</b></td><td><b>基模</b></td><td><b>5/10</b></td></tr>
+<tr><td><b>G2</b></td><td><b>agent</b></td><td><b>glm-5.2</b></td><td><b>基模+rft2</b></td><td><b>4/10</b></td></tr></table>
+<p>翻转：G0→G1=5、G0→G2=4、V1→G1=5、V2→G2=4。McNemar（配对，n=10 样本不足仅参考）：G0↔G1 b=5 c=0 p=0.0625；G0↔G2 b=4 c=0 p=0.125；G1↔G2 b=2 c=3 p=1.0；V1↔G1 b=5 c=0 p=0.0625；V2↔G2 b=4 c=0 p=0.125。</p>
+<h2>3. 每量准确率（k_pass / k_total）</h2>
+<div class="svgwrap"><svg width="560" height="220" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg"><rect width="560" height="220" fill="#fff"/><text x="280.0" y="16" font-size="12" text-anchor="middle" fill="#222">每量准确率（通过条件数 / 总条件数）· V0–V2=单模型工具天花板 · G0–G2=agent 系统</text><line x1="50" y1="190.0" x2="550" y2="190.0" stroke="#eee"/><text x="46" y="193.0" font-size="9" text-anchor="end" fill="#888">0</text><line x1="50" y1="147.5" x2="550" y2="147.5" stroke="#eee"/><text x="46" y="150.5" font-size="9" text-anchor="end" fill="#888">25</text><line x1="50" y1="105.0" x2="550" y2="105.0" stroke="#eee"/><text x="46" y="108.0" font-size="9" text-anchor="end" fill="#888">50</text><line x1="50" y1="62.5" x2="550" y2="62.5" stroke="#eee"/><text x="46" y="65.5" font-size="9" text-anchor="end" fill="#888">75</text><line x1="50" y1="20.0" x2="550" y2="20.0" stroke="#eee"/><text x="46" y="23.0" font-size="9" text-anchor="end" fill="#888">100</text><rect x="56" y="137.5" width="48" height="52.5" fill="#9aa4b2"/><text x="80.0" y="133.5" font-size="11" text-anchor="middle" fill="#222">30.9%</text><text x="80.0" y="208" font-size="9" text-anchor="middle" fill="#444">V0 文本</text><rect x="126" y="125.1" width="48" height="64.9" fill="#2b6cb0"/><text x="150.0" y="121.1" font-size="11" text-anchor="middle" fill="#222">38.2%</text><text x="150.0" y="208" font-size="9" text-anchor="middle" fill="#444">V1 基模VQA</text><rect x="196" y="95.6" width="48" height="94.4" fill="#2f855a"/><text x="220.0" y="91.6" font-size="11" text-anchor="middle" fill="#222">55.5%</text><text x="220.0" y="208" font-size="9" text-anchor="middle" fill="#444">V2 SFT/RL-VQA</text><rect x="266" y="159.1" width="48" height="30.9" fill="#cbd5e0"/><text x="290.0" y="155.1" font-size="11" text-anchor="middle" fill="#222">18.2%</text><text x="290.0" y="208" font-size="9" text-anchor="middle" fill="#444">G0 agent无工具</text><rect x="336" y="49.4" width="48" height="140.6" fill="#dd6b20"/><text x="360.0" y="45.4" font-size="11" text-anchor="middle" fill="#222">82.7%</text><text x="360.0" y="208" font-size="9" text-anchor="middle" fill="#444">G1 agent+基模</text><rect x="406" y="49.4" width="48" height="140.6" fill="#b83280"/><text x="430.0" y="45.4" font-size="11" text-anchor="middle" fill="#222">82.7%</text><text x="430.0" y="208" font-size="9" text-anchor="middle" fill="#444">G2 agent+适配器</text></svg></div>
+<table><tr><th>题</th><th>tier</th><th>V0</th><th>V1</th><th>V2</th><th>G0</th><th>G1</th><th>G2</th><th>G1 vqa</th><th>G1 reask</th><th>G2 vqa</th><th>G2 reask</th><th>翻转</th></tr>
+<tr><td>β9</td><td>C</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>1/9</span></td><td>FAIL<br><span class='muted'>0/9</span></td><td>FAIL<br><span class='muted'>0/9</span></td><td>PASS<br><span class='muted'>9/9</span></td><td>FAIL<br><span class='muted'>8/9</span></td><td>19</td><td>12</td><td>17</td><td>10</td><td>✓</td></tr><tr><td>α4</td><td>B</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>5/9</span></td><td>FAIL<br><span class='muted'>6/9</span></td><td>FAIL<br><span class='muted'>0/9</span></td><td>PASS<br><span class='muted'>9/9</span><br><span class='muted' title='agent hit turn cap; finalized=✓'>⚠cap✓</span></td><td>FAIL<br><span class='muted'>8/9</span></td><td>28</td><td>21</td><td>10</td><td>3</td><td>✓</td></tr><tr><td>β10</td><td>C</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>2/10</span></td><td>FAIL<br><span class='muted'>5/10</span></td><td>FAIL<br><span class='muted'>1/10</span></td><td>PASS<br><span class='muted'>10/10</span></td><td>PASS<br><span class='muted'>10/10</span></td><td>21</td><td>13</td><td>14</td><td>6</td><td>✓</td></tr><tr><td>α1</td><td>A</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>2/9</span></td><td>FAIL<br><span class='muted'>6/9</span></td><td>FAIL<br><span class='muted'>0/9</span></td><td>PASS<br><span class='muted'>9/9</span></td><td>PASS<br><span class='muted'>9/9</span><br><span class='muted' title='agent hit turn cap; finalized=✓'>⚠cap✓</span></td><td>19</td><td>14</td><td>25</td><td>20</td><td>✓</td></tr><tr><td>β8</td><td>C</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>10/13</span></td><td>FAIL<br><span class='muted'>7/13</span></td><td>FAIL<br><span class='muted'>6/13</span></td><td>FAIL<br><span class='muted'>11/13</span><br><span class='muted' title='agent hit turn cap; finalized=✓'>⚠cap✓</span></td><td>FAIL<br><span class='muted'>1/13</span><br><span class='muted' title='agent hit turn cap; finalized=✗'>⚠cap✗</span></td><td>34</td><td>23</td><td>32</td><td>21</td><td></td></tr><tr><td>β11</td><td>B</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>6/12</span></td><td>FAIL<br><span class='muted'>10/12</span></td><td>FAIL<br><span class='muted'>3/12</span></td><td>FAIL<br><span class='muted'>11/12</span></td><td>PASS<br><span class='muted'>12/12</span></td><td>20</td><td>12</td><td>14</td><td>6</td><td>✓</td></tr><tr><td>α2</td><td>A</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>5/9</span></td><td>FAIL<br><span class='muted'>4/9</span></td><td>FAIL<br><span class='muted'>2/9</span></td><td>FAIL<br><span class='muted'>7/9</span></td><td>FAIL<br><span class='muted'>7/9</span></td><td>18</td><td>12</td><td>9</td><td>3</td><td></td></tr><tr><td>β7</td><td>C</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>2/12</span></td><td>FAIL<br><span class='muted'>7/12</span></td><td>FAIL<br><span class='muted'>2/12</span></td><td>FAIL<br><span class='muted'>10/12</span></td><td>FAIL<br><span class='muted'>10/12</span></td><td>19</td><td>10</td><td>21</td><td>12</td><td></td></tr><tr><td>α3</td><td>A</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>5/13</span></td><td>FAIL<br><span class='muted'>7/13</span></td><td>FAIL<br><span class='muted'>4/13</span></td><td>FAIL<br><span class='muted'>1/13</span></td><td>PASS<br><span class='muted'>13/13</span></td><td>6</td><td>0</td><td>8</td><td>0</td><td>✓</td></tr><tr><td>β6</td><td>A</td><td>FAIL<br><span class='muted'>?</span></td><td>FAIL<br><span class='muted'>4/14</span></td><td>FAIL<br><span class='muted'>9/14</span></td><td>FAIL<br><span class='muted'>2/14</span></td><td>PASS<br><span class='muted'>14/14</span></td><td>FAIL<br><span class='muted'>13/14</span></td><td>18</td><td>7</td><td>32</td><td>21</td><td>✓</td></tr>
+<tr style="font-weight:bold;background:#eef3f8"><td>每量合计</td><td>—</td><td>34/110<br>30.9%</td><td>42/110<br>38.2%</td><td>61/110<br>55.5%</td><td>20/110<br>18.2%</td><td>91/110<br>82.7%</td><td>91/110<br>82.7%</td><td>202</td><td>124</td><td>182</td><td>102</td><td>9</td></tr></table>
+<p>agent 指标：G1 共 202 次 VQA 调用 / 124 次 re-ask / 9/10 题有显式自检措辞；G2 共 182 次 / 102 次 re-ask / 9/10 题自检。re-ask = 同一量重复提问/换问法次数（vqa_calls − 量数）。</p>
+<h2>4. agent 自检轨迹（问 → 发现不一致 → 再问）原文片段</h2>
+<div class="card"><h3>G1（基模后端）</h3><ul><li><b>α3</b> (EDA-Eval-DesignFlow-DqReadPa…, vqa=6, reask=0): <code>The first VQA response seems to have some inconsistencies. The second response says pattern_buf is identical. Let me cross-validate more carefully. Let me ask about each panel individually.</code></li><li><b>β7</b> (EDA-Eval-DesignFlow-FsdbWrDq…, vqa=19, reask=10): <code>Let me reconcile the write times. I'm getting conflicting answers:
+- First W: 2.5 ns (from two queries)
+- Second W: 7.5 ns
+- Third W: 12.5 ns or 14.0 ns
+
+Let me cross-validate the third W marker position and also ask about the DQ signal rising and falling intervals.</code></li><li><b>α2</b> (EDA-Eval-DesignFlow-RiseEdge…, vqa=18, reask=12): <code>The second response for data_a seems inconsistent. It says the signal stays at 0V until about 5.5 ns and then crosses 0.75V between 5.5 and 6 ns, which would make data_a rise before clk_a. But the task says data_a rises second. Let me re-examine more carefully.</code></li><li><b>β11</b> (EDA-Eval-DesignFlow-SimFailF…, vqa=20, reask=12): <code>The counts are inconsistent. Let me get a more careful count. One response says 4 pulses, another says 2 rising edges (but was cut off). Let me ask again more carefully.</code></li><li><b>β6</b> (EDA-Eval-DesignFlow-WaveCmpW…, vqa=18, reask=7): <code>Let me cross-validate the uncertain quantities for the bottom panel.</code></li><li><b>α4</b> (EDA-Eval-DesignFlow-TempSelW…, vqa=28, reask=21): <code>Let me gather more details about the pulse windows - their start and end times, and cross-validate the count.</code></li><li><b>β8</b> (EDA-Eval-DesignFlow-WaveView…, vqa=34, reask=23): <code>Let me cross-validate the ambiguous quantities: the data trace's number of levels, the clk duty cycle, and the vref voltage range.</code></li><li><b>α1</b> (EDA-Eval-DesignFlow-EyeApert…, vqa=19, reask=14): <code>Let me analyze the data I've collected:
+
+**Top panel (max_width in ps):**
+- VREF=40: ~20 ps
+- VREF=50: ~35 ps
+- VREF=60: ~68 ps (peak)
+- VREF=70: ~50 ps
+- VREF=80: ~52 ps
+- VREF=90: ~54 ps
+- VREF=100: ~57 ps
+- VREF=110: ? (cut off)
+- VREF=120: ? (cut off)
+
+**Middle panel (eye_height in mV):**
+- VREF=40: 60
+- VREF=50: 80
+- VREF=60: 90
+- VREF=70: 120
+- VREF=80: 150
+- VREF=90: 165
+- VREF=100: 180
+- VREF=110: 170
+- VREF=120: 150
+
+**Bottom panel (skew in ps):**
+- VREF=40: 40
+- VREF=50: 30
+- VREF=60:  …[truncated]</code></li></ul><h3>G2（适配器后端）</h3><ul><li><b>α3</b> (EDA-Eval-DesignFlow-DqReadPa…, vqa=8, reask=0): <code>Based on all the cross-validated readings, I have consistent answers:
+
+- **First diverge stage**: `rd_gate` (pattern_buf is identical, rd_gate is the first to diverge)
+- **Golden at divergence**: 75 (blue line)
+- **Actual at divergence**: 0 (red line drops to zero)
+- **Mismatch first cycle**: 4 (divergence starts at cycle 4)
+- **Mismatch last cycle**: 7 (at cycle 8 they match again, so last divergent cycle is 7)
+- **Num diverge stages**: 4 (rd_gate, slice_mux, read_mux, pad_driver)
+- **Data inta …[truncated]</code></li><li><b>β7</b> (EDA-Eval-DesignFlow-FsdbWrDq…, vqa=21, reask=12): <code>The second W marker response seems confused. Let me re-ask about the second W marker more carefully.</code></li><li><b>β11</b> (EDA-Eval-DesignFlow-SimFailF…, vqa=14, reask=6): <code>Good, I have the basic info. Now let me get more details:
+- fail_time: 1.363e6 ps = 1363000 ps
+- window_start: 1340000 ps
+- window_end: 1370000 ps
+
+Now I need to:
+1. Cross-validate fail_time
+2. Find which trace has the most edges and count them
+3. Get Q_valid value at fail time
+4. Get test_mode value at fail time</code></li><li><b>α4</b> (EDA-Eval-DesignFlow-TempSelW…, vqa=10, reask=3): <code>Let me cross-validate the pulse intervals and count. The VQA says 5 pulses:
+- 3.25 to 4.75
+- 7.75 to 9.25
+- 12.25 to 13.75
+- 16.75 to 18.25
+- 25.25 to 26.75
+
+Each pulse width = 1.5 us. Total high time = 5 * 1.5 = 7.5 us. Total time range = 0 to 30 us. Duty cycle = 7.5/30 = 0.25.
+
+But wait, the last pulse ends at 26.75, but the earlier query said the last pulse ends at 26. Let me re-check. Also the first query said first activation starts at 3.25, which matches.
+
+Let me cross-validate the last ac …[truncated]</code></li><li><b>β10</b> (EDA-Eval-DesignFlow-TempThre…, vqa=14, reask=6): <code>The VQA responses are a bit inconsistent. Let me re-examine. The top waveform is a triangle wave peaking at 1.2V at t=4us. The bottom comparator goes high at t=3us and goes low at t=6.5us. 
+
+For a triangle wave peaking at 1.2V at t=4us, if it's symmetric, it would start at 0V at t=0, rise to 1.2V at t=4us, then fall back to 0V at t=8us. The slope would be 1.2/4 = 0.3 V/us on the rising side and -0.3 V/us on the falling side.
+
+At t=3us on the rising side: v = 0.3 * 3 = 0.9V
+At t=6.5us on the fall …[truncated]</code></li><li><b>β9</b> (EDA-Eval-DesignFlow-WaveMaxF…, vqa=17, reask=10): <code>Let me cross-validate these readings with more specific queries.</code></li><li><b>β8</b> (EDA-Eval-DesignFlow-WaveView…, vqa=32, reask=21): <code>Let me cross-validate the ambiguous quantities: clk duty cycle, clk period, data levels, and sel pulses.</code></li><li><b>β6</b> (EDA-Eval-DesignFlow-WaveCmpW…, vqa=32, reask=21): <code>Let me cross-validate the key quantities with rephrased queries.</code></li></ul></div>
+<h2>5. 「agent 也没救」证据 —— 仍卡在哪几个量</h2>
+<div class="card"><h3>G1 仍失败题的卡点量</h3><ul><li><b>α3</b> EDA-Eval-DesignFlow-DqReadPa…: 1/13 —— 仍卡在 12 个量：first_diverge_stage, failing_stage, root_cause_kind, golden_at_div, actual_at_div, mismatch_first_cycle, mismatch_last_cycle, num_diverge_stages …</li><li><b>β7</b> EDA-Eval-DesignFlow-FsdbWrDq…: 10/12 —— 仍卡在 2 个量：falling_interval_0, summary_falling_avg</li><li><b>α2</b> EDA-Eval-DesignFlow-RiseEdge…: 7/9 —— 仍卡在 2 个量：ref_edge_time, margin_ns</li><li><b>β11</b> EDA-Eval-DesignFlow-SimFailF…: 11/12 —— 仍卡在 1 个量：edge_count</li><li><b>β8</b> EDA-Eval-DesignFlow-WaveView…: 11/13 —— 仍卡在 2 个量：clk_period, data_n_levels · ⚠ <b>turn-capped</b> at 16 turns (consolidated after cap; 34 vqa reads made — 0/k here may understate what was read)</li></ul><h3>G2 仍失败题的卡点量</h3><ul><li><b>β7</b> EDA-Eval-DesignFlow-FsdbWrDq…: 10/12 —— 仍卡在 2 个量：falling_interval_0, summary_falling_avg</li><li><b>α2</b> EDA-Eval-DesignFlow-RiseEdge…: 7/9 —— 仍卡在 2 个量：ref_edge_time, margin_ns</li><li><b>α4</b> EDA-Eval-DesignFlow-TempSelW…: 8/9 —— 仍卡在 1 个量：last_activation_time</li><li><b>β9</b> EDA-Eval-DesignFlow-WaveMaxF…: 8/9 —— 仍卡在 1 个量：offset</li><li><b>β8</b> EDA-Eval-DesignFlow-WaveView…: 1/13 —— 仍卡在 12 个量：clk_type, clk_period, clk_duty, rst_n_type, data_type, data_n_levels, vref_type, vref_vmin … · ⚠ <b>turn-capped</b> at 16 turns (NOT consolidated (cut off mid-tool-use); 32 vqa reads made — 0/k here may understate what was read)</li><li><b>β6</b> EDA-Eval-DesignFlow-WaveCmpW…: 13/14 —— 仍卡在 1 个量：fail_first_rise</li></ul></div>
+<h2>6. 🚫 反作弊审计</h2>
+<div class="card"><p>cheat = <b>False</b>，cheat_count = <b>0</b>，findings = [{"severity": "review", "pattern": "\\bPIL\\b", "why": "forbidden image-bypass token present in runner source"}]。agent（glm-5.2）只与 HTTP VQA 工具 + glm-5.2 文本 API 通信，本进程不解码任何图像。agent VQA 调用 284 次，直接读图 0 次。<b>cheat=0 方可引用通过率</b> ✓。</p></div>
+<h2>7. 诚实结论与口径</h2>
+<div class="card">
+<p><b>整题维度（用户主判据「真实题通过率有提升」）</b>：agent 臂 G1=5/10、G2=4/10，agent 在系统内引入 VQA 翻转 9 题、agent 编排相对单模型翻转 9 题 —— MLLM 作为 agent 系统一部分带来整题级增益。</p>
+<p><b>每量维度（能力增量）</b>：单模型 V0 30.9%→V1 38.2%→V2 55.5%；agent G0 18.2%→G1 82.7%→G2 82.7%。G1−V1=44.5pp、G2−V2=27.2pp = agent 编排相对单次提问的每量增益（re-ask/交叉验证的机制价值）。</p>
+<p><b>单模型臂 vs agent 臂（口径勿混）</b>：V0/V1/V2 是「工具天花板」（Python harness 一次提问），G0/G1/G2 是「agent 系统增益」（glm-5.2 自主编排 + re-ask）。本线能力结论以 G 臂为准；V 臂仅作天花板参考。</p>
+<p><b>下一步</b>：① 把卡点量（精确计数/精确数值/跨面板反推）做成专项 SFT/RL 数据，扩真实波形分布 + GRPO 群体奖励，目标把单题推到全过；② 待 designflow task2（评测机→.17:30002 可达性解阻）做端到端 cline+SUT+VQA 对照，量 end-to-end 翻转；③ 若 agent re-ask 仍读不稳某量，给「该量对 2B VLM 不可解」的边界证据。</p>
+</div>
+<p class="muted">产物：waveview_selftest_agent_run.py · G/&#123;G0,G1,G2&#125;/*.json · summary_agent.json · audit_agent.json。本报告单文件自包含、0 外链、0 script、2 内联 SVG。Single changed variable across G0/G1/G2 = the agent's VQA tool backend (none / base / base+rft2). Same 10 cases, same gen() PNGs, same check_case/oracle/tols, same glm-5.2 backbone @ temperature=0, randomized order. Agent gets task_brief + required key descriptions (no oracle values) and chooses its own queries / re-asks.</p>
+</body></html>

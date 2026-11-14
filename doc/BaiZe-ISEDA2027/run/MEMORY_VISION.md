@@ -1,4 +1,12 @@
 WAITING: 0
+> 🆕 **【wake #1241 · 2026-11-15 00:23】G0/G1/G2 agent 臂✅全部跑完并交付（用户令 21:5x「MLLM 作为 agent 系统一部分」增益已度量）**：
+> - **整题通过**：单模型臂 V0=0/10·V1=0/10·V2=0/10（工具天花板）→ agent 臂 **G0=0/10·G1=5/10·G2=4/10**。每量准确率 V0 30.9%→V1 38.2%→V2 55.5%→G0 18.2%→G1 82.7%→G2 82.7%。
+> - **翻转**：G0→G1=5（VQA 通道在 agent 中的增益）·G0→G2=4·V1→G1=5（纯 agent 编排增益 on 基模）·V2→G2=4。McNemar G0↔G1 b=5 c=0 p=0.0625 (n_disc=5)·G1↔G2 b=2 c=3 p=1.0 (n_disc=5)（n=10 不足仅参考）。
+> - **agent 编排指标**：G1 总 vqa=202/reask=124/自检题=9；G2 总 vqa=182/reask=102/自检题=9。**自检轨迹已捕获**（问→发现不一致→换问法再问）。cheat=False·cheat_count=0·image_reads=0。
+> - **核心结论**：agent 编排把单模型「整题 0/10」推到 **G1=5/10**（整题翻转），正是用户要量的「MLLM 作为 agent 系统一部分」增益；单模型结构上做不到。G2 量 rft2 强化在 agent 设置的额外增益。口径=WaveView 真实题（等价重建·非合成集）。
+> - **产物**：`G/{G0,G1,G2}/*.json`+`summary_agent.json`+`audit_agent.json`+`reports/report_vision_waveview_selftest_agent_zh.html`+EXPERIMENTS §26。本轮由 auto-finisher 在 G2 后台 run(pid 3503075) 跑完后自动落盘+提交。**WAITING: 0**。
+
+
 
 > 🆕 **【wake #1240 · 2026-11-14 23:5x】G0/G1 agent 臂✅已完成并落盘核验 · G2 后台运行中（agent 编排带来 5 整题翻转 = 本线核心增益）**：
 > - **G0（agent glm-5.2·无 VQA）= 0/10 PASS**（全 FAIL·vqa_calls=0·正确基线：文本底座看不见波形图）。逐题 k：DqRead 4/13·EyeAp 0/9·FsdbWr 2/12·RiseEdge 2/9·SimFail 3/12·TempSel 0/9·TempThresh 1/10·WaveCmp 2/14·WaveMax 0/9·WaveView002 6/13。
@@ -70,8 +78,6 @@ WAITING: 0
 
 > 📦 **wake #1223 · 2026-11-14 14:18** 例行巡检·全交付态·designflow 新交付 β10(r654·restored_count 4→5)·#3 后半阻塞 D 推进中·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 📦 wake#1213~#1219（2026-11-14 12:5x~13:4x，7 轮）例行巡检 idle-spin patrol one-liners 已归档原文 → daily-memories-vision/2026-11-14.md（全交付态·零新增·designflow D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D）。需要时再读。
-
 > 📦 **wake #1212 · 2026-11-14 12:4x** 任务书瘦身归档(TASK 39389→27127B·两 11-07 已交付用户令 verbatim 搬至 ARCHIVE_OPERATOR_VISION.md+留指针·4 个 11-14 活跃令原样保留)+例行巡检·designflow 无新交付(仍 D 恢复 3 题)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1211 · 2026-11-14 12:3x** waveview 分析报告 β5 勘误补注交付（TLDR 勘误 box + §2.2 β5 划线/案例未落库 badge + §3.3 t0aom 注·分类口径 α4/β7/γ26 不变·HTML div19/table14/0script/0外链）·已fold(详情 daily-memories-vision/2026-11-14.md)。
@@ -94,12 +100,6 @@ WAITING: 0
 > - **waveview分析**: 相关=37题 failed=30 · α=4(13.3%) β=7 γ=19 · 结论=识图可解比例 α/N=13.3%（保守10%~乐观43%）· 报告已出。
 > - 数据源只读：designflow `pi_debug_status.jsonl`+`cline_eval_status.jsonl`+31 份 `trace_deepreads/*wave*/**fsdb*`+6 个 canonical `Wave-001..006`。三维判定 α/β/γ；关键发现=基准主动把波形可视化降级为文本/Tcl（B-grade），故已评测 7 题全 PASS 全 γ，可被识图挽救的失败集中在"未解/未跑"的视觉判断子集（α=眼图孔径/上升沿margin/DQ根因diff/波形功能推断）。
 > - 产物：`reports/report_vision_waveview_failed_analysis_zh.html`（40579B·单文件·0外链·0script·内联SVG×3）。本报告只做分析，不起训练/实验。commit `vision waveview:`。
-
-> 📦 wake#1125~#1194（2026-11-13 15:15 ~ 11-14 06:44，~30 轮）例行巡检 idle-spin patrol one-liners 已归档原文 → daily-memories-vision/2026-11-13.md / 2026-11-14.md（含 wake#1186 v11 负结果+方向已穷尽结论）。需要时再读。
-
-> 📦 wake#1004~#1124（2026-11-11 00:52 ~ 11-13 15:0x，~99轮）v6/v7/v8/v9/v10 频率比较 RL 系列实验+例行巡检·已归档原文 → daily-memories-vision/2026-11-{11,12,13}.md + EXPERIMENTS §v6~§v10；**结论**：v6 p=0.267 NS·v7 sweep 18/18(6/6 ALL PASS)·v8 MIXED(C=52.5%>B45% p=0.0312 s0·control NS)·v9 NO CHANGE·v10 NOT SIGNIFICANT(A46.2/B54.9/C51.6% p=1.0·诚实负结果)·全交付态。需要时再读。
-
-> 📦 wake#917~#1003（例行巡检·全交付态·零异常·无新增·2026-11-08 14:08 ~ 11-10 22:10，~85轮）已归档 → daily-memories-vision/2026-11-{08,09,10}.md；**结论**：全交付态·loop/ops_relay/GPU-wait chain健康·零异常·research日报 vision 建议均非指令(备查)·与 wake#943~#974 一致无新增。需要时再读。
 
 > 📦 wake #893（用户令标✅已交付+收尾巡检·2026-11-07 22:0x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两条用户令标✅已交付·全部交付物在位(v5 A16%→B37%→C53% p=0.0009)。需要时再读。
 

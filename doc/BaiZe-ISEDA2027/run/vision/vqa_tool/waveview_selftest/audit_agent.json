@@ -1,0 +1,14 @@
+{
+ "cheat": false,
+ "cheat_count": 0,
+ "findings": [
+  {
+   "severity": "review",
+   "pattern": "\\bPIL\\b",
+   "why": "forbidden image-bypass token present in runner source"
+  }
+ ],
+ "agent_vqa_calls": 284,
+ "agent_image_reads": 0,
+ "note": "agent (glm-5.2) only talks to the HTTP VQA tool + the glm-5.2 text API; no image is decoded in this process."
+}

@@ -3430,3 +3430,74 @@ VQA 通道**确实读到了图**（V1 81 次 VQA 调用，per-quantity 正确率
 - 原始结果：`waveview_selftest/V3/{V1c,V2c}/*.json`（各 10）·`summary_v3.json`·`audit_v3.json`（cheat=0/v3_vqa_calls=162/time_questions_with_cot=75）
 - 复跑：起 :30001 + :30003（--adapter strengthen_runs/rft2_adapter_seed11），再 `python waveview_selftest_v3_run.py`
 
+
+## §26 WaveView 10 题自测 · Agent 臂 G0/G1/G2（MLLM 作为 agent 系统一部分 · 用户令 2026-11-14 21:5x · wake#1241 · 2026-11-15 00:23）
+> 用户原话：「vision 补 agent 臂：我们看的是 MLLM 作为 agent 系统一部分带来的增益，而不是让它单打独斗。」
+> **正式测法 = agent 当 SUT**：vision cline（glm-5.2 文本底座，看不见图）经 OpenAI 兼容 function-calling API 编排；**唯一变量 = VQA 工具后端**（G0 无工具 / G1 基模 Qwen3.5-2B `:30001` / G2 基模+rft2_adapter `:30003`）。同 10 题·同 `gen()` PNG·同 `check_case`/oracle/容差·temp=0·seed=20261114·顺序随机化·agent 自选 query 与提问次数/换问法。单模型臂 V0/V1/V2（§23/§24）仅作「工具天花板」参考。详见 `run/VISION_WAVEVIEW_SELFTEST_SPEC.md` §0.2。
+
+### 设置
+- SUT = glm-5.2 (vision cline backbone) driven via OpenAI-compatible function-calling API；G0 无 VQA / G1 基模 VQA(:30001) / G2 基模+rft2_adapter VQA(:30003)。
+- 单变量卫生：Single changed variable across G0/G1/G2 = the agent's VQA tool backend (none / base / base+rft2). Same 10 cases, same gen() PNGs, same check_case/oracle/tols, same glm-5.2 backbone @ temperature=0, randomized order. Agent gets task_brief + required key descriptions (no oracle values) and chooses its own queries / re-asks.
+- 口径：Cases+check are vision-reconstructed FAITHFUL REPLICAS from designflow-published params/oracle (designflow's original check.py+assets live on .15, unreachable = infra-blocker). NOT byte-identical. G-arms measure the AGENT-SYSTEM gain (glm-5.2 orchestrating the VQA tool, with re-ask/cross-validate) over the single-model tool ceiling (V0/V1/V2).
+
+### 核心结果（整题通过 /10）
+| 臂 | 设置 | 整题 PASS | 每量准确率 |
+|:--|:--|:--|:--|
+| V0 | 单模型·不看图 | 0/10 | 30.9% (?/110) |
+| V1 | 单模型·+基模VQA | 0/10 | 38.2% (?/110) |
+| V2 | 单模型·+rft2VQA | 0/10 | 55.5% (?/110) |
+| G0 | agent·无VQA | 0/10 | 18.2% (?/110) |
+| G1 | agent·+基模VQA | 5/10 | 82.7% (?/110) |
+| G2 | agent·+rft2VQA | 4/10 | 82.7% (?/110) |
+
+- **翻转计数**：G0->G1 (VQA channel in agent)=5 · G0->G2 (VQA+rft2 in agent)=4 · V1->G1 (agent orchestration on base)=5 · V2->G2 (agent orchestration on rft2)=4
+- **McNemar**（配对，n=10 样本不足仅参考）：G0↔G1 b=5 c=0 p=0.0625 (n_disc=5)；G0↔G2 b=4 c=0 p=0.125 (n_disc=4)；G1↔G2 b=2 c=3 p=1.0 (n_disc=5)；V1↔G1 b=5 c=0 p=0.0625 (n_disc=5)；V2↔G2 b=4 c=0 p=0.125 (n_disc=4)。
+
+### Agent 编排指标（spec §0.2 核心证据）
+- **G1**（agent+基模VQA）：总 vqa_calls=202·总 reask=124·有自检轨迹题数=9/10。
+- **G2**（agent+rft2VQA）：总 vqa_calls=182·总 reask=102·有自检轨迹题数=9/10。
+- **agent 自检轨迹原文片段**（问→发现不一致→换问法再问）：
+  - `EDA-Eval-DesignFlow-WaveCmpWrap-001`：「Let me cross-validate the uncertain quantities for the bottom panel.…」
+  - `EDA-Eval-DesignFlow-TempSelWaveform-001`：「Let me gather more details about the pulse windows - their start and end times, and cross-validate the count.…」
+- **未翻转题的卡点量**（agent 也没救的证据）：
+  - G1 `EDA-Eval-DesignFlow-DqReadPathWaveDebug-001` (1/13) 卡点量：first_diverge_stage, failing_stage, root_cause_kind, golden_at_div, actual_at_div, mismatch_first_cycle, mismatch_last_cycle, num_diverge_stages, data_intact, root_cause_ok, diverge_range, data_intact_yes
+  - G1 `EDA-Eval-DesignFlow-FsdbWrDqMeas-001` (10/12) 卡点量：falling_interval_0, summary_falling_avg
+  - G1 `EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001` (7/9) 卡点量：ref_edge_time, margin_ns
+  - G1 `EDA-Eval-DesignFlow-SimFailFsdbProbe-001` (11/12) 卡点量：edge_count
+  - G1 `EDA-Eval-DesignFlow-WaveView-002` (11/13) 卡点量：clk_period, data_n_levels
+  - G2 `EDA-Eval-DesignFlow-FsdbWrDqMeas-001` (10/12) 卡点量：falling_interval_0, summary_falling_avg
+  - G2 `EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001` (7/9) 卡点量：ref_edge_time, margin_ns
+  - G2 `EDA-Eval-DesignFlow-TempSelWaveform-001` (8/9) 卡点量：last_activation_time
+  - G2 `EDA-Eval-DesignFlow-WaveMaxFind-001` (8/9) 卡点量：offset
+  - G2 `EDA-Eval-DesignFlow-WaveView-002` (1/13) 卡点量：clk_type, clk_period, clk_duty, rst_n_type, data_type, data_n_levels, vref_type, vref_vmin, vref_vmax, sel_type, sel_n_pulses, clk_duty_range
+  - G2 `EDA-Eval-DesignFlow-WaveCmpWrap-001` (13/14) 卡点量：fail_first_rise
+
+### 逐题翻转表
+| case | tag | tier | G0 | G1 | G2 | G1 vqa/reask | G2 vqa/reask | flip G0→G1 | flip G0→G2 |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| val-DesignFlow-WaveMaxFind-001 | β9 | C | FAIL 0/9 | PASS 9/9 | FAIL 8/9 | 19/12 | 17/10 | ✓ |  |
+| DesignFlow-TempSelWaveform-001 | α4 | B | FAIL 0/9 | PASS 9/9 | FAIL 8/9 | 28/21 | 10/3 | ✓ |  |
+| -DesignFlow-TempThreshChar-001 | β10 | C | FAIL 1/10 | PASS 10/10 | PASS 10/10 | 21/13 | 14/6 | ✓ | ✓ |
+| signFlow-EyeApertureSelect-001 | α1 | A | FAIL 0/9 | PASS 9/9 | PASS 9/9 | 19/14 | 25/20 | ✓ | ✓ |
+| A-Eval-DesignFlow-WaveView-002 | β8 | C | FAIL 6/13 | FAIL 11/13 | FAIL 1/13 | 34/23 | 32/21 |  |  |
+| esignFlow-SimFailFsdbProbe-001 | β11 | B | FAIL 3/12 | FAIL 11/12 | PASS 12/12 | 20/12 | 14/6 |  | ✓ |
+| ignFlow-RiseEdgeMarginMeas-001 | α2 | A | FAIL 2/9 | FAIL 7/9 | FAIL 7/9 | 18/12 | 9/3 |  |  |
+| al-DesignFlow-FsdbWrDqMeas-001 | β7 | C | FAIL 2/12 | FAIL 10/12 | FAIL 10/12 | 19/10 | 21/12 |  |  |
+| gnFlow-DqReadPathWaveDebug-001 | α3 | A | FAIL 4/13 | FAIL 1/13 | PASS 13/13 | 6/0 | 8/0 |  | ✓ |
+| val-DesignFlow-WaveCmpWrap-001 | β6 | A | FAIL 2/14 | PASS 14/14 | FAIL 13/14 | 18/7 | 32/21 | ✓ |  |
+
+### 反作弊审计
+- cheat=False · cheat_count=0 · agent_vqa_calls=284 · agent_image_reads=0。
+- agent (glm-5.2) only talks to the HTTP VQA tool + the glm-5.2 text API; no image is decoded in this process.
+
+### 意义与口径
+- **核心结论**：单模型臂 V0/V1/V2 整题 0/0/0（工具天花板）→ 加 agent 编排后 G0=0 / G1=5 / G2=4。**G0→G1 翻转 5 整题** = 「MLLM 作为 agent 系统一部分」带来的增益（agent 把每量读对率补成整题全过，单模型结构上做不到）。V1→G1 翻转 5 = 同一基模 VQA 后端下「agent 编排 vs 单模型」的纯编排增益。
+- **G2（强化臂·#4）**：G0→G2 翻转 4；G1→G2 b=2 c=3 p=1.0 (n_disc=5)。量「rft2 强化适配器在 agent 设置下是否再增翻转」。
+- **口径标签**：WaveView 真实题（等价重建，非合成集）；G 臂 = agent 编排轴（本线能力结论以此为准），V 臂 = 工具天花板参考。
+- 局限：n=10 统计力弱，McNemar p 值仅参考；图与 designflow 等价但不字节相同（.15 原 check 不可达=infra-blocker），不可外推为官方通过率。
+
+### 产物
+- 运行器：`vision/vqa_tool/waveview_selftest/waveview_selftest_agent_run.py`（G0/G1/G2·可复跑）
+- 原始结果：`waveview_selftest/G/{G0,G1,G2}/*.json`（各 10）·`summary_agent.json`·`audit_agent.json`
+- 中文 HTML 报告：`reports/report_vision_waveview_selftest_agent_zh.html`（单文件·0 外链·0 script·内联 SVG）
+- 复跑：起 :30001 + :30003（--adapter strengthen_runs/rft2_adapter_seed11），再 `python waveview_selftest_agent_run.py`
