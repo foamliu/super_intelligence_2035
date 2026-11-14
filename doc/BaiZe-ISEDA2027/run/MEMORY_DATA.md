@@ -1,6 +1,6 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
 > 🔴 **用户令 2026-11-13a**：把 stack-v3-train **全量**（~3.546TB compressed / 8192 parquet，⚠️ 非 15.9TB——15.9TB 是未压缩 content size）下载到 `/nas_user/app.e0031982/datasets/`；已下载的 2TB（4600 parquet @ `/nas_inference`）搬过去不重下。执行顺序：①等分词主跑+rerun完成 ②rsync 2TB→/nas_user + 校验字节 ③hf download 全量剩余（自动跳已存在）④更新 DATA_MAPPING ⑤commit。纪律：nice19/max-workers2/不挤S1/不碰分词产物。
 
@@ -17,6 +17,8 @@ WAITING: 0
 
 > 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
 > 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
+
+> [11-14 09:12] 唤醒1503：巡检→①StepB下载进度：7157/8207files=87%/7152parquet in data/0inc in data(2 inc in .cache)/2.9TB/PID3112439 alive(etimes~76050s≈21.1h);②下载日志ETA：87% 7157/8207 [21:05:00<3:06:00,10.62s/it]→剩余~3.1h→预计~12:15CST Nov14完成;③StepC auto-wait ALIVE(PID3548419,etimes~37770s≈10.5h,每5min check,最后09:11CST "parquet=7152/8192 incomplete=2",child sleep300 PID3050402);④StepA仍DONE：tokenized 4362json/4565bin@/nas_user/源/nas_train已删(0json实测)/源/nas_inference已清除(0parquet实测);⑤磁盘/nas_user可用54T(53%used)/nas_train可用28T(87%used)/nas_inference可用29T(38%used)→✅;⑥git pull成功(up-to-date);⑦research日报11-14 data建议同前(synthetic data统计量对照+pipeline复盘,记为future work不阻塞);⑧下一步：等下载完成(ETA~12:15CST)→StepC自动分词新shard(跳过已有4362json)→StepD更新DATA_MAPPING+commit
 
 > [11-14 07:46] 唤醒1502：巡检→①StepB下载进度：6902/8207files=84%/6898parquet in data/0inc in data(2 inc in .cache)/2.8TB/PID3112439 alive(etimes~70948s≈19.7h);②下载日志ETA：84% 6902/8207 [19:42:27<3:43:34,10.28s/it]→剩余~3.7h→预计~11:25CST Nov14完成(保守parquet-rate估~15:00CST);③StepC auto-wait ALIVE(PID3548419,etimes~32668s≈9.1h,每5min check,最后07:45CST "parquet=6896/8192 incomplete=2");④StepA仍DONE：tokenized 4362json/4565bin@/nas_user/源/nas_train已删(0json实测)/源/nas_inference已清除(0parquet实测);⑤磁盘/nas_user可用54T(53%used)/nas_train可用28T(87%used)/nas_inference可用29T(38%used)→✅;⑥git pull成功(up-to-date);⑦research日报11-14 data建议="trace/合成数据做17项统计量vs真实参照集分布对照表+预注册判据(偏离>2σ则不入SFT)"(记为future work,不阻塞当前);⑧下一步：等下载完成(ETA~11:25CST)→StepC自动分词新shard(跳过已有4362json)
 
