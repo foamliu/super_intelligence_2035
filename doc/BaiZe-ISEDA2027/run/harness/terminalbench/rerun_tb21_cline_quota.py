@@ -212,7 +212,7 @@ def _docker_ok():
 
 
 def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
-           harness=None, agent=None):
+           harness=None, agent=None, agent_timeout_multiplier=1.0):
     harness = harness or HARNESS
     agent = agent or AGENT
     if not tasks:
@@ -268,6 +268,8 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
         "--agent", agent, "-k", "1", "--n-concurrent", str(n_concurrent),
         "--extra-docker-compose", str(OVERLAY), "--jobs-dir", str(jobs_dir),
     ]
+    if agent_timeout_multiplier and agent_timeout_multiplier != 1.0:
+        harbor_cmd += ["--agent-timeout-multiplier", str(agent_timeout_multiplier)]
     # The agent's shell session often lacks the docker supplementary group
     # (group membership is evaluated at login time, but the loop starts cline
     # via `env -u ... cline` which inherits a stripped environment).  Wrap
@@ -334,6 +336,8 @@ def main():
     ap.add_argument("--timeout", type=int, default=3600, help="单题 agent 超时秒")
     ap.add_argument("--jobs-root", default=str(JOBS), help="job 根目录（默认 /tmp/tb21_glm53_jobs）")
     ap.add_argument("--dry-run", action="store_true", help="只打印 harbor 命令，不执行")
+    ap.add_argument("--agent-timeout-multiplier", type=float, default=1.0,
+                    help="harbor --agent-timeout-multiplier (default 1.0; use 4.0 for 900s→3600s)")
     ap.add_argument("--harness", default=None,
                     help="指定 harness (7way: cline-patched/codex/hermes/opencode/claude-code/deepseek-harness/pi)")
     ap.add_argument("--agent", default=None,
@@ -382,7 +386,8 @@ def main():
 
     if args.launch:
         jobs_dir = launch(tasks, tag, args.n_concurrent, args.timeout,
-                          dry=args.dry_run, harness=args.harness, agent=args.agent)
+                          dry=args.dry_run, harness=args.harness, agent=args.agent,
+                          agent_timeout_multiplier=args.agent_timeout_multiplier)
         if jobs_dir:
             print(f"\n[next] 跑完执行：python3 {Path(__file__).name} --merge {jobs_dir}")
             print("[next] 然后重新生成双报告：python3 gen_report_tb21_7way.py && "
