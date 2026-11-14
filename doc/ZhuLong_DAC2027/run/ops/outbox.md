@@ -16659,3 +16659,128 @@ echo "=== DONE 142 ==="
     after: 47259c6f3 zhulong paper: rebuild main.pdf (anonymous / double-blind)
 === DONE 142 ===
 ```
+
+---
+
+## RUN_ID 143 · 2026-11-14 10:20:58 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 143 | zhulong status probe | $(date '+%F %T') | host=$(hostname) ==="
+GR=$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+cd "$GR" || exit 1
+
+echo
+echo "[1] zhulong loop 进程"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-160 || echo "  (无 zhulong_loop)"
+
+echo
+echo "[2] cline 进程（是否有 agent 在跑）"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E '[c]line ' | grep -v grep | cut -c1-160 | head -10 || echo "  (无 cline)"
+
+echo
+echo "[3] 沙盒端口 status（8664/8665/8653/8669）"
+for p in 8664 8665 8653 8669; do
+  if (exec 3<>/dev/tcp/127.0.0.1/$p) 2>/dev/null; then echo "  $p OPEN"; exec 3<&- 3>&-; else echo "  $p CLOSED"; fi
+done
+
+echo
+echo "[4] 最近的 smoke / subagent 目录（/tmp 与 /nasdata）"
+ls -dt /tmp/subagent_smoke* /tmp/*subagent* 2>/dev/null | head -8 || echo "  (无 /tmp subagent 目录)"
+ls -dt /nasdata/*/subagent_ablation* /nasdata/*/*subagent* 2>/dev/null | head -8 || echo "  (无 /nasdata subagent 目录)"
+
+echo
+echo "[5] 最新 smoke 目录里的关键证据（若有）"
+SD=$(ls -dt /tmp/subagent_smoke* 2>/dev/null | head -1)
+if [ -n "${SD:-}" ]; then
+  echo "  dir=$SD"
+  find "$SD" -name '*messages.json' 2>/dev/null | head -3 | while read -r f; do
+    echo "    $f  n_msgs=$(python3 -c "import json,sys
+try:
+  d=json.load(open('$f'));print(len(d) if isinstance(d,list) else len(d.get('messages',[])))
+except Exception as e: print('ERR')" 2>/dev/null)"
+  done
+  grep -m3 -iE 'finishReason|inputTokens|outputTokens' "$SD"/*.log 2>/dev/null | cut -c1-160 | sed 's/^/    /'
+else
+  echo "  (无 /tmp/subagent_smoke* 目录)"
+fi
+
+echo
+echo "[6] MEMORY_ZHULONG 头部（WAITING / PHASE）"
+head -6 doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md 2>/dev/null | cut -c1-200 | sed 's/^/  /'
+
+echo
+echo "[7] git 状态（应干净）"
+git status --porcelain 2>/dev/null | head -10 | sed 's/^/  /' || true
+echo "  HEAD=$(git log -1 --pretty='%h %s' | cut -c1-90)"
+echo "  behind/ahead vs origin/main: $(git rev-list --left-right --count origin/main...HEAD 2>/dev/null)"
+
+echo
+echo "[8] loop 日志尾部（若存在）"
+for f in /tmp/zhulong_loop.log /tmp/zl_loop.log; do
+  [ -f "$f" ] && { echo "  --- $f (mtime $(date -r "$f" '+%F %T' 2>/dev/null)) ---"; tail -12 "$f" | cut -c1-170 | sed 's/^/    /'; }
+done
+
+echo "=== DONE 143 ==="
+```
+
+**输出**
+```
+=== RUN_ID 143 | zhulong status probe | 2026-11-14 10:20:58 | host=hfeg0tedaap02 ===
+
+[1] zhulong loop 进程
+ 813663 18-01:44:18 bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh
+
+[2] cline 进程（是否有 agent 在跑）
+ 245597 168-17:32:57 0.0 /home/app.e0030544/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /home/app.e0030544/project
+ 264846 176-16:06:04 0.0 node /home/app.e0023936/.npm-global/bin/cline config
+ 380025  8-21:20:00  0.0 node /home/app.t0002147/.npm-global/bin/cline history
+ 380047  8-21:20:00  0.9 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline history
+ 495210  8-21:00:18  0.0 node /home/app.t0002147/.npm-global/bin/cline history
+ 495220  8-21:00:18  0.4 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline history
+ 545406 51-18:25:40  0.0 node /home/app.t0002147/.npm-global/bin/cline --id 1790041981481_aealn
+ 545417 51-18:25:39  1.5 /home/app.t0002147/.npm-global/lib/node_modules/cline/bin/.cline --id 1790041981481_aealn
+3088197 73-18:44:31  0.3 /root/node-v22/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /root --host 127.0.0.1 --port 25463 --pathname /hub
+3383077       24:42  0.0 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 �
+
+[3] 沙盒端口 status（8664/8665/8653/8669）
+  8664 CLOSED
+  8665 CLOSED
+  8653 CLOSED
+  8669 CLOSED
+
+[4] 最近的 smoke / subagent 目录（/tmp 与 /nasdata）
+/tmp/subagent_smokeA_master.log
+/tmp/subagent_smokeA_master.log
+/tmp/subagent_smokeA.log
+/tmp/subagent_smokeA.log
+/tmp/zhulong_subagent_eval_smokeA
+/tmp/subagent_smoke_A
+/tmp/subagent_smoke_A
+/tmp/zhulong_subagent_ablation.log
+/nasdata/app.e0031982/subagent_ablation
+/nasdata/app.e0031982/subagent_ablation
+
+[5] 最新 smoke 目录里的关键证据（若有）
+  dir=/tmp/subagent_smokeA_master.log
+
+[6] MEMORY_ZHULONG 头部（WAITING / PHASE）
+  # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
+  
+  WAITING: 0（2026-11-14 wake#922·**🔴 推翻 wake#915「需源码改」结论·subagent 消融可重跑·confirmatory smoke 待跑（沙盒与 designflow 无关，无争用）**。硬证据：smoke
+  
+  - [2026-11-14 wake#922·**🔴 推翻 wake#915「需源码改」结论·reanalysis_ready·confirmatory smoke 待跑（沙盒独立，无争用）**] 用户重发「启动 subagent 消融」。深查�
+  
+
+[7] git 状态（应干净）
+  M  doc/ZhuLong_DAC2027/EDA-LiveFlow-Bench_ICML2027/main.pdf
+  UU doc/ZhuLong_DAC2027/benchmark/designflow/WAVEVIEW_COLLAB.md
+  M  doc/ZhuLong_DAC2027/benchmark/designflow/trace_ledger_B.tsv
+  ?? doc/ZhuLong_DAC2027/run/run_subagent_smokeA.sh
+  HEAD=3186781be designflow: 指定 shard D 接手 waveview 协作
+  behind/ahead vs origin/main: 0	0
+
+[8] loop 日志尾部（若存在）
+=== DONE 143 ===
+```
