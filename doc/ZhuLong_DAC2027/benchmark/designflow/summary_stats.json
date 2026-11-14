@@ -110,7 +110,7 @@
     "to": "designflow/summary_1113.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
-  "prev_sessions": 4418,
+  "prev_sessions": 6952,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261114_184938/summary.tsv",
   "scan_rows": 41409,
   "scan_sha256": "(pending)",
@@ -207,7 +207,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-14 18:55",
+  "updated_at": "2026-11-14 19:44",
   "users_mc10": 508,
   "users_mc100": 182,
   "users_mc30": 401,
