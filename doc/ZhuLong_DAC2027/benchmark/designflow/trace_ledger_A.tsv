@@ -523,3 +523,12 @@
 1793169406310_49kzt	e0039602	hfeg0pkn005	55	digital	parked		2026-11-14 10:51	r505: xcelium usage Q&A (user: dont execute just tell me) REJECT
 1794469877801_685bd	eric1ch	hfeg0pkn001	50	digital	parked		2026-11-14 10:51	r505: LPDDR6 JEDEC KG skill-usage REJECT
 1793704618870_pz29g	e0039602	hfeg0pkn005	48	digital	parked		2026-11-14 10:51	r505: A_Compare.rpt error analysis Q&A REJECT
+1791785549996_uaa3b	kiaray	hfeahpc505	45	digital	parked		2026-11-14 11:11	r506 REJECT skill-orchestration build-d6/run-d6 skill-invocation env-specific not self-contained produce-task
+1793865143182_nwmze	e0039602	hfeg0pkn005	41	digital	parked		2026-11-14 11:11	r506 REJECT Q&A log-scripts + delete-logs infra destructive non-produce
+1791956799319_0ykok	e0046686	hfeg0pkn005	36	digital	parked		2026-11-14 11:11	r506 REJECT doc-gen onboarding summary of buddy workdir not produce-task
+1791602750335_dtdfk	jason17w	hfeg0pnd002	36	digital	parked		2026-11-14 11:11	r506 REJECT skill-authoring/version-rollback run-regression skill infra
+1791896374185_vc5uj	e0014566	hfeg0plg58	34	digital	parked		2026-11-14 11:11	r506 REJECT vague 'create rtl sample code' no specific deliverable
+1793694635228_d56nb	ruisongs	hfeg0pfn087	33	verification	parked		2026-11-14 11:11	r506 REJECT sim-failure analysis Q&A '分析仿真失败原因'
+1793611777735_q9ulk	ruisongs	hfeg0pfn087	31	verification	parked		2026-11-14 11:11	r506 REJECT xrun.log err debug Q&A
+1793250981130_kq81c	thqu	hfeg0pkn099	31	digital	parked		2026-11-14 11:11	r506 REJECT host 10.129.2.99 ssh connection timed out unreachable infra-block
+1792459025453_8o316	max7c	hfeg0pkn004	13	digital	parked		2026-11-14 11:11	r506 REJECT usage Q&A '如何执行这个脚本'
