@@ -118,5 +118,17 @@ check.py 无法直接验「agent 看了图」，只能验 deliverable 文本答�
 - **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。结果落 eval/status.jsonl + designflow/waveview_baseline_results.D.json（β9 段追加）。
 - **判分隔离**：SUT workdir 只放 prompt.txt + wave_vb_A.png + task_brief.md（PreToolUse hook 验证无 check.py/reference/hidden 泄漏）；判分在独立 judge dir 跑。
 
+### α4 TempSelWaveform-001 — ✅ 已恢复原形态 + 基线已跑（r652, 2026-11-14）
+
+- **恢复完成**：移除文本 .tbl 数据替身（wave_A.tbl / example_output_A.json / hidden/wave_B.tbl / hidden/gen_B.py 全删），改用 matplotlib 在 .75 沙盒生成的真数据图 PNG（sel_wave_A.png：温度传感器选择器信号 v(sel54) 梯形脉冲多窗激活，5 个激活窗 [0–30us]，1500×900，73KB，无数据标签，需从坐标轴读数；hidden/sel_wave_B.png：v(sel68) 周期 7 窗同构异值，82KB，provenance + 反硬编码）。
+- **prompt 改写**：要求 agent 看图读出 v(sel54) 的激活特征量（v_max/v_min/激活次数/首个激活时间/末个激活时间/占空比/激活模式），交付 wv_summary.csv 答案（不再是脚本）。明示"不要尝试用脚本去解析图中的原始数据"。
+- **check.py 重写**：12 条件 (a)-(l)，answer-validation 设计——oracle 由 subprocess 从 embedded A 波形参数重算（梯形脉冲模型 + 数值阈值穿越检测，满足 §4.2 真跑）；值条件 (e)-(j) 验 v_max=1.25/v_min=0.10/num_activations=5/first=2.84us/last=26.18us/duty=0.287（±0.05V/±0.5us/±0.06 读图容差）；(k) activation_pattern=multi_pulse 且与 nact 内部一致（2≤nact≤6）；(l) 反硬编码拒 B 特征字面量（sel68 + B 的 3 位小数穿越时刻）+ 跨字段自洽（first<last, 0<duty≤1, 隐含平均窗宽合理）。
+- **契约适配（metadata.restoration 记录）**：answer-deliverable 设计下，§4.1/§4.2 candidate-script-on-hidden-B 机制替换为 oracle-recomputed-via-subprocess + anti-hardcode-B-token guard + cross-field self-consistency；hidden B 图保留作 provenance + 反硬编码。
+- **自验**：REF PASS 12/12；7 negative（empty_zip/wrong_header/wrong_vmax/wrong_nact/wrong_pattern_inconsistent/hardcode_B/incoherent）全 FAIL（NEG_RC=0，各击溃不同条件）；§4.9 退化回归（empty/stub_allzero/core-deleted）全 FAIL。
+- **断言闸门**：k_rationale==k_check==12 ≥ 8 ✓。
+- **jsonl 更新**：EDA-Eval-DesignFlow_D.jsonl 中该 case 已替换为 restored form（attachments=[sel_wave_A.png, task_brief.md], image_required=true, track=synthesized-image-restored, restoration notes, k=12, check_sha=ad4fb740b6）。D.jsonl 仍 377 条（恢复=替换非新增）。
+- **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。结果落 eval/status.jsonl + designflow/waveview_baseline_results.D.json（α4 段追加）。
+- **判分隔离**：SUT workdir 只放 prompt.txt + sel_wave_A.png + task_brief.md（PreToolUse hook 验证无 check.py/reference/hidden 泄漏, hook_blocks=0）；判分在独立 judge dir 跑。
+
 ### 待恢复（下轮起）
-α4 TempSelWaveform-001 / β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 3 题）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 5 题。B 域 α2/β7 移交 shard B；β8 跨 shard 待 A 裁；β5 未落库待确认。
+β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 2 题）+ β8 WaveView-002（D 域已落库, r508 召集人 A 裁定归属 D）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 5 题。B 域 α2/β7 移交 shard B；β5 未落库（vision 误抄, 非恢复范围）。

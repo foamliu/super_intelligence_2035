@@ -127,6 +127,70 @@
         "beta8 cross-shard -> A convenes",
         "beta5 unbanked -> confirm whether to build"
       ]
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+      "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+      "shard": "D",
+      "date": "2026-11-14",
+      "round": "r652",
+      "restoration_summary": {
+        "original_degradation": "B-grade synthesized .tbl text-parsing task (agent wrote Python signal_analyzer.py to parse text waveform export, no image needed)",
+        "restored_form": "SUT reads sel_wave_A.png (temperature-sensor selector signal v(sel54), 5-window multi_pulse activation over 30us) and extracts activation characteristics from the figure; delivers answer CSV wv_summary.csv (signal,v_max,v_min,num_activations,first_activation_time,last_activation_time,duty_cycle,activation_pattern)",
+        "text_substitute_removed": [
+          "wave_A.tbl",
+          "example_output_A.json",
+          "hidden/wave_B.tbl",
+          "hidden/gen_B.py"
+        ],
+        "image_assets_added": [
+          "sel_wave_A.png (1500x900, 73KB, visible A: v(sel54) trapezoidal-pulse multi_pulse, 5 activation windows)",
+          "hidden/sel_wave_B.png (1500x900, 82KB, hidden B: v(sel68) periodic, 7 windows, anti-hardcode provenance)"
+        ],
+        "figure_generation": "matplotlib 3.x on .75 sandbox (eda_flow run_commands) from trapezoidal-pulse model (baseline 0.10V, vmax 1.25V, 5 windows, rise 0.3us, 1500 pts); no data labels (read from axes)",
+        "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A waveform params (numeric threshold-crossing detection) + anti-hardcode B-token guard (sel68 + B distinctive 3-decimal crossing times) + cross-field self-consistency (first<last, 0<duty<=1, plausible implied avg window width); k_rationale==k_check==12",
+        "self_verification": "REF PASS 12/12; 7 negatives all FAIL (NEG_RC=0); §4.9 degradation (empty/stub_allzero/core-deleted) all FAIL",
+        "oracle_A": {
+          "signal": "v(sel54)",
+          "v_max": 1.25,
+          "v_min": 0.1,
+          "num_activations": 5,
+          "first_activation_time": 2.841895,
+          "last_activation_time": 26.177452,
+          "duty_cycle": 0.286858,
+          "activation_pattern": "multi_pulse",
+          "time_span": 30.0
+        }
+      },
+      "baseline_run": {
+        "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + sel_wave_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified, hook_blocks=0)",
+        "model": "minicpm5-2b-sft-v39-final",
+        "model_note": "2B text-only SFT surrogate served by local vllm proxy. NO multimodal capability. providers.json default model.",
+        "thinking": "low",
+        "duration_sec": 11,
+        "cline_exit": 0,
+        "verdict": "FAIL",
+        "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+        "failure_mode": "run_aborted external_abort ('aborted by another client') after 11s. Session had 264 agent_event / 18 hook_event / 1 run_aborted; 118 mentions of sel_wave/png/prompt.txt in session (model engaged the PNG/prompt context) but 0 successful structured tool_calls and no deliverable written. 2B SFT surrogate's tool-calling is unreliable.",
+        "failure_mode_classification": "engaged-but-aborted (model referenced the PNG/prompt context but made no successful tool calls / produced no deliverable before external abort). Consistent with r651 beta9's engaged-but-incapable pattern. Both end in FAIL (correct no-multimodal baseline).",
+        "hook_blocks": 0,
+        "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-TempSelWaveform-001/20261114_121446",
+        "status_log": "eval/status.jsonl (ts 2026-11-14T04:14:46Z)"
+      },
+      "interpretation_for_vision": {
+        "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
+        "observed": "FAIL (confirmed)",
+        "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. alpha4 is the third restored D-domain case (after alpha1 r650, beta9 r651).",
+        "caveat": "the 2B SFT surrogate's failure is 'engaged-but-aborted' (engaged PNG context but no successful tool calls before external abort). For a cleaner multimodal-gain attribution, vision may want a stronger no-multimodal model that engages the task but cannot read the image. designflow has set up the case correctly (image-required, no text substitute)."
+      },
+      "next_steps_D": [
+        "beta10 TempThreshChar-001 (D, restore)",
+        "beta11 SimFailFsdbProbe-001 (D, restore)",
+        "beta8 WaveView-002 (D, restore, adjudicated to D by shard A r508)",
+        "alpha3 (D, unbanked, build case then restore)",
+        "beta6 (D, unbanked, build case then restore)",
+        "B-domain alpha2/beta7 -> handoff to shard B"
+      ]
     }
   ],
   "last_updated": "2026-11-14 r651",
