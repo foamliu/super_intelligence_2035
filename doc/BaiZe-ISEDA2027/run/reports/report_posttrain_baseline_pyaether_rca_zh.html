@@ -30,6 +30,7 @@ summary{cursor:pointer;font-weight:600;padding:6px;background:#e8e8e8;border:1px
 .tbd{color:#888;font-style:italic}
 .chart{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
 </style></head><body>
+<div style='background:#fff3cd;border:2px solid #ffc107;border-radius:6px;padding:12px 16px;margin:10px 0'><b>ⓘ 本报告已被 v2 取代（2026-11-14）</b>：本报告的失败分类与口径仍成立，但用户要求基于「工具调用约 1.9 万次 vs Pass@1 仅 3.04%」的 trace 重写一份更深度的 RCA。新报告 <b><code>report_posttrain_pyaether_rca_v2_zh.html</code></b>（位于 <code>doc/BaiZe-ISEDA2027/reports/</code>）新增了「工具调用画像」核心章节（各工具调用次数/成功率、每题分布、检索到≠用对、写得出≠跑得通、prompt 矛盾影响），并在末尾给出按 ROI 排序的提分意见。本报告保留作历史参考，新口径与结论请以 v2 为准。</div>
 <div class='box key' style='border:2px solid #c0392b;background:#fdecea;margin-bottom:18px'>
 <h3 style='margin-top:0'>⚠️ 环境口径声明（2026-11-14 用户令追加 · 本报告结论降为 provisional）</h3>
 <p>本报告的 <b>3.04%</b> 基线是 cline agent 在 <b>.17（后训练同机）</b>启动评测得到的。按 2026-11-14 用户令，EDA-Eval-PyAether 评测必须像 zhulong 一样<b>从 36.15 启动</b>——只有 36.15 原生部署了 RAG（API 文档知识库，pyAether_MCP_server :8090）与可访问 EDA 沙盒的 MCP（eda_flow :18891）。故本基线口径存疑，正在 36.15 上以同 158 题、同判据（<code>-p 8 -n</code>、2500s、5-run、Pass@1）重测。</p>
