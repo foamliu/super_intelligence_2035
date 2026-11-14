@@ -886,3 +886,6 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792647973145_t08b0	sherlock	10.129.33.137	43	physical_verify	case	EDA-Eval-DesignFlow-DrcExactSpacingArgusSafe-001	2026-11-14 19:12	
 1794557401043_ki6z0	junweiw	hfeg0plg67	181	layout_aether	case	WireWidthSpaceRuler-001	2026-11-14 19:44	
 1794643455102_wy27j	jzeng	hfeg0plg85		layout_aether	case		2026-11-14 20:36	r568 modify-existing pyAether IMCleAutoVia.py add V4 via capability M4/M5 R90
+1794647287507_zd8b7	jzeng	hfeg0plg85	205	layout_aether	parked		2026-11-14 20:57	same_trace_group near-dup of AutoViaV4Dir3DY-001 (same user jzeng, same V4 dir_3D_Y M4 fill topic); abandoned r568
+1794549309183_d8s4u	yinyus	hfeg0plg66	574	layout_aether	parked		2026-11-14 21:00	out-of-domain: schematic construction (dbCrtSchPin/schematic view/symbol inst) = D domain, not C layout; abandoned r568
+1794539053522_qu4o5	joyc	hfeg0plg16	156	physical_verify	case	EDA-Eval-DesignFlow-QaPatternWidthSpace-001	2026-11-14 21:10	
