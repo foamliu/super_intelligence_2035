@@ -1,10 +1,12 @@
 WAITING: 0
 
-> 🆕 **【wake #1211 · 2026-11-14 12:3x】waveview 分析报告 β5 勘误补注交付（wake#1210 留作下一轮项→本轮落地）**：
-> - **做了什么**：`reports/report_vision_waveview_failed_analysis_zh.html` 补注 β5 勘误——① TLDR 后新增「🔧 勘误（convener shard A r508 核实）」box：β5 FsdbNetToggleDiag-001 在 4 shard jsonl 全 0 命中=从未造题、非可恢复降级 case、可恢复分母订正=4（非 11）、截至 12:1x D 已恢复落盘 3 题(α1/β9/α4)全 FAIL 正确；② §2.2 β 表 β5 行 case_id 划线 + 「案例未落库」badge + 判定依据补「convener r508·不计可恢复分母」；③ §3.3 β 例证(t0aom)补「仅深读笔记·未落库为评测 case·β 判定为定性分析」。**分类口径 α=4/β=7/γ=26 不变**（与 handoff 勘误节一致）。
-> - **校验**：HTML 单文件自包含——`python3` 核 div 19/19·table 14/14·`<script>` 0·外链(src/href http) 0 ✅。
-> - **designflow 进展**：本轮 `git fetch`=0/0 up-to-date，无 designflow 新交付（仍停留 wake#1210 所见 D 恢复 3 题 α1/β9/α4）；剩余 D 域题(β10/β11/β8 已落库 + α3/β6 未落库)待下轮恢复。**#3 后半（无VQA vs 有VQA 对照）仍依赖 D 恢复完毕**，本轮无可推进的跨线增量。
-> - **git**：无 index.lock·窗口打开。add 明确路径(报告+MEMORY+daily)→commit(`vision waveview:`)→push。不卷入 `M main.pdf`(wake#1207 遗留)与 `?? outputs/`(posttrain 在途)。**WAITING: 0**。
+> 🆕 **【wake #1212 · 2026-11-14 12:4x】任务书瘦身归档（wake#1208 标记「下轮归档」→本轮落地）+ 例行巡检**：
+> - **做了什么**：`BAIZE_VISION_TASK.md` 39389B > 32KB 软限 → 把**两个 2026-11-07 用户令块（10:10 阶段2 放行 + 09:2x 走出干等 GPU，均 ✅ 已交付/wake#893）原文 verbatim 搬迁**至 `ARCHIVE_OPERATOR_VISION.md`（+13129B，附归档头「wake#1212·未改一字」），任务书各留 1 行 `### 📦 §…` 指针（沿用本文件既有归档惯例，未改小节编号/未新增指令）。**TASK 39389→27127B ≤32KB ✓**；4 个 2026-11-14 活跃令(10:3x/09:5x/09:1x/08:4x·均未完成)原样保留在运维指令区。
+> - **designflow 进展**：本轮 git incoming 2 commits 均非视觉（designflow shard A ws-shardA r·ops 落款裁定 Yang Liu）；`WAVEVIEW_COLLAB.md` 交付记录仍停留 wake#1211 所见 = D 恢复 3 题(α1/β9/α4·全 FAIL 正确)，剩 5 D 域题(β10/β11/β8 已落库 + α3/β6 未落库)待恢复。**#3 后半（无VQA vs 有VQA 对照）仍依赖 D 恢复完毕**，本轮无可推进跨线增量。
+> - **输入参考**：research 日报 2026-11-14(12:17) vision 栏 = 「Unbundling Multimodal Vision Encoding」(arXiv 2611.17334·视觉编码器先验/专用容量/融合位置三臂)——属**已收敛视觉编码器臂**·非 wave-RL 活跃线 → 不 action（同 wake#1186 判定口径）。
+> - **git**：fetch→behind2(非视觉)→`pull --rebase --autostash`×2(origin 并发前进·第二次 0/0 up-to-date)→add 明确路径(TASK+ARCHIVE+MEMORY+daily)→commit(`vision 归档:`)→push。不卷入 `M main.pdf`(wake#1207 遗留)与 `?? outputs/`(posttrain 在途)。**WAITING: 0**。
+
+> 📦 **wake #1211 · 2026-11-14 12:3x** waveview 分析报告 β5 勘误补注交付（TLDR 勘误 box + §2.2 β5 划线/案例未落库 badge + §3.3 t0aom 注·分类口径 α4/β7/γ26 不变·HTML div19/table14/0script/0外链）·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1210 · 2026-11-14 12:2x** designflow 协作进展接收 + 交底清单勘误：D 已恢复 3 题(α1/β9/α4·全 FAIL 正确)；接受 convener r508 裁定(β5 案例不存在/分母订正=4/β8 归 D)；handoff 清单勘误落地，报告 β5 补注留下一轮(wake#1211 已落地)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
