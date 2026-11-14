@@ -564,3 +564,4 @@
 1794551446322_sco0b.messages.json	eva1li	hfeg0plg74	85	verification	parked		2026-11-14 22:42	analysis Q&A only: 8/8 user inputs are search/where/what questions (CMD_JUMP_cov/TYPE_tb/csfck1_state/PowerUp/compare_enable/SetDataRateSpeedMR/cmdtcal), no produce-task no deliverable; REJECT
 1794557869660_0g9n6.messages.json	thomas1w	hfeg0plg98	42	verification	parked		2026-11-14 22:45	debug/analysis only: 1 user input '仿真卡死帮我看下' (sim hang), agent wrote diagnostic grep scripts diag_find/diag_grep/diag_log, no produce-task deliverable; REJECT
 1794639653207_iuarg.messages.json	gracew	hfeg0plg92	32	verification	case	EDA-Eval-DesignFlow-CompressRd14bitAdd-001	2026-11-14 22:59	
+1794649621804_tlrtw	jkxu	hfeg0pkn004	56	verification	case	EDA-Eval-DesignFlow-VsimRunscriptLogoptFix-001	2026-11-14 23:29	
