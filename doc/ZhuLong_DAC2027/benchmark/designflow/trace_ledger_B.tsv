@@ -1506,4 +1506,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794552735950_6jrrg					parked		2026-11-14 21:33	waveview waveform open (cross-domain shard D)
 1794630329700_sclqx					parked		2026-11-14 21:33	non-produce session (cd ~/.agents)
 1794649204800_nzw43	ericw	hfeg0plg07	33	spice_sim	case	EDA-Eval-DesignFlow-SimErrSubcktRefDiag-001	2026-11-14 22:09	
-1794557662253_j8k52	hairuizh	hfeg0pkn001	10	spice_sim	case	EDA-Eval-DesignFlow-PlatSweepGen-001	2026-11-14 23:23
+1794557662253_j8k52	hairuizh	hfeg0pkn001	10	spice_sim	case	EDA-Eval-DesignFlow-PlatSweepGen-001	2026-11-14 23:23	
+1794641146841_12h9v	dsgao	hfhds201	60	spice_sim	case	EDA-Eval-DesignFlow-FineSimOomDiag-001	2026-11-15 00:09	
+1794550233229_egiyo	e0048410	hfeg0plg98	29	characterization	parked		2026-11-15 00:09	non-produce: 'hello' test session, not a real EDA task
+1794567952569_788sj	yuchens	hfeg0pkn002	11	spice_sim	parked		2026-11-15 00:09	non-produce: py script path-error Q&A, not spice_sim characterization task
