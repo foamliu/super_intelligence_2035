@@ -5,7 +5,7 @@
 
 WAITING: 0
 
-> 🔧 **隧道复盘结论（wake507 · 2026-11-14 23:5x · posttrain infra:）**：隧道**坏过现已恢复**——最后通点 **20:41:50**（36.15 run1 完整 18.99% 落盘）/ 首断点 **22:4x wake505**（.17:3333 未监听+直连36.15:22超时）/ 恢复确认 **23:26 wake506**（中继 tunnel.ps1 重新在线）/ 故障域=**中继侧①+②**（排除SSH认证/36.15 sshd/.17端口重启）/ **非本线造成亦非本线修复**（20:41–23:30 posttrain 未碰中继与隧道，wake505 纯CPU、wake506 kill 仅作用36.15评测进程于恢复后）/ 当前隧道健康三条验证命令实测PASS。报告 `reports/report_infra_tunnel_postmortem_zh.html`。隧道恢复后已接回 A1/A3+P0dev（归因链 PID3707027，A1 23:30 起跑）。
+> 🔧 **隧道复盘结论（wake507 · 2026-11-14 23:5x · posttrain infra:）**：隧道**坏过现已恢复**——最后通点 **20:41:50**（36.15 run1 完整 18.99% 落盘）/ 首断点 **22:4x wake505**（.17:3333 未监听+直连36.15:22超时）/ 恢复确认 **23:26 wake506**（中继 tunnel.ps1 重新在线）/ 故障域=**中继侧①+②**（排除SSH认证/36.15 sshd/.17端口重启）/ **非本线造成亦非本线修复**（20:41–23:30 posttrain 未碰中继与隧道，wake505 纯CPU、wake506 kill 仅作用36.15评测进程于恢复后）/ 当前隧道健康三条验证命令实测PASS。报告 `reports/report_infra_tunnel_postmortem_zh.html`（项目根 reports/ + 本线 run/reports/ 各一份）。隧道恢复后已接回 A1/A3+P0dev（归因链 PID3707027，A1 23:30 起跑）。[wake复验 2026-11-15 07:43：三验证命令实测全 PASS（3333 LISTEN / ssh -p3333→hfeg0tedaap02 / 18096→minicpm5-2b-sft-v39-final）+ anchor final_report.json mtime=20:41:50 pass_rate=0.18987=18.99% 实测确认；ping 36.15 0% loss、nc:22 timeout 符合基线防火墙；.17 uptime 123 天未重启；报告 spec 合规（首屏三句+六问+三命令+无记录标注）。postmortem 任务完成。]
 
 ## 进度快照
 
