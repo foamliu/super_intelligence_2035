@@ -55,8 +55,18 @@
 
 <header>
   <h1>EDA-LiveFlow-Bench 论文下一步改进建议</h1>
-  <div class="meta">视角：spice_sim / characterization 域（shard B）· 撰写于 2026-11-13 · 更新于 2026-11-14 (r508) · 状态：内部研究组建议稿（未做项标「建议验证」）</div>
+  <div class="meta">视角：spice_sim / characterization 域（shard B）· 撰写于 2026-11-13 · 更新于 2026-11-14 (r508) · 再刷新 2026-11-14 (r532) · 状态：内部研究组建议稿（未做项标「建议验证」）</div>
 </header>
+
+<div class="callout info">
+<b>r532 再刷新说明（2026-11-14）</b>：又一个 0-case 触发轮（B 域 mc≥10 fresh=0，r531 对 1113 池全部 13 fresh 做<b>完整覆盖 peek</b>——非抽样，13/13 全跨域/非 EDA，park 后 mc10.fresh(B)=0）。本次仅刷新 r508 后又增长的数字与池饱和实证强度，分析框架与六问回答不变：
+<ul style="margin:6px 0 0 0">
+<li><b>活基准规模</b>：\Ntasks 1264 → <b>1278</b>（A277/B301/C321/D365 → A279/B309/C335/D377，shard sum 1300，+14 宏；<code>main.tex:64</code>）。冻结评测 \Neval=696 / Pass@1=10.0% <b>仍未变</b>。</li>
+<li><b>主 jsonl 实测</b>：1251 → <b>1279 case</b>；与 \Ntasks 宏 1278 已对齐（差 1），但 shard jsonl 合计 1300 与主 jsonl 1279 仍有 21 行 merge-lag，不一致从「宏 vs 主 jsonl」转移为「主 jsonl vs shard 合计」，<b>P2 仍有效</b>。</li>
+<li><b>§5.3 池饱和实证再升级</b>：r506+r507 累计 peek 80 fresh（抽样）→ <b>r531 完整覆盖 peek 13/13 fresh 全跨域</b>（非抽样，B-keyword filter 100% false-positive 实证）→ park 后 mc10.fresh(B)=0。池饱和从「跨两次快照复现」再叠加「<b>同一快照内完整覆盖无遗漏</b>」，论点闭合。</li>
+<li><b>B 域 case 增量</b>：r508 后 r513/r514/r515/r516/r525/r527/r529 连产 7 case（B 301→309，spice_sim 252/characterization 57），全部来自 1113 池 r491–r529 周期；r530–r532 连续 0-case 印证饱和。</li>
+</ul>
+</div>
 
 <div class="callout info">
 <b>r508 更新说明（2026-11-14）</b>：本轮为 0-case 触发轮（B 域 mc≥10 fresh 全部 peek 后无 CLEAN produce-task，触发 2026-11-11 论文报告令）。本次为<b>数据刷新</b>非重写——分析框架与六问回答保持不变，仅更新已过期的数字与池饱和实证：
