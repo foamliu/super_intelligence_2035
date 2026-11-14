@@ -62,6 +62,16 @@ TRACES = HERE / "traces"
 JOBS = Path("/tmp/tb21_glm53_jobs")
 HARNESS = "cline-patched"
 AGENT = "terminalbench.agents.cline_patched:ClinePatched"
+# 7way agent 映射 (2026-11-14 用户令, 供 --harness 覆盖)
+HARNESS_AGENTS = {
+    "cline-patched":    "terminalbench.agents.cline_patched:ClinePatched",
+    "codex":            "terminalbench.agents.codex:CodexTB",
+    "hermes":           "terminalbench.agents.hermes:HermesTB",
+    "opencode":         "terminalbench.agents.opencode:OpenCodeTB",
+    "claude-code":      "terminalbench.agents.claude_code:ClaudeCodeTB",
+    "deepseek-harness": "terminalbench.agents.deepseek_harness:DeepseekHarnessTB",
+    "pi":               "terminalbench.agents.pi:PiTB",
+}
 TB_DATASET = Path(os.path.expanduser("~/terminal-bench"))
 OVERLAY = HERE / "overlay-network-host.yml"
 LAUNCH_SCRIPT = HERE / "launch_tb21_glm53_7way.sh"   # 只为复用其中已登记的 key/env
@@ -201,7 +211,10 @@ def _docker_ok():
         return False
 
 
-def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False):
+def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
+           harness=None, agent=None):
+    harness = harness or HARNESS
+    agent = agent or AGENT
     if not tasks:
         print("[launch] 无 quota_lost 题，跳过")
         return None
@@ -227,7 +240,7 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False):
     if missing:
         print(f"[launch] WARNING: 数据集缺 {len(missing)} 题: {missing[:5]}...", file=sys.stderr)
 
-    jobs_dir = JOBS / f"{HARNESS}_rerun_{tag}"
+    jobs_dir = JOBS / f"{harness}_rerun_{tag}"
     jobs_dir.mkdir(parents=True, exist_ok=True)
     TRACES.mkdir(parents=True, exist_ok=True)
     log = TRACES / f"tb21_cline_quota_rerun_{tag}.log"
@@ -252,7 +265,7 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False):
 
     harbor_cmd = [
         "nice", "-n", "19", "harbor", "run", "-p", str(subset),
-        "--agent", AGENT, "-k", "1", "--n-concurrent", str(n_concurrent),
+        "--agent", agent, "-k", "1", "--n-concurrent", str(n_concurrent),
         "--extra-docker-compose", str(OVERLAY), "--jobs-dir", str(jobs_dir),
     ]
     # The agent's shell session often lacks the docker supplementary group
@@ -289,8 +302,9 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False):
 # 4. 并入官方 jobs-dir（让既有报告自动吃到重跑结果）
 # ---------------------------------------------------------------------------
 
-def merge(rerun_jobs, tag):
-    dst_root = JOBS / HARNESS
+def merge(rerun_jobs, tag, harness=None):
+    harness = harness or HARNESS
+    dst_root = JOBS / harness
     dst_root.mkdir(parents=True, exist_ok=True)
     moved = 0
     for dated in sorted(p for p in rerun_jobs.iterdir() if p.is_dir()):
@@ -320,13 +334,27 @@ def main():
     ap.add_argument("--timeout", type=int, default=3600, help="单题 agent 超时秒")
     ap.add_argument("--jobs-root", default=str(JOBS), help="job 根目录（默认 /tmp/tb21_glm53_jobs）")
     ap.add_argument("--dry-run", action="store_true", help="只打印 harbor 命令，不执行")
+    ap.add_argument("--harness", default=None,
+                    help="指定 harness (7way: cline-patched/codex/hermes/opencode/claude-code/deepseek-harness/pi)")
+    ap.add_argument("--agent", default=None,
+                    help="指定 agent 类 (默认按 --harness 自动映射)")
     args = ap.parse_args()
+
+    # --harness 覆盖全局 HARNESS/AGENT
+    global HARNESS, AGENT
+    if args.harness:
+        HARNESS = args.harness
+        if not args.agent:
+            AGENT = HARNESS_AGENTS.get(args.harness, AGENT)
+    if args.agent:
+        AGENT = args.agent
+    print(f"[config] HARNESS={HARNESS} AGENT={AGENT}")
 
     JOBS = Path(args.jobs_root)
     tag = os.environ.get("RERUN_TAG") or time.strftime("%Y%m%d_%H%M")
 
     if args.merge:
-        merge(Path(args.merge), tag)
+        merge(Path(args.merge), tag, harness=args.harness)
         return 0
 
     if args.task_list:
@@ -353,7 +381,8 @@ def main():
         print(f"  ... (+{len(tasks) - 10})")
 
     if args.launch:
-        jobs_dir = launch(tasks, tag, args.n_concurrent, args.timeout, dry=args.dry_run)
+        jobs_dir = launch(tasks, tag, args.n_concurrent, args.timeout,
+                          dry=args.dry_run, harness=args.harness, agent=args.agent)
         if jobs_dir:
             print(f"\n[next] 跑完执行：python3 {Path(__file__).name} --merge {jobs_dir}")
             print("[next] 然后重新生成双报告：python3 gen_report_tb21_7way.py && "
