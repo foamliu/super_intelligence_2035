@@ -1,4 +1,6 @@
 WAITING: 0
+> 🆕 **wake#1275 2026-11-15 05:51 例行巡检 patrol·全交付态·零新增·非 idle-spin**：git fetch→up-to-date with origin(0 ahead/0 behind·HEAD=36307743f 即上轮 wake#1274·无新 commit·无新运维令自 wake#1249)·复验 wake#1241 交付物全在位(`G/{G0,G1,G2}/` 各 10 case JSON·`summary_agent.json`·`audit_agent.json`·报告)·三 VQA 端点本机全健康(`:30001/health` ok Qwen3.5-2B load_s=2.8·`:30003/health` ok rft2_adapter load_s=50.9·`:30002/mcp` initialize→serverInfo qwen35-vqa v1.30.0)·WAVEVIEW_COLLAB 无新 task2 交付(仍 infra-blocked)·research 日报 2026-11-15 vision 建议 BLIP-2 桥接容量对照=输入参考非新指令(无变化·与 wake#1274 一致)。**唯一真阻塞**不变=① 缺 >10 WaveView 真题(待 designflow·spec 禁合成集冒充)·② task2 网络层 blocked(评测机 10.251.36.15→.17:30002 超时·待 ops/网管放行·vision 无 passwordless sudo 不可自改)。体积 MEMORY=29503B≤32KB✓·TASK=31980B≤32KB✓。距上轮 wake#1274 仅 14min 且状态完全一致→本轮仅记心跳不重复落盘内容。**WAITING: 0**。
+
 > 🆕 **【wake #1241 · 2026-11-15 00:23】G0/G1/G2 agent 臂✅全部跑完并交付（用户令 21:5x「MLLM 作为 agent 系统一部分」增益已度量）**：
 > - **整题通过**：单模型臂 V0=0/10·V1=0/10·V2=0/10（工具天花板）→ agent 臂 **G0=0/10·G1=5/10·G2=4/10**。每量准确率 V0 30.9%→V1 38.2%→V2 55.5%→G0 18.2%→G1 82.7%→G2 82.7%。
 > - **翻转**：G0→G1=5（VQA 通道在 agent 中的增益）·G0→G2=4·V1→G1=5（纯 agent 编排增益 on 基模）·V2→G2=4。McNemar G0↔G1 b=5 c=0 p=0.0625 (n_disc=5)·G1↔G2 b=2 c=3 p=1.0 (n_disc=5)（n=10 不足仅参考）。
