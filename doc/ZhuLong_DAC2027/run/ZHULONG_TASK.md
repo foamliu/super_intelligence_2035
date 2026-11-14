@@ -1,5 +1,68 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🔴 用户令 · 2026-11-14 18:3x（**A1 的强提示方向错了 → 改为 spawn「验证 agent」+ 对抗视角**）· 未完成 · 最高优先
+
+> **用户原话**：「这个强提示理解，但感觉方向不对。任务开始，第一项工作就是调研背景，主 agent 上下文还空，自然没必要 spawn，真 spawn 后，这个 agent 做了调研，有了成果，又无法传给主 agent 的上下文，造成很多浪费。因此我建议通过提示让主 agent spawn 验证 agent，带有一些对抗视角，用于测试主 agent 写的代码。」
+
+**一、为什么现在的提示是错的（用户的分析）**
+
+现有 `SUBAGENT_HINT`（`run_subagent_ablation.sh` L47-52）要求：
+
+> 「Before writing any code, you MUST use the `spawn_agent` tool to delegate to a **researcher** sub-agent…
+> Do NOT answer directly or write code until the sub-agent returns its findings.」
+
+**两个结构性错误**：
+
+1. **调研阶段 spawn 是浪费**：任务刚开始时主 agent 上下文还空，没有"上下文压力"，**本就没必要外包**；
+2. **子 agent 成果传不回来**：子 agent 做完调研，产出**无法注入主 agent 的上下文**（你自己 wake#926 也实测过：子 agent 只有 `systemPrompt` + `task` 两个输入、输出回传受限），
+   ⇒ 主 agent 拿不到调研成果，**等于白跑一轮**，还平白多了一次往返开销。
+
+**二、改成什么：验证 agent + 对抗视角**
+
+**新的 spawn 触发点 = 主 agent 写完代码之后**，让它 spawn 一个**独立的验证/审查 agent**，带**对抗视角**去测主 agent 写的代码。
+
+**为什么这样合理**：
+- 主 agent 此时**已经有上下文**（自己刚写的代码、自己的推理），**正需要外部独立视角**；
+- 验证 agent 的产出是**判定结论**（通过/不通过 + 问题清单），**短小、可直接被主 agent 采用**，不存在"成果传不回来"的浪费；
+- **对抗性**（刻意找错）比"协助调研"更符合独立 agent 的价值。
+
+**三、要改的具体内容**
+
+1. **重写 `SUBAGENT_HINT`**（`run_subagent_ablation.sh` L47-52）：
+   - 触发时机：**在写出第一版代码并执行之后**（不是"写代码之前"）；
+   - 子 agent 角色：**adversarial reviewer / verifier**，任务是**挑错**——检查 API 用法是否正确、参数是否符合文档、边界条件、异常处理、单位/坐标/精度、是否满足题目全部约束；
+   - 要求子 agent **给出明确的通过/不通过判定 + 具体问题清单（含代码位置）**；
+   - **禁止**子 agent 写完整实现（只审不写），避免它变成第二个主 agent。
+
+2. **提示措辞要点**（你自行定稿，务必体现）：
+   - 「写完之后」而非「写之前」；
+   - 「independent reviewer / red team」而非「researcher」；
+   - 「find what is wrong」而非「look up APIs」；
+   - 输出要求：**verdict + issue list**，简洁、可执行。
+
+3. **⚠️ A1 在跑的 3 轮怎么办**：
+   - 若 **r1/r2 已跑完、r3 未起** ⇒ 按**新提示**跑 r3，并在 MEMORY 标注 **r1/r2 用旧提示、r3 用新提示，不可混算**；
+   - 若 3 轮都已跑完 ⇒ **新提示另起一轮完整 3 轮**（A1'），旧 3 轮保留为「旧提示口径」历史数据，**不删**；
+   - 具体采用哪种，按实际进度自行判断并在 MEMORY 写明。
+
+**四、与 H1 结论的关系（重要）**
+
+- 这一改动使 A1 从「**spawn 调研 agent + 强提示**」变为「**spawn 验证 agent + 对抗提示**」，
+  与 A0 的差异**仍然是"是否 spawn"**，但**提示内容变了** ⇒ **新旧 A1 结果不可混算**，必须分组统计。
+- 最终报告需**分别报告**：
+  - A1-旧提示（调研型 spawn）的 Pass@1；
+  - A1-新提示（验证型 spawn）的 Pass@1；
+  - 与 A0 的配对比较（McNemar）。
+- **额外分析（很有价值）**：统计「**主 agent 采纳了验证 agent 意见的题** vs **未采纳的题**」的通过率差异，看对抗审查是否真的有用。
+
+**五、纪律**
+
+- 🚫 不要为了"提高 spawn 率"而把提示写得更强硬重；用户要的是**有意义**的 spawn，不是**多**的 spawn。
+- ✅ 改动后先 **smoke 1 题**，确认：主 agent 先写代码 → 再 spawn → 子 agent 给出 verdict —— trace 里要有这三段。
+- ✅ 记 MEMORY：新旧提示的差异、r1/r2/r3 各用什么提示。
+
+---
+
 ### 🔴 用户令 · 2026-11-14 17:0x（**H3 不做；H2 恢复 —— 允许改 cline 源码重编译，让自主 spawn 的子 agent 用弱模型**）· 未完成 · 最高优先
 
 > **用户原话**：
