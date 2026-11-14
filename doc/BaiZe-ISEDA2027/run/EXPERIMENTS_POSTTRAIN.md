@@ -11029,3 +11029,44 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 36.15 5-run 完成 → 新基线（澄清 model_name 字段 + 标环境差异）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
 - R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs step105 0.0304±0.83%）→ 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html / 负则诚实负结果
 
+
+## §R495 — wake495 唤醒核验（2026-11-14 19:5x）· read-only 监控心跳 + 36.15 run1 漏斗拆解（新发现）
+
+> 本轮为验证型心跳：对三项最高优先用户令做落盘/远端复核 + 双 eval 健康 + **36.15 run1 final_report 漏斗拆解（本轮新发现）**。未起新产物，未编辑运行中脚本，未碰 GPU/36.15 运行中 eval/别线文件。
+
+### 1. 16:3x v2 RCA —— 复核全 PASS（沿用）
+- `doc/BaiZe-ISEDA2027/reports/report_posttrain_pyaether_rca_v2_zh.html` `wc -c`=37415B / `grep -c '<h2'`=5 / `grep -c '<svg'`=8 / `grep -c '<script'`=0；外链 0。
+- `git branch -r --contains e434f6def`=origin/main（已上远端）。
+- 旧报告 `run/reports/report_posttrain_baseline_pyaether_rca_zh.html` line33「ⓘ 本报告已被 v2 取代」指针框 ✓。
+- → **16:3x 用户令：已完成**。
+
+### 2. 16:1x A/B 之争 —— 裁决 A（沿用，已完成）
+
+### 3. 15:4x 36.15 重测 —— `bpt_eval.sh --status` 实测 + run1 漏斗拆解（本轮新发现）
+- 隧道 ACTIVE（PID 618469 ~51.5h）；父进程 PID 1229657=`bpt_eval.sh --run-all` 在 36.15 上 ~12338s(~3.4h) 实证存活；run_cli 8 worker 活跃。
+- `bash /nasdata/app.e0031982/bpt_eval.sh --status` 实测：**run1 DONE pass_rate=0.15823 (25/158)**；run2-5 (未完成)。RESULTS_DIR=`/tmp/posttrain_baseline_3615`（36.15 本地）。
+- **run1 final_report 漏斗拆解（本轮新发现，可复算）**：
+  - `summary.generation_success_rate=0.1835` → **仅 29/158 题 code-gen 成功（18.35%）**。
+  - `summary.runtime_statistics`: `pyAether_aether` num_tasks=29 num_correct=25 sample_accuracy=0.8621；`unknown`(lang=null,host=null) num_tasks=129 num_correct=0 sample_accuracy=0.0000。
+  - **含义**：36.15 上 81.6%(129/158) 的题 code-gen 未成功→落入 `unknown` runtime→0 通过；而 code-gen 成功的 29 题里 25 题通过(86.2%)。
+  - ⇒ **36.15 的瓶颈是「code-gen 成功率 18.35%」这一步，而非「成功后的判分能力」(86.2%)**。与 .17 v2 RCA 的头号失败 `C5_degenerate_pass 60.6%`（模型不真做就 submit）形成鲜明对照：换 sandbox-prompt + 原生 RAG/沙盒后，失败模式从「degenerate pass（不试）」转为「code-gen 失败（试了但没生成出可跑代码）」。
+  - ⚠️ 单 run（run1）结论，需 5-run 完成后用 details_per_task 逐题核实「unknown 129 是否=code-gen 失败」再做定论；但 final_report.json 路径 + python 命令可复算，已落盘。
+  - 复算命令：`ssh -p 3333 app.e0031982@localhost 'python3 -c "import json;d=json.load(open(\"/tmp/posttrain_baseline_3615/run1/final_report.json\"));print(d[\"summary\"][\"runtime_statistics\"],d[\"summary\"][\"generation_success_rate\"])"'`
+- ⚠️ 新基线报告须澄清 run_eval.py 的 `model_name` 陈旧默认字段=「zhulong_deepseek_v32」（实为 minicpm5-2b-sft-v39-final，经 codegen.log/反向隧道 18096 实证）。
+
+### 4. .17 R2 5-run eval —— 实测进度（metrics 嵌套结构已厘清）
+- chain PID 2322797（baize_posttrain_rl_eval_chain.sh）~69310s(~19.25h) 存活健康；run3 code-gen ACTIVE（START@14:18:42，~5.5h 进行中）。
+- final_report.json 结构：`metrics.pass_rate`（非顶层）；实测 run1 pass_rate=0.006329(1/158)、run2=0.012658(2/158)；run4/5 待起。serve GPU7:8095 minicpm5-2b-grpo-R2-step200 正常。
+- 均单 run 不预判（vs step105 5-run mean 3.04%±0.83%，需 5-run 完 + McNemar/bootstrap）。
+
+### 5. step105 基线 3.04% 复算确认（本轮重核）
+- `/tmp/posttrain_5run_eval/step105/run{1..5}/final_report.json` 实测 pass_rate=[0.0380,0.0190,0.0253,0.0316,0.0380] → pass_count=[6,3,4,5,6]/158；mean=0.0304 std=0.0083 ✅ 与 v2 RCA 口径一致。
+
+### 6. git 状态 + 纪律
+- 工作树：仅 vision 线 MEMORY_VISION.md / daily-memories-vision/2026-11-14.md 改动（非本线，不碰）；ahead 4 / behind 8。
+- 本轮仅本地提交本线文件（EXPERIMENTS §R495 + MEMORY wake495 心跳 + daily-memories wake495，`git add --` 显式路径，不用 -A）；push 留待 loop git 同步（共享副本，避免与别线在途提交纠缠）。
+- 0 infra 错误；read-only 核验，未碰 GPU0-7 / 未碰 36.15 运行中 eval / 未碰别线文件。
+
+### 7. Next
+- 36.15 5-run 完成 → 用 details_per_task 逐题核实「unknown 129 是否=code-gen 失败」+ 5-run mean±std → report_posttrain_baseline_pyaether_rca_3615_zh.html（澄清 model_name 字段 + 标环境差异 + 漏斗拆解）。
+- R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs 0.0304±0.83%）→ 显著则里程碑报告 / 负则诚实负结果。
