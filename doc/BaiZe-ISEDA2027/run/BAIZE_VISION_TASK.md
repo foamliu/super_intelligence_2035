@@ -145,6 +145,44 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-14 08:4x（**分析 designflow 评测中的 waveview 用例：哪些 failed 在「有波形图识图能力」下大概率能过**）· 未完成 · 优先于 idle-spin 告警
+
+> **用户原话**：「vision：看下 designflow 做的评测，先筛出 waveview 相关的用例，然后出一份数据分析报告（中文 HTML）。哪些 waveview 相关的 failed case，在有波形图多模态识图能力的情况下，大概率能过。这个比例有多大，请做出有想象力创造力的分析报告。」
+
+- **📌 本条优先于「idle-spin 第 35 轮」告警**：这是一条**新的实质研究方向**，先做完这份报告再谈是否停 loop。
+- **数据源（都在本仓，只读）**：designflow 线（`doc/ZhuLong_DAC2027/benchmark/designflow/`）的评测记录 —— 已确认存在下列 wave 线索，请**自己再全量筛一遍**（别只抄这几个）：
+  - 深度阅读记录：`trace_deepreads/` 下 `*wave*` / `*fsdb*` / `*openwave*` / `*tranwave*` 等（如 `3qe6x_wavecmp_wrap.md`、`7fcir_openwave_fmt.md`、`as67p_waveview_ace_fsdb_signal_extractor.md`、`1790241096712_s0t3i_waveview_panel_height.md`、`1788919426197_cjcn7_tranwave-repair.md`）
+  - 用例台账：`designflow/A.jsonl` / `B.jsonl` / `C.jsonl` / `D.jsonl`（或对应 ledger `*.tsv`）中 task 名/skill 标签含 wave / fsdb / vcd / waveform / waveview / 波形 的条目
+  - 调试现场：`.pi_debug/EDA-Eval-DesignFlow-Wave-00x/`、`EDA-Eval-DesignFlow-Analog-004/_waveview_ref.tcl` 等
+- **筛选口径（请明确定义并写进报告）**：什么算「waveview 相关」？建议三维判定并给每题的判定依据：
+  ① **任务要求**涉及波形文件操作（VCD/FSDB/WLF 解析、信号提取、测量、对比、修复、绘图面板）；
+  ② **判据/checker** 需要看波形数值或形状；
+  ③ **失败原因**是否与"看不见波形/只能读文本"相关。
+  注意：**Aether/纯脚本类**（只改 tcl/python、不涉及波形可视化）不算。
+
+**必做内容（报告五部分）**
+
+1. **筛选结果表**：waveview 相关用例总数 / 其中 passed / failed（给出题名列表与判定依据）；
+2. **失败逐个分类**（关键）：把每个 waveview failed case 归到
+   - **α 强相关 · 识图可解**：失败直接因为"模型看不到波形形状"（例如判断毛刺/时序错位/眼图/上升沿、从截图里读数值），**给了图像大概率能过**
+   - **β 弱相关 · 识图有帮助**：需要波形信息但也可用脚本读数值替代，识图能降低难度但非决定性
+   - **γ 不相关 · 识图无用**：失败原因是脚本语法/环境/API/约束理解，与"看不看得见"无关
+   **每类给题数、占比、2–3 个具体例证（含 trace 原文摘引 + 路径）**
+3. **核心结论数字**：`waveview failed 共 N 题，其中 α(大概率能过) = n 题，α/N = x%；α+β = y%`。**同时给保守/乐观区间**，并说明区间来源（哪几题判不准、为什么）；
+4. **"想象力"部分（用户明确要）**：
+   - 反事实推演：如果给模型**波形截图 + 数值双通道**，这几题的解题路径会变成什么样？举 2–3 个 case 画出**前后对比的推演流程**；
+   - 反向思考：**哪些看起来能过的其实过不了**（例如识图能看出问题但改不对代码）；
+   - 延伸机会：这份分析能否反向指导设计 **"waveform-VQA 专项评测集"**？给出题源与构造思路（这是本报告对后续 vision 实验的价值输出）。
+5. **可视化**：桑基/堆叠条 or 饼图（α/β/γ 占比）+ 结论卡片。**必须内联 SVG，单文件自包含，0 外链 0 script。**
+
+**纪律**
+- 数字全部可复算（路径 + 命令）；拿不到就标 `TODO/BLOCKED`，🚫 **不许编造 case 或 trace 原文**；
+- 报告落 `reports/report_vision_waveview_failed_analysis_zh.html`（中文 / 单文件 / 0 外链 / 0 script / 内联 SVG）；
+- MEMORY 心跳一行：`waveview分析: 相关=N题 failed=M · α=a(x%) β=b γ=c · 结论=<识图可解比例> · 报告已出`；
+- **本报告只做分析，不起训练/实验**（与 idle-spin 处置解耦，处置另议）。
+
+---
+
 > 📦 §用户令·2026-11-06 21:3x（advantage 方差诊断）已归档 → run/ARCHIVE_OPERATOR_VISION.md；**结论**：wake#838 判定 PARTIAL（std=0=78.7%/全0=0%/全同档=无信号根因），建议 group_size→8+按目标差异化+奖励连续化(需批)。需要时再读。
 
 > 📦 §用户令·2026-11-06 18:5x（vision 先上 CPU）**✅ 已交付**（wake#827-#835：P0 冒烟 5 步 365s（73s/步）、P1 50 步 ~2min/步、4 个 eval JSON、报告 15058B、EXPERIMENTS §21；结论 post-GRPO 6.2% < post-SFT 9.2% 未提升）→ 全文见 `run/ARCHIVE_OPERATOR_VISION.md`。
