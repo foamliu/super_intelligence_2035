@@ -10992,3 +10992,40 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 36.15 5-run 完成 → 新基线（**报告须澄清 model_name 陈旧字段**，标环境差异：旧 .17 no-sandbox-prompt+本地MCP:18888 vs 新 36.15 sandbox-prompt+原生RAG:8090+沙盒:18891）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
 - R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs step105 0.0304±0.83%）→ 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html / 负则诚实负结果
 
+## §R494 — wake494 唤醒核验（2026-11-14 19:3x）· read-only 监控心跳 + MEMORY 归档
+
+> 本轮为验证型心跳：对三项最高优先用户令做三项硬证（落盘/远端/指针）复核 + 双 eval 健康实测 + MEMORY 归档（wake491/492 搬入 daily-memories，留指针）。未起新产物，未编辑运行中脚本，未碰 GPU/36.15 运行中 eval/别线文件。
+
+### 1. 16:3x v2 RCA 报告 —— 三项硬证复核全 PASS
+- a) **落盘硬证**：`doc/BaiZe-ISEDA2027/reports/report_posttrain_pyaether_rca_v2_zh.html` 实测 `wc -c`=37415B / `grep -c '<h2'`=5 / `grep -c '<svg'`=8 / `grep -c '<script'`=0；外链 0（自包含单文件）。
+- b) **远端硬证**：`git branch -r --contains e434f6def` = origin/main（v2 RCA 报告已上远端，可复算）。
+- c) **指针硬证**：旧报告 `run/reports/report_posttrain_baseline_pyaether_rca_zh.html` line33 含「ⓘ 本报告已被 v2 取代（2026-11-14）」指针框，显式指向 `report_posttrain_pyaether_rca_v2_zh.html`（位于 `doc/BaiZe-ISEDA2027/reports/`）。
+- 5 必含 H2 章节齐全：①口径与数据（可复算）②工具调用画像（核心）③失败归因（从 trace 自行提炼）④图表汇总（8 内联 SVG）⑤提分意见（按 ROI 排序，含 P0-1/P0-2/P1×3/P2×2 表 +「如果只做一件事 = P0-1 消除 degenerate pass + submit_and_exit 死循环」）。
+- → **16:3x 用户令：已完成（三项硬证复核 PASS）**。
+
+### 2. 16:1x A/B 之争 —— 裁决 A（沿用，已完成）
+- trace_toolcount_3p04_baseline.json verdict=A：3.04% 5-run trace 实证 search_apis/get_api_details/run_code 均被调用且成功，tools_registered=pyAether_MCP_server@127.0.0.1:18888/sse。→ A 有正确工具调用，3.04% 为有效基线（环境差异另由 15:4x 重测表征）。
+
+### 3. 15:4x 36.15 重测 —— 进度（经隧道 SSH 实证）
+- 隧道 ACTIVE；父进程 PID 1229657 = `bpt_eval.sh --run-all` 在 36.15 上跑全 5-run。
+- **run1 DONE = 25/158 = 15.82%**（gen success=29/timeout=1/fail=128）vs 旧 .17 基线 3.04%±0.83% → 同模型(step105)换原生 RAG:8090 + 沙盒 MCP:18891 + sandbox-prompt 即 ~5x 跳升，强证 .17 环境是主要限制因子（15:4x 假设成立）。
+- run2-5 自动起跑中（run2 code-gen IN PROGRESS）。
+- ⚠️ 新基线报告须澄清 run_eval.py 的 `model_name` 陈旧默认字段（实为 minicpm5-2b-sft-v39-final，非 zhulong_deepseek_v32）。
+
+### 4. .17 R2 5-run eval —— 实测进度
+- chain PID 2322797（baize_posttrain_rl_eval_chain.sh）存活 ~68023s(~18.9h)，ppid=2322795，实证存活健康。
+- eval runs 落 `/tmp/posttrain_5run_eval/grpo_R2_step200/`：run1 DONE final_report.json pass_rate=0.006329（1/158=0.63%）、run2 DONE pass_rate=0.012658（2/158=1.27%）、run3 code-gen ACTIVE、run4/5 待起。
+- serve GPU7:8095 minicpm5-2b-grpo-R2-step200 正常。
+- 均单 run 不预判（vs step105 5-run mean 3.04%±0.83%，需 5-run 完 + McNemar/bootstrap）。
+
+### 5. MEMORY 归档 + git 状态
+- **MEMORY 归档**：wake491/wake492 详细条目搬入 `daily-memories-posttrain/2026-11-14.md`，MEMORY 留 1 行指针；归档后 MEMORY=30220B（≤32KB ✓）。
+- 工作树 clean，无 rebase/merge in progress，**无 unmerged 文件**（`git diff --diff-filter=U` 空 → 此前 WAVEVIEW_COLLAB.md UU 已被别线解决）。
+- e434f6def（v2 RCA）已在 origin/main。
+- 本地 ahead 3 / behind 4（origin 前进）。本轮仅本地提交本线文件（EXPERIMENTS §R494 + MEMORY wake494 心跳 + daily-memories 归档，`git add --` 显式路径，不用 -A）；push 留待 loop git 同步（共享副本，避免与别线在途提交纠缠）。
+- 0 infra 错误；read-only 核验 + MEMORY 归档，未碰 GPU0-7 / 未碰 36.15 运行中 eval / 未碰别线文件。
+
+### 6. Next
+- 36.15 5-run 完成 → 新基线（澄清 model_name 字段 + 标环境差异）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
+- R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs step105 0.0304±0.83%）→ 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html / 负则诚实负结果
+
