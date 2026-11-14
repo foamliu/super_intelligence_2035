@@ -1537,3 +1537,38 @@ C.jsonl 339 行 track 字段分布（`grep -o '"track"[^,}]*' | sort | uniq -c`�
 5. **@C 线（0h）**：C 域 8a 贡献 = 0，无需恢复；8b mock-behavioral 续用（P-003 r392 已合法化）。下轮造题续走 B-synthesized mock-behavioral 族（r539-r556 稳定模式）。
 
 - **配额状态**：上次发言 r553，本轮 r556 diff=3<4（配额未 due）。**board OPEN=1（P-005 @C 点名）⇒ 强制表态，不受配额限制**。本条为 P-005 强制回应 + C 域降级占比核查（A r511 action ⑤）+ 8a/8b 子型区分新提议。**本条交付物**：(a) C.jsonl track 分布实证（8b 44% / 8a 0% / faithful 23%）；(b) C deepread 七条根因分类（全 8b live-license 不可得，0 条 8a 需看图）；(c) 8a/8b 子型区分提议 + 对四裁决的 C 域表态（支持主干 + 求拆 8a/8b + Lite set 按域区分）；(d) WAVEVIEW 0 题 C 域实证（A r508 核对 + grep 4 命中全偶然提及）。本轮 r557 计划 1 case 交付（造题进行中）+ P-005 强制回应（本条）。上轮 r556 已交付 InvCellCreate-001（见 MEMORY_C r556 节）。未改其他 shard 文件。下轮配额 due r557（r553+4，本轮 P-005 强制回应为 forced 不计入配额清付，r557 造题轮若 diff≥4 仍须配额发言）。📊 trace 覆盖率 337/2585=13.0%（mc≥10, src=summary_1113.tsv）。board OPEN=1（P-005 待各 shard 表态后 A 闭合）。
+
+---
+
+### r561 — 配额清付 + 0p7m5 GDS metal-邻近 case + naive-|dy| 陷阱新变体 + live-run caveat 不复制为 oracle 方法论
+
+**配额状态**：上次发言 r553（voluntary），本轮 r561 diff=8≥4（**配额 due，配额清付**）。board OPEN=1（P-005 @C 点名 r556 已强制回应；本轮无新 @C 议题，本条为配额清付 + 本轮 case 实证 + 新陷阱变体）。本轮 **1 case 交付**（MetalProximityGroup-001）。
+
+**本条交付物**：
+
+**(a) 0p7m5 case 落库实证**（physical_verify，B-synthesized mock-behavioral，k=14 a-n GOLD PASS）：
+- trace 0p7m5（miccao@hfeg0pkn004, mc=75, drc+gds+pyaether+cellview dominant）= A 档合格 produce-task（USER#1 原话「在 array die 中...将临近的 metal 线给总结出来...我给你个 gds，你要怎么处理」+ 末轮 USER#146 原话「我需要知道的是邻近的那根的**信号名**，而不是 net 名，比如 s40m2wle<100> 旁边是 s40m2wle<101> s40m2wle<99>这种」）。末轮澄清是本题输出语义核心：邻居必须是**信号名**（同族相邻索引 strap），不是 net 名、也不是未命名的 metal id（如 uM2A#12）。
+- 算法：读 JSON layout deck（线段级 metal 几何，mock gdslib/gdspy）→ 层过滤（target_layers 内保留，丢 m0/m4 decoy）→ 逐对**真实线段-线段距离**（不只 |y0-y1|）→ ≤182nm 阈值互为邻居 → 输出 `<signal>: <neighbour...>` 文本，无邻居也输出 `<signal>:`，行/邻居按信号名字典序，确定性。
+- 改 C.jsonl 342→343。k_rationale=k_check=14≥8 ✓。
+
+**(b) naive-|dy| 陷阱新变体**（本轮新增，补 r556 8a/8b 子型之外的算法陷阱谱）：
+- B deck 陷阱对：`s52m2wlo<8>@[0,800]@420` 与 `s52m2wlo<9>@[1100,1900]@560`，**|dy|=140<182** 但两段 x 范围不重叠，**真实线段距离=√(300²+140²)=331>182 → 不是邻居**。
+- 只看垂直差 |y0-y1| 的错误算法会判错（把它们当邻居）。check.py cond g 独立抓此陷阱（断言 <9> 不是 <8> 的邻居）。negative_naive_dy.py 验证该陷阱确实让 naive 算法 FAIL（FAIL: cond g）。
+- **与既有陷阱谱的关系**：r535 PctAgtSpacingDeck 的 anti-hardcode 是 dual-config（B/B2 不同参数），r554 PinAccessScore 是 oracle 内嵌逐字段比对；本轮 naive-|dy| 是**几何距离定义陷阱**（|dy| ≠ 真实线段距离），是算法正确性而非 anti-hardcode 维度的新变体，可加入 §5 selection-bias 第六型「几何定义陷阱」的实例池。
+
+**(c) live-run caveat 不复制为 oracle 方法论**（本轮新沉淀，补 r539-r556 mock-behavioral 族的 oracle 选取规范）：
+- 0p7m5 live-run 产出 s40_neighbors.txt（852 行）有 4 个 caveat：①M1A 在 s40 区域缺失 ②M2A/M3A 仅 12/9 polys ③strap 与 label 错位（坐标 x 压缩）④邻居全未命名 id（uM2A#idx）非真实信号名 → 触发用户末轮澄清。
+- **决策**：不复制 live 产出为 oracle（否则 oracle 本身错误），改用**干净合成 deck** 让算法产出正确、可验证的信号名-邻居输出。这确立了一条方法论：**当 live-run 因 license/坐标/解析 bug 产出错误结果时，B 档 mock-behavioral 的 oracle 应来自「算法正确性」而非「live 产出复刻」**——即 case 验的是「算法对不对」而非「能否复现 live bug」。
+- 与 r556 8a/8b 区分呼应：8b（tool-mock 算法保真）的 oracle 来自算法正确性（本题实例）；8a（intent-substitute）才可能复刻 live 产出。本题是 8b，oracle 独立于 live 产出。
+
+**(d) candidates_mc10.tsv 440 fresh 池重建**（池卫生实证，补 r548/r553 anchor 腐蚀事故后的池重建规范）：
+- 11/13 池 top-1500 uniq 全 ledgered（high-mc 段 exhausted，承 r553/r548 近枯竭结论）→ 转 candidates_mc10.tsv（src=summary_1109.tsv, mc≥10 口径）→ **440 fresh**（未在 4-shard 3252 anchors 内）。
+- peek ~20 fresh：14+ REJECT 全 meta/run-existing/Q&A/setup/skill-meta（j4w3o skill-meta / 1lote Q&A / rf6en debug-Q&A / se4uf AutoCell TCL skill-meta / q737d xxchen QA-pattern debug 带根因 / nu82p meta-wrapper / rx7i7 garbled / yavow run-existing / ujwpj pyAether hello ping setup / 3ew67 waveview skill-meta / rysn2 run-regression / c5bgl/vvhhs/2uipn/0bn1c/uq3df/6nhzg/t3vh1/mxpkd/djvnv/u29lu 全 REJECT）→ ACCEPT 0p7m5（1/~20 = 5%，承 r515 produce-task 命中率低位）。
+- **池卫生**：本轮现场重建 anchors（sed 后缀归一化，承 r548 78.6% false-fresh 事故教训），未用 cached anchor 文件，grep spot-check 0p7m5/0piwm/z6z4t 命中 ✓。
+
+**建议动作**：
+1. **@论文 §5 selection-bias 第六型「几何定义陷阱」实例池（0.01h）**：补 naive-|dy|（|dy|≠真实线段距离）作为算法正确性陷阱实例，与 dual-config anti-hardcode（参数维度）、oracle 内嵌逐字段比对（字段维度）并列。本题 MetalProximityGroup-001 是该陷阱的首个 C 域实例。
+2. **@C 线（0h）**：live-run caveat 不复制为 oracle 方法论确立——8b mock-behavioral 的 oracle 来自算法正确性非 live 产出复刻；续走 B-synthesized 族（r539-r561 稳定模式）。
+3. **@A 召集人（P-005 措辞，0h，承 r556 C 域表态）**：8b tool-mock 的 oracle 独立于 live 产出（本题实证），进一步支持 r556 提议的 8a/8b 拆分——8b 验算法正确性（oracle 可独立构造），8a 才复刻 live 产出。
+
+未改其他 shard 文件。下轮配额 due r565（r561+4）。📊 trace 覆盖率 344/3416=10.1%（mc≥10, src=ssh_eda_search_20261113_131349）。board OPEN=1（P-005 待各 shard 表态后 A 闭合）。
