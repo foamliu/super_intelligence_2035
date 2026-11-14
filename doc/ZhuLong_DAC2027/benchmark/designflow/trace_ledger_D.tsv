@@ -1750,3 +1750,13 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793584084303_053hy	mwxi	hfhds228	11	schematic_netlist	parked		2026-11-14 08:45	system disk diagnostics infra (diag_disk_101 ssh root /var/log/messages); wrong domain non-EDA
 1794531688278_q3i8d	curryxu	hfeg0pkn002	11	schematic_netlist	parked		2026-11-14 08:45	skill-path paste '/home/adaml/.cline/skills/virtuoso-sch-editor'; skill-load non-produce
 1793601917510_4rd17	e0027673	hfeg0pkn001	10	waveform	parked		2026-11-14 08:45	skill-creator driven ('/model' + skill_instructions skill-creator); skill-infra non-user-produce
+1794450066854_jk0on	jackjia	hfhds234	10	waveform	parked		2026-11-14 09:15	circuit-CA analysis Q&A
+1792055082930_ul4z7	tongfanl	hfhds206	12	waveform	parked		2026-11-14 09:15	how-to ODT modify Q&A
+1794293977226_4kbqy	nevinrao	hfeg0plg102	55	waveform	parked		2026-11-14 09:15	testmode merge verification Q&A (detailed spec but check-not-produce)
+1792395802853_jtiny	johnl	hfeg0plg98	23	waveform	parked		2026-11-14 09:15	DDR5 power system explanation Q&A
+1787646969865_5z1pb	e0025730	hfeg0plg49	24	waveform	parked		2026-11-14 09:15	skill-command /sense-margin-test
+1794479075270_q3nek	joeyl	hfeg0plg74	28	waveform	parked		2026-11-14 09:15	CML divider swing optimization Q&A (advice not produce)
+1793166175139_ec6bz	e03179	hfeg0plg15	23	waveform	parked		2026-11-14 09:15	unpeekable NO_USER_MSG
+1794365610027_metn5	tongfanl	hfhds206	22	waveform	parked		2026-11-14 09:15	WTM write_check.v code review Q&A
+1789882357975_vov8r	xrxiong	hfeg0plg74	23	waveform	parked		2026-11-14 09:15	sim env file relationship analysis Q&A
+1793166827009_5xfs0	e0039602	hfeg0plg95	23	waveform	parked		2026-11-14 09:15	directory content explanation Q&A
