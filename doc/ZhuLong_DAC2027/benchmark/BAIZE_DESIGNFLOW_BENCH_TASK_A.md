@@ -181,7 +181,6 @@
 1. **写**：`metadata.test_rationale` 必须**以 `k 条断言：` 开头**，后接 ①②③…，**与 `check()` 中可独立失败的条件一一对应**，每条写「对象 + 判定」。🚫 散文 / 🚫 实现细节（`raise`、`zipfile`）/ 🚫 「校验交付件完整性」式废话。
 2. **对账（落 jsonl 之前）**：agent 必须**先把 `check.py` 的条件标签列出来**（a–n，或 `CONDITIONS = [("a","…"), …]` 表），数出 `k_check`；判据 **`k_rationale == k_check` 且 `k_check ≥ 8`**。
 3. **不过就滚回去改**：`k_rationale ≠ k_check` 或 `k_check < 8` ⇒ 该 case 标 **`incomplete`**：🚫 不许 `mark --status case`、🚫 不许追加进 jsonl、🚫 不计入通过率；写入 `designflow/rewrite_queue.tsv`，**下一轮第一件事就是修它**，修完才准开新 case。
-4. **日报必须自证**：`gen_daily_report.py` 的 case 表**新增三列** `k(断言)` / `k(check)` / `一致`；任一 case 显示 `✗` 或 `—` ⇒ 当日日报判「未交付」，心跳写 `DEBT:<n>`。
 5. **存量 30 条**：按 §4.6 全部视为未完成；每轮从 `rewrite_queue.tsv` **修 1 条**，直到清零，心跳写 `断言清单 x/30`。
 6. **心跳新增一行**：`🧾 断言: k_rationale=k_check=n ✓/✗（今日 x/30 达标）`。
 
@@ -197,10 +196,10 @@
 ## 1. 红线（不可协商）
 
 1. **真实 trace 才有资格**：每条 case 必带 `metadata.trace_source{user, host, session_file, match_count, real_task_summary}`。没有真实 trace 的 case 一律删除，🚫 不许改个名字保留。
-2. **不脱敏（全产物）**：`user` / `host` / `session_file` / `/home/<user>` 路径 / `prompt` / `attachments` / 深读笔记 / 日报 / MEMORY **一律保留原值**；只有 **key / token / 密码** 需掩码。🚫 prompt 里出现"脱敏""不要出现真实用户名"字样视为违规。
+2. **不脱敏（全产物）**：`user` / `host` / `session_file` / `/home/<user>` 路径 / `prompt` / `attachments` / 深读笔记 / MEMORY **一律保留原值**；只有 **key / token / 密码** 需掩码。🚫 prompt 里出现"脱敏""不要出现真实用户名"字样视为违规。
 3. **单一 jsonl**：只往 `benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl` 追加；🚫 新建 jsonl（>500 条才按 `metadata.domain` 拆 4 个）。
 4. **只读纪律**：对 698 机只 `find`/`ls`/`cat`/`head -c`/`awk`/`python3` 只读；🚫 写目标机、🚫 `rm`/`tee`/`>`；🚫 本机自扫；🚫 lineage 自审计 / §X 递归。
-5. **git 双仓**：workspace + 日报 → `super_intelligence_2035` **main**；用例产物 → `EDA-Flow-Bench` **master**；🚫 `git add -A`。
+5. **git 双仓**：workspace → `super_intelligence_2035` **main**；用例产物 → `EDA-Flow-Bench` **master**；🚫 `git add -A`。
 6. **体积**：本 TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限按 §8 归档（原文搬 ARCHIVE，留 1 行指针）。
 
 ## 2. 环境速查
@@ -215,7 +214,6 @@
 | 扫描结果 | `.75:/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv`（列：`ip host user session_file match_count keywords tools`） |
 | 评测框架 | `./RUN_EVAL.sh --design-flow` / `--design-flow-agent`；`scripts/run_design_flow_batch.py`；`config.yaml`；`docs/design_flow_session_backend.md`（§3 接口 / §9 判分两步）；`docs/设计流Benchmark-{测试用例编写指南,框架改进设计文档}.html` |
 | pi（被测） | `pi` 1.4.0，provider `cxmt` / `deepseek-v4-pro-cloud`，已配 `eda_flow` MCP。调用：`pi --print --no-approve --model deepseek-v4-pro-cloud --thinking medium "<prompt>"`（Node 22 需在 PATH：`export PATH=/nasdata/app.e0031982/.local/node-22/bin:$PATH`） |
-| 日报 | `cd <benchmark>/designflow && python3 gen_daily_report.py` → `doc/ZhuLong_DAC2027/reports/report_benchmark_MM_DD.html`（运维已加独立「用户」列，**别再重复改**） |
 
 **命令模板（只读抓 trace）**
 ```bash
@@ -244,7 +242,6 @@ metadata:    { trace_source{...}, domain, test_rationale }
 **单轮闭环 + 交付定义（DoD）**
 
 一轮 = 一条 case 从选料到落库，**不要拆成两轮**：
-`选料 → 深读 → 合成 → 自验(ref PASS + §4.9 三假提交 FAIL) → 追加 jsonl → 日报一行`
 
 - **深读是硬闸门，但不是独立的一轮**：必须先解析完整对话流（`scp` `messages.json` → user 意图 / assistant 工具链 / 关键产物 → `designflow/trace_deepreads/<sid>_<主题>.md`）才允许合成；已有笔记可直接复用，不重复深读。
 - **DoD（交付定义）**：1 条 case 通过自验并写进 `EDA-Eval-DesignFlow.jsonl` 才算交付；**深读笔记是中间产物，不算交付**。
@@ -293,15 +290,12 @@ metadata:    { trace_source{...}, domain, test_rationale }
 1. `trace_ledger.py next --n 5` 取候选 → `claim` → 深读（有笔记就复用）→ 合成（`assets/` `reference/` `hidden/` `negative/`）。
 2. 自验：`reference/` 参考解跑 `check()` 必 PASS；§4.9 (a)(b)(c) 三假提交必 FAIL；`negative_selftest.py` 全 FAIL。
 3. pi 实跑：`designflow/pi_debug_status.jsonl` 追加一行，记 `pi_model / pi_thinking / pi_dur_sec / pi_verdict / ref_check`。
-4. **先过断言闸门**（`k_rationale == k_check ≥ 8`；不过 ⇒ 标 `incomplete` 进 `rewrite_queue.tsv`，本轮只改它、不开新 case）→ 追加 jsonl → **`mark --status case --case-id <id>`** → 日报：`python3 designflow/gen_daily_report.py`（含「用户」列、`k 条断言` 清单、trace 覆盖率进度条）。
-5. 难度回路：按 §5 判定"加难 / 保持 / 查判分"，结论写进当日日报的"阻塞/下一步"。
 6. 收尾：`WAITING: 0`（下一轮 60s 后立即开下一条 case）；仅真外部阻塞（pi 异步未回 / 推送失败 / 等人工）才写 `WAITING: 1`。
 
 ## 7. 当前基线（每轮只更新这一行，不堆历史）
 
 `11 条 proper（10 域）· 已跑 6 条 = 6 PASS · 6 trace_deepreads · test_rationale 断言清单 0/30（硬闸门见顶部令 21:5x）· 目标通过率（B 档）20–30%`
 `📊 trace 覆盖率：见 designflow/trace_ledger.py stats（covered / mc≥10 候选池，target_mc=10）`
-明细看日报 `reports/report_benchmark_MM_DD.html`；历史结论看 `EXPERIMENTS_DESIGNFLOW.md`。
 > 现存 11 条的 `test_rationale` 本轮内全部改写成 `k 条断言：①…`（k = 该 case `check()` 的独立条件数）。
 
 ## 8. 收尾（轻量结账，不是每轮做全套）
@@ -379,7 +373,6 @@ python3 designflow/trace_ledger.py refresh --json '{"scan_path":"<最新>","mc10
 ### 合并
 - **不要碰主 jsonl**（`EDA-Eval-DesignFlow.jsonl`），它由 merge 脚本自动合并 4 个 shard 生成
 - 你的 case 只追加到 `EDA-Eval-DesignFlow_A.jsonl`
-- merge 脚本每 30 分钟自动合并 4 片 → 主 jsonl + regen 日报
 
 ### 收尾提交（只提交自己 shard 的文件 + 全 shard 共享的 summary_stats.json）
 ```bash
