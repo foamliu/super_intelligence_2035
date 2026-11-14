@@ -10753,3 +10753,28 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 0 真实 infra 错误(chain log 仅 START/run2 code-gen;CUDA OOM=0;serve 三端口健康;0 traceback)。
 - 边界:本轮仅读 stats/log/ps/nvidia-smi/curl/final_report.json/.task_queue,未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
 - Next:①run2 RUNNING(~14:25 完)→run3-5(各~5-6h)→5run_rl_analysis_R2.json→R2 5-run mean Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告 reports/report_posttrain_rl_surrogate_zh.html(标替身预演,论证禁引 mean_ratio,改引 reward 曲线+Pass@1);负→诚实负结果+换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4) ③kill_gpu_serve bug 待 chain 空闲修。
+
+## §R474 (wake474, 2026-11-14 08:14) 5-run eval 监控 run2 健康 — 心跳轮(19/158,success=9/fail=1/timeout=0)
+
+**实测**(.17 s0pgpuap12,08:14 CST):
+- chain: PID2322797 存活(etime≈7h52m, bash baize_posttrain_rl_eval_chain.sh)
+- run2: PID2684698 存活(etime 28:24, START@07:46:07, baize_posttrain_5run_eval.sh --run 2)
+- workers: 8/8 `timeout 2500 cline` worker 全活跃(各 1 task in-flight 无死锁)
+- serve: 3 并发全稳 curl 200 OK — GPU4:8098 minicpm5-2b / GPU6:8096 minicpm5-2b-sft-v39-final / GPU7:8095 minicpm5-2b-grpo-R2-step200
+- GPU: GPU7=87%util/39246MiB; GPU6=0%/39246MiB(loaded idle); GPU4=0%/39246MiB; GPU5=3MiB(空闲不碰); GPU0-3=root(45GB/卡,不碰)
+- vllm gpu7.log: 偶发 `400 Bad Request`(tool-call parser 拒非法格式,worker 重试,非 infra 错误); grep OOM/traceback/CUDA error = 0
+
+**run1 复核**(已落盘 §R471-473): final_report Pass@1=1/158=0.63%; code-gen stats success=14/fail=85/timeout=59; < step105 5-run mean 3.04%±0.83%(单 run 不预判,决策门须 5-run mean±std + McNemar/bootstrap)。
+
+**run2 进度(本轮新增)**:
+- .task_queue 剩 140 行(18/158 已分发); code/ 19 项
+- stats: success=9 / failure=1 / timeout=0 / total_time=3302s(≈55min)
+- failed_task.log: EDA-Eval-PyAether-006; timeout_task.log: 0 字节(早期正常)
+- batch_cline.log: worker-2 完成 task-001(1098s), worker-6 完成 task-014(935s), 正常推进
+- rate≈0.345/min → run2 ETA≈14:50(剩 ~139 task)
+
+**口径提醒**: stats/success=code-gen 产出 ≠ Pass@1(final_report sandbox eval 为准)。R2 run1 timeout=37.3% 显著高于 step105≈2.5% —— RL 后轨迹更长/tool-call 更多 → 超时激增可能机械侵蚀 Pass@1(待 5-run 方差覆盖后定论)。
+
+**动作**: 本轮=监控心跳 read-only,无新增训练/调研产出。0 infra 错误。未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5。kill_gpu_serve child-PID bug 待 chain 空闲修(L102-118)。
+
+**Next**: run2-5 RUNNING(各~5-6h)→ /tmp/posttrain_5run_eval/5run_rl_analysis_R2.json → R2 5-run mean Pass@1(vs step105 0.0304±0.0083, McNemar+bootstrap) → 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html(标替身预演,论证引 reward 曲线+Pass@1,禁引 mean_ratio)/负则诚实负结果+换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4)。
