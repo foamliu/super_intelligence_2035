@@ -3393,3 +3393,40 @@ VQA 通道**确实读到了图**（V1 81 次 VQA 调用，per-quantity 正确率
 - 报告：`reports/report_vision_waveview_selftest_zh.html`（覆盖为三段版·中文·单文件·0 外链·0 script·2 内联 SVG）
 - 复跑：起 `qwen35_vqa_server.py --port 30003 --adapter strengthen_runs/rft2_adapter_seed11` + `qwen35_vqa_server.py --port 30001`，再 `python waveview_selftest_v2_run.py`
 
+## §25 WaveView 10 题自测 · V3 单位/标度感知 CoT 提示消融（单模型臂 · wake#1239 · 2026-11-14 22:1x）
+
+**目的**：§24 三段（V0/V1/V2）整题 0/10、0 翻转，但每量 55.5%。最接近全过的题 β11 `SimFailFsdbProbe` 卡在 10/12，2 个未过条件（`fail_time`、`window_start`）是**单位/标度错误**：matplotlib 把 ps 轴渲染成 mantissa 1.340..1.375 + 隐藏 `x1e6` 偏移，VQA 读到 mantissa 却丢了标度因子（答 1363 / 1.340 而非 1,363,000 / 1,340,000 ps）。V3 测一个**通用提示杠杆**——给所有**时间量**的抽取问题追加「读轴标度/偏移并乘开」的 CoT 后缀——看能否把这类系统性误差修掉、进而把整题推过门槛。**这是提示杠杆，不是权重杠杆**，对所有 10 题的时间量统一施加（不针对 gold 调）。
+
+### 配置
+
+- 两臂（唯一变量 = VQA 抽取问题文本是否带单位/标度 CoT 后缀）：
+  - **V1c** = 基模 Qwen3.5-2B VQA（:30001）+ 单位-CoT　vs §24 已交付 **V1**（基模，无 CoT）→ 量基模上的 CoT 增益。
+  - **V2c** = 基模+rft2_adapter VQA（:30003）+ 单位-CoT　vs §24 已交付 **V2**（适配器，无 CoT）→ 量强化模型上的 CoT 增益。
+- 单变量卫生：**同** gen() PNG（cases 文件未改 → V0/V1/V2 可复现性不变）、**同** `check_case`/oracle/容差、**同** 两个 VQA 后端。唯一改的变量 = 时间量抽取问题的文本。
+- cheat 审计：runner 不解码图像（无 PIL/opencv/OCR/base64/直读图），只 POST `{image_path, question}` 给 HTTP VQA 工具并解析文本。`audit_v3.json`：cheat=false / cheat_count=0 / v3_vqa_calls=162 / v3_image_reads=0 / time_questions_with_cot=75。
+
+### 核心结果（诚实）
+
+| 维度 | V0 文本 | V1 基模 | V2 适配器 | V1c 基模+CoT | V2c 适配器+CoT |
+|:--|:--|:--|:--|:--|:--|
+| 整题通过 | 0/10 | 0/10 | 0/10 | 0/10 | **1/10** |
+
+- **首次整题翻转**：β11 `SimFailFsdbProbe-001` V2 = FAIL 10/12 → **V2c = PASS 12/12**。修好的正是 2 个单位误差条件：`fail_time`（1363 → 1,363,000 ps）与 `window_start`（1.34 → 1,340,000 ps）—— CoT 后缀让 VQA 读出 `x1e6` 标度并乘开。
+- **翻转计数**：V2→V2c = **1**（β11）；V1→V1c = 0（基模即便加 CoT 也未把任一题推过全过门槛）；V0→V1c = 0；V0→V2c = 1。
+- **McNemar**（配对，n=10 样本不足仅参考）：V2↔V2c b=1 c=0 p=1.0；V1↔V1c b=0 c=0 p=1.0；V1c↔V2c b=1 c=0 p=1.0。
+- V1c 整题仍 0/10：CoT 在基模上**未**产生整题翻转（基模每量读对率本就低，CoT 只修单位不修识别）。
+- **cheat=0** ⇒ 通过率可引用 ✓。
+
+### 意义与口径
+
+- **这是本线第一个整题 PASS**：在**真实 WaveView 题**（等价重建，非合成集）上，**仅靠提示杠杆**（单位/标度感知 CoT）把一道题从 FAIL 翻成 PASS，无需再训练。证明「合成集只用于机制验证、结论回到真实题」的路线可行——卡点不总是「看不懂图」，有时是「读不准单位」，后者可用 CoT 提示解。
+- **归因干净**：V2c−V2 的唯一变量 = CoT 后缀（同 PNG/同 check/同适配器权重）⇒ β11 的翻转**归因于 CoT 提示**，而非权重或题面变化。
+- **口径标签**：WaveView 真实题（等价重建）；V3 是**单模型臂**（Python harness 一次提问 + CoT），属「工具天花板」轴；agent 编排轴见 §26（G0/G1/G2）。V 臂仅作天花板参考，本线能力结论以 G 臂为准。
+- 局限：n=10、仅 1 题翻转，统计力弱（p=1.0 仅参考）；CoT 后缀是为「时间量单位误差」设计的通用模板，对非时间量（精确计数/跨面板反推）无效——这些仍是 agent 臂/扩样 SFT 的目标。
+
+### 产物
+
+- 运行器：`vision/vqa_tool/waveview_selftest/waveview_selftest_v3_run.py`（V1c/V2c 两臂·可复跑）
+- 原始结果：`waveview_selftest/V3/{V1c,V2c}/*.json`（各 10）·`summary_v3.json`·`audit_v3.json`（cheat=0/v3_vqa_calls=162/time_questions_with_cot=75）
+- 复跑：起 :30001 + :30003（--adapter strengthen_runs/rft2_adapter_seed11），再 `python waveview_selftest_v3_run.py`
+

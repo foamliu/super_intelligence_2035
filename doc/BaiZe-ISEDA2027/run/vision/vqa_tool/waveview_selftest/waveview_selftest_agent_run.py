@@ -457,6 +457,20 @@ def main():
         random.shuffle(arm_order)
         print(f"\n---- running arm {arm} ----", flush=True)
         for case in arm_order:
+            cid = case["case_id"]
+            if arm != "G0":  # never resume G0 (cheap, and toolless baseline must be fresh)
+                prev = os.path.join(GD, arm, cid + ".json")
+                if os.path.isfile(prev):
+                    try:
+                        cached = json.load(open(prev))
+                        if cached.get("verdict") in ("PASS", "FAIL") and "conditions" in cached:
+                            results[arm][cid] = cached
+                            print(f"  [resume] {arm} {cid}: {cached['verdict']} "
+                                  f"({cached.get('k_pass')}/{cached.get('k_total')}) "
+                                  f"vqa={cached.get('vqa_calls_per_task')} (cached)", flush=True)
+                            continue
+                    except Exception:
+                        pass
             try:
                 results[arm][case["case_id"]] = run_agent_case(arm, server, case)
             except Exception as e:
