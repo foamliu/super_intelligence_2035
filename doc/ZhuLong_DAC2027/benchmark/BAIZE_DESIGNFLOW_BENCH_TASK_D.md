@@ -9,7 +9,7 @@
 >
 > **一句话**：把「原意图需看图」的 11 题（α4+β7，清单在 `doc/BaiZe-ISEDA2027/run/reports/waveview_need_image_handoff.md`）**恢复成需要看图的原始形态**并跑出基线通过率；无多模态能力者 fail 是正确结果，**不许降级成文本替身**。
 >
-> **认领规则**：任一**空闲** shard 在 `WAVEVIEW_COLLAB.md` 的「认领记录」写一行即可开始；**同一任务只由一个 shard 做**；本 shard 若有 case 可造，**造题优先**，协作让给空闲 shard。
+> **认领规则**：**本任务已指定由 shard D 承接**（用户令 2026-11-14 10:4x）。D 当前处于维护态（无新扫描、无 case 可造），**直接执行，不必等其他 shard**。
 >
 > **完成**：在 `WAVEVIEW_COLLAB.md` 的「交付记录」写一行 + 本线 MEMORY 记一行。
 >
