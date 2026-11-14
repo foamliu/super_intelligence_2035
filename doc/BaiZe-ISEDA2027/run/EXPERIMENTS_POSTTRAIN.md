@@ -10946,3 +10946,49 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 36.15 5-run 完成 → 新基线（标环境差异）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
 - R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs step105 0.0304±0.83%）→ 显著则里程碑报告 / 负则诚实负结果
 - kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）
+
+
+## §R493 — wake493 唤醒核验（2026-11-14 19:0x）· read-only 监控心跳
+
+> 本轮为验证型心跳：独立复核三项最高优先用户令的真实落盘/远端状态 + 双 eval 健康实测。未起新产物，未编辑运行中脚本，未碰 GPU/36.15 运行中 eval。
+
+### 1. 16:3x v2 RCA 报告 —— 远端可达性硬证（独立复核）
+- 报告路径：`doc/BaiZe-ISEDA2027/reports/report_posttrain_pyaether_rca_v2_zh.html`（项目根 reports/，与既有 BAIZE_*/HARNESS_* 报告同目录，符合「产物落 reports/」）。
+- 实测：`wc -c`=37415B / `grep -c '<h2'`=5 / `grep -c '<svg'`=8 / `grep -c '<script'`=0（0 script 0 外链确认）。
+- 5 个必含 H2 章节齐全且顺序正确：①口径与数据（可复算）②工具调用画像（核心章节）③失败归因（从 trace 自行提炼）④图表汇总 ⑤提分意见（按 ROI 排序）。
+- 提分意见含 P0/P1/P2 ROI 表 + 「如果只做一件事 = P0-1 消除 degenerate pass + submit_and_exit 死循环」。
+- commit `e434f6def`「posttrain rca: v2 RCA report (1.9万工具调用为何仅3.04%)」—— **`git branch -r --contains e434f6def` = origin/main（远端可查，已上远端）**。这是本轮新硬证（wake492 仅记「已在 origin」未给可复算命令）。
+- 旧报告 `run/reports/report_posttrain_baseline_pyaether_rca_zh.html` 已含「ⓘ 本报告已被 v2 取代」指针（commit e434f6def 同提交）。
+- 复算脚本齐备（同 commit）：`baize_posttrain_trace_deep_analysis.py` + `rca_v2_report_gen.py` + `trace_deep_analysis_3p04.json`（2648 行）。
+- → **16:3x 用户令：已完成（含远端可达性硬证）**。
+
+### 2. 16:1x A/B 之争 —— 裁决 A（沿用，已完成）
+- trace_toolcount_3p04_baseline.json verdict=A：3.04% 5-run 工具调用实证 search_apis/get_api_details/run_code 均被调用且成功，tools_registered=pyAether_MCP_server@127.0.0.1:18888/sse。→ A 有正确工具调用，3.04% 为有效基线。
+
+### 3. 15:4x 36.15 重测 —— 经隧道 SSH 实测（新发现：model_name 字段存疑需标注）
+- 隧道 ACTIVE（PID 618469 ~50.8h 正向 6 端口；PID 1008898 反向 18096→.17:8096；PID 1278889 反向 18098→.17:8098）。
+- SSH 经隧道可达 36.15（hostname hfeg0tedaap02）✓。
+- **父进程实证存活**：PID 1229657 = `bash /nasdata/app.e0031982/bpt_eval.sh --run-all`（etimes≈2.85h，非此前误判的「已退出」）。5-run 顺序链健康，run3/4/5 将自动起跑。
+- **run1 DONE**：`/tmp/posttrain_baseline_3615/run1/final_report.json` pass_rate=0.1582（25/158 correct），generation_statistics success=29/timeout=1/fail=128，metrics_by_runtime pyAether_aether=0.8621(25/29)/unknown=0.0(0/129)。
+  - ⚠️ **新发现（需标注进新基线报告）**：该 final_report.json 的 `model_name` 字段 = `"zhulong_deepseek_v32"`、`benchmark_file`=`EDA-Eval-pyAether-158.jsonl` —— 这是 `run_eval.py` 的**陈旧默认字段**（非实际被测模型）。**实际被测模型经 run1/codegen.log 实证 = `minicpm5-2b-sft-v39-final`**（openai-compatible 通道）。故 15.82% 确属本线 step105 模型，非 zhulong_deepseek。新基线报告须显式澄清此字段，避免被误读为「deepseek 的 15.82%」。
+- **run2 IN PROGRESS**：PID 1229678（run_cline_script.sh，子 of timeout 1229677）→ PID 1230898（run_cli.sh）活跃（etimes≈2.9h），code-gen 进行中，未卡死。
+- 对比：旧 .17 基线 3.04%±0.83%（no-sandbox-prompt + 本地 MCP:18888）vs 新 36.15 run1 15.82%（sandbox-prompt + 原生 RAG:8090 + 沙盒 MCP:18891）→ **~5x 跳升，强证 .17 环境是主要限制因子**（15:4x 假设成立）。
+
+### 4. .17 R2 5-run eval —— 实测进度
+- chain PID 2322797（baize_posttrain_rl_eval_chain.sh）存活 ~18.6h，ppid=1。
+- eval runs 落 `/tmp/posttrain_5run_eval/grpo_R2_step200/`：run1 DONE passed=1(0.63%)、run2 DONE passed=2(1.27%)、**run3 code-gen ACTIVE**（codegen.log 6.78MB @19:07 仍写入中，起于 14:18）、run4/5 待起。
+- serve GPU7:8095 minicpm5-2b-grpo-R2-step200 正常。
+- 均单 run 不预判（vs step105 5-run mean 3.04%±0.83%，需 5-run 完 + McNemar/bootstrap）。
+
+### 5. git 状态（本轮不 push，理由见下）
+- 工作树 clean，无 rebase/merge in progress。
+- e434f6def（v2 RCA）已在 origin/main（硬证见 §1）。
+- 本地 ahead 2 / behind 8：ahead = 8481e7495(vision vqa) + a1a357267(posttrain wake492 心跳)；behind = pretrain/designflow/harness 8 提交。
+- **跨线冲突风险**：`doc/ZhuLong_DAC2027/benchmark/designflow/WAVEVIEW_COLLAB.md` 同时出现在 ahead(vision 提交) 与 behind(designflow 提交) → `git pull --rebase` 必在该文件冲突。该文件**非本线**，按边界纪律不解析。
+- **处置（沿用 wake492 先例）**：本轮仅本地提交本线文件（EXPERIMENTS §R493 + MEMORY wake493 心跳，`git add --` 显式路径，不用 -A），**不 pull/rebase/push**；push 留待 WAVEVIEW 落定后由 loop git 同步。本线 posttrain-only 提交仅触 MEMORY_POSTTRAIN.md/EXPERIMENTS_POSTTRAIN.md，rebase 时无冲突（冲突源仅 vision 提交的 WAVEVIEW），故本地提交不加剧跨线问题。
+- 0 infra 错误；read-only 核验，未碰 GPU0-7 / 未碰 36.15 运行中 eval / 未碰别线文件。
+
+### 6. Next
+- 36.15 5-run 完成 → 新基线（**报告须澄清 model_name 陈旧字段**，标环境差异：旧 .17 no-sandbox-prompt+本地MCP:18888 vs 新 36.15 sandbox-prompt+原生RAG:8090+沙盒:18891）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
+- R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs step105 0.0304±0.83%）→ 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html / 负则诚实负结果
+
