@@ -1,0 +1,36 @@
+{
+  "shard": "B",
+  "task": "WAVEVIEW_COLLAB task 1 (vision<->designflow)",
+  "date": "2026-11-14",
+  "restored_cases": [
+    {
+      "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+      "alpha_id": "alpha2",
+      "trace": "1794460481537_xr6sg.messages.json",
+      "trace_user": "yunfat",
+      "trace_host": "hfeahpc505",
+      "domain": "spice_sim",
+      "original_degradation": "B-grade synth_deck: waveform_A.csv + meas_config_A.json text surrogate + Python script parser (L1). SUT writes script to parse CSV and pass — no image/multimodal capability tested.",
+      "restored_form": "image-required answer-deliverable: rise_margin_A.png (matplotlib, .75 sandbox, 1170x676, clk_a+data_a shared time axis, no labels/threshold/markers). SUT reads figure to determine rise-edge crossing times at 50% swing, delivers rise_margin_report.json.",
+      "oracle": {"ref_edge_time": 5.1667, "target_edge_time": 7.3667, "margin_ns": 2.20, "vref": 0.75, "swing": 1.5},
+      "check_conditions": 12,
+      "self_verify": {
+        "ref_pass": true,
+        "ref_conditions_pass": "12/12",
+        "negatives_fail": "4/4 (naive_margin_one->h, hardcoded_b->d+k, always_zero->g+l, swapped_ref_tgt->d+l)",
+        "degenerate_fail": "3/3 (empty_shell->a, print_string->b, core_deleted->f)"
+      },
+      "jsonl_line": 302,
+      "jsonl_track": "synthesized-image-restored",
+      "jsonl_grade": "B",
+      "image_required": true,
+      "k_rationale": 12,
+      "k_check": 12,
+      "baseline_run": {"status": "DEBT:1", "expected": "FAIL (no-multimodal 2B text-only cannot read PNG)", "deferred_to": "r551 (with beta7)"}
+    }
+  ],
+  "pending": [
+    {"case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001", "alpha_id": "beta7", "status": "not started", "deferred_to": "r551"}
+  ],
+  "self_correction": "r547-r549 MEMORY_B wrote 'WAVEVIEW: B 不可认领(全 D域)' — this was a factual error. waveview_restore_plan_D.md §二 line 25/30/38 explicitly assigns alpha2/beta7 to shard B ('case 在 B.jsonl，移交 shard B'). B is the idle 0-case shard (mc10.fresh=0) and should claim. Corrected in r550."
+}
