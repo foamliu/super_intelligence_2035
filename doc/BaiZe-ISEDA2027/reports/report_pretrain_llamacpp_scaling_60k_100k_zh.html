@@ -22,7 +22,7 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 .foot{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center}
 </style></head><body>
 <h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 10 点能力曲线（10k–100k）与 700k 预测</h1>
-<p class='small'>生成时间：2026-11-13 19:38:43　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 19/20 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
+<p class='small'>生成时间：2026-11-14 15:46:59　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 20/20 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
 <div class='card'><h2>① 评测配置</h2><table>
 <tr><th>项目</th><th>说明</th></tr>
 <tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>
@@ -33,9 +33,9 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>
 </table></div>
 <div class='card'><h2>② 关键发现</h2><ul>
-<li>已完成 <strong>19/20</strong> 个检查点（iter_10000, iter_20000, iter_30000, iter_40000, iter_50000, iter_60000, iter_70000, iter_80000, iter_90000, iter_100000, iter_110000, iter_120000, iter_130000, iter_140000, iter_150000, iter_160000, iter_170000, iter_180000, iter_190000）。</li>
-<li>常识推理 Avg 从 iter_10000 的 <strong>51.50%</strong> 到 iter_160000 的 <strong>58.13%</strong>。</li>
-<li>相对 P-6 起点（44.0%@655M/20k）：当前最高 <strong>+14.2 pp</strong>（注：P-6 为 655M，本评测为 2B，参数量不同，仅作趋势参照）。</li>
+<li>已完成 <strong>20/20</strong> 个检查点（iter_10000, iter_20000, iter_30000, iter_40000, iter_50000, iter_60000, iter_70000, iter_80000, iter_90000, iter_100000, iter_110000, iter_120000, iter_130000, iter_140000, iter_150000, iter_160000, iter_170000, iter_180000, iter_190000, iter_200000）。</li>
+<li>常识推理 Avg 从 iter_10000 的 <strong>51.50%</strong> 到 iter_200000 的 <strong>60.12%</strong>。</li>
+<li>相对 P-6 起点（44.0%@655M/20k）：当前最高 <strong>+16.2 pp</strong>（注：P-6 为 655M，本评测为 2B，参数量不同，仅作趋势参照）。</li>
 <li><strong>50k→60k 拐点分析</strong>：Avg 54.25% → 54.25%（Δ=+0.00 pp），趋于平台（50k 前 10k 段斜率 -0.88 pp → 50k 后 +0.00 pp）。S1 于 iter_58000 resume，此拐点可反映 resume 前后训练连续性影响。</li>
 <li><strong>llama.cpp 修复后恢复退化 ckpt</strong>：HF 侧（PyTorch CPU float32）iter_20000/40000/50000 因 Mamba2 SSM 数值不稳定 logits 全 NaN → sciq=0.0 退化；llama.cpp C++ SSM scan 数值稳定，<strong>所有已评测 ckpt 全部可正常出分</strong>，本报告即为修复后真实能力曲线。</li>
 </ul></div>
@@ -240,7 +240,16 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <td>83.0 / 83.0</td>
 <td>58.0 / —</td>
 <td class='avg'>58.13%</td><td class='avg'>55.12%</td></tr>
-<tr><td>iter_200000</td><td>838.86B</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td><strong>iter_200000</strong></td><td>838.86B</td>
+<td>32.0 / 31.0</td>
+<td>66.0 / 67.0</td>
+<td>70.0 / —</td>
+<td>42.0 / 54.0</td>
+<td>23.0 / 38.0</td>
+<td>75.0 / 77.0</td>
+<td>88.0 / 84.0</td>
+<td>60.0 / —</td>
+<td class='avg'>60.12%</td><td class='avg'>57.00%</td></tr>
 <tr><td colspan='12' style='background:#eef2f7;font-weight:600;text-align:left'>参照线</td></tr>
 <tr class='ref'><td>BaiZe P-6 (655M,20k)</td><td>655M tok</td><td colspan='8' class='na'>逐集见 P-6 报告</td><td class='avg'>44.0%</td><td class='avg'>43.1%</td></tr>
 <tr class='ref'><td>Xmodel-2 s1/10K (39.3B tok)</td><td>41.9B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>46.7%</td><td>—</td></tr>
@@ -255,17 +264,17 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <div class='chart'><svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" style="font-family:monospace;background:#fff">
 <rect width="900" height="560" fill="white"/>
 <line x1="70" y1="500.0" x2="750" y2="500.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="503.0" font-size="10" fill="#64748b" text-anchor="end">33%</text>
+<text x="64" y="503.0" font-size="10" fill="#64748b" text-anchor="end">41%</text>
 <line x1="70" y1="408.0" x2="750" y2="408.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="411.0" font-size="10" fill="#64748b" text-anchor="end">49%</text>
+<text x="64" y="411.0" font-size="10" fill="#64748b" text-anchor="end">46%</text>
 <line x1="70" y1="316.0" x2="750" y2="316.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="319.0" font-size="10" fill="#64748b" text-anchor="end">65%</text>
+<text x="64" y="319.0" font-size="10" fill="#64748b" text-anchor="end">50%</text>
 <line x1="70" y1="224.0" x2="750" y2="224.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="227.0" font-size="10" fill="#64748b" text-anchor="end">81%</text>
+<text x="64" y="227.0" font-size="10" fill="#64748b" text-anchor="end">55%</text>
 <line x1="70" y1="132.0" x2="750" y2="132.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="135.0" font-size="10" fill="#64748b" text-anchor="end">97%</text>
+<text x="64" y="135.0" font-size="10" fill="#64748b" text-anchor="end">60%</text>
 <line x1="70" y1="40.0" x2="750" y2="40.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="64" y="43.0" font-size="10" fill="#64748b" text-anchor="end">113%</text>
+<text x="64" y="43.0" font-size="10" fill="#64748b" text-anchor="end">65%</text>
 <line x1="116.9" y1="40" x2="116.9" y2="500" stroke="#e2e8f0" stroke-width="1"/>
 <text x="116.9" y="516" font-size="10" fill="#64748b" text-anchor="middle">10k</text>
 <line x1="212.5" y1="40" x2="212.5" y2="500" stroke="#e2e8f0" stroke-width="1"/>
@@ -296,47 +305,48 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <line x1="70" y1="500" x2="750" y2="500" stroke="#334155" stroke-width="1.5"/>
 <text x="410" y="542" font-size="11" fill="#334155" text-anchor="middle">训练步数 iter（对数轴）</text>
 <text x="18" y="270" font-size="11" fill="#334155" text-anchor="middle" transform="rotate(-90 18 270)">8 集常识推理 Avg (harness口径)</text>
-<polyline points="116.9,542.1 212.5,524.9 268.5,542.1 308.2,507.7 339.0,524.9 364.1,502.0 385.4,519.2 403.8,490.5 420.1,513.4 434.6,507.7 447.8,519.2 459.8,502.0 470.8,513.4 481.0,502.0 490.6,524.9 499.5,496.2 507.8,496.2 515.7,524.9 523.2,519.2" fill="none" stroke="#94a3b8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,421.6 212.5,375.7 268.5,358.5 308.2,358.5 339.0,370.0 364.1,341.3 385.4,364.2 403.8,370.0 420.1,387.2 434.6,370.0 447.8,341.3 459.8,352.7 470.8,347.0 481.0,352.7 490.6,335.5 499.5,335.5 507.8,364.2 515.7,329.8 523.2,335.5" fill="none" stroke="#a3b8c8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,335.5 212.5,370.0 268.5,421.6 308.2,306.8 339.0,306.8 364.1,358.5 385.4,301.1 403.8,312.6 420.1,312.6 434.6,306.8 447.8,329.8 459.8,364.2 470.8,318.3 481.0,415.9 490.6,312.6 499.5,306.8 507.8,347.0 515.7,358.5 523.2,312.6" fill="none" stroke="#b8a3c8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,433.1 212.5,433.1 268.5,438.8 308.2,427.4 339.0,427.4 364.1,410.1 385.4,398.7 403.8,392.9 420.1,387.2 434.6,404.4 447.8,387.2 459.8,387.2 470.8,398.7 481.0,387.2 490.6,410.1 499.5,387.2 507.8,375.7 515.7,370.0 523.2,398.7" fill="none" stroke="#c8a3b8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,490.5 212.5,507.7 268.5,479.0 308.2,496.2 339.0,496.2 364.1,502.0 385.4,467.5 403.8,484.7 420.1,450.3 434.6,461.8 447.8,479.0 459.8,484.7 470.8,461.8 481.0,502.0 490.6,467.5 499.5,496.2 507.8,479.0 515.7,484.7 523.2,467.5" fill="none" stroke="#a3c8b8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,272.4 212.5,301.1 268.5,278.1 308.2,272.4 339.0,278.1 364.1,289.6 385.4,266.7 403.8,301.1 420.1,249.4 434.6,272.4 447.8,272.4 459.8,255.2 470.8,266.7 481.0,260.9 490.6,255.2 499.5,260.9 507.8,255.2 515.7,238.0 523.2,255.2" fill="none" stroke="#c8b8a3" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,289.6 212.5,266.7 268.5,232.2 308.2,249.4 339.0,249.4 364.1,215.0 385.4,243.7 403.8,209.3 420.1,249.4 434.6,209.3 447.8,232.2 459.8,220.7 470.8,215.0 481.0,226.5 490.6,232.2 499.5,220.7 507.8,203.5 515.7,238.0 523.2,215.0" fill="none" stroke="#b8c8a3" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,381.4 212.5,364.2 268.5,347.0 308.2,381.4 339.0,387.2 364.1,421.6 385.4,398.7 403.8,352.7 420.1,324.0 434.6,347.0 447.8,306.8 459.8,358.5 470.8,347.0 481.0,347.0 490.6,370.0 499.5,358.5 507.8,358.5 515.7,358.5 523.2,358.5" fill="none" stroke="#c8a3c8" stroke-width="1" opacity="0.55"/>
-<polyline points="116.9,395.8 212.5,392.9 268.5,387.2 308.2,375.0 339.0,380.0 364.1,380.0 385.4,370.0 403.8,364.2 420.1,359.2 434.6,359.9 447.8,358.5 459.8,365.7 470.8,358.5 481.0,374.3 490.6,363.5 499.5,357.8 507.8,359.9 515.7,362.8 523.2,357.8" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
-<circle cx="116.9" cy="395.8" r="4" fill="#1d4ed8"/>
-<circle cx="212.5" cy="392.9" r="4" fill="#1d4ed8"/>
-<circle cx="268.5" cy="387.2" r="4" fill="#1d4ed8"/>
-<circle cx="308.2" cy="375.0" r="4" fill="#1d4ed8"/>
-<circle cx="339.0" cy="380.0" r="4" fill="#1d4ed8"/>
-<circle cx="364.1" cy="380.0" r="4" fill="#1d4ed8"/>
-<circle cx="385.4" cy="370.0" r="4" fill="#1d4ed8"/>
-<circle cx="403.8" cy="364.2" r="4" fill="#1d4ed8"/>
-<circle cx="420.1" cy="359.2" r="4" fill="#1d4ed8"/>
-<circle cx="434.6" cy="359.9" r="4" fill="#1d4ed8"/>
-<circle cx="447.8" cy="358.5" r="4" fill="#1d4ed8"/>
-<circle cx="459.8" cy="365.7" r="4" fill="#1d4ed8"/>
-<circle cx="470.8" cy="358.5" r="4" fill="#1d4ed8"/>
-<circle cx="481.0" cy="374.3" r="4" fill="#1d4ed8"/>
-<circle cx="490.6" cy="363.5" r="4" fill="#1d4ed8"/>
-<circle cx="499.5" cy="357.8" r="4" fill="#1d4ed8"/>
-<circle cx="507.8" cy="359.9" r="4" fill="#1d4ed8"/>
-<circle cx="515.7" cy="362.8" r="4" fill="#1d4ed8"/>
-<circle cx="523.2" cy="357.8" r="4" fill="#1d4ed8"/>
-<polyline points="116.9,44.5 127.5,45.7 138.1,46.9 148.8,48.1 159.4,49.3 170.0,50.5 180.6,51.7 191.2,52.9 201.8,54.1 212.5,55.2 223.1,56.4 233.7,57.5 244.3,58.6 254.9,59.8 265.6,60.9 276.2,62.0 286.8,63.1 297.4,64.2 308.0,65.3 318.7,66.4 329.3,67.5 339.9,68.5 350.5,69.6 361.1,70.6 371.8,71.7 382.4,72.7 393.0,73.7 403.6,74.8 414.2,75.8 424.8,76.8 435.5,77.8 446.1,78.8 456.7,79.8 467.3,80.8 477.9,81.7 488.6,82.7 499.2,83.7 509.8,84.6 520.4,85.6 531.0,86.5 541.7,87.4 552.3,88.4 562.9,89.3 573.5,90.2 584.1,91.1 594.8,92.0 605.4,92.9 616.0,93.8 626.6,94.7 637.2,95.6 647.9,96.4 658.5,97.3 669.1,98.2 679.7,99.0 690.3,99.9 700.9,100.7" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6,4"/>
+<polyline points="116.9,781.8 212.5,724.5 268.5,781.8 308.2,667.3 339.0,724.5 364.1,648.2 385.4,705.4 403.8,610.0 420.1,686.3 434.6,667.3 447.8,705.4 459.8,648.2 470.8,686.3 481.0,648.2 490.6,724.5 499.5,629.1 507.8,629.1 515.7,724.5 523.2,705.4 530.2,686.3" fill="none" stroke="#94a3b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,380.9 212.5,228.2 268.5,170.9 308.2,170.9 339.0,209.1 364.1,113.6 385.4,190.0 403.8,209.1 420.1,266.3 434.6,209.1 447.8,113.6 459.8,151.8 470.8,132.7 481.0,151.8 490.6,94.5 499.5,94.5 507.8,190.0 515.7,75.4 523.2,94.5 530.2,-0.9" fill="none" stroke="#a3b8c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,94.5 212.5,209.1 268.5,380.9 308.2,-0.9 339.0,-0.9 364.1,170.9 385.4,-20.0 403.8,18.2 420.1,18.2 434.6,-0.9 447.8,75.4 459.8,190.0 470.8,37.2 481.0,361.8 490.6,18.2 499.5,-0.9 507.8,132.7 515.7,170.9 523.2,18.2 530.2,-58.2" fill="none" stroke="#b8a3c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,419.1 212.5,419.1 268.5,438.2 308.2,400.0 339.0,400.0 364.1,342.7 385.4,304.5 403.8,285.4 420.1,266.3 434.6,323.6 447.8,266.3 459.8,266.3 470.8,304.5 481.0,266.3 490.6,342.7 499.5,266.3 507.8,228.2 515.7,209.1 523.2,304.5 530.2,247.3" fill="none" stroke="#c8a3b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,610.0 212.5,667.3 268.5,571.8 308.2,629.1 339.0,629.1 364.1,648.2 385.4,533.6 403.8,590.9 420.1,476.3 434.6,514.5 447.8,571.8 459.8,590.9 470.8,514.5 481.0,648.2 490.6,533.6 499.5,629.1 507.8,571.8 515.7,590.9 523.2,533.6 530.2,552.7" fill="none" stroke="#a3c8b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,-115.5 212.5,-20.0 268.5,-96.4 308.2,-115.5 339.0,-96.4 364.1,-58.2 385.4,-134.6 403.8,-20.0 420.1,-191.8 434.6,-115.5 447.8,-115.5 459.8,-172.8 470.8,-134.6 481.0,-153.7 490.6,-172.8 499.5,-153.7 507.8,-172.8 515.7,-230.0 523.2,-172.8 530.2,-191.8" fill="none" stroke="#c8b8a3" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,-58.2 212.5,-134.6 268.5,-249.1 308.2,-191.8 339.0,-191.8 364.1,-306.4 385.4,-210.9 403.8,-325.5 420.1,-191.8 434.6,-325.5 447.8,-249.1 459.8,-287.3 470.8,-306.4 481.0,-268.2 490.6,-249.1 499.5,-287.3 507.8,-344.6 515.7,-230.0 523.2,-306.4 530.2,-325.5" fill="none" stroke="#b8c8a3" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,247.3 212.5,190.0 268.5,132.7 308.2,247.3 339.0,266.3 364.1,380.9 385.4,304.5 403.8,151.8 420.1,56.3 434.6,132.7 447.8,-0.9 459.8,170.9 470.8,132.7 481.0,132.7 490.6,209.1 499.5,170.9 507.8,170.9 515.7,170.9 523.2,170.9 530.2,132.7" fill="none" stroke="#c8a3c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,295.0 212.5,285.4 268.5,266.3 308.2,225.8 339.0,242.5 364.1,242.5 385.4,209.1 403.8,190.0 420.1,173.3 434.6,175.7 447.8,170.9 459.8,194.8 470.8,170.9 481.0,223.4 490.6,187.6 499.5,168.5 507.8,175.7 515.7,185.2 523.2,168.5 530.2,130.3" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+<circle cx="116.9" cy="295.0" r="4" fill="#1d4ed8"/>
+<circle cx="212.5" cy="285.4" r="4" fill="#1d4ed8"/>
+<circle cx="268.5" cy="266.3" r="4" fill="#1d4ed8"/>
+<circle cx="308.2" cy="225.8" r="4" fill="#1d4ed8"/>
+<circle cx="339.0" cy="242.5" r="4" fill="#1d4ed8"/>
+<circle cx="364.1" cy="242.5" r="4" fill="#1d4ed8"/>
+<circle cx="385.4" cy="209.1" r="4" fill="#1d4ed8"/>
+<circle cx="403.8" cy="190.0" r="4" fill="#1d4ed8"/>
+<circle cx="420.1" cy="173.3" r="4" fill="#1d4ed8"/>
+<circle cx="434.6" cy="175.7" r="4" fill="#1d4ed8"/>
+<circle cx="447.8" cy="170.9" r="4" fill="#1d4ed8"/>
+<circle cx="459.8" cy="194.8" r="4" fill="#1d4ed8"/>
+<circle cx="470.8" cy="170.9" r="4" fill="#1d4ed8"/>
+<circle cx="481.0" cy="223.4" r="4" fill="#1d4ed8"/>
+<circle cx="490.6" cy="187.6" r="4" fill="#1d4ed8"/>
+<circle cx="499.5" cy="168.5" r="4" fill="#1d4ed8"/>
+<circle cx="507.8" cy="175.7" r="4" fill="#1d4ed8"/>
+<circle cx="515.7" cy="185.2" r="4" fill="#1d4ed8"/>
+<circle cx="523.2" cy="168.5" r="4" fill="#1d4ed8"/>
+<circle cx="530.2" cy="130.3" r="4" fill="#1d4ed8"/>
+<polyline points="116.9,306.5 127.5,302.8 138.1,299.1 148.8,295.3 159.4,291.6 170.0,287.9 180.6,284.2 191.2,280.4 201.8,276.7 212.5,273.0 223.1,269.3 233.7,265.5 244.3,261.8 254.9,258.1 265.6,254.4 276.2,250.6 286.8,246.9 297.4,243.2 308.0,239.5 318.7,235.7 329.3,232.0 339.9,228.3 350.5,224.6 361.1,220.8 371.8,217.1 382.4,213.4 393.0,209.7 403.6,205.9 414.2,202.2 424.8,198.5 435.5,194.8 446.1,191.0 456.7,187.3 467.3,183.6 477.9,179.9 488.6,176.1 499.2,172.4 509.8,168.7 520.4,165.0 531.0,161.2 541.7,157.5 552.3,153.8 562.9,150.1 573.5,146.3 584.1,142.6 594.8,138.9 605.4,135.2 616.0,131.4 626.6,127.7 637.2,124.0 647.9,120.3 658.5,116.5 669.1,112.8 679.7,109.1 690.3,105.4 700.9,101.6" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6,4"/>
 <circle cx="703.1" cy="100.9" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
-<text x="697.1" y="92.9" font-size="10" fill="#dc2626" text-anchor="end">700k 预测 102.9%</text>
+<text x="697.1" y="92.9" font-size="10" fill="#dc2626" text-anchor="end">700k 预测 61.7%</text>
 <line x1="70" y1="439.1" x2="750" y2="439.1" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="3,3"/>
-<line x1="70" y1="404.4" x2="750" y2="404.4" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="3,3"/>
-<circle cx="116.9" cy="423.6" r="3.5" fill="#ea580c"/>
-<circle cx="212.5" cy="409.7" r="3.5" fill="#ea580c"/>
-<circle cx="268.5" cy="406.7" r="3.5" fill="#ea580c"/>
-<circle cx="308.2" cy="402.6" r="3.5" fill="#ea580c"/>
+<line x1="70" y1="323.6" x2="750" y2="323.6" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="3,3"/>
+<circle cx="116.9" cy="387.6" r="3.5" fill="#ea580c"/>
+<circle cx="212.5" cy="341.4" r="3.5" fill="#ea580c"/>
+<circle cx="268.5" cy="331.3" r="3.5" fill="#ea580c"/>
+<circle cx="308.2" cy="317.7" r="3.5" fill="#ea580c"/>
 <line x1="758" y1="54" x2="774" y2="54" stroke="#1d4ed8" stroke-width="2"/>
 <text x="778" y="57" font-size="9" fill="#334155">BaiZe-2B Avg（llama.cpp 修复后）</text>
 <line x1="758" y1="70" x2="774" y2="70" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
-<text x="778" y="73" font-size="9" fill="#334155">拟合外推（power, R²=0.813)</text>
+<text x="778" y="73" font-size="9" fill="#334155">拟合外推（log, R²=0.811)</text>
 <circle cx="766" cy="86" r="3.5" fill="#ea580c"/>
 <text x="778" y="89" font-size="9" fill="#334155">Xmodel-2 s1 (1.2B)</text>
 <line x1="758" y1="102" x2="774" y2="102" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
@@ -349,25 +359,25 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 <p class='small' style='text-align:center'>图1：8 集 Avg acc vs 训练步数（对数轴）。蓝粗线=BaiZe-2B Avg，灰细线=逐集，橙点=Xmodel-2 s1，绿/紫虚线=P-6/Phi-1.5 参照，红虚线=拟合外推，红点=700k 预测。</p>
 </div>
 <div class='card'><h2>⑤ 700k 步（≈2.94T token）常识推理水平预测</h2>
-<p>对 19 个完成点（iter 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000）的 8 集 Avg 做两种拟合，取 R² 更高者为预测：</p>
+<p>对 20 个完成点（iter 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000）的 8 集 Avg 做两种拟合，取 R² 更高者为预测：</p>
 <table><tr><th>拟合形式</th><th>公式</th><th>R²</th><th>RMSE</th><th>700k 预测 Avg</th></tr>
-<tr><td>log</td><td><code>acc = 0.2891 + 0.0554·log10(step)</code></td><td>0.8120</td><td>0.0091</td><td class='avg'>61.30%</td></tr>
-<tr><td>power ★</td><td><code>acc = 0.8179 - -0.7084·step^{-0.090}</code></td><td>0.8135</td><td>0.5161</td><td class='avg'>102.89%</td></tr>
+<tr><td>log ★</td><td><code>acc = 0.2755 + 0.0584·log10(step)</code></td><td>0.8114</td><td>0.0097</td><td class='avg'>61.67%</td></tr>
+<tr><td>power</td><td><code>acc = 1.0582 - -0.8724·step^{-0.050}</code></td><td>0.8103</td><td>0.9919</td><td class='avg'>150.32%</td></tr>
 </table>
-<div class='note'><strong>预测结论</strong>：取 power 拟合 （R²=0.813），700k 步（≈2.94T token）时 8 集常识推理 Avg 预测为 <strong>102.89%</strong>。公式：<code>acc = 0.8179 - -0.7084·step^{-0.090}</code>。</div>
-<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>：<ul><li>拟合仅基于 <strong>19 个点</strong>，覆盖 iter 10000–190000，700k 距最末点 <strong>3× 外推</strong>，误差可能很大。</li><li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，二者 700k 预测值的差距即体现模型选择的不确定度。</li><li>RMSE ≈ 0.5161（51.61 pp）为拟合段内残差，<strong>外推误差通常远大于此</strong>。</li><li>每任务 <code>limit=100</code>（样本量小，逐集 ±4.5%），Avg 本身带统计噪声。</li><li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 200k/500k）收窄区间。</li></ul></div>
+<div class='note'><strong>预测结论</strong>：取 log 拟合 （R²=0.811），700k 步（≈2.94T token）时 8 集常识推理 Avg 预测为 <strong>61.67%</strong>。公式：<code>acc = 0.2755 + 0.0584·log10(step)</code>。</div>
+<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>：<ul><li>拟合仅基于 <strong>20 个点</strong>，覆盖 iter 10000–200000，700k 距最末点 <strong>3× 外推</strong>，误差可能很大。</li><li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，二者 700k 预测值的差距即体现模型选择的不确定度。</li><li>RMSE ≈ 0.0097（0.97 pp）为拟合段内残差，<strong>外推误差通常远大于此</strong>。</li><li>每任务 <code>limit=100</code>（样本量小，逐集 ±4.5%），Avg 本身带统计噪声。</li><li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 200k/500k）收窄区间。</li></ul></div>
 </div>
 <div class='card'><h2>⑥ llama.cpp vs HF（PyTorch CPU）后端对比</h2><ul>
 <li><strong>HF 侧（PyTorch CPU float32）</strong>：iter_20000 / 40000 / 50000 因 Mamba2 SSM 数值不稳定（≥17 token 序列 logits 全 NaN）→ sciq=0.0 退化，仅 iter_10000（Avg 50.0%）/ iter_30000（Avg 50.25%）有效。</li>
-<li><strong>llama.cpp 侧（C++ SSM scan，修复后）</strong>：1-token logits 与 HF 对齐 （Δmax=0.006），sciq/piqa limit=100 复判 Δ≤1pp；C++ SSM 数值稳定，<strong>全部 19 个 ckpt 可正常出分</strong>。</li>
-<li><strong>结论</strong>：本报告（llama.cpp）给出真实的 19 点能力曲线，克服了 HF CPU 侧的 NaN 退化问题；NaN 为 PyTorch reference 实现的数值问题，非 ckpt 权重问题（逐张量扫描 ckpt 全无 NaN/Inf）。</li>
+<li><strong>llama.cpp 侧（C++ SSM scan，修复后）</strong>：1-token logits 与 HF 对齐 （Δmax=0.006），sciq/piqa limit=100 复判 Δ≤1pp；C++ SSM 数值稳定，<strong>全部 20 个 ckpt 可正常出分</strong>。</li>
+<li><strong>结论</strong>：本报告（llama.cpp）给出真实的 20 点能力曲线，克服了 HF CPU 侧的 NaN 退化问题；NaN 为 PyTorch reference 实现的数值问题，非 ckpt 权重问题（逐张量扫描 ckpt 全无 NaN/Inf）。</li>
 </ul></div>
 <div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
 <li>本评测为<strong>纯 CPU</strong>，llama.cpp 后端，<code>limit=100</code>，样本量较小，逐集 acc_stderr ≈ ±4.5%，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>
-<li>700k 预测为<strong>外推</strong>，仅基于 19 点，<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>
+<li>700k 预测为<strong>外推</strong>，仅基于 20 点，<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>
 <li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响；iter_60000+ 为 resume 后检查点。</li>
 <li>全程 <code>CUDA_VISIBLE_DEVICES=""</code>，未碰 GPU/S1，CPU load ≪80%。</li>
 </ul></div>
-<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-13 19:38:43</div>
+<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-14 15:46:59</div>
 </body></html>
