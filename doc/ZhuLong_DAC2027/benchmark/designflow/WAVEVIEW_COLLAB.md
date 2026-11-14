@@ -260,3 +260,60 @@ curl -s -m 5 -X POST http://10.252.32.17:30002/mcp \
 - 本轮新增产物：`vision/vqa_tool/qwen35_vqa_mcp_server.py` + `test_vqa_mcp_client.py`（已随本轮 commit）；VQA HTTP server 已由 `127.0.0.1` 重绑为 `0.0.0.0:30001`。
 - **请 designflow 侧下一步**：在评测机测可达性 → OPEN 即加 cline 配置开跑 task2（10 题）→ 翻转结果落 `designflow/waveview_baseline_results.<shard>.json` 的 task2 段 + 在本文件「交付记录」写一行 → vision 据此出 #3 对比报告。
 
+
+## designflow 侧 task2 可达性测试结果（shard B · 2026-11-14 r560）
+
+> **触发**：vision wake#1231 明确「请 designflow 侧下一步：在评测机测可达性 → OPEN 即加 cline 配置开跑 task2」。B 是 0-case 空闲 shard（mc10.fresh=0，1113 池 r531 13/13 peek 闭合），承顶部 2026-11-14 WAVEVIEW 协作令认领此可达性测试。**结论：BLOCKED —— 评测机与 .75 均无法 TCP 连接 vision GPU 机 10.252.32.17 的任一端口（30001/30002/22 全超时），ICMP 通。task2 现为 infra-blocked，需 vision/网管在 10.252.32.17 开放入站 TCP。**
+
+### 测试方法
+
+vision 给出的两条可达性自测命令，外加扩展测试（评测机 + .75 双源、多端口、ICMP 对照），全部在 2026-11-14 18:2x 实测：
+
+**源 1：评测机 `10.251.36.15`（`hfeg0tedaap02`，cline 进程实际运行机）→ `10.252.32.17`**
+
+| 检查 | 命令 | 结果 |
+|:--|:--|:--|
+| TCP 30002（MCP 首选） | `nc -w 3 10.252.32.17 30002` | **BLOCKED**（exit=1，Connection timed out） |
+| MCP initialize 握手 | `curl -s -m 8 -X POST http://10.252.32.17:30002/mcp … initialize …` | **空响应**（超时，无 serverInfo 返回） |
+| TCP 30001（plain-HTTP 回退） | `nc -w 3 10.252.32.17 30001` | **BLOCKED**（exit=1，Connection timed out） |
+| 30001 health | `curl -s -m 6 http://10.252.32.17:30001/health` | **空响应**（超时） |
+| TCP 22（SSH） | `nc -w 3 10.252.32.17 22` | **BLOCKED**（exit=1） |
+| ICMP | `ping -c 2 -W 2 10.252.32.17` | **通**（2/2 received，rtt 0.30ms —— 同 LAN） |
+
+**源 2：`.75`（`10.129.32.75` / `hfhds201`，EDA 沙盒，经 `eda_flow` MCP `run_commands` 实测）→ `10.252.32.17`**
+
+> 测试动机：vision 提出的 path (b)（本地 MCP wrapper 转发到 30001）需评测机能达 30001；若 30001 也被拦，考虑经 .75 中继是否可行。故测 .75 → 10.252.32.17。
+
+| 检查 | 命令 | 结果 |
+|:--|:--|:--|
+| TCP 30002 | `nc -w 3 10.252.32.17 30002 </dev/null` | **BLOCKED**（Ncat: Connection timed out，3017ms） |
+| TCP 30001 | `nc -w 3 10.252.32.17 30001 </dev/null` | **BLOCKED**（Ncat: Connection timed out，3015ms） |
+| 30001 health | `curl -s -m 5 http://10.252.32.17:30001/health` | **空**（超时 5010ms） |
+| 30002 MCP init | `curl -s -m 5 -X POST http://10.252.32.17:30002/mcp … initialize …` | **空**（超时 5011ms） |
+| ICMP | `ping -c 2 -W 2 10.252.32.17` | **通**（2/2，rtt 0.28ms） |
+
+### 判读
+
+1. **`10.252.32.17` 接受 ICMP 但丢弃所有外部入站 TCP**：两台源机（评测机 `10.251.36.15` + .75 `10.129.32.75`）对 `10.252.32.17` 的 TCP 22/30001/30002 全部超时，ICMP 全通且 rtt<0.4ms（同 LAN）。vision 报「从 10.252.32.17 自身外部 IP 可达」成立——那是本机回环，外部主机不可达。**根因 = `10.252.32.17` 上的主机防火墙（iptables/nftables/ufw）或上游网络 ACL 仅放行 ICMP，丢弃入站 TCP**（或仅放行特定源 IP 白名单，未含 `10.251.36.15` / `10.129.32.75`）。
+2. **vision 的两条解阻路径当前均不可行**：
+   - path (a)「请网管放行 `10.251.36.15 → 10.252.32.17:30002`」——**仍需执行，是当前唯一可行路径**。
+   - path (b)「把 MCP 封装脚本拷到评测机本机跑，底层 HTTP 已 `0.0.0.0:30001` 可达」——**不成立**：评测机 → 30001 同样 BLOCKED（上面实测）。path (b) 的前提「只需放行 30001」也不满足。除非 30001 同时对评测机放行，否则本地 wrapper 无后端可转发。
+3. **.75 中继路径亦不可行**：.75 → 10.252.32.17 TCP 同全 BLOCKED。即便 .75 可达，在 .75 上起常驻 relay proxy 也违反「对 698 机只读」纪律（.75 是 EDA 沙盒，非网络中继服务）。
+
+### 需 vision/网管执行（唯一解阻路径）
+
+**在 `10.252.32.17` 上对评测机 `10.251.36.15`（及可选 `.75` `10.129.32.75`）放行入站 TCP 30002（或 30001）**。建议 30002（MCP 端点，cline 直连无需本地 wrapper）。放行后 designflow 可立即：
+- 加 cline MCP 配置 `"qwen35_vqa": {"url": "http://10.252.32.17:30002/mcp", "autoApprove": ["vqa"]}`（临时，run 后回滚）；
+- `run_one.sh` CLI_PROMPT 加 VQA hint（A r530 已留 env-gated `VQA_MCP=1` 骨架可复用）；
+- 跑 task2 全 10 题（D 8 + B 2），翻转结果落 `waveview_baseline_results.<shard>.json` task2 段 + 本文件「交付记录」。
+
+vision 侧若不便改 10.252.32.17 防火墙，**替代方案**：把 `qwen35_vqa_mcp_server.py` 跑在评测机能达的某台**已有 VQA 能力**的机（如 vision 之前提过的其他 GPU 机），或确认 `research.vqa`（评测机本地 8092 已通）作「upper-bound reference」可接受（但 vision wake#1231 已明确 research.vqa 非 #3 核心口径，不可替代 Qwen3.5-2B）。
+
+### B 侧状态
+
+- task1（B 域 α2/β7）：✅ 已交付（r550-r552，恢复 + 基线 FAIL 正确）。
+- task2（VQA 对照）：⬜ **infra-blocked**（上述根因），需 vision/网管在 10.252.32.17 开放入站 TCP。B 单 shard 无法解阻。
+- B 仍 0-case（mc10.fresh=0，1113 池 r531 13/13 peek 闭合；.75 无新扫描）。
+- 本轮交付物：本可达性测试报告（评测机 + .75 双源 × 多端口 × ICMP 对照，证据完整）。
+- **不与 A 冲突**：A r530 已认领 task2 试跑（用 research.vqa），但 vision wake#1231 已明确 research.vqa 非 #3 口径 ⇒ A r530 试跑结果不可作 task2 正式结果，需用 Qwen3.5-2B 重跑。本轮 B 仅做可达性测试（vision 明确要求的「designflow 侧下一步」第一步），未改 harness/cline config，不触碰 A 的 task2 执行权。可达性 OPEN 后由谁跑 task2 全 10 题，建议召集人 A 裁定（A 持 harness 改动权 + 已有 VQA hint 骨架；B 可承接 B 域 2 题）。
+> — shard B，r560（2026-11-14 18:2x）
