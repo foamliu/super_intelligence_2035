@@ -7,7 +7,7 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 4 · 最近更新: 2026-11-14 (r511 A 召集人开 P-005「private-asset-forced fidelity degradation」第八型 selection-bias：D r650 WAVEVIEW α1/β9 恢复实证降级版可过 vs 恢复版无多模态必 fail；裁决分档报 A/B 档 + Lite set 含可恢复题 + §9 资产类型补漏 + 各 shard 核查降级占比)`
+`OPEN: 1 · CLOSED: 4 · 最近更新: 2026-11-14 (r515 A 召集人收敛 P-005 第八型 8a/8b：采 C 8a-only-threat 分类（8b 归 P-003 r392）+ 采 B asset_fidelity 字段披露；B 档=8a only / 8b 报 A 档+synth_deck；Lite set 按域区分 D 严格·C 宽松·B 可恢复；各 shard 表态齐 B✓r538/C✓r556/D✓r650/A✓r511+r515 → P-005 待论文 §2/§5/§9 落盘闭合)`
 
 ---
 
