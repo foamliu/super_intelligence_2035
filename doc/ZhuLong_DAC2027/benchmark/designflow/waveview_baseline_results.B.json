@@ -12,7 +12,13 @@
       "domain": "spice_sim",
       "original_degradation": "B-grade synth_deck: waveform_A.csv + meas_config_A.json text surrogate + Python script parser (L1). SUT writes script to parse CSV and pass — no image/multimodal capability tested.",
       "restored_form": "image-required answer-deliverable: rise_margin_A.png (matplotlib, .75 sandbox, 1170x676, clk_a+data_a shared time axis, no labels/threshold/markers). SUT reads figure to determine rise-edge crossing times at 50% swing, delivers rise_margin_report.json.",
-      "oracle": {"ref_edge_time": 5.1667, "target_edge_time": 7.3667, "margin_ns": 2.20, "vref": 0.75, "swing": 1.5},
+      "oracle": {
+        "ref_edge_time": 5.1667,
+        "target_edge_time": 7.3667,
+        "margin_ns": 2.2,
+        "vref": 0.75,
+        "swing": 1.5
+      },
       "check_conditions": 12,
       "self_verify": {
         "ref_pass": true,
@@ -26,7 +32,25 @@
       "image_required": true,
       "k_rationale": 12,
       "k_check": 12,
-      "baseline_run": {"status": "DONE", "verdict": "FAIL (correct)", "model": "minicpm5-2b-sft-v39-final", "thinking": "low", "timeout": 600, "cline_exit": 0, "dur_sec": 20, "reason": "no submit.zip produced (cline wrote nothing under outputs/)", "hook": "PreToolUse", "hook_blocks": 0, "failure_mode": "did-not-engage", "failure_mode_evidence": "0 mentions of rise_margin/png/margin/clk_a/data_a/submit.zip/outputs/task_brief/eda_flow across 11 session events (model never read prompt.txt or the PNG, never attempted the task). Comparable to D r650 alpha1 did-not-engage baseline.", "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001/20261114_163131", "status_jsonl_ts": "2026-11-14T08:31:31Z", "conclusion": "no-multimodal 2B text-only cannot read PNG => FAIL is correct baseline"}
+      "baseline_run": {
+        "status": "DONE",
+        "verdict": "FAIL (correct)",
+        "model": "minicpm5-2b-sft-v39-final",
+        "thinking": "low",
+        "timeout": 600,
+        "cline_exit": 0,
+        "dur_sec": 20,
+        "reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+        "hook": "PreToolUse",
+        "hook_blocks": 0,
+        "failure_mode": "did-not-engage",
+        "failure_mode_evidence": "0 mentions of rise_margin/png/margin/clk_a/data_a/submit.zip/outputs/task_brief/eda_flow across 11 session events (model never read prompt.txt or the PNG, never attempted the task). Comparable to D r650 alpha1 did-not-engage baseline.",
+        "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001/20261114_163131",
+        "status_jsonl_ts": "2026-11-14T08:31:31Z",
+        "conclusion": "no-multimodal 2B text-only cannot read PNG => FAIL is correct baseline",
+        "failure_mode_tier": "A",
+        "failure_mode_tier_def": "did-not-engage (model never read prompt/PNG, never attempted task)"
+      }
     },
     {
       "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
@@ -37,7 +61,39 @@
       "domain": "spice_sim",
       "original_degradation": "B-grade synth_deck: pre-exported .vec digital text + stimulus.list text + Perl parsing script (L1). SUT writes Perl script to parse .vec/.list and pass — no image/multimodal capability tested.",
       "restored_form": "image-required answer-deliverable: wr_dq_A.png (matplotlib, .75 sandbox session shardB-20261114-r551_WrDqMeas-001-waveview-restore-b7, 1170x560, DQ digital step waveform + WRITE command markers as red dashed verticals with 'W' label, no labels/threshold/numeric annotations). SUT reads figure to determine WRITE command times + DQ rising/falling edge times, computes per-write intervals + summary stats, delivers wr_dq_report.json.",
-      "oracle": {"write_count": 3, "writes": [{"index":0,"write_time":2.0,"rising_interval":1.2,"falling_interval":1.7},{"index":1,"write_time":8.0,"rising_interval":0.8,"falling_interval":1.5},{"index":2,"write_time":14.0,"rising_interval":1.3,"falling_interval":1.8}], "summary_rising": {"min":0.8,"max":1.3,"avg":1.1}, "summary_falling": {"min":1.5,"max":1.8,"avg":1.6667}},
+      "oracle": {
+        "write_count": 3,
+        "writes": [
+          {
+            "index": 0,
+            "write_time": 2.0,
+            "rising_interval": 1.2,
+            "falling_interval": 1.7
+          },
+          {
+            "index": 1,
+            "write_time": 8.0,
+            "rising_interval": 0.8,
+            "falling_interval": 1.5
+          },
+          {
+            "index": 2,
+            "write_time": 14.0,
+            "rising_interval": 1.3,
+            "falling_interval": 1.8
+          }
+        ],
+        "summary_rising": {
+          "min": 0.8,
+          "max": 1.3,
+          "avg": 1.1
+        },
+        "summary_falling": {
+          "min": 1.5,
+          "max": 1.8,
+          "avg": 1.6667
+        }
+      },
       "check_conditions": 13,
       "self_verify": {
         "ref_pass": true,
@@ -51,12 +107,31 @@
       "image_required": true,
       "k_rationale": 13,
       "k_check": 13,
-      "baseline_run": {"status": "DONE", "verdict": "FAIL (correct)", "model": "minicpm5-2b-sft-v39-final", "thinking": "low", "timeout": 600, "cline_exit": 0, "dur_sec": 354, "reason": "no submit.zip produced (cline wrote nothing under outputs/)", "hook": "PreToolUse", "hook_blocks": 0, "failure_mode": "engaged-but-could-not-read-image (tool-confusion variant)", "failure_mode_evidence": "15 tool calls, all off-task: read_files x3 (all /dev/null, never the PNG) + run_commands x6 (all 'echo NOTICE' no-ops) + search_codebase x2 (_NO_MATCH_) + eda_flow__open_session x1 (WRONG task_id 'IO-RVV-001' — hallucinated a different task) + ask_question x3 (all FAILED: invalid input, expected string/array received undefined). png_read=False (never attempted to read wr_dq_A.png). 0 mentions of any task keyword (write_time/DQ/rising/falling/wr_dq_report/submit) across 1752 events. Model engaged (vs alpha2 did-not-engage at 20s) but could not read the waveform PNG, got lost in irrelevant tool calls, and never produced wr_dq_report.json. Distinct from alpha2 baseline (did-not-engage, 20s) but same correct FAIL verdict.", "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-FsdbWrDqMeas-001/20261114_164419", "status_jsonl_ts": "2026-11-14T08:44:19Z", "conclusion": "no-multimodal 2B text-only cannot read PNG => FAIL is correct baseline. Engagement does not change verdict: model cannot extract WRITE times / DQ edges from figure, so cannot produce answer json."}
+      "baseline_run": {
+        "status": "DONE",
+        "verdict": "FAIL (correct)",
+        "model": "minicpm5-2b-sft-v39-final",
+        "thinking": "low",
+        "timeout": 600,
+        "cline_exit": 0,
+        "dur_sec": 354,
+        "reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+        "hook": "PreToolUse",
+        "hook_blocks": 0,
+        "failure_mode": "engaged-but-could-not-read-image (tool-confusion variant)",
+        "failure_mode_evidence": "15 tool calls, all off-task: read_files x3 (all /dev/null, never the PNG) + run_commands x6 (all 'echo NOTICE' no-ops) + search_codebase x2 (_NO_MATCH_) + eda_flow__open_session x1 (WRONG task_id 'IO-RVV-001' — hallucinated a different task) + ask_question x3 (all FAILED: invalid input, expected string/array received undefined). png_read=False (never attempted to read wr_dq_A.png). 0 mentions of any task keyword (write_time/DQ/rising/falling/wr_dq_report/submit) across 1752 events. Model engaged (vs alpha2 did-not-engage at 20s) but could not read the waveform PNG, got lost in irrelevant tool calls, and never produced wr_dq_report.json. Distinct from alpha2 baseline (did-not-engage, 20s) but same correct FAIL verdict.",
+        "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-FsdbWrDqMeas-001/20261114_164419",
+        "status_jsonl_ts": "2026-11-14T08:44:19Z",
+        "conclusion": "no-multimodal 2B text-only cannot read PNG => FAIL is correct baseline. Engagement does not change verdict: model cannot extract WRITE times / DQ edges from figure, so cannot produce answer json.",
+        "failure_mode_tier": "C",
+        "failure_mode_tier_def": "engaged-but-could-not-read-image (understood task, attempted tools, but could not read PNG)"
+      }
     }
   ],
   "pending": [],
   "baseline_status": "BOTH baselines DONE (alpha2 r551 FAIL + beta7 r552 FAIL, both correct). B-shard WAVEVIEW task 1 fully delivered: 2 cases restored to image-required + 2 baselines run, both FAIL with no-multimodal 2B text-only model (correct baseline for measuring multimodal gain).",
   "self_correction": "r547-r549 MEMORY_B wrote 'WAVEVIEW: B 不可认领(全 D域)' — this was a factual error. waveview_restore_plan_D.md §二 line 25/30/38 explicitly assigns alpha2/beta7 to shard B ('case 在 B.jsonl，移交 shard B'). B is the idle 0-case shard (mc10.fresh=0) and should claim. Corrected in r550 (alpha2 restored), r551 (beta7 restored + alpha2 baseline FAIL), r552 (beta7 baseline FAIL).",
   "restored_count": 2,
-  "note": "B-shard WAVEVIEW task 1 scope = alpha2 + beta7 (2 cases, both in B.jsonl). Both restored to image-required answer-deliverable form (r550 alpha2, r551 beta7) AND both baselines run with no-multimodal 2B text-only model (r551 alpha2 FAIL did-not-engage 20s, r552 beta7 FAIL engaged-but-could-not-read-image 354s) — both correct baselines. D-shard handles the other 6 cases (alpha1/beta9/alpha4/beta8/beta10/beta11) per its own delivery log."
+  "note": "B-shard WAVEVIEW task 1 scope = alpha2 + beta7 (2 cases, both in B.jsonl). Both restored to image-required answer-deliverable form (r550 alpha2, r551 beta7) AND both baselines run with no-multimodal 2B text-only model (r551 alpha2 FAIL did-not-engage 20s, r552 beta7 FAIL engaged-but-could-not-read-image 354s) — both correct baselines. D-shard handles the other 6 cases (alpha1/beta9/alpha4/beta8/beta10/beta11) per its own delivery log.",
+  "failure_mode_tier_schema": "A=did-not-engage / B=engaged-text-only / C=engaged-but-could-not-read-image (per A r527 stratification proposal for WAVEVIEW Task2 VQA gain measurement)"
 }
