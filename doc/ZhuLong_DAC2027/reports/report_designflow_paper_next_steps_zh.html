@@ -85,7 +85,7 @@
 <!-- ② 论文现状速览 -->
 <h2>② 论文现状速览（关键数字表）</h2>
 <div class="kpi">
-  <div class="card"><div class="n">1264</div><div class="l">活基准 case 数 \Ntasks（A277/B301/C321/D365）</div></div>
+  <div class="card"><div class="n">1278</div><div class="l">活基准 case 数 \Ntasks（A279/B309/C335/D377，shard sum 1300）</div></div>
   <div class="card"><div class="n">696</div><div class="l">冻结评测 run 数 \Neval（2026-11-09）</div></div>
   <div class="card"><div class="n">10.0%</div><div class="l">Pass@1（62/620 decided，Wilson CI [7.9,12.6]）</div></div>
   <div class="card"><div class="n">13</div><div class="l">EDA 领域数（4 个领域组）</div></div>
@@ -95,7 +95,7 @@
 
 <table>
 <tr><th>维度</th><th>论文现状</th><th>来源（section + 行）</th></tr>
-<tr><td>活基准规模</td><td>\Ntasks = 1264 cases（截至 2026-11-14，主 jsonl 实测 1251）</td><td><code>main.tex:62</code> <code>\newcommand{\Ntasks}{1264}</code></td></tr>
+<tr><td>活基准规模</td><td>\Ntasks = 1278 cases（截至 2026-11-14，主 jsonl 实测 1279；shard 合计 1300，merge-lag 21）</td><td><code>main.tex:64</code> <code>\newcommand{\Ntasks}{1278}</code></td></tr>
 <tr><td>评测快照</td><td>\Neval = 696 run（冻结 2026-11-09），62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT</td><td><code>4_experiments.tex:34,58</code></td></tr>
 <tr><td>分母口径</td><td>headline = 62/620 = 10.0%；计 ABSENT 为失败 9.9%；计 ERROR 为失败 8.9%；三者相差 ≤1.1pp</td><td><code>4_experiments.tex:66</code> 脚注</td></tr>
 <tr><td>骨干</td><td>单一 DeepSeek-V4-Pro；GLM-5.2/Kimi-K2.6/V4-Flash/Doubao-Seed-2.0-Pro 已配置未跑完</td><td><code>4_experiments.tex:22</code></td></tr>
@@ -209,8 +209,8 @@
 
 <!-- Q5 -->
 <h3><span class="seq">5</span>benchmark 本身该怎么演进</h3>
-<h4>5.1 1251 case 的分布是否合理？13 域有没有偏科？</h4>
-<p>活基准主 jsonl 实测 1251 case（A277/B301/C321/D365，与附录 A <code>appendix/A_benchmark_details.tex:54</code> 及 \Ntasks 宏 1264 仍有 13 行出入，应是近期增删未同步 merge/宏——<b>这本身是个要修的不一致</b>）。分布高度偏斜：</p>
+<h4>5.1 1279 case 的分布是否合理？13 域有没有偏科？</h4>
+<p>活基准主 jsonl 实测 1279 case（A279/B309/C335/D377，与附录 A <code>appendix/A_benchmark_details.tex:54</code> 及 \Ntasks 宏 1278 基本对齐；shard 合计 1300 与主 jsonl 1279 仍有 21 行 merge-lag——<b>不一致从「宏 vs 主 jsonl」转移为「主 jsonl vs shard 合计」，P2 仍有效</b>）。分布高度偏斜：</p>
 <table>
 <tr><th>域</th><th>case 数</th><th>占比</th><th>评测 run</th><th>评测 Pass%</th><th>备注</th></tr>
 <tr><td>spice_sim</td><td>239</td><td>19.1%</td><td>104</td><td>8.4%</td><td>B 主力，但 high-mc 段已结构性 mined-out（见 MEMORY_B r465–r507）</td></tr>
@@ -229,7 +229,7 @@
 </ul>
 
 <h4>5.3 增长轨迹与池饱和</h4>
-<p>B shard 的实测（r465–r507 跨两次快照反复复现）：1109 池 mc≥10 fresh 在 r476 后归零（6 个 fresh 全 peek 完）；ops 11-13 13:30 触发新全量扫描 <code>ssh_eda_search_20261113_131349</code>（41409 行）换池到 1113，B 域 mc≥10 fresh 回弹到 76，但 r506（1113 池 65 fresh 全 peek）+ r507（post-1113 daily-log 再挖 15 fresh 全 peek）累计 <b>80 fresh 全部质量饱和、0 clean produce-task</b>——非数量枯竭（fresh≠0，§4 规则下不得报池枯竭），而是 <b>filter-quality 饱和</b>：loose keyword filter 放进跨域噪声（waveview/innovus/verilog-dominant 被误纳为 B）、Q&A/inspection/diagnosis（非 produce-task）、P-004 cross-shard near-dup（joeyl WCK CML / jiangbaol StrongARM 反复出现）。这把池饱和从「单次快照现象」升级为<b>跨两次快照（1109+1113）反复复现的结构性饱和</b>，论点更强。这指向一个 benchmark 级风险：<b>基于单次快照的 trace 池会饱和，且换池只能短暂回弹</b>。论文 §5 threats 提了「Frozen snapshot, adding cases changes the mix」（<code>5_analysis.tex:140</code>），但没提「池本身会枯竭需周期性重扫 + filter 精化」。建议补 roadmap：(1) 周期性全量重扫 698 机（已实证有效：1109→1113 回弹 76 fresh）；(2) <b>filter 精化</b>——把 B-keyword filter 从「spice 词命中」收紧为「spice 工具计数/总工具计数 ≥35% 且 spice≥10」（B 线原口径），压掉跨域噪声；(3) post-snapshot 新用户靶向扫描（B r470 已实证 7prw8 来自 post-1109 session，r507 post-1113 daily-log 挖掘亦解锁 15 fresh，但需 filter 精化才能转 case）。</p>
+<p>B shard 的实测（r465–r531 跨两次快照反复复现）：1109 池 mc≥10 fresh 在 r476 后归零（6 个 fresh 全 peek 完）；ops 11-13 13:30 触发新全量扫描 <code>ssh_eda_search_20261113_131349</code>（41409 行）换池到 1113，B 域 mc≥10 fresh 回弹到 76，但 r506（1113 池 65 fresh 全 peek）+ r507（post-1113 daily-log 再挖 15 fresh 全 peek）累计 <b>80 fresh 全部质量饱和、0 clean produce-task</b>；<b>r531 再对 1113 池剩余 13 fresh 做完整覆盖 peek（非抽样，13/13 全跨域：7 D 域 waveview how-to/measurement + 2 C 域 calibre/layout + 1 A/C virtuoso debug + 2 非 EDA/config Q&A + 1 session-gone），park 后 mc10.fresh(B)=0</b>——非数量枯竭（fresh 在 park 前非 0，§4 规则下不得报池枯竭），而是 <b>filter-quality 饱和</b>：loose keyword filter 放进跨域噪声（waveview/innovus/verilog-dominant 被误纳为 B）、Q&A/inspection/diagnosis（非 produce-task）、P-004 cross-shard near-dup（joeyl WCK CML / jiangbaol StrongARM 反复出现）。这把池饱和从「单次快照现象」升级为<b>跨两次快照（1109+1113）反复复现 + 同一快照内完整覆盖无遗漏</b>的结构性饱和，论点闭合。这指向一个 benchmark 级风险：<b>基于单次快照的 trace 池会饱和，且换池只能短暂回弹</b>。论文 §5 threats 提了「Frozen snapshot, adding cases changes the mix」（<code>5_analysis.tex:140</code>），但没提「池本身会枯竭需周期性重扫 + filter 精化」。建议补 roadmap：(1) 周期性全量重扫 698 机（已实证有效：1109→1113 回弹 76 fresh）；(2) <b>filter 精化</b>——把 B-keyword filter 从「spice 词命中」收紧为「spice 工具计数/总工具计数 ≥35% 且 spice≥10」（B 线原口径），压掉跨域噪声；(3) post-snapshot 新用户靶向扫描（B r470 已实证 7prw8 来自 post-1109 session，r507 post-1113 daily-log 挖掘亦解锁 15 fresh，但需 filter 精化才能转 case）。</p>
 
 <!-- Q6 -->
 <h3><span class="seq">6</span>如果只有两周，先做哪三件事？</h3>
@@ -265,7 +265,7 @@
 <tr><td><span class="tag p2">P2</span></td><td>逐断言 pass-rate 热图</td><td>判分器维护岗</td><td>1.5 人日</td><td>check runner 改造输出 per-assertion</td><td>断言类型 × 域热图 → §5.1 诊断</td></tr>
 <tr><td><span class="tag p2">P2</span></td><td>扫描关键词补 custom_sim/SiliconSmart/liberty + 重扫</td><td>ops（扫描属 A/ops）</td><td>1 人日 + 1 扫描轮</td><td>698 机只读权限</td><td>characterization 候选增量 → §2 覆盖修复</td></tr>
 <tr><td><span class="tag p2">P2</span></td><td>平衡评测子集（每域等 n）</td><td>benchmark 维护岗</td><td>1 人日</td><td>—</td><td>balanced-headline 口径 → §4 双口径报告</td></tr>
-<tr><td><span class="tag p2">P2</span></td><td>修 \Ntasks 宏与实际 jsonl 不一致（1264 vs 1251，merge lag）</td><td>论文编辑（A）</td><td>0.2 人日</td><td>—</td><td>数字一致性</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>修 \Ntasks 宏 / 主 jsonl / shard 合计 三者不一致（1278 / 1279 / 1300，merge lag 21）</td><td>论文编辑（A）</td><td>0.2 人日</td><td>—</td><td>数字一致性</td></tr>
 <tr><td><span class="tag p2">P2</span></td><td>附录 A Task Example [TODO] 补完</td><td>case 维护（任选一中等 schematic_netlist case）</td><td>0.5 人日</td><td>—</td><td>完整 case 展示 → 附录 A</td></tr>
 </table>
 
