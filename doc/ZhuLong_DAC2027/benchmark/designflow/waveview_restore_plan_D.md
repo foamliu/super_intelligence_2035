@@ -106,5 +106,17 @@ check.py 无法直接验「agent 看了图」，只能验 deliverable 文本答�
 - **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。注：providers.json 原 model=deepseek-v4-pro-cloud 在本地 18096 代理不存在（仅 minicpm5-2b 可用），用 --model minicpm5-2b-sft-v39-final 覆盖。结果落 eval/status.jsonl + designflow/waveview_baseline_results.D.json。
 - **判分隔离**：SUT workdir 只放 prompt.txt + eye_sweep_A.png + task_brief.md（PreToolUse hook 验证无 check.py/reference/hidden 泄漏）；判分在独立 judge dir 跑。
 
+### β9 WaveMaxFind-001 — ✅ 已恢复原形态 + 基线已跑（r651, 2026-11-14）
+
+- **恢复完成**：移除文本波形替身（waveform_vb.txt / hidden/waveform_out.txt / hidden/waveform_xa.txt 全删），改用 matplotlib 在 .75 沙盒生成的真数据图 PNG（wave_vb_A.png：v(vb) 阻尼正弦 v(t)=0.6+0.4·exp(-t/3ns)·cos(2π·1GHz·t)，500 点 [0,7ns]，97KB，无数据标签，需从坐标轴读数；hidden/wave_out_B.png：v(out) 同构异值 offset=0.5/amp=0.45/f=0.8GHz/tau=2.5ns/[0,8ns]，93KB，provenance + 反硬编码）。
+- **prompt 改写**：要求 agent 看图读出 v(vb) 的 max/t_at_max/min/t_at_min/peak_to_peak/offset/period 七个量，交付 wv_summary.csv 答案（不再是脚本）。明示"不要尝试用脚本去解析图中的原始数据"。
+- **check.py 重写**：12 条件 (a)-(l)，answer-validation 设计——oracle 由 subprocess 从 embedded A 波形参数重算（满足 §4.2 真跑）；值条件 (e)-(i) 验 max=1.0/t_at_max=0/min=0.2609/t_at_min≈0.491ns/p2p=0.7391（±0.02V / ±0.08ns 读图容差）；反硬编码 (k) 拒 B 特征字面量（v(out)/0.95/0.14843/0.80157/1.25，刻意排除 "0.5" 因 agent 合法读 t_at_min≈0.5ns）；自洽 (l) 验报告的 (max,t_at_max)/(min,t_at_min) 落在 A 曲线上（击败数值与时间错配猜测）。
+- **契约适配（metadata.restoration 记录）**：answer-deliverable 设计下，§4.1/§4.2 candidate-script-runs-on-hidden-B 机制替换为 oracle-recomputed-via-subprocess + anti-hardcode-B-token guard + self-consistency-on-A-curve；hidden B 图保留作 provenance + 反硬编码。
+- **自验**：REF PASS 12/12；5 negative（fake_empty/fake_wrong_header/fake_wrong_max/fake_hardcode_B[B 全量答案]/fake_incoherent）全 FAIL（NEG_RC=0，各击溃不同条件）；§4.9 退化回归（empty zip / stub[全零] / core-deleted[仅表头]）全 FAIL。
+- **断言闸门**：k_rationale==k_check==12 ≥ 8 ✓。
+- **jsonl 更新**：EDA-Eval-DesignFlow_D.jsonl 中该 case 已替换为 restored form（attachments=[wave_vb_A.png, task_brief.md], image_required=true, track=synthesized-image-restored, restoration notes, k=12）。D.jsonl 仍 377 条（恢复=替换非新增）。
+- **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。结果落 eval/status.jsonl + designflow/waveview_baseline_results.D.json（β9 段追加）。
+- **判分隔离**：SUT workdir 只放 prompt.txt + wave_vb_A.png + task_brief.md（PreToolUse hook 验证无 check.py/reference/hidden 泄漏）；判分在独立 judge dir 跑。
+
 ### 待恢复（下轮起）
-α4 TempSelWaveform-001 / β9 WaveMaxFind-001 / β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 4 题）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 6 题。B 域 α2/β7 移交 shard B；β8 跨 shard 待 A 裁；β5 未落库待确认。
+α4 TempSelWaveform-001 / β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 3 题）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 5 题。B 域 α2/β7 移交 shard B；β8 跨 shard 待 A 裁；β5 未落库待确认。
