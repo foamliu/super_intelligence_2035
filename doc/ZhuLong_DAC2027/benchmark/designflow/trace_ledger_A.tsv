@@ -565,3 +565,6 @@
 1794557869660_0g9n6.messages.json	thomas1w	hfeg0plg98	42	verification	parked		2026-11-14 22:45	debug/analysis only: 1 user input '仿真卡死帮我看下' (sim hang), agent wrote diagnostic grep scripts diag_find/diag_grep/diag_log, no produce-task deliverable; REJECT
 1794639653207_iuarg.messages.json	gracew	hfeg0plg92	32	verification	case	EDA-Eval-DesignFlow-CompressRd14bitAdd-001	2026-11-14 22:59	
 1794649621804_tlrtw	jkxu	hfeg0pkn004	56	verification	case	EDA-Eval-DesignFlow-VsimRunscriptLogoptFix-001	2026-11-14 23:29	
+1794577512268_r1hnw	stanleyl	hfeg0plg105	133	verification	case	EDA-Eval-DesignFlow-NetlistHierFinder-001	2026-11-15 00:04	
+1794561779908_voyfu	e0014036	hfeg0plg76	202	verification	parked		2026-11-15 00:04	analysis Q&A only: 13/13 user inputs are read-file/analyze-signal-origin/analyze-circuit-risk/analyze-waveform, no produce-task deliverable; REJECT
+1794555284506_lopt8	congyi	hfeg0plg97	58	verification	parked		2026-11-15 00:04	analysis Q&A only: 7/7 user inputs are how-to-read-testbench/summarize-PRAC/scenario-checker-analysis/longtRAS-explanation, no produce-task deliverable; REJECT
