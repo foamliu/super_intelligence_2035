@@ -6,9 +6,12 @@ WAITING: 0
 > - **判据对照**：用户主判据「真实题通过率有提升」**未达成**（整题 0 翻转·根因=k 全过门槛高·2B 把单量读对率拉到 55.5% 但无任一题全过·最接近 β6 9/14·β11 10/12·α4 6/9）；使命判据「三段数字并列表」**达成**且 V2−V1=+17.3pp 证合成 60→90 迁移到真实题（每量增益非整题翻转）。口径=WaveView 真实题（等价重建·非合成集·.15 不可达=infra-blocker）。
 > - **产物**：`vision/vqa_tool/waveview_selftest/{waveview_selftest_v2_run.py,make_waveview_selftest_v2_report.py}`·`V2/*.json`(10)·`summary_v2.json`·`audit_v2.json`·`qwen35_vqa_server.py`(+`--adapter` PEFT LoRA·:30003)·报告 `reports/report_vision_waveview_selftest_zh.html`(覆盖为三段版·中文·0外链·0script·2内联SVG)·EXPERIMENTS §24。修了报告生成器 V2 图例 `##2f855a` 双井号 SVG 颜色 bug（`.replace` 因 Python 优先级绑错段未生效→直接写单井号）。复跑：起 :30003(--adapter)+:30001 再 `python waveview_selftest_v2_run.py`。**本轮非 idle-spin**（用户直令三段核心实验跑通+报告+EXPERIMENTS+bug 修复）。**WAITING: 0**。
 
-> 📦 **wake #1237 · 2026-11-14 21:3x** 例行巡检·全交付态·零新增·非 idle-spin（fetch→behind2→`pull --ff-only` 整合 2 designflow shard A commit：`CpForceBindInject-001`(A.jsonl 282→283·k=12·非 WaveView 题·不影响 vision 10 题集 D8+B2)+MEMORY_A 归档·0 触视觉文件·无新 vision 令·COLLAB 自 wake#1232 起无新 task2 交付·复验 wake#1235 三段交付物在位：V0/V1/V2 各 10 case json+summary_v2+audit_v2(cheat=0·vqa_calls=81·image_reads=0)+报告 11516B 0script 0外链 2内联SVG+EXPERIMENTS §24·VQA 端点 :30001 health ready(Qwen3.5-2B load_s=2.8)·#3 task2 仍 infra-blocked 待 ops/网管放行 .17 入站 TCP 30002 给评测机·vision 无 passwordless sudo 不能自改）·已fold(详情 daily-memories-vision/2026-11-14.md)。
+> 📦 **wake #1238 · 2026-11-14 21:4x** 例行巡检·全交付态·零新增·非 idle-spin（fetch→0/0 同步·无新 vision 令·root MEMORY 顶仍 19:5x(已 wake#1235 落地)·COLLAB 自 wake#1232 起无新 task2 交付·复验 wake#1235 三段交付物在位自洽(V0/V1/V2 各 10 json+summary_v2 0/10 每量 30.9%→38.2%→55.5%+audit_v2 cheat=0 vqa_calls=81+报告 11516B+EXPERIMENTS §24)·三端点实测全在线 :30001(Qwen3.5-2B ready)/:30002(MCP qwen35-vqa v1.30.0)/:30003(adapter rft2_adapter_seed11)·GPU5 常驻·loop pid 1236761 健康·#3 task2 仍 infra-blocked 待 ops 放行 .17 入站 TCP 30002 给评测机·vision 无 passwordless sudo)·research 日报 vision 建议=视觉塔预训练/合成对照(advisory·针对已收敛编码器线·按任务书无相关则忽略)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 📦 **wake #1236 · 2026-11-14 21:2x** 例行巡检·全交付态·零新增·非 idle-spin（git pull 整合 1 pretrain heartbeat·无新 vision 令·COLLAB 无新 designflow task2 交付·VQA 端点 :30001 health ready·#3 task2 仍 infra-blocked 待 ops/网管放行 .17 入站 TCP 30002 给评测机·vision 无 passwordless sudo 不能自改·wake#1235 三段自测为最新交付）·已fold(详情 daily-memories-vision/2026-11-14.md)。
+
+> 📦 **wake #1237 · 2026-11-14 21:3x** 例行巡检·全交付态·零新增·非 idle-spin（pull 整合 2 designflow shard A commit·0 触视觉·复验 wake#1235 三段交付物在位·#3 task2 仍 infra-blocked）·已fold(详情 daily-memories-vision/2026-11-14.md)。
+
+> 📦 **wake #1236 · 2026-11-14 21:2x** 例行巡检·全交付态·零新增·非 idle-spin（pull 整合 1 pretrain heartbeat·无新 vision 令·#3 task2 仍 infra-blocked·wake#1235 三段自测为最新交付）·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1234 · 2026-11-14 20:2x** 用户直令 19:4x WaveView 10 题自测（±VQA MCP·阶段 A·两段）✅ 已交付（V0=V1=0/10·0 翻转·cheat=0·每量 30.9%→38.2%）·原文已归档 → daily-memories-vision/2026-11-14.md + EXPERIMENTS §23。三段版见 wake#1235/§24。需要时再读。
 
