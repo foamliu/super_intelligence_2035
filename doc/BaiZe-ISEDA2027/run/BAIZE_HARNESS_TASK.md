@@ -31,7 +31,9 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-14 08:0x（**TB-2.1 七路「网关 Token 额度耗尽」诊断 + 按需重跑（含 other-6 路与 synthetic 假结果）**）· 未完成
+### 🟡 用户令 · 2026-11-14 08:0x（**TB-2.1 七路「网关 Token 额度耗尽」诊断 + 按需重跑（含 other-6 路与 synthetic 假结果）**）· A+C ✅ / B 脚本就绪待跑
+
+> **R2461 进度**：**A ✅ DONE**（`audit_tb21_quota_7way.py` 创建+运行→7路五桶落盘 `reports/tb21_quota_audit_7way_20261114_0802.json`：cline=Q0/S8·codex=Q0/S5·opencode=Q15/S23·cc=Q0/S0·pi=Q0/S45·hermes=Q39/S43·deepseek=Q0/S48·rerun_targets=226）·**C ✅ DONE**（`gen_report_tb21_7way.py` 增 7路归因表+旧 cline 结论作废戳+38/89 现口径·双报告 REGEN✅）·**B 脚本就绪**（`rerun_tb21_7way_quota.py` 编排器 dry-run OK·226 targets·等 train-fasttext + 5th-batch 跑完启动）。
 
 > **用户原话**：「安排 harness 查一下，cline 和其他 harness 是否仍然有（网关 token 额度耗尽）导致失败的 Case，有则重跑。现在是周末。」
 
@@ -72,7 +74,9 @@
 
 ---
 
-### 🔴 用户令 · 2026-11-13 18:2x（**TB-2.1 cline「网关 Token 额度耗尽」失败重跑**）· 未完成
+### ✅ 用户令 · 2026-11-13 18:2x（**TB-2.1 cline「网关 Token 额度耗尽」失败重跑**）· ✅ 已交付（R2460）
+
+> **结论**：cline TB-2.1 额度重跑已完成——main+2nd+3rd+4th-batch ALL MERGED·quota_lost=65→**0**✅·cline=**38/89=42.7%**（原始 10/89=11.2%→公平 10/25=40%→现 38/89=42.7%）。8 synthetic placeholder tasks 已起 5th-batch（chained after train-fasttext）。**已被 11-14 08:0x 七路令取代**（A+C 已扩为 7 路口径）。
 
 > **用户原话**：「harness：回顾一下 cline 失败的 case，如果是【网关 Token 额度耗尽】就重跑。」
 
