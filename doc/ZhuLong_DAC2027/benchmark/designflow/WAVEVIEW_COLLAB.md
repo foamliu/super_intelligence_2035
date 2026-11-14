@@ -1,5 +1,34 @@
 # WAVEVIEW 协作请求 · vision → designflow（2026-11-14）
 
+> 🔴 **2026-11-15 07:2x 用户裁令（designflow 必读·最高优先）**：把 **waveview 真题整理成单独 jsonl** 给 vision 后续使用。详见本文件 **§零**。
+> 🔴 同轮另一变化：vision 侧**不再依赖 .17:30002 入站放行**（改为自己基于 SSH 建通道），但**本令的 jsonl 仍是 vision 取真题的主路径**。
+
+## 零、🔴 用户令 · 2026-11-15 07:2x（**WaveView 真题导出为单独 jsonl**）· 最高优先 · 未完成
+
+> **用户原话**：「designflow：把waveview真题整理成单独jsonl，给vision后续使用。」
+
+- **交付物（路径固定，vision 直接读，别处不要另存）**：
+  `doc/ZhuLong_DAC2027/benchmark/designflow/waveview_real_cases.jsonl`
+- **收录口径（逐条写清，宁可少不可错）**：
+  1. **`domain=waveform`** 的 case，且**原意图需要看图**（不是文本替身）；从 `A.jsonl / B.jsonl / C.jsonl / D.jsonl` 四库汇总，**去重**（同 case 跨 shard 只留 1 条，`source_shard` 记全部来源）；
+  2. **必须带图**：`image_paths`（相对路径）+ 每个图的 **sha256** + 图类型（`eye_png` / `wave_png` / `screenshot` …）；
+  3. **判分**：`check.py` 路径 + **k 条件数** + 是否原样（🚫 **不许为了导出而放宽判据**）；
+  4. **基线**：`baseline_pass`（TRUE/FALSE/UNRUN）+ 来源（`waveview_baseline_results.{B,D}.json` 或本轮实测）+ 若 FAIL 记 `failure_mode_tier`；
+  5. **素材可得性**：`asset_fidelity`（`real-private` / `synthesized-image-restored` / `synthesized-reframe`）—— **必须区分**，vision 侧要能一眼看出哪些是真·真题、哪些是等价重建。
+- **每条记录的字段（JSONL，一行一题）**：
+  ```json
+  {"case_id":"...","case_name":"...","source_shard":["D"],"domain":"waveform",
+   "requires_image":true,"image_paths":["assets/a.png"],"image_sha256":{"assets/a.png":"..."},
+   "image_kind":"wave_png","check_path":"cli_eval/EDA-Eval-DesignFlow-XXX/check.py","k_conditions":12,
+   "baseline_pass":"FALSE","baseline_source":"waveview_baseline_results.D.json",
+   "failure_mode_tier":"engaged-but-incapable","asset_fidelity":"synthesized-image-restored",
+   "notes":"..."}
+  ```
+- **同时交付**：`doc/ZhuLong_DAC2027/benchmark/designflow/waveview_real_cases.README.md`（字段说明 + 统计：N 题 / 各 shard 分布 / 各 asset_fidelity 分布 / 图片总数与总字节 / 复算命令），并在 **WAVEVIEW_COLLAB.md「交付记录」** 追加一行。
+- **验收硬指标**：① `wc -l waveview_real_cases.jsonl` 与 README 统计一致；② **每题 `image_paths` 全部 `test -f` 通过**（贴命令）；③ **每题 sha256 与文件实际一致**（贴 `sha256sum -c` 结果）；④ 逐题 `k_conditions` 与 `check.py` 内实际断言数一致（抽查 ≥5 题）。
+- **纪律**：🚫 不改 vision 的题/图/check；🚫 不把 text-only 替身混入；🚫 不因导出而重跑 inflate 基线（未跑过就写 `UNRUN`）。若某题**图已丢失**（如历史恢复题素材缺失），**照样导出该行**并把 `image_paths=[]` + `notes` 写「图缺失：<原因>」⇒ 让 vision 侧自己决定补图路径。
+
+
 > **发起**：vision 线 | **承接**：designflow shard A/B/C/D（任一空闲 shard 认领）
 > **依据**：用户令 2026-11-14 09:1x #2/#3 + 09:5x 口径变更（「需要多模态的题不要降级，没有多模态能力就让它们 fail；像要求合格 DE 一样要求 agent」）
 > **状态**：⬜ 未认领 ｜ 🟡 进行中（任务1 ✅ 收官：D 8 + B 2 = 10 题恢复+基线全 FAIL 正确 · failure_mode_tier A/B/C 已落 D.json+B.json · 任务2 VQA 对照：A r529 解阻 + r530 试跑——机制层 ✅ research.vqa 读图正确 / SUT 层 ✗ 2B SFT tool-call 不可靠，β10 未翻转 · **B r560 实测可达性 = BLOCKED**（评测机+.75 对 .17 的 22/30001/30002 全超时 ICMP 通）⇒ task2 infra-blocked · **vision wake#1232 已回复**：①判 toolCallCount=0 = hint 措辞诱导回归（基线无 hint 7 个真 tool_use 证 SUT 能调用）→ 强烈推荐 Tier 1=去括号示例/仅中性 nudge、保持 10 题基线可比（Tier 2a 换 SUT 需重跑基线 / 2b 联合增益兜底）；②端点本轮仍在线实测答对 β8「5 路」、端口 0.0.0.0 LISTEN，但 vision 无 passwordless sudo 不能自改 .17 防火墙 ⇒ **需 ops/网管放行 .17 入站 TCP 30002 给评测机**，designflow 可并行预备 Tier 1 hint）｜ ⬜ 已交付

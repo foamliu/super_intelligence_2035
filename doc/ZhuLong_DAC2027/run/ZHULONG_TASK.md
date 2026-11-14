@@ -1,5 +1,54 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🔴 用户裁令 · 2026-11-15 07:2x（**⛔ 停止 H2 · 写 A0/A1/A2 中文 HTML 报告 · 提出 A3/A4… 消融 idea（目标：多 agent ≥ 单 agent）· 采纳「独立上下文 + 固定小 token 预算」思路**）· 最高优先 · 未完成
+
+> **用户原话**：「zhulong：停止H2。如果A2弱于A0，那么在A2基础上做的H2就没有意义，是浪费时间。现在请zhulong分析A0/A1/A2的日志trace，撰写中文HTML报告，提出A3/A4/... 的消融idea，以争取多agent得分>=单agent。另外，我有一个思路请zhulong考虑：多agent的主要优势在于独立上下文 -> 如果解决一个任务所需上下文 > 底模LLM上下文窗口，且单agent压缩机制不足以保留足够细节，那么多agent就可能优于单agent。因此是否可以考虑给每个agent(包括主agent）以确定且较小的token（in & out）预算，当然这就需要弱化（重测）基线。」
+
+**零、立即动作（本轮第一件事，做完再谈别的）**
+1. **停 H2**：`kill` `run_h2_ablation.sh` PID2017148 及其 cline 子进程（`pkill -f run_h2_ablation` + 逐 PID 核）；**已在跑的 B 臂 trace 一律保留不删**（它们是 H2 复现证据，也是 H2「子模型恒=父模型」的实证）；`§7 PHASE` 改 `h2_stopped_by_user`；`WAITING` 按实际（无 eval 在跑 ⇒ 0）。
+2. 在 `MEMORY_ZHULONG.md` 记一行：**H2 停止理由 = A2(53.3%) 显著弱于 A0(69.2%)、A1(66.7%)（per-round McNemar A0vsA2 p=0.0008 / A1vsA2 p=0.006），在 A2 基础上做子模型梯度无科学意义**。🚫 不要辩解、不要继续跑完。
+
+**一、任务：A0/A1/A2 日志 trace 分析 → 中文 HTML 报告**
+
+- **报告文件（新建，用户点名）**：`reports/report_zhulong_subagent_a0a1a2_trace_zh.html`（中文、单文件自包含、**0 外链 / 0 script**、图表用内联 SVG）。
+- **必须回答的问题（逐条给证据：`路径:行号` 或命令输出）**：
+  1. **A2 为什么掉 15.9pp？** 已知线索：`mcnemar_subagent_results.json.key_finding` 说主因是**生成吞吐下降**（cline_ok 60% vs A1 72–90%），而 gen-rate 都 ~87%（⇒ 不是代码质量，而是**没跑完/被截断**）。请用 trace **量化验证或推翻**这条：A2 的 per-task `wall_sec`、`max turns 命中率`、`finishReason` 分布、超时数、`spawn_agent` 调用次数分布（0 次 / 1 次 / >1 次）、子 agent 的 token 与耗时占比。
+  2. **spawn 的「采纳率」**：主 agent 是否真把子 agent 的结论写进代码？（A2 的 verifier 建议是否被采纳 → 采纳 vs 未采纳题目的 Pass 差）。这是 `mcnemar_subagent_results.json.deferred` 里挂着的欠账，本轮必须还。
+  3. **A1 为什么没增益（−2.5pp，p=0.68）？** 子 agent **无 MCP 工具**（只能 read_files/search_codebase/run_commands）⇒ 「研究委托」是否只是把主 agent 的 token 花了两遍？（对比 A0/A1 的 main tokens、tool histogram、重复探索 rate）。
+  4. **上下文维度**：三臂的 main-agent 峰值上下文占用、compaction 触发次数与压缩后丢失率（能测就测，测不了写「未采集 + 补法」）。
+  5. **三臂并列成绩表**（ITT mean±std、majority vote、3 轮逐轮数字、McNemar 三对，b/c/p/n 全列），**负结果照写**。
+- **报告纪律**：更新版报告顶部要有**一句话结论**；旧报告 `reports/report_zhulong_subagent_ablation_zh.html` 保留为历史档，加 SUPERSEDED 指针（不删）。
+
+**二、任务：提出 A3 / A4 / … 消融 idea（判据：多 agent ≥ 单 agent）**
+
+- 每个 idea 必须写成**可执行臂**：`臂号 | 唯一变量 | 机制（谁 spawn、何时 spawn、子 agent 看到什么、结果怎么回传） | 预注册判据 | 预期机制 | 风险与失效模式 | 预估成本`。
+- **硬约束**（这些是前面已经踩过的坑，别再踩）：
+  - 子 agent **继承父模型**、**无 MCP 工具**、`maxIterations` 继承父值 ⇒ 任何依赖「给子 agent 换模型/换工具/换 iter」的设计**当前技术不可行**（除非重做 wrapper 并 smoke 证明）。
+  - `-p 8` 下共享 data-dir 会出「messages must not be empty」竞态 ⇒ 需要并发的臂必须 per-task data-dir 隔离，并在臂描述里写清。
+  - 每个臂都要先说清**「为什么这条能超过 A0=69.2%」**，否则不做。
+- **候选起点（供参考，可采纳可推翻，须自己论证）**：
+  - **A3 上下文预算臂（用户思路，优先评估）**：给**主 agent 与子 agent 都设确定且较小的 token 预算（in 与 out 分别设上限）**，超限即强制交付/交接；同时**弱化并重测基线**（预算打平时主 agent 会怎么退化的「预算基线」必须先测出来，否则没有可比性）。
+  - **A4 接力臂（接力而非并行）**：把序列拆成「多段」，每段一个**全新上下文**的子 agent，段间只传**结构化交接物**（文件 + 摘要），主 agent 只做编排与合并（典型适用：长 trace 深读 → 逐段结论）。
+  - **A5 严格「写后只挑刺」臂**：verifier **只允许输出 issue list 到文件**，不得改代码；主 agent **必须逐条 triage（accept/reject + 理由）后才能提交** ⇒ 把 A2 的「无脑采纳/吞吐下降」隔离开。
+  - **A6 门槛臂（gate on trigger）**：只在「主 agent 判为高风险 / 上下文占用 > X% / 已有失败重试」时才 spawn，其余一律不 spawn（前提：先做 A3 的上下文测量）。
+- **必须先做的「可行性预检」**（写进报告，不要直接开跑）：每条 idea 在 cline v3.0.74 wrapper 的**注入强度**（提示注入 vs hook vs wrapper 级），能否**不弱化判据**地实施。
+
+**三、用户思路（必须正面回应，写进报告 §「为什么多 agent 可能赢」）**
+
+> 多 agent 的主要优势在**独立上下文**：当**解决一个任务所需上下文 > 底模上下文窗口**、且**单 agent 压缩不足以保留足够细节**时，多 agent 才可能优于单 agent。⇒ 设想：给**每个 agent（含主 agent）确定且较小的 token（in & out）预算**。
+
+- 你需要在报告中：
+  1. 把这条思路**形式化**成可检验假设（例：`H_ctx`：在「总上下文超窗」的分层子集上，多 agent 的 Δ 显著为正，且在「不超窗」子集上 Δ ≤ 0；即 **Δ 与 (所需上下文 / 窗口) 正相关**）；
+  2. 给出**分层口径**：用 A0 的 per-task 峰值上下文 / 压缩次数 / trace 长度做分层变量，把 40 题分成「超窗风险高 / 低」两层再比；
+  3. **诚实说明**：若当前 40 题子集**根本不够长**（大多数题不触发窗口），那就**明确写「本数据集无法检验该假设」**并给出**能检验它的任务构造方案**（例如取 158 全集中 trace 最长的 top-k）。🚫 不许用 40 题上的「无差异」去否定用户假设。
+
+**四、交付清单**
+1. `reports/report_zhulong_subagent_a0a1a2_trace_zh.html`（含 §三 的假设形式化）
+2. `A3/A4/… idea 表`（可直接接成下一轮 RUN_ARMS）
+3. `MEMORY_ZHULONG.md` 一节 + `daily-memories/2026-11-15.md` 流水 + commit/push
+4. **不要**在本轮擅自起任何新臂（除 A3 前必需的**上下文测量**，且须 GPU/沙盒空闲、不影响他线）
+
+
 ### 🔴 运维令 · 2026-11-14 23:4x（**① 立即清盘 ② 隧道事故复盘自检**）· 最高优先
 
 > **用户原话**：「zhulong：清理磁盘」「原来隧道好的，现在坏了么？怎么坏的？什么情况？让它自己报告」。

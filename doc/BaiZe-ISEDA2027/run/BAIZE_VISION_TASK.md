@@ -28,6 +28,53 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户裁令 · 2026-11-15 07:2x（**解掉两条「真阻塞」：① 走 SSH 自建 VQA 通道 ② 自行 SSH 去 36.15 取 WaveView 真题**）· 最高优先 · 未完成
+
+> **用户原话**：「vision：目前隧道只保证 10.251.36.15 <-> .17 SSH 畅通，30002 不能保证，需要基于SSH，自己（vision在.17）想办法。关于【缺 >10 道 WaveView 真题】，放行vision自行SSH到36.15，检查designflow放置case的目录，自行检出。」
+
+**一、口径变更（先读，别再用旧结论）**
+
+| 旧状态（wake#1275–#1283 心跳里写的） | **新口径** |
+|:--|:--|
+| 阻塞② task2「评测机 → .17:30002 TCP 超时，待 ops/网管放行」 | **不成立了**。运维**不会再放行 30002**；**隧道只保证 `10.251.36.15 ↔ .17` 的 SSH**（`.17:3333`）。⇒ 由**你自己**基于 SSH 建通道 |
+| 阻塞① 「缺 >10 道 WaveView 真题，待 designflow 供给」 | **已解阻**。用户**放行你自行 SSH 到 36.15**，去 designflow 放 case 的目录**自行检出** |
+| 等 ops / 等 designflow | 🚫 **不许再写「待 ops 放行」「待 designflow 供给」** —— 这两条现在都是**你自己的工作项** |
+
+**二、任务 ①：基于 SSH 自建「评测机（36.15）→ VQA 后端（.17:30001/30002/30003）」通道**
+
+- 事实：评测跑在 **36.15**（评测/沙盒容器在 36.15 侧），VQA 服务在 **.17**（`:30001` 基模 / `:30002` MCP / `:30003` +rft2_adapter）。36.15→.17 的 TCP 打不通，但 **36.15 能 SSH 到 .17**（隧道保障）。
+- **做法（任选一，择优并写清理由）**：
+  1. **SSH 端口转发**：先 `ssh -v` 核实握手方向（哪端是 sshd），再决定 `-L` 还是 `-R`；例：`.17` 侧 `ssh -N -R 30001:127.0.0.1:30001 -R 30002:127.0.0.1:30002 -R 30003:127.0.0.1:30003 <user>@<36.15>`。`.17` 侧若 `GatewayPorts=no`，就只能监听 `127.0.0.1` ⇒ 让评测容器走 `--network host` 或经宿主机网关 IP 访问。**实测命令 + `ss -ltnp` 输出必须落盘**。
+  2. **SSH 隧道 + 本地 socat/nginx 暴露**（容器内可达宿主机时用 `host.docker.internal` 或宿主机网关 IP）。
+  3. **HTTP-over-SSH 桥**（最抗断）：转发 `/health`、`/v1/chat/completions`、`/mcp` 三类端点。
+- **必须做到**：
+  - **连通性预注册验证**：从 **36.15 侧宿主** + **评测容器内部** 各 `curl -sS -m 10 http://<桥地址>/health`（三端口各一次），输出落 `run/vision_ssh_bridge_proof.txt`；**容器视角才是评测视角**。
+  - **断线自愈**：`autossh` 或 watchdog（`while true; do ssh -o ServerAliveInterval=15 ...; sleep 30; done`），重连日志落盘；🚫 只建一次性连接不算完。
+  - **不可放宽判据**：换的只是传输层，**题目 / designflow check 判分 / 防作弊（禁 PIL·OCR·base64·搜答案）全不变**。
+- **交付**：`run/vision_vqa_ssh_bridge.md`（方案选择 + 实测命令 + 三方证据：36.15 宿主 / 容器内 / 断线重连实验）+ 用**桥接后**的通道重跑 task2 对照，证明「VQA tool 在评测环境里真的可用」。
+
+**三、任务 ②：自行 SSH 到 36.15 检出 WaveView 真题（>10 道）**
+
+- **放行范围**：你有权 SSH 到 36.15，读取 designflow 放 case 的目录。已知线索（据此定位，不要凭猜）：
+  - 交接区：`doc/ZhuLong_DAC2027/benchmark/designflow/WAVEVIEW_COLLAB.md`（「交付记录」表）
+  - 恢复计划：`doc/ZhuLong_DAC2027/benchmark/designflow/waveview_restore_plan_D.md`（α1–α4 / β7–β11 逐题恢复路径 + 图类型）
+  - 你侧清单：`run/reports/waveview_need_image_handoff.md`（α4+β7=11；**已订正 β5 不存在、真·可恢复分母=4**）
+  - 评测目录：36.15 侧 `.../designflow/cline_eval/EDA-Eval-DesignFlow-<CaseName>/`（每题一目录）；题库 jsonl = **`A.jsonl / B.jsonl / C.jsonl / D.jsonl`**；已有基线 `waveview_baseline_results.{B,D}.json`
+  - 📌 designflow 已被同时下达「把 WaveView 真题整理成单独 jsonl」的令 ⇒ 优先认 **`waveview_real_cases.jsonl`**（落地后你直接读它，别自己重新解析 4 个 shard jsonl）
+- **步骤**：
+  1. 在 36.15 上 `ls` / `grep -l -i wave` 找出**同时**满足：`domain=waveform`、**case 目录内真有图片（PNG/截图）**、有 `check.py`、**已跑过基线**的题；
+  2. **逐题登记**：题名 / shard jsonl / 图文件路径 + sha256 / `check.py` 的 k 条件数 / 基线 PASS·FAIL / failure_mode_tier（若有）；
+  3. 产出 **`run/vision/real_waveview_index.json`**（机器可读）+ `run/vision_real_waveview_intake.md`（人读）；**只读复制**到你自己的数据目录，🚫 **不许改 designflow 的题目/图片/check**；
+  4. 目标 **>10 道真题**；**实测**不足就写「实际可用 = N 道 + 每道为何不可用」，🚫 **不许拿合成集冒充真题**（纪律不变）。
+- **交付**：上述 index/md + 用**真题**重跑的对照（无 VQA / 有 VQA / agent 臂，同口径），并**原地覆盖**更新 `reports/report_vision_waveview_selftest_agent_zh.html`。
+
+**四、验收（本轮必须能回答）**
+1. 36.15 → .17 三条 VQA 通道，**评测容器内部** `curl /health` 是否 ok？（贴命令 + 输出）
+2. 断线 30s 后是否自动重连？（贴日志）
+3. 真题实得 **N 道**（N>10，或写清为何不足）；每题 `check.py` 是否原样未改？
+4. 真题重跑后，「VQA tool 在评测环境下」翻转题数 + McNemar（n 不足写「仅参考」）。
+
+
 ### 🔴 用户令 · 2026-11-14 17:2x（**为 v2 显著正结果写一份正式成果报告**）· 未完成 · 最高优先
 
 > **用户原话**：「① vision —— 出了显著正结果（这是今天最有价值的成果之一）。安排 vision 写个成果报告（中文 HTML）。」
