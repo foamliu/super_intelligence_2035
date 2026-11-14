@@ -10778,3 +10778,19 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 **动作**: 本轮=监控心跳 read-only,无新增训练/调研产出。0 infra 错误。未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5。kill_gpu_serve child-PID bug 待 chain 空闲修(L102-118)。
 
 **Next**: run2-5 RUNNING(各~5-6h)→ /tmp/posttrain_5run_eval/5run_rl_analysis_R2.json → R2 5-run mean Pass@1(vs step105 0.0304±0.0083, McNemar+bootstrap) → 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html(标替身预演,论证引 reward 曲线+Pass@1,禁引 mean_ratio)/负则诚实负结果+换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4)。
+
+## §R475
+
+**wake475 08:26 · 5-run eval RUNNING 监控 run2 健康(心跳轮)**
+
+实测(.17 s0pgpuap12, 2026-11-14 08:26):
+- **chain 健康**: PID2322797 存活(etime≈8h04m); run2 PID2684698 存活(etime 41:07, START@07:46:07); 8/8 worker 全活跃(worker-2 刚完成 EDA-Eval-PyAether-017@973s, 起 019, 无死锁)。
+- **serve 健康**: 3 并发全稳, curl 200 OK —— GPU4:8098(minicpm5-2b)/GPU6:8096(minicpm5-2b-sft-v39-final)/GPU7:8095(minicpm5-2b-grpo-R2-step200); GPU7=87%util/39246MiB; GPU6=0% idle(serve loaded,无请求时idle正常); GPU5=3MiB 空闲(vision 已退出,非本线不碰); GPU0-3=root 不碰。serve 日志(/tmp/vllm_gpu{4,6,7}.log)无 OOM/out-of-memory/traceback/cuda RuntimeError(gpu7 cudagraph capture 为 INFO 非错误)。
+- **run1 COMPLETED(已落盘 §R471-474)**: /tmp/posttrain_5run_eval/grpo_R2_step200/run1/final_report.json metrics.pass_rate=1/158=0.63%(gen success=14/fail=85/timeout=59) < step105 5-run mean 3.04%±0.83%(单 run 不预判, 等 5-run 方差覆盖)。
+- **run2 进度(本轮新增)**: workdir ~/eda_code_eval/2026_1114_074607; .task_queue 剩 139[19/158 dispatched]; stats success=9/failure=2/timeout=0(total_time=4275s≈71min); code/ 20 项; failed=EDA-Eval-PyAether-006,017; timeout=0(早期正常); run2 ETA≈13:30(rate~0.46/min, 剩 139 task)。
+
+**口径提醒**: stats/success=code-gen 产出 ≠ Pass@1(final_report sandbox eval 为准)。R2 run1 timeout=37.3% 显著高于 step105≈2.5% —— RL 后轨迹更长/tool-call 更多 → 超时激增可能机械侵蚀 Pass@1(待 5-run 方差覆盖后定论)。
+
+**动作**: 本轮=监控心跳 read-only, 无新增训练/调研产出。0 infra 错误。未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5。kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
+
+**Next**: run2-5 RUNNING(各~5h)→ /tmp/posttrain_5run_eval/5run_rl_analysis_R2.json → R2 5-run mean Pass@1(vs step105 0.0304±0.0083, McNemar+bootstrap) → 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html(标替身预演, 论证引 reward 曲线+Pass@1, 禁引 mean_ratio)/负则诚实负结果+换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4)。
