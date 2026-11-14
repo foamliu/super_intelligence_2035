@@ -11833,3 +11833,36 @@ $ bash bpt_attribution_manual_rescue.sh --arm A1
 
 **纪律**：`git pull --rebase --autostash` clean；0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线报告+EXPERIMENTS+MEMORY+daily。WAITING=0。
 
+
+## §R526-p0dev-compare（wake526, 2026-11-15 06:2x）— P0-dev McNemar 对比脚本落地+验证 + postmortem 十九度复核
+
+**本轮实质**：为 09:00 及格线唯一未闭环项「P0 dev 前后对比」预置**判定器**，使 P0base/P0p0 数据落盘后一行出结论。
+
+### 1. 新脚本 `bpt_attribution_p0_dev_compare.py`（194 行，repo 落盘，syntax OK）
+- **输入**：两个 rescue 后 `final_report.json`（baseline_dev / p0_dev）+ task 子集（默认 `attribution_traindev_split.json` 的 `dev_ids`=79；ablation 40 子集用 `sampled_task_ids`）。
+- **逻辑**：从 `details_per_task` 逐题取 `num_correct>=1`⇒pass；算各臂 Pass@1（correct/n_attempted）、`delta_pp`、生成统计；**McNemar 精确检验**（b=n01, c=n10，Binom(n,0.5) 双侧 p-value，纯 `math.comb` 无 scipy 依赖）；submit 报错率 best-effort（`codegen.log` grep MCP 拒绝原因 `missing-required-field`/`string-not-array`/`wrong-type-boolean`/`other-type-error`/`unavailable-tool`，无日志⇒`None`）；**预注册判据**（POSTTRAIN_PLAN_NEXT.md §1②）：`delta_pp>=+3` 且 submit 报错率降幅 `>=10pp` ⇒ `PASS`（进累积组合），否则 `FAIL_THRESHOLD`（负结果，不事后调门槛）；报错率数据缺失 ⇒ `INCONCLUSIVE_NO_REJ_DATA`（退化只看 delta_pp 并标注）。
+- **诚实 caveat 内嵌**：path-bug rescue 下界/可能混淆；model_name=zhulong_deepseek_v32 为 config 陈旧标签（实际 minicpm5-2b-sft-v39-final 经反向隧道 18096 curl 核实）。
+
+### 2. 验证（A1 vs A3，40 子集，真实配对）
+`python3 bpt_attribution_p0_dev_compare.py --baseline-report A1_rescued --patch-report A3_rescued --task-ids-key sampled_task_ids --baseline-label A1_no_sandbox_prompt --patch-label A3_no_sandbox_sandbox_off --output /tmp/_a1_vs_a3_validate.json`
+- baseline Pass@1 = 0/40 = 0.0000（gen success6/fail151/timeout1）
+- patch Pass@1 = 2/40 = 0.0500（gen success10/fail148）
+- delta_pp = +5.0000（阈值+3 ⇒ OK）
+- McNemar：n01(b fix)=2，n10(c break)=0，discordant=2，p=0.5000（仅 2 discordant ⇒ 不显著）
+- submit 报错率降幅 = N/A（未传 codegen.log）⇒ INCONCLUSIVE_NO_REJ_DATA
+- **与 MEMORY/wake523 数字完全一致** ⇒ per-task 提取 + McNemar 逻辑验证 PASS。脚本就位，待 P0base/P0p0 `final_report_rescued.json` 齐即可一行出判定。
+
+### 3. postmortem（🔴最高优先）十九度复核 PASS
+报告 `reports/report_infra_tunnel_postmortem_zh.html` 在位（commit 375e11bf7 origin/main，0 script/0 外链，首屏三句话 坏没坏/怎么坏/谁修，§1 六问逐一带证据，§6 三条验证命令）。隧道三命令 06:2x 实测全 PASS：`ss -ltn|grep 3333`→LISTEN 127.0.0.1:3333；`ssh -p3333 ... 'hostname'`→hfeg0tedaap02（TUNNEL_OK）；8664/8665 ssh 隧道进程 618469 活。最高优先令已闭合，无新动作。
+
+### 4. A1/A3 ground-truth 直读复核（经隧道）
+`python3 -c json.load(final_report_rescued.json)`：A1 `metrics.pass_rate=0.0`（0/40），A3 `metrics.pass_rate=0.012658`（2/40=2/158），二者 `model_name=zhulong_deepseek_v32`（陈旧标签）。`summary.generation_statistics`：A1 success6/fail151/timeout1，A3 success10/fail148。`details_per_task` 158 条齐全 ⇒ McNemar 可逐题配对。与 wake523/525 复算一致。
+
+### 5. 双链监控
+- **P0base_dev**：PID1479907 仍在 codegen（etime~1.23h，`--patch baseline --split dev`，79 dev 题，8 worker，GPU6:8096 经 18096 独占）。codegen.log 59772 行 / 251 submit_and_exit markers（05:57 时 55904 行/246 ⇒ ~10min 增 5 markers，慢）。慢因 = minicpm5 tool-call parser 乱码→部分任务 2500s 超时（冻结协议不可改）。dev-eval 脚本 mtime=04:42=fix 版（`grep -aoE` 二进制安全 + `case RD` 尾斜杠 + 清陈旧）⇒ P0base 起跑 05:14 读新脚本 ⇒ **auto-rescue 应正常（去风险坐实）**。P0p0 排队（relaunch515b PID700233 串行，单 serve）。
+- **R2 5-run eval**（.17 GPU7:8095）：run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE；run5 codegen RUNNING@03:33:34（etime~2.9h，serve minicpm5-2b-grpo-R2-step200 健康，eval chain PID2322797 活）。4-run mean 0.475% << step105 3.04%±0.83 趋势负（独立交付项，待 run5 + `baize_posttrain_5run_analysis.py` McNemar/bootstrap）。
+
+### 6. 09:00 及格线状态
+A1=0/40✅ + A3=2/40✅ + T6✅ + 合并 HTML 报告✅（P0 节 pending）+ EXPERIMENTS 新节✅（§R526）。**唯一未闭环 = P0 dev 前后对比**：P0base 仍在 codegen，ETA ~10:00-11:30（或略过 09:00），**throughput 限（parser 乱码→2500s 超时）非 infra 非阻塞，无人卡**。下一 wake P0base+P0p0 `final_report_rescued.json` 齐后：`python3 bpt_attribution_p0_dev_compare.py --baseline-report <baseline_dev>/final_report_rescued.json --patch-report <p0_dev>/final_report_rescued.json --task-ids-key dev_ids --baseline-log <baseline_dev>/codegen.log --patch-log <p0_dev>/codegen.log --output /tmp/posttrain_attribution_prompt/p0_dev_compare.json` 出判定 ⇒ 更新 `report_posttrain_attribution_overnight_zh.html` §4 + EXPERIMENTS §R527。
+
+**纪律**：0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线脚本+EXPERIMENTS+MEMORY+daily。MEMORY 体积：wake523 压缩为指针，wake526 入流水。WAITING=0。
