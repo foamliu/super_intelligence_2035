@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 """collect_subagent_cost.py — collect subagent-ablation cost / spawn-rate / Pass@1 / tokens.
 
-Scans a finished batch dir produced by run_cline_script.sh:
-  <batch>/cli_data/worker_*/data/sessions/*/*.messages.json   <- cline session traces
-  <batch>/stats/{success,failure,timeout,total_time}           <- harness counters
-  <batch>/logs/batch_cline.log                                 <- worker->task map + wall
+Scans a finished batch dir produced by run_cline_script.sh. Supports two layouts:
+  (A) legacy: <batch>/cli_data/worker_*/data/sessions/*/*.messages.json
+  (B) unified-data-dir (CLINE_UNIFIED_DATA_DIR=1): <batch>/code/<task>/ws/sessions/*/*.messages.json
 
-For each worker session it counts:
-  - subagent_researcher tool_use blocks  (spawn calls by main agent)
-  - assistant message metrics.{input,output,cacheRead,cacheWrite}Tokens  (main-agent tokens)
-  - tool_result of subagent_researcher may carry subagent usage (best-effort)
+Each session .messages.json has an `agent` field: "lead" (main agent) or "subagent".
+  - Main sessions: count `spawn_agent` tool_use blocks (spawn calls) + main-agent tokens (assistant metrics).
+  - Subagent sessions (filename starts with `agent_` or agent=="subagent"): collect sub tokens + tools used.
 
-Outputs one JSON per (arm, round) with: spawn_calls, spawn_call_rate (tasks-with-spawn / n_tasks),
-pass_rate_pct, passed/total, wall_sec, tokens{main,sub,total}, timeout, completion_rate.
+Subagent sessions are created by cline's spawn_agent tool; their tokens are reported separately.
+Outputs one JSON per (arm, round) with: spawn_calls, spawn_call_rate, pass_rate, tokens{main,sub}, wall.
 """
 import argparse, json, os, re, glob
 
@@ -36,24 +34,28 @@ def read_int(path):
 
 
 def scan_session(path):
-    """Return dict for one cline session messages.json: spawn_calls, tokens, tool histogram."""
+    """Return dict for one cline session messages.json."""
     try:
         d = json.load(open(path, errors="replace"))
     except Exception:
         return None
-    msgs = d.get("messages") if isinstance(d, dict) else None
+    if not isinstance(d, dict):
+        return None
+    msgs = d.get("messages")
     if not isinstance(msgs, list):
         return None
+    agent_kind = d.get("agent", "")  # "lead" or "subagent"
+    fname = os.path.basename(path)
+    is_subagent = (agent_kind == "subagent") or fname.startswith("agent_")
     spawn = 0
     tool_hist = {}
     in_tok = out_tok = cache_r = cache_w = 0
-    sub_in = sub_out = 0
     n_assistant = 0
+    finish_reasons = {}
     for m in msgs:
         if not isinstance(m, dict):
             continue
         role = m.get("role")
-        # assistant metrics -> main-agent tokens
         if role == "assistant":
             n_assistant += 1
             mt = m.get("metrics") or {}
@@ -61,40 +63,43 @@ def scan_session(path):
             out_tok += int(mt.get("outputTokens", 0) or 0)
             cache_r += int(mt.get("cacheReadTokens", 0) or 0)
             cache_w += int(mt.get("cacheWriteTokens", 0) or 0)
-        # tool_use blocks (assistant content is a list of blocks)
+        # tool_use blocks
         c = m.get("content")
         if isinstance(c, list):
             for blk in c:
                 if isinstance(blk, dict) and blk.get("type") == "tool_use":
                     name = blk.get("name", "")
                     tool_hist[name] = tool_hist.get(name, 0) + 1
-                    if name == "subagent_researcher":
+                    if name == "spawn_agent":
                         spawn += 1
-        # tool_result blocks may contain subagent usage (best-effort parse)
-        if isinstance(c, list):
-            for blk in c:
-                if isinstance(blk, dict) and blk.get("type") == "tool_result":
-                    cont = blk.get("content")
-                    s = cont if isinstance(cont, str) else json.dumps(cont, ensure_ascii=False)
-                    um = re.search(r'"?usage"?\s*:\s*\{[^}]*"inputTokens"\s*:\s*(\d+)[^}]*"outputTokens"\s*:\s*(\d+)', s)
-                    if um and "subagent" in s.lower():
-                        sub_in += int(um.group(1)); sub_out += int(um.group(2))
+        # finishReason
+        fr = m.get("finishReason")
+        if fr:
+            finish_reasons[fr] = finish_reasons.get(fr, 0) + 1
     return {
+        "is_subagent": is_subagent,
+        "agent_kind": agent_kind,
         "spawn_calls": spawn,
         "n_assistant_msgs": n_assistant,
-        "tokens_main": {"input": in_tok, "output": out_tok, "cacheRead": cache_r, "cacheWrite": cache_w},
-        "tokens_sub": {"input": sub_in, "output": sub_out},
+        "n_msgs": len(msgs),
+        "tokens": {"input": in_tok, "output": out_tok, "cacheRead": cache_r, "cacheWrite": cache_w,
+                    "total": in_tok + out_tok},
         "tool_hist": tool_hist,
+        "finish_reasons": finish_reasons,
+        "session_file": path,
     }
 
 
-def worker_task_map(log_text):
-    """From batch_cline.log build worker -> [task_id, ...] in start order."""
-    wm = {}
-    for m in re.finditer(r'\[worker-(\d+)\]\s*开始任务\s+(\S+)', log_text):
-        w, t = m.group(1), m.group(2)
-        wm.setdefault(w, []).append(t)
-    return wm
+def find_sessions(batch_dir):
+    """Find all .messages.json under both legacy and unified layouts."""
+    patterns = [
+        os.path.join(batch_dir, "cli_data", "worker_*", "data", "sessions", "*", "*.messages.json"),
+        os.path.join(batch_dir, "code", "*", "ws", "sessions", "*", "*.messages.json"),
+    ]
+    found = []
+    for pat in patterns:
+        found.extend(sorted(glob.glob(pat)))
+    return found
 
 
 def main():
@@ -102,41 +107,52 @@ def main():
     log_text = open(a.log, errors="replace").read() if os.path.isfile(a.log) else ""
     batch = os.path.basename(a.batch_dir)
 
-    # scan all session messages.json under cli_data/
+    session_files = find_sessions(a.batch_dir)
     sessions = []
-    for mf in sorted(glob.glob(os.path.join(a.batch_dir, "cli_data", "worker_*", "data", "sessions", "*", "*.messages.json"))):
-        # worker id from path
-        wm = re.search(r'worker_(\d+)', mf)
-        worker = wm.group(1) if wm else "?"
+    for mf in session_files:
         s = scan_session(mf)
         if s:
-            s["worker"] = worker
-            s["session_file"] = mf
             sessions.append(s)
 
-    # spawn call rate: tasks (sessions) with >=1 spawn / n_tasks
-    n_spawn_sessions = sum(1 for s in sessions if s["spawn_calls"] > 0)
-    total_spawn = sum(s["spawn_calls"] for s in sessions)
-    n_tasks = a.n_tasks or len(sessions)
+    main_sessions = [s for s in sessions if not s["is_subagent"]]
+    sub_sessions = [s for s in sessions if s["is_subagent"]]
+
+    # spawn call rate: main sessions (tasks) with >=1 spawn_agent / n_tasks
+    n_spawn_sessions = sum(1 for s in main_sessions if s["spawn_calls"] > 0)
+    total_spawn = sum(s["spawn_calls"] for s in main_sessions)
+    n_tasks = a.n_tasks or len(main_sessions)
     spawn_call_rate = round(n_spawn_sessions / n_tasks, 4) if n_tasks else None
 
-    # tokens aggregate (main + sub)
-    main_in = sum(s["tokens_main"]["input"] for s in sessions)
-    main_out = sum(s["tokens_main"]["output"] for s in sessions)
-    main_cache_r = sum(s["tokens_main"]["cacheRead"] for s in sessions)
-    main_cache_w = sum(s["tokens_main"]["cacheWrite"] for s in sessions)
-    sub_in = sum(s["tokens_sub"]["input"] for s in sessions)
-    sub_out = sum(s["tokens_sub"]["output"] for s in sessions)
+    # main-agent tokens
+    main_in = sum(s["tokens"]["input"] for s in main_sessions)
+    main_out = sum(s["tokens"]["output"] for s in main_sessions)
+    main_cache_r = sum(s["tokens"]["cacheRead"] for s in main_sessions)
+    main_cache_w = sum(s["tokens"]["cacheWrite"] for s in main_sessions)
 
-    # tool histogram aggregate
+    # subagent tokens
+    sub_in = sum(s["tokens"]["input"] for s in sub_sessions)
+    sub_out = sum(s["tokens"]["output"] for s in sub_sessions)
+
+    # subagent execution rate: sub sessions with n_msgs > 0 / total sub sessions
+    sub_executed = sum(1 for s in sub_sessions if s["n_msgs"] > 2)  # >2 means real conversation
+    sub_execution_rate = round(sub_executed / len(sub_sessions), 4) if sub_sessions else None
+
+    # subagent tools used (aggregate)
+    sub_tools = {}
+    for s in sub_sessions:
+        for k, v in s["tool_hist"].items():
+            sub_tools[k] = sub_tools.get(k, 0) + v
+    sub_has_mcp = any("pyAether_MCP_server" in k or k in ("search_apis", "get_api_details") for k in sub_tools)
+    # Note: search_apis in sub_tools may be FAILED attempts (NoSuchToolError); check tool_results
+    sub_mcp_rejected = log_text.count("AI_NoSuchToolError")
+
+    # tool histogram aggregate (main sessions)
     agg_hist = {}
-    for s in sessions:
+    for s in main_sessions:
         for k, v in s["tool_hist"].items():
             agg_hist[k] = agg_hist.get(k, 0) + v
 
-    # Pass@1 (real, from run_eval Step 7.1 in round log): parse the pyAether_aether runtime line
-    #   "运行时 pyAether_aether (lang=pyAether, host=aether): 任务=8 样本=8 正确=5 指标={'pass_rate': 0.625}"
-    # or the summary "PASS_RATE=0.6250" for pyAether_aether.
+    # Pass@1: parse the pyAether_aether runtime line
     pass_rate = None
     passed = None
     total = None
@@ -151,14 +167,14 @@ def main():
         if m2:
             pass_rate = round(float(m2.group(1)) * 100, 2)
 
-    # completion (cline exit-0) from stats/ — NOT Pass@1
+    # completion from stats/
     succ = read_int(os.path.join(a.batch_dir, "stats", "success")) or 0
     fail = read_int(os.path.join(a.batch_dir, "stats", "failure")) or 0
     tmo = read_int(os.path.join(a.batch_dir, "stats", "timeout")) or 0
     total_done = succ + fail + tmo
-    completion_rate = round(100.0 * (succ + fail) / total_done, 2) if total_done else None  # exclude timeout
+    completion_rate = round(100.0 * (succ + fail) / total_done, 2) if total_done else None
 
-    # wall from stats/total_time (sec) — fallback to log timestamp delta
+    # wall
     wall = read_int(os.path.join(a.batch_dir, "stats", "total_time"))
     if wall is None:
         ts = re.findall(r'\[(\d{2}:\d{2}:\d{2})\]', log_text)
@@ -168,15 +184,17 @@ def main():
             wall = to_s(ts[-1]) - to_s(ts[0])
             if wall < 0: wall += 86400
 
-    # doubao connectivity: count HTTP 200 / errors in log
-    http_200 = len(re.findall(r'200', log_text))
-    http_err = len(re.findall(r'(?i)(http (4\d\d|5\d\d)|ECONNREFUSED|ETIMEDOUT|doubao.*error)', log_text))
-
     cost = {
         "arm": a.arm, "round": a.round, "batch": batch, "n_tasks": n_tasks,
         "spawn_calls_total": total_spawn,
         "spawn_sessions": n_spawn_sessions,
         "spawn_call_rate": spawn_call_rate,
+        "subagent_sessions_total": len(sub_sessions),
+        "subagent_executed": sub_executed,
+        "subagent_execution_rate": sub_execution_rate,
+        "subagent_has_mcp_tools": sub_has_mcp,
+        "subagent_mcp_rejected_count": sub_mcp_rejected,
+        "subagent_tools_histogram": sub_tools,
         "pass_rate_pct": pass_rate,
         "passed": passed, "total_eval": total,
         "cline_success": succ, "cline_failed": fail, "timed_out": tmo, "total_done": total_done,
@@ -186,18 +204,26 @@ def main():
                         "total": main_in + main_out},
         "tokens_sub": {"input": sub_in, "output": sub_out, "total": sub_in + sub_out},
         "tokens_grand_total": main_in + main_out + sub_in + sub_out,
-        "tool_histogram": agg_hist,
+        "tool_histogram_main": agg_hist,
         "n_sessions_scanned": len(sessions),
-        "doubao_http_200_hits": http_200, "doubao_http_err_hits": http_err,
-        "per_session": [{"worker": s["worker"], "spawn_calls": s["spawn_calls"],
-                         "main_in_tok": s["tokens_main"]["input"], "main_out_tok": s["tokens_main"]["output"],
-                         "n_assistant": s["n_assistant_msgs"]} for s in sessions],
+        "n_main_sessions": len(main_sessions),
+        "n_subagent_sessions": len(sub_sessions),
+        "per_main_session": [{"spawn_calls": s["spawn_calls"],
+                              "n_msgs": s["n_msgs"],
+                              "main_in_tok": s["tokens"]["input"], "main_out_tok": s["tokens"]["output"],
+                              "n_assistant": s["n_assistant_msgs"]} for s in main_sessions],
+        "per_subagent_session": [{"n_msgs": s["n_msgs"],
+                                  "sub_in_tok": s["tokens"]["input"], "sub_out_tok": s["tokens"]["output"],
+                                  "finish_reasons": s["finish_reasons"],
+                                  "tools": s["tool_hist"]} for s in sub_sessions],
         "log": a.log,
     }
     json.dump(cost, open(a.out, "w"), ensure_ascii=False, indent=2)
     print(f"cost saved: {a.out} | arm={a.arm} r={a.round} "
-          f"spawn={total_spawn} calls in {n_spawn_sessions}/{n_tasks} sessions (rate={spawn_call_rate}) "
-          f"Pass@1={pass_rate}% ({passed}/{total}) cline_ok={succ}/{total_done} wall={wall}s main_tok={main_in+main_out}")
+          f"spawn={total_spawn} calls in {n_spawn_sessions}/{n_tasks} tasks (rate={spawn_call_rate}) "
+          f"sub_sessions={len(sub_sessions)} executed={sub_executed} (exec_rate={sub_execution_rate}) "
+          f"Pass@1={pass_rate}% ({passed}/{total}) cline_ok={succ}/{total_done} wall={wall}s "
+          f"main_tok={main_in+main_out} sub_tok={sub_in+sub_out}")
 
 
 if __name__ == "__main__":

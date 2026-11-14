@@ -30,7 +30,7 @@ export PYTHON="${PYTHON:-/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python}
 export CLI_AGENT=cline
 
 EVAL_ROOT_OVERRIDE="/tmp/zhulong_subagent_eval"   # /nasdata 100% 满; 用 /tmp (24G), 每轮清理
-TRACE_BASE="/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_subagent"
+TRACE_BASE="/tmp/zhulong_subagent_trace"            # /nasdata 99% 满 → trace 落 /tmp 并按轮归档
 RESULTS_JSON="$REPO_RUN/ablation_subagent_results.json"
 SUBSET_FILE="${SUBSET_FILE:-$REPO_RUN/compaction_subset_40.txt}"  # 复用 compaction 40 题子集; P1 pilot 覆盖为 8 题
 MASTER_LOG="/tmp/zhulong_subagent_ablation.log"
@@ -139,12 +139,17 @@ print('providers.json reset from compaction basic template')
     --arm "$ARM" --round "$ROUND" --batch-dir "${batch_dir%/}" \
     --log "$round_log" --n-tasks "$n_tasks" --out "$cost_json" 2>&1 | tee -a "$MASTER_LOG" || log "⚠️ cost 收集失败"
 
-  # trace 归档 (不删原 batch; /nasdata 若满改 /tmp)
-  if [[ -n "$batch_dir" && -d "${batch_dir%/}/trace" ]]; then
+  # trace 归档 (不删原 batch; /nasdata 若满改 /tmp) — sessions 在 code/ 下 (CLINE_UNIFIED_DATA_DIR)
+  if [[ -n "$batch_dir" && -d "${batch_dir%/}/code" ]]; then
     local trace_dst="$TRACE_BASE/$ARM/$(basename "${batch_dir%/}")"
     mkdir -p "$trace_dst"
-    cp -a "${batch_dir%/}/trace/." "$trace_dst/" 2>/dev/null && log "  trace 归档 → $trace_dst" || log "⚠️ trace 归档失败"
+    cp -a "${batch_dir%/}/code/." "$trace_dst/" 2>/dev/null && log "  trace 归档 → $trace_dst" || log "⚠️ trace 归档失败"
   fi
+  # 清理旧 batch (保留当前轮; /tmp 空间控制)
+  for _old in "$EVAL_ROOT_OVERRIDE"/*/; do
+    [[ "$_old" == "${batch_dir}" ]] && continue
+    [[ -d "$_old" ]] && rm -rf "$_old" && log "  清理旧 batch: $(basename "${_old%/}")"
+  done
 
   log "  arm=$ARM r=$ROUND 完成 (exit=$exit_code)"
 }
