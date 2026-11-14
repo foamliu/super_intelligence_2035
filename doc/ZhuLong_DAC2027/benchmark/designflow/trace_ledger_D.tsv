@@ -1774,4 +1774,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1782803097375_exstf	e0025730	hfeg0plg49	25	schematic_netlist	case	EDA-Eval-DesignFlow-LvlshftStepFix-001	2026-11-14 22:32	lvlshft SPICE-flow CLI --step args.step string-split bugfix; B-grade synthesized reframe; L2 10-cond; 80 msgs; case r667
 1794461300466_u060n	e0046686	hfeg0plg49	24	schematic_netlist	case	EDA-Eval-DesignFlow-SpfCleanFlow-001	2026-11-14 22:58	
 1794224252917_ls7n4.messages.json	ynbai	hfhds210	25	analog_context	case	EDA-Eval-DesignFlow-CrgWatchFlow-001	2026-11-14 23:54	
-1793077658379_chnlx	e03179	hfeg0plg49	analog:149;transistor:110;netlist:110;lvs:63;waveview:3	analog_context	claimed		2026-11-15 00:45	
+1793077658379_chnlx	e03179	hfeg0plg49	analog:149;transistor:110;netlist:110;lvs:63;waveview:3	analog_context	case	EDA-Eval-DesignFlow-VamCellReco-001	2026-11-15 00:58	VAMAgent cell recommender; B-grade synthesized reframe; L2 12-cond; 16 msgs; case r670
+1794385330458_89rv0	alenxu	hfeg0plg94	22	schematic_netlist	parked		2026-11-15 01:00	Q&A/teaching: how to .MEASURE single-point voltage in finesim tb; no produce-task deliverable, no accepted artifact; 14 msgs single how-to question
