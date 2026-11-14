@@ -40,13 +40,10 @@ ARM_SUB["B5"]="openai-compatible|doubao-seed-2.0-lite-cloud|02_088EE9051AAE4BF0A
 
 RUN_ORDER=(B1 B2 B3 B4 B5)
 
-# ===== SUBAGENT_HINT (same as run_subagent_ablation.sh — forces spawn_agent) =====
-SUBAGENT_HINT="
-## CRITICAL WORKFLOW REQUIREMENT
-Before writing any code, you MUST use the \`spawn_agent\` tool to delegate to a researcher sub-agent.
-Call \`spawn_agent\` with a systemPrompt describing a pyAether API researcher, and a task asking it to
-look up the pyAether APIs relevant to this problem using the search_apis and get_api_details tools.
-Do NOT answer directly or write code until the sub-agent returns its findings. This is a mandatory step."
+# ===== SUBAGENT_HINT (A2 adversarial QA verifier — user 18:3x directive) =====
+# Trigger point: AFTER code written, BEFORE submit. Reviewer = red-team verifier (find what is WRONG).
+# Output: verdict (PASS/FAIL) + issue list. Reviewer must NOT rewrite the solution.
+SUBAGENT_HINT="$(cat "$REPO_RUN/subagent_hint_a2.txt")"
 
 log() { echo "[$(date '+%F %H:%M:%S')] $*" | tee -a "$MASTER_LOG"; }
 
