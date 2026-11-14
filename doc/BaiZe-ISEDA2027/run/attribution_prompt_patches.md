@@ -10,6 +10,8 @@
 
 ## 候选补丁 (按 ROI 排, 一次只加一条)
 
+> ✅ **模板已起草** (2026-11-14 wake503): 每个 pN = `eval_sys_prompt_template_old.md`(36.15 baseline 沙盒提示) + 该补丁的**单一**约束块 (非累积), 落 `run/attribution_prompt_p{0,1,2,3}_*.md`. 设计为**单变量**: round1 各 `--patch pN` 单独 vs `--patch baseline` 在 dev(79) 上测**边际效应**; round2 (选择阶段) 对通过门槛的补丁另建累积组合模板 (如 p0+p2) 再测. 由 `bpt_attribution_prompt_dev_eval.sh` 驱动, `--dry-run` 已在 .17 验证通过 (5 臂 × 79 题, 模板/split/任务数正确).
+
 ### P0-tool-format (本轮 trace 新发现, 最高 ROI)
 - 要点: 在工具清单段加硬约束 —— `run_commands` 的 `commands` 必须是字符串数组, 每元素一条完整 shell 命令 (禁把多条拼成一个字符串); `read_files` 的 `files` 必须是对象数组; 区分两个 MCP server: `pyAether_MCP_server`(:8090)=API 文档检索 (search_apis/get_api_details/run_code), `eda_flow`(:18891)=沙盒会话 (open_session/run_commands/run_code/...), 两者工具参数不互通, 禁把 submit_and_exit 的 summary/verified 传给 eda_flow 工具.
 - 针对失败: run_commands 格式错 1042 + 双 MCP 混淆 (code-gen 完成率低的主因).
@@ -40,11 +42,10 @@
 - test = 全 158 题, 仅最后 5-run 验一次, McNemar 对 15.82% 基线检验.
 
 ## 顺序建议
-1. 先 P0-tool-format (单变量, 直接打 80.5% 的拒绝源) -> dev 测.
-2. 叠加 P2-submit-storm -> dev 测.
-3. 叠加 P1-degenerate-guard -> dev 测.
-4. 叠加 P3-retrieval-landing -> dev 测.
-5. dev 选出的组合 -> test 5-run + McNemar.
+- **round1 (单变量, 各补丁 vs baseline)**: `--patch p0` / `p1` / `p2` / `p3` 分别在 dev(79) 上 3 seed, 各自 vs `--patch baseline` (3 seed). 测每条补丁的边际 Pass@1 增量与 submit 报错率降幅.
+- **round2 (累积选择)**: round1 通过门槛 (>= +3pp 且 submit 报错率降 >= 10pp) 的补丁, 按 ROI 叠加 (P0 最高 ROI 先选): 建累积组合模板 (如 p0+p2) 在 dev 上再测; 一次只加一条增量.
+- **终局**: dev 选出的累积组合 -> test(全 158) 5-run + McNemar 对 15.82%(/18.99% 订正后) 基线检验.
+- ⚠️ 累积组合模板 (如 `attribution_prompt_p0p2.md`) 尚未起草, 待 round1 选定后再建 (避免提前预设组合).
 
 ## ⚠️ 纪律
 - 一次只加一条 (否则又回到多变量同时变、无法归因).

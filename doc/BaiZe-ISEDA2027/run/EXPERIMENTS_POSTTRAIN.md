@@ -11330,3 +11330,61 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 阻塞原因：两套 serve（GPU6 step105 / GPU7 R2）均被运行中 5-run eval 占用；Task A/B 需独占一个 serve 端点，不可与基线/R2 eval 并发争资源（会污染吞吐测量 + 抢 GPU）。
 
 **Next**：① 36.15 5-run 完 → 新基线（5-run mean±std，标 V1/V2/V3/V4 环境差异）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② eval 空一槽 → Task A A0–A3（40 题×4 臂，预注册判据）；③ Task B dev 3-seed；④ R2 5-run 完 → 5run_rl_analysis_R2.json。
+
+## §R-Attribution-update6 (wake503, 2026-11-14 21:5x) — Task B 补丁模板全量起草 (P1/P2/P3) + dev-eval runner 去阻塞 + dry-run 验证
+
+> 用户令 2026-11-14 19:2x（最高优先）。本节把 Task B（trace 驱动 prompt 迭代）的 GPU-free 部分推到**全 run-ready**：补齐 wake498 留下的 P1/P2/P3 模板 TODO，修 dev-eval runner 的潜在 bug，使 4 条补丁全部可在 36.15 上单变量测试。**未跑任何 eval**（GPU 被 36.15 5-run + R2 5-run 占用）。
+
+### 1. 缺口识别
+
+wake498（§R-Attribution-update2）交付了 dev-eval runner `bpt_attribution_prompt_dev_eval.sh` + P0 模板 `attribution_prompt_p0_toolfmt.md` + 79/79 split，但 runner 的 `PATCH_TPL` map 里 **P1/P2/P3 三个槽位是空字符串 TODO**：
+```
+[p1]=""   # TODO: attribution_prompt_p1_degenerate.md
+[p2]=""   # TODO: attribution_prompt_p2_submitstorm.md
+[p3]=""   # TODO: attribution_prompt_p3_retrieval.md
+```
+⇒ `--patch p1/p2/p3` 会命中 runner L54 的 FATAL gate（"补丁模板尚未起草"）直接退出。即 Task B 只对 P0 真正 run-ready，P1/P2/P3 不可跑。
+
+### 2. 补丁模板起草（单变量设计）
+
+定位 baseline = `/home/app.e0031982/code/eda_fastmcp/prompts/eval_sys_prompt_template_old.md`（36.15 baseline 沙盒提示，55 行/3481B，承认沙盒 + 强制 `run_pyAether_code_tool` 执行闭环）。P0 已是该 baseline + 「工具调用格式硬约束」段。**本轮为 P1/P2/P3 各起草一份 = baseline_old + 该补丁的单一约束段**（非累积，插入位置同 P0，在 TECHLIB 段后、代码规范段前）：
+
+| 文件 | 补丁 | 单一约束要点 | 针对失败（spec/RCA 线索） |
+|:--|:--|:--|:--|
+| `attribution_prompt_p1_degenerate.md` (73行) | P1-degenerate-guard | 提交前用 get/query 反查数量并 print 实际值；空实现/只 return None/只 print 不建对象 ⇒ 禁止 submit；数值级断言禁弱断言；自测未过 verified=false | degenerate pass（旧 .17 60.63%） |
+| `attribution_prompt_p2_submitstorm.md` (73行) | P2-submit-storm | submit_and_exit 每任务 ≤2 次；提交前须已 run_code 跑通或写明无法验证；被拒后禁原样重提；连续 2 次被拒 ⇒ 停下重读报错 | submit 风暴（旧 .17 13699 次/91.77% 报错；36.15 已降到 334） |
+| `attribution_prompt_p3_retrieval.md` (70行) | P3-retrieval-landing | search_apis 命中 API 须经 get_api_details 确认才能入代码；source=bm25_fallback 不得当 API 名；最终代码 API 须来自 get_api_details 核过集合 | 检索未落地（旧 .17 overlap 5.7%） |
+
+**设计决策（单变量 vs 累积）**：spec §3 要求「一次只加一条，每条单独在 dev 上测」。本轮把 4 条补丁全部做成**对 baseline 的单变量增量**（round1：各 `--patch pN` 单独 vs `--patch baseline`，测边际效应）；累积组合模板（如 p0+p2）留到 round2 选择阶段再建，避免提前预设组合（已写入 `attribution_prompt_patches.md` 顺序建议）。
+
+### 3. dev-eval runner 去阻塞 + bug 修复
+
+- **填表**：`PATCH_TPL` map 的 p1/p2/p3 槽位由空串改为对应文件名，FATAL gate 不再误触发。
+- **修 latent bug**：runner 原有两处 `tasks=${#TASKS_CSV//[^,]/}+1`（计数逗号 +1 得任务数）—— 这是**无效 bash 替换**（`${#var}` 不能与 `//pattern/` 组合），运行期报 `bad substitution`。原在 .17 上因 chk() 先 FATAL 于 36.15 venv 路径而未暴露，到 36.15 真跑时会在 echo 处报错（非致命但脏）。改为 `NTASKS=$(awk -F, '{print NF}' <<<"$TASKS_CSV")` 一次计算，两处复用。
+- **dry-run 去依赖**：原 `--dry-run` 退出点在 chk()/curl/status-gate 之后，.17 上永远先 FATAL 于 36.15 venv，无法做计划预览。把 dry-run 退出提前到 TASKS_CSV 计算之后、依赖检查之前，使 `--dry-run` 成纯计划预览（不查 36.15 依赖），便于在任一机器验证补丁表 + split + 任务数。
+
+### 4. 验证（dry-run，.17 本机）
+
+```
+for p in baseline p0 p1 p2 p3; do bash bpt_attribution_prompt_dev_eval.sh --patch $p --split dev --dry-run; done
+# 结果: 5 臂均 tasks=79, prompt_template 正确 (baseline=eval_sys_prompt_template_old.md / p0..p3=对应补丁文件), split ids 正确
+bash bpt_attribution_prompt_dev_eval.sh --patch p2 --split test --dry-run   # tasks=158 ✓
+bash bpt_attribution_ablation.sh --arm A1 --dry-run                          # tasks=40 ✓
+bash -n bpt_attribution_prompt_dev_eval.sh && bash -n bpt_attribution_ablation.sh  # 语法 OK
+```
+全部通过：模板/split/任务数正确，无 bad substitution，无 FATAL。
+
+### 5. 双 eval 监控心跳（read-only, 21:5x）
+
+- **36.15 5-run**：run1 DONE=18.99%（final_report pass_rate=0.18987，权威复算 §R-Attribution-update5）；run2 RUNNING（外层 chain on 36.15）。5-run 全完 ETA ~Nov15 14:00。
+- **R2 5-run**（.17 GPU7:8095）：chain PID 2322797 健康；run1=0.63% / run2=1.27% / run3=0.0%（`/tmp/posttrain_5run_eval/grpo_R2_step200/run{1,2,3}/final_report.json`，三 run 全 < 3.04%±0.83%，趋势负，单 run 不预判）/ run4 RUNNING（20:49:52 起，~67min in，PID3344389）/ run5 pending。每 run ~6.5h ⇒ run4 ~03:20 完，run5 ~09:50 完（Nov15）。
+- GPU6=98% / GPU7=90% serve 稳定；0 infra/OOM/traceback。
+- **未碰** GPU0-7 / 未碰运行中 eval / 未碰别线文件 / 未改 benchmark/check.py/题面。
+
+### 6. 归因 prep 现状（全部 run-ready，仅 GPU/serve 阻塞）
+
+- Task A：`bpt_attribution_ablation.sh` + `attribution_stratified_40.json`（40 题）run-ready（dry-run A1 ✓）。
+- Task B：`bpt_attribution_prompt_dev_eval.sh` + `attribution_traindev_split.json`（79/79）+ **P0/P1/P2/P3 四份补丁模板全齐** + `attribution_prompt_patches.md`（设计文档已更新单变量/累积分轮说明）+ per-题画像 `attribution_3615_run1_perquest_profile.json` —— **本轮起全 4 条补丁 dev-eval run-ready**。
+- 阻塞原因不变：两套 serve（GPU6 step105 / GPU7 R2）均被运行中 5-run eval 占用；Task A/B 需独占一个 serve 端点，不可与基线/R2 eval 并发争资源。
+
+**Next**：① 36.15 5-run 完 → 新基线（5-run mean±std）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② eval 空一槽 → Task A A0–A3（40 题×4 臂，预注册判据）；③ Task B round1 dev 3-seed（baseline vs p0/p1/p2/p3 各 79 题）；④ R2 5-run 完 → 5run_rl_analysis_R2.json。

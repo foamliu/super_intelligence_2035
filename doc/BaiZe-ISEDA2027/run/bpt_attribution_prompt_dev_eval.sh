@@ -26,10 +26,13 @@ PATCH_TPL_BASE="eval_sys_prompt_template_old.md"   # 36.15 baseline 沙盒提示
 declare -A PATCH_TPL=(
   [baseline]="eval_sys_prompt_template_old.md"
   [p0]="attribution_prompt_p0_toolfmt.md"
-  [p1]=""   # TODO: attribution_prompt_p1_degenerate.md
-  [p2]=""   # TODO: attribution_prompt_p2_submitstorm.md
-  [p3]=""   # TODO: attribution_prompt_p3_retrieval.md
+  [p1]="attribution_prompt_p1_degenerate.md"
+  [p2]="attribution_prompt_p2_submitstorm.md"
+  [p3]="attribution_prompt_p3_retrieval.md"
 )
+# 单变量设计: 每个 pN = baseline_old + 该补丁的单一约束块 (非累积).
+# round1: 各 --patch pN 单独 vs --patch baseline, 测每条补丁的边际效应.
+# round2 (选择阶段): 通过门槛的补丁需另建累积组合模板 (如 p0+p2) 再测; 本表保持单变量.
 PATCH=""; SPLIT="dev"; SEED=""; DRY_RUN=0; STATUS_ONLY=0; SKIP_STATUS_GATE=0
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -59,6 +62,17 @@ else
   KEY="${SPLIT}_ids"; TASKS_CSV=$(python3 -c "import json;d=json.load(open('$SPLIT_FILE'));print(','.join(d['$KEY']))" 2>/dev/null)
 fi
 [ -z "$TASKS_CSV" ] && { echo "[FATAL] 无法从 $SPLIT_FILE 读取 $SPLIT 的 task ids."; exit 1; }
+NTASKS=$(awk -F, '{print NF}' <<<"$TASKS_CSV")
+# dry-run: 只做计划预览, 不检查 36.15 依赖 (venv/harness/隧道), 便于在任一机器验证补丁表与 split.
+if [ $DRY_RUN = 1 ]; then
+  echo "===== [dry-run] attribution prompt dev-eval patch=$PATCH split=$SPLIT seed=${SEED:-<none>} @ $(date '+%F %T') ====="
+  echo "  prompt_template=$TPL  model=$MODEL_ID @ $MODEL_URL  tasks=$NTASKS"
+  echo "  [dry-run] 计划: 依次 --patch baseline --split dev (3 seed) 与 --patch <p0|p1|p2|p3> --split dev (3 seed) 对比;"
+  echo "  [dry-run] 门槛: Pass@1 >= +3pp 且 submit 报错率降 >= 10pp 才进下一轮 (累积组合)."
+  echo "  [dry-run] split task ids: $TASKS_CSV"
+  echo "  [dry-run] 不执行, 不检查 36.15 依赖."
+  exit 0
+fi
 # 36.15 5-run baseline 完成闸门 (不与运行中 eval 并跑)
 if [ "$SKIP_STATUS_GATE" = 0 ]; then
   if bash /nasdata/app.e0031982/bpt_eval.sh --status 2>/dev/null | grep -q '(未完成)'; then
@@ -86,7 +100,7 @@ export EDA_PROMPT_TEMPLATE_PYAETHER="$DEPLOYED_TPL"   # run_cline_script.sh L26 
 export CLI_DATA_DIR PYTHON="$VENV_PYTHON" EVAL_FW_DIR
 export PATH="$HOME/.local/bin:$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH"
 echo "===== attribution prompt dev-eval patch=$PATCH split=$SPLIT seed=${SEED:-<none>} @ $(date '+%F %T') ====="
-echo "  prompt_template=$DEPLOYED_TPL  model=$MODEL_ID @ $MODEL_URL  tasks=${#TASKS_CSV//[^,]/}+1"
+echo "  prompt_template=$DEPLOYED_TPL  model=$MODEL_ID @ $MODEL_URL  tasks=$NTASKS"
 [ $DRY_RUN = 1 ] && { echo "[dry-run] 不执行. tasks=$TASKS_CSV"; echo "[dry-run] 提示: 依次 --patch baseline --split dev (3 seed) 与 --patch p0 --split dev (3 seed) 对比; 门槛 +3pp & submit 报错率降 10pp."; exit 0; }
 cd "$EDA_BASE"
 echo "[$LABEL] code-gen+eval starting..."
