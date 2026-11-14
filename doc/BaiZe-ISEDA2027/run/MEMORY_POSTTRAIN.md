@@ -74,6 +74,8 @@ WAITING: 0
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
 
 ## 本唤醒流水
+> wake476 R476（2026-11-14）: **基线 RCA 报告交付** reports/report_posttrain_baseline_pyaether_rca_zh.html（62KB / 内联 SVG / 0 外链 / 0 script / 158 题逐题表+饼图+逐类fix）。基线RCA: 158题 pass=4.8/158(3.04%±0.83%复核,5run通过数[6,3,4,5,6]) 失败分类=①7②54③171④0⑤489⑥45(790样本,并集通过22题) 主因=agentic执行层(推理/规划+工具协议;489未产出.py文件,其中307例模型submit_and_exit verified=true幻觉式自证完成;54调用不存在API) top3fix=①PreSubmit文件存在闸门+prompt硬约束先写后submit(P0,+8~15pp)②编码前get_api_details强制校验API名存在(P0,+3~5pp)③SFT补SWIG positional-only+API名纠正+检索失败兜底编码正样本(P1,+5~10pp)。若只修一件=文件闸门。5-run eval 链仍 RUNNING(run2),本轮 read-only 未碰 eval/GPU。分析脚本 rca_baseline_aggregate.py/rca_baseline_enrich.py/rca_baseline_report.py 已落 run/。
+
 
 > 📦 wake1–wake186 (R1–R139) 已归档 → daily-memories-posttrain/2026-11-{06,07,08,09,10}.md（P0/P1/P2/SDPA/cu124 venv/verl/SGLang/Parquet/内存预算/500题/反作弊/替身RL预演/吞吐量等全量调研；R-content 详见 EXPERIMENTS 归档）。
 
