@@ -107,23 +107,32 @@ def process_shard(args):
     import torch
     dtype = getattr(np, DTYPE)
 
+    # Clean up orphan/partial files BEFORE creating builder (builder opens .bin)
+    # Case 1: .bin/.idx exist but .json doesn't → partial run, delete orphans
+    # Case 2: .json exists but .bin doesn't → broken output (bug fix 2026-11-14),
+    #          delete stale .json/.idx so shard gets re-processed
+    if not os.path.exists(json_path):
+        for p in (bin_path, idx_path):
+            if os.path.exists(p):
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
+    else:
+        # .json exists — check if .bin is missing (broken state from NFS silly-rename bug)
+        if not os.path.exists(bin_path):
+            for p in (json_path, idx_path):
+                if os.path.exists(p):
+                    try:
+                        os.remove(p)
+                    except OSError:
+                        pass
+
     builder = IndexedDatasetBuilder(bin_path=bin_path, dtype=dtype)
     n_docs = 0
     n_tokens = 0
     skip_reasons = Counter()
     lang_counts = Counter()
-
-    # Clean up orphan .bin (partial write from previous failed run)
-    if os.path.exists(bin_path) and not os.path.exists(json_path):
-        try:
-            os.remove(bin_path)
-        except OSError:
-            pass
-    if os.path.exists(idx_path) and not os.path.exists(json_path):
-        try:
-            os.remove(idx_path)
-        except OSError:
-            pass
 
     try:
         pf = pq.ParquetFile(str(shard_path))
@@ -198,6 +207,8 @@ def process_shard(args):
     }
     with open(json_path, 'w') as f:
         json.dump(meta, f, indent=2, ensure_ascii=False)
+        f.flush()
+        os.fsync(f.fileno())
     return {'shard_idx': shard_idx, 'skipped': False, **meta}
 
 
@@ -251,7 +262,9 @@ def main():
             si = stats['shard_idx']; nt = stats.get('num_tokens', 0)
             print(f"  [{si}] docs={stats.get('num_documents',0):,} tokens={nt:,} time={stats.get('time_s',0)}s", flush=True)
     else:
-        with Pool(args.workers) as pool:
+        # maxtasksperchild: recycle workers to release memmap memory and prevent OOM
+        pool = Pool(args.workers, maxtasksperchild=50)
+        try:
             for i, stats in enumerate(pool.imap_unordered(process_shard, tasks)):
                 all_stats.append(stats)
                 si = stats.get('shard_idx', '?'); nt = stats.get('num_tokens', 0)
@@ -259,6 +272,13 @@ def main():
                 eta = (dt / done) * (total - done) if done > 0 else 0
                 status = 'SKIP' if stats.get('skipped') else ('ERR' if stats.get('error') else 'OK')
                 print(f"  [{done}/{total}] shard={si} {status} tokens={nt:,} elapsed={dt:.0f}s ETA={eta:.0f}s", flush=True)
+        except (BrokenPipeError, EOFError, ConnectionError) as e:
+            print(f"\n{'='*60}\nWARNING: Pool crashed with {type(e).__name__}: {e}", flush=True)
+            print(f"  Collected {len(all_stats)} results before crash.", flush=True)
+            print(f"  Remaining shards will be re-processed on restart (auto-skip).", flush=True)
+        finally:
+            pool.terminate()
+            pool.join()
     total_time = time.time() - t0
     total_tokens = sum(s.get('num_tokens', 0) for s in all_stats)
     total_docs = sum(s.get('num_documents', 0) for s in all_stats)

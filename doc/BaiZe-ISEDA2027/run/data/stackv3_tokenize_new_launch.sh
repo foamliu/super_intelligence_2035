@@ -73,7 +73,7 @@ nice -n 19 ionice -c3 python3 "$SCRIPT" \
     --parquet-dir "$PARQUET_DIR" \
     --output-dir "$OUTPUT_DIR" \
     --shards all \
-    --workers 16
+    --workers 8
 
 echo "=== Tokenization complete at $(date) ==="
 
