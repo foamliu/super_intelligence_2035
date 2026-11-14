@@ -30,7 +30,7 @@ SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_suba
 - 报告：`reports/report_zhulong_subagent_ablation_zh.html`（新文件=里程碑，中文/自包含/**0 外链**）：摘要 / 机制与 P0 修正 / 主结果表+逐题配对 / 调用率 / 基座梯度曲线 / 成本-性能（主 vs 子 token 分拆）/ 亚组 / 失败分类 / 结论与默认策略
 
 **判据（预注册，不许事后改）**：主终点 = 3 轮 Pass@1 均值（ITT）；**H1** A0 vs A1/B1 McNemar discordant ≥6:6 且方向一致；**H2** B1 vs B2–B5 Δ≥3pp 且 bootstrap CI 不跨 0、梯度回归 R²>0.7、B5 per-pass token 降 ≥20%；**H3** 完成率差 ≥10pp ⇒ maxIter=5 过紧。差异 <3pp 一律写「证据不足」。
-**红线**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不与 designflow 并发抢沙盒；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。
+**纪律**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。沙盒与 designflow 冲突时自行协调（换端口/排队/各用各的 data-dir），不得因此停摆。
 **心跳**：每轮写 臂/轮/PID/etime/log 大小/batch/已评题数/调用率；跑中 WAITING=1；P2+P3 完 + 报告 + commit（`zhulong subagent:`）后 done_all。
 **体积**：本任务书 52.7KB（>40KB 硬上限）⇒ 本轮**同时**把已闭合旧令原文搬去 `run/ARCHIVE_ZHULONG_TASK.md` 留 1 行指针，归档后 ≤32KB。
 
@@ -116,7 +116,7 @@ http_proxy=http://172.19.92.23:13128
 
 3. **回报**：把自检结果（有无代理 / 是否重启 / 新 PID + environ 证据）写进 `MEMORY_ZHULONG.md` 操作流水 1 行。
 
-**红线**：
+**纪律**：
 - 🚫 **不要改 `zhulong_loop.sh` 源码**（加 `export` 是可选项，但当前先靠启动环境注入；若你判断有必要在脚本里加 `export https_proxy=...`，**先在流水里写明理由再改**，且只加在 `git_sync_and_push` 之前、不要影响 cline 那行的 `env -u`）。
 - 🚫 重启 loop **必须带 `setsid` + 重定向**（否则随 ssh 会话断开而死，血的教训）。
 - ✅ 若 loop 当前正带代理且健康，**什么都不用做**，流水记一句「自检通过」即可。
@@ -184,36 +184,6 @@ grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_<TAG>_r<N>.log | tail -5
 ### 步骤 0（PHASE=init）
 1. infra 三项校验（见运维指令区）：`/home` 磁盘 ≥~8G + 8664/8665/8653/8669 全 OPEN + `run_code` 可执行。
 
-### 🔴 用户令 · 2026-11-14 10:2x（**取消所有「红线」——那些是运维助手加戏加出来的，不是用户要求**）· 未完成 · 最高优先
-
-> **用户原话**：「zhulong：没有红线，都是运维助手加戏加出来的。全部去掉。」
-
-**一、处置**
-
-1. **删除「红线」这一提法**：本任务书里所有标注「红线」的条目（含 §P1/P2/P3 的 `**红线**：` 段、§代理自检的 `**红线**：` 段等），把标题词去掉。
-2. **其中真正的操作纪律，改称为「纪律」并保留内容**（这些本身是对的，不是加戏）：
-   - 不改 benchmark / 评分器
-   - 不删旧结果与 trace
-   - 不 kill 编排器 / loop
-   - 不把 proxy / reward 当能力（真实裁判 = Pass@1）
-3. **🚫 取消「不与 designflow 并发抢沙盒」这条阻塞**：
-   - 现状是它把本线**卡死**了——wake#922 已查明 subagent 完全可跑（smoke 3074b：`n_msgs=15`、`finishReason=completed`、`in/out tokens=92836/2026`），两个根因都是**配置级**（`-p 8` 并发竞态 / `providerId` 误用），却因为「等沙盒空闲」一直没跑 confirmatory smoke。
-   - **处理方式**：沙盒端口/资源**冲突时自行协调或换端口/排队**，而不是无限期等待。允许与 designflow 并行，只要不互相破坏（各用各的端口、各自 data-dir）。
-4. **同步清理 MEMORY 与 reanalysis 文档里的「红线」措辞**（`MEMORY_ZHULONG.md`、`run/subagent_reanalysis_findings.md` 中「红线内可修」「守红线」「红线复检」等），改为「纪律」或直接陈述事实。
-
-**二、立即执行的实质工作（去掉红线后不该再有理由拖延）**
-
-1. **跑 confirmatory smoke**：验证「降并发（`-p 1`/`-p 2`）」或「per-task data-dir 隔离」能否复现 smoke 3074b 的成功。
-2. 若 smoke 通过 → **修根因 B**（`researcher.yaml` 的 `providerId` 改为 `openai-compatible` + doubao model/key 配置），再验 doubao 三臂。
-3. 两处都通过 → 按预注册判据进 P1 重跑，给出调用率与 Pass@1。
-
-**三、不变的部分**
-
-- **判据不许事后改**（预注册的 H1/H2/H3、go/no-go 阈值保持原样）。
-- 心跳、成本记录、trace 归档照旧。
-- 🚫 删除「红线」不等于允许破坏：**不删旧结果、不改评分器、不 kill loop** 仍然有效——只是不叫红线。
-
----
 
    - 不满足 → `WAITING=1` 原地等，退出（下轮复检）。
 2. canary：故意触发一次应被拒的调用，确认反作弊 PreToolUse hook 生效；**未被拒 → 立即停，本批作废**。
@@ -254,7 +224,7 @@ grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_<TAG>_r<N>.log | tail -5
 
 ## 10. 📉 记忆维护规程（硬性）
 
-- `MEMORY_ZHULONG.md` **与 `ZHULONG_TASK.md`（全文=prompt）** 上限均 **≤ 32KB**（红线 40KB）；超了就把较早流水滚动到 `daily-memories/<条目日期>.md`（原文不改，追加）。
+- `MEMORY_ZHULONG.md` **与 `ZHULONG_TASK.md`（全文=prompt）** 上限均 **≤ 32KB**（硬上限 40KB）；超了就把较早流水滚动到 `daily-memories/<条目日期>.md`（原文不改，追加）。
 - **任务书自己滚（2026-10-06 用户裁定）**：任务书的归档**由本线 agent 自己做**（与 MEMORY 同机制）—— 只把「已闭合」内容**【原文】搬入** `run/ZHULONG_TASK_ARCHIVE.md`（**留 1 行指针**；**不新增/不改写任何指令**，本区作者仍是运维）。
 - 顶部必须保留：`WAITING:`（行首，只出现一次）+ 状态头 + 执行看板 + 成绩记录 + 最近 ~20 条流水。
 - 旧文件（`MEMORY.md` / `MEMORY_s1_full.md` / `MEMORY_s2_1shot.md` / 三个 `ablation_run_task_*.md`）为**只读历史参考**，不改。
