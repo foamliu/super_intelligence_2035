@@ -84,4 +84,36 @@ NEW_EVAL_DIR=$(comm -13 <(printf '%s\n' "$PRE_EVAL_DIRS") <(printf '%s\n' "$POST
 fr="${NEW_EVAL_DIR}final_report.json"
 [ -n "$NEW_EVAL_DIR" ] && [ -f "$fr" ] && cp "$fr" "$ARM_DIR/final_report.json" && echo "[arm $ARM] final_report -> $ARM_DIR/final_report.json (from $NEW_EVAL_DIR)"
 [ -f "$ARM_DIR/final_report.json" ] && grep -oE '\"pass_rate\"[: ]*[0-9.]+' "$ARM_DIR/final_report.json" | head -1 | sed "s/^/[arm $ARM] /" || echo "[arm $ARM] WARNING: 无 final_report"
+# --- RESCUE (wake515): cline (staged CLI_DATA_DIR /tmp) writes code to code/<task>/pyAether_code/,
+# but run_cline_script.sh internal format_cline_cli_output.py reads code/<task>/ws/pyAether_code/ (ws/ empty)
+# -> 0 extracted -> 0 scripts -> eval empty -> final_report=0/158 or missing (cross-contam risk).
+# Proven on wake515 A1/A3: generated code content valid, only path misplaced.
+# Fix = normalize pyAether_code -> ws/pyAether_code, re-run format+complete+eval, overwrite final_report. ---
+BATCH_DIR=$(grep -oE '输出目录:[[:space:]]*/home/[^[:space:]]+' "$ARM_DIR/codegen.log" | tail -1 | sed 's/.*输出目录:[[:space:]]*//')
+if [ -n "$BATCH_DIR" ] && [ -d "$BATCH_DIR/code" ]; then
+  moved=0
+  for d in "$BATCH_DIR/code"/EDA-Eval-PyAether-*/pyAether_code; do
+    [ -d "$d" ] || continue
+    td=$(dirname "$d"); ws="$td/ws"; mkdir -p "$ws"
+    [ -e "$ws/pyAether_code" ] || { mv "$d" "$ws/pyAether_code"; moved=$((moved+1)); }
+  done
+  echo "[arm $ARM] RESCUE: moved $moved pyAether_code dirs into ws/"
+  TS=$(basename "$BATCH_DIR")
+  CG="$HOME/eda_code_eval/code_generation_${TS}.jsonl"
+  CMP="$HOME/eda_code_eval/completed_code_generation_${TS}.jsonl"
+  cd "$EDA_BASE"; export EVAL_FW_DIR
+  "$VENV_PYTHON" pyAether-eval/script/format_cline_cli_output.py --input_dir="$BATCH_DIR/code" --output_file="$CG" > "$ARM_DIR/rescue_format.log" 2>&1
+  "$VENV_PYTHON" pyAether-eval/script/complete_code_generation.py -o="$EDA_BASE/pyAether-eval/original_dataset/$DATASET" -l="$BATCH_DIR/logs" -c="$CG" > "$ARM_DIR/rescue_complete.log" 2>&1
+  "$VENV_PYTHON" scripts/run_eval.py -g "$CMP" --benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl > "$ARM_DIR/rescue_eval.log" 2>&1
+  RD=$(grep -oE '唯一输出目录:[[:space:]]*[^[:space:]]+' "$ARM_DIR/rescue_eval.log" | tail -1 | sed 's/.*唯一输出目录:[[:space:]]*//')
+  if [ -n "$RD" ] && [ -f "${RD}final_report.json" ]; then
+    cp "${RD}final_report.json" "$ARM_DIR/final_report_rescued.json"
+    cp "${RD}final_report.json" "$ARM_DIR/final_report.json"
+    grep -oE 'pass_rate[^,}]*' "$ARM_DIR/final_report_rescued.json" | head -1 | sed "s/^/[arm $ARM] RESCUE pass_rate=/"
+  else
+    echo "[arm $ARM] RESCUE: eval 未产出 final_report (见 rescue_eval.log)"
+  fi
+else
+  echo "[arm $ARM] RESCUE: 未找到 batch dir (codegen.log 无 输出目录 行), 跳过"
+fi
 echo "===== arm $ARM done @ $(date '+%F %T') ====="
