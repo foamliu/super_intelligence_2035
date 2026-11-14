@@ -30,7 +30,7 @@ SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_suba
 - 报告：`reports/report_zhulong_subagent_ablation_zh.html`（新文件=里程碑，中文/自包含/**0 外链**）：摘要 / 机制与 P0 修正 / 主结果表+逐题配对 / 调用率 / 基座梯度曲线 / 成本-性能（主 vs 子 token 分拆）/ 亚组 / 失败分类 / 结论与默认策略
 
 **判据（预注册，不许事后改）**：主终点 = 3 轮 Pass@1 均值（ITT）；**H1** A0 vs A1/B1 McNemar discordant ≥6:6 且方向一致；**H2** B1 vs B2–B5 Δ≥3pp 且 bootstrap CI 不跨 0、梯度回归 R²>0.7、B5 per-pass token 降 ≥20%；**H3** 完成率差 ≥10pp ⇒ maxIter=5 过紧。差异 <3pp 一律写「证据不足」。
-**纪律**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。沙盒与 designflow 冲突时自行协调（换端口/排队/各用各的 data-dir），不得因此停摆。
+**纪律**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。zhulong 与 designflow 使用**互不相干的沙盒**（本线 = `run_code` 端口 8664/8665/8653/8669；designflow = `eda_flow` MCP → `.75` 远端 `run_commands`），**不存在资源争用**，无需互斥。
 **心跳**：每轮写 臂/轮/PID/etime/log 大小/batch/已评题数/调用率；跑中 WAITING=1；P2+P3 完 + 报告 + commit（`zhulong subagent:`）后 done_all。
 **体积**：本任务书 52.7KB（>40KB 硬上限）⇒ 本轮**同时**把已闭合旧令原文搬去 `run/ARCHIVE_ZHULONG_TASK.md` 留 1 行指针，归档后 ≤32KB。
 
