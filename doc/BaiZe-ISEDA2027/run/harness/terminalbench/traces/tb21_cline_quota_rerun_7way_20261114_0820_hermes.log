@@ -19,3 +19,8 @@ total 8
 -rw------- 1 6218 122 425 Nov 14 00:46 __init__.py
 -rw------- 1 6218 122 145 Nov 14 00:46 plugin.yaml
 
+[hermes] provider plugin installed:
+total 8
+-rw------- 1 6218 122 425 Nov 14 01:21 __init__.py
+-rw------- 1 6218 122 145 Nov 14 01:21 plugin.yaml
+
