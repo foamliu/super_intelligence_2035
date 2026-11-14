@@ -9,7 +9,7 @@
 **① 起跑前复核（10 分钟，任一不过先修再跑）**
 - `researcher.yaml`（**必须 .yaml，不是 .md**）在 `.cline/agents/`；tools 用完整 MCP 名 `pyAether_MCP_server__search_apis / __get_api_details`；工具列表里能看到 `subagent_researcher`（P0 时为第 19 号工具）
 - doubao pro/mini/lite 三 key 连通（P0 已 curl OK，重测 1 次）
-- 沙盒 8664/8665/8653/8669 全 FREE + `pgrep -f '^bash scripts/run_cline_script'` 无输出 + 不与 designflow eval 并发；harness TB-2.1 rerun 在跑（Docker/gateway），若争用则排队并写心跳
+- 沙盒 8664/8665/8653/8669 全 FREE + `pgrep -f '^bash scripts/run_cline_script'` 无输出；harness TB-2.1 rerun 在跑（Docker/gateway），若争用则排队并写心跳
 - **磁盘**：/home 99%（6.6G）先 `df`；`EVAL_ROOT_DIR=/tmp/zhulong_subagent_eval` 每轮清理；trace 落 `/nasdata/.../trace_ablation_subagent/`，`/nasdata` 若满改落 /tmp 并按轮归档；可用 <5G 先清再跑
 
 **② P1 pilot（现在起跑：8 臂 × 8 题 × 1 轮，~1.5h）**
@@ -23,7 +23,7 @@ SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_suba
 - **go/no-go（预注册）**：调用率 `<20%` 且强提示后仍 `<30%` ⇒ **判无效**，停 P2，直接出负结果报告；否则进 P2。单轮不得解释为结论。
 
 **③ P2 主实验（P1 go 后自动进：9 臂 × 40 题 × 3 轮 ≈16h）**
-- 串行（避免抢沙盒）；每轮前 quota probe；429 等待不降并发；每轮落 `cost_S_<arm>_r<n>.json` + `ablation_subagent_results.json` 条目 + trace 归档
+- 串行；每轮前 quota probe；429 等待不降并发；每轮落 `cost_S_<arm>_r<n>.json` + `ablation_subagent_results.json` 条目 + trace 归档
 - **起跑前必须补的工程缺口**：现 `run_subagent_ablation.sh` 的 cost 收集是 TODO 空壳（只写 arm/round/batch）⇒ 必须先实现：从 trace/session 采 `SpawnAgentOutput.usage.{inputTokens,outputTokens}`、spawn 次数与完成率（`finishReason=completed`）、主/子消息数、wall_sec；否则 H2/H3 无法判
 
 **④ P3 全量（P2 完成后：4 臂 A0/B1/B3/B5 × 158 题 × 1 轮 ≈10h）+ P4 报告（2h）**
