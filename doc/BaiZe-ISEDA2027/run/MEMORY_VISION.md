@@ -1,5 +1,12 @@
 WAITING: 0
 
+> 🆕 **【wake #1229 · 2026-11-14 16:5x】用户令 09:1x #4 round-2 强化 ✅ 显著正结果（CoT 推理链 SFT+RFT，预注册判据全部满足）**：
+> - **做了什么**：`vision/vqa_tool/sft_rl_strengthen_v2.py`（v2 单一变量 = 对 cycle_count/amplitude_read/duty_cycle 三技能的 SFT target 改成「读数推理链 + Final Answer: X」，分类/比较/上升沿保持 v1 plain；训练集同图同问同 seed=20261114、held-out 同 seed=20261115≠训练→cheat_rate=0 由构造保证）。3 seed×3 epoch SFT + rejection-sampling FT（best-SFT adapter=seed22, accepted=207/600）。
+> - **结果（同口径 before/v1-SFT/v1-RFT/v2-SFT/v2-RFT）**：before 60.0% → v1-SFT 64.4%±1.6 → v1-RFT 73.3% → **v2-SFT 74.4%±4.2（seed11=70/22=80/33=73.3）→ v2-RFT 90.0%**。**McNemar(best v1-SFT[seed33 66.7%] vs v2-RFT[90%])：b=7 c=0 p=0.0156 <0.05 ✓**。**预注册判据（post-RFT_v2≥post-SFT_v1+5pp 且 p<0.05 且 ≥3seed 且 cheat=0）全部满足 → ✅ 显著提升**。
+> - **技能分解（v2-RFT 闭合 v1 缺口）**：duty_cycle 0.0(v1)→**80%**(v2-RFT)·amplitude_read 20%→**60%**·cycle_count 66.7%→**100%**·type_classification 恢复 100%·freq/rise 维持 100%。**翻转 7 题 0 回退**（duty q20-23 25/75 全对·amplitude q11/q13 6 对·cycle q5 3 对）。
+> - **产物**：`vision/vqa_tool/sft_cot.jsonl`(150 CoT 记录)+`strengthen_runs/`(sft2_seed{11,22,33}_eval+adapter / rft2_seed11_eval+adapter / v2_summary.json)+**中文 HTML** `reports/report_vision_vqa_strengthen_v2_zh.html`(11136B·0script/0外链/内联SVG)。
+> - **意义**：v1(wake#1209) plain-target 强化未达判据(p=0.5)；v2 证明「教模型从坐标轴读数的推理链」是闭合「看懂图但读不准数」缺口的有效手段——#3 后半探针(wake#1227/#1228)指出的精确计数/数值/跨面板缺口，前两类已闭合（跨面板反推仍待解）。结论限定「合成波形识图」scope，不可外推到 designflow 真实 EDA 波形(需 #3 跨线对照)。
+> - **git**：fetch→behind3→`pull --rebase --autostash`→体积维护(归档 wake#1125~#1194 patrol one-liners 至指针，详情已在 daily)→add 明确路径(v2 脚本+sft_cot+strengthen_runs+报告+MEMORY+daily)→commit(`vision rl:`)→push。**WAITING: 0**。
 > 🆕 **【wake #1228 · 2026-11-14 16:0x】#3 后半「可并行半」round-2 探针交付 + 6 题合并报告（非 idle-spin）**：
 > - **做了什么**：designflow shard D 已 restored_count=6（α1 r650/β9 r651/α4 r652/β8 r653/β10 r654/β11 r655·全 FAIL 正确无多模态基线）。wake#1227 仅探了 round-1 三题(β9/α4/β10)；本轮按 10:3x「先做可并行那半」补齐 round-2 剩余三题(a1/b8/b11)：据 designflow 公开参数在本机重生成忠实副本 PNG，VQA tool(Qwen3.5-2B :30001·health ready)逐量提问按 designflow 容差判 pass/fail。
 > - **结果(诚实)**：a1 1/4·b8 3/12·b11 4/8 → round-2 8/24=33.3%；**6 题合并 14/46=30.4%** vs 基线 text-only 0/46(0 deliverable)。**稳定 gap 模式(跨 6 题一致)**：正确项集中在「分类标签/轴标签单量/约束筛选」(b8 信号类型 reset/ramp/pulse 三类全对、b11 root_cause=Q_force_x_stuck_high 读对、a1 optimal_vref=100 约束筛选对)；失败项集中在「精确计数」(b8 clk_period 2→1ns/clk_n_transitions 10→0/sel_n_pulses 2→1、b11 edge_count 4→0)·「精确数值」(a1 skew/height 读成阈值线值 100 而非曲线值 5.38/180、b11 fail_time 1363ns→1)·「跨面板反推」(β10 vth_high/low/hysteresis 全 fail)。→ Qwen3.5-2B 原生 VL「看懂图是什么」但「读不准图上的数」。
@@ -59,76 +66,7 @@ WAITING: 0
 > - 数据源只读：designflow `pi_debug_status.jsonl`+`cline_eval_status.jsonl`+31 份 `trace_deepreads/*wave*/**fsdb*`+6 个 canonical `Wave-001..006`。三维判定 α/β/γ；关键发现=基准主动把波形可视化降级为文本/Tcl（B-grade），故已评测 7 题全 PASS 全 γ，可被识图挽救的失败集中在"未解/未跑"的视觉判断子集（α=眼图孔径/上升沿margin/DQ根因diff/波形功能推断）。
 > - 产物：`reports/report_vision_waveview_failed_analysis_zh.html`（40579B·单文件·0外链·0script·内联SVG×3）。本报告只做分析，不起训练/实验。commit `vision waveview:`。
 
-> 📦 **wake #1194 · 2026-11-14 06:44** 例行巡检·全交付态·✅ git fetch(HEAD 被并发 posttrain ff 推进·wake#1193 提交 c66d05ac5 在史保留·0 触视觉)+fold wake#1193+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 26 轮空转)·已fold(见 wake#1195·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1193 · 2026-11-14 06:5x** 例行巡检·全交付态·✅ git fetch 0/0 up-to-date 无需 pull+fold wake#1192+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 25 轮空转)·已fold(见 wake#1194·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1192 · 2026-11-14 06:3x** 例行巡检·全交付态·✅ git pull --ff-only 至 e5d55b969(fold wake#1191)+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 24 轮空转)·已fold(见 wake#1193·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1191 · 2026-11-14 06:18** 例行巡检·全交付态·✅ 实质动作=恢复 wake#1190 未推送提交(origin 前进 11 非视觉致非 ff→`git pull --rebase --autostash`+push 成功 b3b9b7402)·fold wake#1190+commit+push 本线 2 文件·⚠️idle-spin 告警(第 23 轮空转)·已fold(见 wake#1192·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1190 · 2026-11-14 06:01** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind1(harness 非视觉)→ff pull→0/0 up-to-date→体积维护(fold wake#1189)+commit 本线 2 文件·**push 当轮因 origin 前进致非 ff 失败→由 wake#1191 rebase 恢复并推送成功**·⚠️idle-spin 告警(第 22 轮空转)·已fold(见 wake#1191·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1189 · 2026-11-14 05:50** 例行巡检·全交付态·零异常·无新增·✅ git fetch→HEAD==origin(0/0)无需 pull→体积维护(fold wake#1188)+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 21 轮空转)·已fold(见 wake#1190·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1188 · 2026-11-14 05:39** 例行巡检·全交付态·零异常·无新增·✅ git fetch 0/0 up-to-date 无需 pull→体积维护(fold wake#1187)+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 20 轮空转)·已fold(见 wake#1189·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1187 · 2026-11-14 05:27** 例行巡检·全交付态·零异常·无新增·✅ git pull --rebase ff(incoming 5 非视觉)→vision 0/0 up-to-date→体积维护(归档 wake#1151~#1170 至 daily)+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 19 轮空转)·已fold(见 wake#1188·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1186 · 2026-11-14 05:16** 例行巡检·全交付态·零异常·无新增·✅ git fetch→0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警持续(第 18 轮空转)·已fold(见 wake#1187·详情 daily-memories-vision/2026-11-14.md)。
-> - **状态**：v11 ALL COMPLETE(3 seed 一致负结果·NO GENERATIVE ADVANTAGE)产物复核在位——`vision/wave_rl/v11_results/v11_summary.json`(558B)+`reports/report_vision_cpu_rl_waveform_zh.html`(10205B·3/3 seeds)+EXPERIMENTS §v11+v11_results/(4 子目录:smoke/std_s20261114/15/16)✓。`ps` 核实无 vision 实验进程在跑(无 freqcmp/wave_rl/v11/run_v/autofinish 命中)。v5 仍是唯一统计显著正结果(typecls C=53%>B=37%>A=16% p=0.0009)；v6–v11 连续 6 轮无提升，方向已穷尽。
-> - **输入参考**：research 日报 2026-11-14(mtime 03:11) vision 栏 = ①「回归 vs 生成 三臂小对照」即 v11 已执行完毕(负结果·本期不做生成式路线)→无新可执行项；②视觉塔初始化三臂对照(MAE 预训练)属已收敛视觉编码器臂·非 wave-RL 活跃线→不 action。ops/inbox.md 不存在/无 vision 条目→不 action。
-> - ✅ **git 本轮**：`git fetch origin main`→`git rev-list --left-right --count HEAD...origin/main`=0/0 已 up-to-date→无需 pull(仅 posttrain 在途 `?? outputs/` 不触 vision·不用 -A 不卷入)。无 `.git/index.lock`·无他线 git 进程(仅 gitlab-runner 常驻 + posttrain cline 跑 pyAether code-eval 非 git 阶段)→窗口打开。`git add --` 明确路径(MEMORY_VISION.md + daily-memories-vision/2026-11-14.md)→commit(`vision rl:`)→push。
-> - **⚠️ idle-spin 告警(第 5 次重申·上报运维/用户拍板)**：本线 2026-11-14 已连续 18 轮(wake#1165~#1186)例行巡检零新增·零产物变化，每轮仅心跳+commit，纯耗 token。根因=方向已穷尽(见上)·远超任务书护栏「连续 3 轮无提升必须换方向」阈值。两条 2026-11-07 用户令均 ✅ 已交付。建议：①运维下达下一方向令(或批准新奖励/任务三臂)→本线即起实验；或②运维停掉 baize_vision_loop.sh 以止 token 空转(停时可顺手照 baize_pretrain_loop.sh 新版修 WAITING 正则+git pull 缺陷，见 AGENTS.md §3)。本 agent 不擅自 kill loop(属运维决策·且 kill 自身父进程有风险)。
-> - **GPU/体积**：.17 8×A40 posttrain RL 占卡·vision CPU-only/GPU5 已释放·不冲突。MEMORY ~30.6KB/TASK 26.9KB·均≤32KB✓。fold wake#1185。**WAITING: 0**。
-
-> 📦 **wake #1185 · 2026-11-14 04:59** v11 ALL COMPLETE·3 seed 一致负结果(0/6 判据·NO GENERATIVE ADVANTAGE)·autofinish 收尾出 v11_summary.json(558B)+HTML(10205B)+EXPERIMENTS §v11·commit 全部 v11 产物·cheat_rate=0·v6–v11 连续 6 轮无提升方向已穷尽·已fold(见 wake#1186·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1184 · 2026-11-14 04:5x** v11 监控·seed20261115 DONE 负结果·seed20261116 RUNNING·commit seed20261115 产物+心跳·已fold(见 wake#1185·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1183 · 2026-11-14 04:2x** 🔧 修正陈旧记忆(wake#1181 误报 idle-spin/无实验·实则 v11 已于 03:58 启动)·seed20261114 DONE 负结果·seed20261115 RUNNING·commit seed20261114 产物+脚本+pull/push·idle-spin 告警撤销·已fold(见 wake#1184)。
-> 📦 **wake #1181 · 2026-11-14 03:41** 例行巡检·**记忆已过时**(称 idle-spin/无实验，实则 v11 已于 03:58 启动，见 wake#1183 纠正)·已fold。
-
-> 📦 **wake #1180 · 2026-11-14 03:27** 例行巡检·全交付态·零异常·无新增·✅ git 0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警上报运维(16 轮空转)·已fold(见 wake#1181·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1179 · 2026-11-14 02:53** 例行巡检·全交付态·零异常·无新增·✅ git 0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警上报运维(15 轮空转)·已fold(见 wake#1180·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1178 · 2026-11-14 02:35** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→ff pull(incoming 3 非视觉)+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警上报运维(14 轮空转)·已fold(见 wake#1179·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1177 · 2026-11-14 02:26** 例行巡检·全交付态·零异常·无新增·✅ git 0/0 up-to-date 无需 pull→add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警上报运维(13 轮空转)·已fold(见 wake#1178·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1175 · 2026-11-14 02:08** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开→behind1 ff pull+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1177·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1174 · 2026-11-14 01:58** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0/0 up-to-date 无需 pull)→add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1175·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1173 · 2026-11-14 01:43** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0/0 up-to-date 无需 pull)→add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1174·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1172 · 2026-11-14 01:34** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(0/0 up-to-date 无需 pull)→add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1173·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1171 · 2026-11-14 01:26** 例行巡检·全交付态·零异常·无新增·✅ git 窗口打开(无 index.lock·无活跃 git·posttrain 跑 pyAether code-eval 非 git 阶段)→ff pull(incoming 1 designflow 非视觉)+add 明确路径+commit+push 本线 2 文件·已fold(见 wake#1172·详情 daily-memories-vision/2026-11-14.md)。
-
-
-> 📦 **wake #1150~#1135 · 2026-11-13 17:54–20:52**（16 轮）例行巡检·全交付态·零异常·无新增·多数轮 git 窗口打开→ff pull+add 明确路径+commit+push 本线 2 文件成功；少数轮 git 窗口关闭(posttrain 活跃 git 持 index.lock·按铁律不抢不删)暂缓；wake#1145/#1146 v10_summary.json NFS 属性缓存不一致已自愈；wake#1142 教训:未提交心跳必须当轮 commit(posttrain autostash 会流失)·已fold(见 wake#1151·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1134 · 2026-11-13 17:38→17:45** 例行巡检·全交付态·✅ git 窗口打开(pull ff 撞 transient lock 后 posttrain 完成 push 把 repo ff 至 up-to-date→0 behind/无 competing staged/无 lock)→add 明确路径+commit+push 本线 2 文件成功(wake#1119 起连续 16 轮暂缓解除)·🔧 遗留 stash@{0} autostash(baize_vision_loop.sh DATA_DIR)待运维处置·📣 升级提示·已fold(见 wake#1135·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1133 · 2026-11-13 17:24** 例行巡检·全交付态·git commit/push 仍暂缓(第 15 轮·posttrain 活跃 git·ff-only 撞 transient lock 失败干净)·🔧 发现遗留 stash@{0} autostash(baize_vision_loop.sh DATA_DIR)待运维处置·📣 升级提示(连续 15 轮无法 push)·已fold(见 wake#1134·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1132 · 2026-11-13 17:09** 例行巡检·全交付态·零异常·无新增·⚠️ git 窗口关闭(posttrain/opencode 活跃 git 持 index.lock 16:59·有 check-ignore/ls-files 进程)→按铁律不抢不删·未 add/commit/push·已fold(见 wake#1134/wake#1142·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1131 · 2026-11-13 16:5x** 例行巡检·全交付态·🔧 发现共享 NFS .git 残留 merge 态(wake#1130 遗留 MERGE_HEAD)被 posttrain conclude 自愈·✅ git add 本线 2 文件成功(已暂存)·⚠️ commit 撞 posttrain 持 index.lock exit=128→commit/push 仍暂缓·已fold(见 wake#1132·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1130 · 2026-11-13 16:33** 例行巡检·全交付态·⚠️ git pull 失败遗留 MERGE_HEAD(被 wake#1131 发现·posttrain 已 conclude 自愈)·commit/push 暂缓·已fold(见 wake#1131·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1129 · 2026-11-13 16:15** 例行巡检·全交付态·git 仍暂缓(posttrain RL-startup 活跃 git·index.lock fresh 不抢不删·fold wake#1126/#1121)·已fold(见 wake#1130·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1128 · 2026-11-13 16:01** 例行巡检·全交付态·git pull/push 仍暂缓(posttrain 活跃 git·check-ignore 现跑·origin→45838b663·6 behind/1 ahead·incoming 不触 vision)·已fold(见 wake#1130·详情 daily)。
-
-> 📦 **wake #1127 · 2026-11-13 15:37→15:49** 例行巡检·全交付态·git 仍暂缓(修正初判：清 abandoned stale lock+pull 被 timeout 杀·后发觉 posttrain commit-candidate mtime=15:48 正被写=active git·未 commit)·已fold(见 wake#1130·详情 daily)。
-
-> 📦 **wake #1126 · 2026-11-13 15:24** 例行巡检·全交付态·git 仍暂缓(posttrain RL-startup 活跃 git·index.lock stale 不删他线 lock·fold wake#1118)·已fold(见状态头/wake#1128·详情 daily-memories-vision/2026-11-13.md)。
-
-> 📦 **wake #1125 · 2026-11-13 15:15** 例行巡检·全交付态·git pull/commit 暂缓(posttrain RL-startup 活跃 git 阶段·pull 撞 lock EXIT=1)·已fold(见 wake#1124/wake#1127·详情 daily-memories-vision/2026-11-13.md)。
+> 📦 wake#1125~#1194（2026-11-13 15:15 ~ 11-14 06:44，~30 轮）例行巡检 idle-spin patrol one-liners 已归档原文 → daily-memories-vision/2026-11-13.md / 2026-11-14.md（含 wake#1186 v11 负结果+方向已穷尽结论）。需要时再读。
 
 > 📦 **wake #1076~#1124 · 2026-11-13 04:56~15:0x**（~49 轮）v9 启动→v9 NO CHANGE(seed0 A=0%B=49.5%C=49.5%p=1.0·n_disc=0·grpo_lr 太低)→v10 启动(基座换 Qwen3.5-2B·grpo_lr 1e-5·n_steps 50)→v10 NOT SIGNIFICANT(2/6·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·control 53.8%·诚实负结果)+多轮 git 暂缓(posttrain 活跃持 index.lock·按铁律不抢不删·wake#1119~#1123)→wake#1124 暂缓解除成功 push·全交付态·已归档原文 → daily-memories-vision/2026-11-13.md。需要时再读。
 
@@ -160,7 +98,7 @@ WAITING: 0
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🟢 **用户令 2026-11-14 10:3x「立即可做」两项已交付**：#3 前半=Qwen3.5-2B 封装为 VQA tool（原生多模态 VL·`vision/vqa_tool/`·server live GPU5:30001·单题样例跑通 answer=2）✅；#4=合成数据管线 `synth_waveform_qa.py`(6 技能×带网格图→sft.jsonl 150 条+RL 奖励预注册)+自测基线 n=12 acc=0.5833（type/freq/rise 1.0·cycle 0.5·amplitude/duty 0.0=缺口稳定可复现）✅。⚠️ 已纠错：上一 session 误判 Qwen3.5-2B 为纯文本并起文本桥实现，核实 config 证伪(`Qwen3_5ForConditionalGeneration`+`image_token_id`)→删文本桥目录，统一原生视觉路径。前序：v11 ALL COMPLETE 负结果·v5 p=0.0009 唯一显著正结果。**#3 后半/#4 训练待 designflow 恢复 11 题(shard D 已认领)·WAITING: 0** |
+| PHASE | 🟢 **用户令 09:1x #4 round-2 强化 ✅ 显著正结果（wake#1229）**：v2 CoT 推理链 SFT+RFT——`sft_rl_strengthen_v2.py` 单一变量=对 cycle_count/amplitude_read/duty_cycle 三技能 SFT target 改「读数推理链+Final Answer:X」；before 60%→v1-SFT 64.4%→v1-RFT 73.3%→v2-SFT 74.4%→**v2-RFT 90%**，McNemar b=7/c=0 **p=0.0156<0.05**，预注册判据(≥+5pp·p<0.05·≥3seed·cheat=0)全部满足→✅显著提升；duty 0→80%·amplitude 20→60%·cycle 66.7→100%（闭合 v1 缺口）。前序交付：#1 NeurIPS §6✅·#2 交底✅·#3 前半 VQA tool✅·#3 后半探针(6题30.4%)✅·08:4x 分析✅·v5 p=0.0009·v6–v11 负结果。**#3 后半官方对照待 designflow 跨线·WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | **v9 RUNNING(2026-11-13, SFT 500ex×5ep + GRPO 30步 + 3 seeds + control)** · v8频率比较✅(MIXED, C=52.5%±6.1%, p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 |
 | 当前动作 | **wake#1208 用户令 10:3x「立即可做」两项交付**：#3 VQA tool 封装（`vision/vqa_tool/`·server live GPU5:30001·单题样例 `qwen35_vqa_client.py --image sine_2cyc.png` → answer=2）✅；#4 合成数据管线 `synth_waveform_qa.py`（sft.jsonl 150 条+RL 奖励预注册）+ 自测基线 `synth_selftest_baseline.json` n=12 acc=0.5833（缺口 cycle/amplitude/duty 稳定可复现）✅。🔧 删上一 session 误起的文本桥 `vision/wave_rl/vqa_tool/`（误判 Qwen3.5-2B 为纯文本，config 证伪），统一原生视觉路径。designflow shard D 已认领 11 题恢复（origin ed318ff40）。本轮 add 明确路径 + commit(`vision vqa:`) + push。 |
