@@ -9,6 +9,7 @@
 > 2. **任务 A（先做）**：单变量消融 A0–A3，40 题分层子集，出「prompt 占多少 / 反馈回路占多少 / RAG 占多少」。
 > 3. **任务 B**：用 **36.15 的 trace**（不是旧环境）做失败分型 → 三条最小补丁 P1/P2/P3（退化提交 / submit 风暴 / 检索不落地）→ **train/dev 79/79 分离**，一次只加一条，dev ≥+3pp 且 submit 报错率降 ≥10pp 才晋级，最后 test 上 5-run + McNemar。
 > 4. 🚫 不改 benchmark / 不改 check.py / 不挑题 / 不引用未跑完的 run；每步落 `EXPERIMENTS_POSTTRAIN.md`，报告用中文 HTML，commit 前缀 `posttrain attribution:`。
+> 5. ⚠️ **体积**：本任务书已 ≈42KB（>40KB 硬上限）⇒ 下轮**先**把已闭合块滚入 `ARCHIVE_EXPERIMENTS_POSTTRAIN.md` 再执行本令；本条令不得被归档。
 
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
