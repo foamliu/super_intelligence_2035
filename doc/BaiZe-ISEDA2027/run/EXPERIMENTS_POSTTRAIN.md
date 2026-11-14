@@ -11777,3 +11777,17 @@ $ bash bpt_attribution_manual_rescue.sh --arm A1
 **R2 5-run**：run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE；run5 codegen RUNNING（38/158, GPU7:8095 健康, eval chain PID2322797 活）；4-run mean 0.475% << step105 3.04%±0.83 趋势负。
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程。WAITING=0。
+
+## §R522-chain-monitor（wake522, 2026-11-15 05:0x）— postmortem 十五度复核 + 双链健康 + A3 rescue poll 延长 + P0base/P0p0 去风险
+
+**postmortem（🔴最高优先）**：报告 `reports/report_infra_tunnel_postmortem_zh.html` 在位（commit 375e11bf7, 20496B, 实测 0 script/0 iframe/0 外链）。十五度复核 PASS。隧道三命令 05:0x 实测全 PASS：`ss -ltnp|grep 3333`=LISTEN 127.0.0.1:3333；`ssh -p3333 app.e0031982@localhost`→hfeg0tedaap02；三隧道进程 618469/1008898/1278889 活。最高优先令已闭合。
+
+**归因夜链健康（36.15）**：relaunch 编排器 `bash /tmp/relaunch515b.sh`（PID700233, ppid=1, etime 2h12m）活，四臂串行：A1（done 03:56:36, pass_rate 0.12658=陈旧 contaminated 未被 rescue，干净 A1=0/40 已由 helper 另算）/ A3 RUNNING（PID1040673, 73min, codegen.log 05:10 仍写）/ P0base `--patch baseline --split dev` / P0p0 `--patch p0 --split dev` 待 A3 后自动起。
+
+**P0base/P0p0 auto-rescue 去风险（本轮实质核验）**：dev-eval 脚本 `bpt_attribution_prompt_dev_eval.sh` 36.15 stat mtime=04:42:55 = fix 版：L99 `rm -f` 清陈旧 final_report_rescued.json；L116-117 pre/post 目录差集定位本 patch 产出的 NEW_EVAL_DIR/final_report.json（避交叉污染）；L122 `grep -aoE` 二进制安全；L138-139 `case "$RD" in */) ;; *) RD="$RD/" ;; esac` 尾斜杠修复。⇒ P0base/P0p0 起跑读新脚本 auto-rescue 应正常。09:00「补丁 dev 前后对比」交付去风险。
+
+**A3 rescue poll 延长（本轮实质动作）**：A3（03:56 起 pre-fix in-mem）auto-rescue 必跳过；旧 poll（PID3787607, 24 iter~05:20 尽）窗口偏紧（A3 已 73min 未 done）。已 kill 旧 poll + 起 v2 `/tmp/a3_rescue_poll2.sh`（PID3804659, setsid, 80 iter~100min 至 ~06:50）：命中 relaunch515b.log `[A3] done` 即自动 `bash bpt_attribution_manual_rescue.sh --arm A3`（幂等），保 A3 干净数字。
+
+**R2 5-run run5**：codegen RUNNING@03:33:34（.17 43/158 task~27%, stats success24/fail0/timeout10, GPU7:8095 serve 健康 minicpm5-2b-grpo-R2-step200, eval chain PID2322797 活）。4-run mean 0.475% << step105 3.04%±0.83 趋势负。run5 诚实 ETA~09:30（超 09:00 截止；R2 5-run 属独立交付项，非 09:00 归因及格线；负则诚实负结果 + McNemar/bootstrap）。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；编辑仅限本线记忆文件。MEMORY 35.1KB（<40KB 硬限）。WAITING=0。
