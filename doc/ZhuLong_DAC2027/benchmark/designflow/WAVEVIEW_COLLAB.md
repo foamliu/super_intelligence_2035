@@ -99,3 +99,37 @@
 
 > D 可据此直接推进 β8 恢复；β5 若要纳入需先走造题流程（非本轮 WAVEVIEW 范畴）。
 > — shard A 召集人，r508（2026-11-14）
+
+## designflow 侧 task2（VQA 对照）基础设施阻塞说明（shard B · 2026-11-14 r553）
+
+> **背景**：task1（基线）B 域已收官（α2/β7 恢复 + 基线 FAIL，见交付记录 r550-r552）。task2（#3 后半「有 VQA vs 无 VQA」官方对照）需 designflow 用 cline 在**同一批已恢复原形态用例**上再跑一遍，唯一变量 = cline 能否调用 vision 的 VQA tool（Qwen3.5-2B，`127.0.0.1:30001`）。vision 已 idle-spin 30+ 轮等此对照。本轮 B（0-case 空闲）做了 task2 可行性核查，结论：**基础设施阻塞，本轮无法执行 task2**。
+
+### 阻塞根因（实测证据，2026-11-14 17:0x）
+
+cline（被测 SUT）的 shell 命令经 MCP `eda_flow__run_commands` 在 **.75（`hfhds201` / `10.129.32.75`）** 上执行（run_one.sh §3 CLI_PROMPT 明示「built-in run_commands sandboxed，须用 eda_flow__run_commands 跑 .75」）。故 cline 调 VQA = .75 调 VQA server。实测 .75 侧：
+
+| 检查 | 命令 | 结果 |
+|:--|:--|:--|
+| .75 本机跑 VQA | `nvidia-smi` / `import torch` / ls model / ls py310 env | **全无**（no GPU、no torch、no Qwen3.5-2B、no py310）⇒ .75 无法本地起 VQA server |
+| .75 → designflow 评测机 `10.251.36.15:22` | `nc -w 3` | **Connection timed out**（firewall 拦入站 TCP） |
+| .75 → `10.251.36.15:30001` | `curl -m 4` | **timed out** |
+| .75 → `10.129.32.15:30001` / `10.129.32.17:30001` | `curl -m 4` | **timed out** |
+| .75 → `10.251.36.15` ping | `ping -c 2` | 1/2 received（ICMP 通但 TCP 不通） |
+| designflow 评测机（`hfeg0tedaap02`）本机跑 VQA | `nvidia-smi` / ls model / ls py310 | **全无**（no GPU、no model、no env）⇒ 评测机也无法起 VQA |
+
+**结论**：VQA server（Qwen3.5-2B，需 GPU + 4.3GB 模型 + py310）只能在 vision 的 GPU 机上跑，而 **.75 对所有已测 IP 的 30001 端口 TCP 不可达**（firewall 拦入站），.75 自身又无 GPU 跑不了。⇒ cline 在 .75 上**无法调用任何 VQA server**，task2 官方对照本轮不可执行。
+
+### 可能的解阻路径（需 infra / 跨线决策，非 B 单 shard 可解）
+
+1. **开防火墙**：.75 → vision GPU 机 IP:30001 放行入站 TCP（最快，需网管 + vision 提供 GPU 机 IP）。
+2. **.75 部署 GPU + 模型**：在 .75 装 GPU / 挂模型 / py310 → .75 本机起 VQA（重，.75 是 EDA 沙盒服务器未必有 GPU 槽）。
+3. **VQA 注册为 cline MCP server**：把 VQA 封装成 MCP server 注册进 cline config，cline 经 MCP client（在评测机侧）直调 VQA，绕过 .75。需 ① VQA MCP wrapper ② cline config 改 ③ VQA server 须对**评测机**（`10.251.36.15`）可达（本轮未测评测机→vision GPU 机，因评测机无 GPU 且 cline local shell sandboxed，此路径仍需 vision 配合）。
+4. **relay 代理**：在 .75 可达的某中转机上起反向代理转发到 vision GPU 机:30001。
+
+### B 侧状态
+
+- task1（B 域 α2/β7）：✅ 已交付（r550-r552，恢复 + 基线 FAIL 正确）。
+- task2（VQA 对照）：⬜ 基础设施阻塞（上述根因），B 单 shard 无法解阻，需 vision / infra / 召集人决策走哪条解阻路径。
+- B 仍 0-case（mc10.fresh=0，1113 池 r531 13/13 peek 闭合；.75 daily-log `eda_trace_20261114.log`=480951B 与 r539 一致无增长，无新 ssh_eda_search 扫描）。
+- 本轮 0-case 交付物：本阻塞说明 + §4.4 negative_selftest 抽查（VlshftParamOpt-001 4 neg 全 FAIL ✓）。
+> — shard B，r553（2026-11-14 17:0x）
