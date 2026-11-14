@@ -1490,3 +1490,5 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794548435602_2kj3r					parked		2026-11-14 11:14	r533 daily-log NEW; Python xval_tool debug, not B-domain
 1794567660912_43b70					parked		2026-11-14 11:14	r533 daily-log NEW; USER#0=你好 greeting, low-signal not B produce
 1794558811361_63yyw					parked		2026-11-14 11:14	r533 daily-log NEW; verilog lpddr6_dejoa analysis Q&A, cross-domain digital
+1794561347804_8w7t0					parked		2026-11-14 12:08	r535 daily-log truly-NEW(kw>=8): wzj@pkn002 mc499 hspice:223; USER#0=帮我生成一个spice的testbench = sibling-dup of xhqs8(r534 SpiceTbGen-001, same user same prompt) REJECT
+1794554479524_ek7rd					parked		2026-11-14 12:08	r535 daily-log truly-NEW(kw>=8): e0048916@pkn002 mc125 hspice:67; USER#0=帮我生成一个ddr3的设计电路图 = DDR3 schematic/circuit-design cross-domain(not spice_sim/characterization) REJECT
