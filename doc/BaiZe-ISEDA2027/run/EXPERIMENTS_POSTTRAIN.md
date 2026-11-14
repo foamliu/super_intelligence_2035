@@ -10794,3 +10794,42 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 **动作**: 本轮=监控心跳 read-only, 无新增训练/调研产出。0 infra 错误。未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5。kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
 
 **Next**: run2-5 RUNNING(各~5h)→ /tmp/posttrain_5run_eval/5run_rl_analysis_R2.json → R2 5-run mean Pass@1(vs step105 0.0304±0.0083, McNemar+bootstrap) → 显著则里程碑报告 report_posttrain_rl_surrogate_zh.html(标替身预演, 论证引 reward 曲线+Pass@1, 禁引 mean_ratio)/负则诚实负结果+换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4)。
+
+---
+## R485 (wake485, 2026-11-14 17:1x) — 监控心跳轮：v2 RCA(16:3x)核验全 PASS + 双 eval 进度实测 + stale 0.158 勘误
+
+**背景**：本轮为 read-only 监控心跳。最高优先用户令 16:3x（基于 trace 重写 RCA v2 报告）已在 wake483-484 交付并 commit，本轮做最终核验 + 两个 RUNNING eval 的进度实测。
+
+### ① 16:3x v2 RCA 报告 — 核验全 PASS（已完成）
+- 文件：`doc/BaiZe-ISEDA2027/reports/report_posttrain_pyaether_rca_v2_zh.html`，37415B，0 script / 0 外链，8 内联 SVG，5 个 H2 章节齐备。
+- 已 commit：`1bca8e2da posttrain rca: wake484 v2 RCA报告交付核验全PASS`。
+- 旧报告指针：`report_posttrain_baseline_pyaether_rca_zh.html` line39「ⓘ 本报告已被 v2 取代（2026-11-14）」已加（commit e434f6def）。grep 实证：`grep -n '已被' ...html` → line39 命中。
+- 5 H2 章节核对：①口径与数据（ckpt/serve/dataset md5/trace 根/扫描命令/5run pass=[6,3,4,5,6]=3.04%±0.83% 可复算）②工具调用画像（各工具调用次数+成功率/每题分布/检索到≠用对/run_code 失败分类/死循环/prompt 矛盾）③失败归因（790 分类+漏斗+通过题特征）④图表汇总（8 内联 SVG）⑤提分意见（ROI 排序表+「如果只做一件事=P0-1 消除 degenerate pass」）。
+- 数字可复算：5run pass 从 `/tmp/posttrain_5run_eval/step105/run{1..5}/final_report.json` 实算；MCP 工具从 `run/trace_toolcount_3p04_baseline.json`；deep analysis 从 `run/trace_deep_analysis_3p04.json`。
+- **16:3x 用户令判定：已完成**。
+
+### ② 36.15 重测（15:4x）— 全 5-run RUNNING，run1 进度实测
+- TUNNEL_OK（ssh -p 3333 app.e0031982@localhost → 36.15）。
+- 进程：PID1229657 `bash /nasdata/app.e0031982/bpt_eval.sh --run-all`，etime ~1h06m（17:18 实测）。
+- run1 workdir：`~/eda_code_eval/2026_1114_161225`（START 16:12:25）。进度：`.task_queue` 剩 114（即 ~44/158 dispatched），`code/` 46 项。ETA run1 ~20:00，全 5-run ~Nov15 凌晨。
+- ⚠️ **勘误 wake484**：`/tmp/posttrain_baseline_3615/run1/final_report.json`（pass_rate=0.158, summary.total_problems_evaluated=158, total_correct=25, details_per_task=158）**非有效基线**。
+  - 证据：该文件 timestamp = 2026-11-14 16:10:30，**早于** --run-all 启动（16:12:25）。
+  - 根因：`bpt_eval.sh --smoke` 仅跑 5 题（`SMOKE_TASKS="001,010,050,100,150"`，`task_flag="-t $SMOKE_TASKS"`），但 `run_single()` 用 `ls -dt "$EVAL_FW_DIR/output_evaluation/"*/final_report.json | head -1` 抄「最新」final_report —— 实为**更早某次全量 eval 的遗留产物**（5 题不可能产生 25 correct / 158 problems）。故 0.158 是 stale copy，既非本次 smoke 亦非 --run-all run1。
+  - --run-all run1 完成时会用本次 eval 的 final_report **正确覆盖** run1/final_report.json（run1 eval 完成后才 cp，且 run1 完成后才进 run2，故「最新」=本次）。--run-all 路径无此 bug。
+  - **勿当结论，等 5-run。**
+
+### ③ .17 R2 5-run eval — RUNNING（run3）
+- chain：PID2322797 `baize_posttrain_rl_eval_chain.sh`，etime ~17h，健康。
+- run3 workdir：`~/eda_code_eval/2026_1114_141842`（START 14:18:42）。进度：`.task_queue` 剩 69（即 ~93/158 dispatched）。ETA run3 ~2h，之后 run4/run5 各 ~5-6h。
+- run1 R2 已 COMPLETED：Pass@1=1/158=0.63%（单 run 不预判，等 5-run 方差覆盖）。
+- serve GPU7:8095（minicpm5-2b-grpo-R2-step200）稳定。
+
+### 动作与边界
+- 本轮 = 监控心跳 read-only：仅读 ps/stats/.task_queue/nvidia-smi/curl/final_report.json/ssh 36.15，未编辑运行中脚本，未碰 GPU0-3/4/6/vision GPU5，未碰 36.15 运行中 eval。
+- 0 infra 错误。
+- MEMORY 体积维护：35930B → 26459B（wake481-484 verbose 块原文已在 daily-memories，本轮滚为 1 行指针）。
+
+### Next
+- 36.15 5-run 完成（~Nov15 凌晨）→ 新基线（同 158 题，标环境差异：旧 .17 no-sandbox-prompt + 本地 MCP:18888/隧道 vs 新 36.15 sandbox-prompt + 原生 RAG:8090/沙盒:18891）→ `reports/report_posttrain_baseline_pyaether_rca_3615_zh.html`。
+- R2 5-run 完成 → `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`（vs step105 0.0304±0.0083，McNemar+bootstrap）→ 显著则里程碑报告 `report_posttrain_rl_surrogate_zh.html`（标替身预演，论证引 reward 曲线+Pass@1，禁引 mean_ratio）/ 负则诚实负结果 + 换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮。
+- kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）。
