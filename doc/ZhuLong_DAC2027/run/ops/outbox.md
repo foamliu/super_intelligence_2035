@@ -16784,3 +16784,148 @@ echo "=== DONE 143 ==="
 [8] loop 日志尾部（若存在）
 === DONE 143 ===
 ```
+
+---
+
+## RUN_ID 144 · 2026-11-14 15:37:23 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 144 | post-train eval bootstrap on 36.15 | $(date '+%F %T') | host=$(hostname) ==="
+echo "  预期本机 = 10.251.36.15（若 hostname 不符请停止并报告）"
+hostname -I 2>/dev/null | sed 's/^/  local IPs: /'
+
+BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp
+GR=$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+cd "$GR" || exit 1
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+
+echo
+echo "[1] 既有基础设施现状（RAG / 沙盒 MCP / GPU）"
+echo "  --- RAG 服务（9006）---"
+(curl -s -o /dev/null -w '  RAG:9006 http=%{http_code}\n' --max-time 5 http://127.0.0.1:9006/ ) 2>/dev/null || echo "  RAG:9006 不可达"
+echo "  --- 沙盒 MCP（18891）---"
+(curl -s -o /dev/null -w '  MCP:18891 http=%{http_code}\n' --max-time 5 http://127.0.0.1:18891/mcp ) 2>/dev/null || echo "  MCP:18891 不可达"
+echo "  --- 沙盒端口 8650-8654 ---"
+for p in 8650 8651 8652 8654; do
+  if (exec 3<>/dev/tcp/127.0.0.1/$p) 2>/dev/null; then echo "  $p OPEN"; exec 3<&- 3>&-; else echo "  $p CLOSED"; fi
+done
+echo "  --- GPU（36.15 是否有卡可 serve 2B）---"
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader 2>/dev/null | sed 's/^/  /' || echo "  无 nvidia-smi"
+
+echo
+echo "[2] 是否已有 minicpm5-2b serve 在跑"
+ps -eo pid,etime,args 2>/dev/null | grep -iE 'vllm|sglang|api_server' | grep -v grep | cut -c1-170 | head -8 || echo "  (无 serve 进程)"
+
+echo
+echo "[3] .17 隧道现状（post-train 在 .17，需要把模型调用打通）"
+echo "  --- 现有隧道/端口转发 ---"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'ssh .*-[LR]|ssh -[LR]|autossh' | grep -v grep | cut -c1-170 | head -10 || echo "  (无 ssh 隧道)"
+echo "  --- 到 .17 的连通性 ---"
+ping -c 1 -W 2 10.252.32.17 >/dev/null 2>&1 && echo "  10.252.32.17 ping OK" || echo "  10.252.32.17 ping FAIL"
+
+echo
+echo "[4] post-train 的 SFT ckpt（用于 serve）"
+ls -dt /nasdata/app.e0031982/*/sft* /nasdata/app.e0031982/**/global_step_105 2>/dev/null | head -6 | sed 's/^/  /' || echo "  (未找到 sft ckpt 目录，请人工确认路径)"
+find /nasdata/app.e0031982 -maxdepth 4 -type d -name 'global_step_*' 2>/dev/null | head -8 | sed 's/^/  /'
+
+echo
+echo "[5] zhulong 自己的评测启动方式（供 post-train 复用）"
+echo "  BASE_DIR=$BASE_DIR"
+ls -la "$BASE_DIR" 2>/dev/null | head -12 | sed 's/^/  /' || echo "  BASE_DIR 不存在"
+echo "  --- eda_fastmcp 里的启动脚本 ---"
+find "$BASE_DIR" -maxdepth 2 -name '*.sh' 2>/dev/null | head -12 | sed 's/^/  /'
+echo "  --- 环境变量口径（RAG/沙盒）---"
+grep -rhoE 'RAG_RECALL_URL=[^ ]*|PROXY_PORTS=[^ ]*|SANDBOX_ENDPOINTS=[^ ]*' "$BASE_DIR" 2>/dev/null | sort -u | head -10 | sed 's/^/  /'
+
+echo
+echo "[6] 结论与待办（人工据此决定下一步）"
+echo "  请据 [1]-[5] 判断:"
+echo "   a) RAG(9006) 与 MCP(18891) 是否就绪 — 不就绪则先拉起"
+echo "   b) 36.15 GPU 是否可 serve minicpm5-2b — 决定 serve 命令与端口"
+echo "   c) .17 -> 36.15 的隧道方向 — post-train 在 .17 调用 36.15 的模型端点"
+echo "   d) post-train 侧需要改的是 BASE_URL（指向隧道），不改评测代码"
+
+echo
+echo "=== DONE 144 ==="
+```
+
+**输出**
+```
+=== RUN_ID 144 | post-train eval bootstrap on 36.15 | 2026-11-14 15:37:23 | host=hfeg0tedaap02 ===
+  预期本机 = 10.251.36.15（若 hostname 不符请停止并报告）
+  local IPs: 172.17.0.1 10.251.36.15 10.250.0.1 10.247.64.1 
+
+[1] 既有基础设施现状（RAG / 沙盒 MCP / GPU）
+  --- RAG 服务（9006）---
+  RAG:9006 http=403
+  --- 沙盒 MCP（18891）---
+  MCP:18891 http=403
+  --- 沙盒端口 8650-8654 ---
+  8650 CLOSED
+  8651 CLOSED
+  8652 OPEN
+  8654 CLOSED
+  --- GPU（36.15 是否有卡可 serve 2B）---
+
+[2] 是否已有 minicpm5-2b serve 在跑
+
+[3] .17 隧道现状（post-train 在 .17，需要把模型调用打通）
+  --- 现有隧道/端口转发 ---
+1033205       01:05 timeout -k 15 2700 opencode run --auto -m glm/glm-5.2 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版） 
+1033206       01:05 opencode run --auto -m glm/glm-5.2 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）  > 🆕 **用户令
+3716672  1-19:04:14 ssh -4 -p 2222 -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 127.0.0.1:8098:127.0.0.1:8098 app.e0031982@localho
+  --- 到 .17 的连通性 ---
+  10.252.32.17 ping OK
+
+[4] post-train 的 SFT ckpt（用于 serve）
+
+[5] zhulong 自己的评测启动方式（供 post-train 复用）
+  BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp
+  total 2224
+  drwxr-x--- 23 app.e0031982 app.adm   8192 Nov  1 04:31 .
+  drwxr-x--- 24 app.e0031982 app.adm   4096 Nov 10 12:18 ..
+  drwxr-x---  3 app.e0031982 app.adm   4096 Sep 18 10:03 .claude
+  -rw-r-----  1 app.e0031982 app.adm  15467 Sep 18 10:03 CLAUDE.md
+  -rw-r-----  1 app.e0031982 app.adm   1062 Sep 18 10:45 cleanup_tmp_gt.sh
+  -rw-r-----  1 app.e0031982 app.adm 438028 Oct 31 22:33 code_generation_2026_1031_164422.jsonl
+  -rw-r-----  1 app.e0031982 app.adm 441346 Oct 31 22:33 completed_code_generation_2026_1031_164422.jsonl
+  -rw-r-----  1 app.e0031982 app.adm 436457 Nov  1 04:31 completed_code_generation_2026_1031_230700.jsonl
+  drwxr-x---  2 app.e0031982 app.adm   4096 Sep 28 05:15 daily-memories
+  -rw-r-----  1 app.e0031982 app.adm   1257 Sep 18 10:03 Dockerfile
+  drwxr-x---  5 app.e0031982 app.adm   4096 Oct 27 13:15 docs
+  --- eda_fastmcp 里的启动脚本 ---
+  /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/common.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_cli.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_script.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/clean_sandbox.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/common.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/merge_retry_results.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/reset_memory_bank.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cli.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/run_cline_script_skill.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/start.sh
+  /nasdata/app.e0031982/code/eda_fastmcp/scripts/start_recall_api.sh
+  --- 环境变量口径（RAG/沙盒）---
+  PROXY_PORTS=$PROXY_PORTS"
+  PROXY_PORTS=8650,8651,8652,8654
+  PROXY_PORTS=8656,8658,8661,8662
+  PROXY_PORTS=8663,8666,8667,8670
+  PROXY_PORTS=8664,8665,8653,8669
+  PROXY_PORTS=8664,8665,8653,8669,8668,8652
+  PROXY_PORTS=8666,8667,8669,8670
+  RAG_RECALL_URL=$RAG_RECALL_URL"
+  RAG_RECALL_URL=http://10.252.32.15:9001/recall
+  RAG_RECALL_URL=http://localhost:${PORT}/recall"
+
+[6] 结论与待办（人工据此决定下一步）
+  请据 [1]-[5] 判断:
+   a) RAG(9006) 与 MCP(18891) 是否就绪 — 不就绪则先拉起
+   b) 36.15 GPU 是否可 serve minicpm5-2b — 决定 serve 命令与端口
+   c) .17 -> 36.15 的隧道方向 — post-train 在 .17 调用 36.15 的模型端点
+   d) post-train 侧需要改的是 BASE_URL（指向隧道），不改评测代码
+
+=== DONE 144 ===
+```
