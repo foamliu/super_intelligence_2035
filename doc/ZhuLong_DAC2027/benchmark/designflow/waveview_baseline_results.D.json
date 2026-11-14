@@ -1,242 +1,291 @@
 {
-  "runs": [
-    {
-      "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
-      "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
-      "shard": "D",
-      "date": "2026-11-14",
-      "round": "r650",
-      "restoration_summary": {
-        "original_degradation": "B-grade synthesized .rep text-parsing task (agent wrote Python script to parse text data, no image needed)",
-        "restored_form": "SUT reads eye_sweep_A.png (3-panel VREF sweep figure), determines optimal valid VREF (skew<=15 AND height>=100, max width), delivers answer csv wv_summary.csv",
-        "text_substitute_removed": [
-          "eye_sweep_A.rep",
-          "hidden/eye_sweep_B.rep",
-          "hidden/eye_sweep_allinvalid.rep"
-        ],
-        "image_assets_added": [
-          "eye_sweep_A.png (1286x1286, 144KB, visible A)",
-          "hidden/eye_sweep_B.png (1286x1286, 137KB, hidden B for anti-hardcode provenance)"
-        ],
-        "figure_generation": "matplotlib 3.1.0 on .75 sandbox (eda_flow run_commands), 3-panel: max_width_ps / eye_height_mV(+threshold) / skew_ps(+threshold) vs VREF; no data labels (read from axes)",
-        "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A sweep + anti-hardcode B-token guard + coherent-real-sweep-point check; k_rationale==k_check==12",
-        "self_verification": "REF PASS 12/12; 5 negatives all FAIL (NEG_RC=0); §4.9 degradation (empty/stub/core-deleted) all FAIL",
-        "oracle_A": {
-          "name": "sslvht_10667",
-          "vref": 100.0,
-          "aperture": 56.99,
-          "skew": 5.38,
-          "height": 180.0,
-          "note": "filtered optimum, NOT raw-max false-peak at VREF=60 (width 68.33, skew 35.12, height 90)"
-        }
-      },
-      "baseline_run": {
-        "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + eye_sweep_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified)",
-        "model": "minicpm5-2b-sft-v39-final",
-        "model_note": "2B text-only SFT surrogate served by local vllm proxy @ 127.0.0.1:18096. NO multimodal capability. providers.json default 'deepseek-v4-pro-cloud' not present at this proxy (only minicpm5-2b available); --model override used. deepseek-v4-pro-cloud endpoint not reachable in this env.",
-        "thinking": "low",
-        "duration_sec": 50,
-        "cline_exit": 0,
-        "verdict": "FAIL",
-        "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
-        "failure_mode": "loop-abort: model made 5 consecutive identical run_commands calls (generic 'ls -la /home/user' + 'find /home/user -maxdepth 2 -type d' — workspace exploration unrelated to the PNG task), detected as loop by cline, aborted at iteration 8. Model text: 'Let me verify EDA side files directly.' Model never read prompt.txt, never attempted to read eye_sweep_A.png, never produced any deliverable.",
-        "failure_mode_classification": "did-not-engage-task (model looped on generic shell exploration without reading the prompt or attempting the image task). This is a weaker failure mode than 'engaged-task-but-couldnt-read-image'; both end in FAIL (correct no-multimodal baseline), but vision should note the 2B surrogate's failure is partly model-capacity (didn't engage) not purely image-blindness. A stronger no-multimodal model would likely read prompt.txt, understand the task, attempt to read the PNG, fail to interpret it, and either give up or guess wrong — still FAIL but cleaner attribution to image-blindness.",
-        "hook_blocks": 0,
-        "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-EyeApertureSelect-001/20261114_110619",
-        "status_log": "eval/status.jsonl (ts 2026-11-14T03:06:19Z)"
-      },
-      "interpretation_for_vision": {
-        "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1: 'no multimodal capability = fail is correct, do not downgrade to text substitute')",
-        "observed": "FAIL (confirmed)",
-        "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. alpha1 is the first of 11 restored cases (alpha4 + beta7); D will restore the remaining 6 D-domain cases in subsequent rounds.",
-        "caveat": "the 2B SFT surrogate's failure is 'did-not-engage' (looped on generic exploration) rather than 'engaged-but-image-blind'. For a cleaner multimodal-gain attribution, vision may want to also run a stronger no-multimodal model (e.g. deepseek-v4-pro-cloud if its endpoint can be restored) that engages the task but cannot read the image. designflow has set up the case correctly (image-required, no text substitute); the failure-mode cleanliness depends on the SUT model choice, which is vision's domain."
-      },
-      "next_steps_D": [
-        "alpha4 TempSelWaveform-001 (D, restore)",
-        "beta9 WaveMaxFind-001 (D, restore)",
-        "beta10 TempThreshChar-001 (D, restore)",
-        "beta11 SimFailFsdbProbe-001 (D, restore)",
-        "alpha3 (D, unbanked, build case then restore)",
-        "beta6 (D, unbanked, build case then restore)",
-        "B-domain alpha2/beta7 -> handoff to shard B",
-        "beta8 cross-shard -> A convenes",
-        "beta5 unbanked -> confirm whether to build"
-      ]
-    },
-    {
-      "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
-      "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
-      "shard": "D",
-      "date": "2026-11-14",
-      "round": "r651",
-      "restoration_summary": {
-        "original_degradation": "B-grade synthesized text FSDB dump (50-point v(vb) damped sinusoid) parsed offline by a Python script (no image needed)",
-        "restored_form": "SUT reads wave_vb_A.png (v(vb) damped sinusoid vs time, no data labels), extracts max/t_at_max/min/t_at_min/peak_to_peak/offset/period, delivers answer csv wv_summary.csv",
-        "text_substitute_removed": [
-          "waveform_vb.txt",
-          "hidden/waveform_out.txt",
-          "hidden/waveform_xa.txt"
-        ],
-        "image_assets_added": [
-          "wave_vb_A.png (8x5in @150dpi, 97KB, visible A: v(vb)=0.6+0.4*exp(-t/3ns)*cos(2pi*1GHz*t), 500 pts [0,7ns])",
-          "hidden/wave_out_B.png (8x5in @150dpi, 93KB, hidden B: v(out)=0.5+0.45*exp(-t/2.5ns)*cos(2pi*0.8GHz*t), 500 pts [0,8ns], provenance + anti-hardcode)"
-        ],
-        "figure_generation": "matplotlib 3.1.0 on .75 sandbox (eda_flow run_commands), single-panel voltage vs time; no data labels (read from axes)",
-        "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A params + anti-hardcode B-token guard + self-consistency-on-A-curve; k_rationale==k_check==12",
-        "self_verification": "REF PASS 12/12; 5 negatives all FAIL (NEG_RC=0); section 4.9 degradation (empty/stub-all-zeros/core-deleted-header-only) all FAIL",
-        "oracle_A": {
-          "signal": "v(vb)",
-          "max": 1.0,
-          "t_at_max_ns": 0.0,
-          "min": 0.260933,
-          "t_at_min_ns": 0.490982,
-          "peak_to_peak": 0.739067,
-          "offset": 0.6,
-          "period_ns": 1.0,
-          "note": "damped sinusoid sampled at 500 pts; reading tolerances VTOL=0.02V, TTOL=0.08ns (plot grid)"
-        }
-      },
-      "baseline_run": {
-        "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + wave_vb_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified, hook_blocks=0)",
-        "model": "minicpm5-2b-sft-v39-final",
-        "model_note": "2B text-only SFT surrogate served by local vllm proxy @ 127.0.0.1:18096. NO multimodal capability.",
-        "thinking": "low",
-        "duration_sec": 22,
-        "cline_exit": 0,
-        "verdict": "FAIL",
-        "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
-        "failure_mode": "engaged-but-incapable: model DID read prompt.txt and attempted the task (iteration_start x7, opened eda_flow session, tried to write deliverables), but the 2B model could not sustain a coherent tool sequence -- it looped on tool-call errors (tried unavailable tool 'eval_flow_v1', made malformed editor calls missing required fields), aborted at 22s via run_aborted (external_abort: 'aborted by another client'). No deliverable produced.",
-        "failure_mode_classification": "mixed: partially-engaged-then-aborted. Cleaner than r650 alpha1's 'did-not-engage' (this run the model did read the prompt and attempt the image task), but still ended in FAIL with no output. Both alpha1 and beta9 confirm the no-multimodal baseline = FAIL. For a cleaner multimodal-gain attribution, vision may want to also run a stronger no-multimodal model that engages the task but cannot read the image.",
-        "hook_blocks": 0,
-        "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-WaveMaxFind-001/20261114_114227",
-        "status_log": "eval/status.jsonl (ts 2026-11-14T03:42:27Z)"
-      },
-      "interpretation_for_vision": {
-        "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
-        "observed": "FAIL (confirmed)",
-        "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. beta9 is the second of 11 restored cases (alpha1 + beta9 done; 5 D-domain + 2 unbanked + 2 B-handoff + 1 cross-shard + 1 unbanked-confirm remaining).",
-        "caveat": "the 2B SFT surrogate's failure is a mix of partial-engagement and model-capacity (tool-call errors -> abort), not purely image-blindness. The case is set up correctly (image-required, no text substitute); the failure-mode cleanliness depends on the SUT model choice, which is vision's domain."
-      },
-      "next_steps_D": [
-        "alpha4 TempSelWaveform-001 (D, restore next)",
-        "beta10 TempThreshChar-001 (D, restore)",
-        "beta11 SimFailFsdbProbe-001 (D, restore)",
-        "alpha3 (D, unbanked, build case then restore)",
-        "beta6 (D, unbanked, build case then restore)",
-        "B-domain alpha2/beta7 -> handoff to shard B",
-        "beta8 cross-shard -> A convenes",
-        "beta5 unbanked -> confirm whether to build"
-      ]
-    },
-    {
-      "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
-      "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
-      "shard": "D",
-      "date": "2026-11-14",
-      "round": "r652",
-      "restoration_summary": {
-        "original_degradation": "B-grade synthesized .tbl text-parsing task (agent wrote Python signal_analyzer.py to parse text waveform export, no image needed)",
-        "restored_form": "SUT reads sel_wave_A.png (temperature-sensor selector signal v(sel54), 5-window multi_pulse activation over 30us) and extracts activation characteristics from the figure; delivers answer CSV wv_summary.csv (signal,v_max,v_min,num_activations,first_activation_time,last_activation_time,duty_cycle,activation_pattern)",
-        "text_substitute_removed": [
-          "wave_A.tbl",
-          "example_output_A.json",
-          "hidden/wave_B.tbl",
-          "hidden/gen_B.py"
-        ],
-        "image_assets_added": [
-          "sel_wave_A.png (1500x900, 73KB, visible A: v(sel54) trapezoidal-pulse multi_pulse, 5 activation windows)",
-          "hidden/sel_wave_B.png (1500x900, 82KB, hidden B: v(sel68) periodic, 7 windows, anti-hardcode provenance)"
-        ],
-        "figure_generation": "matplotlib 3.x on .75 sandbox (eda_flow run_commands) from trapezoidal-pulse model (baseline 0.10V, vmax 1.25V, 5 windows, rise 0.3us, 1500 pts); no data labels (read from axes)",
-        "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A waveform params (numeric threshold-crossing detection) + anti-hardcode B-token guard (sel68 + B distinctive 3-decimal crossing times) + cross-field self-consistency (first<last, 0<duty<=1, plausible implied avg window width); k_rationale==k_check==12",
-        "self_verification": "REF PASS 12/12; 7 negatives all FAIL (NEG_RC=0); §4.9 degradation (empty/stub_allzero/core-deleted) all FAIL",
-        "oracle_A": {
-          "signal": "v(sel54)",
-          "v_max": 1.25,
-          "v_min": 0.1,
-          "num_activations": 5,
-          "first_activation_time": 2.841895,
-          "last_activation_time": 26.177452,
-          "duty_cycle": 0.286858,
-          "activation_pattern": "multi_pulse",
-          "time_span": 30.0
-        }
-      },
-      "baseline_run": {
-        "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + sel_wave_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified, hook_blocks=0)",
-        "model": "minicpm5-2b-sft-v39-final",
-        "model_note": "2B text-only SFT surrogate served by local vllm proxy. NO multimodal capability. providers.json default model.",
-        "thinking": "low",
-        "duration_sec": 11,
-        "cline_exit": 0,
-        "verdict": "FAIL",
-        "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
-        "failure_mode": "run_aborted external_abort ('aborted by another client') after 11s. Session had 264 agent_event / 18 hook_event / 1 run_aborted; 118 mentions of sel_wave/png/prompt.txt in session (model engaged the PNG/prompt context) but 0 successful structured tool_calls and no deliverable written. 2B SFT surrogate's tool-calling is unreliable.",
-        "failure_mode_classification": "engaged-but-aborted (model referenced the PNG/prompt context but made no successful tool calls / produced no deliverable before external abort). Consistent with r651 beta9's engaged-but-incapable pattern. Both end in FAIL (correct no-multimodal baseline).",
-        "hook_blocks": 0,
-        "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-TempSelWaveform-001/20261114_121446",
-        "status_log": "eval/status.jsonl (ts 2026-11-14T04:14:46Z)"
-      },
-      "interpretation_for_vision": {
-        "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
-        "observed": "FAIL (confirmed)",
-        "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. alpha4 is the third restored D-domain case (after alpha1 r650, beta9 r651).",
-        "caveat": "the 2B SFT surrogate's failure is 'engaged-but-aborted' (engaged PNG context but no successful tool calls before external abort). For a cleaner multimodal-gain attribution, vision may want a stronger no-multimodal model that engages the task but cannot read the image. designflow has set up the case correctly (image-required, no text substitute)."
-      },
-      "next_steps_D": [
-        "beta10 TempThreshChar-001 (D, restore)",
-        "beta11 SimFailFsdbProbe-001 (D, restore)",
-        "beta8 WaveView-002 (D, restore, adjudicated to D by shard A r508)",
-        "alpha3 (D, unbanked, build case then restore)",
-        "beta6 (D, unbanked, build case then restore)",
-        "B-domain alpha2/beta7 -> handoff to shard B"
-      ]
-    },
-    {
-      "case_id": "EDA-Eval-DesignFlow-WaveView-002",
-      "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
-      "shard": "D",
-      "date": "2026-11-14",
-      "round": "r653",
-      "restoration_summary": {
-        "original_degradation": "B-grade synthesized tool-scripting task: agent wrote a WaveView ACE Tcl script that programmatically classifies FSDB signals (digital/analog/edges/histogram) -- a text/tool-scripting task a text-only model can pass without any image; the original visual-reasoning intent (look at waveform, classify + explain function by eye) was lost",
-        "restored_form": "SUT reads wv_sigs_A.png (5 stacked mixed-signal traces: clk periodic square / rst_n reset / data multi-level bus / vref analog ramp / sel selector pulses, no data labels), classifies each signal (type/n_transitions/function/period_ns/duty/vmin/vmax/n_pulses/n_levels) FROM THE IMAGE, delivers wv_report.json",
-        "text_substitute_removed": [
-          "signals_A.txt (signal name list)",
-          "hidden/hidden_manifest.json",
-          "FSDB path + Tcl-script deliverable (replaced by image-answer deliverable)"
-        ],
-        "image_assets_added": [
-          "wv_sigs_A.png (1500x1200, 41KB, visible A, matplotlib on .75 from known waveform params)",
-          "hidden/wv_sigs_B.png (1500x1200, 39KB, hidden B: clk period 1.25ns/duty 0.2, rst_n rise @2.5ns, data 5 levels, vref ramp 0.2->0.8, sel 3 pulses; anti-hardcode provenance)"
-        ],
-        "figure_generation": "matplotlib (Agg) on .75 sandbox (eda_flow run_commands), 5 stacked subplots shared time axis [0,10ns], step+ramp drawing, no data labels (read from axes); 1500x1200 @150dpi",
-        "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess reconstructing the A waveform from embedded params and numerically measuring transitions/period/duty/levels (satisfies §4.2 真跑) + read-tolerances (n_trans ±1, period ±0.25ns, duty ±0.12, vmin/vmax ±0.07, n_pulses/n_levels exact) + anti-hardcode-B-token guard (reject B's period 1.25/vmin 0.2/vmax 0.8/n_pulses 3/n_levels 5) + cross-field self-consistency (vmin<vmax, clk n_trans even, rst_n n_trans<=2, data n_levels>=2); k_rationale==k_check==12",
-        "self_verification": "REF PASS 12/12; 14 negatives all FAIL (NEG_RC=0, 11 distinct fake_* first_fails covering b-l); §4.9 degradation (empty/stub-allzero/core-deleted) all FAIL",
-        "contract_adaptation": "answer-deliverable design replaces §4.1/§4.2 candidate-script-runs-on-hidden-B with oracle-recomputed-via-subprocess + anti-hardcode-B guard + self-consistency; hidden B image kept for provenance, NOT in SUT sandbox; L2 tool-scripting form (real wv subprocess) preserved in git history pre-r653",
-        "note": "β8 WaveView-002 was structurally an L2 wv-subprocess tool-scripting case; restoration to image-required form converts it to answer-deliverable per WAVEVIEW collaboration goal (measure multimodal gain). A text-only model CAN pass the old form (writes Tcl, no image) so it did not serve multimodal measurement; restored form forces image reading."
-      },
-      "baseline": {
-        "harness": "cline v3.0.51",
-        "model": "minicpm5-2b-sft-v39-final (2B text-only SFT surrogate, NO multimodal)",
-        "thinking": "low",
-        "dur_sec": 9,
-        "cline_exit": 0,
-        "verdict": "FAIL",
-        "fail_mode": "did-not-engage",
-        "fail_detail": "no submit.zip produced; 60 session msgs, model never read wv_sigs_A.png (png/wv_sigs terms=0), never produced wv_report.json (wv_report/submit terms=0), never opened eda_flow session (eda_flow=0); only generic read_file(2)/write(2) exploration then exited",
-        "correctness": "FAIL is the CORRECT baseline -- a text-only model cannot read the image; aligns with user 09:5x order '无多模态能力者 fail 是正确结果'",
-        "agentic_capacity_caveat": "2B SFT surrogate FAIL mixes 'model capacity insufficient to engage' with 'image-blind'; for cleaner multimodal-gain attribution vision should use a stronger no-multimodal model (#3 对照)"
-      },
-      "restored_count_running": 4,
-      "restored_so_far": [
-        "α1 EyeApertureSelect-001",
-        "β9 WaveMaxFind-001",
-        "α4 TempSelWaveform-001",
-        "β8 WaveView-002"
-      ]
+ "runs": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+   "shard": "D",
+   "date": "2026-11-14",
+   "round": "r650",
+   "restoration_summary": {
+    "original_degradation": "B-grade synthesized .rep text-parsing task (agent wrote Python script to parse text data, no image needed)",
+    "restored_form": "SUT reads eye_sweep_A.png (3-panel VREF sweep figure), determines optimal valid VREF (skew<=15 AND height>=100, max width), delivers answer csv wv_summary.csv",
+    "text_substitute_removed": [
+     "eye_sweep_A.rep",
+     "hidden/eye_sweep_B.rep",
+     "hidden/eye_sweep_allinvalid.rep"
+    ],
+    "image_assets_added": [
+     "eye_sweep_A.png (1286x1286, 144KB, visible A)",
+     "hidden/eye_sweep_B.png (1286x1286, 137KB, hidden B for anti-hardcode provenance)"
+    ],
+    "figure_generation": "matplotlib 3.1.0 on .75 sandbox (eda_flow run_commands), 3-panel: max_width_ps / eye_height_mV(+threshold) / skew_ps(+threshold) vs VREF; no data labels (read from axes)",
+    "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A sweep + anti-hardcode B-token guard + coherent-real-sweep-point check; k_rationale==k_check==12",
+    "self_verification": "REF PASS 12/12; 5 negatives all FAIL (NEG_RC=0); §4.9 degradation (empty/stub/core-deleted) all FAIL",
+    "oracle_A": {
+     "name": "sslvht_10667",
+     "vref": 100.0,
+     "aperture": 56.99,
+     "skew": 5.38,
+     "height": 180.0,
+     "note": "filtered optimum, NOT raw-max false-peak at VREF=60 (width 68.33, skew 35.12, height 90)"
     }
-  ],
-  "last_updated": "2026-11-14 r653",
-  "restored_count": 4
+   },
+   "baseline_run": {
+    "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + eye_sweep_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified)",
+    "model": "minicpm5-2b-sft-v39-final",
+    "model_note": "2B text-only SFT surrogate served by local vllm proxy @ 127.0.0.1:18096. NO multimodal capability. providers.json default 'deepseek-v4-pro-cloud' not present at this proxy (only minicpm5-2b available); --model override used. deepseek-v4-pro-cloud endpoint not reachable in this env.",
+    "thinking": "low",
+    "duration_sec": 50,
+    "cline_exit": 0,
+    "verdict": "FAIL",
+    "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+    "failure_mode": "loop-abort: model made 5 consecutive identical run_commands calls (generic 'ls -la /home/user' + 'find /home/user -maxdepth 2 -type d' — workspace exploration unrelated to the PNG task), detected as loop by cline, aborted at iteration 8. Model text: 'Let me verify EDA side files directly.' Model never read prompt.txt, never attempted to read eye_sweep_A.png, never produced any deliverable.",
+    "failure_mode_classification": "did-not-engage-task (model looped on generic shell exploration without reading the prompt or attempting the image task). This is a weaker failure mode than 'engaged-task-but-couldnt-read-image'; both end in FAIL (correct no-multimodal baseline), but vision should note the 2B surrogate's failure is partly model-capacity (didn't engage) not purely image-blindness. A stronger no-multimodal model would likely read prompt.txt, understand the task, attempt to read the PNG, fail to interpret it, and either give up or guess wrong — still FAIL but cleaner attribution to image-blindness.",
+    "hook_blocks": 0,
+    "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-EyeApertureSelect-001/20261114_110619",
+    "status_log": "eval/status.jsonl (ts 2026-11-14T03:06:19Z)"
+   },
+   "interpretation_for_vision": {
+    "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1: 'no multimodal capability = fail is correct, do not downgrade to text substitute')",
+    "observed": "FAIL (confirmed)",
+    "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. alpha1 is the first of 11 restored cases (alpha4 + beta7); D will restore the remaining 6 D-domain cases in subsequent rounds.",
+    "caveat": "the 2B SFT surrogate's failure is 'did-not-engage' (looped on generic exploration) rather than 'engaged-but-image-blind'. For a cleaner multimodal-gain attribution, vision may want to also run a stronger no-multimodal model (e.g. deepseek-v4-pro-cloud if its endpoint can be restored) that engages the task but cannot read the image. designflow has set up the case correctly (image-required, no text substitute); the failure-mode cleanliness depends on the SUT model choice, which is vision's domain."
+   },
+   "next_steps_D": [
+    "alpha4 TempSelWaveform-001 (D, restore)",
+    "beta9 WaveMaxFind-001 (D, restore)",
+    "beta10 TempThreshChar-001 (D, restore)",
+    "beta11 SimFailFsdbProbe-001 (D, restore)",
+    "alpha3 (D, unbanked, build case then restore)",
+    "beta6 (D, unbanked, build case then restore)",
+    "B-domain alpha2/beta7 -> handoff to shard B",
+    "beta8 cross-shard -> A convenes",
+    "beta5 unbanked -> confirm whether to build"
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+   "shard": "D",
+   "date": "2026-11-14",
+   "round": "r651",
+   "restoration_summary": {
+    "original_degradation": "B-grade synthesized text FSDB dump (50-point v(vb) damped sinusoid) parsed offline by a Python script (no image needed)",
+    "restored_form": "SUT reads wave_vb_A.png (v(vb) damped sinusoid vs time, no data labels), extracts max/t_at_max/min/t_at_min/peak_to_peak/offset/period, delivers answer csv wv_summary.csv",
+    "text_substitute_removed": [
+     "waveform_vb.txt",
+     "hidden/waveform_out.txt",
+     "hidden/waveform_xa.txt"
+    ],
+    "image_assets_added": [
+     "wave_vb_A.png (8x5in @150dpi, 97KB, visible A: v(vb)=0.6+0.4*exp(-t/3ns)*cos(2pi*1GHz*t), 500 pts [0,7ns])",
+     "hidden/wave_out_B.png (8x5in @150dpi, 93KB, hidden B: v(out)=0.5+0.45*exp(-t/2.5ns)*cos(2pi*0.8GHz*t), 500 pts [0,8ns], provenance + anti-hardcode)"
+    ],
+    "figure_generation": "matplotlib 3.1.0 on .75 sandbox (eda_flow run_commands), single-panel voltage vs time; no data labels (read from axes)",
+    "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A params + anti-hardcode B-token guard + self-consistency-on-A-curve; k_rationale==k_check==12",
+    "self_verification": "REF PASS 12/12; 5 negatives all FAIL (NEG_RC=0); section 4.9 degradation (empty/stub-all-zeros/core-deleted-header-only) all FAIL",
+    "oracle_A": {
+     "signal": "v(vb)",
+     "max": 1.0,
+     "t_at_max_ns": 0.0,
+     "min": 0.260933,
+     "t_at_min_ns": 0.490982,
+     "peak_to_peak": 0.739067,
+     "offset": 0.6,
+     "period_ns": 1.0,
+     "note": "damped sinusoid sampled at 500 pts; reading tolerances VTOL=0.02V, TTOL=0.08ns (plot grid)"
+    }
+   },
+   "baseline_run": {
+    "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + wave_vb_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified, hook_blocks=0)",
+    "model": "minicpm5-2b-sft-v39-final",
+    "model_note": "2B text-only SFT surrogate served by local vllm proxy @ 127.0.0.1:18096. NO multimodal capability.",
+    "thinking": "low",
+    "duration_sec": 22,
+    "cline_exit": 0,
+    "verdict": "FAIL",
+    "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+    "failure_mode": "engaged-but-incapable: model DID read prompt.txt and attempted the task (iteration_start x7, opened eda_flow session, tried to write deliverables), but the 2B model could not sustain a coherent tool sequence -- it looped on tool-call errors (tried unavailable tool 'eval_flow_v1', made malformed editor calls missing required fields), aborted at 22s via run_aborted (external_abort: 'aborted by another client'). No deliverable produced.",
+    "failure_mode_classification": "mixed: partially-engaged-then-aborted. Cleaner than r650 alpha1's 'did-not-engage' (this run the model did read the prompt and attempt the image task), but still ended in FAIL with no output. Both alpha1 and beta9 confirm the no-multimodal baseline = FAIL. For a cleaner multimodal-gain attribution, vision may want to also run a stronger no-multimodal model that engages the task but cannot read the image.",
+    "hook_blocks": 0,
+    "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-WaveMaxFind-001/20261114_114227",
+    "status_log": "eval/status.jsonl (ts 2026-11-14T03:42:27Z)"
+   },
+   "interpretation_for_vision": {
+    "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
+    "observed": "FAIL (confirmed)",
+    "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. beta9 is the second of 11 restored cases (alpha1 + beta9 done; 5 D-domain + 2 unbanked + 2 B-handoff + 1 cross-shard + 1 unbanked-confirm remaining).",
+    "caveat": "the 2B SFT surrogate's failure is a mix of partial-engagement and model-capacity (tool-call errors -> abort), not purely image-blindness. The case is set up correctly (image-required, no text substitute); the failure-mode cleanliness depends on the SUT model choice, which is vision's domain."
+   },
+   "next_steps_D": [
+    "alpha4 TempSelWaveform-001 (D, restore next)",
+    "beta10 TempThreshChar-001 (D, restore)",
+    "beta11 SimFailFsdbProbe-001 (D, restore)",
+    "alpha3 (D, unbanked, build case then restore)",
+    "beta6 (D, unbanked, build case then restore)",
+    "B-domain alpha2/beta7 -> handoff to shard B",
+    "beta8 cross-shard -> A convenes",
+    "beta5 unbanked -> confirm whether to build"
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+   "shard": "D",
+   "date": "2026-11-14",
+   "round": "r652",
+   "restoration_summary": {
+    "original_degradation": "B-grade synthesized .tbl text-parsing task (agent wrote Python signal_analyzer.py to parse text waveform export, no image needed)",
+    "restored_form": "SUT reads sel_wave_A.png (temperature-sensor selector signal v(sel54), 5-window multi_pulse activation over 30us) and extracts activation characteristics from the figure; delivers answer CSV wv_summary.csv (signal,v_max,v_min,num_activations,first_activation_time,last_activation_time,duty_cycle,activation_pattern)",
+    "text_substitute_removed": [
+     "wave_A.tbl",
+     "example_output_A.json",
+     "hidden/wave_B.tbl",
+     "hidden/gen_B.py"
+    ],
+    "image_assets_added": [
+     "sel_wave_A.png (1500x900, 73KB, visible A: v(sel54) trapezoidal-pulse multi_pulse, 5 activation windows)",
+     "hidden/sel_wave_B.png (1500x900, 82KB, hidden B: v(sel68) periodic, 7 windows, anti-hardcode provenance)"
+    ],
+    "figure_generation": "matplotlib 3.x on .75 sandbox (eda_flow run_commands) from trapezoidal-pulse model (baseline 0.10V, vmax 1.25V, 5 windows, rise 0.3us, 1500 pts); no data labels (read from axes)",
+    "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A waveform params (numeric threshold-crossing detection) + anti-hardcode B-token guard (sel68 + B distinctive 3-decimal crossing times) + cross-field self-consistency (first<last, 0<duty<=1, plausible implied avg window width); k_rationale==k_check==12",
+    "self_verification": "REF PASS 12/12; 7 negatives all FAIL (NEG_RC=0); §4.9 degradation (empty/stub_allzero/core-deleted) all FAIL",
+    "oracle_A": {
+     "signal": "v(sel54)",
+     "v_max": 1.25,
+     "v_min": 0.1,
+     "num_activations": 5,
+     "first_activation_time": 2.841895,
+     "last_activation_time": 26.177452,
+     "duty_cycle": 0.286858,
+     "activation_pattern": "multi_pulse",
+     "time_span": 30.0
+    }
+   },
+   "baseline_run": {
+    "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + sel_wave_A.png + task_brief.md; check.py/reference/hidden excluded, hook verified, hook_blocks=0)",
+    "model": "minicpm5-2b-sft-v39-final",
+    "model_note": "2B text-only SFT surrogate served by local vllm proxy. NO multimodal capability. providers.json default model.",
+    "thinking": "low",
+    "duration_sec": 11,
+    "cline_exit": 0,
+    "verdict": "FAIL",
+    "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+    "failure_mode": "run_aborted external_abort ('aborted by another client') after 11s. Session had 264 agent_event / 18 hook_event / 1 run_aborted; 118 mentions of sel_wave/png/prompt.txt in session (model engaged the PNG/prompt context) but 0 successful structured tool_calls and no deliverable written. 2B SFT surrogate's tool-calling is unreliable.",
+    "failure_mode_classification": "engaged-but-aborted (model referenced the PNG/prompt context but made no successful tool calls / produced no deliverable before external abort). Consistent with r651 beta9's engaged-but-incapable pattern. Both end in FAIL (correct no-multimodal baseline).",
+    "hook_blocks": 0,
+    "workdir": "/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-TempSelWaveform-001/20261114_121446",
+    "status_log": "eval/status.jsonl (ts 2026-11-14T04:14:46Z)"
+   },
+   "interpretation_for_vision": {
+    "expected": "no-multimodal SUT FAILs on image-required task (correct baseline behaviour per WAVEVIEW_COLLAB.md task 1)",
+    "observed": "FAIL (confirmed)",
+    "multimodal_gain_measurement": "this FAIL is the baseline for task 2 (#3 comparison): when VQA tool (Qwen3.5-2B vision) is added, the same case should be re-run; pass->fail delta = multimodal gain. alpha4 is the third restored D-domain case (after alpha1 r650, beta9 r651).",
+    "caveat": "the 2B SFT surrogate's failure is 'engaged-but-aborted' (engaged PNG context but no successful tool calls before external abort). For a cleaner multimodal-gain attribution, vision may want a stronger no-multimodal model that engages the task but cannot read the image. designflow has set up the case correctly (image-required, no text substitute)."
+   },
+   "next_steps_D": [
+    "beta10 TempThreshChar-001 (D, restore)",
+    "beta11 SimFailFsdbProbe-001 (D, restore)",
+    "beta8 WaveView-002 (D, restore, adjudicated to D by shard A r508)",
+    "alpha3 (D, unbanked, build case then restore)",
+    "beta6 (D, unbanked, build case then restore)",
+    "B-domain alpha2/beta7 -> handoff to shard B"
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+   "shard": "D",
+   "date": "2026-11-14",
+   "round": "r653",
+   "restoration_summary": {
+    "original_degradation": "B-grade synthesized tool-scripting task: agent wrote a WaveView ACE Tcl script that programmatically classifies FSDB signals (digital/analog/edges/histogram) -- a text/tool-scripting task a text-only model can pass without any image; the original visual-reasoning intent (look at waveform, classify + explain function by eye) was lost",
+    "restored_form": "SUT reads wv_sigs_A.png (5 stacked mixed-signal traces: clk periodic square / rst_n reset / data multi-level bus / vref analog ramp / sel selector pulses, no data labels), classifies each signal (type/n_transitions/function/period_ns/duty/vmin/vmax/n_pulses/n_levels) FROM THE IMAGE, delivers wv_report.json",
+    "text_substitute_removed": [
+     "signals_A.txt (signal name list)",
+     "hidden/hidden_manifest.json",
+     "FSDB path + Tcl-script deliverable (replaced by image-answer deliverable)"
+    ],
+    "image_assets_added": [
+     "wv_sigs_A.png (1500x1200, 41KB, visible A, matplotlib on .75 from known waveform params)",
+     "hidden/wv_sigs_B.png (1500x1200, 39KB, hidden B: clk period 1.25ns/duty 0.2, rst_n rise @2.5ns, data 5 levels, vref ramp 0.2->0.8, sel 3 pulses; anti-hardcode provenance)"
+    ],
+    "figure_generation": "matplotlib (Agg) on .75 sandbox (eda_flow run_commands), 5 stacked subplots shared time axis [0,10ns], step+ramp drawing, no data labels (read from axes); 1500x1200 @150dpi",
+    "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess reconstructing the A waveform from embedded params and numerically measuring transitions/period/duty/levels (satisfies §4.2 真跑) + read-tolerances (n_trans ±1, period ±0.25ns, duty ±0.12, vmin/vmax ±0.07, n_pulses/n_levels exact) + anti-hardcode-B-token guard (reject B's period 1.25/vmin 0.2/vmax 0.8/n_pulses 3/n_levels 5) + cross-field self-consistency (vmin<vmax, clk n_trans even, rst_n n_trans<=2, data n_levels>=2); k_rationale==k_check==12",
+    "self_verification": "REF PASS 12/12; 14 negatives all FAIL (NEG_RC=0, 11 distinct fake_* first_fails covering b-l); §4.9 degradation (empty/stub-allzero/core-deleted) all FAIL",
+    "contract_adaptation": "answer-deliverable design replaces §4.1/§4.2 candidate-script-runs-on-hidden-B with oracle-recomputed-via-subprocess + anti-hardcode-B guard + self-consistency; hidden B image kept for provenance, NOT in SUT sandbox; L2 tool-scripting form (real wv subprocess) preserved in git history pre-r653",
+    "note": "β8 WaveView-002 was structurally an L2 wv-subprocess tool-scripting case; restoration to image-required form converts it to answer-deliverable per WAVEVIEW collaboration goal (measure multimodal gain). A text-only model CAN pass the old form (writes Tcl, no image) so it did not serve multimodal measurement; restored form forces image reading."
+   },
+   "baseline": {
+    "harness": "cline v3.0.51",
+    "model": "minicpm5-2b-sft-v39-final (2B text-only SFT surrogate, NO multimodal)",
+    "thinking": "low",
+    "dur_sec": 9,
+    "cline_exit": 0,
+    "verdict": "FAIL",
+    "fail_mode": "did-not-engage",
+    "fail_detail": "no submit.zip produced; 60 session msgs, model never read wv_sigs_A.png (png/wv_sigs terms=0), never produced wv_report.json (wv_report/submit terms=0), never opened eda_flow session (eda_flow=0); only generic read_file(2)/write(2) exploration then exited",
+    "correctness": "FAIL is the CORRECT baseline -- a text-only model cannot read the image; aligns with user 09:5x order '无多模态能力者 fail 是正确结果'",
+    "agentic_capacity_caveat": "2B SFT surrogate FAIL mixes 'model capacity insufficient to engage' with 'image-blind'; for cleaner multimodal-gain attribution vision should use a stronger no-multimodal model (#3 对照)"
+   },
+   "restored_count_running": 4,
+   "restored_so_far": [
+    "α1 EyeApertureSelect-001",
+    "β9 WaveMaxFind-001",
+    "α4 TempSelWaveform-001",
+    "β8 WaveView-002"
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "task": "WAVEVIEW_COLLAB task 1 baseline (image-required restoration)",
+   "shard": "D",
+   "date": "2026-11-14",
+   "round": "r654",
+   "restoration_summary": {
+    "original_degradation": "B-grade synthesized FineSim subprocess task (agent wrote characterize.py to parse .measure results, no image needed); ALSO was in broken half-restored state (commit 754f8fd6 replaced assets with PNG but left old FineSim test field / no check.py / empty negatives -> non-runnable)",
+    "restored_form": "SUT reads thresh_char_A.png (two stacked subplots: top v(temp) triangular temp-sweep ramp, bottom v(det) hysteresis-comparator output; no data labels/threshold lines/annotations), cross-references detector transition times against ramp values to infer vth_high/vth_low/hysteresis, delivers thresh_report.json",
+    "text_substitute_removed": [
+     "tb_a.sp",
+     "spec_a.json",
+     "hidden/deck_B.sp",
+     "characterize.py subprocess deliverable"
+    ],
+    "image_assets_added": [
+     "thresh_char_A.png (1500x900, 68KB, visible A)",
+     "hidden/thresh_char_B.png (1500x900, 68KB, hidden B for anti-hardcode provenance)"
+    ],
+    "figure_generation": "matplotlib 3.1.0 (Agg) on .75 sandbox (eda_flow run_code), 2000-pt discretization; two stacked subplots sharing time axis; NO data labels/annotations/threshold lines",
+    "check_redesign": "12 conditions (a)-(l); answer-validation: oracle recomputed via subprocess from embedded A_PARAMS (reconstruct A waveform 2000-pt, measure vmax/vmin/t_at_max/slope/crossings/hysteresis/transitions/duty) + anti-hardcode B-token guard + cross-field self-consistency; k_rationale==k_check==12",
+    "self_verification": "REF PASS 12/12; 18 negatives+degenerate all FAIL (NEG_RC=0, distinct first_fail covers b-l); §4.9 degradation (empty/stub/core-deleted) all FAIL",
+    "oracle_A": {
+     "vmax": 1.1994,
+     "vmin": 0.0,
+     "t_at_max": 4.002,
+     "ramp_slope": 0.3,
+     "vth_high": 0.85,
+     "vth_low": 0.45,
+     "hysteresis": 0.4,
+     "t_cross_up": 2.83642,
+     "t_cross_down": 6.50325,
+     "n_transitions": 2,
+     "duty": 0.36668
+    }
+   },
+   "baseline_run": {
+    "harness": "cline v3.0.51 + PreToolUse hook (no leak: workdir has only prompt.txt + thresh_char_A.png + task_brief.md; check.py/reference/hidden excluded, leak self-check passed, hook_blocks=0)",
+    "model": "minicpm5-2b-sft-v39-final",
+    "model_note": "2B text-only SFT surrogate served by local vllm proxy @ 127.0.0.1:18096. NO multimodal capability. providers.json default 'deepseek-v4-pro-cloud' not present at this proxy; --model override used.",
+    "thinking": "low",
+    "duration_sec": 23,
+    "cline_exit": 0,
+    "verdict": "FAIL",
+    "fail_reason": "no submit.zip produced (cline wrote nothing under outputs/)",
+    "failure_mode": "engaged-but-incapable: 2B model ENGAGED with the task (session mentions thresh_char=254, png=252, task_brief=300, prompt.txt=226, vth_high=201, v(temp)=9, thresh_report=8, submit.zip=3, eda_flow=19) -- it understood it must read the image and produce thresh_report.json with vth_high/etc., but as a text-only model could not extract values from the PNG and did not produce a valid submit.zip. Cleaner attribution than r650 alpha1 did-not-engage (model here clearly engaged but was image-blind).",
+    "image_required": true
+   }
+  }
+ ],
+ "last_updated": "2026-11-14 r654",
+ "restored_count": 5
 }
