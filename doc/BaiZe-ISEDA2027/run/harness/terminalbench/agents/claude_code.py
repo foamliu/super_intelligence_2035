@@ -219,8 +219,13 @@ class ClaudeCodeTB(TBBaseAgent):
             "exit_code": result.return_code,
         }
 
-        if result.return_code != 0:
-            raise RuntimeError(
-                f"Claude-Code exited with code {result.return_code}: "
-                f"{(result.stderr or '')[:500]}"
-            )
+        # FIX (2026-11-14, R2498): Previously any non-zero exit code raised
+        # RuntimeError, which prevented the verifier from running.  In the
+        # 80-turn rerun, 17/30 completed tasks exited with code 1 (empty
+        # stderr) after running 1–53 min — Claude-Code uses exit 1 for
+        # max-turns, API errors, and other non-fatal conditions.  The
+        # verifier is the ground truth: it should ALWAYS run so the reward
+        # reflects the actual workspace state, not the CLI exit code.
+        # Exit 137 (OOM/kill) also benefits — the model may have completed
+        # the task before being killed.  The exit code is preserved in
+        # context.metadata (above) for diagnosis.
