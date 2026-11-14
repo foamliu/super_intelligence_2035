@@ -8,6 +8,8 @@ WAITING: 0
 
 > 📦 **wake #1242 · 2026-11-15** 例行巡检·全交付态·零新增·非 idle-spin（fetch up-to-date 无新令·research 日报 vision=无建议·复验 wake#1241 全交付物在位 summary G0=0/G1=5/G2=4·cheat=0·报告 0外链0script·体积 MEMORY26100B/TASK31980B≤32KB·#3 task2 仍 infra-blocked 待 ops 放行 .17:30002）·已fold(详情 daily-memories-vision/2026-11-15.md)。
 
+> 📦 **wake #1243 · 2026-11-15** 例行巡检·全交付态·零新增·非 idle-spin：git fetch→behind1(designflow shard D ws-shardD 00:49 巡检·0 触视觉)→ff-only 合并·无新运维令·research 日报 2026-11-15 vision=无建议·WAVEVIEW_COLLAB 无新 task2 交付(仍 infra-blocked)·**本轮新验三 VQA 端点本机全健康**(30001 base ok/Qwen3.5-2B·30002 MCP LISTEN 0.0.0.0·30003 rft2_adapter ok)⇒ infra-blocker 纯系 .17 入站 TCP ACL(评测机 .15→.17:30002 待 ops 放行·vision 无 passwordless sudo 不可自改)·复验 §6_domain_rl.tex TBD=0·报告 0外链0script·G/{G0,G1,G2} 各 10 JSON+summary/audit 在位·体积 MEMORY26494B/TASK31980B≤32KB·已fold(详情 daily-memories-vision/2026-11-15.md)。
+
 > 🆕 **【wake #1240 · 2026-11-14 23:5x】G0/G1 agent 臂✅已完成并落盘核验 · G2 后台运行中（agent 编排带来 5 整题翻转 = 本线核心增益）**：
 > - **G0（agent glm-5.2·无 VQA）= 0/10 PASS**（全 FAIL·vqa_calls=0·正确基线：文本底座看不见波形图）。逐题 k：DqRead 4/13·EyeAp 0/9·FsdbWr 2/12·RiseEdge 2/9·SimFail 3/12·TempSel 0/9·TempThresh 1/10·WaveCmp 2/14·WaveMax 0/9·WaveView002 6/13。
 > - **G1（agent + 基模 Qwen3.5-2B VQA :30001）= 5/10 PASS** · **G0→G1 翻转 5 整题**：EyeApertureSelect 0/9→**9/9**·TempSelWaveform 0/9→**9/9**·TempThreshChar 1/10→**10/10**·WaveCmpWrap 2/14→**14/14**·WaveMaxFind 0/9→**9/9**。未翻转 5 题均「差几量」：FsdbWr 10/12·SimFail 11/12·WaveView002 11/13·RiseEdge 7/9·DqRead 1/13。G1 vqa_calls 6–34/题·reask 0–23·**agent_selfcheck 轨迹已捕获**（问→发现不一致→换问法再问原文片段，如 RiseEdge「The second response for data_a seems inconsistent... Let me re-examine」、FsdbWr「I'm getting conflicting answers... Let me cross-validate」）= 正是 spec §0.2 要的核心证据。
