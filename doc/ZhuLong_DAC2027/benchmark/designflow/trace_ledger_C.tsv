@@ -871,3 +871,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794539296413_hf7nj	e02141	hfeg0plg56	177	physical_verify	parked		2026-11-14 13:21	cross-domain synopsys/bandgap sim B/D not-C
 1788418814848_xm15u	jason17w	hfeg0pnd002	137	physical_verify	parked		2026-11-14 13:22	ACCEPT-alt future: jason17w drc+verilog mixed, unpeeked budget-limited r557
 1791972521290_aw79o	yzwang	hfeg0plg06	81	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleTimeAggregator-001	2026-11-14 14:03	
+1794538757522_mku3e.messages.json	e0047488	hfeg0pkn003	603	physical_verify	claimed		2026-11-14 14:45	r559 DRC pipeline JSON->GDS->calibre->report
