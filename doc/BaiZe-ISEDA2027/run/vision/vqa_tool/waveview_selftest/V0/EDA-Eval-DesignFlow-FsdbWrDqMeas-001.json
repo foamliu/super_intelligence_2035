@@ -1,0 +1,118 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+ "tag": "β7",
+ "tier": "C",
+ "verdict": "FAIL",
+ "k_pass": 3,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "write_count",
+   "pass": true,
+   "got": 3.0,
+   "gold": 3,
+   "tol": 0
+  },
+  {
+   "name": "write_time_0",
+   "pass": false,
+   "got": 0.0,
+   "gold": 2.0,
+   "tol": 0.3
+  },
+  {
+   "name": "write_time_1",
+   "pass": false,
+   "got": 100.0,
+   "gold": 8.0,
+   "tol": 0.3
+  },
+  {
+   "name": "write_time_2",
+   "pass": false,
+   "got": 200.0,
+   "gold": 14.0,
+   "tol": 0.3
+  },
+  {
+   "name": "rising_interval_0",
+   "pass": false,
+   "got": 100.0,
+   "gold": 1.2,
+   "tol": 0.3
+  },
+  {
+   "name": "rising_interval_1",
+   "pass": false,
+   "got": 100.0,
+   "gold": 0.8,
+   "tol": 0.3
+  },
+  {
+   "name": "falling_interval_0",
+   "pass": false,
+   "got": 100.0,
+   "gold": 1.7,
+   "tol": 0.3
+  },
+  {
+   "name": "summary_rising_avg",
+   "pass": false,
+   "got": 100.0,
+   "gold": 1.1,
+   "tol": 0.2
+  },
+  {
+   "name": "summary_falling_avg",
+   "pass": false,
+   "got": 100.0,
+   "gold": 1.6667,
+   "tol": 0.2
+  },
+  {
+   "name": "write_count_3",
+   "pass": true,
+   "got": null,
+   "gold": "write_count==3",
+   "tol": 0
+  },
+  {
+   "name": "write_order",
+   "pass": true,
+   "got": null,
+   "gold": "write times increasing",
+   "tol": 0
+  },
+  {
+   "name": "rising_avg_range",
+   "pass": false,
+   "got": null,
+   "gold": "rising_avg in [0.5,2]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "write_count": 3,
+  "write_time_0": 0,
+  "write_time_1": 100,
+  "write_time_2": 200,
+  "rising_interval_0": 100,
+  "rising_interval_1": 100,
+  "falling_interval_0": 100,
+  "falling_interval_1": 100,
+  "summary_rising_avg": 100,
+  "summary_falling_avg": 100
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "A DQ digital step waveform with red dashed vertical 'W' markers (WRITE commands) over time (ns), NO data labels. For each W marker: write_time (ns), then rising_interval (ns, W->DQ rise) and falling_interval (ns, W->DQ fall). Deliver: write_count, the three write times, rising/falling intervals for write 0 and 1, summary_rising_avg, summary_falling_avg. Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"write_count\", \"write_time_0\", \"write_time_1\", \"write_time_2\", \"rising_interval_0\", \"rising_interval_1\", \"falling_interval_0\", \"summary_rising_avg\", \"summary_falling_avg\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"write_count\": 3,\n  \"write_time_0\": 0,\n  \"write_time_1\": 100,\n  \"write_time_2\": 200,\n  \"rising_interval_0\": 100,\n  \"rising_interval_1\": 100,\n  \"falling_interval_0\": 100,\n  \"falling_interval_1\": 100,\n  \"summary_rising_avg\": 100,\n  \"summary_falling_avg\": 100\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 3.77,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

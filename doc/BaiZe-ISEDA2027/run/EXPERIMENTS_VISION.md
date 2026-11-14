@@ -3284,3 +3284,65 @@ v8 是不同任务（频率比较 vs 类型分类），不直接可比。但关�
 - **结论**：在当前 CPU/A40 规模（400 训练例、48 eval、2B+LoRA、5ep SFT）下，生成式路线（augment/synthesis）**不优于**直接回归做周期估计。诚实负结果——「本期不做生成式路线」。下一步（待定，不本轮执行）：① 增大 eval set 提升统计功效（48 题 McNemar 功效有限）；② 重新审视 synthesis 表示（freq 直接输出可能比 type,freq 更稳）；③ 等 GPU 做更大规模 / 真 diffusion 验证。
 
 **产物**：`vision/wave_rl/v11_results/`（smoke + std_s{20261114,20261115,20261116}，各含 `eval_questions.json` + `experiment_results.json`）+ `v11_summary.json`(558B)·`reports/report_vision_cpu_rl_waveform_zh.html`(10205B, 3/3 seeds)·log @ `/tmp/v11_regen.log`。
+
+---
+
+## §23 WaveView 10 题自测（±VQA MCP · 阶段 A · 用户直令 2026-11-14 19:4x · wake#1234）
+
+> 规格：`VISION_WAVEVIEW_SELFTEST_SPEC.md`。**阶段 A（能力增量度量）**：V0（无 VQA MCP，纯文本底座）vs V1（加 Qwen3.5-2B VQA MCP 工具），唯一变量=是否能通过 VQA 工具读图。10 题（designflow 公开参数等价重建：α1/α2/α3/α4/β6/β7/β8/β9/β10/β11），同参数、顺序随机化（seed=20261114）。
+
+### 配置
+
+| 项 | 值 |
+|:--|:--|
+| 两臂模型 | 同一 Qwen3.5-2B 权重；V0 纯文本（不看图）/ V1 经 VQA MCP 工具读图 |
+| VQA 后端 | `qwen35_vqa_server.py` HTTP :30001（GPU5 常驻，Qwen3.5-2B bf16） |
+| 判分 | vision 据 designflow 公开 oracle+容差重建的 `check_case`，k=9–14 条件，全过才 PASS（与 designflow 语义一致） |
+| 题面 | task_brief 只含任务描述+提取要求，**不含答案数值**；PNG 由 `waveview_selftest_cases.py` 用公开参数重建（资产准备，非答案推导） |
+| 反作弊 | V0 不调 VQA/不读图；V1 读图只走 VQA 工具；禁 PIL/cv2/tesseract/base64/imdecode/.read_bytes；逐题 trace 落盘 |
+
+### 核心结果（诚实）
+
+| 指标 | V0（无 VQA） | V1（有 VQA MCP） |
+|:--|--:|--:|
+| 通过率（PASS/10） | **0/10 (0.0%)** | **0/10 (0.0%)** |
+| 翻转题（V0 fail→V1 pass） | — | **0** |
+| cheat_count | 0 | 0 |
+| VQA 工具调用次数 | 0 | 81 |
+
+**预注册判据**：V1=V0（0/10=0/10）⇒ 「**工具可用但未被有效使用或不足以解题**」（spec §5 中段）。cheat=0 ⇒ 通过率可引用。
+
+**逐题 k_pass（V0 / V1）**：
+| tag | V0 | V1 | Δ(V1−V0) |
+|:--|:--|:--|--:|
+| β9 | 0/9 | 1/9 | +1 |
+| α4 | 4/9 | 5/9 | +1 |
+| β10 | 4/10 | 2/10 | −2 |
+| α1 | 3/9 | 2/9 | −1 |
+| β8 | 6/13 | 10/13 | +4 |
+| β11 | 6/12 | 6/12 | 0 |
+| α2 | 2/9 | 5/9 | +3 |
+| β7 | 3/12 | 2/12 | −1 |
+| α3 | 4/13 | 5/13 | +1 |
+| β6 | 2/14 | 4/14 | +2 |
+
+- V1 条件通过数 > V0 在 6/10 题（β8 +4、α2 +3、β6 +2、β9/α4/α3 各 +1）；tie 1（β11）；V0 反超 3（β10/α1/β7）。
+- **McNemar**：不一致对 b=0（V0 fail→V1 pass）、c=0（V0 pass→V1 fail），p=1.0；n=10 样本量不足，p 仅作参考。
+
+### 归因（从 trace）
+
+VQA 通道**确实读到了图**（V1 81 次 VQA 调用，per-quantity 正确率多高于 V0），但**未达整题 PASS**：典型缺口=**精确计数**（β8 clk_period/clk_n_transitions/sel_n_pulses、β11 edge_count）、**精确数值**（α1 skew/height 读成阈值线值、β11 fail_time）、**跨面板反推**（β10 vth_high/low/hysteresis）——与 wake#1227/#1228 探针结论一致（Qwen3.5-2B 原生 VL「看懂图是什么」但「读不准图上的数」）。V0 纯文本无图信息，靠题面猜，部分结构性条件（如 vmax>v_min、window_order）偶中，故 k_pass 非零但同样不达全过。
+
+### 意义与口径
+
+- 这是**阶段 A（能力增量度量）**的诚实基线：原生 Qwen3.5-2B VQA 通道在 WaveView 真实题上**单题 0 翻转**——能力增量体现在 per-quantity 而非整题通过率，**正是 §22 v2 强化（合成集 60→90 p=0.0156）要补的缺口**。
+- 口径标签：**WaveView 真实题（designflow 公开参数等价重建）**，非合成集；PNG/check 非 designflow 原始字节（.15 评测机不可达=infra-blocker）。
+- 阶段 B（SFT/RL 域适配）本轮不做；v2-RFT 强化 adapter 起 task2b 端点同 10 题再跑=下步。
+
+### 产物
+
+- 运行器/题集：`vision/vqa_tool/waveview_selftest/{waveview_selftest_run.py,waveview_selftest_cases.py}`
+- 原始结果：`waveview_selftest/{V0,V1}/*.json`（各 10）·`summary.json`(18.7KB)·`audit.json`·`recompute_audit.py`（审计自匹配修正后重算）
+- 报告：`reports/report_vision_waveview_selftest_zh.html`（19535B·中文·单文件·0 外链·0 script·2 内联 SVG）
+- 复跑：`CUDA_VISIBLE_DEVICES=5 python waveview_selftest_run.py`（需先起 `qwen35_vqa_server.py --port 30001`）·log @ `/tmp/waveview_selftest.log`
+

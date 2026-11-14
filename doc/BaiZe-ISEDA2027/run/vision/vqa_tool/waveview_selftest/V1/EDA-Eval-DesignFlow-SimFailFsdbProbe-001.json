@@ -1,0 +1,182 @@
+{
+ "arm": "V1",
+ "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+ "tag": "β11",
+ "tier": "B",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+ "verdict": "FAIL",
+ "k_pass": 6,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "fail_time",
+   "pass": false,
+   "got": 4.0,
+   "gold": 1363000.0,
+   "tol": 5000
+  },
+  {
+   "name": "root_cause",
+   "pass": true,
+   "got": "Q_force_x_stuck_high",
+   "gold": "Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal",
+   "pass": true,
+   "got": "test_violation_clk",
+   "gold": "test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "edge_count",
+   "pass": false,
+   "got": 1.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "window_start",
+   "pass": false,
+   "got": 1.34,
+   "gold": 1340000.0,
+   "tol": 10000
+  },
+  {
+   "name": "window_end",
+   "pass": false,
+   "got": 1.37,
+   "gold": 1370000.0,
+   "tol": 10000
+  },
+  {
+   "name": "q_valid_at_fail",
+   "pass": false,
+   "got": 1.0,
+   "gold": 0,
+   "tol": 0
+  },
+  {
+   "name": "test_mode_at_fail",
+   "pass": true,
+   "got": 1.0,
+   "gold": 1,
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause==Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal_ok",
+   "pass": true,
+   "got": null,
+   "gold": "edge_signal==test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "window_order",
+   "pass": true,
+   "got": null,
+   "gold": "window_start<window_end",
+   "tol": 0
+  },
+  {
+   "name": "q_valid_drops",
+   "pass": false,
+   "got": null,
+   "gold": "Q_valid==0 at fail",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "fail_time": "Looking at the trace labeled **Q_force_x** (4th from top):\n\n- It starts at 0.\n- At approximately **1.362e6 ps**, it rises to 1 and stays there.\n\nThe x-axis is in **ps**, and the value is given as **1",
+  "root_cause": "Q_force_x_stuck_high",
+  "edge_signal": "test_violation_clk",
+  "edge_count": "Looking at the traces in the plot:\n\n- **test_mode** (bottom trace, pink): constant at 1 → no edges.\n- **BYP_eff** (6th from bottom, brown): constant at 0 → no edges.\n- **test_violation_pos** (3rd from",
+  "window_start": "1.340",
+  "window_end": "1.370",
+  "q_valid_at_fail": "Looking at the top plot labeled **Q_valid**:\n\n- The blue line (Q_valid) is at **1** from time ≈ 1.340 ps to about 1.362 ps.\n- At **t ≈ 1.362 ps**, it drops to **0**.",
+  "test_mode_at_fail": "Looking at the bottom plot labeled `test_mode`, we can see that it is a constant line at value **1** across the entire time range shown (from ~1.340e6 to 1.370e6 ps).\n\nEven though there are other signals like `test_violation"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp",
+   "key": "fail_time",
+   "question": "At what time (in ps) does the Q_force_x trace FIRST go high (rise to 1)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "Looking at the trace labeled **Q_force_x** (4th from top):\n\n- It starts at 0.\n- At approximately **1.362e6 ps**, it rises to 1 and stays there.\n\nThe x-axis is in **ps**, and the value is given as **1",
+   "ok": true,
+   "elapsed_s": 2.187
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "root_cause",
+   "question": "Which trace goes STUCK HIGH at the failure time, indicating the root cause? Answer 'Q_force_x_stuck_high' or 'other'. One phrase.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "Q_force_x_stuck_high",
+   "ok": true,
+   "elapsed_s": 0.666
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "edge_signal",
+   "question": "Which trace has the most rising/falling edges (pulses) in this window? Give the trace name. One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "test_violation_clk",
+   "ok": true,
+   "elapsed_s": 0.647
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "edge_count",
+   "question": "How many rising edges (pulses) does that most-active edge trace have? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "Looking at the traces in the plot:\n\n- **test_mode** (bottom trace, pink): constant at 1 → no edges.\n- **BYP_eff** (6th from bottom, brown): constant at 0 → no edges.\n- **test_violation_pos** (3rd from",
+   "ok": true,
+   "elapsed_s": 2.205
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "window_start",
+   "question": "What is the leftmost (start) time shown on the x-axis in ps? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "1.340",
+   "ok": true,
+   "elapsed_s": 0.624
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "window_end",
+   "question": "What is the rightmost (end) time shown on the x-axis in ps? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "1.370",
+   "ok": true,
+   "elapsed_s": 0.624
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "q_valid_at_fail",
+   "question": "At the failure time, what is the value of Q_valid (0 or 1)? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "Looking at the top plot labeled **Q_valid**:\n\n- The blue line (Q_valid) is at **1** from time ≈ 1.340 ps to about 1.362 ps.\n- At **t ≈ 1.362 ps**, it drops to **0**.",
+   "ok": true,
+   "elapsed_s": 2.236
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "test_mode_at_fail",
+   "question": "At the failure time, what is the value of test_mode (0 or 1)? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "answer": "Looking at the bottom plot labeled `test_mode`, we can see that it is a constant line at value **1** across the entire time range shown (from ~1.340e6 to 1.370e6 ps).\n\nEven though there are other signals like `test_violation",
+   "ok": true,
+   "elapsed_s": 2.205
+  }
+ ],
+ "n_tool_calls": 8,
+ "duration_s": 11.81
+}

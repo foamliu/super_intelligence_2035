@@ -1,0 +1,168 @@
+{
+ "arm": "V1",
+ "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+ "tag": "β10",
+ "tier": "C",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+ "verdict": "FAIL",
+ "k_pass": 2,
+ "k_total": 10,
+ "conditions": [
+  {
+   "name": "vmax",
+   "pass": true,
+   "got": 1.2,
+   "gold": 1.1994,
+   "tol": 0.07
+  },
+  {
+   "name": "t_at_max",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4.002,
+   "tol": 0.3
+  },
+  {
+   "name": "n_transitions",
+   "pass": false,
+   "got": 0.0,
+   "gold": 2,
+   "tol": 0
+  },
+  {
+   "name": "t_cross_up",
+   "pass": false,
+   "got": 1.3,
+   "gold": 2.83642,
+   "tol": 0.3
+  },
+  {
+   "name": "t_cross_down",
+   "pass": false,
+   "got": 0.6,
+   "gold": 6.50325,
+   "tol": 0.3
+  },
+  {
+   "name": "vth_high",
+   "pass": false,
+   "got": null,
+   "gold": 0.85,
+   "tol": 0.07
+  },
+  {
+   "name": "vth_low",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.45,
+   "tol": 0.07
+  },
+  {
+   "name": "hysteresis",
+   "pass": false,
+   "got": null,
+   "gold": 0.4,
+   "tol": 0.1
+  },
+  {
+   "name": "hyst_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "vth_high-vth_low==hyst",
+   "tol": 0
+  },
+  {
+   "name": "cross_order",
+   "pass": false,
+   "got": null,
+   "gold": "t_cross_up<t_cross_down",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "vmax": "1.2",
+  "t_at_max": "4",
+  "n_transitions": "The bottom subplot (v(det)) shows a square wave:\n\n- From t = 0 to t = 3 μs: v(det) = 0 V (flat)\n- At t = 3 μs: **rising transition** (from 0 to 1 V)\n- From t",
+  "t_cross_up": "1.3",
+  "t_cross_down": "0.6",
+  "vth_high": "To find the upper threshold voltage $ v_{th\\_high} $, we need to determine the value of $ v(\\text{det}) $ at which the top plot ($ v(\\text{temp}) $) crosses it — i.e., the point where $ v(\\text{det}) $ transitions from",
+  "vth_low": "0.0",
+  "hysteresis": "To find the hysteresis, we need to determine the voltage thresholds:\n\n- **vth_high** = the voltage at which the system switches from low to high (detected)\n- **vth_low** = the voltage at which the system switches from high to low\n\nLooking at the bottom plot"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp",
+   "key": "vmax",
+   "question": "Look at the TOP subplot (v(temp)). What is its peak/maximum voltage in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "1.2",
+   "ok": true,
+   "elapsed_s": 0.405
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "t_at_max",
+   "question": "Look at the TOP subplot (v(temp)). At what time (in us) does the peak occur? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "4",
+   "ok": true,
+   "elapsed_s": 0.336
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "n_transitions",
+   "question": "Look at the BOTTOM subplot (v(det)). How many rising/falling transitions does it have? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "The bottom subplot (v(det)) shows a square wave:\n\n- From t = 0 to t = 3 μs: v(det) = 0 V (flat)\n- At t = 3 μs: **rising transition** (from 0 to 1 V)\n- From t",
+   "ok": true,
+   "elapsed_s": 2.029
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "t_cross_up",
+   "question": "Look at the BOTTOM subplot (v(det)). At what time (in us) does it FIRST go high (rise to 1)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "1.3",
+   "ok": true,
+   "elapsed_s": 0.41
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "t_cross_down",
+   "question": "Look at the BOTTOM subplot (v(det)). At what time (in us) does it go back low (fall to 0)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "0.6",
+   "ok": true,
+   "elapsed_s": 0.392
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "vth_high",
+   "question": "The bottom v(det) goes high when top v(temp) crosses an upper threshold. What is that upper threshold vth_high in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "To find the upper threshold voltage $ v_{th\\_high} $, we need to determine the value of $ v(\\text{det}) $ at which the top plot ($ v(\\text{temp}) $) crosses it — i.e., the point where $ v(\\text{det}) $ transitions from",
+   "ok": true,
+   "elapsed_s": 2.036
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "vth_low",
+   "question": "The bottom v(det) goes low when top v(temp) crosses a lower threshold. What is that lower threshold vth_low in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "0.0",
+   "ok": true,
+   "elapsed_s": 0.366
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "hysteresis",
+   "question": "What is the hysteresis (vth_high minus vth_low) in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "answer": "To find the hysteresis, we need to determine the voltage thresholds:\n\n- **vth_high** = the voltage at which the system switches from low to high (detected)\n- **vth_low** = the voltage at which the system switches from high to low\n\nLooking at the bottom plot",
+   "ok": true,
+   "elapsed_s": 2.013
+  }
+ ],
+ "n_tool_calls": 8,
+ "duration_s": 8.28
+}

@@ -1,0 +1,94 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+ "tag": "α4",
+ "tier": "B",
+ "verdict": "FAIL",
+ "k_pass": 4,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "v_max",
+   "pass": true,
+   "got": 1.2,
+   "gold": 1.25,
+   "tol": 0.07
+  },
+  {
+   "name": "v_min",
+   "pass": false,
+   "got": -0.8,
+   "gold": 0.1,
+   "tol": 0.07
+  },
+  {
+   "name": "num_activations",
+   "pass": false,
+   "got": 3.0,
+   "gold": 5,
+   "tol": 0
+  },
+  {
+   "name": "first_activation_time",
+   "pass": false,
+   "got": 0.0,
+   "gold": 2.841895,
+   "tol": 0.5
+  },
+  {
+   "name": "last_activation_time",
+   "pass": false,
+   "got": 10.0,
+   "gold": 26.177452,
+   "tol": 0.5
+  },
+  {
+   "name": "duty_cycle",
+   "pass": false,
+   "got": 0.6,
+   "gold": 0.286858,
+   "tol": 0.12
+  },
+  {
+   "name": "activation_pattern",
+   "pass": true,
+   "got": "multi_pulse",
+   "gold": "multi_pulse",
+   "tol": 0
+  },
+  {
+   "name": "vmax_gt_vmin",
+   "pass": true,
+   "got": null,
+   "gold": "v_max>v_min",
+   "tol": 0
+  },
+  {
+   "name": "multi_pulse",
+   "pass": true,
+   "got": null,
+   "gold": "pattern==multi_pulse",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "v_max": 1.2,
+  "v_min": -0.8,
+  "num_activations": 3,
+  "first_activation_time": 0.0,
+  "last_activation_time": 10.0,
+  "duty_cycle": 0.6,
+  "activation_pattern": "multi_pulse"
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "You are given a plot of v(sel54) versus time (us) with NO data labels. Read from the axes and deliver: v_max (V), v_min (V), num_activations (int), first_activation_time (us), last_activation_time (us), duty_cycle (0-1), activation_pattern ('single_pulse' or 'multi_pulse'). Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"v_max\", \"v_min\", \"num_activations\", \"first_activation_time\", \"last_activation_time\", \"duty_cycle\", \"activation_pattern\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"v_max\": 1.2,\n  \"v_min\": -0.8,\n  \"num_activations\": 3,\n  \"first_activation_time\": 0.0,\n  \"last_activation_time\": 10.0,\n  \"duty_cycle\": 0.6,\n  \"activation_pattern\": \"multi_pulse\"\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 2.48,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

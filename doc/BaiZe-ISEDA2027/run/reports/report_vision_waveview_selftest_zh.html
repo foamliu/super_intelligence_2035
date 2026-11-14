@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vision WaveView 10 题自测报告（±VQA MCP）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",Arial,sans-serif;max-width:1080px;margin:24px auto;padding:0 18px;color:#202124;line-height:1.6;}
+h1{font-size:1.5em;border-bottom:3px solid #1a73e8;padding-bottom:8px;}
+h2{font-size:1.2em;color:#1a73e8;margin-top:28px;border-left:4px solid #1a73e8;padding-left:10px;}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px;}
+th,td{border:1px solid #ddd;padding:6px 8px;text-align:center;vertical-align:top;}
+th{background:#f1f3f4;}
+td.pass{background:#e6f4ea;color:#188038;font-weight:bold;}
+td.fail{background:#fce8e6;color:#d93025;font-weight:bold;}
+small{color:#777;font-weight:normal;}
+.card{display:inline-block;border:1px solid #ddd;border-radius:8px;padding:10px 16px;margin:6px 8px 6px 0;background:#fafafa;}
+.big{font-size:1.7em;font-weight:bold;}
+.ok{color:#188038;}.bad{color:#d93025;}.warn{color:#b06000;}
+.note{background:#fff8e1;border-left:4px solid #f9ab00;padding:10px 14px;margin:12px 0;}
+.honest{background:#e8f0fe;border-left:4px solid #1a73e8;padding:10px 14px;margin:12px 0;}
+code{background:#f1f3f4;padding:1px 4px;border-radius:3px;font-size:12px;}
+.meta{color:#666;font-size:12px;}
+</style></head><body>
+<h1>vision WaveView 10 题自测报告：±VQA MCP 能力增量度量（阶段 A）</h1>
+<p class="meta">生成时间：2026-11-14T20:21:15　|　seed=20261114　|　模型：Qwen3.5-2B (same weights both arms; V0 text-only / V1 VL via VQA tool)<br>VQA 后端：<code>http://127.0.0.1:30001</code>　|　文本底座：<code>/nas_data/app.e0031982/models/Qwen3.5-2B</code></p>
+<h2>① 一句话结论</h2>
+<div class="card">V0（无 VQA）通过率 <span class="big">0/10</span> <span class="meta">(0.0%)</span></div>
+<div class="card">V1（有 VQA MCP）通过率 <span class="big">0/10</span> <span class="meta">(0.0%)</span></div>
+<div class="card">翻转题（V0 fail→V1 pass）<span class="big">0</span></div>
+<div class="card">反作弊 <span class="big ok">cheat=0</span></div>
+<p><b>预注册判据核验：</b>＝ V1=V0（工具可用但未被有效使用或不足以解题）。<br>不一致对 b=0（V0 fail→V1 pass）、c=0（V0 pass→V1 fail）；McNemar 精确 p=1.0（n=10 样本量不足，p 值仅作参考）。</p>
+<h2>② 两臂逐题对比表</h2>
+<svg width="500" height="68" xmlns="http://www.w3.org/2000/svg" style="font-family:Arial;font-size:10px">
+<rect x="10" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="31.0" y="21" text-anchor="middle" fill="#fff">β9</text>
+<rect x="10" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="31.0" y="49" text-anchor="middle" fill="#fff">β9</text>
+<rect x="58" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="79.0" y="21" text-anchor="middle" fill="#fff">α4</text>
+<rect x="58" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="79.0" y="49" text-anchor="middle" fill="#fff">α4</text>
+<rect x="106" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="127.0" y="21" text-anchor="middle" fill="#fff">β10</text>
+<rect x="106" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="127.0" y="49" text-anchor="middle" fill="#fff">β10</text>
+<rect x="154" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="175.0" y="21" text-anchor="middle" fill="#fff">α1</text>
+<rect x="154" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="175.0" y="49" text-anchor="middle" fill="#fff">α1</text>
+<rect x="202" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="223.0" y="21" text-anchor="middle" fill="#fff">β8</text>
+<rect x="202" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="223.0" y="49" text-anchor="middle" fill="#fff">β8</text>
+<rect x="250" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="271.0" y="21" text-anchor="middle" fill="#fff">β11</text>
+<rect x="250" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="271.0" y="49" text-anchor="middle" fill="#fff">β11</text>
+<rect x="298" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="319.0" y="21" text-anchor="middle" fill="#fff">α2</text>
+<rect x="298" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="319.0" y="49" text-anchor="middle" fill="#fff">α2</text>
+<rect x="346" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="367.0" y="21" text-anchor="middle" fill="#fff">β7</text>
+<rect x="346" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="367.0" y="49" text-anchor="middle" fill="#fff">β7</text>
+<rect x="394" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="415.0" y="21" text-anchor="middle" fill="#fff">α3</text>
+<rect x="394" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="415.0" y="49" text-anchor="middle" fill="#fff">α3</text>
+<rect x="442" y="6" width="42" height="22" fill="#d93025" rx="3"/><text x="463.0" y="21" text-anchor="middle" fill="#fff">β6</text>
+<rect x="442" y="34" width="42" height="22" fill="#d93025" rx="3"/><text x="463.0" y="49" text-anchor="middle" fill="#fff">β6</text>
+<text x="4" y="21" fill="#555">V0</text><text x="4" y="49" fill="#555">V1</text>
+</svg>
+<table><tr><th>tag</th><th>case_id</th><th>tier</th><th>V0 无VQA</th><th>V1 有VQA</th><th>V1工具调用</th><th>耗时 V0/V1</th><th>翻转</th></tr><tr><td>β9</td><td>EDA-Eval-DesignFlow-WaveMaxFind-001</td><td>C</td><td class='fail'>FAIL<br><small>0/9</small></td><td class='fail'>FAIL<br><small>1/9</small></td><td>7</td><td>156.95s / 14.01s</td><td><b>—</b></td></tr><tr><td>α4</td><td>EDA-Eval-DesignFlow-TempSelWaveform-001</td><td>B</td><td class='fail'>FAIL<br><small>4/9</small></td><td class='fail'>FAIL<br><small>5/9</small></td><td>7</td><td>2.48s / 7.79s</td><td><b>—</b></td></tr><tr><td>β10</td><td>EDA-Eval-DesignFlow-TempThreshChar-001</td><td>C</td><td class='fail'>FAIL<br><small>4/10</small></td><td class='fail'>FAIL<br><small>2/10</small></td><td>8</td><td>3.61s / 8.28s</td><td><b>—</b></td></tr><tr><td>α1</td><td>EDA-Eval-DesignFlow-EyeApertureSelect-001</td><td>A</td><td class='fail'>FAIL<br><small>3/9</small></td><td class='fail'>FAIL<br><small>2/9</small></td><td>5</td><td>2.0s / 9.02s</td><td><b>—</b></td></tr><tr><td>β8</td><td>EDA-Eval-DesignFlow-WaveView-002</td><td>C</td><td class='fail'>FAIL<br><small>6/13</small></td><td class='fail'>FAIL<br><small>10/13</small></td><td>11</td><td>3.56s / 10.61s</td><td><b>—</b></td></tr><tr><td>β11</td><td>EDA-Eval-DesignFlow-SimFailFsdbProbe-001</td><td>B</td><td class='fail'>FAIL<br><small>6/12</small></td><td class='fail'>FAIL<br><small>6/12</small></td><td>8</td><td>2.89s / 11.81s</td><td><b>—</b></td></tr><tr><td>α2</td><td>EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001</td><td>A</td><td class='fail'>FAIL<br><small>2/9</small></td><td class='fail'>FAIL<br><small>5/9</small></td><td>6</td><td>1.98s / 7.37s</td><td><b>—</b></td></tr><tr><td>β7</td><td>EDA-Eval-DesignFlow-FsdbWrDqMeas-001</td><td>C</td><td class='fail'>FAIL<br><small>3/12</small></td><td class='fail'>FAIL<br><small>2/12</small></td><td>9</td><td>3.77s / 16.69s</td><td><b>—</b></td></tr><tr><td>α3</td><td>EDA-Eval-DesignFlow-DqReadPathWaveDebug-001</td><td>A</td><td class='fail'>FAIL<br><small>4/13</small></td><td class='fail'>FAIL<br><small>5/13</small></td><td>9</td><td>3.02s / 11.82s</td><td><b>—</b></td></tr><tr><td>β6</td><td>EDA-Eval-DesignFlow-WaveCmpWrap-001</td><td>A</td><td class='fail'>FAIL<br><small>2/14</small></td><td class='fail'>FAIL<br><small>4/14</small></td><td>11</td><td>3.71s / 17.99s</td><td><b>—</b></td></tr></table>
+<p class="meta">tier：A=结构性(engagement 缺失)·B=弱相关·C=干净 testbed（预期主翻转源）。verdict = 该题全部 k 条件通过才 PASS（与 designflow 语义一致）。</p>
+<h2>③ 条件通过数对比（V0 灰 / V1 蓝）</h2>
+<svg width="1340" height="260" xmlns="http://www.w3.org/2000/svg" style="font-family:Arial;font-size:11px">
+<rect x="0" y="0" width="1340" height="260" fill="#fff"/>
+<line x1="62" y1="220.0" x2="1330" y2="220.0" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="223.0" text-anchor="end" fill="#666">0</text>
+<line x1="62" y1="194.3" x2="1330" y2="194.3" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="197.3" text-anchor="end" fill="#666">2</text>
+<line x1="62" y1="168.6" x2="1330" y2="168.6" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="171.6" text-anchor="end" fill="#666">4</text>
+<line x1="62" y1="142.9" x2="1330" y2="142.9" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="145.9" text-anchor="end" fill="#666">6</text>
+<line x1="62" y1="117.1" x2="1330" y2="117.1" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="120.1" text-anchor="end" fill="#666">8</text>
+<line x1="62" y1="91.4" x2="1330" y2="91.4" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="94.4" text-anchor="end" fill="#666">10</text>
+<line x1="62" y1="65.7" x2="1330" y2="65.7" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="68.7" text-anchor="end" fill="#666">12</text>
+<line x1="62" y1="40.0" x2="1330" y2="40.0" stroke="#e2e2e2" stroke-width="1"/>
+<text x="58" y="43.0" text-anchor="end" fill="#666">14</text>
+<line x1="62" y1="220" x2="1330" y2="220" stroke="#333" stroke-width="1"/>
+<line x1="62" y1="40" x2="62" y2="220" stroke="#333" stroke-width="1"/>
+<rect x="70" y="220.0" width="46" height="0.0" fill="#9aa0a6"/>
+<rect x="122" y="207.1" width="46" height="12.9" fill="#1a73e8"/>
+<text x="96.0" y="234" text-anchor="middle" fill="#333">β9</text>
+<text x="93.0" y="217.0" text-anchor="middle" fill="#555" font-size="9">0</text>
+<text x="145.0" y="204.1" text-anchor="middle" fill="#1a73e8" font-size="9">1</text>
+<rect x="194" y="168.6" width="46" height="51.4" fill="#9aa0a6"/>
+<rect x="246" y="155.7" width="46" height="64.3" fill="#1a73e8"/>
+<text x="220.0" y="234" text-anchor="middle" fill="#333">α4</text>
+<text x="217.0" y="165.6" text-anchor="middle" fill="#555" font-size="9">4</text>
+<text x="269.0" y="152.7" text-anchor="middle" fill="#1a73e8" font-size="9">5</text>
+<rect x="318" y="168.6" width="46" height="51.4" fill="#9aa0a6"/>
+<rect x="370" y="194.3" width="46" height="25.7" fill="#1a73e8"/>
+<text x="344.0" y="234" text-anchor="middle" fill="#333">β10</text>
+<text x="341.0" y="165.6" text-anchor="middle" fill="#555" font-size="9">4</text>
+<text x="393.0" y="191.3" text-anchor="middle" fill="#1a73e8" font-size="9">2</text>
+<rect x="442" y="181.4" width="46" height="38.6" fill="#9aa0a6"/>
+<rect x="494" y="194.3" width="46" height="25.7" fill="#1a73e8"/>
+<text x="468.0" y="234" text-anchor="middle" fill="#333">α1</text>
+<text x="465.0" y="178.4" text-anchor="middle" fill="#555" font-size="9">3</text>
+<text x="517.0" y="191.3" text-anchor="middle" fill="#1a73e8" font-size="9">2</text>
+<rect x="566" y="142.9" width="46" height="77.1" fill="#9aa0a6"/>
+<rect x="618" y="91.4" width="46" height="128.6" fill="#1a73e8"/>
+<text x="592.0" y="234" text-anchor="middle" fill="#333">β8</text>
+<text x="589.0" y="139.9" text-anchor="middle" fill="#555" font-size="9">6</text>
+<text x="641.0" y="88.4" text-anchor="middle" fill="#1a73e8" font-size="9">10</text>
+<rect x="690" y="142.9" width="46" height="77.1" fill="#9aa0a6"/>
+<rect x="742" y="142.9" width="46" height="77.1" fill="#1a73e8"/>
+<text x="716.0" y="234" text-anchor="middle" fill="#333">β11</text>
+<text x="713.0" y="139.9" text-anchor="middle" fill="#555" font-size="9">6</text>
+<text x="765.0" y="139.9" text-anchor="middle" fill="#1a73e8" font-size="9">6</text>
+<rect x="814" y="194.3" width="46" height="25.7" fill="#9aa0a6"/>
+<rect x="866" y="155.7" width="46" height="64.3" fill="#1a73e8"/>
+<text x="840.0" y="234" text-anchor="middle" fill="#333">α2</text>
+<text x="837.0" y="191.3" text-anchor="middle" fill="#555" font-size="9">2</text>
+<text x="889.0" y="152.7" text-anchor="middle" fill="#1a73e8" font-size="9">5</text>
+<rect x="938" y="181.4" width="46" height="38.6" fill="#9aa0a6"/>
+<rect x="990" y="194.3" width="46" height="25.7" fill="#1a73e8"/>
+<text x="964.0" y="234" text-anchor="middle" fill="#333">β7</text>
+<text x="961.0" y="178.4" text-anchor="middle" fill="#555" font-size="9">3</text>
+<text x="1013.0" y="191.3" text-anchor="middle" fill="#1a73e8" font-size="9">2</text>
+<rect x="1062" y="168.6" width="46" height="51.4" fill="#9aa0a6"/>
+<rect x="1114" y="155.7" width="46" height="64.3" fill="#1a73e8"/>
+<text x="1088.0" y="234" text-anchor="middle" fill="#333">α3</text>
+<text x="1085.0" y="165.6" text-anchor="middle" fill="#555" font-size="9">4</text>
+<text x="1137.0" y="152.7" text-anchor="middle" fill="#1a73e8" font-size="9">5</text>
+<rect x="1186" y="194.3" width="46" height="25.7" fill="#9aa0a6"/>
+<rect x="1238" y="168.6" width="46" height="51.4" fill="#1a73e8"/>
+<text x="1212.0" y="234" text-anchor="middle" fill="#333">β6</text>
+<text x="1209.0" y="191.3" text-anchor="middle" fill="#555" font-size="9">2</text>
+<text x="1261.0" y="165.6" text-anchor="middle" fill="#1a73e8" font-size="9">4</text>
+<text x="62" y="26" fill="#666">条件通过数 (k_pass / k=14)</text>
+<rect x="1190" y="14" width="12" height="12" fill="#9aa0a6"/><text x="1206" y="24" fill="#333">V0 无VQA</text><rect x="1260" y="14" width="12" height="12" fill="#1a73e8"/><text x="1276" y="24" fill="#333">V1 有VQA</text>
+</svg>
+<h2>④ 翻转表与逐题归因</h2>
+<p>翻转题数：0/10。</p>
+<p>无翻转题。</p>
+<h3>未翻转题归因</h3>
+<ul><li><b>β9</b> EDA-Eval-DesignFlow-WaveMaxFind-001（tier C）：V0=FAIL→V1=FAIL，V1 条件通过 1/9。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>α4</b> EDA-Eval-DesignFlow-TempSelWaveform-001（tier B）：V0=FAIL→V1=FAIL，V1 条件通过 5/9。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>β10</b> EDA-Eval-DesignFlow-TempThreshChar-001（tier C）：V0=FAIL→V1=FAIL，V1 条件通过 2/10。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>α1</b> EDA-Eval-DesignFlow-EyeApertureSelect-001（tier A）：V0=FAIL→V1=FAIL，V1 条件通过 2/9。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>β8</b> EDA-Eval-DesignFlow-WaveView-002（tier C）：V0=FAIL→V1=FAIL，V1 条件通过 10/13。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>β11</b> EDA-Eval-DesignFlow-SimFailFsdbProbe-001（tier B）：V0=FAIL→V1=FAIL，V1 条件通过 6/12。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>α2</b> EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001（tier A）：V0=FAIL→V1=FAIL，V1 条件通过 5/9。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>β7</b> EDA-Eval-DesignFlow-FsdbWrDqMeas-001（tier C）：V0=FAIL→V1=FAIL，V1 条件通过 2/12。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>α3</b> EDA-Eval-DesignFlow-DqReadPathWaveDebug-001（tier A）：V0=FAIL→V1=FAIL，V1 条件通过 5/13。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li><li><b>β6</b> EDA-Eval-DesignFlow-WaveCmpWrap-001（tier A）：V0=FAIL→V1=FAIL，V1 条件通过 4/14。未翻转：VQA 读图不足以满足该题全部精确读数/跨面板反推条件，典型缺口=精确计数、精确数值、跨面板反推（与既有探针结论一致）。</li></ul>
+<h2>⑤ 反作弊审计结果</h2>
+<div class="ok" style="font-size:1.1em;font-weight:bold">cheat = False　|　cheat_count = 0　→　✅ 可引用通过率</div>
+<table><tr><th>检查项</th><th>结果</th></tr><tr><td>V0 臂调用 VQA 工具次数（应=0）</td><td class="pass">0</td></tr><tr><td>V0 臂读图次数（应=0）</td><td class="pass">0</td></tr><tr><td>V1 臂 VQA 调用次数（读图唯一通道）</td><td>81</td></tr><tr><td>源码静态扫描禁用路径（PIL/cv2/tesseract/base64/imdecode）</td><td class="pass">未命中</td></tr></table>
+<p class="meta">V0 只看题面文本（不含答案数值）；V1 读图只准走 VQA MCP 工具。逐题 trace 已落 <code>summary.json</code> 的 <code>trace</code> 字段。</p>
+<h2>⑥ 诚实声明与局限</h2>
+<div class="honest"><ul><li>样本量 n=10，统计功效极弱：McNemar 需 ≥6 个不一致对才可能 p<0.05；本实验不一致对 b=0/c=0，p=1.0（仅作参考，注明样本不足）。</li><li>题目/PNG/check 均为 vision 据 designflow 公开参数忠实重建的等价副本，并非与 designflow 原始 check.py/资产字节相同（designflow 原始资产位于 .15 评测机，从 .17 不可达 = 已记录的 infra-blocker）。</li><li>两臂使用同一 Qwen3.5-2B 权重：V0 为纯文本（不看图）、V1 经 VQA MCP 工具读图。唯一变量 = 是否能通过 VQA 工具访问图像，符合规格 §2 的「唯一变量」要求。</li><li>V1 仅量「VQA 通道能力增量」(阶段 A)；阶段 B（SFT/RL 域适配）本轮不做。</li><li>反作弊审计：cheat=False（cheat_count=0）；V0 调用 VQA 次数=0，V0 读图次数=0，V1 VQA 调用次数=81。</li></ul></div>
+<div class="note"><b>口径标签</b>：本报告所有数字均为 <b>WaveView 真实题（designflow 公开参数等价重建）</b>，非合成集。阶段 A（能力增量）；阶段 B（SFT/RL 域适配）见 <code>report_vision_vqa_strengthen_v2_zh.html</code>（合成集 v2-RFT 90% p=0.0156）。</div>
+<h2>⑦ 可复现清单</h2>
+<ul><li>题集与判分：<code>vision/vqa_tool/waveview_selftest/waveview_selftest_cases.py</code>（10 题、k 条件、oracle、容差，self-check 全 PASS）</li><li>运行器：<code>vision/vqa_tool/waveview_selftest/waveview_selftest_run.py</code>（V0 文本 / V1 VQA、随机化顺序、审计）</li><li>VQA 后端：<code>vision/vqa_tool/qwen35_vqa_server.py</code>（Qwen3.5-2B，HTTP :30001）+ MCP 封装 <code>qwen35_vqa_mcp_server.py</code>（:30002）</li><li>原始结果：<code>waveview_selftest/V0/*.json</code>、<code>V1/*.json</code>、<code>summary.json</code>、<code>audit.json</code></li><li>复跑：<code>CUDA_VISIBLE_DEVICES=5 python waveview_selftest_run.py</code>（需先起 VQA 服务 <code>qwen35_vqa_server.py --port 30001</code>）</li></ul>
+<p class="meta">commit 前缀 <code>vision waveview-selftest:</code>　|　规格：<code>VISION_WAVEVIEW_SELFTEST_SPEC.md</code></p>
+</body></html>

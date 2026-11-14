@@ -1,0 +1,141 @@
+{
+ "arm": "V1",
+ "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+ "tag": "α2",
+ "tier": "A",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+ "verdict": "FAIL",
+ "k_pass": 5,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "ref_signal",
+   "pass": true,
+   "got": "clk_a",
+   "gold": "clk_a",
+   "tol": 0
+  },
+  {
+   "name": "ref_edge_time",
+   "pass": false,
+   "got": 0.0,
+   "gold": 5.1667,
+   "tol": 0.3
+  },
+  {
+   "name": "target_edge_time",
+   "pass": false,
+   "got": 50.0,
+   "gold": 7.3667,
+   "tol": 0.3
+  },
+  {
+   "name": "margin_ns",
+   "pass": false,
+   "got": 1.0,
+   "gold": 2.2,
+   "tol": 0.2
+  },
+  {
+   "name": "swing",
+   "pass": true,
+   "got": 1.5,
+   "gold": 1.5,
+   "tol": 0.2
+  },
+  {
+   "name": "vref",
+   "pass": true,
+   "got": 0.75,
+   "gold": 0.75,
+   "tol": 0.1
+  },
+  {
+   "name": "margin_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "target-ref==margin",
+   "tol": 0
+  },
+  {
+   "name": "vref_consistency",
+   "pass": true,
+   "got": null,
+   "gold": "swing/2==vref",
+   "tol": 0
+  },
+  {
+   "name": "ref_first",
+   "pass": true,
+   "got": null,
+   "gold": "ref_signal==clk_a",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "ref_signal": "clk_a",
+  "ref_edge_time": "Looking at the top plot (`clk_a`), the signal starts at 0.00 V and rises to 1.50 V.\n\nThe full swing is:  \n**1.50 - 0.00 = 1.50 V**\n\n50% of the full swing",
+  "target_edge_time": "To determine when the `data_a` signal crosses 50% of its full swing on the rising edge:\n\n- The full swing of `data_a` is from 0.00 V to 1.50 V → full swing = 1.50 V\n- 50%",
+  "margin_ns": "To compute the **rise-edge margin** as:\n\n> **data_a_edge_time - clk_a_edge_time**\n\nWe need to find the time at which each signal transitions from low to high (i.e., the rising edge).\n\n---\n\n### Step 1: Identify rising edge times\n\nFrom the plots:",
+  "swing": "1.50",
+  "vref": "0.75"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp",
+   "key": "ref_signal",
+   "question": "There are two signals: 'clk_a' (top, rises first) and 'data_a' (bottom, rises second). Which signal rises FIRST (the reference edge)? 'clk_a' or 'data_a'? One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "clk_a",
+   "ok": true,
+   "elapsed_s": 0.366
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "ref_edge_time",
+   "question": "Look at the 'clk_a' signal (top, the one that rises first). At what time in ns does it cross 50% of its full swing on the rising edge? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "Looking at the top plot (`clk_a`), the signal starts at 0.00 V and rises to 1.50 V.\n\nThe full swing is:  \n**1.50 - 0.00 = 1.50 V**\n\n50% of the full swing",
+   "ok": true,
+   "elapsed_s": 2.019
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "target_edge_time",
+   "question": "Look at the 'data_a' signal (bottom, the one that rises second). At what time in ns does it cross 50% of its full swing on the rising edge? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "To determine when the `data_a` signal crosses 50% of its full swing on the rising edge:\n\n- The full swing of `data_a` is from 0.00 V to 1.50 V → full swing = 1.50 V\n- 50%",
+   "ok": true,
+   "elapsed_s": 1.992
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "margin_ns",
+   "question": "What is the time difference (margin) in ns between the two rising edges, computed as data_a_edge_time minus clk_a_edge_time? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "To compute the **rise-edge margin** as:\n\n> **data_a_edge_time - clk_a_edge_time**\n\nWe need to find the time at which each signal transitions from low to high (i.e., the rising edge).\n\n---\n\n### Step 1: Identify rising edge times\n\nFrom the plots:",
+   "ok": true,
+   "elapsed_s": 2.025
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "swing",
+   "question": "What is the peak-to-peak swing (the high level the signals reach) in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "1.50",
+   "ok": true,
+   "elapsed_s": 0.4
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "vref",
+   "question": "50% of the swing is the crossing level used to define edge time. What is that 50% level in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "0.75",
+   "ok": true,
+   "elapsed_s": 0.365
+  }
+ ],
+ "n_tool_calls": 6,
+ "duration_s": 7.37
+}

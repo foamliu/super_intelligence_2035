@@ -155,10 +155,15 @@ def audit():
         arm = op.get("arm")
         if arm == "V0" and op.get("op") in ("vqa_call", "image_read"):
             findings.append({"severity": "cheat", "op": op, "why": "V0 arm touched image/vqa"})
-    # 2) static: grep own source for forbidden tokens (answer-derivation paths)
+    # 2) static: grep own source for forbidden tokens (answer-derivation paths).
+    #    Exclude THIS audit() function's own forbidden-pattern definition lines
+    #    so the regex strings don't self-match (they are patterns, not usage).
     src = open(os.path.join(HERE, "waveview_selftest_run.py")).read()
+    _fstart = src.find("forbidden = [")
+    _fend = src.find("]", _fstart) + 1
+    src_scan = src[:_fstart] + src[_fend:] if _fstart > 0 else src
     for pat in forbidden:
-        if re.search(pat, src):
+        if re.search(pat, src_scan):
             findings.append({"severity": "review", "pattern": pat,
                              "why": "forbidden image-bypass token present in runner source"})
     cheat = any(f["severity"] == "cheat" for f in findings)

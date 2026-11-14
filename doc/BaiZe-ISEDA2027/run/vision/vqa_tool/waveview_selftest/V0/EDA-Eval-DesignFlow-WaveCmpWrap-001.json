@@ -1,0 +1,133 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+ "tag": "β6",
+ "tier": "A",
+ "verdict": "FAIL",
+ "k_pass": 2,
+ "k_total": 14,
+ "conditions": [
+  {
+   "name": "pass_vdd",
+   "pass": false,
+   "got": 5.0,
+   "gold": 1.2,
+   "tol": 0.1
+  },
+  {
+   "name": "pass_n_pulses",
+   "pass": false,
+   "got": 10.0,
+   "gold": 3,
+   "tol": 0
+  },
+  {
+   "name": "pass_n_edges",
+   "pass": false,
+   "got": 20.0,
+   "gold": 6,
+   "tol": 0
+  },
+  {
+   "name": "pass_period",
+   "pass": false,
+   "got": 100.0,
+   "gold": 30.0,
+   "tol": 4.0
+  },
+  {
+   "name": "pass_first_rise",
+   "pass": false,
+   "got": 5.0,
+   "gold": 110.0,
+   "tol": 4.0
+  },
+  {
+   "name": "fail_vdd",
+   "pass": false,
+   "got": 5.0,
+   "gold": 1.0,
+   "tol": 0.1
+  },
+  {
+   "name": "fail_n_pulses",
+   "pass": false,
+   "got": 10.0,
+   "gold": 2,
+   "tol": 0
+  },
+  {
+   "name": "fail_n_edges",
+   "pass": false,
+   "got": 20.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "fail_period",
+   "pass": false,
+   "got": 100.0,
+   "gold": 40.0,
+   "tol": 4.0
+  },
+  {
+   "name": "fail_first_rise",
+   "pass": false,
+   "got": 5.0,
+   "gold": 115.0,
+   "tol": 4.0
+  },
+  {
+   "name": "verdict",
+   "pass": false,
+   "got": "SAME",
+   "gold": "different",
+   "tol": 0
+  },
+  {
+   "name": "verdict_different",
+   "pass": false,
+   "got": null,
+   "gold": "verdict==different",
+   "tol": 0
+  },
+  {
+   "name": "pass_edges_eq_2x_pulses",
+   "pass": true,
+   "got": null,
+   "gold": "pass n_edges==2*n_pulses",
+   "tol": 0
+  },
+  {
+   "name": "fail_edges_eq_2x_pulses",
+   "pass": true,
+   "got": null,
+   "gold": "fail n_edges==2*n_pulses",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "pass_vdd": 5,
+  "pass_n_pulses": 10,
+  "pass_n_edges": 20,
+  "pass_period": 100,
+  "pass_first_rise": 5,
+  "fail_vdd": 5,
+  "fail_n_pulses": 10,
+  "fail_n_edges": 20,
+  "fail_period": 100,
+  "fail_first_rise": 5,
+  "verdict": "SAME"
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "Two stacked square-wave pulse panels, NO labels/thresholds. TOP: 'pass corner'. BOTTOM: 'fail corner'. For EACH panel deliver: vdd (peak voltage), n_pulses (int), n_edges (total rising+falling edges, int), period (ns), first_rise (ns). Then verdict: are the two corners the SAME or DIFFERENT? Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"pass_vdd\", \"pass_n_pulses\", \"pass_n_edges\", \"pass_period\", \"pass_first_rise\", \"fail_vdd\", \"fail_n_pulses\", \"fail_n_edges\", \"fail_period\", \"fail_first_rise\", \"verdict\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"pass_vdd\": 5,\n  \"pass_n_pulses\": 10,\n  \"pass_n_edges\": 20,\n  \"pass_period\": 100,\n  \"pass_first_rise\": 5,\n  \"fail_vdd\": 5,\n  \"fail_n_pulses\": 10,\n  \"fail_n_edges\": 20,\n  \"fail_period\": 100,\n  \"fail_first_rise\": 5,\n  \"verdict\": \"SAME\"\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 3.71,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}
