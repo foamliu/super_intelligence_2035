@@ -1,0 +1,54 @@
+{
+ "per_run": {
+  "run1_024153": {
+   "sa": 322,
+   "kw": 511,
+   "ga": 458,
+   "rc": 35,
+   "tu": 10195,
+   "err": 6898
+  },
+  "run2_062714": {
+   "sa": 775,
+   "kw": 375,
+   "ga": 327,
+   "rc": 115,
+   "tu": 4720,
+   "err": 1303
+  },
+  "run3_101852": {
+   "sa": 232,
+   "kw": 349,
+   "ga": 343,
+   "rc": 119,
+   "tu": 11241,
+   "err": 7389
+  },
+  "run4_131353": {
+   "sa": 322,
+   "kw": 263,
+   "ga": 350,
+   "rc": 74,
+   "tu": 3248,
+   "err": 262
+  },
+  "run5_163053": {
+   "sa": 267,
+   "kw": 241,
+   "ga": 409,
+   "rc": 164,
+   "tu": 3586,
+   "err": 71
+  }
+ },
+ "five_run_totals": {
+  "search_apis": 1918,
+  "search_apis_by_keyword": 1739,
+  "get_api_details": 1887,
+  "run_code": 507,
+  "RAG_total": 5544,
+  "sandbox_run_code": 507
+ },
+ "verdict": "A",
+ "tools_registered": "cline_mcp_settings.json: pyAether_MCP_server @127.0.0.1:18888/sse autoApprove=[search_apis,get_api_details,search_apis_by_keyword,run_code]"
+}
