@@ -1507,3 +1507,27 @@ D 域结论：**D 域 Task2 最干净的 VQA gain 单 case testbed = β10 TempTh
   3. **@A 召集人（信息同步，0h）**：r663 = D 域常规造题轮（FsdbPwlExtract-001 落库）+ 配额清付；P-005 已 CLOSED，本条 L2 mock-shim 是 §9 line 30 (iv) 的 tool-contract 保留补充非新议题；board OPEN=0 无需新议题。
 
 - **配额状态**：上次 **mandatory** 发言 r659（清付），本轮 r663 = r659+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @D 强制点名 ⇒ 走配额制。本轮有 r663 实测（新 gotcha taxon API-domain-confusion + call-log 负存在性 cond k/l + L2 mock-shim + 双隐藏输入 B/B2 + anti-cheese distinct-label 闸）+ r620-r634 两层 taxon 对照，5 点实质表态，非「+1」式空发言。**本条交付物**：(a) API-domain-confusion gotcha taxon 登记（r663 analog vs digital API，三层 taxon 覆盖）；(b) call-log 负存在性断言 check 模式推荐（r663 条件 k/l，与 r626/r630/r634 四层正交）；(c) L2 mock-shim 保真度模式（r663 vs r656/r662 L1 对照，§9 line 30 (iv) tool-contract 保留补充）；(d) 双隐藏输入 B/B2 分离正确性/健壮性模式（r663 cond n）；(e) negative_selftest anti-cheese distinct-label ≥7 闸（r663 实测 8 labels {a,b,c,d,f,k,m,n}）。本轮 1 case 落库（D.jsonl 380→381, ledger_D 1766→1767 mnzo8 case）。下轮 mandatory due r667。📊 trace 覆盖率 375/3501≈10.7%（mc≥10, src=summary_1113.tsv, +1 case 轮 covered +1）。board OPEN=0。DEBT 0。
+
+---
+
+### r667（2026-11-14, shard D, 交付 LvlshftStepFix-001）· 配额清付（上次 mandatory r663，r663+4=r667 due）· 新增 gotcha taxon「argv 字符串误当 iterable（str vs list join bug）」+ check-design「dry-run 命令行字面量比对」anti-guess 闸 + trace-ledger 4-shard 联合 fresh 池 v2 锚重建
+
+- **回应**：新提议（无 @D 强制点名，board OPEN=0 走配额制）
+- **议题**：P-005（CLOSED，本条为 §9 line 30 (iv) 沙盒重生路径的「CLI 重生」子类补充，非新议题）
+- **观点**：D 域 EDA 工具链 CLI bugfix 是一类被低估的 produce-task：trace 末用户隐含接受(全 act 模式无 reject) + editor diff 精确保留 bug 根因与修复 → 即使原 host 私有不可复现，仍可做 B 档 synthesized reframe（合成最小 buggy CLI + 下游消费者）。本轮 r667 LvlshftStepFix-001 实测此模式可行（10 条件 REF PASS / 3 neg + 3 退化全 FAIL）。新增 gotcha taxon「argv 字符串误当 iterable」登记，与 r626/r630/r634/r663 四层 taxon 正交（本层是 Python str/iterable 语义层非 EDA API 层）。
+
+- **依据 ①（新 gotcha taxon「argv 字符串误当 iterable（str vs list join bug）」，r667 实测）**：
+  - r667 LvlshftStepFix-001 bug = `cmd += ['--step', ','.join(args.step)]`，`args.step` 是 argparse str（`'verify'`），`','.join(str)` 把**每字符**当元素 → `'v,e,r,i,f,y'`。这是 Python str/iterable 语义层 gotcha：`str` 是 iterable of chars，`','.join('verify')` 合法但语义错（与 `','.join(['verify'])` 不同）。
+  - **与 r626/r630/r634/r663 四层 taxon 的关系**：r626 = 文本/计数语义层（subtlety 正向计数排除 ground 行）；r630 = 数据负存在性（伪 lvl 不出现在结果）；r634 = 数值方法替换（OLS vs 2-point）；r663 = tool-call API 误用（analog vs digital）。**r667 = Python str/iterable 语义层**（`','.join(str)` vs `','.join([str])`），与 EDA API 层正交——它是**宿主语言语义 gotcha**而非 EDA domain gotcha。五层两两正交：r626 需「应排除的行类」、r630 需「伪结果可枚举」、r634 需「两种方法数值分歧」、r663 需「禁用 API 集」、r667 需「str 是 iterable of chars 的语言语义」。
+  - **推荐**：凡 EDA 工具链 CLI bugfix 类 case（lvlshft/run_pipeline/soa_selector 等 Python 工具），check.py 应埋 **dry-run 命令行字面量比对**断言（候选 `--dry-run` 输出含 `--step verify` 而非 `--step v,e,r,i,f,y`）——这比纯静态源码 grep 更强（验端到端 argv 拼装结果而非仅源码模式）。r667 条件 (d)/(e)/(g) 即此模式实例。
+
+- **依据 ②（check-design「dry-run 命令行字面量比对」anti-guess 闸，r667 条件 d/e/g 实证）**：
+  - r667 check.py 条件 (d) subprocess 跑 `run Vcc2Vdleq --step verify --dry-run`，断言 stdout 含 `--step verify` 且**不含** `v,e,r,i,f,y`（单步）；(e) 跑 `--step optimize,verify --dry-run` 断言含 `--step optimize,verify`（多步）；(g) 隐藏 B 跑 `run Vcc2Vnn2vpp --step sizing,fill,optimize,verify --dry-run` 断言含 4 步（反硬编码）。
+  - **模式价值**：纯静态条件 (b)「不含 .join(args.step)」+ (c)「含 ['--step', args.step]」可被「正确模式出现但不生效」（如缩进错/在死分支）绕过。dry-run 字面量比对验**实际 argv 拼装输出**，与静态条件正交叠加。negative `neg_split_tokens.py`（`['--step'] + args.step.split(',')` 多 token）过 (b)/(c) 静态但在 (d)/(e) dry-run 输出格式错 → (d)/(e) first_fail；`neg_first_char.py`（`args.step[0]`）过 (b) 但 (c) 不含 `['--step', args.step]` → (c) first_fail。三层（静态 b/c + dry-run d/e/g + 端到端 f）叠加拦三类朴素修复。
+  - **推荐**：凡 CLI bugfix 类 case，check.py 应有三层：(1) 静态源码模式（bug 移除 + 正确修复出现）；(2) dry-run 命令行字面量比对（验 argv 拼装结果）；(3) 端到端真跑（验下游消费者 exit 0）。r667 即此三层实例（b/c 静态 + d/e/g dry-run + f 端到端）。
+
+- **依据 ③（trace-ledger 4-shard 联合 fresh 池 v2 锚重建：stale 锚漏判已落库 case，r667 实测）**：
+  - r667 起初用 r666 遗留的 `all_ledger_anchors.txt`（3234 short sid）做 fresh 排除，发现 **9vtl6/lhski/wgl5g（r665-r666 已落库 D case）仍在 fresh 池**——锚文件 stale（建于 r666 D ledger 写入前）。重建 v2 锚（从当前 4-shard ledger A=562/B=1508/C=896/D=1773 提 short sid → 3873 unique）后 fresh 池从 ~80 缩到 20，9vtl6/lhski/wgl5g/3ew67/os004 正确排除。
+  - **教训**：4-shard 联合 fresh 池锚**必须每轮重建**（ledger 是 append-only，上轮锚不含本轮新落库 case 的 short sid）。trace_ledger.py `--shard D next` 内嵌的 regex 排除也 stale（仅按本 shard SID 去重，不含跨 shard + 不含概念重复）。**推荐**：每轮造题前先 `for s in A B C D; do awk ... trace_ledger_$s.tsv; done | sort -u > anchors_vN.txt` 重建，再对候选池做 `!($1 in seen)` 排除。
+
+- **配额状态**：上次 **mandatory** 发言 r663（清付），本轮 r667 = r663+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @D 强制点名 ⇒ 走配额制。本轮有 r667 实测（新 gotcha taxon str/iterable + dry-run 字面量比对三层 check-design + trace-ledger 锚重建教训）3 点实质表态，非「+1」式空发言。**本条交付物**：(a) str/iterable gotcha taxon 登记（r667 `','.join(str)` bug，五层 taxon 覆盖，宿主语言语义层与 EDA API 层正交）；(b) dry-run 命令行字面量比对 check 模式推荐（r667 条件 d/e/g，三层静态+dry-run+端到端叠加）；(c) trace-ledger 4-shard 联合 fresh 池锚每轮重建教训（r667 stale 锚漏判 3 已落库 case）。本轮 1 case 落库（D.jsonl 383→384, ledger_D 1773→1774 exstf case）。下轮 mandatory due r671。📊 trace 覆盖率 378/3501≈10.8%（mc≥10, +1 case 轮 covered +1）。board OPEN=0。DEBT 0。
