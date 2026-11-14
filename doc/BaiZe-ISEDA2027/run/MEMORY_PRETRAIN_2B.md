@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1/L2 eval脚本已入库baize-llm/scripts/eval/（13文件✅,含新建210k autoqueue,README§4.6已更新✅,commit ed6ea54e4）**·**L1 20/20done(10k-200k,**NEW PEAK 200k=60.12%**↑↑,prev peak 160k/190k=58.13%)·report已刷新20/20+700k pred 61.67%(R²=0.811)✅·210k autoqueue RUNNING✅(.29 PID3942311,serial guard polling for 210k ckpt,train@~206.6k,ETA~6.6h)**·**L2 🟢HF五重验证全部完成:HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%·MMLU=23.16%**·**L3 TB smoke 0/2·无GPU做vLLM重试**·**L4 HANDOFF→post-train（2026-11-12用户令·只读引用）**·**论文§4.6已刷新iter190k+PDF已重编译✅·红线PASS(benchmark名0命中)·已提交**·训练健康iter≈206.6k/700k(29.5%) GPU 8×100%/75GB✅）
-> 2026-11-15 02:42 #2217: **监控巡检·训练健康iter206610/700k(29.5%) GPU 8×100%/75GB✅**·**动作**：①git pull→already up to date✅ ②训练健康(.29):PID146283 via /proc/146283/fd/1,iter206610/700k,step~6914-7088ms<7.4s✅,loss~2.02,0NaN/0skip,GPU 8×100%/75GB✅,tok/s≈600K ③210k autoqueue RUNNING✅(PID3942311,log@02:38 "waiting for ckpt train iter=206590",latest native ckpt iter_0206000,remaining~3390iters×~7.0s≈6.6h,ETA~11-15 09:15,no llama-server active,no 210k ckpt yet) ④research日报11-15:pretrain相关为advisory only(reward设计/data成本/配比模板/FLAN refs,无需action) ⑤📦TASK28.7KB✅/MEMORY26.0KB✅·**四层评测 · L1=60.12%@200k(20/20done!NEW PEAK,210k queued ETA~6.6h) L2=🟢HF五重完成 L3=TB 0/2 L4=🟦HANDOFF→post-train** · 本轮动作：监控巡检+训练健康确认+210k autoqueue确认·未完成指令：有(210k autoqueue running,ETA~6.6h)⇒WAITING:1。
+WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1/L2 eval脚本已入库baize-llm/scripts/eval/（13文件✅,含新建210k autoqueue,README§4.6已更新✅,commit ed6ea54e4）**·**L1 20/20done(10k-200k,**NEW PEAK 200k=60.12%**↑↑,prev peak 160k/190k=58.13%)·report已刷新20/20+700k pred 61.67%(R²=0.811)✅·210k autoqueue RUNNING✅(.29 PID3942311,serial guard polling for 210k ckpt,train@~206.8k,ETA~6.2h)**·**L2 🟢HF五重验证全部完成:HumanEval=15.0%+GSM8K=10.0%+MBPP=5.0%+BBH=3.3%+MATH=0.0%·MMLU=23.16%**·**L3 TB smoke 0/2·无GPU做vLLM重试**·**L4 HANDOFF→post-train（2026-11-12用户令·只读引用）**·**论文§4.6已刷新iter190k+PDF已重编译✅·红线PASS(benchmark名0命中)·已提交**·训练健康iter≈206.8k/700k(29.5%) GPU 8×95-100%/75GB✅）
+> 2026-11-15 03:05 #2218: **监控巡检·训练健康iter206790/700k(29.5%) GPU 8×95-100%/75GB✅**·**动作**：①git pull→already up to date✅ ②训练健康(.29):PID146283 via /proc/146283/fd/1,iter206790/700k,step~6976ms<7.4s✅,loss~2.02,0NaN/0skip,GPU 8×95-100%/75GB✅,tok/s≈600K ③210k autoqueue RUNNING✅(PID3942311,log@02:58 "waiting for ckpt train iter=206760",latest native ckpt iter_0206000,remaining~3210iters×~7.0s≈6.2h,ETA~11-15 09:15,no llama-server active,no 210k ckpt yet) ④📦TASK28.7KB✅/MEMORY25.8KB✅·**四层评测 · L1=60.12%@200k(20/20done!NEW PEAK,210k queued ETA~6.2h) L2=🟢HF五重完成 L3=TB 0/2 L4=🟦HANDOFF→post-train** · 本轮动作：监控巡检+训练健康确认+210k autoqueue确认·未完成指令：有(210k autoqueue running,ETA~6.2h)⇒WAITING:1。
+> 📦 #2217（11-15 02:42, 监控巡检·训练健康iter206610 step~7014ms✅·210k autoqueue RUNNING ETA~6.6h）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2216（11-15 02:23, 监控巡检·训练健康iter206450 step~6973ms✅·210k autoqueue RUNNING ETA~6.9h）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2215（11-15 01:49, 监控巡检·训练健康iter206160 step~6910ms✅·210k autoqueue RUNNING ETA~7.5h）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2214（11-15 01:29, 监控巡检·训练健康iter205990 step~6956ms✅·210k autoqueue RUNNING ETA~7.8h）→ daily-memories/2026-11-15.md；需要时再读。
@@ -19,64 +20,11 @@ WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-tra
 > 📦 #2201（11-14 21:24, 监控巡检·训练健康iter203900 step~7020ms✅·210k autoqueue RUNNING ETA~11.9h）→ daily-memories/2026-11-14.md；需要时再读。
 > 📦 #2200（11-14 21:06, 监控巡检·训练健康iter203740 step~7010ms✅·210k autoqueue RUNNING ETA~12.2h）→ daily-memories/2026-11-14.md；需要时再读。
 > 📦 #2199（11-14 20:47, 监控巡检·训练健康iter203580 step~7010ms✅·210k autoqueue RUNNING ETA~12.5h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2198（11-14 20:29, 监控巡检·训练健康iter203430 step~7050ms✅·210k autoqueue RUNNING ETA~12.9h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2194（11-14 19:10, 监控巡检·训练健康iter202760 step~7011ms✅·210k autoqueue RUNNING ETA~14.1h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2192（11-14 18:32, 监控巡检·训练健康iter202430 step7029ms✅·210k autoqueue RUNNING ETA~14.7h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2191（11-14 18:15, 监控巡检·训练健康iter202270 step6993ms✅·210k autoqueue RUNNING ETA~15.0h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2190（11-14 17:53, 监控巡检·训练健康iter202100 step6994ms✅·210k autoqueue RUNNING ETA~15.4h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2189（11-14 17:36, 监控巡检·训练健康iter201940 step7137ms✅·210k autoqueue RUNNING ETA~15.9h）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2188（11-14 17:18, 监控巡检·训练健康iter201790 step7.1s✅·210k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2187（11-14 16:58, 监控巡检+200k报告刷新·训练健康iter201610 step7.03s✅·210k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2186（11-14 16:38, 监控巡检·训练健康iter201450 step7.1s✅·210k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2185（11-14 16:20, 200k eval COMPLETE 60.12% NEW PEAK+210k autoqueue确认+report提交）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2184（11-14 15:42, 监控巡检·200k eval仍在跑(~73min)·训练健康iter~200k✅）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2183（11-14 15:18, 监控巡检·200k eval仍在跑(~49min)·训练健康iter200790 step7157ms✅）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2181（11-14 14:29, 监控巡检·200k eval进入eval phase!训练健康iter200380 step7.1s✅）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2180（11-14 14:08, 监控巡检·200k GGUF conversion 41%→eval phase transition）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2179（11-14 13:47, 监控巡检·训练突破200k!iter200010 step~7.0s<7.4s✅·200k ckpt FOUND+双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2178（11-14 13:25, 监控巡检·训练健康iter199830 step~7.12s<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2177（11-14 13:05, 监控巡检·训练健康iter199610 step~7.14s<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2176（11-14 12:27, 监控巡检·训练健康iter199330 step~7000ms<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2175（11-14 12:10, 监控巡检·训练健康iter199140 step~7.06s<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2174（11-14 11:44, 监控巡检·训练健康iter198970 step~7000ms<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2173（11-14 11:26, 监控巡检·训练健康iter198810 step~6956ms<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2172（11-14 11:07, 监控巡检+210k autoqueue创建并启动·训练健康iter198590 step~7000ms<7.4s✅·200k+210k双autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2169（11-14 10:02, 监控巡检·训练健康iter198090 step~7.07s<7.4s✅·200k autoqueue RUNNING·红线PASS）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2168（11-14 09:40, 监控巡检·训练健康iter197900 step~7.04s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2167（11-14 09:20, 监控巡检·训练健康iter197730 step~7.06s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2166（11-14 09:00, 监控巡检·训练健康iter197550 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2165（11-14 08:25, 监控巡检·训练健康iter197250 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2164（11-14 08:05, 监控巡检·训练健康iter197070 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2163（11-14 07:43, 监控巡检·训练健康iter196910 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2162（11-14 07:22, 监控巡检·训练健康iter196720 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2161（11-14 07:01, 监控巡检·训练健康iter196550 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2160（11-14 06:40, 监控巡检·训练健康iter196370 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2159（11-14 06:25, 监控巡检·训练健康iter196200 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2158（11-14 06:00, 监控巡检·训练健康iter196010 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2157（11-14 05:39, 监控巡检·训练健康iter195850 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2156（11-14 05:18, 监控巡检·训练健康iter195670 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2155（11-14 04:57, 监控巡检·训练健康iter195500 step~7.06s<7.4s✅·200k autoqueue RUNNING·git冲突处理）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2154（11-14 04:37, 监控巡检·训练健康iter195320 step~7.06s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2153（11-14 04:19, 监控巡检·训练健康iter195150 step~7.03s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2152（11-14 04:00, 监控巡检·训练健康iter194980 step~7.03s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2151（11-14 03:37, 监控巡检·训练健康iter194810 step~7060ms<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2150（11-14 03:17, 监控巡检·训练健康iter194640 step~7.0s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2149（11-14 02:57, 监控巡检·训练健康iter194450 step~6.98s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2148（11-14 02:34, 监控巡检·训练健康iter194270 step~6.95s<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2147（11-14 01:57, 监控巡检·训练健康step<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2146（11-14 01:36, 监控巡检·训练健康iter193770 step<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2142-#2143（11-14 00:12-00:34, 2轮监控巡检·训练健康step<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2139–#2140（11-13 23:06-23:30, 2轮监控巡检·训练健康step<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-13.md；需要时再读。
-> 📦 #2137–#2141（11-13 22:19→23:50, 3轮监控巡检·训练step<7.4s✅·200k autoqueue RUNNING）→ daily-memories/2026-11-13.md；需要时再读。
-> 📦 #2135–#2136（11-13 21:42→21:59, 2轮监控巡检·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：训练持续健康iter191770→191920,200k autoqueue polling,红线PASS。需要时再读。
-> 📦 #2132–#2134（11-13 20:35→21:20, 3轮监控巡检·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：训练持续健康iter191210→191590,200k autoqueue polling ETA从17.1h→16.5h,红线PASS。需要时再读。
-> 📦 #2130–#2131（11-13 19:54→20:15, 2轮监控巡检·190k eval DONE+200k autoqueue STARTED·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：190k eval Avg=58.13%(ties 160k peak),200k autoqueue PID850714 polling。需要时再读。
-> 📦 #2129（11-13 19:31, 190k eval IN PROGRESS监控·训练健康step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：190k eval在跑(lm_eval 71min)，19:54 #2130确认DONE。需要时再读。
-> 📦 #2124–#2127（11-13 17:07→18:11, 4轮监控巡检+200k autoqueue脚本创建·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：训练持续健康iter189440→189990,190k ckpt已落盘,200k autoqueue脚本已创建。需要时再读。
-> 📦 #2123（11-13 16:43, 监控巡检轮+归档·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：训练持续健康iter189230,190k autoqueue polling ETA~1.5h,L1 18/20done,红线PASS,归档#2116-#2121。需要时再读。
-> 📦 #2116–#2121（11-13 14:05→16:03, 6轮监控巡检·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：训练持续健康iter187870→189070,190k autoqueue polling ETA从4.1h→1.8h,L1 18/20done,红线PASS。需要时再读。
-> 📦 #2110–#2115（11-13 12:02→13:45, 6轮监控巡检·训练step<7.4s✅）→ daily-memories/2026-11-13.md；**结论**：训练持续健康iter186830→187710,190k autoqueue polling ETA从6.2h→4.5h,L1 18/20done,红线PASS。需要时再读。
-> 📦 #2064–#2109（11-12 18:35→11-13 11:40, ~23轮监控巡检·训练step6.9-7.5s<7.4s✅）→ daily-memories/2026-11-12.md + 2026-11-13.md；**结论**：训练持续健康iter178030→186650,190k autoqueue polling ETA从22h→6.5h,L1 18/20done(180k=57.25%),L4 HANDOFF→post-train,L1/L2脚本入库确认✅。需要时再读。
+> 📦 #2185–#2198（11-14 16:20→20:29, 10轮监控巡检·训练step<7.4s✅·200k eval COMPLETE 60.12% NEW PEAK(#2185)+210k autoqueue确认）→ daily-memories/2026-11-14.md；需要时再读。
+> 📦 #2172–#2184（11-14 11:07→15:42, 12轮监控巡检·训练step<7.4s✅·200k ckpt FOUND(#2179)+200k eval进入GGUF→eval phase(#2180-#2184)+210k autoqueue创建启动(#2172)）→ daily-memories/2026-11-14.md；需要时再读。
+> 📦 #2146–#2169（11-14 01:36→10:02, ~17轮监控巡检·训练step<7.4s✅·200k autoqueue polling iter193770→198090·红线PASS）→ daily-memories/2026-11-14.md；需要时再读。
+> 📦 #2110–#2143（11-13 12:02→11-14 00:34, ~18轮监控巡检·训练step<7.4s✅·190k eval=58.13%(#2130)+200k autoqueue创建启动(#2124-#2127)+L1 18/20done·红线PASS）→ daily-memories/2026-11-13.md + 2026-11-14.md；需要时再读。
+> 📦 #2064–#2109（11-12 18:35→11-13 11:40, ~23轮监控巡检·训练step<7.4s✅·iter178030→186650·L1 18/20done(180k=57.25%)·L4 HANDOFF→post-train·L1/L2脚本入库确认✅）→ daily-memories/2026-11-12.md + 2026-11-13.md；需要时再读。
 > 📦 #2063（11-12 18:10, 监控巡检+L3/L4资源调查轮·训练step7039ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：L3/L4均BLOCKED(无GPU/SSH不通),训练健康iter177810。需要时再读。
 > 📦 #2062（11-12 17:45, MATH HF eval完成+L2 HF五重验证全部完成+四层报告刷新轮·训练step~7.0s<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：MATH HF=0/10=0.0%,L2 HF五重验证完成(Avg5集=6.66%),llama.cpp SSM bug确认为0%主因。需要时再读。
 > 📦 #2061（11-12 17:15, BBH HF eval结果收集+MATH HF eval启动+四层报告刷新轮·训练step7020ms<7.4s✅）→ daily-memories/2026-11-12.md；**结论**：BBH HF=1/30=3.3%,四重验证完成,MATH HF启动。需要时再读。
