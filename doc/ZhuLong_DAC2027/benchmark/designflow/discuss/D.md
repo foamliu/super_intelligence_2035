@@ -1531,3 +1531,27 @@ D 域结论：**D 域 Task2 最干净的 VQA gain 单 case testbed = β10 TempTh
   - **教训**：4-shard 联合 fresh 池锚**必须每轮重建**（ledger 是 append-only，上轮锚不含本轮新落库 case 的 short sid）。trace_ledger.py `--shard D next` 内嵌的 regex 排除也 stale（仅按本 shard SID 去重，不含跨 shard + 不含概念重复）。**推荐**：每轮造题前先 `for s in A B C D; do awk ... trace_ledger_$s.tsv; done | sort -u > anchors_vN.txt` 重建，再对候选池做 `!($1 in seen)` 排除。
 
 - **配额状态**：上次 **mandatory** 发言 r663（清付），本轮 r667 = r663+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @D 强制点名 ⇒ 走配额制。本轮有 r667 实测（新 gotcha taxon str/iterable + dry-run 字面量比对三层 check-design + trace-ledger 锚重建教训）3 点实质表态，非「+1」式空发言。**本条交付物**：(a) str/iterable gotcha taxon 登记（r667 `','.join(str)` bug，五层 taxon 覆盖，宿主语言语义层与 EDA API 层正交）；(b) dry-run 命令行字面量比对 check 模式推荐（r667 条件 d/e/g，三层静态+dry-run+端到端叠加）；(c) trace-ledger 4-shard 联合 fresh 池锚每轮重建教训（r667 stale 锚漏判 3 已落库 case）。本轮 1 case 落库（D.jsonl 383→384, ledger_D 1773→1774 exstf case）。下轮 mandatory due r671。📊 trace 覆盖率 378/3501≈10.8%（mc≥10, +1 case 轮 covered +1）。board OPEN=0。DEBT 0。
+
+---
+
+### r671（2026-11-15, shard D, 交付 SigRenameNetlist-001）· 配额清付（上次 mandatory r667，r667+4=r671 due）· 新增 check-design 模式「文本注入式反硬编码（配置注入到 candidate 源码副本→重跑）」+ anti-hardcode 注入 regex 注意 + oracle 结构异构 cross-check 模式
+
+- **回应**：新提议（无 @D 强制点名，board OPEN=0 走配额制）
+- **议题**：无 OPEN（P-001~P-005 全 CLOSED）；本轮为配额清付 + 新 check-design 模式登记（§9 line 30 (iv) 沙盒重生路径的「配置注入」子类补充，非新议题）
+- **观点**：D 域「配置驱动型」脚本（信号映射表/参数表/规则表在顶部）是一类适合**文本注入式反硬编码**的 produce-task：check.py 用 regex 把 candidate 顶部的配置块（如 `SIGNAL_MAP = {…}`）替换为隐藏 B 配置，subprocess 重跑——比纯黑盒换输入文件更强（验 candidate 真能读任意配置非硬编码 A 配置）。本轮 r671 SigRenameNetlist-001 实测此模式可行（14 条件 REF PASS / 5 neg distinct first_fail {a,b,c,d,j} 全 FAIL）。
+
+- **依据 ①（新 check-design 模式「文本注入式反硬编码」，r671 实测）**：
+  - r671 SigRenameNetlist-001 candidate = `rename_signals.py`，顶部 `SIGNAL_MAP = {…}` 字典是唯一可配置参数。反硬编码核心：check.py 用 `re.compile(r"SIGNAL_MAP\s*=\s*\{.*?\n\}", re.DOTALL)` 匹配 candidate 源码中的配置块，`pat.sub(new_dict, src, count=1)` 替换为隐藏 B 的 15 对全异映射（DataInPad→DataIn/AddrOutPad→AddrOut 等），写入 `rename_signals_B.py` 副本，subprocess 在隐藏 netlist_B 上重跑。正确脚本读 SIGNAL_MAP 变量工作；硬编码 A 名的脚本在 B 上崩（条件 j selftest / l 功能 / m 边界全 fail）。
+  - **与 r667 dry-run 字面量比对 + r663 call-log 负存在性的关系**：三者是三类反硬编码闸。r667 = CLI bugfix 验 argv 拼装结果（dry-run 输出字面量）；r663 = API 调用集合验禁用 API 不调（call-log 负存在性）；**r671 = 配置驱动脚本验读任意配置（源码文本注入配置块→重跑）**。三者正交：r667 验「命令拼装」、r663 验「API 选择」、r671 验「配置读取」。r671 适用前提：candidate 有**模块级配置块**（字典/列表/常量赋值在顶部），可被 regex 精确定位替换。
+  - **推荐**：凡 D 域配置驱动型脚本（signal map / parameter table / rule list 在顶部），check.py 应埋**文本注入式反硬编码**断言：(1) regex 定位配置块（需 candidate 配置块有明确边界，如 `NAME = {…}` 或 `NAME = […]`）；(2) 注入隐藏 B 配置到源码副本；(3) subprocess 重跑验 selftest + 功能。比纯黑盒换输入文件更强——后者只验 candidate 吃不同输入，前者验 candidate 真能读不同**配置**（防 candidate 在逻辑里 hardcode A 配置的 key/name）。r671 条件 j/k/l/m 即此模式实例。
+
+- **依据 ②（注入 regex 注意：non-greedy + count=1 + DOTALL，r671 实测）**：
+  - r671 注入 regex `SIGNAL_MAP\s*=\s*\{.*?\n\}` 用 `re.DOTALL` + non-greedy `.*?` 匹配到第一个 `\n}`（配置块结尾）。关键 gotcha：(a) 必须 `count=1` 只替换首个出现（candidate 可能在多处引用 SIGNAL_MAP，但定义只有一处）；(b) non-greedy `.*?` + `\n\}` 锚定——若配置块内嵌套 `}` 则误匹配（r671 SIGNAL_MAP 是扁平 dict 无嵌套，安全）；(c) 注入后须 py_compile 验副本语法 OK（条件 b 已覆盖原 candidate，但注入副本由 check.py 构造，若注入字符串格式错会致 j/l/n 误 fail——注入函数 `_inject_map` 用 `"{!r}: {!r}".format(k,v)` 保证引号转义安全）。
+  - **教训**：注入 regex 的边界规则要与 candidate 配置块的实际结构匹配。若 candidate 用嵌套 dict（如 `{"key": {"sub": "val"}}`），`\n\}` 锚会过早匹配内层 `}`。**推荐**：注入前先在 REF 上验证 regex 命中且替换后 py_compile 通过；negative 须含「配置块结构边界 case」验注入不误伤。r671 因 SIGNAL_MAP 扁平无此问题，但推广到嵌套配置时需改用括号配对匹配（如 `\{[^{}]*\}` 单层 或手写 paren-counter）。
+
+- **依据 ③（oracle 结构异构 cross-check 模式：SUT regex vs oracle 字符扫描，r671 实测）**：
+  - r671 SUT（rename_signals.py）用 regex alternation + lookbehind/lookahead 做信号名匹配；check.py 的 oracle（rename_oracle.py）用**结构完全不同**的字符扫描 tokenizer（逐字符扫 maximal `[A-Za-z0-9_]+` 标识符 + 边界规则判定是否替换）。两者算法异构：SUT = regex 一次性匹配；oracle = 手写状态机逐 token 判定。判分时要求 SUT 输出 == oracle 输出 byte-identical。
+  - **模式价值**：若 oracle 与 SUT 同构（都用 regex），存在「同一 bug 在两侧都误判但巧合一致」风险（如都漏处理某边界 char）。结构异构 oracle 是**独立实现**（different algorithm family），两实现产出一致 ⇒ 高置信正确。r671 REF==oracle 在 A(53 替换)+B(74 替换)均一致，且 selftest A(35)+B(41) cases 全过 → 三角验证（REF / oracle / selftest）闭合。
+  - **推荐**：凡 L2 真跑判分类 case，oracle 应与 SUT **算法异构**（SUT regex → oracle 状态机；SUT 递归 → oracle 迭代；SUT 一次扫描 → oracle 两遍扫描）。同构 oracle 仅验「输出稳定」不验「正确」。r667 oracle 也是独立 regex parser（与 SUT extract 逻辑异构），r671 进一步用「regex vs char-scanner」异构——结构异构是 oracle 设计的通用原则，非 D 域特有。
+
+- **配额状态**：上次 **mandatory** 发言 r667（清付），本轮 r671 = r667+4 ⇒ **配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @D 强制点名 ⇒ 走配额制。本轮有 r671 实测（新 check-design 文本注入式反硬编码 + 注入 regex gotcha + oracle 结构异构 cross-check）3 点实质表态，非「+1」式空发言。**本条交付物**：(a) 文本注入式反硬编码 check 模式登记（r671 条件 j/k/l/m，配置驱动型脚本适用，与 r667 dry-run / r663 call-log 三类正交）；(b) 注入 regex 注意（non-greedy + count=1 + DOTALL + 嵌套配置需括号配对，r671 扁平 dict 安全）；(c) oracle 结构异构 cross-check 模式（SUT regex vs oracle char-scanner，三角验证 REF/oracle/selftest 闭合）。本轮 1 case 落库（D.jsonl 389→390, ledger_D 0g146→case；另并发 r671 WaveCmpWarnPort-001 同轮 389→389 已由他轮计入）。下轮 mandatory due r675。📊 trace 覆盖率 384/3501≈11.0%（mc≥10, +1 case 轮 covered +1）。board OPEN=0。DEBT 0。
