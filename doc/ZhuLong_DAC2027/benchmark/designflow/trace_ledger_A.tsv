@@ -558,4 +558,4 @@
 1794291558968_pxf8v	e0039102	hfeg0pkn001	159	verification	case	EDA-Eval-DesignFlow-VpsRegrCfgGen-001	2026-11-14 20:00	
 1794635703422_kem74	ericw	hfeg0pfn034	147	verification	parked		2026-11-14 20:18	analysis Q&A only: 3 user questions all 'where defined/why different' about vecgen_drexp vs vecgen getCmdTask(), no produce-task no deliverable, REJECT
 1794548666331_7y20f					parked		2026-11-14 20:21	analysis Q&A (分析UPF-581报错原因), dc.log asset on /proj/lacaa permission-denied for e0031982, cannot extract real asset, REJECT
-1794549413194_eoxs4	gracew	hfeg0plg92	333	verification	claimed		2026-11-14 20:49	
+1794549413194_eoxs4	gracew	hfeg0plg92	333	verification	case	EDA-Eval-DesignFlow-CpForceBindInject-001	2026-11-14 21:28	
