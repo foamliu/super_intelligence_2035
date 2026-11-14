@@ -877,3 +877,6 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794457252730_k10f0					parked		2026-11-14 15:13	qa-pattern-miner skill usage + how-to Q&A + cimi-kb-search skill meta
 1793598209454_bpcwa					parked		2026-11-14 15:13	debug-Q&A pyAether sandbox connection refused, 0 real user turns
 1793067650462_0p7m5	miccao	hfeg0pkn004	75	physical_verify	case	EDA-Eval-DesignFlow-MetalProximityGroup-001	2026-11-14 16:09	
+1794462982889_ds6nz	haiquanp	hfeg0pkn003	78	layout_aether	case	EDA-Eval-DesignFlow-DupOriginRotate-001	2026-11-14 16:37	
+1794537676928_72xvt					parked		2026-11-14 16:37	run-existing check project config+log, not produce-task
+1794466065713_pttre					parked		2026-11-14 16:37	skill-meta doc-update eda_agent skill structure, not produce-task
