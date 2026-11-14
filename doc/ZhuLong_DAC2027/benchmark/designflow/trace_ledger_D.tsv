@@ -1777,3 +1777,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793077658379_chnlx	e03179	hfeg0plg49	analog:149;transistor:110;netlist:110;lvs:63;waveview:3	analog_context	case	EDA-Eval-DesignFlow-VamCellReco-001	2026-11-15 00:58	VAMAgent cell recommender; B-grade synthesized reframe; L2 12-cond; 16 msgs; case r670
 1794385330458_89rv0	alenxu	hfeg0plg94	22	schematic_netlist	parked		2026-11-15 01:00	Q&A/teaching: how to .MEASURE single-point voltage in finesim tb; no produce-task deliverable, no accepted artifact; 14 msgs single how-to question
 1794558111872_tuj4o	e04201	hfeg0pkn002	41	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistHierExtract-001	2026-11-15 01:18	
+1793686536776_0g146	bensonh	hfeg0plg104	27	schematic_netlist	claimed		2026-11-15 01:41	
+1794366217754_fssd0.messages.json	rongjiez	hfeg0pkn005	12	waveform	case	EDA-Eval-DesignFlow-WaveCmpWarnPort-001	2026-11-15 02:01	
