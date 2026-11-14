@@ -11169,3 +11169,57 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 5. **双 eval 健康** (read-only): 36.15 重测 bpt_eval.sh --status = run1 DONE 0.15823 / run2-5 未完成 (PID1229657~4h, --run-all); R2 5-run chain PID2322797 run3 code-gen ACTIVE. 未碰 GPU0-7/未碰 36.15 运行中 eval/未碰别线文件, 0 infra.
 
 **Next**: ① 36.15 5-run 完 -> 新基线 (同 158, 标环境差异) + report_posttrain_baseline_pyaether_rca_3615_zh.html; ② Task A: 依次 --arm A0 A1 A2 A3 (40题×4臂) -> 预注册判据 -> 一句话归因; ③ Task B: baseline dev(3 seed) vs p0 dev(3 seed) -> 门槛判定 -> 逐条叠加 P1/P2/P3 -> test 5-run + McNemar.
+
+## §R-Attribution-update3 (wake499, 2026-11-14 20:4x) — 模型同一性核验 + 36.15 run1 逐题画像
+
+> 用户令 2026-11-14 19:2x（5× 跳升归因 + prompt 迭代）。Task A/B 实跑仍阻塞 36.15 5-run 完成；本轮做两件非阻塞的硬核工作。
+
+### 1. 模型同一性核验（归因前提是否成立）—— ✅ 同一模型，前提成立
+
+- **问题**：`attribution_3615_run1/final_report.json` 的 `model_name = "zhulong_deepseek_v32"`，与归因前提「同模型 step105」字面冲突。若 36.15 真用了 DeepSeek，则 5× 跳升根本不是同模型比较，整个归因前提崩塌。
+- **核验**：
+  1. `curl http://127.0.0.1:8096/v1/models` → `id=minicpm5-2b-sft-v39-final`, `root=.../sft_surrogate_runs/minicpm5_agentic_v39_pretok/global_step_105` —— .17:8096 实际 serve 的就是 step105。
+  2. 36.15 评测经反向隧道 `36.15:18096 → .17:8096`（`baize_posttrain_baseline_3615_eval.sh` L32/L41），故 36.15 run1 调用的就是 minicpm5-2b-sft step105。
+  3. `model_name` 字段来源：`EDA-Eval-Framework/scripts/calculate_results.py:109` `active_model_name = config.get('active_model', 'unknown_model')`；字符串 `zhulong_deepseek_v32` 出现在 `EDA-Eval-Framework/config.yaml`（`active_model` 残留默认值）——**是陈旧配置标签，不是实际被测模型**。
+- **结论**：5× 跳升 **确属同一模型 (minicpm5-2b-sft step105) 在不同环境下的比较**，归因前提成立。⚠️ 已知 metadata bug：config.yaml `active_model` 误标所有 posttrain run 的 `model_name`；属跨线共享配置（EDA-Eval-Framework，zhulong 亦用），**本线不改**，在新基线报告里手动订正文字标签，并在此记录待 zhulong 修。
+
+### 2. 36.15 run1 逐题画像（Task B profiling，可复算）
+
+- 脚本 `posttrain_attribution_3615_profile.py` → `attribution_3615_run1_profile.json`（8988B）。权威逐题结果取自 `final_report.json::details_per_task`（`generation_statuses` / `execution_statuses` / `num_correct`）。
+- **漏斗（158 题）**：
+  - generation_statuses: success=29 / fail=128 / timeout=1
+  - execution_statuses: passed=25 / failed=4 / not_executed=129
+  - **code-gen 完成率 = 29/158 = 18.35%**；生成后通过率 = 25/29 = 86.21%；pass_rate = 25/158 = 15.82%。
+  - ⇒ **36.15 瓶颈 = code-gen 完成率（81.65% 没生成出可跑代码），而非代码质量（一旦生成 86.2% 通过）**。
+- **4 题「生成代码但未通过」（code-quality 失败，stderr 均为空 → 判分断言不通过，非运行报错）**：EDA-Eval-PyAether-058 / -118 / -143 / -151。
+- **25 题通过** ID 见 profile JSON `passed_ids`（含 001/016/028/038/059/063/076/080/084/085/093/099/102/120/125/126/128/135/137/139/140/144/148/157/158）。
+- **工具调用拒绝（codegen_rejection_stats.json）**：rejected_total=1295；top = `run_commands` 1042（其中 string-not-array 256）/ `read_files` 103 / `get_api_details` 41 / `submit_and_exit` 37；`run_commands_string_not_array`=256；`timeout_markers`=55。
+- **submit_and_exit 仅 334 次**（vs .17 旧环境 13,699 次 / 91.77% 报错）—— sandbox-prompt 把 submit 风暴压下去了。
+- **沙盒实际被用**：eda_flow open_session=67 / run_code=44 / run_commands=48 / close_session=39 / declare_done=39 / read_file=39 / list_files=39 / write_file=39。
+- **RAG 实际被用**：pyAether_MCP get_api_details=349 / search_apis=280 / search_apis_by_keyword=227 / run_code=94。
+
+### 3. .17 vs 36.15 失败模式对照（同模型 step105）
+
+| 维度 | .17（3.04%±0.83%, 790 题旧运行） | 36.15（15.82%, run1） |
+|:--|:--|:--|
+| 头号失败 | degenerate pass 60.63%（不试/空实现被判过） | code-gen 完成率仅 18.35%（试了没生成出可跑代码） |
+| submit_and_exit | 13,699 次 / 91.77% 报错（风暴） | 334 次（被压下） |
+| 沙盒执行 | 仅 9.88% 题走「检索→执行→修错」 | 沙盒主动用（open_session 67 / run_code 44） |
+| RAG | 本地 MCP :18888 内置 search_apis | 原生 pyAether_MCP:8090（search_apis 280 / get_api_details 349） |
+| 主导拒绝 | — | run_commands 1042（string-not-array 256）= 工具调用格式错 |
+
+→ **机制假设（待 A0–A3 单变量消融证实）**：5× 主因 = 提示承认沙盒 + 沙盒执行反馈回路被打开，把失败模式从「不试（degenerate）」转为「试了但卡在工具格式」；RAG 后端次之；prompt 措辞单独不是主因（不许直接归给 prompt）。
+
+### 4. Task B 含义（回答用户「能否继续优化 prompt 提分」）
+
+- **能**：36.15 瓶颈是完成率（18.35%）而非质量（86.2%）。主导拒绝 = `run_commands` 传 string 而非 array（1042 次）+ 双 MCP 工具混淆。P0-tool-format 补丁（`attribution_prompt_p0_toolfmt.md`，wake498 已起草）正打此处。
+- 预期：修工具格式引导 → 提升完成率 → pass 率可显著超过 15.82%（因生成后通过率已达 86.2%，每多救回 1 题生成 ≈ +0.63pp）。
+- **纪律**：仍须 dev(79) 3-seed 选补丁、test(158) 5-run + McNemar 验，不许对着 158 题调 prompt。
+
+### 5. 双 eval 健康（read-only，经隧道 SSH 实测）
+
+- **36.15 5-run**：run1 DONE 0.15823；run2 RUNNING（36.15 PID 2747266, `run_cline_script.sh -p 8 -n -b ...fixed.jsonl`, timeout 72000, ~4min in）；run3-5 pending。ETA：每 run ~2-4h，全 5-run ~10-20h。
+- **R2 5-run**（.17）：chain PID 2322797 健康；run_cline_script PID 3020177 ~6.5h（run3+）。
+- 本轮 read-only 核验 + 画像脚本，未碰 GPU0-7 / 未碰 36.15 运行中 eval / 未碰别线文件，0 infra 错误。
+
+**Next**: ① 36.15 5-run 完 → 新基线（5-run mean±std，标环境差异 + 手动订正 model_name 标签）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② Task A: A0-A3（40 题×4 臂）→ 预注册判据 → 一句话归因（prompt 占多少 / 沙盒反馈回路占多少 / RAG 占多少）；③ Task B: baseline dev 3-seed vs p0 dev 3-seed → 门槛 → 逐条叠加 P1/P2/P3 → test 5-run + McNemar。
