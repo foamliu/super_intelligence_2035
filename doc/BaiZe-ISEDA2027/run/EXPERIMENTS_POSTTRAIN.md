@@ -11899,3 +11899,21 @@ python3 bpt_attribution_p0_dev_compare.py \
 ⇒ 出 delta_pp + McNemar + submit 报错率降幅 + 预注册判定 ⇒ 更新报告 §4 前后对比表 + EXPERIMENTS + MEMORY。R2 run5 完后读 chain 产出的 `5run_rl_analysis_R2.json` ⇒ 显著则里程碑报告 / 负则诚实负结果报告。
 
 **纪律**：0 infra，未碰 GPU0-5/运行中 eval/别线文件/benchmark/隧道进程；编辑仅限本线报告+EXPERIMENTS+MEMORY+daily。MEMORY 32705B（<40KB 硬限）。WAITING=0。
+
+## §R528 双链健康核实 + postmortem 二十一度复核（wake528 · 2026-11-15 07:0x）
+
+**背景**：wake527 后出现"P0chain 01:56 起跑、却 baseline_dev(1479907) etime 仅~1.8h"的疑似卡死/重启信号。本轮核实排除卡死、给出精确 ETA。
+
+**核实证据（经隧道 ssh -p3333 app.e0031982@localhost，hostname=hfeg0tedaap02）**：
+- relaunch515b **PID700233 活**：`ps -p 700233` → ppid=1, started 02:55:41, etime=14853s, cmd=`bash /tmp/relaunch515b.sh`。是 baseline_dev(1479907) 的父进程（`ps -p 1479907 -o ppid=` = 700233）⇒ chain 自治活。
+- baseline_dev(1479907) started **05:14:03**（lstart），非 01:56。原 01:56 attempt 已死，relaunch515b 02:55 重跑：A1 done 03:56:36（raw pass_rate=0.12658=交叉污染数，clean manual rescue=0/40）→ A3 done 05:13:57 → baseline_dev 05:14:04 重启。
+- baseline_dev codegen.log：3.89MB，mtime 07:02:03（活跃增长），head=`启动自动化代码生成流水线: 2026-11-15 05:14:04`。
+- p0_dev 目录尚不存在（排队，relaunch515b 将自动接跑）。
+
+**postmortem 二十一度复核**：报告 `reports/report_infra_tunnel_postmortem_zh.html`（commit 375e11bf7）在位；隧道三命令 07:06 实测全 PASS：`ss -ltnp|grep 3333`=LISTEN 127.0.0.1:3333；`ssh -p3333 ... hostname`=hfeg0tedaap02；三隧道进程 618469/1008898/1278889 活。
+
+**精确 ETA**：40q 臂耗 1-1.3h（A1 1h、A3 1h17m）⇒ baseline_dev(79q) ETA≈07:40-08:00 + p0_dev(79q)≈+2.5h ⇒ **P0 前后对比 ETA≈10:00-10:30**（略过 09:00，codegen 吞吐限非 infra 非阻塞）。R2 run5(.17 PID3721157, etime 3.5h, run4 耗 6.7h) ETA≈10:00-10:30 ⇒ 5run_rl_analysis_R2.json。
+
+**de-risk（下一 wake 行动项）**：relaunch515b 内 chain auto-rescue 因二进制 grep bug 对 dev 臂亦失效（A1 实测"RESCUE: 未找到 batch dir...跳过"）⇒ baseline_dev/p0_dev 完成后须先 `bpt_attribution_manual_rescue.sh` 手动兜底产出 final_report_rescued.json，再跑 `bpt_attribution_p0_dev_compare.py`（已就位，A1-vs-A3 验证 delta+5pp / McNemar n01=2 n10=0 p=0.5 INCONCLUSIVE）出 delta_pp + McNemar + 预注册判定 ⇒ 更新归因夜报 §4。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面。所有 posttrain 交付物已 commit（git status clean）。09:00 及格线 5/6✅，唯一未闭环=P0 dev 前后对比（~10:00+）。
