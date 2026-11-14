@@ -57,3 +57,35 @@
 |:--|:--|:--|:--|:--|
 | 2026-11-14 10:2x | D | 任务1（阶段性·r649） | 11 题素材可得性核查 + 恢复方案完成；WaveView 技术可行性确认（sx_dump_png + eye 命令，沙盒可生成真眼图 PNG）；**未恢复 case 原形态 / 未跑基线**（40min 预算不足，下轮 r650 起逐题恢复，α1 先行作模板）。素材不可得（真实私有波形/FSDB）获取途径=EDA 沙盒对合成波形重新生成真图。 | `designflow/waveview_restore_plan_D.md` |
 | 2026-11-14 11:0x | D | 任务1（α1 恢复+基线·r650） | **α1 EyeApertureSelect-001 原形态恢复完成 + 基线 FAIL（正确）**。移除文本 .rep 替身，改用 matplotlib 在 .75 沙盒生成的真数据图 PNG（3-panel VREF sweep，无数据标签，需从坐标轴读数）。check.py 重写为 12 条件 answer-validation（oracle 由 subprocess 从 embedded sweep 重算 + 反硬编码 B-token guard + 一致性真实点校验）。自验全过（REF PASS 12/12 / 5 negative 全 FAIL / §4.9 退化回归全 FAIL）。基线：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only, 无多模态）→ FAIL（50s, loop-abort, 未产出 submit.zip）——**无多模态 fail 是正确基线**。注意：失败模式=did-not-engage（模型循环 generic ls/find 未读 prompt/PNG），非 engaged-but-image-blind；vision 若需更干净归因可换更强无多模态模型。剩余 6 D 域题下轮起恢复。 | `designflow/waveview_baseline_results.D.json` · `designflow/waveview_restore_plan_D.md` §六 · EDA-Flow-Bench assets/reference/jsonl 已更新 |
+
+---
+
+## 召集人裁定（shard A · 2026-11-14 r508）
+
+> 触发：`designflow/waveview_restore_plan_D.md` §二 标注 β8 WaveView-002「A/B/D 跨 shard，需召集人 A 定归属」+ β5 FsdbNetToggleDiag「未落库待确认」。A 作为 4-shard 召集人核实如下：
+
+### 裁定 1 · β8 WaveView-002 → **归属 shard D，无跨 shard 冲突**
+
+- **核实方法**：对 4 shard jsonl 全量 grep `WaveView-002`。
+- **结果**：`EDA-Eval-DesignFlow-WaveView-002` **仅存在于 D.jsonl**（1 条，`task_id` 字段）；A/B/C jsonl **0 命中**。
+- **元数据**：domain=`waveform`，trace_user=`easont`，trace_host=`hfhds211`，session=`1793147699495_as67p.messages.json`，深读笔记 `as67p_waveview_ace_fsdb_signal_extractor.md` 在。
+- **裁定**：restore_plan_D 中「A/B/D 都有同名，疑历史误分」**不成立**——是 D 的同名 case 与 B 的 `WaveViewPanel-001`（panel height，不同题）混淆。**WaveView-002 干净归属 D**，D 可直接恢复，无需跨 shard 协调。
+- **附注**：B.jsonl 仅有 `WaveViewPanel-001`（不同 case），不构成同名冲突。
+
+### 裁定 2 · β5 FsdbNetToggleDiag → **case 不存在，vision 误抄，超出 Task1 恢复范围**
+
+- **核实方法**：对 4 shard jsonl 全量 grep `FsdbNet` / `FsdbNetToggleDiag`。
+- **结果**：**4 shard 全 0 命中**（A=0 B=0 C=0 D=0）。case_id `EDA-Eval-DesignFlow-FsdbNetToggleDiag-001` 在任何 jsonl 中均不存在。
+- **现存产物**：仅有深读笔记 `designflow/trace_deepreads/1793078405436_t0aom_finesim_fsdb_netlist_diag.md`（trace t0aom, finesim/fsdb）。
+- **裁定**：承 r504 核对结论「III 不存在 1=FsdbNetToggleDiag vision 误抄」**freshly re-confirmed**。β5 **不是「已降级可恢复」的 case**，而是**从未造题**。它不在 Task1「恢复原形态」范围内（Task1 = 恢复已落库的降级文本替身）。若需 β5，属**新造 case**（t0aom 为 finesim/fsdb → D 或 B 域新造），应走常规造题流程，非 WAVEVIEW 恢复流程。
+- **对基线分母的影响**：r504 已厘清基线分母 = 4（真降级文本替身可恢复）非 11；β5 进一步排除，分母不变。
+
+### 小结
+
+| 项 | 裁定 | 依据 |
+|:--|:--|:--|
+| β8 WaveView-002 | D 独占，无冲突 | grep 4 shard：仅 D.jsonl 1 命中，domain=waveform |
+| β5 FsdbNetToggleDiag | case 不存在（vision 误抄），非恢复范围 | grep 4 shard：0 命中，仅深读笔记在 |
+
+> D 可据此直接推进 β8 恢复；β5 若要纳入需先走造题流程（非本轮 WAVEVIEW 范畴）。
+> — shard A 召集人，r508（2026-11-14）
