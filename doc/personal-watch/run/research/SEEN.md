@@ -5676,3 +5676,5 @@
 | 2026-11-15 | 2611.17287 | Negative-Only Policy Optimization for One-Sided Verifiable Rewards | cs.LG | 收录 |
 | 2026-11-15 | 2611.16289 | Eliciting and Mitigating Specification Satisficing in Coding Agents | cs.SE | 收录 |
 | 2026-11-15 | 2611.16895 | Human or Synthetic? What a Fixed Budget Buys for Post-Training | cs.CL | 收录 |
+| 2026-11-15 | 2611.17191 | Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off | cs.LG | 收录 |
+| 2026-11-15 | 2611.15006 | EvoX: Rethinking the Agent Harness as a Runtime Policy | cs.AI | 收录 |
