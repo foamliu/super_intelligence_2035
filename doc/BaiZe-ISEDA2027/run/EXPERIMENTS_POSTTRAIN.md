@@ -11678,3 +11678,37 @@ python3 复算：
 ### G. 纪律
 - 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark；0 infra。kill 仅作用本线归因链（PID3707027 tree + relaunch515 A3）于诊断+重跑前，未碰 ZhuLong 502399(云)/vision R9/GPU0-5。MEMORY 32.4KB（略超 32KB 软限，<40KB 硬限，下轮归档 wake514 流水）。WAITING=0。
 
+## §R519-rescue-fix（wake519 · 2026-11-15 04:1x）— rescue 双 bug 定位+修复 + relaunch515b A1 干净数字恢复 + 双链监控
+
+### A. postmortem（最高优先·用户令 23:4x）— 十二度复核 PASS
+- 报告 `reports/report_infra_tunnel_postmortem_zh.html`(20496B) 在位 + commit `375e11bf7` 在 origin/main。
+- 隧道三命令 04:0x 实测全 PASS：V1 `ss -ltn|grep 127.0.0.1:3333`→LISTEN；V2 `ssh -p3333 app.e0031982@localhost hostname`→`hfeg0tedaap02`；V3 `curl http://127.0.0.1:8096/v1/models`→`id=minicpm5-2b-sft-v39-final root=.../global_step_105`。三隧道进程活（618469 正向-L沙盒 / 1008898 反向-R18096 / 1278889 反向-R18098）。
+- 结论（wake507 既定，未变）：坏过现已恢复；最后通点 20:41:50 / 首断点 22:4x wake505 / 故障域=中继侧①+② / 非本线造成亦非本线修复。
+
+### B. rescue 双 bug 定位（本轮实质发现·GPU-free 只读+最小修复）
+relaunch515b A1（02:55:41 起跑）于 03:56:36 codegen 完成，但 rescue **跳过**（chain.log: `[arm A1] RESCUE: 未找到 batch dir (codegen.log 无 输出目录 行), 跳过`），且报出的 `pass_rate=0.12658` 仍是 wake515 坐实的 ZhuLong DeepSeek 交叉污染旧文件（`final_report.json` mtime 00:48，`generations_file=completed_code_generation_2026_1114_210739.jsonl` 早于 A1 起跑）。两个独立 bug：
+
+- **bug1（grep binary）**：rescue 用 `grep -oE '输出目录:...' "$ARM_DIR/codegen.log"`，但 codegen.log 含 cline ANSI 转义（`\x1b[...`）→ grep 判定 binary，stderr 输出 `binary file matches`、stdout 空 → `BATCH_DIR` 空 → rescue 跳过。**修**：`grep -aoE`（`-a` 强制文本模式）。
+- **bug2（benchmark 相对路径）**：rescue 调 `run_eval.py --benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl`，run_eval.py 在 python cwd=eda_fastmcp 下校验该相对路径存在性 → eda_fastmcp 下无此文件 → `❌ 找不到 benchmark`（即便脚本 export 了 EVAL_FW_DIR，校验仍按 cwd 解析）。**修**：改绝对路径 `--benchmark "$EVAL_FW_DIR/benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"`（该文件实测 499870B 在 EDA-Eval-Framework 下）。
+- **bug3（陈旧报告误报，prompt_dev_eval）**：当本臂本轮未产出 final_report 时，line 117 仍 grep 上一轮残留 `final_report.json` → 报陈旧 pass_rate。**修**：ARM_DIR mkdir 后 `rm -f final_report.json final_report_rescued.json`。
+- 修复文件：`bpt_attribution_ablation.sh`（L92/L107/L108 grep -a + 绝对 benchmark）+ `bpt_attribution_prompt_dev_eval.sh`（L99 rm 陈旧 / L122/L137/L138 grep -a + 绝对 benchmark）。两脚本 `bash -n` 通过。
+- ⚠️ 编辑运行中脚本安全性：A3 bash(PID1040673) 当时阻塞在 L79（codegen 子进程），仅编辑 L92/L107/L108（均在当前执行点之后，且用 old_text→new_text 等行数替换不偏移字节偏移）→ 不破坏运行中解析；最坏情况 bash 已缓冲旧内容则 A3 rescue 仍走旧逻辑（下轮手动 rescue 兜底），无损坏风险。prompt_dev_eval 未运行，全量安全修复。
+
+### C. relaunch515b A1 干净数字恢复（手动 rescue，绕过 bug1/bug2）
+A1 codegen 产物 batch dir = `/home/app.e0031982/eda_code_eval/2026_1115_025541`（codegen.log `输出目录:` 行，`grep -a` 可提取）。手动执行 rescue 三步（normalize 8 个 pyAether_code→ws/、format 8 tasks to jsonl、complete 158 行、run_eval 绝对 benchmark + export EVAL_FW_DIR）：
+- **A1（no_sandbox 提示 + 基线 MCP 沙盒开，40 题子集）= 0/158 = 0.0%；6 generated ok / 151 fail / 1 timeout；generation_success_rate 3.80% → 40 题口径 0/40 = 0%**。
+- 产物已落 36.15 `/tmp/posttrain_attribution_ablation/A1/final_report_rescued.json` + `final_report.json`（覆盖陈旧交叉污染文件），`generations_file=completed_code_generation_2026_1115_025541.jsonl`（本臂本轮，非 ZhuLong）。
+- 与 wake515 手动 rescue（A1=0/40，5gen/0correct）一致 ⇒ **A1 真实数=0% 坐实**；12.66% 确为 ZhuLong DeepSeek 交叉污染，彻底排除。
+- ⚠️ model_name 字段仍标 `zhulong_deepseek_v32`（config.yaml 陈旧标签，非实际模型；实际=minicpm5-2b-sft-v39-final 经 :18096 反向隧道），报告须标注。
+
+### D. 归因链状态（36.15 relaunch515b）
+- relaunch515b(PID700233,02:55,~80min)存活；A1 DONE(干净 0/40) → **A3 RUNNING**(PID1040673,~19min,codegen.log 639KB @04:16 增长,40 题 -p8,no_sandbox 提示+沙盒关[eda_flow 移除]) → P0base_dev/P0_p0_dev pending 串行。
+- A3 rescue：脚本已修复（grep -a+绝对 benchmark），若 bash 已读取新内容则 A3 自动 rescue 出真数；若走旧缓冲则下轮手动 rescue（同 A1 流程，batch dir 从 A3/codegen.log `grep -a` 提取）。
+- 09:00 及格线预估：A1 ✅(0/40 已交) / A3 ETA~05:00-05:30 / P0base·P0p0 dev 前后对比 ETA~07:00-08:00（串行单 serve）⇒ 09:00 可交 A1+A3 两臂 40q + T6 归因表 + P0 补丁前后对比，全链 < 09:00。
+
+### E. R2 5-run eval
+- run1=0.63%(1/158)/run2=1.27%(2/158)/run3=0.0%/run4=0.0% DONE；**run5 START@03:33:34 末轮 codegen RUNNING**(GPU7:8095 89% util)；4-run mean 0.475% << step105 3.04%±0.83 趋势负（待 run5 + 5run_rl_analysis_R2.json McNemar/bootstrap，负则诚实负结果）。
+
+### F. 纪律
+- 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark / 隧道进程；0 infra。编辑仅限本线两 runner 脚本（posttrain attribution:）。MEMORY 体积自检。WAITING=0。
+

@@ -96,6 +96,7 @@ else
 fi
 LABEL="${PATCH}_${SPLIT}${SEED:+_seed${SEED}}"
 ARM_DIR="$RESULTS_DIR/$LABEL"; mkdir -p "$ARM_DIR"
+rm -f "$ARM_DIR/final_report.json" "$ARM_DIR/final_report_rescued.json"   # 清除上一轮残留, 防止报陈旧 pass_rate (wake519)
 export EDA_PROMPT_TEMPLATE_PYAETHER="$DEPLOYED_TPL"   # run_cline_script.sh L26 读此 env
 export CLI_DATA_DIR PYTHON="$VENV_PYTHON" EVAL_FW_DIR
 export PATH="$HOME/.local/bin:$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH"
@@ -118,7 +119,7 @@ fr="${NEW_EVAL_DIR}final_report.json"
 # --- RESCUE (wake515): cline writes code to code/<task>/pyAether_code/ but format reads
 # code/<task>/ws/pyAether_code/ (ws/ empty) -> 0 extracted -> eval empty. Normalize + re-eval.
 # Proven on wake515 (ablation A1/A3): generated code valid, only path misplaced. ---
-BATCH_DIR=$(grep -oE '输出目录:[[:space:]]*/home/[^[:space:]]+' "$ARM_DIR/codegen.log" | tail -1 | sed 's/.*输出目录:[[:space:]]*//')
+BATCH_DIR=$(grep -aoE '输出目录:[[:space:]]*/home/[^[:space:]]+' "$ARM_DIR/codegen.log" | tail -1 | sed 's/.*输出目录:[[:space:]]*//')
 if [ -n "$BATCH_DIR" ] && [ -d "$BATCH_DIR/code" ]; then
   moved=0
   for d in "$BATCH_DIR/code"/EDA-Eval-PyAether-*/pyAether_code; do
@@ -133,8 +134,8 @@ if [ -n "$BATCH_DIR" ] && [ -d "$BATCH_DIR/code" ]; then
   cd "$EDA_BASE"; export EVAL_FW_DIR
   "$VENV_PYTHON" pyAether-eval/script/format_cline_cli_output.py --input_dir="$BATCH_DIR/code" --output_file="$CG" > "$ARM_DIR/rescue_format.log" 2>&1
   "$VENV_PYTHON" pyAether-eval/script/complete_code_generation.py -o="$EDA_BASE/pyAether-eval/original_dataset/$DATASET" -l="$BATCH_DIR/logs" -c="$CG" > "$ARM_DIR/rescue_complete.log" 2>&1
-  "$VENV_PYTHON" scripts/run_eval.py -g "$CMP" --benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl > "$ARM_DIR/rescue_eval.log" 2>&1
-  RD=$(grep -oE '唯一输出目录:[[:space:]]*[^[:space:]]+' "$ARM_DIR/rescue_eval.log" | tail -1 | sed 's/.*唯一输出目录:[[:space:]]*//')
+  "$VENV_PYTHON" scripts/run_eval.py -g "$CMP" --benchmark "$EVAL_FW_DIR/benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl" > "$ARM_DIR/rescue_eval.log" 2>&1
+  RD=$(grep -aoE '唯一输出目录:[[:space:]]*[^[:space:]]+' "$ARM_DIR/rescue_eval.log" | tail -1 | sed 's/.*唯一输出目录:[[:space:]]*//')
   if [ -n "$RD" ] && [ -f "${RD}final_report.json" ]; then
     cp "${RD}final_report.json" "$ARM_DIR/final_report_rescued.json"
     cp "${RD}final_report.json" "$ARM_DIR/final_report.json"
