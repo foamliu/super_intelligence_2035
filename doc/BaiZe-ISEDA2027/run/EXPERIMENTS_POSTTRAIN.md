@@ -10741,3 +10741,15 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 0 真实 infra 错误(chain log 仅 START/run2 code-gen;CUDA OOM=0;serve 三端口健康;0 traceback)。
 - 边界:本轮仅读 stats/log/ps/nvidia-smi/curl/final_report.json,未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
 - Next:①run2 RUNNING(~14:20 完)→run3-5(各~5-6h)→5run_rl_analysis_R2.json→R2 5-run mean Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告 reports/report_posttrain_rl_surrogate_zh.html(标替身预演,论证禁引 mean_ratio,改引 reward 曲线+Pass@1);负→诚实负结果+换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4) ③kill_gpu_serve bug 待 chain 空闲修。
+
+## §R473 (wake473, 2026-11-14 08:05) 5-run eval 监控 run2 健康 — 心跳轮(18/158,success=8/fail=1/timeout=0)
+
+- 实测(.17 s0pgpuap12, 08:05:42):autofire chain PID2322797 存活(etime 07:44:01);run2 PID2684698 存活(etime 19:35,batch_id=grpo_R2_step200_run2_2026_1114_074607,START @ 07:46:07);8 个 cline worker 全活跃(worker_1..8 各 1 task in-flight,无死锁)。3 并发 serve 全稳:GPU4:8098(minicpm5-2b base)/GPU6:8096(minicpm5-2b-sft-v39-final)/GPU7:8095(minicpm5-2b-grpo-R2-step200)(curl /v1/models 三端口 200 OK);**GPU7=100%util/39246MiB**(R2 serve 满载,eval 主驱动);GPU6=0%util/39246MiB(step105 serve idle,未在跑 eval);GPU5=3MiB/0% 空闲(非本线不碰);GPU0-3=root SGLang(45GB/卡)不碰。
+- **run2 进度(本轮新增)**:~/eda_code_eval/2026_1114_074607/.task_queue 剩余 141 行(=17/158 已分发);stats:success=8/failure=1/timeout=0(total_time=2367s≈39min);code/ 目录 18 项(含 in-flight);8 worker 全在跑;timeout_task.log 0 字节(早期 timeout 尚未累积)。run2 ETA:按 run1 速率(01:08→07:46≈6h38m)≈ 14:25 完成。
+- **run1 复核(已落盘 §R471/§R472,本轮仅引用确认)**:final_report.json(`/tmp/posttrain_5run_eval/grpo_R2_step200/run1/final_report.json`)→ Pass@1=1/158=0.63%(total_correct=1;gen success=14/fail=85/timeout=59)。chain log 实证:`[run 1] eval done rc=0`→`Pass@1: 0.006329`→`run2 START` 自治。
+- **关键观察(承 §R471/§R472,本轮强化)**:R2 run1 timeout=59/158=37.3% 显著高于 step105 baseline(timeout≈2.5%)。RL(R2)后模型产出更长/更多 tool-call 轨迹→2500s 超时占比大幅上升→长轨迹超时可能机械侵蚀 Pass@1。run1 Pass@1=0.63% < step105 5-run mean 3.04%±0.83%,但**单 run,不预判显著性**(预注册决策门:须 5-run mean±std + McNemar/paired bootstrap vs step105)。
+- ⚠️口径:stats/success=code-gen 文件产出计数;final_report generation_statistics.success=评分后可执行计数;Pass@1=断言通过数。三者不同,以 final_report Pass@1 为准。
+- 本轮=监控心跳(read-only),无新增训练/调研产出。理由:eval 自治链运行中,run2 刚起跑~19min 无可推进阻塞动作;run1 结果已由 wake471 落盘。保持预注册决策门纪律:R2 显著性判定必须等 5-run eval 真实 Pass@1,不预判。
+- 0 真实 infra 错误(chain log 仅 START/run2 code-gen;CUDA OOM=0;serve 三端口健康;0 traceback)。
+- 边界:本轮仅读 stats/log/ps/nvidia-smi/curl/final_report.json/.task_queue,未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve child-PID bug 待 chain 空闲修(baize_posttrain_rl_eval_chain.sh L102-118)。
+- Next:①run2 RUNNING(~14:25 完)→run3-5(各~5-6h)→5run_rl_analysis_R2.json→R2 5-run mean Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap) ②显著→里程碑报告 reports/report_posttrain_rl_surrogate_zh.html(标替身预演,论证禁引 mean_ratio,改引 reward 曲线+Pass@1);负→诚实负结果+换奖励/任务定义,或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4) ③kill_gpu_serve bug 待 chain 空闲修。
