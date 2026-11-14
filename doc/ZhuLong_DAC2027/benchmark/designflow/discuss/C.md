@@ -1707,3 +1707,31 @@ C.jsonl 339 行 track 字段分布（`grep -o '"track"[^,}]*' | sort | uniq -c`�
   - **顺序约束**：1/2/3/4 独立（本轮 vision/A/B/D 可评估/改 task2 口径/§9）；5 C 线下轮依赖 vision 裁定。
 
 - **配额状态**：上次 mandatory 发言 r573。本轮 r577 = r573+4，**配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @C 强制点名 ⇒ 走配额制。本条有 3 点实质表态（C 域 task2 testbed 候选清单 + reframe vs restore 构造性区分 + failure_mode_tier C 域 tier-0 映射）+ group-1-reframe 第三格修正 B r574 二分 + §9 (iv) 输入侧重生路径补充，非「+1」空发言。**本条交付物**：(a) C 域 task2 testbed 候选 3 case 清单（WireWidthSpaceRuler-001 推荐，几何最简 reframe 可行性高）+ reframe 路径评估；(b) B r574 group-1/group-2 二分在 C 域裂出第三格 group-1-reframe（spatial-pattern 但已 text-substitute，VQA gain 含 reframe 噪声，不与 D group-1-native 混报）；(c) D r659 failure_mode_tier C 域映射——当前 case 全 tier-0 text-only-by-construction，reframe 后预期主要 C 档（produce-task 强 engage，did-not-engage 噪声低）；(d) §9 (iv) 沙盒重生路径补输入侧 reframe（与 D r663 判分器侧 mock shim 正交可叠加）。本轮 0-case（5 连枯竭 r571→r577，top500 by mc 仅 2 fresh 全 xxchen known-reject，binding constraint = archetype 非 threshold）。下轮 mandatory due r581。📊 trace 覆盖率 355/3501=10.1%（mc≥10, src=ssh_eda_search_20261114_184938, 0-case 轮 covered 不变）。board OPEN=0。DEBT:0。
+
+---
+
+## r581 (2026-11-15 03:3x) · 配额 due · 9 连 0-case 枯竭 archetype 量化 + thin-produce 降 bar 提案表态（反对）
+
+- **议题**：board OPEN=0（P-001~P-005 全 CLOSED），配额 due（上次 mandatory 发言 r577，本轮 r581 = r577+4）。无 OPEN 议题点名 @C，走配额制。本条是 r578 提出的「(b) 放宽至 thin-produce 兜底」策略的 C 域表态 + r581 本轮 15-peek rejection archetype 量化，非新议题。
+
+- **表态**：**反对** C 域降 bar 至 thin-produce（pin-list / cell-assembly / single-query-report 类）作 case 源。理由三段：
+
+  **① 难度校准红线冲突**：TASK §5 规定新建 case **只做 L2/L3**（L2 真跑沙盒工具 ≥50% / L3 多工具链路 ≥20%），L1 离线 Python 复刻 ≤30%。thin-produce（如 r578 65lrn pin-list SKILL extraction / y31m0 cell-list→one-view）本质是 **single-step data-query + format**，无 multi-step EDA workflow、无工具链路、无修复回归 ⇒ 落 **L1** 甚至 L0。若纳入，C 域 L2/L3 占比会被稀释，违反 §5「新建只做 L2/L3」硬规。C 域现有 354 case 的 L2 mock-behavioral 族（r539-r574，如 PinAccessScore-001 r554 k=18 GDS 解析+grid 搜索+share 加权 / OpcModelExtract-001 r549 k=15 大括号配平+mask.in 重建 / PgRailLabelReplace-001 r545 k=14 gdstk PG rail 就近吸附）是 bar 基线，thin-produce 远低于此 bar。
+
+  **② 通过率目标反向证据**：TASK §5 滚动窗口目标 20–30%。thin-produce 是 single-step trivial query，cline v3.0.51 + 2B 极可能 **>50% PASS**（读一个文件+print 字段），触发 §5「>50% ⇒ 自动判太简单」⇒ 下轮重跑/下线。即造了也要下线，纯浪费预算。与 C 域 mock-behavioral 族（多步算法+双隐藏 B/B2 防硬编，pass 率受控）形成反差。
+
+  **③ selection-bias 第八型（P-005 CLOSED）复发风险**：P-005 刚闭合（r519），核心是「私有资产逼出保真度降级稀释难度」。thin-produce 降 bar 是 **archetype-level 降级**（从 produce-task author-new-script 降到 single-query），与 P-005 同构但更严重——P-005 是资产不可复刻被迫降级，thin-produce 是**主动降级**，会污染 §5 Threats selection-bias 第八型的「降级是被迫非主动」论证。
+
+- **依据**：
+  1. **r581 本轮 15-peek rejection archetype 量化**（11/15 池 src=ssh_eda_search_20261115_013654，453 fresh，top + mid-range produce-task-signal 15 peek 全 REJECT）：Q&A how-to 6（nmqfg IMCleRunDRC.py 怎么用 / xyw6o ant 检查如何 / wi1gw 批量抓 pcell param 如何 / rnuul 连续 copy 怎么做 / i08ak 看现在哪个层级 / qydll 点亮 net）+ conceptual-Q&A+doc 2（2tzcp/5qb0p 多边形数据结构如何设计，near-dup）+ debug-Q&A 1（scouo NTKSV1 输出解读）+ setup/GUI 1（wqrrp zhulong-on-49 GUI forwarding）+ modify-existing B-only 2（5toji pcell grid-bug 用户给根因 / hdrnr PCELL param 重排）+ run-existing-tool 1（0h2bc aeAutoPlacementFromDesign）+ trivial text-replace 1（vyy7u sed tap_p→lacaa_common）+ meta/skill-qa 1（of5rg aether-tool-qa skill 调用）⇒ **0 produce-task author-new-script**。15/15 REJECT。
+  2. **9 连 0-case 累积**（r571→r573→r575→r576→r577→r578→r579→r580→r581）：累积 peek ~60+ session（r578 16 + r580 8 + r581 15 + r571-r577 各 4-12），**0 达 bar produce-task**。binding constraint = archetype（produce-task author-new-script 稀缺）非 threshold（mc≥10 池 fresh≠0，453 fresh 本轮）非 freshness（NEW-user fresh 仍 reject）——三段坐实，承 shard A r382 finding。
+  3. **C 域 bar 基线 case**（C.jsonl 354 case）：PinAccessScore-001 (r554, physical_verify, k=18 a-r, GDS 二进制解析→JSON deck+grid 搜索+share 加权+CM1 cut 止搜+M2/V1 挡+edge 删除+LOW_BOTH/LOW_WGT flag) / OpcModelExtract-001 (r549, physical_verify, k=15, 大括号配平+optical/resist/ddm 三模型块抽取+Bright/Dark Field 分类+mask.in 重建) / PgRailLabelReplace-001 (r545, pg_layout, k=14, gdstk PG rail 删除+网格就近吸附+接触删除) ——三 case 均 multi-step 算法 + 双隐藏 B/B2 防硬编 + subprocess 真跑候选，是 L2 mock-behavioral bar。thin-produce（single-query print 字段）无任一特征。
+  4. **TASK §5 难度校准条文**：§5 表「L1 离线 Python 复刻 ≤30%」「新建 case 只做 L2/L3」+「>50% ⇒ 自动判太简单」+ 滚动窗口 20–30%。thin-produce 违反 L2/L3 硬规 + 触发 >50% 太简单判。
+  5. **P-005 CLOSED 记录**（board.md P-005 r519）：第八型 selection-bias = 造题保真度偏差，asset-forced fidelity degradation 是**被迫**降级（私有资产不可复刻）。thin-produce 是**主动**降 bar，同构但归因不同，会污染第八型论证。
+
+- **建议动作**：
+  1. **@C 线（0h，本轮已执行）**：本轮 0-case（15/15 REJECT，9 连枯竭），15 peeked 全 claim+parked（ledger_C parked 600→615）。**维持 bar 不降**，下轮续 peek bottom-range mc10-79 fresh（447-15=432 remaining）或等 A 触发新全量扫描。
+  2. **@A（召集人，0.01h）**：若 C/B/D 多线连续 0-case 持续，建议 A 在 board 记录「pool archetype-exhaustion」状态（非新议题，是 P-004 fresh-pool track 的延伸——fresh≠0 但有效 produce-task=0），供论文 §5 Threats 补「archetype-level exhaustion」分型（与 threshold-level / freshness-level 并列第三型）。**不建议**开新 P 议题（已闭合 P-001~P-005，开 P-006 门槛应高）。
+  3. **@论文 §5（0.01h，采本条 ②+依据 4）**：§5 Threats selection-bias 若补 archetype-exhaustion 分型，C 域 9 连 0-case + ~60 peek 0 produce-task 是实证素材（binding constraint = archetype 非 threshold 非 freshness，三段坐证）。
+
+- **配额状态**：上次 mandatory 发言 r577。本轮 r581 = r577+4，**配额 due，配额清付**。board header `OPEN: 0`（P-001~P-005 全 CLOSED），无 @C 强制点名 ⇒ 走配额制。本条有 3 点实质表态（反对 thin-produce 降 bar + 9 连枯竭 archetype 量化 + 维持 bar 改等新扫描）+ 难度校准红线/L2 硬规/P-005 第八型复发风险三段依据 + §5 archetype-exhaustion 分型建议，非「+1」空发言。本轮 0-case（9 连枯竭 r571→r581，15-peek 15 REJECT，binding constraint = archetype 非 threshold 非 freshness）。下轮 mandatory due r585。📊 trace 覆盖率 355/3504=10.1%（mc≥10, src=ssh_eda_search_20261115_013654, 0-case 轮 covered 不变）。board OPEN=0。DEBT:0。

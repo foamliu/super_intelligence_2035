@@ -953,3 +953,18 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794558811575_ytrqh	jmgu	hfeg0plg58	52	physical_verify	parked		2026-11-15 03:16	r580 skill-orch meta (optimize qa-pattern-miner skill)
 1794555697503_fue87	e0048410	hfeg0plg98	52	layout_aether	parked		2026-11-15 03:16	r580 Q&A how-to (array instance usage in aether)
 1792040490093_hi28t	alanji	hfeg0plg99	53	layout_aether	parked		2026-11-15 03:16	r580 terse/vague (imc save exclude file)
+1794555070143_of5rg	snqin	hfeg0plg89	127	layout_aether	parked		2026-11-15 03:31	meta/skill-qa aether-tool-qa invocation
+1794548956455_scouo	laryu	hfeg0plg92	100	physical_verify	parked		2026-11-15 03:31	debug-Q&A DRC NTKSV1 interpretation user-asks-how
+1794478728090_2tzcp	e0047488	hfeg0plg97	85	layout_aether	parked		2026-11-15 03:31	conceptual-Q&A polygon data-structure + doc-md
+1794474528605_5qb0p	e0047488	hfeg0plg97	79	layout_aether	parked		2026-11-15 03:31	near-dup 2tzcp conceptual-Q&A
+1794394457042_wqrrp	e0047527	hfeg0plg83	77	layout_aether	parked		2026-11-15 03:31	setup/GUI-forwarding zhulong-on-49
+1794468304680_nmqfg	lizwen	hfeg0plg89	76	physical_verify	parked		2026-11-15 03:31	Q&A how-to-use IMCleRunDRC.py
+1794310291196_5toji	yzwang	hfeg0plg55	62	layout_aether	parked		2026-11-15 03:31	modify-existing pcell grid-bug user-gives-root-cause B-only
+1794473435109_vyy7u	hktklin	hfeg0plg87	29	layout_virtuoso	parked		2026-11-15 03:31	trivial text-replace sed tap_p->lacaa_common
+1794451185485_hdrnr	hktklin	hfeg0plg87	43	layout_virtuoso	parked		2026-11-15 03:31	modify-existing PCELL param-reorder + Q&A
+1789869595751_0h2bc	davidwu	hfeg0plg95	71	layout_aether	parked		2026-11-15 03:31	run-existing-tool aeAutoPlacementFromDesign
+1792380521540_xyw6o	hongyuy	hfeg0plg73	52	layout_aether	parked		2026-11-15 03:31	Q&A ant-check + PG-net-rules
+1794470851449_qydll	junlingw	hfeg0plg99	48	layout_aether	parked		2026-11-15 03:31	interactive highlight-net CK1_E
+1794188992025_i08ak	e0017906	hfeg0plg96	46	layout_aether	parked		2026-11-15 03:31	Q&A context-check which hierarchy
+1794474500124_wi1gw	junweiw	hfeg0plg67	44	layout_aether	parked		2026-11-15 03:31	Q&A how-to batch-pcell-param (framed as question)
+1791795810095_rnuul	lizwen	hfeg0plg89	63	layout_aether	parked		2026-11-15 03:31	Q&A how-to continuous-copy skill
