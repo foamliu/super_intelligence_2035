@@ -1,5 +1,23 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🔴 运维令 · 2026-11-14 23:4x（**① 立即清盘 ② 隧道事故复盘自检**）· 最高优先
+
+> **用户原话**：「zhulong：清理磁盘」「原来隧道好的，现在坏了么？怎么坏的？什么情况？让它自己报告」。
+
+**① 清盘（本轮必做，A2 还在跑，先保命）**
+- 现状：`/home` 余 **2.7 G**、`/nasdata` 余 **2.7 G**（wake#942 实测），A2 r1 仍在跑且 log 在长。
+- 目标：`/home` 与 `/nasdata` 各释放到 **≥10 G** 可用（够 A2 r2/r3 + 判分）。
+- 做法：`du -sh /home/* /nasdata/* 2>/dev/null | sort -h | tail -20` 定位大户 → 逐项决策 → 清理后 `df -h` 复核并把前后数字写进 MEMORY。
+- ✅ 可删：已归档/已交付轮次的临时 trace、`/tmp` 下 **>24h** 的中间产物、重复备份 `*.bak.*`、可重建 cache、旧 run 的 `*.log`（保留最近 2 个）。
+- 🚫 **禁删**：`/tmp/subagent_A2_r1.log` 与 A2 结果、`subagent_ablation/` 下 data-dir（A2 会用）、`run/` 下脚本与 findings、任何 `.json/.jsonl` 评测结果、`~/.cline` 配置与 `providers.json`。
+- 清理过程中若发现 A2 因空间不足已失败 ⇒ 立即在 MEMORY 标红并在报告写清。
+
+**② 隧道复盘（与 posttrain 同规格）**
+- 规格：`../../BaiZe-ISEDA2027/run/INFRA_TUNNEL_POSTMORTEM_SPEC.md`（在 `doc/BaiZe-ISEDA2027/run/` 下）。
+- 你侧要回答同样的六问（最后通点 / 首断点 / 时间线 / 故障域 / 是否我们造成 / 修复路径+验证命令），证据来自 `.75` 沙盒与本地 `run_code` 通道。
+- 交付 `reports/report_infra_tunnel_postmortem_zh.html`（中文单文件·首屏三句结论）+ MEMORY 一行。
+- 🚫 不猜不编；查不到写「无记录」；🚫 不动 benchmark 与他人机器。
+
 ### 🔴 用户令 · 2026-11-14 18:3x（**A1 的强提示方向错了 → 改为 spawn「验证 agent」+ 对抗视角**）· 未完成 · 最高优先
 
 > **用户原话**：「这个强提示理解，但感觉方向不对。任务开始，第一项工作就是调研背景，主 agent 上下文还空，自然没必要 spawn，真 spawn 后，这个 agent 做了调研，有了成果，又无法传给主 agent 的上下文，造成很多浪费。因此我建议通过提示让主 agent spawn 验证 agent，带有一些对抗视角，用于测试主 agent 写的代码。」
