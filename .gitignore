@@ -30,8 +30,8 @@ doc/sudo.txt
 doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].json
 doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].log
 doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].txt
-run/harness/terminalbench/manifests/
-run/harness/terminalbench/traces/
+doc/BaiZe-ISEDA2027/run/harness/terminalbench/manifests/
+doc/BaiZe-ISEDA2027/run/harness/terminalbench/traces/
 # 例外：被人读报告引用/作为固定产物的清单（如 2nd/3rd-batch ids）如需入库，请显式 `git add -f` 并说明
 # designflow 并发：staging 是临时产物（由 integrator 合并后即可丢弃）
 doc/ZhuLong_DAC2027/benchmark/designflow/cases_staging/

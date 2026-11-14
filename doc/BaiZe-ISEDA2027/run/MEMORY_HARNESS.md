@@ -4,12 +4,12 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2462 §14-08:2x 报告整改(4条REGEN✅)+§14-08:4x cc归因(已交付)·hermes rerun RUNNING·5th-batch RUNNING
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因DONE)·R2462(08:2x报告整改: ①kimi分母标注 ②TB4降附录 ③cc0p归因修正 ④§1§2合并)
-当前动作:     R2461: **cc归因修正REGEN**: audit_tb21_quota_7way.py增connection_refused桶(claude-code 89/89=CR)+CLI bug检测·gen_report_tb21_7way.py增conn_refused列+失败构成列+count_route修正(evaluated=89非0)·gen_report_glm53_7way.py删"待分析"→替换cc归因结论·gen_cline_special.py增cc归因修正节·三报告REGEN✅·hermes rerun RUNNING(PID247919)·5th-batch RUNNING·W:0
-下一步:       ①hermes rerun完成→merge→REGEN ②5th-batch完成→merge→REGEN ③**cc重跑BLOCKED**: claude-code适配器ConnectionRefused(需修复网关连接配置) ④B重跑: opencode38→pi46→deepseek48逐路串行 ⑤commit+mark §08:4x+§08:2x done
+PHASE:        R2463 §14-08:0x B重跑监控·hermes rerun 8/82 RUNNING·5th-batch 3/8 RUNNING·任务清单已备(opencode38/pi46/deepseek48)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因DONE)·R2462(08:2x报告整改+08:4x cc归因已交付)·R2463(08:0x B重跑监控+任务清单准备+.gitignore修复+reports/JSON清理)
+当前动作:     R2463: hermes rerun 8/82(4 setup fail=python3 not found·4 ability fail=reward0)·5th-batch 3/8(reward0=ability)·gateway200·无predict竞争·.gitignore修复(manifests/traces路径)·audit JSON清出reports/→manifests/·opencode/pi/deepseek任务清单已落盘manifests/·W:0
+下一步:       ①hermes rerun完成→merge→REGEN→起opencode(38tasks) ②5th-batch完成→merge→REGEN ③opencode→pi(46)→deepseek(48)逐路串行 ④cc重跑BLOCKED(ConnectionRefused) ⑤TASK归档(39.6KB→≤32KB)
 ERROR_COUNT:  0
- 体积: TASK=32KB / MEMORY=32KB（归档183KB）
+ 体积: TASK=39.6KB / MEMORY=31.8KB（归档183KB）
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
@@ -19,6 +19,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [10:00] R2463 **08:0x B重跑监控**: 自检(CPU load28/224=pretrain·无harness runaway·disk/data5.8T18%·gateway200·无predict竞争)·hermes rerun 8/82done(4setup fail=python3 not found in container·4ability fail=reward0 with agent stdout evidence)·5th-batch 3/8done(reward0=agent ran ability fail)·filter-js-from-html RUNNING(5th)·cobol-modernization RUNNING(hermes)·**.gitignore修复**(manifests/traces路径缺doc/BaiZe-ISEDA2027/前缀→已修)·audit JSON 5个+cline rerun JSON 1个从reports/移至manifests/(reports/现已0 JSON✅)·**后续路由任务清单已落盘**: opencode38tasks/pi46tasks/deepseek48tasks→manifests/tb21_7way_rerun_*_20261114_0858.txt·cc=BLOCKED(89/89 ConnectionRefused)·W:0
 
 > [09:15] R2462 **08:2x报告整改**: gen_report_glm53_7way.py 4条整改REGEN✅: ①§1§2合并="SWE-bench Verified·7路结果"单表(Predict/Real/Empty/Eval N/Resolved/Pass%/状态) ②kimi分母=显式标注(resolved/500 vs resolved/N+可比性列+分母说明+复算命令) ③TB4降附录(1行历史指针·正文无§4.1) ④§5归因修正(cc=88 ConnectionRefused+1 CLI bug·infra BLOCKED·删"docker down""TB4全0")·research日报移除(过程内部·非读者面向)·0script/0外链grep✅·§1-§8编号正确·四报告REGEN✅(glm53_7way/cc_attribution/cline_special/tb21_7way)·audit JSON清出reports/·W:0
 
@@ -190,24 +192,7 @@ ERROR_COUNT:  0
 
 > 📦 R1612-R1787 流水(2026-11-05~07,~50轮 incr_eval/监控/TB4/quiet)已 bulk 归档 → daily-memories-harness/2026-11-05/06/07.md。**关键**:cline rerun 356/500=71.3%·deepseek→212·kimi全7路100%·TB4全量66×7·R1685 cline低分归因(86%能力差)·R1695 proxy修复。需要时再读。
 
-## 🗣️ 运维问答
-
-> **Q1 (09:0x令): Terminal-Bench 一共多少题？**
-> **A**: 89 题（全量）。`ls ~/terminal-bench/` = 89 个任务目录。之前 7×15 = 105 trials 是因本地只有 15 个镜像，**非任务集只有 15 题**。
-
-> **Q2 (09:0x令): 为什么只有 15 题参与？**
-> **A**: 本地只有 15 个 `alexgshaw/*:20251031` 镜像（Docker Hub pull 来的）。其余 74 个之前没拉成功——但**根因不是"MITM proxy blocks"**，而是当时 daemon.json proxies 可能还没配或 daemon 没重启。**现在 daemon.json 已配 172.19.92.25:13128，实测 docker pull 成功**。
-
-> **Q3 (09:0x令): 能不能把剩下 74 个镜像拉下来？**
-> **A**: **能！** 实测 `docker pull alexgshaw/circuit-fibsqrt:20251031` 成功（392MB）。已启动 `_pull_all_tb_images.sh`（PID 2611629）批量拉取 73 个缺失镜像。共享 base layer 已缓存，预计 ~1-2h 完成。/data 剩余 6.4TB，空间充足。
-
-> **Q4 (09:0x令): 改成 7 并发？**
-> **A**: **已完成！** R479 (16:21) 启动 7x89 并发：7 harnesses × 87 tasks = 609 trials, 7-way concurrent。每 harness 独立 jobs-dir 在 /tmp（避免 NFS stale handle），共享 gw_proxy (9090/9091)。v2 串行已 kill（部分结果已保存）。ETA ~2.5-3h。口径声明：7-way concurrent（与之前串行结果不可直接比）。
-
-> **Q5 (09:2x令): 同事通过 92.25 代理成功拉过 Docker 镜像？**
-> **A**: **确认！** daemon.json `proxies` 字段已配 `http://172.19.92.25:13128`，Docker 27.5.1 支持。实测 pull 成功。**无需额外配 systemd drop-in**（daemon.json proxies 已足够）。
-
-> 📦 R113-R202 (2026-10-04~09, 早期 SWE-bench 横评 + SWEBENCH_COMPARE 监控 + 7-way harness 横评) 已归档 → daily-memories-harness/2026-10-04.md ~ 2026-10-09.md。需要时再读。
+> 📦 运维问答(Q1-Q5, 2026-10月) + R113-R202 早期SWE-bench横评 已归档 → daily-memories-harness/2026-11-14.md + 2026-10-04~09.md。需要时再读。
 
 ## 启动说明（首次唤醒）
 
