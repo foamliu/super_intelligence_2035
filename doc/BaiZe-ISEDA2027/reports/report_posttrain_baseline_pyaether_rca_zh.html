@@ -30,6 +30,12 @@ summary{cursor:pointer;font-weight:600;padding:6px;background:#e8e8e8;border:1px
 .tbd{color:#888;font-style:italic}
 .chart{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
 </style></head><body>
+<div class='box key' style='border:2px solid #c0392b;background:#fdecea;margin-bottom:18px'>
+<h3 style='margin-top:0'>⚠️ 环境口径声明（2026-11-14 用户令追加 · 本报告结论降为 provisional）</h3>
+<p>本报告的 <b>3.04%</b> 基线是 cline agent 在 <b>.17（后训练同机）</b>启动评测得到的。按 2026-11-14 用户令，EDA-Eval-PyAether 评测必须像 zhulong 一样<b>从 36.15 启动</b>——只有 36.15 原生部署了 RAG（API 文档知识库，pyAether_MCP_server :8090）与可访问 EDA 沙盒的 MCP（eda_flow :18891）。故本基线口径存疑，正在 36.15 上以同 158 题、同判据（<code>-p 8 -n</code>、2500s、5-run、Pass@1）重测。</p>
+<p><b>诚实复核（基于旧 trace 落盘证据，非估）</b>：.17 旧评测的 cline agent <b>并非「零 RAG/零 MCP」</b>——trace 显示 agent 实际调用了 <code>search_apis</code>（4418 次，且返回真实 API 文档，如 <code>MdePlatParamSweepStartStop</code> similarity=0.9375）、<code>get_api_details</code>（5436）、<code>run_code</code>（1460）、<code>run_commands</code>（6401）。真实差异在于：<b>(1)</b> .17 评测使用的 prompt 模板为 <code>eval_sys_prompt_template_no_sandbox.md</code>，明文写「<i>本场景无沙箱可实际执行，内部推演是唯一的逻辑校验手段</i>」——agent 被告知不执行沙盒；而 36.15 重测使用 <code>eval_sys_prompt_template_old.md</code>（沙盒可执行）。<b>(2)</b> .17 的 RAG/沙盒经本地 MCP(18888)+dual-nix-tunnel 转发，与 36.15 原生部署的 RAG 知识库 + 沙盒 MCP 不同实例。</p>
+<p>因此<b>本报告的失败分类与 fix 方案仅作参考，不得当定论</b>；3.04% 为 provisional。新口径报告：<code>reports/report_posttrain_baseline_pyaether_rca_3615_zh.html</code>（36.15 5-run 完成后生成，将明确标注 <code>旧=.17(no-sandbox prompt+本地MCP/隧道)</code> vs <code>新=36.15(沙盒可用 prompt+原生 RAG/沙盒 MCP)</code> 的环境差异与新基线）。🚫 不许悄悄保留旧结论当定论。</p>
+</div>
 <h1>MiniCPM5-2B（SFT step105）基线在 EDA-Eval-PyAether(158) 的 3.04% 逐题归因报告</h1>
 <p style='color:#666'>后训练线 · 基线根因分析 (RCA) · 2026-11-14 · 单文件自包含 / 0 外链 / 0 script / 内联 SVG</p>
 <div class='box meta'><h3>一、分析对象与口径（原始数据，可复算）</h3>
