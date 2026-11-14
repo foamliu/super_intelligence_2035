@@ -9,7 +9,7 @@ PHASE:        R2461 §14-08:0x A+C DONE: 7路额度审计落盘+报告口径修�
 当前动作:     R2461: 自检OK(CPU28/224·mem1061G·disk5.8T·gw200·无predict竞争=周末)·**A DONE**: audit_tb21_quota_7way.py 创建+运行→7路五桶落盘 reports/tb21_quota_audit_7way_20261114_0802.json·**结果**: cline=Q0/S8/E89·codex=Q0/S5/E89·opencode=Q15/S23/E89·cc=Q0/S0/E89·pi=Q0/S45/E89·hermes=Q39/S43/E89·deepseek=Q0/S48/E89·**rerun_targets=226**·**C DONE**: gen_report_tb21_7way.py增7路归因表+旧cline结论作废戳+38/89现口径·双报告REGEN✅·train-fasttext still RUNNING(45min·n_running=1)·5th-batch waiting(PID2163861)·W:0
 下一步:       ⓪**🔴 新用户令 2026-11-14 08:2x（报告 `report_harness_glm53_7way_swebench_tb_zh.html` 整改·用户判「不合格」·任务书运维指令区第一条）**：①kimi 对照分母统一/说清 ②TB4 移出正文降为附录 ③TB-2.1 复核是否最新 + **claude-code 0p 必须逐题归因并重跑**（不许留「待分析」）④§1 Predict 与 §2 Eval **合并为一节** → 改 gen_report_glm53_7way.py 后一次 REGEN；全部事实须用服务器原始数据复算并给路径+命令 ①train-fasttext done→wait_and_merge auto-merge→REGEN ②5th-batch 8synthetic→merge→REGEN ③**B 重跑**: 逐路串行(cline8synthetic→codex5→opencode38→pi45→hermes82→deepseek48)·-k1/nc1/nice19/sg docker·参数化rerun脚本 ④merge各路→REGEN双报告 ⑤commit+mark §08:0x done
 ERROR_COUNT:  0
- 体积: TASK=31KB / MEMORY=31KB（归档15KB）
+ 体积: TASK=32KB / MEMORY=32KB（归档183KB）
   7路额度审计: cline:Q=0/S=8/E=89 | codex:Q=0/S=5/E=89 | opencode:Q=15/S=23/E=89 | claude-code:Q=0/S=0/E=89 | pi:Q=0/S=45/E=89 | hermes:Q=39/S=43/E=89 | deepseek:Q=0/S=48/E=89 | rerun_targets=226
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
   cline TB-2.1根因: 原始10/89=11.2%=网关额度耗尽(65/80=81%)·**RERUN DONE**(quota_lost=65→0·cline=**38/89=42.7%**)·8synthetic待5th-batch·**7路审计发现**: opencode仍有Q15·hermes仍有Q39(从未rerun)·pi/deepseek大量synthetic(45/48=未真跑)
