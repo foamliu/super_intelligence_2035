@@ -1763,3 +1763,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794394443468_y229p	irene1li	hfeg0pkn004	71	waveform	case	EDA-Eval-DesignFlow-DqTrtfMeasure-001	2026-11-14 15:37	
 1794377315604_dd0n2	shanliny	hfeg0plg53	29	schematic_netlist	case	EDA-Eval-DesignFlow-RcVizTool-001	2026-11-14 19:05	
 1794375819662_r3u6l	yunfat	hfeg0plg94	35	waveform	case	EDA-Eval-DesignFlow-DqDqsAlign-001	2026-11-14 19:13	
+1794395468134_5sw59	hao23c	hfeg0pkn004	19	waveform	parked		2026-11-14 19:35	trace too thin: 16 msgs, single vague request 'open WV eye file' no file specified, assistant never opened anything, no user-accepted product => no golden std for A-grade, B-grade reframe too thin
+1794557816641_mnzo8	guangmingz	hfhds206	19	waveform	case	EDA-Eval-DesignFlow-FsdbPwlExtract-001	2026-11-14 20:00	r663 waveform B-grade L2 mock shim, k=15, 8 negatives distinct labels a/b/c/d/f/k/m/n
