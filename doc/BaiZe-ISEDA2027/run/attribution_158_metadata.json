@@ -1,0 +1,1108 @@
+[
+ {
+  "task_id": "EDA-Eval-PyAether-001",
+  "scenario": "Schematic",
+  "category": "Utilities",
+  "num_unique_apis": 4,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-002",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 4,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-003",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 1,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-004",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 4,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-005",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 3,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-006",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 1,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-007",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-008",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 2,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-009",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 7,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-010",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 6,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-011",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 10,
+  "lines_of_code": 11
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-012",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 1,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-013",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 3,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-014",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 10,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-015",
+  "scenario": "Design Management",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 7,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-016",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 8,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-017",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 8,
+  "lines_of_code": 12
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-018",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-019",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-020",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 7,
+  "lines_of_code": 17
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-021",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 3,
+  "lines_of_code": 18
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-022",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 9,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-023",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 3,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-024",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 5,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-025",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 4,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-026",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 10,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-027",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 7,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-028",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 7,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-029",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 6,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-030",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 2,
+  "lines_of_code": 12
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-031",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 5,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-032",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 6,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-033",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 8,
+  "lines_of_code": 8
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-034",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 6,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-035",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 8,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-036",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 8,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-037",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 10,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-038",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 5,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-039",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 4,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-040",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 6,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-041",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 4,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-042",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 11,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-043",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 2,
+  "lines_of_code": 8
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-044",
+  "scenario": "Design Management",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 3,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-045",
+  "scenario": "Design Management",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 4,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-046",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 20,
+  "lines_of_code": 17
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-047",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 7,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-048",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 8,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-049",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 2,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-050",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 2,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-051",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 5,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-052",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 6,
+  "lines_of_code": 38
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-053",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 4,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-054",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 5,
+  "lines_of_code": 14
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-055",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 1,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-056",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 4,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-057",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 4,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-058",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 5,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-059",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 3,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-060",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 21,
+  "lines_of_code": 18
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-061",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 1,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-062",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 1,
+  "lines_of_code": 11
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-063",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 7,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-064",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-065",
+  "scenario": "Others",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 2,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-066",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 3,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-067",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 3,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-068",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 1,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-069",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 4,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-070",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 3,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-071",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 1,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-072",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 5,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-073",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 3,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-074",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 4,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-075",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 10,
+  "lines_of_code": 13
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-076",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 13,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-077",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 6,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-078",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 11
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-079",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 3,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-080",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 5,
+  "lines_of_code": 14
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-081",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 8,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-082",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 6,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-083",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 8,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-084",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 3,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-085",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 4,
+  "lines_of_code": 16
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-086",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 11,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-087",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 2,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-088",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 9,
+  "lines_of_code": 24
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-089",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 3,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-090",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 3,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-091",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 5,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-092",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 10,
+  "lines_of_code": 8
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-093",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 9,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-094",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 11,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-095",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 4,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-096",
+  "scenario": "Others",
+  "category": "Utilities",
+  "num_unique_apis": 2,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-097",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 5,
+  "lines_of_code": 2
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-098",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 11,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-099",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 10,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-100",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 10,
+  "lines_of_code": 1
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-101",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 4,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-102",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 14,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-103",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 4,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-104",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 9,
+  "lines_of_code": 113
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-105",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 41,
+  "lines_of_code": 104
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-106",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 30,
+  "lines_of_code": 64
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-107",
+  "scenario": "Schematic",
+  "category": "Database & Design Management",
+  "num_unique_apis": 5,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-108",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 5,
+  "lines_of_code": 9
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-109",
+  "scenario": "Schematic",
+  "category": "Database & Design Management",
+  "num_unique_apis": 4,
+  "lines_of_code": 11
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-110",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 4,
+  "lines_of_code": 16
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-111",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 5,
+  "lines_of_code": 13
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-112",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 17,
+  "lines_of_code": 28
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-113",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 6,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-114",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 5,
+  "lines_of_code": 14
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-115",
+  "scenario": "Others",
+  "category": "Design Content Creation",
+  "num_unique_apis": 14,
+  "lines_of_code": 61
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-116",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 10,
+  "lines_of_code": 13
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-117",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 5,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-118",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 29,
+  "lines_of_code": 69
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-119",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 31,
+  "lines_of_code": 88
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-120",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 24,
+  "lines_of_code": 53
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-121",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 41,
+  "lines_of_code": 77
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-122",
+  "scenario": "Layout",
+  "category": "Database & Design Management",
+  "num_unique_apis": 8,
+  "lines_of_code": 20
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-123",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 37,
+  "lines_of_code": 66
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-124",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 27,
+  "lines_of_code": 52
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-125",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 2,
+  "lines_of_code": 28
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-126",
+  "scenario": "Schematic",
+  "category": "Simulation & Analysis Configuration",
+  "num_unique_apis": 12,
+  "lines_of_code": 20
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-127",
+  "scenario": "Others",
+  "category": "Design Content Creation",
+  "num_unique_apis": 3,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-128",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 40,
+  "lines_of_code": 47
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-129",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 28,
+  "lines_of_code": 62
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-130",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 38,
+  "lines_of_code": 70
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-131",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 28,
+  "lines_of_code": 61
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-132",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 5,
+  "lines_of_code": 27
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-133",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 10,
+  "lines_of_code": 3
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-134",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 4,
+  "lines_of_code": 23
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-135",
+  "scenario": "Layout",
+  "category": "Database & Design Management",
+  "num_unique_apis": 2,
+  "lines_of_code": 16
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-136",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 5,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-137",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-138",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 3,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-139",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 5,
+  "lines_of_code": 18
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-140",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 16,
+  "lines_of_code": 11
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-141",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 3,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-142",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 8,
+  "lines_of_code": 34
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-143",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 3,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-144",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 7,
+  "lines_of_code": 19
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-145",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 10,
+  "lines_of_code": 30
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-146",
+  "scenario": "Schematic",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 10,
+  "lines_of_code": 72
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-147",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 8,
+  "lines_of_code": 29
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-148",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 8,
+  "lines_of_code": 38
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-149",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 4,
+  "lines_of_code": 10
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-150",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 7,
+  "lines_of_code": 7
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-151",
+  "scenario": "Schematic",
+  "category": "Design Content Creation",
+  "num_unique_apis": 9,
+  "lines_of_code": 62
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-152",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 9,
+  "lines_of_code": 15
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-153",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 3,
+  "lines_of_code": 5
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-154",
+  "scenario": "Layout",
+  "category": "Design Content Creation",
+  "num_unique_apis": 5,
+  "lines_of_code": 6
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-155",
+  "scenario": "Layout",
+  "category": "Design Content Query & Edit",
+  "num_unique_apis": 12,
+  "lines_of_code": 4
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-156",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 3,
+  "lines_of_code": 12
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-157",
+  "scenario": "Design Management",
+  "category": "Database & Design Management",
+  "num_unique_apis": 6,
+  "lines_of_code": 14
+ },
+ {
+  "task_id": "EDA-Eval-PyAether-158",
+  "scenario": "Layout",
+  "category": "Geometry Operation & Analysis",
+  "num_unique_apis": 3,
+  "lines_of_code": 9
+ }
+]

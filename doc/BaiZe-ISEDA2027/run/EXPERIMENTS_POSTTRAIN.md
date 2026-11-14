@@ -11140,3 +11140,32 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 4. **双 eval 健康监控** (read-only): R2 5-run chain PID2322797~19.8h, run1=1/158(0.63%)/run2=2/158(1.27%)/run3 code-gen ACTIVE; 36.15 重测 run1 DONE=25/158=15.82%, run2 进行中. 未碰 GPU0-7/未碰 36.15 运行中 eval/未碰别线文件, 0 infra.
 
 **Next**: 36.15 5-run 完 -> 依次 --arm A0 A1 A2 A3 (40题×4臂) -> 按预注册判据 (spec §2) 判 prompt/沙盒反馈回路/RAG 占比 -> 一句话归因; Task B 79/79 拆分 + P0-tool-format dev 测.
+
+## §R-Attribution-update2 (wake498, 2026-11-14 20:2x) — Task B 前置: 79/79 train/dev 拆分 + P0-tool-format 补丁模板 + dev-eval runner run-ready
+
+**进展**: 完成 spec §3 Task B 的全部 CPU/IO 前置 (不依赖 36.15 env, 不与运行中 eval 冲突). Task A/B 的实际跑仍阻塞于 36.15 5-run baseline 完成.
+
+1. **158 题元数据快照** (`attribution_158_metadata.json`, 25419B, 已落盘): 从 36.15 经 SSH 拉取 EDA-Eval-PyAether-v20260311_fixed.jsonl 的 metadata (task_id + scenario + category + num_unique_apis + lines_of_code; **不含 prompt/函数签名/断言 -> 无污染**). scenario 分布 = Layout 64 / Schematic 47 / Design Management 24 / Others 23 (与任务书 per-scenario 一致).
+
+2. **79/79 train/dev 分层拆分** (`posttrain_attribution_traindev_split.py` [可复算, seed=20261114] -> `attribution_traindev_split.json`):
+   - 分层变量 = scenario(域) × difficulty_bucket(难度, proxy: easy=apis<=2&loc<=3; medium=apis<=4&loc<=15; hard=else).
+   - 结果 = train 79 / dev 79, **overlap=0, union=158** (已核验).
+   - scenario 分布: train{Layout32,Schematic23,DesignMgmt12,Others12} / dev{Layout32,Schematic24,DesignMgmt12,Others11}.
+   - difficulty 分布: train{easy3,medium27,hard49} / dev{easy3,medium26,hard50}. 两组同构.
+   - 用途: 补丁在 **dev** 上选 (3 seed, 门槛 >= +3pp 且 submit 报错率降 >= 10pp); **test=全 158 仅最后 5-run + McNemar**.
+
+3. **P0-tool-format 补丁模板** (`attribution_prompt_p0_toolfmt.md`): = 36.15 baseline 沙盒提示 `eval_sys_prompt_template_old.md` **+ 单变量插入一段「工具调用格式硬约束」**.
+   - diff 核验: 仅 28 行新增 (全部 `>` 行, 0 行删除), 插在「注意事项」后; `{user_query}` 占位符保留 (1 处). -> 干净的单变量补丁.
+   - 补丁内容: ① 区分两个 MCP server (pyAether_MCP_server:8090=API 文档检索+run_code; eda_flow:18891=沙盒会话), 工具参数不互通; ② `run_commands.commands` 必须是 list[str] (正/反例); ③ `read_files.files` 必须是 list[dict]; ④ 禁把 submit_and_exit 的 summary/verified 传给 eda_flow; ⑤ bm25_fallback 不得直接当 API 名.
+   - 针对: 36.15 run1 拒绝 1295 次中 80.5% (1042) 是 run_commands 传 string 而非 array + 双 MCP 工具混淆 -> 直接打 code-gen 完成率瓶颈 (18.35%).
+   - ⚠️ 跨线放置: 运行时由 dev-eval runner 临时 `cp` 到 `eda_fastmcp/prompts/` (zhulong 仓); 本线只起草, 不入 eda_fastmcp 仓库.
+
+4. **Task B dev-eval runner** (`bpt_attribution_prompt_dev_eval.sh`, run-ready):
+   - `bash -n` OK; `--patch baseline|p0 --split dev|train|test --dry-run --skip-status-gate` 任务加载核验 = dev 79 / train 79 / test 158; p1/p2/p3 未起草时正确 FATAL.
+   - 36.15 5-run 完成闸门: 默认先 `bpt_eval.sh --status`, 见「(未完成)」则 BLOCKED (不与运行中 eval 并跑); `--skip-status-gate` 仅诊断.
+   - 复用 bpt_eval.sh 口径 (run_cline_script.sh / CLI_DATA_DIR / EVAL_FW_DIR / 18096 隧道). 反作弊 `-n` 常开.
+   - 用法: `--patch baseline --split dev --seed S` (3 seed) vs `--patch p0 --split dev --seed S` (3 seed) 对比; 达门槛再叠加 P1/P2/P3 (一次一条); 最终 `--split test` 5-run + McNemar.
+
+5. **双 eval 健康** (read-only): 36.15 重测 bpt_eval.sh --status = run1 DONE 0.15823 / run2-5 未完成 (PID1229657~4h, --run-all); R2 5-run chain PID2322797 run3 code-gen ACTIVE. 未碰 GPU0-7/未碰 36.15 运行中 eval/未碰别线文件, 0 infra.
+
+**Next**: ① 36.15 5-run 完 -> 新基线 (同 158, 标环境差异) + report_posttrain_baseline_pyaether_rca_3615_zh.html; ② Task A: 依次 --arm A0 A1 A2 A3 (40题×4臂) -> 预注册判据 -> 一句话归因; ③ Task B: baseline dev(3 seed) vs p0 dev(3 seed) -> 门槛判定 -> 逐条叠加 P1/P2/P3 -> test 5-run + McNemar.
