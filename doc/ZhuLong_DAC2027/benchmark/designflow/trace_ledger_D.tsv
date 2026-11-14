@@ -1731,3 +1731,12 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794367209347_6sbnc	tongni	hfeg0pkn004	10	waveform	parked		2026-11-14 07:28	r638 waveview-bridge debug Q&A
 1793694775768_lw8dg	rongjiez	hfeg0pkn005	11	waveform	case	EDA-Eval-DesignFlow-WaveCmpReuseMode-001	2026-11-14 07:59	r638 compare_wave.pl env-dep
 1794468905617_ojs6x	m1wang	hfeg0plg79	16	waveform	parked		2026-11-14 07:28	r638 DFT-pattern Q&A
+1794466909476_2gnpb	t0002607	hfeg0pkn004	192	schematic_netlist	parked		2026-11-14 08:24	r625-already-reject SRAM 512->1024 reconfig env-dep live Virtuoso schematic edit (add pin A<9>)
+1794466473272_14921	huifangg	hfeg0pkn004	118	schematic_netlist	parked		2026-11-14 08:24	r641 file-organization Q&A + circuit-id Q&A not produce-task
+1794474782925_5ityn	zjqiao	hfeg0pkn003	404	schematic_netlist	parked		2026-11-14 08:24	r641 GUI-agent build for finesim near-dup 7aypg(r636) same user zjqiao
+1794531763710_isl8h	jolinz	hfeg0pkn001	36	schematic_netlist	parked		2026-11-14 08:24	r641 verilog/SV Q&A (channelif where-defined) wrong-subdomain A-lean not D
+1793695519119_dzi1a	yuhzhu	hfeg0pkn005	54	schematic_netlist	parked		2026-11-14 08:24	r641 layout placement plan image from CDL visual output C-domain non-portable
+1791954194768_5xbw7	hengbow	hfeg0plg79	21	schematic_netlist	parked		2026-11-14 08:24	r641 synthesis kw netlist:64 rtl:24 likely A-domain logic-synthesis unpeekable
+1794443509716_lqshz	e0046686	hfeg0plg74	38	schematic_netlist	parked		2026-11-14 08:24	r641 skill-driven file-organization (structured-file-output skill) not produce
+1794377900782_v2lci	shanliny	hfeg0plg78	47	schematic_netlist	parked		2026-11-14 08:24	r641 continuation rc_viz->xlsx env-dep + near-dup user shanliny=r624
+1793070301949_21ltn	thomasz	hfeg0pkn002	17	schematic_netlist	parked		2026-11-14 08:24	r641 Q&A run.py waveform-usage inspection not produce
