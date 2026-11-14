@@ -1,5 +1,13 @@
 WAITING: 0
 
+> 🆕 **【wake #1240 · 2026-11-14 23:5x】G0/G1 agent 臂✅已完成并落盘核验 · G2 后台运行中（agent 编排带来 5 整题翻转 = 本线核心增益）**：
+> - **G0（agent glm-5.2·无 VQA）= 0/10 PASS**（全 FAIL·vqa_calls=0·正确基线：文本底座看不见波形图）。逐题 k：DqRead 4/13·EyeAp 0/9·FsdbWr 2/12·RiseEdge 2/9·SimFail 3/12·TempSel 0/9·TempThresh 1/10·WaveCmp 2/14·WaveMax 0/9·WaveView002 6/13。
+> - **G1（agent + 基模 Qwen3.5-2B VQA :30001）= 5/10 PASS** · **G0→G1 翻转 5 整题**：EyeApertureSelect 0/9→**9/9**·TempSelWaveform 0/9→**9/9**·TempThreshChar 1/10→**10/10**·WaveCmpWrap 2/14→**14/14**·WaveMaxFind 0/9→**9/9**。未翻转 5 题均「差几量」：FsdbWr 10/12·SimFail 11/12·WaveView002 11/13·RiseEdge 7/9·DqRead 1/13。G1 vqa_calls 6–34/题·reask 0–23·**agent_selfcheck 轨迹已捕获**（问→发现不一致→换问法再问原文片段，如 RiseEdge「The second response for data_a seems inconsistent... Let me re-examine」、FsdbWr「I'm getting conflicting answers... Let me cross-validate」）= 正是 spec §0.2 要的核心证据。
+> - **🔥 本线核心结论（用户 21:5x「MLLM 作为 agent 系统一部分」增益）**：单模型臂 V0/V1/V2 整题**全 0/10**（工具天花板）→ 加 agent 编排后 **G1=5/10**（5 整题翻转）= **agent 编排把「每量读对率」补成「整题全过」**，这是单模型结构上做不到的，正是用户要量的增益。
+> - **G2（agent + rft2_adapter :30003·强化臂 #4）⏳ 后台运行中**（pid 3503075 setsid detached·10 题待跑完·ETA~50min）：量「强化适配器在 agent 设置下是否再增翻转」。:30001/:30003/:30002 三端点实测在线。
+> - **本轮动作**：git pull --rebase --autostash 整合 zhulong+designflow 2 commit(0 触视觉)·落盘核验 G0/G1 逐题 verdict·**提交已定稿的 G0(10)+G1(10) 结果 JSON + 报告生成器**（G2 目录空·待跑完）·起 detached report-only auto-finisher 作安全网·MEMORY 心跳。**G2 跑完后**（本 wake 或下 wake）写 `summary_agent.json`→出 `reports/report_vision_waveview_selftest_agent_zh.html`+EXPERIMENTS §26+最终 commit。体积：MEMORY trim 后≤32KB✓·TASK 31980B≤32KB✓。**本轮非 idle-spin**（核验+提交 agent 臂核心结果+安全网）。**WAITING: 0**。
+
+
 > 🆕 **【wake #1239 · 2026-11-14 22:5x】用户令 21:5x「补 agent 臂」执行中 + V3 CoT 提示消融✅已交付（首次整题翻转）**：
 > - **V3（单模型臂·CoT 提示杠杆）✅ 已交付**：给所有时间量抽取问题追加「读轴标度/偏移并乘开」的 CoT 后缀（提示杠杆非权重·统一施加不针对 gold）。结果 **V2c=1/10 整题 PASS**（β11 SimFailFsdbProbe V2 FAIL 10/12→V2c PASS 12/12·修好 fail_time/window_start 的 x1e6 单位误差）= **本线第一个整题翻转**；V1c=0/10（基模加 CoT 未翻转）。V2→V2c 翻转 1·McNemar p=1.0(n=10 不足)。cheat=0(vqa_calls=162/image_reads=0)。EXPERIMENTS §25。产物 `waveview_selftest_v3_run.py`+`V3/{V1c,V2c}/*.json`+`summary_v3.json`+`audit_v3.json`（已随 22:42 auto-commit 入库）。
 > - **G0/G1/G2 agent 臂（21:5x 正式测法）⏳ 重启运行中（改进脚本·cap 10→16 + 终局合并步）**：SUT=glm-5.2（vision cline 文本底座）经 OpenAI function-calling API，唯一变量=VQA 工具后端（G0 无工具/G1 基模:30001/G2 适配器:30003）。同 10 题·同 gen() PNG·同 check_case·temp=0·seed=20261114。**首轮（旧脚本 cap=10）G1 跑完 10/10 已发现 2 整题 PASS**：WaveCmpWrap 14/14·WaveMaxFind 9/9（= V1 单模型 0/10 → G1 agent 2/10，**agent 编排带来整题翻转**）；另 4 题（EyeAperture/TempSel/TempThresh/WaveView）命中 10-turn 上限未合并答案（23–32 次 vqa 读但 0/k·harness 截断非能力上限）。**已修脚本**（cap→16 + 命中上限时追加一次无工具「合并 FINAL ANSWERS」调用）并**重启**（pid 3503075 setsid detached）：保留 6 个好 G1（含 2 PASS）+10 G0，重跑 4 个 capped G1 + 全部 G2（关键臂）用改进脚本。待跑完写 `summary_agent.json`→`make_waveview_selftest_agent_report.py`（已加 turn-cap 标记）出 `reports/report_vision_waveview_selftest_agent_zh.html`+EXPERIMENTS §26+最终 commit。**WAITING: 0**。
@@ -89,21 +97,9 @@ WAITING: 0
 
 > 📦 wake#1125~#1194（2026-11-13 15:15 ~ 11-14 06:44，~30 轮）例行巡检 idle-spin patrol one-liners 已归档原文 → daily-memories-vision/2026-11-13.md / 2026-11-14.md（含 wake#1186 v11 负结果+方向已穷尽结论）。需要时再读。
 
-> 📦 **wake #1076~#1124 · 2026-11-13 04:56~15:0x**（~49 轮）v9 启动→v9 NO CHANGE(seed0 A=0%B=49.5%C=49.5%p=1.0·n_disc=0·grpo_lr 太低)→v10 启动(基座换 Qwen3.5-2B·grpo_lr 1e-5·n_steps 50)→v10 NOT SIGNIFICANT(2/6·A=46.2%/B=54.9%/C=51.6%±3.1%·McNemar p=1.0·control 53.8%·诚实负结果)+多轮 git 暂缓(posttrain 活跃持 index.lock·按铁律不抢不删·wake#1119~#1123)→wake#1124 暂缓解除成功 push·全交付态·已归档原文 → daily-memories-vision/2026-11-13.md。需要时再读。
+> 📦 wake#1004~#1124（2026-11-11 00:52 ~ 11-13 15:0x，~99轮）v6/v7/v8/v9/v10 频率比较 RL 系列实验+例行巡检·已归档原文 → daily-memories-vision/2026-11-{11,12,13}.md + EXPERIMENTS §v6~§v10；**结论**：v6 p=0.267 NS·v7 sweep 18/18(6/6 ALL PASS)·v8 MIXED(C=52.5%>B45% p=0.0312 s0·control NS)·v9 NO CHANGE·v10 NOT SIGNIFICANT(A46.2/B54.9/C51.6% p=1.0·诚实负结果)·全交付态。需要时再读。
 
-> 🆕 **【wake #1076 · 2026-11-13 04:56】v9实验启动**：v8分析完成(A=0%根因=格式问题:model生成推理文本而非A/B, B=45%真实性能, C=60% GRPO有效) → 设计v9(扩大SFT 200→500×5ep, eval 48→96, GRPO 15→30步, medium难度boost) → 修复qid递增bug(eval 72→91, SFT 152→484) → smoke通过 → **v9 full experiment launched** (3 seeds + control, ETA ~4h on CPU, log @ /tmp/v9_freqcmp.log) · 脚本: `vision/wave_rl/cpu_rl_v9_freqcmp_experiment.py` + `run_v9_freqcmp.sh` + `analyze_v9_freqcmp.py` · **WAITING: 0**。
-
-> 📦 wake#1056~#1075 (2026-11-12 23:3x ~ 11-13 05:3x) v8/v9例行巡检+v8 MIXED结果(C=52.5%±6.1%>B45%·McNemar p=0.0312 s0·control NS·3/5判据→MIXED)·全交付态·已fold(详情 daily-memories-vision/2026-11-13.md + EXPERIMENTS §v8)。
-
-> 📦 **wake #1004~#1056 · 2026-11-11 00:52 ~ 11-12 23:3x**（~50轮）例行巡检+v7 sweep监控+报告/EXPERIMENTS更新·全交付态·零异常·v7 sweep ALL 18/18完成(6/6 ALL PASS)·v6实验完成(p=0.267 NS·nonzero-std 93.8%)·v8实验启动(smoke通过)·已fold。
-
-> 📦 wake#975~#1003（例行巡检·全交付态·零异常·无新增·2026-11-10 05:33~22:10，29轮）已归档 → daily-memories-vision/2026-11-10.md；**结论**：全交付态·11-10早报(06:11)vision栏建议1条(来源2611.09729·稳定性前提)·11-10晚报(18:12)PM vision栏「无新增可用建议」·与wake#943~#974一致·非指令·纳入备查·loop/ops_relay/GPU-wait chain健康。需要时再读。
-
-> 📦 wake#969~#974（例行巡检·全交付态·零异常·2026-11-10 00:34~04:28，6轮）已归档 → daily-memories-vision/2026-11-10.md；**结论**：全交付态·loop/ops_relay健康·零异常·research日报2026-11-09早报vision建议3条与wake#943~#968一致·无新增·非指令。需要时再读。
-
-> 📦 wake#943~#966（例行巡检·全交付态·零异常·2026-11-09 06:23~22:16，24轮）已归档 → daily-memories-vision/2026-11-09.md；**结论**：全交付态·loop/ops_relay/GPU-wait chain健康·零异常·research日报2026-11-09早报vision建议3条(v6奖励拆两项α=0.25/β=0.35+合成数据两道闸+SFT→GRPO对照臂·非指令·备查)无新增。需要时再读。
-
-> 📦 wake#917~#942（例行巡检·全交付态·零异常·2026-11-08 14:08 ~ 11-09 05:48，26轮）已归档 → daily-memories-vision/2026-11-08.md / 2026-11-09.md；**结论**：全交付态·loop/ops_relay/GPU-wait chain健康·零异常·research日报vision建议无新增。需要时再读。
+> 📦 wake#917~#1003（例行巡检·全交付态·零异常·无新增·2026-11-08 14:08 ~ 11-10 22:10，~85轮）已归档 → daily-memories-vision/2026-11-{08,09,10}.md；**结论**：全交付态·loop/ops_relay/GPU-wait chain健康·零异常·research日报 vision 建议均非指令(备查)·与 wake#943~#974 一致无新增。需要时再读。
 
 > 📦 wake #893（用户令标✅已交付+收尾巡检·2026-11-07 22:0x）已归档 → daily-memories-vision/2026-11-07.md；**结论**：两条用户令标✅已交付·全部交付物在位(v5 A16%→B37%→C53% p=0.0009)。需要时再读。
 

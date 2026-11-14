@@ -146,6 +146,9 @@ g0_pass = wp["G0_agent_notool"]
 v1_pass = wp["V1_singlemodel"]; v2_pass = wp["V2_singlemodel"]
 agent_flips = fl["G0->G1 (VQA channel in agent)"] + fl["G0->G2 (VQA+rft2 in agent)"]
 orch_flips = fl["V1->G1 (agent orchestration on base)"] + fl["V2->G2 (agent orchestration on rft2)"]
+# verdict_pos = at least one whole-question PASS in the agent arms (G1/G2) -> the
+# MLLM-as-part-of-agent-system framing produced an observable whole-question flip.
+verdict_pos = (g1_pass + g2_pass) > 0
 vcls = "pos" if verdict_pos else "neg"
 hdr = ("vision 线 · 用户令 2026-11-14 21:5x「补 agent 臂：MLLM 作为 agent 系统一部分带来的增益」"
        f"· SUT = glm-5.2（vision cline 文本底座）经 OpenAI 兼容 function-calling API · {esc(S['date'])}")
