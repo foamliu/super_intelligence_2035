@@ -1729,5 +1729,5 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793176301340_bme92	my7li	hfeg0pkn004	10	schematic_netlist	parked		2026-11-14 07:28	r638 dqtool-capability Q&A
 1794460854642_r3xw8	e02141	hfeg0pkn005	88	analog_context	parked		2026-11-14 07:28	r638 TCAD wrong-subdomain Q&A
 1794367209347_6sbnc	tongni	hfeg0pkn004	10	waveform	parked		2026-11-14 07:28	r638 waveview-bridge debug Q&A
-1793694775768_lw8dg	rongjiez	hfeg0pkn005	11	waveform	parked		2026-11-14 07:28	r638 compare_wave.pl env-dep
+1793694775768_lw8dg	rongjiez	hfeg0pkn005	11	waveform	case	EDA-Eval-DesignFlow-WaveCmpReuseMode-001	2026-11-14 07:59	r638 compare_wave.pl env-dep
 1794468905617_ojs6x	m1wang	hfeg0plg79	16	waveform	parked		2026-11-14 07:28	r638 DFT-pattern Q&A
