@@ -60,6 +60,48 @@ wake#915 的 go_nogo note §五 自承「P0 没验证 subagent 是否真正执�
 
 ---
 
+## 六、confirmatory smoke 实测结果（2026-11-14 10:19–11:15，wake#923）
+
+> 本节用实测**修正** §四 的乐观预期。wake#922 的「config-level 修复、无需源码改」结论**部分被推翻、部分被证实**——拆成两个独立问题。
+
+### smoke-A 系列实测（harness 路径 = run_cline_script.sh → run_cli.sh → cline）
+
+| 跑次 | 时间 | 路径 | PARALLEL | --data-dir | 结果 |
+|:--|:--|:--|:-:|:-:|:--|
+| smokeA (10:19) | harness | 8 | 有 | ❌ 失败 |
+| smokeA_direct (10:26) | 直接 CLI | — | — | ⚠️ 混合：1 次 `messages must not be empty`，其余 anonymous spawn 成功（非 configured researcher） |
+| smoke-A2 (10:30) | harness | 8 | 有 | ❌ 0 subagent session，main session `e.trim` |
+| smoke-A3 (10:50) | harness | 8 | 有 | ❌ 0 subagent session，`e.trim`（**10:45 的 data-dir/agents 修复已全激活**） |
+| **smoke-A4 (11:05)** | **harness** | **1** | **无** | ✅ **PASS** |
+
+### 决定性证据：smoke-A3（修复全激活仍失败）vs smoke-A4（PARALLEL=1 成功）
+
+**smoke-A3**（10:46 起跑，run_cli.sh 10:45:50 已改）逐项核验：
+- `researcher.yaml` 已在 **两处** 确认在位：`ws/agents/researcher.yaml`（cwd）+ 全部 8 个 `worker_*/data/agents/researcher.yaml`（data-dir）✅
+- cline 命令含 `--data-dir .../worker_N/data` + `-c ws`（两处都有 agents/）
+- 仍报 `spawn_agent` → `{"error":"undefined is not an object (evaluating 'e.trim')"}`，is_error=true，**0 subagent session**
+- ⇒ config-location 修复**不能**解决 harness 路径的 e.trim
+
+**smoke-A4**（11:05，PARALLEL=1，run_cli.sh:231 在 PARALLEL=1 时**不加** --data-dir）：
+- 4 个 subagent session：3 个 n_msgs>0 + inputTokens>0（其中 `agent_...9opzhi` n_msgs=12 / inputTokens=4002 / 6 轮 user-assistant）
+- A4 自身 main session：`spawn_agent=True`、**`e.trim=False`**、`messages must not be empty=False`
+- scanner 判定：`SMOKE-A4 (PARALLEL=1): PASS — subagent executed`
+- ⇒ **`--data-dir` flag 是 e.trim 的触发器**（唯一差异 = PARALLEL>1 时 run_cli.sh:231 加 --data-dir）
+
+### 结论：wake#922「无需源码改」拆成两问
+
+- **问题①（e.trim 硬阻塞）= harness-level，可修**：触发器 = harness `cwd(ws) ≠ --data-dir(worker_N/data)` 的路径分裂（wake#923 smoke ④ 证：直接 cline + `--data-dir` 且 `cwd=data-dir` → ✅；smoke ③ harness -p8 `cwd=ws`+`--data-dir` → e.trim）。**非** `--data-dir` flag 本身，亦**非** wake#922 的「-p8 并发竞态」（已证伪）。修法 A=全臂降 `-p 1`（run_cli.sh:231 在 PARALLEL=1 时不加 --data-dir → cwd=ws 单路径 → smoke-A4 ✅）；修法 B=harness 改成 `cwd=data-dir`（对齐直接调用）保 -p 8——需 harness 改动 + 回归测 compaction/think-lang 既有臂。**两法均不改 cline 源码/版本**。
+- **问题②（subagent 模型未用配置）= config-level，待查**：smoke-A4 子 session `modelInfo.id=minicpm5-2b-sft-v39-final`（本地小模型），**非** researcher.yaml 配置的 `deepseek-v4-pro-cloud`；且子 session tool_use 含 `spawn_agent`/`run_commands`（非 researcher.yaml 限定的 search_apis/get_api_details）→ 疑为 **anonymous spawn**（主 agent 调 spawn_agent 未指定 "researcher"，或 configured agent 的 provider/tools 未注入子上下文）。**H2（基座梯度 B1→B5）依赖子 agent 真用各臂配置的 doubao/pro 模型**，此问不解决则 H2 无法检验。需在 P1 前查清：① 主 agent 是否以 `spawn_agent(name="researcher")` 调用；② configured agent 的 providerId/modelId 是否传入子 runtime；③ 若 anonymous spawn 抢占，需强提示指定 name。
+
+  **✅ wake#924 已查清问题②根因**：扫 A4 main session 的 `spawn_agent` tool_use 块，2 次调用的 input = `{"systemPrompt": "You are an EDA assistant..."}` / `{"systemPrompt": "You are a researcher helping me..."}` —— **均为 anonymous spawn（传 systemPrompt 自写），非 configured spawn（应传 `name`/`agent`="researcher"）**。故 researcher.yaml 的 providerId+modelId+tools **从未被加载** → 子 agent 用默认本地 minicpm + 全工具。**修法 = 改 LANG_HINT 强提示**：现提示「调用 subagent_researcher 工具」被主 agent 误解为 anonymous spawn；应改为明确「调用 `spawn_agent` 工具并传 `name="researcher"`（或 cline 配置 agent 的对应选择字段）以使用预配置的 researcher 子 agent」。属提示工程，纪律内可修（非 benchmark/评分器/cline 源码）。需 smoke 验：改提示后子 session `modelInfo.id` 应 = `deepseek-v4-pro-cloud`（B1）/doubao（B3-B5）。
+
+### 状态
+- PHASE = `smoke_A4_pass`（e.trim 硬阻塞已定位+可修；subagent 模型配置待查）
+- 下一步（下一 wake）：① 查问题②（subagent 模型注入）——可在 smoke-A4 trace 里看主 agent 的 spawn_agent 调用参数（是否带 name="researcher"）；② 决定 P1 并发策略（-p 1 全臂 vs harness 改动保 -p 8）；③ 问题②解决 + 并发策略定 → 重跑 P1（8 臂 × 8 题 × 1 轮）。
+- 纪律全守：未改 cline 源码/版本、未改 benchmark/评分器、未删旧结果/trace（A2/A3/A4 全留）、未 kill loop。run_cli.sh 的 10:45 data-dir/agents 改动是前序 wake 所留（未由本 wake 改）。
+
+---
+
 ## 六、2026-11-14 wake#923 opencode 直令·**🔴 推翻 root cause A + 发现真正双根因**
 
 > 用户直令（opencode 非 loop）跑 confirmatory smoke。本节用**实测证据**推翻 wake#922 的 root cause A（-p 8 并发竞态），定位**两个真正的根因**。
