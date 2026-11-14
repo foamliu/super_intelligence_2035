@@ -12,58 +12,10 @@ WAITING: 0（2026-11-15 wake#952·**🟢 A2 全完 ITT 53.3±3.8% + McNemar ✅*
 
 - [2026-11-15 wake#948 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#948 归档]（清盘 /nasdata 5.8G→11G + A2 r2 ✅88.46% ITT 57.5% + A2 r3 跑中·HEAD 5d00c6037·已被 wake#949 取代）
 
-- [2026-11-15 wake#947 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#947 归档]（A2 r2 跑中 heartbeat @02:12·log 21.9MB·/nasdata 6.2G·HEAD 5fb97b6be·已被 wake#948 取代）
-
-- [2026-11-15 wake#946 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#946 归档]（A2 r2 跑中 heartbeat @01:37·log 18.2MB·40/40 code 目录已生成进入 regrade·/nasdata 2.6G·HEAD 548b8ca50·已被 wake#947 取代）
-
-- [2026-11-15 wake#945 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#945 归档]（A2 r2 跑中 heartbeat + 清盘/隧道复盘已交付·删 16 个旧 ABL_B_*.log ≈421MB·/nasdata 3.3G·已被 wake#946 取代）
-
-- [2026-11-15 wake#944 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#944 归档]（A2 r1 ✅86.96% ITT 50% + A2 r2 跑中 + 子agent工具继承bug确认·/nasdata 3.9G·已被 wake#948 取代）
-
-- [2026-11-14 wake#943 原文已滚出] → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#943 归档]（①清盘 /home 2.7G→9.4G·/nasdata 5.3G→4.7G ②隧道复盘报告已交付·无断点无故障 ③A2 r1 heartbeat·已被 wake#945 取代：A2 r1 出分+A2 r2 跑中）
-
-- [2026-11-14 wake#941 原文已滚出] → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#941 归档]（A2 r1 heartbeat @22:15·log 9.83MB 活跃·loop proxy ✅·HEAD 0700673a9==origin 无新令·已被 wake#942 取代：A2 r1 跑中 heartbeat @22:51）
-
-- [2026-11-14 wake#940 原文已滚出] → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#940 归档]（A2 r1 跑中 heartbeat @21:43·log 5.77MB 活跃·loop proxy ✅·HEAD==origin 无新令·已被 wake#941 取代）
-
-- [2026-11-14 wake#939 原文已滚出] → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#939 归档]（A2 smoke 四段 trace ✅验：写完→spawn verifier→verdict FAIL+issue list→修正→提交·verifier 假阳性但被采纳·EVAL_BENCHMARK case bug 修 commit 84a49bce7·真实 A2 r1/r2/r3 起跑 PID2886626·已被 wake#941 取代：A2 r1 跑中 heartbeat）
-
-- [2026-11-14 wake#938 原文已滚出] → 见 `daily-memories/2026-11-14.md`（A1 三轮全完 r1=86.21%/r2=89.29%/r3=83.33%·ITT /40=66.7±7.2%·vs A0 Δ−2.5pp·A2 smoke 起跑·已被 wake#939 取代：smoke 验毕+真实 A2 起跑）
-- [2026-11-14 wake#937·**🟢 A1 r3 跑中 do-nothing heartbeat + 体积维护**] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#938 归档]（A1 r3 18:00 起跑·r1=86.21%/r2=89.29%·A2 prep 就绪·infra /nasdata 3.1G·已被 wake#938 取代：A1 三轮全完+A2 smoke 起跑）
-
-- [2026-11-14 wake#934·🟢 A1 r2 heartbeat + H2 源码已改未build] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#935 归档]（r2 log 10.0MB@16:49·H2 源码 commit 39ccd44cc·已被 wake#935 取代：H2 build 完成）
-
-- [2026-11-14 wake#935/936 原文已滚出] → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#937 归档]（wake#935: H2 build 完成 wrapper v3.0.74 + A2 verifier hint 备好·wake#936: A2 脚本+data-dir 备好·A1 r1=86.21%/r2=89.29%/r3 跑中）
+- [wake#935~#951 旧指针合并·原文见 daily-memories/2026-11-{14,15}.md] wake#951 A2 r3 heartbeat→#950→#949→#948 清盘+A2 r2✅88.46%→#947→#946→#945 清盘+隧道复盘→#944 A2 r1✅86.96%→#943 清盘+隧道报告→#941→#940→#939 A2 smoke四段trace✅+case bug修→#938 A1三轮全完+A2 smoke起跑→#937 A1 r3→#935 H2 build wrapper v3.0.74→#934 H2源码commit 39ccd44cc→#933→#932 A1 r1✅62.5%→#927/928/929 P1 pilot GO+P2起跑→#926 H2/H3技术不可行定论(已被17:0x令推翻)
 
 
-- [2026-11-14 wake#933·🟢 A1 r2 跑中 do-nothing heartbeat] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#934 归档]（r2 log 6.2MB@16:15 活跃·HEAD==origin 无新令·已被 wake#934 取代）
-
-- [2026-11-14 wake#932·🟢 P2 A1 r1 ✅完 ITT 62.5%→r2 跑中] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#934 归档]（r1 出分 25/40=62.5% vs A0 69.2% Δ−6.7pp 单轮不结论·spawn 100%·子有 MCP·r2 起跑 PID233193·已被 wake#934 取代）
-
-- [2026-11-14 wake#927/928/929·**🟢 A1 P1 pilot GO + P2 起跑 / r1 heartbeat 系列**] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out 14:2x wake#930 归档]（cost collector 修正后 A1 r1 真实 spawn 率 100%/子执行 90%/子 tok 699,860/Pass@1 87.5%→GO·P2 A1×40q×3轮 PID233193 13:09 起跑·run_subagent_ablation.sh 修 TRACE_BASE→/tmp+trace 归档 code/·loop PID813663 被 pkill 误杀→重启 PID243809+git config proxy）
-
-- [2026-11-14 wake#926·**🔴 H2/H3 技术不可行最终定论 + 裁决 H1-only**] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#928 归档]（B3 二轮 smoke 子模型=dsv4-pro=主·cline 源码 spawn_agent configProvider/tools/maxIter 全继承父·researcher.yaml 永不加载·H2/H3 ❌技术不可行·H1 ✅可检验·裁 B1-B5/C1/C2 只跑 A1）
-
-- [2026-11-14 wake#923·**🔴 推翻 wake#922 root cause A + 发现真正双根因·agent 路径已修·e.trim 待定位**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（4 组 confirmatory smoke·真根因A=run_cli.sh L201 agent 路径错·真根因A2=cwd≠--data-dir 触发 e.trim·⚠️ 此结论已被 wake#924/925/926/927 推翻：hook 修复后 spawn 可执行·CLINE_UNIFIED_DATA_DIR=1 解决 e.trim）
-
-- [2026-11-14 wake#924·**🟢 smoke-A4 harness -p1 ✅ subagent 执行·⚠️新发现子 agent 用 minicpm 非 dsv4（H2 阻塞待查）**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（smoke-A4 -p1 PASS·子 session n_msgs=12 inputTokens=4002·⚠️子 model=minicpm 非 researcher.yaml dsv4·⚠️此结论被 wake#926 修正：子=主模型 dsv4-pro 非 minicpm）
-
-- [2026-11-14 wake#922·**🔴 推翻 wake#915「需源码改」结论·reanalysis_ready·confirmatory smoke 待跑**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（smoke 3074b n_msgs=15 证 configured-agent 可执行·根因A=并发竞态·根因B=doubao providerId 当类型查·均配置级无需源码改·⚠️此结论被 wake#923-926 推翻/细化）
-
-- [2026-11-14 wake#921·**✅ standby+源码深查·done_all·do-nothing**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（源码深查两根因·⚠️ 此结论已被 wake#922 推翻：smoke 3074b n_msgs=15 证明配置级可修）
-
-- [2026-11-14 wake#920·**✅ standby 复检通过·done_all·do-nothing·无待办**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（复检全通过·等用户裁决）
-
-- [2026-11-14 wake#919·**✅ standby·done_all·体积维护**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（复检全通过·roll out wake#915/916/917·等用户裁决）
-- [2026-11-14 wake#918·**✅ standby·done_all·do-nothing**] 原文已滚出 → 见 `daily-memories/2026-11-14.md`（复检全通过·等用户裁决）
-
-- [2026-11-14 wake#915 · **🔴 subagent 消融 P4 负结果报告已交付·done_all**] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#919 归档]（根因A=cline 3.0.51 delegated-agent 消息初始化 bug·根因B=researcher.yaml providerId 当类型查·执行率 0%·报告 33KB 9节·commit 9b0737fe4）
-
-- [2026-11-14 wake#917·**✅ standby·done_all·do-nothing**] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#919 归档]（复检全通过·等用户裁决）
-- [2026-11-14 05:0x · wake#916·**✅ standby·done_all·体积维护·do-nothing**] 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out wake#919 归档]（TASK 56KB→21KB·MEMORY→36KB·等用户裁决）
-- [2026-11-14 01:10 · subagent pilot 6/8 完·B3/B4/B5 重跑中·2 bug 修复] wake#912 原文已滚出 → 见 `daily-memories/2026-11-14.md` §[rolled-out 01:45 wake#913 归档]（B1✅62.5/B2✅87.5/C1✅/C2✅75/A1✅87.5·2 bug=globalState+tokenSource 修复·B3 跑中·GO）
-
-- [2026-11-13 22:50 · 🔴 21:2x 令·subagent 消融 P1 pilot🟠修复后重跑中·B1 跑中] wake#911 原文已滚出 → 见 `daily-memories/2026-11-14.md`（5 bug 根因+修复·重跑 B1 PID3997948·8题✅·GO）
+- [wake#911~#933 旧指针合并·原文见 daily-memories/2026-11-14.md] #933 A1 r2 heartbeat→#932 A1 r1✅62.5%→#927/928/929 P1 pilot GO+P2起跑→#926 H2/H3技术不可行定论(被17:0x令推翻)→#924 smoke-A4 subagent执行→#923 推翻#922根因→#922 推翻#915→#921 源码深查→#920 standby→#919 standby→#918 standby→#917 standby→#916 体积维护→#915 P4负结果报告交付 commit 9b0737fe4→#912 pilot 6/8完→#911 P1 pilot修复重跑
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
