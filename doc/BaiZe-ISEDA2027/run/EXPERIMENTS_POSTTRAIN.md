@@ -11388,3 +11388,63 @@ bash -n bpt_attribution_prompt_dev_eval.sh && bash -n bpt_attribution_ablation.s
 - 阻塞原因不变：两套 serve（GPU6 step105 / GPU7 R2）均被运行中 5-run eval 占用；Task A/B 需独占一个 serve 端点，不可与基线/R2 eval 并发争资源。
 
 **Next**：① 36.15 5-run 完 → 新基线（5-run mean±std）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② eval 空一槽 → Task A A0–A3（40 题×4 臂，预注册判据）；③ Task B round1 dev 3-seed（baseline vs p0/p1/p2/p3 各 79 题）；④ R2 5-run 完 → 5run_rl_analysis_R2.json。
+
+## §R504 (wake504, 2026-11-14 22:0x) — R2 PPO clip 全程失效诊断（mean_ratio≡1.0/200步）+ R3 ppo_epochs=2 修复 prep（GPU-free）
+
+> 用户令#4 / 决策门 §R425 C：R2 负结果 → 「修 ppo_epochs≥2 + old_logp 冻结使 clip 生效再跑一轮」。
+> 本节 GPU-free：仅读已落盘 metrics.jsonl + 源码静态分析 + 新建 launcher（dry-run 验证）。**未起跑 R3**（GPU7 被 R2 5-run eval 占用）。
+
+### 1. 诊断证据（R2 metrics.jsonl，200 步全量复算）
+
+文件：`rl_surrogate_runs/minicpm5_grpo_loop_R2_sandbox_200step/metrics.jsonl`（200 行）。
+
+```
+python3 复算：
+  total steps = 200
+  mean_ratio: min=1.0000 max=1.0000  n_eq_1 = 200/200  （唯一值 = {1.0}）
+  有真实非零 reward 的步数 = 110；其中 mean_ratio==1.0 的 = 110/110（100%）
+  reward 均值分段：seg1-50=0.0533  seg51-100=0.1114(峰)  seg101-150=0.1061  seg151-200=0.0895(落)
+  frac_positive_adv 均值：seg1-100=0.269  seg101-200=0.214
+```
+
+**结论**：R2 全 200 步 `mean_ratio==1.0`，即便 110 步有真实 reward 信号仍 ratio≡1 →
+`ratio = exp(new_logp - old_logp)` 恒为 1 → `torch.clamp(ratio, 0.8, 1.2)` 对已=1.0 的值是 no-op →
+**PPO clip 全程失效**，PPO 退化为 ratio≡1 的 vanilla policy-gradient（无 trust region）。
+与 reward 在 step100 后平台/回落（0.1114→0.0895）吻合：策略确有更新（grad_norm 非零、84/200 步 posadv>0），
+但缺 clip 约束 → 更新无 trust-region 上界 → 信号无法稳定累积。
+
+### 2. 根因（源码静态分析 baize_posttrain_rl_grpo_loop.py）
+
+- L372-376：`old_logp` / `ref_logp` 在 epoch 循环**外**、`torch.no_grad()` 下计算**一次**，循环内不重算 → **old_logp 已正确冻结**（PPO 要求满足）。
+- L104/498：`ppo_epochs` 默认 = 1；L393 `for epoch in range(cfg.ppo_epochs)`。
+- L394-400：epoch 内 `new_logp` 带 grad 重算；`ratio = exp(new_logp - old_logp)`。
+- **ppo_epochs=1 时**：唯一 epoch 里策略尚未更新 → `new_logp`（带 grad、未更新策略）数值 == `old_logp`（冻结、更新前）→ ratio≡1 → clip 不生效。
+- **ppo_epochs=2 时**：epoch1 末 `optim.step()` 更新策略 → epoch2 在已更新策略上重算 `new_logp` → ratio≠1 → clip 生效，恢复 PPO trust region。
+
+**因此 R3 修复 = 仅 `--ppo-epochs 2`**（old_logp 冻结已满足，无需改源码）。对应决策门「修 ppo_epochs≥2 + old_logp 冻结使 clip 生效」。
+
+### 3. 内存可行性（ppo_epochs=2 不增峰值显存）
+
+- epoch 顺序执行，每 epoch 张量形状相同（Gtot=8 × L × V 的 logits.float()）；epoch1 的 logits 在 epoch2 `logits=policy(...)` 重赋值时释放 → 峰值显存 = ppo_epochs=1 时的峰值。
+- R2 实测配置 = `--batch-prompts 1 --group-size 8`（`cheat_rate.json total_rollouts=1600=200×8` 证实 Gtot=8/step）+ `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`，全程无 OOM → R3 沿用同配置，仅每步 wall time 约 +1 个 loss pass（generation+sandbox 不变；R2≈16s/step → R3 预估 ≈24-32s/step × 200 ≈ 80-110min 训练 + sandbox 开销）。
+
+### 4. 交付物：R3 launcher（run-ready，未起跑）
+
+新文件：`baize_posttrain_r3_ppo2_launch.sh`（chmod +x）。
+- 命令 = R2 实测配置 + `--ppo-epochs 2`，outdir=`rl_surrogate_runs/minicpm5_grpo_loop_R3_sandbox_200step_ppo2`，env 带 `expandable_segments:True`。
+- `--dry-run`：仅打印命令，不加载模型/不占 GPU（已验证 exit=0）。
+- `--status`：读 GPU7 compute-apps / :8095 serve / R2 eval chain 占用（已验证：当前三者均 busy）。
+- 起跑护栏：真正起跑（非 dry-run）前若 R2 eval chain 仍在运行 / :8095 仍 serve / GPU7 仍占用 → FATAL exit 2，**不杀健康 eval、不争 serve 槽**。
+- `bash -n` SYNTAX_OK。
+
+### 5. 双 eval 心跳（read-only, 22:0x）
+
+- **R2 5-run**（.17 GPU7:8095）：run1=0.63% / run2=1.27% / run3=0.0%（三 run < 3.04%±0.83%，趋势负，单 run 不预判）/ run4 RUNNING（20:49:52 起 ~80min）/ run5 pending。GPU7=100%util serve 稳定。
+- **36.15 5-run**：run1 DONE=18.99% / run2 RUNNING。GPU6=90%。
+- 0 infra/OOM/traceback。
+
+### 6. 边界与下一步
+
+- **未碰** GPU0-7 / 未碰运行中 eval / 未碰别线文件 / 未改 benchmark/check.py/题面/loop.py 源码。
+- 归因 Task A/B 仍 run-ready 仅 GPU/serve 阻塞（不变）。
+- **Next**：① R2 5-run 完 → `5run_rl_analysis_R2.json`（vs step105 0.0304±0.83%, McNemar+bootstrap）→ 负则诚实负结果报告 + 用本节 R3 launcher 起 R3（ppo_epochs=2）再跑一轮；② 36.15 5-run 完 → 新基线报告；③ eval 空槽 → 归因 Task A/B。
