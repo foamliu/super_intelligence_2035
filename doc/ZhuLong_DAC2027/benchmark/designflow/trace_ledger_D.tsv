@@ -1769,3 +1769,6 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793061831395_wgl5g					parked		2026-11-14 20:43	dup-concept: same vam-agent finesim.prof cell-reco as #238 mn59z ProfCellReco-001; abandoned r664
 1794466033669_lhski	shaoyou	hfeg0plg47	45	waveform	case	EDA-Eval-DesignFlow-WvGridLayout-001	2026-11-14 21:12	
 1792128765138_9vtl6	tabtao	hfeg0plg55	analog:133	analog_context	case	EDA-Eval-DesignFlow-SdfWarnClassify-001	2026-11-14 21:45	
+1793688199353_3ew67	kailiu	hfeg0plg100	96	waveform	parked		2026-11-14 22:00	debugging session: FSDB read failures (version 6.3>6.1, license down, path truncation), ends code_sidecar_sigterm, no accepted gold standard, not a produce-task; abandoned r666
+1789711703059_os004	e0039602	hfeg0plg95	25	analog_context	parked		2026-11-14 22:04	Q&A/teaching walkthrough of finesim-fsdb-reader skill, no produce-task deliverable or accepted gold standard; abandoned r666
+1782803097375_exstf	e0025730	hfeg0plg49	25	schematic_netlist	case	EDA-Eval-DesignFlow-LvlshftStepFix-001	2026-11-14 22:29	lvlshft SPICE-flow CLI --step args.step string-split bugfix; B-grade synthesized reframe; L2 10-cond; 80 msgs; case r666
