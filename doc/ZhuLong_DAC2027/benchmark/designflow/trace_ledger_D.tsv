@@ -1780,4 +1780,8 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793686536776_0g146	bensonh	hfeg0plg104	27	schematic_netlist	case	EDA-Eval-DesignFlow-SigRenameNetlist-001	2026-11-15 02:04	
 1794366217754_fssd0.messages.json	rongjiez	hfeg0pkn005	12	waveform	case	EDA-Eval-DesignFlow-WaveCmpWarnPort-001	2026-11-15 02:01	
 1794386871675_xkykw	ypzheng	hfeg0pkn003	46	waveform	case	EDA-Eval-DesignFlow-WvHierSignalOpen-001	2026-11-15 02:55	
-1793779123814_1uhpn.messages.json	qiang3xu	hfeg0plg99	22	waveform	claimed		2026-11-15 03:00	
+1793779123814_1uhpn.messages.json	qiang3xu	hfeg0plg99	22	waveform	parked		2026-11-15 03:02	Q&A/teaching: eye-diagram trigger setup + marker font size how-to + aborted circuit summarize (SIGKILL); no produce-task deliverable, no accepted artifact; 16 msgs
+1794395626303_21hii.messages.json	e0023936	hfhds201	15	waveform	parked		2026-11-15 03:04	doc-writing task: rewrite sandbox_fastmcp README to 300 words English; L1 text-gen not L2+ EDA design flow; 39 msgs, accepted artifact=README.md but no EDA tool driving
+1794295993379_y08cq.messages.json	t0002441	hfhds201	42	waveform	parked		2026-11-15 03:06	tool-launch troubleshooting: WaveView fontconfig/license/X-display debugging; user opened tool themselves, no accepted assistant artifact; 50 msgs
+1794373848190_hghkp.messages.json	bensonh	hfeg0plg104	32	schematic_netlist	parked		2026-11-15 03:07	open-waveform task: 'open vgrden voltage/current waveforms'; assistant searches FSDB 53 msgs but never opens; no produce-task deliverable, no accepted artifact
+1792724611414_ohuot.messages.json	e0026027	hfeg0plg104	49	analog_context	parked		2026-11-15 03:08	Q&A+search: 'how to evaluate CXSA' + 'find LSA circuits in DRGQA V0' + 'BLSA/LSA/DSA relationship'; 106 msgs, no produce-task deliverable, no accepted artifact; analog:2757 kw but all Q&A/search
