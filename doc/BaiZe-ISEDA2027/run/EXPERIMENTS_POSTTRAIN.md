@@ -11712,3 +11712,56 @@ A1 codegen 产物 batch dir = `/home/app.e0031982/eda_code_eval/2026_1115_025541
 ### F. 纪律
 - 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark / 隧道进程；0 infra。编辑仅限本线两 runner 脚本（posttrain attribution:）。MEMORY 体积自检。WAITING=0。
 
+---
+
+## §R520-rescue-slashfix（wake520 · 2026-11-15 04:3x）— rescue RD 路径拼接 bug + 独立 helper
+
+**背景**：wake519 修复了 rescue 的 grep-binary bug（`grep -aoE`）+ benchmark 相对路径 bug（绝对路径）+ 陈旧 final_report bug（ARM_DIR mkdir 后 rm），并手动 rescue A1=0/40。但 wake519 **遗漏了 RD 路径拼接 bug**——本轮在为 A3 de-risk 而抽独立 helper 并做 A1 幂等复测时发现。
+
+**bug 根因（证据-backed）**：
+- `bpt_attribution_ablation.sh` L108 + `bpt_attribution_prompt_dev_eval.sh` L138：
+  `RD=$(grep -aoE '唯一输出目录:[[:space:]]*[^[:space:]]+' "$ARM_DIR/rescue_eval.log" | tail -1 | sed 's/.*唯一输出目录:[[:space:]]*//')`
+  → RD = `/nasdata/.../output_evaluation/20261115_0431_app.e0031982`（**无尾斜杠**，因 log 行 `已创建唯一输出目录: <path>` 本身无尾 `/`）。
+- 下一行 `[ -f "${RD}final_report.json" ]` → 拼成 `.../20261115_0431_app.e0031982final_report.json`（缺 `/`）→ `-f` 永假 → cp 跳过 → 报 `[arm] RESCUE: eval 未产出 final_report`。
+- 实测坐实（36.15 A1 re-rescue）：
+  - `ls ${RD}final_report.json` → `No such file or directory`
+  - `ls ${RD}/final_report.json` → `-rw-r--r-- ... 74255B ... final_report.json`（存在）
+  - `rescue_eval.log` 实见 `1115: 0/158 pass (0.0%) | generated: 6 ok, 151 fail` + `Done!`（eval 跑成功，仅 cp 跳过）
+- **影响**：即便 P0base/P0p0 起跑时 bash 读到含 `grep -aoE` 修复的新脚本，auto-rescue 仍会因缺 `/` 而 cp 跳过 → final_report 缺失 → 09:00 P0 dev 前后对比无数据。
+
+**修复**：三脚本（`bpt_attribution_ablation.sh` / `bpt_attribution_prompt_dev_eval.sh` / 新 `bpt_attribution_manual_rescue.sh`）在 `RD=$(...)` 后加：
+```bash
+case "$RD" in */) ;; *) RD="$RD/" ;; esac
+```
+`bash -n` 全 PASS。
+
+**独立 helper `bpt_attribution_manual_rescue.sh`**（本轮新增，repo 提交 + scp 到 36.15 repo 路径）：
+- 抽 rescue 块成可独立调用：`--arm <ARM>` | `--arm-dir <path>` | `--results-dir <dir>`。
+- 复用 ablation 脚本的 env 口径（EDA_BASE / EVAL_FW_DIR / VENV_PYTHON / DATASET / BENCH 绝对路径）。
+- 幂等：pyAether_code 已被前次 rescue 移入 ws/ → 本次 `moved=0` → format 仍从 ws/ 正确读取 → 重跑 run_eval 复现同 final_report。
+- 用途：A3 的 bash 进程（03:56 起）持有旧脚本（grep binary + 缺 `/` 双 bug），auto-rescue 必跳过；下一 wake 用此 helper 手动补 rescue A3。亦可用于核验 P0base/P0p0 的 auto-rescue 产物。
+
+**A1 实测复算 PASS（helper 幂等验证）**：
+```
+$ bash bpt_attribution_manual_rescue.sh --arm A1
+[rescue /tmp/posttrain_attribution_ablation/A1] BATCH_DIR=/home/app.e0031982/eda_code_eval/2026_1115_025541  2026-11-15 04:34:31
+[rescue] moved 0 pyAether_code dirs into ws/ (0=已被前次 rescue 移走, 幂等)
+[rescue] final_report -> /tmp/posttrain_attribution_ablation/A1/final_report.json (from .../20261115_0434_app.e0031982/)
+[rescue] RESCUE pass_rate=...
+[rescue] DONE 2026-11-15 04:34:47
+```
+- final_report.json 内容：`metrics.pass_rate=0.0` / `summary.total_correct_completions=0` / `generation_statistics={success:6,failure:0,timeout:1,fail:151}` / `generation_success_rate=0.0380`
+- ⇒ **A1 干净 = 0/158 = 0/40 = 0% 确认**（与 wake519 手动 rescue 一致；12.66% 交叉污染彻底排除）。
+
+**A3 auto-rescue 失效预警 + 下轮动作**：
+- A3 bash（PID1040673, 03:56:37 起）在 fix 落盘（36.15 git pull 04:20, new inode）前已启动 → 持有旧脚本 → auto-rescue 必跳过。
+- 下一 wake（A3 codegen 完成后）执行：
+  `ssh -p3333 -o StrictHostKeyChecking=no app.e0031982@localhost 'bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/bpt_attribution_manual_rescue.sh --arm A3'`
+- 不杀健康 A3；不覆盖 36.15 运行中的 ablation 脚本（避免 in-place 改运行中脚本致 bash 偏移读坏）。dev-eval 脚本（P0base/P0p0 用）非运行中，已 scp 修复版到 36.15。
+
+**归因链状态（36.15, 04:3x）**：relaunch515b（PID700233）存活；A1 DONE(0/40) → A3 RUNNING(29/40 task, 13 with code) → P0base/P0p0 pending。全链 ETA ~07:00 < 09:00。
+
+**R2 5-run**：run1=0.63/run2=1.27/run3=0.0/run4=0.0 DONE；run5 codegen RUNNING（31/158 task, GPU7:8095 健康）；4-run mean 0.475% << step105 3.04%±0.83 趋势负。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程。MEMORY 39.1KB（<40KB 硬限，下轮归档 wake517/518 降体积）。WAITING=0。
+

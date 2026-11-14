@@ -136,6 +136,7 @@ if [ -n "$BATCH_DIR" ] && [ -d "$BATCH_DIR/code" ]; then
   "$VENV_PYTHON" pyAether-eval/script/complete_code_generation.py -o="$EDA_BASE/pyAether-eval/original_dataset/$DATASET" -l="$BATCH_DIR/logs" -c="$CG" > "$ARM_DIR/rescue_complete.log" 2>&1
   "$VENV_PYTHON" scripts/run_eval.py -g "$CMP" --benchmark "$EVAL_FW_DIR/benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl" > "$ARM_DIR/rescue_eval.log" 2>&1
   RD=$(grep -aoE '唯一输出目录:[[:space:]]*[^[:space:]]+' "$ARM_DIR/rescue_eval.log" | tail -1 | sed 's/.*唯一输出目录:[[:space:]]*//')
+  case "$RD" in */) ;; *) RD="$RD/" ;; esac   # wake520: RD 无尾斜杠 -> 补 "/" 否则 ${RD}final_report.json 拼错路径
   if [ -n "$RD" ] && [ -f "${RD}final_report.json" ]; then
     cp "${RD}final_report.json" "$ARM_DIR/final_report_rescued.json"
     cp "${RD}final_report.json" "$ARM_DIR/final_report.json"
