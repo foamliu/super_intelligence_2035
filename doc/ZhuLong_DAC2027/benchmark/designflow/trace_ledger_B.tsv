@@ -1505,3 +1505,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794559169321_m76bk					parked		2026-11-14 21:33	sim-debug Q&A (verb=为什么报错, not produce-task, 33 msgs minimal tools)
 1794552735950_6jrrg					parked		2026-11-14 21:33	waveview waveform open (cross-domain shard D)
 1794630329700_sclqx					parked		2026-11-14 21:33	non-produce session (cd ~/.agents)
+1794649204800_nzw43	ericw	hfeg0plg07	33	spice_sim	case	EDA-Eval-DesignFlow-SimErrSubcktRefDiag-001	2026-11-14 22:09	
