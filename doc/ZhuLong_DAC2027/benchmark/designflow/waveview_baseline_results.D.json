@@ -379,8 +379,31 @@
         "note": "2B text-only cannot read PNG -> fail is correct baseline"
       },
       "structure_conversion": "removed text CSV/netlist替身; converted L2 candidate-script-on-hidden-B -> answer-validation; original text form in pre-r657 git history"
+    },
+    {
+      "case": "beta6",
+      "task_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+      "round": "r658",
+      "restored": true,
+      "image_required": true,
+      "form": "answer-validation (2 stacked square-wave pulse panels: pass corner vdd=1.2/3 pulses/6 edges + fail corner vdd=1.0/2 pulses/4 edges, no data labels/threshold lines)",
+      "oracle": "subprocess recompute from embedded A_PARAMS (pass 6 edges/3 pulses, fail 4 edges/2 pulses, verdict DIFFERENT, period 30/40, first_rise 110/115, vdd 1.2/1.0)",
+      "k_check": 13,
+      "self_verify": "REF PASS 13/13, 15 negatives NEG_RC=0 (distinct first_fail a-m all 13 covered), §4.9 degenerate all FAIL",
+      "baseline": {
+        "model": "minicpm5-2b-sft-v39-final",
+        "thinking": "low",
+        "dur_sec": 55,
+        "cline_exit": 0,
+        "verdict": "FAIL",
+        "reason": "no submit.zip produced",
+        "failure_mode": "did-not-engage (49KB session, 0 mentions of wave_cmp/png/verdict/pulse/edge/vdd/corner; submit=49 generic task_brief refs; outputs/ empty)",
+        "correct": true,
+        "note": "2B text-only cannot read PNG -> fail is correct baseline (WAVEVIEW task1)"
+      },
+      "structure_conversion": "removed .tbl text surrogates (pass_tbl_A.tbl/fail_tbl_A.tbl/hidden/*.tbl/hidden_manifest.json); converted L1 candidate-writes-wave_cmp.py-CLI-on-.tbl -> answer-validation image-required; pure-Python (numpy+zlib, no matplotlib) generated wave_cmp_A.png + hidden/wave_cmp_B.png (anti-hardcode provenance: pass vdd=0.9/4 pulses/8 edges, fail vdd=1.5/4 pulses/8 edges shifted, verdict GRAY); original text form in pre-r658 git history"
     }
   ],
-  "last_updated": "2026-11-14T08:51:21Z",
-  "restored_count": 7
+  "last_updated": "2026-11-14T09:25:42Z",
+  "restored_count": 8
 }
