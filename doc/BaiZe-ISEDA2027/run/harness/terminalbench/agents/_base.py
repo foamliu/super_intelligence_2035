@@ -347,9 +347,16 @@ class TBBaseAgent(BaseInstalledAgent):
             return  # pip already present
 
         # Try ensurepip first (some images bundle it via python3-venv).
+        # FIX (2026-11-14, R2466): prepend PATH — exec_as_root runs as root
+        # via `docker exec --user root`; on some TB images root's PATH is
+        # minimal and does NOT include /usr/bin where _ensure_python just
+        # installed python3.  Without this, `python3` → "command not found".
         await self.exec_as_root(
             environment,
-            command="python3 -m ensurepip --upgrade 2>&1 | tail -3 || true",
+            command=(
+                "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                "python3 -m ensurepip --upgrade 2>&1 | tail -3 || true"
+            ),
             timeout_sec=120,
         )
         recheck = await environment.exec(
@@ -376,6 +383,7 @@ class TBBaseAgent(BaseInstalledAgent):
         await self.exec_as_root(
             environment,
             command=(
+                "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
                 "python3 /tmp/get-pip.py "
                 "--break-system-packages "
                 "--trusted-host mirrors.aliyun.com 2>&1 | tail -8"
