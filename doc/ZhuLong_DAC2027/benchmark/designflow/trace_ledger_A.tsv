@@ -578,3 +578,18 @@
 1789722904300_n6ohg.messages.json	aaronji	hfeg0pkn002	10	digital	case	EDA-Eval-DesignFlow-CPU8bitVerilog-001	2026-11-15 05:26	r550 case: 8bit CPU verilog (cpu8.v+tb_cpu8.v), 17 assertions, A.jsonl 291, self-verify PASS+4NEG
 1791715561176_7kad5.messages.json	e0014566	hfeg0plg58	13	digital	case	EDA-Eval-DesignFlow-DDR4TbFramework-001	2026-11-15 05:58	
 1792633162750_623vm	lorikx	hfeg0plg52	15	digital	case	EDA-Eval-DesignFlow-SramRenameMod-001	2026-11-15 06:53	12 conditions, produce-task, A.jsonl 292->293
+as306	e02141	hfeg0plg56	15		parked		2026-11-15 07:08	r552:peek=REJECT e02141 Sentaurus TCAD cluster synopsys:18
+nn77i	t0002470	hfeg0plg76	15		parked		2026-11-15 07:08	r552:peek=REJECT merge existing auto_merge_coverage code external-dep non-selfcontained
+7gvna	thomasz	hfeg0plg92	14		parked		2026-11-15 07:08	r552:peek=REJECT read CXMTseCVPSHierSearch.il script code-comprehension
+5qlqi	lorikx	hfeg0plg52	13		parked		2026-11-15 07:08	r552:peek=REJECT analyze SramNoBistGrp3_modified.v selection logic analysis
+lxord	eva1li	hfeg0plg74	10		parked		2026-11-15 07:08	r552:peek=REJECT LPDDR6 JEDEC KG query skill Q&A
+azuve	xingx	hfeg0plg98	11		parked		2026-11-15 07:08	r552:peek=REJECT trivial pwd/ls/nav + token update
+f4n69	laryu	hfeg0plg92	12		parked		2026-11-15 07:08	r552:peek=REJECT dbCrtPin API doc Q&A pyAether
+ay35u	e13zhang	hfeg0plg15	13		parked		2026-11-15 07:08	r552:peek=REJECT tc_driver.sv DRAM testbench analysis compacted
+jka85	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r552:peek=REJECT VPS run_regr doc Q&A + VPSUserGuide.pdf
+1x0zd	e0030085	hfeg0plg80	17		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: rtl:31 netlist ECC array analysis
+sucst	e0039602	hfeg0plg95	17		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: verilog:189 Python verilog_lib_trans tool debug non-design
+p6glk	e0039102	hfeg0plg74	17		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: verilog:199 3 skill files read code-comprehension
+qwx61	thomasz	hfeg0plg92	16		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: SKILL il script read
+iyqdr	thomasz	hfeg0plg92	15		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: same as qwx61 SKILL/dbget read
+bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: VPS run_regr doc query
