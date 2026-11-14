@@ -983,4 +983,9 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794357827042_myiqd	peterch			layout_virtuoso	parked		2026-11-15 04:04	r582 peek REJECT: setup+Q&A (U#0 访问DEJOA项目 + U#2 virtuoso下怎么看hierachy), not produce-task
 1793849646244_6kk7g	adaml			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: run-existing-skill calibre-lvs (U#0 calibre-lvs skill invocation), not produce-task
 1793588497814_536nj	yuqingc			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: file-operation (U#0 export CSV to local machine), not EDA produce-task
-1793945277123_q737d	xxchen	hfeg0pkn001	102	layout_aether	parked		2026-11-15 05:03	r583 unclaim: B档-only modify-existing (user gave solution: add cut option to width fn + draw extra DNW NW half-inside + record LDR issue; NOT 提需求未给方案). Trace recon-only (list_allowed_files×7/read_files×12/search_codebase×3, 0 editor/run). Same as r561 peek rejection '带根因'. 10连0-case archetype-exhaustion 坐实.
+1793945277123_q737d	xxchen	hfeg0pkn001	102	layout_aether	parked		2026-11-15 05:23	not-produce r583
+1787623581243_t3vh1	e0014566	hfeg0plg58	rscalc RTEXT checkPoints layout_virtuoso	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcRtextCheckpoints-001	2026-11-15 05:23	r583 A档 layout_virtuoso k=12 delivered
+1788758180512_5v8w1	xinqiaoz	hfeg0plg56	analysis-project-intro	layout_virtuoso	parked		2026-11-15 05:23	not-produce r583
+1793788216941_zm17a	xinqiaoz	hfeg0plg56	explore-genreleasenote	layout_virtuoso	parked		2026-11-15 05:23	not-produce r583
+1794470584248_uybem	steveny	hfeg0pnd001	find-powerfill-source	layout_virtuoso	parked		2026-11-15 05:23	not-produce r583
+1791965390450_59idr	xinqiaoz	hfeg0plg56	model-comparison	layout_virtuoso	parked		2026-11-15 05:23	not-produce r583
