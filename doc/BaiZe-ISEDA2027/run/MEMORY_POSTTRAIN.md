@@ -74,6 +74,8 @@ WAITING: 0
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
 
 ## 本唤醒流水
+> wake479 R479（2026-11-14）: **基线 RCA 报告交付复核 + MEMORY 体积维护**（read-only 验证，未碰 eval/GPU）。重跑 rca_baseline_aggregate.py + rca_baseline_enrich.py + rca_snip2.py 独立复算 reports/report_posttrain_baseline_pyaether_rca_zh.html（62468B，两处副本 run/reports 与 doc/reports diff 一致，已 commit 4de1f8058）：①5-run mean=0.0304±0.0083（per-run [6,3,4,5,6]/158）✓ ②union pass=22✓ ③790样本 per_run_cat：C5_degenerate479+C4_gen_fail10=489 / C3=86syntax+68runtime(122-54AttributeError)+14assert+3other=171 / C2=54(AttributeError实测54) / C6=45 / C1=7 / PASS=24，sum=790✓ ④verified dist true307/false26/none88(421 degenerate,72.9%)✓ ⑤trace 摘引 enListAObject/dbgetdbsrc/dbInstall/has_matching_enclosure/lib_name/emyString/U+FF0C 均在 execution_results.jsonl 实证✓ ⑥0 script/0 外链(仅 SVG namespace+127.0.0.1)/2 内联 SVG✓。报告含全部 5 项要求（基线口径+158逐题/失败逐类归因+trace路径/饼图+表格/逐类fix排序/结论卡在哪层）。结论：3.04% 卡在 agentic 执行层（推理/规划+工具协议），若只修一件=PreSubmit 文件存在闸门。MEMORY 体积维护：归档指针块精简 35464B→29925B（<32KB✓）。5-run eval 链仍 RUNNING(run2)未碰。WAITING=0.
+
 > wake476 R476（2026-11-14）: **基线 RCA 报告交付** reports/report_posttrain_baseline_pyaether_rca_zh.html（62KB / 内联 SVG / 0 外链 / 0 script / 158 题逐题表+饼图+逐类fix）。基线RCA: 158题 pass=4.8/158(3.04%±0.83%复核,5run通过数[6,3,4,5,6]) 失败分类=①7②54③171④0⑤489⑥45(790样本,并集通过22题) 主因=agentic执行层(推理/规划+工具协议;489未产出.py文件,其中307例模型submit_and_exit verified=true幻觉式自证完成;54调用不存在API) top3fix=①PreSubmit文件存在闸门+prompt硬约束先写后submit(P0,+8~15pp)②编码前get_api_details强制校验API名存在(P0,+3~5pp)③SFT补SWIG positional-only+API名纠正+检索失败兜底编码正样本(P1,+5~10pp)。若只修一件=文件闸门。5-run eval 链仍 RUNNING(run2),本轮 read-only 未碰 eval/GPU。分析脚本 rca_baseline_aggregate.py/rca_baseline_enrich.py/rca_baseline_report.py 已落 run/。
 
 
@@ -85,50 +87,20 @@ WAITING: 0
 
 
 
-> 📦 wake189-wake245 (R142-R176) 已归档 → daily-memories-posttrain/2026-11-10.md / 2026-11-11.md（RL hooks/SFT脚本/Phase1基线/SFT crash诊断/GPU5-7 serve占位/沙盒阻塞/Phase1解锁/eval管线/SFT失败根因+修复/serve chat实测/git代理/沙盒架构/Phase1 dry-run/Phase2 SFT数据管线CPU验证/Phase3 RL依赖图/R151 v7语料1725pairs/R152 verl SFT parquet/R153退火语料/R154-R157 SFT/RL/编排器/看门狗脚本/R158-R161 就绪审计+污染闸门/R162-R176 Phase1就绪/serve桥接/Phase2 SFT完成/RL dry-run/SFT vs Qwen3.8/扩展qual eval）。
+> 📦 wake189-wake245 (R142-R176) 已归档 → daily-memories-posttrain/2026-11-10/11.md（RL hooks/SFT脚本/Phase1就绪/serve占位/沙盒/SFT完成/RL dry-run；R-content 详见 EXPERIMENTS）。
 > 📦 wake246-wake262 (R177-R193) 已归档 → daily-memories-posttrain/2026-11-11.md（R177-R183 schematic API修正+v8~v13语料+污染闸门 / R184-R193 v14-v23 语料：ae*/emy*/db* lifecycle+blind 全清/Mde* sweep-platform/coverage 59-67%）。
 
 
-> 📦 wake263-wake316 已归档 → daily-memories-posttrain/2026-11-11.md / 2026-11-12.md（多次 roll 合并指针；要点：R291 全量113task静态分析 SFT语法95.6%vsBase62.8%/P0 D1-D6终验；R300 场景加权RL奖励；R302-316 Phase1生成失败根因+minicpm5 vLLM tool-call parser+上下文溢出修复；v11-v35 语料合并943对+双重污染闸门PASS+surrogate SFT脚本参数化+train/val 849/94 split；R-content 详见 EXPERIMENTS 归档）。
+> 📦 wake263-wake316 已归档 → daily-memories-posttrain/2026-11-11/12.md（R291 SFT语法95.6%vsBase62.8%/P0 D1-D6终验；R302-316 minicpm5 tool-call parser+上下文溢出修复；v11-v35 语料943对；详见 EXPERIMENTS）。
 
-> 📦 wake320–wake336 流水已归档 → daily-memories-posttrain/2026-11-12.md（R320-R336：API Validator/R321-R323 API coverage 166→258/R324 v11-v38 corpus 1344 pairs/R325 SFT dry-run PASS/R326 SSH tunnel+run_code fix/R327 隧道验证+拆GPU5-7+SFT起跑/R328 SDPA fix+retrain/R329 gen pipeline+scoring/R330 tunnel re-verify+SFT final-epoch/R331 SFT v11v38 CONVERGED+serve GPU5/R332 post-SFT eval LAUNCHED/R334 GPU4 serve重启/R335 31/158/R336 29/158+SFT code quality）
-> 📦 wake337–wake356 流水已归档 → daily-memories-posttrain/2026-11-12.md / 2026-11-13.md（R337 sandbox e2e verified+RL launch-ready / R338-351 eval monitoring+designflow baseline 0/5=0% / R352-356 designflow expand30 0/30=0%+eval path-error diagnosed）
-> 📦 wake357–wake397 流水已归档 → daily-memories-posttrain/2026-11-13.md（R357 SFT配方诊断 / R358 v39 SFT训练启动 / R359 FSDP2 GPU不均衡修复 / R360-364 dual eval+designflow / R365-396 eval monitoring+stuck worker kills+pipeline autonomous / R397 run2 eval done Pass@1=1.9%+JSONL bug fixed+run3 started）
+> 📦 wake320–wake336 已归档 → daily-memories-posttrain/2026-11-12.md（API Validator+v11-v38 corpus 1344 pairs+SFT v11v38 CONVERGED+serve+post-SFT eval LAUNCHED；详见 EXPERIMENTS）。
+> 📦 wake337–wake397 已归档 → daily-memories-posttrain/2026-11-12/13.md（sandbox e2e+RL launch-ready/designflow baseline 0%/v39 SFT训练+eval pipeline autonomous/R397 run2 Pass@1=1.9%；详见 EXPERIMENTS）。
 
-> 📦 wake398-wake432 流水已归档 → daily-memories-posttrain/2026-11-13.md / 2026-11-14.md（R398-R432：5run_analysis bugfix+eval pipeline fully autonomous[R402-R407] / step105 baseline 5/5=0.0304±0.0083 locked[R417] / verl 0.4.0 RL smoke 8 次全失败→弃 verl 自写单进程 GRPO loop smoke 3 步 PASS[R409/R412] / R0 200步主训COMPLETED+诚实负结果[proxy reward 不移动 policy,mean_ratio==1.0,nz 0.97 塌缩][R416/R420/R429] / R0 eval 链 OOM 断裂 5run_rl_analysis.json MISSING→决策门分支2[R429] / R2+sandbox-exec 200步主训起跑+cheat=0+eval autofire chain[OOM 修复版 PID2322797]落地[R428/R430] / R2 监控 step100/151+奖励平台期修正[R431/R432]。R-content 详见 EXPERIMENTS 归档）。
+> 📦 wake398-wake432 已归档 → daily-memories-posttrain/2026-11-13/14.md（step105 baseline 0.0304±0.0083 locked/弃verl自写GRPO loop/R0 200步COMPLETED诚实负结果[reward无方向]/R2+sandbox 200步起跑+cheat=0+eval autofire chain落地；详见 EXPERIMENTS）。
 
-> 📦 [wake433-447] R433-R447 已归档 → daily-memories-posttrain/2026-11-14.md；**结论**：R433 R2 200步主训 COMPLETED(cheat=0/1600,global_step_200 ckpt 5.03GB,奖励平台后回落 0.1195→0.0798 overall 0.0901)+OOM mitigation 手动 teardown GPU5(kill_gpu_serve child-PID bug)+R2 serve GPU7:8095 READY+5-run eval 起跑；R434-R447 5-run eval 健康监控 run1 ~23→70/158 渐进(success26→45/fail1-4/timeout5-21)，8 worker，GPU7 87-100%util，3 并发 serve 稳定，GPU5 空闲，0 traceback/OOM/infra 错误，eval 全自治无人工动作。详见 EXPERIMENTS §R433-§R447。
+> 📦 wake433-447 已归档 → daily-memories-posttrain/2026-11-14.md（R2 200步COMPLETED+serve GPU7:8095+5-run eval 起跑；R434-447 run1 23→70/158 监控，0 infra 错误）。
 
-> 📦 [wake448-455] R448-R455 已归档 → daily-memories-posttrain/2026-11-14.md；**结论**：5-run eval 健康监控 run1 76→102/158 渐进(success49→65/fail4-5/timeout23→32)，速率 ~0.14-0.67/min 波动(timeout 占主导)，GPU5=vision R9 wake449-453 占用/wake454 退出，0 infra 错误。详见 EXPERIMENTS §R448-§R455。
-
-> 📦 [wake456] R456 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 105/158[success66/fail5/timeout34]，本轮+3 success+1/timeout+2 ~0.23/min 速率放缓 timeout 占主导 + git detached HEAD 修复[rebase --abort+checkout main+fetch 重新同步]）。详见 EXPERIMENTS §R456。
-
-> 📦 [wake457] R457 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 108/158[success67/fail5/timeout36]，本轮+3 success+1/timeout+2 ~0.5/min timeout 占主导）。详见 EXPERIMENTS §R457。
-
-> 📦 [wake458-460] R458-R460 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 111→114/158 渐进[success68→69/fail5/timeout38→40],timeout 占主导）。详见 EXPERIMENTS §R458-§R460。
-
-> 📦 [wake461] R461 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 114/158[success69/fail5/timeout40] + 分析管线 fsync 修复[验证 step105=0.0304±0.0083 一致] + git stale rebase-apply 清理）。详见 EXPERIMENTS §R461。
-
-> 📦 [wake462] R462 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 128/158 + eval 管线完整性复核[run_cline→run_eval→analysis 全链自治]）。详见 EXPERIMENTS §R462。
-
-> 📦 [wake463] R463 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 137/158 + R2 RL 动力学指标重释[代码实证 mean_ratio==1.0/policy_loss≈0=ppo_epochs=1 结构性 logging artifact,修正 wake416 误判;真证据=grad_norm 非零+reward 平台/回落]）。详见 EXPERIMENTS §R463。
-
-> 📦 [wake464] R464 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 139/158[success85/fail6/timeout48]）。详见 EXPERIMENTS §R464。
-
-> 📦 [wake465] R465 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 143/158[success87/fail6/timeout50]）。详见 EXPERIMENTS §R465。
-
-> 📦 [wake466] R466 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 147/158[success88/fail6/timeout53]）。详见 EXPERIMENTS §R466。
-
-> 📦 [wake467] R467 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 149/158[success90/fail6/timeout53]，本轮+2 success 心跳轮）。详见 EXPERIMENTS §R467。
-> 📦 [wake468] R468 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 153/158[success92/fail6/timeout55]，+2 success+2 timeout 心跳轮）。详见 EXPERIMENTS §R468。
-
-> 📦 [wake469] R469 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 153/158 心跳轮）。详见 §R469。
-> 📦 [wake470] R470 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run1 154/158 心跳轮）。详见 §R470。
-
-> 📦 [wake472] R472 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run2 起跑健康[run1 COMPLETED Pass@1=0.63% 复核+run2 ~16/158 健康心跳轮]）。详见 §R472。
-> 📦 [wake473] R473 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run2 健康[18/158 success=8/fail=1/timeout=0,run1 COMPLETED Pass@1=0.63% 复核,自治链 sound]）。详见 §R473。
-
-> 📦 [wake474] R474 已归档 → daily-memories-posttrain/2026-11-14.md（5-run eval 监控 run2 健康[19/158 dispatched,run1 COMPLETED Pass@1=0.63% 复核,自治链 sound]）。详见 §R474。
+> 📦 wake448-wake475 已归档 → daily-memories-posttrain/2026-11-14.md（R448-R475 5-run eval 健康监控 run1 COMPLETED Pass@1=0.63%(单run不预判)+run2 RUNNING；R461 fsync 修复+R463 RL 动力学指标重释[mean_ratio==1.0=ppo_epochs=1 logging artifact]；0 infra 错误，eval 全自治。详见 EXPERIMENTS §R448-§R475）。
 
 [wake475 08:26] R475 **5-run eval RUNNING 监控 run2 健康(心跳轮)**。实测(.17,08:26):chain PID2322797 存活(etime≈8h04m);run2 PID2684698 存活(etime 41:07,START@07:46:07);8/8 worker 全活跃(worker-2 刚完成 017@973s 起 019)。3 并发 serve 全稳(GPU4:8098/GPU6:8096/GPU7:8095,curl 200 OK);GPU7=87%util/39246MiB;GPU6=0% idle;GPU5=3MiB 空闲不碰;GPU0-3=root 不碰。**run1 COMPLETED(已落盘 §R471-474)**:final_report metrics.pass_rate=1/158=0.63%(gen success=14/fail=85/timeout=59)<step105 5-run mean 3.04%±0.83%[单 run 不预判]。**run2 进度(本轮新增)**:workdir ~/eda_code_eval/2026_1114_074607;.task_queue 剩 139[19/158 dispatched];stats success=9/failure=2/timeout=0(total_time=4275s≈71min);code/ 20 项;failed=EDA-Eval-PyAether-006,017;timeout=0(早期正常);run2 ETA≈13:30(rate~0.46/min,剩 139)。serve 日志无 OOM/traceback/cuda 错误(gpu7 cudagraph INFO 非错误)。⚠️口径:final_report Pass@1 为准[stats/success=code-gen 产出≠Pass@1];R2 run1 timeout=37.3% 显著高于 step105≈2.5%[RL 后轨迹更长→超时激增可能侵蚀 Pass@1]。本轮=监控心跳 read-only,无新增训练/调研产出。0 infra 错误。未编辑运行中脚本/未碰运行中 eval/GPU0-3/4/6/vision GPU5;kill_gpu_serve bug 待 chain 空闲修。详见 EXPERIMENTS §R475。 Next:run2-5 RUNNING(各~5h)→5run_rl_analysis_R2.json→R2 5-run mean Pass@1(vs step105 0.0304±0.0083,McNemar+bootstrap)→显著则里程碑报告 report_posttrain_rl_surrogate_zh.html(标替身预演,论证引 reward 曲线+Pass@1,禁引 mean_ratio)/负则诚实负结果+换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮(§用户令#4)。WAITING=0.
 
