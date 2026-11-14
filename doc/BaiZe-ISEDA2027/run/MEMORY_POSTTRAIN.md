@@ -83,6 +83,8 @@ WAITING: 0
 
 > wake487 R487（2026-11-14 17:4x）: **16:3x v2 RCA 终验+收尾**。独立复验 v2 报告 `doc/BaiZe-ISEDA2027/reports/report_posttrain_pyaether_rca_v2_zh.html`[37415B/0script/0外链/8内联SVG/5H2齐=①口径与数据②工具调用画像(核心)③失败归因④图表汇总⑤提分意见(ROI+「如果只做一件事=P0-1」)]✓，已 commit(1bca8e2da)。发现 `run/reports/` 下另有一份**旧版** baseline RCA 副本(64620B,git-tracked,**缺 v2 指针**)——为避免任一 tracked 旧报告副本误导读者，已在该副本顶部 `<body>` 后补加「已被 v2 取代」指针(0script,3处 http://127.0.0.1 为本地 endpoint 非外链)。**16:3x 用户令：已完成并终验**。双 eval(R2 5-run / 36.15 5-run)本轮未碰,继续 RUNNING。详见 EXPERIMENTS §R487。WAITING=0.
 
+> wake488 R488（2026-11-14 17:5x）: **16:3x v2 RCA 第三轮独立复验（执行级核验）**。用脚本对 `doc/BaiZe-ISEDA2027/reports/report_posttrain_pyaether_rca_v2_zh.html` 做执行级核验：size=37415B；H2=5 个齐[①口径与数据(可复算)②工具调用画像(核心)③失败归因(从trace自行提炼)④图表汇总⑤提分意见(按ROI排序)]；H3=15；内联 SVG=8；`<script>`=0；外链=0（total links=0，自包含）；末尾含「如果只做一件事」+P0-1(3 处)。git 跟踪确认该文件 tracked+committed(1bca8e2da)，`git rev-list HEAD...origin/main`=0/0（已推送同步）。旧报告两份副本（`run/reports/`L33 + `doc/BaiZe-ISEDA2027/reports/`L39）均含「已被 v2 取代」指针✓。**16:3x 用户令：已完成并终验（第三轮）**。双 eval 本轮 read-only 未碰：.17 R2 5-run eval chain PID2322797 etime~63125s(~17.5h)健康 RUNNING；36.15 5-run 经隧道在 36.15 上 RUNNING(本机无其进程)。未编辑运行中脚本/未碰 GPU0-3/4/6/vision GPU5。本轮仅 MEMORY+daily-mem 心跳，无新产物（deliverable 前轮已交付）。WAITING=0.
+
 > 📦 wake481–wake485（R481–R485）已归档（36.15 环境核实+启动脚本+SMOKE+A/B 之争 trace 实证/v2 RCA 交付核验/36.15 重测起跑/wake485 监控心跳+stale 0.158 勘误；详见 daily-memories-posttrain/2026-11-14.md）→ 原文已搬，此处留指针。
 
 
