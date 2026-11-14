@@ -577,3 +577,4 @@
 1794191874918_jt7be	e0039602	hfeg0pkn003	311	digital	case	EDA-Eval-DesignFlow-DelayCellParamGen-001	2026-11-15 04:06	r546 fresh-confirmed strict-A verilog (e0039602, mc311, verilog:987/netlist:692/lvs:544); NOT in 4-shard union; infra-blocked peek (load-balancer NOFILE all 4 backends, p0fqe-class); pending deepread next round
 1789722904300_n6ohg.messages.json	aaronji	hfeg0pkn002	10	digital	case	EDA-Eval-DesignFlow-CPU8bitVerilog-001	2026-11-15 05:26	r550 case: 8bit CPU verilog (cpu8.v+tb_cpu8.v), 17 assertions, A.jsonl 291, self-verify PASS+4NEG
 1791715561176_7kad5.messages.json	e0014566	hfeg0plg58	13	digital	case	EDA-Eval-DesignFlow-DDR4TbFramework-001	2026-11-15 05:58	
+1792633162750_623vm	lorikx	hfeg0plg52	15	digital	case	EDA-Eval-DesignFlow-SramRenameMod-001	2026-11-15 06:53	12 conditions, produce-task, A.jsonl 292->293
