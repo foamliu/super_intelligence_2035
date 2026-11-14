@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **107** 条（首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023）；**第二十五轮 2026-11-14 03:0x 补 4 条** DeepSeekMath / GRPO `2402.03300`（11,153）/ MAE `2111.06377`（10,217，CVPR 2022）/ S4 `2111.00396`（2,741，ICLR 2022 Outstanding HM）/ DreamerV3 `2301.04104`（1,962，Nature 2025）；**第二十六轮 2026-11-14 06:0x 补 4 条** Adam `1412.6980`（101,807，ICLR 2015）/ Batch Normalization `1502.03167`（34,937，ICML 2015 PMLR 37:448–456）/ GAN `1406.2661`（9,668 预印本记录，NeurIPS 2014）/ DREAMPlace（DAC 2019，177；TCAD 版 205，**无 arXiv**）；**第二十七轮 2026-11-14 09:0x 补 4 条** Latent Diffusion `2112.10752`（**20,670**，CVPR 2022；⚠️ 候选池旧 ID `2207.11240` 实为 Discrete Key-Value Bottleneck ⇒ 已更正）/ MuZero `1911.08265`（Nature 2020 588:604–609，**2,075**）/ AutoDMP（ISPD 2023，**67**，无 arXiv）/ DREAM-GAN（ISPD 2023，**16**，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **47** · vision **28** · harness **60** · data **60** · zhulong **69** · designflow **35**
+**本轮快照**：累计 **111** 条（**第二十八轮 2026-11-14 12:0x 补 4 条**：Genie `2402.15391` / Hitting the Memory Wall（1995） / Deep Learning（Nature 2015） / AlexNet（CACM 2017）；首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023）；**第二十五轮 2026-11-14 03:0x 补 4 条** DeepSeekMath / GRPO `2402.03300`（11,153）/ MAE `2111.06377`（10,217，CVPR 2022）/ S4 `2111.00396`（2,741，ICLR 2022 Outstanding HM）/ DreamerV3 `2301.04104`（1,962，Nature 2025）；**第二十六轮 2026-11-14 06:0x 补 4 条** Adam `1412.6980`（101,807，ICLR 2015）/ Batch Normalization `1502.03167`（34,937，ICML 2015 PMLR 37:448–456）/ GAN `1406.2661`（9,668 预印本记录，NeurIPS 2014）/ DREAMPlace（DAC 2019，177；TCAD 版 205，**无 arXiv**）；**第二十七轮 2026-11-14 09:0x 补 4 条** Latent Diffusion `2112.10752`（**20,670**，CVPR 2022；⚠️ 候选池旧 ID `2207.11240` 实为 Discrete Key-Value Bottleneck ⇒ 已更正）/ MuZero `1911.08265`（Nature 2020 588:604–609，**2,075**）/ AutoDMP（ISPD 2023，**67**，无 arXiv）/ DREAM-GAN（ISPD 2023，**16**，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **47** · vision **28** · harness **60** · data **60** · zhulong **69** · designflow **35**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -1879,11 +1879,81 @@
 
 ---
 
+## 108. Genie: Generative Interactive Environments（**视频世界模型 · 无标注视频学可交互环境**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Genie: Generative Interactive Environments |
+| 作者（前 3） | **Jake Bruce** · **Michael Dennis** · **Ashley Edwards**（et al.，共 **25** 位，末位 **Tim Rocktäschel**；机构 = Google DeepMind） |
+| 年份 | **2024**（arXiv 首发 `2024-02-23T15:47:26Z`，v1；abs 页 `citation_date` = `2024/02/23`） |
+| 会议 / 期刊 | **预印本**（⚠️ arXiv `comment` 仅给一个项目页链接、无会议名 ⇒ **会议未核验**，🚫 不写 ICML） |
+| 被引数 | **258**（OpenAlex arXiv DOI 直查，查询日 **2026-11-14**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.15391> ｜ DOI `10.48550/arxiv.2402.15391` |
+| 一句话贡献 | 摘要原文要点：**首个从无标注互联网视频无监督训练的可交互生成环境**；模型可用**文本 / 合成图像 / 照片 / 草图**提示，生成**动作可控**的虚拟世界；规模 **11B 参数**，可视为一个 foundation world model，由**时空视频 tokenizer + 自回归动力学模型 + 简单可扩展的 latent action model** 组成；在**没有任何真值动作标签**的情况下也能逐帧操作；学到的 latent action 空间还能让 agent **从没见过的视频里模仿行为**。 |
+| 与我们工作的关系 | **zhulong（低价演练：直接）**：如果 agent 能先在「学出来的环境」里试错、再用真工具验证少数候选，就等价于把 MuZero（#105）的「模型内规划」搬到工具链上。<b>动作</b>：先做最小可行版——用**工具日志 + 中间产物截图**训一个单步动力学模型（预测「下一次调用后 PPA / DRC 变化」），不做整环境生成；<b>预注册判据</b>：同等真工具调用预算下，模型内预演若不能把真工具调用次数降 ≥30% 而不掉成功率，则不投入。<br>**harness（如何验证「真的可控」）**：Genie 的最大争议正是「latent action 是真空作还是拟合了相机/场景变化」；我们评测 agent 的「模拟环境」时必须同样自证——<b>动作</b>：加**反事实一致性**测试（同一状态给不同动作，产物必须系统性不同），并报**随机动作基线**。<br>**vision（视频表征）**：时空 tokenizer 与「长程一致性 + 局部保真」的权衡，与我们版图 / 波形这类二维结构数据同构；<b>动作</b>：vision 线做生成式增广时，把这两个指标**分开报**，不合并成一个总分。<br>**data（无标注数据的价值）**：作者证明价值可以来自**没有动作标签**的原始视频；<b>动作</b>：data 线在 manifest 里区分「有标注 / 仅原始观测」两类，并记录后者占比。<br>**风险**：① 258 被引**低于「经典 ≥500」阈值** ⇒ 按「**开创性 / 领域里程碑**」收录（我们的观察），**不作范式结论**；② 11B / 互联网视频规模，我们无对应数据；③ Genie 2 只有 DeepMind 官方博客、**无一手论文** ⇒ 本表**不单独收**，也不引其数字。 |
+
+首次收录: 2026-11-14（第二十八轮）｜ 状态: 元数据 + 被引已核（arXiv **abs 页** `HTTP 200` / 45,346 B，`citation_title` / `citation_date` / `citation_author` × 25 已核；⚠️ 同轮 API `429` 限速，**abs 页为一手替代源**并已注明）；OpenAlex `200` + 摘要原文；Crossref 精确标题检索**未命中** ⇒ 会议留空
+
+---
+
+## 109. Hitting the Memory Wall: Implications of the Obvious（**"内存墙"提法出处**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Hitting the Memory Wall: Implications of the Obvious |
+| 作者（前 3） | **Wm. A. Wulf** · **Sally A. McKee**（共 **2** 位；机构 = University of Virginia, Department of Computer Science） |
+| 年份 | **1995**（Crossref `issued` = `1995-03`） |
+| 会议 / 期刊 | **ACM SIGARCH Computer Architecture News**，**23(1):20–24**（Crossref `200` 逐字核，`journal-article`） |
+| 被引数 | **1,783**（OpenAlex DOI 直查，查询日 **2026-11-14**；ACM 页面自报 1,091，**两源口径不同 ⇒ 不相加、不混用**；S2 / Google Scholar 未查） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1145/216585.216588> |
+| 一句话贡献 | 把「**处理器性能提升速度远快于 DRAM 访问速度**」这个当时被视为理所当然的趋势写成一则可引用的论证：两者差距逐年拉大 ⇒ 处理器将有越来越大比例的时间耗在**等内存**上，并讨论该趋势对系统设计（缓存、并行、编程模型）的含义。⚠️ **原文具体的年增百分比本线未取到**（ACM 全文页 `HTTP 403`、Crossref 无 abstract）⇒ 本条**不写任何百分比数字**，只记论点。 |
+| 与我们工作的关系 | **zhulong（成本口径：直接）**：这是我们「带宽 / 延迟受限 vs 计算受限」判断的**提法源头**；BaiZe 2B 推理、agent 长上下文、DRAM 仿真实验都该先标清「受限项」。<b>动作</b>：任何性能主张必须同时报**计算量 / 访存量 / 墙钟**三列，缺一列不算通过。<br>**designflow（L4 保真度）**：内存墙说明「周期精确仿真」与「纯 FLOP 估算」会给出**系统性偏差**的结论；<b>动作</b>：L4 布局 / 布线题的成本估计必须走 Ramulator 2.0（#51）或 DRAMsim3（#79）这类周期级模型，🚫 用 FLOPs 反推。<br>**harness（评测可比）**：同一算法在不同**内存配置**下的排名可以翻转；<b>动作</b>：评测 manifest 必须记内存配置（通道数 / 频率 / 时序档），并把它当**不可比标记**。<br>**pretrain（HBM 流量视角）**：与 FlashAttention（#1）的 IO-awareness 同源——**先看 HBM 流量，再看 FLOPs**。<br>**风险**：① 1995 年的机器与今日 GPU/HBM 层级差异巨大，**趋势成立 ≠ 数字可用**（我们的观察）；② 论文是 5 页的「观点 + 粗略估算」，不是测量研究；③ 具体百分比未核 ⇒ 引用时只能引「内存墙」这一概念，🚫 引数字。 |
+
+首次收录: 2026-11-14（第二十八轮）｜ 状态: 元数据 + 被引已核（OpenAlex `200` + Crossref `200`，卷期页码 `23(1):20–24` 逐字一致；ACM 全文页 `403` ⇒ 摘要未取，**未写任何未核实数字**）；同主题已有 Ramulator（#70）/ RowHammer（#71）/ IRAM（#75）/ DRAMsim3（#79）/ Ramulator 2.0（#51）
+
+---
+
+## 110. Deep Learning（**Nature 综述 · 表示学习的纲领文本**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deep Learning |
+| 作者（前 3） | **Yann LeCun** · **Yoshua Bengio** · **Geoffrey Hinton**（共 **3** 位；发表时机构 = NYU / UdeM-MILA / Google-Toronto） |
+| 年份 | **2015**（Crossref `issued` = `2015-05-27`） |
+| 会议 / 期刊 | **Nature**，**521(7553):436–444**（Crossref `200`，`journal-article`） |
+| 被引数 | **90,176**（OpenAlex DOI 直查，查询日 **2026-11-14**；S2 / Google Scholar 未查） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1038/nature14539> |
+| 一句话贡献 | 摘要原文要点：深度学习让**多层计算模型**学习**多级抽象**的数据表示；这些方法在**语音识别、视觉物体识别、物体检测**以及药物发现 / 基因组学等领域显著提升 SOTA；它靠**反向传播**指示「每层表示该怎样由上一层表示算出、内部参数该怎样改」；**深卷积网络**在图像、视频、语音、音频上带来突破，**循环网络**则在文本、语音等序列数据上发挥作用。 |
+| 与我们工作的关系 | **pretrain（论证模板：直接）**：这是我们向内部解释「为什么值得做领域预训练」的最短论证链——**表示学习替代手工特征 → 数据规模 + 深度 → 跨任务迁移**；<b>动作</b>：pretrain 线的立项文档直接引这三段，并明确「我们的『多级抽象』对应什么」（字符/词 → 语句 → 设计意图）。<br>**vision（CNN 谱系）**：与 ResNet（#6）/ AlexNet（#111）构成「 convolutional 路线为什么成了默认」的三点一线；<b>动作</b>：视觉塔选型表把 CNN / ViT（#88）并列，注明各自的历史依据。<br>**data（数据与表示的因果）**：文中把「大数据 + 深模型」作为能力来源 ⇒ 数据线的配比实验必须与大模型一起扫，不能单独定。<br>**zhulong（端到端 vs 分阶段）**：综述强调端到端学习表示的收益，这正是我们「agent 端到端 vs 工具链分阶段」争论的历史参照；<b>动作</b>：消融表明确每段是否可微、若不可微用什么代理信号。<br>**风险**：① 2015 年综述，**未涉及 Transformer / 自监督大模型**，不能当今日路线图；② 综述性质，不含新实验，🚫 引用其结论当作实验证据；③ 90,176 为 OpenAlex 口径，与其他源不可比。 |
+
+首次收录: 2026-11-14（第二十八轮）｜ 状态: 元数据 + 被引已核（OpenAlex `200` + Crossref `200`；摘要取自 `nature.com/articles/nature14539` 页面 `dc.description`（`HTTP 200` / 381,847 B），**只写摘要内出现的说法、不写正文数字**）；三位作者中 Hinton 已在 `AUTHORS.md`（第二十二轮），LeCun / Bengio 本轮新增
+
+---
+
+## 111. ImageNet Classification with Deep Convolutional Neural Networks（**AlexNet**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ImageNet Classification with Deep Convolutional Neural Networks |
+| 作者（前 3） | **Alex Krizhevsky** · **Ilya Sutskever** · **Geoffrey Hinton**（共 **3** 位；发表时机构 = University of Toronto） |
+| 年份 | **2012**（NeurIPS 2012 原始版）· 期刊版 **2017**（CACM `issued` = `2017-05-24`，DOI `10.1145/3065386`） |
+| 会议 / 期刊 | **NeurIPS (NIPS) 2012** 原始版 ｜ 本表被引与卷期取 **Communications of the ACM 60(6):84–90** 记录（Crossref `200`，`journal-article`） |
+| 被引数 | **114,712**（OpenAlex CACM DOI 直查，查询日 **2026-11-14**；该数字为**期刊版记录**，与 NeurIPS 版记录**不可相加**；S2 / Google Scholar 未查） |
+| arXiv / DOI | **无 arXiv** ｜ DOI <https://doi.org/10.1145/3065386>（NeurIPS 原始版：`papers.nips.cc` 存档，本线未单独核被引） |
+| 一句话贡献 | 摘要原文要点：训练一个**大型深卷积网络**把 ImageNet LSVRC-2010 的 **120 万张高分辨率图像**分到 **1000 类**，测试 **top-1 37.5% / top-5 17.0%**，显著优于当时 SOTA；网络 **6000 万参数 / 65 万神经元**，**5 个卷积层**（部分接 max-pooling）+ **3 个全连接层** + 1000 路 softmax；为加速训练用了 **non-saturating 神经元（ReLU 系）** 与**高效 GPU 卷积实现**；为抑制全连接层过拟合用了 **dropout**；该模型的 ILSVRC-2012 变体取得 **top-5 15.3%**，第二名 **26.2%**。 |
+| 与我们工作的关系 | **vision（工程配方：直接）**：ReLU + dropout + GPU 卷积这三件事至今是视觉塔的默认项；<b>动作</b>：视觉塔的**消融基线**就用「AlexNet 级配方」起手（小分辨率、固定 patch 数），先确认管线正确再加复杂度。<br>**pretrain（算力换精度）**：6000 万参数在 2012 年已是「大模型」，说明**规模 + 数据 + 算力**的组合早于 Transformer；<b>动作</b>：BaiZe 的 scaling 讨论里把「模型容量 / 数据 / 算力」三轴的历史拐点各标一条，避免把 2020 后的结论当成唯一路线。<br>**harness（固定基准）**：「同一 1000 类、同一 top-1/top-5 口径」是它被高引的重要原因；<b>动作</b>：我们的 EDA 评测必须冻结**任务集版本 + 指标定义**，否则分数不可比。<br>**data（数据规模的作用）**：120 万张标注是当时的关键投入；<b>动作</b>：data 线报「标注成本 / 有效样本数」两列，避免只看总量。<br>**风险**：① 2012 年基准与今日视觉任务差异巨大，🚫 把 15.3% / 26.2% 当现状；② 114,712 是 CACM 汇总记录，含大量教材/综述引用，**不代表同等方法论地位**；③ 两版（NeurIPS 2012 / CACM 2017）**同一工作**，🚫 相加。 |
+
+首次收录: 2026-11-14（第二十八轮）｜ 状态: 元数据 + 被引已核（OpenAlex `200` + 摘要原文；Crossref `200`，CACM `60(6):84–90`、`issued=2017-05-24`；NeurIPS 原始版未单独核被引 ⇒ **只报一个数字**）；作者 Ilya Sutskever / Geoffrey Hinton 已在 `AUTHORS.md`，Alex Krizhevsky 本轮新增（**未找到 X**）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
+>
+> ✅ **第二十七轮候选去向（2026-11-14 12:0x 结清）**：㉔ 视频世界模型线 ⇒ 已转正 **#108 Genie `2402.15391`**（⚠️ **更正**：先用 `10.48550/arxiv.2402.08015` 查 OpenAlex 返回 **Walia-LLM**（阿姆哈拉语 LLaMA 微调）⇒ 该 ID **不是 Genie**；按标题检索得真 ID **`2402.15391`**，25 人作者名单逐字一致后才收录）（Genie 2 只有官方博客、无一手论文 ⇒ 不单独收，只在 #108 备注）；㉕ 存储 / 内存墙补充 ⇒ 已转正 **#109 Hitting the Memory Wall**（1995，1,783；HBM 一手论文 / JEDEC 标准本轮 `ti:` 未命中可用一手条目 ⇒ 留待下轮）；㉖ EDA 大模型位置 ⇒ **ChipNeMo 早于第二轮已收（#5）**，本轮不重复收；另补 **#110 Deep Learning（Nature 2015）/ #111 AlexNet** 两条视觉—预训练源头。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
 > ⚠️ **更正**：候选池此前记的「Kimi 月之暗面早期报告 `2401.14185`」**实测为 `TDFNet`（音视频语音分离，cs.SD），与 Kimi 无关** ⇒ 已删除该候选，改收 **Kimi K2 `2507.20534`**（已转正 #47）。
 > **下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：① ~~DPO / Mamba-2 / FlashAttention-2 / 存储方向~~ ⇒ **第十三轮已转正 #48–#51**；② ~~Zephyr / CircuitNet / Bitter Lesson / SimPO~~ ⇒ **第十四轮已转正 #52–#55**；③ ~~ORPO / IPO / Lost in the Middle / vLLM~~ ⇒ **第十五轮已转正 #56–#59**；④ ~~KTO `2402.01306` / KV cache 压缩（H₂O）/ 指令数据自举（Self-Instruct）/ MoE（Switch）~~ ⇒ **第十六轮已转正 #60–#63**；⑤ ~~版图布局（AlphaChip）/ 长上下文位置编码（YaRN）/ speculative decoding / 量化（GPTQ）~~ ⇒ **第十七轮已转正 #64–#67**；⑥ ~~**EDA 评测基座**（OpenROAD / ORFS 相关一手工作）~~ ⇒ **第十八轮已转正 #68**（OpenROAD DAC 2019，216）；⑦ ~~**长上下文续**（LongRoPE / 位置插值对照）~~ ⇒ **第十八轮已转正 #69**（LongRoPE `2402.13753`，302）；⑧ ~~**存储方向补充**（DRAM 模拟 / 近存计算）~~ ⇒ **第十八轮已转正 #70 Ramulator（799）/ #71 RowHammer（967 / 528 双记录）**；⑨ ~~**近存计算源头**（A Case for Intelligent RAM, Patterson et al. 1997，729）~~ ⇒ **第十九轮已转正 #75**（OpenAlex 摘要/作者/卷期已核）；⑨b **并行训练底座**（Megatron-LM `1909.08053`，3,281）⇒ **第十九轮已转正 #72**；⑨c **MoE 训练配方**（DeepSeek-V3 `2412.19437`，7,939）⇒ **第十九轮已转正 #73**；⑨d **通用 agent 基准**（GAIA `2311.12983`，526）⇒ **第十九轮已转正 #74**；⑩ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充）；⑪ ~~**DRAM 模拟对照**（DRAMsim3，2020，**372**，DOI `10.1109/LCA.2020.2973991`）~~ ⇒ **第二十轮已转正 #79**（OpenAlex 直查 372、卷期页码已核）；⑫ ~~**量化微调**（QLoRA `2305.14314`）~~ / ⑬ ~~**统一文本到文本框架**（T5 `1910.10683`）~~ / ⑭ ~~**检索增强生成**（RAG `2005.11401`）~~ ⇒ **第二十一轮已转正 #80–#82**；⑮ **ORFS / OpenROAD 后续**（Leveling Up: A Trajectory of OpenROAD…, 2022，**13** ⇒ 只作补充，不作主线）；⑯ ~~**蒸馏源头**（Distilling the Knowledge in a Neural Network `1503.02531`）~~ / ⑰ ~~**分组查询注意力**（GQA `2305.13245`）~~ / ⑱ ~~**解释轨迹蒸馏**（Orca `2306.02707`）~~ / ⑲ ~~**滑窗注意力开源模型**（Mistral 7B `2310.06825`）~~ ⇒ **第二十二轮已转正 #84–#87**；⑳ ~~**工具自举**（Toolformer `2302.04761`）~~ ⇒ **第二十一轮已转正 #83**。**第二十六轮后下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：~~㉑ 图像/视频生成线（Latent Diffusion `2207.11240`）~~ ⇒ **第二十七轮已转正 #104**（⚠️ 真 ID **`2112.10752`**，`2207.11240` 实为 Discrete Key-Value Bottleneck）；~~㉒ EDA 布局生成线（AutoDMP / DREAM-GAN, ISPD 2023）~~ ⇒ **第二十七轮已转正 #106 / #107**（均**无 arXiv**，按「本领域权威」收）；~~㉓ RL 探索/规划线（MuZero）~~ ⇒ **第二十七轮已转正 #105**（Nature 2020 版；与 AlphaZero #7 配对）。**第二十七轮后下轮候选（🚫 未实测前不进本表、不写 DOI / 被引）**：㉔ **视频世界模型线**（Sora #46 已有；可补 **Genie / Genie 2** 系列，须核一手）；㉕ **存储 / 内存墙补充**（HBM 相关一手论文或 JEDEC 标准文档，须核可获得性）；㉖ **EDA 大模型位置**（ChipNeMo, NVIDIA 2023，若 OpenAlex 被引足够或按「本领域权威」收）。

@@ -1,0 +1,65 @@
+{
+ "handle": "jeffclune",
+ "name": "Jeff Clune (@jeffclune) / X",
+ "bio": "Co-founder, Recursive. Professor, CS, U. British Columbia. CIFAR AI Chair, Vector Institute. | ML, AI, deep RL, deep learning, AI-Generating Algorithms (AI-GAs)",
+ "tweets": [
+  {
+   "id": "2121003251214802966",
+   "created_at": "2026-11-12 22:12 UTC",
+   "created_at_ms": 1794521556000,
+   "text": "Cool technical approach, but is the result itself at all surprising? I think we all know lots of chips are being smuggled in and used no?",
+   "url": "https://x.com/jeffclune/status/2121003251214802966",
+   "handle_guess": "jeffclune"
+  },
+  {
+   "id": "2120992457630326841",
+   "created_at": "2026-11-12 21:29 UTC",
+   "created_at_ms": 1794518982000,
+   "text": "I have a major result to share.\\\n\\\nI’ve found conclusive forensic evidence that the top 4 Chinese AI labs—DeepSeek, Moonshot, MiniMax and Ant Group—have built their newest models on NVIDIA’s most advanced Blackwell chips, which are barred from export to China.\\\n\\\nThis sounds insane, https://t.co/qlttvJsXG7",
+   "url": "https://x.com/jeffclune/status/2120992457630326841",
+   "handle_guess": "willdepue"
+  },
+  {
+   "id": "2120284261089673376",
+   "created_at": "2026-11-12 19:10 UTC",
+   "created_at_ms": 1794510606000,
+   "text": "This is so fun, and an example of how AI can bring so much joy to the world. Love the idea of being able to step into any painting and explore. That was one of the reasons we were so excited about the Genie project.",
+   "url": "https://x.com/jeffclune/status/2120284261089673376",
+   "handle_guess": "jeffclune"
+  },
+  {
+   "id": "2115114028338962672",
+   "created_at": "2026-10-27 18:40 UTC",
+   "created_at_ms": 1793126446000,
+   "text": "Amazing and rewarding to see our small-team research effort (led by @ashrewards , @jparkerholder, @_rockt  et al.) take on a life of its own as an ever-improving flagship Google product! For me personally, a crazy idea I proposed in my 2019 AI-GA paper (a NN as the entire",
+   "url": "https://x.com/jeffclune/status/2115114028338962672",
+   "handle_guess": "jeffclune"
+  },
+  {
+   "id": "2114815319428796925",
+   "created_at": "2026-10-26 20:23 UTC",
+   "created_at_ms": 1793046238000,
+   "text": "Scary!",
+   "url": "https://x.com/jeffclune/status/2114815319428796925",
+   "handle_guess": "jeffclune"
+  },
+  {
+   "id": "2114752002370544004",
+   "created_at": "2026-10-26 16:12 UTC",
+   "created_at_ms": 1793031142000,
+   "text": "While evaluating Qwen3.8-Flash-Next in a controlled sandbox environment, Cohere's research team observed something unexpected.\\\n\\\nAsked to generate a defensive cybersecurity detection rule, the model instead inventoried aspects of the machine it was running on and attempted to",
+   "url": "https://x.com/jeffclune/status/2114752002370544004",
+   "handle_guess": "cohere"
+  },
+  {
+   "id": "2054554755955937615",
+   "created_at": "2026-05-13 13:30 UTC",
+   "created_at_ms": 1778679000000,
+   "text": "Thrilled to share that we founded Recursive to create AI that safely conducts experiments on how to improve itself in an open-ended process of endless, automated scientific discovery. As I wrote in my 2019 AI-generating algorithms paper, this will likely be the fastest path to https://t.co/TZLiNjh5o6",
+   "url": "https://x.com/jeffclune/status/2054554755955937615",
+   "handle_guess": "jeffclune"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-14 12:05:18"
+}

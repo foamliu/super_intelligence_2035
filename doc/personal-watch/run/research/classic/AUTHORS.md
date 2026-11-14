@@ -6,7 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-**本轮快照**：累计 **110** 人（**第二十七轮 +4：Robin Rombach `@robrombach`（LDM 一作，X 已核验）/ Björn Ommer（LDM 通讯；`b.ommer@lmu.de` 取自课题组现行页 ⇒ 已发信）/ Sung Kyu Lim（DREAM-GAN 末位；`sl186@gatech.edu` 取自 GT ECE 现行目录 ⇒ 已发信）/ Patrick Esser（LDM 四作；X 与邮箱均未找到）**；第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**；**第二十轮 +4：Ankur Srivastava（`ankurs@umd.edu` 已核、已发信；X 未找到）/ Bruce Jacob（邮箱在页面上是图片 ⇒ 不猜；X 未找到）/ Jacob Devlin（`@jacobdevlin` 7 followers、无身份信息 ⇒ 判非本人）/ Ming-Wei Chang（`@mingweichang` 4 followers、0 推文 ⇒ 不登记）**；**第二十一轮 +4：Tim Dettmers `@Tim_Dettmers`（`dettmers@cmu.edu` 取自本人页 `lastname@cmu.edu` 反爬写法，已发信）/ Colin Raffel（无邮箱、`@colinraffel` 404 ⇒ 未找到 X）/ Patrick Lewis `@PSH_Lewis`（主页邮箱为模板占位 ⇒ 不发信）/ Timo Schick `@timo_schick`（主页无邮箱 ⇒ 不发信）**；**第二十二轮 +3：Geoffrey Hinton `@geoffreyhinton`（邮箱取自本人主页 `Email: geoffrey [dot] hinton [at] gmail [dot] com`，已发信）/ Jeff Dean `@JeffDean`（无个人邮箱 ⇒ 不发信）/ Joshua Ainslie（邮箱与 X 均未找到）；另**更正** Arthur Mensch 补上 `@arthurmensch`（bio 自证 Mistral CEO）**；**第二十三轮 +2：Lucas Beyer `@giffmana`（ViT 二作；X bio 自述 `now: Meta`；**邮箱未找到 ⇒ 不发信**）/ Graham Neubig `@gneubig`（CMU LTI 副教授 / `@OpenHandsDev` 联合创始人；邮箱取自 LTI 现行页反爬写法 `gneubig(through)cs.cmu.edu` ⇒ 按页面规则还原，**已发信**）**；**第二十四轮 +2：John Schulman `@johnschulman2`（PPO 一作；`joschu.net` 无邮箱 ⇒ 不发信）· Pieter Abbeel `@pabbeel`（DDPM 三作；`pabbeel@cs.berkeley.edu` 取自 contact 页 ⇒ 已发信）**；**第二十五轮 +2：Saining Xie `@sainingxie`（MAE 三作；`saining.xie@nyu.edu` 取自本人页 `data-user`/`data-domain` ⇒ 已发信）· Danijar Hafner `@danijarh`（DreamerV3 一作；`danijar.com` 无邮箱 ⇒ 不发信）**；**第二十六轮 +7：Ian Goodfellow `@goodfellow_ian`（GAN 一作；无邮箱）/ Diederik P. Kingma（Adam 一作；`diederikkingma.com` `000` ⇒ 无邮箱；`@diederikkingma` 17 followers 无 bio ⇒ 不登记）/ Jimmy Ba（Adam 二作 + DreamerV3 三作；主页无邮箱；`@jimmyba` 无账号信息）/ Sergey Ioffe / Christian Szegedy（BN 两作者；均未找到主页与 X）/ David Z. Pan（DREAMPlace 末位；`dpan@ece.utexas.edu` 取自 UT Austin 现行页 ⇒ 已发信）· Jim Fan `@DrJimFan`（Voyager 作者之一；无邮箱）**）｜已发信 **37**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson** · **Ankur Srivastava** · **Geoffrey Hinton** · **Graham Neubig** · **Pieter Abbeel** · **Saining Xie** · **David Z. Pan**）｜X 已核验 **62**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`** · **`@Tim_Dettmers`** · **`@PSH_Lewis`** · **`@timo_schick`** · **`@geoffreyhinton`** · **`@JeffDean`** · **`@arthurmensch`** · **`@giffmana`** · **`@gneubig`** · **`@sainingxie`** · **`@danijarh`** · **`@goodfellow_ian`** · **`@DrJimFan`**）｜X 未找到 / 未核验 **48**（110 人中 62 已核验；`@colinraffel` **404**、`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **25 条**（V1–V25；**V25 = Demis Hassabis 2026-11-11 原推（AlphaGenome 2），`og:title` + `og:description` 全文核验，本期采用**；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，已采用**；**V18 = Jason Wei 2026-11-12 原推，已采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），本期首发**；**V20 = Albert Gu 2026-11-07 原推（`og:description` 全文核验），本期采用**；**V21 = Tim Dettmers 2026-10-18 原推（推文页 `og:title` = `Tim Dettmers (@Tim_Dettmers) on X`，`og:description` 全文已取），下一期首发**；**V22 = Jeff Dean 2026-11-06 原推（`og:title` + `og:description` 全文核验），本期采用**；**V23 / V24 = 第二十五轮候选，均不采用（V23 实为他人推文、V24 为上下文依赖短句）**；**第二十六轮 0 新增**：`@goodfellow_ian` 时间线首条为 pinned 玩笑（GAN-dalf，2026-08-14）、`@DrJimFan` GR00T 2 两条（2026-11-10 / 11）推文页**无 `og:description`**（只有 `og:title` + 页面正文）⇒ 不满足「双源一致」⇒ 均不采用）
+**本轮快照**：累计 **116** 人（**第二十八轮 +6：Yann LeCun `@ylecun`（主页明文 + `og:title` 核验）/ Yoshua Bengio `@Yoshua_Bengio`（Mila 目录页 `href` + `og:title` 核验）/ Tim Rocktäschel `@_rockt`（本人站 `href` + `og:title` + bio 核验）/ Jeff Clune `@jeffclune`（`og:title` + bio 核验；**`jeff.clune@ubc.ca` 取自 UBC 现行人员页 ⇒ 已发信，第 38 封**）/ Alex Krizhevsky（AlexNet 一作；X 与邮箱均未找到）/ Sally A. McKee（Memory Wall 二作；X 与邮箱均未找到）**；**第二十七轮 +4：Robin Rombach `@robrombach`（LDM 一作，X 已核验）/ Björn Ommer（LDM 通讯；`b.ommer@lmu.de` 取自课题组现行页 ⇒ 已发信）/ Sung Kyu Lim（DREAM-GAN 末位；`sl186@gatech.edu` 取自 GT ECE 现行目录 ⇒ 已发信）/ Patrick Esser（LDM 四作；X 与邮箱均未找到）**；第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**；**第二十轮 +4：Ankur Srivastava（`ankurs@umd.edu` 已核、已发信；X 未找到）/ Bruce Jacob（邮箱在页面上是图片 ⇒ 不猜；X 未找到）/ Jacob Devlin（`@jacobdevlin` 7 followers、无身份信息 ⇒ 判非本人）/ Ming-Wei Chang（`@mingweichang` 4 followers、0 推文 ⇒ 不登记）**；**第二十一轮 +4：Tim Dettmers `@Tim_Dettmers`（`dettmers@cmu.edu` 取自本人页 `lastname@cmu.edu` 反爬写法，已发信）/ Colin Raffel（无邮箱、`@colinraffel` 404 ⇒ 未找到 X）/ Patrick Lewis `@PSH_Lewis`（主页邮箱为模板占位 ⇒ 不发信）/ Timo Schick `@timo_schick`（主页无邮箱 ⇒ 不发信）**；**第二十二轮 +3：Geoffrey Hinton `@geoffreyhinton`（邮箱取自本人主页 `Email: geoffrey [dot] hinton [at] gmail [dot] com`，已发信）/ Jeff Dean `@JeffDean`（无个人邮箱 ⇒ 不发信）/ Joshua Ainslie（邮箱与 X 均未找到）；另**更正** Arthur Mensch 补上 `@arthurmensch`（bio 自证 Mistral CEO）**；**第二十三轮 +2：Lucas Beyer `@giffmana`（ViT 二作；X bio 自述 `now: Meta`；**邮箱未找到 ⇒ 不发信**）/ Graham Neubig `@gneubig`（CMU LTI 副教授 / `@OpenHandsDev` 联合创始人；邮箱取自 LTI 现行页反爬写法 `gneubig(through)cs.cmu.edu` ⇒ 按页面规则还原，**已发信**）**；**第二十四轮 +2：John Schulman `@johnschulman2`（PPO 一作；`joschu.net` 无邮箱 ⇒ 不发信）· Pieter Abbeel `@pabbeel`（DDPM 三作；`pabbeel@cs.berkeley.edu` 取自 contact 页 ⇒ 已发信）**；**第二十五轮 +2：Saining Xie `@sainingxie`（MAE 三作；`saining.xie@nyu.edu` 取自本人页 `data-user`/`data-domain` ⇒ 已发信）· Danijar Hafner `@danijarh`（DreamerV3 一作；`danijar.com` 无邮箱 ⇒ 不发信）**；**第二十六轮 +7：Ian Goodfellow `@goodfellow_ian`（GAN 一作；无邮箱）/ Diederik P. Kingma（Adam 一作；`diederikkingma.com` `000` ⇒ 无邮箱；`@diederikkingma` 17 followers 无 bio ⇒ 不登记）/ Jimmy Ba（Adam 二作 + DreamerV3 三作；主页无邮箱；`@jimmyba` 无账号信息）/ Sergey Ioffe / Christian Szegedy（BN 两作者；均未找到主页与 X）/ David Z. Pan（DREAMPlace 末位；`dpan@ece.utexas.edu` 取自 UT Austin 现行页 ⇒ 已发信）· Jim Fan `@DrJimFan`（Voyager 作者之一；无邮箱）**）｜已发信 **38**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson** · **Ankur Srivastava** · **Geoffrey Hinton** · **Graham Neubig** · **Pieter Abbeel** · **Saining Xie** · **David Z. Pan** · **Jeff Clune**）｜X 已核验 **66**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`** · **`@Tim_Dettmers`** · **`@PSH_Lewis`** · **`@timo_schick`** · **`@geoffreyhinton`** · **`@JeffDean`** · **`@arthurmensch`** · **`@giffmana`** · **`@gneubig`** · **`@sainingxie`** · **`@danijarh`** · **`@goodfellow_ian`** · **`@DrJimFan`**）｜X 未找到 / 未核验 **50**（116 人中 66 已核验；`@colinraffel` **404**、`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **26 条**（V1–V26；**V25 = Demis Hassabis 2026-11-11 原推（AlphaGenome 2），`og:title` + `og:description` 全文核验，本期采用**；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，已采用**；**V18 = Jason Wei 2026-11-12 原推，已采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），本期首发**；**V20 = Albert Gu 2026-11-07 原推（`og:description` 全文核验），本期采用**；**V21 = Tim Dettmers 2026-10-18 原推（推文页 `og:title` = `Tim Dettmers (@Tim_Dettmers) on X`，`og:description` 全文已取），下一期首发**；**V22 = Jeff Dean 2026-11-06 原推（`og:title` + `og:description` 全文核验），本期采用**；**V23 / V24 = 第二十五轮候选，均不采用（V23 实为他人推文、V24 为上下文依赖短句）**；**第二十六轮 0 新增**：`@goodfellow_ian` 时间线首条为 pinned 玩笑（GAN-dalf，2026-08-14）、`@DrJimFan` GR00T 2 两条（2026-11-10 / 11）推文页**无 `og:description`**（只有 `og:title` + 页面正文）⇒ 不满足「双源一致」⇒ 均不采用）
 
 
 ---
@@ -1464,6 +1464,84 @@
 
 ---
 
+### 109. Yann LeCun
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yann LeCun（法国籍 ⇒ 信按英文写） |
+| 机构 | New York University（Silver Professor）· AMI Labs（Founder/Chair，据本人 X bio）· Meta（Ex-Chief AI Scientist，据本人 X bio） |
+| 代表论文 | Deep Learning（Nature 2015，B 轨 #110，一作）· CNN / LeNet 系列（本表未单收） |
+| 邮箱 | **未找到**（本人主页 `https://cs.nyu.edu/~yann/` 实测 `HTTP 200` / 94,524 B，页内**无 `mailto:`**、无明文邮箱；`yann.lecun.com` 直连与走代理均 `000`）⇒ 按纪律**不猜邮箱、不发信** |
+| 主页 | <https://cs.nyu.edu/~yann/>（`200` / 94,524 B） |
+| X 账号 | **@ylecun**（核验：本人主页明文 `Twitter/X: @ylecun`（同页说明「I retweet and comment, but I no longer write posts on X」）+ `x.com/ylecun` 页面 `og:title` = `Yann LeCun (@ylecun) on X`） |
+| 状态 | 待跟踪（X 待 follow） |
+| 备注 | 本人自述**在 X 上只转推与评论、不再发原创帖** ⇒ 其时间线不适合做 `voice_ready` 一手言论源（本轮实测前 5 条含政治转推）；若要采其观点，优先其 **Bluesky**（主页自述 `@yann-lecun.bsky.social`）。与 Bengio / Hinton 是同一篇 Nature 综述的合作圈，**同一轮不重复打扰**。 |
+
+### 110. Yoshua Bengio
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yoshua Bengio |
+| 机构 | Université de Montréal · Mila（科学总监）· LawZero（据本人 X bio） |
+| 代表论文 | Deep Learning（Nature 2015，B 轨 #110，二作）· 注意力 / 神经概率语言模型系列（本表未单收） |
+| 邮箱 | **未找到**（`iro.umontreal.ca/~bengioy/` 返回 **反爬挑战页**（Anubis，`HTTP 200` 但正文是 challenge）；`mila.quebec/en/directory/yoshua-bengio` `200` / 209,040 B 只有**媒体联系人** `medias@mila.quebec`，**非本人邮箱**）⇒ **不猜、不发信** |
+| 主页 | <https://yoshuabengio.org/>（`200` / 48,108 B）· Mila 目录页（`200`） |
+| X 账号 | **@Yoshua_Bengio**（核验：Mila 目录页 `href="https://x.com/yoshua_bengio?lang=en"` + `x.com/Yoshua_Bengio` 页面 `og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`、bio 自述 `Turing Award recipient ... @UMontreal, @LawZero_ & @Mila_Quebec`） |
+| 状态 | 待跟踪（X 待 follow） |
+| 备注 | 本轮 `voice_ready` 已采用其 **2026-11-13** 原推（safe-by-design AI，见 V26）⇒ 是「言论投料」里目前**产出最稳定**的账号之一；研究方向偏 **AI 安全 / 治理**，与我们「agent 评测可验证性」只有间接关系，引用时须标清语境。 |
+
+### 111. Tim Rocktäschel
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tim Rocktäschel（德国籍 ⇒ 信按英文写） |
+| 机构 | Recursive（Co-Founder & Chief Scientist）· University College London（Professor of AI）· 据本人 X bio 另兼 BOLD Lab / ELLIS；**曾任 Google DeepMind**（Genie 发表时） |
+| 代表论文 | Genie: Generative Interactive Environments（arXiv `2402.15391`，B 轨 #108，**末位作者**）· Open-Ended Learning / XLand 系列（本表未单收） |
+| 邮箱 | **未找到**（`rockt.ai` `200` / 228,991 B，页内**无 `mailto:` / 无明文邮箱**；UCL 个人页 `ucl.ac.uk/computer-science/people/tim-rocktaschel` 与 `ucl.ac.uk/~ucgtimr/` 均 **`403`**）⇒ 不发信 |
+| 主页 | <https://rockt.ai/>（`200` / 228,991 B） |
+| X 账号 | **@_rockt**（核验：`rockt.ai` 页内 `href="https://twitter.com/_rockt"` + `x.com/_rockt` 页面 `og:title` = `Tim Rocktäschel (@_rockt) on X`、`og:description` 全文 bio 与主页一致） |
+| 状态 | 待跟踪（X 待 follow） |
+| 备注 | bio 已从 DeepMind 改为 **Recursive**（AI 安全方向的实验室）⇒ 其近期言论偏**公司/招聘**（本轮 7 条时间线前 5 条中 2 条为招聘/排名），做 `voice_ready` 时须先筛掉非技术帖。 |
+
+### 112. Jeff Clune
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeff Clune |
+| 机构 | University of British Columbia（CS 教授）· Vector Institute（CIFAR AI Chair）· Recursive（Co-founder）（据本人 X bio 与 UBC 人员页） |
+| 代表论文 | Genie: Generative Interactive Environments（arXiv `2402.15391`，B 轨 #108，第 22 位作者）· AI-Generating Algorithms 方向（本表未单收） |
+| 邮箱 | **jeff.clune@ubc.ca**（来源：UBC 计算机系**现行人员页** `https://www.cs.ubc.ca/people/jeff-clune` 实测 `HTTP 200` / 128,361 B，页内 `mailto:jeff.clune@ubc.ca`；**未用论文 PDF 上的旧地址**） |
+| 主页 | <https://jeffclune.com/>（`200` / 5,464 B；`cs.ubc.ca/~clune/` 为 **`403`**） |
+| X 账号 | **@jeffclune**（核验：`x.com/jeffclune` 页面 `og:title` = `Jeff Clune (@jeffclune) on X`、bio 自述 `Co-founder, Recursive. Professor, CS, U. British Columbia...`） |
+| 状态 | **已发信**（2026-11-14 12:06 CST，第 38 封）· X 待 follow |
+| 备注 | 选他而不是末位 Rocktäschel：**UBC 现行页有可核验邮箱**，且他在 Genie 中负责开放式学习 / 世界模型方向，与「agent 在学出来的环境里预演」直接相关。信里三问分别回填 **harness（怎么证明 latent action 真可控）/ zhulong（离散工具动作的粒度）/ data（窄域数据先扩什么）**。 |
+
+### 113. Alex Krizhevsky
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alex Krizhevsky |
+| 机构 | 发表时 University of Toronto；此后公开活动很少（本线未找到可核验的现行机构页） |
+| 代表论文 | ImageNet Classification with Deep Convolutional Neural Networks（**AlexNet**，B 轨 #111，一作） |
+| 邮箱 | **未找到**（无可用现行机构页 ⇒ 按令**不用 2012 年 PDF 旧地址**、不猜） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X**（未做任何猜测性 handle 登记） |
+| 状态 | 待跟踪（仅建档） |
+| 备注 | 收 AlexNet 的目的是**视觉塔配方（ReLU / dropout / GPU 卷积）与固定基准口径**，不依赖作者互动；同文另两位作者 Ilya Sutskever（#25）/ Geoffrey Hinton（第二十二轮）已在表中。 |
+
+### 114. Sally A. McKee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sally A. McKee |
+| 机构 | 发表时为 University of Virginia（CS）；现机构本线**未核验**（无一手页面确认） |
+| 代表论文 | Hitting the Memory Wall: Implications of the Obvious（ACM SIGARCH CAN 23(1):20–24, 1995，B 轨 #109，二作） |
+| 邮箱 | **未找到**（未取到现行机构页；ACM 页面 `403`；🚫 不用 1995 年论文旧地址） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪（仅建档） |
+| 备注 | 收这篇的目的是「内存墙」这一**成本口径的提法源头**，不依赖作者互动。同文一作 **Wm. A. Wulf** 本线未找到可核验的现行主页 / X ⇒ **不单独建档**（🚫 不猜）。 |
+
 ## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 
@@ -1556,6 +1634,11 @@
 | 51（**第二十六轮新增**） | Jim Fan（Linxi Fan） | `@DrJimFan` | <https://x.com/DrJimFan> | `200`，`og:title` = `Jim Fan (@DrJimFan) on X`，bio = `NVIDIA Director of Robotics &amp; Distinguished Scientist…` | Voyager 作者之一；VLA / 具身方向言论密度高 |
 | 52（**第二十七轮新增**） | Robin Rombach | `@robrombach` | <https://x.com/robrombach> | `200`，`og:title` = `Robin Rombach (@robrombach) / X`，bio = `long-term PhD student and intern. Generative Models at …` | LDM 一作 / FLUX 系；生成模型（视觉合成数据）的一手发布源 |
 
+| 53（**第二十八轮新增**） | Yann LeCun | `@ylecun` | <https://x.com/ylecun> | `200`，`og:title` = `Yann LeCun (@ylecun) on X`，bio = `Founder/Chair, AMI Labs; Professor, NYU; Partner, 224 Ventures; Ex-Chief AI Scientist, Meta. Researcher in AI, ML, Robotics, etc. ACM Turing Award Laureate.`；handle 亦见本人主页明文 `Twitter/X: @ylecun` | Deep Learning 一作（B 轨 #110）⇒ 深度学习路线判断源；⚠️ 本人自述**在 X 只转推/评论、不再发原创** ⇒ 不宜做 `voice_ready` 主源 |
+| 54（**第二十八轮新增**） | Yoshua Bengio | `@Yoshua_Bengio` | <https://x.com/Yoshua_Bengio> | `200`，`og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`，bio = `Turing Award recipient and world's most cited scientist. Working towards the safe development of AI for the benefit of all @UMontreal, @LawZero_ &amp; @Mila_Quebec`；handle 源自 Mila 目录页 `href` | Deep Learning 二作（B 轨 #110）⇒ **AI 安全 / 治理**方向的一手言论源（V26 已采用） |
+| 55（**第二十八轮新增**） | Tim Rocktäschel | `@_rockt` | <https://x.com/_rockt> | `200`，`og:title` = `Tim Rocktäschel (@_rockt) on X`，`og:description` = `Co-Founder and Chief Scientist of @Recursive_SI, Professor of AI @AI_UCL, PI @BOLD_Lab_AI, Fellow @ELLISforEurope. Ex @GoogleDeepMind @AIatMeta @CompSciOxford`；handle 源自 `rockt.ai` 页内 `href` | Genie 末位（B 轨 #108）⇒ 开放式学习 / 世界模型判断源；⚠️ 近期多公司/招聘帖，须筛 |
+| 56（**第二十八轮新增**） | Jeff Clune | `@jeffclune` | <https://x.com/jeffclune> | `200`，`og:title` = `Jeff Clune (@jeffclune) on X`，bio = `Co-founder, Recursive. Professor, CS, U. British Columbia. CIFAR AI Chair, Vector Institute. ML, AI, deep RL, deep learning, AI-Generating Algorithms (AI-GAs)` | Genie 作者（B 轨 #108）⇒ **AI-GAs / 开放式学习** 判断源；本轮已发信 |
+
 ### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
 
 | # | 人物 | 时间（UTC） | 原文（照抄） | 链接 | 用途 |
@@ -1589,6 +1672,7 @@
 | V24（**第二十五轮候选 · 不采用**） | Lucas Beyer `@giffmana` | 2026-11-13 17:13 UTC / 09:56 UTC | ① `Really glad that i can do this without having to worry about getting paperclipped.` ② `Maybe they should try using a non-copilot model to help debug this.` | <https://x.com/giffmana/status/2121290350069424421> ｜ <https://x.com/giffmana/status/2121180408121274816> | ❌ **上下文依赖 / 断章取义风险**：两条均为**回复**，`og:title` 作者可核（`Lucas Beyer (bl16) (@giffmana) on X`）但离开上文无法成立 ⇒ 按「有上下文必须一并给出 / 不断章取义」纪律不采用；只登记备查 |
 
 | V25（**第二十七轮新增 · 本期采用**） | Demis Hassabis `@demishassabis` | 2026-11-11 17:12 UTC | "Super proud to announce AlphaGenome 2 - our new DNA sequence model! 🧬 It predicts the impact of DNA variants in different specific cell types - unlocking crucial information for understanding complex diseases. Available for academic research via our API: https://t.co/dEyrvpTxIl"（推文页 `og:description` 全文） | <https://x.com/demishassabis/status/2120565316619284734> | 本期 `voice_ready` 第 1 条：推文页 `200` / 177,123 B，`og:title` = `Demis Hassabis (@demishassabis) on X`（bio = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief Scientist of Alphabet...`）；话题点 =「同一份 DNA、不同细胞类型：单字母变异为何只在部分细胞致病 —— 序列模型开始能按细胞类型预测」；风险 = ① 属**模型发布 + 学术 API 开放**的公告口径，🚫 不得写成「已解决疾病机理」；② 预测能力与准确率**未在本推中给数字**，引用时只能给方向；③ 2026-11-11，3 天内，符合 ≤30 天口径 |
+| V26（**第二十八轮新增 · 本期采用**） | Yoshua Bengio `@Yoshua_Bengio` | 2026-11-13 21:55 UTC | "It was great to be in Berlin and Zurich last week to connect with the European scientific community and policymakers on the urgent need for safe-by-design AI."（推文页 `og:description` **全文**，与 profile `full_text` 逐字一致） | <https://x.com/Yoshua_Bengio/status/2121361248889577858> | 本期 `voice_ready` 第 1 条：推文页 `200` / 113,553 B，`og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`（bio = `Turing Award recipient ... @UMontreal, @LawZero_ &amp; @Mila_Quebec`）；话题点 =「图灵奖得主在欧盟各国政府间推『safe-by-design』，说明 AI 安全从论文话题变成政策议程」；风险 = ① 属**行程回顾 + 主张**，🚫 不得写成「欧盟已采纳该原则」或任何政策结论；② 未提任何具体法规/数字 ⇒ 不补；③ 2026-11-13，1 天内，符合 ≤30 天口径 |
 > ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 / **V12** 正文截断不采用；V10 / V11 / **V13 / V14** 作者不符不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
 
 **每个 handle 的原始快照**：`research/classic/x/<handle>.json`（字段 `bio` / `name` / `tweets[]`（`id` / `created_at` / `text` / `url`）/ `fetched_at`）。
@@ -1642,6 +1726,8 @@
 
 
 ---
+
+| 2026-11-14 12:06（**第二十八轮**） | Jeff Clune | `2402.15391` Genie | UBC 计算机系**现行人员页** `https://www.cs.ubc.ca/people/jeff-clune`（`200` / 128,361 B）页内 `mailto:jeff.clune@ubc.ca`；`cs.ubc.ca/~clune/` **`403`** ⇒ 未采用；**未用论文 PDF 旧地址** | `SENT OK`（`jeff.clune@ubc.ca`，**英文 175 词**；🚦 发送前 `wc -w` 已核；UBC 当日第 1 封；同论文其余 24 位作者不发（同论文 ≤1）） |
 
 ## 四、维护纪律
 
