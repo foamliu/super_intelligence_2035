@@ -411,5 +411,43 @@
     "size_bytes": 33270,
     "self_contained": true,
     "external_links": 0
+  },
+  "reanalysis": {
+    "reanalyzed_at": "2026-11-14 wake#922",
+    "supersedes_conclusion": "wake#915 P4 negative report premise (cline 3.0.51 configured-agent unusable, needs source change) is WRONG",
+    "evidence_smoke_3074b": {
+      "subagent_session": "agent_63282962-...messages.json",
+      "n_msgs": 15,
+      "finishReason": "completed",
+      "inputTokens": 92836,
+      "outputTokens": 2026,
+      "providerId": "openai-compatible",
+      "modelId": "deepseek-v4-pro-cloud",
+      "invocation": "direct cline CLI 1 task serial cwd=data-dir"
+    },
+    "root_cause_A_dsv4_arms": {
+      "symptom": "messages must not be empty",
+      "arms": [
+        "B1",
+        "B2",
+        "C2"
+      ],
+      "cause": "P1 -p 8 parallel sharing one CLI_DATA_DIR/sessions.db; smoke 3074b byte-identical B1 config ran 1 task serial and succeeded -> concurrency race",
+      "fix_within_redlines": "reduce -p OR per-task data-dir isolation",
+      "config_diff_vs_smoke": "B1 researcher.yaml+providers.json byte-identical to smoke 3074b; only concurrency differs"
+    },
+    "root_cause_B_doubao_arms": {
+      "symptom": "Unknown or disabled provider doubao-{pro,mini,lite}",
+      "arms": [
+        "B3",
+        "B4",
+        "B5"
+      ],
+      "cause": "researcher.yaml providerId=doubao-* resolved as provider TYPE not profile key",
+      "fix_within_redlines": "providerId=openai-compatible + modelId=doubao-...-cloud + providers.json openai-compatible entry doubao key/model"
+    },
+    "redline_compliance": "no source/version/benchmark change; P4 report + P1 traces preserved",
+    "next_action": "confirmatory smoke when sandbox free (designflow PID 3183742 running): smoke-A B1 -p 1 then smoke-B doubao fixed; pass -> re-run P1",
+    "findings_doc": "run/subagent_reanalysis_findings.md"
   }
 }
