@@ -991,3 +991,24 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791965390450_59idr	xinqiaoz	hfeg0plg56	model-comparison	layout_virtuoso	parked		2026-11-15 05:23	not-produce r583
 1789889776686_se4uf	miccao	hfeg0plg37	106	physical_verify	case	EDA-Eval-DesignFlow-GdsLvlStructDiff-001	2026-11-15 06:01	
 1794206311310_xqvcu.messages.json	cyzhu	hfeg0plg70	45	physical_verify	case	SpfRccCmod-001	2026-11-15 06:56	
+3l3yx	ynbai	hfhds211	80	physical_verify	parked		2026-11-15 07:19	debug/analyze si.out spice sim
+mxpkd	ellawu	hfeg0plg83	79	physical_verify	parked		2026-11-15 07:19	modify-existing IMCleFillImplantDrc add conditional
+1495z	ellawu	hfeg0plg83	79	physical_verify	parked		2026-11-15 07:19	Q&A SVRF SETLAYER syntax explain
+rw7u9	gokuguo	hfeg0plg78	79	physical_verify	parked		2026-11-15 07:19	debug ERC error batch_lvs.py
+v7jqb	thomasz	hfeg0plg92	79	physical_verify	parked		2026-11-15 07:19	debug DRC log + Q&A pathfinder
+rf6en	hswang	hfeg0plg94	79	physical_verify	parked		2026-11-15 07:19	debug new_sim_lib_gui.py traceback
+o1yhw	steveny	hfeg0pnd001	78	layout_virtuoso	parked		2026-11-15 07:19	setup/run-existing symlink+follow prompt_flow.md
+369rv	mwxi	hfhds228	77	physical_verify	parked		2026-11-15 07:19	ops/debug crontab sync IO full
+5cigt	yuankong	hfhds211	76	physical_verify	parked		2026-11-15 07:19	explain Q&A analyze script how to use
+u29lu	cwei	hfeg0plg93	76	layout_aether	parked		2026-11-15 07:19	setup/run-existing load call skill
+ezpne	yinxingj	hfeg0plg13	76	layout_aether	parked		2026-11-15 07:19	Q&A how to make a tool
+wy27j	jzeng	hfeg0plg85	77	layout_aether	parked		2026-11-15 07:19	modify-existing IMCleAutoVia via gen optimize
+x67j4	t0002609	hfeg0plg76	77	physical_verify	parked		2026-11-15 07:19	config/ops/Q&A policy writableRoots
+djvnv	e0014566	hfeg0plg58	79	layout_virtuoso	parked		2026-11-15 07:19	run-existing/follow-instructions prompt_autovia.md
+0pfvw	hybeaml	hfeg0plg88	76	layout_aether	parked		2026-11-15 07:19	thin-produce hotkey layer-switch below bar
+3m5t4	yohannw	hfeg0pnd001	76	layout_aether	parked		2026-11-15 07:19	config/ops agent_policy config mod
+5laiw	yongk1li	hfeg0plg99	79	physical_verify	parked		2026-11-15 07:19	Q&A/modify-existing what is this modify script
+ics15	ziyuny	hfeg0plg98	79	physical_verify	parked		2026-11-15 07:19	debug/analyze DRC log analysis
+61zln	rongtaoy	hfeg0pnd002	76	physical_verify	parked		2026-11-15 07:19	verify/audit-existing coupling extraction audit
+yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config modify policy writableRoots add dir
+1lote	hongyuy	hfeg0plg73	78	physical_verify	parked		2026-11-15 07:19	how-to Q&A CMP add how to operate
