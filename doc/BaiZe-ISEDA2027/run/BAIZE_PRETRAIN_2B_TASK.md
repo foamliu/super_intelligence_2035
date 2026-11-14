@@ -1,6 +1,6 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
-> 🔴 **用户令 · 2026-11-12（L1/L2 评测脚本入库 + L4 移交）· 用户直令 · 最高优先 · 未完成**
+> ✅ **用户令 · 2026-11-12（L1/L2 评测脚本入库 + L4 移交）· 用户直令 · 已完成（commit ed6ea54e4 · 12 脚本 + README §4.6 · L4→HANDOFF→post-train）**
 >
 > **用户原话**：「Pretrain：把修好的 L1/L2 评测脚本提交到 baize-llm 仓库，相应刷新 README。」「既然后训练说『隧道第 4 次复验 OK』，那么 Pretrain 说的 L4 BLOCKED 就不成立了。这件事 Pretrain 不要管，由 Post-Train 负责。」
 >
