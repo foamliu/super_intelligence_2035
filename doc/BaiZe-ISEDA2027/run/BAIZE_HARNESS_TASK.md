@@ -31,6 +31,53 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-14 10:0x（**排查/修复 hermes 重跑的 `python3 not found` setup 失败；善用 web search 参考他人做法**）· 未完成 · 最高优先
+
+> **用户原话**：「harness：python3 not found 的 setup 失败需要排查/修复。请 harness 善用 web search，看看这种类型的问题别人是怎么处理的。」
+
+**一、现象（你 R2463 自己的心跳）**
+- `hermes rerun 8/82`，其中 **4 题 setup fail = `python3 not found`**，另 4 题 ability fail。
+- 这 4 题**不是能力问题、不是额度问题**，是**环境 setup 失败**——按你自己的归因红线，**setup fail 不得计入能力**。
+
+**二、必须先做的排查（用证据，别猜）**
+
+1. **抓到 4 个具体 task 名**，逐题贴出：
+   - 该 task 的基础镜像（`Dockerfile` 的 `FROM`，例如是否 `oven/bun`、`alpine`、`distroless` 这类**默认不带 python3** 的镜像）
+   - 容器内实际执行的 install 命令与**完整 stderr**（含 `HERMES_NO_PYTHON:` 标记是否出现）
+2. **关键疑点（我已看过 `agents/hermes.py`，请你核实）**：
+   - 适配器 L115-118 已有 `command -v python3 / python` 的探测，L117 打印 `HERMES_NO_PYTHON: no python interpreter in task image` 后 `exit 127`；L103 还调用了 `_ensure_pip()`。
+   - **既然有这层回退，为什么还会 `python3 not found`？** 请查清是：
+     a) 容器内**确实没有** python3/python（distroless / scratch / 极简镜像）；
+     b) 有 python 但**不在 PATH**（如 `/usr/local/bin/python3` 未进 PATH，或 login shell 与非 login shell 差异）；
+     c) `_ensure_pip()` 在那 4 题上**本身失败**（preceded error 被你只看最后 5 行 tail 截掉了）；
+     d) 镜像里是 `python3.x` 但无 `python3` symlink。
+   - **这四种成因的修法完全不同**，请先定性再动手。
+3. 顺带核实：这 4 题在**其他 7 路**（cline/opencode/pi/deepseek/codex/cc）跑时是否也 setup fail？若有路跑通了，**对比它怎么处理 python**——这是最直接的答案。
+
+**三、善用 web search（用户明确要求）**
+
+- 检索方向（你自己再扩展）：
+  - Terminal-Bench / harbor / 类似 agent benchmark 里，**容器缺 python3 的通用处理方式**（官方 issue、社区 workaround）
+  - `python3: not found` in **distroless / alpine / bun / node** base images 的标准解法
+  - agent harness 安装 Python CLI 工具的**健壮 install 脚本模式**（探测多候选解释器、`ensurepip` vs `get-pip.py`、`--break-system-packages`、PEP 668 externally-managed-environment 冲突）
+  - `PATH` 在 `docker exec` vs `bash -lc` 下的差异导致命令找不到的经典坑
+- **要求**：把检索到的**具体做法与来源（URL/项目名）**写进报告，并说明**你采用了哪条、为什么**。🚫 不要只列链接不落地。
+
+**四、修复与验证**
+
+- 按定性的根因修（可能落在 adapter 的 install 阶段，也可能需要给特定 image 预置 python）。
+- 修完**先单题冒烟**：确认 `HERMES_NO_PYTHON` 消失、install 成功、hermes CLI 可用、`iterations>0`。
+- 再把这 4 题（或受影响题）重跑，结果并回。
+- **判据**：`hermes rerun` 完成后，setup fail 数应为 **0**（或每一条都有明确 BLOCKED 理由与证据）。
+
+**五、报告与落盘**
+
+- 归因与修复过程写进 `report_harness_tb21_7way_zh.html` 的 infra 归因节 + MEMORY 心跳一行：
+  `hermes python3 修复: 根因=<a/b/c/d> · 参考=<来源> · 改动=<...> · 冒烟=OK · setup_fail 4→N`
+- 若确属镜像根本无 python（如 distroless），写 `BLOCKED + 证据 + 需要什么`，并说明这 4 题应如何从分母中**如实剔除或标注**（🚫 不得悄悄算成能力失败）。
+
+---
+
 ### 🔴 用户令 · 2026-11-14 09:3x（**修复 claude-code ConnectionRefused → 重测 TB-2.1 89 题**）· 未完成 · 最高优先
 
 > **用户原话**：「harness，既然 claude-code TB-2.1 89 个题都归因为 connection_refused。那需要修复问题 -> 重新测试。」
