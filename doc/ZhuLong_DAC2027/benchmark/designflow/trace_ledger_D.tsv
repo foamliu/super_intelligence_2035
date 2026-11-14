@@ -1773,4 +1773,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1789711703059_os004	e0039602	hfeg0plg95	25	analog_context	parked		2026-11-14 22:04	Q&A/teaching walkthrough of finesim-fsdb-reader skill, no produce-task deliverable or accepted gold standard; abandoned r666
 1782803097375_exstf	e0025730	hfeg0plg49	25	schematic_netlist	case	EDA-Eval-DesignFlow-LvlshftStepFix-001	2026-11-14 22:32	lvlshft SPICE-flow CLI --step args.step string-split bugfix; B-grade synthesized reframe; L2 10-cond; 80 msgs; case r667
 1794461300466_u060n	e0046686	hfeg0plg49	24	schematic_netlist	case	EDA-Eval-DesignFlow-SpfCleanFlow-001	2026-11-14 22:58	
-1794224252917_ls7n4.messages.json	ynbai	hfhds210	25	analog_context	claimed		2026-11-14 23:41	
+1794224252917_ls7n4.messages.json	ynbai	hfhds210	25	analog_context	case	EDA-Eval-DesignFlow-CrgWatchFlow-001	2026-11-14 23:54	
