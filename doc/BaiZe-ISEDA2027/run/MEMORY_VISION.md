@@ -6,7 +6,7 @@ WAITING: 0
 > - **核心结论**：agent 编排把单模型「整题 0/10」推到 **G1=5/10**（整题翻转），正是用户要量的「MLLM 作为 agent 系统一部分」增益；单模型结构上做不到。G2 量 rft2 强化在 agent 设置的额外增益。口径=WaveView 真实题（等价重建·非合成集）。
 > - **产物**：`G/{G0,G1,G2}/*.json`+`summary_agent.json`+`audit_agent.json`+`reports/report_vision_waveview_selftest_agent_zh.html`+EXPERIMENTS §26。本轮由 auto-finisher 在 G2 后台 run(pid 3503075) 跑完后自动落盘+提交。**WAITING: 0**。
 
-
+> 📦 **wake #1242 · 2026-11-15** 例行巡检·全交付态·零新增·非 idle-spin（fetch up-to-date 无新令·research 日报 vision=无建议·复验 wake#1241 全交付物在位 summary G0=0/G1=5/G2=4·cheat=0·报告 0外链0script·体积 MEMORY26100B/TASK31980B≤32KB·#3 task2 仍 infra-blocked 待 ops 放行 .17:30002）·已fold(详情 daily-memories-vision/2026-11-15.md)。
 
 > 🆕 **【wake #1240 · 2026-11-14 23:5x】G0/G1 agent 臂✅已完成并落盘核验 · G2 后台运行中（agent 编排带来 5 整题翻转 = 本线核心增益）**：
 > - **G0（agent glm-5.2·无 VQA）= 0/10 PASS**（全 FAIL·vqa_calls=0·正确基线：文本底座看不见波形图）。逐题 k：DqRead 4/13·EyeAp 0/9·FsdbWr 2/12·RiseEdge 2/9·SimFail 3/12·TempSel 0/9·TempThresh 1/10·WaveCmp 2/14·WaveMax 0/9·WaveView002 6/13。
