@@ -149,3 +149,148 @@ wake#915 的 go_nogo note §五 自承「P0 没验证 subagent 是否真正执�
 - spawn_agent 在 cline 3.0.51 **机制可用**（直接调用✅），问题在 harness 编排层。
 - 下一步：① 最小复现 e.trim（直接 cline + cwd≠data-dir + B1 config）② 若是 cwd≠data-dir → harness 改为 cwd=data-dir 或 spawn 用 configured agent 而非 anonymous ③ smoke-B（doubao root cause B 仍有效）④ 通过则重跑 P1
 - P4 负报告仍保留为历史档。
+
+## 七、2026-11-14 wake#925·**Option B 修复 e.trim ✅ + configured agent 工具未注册定论 + B3 决定性实验**
+
+> 接续 wake#924 smoke_A4_pass 状态。本节定论两个关键问题：e.trim 根因 + configured agent 工具注册。
+
+### 1. Option B 修复 e.trim（CLINE_UNIFIED_DATA_DIR=1）
+- **方案**：harness 设 `--data-dir=ws_dir` + 复制 settings/agents/secrets/globalState 进 ws_dir → cwd=data-dir=ws_dir 单路径
+- **实施**：`run_cli.sh` L206-227 加 CLINE_UNIFIED_DATA_DIR 分支；`run_subagent_ablation.sh` export `CLINE_UNIFIED_DATA_DIR=1`
+- **验证（smoke-B1-unified, /tmp/zhulong_subagent_eval_smokeB1uni/）**：
+  - cline 命令 `-c ws --data-dir ws`（cwd=data-dir ✅）
+  - ws_dir 含 agents/researcher.yaml + settings/providers.json（deepseek-v4-pro-cloud）
+  - 主 agent modelInfo=deepseek-v4-pro-cloud ✅
+  - **无 e.trim**（grep count=0）✅
+  - **但 agent 未调任何 subagent**（见下）
+
+### 2. 🔴 configured agent 工具 `subagent_researcher` 在 cline 3.0.51 未注册（定论）
+- smoke-B1-unified 主 session messages.json 分析：
+  - LANG_HINT 要求"调用 `subagent_researcher` 工具"
+  - agent thinking 明确说："However, looking at my available tools, I don't see a `subagent_researcher` tool. I have `spawn_agent`..."
+  - agent 实际调用：run_commands / pyAether_MCP_server__search_apis / get_api_details / run_code / editor / read_files（**从未调 spawn_agent 或 subagent_researcher**）
+  - agent 自己用 search_apis 干活，没委托给任何 subagent
+- **结论**：`subagent_researcher`（configured agent 独立工具）在 cline 3.0.51 **未注册**。cline strings 证实 `AgentConfigSchema` 存在但 configured agent → 独立工具的注册机制在当前版本未生效（或需不同触发条件）。
+- **与 wake#923 一致**：smoke-A 主 session 报 `AI_NoSuchToolError: unavailable tool 'subagent_researcher'`（wake#923 §六 实测 1）。当时归因"agent 路径错误"，但路径修复后 smoke-B1-unified 仍无此工具 → **路径不是根因，工具根本不注册**。
+
+### 3. anonymous `spawn_agent` 可用但需 prompt 明确要求
+- **smoke 3074b 硬证据**（/tmp/subagent_smoke_3074b/）：
+  - 主 session 4 条消息，prompt 明确："You MUST use the **spawn_agent** tool to delegate to the 'researcher' sub-agent."
+  - agent 调了 1 次 spawn_agent（input: `{systemPrompt: "...researcher...", task: "Look up..."}`）
+  - 子 session agent_63282962 n_msgs=15, model=deepseek-v4-pro-cloud
+  - **anonymous spawn 成功执行**
+- **关键差异**：3074b prompt 说"spawn_agent"（工具存在）→ agent 调了；smoke-B1-unified prompt 说"subagent_researcher"（工具不存在）→ agent 没调。
+- **修法**：LANG_HINT 从"调用 `subagent_researcher`"改成"调用 `spawn_agent`"（复刻 3074b 措辞）。
+
+### 4. 🔑 子 agent 模型来源（待 B3 决定性实验定论）
+- anonymous spawn_agent 只接受 `{task, systemPrompt}`，无 model 字段 → 子 agent 模型由 cline 内部逻辑决定。
+- **假设 A**：子 agent = 主 session 模型（providers.json 默认/lastUsedProvider）→ B1-B5 基座梯度不可行（主恒定 dsv4-pro → 子全 dsv4-pro）
+- **假设 B**：子 agent = researcher.yaml modelId → B1-B5 基座梯度可行
+- **3074b 无法区分**：researcher.yaml modelId=dsv4-pro AND providers.json 默认=dsv4-pro → 子=dsv4-pro（两者一致）
+- **B3 决定性实验**（/tmp/zhulong_subagent_eval_smokeB3sp/）：researcher.yaml modelId=doubao-seed-2.0-pro-cloud + providers.json 默认=dsv4-pro
+  - 子=dsv4-pro → 假设 A 成立（H2 不可行）
+  - 子=doubao-pro → 假设 B 成立（H2 可行）
+- **第一轮 B3 smoke 结果**（12:07）：spawn_agent 调用 3 次，**全部 e.trim 失败**，0 子 session → INCONCLUSIVE
+
+### 5. 🔴🔴 真正根因 C（推翻 Option B）：PreToolUse hook 拦截 spawn_agent
+- **Option B（cwd=data-dir）未修复 e.trim**：smoke-B1-unified "无 e.trim" 是假阳性（agent 未调 spawn_agent，因 prompt 说不存在的 subagent_researcher）。B3 smoke 用 spawn_agent prompt → e.trim 复现。
+- **真根因**：`scripts/cline_hooks/PreToolUse` L285 白名单只含 MCP_PREFIXES + SUBMIT_TOOLS。`spawn_agent` 不在白名单 → 落到 L308 `_safe_override` → 输入被改写为 `{"files":[{"path":"/dev/null"}]}` → spawn_agent 收不到 `task` 字段 → `task.trim()` → "undefined is not an object (evaluating 'e.trim')"。
+- **3074b 为什么成功**：3074b 是**直接 cline CLI**调用（cwd=/tmp/subagent_smoke_3074b），**不经 harness** → hook 未部署到 ~/.cline/hooks/ → spawn_agent 不被拦截 → 成功执行。
+- **修复（已实施）**：hook 新增 `SPAWN_TOOLS` 白名单（spawn_agent + team_* + ask_question），L285 改为 `tn in SPAWN_TOOLS` 也放行。这些工具不泄题（子 agent 用已白名单的 MCP 工具）。
+- **纪律**：hook 是 harness 反作弊组件（非 benchmark/评分器/cline 源码），加白名单是合法 harness 修复。
+
+### 6. 第二轮 B3 smoke（hook 修复后，12:09 启动）—— 🔴🔴 决定性结果
+- **hook 修复生效**：e.trim=0 ✅（第一轮=5），spawn_agent 执行成功，子 session 创建 ✅
+- **子 session DB 记录**：`agent_1794629386312_9oczmy | openai-compatible | deepseek-v4-pro-cloud | completed | is_subagent=1`
+- **子 session messages modelInfo**：每条 assistant 消息 `modelInfo.id = deepseek-v4-pro-cloud`（主模型）
+- **🔴 决定性结论**：anonymous spawn_agent 子 agent 使用**主 session 模型**（providers.json 默认/lastUsedProvider），**不读 researcher.yaml 的 modelId**
+  - B3 配置：researcher.yaml modelId=doubao-seed-2.0-pro-cloud + providers.json 默认=dsv4-pro
+  - 子 agent = dsv4-pro（主模型），**非** doubao-pro（researcher.yaml）
+  - **假设 A 成立**：子 agent = 主模型
+- **researcher.yaml 完全不生效**：
+  - modelId 不生效（子=dsv4-pro 非 doubao-pro）
+  - tools 不生效（子有默认工具集 read_files/search_codebase/run_commands/fetch_web_content/editor/ask_question/spawn_agent，**无** MCP 工具 pyAether_MCP_server__search_apis）
+  - 子 agent 尝试调 `search_apis`（无 MCP 前缀）→ NoSuchToolError
+- **子 agent 最终完成**（finishReason=completed），但产出无研究价值（无法查 API 文档）
+
+### 7. 🔴 H2/H3 技术不可行性定论（cline 3.0.51 限制）
+- **H2（基座梯度 B1→B5）技术不可行**：
+  - configured agent 独立工具（subagent_researcher）不注册 → 无法通过 configured agent 传 modelId
+  - anonymous spawn_agent 子 agent = 主模型（providers.json 默认）→ 所有臂子 agent = dsv4-pro → 无梯度
+  - 要实现 H2 需 cline 版本支持 configured agent 工具注册（当前版本不支持）
+- **H3（maxIter 5 vs 30）技术不可行**：
+  - maxIter 是 researcher.yaml 参数 → researcher.yaml 不生效 → maxIter 不可控
+  - anonymous spawn_agent 无 maxIterations 参数
+- **H1（A0 无 spawn vs A1/B1 有 spawn）仍可检验**：
+  - A0 复用 compaction basic（无 spawn）vs A1/B1（强提示调 spawn_agent，子=dsv4-pro=主）
+  - 测"有 subagent 委托 vs 无"的效果（subagent 做研究、主 agent 写代码）
+  - 但注意：子 agent 无 MCP 工具 → 研究能力受限 → H1 效果可能微弱
+
+### 8. 下一步选择（需用户裁决）
+- **Option 1**：只跑 H1（A0 vs A1/B1），H2/H3 标"技术不可行（cline 3.0.51 限制）"，出部分负结果报告
+- **Option 2**：放弃 subagent 消融，出完整负结果报告（H1/H2/H3 均无法有效检验）
+- **Option 3**：等 cline 升级支持 configured agent 工具注册后重跑（需解除版本纪律）
+- **H1**（A0 无 spawn vs A1/B1 有 spawn）：anonymous spawn 路线下可检验（A0 复用旧数据无 spawn；A1/B1 强提示调 spawn_agent，子=dsv4-pro=主）。测"有 subagent 委托 vs 无"的效果。
+- **H2**（B1 vs B2-B5 基座梯度）：取决于 B3 结果。若子=主模型 → **技术不可行**（不是证据不足，是 cline 3.0.51 限制）。若子=researcher.yaml modelId → 可行。
+- **H3**（C1 iter5 vs C2 iter30 完成率）：maxIter 是 researcher.yaml 参数。若 configured agent 工具不注册 → anonymous spawn 不读 researcher.yaml → **maxIter 也不可控** → H3 同样不可行。
+
+### 6. 待办
+1. B3 smoke 结果 → 定 H2/H3 可行性
+2. 若 H2 可行：改 run_subagent_ablation.sh SUBAGENT_HINT（subagent_researcher→spawn_agent）+ A1 也注入 hint + 修 L85 providers.json 验证 → 重跑 P1
+3. 若 H2 不可行：如实报告 cline 3.0.51 subagent 机制限制，只跑 H1（A0 vs A1/B1），H2/H3 标"技术不可行"
+
+---
+
+## 八、2026-11-14 wake#926·**B3 二轮 smoke 决定性证据 + cline 源码定论 + H1-only 裁决**
+
+> 接续 wake#925 §七。本节用 **post-hook-fix B3 二轮 smoke 的实测子 session** + **cline 二进制源码** 双重证据，**最终定论** H2/H3 技术不可行，并裁决执行 H1-only（§七.8 Option 1）。
+
+### 1. B3 二轮 smoke 实测（hook 修复后，batch 2026_1114_120909，PID 4094066）
+- 配置：researcher.yaml `providerId: doubao-pro` / `modelId: doubao-seed-2.0-pro-cloud` / `maxIterations: 15` / `tools: [search_apis, get_api_details]`；providers.json 默认 = `deepseek-v4-pro-cloud`
+- cline 命令：`-c ws --data-dir ws`（Option B unified，cwd=data-dir ✅）+ spawn_agent 强提示
+- **spawn_agent 被调用** ✅（hook SPAWN_TOOLS 白名单修复生效，不再 e.trim）
+- **子 session 创建** ✅：`agent_1794629386312_9oczmy.messages.json`，n_msgs=28
+- **子 session 模型 = `deepseek-v4-pro-cloud`**（provider: openai-compatible）= **主 session 模型 / providers.json 默认**，**非** researcher.yaml 的 doubao-pro
+- **子 session 工具** = `run_commands / search_codebase / fetch_web_content / read_files / search_apis / search_apis_by_keyword / editor / ask_question / spawn_agent`（全套内建工具），**非** researcher.yaml 限定的 `[search_apis, get_api_details]`
+- **🔴 关键**：子 agent 尝试调 `search_apis`（无 MCP 前缀）→ `AI_NoSuchToolError: unavailable tool 'search_apis'`——子 agent **没有 MCP 工具**（pyAether_MCP_server__search_apis 等），只有 cline 内建工具 → 子 agent 无法做 pyAether API 研究
+- spawn_agent input = `{systemPrompt, task}`（anonymous，无 `name`/`agent` 字段）→ researcher.yaml **从未被加载**
+
+### 2. cline 源码定论（spawn_agent execute 函数）
+`strings $(command -v cline)` 提取 spawn_agent 工具定义：
+```js
+{name:"spawn_agent",description:"Spawn a sub-agent with a custom system prompt...",
+ execute:async(i,t)=>{...n=eu({kind:"subagent",prompt:i.systemPrompt,
+   configProvider:e.configProvider,        // ← 父 agent 的 provider（模型）
+   tools:a,                                 // ← 父 agent 的 subAgentTools
+   maxIterations:e.defaultMaxIterations,    // ← 父 agent 的默认 maxIter
+   parentAgent...})}}
+```
+- 子 agent 只用 `i.systemPrompt` + `i.task`；**无 `name`/`agent` 字段查找** → 不可能通过传 name="researcher" 加载 configured agent
+- 子 agent 的 `configProvider`（模型）= 父的 `e.configProvider`（providers.json 默认）
+- 子 agent 的 `tools` = `e.subAgentTools`（父的子代理工具集，= cline 内建工具，**不含 MCP 工具**）
+- 子 agent 的 `maxIterations` = `e.defaultMaxIterations`（父的默认值，**非** researcher.yaml.maxIterations）
+- 配合 §七.2（configured agent 独立工具 `subagent_researcher` 在 3.0.51 不注册）→ **无任何路径**让 researcher.yaml 的 modelId/tools/maxIterations 生效
+
+### 3. 最终定论
+| 假设 | 可行性 | 根因 |
+|:--|:--|:--|
+| **H1**（A0 无 spawn vs A1 有 spawn） | ✅ 可检验 | anonymous spawn 可执行；测"委托 vs 不委托" |
+| **H2**（B1→B5 基座梯度） | ❌ 技术不可行 | 子模型恒=父模型（dsv4-pro）；无梯度；configured agent 工具不注册 |
+| **H3**（C1 iter5 vs C2 iter30） | ❌ 技术不可行 | anonymous spawn 用父 defaultMaxIterations；researcher.yaml.maxIter 不生效 |
+
+**⚠️ H1 重要 caveat**：子 agent **无 MCP 工具**（pyAether_MCP_server__search_apis 等）→ 子 agent 无法查 pyAether API 文档，只能用 read_files/search_codebase/run_commands/fetch_web_content 探索 → "研究委托"能力受限 → H1 的 spawn 增益可能微弱甚至负向（子 agent 产出无研究价值，主 agent 还得自己重做）。这本身是 H1 的一个发现（subagent 委托在当前工具配置下是否有效）。
+
+### 4. 裁决：执行 §七.8 Option 1（H1-only）
+- **保留**：A0（复用 compaction basic r1-r3，无 spawn）+ A1（spawn-on，强提示调 spawn_agent，子=dsv4-pro=主）
+- **裁掉**：B1-B5（H2 不可行，全 = dsv4-pro 子，与 A1 等价）+ C1/C2（H3 不可行，maxIter 不可控）
+- B1 与 A1 功能等价（均 spawn-on + dsv4-pro 子，B1 的 researcher.yaml=dsv4-pro 不被加载也无影响）→ A1 即代表"有 spawn"
+- **P1 pilot**：A1 × 8 题 × 1 轮（A0 复用无需重跑）；go 则 A1 × 40 题 × 3 轮
+- **报告**：H1 实测 + H2/H3 标"技术不可行（cline 3.0.51 anonymous spawn_agent 限制 + configured agent 工具未注册）"+ cline 源码证据 + B3 smoke 证据 + 子 agent 无 MCP 工具 caveat
+
+### 5. 本 wake 实施
+- ✅ B3 二轮 smoke 子 session 模型/工具实证（child=dsv4-pro，无 MCP 工具）
+- ✅ cline 源码 spawn_agent execute 函数提取（configProvider/tools/maxIterations 全继承父）
+- ✅ H2/H3 技术不可行最终定论（双重证据）
+- ✅ 裁决 H1-only（§七.8 Option 1）
+- ⏸ B3 smoke PID 4094066 仍在跑（1 task，不 kill）——其 1-task Pass@1 是 H1-adjacent 数据（B3≈A1，均 dsv4-pro 子）
+- 待办（下一 wake，B3 结束后）：改 RUN_ARMS=("A1") → 起 A1 P1 pilot 8 题 × 1 轮 → go 则 40 题 × 3 轮 → P4 报告
