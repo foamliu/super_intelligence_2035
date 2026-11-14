@@ -1486,3 +1486,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794446582345_uu6ie					parked		2026-11-14 10:18	r531 peek msg0=FSDB skill存在吗 D-domain waveview/FSDB skill-existence Q&A (t0003060) REJECT
 1794374158955_pqigp					parked		2026-11-14 10:18	r531 peek msg0=打开sapen信号 D-domain waveview how-to REJECT
 1794291315469_iqvfi					parked		2026-11-14 10:18	r531 peek msg0=why I cant switch input language non-EDA system Q&A REJECT (sfeng@pkn003)
+1794547157832_xhqs8	wzj	hfeg0pkn002	499	spice_sim	claimed		2026-11-14 11:12	
+1794548435602_2kj3r					parked		2026-11-14 11:14	r533 daily-log NEW; Python xval_tool debug, not B-domain
+1794567660912_43b70					parked		2026-11-14 11:14	r533 daily-log NEW; USER#0=你好 greeting, low-signal not B produce
+1794558811361_63yyw					parked		2026-11-14 11:14	r533 daily-log NEW; verilog lpddr6_dejoa analysis Q&A, cross-domain digital
