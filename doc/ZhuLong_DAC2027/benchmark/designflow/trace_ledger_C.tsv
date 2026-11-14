@@ -880,4 +880,5 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794462982889_ds6nz	haiquanp	hfeg0pkn003	78	layout_aether	case	EDA-Eval-DesignFlow-DupOriginRotate-001	2026-11-14 16:37	
 1794537676928_72xvt					parked		2026-11-14 16:37	run-existing check project config+log, not produce-task
 1794466065713_pttre					parked		2026-11-14 16:37	skill-meta doc-update eda_agent skill structure, not produce-task
-1792134149953_u9yyu	simplec	hfeg0pkn002	11	physical_verify	claimed		2026-11-14 17:23	
+1792134149953_u9yyu	simplec	hfeg0pkn002	11	physical_verify	case		2026-11-14 17:45	RcDiffStarGloryReport-001 physical_verify B-synthesized mock-behavioral StarRC vs Glory RC diff report
+1793241481863_0xwjx	haiquanp	hfeg0plg66	72	layout_aether	claimed		2026-11-14 17:48	
