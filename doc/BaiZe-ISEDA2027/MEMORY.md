@@ -2,6 +2,23 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-14 22:5x — 用户重登 Boss 直聘；运维实测通过并手动触发第 78 轮
+
+用户原话：「boss直聘我已登录」。
+
+**运维实测（CDP，22:52–22:56）**：
+- ⓐ `https://www.zhipin.com/web/chat/index` **未跳** `web/user/?ka=bticket`；
+- ⓑ 会话 items = **40**（`.user-list li` + `.user-item` + `.geek-item`）；
+- ⓒ 无「登录/注册」文案；账号 **「刘先生」**，新招呼 **30**，未读 **69**。
+- ⚠️ 首次进入有「BOSS直聘Windows客户端 内测名额」浮层挡点击，选择器 `.boss-popup__close` / `.icon-close`，已用 CDP 关闭（🚫 不点「立即下载」）。
+- 同批实测 **头条号已登录**（`mp.toutiao.com/profile_v4/index` 进创作后台：粉丝 84、总阅读 44,529、收益 9.15 元），**news 线不需要重新登录**，只要 CDP 9222 在。
+
+**环境准备（重启后自愈）**：
+- `vncserver :1`（只监听 127.0.0.1:5901，需 SSH 隧道）+ **GUI Chrome**（`DISPLAY=:1`，`--remote-debugging-port=9222`，同一 profile `~/.hr-chrome-profile`）；
+- `pw_start_all.sh` 已扩为「VNC + GUI Chrome + 三条 loop」，`@reboot` 已挂 —— 下次重启 30s 后全自动回来。
+
+**手动触发**：第 78 轮已起（`screen pw_recruit_now`，`/tmp/manual_recruit_round.log`，参数与 loop 一致），该轮自检同样过 ⓐⓑ，正在做 ≥30s 复查与 ⓒ。任务书已加运维复验记录（含浮层坑）供 06:00 轮参考。
+
 ## 2026-11-14 22:0x — 三件事：posttrain 自主出计划并执行 / vision 补 agent 臂 / recruit 我上去看
 
 用户三条：
