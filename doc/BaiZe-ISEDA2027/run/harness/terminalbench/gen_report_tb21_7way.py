@@ -331,6 +331,25 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
                  "<strong>not_evaluated</strong> = 89 题中未出现在 result.json (需补跑)</p>"
                  "<p><strong>归因红线</strong>: 额度耗尽 ≠ 能力, 假结果 ≠ 能力 (三者分开记账)</p></div>")
 
+    # ---- §claude-code 归因修正 (2026-11-14 08:4x 用户令) ----
+    H.append("<h2>claude-code TB-2.1 归因修正 (2026-11-14 08:4x 用户令)</h2>")
+    H.append("<div class='caveat'><p><strong>矛盾解释</strong>: claude-code = Q0/S0/E89 但 0 passed "
+             "→ <strong>100% infra/适配器问题，非模型能力</strong>。</p>"
+             "<ul>"
+             "<li><strong>88/89 (98.9%) = ConnectionRefused</strong>: "
+             "claude-code 适配器无法连接 API 网关 "
+             "(<code>API Error: Unable to connect to API (ConnectionRefused)</code>), "
+             "模型从未运行, tokens=0, iterations=-1</li>"
+             "<li><strong>1/89 (1.1%) = CLI 解析 bug</strong>: "
+             "task instruction 以 \"-\" 开头被 claude-code CLI 解析为未知选项</li>"
+             "<li><strong>真正\"模型跑过且答错\" = 0 题</strong></li>"
+             "</ul>"
+             "<p><strong>结论</strong>: claude-code 的真实能力 "
+             "<strong>无法从本批数据中评估</strong> (模型从未成功连接网关)。"
+             "需修复网关连接后重跑才能获得能力数字。"
+             "详见: <code>reports/report_harness_cc_tb21_attribution_zh.html</code> "
+             "(89 行逐题归因明细)</p></div>")
+
     # ---- §cline TB-2.1 根因归因 (2026-11-13 用户令, ~~部分作废~~) ----
     if attr_data:
         cats, fair_p, fair_a, quota_lost, cross = attr_data
