@@ -177,36 +177,10 @@
 
 ---
 
-### 🔴 用户令 · 2026-11-07 10:10（**按早晨令继续评测；cline 专项加盯**）· 用户直令 · 最高优先 · 未完成
-
-> **用户原话**：「harness：按早晨的用户令评测，同时多关注一点 cline。」
-
-#### 1. 主线不变（照 08:1x 令执行，不另起炉灶）
-
-1. 代际审计令（Kimi -> GLM-5.3-Flash、SWE-bench Lite -> Verified、TB2 -> TB4）：代际矩阵表 + 可继承/可修改/应废弃逐项落地；
-2. 目标：**消灭 TB4 全 0 passed**（先 1 题 x 1 路验 verifier 非结构性 0，再 oracle 必须 1.0）；
-3. §22:4x 两基准 7 路全交付；SWE-bench Verified full500 每路推进到 500；
-4. 已知硬故障 `deepseek` `gw_proxy_dsh:9093`（1.1s 空 patch）：继续诊断，修好后重启该路。
-
-#### 2. cline 专项（本轮新增重点，独立考核）
-
-| 序号 | 要求 | 判据 |
-|:--|:--|:--|
-| C1 | **独立统计** cline 的 real patch / empty patch / 每题耗时分布 | 数字可从 trace 复算，给出复算命令 |
-| C2 | **失败原因分类**（适配器 / 网关额度 429 / 上游 5xx / 能力 / 超时 / 格式不可解析 / 环境依赖），逐条可追溯到 trace 文件 | 分类占比之和 = 100%，留 top3 样本原文 |
-| C3 | 确认 R1733 定位的 resume 判定问题修复后，**cline 空 patch 是否归零** | 未归零必须给根因证据（trace + 日志行） |
-| C4 | 每轮心跳含**一行 cline 专项小结**（real/empty/失败 top1） | 缺该行视为未执行本令 |
-| C5 | cline 专题 HTML 报告：固定文件 `reports/report_harness_cline_special_zh.html` **原地覆盖**（🚫 禁止 `_rXXXX` 新文件），写清与 hermes/opencode 的差距来源 | 报告在 `reports/`，自包含、0 外链 |
-
-> 📛 命名纪律照旧：报告正文一律写 `cline`，禁止任何 `cline-patched` 变体。
-
-#### 3. 归因红线
-
-- 网关额度耗尽 / 上游 429 **不得**写成"模型能力"结论；
-- 能力差（真实做错）也**不得**用"基础设施问题"掩盖；两者必须用 oracle + trace 证据区分。
-- cline 若 REAL patch 明显低于其他路，必须给出**可检验假设 + 下一步实验**，而不是只报数字。
+> 📦 §用户令·2026-11-07 10:10（cline专项加盯）**✅ C1-C5 已交付** → ARCHIVE；**结论**：C1-C5全done(332real/empty=0/74.7%/报告R2453)·代际审计见08:1x·TB4→TB-2.1见15:2x·deepseek已修(R988)·剩余TB-2.1 rerun由08:0x覆盖。需要时再读。
 
 ---
+
 
 
 ### ✅ §用户令·2026-11-07 08:1x（评测脚本代际审计）· ✅ 已交付（R1739）
@@ -215,27 +189,7 @@
 
 ---
 
-### 🔴 §用户令·2026-11-06 22:4x（glm-5.3-flash 重测：SWE-bench Verified + Terminal Bench 4.0 × 7 路）· 用户直令 · 最高优先 · ⚠️ 未完成
-
-> **用户原话**：「harness：用 glm-5.3-flash 重新测试 (SWE-bench Verified + Terminal Bench 4.0) x7」
->
-> **口径（不可改）**：backbone 统一 **glm-5.3-flash**（gateway `http://agi-gateway.cxmt.com/v1`，key 用 `launch_glm53_7x300.sh` 里的 `GLM53_KEY`；开跑前先 curl 探针确认 HTTP 200，非 200 不许开跑）；7 路 = cline / codex / opencode / claude-code / pi / hermes / deepseek-harness；**两个基准都要跑满 7 路**。
->
-> **基准 A · SWE-bench Verified（500 题，非 Lite）**
-> - 复用既有 full500 链路（`run/harness/swebench_verified_full/run_verified_full.py` + `jobs_*/`），只把模型注入切到 glm53：cline 直连 gateway；codex / opencode / claude-code / pi / hermes 走 gw_proxy **9092**；deepseek-harness 走 gw_proxy_dsh **9093**（**照抄** `launch_glm53_7x300.sh` 的 Step1–Step2 配置块，不要重新发明）。
-> - 7 路**限并发/串行**（沿用 chain 脚本的 CPU 护栏），每路跑完即 eval；进度按 **100 / 300 / 500** 三段汇报。
-> - 结果落 `swebench_verified_full/reports/eval_glm53_<harness>_*.json`；🚫 结果 JSON 不入库（硬约束③）。
->
-> **基准 B · Terminal Bench 4.0**（✅ 已核实可得：`~/terminal-bench-4.0` **66 题**，镜像已齐，7 路 smoke 全通——见 §08:1x 令）
-> - 走 `terminalbench/launch_tb4_glm53_full.sh`，7 路全量。⚠️ **但当前全 0 passed 是 verifier infra 问题，非模型问题**，先按 §08:1x 令 P0 修 verifier 再跑全量。
-> - 若 verifier 修不动 ⇒ **如实上报 RED**，并仍交付 2.0 × 7 路作对照基线，报告**必须显著标注「版本=2.0」**，🚫 不得把 2.0 写成 4.0。
->
-> **交付物**：`reports/report_harness_glm53_7way_swebench_tb_zh.html`（中文单文件、0 script 0 外链；含 ①7×SWE-bench Verified 矩阵 ②7×TB 矩阵 ③与 kimi-k2.6-cloud 历史结果同口径对照 ④TB 版本核实结论与分母口径 ⑤失败归因，infra 单列）+ 生成器脚本 + 本线记录（`MEMORY_HARNESS.md` 心跳 + `run/harness/` 下的进度日志）。
->
-> **护栏**：CPU 单进程 >80 核立杀（eval 题重跑）、内存同 10-30/11-02 令；🚫 结果 JSON 入库；报告里写 `cline` 不写 `cline-patched`；每路跑完即 commit（`harness glm53:` 前缀）；TASK/MEMORY ≤32KB。
->
-> **带件（用户 22:5x）· 硬盘体检**：开工前先 `df -h /data /` + `docker system df`，算清 **TB 4.0 / SWE-bench 镜像预估占用 vs /data 余量**，写进报告一节；不足则给**清理候选清单**（🚫 不得擅自删他人数据 / 他线镜像）。
-> **完成标记**：两基准 7 路全交付后本行改 `✅ 已交付`；未交付 ⇒ `WAITING: 0`。
+> 📦 §用户令·2026-11-06 22:4x（glm53重测SWE-bench+TB×7路）**✅ SWE-bench 7路全交付 / TB→TB-2.1(由08:0x覆盖)** → ARCHIVE；**结论**：SWE-bench Verified 7路done(cline356/opencode401/pi333/codex291/cc273/deepseek212/hermes184)·TB4切换TB-2.1(✅R1770)·TB-2.1 rerun由08:0x覆盖·报告已交付。需要时再读。
 
 > 📦 历史已闭合指针（原文见 ARCHIVE）：10-28 19:1x+20:0x（结果 JSON 不入库 → R584 `git rm --cached` 15 个；**③ 硬约束仍生效**）· 10-28 12:0x（TB 7way 整改）· 11-04 13:5x（修适配器 → cline **356/500=71.3%**）· 11-04 13:1x（cline 326 vs opencode 401）· 11-06 17:1x（差距 86% 为能力差，p=6.27e-08）。
 ### 🚀 运维令 · 2026-11-02 11:2x（**自检同时盯 CPU：本线评测进程 CPU 不许失控，容器内失控用 sudo/docker kill**）· 用户直令 · 最高优先

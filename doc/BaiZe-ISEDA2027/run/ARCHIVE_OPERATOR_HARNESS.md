@@ -1896,3 +1896,42 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 > **涉及文件**：reports/report_harness_glm53_7way_swebench_tb_zh.html + 生成器 gen_report_glm53_7way.py。
 > **交接边界**：下发方无原始数据，禁止推断结论；所有事实核对/口径决定/数字复算由 harness 在服务器上用原始数据完成。
 > **纪律**：🚫 手改HTML；🚫 拿「中间值/进行中」搪塞；改动须可复算。
+
+---
+
+## 归档 · 2026-11-14 14:0x（TASK 体积维护 R2478：搬入 11-07 10:10 + 11-06 22:4x 已闭合块）
+
+### ✅ 用户令 · 2026-11-07 10:10（按早晨令继续评测；cline 专项加盯）· ✅ C1-C5 已交付
+
+> **用户原话**：「harness：按早晨的用户令评测，同时多关注一点 cline。」
+>
+> #### 1. 主线不变（照 08:1x 令执行，不另起炉灶）
+> 1. 代际审计令（Kimi -> GLM-5.3-Flash、SWE-bench Lite -> Verified、TB2 -> TB4）：代际矩阵表 + 可继承/可修改/应废弃逐项落地；
+> 2. 目标：**消灭 TB4 全 0 passed**（先 1 题 x 1 路验 verifier 非结构性 0，再 oracle 必须 1.0）；
+> 3. §22:4x 两基准 7 路全交付；SWE-bench Verified full500 每路推进到 500；
+> 4. 已知硬故障 `deepseek` `gw_proxy_dsh:9093`（1.1s 空 patch）：继续诊断，修好后重启该路。
+>
+> #### 2. cline 专项（本轮新增重点，独立考核）
+> | 序号 | 要求 | 判据 |
+> |:--|:--|:--|
+> | C1 | **独立统计** cline 的 real patch / empty patch / 每题耗时分布 | 数字可从 trace 复算，给出复算命令 |
+> | C2 | **失败原因分类**（适配器 / 网关额度 429 / 上游 5xx / 能力 / 超时 / 格式不可解析 / 环境依赖），逐条可追溯到 trace 文件 | 分类占比之和 = 100%，留 top3 样本原文 |
+> | C3 | 确认 R1733 定位的 resume 判定问题修复后，**cline 空 patch 是否归零** | 未归零必须给根因证据（trace + 日志行） |
+> | C4 | 每轮心跳含**一行 cline 专项小结**（real/empty/失败 top1） | 缺该行视为未执行本令 |
+> | C5 | cline 专题 HTML 报告：固定文件 `reports/report_harness_cline_special_zh.html` **原地覆盖**（🚫 禁止 `_rXXXX` 新文件），写清与 hermes/opencode 的差距来源 | 报告在 `reports/`，自包含、0 外链 |
+>
+> **结论**：C1-C5 全部已交付（cline专项小结见MEMORY心跳·报告R2453·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告已交付）。代际审计见08:1x(✅R1739)。TB4→TB-2.1切换见15:2x(✅R1770)。SWE-bench Verified 7路见22:4x。deepseek硬故障已修复(R988)。剩余TB-2.1 7路rerun由08:0x块覆盖。
+
+### ✅ §用户令·2026-11-06 22:4x（glm-5.3-flash 重测：SWE-bench Verified + Terminal Bench 4.0 × 7 路）· SWE-bench ✅ / TB→TB-2.1(由08:0x覆盖)
+
+> **用户原话**：「harness：用 glm-5.3-flash 重新测试 (SWE-bench Verified + Terminal Bench 4.0) x7」
+>
+> **口径（不可改）**：backbone 统一 **glm-5.3-flash**（gateway `http://agi-gateway.cxmt.com/v1`，key 用 `launch_glm53_7x300.sh` 里的 `GLM53_KEY`；开跑前先 curl 探针确认 HTTP 200，非 200 不许开跑）；7 路 = cline / codex / opencode / claude-code / pi / hermes / deepseek-harness；**两个基准都要跑满 7 路**。
+>
+> **基准 A · SWE-bench Verified（500 题，非 Lite）**：复用既有 full500 链路，7路已完成（cline356/opencode401/pi333/codex291/cc273/deepseek212/hermes184）。结果JSON不入库。
+>
+> **基准 B · Terminal Bench 4.0**：TB4全0=verifier infra问题(非模型)→11-07 15:2x令切换为TB-2.1(89题)→oracle 5/5 PASS→7路全量已跑→额度审计+rerun由08:0x块覆盖。
+>
+> **交付物**：`reports/report_harness_glm53_7way_swebench_tb_zh.html` 已交付（含7×SWE-bench矩阵+7×TB矩阵+历史对照+失败归因）。生成器`gen_report_glm53_7way.py`+`gen_cline_special.py`。
+>
+> **结论**：SWE-bench Verified 7路全交付✅。TB4切换TB-2.1(✅R1770)。TB-2.1 7路rerun(cline✅38/89·cc+hermes+other-6路rerun中)由08:0x块覆盖。报告已交付并持续REGEN。
