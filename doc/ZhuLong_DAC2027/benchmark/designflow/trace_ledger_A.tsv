@@ -481,7 +481,7 @@
 1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	parked		2026-11-14 07:07	r496 peek: USER#0 read project+tell me what the review prompt is, analysis Q&A, REJECT
 1794382021638_eadk1	alanji	hfeg0plg99	107	digital	parked		2026-11-14 07:07	r496 peek: USER#0 analyze why pattern reports DMI pin compare error, debug/analysis, REJECT
 1794449150836_cdrm1	daiweilu	hfeg0pgn145	107	verification	parked		2026-11-14 07:30	analysis Q&A: 8-turn testmode verification guidance (RingOscCP90Sel/CrackMonEn/VintReadSel/ChipID/BCCheckbit/KillPPRDis), user asks which-signal-to-look-at/how-to-verify, not produce-task. r497 independent peek
-1794571860576_p0fqe	johnl	hfeg0pkn001	224	pnr_signoff	claimed		2026-11-14 07:45	
+1794571860576_p0fqe	johnl	hfeg0pkn001	224	pnr_signoff	parked		2026-11-14 10:51	r505: innovus DRC-rule summarization Q&A (r498 INFRA-BLOCK un-blocked via subdir path fix, REJECT produce-task)
 1794465633184_9scu4	e0045128	hfeg0pkn005	27	digital	parked		2026-11-14 07:57	trivial+unreachable: mc27 synthesis:3 pyAether only (too low signal for produce-task); also NOFILE on 10.129.2.14 (load-balanced)
 1794468675464_p5pi7	dsgao	hfeg0pkn001	236	verification	parked		2026-11-14 09:16	r501 RE-PEEK (infra lifted): gvim Q&A (syntax highlighting for .sv), NOT produce-task. mc236 from systemverilog keywords in context, actual task=troubleshooting gvim config. QUALITY REJECT.
 1794385756928_jeij7	e0039102	hfeg0pbn16	143	verification	parked		2026-11-14 09:17	r501 PEEK: VPS run_regr config generation produce-task (306 msgs). User asks to generate run_regr file set for new project lpddr5_ddgoa_WOWTOP. L1 (offline file gen). Reference files at /rundata/ddgoa/... inaccessible from e0031982 ssh identity. Potential L1 gap-fill case if pool stays depleted.
@@ -518,3 +518,8 @@
 1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	parked		2026-11-14 10:10	r503: sim-path+pattern-path debug (truncated) debug pattern
 1789975587201_fniqj	alanji	hfeg0pjn100	36	digital	parked		2026-11-14 10:10	r503: write python script add keyword vague + netlist-diff analysis
 1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	parked		2026-11-14 10:10	r503: workspace have what infra Q&A
+1791280343229_bp54q	mwxi	hfeg0pkn003	76	digital	parked		2026-11-14 10:51	r505: crontab task-recovery infra REJECT (verilog kw from workspace, task=infra)
+1794377042867_o5njo	xrxiong	hfeg0pkn001	67	digital	parked		2026-11-14 10:51	r505: irun.log sim-error analysis Q&A REJECT
+1793169406310_49kzt	e0039602	hfeg0pkn005	55	digital	parked		2026-11-14 10:51	r505: xcelium usage Q&A (user: dont execute just tell me) REJECT
+1794469877801_685bd	eric1ch	hfeg0pkn001	50	digital	parked		2026-11-14 10:51	r505: LPDDR6 JEDEC KG skill-usage REJECT
+1793704618870_pz29g	e0039602	hfeg0pkn005	48	digital	parked		2026-11-14 10:51	r505: A_Compare.rpt error analysis Q&A REJECT
