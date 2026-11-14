@@ -31,6 +31,42 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-14 09:3x（**修复 claude-code ConnectionRefused → 重测 TB-2.1 89 题**）· 未完成 · 最高优先
+
+> **用户原话**：「harness，既然 claude-code TB-2.1 89 个题都归因为 connection_refused。那需要修复问题 -> 重新测试。」
+
+**一、已知事实（你报告里的原文）**
+- `claude-code TB-2.1 = 0/89`，`ConnectionRefused 88/89 (98.9%)` + `CLI 解析 bug 1/89`
+- 样本：`exception_message = "Claude-Code exited with code 1: API Error: Unable to connect to API (ConnectionRefused)"`
+- 你报告结论：模型从未运行，`tokens=0`；真实能力**无法从本批数据评估**
+
+**二、必做步骤**
+
+1. **定位根因**（先查再改，别直接重跑）：
+   - 适配器 `terminalbench/agents/claude_code.py` L174-182 把 `ANTHROPIC_BASE_URL = TB_GW_PROXY_BASE`（`http://127.0.0.1:9092`）、`OPENAI_BASE_URL = TB_GW_PROXY_URL`（`http://127.0.0.1:9092/v1`）注入**容器内**环境。
+   - **重点核实**：容器内的 `127.0.0.1` 指向的是**容器自己**，不是宿主机。若 gw_proxy 跑在宿主 9092，容器内必须用宿主地址（`host.docker.internal` / docker bridge 网关 / `--network host`）。请用**实际命令验证**（如容器内 `curl -s -o /dev/null -w '%{http_code}' <url>`），把实测输出贴进 MEMORY 与报告。
+   - 同时核实 `--extra-docker-compose` overlay（`overlay-network-host.yml`）在该次运行中**是否真的生效**；以及 7 路里 `cline/pi/opencode` 能连通、`claude-code` 不能，**差异在哪**（这是最有价值的对照证据）。
+
+2. **修复**：按实测根因改（可能是 base_url 换成宿主可达地址、或补 network 配置、或 overlay 未生效）。🚫 不许改判据、不许放宽 timeout 来"刷分"。
+
+3. **重测**：修复后用**与 7 路完全相同的口径**重跑 claude-code TB-2.1 全 89 题（`-k 1`、`n-concurrent 1`、`nice -n 19`、`TB_AGENT_TIMEOUT=3600`、jobs-dir=/tmp）。
+   - 重跑前先做**连通性冒烟**（1 题即可）：确认 `ConnectionRefused` 消失、`iterations>0`、`tokens>0`，再跑全量。
+
+4. **出结果**：
+   - 更新 `report_harness_cc_tb21_attribution_zh.html`（新跑一轮的逐题归因）
+   - 更新 `report_harness_tb21_7way_zh.html`（claude-code 行从 `0/89` 换成真实数字）
+   - 若重跑后仍有失败，**必须给非额度/非连接的证据**（iterations / exception_info / finishReason）
+
+**三、判据**
+- MEMORY 心跳一行：`cc修复: 根因=<实测结论> · 修复=<改动> · 冒烟=<OK> · 重测=passed/N · vs 旧 0/89`
+- 若根因判定为「评测环境限制、无法在离线容器内连通」，写 `BLOCKED + 实测证据 + 需要什么`，🚫 不许把它当成能力结论留着。
+
+**四、提醒**
+- 这是**你上一轮自己给出的结论**（「需修复网关连接后重跑才能获得能力数字」），现在按它执行即可。
+- 现有 `0/89` 是**无效数字**，修完重测才有意义。
+
+---
+
 ### ✅ 用户令 · 2026-11-14 08:4x（**解释审计结果的「自相矛盾」**：claude-code Q0/S0 却 0 passed）· ✅ 已交付（R2462）
 
 > **用户原话**：「把【你观察到的『自相矛盾』的审计结果】也派发给 harness，让它给出解释。」
