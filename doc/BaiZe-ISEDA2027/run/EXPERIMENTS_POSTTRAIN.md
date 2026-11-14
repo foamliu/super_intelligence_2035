@@ -11917,3 +11917,18 @@ python3 bpt_attribution_p0_dev_compare.py \
 **de-risk（下一 wake 行动项）**：relaunch515b 内 chain auto-rescue 因二进制 grep bug 对 dev 臂亦失效（A1 实测"RESCUE: 未找到 batch dir...跳过"）⇒ baseline_dev/p0_dev 完成后须先 `bpt_attribution_manual_rescue.sh` 手动兜底产出 final_report_rescued.json，再跑 `bpt_attribution_p0_dev_compare.py`（已就位，A1-vs-A3 验证 delta+5pp / McNemar n01=2 n10=0 p=0.5 INCONCLUSIVE）出 delta_pp + McNemar + 预注册判定 ⇒ 更新归因夜报 §4。
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面。所有 posttrain 交付物已 commit（git status clean）。09:00 及格线 5/6✅，唯一未闭环=P0 dev 前后对比（~10:00+）。
+
+
+## §R529 postmortem 二十二度复核 + P0 dev 链进度精化 + 阻塞诚实标注（wake529 · 2026-11-15 07:1x）
+
+**postmortem（🔴最高优先）二十二度复核 PASS**：报告 `reports/report_infra_tunnel_postmortem_zh.html`（commit 375e11bf7）在位；隧道三命令 07:11 实测全 PASS：`ss -ltnp|grep 3333`=LISTEN 127.0.0.1:3333；`ssh -p3333 ... 'hostname'`=hfeg0tedaap02；三隧道进程 618469/1008898/1278889 活。**首屏三句话（坏没坏/怎么坏/谁修）+ 六问逐一（每条带证据）+ 三条验证命令复核满足 `INFRA_TUNNEL_POSTMORTEM_SPEC.md` §1/§2**；无证据处标注「无记录」，未猜未编。
+
+**P0 dev 链进度精化**：经隧道取证 36.15——relaunch515b PID700233 活（ppid=1）；baseline_dev PID1479907 仍在 codegen（etime~2h，79 dev 题，`/tmp/posttrain_attribution_prompt/baseline_dev/codegen.log` 3.98MB/85199 行/966 submit markers，较 wake527 06:37 的 259 markers 增长——进度推进但慢）。慢因=minicpm5 tool-call parser 乱码→部分任务命中 2500s 超时，**评测协议冻结项不可改**（2500s / `-p 8 -n` / 单 trace）。p0_dev 仍排队（单 serve 串行，GPU6:8096 经反向隧道 18096 独占，无法加并发）。
+
+**阻塞诚实标注**：P0 前后对比 ETA≈10:00-10:30（**略过 09:00**，codegen 吞吐限，非 infra、非阻塞）；完成后须先手动 `bpt_attribution_manual_rescue.sh` 兜底（relaunch515b 内 chain auto-rescue 对 dev 臂因二进制 grep bug 失效，A1 实测「未找到 batch dir...跳过」）→再跑 `bpt_attribution_p0_dev_compare.py`（已就位，A1-vs-A3 验证 delta+5pp / McNemar n01=2 n10=0 p=0.5 INCONCLUSIVE）出 delta_pp + McNemar + 预注册判定 ⇒ 更新归因夜报 `report_posttrain_attribution_overnight_zh.html` §4。
+
+**R2 5-run eval**：run5 codegen RUNNING@03:33:34（.17 PID3721157，etime~3.6h，GPU7:8095 serve minicpm5-2b-grpo-R2-step200 健康，run4 耗 6.7h⇒ETA≈10:00-10:30）⇒ 5run_rl_analysis_R2.json；4-run mean 0.475% << step105 3.04%±0.83%，趋势 decisively 负。
+
+**09:00 及格线**：5/6✅ [A1=0/40 · A3=2/40 · T6 归因表 · 合并 HTML · EXPERIMENTS]，**唯一未闭环=P0 dev 前后对比**（数据 ETA~10:00+，下一 wake 数据齐 + 手动 rescue 后跑 compare）。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面；未引用未跑完的 run（P0 标 pending）。MEMORY 29723B（<32KB）。
