@@ -115,7 +115,7 @@ class HermesTB(TBBaseAgent):
                 "if command -v python3 >/dev/null 2>&1; then PY=python3; "
                 "elif command -v python >/dev/null 2>&1; then PY=python; "
                 "else echo 'HERMES_NO_PYTHON: no python interpreter in task image' >&2; exit 127; fi && "
-                "$PY -m pip install --break-system-packages hermes-agent 2>&1 | tail -5"
+                "$PY -m pip install --break-system-packages --ignore-installed hermes-agent 2>&1 | tail -5"
             ),
             timeout_sec=900,
         )
@@ -132,7 +132,7 @@ class HermesTB(TBBaseAgent):
                     "if command -v python3 >/dev/null 2>&1; then PY=python3; "
                     "elif command -v python >/dev/null 2>&1; then PY=python; "
                     "else echo 'HERMES_NO_PYTHON: no python interpreter in task image' >&2; exit 127; fi && "
-                    "$PY -m pip install --break-system-packages --force-reinstall "
+                    "$PY -m pip install --break-system-packages --force-reinstall --ignore-installed "
                     "hermes-agent 2>&1 | tail -5"
                 ),
                 timeout_sec=900,

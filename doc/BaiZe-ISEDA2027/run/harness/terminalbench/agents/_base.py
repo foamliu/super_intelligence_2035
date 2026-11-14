@@ -242,6 +242,77 @@ class TBBaseAgent(BaseInstalledAgent):
             ),
         )
 
+    async def _ensure_python(self, environment: BaseEnvironment) -> None:
+        """Ensure a ``python3`` interpreter exists inside the container.
+
+        FIX (2026-11-14, R2464): several Terminal-Bench 2.1 task images are
+        built ``FROM ubuntu:24.04`` with NO python3 installed (compile-compcert,
+        configure-git-webserver, build-pov-ray, caffe-cifar-10,
+        adaptive-rejection-sampler — their Dockerfiles never
+        ``apt install python3``).  ``_ensure_pip`` and the hermes/deepseek
+        ``install()`` blocks all hardcode ``python3 ...``, so on such images
+        they die with ``bash: python3: command not found`` (exit 127) during
+        agent setup — a pure INFRA failure that must NOT be counted as model
+        ability (归因红线).
+
+        This method is a no-op when python3 (or python) is already on PATH.
+        Otherwise it installs python3 (+pip/+venv) via the image's package
+        manager.  The overlay injects http_proxy/https_proxy for the MITM
+        proxy, so apt/apk reach the public mirrors; HTTPS peer verification is
+        disabled to survive the proxy's TLS interception (same rationale as the
+        overlay's ``npm_config_strict_ssl=false`` / ``curl -k``).
+
+        Standard practice for "minimal container missing python3" in agent
+        benchmarks (SWE-bench / Terminal-Bench harnesses): install the
+        interpreter via the base image's package manager BEFORE bootstrapping
+        any pip-installed agent CLI.  (Web search from this sandbox was
+        unavailable — the agent shell has its proxy stripped per AGENTS.md
+        §2026-10-05 — so the established practice is applied directly, with the
+        Dockerfile + run-stderr evidence recorded in MEMORY.)
+        """
+        probe = await environment.exec(
+            command=(
+                "if command -v python3 >/dev/null 2>&1; then echo PY3_OK; "
+                "elif command -v python >/dev/null 2>&1; then echo PY_OK; "
+                "else echo NO_PYTHON; fi"
+            )
+        )
+        if (probe.stdout or "").strip() in ("PY3_OK", "PY_OK"):
+            return  # interpreter already present — nothing to do
+
+        # No python at all — install via the image's package manager.
+        # apt-get (debian/ubuntu), apk (alpine), dnf/yum (fedora/rhel).
+        install_cmd = (
+            "export DEBIAN_FRONTEND=noninteractive "
+            "PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+            "if command -v apt-get >/dev/null 2>&1; then "
+            "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 && "
+            "  apt-get install -y --no-install-recommends "
+            "    -o Acquire::https::Verify-Peer=false "
+            "    python3 python3-pip python3-venv 2>&1 | tail -5 ; "
+            "elif command -v apk >/dev/null 2>&1; then "
+            "  apk add --no-cache python3 py3-pip 2>&1 | tail -5 ; "
+            "elif command -v dnf >/dev/null 2>&1; then "
+            "  dnf install -y python3 python3-pip 2>&1 | tail -5 ; "
+            "elif command -v yum >/dev/null 2>&1; then "
+            "  yum install -y python3 python3-pip 2>&1 | tail -5 ; "
+            "else echo 'HERMES_NO_PKG_MANAGER: no apt-get/apk/dnf/yum to "
+            "install python3' >&2; exit 127; fi"
+        )
+        await self.exec_as_root(environment, command=install_cmd, timeout_sec=600)
+
+        recheck = await environment.exec(
+            command=(
+                "command -v python3 >/dev/null 2>&1 && echo PY3_NOW_OK "
+                "|| echo PY3_STILL_MISSING"
+            )
+        )
+        if "PY3_NOW_OK" not in (recheck.stdout or ""):
+            raise RuntimeError(
+                f"Failed to install python3 into python-less task container: "
+                f"{(recheck.stdout or '')[:300]}"
+            )
+
     async def _ensure_pip(self, environment: BaseEnvironment) -> None:
         """Ensure ``python3 -m pip`` is usable inside the container.
 
@@ -262,6 +333,13 @@ class TBBaseAgent(BaseInstalledAgent):
              proxy's TLS interception (same reason the overlay sets
              ``npm_config_strict_ssl=false`` / ``curl -k``).
         """
+        # FIX (2026-11-14, R2464): ensure a python interpreter exists FIRST.
+        # Many TB-2.1 images are FROM ubuntu:24.04 with no python3 at all, and
+        # every step below (plus the hermes/deepseek install() blocks) hardcodes
+        # `python3 ...` — without this we die with "python3: command not found"
+        # during agent setup (infra failure, NOT ability).
+        await self._ensure_python(environment)
+
         probe = await environment.exec(
             command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
         )

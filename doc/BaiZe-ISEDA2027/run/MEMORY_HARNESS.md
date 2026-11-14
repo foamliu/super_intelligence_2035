@@ -4,10 +4,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2463 §14-09:3x cc修复+重跑LAUNCHED·smoke OK·cc89题RUNNING·hermes rerun 13/82·5th-batch RUNNING
+PHASE:        R2464 §14-10:0x hermes python3修复DONE·smoke OK·cc89题RUNNING·hermes rerun(旧码)16/82·5th-batch RUNNING
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因DONE)·R2462(08:2x报告整改+08:4x cc归因已交付)·R2463(08:0x B重跑监控+任务清单准备+.gitignore修复+reports/JSON清理+09:3x cc修复smoke OK+cc89题重跑LAUNCHED)
-当前动作:     R2463: **cc修复+重跑LAUNCHED**·smoke test OK(claude.exe ANTHROPIC_BASE_URL=http://127.0.0.1:9092/v1·exit0 stdout有内容·无ConnectionRefused)·cc 89题重跑RUNNING(PID2702743·第一题adaptive-rejection-sampler agent执行中)·hermes rerun 13/82(1pass)·5th-batch RUNNING·gateway200·无predict竞争·.gitignore修复+reports/JSON清理+任务清单已备·W:0
-下一步:       ①cc 89题重跑完成→merge→REGEN双报告 ②hermes rerun完成→merge→REGEN ③5th-batch完成→merge→REGEN ④opencode38→pi46→deepseek48逐路串行 ⑤TASK归档(39.6KB→≤32KB)
+当前动作:     R2464: **hermes python3修复DONE+smoke OK**·根因=a(容器无python3·ubuntu24.04等裸镜像)·修法=_base.py增_ensure_python()先apt/apk/dnf装python3+pip+venv→_ensure_pip首行调_ensure_python→hermes.py install块前置python探测·smoke(compile-compcert)验证:HERMES_NO_PYTHON消失·python3.12.3+pip3+venv装好·hermes-agent0.19.0装好·/usr/local/bin/hermes可用✅·cc89题重跑RUNNING·hermes rerun(旧码08:20批)16/82·4py3less题待旧批跑完后用新码重跑·gateway200·W:0
+下一步:       ①cc 89题重跑完成→merge→REGEN双报告 ②hermes rerun(旧码)完成→merge→识别4py3less失败题→用新码重跑4题→merge ③5th-batch完成→merge→REGEN ④opencode38→pi46→deepseek48逐路串行(新码) ⑤TASK归档(39.6KB→≤32KB)
 ERROR_COUNT:  0
  体积: TASK=39.6KB / MEMORY=31.8KB（归档183KB）
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
