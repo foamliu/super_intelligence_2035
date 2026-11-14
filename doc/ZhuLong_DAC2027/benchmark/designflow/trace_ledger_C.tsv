@@ -832,3 +832,41 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793179751886_mgaii	e0047434	hfeg0pnd001	113	physical_verify	case	EDA-Eval-DesignFlow-PinAccessScore-001	2026-11-14 11:18	
 1794445658665_b6iql	zhiguo1w	hfeg0plg06	91	physical_verify	case	EDA-Eval-DesignFlow-CmpQaXlsxChart-001	2026-11-14 12:39	
 1794384121107_0piwm	xdwang	hfeg0plg94	176	layout_aether	case	EDA-Eval-DesignFlow-InvCellCreate-001	2026-11-14 12:55	
+1794537778378_6jg00	e0024852	hfeg0plg78	134	physical_verify	parked		2026-11-14 13:22	ACCEPT-alt future deep-read: e0024852 PEX batch_pex.py modify-existing B档-only (USER#0 gives GDS path fix), thin PEX orchestration algorithm, budget-limited r557 0-case
+1794537737374_td0m5	xinqiaoz	hfeg0plg56	230	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 skill-orch
+1793754683186_j0ndr	xinqiaoz	hfeg0plg56	213	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 issue-handler
+1789717635081_qr3gr	xinqiaoz	hfeg0plg56	207	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 merge-scripts
+1794030393495_9r8mu	xinqiaoz	hfeg0plg56	202	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 continue-merge
+1791803353210_t3nzf	xinqiaoz	hfeg0plg56	185	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1789692730981_g1vyt	xinqiaoz	hfeg0plg56	174	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1792492312284_ocj5p	xinqiaoz	hfeg0plg56	155	physical_verify	parked		2026-11-14 13:21	xinqiaoz PDK Q&A
+1789707960469_v25ss	xinqiaoz	hfeg0plg56	132	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1790066471618_1w17r	xinqiaoz	hfeg0plg56	131	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1789646176811_qguq0	xinqiaoz	hfeg0plg56	128	physical_verify	parked		2026-11-14 13:21	xinqiaoz PDK Q&A
+1794186777174_8lc8s	xinqiaoz	hfeg0plg56	124	physical_verify	parked		2026-11-14 13:21	xinqiaoz PDK/techfile Q&A
+1789713772472_fzq12	xinqiaoz	hfeg0plg56	117	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1789696486678_lg5f2	xinqiaoz	hfeg0plg56	114	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1789717386998_vnknn	xinqiaoz	hfeg0plg56	113	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1792635668782_8hiwm	xinqiaoz	hfeg0plg56	110	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
+1794531720896_vpabb	xxchen	hfeg0plg53	184	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 modify-existing
+1794375180864_lwzz2	xxchen	hfeg0plg53	161	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 label-modify
+1794542962301_1q921	xxchen	hfeg0plg53	154	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 editor-fault
+1792198270473_rgxd6	xxchen	hfeg0plg53	141	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 drc-modify
+1790584988596_q5xew	kenwang	hfeg0plg16	198	layout_aether	parked		2026-11-14 13:21	kenwang known-reject r547 context-summary
+1790574386590_dx2x0	kenwang	hfeg0plg16	140	layout_aether	parked		2026-11-14 13:21	kenwang known-reject near-dup
+1790574379050_pikns	kenwang	hfeg0plg16	140	layout_aether	parked		2026-11-14 13:21	kenwang known-reject near-dup
+1790574116232_re39c	kenwang	hfeg0plg16	140	layout_aether	parked		2026-11-14 13:21	kenwang known-reject near-dup
+1792053493233_vhz0j	panruan	hfeg0plg76	111	physical_verify	parked		2026-11-14 13:21	panruan known-reject r548 rule-parse-QA
+1792053423366_xgo8p	panruan	hfeg0plg76	111	physical_verify	parked		2026-11-14 13:21	panruan known-reject r548 near-dup
+1792053269961_ksa2h	panruan	hfeg0plg76	111	physical_verify	parked		2026-11-14 13:21	panruan known-reject r548 near-dup
+1783653766179_w3bwg	e0014566	hfeg0plg58	139	layout_virtuoso	parked		2026-11-14 13:21	e0014566 known-reject r537 setup-QA
+1785745785528_ivast	e0014566	hfeg0plg58	115	layout_virtuoso	parked		2026-11-14 13:21	e0014566 known-reject r537 meta-wrapper
+1782910844277_huntx	e0014566	hfeg0plg58	112	layout_virtuoso	parked		2026-11-14 13:21	e0014566 known-reject r537 Q&A
+1789003454557_ot5fh	miccao	hfeg0plg92	144	physical_verify	parked		2026-11-14 13:21	miccao known-reject r547
+1792050093175_2cmzd	miccao	hfeg0plg92	124	physical_verify	parked		2026-11-14 13:21	miccao known-reject r547 near-dup
+1791787809781_w7un3	ziyuny	hfeg0pnd002	113	layout_virtuoso	parked		2026-11-14 13:21	ziyuny known-reject r552 schematic-QA
+1794473314599_q2ivp	e0046686	hfeg0plg80	152	physical_verify	parked		2026-11-14 13:21	e0046686 known-reject r547 debug-QA autosim
+1794450390837_qjchg	e07435	hfeg0plg76	205	physical_verify	parked		2026-11-14 13:21	cross-domain spice/verilog D/B not-C
+1794402601515_cs3x5	deniss	hfeg0plg91	163	physical_verify	parked		2026-11-14 13:21	cross-domain waveform/WaveView D not-C
+1794539296413_hf7nj	e02141	hfeg0plg56	177	physical_verify	parked		2026-11-14 13:21	cross-domain synopsys/bandgap sim B/D not-C
+1788418814848_xm15u	jason17w	hfeg0pnd002	137	physical_verify	parked		2026-11-14 13:22	ACCEPT-alt future: jason17w drc+verilog mixed, unpeeked budget-limited r557
