@@ -36,18 +36,33 @@ MODEL_PATH = os.environ.get(
 
 
 class VQAModel:
-    """Loads Qwen3.5-2B VL once; answers image+question pairs."""
-    def __init__(self, model_path, device):
+    """Loads Qwen3.5-2B VL once; answers image+question pairs.
+
+    If ``adapter`` is given, the base model is wrapped with a PEFT LoRA adapter
+    (e.g. the vision-line v2-RFT strengthen adapter) so the SAME HTTP VQA tool
+    interface can serve either the base model or the SFT/RL-strengthened model --
+    the only variable between the V1 (base) and V2 (adapter) selftest arms.
+    """
+    def __init__(self, model_path, device, adapter=None):
         from transformers import AutoProcessor, Qwen3_5ForConditionalGeneration
         t0 = time.time()
         self.processor = AutoProcessor.from_pretrained(model_path, trust_remote_code=True)
         self.model = Qwen3_5ForConditionalGeneration.from_pretrained(
             model_path, torch_dtype=torch.bfloat16, device_map=device,
             trust_remote_code=True)
+        if adapter:
+            from peft import PeftModel
+            print(f"[vqa-server] loading LoRA adapter: {adapter}", flush=True)
+            self.model = PeftModel.from_pretrained(self.model, adapter)
+            self.adapter_name = os.path.basename(os.path.normpath(adapter))
+        else:
+            self.adapter_name = None
         self.model.eval()
         self.device = device
         self.load_s = time.time() - t0
         self.model_name = os.path.basename(model_path.rstrip("/"))
+        if self.adapter_name:
+            self.model_name = f"{self.model_name}+{self.adapter_name}"
 
     @torch.inference_mode()
     def answer(self, image, question, max_new_tokens=512, temperature=0.0):
@@ -145,11 +160,13 @@ def main():
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--gpu", default="0", help="index within CUDA_VISIBLE_DEVICES")
     ap.add_argument("--model", default=MODEL_PATH)
+    ap.add_argument("--adapter", default=None,
+                    help="optional PEFT LoRA adapter dir (e.g. v2-RFT strengthen adapter)")
     args = ap.parse_args()
     device = f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
     print(f"[vqa-server] loading {args.model} on {device} ...", flush=True)
     global MODEL
-    MODEL = VQAModel(args.model, device)
+    MODEL = VQAModel(args.model, device, adapter=args.adapter)
     print(f"[vqa-server] ready on {device} (load {MODEL.load_s:.1f}s) "
           f"serving http://{args.host}:{args.port}", flush=True)
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()

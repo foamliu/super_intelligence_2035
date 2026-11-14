@@ -1,0 +1,200 @@
+{
+ "arm": "V2",
+ "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+ "tag": "α3",
+ "tier": "A",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+ "verdict": "FAIL",
+ "k_pass": 7,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "first_diverge_stage",
+   "pass": false,
+   "got": "pattern_buf",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "failing_stage",
+   "pass": true,
+   "got": "rd_gate",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_kind",
+   "pass": true,
+   "got": "gate_disable",
+   "gold": "gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "golden_at_div",
+   "pass": true,
+   "got": 75.0,
+   "gold": 80.0,
+   "tol": 8.0
+  },
+  {
+   "name": "actual_at_div",
+   "pass": true,
+   "got": 0.0,
+   "gold": 0.0,
+   "tol": 8.0
+  },
+  {
+   "name": "mismatch_first_cycle",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "mismatch_last_cycle",
+   "pass": false,
+   "got": 8.0,
+   "gold": 7,
+   "tol": 0
+  },
+  {
+   "name": "num_diverge_stages",
+   "pass": false,
+   "got": 5.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "data_intact",
+   "pass": false,
+   "got": "no",
+   "gold": "yes",
+   "tol": 0
+  },
+  {
+   "name": "first_eq_failing",
+   "pass": false,
+   "got": null,
+   "gold": "first_diverge==failing",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause_kind==gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "diverge_range",
+   "pass": true,
+   "got": null,
+   "gold": "last>=first cycle",
+   "tol": 0
+  },
+  {
+   "name": "data_intact_yes",
+   "pass": false,
+   "got": null,
+   "gold": "data_intact==yes",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "first_diverge_stage": "pattern_buf",
+  "failing_stage": "rd_gate",
+  "root_cause_kind": "gate_disable",
+  "golden_at_div": "75",
+  "actual_at_div": "0",
+  "mismatch_first_cycle": "4",
+  "mismatch_last_cycle": "8",
+  "num_diverge_stages": "5",
+  "data_intact": "no"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "first_diverge_stage",
+   "question": "There are 5 stacked panels top-to-bottom: 'pattern_buf', 'rd_gate', 'slice_mux', 'read_mux', 'pad_driver'. Each shows a blue (golden) and a red (actual) step line over 16 cycles. Which panel is the FIRST (topmost) one where the blue and red lines DIFFER (diverge)? One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "pattern_buf",
+   "ok": true,
+   "elapsed_s": 0.623
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "failing_stage",
+   "question": "Which stage is the failing (root-cause) stage, i.e. the first one where golden and actual diverge? One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "rd_gate",
+   "ok": true,
+   "elapsed_s": 0.616
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "root_cause_kind",
+   "question": "In the panel where the lines first diverge, the red (actual) line DROPS TO ZERO during the divergent cycles while the blue (golden) stays at a positive value. What kind of fault is this? 'gate_disable' or 'bit_swap'? One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "gate_disable",
+   "ok": true,
+   "elapsed_s": 0.602
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "golden_at_div",
+   "question": "At the first divergent cycles, what value does the blue (golden) line hold? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "75",
+   "ok": true,
+   "elapsed_s": 0.6
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "actual_at_div",
+   "question": "At the first divergent cycles, what value does the red (actual) line drop to? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "0",
+   "ok": true,
+   "elapsed_s": 0.559
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "mismatch_first_cycle",
+   "question": "At which cycle number (0-indexed, from 0 to 15) does the divergence FIRST start? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "The divergence between the \"golden\" (blue) and \"actual\" (red) read-path signals first occurs at cycle 4, where the blue signal jumps up while the red signal drops. Final Answer: 4",
+   "ok": true,
+   "elapsed_s": 2.363
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "mismatch_last_cycle",
+   "question": "At which cycle number does the divergence END (the last divergent cycle)? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "The divergence between the golden and actual read-path signals ends at cycle 8, where the blue \"golden\" signal drops to 0 and the red \"actual\" signal remains at 75. Final answer: 8",
+   "ok": true,
+   "elapsed_s": 2.402
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "num_diverge_stages",
+   "question": "How many panels (stages) show a divergence between the blue and red lines, counting from the first one? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "Counting from the first panel down, 5 panels show a divergence between the blue and red lines. Final Answer: 5",
+   "ok": true,
+   "elapsed_s": 1.543
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "data_intact",
+   "question": "Is there a panel where the blue and red lines are IDENTICAL throughout all 16 cycles (data intact at that stage)? Answer 'yes' or 'no'. One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "no",
+   "ok": true,
+   "elapsed_s": 0.564
+  }
+ ],
+ "n_tool_calls": 9,
+ "duration_s": 10.33
+}

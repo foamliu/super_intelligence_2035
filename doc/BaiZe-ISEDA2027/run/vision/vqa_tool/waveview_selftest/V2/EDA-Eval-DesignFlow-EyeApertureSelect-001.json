@@ -1,0 +1,132 @@
+{
+ "arm": "V2",
+ "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+ "tag": "α1",
+ "tier": "A",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+ "verdict": "FAIL",
+ "k_pass": 6,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "optimal_vref",
+   "pass": false,
+   "got": 60.0,
+   "gold": 100.0,
+   "tol": 0.0
+  },
+  {
+   "name": "max_width_at_opt",
+   "pass": true,
+   "got": 57.0,
+   "gold": 56.99,
+   "tol": 3.0
+  },
+  {
+   "name": "skew_at_opt",
+   "pass": true,
+   "got": 5.0,
+   "gold": 5.38,
+   "tol": 3.0
+  },
+  {
+   "name": "height_at_opt",
+   "pass": true,
+   "got": 180.0,
+   "gold": 180.0,
+   "tol": 10.0
+  },
+  {
+   "name": "vref60_valid",
+   "pass": false,
+   "got": "yes",
+   "gold": "no",
+   "tol": 0
+  },
+  {
+   "name": "validity_skew",
+   "pass": true,
+   "got": null,
+   "gold": "skew_at_opt<=15",
+   "tol": 0
+  },
+  {
+   "name": "validity_height",
+   "pass": true,
+   "got": null,
+   "gold": "height_at_opt>=100",
+   "tol": 0
+  },
+  {
+   "name": "reject_vref60",
+   "pass": false,
+   "got": null,
+   "gold": "VREF=60 invalid (false-peak rejected)",
+   "tol": 0
+  },
+  {
+   "name": "vref_in_range",
+   "pass": true,
+   "got": null,
+   "gold": "optimal_vref in [40,120]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "optimal_vref": "60",
+  "max_width_at_opt": "57",
+  "skew_at_opt": "5",
+  "height_at_opt": "180",
+  "vref60_valid": "yes"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "optimal_vref",
+   "question": "A VREF is valid only if skew<=15 AND height>=100. Among valid VREF values, which VREF (in mV) has the LARGEST max_width? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "raw": "The valid VREF values are those where skew <= 15 AND eye_height >= 100. From the plots, eye_height >= 100 for VREF from 50 to 120 mV. Among these, max_width is largest at VREF = 60 mV (approx 68 ps). Final Answer: 60",
+   "ok": true,
+   "elapsed_s": 3.485
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "max_width_at_opt",
+   "question": "At that optimal VREF, what is the max_width in ps? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "raw": "The optimal VREF appears to be 100 mV, where max_width is approximately 57 ps. Final Answer: 57",
+   "ok": true,
+   "elapsed_s": 1.709
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "skew_at_opt",
+   "question": "At that optimal VREF, what is the skew in ps? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "raw": "The optimal VREF appears to be 100 mV, where the max_width is highest. At that point, the skew is 5 ps. Final Answer: 5",
+   "ok": true,
+   "elapsed_s": 1.987
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "height_at_opt",
+   "question": "At that optimal VREF, what is the eye_height in mV? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "raw": "The optimal VREF is 100 mV, where eye_height is 180 mV. Final Answer: 180",
+   "ok": true,
+   "elapsed_s": 1.689
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "vref60_valid",
+   "question": "Is VREF=60 valid (skew<=15 AND height>=100)? Answer 'yes' or 'no'. One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "raw": "yes",
+   "ok": true,
+   "elapsed_s": 0.468
+  }
+ ],
+ "n_tool_calls": 5,
+ "duration_s": 9.56
+}

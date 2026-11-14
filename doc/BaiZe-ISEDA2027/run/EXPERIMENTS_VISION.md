@@ -3346,3 +3346,50 @@ VQA 通道**确实读到了图**（V1 81 次 VQA 调用，per-quantity 正确率
 - 报告：`reports/report_vision_waveview_selftest_zh.html`（19535B·中文·单文件·0 外链·0 script·2 内联 SVG）
 - 复跑：`CUDA_VISIBLE_DEVICES=5 python waveview_selftest_run.py`（需先起 `qwen35_vqa_server.py --port 30001`）·log @ `/tmp/waveview_selftest.log`
 
+## §24 WaveView 10 题自测 · 三段对照（基线 → VQA → SFT/RL · 用户直令 19:4x 阶段 A+B · wake#1235）
+
+**目的**：本线使命交付判据要「同测法下基线→加 VQA→SFT/RL 三段数字并列表」。§23 只跑了前两段（V0/V1·阶段 A）；本节补**第三段 V2**——把 §22 v2-RFT 强化 LoRA 适配器（`rft2_adapter_seed11`，合成集 60→90 p=0.0156）挂上同一 VQA HTTP 端点，对**同一 10 题**再跑，量「合成训练→真实 WaveView 迁移」的增量。
+
+### 配置
+
+- 三臂（唯一变量 = VQA 后端权重）：
+  - **V0**：纯文本 agent（Qwen3.5-2B 不看图）—— 无多模态基线。
+  - **V1**：agent 经 VQA MCP 工具调**基模** Qwen3.5-2B 读图（HTTP `/vqa` :30001）。
+  - **V2**：同一 agent 同一问题，VQA 后端换为**基模 + v2-RFT LoRA 适配器**（`rft2_adapter_seed11`，HTTP :30003，`qwen35_vqa_server.py --adapter`）。V1↔V2 唯一变量 = 后端权重。
+- 题集/判分：与 §23 完全相同——10 题 designflow 公开参数等价重建（α1/α2/α3/α4/β6/β7/β8/β9/β10/β11），每题 k=9–14 条件全过才 PASS。V2 适配器训练用 CoT target（结尾 `Final Answer: X`），故 V2 抽取该字段后再喂给**同一** `check_case`；V0/V1 用同一抽取重算 == §23 已交付值（`rederive_mismatches=[]`，单变量干净）。
+- 顺序随机化 seed=20261114；cheat 审计逐题扫 trace（禁 PIL/opencv/OCR/base64/直读图/case_id 搜答案）。
+
+### 核心结果（诚实）
+
+| 维度 | V0 文本 | V1 基模VQA | V2 SFT/RL-VQA |
+|:--|:--|:--|:--|
+| 整题通过 | 0/10 | 0/10 | 0/10 |
+| 每量准确率（条件数/总条件数） | 34/110 = **30.9%** | 42/110 = **38.2%** | 61/110 = **55.5%** |
+| VQA 工具调用 | 0 | 81 | 81 |
+| cheat_count | 0 | 0 | 0 |
+
+- **翻转**：V0→V1 = 0，V1→V2 = 0，V0→V2 = 0（整题维度 0 翻转）。
+- **每量维度三段递增**：V1−V0 = **+7.3pp**（接入 VQA 的能力增量，基模能看图）；V2−V1 = **+17.3pp**（SFT/RL 域适配增量，CoT 读数推理链在真实 WaveView 上确有迁移，未停留在合成集）。
+- V2 每量 > V1 在 **7/10** 题（最大单题跃升：β6 4/14→9/14 +5、β7 2/12→7/12 +5、β11 6/12→10/12 +4）；V2 < V1 在 3/10（β9 0<1、β8 7<10、α2 4<5）。
+- **McNemar**（配对，n=10 样本不足仅参考）：V1→V2 b=0 c=0 p=1.0；V0→V2 b=0 c=0 p=1.0。
+
+### 判据对照（预注册 + 使命）
+
+- **用户主判据「真实题通过率有提升」**：**未达成** —— 整题 V0=V1=V2=0/10、0 翻转。根因：每题 k=9–14 条件**全过**门槛高，2B 适配器把单量读对率拉到 55.5%，但尚无任一题把全部条件同时读对（最接近：β6 9/14、β11 10/12、α4 6/9）。**真实题上的诚实负结果**。
+- **使命判据「三段数字并列表」**：**达成** —— V0 30.9% → V1 38.2% → V2 55.5% 三段同表并列（§24 表 + 报告），且 V2−V1=+17.3pp 证明合成集 60→90 的提升**迁移到真实 WaveView**（体现为每量增益而非整题翻转）。
+- **cheat=0** ⇒ 通过率可引用 ✓。
+
+### 意义与口径
+
+- 这是**阶段 A（V0/V1 能力增量）+ 阶段 B（V2 SFT/RL 域适配）**的合并交付：原生 VQA 与强化 VQA 在真实 WaveView 上都**单题 0 翻转**，但**每量准确率三段单调递增**——合成集只用于机制验证，结论回到真实题上说话（每量 +17.3pp，非整题翻转）。
+- 口径标签：**WaveView 真实题**（designflow 公开参数等价重建），非合成集；PNG/check 非 designflow 原始字节（.15 评测机不可达=infra-blocker）。
+- 与 designflow task2（end-to-end cline+SUT+VQA 翻转，待评测机→.17:30002 可达性解阻）互补：本节量的是 **VQA 能力天花板**（VQA 直读图答对率），是 end-to-end 翻转的上界。
+
+### 产物
+
+- 运行器/报告生成：`vision/vqa_tool/waveview_selftest/{waveview_selftest_v2_run.py,make_waveview_selftest_v2_report.py,waveview_selftest_cases.py}`
+- 原始结果：`waveview_selftest/V2/*.json`（10）·`summary_v2.json`·`audit_v2.json`（cheat=0/v2_vqa_calls=81/v2_image_reads=0）
+- 适配器端点：`qwen35_vqa_server.py`（+`--adapter` PEFT LoRA 支持）·`:30003`·adapter=`strengthen_runs/rft2_adapter_seed11`
+- 报告：`reports/report_vision_waveview_selftest_zh.html`（覆盖为三段版·中文·单文件·0 外链·0 script·2 内联 SVG）
+- 复跑：起 `qwen35_vqa_server.py --port 30003 --adapter strengthen_runs/rft2_adapter_seed11` + `qwen35_vqa_server.py --port 30001`，再 `python waveview_selftest_v2_run.py`
+
