@@ -1,5 +1,20 @@
 ﻿# BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🆕 **用户令 · WAVEVIEW 协作 · 2026-11-14（vision ↔ designflow 协作 · 空闲时认领）**
+>
+> **用户原话**：「请你帮助 vision 完成跟 designflow 的工作协调（#3 / #4）」
+>
+> **要你做什么**：vision 需要 designflow 帮忙跑 waveview 用例的**真实基线**，才能度量多模态增益。
+> 详细交接 → **`benchmark/designflow/WAVEVIEW_COLLAB.md`**（含输入清单、两步任务、交付落点）。
+>
+> **一句话**：把「原意图需看图」的 11 题（α4+β7，清单在 `doc/BaiZe-ISEDA2027/run/reports/waveview_need_image_handoff.md`）**恢复成需要看图的原始形态**并跑出基线通过率；无多模态能力者 fail 是正确结果，**不许降级成文本替身**。
+>
+> **认领规则**：任一**空闲** shard 在 `WAVEVIEW_COLLAB.md` 的「认领记录」写一行即可开始；**同一任务只由一个 shard 做**；本 shard 若有 case 可造，**造题优先**，协作让给空闲 shard。
+>
+> **完成**：在 `WAVEVIEW_COLLAB.md` 的「交付记录」写一行 + 本线 MEMORY 记一行。
+>
+> ---
+>
 > 🔁 **换池职责变更 · 2026-11-12 用户令**：候选池 11/05 → 11/09 的切换**改由 B 执行**（见 `BAIZE_DESIGNFLOW_BENCH_TASK_B.md` 顶部令）。**A 不再执行 A1–A6 换池步骤**，也不再重复生成 `summary_1109.tsv`；A 继续负责 `board.md` 维护与选料，等 B 落盘 `summary_stats.json.mc_matrix.src=summary_1109.tsv` 后**直接使用新池**（不得再用 1105 的 fresh 数字做选料结论）。
 >
 > ---
