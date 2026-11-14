@@ -1,5 +1,66 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🔴 用户令 · 2026-11-14 17:0x（**H3 不做；H2 恢复 —— 允许改 cline 源码重编译，让自主 spawn 的子 agent 用弱模型**）· 未完成 · 最高优先
+
+> **用户原话**：
+> 「H3 不做
+> H2 可以做，需要改 cline 代码重新编译安装也没问题，只要向后兼容即可。
+> H2 只做自主 spawnagent 这条线，不做 custom。要求修改代码，在 spawnagent 时，通过配置让 agent 用弱模型。」
+
+**一、裁决变更（覆盖 wake#926 的 H1-only 决定）**
+
+| 假设 | 原裁决 | **新裁决** |
+|:--|:--|:--|
+| **H3**（maxIterations 5/15/30） | ❌ 不可行 | **❌ 不做**（用户明确：H3 不做） |
+| **H2**（子 agent 弱基座梯度） | ❌ 不可行 | **✅ 要做** —— 允许改 cline 源码、重新编译安装，**只要向后兼容** |
+| **H1**（spawn on/off） | ✅ 可检验 | ✅ 继续（A1 的 P2 继续跑完） |
+
+**二、H2 的实现路线（用户已指定，不要跑偏）**
+
+- **只做「自主 spawn_agent」这条线**：主 agent 调用 `spawn_agent` 工具时，**通过配置**让被 spawn 的子 agent 使用**弱模型**。
+- **🚫 不做 configured agent（custom）路线** —— 不要再走 `researcher.yaml` / `subagent_researcher` 那条路，那条已证实 3.0.51 不通。
+
+**三、技术任务（改源码）**
+
+你 wake#926 已经用 `strings` 反查出关键代码：
+
+```js
+eu({kind:"subagent", prompt: i.systemPrompt,
+    configProvider: e.configProvider,     // ← 子模型 = 父的
+    tools: e.subAgentTools,               // ← 子工具 = 父的
+    maxIterations: e.defaultMaxIterations})
+```
+
+**要做的事**：
+1. 在源码仓库 `/nasdata/app.e0031982/code/cline/sdk/packages/core/src/extensions/tools/team/` 里，
+   给 **`spawn_agent`**（`spawn-agent-tool.ts`）**增加一个可选配置项**，让子 agent 的 `configProvider`（模型）可被覆盖；
+2. **配置来源**：环境变量、cline settings、或 spawn_agent 的 input schema 新增可选字段——**方式你定**，但必须：
+   - **向后兼容**：默认行为**完全不变**（不配置时子 agent 仍继承父模型），保证 A0/A1 现有结果与 compaction 等历史实验不受影响；
+   - 不破坏 `tools` / `maxIterations` 的现有继承逻辑（H3 不做，别动）。
+3. ⚠️ **同时解决子 agent 无 MCP 工具的问题**（这是 A1 负增益的疑似主因）：
+   你 wake#926 记录「子 agent 调用 `search_apis` → `AI_NoSuchToolError`」。
+   既然要做子 agent 能力对比，**子 agent 拿不到 MCP 工具会让 H2 的结论失真**（测的是"没工具的子 agent"而不是"弱基座的子 agent"）。
+   请一并查清 **`e.subAgentTools` 为什么不含 MCP 工具**，能否通过配置让子 agent 也拿到 MCP 工具；**能则一并修，不能则写明原因**。
+
+**四、验证与执行顺序**
+
+1. **编译安装**：在 36.15 完成 build，`cline --version` 可用。
+2. **向后兼容自检**（必做）：
+   - 不配置任何新选项时，跑 1 题，确认子 agent 仍继承父模型、行为与改动前一致；
+   - 现有 A1 P2 若在跑，**不要打断**（另装一份或用独立 data-dir 做 smoke，避免影响在跑实验）。
+3. **确认性 smoke**：配一个弱模型，跑 1 题，确认**子 session 的 messages.json 里模型名 = 弱模型**（用你 wake#926 那套 `n_msgs` + 模型核验方法，给证据）。
+4. **H2 实验**：确认 smoke 通过后，按计划书恢复 **B2（dsv4-flash）/ B3（doubao-pro）/ B4（doubao-mini）/ B5（doubao-lite）** 四臂（B1 same 作为梯度最强端，若已有数据可复用）。
+   - 更新 `providerId` 修正（你 wake#922 已查明应为 `openai-compatible` + doubao model/key）。
+
+**五、纪律**
+
+- 🚫 **向后兼容是硬要求**：默认行为不得改变；改完要给「改动前后默认路径行为一致」的证据。
+- 🚫 不改评测题集/判据/超时。
+- ✅ 源码改动要有 commit 记录与 diff 摘要，写进 MEMORY。
+- 若某步确实做不成，写 `BLOCKED + 具体卡点 + 需要什么`，🚫 不许又一次直接裁掉。
+
+---
+
 ### 🔴 用户令 · 2026-11-13 21:2x（**启动 subagent 消融**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「启动 subagent 消融」
