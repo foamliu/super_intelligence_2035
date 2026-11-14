@@ -1,5 +1,71 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 142 -->
+<!-- RUN_ID: 143 -->
+
+## RUN_ID 143 — zhulong 状态体检（只读）：loop / cline / smoke / 沙盒端口 / git
+
+> 目的：确认 wake#922 之后 zhulong 是否真的在推进 confirmatory smoke。
+> 只读，不改任何文件、不起跑、不 kill。
+
+```bash
+set -u
+echo "=== RUN_ID 143 | zhulong status probe | $(date '+%F %T') | host=$(hostname) ==="
+GR=$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+cd "$GR" || exit 1
+
+echo
+echo "[1] zhulong loop 进程"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'zhulong_loop\.sh' | grep -v grep | cut -c1-160 || echo "  (无 zhulong_loop)"
+
+echo
+echo "[2] cline 进程（是否有 agent 在跑）"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E '[c]line ' | grep -v grep | cut -c1-160 | head -10 || echo "  (无 cline)"
+
+echo
+echo "[3] 沙盒端口 status（8664/8665/8653/8669）"
+for p in 8664 8665 8653 8669; do
+  if (exec 3<>/dev/tcp/127.0.0.1/$p) 2>/dev/null; then echo "  $p OPEN"; exec 3<&- 3>&-; else echo "  $p CLOSED"; fi
+done
+
+echo
+echo "[4] 最近的 smoke / subagent 目录（/tmp 与 /nasdata）"
+ls -dt /tmp/subagent_smoke* /tmp/*subagent* 2>/dev/null | head -8 || echo "  (无 /tmp subagent 目录)"
+ls -dt /nasdata/*/subagent_ablation* /nasdata/*/*subagent* 2>/dev/null | head -8 || echo "  (无 /nasdata subagent 目录)"
+
+echo
+echo "[5] 最新 smoke 目录里的关键证据（若有）"
+SD=$(ls -dt /tmp/subagent_smoke* 2>/dev/null | head -1)
+if [ -n "${SD:-}" ]; then
+  echo "  dir=$SD"
+  find "$SD" -name '*messages.json' 2>/dev/null | head -3 | while read -r f; do
+    echo "    $f  n_msgs=$(python3 -c "import json,sys
+try:
+  d=json.load(open('$f'));print(len(d) if isinstance(d,list) else len(d.get('messages',[])))
+except Exception as e: print('ERR')" 2>/dev/null)"
+  done
+  grep -m3 -iE 'finishReason|inputTokens|outputTokens' "$SD"/*.log 2>/dev/null | cut -c1-160 | sed 's/^/    /'
+else
+  echo "  (无 /tmp/subagent_smoke* 目录)"
+fi
+
+echo
+echo "[6] MEMORY_ZHULONG 头部（WAITING / PHASE）"
+head -6 doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md 2>/dev/null | cut -c1-200 | sed 's/^/  /'
+
+echo
+echo "[7] git 状态（应干净）"
+git status --porcelain 2>/dev/null | head -10 | sed 's/^/  /' || true
+echo "  HEAD=$(git log -1 --pretty='%h %s' | cut -c1-90)"
+echo "  behind/ahead vs origin/main: $(git rev-list --left-right --count origin/main...HEAD 2>/dev/null)"
+
+echo
+echo "[8] loop 日志尾部（若存在）"
+for f in /tmp/zhulong_loop.log /tmp/zl_loop.log; do
+  [ -f "$f" ] && { echo "  --- $f (mtime $(date -r "$f" '+%F %T' 2>/dev/null)) ---"; tail -12 "$f" | cut -c1-170 | sed 's/^/    /'; }
+done
+
+echo "=== DONE 143 ==="
+```
+
 ## RUN_ID 142 — 匿名化后重编译 main.pdf + 验证「PDF 里确实看不到作者/邮箱」+ 提交 main.pdf
 
 > 用户令 2026-11-02：「关于 P0 双盲，可以改成匿名」。main.tex 已由运维改为 `[anonymous, sigconf]`（commit `699b17580`，且 18 人网格宏在 anonymous 下跳过）。本块负责**权威编译 + 匿名性实测 + 入库 main.pdf**。
