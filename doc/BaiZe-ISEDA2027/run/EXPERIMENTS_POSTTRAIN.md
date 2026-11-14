@@ -10833,3 +10833,49 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 36.15 5-run 完成（~Nov15 凌晨）→ 新基线（同 158 题，标环境差异：旧 .17 no-sandbox-prompt + 本地 MCP:18888/隧道 vs 新 36.15 sandbox-prompt + 原生 RAG:8090/沙盒:18891）→ `reports/report_posttrain_baseline_pyaether_rca_3615_zh.html`。
 - R2 5-run 完成 → `/tmp/posttrain_5run_eval/5run_rl_analysis_R2.json`（vs step105 0.0304±0.0083，McNemar+bootstrap）→ 显著则里程碑报告 `report_posttrain_rl_surrogate_zh.html`（标替身预演，论证引 reward 曲线+Pass@1，禁引 mean_ratio）/ 负则诚实负结果 + 换奖励或修 ppo_epochs≥2+old_logp 冻结使 clip 生效再跑一轮。
 - kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）。
+
+## §R486 (2026-11-14 17:3x wake486) 监控心跳轮——16:3x v2 RCA 独立复验 + 双 eval 进度实测（read-only，零 GPU）
+
+> 本轮无新增实验，为 read-only 监控心跳。16:3x v2 RCA 用户令已在 wake483/484 交付，本轮做独立复验确认 + 双 eval 进度实测。
+
+### 1. 16:3x v2 RCA 独立复验（全 PASS）
+
+| 检查项 | 结果 | 证据 |
+|:--|:--|:--|
+| 报告存在 | ✅ | `reports/report_posttrain_pyaether_rca_v2_zh.html` 37415B |
+| 5 必含 H2 章节 | ✅ 齐全 | grep `<h2` = ①口径与数据 ②工具调用画像(核心) ③失败归因 ④图表汇总 ⑤提分意见(ROI) |
+| 内联 SVG | ✅ 8 个 | grep `<svg` = 8 |
+| 0 script | ✅ | grep `<script` = 0 |
+| 0 外链 | ✅ | grep `src="http\|href="http` = 0 |
+| 提分意见 + 「如果只做一件事」 | ✅ | 报告末尾，ROI 排序，P0-1 消除 degenerate pass |
+| 旧报告 v2 取代指针 | ✅ | `report_posttrain_baseline_pyaether_rca_zh.html` line39「已被 v2 取代」 |
+| git commit | ✅ | 1bca8e2da(报告)+e434f6def(旧报告指针) |
+
+**结论：16:3x 用户令（基于 trace 重写 RCA v2）已完成。**
+
+### 2. 双 eval 进度实测（2026-11-14 17:3x）
+
+**36.15 重测（15:4x 用户令）**：
+- TUNNEL_OK（ssh -p3333 →36.15 可达）
+- PID1229657 `bpt_eval.sh --run-all` 健康
+- run1 workdir `~/eda_code_eval/2026_1114_161225`（36.15）.task_queue 剩 106 → 52/158 dispatched
+- 无 final_report.json → run1 尚未完成
+- ETA：全 5-run ~Nov15 凌晨
+
+**.17 R2 5-run eval（R2 global_step_200）**：
+- chain PID2322797 etime~61903s(~17.2h) 健康
+- serve GPU7:8095 `/v1/models` 响应 `minicpm5-2b-grpo-R2-step200` 正常
+- run1 Pass@1 = 1/158 = 0.63%（final_report.json: total_correct=1, generation success=14/fail=85/timeout=59）
+- run2 Pass@1 = 2/158 = 1.27%（chain log: 0.012658）
+- run3 RUNNING（workdir 2026_1114_141842 .task_queue 剩 61 = 97/158 dispatched，code-gen 中）
+- ⚠️ 均单 run 不预判（vs step105 5-run mean 3.04%±0.83%）；前 2 run 偏低，待 5-run mean±std + McNemar 判定
+
+### 3. 红线 / 边界
+- read-only 监控：未编辑运行中脚本/未碰 GPU0-3/4/6/vision GPU5/未碰 36.15 运行中 eval
+- 0 infra 错误（无 OOM/traceback/serve 崩溃）
+- cheat rate：R2 主训已落盘 cheat=0/1600（wake433），eval 侧 cline harness anti-cheat 全程开
+
+### 4. Next
+- 36.15 5-run 完成 → `report_posttrain_baseline_pyaether_rca_3615_zh.html`（标环境差异）
+- R2 5-run 完成 → `5run_rl_analysis_R2.json`（vs step105 0.0304±0.0083，McNemar+bootstrap）→ 显著则里程碑报告 / 负则诚实负结果 + 换奖励或修 ppo_epochs≥2+old_logp 冻结
+- kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）
