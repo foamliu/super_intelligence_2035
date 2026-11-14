@@ -4,12 +4,14 @@ WAITING: 0
 
 > 📦 **wake #1221 · 2026-11-14 14:0x** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 🆕 **【wake #1222 · 2026-11-14 14:08】例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)**：
-> - **designflow 进展**：本轮**无新交付**——origin 仅前进 1 commit = `2dddcb8e6 posttrain RCA`（**0 触 WAVEVIEW/视觉**）。`WAVEVIEW_COLLAB.md` 交付记录最末仍是 13:4x β8 r653(restored_count=4 α1+β9+α4+β8)，D 未推进。剩 4 D 域题(β10/β11 已落库+α3/β6 未落库)·β10 半恢复破损态待 D 下轮重生成。**#3 后半(无VQA vs 有VQA 对照)仍阻塞 D**——D 尚未恢复完全部题亦未跑全量新基线，不空等不编造。
-> - **输入参考**：research 日报 2026-11-14(mtime 12:17·同上轮) vision 栏=「Unbundling Multimodal Vision Encoding」属已收敛视觉编码器臂·非 wave-RL 活跃线→不 action(同 wake#1186/#1212~#1221)。ops/inbox.md=RUN_ID 276 TARGET .12(取 chunk2/3 eval 进度·非 vision)→不 action。
-> - **状态**：4 个 2026-11-14 用户令全交付(#1/#2/#3前半/#4·08:4x/09:5x/10:3x 亦✅)；唯一未完成=#3 后半(阻塞 D，本轮 D 零推进)。`ps` 仅 loop 守护 PID1236761 ppid=1 + VQA server PID2806068(gpu5·port30001·#3 前半产物常驻)无新 vision 实验进程。
-> - **git**：fetch→behind1(2dddcb8e6 posttrain RCA·0 触视觉)→`pull --rebase --autostash` ff(autostash 应用·本线无 staged)→0/0 up-to-date。不卷入 `M BaiZe-NeurIPS2027/main.pdf`(wake#1207 遗留)·`?? outputs/`(posttrain 在途)。add 明确路径(MEMORY+daily)→commit(`vision rl:`)→push。
-> - **体积**：fold wake#1221 详细块→one-liner + 加 wake#1222 详细块 + 归档 idle-spin one-liner wake#1195~#1205 至 daily-memories-vision/2026-11-14.md；MEMORY 回落 32KB 软上限内/TASK 27127B·均≤40KB 红线✓。⚠️idle-spin 持续(本轮零跨线增量)。**WAITING: 0**。
+> 📦 **wake #1222 · 2026-11-14 14:08** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
+
+> 🆕 **【wake #1223 · 2026-11-14 14:18】例行巡检·全交付态·designflow 新交付 β10(r654·restored_count 4→5·#3 后半阻塞 D 推进中)**：
+> - **designflow 进展**：本轮**有新交付**——pull 落地 `f869b67ea designflow shard D #654: WAVEVIEW β10 TempThreshChar-001 restore+baseline`。`WAVEVIEW_COLLAB.md` 交付记录新增 14:1x β10 r654：原 L2 FineSim-subprocess 工具脚本 case（且 r653 标注的半恢复破损态已修好）→ 恢复为 image-required answer-deliverable（thresh_char_A.png 双子图三角温度扫描+迟滞比较器翻转，无数据标签需读图）；check.py 12 条件 oracle+反硬编码；REF 12/12 PASS / 18 negative 全 FAIL。基线 cline v3.0.51 + minicpm5-2b-2b-sft-v39-final(2B text-only)→ **FAIL 正确**，**失败模式=engaged-but-incapable**（session 提及 thresh_char=254/png=252/task_brief=300，模型读懂任务知道要读图产 thresh_report.json 但 2B 读不了 PNG）——**这是 α 类「识图可解」的干净失败**，比 r650 α1 did-not-engage 更利于 #3 对照。**restored_count=5（α1+β9+α4+β8+β10）**，剩 3 D 域题(β11 已落库 + α3/β6 未落库)待 D 下轮恢复。**#3 后半(无VQA vs 有VQA 对照)仍阻塞 D**——D 尚未恢复完全部题亦未跑全量新基线，不空等不编造，但已从「零推进」转为「推进中」。
+> - **输入参考**：research 日报 2026-11-14(mtime 12:17·同上轮) vision 栏=「Unbundling Multimodal Vision Encoding」属已收敛视觉编码器臂·非 wave-RL 活跃线→不 action(同 wake#1186/#1212~#1222)。ops/inbox.md=RUN_ID 276 TARGET .12(取 chunk2/3 eval 进度·非 vision)→不 action。
+> - **状态**：4 个 2026-11-14 用户令全交付(#1/#2/#3前半/#4·08:4x/09:5x/10:3x 亦✅)；唯一未完成=#3 后半(阻塞 D，本轮 D 推进 1 题 β10)。`ps` 仅 loop 守护 PID1236761 ppid=1 + VQA server PID2806068(gpu5·port30001·#3 前半产物常驻)无新 vision 实验进程。
+> - **git**：fetch→behind2(harness+data·0 触视觉)→commit→push 撞 remote 前进(2dddcb8e6 后又增 designflow D β10 r654 + shard A r517)→`pull --rebase --autostash` ff(autostash 应用·本线无 staged·replay 本线 commit)→ahead1。不卷入 `M BaiZe-NeurIPS2027/main.pdf`(wake#1207 遗留)·`?? outputs/`(posttrain 在途)。add 明确路径(MEMORY+daily)→amend 心跳(订正 β10 新交付)→push。
+> - **体积**：fold wake#1222 详细块→one-liner + 加 wake#1223 详细块；MEMORY ~32KB 软上限内/TASK 27127B·均≤40KB 红线✓。⚠️idle-spin 缓解(本轮 D 有 β10 跨线增量)。**WAITING: 0**。
 
 > 📦 **wake #1219 · 2026-11-14 13:4x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
