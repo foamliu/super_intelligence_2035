@@ -9,6 +9,9 @@
    `ARCHIVE_*.md`、留 1 行指针。**尚未交付的运维令留在正文**，搬完当轮继续把它做完。
 3. **报告**：默认不新开文件——维护本线既定的固定报告（原地覆盖）（本线现有：`reports/report_harness_glm53_7way_swebench_tb_zh.html`、`reports/report_harness_cline_special_zh.html`、`run/harness/gen_report_glm53_7way.py`、`run/harness/gen_cline_special.py`）；
    只有**用户点名**或**里程碑**才新增，文件名写里程碑；产物一律落 `reports/`。
+   **🔴 `reports/` 只放人读 HTML（2026-11-14 用户令）**：机器逐轮中间产物（`*_<YYYYMMDD>_<HHMM>.json/.log/.txt` 快照、逐题证据、harbor 原始日志）**一律写 `run/harness/terminalbench/manifests/` 与 `traces/`，两处均已 .gitignore**。
+   事故复盘：`tb21_cline_quota_rerun_<tag>.json` 曾逐轮写进 `reports/`，随自动提交累积 **27 个 × 1.3k 行**（首犯 `c63912b22` R2391 2026-11-13 19:13），2026-11-14 已 `git rm` 全清。
+   提交前自查：`git status --porcelain` 里**不许出现** `reports/` 下的 .json/.log/.txt；`git check-ignore -v <file>` 应命中。
 4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
 5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
 

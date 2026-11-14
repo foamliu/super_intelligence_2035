@@ -21,15 +21,17 @@
   python3 rerun_tb21_cline_quota.py --merge <dir>    # 重跑结果并入官方 jobs-dir
   python3 rerun_tb21_cline_quota.py --task-list f    # 手动指定 task（每行一个）
 
-产物：
-  reports/tb21_cline_quota_rerun_<tag>.json   逐题证据 + 汇总
-  reports/tb21_cline_quota_rerun_ids.txt      待重跑 task 名（每行一个）
-  traces/tb21_cline_quota_rerun_<tag>.log     --launch 的 harbor 原始输出
+产物（🚫 一律**不写** `reports/`——那是人读 HTML 报告目录）：
+  terminalbench/manifests/tb21_cline_quota_rerun_<tag>.json    逐题证据 + 汇总（机器中间产物，已 gitignore）
+  terminalbench/manifests/tb21_cline_quota_rerun_ids_<tag>.txt 待重跑 task 名（每行一个）
+  terminalbench/traces/tb21_cline_quota_rerun_<tag>.log        --launch 的 harbor 原始输出
 
 注意：
   * 只读 /tmp/tb21_glm53_jobs 现有结果，不改动原 trial 目录（merge 除外，且只搬 rerun 产物）；
   * 必须先确认网关 200（gw_proxy 9092）；429 状态下重跑只会再造一批空 patch；
-  * 重跑按 unique task 计分，同一题多 trial 不重复计数（与 7way 报告口径一致）。
+  * 重跑按 unique task 计分，同一题多 trial 不重复计数（与 7way 报告口径一致）；
+  * 人读结论只进 `reports/*.html`（由 gen_report_tb21_7way.py / gen_cline_special.py 生成），
+    且提交前 `git check-ignore -v <file>` 自查，别把 manifests/traces 卷进 commit。
 """
 from __future__ import annotations
 
@@ -50,7 +52,11 @@ HERE = Path(__file__).resolve().parent
 HARNESS_DIR = HERE.parent                      # run/harness
 REPO_LINE_DIR = HARNESS_DIR.parent             # run/
 DOC_DIR = REPO_LINE_DIR.parent                 # doc/BaiZe-ISEDA2027
-REPORTS = DOC_DIR / "reports"
+# ⚠️ 2026-11-14 用户令：reports/ 是**人读报告目录**（只放 .html），机器逐轮 JSON 一律不落这里。
+#    历史事故：本脚本曾把 tb21_cline_quota_rerun_<tag>.json 写进 reports/，被 harness loop 的
+#    `git add -- run/harness` 之外的兜底提交卷进仓库，累积 27 个 1.3k 行文件。
+#    ⇒ 改为写 manifests/（证据目录，已 .gitignore），reports/ 只放 HTML 报告。
+MANIFESTS = HERE / "manifests"
 TRACES = HERE / "traces"
 
 JOBS = Path("/tmp/tb21_glm53_jobs")
@@ -138,9 +144,9 @@ def classify(task_data):
 # ---------------------------------------------------------------------------
 
 def write_manifest(summary, quota_lost, detail, tag):
-    REPORTS.mkdir(parents=True, exist_ok=True)
-    out_json = REPORTS / f"tb21_cline_quota_rerun_{tag}.json"
-    out_ids = REPORTS / "tb21_cline_quota_rerun_ids.txt"
+    MANIFESTS.mkdir(parents=True, exist_ok=True)
+    out_json = MANIFESTS / f"tb21_cline_quota_rerun_{tag}.json"
+    out_ids = MANIFESTS / f"tb21_cline_quota_rerun_ids_{tag}.txt"
     payload = {
         "round": "rerun-cline-quota",
         "generated": time.strftime("%Y-%m-%d %H:%M:%S"),

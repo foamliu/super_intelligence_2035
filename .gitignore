@@ -22,6 +22,17 @@ desktop.ini
 
 hf_checkpoints/
 doc/sudo.txt
+# ── 2026-11-14 用户令：reports/ 只放【人读 HTML 报告】，机器逐轮中间产物一律不入库 ──────────
+# 事故：tb21_cline_quota_rerun_<tag>.json 被逐轮写进 doc/BaiZe-ISEDA2027/reports/，随 harness
+#       自动提交累积 27 个 1.3k 行文件（首犯 c63912b22 R2391，2026-11-13 19:13）。
+# 新位置：run/harness/terminalbench/manifests/（证据），traces/（日志）。三者都不得入库。
+# 只拦「带时间戳的逐轮快照」，不动 batch-ids 清单等固定产物。
+doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].json
+doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].log
+doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].txt
+run/harness/terminalbench/manifests/
+run/harness/terminalbench/traces/
+# 例外：被人读报告引用/作为固定产物的清单（如 2nd/3rd-batch ids）如需入库，请显式 `git add -f` 并说明
 # designflow 并发：staging 是临时产物（由 integrator 合并后即可丢弃）
 doc/ZhuLong_DAC2027/benchmark/designflow/cases_staging/
 
