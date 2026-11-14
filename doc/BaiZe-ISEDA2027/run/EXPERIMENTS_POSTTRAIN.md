@@ -11070,3 +11070,57 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 ### 7. Next
 - 36.15 5-run 完成 → 用 details_per_task 逐题核实「unknown 129 是否=code-gen 失败」+ 5-run mean±std → report_posttrain_baseline_pyaether_rca_3615_zh.html（澄清 model_name 字段 + 标环境差异 + 漏斗拆解）。
 - R2 5-run 完成 → 5run_rl_analysis_R2.json（McNemar+bootstrap vs 0.0304±0.83%）→ 显著则里程碑报告 / 负则诚实负结果。
+
+---
+
+## §R-Attribution — 「3.04% -> 15.82%」≈5x 跳升归因 (trace 驱动, 2026-11-14 19:5x wake496)
+> 用户令 2026-11-14 19:2x. 规格: POSTTRAIN_ENV_ATTRIBUTION_SPEC.md. commit 前缀 posttrain attribution:.
+> 可复算: `python3 posttrain_attribution_trace_analysis.py` -> attribution_analysis_3615_vs_17.json
+
+### A. 数据口径 (先钉死)
+- 同模型 minicpm5-2b-sft-v39-final (step105); 同 158 题; 同协议 Pass@1/2500s/-p 8 -n.
+- .17 = 5-run (trace_deep_analysis_3p04.json, 790 题-会话), mean 3.04%±0.83% (pass=[6,3,4,5,6]/158).
+- 36.15 = 单 run1 (5-run 仍跑, 不引用未完成 run; bpt_eval.sh --status: run1 DONE 0.15823, run2-5 未完成).
+- ⚠️ final_report.model_name="zhulong_deepseek_v32" 是 run_eval.py 陈旧默认字段, 实际模型经 codegen.log/反向隧道 18096 实证 = minicpm5-2b-sft-v39-final.
+- 4 变量同时变 (spec §1): V1 系统提示 (no_sandbox vs sandbox) / V2 RAG 后端 (本地:18888 vs 原生:8090) / V3 沙盒 (提示否认 vs :18891 直连承认) / V4 网络 (.17 本地 vs 反向隧道延迟更高). 单变量未跑 => 不能归给 prompt 措辞.
+
+### B. 36.15 run1 漏斗 (可复算: attribution_3615_run1/final_report.json)
+- 158 -> code-gen 成功 29 (18.35%) / timeout 1 / fail 128 -> 通过 25 (86.2% on completed) -> overall 15.82%.
+- 129 题 lang=null/unknown = code-gen 未成功 -> 0 通过.
+- **瓶颈 = code-gen 完成率 18.35%, 不是完成后的判分能力 (86.2%).**
+
+### C. 36.15 工具调用拒绝画像 (可复算: attribution_3615_run1/codegen_rejection_stats.json, 由 _extract_rej_stats.py 经 SSH 在 36.15 上跑 codegen.log 提取)
+- rejected_before_execution_total = 1295. 排名: run_commands 1042 (80.5%) / read_files 103 / get_api_details 41 / submit_and_exit 37 / search_apis 17 / write_file 13 / eda_flow__open_session 6.
+- run_commands 传 string 而非 array 是主因 (Type validation failed: expected array, received string).
+- 双 MCP 工具混淆: 模型把 submit_and_exit 的 summary/verified 传给 eda_flow__open_session.
+- submit_and_exit 仅 334 次 (vs .17 13699 次/91.77% 报错) -> submit 风暴在 36.15 已大幅缓解.
+- pyAether_MCP 调用: get_api_details 349 / search_apis 280 / keyword 227 / run_code 94; eda_flow: open_session 67 / run_commands 48 / run_code 44.
+
+### D. .17 (3.04%) 5-run 画像 (可复算: trace_deep_analysis_3p04.json)
+- submit_calls 5-run = [6009,346,6984,132,?] 共 13699, submit_err_rate_avg ≈ 91.77%.
+- 头号失败 = degenerate pass 479/790=60.63% (空操作/无效实现却自报 verified=True, run_eval 判不过).
+- contradiction_hits/total (模型在 提示说别执行 vs 环境能执行 间摇摆): run1 1/35, run2 64/115, run3 97/119.
+- retrieved_apis 5-run = [333,241,267,?], used_overlap = [19,9,11,?] -> overlap_rate ≈ 5.7% (检索未落地进代码).
+
+### E. 归因结论 (trace 证据导向的待验结论, 非定论)
+- **5x 不能归给 prompt 措辞单独** (4 变量同时变, A0-A3 单变量消融未跑).
+- 高置信主因①: 提示是否承认沙盒 —— .17 否认 -> 退化提交 60.63% + submit 风暴 13699; 36.15 承认 -> 真执行, submit 334, 退化消失.
+- 高置信主因②: 沙盒执行反馈回路 —— 36.15 完成题 86.2% 通过 (执行->报错->修正有效); .17 无回路 -> 质量塌缩.
+- 中置信: RAG 后端 (36.15 原生:8090 检索更落地; .17 overlap 5.7%), 未单变量隔离.
+- 低置信: 网络延迟 (36.15 延迟更高但 pass 更高 -> 非负因子).
+- **新失败模式 (36.15)**: code-gen 完成率 18.35% 低, 主因 = 工具调用格式错误 1295 次 (80.5% run_commands 传 string) + 双 MCP 工具混淆. 与 .17 退化提交是不同失败模式.
+
+### F. 回答用户问题 「是否还能继续优化系统 PROMPT 来提分」
+- **能**. 36.15 完成题质量 86.2%, 瓶颈是完成率. 修工具调用格式引导 (run_commands 数组化) + 澄清双 MCP 工具边界 -> 完成率升 -> pass 率可显著超 15.82% (粗估 +8~15pp, 待 dev 实测).
+- 补丁设计见 attribution_prompt_patches.md: P0-tool-format (最高 ROI, 打 80.5% 拒绝源) / P1-degenerate-guard / P2-submit-storm / P3-retrieval-landing. 一次只加一条, dev(79)/test(158) 分离, McNemar 检验.
+
+### G. 已交付产物 (本轮)
+- posttrain_attribution_trace_analysis.py (可复算分析脚本) + attribution_analysis_3615_vs_17.json (5151B).
+- attribution_3615_run1/ (final_report.json 73478B + completed_code_generation.jsonl 158 行 + execution_results.jsonl 29 行 + codegen_rejection_stats.json, 从 36.15 经 SSH 拉取落盘).
+- bpt_attribution_ablation.sh (A0-A3 单变量消融 runner scaffold, bash -n OK, --dry-run OK; 待 5-run 完成后在 36.15 跑).
+- attribution_prompt_patches.md (Task B 补丁设计 + ROI + train/dev 分离 + 顺序).
+
+### H. Next (未完成, 留下一轮)
+1. Task A: 36.15 5-run baseline 完成后, 生成 40 题 stratified sample (--tasks), 依次跑 A0/A1/A2/A3, 按预注册判据 (spec §2) 判 prompt vs 沙盒反馈回路 vs RAG 占比.
+2. Task B: 79/79 train-dev 拆分 -> P0-tool-format 在 dev 3 seed 测 -> 门槛 +3pp & submit 报错率降 10pp -> 逐条叠加 -> test 5-run + McNemar.
+3. 36.15 5-run 完 -> 新基线报告 report_posttrain_baseline_pyaether_rca_3615_zh.html (澄清 model_name + 漏斗拆解 + 环境差异).
