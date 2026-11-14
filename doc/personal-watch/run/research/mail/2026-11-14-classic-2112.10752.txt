@@ -1,0 +1,17 @@
+Dear Professor Ommer,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B domain model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). We are considering latent diffusion for generating rare layout patterns and waveform segments, and your paper is the reference we keep returning to.
+
+1. Your results hinge on a good autoencoder: too much downsampling loses fine detail, too little makes diffusion expensive. For images whose information sits in very thin metal lines and large uniform regions, which measurable data property should set the downsampling factor, and what fails first when we push it too far?
+
+2. Text and bounding boxes enter through cross-attention. If the condition is a netlist or a tool log rather than text, would you still route it through the same conditioning path, or does the encoder need a different interface?
+
+3. For synthetic data, downstream signoff metrics are expensive. Is there a cheap proxy you would trust before committing to full evaluation, and would you favor latent diffusion over direct regression for this use?
+
+Thank you for considering these questions.
+
+Best regards,
+
+Liu Yang
+
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027
