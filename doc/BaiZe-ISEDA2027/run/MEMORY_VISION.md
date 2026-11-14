@@ -2,12 +2,14 @@ WAITING: 0
 
 > 📦 **wake #1220 · 2026-11-14 13:5x** 例行巡检·designflow 新交付 β8(D #653·restored_count 3→4)·#3 后半仍阻塞 D(推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 🆕 **【wake #1221 · 2026-11-14 14:0x】例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)**：
-> - **designflow 进展**：本轮**无新交付**——origin 仅前进 1 commit = `0cb1e5d64 designflow shard A #r516`（0-case + 体积归档 r503-r513→ARCHIVE·paper 0err·**0 触 WAVEVIEW/视觉**）。`WAVEVIEW_COLLAB.md` 交付记录最末仍是 13:4x β8 r653(restored_count=4 α1+β9+α4+β8)，D 未推进。剩 4 D 域题(β10/β11 已落库+α3/β6 未落库)·β10 半恢复破损态待 D 下轮重生成。**#3 后半(无VQA vs 有VQA 对照)仍阻塞 D**——D 尚未恢复完全部题亦未跑全量新基线，不空等不编造。
-> - **输入参考**：research 日报 2026-11-14(mtime 12:17·同上轮) vision 栏=「Unbundling Multimodal Vision Encoding」(视觉编码器三可分离设计选择·预训练视觉先验非必需/专用视觉容量起作用/融合前放置可后移)属已收敛视觉编码器臂·非 wave-RL 活跃线→不 action(同 wake#1186/#1212~#1220)。ops/inbox.md=RUN_ID 276 TARGET .12(取 chunk2/3 eval 进度·非 vision)→不 action。
+> 📦 **wake #1221 · 2026-11-14 14:0x** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
+
+> 🆕 **【wake #1222 · 2026-11-14 14:08】例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=4·#3 后半阻塞 D)**：
+> - **designflow 进展**：本轮**无新交付**——origin 仅前进 1 commit = `2dddcb8e6 posttrain RCA`（**0 触 WAVEVIEW/视觉**）。`WAVEVIEW_COLLAB.md` 交付记录最末仍是 13:4x β8 r653(restored_count=4 α1+β9+α4+β8)，D 未推进。剩 4 D 域题(β10/β11 已落库+α3/β6 未落库)·β10 半恢复破损态待 D 下轮重生成。**#3 后半(无VQA vs 有VQA 对照)仍阻塞 D**——D 尚未恢复完全部题亦未跑全量新基线，不空等不编造。
+> - **输入参考**：research 日报 2026-11-14(mtime 12:17·同上轮) vision 栏=「Unbundling Multimodal Vision Encoding」属已收敛视觉编码器臂·非 wave-RL 活跃线→不 action(同 wake#1186/#1212~#1221)。ops/inbox.md=RUN_ID 276 TARGET .12(取 chunk2/3 eval 进度·非 vision)→不 action。
 > - **状态**：4 个 2026-11-14 用户令全交付(#1/#2/#3前半/#4·08:4x/09:5x/10:3x 亦✅)；唯一未完成=#3 后半(阻塞 D，本轮 D 零推进)。`ps` 仅 loop 守护 PID1236761 ppid=1 + VQA server PID2806068(gpu5·port30001·#3 前半产物常驻)无新 vision 实验进程。
-> - **git**：fetch→behind1(0cb1e5d64 designflow A 归档·0 触视觉)→`pull --rebase --autostash` ff(autostash 应用·本线无 staged)→0/0 up-to-date。不卷入 `M BaiZe-NeurIPS2027/main.pdf`(wake#1207 遗留)·`M reports/report_posttrain_baseline_pyaether_rca_zh.html`+`M rca_baseline_report.py`(posttrain 在途)·`?? outputs/`(posttrain 在途)。add 明确路径(MEMORY+daily)→commit(`vision rl:`)→push。
-> - **体积**：fold wake#1220 详细块→one-liner + 加 wake#1221 详细块；MEMORY ~33KB/TASK 27127B·均≤40KB 红线✓(MEMORY 贴 32KB 软上限·下轮若再涨优先归档)。⚠️idle-spin 持续(本轮零跨线增量)。**WAITING: 0**。
+> - **git**：fetch→behind1(2dddcb8e6 posttrain RCA·0 触视觉)→`pull --rebase --autostash` ff(autostash 应用·本线无 staged)→0/0 up-to-date。不卷入 `M BaiZe-NeurIPS2027/main.pdf`(wake#1207 遗留)·`?? outputs/`(posttrain 在途)。add 明确路径(MEMORY+daily)→commit(`vision rl:`)→push。
+> - **体积**：fold wake#1221 详细块→one-liner + 加 wake#1222 详细块 + 归档 idle-spin one-liner wake#1195~#1205 至 daily-memories-vision/2026-11-14.md；MEMORY 回落 32KB 软上限内/TASK 27127B·均≤40KB 红线✓。⚠️idle-spin 持续(本轮零跨线增量)。**WAITING: 0**。
 
 > 📦 **wake #1219 · 2026-11-14 13:4x** 例行巡检·全交付态·零新增·designflow 无新交付(仍 D 恢复 3 题 α1/β9/α4·#3 后半阻塞 D)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
@@ -45,28 +47,6 @@ WAITING: 0
 > - **waveview分析**: 相关=37题 failed=30 · α=4(13.3%) β=7 γ=19 · 结论=识图可解比例 α/N=13.3%（保守10%~乐观43%）· 报告已出。
 > - 数据源只读：designflow `pi_debug_status.jsonl`+`cline_eval_status.jsonl`+31 份 `trace_deepreads/*wave*/**fsdb*`+6 个 canonical `Wave-001..006`。三维判定 α/β/γ；关键发现=基准主动把波形可视化降级为文本/Tcl（B-grade），故已评测 7 题全 PASS 全 γ，可被识图挽救的失败集中在"未解/未跑"的视觉判断子集（α=眼图孔径/上升沿margin/DQ根因diff/波形功能推断）。
 > - 产物：`reports/report_vision_waveview_failed_analysis_zh.html`（40579B·单文件·0外链·0script·内联SVG×3）。本报告只做分析，不起训练/实验。commit `vision waveview:`。
-
-> 📦 **wake #1205 · 2026-11-14 08:26** 例行巡检·全交付态·零异常·无新增·✅ git fetch behind3(0 触视觉)→ff pull 0/0+fold wake#1204+commit+push·⚠️idle-spin 第 37 轮·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1204 · 2026-11-14 08:17** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind5(designflow shard A ws-shardA + shard C r549 + harness 任务书/报告更新· 0 触视觉)→ff pull→0/0 up-to-date+fold wake#1203+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 第 36 轮·已fold(见 wake#1205·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1203 · 2026-11-14 07:58** 例行巡检·全交付态·零异常·无新增·✅ git fetch behind1(325e260bc harness TB-2.1 额度诊断· 0 触视觉)→ff pull→0/0 up-to-date+fold wake#1202+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 第 35 轮·已fold(见 wake#1204·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1202 · 2026-11-14 07:47** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind1(78c5b42c5 pretrain #2163· 0 触视觉)→ff pull→0/0 up-to-date+fold wake#1201+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 第 34 轮·已fold(见 wake#1203·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1201 · 2026-11-14 07:39** 例行巡检·全交付态·零异常·无新增·v11 ALL COMPLETE 产物复核在位·git ff pull+commit+push·⚠️idle-spin 告警(第20次重申·连续33轮空转上报运维)·已fold(原文→daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1200 · 2026-11-14 07:2x** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind1(designflow trace_deepreads/r547·0 触视觉)→ff pull→0/0 up-to-date+fold wake#1199+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第32轮空转·第19次重申)·已fold(见 wake#1201·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1199 · 2026-11-14 07:22** 例行巡检·全交付态·零异常·无新增·✅ git fetch→0/0 up-to-date 无需 pull(无 index.lock·仅 posttrain cline 非 git 阶段)+fold wake#1198+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第31轮空转·第18次重申)·已fold(见 wake#1200·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1198 · 2026-11-14 07:14** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind1(designflow_D·0 触视觉)→ff pull→0/0 up-to-date+fold wake#1197+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第30轮空转·第17次重申)·已fold(见 wake#1199·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1197 · 2026-11-14 07:2x** 例行巡检·全交付态·零异常·无新增·✅ git fetch→behind5→ff pull(designflow/harness/pretrain·0 触视觉)→0/0 up-to-date+fold wake#1196+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第29轮空转·第16次重申)·已fold(见 wake#1198·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1196 · 2026-11-14 07:1x** 例行巡检·全交付态·零异常·无新增·✅ git fetch→0/0 up-to-date 无需 pull(无 index.lock·仅 posttrain cline 非 git 阶段)→fold wake#1195+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第28轮空转·第15次重申)·已fold(见 wake#1197·详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1195 · 2026-11-14 07:0x** 例行巡检·全交付态·✅ git fetch→behind2(designflow shard C/D·0 触视觉)→ff pull→0/0 up-to-date+体积维护(fold wake#1194+归档 wake#1076~#1124 至 daily 11-13)+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 27 轮空转)·已fold(见 wake#1196·详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1194 · 2026-11-14 06:44** 例行巡检·全交付态·✅ git fetch(HEAD 被并发 posttrain ff 推进·wake#1193 提交 c66d05ac5 在史保留·0 触视觉)+fold wake#1193+add 明确路径+commit+push 本线 2 文件·⚠️idle-spin 告警(第 26 轮空转)·已fold(见 wake#1195·详情 daily-memories-vision/2026-11-14.md)。
 
