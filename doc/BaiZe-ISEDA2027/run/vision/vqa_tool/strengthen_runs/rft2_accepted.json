@@ -1,0 +1,167 @@
+{
+  "accepted": 207,
+  "k_samples": 4,
+  "thresh": 0.5,
+  "items": [
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q25.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q25.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q25.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q25.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q29.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q29.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q29.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q30.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q30.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "skill": "cycle_count",
+      "ans": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "reward": 1.0
+    }
+  ]
+}
