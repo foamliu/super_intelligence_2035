@@ -21,10 +21,12 @@ BASE_DIR="/nasdata/app.e0031982/code/eda_fastmcp"
 EVAL_FW="/nasdata/app.e0031982/code/EDA-Eval-Framework"
 export PYTHON="${PYTHON:-/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python}"
 
-# 🔑 关键修复 2026-11-13: 必须用 cline (act 模式), 不能用 zhulong (-y yolo 模式).
-#   yolo 预设 enableSpawnAgent=false (presets.ts:106) → subagent_researcher 工具不注册 → 调用率 0%.
-#   cline 路径 run_cli.sh 不传 -y → act 预设 enableSpawnAgent=true → 工具注册 → spawn 生效.
-#   smoke 验证: act 模式下 [subagent_researcher] 工具被成功调用 (2026-11-13 22:40).
+# 🔑 关键修复 2026-11-14 wake#925: 
+#   1. configured agent 独立工具 subagent_researcher 在 cline 3.0.51 不注册 → 改用 anonymous spawn_agent
+#   2. PreToolUse hook 拦截 spawn_agent (白名单缺) → e.trim → 已修 hook 加 SPAWN_TOOLS 白名单
+#   3. LANG_HINT 改用 spawn_agent 措辞 (复刻 smoke 3074b 成功 prompt)
+#   4. 所有 spawn 臂 (A1/B1-B5/C1/C2) 都注入强提示 (A1 也要, 否则 H1 无效)
+#   smoke 3074b 证据: anonymous spawn_agent 子 session n_msgs=15 model=dsv4-pro (直接 cline 无 hook)
 export CLI_AGENT=cline
 
 EVAL_ROOT_OVERRIDE="/tmp/zhulong_subagent_eval"   # /nasdata 100% 满; 用 /tmp (24G), 每轮清理
@@ -39,18 +41,23 @@ PARALLEL=8
 ROUNDS="${ROUNDS:-3}"
 DS_MODEL="deepseek-v4-pro-cloud"
 
-# 强提示: 要求主 agent 先调 subagent_researcher
+# 强提示: 要求主 agent 先调 spawn_agent (anonymous subagent)
+# 🔑 2026-11-14 wake#925: 改用 spawn_agent 措辞 (cline 3.0.51 不注册 configured agent 独立工具 subagent_researcher;
+#   anonymous spawn_agent 可用但需 prompt 明确要求, 复刻 smoke 3074b 成功 prompt 措辞)
 SUBAGENT_HINT="
-## 重要：工作流程要求
-在写代码之前，你**必须**先调用 \`subagent_researcher\` 工具，让它查询本任务涉及的所有 pyAether API 文档。拿到 API 文档摘要后，再开始写代码。这是强制步骤。"
+## CRITICAL WORKFLOW REQUIREMENT
+Before writing any code, you MUST use the \`spawn_agent\` tool to delegate to a researcher sub-agent.
+Call \`spawn_agent\` with a systemPrompt describing a pyAether API researcher, and a task asking it to
+look up the pyAether APIs relevant to this problem using the search_apis and get_api_details tools.
+Do NOT answer directly or write code until the sub-agent returns its findings. This is a mandatory step."
 
 log() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$MASTER_LOG"; }
 
-# 臂列表 (A0 复用, 不跑)
-RUN_ARMS=("A1" "B1" "B2" "B3" "B4" "B5" "C1" "C2")
+# 臂列表 (A0 复用, 不跑) — wake#926: H2/H3 技术不可行, 裁 B1-B5/C1/C2, 只跑 A1 (H1-only)
+RUN_ARMS=("A1")
 
-# ABBA-like 顺序: 先跑 B 系列确认 subagent 有效, 再跑 A1/C
-RUN_ORDER=("B1" "B2" "B3" "B4" "B5" "C1" "C2" "A1")
+# ABBA-like 顺序: wake#926 H1-only — 只跑 A1
+RUN_ORDER=("A1")
 
 run_round() {
   local ARM="$1" ROUND="$2"
@@ -80,10 +87,10 @@ print('providers.json reset from compaction basic template')
 "
   }
 
-  # 验证 providers.json
+  # 验证 providers.json (主基座 dsv4-pro 恒定; doubao provider 按臂追加)
   local prov="$ARM_DIR/settings/providers.json"
   if ! grep -q '/cloud/v1' "$prov" 2>/dev/null || ! grep -q 'deepseek-v4-pro-cloud' "$prov" 2>/dev/null; then
-    log "  ❌ $ARM providers.json 修复后仍不对, 跳过此轮"
+    log "  ❌ $ARM providers.json 修复后仍不对 (缺 /cloud/v1 或 dsv4-pro 主基座), 跳过此轮"
     return 1
   fi
 
@@ -92,6 +99,9 @@ print('providers.json reset from compaction basic template')
   export CLINE_COMPACTION="basic"
   export CLINE_THINKING="medium"
   export LANG_HINT=""  # 轴 B 空提示
+  # 🔑 wake#925 Option B: 统一 cwd=data-dir=ws_dir → 避免 e.trim + 子 agent 用臂配置模型
+  #   run_cli.sh 据此把 --data-dir 指向 ws_dir 并复制 settings/agents 进 ws_dir (保留 -p8)
+  export CLINE_UNIFIED_DATA_DIR=1
   export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
   # 🔑 修复: harness run_cline_script.sh:40 读 EVAL_ROOT_DIR_OVERRIDE (不是 EVAL_ROOT_DIR)
   export EVAL_ROOT_DIR_OVERRIDE="$EVAL_ROOT_OVERRIDE"
@@ -107,10 +117,9 @@ print('providers.json reset from compaction basic template')
     log "  无 configured agent (A1 spawn-only)"
   fi
 
-  # 注入 subagent 强提示 (B1-B5/C1/C2 臂; A1 不注入因为没 researcher)
-  if [[ "$ARM" != "A1" ]]; then
-    export LANG_HINT="$SUBAGENT_HINT"
-  fi
+  # 注入 subagent 强提示 (所有 spawn 臂 A1/B1-B5/C1/C2 都需要, 否则 agent 不自然调 spawn_agent)
+  # 🔑 wake#925: A1 也注入 — A1=spawn-on 需强提示才会调 spawn_agent, 否则 A1≈A0 使 H1 无效
+  export LANG_HINT="$SUBAGENT_HINT"
 
   # 启动 eval
   log "  launching run_cline_script.sh (foreground, 12h cap) -> $round_log"
