@@ -1466,3 +1466,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1792394008610_lyj3f					parked		2026-11-14 08:48	r528 peek msg0=读取网表帮我分析电路 verb=分析=analysis Q&A not produce-task REJECT
 1794375714680_dx87n					parked		2026-11-14 08:48	r528 deepread 22msgs: sch->netlist extract P2STopM5 but msg21 pyAether sandbox conn-refused no netlist produced=INCOMPLETE trace; existing archetype#2; heavy Aether-license L2; alexli@pkn004=P-004 cluster host REJECT
 1794377551087_9mc97					parked		2026-11-14 08:48	r527 peek msg0=建22nm CMOS sentaurus sprocess deck=TCAD process sim Sentaurus未装非B spice_sim REJECT (r527 peek未park, r528补park)
+1794378329165_cli7p	alenxu	hfeg0pkn134	21	characterization	case	EDA-Eval-DesignFlow-VrefStepMeasure-001	2026-11-14 09:38	
