@@ -49,7 +49,13 @@
         "status_jsonl_ts": "2026-11-14T08:31:31Z",
         "conclusion": "no-multimodal 2B text-only cannot read PNG => FAIL is correct baseline",
         "failure_mode_tier": "A",
-        "failure_mode_tier_def": "did-not-engage (model never read prompt/PNG, never attempted task)"
+        "failure_mode_tier_def": "did-not-engage (model never read prompt/PNG, never attempted task)",
+        "post_vqa_failure_mode_prediction": {
+          "predicted_tier": "A",
+          "predicted_mode": "did-not-engage (persists)",
+          "rationale": "alpha2 baseline = A-tier did-not-engage (0 task-term mentions across 11 events, 20s, never read prompt.txt or PNG). Per B r554 'did-not-engage flip-rate structurally 0' + A r527: VQA tool cannot be called if model never engages the task. +VQA hint does not create task engagement that baseline lacked. Prediction: stays A, ~0 flip.",
+          "dependency": "actual +VQA run NOT executed - task2 infra-blocked (r560: eval machine + .75 -> 10.252.32.17 TCP 30002 all BLOCKED, needs vision to open firewall). This is a PREDICTION, not an actual measurement."
+        }
       }
     },
     {
@@ -124,7 +130,14 @@
         "status_jsonl_ts": "2026-11-14T08:44:19Z",
         "conclusion": "no-multimodal 2B text-only cannot read PNG => FAIL is correct baseline. Engagement does not change verdict: model cannot extract WRITE times / DQ edges from figure, so cannot produce answer json.",
         "failure_mode_tier": "C",
-        "failure_mode_tier_def": "engaged-but-could-not-read-image (understood task, attempted tools, but could not read PNG)"
+        "failure_mode_tier_def": "engaged-but-could-not-read-image (understood task, attempted tools, but could not read PNG)",
+        "post_vqa_failure_mode_prediction": {
+          "predicted_tier": "C-with-task-framing-confound (NOT clean image-blind)",
+          "predicted_mode": "tool-confusion persists OR migrates to (d) hint-induced tool-call collapse",
+          "rationale": "beta7 baseline = C-tier 'engaged-but-could-not-read-image (tool-confusion variant)' BUT evidence shows model NEVER attempted to read the PNG (read_files x3 all /dev/null, run_commands x6 all echo NOTICE, eda_flow open_session hallucinated WRONG task_id IO-RVV-001). beta7 failure is task-FRAMING confusion + tool MISUSE + task_id hallucination, NOT image-blindness - image-reading capability was never the bottleneck. Per A r531 r530 live-run (d) hint-induced tool-call collapse: beta7 already has severe tool-confusion (15 off-task calls) + tool hallucination; adding VQA hint that writes tool(param=...) usage example adds another tool to misuse/hallucinate. Unlike beta10 (clean C, image-blind, tool-call reliable 7 tool_use), beta7 tool-call already unreliable. Prediction: +VQA does NOT flip beta7 because (1) image-reading was never the bottleneck, (2) task-framing confusion persists, (3) VQA hint may worsen tool-confusion (migrate to (d)).",
+          "b_domain_insight": "spice_sim waveform images (wr_dq_A.png = DQ digital step waveform) require NUMERIC VALUE EXTRACTION (read WRITE command times + rising/falling edge times off a plotted curve, oracle = interpolation), cognitively different from layout/eye-diagram spatial pattern recognition. For spice_sim domain, VQA capability gain may be SMALLER than for layout domains because image-reading is closer to 'read 2-3 numeric values off a plot' (a CSV parser could replace it). BUT beta7 shows dominant spice_sim C-tier failure is not image-blindness - it is task-framing/tool-confusion. So even perfect VQA will not flip beta7.",
+          "dependency": "actual +VQA run NOT executed - task2 infra-blocked (r560). This is a PREDICTION, not an actual measurement."
+        }
       }
     }
   ],
@@ -133,5 +146,14 @@
   "self_correction": "r547-r549 MEMORY_B wrote 'WAVEVIEW: B 不可认领(全 D域)' — this was a factual error. waveview_restore_plan_D.md §二 line 25/30/38 explicitly assigns alpha2/beta7 to shard B ('case 在 B.jsonl，移交 shard B'). B is the idle 0-case shard (mc10.fresh=0) and should claim. Corrected in r550 (alpha2 restored), r551 (beta7 restored + alpha2 baseline FAIL), r552 (beta7 baseline FAIL).",
   "restored_count": 2,
   "note": "B-shard WAVEVIEW task 1 scope = alpha2 + beta7 (2 cases, both in B.jsonl). Both restored to image-required answer-deliverable form (r550 alpha2, r551 beta7) AND both baselines run with no-multimodal 2B text-only model (r551 alpha2 FAIL did-not-engage 20s, r552 beta7 FAIL engaged-but-could-not-read-image 354s) — both correct baselines. D-shard handles the other 6 cases (alpha1/beta9/alpha4/beta8/beta10/beta11) per its own delivery log.",
-  "failure_mode_tier_schema": "A=did-not-engage / B=engaged-text-only / C=engaged-but-could-not-read-image (per A r527 stratification proposal for WAVEVIEW Task2 VQA gain measurement)"
+  "failure_mode_tier_schema": "A=did-not-engage / B=engaged-text-only / C=engaged-but-could-not-read-image (per A r527 stratification proposal for WAVEVIEW Task2 VQA gain measurement)",
+  "post_vqa_prediction_note": "post_vqa_failure_mode_prediction fields added r562 (2026-11-14) per A r531 @B action. ALL are PREDICTIONS, not actual measurements - task2 +VQA runs are infra-blocked since r560 (eval machine 10.251.36.15 + .75 -> 10.252.32.17 TCP 30002 all BLOCKED, needs vision to open host firewall). Predictions will be validated once infra unblocked. Rationale grounded in baseline_run evidence + A r531 r530 live-run (d) hint-induced tool-call collapse + B r554 did-not-engage flip-rate=0 + B r558 C-tier abort mechanism heterogeneity.",
+  "post_vqa_status": {
+    "state": "infra-blocked",
+    "blocker": "r560: eval machine + .75 -> 10.252.32.17 TCP 30001/30002 all BLOCKED (host firewall/ACL), ICMP ok",
+    "unblock_dependency": "vision/network admin to allow inbound TCP 30002 on 10.252.32.17 from eval machine 10.251.36.15",
+    "prediction_recorded": true,
+    "prediction_round": "r562",
+    "actual_run_recorded": false
+  }
 }
