@@ -11516,3 +11516,29 @@ python3 复算：
 - 只在 36.15 上跑归因臂 + dev-eval；未改 benchmark/check.py/题面/不挑题；反作弊钩子随 cline harness 常开。
 - kill 的仅本线 baseline 5-run 进程（最新令优先，run1 基线已立）；未碰 GPU0-3 root / GPU4 base / GPU5 vision R9 / GPU7 R2 eval chain / ZhuLong subagent / 别线文件。
 - commit 前缀 posttrain attribution:。下一 wake 待链完读 36.15 `/tmp/posttrain_attribution_*/{A1,A3,baseline_dev,p0_dev}/final_report.json` 汇总。
+
+---
+
+## §R508-monitor — 隧道复盘核验 + 双链健康监控（wake508 · 2026-11-15 00:0x）
+
+### 1. postmortem 复核（用户令 23:4x 最高优先）
+- `reports/report_infra_tunnel_postmortem_zh.html`（20496B）已由 wake507 交付并提交（commit 375e11bf7 @2026-11-14 23:59:30）。
+- 结构核验：首屏三句话（坏没坏=坏过现已恢复 / 怎么坏=中继侧 tunnel.ps1 短时掉线 / 谁修=非本线造成亦非本线修复，需用户在 172.19.195.133 重跑 tunnel.ps1）+ §0 架构（dual-nix-tunnel / 正反向隧道 PID / 36.15:22 始终被防火墙拦截仅 ICMP）+ §1 六问逐条带证据。
+- MEMORY 顶部 wake507 结论行在位（最后通点 20:41:50 / 首断点 22:4x wake505 / 恢复确认 23:26 wake506 / 故障域中继侧①+②）。
+
+### 2. 隧道三条验证命令实测（2026-11-15 00:0x，全 PASS）
+- V1 `.17` 本侧：`ss -ltn | grep 127.0.0.1:3333` → LISTEN 127.0.0.1:3333 ✅
+- V2 经中继落 36.15：`ssh -p 3333 -o ConnectTimeout=12 app.e0031982@localhost hostname` → hfeg0tedaap02 / SSH_OK ✅
+- V3 反向隧道模型可达：`36.15: curl -s -m8 http://127.0.0.1:18096/v1/models` → id=minicpm5-2b-sft-v39-final ✅
+- 中继 Windows 172.19.195.133 tunnel.ps1 当前在线。
+
+### 3. 归因夜链健康（36.15 setsid）
+- 链 PID 3707027 存活（`bpt_attribution_overnight_chain.sh`）；A1 40q RUNNING：run_cline_script PID3728419 @23:30，codegen.log 713014B 持续增长（00:06 修改），task005 is_polygon_convex 真实代码生成中，8 worker 并行，GPU6=98% A1 独占。
+- ETA 沿用 wake506：A1~00:15 / A3~01:15 / P0base~02:45 / P0p0~04:30 → 全链~05:00 < 09:00 及格线。A3/P0base/P0p0 pending 串行。
+
+### 4. R2 5-run eval 健康（GPU7:8095）
+- run1=0.63% / run2=1.27% / run3=0.0% DONE；run4 RUNNING @20:49（code-gen 阶段，GPU7=85%）；run5 pending。
+- 3 run 均 < step105 5-run mean 3.04%±0.83%，趋势负；单 run 不预判，待 5-run mean + McNemar/bootstrap。
+
+### 5. 边界
+- 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark，0 infra。本轮为只读监控 + 心跳，无服务动作。
