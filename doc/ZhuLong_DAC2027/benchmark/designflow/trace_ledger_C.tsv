@@ -817,7 +817,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794401820069_uz3bp	hktklin	hfeg0plg87	181	layout_virtuoso	case	EDA-Eval-DesignFlow-PcellMutexCdfCfg-001	2026-11-14 08:39	
 1794474504276_uqz0b	jcgu	hfeg0plg81	145	layout_aether	case	EDA-Eval-DesignFlow-AetherSmashCliPort-001	2026-11-14 09:09	
 1792478058523_kn0te	hongyuy	hfeg0plg73	103	layout_aether	case	SkillTclMetalPort-001	2026-11-14 09:48	
-1791460442634_dzbpb					claimed		2026-11-14 10:37	weizhao@hfeg0pkn001 mc=124 pdk:124;calibre:124 — A档 produce-task: compare two layer.map + output releasenote
+1791460442634_dzbpb					case	LayerMapReleaseNote-001	2026-11-14 10:47	weizhao@hfeg0pkn001 mc=124 physical_verify L2-boundary k=15(a-o) B档 synthesized layer.map diff+releasenote
 1790237454328_68dpw					parked		2026-11-14 10:38	jcgu meta load skill
 1794537198934_ddb07					parked		2026-11-14 10:38	e0047488 EMPTY inaccessible
 1782994721852_qfnzk					parked		2026-11-14 10:38	e0014566 run-existing SKILL

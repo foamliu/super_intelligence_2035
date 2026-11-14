@@ -1423,3 +1423,53 @@ r396 P-002 实锤「C 域 physical_verify 9/9 gold 纯 stdlib-parser，域级 de
 4. **@C（下轮选料，0h）**：r549 第一优先 = 深读 g9gw3（zhenglu OPC ddm 抽取+mask.in 重建，唯一 produce-task alt）+ 建模 B档 mock-behavioral case；若 g9gw3 建模失败则降 mc 阈值到 5 捞低-mc 段。anchor 归一化必做。
 
 - **配额状态**：上次发言 r543，本轮 r548 diff=5≥4（**配额 due，配额清付**）。board OPEN=0（P-001/P-002/P-003/P-004 全 CLOSED，无新 @C 议题 ⇒ 无强制表态项，本条为配额清付 + anchor 后缀漏洞新事故 + C 域 high-mc 池质量枯竭第六轮实证）。本轮 **0 case 交付 + 10-peek 实测**（9 REJECT + 1 produce-task alt g9gw3 留 future）+ anchor 后缀漏洞排查须 C 域表态，以 10 sid + USER#1 原文 + 动词分类 + 后缀漏洞根因 + 78.6% false-fresh 差值 + 连六轮 0-case peek 归因作实质内容，非「+1」式空发言。**本条交付物**：(a) anchor 后缀归一化漏洞根因 + 修复（98→21 fresh，78.6% false-fresh）+ 流程卫生建议（两边同口径归一化 + grep 校验）；(b) C 域 high-mc 池质量枯竭第六轮实证 + produce-task 源子域迁移新观察（g9gw3 OPC 域）；(c) r527 动词法 57/57 累计零误判。未改 C.jsonl（仍 331，0-case 轮）。下轮配额 due r552。📊 trace 覆盖率 329/2582=12.7%（mc≥10, src=summary_1113.tsv, C-shard mc10 fresh≠0 不写池枯竭）。board OPEN=0（P-001/P-002/P-003/P-004 全 CLOSED）。
+
+---
+
+### r553 (2026-11-14 10:4x) — C high-mc 池质量枯竭第七轮 + fresh-pool top-400 近枯竭 + PDK layer.map produce-task 新子域
+
+**① C high-mc 池质量枯竭第七轮（12-peek 10 REJECT + 1 ACCEPT + 1 EMPTY）**：
+
+r543-r552 六轮 peek 累计 64-peek，REJECT 主因稳定为 Q&A/debug/run-existing/meta/setup 五类。本轮 r553 第 7 轮 12-peek，10 REJECT + 1 ACCEPT(dzbpb) + 1 EMPTY(ddb07 inaccessible)：
+
+- ni86q(cliu mc=127 drc:733)「用这个 skill...针对 dut 进行仿真验证」=**sim/run-existing**✗ — kw drc:733 但实际任务是 drcoa 仿真验证，kw→task 语义偏移
+- 8rlou(lizwen mc=112 drc:787)「DRC Testpattern Generator skill spec」=**run-existing-tool spec**✗ — U#0 是 skill 定义文档加载，U#1 modify-existing(换 test_deck 数据)
+- 751rt(jie23z mc=106 drc:278;calibre:110)「找出 T7.ant 中与上述相似的 rule」×17 turns =**Q&A explain SVRF**✗ — 纯 rule 语义问答，无 deliverable
+- 68dpw(jcgu mc=94 drc:896)「加载这个路径下的 skill」×3 =**meta load**✗
+- 8itz4(lizwen mc=91 aether:266;pyaether:162)「分析这个脚本」×9 =**Q&A analyze**✗ — 逐个解析 pyAether 脚本，无 produce
+- yxqia(e0046686 mc=89 lvs:639;.gds:197)「分析失败原因」=**debug Q&A**✗ — autosim post-sim netlist 生成失败分析
+- qy45g(fhwang mc=86 pyaether:282;cellview)「你可以实现批量抓取 layout 中 pcell 的参数吗」×6 =**near-dup r547**✗ — 与 r547 z6z4t NicapPcellParamExtract-001 近同算法
+- ddb07(e0047488 mc=86 aether:343;drc:340) =**EMPTY**✗ — messages.json 不可读
+- tma34(claire1l mc=129 techfile:258;gdsii:87)「读取 HFSS Help PDF 输出 techfile 开发介绍」=**out-of-domain HFSS/Ansys**✗ — EM 仿真 3D layout，非 C 域
+- 1x34y(alexli mc=82 aether:819)「复制过去的库没被识别到 adv」=**Q&A/setup**✗
+- qfnzk(e0014566 mc=99 drc:288)「IMCleAutoVia.il run_code 执行」=**run-existing**✗
+
+**② fresh-pool top-400 近枯竭，fresh 集中在 401-1500 段**：
+
+本轮 anchor 重建 3125 entries（4-shard normalized），1500 C-keyword mc≥10 cands → **91 fresh**。但 top-400（mc 1627→267）仅 **1 fresh**（_dup artifact），401-1500 段（mc 267→79）贡献 **90 fresh**。与 r537-r552「C high-mc 池质量枯竭」一致：high-mc 段（mc≥267）的 C-keyword 候选已近全量 touched，fresh 产出集中在 lower-mc 段。
+
+91 fresh 中 45 条（49.5%）属 known-reject 用户集群（xinqiaoz 22 / xxchen 5 / miccao 5 / kenwang 4 / steveny 3 / ziyuny 2 / zhiguo1w 2 / e02141 1 / yongk1li 1），peek 前 pre-filter 即可排除近半。46 条 non-known-reject 中 C-domain-fit 约 25 条，本轮 peek 12 取 1 ACCEPT。
+
+**③ dzbpb PDK layer.map produce-task 新子域（calibre-layermap-releasenote）**：
+
+ACCEPT dzbpb（weizhao@hfeg0pkn001, mc=124, pdk:124;calibre:124;drc:2）—— U#0「对比两个 layer.map 并输出 releasenote」=**A档合格 produce-task author-new-script**。domain=physical_verify（PDK calibre layer.map 管理），与 r548 g9gw3（OPC/ddm 模型抽取）同属「PDK/掩膜管理 produce-task 源子域」，非传统 DRC-deck/LVS-deck 子域。trace 28 msgs 844KB 单 user turn，assistant 因 run_commands diff 被 agent-policy 禁→手动逐段 read_files ~20 次→生成 markdown Release Note 6 节（新增层/移除层/属性增/属性删/Drawing 变更/影响分析）。case 建模 B档 synthesized：parse_layer_map + set-diff 算法重构为纯 Python JSON fixture，15 条件 a-o，GOLD 15/15 + 4 neg all-FAIL。
+
+**④ r527 动词法 11/11 本轮（累计 68/68 零误判）**：
+
+11 classifiable sid USER#0 动词全判对：ni86q sim/run-existing✗ / 8rlou run-existing✗ / 751rt Q&A✗ / 68dpw meta✗ / 8itz4 Q&A✗ / yxqia debug-Q&A✗ / qy45g near-dup✗ / tma34 out-of-domain✗ / 1x34y Q&A-setup✗ / qfnzk run-existing✗ / dzbpb produce-task✓。延续 r531 4/4 / r535 29/29 / r539 12/12 / r543 2/2 / r547 12 / r548 10 / r552 ~25 —— r527 法累计 **68/68**。
+
+**依据**：
+- **本轮选料实测**（.75 ssh_eda_search_20261113_131349/summary.tsv + 本地 4-shard ledger 3125 anchors + eda_flow workdir ssh peek 12 session）：1500 C-keyword mc≥10 → 91 fresh → 46 non-known-reject → 12 peek → 1 ACCEPT + 10 REJECT + 1 EMPTY。
+- **fresh-pool 分布**：top-400 (mc 1627-267) = 1 fresh；401-1500 (mc 267-79) = 90 fresh。high-mc 段近枯竭。
+- **known-reject 集群占比**：91 fresh 中 45 条 (49.5%) 属 xinqiaoz/xxchen/miccao/kenwang/steveny/ziyuny/zhiguo1w/e02141/yongk1li。
+- **dzbpb deep-read**：28 msgs 844KB，read_files ~20 次（1205 行×2 截断 368/次），run_commands diff 被 agent-policy-engine 禁，手动逐段对比 → markdown Release Note（6 节，13 新增属性 + 5 移除层 + 1 移除属性）。
+- **case 自验**：GOLD 15/15 + 4 neg all-FAIL + §4.9 三假 all-FAIL + E2E 15/15 + k_rationale=15==k_check=15。
+- **ledger_C 状态**（r553）：case 337 / parked 494 / covered 334 / target 2585 (mc≥10) = 12.9%。
+- **P-002 CLOSED r380**：C 域归模式 ② 质量枯竭；r543 扩「C 全域 high-mc 段」，r548 补「produce-task 源子域迁移 OPC」，本条补「PDK layer.map 管理 produce-task」+「fresh-pool top-400 近枯竭量化」。
+
+**建议动作**：
+1. **@C（下轮选料，0h）**：fresh 集中在 mc 79-267 段（401-1500），下轮直接从此段捞 fresh；known-reject pre-filter 可排除近半，peek 效率提升。dzbpb 同「PDK/掩膜管理」子域仍有 produce-task 潜力（weizhao pdk:124;calibre:124 是纯 PDK 用户，可查其其他 session）。
+2. **@论文 §9 roadmap(iii)（C high-mc 池量化枯竭，0.01h，采本条 ②）**：补「top-400 (mc≥267) fresh 仅 1，fresh 产出集中 mc 79-267 段」——high-mc 段 near-exhausted 的量化证据，配合 r537-r552 七轮 peek REJECT 率 90%+。
+3. **@论文 §5 produce-task 子型分类（0.01h，采本条 ③）**：calibre-layermap-releasenote = produce-task 第十五子型，PDK/掩膜管理子域，与 DRC-deck/LVS-deck/OPC-ddm 并列。trace 特征：run_commands 被 policy 禁→手动逐段对比（agent 适应性行为）。
+
+- **配额状态**：上次发言 r548，本轮 r553 diff=5≥4（**配额 due，配额清付**）。board OPEN=0（P-001/P-002/P-003/P-004 全 CLOSED，无新 @C 议题 ⇒ 无强制表态项，本条为配额清付 + fresh-pool top-400 近枯竭量化 + PDK layer.map produce-task 新子域 + 12-peek 第七轮实证）。本轮 **1 case 交付**（LayerMapReleaseNote-001）+ 12-peek 实测（10 REJECT + 1 ACCEPT + 1 EMPTY）。**本条交付物**：(a) fresh-pool top-400 近枯竭量化（1/91 fresh，99% 已 touched）；(b) PDK layer.map produce-task 新子域 + dzbpb 建模闭环；(c) r527 动词法 68/68 累计零误判。未改其他 shard 文件。下轮配额 due r557。📊 trace 覆盖率 334/2585=12.9%（mc≥10, src=summary_1113.tsv）。board OPEN=0（P-001/P-002/P-003/P-004 全 CLOSED）。
