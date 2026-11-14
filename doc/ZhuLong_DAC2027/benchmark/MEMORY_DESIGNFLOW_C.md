@@ -17,11 +17,11 @@ WAITING: 0
 - **r336-r371（36 轮历史：r339-r371 omission-negative 推广 33 条 + r336 选料筛选 + r338 schema 归一 + r339 试点）已全归档 MEMORY_C_archive.md（归档批次 r344-r374）；各轮详述见 daily_C_2026-11-10/11.md。omission 覆盖明细见下方 omission 行。**
 - r319-r326（8 轮 case 交付：DrcVsDrmRuleAudit/LibPinManifest/DrcExactWaiver/DrcBad2gridLshape/DrcDeckCmpGen/OaLayoutM1RectEdit/NetlistMatchCkGen/BatchLvlGdsCmp）详细流水已归档 MEMORY_C_archive.md（归档批次 r323/r327）；trace_deepreads 见各 case 链接
 DOMAINS: layout_aether, layout_virtuoso, pg_layout, physical_verify
-round: 584（r584 CASE DELIVERED GdsLvlStructDiff-001 physical_verify k=12 a-l：承 r583 pyAether-peek 通道直取留-future 队列 se4uf(miccao mc106)；deep-read se4uf=run-existing+GDSII-LVL-diff 算法/2uipn=reference API 库 REJECT；GDSII record-parse+忽略时间戳+按结构分组+按层比对；C.jsonl 355→356；2uipn/0bn1c/c5bgl/vvhhs 留 future）
-📊 trace 覆盖率：357/942=37.9%（mc≥10, src=ssh_eda_search_20261115_013654 sessions=6959 mc10=3504；ledger_C case 357·parked 635·total 992；jsonl_C 356；la 90·lv 68·pg 42·pv 149）
-🎯 通过率: shard C 累计 356 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%；r584 交付 GdsLvlStructDiff novel GDSII-LVL-diff）
-🧾 断言: k_rationale=12 = k_check=12 ≥ 8 ✓（r584 GdsLvlStructDiff-001 12 条 a-l 为最近 case；存量 356/356 断言闸门 k≥8 PASS）
-🛠 DEBT: 0（r569 case 闭环✓；qu4o5 已 claim+mark case；r581 0-case 无新 DEBT）
+round: 585（r585 CASE DELIVERED SpfRccCmod-001 physical_verify k=12 a-l：选料 next-tier 228 候选 normalized 4-shard 去重→17 fresh→14 C-fit→1 达 bar cyzhu 1794206311310_xqvcu mc=45 USER#5 spf_RCC tBL*far 相邻对耦合电容改注 produce-task；B 档 synthesized _build_spf(counts) 程序化合成 SPF_RCC text fixture 5 相邻对 251-256+tBLfar/tBLbfar 通配+三类干扰；per-group oracle _verify_groups（B2_COUNTS=[3,5,2,4,3] 故意含重复 count=3 测 per-group 非 per-value）；C.jsonl 356→357）
+📊 trace 覆盖率：358/942=38.0%（mc≥10, src=ssh_eda_search_20261115_013654 sessions=6959 mc10=3504；ledger_C case 358·parked 635·total 993；jsonl_C 357；la 90·lv 68·pg 42·pv 150）
+🎯 通过率: shard C 累计 357 case 已落 jsonl（pi/cline 实跑数见 cline_eval_status.jsonl，B 档目标 20–30%；r585 交付 SpfRccCmod-001 novel SPF_RCC 电容改注 per-group oracle）
+🧾 断言: k_rationale=12 = k_check=12 ≥ 8 ✓（r585 SpfRccCmod-001 12 条 a-l 为最近 case；存量 357/357 断言闸门 k≥8 PASS）
+🛠 DEBT: 0（r585 case 闭环✓ SpfRccCmod-001 已 claim+mark case；r581 0-case 无新 DEBT）
 omission 覆盖: C-authored tracked 116/310=37.4%（r531 无 omission）；file 口径（含跨 shard）119/310=38.4%；per-domain(file 口径) layout_aether 26/74=35.1%·layout_virtuoso 28/63=44.4%·pg_layout 28/44=63.6%·physical_verify 37/131=28.2%。最近：r516 SkillMenuRoute-001 layout_virtuoso cond (g)。更早 r347-r515 共 66 条 omission 详各轮流水/归档批次 MEMORY_C_archive.md。
 📦 体积：TASK_C≈32.1KB / MEMORY_C≈9.8KB（r584 归档 r534-r572 流水至 MEMORY_C_archive 后达标）/ MEMORY_C_archive≈1.26MB
 - r206-r318（113 轮历史：选料筛选饱和期 + 13 条 case 交付 r319-r335 + omission 推广 r339-r345 + schema 归一 r338）详细指针已归档 MEMORY_C_archive.md（归档批次 r357）；各轮详述见 daily-memories-designflow/daily_C_*.md 与 designflow/MEMORY_C_archive.md
