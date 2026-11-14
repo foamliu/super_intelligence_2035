@@ -895,3 +895,12 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794550161116_20kqp	e0014036	hfeg0pkn001	137	physical_verify	parked		2026-11-14 22:03	r570 peek: e0014036 USER#0 comprehension/QA/debug, not A-档 produce-task
 1793845744498_7n2w3	e0039602	hfeg0pkn003	87	physical_verify	parked		2026-11-14 22:03	r570 peek: e0039602 USER#0 comprehension/QA/debug, not A-档 produce-task
 1794639258901_ufb7a	yu23z	hfeg0pkn004	182	layout_aether	case	EDA-Eval-DesignFlow-PcellNcxnrReplace-001	2026-11-14 22:40	
+1794556434650_v79pf	laijiang	hfeg0plg97	183	layout_aether	parked		2026-11-14 23:06	r573 peek: laijiang USER#0 produce-task pyAether pin->netset mapping BUT docstring says schematic cell + schematic:311 dominant => D-domain schematic_netlist, cross-domain not-C
+1794484059186_cot9z	e0039516	hfeg0plg99	245	physical_verify	parked		2026-11-14 23:06	r572 peek: e0039516 comprehension Q&A not produce-task
+1794645532852_dq1ol	jzeng	hfeg0plg85	205	physical_verify	parked		2026-11-14 23:06	r572 peek: jzeng same_trace_group near-dup of r568 wy27j IMCleAutoVia
+1794552458120_tgpup	yinyus	hfeg0plg66	510	physical_verify	parked		2026-11-14 23:06	r572 peek: yinyus D-domain schematic construction
+1794550428633_s4vkc	yinyus	hfeg0plg66	495	physical_verify	parked		2026-11-14 23:06	r572 peek: yinyus D-domain schematic construction
+1794645596542_ebctc	xxchen	hfeg0plg19	318	physical_verify	parked		2026-11-14 23:06	r573: xxchen known-reject user drc/.gds modify-existing
+1794546636932_2tppk	e0024852	hfeg0plg78	156	physical_verify	parked		2026-11-14 23:06	r567 peek: e0024852 modify-existing config
+1794453555751_gklsl	pdsong	hfeg0plg74	129	physical_verify	parked		2026-11-14 23:06	r566 peek: pdsong analysis Q&A
+1794478125354_p7xx6	dsgao	hfhds201	106	physical_verify	parked		2026-11-14 23:06	r568 peek: dsgao Q&A capability patron EM sim
