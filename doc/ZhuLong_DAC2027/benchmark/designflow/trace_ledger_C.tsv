@@ -945,3 +945,11 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794380399121_8dkdw	claire1l	hfeg0plg76	70	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT comprehension/doc layer_setup syntax summary->md->pdf
 1794449589306_y3azi	yohannw	hfeg0pnd001	72	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT DevOps agent-policy allowedScriptRoots config off-domain (zl framework)
 1794656882029_saflm	thomasz	hfeg0pfn058		physical_verify	parked		2026-11-15 02:39	r579 peek REJECT debug-Q&A ESD PathFinder sim-time compare analysis (对比两个仿真时间差距), no produce deliverable; same archetype as r576 v7jqb/6ty3f
+1793254775583_g4jab	e0047434	hfeg0pnd001	55	physical_verify	parked		2026-11-15 03:16	r580 meta/test session (all 'test' msgs, 0 real task)
+1794466497864_4vil0	m1wang	hfeg0plg79	56	layout_aether	parked		2026-11-15 03:16	r580 Q&A how-to (view waveforms CM0/CM1)
+1794300368354_t4364	t0002986	hfeg0plg76	50	layout_virtuoso	parked		2026-11-15 03:16	r580 setup/meta Q&A (virtuoso bridge)
+1794463494298_dz6qs	lvyy	hfeg0plg99	51	physical_verify	parked		2026-11-15 03:16	r580 Q&A/analysis (parameter tuning how-to CML/CTLE/C2C)
+1792413707987_cm4kr	cadmin	hfeg0plg97	57	physical_verify	parked		2026-11-15 03:16	r580 meta/trivial (hello world script)
+1794558811575_ytrqh	jmgu	hfeg0plg58	52	physical_verify	parked		2026-11-15 03:16	r580 skill-orch meta (optimize qa-pattern-miner skill)
+1794555697503_fue87	e0048410	hfeg0plg98	52	layout_aether	parked		2026-11-15 03:16	r580 Q&A how-to (array instance usage in aether)
+1792040490093_hi28t	alanji	hfeg0plg99	53	layout_aether	parked		2026-11-15 03:16	r580 terse/vague (imc save exclude file)
