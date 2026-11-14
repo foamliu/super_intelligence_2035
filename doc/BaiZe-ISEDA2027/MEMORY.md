@@ -2,6 +2,30 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-14 19:5x — 用户订正线职责（运维此前混淆，已改口径）
+
+用户原话（三条纠正）：
+1. **designflow 是在做 benchmark**；
+2. **post-train 才是用 minicpm5-2b 做基模**，在 EDA-Eval-PyAether 158 上测基线通过率（写 EDA 脚本 PyAether 的能力），然后过 **SFT/RL 做领域适配**，把通过率**显著提升**；
+3. **vision 则是基于 glm-5.2 这种文本 LLM 做 agent 底模**，通过接 **Qwen3.5-2B 做 VQA MCP** 构建**多模态能力**（读懂波形图），然后通过 **SFT/RL 做领域适配**，把通过率**显著提升**。
+
+**正确模型（后续一律按此表述）**：
+
+| 线 | 角色 | 产出 |
+|:--|:--|:--|
+| designflow | **benchmark 生产线** | 造题 / 恢复原形态 / 写 `check.py`；跑基线只用于**题库自检**，不产模型能力结论 |
+| posttrain | **文本/脚本能力线** | 基模 minicpm5-2b → PyAether 158 基线 → SFT/RL → 通过率提升 |
+| vision | **多模态能力线** | agent（glm-5.2）+ VQA MCP（Qwen3.5-2B）构建看图能力 → WaveView 基线 → SFT/RL → 通过率提升 |
+
+**我此前犯的错（已修）**：把 designflow 用 minicpm5-2b 跑出的 10/10 FAIL 当成「模型能力基线」去和 vision 比；把 posttrain 的 3.04%→15.82% 说成「环境限制了模型」，而没说清它真正的意义 —— **测法不一致会让「SFT/RL 提升」失去可归因性**。
+
+已修文档：
+- `run/VISION_WAVEVIEW_SELFTEST_SPEC.md` §0 重写为「vision 多模态能力线的**阶段 A：能力增量度量**」，V0 应 fail 是正确基线，阶段 B（SFT/RL）本轮不做；并加**线职责边界**警示。
+- `run/POSTTRAIN_ENV_ATTRIBUTION_SPEC.md` §0 重写为「先对齐职责 + 第一性目标是钉死评测口径，让基线→SFT→RL 三段可比」。
+- 两本任务书顶部的令同步改口径并重排序号。
+
+**口径**：designflow 的分数不是模型分数；`posttrain` 与 `vision` 各自的「基线 → SFT → RL」必须在**同一测法**下比较，跨测法的差值一律标「不可比」。
+
 ## 2026-11-14 19:4x — 用户令 vision 自测 WaveView 10 题（±VQA MCP）
 
 用户原话：「请 vision 自己做一下 waveview 的题目看看通过率。然后给自己配置 Qwen3.5-2B 的 VQA 作为 MCP，再做一遍，看看通过率能否有提升。」

@@ -5,11 +5,12 @@
 > **用户原话**：「请 posttrain 分析一下这 ≈5 倍跳升从何而来。既然 MCP 工具一样，难道差异仅仅来自于系统 PROMPT 的差异吗？如果系统 PROMPT 差异这么大，那么看看 trace，是否还能继续优化系统 PROMPT 来提分？」
 >
 > **完整规格 → `run/POSTTRAIN_ENV_ATTRIBUTION_SPEC.md`（先读完再动手）**。要点：
-> 1. **前提纠正**：3.04%（.17）与 15.82%（36.15 run1）之间同时变了 4 件事（系统提示 / RAG 后端 / 沙盒可达性 / 网络延迟），**不许**把 5× 直接归给 prompt。
-> 2. **任务 A（先做）**：单变量消融 A0–A3，40 题分层子集，出「prompt 占多少 / 反馈回路占多少 / RAG 占多少」。
-> 3. **任务 B**：用 **36.15 的 trace**（不是旧环境）做失败分型 → 三条最小补丁 P1/P2/P3（退化提交 / submit 风暴 / 检索不落地）→ **train/dev 79/79 分离**，一次只加一条，dev ≥+3pp 且 submit 报错率降 ≥10pp 才晋级，最后 test 上 5-run + McNemar。
-> 4. 🚫 不改 benchmark / 不改 check.py / 不挑题 / 不引用未跑完的 run；每步落 `EXPERIMENTS_POSTTRAIN.md`，报告用中文 HTML，commit 前缀 `posttrain attribution:`。
-> 5. ⚠️ **体积**：本任务书已 ≈42KB（>40KB 硬上限）⇒ 下轮**先**把已闭合块滚入 `ARCHIVE_EXPERIMENTS_POSTTRAIN.md` 再执行本令；本条令不得被归档。
+> 1. **先对齐职责**：`designflow` 做 benchmark（造题/判分）；`posttrain` 是文本/脚本能力线（minicpm5-2b → PyAether 158 → SFT/RL 提升）。本任务的**第一性目标是钉死评测口径**，让「基线 → SFT → RL」三段可比 —— 否则任何「+X pp」都可能只是换了 harness。
+> 2. **前提纠正**：3.04%（.17）与 15.82%（36.15 run1）之间同时变了 4 件事（系统提示 / RAG 后端 / 沙盒可达性 / 网络延迟），**不许**把 5× 直接归给 prompt。
+> 3. **任务 A（先做）**：单变量消融 A0–A3，40 题分层子集，出「prompt 占多少 / 反馈回路占多少 / RAG 占多少」。
+> 4. **任务 B**：用 **36.15 的 trace**（不是旧环境）做失败分型 → 三条最小补丁 P1/P2/P3（退化提交 / submit 风暴 / 检索不落地）→ **train/dev 79/79 分离**，一次只加一条，dev ≥+3pp 且 submit 报错率降 ≥10pp 才晋级，最后 test 上 5-run + McNemar。
+> 5. 🚫 不改 benchmark / 不改 check.py / 不挑题 / 不引用未跑完的 run；每步落 `EXPERIMENTS_POSTTRAIN.md`，报告用中文 HTML，commit 前缀 `posttrain attribution:`。
+> 6. ⚠️ **体积**：本任务书已 ≈42KB（>40KB 硬上限）⇒ 下轮**先**把已闭合块滚入 `ARCHIVE_EXPERIMENTS_POSTTRAIN.md` 再执行本令；本条令不得被归档。
 
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
