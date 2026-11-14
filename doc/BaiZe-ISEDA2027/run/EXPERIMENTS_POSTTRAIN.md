@@ -11223,3 +11223,64 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 本轮 read-only 核验 + 画像脚本，未碰 GPU0-7 / 未碰 36.15 运行中 eval / 未碰别线文件，0 infra 错误。
 
 **Next**: ① 36.15 5-run 完 → 新基线（5-run mean±std，标环境差异 + 手动订正 model_name 标签）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② Task A: A0-A3（40 题×4 臂）→ 预注册判据 → 一句话归因（prompt 占多少 / 沙盒反馈回路占多少 / RAG 占多少）；③ Task B: baseline dev 3-seed vs p0 dev 3-seed → 门槛 → 逐条叠加 P1/P2/P3 → test 5-run + McNemar。
+
+## §R-Attribution-update4 (wake500, 2026-11-14 21:0x) — 🔴 36.15 run1 口径订正 (15.82%→18.99%) + per-题画像/六类分型 + R2 5-run 进度
+
+> 用户令 2026-11-14 19:2x（最高优先）。本节纠正 wake499 §R-Attribution-update3 的一个**口径错误**并补完 Task B 步骤 1-2（per-题画像 + 分型）。
+
+### 1. 🔴 重大订正：36.15 run1 = 18.99% (30/158)，非 15.82% (25/158)
+
+- **根因**：wake499 在 20:03 经隧道 scp 了 `/tmp/posttrain_baseline_3615/run1/` 的 `final_report.json`，但该时刻 run1 **仍在运行**（codegen.log 头部 `启动流水线 16:12:25`，run1 实际完成于 20:41）。20:03 抓到的是**部分 run1**（25 通过 / 29 生成成功 / 174188 log 行）。
+- **完整 run1**（36.15 `/tmp/posttrain_baseline_3615/run1/`，20:41 落盘，189798 log 行）权威数字：
+  - `pass_rate = 0.18987`（**30/158**），`total_correct_completions = 30`
+  - generation: success **36** / fail **121** / timeout 1
+  - execution: passed **30** / failed **6** / not_executed 122
+  - 生成后通过率 = 30/36 = **83.3%**（wake499 误报 86.2% = 25/29）
+- **影响范围**：MEMORY 快照、POSTTRAIN_ENV_ATTRIBUTION_SPEC.md、本节 §R-Attribution-update3、（未来）36.15 基线报告里所有「15.82% / 25 / 29 / 86.2% / 5×」均需以 18.99% / 30 / 36 / 83.3% / ≈6.2× 替换。**v2 RCA 报告（.17 790 题旧运行）不受影响**（它不引用 36.15 run1）。
+- **纪律提醒**：18.99% 仍只是 **run1 单次**；正式基线 = 5-run mean±std（run2 RUNNING，run3-5 pending）。引用 36.15 基线须等 5-run 完成。
+- **处置**：已重 scp 完整 run1 的 `final_report.json` / `completed_code_generation.jsonl` / `execution_results.jsonl` 到 `attribution_3615_run1/`（覆盖部分副本）；重跑 `_extract_rej_stats.py`（complete log 189798 行）→ `codegen_rejection_stats.json` 更新（rejected_total 1295→**1304**, submit 334→**339**, string-not-array 256→**262**, timeout 55→**77**）；重跑 `posttrain_attribution_3615_profile.py`（订正硬编码 0.1582 标签为动态计算）→ `attribution_3615_run1_profile.json` 现报 0.1899。
+
+### 2. Task B 步骤 1-2：per-题画像 + RCA-v2 六类分型（新脚本）
+
+- 脚本 `posttrain_attribution_3615_perquest_profile.py`（在 36.15 上对完整 codegen.log 分段解析，158 题全部分段成功）→ `attribution_3615_run1_perquest_profile.json`。
+- **六类分型**（按完整 run1 重算）：
+  | 类型 | 题数 | 占比 | 说明 |
+  |:--|--:|--:|:--|
+  | PASS | 30 | 19.0% | num_correct>0 |
+  | T6_tool_format_genfail | 121 | 76.6% | 生成失败（无代码文件）= 头号失败 |
+  | T4_assertion_insufficient | 5 | 3.2% | 生成成功但 AssertionError |
+  | T5_timeout | 1 | 0.6% | 生成超时 |
+  | T3_api_misuse | 1 | 0.6% | 生成成功但 TypeError（疑似 API 误用） |
+- **gen-fail 深挖**（121 题）：rejection 计数分布 = 0 次:45 / 1-2 次:38 / 3-5 次:19 / 6-10 次:7 / 11+ 次:12。
+  - 45 题**零拒绝** → 多为超时/放弃（timeout_markers=77 全局），非工具格式错。
+  - 76 题**≥1 拒绝** → 工具调用格式错耗尽预算为主导机制。
+- **全局拒绝归因**（1304 次，可靠——来自系统生成的 `was rejected before execution` 行）：
+  - 按工具：run_commands **1048** / read_files 104 / get_api_details 41 / submit_and_exit 37 / search_apis 17 / write_file 13 / open_session 6
+  - 按原因：missing-required-field **527** / other-type-error 378 / string-not-array **321** / unavailable-tool 41（如 `apply_edit`）/ wrong-type-boolean 37（如 `submit_and_exit.verified` 传字符串非布尔）
+- **已知局限（诚实标注）**：脚本对「成功执行的工具调用」计数偏低——被拒调用常不留下干净的 `<function name="X">` 标记（仅留拒绝 error 行），且模型散文含伪 `<function name=...>` token；故 per-题 `tool_calls` / `used_search_apis` / `used_run_code` 不可靠（gen-fail 中 used_search_apis=0 是低估，与全局 search_apis 拒绝 17 矛盾）。**拒绝计数与六类分型可靠**，工具成功调用频次 TODO 待补（需解析 cline tool-call JSON 块而非正则）。
+
+### 3. .17 vs 36.15 失败模式对照（订正后）
+
+| 维度 | .17（3.04%±0.83%, 790 题旧运行） | 36.15（18.99%, run1 完整） |
+|:--|:--|:--|
+| 头号失败 | degenerate pass 60.63%（不试/空实现被判过） | code-gen 完成率仅 22.8%（36/158，试了没生成出可跑代码） |
+| submit_and_exit | 13,699 次 / 91.77% 报错（风暴） | 339 次（被压下） |
+| 沙盒执行 | 仅 9.88% 题走「检索→执行→修错」 | 沙盒主动用（open_session 67 / run_code 44，部分副本口径） |
+| 主导拒绝 | — | run_commands 1048（string-not-array 262）+ missing-field 527 = 工具调用格式错 |
+| 生成后质量 | — | 83.3%（30/36）= 质量非瓶颈 |
+
+→ **机制假设（仍待 A0–A3 单变量消融证实，不许直接归给 prompt）**：跳升主因 = 提示承认沙盒 + 执行反馈回路打开，把失败模式从「不试（degenerate）」转为「试了但卡在工具格式（gen-fail 76.6%）」；prompt 措辞单独不是主因。
+
+### 4. R2 5-run 进度（.17，read-only）
+
+- chain PID 2322797 健康；run4 RUNNING（20:49 起，code-gen 中）。
+- 已完成：run1 Pass@1=0.63% / run2=1.27% / run3=0.0%。**三 run 全部低于 step105 基线 3.04%±0.83%** → R2 RL 趋势为**负**（单 run 不预判，等 5-run mean+McNemar）。
+- ETA：每 run ~6.5h；run4 ~03:20 完，run5 ~09:50 完（Nov 15）。
+
+### 5. 本轮动作 / 边界
+
+- read-only 核验 + 画像脚本（在 36.15 跑，仅读 codegen.log/final_report）；重 scp 完整 run1 数据覆盖部分副本；订正 funnel 脚本硬编码标签。
+- **未碰** GPU0-7 / 未碰 36.15 运行中 eval（run2 RUNNING）/ 未碰别线文件 / 未改 benchmark/check.py/题面，0 infra 错误。
+- Task A/B 实跑仍阻塞 36.15 5-run 完成（不可与基线测并发争资源）。
+
+**Next**: ① 36.15 5-run 完 → 新基线（5-run mean±std，标环境差异，run1=18.99% 为单次参考）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② Task A: A0-A3（40 题×4 臂）→ 预注册判据；③ Task B: baseline dev 3-seed vs p0 dev 3-seed → 门槛 → 逐条叠加 P1/P2/P3 → test 5-run + McNemar；④ R2 5-run 完 → 5run_rl_analysis_R2.json（vs 3.04%±0.83%，McNemar+bootstrap）→ 负则诚实负结果报告。

@@ -1,15 +1,15 @@
 {
     "model_name": "zhulong_deepseek_v32",
     "evaluation_mode": "pass_rate",
-    "timestamp_iso": "2026-11-14T15:29:32.130931",
+    "timestamp_iso": "2026-11-14T20:08:28.421580",
     "benchmark_file": "EDA-Eval-pyAether-158.jsonl",
-    "generations_file": "completed_code_generation_2026_1114_130945.jsonl",
+    "generations_file": "completed_code_generation_2026_1114_180019.jsonl",
     "metrics": {
-        "pass_rate": 0.15822784810126583
+        "pass_rate": 0.189873417721519
     },
     "metrics_by_runtime": {
         "pyAether_aether": {
-            "pass_rate": 0.8620689655172413
+            "pass_rate": 0.8333333333333334
         },
         "unknown": {
             "pass_rate": 0.0
@@ -18,30 +18,30 @@
     "summary": {
         "total_problems_evaluated": 158,
         "total_samples_generated": 158,
-        "total_correct_completions": 25,
-        "overall_sample_accuracy (correct_samples/total_samples)": "0.1582",
+        "total_correct_completions": 30,
+        "overall_sample_accuracy (correct_samples/total_samples)": "0.1899",
         "generation_statistics": {
-            "success": 29,
+            "success": 36,
             "failure": 0,
             "timeout": 1,
-            "fail": 128
+            "fail": 121
         },
-        "generation_success_rate": "0.1835",
+        "generation_success_rate": "0.2278",
         "total_generations": 158,
         "runtime_statistics": {
             "pyAether_aether": {
                 "lang": "pyAether",
                 "host": "aether",
-                "num_tasks": 29,
-                "num_samples": 29,
-                "num_correct": 25,
-                "sample_accuracy": "0.8621"
+                "num_tasks": 36,
+                "num_samples": 36,
+                "num_correct": 30,
+                "sample_accuracy": "0.8333"
             },
             "unknown": {
                 "lang": null,
                 "host": null,
-                "num_tasks": 129,
-                "num_samples": 129,
+                "num_tasks": 122,
+                "num_samples": 122,
                 "num_correct": 0,
                 "sample_accuracy": "0.0000"
             }
@@ -1775,37 +1775,33 @@
         },
         "EDA-Eval-PyAether-104": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-105": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-106": {
             "num_samples": 1,
@@ -1911,20 +1907,18 @@
         },
         "EDA-Eval-PyAether-112": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-113": {
             "num_samples": 1,
@@ -1945,20 +1939,18 @@
         },
         "EDA-Eval-PyAether-114": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-115": {
             "num_samples": 1,
@@ -2047,18 +2039,20 @@
         },
         "EDA-Eval-PyAether-120": {
             "num_samples": 1,
-            "num_correct": 1,
-            "pass_rate": 1.0,
-            "error_types": [],
+            "num_correct": 0,
+            "pass_rate": 0.0,
+            "error_types": [
+                "Generation fail"
+            ],
             "generation_statuses": [
-                "success"
+                "fail"
             ],
             "execution_statuses": [
-                "passed"
+                "not_executed"
             ],
-            "lang": "pyAether",
-            "host": "aether",
-            "runtime_key": "pyAether_aether"
+            "lang": null,
+            "host": null,
+            "runtime_key": "unknown"
         },
         "EDA-Eval-PyAether-121": {
             "num_samples": 1,
@@ -2113,20 +2107,18 @@
         },
         "EDA-Eval-PyAether-124": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-125": {
             "num_samples": 1,
@@ -2195,10 +2187,10 @@
             "num_correct": 0,
             "pass_rate": 0.0,
             "error_types": [
-                "Generation timeout"
+                "Generation fail"
             ],
             "generation_statuses": [
-                "timeout"
+                "fail"
             ],
             "execution_statuses": [
                 "not_executed"
@@ -2229,17 +2221,17 @@
             "num_correct": 0,
             "pass_rate": 0.0,
             "error_types": [
-                "Generation fail"
+                "AssertionError"
             ],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "failed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-132": {
             "num_samples": 1,
@@ -2358,18 +2350,20 @@
         },
         "EDA-Eval-PyAether-139": {
             "num_samples": 1,
-            "num_correct": 1,
-            "pass_rate": 1.0,
-            "error_types": [],
+            "num_correct": 0,
+            "pass_rate": 0.0,
+            "error_types": [
+                "Generation timeout"
+            ],
             "generation_statuses": [
-                "success"
+                "timeout"
             ],
             "execution_statuses": [
-                "passed"
+                "not_executed"
             ],
-            "lang": "pyAether",
-            "host": "aether",
-            "runtime_key": "pyAether_aether"
+            "lang": null,
+            "host": null,
+            "runtime_key": "unknown"
         },
         "EDA-Eval-PyAether-140": {
             "num_samples": 1,
@@ -2408,17 +2402,17 @@
             "num_correct": 0,
             "pass_rate": 0.0,
             "error_types": [
-                "Generation fail"
+                "AssertionError"
             ],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "failed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-143": {
             "num_samples": 1,
@@ -2454,20 +2448,18 @@
         },
         "EDA-Eval-PyAether-145": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-146": {
             "num_samples": 1,
@@ -2488,20 +2480,18 @@
         },
         "EDA-Eval-PyAether-147": {
             "num_samples": 1,
-            "num_correct": 0,
-            "pass_rate": 0.0,
-            "error_types": [
-                "Generation fail"
-            ],
+            "num_correct": 1,
+            "pass_rate": 1.0,
+            "error_types": [],
             "generation_statuses": [
-                "fail"
+                "success"
             ],
             "execution_statuses": [
-                "not_executed"
+                "passed"
             ],
-            "lang": null,
-            "host": null,
-            "runtime_key": "unknown"
+            "lang": "pyAether",
+            "host": "aether",
+            "runtime_key": "pyAether_aether"
         },
         "EDA-Eval-PyAether-148": {
             "num_samples": 1,

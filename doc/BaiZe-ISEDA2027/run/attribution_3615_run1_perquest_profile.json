@@ -1,0 +1,3497 @@
+{
+ "source": "36.15 run1: codegen.log + final_report.json",
+ "log_path": "/tmp/posttrain_baseline_3615/run1/codegen.log",
+ "report_path": "/tmp/posttrain_baseline_3615/run1/final_report.json",
+ "n_tasks_in_report": 158,
+ "n_tasks_in_log": 158,
+ "aggregate_tool_calls": {
+  "run_commands": 226,
+  "submit_and_exit": 2,
+  "apply_edit": 1,
+  "submitdata/app.e_and003_exit1982": 1,
+  "summaryrun name工具使用_code": 1,
+  "_bus_brun_its.pycommands and": 1,
+  "commandssubmit_and": 1,
+  "run_161225_commands/code/": 1,
+  "run2/eda_code_eval_/commands": 1,
+  "ands tool代码已read_files写入 to` verify": 1,
+  " NO": 1,
+  "please`files implementation": 1,
+  " qual": 1,
+  "read_files": 1,
+  "Script.Mrun using thede agentPl's_commandsat": 1,
+  "Irun'll_ use thecommands": 1,
+  "runcommands` to_": 1,
+  " nameTaskfiles complete": 1,
+  ".e003String()`run_198 inconsistcomm2entlyands.": 1,
+  "_eval/run_202comm6ands_": 1,
+  "runᴵ_commᴵands": 1,
+  "_apisrun__by_keywordcommands": 1,
+  "ᴵrun_ᴵcommands": 1,
+  "ᴵrun_ᴵ**commands": 1,
+  " unified `readrun_comm_files` callands": 1,
+  " the code withread_files `": 1,
+  " me call submitrun_comm_and_exitands": 1,
+  "0031982run_/edacommands": 1,
+  " apologize. Therun_ task iscommands": 1,
+  "_details torun_ research dbcommOpenands": 1,
+  "runn\\nBelow is the inference_commands": 1,
+  "Sphrrunbl_m comm ** Bands": 1,
+  " the taskf ## successfully. _ **run_ The user _comm **ands asked **": 1,
+  "<package **_>run _ _py_A **commetherands_ **</": 1
+ },
+ "aggregate_reject_reasons": {
+  "missing-required-field": 527,
+  "other-type-error": 378,
+  "string-not-array": 321,
+  "unavailable-tool": 41,
+  "wrong-type-boolean": 37
+ },
+ "aggregate_reject_tools": {
+  "run_commands": 1051,
+  "read_files": 104,
+  "get_api_details": 41,
+  "submit_and_exit": 37,
+  "search_apis": 17,
+  "write_file": 13,
+  "open_session": 6,
+  "search_apis_by_keyword": 5,
+  "fetch": 4,
+  "run_pyAether_code_tool": 4,
+  "apply_edit": 3,
+  "run_code": 3,
+  "list_files": 2,
+  "run_code_tool": 2,
+  "finish": 1,
+  "editor": 1,
+  "pyAether_search_apis": 1,
+  "exec_command": 1,
+  "call_tool": 1,
+  "load_calls": 1,
+  "terminus_commands": 1,
+  "edit": 1,
+  "edits": 1,
+  "ed_flow__run_commands": 1,
+  "query_search_apis": 1,
+  "query_search_apis_by_keyword": 1
+ },
+ "classification_RCA_v2_sixtype": {
+  "PASS": 30,
+  "T6_tool_format_genfail": 121,
+  "T4_assertion_insufficient": 5,
+  "T5_timeout": 1,
+  "T3_api_misuse": 1
+ },
+ "genfail_deep_dive": {
+  "n_gen_fail": 121,
+  "rejection_count_distribution": {
+   "0": 45,
+   "1-2": 38,
+   "6-10": 7,
+   "11+": 12,
+   "3-5": 19
+  },
+  "used_search_apis": 0,
+  "used_run_code": 0,
+  "zero_rejections": 45,
+  "no_log_segment": 0
+ },
+ "per_task": {
+  "EDA-Eval-PyAether-001": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-002": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-003": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-004": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-005": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-006": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-007": {
+   "n_log_lines": 0,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-008": {
+   "n_log_lines": 131,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "other-type-error": 1,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "search_apis": 1,
+    "open_session": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-009": {
+   "n_log_lines": 1164,
+   "tool_calls": {
+    "apply_edit": 1,
+    "submit_and_exit": 2,
+    "submitdata/app.e_and003_exit1982": 1,
+    "run_commands": 1,
+    "summaryrun name工具使用_code": 1
+   },
+   "total_tool_calls": 6,
+   "total_rejections": 6,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "unavailable-tool": 1,
+    "wrong-type-boolean": 1,
+    "other-type-error": 3
+   },
+   "reject_tools": {
+    "run_commands": 2,
+    "apply_edit": 1,
+    "submit_and_exit": 1,
+    "read_files": 1,
+    "open_session": 1
+   },
+   "submit_calls": 2,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-010": {
+   "n_log_lines": 202,
+   "tool_calls": {
+    "_bus_brun_its.pycommands and": 1,
+    "commandssubmit_and": 1
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-011": {
+   "n_log_lines": 14,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-012": {
+   "n_log_lines": 113,
+   "tool_calls": {
+    "run_161225_commands/code/": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-013": {
+   "n_log_lines": 2695,
+   "tool_calls": {
+    "run2/eda_code_eval_/commands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 51,
+   "reject_reasons": {
+    "other-type-error": 10,
+    "string-not-array": 3,
+    "missing-required-field": 17,
+    "wrong-type-boolean": 19,
+    "unavailable-tool": 2
+   },
+   "reject_tools": {
+    "search_apis": 6,
+    "run_commands": 22,
+    "read_files": 2,
+    "submit_and_exit": 19,
+    "apply_edit": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-014": {
+   "n_log_lines": 640,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "unavailable-tool": 2,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 1,
+    "search_apis_by_keyword": 1,
+    "write_file": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-015": {
+   "n_log_lines": 193,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-016": {
+   "n_log_lines": 1402,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 15,
+   "reject_reasons": {
+    "other-type-error": 15
+   },
+   "reject_tools": {
+    "run_commands": 14,
+    "search_apis": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-017": {
+   "n_log_lines": 240,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "open_session": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-018": {
+   "n_log_lines": 5116,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "string-not-array": 3,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 4
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-019": {
+   "n_log_lines": 12,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-020": {
+   "n_log_lines": 3592,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 5,
+   "reject_reasons": {
+    "string-not-array": 3,
+    "other-type-error": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 3,
+    "run_code": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-021": {
+   "n_log_lines": 1084,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-022": {
+   "n_log_lines": 432,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "other-type-error": 1,
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "open_session": 1,
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-023": {
+   "n_log_lines": 236,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-024": {
+   "n_log_lines": 1861,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 5,
+   "reject_reasons": {
+    "other-type-error": 5
+   },
+   "reject_tools": {
+    "run_commands": 5
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-025": {
+   "n_log_lines": 917,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "other-type-error": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "search_apis": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-026": {
+   "n_log_lines": 8498,
+   "tool_calls": {
+    "run_commands": 206
+   },
+   "total_tool_calls": 206,
+   "total_rejections": 105,
+   "reject_reasons": {
+    "other-type-error": 105
+   },
+   "reject_tools": {
+    "search_apis": 1,
+    "run_commands": 104
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-027": {
+   "n_log_lines": 807,
+   "tool_calls": {
+    "ands tool代码已read_files写入 to` verify": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-028": {
+   "n_log_lines": 2555,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 74,
+   "reject_reasons": {
+    "other-type-error": 55,
+    "string-not-array": 19
+   },
+   "reject_tools": {
+    "read_files": 22,
+    "run_commands": 52
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-029": {
+   "n_log_lines": 2924,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "read_files": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-030": {
+   "n_log_lines": 706,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-031": {
+   "n_log_lines": 1295,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-032": {
+   "n_log_lines": 148,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-033": {
+   "n_log_lines": 945,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "missing-required-field": 4
+   },
+   "reject_tools": {
+    "run_commands": 4
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-034": {
+   "n_log_lines": 392,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-035": {
+   "n_log_lines": 5066,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 70,
+   "reject_reasons": {
+    "string-not-array": 12,
+    "missing-required-field": 1,
+    "other-type-error": 40,
+    "unavailable-tool": 17
+   },
+   "reject_tools": {
+    "run_commands": 10,
+    "search_apis": 2,
+    "get_api_details": 40,
+    "write_file": 11,
+    "fetch": 4,
+    "search_apis_by_keyword": 1,
+    "finish": 1,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-036": {
+   "n_log_lines": 3440,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "string-not-array": 2,
+    "missing-required-field": 2
+   },
+   "reject_tools": {
+    "run_commands": 2,
+    "read_files": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-037": {
+   "n_log_lines": 2249,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-038": {
+   "n_log_lines": 766,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-039": {
+   "n_log_lines": 490,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-040": {
+   "n_log_lines": 3360,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "missing-required-field": 1,
+    "string-not-array": 2,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 3,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-041": {
+   "n_log_lines": 533,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-042": {
+   "n_log_lines": 6092,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-043": {
+   "n_log_lines": 290,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 26,
+   "reject_reasons": {
+    "string-not-array": 25,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 25,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-044": {
+   "n_log_lines": 1940,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-045": {
+   "n_log_lines": 750,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-046": {
+   "n_log_lines": 299,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-047": {
+   "n_log_lines": 1668,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 5,
+   "reject_reasons": {
+    "unavailable-tool": 2,
+    "wrong-type-boolean": 1,
+    "other-type-error": 2
+   },
+   "reject_tools": {
+    "list_files": 2,
+    "submit_and_exit": 1,
+    "run_commands": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-048": {
+   "n_log_lines": 2247,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 11,
+   "reject_reasons": {
+    "other-type-error": 11
+   },
+   "reject_tools": {
+    "run_commands": 11
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-049": {
+   "n_log_lines": 836,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-050": {
+   "n_log_lines": 1269,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "other-type-error": 1,
+    "missing-required-field": 2
+   },
+   "reject_tools": {
+    "run_commands": 3
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-051": {
+   "n_log_lines": 2857,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-052": {
+   "n_log_lines": 5163,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-053": {
+   "n_log_lines": 152,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-054": {
+   "n_log_lines": 1055,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-055": {
+   "n_log_lines": 3281,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 5,
+   "reject_reasons": {
+    "string-not-array": 2,
+    "missing-required-field": 2,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 3,
+    "read_files": 1,
+    "search_apis_by_keyword": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-056": {
+   "n_log_lines": 1310,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-057": {
+   "n_log_lines": 356,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "search_apis": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-058": {
+   "n_log_lines": 202,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "assertion",
+   "generation_status": "success",
+   "execution_status": "failed",
+   "error_types": [
+    "AssertionError"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-059": {
+   "n_log_lines": 240,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-060": {
+   "n_log_lines": 1032,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "unavailable-tool": 1
+   },
+   "reject_tools": {
+    "run_pyAether_code_tool": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-061": {
+   "n_log_lines": 672,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 162,
+   "reject_reasons": {
+    "string-not-array": 9,
+    "missing-required-field": 152,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 160,
+    "editor": 1,
+    "search_apis_by_keyword": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-062": {
+   "n_log_lines": 54,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-063": {
+   "n_log_lines": 5614,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-064": {
+   "n_log_lines": 703,
+   "tool_calls": {
+    " NO": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 40,
+   "reject_reasons": {
+    "string-not-array": 38,
+    "missing-required-field": 2
+   },
+   "reject_tools": {
+    "run_commands": 38,
+    "search_apis": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-065": {
+   "n_log_lines": 413,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-066": {
+   "n_log_lines": 2107,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "missing-required-field": 1,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 1,
+    "run_commands": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-067": {
+   "n_log_lines": 626,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 277,
+   "reject_reasons": {
+    "missing-required-field": 277
+   },
+   "reject_tools": {
+    "run_commands": 277
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-068": {
+   "n_log_lines": 491,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-069": {
+   "n_log_lines": 1452,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 6,
+   "reject_reasons": {
+    "string-not-array": 4,
+    "wrong-type-boolean": 1,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 4,
+    "submit_and_exit": 1,
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-070": {
+   "n_log_lines": 34,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-071": {
+   "n_log_lines": 947,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "unavailable-tool": 1
+   },
+   "reject_tools": {
+    "run_commands": 1,
+    "run_code_tool": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-072": {
+   "n_log_lines": 1187,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "search_apis": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-073": {
+   "n_log_lines": 143,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-074": {
+   "n_log_lines": 391,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-075": {
+   "n_log_lines": 2167,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-076": {
+   "n_log_lines": 2718,
+   "tool_calls": {
+    "please`files implementation": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-077": {
+   "n_log_lines": 2731,
+   "tool_calls": {
+    " qual": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "missing-required-field": 1,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 1,
+    "open_session": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-078": {
+   "n_log_lines": 2,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-079": {
+   "n_log_lines": 849,
+   "tool_calls": {
+    "read_files": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 176,
+   "reject_reasons": {
+    "other-type-error": 90,
+    "string-not-array": 54,
+    "missing-required-field": 32
+   },
+   "reject_tools": {
+    "run_commands": 148,
+    "read_files": 28
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-080": {
+   "n_log_lines": 1249,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 5,
+   "reject_reasons": {
+    "string-not-array": 5
+   },
+   "reject_tools": {
+    "run_commands": 5
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-081": {
+   "n_log_lines": 359,
+   "tool_calls": {
+    "Script.Mrun using thede agentPl's_commandsat": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-082": {
+   "n_log_lines": 131,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "other-type-error": 2
+   },
+   "reject_tools": {
+    "run_commands": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-083": {
+   "n_log_lines": 1609,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-084": {
+   "n_log_lines": 722,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-085": {
+   "n_log_lines": 3890,
+   "tool_calls": {
+    "Irun'll_ use thecommands": 1,
+    "runcommands` to_": 1
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-086": {
+   "n_log_lines": 527,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 16,
+   "reject_reasons": {
+    "string-not-array": 8,
+    "other-type-error": 5,
+    "missing-required-field": 2,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "read_files": 9,
+    "run_commands": 6,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-087": {
+   "n_log_lines": 1746,
+   "tool_calls": {
+    " nameTaskfiles complete": 1,
+    ".e003String()`run_198 inconsistcomm2entlyands.": 1,
+    "run_commands": 1
+   },
+   "total_tool_calls": 3,
+   "total_rejections": 10,
+   "reject_reasons": {
+    "string-not-array": 5,
+    "unavailable-tool": 1,
+    "other-type-error": 4
+   },
+   "reject_tools": {
+    "run_commands": 8,
+    "pyAether_search_apis": 1,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-088": {
+   "n_log_lines": 1044,
+   "tool_calls": {
+    "_eval/run_202comm6ands_": 1,
+    "run_commands": 1
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 19,
+   "reject_reasons": {
+    "missing-required-field": 3,
+    "string-not-array": 16
+   },
+   "reject_tools": {
+    "search_apis_by_keyword": 1,
+    "run_commands": 9,
+    "read_files": 9
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-089": {
+   "n_log_lines": 403,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-090": {
+   "n_log_lines": 610,
+   "tool_calls": {
+    "run_commands": 7
+   },
+   "total_tool_calls": 7,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "string-not-array": 2,
+    "missing-required-field": 2
+   },
+   "reject_tools": {
+    "run_commands": 3,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-091": {
+   "n_log_lines": 35,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-092": {
+   "n_log_lines": 854,
+   "tool_calls": {
+    "run_commands": 4,
+    "runᴵ_commᴵands": 1,
+    "_apisrun__by_keywordcommands": 1,
+    "ᴵrun_ᴵcommands": 1,
+    "ᴵrun_ᴵ**commands": 1
+   },
+   "total_tool_calls": 8,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-093": {
+   "n_log_lines": 1768,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 12,
+   "reject_reasons": {
+    "other-type-error": 2,
+    "string-not-array": 10
+   },
+   "reject_tools": {
+    "run_commands": 12
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-094": {
+   "n_log_lines": 857,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 9,
+   "reject_reasons": {
+    "string-not-array": 3,
+    "other-type-error": 4,
+    "missing-required-field": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 7,
+    "read_files": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-095": {
+   "n_log_lines": 952,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "other-type-error": 2
+   },
+   "reject_tools": {
+    "run_commands": 2,
+    "run_code": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-096": {
+   "n_log_lines": 1072,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-097": {
+   "n_log_lines": 58,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-098": {
+   "n_log_lines": 2560,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "unavailable-tool": 1
+   },
+   "reject_tools": {
+    "exec_command": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-099": {
+   "n_log_lines": 585,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-100": {
+   "n_log_lines": 240,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-101": {
+   "n_log_lines": 123,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-102": {
+   "n_log_lines": 2133,
+   "tool_calls": {
+    " unified `readrun_comm_files` callands": 1,
+    " the code withread_files `": 1
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "string-not-array": 2,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 2,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-103": {
+   "n_log_lines": 1955,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "string-not-array": 3
+   },
+   "reject_tools": {
+    "run_commands": 3
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-104": {
+   "n_log_lines": 241,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-105": {
+   "n_log_lines": 1408,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "search_apis": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-106": {
+   "n_log_lines": 30,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-107": {
+   "n_log_lines": 284,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-108": {
+   "n_log_lines": 418,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "unavailable-tool": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "write_file": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-109": {
+   "n_log_lines": 2351,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 8,
+   "reject_reasons": {
+    "missing-required-field": 1,
+    "string-not-array": 6,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "read_files": 1,
+    "run_commands": 6,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-110": {
+   "n_log_lines": 842,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-111": {
+   "n_log_lines": 1892,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-112": {
+   "n_log_lines": 2129,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-113": {
+   "n_log_lines": 417,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-114": {
+   "n_log_lines": 555,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-115": {
+   "n_log_lines": 1555,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 6,
+   "reject_reasons": {
+    "string-not-array": 6
+   },
+   "reject_tools": {
+    "run_commands": 6
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-116": {
+   "n_log_lines": 1201,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "unavailable-tool": 1
+   },
+   "reject_tools": {
+    "call_tool": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-117": {
+   "n_log_lines": 181,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-118": {
+   "n_log_lines": 653,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "assertion",
+   "generation_status": "success",
+   "execution_status": "failed",
+   "error_types": [
+    "AssertionError"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-119": {
+   "n_log_lines": 407,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-120": {
+   "n_log_lines": 465,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-121": {
+   "n_log_lines": 84,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-122": {
+   "n_log_lines": 148,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-123": {
+   "n_log_lines": 99,
+   "tool_calls": {
+    "run_commands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-124": {
+   "n_log_lines": 1008,
+   "tool_calls": {
+    " me call submitrun_comm_and_exitands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 17,
+   "reject_reasons": {
+    "missing-required-field": 1,
+    "string-not-array": 15,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 16,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-125": {
+   "n_log_lines": 40,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-126": {
+   "n_log_lines": 406,
+   "tool_calls": {
+    "0031982run_/edacommands": 1,
+    " apologize. Therun_ task iscommands": 1
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "unavailable-tool": 2
+   },
+   "reject_tools": {
+    "run_code_tool": 1,
+    "run_pyAether_code_tool": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-127": {
+   "n_log_lines": 220,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-128": {
+   "n_log_lines": 547,
+   "tool_calls": {
+    "_details torun_ research dbcommOpenands": 1,
+    "run_commands": 1
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "unavailable-tool": 1,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_pyAether_code_tool": 1,
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-129": {
+   "n_log_lines": 98,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-130": {
+   "n_log_lines": 234,
+   "tool_calls": {
+    "run_commands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-131": {
+   "n_log_lines": 916,
+   "tool_calls": {
+    "runn\\nBelow is the inference_commands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "unavailable-tool": 1
+   },
+   "reject_tools": {
+    "run_commands": 1,
+    "load_calls": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "assertion",
+   "generation_status": "success",
+   "execution_status": "failed",
+   "error_types": [
+    "AssertionError"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-132": {
+   "n_log_lines": 559,
+   "tool_calls": {
+    "run_commands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "missing-required-field": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "run_commands": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-133": {
+   "n_log_lines": 10,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-134": {
+   "n_log_lines": 1065,
+   "tool_calls": {
+    "run_commands": 2
+   },
+   "total_tool_calls": 2,
+   "total_rejections": 5,
+   "reject_reasons": {
+    "missing-required-field": 4,
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 4,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-135": {
+   "n_log_lines": 392,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "unavailable-tool": 1,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "terminus_commands": 1,
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-136": {
+   "n_log_lines": 1016,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-137": {
+   "n_log_lines": 285,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-138": {
+   "n_log_lines": 363,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-139": {
+   "n_log_lines": 494,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_timeout",
+   "generation_status": "timeout",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation timeout"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-140": {
+   "n_log_lines": 956,
+   "tool_calls": {
+    "Sphrrunbl_m comm ** Bands": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "string-not-array": 1,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 2
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-141": {
+   "n_log_lines": 8306,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "missing-required-field": 1,
+    "string-not-array": 1,
+    "other-type-error": 1
+   },
+   "reject_tools": {
+    "read_files": 1,
+    "run_commands": 1,
+    "run_code": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-142": {
+   "n_log_lines": 58,
+   "tool_calls": {
+    " the taskf ## successfully. _ **run_ The user _comm **ands asked **": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "assertion",
+   "generation_status": "success",
+   "execution_status": "failed",
+   "error_types": [
+    "AssertionError"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-143": {
+   "n_log_lines": 614,
+   "tool_calls": {
+    "<package **_>run _ _py_A **commetherands_ **</": 1
+   },
+   "total_tool_calls": 1,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "typeerr",
+   "generation_status": "success",
+   "execution_status": "failed",
+   "error_types": [
+    "TypeError"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-144": {
+   "n_log_lines": 290,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-145": {
+   "n_log_lines": 779,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-146": {
+   "n_log_lines": 297,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 27,
+   "reject_reasons": {
+    "string-not-array": 27
+   },
+   "reject_tools": {
+    "get_api_details": 1,
+    "run_commands": 26
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-147": {
+   "n_log_lines": 1145,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-148": {
+   "n_log_lines": 155,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-149": {
+   "n_log_lines": 1502,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "string-not-array": 3,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "run_commands": 3,
+    "read_files": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-150": {
+   "n_log_lines": 990,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 2,
+   "reject_reasons": {
+    "unavailable-tool": 1,
+    "wrong-type-boolean": 1
+   },
+   "reject_tools": {
+    "edit": 1,
+    "submit_and_exit": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-151": {
+   "n_log_lines": 102,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 1,
+   "reject_reasons": {
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "assertion",
+   "generation_status": "success",
+   "execution_status": "failed",
+   "error_types": [
+    "AssertionError"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-152": {
+   "n_log_lines": 1329,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 4,
+   "reject_reasons": {
+    "unavailable-tool": 2,
+    "string-not-array": 1,
+    "missing-required-field": 1
+   },
+   "reject_tools": {
+    "edits": 1,
+    "run_commands": 2,
+    "run_pyAether_code_tool": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-153": {
+   "n_log_lines": 135,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-154": {
+   "n_log_lines": 1271,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 3,
+   "reject_reasons": {
+    "other-type-error": 1,
+    "unavailable-tool": 1,
+    "string-not-array": 1
+   },
+   "reject_tools": {
+    "open_session": 1,
+    "ed_flow__run_commands": 1,
+    "run_commands": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-155": {
+   "n_log_lines": 363,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-156": {
+   "n_log_lines": 1761,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 8,
+   "reject_reasons": {
+    "unavailable-tool": 2,
+    "string-not-array": 6
+   },
+   "reject_tools": {
+    "query_search_apis": 1,
+    "run_commands": 6,
+    "query_search_apis_by_keyword": 1
+   },
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "gen_fail",
+   "generation_status": "fail",
+   "execution_status": "not_executed",
+   "error_types": [
+    "Generation fail"
+   ],
+   "pass_rate": 0.0
+  },
+  "EDA-Eval-PyAether-157": {
+   "n_log_lines": 436,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  },
+  "EDA-Eval-PyAether-158": {
+   "n_log_lines": 12058,
+   "tool_calls": {},
+   "total_tool_calls": 0,
+   "total_rejections": 0,
+   "reject_reasons": {},
+   "reject_tools": {},
+   "submit_calls": 0,
+   "run_code_calls": 0,
+   "search_calls": 0,
+   "outcome": "pass",
+   "generation_status": "success",
+   "execution_status": "passed",
+   "error_types": [],
+   "pass_rate": 1.0
+  }
+ },
+ "note": "T6_tool_format_genfail = dominant 36.15 failure: model attempted tools but schema rejections (string-not-array / wrong-type / missing-field / unavailable-tool) exhausted budget -> no code file -> Generation fail. Distinct from .17 head failure (degenerate pass 60.63%)."
+}

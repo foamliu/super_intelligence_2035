@@ -1,33 +1,33 @@
 {
-  "source": "attribution_3615_run1/ (36.15 run1, timestamp 2026-11-14T15:29:32, pass_rate 0.1582)",
+  "source": "attribution_3615_run1/ (36.15 run1 COMPLETE, regenerated from complete codegen.log 189798 lines @20:41; pass_rate 0.1899; NOTE: wake499 copied a PARTIAL run1 at 20:03 yielding stale 0.1582/25-pass — superseded)",
   "funnel": {
     "total": 158,
     "generation_statuses": {
-      "success": 29,
-      "fail": 128,
+      "success": 36,
+      "fail": 121,
       "timeout": 1
     },
     "execution_statuses": {
-      "passed": 25,
-      "not_executed": 129,
-      "failed": 4
+      "passed": 30,
+      "not_executed": 122,
+      "failed": 6
     },
-    "codegen_success": 29,
-    "codegen_success_rate": 0.1835,
-    "codegen_fail": 128,
+    "codegen_success": 36,
+    "codegen_success_rate": 0.2278,
+    "codegen_fail": 121,
     "codegen_timeout": 1,
-    "codegen_fail_or_timeout": 129,
-    "codegen_fail_or_timeout_rate": 0.8165,
-    "passed": 25,
-    "pass_rate": 0.1582,
-    "gen_success_then_pass": 25,
-    "gen_success_then_fail": 4,
-    "gen_success_pass_rate": 0.8621
+    "codegen_fail_or_timeout": 122,
+    "codegen_fail_or_timeout_rate": 0.7722,
+    "passed": 30,
+    "pass_rate": 0.1899,
+    "gen_success_then_pass": 30,
+    "gen_success_then_fail": 6,
+    "gen_success_pass_rate": 0.8333
   },
   "genfail_breakdown_by_runtime": {
-    "gen_fail": 128,
+    "gen_fail": 121,
     "gen_timeout": 1,
-    "not_executed": 129
+    "not_executed": 122
   },
   "genfail_ids": [
     "EDA-Eval-PyAether-002",
@@ -119,39 +119,32 @@
     "EDA-Eval-PyAether-100",
     "EDA-Eval-PyAether-101",
     "EDA-Eval-PyAether-103",
-    "EDA-Eval-PyAether-104",
-    "EDA-Eval-PyAether-105",
     "EDA-Eval-PyAether-106",
     "EDA-Eval-PyAether-107",
     "EDA-Eval-PyAether-108",
     "EDA-Eval-PyAether-109",
     "EDA-Eval-PyAether-110",
     "EDA-Eval-PyAether-111",
-    "EDA-Eval-PyAether-112",
     "EDA-Eval-PyAether-113",
-    "EDA-Eval-PyAether-114",
     "EDA-Eval-PyAether-115",
     "EDA-Eval-PyAether-116",
     "EDA-Eval-PyAether-117",
     "EDA-Eval-PyAether-119",
+    "EDA-Eval-PyAether-120",
     "EDA-Eval-PyAether-121",
     "EDA-Eval-PyAether-122",
     "EDA-Eval-PyAether-123",
-    "EDA-Eval-PyAether-124",
     "EDA-Eval-PyAether-127",
     "EDA-Eval-PyAether-129",
     "EDA-Eval-PyAether-130",
-    "EDA-Eval-PyAether-131",
     "EDA-Eval-PyAether-132",
     "EDA-Eval-PyAether-133",
     "EDA-Eval-PyAether-134",
     "EDA-Eval-PyAether-136",
     "EDA-Eval-PyAether-138",
+    "EDA-Eval-PyAether-139",
     "EDA-Eval-PyAether-141",
-    "EDA-Eval-PyAether-142",
-    "EDA-Eval-PyAether-145",
     "EDA-Eval-PyAether-146",
-    "EDA-Eval-PyAether-147",
     "EDA-Eval-PyAether-149",
     "EDA-Eval-PyAether-150",
     "EDA-Eval-PyAether-152",
@@ -174,15 +167,20 @@
     "EDA-Eval-PyAether-093",
     "EDA-Eval-PyAether-099",
     "EDA-Eval-PyAether-102",
-    "EDA-Eval-PyAether-120",
+    "EDA-Eval-PyAether-104",
+    "EDA-Eval-PyAether-105",
+    "EDA-Eval-PyAether-112",
+    "EDA-Eval-PyAether-114",
+    "EDA-Eval-PyAether-124",
     "EDA-Eval-PyAether-125",
     "EDA-Eval-PyAether-126",
     "EDA-Eval-PyAether-128",
     "EDA-Eval-PyAether-135",
     "EDA-Eval-PyAether-137",
-    "EDA-Eval-PyAether-139",
     "EDA-Eval-PyAether-140",
     "EDA-Eval-PyAether-144",
+    "EDA-Eval-PyAether-145",
+    "EDA-Eval-PyAether-147",
     "EDA-Eval-PyAether-148",
     "EDA-Eval-PyAether-157",
     "EDA-Eval-PyAether-158"
@@ -198,25 +196,37 @@
       "task_id": "EDA-Eval-PyAether-118",
       "runtime_key": "pyAether_aether",
       "stderr_head": "",
-      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596_skill, lib.defs=/proj/train/AI/workdir/t0002596_skill/lib.defs\nFAIL: AssertionError: Missing ptn instance\n"
+      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596_skill, lib.defs=/proj/train/AI/workdir/t0002596_skill/lib.defs\nFAIL: AssertionError: Failed to instantiate p18/n18\n"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-131",
+      "runtime_key": "pyAether_aether",
+      "stderr_head": "",
+      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596, lib.defs=/proj/train/AI/workdir/t0002596/lib.defs\nFAIL: AssertionError: Expected 6 'ptn' instances, but found 0.\n"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-142",
+      "runtime_key": "pyAether_aether",
+      "stderr_head": "",
+      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596, lib.defs=/proj/train/AI/workdir/t0002596/lib.defs\nFAIL: AssertionError: Failed to place the PMOS/NMOS instances\n"
     },
     {
       "task_id": "EDA-Eval-PyAether-143",
       "runtime_key": "pyAether_aether",
       "stderr_head": "",
-      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596, lib.defs=/proj/train/AI/workdir/t0002596/lib.defs\nFAIL: TypeError: cannot unpack non-iterable NoneType object\n"
+      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596_bak_1, lib.defs=/proj/train/AI/workdir/t0002596_bak_1/lib.defs\nFAIL: TypeError: cannot unpack non-iterable NoneType object\n"
     },
     {
       "task_id": "EDA-Eval-PyAether-151",
       "runtime_key": "pyAether_aether",
       "stderr_head": "",
-      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596_skill, lib.defs=/proj/train/AI/workdir/t0002596_skill/lib.defs\nFAIL: AssertionError: Expected 9 instances, found 4\n"
+      "stdout_head": "EDA environment initialized: work_dir=/proj/train/AI/workdir/t0002596_bak, lib.defs=/proj/train/AI/workdir/t0002596_bak/lib.defs\nNAND schematic created: 4 instances, 6 nets.\nFAIL: AssertionError: Expe"
     }
   ],
   "rejection_summary": {
-    "rejected_total": 1295,
+    "rejected_total": 1304,
     "top_tools": {
-      "run_commands": 1042,
+      "run_commands": 1048,
       "read_files": 103,
       "pyAether_MCP_server__get_api_details": 41,
       "submit_and_exit": 37,
@@ -225,25 +235,25 @@
       "eda_flow__open_session": 6,
       "pyAether_MCP_server__search_apis_by_keyword": 4
     },
-    "run_commands_string_not_array": 256,
-    "submit_and_exit_count": 334,
-    "timeout_markers": 55,
+    "run_commands_string_not_array": 262,
+    "submit_and_exit_count": 339,
+    "timeout_markers": 77,
     "eda_flow_sandbox_calls": {
-      "open_session": 67,
-      "run_commands": 48,
-      "run_code": 44,
-      "close_session": 39,
-      "declare_done": 39,
-      "read_file": 39,
-      "list_files": 39,
-      "write_file": 39,
+      "open_session": 70,
+      "run_commands": 53,
+      "run_code": 47,
+      "close_session": 41,
+      "declare_done": 41,
+      "read_file": 41,
+      "list_files": 41,
+      "write_file": 41,
       "run_": 1
     },
     "pyAether_rag_calls": {
-      "get_api_details": 349,
-      "search_apis": 280,
-      "search_apis_by_keyword": 227,
-      "run_code": 94,
+      "get_api_details": 354,
+      "search_apis": 285,
+      "search_apis_by_keyword": 232,
+      "run_code": 96,
       "list_files": 6,
       "run_code_tool": 6,
       "run_pyAether_code_tool": 4,
@@ -254,15 +264,17 @@
       "get_api_d": 1,
       "search": 1,
       "s": 1,
-      "ge": 1
+      "ge": 1,
+      "search_apis_and__": 1,
+      "search_apis_and__get_api_details": 1
     }
   },
   "contrast_dot17_vs_dot3615": {
     "metric": "same model minicpm5-2b-sft step105 (verified .17:8096 /v1/models id=minicpm5-2b-sft-v39-final root=global_step_105; reverse tunnel 36.15:18096->.17:8096)",
     "model_name_field_note": "final_report.json model_name=zhulong_deepseek_v32 is a STALE config label (EDA-Eval-Framework/config.yaml active_model), NOT the served model; calculate_results.py:109 reads config active_model",
     "dot17_submit_storm": "13699 submit_and_exit / 91.77% error / degenerate_pass 60.63% (RCA v2, 790-task run)",
-    "dot3615_submit": "334 submit_and_exit; sandbox actively used (eda_flow open_session=67, run_code=44); RAG used (search_apis=280, get_api_details=349)",
-    "dot3615_bottleneck": "codegen completion 29/158=0.1835 (not code quality 0.8621); dominant rejection run_commands=1042 (string-not-array=256)"
+    "dot3615_submit": "339 submit_and_exit; sandbox actively used (eda_flow open_session=70, run_code=47); RAG used (search_apis=285, get_api_details=354)",
+    "dot3615_bottleneck": "codegen completion 36/158=0.2278 (not code quality 0.8333); dominant rejection run_commands=1048 (string-not-array=262)"
   },
-  "task_b_implication": "5x jump is same-model env change. 36.15 bottleneck = code-gen COMPLETION (18.35%), dominated by tool-call format errors (run_commands string-not-array). P0-tool-format patch directly targets this. Code quality once generated is high (86.2%). Prompt iteration ROI: fix tool format -> raise completion -> raise pass rate above 15.82%."
+  "task_b_implication": "5x/6x jump is same-model env change. 36.15 run1 COMPLETE bottleneck = code-gen COMPLETION 36/158=0.2278 (not code quality 0.8333); dominated by tool-call format errors (run_commands string-not-array=262, total rejections=1304). P0-tool-format patch directly targets this. Code quality once generated is high (0.8333). Prompt iteration ROI: fix tool format -> raise completion -> raise pass rate above 0.1899. CORRECTION: wake499 stale 0.1582/15.82% was a PARTIAL run1 copy; complete run1 = 0.1899 (30/158)."
 }

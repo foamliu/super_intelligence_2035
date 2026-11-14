@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # posttrain_attribution_3615_profile.py
-# 36.15 run1 (15.82%) 逐题画像 —— Task B profiling（用户令 2026-11-14 19:2x）
+# 36.15 run1 逐题画像 —— Task B profiling（用户令 2026-11-14 19:2x）
+# 注：wake499 初版误用 PARTIAL run1(0.1582)；本版用 COMPLETE run1(0.1899, 30/158)
 # 输入：attribution_3615_run1/{final_report.json, completed_code_generation.jsonl,
 #        execution_results.jsonl, codegen_rejection_stats.json}
 # 输出：attribution_3615_run1_profile.json（可复算）
@@ -89,7 +90,7 @@ contrast = {
 }
 
 out = {
-    "source": "attribution_3615_run1/ (36.15 run1, timestamp 2026-11-14T15:29:32, pass_rate 0.1582)",
+    "source": f"attribution_3615_run1/ (36.15 run1 COMPLETE, regenerated from complete codegen.log 189798 lines @20:41; pass_rate {funnel['pass_rate']}; NOTE: wake499 copied a PARTIAL run1 at 20:03 yielding stale 0.1582/25-pass — superseded)",
     "funnel": funnel,
     "genfail_breakdown_by_runtime": dict(genfail_breakdown),
     "genfail_ids": genfail_ids,
@@ -98,10 +99,13 @@ out = {
     "rejection_summary": rejection_summary,
     "contrast_dot17_vs_dot3615": contrast,
     "task_b_implication": (
-        "5x jump is same-model env change. 36.15 bottleneck = code-gen COMPLETION (18.35%), "
-        "dominated by tool-call format errors (run_commands string-not-array). P0-tool-format patch "
-        "directly targets this. Code quality once generated is high (86.2%). "
-        "Prompt iteration ROI: fix tool format -> raise completion -> raise pass rate above 15.82%."
+        f"5x/6x jump is same-model env change. 36.15 run1 COMPLETE bottleneck = code-gen COMPLETION "
+        f"{gen_success}/{total}={funnel['codegen_success_rate']} (not code quality {funnel['gen_success_pass_rate']}); "
+        f"dominated by tool-call format errors (run_commands string-not-array={rej.get('run_commands_string_not_array')}, "
+        f"total rejections={rej.get('rejected_total')}). P0-tool-format patch directly targets this. "
+        f"Code quality once generated is high ({funnel['gen_success_pass_rate']}). "
+        f"Prompt iteration ROI: fix tool format -> raise completion -> raise pass rate above {funnel['pass_rate']}. "
+        f"CORRECTION: wake499 stale 0.1582/15.82% was a PARTIAL run1 copy; complete run1 = {funnel['pass_rate']} ({passed_n}/{total})."
     ),
 }
 
