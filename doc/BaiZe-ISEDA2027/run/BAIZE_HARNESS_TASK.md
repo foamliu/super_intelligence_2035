@@ -31,6 +31,54 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-14 08:2x（**报告 `report_harness_glm53_7way_swebench_tb_zh.html` 整改** · 用户判定「不合格」）· 未完成
+
+> **用户原话（逐字转述，共 4 条）**：
+>
+> 「harness 呈现的报告：`report_harness_glm53_7way_swebench_tb_zh.html` 不合格
+> 1.【3. 与 kimi-k2.6-cloud 对照】表格为什么 kimi 的分母是 500，而 glm-5.3 的分母千奇百怪？
+> 2.【TB4 — 已闭合】为什么还放在报告里？
+> 3.【TB-2.1 — 进行中】这是最新的结果吗？claude-code 只有零分，难道 harness 自己对此完全没有疑问吗？为什么不排查？
+> 4.【1. SWE-bench Verified · 7 路 Predict】&【2. SWE-bench Verified · 7 路 Eval 矩阵】为什么把 predict 和 eval 分开，这对于报告的阅读者有任何意义吗？」
+
+> ⚠️ **交接边界（用户 2026-11-14 明确要求）**：下发方（运维/Windows 侧）**没有 tb21 jobs、predictions、eval 的原始数据**，无法复核任何一个数字，**禁止**由下发方推断结论。以下只转述问题；**所有事实核对、口径决定、数字复算，必须由 harness 自己在服务器上用原始数据完成**，并把证据（路径/命令/行号）写进报告与 MEMORY。
+
+- **涉及文件**：`reports/report_harness_glm53_7way_swebench_tb_zh.html`；生成器 `run/harness/gen_report_glm53_7way.py`（模板 L246+、kimi 行 L215-220、`KIMI` 常量 L189、§1/§2/§4 结构 L260-286）。
+- **纪律**：🚫 手改 HTML；🚫 拿「中间值/进行中」搪塞；改动须可复算。
+
+**问题 1 · kimi 对照表分母不一致**
+
+- 用户质疑：kimi 分母恒 500，glm-5.3 一路一个分母（"千奇百怪"）。
+- 现状（L215-220）：`k_rate=k_resolved/500` vs `g_rate=resolved/n`（n=该路已评题数）。
+- 落地其一：a) 统一同分母并写清定义；b) 拆成「已评 N 题 pass%」与「按 500 折算」两列各自标注；c) 确不可比则不做除法比较，并列陈述+说明。
+- 自查 `KIMI={...}`（L189）是**硬编码**：核实来源/时点/口径并注明，否则是拿两个基准做除法。
+- 交付：表头写清两边分母 + 复算命令 + 一句话结论（该表能否跨行比大小）。
+
+**问题 2 · 已闭合的 TB4 仍在正文**
+
+- TB4 从正文移附录或删，仅留 1 行历史指针（如「R1770 被 TB-2.1 取代，66×7=462 全 reward=0，详见 `run/ARCHIVE_OPERATOR_HARNESS.md`」）。
+- 判据：正文 Terminal-Bench 章不再有 TB4 独立小节。
+
+**问题 3 · TB-2.1 是否最新 + claude-code 全零为何不排查**
+
+- 用户对工作态度的直接批评：**0 分不是"已知结论"，是必须归因的异常**。
+- ① 复核各路 completed/passed/errored/remaining 是否最新（数据时点、扫描命令、`/tmp` 是否被清理）；② **专查 claude-code**：`/tmp/tb21_glm53_jobs/claude-code/` 逐 trial 看 `result.json`/`exception_info`/`agent_result.metadata`（`run_result`、`iterations`、`stdout`），按 ①从未启动(docker/镜像) ②适配器 bug ③429 ④超时 ⑤真能力差 逐题归类，**每类给证据**；③ infra 判定则**必须重跑并并回**，能力判定则给 iterations/token 证据；④ 一并体检 codex（报告自称 err=适配器）与 hermes（7/53）。
+- 判据：该节必须有「claude-code = 0p 归因=<类别> + 证据 <路径>」一行 + MEMORY 心跳；🚫 不许留「0p 待分析」。
+- 同时修措辞矛盾：§4.2「claude-code 0p待分析」、§5/§6「已恢复 HTTP 200」与「网关429(历史)」并存。
+
+**问题 4 · predict 与 eval 分作两节，对读者无意义**
+
+- **合并成一节「SWE-bench Verified · 7 路结果」**，列：`Harness | Predict(attempt/500) | Real | Empty | Eval N | Resolved | Pass%(resolved/N) | 状态`；中间态用一行注释，不单开节。
+- 顺带清理暴露的矛盾/冗余：§2「各路predict推进中(网关429 blocking)」与页首「网关 HTTP 200」冲突；§8 research 日报输入、§7 硬盘体检是否该留在正式报告（用户未点名，同属"读者无意义"，请判断并给取舍理由）。
+
+**统一交付（4 条一次 REGEN）**
+
+1. 改生成器 → REGEN → 体积/0外链/0script 自检；2. 每条结论可追到原始文件（路径+复算命令）；3. MEMORY 心跳一行：`报告整改 R2462: ①kimi分母=X ②TB4降附录 ③cc0p归因=Y(证据Z)+重跑N ④§1§2合并`；4. 做不到就写 `BLOCKED: <原因> + 需求`，🚫 不许糊。
+5. **体积**：本轮先按 §工作约定 把已闭合的 §运维令/流水块 fold 进 `run/ARCHIVE_OPERATOR_HARNESS.md`，再做整改。
+
+---
+
+
 ### 🟡 用户令 · 2026-11-14 08:0x（**TB-2.1 七路「网关 Token 额度耗尽」诊断 + 按需重跑（含 other-6 路与 synthetic 假结果）**）· A+C ✅ / B 脚本就绪待跑
 
 > **R2461 进度**：**A ✅ DONE**（`audit_tb21_quota_7way.py` 创建+运行→7路五桶落盘 `reports/tb21_quota_audit_7way_20261114_0802.json`：cline=Q0/S8·codex=Q0/S5·opencode=Q15/S23·cc=Q0/S0·pi=Q0/S45·hermes=Q39/S43·deepseek=Q0/S48·rerun_targets=226）·**C ✅ DONE**（`gen_report_tb21_7way.py` 增 7路归因表+旧 cline 结论作废戳+38/89 现口径·双报告 REGEN✅）·**B 脚本就绪**（`rerun_tb21_7way_quota.py` 编排器 dry-run OK·226 targets·等 train-fasttext + 5th-batch 跑完启动）。
