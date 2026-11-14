@@ -5,6 +5,8 @@
 
 WAITING: 0
 
+> 🔧 **隧道复盘结论（wake507 · 2026-11-14 23:5x · posttrain infra:）**：隧道**坏过现已恢复**——最后通点 **20:41:50**（36.15 run1 完整 18.99% 落盘）/ 首断点 **22:4x wake505**（.17:3333 未监听+直连36.15:22超时）/ 恢复确认 **23:26 wake506**（中继 tunnel.ps1 重新在线）/ 故障域=**中继侧①+②**（排除SSH认证/36.15 sshd/.17端口重启）/ **非本线造成亦非本线修复**（20:41–23:30 posttrain 未碰中继与隧道，wake505 纯CPU、wake506 kill 仅作用36.15评测进程于恢复后）/ 当前隧道健康三条验证命令实测PASS。报告 `reports/report_infra_tunnel_postmortem_zh.html`。隧道恢复后已接回 A1/A3+P0dev（归因链 PID3707027，A1 23:30 起跑）。
+
 ## 进度快照
 
 - PHASE: posttrain-wake500（✅ **归因前提核验PASS:5×跳升确属同模型step105不同环境比较**[curl .17:8096=id=minicpm5-2b-sft-v39-final root=global_step_105;36.15经反向隧道18096→.17:8096;final_report model_name=zhulong_deepseek_v32=config.yaml active_model陈旧标签非实际模型];**36.15 run1逐题画像[🔴wake500订正:完整run1=18.99%(30/158)/gen成功36/gen_fail121/生成后通过率83.3%;六类分型T6_tool_format_genfail121头号(76.6%);全局拒绝1304[run_commands1048/missing-field527/string-not-array321];wake499的15.82%/29/25/86.2%是20:03部分副本,已superseded]**;v2 RCA已交付[e434f6def];**双 eval 并行 RUNNING**:36.15重测 run1 DONE=18.99%(完整,wake500订正;旧15.82%为部分副本)/run2 RUNNING(PID2747266) + .17 R2 5-run chain PID2322797健康;v2 RCA核心:MCP工具6051+submit13699/91.77%报错/C5_degenerate_pass479/790=60.6%头号/检索333API仅19进代码5.7%）
