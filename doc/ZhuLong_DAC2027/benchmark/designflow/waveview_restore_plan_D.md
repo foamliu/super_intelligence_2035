@@ -91,3 +91,20 @@ check.py 无法直接验「agent 看了图」，只能验 deliverable 文本答�
   - 缺：11 题的**真实私有波形 / FSDB / WaveView 项目环境**（e0023936 等用户的私有数据，权限不可复刻，红线 4 禁写目标机）。
   - 获取途径：用 EDA 沙盒（eda_flow `run_code lang=tcl host=waveview` / FineSim）对**合成波形**重新生成真图（路径 A）。真实私有数据不进 SUT 沙盒（隔离原则）。
   - designflow 不以「素材不可得」为由降级凑数；恢复后的 case 必须是「需看图」形态，无多模态 fail 是正确结果。
+
+## 六、恢复进度（r650, 2026-11-14）
+
+### α1 EyeApertureSelect-001 — ✅ 已恢复原形态 + 基线已跑
+
+- **恢复完成**：移除文本 .rep 数据替身（eye_sweep_A.rep / hidden/eye_sweep_B.rep / hidden/eye_sweep_allinvalid.rep 全删），改用 matplotlib 在 .75 沙盒生成的真数据图 PNG（eye_sweep_A.png 3-panel VREF sweep, 1286×1286, 144KB；hidden/eye_sweep_B.png 同构异值, 137KB）。
+- **prompt 改写**：要求 agent 看图读数作答（从坐标轴读 VREF/width/skew/height），交付 wv_summary.csv 答案（不再是脚本）。明示"不要尝试用脚本去解析图中的原始数据"。
+- **check.py 重写**：12 条件 (a)-(l)，answer-validation 设计——oracle 由 subprocess 从 embedded A sweep 数据重算（满足 §4.2 真跑），值条件 (f)-(i) 验 vref=100/aperture=56.99/skew=5.38/height=180（过滤后最优，非 raw-max=60 假峰）；反硬编码 (k) 拒 B 特征字面量；一致性 (l) 验报告元组匹配 A sweep 真实点（击溃跨 VREF 混搭猜测）。
+- **契约适配（metadata.restoration_notes 记录）**：answer-deliverable 设计下，§4.1/§4.2 candidate-script-runs-on-hidden-B 机制替换为 oracle-recomputed-via-subprocess + anti-hardcode-B-token guard；hidden B 图保留作 provenance + 反硬编码。
+- **自验**：REF PASS 12/12；5 negative（fake_empty/fake_all_zero/fake_raw_max/fake_hardcode_B/fake_wrong_height）全 FAIL（NEG_RC=0，各击溃不同条件）；§4.9 退化回归（empty zip / stub / core-deleted）全 FAIL。
+- **断言闸门**：k_rationale==k_check==12 ≥ 8 ✓。
+- **jsonl 更新**：EDA-Eval-DesignFlow_D.jsonl 中该 case 已替换为 restored form（attachments=[eye_sweep_A.png, task_brief.md], image_required=true, track=synthesized-image-restored, restoration notes）。
+- **基线**：cline v3.0.51 + minicpm5-2b-sft-v39-final（2B text-only SFT surrogate, 无多模态）跑——预期 FAIL（不能看图）。注：providers.json 原 model=deepseek-v4-pro-cloud 在本地 18096 代理不存在（仅 minicpm5-2b 可用），用 --model minicpm5-2b-sft-v39-final 覆盖。结果落 eval/status.jsonl + designflow/waveview_baseline_results.D.json。
+- **判分隔离**：SUT workdir 只放 prompt.txt + eye_sweep_A.png + task_brief.md（PreToolUse hook 验证无 check.py/reference/hidden 泄漏）；判分在独立 judge dir 跑。
+
+### 待恢复（下轮起）
+α4 TempSelWaveform-001 / β9 WaveMaxFind-001 / β10 TempThreshChar-001 / β11 SimFailFsdbProbe-001（D 域已落库 4 题）+ α3 / β6（D 域未落库 2 题，需先造 case 再恢复）= 6 题。B 域 α2/β7 移交 shard B；β8 跨 shard 待 A 裁；β5 未落库待确认。
