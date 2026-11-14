@@ -1,5 +1,74 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 143 -->
+<!-- RUN_ID: 144 -->
+
+## RUN_ID 144 — 协助 post-train 从 36.15 启动 PyAether 评测（serve minicpm5-2b + 隧道 + 起跑）
+
+> **用户令 2026-11-14**：post-train 的 `EDA-Eval-PyAether-v20260311_fixed.jsonl` 评测
+> **不应在 .17 本地启动**（那样没有 RAG、没有沙盒 MCP，测出来不是真实分数）。
+> 必须像 zhulong 一样**从 36.15 启动**。本块负责把链路打通并起跑。
+> 只做 zhulong 熟悉的动作；不改 post-train 的评测代码/判据。
+
+```bash
+set -u
+echo "=== RUN_ID 144 | post-train eval bootstrap on 36.15 | $(date '+%F %T') | host=$(hostname) ==="
+echo "  预期本机 = 10.251.36.15（若 hostname 不符请停止并报告）"
+hostname -I 2>/dev/null | sed 's/^/  local IPs: /'
+
+BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp
+GR=$(git rev-parse --show-toplevel 2>/dev/null || echo /nasdata/app.e0031982/code/super_intelligence_2035)
+cd "$GR" || exit 1
+git pull --rebase --autostash origin main >/dev/null 2>&1 || true
+
+echo
+echo "[1] 既有基础设施现状（RAG / 沙盒 MCP / GPU）"
+echo "  --- RAG 服务（9006）---"
+(curl -s -o /dev/null -w '  RAG:9006 http=%{http_code}\n' --max-time 5 http://127.0.0.1:9006/ ) 2>/dev/null || echo "  RAG:9006 不可达"
+echo "  --- 沙盒 MCP（18891）---"
+(curl -s -o /dev/null -w '  MCP:18891 http=%{http_code}\n' --max-time 5 http://127.0.0.1:18891/mcp ) 2>/dev/null || echo "  MCP:18891 不可达"
+echo "  --- 沙盒端口 8650-8654 ---"
+for p in 8650 8651 8652 8654; do
+  if (exec 3<>/dev/tcp/127.0.0.1/$p) 2>/dev/null; then echo "  $p OPEN"; exec 3<&- 3>&-; else echo "  $p CLOSED"; fi
+done
+echo "  --- GPU（36.15 是否有卡可 serve 2B）---"
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader 2>/dev/null | sed 's/^/  /' || echo "  无 nvidia-smi"
+
+echo
+echo "[2] 是否已有 minicpm5-2b serve 在跑"
+ps -eo pid,etime,args 2>/dev/null | grep -iE 'vllm|sglang|api_server' | grep -v grep | cut -c1-170 | head -8 || echo "  (无 serve 进程)"
+
+echo
+echo "[3] .17 隧道现状（post-train 在 .17，需要把模型调用打通）"
+echo "  --- 现有隧道/端口转发 ---"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'ssh .*-[LR]|ssh -[LR]|autossh' | grep -v grep | cut -c1-170 | head -10 || echo "  (无 ssh 隧道)"
+echo "  --- 到 .17 的连通性 ---"
+ping -c 1 -W 2 10.252.32.17 >/dev/null 2>&1 && echo "  10.252.32.17 ping OK" || echo "  10.252.32.17 ping FAIL"
+
+echo
+echo "[4] post-train 的 SFT ckpt（用于 serve）"
+ls -dt /nasdata/app.e0031982/*/sft* /nasdata/app.e0031982/**/global_step_105 2>/dev/null | head -6 | sed 's/^/  /' || echo "  (未找到 sft ckpt 目录，请人工确认路径)"
+find /nasdata/app.e0031982 -maxdepth 4 -type d -name 'global_step_*' 2>/dev/null | head -8 | sed 's/^/  /'
+
+echo
+echo "[5] zhulong 自己的评测启动方式（供 post-train 复用）"
+echo "  BASE_DIR=$BASE_DIR"
+ls -la "$BASE_DIR" 2>/dev/null | head -12 | sed 's/^/  /' || echo "  BASE_DIR 不存在"
+echo "  --- eda_fastmcp 里的启动脚本 ---"
+find "$BASE_DIR" -maxdepth 2 -name '*.sh' 2>/dev/null | head -12 | sed 's/^/  /'
+echo "  --- 环境变量口径（RAG/沙盒）---"
+grep -rhoE 'RAG_RECALL_URL=[^ ]*|PROXY_PORTS=[^ ]*|SANDBOX_ENDPOINTS=[^ ]*' "$BASE_DIR" 2>/dev/null | sort -u | head -10 | sed 's/^/  /'
+
+echo
+echo "[6] 结论与待办（人工据此决定下一步）"
+echo "  请据 [1]-[5] 判断:"
+echo "   a) RAG(9006) 与 MCP(18891) 是否就绪 — 不就绪则先拉起"
+echo "   b) 36.15 GPU 是否可 serve minicpm5-2b — 决定 serve 命令与端口"
+echo "   c) .17 -> 36.15 的隧道方向 — post-train 在 .17 调用 36.15 的模型端点"
+echo "   d) post-train 侧需要改的是 BASE_URL（指向隧道），不改评测代码"
+
+echo
+echo "=== DONE 144 ==="
+```
+
 
 ## RUN_ID 143 — zhulong 状态体检（只读）：loop / cline / smoke / 沙盒端口 / git
 
