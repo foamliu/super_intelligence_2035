@@ -2441,3 +2441,19 @@ python3 research/arxiv_fetch.py --query 'cat:cs.CL AND abs:"agent"' --max-result
 - **作者网**：+7 → **106**（Ian Goodfellow `@goodfellow_ian` · Diederik P. Kingma（未找到 X / 邮箱）· Jimmy Ba（未找到）· Sergey Ioffe / Christian Szegedy（未找到）· David Z. Pan（已发信；X 未找到）· Jim Fan `@DrJimFan`）；X 已核验 **61**、待 follow 清单 **51**、已 follow **0**。
 - **投料**：`voice_ready` **0**（本期无）；`news_ready` **1**（不新增）。
 - **交付**：`daily/2026-11-14.html` **65,131 B**（div 117/117、table 11/11、tr 71/71、td 235/235、th 43/43、h2 17/17、details 1/1、footer 1/1、**0 `<script>`**、0 残留 `**`）+ `daily/index.html`（103 篇 / 106 人 / 35 封）；`PAPERS.md` **103** / `AUTHORS.md` **106**；6 线增量建议 **6 条**（逐线覆盖）。
+
+## §9.171 · 2026-11-14 09:00 CST（时窗轮 · A 轨复核 0 新收 + B 轨第二十七轮 + 第 36–37 封信）
+
+- **公告批仍未前进**：单分类 5 查询 **5/5 `200` + `application/atom+xml; charset=utf-8`**（1.24 / 2.48 / 1.97 / 2.23 / 1.43 s，串行 ≥3.2s）；`totalResults` = **125,322 / 213,258 / 299,025 / 212,730 / 31,041**（与 06:00 **逐值相同**）；窗口最晚 `published` 仍 **`2026-11-12T18:59:55Z`**。
+- **A 轨结果**：merged **391** / SEEN **7** / 新候选 **384**（`raw/candidates_r171.py`，产物 `raw/2026-11-14-09h-candidates-r171.json`，`min_published=2026-11-10`）；当日 5/5 已收口 ⇒ **0 新收**。
+- **B 轨元数据**：`id_list=2112.10752` ⇒ **`200` + atom**（3,162 B；5 作者；首发 `2021-12-20T18:55:25Z`；`comment=CVPR 2022`）；`id_list=1911.08265` ⇒ **`200` + atom**（3,431 B；12 作者；首发 `2019-11-19T13:58:52Z`）。⚠️ 期间连续 **`429`**（3 次退避：20 / 60 / 80 s）与 1 次 **`000`** 超时；改用显式 `User-Agent: research-watch/1.0` + `http://export.arxiv.org` + 串行 ≥10s 后恢复 `200`。
+- **无 arXiv 核验**：`ti:"AutoDMP"`（699 B）与 `ti:"DREAM-GAN"`（703 B）均 **`200` + atom、`totalResults=0`**。
+- **OpenAlex（查询日 2026-11-14，4/4 `200`）**：Latent Diffusion **20,670**（`conference-paper`，CVPR 系列）· MuZero **2,075**（`article`，Nature）· AutoDMP **67**（`conference-paper`，ISPD，pp.149–157）· DREAM-GAN **16**（`conference-paper`，ISPD，pp.141–148）。
+- **Crossref（3/3 `200`）**：MuZero `10.1038/s41586-020-03051-4` ⇒ Nature **588(7839):604–609**，`published=[[2020,12,23]]`；AutoDMP `10.1145/3569052.3578923` ⇒ `Proceedings of the 2023 International Symposium on Physical Design`，pp.149–157，`[[2023,3,26]]`；DREAM-GAN `10.1145/3569052.3572993` ⇒ pp.141–148，`[[2023,3,26]]`。
+- **⚠️ 更正**：OpenAlex `10.48550/arxiv.2207.11240` 返回 **Discrete Key-Value Bottleneck**（Träuble 等，2022，被引 15）⇒ 候选池的 LDM ID 有误；真 ID = **`2112.10752`**（OpenAlex 直查标题与 5 位作者逐字一致）。
+- **X（只读，显式 `-x http://127.0.0.1:7897`）**：`x.com` 自检 **`200`**；profile **8/8 `200`**（`robrombach` / `patrickesser` / `hardmaru` / `demishassabis` / `karpathy` / `RichardSSutton` / `ilyasut` / `agnesina`）；`@PatrickEsser` = 巴西葡语个人账号（2012–2013）⇒ **非本人**；`@agnesina` 无 bio ⇒ 不登记；`@robrombach` `og:title` 本人（bio 含 `Generative Models`）⇒ 登记。
+- **推文页核验（4/4 `200`）**：`demishassabis/status/2120565316619284734` ⇒ `og:title` 本人、`og:description` **全文**（AlphaGenome 2）⇒ 采用为 V25；`RichardSSutton/status/2119142310894334262` ⇒ 全文但**已用于 11-12 期 V4**；`.../2119218417383383222`、`.../2116314708101988817` ⇒ `og:description` 以省略号**截断** ⇒ 不采用；`robrombach/status/2120999674299478117` ⇒ `FLUX-mimic goes brrr`（产品向短句，信息量不足）。
+- **发信 2 封（`SENT OK`）**：Björn Ommer `09:09:16`（Latent Diffusion，英文 **188** 词）· Sung Kyu Lim `09:09:16`（DREAM-GAN，英文 **184** 词）；两封发送前 `wc -w` 已核。今日累计 **5 封**、累计 **37 封**。
+- **作者网**：+4 → **110**（Rombach `@robrombach` · Ommer 已发信 · Lim 已发信 · Esser 未找到 X / 邮箱）；X 已核验 **62**、待 follow **52**、已 follow **0**。
+- **投料**：`voice_ready` **1**（V25 Hassabis）· `news_ready` **1**（不新增）。
+- **交付**：`daily/2026-11-14.html` **80,669 B**（div 122/122、table 16/16、tr 101/101、td 325/325、th 64/64、h2 24/24、details 2/2、footer 1/1、**0 `<script>`**、0 残留 `**`）+ `daily/index.html`（107 篇 / 110 人 / 37 封）；`PAPERS.md` **107** / `AUTHORS.md` **110**；6 线增量建议 **6 条**。
