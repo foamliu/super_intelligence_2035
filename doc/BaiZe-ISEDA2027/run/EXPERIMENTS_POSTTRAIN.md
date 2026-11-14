@@ -11542,3 +11542,44 @@ python3 复算：
 
 ### 5. 边界
 - 未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark，0 infra。本轮为只读监控 + 心跳，无服务动作。
+
+---
+
+## §R512-attribution-audit — 归因夜链有效性审计（wake512 · 2026-11-15 01:3x）
+
+### 1. 目的
+用户令 21:5x「明早 09:00 及格线」要求「至少一条补丁的 dev 前后对比」。该交付依赖 P0base（baseline 提示）vs P0p0（P0 工具格式补丁）在 dev(79) 上的单变量对比。若提示机制不生效（如 wake506 发现的 MCP_CFG/SANDBOX_ON no-op bug），P0base 与 P0p0 会用同一默认提示 ⇒ 无前后差异 ⇒ 交付静默失败。本轮在链运行期间（A3 RUNNING，P0base/P0p0 pending）做只读端到端核验，提前 de-risk。
+
+### 2. 提示机制端到端核验（代码级 + 日志级，经隧道 ssh 到 36.15 取证）
+- `eda_fastmcp/scripts/run_cline_script.sh` L25-26：`export EDA_PROMPT_TEMPLATE="${EDA_PROMPT_TEMPLATE_PYAETHER:-eval_sys_prompt_template_old.md}"` —— 读 env，默认 old.md。
+- `eda_fastmcp/pyAether-eval/script/format_eval_task.py` L306：`os.environ.get("EDA_PROMPT_TEMPLATE", "eval_sys_prompt_template.md")` —— 读 EDA_PROMPT_TEMPLATE 选模板文件合并进任务提示。
+- 调用链：runner `export EDA_PROMPT_TEMPLATE_PYAETHER=$PROMPT_TPL` → run_cline_script.sh L26 → format_eval_task.py L306 → merge_prompt_template2task。
+- A1 codegen.log 实见 `[merge_prompt_template2task] Format prompt 158 tasks` —— 合并步骤实跑。
+- 结论：**提示机制真生效**（与 MCP_CFG/SANDBOX_ON no-op bug 不同）。P0 补丁将真实到达模型。
+
+### 3. 各臂实际配置（staged cline_mcp_settings.json + 脚本 case 表取证）
+- A0（run1 18.99% 基线）= old.md + pyAether:8090 + eda_flow:18891（全开）
+- A1（DONE 12.66% on 40q）= no_sandbox.md + pyAether:8090 + eda_flow:18891（只改提示）
+- A3（RUNNING）= no_sandbox.md + pyAether:8090（eda_flow 移除）—— 隔离 eda_flow
+- P0base（pending）= old.md + baseline MCP（full）
+- P0p0（pending）= attribution_prompt_p0_toolfmt.md（deploy 到 prompts/ + env）+ baseline MCP（full）—— 隔离 P0 提示补丁
+- ⇒ A1-vs-A3 隔离 eda_flow（单变量，prompt 持恒 no_sandbox）；P0base-vs-P0p0 隔离 P0 提示（单变量，MCP 持恒 full）。均为有效单变量设计。
+
+### 4. A3 旁注（诚实标注，须进最终报告）
+- :8090 pyAether_MCP_server `tools/list` 实测 = [get_api_details, search_apis, search_apis_by_keyword, **run_code**]。
+- A3 移除 eda_flow（:18891，含 run_commands/run_code/read_file/write_file/open_session）但保留 :8090（仍暴露 run_code）。
+- T6 归因表（attribution_t6_table.json）：全局拒绝 1304 中 run_commands 占 1051（80.6%），属 eda_flow 工具 ⇒ A3 正确隔离主导失败变量。
+- :8090 run_code 为次要残留；A3 ≠「沙盒完全关闭」而是「eda_flow 移除 + no_sandbox 提示」。报告须以此口径表述，不得声称 A3=完全无沙盒。
+
+### 5. 链健康（01:31 实测）
+- 链 PID 3707027 存活 ~2h05m；A1 DONE @00:48:54 pass_rate=0.12658（12.66%）；A3 RUNNING PID4176306 ~42min（code-gen，minicpm5 parser 乱码→2500s 超时拉长）。
+- P0base/P0p0 pending 串行；全链 ETA ~04-05 < 09:00。
+- GPU6:8096（step105-final）/ GPU7:8095（R2-step200）serve 健康（curl /v1/models 均 OK，85% util）。
+
+### 6. R2 5-run eval（.17 GPU7:8095）
+- run1=0.63% / run2=1.27% / run3=0.0% DONE；run4 RUNNING PID3344389 ~4h47m code-gen；run5 pending。
+- 3 run < step105 5-run mean 3.04%±0.83%，趋势负；单 run 不预判，待 5-run mean + McNemar/bootstrap。
+
+### 7. 跨线与边界
+- ZhuLong subagent A2（PID2886626 → run_cline_script PID3805045）在 36.15 跑全 158 题，走云 agi-gateway，不占 GPU6:8096。非本线，未碰。
+- 本轮仅只读取证（curl/ssh/grep/ps/cat/stat），未碰 GPU0-5 / 运行中 eval / 别线文件 / benchmark / 隧道进程，0 infra 改动。
