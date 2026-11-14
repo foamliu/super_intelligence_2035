@@ -6,6 +6,7 @@ WAITING: 0
 > - **核心结论**：agent 编排把单模型「整题 0/10」推到 **G1=5/10**（整题翻转），正是用户要量的「MLLM 作为 agent 系统一部分」增益；单模型结构上做不到。G2 量 rft2 强化在 agent 设置的额外增益。口径=WaveView 真实题（等价重建·非合成集）。
 > - **产物**：`G/{G0,G1,G2}/*.json`+`summary_agent.json`+`audit_agent.json`+`reports/report_vision_waveview_selftest_agent_zh.html`+EXPERIMENTS §26。本轮由 auto-finisher 在 G2 后台 run(pid 3503075) 跑完后自动落盘+提交。**WAITING: 0**。
 
+> 📦 wake#1261 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind2 ff-only 合并 designflow shard B r587·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
 > 📦 wake#1260 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind1 ff-only 合并 designflow shard B r586·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
 
 > 📦 wake#1242~#1244 例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·复验 wake#1241 交付物在位·三 VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
