@@ -4,10 +4,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2461 §14-08:4x cc归因修正落入7路审计表(connection_refused列)·count_route修正(evaluated=89)·"待分析"全清·双报告+glm53报告REGEN✅·hermes rerun RUNNING·5th-batch RUNNING
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因修正DONE: connection_refused新桶+失败构成列+count_route修正+待分析全清)
+PHASE:        R2462 §14-08:2x 报告整改(4条REGEN✅)+§14-08:4x cc归因(已交付)·hermes rerun RUNNING·5th-batch RUNNING
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB4 0passed(能力)·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE·cc归因DONE)·R2462(08:2x报告整改: ①kimi分母标注 ②TB4降附录 ③cc0p归因修正 ④§1§2合并)
 当前动作:     R2461: **cc归因修正REGEN**: audit_tb21_quota_7way.py增connection_refused桶(claude-code 89/89=CR)+CLI bug检测·gen_report_tb21_7way.py增conn_refused列+失败构成列+count_route修正(evaluated=89非0)·gen_report_glm53_7way.py删"待分析"→替换cc归因结论·gen_cline_special.py增cc归因修正节·三报告REGEN✅·hermes rerun RUNNING(PID247919)·5th-batch RUNNING·W:0
-下一步:       ①hermes rerun完成→merge→REGEN ②5th-batch完成→merge→REGEN ③**cc重跑BLOCKED**: claude-code适配器ConnectionRefused(容器内127.0.0.1:9092不可达·需修复适配器网络配置) ④**08:2x 报告整改**: report_harness_glm53_7way_swebench_tb_zh.html 4条整改 ⑤B重跑: opencode38→pi46→deepseek48逐路串行 ⑥commit+mark §08:4x done
+下一步:       ①hermes rerun完成→merge→REGEN ②5th-batch完成→merge→REGEN ③**cc重跑BLOCKED**: claude-code适配器ConnectionRefused(需修复网关连接配置) ④B重跑: opencode38→pi46→deepseek48逐路串行 ⑤commit+mark §08:4x+§08:2x done
 ERROR_COUNT:  0
  体积: TASK=32KB / MEMORY=32KB（归档183KB）
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
@@ -20,13 +20,9 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
+> [09:15] R2462 **08:2x报告整改**: gen_report_glm53_7way.py 4条整改REGEN✅: ①§1§2合并="SWE-bench Verified·7路结果"单表(Predict/Real/Empty/Eval N/Resolved/Pass%/状态) ②kimi分母=显式标注(resolved/500 vs resolved/N+可比性列+分母说明+复算命令) ③TB4降附录(1行历史指针·正文无§4.1) ④§5归因修正(cc=88 ConnectionRefused+1 CLI bug·infra BLOCKED·删"docker down""TB4全0")·research日报移除(过程内部·非读者面向)·0script/0外链grep✅·§1-§8编号正确·四报告REGEN✅(glm53_7way/cc_attribution/cline_special/tb21_7way)·audit JSON清出reports/·W:0
+
 > [08:58] R2461 cc归因修正: **connection_refused新桶**→audit_tb21_quota_7way.py(claude-code 89/89=CR·CLI bug检测)·gen_report_tb21_7way.py增conn_refused列+失败构成列(claude-code="连接拒绝89")·**count_route修正**: 之前verifier_result=None就skip→claude-code显示0 evaluated·现修正为按result.json存在计evaluated=89·gen_report_glm53_7way.py删"0p待分析"→替换"0p=100%infra(88 ConnectionRefused+1 CLI bug)"·gen_cline_special.py增cc归因修正节·**三报告REGEN✅**·"待分析"全清(grep验证0处)·audit JSON落盘tb21_quota_audit_7way_20261114_0858.json·cc重跑BLOCKED(适配器ConnectionRefused需修复网络配置)·W:0
-
-> [08:22] R2461 cont: **B 启动**·rerun_tb21_cline_quota.py 增 --harness/--agent 参数(7way agent映射)·**hermes rerun LAUNCHED**(82tasks·AGENT=terminalbench.agents.hermes:HermesTB·jobs-dir=hermes_rerun_7way_20261114_0820_hermes·PID247906)·hermes env issue: python3 not found in task image(正在retry with PATH fix)·train-fasttext RUNNING(61min·超3600s timeout但cline agent仍在容器内工作)·5th-batch waiting·W:0
-
-> [08:26] R2461 update: hermes rerun RUNNING(PID247900·`--harness hermes`·correct agent=HermesTB✅·task2/82=bn-fit-modify in docker·1 done=adaptive-rejection-sampler(verifier pending)·log=/tmp/tb21_7way_hermes_rerun.log)·train-fasttext still RUNNING(65min·PID160601·n_running=1)·audit re-verified: 7路结果一致·W:0
-
-> [08:07] R2461: §14-08:0x **A+C DONE**·自检OK(CPU28/224·mem1061G·disk5.8T·gw200·无predict竞争)·**A**: audit_tb21_quota_7way.py 创建+运行→7路五桶: cline=Q0/S8·codex=Q0/S5·opencode=Q15/S23·cc=Q0/S0·pi=Q0/S45·hermes=Q39/S43·deepseek=Q0/S48·rerun_targets=226→reports/tb21_quota_audit_7way_20261114_0802.json·**C**: gen_report_tb21_7way.py增7路归因表+旧cline结论作废戳+38/89现口径·双报告REGEN✅·train-fasttext RUNNING(45min)·5th-batch waiting·W:0
 
 > [07:45] R2460: 自检(CPU load28/224=pretrain·无harness runaway·disk/data5.8T18%·mem1060GB avail·gateway200)·git synced(HEAD=origin/main=31822834a)·dry-run scan: quota_lost=**0**✅·cline=38/90=42.2%·52non-quota-failed审计: 43有proper非额度证据(AgentTimeoutError/iterations>1/has_result+stdout)·**8=synthetic placeholder**(2nd-batch source=rerun_2nd_batch_synthetic·has_run_result=false·stdout=0·never ran agent: extract-moves-from-video/feal-diff/feal-linear/filter-js/financial-doc/fix-code-vuln/fix-git/fix-ocaml-gc)·**5th-batch LAUNCHED**(PID2163861·chained after train-fasttext marker·will auto-rerun 8tasks→merge→REGEN双报告)·train-fasttext still RUNNING(~22min·ETA~08:21)·wait_and_merge PID254276 alive·W:0
 

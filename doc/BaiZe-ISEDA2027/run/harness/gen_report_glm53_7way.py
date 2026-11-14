@@ -202,22 +202,30 @@ for f in cline_files:
 # ---- Build HTML rows ----
 CSS = 'body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}h3{color:#2874a6;margin-top:20px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:white}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}code{background:#f0f0f0;padding:2px 6px;border-radius:3px}'
 
-sw_rows = ""
-for i, (name, n, resolved, unresolved, errored, status) in enumerate(swebench, 1):
-    rate = f"{resolved/n*100:.1f}%" if n else "—"
-    sw_rows += f"<tr><td>{i}</td><td>{esc(name)}</td><td>{n}</td><td class='pass'>{resolved}</td><td class='fail'>{unresolved}</td><td>{errored}</td><td><strong>{rate}</strong></td><td>{'✅ 已评' if status=='eval_done' else '⏳ 待评'}</td></tr>\n"
+# Merged predict+eval rows (Issue 4: §1+§2 合并成一节)
+merged_rows = ""
+for i, ((name, n, resolved, unresolved, errored, status),
+        (pname, total, real, empty)) in enumerate(zip(swebench, predict), 1):
+    pass_rate = f"{resolved/n*100:.1f}%" if n else "—"
+    merged_rows += (f"<tr><td>{i}</td><td>{esc(name)}</td><td>{total}/500</td>"
+                    f"<td class='pass'>{real}</td><td class='fail'>{empty}</td>"
+                    f"<td>{n}</td><td class='pass'>{resolved}</td>"
+                    f"<td><strong>{pass_rate}</strong></td>"
+                    f"<td>{'✅ 已评' if status=='eval_done' else '⏳ 待评'}</td></tr>\n")
 
-pred_rows = ""
-for i, (name, total, real, empty) in enumerate(predict, 1):
-    rrate = f"{real/total*100:.1f}%" if total else "—"
-    pred_rows += f"<tr><td>{i}</td><td>{esc(name)}</td><td>{total}/500</td><td class='pass'>{real}</td><td class='fail'>{empty}</td><td>{rrate}</td></tr>\n"
-
+# Kimi comparison — 显式标注两边分母 (Issue 1: kimi /500 vs glm53 /N)
 kimi_rows = ""
-for i, (name, n, resolved, unresolved, errored, status) in enumerate(swebench, 1):
+for i, ((name, n, resolved, unresolved, errored, status),
+        (pname, total, real, empty)) in enumerate(zip(swebench, predict), 1):
     k_resolved = KIMI.get(name, "—")
     k_rate = f"{k_resolved/500*100:.1f}%" if isinstance(k_resolved, int) else "—"
     g_rate = f"{resolved/n*100:.1f}%" if n else "—"
-    kimi_rows += f"<tr><td>{esc(name)}</td><td>{k_resolved}/500 ({k_rate})</td><td>{resolved}/{n if n else '?'} ({g_rate})</td><td>{'⚠️ 中间值' if n < 500 else '✅ 全量'}</td></tr>\n"
+    g_denom = f"{n}" if n else "?"
+    comparable = "⚠️ 分母不同(不可跨行比)" if n < 500 else "✅ 可比(均满量500)"
+    kimi_rows += (f"<tr><td>{esc(name)}</td>"
+                  f"<td>{k_resolved}/500 ({k_rate})</td>"
+                  f"<td>{resolved}/{g_denom} ({g_rate})</td>"
+                  f"<td>{comparable}</td></tr>\n")
 
 tb_rows = ""
 status_map = {"done":"✅ 已完成","running":"🔄 运行中","partial":"⚠️ 部分","unknown":"❌ 未启动"}
@@ -250,42 +258,31 @@ HTML = f"""<!DOCTYPE html>
 <style>{CSS}</style></head><body>
 <h1>glm-5.3-flash · 7 路 × SWE-bench Verified + Terminal-Bench 横评报告</h1>
 <div class="info">
-<p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 200 · 已恢复）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 {GW_NOTE}）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
 <p><strong>生成时间</strong>：{NOW}（{ROUND}）</p>
 <p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval {total_resolved} resolved(0 true backlog·incr_eval {ROUND}已完成)；TB-2.1 7路({tb_total_pass}p/{tb_total_trials}t)</p>
 </div>
-<div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 200 ✅(已恢复) (quota exhausted)</p></div>
+<div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 {GW_EMOJI} {GW_NOTE_SHORT}</p></div>
 
-<h2>1. SWE-bench Verified · 7 路 Predict</h2>
-<table><tr><th>#</th><th>Harness</th><th>Predict</th><th>Real</th><th>Empty</th><th>Real%</th></tr>
-{pred_rows}</table>
-<div class="note"><p><strong>合计</strong>：{total_pred}/3500={total_pred/3500*100:.1f}%，real={total_real}，empty={total_pred-total_real}。Empty 主因=429额度期+sphinx-doc能力放弃。</p></div>
+<h2>1. SWE-bench Verified · 7 路结果</h2>
+<table><tr><th>#</th><th>Harness</th><th>Predict(attempt/500)</th><th>Real</th><th>Empty</th><th>Eval N</th><th>Resolved</th><th>Pass%(resolved/N)</th><th>状态</th></tr>
+{merged_rows}</table>
+<div class="note"><p><strong>合计</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%，real={total_real}，empty={total_pred-total_real}。eval {total_resolved} resolved/{total_evaluated} evaluated，0 backlog。Empty 主因=429额度期+sphinx-doc能力放弃。领先: {sw_lead_str}。</p></div>
 
-<h2>2. SWE-bench Verified · 7 路 Eval 矩阵</h2>
-<table><tr><th>#</th><th>Harness</th><th>Eval N</th><th>Resolved</th><th>Unresolved</th><th>Errored</th><th>Rate</th><th>状态</th></tr>
-{sw_rows}</table>
-<div class="info"><ul>
-<li>领先: {sw_lead_str}</li>
-<li>eval全量完成:7/7 DONE,{total_resolved} resolved/{total_evaluated} evaluated,0 backlog</li>
-<li>各路predict推进中(网关429 blocking),eval随新predict增量更新</li>
-</ul></div>
-
-<h2>3. 与 kimi-k2.6-cloud 对照</h2>
-<table><tr><th>Harness</th><th>kimi(resolved/500)</th><th>glm53(interim)</th><th>备注</th></tr>
+<h2>2. 与 kimi-k2.6-cloud 对照</h2>
+<table><tr><th>Harness</th><th>kimi(resolved/500)</th><th>glm53(resolved/N)</th><th>可比性</th></tr>
 {kimi_rows}</table>
-<div class="note"><p>⚠️ glm53 eval全量完成,可对照。但glm53 predict未满500(网关200·predict进行中),kimi为500满量,分母不同。</p></div>
+<div class="note"><p><strong>分母说明</strong>：kimi-k2.6-cloud 为 2026-10-28 full500 满量结果（分母恒 500）；glm-5.3-flash 各路 predict 尚未满 500（网关{GW_NOTE_SHORT}·predict进行中），分母 N=该路已评测题数。<strong>当 N&lt;500 时两列 pass% 不可跨行直接比大小</strong>（分母不同）。kimi 数据来源：硬编码自 10-28 full500 eval（KIMI 常量，详见生成器 L189）。复算命令：<code>cd swebench_verified_full/reports &amp;&amp; for h in cline-patched codex opencode claude-code pi hermes deepseek-harness; do python3 -c "import json;d=json.load(open('eval_glm53_$h.json'));print('$h',len(d.get('resolved',[])),'/',d.get('n',0))"; done</code></p></div>
 
-<h2>4. Terminal-Bench</h2>
-<h3>4.1 TB4 — 已闭合</h3>
-<div class="critical"><p>66×7=462 trials，0 passed。根因=能力(R1743)。已切换TB-2.1。</p></div>
-<h3>4.2 TB-2.1 — 进行中</h3>
-<div class="info"><p>口径：TB-2.1/89题/7-way（与TB4不可比）。Oracle 5/5 ✅。§15:2x判据MET ✅</p></div>
+<h2>3. Terminal-Bench 2.1（89 题 × 7 路）</h2>
+<div class="info"><p>口径：TB-2.1/89题/7-way concurrent（与旧 TB4 不可比）。Oracle 5/5 ✅（break-filter/bn-fit/log-summary/cancel-async/fix-git 全 reward=1）。§15:2x判据MET ✅。<br>
+<em>历史指针</em>：TB4（66×7=462 trials, 0 passed, 根因=能力 R1743）已被 TB-2.1 取代，详见 <code>run/ARCHIVE_OPERATOR_HARNESS.md</code>。</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
-<div class="note"><p>TB-2.1进行中:7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。codex err=适配器(infra),claude-code 0p=100%infra(88 ConnectionRefused+1 CLI解析bug,模型从未运行,详见 reports/report_harness_cc_tb21_attribution_zh.html)。</p></div>
+<div class="note"><p>TB-2.1: 7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。<strong>claude-code 0p 归因</strong>=100%infra(88 ConnectionRefused+1 CLI解析bug,模型从未运行,tokens=0,iterations=-1,详见 <code>reports/report_harness_cc_tb21_attribution_zh.html</code> 89行逐题明细)。codex err=适配器(infra)。claude-code 重跑 BLOCKED(适配器ConnectionRefused,需修复网关连接配置)。</p></div>
 
-<h2>5. cline 专项（§10:10 C1-C5）</h2>
+<h2>4. cline 专项（§10:10 C1-C5）</h2>
 <table><tr><th>指标</th><th>值</th><th>判据</th></tr>
 <tr><td>C1 Predict</td><td>{cline_real}r/{cline_empty}e/{len(cline_files)}t</td><td>可复算</td></tr>
 <tr><td>C2 失败分类</td><td>能力差(eval fail {cline_empty})+网关429历史(infra,已cleanup·网关已恢复200)</td><td>占比=100%</td></tr>
@@ -295,31 +292,28 @@ HTML = f"""<!DOCTYPE html>
 </table>
 <div class="info"><p>cline空patch={cline_empty}(cleanup后,由历史429产生后删除·网关已恢复200)。cline eval pass rate={_cl_rate}({_cl_r}/{_cl_n}),opencode={_oc_rate}({_oc_r}/{_oc_n}),差距为能力差(p=6.27e-08,R1685)。eval {total_resolved} resolved(0 true backlog),pass%可直接对比。</p></div>
 
-<h2>6. 失败归因（infra单列）</h2>
+<h2>5. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
-<tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,已恢复HTTP 200)</td><td class='warn'>infra(已恢复·predict进行中)</td></tr>
-<tr><td>TB4全0</td><td>66×7=462 0passed</td><td class='fail'>能力</td></tr>
-<tr><td>TB-2.1 codex 84err</td><td>适配器/docker环境</td><td class='warn'>infra</td></tr>
-<tr><td>TB-2.1 cc docker down</td><td>已重启</td><td class='warn'>infra(已修)</td></tr>
+<tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,当前{GW_NOTE_SHORT})</td><td class='warn'>infra(当前{GW_NOTE_SHORT})</td></tr>
+<tr><td>TB-2.1 codex 1/89</td><td>适配器 wire_api 解析异常</td><td class='warn'>infra</td></tr>
+<tr><td>TB-2.1 claude-code 0/89</td><td>88 ConnectionRefused(适配器无法连接API网关)+1 CLI解析bug,模型从未运行(tokens=0)</td><td class='warn'>infra(BLOCKED·需修复网关连接配置后重跑)</td></tr>
+<tr><td>TB-2.1 hermes 7/89</td><td>39 quota_only+43 synthetic(未真跑),rerun进行中</td><td class='warn'>infra(rerun中)</td></tr>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
 
-<h2>7. 硬盘体检</h2>
+<h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>
 <tr><td>/data</td><td>7.0T</td><td>1.3T</td><td>5.8T</td><td>18%</td></tr>
 <tr><td>/</td><td>384G</td><td>13G</td><td>352G</td><td>4%</td></tr></table>
 
-<h2>8. research日报输入(2026-11-12)</h2>
-<div class="info"><p>research日报2026-11-12已查(mtime15:10)。harness advice(仅参考·不构成新指令·与本任务书冲突以本任务书为准):①任务书合规审计(论文2611.13709·把6份任务书显式指令改写成可判定检查·输出"始终遵守/从未遵守/无法判定"三列)·②报告pool表加mean/worst列。本轮纳入计划:已阅并记入心跳·①审计待§22:4x全交付后做·②mean/worst列待下轮用现有{total_resolved} resolved数据回填。网关{GW_NOTE_SHORT}·predict进行中。</p></div>
-
-<h2>9. ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
+<h2>7. ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
 <div class="info"><p><strong>① SWE-bench Verified(500题×7路)</strong>：{swe_eta_str}（预计 {swe_eta_date}）<br>
 <strong>② Terminal-Bench 2.1(89题×7路)</strong>：{tb_eta_str}</p></div>
 <table><tr><th>路</th><th>Predict</th><th>剩余</th><th>3日均速</th><th>今日速</th><th>ETA</th></tr>
 {eta_html_rows}</table>
 <div class="note"><p><strong>复算方法</strong>：ETA = 剩余题数 ÷ 3日平均速率(由 predictions_glm53/ 文件 mtime 统计)。瓶颈=剩余最多且速率最低的活跃路。DONE=该路已 attempt 500 题、空 patch=能力差(不重启)。网关 429 会降低有效速率；当前网关{GW_NOTE_SHORT}。复算命令：<code>cd swebench_verified_full/predictions_glm53 &amp;&amp; for r in cline-patched codex opencode claude-code pi hermes deepseek-harness; do n=$(ls ${{r}}__*.json|wc -l); echo "$r: $n/500 remaining=$((500-n))"; done</code></p></div>
 
-<h2>10. 后续计划</h2>
+<h2>8. 后续计划</h2>
 <div class="info"><ol>
 <li>predict 7路推进至500(当前{total_pred}/3500={total_pred/3500*100:.1f}%,网关200·predict进行中)</li>
 <li>eval {total_resolved} resolved(0 true backlog)·新predict后增量eval({ROUND}: incr_eval已完成·待新predict累积)</li>
@@ -334,7 +328,7 @@ BaiZe Harness · {ROUND} · {NOW}<br>glm-5.3-flash · SWE-bench Verified 500 + T
 # ---- Post-process: replace hardcoded gateway status with dynamic probe result ----
 HTML = HTML.replace("网关 HTTP 200 · 已恢复", f"网关 {GW_NOTE}")
 HTML = HTML.replace("网关200·predict进行中", f"网关{GW_NOTE_SHORT}·predict进行中" if _gw_code==200 else f"网关{GW_NOTE_SHORT}·predict stalled")
-HTML = HTML.replace("网关 200 ✅(已恢复) (quota exhausted)", f"网关 {GW_EMOJI} {GW_NOTE_SHORT}")
+HTML = HTML.replace("网关 {GW_EMOJI} {GW_NOTE_SHORT}", f"网关 {GW_EMOJI} {GW_NOTE_SHORT}")
 HTML = HTML.replace("额度耗尽(quota exhausted,已恢复HTTP 200)", f"额度耗尽(quota exhausted,当前{GW_NOTE_SHORT})")
 HTML = HTML.replace("infra(已恢复·predict进行中)", f"infra(当前{GW_NOTE_SHORT})")
 
