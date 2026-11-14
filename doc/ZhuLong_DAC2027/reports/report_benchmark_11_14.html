@@ -24,7 +24,7 @@ td{word-break:break-word}
 footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </style></head><body><div class="wrap">
 <h1>设计流 Benchmark 日报 · 11_14</h1>
-<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-11-14 13:24</span></p>
+<p><span class="tag pass">多机扩样层 v0.50 已交付</span> <span class="tag legacy">即时令 VII/VIII 整改：单一 jsonl + 设计流契约</span> <span style="color:#999">生成时间 2026-11-14 13:35</span></p>
 
 <h2>一、三口径数字（.75 实时重扫 2026-11-03，eda_flow run_commands 实测）</h2>
 <div class="kpis">
@@ -47,9 +47,9 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 </div>
 <h3>候选池与覆盖率（候选池 = match_count≥10 的去重 session，2026-11-11 全线下调）</h3>
 <div class="kpis">
-<div class="kpi"><div class="n">2585</div><div class="l">候选池（mc≥10 去重 session）</div></div>
-<div class="kpi"><div class="n">2597</div><div class="l">已动过（含暂缓）</div></div>
-<div class="kpi"><div class="n">663</div><div class="l">未动过（真正可做）</div></div>
+<div class="kpi"><div class="n">3416</div><div class="l">候选池（mc≥10 去重 session）</div></div>
+<div class="kpi"><div class="n">0</div><div class="l">已动过（含暂缓）</div></div>
+<div class="kpi"><div class="n">0</div><div class="l">未动过（真正可做）</div></div>
 <div class="kpi"><div class="n">mc10</div><div class="l">分母快照口径</div></div>
 </div>
 <div class="note">
@@ -61,24 +61,20 @@ footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
 
 <table style="margin-top:6px;font-size:.78rem">
 <tr><th>mc 阈值</th><th>池总量</th><th>已动过</th><th>未动过（可做）</th><th>说明</th></tr>
-<tr><td>mc≥5</td><td>3609</td><td>2649</td><td>960</td><td>参考档（噪声偏大）</td></tr>
-<tr style="background:#e8f2ff;font-weight:700"><td>mc≥10</td><td>3260</td><td>2597</td><td>663</td><td>← 2026-11-11 用户令采用</td></tr>
-<tr><td>mc≥15</td><td>3047</td><td>2493</td><td>554</td><td>原 shard A 阈值</td></tr>
-<tr><td>mc≥20</td><td>2869</td><td>2398</td><td>471</td><td>参考档</td></tr>
-<tr><td>mc≥30</td><td>2575</td><td>2228</td><td>347</td><td>原 B/C/D 阈值（已弃）</td></tr>
+<tr><td colspan="5">(mc_matrix 未生成，先跑 trace_ledger.py mc-matrix)</td></tr>
 </table>
 
 <h3>trace 覆盖率进度条（候选池 mc&ge;10，合并 4 shard ledger）</h3>
 <p style="color:#666;font-size:.78rem">分母口径 = <code>summary_stats.json:mc10</code>（target_mc=10）</p>
 <div class="kpis">
-<div class="kpi"><div class="n">39.8%</div><div class="l">已用 / 候选池（mc&ge;10）</div></div>
-<div class="kpi"><div class="n">1028</div><div class="l">已用去重 session</div></div>
-<div class="kpi"><div class="n">2585</div><div class="l">候选池总量</div></div>
-<div class="kpi"><div class="n">3013</div><div class="l">已动过（含暂缓）</div></div>
+<div class="kpi"><div class="n">31.4%</div><div class="l">已用 / 候选池（mc&ge;10）</div></div>
+<div class="kpi"><div class="n">1073</div><div class="l">已用去重 session</div></div>
+<div class="kpi"><div class="n">3416</div><div class="l">候选池总量</div></div>
+<div class="kpi"><div class="n">3375</div><div class="l">已动过（含暂缓）</div></div>
 </div>
-<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden"><div style="width:39.8%;height:18px;background:#2c7be5"></div></div>
-<p style="color:#666;font-size:.8rem">新增 traces（自上次刷新）：+916 · 台账 case 1073 / seeded 0 / deepread 0 / parked 2302 / claimed 0</p>
-<ul><li>analog_context：<b>42</b></li><li>characterization：<b>58</b></li><li>digital：<b>105</b></li><li>digital_front：<b>1</b></li><li>eda_other：<b>39</b></li><li>layout_aether：<b>67</b></li><li>layout_virtuoso：<b>52</b></li><li>pg_layout：<b>27</b></li><li>physical_verify：<b>102</b></li><li>pnr_signoff：<b>32</b></li><li>schematic_netlist：<b>111</b></li><li>skipper：<b>1</b></li><li>spice_sim：<b>274</b></li><li>verification：<b>55</b></li><li>waveform：<b>32</b></li></ul>
+<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden"><div style="width:31.4%;height:18px;background:#2c7be5"></div></div>
+<p style="color:#666;font-size:.8rem">新增 traces（自上次刷新）：+2666 · 台账 case 1073 / seeded 0 / deepread 0 / parked 2302 / claimed 0</p>
+<ul><li>analog_context：<b>44</b></li><li>characterization：<b>61</b></li><li>digital：<b>109</b></li><li>digital_front：<b>1</b></li><li>eda_other：<b>43</b></li><li>layout_aether：<b>68</b></li><li>layout_virtuoso：<b>53</b></li><li>pg_layout：<b>27</b></li><li>physical_verify：<b>103</b></li><li>pnr_signoff：<b>34</b></li><li>schematic_netlist：<b>113</b></li><li>skipper：<b>1</b></li><li>spice_sim：<b>292</b></li><li>verification：<b>55</b></li><li>waveform：<b>35</b></li></ul>
 
 
 <h2>二、评测用例盘点（benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl）</h2>
