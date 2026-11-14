@@ -113,7 +113,7 @@ print('providers.json reset from compaction basic template (A2 fallback)')
   export CLINE_THINKING="medium"
   # 🔑 轴 B 空 hint (LANG_HINT 基线) — 但 spawn 臂用 arm-specific hint 覆盖 (见下)
   export CLINE_UNIFIED_DATA_DIR=1
-  export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-PyAether-158.jsonl"
+  export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
   export EVAL_ROOT_DIR_OVERRIDE="$EVAL_ROOT_OVERRIDE"
   export SUBSET_FILE
   export PARALLEL
