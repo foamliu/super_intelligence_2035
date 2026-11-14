@@ -179,8 +179,51 @@ def esc(s):
             .replace(">", "&gt;").replace('"', "&quot;"))
 
 
+# ---------------------------------------------------------------------------
+# §七路额度归因 (2026-11-14 用户令)
+# ---------------------------------------------------------------------------
+
+def _quota_audit_7way():
+    """返回 dict: harness_key -> {summary, buckets} — 七路五桶额度归因。
+
+    复用 audit_tb21_quota_7way.py 的 scan + classify 逻辑。
+    """
+    try:
+        import importlib.util
+        audit_path = Path(__file__).parent / "audit_tb21_quota_7way.py"
+        spec = importlib.util.spec_from_file_location("audit_tb21_quota_7way", audit_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except Exception:
+        return {}
+
+    all_tasks = mod.get_all_tasks()
+    result = {}
+    for h in mod.HARNESSES:
+        root = mod.JOBS / h
+        task_data = mod.scan_trials(root)
+        buckets, detail = mod.classify_route(task_data, all_tasks)
+        evaluated = len(task_data)
+        passed = len(buckets["passed"])
+        result[h] = {
+            "summary": {
+                "evaluated": evaluated,
+                "passed": passed,
+                "quota_only": len(buckets["quota_only"]),
+                "mixed_fail": len(buckets["mixed_fail"]),
+                "ability_fail": len(buckets["ability_fail"]),
+                "synthetic_or_never_ran": len(buckets["synthetic_or_never_ran"]),
+                "not_evaluated": len(buckets["not_evaluated"]),
+                "pass_rate": round(passed / max(evaluated, 1), 4),
+                "rerun_targets": len(buckets["quota_only"]) + len(buckets["synthetic_or_never_ran"]),
+            },
+            "buckets": buckets,
+        }
+    return result
+
+
 def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
-                attr_data=None):
+                attr_data=None, audit_7way=None):
     css = ("body{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;"
            "max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}"
            "h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}"
@@ -236,17 +279,73 @@ def _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
              "(exception_info 非空, 非能力). 网关 ALL 200, 非 429. "
              "reward=0 且无 exception = 能力差 (真实做错).</p>"
              "<p><strong>7 路纪律</strong>: 7 路不得替换/合并 (§15:2x 铁律).</p></div>")
-    # ---- §cline TB-2.1 根因归因 (2026-11-13 用户令) ----
+    # ---- §七路额度归因 (2026-11-14 用户令) ----
+    if audit_7way:
+        H.append("<h2>TB-2.1 七路额度归因 (2026-11-14 用户令)</h2>")
+        total_quota = sum(a["summary"]["quota_only"] for a in audit_7way.values())
+        total_synth = sum(a["summary"]["synthetic_or_never_ran"] for a in audit_7way.values())
+        total_rerun = sum(a["summary"]["rerun_targets"] for a in audit_7way.values())
+        if total_quota == 0 and total_synth > 0:
+            conclusion = (f"七路合计 quota_only = <strong>{total_quota}</strong> (额度耗尽已清零), "
+                          f"但仍有 <strong>{total_synth}</strong> 个 synthetic/未真跑结果需重跑; "
+                          f"失败主因 = synthetic 假结果 + timeout/ability")
+        elif total_quota > 0:
+            conclusion = (f"七路合计 quota_only = <strong>{total_quota}</strong> (仍有额度耗尽未重跑), "
+                          f"synthetic = <strong>{total_synth}</strong>; "
+                          f"rerun_targets = <strong>{total_rerun}</strong>")
+        else:
+            conclusion = (f"七路合计 quota_only = 0, synthetic = 0; "
+                          f"失败 = timeout/ability (无额度/假结果因素)")
+        H.append(f"<div class='info'><p><strong>结论一句话 (数据驱动)</strong>: {conclusion}</p></div>")
+        H.append("<table><tr><th>Harness</th><th>Pass</th><th>Eval</th>"
+                 "<th>quota_only</th><th>mixed</th><th>ability</th>"
+                 "<th>synthetic</th><th>not_eval</th><th>rerun_targets</th></tr>")
+        for h in HARNESSES:
+            if h not in audit_7way:
+                continue
+            s = audit_7way[h]["summary"]
+            name = DISP[h]
+            q_cls = "warn" if s["quota_only"] > 0 else ""
+            syn_cls = "warn" if s["synthetic_or_never_ran"] > 0 else ""
+            H.append(f"<tr><td><strong>{esc(name)}</strong></td>"
+                     f"<td class='pass'>{s['passed']}</td>"
+                     f"<td>{s['evaluated']}</td>"
+                     f"<td class='{q_cls}'>{s['quota_only']}</td>"
+                     f"<td>{s['mixed_fail']}</td>"
+                     f"<td class='fail'>{s['ability_fail']}</td>"
+                     f"<td class='{syn_cls}'>{s['synthetic_or_never_ran']}</td>"
+                     f"<td>{s['not_evaluated']}</td>"
+                     f"<td><strong>{s['rerun_targets']}</strong></td></tr>")
+        H.append(f"<tr style='font-weight:bold;background:#d5e8d4'>"
+                 f"<td>合计</td><td>{sum(a['summary']['passed'] for a in audit_7way.values())}</td>"
+                 f"<td>—</td><td class='{ 'warn' if total_quota else ''}'>{total_quota}</td>"
+                 f"<td>—</td><td>—</td>"
+                 f"<td class='{ 'warn' if total_synth else ''}'>{total_synth}</td>"
+                 f"<td>—</td><td>{total_rerun}</td></tr>")
+        H.append("</table>")
+        H.append("<div class='caveat'><p><strong>五桶定义</strong>: "
+                 "<strong>quota_only</strong> = 全部 trial 命中网关额度耗尽 (零机会, 需重跑) | "
+                 "<strong>mixed_fail</strong> = 部分额度+部分非额度 (不重跑) | "
+                 "<strong>ability_fail</strong> = 无额度, 有 proper 证据 (iterations>1/run_result/exception) = 能力差 | "
+                 "<strong>synthetic_or_never_ran</strong> = 无 run_result, stdout 极短 = 假结果/未真跑 (需重跑) | "
+                 "<strong>not_evaluated</strong> = 89 题中未出现在 result.json (需补跑)</p>"
+                 "<p><strong>归因红线</strong>: 额度耗尽 ≠ 能力, 假结果 ≠ 能力 (三者分开记账)</p></div>")
+
+    # ---- §cline TB-2.1 根因归因 (2026-11-13 用户令, ~~部分作废~~) ----
     if attr_data:
         cats, fair_p, fair_a, quota_lost, cross = attr_data
         total_fail = sum(cats.values()) - cats["passed"]
-        H.append("<h2>cline TB-2.1 低分根因归因 (2026-11-13 用户令)</h2>")
-        H.append(f"<div class='caveat'><p><strong>结论一句话</strong>: "
-                 f"cline TB-2.1 = 10/89 = 11.2% 的低分 "
+        H.append("<h2>cline TB-2.1 低分根因归因 (2026-11-13 用户令)"
+                 " <span style='color:#e74c3c;text-decoration:line-through'>~~部分作废~~</span>"
+                 f" <small>见上方「七路额度归因」{now}</small></h2>")
+        H.append(f"<div class='caveat'><p><strong>结论一句话 (原始, R2386)</strong>: "
+                 f"cline TB-2.1 原始 = 10/89 = 11.2% 的低分 "
                  f"<strong>非模型能力问题</strong>，主因 = "
                  f"<strong>网关 Token 额度耗尽</strong>（本次Token额度已用完）"
                  f"占失败 {cats['quota_exhausted']}/{total_fail} = "
                  f"{cats['quota_exhausted']/max(total_fail,1)*100:.0f}%。"
+                 f"<br><strong>⚠️ 更新 ({now})</strong>: cline 额度重跑已清零 "
+                 f"(quota_lost=0), cline 现 = <strong>38/89 = 42.7%</strong>。"
                  f"排除额度耗尽后 cline 公平通过率 = "
                  f"{fair_p}/{fair_a} = "
                  f"{fair_p/max(fair_a,1)*100:.0f}%，与同 backbone 同路（pi/opencode）"
@@ -346,8 +445,9 @@ def main():
     total_eval = sum(r[2] for r in rows)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     attr_data = _cline_attrtribution()
+    audit_7way = _quota_audit_7way()
     _build_html(rows, total_tasks, total_passed, total_trials, total_eval, now,
-                attr_data=attr_data)
+                attr_data=attr_data, audit_7way=audit_7way)
 
 
 if __name__ == "__main__":
