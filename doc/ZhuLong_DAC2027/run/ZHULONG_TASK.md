@@ -1,17 +1,5 @@
 ﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-### 🔴 用户裁令 · 2026-11-15 07:4x（**🚫 不要自己写汇报类 HTML；报告一律按需**）· 常驻 · 最高优先
-
-> **用户原话**：「report_benchmark_11_15.html 是谁写的，不是说不用写日报了吗。很费token。以后我会按需请相关agent出报告。」
-
-- **事实澄清（已核）**：该文件不是你（zhulong）写的，是 **designflow 线** 的 `merge_shards.py` 每次合并后自动调 `gen_daily_report.py` 重写产生的（单 3MB；已由运维**停用自动调用**）。你无需处理。
-- **对你的约束（常驻）**：
-  1. 🚫 **不再新建任何「周期性/日报/心跳汇总」类 HTML**；MEMORY 与 daily 流水照旧用 Markdown。
-  2. **用户点名的报告必须写**（例如本令的 `report_zhulong_subagent_a0a1a2_trace_zh.html`）——**报告按需出，不按周期出**。
-  3. 写报告时**控制体积**：单文件尽量 ≤200KB，图表用内联 SVG；🚫 不把 trace 原文/大段 JSON 塞进 HTML。
-  4. 若你认为某个新报告「有必要」，**先问，不要直接生成**。
-
-
 ### 🔴 用户裁令 · 2026-11-15 07:2x（**⛔ 停止 H2 · 写 A0/A1/A2 中文 HTML 报告 · 提出 A3/A4… 消融 idea（目标：多 agent ≥ 单 agent）· 采纳「独立上下文 + 固定小 token 预算」思路**）· 最高优先 · 未完成
 
 > **用户原话**：「zhulong：停止H2。如果A2弱于A0，那么在A2基础上做的H2就没有意义，是浪费时间。现在请zhulong分析A0/A1/A2的日志trace，撰写中文HTML报告，提出A3/A4/... 的消融idea，以争取多agent得分>=单agent。另外，我有一个思路请zhulong考虑：多agent的主要优势在于独立上下文 -> 如果解决一个任务所需上下文 > 底模LLM上下文窗口，且单agent压缩机制不足以保留足够细节，那么多agent就可能优于单agent。因此是否可以考虑给每个agent(包括主agent）以确定且较小的token（in & out）预算，当然这就需要弱化（重测）基线。」
