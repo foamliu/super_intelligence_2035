@@ -10879,3 +10879,42 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - 36.15 5-run 完成 → `report_posttrain_baseline_pyaether_rca_3615_zh.html`（标环境差异）
 - R2 5-run 完成 → `5run_rl_analysis_R2.json`（vs step105 0.0304±0.0083，McNemar+bootstrap）→ 显著则里程碑报告 / 负则诚实负结果 + 换奖励或修 ppo_epochs≥2+old_logp 冻结
 - kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）
+
+## §R490 (wake490, 2026-11-14 18:1x) — 监控心跳轮：v2 RCA 终验 + 双 eval 实测进度 + MEMORY 归档
+
+### 1. 16:3x v2 RCA 终验（执行级核验）
+- `reports/report_posttrain_pyaether_rca_v2_zh.html` size=37415B
+- H2=5[①口径与数据②工具调用画像(核心)③失败归因④图表汇总⑤提分意见]；H3=15；内联 SVG=8；`<script>`=0；外链=0
+- 提分意见表：P0-1(消除 degenerate pass+submit 死循环)/P0-2(修 non-ASCII)/P1×3(工具协议/检索→用对/prompt 矛盾)/P2×2(RL 迭代闭环/get_api_details 成功率)，每条含 改什么/依据/预期收益/成本/优先级
+- 末尾「如果只做一件事=P0-1」
+- git-tracked+committed(e434f6def) → **16:3x 用户令：已完成**
+- 16:1x A/B 裁决 A（沿用 trace_toolcount_3p04_baseline.json verdict=A）→ **已完成**
+
+### 2. 双 eval 进度实测
+
+**36.15 重测(15:4x)**：
+- 6 端口隧道 ACTIVE（PID618469, etime~2d02h）
+- 全 5-run RUNNING 在 36.15 上（PID1229657 `bpt_eval.sh --run-all`）
+- run1 workdir `~/eda_code_eval/2026_1114_161225`：.task_queue 剩 73 → 85/158 dispatched；88 code files；code-gen phase（无 final_report=未完）
+- RAG 服务 :9006 返回 `{"detail":"Not Found"}` 于 `/v1/models`（RAG 非 OpenAI-compatible，预期；模型经反向隧道 :18098→.17 GPU4:8098）
+
+**.17 R2 5-run eval（R2 global_step_200）**：
+- chain PID2322797 etime~17.8h 健康；serve GPU7:8095 `/v1/models` 响应 `minicpm5-2b-grpo-R2-step200` 正常
+- chain log 实证：run1 Pass@1=0.00633(1/158=0.63%) END@07:46:07；run2 Pass@1=0.01266(2/158=1.27%) END@14:18:42
+- run3 RUNNING（workdir 2026_1114_141842 .task_queue 剩 51 → 107/158 dispatched；112 code files；code-gen 中）
+- GPU6 98%/GPU7 91% util（双 serve 被并发查询：step105 base :8096 + R2 step200 :8095）
+- ⚠️ 均单 run 不预判（vs step105 5-run mean 3.04%±0.83%）；前 2 run 偏低，待 5-run mean±std + McNemar 判定
+
+### 3. MEMORY 归档
+- wake485-488 详细条目 31786B→25916B（4 条监控心跳），原文搬入 daily-memories-posttrain/2026-11-14.md，留 1 行指针
+- 归档后加 wake490 心跳，MEMORY 终值 28286B（≤32KB ✓）
+
+### 4. 红线 / 边界
+- read-only 监控 + MEMORY 归档：未编辑运行中脚本/未碰 GPU0-3/4/6/vision GPU5/未碰 36.15 运行中 eval
+- 0 infra 错误
+- cheat rate：R2 主训 cheat=0/1600 已落盘；eval 侧 cline harness anti-cheat 全程开
+
+### 5. Next
+- 36.15 5-run 完成 → 新基线（标环境差异：旧 .17 no-sandbox-prompt+本地 MCP:18888/隧道 vs 新 36.15 sandbox-prompt+原生 RAG:8090/沙盒:18891）→ report_posttrain_baseline_pyaether_rca_3615_zh.html
+- R2 5-run 完成 → 5run_rl_analysis_R2.json（vs step105 0.0304±0.0083，McNemar+bootstrap）→ 显著则里程碑报告 / 负则诚实负结果 + 换奖励或修 ppo_epochs≥2+old_logp 冻结
+- kill_gpu_serve child-PID bug 待 chain 空闲修（baize_posttrain_rl_eval_chain.sh L102-118）
