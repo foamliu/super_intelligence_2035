@@ -475,6 +475,82 @@
   <tr><td>发信</td><td><b>1 封</b>：<code>SENT OK 2026-11-14 12:06:47</code>（Jeff Clune，英文 <b>175</b> 词，发送前 <code>wc -w</code> 已核）</td></tr>
 </table>
 
+<h2 class="sec">🅱 B 轨 · 经典论文第二十九轮（+4 → 115 篇）<span class="badge b-b">经典</span></h2>
+<table>
+  <tr><th>#</th><th>论文</th><th>年份 · 出处</th><th>被引</th><th>一句话贡献</th><th>服务线</th></tr>
+  <tr><td>112</td><td>Textbooks Are All You Need（<b>phi-1</b>，<code>2306.11644</code>）</td><td>2023 · 预印本（<b>未核到</b>正式会议）</td><td><b>1,104</b></td><td><b>1.3B</b> 模型用 8×A100 训 4 天：6B token「教科书质量」筛后网页数据 + 1B token GPT-3.5 合成教材；HumanEval <b>50.6%</b> / MBPP <b>55.5%</b>；同配方 350M 仍达 45%</td><td>data（数据筛选 + 合成）· pretrain（低成本消融）· vision（合成教学样例）· designflow（带解法的题）</td></tr>
+  <tr><td>113</td><td>OSWorld（<code>2404.07972</code>）</td><td>2024 · <b>NeurIPS 2024</b>，pp. 52040–52094</td><td><b>686</b></td><td><b>369</b> 条真实电脑任务，每条自带<b>初始状态配置 + 判定脚本</b>（执行式评测）；人类 <b>72.36%</b> vs 最好模型 <b>12.24%</b>，卡在 GUI grounding 与操作知识</td><td>harness（判分可验证）· zhulong（二值 vs 子目标）· designflow（造题模板）· vision（接地瓶颈）</td></tr>
+  <tr><td>114</td><td>Machine Learning for EDA: A Survey（<code>2102.03357</code>）</td><td>2021 · <b>TODAES 26(5):1–46</b></td><td><b>388</b></td><td>按 <b>EDA 层级</b>（而非模型类别）组织的 ML-for-EDA 综述 —— 把「ML 能插进设计流哪一层」画成有序地图</td><td>designflow（L1–L5 外部校验）· pretrain / data（语料分层）· harness（分层指标不可混算）· zhulong（代理模型边界）</td></tr>
+  <tr><td>115</td><td>A Modern Primer on Processing in Memory（<code>2012.03112</code>）</td><td>2020（v5 2025-02） · 综述</td><td><b>92</b></td><td>PIM 综述：把计算放进<b>存储芯片 / 3D 堆叠逻辑层 / 存储控制器 / 存储设备</b>，减少或消除数据搬移；区分 <b>processing-using-memory</b> 与近存路线</td><td>zhulong（计算 / 搬移 / 容量三分法）· designflow（L4+）· data（结构化规格语料）</td></tr>
+</table>
+<div class="note">
+  <b>选文依据</b>：本轮补的是<b>三条此前无落点的轴</b> ——「<b>数据质量配方的可执行版本</b>」（112）、「<b>执行式判分</b>」（113，直接对上 harness 线当前最缺的东西）、「<b>EDA 层级地图 + 搬移视角</b>」（114 / 115）。<br>
+  ⚠️ <b>三处如实记录</b>：① phi-1 的 <b>1,104 已过线</b>，但其 HumanEval 分数<b>为作者自报、本线未复现</b>，且存在训练集污染争议（<b>我们的观察</b>）；② ML-for-EDA 综述 <b>388 &lt; 500</b>、PIM 综述 <b>92 &lt; 500</b> ⇒ 均按「<b>本领域权威综述 + 方法论常青</b>」收录，<b>不作范式结论</b>；③ 两条综述<b>不含新实验</b>，🚫 不许当实验证据引用。
+</div>
+
+<h2 class="sec">👥 作者关系网（+3 → 119 人；X 已核验 66）</h2>
+<table>
+  <tr><th>姓名</th><th>角色</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>Tianbao Xie</td><td>OSWorld 一作 · 香港大学（论文时）· 该基准<b>现行维护者</b></td><td><b>tianbaoxiexxx@gmail.com</b>（OSWorld <b>官方仓库 README</b>「current maintainer」明文，<code>200</code> / 18,251 B）</td><td>未找到 X（GitHub 个人页无 X 外链）</td><td><b>已发信</b>（15:04:20）</td></tr>
+  <tr><td>Bei Yu</td><td>ML-for-EDA 综述末位 · 香港中文大学 CSE</td><td><b>byu@cse.cuhk.edu.hk</b>（本人页 <code>byu[at]</code> 反爬写法，<code>200</code> / 21,338 B）</td><td>未找到 X</td><td>待跟踪（邮箱已核，本轮不发）</td></tr>
+  <tr><td>Suriya Gunasekar</td><td>phi-1 一作 · Microsoft Research</td><td>未找到（MSR 人员页两条候选 URL 均 <code>404</code>）</td><td>未找到 X</td><td>待跟踪（仅建档）</td></tr>
+</table>
+<div class="note">
+  待 follow 清单 <b>56</b> 条、已 follow <b>0</b>（follow 需登录态 ⇒ 未假装）。本轮<b>没有新增任何 X handle</b>：三位新作者的公开页面均未挂 X 外链，按令<b>不猜 handle</b> ⇒ 宁可「未找到」也不 follow 错人。
+</div>
+
+<h2 class="sec">✉️ 作者请教信（15:00 新增 1 封 · 当日 7 · 累计 39）＋ 🆕 回信跟踪制度化</h2>
+<table>
+  <tr><th>时间</th><th>作者</th><th>论文</th><th>语言 / 篇幅</th><th>三问（回填哪条线）</th></tr>
+  <tr><td><code>SENT OK 15:04:20</code></td><td>Tianbao Xie（香港大学）</td><td>OSWorld <code>2404.07972</code></td><td><b>中文</b>（判据 = 拼音姓名 + 香港机构）/ 非空白 <b>296</b> 字</td><td>① 分钟级、无 GUI 的 EDA 任务是否仍需 VM 快照 → harness 隔离与部分分；② 题面公开后怎么查「背题」→ data 去污染；③ 长链条任务子目标加权判分 → zhulong 成本可比</td></tr>
+</table>
+<div class="ok-box">
+  <b>本轮按用户令落地的三条硬要求</b>：<br>
+  ① <b>署名统一为 <code>Yang Liu</code></b>，落款<b>固定两行</b>（<code>祝好，</code> / <code>Yang Liu</code>），<b>其后无任何行</b>，项目名一律不进落款。<br>
+  ② <b>按姓名族属判母语</b>：Tianbao Xie 是华人 ⇒ <b>中文全文</b>（≤300 字），不再以「论文英文 / 邮箱 gmail」判英文。<br>
+  ③ <b>抗模板化</b>：开头句与问题句式与今日前 6 封均不同，且含只对本篇成立的细节（<code>369</code> 条 / <code>72.36%</code> vs <code>12.24%</code> / 每条任务自带 <code>setup</code> + 判定脚本）。<br>
+  <b>回信跟踪制度化（新建）</b>：<code>research/mail/replies/</code> 目录已建（含 <code>README.md</code> 模板与纪律）；<code>research/mail/发送记录.md</code> 末尾新增<b>「回信状态跟踪」表</b>（39 封逐条列<b>到期日</b>，三值 <code>已回复</code> / <code>无应答(&gt;14d)</code> / <code>未到期</code>，<b>不留空</b>）。<b>本轮累计回信率 = 0 / 39</b> —— 0 回信<b>不记为成功</b>，按待诊断信号处理（地址不达？问题过泛？模板感？作者已转行？），最早一批 <b>2026-11-25</b> 到期。
+</div>
+
+<h2 class="sec">🗣 voice_ready（15:00 本期 1 条）与投料纪律</h2>
+<details class="voice-ready" open>
+<summary>🗣 voice_ready · 研究者言论（可发头条）</summary>
+<ul>
+  <li><b>人物</b>：Percy Liang（<code>@percyliang</code>，斯坦福 CS 教授 / Stanford CRFM；代表作 HELM、Alpaca 等）</li>
+  <li><b>言论</b>：<i>“Why was Marin 535B-A23B the size it was? Why 8 of 384 experts? Why GatedNorm, sconv, XSA? Why linear learning rate? All of these factors were driven by tradeoffs between timelines, compute efficiency, MoE router stability, etc. Read about the rationale of each design decision:”</i><br>中文：Marin 535B-A23B 为什么是这个规模？为什么是 384 个专家里选 8 个？为什么用 GatedNorm、sconv、XSA？为什么用线性学习率？这些都不是「最优」，而是<b>在时间线、算力效率、MoE 路由稳定性之间权衡出来的</b>。</li>
+  <li><b>时间</b>：2026-11-10 06:04 UTC（距今 4 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/percyliang/status/2120034819291898364">https://x.com/percyliang/status/2120034819291898364</a>（推文页 <code>HTTP 200</code> / 152,512 B，<code>og:title</code> = <code>Percy Liang (@percyliang) on X</code>，<code>og:description</code> 全文与 profile <code>full_text</code> 逐字一致 ⇒ <b>双源一致</b>，台账 <b>V27</b>）</li>
+  <li><b>话题点</b>：「大模型的每个超参都不是最优解，而是工程权衡」——公众第一次能看到 MoE 规模与学习率背后是<b>取舍</b>而非「越大越好」。</li>
+  <li><b>风险</b>：① 涉及具体 MoE 配置（384 专家 / 8 激活），<b>易被简化成「MoE 最优配置」</b>；② 原推链到外部博客，正文未展开数据 ⇒ 引用必须保留「权衡」这一限定语；③ 该模型细节属作者自述，本线<b>未复现</b>。</li>
+</ul>
+</details>
+<div class="note">
+  <b>否决记录（本轮）</b>：① <code>@gneubig</code> 时间线上那条「Marin 535B-A23B / 18T tokens」经单条推文页 <code>og:title</code> 核对为 <b>Larry Dial（<code>@classiclarryd</code>）</b>所发 ⇒ 非本人，<b>丢弃</b>（《维护纪律》第 3 条再次生效）；② <code>@ShunyuYao12</code> 2026-11-04 那条推文页 <code>og:description</code> 仅「Proud of what we've achieved under a year!」<b>截断</b> ⇒ 不满足双源一致，不采用；③ <code>@percyliang</code> 另一条「Can we forecast benchmark accuracy from models that score zero?」推文页 <code>og:title</code> 为 <b>Suze van Adrichem</b> ⇒ 非本人，丢弃。<code>news_ready</code> 本期 <b>无新增</b>（B 轨为经典论文、无事件点；A 轨 0 新收）。
+</div>
+
+<h2 class="sec">🎯 15:00 轮 · 对各线的可执行建议（6 条，逐线覆盖 · 不重复上午）</h2>
+<table>
+  <tr><th>线</th><th>动作（可直接执行）</th><th>判据 / 验收</th></tr>
+  <tr><td><b>pretrain</b></td><td>把 phi-1（#112）的「筛 + 合成」做成<b>三档 data-mix 对照</b>：<code>--data-mix web_full / filtered / filtered_synth</code>，固定 60B token、固定 seed、先跑 350M 级再上 2B（照其「4 天 × 8×A100」的低成本循环）。</td><td>代码类 pass@1 相对 <code>web_full</code> ≥ +5pp <b>且</b>通用中文能力下降 ≤2pp ⇒ 才进 2B 正式配方；否则只保留筛选、不上合成。</td></tr>
+  <tr><td><b>vision</b></td><td>照 OSWorld（#113）的失败分布，给视觉塔评测加<b>两档退化</b>：原图 / 缩放到 0.5×（模拟低分辨率与缩放）。</td><td>0.5× 档成功率相对原图下降 &gt;15pp ⇒ 判定「分辨率敏感」，必须在上游加 tile / OCR 预处理后再谈模型改进。</td></tr>
+  <tr><td><b>harness</b></td><td>评测 manifest <b>强制两段</b>：<code>setup</code>（固定设计 / 工具版本 / 种子）与 <code>check()</code>（只读 GDS / 报告 JSON / 日志断言）；新增 <code>initial_state_hash</code> 与 <code>eda_layer</code> 两个必填字段（照 #113 / #114）。</td><td>缺 <code>check()</code> 的题判 <code>invalid</code>、<b>不计分不汇总</b>；改题未换 hash ⇒ 旧成绩作废。</td></tr>
+  <tr><td><b>data</b></td><td>建「<b>背题</b>」检测流程：对公开基准（OSWorld / SWE-bench / CircuitNet）做指令级近似检索（n-gram + 向量近邻），命中即入隔离集；同时留 10% 自建留出题不公开。</td><td>检出率须报数；剔除命中样本后回测，指标下降 &gt;1pp ⇒ 说明此前分数含污染，对外一律改用剔除后数字。</td></tr>
+  <tr><td><b>zhulong</b></td><td>性能 / 成本主张起强制标「<b>计算受限 / 搬移受限 / 容量受限</b>」三分法（照 #109 + #115），并把 PIM 类方案单列一档；代理模型只许在单一 EDA 层级内声明有效（照 #114）。</td><td>缺受限标注或跨层聚合 ⇒ 标 <code>不可比</code>、不进汇总；PIM / 近存方案与 GPU 基线<b>禁止混算</b>。</td></tr>
+  <tr><td><b>designflow</b></td><td>造题表加两列：<code>eda_layer</code>（按 #114 的 EDA 层级口径）与 <code>reference_solution</code>（照 #112 的「教材 + 练习」：无参考解法不入库）。</td><td>两套分层对不上的题 ⇒ 先重新归层再入库；无判分脚本或无参考解法的题 ⇒ 一律退回。</td></tr>
+</table>
+
+<h2 class="sec">附录 A5 · 15:00 轮检索式与实测证据（可核验）</h2>
+<table>
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>A 轨复核</td><td><code>cat:cs.CL</code> 单查询（<code>sortBy=submittedDate</code>，<code>https://export.arxiv.org</code>，<code>User-Agent: research-watch/1.0</code>）<b><code>200</code> + <code>application/atom+xml</code></b>（87,661 B / 1.24 s）；<code>totalResults</code> = <b>125,322</b>（与 12:00 <b>逐值相同</b>）；30 条最新 entry 的 <code>published</code> 上界 = <b><code>2026-11-12T18:59:52Z</code></b> ⇒ 公告批未前进；当日已 <b>5/5</b> ⇒ <b>0 新收</b>（不超额）</td></tr>
+  <tr><td>B 轨元数据</td><td><code>id_list=2306.11644,2404.07972,2012.03112,2102.03357</code> ⇒ <b><code>200</code> + atom</b>（12,315 B）：标题 / 首发日 / 主分类 / 作者数（<b>19 / 17 / 6 / 16</b>）逐字核</td></tr>
+  <tr><td>被引</td><td>OpenAlex <b>4/4 <code>200</code></b>：phi-1 <b>1,104</b> · OSWorld <b>686</b>（<code>conference-paper</code>，pp. 52040–52094，DOI <code>10.52202/079017-1650</code>）· ML-for-EDA <b>388</b>（<code>article</code>，TODAES <code>26(5):1–46</code>）· PIM <b>92</b>（查询日 2026-11-14）</td></tr>
+  <tr><td>邮箱核验</td><td><code>raw.githubusercontent.com/xlang-ai/OSWorld/main/README.md</code> <b><code>200</code> / 18,251 B</b>（第 264 行 <code>tianbaoxiexxx@gmail.com</code>）；<code>www.cse.cuhk.edu.hk/~byu/</code> <b><code>200</code> / 21,338 B</b>（<code>byu[at]cse.cuhk.edu.hk</code>）；<code>tianbaoxie.com</code> 直连与代理均 <b><code>000</code></b>；MSR 人员页 <b><code>404</code></b> ×2；<code>github.com/TianbaoXie</code> <b><code>200</code> / 144,358 B</b>（无 X 外链）</td></tr>
+  <tr><td>X 只读</td><td><code>x.com</code> 自检 <b><code>200</code></b>（<code>https_proxy=http://127.0.0.1:7897</code>）；profile <b>4/4 <code>200</code></b>（<code>ShunyuYao12</code> · <code>gneubig</code> · <code>percyliang</code> · <code>karthik_r_n</code>）；推文页 <b>4/4 <code>200</code></b>，其中 <b>2 条 <code>og:title</code> 与预期作者不符</b>（<code>classiclarryd</code> / <code>suze_va</code>）⇒ 丢弃</td></tr>
+  <tr><td>发信</td><td><b>1 封</b>：<code>SENT OK 2026-11-14 15:04:20</code>（Tianbao Xie，<b>中文 296 字</b>，发送前非空白字符已核；落款两行）</td></tr>
+  <tr><td>回信</td><td><code>research/mail/replies/</code> 仅 <code>README.md</code> ⇒ <b>累计回信率 0 / 39</b>；跟踪表已建（最早到期 <b>2026-11-25</b>）</td></tr>
+</table>
+
 <h2 class="sec">📝 03:00 补篇变更说明（00:00 → 03:00）</h2>
 
 <div class="ok-box">
@@ -519,8 +595,21 @@
   ⑦ <b>未变</b>：0 follow（需登录态）、未发日报邮件、未注册账号、未用未授权凭据、未改他线文件、未下载 PDF、未改任务书。
 </div>
 
+<h2 class="sec">📝 15:00 变更说明（12:00 → 15:00）</h2>
+<div class="ok-box">
+  ① <b>A 轨 5/5 不变、0 新收</b>：<code>cat:cs.CL</code> 单查询 <code>200</code> + atom，<code>totalResults</code> 仍 <b>125,322</b>（与 12:00 逐值相同），最新 30 条 <code>published</code> 上界 <code>2026-11-12T18:59:52Z</code> ⇒ 公告批未前进；当日额度已满 ⇒ <b>不超额</b>。<br>
+  ② <b>B 轨 111 → 115</b>：新增 phi-1（#112）· OSWorld（#113）· ML-for-EDA 综述（#114）· PIM 综述（#115）；选文依据 = 补「数据质量的可执行配方 / 执行式判分 / EDA 层级地图 + 搬移视角」三条无落点的轴。<br>
+  ③ <b>作者网 116 → 119</b>：Tianbao Xie（已发信）· Bei Yu（邮箱已核，待跟踪）· Suriya Gunasekar（邮箱与 X 均未找到，仅建档）；<b>X 已核验仍 66</b>、待 follow 仍 <b>56</b>、已 follow <b>0</b> —— 本轮<b>没有新增 handle</b>，因为三位新作者页面均无 X 外链（不猜）。<br>
+  ④ <b>作者信当日 6 → 7 封</b>，累计 38 → <b>39</b>：新增 OSWorld 一作 Tianbao Xie（<b>中文 296 字</b>，<code>SENT OK 15:04:20</code>）。<br>
+  ⑤ <b>🆕 回信跟踪制度化</b>：<code>research/mail/replies/</code> 已建（README 模板 + 纪律）；<code>发送记录.md</code> 末尾新增 39 行<b>回信状态跟踪表</b>（三值、不留空、含到期日）；<b>累计回信率 0 / 39</b>，按待诊断信号处理，<b>不当成功</b>。<br>
+  ⑥ <b>署名与落款修正落地</b>：本轮信统一 <code>Yang Liu</code> + 两行落款（<b>其后无任何行</b>），项目名不进落款；语言按姓名族属判（华人 ⇒ 中文），不再用「英文论文 / gmail」判英文。<br>
+  ⑦ <b>投料</b>：<code>voice_ready</code> 本期 <b>1</b>（Percy Liang 2026-11-10，Marin 535B-A23B 的设计权衡；推文页 <code>og:title</code> + <code>og:description</code> 全文与 profile 一致 ⇒ V27）；<code>news_ready</code> <b>无新增</b>（维持 1 条）。<br>
+  ⑧ <b>诚实记录 3 处</b>：<code>@gneubig</code> / <code>@percyliang</code> 时间线上各有 1 条实为他人推文（<code>@classiclarryd</code> / <code>@suze_va</code>），经 <code>og:title</code> 核对后<b>丢弃</b>；ML-for-EDA（388）与 PIM（92）被引均 &lt; 500 ⇒ 按「领域权威综述」收并注明；<code>tianbaoxie.com</code> 本机 <code>000</code> ⇒ 主页未核，只用官方 README 的维护者邮箱。<br>
+  ⑨ <b>未变</b>：0 follow（需登录态，未假装）、未发日报邮件、未注册账号、未用未授权凭据、未改他线文件、未下载 PDF、未改任务书。
+</div>
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 A 轨 3 篇 ＋ 03:00 时窗补 2 篇 ＋ 06:00 / 09:00 复核 ＋ B 轨第二十八轮 111 篇 · 作者网 116 人 · 作者信累计 38 封）｜ 数据源 arXiv API / OpenAlex / Crossref / X（只读）｜ 生成时间 2026-11-14 12:20 CST<br>
+  研究线 · 论文观察日报 · 2026-11-14（00:00 时窗 A 轨 3 篇 ＋ 03:00 时窗补 2 篇 ＋ 06:00 / 09:00 / 12:00 / 15:00 复核 ＋ B 轨第二十九轮 115 篇 · 作者网 119 人 · 作者信累计 39 封 · 回信率 0/39）｜ 数据源 arXiv API / OpenAlex / X（只读）｜ 生成时间 2026-11-14 15:15 CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>
