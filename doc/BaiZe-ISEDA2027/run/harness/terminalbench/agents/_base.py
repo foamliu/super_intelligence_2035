@@ -391,10 +391,100 @@ class TBBaseAgent(BaseInstalledAgent):
         if "HERMES_PIP_MISSING" not in (recheck.stdout or ""):
             return  # ensurepip worked
 
-        # ensurepip unavailable → bootstrap via get-pip.py (uploaded from host).
+        # FIX (2026-11-15, R2499): ensurepip unavailable AND python3 is present
+        # but pip is missing.  Try installing python3-pip via the image's package
+        # manager BEFORE falling back to get-pip.py.  This is critical for
+        # containers with Python 3.9 (e.g. qemu-alpine-ssh, qemu-startup) where
+        # the bundled get-pip.py requires Python 3.10+ and fails with
+        # "This script does not work on Python 3.9".
+        # Standard practice: prefer the distro package manager for pip — it
+        # always installs a pip version compatible with the system Python.
+        await self.exec_as_root(
+            environment,
+            command=(
+                "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                "if command -v apt-get >/dev/null 2>&1; then "
+                "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 && "
+                "  apt-get install -y --no-install-recommends "
+                "    -o Acquire::https::Verify-Peer=false python3-pip 2>&1 | tail -5 ; "
+                "elif command -v apk >/dev/null 2>&1; then "
+                "  apk add --no-cache py3-pip 2>&1 | tail -5 ; "
+                "elif command -v dnf >/dev/null 2>&1; then "
+                "  dnf install -y python3-pip 2>&1 | tail -5 ; "
+                "elif command -v yum >/dev/null 2>&1; then "
+                "  yum install -y python3-pip 2>&1 | tail -5 ; fi"
+            ),
+            timeout_sec=300,
+        )
+        recheck_pkg = await environment.exec(
+            command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
+        )
+        if "HERMES_PIP_MISSING" not in (recheck_pkg.stdout or ""):
+            return  # package-manager install worked
+
+        # ensurepip + package manager both unavailable → bootstrap via get-pip.py
+        # (uploaded from host).  FIX (2026-11-15, R2499): the bundled get-pip.py
+        # requires Python 3.10+.  For Python 3.9 containers, download the legacy
+        # get-pip.py from https://bootstrap.pypa.io/pip/3.9/get-pip.py instead.
         from pathlib import Path
         import tempfile
         getpip_src = Path(__file__).resolve().parent / "get-pip.py"
+
+        # Check Python version to choose the right get-pip.py
+        ver_probe = await environment.exec(
+            command="python3 -c 'import sys; print(sys.version_info[:2])'"
+        )
+        py_ver_str = (ver_probe.stdout or "").strip()
+        use_legacy_getpip = False
+        try:
+            major, minor = eval(py_ver_str)
+            if (major, minor) < (3, 10):
+                use_legacy_getpip = True
+        except Exception:
+            pass  # if we can't determine version, try the bundled one
+
+        if use_legacy_getpip:
+            # Download legacy get-pip.py for Python 3.9 from the bootstrap
+            # mirror.  Uses the overlay's proxy + aliyun mirror.
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                    "curl -kfsSL "
+                    "https://bootstrap.pypa.io/pip/3.9/get-pip.py "
+                    "-o /tmp/get-pip.py 2>&1 | tail -3"
+                ),
+                timeout_sec=120,
+            )
+            # Verify download succeeded
+            gp_check = await environment.exec(
+                command="test -s /tmp/get-pip.py && echo GP_OK || echo GP_FAIL"
+            )
+            if "GP_OK" in (gp_check.stdout or ""):
+                await self.exec_as_root(
+                    environment,
+                    command=(
+                        "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                        "python3 /tmp/get-pip.py "
+                        "--break-system-packages "
+                        "--trusted-host mirrors.aliyun.com 2>&1 | tail -8"
+                    ),
+                    timeout_sec=300,
+                )
+                final = await environment.exec(
+                    command="python3 -m pip --version 2>&1 "
+                    "|| echo HERMES_PIP_STILL_MISSING"
+                )
+                if "HERMES_PIP_STILL_MISSING" in (final.stdout or ""):
+                    raise RuntimeError(
+                        f"Failed to bootstrap pip (legacy get-pip.py for Py3.9): "
+                        f"{(final.stdout or '')[:300]}"
+                    )
+                return  # legacy get-pip.py worked
+
+            # Download failed → fall through to bundled get-pip.py as last resort
+            # (will likely fail on 3.9, but the error message will be clear)
+
         if not getpip_src.exists():
             raise RuntimeError(
                 f"get-pip.py not found at {getpip_src}; cannot bootstrap "
