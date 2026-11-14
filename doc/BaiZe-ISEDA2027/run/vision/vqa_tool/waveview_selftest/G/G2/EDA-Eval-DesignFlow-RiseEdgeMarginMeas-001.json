@@ -1,0 +1,242 @@
+{
+ "arm": "G2",
+ "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+ "tag": "α2",
+ "tier": "A",
+ "sut": "glm-5.2 agent + VQA rft2_adapter",
+ "vqa_backend": "base+rft2_adapter :30003",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+ "verdict": "FAIL",
+ "k_pass": 7,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "ref_signal",
+   "pass": true,
+   "got": "clk_a",
+   "gold": "clk_a",
+   "tol": 0
+  },
+  {
+   "name": "ref_edge_time",
+   "pass": false,
+   "got": 5.5,
+   "gold": 5.1667,
+   "tol": 0.3
+  },
+  {
+   "name": "target_edge_time",
+   "pass": true,
+   "got": 7.5,
+   "gold": 7.3667,
+   "tol": 0.3
+  },
+  {
+   "name": "margin_ns",
+   "pass": false,
+   "got": 2.0,
+   "gold": 2.2,
+   "tol": 0.2
+  },
+  {
+   "name": "swing",
+   "pass": true,
+   "got": 1.5,
+   "gold": 1.5,
+   "tol": 0.2
+  },
+  {
+   "name": "vref",
+   "pass": true,
+   "got": 0.75,
+   "gold": 0.75,
+   "tol": 0.1
+  },
+  {
+   "name": "margin_consistency",
+   "pass": true,
+   "got": null,
+   "gold": "target-ref==margin",
+   "tol": 0
+  },
+  {
+   "name": "vref_consistency",
+   "pass": true,
+   "got": null,
+   "gold": "swing/2==vref",
+   "tol": 0
+  },
+  {
+   "name": "ref_first",
+   "pass": true,
+   "got": null,
+   "gold": "ref_signal==clk_a",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "ref_signal": "clk_a",
+  "ref_edge_time": 5.5,
+  "target_edge_time": 7.5,
+  "margin_ns": 2.0,
+  "swing": 1.5,
+  "vref": 0.75
+ },
+ "final_answer_raw": {
+  "ref_signal": "clk_a",
+  "ref_edge_time": 5.5,
+  "target_edge_time": 7.5,
+  "margin_ns": 2.0,
+  "swing": 1.5,
+  "vref": 0.75
+ },
+ "vqa_calls_per_task": 9,
+ "reask_count": 3,
+ "vqa_calls": [
+  {
+   "query": "What is the time axis range in nanoseconds? What are the minimum and maximum time values shown on the x-axis?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The time axis range in nanoseconds is from 0 to 12 ns. The minimum time value shown on the x-axis is 0 ns and the maximum is 12 ns.",
+   "ok": true,
+   "elapsed_s": 1.914
+  },
+  {
+   "query": "What is the voltage range on the y-axis for the top signal (clk_a)? What are the low and high voltage levels it reaches?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The y-axis for the top signal (clk_a) ranges from 0.00 V to 1.50 V. The low voltage level it reaches is 0.00 V, and the high voltage level it reaches is 1.50 V.",
+   "ok": true,
+   "elapsed_s": 2.655
+  },
+  {
+   "query": "What is the voltage range on the y-axis for the bottom signal (data_a)? What are the low and high voltage levels it reaches?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The y-axis for the bottom signal (data_a) ranges from 0.00 V to 1.50 V. The low voltage level it reaches is 0.00 V, and the high voltage level it reaches is 1.50 V.",
+   "ok": true,
+   "elapsed_s": 2.645
+  },
+  {
+   "query": "Looking at the top signal (clk_a), at what time in ns does the rising edge cross the 50% level (0.75V)? Give the exact time value.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The 50% level of clk_a is 0.75 V. Looking at the top plot, the rising edge crosses 0.75 V at approximately 5.5 ns. Final Answer: 5.5",
+   "ok": true,
+   "elapsed_s": 2.308
+  },
+  {
+   "query": "Looking at the bottom signal (data_a), at what time in ns does the rising edge cross the 50% level (0.75V)? Give the exact time value.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The 50% level for data_a is 0.75 V. Looking at the bottom plot, the rising edge crosses 0.75 V at approximately 7.5 ns. Final Answer: 7.5",
+   "ok": true,
+   "elapsed_s": 2.304
+  },
+  {
+   "query": "Which signal rises first - the top one (clk_a) or the bottom one (data_a)?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The top signal, `clk_a`, rises first. It starts rising around 5 ns and reaches its final value by 6 ns, while the bottom signal `data_a` only begins to rise around 7 ns.",
+   "ok": true,
+   "elapsed_s": 2.173
+  },
+  {
+   "query": "On the top signal (clk_a), the rising edge goes from 0V to 1.5V. At what exact time does the signal pass through the midpoint of 0.75V? Is it closer to 5.0, 5.5, or 6.0 ns?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The midpoint of 0.75V on the top plot (clk_a) is 0.75 V. The rising edge of clk_a goes from 0 V to 1.5 V, so the midpoint is 0.75 V.\n\nLooking at the plot, the signal crosses 0.75 V at approximately 5.5 ns — it's clearly between 5.0 ns and 6.0 ns, much closer to 5.5 ns.\n\nFinal Answer: 5.5 ns",
+   "ok": true,
+   "elapsed_s": 4.998
+  },
+  {
+   "query": "On the bottom signal (data_a), the rising edge goes from 0V to 1.5V. At what exact time does the signal pass through the midpoint of 0.75V? Is it closer to 7.0, 7.5, or 8.0 ns?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The midpoint of 0.75V on the bottom plot (data_a) is 0.75 V. The rising edge of data_a goes from 0 V to 1.5 V, so the midpoint is 0.75 V.\n\nLooking at the plot, the signal crosses 0.75 V at approximately 7.5 ns — right in the middle of the steep rise between 7 ns and 8 ns. So the answer is **7.5 ns**.",
+   "ok": true,
+   "elapsed_s": 4.652
+  },
+  {
+   "query": "What is the peak-to-peak voltage swing of the signals? The signals go from 0V to what maximum voltage? Is the high level 1.2V, 1.5V, or some other value?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+   "answer": "The plots show two signals, `clk_a` (blue) and `data_a` (red), both rising from 0 V to a maximum of 1.5 V. The peak-to-peak voltage swing is therefore 1.5 V - 0 V = 1.5 V. The high level is 1.5 V, not 1.2 V. Final Answer: 1.5 V",
+   "ok": true,
+   "elapsed_s": 3.901
+  }
+ ],
+ "agent_selfcheck": [],
+ "n_turns": 5,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 193.23,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "Let me analyze the waveform image by asking several questions to extract the required quantities.",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"What is the time axis range in nanoseconds? What are the minimum and maximum time values shown on the x-axis?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"What is the voltage range on the y-axis for the top signal (clk_a)? What are the low and high voltage levels it reaches?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"What is the voltage range on the y-axis for the bottom signal (data_a)? What are the low and high voltage levels it reaches?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"Looking at the top signal (clk_a), at what time in ns does the rising edge cross the 50% level (0.75V)? Give the exact time value.\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"Looking at the bottom signal (data_a), at what time in ns does the rising edge cross the 50% level (0.75V)? Give the exact time value.\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"Which signal rises first - the top one (clk_a) or the bottom one (data_a)?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"On the top signal (clk_a), the rising edge goes from 0V to 1.5V. At what exact time does the signal pass through the midpoint of 0.75V? Is it closer to 5.0, 5.5, or 6.0 ns?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"On the bottom signal (data_a), the rising edge goes from 0V to 1.5V. At what exact time does the signal pass through the midpoint of 0.75V? Is it closer to 7.0, 7.5, or 8.0 ns?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png\", \"query\": \"What is the peak-to-peak voltage swing of the signals? The signals go from 0V to what maximum voltage? Is the high level 1.2V, 1.5V, or some other value?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n```json\n{\n  \"ref_signal\": \"clk_a\",\n  \"ref_edge_time\": 5.5,\n  \"target_edge_time\": 7.5,\n  \"margin_ns\": 2.0,\n  \"swing\": 1.5,\n  \"vref\": 0.75\n}\n```",
+   "reasoning": "All values confirmed:\n- ref_signal: clk_a (rises first)\n- ref_edge_time: 5.5 ns (clk_a 50% crossing)\n- target_edge_time: 7.5 ns (data_a 50% crossing)\n- margin_ns: 7.5 - 5.5 = 2.0 ns\n- swing: 1.5 V (peak-to-peak)\n- vref: 0.75 V (50% of 1.5V)",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}

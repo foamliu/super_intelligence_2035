@@ -1,0 +1,267 @@
+{
+ "arm": "G2",
+ "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+ "tag": "α3",
+ "tier": "A",
+ "sut": "glm-5.2 agent + VQA rft2_adapter",
+ "vqa_backend": "base+rft2_adapter :30003",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+ "verdict": "PASS",
+ "k_pass": 13,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "first_diverge_stage",
+   "pass": true,
+   "got": "rd_gate",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "failing_stage",
+   "pass": true,
+   "got": "rd_gate",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_kind",
+   "pass": true,
+   "got": "gate_disable",
+   "gold": "gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "golden_at_div",
+   "pass": true,
+   "got": 75.0,
+   "gold": 80.0,
+   "tol": 8.0
+  },
+  {
+   "name": "actual_at_div",
+   "pass": true,
+   "got": 0.0,
+   "gold": 0.0,
+   "tol": 8.0
+  },
+  {
+   "name": "mismatch_first_cycle",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "mismatch_last_cycle",
+   "pass": true,
+   "got": 7.0,
+   "gold": 7,
+   "tol": 0
+  },
+  {
+   "name": "num_diverge_stages",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "data_intact",
+   "pass": true,
+   "got": "yes",
+   "gold": "yes",
+   "tol": 0
+  },
+  {
+   "name": "first_eq_failing",
+   "pass": true,
+   "got": null,
+   "gold": "first_diverge==failing",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause_kind==gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "diverge_range",
+   "pass": true,
+   "got": null,
+   "gold": "last>=first cycle",
+   "tol": 0
+  },
+  {
+   "name": "data_intact_yes",
+   "pass": true,
+   "got": null,
+   "gold": "data_intact==yes",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "first_diverge_stage": "rd_gate",
+  "failing_stage": "rd_gate",
+  "root_cause_kind": "gate_disable",
+  "golden_at_div": 75,
+  "actual_at_div": 0,
+  "mismatch_first_cycle": 4,
+  "mismatch_last_cycle": 7,
+  "num_diverge_stages": 4,
+  "data_intact": "yes"
+ },
+ "final_answer_raw": {
+  "first_diverge_stage": "rd_gate",
+  "failing_stage": "rd_gate",
+  "root_cause_kind": "gate_disable",
+  "golden_at_div": 75,
+  "actual_at_div": 0,
+  "mismatch_first_cycle": 4,
+  "mismatch_last_cycle": 7,
+  "num_diverge_stages": 4,
+  "data_intact": "yes"
+ },
+ "vqa_calls_per_task": 8,
+ "reask_count": 0,
+ "vqa_calls": [
+  {
+   "query": "Describe the five stacked panels from top to bottom. For each panel, do the blue and red step lines differ at any point over the 16 cycles? Which panel is the first (topmost) where blue and red diverge?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "The five stacked panels from top to bottom are:\n\n1. **pattern_buf** – Shows the buffer occupancy over 16 cycles. The red “actual” line and blue “golden” line are identical throughout; they never diverge.\n\n2. **rd_gate** – Shows the read gate control signal. They diverge at cycle 4: the blue line jumps to 75 while the red line drops to 0.\n\n3. **slice_mux** – Shows the slice multiplexer control. They also diverge at cycle 4: blue goes to 75, red drops to 0.\n\n4. **read_mux** – Shows the read multiplexer control. Same divergence as above at cycle 4: blue to 75, red to 0.\n\n5. **pad_driver** – Shows …[truncated]",
+   "ok": true,
+   "elapsed_s": 11.281
+  },
+  {
+   "query": "What are the names/labels of the five panels from top to bottom?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "The five panels from top to bottom are labeled as follows:\n\n1. pattern_buf\n2. rd_gate\n3. slice_mux\n4. read_mux\n5. pad_driver",
+   "ok": true,
+   "elapsed_s": 2.1
+  },
+  {
+   "query": "In the rd_gate panel, what value does the blue (golden) line hold during the divergent cycles? What value does the red (actual) line drop to? At which cycle number does the divergence start and end? The x-axis is 0 to 15 cycles.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "In the rd_gate panel:\n\n- The blue (golden) line holds a value of **75** during the divergent cycles.\n- The red (actual) line drops to **0** during those same cycles.\n- The divergence starts at **cycle 4** and ends at **cycle 8**.\n\nThis is visible as a square region where the golden path is active (75) and the actual path is inactive (0), spanning from cycle 4 to 8 on the x-axis.",
+   "ok": true,
+   "elapsed_s": 4.962
+  },
+  {
+   "query": "How many of the five panels show a divergence between blue and red lines? Is there any panel where blue and red are identical throughout all 16 cycles?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Counting the panels with a divergence between blue and red lines across all 16 cycles, 4 of the five panels show such a difference. The only panel where blue and red are identical throughout is the top one, \"pattern_buf\". Final Answer: 4 panels show divergence; 1 panel is identical.",
+   "ok": true,
+   "elapsed_s": 3.051
+  },
+  {
+   "query": "In the rd_gate panel, at which exact cycle number on the x-axis (0 to 15) does the blue line first go up while the red line stays at zero or drops? And at which exact cycle does the red line come back up to match the blue line again? Please give precise cycle numbers.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Looking at the rd_gate panel:\n\n- The blue line (\"golden\") starts at 50 and jumps up to 75 at cycle 4.\n- The red line (\"actual\") is at 50 until cycle 4, then drops to 0 and stays at 0 until cycle 8.\n- The red line comes back up to match the blue line (both at 75) at cycle 8.\n\nSo:\n- The blue line first goes up while the red line is at zero or drops at **cycle 4**.\n- The red line comes back up to match the blue line again at **cycle 8**.\n\nFinal Answer:\n- Blue line goes up: **4**\n- Red line comes back up: **8**",
+   "ok": true,
+   "elapsed_s": 7.159
+  },
+  {
+   "query": "In the rd_gate panel, what is the y-axis value of the blue line during the divergence? Is it 75 or some other value? What is the y-axis value of the red line during the divergence? Is it 0?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "In the rd_gate panel:\n\n- The **blue line** (\"golden\") is at **75** during the divergence (cycles 4–8).\n- The **red line** (\"actual\") is at **0** during the divergence (cycles 4–8).\n\nSo yes, your understanding is correct: the blue line is 75 and the red line is 0 during the divergence.",
+   "ok": true,
+   "elapsed_s": 4.027
+  },
+  {
+   "query": "In the rd_gate panel, during the divergence between blue and red, does the red line drop to zero (gate disable) or does it show a different bit pattern (bit swap)? Is the red line at 0 during the divergent cycles?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "In the rd_gate panel, during the divergent cycles (from cycle 4 to 8), the red line does drop to 0. This indicates that the gate is disabled during this period, which is consistent with a bit swap operation where the read gate is turned off to prevent data from being read from the wrong stage. The blue line remains high (75), representing the golden (intended) behavior, while the red line being at 0 confirms that the actual implementation disables the gate during the swap. So, yes, the red line is at 0 during the divergent cycles.",
+   "ok": true,
+   "elapsed_s": 5.394
+  },
+  {
+   "query": "Looking at the last divergent cycle in the rd_gate panel: at cycle 7, are blue and red still different? At cycle 8, do they match again? So is the last divergent cycle 7 or 8?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Let's examine the last divergent cycle in the `rd_gate` panel.\n\n- At **cycle 7**, the blue line (golden) is at 75, while the red line (actual) is at 0 → they are **different**.\n- At **cycle 8**, both blue and red lines jump to 62.5 → they are now **matching again**.\n\nSo the last divergent cycle is **7**, and they match again at cycle 8. Final Answer: **7**",
+   "ok": true,
+   "elapsed_s": 4.982
+  }
+ ],
+ "agent_selfcheck": [
+  "Based on all the cross-validated readings, I have consistent answers:\n\n- **First diverge stage**: `rd_gate` (pattern_buf is identical, rd_gate is the first to diverge)\n- **Golden at divergence**: 75 (blue line)\n- **Actual at divergence**: 0 (red line drops to zero)\n- **Mismatch first cycle**: 4 (divergence starts at cycle 4)\n- **Mismatch last cycle**: 7 (at cycle 8 they match again, so last divergent cycle is 7)\n- **Num diverge stages**: 4 (rd_gate, slice_mux, read_mux, pad_driver)\n- **Data inta …[truncated]"
+ ],
+ "n_turns": 5,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 78.95,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "Let me analyze this waveform image step by step. I need to read the image to understand the five stacked panels and identify where blue and red lines diverge.\n\nLet me start by asking several questions about the image.",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"Describe the five stacked panels from top to bottom. For each panel, do the blue and red step lines differ at any point over the 16 cycles? Which panel is the first (topmost) where blue and red diverge?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"What are the names/labels of the five panels from top to bottom?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "So the first divergent stage is rd_gate. Let me get more details about the values and cycles.",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"In the rd_gate panel, what value does the blue (golden) line hold during the divergent cycles? What value does the red (actual) line drop to? At which cycle number does the divergence start and end? The x-axis is 0 to 15 cycles.\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"How many of the five panels show a divergence between blue and red lines? Is there any panel where blue and red are identical throughout all 16 cycles?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"In the rd_gate panel, at which exact cycle number on the x-axis (0 to 15) does the blue line first go up while the red line stays at zero or drops? And at which exact cycle does the red line come back up to match the blue line again? Please give precise cycle numbers.\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"In the rd_gate panel, what is the y-axis value of the blue line during the divergence? Is it 75 or some other value? What is the y-axis value of the red line during the divergence? Is it 0?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"In the rd_gate panel, during the divergence between blue and red, does the red line drop to zero (gate disable) or does it show a different bit pattern (bit swap)? Is the red line at 0 during the divergent cycles?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"Looking at the last divergent cycle in the rd_gate panel: at cycle 7, are blue and red still different? At cycle 8, do they match again? So is the last divergent cycle 7 or 8?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "Based on all the cross-validated readings, I have consistent answers:\n\n- **First diverge stage**: `rd_gate` (pattern_buf is identical, rd_gate is the first to diverge)\n- **Golden at divergence**: 75 (blue line)\n- **Actual at divergence**: 0 (red line drops to zero)\n- **Mismatch first cycle**: 4 (divergence starts at cycle 4)\n- **Mismatch last cycle**: 7 (at cycle 8 they match again, so last divergent cycle is 7)\n- **Num diverge stages**: 4 (rd_gate, slice_mux, read_mux, pad_driver)\n- **Data intact**: yes (pattern_buf is identical throughout)\n- **Root cause kind**: `gate_disable` (red drops to zero = gate disabled, not a bit swap)\n\nFINAL ANSWERS:\n```json\n{\n  \"first_diverge_stage\": \"rd_gate\",\n  \"failing_stage\": \"rd_gate\",\n  \"root_cause_kind\": \"gate_disable\",\n  \"golden_at_div\": 75,\n  \"actual_at_div\": 0,\n  \"mismatch_first_cycle\": 4,\n  \"mismatch_last_cycle\": 7,\n  \"num_diverge_stages\": 4,\n  \"data_intact\": \"yes\"\n}\n```",
+   "reasoning": "Let me reconcile the cycle numbers. The divergence starts at cycle 4 and the last divergent cycle is cycle 7 (at cycle 8 they match again). So:\n- mismatch_first_cycle = 4\n- mismatch_last_cycle = 7\n\nNow for root_cause_kind: the red line drops to 0 while blue stays at 75. The task says: \"the red (actual) line DROPS TO ZERO during the divergent cycles while the blue (golden) stays at a positive value. What kind of fault is this? 'gate_disable' or 'bit_swap'?\" \n\nThe answer should be 'gate_disable' since the red line drops to zero (gate is disabled). A bit_swap would show a different bit pattern, not zero.\n\nLet me also confirm the golden_at_div value. The VQA says blue is at 75 during divergence. But one response mentioned it starts at 50 and jumps to 75 at cycle 4. So golden_at_div = 75.\n\nactu …[truncated]",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}
