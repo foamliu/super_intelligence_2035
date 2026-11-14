@@ -1,5 +1,10 @@
 WAITING: 0
 
+> 🆕 **【wake #1230 · 2026-11-14 17:2x】用户令 17:2x 成果报告 ✅ 交付（v2 CoT 显著正结果正式成果报告）**：
+> - **做了什么**：按用户令 17:2x 为 v2（wake#1229 CoT 推理链 SFT+RFT，本线自 v5 后首个显著正结果）写**面向外部读者**的正式成果报告 `reports/report_vision_cot_vqa_result_zh.html`（18287B·单文件自包含·0 外链·0 script·2 内联 SVG）。七节齐全：①一句话结论+4 项预注册判据逐条核验(全✓) ②问题溯源(#3 探针 6 题合并 14/46=30.4% vs 基线 0/46 + 稳定 gap 模式) ③方法(v1 plain 为何失败 p=0.5·v2 单一变量=读数推理链·cheat=0 由构造) ④结果(全链路 60→90 + 折线图 + 3seed 明细 + 技能分解柱状图 + 翻转 7 题) ⑤诚实声明(scope 限合成/跨面板反推待解/探针图非官方/RFT 选择偏差 207/600/RFT 单 seed) ⑥可复现清单(脚本/数据/adapter/判据公式/复算命令) ⑦下一步与可迁移价值。与既有 `report_vision_vqa_strengthen_v2_zh.html`(过程性) 区分，本报告定位「成果汇报」。
+> - **数字全溯源**：均来自 `vision/vqa_tool/strengthen_runs/v2_summary.json` + `restored_probe*_results.json`，无编造。
+> - **git**：fetch→behind→`pull --rebase --autostash`(不卷入 posttrain 在途 M/??)→add 明确路径(报告+MEMORY+daily)→commit(`vision:`)→push。不提交未完成的 `prelim_restored_probe3.py`(round-3 探针进行中无 results)。**WAITING: 0**。
+
 > 🆕 **【wake #1229 · 2026-11-14 16:5x】用户令 09:1x #4 round-2 强化 ✅ 显著正结果（CoT 推理链 SFT+RFT，预注册判据全部满足）**：
 > - **做了什么**：`vision/vqa_tool/sft_rl_strengthen_v2.py`（v2 单一变量 = 对 cycle_count/amplitude_read/duty_cycle 三技能的 SFT target 改成「读数推理链 + Final Answer: X」，分类/比较/上升沿保持 v1 plain；训练集同图同问同 seed=20261114、held-out 同 seed=20261115≠训练→cheat_rate=0 由构造保证）。3 seed×3 epoch SFT + rejection-sampling FT（best-SFT adapter=seed22, accepted=207/600）。
 > - **结果（同口径 before/v1-SFT/v1-RFT/v2-SFT/v2-RFT）**：before 60.0% → v1-SFT 64.4%±1.6 → v1-RFT 73.3% → **v2-SFT 74.4%±4.2（seed11=70/22=80/33=73.3）→ v2-RFT 90.0%**。**McNemar(best v1-SFT[seed33 66.7%] vs v2-RFT[90%])：b=7 c=0 p=0.0156 <0.05 ✓**。**预注册判据（post-RFT_v2≥post-SFT_v1+5pp 且 p<0.05 且 ≥3seed 且 cheat=0）全部满足 → ✅ 显著提升**。
