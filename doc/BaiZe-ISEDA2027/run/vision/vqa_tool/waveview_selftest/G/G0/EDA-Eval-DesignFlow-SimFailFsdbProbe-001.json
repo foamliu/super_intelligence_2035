@@ -1,0 +1,135 @@
+{
+ "arm": "G0",
+ "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+ "tag": "β11",
+ "tier": "B",
+ "sut": "glm-5.2 agent (no VQA tool)",
+ "vqa_backend": "none",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+ "verdict": "FAIL",
+ "k_pass": 3,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "fail_time",
+   "pass": false,
+   "got": null,
+   "gold": 1363000.0,
+   "tol": 5000
+  },
+  {
+   "name": "root_cause",
+   "pass": true,
+   "got": "Q_force_x_stuck_high",
+   "gold": "Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal",
+   "pass": false,
+   "got": null,
+   "gold": "test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "edge_count",
+   "pass": false,
+   "got": null,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "window_start",
+   "pass": false,
+   "got": null,
+   "gold": 1340000.0,
+   "tol": 10000
+  },
+  {
+   "name": "window_end",
+   "pass": false,
+   "got": null,
+   "gold": 1370000.0,
+   "tol": 10000
+  },
+  {
+   "name": "q_valid_at_fail",
+   "pass": false,
+   "got": null,
+   "gold": 0,
+   "tol": 0
+  },
+  {
+   "name": "test_mode_at_fail",
+   "pass": false,
+   "got": null,
+   "gold": 1,
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause==Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal_ok",
+   "pass": false,
+   "got": null,
+   "gold": "edge_signal==test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "window_order",
+   "pass": true,
+   "got": null,
+   "gold": "window_start<window_end",
+   "tol": 0
+  },
+  {
+   "name": "q_valid_drops",
+   "pass": false,
+   "got": null,
+   "gold": "Q_valid==0 at fail",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "fail_time": null,
+  "root_cause": "Q_force_x_stuck_high",
+  "edge_signal": null,
+  "edge_count": null,
+  "window_start": null,
+  "window_end": null,
+  "q_valid_at_fail": null,
+  "test_mode_at_fail": null
+ },
+ "final_answer_raw": {
+  "fail_time": null,
+  "root_cause": "Q_force_x_stuck_high",
+  "edge_signal": null,
+  "edge_count": null,
+  "window_start": null,
+  "window_end": null,
+  "q_valid_at_fail": null,
+  "test_mode_at_fail": null
+ },
+ "vqa_calls_per_task": 0,
+ "reask_count": 0,
+ "vqa_calls": [],
+ "agent_selfcheck": [],
+ "n_turns": 1,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 12.68,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n{\n  \"fail_time\": null,\n  \"root_cause\": \"Q_force_x_stuck_high\",\n  \"edge_signal\": null,\n  \"edge_count\": null,\n  \"window_start\": null,\n  \"window_end\": null,\n  \"q_valid_at_fail\": null,\n  \"test_mode_at_fail\": null\n}",
+   "reasoning": "The task describes a waveform plot that I cannot see. The text contains no numeric answer values. I must not invent numeric values. I can infer qualitative/structural facts explicit in the text.\n\nFrom the text:\n- Seven stacked traces: Q_valid, test_op_type, test_violation_pos, Q_force_x, test_violation_clk, BYP_eff, test_mode\n- A sim failure occurs when Q_force_x goes stuck high\n- root_cause: 'Q_force_x_stuck_high' (explicitly stated)\n- fail_time: numeric, cannot determine from text alone → null\n- edge_signal: cannot determine from text alone → null? But maybe we can infer something? The text says \"name of the signal with the most edges near the fail\" but doesn't specify which one. So null.\n- edge_count: numeric, cannot determine → null\n- window_start: numeric, cannot determine → null\n- wi …[truncated]",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}

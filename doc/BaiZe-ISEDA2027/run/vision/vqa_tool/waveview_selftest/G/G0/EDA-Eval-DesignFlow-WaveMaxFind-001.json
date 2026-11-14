@@ -1,0 +1,112 @@
+{
+ "arm": "G0",
+ "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+ "tag": "β9",
+ "tier": "C",
+ "sut": "glm-5.2 agent (no VQA tool)",
+ "vqa_backend": "none",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+ "verdict": "FAIL",
+ "k_pass": 0,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "max",
+   "pass": false,
+   "got": null,
+   "gold": 1.0,
+   "tol": 0.02
+  },
+  {
+   "name": "t_at_max_ns",
+   "pass": false,
+   "got": null,
+   "gold": 0.0,
+   "tol": 0.08
+  },
+  {
+   "name": "min",
+   "pass": false,
+   "got": null,
+   "gold": 0.260933,
+   "tol": 0.02
+  },
+  {
+   "name": "t_at_min_ns",
+   "pass": false,
+   "got": null,
+   "gold": 0.490982,
+   "tol": 0.08
+  },
+  {
+   "name": "peak_to_peak",
+   "pass": false,
+   "got": null,
+   "gold": 0.739067,
+   "tol": 0.02
+  },
+  {
+   "name": "offset",
+   "pass": false,
+   "got": null,
+   "gold": 0.6,
+   "tol": 0.02
+  },
+  {
+   "name": "period_ns",
+   "pass": false,
+   "got": null,
+   "gold": 1.0,
+   "tol": 0.08
+  },
+  {
+   "name": "p2p_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "max-min==p2p",
+   "tol": 0
+  },
+  {
+   "name": "offset_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "(max+min)/2==offset",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "max": null,
+  "t_at_max_ns": null,
+  "min": null,
+  "t_at_min_ns": null,
+  "peak_to_peak": null,
+  "offset": null,
+  "period_ns": null
+ },
+ "final_answer_raw": {
+  "max": null,
+  "t_at_max_ns": null,
+  "min": null,
+  "t_at_min_ns": null,
+  "peak_to_peak": null,
+  "offset": null,
+  "period_ns": null
+ },
+ "vqa_calls_per_task": 0,
+ "reask_count": 0,
+ "vqa_calls": [],
+ "agent_selfcheck": [],
+ "n_turns": 1,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 3.65,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n{\n  \"max\": null,\n  \"t_at_max_ns\": null,\n  \"min\": null,\n  \"t_at_min_ns\": null,\n  \"peak_to_peak\": null,\n  \"offset\": null,\n  \"period_ns\": null\n}",
+   "reasoning": "The user wants me to analyze a waveform plot of signal v(vb) versus time, but I cannot see the image and have no image-reading tool. The task text contains no numeric answer values. I must not invent numeric values. For any numeric quantity I cannot determine, output null.\n\nSince I have no image and no numeric data in the text, all values should be null.",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}

@@ -82,16 +82,25 @@ def svg_whole():
             f'<text x="{W/2}" y="16" font-size="12" text-anchor="middle" fill="#222">整题通过数（PASS = 全 k 条件过）</text>{bars}</svg>')
 
 
+def _cap_badge(D, cid):
+    r = D.get(cid, {})
+    if r.get("turn_capped"):
+        fin = "✓" if r.get("finalized_after_cap") else "✗"
+        return f"<br><span class='muted' title='agent hit turn cap; finalized={fin}'>⚠cap{fin}</span>"
+    return ""
+
+
 case_rows = ""
 for r in rows:
+    cid = r["case_id"]
     case_rows += (
         f"<tr><td>{esc(r['tag'])}</td><td>{esc(r['tier'])}</td>"
         f"<td>{esc(r['V0'])}<br><span class='muted'>{esc(r.get('V0_k','?'))}</span></td>"
         f"<td>{esc(r['V1'])}<br><span class='muted'>{esc(r['V1_k'])}</span></td>"
         f"<td>{esc(r['V2'])}<br><span class='muted'>{esc(r['V2_k'])}</span></td>"
         f"<td>{esc(r['G0'])}<br><span class='muted'>{esc(r['G0_k'])}</span></td>"
-        f"<td>{esc(r['G1'])}<br><span class='muted'>{esc(r['G1_k'])}</span></td>"
-        f"<td>{esc(r['G2'])}<br><span class='muted'>{esc(r['G2_k'])}</span></td>"
+        f"<td>{esc(r['G1'])}<br><span class='muted'>{esc(r['G1_k'])}</span>{_cap_badge(G1,cid)}</td>"
+        f"<td>{esc(r['G2'])}<br><span class='muted'>{esc(r['G2_k'])}</span>{_cap_badge(G2,cid)}</td>"
         f"<td>{r.get('G1_vqa','?')}</td><td>{r.get('G1_reask','?')}</td>"
         f"<td>{r.get('G2_vqa','?')}</td><td>{r.get('G2_reask','?')}</td>"
         f"<td>{'✓' if (r.get('flip_G0_G1') or r.get('flip_G0_G2')) else ''}</td></tr>")
@@ -116,9 +125,13 @@ def stuck_block(arm, D):
             continue
         conds = r.get("conditions") or []
         failed = [c.get("name", c.get("key", "?")) for c in conds if not c.get("pass")]
+        cap_note = ""
+        if r.get("turn_capped"):
+            fin = "consolidated after cap" if r.get("finalized_after_cap") else "NOT consolidated (cut off mid-tool-use)"
+            cap_note = f" · ⚠ <b>turn-capped</b> at {r.get('n_turns')} turns ({fin}; {r.get('vqa_calls_per_task')} vqa reads made — 0/k here may understate what was read)"
         items.append(f"<li><b>{esc(r.get('tag'))}</b> {esc(cid[:28])}…: {r.get('k_pass')}/{r.get('k_total')} "
                      f"—— 仍卡在 {len(failed)} 个量：{esc(', '.join(failed[:8]))}"
-                     f"{(' …' if len(failed)>8 else '')}</li>")
+                     f"{(' …' if len(failed)>8 else '')}{cap_note}</li>")
     if not items:
         return f"<p class='muted'>（{arm} 无失败题。）</p>"
     return "<ul>" + "".join(items) + "</ul>"

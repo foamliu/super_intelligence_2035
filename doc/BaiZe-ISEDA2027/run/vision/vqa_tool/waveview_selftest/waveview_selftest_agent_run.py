@@ -61,7 +61,7 @@ GLM_URL = os.environ.get("GLM_BASE_URL", "http://agi-gateway.cxmt.com/cloud/v1/c
 GLM_KEY = os.environ.get("GLM_API_KEY", "02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23")
 GLM_MODEL = os.environ.get("GLM_MODEL", "glm-5.2")
 
-MAX_TURNS = int(os.environ.get("AGENT_MAX_TURNS", "10"))   # G1/G2 turn cap
+MAX_TURNS = int(os.environ.get("AGENT_MAX_TURNS", "16"))   # G1/G2 turn cap (bumped from 10: agents that call vqa per-quantity need room to also consolidate)
 MAX_TURNS_NO_TOOL = 4                                       # G0 cap (no tool, cheap)
 TRACE = []
 
@@ -322,6 +322,39 @@ def run_agent_case(arm, server, case):
                 final_answer = fj
             break
 
+    # ---- finalization: if the agent hit the turn cap while still calling the vqa
+    # tool (it READ many values but never stopped to consolidate them into a
+    # FINAL ANSWERS block), give it one last tool-less turn to emit the answers
+    # from the readings so far. Without this, a turn-capped agent is mis-scored
+    # 0/k even though it made 20+ correct vqa reads -- which would understate the
+    # agent-system per-quantity accuracy and make the G-vs-V comparison unfair.
+    hit_cap = (final_answer is None and n_turns >= cap and has_tool)
+    finalized_after_cap = False
+    if hit_cap and vqa_calls:
+        final_msg = ("You have used all your tool turns. Based on EVERY vqa reading above, "
+                     "emit FINAL ANSWERS NOW as a JSON object with EXACTLY the required keys "
+                     "(numbers as numbers, strings as strings), prefixed by the line "
+                     "'FINAL ANSWERS:'. Use ONLY values you actually obtained from the vqa "
+                     "tool; for any key you could not read, use null. Do NOT call any tool.")
+        messages.append({"role": "user", "content": final_msg})
+        try:
+            resp = glm_chat(messages, tools=None, max_tokens=1800, timeout=200)
+            choice = (resp.get("choices") or [{}])[0]
+            msg2 = choice.get("message", {})
+            content2 = msg2.get("content") or ""
+            reasoning2 = msg2.get("reasoning_content") or ""
+            turns.append({"role": "assistant", "content": _short(content2, 1200),
+                          "reasoning": _short(reasoning2, 800), "tool_calls": None,
+                          "finish_reason": choice.get("finish_reason"), "finalization": True})
+            fj = extract_final_json(content2)
+            if fj is None:
+                fj = extract_final_json(content2 + "\n" + reasoning2)
+            if isinstance(fj, dict):
+                final_answer = fj
+                finalized_after_cap = True
+        except Exception as e:
+            turns.append({"role": "system_error", "error": str(e), "finalization": True})
+
     answer = {}
     if isinstance(final_answer, dict):
         for key, q, kind in case["questions"]:
@@ -348,6 +381,8 @@ def run_agent_case(arm, server, case):
         "vqa_calls": vqa_calls,
         "agent_selfcheck": selfcheck,
         "n_turns": n_turns,
+        "turn_capped": bool(hit_cap),
+        "finalized_after_cap": finalized_after_cap,
         "duration_s": round(time.time() - t0, 2),
         "turns": turns,
     }

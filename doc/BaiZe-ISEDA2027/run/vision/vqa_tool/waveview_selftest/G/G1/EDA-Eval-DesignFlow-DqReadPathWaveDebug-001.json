@@ -1,0 +1,208 @@
+{
+ "arm": "G1",
+ "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+ "tag": "α3",
+ "tier": "A",
+ "sut": "glm-5.2 agent + VQA base",
+ "vqa_backend": "base Qwen3.5-2B :30001",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+ "verdict": "FAIL",
+ "k_pass": 1,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "first_diverge_stage",
+   "pass": false,
+   "got": null,
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "failing_stage",
+   "pass": false,
+   "got": null,
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_kind",
+   "pass": false,
+   "got": null,
+   "gold": "gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "golden_at_div",
+   "pass": false,
+   "got": null,
+   "gold": 80.0,
+   "tol": 8.0
+  },
+  {
+   "name": "actual_at_div",
+   "pass": false,
+   "got": null,
+   "gold": 0.0,
+   "tol": 8.0
+  },
+  {
+   "name": "mismatch_first_cycle",
+   "pass": false,
+   "got": null,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "mismatch_last_cycle",
+   "pass": false,
+   "got": null,
+   "gold": 7,
+   "tol": 0
+  },
+  {
+   "name": "num_diverge_stages",
+   "pass": false,
+   "got": null,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "data_intact",
+   "pass": false,
+   "got": null,
+   "gold": "yes",
+   "tol": 0
+  },
+  {
+   "name": "first_eq_failing",
+   "pass": true,
+   "got": null,
+   "gold": "first_diverge==failing",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": false,
+   "got": null,
+   "gold": "root_cause_kind==gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "diverge_range",
+   "pass": false,
+   "got": null,
+   "gold": "last>=first cycle",
+   "tol": 0
+  },
+  {
+   "name": "data_intact_yes",
+   "pass": false,
+   "got": null,
+   "gold": "data_intact==yes",
+   "tol": 0
+  }
+ ],
+ "answer": {},
+ "final_answer_raw": null,
+ "vqa_calls_per_task": 6,
+ "reask_count": 0,
+ "vqa_calls": [
+  {
+   "query": "There are 5 stacked panels top-to-bottom labeled pattern_buf, rd_gate, slice_mux, read_mux, pad_driver. Each shows a blue (golden) and red (actual) step line over 16 cycles (0-15). For each panel, do the blue and red lines differ at any point? Which is the first (topmost) panel where they diverge?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Let’s analyze each panel step by step to find the **first (topmost) panel** where the **blue (golden)** and **red (actual)** lines differ.\n\nWe’ll go from top to bottom:\n\n---\n\n### 1. **pattern_buf**\n\n- Blue (golden): 50 → 75 → 75 → 60 → 75\n- Red (actual): 50 → 50 → 75 → 60 → 75\n\n→ At cycle 4: blue jumps to 75, red stays at 50 → **they differ at cycle 4**\n\n✅ So, **pattern_buf** is the **first panel** where they differ.\n\n---\n\nBut wait — let’s double-check the other panels just in case we misread.\n\n---\n\n### 2. **rd_gate**\n\n- Blue: 50 → 75 → 75 → 60 → 75\n- Red: 50 → 0 → 0 → 60 → 75\n\n→ At cycle 4: b …[truncated]",
+   "ok": true,
+   "elapsed_s": 8.837
+  },
+  {
+   "query": "In the topmost panel (pattern_buf), are the blue and red lines identical across all 16 cycles? What values do they hold?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Looking at the **topmost panel** (`pattern_buf`), we can observe:\n\n- The **blue line** (“golden”) is **identical to the red line** (“actual”) across all 16 cycles.\n- Both lines follow the same step function:\n  - From cycle 0 to 3: value = **50**\n  - From cycle 4 to 7: value = **75**\n  - From cycle 8 to 11: value = **60**\n  - From cycle 12 to 15: value = **75**\n\nThis indicates that the simulation output matches the expected (golden) pattern exactly — no discrepancies are visible.\n\n✅ **Answer**: Yes, the blue and red lines are identical across all 16 cycles. Their values are:\n- 50 (cycles 0–3)\n- …[truncated]",
+   "ok": true,
+   "elapsed_s": 7.307
+  },
+  {
+   "query": "Look at the second panel from the top, labeled 'rd_gate'. Do the blue (golden) and red (actual) lines differ? If so, at which cycle does the divergence start and end? What value does the blue line hold during the divergent cycles, and what value does the red line hold?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Looking at the second panel from the top, labeled **'rd_gate'**, we can observe:\n\n- The **blue line (golden)** is active (at value 75) from **cycle 4 to cycle 8**.\n- The **red line (actual)** is at **0** during cycles 4–8, then jumps to **60** at cycle 8 and stays there.\n\n### Divergence Analysis:\n\n- **Divergence starts at cycle 4**: At this point, the blue line rises to 75 while the red line is at 0.\n- **Divergence ends at cycle 8**: At cycle 8, the blue line drops back to 0 (matching the red line), so they become equal again.\n\n### Values During Divergent Cycles (4–7):\n\n- **Blue (golden) line* …[truncated]",
+   "ok": true,
+   "elapsed_s": 7.662
+  },
+  {
+   "query": "Look at the third panel from the top, labeled 'slice_mux'. Do the blue (golden) and red (actual) lines differ at any cycle? If so, at which cycles?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Looking at the **third panel from the top**, labeled **`slice_mux`**:\n\n- The **blue line (golden)** is active (at 75) from **cycle 4 to cycle 8** (inclusive), and inactive (at 0) otherwise.\n- The **red line (actual)** is at 50 from cycle 0 to 3, then drops to 0 from cycle 4 to 7, then rises to 60 at cycle 8, and stays there.\n\nLet’s compare them cycle by cycle:\n\n| Cycle | Golden (blue) | Actual (red) | Differ? |\n|-------|---------------|--------------|---------|\n| 0     | 0             | 50           | ✅ Yes   |\n| 1     | 0             | 50           | ✅ Yes   |\n| 2     | 0             | 50     …[truncated]",
+   "ok": true,
+   "elapsed_s": 8.876
+  },
+  {
+   "query": "Look at the fourth panel from the top, labeled 'read_mux'. Do the blue (golden) and red (actual) lines differ at any cycle? If so, at which cycles?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Looking at the **fourth panel from the top**, labeled **'read_mux'**, we can compare the blue (golden) and red (actual) lines across cycles 0 to 16.\n\n### Observation:\n- From **cycle 0 to 3**: Both lines are at **50**.\n- From **cycle 4 to 7**: \n  - Blue (golden) is at **75**\n  - Red (actual) is at **0**\n- From **cycle 8 to 11**:\n  - Blue (golden) is at **75**\n  - Red (actual) is at **60**\n- From **cycle 12 to 16**:\n  - Blue (golden) is at **75**\n  - Red (actual) is at **70**\n\n---\n\n### Conclusion:\nYes, the blue (golden) and red (actual) lines **do differ** at the following cycles:\n\n- **Cycle 4** …[truncated]",
+   "ok": true,
+   "elapsed_s": 8.951
+  },
+  {
+   "query": "Look at the fifth (bottom) panel, labeled 'pad_driver'. Do the blue (golden) and red (actual) lines differ at any cycle? If so, at which cycles?",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "answer": "Looking at the **fifth (bottom) panel**, labeled **'pad_driver'**, we compare the blue line (“golden”) and the red line (“actual”) across cycles 0 to 16.\n\n### Observation:\n- From **cycle 0 to 3**: Both lines are at **50**.\n- From **cycle 4 to 7**: Both lines are at **75**.\n- From **cycle 8 to 11**: Both lines are at **60**.\n- From **cycle 12 to 16**: Both lines are at **70**.\n\nThere is **no difference** between the blue and red lines in any cycle — they are identical throughout the entire 17-cycle timeline.\n\n---\n\n### ✅ Final Answer:\n**No, the blue (golden) and red (actual) lines do not differ  …[truncated]",
+   "ok": true,
+   "elapsed_s": 5.823
+  }
+ ],
+ "agent_selfcheck": [
+  "The first VQA response seems to have some inconsistencies. The second response says pattern_buf is identical. Let me cross-validate more carefully. Let me ask about each panel individually.",
+  "Let me consolidate the findings:\n\n1. **pattern_buf** (top panel): Blue and red are IDENTICAL across all 16 cycles. Values: 50 (cycles 0-3), 75 (cycles 4-7), 60 (cycles 8-11), 75 (cycles 12-15).\n\n2. **rd_gate** (second panel): Blue and red DIVERGE. Blue holds 75 during cycles 4-7, red drops to 0. Divergence starts at cycle 4, ends at cycle 7 (or cycle 8 where they reconverge).\n\n3. **slice_mux** (third panel): Blue and red differ - the VQA response seems a bit confused, but they do diverge.\n\n4. ** …[truncated]"
+ ],
+ "n_turns": 3,
+ "duration_s": 101.88,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "Let me analyze this waveform image step by step. I need to read the image to understand the 5 stacked panels and identify where blue and red lines diverge.",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"There are 5 stacked panels top-to-bottom labeled pattern_buf, rd_gate, slice_mux, read_mux, pad_driver. Each shows a blue (golden) and red (actual) step line over 16 cycles (0-15). For each panel, do the blue and red lines differ at any point? Which is the first (topmost) panel where they diverge?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"In the topmost panel (pattern_buf), are the blue and red lines identical across all 16 cycles? What values do they hold?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "",
+   "reasoning": "The first VQA response seems to have some inconsistencies. The second response says pattern_buf is identical. Let me cross-validate more carefully. Let me ask about each panel individually.",
+   "tool_calls": [
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"Look at the second panel from the top, labeled 'rd_gate'. Do the blue (golden) and red (actual) lines differ? If so, at which cycle does the divergence start and end? What value does the blue line hold during the divergent cycles, and what value does the red line hold?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"Look at the third panel from the top, labeled 'slice_mux'. Do the blue (golden) and red (actual) lines differ at any cycle? If so, at which cycles?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"Look at the fourth panel from the top, labeled 'read_mux'. Do the blue (golden) and red (actual) lines differ at any cycle? If so, at which cycles?\"}"
+    },
+    {
+     "name": "vqa",
+     "args": "{\"image_path\": \"/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png\", \"query\": \"Look at the fifth (bottom) panel, labeled 'pad_driver'. Do the blue (golden) and red (actual) lines differ at any cycle? If so, at which cycles?\"}"
+    }
+   ],
+   "finish_reason": "tool_calls"
+  },
+  {
+   "role": "assistant",
+   "content": "<tool_call>vqa<arg_key>image_path</arg_key><arg_value>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png</arg_value><arg_key>query</arg_key><arg_value>In the rd_gate panel (second from top), what is the exact value of the blue",
+   "reasoning": "Let me consolidate the findings:\n\n1. **pattern_buf** (top panel): Blue and red are IDENTICAL across all 16 cycles. Values: 50 (cycles 0-3), 75 (cycles 4-7), 60 (cycles 8-11), 75 (cycles 12-15).\n\n2. **rd_gate** (second panel): Blue and red DIVERGE. Blue holds 75 during cycles 4-7, red drops to 0. Divergence starts at cycle 4, ends at cycle 7 (or cycle 8 where they reconverge).\n\n3. **slice_mux** (third panel): Blue and red differ - the VQA response seems a bit confused, but they do diverge.\n\n4. **read_mux** (fourth panel): Blue and red differ at cycles 4-7 (golden=75, actual=0), and also at cycles 8-11 and 12-15.\n\n5. **pad_driver** (fifth/bottom panel): Blue and red are IDENTICAL throughout.\n\nWait, the VQA results are a bit inconsistent. Let me re-examine:\n\n- pattern_buf: identical → no dive …[truncated]",
+   "tool_calls": null,
+   "finish_reason": "length"
+  }
+ ]
+}

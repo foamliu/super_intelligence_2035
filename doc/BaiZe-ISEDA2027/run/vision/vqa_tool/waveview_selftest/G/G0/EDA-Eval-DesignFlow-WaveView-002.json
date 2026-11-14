@@ -1,0 +1,148 @@
+{
+ "arm": "G0",
+ "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+ "tag": "β8",
+ "tier": "C",
+ "sut": "glm-5.2 agent (no VQA tool)",
+ "vqa_backend": "none",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wv_sigs_A.png",
+ "verdict": "FAIL",
+ "k_pass": 6,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "clk_type",
+   "pass": true,
+   "got": "digital_square",
+   "gold": "digital_square",
+   "tol": 0
+  },
+  {
+   "name": "clk_period",
+   "pass": false,
+   "got": null,
+   "gold": 1.0,
+   "tol": 0.25
+  },
+  {
+   "name": "clk_duty",
+   "pass": false,
+   "got": null,
+   "gold": 0.5,
+   "tol": 0.12
+  },
+  {
+   "name": "rst_n_type",
+   "pass": true,
+   "got": "digital_reset",
+   "gold": "digital_reset",
+   "tol": 0
+  },
+  {
+   "name": "data_type",
+   "pass": true,
+   "got": "digital_bus",
+   "gold": "digital_bus",
+   "tol": 0
+  },
+  {
+   "name": "data_n_levels",
+   "pass": false,
+   "got": null,
+   "gold": 3,
+   "tol": 0
+  },
+  {
+   "name": "vref_type",
+   "pass": true,
+   "got": "analog_ramp",
+   "gold": "analog_ramp",
+   "tol": 0
+  },
+  {
+   "name": "vref_vmin",
+   "pass": false,
+   "got": null,
+   "gold": 0.2,
+   "tol": 0.07
+  },
+  {
+   "name": "vref_vmax",
+   "pass": false,
+   "got": null,
+   "gold": 0.8,
+   "tol": 0.07
+  },
+  {
+   "name": "sel_type",
+   "pass": true,
+   "got": "selector",
+   "gold": "selector",
+   "tol": 0
+  },
+  {
+   "name": "sel_n_pulses",
+   "pass": false,
+   "got": null,
+   "gold": 2,
+   "tol": 0
+  },
+  {
+   "name": "vref_range",
+   "pass": true,
+   "got": null,
+   "gold": "vref_vmin<vref_vmax",
+   "tol": 0
+  },
+  {
+   "name": "clk_duty_range",
+   "pass": false,
+   "got": null,
+   "gold": "clk_duty in [0,1]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "clk_type": "digital_square",
+  "clk_period": null,
+  "clk_duty": null,
+  "rst_n_type": "digital_reset",
+  "data_type": "digital_bus",
+  "data_n_levels": null,
+  "vref_type": "analog_ramp",
+  "vref_vmin": null,
+  "vref_vmax": null,
+  "sel_type": "selector",
+  "sel_n_pulses": null
+ },
+ "final_answer_raw": {
+  "clk_type": "digital_square",
+  "clk_period": null,
+  "clk_duty": null,
+  "rst_n_type": "digital_reset",
+  "data_type": "digital_bus",
+  "data_n_levels": null,
+  "vref_type": "analog_ramp",
+  "vref_vmin": null,
+  "vref_vmax": null,
+  "sel_type": "selector",
+  "sel_n_pulses": null
+ },
+ "vqa_calls_per_task": 0,
+ "reask_count": 0,
+ "vqa_calls": [],
+ "agent_selfcheck": [],
+ "n_turns": 1,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 5.9,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n{\n  \"clk_type\": \"digital_square\",\n  \"clk_period\": null,\n  \"clk_duty\": null,\n  \"rst_n_type\": \"digital_reset\",\n  \"data_type\": \"digital_bus\",\n  \"data_n_levels\": null,\n  \"vref_type\": \"analog_ramp\",\n  \"vref_vmin\": null,\n  \"vref_vmax\": null,\n  \"sel_type\": \"selector\",\n  \"sel_n_pulses\": null\n}",
+   "reasoning": "No image, no numeric values in text. Must infer qualitative types from names/order. Types: clk digital_square, rst_n digital_reset, data digital_bus, vref analog_ramp, sel selector. All numeric null.",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}
