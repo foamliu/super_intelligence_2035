@@ -1,0 +1,21 @@
+# 2026-11-14 08:20:22 sg docker -c nice -n 19 harbor run -p /tmp/tb21_cline_quota_t8sdexzj --agent terminalbench.agents.hermes:HermesTB -k 1 --n-concurrent 1 --extra-docker-compose /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml --jobs-dir /tmp/tb21_glm53_jobs/hermes_rerun_7way_20261114_0820_hermes
+[hermes] provider plugin installed:
+total 8
+-rw------- 1 6218 122 425 Nov 14 00:21 __init__.py
+-rw------- 1 6218 122 145 Nov 14 00:21 plugin.yaml
+
+[hermes] provider plugin installed:
+total 8
+-rw------- 1 6218 122 425 Nov 14 00:37 __init__.py
+-rw------- 1 6218 122 145 Nov 14 00:37 plugin.yaml
+
+[hermes] provider plugin installed:
+total 8
+-rw------- 1 6218 122 425 Nov 14 00:42 __init__.py
+-rw------- 1 6218 122 145 Nov 14 00:42 plugin.yaml
+
+[hermes] provider plugin installed:
+total 8
+-rw------- 1 6218 122 425 Nov 14 00:46 __init__.py
+-rw------- 1 6218 122 145 Nov 14 00:46 plugin.yaml
+

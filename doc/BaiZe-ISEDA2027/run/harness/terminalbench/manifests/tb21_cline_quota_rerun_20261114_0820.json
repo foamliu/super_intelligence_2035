@@ -1,0 +1,511 @@
+{
+  "round": "rerun-cline-quota",
+  "generated": "2026-11-14 08:20:13",
+  "source_jobs": "/tmp/tb21_glm53_jobs/hermes",
+  "rule": "best_reward<1.0 AND all trials stdout contains 额度已用完/Token额度",
+  "summary": {
+    "unique_tasks": 82,
+    "trials_total": 0,
+    "passed": 0,
+    "failed": 82,
+    "quota_lost_tasks": 82,
+    "non_quota_failed_tasks": 0,
+    "pass_rate": 0.0
+  },
+  "rerun_tasks": [
+    "adaptive-rejection-sampler",
+    "bn-fit-modify",
+    "build-cython-ext",
+    "build-pmars",
+    "build-pov-ray",
+    "caffe-cifar-10",
+    "chess-best-move",
+    "circuit-fibsqrt",
+    "cobol-modernization",
+    "code-from-image",
+    "compile-compcert",
+    "configure-git-webserver",
+    "count-dataset-tokens",
+    "crack-7z-hash",
+    "custom-memory-heap-crash",
+    "db-wal-recovery",
+    "dna-assembly",
+    "dna-insert",
+    "extract-moves-from-video",
+    "feal-differential-cryptanalysis",
+    "filter-js-from-html",
+    "financial-document-processor",
+    "fix-code-vulnerability",
+    "fix-git",
+    "fix-ocaml-gc",
+    "gcode-to-text",
+    "git-leak-recovery",
+    "git-multibranch",
+    "gpt2-codegolf",
+    "headless-terminal",
+    "hf-model-inference",
+    "install-windows-3.11",
+    "kv-store-grpc",
+    "large-scale-text-editing",
+    "largest-eigenval",
+    "llm-inference-batching-scheduler",
+    "log-summary-date-ranges",
+    "mailman",
+    "make-doom-for-mips",
+    "make-mips-interpreter",
+    "mcmc-sampling-stan",
+    "merge-diff-arc-agi-task",
+    "model-extraction-relu-logits",
+    "modernize-scientific-stack",
+    "mteb-leaderboard",
+    "mteb-retrieve",
+    "multi-source-data-merger",
+    "nginx-request-logging",
+    "openssl-selfsigned-cert",
+    "overfull-hbox",
+    "password-recovery",
+    "path-tracing",
+    "path-tracing-reverse",
+    "polyglot-c-py",
+    "polyglot-rust-c",
+    "portfolio-optimization",
+    "protein-assembly",
+    "prove-plus-comm",
+    "pypi-server",
+    "pytorch-model-cli",
+    "pytorch-model-recovery",
+    "qemu-alpine-ssh",
+    "qemu-startup",
+    "query-optimize",
+    "raman-fitting",
+    "regex-chess",
+    "regex-log",
+    "reshard-c4-data",
+    "rstan-to-pystan",
+    "sam-cell-seg",
+    "sanitize-git-repo",
+    "schemelike-metacircular-eval",
+    "sparql-university",
+    "sqlite-with-gcov",
+    "torch-pipeline-parallelism",
+    "torch-tensor-parallelism",
+    "train-fasttext",
+    "tune-mjcf",
+    "video-processing",
+    "vulnerable-secret",
+    "winning-avg-corewars",
+    "write-compressor"
+  ],
+  "detail": {
+    "adaptive-rejection-sampler": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "bn-fit-modify": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "build-cython-ext": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "build-pmars": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "build-pov-ray": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "caffe-cifar-10": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "chess-best-move": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "circuit-fibsqrt": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "cobol-modernization": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "code-from-image": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "compile-compcert": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "configure-git-webserver": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "count-dataset-tokens": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "crack-7z-hash": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "custom-memory-heap-crash": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "db-wal-recovery": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "dna-assembly": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "dna-insert": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "extract-moves-from-video": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "feal-differential-cryptanalysis": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "filter-js-from-html": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "financial-document-processor": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "fix-code-vulnerability": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "fix-git": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "fix-ocaml-gc": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "gcode-to-text": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "git-leak-recovery": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "git-multibranch": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "gpt2-codegolf": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "headless-terminal": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "hf-model-inference": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "install-windows-3.11": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "kv-store-grpc": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "large-scale-text-editing": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "largest-eigenval": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "llm-inference-batching-scheduler": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "log-summary-date-ranges": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "mailman": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "make-doom-for-mips": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "make-mips-interpreter": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "mcmc-sampling-stan": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "merge-diff-arc-agi-task": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "model-extraction-relu-logits": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "modernize-scientific-stack": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "mteb-leaderboard": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "mteb-retrieve": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "multi-source-data-merger": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "nginx-request-logging": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "openssl-selfsigned-cert": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "overfull-hbox": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "password-recovery": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "path-tracing": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "path-tracing-reverse": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "polyglot-c-py": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "polyglot-rust-c": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "portfolio-optimization": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "protein-assembly": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "prove-plus-comm": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "pypi-server": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "pytorch-model-cli": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "pytorch-model-recovery": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "qemu-alpine-ssh": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "qemu-startup": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "query-optimize": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "raman-fitting": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "regex-chess": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "regex-log": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "reshard-c4-data": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "rstan-to-pystan": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "sam-cell-seg": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "sanitize-git-repo": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "schemelike-metacircular-eval": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "sparql-university": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "sqlite-with-gcov": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "torch-pipeline-parallelism": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "torch-tensor-parallelism": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "train-fasttext": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "tune-mjcf": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "video-processing": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "vulnerable-secret": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "winning-avg-corewars": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    },
+    "write-compressor": {
+      "category": "manual",
+      "best_reward": null,
+      "trials": []
+    }
+  }
+}
