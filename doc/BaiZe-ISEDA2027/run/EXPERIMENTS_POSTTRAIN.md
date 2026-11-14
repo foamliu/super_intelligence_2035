@@ -11284,3 +11284,49 @@ setsid bash -c 'exec bash baize_posttrain_rl_eval_chain.sh \
 - Task A/B 实跑仍阻塞 36.15 5-run 完成（不可与基线测并发争资源）。
 
 **Next**: ① 36.15 5-run 完 → 新基线（5-run mean±std，标环境差异，run1=18.99% 为单次参考）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② Task A: A0-A3（40 题×4 臂）→ 预注册判据；③ Task B: baseline dev 3-seed vs p0 dev 3-seed → 门槛 → 逐条叠加 P1/P2/P3 → test 5-run + McNemar；④ R2 5-run 完 → 5run_rl_analysis_R2.json（vs 3.04%±0.83%，McNemar+bootstrap）→ 负则诚实负结果报告。
+
+## §R-Attribution-update5 (wake502, 2026-11-14 21:3x) — V1 系统提示差异实证（近全文重写，非微调）+ 18.99% 权威复算
+
+> 用户令 2026-11-14 19:2x（最高优先）。本节回答用户原话「如果系统 PROMPT 差异这么大」——**实证两套提示词的差异量级**，为 A0–A3 单变量消融（V1 臂）提供「变量真实存在」的前提证据。
+
+### 1. 18.99% 权威复算（从落盘 execution_results.jsonl 直接核）
+
+- 源文件：`run/attribution_3615_run1/execution_results.jsonl`（36 行 = 进入沙盒执行的题）。
+- `python3 -c`：`status counts = {'passed': 30, 'failed': 6}` → **30 passed / 158 total = 18.987% ≈ 18.99%**。✅ 与 wake500 口径订正一致。
+- `completed_code_generation.jsonl`（158 行）：`completion={'pass':158}`（全部题 code-gen 步有尝试），`status={'fail':157,'timeout':1}`。
+- **漏斗复算**（权威）：158 → code-gen success 36（22.8%）→ sandbox pass 30（生成后通过率 30/36=83.3%）→ **18.99%**。gen_fail=121 + timeout=1 + gen_success=36 = 158（wake500 的 gen_fail=121 正确，timeout 单列；此前任何「122」为含 timeout 口径，均以本节为准）。
+- final_report.json 的 `model_name=zhulong_deepseek_v32` = EDA-Eval-Framework/config.yaml `active_model` 陈旧标签（calculate_results.py:109 写入），**非实际被测模型**；实际被测模型 = `minicpm5-2b-sft-v39-final`（经反向隧道 36.15:18096 → .17:8096，wake499 已核验）。
+
+### 2. V1 系统提示差异实证（用户问的核心）
+
+36.15 评测脚本 `scripts/run_cline_script.sh`：`export EDA_PROMPT_TEMPLATE="${EDA_PROMPT_TEMPLATE_PYAETHER:-eval_sys_prompt_template_old.md}"`（默认 old.md，36.15 5-run 未覆盖该 env，实测跑的就是 old.md）。.17 评测用 `eval_sys_prompt_template_no_sandbox.md`。两文件均 fetched 到本机比对（`/tmp/3615_eval_sys_prompt_template_{old,no_sandbox}.md`，原文件在 `/nasdata/app.e0031982/code/eda_fastmcp/prompts/`）：
+
+| 维度 | `old.md`（36.15，55 行 / 3003B） | `no_sandbox.md`（.17，58 行 / 5105B） |
+|:--|:--|:--|
+| 角色 | 「精通 pyAether 文档的 python 工程师」 | 「pyAether 代码工程师，使用 MCP 工具检索…生成代码」 |
+| **工具清单** | `get_api_details` / `search_apis` / **`run_pyAether_code_tool`（沙盒执行工具，明列）** | `search_apis` / `search_apis_by_keyword` / `get_api_details` / `{evolve_tools_section}` —— **无任何执行工具** |
+| **核心校验机制** | 「生成的代码必须通过 `run_pyAether_code_tool` 工具」+「优先分析 error_log/print_log」—— **执行→报错→修** 闭环 | 「**本场景无沙箱可实际执行，内部推演是唯一的逻辑校验手段**」—— **无执行，纯脑内推演** |
+| 沙盒/TECHLIB | 「当前沙盒环境中预置了名为 TECHLIB 的标准工艺库…可自由读取…严禁写入」—— **承认沙盒** | 无（明示无沙箱） |
+| 自测方式 | 合规流程含「使用 run_pyAether_code_tool 测试代码 → 验证函数正确性」 | 长「自我评测」段：推演覆盖正常+边界输入 / 逆向思考失败点 / assert 实际效果（禁「无异常」弱断言）/ 禁 try-except 吞异常 |
+| 反馈回路 | 实环境 error_log 驱动修正 | 「推演中发现任何 API 误用…必须修正后重新推演」—— 纯推演自检 |
+| 上下文防护 | 无 | 「上下文退化防护」段 + `eda-context-degradation-guard` Skill |
+| API 族选择指引 | 无 | `db*` vs `emy*`、SWIG positional-only、`eda-command-family-selection`/`eda-swig-type-construction` Skill |
+
+**结论（实证，非假设）**：两套提示词是**近全文重写**（结构/工具集/校验机制/长度全不同），**不是微调**。最关键差异 = **old.md 打开「执行→报错→修」闭环**（强制 `run_pyAether_code_tool`），**no_sandbox.md 关闭它**（明示无沙箱、纯推演）。这与 RCA v2 假设完全吻合：5× 的机制主因候选 = 提示是否承认沙盒 + 是否要求执行反馈，而**非措辞本身**。**V1 作为「真实变量」前提成立**，可进入 A0–A3 单变量消融（A1 臂 = 36.15 配置只把提示换成 no_sandbox 版）。
+
+> ⚠️ 仍守纪律：这只是「变量真实存在」的实证，**不是归因结论**。prompt 占多少 / 沙盒回路占多少 / RAG 占多少，必须等 A0–A3 跑完按预注册判据核对（spec §2）。不许现在把 5× 归给 prompt。
+
+### 3. 双 eval 监控心跳（read-only, 21:3x）
+
+- **36.15 5-run**：run1 DONE=18.99%（权威复算 §1）；run2 RUNNING（外层 chain PID 2747266 on 36.15，~54min in；内层 code-gen PID 2886715 ~28min）。run1 实测耗时 ~4.5h（16:12→20:41）⇒ run2 ETA ~01:10 Nov15；5-run 全完 ETA ~Nov15 14:00。
+- **R2 5-run**（.17 GPU7:8095）：chain PID 2322797 健康；run1=0.63% / run2=1.27% / run3=0.0%（三 run 全 < 3.04%±0.83%，趋势负）/ run4 RUNNING（20:49 起，~45min in）/ run5 pending。每 run ~6.5h ⇒ run4 ~03:20 完，run5 ~09:50 完（Nov15）。
+- GPU6=89% / GPU7=97% serve 稳定；0 infra/OOM/traceback。
+- **未碰** GPU0-7 / 未碰运行中 eval / 未碰别线文件 / 未改 benchmark/check.py/题面。
+
+### 4. 归因 prep 现状（全部 run-ready，仅 GPU/serve 阻塞）
+
+- Task A：`bpt_attribution_ablation.sh` + `attribution_stratified_40.json`（40 题分层抽样）run-ready。
+- Task B：`bpt_attribution_prompt_dev_eval.sh` + `attribution_traindev_split.json`（79/79）+ `attribution_prompt_p0_toolfmt.md`（P0 补丁）+ `attribution_prompt_patches.md`（P1/P2/P3）run-ready；per-题画像 = `attribution_3615_run1_perquest_profile.json`。
+- 阻塞原因：两套 serve（GPU6 step105 / GPU7 R2）均被运行中 5-run eval 占用；Task A/B 需独占一个 serve 端点，不可与基线/R2 eval 并发争资源（会污染吞吐测量 + 抢 GPU）。
+
+**Next**：① 36.15 5-run 完 → 新基线（5-run mean±std，标 V1/V2/V3/V4 环境差异）→ `report_posttrain_baseline_pyaether_rca_3615_zh.html`；② eval 空一槽 → Task A A0–A3（40 题×4 臂，预注册判据）；③ Task B dev 3-seed；④ R2 5-run 完 → 5run_rl_analysis_R2.json。
