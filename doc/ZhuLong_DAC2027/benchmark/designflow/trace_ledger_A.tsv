@@ -570,3 +570,7 @@
 1794555284506_lopt8	congyi	hfeg0plg97	58	verification	parked		2026-11-15 00:04	analysis Q&A only: 7/7 user inputs are how-to-read-testbench/summarize-PRAC/scenario-checker-analysis/longtRAS-explanation, no produce-task deliverable; REJECT
 1794624122377_nu57g.messages.json	yunfat	hfeg0plg94	13	digital	case	EDA-Eval-DesignFlow-KsAddsubGen-001	2026-11-15 00:45	
 1794651030659_jrorc.messages.json	jkxu	10.129.2.12	85	verification	case	EDA-Eval-DesignFlow-VsimPatternRunGen-001	2026-11-15 01:20	
+1794551664857_x41qu	chuanqiz	hfeg0pkn005	158	verification	parked		2026-11-15 02:29	r541 peeked analysis Q&A (6 user inputs all 分析作用/如何实现); r545 park (r541 forgot to park); verilog:865 but Q&A not produce-task
+1794550196398_kqydq	e02141	hfeg0pkn005	133	eda_other	parked		2026-11-15 02:29	r541 peeked B-domain (synopsys-dominant bandgap/mosfet hspice); r545 park (r541 forgot); first-kw synopsys but B-domain content
+1794550071403_m8srw	e02141	hfeg0pkn005	122	eda_other	parked		2026-11-15 02:29	r541 peeked B-domain (synopsys-dominant); r545 park (r541 forgot); same e02141 bandgap cluster as kqydq
+1792671863382_ibrpp	jkxu	hfhds206	11	verification	parked		2026-11-15 02:29	r545 peek: 18msgs/4 user inputs all analysis Q&A (你是什么模型/xrun手册/evcd/evcd产生testbench吗); jkxu but not produce-task unlike jrorc/tlrtw
