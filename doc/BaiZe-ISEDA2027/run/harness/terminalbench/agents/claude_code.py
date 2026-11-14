@@ -197,6 +197,13 @@ class ClaudeCodeTB(TBBaseAgent):
             "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
             "OTEL_METRICS_EXPORTER": "none",
             "OTEL_LOGS_EXPORTER": "none",
+            # FIX (2026-11-14, R2494): 3 TB-2.1 tasks (circuit-fibsqrt,
+            # crack-7z-hash, feal-linear-cryptanalysis) failed because
+            # Claude's response exceeded the 32000 output token maximum.
+            # Raise the per-response output token cap to 128k so long-form
+            # tasks are not truncated.  This is a CONFIG fix, not a scoring
+            # change — the model still has to produce correct output.
+            "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "128000",
         })
 
         result = await environment.exec(
