@@ -37,10 +37,17 @@ eu({kind:"subagent", prompt: i.systemPrompt,
 2. **配置来源**：环境变量、cline settings、或 spawn_agent 的 input schema 新增可选字段——**方式你定**，但必须：
    - **向后兼容**：默认行为**完全不变**（不配置时子 agent 仍继承父模型），保证 A0/A1 现有结果与 compaction 等历史实验不受影响；
    - 不破坏 `tools` / `maxIterations` 的现有继承逻辑（H3 不做，别动）。
-3. ⚠️ **同时解决子 agent 无 MCP 工具的问题**（这是 A1 负增益的疑似主因）：
-   你 wake#926 记录「子 agent 调用 `search_apis` → `AI_NoSuchToolError`」。
-   既然要做子 agent 能力对比，**子 agent 拿不到 MCP 工具会让 H2 的结论失真**（测的是"没工具的子 agent"而不是"弱基座的子 agent"）。
-   请一并查清 **`e.subAgentTools` 为什么不含 MCP 工具**，能否通过配置让子 agent 也拿到 MCP 工具；**能则一并修，不能则写明原因**。
+3. 🔴 **必须一并修复：子 agent 的工具限制（用户 2026-11-14 18:0x 明确要求）**
+
+   > **用户原话**：「search_apis 报 NoSuchToolError 说明原来的实现有问题，限制了子 agent 使用的工具。这个问题这次要一起修复。」
+   > **用户给定的目标行为**：「**子 agent 默认继承所有工具，唯二的差别在于 LLM + 上下文。**」
+
+   - **正确设计 = 子 agent 继承主 agent 的完整工具集**，与主 agent 的差别**只有两个**：① 用哪个 LLM ② 上下文（systemPrompt / task）。
+   - 你在 wake#926/#927 记录到「子 agent 调用 `search_apis` → `AI_NoSuchToolError`，回退 `search_codebase`」——
+     **这说明当前实现在 `tools: e.subAgentTools` 处对子 agent 做了工具限制，是 bug，本次一并修掉。**
+   - 修法：让 `spawn_agent` 派生子 agent 时传**父 agent 的完整工具集**（含 MCP 工具），而不是受限子集。
+   - ⚠️ 顺带核实 `NoSuchToolError` 的**直接成因**：是工具名不匹配（子 agent 用了裸名 `search_apis`，而 MCP 工具在父侧的完整名是 `pyAether_MCP_server__search_apis`），还是工具确实没注入。**两种情况都要修到"子 agent 能正常调用 MCP 工具"为止**，并在 smoke 里给证据（子 agent 成功调用一次 MCP 工具的 trace 原文）。
+   - **向后兼容**：此项修复同样不得改变主 agent 的工具集与默认行为。
 
 **四、验证与执行顺序**
 
