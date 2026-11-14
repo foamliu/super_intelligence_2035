@@ -1,0 +1,4 @@
+# Regenerable synthetic waveform images (deterministic via synth_waveform_qa.py, fixed seed)
+sft_images/
+selftest_images/
+__pycache__/

@@ -1,0 +1,204 @@
+{
+  "server": "http://127.0.0.1:30001",
+  "model": "Qwen3.5-2B (native VL)",
+  "n": 12,
+  "correct": 7,
+  "accuracy": 0.5833,
+  "mean_reward": 0.6257,
+  "skill_acc": {
+    "type_classification": {
+      "n": 2,
+      "correct": 2,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "cycle_count": {
+      "n": 2,
+      "correct": 1,
+      "acc": 0.5,
+      "mean_reward": 0.5542
+    },
+    "amplitude_read": {
+      "n": 2,
+      "correct": 0,
+      "acc": 0.0,
+      "mean_reward": 0.1988
+    },
+    "freq_comparison": {
+      "n": 2,
+      "correct": 2,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "duty_cycle": {
+      "n": 2,
+      "correct": 0,
+      "acc": 0.0,
+      "mean_reward": 0.0013
+    },
+    "rise_edge": {
+      "n": 2,
+      "correct": 2,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    }
+  },
+  "tau": 0.15,
+  "skills": [
+    "type_classification",
+    "cycle_count",
+    "amplitude_read",
+    "freq_comparison",
+    "duty_cycle",
+    "rise_edge"
+  ],
+  "ts": "2026-11-14T11:10:47",
+  "results": [
+    {
+      "id": "q0",
+      "skill": "type_classification",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q0.png",
+      "question": "Which waveform type is this: sine, square, triangle, or sawtooth? Answer with the single type name.",
+      "gt": "sawtooth",
+      "answer": "sawtooth",
+      "pred": "sawtooth",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.31
+    },
+    {
+      "id": "q1",
+      "skill": "type_classification",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q1.png",
+      "question": "Which waveform type is this: sine, square, triangle, or sawtooth? Answer with the single type name.",
+      "gt": "triangle",
+      "answer": "triangle",
+      "pred": "triangle",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q2",
+      "skill": "cycle_count",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q2.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "3",
+      "answer": "4",
+      "pred": "4",
+      "correct": false,
+      "reward": 0.1084,
+      "latency_s": 0.2
+    },
+    {
+      "id": "q3",
+      "skill": "cycle_count",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q3.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "2",
+      "answer": "2",
+      "pred": "2",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q4",
+      "skill": "amplitude_read",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q4.png",
+      "question": "What is the peak-to-peak amplitude of this waveform, in vertical grid divisions (each grid square = 1 division)? Answer with a number.",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude**, we measure the total vertical distance from the **lowest point** (trough) to the **highest point** (peak) of the waveform.\n\nLooking at the graph:\n\n- The waveform starts at its **lowest point** (trough) — this is at **1 division below the x-axis**.\n- It goes up to its **highest point** (peak) — this is at **1 division above the x-axis**.\n\nSo, the peak-to-peak amplitude is:\n\n> From -1 to +1 → total span = **2 divisions**\n\nThis is consistent across all cycles in the waveform.\n\n✅ Final Answer: **2**",
+      "pred": "2",
+      "correct": false,
+      "reward": 0.0117,
+      "latency_s": 4.47
+    },
+    {
+      "id": "q5",
+      "skill": "amplitude_read",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q5.png",
+      "question": "What is the peak-to-peak amplitude of this waveform, in vertical grid divisions (each grid square = 1 division)? Answer with a number.",
+      "gt": "7",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we need to determine the total vertical distance between the highest and lowest points of the waveform.\n\nLooking at the graph:\n\n- The waveform is a sawtooth-like pattern with vertical jumps.\n- From the leftmost point (lowest point) to the rightmost point (highest point), we can count how many grid divisions it spans vertically.\n- The waveform starts at the bottom of the first grid square (below the x-axis) and ends at the top of the last grid square (above the x-axis).\n- Counting from the lowest point to the highest point: it spans **6 full grid divisions** upward.\n\nSince each grid square = 1 division, the peak-to-peak amplitude is **6 divisions**.\n\n✅ Final Answer: **6**",
+      "pred": "6",
+      "correct": false,
+      "reward": 0.3858,
+      "latency_s": 5.05
+    },
+    {
+      "id": "q6",
+      "skill": "freq_comparison",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q6.png",
+      "question": "Signal A (blue, top) and signal B (red, bottom) are shown. Which signal has the HIGHER frequency? Answer A or B.",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- The **blue signal (A)** completes **more cycles** in the same horizontal distance compared to the red signal.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since the blue wave oscillates **more frequently** — it has more peaks and troughs over the same interval — it has the **higher frequency**.\n\n✅ Therefore, the answer is: **A**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.21
+    },
+    {
+      "id": "q7",
+      "skill": "freq_comparison",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q7.png",
+      "question": "Signal A (blue, top) and signal B (red, bottom) are shown. Which signal has the HIGHER frequency? Answer A or B.",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since **Signal A has more cycles over the same interval**, it has a **higher frequency**.\n\n✅ Therefore, the answer is: **A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 2.54
+    },
+    {
+      "id": "q8",
+      "skill": "duty_cycle",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q8.png",
+      "question": "What is the duty cycle of this square wave (high-time / period)? Answer as a percentage.",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the waveform shown:\n\n- The **high time** (duration the signal is high) is **4 units** (counting the vertical segments above the zero line).\n- The **period** (total duration of one full cycle) is **8 units** (4 high + 4 low).\n\nSo,\n\n> Duty Cycle = (4 / 8) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.0013,
+      "latency_s": 4.08
+    },
+    {
+      "id": "q9",
+      "skill": "duty_cycle",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q9.png",
+      "question": "What is the duty cycle of this square wave (high-time / period)? Answer as a percentage.",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the waveform shown:\n\n- The **high time** (duration the signal is high) is **4 units** (counting the vertical segments above the zero line).\n- The **period** (total duration of one full cycle) is **8 units** (4 high + 4 low).\n\nSo,\n\n> Duty Cycle = (4 / 8) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.0013,
+      "latency_s": 4.1
+    },
+    {
+      "id": "q10",
+      "skill": "rise_edge",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q10.png",
+      "question": "Is the rising edge of this signal sharp (near-vertical) or gradual (sloped)? Answer 'sharp' or 'gradual'.",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q11",
+      "skill": "rise_edge",
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/selftest_images/q11.png",
+      "question": "Is the rising edge of this signal sharp (near-vertical) or gradual (sloped)? Answer 'sharp' or 'gradual'.",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    }
+  ],
+  "note": "pre-SFT/RL baseline on synthetic waveform images; native multimodal path (no image->text bridge). Same image/question distribution reused for post-SFT/RL paired comparison (#4).",
+  "preregistered_criteria": "success: post-RL >= post-SFT + 5pp, McNemar p<0.05, >=3 seeds, cheat_rate=0; negative results reported honestly."
+}

@@ -56,3 +56,58 @@ curl -s -X POST http://127.0.0.1:30001/vqa \
 2. designflow 用本 VQA tool 对同一批题再评（唯一变量=有没有 VQA）→ 对比报告「哪些题靠 VQA 翻转」。
 3. vision 用合成数据/SFT/RL 强化基模（#4）→ 再评 → 证明显著提升（对照+显著性）。
 本仓库仅交付工具+基线；跨线实跑由 designflow shard 执行（vision 不擅改 designflow 任务书）。
+
+---
+
+## #4 合成数据管线 + 基模能力自测基线（`synth_waveform_qa.py`）
+
+把 #4 的「训练/合成数据管线」与「合成数据自测基线」做成可复算的确定性脚本（seed 固定）。
+
+### 文件
+| 文件 | 作用 |
+|:--|:--|
+| `synth_waveform_qa.py` | 合成管线主脚本：生成 SFT 数据集 / 跑自测基线 |
+| `sft.jsonl` | 150 条多模态 SFT 记录（25/技能 × 6 技能），Qwen3.5-2B VL chat 格式（user=[image,text] / assistant=gt） |
+| `dataset_meta.json` | 数据集 manifest（seed/counts/tau/skills） |
+| `synth_selftest_baseline.json` | **基模能力自测基线**（pre-SFT/RL 底数，#4 配对对照的 before） |
+| `sft_images/`、`selftest_images/` | 合成波形图（带网格，VLM 可「数格读数」）—— **已 gitignore，可由脚本确定性再生** |
+
+### 架构口径（重要）
+Qwen3.5-2B 是**原生多模态 VL 模型**（`Qwen3_5ForConditionalGeneration`，config 含 `image_token_id`），
+**直接吃像素**。本管线把图喂给 VLM，**不做**「图→文本桥」降级——用户 09:5x 令明确反对把视觉判断
+降级为脚本/文本；文本桥会把「看图」偷换成「读数」，无法度量多模态增益。#4 强化的是基模「看图」能力。
+
+### 6 个识图技能（覆盖 waveview α/β）
+`type_classification` / `cycle_count` / `amplitude_read` / `freq_comparison` / `duty_cycle` / `rise_edge`
+
+### RL 奖励设计（预注册，🚫 不许看结果再调判据）
+- 回归任务（cycle_count / amplitude_read / duty_cycle）：`R = exp(-rel_err/tau)`，`tau=0.15`（与 v11 TOL 对齐）——连续平滑，消除 v2–v11「全同档=无信号」病灶
+- 二值任务（type / freq_compare / rise）：`R = 1.0/0.0`
+- 群体：`group_std(rewards)`；为 0 则该组 advantage=0（v2–v4 病灶检测）
+- **预注册判据**：成功 = post-RL ≥ post-SFT + 5pp，McNemar p<0.05，≥3 seeds 一致，cheat_rate=0；负结果同样上报
+
+### 用法
+```bash
+PY=/nas_data/app.e0031982/miniforge3/envs/py310/bin/python
+# 生成 SFT 数据集（150 题，渲染图像 + sft.jsonl）
+$PY synth_waveform_qa.py --n_per_skill 25
+# 跑自测基线（查常驻 VQA server，落 synth_selftest_baseline.json）
+$PY synth_waveform_qa.py --selftest --selftest_n 2
+```
+
+### 自测基线结果（pre-SFT/RL · 2026-11-14 · native VL · GPU5:30001）
+`synth_selftest_baseline.json`：**n=12，correct=7，acc=0.5833，mean_reward=0.6257**。
+
+| skill | n | acc | mean_reward | 解读 |
+|:--|--:|--:|--:|:--|
+| type_classification | 2 | 1.00 | 1.00 | ✅ 四类波形辨识已掌握 |
+| freq_comparison | 2 | 1.00 | 1.00 | ✅ 两波形频率比较已掌握 |
+| rise_edge | 2 | 1.00 | 1.00 | ✅ 上升沿 sharp/gradual 已掌握 |
+| cycle_count | 2 | 0.50 | 0.55 | 🟠 周期计数偏差（3→4） |
+| amplitude_read | 2 | 0.00 | 0.20 | 🔳 峰峰值欠读（6→2、7→6） |
+| duty_cycle | 2 | 0.00 | 0.00 | 🔳 25% 一律误读为 50% |
+
+**这正是 #4（SFT/RL 强化）要攻的缺口**：精确计数、幅值读数、占空比区分。
+同一脚本同一 seed 再生的图像/问题将用于 post-SFT/RL 配对对照（McNemar / paired bootstrap）。
+与既有手作基线（`baseline_waveform_vqa_results.json` n=9 acc=0.5556）一致：rise_edge/freq/type 强、
+duty_cycle/amplitude/cycle 弱——缺口稳定可复现，适合做强化对照。

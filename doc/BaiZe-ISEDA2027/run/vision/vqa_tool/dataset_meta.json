@@ -1,0 +1,28 @@
+{
+  "seed": 20261114,
+  "n_per_skill": 25,
+  "counts": {
+    "type_classification": 25,
+    "cycle_count": 25,
+    "amplitude_read": 25,
+    "freq_comparison": 25,
+    "duty_cycle": 25,
+    "rise_edge": 25
+  },
+  "total": 150,
+  "skills": [
+    "type_classification",
+    "cycle_count",
+    "amplitude_read",
+    "freq_comparison",
+    "duty_cycle",
+    "rise_edge"
+  ],
+  "tau": 0.15,
+  "waveform_types": [
+    "sine",
+    "square",
+    "triangle",
+    "sawtooth"
+  ]
+}
