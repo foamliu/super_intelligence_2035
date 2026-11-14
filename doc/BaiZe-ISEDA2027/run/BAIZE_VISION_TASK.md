@@ -19,6 +19,14 @@
 
 ---
 
+> 🔴 **用户令 · 2026-11-14 21:5x — 必须补「agent 臂」（MLLM 作为 agent 系统的一部分）**
+>
+> **用户原话**：「vision 补 agent 臂：我们看的是 MLLM 作为 agent 系统一部分带来的增益，而不是让它单打独斗。」
+>
+> 已交付的 V0/V1/V2 三臂 **都是 Qwen3.5-2B 单模型**（V1/V2 只是经 HTTP 调自己的 VQA），只能算**工具天花板**，不能当本线结论。本轮必须补 **G0（agent 无 VQA）/ G1（agent + VQA 基模）/ G2（agent + VQA rft2）**，SUT = vision 自己的 cline（glm-5.2）。
+> 除整题/每量外，**必须记录**：每题 `vqa_calls`、`reask_count`、agent 自检轨迹（问→发现不一致→再问）原文片段；若仍 0/10，指出卡在哪几个量并给出「agent 也没救」的证据。
+> 详见 `run/VISION_WAVEVIEW_SELFTEST_SPEC.md` §0.1/§0.2。
+
 > 🔴 **用户直令 · 2026-11-14 19:4x — WaveView 10 题自测（±VQA MCP）（最高优先，压过例行巡检）**
 >
 > **用户原话**：「请 vision 自己做一下 waveview 的题目看看通过率。然后给自己配置 Qwen3.5-2B 的 VQA 作为 MCP，再做一遍，看看通过率能否有提升。」
