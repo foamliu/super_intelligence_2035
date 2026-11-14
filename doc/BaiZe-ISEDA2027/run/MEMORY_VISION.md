@@ -6,27 +6,9 @@ WAITING: 0
 > - **核心结论**：agent 编排把单模型「整题 0/10」推到 **G1=5/10**（整题翻转），正是用户要量的「MLLM 作为 agent 系统一部分」增益；单模型结构上做不到。G2 量 rft2 强化在 agent 设置的额外增益。口径=WaveView 真实题（等价重建·非合成集）。
 > - **产物**：`G/{G0,G1,G2}/*.json`+`summary_agent.json`+`audit_agent.json`+`reports/report_vision_waveview_selftest_agent_zh.html`+EXPERIMENTS §26。本轮由 auto-finisher 在 G2 后台 run(pid 3503075) 跑完后自动落盘+提交。**WAITING: 0**。
 
-> 📦 wake#1261 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind2 ff-only 合并 designflow shard B r587·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1260 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind1 ff-only 合并 designflow shard B r586·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
+> 📦 wake#1242~#1262 例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·各轮 behind0–3 ff-only 合并 designflow/pretrain/zhulong·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked 待 ops 放行 .17 入站 TCP 30002 给评测机 10.251.36.15·research 日报 2026-11-15 vision 建议 BLIP-2 桥接容量对照=输入参考非新指令·已 wake#1259 纳入心跳标注）。需要时再读。
 
-> 📦 wake#1242~#1244 例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·复验 wake#1241 交付物在位·三 VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1250 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1251 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind2 ff-only 合并·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1252 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind2 ff-only 合并·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1253 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·up-to-date·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1254 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind1 ff-only 合并·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1255/#1256 例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind1-2 ff-only 合并·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1259 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·up-to-date·research 日报 2026-11-15 vision 建议 BLIP-2 桥接容量对照=输入参考非新指令·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1262 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind1 ff-only 合并 designflow shard B r588·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-> 📦 wake#1258 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind2 ff-only 合并·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-
-
-
-> 📦 wake#1246~#1247 例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·复验 wake#1241 交付物在位·三 VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-
-> 📦 wake#1248 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked）。需要时再读。
-
-> 📦 wake#1249 例行巡检 patrol one-liner 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·behind3 ff-only 合并·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 仍 infra-blocked 待 ops 放行 .17:30002·designflow C r577 已备 C 域 task2 候选 3 case 待可达性 OPEN）。需要时再读。
+> 🆕 **wake#1263 2026-11-15 03:5x 例行巡检 patrol·全交付态·零新增·非 idle-spin**：git fetch→up-to-date with origin(0 ahead/0 behind·无新 commit/无新运维令自 wake#1249·TASK 最近改动=5c6ceb7e0 即 21:5x agent 臂令已交付)·research 日报 2026-11-15 03:14 仍最新(vision 建议 BLIP-2 桥接容量对照=输入参考非新指令·已 wake#1259 纳入心跳标注)·WAVEVIEW_COLLAB 无新 task2 交付(仍 infra-blocked 待 ops 放行 .17 入站 TCP 30002 给评测机 10.251.36.15·vision 无 passwordless sudo 不可自改)。复验 VQA 端点本机健康(`curl :30001/vqa`=FileNotFoundError 即后端在线·`:30002/mcp` initialize=serverInfo qwen35-vqa v1.30.0·`:30003/vqa`=FileNotFoundError 即后端在线)·summary_agent.json whole_question_pass V0=0/V1=0/V2=0/G0=0/G1=5/G2=4·flips G0→G1=5·G0→G2=4·McNemar G0↔G1 p=0.0625(b=5 c=0)·audit_agent.json cheat=False/cheat_count=0/agent_image_reads=0/agent_vqa_calls=284·§6_domain_rl.tex `grep -c TBD`=0·agent 报告 0外链/0script/2内联SVG/22851B·G/{G0,G1,G2} 各 10 case JSON+summary_agent.json+audit_agent.json 在位·体积 fold wake#1242~#1262 详文→单指针后 MEMORY≤32KB/TASK31980B≤32KB。**WAITING: 0**。
 
 
 > 🆕 **【wake #1240 · 2026-11-14 23:5x】G0/G1 agent 臂✅已完成并落盘核验 · G2 后台运行中（agent 编排带来 5 整题翻转 = 本线核心增益）**：
