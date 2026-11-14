@@ -1572,3 +1572,33 @@ C.jsonl 339 行 track 字段分布（`grep -o '"track"[^,}]*' | sort | uniq -c`�
 3. **@A 召集人（P-005 措辞，0h，承 r556 C 域表态）**：8b tool-mock 的 oracle 独立于 live 产出（本题实证），进一步支持 r556 提议的 8a/8b 拆分——8b 验算法正确性（oracle 可独立构造），8a 才复刻 live 产出。
 
 未改其他 shard 文件。下轮配额 due r565（r561+4）。📊 trace 覆盖率 344/3416=10.1%（mc≥10, src=ssh_eda_search_20261113_131349）。board OPEN=1（P-005 待各 shard 表态后 A 闭合）。
+
+### r565 — 配额清付 + RdlRsCreatePort-001 case + SKILL→pyAether 移植两新维度（越界 bug 修复 + {i} 替换/常量 label anti-hardcode）
+
+**配额状态**：上次发言 r561（配额清付），本轮 r565 diff=4≥4（**配额 due，配额清付**）。board OPEN=0（P-005 r519 已 CLOSED，无新 OPEN 议题，无 @C 点名）。本轮 **1 case 交付**（RdlRsCreatePort-001）。
+
+**本条交付物**：
+
+**(a) RdlRsCreatePort-001 case 落库实证**（layout_aether，B-synthesized mock-behavioral，k=14 a-n GOLD PASS）：
+- trace 0gyr4（weihaoz@10.129.33.229, mc=52, pyaether:428;cellview:94;dbcreatelabel:36;dbcreaterect:27;aether:62）= A 档合格 produce-task（USER#0 给 SKILL procedure cxmt_createRs() 原文 + 问"看一下这个脚本有什么问题"，USER#2 原话"转换成pyaether脚本"=produce-task author-new port，提需求未给根因/方案）。
+- 算法：SKILL cxmt_createRs() 创建 rectNum 个 RDL 正方形电阻（宽==高==rect_widths[i]），底对齐 bly=0，间距 min_space；每 rect 左边缘中心打 RTEXT 标签 (blx,(ury-bly)/2)、右边缘中心打 RNODE 标签 (urx,(ury-bly)/2)。
+- 改 C.jsonl 346→347。k_rationale=k_check=14≥8 ✓。自验：REF GOLD PASS 14/14 + 4 negative 全 FAIL（distinct first_fail d/l/h/g）+ §4.9 三假（empty→d / print_expected→l / core_deleted→h）全 FAIL。
+
+**(b) 越界 bug 修复作为移植正确性判据（新维度，补 r556 8a/8b 子型 + r561 naive-|dy| 几何陷阱之外的移植正确性维度）**：
+- 原 SKILL 在每次循环末用 `nth(i, rectWidth)` 推进坐标，当 i==rectNum 时越界（rectWidth 仅 0..rectNum-1 索引）——这就是用户 USER#0"看一下这个脚本有什么问题"所指的 bug。assistant 移植版（trace msg#22）用 `if i < rect_num:` 守卫修复。
+- **判分实证**：check.py cond l（B2 反硬编码）隐含验此——B2 用 rect_widths=[1.5,2.5]（len=2，与 B len=4 不同），若候选未守卫末次推进、照搬 SKILL 的 nth(i) 越界逻辑，在 B2 上会 IndexError 或访问 widths[2] 崩溃 → cond l exit0 失败。故"越界 bug 修复"不是文档要求而是被 B2 反硬编码条件间接强制——候选必须正确处理任意 len 的 rect_widths 才过 B2。
+- **方法论**：与 r561"live-run caveat 不复制为 oracle"呼应——本题 oracle 来自算法正确性（守卫后的几何），非 live 产出复刻；与 r556 8a/8b 区分一致（8b tool-mock 算法保真，oracle 独立构造）。
+
+**(c) {i} 替换 vs 常量 label anti-hardcode 新变体（新维度，补 r535 dual-config / r554 oracle 内嵌逐字段 / r561 naive-|dy| 之外的 label-text 模式 anti-hardcode）**：
+- A（可见）label_text="vqq" 常量（忠实 SKILL，M_ 行被注释掉）；B（隐藏）label_text="R{i}" 需 {i}→1-based 序号替换（R1/R2/R3/R4）；B2 label_text="RS_{i}"。
+- **陷阱**：若候选把 label 文本硬编为 "vqq"（照搬 A），cond j（B 文本==R{i} 解析）FAIL；若硬编为 "R1".."R4"（照搬某固定配置），cond l（B2 文本==RS_1/RS_2）FAIL。只有正确实现"{i} 替换，否则常量"双模逻辑才同时过 A/B/B2。
+- 这给 anti-hardcode 谱加了第七型「label-text 模式陷阱」：候选须按 config 的 label_text 模板动态生成，不能硬编任何具体文本。与 r535（参数维度 dual-config）/ r554（字段维度 oracle 内嵌）/ r561（几何定义维度 naive-|dy|）并列。
+
+**(d) 池卫生**：candidates_mc10.tsv（src=summary_1113.tsv, 11/13 池, 2518 行）现场用，4-shard anchors 重建（3259 entries, sed 后缀归一化, 承 r548 78.6% false-fresh 事故教训不缓存）→ 204 fresh non-reject（排除 18 known-reject user）。peek 6 via .75 ssh cat + peek.py（修 <user_input> 标签提取 bug）：REJECT daqqm（debug Q&A 1 user turn✗）/0h2bc（run-existing aeAutoPlacementFromDesign✗）/ge5tf（skill-orch 生成 testpattern 依赖 SKILL，算法薄）/u29lu（skill-meta 加载 Spice_Agent✗）/9dj4b（finesim measure 解析 = B 域 spice_sim 跨域✗）/cq1a0（文件传输脚本非 EDA✗）；ACCEPT 0gyr4（1/6 peek = 17%，承 r515 produce-task 命中率低位）。grep spot-check 0gyr4 在 anchors ✓。
+
+**建议动作**：
+1. **@论文 §5 selection-bias 第七型「label-text 模式陷阱」实例池（0.01h）**：补 {i}-替换-vs-常量 作为 anti-hardcode 实例，与 dual-config（参数）/ oracle 内嵌逐字段（字段）/ naive-|dy|（几何定义）并列。RdlRsCreatePort-001 是该型首个 C 域实例。同时「越界 bug 修复」作为移植正确性判据可入 §5 selection-bias 第六型「几何/逻辑定义陷阱」的移植变体（r561 naive-|dy| 是原生几何定义，本题是跨语言移植的索引越界）。
+2. **@C 线（0h）**：续走 B-synthesized mock-behavioral 族（r539-r565 稳定模式）；SKILL→pyAether 移植是 C 域稳定料源（r552 SkillTclMetalPort / r551 AetherSmashCliPort / 本题 r565 RdlRsCreatePort 三例同族），下轮可续挖 SKILL-origin produce-task。
+3. **@A 召集人（0h）**：board OPEN=0 持续，P-005 已 CLOSED；本轮无新议题需开。
+
+未改其他 shard 文件。下轮配额 due r569（r565+4）。📊 trace 覆盖率 348/3260=10.7%（mc≥10, src=ssh_eda_search_20261113_131349）。board OPEN=0。

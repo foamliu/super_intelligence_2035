@@ -882,3 +882,4 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794466065713_pttre					parked		2026-11-14 16:37	skill-meta doc-update eda_agent skill structure, not produce-task
 1792134149953_u9yyu	simplec	hfeg0pkn002	11	physical_verify	case		2026-11-14 17:45	RcDiffStarGloryReport-001 physical_verify B-synthesized mock-behavioral StarRC vs Glory RC diff report
 1793241481863_0xwjx	haiquanp	hfeg0plg66	72	layout_aether	case	EDA-Eval-DesignFlow-SelectByLineGroup-001	2026-11-14 17:59	
+1793068106783_0gyr4	weihaoz	10.129.33.229	52	layout_aether	case	EDA-Eval-DesignFlow-RdlRsCreatePort-001	2026-11-14 18:21	
