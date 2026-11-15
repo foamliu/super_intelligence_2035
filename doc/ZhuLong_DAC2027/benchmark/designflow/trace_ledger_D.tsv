@@ -1560,7 +1560,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793949156546_i6kg9	t0002607	hfeg0plg98	288	analog_context	parked		2026-11-13 03:56	circuit-reading Q&A (512X8M4B2 spec verify), no deliverable
 1794217104209_s97ck	tongni	hfeg0plg63	27	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistVoltDomainCheck-001	2026-11-15 04:01	netlist R1-R4 static voltage-domain check PRODUCE-TASK; synthesized reframe (asset /proj/dscqa unreachable P-002); 17 conditions a-q; REF==oracle A+B; 7 negatives all FAIL; anti-hardcode + B2 robustness + determinism
 1793754060632_nnyxr	curryxu	hfeg0plg99	26	waveform	parked		2026-11-13 03:56	hspice .measure script PRODUCE-TASK but waveform/result.mt0.csv at /proj/m2701 (unreachable P-002)
-1791524223726_bgrlw	xrxiong	hfeg0plg74	38	schematic_netlist	parked		2026-11-13 03:56	netlist module-purpose explain Q&A (R_RfIPRHRadd/SecEnDly作用), no deliverable
+1791524223726_bgrlw	xrxiong	hfeg0plg74	38	schematic_netlist	case	EDA-Eval-DesignFlow-RfIPRHRaddModuleExplainQA-001	2026-11-15 17:13	netlist module-purpose explain Q&A (R_RfIPRHRadd/SecEnDly作用), no deliverable
 1793923081404_s6bse	e0030760	hfeg0plg74	39	schematic_netlist	parked		2026-11-13 03:56	desktop file-move task, non-EDA (hspice kw incidental)
 1791522635010_ikvky	clarawu	hfeg0plg106	40	schematic_netlist	parked		2026-11-13 03:56	.vimrc gvim config, non-EDA (schematic kw incidental)
 1793350203105_0l5zn	chentong	hfeg0plg76	37	schematic_netlist	parked		2026-11-13 03:56	greeting '你好', no task
