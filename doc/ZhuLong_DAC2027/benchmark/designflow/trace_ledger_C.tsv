@@ -1034,3 +1034,10 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1789697908076_bvqsb					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1790215562772_dj66w					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1794561894844_927j6	feng1z	10.129.8.221	73	physical_verify	case	EDA-Eval-DesignFlow-SpfWlBlbCoupling-001	2026-11-15 12:49	
+1786439419749_1n299	e0014566	hfeg0plg58	64	layout_virtuoso	case	EDA-Eval-DesignFlow-RscalcFlowDocGen-001	2026-11-15 13:32	
+1791796751454_jtjrm					parked		2026-11-15 13:33	r599 peek REJECT: lizwen Q&A (smash shortcut), dup of dt95j
+1791796755681_dt95j					parked		2026-11-15 13:33	r599 peek REJECT: lizwen Q&A (smash shortcut), dup of jtjrm
+1783315946847_0bn1c					parked		2026-11-15 13:33	r599 peek REJECT: run-existing IMCleAutoVia.il live Virtuoso, offline check teeth hard
+1789961307805_2uipn					parked		2026-11-15 13:33	r599 peek REJECT: ziyuny 'give me a reference' Q&A for auto-placement move inst, borderline Q&A
+1794550604621_aiqos					parked		2026-11-15 13:33	r599 peek REJECT: yan1zh brainstorming skill_wrapper, design-exploration Q&A, mixed analog
+1785808345612_2vufm					parked		2026-11-15 13:33	r599 peek REJECT: e0014566 prompt-handoff 'read prompt_autovia.md and do the job' thin
