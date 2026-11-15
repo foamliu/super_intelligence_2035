@@ -26,8 +26,8 @@
   "mc5": 3874,
   "mc500": 102,
   "mc_matrix": {
-    "note": "11/15 01:36 scan: 694 hosts, 39263 rows, 6959 dedup. mc10=3504, mc30=2656",
-    "src": "ssh_eda_search_20261115_013654/summary.tsv"
+    "note": "11/15 08:15 scan (rescan of 01:36, 0 new sessions): 694 hosts, 39103 rows, 6959 dedup. mc10=3504, mc30=2656",
+    "src": "ssh_eda_search_20261115_081559/summary.tsv"
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -111,16 +111,16 @@
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261105_192825/summary.tsv",
   "prev_sessions": 6959,
-  "scan_path": "/home/t0002965/log/ssh_eda_search_20261115_013654/summary.tsv",
+  "scan_path": "/home/t0002965/log/ssh_eda_search_20261115_081559/summary.tsv",
   "scan_rows": 41409,
   "scan_sha256": "(pending)",
   "scansync": {
-    "duration_sec": 260,
+    "duration_sec": 289,
     "fresh_A_domain": 0,
-    "fresh_vs_1114": 5,
-    "method": "full_orchestrator_698hosts",
-    "round": "r543",
-    "scan": "ssh_eda_search_20261115_013654",
+    "fresh_vs_013654": 0,
+    "method": "orchestrator.sh full 698-host rescan (补扫#2 today, reason: r553 exhausted 013654 scan, need fresh data for A-core produce-task)",
+    "round": "r554",
+    "scan": "ssh_eda_search_20261115_081559",
     "unreachable": 6
   },
   "sessions": 6959,
@@ -208,7 +208,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-15 06:10",
+  "updated_at": "2026-11-15 08:23",
   "users_mc10": 581,
   "users_mc100": 182,
   "users_mc30": 401,
