@@ -38,12 +38,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-        <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 194.6k/700k, ~816B tokens）</div>
+        <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 213.6k/700k, ~896B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-14</span>
+    <span>📅 2026-11-15</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈194.64k / 700k(27.8%) · step~7.0s · loss~2.01 · 0NaN/0skip · lr-decay-iters=0(stable段) · GPU 8×88-100%/75GB · ✅ L1 19/20 ckpt done(190k=58.13%) · 200k autoqueue RUNNING(PID850714, ETA~13:35)</span>
-    <span>📊 L1: 19 ckpt ✅(160k=58.13%峰值,190k=58.13%,180k=57.25%) · 200k autoqueue运行中 | L2: 🟢<b>HF transformers 五重验证全部完成</b>: HumanEval HF=15.0%(3/20)✅ + GSM8K HF=10.0%(1/10)✅ + MBPP HF=5.0%(1/20)✅ + BBH HF=3.3%(1/30)✅ + <b>MATH HF=0.0%(0/10)✅</b> → <b>llama.cpp SSM bug是0%主因(五任务验证)</b> · MMLU=23.16%(≈随机,MCQ) | L3: 🔴TB smoke 0/2(pipeline✅,生成退化致agent无法编辑文件) | L4: 🟦<b>HANDOFF→post-train</b>(2026-11-12用户令·隧道4次复验OK·不再做SSH/资源调查)</span>
+    <span>🔥 训练 iter≈213.55k / 700k(30.5%) · step~7070ms · loss~2.01 · 0NaN/0skip · lr=1e-3(stable段) · GPU 8×78-100%/75GB · ✅ L1 21/21 ckpt done(10k-210k, peak 200k=60.12%) · 220k autoqueue RUNNING(PID203680, ETA~Nov16 05:00)</span>
+    <span>📊 L1: 21 ckpt ✅(200k=60.12%峰值,210k=58.50%,plateau) | L2: 🟢<b>HF五重@200k全部完成</b>: HE=10.0%(2/20) + GSM8K=10.0%(1/10) + MBPP=0.0%(0/20) + BBH=10.0%(3/30) + MATH=0.0%(0/10) → vs 160k: 全在噪声内(plateau) · MMLU@200k pending | L3: 📜pipeline脚本已创建(blocked:GPU满) | L4: 🟦<b>HANDOFF→post-train</b></span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -454,6 +454,39 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <b>环境</b>：sglang conda env on .29 · CPU bfloat16 · OMP_NUM_THREADS=4 · nice 19<br>
     <b>脚本</b>：<code>baize_l2_hf_bbh_direct.py</code>（3-shot CoT, 3 代表子任务）<br>
     <b>结果落盘</b>：<code>gguf_iter_160000_l2_hf_bbh_direct/results.json</code>
+  </div>
+</div>
+
+<!-- L2 @200k COMPLETE -->
+<div class="card" style="border-left:4px solid var(--ok)">
+  <h3>✅ L2 HF 五重评测 @200k 全部完成（#2248 · 2026-11-15 16:11 · 训练未受影响）</h3>
+  <div class="ok-box">
+    <b>用 sglang env (transformers, native NemotronH) 对 200k ckpt 做 5 集 HF 直跑评测全部完成</b>。
+    训练 step 6955-7176ms &lt; 7.4s ✅ 未受影响。评测串行单任务，总时间 ~32 分钟（5 集 × ~6 min/集）。
+  </div>
+  <table>
+    <tr><th>任务</th><th>160k 结果</th><th>200k 结果</th><th>Δ</th><th>样本量</th><th>是否显著</th><th>备注</th></tr>
+    <tr><td class="l">HumanEval pass@1</td><td>15.0% (3/20)</td><td><b>10.0% (2/20)</b></td><td class="warn">-5.0pp</td><td>n=20</td><td class="l">❌ 噪声内 (stderr±10.6%)</td><td class="l">160k 偏高/200k 偏低均在抽样波动内</td></tr>
+    <tr><td class="l">GSM8K acc</td><td>10.0% (1/10)</td><td><b>10.0% (1/10)</b></td><td>0</td><td>n=10</td><td class="l">— 持平</td><td class="l">4-shot, 数学推理能力未变</td></tr>
+    <tr><td class="l">MBPP pass@1</td><td>5.0% (1/20)</td><td><b>0.0% (0/20)</b></td><td class="warn">-5.0pp</td><td>n=20</td><td class="l">❌ 噪声内 (stderr±9.7%)</td><td class="l">160k 仅 1/20 PASS，降至 0/20 在抽样波动内</td></tr>
+    <tr><td class="l">BBH acc (3 子任务)</td><td>3.3% (1/30)</td><td><b>10.0% (3/30)</b></td><td class="ok">+6.7pp</td><td>n=30</td><td class="l">❌ 噪声内 (stderr±5.5%)</td><td class="l">boolean_expressions 2/10 + date_understanding 1/10 + multistep_arith 0/10</td></tr>
+    <tr><td class="l">MATH-500 acc</td><td>0.0% (0/10)</td><td><b>0.0% (0/10)</b></td><td>0</td><td>n=10</td><td class="l">— 持平</td><td class="l">MATH-500 难度远超 2B@30%训练，预期 0%</td></tr>
+    <tr><td class="l">MMLU (MCQ)</td><td>23.16%</td><td class="warn">⏳ pending</td><td>—</td><td>—</td><td>—</td><td class="l">MCQ loglikelihood 任务，待后续评测</td></tr>
+  </table>
+  <div class="alert">
+    <b>关键结论</b>：<br>
+    ① <b>L2 生成能力在 200k 处于 plateau</b>——所有 5 集 HF 结果均在 160k 的抽样噪声范围内，无显著变化。<br>
+    ② <b>BBH 从 3.3%→10.0% 有改善趋势</b>（boolean_expressions 2/10），但 n=30 stderr±5.5%，不构成统计显著。<br>
+    ③ <b>MBPP 从 5%→0% 有下降趋势</b>，但 n=20 stderr±9.7%，同样不显著。<br>
+    ④ <b>模型处于 stable 段（lr=1e-3 恒定，无 decay）</b>，L2 能力在 stable 段预期保持平坦，直到 decay/SFT 阶段注入 domain data 才可能有跃升。<br>
+    ⑤ <b>GSM8K 生成仍见 repetition 倾向</b>（如 "2 * 2 * 2 * 2..." 重复），但 HF 后端生成整体连贯，非 llama.cpp 式退化。
+    <b>下一步</b>：① MMLU@200k 待评（MCQ，可用 llama.cpp loglikelihood，不受 SSM bug 影响）② 220k ckpt 落盘后 L1 补评 ③ 等 decay 阶段后再做 L2 全面对比
+  </div>
+  <div class="note">
+    <b>环境</b>：sglang conda env on .29 · CPU bfloat16 · OMP_NUM_THREADS=4 · nice 19<br>
+    <b>脚本</b>：<code>baize_l2_hf_{humaneval,gsm8k,mbpp,bbh,math}_direct.py</code>（code/baize-llm/scripts/eval/）<br>
+    <b>结果落盘</b>：<code>gguf_iter_200000_l2_hf_{humaneval,gsm8k,mbpp,bbh,math}_direct/results.json</code> 5/5 ✅<br>
+    <b>训练监控</b>：评测期间 step 6955-7176ms &lt; 7.4s ✅，loss ~2.00-2.01，0 NaN
   </div>
 </div>
 
