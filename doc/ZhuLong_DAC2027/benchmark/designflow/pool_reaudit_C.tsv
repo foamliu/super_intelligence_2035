@@ -1,0 +1,45 @@
+session	user	host	mc	domain	旧判定	新判定	拟造任务形态
+1792639733537_qwreb			物理验证	weak: Q&A/sim/run-existing	r537	可造	旧判 Q&A 现合法；需 deepread 确认 user 真实意图+check() 可写	Q&A/analysis：让 agent 回答 DRC 相关问题，check() 验答案结构+关键事实
+1793790199273_ge424			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1793264574506_nx2ac			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1793686357167_wlw3b			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794297992607_e4kv0			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794357795851_55qgy			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794276534959_30cgz			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794295625900_jia3m			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794529920818_slj4a			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794188385974_1c67w			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1790079870984_56jqu			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1792223700738_pebvu			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794363615663_goeio			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794480484564_nphvz			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794292352673_gjzyg			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1794357676593_s5o5k			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1793192893935_poa8g			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1791425862447_ytr6l			物理验证	weak: Q&A/sim/run-existing	r537	可造	同上	同上
+1792998643161_19e3k	jcgu	10.129.32.236	542		weak: skill-orch skill-creator	r538	可造	skill 编写是真实用户意图；需 deepread 确认	skill 编写：让 agent 写 skill 脚本，check() 验脚本结构+功能
+1786615396051_enh4y	e0014566	10.129.35.82	690		weak: run-existing rscalc flow	r538	可造	run-existing 现合法；需 deepread 确认 check() 可写	rscalc flow 执行：让 agent 跑 rscalc 流程，check() 验产物
+1793018571117_y5suo			物理验证	weak: report-gold prose 非 runnable	不可造	gold=prose 报告非 script，check() 无法用 subprocess 验交付；符合排除标准 2(写不出有牙 check())	—
+1792982125759_5m5ut			物理验证	weak: live Calibre DRC 不可复现	不可造	gold=prose violation report，沙盒无法复现 live Calibre DRC run；符合排除标准 2	—
+1791956790271_31ata			物理验证	weak: 任务未完成仅产 demo	不可造	trace 结束时 status=running，无 accepted gold；符合排除标准 2	—
+1789649163024_r15ih			物理验证	weak: schematic 非本 shard	不可造	SKILL 连通性遍历属 schematic 非 C 域；域错误仍有效	—
+1793152046824_iacrk			物理验证	weak: 解析 dummy 逻辑=prose	可造	旧判 prose 解释现合法(analysis)；需 deepread 确认能否写 check() 验解析结果	analysis：让 agent 解析 dummy rule 逻辑产结构化报告，check() 验关键逻辑点
+1791959556511_kkjsm			物理验证	weak: 解析 CT_F rule 24 轮 Q&A	可造	旧判 Q&A 现合法；需 deepread 确认 check() 可写	Q&A/analysis：让 agent 解析 CT_F rule 产结构化答案，check() 验关键事实
+1792465550373_n9l88			物理验证	weak: 用户指出脚本 bug=debug 轮	可造	debug 是真实用户意图；需 deepread 确认能否隔离 clean sub-task	debug-fix：让 agent 定位+修脚本 bug，check() 验修复后行为
+1792025924814_xk5uw			物理验证	weak: 查找 PDK drc 文件+层含义 QA	可造	doc-search/Q&A 现合法；需 deepread 确认 check() 可写	doc-search：让 agent 查 PDK 文件+解释层含义，check() 验答案结构+关键事实
+1791785748768_pvl8c			物理验证	weak: skill 路由定义 meta-skill	可造	skill 编写是真实意图；需 deepread 确认 check() 可写	skill 编写：让 agent 写 skill 路由，check() 验路由逻辑
+1792547960320_eabca			物理验证	weak: aeGetSelSet 怎么查看选中对象 QA	可造	Q&A 现合法；需 deepread 确认 check() 可写	Q&A：让 agent 解释 aeGetSelSet 用法，check() 验答案关键 API 点
+1787742497412_aneeo	e0014566	hfeg0plg58	826	layout_virtuoso	weak: too large+dup risk	不可造	4.5MB/1605msgs 操作性障碍+同 rscalc flow 重复；去重仍有效	—
+1785735994579_tckme	e0014566	hfeg0plg58	654	layout_virtuoso	weak: dup PowerFill	不可造	同 PowerFill-001 重复；去重仍有效	—
+1786504317615_fkprl	e0014566	hfeg0plg58	633	layout_virtuoso	weak: dup RTEXT/RNODE	不可造	同 LayoutVirtuoso-001 主题重复；去重仍有效	—
+1792679003281_z44lk	xinqiaoz	hfeg0pkn004	610	physical_verify	weak: near-dup DummyDeck	不可造	同 DummyDeck-001 重复；去重仍有效	—
+1785725739513_r7ah0	t0002638	hfeg0plg49	685	layout_aether	weak: meta/tooling setup	可造	env-setup 现合法；但 trace 全为 start MCP/restart service 非设计交付，check() 难写有牙判定→待 deepread 确认	env-config：让 agent 配 MCP/sandbox，check() 验配置正确性(若可隔离 clean sub-task)
+1789994991166_v80cd	davidwu	hfeg0pjn200	398	layout_aether	weak: 455-msg debug saga	L2-blocked	不可造	455-msg 调试 saga+live placer blocked，gold 难隔离；操作性障碍非意图问题	—
+1790578231952_ircle	kenwang	hfeg0pkn005	150	layout_aether	weak: gold broken WIP	不可造	agent_core.py gold 是 broken WIP(SyntaxError)，无 clean runnable gold；符合排除标准 2	—
+1793174783533_791f6	haoq	hfeg0pkn002	218	physical_verify	weak: status=failed no gold	不可造	trace 结束 user 未获 working result(不显示面积)，无 accepted gold；符合排除标准 2	—
+1791362457881_awgyg	hbpeng	hfeg0plg55	445	physical_verify	weak: multi-topic fragmented	不可造	20-turn fragmented+IMCP codebase unreachable in .75，无 clean self-contained sub-task；操作性障碍	—
+1792297573507_9knot	vincelu	hfeg0plg55	862	physical_verify	weak: netlist+schematic+hspice 非纯 C	不可造	cross-domain spice/schematic 非本 shard；域错误仍有效	—
+1784623431472_gvm3g	e0014566	hfeg0pkn001	554	layout_virtuoso	weak: UI hello/runme 太薄	可造	旧判"太薄元任务"现合法(thin task 是真实意图)；需 deepread 确认 check() 可写	thin task：让 agent 写 UI hello/runme 脚本，check() 验脚本结构+行为
+1792829537180_vaiob	harrywu	hfeg0pkn002	506	physical_verify	weak: xinqiaoz PDK QA handoff	不可造	handoff resume 强状态依赖，无 clean single-turn seed；操作性障碍	—
+1792205753795_x5t0t	brian	hfeg0plg99	497	layout_virtuoso	weak: r334 failed+recon	不可造	failed+recon，无 accepted gold；符合排除标准 2	—
+1785994889000_x5tcq	e0014566	hfeg0plg58	484	pg_layout	weak: r334 idle+handoff-resume	不可造	idle+handoff-resume 强状态依赖；操作性障碍	—

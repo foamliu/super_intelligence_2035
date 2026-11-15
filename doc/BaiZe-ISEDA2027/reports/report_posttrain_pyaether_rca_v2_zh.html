@@ -22,6 +22,7 @@ pre{background:#263238;color:#eceff1;padding:10px 12px;border-radius:6px;overflo
 .chart{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin:10px 0}
 .oldnote{background:#fff3cd;border:2px solid #ffc107;border-radius:6px;padding:12px 16px;margin:10px 0}
 </style></head><body>
+<div style="background:#7f1d1d;color:#fff;padding:14px 18px;border-radius:8px;margin:14px 0;font-weight:700;font-size:15px;border:3px solid #fbbf24">⚠️ 口径失配 · 工具面含被 PreToolUse 禁用的 <code style="background:rgba(255,255,255,.15);color:#fde68a">run_commands</code> · 佐证结论 PENDING-REMOTEST（待重测）<br><span style="font-weight:400;font-size:13px">本报告「工具调用被拒 / MCP 协议格式」类归因将 <code style="background:rgba(255,255,255,.15);color:#fde68a">run_commands</code> 1051 次拒绝（占 80.6%）算作模型能力缺陷；事实是 36.15 PreToolUse hook <b>主动禁用</b> run_commands（白名单仅 3 知识库工具 + run_code），属评测环境设计行为，非模型缺陷。真 MCP 工具拒绝率仅 6.0%（run_code 3.0%）。重测口径见 <code style="background:rgba(255,255,255,.15);color:#fde68a">report_posttrain_zhulong_reattribution_zh.html</code>。</span></div>
 <h1>MiniCPM5-2B PyAether RCA v2 — 工具调用 1.9 万次为何仍只有 3.04%</h1>
 <div class='oldnote'><b>ⓘ 与旧报告的关系</b>：本报告为 <b>v2 重写版</b>，主线是「工具调用约 1.9 万次 vs Pass@1 仅 3.04%」的落差归因。旧报告 <code>report_posttrain_baseline_pyaether_rca_zh.html</code> 保留作历史，其失败分类与口径仍成立，但本 v2 新增了<b>工具调用画像</b>核心章节，并以 trace 实证回答了「检索到≠用对 / 写得出≠跑得通 / 跑得通≠判得过」三个具体问题。旧报告结论不废止，本报告在其之上深化。</div>
 <h2>1. 口径与数据（可复算）</h2>

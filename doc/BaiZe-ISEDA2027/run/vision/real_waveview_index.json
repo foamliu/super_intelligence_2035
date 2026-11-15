@@ -1,0 +1,289 @@
+{
+ "generated": "2026-11-15",
+ "line": "vision",
+ "source": "SSH 36.15 EDA-Flow-Bench + WAVEVIEW_COLLAB.md baseline JSON",
+ "real_cases_count": 10,
+ "note": "exactly 10 designflow-restored image-required WaveView cases (D8+B2); beta5 不存在(convener r508)故分母=10 非11; 5 个额外 wave 名 case(SimFailDiagnose/SimFailParse/TempSelInfer/WaveviewModuleUpdate/WaveViewPanel)有 check.py 但无 visible PNG, 不在已恢复看图集",
+ "cases": [
+  {
+   "id": "alpha1",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r650",
+   "image_visible": {
+    "filename": "eye_sweep_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-EyeApertureSelect-001/eye_sweep_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-EyeApertureSelect-001/eye_sweep_A.png",
+    "sha256": "775c2a7899761c9a95fc508ef71f175360aeb28ad426da3affb0a63f9b03423d",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-EyeApertureSelect-001/check.py",
+    "sha256": "337ce8950daa77f4f4850293f682dc590a4b46508e825baef59e34dc8122adfd",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "A"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "beta9",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r651",
+   "image_visible": {
+    "filename": "wave_vb_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-WaveMaxFind-001/wave_vb_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-WaveMaxFind-001/wave_vb_A.png",
+    "sha256": "2be5880773901f45795ef33f6a9863155d3ec160192630cd449967a8bcdee74e",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-WaveMaxFind-001/check.py",
+    "sha256": "04ad68c8f23c5e3fb6d964f0ab5871d9a7f2261a99b6a1c28d445c9d417e4a1f",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "C"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "alpha4",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r652",
+   "image_visible": {
+    "filename": "sel_wave_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-TempSelWaveform-001/sel_wave_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-TempSelWaveform-001/sel_wave_A.png",
+    "sha256": "4bcbddf280c109c847d37268ee51bb8a467894d35021de71f02494a59fec3494",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-TempSelWaveform-001/check.py",
+    "sha256": "ad4fb740b6b6d1fe17a462b2a58b808ccb69227d90be000dbc0d921177d339ba",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "B"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "beta8",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r653",
+   "image_visible": {
+    "filename": "wv_sigs_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-WaveView-002/wv_sigs_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-WaveView-002/wv_sigs_A.png",
+    "sha256": "c06fbd14066c38eeb74481e21d0989bd1b9f26e6c7e26148b26d8ea2722ab091",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-WaveView-002/check.py",
+    "sha256": "9561dd4e00e1af0905848a908af721f6dc7377901d443366addefde1ababfd60",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "C"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "beta10",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "analog_context",
+   "round": "r654",
+   "image_visible": {
+    "filename": "thresh_char_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-TempThreshChar-001/thresh_char_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-TempThreshChar-001/thresh_char_A.png",
+    "sha256": "0afd31cd29ef8409055f15b7fc46fc7e7cc43ea7b3c8f4c56b4028728e03127f",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-TempThreshChar-001/check.py",
+    "sha256": "4d9b565a425f0dbaba14922606a1890fea851be890c937c30834b1a08c193973",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "C"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "beta11",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r655",
+   "image_visible": {
+    "filename": "sim_fail_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-SimFailFsdbProbe-001/sim_fail_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-SimFailFsdbProbe-001/sim_fail_A.png",
+    "sha256": "6b3d93cc1fadaf23f08009ffee9f9c05c7b3ffa7190091c20f13f23dae8a8987",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-SimFailFsdbProbe-001/check.py",
+    "sha256": "d1c028f3323a3f0e92c0f3c13ab9ed09c1c95b685027032004e3ca926801ba17",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "B"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "alpha3",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r657",
+   "image_visible": {
+    "filename": "dq_readpath_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-DqReadPathWaveDebug-001/dq_readpath_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-DqReadPathWaveDebug-001/dq_readpath_A.png",
+    "sha256": "e78fabfe78f25f994719113f5f6129af4ba4028db9c6036d6799a1c7a44cde1f",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-DqReadPathWaveDebug-001/check.py",
+    "sha256": "4e2f0f78a6fee322f00988851721d43b8d7e1519305458737a8dc89c25cc3aa5",
+    "k_conditions": 13,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "A"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "beta6",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "shard": "D",
+   "shard_jsonl": "EDA-Eval-DesignFlow_D.jsonl",
+   "domain": "waveform",
+   "round": "r658",
+   "image_visible": {
+    "filename": "wave_cmp_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-WaveCmpWrap-001/wave_cmp_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-WaveCmpWrap-001/wave_cmp_A.png",
+    "sha256": "23612a8266f2eca05b0de4ce82cda5b51ec15a281eada0384af8ab25d3337aa4",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-WaveCmpWrap-001/check.py",
+    "sha256": "052475fb522808dfa2cf646e4bb831e3b00835f1a6571a7b239e6857a61ed043",
+    "k_conditions": 13,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "A"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "alpha2",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "shard": "B",
+   "shard_jsonl": "EDA-Eval-DesignFlow_B.jsonl",
+   "domain": "spice_sim",
+   "round": "r550",
+   "image_visible": {
+    "filename": "rise_margin_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001/rise_margin_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001/rise_margin_A.png",
+    "sha256": "7e67e262430d69b8b9607f7b567abbf91199dc6b90dff47703862a1f38cf0ed8",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001/check.py",
+    "sha256": "04b4a3fdf3bad4d0ac63b162e8586053678d5fb3b411d233aff136855b6d71c6",
+    "k_conditions": 12,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "A"
+   },
+   "image_required": true,
+   "restored": true
+  },
+  {
+   "id": "beta7",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "shard": "B",
+   "shard_jsonl": "EDA-Eval-DesignFlow_B.jsonl",
+   "domain": "spice_sim",
+   "round": "r551",
+   "image_visible": {
+    "filename": "wr_dq_A.png",
+    "source_path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/assets/EDA-Eval-DesignFlow-FsdbWrDqMeas-001/wr_dq_A.png",
+    "local_copy_path": "vision/real_waveview_images/EDA-Eval-DesignFlow-FsdbWrDqMeas-001/wr_dq_A.png",
+    "sha256": "a91588c2ea50f5401cd99aeea4b4636c677c348c6fda0b2e640e04c9f275cb0e",
+    "local_sha256_verified": true
+   },
+   "check_py": {
+    "path_3615": "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-FsdbWrDqMeas-001/check.py",
+    "sha256": "3d54d3cb4a9c2fa1f9cb7a47f96173c54f565e3250aeb23484c26b43cb80e2f6",
+    "k_conditions": 13,
+    "modified": false
+   },
+   "baseline": {
+    "verdict": "FAIL",
+    "correct_no_multimodal": true,
+    "failure_mode_tier": "C"
+   },
+   "image_required": true,
+   "restored": true
+  }
+ ]
+}
