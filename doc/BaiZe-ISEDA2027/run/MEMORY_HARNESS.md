@@ -2,6 +2,14 @@
 
 WAITING: 1
 
+> 🆕 **R2517 · 2026-11-15 14:0x — cc rerun 监控(18/82·task19 feal-linear-cryptanalysis 跑~25min中) + 归因修正 + 自检全绿**
+> - **cc rerun**: PID 1510521 alive(~10.3h·etimes 37022s)·**18/82 done**(task19 feal-linear-cryptanalysis in progress·跑~25min)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)·0 quota/429 ✅
+> - **归因(18题·修正1项)**: **2PASS**(custom-memory-heap-crash+dna-assembly·reward=1.0)·**7× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert·stdout="Reached max turns (80)")·**1× timeout=能力**(configure-git-webserver·AgentTimeoutError after 3600s·reward=0.0·**修正**:R2515误归类为max-turns·实为timeout·verifier确认FAIL·均=能力)·**6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video·stdout="502 gw-proxy upstream error: Connection reset by peer")·**2NA**(code-from-image+feal-differential-cryptanalysis·reward=None·timeout 3600s)·502归因红线:6题不得计入能力失败·cc全量完成后rerun
+> - **公平能力评估(排除6×502+2NA)**: 2PASS/10=20%·(含infra: 2/18=11.1%不公平)
+> - **自检**: load 28.82/224 ✅·mem 1046GB avail ✅·harness CPU max=0.0% ✅·0 runaway(无RSS>50GB/pcpu>8000%) ✅·reports clean(git status --porcelain reports/=empty) ✅·adaptive_concurrency: mode=off cur=8/10 next=9(quiet=149m·0 total 429) ✅
+> - **ETA**: rate~2 tasks/h·(82-18)/2≈32h·cc 完成 ETA ~Nov16 22:00
+> - **research 日报 11-15**: harness建议(SatisFix/EvoX/harness版本号写报表头) 已在R2513 noted·cc未完成=非本轮actionable
+
 > 🆕 **R2516 · 2026-11-15 13:3x — cc rerun 监控(17/82·task18 feal-differential-cryptanalysis 跑~1h中) + 自检全绿**
 > - **cc rerun**: PID 1510521 alive(~9.7h·etimes 34859s)·**17/82 done**(task18 in progress·跑~1h)·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 quota/429 in log ✅
 > - **归因(17题不变)**: **2PASS**(custom-memory-heap-crash+dna-assembly)·**8× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert/configure-git-webserver)·**6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video·502=1 grep确认)·**1NA**(code-from-image·timeout)·502归因红线:6题不得计入能力失败·cc全量完成后rerun
