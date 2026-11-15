@@ -29,8 +29,8 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1789882246438_m1cve	johnl	hfeg0pfn119	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
 1792552971568_dnkz8	johnl	hfeg0plg99	n/a	pnr_signoff	NOFILE;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
 1792120944014_78z8d	e0045128	hfeg0pkn001	n/a	pnr_signoff	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
-1791796982758_nc938			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
-1792207124614_65efs			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791796982758_nc938			n/a		analysis-Q&A	不可造 (r567 deepread: NO-CHECKABLE-DELIVERABLE, pure multi-topic knowledge Q&A 6 unrelated Qs 0 tool_use, prose answer check() forbidden by 4.2, B-synth would over_constrain)	-
+1792207124614_65efs			n/a		analysis-Q&A	不可造 (r567 deepread: NO-CHECKABLE-DELIVERABLE, methodology+product Q&A KB-dependent speculative, no produce-task capability, prose check() forbidden by 4.2)	-
 1790058749132_f0qtv			n/a		debug/env-config;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
 1792027020710_k8vvn	claire1l	hfeg0pkn004	n/a	eda_other	not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
 1792550261464_ztom2	johnl	hfeg0pfn119	n/a	pnr_signoff	not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
