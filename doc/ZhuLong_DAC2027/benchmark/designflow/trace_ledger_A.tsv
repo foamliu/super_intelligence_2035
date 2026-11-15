@@ -40,7 +40,7 @@
 1789624027491_t45kv					parked		2026-11-03 08:04	surveyed r37: 'how to start pr job' / 'do you search my own dir only for apr scripts?' = Q&A, no delivery. 43 msgs.
 1791940499909_2pdn0	e0045128	hfeg0pkn001	34	eda_other	parked		2026-11-03 08:23	surveyed r37: pure Q&A (genus/DC/starRC eat TLUPlus or QRC, milkyway suffix). 20 msgs, no delivery.
 1790219850745_1f34q	johnl	hfeg0pfn119	35	digital	case	EDA-Eval-DesignFlow-DCCombHier-001	2026-11-03 08:38	
-1788770994295_x4b0p	xinqiaoz	hfeg0pkn004	1367	pnr_signoff	parked		2026-11-03 08:54	diffuse multi-phase PDK QA migration (SOP-driven Phase0-3, env-debug VCO hack, no clean single deliverable); most user turns give root-cause/fix -> A-faithful rule2 violate; not casemaking material
+1788770994295_x4b0p	xinqiaoz	hfeg0pkn004	1367	pnr_signoff	case	EDA-Eval-DesignFlow-CalVcoEnvWorkaround-001	2026-11-15 14:30	r570 revived (pool_reaudit 可造): env-config/Calibre VCO workaround, B-档 synthesis in progress, deepread note x4b0p_pdkqa_drc_calibre_vco.md 复用
 1792142855712_2h3mf	e0045128	hfeg0pkn001	27	digital	parked		2026-11-03 09:05	Q&A: genus keep_hierarchy how-to (AskEDA query), no delivery
 1790662286657_8356t	fxian	hfeg0pkn002	32	digital	parked		2026-11-03 09:05	consultative: 阅读总结+3 alt TCL proposals (genus/dc/yosys), no single verified/accepted deliverable; overlaps DCSynth/DCCombHier addr_to_rowcol family
 1791447139857_poxvz					parked		2026-11-03 09:38	surveyed r40: DC env/license debug (DCSH-1 'Design Compiler is not enabled' in cline shell-runner profile), user#0 '运行失败什么原因'+#14 '不准动rtl'+#28 '为什么我手动可以' = ②precondition (env/license not design), not design_flow deliverable; same addr_to_rowcol RTL family as DCSynth/DCCombHier
