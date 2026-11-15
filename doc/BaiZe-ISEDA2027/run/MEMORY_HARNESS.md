@@ -2,22 +2,28 @@
 
 WAITING: 1
 
-> 🆕 **R2511 · 2026-11-15 10:4x — 用户令「并发放量 + 429 自适应回退」已落码（等下一轮 rerun 实跑验证）**
+> 🆕 **R2513 · 2026-11-15 11:3x — adaptive_concurrency 验收完成 + TASK 归档 37→25KB + cc rerun 监控**
+> - **adaptive_concurrency 验收✅**：R2512 自检遗留的 stale state（last_429=2026-11-17 future timestamp）已清除（last_429=null·429_total=0·current=8）；`status` 打印 mode/current/cap/next/reason ✅；`--now` 4 时刻注入 ✅（Sat03:00 off 8/10→Mon10:00 work clamp 4→Mon18:00 off ramp 9→Sun23:00 off ramp 9）；`--dry-run` 状态不推进 ✅（before=8 after=8）。**机制已验收，待下一路 rerun 实跑**。
+> - **cc rerun 监控**：PID 1510521 alive(~7.8h·etimes 27944s)·15/82 done·**2PASS**(custom-memory-heap-crash+dna-assembly·verifier=1.0)·12FAIL(verifier=0.0)·1NA(code-from-image·verifier=None)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)·best_reward=null 是 trial-level result.json 无此字段(非 bug·报告生成器从 verifier_result.rewards.reward 提取)·3 个 429 grep 命中=FALSE POSITIVE(数字 429 在输出数据中·非 HTTP 429)·gateway 200 ✅·rate~1.92 tasks/h·ETA ~Nov16 23:00
+> - **自检**：load 33/224 ✅·mem 1051GB avail ✅·0 harness runaway(pcpu max=0.0% for harness procs) ✅·reports clean(git status --porcelain reports/ = empty) ✅
+> - **TASK 归档**：37KB→25KB ✅（hermes py3 block + TB-2.1 7way block + research line block → ARCHIVE_OPERATOR_HARNESS.md·各留 1 行指针·内容不改）
+> - **research 日报 11-15**：harness 建议(SatisFix:不把 agent 放法官位→自评改报告选择+理由·EvoX 失败三分法:tool-call mismatch/interrupted workflow/unsupported completion claims·harness 版本号写进报表头) noted·非本轮 actionable(cc 未完成)
+
+> 🆕 **R2511 · 2026-11-15 10:4x — 用户令「并发放量 + 429 自适应回退」已落码（✅ 验收完成 R2513）**
 > - 令：**周末并发开高一些；工作时段（长鑫 08:30–17:30）遇 429 就回退；工作时间之外一段时间没有 429 就加并发。**
 > - 新增 `run/harness/adaptive_concurrency.py`：`work`（周一~五 08:30–17:30，上限 **4**）/`off`（其余含周末，上限 **10**）；**429 ⇒ 减半**（最低 1，冷却 20min）；**连续 20min 无 429 ⇒ +1**；最小调整间隔 10min；`off→work` 自动压回 4。状态/事件在 `run/harness/manifests/`（已 gitignore）。
 > - `terminalbench/rerun_tb21_cline_quota.py` 新增 `--n-concurrent auto` / `--chunk-size N` / `--adaptive-state`：分块串行，块尾扫 429/quota 并记录，**下一块生效**；`--dry-run` 只读不推进状态。
 > - 新增 `terminalbench/launch_tb21_adaptive.sh`（chunk 默认 12）；`rerun_tb21_7way_quota.py` 支持 `RERUN_N_CONCURRENT=auto`、`RERUN_CHUNK_SIZE=N`。
-> - 自检（本机 py_compile + 注入时间）：周末 03:00 `off` 起步 8 → 30min 后 9 → `429×2` 减半 4 → 5min 冷却不变 → 25min 后 5；周一 09:00 `work` 由 8 压到 4；18:00 再升 5。`--dry-run` 分块计划（5 题/块2）输出正确且状态不变。
 > - **默认不改行为**：不传 `auto` 仍 n=1；正在跑的 cc rerun 不打断（harbor 启动后不可热改），下一路起生效。429 仍单列 quota-blocked，不计能力失败。
 
 ## 📊 进度快照
 
-PHASE:        R2512 cc rerun 15/82 monitoring(2PASS/11FAIL/1NA·0ConnRefused✅)·adaptive_concurrency验收✅·hermes COMPLETE 38/89
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494(cc toklimit fix)·R2498(cc adapter RuntimeError fix)·R2499(_ensure_pip Py3.9 fix)·R2502(hermes rerun 65/65 COMPLETE→MERGED→hermes=38/89)·R2503(cc rerun RESTARTED with fixed adapter)·R2504-R2509(cc rerun monitoring)·R2508(11-15报告重构令✅:2表+Infra台账+守恒✅)·R2510(qemu post-rerun=BLOCKED:Py3.9<hermes-agent≥3.11·_ensure_pip fix verified→exec_as_root||true+host-download get-pip-3.9.py+Py版本前置检查HERMES_PY_TOO_OLD·v6 merged→报告更新)
-当前动作:     R2512: 自检(adaptive_concurrency status=off 8/10✅+--now 4时刻注入✅:Sat03:00 off 8→Mon10:00 work clamp4→429+5min cooldown→25min hold@cap+gateway200✅+load30/224✅+0harness runaway✅+reports clean 0json/log/txt✅)·cc rerun PID1510521 alive(7.1h)·15/82(14task-level:2PASS/11FAIL/1NA·0ConnRefused HARD VERIFIED✅·0real429=2false positive:timestamp.429209Z+Fibonacci267914296·rate2.11/h·ETA~Nov16 16:00)·research日报11-15 harness建议(SatisFix:不把agent放法官位→自评改报告选择+理由)noted非本轮actionable·W:1
-下一步:       ①cc 82题完成(ETA~Nov16 16:00)→merge→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标
+PHASE:        R2513 adaptive_concurrency验收✅·cc rerun 15/82 monitoring(2PASS/12FAIL/1NA·0ConnRefused✅)·TASK归档37→25KB✅·hermes COMPLETE 38/89
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2512(cc rerun monitoring)·R2508(报告重构令✅)·R2510(qemu BLOCKED:Py3.9<3.11)·R2511(adaptive_concurrency落码)·R2513(adaptive验收✅+TASK归档✅)
+当前动作:     R2513: adaptive_state cleaned(stale future 429 cleared→last_429=null·current=8)·--now 4时刻验证✅(Sat03:00 off 8→Mon10:00 work clamp4→Mon18:00 off ramp9→Sun23:00 off ramp9)·dry-run state preserved✅·cc rerun PID1510521 alive(7.8h)·15/82(2PASS/12FAIL/1NA·0ConnRefused HARD VERIFIED✅·verifier runs correctly·best_reward=null=trial-level no field·0real429)·TASK 37→25KB✅·gateway200✅·load33/224✅·0runaway✅·reports clean✅·W:1
+下一步:       ①cc 82题完成(ETA~Nov16 23:00)→merge→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto·chunk=12) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
- 体积: TASK=37.0KB / MEMORY=~22KB（归档~210KB）·⚠️TASK超32KB需归档(下次唤醒先做)
+ 体积: TASK=25.0KB / MEMORY=~23KB（归档~209KB）·✅TASK≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差

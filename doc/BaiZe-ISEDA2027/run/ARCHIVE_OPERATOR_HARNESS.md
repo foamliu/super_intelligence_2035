@@ -2016,3 +2016,107 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 
 
 
+
+
+---
+
+## 📦 归档批次 · 2026-11-15 11:3x（TASK 体积维护：37KB→目标≤32KB）
+
+### 归档块：hermes_py3_20261114
+
+### 🟡 用户令 · 2026-11-14 10:0x（**排查/修复 hermes 重跑的 `python3 not found` setup 失败；善用 web search 参考他人做法**）· ✅ 核心修复已交付 (R2464-R2500) · 仅剩 qemu Py3.9 post-rerun re-run + hermes rerun 完成 merge
+
+> **✅ 交付结论 (R2500)**：根因=(a) 容器内确实无 python3（ubuntu:24.04 bare 镜像）· web search DONE（GitHub Issues 0 条 + harbor BaseInstalledAgent 无 _ensure_python + 交叉对照 Node.js/Bun agent 不受影响 = 最直接证据）· 修复=`_base.py:245 _ensure_python()`（apt-get/apk/dnf/yum install python3）+ `_base.py:342 _ensure_pip()` 先调 _ensure_python + R2499 Py3.9 fix（包管理器装 pip + legacy get-pip.py 3.9）· 冒烟=OK · **hermes rerun 60/65 done: 26PASS/27FAIL/7NA · setup_fail 4→0 ✅（判据满足）**· 4 原 setup-fail 题 setup 全部成功（configure-git-webserver=PASS · compile-compcert=PASS · caffe-cifar-10=FAIL(超时=能力) · build-pov-ray=NA(超时=infra)）· 7NA 逐题归因: 2timeout+2mteb(BLOCKED:hermes-agent not in PyPI)+2qemu(Py3.9 get-pip.py→R2499 FIX·harbor cached old module→post-rerun re-run)+1empty · 报告 `report_harness_tb21_7way_zh.html` infra 归因节已 REGEN（18503 bytes）· **剩余**: ①hermes rerun 5 题完成→merge→REGEN ②qemu 2 题 post-rerun 用 fixed _ensure_pip 重跑 ③mteb 2 题=infra BLOCKED（非能力·非 py3）
+
+**一、现象（你 R2463 自己的心跳）**
+- `hermes rerun 8/82`，其中 **4 题 setup fail = `python3 not found`**，另 4 题 ability fail。
+- 这 4 题**不是能力问题、不是额度问题**，是**环境 setup 失败**——按你自己的归因红线，**setup fail 不得计入能力**。
+
+**二、必须先做的排查（用证据，别猜）**
+
+1. **抓到 4 个具体 task 名**，逐题贴出：
+   - 该 task 的基础镜像（`Dockerfile` 的 `FROM`，例如是否 `oven/bun`、`alpine`、`distroless` 这类**默认不带 python3** 的镜像）
+   - 容器内实际执行的 install 命令与**完整 stderr**（含 `HERMES_NO_PYTHON:` 标记是否出现）
+2. **关键疑点（我已看过 `agents/hermes.py`，请你核实）**：
+   - 适配器 L115-118 已有 `command -v python3 / python` 的探测，L117 打印 `HERMES_NO_PYTHON: no python interpreter in task image` 后 `exit 127`；L103 还调用了 `_ensure_pip()`。
+   - **既然有这层回退，为什么还会 `python3 not found`？** 请查清是：
+     a) 容器内**确实没有** python3/python（distroless / scratch / 极简镜像）；
+     b) 有 python 但**不在 PATH**（如 `/usr/local/bin/python3` 未进 PATH，或 login shell 与非 login shell 差异）；
+     c) `_ensure_pip()` 在那 4 题上**本身失败**（preceded error 被你只看最后 5 行 tail 截掉了）；
+     d) 镜像里是 `python3.x` 但无 `python3` symlink。
+   - **这四种成因的修法完全不同**，请先定性再动手。
+3. 顺带核实：这 4 题在**其他 7 路**（cline/opencode/pi/deepseek/codex/cc）跑时是否也 setup fail？若有路跑通了，**对比它怎么处理 python**——这是最直接的答案。
+
+**三、善用 web search（用户明确要求）**
+
+- 检索方向（你自己再扩展）：
+  - Terminal-Bench / harbor / 类似 agent benchmark 里，**容器缺 python3 的通用处理方式**（官方 issue、社区 workaround）
+  - `python3: not found` in **distroless / alpine / bun / node** base images 的标准解法
+  - agent harness 安装 Python CLI 工具的**健壮 install 脚本模式**（探测多候选解释器、`ensurepip` vs `get-pip.py`、`--break-system-packages`、PEP 668 externally-managed-environment 冲突）
+  - `PATH` 在 `docker exec` vs `bash -lc` 下的差异导致命令找不到的经典坑
+- **要求**：把检索到的**具体做法与来源（URL/项目名）**写进报告，并说明**你采用了哪条、为什么**。🚫 不要只列链接不落地。
+
+**四、修复与验证**
+
+- 按定性的根因修（可能落在 adapter 的 install 阶段，也可能需要给特定 image 预置 python）。
+- 修完**先单题冒烟**：确认 `HERMES_NO_PYTHON` 消失、install 成功、hermes CLI 可用、`iterations>0`。
+- 再把这 4 题（或受影响题）重跑，结果并回。
+- **判据**：`hermes rerun` 完成后，setup fail 数应为 **0**（或每一条都有明确 BLOCKED 理由与证据）。
+
+**五、报告与落盘**
+
+- 归因与修复过程写进 `report_harness_tb21_7way_zh.html` 的 infra 归因节 + MEMORY 心跳一行：
+  `hermes python3 修复: 根因=<a/b/c/d> · 参考=<来源> · 改动=<...> · 冒烟=OK · setup_fail 4→N`
+- 若确属镜像根本无 python（如 distroless），写 `BLOCKED + 证据 + 需要什么`，并说明这 4 题应如何从分母中**如实剔除或标注**（🚫 不得悄悄算成能力失败）。
+
+### 归档块：tb21_7way_quota_20261114
+
+### 🟡 用户令 · 2026-11-14 08:0x（**TB-2.1 七路「网关 Token 额度耗尽」诊断 + 按需重跑（含 other-6 路与 synthetic 假结果）**）· A+C ✅ / B 脚本就绪待跑
+
+> **R2461 进度**：**A ✅ DONE**（`audit_tb21_quota_7way.py` 创建+运行→7路五桶落盘 `reports/tb21_quota_audit_7way_20261114_0802.json`：cline=Q0/S8·codex=Q0/S5·opencode=Q15/S23·cc=Q0/S0·pi=Q0/S45·hermes=Q39/S43·deepseek=Q0/S48·rerun_targets=226）·**C ✅ DONE**（`gen_report_tb21_7way.py` 增 7路归因表+旧 cline 结论作废戳+38/89 现口径·双报告 REGEN✅）·**B 脚本就绪**（`rerun_tb21_7way_quota.py` 编排器 dry-run OK·226 targets·等 train-fasttext + 5th-batch 跑完启动）。
+
+> **用户原话**：「安排 harness 查一下，cline 和其他 harness 是否仍然有（网关 token 额度耗尽）导致失败的 Case，有则重跑。现在是周末。」
+
+- **下发时的现状（08:0x 复核，勿重复劳动）**：cline 侧 `quota_lost` 已 = **0**（R2460：main+2nd+3rd+4th-batch ALL MERGED，cline=38/90=42.2%）；R2460 另发现 **8 个 synthetic placeholder**（2nd-batch 来源 `rerun_2nd_batch_synthetic`、`has_run_result=false`、`stdout=0` ⇒ **agent 从未真跑**）已起 5th-batch。**⇒ cline 的「额度」问题已闭环，本令剩余价值只在两处：① 其他 6 路从未做过额度口径归因；② 用同一口径复核「假结果/未真跑」是否也存在于其他路。**
+- **范围**：本令聚焦 **TB-2.1 / 89 题 / 7 路**。SWE-bench 侧不在本令范围（cline 专项 C2 已证：网关额度 429 = 0 题 0.0%，66 个失败 100% 能力）；但若你发现 TB-2.1 的结论依赖 SWE-bench 的某个事实，可以引用它。
+
+**A. 诊断（必做，只读）— 覆盖全部 7 路，而不是只有 cline**
+
+1. 新建 `run/harness/terminalbench/audit_tb21_quota_7way.py`：对 **7 路**逐路扫 `/tmp/tb21_glm53_jobs/<harness>/` 的 dated 子目录 `result.json`（过滤口径同 `gen_report_tb21_7way.py::count_route`：`"/20" in str(f)`）。
+2. 判定口径**逐字复用** `rerun_tb21_cline_quota.py::classify` 与 `gen_report_tb21_7way.py::_cline_attrtribution`：stdout 含 `额度已用完` 或 `Token额度` ⇒ quota trial；**task 级 `best_reward<1.0` 且全部 trial 均 quota ⇒ `quota_only`**。
+3. 关键新增（R2460 教训）：额外标出 **`synthetic_or_never_ran`** —— `agent_result.metadata` 无 `run_result`（或 `stdout` 长度=0 / `"run_result"` 不在 stdout）且 reward<1.0 的 trial → 这**不是能力，也不能算额度**，是「**假结果/未真跑**」，需单列并进重跑队列。
+4. 每路四桶 + 一标记，落 `run/reports/tb21_quota_audit_7way_<tag>.json`：`quota_only_tasks` / `mixed_fail_tasks`（不重跑）/ `ability_fail_tasks` / `synthetic_or_never_ran` / `not_evaluated`（89−evaluated，**先补跑非重跑**）。
+5. MEMORY 心跳写一行汇总：`7路 quota_only: cline=0 · pi=? · opencode=? · deepseek=? · hermes=? · codex=? · cc=? | synthetic: <各数> | evaluated: <各值>/89`。
+
+**B. 重跑（只跑 A 里非空的桶；空的就记「0」不跑）**
+
+1. 前置：`curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9092/v1/models` = 200；确认**无 SWE-bench predict 抢同一额度池**（周末窗口独占）；S1 训练（10.239.2.29 pretrain）不挤；`df`/`nvidia-smi` 自检照常。
+2. 排队顺序：**5th-batch（8 synthetic）先跑完** → 再跑本次审计新增的 `quota_only`/`synthetic` 题；**逐路串行，一路 merge 完再起下一路**（避免 R2454 踩过的 cline-hub 冲突）。
+3. cline 路：默认沿用 `rerun_tb21_cline_quota.py --launch`（判定口径保持不变，这样可与旧结果对齐）。
+4. 其他路：把 `rerun_tb21_cline_quota.py::launch()` 的 `HARNESS`/`AGENT` **参数化**（新增 `--harness <name>`，或另建 `rerun_tb21_quota_7way.py`，**沿用其 judge/merge/落盘逻辑**），agent 映射照抄 `launch_tb21_glm53_7way.sh:67-73`：`codex=terminalbench.agents.codex:CodexTB` · `hermes=…hermes:HermesTB` · `opencode=…opencode:OpenCodeTB` · `claude-code=…claude_code:ClaudeCodeTB` · `deepseek-harness=…deepseek_harness:DeepseekHarnessTB` · `pi=…pi:PiTB`。
+5. **参数基线**：`-k 1`、`--n-concurrent 1`、`nice -n 19`、`TB_AGENT_TIMEOUT=3600`、`sg docker` 兜底、jobs-dir=/tmp（为保证跨路可比，先按这个跑）。若你判断提高并发/超时对**硬件利用率或诊断效率**明显有利，可以调——但必须：① 在心跳记录改动前后值与理由；② 同一 harness 的旧/新参数结果**分开记账、不混算**；③ 结论里写清「参数差异是否影响归因」。
+6. 跑完：`--merge /tmp/tb21_glm53_jobs/<harness>_rerun_<tag>` → `gen_report_tb21_7way.py` + `../gen_cline_special.py` REGEN → commit（`harness:` 前缀，只 add 本线路径）。
+
+**C. 报告口径修正（本轮必做）**
+
+- `gen_report_tb21_7way.py`：① 额度归因从 cline 单路扩为 **7 路表**；② 顶部「结论一句话」改**数据驱动**（合计 0 时写「无额度失败；失败=timeout/ability/假结果」）；③ 旧文字「主因=额度耗尽…原始 10/89=11.2%…公平 40%」加「~~作废~~ 见 R<本轮>」时点戳，并补 R2460 后的 38/90=42.2% 现口径。
+- `report_harness_cline_special_zh.html` 的 TB-2.1 段（仍写「65 题 81%…公平 40%」）同步改「已清 0 + 现 38/90」。
+- 🚫 不手改 HTML，改生成器后 REGEN。
+
+**D. 判据**：重跑前后 `quota_lost` 与 `synthetic` 题数、各路 passed/fair-pass **同框**写进心跳；重跑后仍 0 分的题必须给**非额度证据**（iterations/exception_info/finishReason），否则不得下能力结论；`synthetic` 重跑后若仍无 run_result ⇒ 报 infra bug，禁写「模型不会」。
+
+**E. 红线**：🚫 不改 SWE-bench 口径/数字；🚫 额度失败≠能力、假结果≠能力（三者必须分开记账）；🚫 同题多 trial 只按 unique task 计一次；🚫 不放宽 timeout/并发刷分；🚫 无实测 `http_code`+trial 证据不得断言「额度已恢复」。
+
+**F. 落盘**：`run/reports/tb21_quota_audit_7way_<tag>.json` + `run/reports/tb21_quota_rerun_7way_<tag>.json` + `run/harness/terminalbench/traces/tb21_quota_rerun_7way_<tag>.log` + MEMORY 心跳 + 双报告。
+
+**G. 节奏**：本轮先做 **A+C**（诊断+口径，纯只读/生成器），把 7 路清单落盘；**同轮内网关 200 且无 predict 竞争就顺势进 B**（周末额度补充窗口，别拖到工作日）。不能跑就写 `BLOCKED: <原因> + 清单已落盘`，不许空转。
+**H. 体积提示**：本令下发时 `MEMORY_HARNESS.md` 已 31.4KB（贴 32KB 上限）⇒ 本轮先按 §工作约定 把已闭合的 R24xx 流水 fold 到 `daily-memories-harness/`，再写心跳。
+
+### 归档块：existing_research_line_20261002
+
+> ## 🔍 既有同类研究线（2026-10-02 勘察，已闭合 → 详见 `run/ARCHIVE_OPERATOR_HARNESS.md`）
+>
+> `/nas_train/app.e0031982/harness/` 下另有一条 9 月创建的同类线（5 个 harness 源码 + `loop.sh` + `MEMORY.md` + `evidence/` + `mechanisms/` + `analyze_harness_sources.md` 11.8KB + `report.html` 24.6KB）。
+> 运维 2026-10-02 确认：其 `loop.sh` **早已停掉**，⚠️ **不要重启它**；指示「可以合并」——其产物作**纯输入**复用，结论按我方主线重新审视。
+> 纪律：① 只读不改它的目录 ② 产出统一落我方 `run/harness/` ③ 🚫 不启动它的 `loop.sh`（避免两个同类 loop 抢 token）。
+
