@@ -1,0 +1,26 @@
+session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务形态
+#	本表为 shard D 候选池重审（2026-11-15 用户令 · 最高优先）						重审进度 19/1357（noted-parked 全审；1338 empty-note 待分批 re-triage）
+#	新标准只剩两条排除：①无真实 trace ②写不出有牙 check()。旧 weak/analysis-only/Q&A/doc-search/debug-Q&A/env-config/flow-driving/setup/retrieval/explain 全部恢复可造						D-purity 是筛选偏好不是初衷，跨域工作照样造
+#	---- 19 条 noted-parked 重审 ----						
+1791425782404_rn6pm	yohannw	hfeg0pkn003	?	schematic_netlist	SKILL source-code analysis/documentation (tooling infra)	不可造	无真实用户设计意图（分析 agent 自身 skill 源码，非用户 EDA 任务）；保留排除
+1791958525711_f1fik	chengleiy	hfeg0pkn001	?	schematic_netlist	PDK/LVS-QA infra (read-all-scripts comprehension)	可造(若真实用户意图)	需 re-triage 确认用户是否在做 PDK/LVS 流程编排；若真实则可造「LVS-QA 配置审查/流程编排」任务（跨域 OK）
+1792487689184_4ybw1	yan1zh	hfeg0plg65	?	schematic_netlist	layout-from-schematic + LVS (shard C territory)	可造(D 子技能部分)	跨域 OK：若 trace 含 schematic→netlist 子流程，D 可造 netlist 部分；纯 LVS 由 C。需 re-triage
+1792570431387_vdqlw	ypzheng	hfeg0pkn003	?	schematic_netlist	Aether tool-QA skill creation (infra)	不可造	无真实用户设计意图（创建 agent skill 元工具，非用户 EDA 设计任务）；保留排除
+1787569992152_uml8e	e0024597	hfeg0pkn005	?	schematic_netlist	ERC batch-run (physical_verify, shard C)	可造(D 子技能部分)	跨域 OK：若 trace 含 netlist/schematic 子流程，D 可造；纯 ERC 由 C。需 re-triage
+1788932125428_zqelb	ziyuny	hfeg0pnd002	?	schematic_netlist	DRC/LVS startup + layout delete/cleanup (shard C)	可造(D 子技能部分)	跨域 OK：若 trace 含 schematic/netlist 操作，D 可造；纯 DRC/LVS 由 C。需 re-triage
+1789092579396_tgs17	miccao	hfeg0plg37	?	schematic_netlist	autocell pcell/GDS-from-CDL (layout/pdk, shard C)	不可造(纯 layout/pdk)	纯 pcell/GDS 物理版图任务属 C；无 D 子技能。保留排除（除非 re-triage 发现 netlist 子流程）
+1788172501150_w4x70	haoyut	hfeg0pkn003	?	analog_context	EDA-Eval-DesignFlow-Analog-001（已 case）	已造	ledger 双重记录（已 mark case #1），无需重审
+1790487462826_wb03t	cwei	hfeg0plg93	?	schematic_netlist	EDA-Eval-DesignFlow-CTLEAether-001（已 case）	已造	已 case，无需重审
+1792551272867_jnf1q	jasonxu	hfeg0plg93	?	schematic_netlist	EDA-Eval-DesignFlow-ReadsigAddrTbl-001（已 case）	已造	已 case，无需重审
+1793668052150_wp5jq	curryxu	hfeg0pkn001	?	schematic_netlist	EDA-Eval-DesignFlow-FifoTbStimGen-001（已 case）	已造	已 case，无需重审
+1792378803577_hpy3y	ruisongs	10.129.33.207	?	schematic_netlist	EDA-Eval-DesignFlow-ShortCfgTrace-001（已 case）	已造	已 case，无需重审
+1793347412273_nq8l2	zjqiao	10.129.32.80	?	schematic_netlist	EDA-Eval-DesignFlow-HcellNetlistCheck-001（已 case）	已造	已 case，无需重审
+1791963281932_4a852	e0039602	hfeg0plg95	?	schematic_netlist	EDA-Eval-DesignFlow-NetlistLibCellMap-001（已 case，红线#1 parked on D）	已造(A)	跨 shard 已 A 造，D parked 正确（红线#1 去重）
+1792831256137_6qt0a	harrywu	hfeg0pkn002	?	schematic_netlist	cross-shard dup = B DelayChainEdgeMeas-001	不可造	跨 shard 重复（B 已造），红线#1 去重，保留排除
+1787897609476_ooyxi	sophiaw	hfeg0plg09	?	schematic_netlist	cross-shard dup = B PVTalterChar-001	不可造	跨 shard 重复（B 已造），红线#1 去重，保留排除
+1792400027384_ahjnv	zhukaic	hfeahpc503	?	schematic_netlist	cross-shard dup = B OpampACSpec-001	不可造	跨 shard 重复（B 已造），红线#1 去重，保留排除
+1793093197648_x2w2z	yueliu	hfeahpc501	?	schematic_netlist	cross-shard dup = B AlterDeckSplit-001	不可造	跨 shard 重复（B 已造），红线#1 去重，保留排除
+1787903140887_314mt	sophiaw	hfeg0plg09	?	schematic_netlist	cross-shard dup = B InvPVTchar-001	不可造	跨 shard 重复（B 已造），红线#1 去重，保留排除
+#	---- 1338 条 empty-note parked（本轮未逐条 re-triage，统判定）						下一轮起分批 re-triage
+(empty-note parked x1338)	*	*	*	*	triage 时 parked 未写理由（多为 r673/r677 等轮判 Q&A/open-tool/search/no-produce-task）	待重审(预期多数可造)	按新指令 Q&A/analysis/doc-search/debug-Q&A/explain 全部恢复可造；需逐条 re-triage 确认 ①有真实 trace ②能写有牙 check()。下轮起每轮 re-triage 30-50 条
+#						小结：noted-parked 19 → 可造 5（D 子技能部分，需 re-triage）/ 不可造 8（cross-shard dup 5 + 纯 infra 3）/ 已造 6 / empty-note 1338 待分批重审						

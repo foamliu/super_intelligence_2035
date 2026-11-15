@@ -1,0 +1,37 @@
+case_id	user_intent_from_trace	判定	理由	处置
+#	本表为 shard D 意图审计（2026-11-15 用户令 · 最高优先）	header	分批进行，本轮审 35 条（最近 30 条 #367-#396 + 5 条红旗抽样 #26/#222/#238/#250/#300）	审计进度 35/396
+EDA-Eval-DesignFlow-IddCellFilter-001	(#367 maggiew mc14) FineSim dou-fulltoggle idd CSV 后处理：筛 idd>5 行导出 idd+cellName 明细，6 轮迭代澄清 keep	用户提 produce-task（筛 CSV 导明细），prompt 忠实重述，check 验交付的筛选脚本输出结构 = 用户要的「明细」	保留
+EDA-Eval-DesignFlow-DspfRLvlAggregate-001	(#368 e0024852 mc25) GloryEX PEX DSPF 寄生电阻按 $lvl 分层汇总找贡献最大层 + 定位 lvl=37 电阻两端节点版图坐标 keep	用户 produce-task（分层汇总+定位坐标），prompt 忠实，B-grade reframe 因原 DSPF 私有不可达，check 验分层汇总+坐标取中点	保留
+EDA-Eval-DesignFlow-SpiceMeasInject-001	(#369 jiangbaol mc146) HSPICE/Finesim slicer deck 追加 .measure 语句测功耗/延时 keep	用户 produce-task（追加 measure 语句），prompt 忠实重述继承既有采样窗口，check 验注入的 .measure 语法+语义	保留
+EDA-Eval-DesignFlow-FinesimIgnoreGen-001	(#370 ynbai mc302) 写脚本输入 netlist 输出 finesim ignore 文件：找 X instance 子电路提取直接 X 子实例按 cell 排除 keep	用户 produce-task 明确（输入 netlist→输出 ignore 文件），prompt 忠实，check 验 ignore 文件结构+排除逻辑	保留
+EDA-Eval-DesignFlow-RonSmoothnessGen-001	(#371 clarawu mc29) 从 FineSim .md0 分析 rpu_50/rpd_50 随 zqdec 变化曲线光滑度 keep	用户 produce-task（分析曲线光滑度），prompt 忠实，check 验 .md0 折行解析+光滑度指标	保留
+EDA-Eval-DesignFlow-NetlistGateInventory-001	(#372 hairuizh mc95) 统计 ALPS 后仿 SPICE 网表三个 GATE 库用到的逻辑 gate cell 按基础名去重取最小尺寸 keep	用户 produce-task（统计 gate cell），prompt 忠实，check 验去重+最小尺寸逻辑	保留
+EDA-Eval-DesignFlow-OcTimeFitter-001	(#373 xuelianf mc95) 从 DDR5 tOC result_summary.csv 拟合 Vtarget vs OC_time 曲线求交点时间 keep	用户 produce-task（拟合求交点），prompt 忠实，check 验拟合+交点计算	保留
+EDA-Eval-DesignFlow-StdcellCatalogGen-001	(#374 xdwang mc130) 从 Aether data.dm 提取 stdcells_ac 1328 stdcell 解码 cell name 到 function/flavor/drive/device-type keep	用户 produce-task（提取+解码 stdcell），prompt 忠实，check 验解码+交叉验证缺失 master	保留
+EDA-Eval-DesignFlow-GrDecPwrMeasure-001	(#375 dsgao mc183) 从 FineSim .fsdb 抓 GrDecPwr 在两版本×三 PVT corner 的值 keep	用户 produce-task（抓波形值），prompt 忠实，check 验多 corner 提取+对比	保留
+EDA-Eval-DesignFlow-WaveCmpReuseMode-001	(#376 rongjiez mc11) compare_wave_new.pl 加 -reuse 模式跳过导出复用 debugMode keep	用户 produce-task（加 -reuse 模式），prompt 忠实，check 验 -reuse 行为	保留
+EDA-Eval-DesignFlow-DqTrtfMeasure-001	(#377 irene1li mc71) WaveView ACE 从 FSDB 读 v(dq) 测 trtf/duty/slew_rate/period keep	用户 produce-task（测时序指标），prompt 忠实，B-grade reframe 用时序点表代替私有 FSDB，check 验测量算法	保留
+EDA-Eval-DesignFlow-DqReadPathWaveDebug-001	(#378 jinhaoli mc156) DDR5 write-pattern DQ read-path 波形比对 debug 定位电路根因 keep	用户 debug 请求（定位根因），prompt 用逐级对比图忠实重述，check 验根因定位分析。debug 任务按新指令合法	保留
+EDA-Eval-DesignFlow-RcVizTool-001	(#379 shanliny) RC 走线可视化反馈四类问题要求改进 keep	用户 produce-task（改进可视化脚本），prompt 逐字含用户四类反馈，check 验改进点	保留
+EDA-Eval-DesignFlow-DqDqsAlign-001	(#380 yunfat) 查 DQ 与 DQS 是否对齐、过程文件放回 raw 目录 keep	用户 produce-task（查对齐），prompt 忠实，check 验对齐判定+过程文件	保留
+EDA-Eval-DesignFlow-FsdbPwlExtract-001	(#381 guangmingz mc19) 写 extract_pwl.tcl 从 FSDB 提两模拟信号导出 PWL keep	用户 produce-task（写 Tcl 脚本），prompt 忠实，check 验 Tcl 脚本结构+PWL 导出	保留
+EDA-Eval-DesignFlow-WvGridLayout-001	(#382 shaoyou mc45) WaveView 显示 v(input_*) + zoom 200ns + 五信号九宫格 keep	用户 produce-task（九宫格布局 Tcl），prompt 忠实，check 验网格布局	保留
+EDA-Eval-DesignFlow-SdfWarnClassify-001	(#383 tabtao mc27) $sdf_annotate 日志按 SDFCOM 类型分类 warning + 编号 + 汇总 keep	用户 produce-task（分类汇总 warning），prompt 忠实，check 验分类+编号+汇总	保留
+EDA-Eval-DesignFlow-LvlshftStepFix-001	(#384 e0025730 mc25) 修复 lvlshft.py --step 参数传递 bug（str 误用 join 拆字符） keep	用户 produce-task（修 bug），prompt 忠实描述 bug，check 验修复后 --step 直传	保留
+EDA-Eval-DesignFlow-SpfCleanFlow-001	(#385 e0046686 mc24) 按 TASK_CLEAN_SPF 执行：清 SPF 临时/日志保留结果，仅全 PVT 成功才清 keep	用户 produce-task（清流程），prompt 忠实，check 验清理逻辑+保留约束	保留
+EDA-Eval-DesignFlow-CrgWatchFlow-001	(#386 ynbai mc25) 监控 MatrixRun 目录 primesim.* 出现后等 10 分钟执行 bmatrix keep	用户 produce-task（写监控脚本），prompt 忠实，check 验轮询+延时+执行	保留
+EDA-Eval-DesignFlow-VamCellReco-001	(#387 e03179 mc19) vam-agent 阶段 0 从 finesim.prof 推荐值得行为建模加速的模拟 cell keep	用户 produce-task（cell 推荐），prompt 忠实，check 验分类+排序+推荐	保留
+EDA-Eval-DesignFlow-NetlistHierExtract-001	(#388 e04201 mc41) 读 102MB 网表提取实例层级路径对应的 module 另存 keep	用户 produce-task（提取 module），prompt 忠实，关键洞察实例名≠类型名，check 验层级追踪+提取	保留
+EDA-Eval-DesignFlow-WaveCmpWarnPort-001	(#389 rongjiez mc12) 把 compare_wave.pl 的 [WARNING] 行为移植到 compare_wave_new.pl keep	用户 produce-task（移植 [WARNING]），prompt 逐字含 U#6 原话，check 验 [WARNING] 格式+位置	保留
+EDA-Eval-DesignFlow-SigRenameNetlist-001	(#390 bensonh mc27) 改进 rename_signals.py：SIGNAL_MAP 集中顶部 + 边界匹配防误伤 keep	用户 produce-task（改进脚本），prompt 逐字含改进要求，check 验边界匹配+集中配置	保留
+EDA-Eval-DesignFlow-WvHierSignalOpen-001	(#391 ypzheng mc46) 找 net1069 在波形中打开（层次化信号须解析完整名） keep	用户 produce-task（打开层次信号），prompt 忠实含真实教训，check 验层次名解析+可靠显示	保留
+EDA-Eval-DesignFlow-NetlistVoltDomainCheck-001	(#392 tongni mc27) sim-sp-gen 对 SPICE netlist 做 R1-R4 静态电压域检查出 JSON 报告 keep	用户 produce-task（R1-R4 检查），prompt 忠实，check 验 4 类检查+JSON 结构	保留
+EDA-Eval-DesignFlow-SvdbSignalSummary-001	(#393 shunlinp mc27) 遍历 result_* 文件夹 defect case 命中信号统计成报告 keep	用户 produce-task（统计信号），prompt 逐字含 U#0/U#1 原话，check 验遍历+统计	保留
+EDA-Eval-DesignFlow-VdleqNetlistExtract-001	(#394 chengwen mc37) 整理用到 vdleq 的 cell name 和 hierarchy keep	用户 produce-task（提取信号使用），prompt 忠实，check 验端口续行+带参实例两个真实解析 bug	保留
+EDA-Eval-DesignFlow-RcNetResistanceCalc-001	(#395 shanliny mc34) PEX RC 网表可视化 + 两点等效电阻估算 keep	用户 produce-task（可视化+电阻估算），prompt 忠实，check 验 RC 图构建+节点分析+*|I 前导括号 bug	保留
+EDA-Eval-DesignFlow-SineWaveAnalysis-001	(#396 e0047722 mc52) Tcl 画正弦波并计算过零点、估算频率与峰值 keep	用户 produce-task（生成+分析正弦波），prompt 忠实，check 验过零点/频率/峰值算法	保留
+(no_id_#26)	(#26 kli mc424) 两份 fullchip si.out 对比判断待诊断运行是否更重/OOM 崩溃 keep	用户意图=诊断（更重？OOM？），case 结晶成「写解析器产结构化 JSON 诊断」，JSON 报告即诊断结果，直接回答用户问题。非 over_constrained	保留
+EDA-Eval-DesignFlow-RsCalcReport-001	(#222 e0014566 mc183) RsCalc 流程：生成 calcr + Virtuoso 批处理 + 检查 .rvn + 解释电阻值(问答) + 版图优化 downgraded	用户真实意图更广（跑流程+解释+优化版图），case 仅裁出「结果汇总报告生成」子技能。按新指令 Q&A 解释/版图优化亦合法，可造更完整 v2。v1 子技能仍是真实意图的一部分	保留 v1；v2 可加「解释电阻值+优化建议」交付
+EDA-Eval-DesignFlow-HierNetTrace-001	(#238 junweix mc50) 用户问「aether 怎么可以跨层级点亮信号线」（GUI Q&A），agent 未交付用户未接受 off_intent	用户真实意图=aether GUI 跨层级高亮的操作问答，case 把主题迁移到 SPICE 网表解析 produce-task（Python CLI），域+交付形态均偏离用户原意。按新指令 Q&A 合法，应重做成忠实 Q&A（交付=操作步骤解释，check 验答案覆盖 aether Trace Net 跨层级选项）或下线	重做 v2（Q&A 形态）或下线；v1 标 retired 备注
+EDA-Eval-DesignFlow-InvSpiceSim-001	(#250 jie23z mc134) 'write a .sp file for me to simulaiton an INV circuit'，agent 未产出会话即结束 keep	用户意图清晰（写 .sp 仿真 INV），虽 trace 无 accepted gold（agent 未完成），但意图明确，B-grade 合成金标合理。check 验 .sp 网表+解析仿真报告。非 off_intent（意图真实）	保留（备注：无 accepted gold，合成金标）
+EDA-Eval-DesignFlow-DriverTrace-001	(#300 daiweilu mc110) '帮我看 cm0_ts_DumEdgeWL_nearDrv 这个模块，DumWL 是谁驱动的？'（debug/analysis） keep	用户意图=理解驱动链（debug），case 结晶成「driver_trace.py→report.json」产出结构化驱动溯源报告，报告即用户要的理解。debug 任务按新指令合法，交付形态合理。边界：用户问特定模块，case 泛化为通用工具——B-grade reframe 合理泛化以可 check	保留（备注：debug→结构化报告，泛化合理）
