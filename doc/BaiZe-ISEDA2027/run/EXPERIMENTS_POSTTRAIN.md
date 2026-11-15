@@ -12046,3 +12046,21 @@ python3 bpt_attribution_p0_dev_compare.py \
 
 **纪律**：0 infra 误操作，未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。MEMORY 33.25KB（超 32KB 软限，下次唤醒先归档）。
 
+## §R537-dual-chain-health-monitor（wake537, 2026-11-15 09:4x）— zhulong 基线链 + R2 eval 双链健康监控 + MEMORY 归档
+
+**起因**：wake536 口径全量复核 PASS 后，zhulong 基线 5-run 链（PID4014235）进入 GATE 避让 R2 状态；R2 5-run eval run5 code-gen 进行中。本轮=纯监控 + MEMORY 体积合规（snapshot 上轮标注「下次唤醒先归档」）。
+
+**实测（2026-11-15 09:4x）**：
+1. 隧道 `ss -ltnp | grep 3333` → LISTEN 127.0.0.1:3333 ✅（dual-nix-tunnel 健康）
+2. GPU6:8096 `curl /v1/models` → `minicpm5-2b-sft-v39-final`（root=global_step_105）✅ —— 即 zhulong 基线链经反向隧道 18096→.17:8096 的目标 serve，健康
+3. GPU7:8095 `curl /v1/models` → `minicpm5-2b-grpo-R2-step200`✅；`nvidia-smi` GPU7 util=88% ✅（R2 run5 code-gen 活跃）
+4. R2 run5 code-gen 进度：`/home/app.e0031982/eda_code_eval/2026_1115_033334/code` 目录 146/158 任务已建，最新 mtime 09:43（活跃）→ ETA ~10:00-10:30（run4 同口径耗时 6.7h，run5 起 03:33）
+5. zhulong 链日志 `/tmp/posttrain_zhulong_baseline_5run_chain.log`：run1=18.99% 既有，run2 GATE 中，每 300s 探 `r2alive=1 rem_busy=<pid>` → 正确避让，无异常
+6. GPU0-3=root SGLang（不可动）/GPU5=vision R9 10621MiB（非本线）/GPU4=base serve，均未触碰
+
+**链路预期**：R2 run5 完 → R2 链自动算 `5run_rl_analysis_R2.json`（5-run mean±std + McNemar + bootstrap vs step105）→ R2 链退出 → zhulong GATE 探测 `r2alive=0` 释放 → 起跑 zhulong run2-5（每 run ~6.5h，4 run ≈ 26h，ETA ~11-16）→ `5run_zhulong_baseline_analysis.json`（mean±std + McNemar/Wilcoxon vs 旧 .17 5-run 3.04%±0.74%）→ 更新报告 §10。
+
+**MEMORY 归档**：33.25KB → 31.94KB。wake534/wake535 流水详情压缩为 1 行 📦 指针（全文已在 EXPERIMENTS §R534/§R535 + daily 2026-11-15 wake534/wake535），保留 wake536/wake537 全文。`WAITING:` 仍只在顶部出现一次（line 4 为规则描述行，非状态行）。
+
+**纪律**：0 infra 误操作，未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。本轮纯 CPU 监控 + 文档归档。
+
