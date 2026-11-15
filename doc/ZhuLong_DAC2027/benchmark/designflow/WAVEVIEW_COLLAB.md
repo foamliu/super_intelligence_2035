@@ -101,6 +101,7 @@
 | 2026-11-14 17:4x | D | 任务1配套（failure_mode_tier 同步·r659） | **D.json failure_mode_tier A/B/C 全 8 条落盘——task2（VQA 对照）输入条件就绪**。承 A r527 action 2 + B r554 action 2 直接 @D「D.json 7 条基线仍用 free-text，建议同步加 failure_mode_tier A/B/C 枚举字段，B 已做表率」。本轮把 `waveview_baseline_results.D.json` 全 8 条 run 的 baseline_run/baseline 子 dict 加 `failure_mode_tier`（"A"/"B"/"C"）+ `failure_mode_tier_def` + `failure_mode_short`；顶层加 `failure_mode_tier_schema`（与 B.json 同字符串）+ `failure_mode_tier_distribution`（A=4/B=2/C=2 + 案例清单 + note）。vision 现可对 D+B 共 10 条基线机械分层报翻转率，无需 grep free-text。**D 域 8 基线三档分布**：A 档 did-not-engage 4/8=50%（α1 r650·50s / β8 r653·9s / α3 r657·22s / β6 r658·55s）；B 档 engaged-text-only 2/8=25%（α4 r652·11s / β11 r655·31s）；C 档 engaged-but-could-not-read-image 2/8=25%（β9 r651·22s 带 tool-call confound caveat / β10 r654·23s 最干净 C 无 confound）。**D 域反证 B r554 duration 粗筛**：B r554 提议「<60s=>A 档」，但 D 域 C 档 β9/β10（22-23s）duration **短于** A 档 α1/β6（50-55s）——粗筛会把 C 档误判为 A 档（误剔 VQA 干净 testbed）。建议改用 task-term mention count 作粗筛（A=0/C=high），duration 仅作极端值方向性辅助。**对 Task2 含义**：D 域 Task2 翻转率分母建议=C 档 2 条（β9/β10）非全 8；A 档 4 条预期≈0 翻转（结构性 0）；C 档内 β9（tool-call confound）/ β10（clean C）建议分子报，**β10 TempThreshChar-001 是 D 域最干净 VQA gain 单 case testbed**。task1 D 域 8/8 已于 r658 收官，本轮为配套收尾（无新 case 落库，D.jsonl 378 不变）。详见 `discuss/D.md` r659 + `MEMORY_DESIGNFLOW_D.md` r659。 | `designflow/waveview_baseline_results.D.json`（failure_mode_tier 落盘 8 条 + schema + distribution）· `discuss/D.md` r659 |
 | 2026-11-14 18:3x | D | 任务1收官 + task2 可达性独立复核（r660） | **D 域 WAVEVIEW 任务1 已全部交付（r658 收官 8/8 恢复+基线全 FAIL 正确，r659 failure_mode_tier A/B/C 同步落盘）——本轮为收官确认 + task2 可达性独立复核**。**可达性独立复核（vision wake#1231「唯一未验项」）**：D 在评测机 `hfeg0tedaap02`（10.251.36.15，cline 实际运行机）独立复测 vision Qwen3.5-2B VQA MCP 端点 `10.252.32.17`：TCP 30002 `nc -w 3`→**BLOCKED** / 30001 `nc -w 3`→**BLOCKED** / 22→**BLOCKED** / ICMP `ping`→**通**（0.27ms 同 LAN）。**与 B r560 结论完全一致**（两 shard 独立实测同结果：10.252.32.17 接受 ICMP 但丢弃所有外部入站 TCP，两源机评测机+.75 对 22/30001/30002 全超时）。**判读**：vision 两条解阻路径当前均不可行——path (a) 网管放行仍需执行（唯一可行路径）；path (b) 本地 wrapper 转发 30001 不成立（30001 同 BLOCKED）。**task2（Qwen3.5-2B VQA 对照）= infra-blocked**，需 vision/网管在 10.252.32.17 对评测机 10.251.36.15 放行入站 TCP 30002（或 30001），非 D 单 shard 可解。**D 侧状态**：task1 D 域 8/8 已交付（α1/β9/α4/β8/β10/β11/α3/β6 全恢复+基线全 FAIL 正确，failure_mode_tier 已落 D.json）；task2 待防火墙放行后可立即承接 D 域 8 题重跑（β10 为最干净 VQA gain testbed，per r659）。D.jsonl 378 不变（本轮无新 case 落库，纯协作收官+复核）。**D 池非空**：mc-matrix src=summary_1113.tsv → mc≥10 fresh=247（非 0-case，下轮可恢复常规造题）。 | 本条（可达性复核双源印证 B r560）· `MEMORY_DESIGNFLOW_D.md` r660 |
 | 2026-11-15 23:0x | D | **§零 waveview_real_cases.jsonl 导出（r724，最高优先·未完成→已交付）** | **用户令 2026-11-15 07:2x「把 waveview 真题整理成单独 jsonl，给 vision 后续使用」已交付**。产出 `designflow/waveview_real_cases.jsonl`（10 题）+ `waveview_real_cases.README.md`。收录 = handoff α4+β7=11 减 β5（不存在）= **10 真题**（D 8 + B 2），全 `image_required=true` / `asset_fidelity=synthesized-image-restored` / 基线全 FAIL（正确）。**四项验收硬指标全过**：① wc -l=10 与 README 一致 ② 10/10 image_paths test -f 通过 ③ 10/10 sha256 校验 OK ④ 10/10 k_conditions 与 check.py (a)-(l) 标注一致。vision wake#1329 已声明导出对 vision 非阻塞（vision 自行检出 10 题）⇒ 本导出 = 双方对账件（vision 可据 sha256/k_conditions 交叉核验 vision/real_waveview_index.json）。**数据完整性发现**：7/10 恢复题 jsonl attachments 字段 stale（PNG 在磁盘但不在 attachments 列表），导出改用磁盘 assets/ 作权威源；建议各 shard 核查同类恢复题补 jsonl 回标。详见 `discuss/D.md` r724 + `MEMORY_DESIGNFLOW_D.md` r724。 | `designflow/waveview_real_cases.jsonl`（10 行）· `designflow/waveview_real_cases.README.md` · `discuss/D.md` r724 |
+| 2026-11-16 08:0x | **A** | 任务2（Tier 1 harness prep + β10 对照实验·r621，**Tier 1 被证伪，提请 vision 裁 Tier 2a**） | **认领 task2 → Tier 1 被实证证伪 → 提请 vision 裁 Tier 2a**。承 wake#1232 Tier 1（去括号示例）+ wake#1329（VQA 桥已上线 127.0.0.1:13002，本轮 live 复验 ✅ Qwen3.5-2B /health ok + MCP initialize ok）。**harness prep 已落盘**：① cline_mcp_settings.json 加 `qwen35_vqa@127.0.0.1:13002/mcp`（autoApprove 仅 `vqa`，#3 核心口径 Qwen3.5-2B），备份 `.bak.r621-task2`；② run_one.sh VQA_MCP hint 改 Tier 1（去 `vqa(image_path=…, query=…)` 括号示例，仅中性 nudge 命名 `vqa` 工具）。**β10 TempThreshChar-001 三臂对照实验（同 SUT minicpm5-2b-sft-v39-final / thinking low）**：① **r621 Tier 1**（qwen35_vqa 注册 + Tier 1 无括号 hint, VQA_MCP=1）→ 1 iteration / **0 native tool_use** / 0 vqa calls / 模型吐 garbled XML-as-text（中俄英混杂胡言）→ FAIL（与 r530 同 0 tool_use，**去括号未修好回归**）；② **r621 no-hint 对照**（qwen35_vqa 注册 + 无 hint, VQA_MCP=0）→ 7 iterations / **7 native tool_use**（read_files×3/run_commands/eda_flow×2/team_status）/ 0 vqa calls → FAIL（image-blind，从未读 PNG）；③ 对照 r654 baseline（无 qwen35_vqa + 无 hint）→ 7 tool_use。**结论（definitive）**：**MCP 注册安全**（no-hint 7 tool_use = baseline 7，qwen35_vqa 在 tool list 不破坏 native tool-call）；**VQA hint 文本是回归触发器**（任何 VQA hint——括号或 not——→ 0 tool_use + XML-as-text，2B SFT 把 hint 关联到 XML-tool 格式切换模式）；**Tier 1（去括号）被证伪**——根因是 hint 文本非括号语法。**2B SUT 无可用配置做 task2**：有 hint→tool-call 崩；无 hint→0 vqa calls（从不自发调 unfamiliar tool）。**Tier 2a 可行性已验**：agi-gateway `http://agi-gateway.cxmt.com/v1` /models → **HTTP 200 / 8ms**（r654 note「评测机不可达」已过期，本轮可达）⇒ deepseek-v4-pro-cloud 可作 tool-call-reliable text-only SUT。**提请 vision 裁**：(a) 批准 Tier 2a（deepseek 作 SUT + 重跑 task1 基线 10 题 + task2 10 题 = 20 runs，多轮）？(b) 接受 Tier 2b（tool-call+vision 联合增益 caveat，但 2B 既 tool-call 崩又 0 vqa ⇒ 无 gain 可量，故 Tier 2b 对 2B SUT 无意义）？(c) 其他？harness prep（MCP config + Tier 1 hint，env-gated VQA_MCP=1 默认 off 不影响他 shard）保留待 Tier 2a 启动。详见 WAVEVIEW_COLLAB.md「designflow 答复 r621」+ MEMORY_DESIGNFLOW_A.md r621。 | `eval/run_one.sh`（Tier 1 hint）· `~/.cline/data/settings/cline_mcp_settings.json`（+qwen35_vqa, bak.r621-task2）· β10 三臂 session @ `/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-TempThreshChar-001/20261116_07{4611,5032}` · `designflow/WAVEVIEW_COLLAB.md`（r621 答复） |
 | 2026-11-14 18:1x | **A** | 任务2（VQA 对照试跑·r530） | **task2 试跑执行完毕——机制层 ✅ 验证通过，SUT 模型层 ✗ 工具调用失败，β10 未翻转（FAIL→FAIL）**。**试跑对象**：β10 TempThreshChar-001（D r659 标 D 域最干净 C 档 VQA gain testbed），同模型 minicpm5-2b-sft-v39-final / thinking low / timeout 600，唯一新增变量 = `VQA_MCP=1`（cline_mcp_settings.json 加 `research_vqa`@127.0.0.1:8092 autoApprove 仅 `vqa` + run_one.sh CLI_PROMPT env-gated VQA hint）。**机制层验证（✅）**：① research.vqa MCP 端到端可用——直接调 `research.vqa(thresh_char_A.png, "peak voltage of v(temp)?")` → 正确答 **1.2 V**（从上图 y 轴读出，与 oracle embedded A_PARAMS vmax=1.20 一致）；② 评测机无 GPU/torch 但 research 后端转发远端 GPU，VQA 照常工作（承 r529 实测）；③ cline_mcp_settings.json 注册 research_vqa 成功，cline 启动看到该 tool。**SUT 模型层（✗ 工具调用失败，未翻转）**：cline headless 跑 12s exit=0，**1 iteration 即停，hadToolCalls=false toolCallCount=0**——2B SFT 模型把工具调用以**纯文本 XML** 形式吐出（`<read_files><param name="path">…/prompt.txt</param></function>`）但未触发任何真 tool_use block，outputs/ 空未产 submit.zip，判分 FAIL（no submit.zip）。**对照基线 β10（r654，无 VQA hint）**：23s 8 iterations，**7 个真 tool_use block**（read_files×2 / run_commands×2 / eda_flow__open_session / eda_flow__read_file / eda_flow__list_files / eda_flow__write_file），engaged-but-incapable（接触 prompt/task_brief 但从未读 PNG），FAIL。**关键反差**：加 VQA hint 后 2B 模型工具调用**反而退化**（7 真 tool_use → 0 真 tool_use，emit XML-as-text），engagement 更差（8 iter → 1 iter），verdict 仍 FAIL。**判读**：harness/MCP plumbing 正确（research.vqa 读图正确），但 2B SFT surrogate 在 VQA hint 下无法稳定 emit native tool_use block（被 hint 里的 `research_vqa__vqa(image_path=…, query=…)` 用法描述诱导成 XML-text 格式）——**这是 SUT 模型工具调用能力的瓶颈，非 harness/MCP 问题**。**对 Task2 度量的含义（重要）**：① 2B SFT surrogate 既「无多模态」又「tool-call 不可靠」，故 baseline vs +VQA 的对照被 tool-call 混杂（baseline 靠 7 个真 tool_use 但读不了图 FAIL / +VQA 靠 0 个真 tool_use 直接 fail）——**不是干净的「text-only vs +VQA」capability gain 度量**；② 要量 VQA 增益需换一个 tool-call 可靠的 text-only 模型作 SUT（如 deepseek-v4-pro-cloud，但 r654 note 该 endpoint 在本评测机不可达；或换更强 SFT），否则 task2 翻转率 = tool-call-ability 翻转率 ≠ vision-capability 翻转率；③ D r659 的 C 档「engaged-but-could-not-read-image」分档仍成立，但 +VQA 翻转的干净 testbed 前提是 SUT 能 emit tool_use 调 research_vqa——2B SFT 不满足此前提。**A 侧状态**：task2 试跑 done（机制验通、SUT 瓶颈定位），harness 改动（run_one.sh `VQA_MCP` env-gated hint + cline_mcp_settings.json 模板）已落盘，**cline_mcp_settings.json 已回滚**（移除 research_vqa，避免影响其他 shard 的常规 run；task2 run 前临时再加）。A.jsonl 280 不变（0-case），A-core 造题仍 blocked。**vision 决策点**（升级 r529 两点）：(1) VQA 后端模型口径（research.vqa 后端 ≠ Qwen3.5-2B，量的是「有 VQA vs 无」非严格 Qwen3.5-2B 增益）；(2) **SUT 模型选择**——2B SFT tool-call 不可靠会混杂度量，建议 vision 指定一个 tool-call 可靠的 text-only 模型作 task2 SUT，或确认「量 tool-call+vision 联合增益」可接受。 | `eval/run_one.sh`（`VQA_MCP` env-gated hint）· `eval/status.jsonl`（β10 +VQA run FAIL 12s）· 试跑 session `/nasdata/app.e0031982/.cache/cline_eval/EDA-Eval-DesignFlow-TempThreshChar-001/20261114_180713/`（不入库） |
 
 ---
@@ -474,4 +475,58 @@ task2 跑完后，vision 已把 v2-RFT 强化 adapter 挂在 `:30003`（合成 6
 vision 已自行 SSH 到 36.15 检出 **10 道真题**（β5 不存在→分母 10 非 11；check.py 原样未改；sha256 校验只读复制到 `vision/real_waveview_images/`；见 `vision_real_waveview_intake.md` + `vision/real_waveview_index.json`）。故 designflow 导出 `waveview_real_cases.jsonl` **对 vision 不再是阻塞**（仍欢迎导出作双方对账，但 vision 不等它）。vision 的 #3 官方对照以 designflow task2（经桥）结果为准。
 
 > — vision wake#1329（2026-11-15 17:3x）
+
+---
+
+## designflow 答复 · Tier 1 实验结果 + 提请 vision 裁 Tier 2a（shard A r621 · 2026-11-16 08:0x）
+
+> **承**：wake#1329「VQA 桥已上线，task2 可立即开跑」+ wake#1232 Tier 1 方案（去括号示例，强推 Tier 1）。本轮认领 task2、落盘 harness prep、跑 β10 三臂对照实验。
+
+### 0 · VQA 桥本轮 live 复验（2026-11-16 08:0x，评测机 36.15）
+
+| 检查 | 结果 |
+|:--|:--|
+| `curl 127.0.0.1:13001/health` | `{"ok":true,"model":"Qwen3.5-2B","ready":true,"load_s":2.6}` ✅ |
+| `curl 127.0.0.1:13003/health` | `{"ok":true,"model":"Qwen3.5-2B+rft2_adapter_seed11","ready":true,"load_s":46.0}` ✅（task2b #4 后端在线） |
+| `POST 127.0.0.1:13002/mcp` initialize | `serverInfo{name=qwen35-vqa, version=1.30.0}` + tools 能力 ✅ |
+
+→ 桥本轮仍端到端可用，task2 infra 解阻成立。
+
+### 1 · harness prep（已落盘，env-gated 不影响他 shard）
+
+- **MCP 配置**：`~/.cline/data/settings/cline_mcp_settings.json` 加 `qwen35_vqa@http://127.0.0.1:13002/mcp`（autoApprove 仅 `vqa`），备份 `.bak.r621-task2`。
+- **run_one.sh VQA_MCP hint**：改 Tier 1——去掉 `vqa(image_path=…, query=…)` 括号示例（per wake#1232），仅中性 nudge 命名 `vqa` 工具。`VQA_MCP` env-gated，默认 off。
+
+### 2 · β10 TempThreshChar-001 三臂对照实验（同 SUT minicpm5-2b-sft-v39-final / thinking low / timeout 600）
+
+| 臂 | qwen35_vqa MCP 注册 | VQA hint | iters | native tool_use | tool names | vqa 调用 | verdict |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| r654 baseline | 否 | 否 | 8 | **7** | read_files×2 / run_commands×2 / eda_flow×4 | n/a | FAIL（image-blind, engaged） |
+| **r621 no-hint** | 是 | **否** (VQA_MCP=0) | 7 | **7** | read_files×3 / run_commands / eda_flow×2 / team_status | **0** | FAIL（image-blind，从未读 PNG） |
+| r530 | 是 (research_vqa) | 是（括号） | 1 | **0** | — | 0 | FAIL（XML-as-text） |
+| **r621 Tier 1** | 是 | **是（无括号）** | 1 | **0** | — | 0 | FAIL（garbled XML-as-text） |
+
+### 3 · 结论（definitive，三臂互证）
+
+1. **MCP 注册安全**：no-hint 臂（qwen35_vqa 注册 + 无 hint）= 7 native tool_use，与 r654 baseline（无 qwen35_vqa + 无 hint）= 7 tool_use **完全一致** ⇒ qwen35_vqa 在 tool list 不破坏 native tool-call。
+2. **VQA hint 文本是回归触发器**：任何 VQA hint（括号 r530 / 无括号 r621 Tier 1）→ **0 native tool_use + XML-as-text**。去括号示例 **未修好回归**——根因是 hint 文本本身，非括号语法。2B SFT 把「VQA/image-reading tool」提及关联到 XML-tool 格式，切换出 native tool_use 模式。
+3. **Tier 1 被 (b) 对照臂证伪**：wake#1232 假设「括号示例诱导 XML-as-text」不成立——无括号 hint 同样 0 tool_use。
+4. **2B SUT 无可用配置做 task2**：有 hint→tool-call 崩（0 tool_use）；无 hint→0 vqa calls（2B 从不自发调 unfamiliar tool，no-hint 臂 0 vqa）。**不存在「既 native tool-call 又调 vqa」的 2B 配置**。
+
+### 4 · Tier 2a 可行性已验
+
+- `curl http://agi-gateway.cxmt.com/v1/models` → **HTTP 200 / 8ms**（r654 note「deepseek endpoint 评测机不可达」**已过期**，本轮可达）。
+- `deepseek-v4-pro-cloud`（或 fp4）可作 tool-call-reliable text-only SUT。但 **Tier 2a 要求用新 SUT 重跑 task1 基线 10 题**（当前基线 = minicpm5-2b，baseline vs +VQA 须同 SUT 可比）→ 20 runs（10 baseline + 10 task2），多轮。
+
+### 5 · 提请 vision 裁决
+
+| 选项 | 说明 | designflow 建议 |
+|:--|:--|:--|
+| (a) **Tier 2a** | deepseek 作 SUT + 重跑 task1 基线 10 题 + task2 10 题（+VQA Qwen3.5-2B 经桥）= 20 runs，多轮。SUT tool-call 可靠 ⇒ 干净的「text-only vs +VQA」capability gain 度量。 | ✅ **推荐**（唯一可量纯 vision gain 的路径；agi-gateway 本轮可达） |
+| (b) Tier 2b | 接受「tool-call+vision 联合增益」caveat。但 2B SUT 既 tool-call 崩（0 tool_use）又 0 vqa calls ⇒ **无 gain 可量**，Tier 2b 对 2B SUT 无意义。 | ❌ 对 2B SUT 不成立 |
+| (c) 其他 | vision 另提 | 开放 |
+
+**designflow 侧状态**：harness prep（MCP config + Tier 1 hint，env-gated 默认 off）保留待 Tier 2a 启动；若 vision 批 (a)，下轮起配 deepseek provider + 重跑 task1 基线 10 题。A.jsonl 341 不变（本轮 0 case，auto-stop 持续，产出 = task2 科学结论 + harness prep）。
+
+> — shard A r621（2026-11-16 08:0x）
 
