@@ -21,6 +21,12 @@
   python3 rerun_tb21_cline_quota.py --merge <dir>    # 重跑结果并入官方 jobs-dir
   python3 rerun_tb21_cline_quota.py --task-list f    # 手动指定 task（每行一个）
 
+自适应并发（2026-11-15 用户令：周末放量 + 429 回退）：
+  --n-concurrent auto --chunk-size 12
+      ⇒ 每 12 题一块串行跑；块前按控制器算并发，块后扫日志里的 429：
+        工作时段(周一~五 08:30-17:30) 遇 429 减半；非工作时段连续 20min 无 429 加 1。
+      控制器：run/harness/adaptive_concurrency.py；状态：run/harness/manifests/（已 gitignore）。
+
 产物（🚫 一律**不写** `reports/`——那是人读 HTML 报告目录）：
   terminalbench/manifests/tb21_cline_quota_rerun_<tag>.json    逐题证据 + 汇总（机器中间产物，已 gitignore）
   terminalbench/manifests/tb21_cline_quota_rerun_ids_<tag>.txt 待重跑 task 名（每行一个）
@@ -76,6 +82,44 @@ TB_DATASET = Path(os.path.expanduser("~/terminal-bench"))
 OVERLAY = HERE / "overlay-network-host.yml"
 LAUNCH_SCRIPT = HERE / "launch_tb21_glm53_7way.sh"   # 只为复用其中已登记的 key/env
 GW_MODELS = "http://127.0.0.1:9092/v1/models"
+
+# ---- 自适应并发（用户令 2026-11-15）---------------------------------------
+# 「评测要能放量/回退：工作时段(8:30-17:30)遇 429 就退；工作时间之外一段时间无 429 就加」
+# 控制器在 run/harness/adaptive_concurrency.py；状态在 run/harness/manifests/（已 gitignore）。
+HARNESS_ROOT = HERE.parent                     # run/harness
+if str(HARNESS_ROOT) not in sys.path:
+    sys.path.insert(0, str(HARNESS_ROOT))
+try:
+    import adaptive_concurrency as ac          # noqa: E402
+except Exception:                              # pragma: no cover - 控制器缺失时降级为固定并发
+    ac = None
+
+
+def _resolve_n(n_concurrent, adaptive_state=None, quiet=False, persist=True) -> int:
+    """把 --n-concurrent 解析成整数；字符串 auto ⇒ 读自适应策略。
+
+    persist=False（dry-run）只做只读推算，不推进状态。
+    """
+    if isinstance(n_concurrent, str) and n_concurrent.strip().lower() == "auto":
+        if ac is None:
+            print("[adaptive] WARNING: 找不到 adaptive_concurrency.py，回退 n=1", file=sys.stderr)
+            return 1
+        if persist:
+            n = ac.auto_next(adaptive_state, quiet=quiet)
+        else:
+            st = ac.load_state(adaptive_state)
+            n, reason = ac.decide(st, ac.now_cst())
+            if not quiet:
+                print(f"[adaptive] (dry-run) n_concurrent={n} ({reason})")
+            return max(1, int(n))
+        if not quiet:
+            print(f"[adaptive] n_concurrent={n} (auto)")
+        return max(1, int(n))
+    try:
+        return max(1, int(n_concurrent))
+    except (TypeError, ValueError):
+        print(f"[adaptive] WARNING: 非法 --n-concurrent={n_concurrent!r}，回退 1", file=sys.stderr)
+        return 1
 
 # ---------------------------------------------------------------------------
 # 1. 扫描 + 归因
@@ -212,7 +256,8 @@ def _docker_ok():
 
 
 def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
-           harness=None, agent=None, agent_timeout_multiplier=1.0):
+           harness=None, agent=None, agent_timeout_multiplier=1.0,
+           chunk_size=0, adaptive_state=None):
     harness = harness or HARNESS
     agent = agent or AGENT
     if not tasks:
@@ -229,21 +274,14 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
         print(f"[launch] FATAL: 网关未就绪 {GW_MODELS}（429/断网时重跑无意义）", file=sys.stderr)
         return None
 
-    subset = Path(tempfile.mkdtemp(prefix="tb21_cline_quota_"))
-    missing = []
-    for t in tasks:
-        src = TB_DATASET / t
-        if src.exists():
-            (subset / t).symlink_to(src)
-        else:
-            missing.append(t)
-    if missing:
-        print(f"[launch] WARNING: 数据集缺 {len(missing)} 题: {missing[:5]}...", file=sys.stderr)
+    # 分块：chunk_size>0 时串行跑多块，块间按 429 反馈重算并发（auto 模式的核心）
+    chunks = [tasks]
+    if chunk_size and chunk_size > 0 and len(tasks) > chunk_size:
+        chunks = [tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)]
 
     jobs_dir = JOBS / f"{harness}_rerun_{tag}"
     jobs_dir.mkdir(parents=True, exist_ok=True)
     TRACES.mkdir(parents=True, exist_ok=True)
-    log = TRACES / f"tb21_cline_quota_rerun_{tag}.log"
 
     env = dict(os.environ)
     home = os.path.expanduser("~")
@@ -263,40 +301,75 @@ def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
     for k in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY"):
         env.pop(k, None)
 
-    harbor_cmd = [
-        "nice", "-n", "19", "harbor", "run", "-p", str(subset),
-        "--agent", agent, "-k", "1", "--n-concurrent", str(n_concurrent),
-        "--extra-docker-compose", str(OVERLAY), "--jobs-dir", str(jobs_dir),
-    ]
-    if agent_timeout_multiplier and agent_timeout_multiplier != 1.0:
-        harbor_cmd += ["--agent-timeout-multiplier", str(agent_timeout_multiplier)]
-    # The agent's shell session often lacks the docker supplementary group
-    # (group membership is evaluated at login time, but the loop starts cline
-    # via `env -u ... cline` which inherits a stripped environment).  Wrap
-    # harbor in `sg docker -c '...'` so the child picks up the group and can
-    # reach /var/run/docker.sock.
-    if _docker_ok():
-        cmd = harbor_cmd
-        docker_wrap = False
-    else:
-        cmd = ["sg", "docker", "-c", " ".join(shlex.quote(c) for c in harbor_cmd)]
-        docker_wrap = True
-    print(f"[launch] tasks={len(tasks)} jobs_dir={jobs_dir} docker_wrap={docker_wrap}")
-    print("[launch] " + " ".join(cmd))
-    if dry:
-        return jobs_dir
+    print(f"[launch] tasks={len(tasks)} chunks={len(chunks)} chunk_size={chunk_size} "
+          f"n_concurrent={n_concurrent} jobs_dir={jobs_dir}")
+    for idx, chunk in enumerate(chunks, 1):
+        n = _resolve_n(n_concurrent, adaptive_state, persist=not dry)
 
-    with log.open("w") as fh:
-        fh.write(f"# {time.strftime('%F %T')} {' '.join(cmd)}\n")
-        fh.flush()
-        p = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT, text=True, bufsize=1)
-        for line in p.stdout:
-            fh.write(line)
+        subset = Path(tempfile.mkdtemp(prefix=f"tb21_{harness}_part{idx}_"))
+        missing = []
+        for t in chunk:
+            src = TB_DATASET / t
+            if src.exists():
+                (subset / t).symlink_to(src)
+            else:
+                missing.append(t)
+        if missing:
+            print(f"[launch] WARNING: 数据集缺 {len(missing)} 题: {missing[:5]}...",
+                  file=sys.stderr)
+
+        harbor_cmd = [
+            "nice", "-n", "19", "harbor", "run", "-p", str(subset),
+            "--agent", agent, "-k", "1", "--n-concurrent", str(n),
+            "--extra-docker-compose", str(OVERLAY), "--jobs-dir", str(jobs_dir),
+        ]
+        if agent_timeout_multiplier and agent_timeout_multiplier != 1.0:
+            harbor_cmd += ["--agent-timeout-multiplier", str(agent_timeout_multiplier)]
+        # The agent's shell session often lacks the docker supplementary group
+        # (group membership is evaluated at login time, but the loop starts cline
+        # via `env -u ... cline` which inherits a stripped environment).  Wrap
+        # harbor in `sg docker -c '...'` so the child picks up the group and can
+        # reach /var/run/docker.sock.
+        if _docker_ok():
+            cmd = harbor_cmd
+            docker_wrap = False
+        else:
+            cmd = ["sg", "docker", "-c", " ".join(shlex.quote(c) for c in harbor_cmd)]
+            docker_wrap = True
+
+        suffix = f"_p{idx}" if len(chunks) > 1 else ""
+        log = TRACES / f"tb21_{harness}_rerun_{tag}{suffix}.log"
+        print(f"[launch] part {idx}/{len(chunks)} tasks={len(chunk)} "
+              f"n_concurrent={n} docker_wrap={docker_wrap} log={log}")
+        print("[launch] " + " ".join(cmd))
+        if dry:
+            continue
+
+        with log.open("w") as fh:
+            fh.write(f"# {time.strftime('%F %T')} part={idx}/{len(chunks)} "
+                     f"n_concurrent={n} {' '.join(cmd)}\n")
             fh.flush()
-            sys.stdout.write(line)
-        p.wait()
-    print(f"[launch] harbor rc={p.returncode} log={log}")
+            p = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, text=True, bufsize=1)
+            for line in p.stdout:
+                fh.write(line)
+                fh.flush()
+                sys.stdout.write(line)
+            p.wait()
+
+        # 块结束：扫 429/quota ⇒ 记一次事件（下一步并发由控制器决定）
+        hits = 0
+        if ac is not None:
+            hits = ac.scan_log(log)["hits"]
+            if hits:
+                st = ac.record("429", count=hits, state_path=adaptive_state,
+                               note=f"{harness} part{idx}/{len(chunks)}")
+                print(f"[adaptive] part {idx}: 429 x{hits} -> n_concurrent={st['current']}")
+            else:
+                ac.record("ok", state_path=adaptive_state,
+                          note=f"{harness} part{idx}/{len(chunks)}")
+        print(f"[launch] part {idx} harbor rc={p.returncode} 429_hits={hits} log={log}")
+
     return jobs_dir
 
 
@@ -332,7 +405,12 @@ def main():
     ap.add_argument("--merge", metavar="RERUN_JOBS_DIR", default=None,
                     help="把重跑 jobs-dir 并入 /tmp/tb21_glm53_jobs/cline-patched")
     ap.add_argument("--task-list", default=None, help="手动指定 task 列表文件")
-    ap.add_argument("--n-concurrent", type=int, default=1)
+    ap.add_argument("--n-concurrent", default="1",
+                    help="并发数；auto = 按 run/harness/adaptive_concurrency.py 策略自动升降")
+    ap.add_argument("--chunk-size", type=int, default=0,
+                    help=">0 时把任务分块串行跑，块间按 429 反馈重算并发（auto 模式推荐 10-15）")
+    ap.add_argument("--adaptive-state", default=None,
+                    help="自适应状态文件（默认 run/harness/manifests/adaptive_concurrency_state.json）")
     ap.add_argument("--timeout", type=int, default=3600, help="单题 agent 超时秒")
     ap.add_argument("--jobs-root", default=str(JOBS), help="job 根目录（默认 /tmp/tb21_glm53_jobs）")
     ap.add_argument("--dry-run", action="store_true", help="只打印 harbor 命令，不执行")
@@ -387,7 +465,9 @@ def main():
     if args.launch:
         jobs_dir = launch(tasks, tag, args.n_concurrent, args.timeout,
                           dry=args.dry_run, harness=args.harness, agent=args.agent,
-                          agent_timeout_multiplier=args.agent_timeout_multiplier)
+                          agent_timeout_multiplier=args.agent_timeout_multiplier,
+                          chunk_size=args.chunk_size,
+                          adaptive_state=args.adaptive_state)
         if jobs_dir:
             print(f"\n[next] 跑完执行：python3 {Path(__file__).name} --merge {jobs_dir}")
             print("[next] 然后重新生成双报告：python3 gen_report_tb21_7way.py && "

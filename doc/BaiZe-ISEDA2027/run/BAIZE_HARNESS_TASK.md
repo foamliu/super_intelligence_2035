@@ -32,6 +32,31 @@
 
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
+
+> 🔴 **用户令 · 2026-11-15 10:2x（并发放量 + 429 自适应回退）· 最高优先 · ✅ 机制已落码，待下一轮 rerun 实跑验证**
+>
+> **用户原话**：「harness：趁周末并发可以开的高一些。评测是否可以有些放量和回退机制。
+> 长鑫工作时间是:8:30-17:30，工作时间内如果遇到 429 就回退减少并发；
+> 工作时间之外如果一段时间没有 429 就增加并发。」
+>
+> **已交付（代码，可直接用）**：
+> - `run/harness/adaptive_concurrency.py`：并发控制器。时段 `work=周一~周五 08:30–17:30`（上限 **4**）/`off=其余含周末`（上限 **10**）；**429 ⇒ 立即减半**（最低 1）并冷却 20min；**非冷却期连续 20min 无 429 ⇒ +1**；两次调整最小间隔 10min；`off→work` 切换时把并发压回工作日上限。状态/事件落 `run/harness/manifests/`（已 gitignore）。
+> - `run/harness/terminalbench/rerun_tb21_cline_quota.py`：新增 `--n-concurrent auto`、`--chunk-size N`、`--adaptive-state`。分块串行跑，**每块结束扫日志里的 429/quota**（`429`/`Too Many Requests`/`rate limit`/`额度已用完`/`Token额度`），据此记录升降，**下一块即生效**。
+> - `run/harness/terminalbench/launch_tb21_adaptive.sh`：一行封装（默认 `chunk=12`，可用 `HARNESS_CHUNK_SIZE` 覆盖）。
+> - `rerun_tb21_7way_quota.py`：支持 `RERUN_N_CONCURRENT=auto` / `RERUN_CHUNK_SIZE=N` 环境变量透传。
+>
+> **纪律**：
+> 1. **默认行为不变**：不显式传 `auto` 时并发仍是 1（历史分数可比性优先）。
+> 2. **正在跑的 cc rerun 不打断**（`--n-concurrent` 在 harbor 启动时固定，不可热改）；本轮令从**下一路（opencode/pi/deepseek）或下一次重跑**开始生效。
+> 3. **429 归因红线不变**：命中 429 的 trial 仍按「quota-blocked」单列，**不得计入能力失败**；报告分母/口径不变。
+> 4. 并发调高只影响**吞吐**，不得改变单题超时、判据、题集；报告需注明「本轮并发为自适应，区间 n=a..b」。
+>
+> **验收（下一轮唤醒必做）**：
+> - `python3 run/harness/adaptive_concurrency.py status` 打印 `mode/current/cap/next/reason`；
+> - 用 `--now` 注入 4 个时刻自检：周末 03:00→off（8 起步）、工作日 10:00→work（≤4）、`record --event 429` 后 5min→冷却不减不加、再 25min→+1；
+> - 实跑时日志里应能看到 `[adaptive] part k: 429 xN -> n_concurrent=...`；报告里写明实际并发区间。
+> - 用 `--dry-run` 验证分块计划时**不得推进状态**（已实现 `persist=not dry`）。
+
 > 📦 §用户令·2026-11-15 07:5x（重构 report_harness_tb21_7way_zh.html：只留两张表、分母统一为题集总数）**✅ 已交付（R2508）** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：报告重构完成——表一(7路矩阵 Harness|Passed|题集总数|Pass%|墙钟|Token)+表二(失败分析 Failed|Infra|能力不足|其他·逐行守恒✅合计471=7×89−152)+表三(Infra修复台账)·分母统一89(grep eval=0)·成本列=未采集+补采方案(7路token/wall全null·宁缺勿编)·旧版详表归档 reports/archive/harness_tb21_7way/·生成器 gen_report_tb21_7way.py 重写(修count_route用task_name去重+跳job级result.json→evaluated=89)·cc rerun继续不中断。需要时再读。
 ### 🟡 用户令 · 2026-11-14 10:0x（**排查/修复 hermes 重跑的 `python3 not found` setup 失败；善用 web search 参考他人做法**）· ✅ 核心修复已交付 (R2464-R2500) · 仅剩 qemu Py3.9 post-rerun re-run + hermes rerun 完成 merge
 

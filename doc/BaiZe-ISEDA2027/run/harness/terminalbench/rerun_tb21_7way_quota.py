@@ -77,7 +77,9 @@ def launch_route(harness, tasks, tag, timeout=3600):
         "--task-list", str(task_file),
         "--launch",
         "--timeout", str(timeout),
-        "--n-concurrent", "1",
+        # 2026-11-15 用户令：默认仍 1，可用环境变量开自适应（周末放量 / 429 回退）
+        "--n-concurrent", os.environ.get("RERUN_N_CONCURRENT", "1"),
+        "--chunk-size", os.environ.get("RERUN_CHUNK_SIZE", "0"),
     ]
     env = dict(os.environ)
     env["RERUN_TAG"] = f"7way_{tag}_{harness}"

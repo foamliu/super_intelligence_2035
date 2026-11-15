@@ -2,6 +2,14 @@
 
 WAITING: 1
 
+> 🆕 **R2511 · 2026-11-15 10:4x — 用户令「并发放量 + 429 自适应回退」已落码（等下一轮 rerun 实跑验证）**
+> - 令：**周末并发开高一些；工作时段（长鑫 08:30–17:30）遇 429 就回退；工作时间之外一段时间没有 429 就加并发。**
+> - 新增 `run/harness/adaptive_concurrency.py`：`work`（周一~五 08:30–17:30，上限 **4**）/`off`（其余含周末，上限 **10**）；**429 ⇒ 减半**（最低 1，冷却 20min）；**连续 20min 无 429 ⇒ +1**；最小调整间隔 10min；`off→work` 自动压回 4。状态/事件在 `run/harness/manifests/`（已 gitignore）。
+> - `terminalbench/rerun_tb21_cline_quota.py` 新增 `--n-concurrent auto` / `--chunk-size N` / `--adaptive-state`：分块串行，块尾扫 429/quota 并记录，**下一块生效**；`--dry-run` 只读不推进状态。
+> - 新增 `terminalbench/launch_tb21_adaptive.sh`（chunk 默认 12）；`rerun_tb21_7way_quota.py` 支持 `RERUN_N_CONCURRENT=auto`、`RERUN_CHUNK_SIZE=N`。
+> - 自检（本机 py_compile + 注入时间）：周末 03:00 `off` 起步 8 → 30min 后 9 → `429×2` 减半 4 → 5min 冷却不变 → 25min 后 5；周一 09:00 `work` 由 8 压到 4；18:00 再升 5。`--dry-run` 分块计划（5 题/块2）输出正确且状态不变。
+> - **默认不改行为**：不传 `auto` 仍 n=1；正在跑的 cc rerun 不打断（harbor 启动后不可热改），下一路起生效。429 仍单列 quota-blocked，不计能力失败。
+
 ## 📊 进度快照
 
 PHASE:        R2510 qemu BLOCKED(Py3.9<3.11)·cc rerun 14/82 monitoring·hermes COMPLETE 38/89
