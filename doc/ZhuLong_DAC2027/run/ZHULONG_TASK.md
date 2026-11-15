@@ -2,6 +2,37 @@
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不改题/图/check、不编造数字、不删他人数据）。判断标准只有一条：**这条约束是为了「防止说谎/防止破坏」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主设计消融臂、判据与实验路线；A3/A4/… 的 idea 由你提，不要等我给。**
 
+> 🔴 **运维令 · 2026-11-15 12:5x（清盘 · 最高优先 · 本轮第一件事）· 未完成**
+>
+> **用户原话**：「安排 zhulong 清理硬盘啊」
+>
+> **现状（你 wake#966 自报）**：`/home` 仅 **267M（100% 满）**、`/nasdata` **9.8G**。已卡住 loop/git 余量，也让 A3–A6 的（a）项磁盘前置无法满足。11-14 23:4x 已清过一次（done_all），本次属**复发**。
+>
+> **目标**：`/home` 可用 **≥5G**、`/nasdata` 可用 **≥25G**（回到 11-14 清盘后的口径）。达不到就把能清的全清掉，并在报告首屏写清还差多少。
+>
+> **硬护栏（违反则本轮作废，宁可少清）**：
+> 1. **禁删在跑评测的产物**：posttrain 的 baseline batch `2026_1115_110506`（`run_cline_script -p 8`，PID3506378/3506387）的 jobs/工作目录、`/tmp` 下其 code/log/data-dir、任何 cline session 目录。
+> 2. **禁 kill 任何进程**（含他线 loop）；禁改他人文件；遇到 `Permission denied` 记下来，不 sudo 硬来。
+> 3. **禁删**：git 仓库、`eda_fastmcp` / `EDA-Eval-PyAether` / `EDA-Flow-Bench` 源码与题面、模型权重/serve、`~/.ssh`、token、正在用的 conda/venv、`/nasdata` 上 designflow 的 ledger/trace。
+> 4. **先列后删**：每次删除前 `du -sh <path>` + `ls -lt` 留证；只对**明确路径**执行 `rm -rf`，**禁止** `rm -rf /home/*`、`rm -rf ~/*` 这类通配；删除清单落 `run/zhulong_disk_cleanup_<YYYYMMDD_HHMM>.tsv`（路径 / 字节 / 理由），随 commit 入库。
+>
+> **执行顺序（先安全后激进）**：
+> - **a) 缓存**：`~/.cache/pip`、`~/.npm/_cacache`、`~/.cache/uv`、`~/.cache/huggingface`（**仅当无下载在跑**）、`__pycache__`、`*.pyc`
+> - **b) 日志/临时**：自己产生的 `*.log`（>3 天）、旧 screen/nohup 日志、core dump、`/tmp` 下自己建的临时目录（**避开** posttrain 正在写的）
+> - **c) 备份/中间物**：`*.bak*`、`*.old`、`*.tmp`、`*~`、失败的 run 目录（**无 `result.json` 且 mtime>3 天**）
+> - **d) 旧产物**：只删**本线**已被取代/已归档的；**最新一版与正在用的绝不删**；不确定的先列清单不删
+> - **e) `/nasdata`**：旧 scan 快照（`_hist` 留最新一版）、旧 jobs-dir、有 `.txt` 可复原的重复 `.b64`（先删重复编码件，保留文本）
+>
+> **验收（缺一不可）**：
+> - `df -h /home /nasdata` **before/after 对比**；达标或写清差额
+> - `ps -ef | grep run_cline_script` 仍能看到 baseline eval 存活（或已正常结束）
+> - `git status -sb` 正常、loop 进程未挂
+> - 报告 `reports/report_zhulong_disk_cleanup_zh.html`（中文、单文件、0 外链 / 0 script）：首屏两行给 before/after，随后「删除清单 top20（路径/大小/理由）」「未删项及原因」「若仍不足，下一步需要谁做什么」
+> - `MEMORY_ZHULONG.md` 顶部一行结论（before/after + 是否达标）+ `daily-memories/2026-11-15.md` 流水 + commit 前缀 `zhulong disk:`
+>
+> **自主性**：清哪些由你判断，只要不碰上面四类禁区。若判断某目录可能是他线正在写的（mtime 很新），**先列不删**，在报告里点名让运维确认。
+
+
 ### ✅ 用户裁令 · 2026-11-15 07:2x（**⛔ 停止 H2 · 写 A0/A1/A2 中文 HTML 报告 · 提出 A3/A4… 消融 idea（目标：多 agent ≥ 单 agent）· 采纳「独立上下文 + 固定小 token 预算」思路**）· ✅ 已完成（wake#957·commit a6f78b8bc + 报告 Q1 补充 commit 见下）· **等用户裁决 A3-A6 起跑顺序**
 
 > **用户原话**：「zhulong：停止H2。如果A2弱于A0，那么在A2基础上做的H2就没有意义，是浪费时间。现在请zhulong分析A0/A1/A2的日志trace，撰写中文HTML报告，提出A3/A4/... 的消融idea，以争取多agent得分>=单agent。另外，我有一个思路请zhulong考虑：多agent的主要优势在于独立上下文 -> 如果解决一个任务所需上下文 > 底模LLM上下文窗口，且单agent压缩机制不足以保留足够细节，那么多agent就可能优于单agent。因此是否可以考虑给每个agent(包括主agent）以确定且较小的token（in & out）预算，当然这就需要弱化（重测）基线。」

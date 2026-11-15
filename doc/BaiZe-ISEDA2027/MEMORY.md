@@ -2,6 +2,14 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-15 12:5x — 用户令「安排 zhulong 清理硬盘」→ 清盘令已下发
+
+- **现状（zhulong wake#966 自报）**：`/home` **267M（100% 满）**、`/nasdata` **9.8G**；A3–A6 的磁盘前置（/nasdata≥25G 或 /home≥12G）无法满足。11-14 23:4x 已清过一次（done_all），本次为**复发**。
+- **已下发** `doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md` 顶部运维令（最高优先）：目标 **/home ≥5G、/nasdata ≥25G**；四类禁区＝**不删/不杀**正在跑的 posttrain baseline batch `2026_1115_110506`（PID3506378/3506387）· 不 kill 任何进程 · 不删仓库源码/题面/模型权重/ssh/token · 先 `du -sh`+`ls -lt` 列证再按明确路径删（禁通配）。
+- **执行顺序**：缓存(`~/.cache/pip`、npm、uv、hf——仅当无下载) → 日志/临时(>3天) → `*.bak*`/失败 run 目录(无 result.json 且 >3天) → 本线旧产物(留最新版) → /nasdata 旧 scan `_hist`/旧 jobs-dir/有 `.txt` 可复原的重复 `.b64`。
+- **交付**：`reports/report_zhulong_disk_cleanup_zh.html`（中文/单文件/0 外链/0 script，首屏 before-after）+ 删除清单 TSV + MEMORY 一行 + daily + commit `zhulong disk:`。达不到目标须写清差额与"还需谁做什么"。
+- **判断**：这是基础设施问题，不改变任何实验口径；清盘期间 baseline eval 继续跑，不干预。
+
 ## 2026-11-14 23:1x — R78 结果：登录恢复，但指标未达（供给侧卡住）+ 补上 00:13 唤醒
 
 第 78 轮（运维手动触发）已提交 `3609971ac`：
