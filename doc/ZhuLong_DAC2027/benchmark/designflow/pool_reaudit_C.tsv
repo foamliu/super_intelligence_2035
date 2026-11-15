@@ -113,7 +113,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1789017399621_cmsbu	chenyue	hfeg0plg85	129	layout_aether	parked: near-dup of M2PathLayout-001 (i1gjh): same chenyue/hfeg	可造-低优	同已覆盖case形态(需deepread)
 1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked: user turns all fix-direction (改ae.dmDeleteObj->dbDelCV)	可造	debug/analysis:check验根因+修复+hidden B
 1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked: sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 	不可造	—
-1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked: meta: UI#0 policy engine caching/permission debug, UI#2	可造	debug/analysis:check验根因+修复+hidden B
+1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked: meta: UI#0 policy engine caching/permission debug, UI#2	不可造(deepread r592)	r592 deepread 确认: trace=Cline policy-engine caching/permission debug(UI#0 'policy engine cached old values at session startup'/UI#2 'grant permission to change file'); 非EDA非design-flow; r590 'debug' keyword 批量 revival=FALSE POSITIVE, 原 parked 判定正确
 1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked: generic launch: UI#0 启动业务场景:时序分析, UI#264 report product	可造	analysis:check验报告结构+关键事实+hidden B
 1790236124444_8orer	lvyy	hfeg0pkn002	165	layout_aether	parked: schematic domain: UI#135 复制电路 CkIbDiffM6+子电路到新library=s	不可造	—
 1791788736494_t2qp9	leo27li	hfeg0pkn001	156	layout_virtuoso	parked: STA/Innovus PnR Q&A: UI#0 setup/hold sta, UI#5 innovus 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
@@ -448,7 +448,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1794480485564_nphvz					parked: r537 peek REJECT (Q&A/sim/run-existing/done)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1790078216880_4g0i9	lizwen	10.129.2.12	241		parked: r538 peek REJECT (skill-orch: DRC pattern gen into skil	可造	分析/Q&A或脚本(需deepread)
 1792055923522_tqmu1	cynthiaz	10.129.2.13	406		parked: r538 peek REJECT (wrong-domain: schematic creation Stro	可造	分析/Q&A或脚本(需deepread)
-1794400409399_njh7p	jackjia	10.129.32.100	459		parked: r538 peek REJECT (Q&A: analyze MROPT fanout)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794400409399_njh7p	jackjia	10.129.32.100	459		parked: r538 peek REJECT (Q&A: analyze MROPT fanout)	不可造-for-C(deepread r592)	r592 deepread 确认: trace=Aether schematic hierarchy Q&A(MROPT<1>/PMRW/PMWRR 信号 tracing across WOWTOP->Ictop->DDR5TOP->I_Channel->...->I_C_MrwSetMr2, 57 user_input, 71 SandBox run_code); 域=schematic_netlist(D-shard)非C(physical_verify); r538 'Q&A' revival 对 C 是域错 FALSE POSITIVE
 1793953739742_3hw3m	ruifan	10.129.32.46	525		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
 1794376149228_dr7mm	fxian	10.129.8.112	446		parked: r538 peek REJECT (wrong-domain: schematic pin script = 	可造	分析/Q&A或脚本(需deepread)
 1793952785938_fmd3i	ruifan	10.129.32.46	434		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
@@ -644,7 +644,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1791965390450_59idr	xinqiaoz	hfeg0plg56	model-comparison	layout_virtuoso	parked: not-produce r583	不可造	—
 3l3yx	ynbai	hfhds211	80	physical_verify	parked: debug/analyze si.out spice sim	可造	debug/analysis:check验根因+修复+hidden B
 mxpkd	ellawu	hfeg0plg83	79	physical_verify	parked: modify-existing IMCleFillImplantDrc add conditional	可造	脚本/审计:check验修改或审计结果+hidden B
-1495z	ellawu	hfeg0plg83	79	physical_verify	parked: Q&A SVRF SETLAYER syntax explain	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1495z	ellawu	hfeg0plg83	79	physical_verify	parked: Q&A SVRF SETLAYER syntax explain	不可造-dup(deepread r592)	r592 deepread 确认: trace=ellawu 多轮 Calibre TVF SETLAYER rule deck 逐行解释(AT4_NCH ENC/PG dummy fill, PRB_RANGE_ENCRegion_NMOS_Y, LENGTH ANGLE); DUPLICATES r330 TvfSetlayerExpl-001(同 ellawu 同 SETLAYER-explanation 主题); 原 r337 parked dup 判定正确, r590 revival=重复 FALSE POSITIVE
 rw7u9	gokuguo	hfeg0plg78	79	physical_verify	parked: debug ERC error batch_lvs.py	可造	debug/analysis:check验根因+修复+hidden B
 v7jqb	thomasz	hfeg0plg92	79	physical_verify	parked: debug DRC log + Q&A pathfinder	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 rf6en	hswang	hfeg0plg94	79	physical_verify	parked: debug new_sim_lib_gui.py traceback	可造	debug/analysis:check验根因+修复+hidden B
