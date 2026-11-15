@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong · A3–A6 消融臂中文报告（是什么 · 判据 · 成本 · 起跑前置）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222c; --border:#2a2f3a;
+    --txt:#e6e8ee; --mut:#9aa0ad; --acc:#5b9dff; --ok:#3fb950; --warn:#d29922;
+    --bad:#f85149; --badbg:rgba(248,81,73,.12); --okbg:rgba(63,185,80,.12);
+    --code:#1b1e26; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;
+    line-height:1.7;font-size:15px}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:26px;border-bottom:2px solid var(--acc);padding-bottom:10px;margin:0 0 8px}
+  h2{font-size:21px;color:var(--acc);margin:32px 0 12px;border-left:4px solid var(--acc);padding-left:10px}
+  h3{font-size:17px;color:var(--txt);margin:24px 0 8px}
+  h4{font-size:15px;color:var(--acc);margin:18px 0 6px}
+  .conclusion{background:linear-gradient(135deg,#1a2332,#1e2839);border:1px solid var(--acc);
+    border-radius:10px;padding:16px 20px;margin:16px 0;font-size:16px;font-weight:bold}
+  .conclusion .neg{color:var(--bad)}
+  .conclusion .pos{color:var(--ok)}
+  .crosslink{background:rgba(91,157,255,.08);border:1px solid rgba(91,157,255,.3);
+    border-radius:6px;padding:10px 14px;margin:12px 0;font-size:14px}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+  th,td{border:1px solid var(--border);padding:6px 9px;text-align:center;vertical-align:top}
+  th{background:var(--panel2);color:var(--acc);font-weight:600}
+  td.l{text-align:left}
+  tr:hover{background:var(--panel2)}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:12px 0}
+  .evidence{background:var(--code);border-left:3px solid var(--mut);padding:8px 12px;margin:8px 0;
+    font-family:var(--mono);font-size:12.5px;color:var(--mut);border-radius:0 6px 6px 0;white-space:pre-wrap;word-break:break-all}
+  .bad{color:var(--bad);font-weight:bold}
+  .ok{color:var(--ok);font-weight:bold}
+  .warn{color:var(--warn);font-weight:bold}
+  .mut{color:var(--mut)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin:0 2px}
+  .badge.bad{background:var(--badbg);color:var(--bad)}
+  .badge.ok{background:var(--okbg);color:var(--ok)}
+  .badge.warn{background:rgba(210,153,34,.15);color:var(--warn)}
+  svg{display:block;margin:12px auto;max-width:100%}
+  .hint{background:rgba(91,157,255,.08);border:1px solid rgba(91,157,255,.3);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:14px}
+  .arm{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:14px 0}
+  .arm h3{color:var(--acc);margin-top:0}
+  ul{margin:6px 0;padding-left:22px}
+  li{margin:4px 0}
+  .num{font-family:var(--mono);color:var(--acc)}
+  hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+  .status-notstarted{color:var(--warn);font-weight:bold}
+  code{font-family:var(--mono);background:var(--code);padding:1px 5px;border-radius:3px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ZhuLong · A3–A6 消融臂中文报告</h1>
+<p class="mut">2026-11-15 · ZhuLong（DAC2027）EDA 消融评测 · 「A3–A6 是什么」专项 · 纯文档（不跑实验、不改 A0/A1/A2 任何数字）</p>
+
+<div class="crosslink">
+  <b>互链 / 配套报告</b>：本报告是 A3–A6 臂的「定义 + 判据 + 成本 + 起跑前置 + 推荐顺序」专项，
+  其所依据的 A0/A1/A2 trace 深度分析、§5/§6 上下文实测、H_ctx 形式化均见配套报告 →
+  <code>reports/report_zhulong_subagent_a0a1a2_trace_zh.html</code>（2026-11-15 · commit a6f78b8bc + 6d2d8f422 + 712247549）。
+  本报告不重复其数字推导，只引用并标注证据出处。
+</div>
+
+<!-- ==================== §8 首屏一句话结论 ==================== -->
+
+<div class="conclusion">
+  <span class="pos">首屏一句话结论：</span>
+  <b>A3</b>＝给主+子 agent 同时设确定小 token 预算（强制超窗）以检验「多 agent 交接 vs 单 agent 压缩」；
+  <b>A4</b>＝序列分段接力（段间传文件+摘要，非并行）；
+  <b>A5</b>＝严格「写后只挑刺」（verifier 只出 issue list，主 agent 逐条 triage）；
+  <b>A6</b>＝门槛 spawn（仅高风险任务才 spawn）。
+  <span class="neg">四臂当前全部未起跑</span>（仓库内不存在任何 A3–A6 实验报告/结果，仅有 idea 与可行性预检）；
+  <span class="neg">A3 的「自然超窗」路径已被 §5/§6 实测判死（40 题 max 112K、158 题 max 100,115，0/1116 超 128K 且峰值被 compaction 截断），唯一可行路径是「强制小预算」，且必须先测 A0′ 预算基线才能有可比锚点。</span>
+</div>
+
+<div class="hint">
+  <b>证据来源总览</b>（本报告所有结论均给可核验出处）：
+  <ul style="margin:4px 0">
+  <li>A0/A1/A2 成绩与 McNemar → <code>MEMORY_ZHULONG.md:95-99</code> · <code>mcnemar_subagent_results.json</code>（keys: <code>itt_3round_mean_std</code> / <code>mcnemar_per_round_120obs</code> / <code>key_finding</code>）· 配套报告 <code>report_zhulong_subagent_a0a1a2_trace_zh.html:239-257</code></li>
+  <li>A3–A6 idea 表 + 注入强度 + 硬约束 → 配套报告 §2 <code>:262-347</code></li>
+  <li>H_ctx 形式化 → 配套报告 §3 <code>:357-388</code></li>
+  <li>40 题上下文实测 → 配套报告 §5 <code>:414-444</code>（commit 6d2d8f422）</li>
+  <li>158 题上下文实测 + compaction 截断 + 30 题候选子集 → 配套报告 §6 <code>:446-483</code>（commit 712247549）</li>
+  <li>H2 wrapper（commit 39ccd44cc · v3.0.74 · INHERIT_MCP=1）→ <code>MEMORY_ZHULONG.md:99</code> · 配套报告 <code>:345</code></li>
+  <li>当前未起跑状态 → <code>MEMORY_ZHULONG.md:54</code>（PHASE=<code>h2_stopped_by_user</code>，A3-A6 idea 待起跑）· <code>:5</code>（wake#969: 用户裁决 A3-A6 未收到）</li>
+  </ul>
+</div>
+
+<!-- ==================== §1 总表 ==================== -->
+
+<h2>§1 总表（A3 / A4 / A5 / A6 四行齐全）</h2>
+
+<div class="panel">
+<p>下表四臂齐全，缺一不可。每行字段依用户令：定义 / 唯一变量 / 机制（谁 spawn、何时 spawn、子 agent 看到什么、结果如何回传）/ 预注册判据 / 为什么可能超过 A0 / 风险·失效模式 / 预估成本 / 当前状态。</p>
+
+<table>
+<tr>
+<th>臂号</th><th>一句话定义</th><th>唯一变量</th><th class="l">机制（谁 spawn·何时·子 agent 看到什么·结果如何回传）</th>
+<th>预注册判据</th><th class="l">为什么可能超过 A0（69.2%）</th><th class="l">风险 / 失效模式</th><th>预估成本</th><th>当前状态</th>
+</tr>
+
+<!-- A3 -->
+<tr>
+<td><b>A3</b></td>
+<td class="l">上下文预算臂（用户思路·强制小预算）</td>
+<td class="l">主 + 子 agent 均设确定且较小的 token 预算（in / out 分别设上限），超限强制交付/交接</td>
+<td class="l">主 agent in_budget=X / out_budget=Y；超出 in_budget 时<b>强制 spawn 子 agent 接力</b>，子 agent 只收到前段摘要 + 结构化交接物（文件 + README），子 agent 同样有预算上限；结果以文件形式回传，主 agent 读文件合并。<b>同时弱化重测基线 A0′</b>＝同预算下无 spawn 的主 agent</td>
+<td>A3 ITT ≥ A0′ ITT + 3pp · McNemar b≥6,c≥6 方向一致</td>
+<td class="l"><b>只有当预算 &lt; 所需上下文时</b>：单 agent 被迫压缩→丢细节→质量降；多 agent 各段小窗口 + 结构化交接保细节 → 赢。若 40 题不超预算 → A3 ≤ A0′</td>
+<td class="l">① 预算太小→主 agent 连题都读不完→全挂；② 交接物设计差→子 agent 上下文断裂→更差；③ 当前子集可能不够长→Δ≤0（需换超窗子集）；④ 须先测 A0′ 预算基线</td>
+<td>A0′ + A3 各 3 轮 × 40 题 ≈ 240 任务 × ~20min ≈ <b>~80h</b>（串行）</td>
+<td class="status-notstarted">🟠 未起跑<br>（仅 §5/§6 可行性预检 done）</td>
+</tr>
+
+<!-- A4 -->
+<tr>
+<td><b>A4</b></td>
+<td class="l">接力臂（序列分段·非并行）</td>
+<td class="l">主 agent 编排 + 多段子 agent 接力，段间传结构化交接物（文件 + 摘要）</td>
+<td class="l">主 agent 把任务拆成 N 段（例：① 调研 API → ② 写代码 → ③ 验证），<b>每段 spawn 一个全新上下文子 agent</b>；子 agent 只看到该段的交接摘要 + 文件；段间结果写入 <code>pyAether_code/</code> + <code>README.md</code>；主 agent 只做编排与合并不亲自写代码</td>
+<td>A4 ITT ≥ A0 ITT（69.2%）· McNemar b≥6,c≥6 方向一致</td>
+<td class="l"><b>只在长任务上可能赢</b>：trace &gt;200 msgs 的任务单 agent 上下文累积→后期推理质量降；接力每段从零开始→保质量。短任务上 A4 ≤ A0（编排开销纯亏）</td>
+<td class="l">① 段间交接丢失关键约束→后段写错；② N 段串行→wall_sec 翻 N 倍→更多 timeout；③ 子 agent 无 MCP 工具→调研/验证段质量低（同 A1/A2 bug）→<b>必须 INHERIT_MCP=1</b></td>
+<td>3 轮 × 40 题，每题 wall 翻 2-3× ≈ <b>~120h</b></td>
+<td class="status-notstarted">🟠 未起跑</td>
+</tr>
+
+<!-- A5 -->
+<tr>
+<td><b>A5</b></td>
+<td class="l">严格「写后只挑刺」臂（隔离 A2 的无脑采纳）</td>
+<td class="l">verifier 只输出 issue list 到文件、不得改代码；主 agent 必须逐条 triage（accept/reject + 理由）后才能提交</td>
+<td class="l"><b>写后 spawn</b>（同 A2 时机）；verifier 读主 agent 已写代码 → 输出 <code>qa_issues.json</code>（issue list + 严重度），<b>不返回自由文本</b>；主 agent 读 <code>qa_issues.json</code> 后对每条写 <code>triage.md</code>（accept/reject + 理由），accept 的才改 → 隔离 A2 的 88% 无脑采纳 + verifier 22.2% 假阳性</td>
+<td>A5 ITT ≥ A0 ITT + 3pp · A5 cline_ok ≥ 75%（A2 的 60%→75% 为吞吐恢复门槛）</td>
+<td class="l"><b>不确定能超</b>：A5 修复了 A2「无脑采纳」，但 verifier 无 MCP 根本问题仍在。只有当 verifier 真阳性 issue 能帮主 agent 抓到漏掉的 bug 时才赢。预期 A5 ≈ A0 ± 3pp</td>
+<td class="l">① triage 增加主 agent 负载→cline_ok 仍可能 &lt;75%；② verifier 无 MCP→issue 质量低→triage 无好素材；③ 主 agent 可能全 reject→退化成 A0 + 额外开销；④ <b>必须 INHERIT_MCP=1</b></td>
+<td>3 轮 × 40 题 ≈ <b>~20h</b>（比 A2 略长，triage 增少量消息）</td>
+<td class="status-notstarted">🟠 未起跑</td>
+</tr>
+
+<!-- A6 -->
+<tr>
+<td><b>A6</b></td>
+<td class="l">门槛臂（gate on trigger·条件 spawn）</td>
+<td class="l">只在「主 agent 判为高风险 / 上下文占用 &gt;X% / 已有失败重试」时才 spawn，其余一律不 spawn</td>
+<td class="l"><b>写后自评</b>：主 agent 先自评风险（高/中/低），<b>仅高风险任务 spawn verifier</b>（同 A2 verifier）；中低风险直接提交；verifier 结果以 issue list 回传（同 A5 口径）→ 减少不必要 spawn 开销 → 保吞吐</td>
+<td>A6 ITT ≥ A0 ITT · A6 cline_ok ≥ 85%（接近 A0 ~100%）· spawn 率 &lt; 30%</td>
+<td class="l"><b>可能保平或微赢</b>：A6 = A0（低风险）+ A2（高风险）。若 verifier 在高风险任务真有价值→A6 &gt; A0；若无价值（如 A2 所示）→A6 ≈ A0（吞吐因 spawn 率低而恢复）。<b>下行风险最小</b></td>
+<td class="l">① 主 agent 自评风险不准→gate 形同虚设；② 高风险任务本身 cline_ok 就低→spawn 雪上加霜；③ <b>需先做 A3 的上下文测量确定阈值 X</b>；④ <b>必须 INHERIT_MCP=1</b></td>
+<td>3 轮 × 40 题 ≈ <b>~18h</b>（spawn 率低→比 A2 快）</td>
+<td class="status-notstarted">🟠 未起跑</td>
+</tr>
+</table>
+
+<div class="evidence">证据：四臂 idea 原文 = 配套报告 §2 各 <code>&lt;div class="idea"&gt;</code> 块
+A3 = :271-285 · A4 = :288-301 · A5 = :304-317 · A6 = :320-333
+唯一变量 / 机制 / 判据 / 风险 / 成本 / 为什么能超 A0 各字段均逐字来自该报告，本表只重排为「总表」格式，不改判据与数字。</div>
+</div>
+
+<!-- ==================== §2 与已完成三臂的差别 ==================== -->
+
+<h2>§2 与已完成三臂的差别（每臂只改哪一个变量 · 是否污染可归因性）</h2>
+
+<div class="panel">
+<p><b>已完成三臂成绩</b>（同 40 题子集 ITT · 3 轮 · 配套报告 §1.Q5 + MEMORY 成绩表）：</p>
+<table>
+<tr><th>臂</th><th>配置</th><th>ITT mean±std</th><th>各轮 ITT</th><th>gen-rate</th><th>cline_ok</th><th>spawn 率</th></tr>
+<tr><td><b>A0</b></td><td class="l">无 spawn（compaction basic r1-r3）</td><td><b>69.2±1.4%</b></td><td>[67.5, 70.0, 70.0]</td><td>~69%</td><td>~100%</td><td>0</td></tr>
+<tr><td><b>A1</b></td><td class="l">调研型 spawn（researcher·写前 spawn）</td><td>66.7±7.2%</td><td>[62.5, 62.5, 75.0]</td><td>86.2%</td><td>78%</td><td>1.1/task</td></tr>
+<tr><td class="bad"><b>A2</b></td><td class="l">验证型 spawn（adversarial QA·写后 spawn）</td><td class="bad">53.3±3.8%</td><td>[50.0, 57.5, 52.5]</td><td>87.6%</td><td class="bad">60%</td><td>0.8/task</td></tr>
+</table>
+<div class="evidence">证据：MEMORY_ZHULONG.md:95-99（子 agent 消融表）· 配套报告 :239-241
+McNemar（per-round 120 obs）：A0vsA2 b=24,c=5,p=0.0008 高度显著 · A1vsA2 b=23,c=7,p=0.006 显著 · A0vsA1 b=13,c=10,p=0.68 不显著
+出处：mcnemar_subagent_results.json → mcnemar_per_round_120obs · key_finding="Verifier spawn (A2) significantly degrades ITT vs both A0 and A1, primarily through reduced generation throughput (cline_ok 60% vs A1 72-90%), not code quality (gen-rate ~87% maintained)"</div>
+
+<p><b>A3–A6 各自「只改哪一个变量」及对「多 agent vs 单 agent」可归因性的影响：</b></p>
+<table>
+<tr><th>新臂</th><th class="l">相对哪个旧臂改了什么（唯一变量）</th><th class="l">是否会污染「多 agent vs 单 agent」可归因性</th></tr>
+<tr>
+<td><b>A3</b></td>
+<td class="l">相对 A0：<b>同时引入「小预算」+「多 agent 交接」</b>。为保可归因性，<b>必须配 A0′</b>＝同小预算下无 spawn 的单 agent。<b>真正对比是 A3 vs A0′（同预算），不是 A3 vs A0</b>（A0 是无预算限制的旧基线）</td>
+<td class="l"><b>会污染（若不测 A0′）</b>：A3 vs A0 同时变了「预算」和「agent 数」两个变量。✅ 解法＝强制配 A0′ 预算基线，把唯一变量收敛回「agent 数」。<b>这是用户令 §3 明确要求的「必须先测 A0′ 预算基线」</b></td>
+</tr>
+<tr>
+<td><b>A4</b></td>
+<td class="l">相对 A0：引入「分段接力 + 主 agent 只编排不写码」。<b>两变量耦合</b>：agent 数（多）+ 主 agent 角色（编排 vs 全做）</td>
+<td class="l"><b>部分污染</b>：A4 同时改了「agent 数」和「主 agent 是否亲自写码」。要拆开归因需额外加 A4′（主 agent 编排 + 单段子 agent 写码）。但若只问「多 agent 接力 ≤/≥ 单 agent」这一总问题，A4 vs A0 仍可答。判据用 A4 ITT ≥ A0 ITT</td>
+</tr>
+<tr>
+<td><b>A5</b></td>
+<td class="l">相对 A2：<b>唯一改「采纳协议」</b>（A2 无脑采纳 → A5 强制 triage），spawn 时机/对象/工具不变</td>
+<td class="l"><b>不污染「多 agent vs 单 agent」</b>：A5 是 A2 的「修复版」，判据应是 A5 vs A0（多 agent 修复后是否反超单 agent），不是 A5 vs A2。A5 vs A2 只能回答「triage 是否修复无脑采纳」，属子问题</td>
+</tr>
+<tr>
+<td><b>A6</b></td>
+<td class="l">相对 A2：<b>唯一改「spawn 触发条件」</b>（A2 一律 spawn → A6 仅高风险 spawn），verifier 协议不变</td>
+<td class="l"><b>不污染</b>：A6 = A0（低风险路径）+ A2（高风险路径），是 A0 与 A2 的条件混合。判据 A6 vs A0 回答「条件 spawn 是否 ≥ 一律不 spawn」。可归因性清晰</td>
+</tr>
+</table>
+
+<p><b>一句话归因口径</b>：A3 必须配 A0′（否则双变量不可归因）；A4 若只问总问题可对比 A0，拆归因需加 A4′；A5/A6 单变量清晰，直接对比 A0。</p>
+</div>
+
+<!-- ==================== §3 A3 专项 ==================== -->
+
+<h2>§3 A3 专项（用户思路·重点）</h2>
+
+<div class="panel">
+
+<h3>① H_ctx 形式化</h3>
+<p>设 <code>ctx_req(t)</code>＝任务 t 所需最小上下文（完整读完题 + 查全 API + 推理链不丢细节），<code>W</code>＝底模上下文窗口（deepseek-v4-pro ≈ 128K）。</p>
+<p><b>H_ctx</b>：在 <code>ctx_req(t) &gt; W</code> 的子集 S_overflow 上，Δ = ITT(multi) − ITT(single) <span class="ok">显著为正</span>；在 <code>ctx_req(t) ≤ W</code> 的子集 S_fit 上，Δ <span class="bad">≤ 0</span>。即 <b>Δ 与 (ctx_req / W) 正相关</b>，存在交叉点 ctx_req* ≈ W。</p>
+<div class="evidence">证据：配套报告 §3 :357-364（H_ctx 形式化原文）</div>
+
+<h3>② §5 的 40 题峰值 max 112K（不超窗）</h3>
+<p>从 <code>/tmp/zhulong_subagent_trace/{A1,A2}/</code> 全 3 轮 trace 提取每个主 agent 会话的 <code>metrics.inputTokens</code> 峰值（A0 messages.json 已清理 → 用 A1 作 A0 上界代理：A0 无 spawn 故 A0 峰值 ≤ A1 峰值）。</p>
+<table>
+<tr><th>臂</th><th>n</th><th>min</th><th>median</th><th>mean</th><th>p90</th><th>p95</th><th>p99</th><th>max</th><th>&gt;80K</th><th>&gt;100K</th><th>&gt;128K</th></tr>
+<tr><td><b>A1</b>(=A0 上界)</td><td>120</td><td>25,006</td><td>90,385</td><td>78,417</td><td>103,063</td><td>108,294</td><td>112,088</td><td><b>112,318</b></td><td>69 (57.5%)</td><td>23 (19.2%)</td><td><b>0 (0%)</b></td></tr>
+<tr><td><b>A2</b></td><td>121</td><td>25,118</td><td>92,661</td><td>82,773</td><td>101,631</td><td>103,174</td><td>107,961</td><td><b>108,740</b></td><td>81 (66.9%)</td><td>20 (16.5%)</td><td><b>0 (0%)</b></td></tr>
+</table>
+<div class="evidence">证据：配套报告 §5 :421-426（表 §5-1）· commit 6d2d8f422 "A3 feasibility pre-check ①a ... max 112K"
+结论：40 题 pooled max=112,318 &lt; 128K 窗口 · 0/241 观测 &gt; 128K · 由 A0≤A1≤A2 不等式 A0 峰值亦 &lt; 128K ⇒ H_ctx 在 40 题上不可检验</div>
+
+<h3>③ §6 的 158 题峰值 max 100,115 · 0/1116 超 110K · compaction 57 events / 28 tasks</h3>
+<p>数据源：<code>trace_ablation_think_lang/A_none_r{1,2,3}/</code>（glm-5.2 · 无 thinking · 158 题 · 3 轮 · 与 subagent A0 最近的干净基线）。每 worker session 串行处理多任务，<b>inputTokens 骤降 &gt;50% = 新任务边界</b>，取每段峰值。规模：316/316/632 sessions → 392/336/388 task-segments → <b>pooled n=1116</b>。</p>
+<table>
+<tr><th>统计量</th><th>min</th><th>median</th><th>mean</th><th>p90</th><th>p95</th><th>p99</th><th>max</th></tr>
+<tr><td>峰值 inputTokens</td><td>14,935</td><td>39,046</td><td>46,486</td><td>88,160</td><td>92,209</td><td>96,157</td><td><b>100,115</b></td></tr>
+</table>
+<table>
+<tr><th>阈值</th><th>&gt;80K</th><th>&gt;100K</th><th>&gt;110K</th><th>&gt;120K</th><th>&gt;128K（窗口）</th></tr>
+<tr><td>任务-segment 数</td><td>168 (15.1%)</td><td>2 (0.18%)</td><td>0</td><td>0</td><td><span class="badge bad">0</span></td></tr>
+</table>
+<div class="evidence">证据：配套报告 §6 :452-462 · commit 712247549 "A3 feasibility pre-check ①b ... max 100K&lt;128K, 0/1116 overflow 128K; compaction caps at ~100K (57 events/28 tasks)"</div>
+
+<p><b>Compaction 截断实测</b>：trace 中存在大量 <code>*.compaction.json</code>（r1=22 · r2=17 · r3=18 = <b>57 events</b>）；compaction 触发时 cline 把对话替换为 "Context summary: ## Goal / ## State / ## Done ..." 摘要，此后 inputTokens 回落 → 观测峰值被压在 ~100K。<b>28 个不同任务触发过 compaction</b>（8/57 event 函数名未从摘要正则匹配，distinct ≥ 28）。</p>
+<div class="evidence">证据：配套报告 §6 :464-467 · "28 个不同任务触发过 compaction" + "57 events"
+关键推论：「0 任务超 128K」<b>部分是 compaction 的产物</b>——本会超 100K 的任务被 cline 压回。这正是用户假设中「单 agent 压缩机制」的实例 ⇒ 强化 A3 的科学意义：A3 用「人为小预算 + 多 agent 交接」直接对标「cline 压缩」</div>
+
+<h3>④ 结论：「自然超窗路径是死路 ⇒ 唯一可行 = 强制小预算」</h3>
+<div class="panel" style="background:var(--code);border-color:var(--bad)">
+<p><b>逐条推理</b>：</p>
+<ol>
+<li>40 题 max 112,318 &lt; 128K（§5）· 158 题 max 100,115 &lt; 128K（§6）· <b>两数据集均无任务自然超窗</b>；</li>
+<li>即便禁用 compaction 让上下文自然长，真实需求也只是略超 100K，超窗任务太少（统计检验力不足）+ 禁用会冒窗口溢出→null-content/报错风险；</li>
+<li>且观测峰值 ~100K 本身被 compaction 截断（57 events/28 tasks 实证）→「看不到超窗」部分是压缩产物；</li>
+<li>⇒ <b>H_ctx 的「自然超窗」路径在本数据集上不可行</b>（配套报告 §6 :468, :478-481）。</li>
+</ol>
+<p><b>唯一可行路径 = A3 强制小预算</b>：把主+子 agent 预算人为压到 32K/48K → <b>所有任务被迫「超预算」</b> → 多 agent 交接 vs 单 agent 压缩在同子集上可比。预算是旋钮，可让多数任务超预算→大子集→强检验力（配套报告 §6 :479 路径(b) 标「推荐」）。</p>
+</div>
+<div class="evidence">证据：配套报告 §6 :468 "H_ctx 的「自然超窗」路径在本数据集上不可行" · :479 路径(b) 强制小预算标 &lt;b&gt;推荐&lt;/b&gt; · :481 "唯一可行的 H_ctx 检验方式是 A3 强制小预算"</div>
+
+<h3>⑤ 预注册判据：A3 ITT ≥ A0′ ITT + 3pp</h3>
+<div class="evidence">证据：配套报告 §2 A3 块 :277 "A3 ITT ≥ A0′ ITT + 3pp（同预算下多 agent 优于单 agent）· McNemar b≥6,c≥6 方向一致"
+⚠️ 注意：判据锚点是 <b>A0′（同预算基线）</b>，不是 A0（无预算旧基线）。A3 vs A0 同时变「预算 + agent 数」双变量不可归因。</div>
+
+<h3>⑥ 必须先测 A0′ 预算基线</h3>
+<p><b>A0′</b>＝同小预算（主+子 agent 分别设 in/out 上限，如 32K/16K）下、无 spawn 的单 agent。没有 A0′，A3 的 Δ 无法归因到「多 agent」还是「预算收紧」。</p>
+<div class="evidence">证据：配套报告 §2 A3 块 :284 "① 先测 A0′ 预算基线（给主 agent 设 maxTokens=8192 看退化多少）"
+· §5 :433 "必须先测「预算基线 A0′」（同等小预算下单 agent 退化多少），否则没有可比锚点"
+· §6 :479 路径(b) 风险列 "需测 A0′ 预算基线 + per-task data-dir 隔离"
+· 用户令原文：「当然这就需要弱化（重测）基线」</div>
+<p><b>A0′ 预算候选</b>（配套报告 :284/:433 提到 maxTokens=8192 作示例；本报告按用户令 §3「主+子 agent 分别设 in/out 上限，32K/16K 等」细化）：主 agent in≤32K/out≤4K · 子 agent in≤16K/out≤4K。具体值在起跑前于 MEMORY 写定。</p>
+
+<h3>⑦ 30 题 H_ctx 候选子集的构造口径</h3>
+<p><b>构造口径</b>：<code>compacted 任务 ∪ top-25 by peak</code> = <b>30 题</b>（占 158 的 19%）。28 个 compacted 任务与 top-25 峰值任务高度重叠（交集 17），并集 30，集中在 076–158 的难题区。</p>
+<div class="evidence">30 题清单（配套报告 §6 :472）：
+EDA-Eval-PyAether-{076,080,104,105,106,108,111,112,114,119,120,123,124,126,128,129,130,131,132,137,139,142,143,144,145,147,148,149,150,158}
+Top-5 峰值：task-130=100,115 · task-131=99,057 · task-106=97,652 · task-105=97,080 · task-128=96,406
+用途：A3 强制预算下，这 30 题（高上下文需求）vs 其余 128 题（低需求）的 Δ(A3−A0′) 差异 → 检验「Δ 与上下文需求正相关」这一 H_ctx 核心预测</div>
+</div>
+
+<!-- ==================== §4 A4/A5/A6 专项 ==================== -->
+
+<h2>§4 A4 / A5 / A6 专项</h2>
+
+<div class="arm">
+<h3>A4 · 接力臂（序列分段·非并行）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>机制</b></td><td class="l">主 agent 把任务拆成 N 段（① 调研 API → ② 写代码 → ③ 验证），每段 spawn 一个<b>全新上下文</b>子 agent；子 agent 只看到该段交接摘要 + 文件；段间结果写入 <code>pyAether_code/</code> + <code>README.md</code>；主 agent 只编排与合并，不亲自写码</td></tr>
+<tr><td><b>适用任务</b></td><td class="l">长任务（trace &gt;200 msgs / wall &gt;2000s）。这些任务单 agent 上下文累积→后期推理质量降；接力每段从零开始→保质量</td></tr>
+<tr><td><b>为什么可能赢</b></td><td class="l">每段子 agent 上下文小且专注→不被前段噪声污染。短任务上 A4 ≤ A0（编排开销纯亏）</td></tr>
+<tr><td><b>依赖关系</b></td><td class="l"><b>需 H2 wrapper <code>INHERIT_MCP=1</code></b>（commit 39ccd44cc · v3.0.74）：调研段/验证段子 agent 必须能调 pyAether MCP 工具，否则退化成 A1/A2 的无效审查。当前 cline 3.0.51 下子 agent 无 MCP（每轮 37-41 次调用被拒）</td></tr>
+<tr><td><b>在什么条件下应当不跑</b></td><td class="l">① H2 wrapper 未能向后兼容装好（影响 A0/A1 历史结果）；② 子集里长任务太少（&lt;10 题）→ 统计检验力不足；③ 已有 A3 结论显示「多 agent 交接」不优于「单 agent 压缩」→ A4 接力本质同属「交接类」无必要重复</td></tr>
+</table>
+<div class="evidence">证据：配套报告 §2 A4 块 :288-301 · :300 "需 INHERIT_MCP=1 让子 agent 有 MCP 工具，否则调研/验证段无法工作" · :345 "A4/A5/A6 都必须先装 H2 wrapper v3.0.74 + INHERIT_MCP=1"</div>
+</div>
+
+<div class="arm">
+<h3>A5 · 严格「写后只挑刺」臂（隔离 A2 的无脑采纳）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>机制</b></td><td class="l">写后 spawn verifier（同 A2 时机）；verifier 输出 <code>qa_issues.json</code>（issue list + 严重度），<b>不返回自由文本、不改代码</b>；主 agent 读后对每条写 <code>triage.md</code>（accept/reject + 理由），accept 的才改</td></tr>
+<tr><td><b>适用任务</b></td><td class="l">全 40 题子集。A5 是 A2 的「修复版」——A2 的 88% 无脑采纳 + verifier 22.2% 假阳性是主因之一</td></tr>
+<tr><td><b>为什么可能赢</b></td><td class="l">triage 强制主 agent 独立判断每条 issue→过滤假阳性→避免「改了反而改错」。但不确定能超 A0，预期 A5 ≈ A0 ± 3pp</td></tr>
+<tr><td><b>依赖关系</b></td><td class="l"><b>依赖 A2 结论</b>（A5 是 A2 的修复版，需 A2 的 trace 证明「无脑采纳 + 假阳性」是问题，A2 已提供：FAIL 采纳 70.3% vs 未采纳 60.0% n=5 不显著 · PASS 假阳性 22.2%）。<b>同时需 H2 wrapper <code>INHERIT_MCP=1</code></b>，否则 verifier 仍无法验证 API 签名</td></tr>
+<tr><td><b>在什么条件下应当不跑</b></td><td class="l">① H2 wrapper 未装好（verifier 无 MCP → issue 质量低 → triage 无好素材）；② A6 已显示「条件 spawn」能保平 → A5 的「全量 triage」额外开销无必要；③ A2 重审发现采纳率其实有益（与当前结论相反）→ A5 前提不成立</td></tr>
+</table>
+<div class="evidence">证据：配套报告 §2 A5 块 :304-317 · :316 "前提是先修 MCP bug（用 H2 wrapper v3.0.74 + INHERIT_MCP=1）"
+A2 采纳率数据（配套报告 §1.Q2 :167-187）：verdict PASS 45 (37.5%, pass 77.8%) · FAIL 42 (35.0%, pass 69.0%) · fail_adopted 26/37=70.3% vs fail_not_adopted 3/5=60.0%</div>
+</div>
+
+<div class="arm">
+<h3>A6 · 门槛臂（gate on trigger·条件 spawn）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>机制</b></td><td class="l">写后主 agent 先自评风险（高/中/低），仅高风险 spawn verifier（同 A2 verifier，issue list 口径）；中低风险直接提交</td></tr>
+<tr><td><b>适用任务</b></td><td class="l">全 40 题子集。A6 = A0（低风险路径）+ A2（高风险路径），是 A0 与 A2 的条件混合</td></tr>
+<tr><td><b>为什么可能赢</b></td><td class="l">下行风险最小：多数任务走 A0 快速路径→吞吐恢复（cline_ok 目标 ≥85%）；高风险任务上 verifier 可能抓到 bug → ITT 升。若 verifier 无价值 → A6 ≈ A0</td></tr>
+<tr><td><b>依赖关系</b></td><td class="l"><b>依赖 A3 的上下文测量</b>（配套报告 §2 A6 块 :328 "需先做 A3 的上下文测量确定阈值 X"）：风险阈值 X 需用 A3 测出的 per-task 峰值上下文分布来定。同时<b>需 H2 wrapper <code>INHERIT_MCP=1</code></b></td></tr>
+<tr><td><b>在什么条件下应当不跑</b></td><td class="l">① A3 上下文测量未做 → 阈值 X 无依据 → gate 形同虚设；② A2 重审显示 verifier 在高风险任务上也无价值 → A6 无上行空间只剩开销；③ H2 wrapper 未装好</td></tr>
+</table>
+<div class="evidence">证据：配套报告 §2 A6 块 :320-333 · :328 "需先做 A3 的上下文测量确定阈值 X" · :332 "需 INHERIT_MCP=1"</div>
+</div>
+
+<!-- ==================== §5 可行性 / 注入强度 ==================== -->
+
+<h2>§5 可行性 / 注入强度（cline v3.0.74 wrapper）</h2>
+
+<div class="panel">
+<p>各臂靠「提示注入 / hook / wrapper 级」哪一级实现：</p>
+<table>
+<tr><th>臂</th><th>注入方式</th><th>需改 wrapper?</th><th>需 INHERIT_MCP?</th><th>当前可行?</th></tr>
+<tr><td><b>A3</b> 上下文预算</td><td class="l">hook 监控 inputTokens + 强制 spawn；output 用 maxTokens 控制</td><td class="warn">是（需扩展 wrapper）</td><td>推荐</td><td class="warn">需开发</td></tr>
+<tr><td><b>A4</b> 接力臂</td><td class="l">提示注入（主 agent 分段编排）</td><td>否</td><td class="bad">必须</td><td class="ok">可行（需装 H2 wrapper）</td></tr>
+<tr><td><b>A5</b> 严格挑刺</td><td class="l">提示注入（verifier 输文件 + 主 agent triage）</td><td>否</td><td class="bad">必须</td><td class="ok">可行（需装 H2 wrapper）</td></tr>
+<tr><td><b>A6</b> 门槛臂</td><td class="l">提示注入（主 agent 自评风险 + 条件 spawn）</td><td>否</td><td class="bad">必须</td><td class="ok">可行（需装 H2 wrapper）</td></tr>
+</table>
+<div class="evidence">证据：配套报告 §2 可行性预检表 :339-344 · :345 "A4/A5/A6 都必须先装 H2 wrapper v3.0.74 + INHERIT_MCP=1，否则子 agent 无 MCP 工具 → 退化成 A2 的无效审查"
+H2 wrapper：源码 commit 39ccd44cc · v3.0.74 · 已 build 未装为默认 → MEMORY_ZHULONG.md:99 "H2 源码 commit 39ccd44cc+wrapper v3.0.74 已 build 未装→待装+smoke"</div>
+
+<h3>三条硬约束对每臂的影响</h3>
+<table>
+<tr><th>硬约束</th><th class="l">A3 影响</th><th class="l">A4 影响</th><th class="l">A5 影响</th><th class="l">A6 影响</th></tr>
+<tr>
+<td><b>① 子 agent 继承父模型</b><br>（不能给子 agent 换弱/强模型）</td>
+<td class="l">无影响——A3 变量是「预算」非「模型」</td>
+<td class="l">无影响——接力各段同模型</td>
+<td class="l">无影响——verifier 同模型</td>
+<td class="l">无影响——verifier 同模型</td>
+</tr>
+<tr>
+<td class="bad"><b>② 子 agent 无 MCP 工具</b><br>（cline 3.0.51 bug · 每轮 37-41 次调用被拒）</td>
+<td class="l"><b>需修</b>——A3 接力子 agent 要调 pyAether 写码/验证。解法=装 H2 wrapper <code>INHERIT_MCP=1</code></td>
+<td class="l"><b>致命</b>——调研/验证段无 MCP → 退化成 A1/A2 浅层审查。<b>必须 INHERIT_MCP=1</b></td>
+<td class="l"><b>致命</b>——verifier 无法验证 API 签名 → issue 质量低 → triage 无好素材。<b>必须 INHERIT_MCP=1</b></td>
+<td class="l"><b>致命</b>——同 A5。<b>必须 INHERIT_MCP=1</b></td>
+</tr>
+<tr>
+<td><b>③ maxIterations 继承父值</b><br>（不能给子 agent 加/减轮数）</td>
+<td class="l">低影响——预算超限强制交接由 hook 控制，不靠改 iter</td>
+<td class="l">低影响——段内轮数继承，编排靠提示</td>
+<td class="l">低影响——triage 在主 agent 侧</td>
+<td class="l">低影响——gate 在主 agent 侧</td>
+</tr>
+</table>
+<div class="evidence">证据：配套报告 §2 硬约束提示 :265-267 "子 agent 继承父模型、无 MCP 工具（cline 3.0.51 bug）、maxIterations 继承父值。任何依赖「给子 agent 换模型/换工具/换 iter」的设计当前不可行（除非用 H2 wrapper v3.0.74 + INHERIT_MCP=1）"</div>
+
+<h3><code>-p 8</code> 必须 per-task data-dir 隔离</h3>
+<p><code>-p 8</code> 共享 data-dir 会出 <code>messages must not be empty</code> 竞态 → <b>需要并发的臂必须 per-task data-dir 隔离</b>，并在臂描述里写清。A3/A4/A5/A6 凡用 <code>-p 8</code> 均适用。</p>
+<div class="evidence">证据：配套报告 §2 硬约束提示 :267 "-p 8 共享 data-dir 竞态需 per-task 隔离" · 用户令原文硬约束："-p 8 下共享 data-dir 会出「messages must not be empty」竞态"</div>
+</div>
+
+<!-- ==================== §6 起跑前置 gate ==================== -->
+
+<h2>§6 起跑前置（gate）</h2>
+
+<div class="panel">
+<p>每臂起跑前<b>必须同时满足</b>以下前置（用户令 §6 + 任务书 §三.4 自主发起实验要求）：</p>
+
+<h3>资源 / 不冲突前置</h3>
+<table>
+<tr><th>前置项</th><th>阈值</th><th>当前实测（2026-11-15 本报告生成时）</th><th>满足?</th></tr>
+<tr><td class="l">GPU / 沙盒空闲</td><td>无他线 eval 占用沙盒</td><td class="l"><b>不满足</b>：有 <code>run_cline_script</code> 进程在跑（PIDs 636881/636890/761113，疑 142735 基线 eval 仍在跑或新起）</td><td class="bad">❌</td></tr>
+<tr><td class="l">不与他线冲突</td><td>无并行 cline eval</td><td class="l">同上 → A3 <code>-p 8</code> 起跑会沙盒/资源冲突</td><td class="bad">❌</td></tr>
+<tr><td class="l"><code>/nasdata</code> 可用</td><td>≥ 25G</td><td class="l"><b>20G（差 ~5G）</b>：两轮清盘共清 ~11G 已达我侧极限，缺口结构性（opencode.db 2.1G 活库 + .cline session ~1G 硬护栏#1 + eda_fastmcp/venv 6.1G eval 在用）→ <b>需运维 VACUUM opencode.db + 授权清旧 .cline session</b></td><td class="bad">❌</td></tr>
+<tr><td class="l"><code>/home</code> 可用</td><td>≥ 5G（清盘令口径）</td><td class="l">7.1G</td><td class="ok">✅</td></tr>
+<tr><td class="l">沙盒 .75 端口</td><td>8664/8665/8653/8669 全 OPEN</td><td class="l">wake#965 已纠正误测：.75 全 OPEN ✅</td><td class="ok">✅</td></tr>
+<tr><td class="l">loop 健康</td><td>PID 存活 + environ 含 https_proxy</td><td class="l">PID 243810 存活 + proxy ✅</td><td class="ok">✅</td></tr>
+</table>
+<div class="evidence">证据：MEMORY_ZHULONG.md:3-5（wake#969 blocker 四项：(a)/nasdata 差 5G 需运维 (b) 有他线 eval 在跑 ⇒ A3 起跑 -p8 会沙盒/资源冲突 (c) 用户裁决 A3-A6 未收到 (d) 沙盒 .75 全 OPEN ✅ 满足）
+本报告生成时 df 实测：/home 7.1G · /nasdata 20G · run_cline_script 进程在跑</div>
+
+<h3>登记前置（每臂起跑前必须在 MEMORY 写）</h3>
+<p>按任务书 §三.4「起跑前在 MEMORY 写一句『臂号 + 唯一变量 + 判据』，这样结果可追溯」。建议格式：</p>
+<div class="evidence">示例（A3 起跑前登记）：
+[A3 起跑] 唯一变量=主+子 agent in≤32K/out≤4K 预算强制交接 · 判据=A3 ITT ≥ A0′ ITT + 3pp · McNemar b≥6,c≥6
+前置核对：/nasdata ≥25G ✅ · 沙盒空闲 ✅ · A0′ 预算基线已测 ✅ · H2 wrapper INHERIT_MCP=1 已装 smoke ✅</div>
+
+<h3>用户裁决前置</h3>
+<p>wake#969 记「用户裁决 A3-A6 未收到」。本报告交付后，<b>用户令 §7 推荐顺序</b>即为本报告的起跑顺序建议，<b>等用户裁决（或按任务书 §三.4 自主发起）</b>。</p>
+<div class="evidence">证据：MEMORY_ZHULONG.md:5 "blocker 四项 ... (c) 用户裁决 A3-A6 未收到"</div>
+</div>
+
+<!-- ==================== §7 推荐顺序 + 论证 ==================== -->
+
+<h2>§7 推荐顺序 + 论证（可推翻旧建议·须给理由）</h2>
+
+<div class="panel">
+<p><b>先写死结论（用户令 §7 明确要求）</b>：<span class="bad">A3 的「自然超窗」路径不可行，只能走「强制小预算」</span>（§3 ④已论证：40 题 max 112K、158 题 max 100,115、0/1116 超 128K、峰值被 compaction 截断）。</p>
+
+<h3>对配套报告旧建议的复核</h3>
+<p>配套报告 §2 末 :346 旧建议顺序为：① A3 可行性预检 → ② 若 40 题不超窗取 158 top-k → ③ 装 H2 wrapper → ④ A6 → ⑤ A4 → ⑥ 视结果决定 A5。</p>
+<p><b>本报告的复核结论</b>：①② 已完成（§5/§6 即 A3 可行性预检结果：两数据集均不超窗 → 自然超窗死路 → 强制小预算唯一可行）。旧建议的「取 158 top-k 自然超窗子集」<b>已被 §6 实测推翻</b>（158 题 max 100,115 也不超窗），故旧步骤②改为「构造 30 题 H_ctx 候选子集作分层分析用」而非「自然超窗子集」。其余顺序基本保留。</p>
+
+<h3>本报告推荐起跑顺序</h3>
+<table>
+<tr><th>序</th><th>动作</th><th class="l">理由</th><th>前置</th></tr>
+<tr>
+<td><b>0</b></td>
+<td class="l">运维清盘到 /nasdata ≥25G（VACUUM opencode.db + 授权清旧 .cline session）</td>
+<td class="l">当前 20G 差 5G 是结构性缺口，我侧两轮清盘已到极限；A3 <code>-p 8</code> 需写 trace，磁盘不足会卡</td>
+<td>—</td>
+</tr>
+<tr>
+<td><b>1</b></td>
+<td class="l"><b>测 A0′ 预算基线</b>（同小预算无 spawn · 3 轮 × 40 题）</td>
+<td class="l"><b>无 A0′ 则 A3 不可归因</b>（§2 已论证 A3 vs A0 双变量）。这是用户令 §3 明确要求「必须先测 A0′ 预算基线」。A0′ 不需 H2 wrapper（无 spawn），资源门槛低，可最先跑</td>
+<td>序 0</td>
+</tr>
+<tr>
+<td><b>2</b></td>
+<td class="l"><b>装 H2 wrapper v3.0.74 + INHERIT_MCP=1</b> 为独立二进制 + smoke</td>
+<td class="l">A4/A5/A6 全依赖它（§5 已论证：无 INHERIT_MCP → 子 agent 无 MCP → 退化成 A2 无效审查）。向后兼容装，不影响 A0/A1 历史结果</td>
+<td>序 0</td>
+</tr>
+<tr>
+<td><b>3</b></td>
+<td class="l"><b>跑 A3</b>（强制小预算多 agent · 3 轮 × 40 题 + 30 题分层分析）</td>
+<td class="l">A3 是用户思路核心 + H_ctx 唯一可行检验（§3 ④）。需序 1 的 A0′ 作锚点。A3 需 hook/wrapper 级开发（§5），故在序 2 之后</td>
+<td>序 1, 2</td>
+</tr>
+<tr>
+<td><b>4</b></td>
+<td class="l"><b>跑 A6</b>（门槛 spawn · 3 轮 × 40 题）</td>
+<td class="l"><b>下行风险最小</b>（§1 总表 + §4 A6）：A6 = A0（低风险）+ A2（高风险），若 verifier 无价值 A6 ≈ A0 不致显著伤。依赖 A3 的上下文测量定阈值 X（序 3 已提供）。成本低（~18h）</td>
+<td>序 2, 3</td>
+</tr>
+<tr>
+<td><b>5</b></td>
+<td class="l"><b>跑 A4</b>（接力臂 · 长任务子集上）</td>
+<td class="l">A4 只在长任务上可能赢（§4 A4）。用序 3 A3 测出的 30 题 H_ctx 候选子集（长任务集中区 076-158）跑。成本最高（~120h）故排后</td>
+<td>序 2, 3</td>
+</tr>
+<tr>
+<td><b>6</b></td>
+<td class="l"><b>视 A6/A4 结果决定 A5</b></td>
+<td class="l">A5 是 A2 修复版，预期 ≈ A0 ± 3pp（§4 A5）。若 A6 已显示「条件 spawn」能保平 → A5 的「全量 triage」额外开销无必要 → 可不跑。若 A6 显示 verifier 在高风险任务上有价值 → A5 进一步提炼 triage 协议</td>
+<td>序 4 结果</td>
+</tr>
+</table>
+
+<h3>「先 A6 还是先测 A0′」的明确答复</h3>
+<p><b>先测 A0′</b>。理由：A0′ 不需 H2 wrapper（无 spawn）、资源门槛最低、且是 A3 的硬前置（无 A0′ 则 A3 不可归因）。A6 依赖 A3 的上下文测量定阈值 X，而 A3 又依赖 A0′，故链路是 A0′ → A3 → A6，不能先 A6。</p>
+
+<h3>「先 A6 还是先 A3」的明确答复</h3>
+<p><b>先 A3</b>。理由：A6 的风险阈值 X 需 A3 测出的 per-task 峰值上下文分布来定（§4 A6 依赖关系），先 A6 则 gate 无依据。且 A3 是用户思路核心 + H_ctx 唯一可行检验，科学优先级最高。</p>
+
+<h3>在什么条件下整套都不该跑</h3>
+<ul>
+<li>运维无法把 /nasdata 清到 ≥25G → A3 <code>-p 8</code> 起跑会磁盘卡死，整套暂停；</li>
+<li>H2 wrapper 无法向后兼容装好（影响 A0/A1 历史结果）→ A4/A5/A6 全不能跑，只剩 A0′+A3 但 A3 也需 wrapper 级 hook → 整套暂停；</li>
+<li>用户裁决不跑 → 按裁决。</li>
+</ul>
+</div>
+
+<!-- ==================== §8 重申 ==================== -->
+
+<h2>§8 首屏一句话结论（重申）</h2>
+<div class="conclusion">
+  <b>A3</b>＝强制小 token 预算（主+子 agent）检验「多 agent 交接 vs 单 agent 压缩」；
+  <b>A4</b>＝序列分段接力（段间传文件+摘要）；
+  <b>A5</b>＝严格写后挑刺（verifier 只出 issue list + 主 agent triage）；
+  <b>A6</b>＝门槛 spawn（仅高风险才 spawn）。
+  <span class="neg">A0/A1/A2 已跑完（69.2 / 66.7 / 53.3%），A3–A6 四臂均未起跑（仓库无任何 A3–A6 实验报告/结果）。</span>
+  <span class="neg">A3 唯一可行路径是「强制小预算」（自然超窗已被 §5/§6 实测判死），且必须先测 A0′ 预算基线才有可比锚点。</span>
+  <span class="pos">推荐顺序：清盘 → A0′ → 装 H2 wrapper → A3 → A6 → A4 → 视结果决定 A5。</span>
+</div>
+
+<hr>
+<p class="mut">
+报告生成：2026-11-15 · 纯文档（不跑实验、不改 A0/A1/A2 任何数字/判据/trace）·
+证据来源：MEMORY_ZHULONG.md · mcnemar_subagent_results.json · 配套报告 report_zhulong_subagent_a0a1a2_trace_zh.html（§2 idea 表 / §3 H_ctx / §5 40 题 / §6 158 题）·
+commits a6f78b8bc（trace 报告）· 6d2d8f422（§5 预检）· 712247549（§6 预检）· 39ccd44cc（H2 wrapper 源码）·
+本报告顶部互链指向配套报告；配套报告顶部已加 STATUS 指针指向本报告（不删不改其数字）。
+</p>
+
+</div>
+</body>
+</html>

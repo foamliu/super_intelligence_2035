@@ -56,6 +56,13 @@
 <h1>ZhuLong · A0/A1/A2 Subagent 消融 Trace 深度分析报告</h1>
 <p class="mut">2026-11-15 · ZhuLong（DAC2027）EDA 消融评测 · 40 题子集 ITT · cline 3.0.51 · 主基座 deepseek-v4-pro-cloud</p>
 
+<!-- STATUS 指针 · 2026-11-15 15:0x 用户令增补 · 不删不改本报告任何数字/判据/trace -->
+<div style="background:rgba(63,185,80,.10);border:1px solid #3fb950;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:14px">
+<b>STATUS · 配套报告</b>：本报告的 A3–A6 idea（§2）、H_ctx 形式化（§3）、上下文实测（§5/§6）已被独立整理为专项报告 →
+<code>reports/report_zhulong_a3a6_arms_zh.html</code>（「A3–A6 是什么」· 总表+判据+成本+起跑前置+推荐顺序 · 2026-11-15）。
+<b>本报告所有数字、判据、trace 结论保持不变</b>，仅增此指针。
+</div>
+
 <div class="conclusion">
   <span class="neg">一句话结论：</span>A2（验证型 spawn）比 A0 掉 15.9pp <span class="neg">不是代码质量下降</span>（gen-rate 三臂持平 ~87%），而是<span class="neg">吞吐崩溃</span>——验证 QA 流程使单任务消息数翻倍（A2 均值 115-156 vs A0 39-48）、主 agent token 烧 1.5-2×，导致 cline_ok 率从 ~100% 降至 60%，27.5% 的任务未生成代码直接判 0 分；采纳率分析显示 verifier 的 FAIL 判定仅 +10.3pp（n=5 不显著），且 PASS 判定有 22.2% 假阳性——<span class="neg">子 agent 无 MCP 工具（cline 3.0.51 bug）使其无法真正验证 API 签名</span>，对抗审查流于形式。A1（调研型 spawn）无增益（−2.5pp, p=0.68）因子 agent 46M token 调研成果无法回传主 agent 上下文（用户诊断正确）。<span class="pos">用户「独立上下文 + 小 token 预算」思路形式化为 H_ctx 假设，但当前 40 题子集峰值上下文 ~83K 远低于 128K 窗口，无法检验</span>——需取 158 全集中 trace 最长 top-k 构造超窗子集。
 </div>
