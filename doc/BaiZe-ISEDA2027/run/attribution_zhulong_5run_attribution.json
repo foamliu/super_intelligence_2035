@@ -129,7 +129,21 @@
       }
     },
     "pass1_diff_pp": 15.95,
-    "paired_tests": null,
+    "paired_tests": {
+      "mcnemar_passany": {
+        "n11_both_pass": 0,
+        "n00_both_fail": 106,
+        "n10_new_only": 30,
+        "n01_old_only": 22,
+        "chi2_corrected": 0.9423,
+        "discordant": 52
+      },
+      "wilcoxon_passfrac": {
+        "n_nonzero": 30,
+        "error": "No module named 'scipy'"
+      },
+      "delta_pp_from_analysis": 15.95
+    },
     "decomposition": [
       {
         "factor": "tool_face",

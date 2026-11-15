@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-11-15T12:17:47",
+  "protocol": "EDA-Eval-PyAether-158, Pass@1, 5-run mean±std, -p 8 -n",
+  "new_zhulong_baseline": {
+    "n": 1,
+    "mean": 0.1899,
+    "std": 0.0,
+    "values": [
+      0.1899
+    ],
+    "env": "36.15 zhulong口径 (PreToolUse hook, RAG+沙盒可达, run_commands禁用)",
+    "cli_agent": "zhulong fork 3.0.29",
+    "model": "minicpm5-2b-sft-v39-final(step105) via 18096->.17:8096"
+  },
+  "old_17_baseline": {
+    "n": 5,
+    "mean": 0.0304,
+    "std": 0.0074,
+    "values": [
+      0.038,
+      0.019,
+      0.0253,
+      0.0316,
+      0.038
+    ],
+    "env": ".17 非zhulong (无RAG/无沙盒, run_commands启用)",
+    "source": "/tmp/posttrain_5run_eval/step105"
+  },
+  "delta_pp": 15.95,
+  "paired_test_passany_mcnemar": {
+    "n11_both_pass": 0,
+    "n00_both_fail": 106,
+    "n10_new_only": 30,
+    "n01_old_only": 22,
+    "chi2_corrected": 0.9423,
+    "discordant": 52
+  },
+  "paired_test_passfrac_wilcoxon": {
+    "n_nonzero": 30,
+    "error": "No module named 'scipy'"
+  },
+  "note": "5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。"
+}
