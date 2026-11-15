@@ -1016,7 +1016,7 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1792052900749_j4w3o	miccao	hfeg0plg92	93	physical_verify	case	EDA-Eval-DesignFlow-DrcLog4ModTruncOpt-001	2026-11-15 08:37	r588 physical_verify L2-boundary B-synthesized k=12 a-l; miccao calibre-drc-log-analysis truncated rundrc.log 4-module teardown report generator
 1790065302917_0c5yk	weizhao	hfeg0pkn001	409	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckValueCompare-001	2026-11-15 10:21	
 1790216513217_vvhhs.messages.json	lizwen	hfeg0pkn002	84	physical_verify	case	EDA-Eval-DesignFlow-DeckRuleParseExtract-001	2026-11-15 10:50	
-1793697346047_5zola	xxchen	hfeg0pkn001	55	physical_verify	claimed		2026-11-15 11:14	
+1793697346047_5zola	xxchen	hfeg0pkn001	55	physical_verify	case	EDA-Eval-DesignFlow-MustBeSurroundedCheck-001	2026-11-15 11:34	
 1794462601866_8v2mb	peeked	hfeg0pkn001	0	physical_verify	parked		2026-11-15 11:14	Q&A 量测函数/多边形表征 概念问答 no deliverable
 1783083957268_c5bgl	peeked	hfeg0pkn001	0	physical_verify	parked		2026-11-15 11:14	run-existing batch_auto_via.il2 live Virtuoso flow-driving no offline check teeth
 1785476759230_nu82p	peeked	hfeg0pkn001	0	physical_verify	parked		2026-11-15 11:14	prompt-handoff read prompt.md thin single-turn
