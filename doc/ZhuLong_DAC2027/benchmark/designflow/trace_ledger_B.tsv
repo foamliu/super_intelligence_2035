@@ -1233,7 +1233,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793341820971_f5ser	wzj	hfeg0pkn002	96	characterization	case	EDA-Eval-DesignFlow-G5TbGen-001	2026-11-11 19:25	
 1790241096712_s0t3i	rongjiez	hfeg0pkn005	23	spice_sim	case	EDA-Eval-DesignFlow-WaveViewPanel-001	2026-11-11 19:56	
 1790235335073_qrmvt	rongjiez	hfeg0pkn005	146	spice_sim	parked		2026-11-11 20:22	near-dup WaveViewPanel-001 (same rongjiez openWave.pl)
-1792045829835_j93p1	warrenm	hfeg0pkn002	131	spice_sim	parked		2026-11-11 20:22	reject consultation (Aether trn->vcd 是否有 question)
+1792045829835_j93p1	warrenm	hfeg0pkn002	131	spice_sim	case	EDA-Eval-DesignFlow-TrnToVcdConvertGuide-001	2026-11-15 17:45	r636 revived-pool #18 trn->vcd
 1788946494214_rp39a	rongjiez	hfeg0pkn005	49	spice_sim	parked		2026-11-11 20:22	reject wrong-domain Qt/C++ mainwindow probe GUI
 1793669959152_3123n	lvyy	10.129.2.13	576	spice_sim	case	EDA-Eval-DesignFlow-CmlPvtAcReport-001	2026-11-11 21:38	
 1792732271802_olayh	junweix	hfeg0pkn002	21	spice_sim	parked		2026-11-11 21:28	consultation: read .sp path + explain MC netlist, 4 tool_calls all read_files, no produce-task (1111 21:2x peek)
