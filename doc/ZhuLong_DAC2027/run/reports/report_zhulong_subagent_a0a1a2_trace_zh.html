@@ -443,8 +443,47 @@ trace 证据：/tmp/zhulong_subagent_trace/A2/2026_1114_210739/EDA-Eval-PyAether
 <p class="mut">§5 数据源：/tmp/zhulong_subagent_trace/{A1,A2}/*.messages.json · 脚本 /tmp/measure_a3_feasibility.py → /tmp/a3_feasibility_ctx_dist.json · A0 代理论证：A0 无 spawn → 主 agent 峰值 ≤ A1 · compaction 截断假设待 compaction.json 核验</p>
 </div>
 
+<h2>§6 · 158 题上下文分布实测 + H_ctx 候选子集（wake#960 增补）</h2>
+<div class="panel">
+<p><b>目的</b>：§5 发现 40 题子集不自然超窗（max 112K &lt; 128K），并留下两个欠账——① 158 全集是否超窗？② 峰值是否被 compaction 截断？本节实测 158 全集回答这两个问题，并给出 H_ctx 可检验的候选子集。</p>
+<p><b>数据源</b>：<code>trace_ablation_think_lang/A_none_r{1,2,3}/</code>（glm-5.2 · 无 thinking · 158 题 · cline 3.0.51 · 3 轮）——与 subagent A0 最近的干净基线。每 worker session 串行处理多任务，<b>inputTokens 骤降 &gt;50% = 新任务边界</b>，取每段峰值 = 该任务峰值上下文。任务 ID 由段首 user 消息中的 <code>def foo(</code> 函数名匹配 <code>full_tasks/*.md</code>。</p>
+<p><b>规模</b>：316/316/632 sessions → 392/336/388 task-segments → <b>pooled n=1116</b>（r1 映射 156/158 题 · r2 146 · r3 156）。</p>
+
+<h3>① 158 题峰值上下文分布（pooled n=1116）</h3>
+<table>
+<tr><th>统计量</th><th>min</th><th>median</th><th>mean</th><th>p90</th><th>p95</th><th>p99</th><th>max</th></tr>
+<tr><td>峰值 inputTokens</td><td>14,935</td><td>39,046</td><td>46,486</td><td>88,160</td><td>92,209</td><td>96,157</td><td><b>100,115</b></td></tr>
+</table>
+<table>
+<tr><th>阈值</th><th>&gt;80K</th><th>&gt;100K</th><th>&gt;110K</th><th>&gt;120K</th><th>&gt;128K（窗口）</th></tr>
+<tr><td>任务-segment 数</td><td>168 (15.1%)</td><td>2 (0.18%)</td><td>0</td><td>0</td><td><span class="badge bad">0</span></td></tr>
+</table>
+<div class="evidence">结论：max=100,115（task-130, r3）&lt; 128K 窗口；0/1116 超 110K。
+⇒ 即使在 158 全集上，<b>也没有任务自然超窗</b>——与 §5 的 40 题结论一致，只是上界从 112K 微移到 100K。</div>
+
+<h3>② Compaction 截断实测——100K 天花板是压缩产物</h3>
+<p>trace 中存在大量 <code>*.compaction.json</code> 文件（r1=22 · r2=17 · r3=18 = <b>57 events</b>）。compaction 触发时 cline 将对话替换为 "Context summary" 摘要，<b>此后 inputTokens 回落</b>——故观测峰值被压在 ~100K。这与 §5 的「关键混杂」假设<b>正面证实</b>：</p>
+<div class="evidence">28 个不同任务触发过 compaction（8 个 event 的函数名未能从摘要正则匹配，实际 distinct ≥ 28）。
+compaction 摘要格式："Context summary: ## Goal / ## State / ## Done ..."——这正是用户假设中「单 agent 压缩机制」的实例。</div>
+<p><b>关键推论</b>：「0 任务超 128K」<b>部分是 compaction 的产物</b>——本会超 100K 的任务被 cline 压回。这意味着 <b>H_ctx 的「自然超窗」路径在本数据集上不可行</b>（即便禁用 compaction，真实需求也只是略超 100K，且禁用会冒窗口溢出→报错风险）。</p>
+
+<h3>③ H_ctx 候选子集（compacted ∪ top-25 by peak）= 30 题</h3>
+<p>28 个 compacted 任务与 top-25 峰值任务高度重叠（交集 17），并集 = <b>30 题（占 158 的 19%）</b>，集中在 076–158 的难题区：</p>
+<div class="evidence">EDA-Eval-PyAether-{076,080,104,105,106,108,111,112,114,119,120,123,124,126,128,129,130,131,132,137,139,142,143,144,145,147,148,149,150,158}</div>
+<p>这些是「单 agent 已触发压缩 / 逼近窗口」的任务——<b>最可能暴露「压缩丢细节」代价</b>，是检验「多 agent 交接 vs 单 agent 压缩」的天然战场。Top-5 峰值：task-130=100,115 · task-131=99,057 · task-106=97,652 · task-105=97,080 · task-128=96,406。</p>
+
+<h3>④ 对 A3 起跑的两条修正路径</h3>
+<table>
+<tr><th>路径</th><th>机制</th><th>H_ctx 可检验性</th><th>风险</th><th>本节判断</th></tr>
+<tr><td class="l"><b>(a) 禁 compaction 自然超窗</b></td><td class="l">关 cline compaction，让上下文自然长到窗口上限</td><td class="l"><span class="badge bad">低</span> 真实需求只略超 100K，超窗任务太少（统计检验力不足）</td><td class="l">窗口溢出→null-content / 报错</td><td class="l">不推荐</td></tr>
+<tr><td class="l"><b>(b) 强制小预算（A3）</b></td><td class="l">主+子 agent 都设 32K/48K 预算，超限强制交接；弱化重测 A0' 基线</td><td class="l"><span class="badge ok">高</span> 预算是旋钮，可让 <b>多数任务</b> 超预算→大子集→强检验力</td><td class="l">需测 A0' 预算基线 + per-task data-dir 隔离</td><td class="l"><b>推荐</b></td></tr>
+</table>
+<p><b>结论</b>：§5 的「强制小预算」路径在 158 全集上得到进一步支持——自然超窗路径死路（0/1116 超 128K 且峰值被 compaction 截断），<b>唯一可行的 H_ctx 检验方式是 A3 强制小预算</b>。30 题 H_ctx 候选子集可用于「分层分析」：在 A3 强制预算下，这 30 题（高上下文需求）vs 其余 128 题（低需求）的 Δ(A3−A0') 差异，检验 <b>Δ 与上下文需求正相关</b>这一 H_ctx 核心预测。</p>
+<p class="mut">§6 数据源：trace_ablation_think_lang/A_none_r{1,2,3}/ · 脚本 /tmp/measure_158_ctx_topk.py → /tmp/ctx_topk_158.json + /tmp/hctx_candidates.json · compaction 统计来自 rglob('*.compaction.json') + 摘要正则匹配函数名 · 8/57 event 函数名未匹配（distinct compacted ≥ 28）· 增补于 wake#960</p>
+</div>
+
 <hr>
-<p class="mut">报告生成：2026-11-15 · 数据源：trace /tmp/zhulong_subagent_trace/{A1,A2}/ · cost_S_{A1,A2}_r{1,2,3}.json · ablation_compaction_results.json · EDA-Eval-Framework output_evaluation/*/final_report.json · 分析脚本 analyze_subagent_traces.py + build_report_data.py → report_data.json · McNemar 与 mcnemar_subagent_results.json 交叉验证一致 · §5 增补于 wake#959（A3 可行性预检·上下文分布实测）</p>
+<p class="mut">报告生成：2026-11-15 · 数据源：trace /tmp/zhulong_subagent_trace/{A1,A2}/ · cost_S_{A1,A2}_r{1,2,3}.json · ablation_compaction_results.json · EDA-Eval-Framework output_evaluation/*/final_report.json · 分析脚本 analyze_subagent_traces.py + build_report_data.py → report_data.json · McNemar 与 mcnemar_subagent_results.json 交叉验证一致 · §5 增补于 wake#959（A3 可行性预检·上下文分布实测）· §6 增补于 wake#960（158 题上下文分布 + H_ctx 候选 30 题子集 + compaction 截断实证）</p>
 
 </div>
 </body>
