@@ -2,6 +2,45 @@
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线与防破坏约束**（不改题/图/check、不 clean/reset/stash 他人改动、不编造数字/trace、`git add -A` 会污染共享副本）。判断标准只有一条：**这条约束是为了「防止说谎/防止毁坏他人数据」还是「防止尝试」？** 前者保留，后者删除。**默认立场：选料策略、造题目、深读方法由你自主决定；用产出说话。**
 
+> 🔴 **2026-11-15 用户令 · shard A：mc 阈值降到 5（选料枯竭 → 扩池）· 最高优先 · 未完成**
+
+> **用户原话**：「既然 designflow shard A 选料枯竭，那就把 mc 阈值降到 5」
+
+**一、配置已由运维改好（不是待办，直接生效）**
+
+- `designflow/summary_stats.json` → `shard_mc = {"A": 5, "B": 10, "C": 10, "D": 10}`（**只有 A 降到 5**，B/C/D 维持 10）
+- `target_mc` 仍为 10（全局覆盖率分母口径不变）
+- `trace_ledger.py` 读取逻辑：`--shard A` 时取 `shard_mc["A"]=5`（已核对代码 L320-324）
+- 复算命令（`--thresholds` 默认就含 5，无需改代码）：
+  ```
+  python3 designflow/trace_ledger.py --shard A mc-matrix --thresholds 5,10,15,20,30
+  python3 designflow/trace_ledger.py --shard A mc-matrix --emit-candidates-mc 5
+  ```
+
+**二、你要做的事**
+
+1. **用最新扫描快照重算 A 的 mc≥5 池**（`scan_path` 现指向 `ssh_eda_search_20261115_013654/summary.tsv`，11-15 01:36，39263 行 / 6959 dedup）。
+   ⚠️ **不要引用 r382 那份「降到 mc≥5 没用」的结论**——它基于 **11-05 的 `summary_1105.tsv`（2560 dedup）**，而现在是 **6959 dedup，数据量翻了近 3 倍**，旧结论可能已过期。**必须用新快照重新算一遍再说。**
+2. **按 mc≥5 选料造题**，沿用既有全部质检（k≥8、3 neg FAIL、hidden B、A 档自包含、真实 trace 溯源——**这些门禁一条都不放松**）。
+3. **每轮心跳必须报三个数**（不然无法判断降阈值是否有效）：
+   - mc≥5 的 `pool / touched / fresh`
+   - 本轮 peek 的候选里 **A 域 vs 跨域（C/D）的比例**
+   - 本轮产出 case 数
+4. **自动止损（写进你的判断逻辑，不用问我）**：若连续 **3 轮** mc≥5 下仍 0 case、且 A 域占比 <50%，说明 r382 结论在当前数据上仍成立 ⇒ **把 `shard_mc.A` 改回 10**，在 MEMORY 记录「mc≥5 扩池实测无效 + 数据依据」，然后转向别的产出（详见下条）。
+
+**三、并行任务：把 `waveview_real_cases.jsonl` 做出来**
+
+你已连续 0-case 空转多轮，这段产能不要浪费。**在跑 mc≥5 选料的同时（或空转时）**，优先完成：
+
+- 产出 `designflow/waveview_real_cases.jsonl` + `waveview_real_cases.README.md`
+- 规格见 `designflow/WAVEVIEW_COLLAB.md` §零（字段、验收硬指标、纪律都在里面）
+- 这条已经挂了 1 小时，vision 侧在等（虽然它也自己开了 SSH 通道，但你的 jsonl 是它的主路径）
+
+**四、纪律**
+- 🚫 不改题/图/check；🚫 不混 text-only 替身
+- ✅ 「枯竭」照实说，但**要换成 mc≥5 口径重新举证**，不能拿 mc≥10 的旧证据说 mc≥5 也枯竭
+
+
 > 🟢 **运维令 · 2026-11-14 18:0x（用户直令）· A 可主动全量扫描 698 机 —— 覆盖 §9「默认否，只被动只读发现」**
 >
 > **用户原话**：「designflow A 要开新全量扫描就开吧，随他。」

@@ -125,7 +125,7 @@
   },
   "sessions": 6959,
   "shard_mc": {
-    "A": 10,
+    "A": 5,
     "B": 10,
     "C": 10,
     "D": 10
@@ -133,7 +133,7 @@
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "summary_1113_dedup_sessions": 4418,
   "target_mc": 10,
-  "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6",
+  "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6. 2026-11-15 用户令: shard A 单独 10 -> 5 (A 选料枯竭, 扩池); B/C/D 维持 10.",
   "threshold_eval_shardA": {
     "eval_basis": [
       "r374-r380 peek 32/32 fresh strict-clean A-domain candidates (mc>=10, strict-clean filter adom>=50 & adom>1.2*ndom & mc>=15 & noise<0.3*adom) ALL weak: env-config / analysis-Q&A / doc-search / debug-Q&A / flow-driving; 1 produce-task = y4c5b Qt Jobmonitor (non-EDA GUI, delivered r377 as L1 offline-patch reframe)",
