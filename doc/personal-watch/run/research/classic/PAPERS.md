@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **141** 条（**第三十六轮 2026-11-15 15:0x 补 4 条**：Whisper `2212.04356`（**3,720**）/ Gato `2205.06175`（**876**，TMLR 2022）/ SGLang `2312.07104`（**812**，NeurIPS 2024）/ Self-Consistency `2203.11171`（**5,587**，ICLR 2023）；**第三十五轮 2026-11-15 12:0x 补 4 条**：Qwen Technical Report `2309.16609`（**6,006**）/ PaLM `2204.02311`（**5,425**）/ RETRO `2112.04426`（**697**）/ AWQ `2306.00978`（**831**，MLSys 2024 Best Paper）；**第三十四轮 2026-11-15 09:0x 补 4 条**：MemGPT `2310.08560`（1,909）/ Generative Agents `2304.03442`（4,325，UIST 2023）/ Self-Refine `2303.17651`（2,464，NeurIPS 2023）/ Mamba `2312.00752`（7,633）；**第三十三轮 2026-11-15 06:0x 补 3 条**：ToolLLM `2307.16789`（**1,490**，2023 预印本）/ Voyager `2305.16291`（**2,787**，2023 预印本）/ HuggingGPT `2303.17580`（**1,219**，NeurIPS 2023）；**第三十二轮 2026-11-15 03:0x 补 3 条**：AgentBench `2308.03688`（**1,427**，ICLR 2024，会议取自 arXiv `comment`）/ Constitutional AI `2212.08073`（**5,135**）/ BLIP-2 `2301.12597`（**3,197**）；**第三十一轮 2026-11-15 00:0x 补 4 条**：Codex / HumanEval `2107.03374`（**12,170**，2021 预印本）/ HELM `2211.09110`（**2,295**，TMLR 2023）/ The Pile `2101.00027`（**3,021**，2020 预印本）/ FLAN `2109.01652`（**3,471**，2021 预印本）；**第三十轮 2026-11-14 22:3x 补 4 条**：GPT-4 `2303.08774`（38,329）/ Roofline（CACM 52(4):65–76，2,165）/ SigLIP `2303.15343`（1,884，ICCV'23）/ 训练集去重 `2107.06499`（ACL 2022，226）；**第二十九轮 2026-11-14 15:0x 补 4 条**：phi-1 `2306.11644`（**1,104**，2023，预印本）/ OSWorld `2404.07972`（**686**，NeurIPS 2024，pp. 52040–52094）/ ML for EDA Survey `2102.03357`（**388**，TODAES 26(5):1–46）/ A Modern Primer on PIM `2012.03112`（**92**，2020，综述）；**第二十八轮 2026-11-14 12:0x 补 4 条**：Genie `2402.15391` / Hitting the Memory Wall（1995） / Deep Learning（Nature 2015） / AlexNet（CACM 2017）；首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023）；**第二十五轮 2026-11-14 03:0x 补 4 条** DeepSeekMath / GRPO `2402.03300`（11,153）/ MAE `2111.06377`（10,217，CVPR 2022）/ S4 `2111.00396`（2,741，ICLR 2022 Outstanding HM）/ DreamerV3 `2301.04104`（1,962，Nature 2025）；**第二十六轮 2026-11-14 06:0x 补 4 条** Adam `1412.6980`（101,807，ICLR 2015）/ Batch Normalization `1502.03167`（34,937，ICML 2015 PMLR 37:448–456）/ GAN `1406.2661`（9,668 预印本记录，NeurIPS 2014）/ DREAMPlace（DAC 2019，177；TCAD 版 205，**无 arXiv**）；**第二十七轮 2026-11-14 09:0x 补 4 条** Latent Diffusion `2112.10752`（**20,670**，CVPR 2022；⚠️ 候选池旧 ID `2207.11240` 实为 Discrete Key-Value Bottleneck ⇒ 已更正）/ MuZero `1911.08265`（Nature 2020 588:604–609，**2,075**）/ AutoDMP（ISPD 2023，**67**，无 arXiv）/ DREAM-GAN（ISPD 2023，**16**，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **56** · vision **33** · harness **72** · data **69** · zhulong **79** · designflow **40**
+**本轮快照**：累计 **145** 条（**第三十七轮 2026-11-15 18:0x 补 4 条**：wav2vec 2.0 `2006.11477`（**3,140**）/ Multi-Query Attention `1911.02150`（**872**）/ BitNet b1.58 `2402.17764`（**496**，`Work in progress` 预印本）/ Reward Model Overoptimization `2210.10760`（**291**）；**第三十六轮 2026-11-15 15:0x 补 4 条**：Whisper `2212.04356`（**3,720**）/ Gato `2205.06175`（**876**，TMLR 2022）/ SGLang `2312.07104`（**812**，NeurIPS 2024）/ Self-Consistency `2203.11171`（**5,587**，ICLR 2023）；**第三十五轮 2026-11-15 12:0x 补 4 条**：Qwen Technical Report `2309.16609`（**6,006**）/ PaLM `2204.02311`（**5,425**）/ RETRO `2112.04426`（**697**）/ AWQ `2306.00978`（**831**，MLSys 2024 Best Paper）；**第三十四轮 2026-11-15 09:0x 补 4 条**：MemGPT `2310.08560`（1,909）/ Generative Agents `2304.03442`（4,325，UIST 2023）/ Self-Refine `2303.17651`（2,464，NeurIPS 2023）/ Mamba `2312.00752`（7,633）；**第三十三轮 2026-11-15 06:0x 补 3 条**：ToolLLM `2307.16789`（**1,490**，2023 预印本）/ Voyager `2305.16291`（**2,787**，2023 预印本）/ HuggingGPT `2303.17580`（**1,219**，NeurIPS 2023）；**第三十二轮 2026-11-15 03:0x 补 3 条**：AgentBench `2308.03688`（**1,427**，ICLR 2024，会议取自 arXiv `comment`）/ Constitutional AI `2212.08073`（**5,135**）/ BLIP-2 `2301.12597`（**3,197**）；**第三十一轮 2026-11-15 00:0x 补 4 条**：Codex / HumanEval `2107.03374`（**12,170**，2021 预印本）/ HELM `2211.09110`（**2,295**，TMLR 2023）/ The Pile `2101.00027`（**3,021**，2020 预印本）/ FLAN `2109.01652`（**3,471**，2021 预印本）；**第三十轮 2026-11-14 22:3x 补 4 条**：GPT-4 `2303.08774`（38,329）/ Roofline（CACM 52(4):65–76，2,165）/ SigLIP `2303.15343`（1,884，ICCV'23）/ 训练集去重 `2107.06499`（ACL 2022，226）；**第二十九轮 2026-11-14 15:0x 补 4 条**：phi-1 `2306.11644`（**1,104**，2023，预印本）/ OSWorld `2404.07972`（**686**，NeurIPS 2024，pp. 52040–52094）/ ML for EDA Survey `2102.03357`（**388**，TODAES 26(5):1–46）/ A Modern Primer on PIM `2012.03112`（**92**，2020，综述）；**第二十八轮 2026-11-14 12:0x 补 4 条**：Genie `2402.15391` / Hitting the Memory Wall（1995） / Deep Learning（Nature 2015） / AlexNet（CACM 2017）；首轮 11:5x 收 4 条；第二轮 11:4x 补 4 条 EDA / agent / PEFT；第三轮 12:1x 补 4 条 RoPE / SWE-bench / Reflexion / CoT；第四轮 12:4x 补 3 条 GPT-3 / InstructGPT / LLaMA；第五轮 15:0x 补 4 条 ResNet / seq2seq / Dyna / LLaVA；第六轮 18:0x 补 4 条 GPT-1 / GPT-2 / Kaplan scaling laws / DQN；第七轮 21:0x 补 4 条 AlphaGo / AlphaGo Zero / Gemini / OpenVLA；第八轮 2026-11-12 00:0x 补 4 条 AlphaFold / AlphaStar / Kimi k1.5 / π0；第九轮 2026-11-12 03:0x 补 4 条 GLM-4 / MiniMax-01 / RT-2 / Octo；**第十轮 2026-11-12 06:0x 补 4 条** SWE-agent / Tree of Thoughts / Llama 2 / LLaVA-1.5；**第十一轮 2026-11-12 09:0x 补 4 条** Llama 3 / RT-1 / Christiano 2017 / Stiennon 2020；**第十二轮 2026-11-12 12:0x 补 4 条** τ-bench / TD-Gammon / Sora 技术报告 / Kimi K2；**第十三轮 2026-11-12 15:0x 补 4 条** DPO / Mamba-2(SSD) / FlashAttention-2 / Ramulator 2.0；**第十四轮 2026-11-12 18:0x 补 4 条** SimPO / Zephyr / CircuitNet / Sutton《The Bitter Lesson》（博客，单列非论文条目）；**第十六轮 2026-11-13 00:0x 补 4 条** KTO `2402.01306` / H₂O `2306.14048` / Self-Instruct `2212.10560` / Switch Transformer `2101.03961`；**第十七轮 2026-11-13 03:0x 补 4 条** Chip Placement（AlphaChip 预印本 `2004.10746`）/ YaRN `2309.00071` / Speculative Decoding `2211.17192` / GPTQ `2210.17323`；**第十八轮 2026-11-13 06:0x 补 4 条** Toward an Open-Source Digital Flow（OpenROAD, DAC 2019）/ LongRoPE `2402.13753` / Ramulator（IEEE CAL 2015）/ RowHammer（ISCA 2014）；**第十九轮 2026-11-13 09:0x 补 4 条** Megatron-LM `1909.08053` / DeepSeek-V3 `2412.19437` / GAIA `2311.12983` / A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv）；**第二十轮 2026-11-13 12:0x 补 4 条** BERT `1810.04805` / CLIP `2103.00020` / DeepSeek-R1 `2501.12948` / DRAMsim3（IEEE CAL 2020，无 arXiv）；**第二十一轮 2026-11-13 15:0x 补 4 条** QLoRA `2305.14314` / T5 `1910.10683` / RAG `2005.11401` / Toolformer `2302.04761`；**第二十二轮 2026-11-13 18:0x 补 4 条** Distilling the Knowledge `1503.02531` / GQA `2305.13245` / Orca `2306.02707` / Mistral 7B `2310.06825`；**第二十三轮 2026-11-13 21:0x 补 4 条** ViT `2010.11929` / DINOv2 `2304.07193` / WebArena `2307.13854` / TPU ISCA 2017 `1704.04760`；**第二十四轮 2026-11-14 00:0x 补 4 条** PPO `1707.06347`（31,326）/ DDPM `2006.11239`（11,034）/ ZeRO `1910.02054`（1,432，SC 2020）/ SAM `2304.02643`（16,904，ICCV 2023）；**第二十五轮 2026-11-14 03:0x 补 4 条** DeepSeekMath / GRPO `2402.03300`（11,153）/ MAE `2111.06377`（10,217，CVPR 2022）/ S4 `2111.00396`（2,741，ICLR 2022 Outstanding HM）/ DreamerV3 `2301.04104`（1,962，Nature 2025）；**第二十六轮 2026-11-14 06:0x 补 4 条** Adam `1412.6980`（101,807，ICLR 2015）/ Batch Normalization `1502.03167`（34,937，ICML 2015 PMLR 37:448–456）/ GAN `1406.2661`（9,668 预印本记录，NeurIPS 2014）/ DREAMPlace（DAC 2019，177；TCAD 版 205，**无 arXiv**）；**第二十七轮 2026-11-14 09:0x 补 4 条** Latent Diffusion `2112.10752`（**20,670**，CVPR 2022；⚠️ 候选池旧 ID `2207.11240` 实为 Discrete Key-Value Bottleneck ⇒ 已更正）/ MuZero `1911.08265`（Nature 2020 588:604–609，**2,075**）/ AutoDMP（ISPD 2023，**67**，无 arXiv）/ DREAM-GAN（ISPD 2023，**16**，无 arXiv））｜ 覆盖（一篇可服务多线，按文内「与我们工作的关系」逐条计数）：pretrain **59** · vision **33** · harness **76** · data **71** · zhulong **82** · designflow **40**
 
 > 🆕 **第四轮（2026-11-11 12:4x）新增 3 条 = 「规模 → 指令 → 开放权重」三段主线**：GPT-3（few-shot 能力从哪来）→ InstructGPT（对齐/指令跟随的范式起点）→ LLaMA（用「多 token」把开放权重做到可用）。三篇合起来回答 data 线当前最实际的问题：**token 预算、指令数据、公开配比**。
 >
@@ -2463,6 +2463,74 @@
 ---
 
 
+## 142. wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations |
+| 作者（前 3） | Alexei Baevski · Henry Zhou · Abdelrahman Mohamed（共 **4** 位，含 Michael Auli；arXiv 作者字段逐字核） |
+| 年份 | **2020**（v1 `2020-06-20`；v3 `2020-10-22`） |
+| 会议 / 期刊 | **未核验**（arXiv `comment` 为空；OpenAlex `primary_location.source` = arXiv，`type` = `preprint`）⇒ 🚫 不写 NeurIPS 2020 等会场断言 |
+| 被引数 | **3,140**（OpenAlex `10.48550/arxiv.2006.11477`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2006.11477> ｜ DOI `10.48550/arxiv.2006.11477` |
+| 一句话贡献 | 用**对比学习 + 量化码本**在**无标注语音**上预训练（论文口径 **53.2k 小时** LibriVox 音频；码本 **G = 320**、特征步长 **25 ms**、掩码概率 **0.065**），再在少量有标注数据上微调：用 LibriSpeech 全部标注数据得 **1.8 / 3.3 WER**（clean / other），仅 **10 分钟**标注数据得 **5.2 / 8.6**，无标注数据扩到 53k 小时则 **4.8 / 8.2**。 |
+| 与我们工作的关系 | **data（无标注数据的价值量化，主目标）**：这是「标注少、无标注多」场景的范式证据 ⇒ <b>动作</b>：在数据线报表里把「无标注小时数 / 有标注小时数」做成两列，并记录「10 分钟 / 1 小时 / 10 小时 / 100 小时 / 全量」五档学习曲线，禁止只报全量结果。<br>**pretrain（掩码式自监督的可迁移性）**：掩码 + 对比的组合与我们图文/代码侧的掩码目标同构 ⇒ <b>动作</b>：在 2B 主干的预训练目标消融里加一档「纯掩码 vs 掩码+对比」，固定 token 预算比较下游。<br>**harness（评测口径）**：WER 的 clean / other 分列是「同一模型两个难度域」的样板 ⇒ <b>动作</b>：agent 评测表也按难度域分列（easy / hard），避免单值平均掩盖长尾。<br>**风险**：① 53.2k 小时数据集（LibriVox 预处理版）**未随论文发布**，配比不可复现；② 1.8/3.3 是语音识别专用指标，🚫 不可外推到文本任务；③ 会场未核验，引用时只写 arXiv。 |
+
+首次收录: 2026-11-15（第三十七轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：4 作者、v1/v3 日期已核；OpenAlex `200` 3,140；PDF `200` 740,863 B / 19 页，`pdftotext` 核对 53.2k 小时 / G = 320 / 25ms / 0.065 / 1.8 / 3.3 / 10 minutes）
+
+---
+
+## 143. Fast Transformer Decoding: One Write-Head is All You Need（Multi-Query Attention）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Fast Transformer Decoding: One Write-Head is All You Need |
+| 作者（前 3） | Noam Shazeer（**单一作者**，共 1 位） |
+| 年份 | **2019**（`2019-11-06`，v1 = 最新） |
+| 会议 / 期刊 | **未核验**（arXiv `comment` / `journal_ref` 均为空；OpenAlex `primary_location.source` = arXiv） |
+| 被引数 | **872**（OpenAlex `10.48550/arxiv.1911.02150`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/1911.02150> ｜ DOI `10.48550/arxiv.1911.02150` |
+| 一句话贡献 | 指出自回归增量解码的瓶颈是**重新加载 K/V 张量的显存带宽**（正文给的访存/计算比 = Θ(n/d + 1/b)），提出 **multi-query attention**：所有 head **共享一组 K/V**（query / output 仍多头），把 K/V 张量缩小到 1/h；实测 base 模型训练 step `433ms`（基线）vs `425ms`（MQA），解码**明显更快**而质量仅轻微下降，并用 beam-4 解码做了端到端对照。 |
+| 与我们工作的关系 | **zhulong（推理成本的第一性分解，主目标）**：把「解码慢」归因到**带宽**而非算力，是我们成本表的正确框架 ⇒ <b>动作</b>：成本表拆成 `compute` / `memory-bandwidth` 两列，并记录 `batch` 与 `context length` 两个条件，否则倍数不可比。<br>**pretrain（架构选型的对照项）**：MQA 与 GQA（#85）是同一族谱 ⇒ <b>动作</b>：2B 主干的注意力头配置至少跑 MHA / GQA / MQA 三档，固定 token 与下游评测，报「质量损失 vs 解码加速」。<br>**harness（吞吐评测纪律）**：论文只报 step 时间与解码速度、未报完整质量表 ⇒ <b>动作</b>：我们的评测必须同时给「准确率」与「tokens/s」，单向指标不算通过。<br>**风险**：① 2019 年 TPUv2 口径，🚫 不能当今天 GPU 上的倍数；② 论文自述 MQA 质量「略差于基线」，小模型上差距可能放大；③ 本条目被引 872 属「奠基范式」入选，非高引入选。 |
+
+首次收录: 2026-11-15（第三十七轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：1 作者、cs.NE 主分类；OpenAlex `200` 872；PDF `200` 142,627 B / 9 页，`pdftotext` 核对 `multi-query` / Θ(n/d + 1/b) / 433ms vs 425ms / beam-4）
+
+---
+
+## 144. The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits（BitNet b1.58）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits |
+| 作者（前 3） | Shuming Ma · Hongyu Wang · Lingxiao Ma（共 **10** 位，含 Furu Wei（⋄ 通讯）；arXiv 作者字段逐字核） |
+| 年份 | **2024**（`2024-02-27`，v1 = 最新） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 原文：`Work in progress`） |
+| 被引数 | **496**（OpenAlex `10.48550/arxiv.2402.17764`，查询日 **2026-11-15**；⚠️ 低于 500 ⇒ 按「开创范式」入选，不按高引） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.17764> ｜ DOI `10.48550/arxiv.2402.17764` |
+| 一句话贡献 | 把每个权重压成**三值 `{-1, 0, 1}`**（即 **1.58 bit**）：`BitLinear` 替换 `nn.Linear`，权重 **absmean 量化**、激活保持 **8-bit**，从零训练；摘要称同规模同 token 下 PPL 与下游追平 FP16/BF16 基线，且 **3.55× 显存 / 2.71× 加速**（正文另报 3.9B = **2.4× 快 / 3.32× 省**，70B 快 **4.1×**、batch **11×**、吞吐 **8.9×**，7nm 上矩阵乘算术能耗降至 **1/71.4**）。 |
+| 与我们工作的关系 | **pretrain（低成本主干的候选路线，主目标）**：三值权重把「显存 / 能耗」压到另一条曲线 ⇒ <b>动作</b>：在 2B 主干的可行性表里新增一行 `weight_precision ∈ {FP16, INT8, 1.58-bit}`，同时记录 `tokens_to_target_ppl`，用「达到同一 PPL 所需 token」比较，而不是只比同 token 的 PPL。<br>**zhulong（推理侧预算）**：论文的省显存主要发生在**权重**，KV cache 不受益 ⇒ <b>动作</b>：长上下文场景必须把「权重显存 / KV 显存」分列，避免把权重的 3.55× 误当端到端。<br>**harness（能力回归）**：三值模型的失败模式常在**格式遵循 / 长链推理**而非 PPL ⇒ <b>动作</b>：量化档位变更必须跑同一套 agent 任务回归，PPL 不作为唯一门槛。<br>**风险**：① 论文自述 `Work in progress`，未同行评审；② 3.55×/2.71× 的测量条件（序列长度、batch、是否含 KV）摘要未给全；③ 496 次引用低于 500 阈值，🚫 不得当「高引经典」引用。 |
+
+首次收录: 2026-11-15（第三十七轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：10 作者、`comment` = `Work in progress`；OpenAlex `200` 496；PDF `200` 463,748 B / 8 页，`pdftotext` 核对 1.58 / {-1,0,1} / absmean / 3.55x / 2.71x / 4.1 times / 71.4 times）
+
+---
+
+## 145. Scaling Laws for Reward Model Overoptimization
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Laws for Reward Model Overoptimization |
+| 作者（前 3） | Leo Gao · John Schulman · Jacob Hilton（共 **3** 位） |
+| 年份 | **2022**（`2022-10-19`，v1 = 最新） |
+| 会议 / 期刊 | **未核验**（arXiv `comment` / `journal_ref` 均为空；OpenAlex `primary_location.source` = arXiv） |
+| 被引数 | **291**（OpenAlex `10.48550/arxiv.2210.10760`，查询日 **2026-11-15**；⚠️ 低于 500 ⇒ 按「方法论常青」入选，不按高引） |
+| arXiv / DOI | <https://arxiv.org/abs/2210.10760> ｜ DOI `10.48550/arxiv.2210.10760` |
+| 一句话贡献 | 用一个**固定的 gold RM 冒充人类**、训练 proxy RM 的**合成实验**，量化「对 proxy 优化过度会把 gold 分数拉下来」的 overoptimization：**RL 与 best-of-n 两种优化方式服从不同的函数形式**，gold 分数随 KL 距离 `d = D_KL(π‖π_init)` 先升后降；proxy RM 参数量 / 数据量对曲线的**偏移是对数线性的**；并给出「RL 的 KL 惩罚能抬高 proxy 分数，但**不改善** gold–KL 前沿」这一反直觉结论。 |
+| 与我们工作的关系 | **harness（奖励/判分不可无限优化，主目标）**：这是「评测得给上限」的定量依据 ⇒ <b>动作</b>：任何用学习型判分器（RM-as-judge）的评测，必须同时报 best-of-n 的 n 与 KL 预算，并画 gold 代理对照曲线，禁止只报 n 越大越好。<br>**zhulong（posttrain 的早停判据）**：KL 惩罚不改善真实前沿 ⇒ <b>动作</b>：RL 阶段把「proxy 分数 / 独立留出集分数 / KL」三线同图，用留出集拐点做早停，而不是用 KL 系数调参。<br>**data（合成偏好数据的边界）**：proxy RM 的数据量只带来对数级偏移 ⇒ <b>动作</b>：偏好数据扩量前先估「当前 proxy 与 gold 的差距来自数据量还是模型容量」，再决定投哪一边。<br>**风险**：① gold RM **不是人类**，合成实验的绝对值不可直接外推到真人偏好；② 291 次引用低于 500 阈值，🚫 不当高引引用；③ 会场未核验，只写 arXiv。 |
+
+首次收录: 2026-11-15（第三十七轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：3 作者、cs.LG 主分类；OpenAlex `200` 291；PDF `200` 3,186,215 B / 28 页，`pdftotext` 核对 gold-standard / proxy / best-of-n / D_KL(π ‖ π_init) / KL penalty ineffectiveness）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > ✅ **第三十六轮（2026-11-15 15:0x）转正 4 条**：Whisper `2212.04356`（#138，3,720）· Gato `2205.06175`（#139，876，TMLR 2022）· SGLang `2312.07104`（#140，812，NeurIPS 2024）· Self-Consistency `2203.11171`（#141，5,587，ICLR 2023）⇒ B 轨累计 **141**。
@@ -2472,6 +2540,9 @@
 
 
 > 只登记「已实测 arXiv 元数据」的条目；被引数待下轮 OpenAlex 批量核过再写，**本表数字一律留空 = 未查**。
+>
+> ✅ **第三十七轮（2026-11-15 18:0x）转正 4 条**：wav2vec 2.0 `2006.11477`（#142，3,140）· Multi-Query Attention `1911.02150`（#143，872）· BitNet b1.58 `2402.17764`（#144，496，按「开创范式」入选）· Reward Model Overoptimization `2210.10760`（#145，291，按「方法论常青」入选）⇒ B 轨累计 **145**。
+> **下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① 语音侧（SpeechT5 `2010.00718` / HuBERT，须先核一手元数据）；② 测试时算力线的 verifier 原始工作（CoT / Self-Consistency 已收）；③ 存储方向（HBM / GDDR 一手综述或 JEDEC 标准文档，须先核可获得性）；④ 训练稳定性（loss spike / μP 相关一手工作）。
 >
 > ✅ **第二十七轮候选去向（2026-11-14 12:0x 结清）**：㉔ 视频世界模型线 ⇒ 已转正 **#108 Genie `2402.15391`**（⚠️ **更正**：先用 `10.48550/arxiv.2402.08015` 查 OpenAlex 返回 **Walia-LLM**（阿姆哈拉语 LLaMA 微调）⇒ 该 ID **不是 Genie**；按标题检索得真 ID **`2402.15391`**，25 人作者名单逐字一致后才收录）（Genie 2 只有官方博客、无一手论文 ⇒ 不单独收，只在 #108 备注）；㉕ 存储 / 内存墙补充 ⇒ 已转正 **#109 Hitting the Memory Wall**（1995，1,783；HBM 一手论文 / JEDEC 标准本轮 `ti:` 未命中可用一手条目 ⇒ 留待下轮）；㉖ EDA 大模型位置 ⇒ **ChipNeMo 早于第二轮已收（#5）**，本轮不重复收；另补 **#110 Deep Learning（Nature 2015）/ #111 AlexNet** 两条视觉—预训练源头。
 > ⚠️ 第十轮把 **Llama 2 `2307.09288` / LLaVA-1.5 `2310.03744` / SWE-agent `2405.15793` / Tree of Thoughts `2305.10601`** 四条转正为 #36–#39；**第十一轮把 Llama 3 `2407.21783` / RT-1 `2212.06817` / Christiano 2017 `1706.03741` / Stiennon 2020 `2009.01325`** 四条转正为 #40–#43；**第十二轮把 τ-bench `2406.12045` / TD-Gammon（CACM `10.1145/203330.203343`）/ Sora 技术报告 / Kimi K2 `2507.20534`** 四条转正为 #44–#47（元数据 + 被引当场实测）。✅ **必读清单 37/37 条目已全部覆盖**，此后以「补充 / 更正」为主。
