@@ -7,13 +7,15 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-16 (r615 A 召集人: v2 队列 28/28 完成 [27 v2 落地 r588-r614 + 1 retired AsyncResetSyncRelease], A.jsonl 313→340 — 提议 CLOSED P-006, (C) 分流 28 案实证 [27 evidence-verify v2 / 1 retired 无 evidence anchor], C-A 模板 source-type 9 类; mc≥5 令执行: 081559 重算 pool=3863/A-domain mc5=161, 3p5vl 复活 [旧 r316 weak 筛子作废, analysis-Q&A pkg-var DUT/TB pass, deepread done DEBT synthesize]; 待 B/C/D 表态闭合 P-006)`
+`OPEN: 0 · CLOSED: 6 · 最近更新: 2026-11-16 (r618 A 召集人: 正式 CLOSED P-006 — B r648 + C r639 + D r744 三 shard 全 endorse (C) 分流 + 4-check-contract by deliverable-form, 4-shard 达标闭合; 28 案处置实证 [27 (C)-(A) v2 落地 r588-r614 + 1 retired AsyncResetSyncRelease 无 evidence anchor], A.jsonl 313→340, C-A 模板 source-type 9 类, k_rationale=k_check=16-19 全 GATE PASS; 存档 rounds/r618_P-006.md; 闭合后各 shard 新 off_intent 案按 (C) 分流继续, 不需重开议题, 选料维持 dedup 警觉)`
 
 ---
 
 ## OPEN 议题
 
-### P-006 v2 redo 的 check()-contract：pure-Q&A off_intent 案的「§4.2 subprocess-on-B / §4.9 anti-hardcode」根本张力 · 状态：**OPEN** · r586 (2026-11-15) · 召集人 A 开题
+_(无 OPEN 议题。P-006 已于 r618 闭合，见下方 CLOSED 区。)_
+
+### P-006 v2 redo 的 check()-contract：pure-Q&A off_intent 案的「§4.2 subprocess-on-B / §4.9 anti-hardcode」根本张力 · 状态：**CLOSED** · r618 (2026-11-16) · 召集人 A 关闭
 - **问题**：11-15 最高优先令要求把 28 条 off_intent 案「重做(v2)：还原为原始 Q&A/分析任务形态，check() 刭结构化答案/报告，满足 §4.2/4.3 牙齿」。但 v2 还原成 Q&A 形态后，**§4.1「check() 只跑 B」+ §4.2「subprocess 在 B 上执行候选脚本」+ §4.9「只 print 期望串必须 FAIL」三条同时不可满足**——这是本议题要各 shard 定夺的设计决策，定夺前不应批量产 28 条 v2（否则可能全需返工）。
 - **张力根因**（逐条）：
   1. off_intent 案的用户意图 = **one-shot Q&A answer 关于固定输入 A**（如 LibPVT「列出这个 folder 的 PVT 表」、AsyncResetSyncRelease「异步复位同步释放电路是什么样的」、FloorplanTclAudit「解释一下这个脚本」）。用户要的是**答案/结论**，不是可复用工具。
@@ -33,6 +35,7 @@
 - **截止**：开启后 2 轮内表态（未表态记「未出席」）
 - **论文参考节**：`sections/2_benchmark.tex`（task contract / judging stdlib-only）· `sections/5_analysis.tex`（Threats: task-form fidelity）· `sections/9_reproducibility.tex`（check contract）
 - **A 域初报**（r586）：28 off_intent 全量已审（r584 13 + r585 15）；7 borderline r586 复审全 keep（retrieval/process B-可执行）；推荐 (C) 分流；LibPVT 拟作 (C)-(A) 首条 v2 模板（待共识后落地）。详见 `discuss/A.md` r586。
+- **r618 召集人闭合更新**（2026-11-16）：**P-006 正式 CLOSED**——B r648 + C r639 + D r744 三 shard 全 endorse (C) 分流 + 4-check-contract by deliverable-form（①tool-on-B / ②answer-validation / ③evidence-only / ④retired），4-shard 达标闭合。28 案处置实证：27 (C)-(A) v2 落地（r588-r614，A.jsonl 313→340）+ 1 retired（AsyncResetSyncRelease，纯 concept-Q&A 无 evidence anchor）。C-A 模板 source-type 覆盖 9 类，check() 牙齿统一 = content-correctness(≥13) + evidence-verification + B judge-self-check + 3-seed，k_rationale=k_check=16-19 ≥8 全 GATE PASS。**判据一句话定稿**：「交付物是否含可独立核验的证据定位」是 Q&A/分析 off_intent 案能否造 v2 的可靠分流线。闭合后各 shard 新 off_intent 案按 (C) 分流继续，不需重开议题；选料维持 dedup 警觉。存档见 `rounds/r618_P-006.md`。详见 `discuss/A.md` r618。
 
 ### P-005 私有资产逼出的保真度降级（private-asset-forced fidelity degradation）· 状态：**CLOSED** · r519 (2026-11-14)
 - **r519 召集人闭合更新**（2026-11-14）：**P-005 正式 CLOSED**——论文 §2/§5/§9 落盘全部完成。§5 Threats 新增第八型「Asset-forced fidelity degradation」（8a-only-threat 采 C r556：intent-substitute ONLY，D WAVEVIEW 11 题实证 text-only baseline FAIL 证难度差；8b tool-mock 归 P-003 r392 mock-behavioral check mode 不重复列 threat）+ 分档报（A 档恢复版 vs B 档替身版）+ Lite set 按域区分（waveform 仅可恢复替身版 / layout mock fixture 可释放 / spice sanitized .lib copy）。§9 line 27 资产枚举扩 4 类（waveforms (FSDB) + eye-diagram plots + WaveView project environments / foundry model libraries .lib/.inc + sel_cond / project-private PDK paths /proj / live-license tool bridges Aether/Virtuoso/Calibre/WaveView）+ 降级披露句 + `asset_fidelity` 三值（original/synth_deck/text_sub）。§9 line 30 mitigations 增 (iv) 沙盒重生真图恢复路径（matplotlib / WaveView sx_dump_png，恢复 image-required 形态，no-VQA vs with-VQA 多模态通过率差可度量）。§2 Lite set releaseability 按域区分披露句。pdflatex 两遍 exit=0 / 0 undefined / 14p / main.pdf 重生成。**B r542 问责成立并本轮执行**：P-005 自 r515 收敛至 r542 跨 27 轮 0 落盘 stalled，根因 A 召集人未执行落盘（非讨论条件未满足），本轮 A 执行闭合。**asset_fidelity jsonl 侧回标是各 shard 渐进任务非 P-005 前置**（论文侧机制已就位）：A 280 条无降级可批量 original / B 76 / C 149 / D 11 分批回标（B r542 已承诺 B 本轮起做）。**r518 verilog-dominant gem 附带方法论修正**（P-002 CLOSED 后实证）：r482-r517「A 质量枯竭」是 strict-A-STRONG 过滤口径的属性非池属性，broad-filter（含 verilog/synopsys）仍挖出真 gem Lpddr5CovTermitFix-001（A.jsonl 279→280）；A 线选料默认切换 broad-filter。详见 `discuss/A.md` r519。
@@ -107,7 +110,7 @@
 | P-003 | ✅ r390+r392 | ⏳ 未出席 | ✅ r399 | ✅ r522+r518 |
 | P-004 | ✅ r434+r438+r440 | ✅ r448+r461 | ✅ r451+r459+r467+r471 | ✅ r562+r566 |
 | P-005 | ✅ r511+r515+r519 | ✅ r538+r542 | ✅ r556 | ✅ r650 |
-| P-006 | ✅ r586 (开题) + r588 (落地模板) | ⏳ | ⏳ | ⏳ |
+| P-006 | ✅ r586+r588+r615+r618(闭合) | ✅ r648 | ✅ r639 | ✅ r744 |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
