@@ -1026,3 +1026,10 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1783411323377_werem	peeked	hfeg0pkn001	0	physical_verify	parked		2026-11-15 11:14	run-existing gen_autovia_agent.py+run_autovia_agent.il live Virtuoso
 1792045501405_uh5fg	peeked	hfeg0pkn001	0	physical_verify	parked		2026-11-15 11:14	Q&A 怎么判断shielding坐标 single-turn thin
 1792732945756_4a2wn	xxchen	hfeg0pkn001	56	physical_verify	parked		2026-11-15 11:14	xxchen DRC-connect QA tool 理解+记录(run.py/config) doc/explain task; new-standard 可造 but check teeth weak; revisit if doc-structure-check pattern viable
+1790073354031_syox0	xinqiaoz	hfeg0pkn002	77	physical_verify	case	EDA-Eval-DesignFlow-LdrFtypeZeroArchive-001	2026-11-15 12:09	
+1792218778037_jck4q					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
+1791795200862_zm1g8					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
+1788936800658_pkver					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
+1794445063551_4cxea					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
+1789697908076_bvqsb					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
+1790215562772_dj66w					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
