@@ -1,27 +1,9 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 21/21done(10k-210k,**PEAK 200k=60.12%**·210k=58.50%)·**220k lm_eval RUNNING✅(server PID3659759 -t4 nice19 CPU-only,eval PID4107970,~75%(1949/2599 hellaswag ll),ETA~20-30min hellaswag→then obqa/piqa/sciq/wino→results.json→auto report refresh)**·**230k autoqueue RUNNING✅(PID2278602,waiting for 220k results)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·训练健康iter≈220870/700k(31.6%) GPU 8×100%/75GB✅ step~7015ms(✅<7.4s)**）
-> 2026-11-16 06:32 #2286: **例行监控·训练健康iter=220870/700k(31.6%) GPU 8×100%/75GB✅ step=7015ms(✅<7.4s) loss=2.008**·**动作**：①git pull→already up to date✅ ②训练健康(iter=220870@06:31,step=7015ms✅,GPU 8×100%/~75GB,loss=2.008,grad_norm=0.106,0 nan/0 skip) ③**220k lm_eval ACTIVELY RUNNING✅**(llama-server PID3659759 -t4 nice19 CPU-only port8194, lm_eval PID4107970, hellaswag at 75%(1949/2599), running ~62min, ETA ~20-30min for hellaswag+4 more tasks→results.json→auto report refresh via autoqueue) ④230k autoqueue RUNNING✅(PID2278602,polling 5min for 220k results,serial guard,last check 06:28) ⑤CPU eval no GPU impact(step=7.0s stable✅) ⑥next save-interval=222000(~130 iters~15min away), next 10k eval=230k(queued,ckpt ETA~18h) ⑦research daily 11-16 checked,no urgent pretrain items ⑧📦TASK19KB✅/MEMORY~23KB✅·**四层评测 · L1=60.12%@200k(21done,220k eval 75% in progress,230k queued) L2=🟢@200k 6/6done(plateau) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+commit·未完成指令：有(220k eval in progress)⇒WAITING:1。
-> 📦 #2285（11-16 06:14, 例行监控·训练健康iter220710 step6960ms✅·220k lm_eval ~65% in progress）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2284（11-16 05:54, 例行监控·训练健康iter220550 step7000ms✅·220k lm_eval ~42% in progress）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2283（11-16 05:08, 例行监控·训练健康iter220160 step7081ms✅·220k GGUF conversion in progress）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2282（11-16 04:50, 例行监控·训练健康iter219990 step~7.0s✅·220k ckpt imminent）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2281（11-16 04:30, 例行监控·训练健康iter219820 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2280（11-16 03:55, 例行监控·训练健康iter219520 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2279（11-16 03:33, 例行监控·训练健康iter219350 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2278（11-16 03:14, 例行监控·训练健康iter219180 step~7.02s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2277（11-16 02:53, 例行监控·训练健康iter219010 step~7.06s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2276（11-16 02:33, 例行监控·训练健康iter218830 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2275（11-16 02:11, 例行监控·训练健康iter218650 step~7.1s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2274（11-16 01:53, 例行监控·训练健康iter218460 step~6.9s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2273（11-16 01:32, 例行监控·训练健康iter218280 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2272（11-16 01:13, 例行监控+230k autoqueue创建启动·训练健康iter218110 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2271（11-16 00:49, 例行监控·训练健康iter217940 step~7.0s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2270（11-16 00:29, 例行监控·训练健康iter217770 step~7.02s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2269（11-15 23:53, 例行监控·训练健康iter217460 step~7.06s✅）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2268（11-15 23:33, 例行监控·训练健康iter217260 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2267（11-15 23:13, 例行监控·训练健康iter217130 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2266（11-15 23:00, 例行监控·训练健康iter216970 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2265（11-15 22:37, 例行监控·训练健康iter216810 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
+WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 22/22done(10k-220k,**PEAK 200k=60.12%**·210k=58.50%·**220k=57.75% COMPLETE✅**)·**230k autoqueue RUNNING✅(PID2278602,polling for ckpt,ETA~17h)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·训练健康iter≈221050/700k(31.6%) GPU 8×100%/75GB✅ step~7021ms(✅<7.4s)**）
+> 2026-11-16 06:53 #2287: **220k eval COMPLETE✅ + 报告刷新✅ + llama-server清理✅**·训练健康iter=221050/700k(31.6%) GPU 8×100%/75GB✅ step=7021ms(✅<7.4s) loss=2.020·**动作**：①git pull→already up to date✅ ②训练健康(iter=221050@06:52,step=7021ms✅,loss=2.020,grad_norm=0.099,0 nan/0 skip) ③**220k eval COMPLETE✅**(results.json@06:47:50,8集limit=100,0-shot,harness Avg=57.75%: ARC-C=33% ARC-E=60% BoolQ=59% HellaSwag=55% OBQA=37% PIQA=80% SciQ=83% Wino=55%,elapsed=4613s) ④**报告刷新✅**(gen_llamacpp_scaling_report.py→report_pretrain_llamacpp_scaling_zh.html 27492B,22/30 ckpt) ⑤**llama-server killed✅**(PID3659759 port8194,eval done→freed CPU) ⑥230k autoqueue RUNNING✅(PID2278602,found 220k results@06:48,polling for iter_0230000,train iter=221050,ETA~17h) ⑦L1趋势:200k=60.12%(PEAK)→210k=58.50%→220k=57.75%(plateau,limit=100 ±5%stderr内) ⑧📦TASK19KB✅/MEMORY~23KB✅·**四层评测 · L1=57.75%@220k(22done,230k queued autoqueue) L2=🟢@200k 6/6done(plateau) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：220k eval完成+报告刷新+server清理+commit·未完成指令：有(230k autoqueue running)⇒WAITING:1。
+> 📦 #2286（11-16 06:32, 例行监控·训练健康iter220870 step7015ms✅·220k lm_eval ~75% in progress）→ daily-memories/2026-11-16.md；需要时再读。
+> 📦 #2285–#2270（11-16 06:14→00:29, ~14轮例行监控·训练step<7.4s✅·220k eval progress 42%→75%·230k autoqueue created）→ daily-memories/2026-11-16.md；需要时再读。
+> 📦 #2269–#2264（11-15 23:53→22:17, ~5轮例行监控·训练step<7.4s✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2264（11-15 22:17, 例行监控·训练健康iter216650 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2263（11-15 21:56, 例行监控·训练健康iter216480 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2262（11-15 21:36, 例行监控·训练健康iter216300 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
