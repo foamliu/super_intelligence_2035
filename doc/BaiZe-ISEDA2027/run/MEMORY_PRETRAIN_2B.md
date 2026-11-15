@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 21/21done(10k-210k,**PEAK 200k=60.12%**·210k=58.50%)·220k autoqueue RUNNING✅(PID203680 on .29,waiting for iter_0220000 ckpt,train@~215.6k ETA~8.6h)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·训练健康iter≈215.62k/700k(30.8%) GPU 8×~100%/75GB✅ step~7.1s(✅<7.4s)**）
-> 2026-11-15 20:15 #2258: **例行监控·训练健康iter215620/700k(30.8%) GPU 8×~100%/75GB✅ step 7125ms(✅<7.4s)**·**动作**：①git pull→already up to date✅ ②训练健康(.29 PID146283 alive,iter215620/700k,step7125ms<7400ms✅,loss2.005,0NaN/0skip,GPU 8×100%/~75GB) ③latest ckpt=iter_0214000,save-interval=2000→next iter_0216000 ETA~45min ④220k autoqueue RUNNING✅(PID203680,train@215620→220000 ~4380步×~7.1s≈8.7h ETA~Nov16 05:00) ⑤ops inbox RUN_ID276=TARGET:12(非pretrain)忽略 ⑥research daily 11-15=paper reading建议(Mamba等参对照/tokens_to_target_ppl/精度档位),研究级参考不立即actionable ⑦📦TASK19KB✅/MEMORY~19.5KB✅·**四层评测 · L1=60.12%@200k(21done,220k queue) L2=🟢@200k 6/6done(plateau) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+commit·未完成指令：有(220k autoqueue waiting)⇒WAITING:1。
+WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 21/21done(10k-210k,**PEAK 200k=60.12%**·210k=58.50%)·220k autoqueue RUNNING✅(PID203680 on .29,waiting for iter_0220000 ckpt,train@~215.8k ETA~8.3h)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·训练健康iter≈215.79k/700k(30.8%) GPU 8×~100%/75GB✅ step~7.2s(✅<7.4s)**）
+> 2026-11-15 20:35 #2259: **例行监控·训练健康iter215790/700k(30.8%) GPU 8×~100%/75GB✅ step 7213.8ms(✅<7.4s)**·**动作**：①git pull→already up to date✅ ②训练健康(.29 PID146283 alive,iter215790/700k,step7213.8ms<7400ms✅,loss2.019,0NaN/0skip,GPU 8×100%/~75GB)⚠️iter215770-215780有瞬时spike(7436/7772ms,215790已恢复7213ms=transient) ③latest ckpt=iter_0214000(saved 17:03),save-interval=2000→next iter_0216000 ETA~25min ④220k autoqueue RUNNING✅(PID203680,0%CPU=just waiting,train@215790→220000 ~4210步×~7.1s≈8.3h ETA~Nov16 05:00) ⑤ops inbox RUN_ID276=TARGET:12(非pretrain)忽略 ⑥research daily 11-15=paper reading建议(Mamba/BitNet/MQA等),研究级参考不立即actionable ⑦📦TASK19KB✅/MEMORY~19.4KB✅·**四层评测 · L1=60.12%@200k(21done,220k queue) L2=🟢@200k 6/6done(plateau) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+commit·未完成指令：有(220k autoqueue waiting)⇒WAITING:1。
+> 📦 #2258（11-15 20:15, 例行监控·训练健康iter215620 step7125ms✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2257（11-15 19:50, 例行监控+MMLU@200k COMPLETE·训练健康iter215410）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2256（11-15 19:31, 例行监控·训练健康iter215210·MMLU@200k RUNNING 98%）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2255（11-15 19:08, 例行监控·训练健康iter215040·MMLU@200k仍运行2h30min）→ daily-memories/2026-11-15.md；需要时再读。
@@ -25,11 +26,7 @@ WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-tra
 > 📦 #2234（11-15 10:15, 210k eval确认+220k autoqueue LAUNCH·训练健康iter210500）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2232（11-15 08:00, 监控巡检·训练健康iter209330·210k autoqueue RUNNING）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2231（11-15 07:40, 监控巡检·训练健康iter209150）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2229（11-15 07:00, 监控巡检·训练健康iter208820）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2228（11-15 06:42, 监控巡检·训练健康iter208660 step6994ms✅·210k autoqueue RUNNING ETA~2.6h）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2227（11-15 06:25, 监控巡检·训练健康iter208490 step6994ms✅·210k autoqueue RUNNING ETA~2.9h）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2226（11-15 06:05, 监控巡检·训练健康iter208310 step6950ms✅·210k autoqueue RUNNING ETA~3.3h）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2225（11-15 05:40, 监控巡检·训练健康iter208150 step6929ms✅·210k autoqueue RUNNING ETA~3.6h）→ daily-memories/2026-11-15.md；需要时再读。
+> 📦 #2225–#2229（11-15 05:40→07:00, 5轮监控巡检·训练健康iter208150-208820 step<7.0s✅·210k autoqueue RUNNING）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2210–#2224（11-15 00:13→05:20, 15轮监控巡检·训练step<7.4s✅·210k autoqueue RUNNING ETA~4-9h）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2209（11-14 23:54, 监控巡检·训练健康iter205180 step~7.0s✅·210k autoqueue RUNNING ETA~9.4h）→ daily-memories/2026-11-14.md；需要时再读。
 > 📦 #2208（11-14 23:36, 监控巡检·训练健康iter205030 step~7.0s✅·210k autoqueue RUNNING ETA~9.7h）→ daily-memories/2026-11-14.md；需要时再读。
