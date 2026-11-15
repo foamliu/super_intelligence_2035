@@ -848,7 +848,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1789696486678_lg5f2	xinqiaoz	hfeg0plg56	114	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
 1789717386998_vnknn	xinqiaoz	hfeg0plg56	113	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
 1792635668782_8hiwm	xinqiaoz	hfeg0plg56	110	physical_verify	parked		2026-11-14 13:21	xinqiaoz DRC/PDK Q&A
-1794531720896_vpabb	xxchen	hfeg0plg53	184	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 modify-existing
+1794531720896_vpabb	xxchen	hfeg0plg53	184	physical_verify	case	CornerSpacePatternGen-001	2026-11-15 17:48	r610 revive: B类误杀 modify-existing 现合法; xxchen produce-task corner-to-corner bad pattern 2 fix
 1794375180864_lwzz2	xxchen	hfeg0plg53	161	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 label-modify
 1794542962301_1q921	xxchen	hfeg0plg53	154	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 editor-fault
 1792198270473_rgxd6	xxchen	hfeg0plg53	141	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 drc-modify
