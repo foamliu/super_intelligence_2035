@@ -12026,3 +12026,23 @@ python3 bpt_attribution_p0_dev_compare.py \
 
 **纪律**：🚫 run_commands 保持禁用（防泄题）；🚫 不改 eda_fastmcp 代码（只复用入口）；✅ 旧报告/数字全保留（PENDING-REMOTEST banner）；✅ 起跑即 push。0 infra 误操作，未碰 GPU/运行中 R2 eval/隧道/别线。
 
+## §R536-zhulong-baseline-5run-口径复核（wake536, 2026-11-15 09:3x）— zhulong 基线链口径全量复核 PASS + R2 5-run 临近完成
+
+**起因**：wake535 起跑了 zhulong 基线 5-run 链（PID4014235），但未对链的运行时口径做端到端实测复核。用户令「照抄 zhulong 的调用方式」要求确保链 GATE 释放后产出的 run2-5 确为 zhulong 口径。本轮经隧道 ssh -p3333 逐项实测。
+
+**口径六项实测（全 PASS）**：
+1. **CLI_AGENT 默认**：36.15 `.env` L207 `CLI_AGENT=${CLI_AGENT:-zhulong}` → 默认 zhulong fork 3.0.29（与 run1 一致）。run_cline_script.sh L23 `export CLI_AGENT=${CLI_AGENT:-cline}` 但 L16 加载 .env 覆盖之 → zhulong ✅
+2. **Prompt 模板**：`.env` L279 `EDA_PROMPT_TEMPLATE_PYAETHER=eval_sys_prompt_template_old.md` ✅
+3. **PreToolUse hook**：`scripts/cline_hooks/PreToolUse`（anti-leak v2, mtime 11-14 12:09）。白名单=MCP 工具(mcp__/pyaether_mcp_server__ 前缀)+submit_and_exit+spawn_agent+read/list/write(限 workspace 内)；run_commands/bash/exec_command 被 `_safe_override` 改写为 echo 通知（非 cancel，避免 abort 整 run）✅
+4. **反向隧道**：36.15 `curl http://127.0.0.1:18096/v1/models` → `{"id":"minicpm5-2b-sft-v39-final","root":".../global_step_105"}` ✅ 模型端点可达
+5. **`-b` flag 合法**：run_cline_script.sh L105-106 `-b|--benchmark) BENCHMARK_OVERRIDE="$2"` + L149-155 `resolve_dataset` 解析 → 链的 `run_cline_script.sh -p 8 -n -b EDA-Eval-PyAether-v20260311_fixed.jsonl` 合法 ✅
+6. **Benchmark + cline 版本**：`EDA-Eval-PyAether-v20260311_fixed.jsonl`=158 行 ✅ / zhulong 3.0.29 + cline 3.0.51 ✅
+
+**结论**：链 GATE 释放后将正确以 zhulong 口径跑 run2-5（run1=18.99% 已存在）。口径与 run1 完全一致。
+
+**R2 5-run eval 状态（.17 口径）**：run1=0.63%(1/158) / run2=1.27%(2/158) / run3=0.0% / run4=0.0% → **4-run mean≈0.475%，decisively 负**（vs step105 baseline 3.04%±0.83%，同 .17 口径可比）。run5 code-gen RUNNING（03:33:34 起，codegen.log 8.5MB/235534 行活跃，GPU7 89%util，ETA~10:00-10:30）。链 run5 后自动调用 `baize_posttrain_5run_analysis.py` → `5run_rl_analysis_R2.json`（5-run mean±std + McNemar + bootstrap vs step105）。
+
+**口径差异提醒（重要）**：R2 eval 跑 .17 本地（baize_posttrain_5run_eval.sh, EDA_BASE=/home/app.e0031982/code/eda_fastmcp, 无 RAG/MCP/PreToolUse hook）；step105 baseline 亦 .17 口径 → **R2 vs step105 可比**。但 zhulong 基线=36.15 口径（有 RAG+MCP+hook, 18.99%）→ **R2 vs zhulong 基线不可比**，R2 须另在 zhulong 口径重测（未来项，记入下一步④）。
+
+**纪律**：0 infra 误操作，未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。MEMORY 33.25KB（超 32KB 软限，下次唤醒先归档）。
+
