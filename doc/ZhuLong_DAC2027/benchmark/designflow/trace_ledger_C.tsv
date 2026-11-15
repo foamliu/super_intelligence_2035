@@ -550,7 +550,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793858875143_wzws0	adaml	hfeg0pkn002	5542	physical_verify	parked		2026-11-10 01:48	r298 REJECT: adaml skill-builder multi-task session (990 msgs calibre-lvs skill iterate blcnand3GFx1/bufGSx64/bufGFLx24), mc=2-4 below threshold (ledger mc=5542 was keywords-col misread), gold=evolving skill doc already embedded in prompt skill_instructions block, AVOID_USER confirmed
 1794021094674_ds1vt	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-handoff
 1794017030283_ob5f7	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-handoff
-1794192534501_fju0e	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-handoff
+1794192534501_fju0e	xinqiaoz	hfeg0pkn002			case	EDA-Eval-DesignFlow-DrcDensityParseJudge-001	2026-11-15 21:01	r298: idle-handoff
 1793000520129_g37na	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-drcqa
 1792480534403_xgfip	xinqiaoz	hfeg0pkn002			parked		2026-11-10 01:39	r298: failed-handoff
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked		2026-11-10 01:39	r298: idle-empty
