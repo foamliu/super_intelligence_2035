@@ -593,7 +593,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1792497102583_70jmd.messages.json	johnl	hfeg0pkn001	127	spice_sim	parked		2026-11-09 11:42	U0 find .lib files file-op
 1793777097935_fgz7v.messages.json	e0046686	hfeg0pkn001	106	characterization	parked		2026-11-09 11:42	U0 @TASKS/TASK rev_cali req-analysis L1 assets perm-denied no in-trace deliverable
 1793672369557_fx2mf.messages.json	johnl	hfeg0pkn001	104	spice_sim	parked		2026-11-09 11:42	U0 explain matrix-run files diagnostic
-1792220867806_o9dcl.messages.json	e0014566	hfeg0pkn001	101	spice_sim	parked		2026-11-09 11:42	U0 ask-eda nanospice precision consulting
+1792220867806_o9dcl.messages.json	e0014566	hfeg0pkn001	101	spice_sim	case	EDA-Eval-DesignFlow-NanoSpicePrecisionGuide-001	2026-11-15 19:58	r641 reaudit-revival: nanospice precision consulting Q&A
 1792223380722_d4yrg.messages.json	e0014566	hfeg0pkn005	84	spice_sim	parked		2026-11-09 11:42	dup o9dcl consulting
 1793603977814_gobna.messages.json	steveny	hfeg0pkn005	107	spice_sim	parked		2026-11-09 11:42	U0 introduce finesim consulting
 1792138312431_6i68m.messages.json	e0042624	hfeg0pkn005	64	spice_sim	parked		2026-11-09 11:42	U0 skill_instructions paste no explicit user produce-turn
