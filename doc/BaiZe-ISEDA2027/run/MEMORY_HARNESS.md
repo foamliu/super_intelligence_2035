@@ -2,14 +2,14 @@
 
 WAITING: 0
 
-> 🆕 **R2529 · 2026-11-15 17:30 — cc rerun 23/82(fix-ocaml-gc verifier running·0ConnRefused✅) + opencode 19/38(9P/6F/4NA·adaptive n=10·0 429✅) + 自检全绿**
-> - **cc rerun**: PID 1510536 harbor alive(etimes 49151s~13.6h)·**23 task-level result.json**=4PASS/16FAIL/3NA·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 429✅·4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·16FAIL(reward=0.0)·3NA=code-from-image/feal-differential/feal-linear(3600s timeout)·fix-ocaml-gc verifier running(40min)·58 remaining·ETA~Nov17 19:00
-> - **opencode rerun**: PID 517594(rerun script 4671s)+PID 773163(harbor part2 998s)·`--n-concurrent auto --chunk-size 12`·**19 result.json**=19/38(9PASS/6FAIL/4NA)·part1(12tasks:4P/4F/4NA)+part2(7tasks:5P/2F/0NA so far)·9PASS=break-filter-js/build-pmars/cancel-async/chess-best-move/financial-doc/fix-code-vuln/fix-git/git-leak-recovery/git-multibranch·**0 429**✅·19 remaining·ETA~Nov15 20:00
+> 🆕 **R2530 · 2026-11-15 17:40 — cc rerun 23/82(4P/16F/3NA·0ConnRefused✅) + opencode 20/38(9P/6F/5NA·adaptive n=10·0 429✅) + 4适配器RuntimeError修复(verifier-always-run) + 自检全绿**
+> - **cc rerun**: PID 1510536 harbor alive(~13.7h)·**23 task-level**=4PASS/16FAIL/3NA·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 real 429✅(grep hits=timestamp false positives `.224295Z`)·4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·16FAIL(reward=0.0=ability)·3NA=code-from-image/feal-differential/feal-linear(3600s timeout)·59 remaining·ETA~Nov17 20:00
+> - **opencode rerun**: PID 517594+773163 harbor part2 alive·`--n-concurrent auto --chunk-size 12`·**20 task-level**=9PASS/6FAIL/5NA·9PASS=break-filter-js/build-pmars/cancel-async/chess-best-move/financial-doc/fix-code-vuln/fix-git/git-leak-recovery/git-multibranch·5NA=caffe-cifar-10(timeout)+cobol-modernization(exit1)+distribution-search(InvalidHTTPResponse=infra)+dna-assembly(InvalidHTTPResponse=infra)+filter-js-from-html(verifier timeout 900s)·18 remaining·ETA~Nov15 21:00
+> - **🔴 NEW FIX R2530 — 4适配器RuntimeError修复**: opencode.py/pi.py/hermes.py/deepseek_harness.py 的 `run()` 方法都有 `if return_code!=0: raise RuntimeError` ——与 claude_code.py R2498 同一bug：非零退出码阻止verifier运行→reward=NA而非真实0.0/1.0。已全部移除（grep `raise RuntimeError.*exited with code`=0✅）·py_compile 5/5 OK✅·deepseek install()里的RuntimeError保留（那是真正的SDK安装失败）·**影响**：当前运行的harbor进程模块已缓存不会生效；下一chunk的new harbor process会import修复后的模块
 > - **adaptive_concurrency**: status mode=off current=10/10 累计429=0 ✅(Sunday off-peak cap=10)
-> - **自检**: load 35/224 ✅(pretrain dominant)·mem 1033GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·reports clean(porcelain=0)✅·/tmp 40% ✅
-> - **ETA**: cc 58remaining/~1h≈58h→~Nov17 19:00·opencode 19remaining/n=10≈2h→~Nov15 20:00
-> - **cc ConnectionRefused fix**: claude_code.py no_proxy pin+overlay-network-host.yml·0ConnRefused across 23+ trials✅(vs旧0/89=100%infra)
-> - **📦 体积**: TASK=25.6KB / MEMORY≈24.4KB（✅≤32KB）
+> - **自检**: load 34/224 ✅(pretrain dominant)·mem 1031GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·reports clean(porcelain=0)✅·/tmp 40% ✅
+> - **cc ConnectionRefused fix**: claude_code.py no_proxy pin+overlay-network-host.yml·0ConnRefused across 23+ trials✅(vs旧0/89=100%infra)·cc修复判据已met(模型真正运行·4题PASS=真能力)
+> - **📦 体积**: TASK=25.6KB / MEMORY≈24.5KB（✅≤32KB）
 
 > 📦 R2528 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/3NA·fix-ocaml-gc running·0ConnRefused✅)+opencode 21/38(9P/6F/6NA·adaptive n=10·0 429✅)+自检全绿。需要时再读。
 
@@ -33,7 +33,7 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2529 cc rerun 23/82(fix-ocaml-gc verifier running·0ConnRefused✅) + opencode 19/38(9P/6F/4NA·adaptive n=10·0 429✅)·hermes COMPLETE 38/89
+PHASE:        R2530 cc rerun 23/82(4P/16F/3NA·0ConnRefused✅) + opencode 20/38(9P/6F/5NA·adaptive n=10·0 429✅) + 4适配器RuntimeError修复·hermes COMPLETE 38/89
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2528(cc rerun 6→23/82+adaptive落码+验收4/4✅+TASK归档+opencode rerun LAUNCHED+adaptive real-world validated 8→9→10+opencode 19/38)
 当前动作:     R2529: cc rerun PID1510536 harbor alive(13.6h)·23 task-level(4P/16F/3NA)+fix-ocaml-gc verifier running·0ConnRefused✅·opencode rerun PID773163 harbor part2(17min)·19done(9P/6F/4NA)+running·adaptive n=10·0 429✅·load35/224✅·CPU<1%✅·0runaway✅·reports clean✅·W:0
 下一步:       ①cc 82题完成(ETA~Nov17 19:00)→rerun 3 NA timeout题→rerun 7×502→REGEN报告(cc行从0/89换真实数字) ②opencode 38tasks完成(ETA~Nov15 20:00)→merge→REGEN报告 ③pi46→deepseek48逐路串行(用adaptive_concurrency auto·chunk=12) ④hermes qemu 2题=BLOCKED(Py3.9<3.11) ⑤hermes 2 mteb=infra BLOCKED ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
@@ -48,6 +48,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [17:40] R2530 **cc rerun monitoring + opencode rerun monitoring + 4适配器RuntimeError修复**: 自检(gateway200✅·load34/224=pretrain no harness runaway✅·mem1031GB avail✅·harness CPU max<1%✅·0 runaway✅·reports porcelain=0✅·/tmp40%✅)·git pull(up to date)·**cc rerun 0348**: PID1510536 harbor alive(~13.7h)·**23 task-level**=4PASS(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git)/16FAIL(reward=0.0=ability)/3NA(code-from-image+feal-diff+feal-linear all 3600s timeout)·**0ConnRefused HARD VERIFIED**(grep=0)·**0 real 429**(6 grep hits全false positive: timestamps `.224295Z`/`.429209Z`+Fibonacci `267914296`+test output line numbers)·59 remaining·ETA~Nov17 20:00·**cc修复判据已met**: 模型真正运行(tokens>0·4题PASS=真能力)·vs旧0/89=100%infra(88ConnRefused)→修复后0ConnRefused✅·**opencode rerun**: PID517594+773163·`--n-concurrent auto --chunk-size 12`·**20 task-level**=9PASS/6FAIL/5NA·5NA分析: caffe-cifar-10(3600s timeout)+cobol-modernization(exit1·模型跑了但读binary file失败=ability)+distribution-search(InvalidHTTPResponse gw_proxy=infra)+dna-assembly(InvalidHTTPResponse gw_proxy=infra)+filter-js-from-html(verifier 900s timeout)·18 remaining·**🔴 NEW FIX**: 发现opencode.py/pi.py/hermes.py/deepseek_harness.py 的`run()`方法都有`if return_code!=0: raise RuntimeError`——与cc R2498同一bug(非零退出码阻止verifier→reward=NA)·已全部移除·py_compile 5/5 OK✅·grep `raise RuntimeError.*exited with code`=0✅·deepseek install()里的RuntimeError保留(真正SDK安装失败)·**影响**: 当前harbor进程模块已缓存不生效；下一chunk new harbor process会import修复后的模块·adaptive_concurrency status=off current=10/10 累计429=0✅·W:0
 
 > [10:5x] R2512 **adaptive_concurrency 验收 + cc rerun monitoring**: 自检(gateway200✅·load30/224=pretrain only no harness runaway✅·mem OK·0 harness proc>8000% CPU✅·reports/ 0 json/log/txt✅)·**adaptive_concurrency 验收(11-15令)**: `status`=off current=8/10 cap=10✅·`--now` 4时刻注入全通过(Sat03:00 off起步8→Mon10:00 work clamp 8→4→record 429+5min cooldown no change→25min hold@cap=4因work cap限制✅)·`--dry-run` support confirmed in rerun script✅·**cc rerun 0348**: PID1510521 alive(etimes25554s~7.1h)·15 result.json(14 task-level:2PASS(custom-memory-heap-crash+dna-assembly)/11FAIL(reward=0.0)/1NA(code-from-image timeout))·**0ConnRefused HARD VERIFIED**(grep=0 files)·**0 real 429**(2 grep hits=false positive:build-pmars timestamp `.429209Z`+circuit-fibsqrt Fibonacci `267914296`)·rate=2.11/h·67 remaining·ETA~31.7h→Nov16~16:00·**cc修复确认**: 模型真正运行(tokens>0·iterations>0·2题PASS=真能力)·vs旧0/89=100%infra(88ConnRefused)→修复后ConnRefused=0✅判据met·research日报2026-11-15 harness建议(SatisFix:不把agent放法官位·自评→报告选择+理由·同预算对照pass@1)noted=future eval design参考·非本轮actionable·W:1
 

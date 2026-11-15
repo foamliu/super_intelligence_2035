@@ -225,9 +225,10 @@ except Exception:
             "exit_code": result.return_code,
         }
 
-        if result.return_code != 0:
-            raise RuntimeError(
-                f"DeepSeek-Harness exited with code {result.return_code}: "
-                f"stdout={(result.stdout or '')[:800]} "
-                f"stderr={(result.stderr or '')[:300]}"
-            )
+        # FIX (2026-11-15, R2530): Same fix as claude_code.py (R2498) and
+        # opencode.py (R2530) — do NOT raise RuntimeError on non-zero exit in
+        # the run() method.  The verifier is the ground truth and should ALWAYS
+        # run so the reward reflects the actual workspace state, not the CLI
+        # exit code.  The exit code is preserved in context.metadata (above)
+        # for diagnosis.  (Note: the RuntimeError in install() at line ~101 is
+        # intentionally KEPT — that one catches genuine SDK install failure.)

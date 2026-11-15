@@ -147,8 +147,11 @@ class OpenCodeTB(TBBaseAgent):
             "exit_code": result.return_code,
         }
 
-        if result.return_code != 0:
-            raise RuntimeError(
-                f"OpenCode exited with code {result.return_code}: "
-                f"{(result.stderr or '')[:500]}"
-            )
+        # FIX (2026-11-15, R2530): Previously any non-zero exit code raised
+        # RuntimeError, which prevented the verifier from running — the same
+        # bug fixed in claude_code.py (R2498).  OpenCode exits with code 1 for
+        # max-turns, API errors (InvalidHTTPResponse), and other non-fatal
+        # conditions; 3/20 opencode TB-2.1 rerun tasks got NA because of this.
+        # The verifier is the ground truth: it should ALWAYS run so the reward
+        # reflects the actual workspace state, not the CLI exit code.  The exit
+        # code is preserved in context.metadata (above) for diagnosis.

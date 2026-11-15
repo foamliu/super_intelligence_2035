@@ -171,8 +171,8 @@ class PiTB(TBBaseAgent):
             "exit_code": result.return_code,
         }
 
-        if result.return_code != 0:
-            raise RuntimeError(
-                f"Pi exited with code {result.return_code}: "
-                f"{(result.stderr or '')[:500]}"
-            )
+        # FIX (2026-11-15, R2530): Same fix as claude_code.py (R2498) and
+        # opencode.py (R2530) — do NOT raise RuntimeError on non-zero exit.
+        # The verifier is the ground truth and should ALWAYS run so the reward
+        # reflects the actual workspace state, not the CLI exit code.  The exit
+        # code is preserved in context.metadata (above) for diagnosis.
