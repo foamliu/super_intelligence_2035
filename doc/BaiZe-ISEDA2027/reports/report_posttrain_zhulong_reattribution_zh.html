@@ -90,7 +90,7 @@ code{background:#eef;padding:1px 5px;border-radius:3px;font-size:0.9em}
 <tr><td>run1</td><td><b>18.99%</b></td><td>36</td><td>121</td><td>✅ 完成</td><td>attribution_3615_run1（36.15 14T20:08 落盘）</td></tr>
 <tr><td>run2</td><td><b>0.0%</b></td><td>1</td><td>156</td><td>✅ 完成</td><td><b>degenerate non-generation</b>：cline session 成功 139 但仅 1/158 产出有效代码；batch_cline.log 无连接/500/超时错误，端点全程健康 → <b>非 infra，系 2B 模型 agent 回路退化</b></td></tr>
 <tr><td>run3</td><td><b>0.0%</b></td><td colspan="2">pass_rate=0.0（metrics 仅含 pass_rate，无 gen_success/gen_fail 明细）</td><td>✅ 完成</td><td>batch 2026_1115_144001，36.15 流水线 rc=0 退出（18:34:34 落盘）；output_evaluation/20261115_1834 → attribution_3615_run3/。<b>又一次 degenerate collapse</b>（同 run2）→ 2B 模型 run-to-run 高方差再证</td></tr>
-<tr><td>run4</td><td>—</td><td colspan="2">codegen 70/158（~1.5h，-p 8 并发；stats/success=63/failure=7/timeout=0，活跃写入 @20:03）</td><td>⏳ RUNNING</td><td>batch 2026_1115_183438，run_cline_script PID1910477 活(etimes≈5563s≈1.5h)；端点 :8096 / 隧道 :3333 实测 PASS；<b>run4 codegen 健康（success=63/70≈90%，非 run2/run3 degenerate collapse）</b>；codegen ETA ~21:40 → run_eval → run5 串行 ETA ~01:00+ 全 5-run 齐</td></tr>
+<tr><td>run4</td><td>—</td><td colspan="2">codegen 101/158（~1.9h，-p 8 并发；code/ 目录 101 子目录活跃写入 @20:28）</td><td>⏳ RUNNING</td><td>batch 2026_1115_183438，run_cline_script PID1910477/1910486 活(etimes≈6881s≈1.9h)；端点 :8096 / 隧道 :3333 实测 PASS；<b>run4 codegen 健康（~64% 完成，非 run2/run3 degenerate collapse）</b>；codegen ETA ~21:50 → run_eval → run5 串行 ETA ~01:30+ 全 5-run 齐</td></tr>
 <tr><td>run5</td><td>—</td><td colspan="2">—</td><td>⬜ 待跑</td><td>串行，ETA ~23:40 全 5-run 齐</td></tr></table>
 <p><b>关键发现（run2 collapse）</b>：run1→run2 = 36→1 有效代码生成的<b>极端 swing</b>，证实 2B 模型 run-to-run <b>高方差</b>。这直接印证 §5/Q3「静默未进入 agent 回路」<b>不是工具格式问题、是模型未完成/未启动 agent 行为</b>，且<b>单 run 不可代表模型能力</b>——这正是总纲 §2 要求 5-run mean±std 的根本理由。run2=0.0% 已记入 <code>attribution_zhulong_5run_attribution.json#run2_collapse_note</code>。<b>run3=0.0% 为第二次 collapse</b>（同模型同口径），进一步坐实高方差——5-run mean±std 是唯一可信口径。</p>
 <p><b>interim 5-run（n=3）</b>：new mean=<b>6.33%±10.96%</b> [18.99%, 0.0%, 0.0%] vs old .17 5-run mean=3.04%±0.83% [3.8,1.9,2.53,3.16,3.8]%，delta=<b>+3.29pp</b>。McNemar(pass@any) discordant=52 chi2=0.94（n=3 仍偏倚，5-run 齐后公平；scipy 不可用→Wilcoxon 降级报 n）。<b>注意</b>：n=3 的 std=10.96% 极大（两次 collapse 拉低均值），正是高方差的直接体现；最终 5-run mean±std 以链尾 <code>5run_zhulong_baseline_analysis.json</code> 为准。</p>
@@ -105,5 +105,5 @@ ls attribution_3615_run1/                    # final_report.json codegen_rejecti
 #   ~/.local/zhulong/bin/zhulong --version  -> 3.0.29
 #   ~/.local/bin/cline --version            -> 3.0.51
 #   curl http://127.0.0.1:18096/v1/models   -> minicpm5-2b-sft-v39-final</pre></div>
-<p class="small">生成时间 2026-11-15 · commit posttrain attribution: zhulong 口径再归因 · 数据源 attribution_3615_run1/（36.15 run1，2026-11-14T20:08 落盘）· §10 进度表 wake563 刷新（run4 codegen 70/158 @20:06）</p>
+<p class="small">生成时间 2026-11-15 · commit posttrain attribution: zhulong 口径再归因 · 数据源 attribution_3615_run1/（36.15 run1，2026-11-14T20:08 落盘）· §10 进度表 wake564 刷新（run4 codegen 101/158 @20:28）</p>
 </body></html>
