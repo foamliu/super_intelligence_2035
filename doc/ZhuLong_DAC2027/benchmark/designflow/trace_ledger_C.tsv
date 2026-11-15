@@ -776,7 +776,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794470022094_e7s2r	chapinc	10.129.2.10	324		parked		2026-11-14 02:30	r538 peek REJECT (Q&A: count MOSFET in block)
 1793607437978_fzngm	yazhuok	10.129.8.228	245		parked		2026-11-14 02:30	r538 peek REJECT (analysis: netlist RC compare cross-domain)
 1792564023249_i4laj	colinxu	10.129.35.74	236		parked		2026-11-14 02:30	r538 peek REJECT (interactive cellview edit: delete pin+add label, not offline-sandboxable)
-1794469565658_ltzuo	youmingz	10.129.8.225	273		parked		2026-11-14 02:30	r538 peek REJECT (analysis: highlight+measure routing length)
+1794469565658_ltzuo	youmingz	10.129.8.225	273		case	EDA-Eval-DesignFlow-NetLayerLength-001	2026-11-15 16:45	r607 layout_aether net highlight + per-metal-layer routing length (B档 mock-behavioral reframe, k=16)
 1794383524797_n9szu	xdwang	10.129.2.14	231		parked		2026-11-14 02:30	r538 peek REJECT (wrong-domain: add inverter to schematic = D)
 1792572179617_nvnc3	e0022089	10.129.2.11	223		parked		2026-11-14 02:30	r538 peek REJECT (Q&A: hierarchy shortcuts + module analysis)
 1789112462640_pb4ei	davidwu	10.129.35.118	260		parked		2026-11-14 02:30	r538 peek REJECT (run-existing: auto-placement step 3)
