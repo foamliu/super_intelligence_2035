@@ -39,7 +39,12 @@ gate_wait(){
     if [ -n "$r2pid" ] && kill -0 "$r2pid" 2>/dev/null; then r2alive=1; fi
     # 2) 36.15 上是否有 run_cline_script.sh 在跑（本机/zhulong 的 eval）
     local rem_busy=0
-    rem_busy=$($SSH 'pgrep -f "scripts/run_cline_script.sh" | head -1' 2>/dev/null | tr -d '[:space:]')
+    # NOTE: 用 [r] grep 技巧避免 self-match —— pgrep -f "run_cline_script.sh" 会
+    # 匹配到运行该 pgrep 的 bash -c shell 自身（其 cmdline 含搜索串），导致
+    # rem_busy 永远非空、gate 永不放行。[r]un_cline_script.sh 作为 regex 匹配
+    # run_cline_script.sh，但字面串 [r]un_cline_script.sh 不含子串 run_cline_script.sh，
+    # 故 grep 不会命中自身 shell。
+    rem_busy=$($SSH 'ps -eo pid=,cmd= 2>/dev/null | grep "[r]un_cline_script.sh" | head -1' 2>/dev/null | awk '{print $1}' | tr -d '[:space:]')
     if [ "$r2alive" = "0" ] && [ -z "$rem_busy" ]; then
       log "[gate] 沙盒空闲（R2链已死 + 36.15 无 eval）→ 放行"
       return 0
@@ -57,7 +62,13 @@ run_one(){
   log "[run $runidx] GATE 开始"
   gate_wait "$R2_CHAIN_PID"
   log "[run $runidx] 在 36.15 启动全量158（zhulong 口径, -p 8 -n, CLI_AGENT=zhulong）..."
-  local cmd="cd $REMOTE_BASE && timeout --signal=TERM --kill-after=120 80000 bash scripts/run_cline_script.sh -p 8 -n -b $BENCH"
+  # 照抄 zhulong 启动方式：必须显式传 PYTHON(venv 含 pydantic) + EVAL_FW_DIR(默认路径缺失)
+  # 来源：ZhuLong ops/outbox.md L4364 `export PYTHON=.../venv/bin/python` + EVAL_FW_DIR
+  local py_venv="/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python"
+  local eval_fw="/nasdata/app.e0031982/code/EDA-Eval-Framework"
+  # 用 bash -lc（登录 shell）确保 PATH 含 ~/.local/bin(zhulong) + node-20/bin(bun)，
+  # 否则非交互 SSH 找不到 zhulong 命令（Exit 127）。
+  local cmd="bash -lc 'cd $REMOTE_BASE && PYTHON=$py_venv EVAL_FW_DIR=$eval_fw timeout --signal=TERM --kill-after=120 80000 bash scripts/run_cline_script.sh -p 8 -n -b $BENCH'"
   local rc=0
   $SSH "$cmd" >>"$LOG" 2>&1 || rc=$?
   log "[run $runidx] 36.15 流水线退出 rc=$rc"
