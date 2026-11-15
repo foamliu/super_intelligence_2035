@@ -2923,3 +2923,204 @@ wc -l run/compaction_subset_40.txt   # 必须 40
 **③ 完成标记**：P0 标 CLOSED 且心跳含证据 ⇒ `WAITING: 1`（恢复空巡检）；若发现需改动且未改完 ⇒ `WAITING: 0`。
 
 
+
+
+---
+
+## 归档块 · 2026-11-15（subagent 消融四令闭合：A0/A1/A2 全完 + H2 停止 + trace 报告交付）
+
+> 以下四令均已完成（详见 MEMORY_ZHULONG.md wake#928~#957）：
+> - 2026-11-13 21:2x「启动 subagent 消融」→ ✅ A0/A1/A2 三轮全完 + P4 报告交付（commit 9b0737fe4 + a6f78b8bc）
+> - 2026-11-14 17:0x「H2 恢复」→ ✅ cline 源码改 + wrapper v3.0.74 build（commit 39ccd44cc）+ 三 smoke 全过 + B1-B5 起跑（后被 11-15 07:2x 叫停）
+> - 2026-11-14 18:3x「A1 提示改验证 agent」→ ✅ A2 作为新臂完整跑 3 轮（53.3±3.8### 🔴 运维令 · 2026-11-14 23:4x（**① 立即清盘 ② 隧道事故复盘自检**）· 最高优先
+
+> **用户原话**：「zhulong：清理磁盘」「原来隧道好的，现在坏了么？怎么坏的？什么情况？让它自己报告」。
+
+**① 清盘（本轮必做，A2 还在跑，先保命）**
+- 现状：`/home` 余 **2.7 G**、`/nasdata` 余 **2.7 G**（wake#942 实测），A2 r1 仍在跑且 log 在长。
+- 目标：`/home` 与 `/nasdata` 各释放到 **≥10 G** 可用（够 A2 r2/r3 + 判分）。
+- 做法：`du -sh /home/* /nasdata/* 2>/dev/null | sort -h | tail -20` 定位大户 → 逐项决策 → 清理后 `df -h` 复核并把前后数字写进 MEMORY。
+- ✅ 可删：已归档/已交付轮次的临时 trace、`/tmp` 下 **>24h** 的中间产物、重复备份 `*.bak.*`、可重建 cache、旧 run 的 `*.log`（保留最近 2 个）。
+- 🚫 **禁删**：`/tmp/subagent_A2_r1.log` 与 A2 结果、`subagent_ablation/` 下 data-dir（A2 会用）、`run/` 下脚本与 findings、任何 `.json/.jsonl` 评测结果、`~/.cline` 配置与 `providers.json`。
+- 清理过程中若发现 A2 因空间不足已失败 ⇒ 立即在 MEMORY 标红并在报告写清。
+
+**② 隧道复盘（与 posttrain 同规格）**
+- 规格：`../../BaiZe-ISEDA2027/run/INFRA_TUNNEL_POSTMORTEM_SPEC.md`（在 `doc/BaiZe-ISEDA2027/run/` 下）。
+- 你侧要回答同样的六问（最后通点 / 首断点 / 时间线 / 故障域 / 是否我们造成 / 修复路径+验证命令），证据来自 `.75` 沙盒与本地 `run_code` 通道。
+- 交付 `reports/report_infra_tunnel_postmortem_zh.html`（中文单文件·首屏三句结论）+ MEMORY 一行。
+- 🚫 不猜不编；查不到写「无记录」；🚫 不动 benchmark 与他人机器。
+
+### 🔴 用户令 · 2026-11-14 18:3x（**A1 的强提示方向错了 → 改为 spawn「验证 agent」+ 对抗视角**）· 未完成 · 最高优先
+
+> **用户原话**：「这个强提示理解，但感觉方向不对。任务开始，第一项工作就是调研背景，主 agent 上下文还空，自然没必要 spawn，真 spawn 后，这个 agent 做了调研，有了成果，又无法传给主 agent 的上下文，造成很多浪费。因此我建议通过提示让主 agent spawn 验证 agent，带有一些对抗视角，用于测试主 agent 写的代码。」
+
+**一、为什么现在的提示是错的（用户的分析）**
+
+现有 `SUBAGENT_HINT`（`run_subagent_ablation.sh` L47-52）要求：
+
+> 「Before writing any code, you MUST use the `spawn_agent` tool to delegate to a **researcher** sub-agent…
+> Do NOT answer directly or write code until the sub-agent returns its findings.」
+
+**两个结构性错误**：
+
+1. **调研阶段 spawn 是浪费**：任务刚开始时主 agent 上下文还空，没有"上下文压力"，**本就没必要外包**；
+2. **子 agent 成果传不回来**：子 agent 做完调研，产出**无法注入主 agent 的上下文**（你自己 wake#926 也实测过：子 agent 只有 `systemPrompt` + `task` 两个输入、输出回传受限），
+   ⇒ 主 agent 拿不到调研成果，**等于白跑一轮**，还平白多了一次往返开销。
+
+**二、改成什么：验证 agent + 对抗视角**
+
+**新的 spawn 触发点 = 主 agent 写完代码之后**，让它 spawn 一个**独立的验证/审查 agent**，带**对抗视角**去测主 agent 写的代码。
+
+**为什么这样合理**：
+- 主 agent 此时**已经有上下文**（自己刚写的代码、自己的推理），**正需要外部独立视角**；
+- 验证 agent 的产出是**判定结论**（通过/不通过 + 问题清单），**短小、可直接被主 agent 采用**，不存在"成果传不回来"的浪费；
+- **对抗性**（刻意找错）比"协助调研"更符合独立 agent 的价值。
+
+**三、要改的具体内容**
+
+1. **重写 `SUBAGENT_HINT`**（`run_subagent_ablation.sh` L47-52）：
+   - **触发时机（用户 18:4x 明确指定）**：**代码已写好、但还没有提交之前** —— 即「**写完 → spawn 验证 agent 做 QA → 按 QA 意见修正 → 再提交**」。
+     - 不是"写代码之前"；也不是"执行完就结束"，而是**卡在"写完"与"提交"之间**这个检查点。
+     - 主 agent 应在 QA 返回后**依据问题清单修正**，然后再提交最终产物。
+   - 子 agent 角色：**adversarial QA / verifier**，任务是**挑错**——检查 API 用法是否正确、参数是否符合文档、边界条件、异常处理、单位/坐标/精度、是否满足题目全部约束；
+   - 要求子 agent **给出明确的通过/不通过判定（verdict）+ 具体问题清单（含代码位置）**；
+   - **禁止**子 agent 写完整实现（只审不写），避免它变成第二个主 agent。
+
+2. **提示措辞要点**（你自行定稿，务必体现）：
+   - 「写完之后」而非「写之前」；
+   - 「independent reviewer / red team」而非「researcher」；
+   - 「find what is wrong」而非「look up APIs」；
+   - 输出要求：**verdict + issue list**，简洁、可执行。
+
+3. 🔴 **A1 与 A2 的划分（用户 2026-11-14 18:5x 裁决 · 覆盖上面的含糊处理）**
+
+   > **用户原话**：「可以让 zhulong 按原配置把 A1 的三轮跑完，新配置作为 A2。」
+
+   - **A1 = 原配置**（调研型 spawn + 现有强提示）—— **保持原样把 3 轮跑完**，不要中途换提示、不要混算。
+   - **A2 = 新配置**（验证型 QA agent + 对抗提示，触发点 = 代码写好但未提交之前）—— **作为独立的新臂**，完整跑 3 轮。
+   - **🚫 不要动正在跑的 A1**：不打断、不改提示、不重跑已有的 r1。
+   - **A2 先改脚本再做 smoke**：改完 `SUBAGENT_HINT` 后，先 smoke 1 题确认「写完 → spawn QA → 按意见修正 → 提交」四段齐全，再起 A2 的 r1/r2/r3。
+   - **A2 的臂配置**：与 A1 **完全一致**，唯一差异 = spawn 提示（触发点 + 角色 + 任务）。compaction=basic、thinking=medium、同 40 题子集、`-p 8 -n`、同主基座，一律不动。
+   - **实验臂清单更新为**：**A0（无 spawn，复用 compaction basic r1–r3）/ A1（调研型 spawn，3 轮）/ A2（验证型 QA spawn，3 轮）**。
+
+**四、与 H1 结论的关系（重要）**
+
+- 这一改动使 A1 从「**spawn 调研 agent + 强提示**」变为「**spawn 验证 agent + 对抗提示**」，
+  与 A0 的差异**仍然是"是否 spawn"**，但**提示内容变了** ⇒ **新旧 A1 结果不可混算**，必须分组统计。
+- 最终报告需**分别报告**：
+  - A1-旧提示（调研型 spawn）的 Pass@1；
+  - A1-新提示（验证型 spawn）的 Pass@1；
+  - 与 A0 的配对比较（McNemar）。
+- **额外分析（很有价值）**：统计「**主 agent 采纳了验证 agent 意见的题** vs **未采纳的题**」的通过率差异，看对抗审查是否真的有用。
+
+**五、纪律**
+
+- 🚫 不要为了"提高 spawn 率"而把提示写得更强硬重；用户要的是**有意义**的 spawn，不是**多**的 spawn。
+- ✅ 改动后先 **smoke 1 题**，确认：主 agent 先写代码 → 再 spawn → 子 agent 给出 verdict —— trace 里要有这三段。
+- ✅ 记 MEMORY：新旧提示的差异、r1/r2/r3 各用什么提示。
+
+---
+
+### 🔴 用户令 · 2026-11-14 17:0x（**H3 不做；H2 恢复 —— 允许改 cline 源码重编译，让自主 spawn 的子 agent 用弱模型**）· 未完成 · 最高优先
+
+> **用户原话**：
+> 「H3 不做
+> H2 可以做，需要改 cline 代码重新编译安装也没问题，只要向后兼容即可。
+> H2 只做自主 spawnagent 这条线，不做 custom。要求修改代码，在 spawnagent 时，通过配置让 agent 用弱模型。」
+
+**一、裁决变更（覆盖 wake#926 的 H1-only 决定）**
+
+| 假设 | 原裁决 | **新裁决** |
+|:--|:--|:--|
+| **H3**（maxIterations 5/15/30） | ❌ 不可行 | **❌ 不做**（用户明确：H3 不做） |
+| **H2**（子 agent 弱基座梯度） | ❌ 不可行 | **✅ 要做** —— 允许改 cline 源码、重新编译安装，**只要向后兼容** |
+| **H1**（spawn on/off） | ✅ 可检验 | ✅ 继续（A1 的 P2 继续跑完） |
+
+**二、H2 的实现路线（用户已指定，不要跑偏）**
+
+- **只做「自主 spawn_agent」这条线**：主 agent 调用 `spawn_agent` 工具时，**通过配置**让被 spawn 的子 agent 使用**弱模型**。
+- **🚫 不做 configured agent（custom）路线** —— 不要再走 `researcher.yaml` / `subagent_researcher` 那条路，那条已证实 3.0.51 不通。
+
+**三、技术任务（改源码）**
+
+你 wake#926 已经用 `strings` 反查出关键代码：
+
+```js
+eu({kind:"subagent", prompt: i.systemPrompt,
+    configProvider: e.configProvider,     // ← 子模型 = 父的
+    tools: e.subAgentTools,               // ← 子工具 = 父的
+    maxIterations: e.defaultMaxIterations})
+```
+
+**要做的事**：
+1. 在源码仓库 `/nasdata/app.e0031982/code/cline/sdk/packages/core/src/extensions/tools/team/` 里，
+   给 **`spawn_agent`**（`spawn-agent-tool.ts`）**增加一个可选配置项**，让子 agent 的 `configProvider`（模型）可被覆盖；
+2. **配置来源**：环境变量、cline settings、或 spawn_agent 的 input schema 新增可选字段——**方式你定**，但必须：
+   - **向后兼容**：默认行为**完全不变**（不配置时子 agent 仍继承父模型），保证 A0/A1 现有结果与 compaction 等历史实验不受影响；
+   - 不破坏 `tools` / `maxIterations` 的现有继承逻辑（H3 不做，别动）。
+3. 🔴 **必须一并修复：子 agent 的工具限制（用户 2026-11-14 18:0x 明确要求）**
+
+   > **用户原话**：「search_apis 报 NoSuchToolError 说明原来的实现有问题，限制了子 agent 使用的工具。这个问题这次要一起修复。」
+   > **用户给定的目标行为**：「**子 agent 默认继承所有工具，唯二的差别在于 LLM + 上下文。**」
+
+   - **正确设计 = 子 agent 继承主 agent 的完整工具集**，与主 agent 的差别**只有两个**：① 用哪个 LLM ② 上下文（systemPrompt / task）。
+   - 你在 wake#926/#927 记录到「子 agent 调用 `search_apis` → `AI_NoSuchToolError`，回退 `search_codebase`」——
+     **这说明当前实现在 `tools: e.subAgentTools` 处对子 agent 做了工具限制，是 bug，本次一并修掉。**
+   - 修法：让 `spawn_agent` 派生子 agent 时传**父 agent 的完整工具集**（含 MCP 工具），而不是受限子集。
+   - ⚠️ 顺带核实 `NoSuchToolError` 的**直接成因**：是工具名不匹配（子 agent 用了裸名 `search_apis`，而 MCP 工具在父侧的完整名是 `pyAether_MCP_server__search_apis`），还是工具确实没注入。**两种情况都要修到"子 agent 能正常调用 MCP 工具"为止**，并在 smoke 里给证据（子 agent 成功调用一次 MCP 工具的 trace 原文）。
+   - **向后兼容**：此项修复同样不得改变主 agent 的工具集与默认行为。
+
+**四、验证与执行顺序**
+
+1. **编译安装**：在 36.15 完成 build，`cline --version` 可用。
+2. **向后兼容自检**（必做）：
+   - 不配置任何新选项时，跑 1 题，确认子 agent 仍继承父模型、行为与改动前一致；
+   - 现有 A1 P2 若在跑，**不要打断**（另装一份或用独立 data-dir 做 smoke，避免影响在跑实验）。
+3. **确认性 smoke**：配一个弱模型，跑 1 题，确认**子 session 的 messages.json 里模型名 = 弱模型**（用你 wake#926 那套 `n_msgs` + 模型核验方法，给证据）。
+4. **H2 实验**：确认 smoke 通过后，按计划书恢复 **B2（dsv4-flash）/ B3（doubao-pro）/ B4（doubao-mini）/ B5（doubao-lite）** 四臂（B1 same 作为梯度最强端，若已有数据可复用）。
+   - 更新 `providerId` 修正（你 wake#922 已查明应为 `openai-compatible` + doubao model/key）。
+
+**五、纪律**
+
+- 🚫 **向后兼容是硬要求**：默认行为不得改变；改完要给「改动前后默认路径行为一致」的证据。
+- 🚫 不改评测题集/判据/超时。
+- ✅ 源码改动要有 commit 记录与 diff 摘要，写进 MEMORY。
+- 若某步确实做不成，写 `BLOCKED + 具体卡点 + 需要什么`，🚫 不许又一次直接裁掉。
+
+---
+
+### 🔴 用户令 · 2026-11-13 21:2x（**启动 subagent 消融**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「启动 subagent 消融」
+
+**执行口径**：严格按已交付计划书 `reports/plan_zhulong_subagent_ablation_zh.html`（P0 已于 2026-11-13 17:20 PASS）。全臂恒定：`--compaction basic`、`CLINE_THINKING=medium`、`LANG_HINT` 空、`-p 8 -n`、主基座 `deepseek-v4-pro-cloud`；**A0 直接复用 compaction basic r1–r3**（不重跑），A0 的 158 题复用轴 A medium。
+
+**① 起跑前复核（10 分钟，任一不过先修再跑）**
+- `researcher.yaml`（**必须 .yaml，不是 .md**）在 `.cline/agents/`；tools 用完整 MCP 名 `pyAether_MCP_server__search_apis / __get_api_details`；工具列表里能看到 `subagent_researcher`（P0 时为第 19 号工具）
+- doubao pro/mini/lite 三 key 连通（P0 已 curl OK，重测 1 次）
+- 沙盒 8664/8665/8653/8669 全 FREE + `pgrep -f '^bash scripts/run_cline_script'` 无输出；harness TB-2.1 rerun 在跑（Docker/gateway），若争用则排队并写心跳
+- **磁盘**：/home 99%（6.6G）先 `df`；`EVAL_ROOT_DIR=/tmp/zhulong_subagent_eval` 每轮清理；trace 落 `/nasdata/.../trace_ablation_subagent/`，`/nasdata` 若满改落 /tmp 并按轮归档；可用 <5G 先清再跑
+
+**② P1 pilot（现在起跑：8 臂 × 8 题 × 1 轮，~1.5h）**
+
+```bash
+head -8 run/compaction_subset_40.txt > run/subagent_pilot8.txt
+SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_subagent_ablation.sh > /tmp/subagent_pilot_master.log 2>&1 &
+```
+
+- 产出：每臂 subagent 调用率 / doubao 三臂连通 / 每臂 Pass@1 / 墙钟
+- **go/no-go（预注册）**：调用率 `<20%` 且强提示后仍 `<30%` ⇒ **判无效**，停 P2，直接出负结果报告；否则进 P2。单轮不得解释为结论。
+
+**③ P2 主实验（P1 go 后自动进：9 臂 × 40 题 × 3 轮 ≈16h）**
+- 串行；每轮前 quota probe；429 等待不降并发；每轮落 `cost_S_<arm>_r<n>.json` + `ablation_subagent_results.json` 条目 + trace 归档
+- **起跑前必须补的工程缺口**：现 `run_subagent_ablation.sh` 的 cost 收集是 TODO 空壳（只写 arm/round/batch）⇒ 必须先实现：从 trace/session 采 `SpawnAgentOutput.usage.{inputTokens,outputTokens}`、spawn 次数与完成率（`finishReason=completed`）、主/子消息数、wall_sec；否则 H2/H3 无法判
+
+**④ P3 全量（P2 完成后：4 臂 A0/B1/B3/B5 × 158 题 × 1 轮 ≈10h）+ P4 报告（2h）**
+- 报告：`reports/report_zhulong_subagent_ablation_zh.html`（新文件=里程碑，中文/自包含/**0 外链**）：摘要 / 机制与 P0 修正 / 主结果表+逐题配对 / 调用率 / 基座梯度曲线 / 成本-性能（主 vs 子 token 分拆）/ 亚组 / 失败分类 / 结论与默认策略
+
+**判据（预注册，不许事后改）**：主终点 = 3 轮 Pass@1 均值（ITT）；**H1** A0 vs A1/B1 McNemar discordant ≥6:6 且方向一致；**H2** B1 vs B2–B5 Δ≥3pp 且 bootstrap CI 不跨 0、梯度回归 R²>0.7、B5 per-pass token 降 ≥20%；**H3** 完成率差 ≥10pp ⇒ maxIter=5 过紧。差异 <3pp 一律写「证据不足」。
+**纪律**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。zhulong 与 designflow 使用**互不相干的沙盒**（本线 = `run_code` 端口 8664/8665/8653/8669；designflow = `eda_flow` MCP → `.75` 远端 `run_commands`），**不存在资源争用**，无需互斥。
+**心跳**：每轮写 臂/轮/PID/etime/log 大小/batch/已评题数/调用率；跑中 WAITING=1；P2+P3 完 + 报告 + commit（`zhulong subagent:`）后 done_all。
+**体积**：本任务书 52.7KB（>40KB 硬上限）⇒ 本轮**同时**把已闭合旧令原文搬去 `run/ARCHIVE_ZHULONG_TASK.md` 留 1 行指针，归档后 ≤32KB。
+
+---

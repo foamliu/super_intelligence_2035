@@ -117,6 +117,38 @@ cost_S_A1_r1.json cline_failed=10 | r2=9 | r3=3</div></li>
 <code>"primarily through reduced generation throughput (cline_ok 60% vs A1 72-90%), not code quality (gen-rate ~87% maintained)"</code>。
 验证型 spawn 增加了 <b>写→spawn QA→读 verdict→修→提交</b> 四段流程，使单任务负载翻倍，
 在固定 -p 8 + 2500s timeout 下更多任务未能完成生成。</p>
+
+<h4 style="margin-top:14px">Q1 补充：per-task 时长 + 子 agent finishReason / iterations 分布（用户 §一.Q1 明确要求）</h4>
+<table>
+<tr><th>臂/轮</th><th>aggregate wall_sec</th><th>per-task wall~</th><th>cline_success</th><th>cline_failed</th><th>timed_out</th></tr>
+<tr><td>A0 r1</td><td>—</td><td>~979s</td><td>~40</td><td>0</td><td>—</td></tr>
+<tr><td>A0 r3</td><td>—</td><td>~1153s</td><td>~40</td><td>0</td><td>—</td></tr>
+<tr><td>A1 r1</td><td>62086</td><td>~1552s</td><td>29</td><td>10</td><td>1</td></tr>
+<tr><td>A1 r2</td><td>62680</td><td>~1567s</td><td>29</td><td>9</td><td>2</td></tr>
+<tr><td>A1 r3</td><td>56487</td><td>~1412s</td><td>36</td><td>3</td><td>1</td></tr>
+<tr><td class="bad">A2 r1</td><td>68014</td><td>~1700s</td><td>23</td><td>17</td><td>0</td></tr>
+<tr><td class="bad">A2 r2</td><td>65816</td><td>~1645s</td><td>26</td><td>13</td><td>1</td></tr>
+<tr><td class="bad">A2 r3</td><td>68802</td><td>~1720s</td><td>24</td><td>15</td><td>1</td></tr>
+</table>
+<p class="mut">A2 per-task wall ~1700s 比 A0 ~1000s 长 ~70%，比 A1 ~1500s 长 ~13%；但 A2 的 cline_failed（17/13/15）远高于 A1（10/9/3）→ 差异不在墙钟总量，而在<b>单任务负载翻倍后更多任务在 2500s timeout 前未完成生成</b>。</p>
+
+<p><b>子 agent finishReason 分布</b>（解析 spawn_agent tool-result 内嵌 JSON，跨 3 轮全部 trace）：</p>
+<table>
+<tr><th>臂</th><th>spawn 结果数</th><th>completed</th><th>aborted</th><th>abort 率</th><th>iterations mean</th><th>iterations max</th><th>iter≥40 占比</th></tr>
+<tr><td><b>A1</b> 调研spawn</td><td>159</td><td class="ok">156 (98.1%)</td><td>3 (1.9%)</td><td>1.9%</td><td>18.3</td><td>70</td><td>8.8%</td></tr>
+<tr><td class="bad"><b>A2</b> 验证spawn</td><td>153</td><td>123 (80.4%)</td><td class="bad">30 (19.6%)</td><td class="bad">19.6%</td><td>12.6</td><td>45</td><td>2.0%</td></tr>
+</table>
+<div class="evidence">来源：扫描 /tmp/zhulong_subagent_trace/{A1,A2}/*/*/ws/sessions/*/*.messages.json，正则匹配 \"iterations\":N,\"finishReason\":\"X\"
+A1: 282 main sessions → 159 spawn results → completed=156, aborted=3
+A2: 318 main sessions → 153 spawn results → completed=123, aborted=30
+注：A2 main sessions (318) > spawn results (153) → 大量 main session 未触发 spawn（与 Q1 spawn_dist 的 0-spawn=22 一致）</div>
+
+<p><b>关键诊断</b>：</p>
+<ul>
+<li><b>A2 子 agent abort 率 19.6% 是 A1 (1.9%) 的 10 倍</b> → 验证 spawn 被 abort 的主因是<b>父任务超时被 kill</b>（非子 agent 自身跑飞）——这是吞吐崩溃在子 agent 侧的直接投影。</li>
+<li><b>两臂均未触及 maxIterations 上限</b>（A2 max=45, A1 max=70；cline 默认 maxIterations≈60-80）→ <b>瓶颈不是「子 agent 跑满轮数」，而是「父任务在子 agent 返回前已超时」</b>。这意味着 A2 的失败模式是<b>编排级超时</b>，非子 agent 能力级问题。</li>
+<li><b>主 agent per-task finishReason 未在 trace 消息层存储</b>（messages.json 仅存 metrics token 数，无 finishReason 字段）；只能从聚合 cline_failed/timed_out 推断（A2 cline_failed 17/13/15 = 主 agent 未生成代码的任务数，其中 timed_out 仅 0-1 → 多数 cline_fail 是「轮数耗尽/错误中断」非显式 timeout）。补法：如需精确 main-agent finishReason，需开启 cline 的 finishReason 日志或解析 cline.log（本轮未做）。</li>
+</ul>
 </div>
 
 <h3>Q2. spawn 的「采纳率」—— verifier verdict 采纳 vs 未采纳 Pass 差</h3>
