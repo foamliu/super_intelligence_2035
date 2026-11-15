@@ -2,16 +2,19 @@
 
 WAITING: 0
 
-> 🆕 **R2543 · 2026-11-15 20:08 — 自检全绿 + git pull up-to-date + cc 29/82(4P·0ConnRefused✅) + opencode 37/38(10P·1remaining=train-fasttext) + pi 22/46(5P) + deepseek 22/48(0P) + adaptive off10/10·0 429✅**
-> - **自检**: load 32/224 ✅·mem 1043GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ porcelain=0 ✅
+> 🆕 **R2544 · 2026-11-15 20:12 — 自检全绿 + git pull up-to-date + cc 31/82(5P·0ConnRefused✅) + opencode 41results(10P·train-fasttext last task running) + pi 25/46(5P) + deepseek 25/48(0P) + adaptive off10/10·0 429✅**
+> - **自检**: load 29.5/224 ✅·mem 1038GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ porcelain=0 ✅
 > - **git pull**: up-to-date ✅
-> - **cc rerun**: PID 1510536 harbor alive(16h)·**29/82 done**(4P/21F/4EX)·**0ConnRefused ✅ HARD VERIFIED**(current 20261115_0348 dir grep=0)·53 remaining·ETA~Nov17
-> - **opencode rerun**: PID 517594 alive(3.9h)·**37/38 done**(10P/19F/8EX)·1 remaining=train-fasttext(part4/4 running)·0 429 ✅(log 2hits=脚本自报429_hits=0非真429)
-> - **pi rerun**: PID 3809768 alive(73min)·**22/46 done**(5P/17F/0EX)·part1+part2 done·24 remaining·adaptive n=10
-> - **deepseek rerun**: PID 4039988 alive(14min)·**22/48 done**(0P/20F/2EX)·part1 done(11t/1EX)·part2 running·26 remaining·n=10 adaptive
-> - **adaptive**: off current=10/10 cap=10·quiet=87m·累计429=0 ✅·实跑验证✅
-> - **下一步**: ①opencode train-fasttext finishes→COMPLETE→regen opencode行 ②deepseek 26 remaining ③pi 24 remaining ④cc 53 remaining(~Nov17)→REGEN双报告(cc行从0/89换真实数字) ⑤opencode 8×RuntimeError EX单独重跑(fixed adapter) ⑥cc完成后失败题按EvoX三分法打标 ⑦成本补采 ⑧hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.5KB（✅≤32KB）
+> - **cc rerun**: PID 1510536 harbor alive(16.4h)·**31/82 done**(5P/21F/4EX/1NA)·**0ConnRefused ✅ HARD VERIFIED**(0348 dir)·51 remaining·ETA~Nov17 23:00
+> - **opencode rerun**: PID 135257 part4 alive(20min)·**41 results**(10P/19F/8EX/4NA)·train-fasttext=last task(part4/4 running·started19:53)·0 429 ✅
+> - **pi rerun**: PID 3809768 alive(80min)·**25/46 done**(5P/17F/1EX/2NA)·21 remaining·adaptive n=10
+> - **deepseek rerun**: PID 4039988 alive(21min)·**25/48 done**(0P/21F/2EX/2NA)·23 remaining·n=10 adaptive
+> - **adaptive**: off current=10/10 cap=10·quiet=94m·累计429=0 ✅·实跑验证✅
+> - **cc 1529空目录**: pre-created jobs dir for future cc NA-rerun(18 NA需RestartError fix生效后重跑)·暂未使用·无影响
+> - **下一步**: ①opencode train-fasttext finishes→COMPLETE→regen opencode行 ②deepseek 23 remaining ③pi 21 remaining ④cc 51 remaining(~Nov17)→REGEN双报告(cc行从0/89换真实数字) ⑤opencode 8×RuntimeError EX单独重跑(fixed adapter) ⑥cc完成后失败题按EvoX三分法打标 ⑦成本补采 ⑧hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈29.4KB（✅≤32KB）
+
+> 📦 R2543 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82(4P·0ConnRefused✅)+opencode 37/38(10P·1remaining)+pi 22/46(5P)+deepseek 22/48(0P)+adaptive off10/10·0 429✅。需要时再读。
 
 > 📦 R2542 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82(4P·0ConnRefused✅)+opencode part4/4(last 2 tasks)+pi 20/46(4P)+deepseek 12/48(0P)+adaptive off10/10·0 429✅。需要时再读。
 
