@@ -89,7 +89,7 @@ code{background:#eef;padding:1px 5px;border-radius:3px;font-size:0.9em}
 <table><tr><th>run</th><th>Pass@1</th><th>gen_success</th><th>gen_fail</th><th>状态</th><th>说明</th></tr>
 <tr><td>run1</td><td><b>18.99%</b></td><td>36</td><td>121</td><td>✅ 完成</td><td>attribution_3615_run1（36.15 14T20:08 落盘）</td></tr>
 <tr><td>run2</td><td><b>0.0%</b></td><td>1</td><td>156</td><td>✅ 完成</td><td><b>degenerate non-generation</b>：cline session 成功 139 但仅 1/158 产出有效代码；batch_cline.log 无连接/500/超时错误，端点全程健康 → <b>非 infra，系 2B 模型 agent 回路退化</b></td></tr>
-<tr><td>run3</td><td>—</td><td colspan="2">~72% (114/158 codegen)</td><td>⏳ RUNNING</td><td>batch 2026_1115_144001，PID636890 活(etimes≈7700s)，-p 8 并发；端点 :8096/反隧:18096 16:48 实测 PASS</td></tr>
+<tr><td>run3</td><td>—</td><td colspan="2">~81% (128/158 codegen: success 113 / failure 15 / 队列剩 22)</td><td>⏳ RUNNING</td><td>batch 2026_1115_144001，PID636890 活，-p 8 并发；端点 :8096 / 隧道 :3333 17:17 实测 PASS；run3 ETA ~17:45，run4–5 串行 ETA ~22:30–23:40 全 5-run 齐</td></tr>
 <tr><td>run4–5</td><td>—</td><td colspan="2">—</td><td>⬜ 待跑</td><td>串行，ETA ~23:40 全 5-run 齐</td></tr></table>
 <p><b>关键发现（run2 collapse）</b>：run1→run2 = 36→1 有效代码生成的<b>极端 swing</b>，证实 2B 模型 run-to-run <b>高方差</b>。这直接印证 §5/Q3「静默未进入 agent 回路」<b>不是工具格式问题、是模型未完成/未启动 agent 行为</b>，且<b>单 run 不可代表模型能力</b>——这正是总纲 §2 要求 5-run mean±std 的根本理由。run2=0.0% 已记入 <code>attribution_zhulong_5run_attribution.json#run2_collapse_note</code>。</p>
 <p><b>interim 5-run（n=2）</b>：new mean=<b>9.49%±9.49%</b> [18.99%, 0.0%] vs old .17 5-run mean=3.04%±0.83% [3.8,1.9,2.53,3.16,3.8]%，delta=<b>+6.45pp</b>。McNemar(pass@any) discordant=52 chi2=0.94（n=2 偏倚，5-run 齐后公平；scipy 不可用→Wilcoxon 降级报 n）。<b>注意</b>：n=2 的 std=9.49% 极大，正是高方差的直接体现；最终 5-run mean±std 以链尾 <code>5run_zhulong_baseline_analysis.json</code> 为准。</p>
