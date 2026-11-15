@@ -1208,7 +1208,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793957358059_v5icx	yanxvwei	hfeg0pkn002	25	spice_sim	parked		2026-11-11 19:25	reject how-to Q&A ansim_pro Run
 1793257968522_mp3us	tongni	hfeg0plg49	164	spice_sim	parked		2026-11-11 19:25	reject skill-authoring sim-sp-gen
 1793856196029_7at4j	lvyy	hfeg0pkn002	69	spice_sim	parked		2026-11-11 19:25	reject diagnostic 仿真提交没生成文件夹
-1793263785862_3123n	lvyy	hfeg0pkn002	576	spice_sim	parked		2026-11-11 19:25	reject consultation 扫mp5尺寸电流差
+1793263785862_3123n	lvyy	hfeg0pkn002	576	spice_sim	case	EDA-Eval-DesignFlow-CmlMirrorSweepAnalysis-001	2026-11-15 15:51	reject consultation 扫mp5尺寸电流差
 1785907092176_vdeyi	e0025768	hfeg0pkn001	65	spice_sim	parked		2026-11-11 19:25	reject debugging optimize报错
 1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-11 19:25	reject debugging SiliconSmart char hspice rc=1
 1793264248842_f1rqc	hbpeng	hfeg0pkn004	151	spice_sim	parked		2026-11-11 19:25	reject wrong-domain tcl->skill PDK QA + /apps/imctf perm
