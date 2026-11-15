@@ -1303,7 +1303,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793260065712_n78nn.messages.json					parked		2026-11-12 05:14	wrong-type (t0003117 '调出抽网表的skill' - skill invocation, not spice produce)
 1793337530823_x6taw.messages.json					parked		2026-11-12 05:14	DUP McRonMismatch-001 (clarawu, same RON_PU/PD_mismatch 6*std/230 from Ron_linMC#4.md0 task)
 1793843116422_qzva9.messages.json					parked		2026-11-12 05:14	consultation (thqu 'ntn管子阈值电压怎么查看' - how-to-view, not produce)
-1791797079020_pqeal.messages.json					parked		2026-11-12 05:14	consultation (e0039122 '阅读工程给出代码架构' - code architecture doc, not spice produce)
+1791797079020_pqeal.messages.json					case	EDA-Eval-DesignFlow-SimResultDirExplain-001	2026-11-16 02:52	consultation (e0039122 '阅读工程给出代码架构' - code architecture doc, not spice produce)
 1793238266404_bsjfb.messages.json					parked		2026-11-12 05:14	consultation (t0002224 '看一下这个项目详细介绍' - project intro, not produce)
 1793931174603_tc4yu.messages.json					parked		2026-11-12 05:14	consultation (lvyy '为什么PM11截止 如何调整cascode' - circuit debug consultation)
 1792297573507_9knot.messages.json					parked		2026-11-12 05:14	continuation (vincelu '能避开这些错吗' - error-avoidance, not first-turn produce)
