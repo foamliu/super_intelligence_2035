@@ -597,7 +597,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1792223380722_d4yrg.messages.json	e0014566	hfeg0pkn005	84	spice_sim	parked		2026-11-09 11:42	dup o9dcl consulting
 1793603977814_gobna.messages.json	steveny	hfeg0pkn005	107	spice_sim	parked		2026-11-09 11:42	U0 introduce finesim consulting
 1792138312431_6i68m.messages.json	e0042624	hfeg0pkn005	64	spice_sim	parked		2026-11-09 11:42	U0 skill_instructions paste no explicit user produce-turn
-1792541695111_m40h5.messages.json	e0042624	hfeg0pkn005	60	spice_sim	parked		2026-11-09 11:42	U0 show runcodeGuard config consulting
+1792541695111_m40h5.messages.json	e0042624	hfeg0pkn005	60	spice_sim	case	EDA-Eval-DesignFlow-RunCodeGuardConfigExplain-001	2026-11-16 04:51	r659 复活池变现 #40: runCodeGuard config explain Q&A, 18 断言, B-synthesized v2 policy
 1790216933447_e5opy	jason17w	hfeg0pnd002	16	spice_sim	parked		2026-11-09 12:04	L1 workflow-doc paste (DDR run-regression skill doc, not user produce-task); wrong-shard A(digital); old 09-24; spice ratio 6%
 1793583717674_opbrl	jinsongl	hfeg0pkn005	15	spice_sim	parked		2026-11-09 12:04	L1 explain-code-logic (erc_ai_signoff tools); wrong-shard C(ERC); spice ratio 5%
 1793843108682_lgbx4	thomasz	hfeg0pkn002	16	spice_sim	parked		2026-11-09 12:04	L1 read-log diagnostic (FineSim pvt.log explain); no produce deliverable; spice ratio 4%
