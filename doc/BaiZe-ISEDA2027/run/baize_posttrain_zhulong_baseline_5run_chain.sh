@@ -93,7 +93,7 @@ run_one(){
   # EDA-Eval-Framework/output_evaluation/<时间戳>/，不在 ~/eda_code_eval/<batch>/。
   # 旧脚本从 batch 目录 cat 这些文件 → 永远空 → Pass@1=NA。现从正确位置取。
   local latest_oe
-  latest_oe=$($SSH 'ls -dt /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/*/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
+  latest_oe=$($SSH 'ls -dt /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/*_app.e0031982/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
   log "[run $runidx] 最新 output_evaluation=$latest_oe"
   # 1) final_report.json + execution_results.jsonl ← output_evaluation（评分产物）
   for f in final_report.json execution_results.jsonl; do
