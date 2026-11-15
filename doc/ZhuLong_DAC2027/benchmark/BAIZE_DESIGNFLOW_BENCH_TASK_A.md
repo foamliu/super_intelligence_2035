@@ -12,6 +12,70 @@
 >
 > **难度分布是观察对象，不是生产指标。** L1/L2/L3 只用于事后统计当前题库覆盖了什么，**不得用于限制新建 case**。**通过率同样是观察值**——由用户任务的真实难度与 agent 真实能力共同决定，如实测量即可，不为凑数字而挑题、改题、加难或降难。
 
+> ## 🔍 2026-11-15 用户令 · 用新标准重审「已造的题」与「候选池」· 最高优先 · 全部 4 shard
+
+> **用户原话**：「安排4线重新审视自己已经造的题和候选池，如果跟任务初衷有违背可以重做」
+
+**为什么现在要重审**
+
+任务初衷已置顶（见本文件开头），但**你现有的题和候选池，是在旧规则下筛出来的**——旧规则里有 `L1≤30%/L2≥50%/L3≥20%` 的难度配额、有"只做 L2/L3"的准入限制、有"analysis-only 判为 weak"的筛子、还有"通过率必须落 20–30%"的调难度要求。**这些规则今天全部作废。**因此旧题里可能混进了两类问题：
+
+- **A 类（该删/该重做）**：为了满足配额或通过率区间而**人为加难、改题、硬凑工具链路**的题——它们不是用户真实想干的事。
+- **B 类（被误杀，该复活）**：当年因为"归为 analysis / doc-search / Q&A / env-config"被判 weak 而**没造的候选**——按新标准这些都是合法任务。
+
+**一、重审「已造的题」（本 shard 全部 jsonl）**
+
+逐题过一遍，用这三个问题判定：
+
+1. **这条题问的，是 trace 里用户真实想干的事吗？**
+   - 是 → 保留
+   - 否（为了凑 L2/L3 配额硬加的步骤、为过题而人为改造的任务、把用户没要求的东西塞进判分） → 标 **`off_intent`**，进重做队列
+2. **如果 `check()` 判分要求的东西，超出了用户原始意图**（例如用户只要"看到结果"，判分却要求特定文件结构/特定实现路径） → 标 **`over_constrained`**，把判分收敛回用户真实交付物
+3. **有没有因为旧配额规则，把用户真实任务"降级/裁剪"后才入库的？** → 标 **`downgraded`**，考虑恢复原形态
+
+**产出**：`designflow/intent_audit_<shard>.tsv`，列固定：
+```
+case_id | user_intent_from_trace | 判定(keep/off_intent/over_constrained/downgraded) | 理由 | 处置(保留/重做/下线)
+```
+并在 MEMORY 写一行：`🔍 意图审计: N 题, keep=x / off_intent=y / over_constrained=z / downgraded=w`
+
+**二、重审「候选池」**
+
+旧筛子把大量真实用户意图判成了"不可造"。逐项重判：
+
+- **旧判为 weak / analysis-only / 不可造的候选**：`analysis-Q&A`、`doc-search`、`debug-Q&A`、`env-config`、`flow-driving`、`setup 类`、`retrieval 类`、`explain 类` —— **按任务初衷，这些都是真实用户意图，全部恢复为可造**。
+- 唯一保留的排除标准只有两条：
+  1. **没有真实 trace**（无 `trace_source` 可溯源）→ 不可造
+  2. **写不出能区分真假交付的 `check()`**（判分没有"牙"）→ 不可造
+- 其余一律视为**有资格造题**。
+
+**产出**：`designflow/pool_reaudit_<shard>.tsv`，列：
+```
+session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 拟造任务形态
+```
+并在 MEMORY 写：`🔍 候选重审: 旧可造=x → 新可造=y（新增 z 条被旧规则误杀）`
+
+**三、重做的方式（重要）**
+
+- **重做不是删了重来**：保留原 case 及其 `check()`（作历史对照），新建修正版（case_id 加 `-v2` 后缀或独立新 id），并在 MEMORY 说明「v2 相对 v1 改了什么、为什么」。
+- 🚫 **不删旧 case、不删 jsonl 行**——旧题是"旧规则下的产物"的证据，留着才能说明口径变迁。
+- ✅ 允许**下线**：标 `retired` + 理由，从通过率分母中剔除（但 jsonl 行保留）。
+- **工作量提示**：1366 条全审不是一轮能干完的（A=293 / B=319 / C=358 / D=396）。**分批做**：每轮审 N 条（自己定），把进度写进 MEMORY（`审计进度 x/N`），审完再回到正常造题。
+
+**四、顺序建议**
+
+1. 先审**最近 50 条**（最近的最可能带旧配额痕迹）
+2. 再审 `rewrite_queue.tsv` 里挂着的那批
+3. 最后扫历史存量
+4. **候选池重审优先于继续造题**——池里被误杀的候选可能比你现在能挖到的更多
+
+**五、纪律**
+
+- 🚫 不改别人 shard 的 jsonl / MEMORY
+- 🚫 不删数据（重做 = 新增版本 + 标状态）
+- ✅ 审计结论要能逐题追溯到 trace 原文（`user` / `session_file` / 用户原话）
+
+
 
 > 🔴 **2026-11-15 用户令 · shard A：mc 阈值降到 5（选料枯竭 → 扩池）· 最高优先 · 未完成**
 
@@ -212,12 +276,7 @@
 > - 若某工具的全部调用都失败，单独点名（这正是用户要的"异常"）。
 > - 数字不许估：取不到写 `n/a` 并说明原因。
 
-> 🎯 **本轮最高优先（2026-11-09 用户令 · 优先于常规选料）**：**全量 trace 重扫 + mc 阈值下调评估**
-> 1) **全量重扫**：停止依赖 11/05 的 stale `summary.tsv`，也不要只做 fresh-window。对目标机群执行一次**全量 `ssh_eda_search`**（或等价全盘 `find`），重新生成 `summary.tsv`。记录：扫描主机数、成功/失败、耗时、去重后 session 数、按 mc 的分布。
-> 2) **mc 阈值表**：对 Shard A 的域（digital / verification / pnr_signoff / eda_other）分别统计 **mc≥30 / 25 / 20 / 15 / 10 / 5** 的：session 数、unique users、un-ledgered、digital-marker 命中数。
-> 3) **可行性评估**：每个阈值取 top-N（≤20）做 peek，统计 **可忠实还原用户意图的任务 / 需要沙盒工具的任务 / 需要多工具链路的任务** 各多少；**不得再把 analysis-Q&A / doc-search / debug-Q&A / env-config / flow-driving 判为 weak 或 analysis-only**——按顶部「任务初衷」，这些都是真实用户意图，都该造。给出预计新增 case 数即可，**不要给"最低可用阈值"这类建议**（阈值低就该用低的，不需要向上论证）。
-> 4) **交付**：`summary_stats.json.scansync` 写 r291 条目（含 `threshold_table`）、更新 `MEMORY_DESIGNFLOW_A.md`、`EXPERIMENTS_DESIGNFLOW.md` 新增一节；**不要新建 HTML 报告**（报告纪律）。
-> 5) **护栏**：只读扫描；不动其他 shard ledger；拒绝必须写理由；A-faithful produce-task 优先。
+> 📦 **归档指针 · 2026-11-09「全量 trace 重扫 + mc 阈值下调评估」**（已执行完毕）：现行做法 = 定期全量 `ssh_eda_search` 重扫 → 更新 `summary_stats.json.scansync` + `threshold_table`；阈值评估**只看"能忠实还原用户意图的候选有多少"**，不再产出"最低可用阈值"这类向上论证。原文见 `ARCHIVE_OPERATOR_DESIGNFLOW.md`。
 
 
 > ⛳ **每轮收尾必做（2026-11-09 运维令 · 论文维护）**
@@ -239,18 +298,7 @@
 
 ### 📦 归档指针 · 2026-11-02「被测换 cline + PreToolUse 防泄题 hook」· 现行口径：被测 = cline（`--auto-approve true --json`）；hook ⇒ agent 只能看 workspace 内文件，判分器在 workspace 外跑。原文见 `ARCHIVE_OPERATOR_DESIGNFLOW.md`「归档块 · 2026-11-11」
 
-### 🚨 2026-10-31 21:5x 运维令：`test 思路` 必须是「k 条断言」（**硬闸门 + 打回重写**）· 用户直令 · 最高优先
-
-> **背景**：§4.6 昨天已要求 `k 条断言：①…`，但 10_31 日报 **30 条 case 里 0 条达标**（全文“断言”出现 0 次，全部仍是散文式，如「解 zip 校验 5 文件…」）。原因不是理解偏差，是**没有闸门**。本轮起改成硬闸门。
-
-**规则（每条 case、每一轮都必须过）**
-1. **写**：`metadata.test_rationale` 必须**以 `k 条断言：` 开头**，后接 ①②③…，**与 `check()` 中可独立失败的条件一一对应**，每条写「对象 + 判定」。🚫 散文 / 🚫 实现细节（`raise`、`zipfile`）/ 🚫 「校验交付件完整性」式废话。
-2. **对账（落 jsonl 之前）**：agent 必须**先把 `check.py` 的条件标签列出来**（a–n，或 `CONDITIONS = [("a","…"), …]` 表），数出 `k_check`；判据 **`k_rationale == k_check` 且 `k_check ≥ 8`**。
-3. **不过就滚回去改**：`k_rationale ≠ k_check` 或 `k_check < 8` ⇒ 该 case 标 **`incomplete`**：🚫 不许 `mark --status case`、🚫 不许追加进 jsonl、🚫 不计入通过率；写入 `designflow/rewrite_queue.tsv`，**下一轮第一件事就是修它**，修完才准开新 case。
-5. **存量 30 条**：按 §4.6 全部视为未完成；每轮从 `rewrite_queue.tsv` **修 1 条**，直到清零，心跳写 `断言清单 x/30`。
-6. **心跳新增一行**：`🧾 断言: k_rationale=k_check=n ✓/✗（今日 x/30 达标）`。
-
-> 📦 体积：本令约 1.5KB；TASK 现 17KB，远低于 40KB 红线。
+### 📦 归档指针 · 2026-10-31 21:5x「k 条断言硬闸门」· 现行口径已并入 **§4.3（≥8 独立条件）+ §4.6（test_rationale 逐条断言清单）**：`k_rationale == k_check 且 k_check ≥ 8`，不过则标 `incomplete` + 进 `rewrite_queue.tsv`，不许落 jsonl、不计通过率。原文见 `ARCHIVE_OPERATOR_DESIGNFLOW.md`。
 
 
 ### 📦 归档指针 · 2026-10-31「A/B 双档 casemaking」· 现行要点：A 档 = trace-faithful（用真实 trace 用户原话作任务说明，不改写），B 档 = synthesized；A 档优先，B 档须说明 A 为何不可行。原文见 `ARCHIVE_OPERATOR_DESIGNFLOW.md`「归档块 · 2026-11-11」。
