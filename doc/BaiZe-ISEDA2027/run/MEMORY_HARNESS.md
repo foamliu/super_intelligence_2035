@@ -2,19 +2,19 @@
 
 WAITING: 1
 
-> 🆕 **R2552 · 2026-11-16 00:17 — 监控轮·自检全绿 + 🔴502 infra发现(10题·非能力) + cc rerun 40/82(1 running·41 remaining) + adaptive off10/10·0 429✅ + gateway NOW healthy(200)**
-> - **自检**: load31/224 ✅·mem 1044GB avail ✅·0 harness proc >8000%CPU ✅·reports/ porcelain 仅HTML✅
+> 🆕 **R2553 · 2026-11-16 01:04 — 监控轮·自检全绿 + cc rerun 41/82(7P/27F/7NA·1 running·40 remaining) + 0 agent-level ConnRefused HARD VERIFIED✅ + gateway healthy(200) + adaptive off10/10·0 429✅**
+> - **自检**: load34/224 ✅·mem 1042GB avail ✅·0 harness proc >8000%CPU ✅·reports/ porcelain 仅HTML✅
 > - **git**: `git pull` up-to-date ✅
-> - **cc rerun**: PID 1510521 alive(20.5h·n=1·jobs-dir=0348)·**40/82 done + 1 running(merge-diff-arc-agi-task) + 41 remaining**·ETA~Nov17·**0 agent-level ConnRefused ✅**(fix verified·overlay --network host)
-> - **🔴 502 infra发现(深挖40 completed逐题stdout)**: 10题 stdout="API Error: 502 gw-proxy upstream error: [Errno 104] Connection reset by peer"=**INFRA非能力**: 9 FAIL(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video/filter-js-from-html/git-multibranch/gpt2-codegolf)+1 NA(fix-ocaml-gc)·502分散Nov14 21:00→Nov15 11:36(**间歇非集中**·每题跑~44min后遇502)·**gateway NOW healthy**(HTTP 200·chat completion OK·2026-11-16 00:17)
-> - **accurate attribution(40 done)**: 7 PASS + 14 max-turns-80(能力) + 2 wrong-solution-exit0(能力·git-leak-recovery/kv-store-grpc) + 9 FAIL-502(**infra**) + 7 NA-timeout-3600s(能力待定·model ran full hour·stdout empty·gw_proxy log无覆盖) + 1 NA-502(**infra**) = 40 ✅守恒
-> - **⚠️ 修正R2551**: R2551将8 NA归因为"R2498 RuntimeError bug"=**错误**·实为7 timeout(3600s)+1 502(infra)·非R2498 bug(R2498 fix=non-zero-exit不raise·已生效·verifier正常跑)
+> - **cc rerun**: PID 1510521 alive(21.2h·n=1·jobs-dir=0348)·**41/82 done + 1 running(model-extraction-relu-logits) + 40 remaining**·ETA~Nov17·**0 agent-level ConnRefused HARD VERIFIED ✅**(grep agent result.json=0·overlay --network host·fix=R2463 confirmed)
+> - **cc 41 done breakdown**: 7 PASS(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git/hf-model-inference/large-scale-text-editing/log-summary-date-ranges) + 27 FAIL(含9 infra-502=ability-fail-with-infra-cause) + 7 NA(6 timeout-3600s + 1 502-infra fix-ocaml-gc) = 41 ✅守恒
+> - **502 infra(unchanged from R2552)**: 10题 stdout="502 gw-proxy upstream error: Connection reset by peer"=INFRA非能力·9 FAIL+1 NA·gateway NOW healthy(HTTP 200·2026-11-16 01:04)
 > - **infra rerun manifest已备**: `manifests/tb21_cc_rerun_round2_infra_timeout_20261116.txt`(10 502 + 7 timeout=17题)·**待82完成后rerun**(gateway healthy now·用adaptive auto·同口径)
-> - **adaptive**: off 10/10·quiet=425m·0 429✅·验收4/4✅(separate test state·production state clean)·实跑验证✅(opencode/pi/deepseek 12 parts·0 429)
+> - **adaptive**: off 10/10·quiet=473m·0 429✅·status=hold(cap=10)·策略 work4/off10 clean20m cool20m dwell10m
 > - **7way报告**: cc仍0/89待merge(82完成后→rerun 17 infra/timeout→merge→REGEN·cc行换真实数字+502单列infra)
-> - **research日报2026-11-16**: harness建议=agent记忆三联对照(无记忆/摘要/摘要+原文可回查+意图组合·MAPE论文)=future eval design参考·非本轮actionable
-> - **下一步**: ①cc 82完成(~Nov17)→rerun 17 infra/timeout题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字·502/timeout单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.6KB / MEMORY≈28.2KB（✅≤32KB）
+> - **下一步**: ①cc 82完成(~Nov17)→rerun 17 infra/timeout题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈28.5KB（✅≤32KB）
+>
+> 📦 R2552 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 40/82(7P·0ConnRefused)+502 infra发现(10题)+adaptive off10/10·0 429·gateway healthy。需要时再读。
 >
 > 📦 R2551 流水已归档 → daily-memories-harness/2026-11-15.md。结论：监控轮·cc 40/82(7P·0ConnRefused)+pi COMPLETE 45/46(8P)+adaptive off10/10·0 429·7way REGEN(pi35/89)。注意:R2551的NA归因已被R2552修正。需要时再读。
 > 📦 R2550 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+pi rerun merge→REGEN 7way(pi27→35/89)+adaptive state修复(测试污染→reset)+cc 37/82(7P)+pi 45/46(8P)+adaptive off10/10·0 429✅。需要时再读。
