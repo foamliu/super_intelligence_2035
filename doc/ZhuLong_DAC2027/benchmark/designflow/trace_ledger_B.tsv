@@ -1460,7 +1460,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794374820094_yuumj					parked		2026-11-14 05:20	kaixuanx:waveform viewing+Q&A (打开 i(vdd) 分析功耗)
 1794529802472_qcrl8	e0046686	10.129.2.14	189	characterization	case	EDA-Eval-DesignFlow-SpfAutosimSetup-001	2026-11-14 07:23	
 1794539336252_x67j4	t0002609	hfeg0pkn004	76	spice_sim	parked		2026-11-14 07:56	r526 peek: USER#0 agent-policy writableRoot write-test = env-policy testing not produce; lvs:270/drc:41 but intent=agent-policy-test REJECT
-1794536630040_5u9zc	pdsong	hfeg0plg74	80	spice_sim	parked		2026-11-14 07:56	r526 peek: USER#0 帮我分析下这个脚本 grepPCPNLoc_v2.py = analysis Q&A (verb 分析, C r527 type); lvs:304/calibre:146 but intent=analyze-existing-script REJECT
+1794536630040_5u9zc	pdsong	hfeg0plg74	80	spice_sim	case	EDA-Eval-DesignFlow-PcpnScriptAnalysis-001	2026-11-15 22:01	r645 复活池变现 #27
 1794376048465_g9gw3	zhenglu	hfeg0plg55	104	characterization	case	EDA-Eval-DesignFlow-OpcModelExtract-001	2026-11-15 16:21	r526 peek: USER#0 PRODUCE extract optical/ddm/resist model from PDK .tbc.decrypt -> text file AA_22nm_GL_optical; calibre:476/pdk:133 dominant but task=device-model extraction (characterization-adjacent). NOT deliverable A档: assets=encrypted private PDK .tbc.decrypt (huali_22nm) unreachable+unshippable; L1 text-extraction weak EDA-specificity (§5 L2/L3 preferred). B-track synthesis candidate (portable synthetic PDK-text model-extraction) for future round
 1794474782925_5ityn	zjqiao	hfhds206	404	spice_sim	case	EDA-Eval-DesignFlow-FinesimLaunchAgent-001	2026-11-14 08:29	
 1792394008610_lyj3f					parked		2026-11-14 08:48	r528 peek msg0=读取网表帮我分析电路 verb=分析=analysis Q&A not produce-task REJECT
