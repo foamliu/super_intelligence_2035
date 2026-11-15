@@ -2,82 +2,9 @@
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」检查**：限制探索的禁令已删除；**数据安全类约束全部保留**（删源前校验、不挤他人带宽、不碰他人产物、磁盘红线）——它们防的是**数据损毁**，不是防尝试。**默认立场：数据筛选规则、抽样方法、质检策略由你自主决定，写清依据即可。**
 
-> 🔴 **用户令 · 2026-11-15 09:0x（评估 5 个 agent datasets，有用则加入下载队列）· 高优先 · 未完成**
+> ✅ **用户令 · 2026-11-15 09:0x（评估 5 个 agent datasets）· ✅ 已完成** → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§2026-11-15 09:0x」；结论：Toucan(21GB)+AgentTrove(19GB)+neulab ADP 15子集(79GB)已落盘；orca P2不下；freeinference P3排除(转告harness)；adp_subset_plan.md+污染检查+DATA_MAPPING D1-D4已交付。以下详细内容保留供参考，已闭合。
 
-> **用户原话**：「data: 这些agent datasets 是否有用，有用就加入下载队列」+ 5 个 HF 链接
-
-**我的初判（基于实查，你要自己复核并纠正我）**
-
-| # | repo | 规模 | 性质 | **我的初判** |
-|:--|:--|:--|:--|:--|
-| 1 | `microsoft/orca-agentinstruct-1M-v1` | ~2.2GB | **纯合成**，GPT-4 生成，OpenAI messages 格式，**无真实工具执行** | 🟡 **低优先**（见下） |
-| 2 | `Agent-Ark/Toucan-1.5M` | 待核实 | **495 个真实 MCP server / 2000+ 工具** 合成的 150 万条轨迹，含真实工具执行，多轮/并行调用；BFCL-V3 + MCP-Universe 上有增益 | ✅ **强烈建议下**（最贴我们） |
-| 3 | `open-thoughts/AgentTrove` | 1.7M 行 | **terminus-2 / Harbor harness 格式**的真实 agent 轨迹（含 SWE、codeforces、SWE-smith 等），带 `reward` 与失败轨迹 | ✅ **强烈建议下**（与我们 harness 线同源） |
-| 4 | `neulab/agent-data-collection` | **499 GB** | **ADP 统一协议**，把上面 3 个 + 20 多个源统一成 SFT 格式 | ⚠️ **去重后再决定**（见下） |
-| 5 | `harvardMadsys/freeinference_agentic_trace` | 1.19M 请求 / 1.21M 工具调用 | **只有元数据，没有消息文本**（`No message text is released`） | ❌ **不能用于训练**，但对 harness 线的 workload 分析有用（见下） |
-
-**逐条判断依据**
-
-**① `microsoft/orca-agentinstruct-1M-v1` → 🟡 低优先**
-- 纯合成（Azure GPT-4 生成），许可证 `cdla-permissive-2.0`，英文
-- **关键缺陷**：它的"agentic"是**方法论层面的**（AgentInstruct 流程生成问答），**轨迹里没有真实工具调用/执行反馈**。我们要培养的是"按协议调工具并交付结果"，这种数据帮助有限
-- ⇒ **先不下**，除非你在调研后认为需要补充通用指令遵循能力。若要下，优先级排在 2/3 之后
-
-**② `Agent-Ark/Toucan-1.5M` → ✅ 强烈建议下**
-- **最贴我们痛点**：495 个**真实 MCP server**、2000+ 工具、真实工具执行、多轮/顺序/并行调用 —— 这正是 **posttrain 那 1304 次工具调用被拒**要解决的问题
-- 有配套 SFT 子集（119.3K：28.3K 原始 + 40K Irrelevance + 15.8K Diversify + 35.2K Multi-Turn），含 **Irrelevance 扩展**（教模型"不该调工具时别调"）—— 对减少无效调用特别有用
-- license Apache-2.0
-- ⇒ **下全量**
-
-**③ `open-thoughts/AgentTrove` → ✅ 强烈建议下**
-- **与我们 harness 线直接同源**：Harbor / terminus-2 格式，就是 harness 线做 SWE-bench / TB-2.1 用的那套框架
-- 1.7M 行，来源含 `swesmith` / `codeforces` / `nl2bash` / `r2egym` / `staqc` / `freelancer` 等，**带 `reward`（0/1）**⇒ 可用于 RL
-- ⇒ **下全量**；并**额外记录**：它与我们 harness 线的 Nemotron Terminal Corpus 同格式（AgentTrove 规模是它的 4 倍）
-
-**④ `neulab/agent-data-collection` → ⚠️ 去重后再决定**
-- **499 GB**，但**它里面已经包含了 #2 Toucan 和 #3 的部分来源**（`orca_agentinstruct`、`toucan_1_5m`、`nemotron_terminal_corpus`、`swe-smith`、`nebius_SWE-agent-trajectories` 等 20+ 源）
-- 价值：**ADP 统一协议**把各源转成统一 SFT 格式（`sweagent` / `openhands` / `agentlab` 三种模板），省你自己写转换器
-- 风险：**与 2/3 内容重叠**，全下 499GB 会重复存储
-- ⇒ **做法**：先下 **ADP 的转换脚本和 schema**（GitHub `neulab/agent-data-protocol`，不含大数据），再**只挑 2/3 里没有的源**（例如 `code_feedback`、`codeactinstruct`、`mind2web`、`nnetnav-*`、`go-browse-wa`、`synatra`、`agenttuning_*`、`openhands`、`CharlieDreemur_OpenManus-RL`）。**下之前先出「重叠清单 + 建议下哪些子集」**给我确认
-
-**⑤ `harvardMadsys/freeinference_agentic_trace` → ❌ 不能训练，但有别的用**
-- **`No message text is released`** —— 只有请求时序、token 用量、工具名、工具调用参数结构、缓存块 ID，**没有实际对话内容**
-- ⇒ **排除出训练数据队列**
-- **但建议告知 harness 线**：它有 **14 种 harness（含 claude-code）+ 267 账户 + 16 周真实 agent workload**（1.19M 请求 / 1.21M 工具调用），对 harness 线做 **workload 特征分析、性能建模、真实调用分布** 有价值（不是训练用）。**你只需在 MEMORY 里记一行转告，不用自己深挖**
-
-**执行要求**
-
-1. **先核实再下**（不要信我和网上的说法）：对每个要下的 repo 用 `HfApi().dataset_info(repo_id, files_metadata=True)` 拿**精确文件数/字节数/子集列表/license**，写进 MEMORY
-2. **下载队列（按优先级）**：
-   - **P0（本轮就下）**：`Agent-Ark/Toucan-1.5M`、`open-thoughts/AgentTrove`
-   - **P1（自己判断后直接下，不必回来确认）**：`neulab/agent-data-collection` —— **只下「非重叠子集」，禁止全量 499GB**。判定规则给你，自己执行：
-     - **不许下**（与 P0 重复 / 可从 P0 派生）：`toucan_1_5m`、`orca_agentinstruct`、`nemotron_terminal_corpus`、`swe-smith`、`swe-gym_*`、`nebius_SWE-agent-trajectories`（若 AgentTrove 已覆盖）
-     - **要下**（AgentTrove/Toucan 里没有、且对"工具调用能力"有新信息）：`code_feedback`、`codeactinstruct`、`mind2web`、`nnetnav-live`、`nnetnav-wa`、`go-browse-wa`、`synatra`、`agenttuning_*`（alfworld/db/kg/mind2web/os/webshop）、`openhands`、`CharlieDreemur_OpenManus-RL`、`mini-coder`、`logicstar_swe-star`、`swe-play-trajectories`
-     - **执行方式**：`hf download neulab/agent-data-collection --include "<子集>/*"` 逐子集下，**每下完一个报体积 + `df -h /nas_user`**
-     - **额外收货（别漏）**：把 ADP 转换脚本也拉下来（`git clone https://github.com/neulab/agent-data-protocol`，代码很小）——它把异构 agent 轨迹统一成 SFT 格式，**以后转换我们自己的 cline trace 也要用它**
-     - **判定依据落盘**：写 `run/data/adp_subset_plan.md`（每个子集：下/不下 + 理由 + 与其他源的重复情况）。**你自行决定，不要回来问我**
-   - **P2（不下，但可改判）**：`microsoft/orca-agentinstruct-1M-v1` —— 纯合成、无真实工具执行，判低价值。**若你核实后发现它的 messages 里其实含 function-call 结构，可在 MEMORY 写明后改判并下**
-   - **P3（排除训练）**：`harvardMadsys/freeinference_agentic_trace` —— `No message text is released`，无对话内容。**不要下**；只需在 MEMORY 记一行转告 harness 线（14 种 harness / 267 账户 / 16 周真实 workload / 1.19M 请求 / 1.21M 工具调用，可用于 workload 分析，非训练用）
-
-3. **落盘**：`/nas_user/app.e0031982/datasets/<org>/<name>/`（与 IFM 那批同级）
-4. **护栏不变**：`nice -n 19` + `ionice -c3` + `max-workers 2` + `setsid` 后台；**不挤 StepC 分词与 pretrain 训练**；`/nas_user` 余量 <5T 暂停报运维
-5. **执行顺序（重要，别四批一起抢带宽）**：
-   - **Step 1**：先 `HfApi` 探测全部 5 个 repo + 写 `adp_subset_plan.md`（纯元数据，几分钟，不占带宽）
-   - **Step 2**：P0 两个（Toucan → AgentTrove）**串行**下载
-   - **Step 3**：P0 完成后，再按 `adp_subset_plan.md` 下 P1 的非重叠子集
-   - **Step 4**：边下边做调研报告（调研纯 web，不占 NAS 带宽，可与下载并行）
-   - ⚠️ 若 StepC 分词（PID1677655）出现速率下降，**立刻把下载让位**，等分词跑完再继续
-6. **登记**：`DATA_MAPPING.md` 记录每个 repo 的 `repo_id / 类型(预训练·SFT·RL) / 规模 / license / 是否含真实工具执行 / 是否带 reward / 与我们已有数据的重叠情况`
-7. **污染检查**（关键，不可省）：这些 agent 数据是否混入 **SWE-bench / Terminal-Bench / BFCL / MCP-Universe / HumanEval** 测试集 —— 尤其 `AgentTrove` 含 `swesmith`/`codeforces`，`neulab` 含 `swe-smith`，**必须核对是否与我们的评测集重叠**，重叠的要么剔除、要么在评测时换题
-
-
-**验收**
-1. 5 个 repo 的实测元数据（文件数/字节/license），与我的初判对照，**若我判断错了要指出并说明**
-2. P0 两个已落盘 + `DATA_MAPPING.md` 登记 + `df -h /nas_user` 前后对比
-3. `run/data/adp_subset_plan.md`（P1 每个子集的下/不下决策 + 理由）+ 实际下了哪些、共多少 GB
-4. ADP 转换脚本已 clone 到位（`agent-data-protocol`）
-5. 与 SWE-bench / TB-2.1 / BFCL / HumanEval 的**污染检查结论**（重叠 or 不重叠，要有依据）
-6. 调研报告 `reports/report_data_math_code_datasets_survey_zh.html` 已交付
+> 详细内容已归档至 `ARCHIVE_OPERATOR_DATA.md`「§2026-11-15 09:0x」。
 
 
 > 🔴 **用户令 · 2026-11-15 08:5x（下载 3 个 IFM 数学/代码数据集 + 调研更多可用数据集）· 最高优先 · 未完成**

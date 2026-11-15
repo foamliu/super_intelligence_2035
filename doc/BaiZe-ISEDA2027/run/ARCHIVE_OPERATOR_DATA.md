@@ -1,3 +1,27 @@
+## 归档 2026-11-15 09:0x（由 BAIZE_DATA_TASK.md 搬入，原文未改）
+
+### ✅ 用户令 · 2026-11-15 09:0x（评估 5 个 agent datasets，有用则加入下载队列）· ✅ 已完成
+
+> **用户原话**：「data: 这些agent datasets 是否有用，有用就加入下载队列」+ 5 个 HF 链接
+
+**结论**：✅ 全部验收项已满足。Toucan-1.5M(409files/21GB/0inc)+AgentTrove(121files/19GB/0inc)+neulab ADP 15子集(277files/79GB/0inc)已落盘；adp_subset_plan.md已写；agent-data-protocol已clone；污染检查CONTAMINATION_CHECK_AGENT_IFM.md已交付；DATA_MAPPING D1-D4已更新；orca P2低价值不下；freeinference P3排除训练(已转告harness线workload:14种harness/267账户/16周真实workload/1.19M请求/1.21M工具调用)。
+
+**我的初判（基于实查，已复核纠正）**
+
+| # | repo | 规模 | 性质 | **初判** |
+|:--|:--|:--|:--|:--|
+| 1 | `microsoft/orca-agentinstruct-1M-v1` | ~2.2GB | **纯合成**，GPT-4 生成，OpenAI messages 格式，**无真实工具执行** | 🟡 **低优先**（P2不下） |
+| 2 | `Agent-Ark/Toucan-1.5M` | 21GB | **495 个真实 MCP server / 2000+ 工具** 合成的 150 万条轨迹，含真实工具执行，多轮/并行调用 | ✅ **已下**（P0） |
+| 3 | `open-thoughts/AgentTrove` | 19GB | **terminus-2 / Harbor harness 格式**的真实 agent 轨迹，带 `reward` 与失败轨迹 | ✅ **已下**（P0） |
+| 4 | `neulab/agent-data-collection` | 79GB(15子集) | **ADP 统一协议**，只下非重叠子集 | ✅ **已下**（P1，15子集） |
+| 5 | `harvardMadsys/freeinference_agentic_trace` | 1.19M 请求 | **只有元数据，没有消息文本** | ❌ **排除训练**（P3） |
+
+**执行要求摘要**：先核实再下→P0 Toucan+AgentTrove串行→P1 neulab非重叠子集→P2 orca不下→P3 freeinference排除→adp_subset_plan.md→污染检查→DATA_MAPPING登记。全部已执行。
+
+**验收**：1.✅5repo实测元数据 2.✅P0落盘+DATA_MAPPING 3.✅adp_subset_plan.md 4.✅agent-data-protocol clone 5.✅污染检查结论 6.✅调研报告已交付
+
+---
+
 ## 归档 2026-10-31（由 BAIZE_DATA_TASK.md 搬入，原文未改）
 
 ### 🚨 2026-10-30 22:2x 运维直令：恢复 85M 下载 + `/nas_train` 大目录清理盘点 · [主体已交付，下载持续进行]
