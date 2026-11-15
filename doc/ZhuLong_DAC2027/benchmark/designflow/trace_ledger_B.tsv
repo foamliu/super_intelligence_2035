@@ -217,7 +217,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793585625884_wohc2.messages.json	dsgao	hfeg0pkn001	104	spice_sim	parked		2026-11-06 13:31	verdi_diag
 1791447139857_poxvz.messages.json	johnl	hfeg0pkn001	87	spice_sim	parked		2026-11-06 13:31	run_dc_fail_diag
 1793856196029_7at4j.messages.json	lvyy	hfeg0pkn004	69	spice_sim	parked		2026-11-06 13:31	why_no_folder_diag
-1792042544705_d1cg3.messages.json	t0002441	hfhds201	103	spice_sim	parked		2026-11-06 13:31	finesim_dc_nonconv_howto
+1792042544705_d1cg3.messages.json	t0002441	hfhds201	103	spice_sim	case	EDA-Eval-DesignFlow-FineSimDcConvGuide-001	2026-11-15 18:42	finesim_dc_nonconv_howto
 1791962616204_7j1bw.messages.json	caozhang	hfeg0pkn004	218	spice_sim	parked		2026-11-06 13:31	async_fifo_rtl
 1793326532932_fxfox.messages.json	tongni	hfeg0pkn001	209	spice_sim	parked		2026-11-06 13:31	rtl_python_dup
 1793257968522_mp3us.messages.json	tongni	hfeg0pkn001	164	spice_sim	parked		2026-11-06 13:31	vcc2sc_dup
@@ -1511,3 +1511,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794550233229_egiyo	e0048410	hfeg0plg98	29	characterization	parked		2026-11-15 00:09	non-produce: 'hello' test session, not a real EDA task
 1794567952569_788sj	yuchens	hfeg0pkn002	11	spice_sim	parked		2026-11-15 00:09	non-produce: py script path-error Q&A, not spice_sim characterization task
 1793353212592_38quf	gurmanli	hfeg0pkn005	597	spice_sim	case	EDA-Eval-DesignFlow-AetherAutoloadDiag-001	2026-11-15 14:30	
+1793603977814_gobna	steveny	hfeg0pkn005	107	spice_sim	case	EDA-Eval-DesignFlow-FineSimIntroGuide-001	2026-11-15 19:05	
