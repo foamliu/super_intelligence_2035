@@ -1620,7 +1620,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792655347922_nb078	hongl	hfeg0plg76	30	analog_context	parked		2026-11-13 12:11	r611 peek: 打开VIRTUOSO (open app, not produce)
 1785985110283_10ne1	e0014566	hfeg0pkn001	24	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 看下版图的情况都包含什么 (analysis, not produce)
 1793958513330_5svkc	e0039102	hfeg0plg74	26	analog_context	parked		2026-11-13 12:11	r611 peek: handoff 对话卡住了找到并继续 (continuation, not produce)
-1789647055494_9imo1	rongjiez	hfeg0plg54	45	schematic_netlist	parked		2026-11-13 12:11	r611 peek: debug pyaether 脚本结果不一致,先不要修改 (explicit no-modify debug)
+1789647055494_9imo1	rongjiez	hfeg0plg54	45	schematic_netlist	case	EDA-Eval-DesignFlow-LatchFFDiagnoseQA-001	2026-11-15 16:44	r709 reaudit prototype-proven candidate造题 (套 #254 v2 code-grounded debug-diagnosis pattern, 同族 r708 86g62)
 1791714944861_r8u7j	e0014566	hfeg0pkn001	38	schematic_netlist	parked		2026-11-13 12:11	r611 peek: first turn nihao greeting (no produce task in first turn)
 1792571639391_fowlb	dorswu	hfeg0pkn004	30	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 分析 SA 版图列出可修改的地方 (analysis, not produce)
 1793684751196_iyspj	jasonxu	hfeg0plg93	20	schematic_netlist	parked		2026-11-13 12:33	r612 peek: run existing sim script /proj/drvsa/.../runcript (execute-existing, not produce)
