@@ -2,14 +2,16 @@
 
 WAITING: 0
 
-> 🆕 **R2528 · 2026-11-15 17:20 — cc rerun 24/82(fix-ocaml-gc still running·0ConnRefused✅) + opencode 21/38(9P/6F/6NA·adaptive n=10·0 429✅) + 自检全绿**
-> - **cc rerun**: PID 1510536 harbor alive(etimes 48707s~13.5h)·job-level stats: n_completed=23+n_running=1(fix-ocaml-gc)+n_pending=58·**23 task-level result.json**=4PASS/16FAIL/3NA·**0ConnRefused HARD VERIFIED ✅**(grep=0)·4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·16FAIL(reward=0.0)·3NA=feal-linear/feal-differential/code-from-image(3600s timeout)·mean_reward=0.174(4/23)·58 remaining·ETA~Nov17 19:00
-> - **opencode rerun**: PID 517594(rerun script 4227s)+PID 773163(harbor part2 554s)·`--n-concurrent auto --chunk-size 12`·**21 result.json**=21/38(9PASS/6FAIL/6NA)·9PASS=cancel-async-tasks/chess-best-move/break-filter-js-from-html/build-pmars/git-multibranch/git-leak-recovery/fix-code-vulnerability/fix-git/financial-document-processor·6FAIL=circuit-fibsqrt/build-cython-ext/adaptive-rejection-sampler/dna-insert/gpt2-codegolf/feal-linear·6NA(3×timeout+3×exit-1+job-level)·**0 429**✅·17 remaining·ETA~Nov15 20:00
-> - **adaptive_concurrency REAL-WORLD VALIDATED ✅✅**: status: mode=off current=10/10(累计429=0)·ramp log: `8→9(quiet=273m)`+`9→10(quiet=61m)`·验收全部满足
-> - **自检**: load 32/224 ✅(pretrain dominant)·mem 1034GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·reports clean(porcelain=0)✅·/tmp 40% ✅
-> - **ETA**: cc 58remaining/~1h≈58h→~Nov17 19:00·opencode 17remaining/n=10≈2h→~Nov15 20:00
-> - **cc ConnectionRefused fix**: claude_code.py L182-201 no_proxy pin+overlay-network-host.yml·0ConnRefused across 24 trials✅(vs旧0/89=100%infra)
-> - **📦 体积**: TASK=25.6KB / MEMORY≈24.7KB（✅≤32KB）
+> 🆕 **R2529 · 2026-11-15 17:30 — cc rerun 23/82(fix-ocaml-gc verifier running·0ConnRefused✅) + opencode 19/38(9P/6F/4NA·adaptive n=10·0 429✅) + 自检全绿**
+> - **cc rerun**: PID 1510536 harbor alive(etimes 49151s~13.6h)·**23 task-level result.json**=4PASS/16FAIL/3NA·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 429✅·4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·16FAIL(reward=0.0)·3NA=code-from-image/feal-differential/feal-linear(3600s timeout)·fix-ocaml-gc verifier running(40min)·58 remaining·ETA~Nov17 19:00
+> - **opencode rerun**: PID 517594(rerun script 4671s)+PID 773163(harbor part2 998s)·`--n-concurrent auto --chunk-size 12`·**19 result.json**=19/38(9PASS/6FAIL/4NA)·part1(12tasks:4P/4F/4NA)+part2(7tasks:5P/2F/0NA so far)·9PASS=break-filter-js/build-pmars/cancel-async/chess-best-move/financial-doc/fix-code-vuln/fix-git/git-leak-recovery/git-multibranch·**0 429**✅·19 remaining·ETA~Nov15 20:00
+> - **adaptive_concurrency**: status mode=off current=10/10 累计429=0 ✅(Sunday off-peak cap=10)
+> - **自检**: load 35/224 ✅(pretrain dominant)·mem 1033GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·reports clean(porcelain=0)✅·/tmp 40% ✅
+> - **ETA**: cc 58remaining/~1h≈58h→~Nov17 19:00·opencode 19remaining/n=10≈2h→~Nov15 20:00
+> - **cc ConnectionRefused fix**: claude_code.py no_proxy pin+overlay-network-host.yml·0ConnRefused across 23+ trials✅(vs旧0/89=100%infra)
+> - **📦 体积**: TASK=25.6KB / MEMORY≈24.4KB（✅≤32KB）
+
+> 📦 R2528 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/3NA·fix-ocaml-gc running·0ConnRefused✅)+opencode 21/38(9P/6F/6NA·adaptive n=10·0 429✅)+自检全绿。需要时再读。
 
 > 📦 R2527 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/4NO_VER·fix-ocaml-gc verifier running·0ConnRefused✅)+opencode 14/38(4P/4F/6NO_VER·adaptive RAMPED 9→10 real-world log✅)+自检全绿。需要时再读。
 
@@ -31,12 +33,12 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2528 cc rerun 24/82(fix-ocaml-gc still running·0ConnRefused✅) + opencode 21/38(9P/6F/6NA·adaptive n=10·0 429✅)·hermes COMPLETE 38/89
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2527(cc rerun 6→24/82+adaptive落码+验收4/4✅+TASK归档+opencode rerun LAUNCHED+verifier精确归因+adaptive real-world validated 8→9→10)
-当前动作:     R2528: cc rerun PID1510536 harbor alive(13.5h)·23 task-level(4P/16F/3NA)+fix-ocaml-gc running·0ConnRefused✅·opencode rerun PID773163 harbor part2(9min)·21done(9P/6F/6NA)+running·adaptive n=10·0 429✅·load32/224✅·CPU<1%✅·0runaway✅·reports clean✅·W:0
-下一步:       ①cc 82题完成(ETA~Nov17 19:00)→rerun 3 NA timeout题(RuntimeError fix生效)→rerun 7×502→REGEN报告(cc行从0/89换真实数字) ②opencode 38tasks完成(ETA~Nov15 20:00)→merge→REGEN报告 ③pi46→deepseek48逐路串行(用adaptive_concurrency auto·chunk=12) ④hermes qemu 2题=BLOCKED(Py3.9<3.11) ⑤hermes 2 mteb=infra BLOCKED ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
+PHASE:        R2529 cc rerun 23/82(fix-ocaml-gc verifier running·0ConnRefused✅) + opencode 19/38(9P/6F/4NA·adaptive n=10·0 429✅)·hermes COMPLETE 38/89
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2528(cc rerun 6→23/82+adaptive落码+验收4/4✅+TASK归档+opencode rerun LAUNCHED+adaptive real-world validated 8→9→10+opencode 19/38)
+当前动作:     R2529: cc rerun PID1510536 harbor alive(13.6h)·23 task-level(4P/16F/3NA)+fix-ocaml-gc verifier running·0ConnRefused✅·opencode rerun PID773163 harbor part2(17min)·19done(9P/6F/4NA)+running·adaptive n=10·0 429✅·load35/224✅·CPU<1%✅·0runaway✅·reports clean✅·W:0
+下一步:       ①cc 82题完成(ETA~Nov17 19:00)→rerun 3 NA timeout题→rerun 7×502→REGEN报告(cc行从0/89换真实数字) ②opencode 38tasks完成(ETA~Nov15 20:00)→merge→REGEN报告 ③pi46→deepseek48逐路串行(用adaptive_concurrency auto·chunk=12) ④hermes qemu 2题=BLOCKED(Py3.9<3.11) ⑤hermes 2 mteb=infra BLOCKED ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
- 体积: TASK=25.6KB / MEMORY≈24KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
+ 体积: TASK=25.6KB / MEMORY≈24.4KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
