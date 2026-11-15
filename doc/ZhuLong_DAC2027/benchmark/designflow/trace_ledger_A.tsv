@@ -608,6 +608,6 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793607738033_9ufjy					parked		2026-11-15 07:54	r553: waveform analysis (DDR5 DRC module function+TM timing), Q&A not produce-task
 1789884434870_ilkea					parked		2026-11-15 07:54	r553: project analysis (look at dir), analysis not produce-task
 1791507262889_xotf3					parked		2026-11-15 07:54	r553: NetApp IO monitoring + script cleanup, IT-ops not EDA
-1792738846439_266sb	xing1z	hfeg0plg07	8	pnr_signoff	claimed		2026-11-15 08:53	
+1792738846439_266sb	xing1z	hfeg0plg07	8	pnr_signoff	case	EDA-Eval-DesignFlow-SdcCdcFix-001	2026-11-15 09:32	
 1793241105381_nurc0	shanliny	hfeg0pkn005	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .sv attached but Q&A not produce-task
 1791946267022_oqri7	xingx	hfeg0pkn002	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: pwd start, 0 write tool calls, read-only code-comprehension
