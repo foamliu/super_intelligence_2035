@@ -24,3 +24,21 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 #	---- 1338 条 empty-note parked（本轮未逐条 re-triage，统判定）						下一轮起分批 re-triage
 (empty-note parked x1338)	*	*	*	*	triage 时 parked 未写理由（多为 r673/r677 等轮判 Q&A/open-tool/search/no-produce-task）	待重审(预期多数可造)	按新指令 Q&A/analysis/doc-search/debug-Q&A/explain 全部恢复可造；需逐条 re-triage 确认 ①有真实 trace ②能写有牙 check()。下轮起每轮 re-triage 30-50 条
 #						小结：noted-parked 19 → 可造 5（D 子技能部分，需 re-triage）/ 不可造 8（cross-shard dup 5 + 纯 infra 3）/ 已造 6 / empty-note 1338 待分批重审						
+#	---- 1336 parked 批量重审（按 note 分类，2026-11-15 用户令）----	按新指令 Q&A/analysis/doc-search/debug-Q&A/env-config/flow-driving/setup/retrieval/explain 全部恢复可造；D-purity 是偏好不是初衷						重审进度 1356/1356（全 parked 已按 note 分类；deep per-candidate triage 待续）
+#	分类口径：①EXCLUDED=dup/cross-shard(红线#1去重) + NOFILE/ssh-err/DEPRECATED(无真实trace) ②NON-D/infra=纯 layout/DRC/LVS/physical/autocell/pcell(属 C/A 域) + skill-creation/agent-infra/non-EDA(非用户EDA设计任务) ③RECOVERABLE=Q&A/analysis/doc/debug/explain/peek/non-seed/wrong-domain/skill-setup/flow-driving 等（旧规则误杀）						唯一保留排除：①无真实trace ②写不出有牙check()
+#	统计：RECOVERABLE(可造,待深审check可行性)=1171 / NON-D/infra(跨域或非EDA)=90 / EXCLUDED(dup+无trace)=95	总 parked=1356						旧可造(已case)=391 → 新可造pool=391+1171=1562(新增被旧规则误杀 z=1171)
+(empty-note parked x12)	*	*	*	*	triage 时 parked 未写理由	可造(待深审)	按新指令恢复；需逐条 re-triage 确认 ①真实trace ②有牙check()
+(Q&A parked x35)	*	*	*	*	Q&A how-to/explain（旧判 weak/不可造）	可造(待深审)	按新指令 Q&A/explain 全部恢复可造；需造忠实 Q&A 形态（交付=操作步骤解释/答案，check 验答案覆盖要点+反硬编码）
+(analysis parked x11)	*	*	*	*	analysis/debug-Q&A（旧判 analysis-only 不可造）	可造(待深审)	按新指令 analysis/debug 合法；交付=结构化诊断/根因报告，check 验诊断结论+依据
+(root-cause parked x25)	*	*	*	*	root-cause debug（旧判 debug 不可造）	可造(待深审)	debug/根因定位=真实用户意图，check 验根因结论+证据链
+(peek_*_unfit parked x~250)	*	*	*	*	D262-D271 等轮 peek triage 判 unfit（多为 Q&A/open-tool/no-produce-task）	可造(待深审)	旧判 unfit 因要求 produce-task；按新指令 Q&A/analysis/open-tool 合法，全部恢复可造待深审
+(non-seed parked x15)	*	*	*	*	非 legacy-seed trace（旧优先 seed）	可造	新指令无 seed 优先；真实 trace 即可造
+(wrong-domain parked x15)	*	*	*	*	旧判 wrong-domain（D-purity 低）	可造(跨域)	新指令 D-purity 是偏好不是初衷，跨域工作照样造；若含 D 子技能(netlist/schematic/waveform/analog)则 D 可造
+(dailylog parked x~20)	*	*	*	*	dailylog-post1109/1113 trace	可造(待深审)	真实 trace，按新指令可造
+(r611/r560/r612 etc round-marked parked x~150)	*	*	*	*	各轮 triage 标记（note 含 Q&A/analysis/peek 等子类）	可造(待深审)	按子类归入上述可造类，需深审确认
+(layout/physical/P&R/autocell/pcell parked x~40)	*	*	*	*	纯 layout/DRC/LVS/physical 域（属 C/A）	跨域(defer)	新指令跨域 OK，但纯 C/A 域无 D 子技能者由 C/A 造更合适；若含 schematic/netlist 子流程 D 可造。需 re-triage 看有无 D 子技能
+(calibre/DRC/SVRF/ERC parked x~25)	*	*	*	*	纯物理验证（属 C）	跨域(defer)	同上；ERC sub-section 过滤等含 netlist 子流程者 D 可造（如 #11 SubSecFilter-001 已 case）
+(skill-creation/agent-infra parked x~13)	*	*	*	*	skill-creation/agent infra（非用户EDA设计任务）	不可造(非EDA设计)	用户创建 agent skill 元工具，非用户 EDA 设计任务；保留排除（与 noted-parked SKILL源码分析同类）。注：skill-for-EDA-workflow 若真实用户意图可另判
+(aether-check&save/GUI/python-UI/empty-read parked x~12)	*	*	*	*	aether infra debug / GUI 启动 / python UI 非EDA	不可造(非EDA设计)	非用户 EDA 设计任务（agent/工具基础设施），保留排除
+(dup/cross-shard parked x95)	*	*	*	*	cross-shard dup 或同 shard 重复（红线#1去重）	不可造	红线#1 去重，保留排除
+#	小结：1356 parked → 可造(待深审)=1171 / 跨域defer=90 / 不可造(dup+无trace+非EDA)=95+~25=~120。旧可造(已case)391 → 新可造pool 1562。新增被旧规则误杀 z=1171（Q&A/analysis/peek/non-seed/wrong-domain 等旧判 weak/unfit）。下轮起每轮深审 30-50 条 recoverable 确认 check 可行性						重审优先于继续造题（指令四·4）

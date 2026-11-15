@@ -65,3 +65,34 @@ EDA-Eval-DesignFlow-BsmFailAnalyzer-001	(#363 zoeyr mc25) SRAM Sense Margin 二�
 EDA-Eval-DesignFlow-SpfCouplingCapExtract-001	(#364 gallopc mc16) StarRC DSPF/SPF 目标信号总寄生耦合电容统计（XDecGap 后处理） keep	用户 produce-task（耦合电容统计），prompt 忠实，check 验总耦合电容计算+反硬编码	保留
 EDA-Eval-DesignFlow-SpIncludeTrace-001	(#365 ghyang mc77) SPICE 仿真 deck include 引用追踪与分组（DDGOA SRAM 多仿真文件夹 sim*.sp） keep	用户 produce-task（include 追踪+分组），prompt 忠实，check 验 include 解析+分组+反硬编码文件夹名	保留
 EDA-Eval-DesignFlow-SpfBitcellParmHack-001	(#366 e0046686 mc13) DSPF/SPF 寄生网表 DDR bitcell mismatch 参数注入 parm_hack_spf.py keep	用户 produce-task（参数注入），prompt 忠实，check 验 parm_hack_spf.py 注入+反硬编码 TOPMOD_A	保留
+EDA-Eval-DesignFlow-Analog-001	(#1 haoyut mcNone) netlist/SPEF 连接追踪器构建·反标失败诊断辅助	keep	用户 produce-task（net_trace.py 连接链+PARA 分类），prompt 含真实用户/主机/场景，check 验 UPSTREAM/DOWNSTREAM 链+bus bit+跨输入守卫	保留
+EDA-Eval-DesignFlow-ResReport-001	(#2 e0014566 mc826) RsCalc 电源网络电阻分布报告生成（5 份英文报告+对账）	keep	用户 produce-task（5 份报告+数字对账），prompt 含真实陷阱（vss! 写 0 被抓），check 验报告内容+对账	保留
+EDA-Eval-DesignFlow-RsCalcFlow-001	(#3 e0014566 mc975) Virtuoso SKILL rscalc/autovia/powerfill 工作流编排	keep	用户 produce-task（流程编排+prompt_flow.md），prompt 忠实，mock_tools 离线模拟器替代真 Virtuoso（B-grade reframe 合理），check 验 7 文件+config+迭代	保留
+EDA-Eval-DesignFlow-Backannot-001	(#4 haoyut mc878) PrimeTime read_parasitics 反标失败诊断（9660/1041009 net）	keep	用户 produce-task（诊断报告+ignore 方案），prompt 含真实 PARA-043/044/124，check 验 4 文件+分类+计数	保留
+EDA-Eval-DesignFlow-Characterization-001	(#5 vincelu mc862) SiliconSmart 库表征配置调试（5 库 8 类 error 修复）	keep	用户 produce-task（修配置至全 tasks 成功），prompt 含真实 8 类 error，check 验 .tcl/.inst 修复+fix_summary	保留
+EDA-Eval-DesignFlow-HierDescend-001	(#6 fxian mc606) Aether 原理图层次 descend（GUI 加按钮逐级 descend）	keep	用户 produce-task（hierarchy_descend.py+按钮），prompt 含用户三约束原话，check 验逐级 descend+schematic 视图+末级停	保留
+EDA-Eval-DesignFlow-LibCell-001	(#7 zjqiao mc728) gen_lib_cell.py 从大网表+cell list 生成 lib_cell.list	keep	用户 produce-task（流式解析注释头→库映射），prompt 含真实陷阱（禁按前缀硬编码），check 验 cell-recall+ghost-exclusion+反硬编码	保留
+EDA-Eval-DesignFlow-NetlistChk-001	(#8 jason17w mc288) 100W 行 Netlist_Vcap 网表语法/格式检查器	keep	用户 produce-task（流式 netlist_checker.py+JSON 报告），意图忠实；prompt 为英文 scenario 风格（legacy 合成写法）但任务=用户所求，check 验 14 类错误+subprocess 真跑	保留（备注：prompt 英文 scenario 风格，非 trace 逐字，但意图忠实）
+EDA-Eval-DesignFlow-Schematic-001	(#9 e0039602 mc394) netlist_cell_convert 抽象cell→simlib 物理单元转换	keep	用户 produce-task（确定性变换工具固化），prompt 含真实场景，check 验三级映射+死节点+合并	保留
+EDA-Eval-DesignFlow-SimlibIndex-001	(#10 e0039602 mc515) simlib model 名解析建可索引表+相似匹配+参考示例	keep	用户 produce-task（参考示例库模块），prompt 含真实相似匹配场景，check 验索引+匹配+截断	保留
+EDA-Eval-DesignFlow-SubSecFilter-001	(#11 e0031668 mc1478) ERC_AI_CHECK 按 sub-section 2.1-2.8 过滤 ERC 报错	keep	用户 produce-task（filter_erc_by_section+run_drcpa_218.sh），prompt 含真实原话「只看 erc 报错里面 2.1-2.8 的」，check 验 sub-section 匹配。跨域 ERC 在 D.jsonl 按新规则合法	保留
+EDA-Eval-DesignFlow-SubcktExtract-001	(#12 rongtaoy mc574) 115MB DRAM 网表按 cell 名复用三步提取（locate/extract/parse）	keep	用户 produce-task（三步流程脚本），prompt 含真实 bug（+ 续行致 cell 名取错），check 验端口/子 cell/网+续行处理	保留
+EDA-Eval-DesignFlow-TempSelInfer-001	(#13 easont mc650) TempHalfWL 温度传感器 cosim 波形→推断各 signal 功能	keep	用户 analysis/Q&A（从波形说明信号功能），按新指令 analysis 合法；case 保留推断+验证 one-hot 形态。意图忠实	保留
+EDA-Eval-DesignFlow-WaveView-002	(#14 easont mc786) TempHalfWL cosim FSDB 波形逐信号读+判数字/模拟+统计	keep	用户 produce-task（waveview skill 读 FSDB），WAVEVIEW 协作 task1 已恢复看图形态。意图忠实	保留
+EDA-Eval-DesignFlow-Waveform-001	(#15 e0039602 mc73) 调试/理解 waveview-fsdb-readerV2-2 skill（FileNotFoundError+detect_signal_type）	keep	用户 debug/understanding skill 逻辑。case 将 skill 分析逻辑结晶成独立 tbl_analyzer.py（B-grade reframe）——主题与用户调查的 skill 逻辑一致，deliverable 形态从「理解」转「构建」但 subject 对齐。按新指令 debug/Q&A 合法；v1 produce-task 形态可保留，v2 可补 Q&A 解释形态	保留（备注：debug→tool reframe，subject 对齐；v2 可补 Q&A 形态）
+EDA-Eval-DesignFlow-SkillToAether-001	(#16 e0031668 mc704) ERC_AI_CHECK step3 SKILL(.il)→pyAether 改写	keep	用户 produce-task（.il→pyAether 等价改写），prompt 含真实卡点（无 Virtuoso），check 验 aether_db+cell_chains+网名分类	保留
+EDA-Eval-DesignFlow-CellMap-001	(#17 e0039602 mc661) netlist 缺失 cell→simlib_base 物理单元映射引擎	keep	用户 produce-task（cell_mapper.py 确定性变换），prompt 含真实 11 条映射约束，check 验映射+报告	保留
+EDA-Eval-DesignFlow-CTLEAcMetric-001	(#18 alenxu mc755) CTLE AC 仿真结果整理（从 .pa0 提指标+spec 判定）	keep	用户原话「仿真结果每次跑完都需要整理好」+「bw 为 -3db 带宽」= 真实子意图（整理结果+算 BW），case 捕获该子技能，非 downgraded。更大设计任务是另一 case 范畴	保留（备注：取设计任务的「整理结果」子意图，用户原话支持）
+EDA-Eval-DesignFlow-NetlistDCE-001	(#19 easont mc650) TempHalfWL 扁平网表死代码消除（删未实例化 .SUBCKT）	keep	用户原话「理解网表→分析可优化→直接在netlist上修改」，gold=删死代码非逻辑重构，prompt 忠实，check 验 DCE+保留结构	保留
+EDA-Eval-DesignFlow-WvEdgeTiming-001	(#20 e0039602 mc685) waveview_fsdb_readerV2.py 增强（高/低电平时长+tr/tf 25%-75%）	keep	用户原话逐字（增加高低电平时长+上升下降沿 25%→75%），prompt 含真实 V2→V2.1 迭代，check 验算法+总线展开	保留
+EDA-Eval-DesignFlow-InstCdlConsist-001	(#21 vincelu mc476) .inst 与 CDL 网表电路行为一致性分析（列差异不改）	keep	用户 produce-task（一致性分析+列差异），prompt 逐字含四维度要求，check 验端口/方向/网表名/pintype 15 flag	保留
+EDA-Eval-DesignFlow-TempSelWaveform-001	(#22 easont mc590) TempHalfWL cosim sel* 信号波形→说明功能（看图）	keep	用户 analysis（从波形说明 sel* 功能），WAVEVIEW task1 已恢复看图形态。意图忠实，analysis 合法	保留
+EDA-Eval-DesignFlow-ToggleTrTf-001	(#23 adaml mc324) r3_hold_rise_wch tr0 波形提取所有 toggle 的 tr/tf（10%-90%）	keep	用户 produce-task（用 skill 验证+提取 tr/tf），prompt 含真实目录+13/38 toggle，check 验 toggle 识别+tr/tf 算法	保留
+no_id_#24	(#24 easont mc590) TempHalfWL 网表优化前后对比生成 markdown 报告	keep	用户 produce-task（对比网表生成 md 报告），prompt 逐字含 U[383] 原话，check 验删/留/新增+实例数+关键结构	保留
+EDA-Eval-DesignFlow-TempThreshChar-001	(#25 easont mc650) TempHalfWL 阈值检测器表征（trip-point/迟滞窗口/阈值排序，看图）	keep	用户 analysis（阈值表征），WAVEVIEW task1 已恢复看图形态。意图忠实，analysis 合法	保留
+no_id_#26	(#26 kli mc424) 两份 fullchip si.out 对比诊断（更重？OOM？）	keep	[batch1 已审] 用户意图=诊断，JSON 报告即诊断=答用户问题	保留
+no_id_#27	(#27 taodu mc356) FineSim connectFile 网表连接性校验 Perl 脚本	keep	用户 produce-task（check_connectFile_nets.pl），prompt 含真实多轮演进，check 验端口哈希+实例路径+ignore	保留
+no_id_#28	(#28 jasonxu mc469) ReadsigCM.py 从 ALPS 网表提取模拟 readout 电路地址 net+位编码	keep	用户 produce-task（ReadsigCM.py 多轮迭代），prompt 含 skill-creator 原话，check 验提取+排序+清洗+时间戳	保留
+no_id_#29	(#29 e04201 mc323) 分析 DDR5 DLL 控制电路（cm1_io_DLLBypass/LDB 信号行为+Write/Read 流程）	downgraded	用户真实意图=功能理解（cm1_io_DLLBypass/LDB 信号行为、Write/Read 命令流程=Q&A/analysis），case 把主题迁移到结构化网表解析器（parse_netlist.py 提 module/端口/cell 计数），dropped 功能行为问题、只留结构提取。按新指令 Q&A/analysis 合法，应重做 v2 回答用户实际功能问题（DLL bypass 行为、Write/Read 流程），或保留 v1 作结构解析子技能+标备注。netlist 域共享但 functional question 被裁掉	保留 v1（结构解析子技能）；v2 可补「DLL 信号行为+命令流程」Q&A 形态
+no_id_#30	(#30 jason17w mc506) DDR5 VPS/UVS verilog 回归 verilogrun 脚本批量编辑（去 -noerror 120343+换库+备份）	keep	用户 produce-task（5 个 verilogrun 脚本批量编辑），prompt 含 U[435] 原话+真实目录，check 验编辑+备份	保留
+#	本表 batch3（#1-#30 最老历史存量）审完	审计进度 95/397（batch1 35 + batch2 30 + batch3 30）	keep=28 / downgraded=1 (#29) / off_intent=0 / over_constrained=0	header
