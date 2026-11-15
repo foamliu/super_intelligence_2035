@@ -69,7 +69,7 @@
 1792297573507_9knot.messages.json	vincelu	hfeg0plg55	862	physical_verify	parked		2026-11-03 11:01	netlist+schematic+hspice 非纯 shard C,4.2MB>2MB(r43)
 1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	parked		2026-11-03 11:01	pdk QA handoff 起手不纯需求(r43)
 1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	case	EDA-Eval-DesignFlow-SshTestProfileBuilder-001	2026-11-15 18:08	handoff resume PDK QA test fixes 强状态依赖(r47)
-1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked		2026-11-03 11:01	UI hello/runme 太薄元任务(r47)
+1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked		2026-11-15 20:07	r616 re-park: deepread reveals domain=spice_sim/analog_context (FineSim/Totem-SC PowerIREM), NOT C (layout/pv); belongs to shard B/D. 2 prior deepreads exist. C-domain misclassify in pool_reaudit.
 1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked		2026-11-03 11:01	handoff 弃(r46)
 1786592143567_5jmnc.messages.json	e0014566	hfeg0plg58	539	layout_virtuoso	parked		2026-11-03 11:01	RsCalc/AutoVia/PowerFill 重叠既有(r45)
 1790067900307_qy90r.messages.json	xinqiaoz	hfeg0plg76	534	physical_verify	parked		2026-11-03 11:01	handoff resume PDK QA sync phase4(r47)
@@ -148,7 +148,7 @@
 1790490487765_6dx8f.messages.json	cwei	hfeahpc504	328	layout_aether	case	EDA-Eval-DesignFlow-CTLESchGenAudit-001	2026-11-03 22:54	
 1792546322783_po4s1.messages.json	colinxu	hfeg0plg81	248	layout_virtuoso	case	EDA-Eval-DesignFlow-SchPinPlanAudit-001	2026-11-03 23:15	
 1789017399621_cmsbu	chenyue	hfeg0plg85	129	layout_aether	parked		2026-11-03 23:28	near-dup of M2PathLayout-001 (i1gjh): same chenyue/hfeg0plg85/cimi_test_cy/test_cimi/layout, same dbCreatePath theme (M2LANE/100paths/pitch0.69 vs M2/40paths/2um); parked to avoid topic dup
-1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked		2026-11-03 23:29	user turns all fix-direction (改ae.dmDeleteObj->dbDelCV) or error-report (ASSTRM-80158 unbound master); no clean A-档 提出需求 seed; attached cxmt_layout_remainTopPin_Virtual.py debug session
+1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	deepread		2026-11-15 20:15	r616 deepread done; case synthesis DEBT:1 ETA r617; layout_aether remain-top-pin-virtual script fix (dbDelCV+aeAddTrace-once+try-except ASSTRM-80158)
 1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked		2026-11-03 23:29	sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 非 physical_layout; netlist124+hspice dominant
 1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked		2026-11-03 23:32	meta: UI#0 policy engine caching/permission debug, UI#234 grant permission to change file; not a design-flow seed
 1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked		2026-11-03 23:32	generic launch: UI#0 启动业务场景:时序分析, UI#264 report product yield; innovus110 mixed timing/yield non pure layout
