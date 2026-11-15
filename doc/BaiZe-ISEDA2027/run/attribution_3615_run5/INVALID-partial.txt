@@ -1,0 +1,9 @@
+INVALID-partial (RCA 2026-11-16)
+
+run5 was KILLED mid-codegen per 2026-11-15 23:0x user order (stop blind 5-run chain).
+- 5-run chain PID43678 + run5 subtree killed (killed PIDs: 43678 / 335903 / 4109314; vision/zhulong/pretrain NOT touched).
+- run5 batch on 36.15 = 2026_1115_214751 (started @21:47, run_cline_script PID2855220); interrupted before completion.
+- This directory is intentionally EMPTY of eval artifacts (no final_report.json / execution_results.jsonl / completed_code_generation.jsonl).
+- run5 produces NO usable Pass@1. It MUST NOT be used in any 5-run mean or conclusion.
+- The auto-generated 5-run aggregate 5run_zhulong_baseline_interim.json (n=4, mean=4.75%±8.22%) is also marked INVALID (contains 3 pipeline-corrupted runs: run2/3/4). See reports/report_posttrain_collapse_rca_zh.html §6.
+- All other run1-run4 products preserved; no trace deleted.

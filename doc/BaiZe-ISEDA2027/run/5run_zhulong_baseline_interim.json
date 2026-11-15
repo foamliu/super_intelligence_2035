@@ -42,5 +42,8 @@
     "n_nonzero": 32,
     "error": "No module named 'scipy'"
   },
-  "note": "5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。"
+  "note": "5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。",
+  "rca_status": "INVALID",
+  "rca_invalid_reason": "RCA 2026-11-16: run2/3/4 are pipeline-corrupted (shared-temp race in format_cline_cli_output.py + stale-copy in chain script). run5=INVALID-partial (killed mid-codegen). This n=4 aggregate (mean=4.75%+-8.22%) contains 3 corrupted runs and MUST NOT be cited as a 5-run mean or model-capability conclusion. See reports/report_posttrain_collapse_rca_zh.html.",
+  "run5_status": "INVALID-partial"
 }
