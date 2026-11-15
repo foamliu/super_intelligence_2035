@@ -1,25 +1,20 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 
-> 🆕 **R2519 · 2026-11-15 15:29 — adaptive_concurrency 验收全通过 ✅✅✅✅ + cc rerun 监控(19/82·task20跑中) + 自检全绿**
-> - **adaptive_concurrency 验收(11-15令·下一轮必做 → 本轮DONE)**: ① `status` 打印 mode/current/cap/next/reason ✅(`mode=off current=8/10 next=9 clean_ramp(quiet=232m)`) ② `--now` 4时刻自检全通过 ✅(S1: 周六03:00→off current=8/10起步✅·S2: 周二10:00→work clamp_to_work_cap(8->4)✅·S3: record 429→current减半4→2·5min后cooldown(15m_left)tick不减不加✅·S4: 25min后cooldown过期+clean_ramp(quiet=30m)→2→3(+1)✅) ③ `--dry-run` 不推进状态 ✅(dry-run前后 state 均 `current=8/10 next=9`·`persist=not dry`生效·打印7 chunks×12 tasks `[adaptive] (dry-run) n_concurrent=9` 不执行harbor) ④ 真实state未被测试污染 ✅(使用独立--state/--events临时文件·real state保持off 8/10 累计429=0)
-> - **cc rerun**: PID 1510521 alive(~11.7h)·**19/82 done**(task20 filter-js-from-html in progress)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)·0 real 429 ✅
-> - **归因(19题·verifier_result.rewards.reward=ground truth)**: **2PASS**(custom-memory-heap-crash+dna-assembly·reward=1.0)·**7× max-turns=能力**(reward=0.0·stdout="Reached max turns (80)")·**1× timeout=能力**(configure-git-webserver·reward=0.0)·**6× 502 gw-proxy=infra**(reward=0.0·stdout="502 gw-proxy upstream error: Connection reset by peer")·**3× NA timeout**(reward=None·code-from-image/feal-diff/feal-linear·3600s超时verifier未跑)
-> - **公平能力评估(排除6×502+3NA)**: 2PASS/10=20%
-> - **自检**: load 28.04/224 ✅(top=pretrain 145%非本线)·mem 1048GB avail ✅·harness CPU max=0.0% ✅·0 runaway ✅·reports clean(git status --porcelain reports/=empty) ✅·adaptive_concurrency: mode=off cur=8/10 next=9(quiet=232m·累计429=0) ✅
-> - **ETA**: rate~2 tasks/h·(82-19)/2≈31.5h·cc 完成 ETA ~Nov16 22:00
-> - **📦 体积**: TASK=25.6KB / MEMORY≈28KB（归档R2516-17约2.5KB）
+> 🆕 **R2520 · 2026-11-15 16:10 — cc rerun 24/82(0ConnRefused✅·4PASS·fair=30.8%) + opencode rerun LAUNCHED(adaptive auto n=9) + 自检全绿**
+> - **cc rerun**: PID 1510521 alive(~12.3h)·**24/82 done**(fix-ocaml-gc running as #25)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)
+> - **cc归因(24题·agent_result.metadata.stdout)**: **4PASS**(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·reward=1.0)·**8×max-turns=能力**(reward=0.0·"Reached max turns (80)")·**1×timeout=能力**(configure-git-webserver)·**7×502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video/filter-js-from-html)·**3×NA timeout**(code-from-image/feal-diff/feal-linear·3600s超时verifier未跑)
+> - **cc公平能力评估(排除7×502+3NA)**: **4PASS/13=30.8%** · vs 旧0/89=0%(100%infra) → 修复有效✅
+> - **opencode rerun LAUNCHED(本轮新开)**: PID 517594·`--n-concurrent auto --chunk-size 12`·**adaptive 8→9**(clean_ramp quiet=273m·累计429=0)·38 tasks·jobs-dir=/tmp/tb21_glm53_jobs/opencode_rerun_7way_20261115_opencode·多container已起(break-filter-js/cancel-async等)·与cc并行跑(周末off-mode cap=10)
+> - **adaptive_concurrency**: mode=off current=8→9/10 next=9(quiet=273m·累计429=0) ✅·opencode为首个使用auto模式的rerun路由(11-15令"下一路开始生效"→本轮落实)
+> - **自检**: load 31/224 ✅(top=pretrain 128%非本线)·mem 1046GB avail ✅·harness CPU max=0.0% ✅·0 runaway ✅·reports clean(git status --porcelain reports/=empty) ✅
+> - **research日报(11-15)**: SatisFix(#2·pre-report开关同预算对照)+EvoX(#5·harness失败三分法+10.7pp模型间差)→harness直接对口·记为未来分析参考·本轮不action
+> - **ETA**: cc rate~2 tasks/h·(82-24)/2≈29h→cc完成~Nov16 21:00·opencode 38tasks@n=9≈4-5h→~Nov15 21:00·之后pi(46)+deepseek(48)待跑
+> - **📦 体积**: TASK=25.6KB / MEMORY≈30.5KB（归档R2518-19约2KB→下轮如超32KB先归档）
 
-> 🆕 **R2518 · 2026-11-15 14:44 — cc rerun 监控(19/82·task20 filter-js-from-html 跑中) + 429误报核验 + 自检全绿**
-> - **cc rerun**: PID 1510521 alive(~10.9h·etimes 39306s)·**19/82 done**(task20 filter-js-from-html in progress)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)
-> - **429核验**: grep 3 hits = **全部误报** ✅(circuit-fibsqrt verifier test-stdout Fibonacci数 `267914296`含子串"429"·dna-insert/build-pmars result.json timestamp `429209Z`)→**真实429/quota=0** ✅·429归因红线:无quota-blocked题
-> - **归因(19题·verifier_result=ground truth)**: **2PASS**(custom-memory-heap-crash+dna-assembly·reward=1.0)·**7× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert·reward=0.0)·**1× timeout=能力**(configure-git-webserver·AgentTimeoutError 3600s·verifier仍跑通 reward=0.0)·**6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video·stdout="API Error: 502 gw-proxy upstream error: [Errno 104] Connection reset by peer")·**3× NA timeout**(code-from-image/feal-differential-cryptanalysis/feal-linear-cryptanalysis·reward=None·3600s超时verifier未跑)
-> - **公平能力评估(排除6×502+3NA)**: 2PASS/10=20%·(含infra: 2/19=10.5%不公平)
-> - **自检**: load 26.66/224 ✅·mem 1047GB avail ✅·harness CPU max=0.0%(top=pretrain 145%非本线) ✅·0 runaway ✅·reports clean ✅·adaptive_concurrency: mode=off cur=8/10 next=9(quiet=187m·累计429=0) ✅
-> - **ETA**: rate~2 tasks/h·(82-19)/2≈31.5h·cc 完成 ETA ~Nov16 22:00
-> - **cc修复根因(已落码·adapter L188-201)**: 11-09原跑88/89 ConnRefused=transient gw_proxy outage(19:38-19:51窗口·同URL 127.0.0.1:9092的其余6路全0失败)·FIX=no_proxy/NO_PROXY belt-and-suspenders pin(L200-201)+CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000(R2494)+去RuntimeError→verifier恒跑(R2498)·11-14起rerun=0 ConnRefused
->
+> 📦 R2519-R2518 流水已归档 → daily-memories-harness/2026-11-15.md。结论：adaptive_concurrency验收4/4全通过✅·cc rerun 19/82·0ConnRefused✅·归因不变(2PASS/7maxturns/1timeout/6×502=infra/3NA)·429核验全误报✅。需要时再读。
+
 > 📦 R2517-R2516 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 17→18/82·0ConnRefused✅·归因不变(2PASS/7maxturns/1timeout/6×502=infra/2-3NA)·自检全绿。需要时再读。
 
 > 🆕 **R2515 · 2026-11-15 12:5x — cc rerun 监控(17/82) + 归因精化(extract-moves-from-video→6th 502 infra)**
