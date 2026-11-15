@@ -1037,7 +1037,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792041709940_x5fd4	t0002801	hfeg0plg49	119	characterization	case	EDA-Eval-DesignFlow-GmidLutRunSelect-001	2026-11-11 08:59	
 1794361090583_vi4ut	vincentz	hfeg0pkn004	206	spice_sim	parked		2026-11-11 10:30	input netlists /proj/drvqa/ permission-denied (vincentz-owned); trace has only diff-excerpt+grep, cannot reconstruct full 6672-line netlists; deep-read saved trace_deepreads/vi4ut_netlist_compare.md; revive if perms open
 1793843578065_vamug	rongtaoy	hfeg0pkn005	274	spice_sim	parked		2026-11-11 11:19	post-snap fresh: IO-extract Q&A turn1+script-modify goal; spice ratio 7%; /proj/ddgoa perm risk; borderline parked
-1794357676593_s5o5k	e0047527	hfeg0pkn005	153	eda_other	parked		2026-11-11 11:19	post-snap fresh: bridge-connection diagnostics not produce
+1794357676593_s5o5k	e0047527	hfeg0pkn005	153	eda_other	case	EDA-Eval-DesignFlow-BridgeCfgDiag-001	2026-11-15 12:06	post-snap fresh: bridge-connection diagnostics not produce
 1794359298326_ho1cr	e0039602	hfeg0pkn005	57	eda_other	parked		2026-11-11 11:19	post-snap fresh: LLM-review-code refactor not EDA
 1794362790365_5kysh	e0039602	hfeg0pkn005	57	eda_other	parked		2026-11-11 11:19	post-snap fresh: similar-model-match Q&A not produce
 1794362305034_y7tif	lein	hfeg0pkn005	49	eda_other	parked		2026-11-11 11:19	post-snap fresh: regression-diff Q&A not produce
