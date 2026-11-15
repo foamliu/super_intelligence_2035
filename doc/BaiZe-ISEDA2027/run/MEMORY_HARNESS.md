@@ -2,16 +2,16 @@
 
 WAITING: 0
 
-> 🆕 **R2526 · 2026-11-15 17:05 — cc rerun 24/82(4P/16F/4NO_VER·fix-ocaml-gc verifier running 18min) + opencode 12/38(4P/4F/4NO_VER·adaptive n=9 quiet=53m→10 imminent) + 自检全绿**
-> - **cc rerun**: PID 1510536 harbor alive(etimes 47659s~13.2h)·**24 result.json**(4PASS/16FAIL/4NO_VER)+fix-ocaml-gc verifier running(1071s~18min)=24/82·**0ConnRefused HARD VERIFIED ✅**(python3 grep=0)·4 PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·16 FAIL=0.0(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/circuit-fibsqrt/cobol-modernization/compile-compcert/configure-git-webserver[timeout]/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video/filter-js-from-html/financial-document-processor)·4 NO_VER=code-from-image/feal-differential/feal-linear[all 3600s timeout]+fix-ocaml-gc[verifier running]
-> - **cc归因**: 4PASS=1.0·16FAIL=0.0(15=agent completed no-pass·1=timeout)·4 NO_VER=3 timeout RuntimeError(3600s)+1 verifier-in-progress·verifier blocked by timeout exception(harbor cached old module→fix won't take effect until restart)→**batch完成后rerun NO_VER题**
-> - **opencode rerun**: PID 517613 harbor alive(etimes 3179s~53min)·`--n-concurrent auto --chunk-size 12`·**12 result.json**(4PASS[break-filter-js-from-html/build-pmars/cancel-async-tasks/chess-best-move]/4FAIL[adaptive-rejection-sampler/build-cython-ext/circuit-fibsqrt/dna-insert]/4NO_VER[cobol-modernization/distribution-search/dna-assembly/+1 job-level])+running·chunk1 of 38tasks
-> - **adaptive_concurrency REAL-WORLD VALIDATED ✅**: mode=off current=9/10 next=10(quiet=53m·累计429=0)·status confirmed via `python3 harness/adaptive_concurrency.py status`·ramping to 10 imminent
-> - **自检**: load 38/224 ✅(pretrain dominant)·mem 1033GB avail ✅·harness CPU max<4% ✅·0 runaway ✅·reports clean(porcelain=0 for reports/)✅
-> - **ETA**: cc (82-24)/~2h≈29h→~Nov16 21:00·opencode (38-12)/9≈3h→~Nov15 20:00
-> - **cc ConnectionRefused fix verified in code**: claude_code.py L182-201 ANTHROPIC_BASE_URL=TB_GW_PROXY_BASE(127.0.0.1:9092)+no_proxy explicit pin+overlay-network-host.yml(host network)·root cause=transient gw_proxy outage(非容器网络问题)·0ConnRefused across 24 trials✅
-> - **research日报11-15**: SatisFix前置报告switch(post-rerun低优先) already noted·no new actions this round
-> - **📦 体积**: TASK=25.6KB / MEMORY≈24KB（✅≤32KB）
+> 🆕 **R2527 · 2026-11-15 17:12 — cc rerun 24/82(fix-ocaml-gc verifier running 23min·0ConnRefused✅) + opencode 14/38(4P/4F/6NO_VER·adaptive RAMPED 9→10 real-world log证据✅) + 自检全绿**
+> - **cc rerun**: PID 1510536 harbor alive(etimes 48127s~13.4h)·**24 result.json**=24/82(4PASS/16FAIL/4NO_VER)·fix-ocaml-gc verifier running(1381s~23min)·**0ConnRefused HARD VERIFIED ✅**(grep=0)·4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·16FAIL=0.0·4NO_VER=3×3600s timeout(code-from-image/feal-differential/feal-linear)+1 job-level(fix-ocaml-gc verifier in-progress)
+> - **opencode rerun**: PID 517613 harbor alive(etimes 3647s~1h)·`--n-concurrent auto --chunk-size 12`·**14 result.json**=14/38(4PASS[break-filter-js-from-html/build-pmars/cancel-async-tasks/chess-best-move]/4FAIL[adaptive-rejection-sampler/build-cython-ext/circuit-fibsqrt/dna-insert]/6NO_VER[1×3600s timeout=caffe-cifar-10+3×OpenCode exit-1=cobol-modernization/distribution-search/dna-assembly+2 job-level])+running
+> - **adaptive_concurrency REAL-WORLD VALIDATED ✅✅**: `/tmp/tb21_opencode_rerun.log` 实测证据: `[adaptive] 8 -> 9 (clean_ramp(quiet=273m))` + `[adaptive] 9 -> 10 (clean_ramp(quiet=61m))`·status: mode=off current=9/10 next=10(累计429=0)·验收全部满足(status/--now注入4/4✅/real-run ramp log✅/--dry-run不推进✅)
+> - **自检**: load 38/224 ✅(pretrain dominant)·mem avail OK ✅·harness CPU max<4% ✅·0 runaway ✅·reports clean(porcelain=0)✅
+> - **ETA**: cc (82-24)/~1h≈58h→~Nov17 03:00·opencode (38-14)/10≈2.4h→~Nov15 20:00
+> - **cc ConnectionRefused fix**: claude_code.py L182-201 no_proxy pin+overlay-network-host.yml·root cause=transient gw_proxy outage·0ConnRefused across 24 trials✅(vs旧0/89=100%infra)
+> - **📦 体积**: TASK=25.6KB / MEMORY≈24.7KB（✅≤32KB）
+
+> 📦 R2526 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/4NO_VER·fix-ocaml-gc verifier running 18min·0ConnRefused✅)+opencode 12/38(4P/4F/4NO_VER·adaptive n=9 quiet=53m)+自检全绿。需要时再读。
 
 > 📦 R2525 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/4NO_VER·fix-ocaml-gc verifier running·0ConnRefused✅)+opencode 12/38(4P/4F/4NO_VER·adaptive n=9 quiet=45m)+自检全绿。需要时再读。
 
@@ -29,9 +29,9 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2526 cc rerun 24/82(4P/16F/4NO_VER·fix-ocaml-gc verifier running 18min·0ConnRefused✅) + opencode 12/38(4P/4F/4NO_VER·adaptive n=9 quiet=53m→10 imminent)·hermes COMPLETE 38/89
+PHASE:        R2527 cc rerun 24/82(fix-ocaml-gc verifier running 23min·0ConnRefused✅) + opencode 14/38(4P/4F/6NO_VER·adaptive RAMPED 9→10 real-world log✅)·hermes COMPLETE 38/89
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2525(cc rerun 6→24/82+adaptive落码+验收4/4✅+TASK归档+opencode rerun LAUNCHED+verifier精确归因+adaptive real-world validated 8→9)
-当前动作:     R2526: cc rerun PID1510536 harbor alive(13.2h)·24 result.json=24/82(4P/16F/4NO_VER·0ConnRefused✅)·fix-ocaml-gc verifier running(18min)·opencode rerun PID517613 harbor alive(53min)·12done(4P/4F/4NO_VER)+running·adaptive n=9 quiet=53m→10 imminent·load38/224✅·mem1033G✅·CPU<4%✅·0runaway✅·reports clean✅·W:0
+当前动作:     R2527: cc rerun PID1510536 harbor alive(13.4h)·24 result.json=24/82(4P/16F/4NO_VER·0ConnRefused✅)·fix-ocaml-gc verifier running(23min)·opencode rerun PID517613 harbor alive(1h)·14done(4P/4F/6NO_VER)+running·adaptive ramped 9→10 real-world log证据✅·load38/224✅·CPU<4%✅·0runaway✅·reports clean✅·W:0
 下一步:       ①cc 82题完成(ETA~Nov16 21:00)→rerun 4 NO_VER timeout题(RuntimeError fix生效)→rerun 7×502→REGEN报告(cc行从0/89换真实数字) ②opencode 38tasks完成(ETA~Nov15 20:00) ③pi46→deepseek48逐路串行(用adaptive_concurrency auto·chunk=12) ④hermes qemu 2题=BLOCKED(Py3.9<3.11) ⑤hermes 2 mteb=infra BLOCKED ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
  体积: TASK=25.6KB / MEMORY≈24KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
