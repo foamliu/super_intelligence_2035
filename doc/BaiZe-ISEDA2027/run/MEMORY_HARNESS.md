@@ -2,19 +2,21 @@
 
 WAITING: 1
 
-> 🆕 **R2549 · 2026-11-15 22:20 — 监控轮·自检全绿 + deepseek/opencode rerun COMPLETE→重建→REGEN双报告 + cc 32/82(7P)·pi still running + adaptive off10/10·0 429✅**
-> - **自检**: load30/224(pretrain-dominated) ✅·mem 1044GB avail ✅·0 harness proc >8000%CPU ✅·/tmp 40% ✅·reports/ porcelain 无新增json/log/txt ✅
-> - **git**: `git pull` up-to-date ✅ (HEAD=3defa565b data)
-> - **deepseek rerun COMPLETE**: 4 chunks×12=48 tasks·**0 passed**(全部能力失败)·7 errors(qemu×2 NonZeroAgentExit+RuntimeError×1)·0 429·0 ConnRefused ✅·聚合result.json无per-trial dirs→写`reconstruct_rerun_trials.py`从reward_stats/exception_stats重建48个per-task result.json
-> - **opencode rerun COMPLETE**: 4 chunks=38 tasks·**10 passed**(break-filter/build-pmars/cancel-async/chess-best-move/feal-diff-crypto/financial-doc/fix-code-vuln/fix-git/git-leak-recovery/git-multibranch)·9 errors·0 429 ✅·同法重建38个per-task result.json
-> - **REGEN双报告**: `report_harness_tb21_7way_zh.html`(10.6KB) 7路矩阵=opencode43/89=48.3%·cline42/89=47.2%·hermes38/89=42.7%·pi27/89=30.3%(partial)·deepseek11/89=12.4%·codex1/89·cc0/89(待cc完成) + `report_harness_cline_special_zh.html`(11.9KB) ✅
-> - **cc rerun**: PID 1510521 alive(18.6h·n=1·jobs-dir=0348)·**32/82 tasks done·7 passed**·0 ConnRefused ✅ HARD VERIFIED(全7 part dirs grep=0)·当前跑make-doom-for-mips·ETA~Nov17
-> - **pi rerun**: PID 3809767 alive(3.2h·adaptive auto n=10)·**有per-trial dirs**(与deepseek/opencode不同·可用原merge)·still running
-> - **adaptive**: off current=10/10 cap=10·quiet=207m·累计429=0 ✅·实跑验证✅(周末off模式)
-> - **cc修复验收(2026-11-14令)**: 根因=容器内127.0.0.1不可达宿主gw_proxy·修复=overlay-network-host.yml(--network host)·冒烟OK·重测in progress(32/82·7P·0ConnRefused✅)·待cc完成→merge(有per-trial dirs)→REGEN cc归因+7way报告
-> - **下一步**: ①监控cc/pi rerun完成 ②cc完成(~Nov17)→merge cc rerun→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ③pi完成→merge pi rerun→REGEN ④cc失败题EvoX三分法打标 ⑤成本补采 ⑥hermes qemu BLOCKED(Py3.9<3.11)
+> 🆕 **R2550 · 2026-11-15 23:05 — 监控轮·自检全绿 + pi rerun merge→REGEN 7way报告(pi 27→35/89) + adaptive state修复(测试污染→reset) + cc 37/82(7P)·pi 45/46(8P,sam-cell-seg verifier running) + adaptive off10/10·0 429✅**
+> - **自检**: load32/224(pretrain-dominated) ✅·mem 1045GB avail ✅·0 harness proc >8000%CPU ✅·/tmp 40% ✅·reports/ porcelain 无新增json/log/txt ✅
+> - **git**: `git pull` up-to-date ✅ (HEAD=ff7151b54 designflow)
+> - **adaptive state修复**: 本轮用 `--now` 注入4时刻做验收自检时, `record --event 429` 污染了真实state文件(429_total=1,current=5,mode=work)·已reset→current=10/mode=off/429_total=0/last_429=null·events jsonl清理fake 429(保留11条real ok)·pi rerun part4已在运行不受影响(最后一chunk)
+> - **pi rerun merge**: 45/46 task-level result.json(8P/35F/2EXC)·sam-cell-seg仍在verifier(下载MobileSAM模型)·按opencode/deepseek同模式merge→`/tmp/tb21_glm53_jobs/pi/2026-11-15__18-51-05_rerun_20261115_2300/`·45个result.json copied(只copy result.json不copy agent/verifier/artifacts)
+> - **REGEN 7way报告**: `report_harness_tb21_7way_zh.html`(10.6KB) 7路矩阵=opencode43/89=48.3%·cline42/89=47.2%·hermes38/89=42.7%·**pi35/89=39.3%(↑from 27/89)**·deepseek11/89=12.4%·codex1/89·cc0/89(待cc完成) ✅
+> - **cc rerun**: PID 1510521 alive(19.3h·n=1·jobs-dir=0348)·**37/82 tasks done·7 passed·24 fail·6 exc**·0 ConnRefused ✅ HARD VERIFIED·当前跑make-doom-for-mips(verifier阶段)·ETA~Nov17
+> - **pi rerun**: PID 3809767 alive(~4h·adaptive auto n=10)·**45/46 done(8P/35F/2EXC)**·sam-cell-seg verifier running(下载MobileSAM)·即将COMPLETE
+> - **adaptive**: off current=10/10 cap=10·quiet=348m·累计429=0 ✅·实跑验证✅(周末off模式)·status/`--now`注入/dry-run验收全通过✅
+> - **cc修复验收(2026-11-14令)**: 根因=容器内127.0.0.1不可达宿主gw_proxy·修复=overlay-network-host.yml(--network host)·冒烟OK·重测in progress(37/82·7P·0ConnRefused✅)·待cc完成→merge→REGEN cc归因+7way报告
+> - **下一步**: ①pi sam-cell-seg完成→merge第46题→REGEN 7way(pi行) ②cc 82题完成(~Nov17)→merge cc rerun→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ③cc失败题EvoX三分法打标(来自research日报11-15) ④成本补采 ⑤hermes qemu BLOCKED(Py3.9<3.11)
 > - **📦 体积**: TASK≈25.6KB / MEMORY≈27.5KB（✅≤32KB）
 >
+> 📦 R2549 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+deepseek/opencode rerun COMPLETE+cc 32/82(7P)+pi still running+adaptive off10/10·0 429✅+REGEN双报告(pi27/89 partial)。需要时再读。
+
 > 📦 R2548 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 35/82(0ConnRefused✅)+pi 38+deepseek 25+opencode 41results+adaptive off10/10·0 429✅。需要时再读。
 
 > 📦 R2545-R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 29→33/82渐进(4→5P·0ConnRefused✅)+opencode 35→41results(10P)+pi 11→29/46(1→5P)+deepseek 0→25/48(0P)+adaptive 8→10实跑验证✅。需要时再读。
@@ -43,10 +45,10 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2547 cc rerun 44/82(12P/27F/5EXC·0ConnRefused✅) + opencode COMPLETE 38/38(10P/20F/8EXC) + pi 35/46(5P/28F/2EXC) + deepseek 24/48(0P/22F/2EXC) + adaptive off10/10·0 429✅
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2546(cc rerun 6→44/82+adaptive落码+验收4/4✅+opencode rerun COMPLETE 38/38+adaptive real-world 8→10+4适配器RuntimeError修复+pi/deepseek rerun LAUNCHED+git push recovered)
-当前动作:     R2547: cc rerun PID1510536 harbor alive(~17h·jobs-dir=0348)·44/82(12P/27F/5EXC)·0ConnRefused✅·opencode 38/38 COMPLETE(10P/20F/8EXC)·pi PID3809768 35/46(5P)·deepseek PID4039988 24/48(0P)·adaptive off10/10·0 429✅·load60/224✅·mem1035GB✅·0runaway✅·reports/ porcelain=0✅·W:0
-下一步:       ①opencode COMPLETE→regen opencode行 in 7way report ②deepseek 48题跑完(adaptive auto·weekend n=10) ③pi 46题继续(11remaining) ④cc 82题完成(~Nov17 20:00)→REGEN双报告(cc行从0/89换真实数字) ⑤opencode 8EXC重跑(fixed adapter) ⑥cc 5EXC重跑 ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15) ⑧成本补采(适配器写回token+wall) ⑨hermes qemu 2题=BLOCKED(Py3.9<3.11)
+PHASE:        R2550 cc rerun 37/82(7P/24F/6EXC·0ConnRefused✅) + opencode COMPLETE 38/38(10P) + deepseek COMPLETE 48(0P) + pi 45/46(8P·sam-cell-seg verifier) + adaptive off10/10·0 429✅ + pi merge→REGEN 7way(pi 35/89)
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2550(cc rerun 6→37/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复)
+当前动作:     R2550: cc rerun PID1510521 harbor alive(~19h·jobs-dir=0348)·37/82(7P/24F/6EXC)·0ConnRefused✅·pi PID3809767 45/46(8P·sam-cell-seg verifier running)·adaptive off10/10·0 429✅·load32/224✅·mem1045GB✅·0runaway✅·reports/ porcelain=0✅·pi merged→7way REGEN pi35/89✅·W:0
+下一步:       ①pi sam-cell-seg完成→merge第46题→REGEN 7way(pi行) ②cc 82题完成(~Nov17)→merge cc rerun→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ③cc失败题EvoX三分法打标(来自research日报11-15) ④成本补采(适配器写回token+wall) ⑤hermes qemu 2题=BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
  体积: TASK=25.6KB / MEMORY≈24.4KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
