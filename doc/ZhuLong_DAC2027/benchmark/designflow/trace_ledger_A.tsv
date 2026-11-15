@@ -615,4 +615,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793931604619_df52y					parked		2026-11-15 15:07	r571 deepread: 0 write tool_calls, pure pinyin analysis Q&A about mrr_exp.pl script, type-b scattered knowledge Q&A
 1793240477462_vf2q3					parked		2026-11-15 15:07	r571 deepread: ODT error scanner (scan_odt.py) duplicates existing OdtErrScan-001 (gbzuy trace, same task pattern)
 1793704285912_k2x6m	daiweilu	10.129.32.83	0	digital	case	TmDqSwitchAdaptRestore-001	2026-11-15 16:57	
-1792548360759_l8989	tongfanl	hfhds201	0	digital	parked		2026-11-15 19:01	r582 deepread done (l8989_ddr5_readcmd_expdata.md), B-synth ReadExpdataWireAudit-001 viable next-round fast-path, budget-constrained this round
+1792548360759_l8989	tongfanl	hfhds201	0	digital	case	EDA-Eval-DesignFlow-ReadExpdataWireAudit-001	2026-11-15 19:19	r582 deepread done (l8989_ddr5_readcmd_expdata.md), B-synth ReadExpdataWireAudit-001 viable next-round fast-path, budget-constrained this round
