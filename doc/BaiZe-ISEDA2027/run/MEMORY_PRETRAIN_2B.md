@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 21/21done(10k-210k,**PEAK 200k=60.12%**·210k=58.50%)·220k autoqueue RUNNING✅(PID203680 on .29,waiting for iter_0220000 ckpt,train@~217.13k ETA~5.6h)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·训练健康iter≈217.13k/700k(31.0%) GPU 8×95-100%/75GB✅ step~6933-7112ms(✅<7.4s)**）
-> 2026-11-15 23:13 #2267: **例行监控·训练健康iter217130/700k(31.0%) GPU 8×95-100%/75GB✅ step~6933-7112ms(✅<7.4s)**·**动作**：①git pull→Already up to date✅ ②训练健康(.29 PID146283 alive,iter217130/700k,step6933-7112ms<7400ms✅,loss2.00-2.03,grad_norm0.09-0.36(1 spike5.05@216920 recovered),0NaN/0skip,GPU 8×95-100%/~75GB) ③latest ckpt=iter_0216000(saved 21:00),save-interval=2000→next iter_0218000 ETA~Nov16 00:54(870步×~7.05s≈1.7h) ④220k autoqueue RUNNING✅(PID203680,train@217130→220000 ~2870步×~7.05s≈5.6h ETA~Nov16 04:50) ⑤ops inbox RUN_ID276=TARGET:12(非pretrain)忽略 ⑥research daily 11-15=paper reading建议(Mamba等参对照/μP迁移/精度档位),研究级参考不立即actionable ⑦📦TASK19KB✅/MEMORY19.7KB✅·**四层评测 · L1=60.12%@200k(21done,220k queue) L2=🟢@200k 6/6done(plateau) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+commit·未完成指令：有(220k autoqueue waiting)⇒WAITING:1。
+WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 21/21done(10k-210k,**PEAK 200k=60.12%**·210k=58.50%)·220k autoqueue RUNNING✅(PID203680 on .29,waiting for iter_0220000 ckpt,train@~217.26k ETA~5.3h)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·训练健康iter≈217.26k/700k(31.0%) GPU 8×95-100%/75GB✅ step~7.0s(✅<7.4s)**）
+> 2026-11-15 23:33 #2268: **例行监控·训练健康iter217260/700k(31.0%) GPU 8×95-100%/75GB✅ step~7.0s(✅<7.4s)**·**动作**：①git pull→Already up to date✅ ②训练健康(.29 PID146283 alive,iter217260/700k,step~7.0s<7400ms✅,GPU 8×95-100%/~75GB) ③latest ckpt=iter_0216000,save-interval=2000→next iter_0218000 ETA~Nov16 01:00 ④220k autoqueue RUNNING✅(PID203680,train@217260→220000 ~2740步×~7.0s≈5.3h ETA~Nov16 04:50) ⑤ops inbox RUN_ID276=TARGET:12(非pretrain)忽略 ⑥research daily 11-15=paper reading建议(Mamba等参/μP/精度档),研究级参考不立即actionable ⑦📦TASK19KB✅/MEMORY~20KB✅·**四层评测 · L1=60.12%@200k(21done,220k queue) L2=🟢@200k 6/6done(plateau) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+commit·未完成指令：有(220k autoqueue waiting)⇒WAITING:1。
+> 📦 #2267（11-15 23:13, 例行监控·训练健康iter217130 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2266（11-15 23:00, 例行监控·训练健康iter216970 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2265（11-15 22:37, 例行监控·训练健康iter216810 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2264（11-15 22:17, 例行监控·训练健康iter216650 step~7.0s✅）→ daily-memories/2026-11-15.md；需要时再读。
@@ -14,9 +15,9 @@ WAITING: 1（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-tra
 > 📦 #2256（11-15 19:31, 例行监控·训练健康iter215210·MMLU@200k RUNNING 98%）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2255（11-15 19:08, 例行监控·训练健康iter215040·MMLU@200k仍运行2h30min）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2254（11-15 18:46, 例行监控+MMLU@200k进度检查·训练健康iter214860）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2253（11-15 18:25, 例行监控+MMLU@200k进度检查·训练健康iter214690）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2252（11-15 17:38, 例行监控+MMLU@200k进度检查·训练健康iter214300）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2250（11-15 17:00, 例行监控+L2@200k结果确认·训练健康iter213960）→ daily-memories/2026-11-15.md；需要时再读。
+> 📦 #2253（11-15 18:25, 监控巡检+MMLU@200k进度检查·训练健康iter214690）→ daily-memories/2026-11-15.md；需要时再读。
+> 📦 #2252（11-15 17:38, 监控巡检+MMLU@200k进度检查·训练健康iter214300）→ daily-memories/2026-11-15.md；需要时再读。
+> 📦 #2250（11-15 17:00, 监控巡检+L2@200k结果确认·训练健康iter213960）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2249（11-15 16:40, MMLU@200k eval LAUNCHED+监控巡检·训练健康iter213790）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2248（11-15 16:12, L2@200k五重全部完成+监控巡检·训练健康iter213550）→ daily-memories/2026-11-15.md；需要时再读。
 > 📦 #2247（11-15 15:52, 监控巡检+L2@200k进度·训练健康iter213390）→ daily-memories/2026-11-15.md；需要时再读。
