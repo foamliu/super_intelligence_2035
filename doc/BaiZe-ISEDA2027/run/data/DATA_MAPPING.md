@@ -669,8 +669,8 @@
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
 | `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 第一批完成(5子集/1093 files/231.6GB/0 inc; megamath-web~1TB第二批按需) |
-| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(222.7GB/112 parquet/3 cache inc/PID1829139/nice19/max-workers2; 当前下math-dialogue子集~2.37TB) |
-| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载极慢(15.4GB/9 parquet/2 cache inc/PID3194782; ~35min/file × 1637 files = ETA~20天; 7子集: code-no-thinking-hard在下) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(270GB/143 parquet/PID1829139/nice19/max-workers2/~15MB·s/ETA~3天; 当前下math-dialogue子集) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载重启v3(17GB/9 parquet done/PID2531833/nice19/max-workers2; 旧进程~1MB/s极慢已kill+清lock; hf_transfer不兼容proxy已弃用; 7子集: code-no-thinking-hard在下; ETA待观察) |
 
 **MegaMath 子集详情**：
 - `megamath-web` (279B tokens, ~1TB) — 第二批按需
@@ -687,14 +687,14 @@
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
 | `Agent-Ark/Toucan-1.5M` | SFT | MCP工具调用 | 136 | 21.81 | apache-2.0 | ✅ 495 MCP server/2000+工具 | 否 | 独立 | `0df3cf3` | ✅ 已落盘(134 parquet/21GB/0 incomplete) |
-| `open-thoughts/AgentTrove` | SFT/RL | Agent轨迹(含SWE/CF) | 40 | 19.55 | apache-2.0 | ✅ 真实agent轨迹 | ✅ reward(0/1) | 与harness线Nemotron Terminal同格式 | `b395a43` | 🔄 下载中(36/38 parquet/18.2GB/2 cache inc/90%/PID32820/ETA~28min) |
+| `open-thoughts/AgentTrove` | SFT/RL | Agent轨迹(含SWE/CF) | 40 | 19.55 | apache-2.0 | ✅ 真实agent轨迹 | ✅ reward(0/1) | 与harness线Nemotron Terminal同格式 | `b395a43` | ✅ 已落盘(38/38 parquet/19GB/0 incomplete/121 files total) |
 | `neulab/agent-data-collection` | SFT | ADP统一协议 | 130 | 498.66 | 各子集不同 | 混合 | 混合 | 部分与Toucan/AgentTrove重叠 | `31a76bf` | ✅ 15个非重叠子集已落盘(84.5GB/277 files/64 jsonl/0 inc/16子目录) |
 | `microsoft/orca-agentinstruct-1M-v1` | SFT | 纯合成指令 | 22 | 2.38 | cdla-permissive-2.0 | ❌ 无真实工具执行 | 否 | ADP含orca子集 | `86d6091` | 🚫 不下(低价值) |
 | `harvardMadsys/freeinference_agentic_trace` | 分析 | workload元数据 | 217 | 8.93 | cc-by-4.0 | N/A | N/A | N/A | `bb26cf7` | 🚫 不下(无消息文本) |
 
 **ADP 非重叠子集下载计划**：详见 `run/data/adp_subset_plan.md`。只下 15 个子集(~85GB)，跳过与 P0 重复的 6 个子集(toucan/orca/nemotron/swe-smith等)。
 
-**ADP 转换脚本**：`git clone https://github.com/neulab/agent-data-protocol` → 已 clone 到 `/nas_user/app.e0031982/datasets/agent-data-protocol/`（把异构 agent 轨迹统一成 SFT 格式，以后转换 cline trace 也要用它）。
+**ADP 转换脚本**：`git clone https://github.com/neulab/agent-data-protocol` → 已 clone 到 `run/data/agent-data-protocol/`（commit 040a279；把异构 agent 轨迹统一成 SFT 格式，以后转换 cline trace 也要用它）。
 
 ### D3. 污染检查（agent datasets + IFM vs 评测集）
 
