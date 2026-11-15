@@ -95,6 +95,17 @@ run_one(){
   batch_id=$(basename "${batch_dir%/}")
   log "[run $runidx] batch=$batch_dir (BATCH_ID=$batch_id)"
   if [ -z "$batch_dir" ]; then log "[run $runidx] ⚠ 未找到 batch 目录 → INVALID"; echo "INVALID"; return 0; fi
+  # ═══ RCA 修复 4.2+4.4（2026-11-16）：回补丢码 + 干净重评测 ═══
+  # run_cline_script Step6 用共享相对 temp 拼 jsonl → 36.15 并发 eval 互相踩空 →
+  # 只剩 0~1 行真码。但 code/<task>/pyAether_code/ 真实 .py 完整存活(per-batch 隔离)。
+  # (1) rca_recover_extract.py 从 code/ 回补 jsonl；(2) 重跑 run_eval 产干净报告。
+  # ⇒ 共享 temp race 被 bypass，无需改 eda_fastmcp。--benchmark 小写 pyAether-158(run1 同口径)。
+  $SSH "test -f ~/rca_recover_extract.py" 2>/dev/null | grep -q . || \
+    { cat "$RUN_DIR/rca_recover_extract.py" | $SSH 'cat > ~/rca_recover_extract.py && chmod +x ~/rca_recover_extract.py' 2>/dev/null; }
+  $SSH "python3 ~/rca_recover_extract.py ~/eda_code_eval/$batch_id completed_code_generation_$batch_id.jsonl" >>"$LOG" 2>&1 || true
+  local reeval_cmd="cd $REMOTE_BASE && PYTHON=$py_venv EVAL_FW_DIR=$eval_fw timeout --signal=TERM --kill-after=120 14400 $py_venv scripts/run_eval.py -g completed_code_generation_${batch_id}.jsonl --benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+  $SSH "$reeval_cmd" >>"$LOG" 2>&1 || log "[run $runidx] 干净重评测 rc 非0(继续, 取最新 output_evaluation)"
+  log "[run $runidx] 回补+干净重评测完成 → 后续取最新(mtime)匹配 output_evaluation(=干净版)"
   local gen_jsonl="completed_code_generation_${batch_id}.jsonl"
   # 精确匹配 output_evaluation：其 final_report.json 的 generations_file 含 $gen_jsonl
   local latest_oe
