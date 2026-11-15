@@ -900,7 +900,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794645532852_dq1ol	jzeng	hfeg0plg85	205	physical_verify	parked		2026-11-14 23:06	r572 peek: jzeng same_trace_group near-dup of r568 wy27j IMCleAutoVia
 1794552458120_tgpup	yinyus	hfeg0plg66	510	physical_verify	parked		2026-11-14 23:06	r572 peek: yinyus D-domain schematic construction
 1794550428633_s4vkc	yinyus	hfeg0plg66	495	physical_verify	parked		2026-11-14 23:06	r572 peek: yinyus D-domain schematic construction
-1794645596542_ebctc	xxchen	hfeg0plg19	318	physical_verify	parked		2026-11-14 23:06	r573: xxchen known-reject user drc/.gds modify-existing
+1794645596542_ebctc	xxchen	hfeg0plg19	318	physical_verify	case	EDA-Eval-DesignFlow-WaiveParamMultiParse-001	2026-11-15 16:25	r606 delivered: WaiveParamMultiParse-001 (waive multi-pattern parse, k=15 a-o) revival of B类误杀
 1794546636932_2tppk	e0024852	hfeg0plg78	156	physical_verify	parked		2026-11-14 23:06	r567 peek: e0024852 modify-existing config
 1794453555751_gklsl	pdsong	hfeg0plg74	129	physical_verify	parked		2026-11-14 23:06	r566 peek: pdsong analysis Q&A
 1794478125354_p7xx6	dsgao	hfhds201	106	physical_verify	parked		2026-11-14 23:06	r568 peek: dsgao Q&A capability patron EM sim
