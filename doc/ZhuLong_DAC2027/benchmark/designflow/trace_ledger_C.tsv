@@ -927,7 +927,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1790212962899_ge5tf	e0041123	hfeg0plg104	67	physical_verify	parked		2026-11-15 00:42	skill-loading+run-existing drc-pattern DNW testpattern PyQt5 fail r576
 1792651065355_6ty3f	thomasz	hfeg0plg92	66	physical_verify	parked		2026-11-15 00:42	debug-Q&A drcoa ESD stuck log compare r576
 1794636165058_j8uux	xxchen	hfeg0plg19	468	physical_verify	case	EDA-Eval-DesignFlow-VirlayerNotParse-001	2026-11-15 09:30	known-reject xxchen r577 top500-fresh drc-dominant
-1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	parked		2026-11-15 02:15	known-reject xxchen r577 top500-fresh drc-dominant
+1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	case	EDA-Eval-DesignFlow-EncloseSide1PatternGen-001	2026-11-15 17:13	r608 revive: parked->claimed, xxchen enclose_side1+waiveMark produce-task, B-class miskill (modify-existing now legit)
 1792484214005_w1dp0	zqzhan	hfeg0pkn002	77	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT debug-sim off-domain D (primesim/fsdb LSBATCH log)
 1794381807398_hcd0c	hktklin	hfeg0plg87	65	layout_virtuoso	parked		2026-11-15 02:05	r578 peek REJECT text-sub tap_p->lacaa_common on SKILL files (generic file manipulation, not EDA produce)
 1789973566279_0cjq2	davidwu	hfeg0pgn019	61	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT run-existing auto-placement step3 (dup pb4ei r538 reject; user dumps P&R skill spec then asks execute step3)
