@@ -33,7 +33,7 @@
 2. **如果 `check()` 判分要求的东西，超出了用户原始意图**（例如用户只要"看到结果"，判分却要求特定文件结构/特定实现路径） → 标 **`over_constrained`**，把判分收敛回用户真实交付物
 3. **有没有因为旧配额规则，把用户真实任务"降级/裁剪"后才入库的？** → 标 **`downgraded`**，考虑恢复原形态
 
-**产出**：`designflow/intent_audit_<shard>.tsv`，列固定：
+**产出**：`designflow/intent_audit_A.tsv`，列固定：
 ```
 case_id | user_intent_from_trace | 判定(keep/off_intent/over_constrained/downgraded) | 理由 | 处置(保留/重做/下线)
 ```
@@ -49,7 +49,7 @@ case_id | user_intent_from_trace | 判定(keep/off_intent/over_constrained/downg
   2. **写不出能区分真假交付的 `check()`**（判分没有"牙"）→ 不可造
 - 其余一律视为**有资格造题**。
 
-**产出**：`designflow/pool_reaudit_<shard>.tsv`，列：
+**产出**：`designflow/pool_reaudit_A.tsv`，列：
 ```
 session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 拟造任务形态
 ```
