@@ -26,3 +26,335 @@ EDA-Eval-DesignFlow-DummyQA-001	pdkQaSystem Dummy QA 模块测试(DummySyntaxChe
 EDA-Eval-DesignFlow-ERCFilter-001	ERC AI-check pipeline 过滤 rules 2.1-2.8	keep	prompt=trace-faithful，case 隔离 2.1-2.8 过滤子任务(trace 中 agent 实际执行)；check 16 条 a-p 对过滤/CSV 断言，未超意图	保留
 EDA-Eval-DesignFlow-LVSLogFilter-001	扫描 argusLVS.log 按 4 标准过滤问题 LVS 结果	keep	prompt=trace-faithful，user 要求 LVS log 排查，case 要求写脚本实现同样过滤；check 对 4 标准断言，未超意图	保留
 EDA-Eval-DesignFlow-LibCellList-001	从 cell list + SPICE 网表生成 lib_cell.list(Library Cell 对)	keep	prompt 用 user 原话逐字(我提供cell list文件和netlist...)，case 要求写脚本实现同样生成；check 对 lib_cell.list 断言，未超意图	保留
+EDA-Eval-DesignFlow-PDKQA-001	PDK QA DRC 框架 Windows→Linux 迁移, Calibre VCO aok/aoi autoswitch bug 以假 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PowerFill-001	e0014566 的 PowerFill 后端流程会话（cwd /home/e0014566/test_layout_rscalc_flow	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ERCFlowAether-001	e0031668 的 ERC_AI_CHECK flow 会话（cwd /home/e0031668/work/ERC，341 msgs/3	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CTLEAether-001	cwei 的 SpiceAgent 会话（400 msgs/9 user turns，tool_use：pyAether 268 + hsp	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCKDeckOpt-001	miccao 的 cline 会话（497 msgs/263 user/234 assistant；tool_use: run_approv	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-RsCalcMesh-001	yohannw 的 cline 会话（462 msgs/257 user/205 assistant；tool_use: editor 77	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCPatGen-001	DRC Testpattern Generator: 用户给规则名(通配符,大小写不敏感),用 pyAether API 直接画 .oa t	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCPatPlan-001	kenwang 在 35H_DBC_QA 库用 SKILL/Virtuoso 生成 DRC QA pattern。trace U[186] 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-StrongARMComp-001	cynthiaz 的 cline 会话（412 msgs/12 user turns，tool_use：run_approved_comma	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PinFloatAether-001	laryu 的 cline 会话（206 msgs/11 user turns，tool_use：pyAether 487 + dbGet 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PGAssemblyLVS-001	jianhaiq 的 cline 会话(287 msgs；tool_use：calibre 432 + pyAether 263 + net	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AddCellPin-001	colinxu 的 cline 会话（229 msgs/5 真实 user turns，tool_use：editor 大量 + read_	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-M2PathLayout-001	chenyue 的 cline 会话（164 msgs/12 user turns，tool_use：cellview 295 + pyAe	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-WireWatermark-001	hongyuy 的 cline 会话（264 msgs/4 user_input turns，tool_use：editor 47 + RA	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaGen-001	e0014566 的 cline 会话（637 msgs/10 user_input turns，cwd /home/e0014566/te	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-GDSBump2-001	xxchen 的 cline 会话（349 msgs/5 user_input turns，cwd /home/xxchen/skipper	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-VTTFLayerMap-001	chengleiy 的 cline 会话(543 msgs/80 user turns,cwd /home/chengleiy/testTo	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-WheelZoom-001	qijingx 的 cline 会话(122 msgs/2 user_input turns,cwd /home/qijingx,model	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRQAPlan2Skill-001	kenwang 的 cline 会话(387 msgs/13 user_input turns,cwd /home/kenwang,mode	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCTimeStats-001	yzwang 的 cline 会话(106 msgs/10 user_input,cwd /home/yzwang,model deepse	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-FreezeMaker-001	weizhao 的 cline 会话(122 msgs/3 user_input,cwd /home/weizhao,model deeps	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HierJump-001	在 aether 中添加 hierarchy path quick-jump 下拉菜单按钮,逐级 descend 到目标 cell,debu	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRConnTiming-001	分析 /proj/drvsa/.../WOWTOP_1022_fb_sl/drc.log 为什么跑得特别慢;经多轮追问定位 nobrknet	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-FindCircuitByPath-001	在 aether 中写脚本:弹窗粘贴点分隔 hierarchy 实例路径(XI_DDR6TOP_R.XI_Array32GTop_0...X	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PGSplitNTN-001	写 python 脚本 mkntn.py:用 NTN_right_layout.gds+GateRes_right_layout.gds 两	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PortPropagate-001	U[0] 逐字『可以做一些自动化工具么？譬如帮忙从顶层cell打到指定cell的port，同步更新schematic和symbol』+ U[	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ListInstCV-001	U[0] 逐字『帮我写一个python脚本，在当前运行路径下，使用aether打开某个指定的lib/cell/view,并获取view里全部	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ScanCopyVerify-001	U[33] 逐字『你能不能帮我看下 drjqa_top 下面所有的cell, 哪些包含 autovia powerfill 这些工具产出的i	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCSFCompare-001	U[0] 逐字『帮我分析一下一下两个DRC rule，一份是Shrink factor =1 ，另一份是shrink factor = 0.	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-CCKDriverFind-001	U[136] 逐字『现在有如下需求，输入为一个电路中inst的层次结构，对应cck的fullpath，希望脚本首先能够定位到这个inst，其	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RNodePlan-001	U[0] 逐字『我现在要用rscalc计算电阻，看看其powernet上的RTEXT以及RNODE有没有打齐，没有的话帮忙打上，既然不能修改	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NetHierTrace-001	haoyut 在 PrimeTime read_parasitics 反标调试中，要求给定未反标 net 的完整 hierarchy 路径 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaPFAudit-001	e0014566 在 RsCalc+AutoVia+PowerFill 降阻流程后，要求核查 auto_austin_case1/Array	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LVSDiag-001	AF_AllTop 顶层 Calibre LVS 跑完报 INCORRECT (Error: Different numbers of in	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DeckIncludeResolve-001	PDK QA DRC deck case（G5_CIP/0922_zhaowei2/base）：用户 xinqiaoz 让把 calibre	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-AutoCellKitMap-001	AutoCell 批量 GDS 生成（miccao）：用户给定 ddcpc 网表目录 + cell_constraints_template	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCPatPlacePlan-001	DRC testpattern 生成 skill（lizwen, layout_aether）：用户构建 Aether skill drc_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RTextChkPlan-001	RsCalc 电阻计算准备（e0014566, pg_layout, pj0ax session）：用户在 hfeg0plg58 上用 Rs	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PCellFlowPlan-001	AutoCell pcell tcl + netlist cdl -> GDS flow generation with missing-p	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ChkSaveHistDedup-001	Aether/CXMT Custom Check-and-Save .hist 审计失真诊断（zqzhan, hfeg0pkn005, 7f	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyQaCliNoConfig-001	PDK_QA/pdkQaSystem Dummy QA 主入口 DummyQa.py 无 config 直传 + 单项检查 feature（	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-VlogPortAudit-001	Empyrean Aether SGE 网表编译器『Port map mismatch』根因排查（johnl, hfeg0plg99, gp	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcCfgSync-001	RsCalc 流程 checkPoints 配置同步（e0014566, hfeg0pkn001, odo3s session, pg_la	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ERCBootPlan-001	用户要求基于 ERC/codes/run_all.sh 对 ERC/drcpa/ 下的数据文件跑完所有 follow；agent 修复一串环	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-MVVarNamingAudit-001	用户要求按《多值 rule 变量命名规范》草案（02_multi_value_variable_naming_standard.md）适配 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PFMergeAudit-001	用户运行 PowerFill 流程 merge 输入 layout 和自动生成的 power fill cell，发现 merged lay	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RNodeCovAudit-001	用户跑 RsCalc→AutoVia→PowerFill 优化后三轮 .rvn 电阻 md5 逐字节相同（零改善），怀疑 PowerFill	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-AutoCellFlowValidate-001	用户给 AutoCell TCL Flow Generator 规范 + 真实请求：用网表 blcnand2PF47x1.cdl 依据 ce	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-AutoCellClassify-001	用户请求识别并移除 auto_austin_case1/BCenterCA_rscalc/layout 中 autovia 和 powerf	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SkillMenuRoute-001	用户(yohannw)在 workdir_26Q4 会话里让 agent 定位 Virtuoso CXMT 三个菜单路径(CXMT->Fil	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PFMergeDupAudit-001	用户(e0014566)在 test_power_analysis_5 会话里让 agent 审查 4 个 cell 之间的关系——原始输入	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCPatManifest-001	用户(lizwen)在 .cline scripts/data 会话里定义 Aether SKILL「DRC Testpattern Gen	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCHierLossAudit-001	miccao 的 calibre-drc-log-analysis skill 开发会话（318 msgs / 16 user_input）	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CTLESchGenAudit-001	cwei (NEW 用户) 的 SpiceAgent CTLE 原理图生成会话（197 msgs / 4 user_input / 1.0M	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchPinPlanAudit-001	"UI#3 逐字: ""帮我在这个cell里创建一个TESTPIN，并且完成保存"". colinxu 在 Virtuoso SKILL 里对 d"	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NetDelSaveAudit-001	colinxu cline 会话 (250 msgs/12 user turns, tool_use: SandBox run_code(s	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-APRRoutePrecondDiag-001	davidwu cline 会话 (229 msgs/1 user turn, tool_use: editor 25 + run_comm	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LabelApiPolDiag-001	colinxu cline 会话 (170 msgs/4 user turns, tool_use: RAG search_apis/get	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCPatGenAudit-001	kenwang cline 会话 (641 msgs/7 user turns, tool_use: editor 162 + read_f	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DdgoaDeviceAudit-001	用户逐字问 DDGOA V0 schematic 是否用到 ptk_sv/ptk/ntn_lv、用了哪些 device、所有晶体管 W/L 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcFlowOrch-001	read prompt_flow.md and execute Layout Resistance Optimization Workflo	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCDeckWinClean-001	xinqiaoz maintained pdkQaSystem (PDK QA driving calibre DRC): cleaned 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SVRFDepAudit-001	ellawu iteratively develops a Calibre SVRF AT4_DUMMY2/PG_PGDummy dummy	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcCkPtAudit-001	用 rscalc 计算电源网络电阻：拷贝 BCenterR layout → 在 vdd1!/vss!/vcc! powernet 上打 R	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HierSearchDFS-001	写 pyAether 脚本在 Aether layout 中 by hierarchy DFS 查找目标 cell：逐层遍历 instanc	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCDeckSyncPlan-001	PDK QA DRC deck (Python) local↔stable 同步：从头 diff common/DRC 两目录(68 .py	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DRCSpecGen-001	学习 35H_DBC_DRC_Cal_V0d1_Rev13_T8.drc calibre DRC deck（424 层/2853 规则，DB	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-MVValueCmp-001	PDK_QA pdkQaSystem B3 多值变量比对：sync_to_stable 同步整理 + DrcDefinitionRuleCh	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PGReproGuide-001	USER#0 逐字: /home/johnl/.cline/scripts/data/primelib_char_T_IsmTop/dc_a	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PwrGlobalsGen-001	USER#3 逐字: 将apr/innovus下的初始配置，写入apr/innovus/gui/power.globals中，使其能在inn	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-FillImplantFlowAudit-001	USER#8 逐字: flow youshenmewentima (flow 有什么问题吗) (A-档 seed, 提出目标未给根因/修复)	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-RsCalcShortDiag-001	USER#58 逐字: 为什么 rscalc 计算失败了，排查下原因 (A-档 seed, 提出目标未给根因/修复). trace=e001	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCReportIpAudit-001	USER#5 逐字: 分析一下这个drc report 看看结果哪些还需要在IP级修改 (A-档 seed, 提出目标未给根因/修复). t	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PowerFillMergeGen-001	USER#0 逐字: read the prompt_powerfill.md and do the job in it (A-档 seed	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcPatCheckAudit-001	USER#1(msg0) 逐字: 请使用 handoff 技能，从以下交接文档恢复上下文并继续之前的工作: /home/xinqiaoz/P	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DummyGeoVerify-001	PDK Dummy QA: QA-18 frame border 静默零输出根因修复(测试 GDS 补画 301_0/302_505)+QA	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ABMatchPlacementCheck-001	ziyuny VwlpRefAmpIP schematic-vs-layout AB matching check: phase5.json	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-GdsRectGen-001	Generate a GDSII binary for an M1 3umx3um rectangle (layer 88) and str	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchWireRebuildGen-001	Rebuild DDR5 SDRAM schematic R1bSTD/D_KD145 in Cadence Virtuoso (35 in	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcChkPtGen-001	USER#1 逐字(A-档 seed, 提出目标未给根因/修复): 先看一下配置参数 rscalc.config, 获取到目标 layout	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPairWaiveClassify-001	xinqiaoz/hfeg0plg76(10.129.8.124)/hfeg0pkn004(10.129.2.13), mc=325, ke	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcLegacyFallback-001	xinqiaoz/hfeg0plg76(10.129.8.124), mc=321, keywords pdk:714;calibre:41	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-InnovusDbAudit-001	johnl/hfeg0pfn119(10.129.x), mc=255, keywords innovus:645;schematic:23	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DummyQaDataPrep-001	"Dummy QA 数据准备: 复制 DYT4E_WHCFP_LHCRP_DHCFP deck, 按""能重新产生 = 可删""脱敏删中间产物, "	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-InnovusViaCutDiag-001	Innovus TSI 工艺 via-cut 诊断: 分析为啥宽线上不能自动打孔只能打出单个孔, 对比两份 tech LEF 走线规则, 分	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoCellExtEngineCfg-001	AutoCell N5 标准单元编译器物理验证配置: 用户用 Empyrean AutoCell 生成 std cell GDS, 需配 c	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-RsCalcAgentGen-001	执行 virtuoso-rscalc-runner SKILL：gen_rscalc_agent.py 读 rscalc.config + 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPatQaDiag-001	用 issue-handler skill 处理 pdkQaSystem DRC issue 0924_yifan: pattern QA 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ErcReconLicDiag-001	gokuguo 跑 python3 batch_lvs.py lvs.json 批量 Calibre LVS+ERC (35H_1P18M_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPyEnvDiag-001	kenwang 跑 DRC 自动化批处理 /rundata/lacaa/V0/workdir/kenwang/Calibre_DRC/met	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PdkRunsetExplorer-001	xinqiaoz/hfeg0pkn004(10.129.x), mc=283, keywords calibre:1459, 147 msg	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ScmosStructId-001	(no summary; prompt trace-faithful)	keep	trace_source.real_task_summary 缺失但 prompt 含真实用户/路径/工具(trace-faithful),需补 summary 字段	保留(补 trace_source.real_task_summary)
+EDA-Eval-DesignFlow-AutoViaLayoutMerge-001	AutoVia 跑通后，把 addViaToLayout 的 via-cell→layout merge 逻辑 inline 进 RunAu	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ResistAttribReport-001	BCenterL RsCalc flow resistance-reduction attribution: analyze why R d	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AetherApiSummary-001	taodu/hfeg0plg55(10.129.35.74), mc=271, keywords schematic:288/dbGet:2	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPatternHandover-001	xinqiaoz/hfeg0pkn004(10.129.x.x), mc=281, keywords calibre:378/virtuos	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-PaCfgMigrate-001	e0014566/hfeg0pkn001(10.129.2.10), mc=274, tools virtuoso:1143/schemat	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoCellFlowAudit-001	miccao/hfeg0plg37(10.129.32.47), mc=187, tools calibre:850/netlist:169	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ViaFillSvrfGen-001	ellawu/hfeg0pkn005(10.129.8.235), mc=335, tools calibre:508/schematic:	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ErcBatchReasonFlow-001	Concurrent ERC error reasoning pipeline: run run_all.sh over ERC/drcpa	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HierNtkSearchGen-001	jcgu/hfeg0pin003(10.129.32.236), mc=229, tools aether:518/dbget:381/cm	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PinNetWiringAether-001	jiashengz 在 Aether R1b/WRAP_LATENCY_BLOCK schematic 中把 XU_CELL1.OUT 与 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LefPostprocessFix-001	johnl 在 Innovus 23.1 中为 addr_to_rowcol_v7 (mapped.v 18 个 *LVS* comb ce	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ItfParamCompare-001	claire1l 给出 5 份 StarRC ITF 提取工艺文件（TSI1.0 OL/NL、TSI2.0a NL、TSI2.0b OL/N	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-TechDisplayPacketNorm-001	yzwang 在 /home/yzwang/06_AI_workspace/ 下用 cline 调试 IMCP Updata_TechDis	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PortTextPlan-001	ellawu 在 /home/ellawu/ 下用 cline 分析 Cadence SKILL 脚本 cxmt_autoPR_genera	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaNameGen-001	e0014566/hfeg0pkn001(10.129.32.75 免密机), mc=252, tools calibre:176/virt	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoCellLossPara-001	miccao/hfeg0plg37, mc=258, tools netlist:472/calibre:142/schematic:104	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SVRFDeckCatalog-001	weizhao/hfeg0pkn004, mc=43, tools calibre:1790/virtuoso:18/innovus:18 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-PlacePersistAudit-001	davidwu/hfeg0pjn200, mc=228, tools pyAether:195/virtuoso:48/dbGet:116 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcWaiveDeckGen-001	xinqiaoz/hfeg0pkn004, mc=321, keywords pdk:714/calibre:414/.gds:113/vi	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-LayToolFingerprintAudit-001	read prompt.md: analyze Aether layout drjqa_top/BCenterL/Layout, list 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-VirtuosoPollWait-001	Virtuoso batch rscalc/autovia/powerfill flow: replace fixed sleep+grep	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyCfgCheck-001	xinqiaoz/hfeg0plg76, mc=308, keywords calibre:288. 196 msgs. Context: 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LayoutEditDiag-001	看下这个layout, 可编辑吗？可以修改里面的内容吗？ (目标 auto_austin_case1/Array16G_B/layout) 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PGTierTunerDecision-001	启动业务场景: 模拟电路优化·二次执行 —— PG 电阻优化闭环 RsCalc(基准)→[AutoVia→PowerFill→RsCalc]	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PRStartMethodSelect-001	用户问 'how to start pr job'（CXMT idjoa/dejoa V0_APR, 28nm G4B/ICEM, Inno	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaPwrFillRemove-001	用户要求识别 auto_austin_case1/Array16G_T_rscalc layout 中 autovia 和 powerfil	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcFlowReporter-001	用户要求出5份报告：4份研读 test_layout_rscalc_flow_17 下4个skill(virtuoso-rtext-chec	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DigitalDesignFlowSampleGen-001	User asked 'please get sample of digital design flow'; agent surveyed 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SWBProjCreate-001	配置 swb-python-api 后用 swbpy2 创建 SWB 项目 try0923 (sprocess/sdevice/svisua	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPatternReportComposer-001	PDK QA Pattern DRC (DrcPatternCheck.py) 维护会话：诊断 legacy bad-only cell 报	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-RsRedFlowOrchestrator-001	RsCalc+AutoVia+PowerFill 电阻削减流编排：用户令 'read the prompt_flow.md and do t	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcAutoNetDetect-001	Virtuoso RsCalc runner SKILL: make config field pwrNets optional -- wh	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AetherEnvBootstrap-001	Empyrean Aether (pyAether) home-dir bootstrap. User wanted to launch A	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HierTextLabelGen-001	在 Virtuoso 顶层 schematic dq_rx_afe 上插入层级描述 text 标签；agent 写 addHierText_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SvrfFragMerge-001	PDK QA：在 /apps/imctf/develop/dummy/ 查 Calibre DRC Dummy 工艺配置(TVF)、找 TV	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SpiceSimSkillGen-001	layout_aether (pyAether): sophiaw 用 /skill-creator 让 cline 生成可自动跑 Fine	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchHierDescentReport-001	layout_aether (pyAether/SKILL): haoyut 在 Virtuoso 打开 iejoal_top/LOGICT	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-OALibReadinessReport-001	pg_layout (pyAether+Innovus db audit): johnl 要求对 /proj/drcoa/V0 drcoa_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SvrfHandbookPaginate-001	physical_verify (Calibre SVRF handbook pagination): e0014566 要求从 Calib	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchDigitalAnalogClassify-001	layout_aether (Aether pyAether schematic digital/analog classify): jcg	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PcellFinder-001	layout_aether (Aether pyAether pcell finder): hbpeng 要求「请基于pyaether开发一	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LayCvPreserveAudit-001	layout_virtuoso (Virtuoso AutoVia merge + cellview preservation audit)	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PcellBasexEncloseAudit-001	SKILL pcell Metal3DEncloseOneSideLand_F.il: withEncloseShort/withEnclo	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-Nand3LefDeriveAudit-001	Innovus/GenLEF(ski-genlef) 生成 nand3LVSx1 LEF 时 prBoundary 丢失(dbCreateR	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcConnScriptAudit-001	xxchen 的 cline 会话(361 msgs/cwd /home/xxchen/connectivity 项目,tool_use 3	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-TaperChainDoeGen-001	thqu 的 cline 会话(245 msgs/cwd ddgoa_cmos_work,tool-use 含 virtuoso/cellv	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyBorderRcaGen-001	xinqiaoz 的 cline 会话(165 msgs/cwd /home/xinqiaoz/PDK_QA/pdkQaSystem,too	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-VcoChainFixGen-001	e0014566 的 cline 会话(138 msgs/cwd /home/e0014566/test_power_analysis_4,	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SvrfRuleExplain-001	用户粘贴一段 Calibre SVRF DRC 规则块（NL_S_008_10，4 条 EXT 子句，PDIF NOT PSUB 布尔层 +	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcMatchRca-001	用户在 PDK QA DRC pattern-check 工具 (DrcPatternCheck.py) 的 drcWithPattern 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-RvnDistReport-001	用户在 test_layout_rscalc_flow_17（Virtuoso RsCalc 电源网络电阻优化流，cell BCenterC	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PwrFlowCfgGen-001	build gen_flow_configs.py that merges common.config (shared params + f	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RscalcChkptGen-001	Virtuoso rscalc power-network resistance prep: copy BCenterR layout to	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SkillFlowAnalyzer-001	Virtuoso SKILL flow-script static analysis: user asks to analyze IMCut	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LvsSeedPromoDetect-001	User debugs a Calibre LVS FAIL for hierarchy Ary_1BK_2piece_WLx448; id	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LvsDeepReportAnalyzer-001	User authors/invokes a lvs-debuger skill to produce a deep diagnostic 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PwrFillAgentGen-001	Use virtuoso-powerfill-runner skill to run Cadence Virtuoso PowerFill 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ConvexEnclosePcellGen-001	SKILL pcell convex_corner_enclose pass/fail QA-pattern generator -> Py	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-QaCellRuleLabelGen-001	DRC_pattern_tool enclose 规则描述标签修复：SKILL pcell (enclosePass.il 233-234 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyHeaderQaResolver-001	G7 T1 Dummy deck (calibreDummy.rule) QA: 21 检查项逐项推进；header 开关检查(1/2/7/	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaSelAnalyze-001	Aether Layout Editor pyAether 脚本 xyCreateAutoVia.py 配置+调试: partial-sel	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcRuleCellMatch-001	PDK_QA DRC pattern-check 工具 (DrcPatternCheck.py) 多轮迭代: patternNotFound	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-CombCellNetlistSyn-001	全定制电路设计工程师 sinanz 在 Aether 里用 pyAether + stdcells_ac 公共库搭组合逻辑单元: U#1 提	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcDensityRuleParse-001	Calibre SVRF/DRC training: laryu pastes a DRC density rule (POLY_DENOR	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-PinAccessCfgManifest-001	Std-cell QA 工程师 e0047434 在 hfeg0pkn002 上分析 pin 可访问性评估脚本（SKILL config_a	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcLogAnalyzer-001	DRCoa DRC 维护工程师 miccao 在 hfeg0plg37 上用 calibre-drc-log-analysis skill 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-GateNetlistBuildVerify-001	用 pyAether 在 Aether/Test_ZSN 库用 stdcells_ac 标准单元(xor2Lx1/and2Lx1/or2Lx	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PortTextPinPlan-001	用 Cadence SKILL 维护 CXMT 脚本 cxmt_autoPR_generatePortText.il（把 schematic	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PgFillMergeAudit-001	用 Cadence Virtuoso SKILL 跑自动 power-fill 流程把 power fill cell 调进原 layout	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-WlAdjFind-001	用户把 Virtuoso SKILL 脚本 find_adjacent_wl.il（顶层 M1 上按 WL label 认领 shape、g	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPatternPlan-001	DRC testpattern 生成：查询 NW* 规则，用 pyAether 生成 PASS/FAIL 测试版图 cell（drc_pat	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RtextChkPlan-001	rscalc 电阻流: 读 rscalc.config 取目标 layout(Array16G_T), 拷贝版图, 在 powernet(v	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-FpaDensityCheck-001	pyAether 检查 WOWTOP layout 中 FPA 层密度: 在 drgqa V0 (auto_pgnet/WOWTOP_202	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ImplantFillDeckGen-001	Calibre DRC implant-fill rule-deck generation: fix 'VAR2 no variable v	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaPwrFillCellRemove-001	Virtuoso SKILL layout cell identification & removal: open auto_austin_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RunsetLddbVersion-001	Calibre runset version-folder finder (RunsetVersionFinder.py) special-	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PcCoordUniformSample-001	pdsong 在 PDN power-cap split 仿真 lvsSvdb 下分析 grepPCPNLoc_fixed.py，要求每 c	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RscalcStaleDbobjFix-001	读 prompt_flow.md 只执行 rscalc 电阻计算这一步；run_rscalc_nogui.il 跑到 label 提取阶段崩	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DeleteM1Shapes-001	用户要求用 SKILL 语言生成代码并执行：删除当前版图所有 M1 图形，统计删除数目并保存到本地文件：ssistant 生成 delete	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PgRundirDefault-001	用户维护 test_layout_rscalc_flow_7 项目（virtuoso-rscalc-runner / virtuoso-au	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PgCellClassify-001	用户要求识别 auto_austin_case1/BCenterL_rscalc layout 中 autovia 与 powerfill 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-FloatingPinGen-001	用户 ellawu 在 SKILL 脚本 cxmt_autoPR_generatePortText.il 基础上要求新增浮 pin 功能（除	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchPinAnalyze-001	用户 sinanz 要求打开 Aether 原理图 CNT_COM_PRAC_new（库 Test_ZSN_DLUTFull_2），列出 i	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PgFlowConfigMerge-001	用户 e0014566 提供三个 Virtuoso skill（rscalc 电阻计算 / autovia via 插入 / powerfi	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AutoViaDeGui-001	用户 e0014566 要求把 GUI 版 AutoVia 脚本 IMCleAutoVia.il(2035 行, hiCreateAppFo	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PgDummyDeckInv-001	用户 ellawu (ChangXin Memory calibre rule deck 工程师) 维护 G5 AA/PG dummy fi	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AdjViaSelect-001	gurmanli 要求 Aether 启动时自动加载 pyAether 脚本 aether_select_adjacent_vias.py(	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CalibreLabInventory-001	jcgu 让助手分析 /home/jcgu/script/study/labs_calibre_drc_lvs 这套《Using Calib	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HierCellPatternFind-001	m1wang 让助手在 Virtuoso/Aether 环境下基于 pyAether 从 DEJOA 项目 TOP 层原理图出发递归遍历整棵	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PgRscalcAgentInline-001	steveny 在 hfeg0pnd001 上跑 RsCalc->AutoVia->PowerFill 电源网络降阻 flow（test_l	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CentroidPlaceAudit-001	leozhao 在 hfeg0plg36 上用 pyAether 做 gen-from-source 版图生成：读 leo_work/dem	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AntPatternConfigAudit-001	xxchen 在 hfeg0pkn002 上做 QA Pattern Tool v0.3 的 SKILL pcell→Python(gdsp	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-MaxAreaRatioSidewallSolver-001	xxchen 在 hfeg0pkn002 上做 QA Pattern Tool v0.3 的 SKILL pcell→Python 迁移收尾	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HierJumpToolbarGen-001	shuoran 在 hfeg0pkn005 (10.129.33.28) 上用 deepseek-v4-flash 想给 Aether 加一	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcLogHugeCellOverlap-001	miccao 在 hfeg0plg36 上用 cline 跑 [calibre-drc-log-analysis] skill 拆解 Arg	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ArgusDeckEquivAudit-001	[calibre-drc-log-analysis] 分析 argusDRC.log + 第二轮 rundrc.log + deck 对比(	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DupViaPriorityCheck-001	[layout connectivity-QA pattern gen] 优化 main.py(gdspy+calibre LVS 连通性检	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-QaWidthPatternGen-001	Virtuoso SKILL DRC QA width-pattern 生成 (AA_W_1.il): drqaCreateRectWidt	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcUnusedVarClassify-001	PDK_QA DRC variableUnusedDrc 根因分析: yuxi 反馈 report 把 V1A_Size_001_00/V2	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-InnovusProjLogDiag-001	Innovus 多子项目目录 inventory + log 健康诊断: chengleiy 在 e_innovus/ 下做了 LDDB L	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-InnovusFpLogDiag-001	Innovus APR floorplan log 诊断: alan3zh 在 test_chip_v1/apr 跑 Innovus flo	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NoOverlapPcellLayerParse-001	Virtuoso SKILL NoOverlap pcell 调试: yzwang 在 /home/pdk/yzwang/06_AI_wor	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SwitchGatedSpacePatternGen-001	Virtuoso SKILL pcell oneOrTwoLayerSpacePass 调试: yzwang 在 /home/pdk/yzw	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-InvLayoutGen-001	NEW 用户 ethan5c 请求用 Python 生成 1 NMOS+1 PMOS 反相器版图并以 GDS 保存；assistant 意图	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-YamlToGds-001	NEW 用户 e0047488 请求把 windows 迁来的 QA pattern 项目（out/input_DR_m1/ 下按 laye	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CmLatchMaOpGen-001	NEW 用户 ruifan 在 hfeg0plg36 用 Cadence Virtuoso SKILL 跑 CXMTseGetAllLatc	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CalibreLvsRepDiag-001	NEW 用户 e0024852 在 hfeg0pkn005 跑 SRAM bitcell 的 Calibre LVS：msg#0 dspf-	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcExtendRuleValidator-001	NEW 用户 xxchen 在 hfeg0pkn002 写 DRC pattern rule DNW_EXT_005(alayer exte	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ErcPathchkTopoDiag-001	NEW 用户 eric9zhu 在 hfeg0pkn005 做 vref_mos_core 的 Calibre LVS ERC PATHCH	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcQaWidthTypeGeom-001	Virtuoso SKILL AA_W_1.il DRC QA width pattern generator (11 types A/B/	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SvrfTvfLayerMapGen-001	Calibre SVRF/TVF layer-mapping framework authoring (physical_verify): 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-PexFlowRunLogDiag-001	Calibre CCI-LVS + GloryEX gxrc PEX flow signoff debug for 35H FS SRAM 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-SchOaInventoryExtract-001	Aether OA schematic analysis for DDR4 DQ/DQS receiver DTCO (layout_aet	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-VirtuosoLaunchRecipeGen-001	Virtuoso IC6.1.7 GUI launch + LACAA SRAM Bitcell schematic open on RHE	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-InnovusPwrRtDiag-001	Innovus APR test_chip_v1 power-routing + route/fp log diagnosis (pg_la	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PcellPatternGeoDiag-001	pcell oneOrTwoLayerSpaceFail.il (SKILL, 1439行) QA DRC space/width 规则：默	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ImplantFillDummyLeftoverDiag-001	IMCleFillImplantDrc.py (174KB, Aether implant-fill DRC flow, calibre D	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-WlDrcClusterPairParse-001	用户 leozhao 提供 calibre DRC deck wl_adjacent.drc + parse_wl_pairs.py，要求在	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DiffNetConnLayerSelect-001	用户 xxchen 报 drcConnect run_1 diffNet 里没有 BTSV_drawing 连接测试：conn_layers	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-VirtuosoStartupDiag-001	用户 chengleiy 在 hfeg0pkn005(RHEL 8.10)上跑 Cadence Virtuoso IC617ISR23 做 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SkillPyaetherTransAudit-001	用户 rongjiez 把 Virtuoso SKILL 脚本 cxmt_getLatchFFCellList.il（获取电路中可能的 FF	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SkillM1ShapeDeleteAudit-001	用户 e03179 在 hfeg0pkn002 上单轮要求'删除当前版图在所有M1的图形，使用skill语言生成代码并执行'，cellvie	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-InstM0ShapePinIdentify-001	用户 e0047695 在 hfeg0pkn005 上单轮两条 user_input: '写个skill脚本，识别instance的m0' 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SkillBindkeyFlattenMakeCell-001	用户 weizhao 在 hfeg0pkn004(10.129.2.13) 上单轮 user_input: '1.帮我写一个skill脚本 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcLogTeardownReport-001	用户 joelchen(NEW user) 在 hfeg0plg37 上反复执行一套《Calibre/Argus DRC Log 拆解报告》	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-LayoutFloorplanGen-001	用户 michael1l(NEW user) 在 hfeg0pkn003 上单轮需求「启动场景，版图规划」(项目 /proj/lacaa/T	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcRuleTimeRank-001	Parse Calibre DRC-H rundrc.log (323380 lines, 32-core, ~16h): aggregat	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-WlAdjacentPairParse-001	leozhao 维护 wl-adjacent-detection Calibre DRC deck(v2 属性链架构,4791 行静态 de	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SvrfPvrsRuleTranslate-001	(no summary; prompt trace-faithful)	keep	trace_source.real_task_summary 缺失但 prompt 含真实用户/路径/工具(trace-faithful),需补 summary 字段	保留(补 trace_source.real_task_summary)
+EDA-Eval-DesignFlow-SaqpIntAngleEqSplit-001	(no summary; prompt trace-faithful)	keep	trace_source.real_task_summary 缺失但 prompt 含真实用户/路径/工具(trace-faithful),需补 summary 字段	保留(补 trace_source.real_task_summary)
+EDA-Eval-DesignFlow-VssPunchRuleGen-001	laryu 在 /proj/drgqa/V0/workdir/laryu/SVRF_training/ 学习/调试 Calibre SVRF	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RectAspectRuleCheck-001	lipingy 在 /home/lipingy/AutoDRC/calibreDRC.rule（长鑫 DRAM Calibre DRC TV	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-LefFromPinList-001	e0024981 在 /home/e0024981/.cline/scripts/data 下做 SRAM macro 物理交付；先贴出 G	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SpfRcAggregateAudit-001	Parse 39GB SPF file for 256 net RC values (Yio*Msaq* pattern), aggrega	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HcellPairGen-001	用户跑 Calibre LVS 抽 PEX，hcell 文件不全，calibre 报 'Terminate LPE running due 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LvsAmbiguityDiag-001	用户跑 Calibre LVS(SVS 流程 schematic-vs-schematic)，lvs.rep 报 INCORRECT CON	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-LayStructExtract-001	User asks to generate layout for drcpa_analog/AG_ThinFsAllTopCap; agen	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PinListPortOrderExtract-001	User asks to get all pin list of the current circuit and output to pin	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-EmyCdlNetlistExtract-001	User asks to use API/CLI emy2netlist to extract CDL netlist for cell 4	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CmMaOpTableGen-001	User (m1wang, DRCPA/ddjma DDR5 project) asks agent to traverse T_CM* c	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-LdrSvrfRuleGen-001	LDR 自然语言设计规则（M1 width>=0.159、VSH_cmp space>=0.028）→ Calibre SVRF DRC 检	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-GloryRcFlowSetup-001	GloryEX RC flow 批量跑：simplec 让 agent 跑 glory RC flow，agent 深读 gxrc_auto	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ConnChkSummaryGen-001	xxchen 自建 DRC 连通性检查工具 drcConnect，让 agent 改造报告生成：U#1 多 bottomLayer 支持 +	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcConnectGraphGen-001	xxchen 自建 DRC 连通性图绘制工具 drcConnect/build_graphV2，让 agent 把 calibreDRC3d	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ErcSchMarkNetDump-001	ERC schMark net dumper: traverse all circuit nodes, keep nets carrying	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-HilightCsvGroupGen-001	Virtuoso layout bbox highlight generator: parse a resistor-segment CSV	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SacapSpfCouplingExtract-001	rongtaoy 自建 SA bitline 耦合电容提取工具 sacap_extract.py(v1.7a, 对齐 sacap_0922.	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CmTestmodeDomainCount-001	shanksw 在 DDGOA(DDR5) flat SPICE presim 网表 netlist.presim~ 里数 CMLeft(例	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ScmosCrossProbeCsvGen-001	xiwang 在 DDGOA V0 Aether/OA 设计库中, 以 SCmosDataDPCtrlNew_DDGOA_add 与 SCm	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RscalcBsubPollRunner-001	e0014566 在 test_layout_rscalc_flow_7 中排查 rscalc baseline 计算失败: (A) LSF	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPatternGeomGen-001	kenwang 在 Virtuoso SKILL IDE 开发 DRC QA test-pattern 自动生成脚本 AA_W_1.il，为	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-InnovusImpsr1253Diag-001	Innovus fp IMPSR-1253 告警根因排查：新 DC 网表自带 VDD_PM 隔离(PM_VDDI_Inst 端口 .VDD_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RscalcRtextRnodePlan-001	inspect layout auto_austin_case1/Array16G_B for rscalc resistance setu	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PpFlowSetupGen-001	test_chip_v1 项目补建功耗/IR-drop 分析流程：新建 pp/ptpx（PrimePower PTPX 平均功耗分析）+ p	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LayoutAnalyzeReport-001	DRVQA Ary16G 阵列核版图分析：aeGetCurDesign 连真实 OA，遍历 layer/purpose 统计 die 大小（	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyRuleCfgParse-001	zhiguo1w 分析自研 Calibre Dummy 生成脚本树(0.3.3)的 *_Info 变量读取/使用方法与配套脚本：读 cali	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-M1ShapeDelete-001	e03179 在当前版图 cellview(TECHLIB_test/CT_Mark_P/layout, dbu=1000, 3 图形含 1	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-ConnPriorityDupCheck-001	yqlu 在 hfeg0pkn005 上跑 DYT3E 工艺 calibre LVS connectivity QA 脚本 main.py(	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PdFloorplanGen-001	xiwang 在 hfeg0pkn002 上基于 ddgoa_cmos_top/LP5TOP 做 power-domain floorpla	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-EccDsaLocate-001	xiwang 在 hfeg0pkn002 上基于 DDGOA spine 版图，要求画出 ECC 和 DSA 所在的位置。真实 agent 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchNetPrefixHilightGen-001	用 Virtuoso SKILL 高亮当前 schematic cellview 中所有以 'net' 打头的 net（不区分大小写，黄色 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PexRccCdlPortMapFix-001	PEX RCC extraction failed for T_IsmTop: XI37 (bufLx4) bottom-layer por	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-StdcellLayoutPlanGen-001	stdcell layout generation: parse bufLVCKx24 netlist -> draw layout_tet	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcRulePkgConvert-001	xxchen@pkn001 analyzed the searchDRC tool (4-level LDR/DRC/Tcl config 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcPatternPkgGen-001	lizwen@pkn003 (10.129.2.12) 在 Aether 上做 DRAM DRC testpattern：加载 drc_pa	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-QaPatternPlanGen-001	SKILL pcell -> Python QA pattern generator 批量迁移 (DRC_pattern_tool, 28 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-HeadlessLatchSkillGen-001	ruifan@hfeg0plg36 在 /home/ruifan/agentdir/dejoa/V0 多轮迭代驱动 headless Vir	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PcellCyclicMerge-001	hktklin@hfeg0plg87(10.129.8.138) 三轮迭代驱动 PCELL 单选改造：U#0 要求把 common_tap_	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-TrMatchHelperGen-001	用户要求在 Aether(pyAether) 中编写模拟版图管子匹配辅助脚本。assistant 经 RAG API 检索(leGuiDev	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcVsDrmRuleAudit-001	检查 DRM 设计手册中的 rule 是否都在 DRC Calibre deck 中存在，列出 DRM 有 DRC 无 / DRC 有 DR	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LibPinManifest-001	从 K 库 Virtuoso 标准单元库的 Liberty .lib 结果文件中，整理所有 cell 的输入/输出 signal pin 与	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcExactWaiver-001	修改 Calibre DRC deck 中的 BLR_S_004_00 规则：把 @Min 间距检查改为 BLR 与 AGT 的 @Exac	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcBad2gridLshape-001	在 DRC QA 图案生成规则 M1.W.1 的 recipe override YAML 中，向 bad.add 追加一个 {catego	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcDeckCmpGen-001	学习一份新 Calibre DRC deck（35H，1P22M，下划线命名）相对于 n7 参考 deck 没有的 code 写法；同一 d	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-OaLayoutM1RectEdit-001	确认对 OA layout 文件 /proj/train/drcoa_social/workdir/t0002962/PierceLib_t	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NetlistMatchCkGen-001	用户要求创建一个匹配流程，用 DDR6TOP_Latch_FF_RS.list 中的 library/cell 信息匹配 SPICE 网表中	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-BatchLvlGdsCmp-001	用户要求比较 /home/miccao/autocell/decqa/gds 与 /home/miccao/autocell/ddcpc/g	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LayerSoloBindkeyGen-001	用户要一个 Aether 平台脚本：版图中切换显示层次，快捷键 1 显示 M1 层、快捷键 2 显示 M2 层。真实 assistant 查	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RunsetPairCmpGen-001	用户要求只阅读对比两个 35HFS.layermap 文件(/proj/lacaa/TV1_FS_Virtuoso 与 /proj/laca	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcMetalOptGen-001	用户(kenwang)在 /rundata/lacaa/V0/workdir/kenwang/Calibre_DRC/metalOption	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-TvfSetlayerExpl-001	用户(ellawu)提供一个 Calibre TVF DRC deck(G4C_AA_PG_dummy_fill_for_Logic.rul	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcCloseOpenSwap-001	用户(weizhao)在 Calibre DRC rule 文件中需要将 LAYER MAP 定义的 XXX_CLOSE / XXX_ope	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-LvsReportAnalyze-001	用户(fhwang)需要分析 Calibre LVS 运行结果(Array3G_TOP_L.lvs.report,260MB,1.9M行)中	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-AntMetalThkPathFix-001	用户(xinqiaoz)报告 PDK_QA antMetalThk 检查两个 bug：1) config.ini 同时写 drc 和 ant	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DRCLogTeardown-001	Calibre/Argus DRC Log 拆解报告 — parse a Calibre DRC-H rundrc.log, produce	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-IRReportPdf-001	DDR5TOP IR-drop 报告 PDF 生成 — read worst_ir_summary.dr (14 power nets Pe	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SASchematicAether-001	DRAM 锁存型位线灵敏放大器(SA)原理图构建 — 用 pyAether 脚本在 Aether 中自动建库+建视图、放置 6 个器件(MP	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LVSShortExtract-001	ziyuny/10.129.32.190 (mc=171, cmos:992;lvs:794;calibre:198), 88 msgs/9	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-StarrcReleaseNoteGen-001	xinqiaoz/10.129.2.11 (mc=366, pdk:1011;drc:576;calibre:281), 240 msgs/	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcEnclosureTripleExtract-001	jiaqis/hfeg0plg76 (mc=251, drc:1207;calibre:18;.def:8;gdsii:1), 94 msg	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcQaMergeBloatDiagnose-001	xinqiaoz/hfeg0plg56 (mc=199, drc:4486;calibre:162;pdk:837), 89 msgs, a	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NetlistExtractSkill-001	t0003117/hfeg0pkn005 (mc=611, virtuoso:88/skill:42/calibre:5-误判), 395 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyTargetLayerCmp-001	xinqiaoz/hfeg0plg56 (mc=386, pdk:1011;drc:212;calibre:63) T1 G7 hyperb	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcQaReportSummary-001	yzwang/hfeg0pkn001 (mc=238, drc:1124;pdk:199;calibre:19) DRC QA report	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyFillCoverageAnalyzer-001	zhiguo1w/hfeg0plg76 (mc=78, drc:32;calibre:18;aether:14;virtuoso:8) Ca	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-BlkDummyClipPipelineExtract-001	ellawu/hfeg0pkn005 (mc=36, drc:2419;calibre:145;aether:116;.gds:30;gds	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SchematicPinAdd-001	build-tool: 用户要求在 drcqa_analog/AG_AmpsUpBankFar/schematic 中添加 TESTPIN 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcPatQueryEnrich-001	lizwen 在 hfeg0plg89 上调试 DRC Testpattern Generator skill (drc_pattern_g	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PwrViaAgentGen-001	e0014566 在 hfeg0pkn005 (10.129.2.14) 上跑 Virtuoso pg_layout 批量流：两条子任务(A	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ErcSetupGen-001	e0031668 在 hfeg0pkn003 (10.129.32.75) 上跑 physical_verify ERC setup 流：读	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcSwitchSweepOpt-001	junwangt 在 hfeg0plg07 (172.16.8.14) 上优化 Perl DRC runset switch-syntax-	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-MetalOptRuleExpand-001	kenwang 跑 Calibre DRC 自动化模板引擎 drc_auto.py（把 .rules 模板 #loop/$<var> 渲染成	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RsCalcFlowOrchestrator-001	Single USER turn 'read the prompt_flow.md and do the job in it.' — exe	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PexBlCouplingCompare-001	PEX BL coupling comparison: parse 0916BK vs 0608BK PEX coupling result	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PexRccLayerMigrate-001	PEX RCC layer migration: user ran update_RCC_layer.pl -excel ./nTSV_10	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcRuleFromDesc-001	DRC rule code development from @description: user has /home/kenwang/zl	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcQaAutoPipe-001	e0047488 在 QA_pattern_repo_linux 建 JSON→GDS→DRC 自动化校验流水线：M1 QA pattern	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcDeckUpdateQa-001	QA a 1P22M Calibre DRC deck update (Rev13_S12_1030) against update_103	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NicapNetlistPivot-001	Batch extract netlists from Aether schematics, parse **TopDesStart ins	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-JsonGdsDrcPipe-001	Build automated verification path from JSON product files -> GDSII -> 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-Gds2Lef-001	Extract LEF abstract from GDSII (抽lef) for standard-cell memory macros	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DfmDumFillConvert-001	Calibre DFM DUMMYFILL SVRF deck format conversion: user (jon) on 172.1	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DbusMetalFlowReport-001	DECQA project layout analysis: user (chapinc) on hfeg0pkn001 wanted to	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcDeckOptimize-001	DDR5TOP DFM Calibre DRC deck optimization: user (miccao) on hfeg0plg92	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DummyFillMeasureRpt-001	Dummy fill QA on GDS: measure dummy geometry (size/spacing/distance-to	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LvsRuntimeDiff-001	Write a script to compare 2D-LVS vs 3D-LVS runtime across project vers	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PrlSpaceQaFix-001	DRC QA Pattern Tool prl_space 函数缺陷修复：工程师 QA 调试 PW_S_016_02 报告 3 缺陷——(1	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-PctAgtSpacingDeck-001	Argus_DRC deck 编写型 produce-task：用户要求生成一条 DRC 规则检查 PCT/AGT 两层版图间距是否不等于 	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-EncloseSide2Good5-001	DRC QA Pattern Tool enclose_side2 function produce-task：用户要求新增 functio	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-FreeTrackFinder-001	PyAether 空 Track 标记器脚本生成 — 扫描版图指定金属层找空置 track 段，高亮标记+占用率报表	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-RscalcLabel-001	Virtuoso rscalc 电阻提取 RTEXT/RNODE 标签布局规划 — 拷贝版图、分析电源网络引脚坐标、按比例采样放置 RTEX	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LabelFlattenTop-001	版图顶层 label 扁平化流程脚本生成 — 所有 QA cell 放置后把后代 cell 标签按引用 origin 累加平移复制到顶层 r	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-ExcludeRegionRowLayout-001	DRC QA pattern deck excludeRegion 逐区域 exempt 行布局重构 — 把所有 excludeRegion	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-QaDrcAutoCheck-001	打通 QA pattern 产物文件→GDS→DRC check→返回结果路径 — 因生产环境 Calibre(VCO env)/Argus	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-PgRailLabelReplace-001	在 tiled GDS 的 Metal4 电源/地 rail (95:353 VDD / 95:354 VSS) 上重布 PG pin la	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DummyMvFracCfg-001	为新增 DUMMY 检查项 dummyMaskVsFracture 编写 test_chip/config.ini —— 用户新增 Dumm	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-NicapPcellParamExtract-001	U#6 我需要抓取出Aether layout中所有Nicap Pcell的parameter（nc/nr/c）→ assistant RA	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-OpcModelExtract-001	U#0 把 HL_LFD 目录下文件中的 optical 模型 ddm resist 抽取出来保存成文本文件 AA_22nm_GL_opti	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PcellMutexCdfCfg-001	U#0 对 common_M0C_CUT_SKILL_bk.il 修改使 PCELL 点选 M0C_CUT_124/MOC_CUT_35/M	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-AetherSmashCliPort-001	U#1 produce-task author-new-script：原始脚本 Aether_Porting_Smash_20260826.	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-SkillTclMetalPort-001	U#0 用户提供 Virtuoso SKILL 金属层次快速切换脚本 changeSelectedMetal(toLayer)/change	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-LayerMapReleaseNote-001	U#0 produce-task author-new-script：对比 /home/pdk/weizhao/sos/runsetRule	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-PinAccessScore-001	U#6/U#8 produce-task author-new-script：根据 check_access.il 的 pin access	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-CmpQaXlsxChart-001	U#13/U#6 produce-task modify-existing: 改写 cmp_qa_run.py CSV->xlsx(xlsx	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-InvCellCreate-001	"U#2 produce-task author-new-cell：在 00_DSCQA_SA 库里新建 circuit ""INV"" 实现反相"	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DrcRuleTimeAggregator-001	U#0 produce-task modify-existing：DRC run 日志 rundrc.log 的规则耗时统计脚本 parse	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-DrcPipelineRunner-001	U#0 produce-task author-new-flow：用户 e0047488 项目输出 out/*.json（cell 几何形状	keep	B档可跑性收敛(L3 trace→L1 offline-Python,因 check() 无 EDA license;非旧配额降级,意图核心保留)	保留(可选恢复L3形态)
+EDA-Eval-DesignFlow-FloorplanReblockGds-001	U#1 '我给你GDS还有CDL' 给 CDL(VwlnSGx64_3T_1Mat) -> U#2 给 GDS 路径(R_SaCtrol_s	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-MetalProximityGroup-001	U#1 '在array die中...将临近的metal线给总结出来...我给你个gds，你要怎么处理' = produce-task：给 	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留
+EDA-Eval-DesignFlow-DupOriginRotate-001	produce-task author-new-script: implement pyAether layout script to de	keep	prompt=trace-faithful,check 对交付物断言未超意图	保留

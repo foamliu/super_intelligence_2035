@@ -43,3 +43,623 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1792829537180_vaiob	harrywu	hfeg0pkn002	506	physical_verify	weak: xinqiaoz PDK QA handoff	不可造	handoff resume 强状态依赖，无 clean single-turn seed；操作性障碍	—
 1792205753795_x5t0t	brian	hfeg0plg99	497	layout_virtuoso	weak: r334 failed+recon	不可造	failed+recon，无 accepted gold；符合排除标准 2	—
 1785994889000_x5tcq	e0014566	hfeg0plg58	484	pg_layout	weak: r334 idle+handoff-resume	不可造	idle+handoff-resume 强状态依赖；操作性障碍	—
+1787742497412_aneeo.messages.json	e0014566	hfeg0plg58	826	layout_virtuoso	parked: 4.5MB/1605msgs too large for single-round synth+verify;	可造-低优	同已覆盖case形态(需deepread)
+1785735994579_tckme.messages.json	e0014566	hfeg0plg58	654	layout_virtuoso	parked: 同 e0014566 PowerFill flow 重复 itvhk/PowerFill-001，避免同域重复	可造-低优	同已覆盖case形态(需deepread)
+1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	layout_virtuoso	parked: RTEXT/RNODE 打齐同 LayoutVirtuoso-001 主题，避免重复	可造-低优	同已覆盖case形态(需deepread)
+1792679003281_z44lk.messages.json	xinqiaoz	hfeg0pkn004	610	physical_verify	parked: near-dup of DummyDeck-001 (BORD NOT empty-derived-layer	可造-低优	同已覆盖case形态(需deepread)
+1788577896116_33zw1.messages.json	haoyut	172.16.8.191	584	layout_virtuoso	parked: cross-shard near-dup C down D keep (A r440 ruling); C s	不可造	—
+1792715254915_8z5a8	xinqiaoz	hfeg0pkn004	611	physical_verify	parked: gold file (make_fix_gds.py+fixed deck/config) on hfeg0p	可造	分析/Q&A或脚本(需deepread)
+1792297573507_9knot.messages.json	vincelu	hfeg0plg55	862	physical_verify	parked: netlist+schematic+hspice 非纯 shard C,4.2MB>2MB(r43)	不可造	—
+1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	parked: pdk QA handoff 起手不纯需求(r43)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	parked: handoff resume PDK QA test fixes 强状态依赖(r47)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked: UI hello/runme 太薄元任务(r47)	可造	分析/Q&A或脚本(需deepread)
+1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked: handoff 弃(r46)	可造	analysis:check验报告结构+关键事实+hidden B
+1786592143567_5jmnc.messages.json	e0014566	hfeg0plg58	539	layout_virtuoso	parked: RsCalc/AutoVia/PowerFill 重叠既有(r45)	可造-低优	同已覆盖case形态(需deepread)
+1790067900307_qy90r.messages.json	xinqiaoz	hfeg0plg76	534	physical_verify	parked: handoff resume PDK QA sync phase4(r47)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792998643161_19e3k.messages.json	jcgu	hfeg0plg95	533	physical_verify	parked: ssh 超时弃(r45)	不可造	—
+1790164140533_q2upl.messages.json	xinqiaoz	hfeg0plg76	513	physical_verify	parked: handoff resume PDK QA phase5(r47)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1786615396051_enh4y.messages.json	e0014566	hfeg0plg58	511	layout_virtuoso	parked: RDL/RNODE/RTEXT 重叠 9cg75(r45)	可造-低优	同已覆盖case形态(需deepread)
+1792829537180_vaiob.messages.json	harrywu	hfeg0pkn002	506	physical_verify	parked: meta 中文输入法问题非EDA(r47)	不可造	—
+1792205753795_x5t0t.messages.json	brian	hfeg0plg99	497	layout_virtuoso	parked: opamp design=analog/schematic 域非纯 shard C(r47)	不可造	—
+1792025124250_ebwqh.messages.json	xinqiaoz	hfeg0plg76	485	physical_verify	parked: dummy migration 协作弃(r46)	可造	分析/Q&A或脚本(需deepread)
+1791786838927_a15un.messages.json	xinqiaoz	hfeg0plg76	484	physical_verify	parked: test-inventory 元任务(r46)	可造	分析/Q&A或脚本(需deepread)
+1785994889000_x5tcq.messages.json	e0014566	hfeg0plg58	484	pg_layout	parked: RsCalc/AutoVia/PowerFill 重 L3 flow 不可离线判分(r42)	不可造	—
+1793004131427_spkav.messages.json	xinqiaoz	hfeg0plg76	479	physical_verify	parked: handoff 续会话弃(r46)	可造	analysis:check验报告结构+关键事实+hidden B
+1788853586047_k45c2.messages.json	ziyuny	hfeg0pnd002	478	layout_virtuoso	parked: 仅 2 UI 启动场景弃(r42)	可造	分析/Q&A或脚本(需deepread)
+1792551272867_jnf1q.messages.json	jasonxu	hfeahpc501	470	physical_verify	parked: skill-creator meta 非EDA(r47)	不可造	—
+1792583307053_mrwvg.messages.json	jasonxu	hfeahpc501	469	physical_verify	parked: skill-creator meta 非EDA(r47)	不可造	—
+1792724929127_2vuso.messages.json	tongni	hfeg0pfn119	468	physical_verify	parked: sim-sp-gen sim 域非 shard C(r47)	不可造	—
+1788830861723_dnvv4.messages.json	miccao	hfeg0plg37	458	physical_verify	parked: meta how-to install skill 非EDA(r47)	不可造	—
+1791805925563_jbqzl.messages.json	xinqiaoz	hfeg0plg76	455	physical_verify	parked: handoff 弃(r46)	可造	analysis:check验报告结构+关键事实+hidden B
+1792297746172_kyref.messages.json	vincelu	hfeg0plg55	476	layout_aether	parked: wrong domain: create .inst char files (SiliconSmart), n	不可造	—
+1792675302417_puv3q.messages.json	xinqiaoz	hfeg0plg76	454	physical_verify	parked: DummyDeck 重叠既有弃(r46)	可造-低优	同已覆盖case形态(需deepread)
+1792744168464_n1k2a.messages.json	e0045291	hfeg0plg80	451	physical_verify	parked: token-burning 弃(r43)	不可造	—
+1793087996513_u78sz.messages.json	hengbow	hfeg0plg94	407	physical_verify	parked: FSDB+waveview=sim 域弃(r42)	不可造	—
+1787897609476_ooyxi.messages.json	sophiaw	hfeg0plg49	394	physical_verify	parked: skill-gen 弃(r41)	可造	env-config/skill:check验配置或产物正确性+hidden B
+1786967377211_bf4yc.messages.json	e0014566	hfeg0plg58	449	layout_virtuoso	parked: meta read prompt_flow.md + RsCalc/AutoVia/PowerFill 重叠(	可造-低优	同已覆盖case形态(需deepread)
+1786349419937_ipbrb.messages.json	e0014566	hfeg0plg58	449	layout_virtuoso	parked: meta read prompt.md + Array16G_B autovia/powerfill 分析重叠	可造-低优	同已覆盖case形态(需deepread)
+1790133815976_z9yjw.messages.json	e0014566	hfeg0plg58	416	layout_virtuoso	parked: handoff resume BCenterCA 降阻迭代 强状态依赖(r47)	可造	analysis:check验报告结构+关键事实+hidden B
+1783580842066_09kkp.messages.json	e0014566	hfeg0plg58	396	layout_virtuoso	parked: meta read prompt_powerfill.md + PowerFill 重叠(r47)	可造-低优	同已覆盖case形态(需deepread)
+1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked: Array16G_B RTEXT/RNODE rscalc 重叠 RNodePlan-001(r47)	可造-低优	同已覆盖case形态(需deepread)
+1783504511275_fvpye.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked: meta read prompt_powerfill.md + PowerFill 重叠(r47)	可造-低优	同已覆盖case形态(需deepread)
+1785498914896_8du7m.messages.json	e0014566	hfeg0plg58	390	layout_virtuoso	parked: meta read prompt_flow.md + RsCalc flow 重叠(r47)	可造-低优	同已覆盖case形态(需deepread)
+1792055923522_tqmu1.messages.json	cynthiaz	hfeg0plg93	404	layout_aether	parked: Strongarm 比较器 schematic 搭建 域非 layout(r47)	不可造	—
+1792742447012_djml8.messages.json	wnyu	hfeg0plg06	401	layout_aether	parked: PFD delay symbol 查找 schematic 域非 layout(r47)	不可造	—
+1792400027384_ahjnv.messages.json	zhukaic	hfeg0plg94	397	layout_aether	parked: OTA 2-stage 调参 skill-driven sim 域非 layout(r47)	不可造	—
+1788932125428_zqelb.messages.json	ziyuny	hfeg0pnd002	378	layout_aether	parked: meta 找已打开 aether 非 design flow(r47)	不可造	—
+1793017339067_jhdvn	t0002805	hfeg0plg91	492	skipper	parked: r50 已判: schematic 域(1844 schematic/733 netlist),非纯 shar	不可造	—
+1783577039866_4dd1i	e0014566	hfeg0plg58	491	skipper	parked: r50 已判: handoff prompt_powerfill.md,重叠既有 PowerFill	可造-低优	同已覆盖case形态(需deepread)
+1791853171557_i3dz3	xinqiaoz	hfeg0pkn004	413	skipper	parked: r50 已判: pdkQaSystem 迁移审核=meta 非 EDA 设计流	不可造	—
+1788914570061_39qja	xinqiaoz	hfeg0pkn004	400	skipper	parked: r50 已判: pdkQaSystem 迁移审核=meta 非 EDA 设计流	不可造	—
+1790578654193_ke3sv	xinqiaoz	hfeg0plg76	402	skipper	parked: UI#0=handoff 恢复 pdkQaSystem,非纯 EDA 设计流 seed	可造	analysis:check验报告结构+关键事实+hidden B
+1789624635745_u0vle	xinqiaoz	hfeg0plg76	394	skipper	parked: UI#0=阅读 pdkQaSystem agent-command-profiles 规则并解释,meta/h	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1787137440904_wyrs2.messages.json					parked: handoff prompt_flow.md RsCalc+AutoVia+PowerFill flow; o	可造-低优	同已覆盖case形态(需deepread)
+1788147634807_soqbk.messages.json					parked: handoff prompt_flow.md + 5 reports; overlaps RsCalc/Pow	可造-低优	同已覆盖case形态(需deepread)
+1785761013677_e0mmo.messages.json					parked: handoff prompt_flow.md bare	可造	analysis:check验报告结构+关键事实+hidden B
+1783568117344_9iqwf.messages.json					parked: handoff prompt_powerfill.md; overlaps PowerFill	可造-低优	同已覆盖case形态(需deepread)
+1788353323015_rjizk.messages.json					parked: RTEXT/checkPoints task identical to RTextChkPlan-001 (r	可造-低优	同已覆盖case形态(需deepread)
+1789866007933_m14th.messages.json					parked: meta issue-handler workflow spec, not a specific EDA ta	可造	分析/Q&A或脚本(需deepread)
+1789384598319_agzjb.messages.json					parked: meta code-review of DrcPatternCheck.py vs proposal doc;	可造-低优	同已覆盖case形态(需deepread)
+1792460489351_tb0xk.messages.json					parked: empty prompt	不可造	—
+1789092579396_tgs17.messages.json					parked: miccao autocell config explain; overlaps PCellFlowPlan;	可造-低优	同已覆盖case形态(需deepread)
+1789895218929_1xhgy.messages.json					parked: miccao skill-content paste; r47 judged	可造	分析/Q&A或脚本(需deepread)
+1790060113870_jr97m.messages.json					parked: DRC issue 0922_zhaowei root cause hinted by user (not i	可造-低优	同已覆盖case形态(需deepread)
+1785898505302_zfrbu	xu1wu	hfeg0plg75	341	layout_virtuoso	parked: UI#0 meta-task template 启动业务场景：模拟电路生成; 127msgs 全是 Virtu	可造	env-config/skill:check验配置或产物正确性+hidden B
+1792380576403_uumms	e0029308	hfeg0pkn001	343	schematic_netlist	parked: Verilog netlist cell extraction + finesim/spectre sim =	不可造	—
+1792063193685_1vto1.messages.json	e0023936	hfeg0pkn001	305	layout_virtuoso	parked: schematic-domain (highlight nets/MOS in schematic), not	不可造	—
+1783585721814_kkzh8.messages.json	e0014566	hfeg0pkn001	322	layout_virtuoso	parked: same powerfill-merge domain as r62 PFMergeDupAudit (53n	可造-低优	同已覆盖case形态(需deepread)
+1788764026073_8hdj3.messages.json	ziyuny	hfeg0pnd002	305	layout_aether	parked: env-setup+generic launch (UI#160 启动业务场景:模拟电路优化·二次执行=gen	可造	env-config/skill:check验配置或产物正确性+hidden B
+1789960398048_ajqj4.messages.json	lizwen	hfeg0pkn002	298	layout_aether	parked: same drc_pattern_gen skill domain as r63 DRCPatManifest	可造-低优	同已覆盖case形态(需deepread)
+1789017399621_cmsbu	chenyue	hfeg0plg85	129	layout_aether	parked: near-dup of M2PathLayout-001 (i1gjh): same chenyue/hfeg	可造-低优	同已覆盖case形态(需deepread)
+1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked: user turns all fix-direction (改ae.dmDeleteObj->dbDelCV)	可造	debug/analysis:check验根因+修复+hidden B
+1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked: sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 	不可造	—
+1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked: meta: UI#0 policy engine caching/permission debug, UI#2	可造	debug/analysis:check验根因+修复+hidden B
+1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked: generic launch: UI#0 启动业务场景:时序分析, UI#264 report product	可造	analysis:check验报告结构+关键事实+hidden B
+1790236124444_8orer	lvyy	hfeg0pkn002	165	layout_aether	parked: schematic domain: UI#135 复制电路 CkIbDiffM6+子电路到新library=s	不可造	—
+1791788736494_t2qp9	leo27li	hfeg0pkn001	156	layout_virtuoso	parked: STA/Innovus PnR Q&A: UI#0 setup/hold sta, UI#5 innovus 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1785738164906_rqpb4.messages.json	t0002638	hfeg0plg49	517	layout_aether	parked: meta-infra session: bench author t0002638 building EDA-	可造-低优	同已覆盖case形态(需deepread)
+1782728857158_05p8p	e03179	hfeg0pkn002	296	layout_aether	parked: meta-infra: devops e0025768 debugging Virtuoso bridge s	可造-低优	同已覆盖case形态(需deepread)
+1788488824102_unnkw	e02141	hfeg0pkn002	250	layout_aether	parked: meta-infra: e02141 devops setup (mkdir/cp eda_sandbox, 	可造	env-config/skill:check验配置或产物正确性+hidden B
+1785556613011_1al18	jojoyan	hfeg0plg56	229	layout_aether	parked: canned-scenario + infra-debug: '启动业务场景: 模拟电路生成' is cann	可造	debug/analysis:check验根因+修复+hidden B
+1791958054953_qrb1b	yan1zh	hfeg0plg65	314	layout_aether	parked: agent stuck in Aether env-debugging (LD_PRELOAD/libstdc	可造-低优	同已覆盖case形态(需deepread)
+1791852620999_5u8d5	ellawu	hfeg0pkn005	293	layout_aether	parked: OVERLAP: pin-float (cxmt_floatPinToTop.py) theme identi	可造-低优	同已覆盖case形态(需deepread)
+1792411915181_j8f3i	yutongy	hfeg0pgn021	221	layout_virtuoso	parked: dup of shard D SpfstdBtn-001 (schematic_netlist); same 	不可造	—
+1791966358446_82iou	fxian	hfeg0pkn002	606	layout_aether	parked: trace already used by shard D HierDescend-001; schemati	不可造	—
+1791960706202_66ut5	haifengf	hfeg0pkn002	301	layout_virtuoso	parked: analog/sim optimization (FineSim+invCSx1 delay/pwr), no	不可造	—
+1790213910009_nw4v8	e0041123	hfeg0plg104	120	layout_aether	parked: session failed: pyAether/PyQt5 sip API v12.0-12.6 vs v1	不可造	—
+1787285566134_xwncx	e0014566	hfeg0pkn001	269	layout_virtuoso	parked: dup of RTextChkPlan-001/RsCalcChkPtGen-001 (same rtext-	可造-低优	同已覆盖case形态(需deepread)
+1791964484349_gaz6r.messages.json	jaceyx	hfeg0plg90	86	layout_aether	parked: Q&A session (ITF/inline-data concept questions, 0 write	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1783080403465_aneq6.messages.json					parked: autovia IMCleAutoVia.il GUI-removal - overlaps AutoViaG	可造-低优	同已覆盖case形态(需deepread)
+1783413531894_o8i0o.messages.json					parked: autovia run_autovia_agent.il exec - overlaps existing a	可造-低优	同已覆盖case形态(需deepread)
+1789632393597_0zg87.messages.json					parked: fragmented intent (DFM SPEC FILL / print(f)deyongfa), 0	可造	分析/Q&A或脚本(需deepread)
+1792672720715_02kcl.messages.json	kevinc	hfeg0plg84	87	physical_verify	parked: DUPLICATE trace - already covered by DRConnTiming-001 (	可造-低优	同已覆盖case形态(需deepread)
+1792115444722_relly.messages.json					parked: SVRF SETLAYER rule paste + RAG Q&A, 0 write ops, concep	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791852261815_1pxm7.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791795655205_1ln5m.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792477596495_6f3gm.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792547960320_eabca.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789955535816_el8uc.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1787134874335_uzh9z.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1783414380980_uhn3f.messages.json					parked: autovia run_autovia_agent.il sandbox troubleshooting - 	可造-低优	同已覆盖case形态(需deepread)
+1792570431387_vdqlw.messages.json	ypzheng	hfeg0plg103	335	physical_verify	parked: schematic/netlist/analog comprehension (cmos:3023 netli	不可造	—
+1782905118695_h80lc	e0014566	hfeg0pkn001	225	layout_virtuoso	parked: gold污染:agent全程未成功读取and2LVSDx1版图内容(sandbox桥接失败/pyAether端	可造	env-config/skill:check验配置或产物正确性+hidden B
+1789887279405_ve67l	mike	hfhds206	279	pg_layout	parked: wrong domain: cosim/VCS/spike RISC-V build flow, not ph	不可造	—
+1789874220542_wiait	xinqiaoz	hfeg0plg76	321	physical_verify	parked: duplicates existing DrcLegacyFallback-001 (i4c8d) - sam	可造-低优	同已覆盖case形态(需deepread)
+1791944224191_6i6lk	jason17w	hfeg0pnd002	328	physical_verify	parked: VPS verilog regression orchestration (run_approved_comm	不可造	—
+1792836135136_zpb6g.messages.json	keviny	hfeg0plg57	44	layout_virtuoso	parked: slash command /anasimpro-gui-start unresolved; assistan	可造	分析/Q&A或脚本(需deepread)
+1792215882223_qv6pl	adaml	hfeg0pkn001	324	layout_aether	parked: wrong domain: waveview/fsdb spice_sim skill dev, not la	不可造	—
+1792479341771_hacfk	jianwang	hfhds201	98	pg_layout	parked: already parked	可造	分析/Q&A或脚本(需deepread)
+1792491091764_qk0vo	pdong	hfeg0plg98	49	pg_layout	parked: env-debug: how to launch innovus(module/bsub/libssl) no	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791443950843_b7y8t	shaoyou	hfeg0pkn004	107	layout_aether	parked: schematic net highlight net7 = schematic domain + overl	可造-低优	同已覆盖case形态(需deepread)
+1792380407268_opm9y	willashi	hfeg0plg55	279	layout_virtuoso	parked: schematic fix + spectre pre-sim debug = schematic/sim d	可造	debug/analysis:check验根因+修复+hidden B
+1792375022144_ekpd7	xinqiaoz	hfeg0pkn004	308	physical_verify	parked: handoff DummyConfigCheck; overlaps DummyCfgCheck-001 bz	可造-低优	同已覆盖case形态(需deepread)
+1790585092055_a1jb6	xinqiaoz	hfeg0pkn004	265	physical_verify	parked: handoff drc_pattern + comm-help 新人话术; overlaps DrcPatCh	可造-低优	同已覆盖case形态(需deepread)
+1782886485849_iryie	e03179	hfeg0pkn002	198	layout_aether	parked: canned launcher 启动业务场景模拟电路生成+infra-debug non-seed	不可造	—
+1793161602607_0i3r5	my7li	hfeg0pkn004	178	layout_aether	parked: env-bootstrap pyAether PYTHONHOME/libemyVCell debug no 	可造-低优	同已覆盖case形态(需deepread)
+1792982671736_ja990	e0045291	hfeg0plg80	203	layout_aether	parked: token-burning 消耗400K read-only non-design	不可造	—
+1793091608908_lzt3e	e0023936	hfhds201	159	layout_aether	parked: MCP API-doc exploration 查询pyAether/tcl接口 meta/how-to no	不可造	—
+1790230469843_kzlkh	lizwen	hfeg0pkn002	143	physical_verify	parked: DRC Testpattern Generator skill def; overlaps 6+ DRC-pa	可造-低优	同已覆盖case形态(需deepread)
+1792455460383_h0hmj	xinqiaoz	hfeg0pkn004	276	physical_verify	parked: handoff DummyConfigCheck calibreDummy.rule; overlaps Du	可造-低优	同已覆盖case形态(需deepread)
+1793167439759_tkpln	xinqiaoz	hfeg0pkn004	276	physical_verify	parked: Dummy 知识库清理审计/git-commit repo maintenance non-EDA	不可造	—
+1789904184223_i5slk	yiz	hfeg0plg101	152	physical_verify	parked: finesim-fsdb-reader skill adapter ncsim.trn = waveform/	不可造	—
+1792827081154_d810y	jackjia	hfeg0plg78	274	layout_virtuoso	parked: mixed schematic/waveform-sim Q&A (finesim/primesim/wv F	不可造	—
+1792042618272_wl9i4	xingx	hfeg0pkn002	290	pg_layout	parked: netlist/verilog compile-opt (digital sim), not physical	不可造	—
+1791523473684_8xpyo	t0002962	hfeg0pkn003	124	layout_aether	parked: policy/perm struggle, script never executed; poor gold;	可造	env-config/skill:check验配置或产物正确性+hidden B
+1793775672932_5j455	e0047722	hfeg0pkn004	517	physical_verify	parked: dup-of-shardB-DrcQaDiffReport-001 (race: claimed C 12:0	可造-低优	同已覆盖case形态(需deepread)
+1793600748187_dq8bz	adaml	hfeg0pkn002	621	physical_verify	parked: no accepted gold product; CDL-export debugging session 	不可造	—
+1792133910648_645nk	wnyu	hfeg0pkn004	1	spice_sim	parked: concurrent rescan deepread concluded no clean A-faithfu	可造	debug/analysis:check验根因+修复+hidden B
+1793669661941_b7u1n	e0023936	hfhds201	93	layout_aether	parked: weak trace: sandbox died, no completed artifact, vague 	可造	analysis:check验报告结构+关键事实+hidden B
+1793614737757_3y3vq	sinanz	hfeg0pkn005	590	layout_aether	parked: schematic editing via pyAether (rename nets/pins, build	不可造	—
+1789377766402_g2n5n	xinqiaoz	hfeg0pkn002	367	physical_verify	parked: PDK_QA pdkQaSystem sync_to_stable dev/sync workflow (Dr	可造-低优	同已覆盖case形态(需deepread)
+1789893408070_cu2a6	xinqiaoz	hfeg0pkn002	366	physical_verify	parked: PDK_QA HANDOFF_drc_pattern_check continuation; near-dup	可造-低优	同已覆盖case形态(需deepread)
+1789893385737_zi4oj	xinqiaoz	hfeg0pkn002	366	physical_verify	parked: PDK_QA HANDOFF_drc_pattern_check continuation; near-dup	可造-低优	同已覆盖case形态(需deepread)
+1792637789324_aakue	xinqiaoz	hfeg0pkn002	375	physical_verify	parked: xinqiaoz PDK_QA calibre session; same pdkQaSystem codeb	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789622204418_k1qtw	xinqiaoz	hfeg0pkn002	352	physical_verify	parked: PDK_QA sync_to_stable commit sync workflow; same pdkQaS	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791965422114_8lf0t	xinqiaoz	hfeg0pkn002	334	physical_verify	parked: xinqiaoz PDK_QA calibre session; same pdkQaSystem codeb	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793581640305_t2r9f	xinqiaoz	hfeg0pkn002	457	physical_verify	parked: xinqiaoz PDK_QA calibre session (13 calibre uses); same	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793773107836_90vlt	e0045291	hfeg0pkn005	455	layout_aether	parked: token-burn session: user asked to consume 280k tokens r	不可造	—
+1792739133486_74dww	e0047434	hfeg0pkn002	91	layout_aether	parked: env-recon/how-to: user asks 'what software can show gds	不可造	—
+1790145633753_pax7g	miccao	hfeg0plg37	106	physical_verify	parked: AutoCell TCL flow gen + calibre VCO aok/aoi mismatch DR	可造-低优	同已覆盖case形态(需deepread)
+1789634880745_4ys8e	ellawu	hfeg0pkn005	178	physical_verify	parked: prose-doc: UI#0 'DFM SPEC FILL'+attached calbr_drv_ref.	可造-低优	同已覆盖case形态(需deepread)
+1791958529982_6bs3u.messages.json	mwxi	hfhds228	63	physical_verify	parked: ops/infra session (mwxi): software update on 10.129.8.2	不可造	—
+1791958486756_7vfvg.messages.json	mwxi	hfhds228	61	physical_verify	parked: ops session mwxi: identical keyword profile to 6bs3u (c	可造	分析/Q&A或脚本(需deepread)
+1791941073804_i96df.messages.json	mwxi	hfhds228	61	physical_verify	parked: ops session mwxi: identical keyword profile to 6bs3u (c	可造	分析/Q&A或脚本(需deepread)
+1785823412281_4ckeg.messages.json	e0014566	hfeg0pkn005	29	layout_virtuoso	parked: explanation request session (e0014566, 10 msgs): user a	不可造	—
+1791792980970_4vv1y	lizwen	hfeg0pkn002	138	layout_aether	parked: Q&A how-to 连续copy aether skill, 纯文档推荐无交付物, 同 74dww 类	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793324531319_9o809	e0047722	hfeg0pkn002	332	layout_aether	parked: env-recon+prose design doc (CLI wrapper 方案设计说明书); final	不可造	—
+1793240378933_kck7n.messages.json					parked: env-recon/how-to Q&A (查gds工具/启klayout/how to use virtuo	不可造	—
+1792497366260_giuwf.messages.json	johnl	hfeg0pkn001	24	pg_layout	parked: Q&A find .lib/cells.yaml files + mtime; innovus kw from	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792371906656_jyoob.messages.json	pwma	hfeg0pkn005	147	layout_virtuoso	parked: Virtuoso IC617ISR23/RHEL8.10 OA_UNSUPPORTED_PLAT launch	不可造	—
+1782880010844_z79lb	e03179	hfeg0pkn002	64	layout_virtuoso	parked: dup of r232 jzzsv SkillM1ShapeDeleteAudit (title=删除M1图形	可造-低优	同已覆盖case形态(需deepread)
+1782879865358_6ktpb	e03179	hfeg0pkn002	64	layout_virtuoso	parked: fork-parent of z79lb, same M1-delete task as r232 jzzsv	可造-低优	同已覆盖case形态(需deepread)
+1793843002439_53nr3	sinanz	hfeg0pkn005	164	layout_aether	parked: schematic view (aeOpenDesign schematic) full-adder stdc	不可造	—
+1791782422113_e1ll7	steveny	hfeg0pnd001	58	layout_virtuoso	parked: highlight nets in schematic view (Virtuoso SKILL but sc	不可造	—
+1793846988442_zhq3r	e0039669	hfeg0pkn002	147	layout_aether	parked: prompt='hi' 普通对话, status=cancelled; not a real task; SK	可造-低优	同已覆盖case形态(需deepread)
+1792395640746_nce9i	colinxu	hfeg0pgn041	116	layout_virtuoso	parked: pin-existence Q&A 'vddtest pin 存在吗', status=cancelled; 	可造-低优	同已覆盖case形态(需deepread)
+1793846426867_874ye	e0044131	hfeg0pkn004	262	layout_aether	parked: session file cleaned from host (only tzbss/d1yda/96crr 	不可造	—
+1793614615410_y612r	sinanz	hfeg0pkn005	264	layout_aether	parked: title=DS_circuitEdit, status=failed; circuit-edit A/B c	不可造	—
+1793862562240_2m2ja	sinanz	hfeg0pkn005	197	layout_aether	parked: title=资深全定制电路设计工程师学习Skills; same sinanz circuit-edit/Sk	不可造	—
+1793859046486_1y31v	sinanz	hfeg0pkn005	122	layout_aether	parked: title=我在路径.../Skills; same sinanz circuit-edit/Skills c	不可造	—
+1792552343391_748ox	johnl	hfeg0pkn001	226	physical_verify	parked: cross-shard dup: =shard A EDA-Eval-DesignFlow-CdlBodyMa	不可造	—
+1790046970076_ym81m	lizwen	hfeg0pkn002	138	physical_verify	parked: skill-def session 'DRC Testpattern Generator' (not orga	不可造	—
+1790055693266_i2k9v	lizwen	hfeg0pkn002	81	physical_verify	parked: skill-def 'DRC Testpattern Generator' sibling of ym81m;	可造-低优	同已覆盖case形态(需deepread)
+1793167986392_7bqnr	oshen	hfeg0plg36	125	pg_layout	parked: env-recon: user asks '启动aether吗' how-to question, not a	不可造	—
+1789894067947_9lbfz	iceyma	hfeg0pkn005	46	physical_verify	parked: code-comprehension: user asks '解析PVPRO.main脚本+优化建议', go	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792476910654_1m39e	e0042624	hfeg0pkn001	49	physical_verify	parked: env-recon/onboarding: user slash-command /anasimpro-gui	不可造	—
+1789470466679_wqxag	shaoyou	hfeg0pkn003	248	physical_verify	parked: non-seed: auto-injected user_input mode=act '启动业务场景: 模拟	不可造	—
+1791959543373_on81o					parked: auto-injected: 3 user turns all mode=act skill_instruct	不可造	—
+1793790579965_4ncj8					parked: env-recon: auto-injected '帮我打开virtuoso进入degpa项目' onboar	不可造	—
+1793869520540_zjyk4					parked: how-to/comprehension: user pastes GloryEX RC errors and	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792212685175_648r9					parked: analog-design-planning: user '需要设计一个LDO' via Spice_Agen	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793791239976_91hxh					parked: doc-search: user 'layout design' 'auto cap' asks about 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793017939897_y4ri2					parked: file-lookup: xinqiaoz SAT user asks '帮我在/apps/imctf/dev	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789539855030_14yzz					parked: code-comprehension: xinqiaoz SAT user asks about os.chd	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791507238420_u22ke					parked: config-update: xinqiaoz SAT user updates agent-policy.j	可造	env-config/skill:check验配置或产物正确性+hidden B
+1792046998744_56dzu					parked: sim-troubleshooting: 'Finesim仿真报DC不收敛的错误' how-to, sim d	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793276963650_xksfz					parked: sim-troubleshooting: 'dsim仿真提交后没跑起来' how-to, sim domain	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792461154447_p68c3					parked: organic SPF coupling analysis but wrong sub-domain: use	可造	analysis:check验报告结构+关键事实+hidden B
+1790231579209_h34qb	joelchen	hfeg0plg37	142	physical_verify	parked: env-recon/skill-load+policy-blocked(no shell-runner pro	不可造	—
+1793154955266_qw049	yixiaow	hfeg0pkn005	88	layout_virtuoso	parked: wrong-domain:schematic/sim(schematic:248+netlist:74+hsp	不可造	—
+1793240378933_kck7n	e0047434	hfeg0pnd001	87	physical_verify	parked: env-recon/how-to(what GDS viewers on machine/how to lau	不可造	—
+1789538980408_lb3d3	lynn1y	hfeg0pkn002	0		parked: mode=act skill activation DFM SPEC FILL no organic inte	不可造	—
+1789090752430_4xt0p	zhigangw	hfeg0pkn002	0		parked: mode=act 启动业务场景 模拟电路优化 no organic intent	不可造	—
+1793236307554_giaze	pdsong	hfeg0pkn004	0		parked: code-comprehension 分析脚本功能	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793667682319_64ztm	e0047488	hfeg0pkn002	0		parked: dup of YamlToGds-001 same user/task	可造-低优	同已覆盖case形态(需deepread)
+1793012120155_plwnn	pdsong	hfeg0pkn004	0		parked: code-comprehension 分析lvsSvdb文件	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792488450622_kc85b	kevinc	hfeg0pkn002	0		parked: root-cause debug LPE失败 non-seed	不可造	—
+1790126403703_fj73q	e02141	hfeg0pkn001	0		parked: env-recon 配置swb-python-api环境	不可造	—
+1793870539133_n91uu	e0047722	hfeg0pkn004	0		parked: code-comprehension PDK_QA项目目录结构	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793089887669_4c5ws					parked: env-recon/how-to (view png/install bcompare/check versi	不可造	—
+1791940707499_psbg1					parked: env-recon/how-to (list skills/how spice_agent built/bui	不可造	—
+1793252859649_p5x6n					parked: wrong-domain: draw cosine wave via WaveView ACE Tcl = s	不可造	—
+1792111744261_uxwb5					parked: wrong-domain: highlight nets starting with 'net' in Sch	不可造	—
+1793272965134_mirbg	yohannw	hfeg0pnd001	225	layout_aether	parked: yohannw home drwxr-x--- not traversable, no sudo, snaps	不可造	—
+1791516327546_gfccq					parked: r270 non-seed: e0042624 NEW user, virtuoso147但实为custom_	不可造	—
+1793775927024_1stc5					parked: r270 non-seed: shaoyou, innovus36但实为WaveView FSDB波形分析(U	不可造	—
+1793782993086_d1yda					parked: prose how-to(华大aether如何批量copy cell到目标文件夹); 1 user turn 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789536472827_nwhe2					parked: U0='zl -cli'(7chars typo/CLI invoke); 1 user turn 26msg	可造	分析/Q&A或脚本(需deepread)
+1789717866261_vhb6i					parked: perf-diagnosis: U0 asks why pyaether-script slower than	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792652163775_i6fn6					parked: env-recon: U0='你能获取到当前我打开的aether进程吗'+U10'你检查的范围是什么我已经开了	不可造	—
+1792043637880_ajcab					parked: duplicate schematic-highlight: U37='帮我高亮当前schematic中所有的	不可造	—
+1785910754851_j98ua					parked: sim/scenario-launch: U0='启动场景 模拟电路优化'+U84'我在virtuoso'+U	不可造	—
+1785390178118_ewjnc					parked: vague-analysis: U2='请你帮忙分析下你连接到的layout 路径.../austin_rsc	可造	analysis:check验报告结构+关键事实+hidden B
+1783422292753_zh4of					parked: duplicate autovia: U0=run run_autovia_agent.il+troubles	可造-低优	同已覆盖case形态(需deepread)
+1785487939572_csrxv					parked: harness-bridge-test: U0='agent 跟 Virtuoso 连接的桥接是通的嘛写一个测	不可造	—
+1785416279062_uu38v					parked: harness-bridge-test: U0 identical to csrxv (agent-Virtu	不可造	—
+1792394012677_5gxno					parked: REJECT r274: 90msgs, real user turn U#9 only 'power pin	不可造	—
+1789983891289_tatnx					parked: REJECT r274: 217msgs RsCalc+AutoVia+PowerFill resistanc	可造-低优	同已覆盖case形态(需deepread)
+1793933023338_1uxza					parked: REJECT r274: 72msgs PrimeLib/DC-shell synthesis + .lib/	可造	分析/Q&A或脚本(需deepread)
+1792465819194_r75ux					parked: REJECT r274: 49msgs prose-how-to/knowledge Q&A (AND-met	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1787136689541_6bje0.messages.json					parked: REJECT r275: overlaps RsCalcChkPtGen-001 (same virtuoso	可造-低优	同已覆盖case形态(需deepread)
+1790156510392_22tx1.messages.json					parked: REJECT r275: fragmented multi-turn env-debug/handoff se	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1783056984013_albb5					parked: prose-how-to thin 1 real turn, e0014566 saturated	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793266625005_uaas3					parked: context-restore continuation PROJECT_STATE.md dump, no 	可造	分析/Q&A或脚本(需deepread)
+1788746263950_bxdtw					parked: DRC-hang diagnostic thin 2 turns, overlaps r237/r259/r2	可造-低优	同已覆盖case形态(需deepread)
+1792397054964_fz05e					parked: schematic pin-insert domain wrong-shard (shard D)	不可造	—
+1794143890547_lnkot.messages.json					parked: r281 reject: fragmented multi-topic (HTML flower gen + 	可造	分析/Q&A或脚本(需deepread)
+1793089704959_am99r.messages.json					parked: r281 reject: op-amp DC operating-point analysis + sim-j	不可造	—
+1794131904136_0rtkh.messages.json					parked: r281 reject: editor(99)/read_files(88)/run_approved_com	可造	分析/Q&A或脚本(需deepread)
+1794210366563_2wp18.messages.json					parked: r281 borderline-park: LVS Error(20043) net-short diagno	可造	debug/analysis:check验根因+修复+hidden B
+1793794507428_dus4q					parked: r285 deepread: e0047527 newbie Q&A (what is aether/how 	不可造	—
+1793161126345_sls03					parked: r285 deepread: my7li 79msgs 4user-turns all setup recon	可造	env-config/skill:check验配置或产物正确性+hidden B
+1787887644598_cpnbc					parked: r285 deepread: e02141 223msgs Sentaurus TCAD session (S	不可造	—
+1793840726858_8fudf					parked: r285 deepread: e0045260 21msgs 1user-turn how-to (virtu	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792023179795_wpxqf					parked: r286 peek: e0042624@pkn002 29msgs 3user-turns (search v	不可造	—
+1793191074113_6vcuk					parked: r286 peek: hbpeng@pkn002 342msgs 6user-turns; generic P	可造-低优	同已覆盖case形态(需deepread)
+1792067800928_1b60m					parked: r286 peek: colinxu@pkn002 66msgs 3user-turns (现在是什么cell	可造	分析/Q&A或脚本(需deepread)
+1793100948216_wzpd1					parked: r286 peek: colinxu@pkn002 35msgs 1user-turn (帮我查看当前打开的v	不可造	—
+1790143887151_qoq1g					parked: r286 peek: steveny@pnd001 38msgs 2user-turns (讲解一下 .../	不可造	—
+bpcwa	e0027537	hfeg0pkn002	122	physical_verify	parked: consulting-QA Vpgint/vint relationship 1-turn RAG-only	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+i0izd	e0048306	hfeg0pkn003	234	physical_verify	parked: skill-writing+pinyin learning+schematic consulting	不可造	—
+jdpmg	e0029495	hfeg0pkn001	19	physical_verify	parked: anasimpro-gui-start slash-command recon	不可造	—
+q7wqo	t0002062	hfeg0pkn004	34	physical_verify	parked: rscalc-fail-diag-root-cause+argusdrc-how-to A-disqualif	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+x8mdt	e0042624	hfeg0pkn001	31	physical_verify	parked: harness-policy-mcp-recon 8-show-me turns	可造	env-config/skill:check验配置或产物正确性+hidden B
+yltpy	e0042624	hfeg0pkn001	20	physical_verify	parked: scp-git-skill-deploy-ops+policy-recon	可造	env-config/skill:check验配置或产物正确性+hidden B
+gaz6r	jaceyx	hfeg0pkn002	96	physical_verify	parked: ITF-inline-data-concept-QA RAG-how-to no-deliverable	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1xqgw	steveny	hfeg0pnd001	754	physical_verify	parked: rscalc-reproduction-review-overlaps-tatnx continuation-	可造-低优	同已覆盖case形态(需deepread)
+hxh3n	colinxu	hfeg0pkn002	733	physical_verify	parked: view-cell+add-pin+schematic colinxu-recon-pattern	不可造	—
+ccxtr	colinxu	hfeg0pkn002	206	physical_verify	parked: view-current-circuit 1-turn recon	不可造	—
+yzifo	colinxu	hfeg0pkn002	85	physical_verify	parked: view-current-cell 1-turn recon	不可造	—
+gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-interface how-to	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+5331g	colinxu	hfeg0pkn002	230	physical_verify	parked: schematic-add-delete-TESTPIN net-zero shard-D+harness-r	不可造	—
+1794225749981_8lqkt	e0023936	hfhds201		layout_aether	parked: r288 L_shape cluster FAILED: pyAether sandbox down (Con	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794224302868_5yhnm	e0023936	hfhds201		layout_aether	parked: r288 L_shape cluster FAILED: pyAether sandbox down (Con	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794225279904_c6pff	e0023936	hfhds201		layout_aether	parked: r288 L_shape cluster FAILED: pyAether sandbox down (Con	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794226884359_6zlya	e0023936	hfhds201		layout_aether	parked: r288 L_shape cluster FAILED: pyAether sandbox down (Con	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794227047062_rc1s1	e0023936	hfhds201		layout_aether	parked: r288 L_shape cluster FAILED: pyAether sandbox down (Con	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793927576271_5zvj0	xxchen	10.129.2.13	46	layout_aether	parked: cancelled mid-investigation (status=cancelled at 01:49)	不可造	—
+1786540588830_0y973	e0014566	10.129.2.10	101	layout_aether	parked: failed (status=failed); 18 msgs 1 user turn recon how-t	不可造	—
+1794202805254_7b6qy					parked: r293 peek: status=idle (e0039120 DRVcase), no accepted 	不可造	—
+1794204930558_vgi1y					parked: r293 peek: status=idle (e0047600 gds_tiling), no accept	不可造	—
+1793952785938_fmd3i.messages.json	ruifan	hfeg0plg36	400	layout_virtuoso	parked: fork/sibling of 3hw3m (claimed r294), same headless-lat	可造-低优	同已覆盖case形态(需deepread)
+1793950309060_k8y6h.messages.json	ruifan	hfeg0plg36	400	layout_virtuoso	parked: fork/sibling of 3hw3m (claimed r294), same headless-lat	可造-低优	同已覆盖case形态(需deepread)
+1793945031575_7l5ub.messages.json	ruifan	hfeg0plg36	400	layout_virtuoso	parked: fork/sibling of 3hw3m (claimed r294), same headless-lat	可造-低优	同已覆盖case形态(需deepread)
+1793949237063_wsxpm.messages.json	ruifan	hfeg0plg36	400	layout_virtuoso	parked: fork/sibling of 3hw3m (claimed r294), same headless-lat	可造-低优	同已覆盖case形态(需deepread)
+1793796472971_q71j8	kevin1d	hfeg0plg104	94	layout_aether	parked: r296 cancelled, auto-place spacer, no accepted gold (A 	不可造	—
+1790928288602_o6pnp	e0014566	hfeg0plg58	60	layout_virtuoso	parked: r296 failed, analyze-skill how-to not produce	不可造	—
+1783577975924_z161m	e0014566	hfeg0plg58	51	layout_virtuoso	parked: r296 failed, read-prompt-md vague	可造	分析/Q&A或脚本(需deepread)
+1783075932652_ixy31	e0014566	hfeg0plg58	43	layout_virtuoso	parked: r296 failed, read-usage-prompt vague	可造	分析/Q&A或脚本(需deepread)
+1794216750374_d5x87	hktklin	hfeg0plg87	332	layout_virtuoso	parked: r296 completed but trivial sed (tap_p->lacaa_common, de	不可造	—
+1794209602601_w5ajz	hktklin	hfeg0plg87	56	layout_virtuoso	parked: r296 completed but same trivial sed task as d5x87 (same	可造-低优	同已覆盖case形态(需deepread)
+1793879392010_hyalb	chengleiy	hfeg0plg15	114	physical_verify	parked: r296 idle, diagnose LVS-QA license-hang (read log expla	不可造	—
+1793843123624_u65cq	e0047472	hfeg0plg99	189	physical_verify	parked: r296 idle, pinyin how-to (innovus query dummy cmd), not	不可造	—
+1794216319185_lvu4r	hktklin	hfeg0plg87	1	layout_virtuoso	parked: r298: same trivial sed as r297 d5x87/w5ajz; failed exit	不可造	—
+1793858875143_wzws0	adaml	hfeg0pkn002	5542	physical_verify	parked: r298 REJECT: adaml skill-builder multi-task session (99	不可造	—
+1794021094674_ds1vt	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	可造	analysis:check验报告结构+关键事实+hidden B
+1794017030283_ob5f7	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	可造	analysis:check验报告结构+关键事实+hidden B
+1794192534501_fju0e	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	可造	analysis:check验报告结构+关键事实+hidden B
+1793000520129_g37na	xinqiaoz	hfeg0pkn002			parked: r298: failed-drcqa	不可造	—
+1792480534403_xgfip	xinqiaoz	hfeg0pkn002			parked: r298: failed-handoff	可造	analysis:check验报告结构+关键事实+hidden B
+1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked: r298: idle-empty	不可造	—
+1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked: completed-non-EDA-vim-NERDtree-troubleshoot	可造	分析/Q&A或脚本(需deepread)
+1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked: r543 reject Q&A/setup: U#1=禁用virtuoso layout鼠标拖动器件功能cds	不可造	—
+1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked: r299: how-to Q&A (pcell instance array), idle, prose go	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked: r299: failed, wrong-shard web-dev (HTML UI export for P	不可造	—
+1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked: r299: cancelled, trivial prompt=你好, A-rule2 fail	不可造	—
+1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked: r299: idle, capability Q&A prompt=你可以使用Aether吗, no prod	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791611768210_xnqkp					parked: r312 data-analysis on aether crash CSV (wrong-shard, no	不可造	—
+1793094734633_bn62m					parked: r312 pex-fail diagnose-fix (no clean produce deliverabl	可造	debug/analysis:check验根因+修复+hidden B
+1793015068991_s8p63					parked: r312 aether-launcher skill-enable (not produce)	不可造	—
+1793760799765_jj71x					parked: r312 drc-exit255 diagnose-fix (no clean deliverable)	可造	debug/analysis:check验根因+修复+hidden B
+1794209380351_1bu1m					parked: r312 failed exit=1 no accepted gold	不可造	—
+1791795346613_15rw7					parked: r312 cancelled skill-enable aether (not produce)	不可造	—
+1792980238183_sh05n					parked: r312 failed meta-question no gold	不可造	—
+1792744504374_xpor0					parked: r312 stress-test consume-280k-token (not produce)	不可造	—
+1793346955766_iz8r1					parked: r312 idle how-to aether-load-script (no gold)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793353206916_oj58x					parked: r312 empty prompt resume session (not seedable)	不可造	—
+1793791758551_nd56k					parked: r312 cancelled launcher command (not produce)	不可造	—
+1794201560065_efk6e					parked: r312 idle netlist-diff compare (shard D)	不可造	—
+1792215728595_u7a72					parked: r312 cancelled open-aging-sim (not produce)	不可造	—
+1793760446684_bbei1					parked: r312 idle digital netlist-diff (shard D)	不可造	—
+1791858774096_1hq6h					parked: r312 LSF-queue-error diagnose-fix (not produce)	不可造	—
+1793672454901_bg39v					parked: r312 cancelled verilog-stimulus vecgen (shard A/D)	不可造	—
+1791944071628_pwhqb					parked: r312 cancelled empty prompt (not seedable)	不可造	—
+1788871441686_fieju					parked: r312 failed 3D-NAND MCU logic verilog (shard A/D)	不可造	—
+1790057385284_xpsbw					parked: r312 failed skill-loader ddr5-coverage (not produce)	不可造	—
+1793322259360_bisir					parked: failed-spiceIn-skill-troubleshoot	不可造	—
+1791463574990_um5we					parked: r312 completed verilog-stimulus seed-pattern (shard A/D	不可造	—
+1790849679042_bjkmi					parked: r312 failed verilog-stimulus diag (shard A/D)	不可造	—
+1791958525711_f1fik.messages.json	chengleiy	hfeg0pkn005	594	physical_verify	parked: r313 peek(via pyAether NFS home read): chengleiy prompt	不可造	—
+1793614737757_3y3vq.messages.json	sinanz	hfeg0pkn005	590	layout_aether	parked: r313 peek: sinanz prompt=先获2skill再结合,阅读schematic DEMMO_	不可造	—
+1793363087693_d0ild.messages.json	xiwang	hfeg0pkn002	520	layout_aether	parked: r313 peek: xiwang prompt=DDGOA V0按SCmosDataDPCtrlNew结构找	不可造	—
+1793775672932_5j455.messages.json	e0047722	hfeg0pkn001	517	physical_verify	parked: r313 peek: e0047722 prompt=运行DRC_QA.md所有case参考DrcQa.py输	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793268918911_brnqb.messages.json	e02141	hfeg0pkn001	717	physical_verify	parked: r313 peek(NFS meta): e02141=Sentaurus TCAD wrong-shard(	不可造	—
+1793261255178_1wvdl.messages.json	e02141	hfeg0pkn001	698	physical_verify	parked: r313 peek(NFS meta): e02141=Sentaurus TCAD wrong-shard;	不可造	—
+1793268873755_cwq7f.messages.json	e02141	hfeg0pkn001	698	physical_verify	parked: r313 peek(NFS meta): e02141=Sentaurus TCAD wrong-shard;	不可造	—
+1792993372322_f6x1i.messages.json	e02141	hfeg0pkn001	686	physical_verify	parked: r313 peek(NFS meta): e02141=Sentaurus TCAD wrong-shard;	不可造	—
+1793930786851_my769.messages.json	e0017906	hfeg0pkn002	620	physical_verify	parked: r313 peek(NFS meta): e0017906 prompt=你对模拟电路有没有什么好的分析方法 	不可造	—
+1793865788118_b7otd	xy1zhang	hfeg0plg49	360	physical_verify	parked: failed how-to workspace-create non-produce	不可造	—
+1793935018992_a75vy	dsgao	hfeg0plg08	298	physical_verify	parked: failed empty-prompt non-produce	不可造	—
+1793952218730_ph95k	e0017832	hfeg0plg15	311	layout_aether	parked: cancelled aether-startup non-produce	不可造	—
+1792389512614_7z9re	williang	hfeg0plg16	162	pg_layout	parked: failed liberty-pg_pin-def not-layout non-produce	不可造	—
+1794226772548_iyl1p	e0024852	hfeg0pkn002	96	misc	parked: recon/how-to: 'what is in via_optim_gds.py' (status=run	不可造	—
+1793843537860_m8ma9	e0045128	hfeg0pkn005	32	misc	parked: empty prompt 'Hi' (status=idle, no task)	不可造	—
+1793879856361_1281g	hairuizh	hfeahpc504	152	spice_sim	parked: wrong-shard B: SPICE device-characterization testbenche	不可造	—
+1793937421846_ip3nr	berylwu	hfeg0pkn002	124	spice_sim	parked: wrong-shard B: SPICE stim string-replace+run (status=id	不可造	—
+1794227785944_i555n	e0046913	hfeg0pkn003	38	verification	parked: wrong-shard A: formal verification fm log interpret (st	不可造	—
+1794227337092_vuj95	marryma	hfeg0pkn002	128	layout_aether	parked: how-to find layout: 'find SA/SWD layouts' (status=runni	不可造	—
+1794224138220_25gxe	ziyuny	hfeg0pnd002	69	misc	parked: how-to Q&A: 'can you see history of session id' (status	不可造	—
+1792026663236_uo1hv	xxchen	hfeg0pkn001	106	physical_verify	parked: r323: requirements-doc task, weak check, deferred	可造	分析/Q&A或脚本(需deepread)
+1790219463471_6zy8a	e0041123	hfeg0pjn049	98	physical_verify	parked: r507 deep-read REJECT: skill-injection + heavy Aether e	可造	分析/Q&A或脚本(需deepread)
+1792391697681_a4w9c	thomasz	hfeg0pfn060	132	physical_verify	parked: diagnose-log-stuck-no-deliverable	可造	debug/analysis:check验根因+修复+hidden B
+1792400577461_8u3iw	thomasz	hfeg0pfn060	114	physical_verify	parked: compare-paths-no-script-written-inline-only	可造	分析/Q&A或脚本(需deepread)
+1793338660647_cwyot	sierraw	hfeg0plg09	72	physical_verify	parked: idle-PEX-SPF-cap-trend-env-broken-no-accepted-gold	不可造	—
+1793946450751_yfce1	hktklin	hfeg0plg87	102	layout_virtuoso	parked: trivial-single-string-replace-tap_p-lacaa-weak-check	可造	分析/Q&A或脚本(需deepread)
+1792052564350_a6gif	panruan	hfeg0plg52	111	physical_verify	parked: consultation-parse-DRC-rules-Q-and-A-multi-turn-no-clea	可造	分析/Q&A或脚本(需deepread)
+1790487462826_wb03t	cwei	hfeg0plg93	698	layout_virtuoso	parked: completed-wrong-shard-spice-CTLE-design-shard-D	不可造	—
+1790147076382_6udy2	lizwen	hfeg0pkn003	130	physical_verify	parked: failed-DRC-testpattern-generator	不可造	—
+1790219914907_y9xit	lizwen	hfeg0pkn003	128	physical_verify	parked: failed-DRC-testpattern-env-broken	不可造	—
+1793869595986_r342a	kenwang	hfeg0plg16	98	physical_verify	parked: r507 deep-read REJECT: skill-injection + assets /rundat	可造	分析/Q&A或脚本(需deepread)
+1789622352136_kkl2q					parked: non-seed: PDK_QA DrcPatternCheck refactoring, user give	不可造	—
+1793189369078_y8881					parked: non-seed: only user msg '沙箱是否打开' env-recon how-to, no p	不可造	—
+1794010547317_7ansu					parked: non-seed: PDK_QA issue-handler status check + DrcPatter	不可造	—
+1791523535284_pibrs					parked: non-seed: run_pyaether policy validation recon/how-to, 	不可造	—
+1793949837980_hs4sv	adaml	hfeg0pkn002	756	layout_virtuoso	parked: non-seed: ai-skill-optimizer reviewing virtuoso-sch-edi	不可造	—
+1793165088136_0suhi	e0046686	hfeg0pkn001	1412	physical_verify	parked: wrong-shard D: AUTOSIM netlist/vector generation tool (	不可造	—
+1790168650173_mdx5g					parked: r507 deep-read REJECT: skill-mgmt add-from-folder	可造	分析/Q&A或脚本(需deepread)
+1789973143978_7glsf					parked: r507 deep-read REJECT: env-dep live-aether connect, fai	可造	分析/Q&A或脚本(需deepread)
+1793586676522_9kzwd					parked: r334: failed+wrong-shard D (coverage bin analysis veril	不可造	—
+1794201867852_u5ihf					parked: r334: failed+wrong-shard D (BURST_ORD verilog tb stimul	不可造	—
+1789463421521_esq76					parked: r334: failed+recon (read 0915_drc_pattern_check_handove	不可造	—
+1789535720497_l98b2					parked: r334: failed+recon (read multi_value_variable_naming_st	不可造	—
+1789611616123_di7rc					parked: r334: failed+issue-handler-workflow (pdkQaSystem issue 	不可造	—
+1789643977401_bousd					parked: r334: failed+recon (read drc_pattern_check_handover.md)	不可造	—
+1789973243825_ws91y					parked: r334: failed+recon (read sync_to_stable/README.md backg	不可造	—
+1791967778332_6uwxi					parked: r334: failed+doc-audit (doc vs code consistency audit, 	不可造	—
+1792021302895_idx43					parked: r334: failed+doc-audit (same doc consistency audit) no 	不可造	—
+1794200810852_wmv7m					parked: r334: idle+handoff-resume (HANDOFF_20261109_114500.md) 	可造	analysis:check验报告结构+关键事实+hidden B
+1794202378967_ihvqf					parked: r334: idle+handoff-resume (HANDOFF_20261109_150000.md) 	可造	analysis:check验报告结构+关键事实+hidden B
+1794213041594_yhfm0					parked: r334: idle+handoff-resume (HANDOFF_20261109_171000.md) 	可造	analysis:check验报告结构+关键事实+hidden B
+1791795024899_lp74k					parked: r334: cancelled+non-seed skill-launch (启动aether的skill) 	不可造	—
+1791512939497_0aw4j					parked: r334: wrong-shard D/verif (DDR/LPDDR run-regression cov	不可造	—
+1793264175600_ocmhu					parked: r334: wrong-shard D/verif (verilog toggle coverage read	不可造	—
+1793251326263_gesut					parked: r334: non-seed Q&A/how-to (hefei SOP/PDF/LMB/.dr explan	不可造	—
+1793016668331_gm17v					parked: r334: non-seed env-setup (aether-launcher setup.bash+st	不可造	—
+1791507538479_0w5tl					parked: r335 peek: completed fork from a1jb6, title Pattern QA 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1785844148600_bqvts	e0014566	pkn001	319	layout_virtuoso	parked: r337 deepread: real produce-task (integrate PowerFill i	可造-低优	同已覆盖case形态(需deepread)
+1793964715214_ddg83					parked: r337 deepread: Virtuoso ADE netlist creation error diag	不可造	—
+1790583848095_60xn0					parked: r337 deepread: ellawu asks 'SVRF edge operation command	不可造	—
+1790737047923_1495z					parked: r337 deepread: ellawu multi-turn SETLAYER line-by-line 	可造-低优	同已覆盖case形态(需deepread)
+1792398649832_4tgr1					parked: r337 deepread: mwxi create /scripts/sync_opc/syncopc.V0	可造	分析/Q&A或脚本(需deepread)
+1792995418878_a5drw					parked: r337 deepread: xinqiaoz init Dummy QA directory environ	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791976043518_5w70e					parked: r337 deepread: xinqiaoz pdkQaSystem DUMMY status recon 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789648311264_pev4p	xinqiaoz	10.129.2.11	323	physical_verify	parked: NFS automount broken on 10.129.2.11 for /home/xinqiaoz 	不可造	—
+1789954294975_4chsl.messages.json	xrxiong	hfeg0plg74	497	physical_verify	parked: wrong-shard: seed task=分析row_ctrl模块功能 from 893KB netlis	不可造	—
+1792142949789_rmlwy.messages.json	xinqiaoz	hfeg0plg56	281	physical_verify	parked: r389 screen: NOT seed. Trace=3 user turns (symlink dumm	可造	analysis:check验报告结构+关键事实+hidden B
+1789955434443_clv6k	t0002470	hfeg0plg76	188	physical_verify	parked: wrong-shard: drc keyword is substring of path verilog.d	不可造	—
+1793945031575_7l5ub	ruifan	hfeg0plg96	408	layout_virtuoso	parked: near-dup of HeadlessLatchSkillGen-001 (same ruifan task	可造-低优	同已覆盖case形态(需deepread)
+1793155371052_v59v8	e0047695	hfeg0plg76	376	layout_virtuoso	parked: wrong-shard: generic tkinter GUI file-finder utility (f	不可造	—
+1785906650010_ejxgg	michael1l	hfeg0pkn003	87	pg_layout	parked: r394 screen: NOT seed. 1 user input "启动场景，版图规划" but 38 	可造	debug/analysis:check验根因+修复+hidden B
+1791854550345_39z6e	lizwen	hfeg0pkn003	41	layout_aether	parked: r394 screen: NOT produce-task. Aether tool Q&A skill lo	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791793284554_7pcsx	miccao	hfeg0plg36	35	layout_aether	parked: r394 screen: NOT produce-task. Aether tool Q&A skill lo	可造-低优	同已覆盖case形态(需deepread)
+1789546230509_gt7qv	kenwang	hfeg0pkn004	228	physical_verify	parked: r394 screen: near-dup of EDA-Eval-DesignFlow-DrcMetalOp	可造-低优	同已覆盖case形态(需deepread)
+1789884031576_90rjj	weizhao	hfeg0pkn004	155	physical_verify	parked: r394 screen: NOT seed. code-search session (weizhao exp	可造	分析/Q&A或脚本(需deepread)
+1785500517076_mbx8u	e0014566	hfeg0pkn005	148	physical_verify	parked: r394 screen: NOT seed. auto-via SKILL meta-prompt + deb	可造	debug/analysis:check验根因+修复+hidden B
+1793774943418_sih3i	xinqiaoz	hfeg0pkn005	364	physical_verify	parked: near-dup of StarrcReleaseNoteGen-001 (r387 v23sb): same	可造-低优	同已覆盖case形态(需deepread)
+1793687763129_30a1n	jcgu	hfeg0pin003	265	layout_aether	parked: r396 screen: group_gen_sdl.py is pure pyAether bridge-w	可造-低优	同已覆盖case形态(需deepread)
+1789561002781_mqop7	ziyuny	hfeg0pnd002	579	physical_verify	parked: dup of LVSLogFilter-001 (same trace ziyuny/mqop7, alrea	可造-低优	同已覆盖case形态(需deepread)
+1793879524880_3h21t.messages.json					parked: r419 peek: e0047527 newbie env-setup Q&A (modulecmd/sta	不可造	—
+1789636492253_sr1fw.messages.json					parked: r419 peek: miccao, USER#1 = Calibre/Argus DRC Log 拆解报告 	可造-低优	同已覆盖case形态(需deepread)
+1789699043373_y91i6.messages.json					parked: r419 peek: ericw(NEW user), coverage-bin filtering (drc	可造	分析/Q&A或脚本(需deepread)
+1794010590146_aqtdv.messages.json					parked: r419 peek: xinqiaoz PDK-QA genReleaseNote refactor (mer	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793000252239_9jz8x.messages.json					parked: r419 profile-reject: xinqiaoz drc:2341;pdk:776 = PDK-QA	可造-低优	同已覆盖case形态(需deepread)
+1789628116508_kxmzc.messages.json					parked: r419: rongtaoy PEX (pex:195), near-dup b48ma PexBlCoupl	可造-低优	同已覆盖case形态(需deepread)
+1789645785974_iuoie.messages.json					parked: r419: rongtaoy PEX (pex:178), near-dup b48ma+vtz09 same	可造-低优	同已覆盖case形态(需deepread)
+1783084592736_1kipj					parked: r421 REJECT tool-drive-near-dup: 'execute batch_auto_vi	可造-低优	同已覆盖case形态(需deepread)
+1783323056207_rc0jh					parked: r421 REJECT env-setup: '请尝试连接virtuoso' = newbie virtuos	可造-低优	同已覆盖case形态(需deepread)
+1793356890947_umhrd	kenwang	hfeg0plg16		physical_verify	parked: r460 PARKED: dup scenario of r405 DrcRuleFromDesc-001 (	可造-低优	同已覆盖case形态(需deepread)
+1789097271183_hsrb5	davidwu	hfeg0pjn200	231	layout_aether	parked: dup PlacePersistAudit-001(xx7by)+APRRoutePrecondDiag-00	可造-低优	同已覆盖case形态(需deepread)
+1793758047628_xyaxc	adaml	hfeg0pkn002	98	physical_verify	parked: r507 deep-read REJECT: pure skill-curation Q&A, no prod	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793069381553_sy1se	xxchen	hfeg0pkn001	318	physical_verify	parked: r508 peek REJECT: continuation/task-resume, GDS pattern	可造	分析/Q&A或脚本(需deepread)
+1793781389038_g6wy0	cliu	hfhds209	313	physical_verify	parked: r508 peek REJECT: skill-invoke tb_family+simulation on 	可造	分析/Q&A或脚本(需deepread)
+1785745498995_8c5jw	t0002638	hfeg0plg49	290	layout_aether	parked: r508 peek REJECT: env-dep pyAether screenshot API explo	可造	分析/Q&A或脚本(需deepread)
+1793005551647_i6pnk	jkxu	hfhds209	247	physical_verify	parked: r508 peek REJECT: DDR5 testbench timing Q&A (A-domain v	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1785821933914_r0a7b	t0002638	hfeg0plg49	277	layout_aether	parked: r509 peek: env-dep API exploration (pyAether print Hell	可造	debug/analysis:check验根因+修复+hidden B
+1793846610746_z9zx7	cliu	hfhds209	267	physical_verify	parked: r509 peek: skill-invoke+sim (stdcell AC testbench, drc/	可造	分析/Q&A或脚本(需deepread)
+1793002485489_j9ycq	xxchen	hfeg0pkn001	288	physical_verify	parked: r509 peek: continuation (compaction_summary verify_deco	可造	分析/Q&A或脚本(需deepread)
+1794211552381_4o1b4	e0047527	hfeg0pkn005	206	skipper	parked: r512 fresh peek: USER#0=capability Q&A '你可以帮我运行哪些eda任务'	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792201142166_8g8rx	jessegao	hfeg0pkn005	203	schematic_netlist	parked: r512 fresh peek: USER#0=LDO circuit generation spec (an	可造	analysis:check验报告结构+关键事实+hidden B
+1789606383622_laidd	xinqiaoz	hfeg0pkn005	199	physical_verify	parked: r512 fresh peek: USER#0=9-step DRC issue-handler workfl	可造	env-config/skill:check验配置或产物正确性+hidden B
+1794485932332_ef68k					parked: near-dup of drf0r (same kw/user)	可造-低优	同已覆盖case形态(需deepread)
+1794484297578_vvdk8					parked: near-dup of drf0r (same kw/user)	可造-低优	同已覆盖case形态(需deepread)
+1789621916894_m8ndm	ellawu	10.129.2.14	97	layout_aether	parked: r527 peek REJECT: code-review Q&A (pinyin 'zhegejiaoben	不可造	—
+1792981991715_yaddy	xinqiaoz	10.129.2.14	277	physical_verify	parked: r527 peek REJECT: agent-infra design (handoff/flight-re	可造	analysis:check验报告结构+关键事实+hidden B
+1793604943151_j1mi3	e0047488	10.129.2.10	38	physical_verify	parked: r527 peek REJECT: zhulong LLM-adapter integration (llm_	可造	分析/Q&A或脚本(需deepread)
+1794480485564_nphvz					parked: r537 peek REJECT (Q&A/sim/run-existing/done)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790078216880_4g0i9	lizwen	10.129.2.12	241		parked: r538 peek REJECT (skill-orch: DRC pattern gen into skil	可造	分析/Q&A或脚本(需deepread)
+1792055923522_tqmu1	cynthiaz	10.129.2.13	406		parked: r538 peek REJECT (wrong-domain: schematic creation Stro	可造	分析/Q&A或脚本(需deepread)
+1794400409399_njh7p	jackjia	10.129.32.100	459		parked: r538 peek REJECT (Q&A: analyze MROPT fanout)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793953739742_3hw3m	ruifan	10.129.32.46	525		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
+1794376149228_dr7mm	fxian	10.129.8.112	446		parked: r538 peek REJECT (wrong-domain: schematic pin script = 	可造	分析/Q&A或脚本(需deepread)
+1793952785938_fmd3i	ruifan	10.129.32.46	434		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
+1793950309060_k8y6h	ruifan	10.129.32.46	433		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
+1788577896116_33zw1	haoyut	10.129.2.12	586		parked: r538 peek REJECT (Q&A: browse hierarchy highlight net)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794396575822_5qw2u	e0044131	10.129.8.231	256		parked: r538 peek REJECT (Q&A: check&save error howto)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794471252482_6njpw	junlingw	10.129.8.231	337		parked: r538 peek REJECT (Q&A: highlight net in layout)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789867185527_85sjy	steveny	10.129.32.189	220		parked: r538 peek REJECT (Q&A: get design info/setup)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790501128558_cd4qp	cwei	10.129.8.225	218		parked: r538 peek REJECT (skill-orch: spice agent summarize)	可造	分析/Q&A或脚本(需deepread)
+1794470022094_e7s2r	chapinc	10.129.2.10	324		parked: r538 peek REJECT (Q&A: count MOSFET in block)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793607437978_fzngm	yazhuok	10.129.8.228	245		parked: r538 peek REJECT (analysis: netlist RC compare cross-do	不可造	—
+1792564023249_i4laj	colinxu	10.129.35.74	236		parked: r538 peek REJECT (interactive cellview edit: delete pin	可造	分析/Q&A或脚本(需deepread)
+1794469565658_ltzuo	youmingz	10.129.8.225	273		parked: r538 peek REJECT (analysis: highlight+measure routing l	可造	analysis:check验报告结构+关键事实+hidden B
+1794383524797_n9szu	xdwang	10.129.2.14	231		parked: r538 peek REJECT (wrong-domain: add inverter to schemat	可造	分析/Q&A或脚本(需deepread)
+1792572179617_nvnc3	e0022089	10.129.2.11	223		parked: r538 peek REJECT (Q&A: hierarchy shortcuts + module ana	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789112462640_pb4ei	davidwu	10.129.35.118	260		parked: r538 peek REJECT (run-existing: auto-placement step 3)	可造	run-existing:check验运行结果+hidden B
+1794466059561_pm7mp	chapinc	10.129.2.10	267		parked: r538 peek REJECT (analysis: Dbus metal-layer signal-flo	可造	analysis:check验报告结构+关键事实+hidden B
+1793949237063_wsxpm	ruifan	10.129.32.46	400		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
+1794468995675_xyj6b	rayfeng	10.129.2.10	227		parked: r538 peek REJECT (wrong-domain: TCAD MCP server dev)	可造	分析/Q&A或脚本(需deepread)
+1793172979841_8tchb	easont	10.129.32.81	261		parked: r538 peek REJECT (wrong-domain: characterization sim = 	可造	分析/Q&A或脚本(需deepread)
+1794485797930_w7spy	chapinc	10.129.2.10	381		parked: r538 peek REJECT (Q&A: count MOSFET in block)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789954294975_4chsl	xrxiong	10.129.2.10	497		parked: r538 peek REJECT (wrong-domain: verilog RTL analysis = 	可造	analysis:check验报告结构+关键事实+hidden B
+1792025124250_ebwqh	xinqiaoz	10.129.2.11	520		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1790046433855_egji4	xinqiaoz	10.129.2.11	698		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1791787171667_hx63x	xinqiaoz	10.129.2.11	576		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1789436856855_nptmy	xinqiaoz	10.129.2.11	570		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1792675302417_puv3q	xinqiaoz	10.129.2.11	470		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1790164140533_q2upl	xinqiaoz	10.129.2.11	643		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1790067900307_qy90r	xinqiaoz	10.129.2.11	666		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1789893440245_qzgr0	xinqiaoz	10.129.2.11	642		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1793004131427_spkav	xinqiaoz	10.129.2.11	542		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1794448098712_cs1zr	e0047695	hfeg0pkn003	298	physical_verify	parked: r543 reject run-existing: U#1=帮我检查drc不关注chip=run calibr	不可造	—
+1790218039885_fqzjj	e0041123	hfeg0pjn049	122	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1793929785105_2nezk	xxchen	hfeg0pkn001	133	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1790233170014_92cla	lizwen	hfeg0pkn003	167	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1794386908289_3hd5b	yanxvwei	hfeg0pkn002	136	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1792053544813_f0yt9	panruan	hfeg0plg52	111	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1791768354807_ytvn2	thomasz	hfeg0pkn002	97	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1792115466563_n1b1u	gokuguo	hfeg0plg53	119	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1793877875513_bcf10	ryanr	hfeg0pkn001	101	layout_aether	parked: r548 peek reject (non-produce)	不可造	—
+1791946991037_9io52	yan1zh	hfeg0pkn005	108	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1790237454328_68dpw					parked: jcgu meta load skill	不可造	—
+1794537198934_ddb07					parked: e0047488 EMPTY inaccessible	不可造	—
+1782994721852_qfnzk					parked: e0014566 run-existing SKILL	可造	run-existing:check验运行结果+hidden B
+1794444917328_1x34y					parked: alexli Q&A setup	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794394227255_yxqia					parked: e0046686 debug Q&A autosim	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793955340134_ni86q					parked: cliu sim/run-existing	可造	run-existing:check验运行结果+hidden B
+1794463125342_751rt					parked: jie23z Q&A SVRF rules	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790080023760_8rlou					parked: lizwen run-existing skill spec	可造	run-existing:check验运行结果+hidden B
+1792485371006_tma34					parked: claire1l HFSS out-of-domain	不可造	—
+1794374467290_8itz4					parked: lizwen Q&A analyze scripts	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794474528744_qy45g					parked: fhwang near-dup r547 pcell	可造-低优	同已覆盖case形态(需deepread)
+1794537778378_6jg00	e0024852	hfeg0plg78	134	physical_verify	parked: ACCEPT-alt future deep-read: e0024852 PEX batch_pex.py 	可造	分析/Q&A或脚本(需deepread)
+1794537737374_td0m5	xinqiaoz	hfeg0plg56	230	physical_verify	parked: xinqiaoz known-reject r545 skill-orch	可造	分析/Q&A或脚本(需deepread)
+1793754683186_j0ndr	xinqiaoz	hfeg0plg56	213	physical_verify	parked: xinqiaoz known-reject r545 issue-handler	可造	分析/Q&A或脚本(需deepread)
+1789717635081_qr3gr	xinqiaoz	hfeg0plg56	207	physical_verify	parked: xinqiaoz known-reject r545 merge-scripts	可造	分析/Q&A或脚本(需deepread)
+1794030393495_9r8mu	xinqiaoz	hfeg0plg56	202	physical_verify	parked: xinqiaoz known-reject r545 continue-merge	可造	分析/Q&A或脚本(需deepread)
+1791803353210_t3nzf	xinqiaoz	hfeg0plg56	185	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789692730981_g1vyt	xinqiaoz	hfeg0plg56	174	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792492312284_ocj5p	xinqiaoz	hfeg0plg56	155	physical_verify	parked: xinqiaoz PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789707960469_v25ss	xinqiaoz	hfeg0plg56	132	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790066471618_1w17r	xinqiaoz	hfeg0plg56	131	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789646176811_qguq0	xinqiaoz	hfeg0plg56	128	physical_verify	parked: xinqiaoz PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794186777174_8lc8s	xinqiaoz	hfeg0plg56	124	physical_verify	parked: xinqiaoz PDK/techfile Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789713772472_fzq12	xinqiaoz	hfeg0plg56	117	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789696486678_lg5f2	xinqiaoz	hfeg0plg56	114	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789717386998_vnknn	xinqiaoz	hfeg0plg56	113	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792635668782_8hiwm	xinqiaoz	hfeg0plg56	110	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794531720896_vpabb	xxchen	hfeg0plg53	184	physical_verify	parked: xxchen known-reject r547 modify-existing	可造	脚本/审计:check验修改或审计结果+hidden B
+1794375180864_lwzz2	xxchen	hfeg0plg53	161	physical_verify	parked: xxchen known-reject r547 label-modify	可造	分析/Q&A或脚本(需deepread)
+1794542962301_1q921	xxchen	hfeg0plg53	154	physical_verify	parked: xxchen known-reject r547 editor-fault	可造	分析/Q&A或脚本(需deepread)
+1792198270473_rgxd6	xxchen	hfeg0plg53	141	physical_verify	parked: xxchen known-reject r547 drc-modify	可造	分析/Q&A或脚本(需deepread)
+1790584988596_q5xew	kenwang	hfeg0plg16	198	layout_aether	parked: kenwang known-reject r547 context-summary	可造	分析/Q&A或脚本(需deepread)
+1790574386590_dx2x0	kenwang	hfeg0plg16	140	layout_aether	parked: kenwang known-reject near-dup	可造-低优	同已覆盖case形态(需deepread)
+1790574379050_pikns	kenwang	hfeg0plg16	140	layout_aether	parked: kenwang known-reject near-dup	可造-低优	同已覆盖case形态(需deepread)
+1790574116232_re39c	kenwang	hfeg0plg16	140	layout_aether	parked: kenwang known-reject near-dup	可造-低优	同已覆盖case形态(需deepread)
+1792053493233_vhz0j	panruan	hfeg0plg76	111	physical_verify	parked: panruan known-reject r548 rule-parse-QA	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792053423366_xgo8p	panruan	hfeg0plg76	111	physical_verify	parked: panruan known-reject r548 near-dup	可造-低优	同已覆盖case形态(需deepread)
+1792053269961_ksa2h	panruan	hfeg0plg76	111	physical_verify	parked: panruan known-reject r548 near-dup	可造-低优	同已覆盖case形态(需deepread)
+1783653766179_w3bwg	e0014566	hfeg0plg58	139	layout_virtuoso	parked: e0014566 known-reject r537 setup-QA	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1785745785528_ivast	e0014566	hfeg0plg58	115	layout_virtuoso	parked: e0014566 known-reject r537 meta-wrapper	可造	分析/Q&A或脚本(需deepread)
+1782910844277_huntx	e0014566	hfeg0plg58	112	layout_virtuoso	parked: e0014566 known-reject r537 Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789003454557_ot5fh	miccao	hfeg0plg92	144	physical_verify	parked: miccao known-reject r547	可造	分析/Q&A或脚本(需deepread)
+1792050093175_2cmzd	miccao	hfeg0plg92	124	physical_verify	parked: miccao known-reject r547 near-dup	可造-低优	同已覆盖case形态(需deepread)
+1791787809781_w7un3	ziyuny	hfeg0pnd002	113	layout_virtuoso	parked: ziyuny known-reject r552 schematic-QA	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794473314599_q2ivp	e0046686	hfeg0plg80	152	physical_verify	parked: e0046686 known-reject r547 debug-QA autosim	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794450390837_qjchg	e07435	hfeg0plg76	205	physical_verify	parked: cross-domain spice/verilog D/B not-C	不可造	—
+1794402601515_cs3x5	deniss	hfeg0plg91	163	physical_verify	parked: cross-domain waveform/WaveView D not-C	不可造	—
+1794539296413_hf7nj	e02141	hfeg0plg56	177	physical_verify	parked: cross-domain synopsys/bandgap sim B/D not-C	不可造	—
+1788418814848_xm15u	jason17w	hfeg0pnd002	137	physical_verify	parked: ACCEPT-alt future: jason17w drc+verilog mixed, unpeeked	可造	分析/Q&A或脚本(需deepread)
+1794472894727_gezw1					parked: skill-orch search_kb.py meta, 0 real user turns in 300K	不可造	—
+1794457252730_k10f0					parked: qa-pattern-miner skill usage + how-to Q&A + cimi-kb-sea	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793598209454_bpcwa					parked: debug-Q&A pyAether sandbox connection refused, 0 real u	不可造	—
+1794537676928_72xvt					parked: run-existing check project config+log, not produce-task	不可造	—
+1794466065713_pttre					parked: skill-meta doc-update eda_agent skill structure, not pr	不可造	—
+1794647287507_zd8b7	jzeng	hfeg0plg85	205	layout_aether	parked: same_trace_group near-dup of AutoViaV4Dir3DY-001 (same 	可造-低优	同已覆盖case形态(需deepread)
+1794549309183_d8s4u	yinyus	hfeg0plg66	574	layout_aether	parked: out-of-domain: schematic construction (dbCrtSchPin/sche	不可造	—
+1794651030659_jrorc	jkxu	hfhds201	85	layout_aether	parked: r570 peek: jkxu USER#0 comprehension/QA/debug, not A-档 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794557520651_qrcw5	e04201	hfeg0plg18	90	physical_verify	parked: r570 peek: e04201 USER#0 comprehension/QA/debug, not A-	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794550161116_20kqp	e0014036	hfeg0pkn001	137	physical_verify	parked: r570 peek: e0014036 USER#0 comprehension/QA/debug, not 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793845744498_7n2w3	e0039602	hfeg0pkn003	87	physical_verify	parked: r570 peek: e0039602 USER#0 comprehension/QA/debug, not 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794556434650_v79pf	laijiang	hfeg0plg97	183	layout_aether	parked: r573 peek: laijiang USER#0 produce-task pyAether pin->n	不可造	—
+1794484059186_cot9z	e0039516	hfeg0plg99	245	physical_verify	parked: r572 peek: e0039516 comprehension Q&A not produce-task	不可造	—
+1794645532852_dq1ol	jzeng	hfeg0plg85	205	physical_verify	parked: r572 peek: jzeng same_trace_group near-dup of r568 wy27	可造-低优	同已覆盖case形态(需deepread)
+1794552458120_tgpup	yinyus	hfeg0plg66	510	physical_verify	parked: r572 peek: yinyus D-domain schematic construction	可造	分析/Q&A或脚本(需deepread)
+1794550428633_s4vkc	yinyus	hfeg0plg66	495	physical_verify	parked: r572 peek: yinyus D-domain schematic construction	可造	分析/Q&A或脚本(需deepread)
+1794645596542_ebctc	xxchen	hfeg0plg19	318	physical_verify	parked: r573: xxchen known-reject user drc/.gds modify-existing	可造	脚本/审计:check验修改或审计结果+hidden B
+1794546636932_2tppk	e0024852	hfeg0plg78	156	physical_verify	parked: r567 peek: e0024852 modify-existing config	可造	脚本/审计:check验修改或审计结果+hidden B
+1794453555751_gklsl	pdsong	hfeg0plg74	129	physical_verify	parked: r566 peek: pdsong analysis Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794478125354_p7xx6	dsgao	hfhds201	106	physical_verify	parked: r568 peek: dsgao Q&A capability patron EM sim	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794535679588_rk2g7	chapinc	hfeg0plg96	93	layout_aether	parked: r575 peek: chapinc USER#0 context-summary continuation,	不可造	—
+1794562625468_67snx	cuij	hfeg0plg86	89	physical_verify	parked: r575 peek: cuij USER#0 debug-Q&A analyze-why-missing, n	不可造	—
+1794554327128_bqjsi	e0047488	hfeg0plg97	91	layout_aether	parked: r575 peek: e0047488 USER#0-6 conceptual Q&A+doc-summary	不可造	—
+1794395067104_4koby	xrxiong	hfeg0plg74	85	layout_aether	parked: r575 peek: xrxiong USER#1 install skill meta/setup, not	不可造	—
+1788413551469_rysn2	jason17w	hfeg0pnd002	95	physical_verify	parked: r575 peek: jason17w USER#0 run-regression run-existing,	不可造	—
+1791355109862_g2ys9	adminai	hfeg0plg107	83	physical_verify	parked: r575 peek: adminai USER#0-4 debug-Q&A/setup db-config, 	不可造	—
+1794555150323_1m1dn	jerrygu	hfeg0plg93	81	physical_verify	parked: r575 peek: jerrygu USER#0 analysis-Q&A analyze-module-f	不可造	—
+1794475750838_fbuxz	ywli	hfeg0plg91	79	layout_aether	parked: r575 peek: ywli USER#0 capability-Q&A can-modify-layout	不可造	—
+1792390124324_rf6en	hswang	hfeg0plg94	79	physical_verify	parked: r575 peek: hswang USER#0 debug-Q&A traceback analyze-er	不可造	—
+1792386923801_1lote	hongyuy	hfeg0plg73	78	physical_verify	parked: Q&A how-to CMP M1A/M2A/M3A r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794449024377_ezpne	yinxingj	hfeg0plg13	76	layout_aether	parked: Q&A how-to make a tool r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790663852783_u29lu	cwei	hfeg0plg93	76	layout_aether	parked: skill-loading Spice_Agent r576	不可造	—
+1794211804231_rx7i7	zhi3wang	hfeg0plg86	75	layout_aether	parked: Q&A synchronous Zoom sync debug r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793950360162_s0yfe	jcgu	hfeg0plg81	73	layout_aether	parked: skill-meta+Q&A Stamp Layer explain r576	不可造	—
+1789647274009_jz2at	joelchen	hfeg0plg89	73	physical_verify	parked: skill-meta upload/register skill r576	不可造	—
+1794553523442_0b2zv	t0002609	hfeg0plg76	72	physical_verify	parked: Q&A+doc-gen LVS QA flow summary r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792405579910_v7jqb	thomasz	hfeg0plg92	79	physical_verify	parked: debug-Q&A drcoa ESD log error r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794378405719_bv2aa	hktklin	hfeg0plg87	68	layout_virtuoso	parked: text-sub tap_p→lacaa_common known-reject r555 r576	可造	分析/Q&A或脚本(需deepread)
+1792141858109_fy3k2	colinxu	hfeg0plg81	68	layout_aether	parked: Q&A check cell properties r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790212962899_ge5tf	e0041123	hfeg0plg104	67	physical_verify	parked: skill-loading+run-existing drc-pattern DNW testpattern 	不可造	—
+1792651065355_6ty3f	thomasz	hfeg0plg92	66	physical_verify	parked: debug-Q&A drcoa ESD stuck log compare r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794636165058_j8uux	xxchen	hfeg0plg19	468	physical_verify	parked: known-reject xxchen r577 top500-fresh drc-dominant	可造	分析/Q&A或脚本(需deepread)
+1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	parked: known-reject xxchen r577 top500-fresh drc-dominant	可造	分析/Q&A或脚本(需deepread)
+1792484214005_w1dp0	zqzhan	hfeg0pkn002	77	physical_verify	parked: r578 peek REJECT debug-sim off-domain D (primesim/fsdb 	不可造	—
+1794381807398_hcd0c	hktklin	hfeg0plg87	65	layout_virtuoso	parked: r578 peek REJECT text-sub tap_p->lacaa_common on SKILL 	可造	分析/Q&A或脚本(需deepread)
+1789973566279_0cjq2	davidwu	hfeg0pgn019	61	layout_aether	parked: r578 peek REJECT run-existing auto-placement step3 (dup	可造-低优	同已覆盖case形态(需deepread)
+1794223587428_daqqm	zhukais	hfeg0plg54	60	layout_aether	parked: r578 peek REJECT debug Q&A panel-delete reason	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794475569524_zdrpw	jinyuli	hfeg0plg52	63	layout_aether	parked: r578 peek REJECT Q&A how-to highlight layout net from s	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794380117784_3tv6m	e0047722	hfeg0plg75	57	layout_virtuoso	parked: r578 peek REJECT debug virtuoso bridge service startup 	可造	debug/analysis:check验根因+修复+hidden B
+1794366524360_puc1n	e0045260	hfeg0plg104	63	layout_virtuoso	parked: r578 peek REJECT Q&A virtuoso hotkey/pin-popup how-to c	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1782390514668_65lrn	e03179	hfeg0plg15	61	layout_aether	parked: r578 peek REJECT meta-chat(9msgs hello/who/model) + thi	可造	分析/Q&A或脚本(需deepread)
+1791272615348_sgzbs	mwxi	hfhds228	61	physical_verify	parked: r578 peek REJECT DevOps crontab ledger+Obsidian page of	可造	分析/Q&A或脚本(需deepread)
+1793842989021_kkzyd	cliu	hfeg0pkn002	61	physical_verify	parked: r578 peek REJECT run-existing sim skill on DUT off-doma	可造	run-existing:check验运行结果+hidden B
+1793063311378_y31m0	yuhzhu	hfeg0plg66	60	layout_aether	parked: r578 peek REJECT meta(hello layout eng) + thin produce 	可造	分析/Q&A或脚本(需deepread)
+1789700694389_u0w9t	jiaqis	hfeg0plg76	59	physical_verify	parked: r578 peek REJECT comprehension/doc-gen markdown of proj	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791954600423_5g0nl	colinxu	hfeg0plg55	72	layout_aether	parked: r578 peek REJECT Q&A+run-existing delete opened lib/cel	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789090361589_54h58	e0044455	hfeg0pkn004	66	physical_verify	parked: r578 peek REJECT meta scenario-loading DRC/LVS + which-	可造	分析/Q&A或脚本(需deepread)
+1794380399121_8dkdw	claire1l	hfeg0plg76	70	physical_verify	parked: r578 peek REJECT comprehension/doc layer_setup syntax s	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794449589306_y3azi	yohannw	hfeg0pnd001	72	layout_aether	parked: r578 peek REJECT DevOps agent-policy allowedScriptRoots	可造	env-config/skill:check验配置或产物正确性+hidden B
+1794656882029_saflm	thomasz	hfeg0pfn058		physical_verify	parked: r579 peek REJECT debug-Q&A ESD PathFinder sim-time comp	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793254775583_g4jab	e0047434	hfeg0pnd001	55	physical_verify	parked: r580 meta/test session (all 'test' msgs, 0 real task)	不可造	—
+1794466497864_4vil0	m1wang	hfeg0plg79	56	layout_aether	parked: r580 Q&A how-to (view waveforms CM0/CM1)	不可造	—
+1794300368354_t4364	t0002986	hfeg0plg76	50	layout_virtuoso	parked: r580 setup/meta Q&A (virtuoso bridge)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794463494298_dz6qs	lvyy	hfeg0plg99	51	physical_verify	parked: r580 Q&A/analysis (parameter tuning how-to CML/CTLE/C2C	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792413707987_cm4kr	cadmin	hfeg0plg97	57	physical_verify	parked: r580 meta/trivial (hello world script)	不可造	—
+1794558811575_ytrqh	jmgu	hfeg0plg58	52	physical_verify	parked: r580 skill-orch meta (optimize qa-pattern-miner skill)	不可造	—
+1794555697503_fue87	e0048410	hfeg0plg98	52	layout_aether	parked: r580 Q&A how-to (array instance usage in aether)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1792040490093_hi28t	alanji	hfeg0plg99	53	layout_aether	parked: r580 terse/vague (imc save exclude file)	可造	分析/Q&A或脚本(需deepread)
+1794555070143_of5rg	snqin	hfeg0plg89	127	layout_aether	parked: meta/skill-qa aether-tool-qa invocation	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794548956455_scouo	laryu	hfeg0plg92	100	physical_verify	parked: debug-Q&A DRC NTKSV1 interpretation user-asks-how	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794478728090_2tzcp	e0047488	hfeg0plg97	85	layout_aether	parked: conceptual-Q&A polygon data-structure + doc-md	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794474528605_5qb0p	e0047488	hfeg0plg97	79	layout_aether	parked: near-dup 2tzcp conceptual-Q&A	可造-低优	同已覆盖case形态(需deepread)
+1794394457042_wqrrp	e0047527	hfeg0plg83	77	layout_aether	parked: setup/GUI-forwarding zhulong-on-49	可造	env-config/skill:check验配置或产物正确性+hidden B
+1794468304680_nmqfg	lizwen	hfeg0plg89	76	physical_verify	parked: Q&A how-to-use IMCleRunDRC.py	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794310291196_5toji	yzwang	hfeg0plg55	62	layout_aether	parked: modify-existing pcell grid-bug user-gives-root-cause B-	可造	debug/analysis:check验根因+修复+hidden B
+1794473435109_vyy7u	hktklin	hfeg0plg87	29	layout_virtuoso	parked: trivial text-replace sed tap_p->lacaa_common	可造	分析/Q&A或脚本(需deepread)
+1794451185485_hdrnr	hktklin	hfeg0plg87	43	layout_virtuoso	parked: modify-existing PCELL param-reorder + Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1789869595751_0h2bc	davidwu	hfeg0plg95	71	layout_aether	parked: run-existing-tool aeAutoPlacementFromDesign	可造	run-existing:check验运行结果+hidden B
+1792380521540_xyw6o	hongyuy	hfeg0plg73	52	layout_aether	parked: Q&A ant-check + PG-net-rules	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794470851449_qydll	junlingw	hfeg0plg99	48	layout_aether	parked: interactive highlight-net CK1_E	不可造	—
+1794188992025_i08ak	e0017906	hfeg0plg96	46	layout_aether	parked: Q&A context-check which hierarchy	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794474500124_wi1gw	junweiw	hfeg0plg67	44	layout_aether	parked: Q&A how-to batch-pcell-param (framed as question)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791795810095_rnuul	lizwen	hfeg0plg89	63	layout_aether	parked: Q&A how-to continuous-copy skill	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794551883020_5hfp3	krystall			physical_verify	parked: r582 peek REJECT: Q&A DRCOA YDEC module design analysis	不可造	—
+1792034997613_2t683	hayleyz			physical_verify	parked: r582 peek REJECT: data/log analysis+plotting from sim l	可造	analysis:check验报告结构+关键事实+hidden B
+1792223495728_jgek9	rechealz			layout_virtuoso	parked: r582 peek REJECT: Q&A how-to (U#0 virtuoso load cdf com	不可造	—
+1792983503146_agccr	dxkong			physical_verify	parked: r582 peek REJECT: Q&A DRC rule (U#0 how about fullchip 	不可造	—
+1792053244466_5hdsl	eunicef			physical_verify	parked: r582 peek REJECT: Q&A LVS error understanding + thin IT	不可造	—
+1792031854472_4v6rb	wenjiez			layout_aether	parked: r582 peek REJECT: debug-Q&A analog sim (U#0 仿真发现vdly am	不可造	—
+1791964211480_r9jxw	bqchen			physical_verify	parked: r582 peek REJECT: Q&A SVRF (U#1 in svrf what is differe	不可造	—
+1791444301737_g0or5	jiaheli			physical_verify	parked: r582 peek REJECT: debug-Q&A Verilog compilation error (	不可造	—
+1793155140658_8ciyv	sherlock			layout_virtuoso	parked: r582 peek REJECT: Q&A how-to (U#0 怎样在电路中一次性给多个Pin加前缀字符)	不可造	—
+1794450761269_flb0n	hongl			physical_verify	parked: r582 peek REJECT: conceptual Q&A DRC bad pattern (U#0 查	不可造	—
+1791944596389_h9kyu	e13zhang			physical_verify	parked: r582 peek REJECT: meta/analysis Q&A patent ideas (U#4 分	不可造	—
+1793098650308_1tdh8	michael1l			layout_aether	parked: r582 peek REJECT: meta+Q&A (U#0-2 hi + U#3 aether里有漏孔检查	不可造	—
+1794357827042_myiqd	peterch			layout_virtuoso	parked: r582 peek REJECT: setup+Q&A (U#0 访问DEJOA项目 + U#2 virtuo	不可造	—
+1793849646244_6kk7g	adaml			physical_verify	parked: r582 peek REJECT: run-existing-skill calibre-lvs (U#0 c	不可造	—
+1793588497814_536nj	yuqingc			physical_verify	parked: r582 peek REJECT: file-operation (U#0 export CSV to loc	可造	分析/Q&A或脚本(需deepread)
+1793945277123_q737d	xxchen	hfeg0pkn001	102	layout_aether	parked: not-produce r583	不可造	—
+1788758180512_5v8w1	xinqiaoz	hfeg0plg56	analysis-project-intro	layout_virtuoso	parked: not-produce r583	不可造	—
+1793788216941_zm17a	xinqiaoz	hfeg0plg56	explore-genreleasenote	layout_virtuoso	parked: not-produce r583	不可造	—
+1794470584248_uybem	steveny	hfeg0pnd001	find-powerfill-source	layout_virtuoso	parked: not-produce r583	不可造	—
+1791965390450_59idr	xinqiaoz	hfeg0plg56	model-comparison	layout_virtuoso	parked: not-produce r583	不可造	—
+3l3yx	ynbai	hfhds211	80	physical_verify	parked: debug/analyze si.out spice sim	可造	debug/analysis:check验根因+修复+hidden B
+mxpkd	ellawu	hfeg0plg83	79	physical_verify	parked: modify-existing IMCleFillImplantDrc add conditional	可造	脚本/审计:check验修改或审计结果+hidden B
+1495z	ellawu	hfeg0plg83	79	physical_verify	parked: Q&A SVRF SETLAYER syntax explain	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+rw7u9	gokuguo	hfeg0plg78	79	physical_verify	parked: debug ERC error batch_lvs.py	可造	debug/analysis:check验根因+修复+hidden B
+v7jqb	thomasz	hfeg0plg92	79	physical_verify	parked: debug DRC log + Q&A pathfinder	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+rf6en	hswang	hfeg0plg94	79	physical_verify	parked: debug new_sim_lib_gui.py traceback	可造	debug/analysis:check验根因+修复+hidden B
+o1yhw	steveny	hfeg0pnd001	78	layout_virtuoso	parked: setup/run-existing symlink+follow prompt_flow.md	可造	env-config/skill:check验配置或产物正确性+hidden B
+369rv	mwxi	hfhds228	77	physical_verify	parked: ops/debug crontab sync IO full	可造	debug/analysis:check验根因+修复+hidden B
+5cigt	yuankong	hfhds211	76	physical_verify	parked: explain Q&A analyze script how to use	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+u29lu	cwei	hfeg0plg93	76	layout_aether	parked: setup/run-existing load call skill	可造	env-config/skill:check验配置或产物正确性+hidden B
+ezpne	yinxingj	hfeg0plg13	76	layout_aether	parked: Q&A how to make a tool	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+wy27j	jzeng	hfeg0plg85	77	layout_aether	parked: modify-existing IMCleAutoVia via gen optimize	可造	脚本/审计:check验修改或审计结果+hidden B
+x67j4	t0002609	hfeg0plg76	77	physical_verify	parked: config/ops/Q&A policy writableRoots	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+djvnv	e0014566	hfeg0plg58	79	layout_virtuoso	parked: run-existing/follow-instructions prompt_autovia.md	可造	run-existing:check验运行结果+hidden B
+0pfvw	hybeaml	hfeg0plg88	76	layout_aether	parked: thin-produce hotkey layer-switch below bar	可造	分析/Q&A或脚本(需deepread)
+3m5t4	yohannw	hfeg0pnd001	76	layout_aether	parked: config/ops agent_policy config mod	可造	env-config/skill:check验配置或产物正确性+hidden B
+5laiw	yongk1li	hfeg0plg99	79	physical_verify	parked: Q&A/modify-existing what is this modify script	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+ics15	ziyuny	hfeg0plg98	79	physical_verify	parked: debug/analyze DRC log analysis	可造	debug/analysis:check验根因+修复+hidden B
+61zln	rongtaoy	hfeg0pnd002	76	physical_verify	parked: verify/audit-existing coupling extraction audit	可造	脚本/审计:check验修改或审计结果+hidden B
+yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked: config modify policy writableRoots add dir	可造	env-config/skill:check验配置或产物正确性+hidden B
+1lote	hongyuy	hfeg0plg73	78	physical_verify	parked: how-to Q&A CMP add how to operate	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
