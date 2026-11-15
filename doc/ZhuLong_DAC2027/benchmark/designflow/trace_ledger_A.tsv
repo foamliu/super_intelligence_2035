@@ -593,3 +593,18 @@ p6glk	e0039102	hfeg0plg74	17		parked		2026-11-15 07:08	r550 deepread REJECT r552
 qwx61	thomasz	hfeg0plg92	16		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: SKILL il script read
 iyqdr	thomasz	hfeg0plg92	15		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: same as qwx61 SKILL/dbget read
 bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r552 confirm-park: VPS run_regr doc query
+1793762245106_h1of4	jason17w	hfeg0pnd002		digital	parked		2026-11-15 07:40	r553: Q&A explanation task (vps run_regr meaning + VPSUserGuide.pdf), no deliverable; 3 forks (h1of4 forked-from qrd72, dvchf sibling); reject
+1793762224725_qrd72	jason17w	hfeg0pnd002		digital	parked		2026-11-15 07:40	r553: Q&A explanation task (vps run_regr meaning + VPSUserGuide.pdf), no deliverable; 3 forks (h1of4 forked-from qrd72, dvchf sibling); reject
+1793762194315_dvchf	jason17w	hfeg0pnd002		digital	parked		2026-11-15 07:40	r553: Q&A explanation task (vps run_regr meaning + VPSUserGuide.pdf), no deliverable; 3 forks (h1of4 forked-from qrd72, dvchf sibling); reject
+1789539770606_2ga1l					parked		2026-11-15 07:54	r553: calibre-drc-log-analysis skill check Q&A, not produce-task
+1793930174180_1suhd					parked		2026-11-15 07:54	r553: PID echo title, command-exec not produce-task
+1790837731203_a6f23					parked		2026-11-15 07:54	r553: LSF admin task, infra not EDA design
+1791785530444_aaqrb					parked		2026-11-15 07:54	r553: update build skill, skill-dev not design produce-task
+1792135972903_3si95					parked		2026-11-15 07:54	r553: Virtuoso Ignore Instance how-to Q&A, not produce-task
+1791942254525_bd1k2					parked		2026-11-15 07:54	r553: simdiag-cli skill diag, infra not produce-task
+1783080146131_ebokr					parked		2026-11-15 07:54	r553: run existing .il script (IMCleAutoVia.il), exec not produce-task
+1790230242506_8h59z					parked		2026-11-15 07:54	r553: run-regression skill invocation, canned workflow not produce-task
+1792995847117_mon3r					parked		2026-11-15 07:54	r553: SDF SDFCOM_NL warning debug, troubleshooting not produce-task
+1793607738033_9ufjy					parked		2026-11-15 07:54	r553: waveform analysis (DDR5 DRC module function+TM timing), Q&A not produce-task
+1789884434870_ilkea					parked		2026-11-15 07:54	r553: project analysis (look at dir), analysis not produce-task
+1791507262889_xotf3					parked		2026-11-15 07:54	r553: NetApp IO monitoring + script cleanup, IT-ops not EDA
