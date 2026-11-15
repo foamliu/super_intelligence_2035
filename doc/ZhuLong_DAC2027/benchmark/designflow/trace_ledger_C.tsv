@@ -95,7 +95,7 @@
 1787897609476_ooyxi.messages.json	sophiaw	hfeg0plg49	394	physical_verify	parked		2026-11-03 11:04	skill-gen 弃(r41)
 1786967377211_bf4yc.messages.json	e0014566	hfeg0plg58	449	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt_flow.md + RsCalc/AutoVia/PowerFill 重叠(r47)
 1786349419937_ipbrb.messages.json	e0014566	hfeg0plg58	449	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt.md + Array16G_B autovia/powerfill 分析重叠 AutoViaPFAudit(r47)
-1790133815976_z9yjw.messages.json	e0014566	hfeg0plg58	416	layout_virtuoso	parked		2026-11-03 11:11	handoff resume BCenterCA 降阻迭代 强状态依赖(r47)
+1790133815976_z9yjw.messages.json	e0014566	hfeg0plg58	416	layout_virtuoso	case	RscalcHandoffDocGen-001	2026-11-15 19:26	r614 revive: parked UI hello/runme 太薄(r47) was B类误杀; reaudited 可造 (2026-11-15 令 thin/doc-gen legal); deepread confirms UI#19 handoff-doc produce-task, layout_virtuoso RsCalc/AutoVia/PowerFill stuck-flow handoff/交接单
 1783580842066_09kkp.messages.json	e0014566	hfeg0plg58	396	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt_powerfill.md + PowerFill 重叠(r47)
 1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked		2026-11-03 11:11	Array16G_B RTEXT/RNODE rscalc 重叠 RNodePlan-001(r47)
 1783504511275_fvpye.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt_powerfill.md + PowerFill 重叠(r47)
