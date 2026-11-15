@@ -2253,6 +2253,74 @@
 
 ---
 
+## 130. MemGPT: Towards LLMs as Operating Systems（**虚拟上下文管理 = 分层 + 由模型自己换页**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MemGPT: Towards LLMs as Operating Systems |
+| 作者（前 3） | Charles Packer · Sarah Wooders · Kevin Lin（共 **7** 位，含 Vivian Fang / Shishir G. Patil / Ion Stoica / Joseph E. Gonzalez；arXiv abs 页作者字段逐字核） |
+| 年份 | **2023**（v1 `2023-10-12`，v2 `2024-02-12`） |
+| 会议 / 期刊 | **预印本**（arXiv 无 `journal_ref`；`comment` 仅给代码与数据链接；OpenAlex `primary_location` = arXiv） |
+| 被引数 | **1,909**（OpenAlex `10.48550/arxiv.2310.08560`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.08560> ｜ DOI `10.48550/arxiv.2310.08560` |
+| 一句话贡献 | 借操作系统「分页」的思路做**虚拟上下文**：把上下文分成主上下文（直接进窗口）与外部存储（可检索的归档），由模型自己发函数调用在两层之间换入换出，并配读写队列与事件通知；作者在两个「窗口不够用」的场景（长文档分析 / 多轮会话）上验证。 |
+| 与我们工作的关系 | **harness（主目标）**：上下文管理不该只有「拉长窗口」一条路 ⇒ <b>动作</b>：我们的 agent 循环里把「取用外部信息」做成显式工具调用，并<b>记录每次换页</b>（谁触发、取了什么、为什么），否则长任务出错无法归因。<br>**zhulong（次要）**：换页次数是可计量的成本项 ⇒ <b>动作</b>：成本表加 `page_in / page_out` 两列，与 token 成本并列。<br>**风险**：① 换页由模型自主决定，论文未给人工核验的「是否该换」准确率；② 无训练、纯提示工程的系统，换模型即需重调提示；③ 1,909 为 OpenAlex 口径。 |
+
+首次收录: 2026-11-15（第三十四轮）｜ 状态: 元数据 + 被引已核（abs 页 `200` / 43,126 B 逐字解析，7 作者；OpenAlex `200`；PDF `200` 663,708 B 并 `pdftotext` 核对「虚拟上下文管理 / 分层换页」表述）
+
+---
+
+## 131. Generative Agents: Interactive Simulacra of Human Behavior（**记忆流 + 三轴检索 + 反思**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Generative Agents: Interactive Simulacra of Human Behavior |
+| 作者（前 3） | Joon Sung Park · Joseph C. O'Brien · Carrie J. Cai（共 **6** 位，含 Meredith Ringel Morris / Percy Liang / Michael S. Bernstein；abs 页逐字核） |
+| 年份 | **2023**（v1 `2023-04-07`，v2 `2023-08-06`） |
+| 会议 / 期刊 | **UIST 2023**（OpenAlex `primary_location` = ACM Symposium on User Interface Software and Technology；arXiv 无 `journal_ref`） |
+| 被引数 | **4,325**（OpenAlex `10.48550/arxiv.2304.03442`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2304.03442> ｜ DOI `10.48550/arxiv.2304.03442` |
+| 一句话贡献 | 给 agent 一套可长期运行的记忆：所有观察进**记忆流**，检索时按**时近性 / 重要性 / 相关性**三轴加权；再让模型**反思**，把零散观察抽象成高层结论写回记忆流；25 个 agent 在小镇里跑出可观察的社会行为（如自发组织活动）。 |
+| 与我们工作的关系 | **harness（主目标）**：记忆模块的检索口径决定长任务表现 ⇒ <b>动作</b>：我们的 agent 记忆至少存 `recency` / `importance` / `relevance` 三个字段，并做一次「去掉反思层」的消融再决定是否上反思（每次反思是一次额外 LLM 调用）。<br>**data（次要）**：观察与反思是两类不同数据 ⇒ <b>动作</b>：训练/评测数据里分开标注 `observation` 与 `reflection`，不要混成一种。<br>**风险**：① 行为评估以人类打分与访谈为主，指标不可直接搬到工程任务；② 4,325 为 OpenAlex 口径（UIST 引用量口径偏大，含 HCI 社区）；③ 25 agent × 2 天的模拟规模有限。 |
+
+首次收录: 2026-11-15（第三十四轮）｜ 状态: 元数据 + 被引已核（abs 页 `200` / 44,651 B，6 作者；OpenAlex `200` 且 `primary_location` = UIST；PDF `200` 11,947,867 B 并 `pdftotext` 核对记忆/反思表述）
+
+---
+
+## 132. Self-Refine: Iterative Refinement with Self-Feedback（**同一模型自评自改，不训练也涨分**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Self-Refine: Iterative Refinement with Self-Feedback |
+| 作者（前 3） | Aman Madaan · Niket Tandon · Prakhar Gupta（共 **16** 位，含 Yiming Yang / Sean Welleck / Amir Yazdanbakhsh / Peter Clark；abs 页逐字核） |
+| 年份 | **2023**（v1 `2023-03-30`，v2 `2023-05-25`） |
+| 会议 / 期刊 | **NeurIPS 2023**（OpenAlex `primary_location` = Neural Information Processing Systems；arXiv 无 `journal_ref`） |
+| 被引数 | **2,464**（OpenAlex `10.48550/arxiv.2303.17651`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.17651> ｜ DOI `10.48550/arxiv.2303.17651` |
+| 一句话贡献 | 生成 → 同一模型写反馈 → 按反馈改写，循环到停止条件：7 个任务（对话、代码可读性、数学推理等）平均绝对提升约 **20%**，不需要监督数据、额外训练或 RL；停止条件 `stop(fb_t, t)` 只能是「固定 timestep」或「反馈提示里生成一个 scalar stop score」；失败分析（70 条样本）：**25%** 忽略反馈、**20%** 引入新问题，另有 **60%** 对错误或泛泛反馈保持鲁棒；Vicuna-13B 连 feedback 的格式都产不出。 |
+| 与我们工作的关系 | **posttrain（主目标）**：test-time 迭代是「不训练也能涨」的第三条路，但必须与「多采样 k 条再投票」算力对齐才能比 ⇒ <b>动作</b>：任何自评自改的收益都要报「等 token 预算」对照。<br>**harness（次要）**：失败要分类记，不能只看最终分 ⇒ <b>动作</b>：日志加 `feedback_ignored` / `new_issue_introduced` / `robust_to_wrong_feedback` 三列。<br>**风险**：① 20% 是 7 个任务平均、模型为 GPT-3.5/GPT-4，不能外推到 2B；② 停止判据由模型自己给，论文未给「何时该停」的可靠性数字；③ 生成器/评审同一模型 ⇒ 同源偏置。 |
+
+首次收录: 2026-11-15（第三十四轮）｜ 状态: 元数据 + 被引已核（abs 页 `200` / 43,537 B，16 作者；OpenAlex `200` 且 = NeurIPS；PDF `200` 2,014,949 B 并 `pdftotext` 核对 ~20% / 7 tasks / `stop(fb_t,t)` / 25% / 20% / 60% / Vicuna-13B）
+
+---
+
+## 133. Mamba: Linear-Time Sequence Modeling with Selective State Spaces（**选择性 SSM 骨干**）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mamba: Linear-Time Sequence Modeling with Selective State Spaces |
+| 作者（前 3） | Albert Gu · Tri Dao（共 **2** 位；abs 页逐字核） |
+| 年份 | **2023**（v1 `2023-12-01`，v2 `2024-05-31`） |
+| 会议 / 期刊 | **预印本**（arXiv 无 `journal_ref`；OpenAlex `primary_location` = arXiv） |
+| 被引数 | **7,633**（OpenAlex `10.48550/arxiv.2312.00752`，查询日 **2026-11-15**） |
+| arXiv / DOI | <https://arxiv.org/abs/2312.00752> ｜ DOI `10.48550/arxiv.2312.00752` |
+| 一句话贡献 | 让 SSM 的参数随输入变化（selective，解决离散模态上的内容推理弱项），但这样就不能再用卷积 ⇒ 设计 **recurrent 模式的硬件感知 parallel scan** 把并行度补回来；整网无 attention、无 MLP 块；生成吞吐约为同规模 Transformer 的 **5×**、序列长度线性扩展，Mamba-3B 在语言建模上超过同规模 Transformer、追平 2× 规模；块内 **expansion = 2**、MLP 扩张因子取 **2**（而非 4）、层数相应 ×**1.5** 保参数量；训练配方为 linear warmup + cosine 衰减到 `1e-5`、峰值取 GPT-3 的 **5 倍**。 |
+| 与我们工作的关系 | **pretrain（主目标）**：换骨干是最大的单点决策 ⇒ <b>动作</b>：先做**等参对照**（按上面的配比把参数量对齐现有 2B Transformer，同 token 数、同评测集），同时记 `tokens/s` 与显存峰值；等参下短任务平均分低 >2 个百分点就不换。<br>**zhulong（次要）**：5× 是短序列生成口径 ⇒ <b>动作</b>：成本模型按 `(batch, seq_len)` 分档实测，不许用一个常数。<br>**风险**：① 5× 与「追平 2× 规模」都是作者自报、单实验室；② 长上下文（≥32k）的显存/吞吐拐点论文未给工程结论；③ 7,633 为 OpenAlex 口径。 |
+
+首次收录: 2026-11-15（第三十四轮）｜ 状态: 元数据 + 被引已核（abs 页 `200` / 43,088 B，2 作者；OpenAlex `200`；PDF `200` 1,168,615 B 并 `pdftotext` 核对 5× / E=2 / MLP 2 / ×1.5 / 1e-5 / 5× GPT-3 peak lr；作者块自带 `agu@cs.cmu.edu`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 

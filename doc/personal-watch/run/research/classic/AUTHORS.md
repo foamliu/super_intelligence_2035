@@ -1926,6 +1926,45 @@
 | 状态 | **待跟踪**（X 待 follow；邮箱待公开后再评估发信） |
 | 备注 | 同论文的另一位作者 Jim Fan 已是本表 **#104**（`@DrJimFan`），因此本论文只新增末位通讯方向，避免重复建档。 |
 
+### 130. Aman Madaan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aman Madaan（印度姓名族属 ⇒ 发信按**英文**） |
+| 机构 | **Carnegie Mellon University · Language Technologies Institute**（另有 Allen Institute for AI / Google Research 合作） |
+| 代表论文 | Self-Refine（arXiv `2303.17651`，**一作**） |
+| 邮箱 | `amadaan@cs.cmu.edu`（**PDF v2 首页作者块**；`cs.cmu.edu/~amadaan/` <code>200</code> / 4,924 B 另有 `mailto:amn.madaan@gmail.com` ⇒ **两处一致，取机构地址**） |
+| 主页 | <https://www.cs.cmu.edu/~amadaan/>（`200` / 4,924 B） |
+| X 账号 | **未登记**（`x.com/aman_madaan` `200`，`og:title` = `Aman (@aman_madaan) on X`，但 bio 仅 `@xAI`、无 CMU / Self-Refine 关联 ⇒ **身份不可确认，按纪律不登记**） |
+| 状态 | **已发信**（2026-11-15 09:03 CST，经典论文请教信第 48 封，英文 171 词） |
+| 备注 | `语言=英文(判据=印度姓名族属+美国机构)`。信里问的是：1-vs-k 是否算力对齐、2B–7B 是否只蒸馏 feedback 步并固定迭代次数、以及有没有 prompt 级约束实测压低「忽略反馈 25% / 引入新问题 20%」这两类失败 —— 分别回填 posttrain 的 test-time 预算口径与 harness 的失败分列。 |
+
+### 131. Albert Gu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Albert Gu（华人姓名族属 ⇒ 发信按**中文**；机构在美国**不据此判英文**） |
+| 机构 | **Carnegie Mellon University · Machine Learning Department**（助理教授）· 兼 Cartesia 首席科学家 |
+| 代表论文 | Mamba（arXiv `2312.00752`，**一作**）· Mamba-2 / SSD 系列 |
+| 邮箱 | `agu@cs.cmu.edu`（**PDF v2 首页作者块**；`goombalab.github.io` `200` / 16,373 B **无 `mailto:`** ⇒ 以论文首页地址为准，机构未变） |
+| 主页 | <https://goombalab.github.io/>（`200` / 16,373 B） |
+| X 账号 | **@_albertgu**（`x.com/_albertgu` `200`，`og:title` = `Albert Gu (@_albertgu) on X`，bio = `assistant prof @mldcmu. chief scientist @cartesia. leading the ssm revolution.`） |
+| 状态 | **已发信**（2026-11-15 09:03 CST，经典论文请教信第 49 封，中文 211 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 Gu+可读中文；机构在美国未据此判英文)`。信里问的是 2B 中文语料的 expansion/层数配比是否重调、≥32k 上下文的显存/吞吐拐点、以及 batch 推理下 5× 收敛到多少 —— 分别回填 pretrain 的骨架选型与 zhulong 的成本系数。⚠️ **二作 Tri Dao 已在 #1（2026-11-11，`tri@tridao.me`）触达过** ⇒ 同论文不重复发。 |
+
+### 132. Joon Sung Park（박준성）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Joon Sung Park（박준성；韩文姓名族属 ⇒ 若发信应用**한국어**） |
+| 机构 | **Stanford University**（CS PhD，2025 毕业；HCI + NLP）· 现 **Simile AI** CEO |
+| 代表论文 | Generative Agents（arXiv `2304.03442`，**一作**，UIST 2023 最佳论文）· Generative Agent Simulations of Human Behavior（博士论文，Arthur Samuel 奖） |
+| 邮箱 | **未找到**（`joonsungpark.com` `200` / 154,801 B 无 `mailto:` 无明文邮箱；`/cv` `200` / 409,713 B 是 **8 页 PDF**，`pdftotext` 后仍无邮箱；`profiles.stanford.edu/joon-sung-park` `200` 的 `mailto:` 只是「分享 profile」功能链接 ⇒ **不猜 `@cs.stanford.edu`，本轮不发信**） |
+| 主页 | <https://www.joonsungpark.com/>（`200` / 154,801 B） |
+| X 账号 | **@joon_s_pk**（`x.com/joon_s_pk` `200`，`og:title` = `Joon Sung Park (@joon_s_pk) on X`，bio = `CEO @simile_ai. Building simulations of society. CS PhD @stanfordhci + @stanfordnlp. Oil painter.` ⇒ 身份确认） |
+| 状态 | **待跟踪**（X 待 follow；邮箱待公开后再评估发信） |
+| 备注 | 本轮唯一「身份已核但邮箱全无」的建档；也是「不猜地址」纪律的正向例子 —— 宁可只 follow 不发信，也不猜 `@cs.stanford.edu`。 |
+
 ## 四、维护纪律
 
 1. **一次一作者**：同一作者 / 同一论文 ≤1 封；同一机构 ≤2 封/天（`RESEARCH_MAIL_SPEC §3`）。
@@ -1935,3 +1974,4 @@
 5. 抓 X 一律走 `research/classic/x_fetch.py`（只读、串行、≥3s、单轮 ≤6 个 handle），原始结果落 `research/classic/x/`，**不做任何写操作**。
 6. **发送前必查词数（2026-11-12 新增，血的教训）**：英文信发送**之前**先 `wc -w <body.txt>` 确认 ≤200（中文 ≤300 字），**不达标先删改再发**。第十二轮因「先发后核」实测 **212 词**、超 12 词 ⇒ 已如实记入 `research/mail/发送记录.md`；此后本项为**发送前置检查**，不是事后记录。
 7. **X 抓取需显式代理**：本机 shell 默认**不继承** `HTTP(S)_PROXY`，直连 `x.com` 会返回 `000`；`x_fetch.py` 内部默认走 `http://127.0.0.1:7897`，手工 `curl` 时**必须加 `--proxy`**。`000` **不等于**代理挂了（本轮实测：直连 000 / 带代理 200）⇒ 先分清「无代理」与「代理挂」，再决定是否报运维。
+8. **编号纪律（2026-11-15 r178 起）**：条目标题编号取**连续号**，不再沿用「人数计数器」。历史上曾出现编号最后一位（129）小于人数（131）的情况（两者口径不同：有的 section 覆盖两位同论文作者）⇒ 新条目从 129 之后依次编号 130 / 131 / 132，**人数仍以日报与 MEMORY 的计数器为准（134）**。

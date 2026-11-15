@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-15（5/5 ＋ B 轨第三十二轮 126 篇 · 作者网 128 人 · 作者信 46 封）· research 线</title>
+<title>论文观察日报 · 2026-11-15（5/5 ＋ B 轨第三十四轮 133 篇 · 作者网 134 人 · 作者信 49 封）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,10 +53,10 @@
 <div class="wrap">
 <header class="hero">
   <h1>论文观察日报 · 2026-11-15</h1>
-  <div class="sub">全报 <b>5 篇「借鉴」</b>（进度 <b>5/5</b>）＋ 🅱 B 轨第三十二 / 三十三轮累计 <b>129</b> 篇 ＋ 👥 作者网 <b>131</b> 人（X 已核验 73）＋ ✉ 作者信累计 <b>47</b> 封（回信率 <b>0/47</b>）</div>
+  <div class="sub">全报 <b>5 篇「借鉴」</b>（进度 <b>5/5</b>）＋ 🅱 B 轨第三十二 / 三十三 / 三十四轮累计 <b>133</b> 篇 ＋ 👥 作者网 <b>134</b> 人（X 已核验 76）＋ ✉ 作者信累计 <b>49</b> 封（回信率 <b>0/49</b>）</div>
   <div class="meta">
     <span>数据源：arXiv API（<code>cat:cs.CL</code> / <code>cat:cs.LG</code> / <code>cat:cs.SE</code> 列表查询 + <code>id_list</code> 元数据）</span>
-    <span>生成：2026-11-15 00:1x 首版 · 03:0x 补至 5/5 · 06:0x 追加 B 轨第三十三轮</span>
+    <span>生成：2026-11-15 00:1x 首版 · 03:0x 补至 5/5 · 06:0x B 轨第三十三轮 · 09:0x B 轨第三十四轮 + 两封信</span>
     <span>进度：<b>5 / 5</b>（00:00 出 3；03:00 补 2）</span>
     <span>出口：仅 HTML（🚫 不发日报邮件）</span>
   </div>
@@ -167,7 +167,7 @@
 </ul>
 </details>
 
-<h2 class="sec">🅱 B 轨 · 经典论文第三十二 / 三十三轮（+6 → 129 篇）<span class="badge b-b">经典</span></h2>
+<h2 class="sec">🅱 B 轨 · 经典论文第三十二 / 三十三 / 三十四轮（+10 → 133 篇）<span class="badge b-b">经典</span></h2>
 
 <table>
   <tr><th>#</th><th>论文</th><th>被引</th><th>年份 / 出处</th><th>补的是哪条轴 · 服务线</th></tr>
@@ -241,14 +241,43 @@
     <td>2023 · <b>NeurIPS 2023</b>（OpenAlex <code>primary_location</code> = NeurIPS；arXiv 无 <code>comment</code>）</td>
     <td><b>LLM 当调度器</b>：任务规划（带 <code>dep</code>）→ 模型选择（model card）→ 执行（<code>&lt;resource&gt;-task_id</code> 运行时替换）→ 汇总 · <b>harness / vision</b></td>
   </tr>
+  <tr>
+    <td>130</td>
+    <td><b>MemGPT: Towards LLMs as Operating Systems</b><br><code>2310.08560</code></td>
+    <td><b>1,909</b></td>
+    <td>2023（v2 2024-02-12）· <b>预印本</b>（OpenAlex <code>primary_location</code> = arXiv）</td>
+    <td><b>虚拟上下文管理</b>：借鉴操作系统分页，把上下文拆成主上下文与外部存储两层，由模型自己发函数调用在两层之间换入换出 · <b>harness / zhulong</b></td>
+  </tr>
+  <tr>
+    <td>131</td>
+    <td><b>Generative Agents: Interactive Simulacra of Human Behavior</b><br><code>2304.03442</code></td>
+    <td><b>4,325</b></td>
+    <td>2023 · <b>UIST 2023</b>（OpenAlex <code>primary_location</code> = ACM Symposium on User Interface Software and Technology）</td>
+    <td><b>记忆流三件套</b>：原始观察全量入流，按<b>时近性 / 重要性 / 相关性</b>加权检索，再由「反思」把流水抽象成高层结论；25 个 agent 的社会行为涌现 · <b>harness / data</b></td>
+  </tr>
+  <tr>
+    <td>132</td>
+    <td><b>Self-Refine: Iterative Refinement with Self-Feedback</b><br><code>2303.17651</code></td>
+    <td><b>2,464</b></td>
+    <td>2023 · <b>NeurIPS 2023</b>（OpenAlex <code>primary_location</code> = NeurIPS；arXiv 无 <code>journal_ref</code>）</td>
+    <td><b>同一模型自评自改</b>：生成 → 自己写反馈 → 按反馈改，直到 <code>stop(fb_t, t)</code> 触发；7 个任务平均绝对提升约 <b>20%</b>，全流程无监督数据、无额外训练 · <b>posttrain / harness</b></td>
+  </tr>
+  <tr>
+    <td>133</td>
+    <td><b>Mamba: Linear-Time Sequence Modeling with Selective State Spaces</b><br><code>2312.00752</code></td>
+    <td><b>7,633</b></td>
+    <td>2023（v2 2024-05-31）· <b>预印本</b>（OpenAlex <code>primary_location</code> = arXiv）</td>
+    <td><b>选择性 SSM 骨干</b>：让 SSM 参数随输入变化（selective），再设计 recurrent 模式的硬件感知 scan 补回并行度；无 attention 无 MLP 块，生成吞吐约为同规模 Transformer 的 <b>5×</b>，序列长度线性扩展 · <b>pretrain / zhulong</b></td>
+  </tr>
 </table>
 
 <div class="ok-box">
   <b>选文依据（不是「找七篇老论文」）</b>：00:00 轮的 A 轨三篇落在「奖励是否可信 / 需求是否满足 / 数据是否划算」，B 轨补其<b>历史源头</b>——① 判分口径来自 Codex/HumanEval；② 多指标同表来自 HELM；③ 数据配比与许可账来自 The Pile；④ 指令数据的「簇切分」来自 FLAN。03:00 轮补的 2 篇 A 轨（LoRA 有效秩 / harness 运行时）再补三条地基——⑤ <b>AgentBench</b>（把「LLM 当 agent 评」的八环境共同口径）；⑥ <b>Constitutional AI</b>（用成文原则 + AI 反馈替代人工标注，正是「偏好数据贵」的另一条路）；⑦ <b>BLIP-2</b>（冻结视觉塔 + 轻量桥接，是「视觉能力接入不一定要重训主干」的源头）。<b>06:00 轮补 3 篇</b>（A 轨已 5/5，余量全给 B 轨），补的是「agent 怎么造数据 / 怎么记记忆 / 怎么编排多模型」三条互相咬合的轴——⑧ <b>ToolLLM</b>（解路径靠搜索标注 + 两套判分口径，直指 harness 的评测表怎么分列）；⑨ <b>Voyager</b>（把成功经验固化成可检索复用的代码技能，比只存对话历史更省推理成本）；⑩ <b>HuggingGPT</b>（多模型编排的失败点在「描述匹配」与「任务间依赖」，日志必须逐任务记 model 与 task_id）。<br>
-  <b>口径</b>：被引数全部为 <b>OpenAlex</b> 单源（查询日 2026-11-15），不同来源不可横比；Codex 的 OpenAlex 一作被误并为 `Mark I-Cheng Chen`，<b>以 arXiv 作者字段为准</b>；FLAN / AgentBench / Constitutional AI / BLIP-2 的 OpenAlex <code>primary_location</code> 均为 arXiv ⇒ 只写预印本，不写会议。
+  <b>09:00 轮补 4 篇（A 轨已 5/5，余量全给 B 轨）</b>：这四篇不是按「老」选的，而是按「我们在研的三条线各缺一块地基」选的——⑪ <b>MemGPT</b>（上下文不够时怎么办：分层 + 由模型自己换页，而不是一味拉长窗口）；⑫ <b>Generative Agents</b>（记忆该存什么、怎么检索：时近性/重要性/相关性三轴 + 反思，正是我们 harness 记忆模块缺少的检索口径）；⑬ <b>Self-Refine</b>（不训练也能改好：迭代自评的收益边界与失败模式）；⑭ <b>Mamba</b>（预训练骨干的另一条路：selective + 线性复杂度，成本口径必须按序列长度分档）。四篇的作者都被本轮建档（Aman Madaan / Albert Gu / Joon Sung Park），其中两位已发信。<br>
+  <b>口径</b>：被引数全部为 <b>OpenAlex</b> 单源（查询日 2026-11-15），不同来源不可横比；Codex 的 OpenAlex 一作被误并为 `Mark I-Cheng Chen`，<b>以 arXiv 作者字段为准</b>；FLAN / AgentBench / Constitutional AI / BLIP-2 的 OpenAlex <code>primary_location</code> 均为 arXiv ⇒ 只写预印本，不写会议。生成式智能体（UIST 2023）与 Self-Refine（NeurIPS 2023）的会场来自 OpenAlex <code>primary_location</code>，arXiv 本身无 <code>journal_ref</code>；MemGPT / Mamba 只写预印本。
 </div>
 
-<h2 class="sec">👥 作者关系网（+5 → 131 人；X 已核验 73）</h2>
+<h2 class="sec">👥 作者关系网（+8 → 134 人；X 已核验 76）</h2>
 
 <table>
   <tr><th>姓名</th><th>机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
@@ -315,12 +344,34 @@
     <td><b>@AnimaAnandkumar</b>（<code>og:title</code> = <code>Prof. Anima Anandkumar (@AnimaAnandkumar) on X</code>，bio 含 <code>Bren Professor @caltech</code>）</td>
     <td>待跟踪（X 待 follow；邮箱待公开）</td>
   </tr>
+  <tr>
+    <td>Aman Madaan</td>
+    <td>Carnegie Mellon University · LTI（Self-Refine 一作；Allen AI / Google 合作者）</td>
+    <td><code>amadaan@cs.cmu.edu</code>（PDF v2 首页作者块；<code>cs.cmu.edu/~amadaan/</code> <code>200</code> / 4,924 B 另有 <code>mailto:amn.madaan@gmail.com</code> ⇒ <b>两处一致，取机构地址</b>）</td>
+    <td><b>未登记</b>（<code>x.com/aman_madaan</code> <code>200</code> 但 bio 仅 <code>@xAI</code>，<b>无法确认是否同一人 ⇒ 不登记</b>，不猜）</td>
+    <td><b>已发信</b>（第 48 封，英文）</td>
+  </tr>
+  <tr>
+    <td>Albert Gu</td>
+    <td>Carnegie Mellon University · ML Dept（助理教授）· 兼 Cartesia 首席科学家（Mamba 一作）</td>
+    <td><code>agu@cs.cmu.edu</code>（PDF v2 首页作者块；<code>goombalab.github.io</code> <code>200</code> / 16,373 B <b>无 <code>mailto:</code></b> ⇒ 以论文首页地址为准，机构未变）</td>
+    <td><b>@_albertgu</b>（<code>og:title</code> = <code>Albert Gu (@_albertgu) on X</code>，bio = <code>assistant prof @mldcmu. chief scientist @cartesia. leading the ssm revolution.</code>）</td>
+    <td><b>已发信</b>（第 49 封，中文）</td>
+  </tr>
+  <tr>
+    <td>Joon Sung Park（박준성）</td>
+    <td>Stanford University（CS PhD，2025 毕业）· 现 Simile AI CEO（Generative Agents 一作）</td>
+    <td><b>未找到</b>（<code>joonsungpark.com</code> <code>200</code> / 154,801 B 无 <code>mailto:</code> 无明文邮箱；CV 是 PDF（<code>/cv</code> <code>200</code> / 409,713 B / 8 页），<code>pdftotext</code> 后仍无邮箱 ⇒ <b>不猜 <code>@cs.stanford.edu</code>，本轮不发信</b>）</td>
+    <td><b>@joon_s_pk</b>（<code>og:title</code> = <code>Joon Sung Park (@joon_s_pk) on X</code>，bio = <code>CEO @simile_ai. Building simulations of society. CS PhD @stanfordhci + @stanfordnlp. Oil painter.</code> ⇒ 身份确认）</td>
+    <td>待跟踪（X 待 follow；邮箱待公开）</td>
+  </tr>
 </table>
 <div class="note">
-  <b>两个「同名不同人」的坑，本轮都踩到了</b>：① HELM 作者列表里的 <code>Tianyi Zhang</code> <b>不是</b> Purdue 这位（已在 AUTHORS.md 备注，🚫 不合并建档）；② OpenAlex 把 Codex 一作写成了 <code>Mark I-Cheng Chen</code>（把两个人合并了）⇒ METADATA 一律以 arXiv 为准。
+  <b>两个「同名不同人」的坑，本轮都踩到了</b>：① HELM 作者列表里的 <code>Tianyi Zhang</code> <b>不是</b> Purdue 这位（已在 AUTHORS.md 备注，🚫 不合并建档）；② OpenAlex 把 Codex 一作写成了 <code>Mark I-Cheng Chen</code>（把两个人合并了）⇒ METADATA 一律以 arXiv 为准。<br>
+  <b>09:00 轮的反向例子（宁缺勿猜）</b>：③ <code>x.com/aman_madaan</code> 身份不可确认 ⇒ 不登记；④ <code>x.com/tridao_</code> <b><code>404</code></b>（Mamba 二作 Tri Dao 的 handle 未找到）⇒ 不登记；⑤ Joon Sung Park 主页与 CV 都<b>没有公开邮箱</b> ⇒ 只建档、不发信。
 </div>
 
-<h2 class="sec">✉️ 作者请教信（03:00 新增 1 封 · 06:00 新增 1 封 · 当日 4 · 累计 47；回信率 0/47）</h2>
+<h2 class="sec">✉️ 作者请教信（03:00 +1 · 06:00 +1 · 09:00 +2 · 当日 6 · 累计 49；回信率 0/49）</h2>
 
 <table>
   <tr><th>#</th><th>收件人 / 机构</th><th>主题</th><th>语言与判据</th><th>只对本文成立的技术细节</th><th>发送</th></tr>
@@ -356,16 +407,33 @@
     <td>126,486 条（指令, 解路径）对 · 4096→8192 positional interpolation · DFSDT 分支数/回溯上限是否与 pass rate 评测同一预算 · ToolEval 与人工的一致率 · 16,464 API 的 404 剔除判据与 retriever top-k</td>
     <td><code>SENT OK 06:03:56</code></td>
   </tr>
+  <tr>
+    <td>48</td>
+    <td><b>Aman Madaan</b> · Carnegie Mellon University · LTI（Self-Refine 一作）</td>
+    <td>Questions on Self-Refine: compute-matched baseline, small-model feedback distillation, and the 25%/20% failure modes</td>
+    <td><b>英文</b>（判据 = 印度姓名族属 + 美国机构，无华人 / 日韩信号；<b>171 词</b> ≤200，发送前 <code>wc -w</code> 核）</td>
+    <td><code>stop(fb_t, t)</code> 只能取「固定 timestep」或「<code>p_fb</code> 内生成的 scalar stop score」· 1-vs-k 人类偏好实验是否算力对齐 · Vicuna-13B 连 feedback 格式都产不出 · 70 条失败样本：25% 忽略反馈 / 20% 引入新问题 / 60% 对错误或泛泛反馈鲁棒</td>
+    <td><code>SENT OK 09:03:34</code></td>
+  </tr>
+  <tr>
+    <td>49</td>
+    <td><b>Albert Gu</b> · Carnegie Mellon University · ML Dept（Mamba 一作）</td>
+    <td>关于 Mamba 的两点请教：2B 中文预训练的块配比与长上下文吞吐拐点</td>
+    <td><b>中文</b>（判据 = 华人姓名族属「Gu」+ 可读中文；<b>机构在美国未据此判英文</b>，对应 11-14 谢赛宁事故的反向校准；汉字 <b>211</b> ≤300）</td>
+    <td>Δt 随输入变化（selective）⇒ 不能再用卷积、必须走 recurrent 模式的硬件感知 scan · block 内 expansion 取 <b>2</b>、MLP 扩张因子取 <b>2</b>（非 4）、层数相应 ×<b>1.5</b> 保参数量 · warmup + cosine 降到 <b>1e-5</b>、峰值取 GPT-3 的 <b>5×</b> · 摘要的 <b>5×</b> 是生成吞吐（短序列）口径</td>
+    <td><code>SENT OK 09:03:42</code></td>
+  </tr>
 </table>
 
 <div class="note">
   <b>四条硬要求逐条自检</b>：① 回信跟踪制度化 —— 台账 <code>发送记录.md</code> 已加 #44 / #45 / #46 跟踪行（到期 2026-11-29），<b>累计回信率 0/46</b>，0 封到期（最早 2026-11-25），按<b>待诊断信号</b>处理、不记为成功；② 署名统一 <code>Yang Liu</code>，落款固定两行（中文 <code>祝好，</code> / 日文 <code>どうぞよろしくお願いいたします。</code> + <code>Yang Liu</code>），<b>其后无任何行</b>，项目名不进落款；③ 抗模板 —— 三封开头句各不相同（「读到您与王睿鑫的…」/「我们用每美元换多少胜率…」/「劉楊と申します…」），问题句式不同，各含只对本文成立的数字（5.09% / 7.06% · $200–400 档 · λ=0.01 与「0.02 以内」例外）；④ 语言按姓名族属判：#44 / #45 为华人学者用中文；#46 姓名族属为日文且 X bio 自写「日本語 DMs Open」⇒ <b>日文全文</b>，<b>未以「机构在美国 / 论文英文 / 邮箱 gatech.edu」判英文</b>（这正是 2026-11-14 谢赛宁事故的反向校准）。<br>
   <b>防重复事故</b>：发送前按台账查重（<code>grep</code> 收件人 / arXiv ID 均为 0 命中），三封依次发送、不同收件人；同论文其余作者不发（SatisFix 一作 Ruixin Wang、LoRA 二作 Kartik Goyal 仅建档）。<br>
   <b>06:00 轮追加自检（第 47 封 · ToolLLM）</b>：① 回信跟踪 —— 台账跟踪表新增 #47（到期 2026-11-29），<b>累计回信率 0/47</b>、0 封到期（最早 2026-11-25）；② 署名 <code>Yang Liu</code>，落款两行 <code>祝好，</code> + <code>Yang Liu</code>，<b>其后无任何行</b>；③ 抗模板 —— 开头句与前三封完全不同（直接以「我们在搭工具调用 agent 的评测与训练数据流程」切入，不写「读到您与某某的…」），问题句式是「同一预算吗 / 有没有具体数字 / 判据是什么」，且含 126,486 与 4096→8192 两个只对本文成立的细节；④ 语言按姓名族属判为<b>中文</b>（RUC + 中文本人页），未以「论文英文」判英文。<br>
-  <b>同轮未发（可核）</b>：Yongliang Shen（ZJU）与 Anima Anandkumar（Caltech）虽 X 身份已核，但<b>邮箱均未找到</b> ⇒ 按「不猜地址」纪律只建档不发信；本论文的 Jim Fan 已在 #104，不重复建档。
+  <b>同轮未发（可核）</b>：Yongliang Shen（ZJU）与 Anima Anandkumar（Caltech）虽 X 身份已核，但<b>邮箱均未找到</b> ⇒ 按「不猜地址」纪律只建档不发信；本论文的 Jim Fan 已在 #104，不重复建档。<br>
+  <b>09:00 轮追加自检（第 48 / 49 封）</b>：① 回信跟踪 —— 台账跟踪表新增 #48 / #49（到期 <b>2026-11-29</b>），<b>累计回信率 0/49</b>、0 封到期（最早 2026-11-25）；② 署名统一 <code>Yang Liu</code>，落款两行（<code>Best regards,</code> / <code>祝好，</code> + <code>Yang Liu</code>），<b>其后无任何行</b>，三个项目名均未出现在落款；③ 抗模板 —— 两封开头句完全不同（英文以「Self-Refine is the reference point for the iterative loop in our harness」切入并直接点出 <code>stop(fb_t, t)</code>；中文以「我们在为 2B 级预训练选骨干」切入），问题句式一为「was it compute-matched / would you rather / did any constraint」，一为「需要重调吗 / 拐点在哪 / 会收敛到多少」，<b>无一句共用</b>；④ 语言按姓名族属判：#48 印度姓名 ⇒ 英文；#49 华人姓名 ⇒ 中文，<b>未以「论文英文 / 邮箱 cs.cmu.edu / 人在美国」判英文</b>；⑤ 发送前按台账查重：<code>grep 2303.17651</code> / <code>2312.00752</code> / <code>amadaan</code> / <code>agu@cs.cmu.edu</code> 均 <b>0 命中</b>，同论文其余作者（Mamba 二作 Tri Dao、Self-Refine 其余 15 位）一律不发。
 </div>
 
-<h2 class="sec">🗣 voice_ready（本期 1 条 · 06:00 轮 0 新增）与投料纪律</h2>
+<h2 class="sec">🗣 voice_ready（本期 1 条 · 06:00 / 09:00 轮 0 新增）与投料纪律</h2>
 
 <details class="voice-ready">
 <summary>🗣 voice_ready · 研究者言论（可发头条）</summary>
@@ -465,7 +533,43 @@
   </tr>
 </table>
 
-<h2 class="sec">附录 A · 检索式与实测证据（2026-11-15 00:0x 首版 · 03:0x 与 06:0x 补录 · 可核验）</h2>
+<h2 class="sec">🎯 09:00 轮 · 对各线的可执行建议（6 条，逐线覆盖）</h2>
+
+<table>
+  <tr><th>线</th><th>建议（可落地）</th><th>依据</th></tr>
+  <tr>
+    <td><b>pretrain</b></td>
+    <td>① 若试 Mamba 骨干，先做<b>等参对照</b>：按论文配方（expansion 2 / MLP 扩张 2 / 层数 ×1.5）把参数量对齐到现有 2B Transformer，同 token 数跑同一评测集，并记 <code>tokens/s</code> 与显存峰值；<b>判据</b>：等参下短任务平均分低 &gt;2 个百分点 ⇒ 不换骨干。②把论文的优化器配方（linear warmup + cosine 到 <code>1e-5</code>、峰值 = GPT-3 的 <b>5×</b>）作为<b>冻结项</b>写进 config，先只动这一个变量做单臂对照。</td>
+    <td>#133 Mamba（selective / E=2 / 1.5× layers / 5× GPT-3 peak lr）</td>
+  </tr>
+  <tr>
+    <td><b>vision</b></td>
+    <td>多页图表 / 长文档问答先做「<b>页级摘要入主上下文、原图存外部按需取</b>」的分层，而不是直接把 32 张图塞进窗口：每页生成一句 caption + 图内关键数字，取用时由模型显式请求第 k 页原图。<b>判据</b>：端到端准确率相对「全图直塞」提升 &lt;3 个百分点 ⇒ 不加这层复杂度。</td>
+    <td>#130 MemGPT（虚拟上下文管理 / 分页）</td>
+  </tr>
+  <tr>
+    <td><b>harness</b></td>
+    <td>自评自改类循环的日志<b>必须分三类失败</b>：<code>feedback_ignored</code> / <code>new_issue_introduced</code> / <code>robust_to_wrong_feedback</code>，不能只记最终分。同时固定 <code>max_iterations</code> 与停止判据（固定 timestep 或显式 stop score，二选一并写进配置）。<b>判据</b>：若 <code>new_issue_introduced</code> 占到失败样本 &gt;15%，<code>max_iterations</code> 压到 1，先只做单轮改。</td>
+    <td>#132 Self-Refine（25% 忽略反馈 / 20% 引入新问题 / 60% 对错误反馈鲁棒）</td>
+  </tr>
+  <tr>
+    <td><b>data</b></td>
+    <td>agent 记忆数据按<b>三轴打分</b>存：<code>recency</code>（时间戳）/ <code>importance</code>（LLM 打分 1–10）/ <code>relevance</code>（与当前查询的 embedding 相似度），并保留「反思条目」与「原始观察」两类分开标注。<b>判据</b>：做一次「去掉反思层」的消融，若任务成功率下降 &lt;2 个百分点，则不生成反思数据（省掉一轮 LLM 调用）。</td>
+    <td>#131 Generative Agents（记忆流 + 三轴检索 + 反思）</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b></td>
+    <td>成本口径里<b>不许用一个吞吐常数</b>：把骨干吞吐按 <code>(batch, seq_len)</code> 分档实测填表（论文的 5× 是短序列生成口径）。<b>判据</b>：若 batch ≥32 时实测倍数收敛到 &lt;2×，成本模型必须改用实测档位值，否则会系统性低估长上下文成本。</td>
+    <td>#133 Mamba（5× 为生成吞吐口径，论文附录按端到端吞吐测）</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b></td>
+    <td>L4/L5 长流程题允许「结论入主上下文、中间产物落外部」的结构，但提交里必须带<b>取用记录</b>（page-in / page-out 日志：第几步取了哪份中间产物、为什么取）。<b>判据</b>：缺取用记录的长流程提交即使结果正确也只计部分分；连续两轮缺失率 &gt;30% ⇒ 改题面，把「记录」写进题面要求。</td>
+    <td>#130 MemGPT（换页由模型自己发起，所以可审计）· #131 Generative Agents（可追溯的检索来源）</td>
+  </tr>
+</table>
+
+<h2 class="sec">附录 A · 检索式与实测证据（2026-11-15 00:0x 首版 · 03:0x / 06:0x / 09:0x 补录 · 可核验）</h2>
 
 <table>
   <tr><th>项</th><th>结果</th></tr>
@@ -488,6 +592,12 @@
   <tr><td><b>06:00 轮 · PDF 校验</b></td><td><code>arxiv.org/pdf/2307.16789v2</code> <b><code>200</code> / <code>application/pdf</code> / 2,048,075 B</b>；<code>2305.16291v2</code> <b><code>200</code> / 18,830,859 B</b>；<code>2303.17580v4</code> <b><code>200</code> / 3,417,598 B</b>；三者 <code>pdftotext</code> 可解析，正文核对到 <b>126,486</b> / <b>16,464</b> / <b>4096→8192</b>、<b>3.3× / 2.3× / 15.3× / 160 iterations</b>、<b><code>&lt;resource&gt;-task_id</code> / hybrid endpoint</b>。</td></tr>
   <tr><td><b>06:00 轮 · 作者页 / X</b></td><td>邮箱页：<code>linyankai.github.io</code> <b><code>200</code> / 22,319 B</b>（<code>mailto:yankailin@ruc.edu.cn</code>）· <code>person.zju.edu.cn/shenyongliang</code> <code>200</code> / 7,913 B（iframe，无邮箱）· <code>zjureal.com/people.html</code> <code>200</code> / 52,160 B（无 <code>mailto:</code>）· <code>cms.caltech.edu/people/anima</code> <code>200</code> / 196,451 B（无 <code>mailto</code>）。X（代理）：<code>AnimaAnandkumar</code> <code>200</code> / 179,246 B · <code>itricktreat</code> <code>200</code> / 165,985 B · <code>yankailin</code> <code>200</code> 但 <code>og:title</code>=<code>X</code>（不登记）· 推文页 <b>2/2 <code>200</code></b>（<code>og:description</code> 均被截断 ⇒ 不采用）。</td></tr>
   <tr><td><b>06:00 轮 · 发信</b></td><td><b>1 封</b> <code>SENT OK 06:03:56</code>（中文，汉字 209 / 非空白 421，落款两行）；发送前 <code>grep</code> 台账 <code>2307.16789</code> / <code>yankailin</code> / <code>ruc.edu.cn</code> 均 <b>0 命中</b>；当日累计 4 封、总累计 <b>47</b>；<code>replies/</code> 仍无回信 ⇒ <b>0 / 47</b>，0 封到期。</td></tr>
+  <tr><td><b>09:00 轮 · A 轨复核（公告批）</b></td><td><code>https://export.arxiv.org/api/query?search_query=cat:cs.CL…</code> <b><code>200</code> + <code>application/atom+xml</code></b>（<b>50,083 B</b> / 20 entry）；窗口内最新 <code>published</code> 上界仍为 <b><code>2026-11-12T18:59:52Z</code></b>（次新 <code>18:58:50Z</code> / <code>18:58:22Z</code>）⇒ <b>公告批连续第 8 个时窗未前进</b>；今日 A 轨已 5/5，本轮 <b>0 新收</b>，不拿超窗 / 低质条目凑数。</td></tr>
+  <tr><td><b>09:00 轮 · B 轨元数据</b></td><td>⚠️ <code>id_list</code> 批量接口两次失败（<code>HTTP 000</code> 与 <code>429</code>，间隔 45 s）⇒ <b>改走 abs 页</b>，<b>4/4 <code>200</code></b>（43,126 / 44,651 / 43,537 / 43,088 B），标题 / 作者 / 提交日期 / 主分类 / <code>comment</code> 逐字解析；作者数 <b>7</b>（MemGPT）/ <b>6</b>（Generative Agents）/ <b>16</b>（Self-Refine）/ <b>2</b>（Mamba）。</td></tr>
+  <tr><td><b>09:00 轮 · 被引（OpenAlex）</b></td><td><b>4/4 <code>200</code></b>（查询日 2026-11-15）：MemGPT <b>1,909</b>（arXiv）· Generative Agents <b>4,325</b>（<code>primary_location</code> = UIST）· Self-Refine <b>2,464</b>（= NeurIPS）· Mamba <b>7,633</b>（arXiv）。</td></tr>
+  <tr><td><b>09:00 轮 · PDF 校验</b></td><td><code>arxiv.org/pdf/2303.17651</code> <b><code>200</code> / 2,014,949 B</b> · <code>2310.08560</code> <b><code>200</code> / 663,708 B</b> · <code>2304.03442</code> <b><code>200</code> / 11,947,867 B</b> · <code>2312.00752</code> <b><code>200</code> / 1,168,615 B</b>；四者文件头 <code>%PDF-</code> + <code>pdftotext</code> 可解析，正文核对到 <b>~20% absolute / 7 tasks</b>、<b><code>stop(fb_t, t)</code> / 70 samples / 25% / 20% / 60%</b>、<b>Vicuna-13B</b>、<b>E=2 / MLP 2 / ×1.5 / 1e-5 / 5× GPT-3 / 5× throughput</b>；另核到 Mamba 作者块自带 <code>agu@cs.cmu.edu</code>、Self-Refine <code>amadaan@cs.cmu.edu</code>。</td></tr>
+  <tr><td><b>09:00 轮 · 作者页 / X（代理自检 <code>x.com</code> = <code>200</code>）</b></td><td>主页：<code>joonsungpark.com</code> <b><code>200</code> / 154,801 B</b>（无 <code>mailto:</code>）+ <code>/cv</code> <b><code>200</code> / 409,713 B / 8 页 PDF</b>（<code>pdftotext</code> 后仍无邮箱）· <code>cs.cmu.edu/~amadaan/</code> <b><code>200</code> / 4,924 B</b>（<code>mailto:amn.madaan@gmail.com</code>）· <code>goombalab.github.io</code> <b><code>200</code> / 16,373 B</b>（无 <code>mailto:</code>）。X：<code>joon_s_pk</code> <code>200</code>（<code>og:title</code> 带作者名 + bio <code>CEO @simile_ai</code>）· <code>_albertgu</code> <code>200</code>（bio <code>assistant prof @mldcmu … @cartesia</code>）· <code>aman_madaan</code> <code>200</code> 但 bio 仅 <code>@xAI</code> ⇒ <b>不登记</b> · <code>tridao_</code> <b><code>404</code></b> ⇒ 不登记。profile 页内嵌 timeline 未取到 <code>full_text</code>（JS 渲染）⇒ 本轮 <code>voice_ready</code> 0 新增。</td></tr>
+  <tr><td><b>09:00 轮 · 发信</b></td><td><b>2 封</b>：<code>SENT OK 09:03:34</code>（英文 171 词，落款 <code>Best regards,</code> / <code>Yang Liu</code>）· <code>SENT OK 09:03:42</code>（中文，汉字 211，落款 <code>祝好，</code> / <code>Yang Liu</code>）；发送前台账查重 <b>0 命中</b>（收件人 / arXiv ID 四项）；当日累计 <b>6</b> 封、总累计 <b>49</b>；<code>replies/</code> 仍无回信 ⇒ <b>0 / 49</b>，0 封到期。</td></tr>
 </table>
 
 <h2 class="sec">📝 00:00 轮 · 变更说明（相对 11-14 收尾）</h2>
@@ -524,8 +634,20 @@
   ⑧ <b>未变</b>：0 follow（需登录态，未假装）、未发日报邮件、未注册账号、未用未授权凭据、未改他线文件、未改任务书。
 </div>
 
+<h2 class="sec">📝 09:00 轮 · 变更说明（A 轨仍 5/5 · B 轨第三十四轮 +4 · 两封信）</h2>
+<div class="ok-box">
+  ① <b>A 轨复核：公告批仍未前进（连续第 8 个时窗）</b>——<code>cat:cs.CL</code> 列表 <b><code>200</code> + atom</b>（50,083 B），<code>published</code> 上界仍是 <code>2026-11-12T18:59:52Z</code>；今日已 5/5 ⇒ <b>0 新收</b>，不凑数、不放松 72h 口径。<br>
+  ② <b>B 轨 129 → 133</b>：MemGPT（1,909）· Generative Agents（4,325）· Self-Refine（2,464）· Mamba（7,633）。四篇过三关（一手元数据 / OpenAlex 被引 / PDF 正文核对）；⚠️ <code>id_list</code> 批量接口本轮 <code>000</code> 与 <code>429</code> 各一次 ⇒ 改走 abs 页逐篇解析，已在附录写明。<br>
+  ③ <b>作者网 131 → 134</b>：Aman Madaan（<code>amadaan@cs.cmu.edu</code>，PDF 与主页两处一致 ⇒ 已发信）· Albert Gu（<code>agu@cs.cmu.edu</code>，PDF v2 首页；<code>@_albertgu</code> 已核 ⇒ 已发信）· Joon Sung Park（<code>@joon_s_pk</code> 已核，主页与 8 页 CV 均无邮箱 ⇒ 只建档不发信）；X 已核验 <b>73 → 76</b>。<br>
+  ④ <b>作者信 47 → 49</b>：#48 英文（171 词，印度姓名族属 ⇒ 英文）· #49 <b>中文</b>（汉字 211，华人姓名族属 ⇒ 中文，<b>未因机构在 CMU / 邮箱 cs.cmu.edu / 论文英文改判英文</b>）；落款严格两行、署名统一 <code>Yang Liu</code>；发送前台账查重 0 命中；两封开头句与问题句式<b>完全不共用</b>。<br>
+  ⑤ <b>回信率 0/49</b>：0 封到期（最早 2026-11-25）；发件通道<b>只发不收</b>（无 IMAP/POP3）这一阻塞仍未解，继续当待诊断信号而不是成功。<br>
+  ⑥ <b>voice_ready 0 新增</b>（本期仍 1 条）：X profile 页内嵌 timeline 未取到 <code>full_text</code>（JS 渲染），且没有可核的作者自宣推文链接 ⇒ 按「必须原文 + 链接」不采用；<code>news_ready</code> 仍 0（本轮无新增论文）。<br>
+  ⑦ <b>新增 6 条可执行建议</b>（逐线覆盖）：pretrain 做 Mamba 等参对照并冻结优化器配方；vision 做页级摘要 + 原图按需取；harness 把自评失败分三类并压迭代上限；data 记忆三轴打分 + 反思消融；zhulong 吞吐按 <code>(batch, seq_len)</code> 分档；designflow 要求 page-in/out 取用记录。<br>
+  ⑧ <b>未变</b>：0 follow（需登录态，未假装）、未发日报邮件、未注册账号、未用未授权凭据、未改他线文件、未改任务书。
+</div>
+
 <footer>
-  研究线 · 论文观察日报 · 2026-11-15（00:00 + 03:00 + 06:00 三个时窗：A 轨 5/5 ＋ B 轨第三十二 / 三十三轮 129 篇 ＋ 作者网 131 人 ＋ 作者信累计 47 封 · 回信率 0/47）｜ 数据源 arXiv API / OpenAlex / X（只读）｜ 生成时间 2026-11-15 06:1x CST<br>
+  研究线 · 论文观察日报 · 2026-11-15（00:00 + 03:00 + 06:00 + 09:00 四个时窗：A 轨 5/5 ＋ B 轨第三十二–三十四轮 133 篇 ＋ 作者网 134 人 ＋ 作者信累计 49 封 · 回信率 0/49）｜ 数据源 arXiv API / OpenAlex / X（只读）｜ 生成时间 2026-11-15 09:1x CST<br>
   ⚠️ 本页为论文解读 / 待读线索，<b>非结论、非官方</b>；数字均为作者自报、本线未复现；「对各线的可执行建议」为基于论文的推断，<b>非指令</b>。
 </footer>
 </div>
