@@ -1,12 +1,13 @@
 {
-  "generated_at": "2026-11-15T14:41:53",
+  "generated_at": "2026-11-15T18:55:08",
   "protocol": "EDA-Eval-PyAether-158, Pass@1, 5-run mean±std, -p 8 -n",
   "new_zhulong_baseline": {
-    "n": 2,
-    "mean": 0.0949,
-    "std": 0.0949,
+    "n": 3,
+    "mean": 0.0633,
+    "std": 0.1096,
     "values": [
       0.1899,
+      0.0,
       0.0
     ],
     "env": "36.15 zhulong口径 (PreToolUse hook, RAG+沙盒可达, run_commands禁用)",
@@ -27,7 +28,7 @@
     "env": ".17 非zhulong (无RAG/无沙盒, run_commands启用)",
     "source": "/tmp/posttrain_5run_eval/step105"
   },
-  "delta_pp": 6.45,
+  "delta_pp": 3.29,
   "paired_test_passany_mcnemar": {
     "n11_both_pass": 0,
     "n00_both_fail": 106,
