@@ -3157,3 +3157,41 @@ SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_suba
 > **优先级**：本令是纯文档，**不占 GPU/沙盒，应在下一次唤醒第一件事完成**；下面 12:5x 清盘令**仍然有效**，做完本令后继续清盘（两者不冲突）。
 
 ```
+
+---
+
+### 📦 归档块 · 2026-11-15 12:5x — 运维令「清盘」（✅ 已闭合 · wake#975 第三轮双达标 · commit 见 `zhulong disk:`）
+
+> 归档时间：2026-11-15（wake#976）。归档原因：清盘已完成。三轮清盘（wake#967 ~6G / wake#968 4.93G / wake#975 第三轮）后双目标达标。wake#975 根因 = 前两轮没往 `ZhuLong_DAC2027/` 论文树里看，漏掉 `trace_ablation_think_lang/` 11G 已归档 trace（think×lang 消融·11-07 交付 30/30·结果已入论文）→ 压缩为 `trace_ablation_think_lang.tar.zst` 1004M（zstd·~10.8:1·`tar -t` VERIFY_OK·82695 条目/30 run 核验）→ 删原件净释放 ~10G。**验收实测（wake#976 复核）**：`df -h` `/home` 5.8G✅（≥5G）、`/nasdata` 33G✅（≥25G）；baseline eval PID1910477/1910486 存活✅；loop PID243810 + https_proxy✅；HEAD==origin✅。报告 `reports/report_zhulong_disk_cleanup_zh.html`（19:12 更新·三轮合并首屏 before/after·中文·单文件·0 外链 0 script）+ TSV `zhulong_disk_cleanup_20261115_1902.tsv`（含三轮 `*_1330`/`*_1400`/`*_1902`）。本块原文搬迁，未改写任何指令。
+
+```markdown
+> 🔴 **运维令 · 2026-11-15 12:5x（清盘 · 最高优先 · 本轮第一件事）· 未完成**
+>
+> **用户原话**：「安排 zhulong 清理硬盘啊」
+>
+> **现状（你 wake#966 自报）**：`/home` 仅 **267M（100% 满）**、`/nasdata` **9.8G**。已卡住 loop/git 余量，也让 A3–A6 的（a）项磁盘前置无法满足。11-14 23:4x 已清过一次（done_all），本次属**复发**。
+>
+> **目标**：`/home` 可用 **≥5G**、`/nasdata` 可用 **≥25G**（回到 11-14 清盘后的口径）。达不到就把能清的全清掉，并在报告首屏写清还差多少。
+>
+> **硬护栏（违反则本轮作废，宁可少清）**：
+> 1. **禁删在跑评测的产物**：posttrain 的 baseline batch `2026_1115_110506`（`run_cline_script -p 8`，PID3506378/3506387）的 jobs/工作目录、`/tmp` 下其 code/log/data-dir、任何 cline session 目录。
+> 2. **禁 kill 任何进程**（含他线 loop）；禁改他人文件；遇到 `Permission denied` 记下来，不 sudo 硬来。
+> 3. **禁删**：git 仓库、`eda_fastmcp` / `EDA-Eval-PyAether` / `EDA-Flow-Bench` 源码与题面、模型权重/serve、`~/.ssh`、token、正在用的 conda/venv、`/nasdata` 上 designflow 的 ledger/trace。
+> 4. **先列后删**：每次删除前 `du -sh <path>` + `ls -lt` 留证；只对**明确路径**执行 `rm -rf`，**禁止** `rm -rf /home/*`、`rm -rf ~/*` 这类通配；删除清单落 `run/zhulong_disk_cleanup_<YYYYMMDD_HHMM>.tsv`（路径 / 字节 / 理由），随 commit 入库。
+>
+> **执行顺序（先安全后激进）**：
+> - **a) 缓存**：`~/.cache/pip`、`~/.npm/_cacache`、`~/.cache/uv`、`~/.cache/huggingface`（**仅当无下载在跑**）、`__pycache__`、`*.pyc`
+> - **b) 日志/临时**：自己产生的 `*.log`（>3 天）、旧 screen/nohup 日志、core dump、`/tmp` 下自己建的临时目录（**避开** posttrain 正在写的）
+> - **c) 备份/中间物**：`*.bak*`、`*.old`、`*.tmp`、`*~`、失败的 run 目录（**无 `result.json` 且 mtime>3 天**）
+> - **d) 旧产物**：只删**本线**已被取代/已归档的；**最新一版与正在用的绝不删**；不确定的先列清单不删
+> - **e) `/nasdata`**：旧 scan 快照（`_hist` 留最新一版）、旧 jobs-dir、有 `.txt` 可复原的重复 `.b64`（先删重复编码件，保留文本）
+>
+> **验收（缺一不可）**：
+> - `df -h /home /nasdata` **before/after 对比**；达标或写清差额
+> - `ps -ef | grep run_cline_script` 仍能看到 baseline eval 存活（或已正常结束）
+> - `git status -sb` 正常、loop 进程未挂
+> - 报告 `reports/report_zhulong_disk_cleanup_zh.html`（中文、单文件、0 外链 / 0 script）：首屏两行给 before/after，随后「删除清单 top20（路径/大小/理由）」「未删项及原因」「若仍不足，下一步需要谁做什么」
+> - `MEMORY_ZHULONG.md` 顶部一行结论（before/after + 是否达标）+ `daily-memories/2026-11-15.md` 流水 + commit 前缀 `zhulong disk:`
+>
+> **自主性**：清哪些由你判断，只要不碰上面四类禁区。若判断某目录可能是他线正在写的（mtime 很新），**先列不删**，在报告里点名让运维确认。
+```
