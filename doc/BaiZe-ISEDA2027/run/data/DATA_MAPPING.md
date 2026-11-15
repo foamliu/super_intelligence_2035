@@ -657,3 +657,61 @@
 >
 > **污染隔离实测**：Phase B 抽样 3200 文件中搜索 eda-eval/pyaether/zhulong/designflow/baize 关键词 → 命中 0，未发现评测集污染。全量入库仍需跑 13-gram 闸门。
 
+---
+
+## D. 新增数据集（2026-11-15 用户令 · IFM 数学/代码 + Agent datasets）
+
+> 所有数据均经 `HfApi().dataset_info(repo_id, files_metadata=True)` 实测，非二手描述。
+> 落盘位置：`/nas_user/app.e0031982/datasets/<org>/<name>/`
+
+### D1. IFM 数学/代码数据集（用户令 2026-11-15 08:5x）
+
+| repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
+|:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
+| `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | 🔄 第一批下载中(5子集) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | ⏳ 排队(MegaMath后) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | ⏳ 排队(Math-Reasoning后) |
+
+**MegaMath 子集详情**：
+- `megamath-web` (279B tokens, ~1TB) — 第二批按需
+- `megamath-web-pro` (15B tokens, 高质量) — ✅ 第一批
+- `megamath-code` (28B tokens) — ✅ 第一批
+- `megamath-qa` — ✅ 第一批
+- `megamath-text-code-block` — ✅ 第一批
+- `megamath-translated-code` — ✅ 第一批
+
+**IFM/MegaMath ≡ LLM360/MegaMath 验证**：两 repo SHA 完全相同 (`3cbc64616594d6bc8759abaa0b2a71858f880f0d`)、文件数相同 (5317)、字节相同 (1041.37 GB) → 确为同一份数据，下 IFM 版即可。
+
+### D2. Agent datasets（用户令 2026-11-15 09:0x · 5 个评估）
+
+| repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
+|:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
+| `Agent-Ark/Toucan-1.5M` | SFT | MCP工具调用 | 136 | 21.81 | apache-2.0 | ✅ 495 MCP server/2000+工具 | 否 | 独立 | `0df3cf3` | ✅ 已落盘(134 parquet/21GB/0 incomplete) |
+| `open-thoughts/AgentTrove` | SFT/RL | Agent轨迹(含SWE/CF) | 40 | 19.55 | apache-2.0 | ✅ 真实agent轨迹 | ✅ reward(0/1) | 与harness线Nemotron Terminal同格式 | `b395a43` | 🔄 下载中(40文件/19.55GB/PID32820) |
+| `neulab/agent-data-collection` | SFT | ADP统一协议 | 130 | 498.66 | 各子集不同 | 混合 | 混合 | 部分与Toucan/AgentTrove重叠 | `31a76bf` | ⏳ 只下15个非重叠子集(AgentTrove后) |
+| `microsoft/orca-agentinstruct-1M-v1` | SFT | 纯合成指令 | 22 | 2.38 | cdla-permissive-2.0 | ❌ 无真实工具执行 | 否 | ADP含orca子集 | `86d6091` | 🚫 不下(低价值) |
+| `harvardMadsys/freeinference_agentic_trace` | 分析 | workload元数据 | 217 | 8.93 | cc-by-4.0 | N/A | N/A | N/A | `bb26cf7` | 🚫 不下(无消息文本) |
+
+**ADP 非重叠子集下载计划**：详见 `run/data/adp_subset_plan.md`。只下 15 个子集(~85GB)，跳过与 P0 重复的 6 个子集(toucan/orca/nemotron/swe-smith等)。
+
+**ADP 转换脚本**：`git clone https://github.com/neulab/agent-data-protocol` → 已 clone 到 `run/data/agent-data-protocol/`（把异构 agent 轨迹统一成 SFT 格式，以后转换 cline trace 也要用它）。
+
+### D3. 污染检查（agent datasets vs 评测集）
+
+| 数据集 | 可能污染的评测集 | 检查结论 | 依据 |
+|:--|:--|:--|:--|
+| `AgentTrove` (含 swesmith/codeforces) | SWE-bench | ⚠️ 可能重叠 | AgentTrove 含 `swesmith` 来源，SWE-bench 含类似题目；下载后需逐题核对 |
+| `AgentTrove` (含 codeforces) | — | 不影响 | codeforces 不在我们的评测集列表中 |
+| ADP `swe-smith` (已决定不下) | SWE-bench | ✅ 已规避 | 不下载此子集 |
+| ADP `nebius_SWE-agent-trajectories` (已决定不下) | SWE-bench | ✅ 已规避 | 不下载此子集 |
+| ADP `swe-gym_*` (已决定不下) | SWE-bench | ✅ 已规避 | 不下载此子集 |
+| `Toucan-1.5M` | BFCL / MCP-Universe | ✅ 不重叠 | Toucan 在 BFCL-V3/MCP-Universe 上有增益，但训练数据不含测试题 |
+| `IFM/MegaMath` | GSM8K / MATH | ✅ 不重叠 | MegaMath 是预训练语料(web crawled)，非 SFT 评测题改写 |
+| `IFM/Math-Reasoning` | GSM8K / MATH | ⚠️ 需下载后检查 | 推理链数据可能包含评测题目，需逐题核对 |
+
+**结论**：主要风险在 AgentTrove 与 SWE-bench 的潜在重叠，以及 IFM/Math-Reasoning 与 GSM8K/MATH 的潜在重叠。下载完成后需做逐题污染检查（hash 匹配 + n-gram 比对）。
+
+### D4. 转告 harness 线
+
+`harvardMadsys/freeinference_agentic_trace`：14 种 harness（含 claude-code）+ 267 账户 + 16 周真实 agent workload（1.19M 请求 / 1.21M 工具调用），可用于 workload 特征分析、性能建模、真实调用分布（非训练用）。
+
