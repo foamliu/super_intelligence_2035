@@ -21,8 +21,22 @@
 set -uo pipefail
 
 RUN_DIR="/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run"
-NUM_RUNS="${1:-5}"
-if [ "$1" = "--num-runs" ]; then NUM_RUNS="${2:-5}"; fi
+NUM_RUNS=5
+DRY_RUN=0
+# ---- 参数解析（robust under set -u：支持 --num-runs N / --dry-run / 无参默认 5）----
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --num-runs) NUM_RUNS="$2"; shift 2;;
+    --num-runs=*) NUM_RUNS="${1#--num-runs=}"; shift;;
+    --dry-run) DRY_RUN=1; shift;;
+    -h|--help)
+      echo "用法: bash $0 [--num-runs 5] [--dry-run]"; exit 0;;
+    *) echo "未知参数: $1（用法: --num-runs N / --dry-run）" >&2; exit 2;;
+  esac
+done
+if ! [ "$NUM_RUNS" -gt 0 ] 2>/dev/null; then
+  echo "FATAL: --num-runs 需正整数，得到 '$NUM_RUNS'" >&2; exit 2
+fi
 
 cd "$RUN_DIR" || { echo "FATAL: cannot cd $RUN_DIR"; exit 2; }
 
@@ -48,7 +62,9 @@ if [ "$present" -lt "$NUM_RUNS" ]; then
 fi
 
 # ---- ① 5-run 基线分析（mean±std + 配对检验 vs 旧 .17 step105）----
-if [ -f "$BASE_PY" ]; then
+if [ "$DRY_RUN" = "1" ]; then
+  log "[dry-run] ① 将运行: python3 $BASE_PY --run-dir $RUN_DIR --num-runs $NUM_RUNS --out $BASE_OUT --old-dir $OLD_DIR （跳过执行，不写产物）"
+elif [ -f "$BASE_PY" ]; then
   log "运行 ① $BASE_PY --num-runs $NUM_RUNS --out $BASE_OUT --old-dir $OLD_DIR"
   python3 "$BASE_PY" --run-dir "$RUN_DIR" --num-runs "$NUM_RUNS" --out "$BASE_OUT" --old-dir "$OLD_DIR" \
     > /tmp/bpt_zhulong_finalize_base.log 2>&1 || log "⚠ $BASE_PY 退出非0（见 /tmp/bpt_zhulong_finalize_base.log）"
@@ -61,7 +77,9 @@ else
 fi
 
 # ---- ② 5-run 归因聚合（Q1-Q4，run_commands 排除）----
-if [ -f "$ATTR_PY" ]; then
+if [ "$DRY_RUN" = "1" ]; then
+  log "[dry-run] ② 将运行: python3 $ATTR_PY --run-dir $RUN_DIR --num-runs $NUM_RUNS --out $ATTR_OUT （跳过执行，不写产物）"
+elif [ -f "$ATTR_PY" ]; then
   log "运行 ② $ATTR_PY --num-runs $NUM_RUNS --out $ATTR_OUT"
   python3 "$ATTR_PY" --run-dir "$RUN_DIR" --num-runs "$NUM_RUNS" --out "$ATTR_OUT" \
     > /tmp/bpt_zhulong_finalize_attr.log 2>&1 || log "⚠ $ATTR_PY 退出非0（见 /tmp/bpt_zhulong_finalize_attr.log）"
@@ -74,6 +92,9 @@ else
 fi
 
 # ---- 收口摘要（新旧基线同表）----
+if [ "$DRY_RUN" = "1" ]; then
+  log "[dry-run] ③ 跳过新旧基线同表摘要生成（dry-run 不读不写产物）"
+else
 log "===== 新旧基线同表并列 ====="
 python3 - "$BASE_OUT" "$ATTR_OUT" "$OLD_DIR" "$NUM_RUNS" <<'PYEOF' 2>/dev/null || log "摘要生成失败"
 import json,sys,statistics,glob,os
@@ -101,6 +122,7 @@ print(f"| 新=36.15 zhulong口徑(PreToolUse hook,RAG+沙盒,run_commands禁用)
 if old_prs and new_prs:
     print(f"| Δ(new−old) | | {round((statistics.fmean(new_prs)-statistics.fmean(old_prs))*100,2)}pp | |")
 PYEOF
+fi
 
 log "===== zhulong 口径 5-run 收口 END ====="
 log "交付物：$RUN_DIR/$BASE_OUT  +  $RUN_DIR/$ATTR_OUT"
