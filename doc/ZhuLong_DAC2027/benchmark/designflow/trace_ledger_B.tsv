@@ -868,7 +868,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1791787377751_frxg5	hswang	hfeg0plg64	54	spice_sim	parked		2026-11-10 23:23	consultation analyze-aging-script
 1791513972290_bih9j	thomasz	hfeg0pfn060	99	spice_sim	parked		2026-11-10 23:23	debug IR-result-missing-vcc-vblh
 1793875415367_oue4a	eva1wu	hfeg0plg52	49	spice_sim	parked		2026-11-10 23:23	consultation what-is-cm generic
-1794212917714_ibwba	zhililu	hfeg0pkn002	154	spice_sim	parked		2026-11-10 23:23	consultation virtuoso-netlist-sim debug-sfe
+1794212917714_ibwba	zhililu	hfeg0pkn002	154	spice_sim	case	EDA-Eval-DesignFlow-VirtuosoSfeLangDiag-001	2026-11-15 17:23	consultation virtuoso-netlist-sim debug-sfe
 1793879303886_7l4sx	e0017906	hfeg0pkn002	122	spice_sim	parked		2026-11-10 23:23	consultation circuit-hierarchy exploration
 1792045004436_fdrqq	zxtu	hfeg0pkn001	70	spice_sim	parked		2026-11-10 23:23	consultation perl-python pipe finesim-automation
 1792572197494_0rj7b	e0022089	hfeg0pkn002	24	spice_sim	parked		2026-11-10 23:23	consultation explain-model-purpose
