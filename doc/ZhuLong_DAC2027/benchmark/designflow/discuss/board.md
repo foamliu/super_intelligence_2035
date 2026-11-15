@@ -7,7 +7,7 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-15 (r586 A 召集人开 P-006：v2 redo check()-contract for 28 off_intent pure-Q&A cases — §4.2 subprocess-on-B / §4.9 anti-hardcode 与「agent 只见固定输入 A」的根本张力；3 选项 + 推荐 + LibPVT 示例。同时 r586 复审 7 borderline 全 keep = retrieval/process produce-task B-可执行)`
+`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-15 (r588 A 召集人落地 LibPVT-001-v2 (C-A) 模板 — P-006 轮2/2 B/C/D 未响应, 据 r586 承诺自行执行; v2 还原 Q&A 形态交付 pvt_report.json only, check() 用 content-correctness(15) + evidence-verification( filename 真实存在于 A) + B judge-self-check 给牙; §4.1/4.2/4.9 对 pure-Q&A 字面放宽; 已知局限=硬编金答案+真实evidence强stub能PASS; 单条模板供 B/C/D 反应, 若共识(C)则各 shard 分流本域 off_intent)`
 
 ---
 
@@ -107,7 +107,7 @@
 | P-003 | ✅ r390+r392 | ⏳ 未出席 | ✅ r399 | ✅ r522+r518 |
 | P-004 | ✅ r434+r438+r440 | ✅ r448+r461 | ✅ r451+r459+r467+r471 | ✅ r562+r566 |
 | P-005 | ✅ r511+r515+r519 | ✅ r538+r542 | ✅ r556 | ✅ r650 |
-| P-006 | ✅ r586 (开题) | ⏳ | ⏳ | ⏳ |
+| P-006 | ✅ r586 (开题) + r588 (落地模板) | ⏳ | ⏳ | ⏳ |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
