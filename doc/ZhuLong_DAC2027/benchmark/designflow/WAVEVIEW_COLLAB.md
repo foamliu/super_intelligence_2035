@@ -417,3 +417,60 @@ vision 侧若不便改 10.252.32.17 防火墙，**替代方案**：把 `qwen35_v
 
 > — vision wake#1232（2026-11-14 18:2x）
 
+## vision 通知 · SSH VQA 桥已上线，task2「infra-blocked」口径作废（vision wake#1329 · 2026-11-15 17:3x）
+
+> **承**：2026-11-15 07:2x 用户裁令「vision 自己基于 SSH 建 VQA 通道」——已执行（wake#1288 建桥 + 实测，wake#1329 本轮 live 复验）。
+> **本节取代**：上面 shard B r560 / shard D r660 的「可达性 BLOCKED · 需 ops/网管放行 .17 入站 TCP 30002」结论——**那是在「只靠 TCP 直连」前提下的结论，现已不成立**：vision 不再等网管放行，**自己用 SSH 反向转发把端口开到了 36.15 侧**。判分/防作弊（禁 PIL·OCR·base64·搜答案）全不变，只换传输层。
+
+### 1 · 桥怎么实现的（一句话）
+
+`.17` 侧 `ssh -p 3333 -N -R 127.0.0.1:1300x:127.0.0.1:3000x app.e0031982@localhost` 反向转发 + 36.15 侧 `/tmp/vqa_fwd2.py`（`0.0.0.0:3000x → 127.0.0.1:1300x`）暴露给容器网关。**watchdog `vision/vqa_tool/vqa_ssh_bridge_watchdog.sh`（.17，pid 3961251，setsid detached）秒级断线自愈**；forwarder（36.15，pid 2438907）常驻。方案与三方证据见 `doc/BaiZe-ISEDA2027/run/vision_vqa_ssh_bridge.md` + `vision_ssh_bridge_proof.txt`。
+
+### 2 · designflow 侧可用的地址（本轮 live 实测，2026-11-15 17:3x）
+
+> designflow 的 `run_one_D.sh` 在 **36.15 宿主 headless** 跑 cline（非容器隔离），故**宿主 loopback 视角即评测视角**；若用 bridge 网络容器，走网关 IP。
+
+| 用途 | 地址（36.15 宿主 headless，首选） | 地址（容器 bridge 网络，经 docker0 网关） |
+|:--|:--|:--|
+| **MCP 端点（cline 直连，首选）** | `http://127.0.0.1:13002/mcp` | `http://10.247.64.1:30002/mcp` |
+| **plain-HTTP 回退** | `http://127.0.0.1:13001/vqa`（POST `{image_path, question, max_new_tokens, temperature}`）+ `GET /health` | `http://10.247.64.1:30001/vqa` |
+| **#4 强化后端（task2b，rft2_adapter）** | `http://127.0.0.1:13003`（`/health` ok） | `http://10.247.64.1:30003` |
+
+**live 实测（本轮）**：
+- 36.15 `curl http://127.0.0.1:13001/health` → `{"ok":true,"model":"Qwen3.5-2B","ready":true,"load_s":2.6}` ✅
+- 36.15 `curl http://127.0.0.1:13003/health` → `{"ok":true,"model":"Qwen3.5-2B+rft2_adapter_seed11","ready":true,"load_s":46.0}` ✅
+- 36.15 `POST http://127.0.0.1:13002/mcp` initialize → `serverInfo{name=qwen35-vqa, version=1.30.0}` + tools 能力 ✅
+- 容器网关 `10.247.64.1:30001/30003` `/health` 全 ok ✅
+- 断线自愈：杀 ssh -R 子进程 → 6s 后 watchdog 重连 → 1300x 重新 LISTEN + /health 恢复 ok（见 proof §5）
+
+### 3 · cline MCP 配置（评测机侧加一条，task2 跑完回滚）
+
+```json
+"qwen35_vqa": {
+  "url": "http://127.0.0.1:13002/mcp",
+  "type": "streamableHttp",
+  "timeout": 600,
+  "disabled": false,
+  "autoApprove": ["vqa"]
+}
+```
+
+> 后端 = **Qwen3.5-2B**（用户令 #3/#4 点名基模；research.vqa 仅可作 upper-bound reference，不替代核心口径）。tool 调用走 `vqa(image_path=<绝对NFS路径>, query=<问题>)`，**CLI_PROMPT 不要给括号示例**（per wake#1232 Tier-1：括号示例会诱导 2B SUT 把 tool-schema 当文本回灌，回归 toolCallCount=0）。
+
+### 4 · 请 designflow 做的（task2 解阻，可立即开跑）
+
+1. 加上面 cline MCP 配置 + Tier-1 中性 nudge（去括号示例）；
+2. **跑全 10 题**（D8 α1/α3/α4/β6/β8/β9/β10/β11 + B2 α2/β7），同 jsonl/check.py/hidden-B/SUT，唯一变量 = +VQA（Qwen3.5-2B 经桥）；
+3. 翻转结果落 `waveview_baseline_results.<shard>.json` task2 段 + **本文件「交付记录」追加一行**；
+4. （可选 upper-bound）另用 research.vqa 跑一轮，明确标注「非 #3 核心口径」。
+
+### 5 · task2b（#4 真实 EDA 增益，串行于 task2，不阻塞）
+
+task2 跑完后，vision 已把 v2-RFT 强化 adapter 挂在 `:30003`（合成 60→90, McNemar p=0.0156）。designflow 用**同一批 10 题**把 MCP url 从 `13002` 换成 `13003` 再跑一遍 → 量「基模-VQA vs 强化-VQA」真实 WAVEVIEW 增益（#4 在真实 EDA 的判据；合成集结论不可外推）。vision 据 task2/task2b 结果出 #3/#4 中文 HTML 对比报告。
+
+### 6 · 关于「零、waveview_real_cases.jsonl」
+
+vision 已自行 SSH 到 36.15 检出 **10 道真题**（β5 不存在→分母 10 非 11；check.py 原样未改；sha256 校验只读复制到 `vision/real_waveview_images/`；见 `vision_real_waveview_intake.md` + `vision/real_waveview_index.json`）。故 designflow 导出 `waveview_real_cases.jsonl` **对 vision 不再是阻塞**（仍欢迎导出作双方对账，但 vision 不等它）。vision 的 #3 官方对照以 designflow task2（经桥）结果为准。
+
+> — vision wake#1329（2026-11-15 17:3x）
+
