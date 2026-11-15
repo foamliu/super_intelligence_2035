@@ -1,12 +1,12 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
-> 🔴 **用户令 2026-11-13a**：stack-v3-train 全量下载→✅StepA/B DONE(8192parquet/3.3TB); StepC分词🔄95.1%(7778/8192 .json/1.7TB/8workers/ETA~1.2h); 纪律nice19/ionice3/不挤S1 ✅
+> 🔴 **用户令 2026-11-13a**：stack-v3-train 全量下载→✅StepA/B DONE(8192parquet/3.3TB); StepC分词🔄96.3%(7890/8192 .json/1.7TB/8workers/ETA~54min); 纪律nice19/ionice3/不挤S1 ✅
 
-> 🔴 **用户令 2026-11-13b**：分词数据搬到/nas_user→✅StepA DONE; 分词新shard→🔄StepC 95.1%; ETA~1.2h完成→StepD校验+更新DATA_MAPPING+commit
+> 🔴 **用户令 2026-11-13b**：分词数据搬到/nas_user→✅StepA DONE; 分词新shard→🔄StepC 96.3%; ETA~54min完成→StepD校验+更新DATA_MAPPING+commit
 
-> 🔴 **用户令 2026-11-15 08:5x（IFM 3个数学/代码数据集+调研）**：✅IFM/MegaMath第一批DONE(729files/216GB/0inc); 🔄IFM/Math-Reasoning下载中(192datafiles/357GB/PID1829139/elapsed~6.5h/2228total→8.6%); 🔄IFM/Code-Reasoning下载RESTARTED(旧PID2531833已死→清75stale.lock→重启PID916265/nice19/max-workers2/24datafiles/42GB/1637total); ✅MegaMath≡LLM360/MegaMath(sha 3cbc646 一致); ✅调研报告report_data_math_code_datasets_survey_zh.html(26KB)落reports/
+> 🔴 **用户令 2026-11-15 08:5x（IFM 3个数学/代码数据集+调研）**：✅IFM/MegaMath第一批DONE(729files/216GB/0inc); 🔄IFM/Math-Reasoning下载中(217/2228files/402GB/PID1829139/elapsed~7.2h/rate~120s/file/ETA~67h); 🔄IFM/Code-Reasoning下载中(28/1637files/50GB/PID916265/nice19/max-workers2/elapsed~45min/rate~85s/file/ETA~38h); ✅MegaMath≡LLM360/MegaMath(sha 3cbc646 一致); ✅调研报告report_data_math_code_datasets_survey_zh.html(26KB)落reports/
 
 > ✅ **用户令 2026-11-15 09:0x（5个agent datasets评估+下载）→全部验收项已满足**：✅Toucan-1.5M(409files/21GB/0inc); ✅AgentTrove(121files/19GB/0inc); ✅neulab ADP 15子集(277files/79GB/0inc); ✅adp_subset_plan.md; ✅agent-data-protocol clone; ✅污染检查CONTAMINATION_CHECK_AGENT_IFM.md; ✅DATA_MAPPING.md D1-D4; 🚫orca P2/🚫freeinference P3; 📝转告harness线freeinference workload(已记MEMORY+DATA_MAPPING)
 
@@ -42,12 +42,12 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        用户令2026-11-15 IFM数学/代码下载+5agent评估+调研 → StepC tokenizing 93.6% → P0 Toucan+AgentTrove DONE ✅ → MegaMath batch1 DONE ✅ → neulab 15子集 DONE ✅ → IFM Math-Reasoning downloading 7.4% → Code-Reasoning downloading v3 → WAITING=0
-已完成:       ✅分词全DONE(4600shard);✅EDA分析DONE;✅2TB下载DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅StepA/B DONE;✅StepC SKIP phase(4600);✅5agent datasets HfApi探测全DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md(15/22下~85GB);✅agent-data-protocol clone DONE(@run/data/);✅DATA_MAPPING.md D1-D4节写入;✅调研报告report_data_math_code_datasets_survey_zh.html(26KB)生成;✅IFM/MegaMath≡LLM360/MegaMath SHA级验证(同一份);✅污染检查结论写入DATA_MAPPING D3;✅Toucan下载DONE(409文件/21GB/4子集);✅AgentTrove下载DONE(38/38parquet/19GB/0inc);✅neulab 15非重叠子集DONE(79GB/0 inc);✅MegaMath batch1 DONE(5子集/1093files/216GB/0 inc);✅P3 freeinference转告harness线;✅清理364 MegaMath+62 Math-Reasoning stale .lock文件;✅Code-Reasoning旧进程kill+hf_transfer不兼容proxy诊断+重启v3
-当前动作:     ①StepC RUNNING:PID1677655(8workers,nice19/ionice3,elapsed~22h),7666/8192(93.6%),ETA~5437s≈1.5h,0ERR,du=1.7T;②Math-Reasoning下载RUNNING(PID1829139,309GB/164parquet/2228total=7.4%,3incomplete,elapsed~5.7h);③Code-Reasoning下载RUNNING v3(PID2531833,nice19/max-workers2,17parquet/32GB/1637total,~5min/file→ETA~数天);④磁盘/nas_user 113T总/52T可用(55%used)→✅
-下一步:       ①等StepC分词完成(ETA~1.5h)→StepD校验du+find.json=8192+failed_shards.txt空→更新DATA_MAPPING→commit;②等IFM Math/Code-Reasoning完成(ETA数天,体量大)→更新DATA_MAPPING;③MegaMath batch2(megamath-web~1TB)按需决定;④所有下载完成后做逐题污染检查
-阻塞:         无(WAITING=0短睡巡检,所有下载nice19/ionice3/max-workers2不挤S1;stale locks已清理;Code-Reasoning速度待观察)
-ERROR_COUNT:  0(当前run 0ERR;8 BrokenPipeError lines from previous crash already fixed;1 zero-byte .bin=shard7673 actively writing)
+PHASE:        用户令2026-11-15 IFM数学/代码下载+5agent评估+调研 → StepC tokenizing 96.3% → agent datasets ALL DONE ✅ → MegaMath batch1 DONE ✅ → IFM Math/Code-Reasoning downloading → WAITING=1
+已完成:       ✅分词全DONE(4600shard);✅EDA分析DONE;✅2TB下载DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅StepA/B DONE;✅StepC SKIP phase(4600);✅5agent datasets HfApi探测全DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md(15/22下~85GB);✅agent-data-protocol clone DONE(@run/data/);✅DATA_MAPPING.md D1-D4节写入;✅调研报告report_data_math_code_datasets_survey_zh.html(26KB)生成;✅IFM/MegaMath≡LLM360/MegaMath SHA级验证(同一份);✅污染检查结论写入DATA_MAPPING D3;✅Toucan下载DONE(409文件/21GB/4子集);✅AgentTrove下载DONE(38/38parquet/19GB/0inc);✅neulab 15非重叠子集DONE(79GB/0 inc);✅MegaMath batch1 DONE(5子集/1093files/216GB/0 inc);✅P3 freeinference转告harness线;✅清理364 MegaMath+62 Math-Reasoning stale .lock文件;✅Code-Reasoning旧进程kill+重启v3(PID916265,活跃下载中)
+当前动作:     ①StepC RUNNING:PID1677655(8workers,nice19/ionice3,elapsed~84820s≈23.6h),7890/8192(96.3%),ETA~3247s≈54min,0ERR,du=1.7T,.json=7891/.bin=7897/0 zero-byte;②Math-Reasoning下载RUNNING(PID1829139,217/2228files/402GB/3incomplete,elapsed~7.2h,rate~120s/file,ETA~67h);③Code-Reasoning下载RUNNING(PID916265,nice19/max-workers2,28/1637files/50GB/2incomplete,elapsed~45min,rate~85s/file,ETA~38h,stdout→/tmp/ifm_code_reasoning_download.log);④磁盘/nas_user 113T总/52T可用(55%used)→✅
+下一步:       ①等StepC分词完成(ETA~54min,预计~19:44CST)→StepD校验du+find.json=8192+failed_shards.txt空→更新DATA_MAPPING→commit;②等IFM Math/Code-Reasoning完成(ETA数天,体量大,max-workers2不挤S1);③MegaMath batch2(megamath-web~1TB)按需决定;④所有下载完成后做逐题污染检查
+阻塞:         无(WAITING=1长睡30min,StepC ETA~54min;所有下载nice19/ionice3/max-workers2不挤S1;Code-Reasoning proxy error是旧日志,当前进程活跃下载中)
+ERROR_COUNT:  0(当前run 0ERR;Code-Reasoning v3.log中的ProxyError来自前一次已死进程,当前PID916265活跃,fd有.incomplete文件正在写)
 未完成指令:   有(StepC分词RUNNING+IFM Math/Code-Reasoning下载+StepD校验待完成)→WAITING=0
 ```
 
@@ -61,6 +61,7 @@ ERROR_COUNT:  0(当前run 0ERR;8 BrokenPipeError lines from previous crash alrea
 > 📦 唤醒1522 原文已归档 → daily-memories-data/2026-11-15.md（HfApi全8repo复核+重复进程清理+stale.lock清理+freeinference转告harness,详见日文件）
 
 > [11-15 18:4x] 唤醒1526(运维介入巡检+修复Code-Reasoning)：①StepC RUNNING:PID1677655(8workers,nice19/ionice3),7778/8192(95.1%),.json=7778/du=1.7T,ETA~4379s≈1.2h,0ERR,no failed_shards.txt;②✅Agent datasets 09:0x任务全部验收项满足(Toucan/AgentTrove/neulab ADP/adp_subset_plan/contamination check/DATA_MAPPING全部DONE);③🔄Math-Reasoning下载RUNNING(PID1829139,192datafiles/357GB/2228total=8.6%,elapsed~6.5h);④🔴Code-Reasoning下载已死(旧PID2531833不存在)→清理75个stale.lock(Math49+Code26)→重启新PID916265(nice19/ionice3/max-workers2/24datafiles/42GB/1637total,正在下code-no-thinking-hard子集);⑤磁盘/nas_user 113T总/52T可用(55%)→✅;⑥pretrain训练在.12跑→nice19/ionice3正确;⑦下一步:等StepC完成(ETA~1.2h)→StepD校验du+find.json=8192+failed_shards.txt空→更新DATA_MAPPING→commit;等IFM下载完成→更新DATA_MAPPING
+> [11-15 18:5x] 唤醒1527(巡检)：①StepC RUNNING:PID1677655(ppid=1,8workers,nice19/ionice3,elapsed~84820s≈23.6h),7890/8192(96.3%);SKIP phase COMPLETE(4600 shards0-4599);new shard phase RUNNING(3290 new OK shards4600+,rate~24.6s/shard wall);0ERR;0 zero-byte .bin;no failed_shards.txt;.json=7891/.bin=7897/.idx=7891/du=1.7T;MANIFEST.json exists;log末行=[7890/8192]shard=7891 OK tokens=39,780,173 elapsed=84820s ETA=3247s;②✅Agent datasets 09:0x全部DONE(Toucan409files/21GB+AgentTrove121files/19GB+neulab277files/79GB/15子集);③🔄Math-Reasoning下载RUNNING(PID1829139,217/2228files/402GB/3incomplete,elapsed~7.2h,rate~120s/file,ETA~67h,stdout→/tmp/dl_master_orchestrator.log);④🔄Code-Reasoning下载RUNNING(PID916265,nice19/ionice3/max-workers2,28/1637files/50GB/2incomplete,elapsed~45min,rate~85s/file,ETA~38h,stdout→/tmp/ifm_code_reasoning_download.log,fd检查活跃.incomplete正在写);⑤✅MegaMath batch1 DONE(364parquet/216GB/5子集/0inc);⑥磁盘/nas_user 113T总/52T可用(55%)→✅;⑦源清理确认:/nas_train tokenized=0files✅,/nas_inference parquet=0files✅;⑧pretrain训练在.12跑(torchrun可见)→nice19/ionice3正确;⑨⚠️Code-Reasoning旧v3.log中ProxyError(503)来自前次已死进程,当前PID916265活跃,已确认fd有.incomplete文件正在写;⑩下一步:等StepC完成(ETA~54min,预计~19:44CST)→StepD校验du+find.json=8192+failed_shards.txt空→更新DATA_MAPPING→commit;等IFM下载完成→更新DATA_MAPPING
 
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
