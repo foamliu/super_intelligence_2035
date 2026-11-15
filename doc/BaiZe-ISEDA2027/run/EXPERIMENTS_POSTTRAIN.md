@@ -12064,3 +12064,19 @@ python3 bpt_attribution_p0_dev_compare.py \
 
 **纪律**：0 infra 误操作，未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。本轮纯 CPU 监控 + 文档归档。
 
+
+## §R538-dual-chain-monitor-preflight（wake538, 2026-11-15 09:5x）— zhulong 基线链 + R2 eval 双链健康监控 + 前置就绪验证
+
+**背景**：2026-11-15 08:1x 用户令「158 评测改用 zhulong 方式」最高优先。wake534 已交付再归因（attribution_zhulong_reattribution.json，四问回答：真 MCP 拒绝 6.0%/run_code 3.0%/静默 45=28.5%/+15.95pp），wake535 起跑 zhulong 基线 5-run 链（PID4014235），wake536 口径六项全量复核 PASS。本轮=wake538 监控 + 前置就绪核验。
+
+**实测（2026-11-15 09:5x，.17）**：
+1. **R2 run5 code-gen 进度**：`/home/app.e0031982/eda_code_eval/2026_1115_033334/code/` = **154/158**（task_queue 剩 EDA-Eval-PyAether-148..158 共 11）；codegen.log 9.0MB mtime 09:52 活跃；GPU7 83%util 39246MiB；run4 耗 6h43m（20:49→03:33）⇒ run5 ETA ~10:00-10:30。链 run5 完后自动算 `5run_rl_analysis_R2.json`（run1-4 mean≈0.475% decisively 负 vs step105 3.04%±0.83% 同 .17 口径可比）。
+2. **zhulong 基线链 GATE**：PID4014235/4014258 alive（etimes=2159）；log 显示 09:15 起每 300s 探一次，09:50 仍 `r2alive=1 rem_busy=...` 正确避让 R2（沙盒隧道 8664-8668 争用避免）。R2 链退出后 GATE 释放→起 run2-5（每 run~6-7h，5-run ETA~11-16）。
+3. **隧道三验证命令全 PASS**：① `ss -ltn | grep :3333` → LISTEN ② `ssh -p3333 app.e0031982@localhost hostname` → hfeg0tedaap02（36.15）③ `curl 18096/v1/models` → minicpm5-2b-sft-v39-final root=global_step_105。
+4. **前置就绪**：① `bpt_zhulong_baseline_5run_analysis.py` py_compile OK（5-run mean±std + McNemar/Wilcoxon vs 旧 .17 5-run 3.04%±0.74%）② 新报告 `reports/report_posttrain_zhulong_reattribution_zh.html`（13.6KB）在位 ③ 5 份旧报告 PENDING-REMOTEST banner 在位（rca/rca_v2/attribution_overnight/attribution_t6/baseline_pyaether_rca）④ `attribution_3615_run2/` dir 已建（待链填充）。
+
+**口径纪律**：R2 eval 跑 .17 本地（无 RAG/MCP/hook），step105 亦 .17 口径⇒ R2 vs step105 可比；但 R2 vs zhulong 基线（36.15 口径 18.99%）不可比，R2 须另在 zhulong 口径重测（未来项）。run_commands 保持禁用（PreToolUse hook 白名单，防泄题）。
+
+**MEMORY**：32024B ≤32KB（wake536 流水压缩为 📦 指针）。
+
+**纪律**：0 infra 误操作，未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。本轮纯 CPU 监控 + 文档。
