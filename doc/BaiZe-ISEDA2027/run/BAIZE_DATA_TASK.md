@@ -2,6 +2,69 @@
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」检查**：限制探索的禁令已删除；**数据安全类约束全部保留**（删源前校验、不挤他人带宽、不碰他人产物、磁盘红线）——它们防的是**数据损毁**，不是防尝试。**默认立场：数据筛选规则、抽样方法、质检策略由你自主决定，写清依据即可。**
 
+> 🔴 **用户令 · 2026-11-15 09:0x（评估 5 个 agent datasets，有用则加入下载队列）· 高优先 · 未完成**
+
+> **用户原话**：「data: 这些agent datasets 是否有用，有用就加入下载队列」+ 5 个 HF 链接
+
+**我的初判（基于实查，你要自己复核并纠正我）**
+
+| # | repo | 规模 | 性质 | **我的初判** |
+|:--|:--|:--|:--|:--|
+| 1 | `microsoft/orca-agentinstruct-1M-v1` | ~2.2GB | **纯合成**，GPT-4 生成，OpenAI messages 格式，**无真实工具执行** | 🟡 **低优先**（见下） |
+| 2 | `Agent-Ark/Toucan-1.5M` | 待核实 | **495 个真实 MCP server / 2000+ 工具** 合成的 150 万条轨迹，含真实工具执行，多轮/并行调用；BFCL-V3 + MCP-Universe 上有增益 | ✅ **强烈建议下**（最贴我们） |
+| 3 | `open-thoughts/AgentTrove` | 1.7M 行 | **terminus-2 / Harbor harness 格式**的真实 agent 轨迹（含 SWE、codeforces、SWE-smith 等），带 `reward` 与失败轨迹 | ✅ **强烈建议下**（与我们 harness 线同源） |
+| 4 | `neulab/agent-data-collection` | **499 GB** | **ADP 统一协议**，把上面 3 个 + 20 多个源统一成 SFT 格式 | ⚠️ **去重后再决定**（见下） |
+| 5 | `harvardMadsys/freeinference_agentic_trace` | 1.19M 请求 / 1.21M 工具调用 | **只有元数据，没有消息文本**（`No message text is released`） | ❌ **不能用于训练**，但对 harness 线的 workload 分析有用（见下） |
+
+**逐条判断依据**
+
+**① `microsoft/orca-agentinstruct-1M-v1` → 🟡 低优先**
+- 纯合成（Azure GPT-4 生成），许可证 `cdla-permissive-2.0`，英文
+- **关键缺陷**：它的"agentic"是**方法论层面的**（AgentInstruct 流程生成问答），**轨迹里没有真实工具调用/执行反馈**。我们要培养的是"按协议调工具并交付结果"，这种数据帮助有限
+- ⇒ **先不下**，除非你在调研后认为需要补充通用指令遵循能力。若要下，优先级排在 2/3 之后
+
+**② `Agent-Ark/Toucan-1.5M` → ✅ 强烈建议下**
+- **最贴我们痛点**：495 个**真实 MCP server**、2000+ 工具、真实工具执行、多轮/顺序/并行调用 —— 这正是 **posttrain 那 1304 次工具调用被拒**要解决的问题
+- 有配套 SFT 子集（119.3K：28.3K 原始 + 40K Irrelevance + 15.8K Diversify + 35.2K Multi-Turn），含 **Irrelevance 扩展**（教模型"不该调工具时别调"）—— 对减少无效调用特别有用
+- license Apache-2.0
+- ⇒ **下全量**
+
+**③ `open-thoughts/AgentTrove` → ✅ 强烈建议下**
+- **与我们 harness 线直接同源**：Harbor / terminus-2 格式，就是 harness 线做 SWE-bench / TB-2.1 用的那套框架
+- 1.7M 行，来源含 `swesmith` / `codeforces` / `nl2bash` / `r2egym` / `staqc` / `freelancer` 等，**带 `reward`（0/1）**⇒ 可用于 RL
+- ⇒ **下全量**；并**额外记录**：它与我们 harness 线的 Nemotron Terminal Corpus 同格式（AgentTrove 规模是它的 4 倍）
+
+**④ `neulab/agent-data-collection` → ⚠️ 去重后再决定**
+- **499 GB**，但**它里面已经包含了 #2 Toucan 和 #3 的部分来源**（`orca_agentinstruct`、`toucan_1_5m`、`nemotron_terminal_corpus`、`swe-smith`、`nebius_SWE-agent-trajectories` 等 20+ 源）
+- 价值：**ADP 统一协议**把各源转成统一 SFT 格式（`sweagent` / `openhands` / `agentlab` 三种模板），省你自己写转换器
+- 风险：**与 2/3 内容重叠**，全下 499GB 会重复存储
+- ⇒ **做法**：先下 **ADP 的转换脚本和 schema**（GitHub `neulab/agent-data-protocol`，不含大数据），再**只挑 2/3 里没有的源**（例如 `code_feedback`、`codeactinstruct`、`mind2web`、`nnetnav-*`、`go-browse-wa`、`synatra`、`agenttuning_*`、`openhands`、`CharlieDreemur_OpenManus-RL`）。**下之前先出「重叠清单 + 建议下哪些子集」**给我确认
+
+**⑤ `harvardMadsys/freeinference_agentic_trace` → ❌ 不能训练，但有别的用**
+- **`No message text is released`** —— 只有请求时序、token 用量、工具名、工具调用参数结构、缓存块 ID，**没有实际对话内容**
+- ⇒ **排除出训练数据队列**
+- **但建议告知 harness 线**：它有 **14 种 harness（含 claude-code）+ 267 账户 + 16 周真实 agent workload**（1.19M 请求 / 1.21M 工具调用），对 harness 线做 **workload 特征分析、性能建模、真实调用分布** 有价值（不是训练用）。**你只需在 MEMORY 里记一行转告，不用自己深挖**
+
+**执行要求**
+
+1. **先核实再下**（不要信我和网上的说法）：对每个要下的 repo 用 `HfApi().dataset_info(repo_id, files_metadata=True)` 拿**精确文件数/字节数/子集列表/license**，写进 MEMORY
+2. **下载队列（按优先级）**：
+   - **P0（本轮就下）**：`Agent-Ark/Toucan-1.5M`、`open-thoughts/AgentTrove`
+   - **P1（核实后下）**：`neulab/agent-data-collection` 的**非重叠子集**（先出清单给我确认）
+   - **P2（暂不下）**：`microsoft/orca-agentinstruct-1M-v1`（理由见上，若你认为该下，说明理由后下）
+   - **P3（排除）**：`harvardMadsys/freeinference_agentic_trace`（无文本）
+3. **落盘**：`/nas_user/app.e0031982/datasets/<org>/<name>/`（与 IFM 那批同级）
+4. **护栏不变**：`nice -n 19` + `ionice -c3` + `max-workers 2` + `setsid` 后台；**不挤 StepC 分词与 pretrain 训练**；`/nas_user` 余量 <5T 暂停报运维
+5. **登记**：`DATA_MAPPING.md` 记录每个 repo 的 `repo_id / 类型(预训练·SFT·RL) / 规模 / license / 是否含真实工具执行 / 是否带 reward / 与我们已有数据的重叠情况`
+6. **污染检查**（关键，不可省）：这些 agent 数据是否混入 **SWE-bench / Terminal-Bench / BFCL / MCP-Universe / HumanEval** 测试集 —— 尤其 `AgentTrove` 含 `swesmith`/`codeforces`，`neulab` 含 `swe-smith`，**必须核对是否与我们的评测集重叠**，重叠的要么剔除、要么在评测时换题
+
+**验收**
+1. 5 个 repo 的实测元数据（文件数/字节/license），与我的初判对照，**若我判断错了要指出**
+2. P0 两个已落盘 + DATA_MAPPING 登记 + `df -h /nas_user` 前后对比
+3. `neulab` 的重叠清单 + 建议子集清单（等确认）
+4. 与 SWE-bench / TB / BFCL 的污染检查结论
+
+
 > 🔴 **用户令 · 2026-11-15 08:5x（下载 3 个 IFM 数学/代码数据集 + 调研更多可用数据集）· 最高优先 · 未完成**
 
 > **用户原话**：「安排data下载：https://huggingface.co/datasets/IFM/MegaMath 、 https://huggingface.co/datasets/IFM/Math-Reasoning 、 https://huggingface.co/datasets/IFM/Code-Reasoning。同时请它调研一下，要提升LLM的数学和编码能力，还有那些数据集可以用。」「放在 /nas_user 下面」
@@ -264,20 +327,12 @@
 
 ### 📦 归档指针 · 2026-11-07 08:5x「代码语料放行 stack-v3-train」· ✅ 已交付（ROI表+8源25.14GB+stack-v3调研+2TB全下+ROI复盘）。现行要点：`the-stack-v2` 🚫禁下；`stack-v3-train` 仅 train 15.9TB（🚫 full 113.7TB）；其它单集 <1TB 按 ROI 自排；code 补料属**低压力背景任务**（用户：有也行无也行、不急、不挤 S1 带宽）。原文见 ARCHIVE「归档块 · 2026-11-11」
 
-### 🚀 运维令 · 2026-11-04 13:2x（B类agentic数据下载）· ✅ 已交付（12/12 落地 78.73 GiB）→ 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§运维令·2026-11-04 B类agentic下载」。
-
-### 📦 运维令 · 2026-11-04 13:2x（RL+数学+agentic 调研）+ 09:4x（复杂推理+代码 SFT 调研）· ✅ 均已交付 → 原文见 `ARCHIVE_OPERATOR_DATA.md`
-
-> **用户原话**：①「请 data 调研能够强化 LLM 复杂推理和代码能力的 SFT 和 Code-SFT 数据集，写成中文 HTML 报告。」②「调研提升复杂推理/代码/数学/agentic 能力的 SFT+RL 数据集」。
-> **交付**：`report_data_reasoning_code_sft_survey_zh.html`(79KB) + `report_data_rl_math_survey_zh.html`(38KB)，均 0 script 0 外链。**口径**：只调研不下载；真去 hf.co 核实 repo/体量/license/gated/字段；奖励信号类型单列；与盘上 12 源去重。需要明细读报告原文。
-### 🚀 运维令 · 2026-11-04 09:2x（A类长上下文数据下载）· ✅ 已交付 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§运维令·2026-11-04 A类长上下文下载」。
-
-### 🚀 运维令 · 2026-11-04 09:1x（确认85M下载完成）· ✅ 已完成 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§运维令·2026-11-04 85M确认」。
-
-### 📦 运维令 · 2026-10-31 17:3x（HF 两类数据集调研：长上下文 + agentic）· ✅ 已交付 → 原文见 `ARCHIVE_OPERATOR_DATA.md`
-
-> **用户原话**：「让 data 用 web search 去 hf.co 找找下边两类数据集：1. 长上下文（用于白泽的长上下文训练）2. agentic（用于白泽的 SFT 和 RL…）。上述调研写个中文 HTML 报告」
-> **交付**：`reports/report_data_lc_agentic_survey_zh.html`（117KB，单文件 0 script 0 外链）+ 生成器（幂等）。**关键口径**：decay-B 闸门 = `en_v1_4` 里 ≥32K 文档仅 2.52% token、≥128K 仅 0.03%，目标 ≥20%/≥1%；报告须给每个候选的「≥32K/≥128K 占比」证据或标「未标注需实测」。需要明细再读 archive / 报告原文。
+> 📦 **归档指针 · 2026-10-31 ~ 11-04 五条旧令**（原文均已在 `ARCHIVE_OPERATOR_DATA.md`）：
+> - **11-04 13:2x「B 类 agentic 数据下载」** → ✅ 已交付 12/12，落地 78.73 GiB
+> - **11-04 13:2x「RL + 数学 + agentic 调研」+ 09:4x「复杂推理 + 代码 SFT 调研」** → ✅ 已交付 `report_data_reasoning_code_sft_survey_zh.html`(79KB) + `report_data_rl_math_survey_zh.html`(38KB)。口径：**只调研不下载**；真去 hf.co 核实 repo/体量/license/gated/字段；奖励信号类型单列；与盘上 12 源去重
+> - **11-04 09:2x「A 类长上下文数据下载」** → ✅ 已交付
+> - **11-04 09:1x「确认 85M 下载完成」** → ✅ 已完成
+> - **10-31 17:3x「HF 两类数据集调研：长上下文 + agentic」** → ✅ 已交付 `reports/report_data_lc_agentic_survey_zh.html`(117KB)。关键口径：decay-B 闸门 = `en_v1_4` 里 ≥32K 文档仅 2.52% token、≥128K 仅 0.03%，目标 ≥20%/≥1%；须给每个候选的「≥32K/≥128K 占比」证据或标「未标注需实测」
 ### ⚖️ 口径仲裁（2026-10-25 13:3x · **与下文任何旧条冲突时，一律以本表为准**）
 | 冲突点 | 旧说法 | **现在按这个做** |
 |---|---|---|
@@ -298,38 +353,25 @@
 > 📦 §运维令·2026-10-25 12:5x（本轮执行顺序：①已分词布局镜像hardlink/symlink ②未分词4源开跑224核）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：①布局DONE(tokenized/镜像10目录/815shard/INDEX.tsv)+②分词DONE 131/131(09:43:35,1.18T/4.05TB)；口径仲裁表(本文件下方)仍为活口径不归档。需要时再读。
 
 
-### 🧵 运维令 · 2026-10-25 11:0x（重盘盘点 + 对未分词开跑）· **已并入 12:0x 令，本条仅存档要点**
-> 224 核是上限不是指标（4 档标定 64/96/128/192 取拐点，留余量给 85M）；分词器 `tokenizer_eod`（vocab 129,281 / pad 129,408）；落 `baize-data/tokenized/<镜像下载路径>/`（见仲裁表）；每前缀必须有 manifest（shard→源 parquet）；`setsid` 后台 + `/tmp/tokenize_untokenized_*.log` + `failed_shards.txt`；🚫 `/tmp`/`staging`/`*.orig` 不算源。
-
-### 🗑 运维令 · 2026-10-25 10:3x（删不可对应产物）· **已执行完毕**
-> 判定 110 shard → 删 78（被 `full_*` 覆盖，3.69 TiB）+ 删 32（不可与下载目录建立产物级对应，1.91 TiB，运维 RUN_ID 199）；`baize-data/text/` 现为 **110 shard / 2238.14 B / 8.93 TB（全 `env14_*`）**。清单 `run/data/prune_unmapped_*.txt|tsv|json`。
-
-### 🚨 运维令 · 2026-10-25 08:0x（重写报告 v2）· **已闭合，被 12:0x 令取代**
-> 原要点：以下载目录为准、一个下载目录一行、禁手填小计、未分词写「未实测」。v2 仍含漏源与小计错，且不是单表 ⇒ 12:0x 令要求整篇重写为「一张对应表」。
+> 📦 **归档指针 · 2026-10-25 三条旧令**（均已在 `run/ARCHIVE_OPERATOR_DATA.md`）：
+> - **11:0x「重盘盘点 + 未分词开跑」** → 已被 12:5x 令取代。要点：224 核是上限不是指标；分词器 `tokenizer_eod`（vocab 129,281 / pad 129,408）；产物落 `baize-data/tokenized/<镜像下载路径>/`；每前缀必须有 manifest；`setsid` 后台。
+> - **10:3x「删不可对应产物」** → 已执行完毕：判定 110 shard，删 78（被 `full_*` 覆盖，3.69 TiB）+ 删 32（无法产物级对应，1.91 TiB），`baize-data/text/` 现 110 shard / 8.93 TB。
+> - **08:0x「重写报告 v2」** → 已闭合，被 12:5x 令取代。
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
 
-
-> 📦 §运维指令·2026-10-23 22:1x（复测 92.25 代理 / 恢复 85M / 分词产物体积 / 搬 /nas_env）**已闭合**（85M 已恢复并在降优先级后台跑，迁移 5/5 全 DONE）→ 原文归档 `run/ARCHIVE_OPERATOR_DATA.md`；**结论**：代理走 92.25+hf.co 直连；迁移铁律 = rsync -a 不用 mv、校验 shard+字节一致才删源、先建软链接、/nas_env 余量 ≥ 数据×1.1。需要时再读。
-
-> 📦 §运维指令·2026-10-21 04:0x（MiniCPM5 全量数据完整分词·224核全开）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：5源全部分词完成（574 shards/1056.36B tokens/4.24TB），env14也完成（110/110/2238.14B/8.88TB）。迁移到/nas_env进行中。需要时再读。
-> 📦 §运维指令·2026-10-20 15:5x（✅恢复en_v1_4下载）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：下载已恢复并运行中（PID1875054 alive,99/110dirs），kill+重启口径恢复，分词不受影响。需要时再读。
-
-### 🗄 运维指令 · 2026-10-18 21:0x（en_v1_4 全量分词，不按 500B 截断）· **已闭合**
-> 结论：env14 已 **110/110** 完成（2238.14 B tokens / 8.93 TB）；「32 或 64 核」是当时的限速口径，**已被 2026-10-25 12:5x 令的 96–224 四档标定取代**。原文归档 `run/ARCHIVE_OPERATOR_DATA.md`。
+> 📦 **归档指针 · 2026-10-17 ~ 10-23 六条旧令**（原文均已在 `run/ARCHIVE_OPERATOR_DATA.md` 或对应 daily）：
+> - **10-23 22:1x**：代理走 92.25 + hf.co 直连；迁移铁律 = `rsync -a` 不用 `mv`、校验 shard+字节一致才删源、先建软链接、`/nas_env` 余量 ≥ 数据×1.1
+> - **10-21 04:0x**：MiniCPM5 全量分词完成（574 shards / 1056.36B tokens / 4.24TB），env14 亦完成（110/110 / 8.88TB）
+> - **10-20 15:5x**：en_v1_4 下载恢复完成
+> - **10-18 21:0x**：env14 全量分词 110/110 完成（2238.14B tokens / 8.93TB）；"32 或 64 核"限速口径已被 10-25 的 96–224 四档标定取代
+> - **10-18 10:2x**：git push 修复（需剥离 HF 代理：`env -u http_proxy -u https_proxy git push`）
+> - **10-17**：本线 `/tmp` 残留清理完成
 
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
-- **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
+- **降级为局部**：旧块里的"等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X"只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
-
-
-> 📦 §运维指令·2026-10-18 10:2x（P0恢复git push）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：git push已修复（剥离HF代理执行：`env -u http_proxy -u https_proxy git push`），commit+push正常。需要时再读。
-
-> 📦 §运维指令·2026-10-18②（.23+hf-mirror续en_v1_4最后25shard）已归档 → run/ARCHIVE_OPERATOR_DATA.md；**结论**：25-shard续传已执行(下载现99/110dirs,.23+hf-mirror),en_v1_4分词由fullsource脚本接管(PID749330)。需要时再读。
-
-### 🆕 运维指令 · 2026-10-17（🧹 清理本线 .12 /tmp 残留）· 用户直令
-> 📦 已闭合（/tmp 清理已完成，残留=0）→ 原文 `daily-memories-data/2026-10-17.md`。
 
 ### 🆕 运维指令 · 2026-10-15（⬇️ **补下 `UltraData-RL-2609`** + 复核 SFT-2605）· 用户直令 · 最高优先
 
