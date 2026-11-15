@@ -274,7 +274,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793763970829_iq1bu.messages.json					parked		2026-11-07 03:54	1437
 1793261282500_4fq1p.messages.json					parked		2026-11-07 03:54	2310
 1792544094676_mntzu.messages.json					parked		2026-11-07 03:54	917
-1791980431476_gsmj2.messages.json					parked		2026-11-07 03:54	155
+1791980431476_gsmj2.messages.json					case	EDA-Eval-DesignFlow-TspcNetlistAnalyze-001	2026-11-15 23:51	155
 1793274153419_2q4mg.messages.json					parked		2026-11-07 03:54	291
 1789614314714_ctu99	rongjiez	hfeg0pkn005	40	characterization	case	EDA-Eval-DesignFlow-ShrinkExtract-001	2026-11-07 04:40	
 1788771111710_mwijd	scout	scout	0	characterization	parked		2026-11-07 04:40	sagequan@hfeg0pnd002 meta-testing-zlcli-harness-not-EDA
@@ -1212,7 +1212,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1785907092176_vdeyi	e0025768	hfeg0pkn001	65	spice_sim	parked		2026-11-11 19:25	reject debugging optimize报错
 1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-11 19:25	reject debugging SiliconSmart char hspice rc=1
 1793264248842_f1rqc	hbpeng	hfeg0pkn004	151	spice_sim	parked		2026-11-11 19:25	reject wrong-domain tcl->skill PDK QA + /apps/imctf perm
-1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	parked		2026-11-11 19:25	reject analysis 网表功能分析报告
+1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	parked	EDA-Eval-DesignFlow-TspcNetlistAnalyze-001	2026-11-15 23:52	stale slug variant; real trace=1791980431476_gsmj2.messages.json (delivered as EDA-Eval-DesignFlow-TspcNetlistAnalyze-001 @ r649). revival-pool slug kept parked to avoid double-count
 1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	case	EDA-Eval-DesignFlow-SimIncompleteWalltimeDiag-001	2026-11-15 22:25	r646 2q4mg rhyanw SMMismatch bisection sim-incomplete walltime+overload root-cause diag, spice_sim L1 debug-Q&A, k=16, ref PASS 16/16 + 4 negs FAIL
 1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	parked		2026-11-11 19:25	reject skill-authoring skill-creator meta
 1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	parked		2026-11-11 19:25	reject consultation 解释sp文件

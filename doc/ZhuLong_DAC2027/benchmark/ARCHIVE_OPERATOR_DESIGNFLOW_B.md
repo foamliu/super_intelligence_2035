@@ -1517,3 +1517,45 @@ r574/r570/r569/r565/r564/r563/r562 七轮原文滚入归档（r574/r570 discuss 
 - [r634] 2026-11-15 17:0x **复活池变现 #16 轮 · wei9liu/l36g5(AMS config viewlist 含 functional 导致 .v 被路由到 amsspice 而非 xmvlog 根因诊断, mc168)→AmsConfigViewDiag-001 交付 · AMS config viewlist 回归诊断首例 + amsspice-vs-xmvlog 路由首例**. 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r635-mem-trim
 - [r633] 2026-11-15 16:3x **复活池变现 #15 轮 · kailiu/l64el(pyAether SPF 抽取可行性诊断, mc182)→SpfExtractFeasibility-001 交付 · SPF 可行性诊断首例 + pyAether-API-能力五分类首例 + verdict 双态首例**. 原文见 ARCHIVE 归档批次 r635-mem-trim
 - [r632] 2026-11-15 16:1x **复活池变现 #14 轮 · zhenglu/g9gw3(OPC/ddm 模型抽取 + mask.in 重建, mc104 characterization)→OpcModelExtract-001 交付 · characterization 域补强首例 + produce-deck(form-archetype-exhaustion 升级判据反例: r632 是 produce-deck ⇒ r631 升级条件不满足)**. 原文见 ARCHIVE 归档批次 r635-mem-trim
+
+
+## 归档批次 r649-mem-trim (2026-11-15) — MEMORY_B 瘦身, 以下 r619-r631/r648 流水原文从 MEMORY 移入
+
+### [r648] (was MEMORY line 32)
+- [r648] 2026-11-15 23:1x **复活池变现 #30 轮(11-15 用户令·reaudit 191 误杀复活池变现 #30) · curryxu/xgfh1(FineSim time step too small diverged 根因诊断, mc51 spice_sim, 旧判 parked "REJECT consulting" r435 / r618 reaudit 可造) → EDA-Eval-DesignFlow-FinesimConvDiag-001 交付 · FineSim 瞬态收敛失败根因诊断首例 + finesim_convlevel 5 级 value_table 首例 + (A)+(B) 混合档 P-006 实证首例** · 承 r619-r647(复活池变现 #1-#29) · 本轮取 191 复活池中 xgfh1(curryxu@hfeg0pkn001 mc51, trace 16msgs/64KB/1 substantive user turn, 用户问"finesim仿真报这个错，是什么原因" ERROR! time step too small diverged at node DLL/DCC) 深读(.75 open_session ssh hfeg0pkn001 scp 抓 16 msgs) · 合成 EDA-Eval-DesignFlow-FinesimConvDiag-001(spice_sim L1 离线根因诊断器, B 档 synthesized): A=doc/(error_log+run_cmd+netlist+option) hidden B=不同节点(dl_dcc_qa/xmpp1/src)/np8/fqueue3h/spicemd; 15 键 JSON; 16 断言 a-p 含 cross-input guard + A-leak guard + 真跑候选 + 确定性 + value_table 5 级 + detect_vcvs_loop; ref 16/16 PASS + 4 negs 全 FAIL · discuss r648 mandatory 清付(表态 P-006 支持 (C) 分流 + 补 (A)+(B) 混合档, B 域 30 例 revival 实证) · jsonl_B 348→349 · ledger_B case 496→497 · 📊 497/3504=14.2% · DEBT 0 · board OPEN=1(P-006) · 下轮 r649 取复活池下一高 mc 候选(gsmj2 mc58 / frxg5 mc54 / qpgvn mc53 / v593e mc52 / a7erh mc52 均未 peek)
+
+### [r631] (was MEMORY line 50)
+- [r631] 2026-11-15 15:5x **复活池变现 #13 轮 · lvyy/3123n(CML 电流镜 sweep W/L/multi 分析)→CmlMirrorSweepAnalysis-001 · same_trace_group cap-2 首例**. 原文见 ARCHIVE 归档批次 r631-mem-trim
+
+### [r629] (was MEMORY line 52)
+- [r629] 2026-11-15 14:5x 复活池变现 #11: e0024852/roznq(FineSim .md0 指标定位+多工艺角缺失诊断 mc553)→FineSimMetricCornerDiag-001, spice_sim L1 debug-Q&A, k=13, ref PASS+4negs FAIL, jsonl_B 329→330, ledger 477→478. 原文见 ARCHIVE 归档批次 r629-mem-trim
+
+### [r628] (was MEMORY line 53)
+- [r628] 2026-11-15 14:2x 复活池变现 #10: gurmanli/38quf(Aether 本地脚本自动加载诊断 mc597)→AetherAutoloadDiag-001, spice_sim L1 debug-Q&A, aether.ini 三级优先级+PY_INIT_FILE, k=13, ref PASS+4negs FAIL, jsonl_B 328→329, ledger 476→477. 原文见 ARCHIVE 归档批次 r629-mem-trim
+
+### [r627] (was MEMORY line 54)
+- [r627] 2026-11-15 13:5x 复活池变现 #9: e02141/brnqb(Sentaurus GAA_FET deck 增强 mc723)→GaaFetDeckAugment-001, spice_sim L1 produce-deck, k=13, ref PASS+4negs FAIL, jsonl_B 327→328, ledger 475→476. 原文见 ARCHIVE 归档批次 r628-mem-trim
+
+### [r626] (was MEMORY line 55)
+- [r626] 2026-11-15 13:2x **复活池变现 #8 轮(11-15 用户令·reaudit 191 误杀复活池变现 #8) · e02141/cwq7f(Sentaurus TCAD deck setup 常见文件学习总结, mc698 characterization, 旧判 parked "sentaurus-tcad-deck-study-QA-not-B-produce" r435 peeked, B 池复活候选 mc698 第 5 高) → EDA-Eval-DesignFlow-SentaurusDeckSetupSummary-001 交付** · 原文见 ARCHIVE 归档批次 r627-mem-trim
+
+### [r625] (was MEMORY line 56)
+- [r625] 2026-11-15 12:5x **复活池变现 #7 轮 · kejunw/2g3in(FSDB 波形信号脉冲宽度/tr/tf 筛选分析, mc866)→FsdbPulseFilter-001 交付 · waveform-metric 筛选分析首例 + pulse-width/rise-time/fall-time 三指标首例**. 原文见 ARCHIVE 归档批次 r625-mem-trim
+
+### [r624] (was MEMORY line 57)
+- [r624] 2026-11-15 11:4x 复活池变现 #6: e0047527/s5o5k(EDA 桥接服务 pyAether 配置失败多根因诊断 mc400)→BridgeCfgDiag-001, spice_sim L1 debug-Q&A, 7-根因链, k=13, ref PASS+4negs FAIL, jsonl_B 324→325, ledger 472→473. 原文见 ARCHIVE 归档批次 r625-mem-trim
+
+### [r623] (was MEMORY line 58)
+- [r623] 2026-11-15 11:3x 复活池变现 #5: e0024852/v6u6m(FineSim/XA SRAM-PEX 五连报错 mc107)→FineSimDiag-001, spice_sim L1 debug-Q&A, 5-独立错误-category, k=13, ref PASS+4negs FAIL, jsonl_B 323→324, ledger 471→472, v87lq 改判 no-trace. 原文见 ARCHIVE 归档批次 r625-mem-trim
+
+### [r622] (was MEMORY line 59)
+- [r622] 2026-11-15 10:4x **复活池变现 #4 轮 · e0024852/sjaal(CH336_FS 后仿「换 bitcell 252→336 + width→40nm 结果不变」根因诊断, mc971)→SimModelMismatchDiag-001 交付 · model-corner-mismatch 首例 + 负结果(PF 库无 hc_*)断言**. 原文见 ARCHIVE 归档批次 r625-mem-trim
+
+### [r621] (was MEMORY line 60)
+- [r621] 2026-11-15 10:2x 复活池变现 #3: marryma/vuj95(PDK SA/SWD 版图层定位 mc1126)→PdkLayerLocate-001, characterization L1, k=12, ref PASS+4negs FAIL, jsonl_B 321→322, ledger 469→470. 原文见 ARCHIVE 归档批次 r624-mem-trim
+
+### [r620] (was MEMORY line 61)
+- [r620] 2026-11-15 09:5x 复活池变现 #2: e0017484/hwbr5(DDR6 .rpt.die0 命令提取 mc1560 B 池顶)→Ddr6RptCmdExtract-001, spice_sim L1 analysis, output-fidelity shift 首例, k=12, ref PASS+4negs FAIL, jsonl_B 320→321, ledger 468→469, discuss r620 mandatory 补付. 原文见 ARCHIVE 归档批次 r624-mem-trim
+
+### [r619] (was MEMORY line 62)
+- [r619] 2026-11-15 09:26 **复活候选→case 首例轮(11-15 用户令·reaudit 191 误杀复活池变现 #1) · e0029308/am99r(OP analysis Q&A, 旧判 reject consulting) → EDA-Eval-DesignFlow-StackedMOSOpAnalysis-001 交付** · spice_sim L1 analysis/explain 首例, A 档 trace-faithful(5T OTA 堆叠 NMOS 输入对管 dcOpInfo), hidden B cascoded PMOS load cross-input guard, k=11, ref 11/11 PASS + 4 negs FAIL, jsonl_B 319→320, ledger_B am99r mark case(467→468). 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 归档批次 r620-mem-trim 1
