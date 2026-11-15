@@ -2,17 +2,20 @@
 
 WAITING: 0
 
-> 🆕 **R2535 · 2026-11-15 18:38 — cc 26/82(4P/5EXC/8×502infra/9maxturn) + opencode 24/38(10P/7F/7EXC·chunk3启动10in-flight) + adaptive off 10/10·0 429✅ + 自检全绿 + git pull up-to-date**
-> - **cc rerun**: PID 1510536 harbor alive(~14.8h)·**26/82 TRIAL done**·**0ConnRefused ✅**(exception_info grep=0)·1 in-flight(git-multibranch)·55 remaining·ETA~Nov17
->   - 归因: 4PASS(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git) + 5EXC=infra(3×agent timeout@3600s + 1×AgentTimeout + 1×VerifierTimeout) + 8×502=infra(gw-proxy upstream Errno104) + ~9×maxturn=capability(80 turns用完) + 1×wrong-answer(git-leak-recovery: agent自认done但verifier=0)
+> 🆕 **R2536 · 2026-11-15 18:51 — cc 28/82(4P/19F/5NA·0ConnRefused✅) + opencode 33/38(10P/13F/10NA·0quota429✅·5remaining) + **pi rerun LAUNCHED**(n=10 adaptive·46 tasks·jobs-dir=/tmp/tb21_glm53_jobs/pi_rerun_20261115_1851) + adaptive off 10/10·0 429✅ + 自检全绿 + git pull FF**
+> - **cc rerun**: PID 1510536 harbor alive(~15h)·**28/82 TRIAL done**(4PASS/19FAIL/5NA)·**0ConnRefused ✅**(grep=0)·currently running gpt2-codegolf·54 remaining·ETA~Nov17
+>   - 5NA=infra(3×Command timeout@3600s + 1×AgentTimeout + 1×VerifierTimeout)·19FAIL含~12×502=infra(gw-proxy upstream Errno104)+~7×capability(maxturns/wrong-answer)
 >   - cc修复判据已met: 0ConnRefused + 4PASS=真能力(vs旧0/89=100%infra) ✅
-> - **opencode rerun**: PID 773163 harbor alive(~1.4h)·**24/38 TRIAL done**(10P/7F/7EXC[5RuntimeError+2Timeout])·**10 in-flight**(chunk3@18:37: polyglot-rust-c/polyglot-c-py/make-doom-for-mips/largest-eigenval/install-windows-3.11/prove-plus-comm/mteb-retrieve/model-extraction-relu-logits/qemu-alpine-ssh/path-tracing-reverse)·4 remaining·adaptive n=10·0 429✅
-> - **adaptive_concurrency**: `status`→mode=off/current=10/cap=10/0 cumulative 429 ✅(weekend)·实跑验证中(opencode chunk3 n=10 real-world)
-> - **自检**: load 31.84/224 ✅·mem 1029GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·/tmp 40% ✅·reports/ clean ✅
-> - **git pull**: ✅ Already up to date
+> - **opencode rerun**: PID 2804696 harbor alive(chunk3)·**33/38 TRIAL done**(10PASS/13FAIL/10NA)·6 in-flight·5 remaining·**0 quota-429 in exception_info ✅**·adaptive n=10
+> - **pi rerun** 🆕: PID 3809768→3810204 harbor run `--agent terminalbench.agents.pi:PiTB --n-concurrent 10`(adaptive auto→10 weekend)·46 tasks·task-list=manifests/tb21_7way_rerun_pi_20261114_0858.txt·jobs-dir=/tmp/tb21_glm53_jobs/pi_rerun_20261115_1851·just started(initializing)
+> - **adaptive_concurrency**: `status`→mode=off/current=10/cap=10/0 cumulative 429 ✅(weekend)·real-world validated(opencode n=10 + pi n=10 concurrent)
+> - **自检**: load 39/224 ✅·mem 1032GB avail ✅·harness CPU max=qemu 98%(1核) ✅·0 runaway ✅·/tmp 40% ✅·reports/ clean ✅
+> - **git pull**: ✅ Fast-forward(designflow changes only·0 harness touch)
 > - **research 日报 2026-11-15**: SatisFix(specification satisficing前报告机制)·仅作输入参考·无新指令·本轮不采纳
-> - **下一步**: opencode chunk3完成(~1h)→启动pi rerun(46题·adaptive auto·task-list已就绪)→再deepseek(48题·task-list已就绪)→cc完成后更新双报告(report_harness_cc_tb21_attribution_zh.html + report_harness_tb21_7way_zh.html)
-> - **📦 体积**: TASK≈25.6KB / MEMORY≈27.5KB（✅≤32KB）
+> - **下一步**: opencode finishes(~5 remaining·~30min)→启动deepseek rerun(48题·adaptive auto)→pi runs(46题·~2-3h with n=10)→cc finishes(~Nov17)→REGEN双报告(report_harness_cc_tb21_attribution_zh.html + report_harness_tb21_7way_zh.html)
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈27.9KB（✅≤32KB）
+
+> 📦 R2535 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 26/82(4P/5EXC/8×502infra/9maxturn·0ConnRefused✅)+opencode 24/38(10P/7F/7EXC·chunk3 10in-flight·adaptive n=10·0 429✅)+adaptive off 10/10+自检全绿+git pull up-to-date。需要时再读。
 
 > 📦 R2534 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 27/82(4P/18F/5NO_VER·0ConnRefused✅)+opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)+adaptive自测全过✅+自检全绿+git pull up-to-date。需要时再读。
 
