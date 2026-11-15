@@ -1,20 +1,20 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
 
-> 🆕 **R2547 · 2026-11-15 20:40 — 自检全绿 + cc 44/82(12P/27F/5EXC·0ConnRefused✅ HARD VERIFIED) + opencode 38/38 COMPLETE(10P/20F/8EXC) + pi 35/46(5P/28F/2EXC) + deepseek 24/48(0P/22F/2EXC) + adaptive off10/10·0 429✅**
-> - **自检**: load~60/224(pretrain-dominated) ✅·mem 1035GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ porcelain=0 ✅
-> - **git**: `git pull` up-to-date ✅ (HEAD=17c0f6dc5 designflow)
-> - **cc rerun**: PID 1510536 harbor alive(16.9h·jobs-dir=0348)·**44/82 done**(12P/27F/5EXC·reward=verifier_result.rewards.reward口径)·**0ConnRefused ✅ HARD VERIFIED**(grep 0/44)·38 pending·ETA~Nov17
-> - **opencode rerun**: PID 135257 part4 finishing·**38/38 COMPLETE**(10P/20F/8EXC)·train-fasttext=last task·0 429 ✅
-> - **pi rerun**: PID 3809768 alive·**35/46 done**(5P/28F/2EXC)·11 remaining·n=10 adaptive
-> - **deepseek rerun**: PID 4039988 alive·**24/48 done**(0P/22F/2EXC)·24 remaining·n=10 adaptive
-> - **adaptive**: off current=10/10 cap=10·quiet=118m·累计429=0 ✅·实跑验证✅(周末off模式)
-> - **cc修复验收**: cc rerun 0ConnRefused✅(44 results全0)·12P vs 旧0/89(88ConnRefused)→fix confirmed·待cc完成(38remaining)→REGEN双报告
-> - **下一步**: ①opencode COMPLETE→regen opencode行 ②pi 11 remaining ③deepseek 24 remaining ④cc 38 remaining(~Nov17)→REGEN双报告(cc行从0/89换真实数字) ⑤opencode 8EXC重跑 ⑥cc 5EXC重跑 ⑦cc失败题EvoX三分法打标 ⑧成本补采 ⑨hermes qemu BLOCKED(Py3.9<3.11)
+> 🆕 **R2548 · 2026-11-15 20:50 — 监控轮·自检全绿 + cc rerun harbor alive17h·0ConnRefused✅(全rerun dirs复核) + pi38/deepseek25/opencode41results·0真429(2误报) + adaptive off10/10·0 429✅**
+> - **自检**: load27/224(pretrain-dominated) ✅·mem 1041GB avail ✅·0 harness proc >8000%CPU ✅·/tmp 40% ✅·reports/ porcelain 未变 ✅
+> - **git**: `git pull` up-to-date ✅ (HEAD=c675f5b34 designflow)
+> - **cc rerun**: PID 1510536 harbor alive(17h·jobs-dir=0348·n=1)·0348批35 results·**0ConnRefused ✅ 全rerun dirs复核**(grep 0 across 0950/0951/1251/0348/1529·仅原始claude-code dir有88)·fix confirmed·待cc完成→REGEN双报告
+> - **pi rerun**: PID 3809768 alive·rerun dir 38 results·n=10 adaptive·0 429 ✅
+> - **deepseek rerun**: PID 726880 alive·rerun dir 25 results·n=10 adaptive·0 429 ✅
+> - **opencode rerun**: PID 135257 part4·rerun dir 41 results·train-fasttext still running(57min)·**0真429**(log 2 hits=`429_hits=0`误报) ✅
+> - **adaptive**: off current=10/10 cap=10·quiet=133m·累计429=0 ✅·实跑验证✅(周末off模式)
+> - **cc修复验收(2026-11-14令)**: 根因=容器内127.0.0.1不可达宿主gw_proxy·修复=overlay-network-host.yml(--network host)·冒烟OK·重测in progress(0ConnRefused✅)·待cc 89题完成→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字)
+> - **下一步**: ①监控cc/pi/deepseek/opencode rerun完成 ②cc完成(~Nov17)→REGEN双报告 ③opencode train-fasttext完成→regen opencode行 ④opencode8EXC/cc5EXC重跑 ⑤cc失败题EvoX三分法打标 ⑥成本补采 ⑦hermes qemu BLOCKED(Py3.9<3.11)
 > - **📦 体积**: TASK≈25.6KB / MEMORY≈27.5KB（✅≤32KB）
 >
-> 📦 R2546 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 33/82(5P·0ConnRefused✅)+opencode 41results(10P·train-fasttext running)+pi 29/46(5P)+deepseek 25/48(0P)+adaptive off10/10·0 429✅。需要时再读。
+> 📦 R2547 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 44/82(12P·0ConnRefused✅ HARD VERIFIED)+opencode 38/38 COMPLETE(10P)+pi 35/46(5P)+deepseek 24/48(0P)+adaptive off10/10·0 429✅。需要时再读。
 
 > 📦 R2545-R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 29→33/82渐进(4→5P·0ConnRefused✅)+opencode 35→41results(10P)+pi 11→29/46(1→5P)+deepseek 0→25/48(0P)+adaptive 8→10实跑验证✅。需要时再读。
 
