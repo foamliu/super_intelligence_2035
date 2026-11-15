@@ -68,7 +68,7 @@
 1790130588724_141n0	xinqiaoz	hfeg0pkn004	915	physical_verify	case	EDA-Eval-DesignFlow-DeckIncludeResolve-001	2026-11-03 10:38	
 1792297573507_9knot.messages.json	vincelu	hfeg0plg55	862	physical_verify	parked		2026-11-03 11:01	netlist+schematic+hspice 非纯 shard C,4.2MB>2MB(r43)
 1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	parked		2026-11-03 11:01	pdk QA handoff 起手不纯需求(r43)
-1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	parked		2026-11-03 11:01	handoff resume PDK QA test fixes 强状态依赖(r47)
+1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	case	EDA-Eval-DesignFlow-SshTestProfileBuilder-001	2026-11-15 18:08	handoff resume PDK QA test fixes 强状态依赖(r47)
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked		2026-11-03 11:01	UI hello/runme 太薄元任务(r47)
 1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked		2026-11-03 11:01	handoff 弃(r46)
 1786592143567_5jmnc.messages.json	e0014566	hfeg0plg58	539	layout_virtuoso	parked		2026-11-03 11:01	RsCalc/AutoVia/PowerFill 重叠既有(r45)
