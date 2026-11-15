@@ -1935,3 +1935,84 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 > **交付物**：`reports/report_harness_glm53_7way_swebench_tb_zh.html` 已交付（含7×SWE-bench矩阵+7×TB矩阵+历史对照+失败归因）。生成器`gen_report_glm53_7way.py`+`gen_cline_special.py`。
 >
 > **结论**：SWE-bench Verified 7路全交付✅。TB4切换TB-2.1(✅R1770)。TB-2.1 7路rerun(cline✅38/89·cc+hermes+other-6路rerun中)由08:0x块覆盖。报告已交付并持续REGEN。
+
+---
+
+> 📦 §2026-11-15 07:5x 用户令（重构 report_harness_tb21_7way_zh.html）旧版完整报告快照已归档 → reports/archive/harness_tb21_7way/report_harness_tb21_7way_zh_R2508_pre_refactor.html（18489 bytes）。旧版含 cline 五桶根因长表、python3 容器表、交叉对照明细、历史叙事段落，均已按用户令删除/归档；新版只保留两张表 + Infra 修复台账，分母统一为题集总数(89)。需要时再读。
+
+---
+
+### 🔴 用户令 · 2026-11-15 07:5x（重构 report_harness_tb21_7way_zh.html）· ✅ 已交付 (R2508) — 原文归档
+
+### 🔴 用户令 · 2026-11-15 07:5x（**重构 `report_harness_tb21_7way_zh.html`：只留两张表、分母统一为「题集总数」**）· 最高优先 · 未完成
+
+> **用户原话**：「我看了report_harness_tb21_7way_zh.html。Pass% = Passed / Evaluated 不合理吧，为什么不是 Passed / 89。其实这个报告有些过去复杂，我们只需：1. TB-2.1 7路矩阵 (unique tasks passed) 这个表格。表格需要的列：Harness、Passed、题集总数、Pass%、成本列（比如墙钟和tok）。2. 各Harness失败分析表格，需要的列：Harness、Failed、以及各类失败（比如Infra多少、能力不够多少）数。最后此表各harness的infra数应该归0（通过修复重跑）。」
+
+**一、你对现报告的三处口径问题（我已核实，你判断正确）**
+
+现报告同一指标用了**三个互不相同的分母**，且彼此矛盾：
+
+| 位置 | 现状 | 问题 |
+|:--|:--|:--|
+| TB-2.1 矩阵表 | `Pass% = 42/90 = 46.7%`（列名 `Pass% (passed/eval)`） | 分母 **90 > 题集 89**，本身不合法（下述 bug 所致） |
+| 失败分析表 | `Pass 42 / Eval 89` | 与上表 90 不一致 |
+| cline 根因表 | `passed 42 / timeout 22 / real_ability 22` | 22+22 ≠ 47，**加总不守恒** |
+
+**分母 > 89 的根因（代码级，已定位）**：`audit_tb21_quota_7way.py::scan_trials` 用
+`task = str(f.parent.name).split("__")[0]` 作题名键，再 `evaluated = len(task_data)`。
+当目录名带 `-001` 类后缀、或同题存在多个 trial 目录时，题名会被拆成多个 key ⇒ `len()` 虚高到 90/91。
+⇒ **`evaluated` 既不是「题目总数」，也不是「有效评测数」，不能作分母。**
+
+**二、重写要求（严格按此执行）**
+
+**2.1 分母铁律**
+- `Pass% = Passed / 89`（89 = TB-2.1 题集总数，即 `~/terminal-bench` 下题目录数）。
+- 🚫 **全报告只允许一个分母**：题集总数。不再出现 `evaluated` 作分母。
+- 若训练集题数与 89 不一致（实测 N≠89），**以实测 N 为准并在表头写明 N**，同时标注「旧版 89 与此 N 的差异原因」。
+
+**2.2 表一：TB-2.1 7 路矩阵（唯一保留的主表）**
+列固定为：**Harness | Passed | 题集总数 | Pass% | 墙钟成本 | Token 成本**
+- `Passed` = unique tasks passed（沿用现口径：按 task 去重，任一 trial reward==1.0 即 passed）。
+- `Pass%` 列直接写 `Passed/89` 的百分比，一位小数。
+- **成本列必须真采**：
+  - 墙钟 = 该 harness 全部 trial 的 `wall_sec`/`duration` 之和（若 per-task 有则累加；无则记 `未采集`，并说明补采方案）。
+  - Token = `input + output` 之和（**分列写明 in/out 更好**）；无则记 `未采集`。
+  - 🚫 **不要用估算数字**；采不到就写 `未采集`（宁缺勿编）。
+- 表末加一行 **合计**（Passed 合计 / 7×89 / 各成本合计）。
+
+**2.3 表二：各 Harness 失败分析（列固定）**
+列：**Harness | Failed | Infra | 能力不足 | 其他(未评测/未跑)**
+- `Failed = 89 − Passed`（**必须守恒**：Failed = Infra + 能力不足 + 其他，逐行校验并在表下断言）。
+- 桶定义（可沿用你线现有判定；若现有判定不合理，可以重新定义并说明理由）：
+  - **Infra** = quota_exhausted + connection_refused + timeout + ECONNRESET + setup/env 失败（如 python3 not found）+ CLI/adapter bug + gateway 502 + 未真跑/假结果。
+  - **能力不足** = 模型真正运行、有 run_result、有 token 消耗，但 verifier 判 fail（含 Reached max turns）。
+  - **其他** = 未出现在任何 result.json（not_evaluated）等。
+- 🚫 **不再出现「mixed_fail」这种 mixed 桶**（额度+非额度混在一起无法归因）：请按**每个 trial** 拆开再归题（任一 trial 有 proper 证据+verifier fail ⇒ 记能力；全部 trial 都是 infra ⇒ 记 infra）。（注：这是**归因要求**，不是限制你的分类自由——你完全可以设计更好的分桶，只要能逐题追溯且加总守恒。）
+
+**2.4 终态目标：Infra 列必须归零**
+- 这张表的**存在意义**就是作为「infra 已清零」的验收证据：**每个 harness 的 Infra 数最终都应为 0**。
+- 因此除出报告外，还要**按 Infra 列的名单逐条修复+重跑**（这是本令的实质工作，不是只改报表格式）：
+  - 现有已知 Infra 欠账（修复后重跑）：`claude-code` 的 ConnectionRefused 89 题（adapter 已修，rerun 进行中 10/82）、`hermes` 的 2 题 mteb（hermes-agent 不在容器 PyPI 镜像）+ 2 题 qemu（Py3.9，`_ensure_pip` 已修但需用新码重跑）、`pi`/`opencode`/`deepseek` 的 synthetic 假结果、codex 的 gateway 502 类。
+  - 每修一项：**旧结果保留**（不删 trace/result.json），新结果落新目录，并在表下写明「旧 X → 新 Y」。
+
+**2.5 报告瘦身（用户明确要求「过去复杂」）**
+- **只保留**：① 顶部一句话结论（含 7 路 Passed/89 一行速览）② 表一 ③ 表二 ④ 一张「Infra 欠账修复台账」小表（Harness | 原 Infra 题 | 修复动作 | 重跑状态 | 现 Infra）。
+- **删掉/归档**：cline 专门的五桶根因长表、python3 容器表、交叉对照明细长表、以及所有历史叙事段落 → 全部搬 `run/ARCHIVE_*.md` 留一行指针。
+- 单文件 **≤200KB**、0 script、0 外链、内联 SVG（若有图）。
+- 文件名不变（原地覆盖）：`reports/report_harness_tb21_7way_zh.html`。
+
+**三、验收（必须逐条能回答）**
+1. 表一每行 `Pass%` 是否 = `Passed/89`？分母**是否处处为 89**（grep 报告全文的 `eval` 字样应为 0 处）？
+2. 表二每行 `Failed = Infra + 能力不足 + 其他` 是否成立（贴校验输出）？全表 `Failed 合计 = 7×89 − Passed 合计` 是否成立？
+3. 成本列的墙钟与 token 是否**每个 harness 都有真实数字**（或显式 `未采集`+补采方案）？
+4. Infra 列当前各值、目标全 0；尚未归零的写清「卡在哪 + 修复计划 + ETA」。
+5. 报告体积、0 script/0 外链是否达标？
+
+**四、纪律**
+- 🚫 不改评测判据（verifier / reward 定义）——本次只改**统计口径与报表结构**。
+- 🚫 不删任何旧 result.json / trace（重跑落新目录）。
+- 🚫 不编造成本数字；采不到写 `未采集`。
+- cc rerun（82 题，ETA ~Nov16 14:00）继续跑，**不要因本令中断**；本令先在**现有数据**上把两张表和口径做对，cc 完成后自动刷新数字。
+
+
+
