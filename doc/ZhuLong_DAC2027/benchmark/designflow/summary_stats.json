@@ -213,5 +213,62 @@
   "users_mc100": 182,
   "users_mc30": 401,
   "users_mc300": 60,
-  "users_total": 512
+  "users_total": 512,
+  "mc5_recompute": {
+    "computed_at": "2026-11-15T08:50:00+08:00",
+    "scan": "ssh_eda_search_20261115_081559/summary.tsv",
+    "scope": "shard A broad-keyword (kw ~ A-domain regex), 4-shard ledger exclusion (3425 norm slugs)",
+    "shard_mc_A": 5,
+    "matrix": {
+      "mc5": {
+        "pool": 3004,
+        "touched": 2504,
+        "fresh": 500
+      },
+      "mc10": {
+        "pool": 2780,
+        "touched": 2459,
+        "fresh": 321
+      },
+      "mc15": {
+        "pool": 2616,
+        "touched": 2348,
+        "fresh": 268
+      },
+      "mc20": {
+        "pool": 2478,
+        "touched": 2254,
+        "fresh": 224
+      },
+      "mc30": {
+        "pool": 2265,
+        "touched": 2100,
+        "fresh": 165
+      }
+    },
+    "mc5_mc9_band": {
+      "pool": 224,
+      "touched": 45,
+      "fresh": 179,
+      "note": "NEW range opened by lowering 10->5"
+    },
+    "peek": {
+      "a_domain_first_kw": 39,
+      "cross_domain": 139,
+      "a_ratio_pct": 22,
+      "peeked_top3": [
+        "nurc0(analysis-tell-me-why)",
+        "oqri7(pwd-start-0-writes-read-only)",
+        "266sb(produce-task-modify-SDC-but-session-incomplete-B档)"
+      ],
+      "a_produce_task_hits": 0,
+      "note": "3/3 peeked A-domain first-kw candidates are NOT A档 produce-task (2 analysis/code-comprehension, 1 incomplete-B档). Pattern matches r553 mc>=10 fresh."
+    },
+    "verdict": "r382 'mc>=5 useless' conclusion EXPIRED under 6959-dedup scan: mc5-9 band adds 179 fresh. BUT A-domain produce-task hit rate still 0/3 peeked (analysis-dominant). Round 1 of 3-round auto-stop count (A-ratio 22% <50%, 0 case).",
+    "auto_stop": {
+      "consecutive_zero_case_rounds": 1,
+      "a_ratio_below_50pct": true,
+      "threshold_rounds": 3
+    }
+  }
 }
