@@ -1052,3 +1052,16 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1789631689135_9pcjd	miccao	hfeg0plg37	79	physical_verify	case	EDA-Eval-DesignFlow-AutoCellParamSecurityAudit-001	2026-11-15 23:42	
 1793673896066_wjwc4	e0047695	hfeg0plg49	80	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoMosaicRowColAdjust-001	2026-11-16 00:12	
 1793188016291_mxpkd	ellawu	hfeg0pkn001	79	physical_verify	case	ImplFillFillcellGate-001	2026-11-16 00:57	
+1790239013077_r1iqi					parked		2026-11-16 01:16	r628 peek: e0041123 skill-orch DRC pattern gen (load skill+gen pattern), near-dup DRC testpattern cluster
+1790151981511_hn72n					parked		2026-11-16 01:16	r628 peek: oliverz env-recon Q&A (怎么看自己的模型在哪个文件看), no produce-task
+1794450183857_2dyfr					parked		2026-11-16 01:16	r628 peek: hktklin trivial text-sub tap_p->lacaa_common + _SKILL delete (known-reject text-sub pattern d5x87/w5ajz)
+1790055622847_hhl2j					parked		2026-11-16 01:16	r628 peek: simplec glory RC flow run-existing + dspf cap extract thin + 封装skill skill-orch, overlaps r623 BatchPexDspfExtract
+1793870529521_49aua					parked		2026-11-16 01:16	r628 peek: e0018590 T-coil EM de-embedding methodology Q&A + thin RF Z0 script, off C-domain (RF/EM not physical_verify/layout/pg)
+1789700770987_trawk					parked		2026-11-16 01:16	r628 peek: ziyuny 配置glm token plan + 学习lvs-debug-flow.md + doc-edit, env-setup/doc-curation no produce-task
+1792981065381_vg3v4					parked		2026-11-16 01:16	r628 peek: yunfat /anasimpro-gui-start canned slash-command launcher, non-seed
+1792047037529_pqhdr					parked		2026-11-16 01:16	r628 peek: joelchen calibre-drc-log-analysis skill_instructions auto-paste, skill-driven 1-turn near-dup DRC log analysis
+1782874464597_v64ys					parked		2026-11-16 01:16	r628 peek: e03179 删除M1图形+统计+save, same_trace_group near-dup (e03179 already 3 M1-delete cases: DeleteM1Shapes-001/SkillM1ShapeDeleteAudit-001/M1ShapeDelete-001)
+1789699878018_gh9l5					parked		2026-11-16 01:16	r628 peek: jiaqis 查看工作目录文件/关系 recon-comprehension Q&A, no produce-task
+1792401986160_fmjku					parked		2026-11-16 01:16	r628 peek: e0045488 LVS short report analysis-Q&A (tell me what is inside), 1-turn comprehension
+1789369849822_np0t2					parked		2026-11-16 01:16	r628 peek: e0031668 run-existing run_all.sh on ERC data + filter erc 2.1-2.8, run-existing+analysis no author-new-script
+1794562364349_ssfrb					parked		2026-11-16 01:16	r628 peek: jmgu qa-pattern-miner skill-orch M1 QA pattern KB curation, near-dup r582 qa-pattern-miner reject
