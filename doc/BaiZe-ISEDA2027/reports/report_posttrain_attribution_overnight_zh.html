@@ -35,14 +35,14 @@ ul{margin:6px 0}
 <strong>首屏三句话：</strong>
 ① <strong>口径已钉死</strong>——36.15 run1 基线 = <strong>18.99%（30/158）</strong>，同模型 <code>minicpm5-2b-sft-v39-final / global_step_105</code>（<code>final_report.model_name=zhulong_deepseek_v32</code> 为 config 陈旧标签，非实际模型，已 curl 核实）；
 ② <strong>损失大头不在「会不会写」，而在「会不会按 MCP 协议调工具/提交」</strong>——T6 工具格式问题占 121 个生成失败的 <strong>100%</strong>（占全 158 题 76.6%），全局被拒 <strong>1304 次</strong>，其中 <code>run_commands</code> 占 80.6%；
-③ <strong>P0 工具格式补丁的 dev 前后对比：baseline_dev 已完成 = 0/79</strong>（07:34 落盘，经 <code>details_per_task</code> 按 dev_ids 逐题复核），<strong>P0patch codegen 进行中 @07:34</strong>（641 submit markers / 16168 行，ETA≈09:55；受 minicpm5 parser 乱码→2500s 超时拖慢，<strong>或略过 09:00</strong>——属 codegen 吞吐限，非 infra、非阻塞），A1/A3 单变量消融与 T6 归因表已落盘，详见下文。
+③ <strong>P0 工具格式补丁的 dev 前后对比：baseline_dev 已完成 = direct 2/79 vs rescue 0/79</strong>（07:34 落盘，<strong>沙盒非确定性致两次评测不一致</strong>，真实值 ∈ [0,2]/79，单 seed 不可定论——见 §4 caveat），<strong>P0patch codegen 进行中 @07:34</strong>（641 submit markers / 16168 行，ETA≈09:55；受 minicpm5 parser 乱码→2500s 超时拖慢，<strong>或略过 09:00</strong>——属 codegen 吞吐限，非 infra、非阻塞），A1/A3 单变量消融与 T6 归因表已落盘，详见下文。
 </div>
 
 <div class="box pending">
 <strong>09:00 及格线交付状态（5 项）：</strong>
 <span class="kpi">A1/A3 两臂 40 题 ✅</span>
 <span class="kpi">T6 归因表 ✅</span>
-<span class="kpi">P0 dev 前后对比 ▶ baseline_dev 完成 0/79 · p0_dev codegen 进行中 ETA≈09:55（codegen 吞吐限）</span>
+<span class="kpi">P0 dev 前后对比 ▶ baseline_dev 完成 direct 2/79 vs rescue 0/79（沙盒非确定性 caveat）· p0_dev codegen 进行中 ETA≈09:55</span>
 <span class="kpi">中文 HTML 报告 ✅（本文件，P0 节待补）</span>
 <span class="kpi">EXPERIMENTS 新节 ✅（§R-Attribution-overnight / §R524）</span>
 </div>
@@ -118,14 +118,30 @@ ul{margin:6px 0}
 </div>
 <h2>4. P0 补丁 dev 前后对比（▶ baseline_dev 完成 · p0_dev 进行中）</h2>
 <div class="box pending">
-<strong>状态（wake531 · 07:50 实测）：baseline_dev 已完成 = 0/79；p0_dev codegen 进行中，ETA≈09:55（codegen 吞吐限，非 infra、非阻塞）。</strong>
+<strong>状态（wake533 · 08:2x 实测）：baseline_dev 已完成 = direct 2/79 vs rescue 0/79（沙盒非确定性，见下文 caveat，真实值 ∈ [0,2]/79）；p0_dev codegen 进行中，ETA≈09:55（codegen 吞吐限，非 infra、非阻塞）。</strong>
 <ul>
-<li><strong>P0baseline ✅ 已完成</strong>（<code>eval_sys_prompt_template_old.md</code>，79 dev 题）：36.15 <code>bpt_attribution_prompt_dev_eval.sh --patch baseline --split dev</code> 于 <strong>07:34:47 落盘</strong> <code>/tmp/posttrain_attribution_prompt/baseline_dev/final_report.json</code>。<strong>dev 子集逐题复核 = 0/79</strong>（用 <code>attribution_traindev_split.json</code> 的 dev_ids 过滤 <code>details_per_task</code> 取 <code>num_correct≥1</code>，与 compare 脚本 <code>bpt_attribution_p0_dev_compare.py</code> 同口径）。注：chain 日志提取的 1/79=1.27% 为 rescue 前瞬时值，rescue 复算后 final 为 0/79（以落盘 final_report 为准，不取 chain 日志瞬时值）。</li>
+<li><strong>P0baseline ✅ 已完成</strong>（<code>eval_sys_prompt_template_old.md</code>，79 dev 题）：36.15 <code>bpt_attribution_prompt_dev_eval.sh --patch baseline --split dev</code> 于 <strong>07:34:47 落盘</strong>。<strong>dev 子集逐题复核</strong>（用 <code>attribution_traindev_split.json</code> 的 dev_ids 过滤 <code>details_per_task</code> 取 <code>num_correct≥1</code>，与 compare 脚本同口径）：<strong>direct 评测 = 2/79</strong>（10 gen-success，落盘 <code>final_report_direct.json</code>，源自 <code>output_evaluation/20261115_0515_app.e0031982/</code>），<strong>rescue 复算 = 0/79</strong>（15 gen-success，落盘 <code>final_report.json</code>）。<strong>两者不一致</strong>——见下文「沙盒非确定性」caveat；真实值 ∈ [0,2]/79，单 seed 不可定论。</li>
 <li><strong>P0patch ▶ 进行中</strong>（<code>attribution_prompt_p0_toolfmt.md</code>，79 dev 题）：relaunch515b PID700233 串行自动起 @07:34:54，codegen.log 16168 行 / 641 submit markers（07:50 实测），8 worker，GPU6:8096 经 18096 独占，进程健康。baseline_dev 耗时 ≈2h20min ⇒ <strong>p0_dev ETA≈09:55</strong>。<strong>慢因 = minicpm5 tool-call parser 乱码 → 部分任务命中 2500s 超时</strong>（评测协议冻结项不可改）。</li>
 <li><strong>判据（预注册）</strong>：dev 上 ≥+3pp 且 submit 报错率降 ≥10pp 才进下一轮；不达门槛记负结果，不事后调门槛。</li>
 <li><strong>rescue 去风险</strong>：A1/A3 的 rescued <code>final_report_rescued.json</code> 已在盘（74255B / 74237B，A1=0/40、A3=2/40，经 <code>bpt_attribution_manual_rescue.sh</code> 幂等复算确认）⇒ rescue 机制有效。p0_dev 完成后若 chain 内 auto-rescue 受二进制日志干扰跳过，<strong>手动 rescue helper 作为可靠兜底</strong>（幂等，已验证）。</li>
 </ul>
-<strong>下一 wake（p0_dev 数据齐后）</strong>：先 <code>bpt_attribution_manual_rescue.sh --arm p0_dev</code> 兜底 → 跑 <code>bpt_attribution_p0_dev_compare.py</code>（baseline_dev 0/79 vs p0_dev，逐题 Pass@1 + delta_pp + McNemar 精确检验 + submit 报错率 + 预注册判据）⇒ 填本节前后对比表 + 判定 P0 是否进累积组合。脚本已就位并在 A1-vs-A3 上验证通过（delta+5pp / McNemar n01=2 n10=0 p=0.5 / INCONCLUSIVE）。
+<strong>下一 wake（p0_dev 数据齐后）</strong>：先 <code>bpt_attribution_manual_rescue.sh --arm-dir /tmp/posttrain_attribution_prompt/p0_dev</code> 兜底 → <strong>双轨跑</strong> <code>bpt_attribution_p0_dev_compare.py</code>：（A）<strong>direct-vs-direct</strong> = baseline_dev <code>final_report_direct.json</code>（2/79）vs p0_dev <code>final_report_direct.json</code>；（B）<strong>rescue-vs-rescue</strong> = baseline_dev <code>final_report.json</code>（0/79）vs p0_dev <code>final_report.json</code>。两轨各出 delta_pp + McNemar 精确检验 + submit 报错率 + 预注册判据；<strong>仅当两轨判据一致</strong>才采信，否则判 INCONCLUSIVE（沙盒非确定性噪声 > 单 seed delta）⇒ 填本节前后对比表。脚本已就位并在 A1-vs-A3 上验证通过。
+</div>
+
+<div class="box caveat">
+<strong>⚠️ 沙盒非确定性发现（wake533 · 08:2x 实测，直接影响归因分辨率）：</strong>
+<p>baseline_dev 同一份生成代码，<strong>两次评测得到不同结果</strong>：</p>
+<table>
+<tr><th>评测轨</th><th>代码恢复</th><th>gen-success</th><th>通过（dev 79）</th><th>来源</th></tr>
+<tr><td>direct（harness 首跑）</td><td>format 仅读到 10/16 任务代码</td><td>10</td><td><strong>2/79</strong></td><td><code>output_evaluation/20261115_0515_app.e0031982/</code></td></tr>
+<tr><td>rescue（移码 + 重跑 run_eval）</td><td>恢复 15/16 任务代码</td><td>15</td><td><strong>0/79</strong></td><td><code>/tmp/.../baseline_dev/final_report.json</code></td></tr>
+</table>
+<ul>
+<li><strong>根因双重</strong>：① direct 的 <code>format_cline_cli_output.py</code> 只读 <code>ws/pyAether_code/</code>，而 path-fix 下部分代码仍在 <code>pyAether_code/</code>（未完全归一）→ direct 漏收 6 份代码；② rescue 把全部代码移入 ws/ 后<strong>重跑沙盒 run_eval</strong>（第二条 trace），同一份代码在 Virtuoso SKILL + pyAether SWIG 沙盒里<strong>二次执行结果不同</strong>（2 pass → 0 pass）。</li>
+<li><strong>对归因的冲击</strong>：A1=0/40、A3=2/40、baseline_dev∈[0,2]/79 —— 这些单 seed delta 的量级（0–2 题）<strong>小于沙盒 run-to-run 方差</strong>。⇒ <strong>单 seed 消融/补丁对比不可定论</strong>，归因结论须以多 seed（≥3）mean±std 为准；当前夜报所有单 seed 数字均标「下界 / 噪声内」。</li>
+<li><strong>对评测口径的启示</strong>：EDA-Eval-PyAether 的 Pass@1 在同一生成代码上存在非确定性 floor ⇒ 「基线→SFT→RL」三段比较的<strong>最小可检测差异</strong>受此 floor 限制；显著提升须 > 该 floor（待多 seed 量化）。</li>
+<li><strong>修法（待 chain 空闲，不改运行中脚本）</strong>：runner 应在<strong>首跑 eval 前</strong>先做 <code>pyAether_code→ws/</code> 归一（单条 trace 拿全代码），且 rescue 仅在 direct 缺 final_report 或 gen_success=0 时触发（不无条件覆写）。</li>
+</ul>
 </div>
 
 <h2>5. 隧道事故复盘（最高优先令 · 已闭合）</h2>
@@ -157,6 +173,6 @@ ps -eo pid,etime,cmd | grep -E '618469|1008898|1278889' | grep -v grep
 <li>0 infra 改动；未碰 GPU0-5 / 运行中 eval / 别线文件 / 隧道进程。</li>
 </ul>
 
-<p class="small">报告生成：2026-11-15 07:5x（wake531，§4 baseline_dev 完成 0/79 + p0_dev 进行中 ETA≈09:55）· 06:3x（wake527，§4 ETA 修正）· 05:5x（wake525，初版）· posttrain 线 · 数据截止 07:50 · P0 节待 p0_dev 完成后下一 wake 跑 compare 脚本补齐前后对比 + McNemar。</p>
+<p class="small">报告生成：2026-11-15 08:2x（wake533，§4 baseline_dev direct 2/79 vs rescue 0/79 沙盒非确定性发现 + direct final_report 回收 + 双轨 compare 方法论）· 07:5x（wake531，§4 baseline_dev 完成 + p0_dev 进行中 ETA≈09:55）· 06:3x（wake527，§4 ETA 修正）· 05:5x（wake525，初版）· posttrain 线 · 数据截止 08:20 · P0 节待 p0_dev 完成后下一 wake 跑双轨 compare 脚本补齐前后对比 + McNemar。</p>
 </body>
 </html>

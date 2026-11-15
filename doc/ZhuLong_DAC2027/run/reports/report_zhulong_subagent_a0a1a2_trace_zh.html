@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong · A0/A1/A2 Subagent 消融 Trace 深度分析报告</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222c; --border:#2a2f3a;
+    --txt:#e6e8ee; --mut:#9aa0ad; --acc:#5b9dff; --ok:#3fb950; --warn:#d29922;
+    --bad:#f85149; --badbg:rgba(248,81,73,.12); --okbg:rgba(63,185,80,.12);
+    --code:#1b1e26; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;
+    line-height:1.7;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:26px;border-bottom:2px solid var(--acc);padding-bottom:10px;margin:0 0 8px}
+  h2{font-size:21px;color:var(--acc);margin:32px 0 12px;border-left:4px solid var(--acc);padding-left:10px}
+  h3{font-size:17px;color:var(--txt);margin:24px 0 8px}
+  .conclusion{background:linear-gradient(135deg,#1a2332,#1e2839);border:1px solid var(--acc);
+    border-radius:10px;padding:16px 20px;margin:16px 0;font-size:17px;font-weight:bold}
+  .conclusion .neg{color:var(--bad)}
+  .conclusion .pos{color:var(--ok)}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:6px 10px;text-align:center}
+  th{background:var(--panel2);color:var(--acc);font-weight:600}
+  td.l{text-align:left}
+  tr:hover{background:var(--panel2)}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:12px 0}
+  .evidence{background:var(--code);border-left:3px solid var(--mut);padding:8px 12px;margin:8px 0;
+    font-family:var(--mono);font-size:13px;color:var(--mut);border-radius:0 6px 6px 0;white-space:pre-wrap;word-break:break-all}
+  .bad{color:var(--bad);font-weight:bold}
+  .ok{color:var(--ok);font-weight:bold}
+  .warn{color:var(--warn);font-weight:bold}
+  .mut{color:var(--mut)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin:0 2px}
+  .badge.bad{background:var(--badbg);color:var(--bad)}
+  .badge.ok{background:var(--okbg);color:var(--ok)}
+  .badge.warn{background:rgba(210,153,34,.15);color:var(--warn)}
+  svg{display:block;margin:12px auto;max-width:100%}
+  .hint{background:rgba(91,157,255,.08);border:1px solid rgba(91,157,255,.3);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:14px}
+  .idea{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:14px 0}
+  .idea h3{color:var(--acc);margin-top:0}
+  .tag{display:inline-block;background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:12px;margin:2px}
+  ul{margin:6px 0;padding-left:22px}
+  li{margin:4px 0}
+  .num{font-family:var(--mono);color:var(--acc)}
+  hr{border:0;border-top:1px solid var(--border);margin:24px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ZhuLong · A0/A1/A2 Subagent 消融 Trace 深度分析报告</h1>
+<p class="mut">2026-11-15 · ZhuLong（DAC2027）EDA 消融评测 · 40 题子集 ITT · cline 3.0.51 · 主基座 deepseek-v4-pro-cloud</p>
+
+<div class="conclusion">
+  <span class="neg">一句话结论：</span>A2（验证型 spawn）比 A0 掉 15.9pp <span class="neg">不是代码质量下降</span>（gen-rate 三臂持平 ~87%），而是<span class="neg">吞吐崩溃</span>——验证 QA 流程使单任务消息数翻倍（A2 均值 115-156 vs A0 39-48）、主 agent token 烧 1.5-2×，导致 cline_ok 率从 ~100% 降至 60%，27.5% 的任务未生成代码直接判 0 分；采纳率分析显示 verifier 的 FAIL 判定仅 +10.3pp（n=5 不显著），且 PASS 判定有 22.2% 假阳性——<span class="neg">子 agent 无 MCP 工具（cline 3.0.51 bug）使其无法真正验证 API 签名</span>，对抗审查流于形式。A1（调研型 spawn）无增益（−2.5pp, p=0.68）因子 agent 46M token 调研成果无法回传主 agent 上下文（用户诊断正确）。<span class="pos">用户「独立上下文 + 小 token 预算」思路形式化为 H_ctx 假设，但当前 40 题子集峰值上下文 ~83K 远低于 128K 窗口，无法检验</span>——需取 158 全集中 trace 最长 top-k 构造超窗子集。
+</div>
+
+<div class="hint">
+  <b>证据来源</b>：trace 目录 <code>/tmp/zhulong_subagent_trace/{A1,A2}/</code>（120 task-trace/臂）·
+  cost 文件 <code>cost_S_{A1,A2}_r{1,2,3}.json</code> ·
+  eval 输出 <code>/nasdata/.../EDA-Eval-Framework/output_evaluation/*/final_report.json</code> ·
+  分析脚本 <code>analyze_subagent_traces.py</code> + <code>build_report_data.py</code> → <code>report_data.json</code>
+</div>
+
+<!-- ==================== §1 五问 ==================== -->
+
+<h2>§1 五问逐条回答</h2>
+
+<h3>Q1. A2 为什么掉 15.9pp？—— 吞吐崩溃，非代码质量下降</h3>
+
+<div class="panel">
+<p><b>核心证据</b>：三臂 <b>gen-rate</b>（pass/generated，即生成代码后的通过率）持平 ~87%，说明<b>代码质量不变</b>；
+差异完全来自 <b>cline_ok 率</b>（成功生成代码的任务比例）。</p>
+
+<table>
+<tr><th>臂</th><th>ITT (pass/40)</th><th>cline_ok (gen/40)</th><th>gen-rate (pass/gen)</th><th>cline_fail</th><th>timeout</th></tr>
+<tr><td><b>A0</b> 无spawn</td><td>69.2±1.4%</td><td>~40/40 (100%)</td><td>~69%</td><td>—</td><td>—</td></tr>
+<tr><td><b>A1</b> 调研spawn</td><td>66.7±7.2%</td><td>29-36/40 (78%)</td><td>86%</td><td>3-10</td><td>1-2</td></tr>
+<tr><td class="bad"><b>A2</b> 验证spawn</td><td class="bad">53.3±3.8%</td><td class="bad">23-26/40 (60%)</td><td>87%</td><td class="bad">13-17</td><td>0-1</td></tr>
+</table>
+
+<p><b>量化根因链</b>：</p>
+<ol>
+<li><b>验证流程使单任务长度翻倍</b>：A2 每任务均值消息数 <span class="num">115-156</span>（A1=68-77，A0=39-48），最长任务 <span class="num">681-728</span> 条消息（A1 max=242，A0 max=229）。
+<div class="evidence">来源：report_data.json → cost.A2.{r1,r2,r3}.n_msgs_per_task mean/max
+A2 r1 mean_msgs=115 max_msgs=692 | A2 r3 mean_msgs=153 max_msgs=681
+A1 r1 mean_msgs=77 max_msgs=242 | A0 r1 mean_msgs=47.6 max_msgs=229</div></li>
+
+<li><b>主 agent token 烧 1.5-2× → 更多任务超时/失败</b>：A2 主 agent token <span class="num">84-119M</span>/轮（A1=58-64M，A0 总 ~100M/3 轮）。
+<div class="evidence">cost_S_A2_r1.json tokens_main.total=83750418 | r2=104075983 | r3=118716798
+cost_S_A1_r1.json tokens_main.total=64097114 | r2=60291535 | r3=58385325</div></li>
+
+<li><b>cline_fail 翻倍</b>：A2 每轮 <span class="bad">13-17</span> 个任务未生成代码（A1=3-10，A0≈0），这些任务直接判 0 分。
+<div class="evidence">cost_S_A2_r1.json cline_failed=17 | r2 cline_failed=13 | r3 cline_failed=15
+cost_S_A1_r1.json cline_failed=10 | r2=9 | r3=3</div></li>
+
+<li><b>spawn 分布</b>（120 task-rounds）：0 次 spawn = <span class="bad">22 (18%)</span>，1 次 = 81 (68%)，2 次 = 15 (13%)，3 次 = 2 (2%)。
+<div class="evidence">report_data.json → a2_adoption.spawn_dist: {"0_spawn":22,"1_spawn":81,"2_spawn":15,"3_spawn":2}
+0-spawn 任务 = 未生成代码 → ITT 直接损失 18%</div></li>
+
+<li><b>子 agent 执行率仅 ~75%</b>：A2 spawn 调用 39 次/轮，但子 session 仅 44-54/60-68 真正执行（73-79%）。
+<div class="evidence">cost_S_A2_r1.json: subagent_executed=44 subagent_sessions_total=60 (73.3%)
+→ 部分 spawn 调用未产生子 session（可能因父任务已超时被 kill）</div></li>
+
+<li><b>子 agent MCP 工具被拒</b>（cline 3.0.51 bug）：A2 每轮 <span class="bad">37-41</span> 次 MCP 调用被拒，子 agent 提示要求用 search_apis/get_api_details 验证 API 签名但<b>无此工具</b>。
+<div class="evidence">cost_S_A2_r1.json subagent_mcp_rejected_count=40 | r2=41 | r3=37
+子 agent tools_histogram: search_codebase 168, read_files 142, fetch_web_content 170
+→ verifier 无法真正检查 API 正确性，退化为「读代码 + 搜网页」的浅层审查</div></li>
+</ol>
+
+<p><b>结论</b>：A2 的 −15.9pp <b>完全由吞吐崩溃导致</b>，与 mcnemar_subagent_results.json 的 key_finding 一致：
+<code>"primarily through reduced generation throughput (cline_ok 60% vs A1 72-90%), not code quality (gen-rate ~87% maintained)"</code>。
+验证型 spawn 增加了 <b>写→spawn QA→读 verdict→修→提交</b> 四段流程，使单任务负载翻倍，
+在固定 -p 8 + 2500s timeout 下更多任务未能完成生成。</p>
+</div>
+
+<h3>Q2. spawn 的「采纳率」—— verifier verdict 采纳 vs 未采纳 Pass 差</h3>
+
+<div class="panel">
+<p><b>这是 mcnemar_subagent_results.json.deferred 的欠账，本轮已还。</b></p>
+
+<p><b>Verdict 分布</b>（120 task-rounds = 3 轮 × 40 题）：</p>
+<table>
+<tr><th>Verdict</th><th>计数</th><th>占比</th><th>Pass 率</th><th>含义</th></tr>
+<tr><td class="ok">PASS</td><td>45</td><td>37.5%</td><td class="ok">77.8% (35/45)</td><td>verifier 认为代码正确</td></tr>
+<tr><td class="bad">FAIL</td><td>42</td><td>35.0%</td><td>69.0% (29/42)</td><td>verifier 发现问题</td></tr>
+<tr><td class="warn">NO_SPAWN</td><td>33</td><td>27.5%</td><td class="bad">0.0% (0/33)</td><td>未 spawn = 未生成代码 = 全挂</td></tr>
+</table>
+
+<p><b>采纳分析</b>（FAIL verdict → 主 agent 是否修改代码）：</p>
+<table>
+<tr><th>组</th><th>n</th><th>Pass</th><th>Pass 率</th><th>说明</th></tr>
+<tr><td>FAIL + 采纳（编辑修正）</td><td>37</td><td>26</td><td>70.3%</td><td>主 agent 按 issue list 修改代码</td></tr>
+<tr><td>FAIL + 未采纳</td><td>5</td><td>3</td><td>60.0%</td><td>主 agent 忽略 FAIL 直接提交</td></tr>
+<tr><td>PASS + 未改（直接提交）</td><td>37</td><td>29</td><td>78.4%</td><td>主 agent 按 PASS 直接提交</td></tr>
+<tr><td>PASS + 仍改（多余编辑）</td><td>8</td><td>6</td><td>75.0%</td><td>主 agent 不信任 PASS 仍修改</td></tr>
+</table>
+
+<p><b>关键发现</b>：</p>
+<ul>
+<li><b>采纳的边际效益不显著</b>：FAIL 采纳 70.3% vs 未采纳 60.0%，<b>Δ=+10.3pp</b>，但 n(未采纳)=5 太小，无法统计显著。</li>
+<li><b>PASS 判定有 22.2% 假阳性</b>：verifier 说 PASS 的 45 题中 10 题实际 fail（77.8% pass rate）——<b>verifier 准确性不足</b>。</li>
+<li><b>FAIL 判定有 31.0% 假阴性</b>：verifier 说 FAIL 的 42 题中 29 题实际 pass（69.0% pass rate）——<b>verifier 过度报错</b>，多数 FAIL 是误报。</li>
+<li><b>根因</b>：子 agent <b>无 MCP 工具</b>（每轮 37-41 次 MCP 调用被拒），无法用 search_apis/get_api_details 验证 API 签名，只能读代码 + 搜网页 → 审查质量低 → verdict 信号弱 → 采纳与否差异不大。</li>
+</ul>
+<div class="evidence">来源：report_data.json → a2_adoption.verdict_pass + fail_adopted + fail_not_adopted
+verdict=PASS: 35/45=77.8% | verdict=FAIL: 29/42=69.0% | verdict=NO_SPAWN: 0/33=0.0%
+fail_adopted: 26/37=70.3% | fail_not_adopted: 3/5=60.0%
+trace 证据：/tmp/zhulong_subagent_trace/A2/2026_1114_210739/EDA-Eval-PyAether-001/ws/sessions/.../agent_*.messages.json
+子 agent 最后消息："The pyAether MCP tools are NOT available (only the 8 tools)" → verifier 自知无法验证</div>
+</div>
+
+<h3>Q3. A1 为什么没增益（−2.5pp, p=0.68）？—— 调研成果传不回来，token 花两遍</h3>
+
+<div class="panel">
+<p><b>用户 18:3x 诊断正确</b>：「子 agent 做完调研，产出无法注入主 agent 的上下文，等于白跑一轮」。</p>
+
+<p><b>证据</b>：</p>
+<ol>
+<li><b>子 agent 烧 46M token 做调研，但主 agent 仍需自己重做</b>：
+<div class="evidence">cost_S_A1_r1.json: tokens_sub.total=46061840 (46M) | tokens_main.total=64097114 (64M)
+→ 主+子合计 110M token，是 A0（~33M/轮）的 3.3×
+子 agent tools_histogram: run_commands 704, search_codebase 158, read_files 281, fetch_web_content 71
+→ 子 agent 做了大量探索，但成果只在子 session 内，主 agent 看不到</div></li>
+
+<li><b>主 agent 消息数翻倍但仍重做研究</b>：A1 mean_n_msgs=68-77（A0=39-48），说明主 agent 在 spawn 返回后<b>仍自己做了一遍研究</b>（spawn 只返回一段文字摘要，不含完整 API 文档）。</li>
+
+<li><b>子 agent 执行率 100% 但无 MCP 工具</b>：A1 sub_exec=55/55, 59/64, 43/43（~97%），但 subagent_mcp_rejected=13-46 → 子 agent 同样无法调用 pyAether MCP 工具，只能用 search_codebase/read_files/fetch_web_content 做<b>泛化搜索</b>，非 API 级精准调研。</li>
+
+<li><b>ITT 不显著差异</b>：A0 vs A1 per-round McNemar b=13, c=10, p=0.68 → 调研型 spawn 既不显著伤也不显著助，<b>纯浪费 token</b>。</li>
+</ol>
+
+<p><b>结论</b>：A1 的 −2.5pp 来自吞吐轻微下降（spawn 增加 1 轮往返开销，cline_ok 78% vs A0 ~100%），
+但代码质量持平（gen-rate 86%）。子 agent 46M token 调研<b>对主 agent 不可见</b>，
+等于「花钱请人查资料但没把笔记带回来」——用户 18:3x 的结构性诊断完全正确。</p>
+</div>
+
+<h3>Q4. 上下文维度 —— 三臂峰值上下文、消息数、压缩</h3>
+
+<div class="panel">
+<table>
+<tr><th>臂</th><th>mean peak ctx (tokens)</th><th>mean n_msgs</th><th>max n_msgs</th><th>mean wall_sec</th></tr>
+<tr><td><b>A0</b></td><td>~2.5M (cumulative prompt)</td><td>39-48</td><td>119-229</td><td>979-1153</td></tr>
+<tr><td><b>A1</b></td><td>77-80K</td><td>68-77</td><td>205-242</td><td>—</td></tr>
+<tr><td><b>A2</b></td><td>81-84K</td><td class="bad">115-156</td><td class="bad">681-728</td><td>—</td></tr>
+</table>
+<p class="mut">注：A0 的 prompt_tokens 是累计输入 token（非峰值上下文窗口占用），A1/A2 的 peak_ctx 是单条消息最大 inputTokens（≈上下文窗口占用）。口径不同但可定性比较。</p>
+
+<ul>
+<li><b>峰值上下文 ~83K 远低于 128K 窗口</b> → <b>大多数任务不触发窗口溢出</b> → compaction=basic 模式下压缩触发极少（trace 中未检测到明显 compaction 事件）。</li>
+<li><b>A2 的 n_msgs 是 A0 的 3×、A1 的 2×</b> → 验证流程使对话轮次大幅增加，但单轮上下文增量小（verifier verdict 是短文本）。</li>
+<li><b>A2 max n_msgs=728</b> 的极端任务已接近上下文极限 → 这些任务是 cline_fail 的主要来源。</li>
+<li><b>压缩触发检测</b>：basic compaction 模式下未在 trace 中找到明确的 compaction 事件标记（compaction 在 cline 内部处理，trace 仅记录消息流）。补法：如需精确测量，需开启 cline 的 compaction 日志或用 agentic compaction 对比。</li>
+</ul>
+</div>
+
+<h3>Q5. 三臂并列成绩表（负结果照写）</h3>
+
+<div class="panel">
+<table>
+<tr><th>臂</th><th>配置</th><th>ITT mean±std</th><th>各轮 ITT</th><th>gen-rate</th><th>cline_ok</th><th>spawn 率</th></tr>
+<tr><td><b>A0</b></td><td class="l">无 spawn（复用 compaction basic r1-r3）</td><td><b>69.2±1.4%</b></td><td>[67.5, 70.0, 70.0]</td><td>—</td><td>~100%</td><td>0</td></tr>
+<tr><td><b>A1</b></td><td class="l">调研型 spawn（researcher·写前 spawn）</td><td>66.7±7.2%</td><td>[62.5, 62.5, 75.0]</td><td>86.2%</td><td>78%</td><td>1.1/task</td></tr>
+<tr><td class="bad"><b>A2</b></td><td class="l">验证型 spawn（adversarial QA·写后 spawn）</td><td class="bad">53.3±3.8%</td><td>[50.0, 57.5, 52.5]</td><td>87.6%</td><td class="bad">60%</td><td>0.8/task</td></tr>
+</table>
+
+<p><b>Δ</b>：A1 vs A0 = <span class="warn">−2.5pp</span>（~0.3σ，证据不足）· A2 vs A0 = <span class="bad">−15.9pp</span> · A2 vs A1 = <span class="bad">−13.4pp</span></p>
+
+<p><b>McNemar 配对检验</b>（已验证，与 mcnemar_subagent_results.json 一致）：</p>
+<table>
+<tr><th>对比</th><th>口径</th><th>b (A>B)</th><th>c (B>A)</th><th>n</th><th>p</th><th>显著?</th><th>满足 ≥6:6?</th></tr>
+<tr><td>A0 vs A1</td><td>majority</td><td>4</td><td>1</td><td>5</td><td>0.37</td><td>❌</td><td>—</td></tr>
+<tr><td class="bad">A0 vs A2</td><td>majority</td><td class="bad">9</td><td>0</td><td>9</td><td class="bad">0.004</td><td class="bad">✅</td><td>—</td></tr>
+<tr><td>A1 vs A2</td><td>majority</td><td>8</td><td>2</td><td>10</td><td>0.11</td><td>❌(趋势)</td><td>—</td></tr>
+<tr><td>A0 vs A1</td><td>per-round(120)</td><td>13</td><td>10</td><td>23</td><td>0.68</td><td>❌</td><td>❌</td></tr>
+<tr><td class="bad">A0 vs A2</td><td>per-round(120)</td><td class="bad">24</td><td>5</td><td>29</td><td class="bad">0.0008</td><td class="bad">✅✅</td><td>—</td></tr>
+<tr><td class="bad">A1 vs A2</td><td>per-round(120)</td><td class="bad">23</td><td>7</td><td>30</td><td class="bad">0.006</td><td class="bad">✅</td><td class="bad">✅ b=23,c=7</td></tr>
+</table>
+
+<p><b>majority vote</b>：A0=72.5% (29/40) · A1=65.0% (26/40) · A2=50.0% (20/40)</p>
+</div>
+
+<!-- ==================== §2 A3/A4 idea ==================== -->
+
+<h2>§2 A3/A4/… 消融 idea（判据：多 agent ≥ 单 agent）</h2>
+
+<div class="hint">
+<b>硬约束（已踩过的坑）</b>：子 agent 继承父模型、无 MCP 工具（cline 3.0.51 bug）、maxIterations 继承父值。
+任何依赖「给子 agent 换模型/换工具/换 iter」的设计当前不可行（除非用 H2 wrapper v3.0.74 + INHERIT_MCP=1）。
+-p 8 共享 data-dir 竞态需 per-task 隔离。每条须说清「为什么能超过 A0=69.2%」。
+</div>
+
+<!-- ============ A3 ============ -->
+<div class="idea">
+<h3>A3 · 上下文预算臂（用户思路，优先评估）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>唯一变量</b></td><td class="l">主 agent + 子 agent 均设确定且较小的 token 预算（in/out 分别设上限），超限强制交付/交接</td></tr>
+<tr><td><b>机制</b></td><td class="l">主 agent in_budget=X / out_budget=Y；超出 in_budget 时强制 spawn 子 agent 接力（子 agent 只收到前段摘要 + 结构化交接物）；子 agent 同样有预算上限。<br>同时<b>弱化并重测基线</b>：A0' = 同预算下无 spawn 的主 agent（预算打平时单 agent 会怎么退化的「预算基线」必须先测出）</td></tr>
+<tr><td><b>预注册判据</b></td><td class="l">A3 ITT ≥ A0' ITT + 3pp（同预算下多 agent 优于单 agent）· McNemar b≥6,c≥6 方向一致</td></tr>
+<tr><td><b>预期机制</b></td><td class="l">当所需上下文 > 预算窗口时，单 agent 被迫压缩 → 丢细节 → 质量降；多 agent 各自小窗口 + 结构化交接 → 保留更多细节 → 质量升</td></tr>
+<tr><td><b>风险与失效</b></td><td class="l">① 预算太小 → 主 agent 连题目都读不完 → 全挂；② 交接物设计不好 → 子 agent 上下文断裂 → 质量更差；③ 40 题子集可能不够长 → 无法触发预算压力 → Δ≤0（此时需换超窗子集）</td></tr>
+<tr><td><b>预估成本</b></td><td class="l">A0' + A3 各 3 轮 × 40 题 ≈ 6 × 40 = 240 任务 × ~20min = ~80h（串行）</td></tr>
+<tr><td><b>为什么能超 A0</b></td><td class="l"><b>只有当预算 < 所需上下文时</b>，单 agent 压缩丢细节而多 agent 交接保细节 → A3 在超窗子集上可能赢。但若 40 题不超窗 → A3 ≤ A0。需先做可行性预检（§2 末）。</td></tr>
+</table>
+<p><b>注入强度</b>：需 wrapper 级——cline 的 maxTokens 控制 output，但 input 预算需 hook 或 wrapper 监控 inputTokens 并强制 spawn。当前 cline 3.0.51 无此机制 → <span class="badge warn">需改 wrapper 或用 H2 wrapper 扩展</span>。</p>
+<p><b>可行性预检</b>：① 先测 A0' 预算基线（给主 agent 设 maxTokens=8192 看退化多少）；② 测 40 题中峰值上下文分布——若 >90% 任务 < 预算 → 判「本数据集无法检验 A3」→ 改用 158 全集 top-k trace 最长任务。</p>
+</div>
+
+<!-- ============ A4 ============ -->
+<div class="idea">
+<h3>A4 · 接力臂（序列分段，非并行）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>唯一变量</b></td><td class="l">主 agent 编排 + 多段子 agent 接力，段间传结构化交接物（文件 + 摘要）</td></tr>
+<tr><td><b>机制</b></td><td class="l">主 agent 把任务拆成 N 段（例：① 调研 API → ② 写代码 → ③ 验证），每段 spawn 一个<b>全新上下文</b>子 agent，段间只传文件 + 摘要（写入 pyAether_code/ + README.md）；主 agent 只做编排与合并，不亲自写代码</td></tr>
+<tr><td><b>预注册判据</b></td><td class="l">A4 ITT ≥ A0 ITT（69.2%）+ McNemar b≥6,c≥6 方向一致</td></tr>
+<tr><td><b>预期机制</b></td><td class="l">每段子 agent 上下文小且专注 → 不被前段噪声污染 → 长任务（trace >200 msgs）上优于单 agent 的全程累积上下文</td></tr>
+<tr><td><b>风险与失效</b></td><td class="l">① 段间交接丢失关键约束 → 后段写错；② 编排开销 + N 段串行 → wall_sec 翻 N 倍 → 更多 timeout；③ 子 agent 无 MCP 工具 → 调研段/验证段质量低（同 A1/A2 的 MCP bug）</td></tr>
+<tr><td><b>预估成本</b></td><td class="l">3 轮 × 40 题，但每题 wall 翻 2-3× → ~120h</td></tr>
+<tr><td><b>为什么能超 A0</b></td><td class="l"><b>只在长任务上可能赢</b>：trace >200 msgs 的任务，单 agent 上下文累积导致后期推理质量降；接力每段从零开始 → 保质量。短任务上 A4 ≤ A0（编排开销纯亏）。</td></tr>
+</table>
+<p><b>注入强度</b>：提示注入级——主 agent 提示「你必须分段 spawn，每段只做 X，交接物写入文件」。<span class="badge ok">当前可行</span>（不需改 wrapper，但需 INHERIT_MCP=1 让子 agent 有 MCP 工具，否则调研/验证段无法工作）。</p>
+</div>
+
+<!-- ============ A5 ============ -->
+<div class="idea">
+<h3>A5 · 严格「写后只挑刺」臂（隔离 A2 的无脑采纳）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>唯一变量</b></td><td class="l">verifier 只输出 issue list 到文件，不得改代码；主 agent 必须逐条 triage（accept/reject + 理由）后才能提交</td></tr>
+<tr><td><b>机制</b></td><td class="l">verifier 输出 <code>qa_issues.json</code>（issue list + 严重度）；主 agent 读后对每条 issue 写 <code>triage.md</code>（accept/reject + 理由），accept 的才改，reject 的说明为什么 verifier 错了 → 隔离 A2 的「88% 无脑采纳」+ verifier 假阳性 22%</td></tr>
+<tr><td><b>预注册判据</b></td><td class="l">A5 ITT ≥ A0 ITT + 3pp · A5 cline_ok ≥ 75%（A2 的 60% → 75% 为吞吐恢复门槛）</td></tr>
+<tr><td><b>预期机制</b></td><td class="l">triage 强制主 agent 独立判断 verifier 的每条 issue → 过滤假阳性 → 避免无脑采纳导致的「改了反而改错」</td></tr>
+<tr><td><b>风险与失效</b></td><td class="l">① triage 本身增加主 agent 负载 → cline_ok 仍可能 <75%；② verifier 无 MCP → issue list 质量低 → triage 无好素材可筛；③ 主 agent 可能全 reject → 退化成 A0 + 额外开销</td></tr>
+<tr><td><b>预估成本</b></td><td class="l">3 轮 × 40 题 ≈ ~20h（比 A2 略长，triage 增加少量消息）</td></tr>
+<tr><td><b>为什么能超 A0</b></td><td class="l"><b>不确定能超</b>：A5 修复了 A2 的「无脑采纳」问题，但 verifier 无 MCP 的根本问题仍在。只有当 verifier 的真阳性 issue 能帮主 agent 抓到它漏掉的 bug 时才赢。预期 A5 ≈ A0 ± 3pp，可能不显著。</td></tr>
+</table>
+<p><b>注入强度</b>：提示注入级——改 SUBAGENT_HINT 要求 verifier 输出文件 + 主 agent 提示要求 triage。<span class="badge ok">当前可行</span>。但<b>前提是先修 MCP bug</b>（用 H2 wrapper v3.0.74 + INHERIT_MCP=1），否则 verifier 仍无法验证 API。</p>
+</div>
+
+<!-- ============ A6 ============ -->
+<div class="idea">
+<h3>A6 · 门槛臂（gate on trigger，条件 spawn）</h3>
+<table>
+<tr><th>字段</th><th class="l">内容</th></tr>
+<tr><td><b>唯一变量</b></td><td class="l">只在「主 agent 判为高风险 / 上下文占用 >X% / 已有失败重试」时才 spawn，其余不 spawn</td></tr>
+<tr><td><b>机制</b></td><td class="l">主 agent 自评风险（高/中/低），仅高风险任务 spawn verifier；中低风险直接提交 → 减少不必要的 spawn 开销 → 保吞吐</td></tr>
+<tr><td><b>预注册判据</b></td><td class="l">A6 ITT ≥ A0 ITT · A6 cline_ok ≥ 85%（接近 A0 的 ~100%）· spawn 率 < 30%</td></tr>
+<tr><td><b>预期机制</b></td><td class="l">只在高风险任务上付 spawn 开销 → 多数任务走 A0 快速路径 → 吞吐恢复；高风险任务上 verifier 可能抓到 bug → ITT 升</td></tr>
+<tr><td><b>风险与失效</b></td><td class="l">① 主 agent 自评风险不准 → gate 形同虚设；② 高风险任务本身 cline_ok 就低 → spawn 雪上加霜；③ 需先做 A3 的上下文测量确定阈值 X</td></tr>
+<tr><td><b>预估成本</b></td><td class="l">3 轮 × 40 题 ≈ ~18h（spawn 率低 → 比 A2 快）</td></tr>
+<tr><td><b>为什么能超 A0</b></td><td class="l"><b>可能保平或微赢</b>：A6 = A0（低风险）+ A2（高风险）。若 verifier 在高风险任务上真有价值 → A6 > A0；若 verifier 无价值（如 A2 所示）→ A6 ≈ A0（吞吐因 spawn 率低而恢复）。下行风险小。</td></tr>
+</table>
+<p><b>注入强度</b>：提示注入级——主 agent 提示「先自评风险，仅高风险 spawn verifier」。<span class="badge ok">当前可行</span>，但需 INHERIT_MCP=1。</p>
+</div>
+
+<h3>可行性预检（不要直接开跑）</h3>
+<div class="panel">
+<p>每条 idea 在 cline v3.0.74 wrapper（H2 已 build）的注入强度：</p>
+<table>
+<tr><th>Idea</th><th>注入方式</th><th>需改 wrapper?</th><th>需 INHERIT_MCP?</th><th>当前可行?</th></tr>
+<tr><td>A3 上下文预算</td><td>hook 监控 inputTokens + 强制 spawn</td><td class="warn">是（需扩展 wrapper）</td><td>推荐</td><td class="warn">需开发</td></tr>
+<tr><td>A4 接力臂</td><td>提示注入（主 agent 分段编排）</td><td>否</td><td class="bad">必须</td><td class="ok">可行（需装 H2 wrapper）</td></tr>
+<tr><td>A5 严格挑刺</td><td>提示注入（verifier 输文件 + 主 agent triage）</td><td>否</td><td class="bad">必须</td><td class="ok">可行（需装 H2 wrapper）</td></tr>
+<tr><td>A6 门槛臂</td><td>提示注入（主 agent 自评风险 + 条件 spawn）</td><td>否</td><td class="bad">必须</td><td class="ok">可行（需装 H2 wrapper）</td></tr>
+</table>
+<p><b>关键阻塞</b>：A4/A5/A6 都<b>必须先装 H2 wrapper v3.0.74 + INHERIT_MCP=1</b>，否则子 agent 无 MCP 工具 → 退化成 A2 的无效审查。H2 wrapper 已 build（commit 39ccd44cc）但未装为默认 cline → 需在不影响 A0/A1 历史结果的前提下装为独立二进制。</p>
+<p><b>推荐起跑顺序</b>：① 先做 A3 可行性预检（测 A0' 预算基线 + 40 题上下文分布）→ ② 若 40 题不超窗 → 取 158 全集 top-k trace 最长任务构造超窗子集 → ③ 装 H2 wrapper（向后兼容）→ ④ 跑 A6（下行风险最小）→ ⑤ 跑 A4（长任务子集上）→ ⑥ 视结果决定 A5。</p>
+</div>
+
+<!-- ==================== §3 用户思路形式化 ==================== -->
+
+<h2>§3 为什么多 agent 可能赢——用户思路形式化</h2>
+
+<div class="hint">
+<b>用户原话</b>：「多 agent 的主要优势在<b>独立上下文</b>：当解决一个任务所需上下文 > 底模上下文窗口、且单 agent 压缩不足以保留足够细节时，多 agent 才可能优于单 agent。⇒ 给每个 agent（含主 agent）确定且较小的 token 预算。」
+</div>
+
+<h3>形式化假设 H_ctx</h3>
+<div class="panel">
+<p>设 <code>ctx_req(t)</code> = 任务 t 所需的最小上下文（完整读完题 + 查全 API + 推理链不丢细节），<code>W</code> = 底模上下文窗口（deepseek-v4-pro ≈ 128K）。</p>
+<p><b>H_ctx</b>：在 <code>ctx_req(t) > W</code> 的子集 S_overflow 上，多 agent 的 Δ = ITT(multi) − ITT(single) <span class="ok">显著为正</span>；
+在 <code>ctx_req(t) ≤ W</code> 的子集 S_fit 上，Δ <span class="bad">≤ 0</span>。
+即 <b>Δ 与 (ctx_req / W) 正相关</b>，存在交叉点 ctx_req* ≈ W。</p>
+<p><b>直觉</b>：窗口够用时，单 agent 一口气做完最优（无交接损耗）；窗口不够时，单 agent 被迫压缩 → 丢细节 → 出错，而多 agent 各段小窗口 + 结构化交接保细节 → 赢。</p>
+</div>
+
+<h3>分层口径</h3>
+<div class="panel">
+<p>用 A0 的 per-task 指标做分层变量：</p>
+<ul>
+<li><b>分层变量</b>：A0 per-task 峰值上下文（prompt_tokens）/ n_assistant_msgs / wall_sec</li>
+<li><b>分两层</b>：S_overflow = 峰值上下文 > 阈值 T（例 T = 100K，接近 128K 窗口的 80%）；S_fit = ≤ T</li>
+<li><b>比较</b>：在 S_overflow 和 S_fit 上分别算 A0 vs A1/A2 的 Δ 与 McNemar</li>
+</ul>
+<p><b>当前数据</b>：A0 per-task prompt_tokens 均值 2.0-2.5M（累计，非峰值窗口占用）；A1/A2 peak_ctx 均值 77-84K（峰值窗口占用）。<b>40 题子集中绝大多数任务峰值 < 128K 窗口</b> → S_overflow 几乎为空 → <b>无法检验 H_ctx</b>。</p>
+</div>
+
+<h3>诚实说明</h3>
+<div class="panel">
+<p class="bad"><b>本 40 题子集无法检验 H_ctx。</b></p>
+<p>原因：40 题子集是从 158 题中按 compaction 实验需求抽取的「中等难度」子集，峰值上下文 77-84K 远低于 128K 窗口。A1/A2 的 Δ≤0 恰好符合 H_ctx 在 S_fit 上的预测（窗口够用时多 agent ≤ 单 agent），<b>但这是 H_ctx 的「弱支持」而非「否定」</b>——因为缺少 S_overflow 的对照。</p>
+<p><b>能检验 H_ctx 的任务构造方案</b>：</p>
+<ol>
+<li>取 158 全集中 A0 的 per-task <b>trace 最长 top-k</b>（n_assistant_msgs > 150 或 wall_sec > 2000s 的任务）——这些是最可能超窗的任务；</li>
+<li>在 top-k 子集上重跑 A0 + A3/A4（小预算多 agent），看 Δ 是否在 top-k 上翻正；</li>
+<li>若 top-k 的峰值上下文仍 < 128K → 说明 158 题本身不超窗 → <b>需构造更长任务</b>（例：多文件联合修改、跨库 ref、长 API 链）才能检验 H_ctx。</li>
+</ol>
+<p class="mut">🚫 不许用 40 题上的「无差异」去否定用户假设——40 题不超窗，本就不在 H_ctx 的作用域内。</p>
+</div>
+
+<!-- ==================== §4 总结 ==================== -->
+
+<h2>§4 总结与下一步</h2>
+
+<div class="panel">
+<p><b>本轮发现</b>：</p>
+<ol>
+<li><b>A2 −15.9pp 的根因 = 吞吐崩溃</b>（cline_ok 60%，非代码质量降），验证了 mcnemar key_finding；</li>
+<li><b>采纳率欠账已还</b>：verifier FAIL 采纳 +10.3pp（n=5 不显著），PASS 假阳性 22.2% + FAIL 假阴性 31.0% → verifier 信号弱，根因是子 agent 无 MCP 工具；</li>
+<li><b>A1 无增益根因 = 调研成果传不回主 agent 上下文</b>（用户诊断正确），子 agent 46M token 纯浪费；</li>
+<li><b>用户 H_ctx 假设形式化完成</b>，但 40 题子集不超窗 → 无法检验 → 需取 158 全集 top-k trace 最长任务；</li>
+<li><b>A3-A6 四条 idea 已写为可执行臂</b>，A4/A5/A6 需先装 H2 wrapper（INHERIT_MCP=1）让子 agent 有 MCP 工具。</li>
+</ol>
+
+<p><b>下一步（不在本轮起跑，等用户裁决）</b>：</p>
+<ol>
+<li>装 H2 wrapper v3.0.74 为独立二进制（向后兼容，不影响 A0/A1 历史结果）；</li>
+<li>测 A0' 预算基线 + 40 题上下文分布（A3 可行性预检）；</li>
+<li>取 158 全集 top-k trace 最长任务构造超窗子集（H_ctx 检验前提）；</li>
+<li>按推荐顺序跑 A6 → A4 → A5（视前一条结果决定是否继续）；</li>
+<li><b>本轮不起任何新臂</b>（除 A3 前必需的上下文测量，且须 GPU/沙盒空闲、不影响他线）。</li>
+</ol>
+</div>
+
+<hr>
+<p class="mut">报告生成：2026-11-15 · 数据源：trace /tmp/zhulong_subagent_trace/{A1,A2}/ · cost_S_{A1,A2}_r{1,2,3}.json · ablation_compaction_results.json · EDA-Eval-Framework output_evaluation/*/final_report.json · 分析脚本 analyze_subagent_traces.py + build_report_data.py → report_data.json · McNemar 与 mcnemar_subagent_results.json 交叉验证一致</p>
+
+</div>
+</body>
+</html>
