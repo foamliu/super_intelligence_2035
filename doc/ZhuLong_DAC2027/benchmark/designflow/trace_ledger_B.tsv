@@ -936,7 +936,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794288882731_kjeit	e0039602	hfeg0plg07	0	spice_sim	parked		2026-11-11 04:50	verilog_lib diff consultation
 1794291739758_mh8rj	yuqingc	hfeg0plg05	0	spice_sim	parked		2026-11-11 04:50	verilog controller path find wrong-shard A
 1794292759049_xqgpn	e0041392	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	workspace upload ops
-1793268918911_brnqb	e02141	hfeg0plg58	0	spice_sim	parked		2026-11-11 04:50	sentaurus deck study consultation
+1793268918911_brnqb	e02141	hfeg0plg58	0	spice_sim	case	EDA-Eval-DesignFlow-GaaFetDeckAugment-001	2026-11-15 13:58	sentaurus deck study consultation
 1794276648034_pigzp	e0041126	hfeg0plg76	0	spice_sim	parked		2026-11-11 04:50	verilog regression run wrong-shard A
 1794291558968_pxf8v	e0039102	hfeg0plg52	0	spice_sim	parked		2026-11-11 04:50	run_regr compare verilog wrong-shard A
 1793104413373_56ohw	jackliu	hfeg0pkn005	0	spice_sim	parked		2026-11-11 04:50	verilog x-state analysis wrong-shard A
