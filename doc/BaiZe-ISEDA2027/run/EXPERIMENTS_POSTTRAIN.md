@@ -11932,3 +11932,21 @@ python3 bpt_attribution_p0_dev_compare.py \
 **09:00 及格线**：5/6✅ [A1=0/40 · A3=2/40 · T6 归因表 · 合并 HTML · EXPERIMENTS]，**唯一未闭环=P0 dev 前后对比**（数据 ETA~10:00+，下一 wake 数据齐 + 手动 rescue 后跑 compare）。
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面；未引用未跑完的 run（P0 标 pending）。MEMORY 29723B（<32KB）。
+
+## §R532-p0dev-derisk（wake532, 2026-11-15 08:0x）— postmortem 复验 + P0 dev compare/rescue 工具链 p0_dev 路径去风险（本轮实质）
+
+**postmortem（🔴最高优先令）复验 PASS**：报告 `reports/report_infra_tunnel_postmortem_zh.html`（commit 375e11bf7 + c7261dc0a，项目根 reports/ + 本线 run/reports/ 各一份）通读复核——首屏三句话（坏没坏=坏过已恢复 / 怎么坏=中继侧①+② / 谁修=中继侧自行恢复非本线）、§1 六问逐一带证据、§6 修复路径「需运维/用户在 Windows 中继机 `172.19.195.133` 上重跑 `tunnel.ps1`」+ 三条验证命令（含期望与实测输出）齐全，满足 `INFRA_TUNNEL_POSTMORTEM_SPEC.md` §1/§2，无需改动。隧道 08:04 三命令实测全 PASS：`ss -ltnp|grep 3333`=LISTEN 127.0.0.1:3333；`ssh -p3333 ... 'hostname'`=hfeg0tedaap02（36.15）；`curl http://127.0.0.1:18096/v1/models`（经 36.15 反向隧道）→ id=minicpm5-2b-sft-v39-final root=global_step_105。**postmortem 任务保持闭合交付状态。**
+
+**本轮实质 = P0 dev compare/rescue 工具链 p0_dev 路径去风险**（为下一 wake p0_dev 数据齐后立即出判定铺路，避免重蹈 path-bug 覆辙）：
+
+1. **rescue helper 调用口径订正（重要）**：`bpt_attribution_manual_rescue.sh` 默认 `RESULTS_DIR=/tmp/posttrain_attribution_ablation`（A1/A3 用）；`--arm p0_dev` 会解析到 `/tmp/posttrain_attribution_ablation/p0_dev`（**错误**，p0_dev 不在 ablation 目录）。**正确兜底调用 = `--arm-dir /tmp/posttrain_attribution_prompt/p0_dev`**（baseline_dev 同理 `/tmp/posttrain_attribution_prompt/baseline_dev`）。已核 helper L15/L37 + L67 尾斜杠修复（wake520）就位。
+2. **chain auto-rescue 实测对 dev 臂有效**：relaunch515b.log 实测 baseline_dev 段输出「RESCUE: moved 22 pyAether_code dirs into ws/」+「RESCUE pass_rate=...」并直接落盘 `/tmp/posttrain_attribution_prompt/baseline_dev/final_report.json`（pass_rate=0.012658=1/79，rescue 前瞬时值）。⇒ **relaunch515b 链（fix 落盘后 02:55 起跑）的 auto-rescue 对 dev 臂有效**（wake528/529 记的「auto-rescue 失效」属更早 A1/A3 attempt，旧 inode 持有 bug 脚本；本链已修）。⇒ **p0_dev 完成后 chain auto-rescue 应直接产出 `final_report.json`，手动 helper 仅作二线兜底**（若 auto-rescue 受二进制日志干扰跳过才用 `--arm-dir` 调用）。
+3. **compare 脚本就绪验证**：`bpt_attribution_p0_dev_compare.py` `py_compile` PASS + `--help` 正常（参数 `--baseline-report`/`--patch-report`/`--task-ids-file`/`--task-ids-key dev_ids`/`--baseline-label baseline_dev`/`--patch-label p0_dev`/`--delta-threshold-pp`/`--rej-reduction-threshold-pp`/`--output`）。下一 wake 一行命令出判定：
+   `python3 bpt_attribution_p0_dev_compare.py --baseline-report /tmp/posttrain_attribution_prompt/baseline_dev/final_report.json --patch-report /tmp/posttrain_attribution_prompt/p0_dev/final_report.json --task-ids-file attribution_traindev_split.json --task-ids-key dev_ids --output /tmp/posttrain_attribution_prompt/p0_dev_compare.json`
+4. **baseline_dev 口径复核**：经隧道在 36.15 实跑 `details_per_task` 按 `attribution_traindev_split.json` dev_ids(79) 过滤取 num_correct≥1 ⇒ **pass=0/79**，与 wake531 落盘结论一致（chain 日志 1/79 为 rescue 前瞬时值，以落盘 final_report 为准）。
+
+**双链健康监控**：①p0_dev ▶ RUNNING（36.15 relaunch515b PID700233 活，codegen.log 29657 行/1.1MB @08:04，07:34:54 起跑，baseline_dev 耗 ~2h20min ⇒ **p0_dev ETA≈09:55**，慢因=minicpm5 parser 乱码→2500s 超时，协议冻结不可改，单 serve 串行无法加速）；②R2 run5 codegen RUNNING@03:33:34（.17 PID3721157，etime~4.5h，GPU7:8095 健康，run4 耗 6.7h ⇒ ETA≈10:00-10:30 ⇒ 5run_rl_analysis_R2.json）；4-run mean 0.475% << step105 3.04%±0.83 decisively 负。
+
+**09:00 及格线**：5/6✅ [A1=0/40 · A3=2/40 · T6 归因表 · 合并 HTML · EXPERIMENTS]，**唯一未闭环=P0 dev 前后对比**（p0_dev ETA~09:55，略过 09:00，codegen 吞吐限非 infra 非阻塞；下一 wake 数据齐 → auto-rescue 产出 final_report → 跑 compare 出 delta_pp + McNemar + 预注册判定 → 填报告 §4 前后对比表）。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面；未引用未跑完的 run（P0 标 pending）；仅只读诊断 + 脚本 py_compile/help 验证（未执行 compare 实跑，因 p0_dev final_report 未落盘）。MEMORY 归档 wake530 全文→指针控体积。
