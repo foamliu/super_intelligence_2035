@@ -2,20 +2,21 @@
 
 WAITING: 1
 
-> 🆕 **R2555 · 2026-11-16 02:19 — 监控轮·自检全绿 + cc rerun 44/82(9P/27F/8ERR·+2 PASS since R2554·0ConnRefused✅) + adaptive off10/10·0 429✅ + gateway 200✅ + infra rerun manifest备妥(17题)**
-> - **自检**: load28.73/224 ✅(pretrain dominant)·mem 1039GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun 0%·harbor 0%)·reports/ porcelain=0✅
-> - **git**: `git pull` up-to-date ✅
-> - **cc rerun**: PID 1510521 alive(81020s≈22.5h·n=1·jobs-dir=0348)·**44/82 done** + mteb-leaderboard running·**38 remaining**·ETA~Nov17 20:00
-> - **cc 44 done breakdown(精确·verifier_result.rewards.reward)**: 9 PASS(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git/hf-model-inference/large-scale-text-editing/log-summary-date-ranges/**model-extraction-relu-logits**/**modernize-scientific-stack** ← R2555新增) + 27 FAIL(reward=0=ability) + 8 ERR(全timeout-3600s: code-from-image/configure-git-webserver/feal-diff/feal-linear/fix-ocaml-gc/llm-inference-batching-scheduler/make-doom-for-mips/mcmc-sampling-stan) = 44 ✅守恒
-> - **0 ConnRefused HARD VERIFIED ✅**: grep agent result.json exception_info=0·cc修复(overlay --network host·fix=R2463)confirmed·模型真正运行(tokens>0·9题PASS=真能力)·vs旧0/89=100%infra
-> - **502 infra**: 9题FAIL stdout=502=INFRA非能力(在27 FAIL内·stdout非exception_info)·gateway NOW healthy(200)
+> 🆕 **R2556 · 2026-11-16 02:56 — 监控轮·自检全绿 + cc rerun 44/82(9P/27F/8NA·0ConnRefused✅·+1 result.json in-flight) + adaptive off10/10·quiet202m·0 429✅ + gateway 200✅ + infra rerun manifest备妥(17题)**
+> - **自检**: load28.43/224 ✅(pretrain dominant·88.7%idle)·mem 1064GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun 0%·harbor 0%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> - **git**: `git pull` fast-forward(posttrain changes only) ✅·harness line clean ✅
+> - **cc rerun**: PID 1510521 alive(83199s≈23.1h·n=1·jobs-dir=0348·overlay-network-host.yml IN USE✅)·**44 verified + 1 in-flight=45 result.json**·mteb-retrieve running·**37 remaining**·ETA~Nov17 20:00
+> - **cc 44 done breakdown(精确·verifier_result.rewards.reward)**: 9 PASS + 27 FAIL(reward=0=ability) + 8 NA(全timeout-3600s) = 44 ✅守恒(unchanged since R2555·1 task in-flight)
+> - **0 ConnRefused HARD VERIFIED ✅**: python grep exception_info=0·cc修复(overlay --network host·fix=R2463)confirmed·模型真正运行(tokens>0·9题PASS=真能力)·vs旧0/89=100%infra
+> - **502 infra**: 9题FAIL stdout=502=INFRA非能力(在27 FAIL内)·gateway NOW healthy(200)
 > - **infra rerun manifest备妥**: `terminalbench/manifests/tb21_cc_rerun_round2_infra_timeout_20261116.txt`(10×502 + 7×timeout=17题)·**待82完成后rerun**(adaptive auto·同口径)
-> - **adaptive**: off 10/10·quiet=165m·0 429✅·策略 work4/off10 clean20m cool20m dwell10m
-> - **research日报2026-11-16 harness建议**: 记忆设计(摘要+原文双落盘/三联对照/每任务成本双指标)+事实比较题分桶=future eval design参考·非本轮actionable·noted
+> - **adaptive**: off 10/10·quiet=202m·0 429✅·策略 work4/off10 clean20m cool20m dwell10m
+> - **research日报2026-11-16**: 已reviewed(R2555)·无新日报·harness建议非本轮actionable·noted
 > - **7way报告**: cc仍0/89待merge(82完成→rerun 17 infra/timeout→merge→REGEN·cc行换真实数字+502单列infra)
 > - **下一步**: ①cc 82完成(~Nov17)→rerun 17 infra/timeout题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
 > - **📦 体积**: TASK≈25.0KB / MEMORY≈28.5KB（✅≤32KB）
 >
+> 📦 R2555 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 44/82(9P·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway 200✅。需要时再读。
 > 📦 R2554 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控+adaptive验收轮·cc 43/82(7P)+adaptive验收4/4✅+0ConnRefused✅。需要时再读。
 > 📦 R2553 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 41/82(7P·0ConnRefused)+adaptive off10/10·0 429·gateway healthy。需要时再读。
 > 📦 R2552 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 40/82(7P·0ConnRefused)+502 infra发现(10题)+adaptive off10/10·0 429·gateway healthy。需要时再读。
