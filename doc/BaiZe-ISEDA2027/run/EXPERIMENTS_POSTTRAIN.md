@@ -12080,3 +12080,30 @@ python3 bpt_attribution_p0_dev_compare.py \
 **MEMORY**：32024B ≤32KB（wake536 流水压缩为 📦 指针）。
 
 **纪律**：0 infra 误操作，未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。本轮纯 CPU 监控 + 文档。
+
+## §R539-rl-surrogate-negative-report（wake539, 2026-11-15 10:1x）— R2 诚实负结果报告生成器 + 初步报告落盘（本轮实质）
+
+**目的**：R2（GRPO+sandbox-exec 奖励,200步）5-run eval run5 收尾在即（4-run 已 decisively 负），提前交付报告生成器 + 初步报告，run5 完成后重跑出 5-run 终版。
+
+**交付物**：
+1. `bpt_rl_surrogate_5run_report.py`（占位符 @@TOKEN@@ 替换,py_compile OK）——读 /tmp/posttrain_5run_eval/{grpo_R2_step200,step105}/run*/final_report.json + R2 训练 dir(metrics.jsonl 200步 + cheat_rate.json)，自算 per-run pass、mean±std、逐任务配对 Wilcoxon、任务级 bootstrap(10000) Δ 95% CI；robust to 缺 run（run5 RUNNING 时标"预生成"）。内联 SVG reward 曲线，0 script/0 外链。
+2. `reports/report_posttrain_rl_surrogate_zh.html`（12.4KB，HTMLParser 解析 OK，0 残留 @@TOKEN@@）——**替身预演** banner + 首屏三句 + 实验配置 + 5-run 对比 + 训练侧证据 + 负结果归因 + 下一步(预注册) + 可复算命令。
+
+**关键数字（实测,可复算）**：
+- R2 run1-4 = 1/2/0/0 per 158 ⇒ **4-run mean=0.47%±0.61%**（n=4）
+- step105 基线 = 6/3/4/5/6 per 158 ⇒ **3.04%±0.83%**（n=5, locked）
+- Δ=**−2.56pp**，逐任务配对 Wilcoxon **p=0.0025**，任务级 bootstrap 95% CI=[**−3.89pp, −1.33pp**]**全<0 ⇒ decisively 负**（即便 run5 取最大可能,5-run mean 仍显著低于 step105,结论稳健）
+- 训练侧：200步 overall_reward=0.0901，**84/200 步 posadv**，grad_norm 均值=1.65，cheat=0/1600 绿 ⇒ 梯度流动,**非 R0 塌缩**
+- 分段 reward：step1-50=0.053 / 51-100=0.111 / 101-150=0.106 / 151-200=0.090 ⇒ step100 后平台/回落
+
+**负结果归因**：训练 reward ↑（0.053→0.111）但评测 Pass@1 ↓（3.04→0.47）⇒ **proxy reward（sandbox-exec 判定）与 EDA-Eval 任务正确性未对齐**（主因），非 infra/非 cheat/非 塌缩。ppo_epochs=1 使 clip 无效待修（mean_ratio==1.0 为结构性 logging artifact，禁作"policy 不动"证据）。
+
+**口径纪律**：R2 vs step105 均为 .17 口径 ⇒ 可比；R2 vs zhulong 基线(36.15 口径 18.99%) 不可比,R2 须另在 zhulong 口径重测（未来项）。run_commands 保持禁用（PreToolUse hook 白名单,防泄题）。
+
+**下一步（预注册）**：① run5 完→重跑脚本出 5-run 终版 ② 修 PPO 配置（ppo_epochs≥2 + 冻结 old_logp）或换奖励（run_code 执行+check 断言通过才给分）再跑 200 步 ③ 预注册判据：Δ>0 且 bootstrap CI 下界>0 才算正向。
+
+**状态**：run5 codegen 队列已空、进程 PID3721173 仍活（末批 in-flight/timeout 收尾,ETA~10:15-10:45）→ 完→链算 5run_rl_analysis_R2.json 退出→zhulong GATE 释放起 run2-5。zhulong 链 PID4014235 GATE 正确避让 R2（300s 探,r2alive=1）。
+
+**MEMORY**：31587B ≤32KB（wake537/538 流水压缩为 📦 指针）。
+
+**纪律**：0 infra 误操作,未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。本轮纯 CPU 报告生成器开发 + 初步报告落盘。
