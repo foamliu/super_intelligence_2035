@@ -1,0 +1,12 @@
+Lianmin Zheng 老师，您好：
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我们自建 agent harness 时把 SGLang 当服务端对照：RadixAttention 用基数树管理 KV 前缀、按 LRU 淘汰，正好对应我们「多轮工具调用、前缀高度重复」的负载。
+
+想请教三点：① RadixAttention 的淘汰粒度是单节点还是整棵子树？每轮只多出几百 token 的短前缀场景，命中率的实测区间大概是多少？② 摘要里的 6.4× 是端到端口径，RadixAttention 与压缩后 FSM 各占多少？换成 ≤2B 小模型、batch ≥16 时，这个拆分会不会反过来？③ 给 agent 循环预留固定显存做前缀缓存时，预算按 token 数还是按树节点数定？
+
+谢谢您抽时间看信。
+
+祝好，
+Yang Liu
