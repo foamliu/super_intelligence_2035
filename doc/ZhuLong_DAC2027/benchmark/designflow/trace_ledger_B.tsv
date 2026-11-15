@@ -862,7 +862,7 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793771879264_qtchi	qijingx	hfeg0pjn200	70	spice_sim	case	EDA-Eval-DesignFlow-DcSimSetupFromRef-001	2026-11-15 22:52	consultation netlist-compare no produce-task
 1793931348269_d06uu	curryxu	hfeg0plg99	51	spice_sim	parked		2026-11-10 23:23	consultation circuit-opt-suggestion
 peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
-1794208159902_v593e	t0002614	hfeg0pkn004	52	spice_sim	parked		2026-11-10 23:23	consultation netlist-extract-how-to
+1794208159902_v593e	t0002614	hfeg0pkn004	52	spice_sim	case	EDA-Eval-DesignFlow-ManualSectionExtract-001	2026-11-16 01:30	consultation netlist-extract-how-to
 1792567034258_hasla	zqzhan	hfeg0plg58	41	spice_sim	parked		2026-11-10 23:23	consultation finesim-deck script-snippet
 1793870551130_jr0o3	ronghu	hfeg0pkn005	44	spice_sim	parked		2026-11-10 23:23	debug power-meas-inst fix-iteration
 1791787377751_frxg5	hswang	hfeg0plg64	54	spice_sim	case	EDA-Eval-DesignFlow-AgingScriptAnalyze-001	2026-11-16 00:24	consultation analyze-aging-script
