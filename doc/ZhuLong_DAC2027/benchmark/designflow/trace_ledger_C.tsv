@@ -1097,3 +1097,6 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1791977738877_zlgvc.messages.json					parked		2026-11-16 05:12	r637 peek-reject: env-recon/Q&A/skill-orch/ops/D-domain/run-existing
 1792459904666_ajszr	cuij	hfeg0plg36	23	physical_verify	case	EDA-Eval-DesignFlow-SortPgfillLogByCount-001	2026-11-16 05:47	
 1793006457236_47bm9.messages.json	fhwang	hfeg0plg105	21	physical_verify	case	EDA-Eval-DesignFlow-DrcSvrfRuleWaiveExtract-001	2026-11-16 06:13	
+1794465375311_dn6lx.messages.json	minjiex	hfeg0plg90	12	physical_verify	case	SvrfDfmPropCondAssignExtract-001	2026-11-16 06:40	
+1793341332293_wyryl.messages.json	tianqizh	hfeg0plg89	12	physical_verify	parked		2026-11-16 06:41	r640 peek: env-recon locate-work-path + vague batch-process-files request, no concrete produce-task, drc keyword incidental (path drcoa)
+1792546154938_tnu8h.messages.json	jxwang	hfeg0pkn005	11	physical_verify	parked		2026-11-16 06:41	r640 peek: LSF bjobs/bqueues/bhosts job-status how-to Q&A, off-C ops/env, aether keyword incidental
