@@ -91,7 +91,7 @@ PYEOF
   export CLINE_THINKING="medium"
   export LANG_HINT=""                 # 无 spawn 提示 (A0′ = 无 spawn)
   export CLINE_UNIFIED_DATA_DIR=1
-  export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-PyAether-158.jsonl"
+  export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
   export EVAL_ROOT_DIR_OVERRIDE="$EVAL_ROOT_OVERRIDE"
   export PARALLEL
   unset CLINE_AGENTS_SRC              # 无 configured agent
