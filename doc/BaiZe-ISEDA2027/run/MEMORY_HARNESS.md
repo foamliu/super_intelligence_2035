@@ -2,7 +2,16 @@
 
 WAITING: 1
 
-> 🆕 **R2513 · 2026-11-15 11:3x — adaptive_concurrency 验收完成 + TASK 归档 37→25KB + cc rerun 监控**
+> 🆕 **R2514 · 2026-11-15 12:1x — cc rerun 监控(17/82) + FAIL 三分法归因 + 502 infra 发现**
+> - **cc rerun**: PID 1510521 alive(~8.5h·etimes 30543s)·**17/82 done**(2PASS/13FAIL/2NA)·**0ConnRefused HARD VERIFIED ✅**(17/17 tasks·grep ConnectionRefused=0)
+> - **FAIL 三分法(13FAIL)**: ① **8× max-turns**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert/configure-git-webserver=AgentTimeoutError) = **能力不足**(模型跑满80轮未解) ② **5× 502 gw-proxy upstream**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf) = **infra**(gw_proxy 上游 Connection reset·非 ConnectionRefused·容器→gw_proxy 连通✅但 gw_proxy→模型 API reset) ③ **0× 纯连接失败**
+> - **2NA**: code-from-image(RuntimeError) + 1 unknown(verifier=None)
+> - **2PASS**: custom-memory-heap-crash + dna-assembly(verifier reward=1.0)
+> - **502 归因红线**: 5× 502 是 gw_proxy 上游 reset(临时性 infra)·**不得计入能力失败**·cc 全量完成后需 rerun 这 5 题(同 quota-blocked 机制)
+> - **自检**: load 30/224 ✅·mem 1051GB avail ✅·0 harness runaway ✅·reports clean ✅·adaptive_concurrency status: mode=off current=8/10 next=9(quiet=41m·0 total 429) ✅
+> - **ETA**: rate~2 tasks/h·(82-17)/2≈32.5h·cc 完成 ETA ~Nov16 21:00
+
+> 📦 R2513 流水已归档 → daily-memories-harness/2026-11-15.md。结论：adaptive_concurrency 验收✅(stale state cleared·--now 4时刻✅·dry-run✅)·TASK归档37→25KB✅·cc rerun 15/82(0ConnRefused✅)。需要时再读。
 > - **adaptive_concurrency 验收✅**：R2512 自检遗留的 stale state（last_429=2026-11-17 future timestamp）已清除（last_429=null·429_total=0·current=8）；`status` 打印 mode/current/cap/next/reason ✅；`--now` 4 时刻注入 ✅（Sat03:00 off 8/10→Mon10:00 work clamp 4→Mon18:00 off ramp 9→Sun23:00 off ramp 9）；`--dry-run` 状态不推进 ✅（before=8 after=8）。**机制已验收，待下一路 rerun 实跑**。
 > - **cc rerun 监控**：PID 1510521 alive(~7.8h·etimes 27944s)·15/82 done·**2PASS**(custom-memory-heap-crash+dna-assembly·verifier=1.0)·12FAIL(verifier=0.0)·1NA(code-from-image·verifier=None)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)·best_reward=null 是 trial-level result.json 无此字段(非 bug·报告生成器从 verifier_result.rewards.reward 提取)·3 个 429 grep 命中=FALSE POSITIVE(数字 429 在输出数据中·非 HTTP 429)·gateway 200 ✅·rate~1.92 tasks/h·ETA ~Nov16 23:00
 > - **自检**：load 33/224 ✅·mem 1051GB avail ✅·0 harness runaway(pcpu max=0.0% for harness procs) ✅·reports clean(git status --porcelain reports/ = empty) ✅
@@ -18,10 +27,10 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2513 adaptive_concurrency验收✅·cc rerun 15/82 monitoring(2PASS/12FAIL/1NA·0ConnRefused✅)·TASK归档37→25KB✅·hermes COMPLETE 38/89
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2512(cc rerun monitoring)·R2508(报告重构令✅)·R2510(qemu BLOCKED:Py3.9<3.11)·R2511(adaptive_concurrency落码)·R2513(adaptive验收✅+TASK归档✅)
-当前动作:     R2513: adaptive_state cleaned(stale future 429 cleared→last_429=null·current=8)·--now 4时刻验证✅(Sat03:00 off 8→Mon10:00 work clamp4→Mon18:00 off ramp9→Sun23:00 off ramp9)·dry-run state preserved✅·cc rerun PID1510521 alive(7.8h)·15/82(2PASS/12FAIL/1NA·0ConnRefused HARD VERIFIED✅·verifier runs correctly·best_reward=null=trial-level no field·0real429)·TASK 37→25KB✅·gateway200✅·load33/224✅·0runaway✅·reports clean✅·W:1
-下一步:       ①cc 82题完成(ETA~Nov16 23:00)→merge→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto·chunk=12) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
+PHASE:        R2514 cc rerun 17/82 monitoring(2PASS/8max-turns/5×502infra/1timeout/2NA·0ConnRefused✅)·adaptive_concurrency验收✅·hermes COMPLETE 38/89
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2513(cc rerun monitoring+adaptive验收+TASK归档)
+当前动作:     R2514: cc rerun PID1510521 alive(8.5h)·17/82(2PASS/13FAIL/2NA·0ConnRefused✅)·FAIL三分法:8×max-turns=能力+5×502=infra(gw_proxy上游reset·非ConnRefused·待rerun)+1×timeout·adaptive status mode=off cur=8/10·load30/224✅·mem1051G✅·0runaway✅·reports clean✅·W:1
+下一步:       ①cc 82题完成(ETA~Nov16 21:00)→merge→rerun 5×502→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto·chunk=12) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
  体积: TASK=25.0KB / MEMORY=~23KB（归档~209KB）·✅TASK≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
