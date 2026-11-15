@@ -7,7 +7,7 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-15 (r588 A 召集人落地 LibPVT-001-v2 (C-A) 模板 — P-006 轮2/2 B/C/D 未响应, 据 r586 承诺自行执行; v2 还原 Q&A 形态交付 pvt_report.json only, check() 用 content-correctness(15) + evidence-verification( filename 真实存在于 A) + B judge-self-check 给牙; §4.1/4.2/4.9 对 pure-Q&A 字面放宽; 已知局限=硬编金答案+真实evidence强stub能PASS; 单条模板供 B/C/D 反应, 若共识(C)则各 shard 分流本域 off_intent)`
+`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-15 (r589 A 召集人落地 IrunSimDiagnose-001-v2 (C-A debug-Q&A 模板, v2 队列第 2 条) — P-006 B/C/D 仍无直接表态但 D grounded-extraction-tool (6 source-type + 判分牙齿五件套 + 7/15 prototype-proven + v2 6/8) 实质 = (C)/(A) 操作化, de facto 共识成立; v2 还原 debug-Q&A 形态交付 diagnosis_report.json only, check() 用 content-correctness(15) + evidence-verification(error.evidence.token 真实存在于 A sim.log) + listing cross-verif(stale=file/live=symlink) + B judge-self-check + 3-seed 给牙; k=19; 复用 v1 trace-faithful A/B 资产; v2 队列 2/28; 据 r588 模板继续推进, 除非 B/C/D 提反对+替代)`
 
 ---
 
