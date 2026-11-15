@@ -1,5 +1,24 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+> 🔴 **用户令 · 2026-11-15 23:0x（停止盲跑 · 先查 trace/管线 · 最高优先）· 未完成**
+>
+> **用户原话**：「post-train：run2/3/4：各只有 1 个有效生成 → 0.0%，都这样了还继续跑呢？不会看一眼trace排查一下吗？」
+>
+> **立即动作（本轮第一件事，做完再谈别的）**
+> 1. **停链**：`kill` 5-run 链 `PID43678` 及当前 run5 的 `run_cline_script` / `run_cli.sh` 子树；**不要再起任何新 run**。run5 若未完成，标 `INVALID-partial`；若 5-run 汇总已自动生成，也标 `INVALID` 并**不得用于任何结论**。产物一律保留，不删。
+> 2. **封存现场**：run1–run4 的 `final_report.json` / `execution_results.jsonl` / `completed_code_generation.jsonl` / `codegen_rejection_stats.json`，以及 36.15 对应 batch 的 `output_evaluation/<ts>/`、`eda_code_eval/<batch>/`、`code/EDA-Eval-PyAether-*/`、cline session 日志；记录路径 + mtime + 大小（小文件 sha256）。
+> 3. **必须解释的 4 个异常（先复现，再下结论；每条给证据）**：
+>    - **A**：run2/3/4 的 `completed_code_generation.jsonl` 都是 **158 行**，但 `execution_results.jsonl` **只有 1 行**（run1 是 36 行）。`run_eval` 的「有效生成」判定在哪一行？依据哪个文件 / glob / 字段？把代码贴出来。
+>    - **B**：run2 的 `completed_code_generation.jsonl` 里只有 1 行 `completion` 是代码（task 003），run3 是 1 行（task 107），run1 是 0 行（全 `pass`）——这个文件到底谁写的？`completion` / `status` 字段语义是什么？它和 `run_eval` 读的文件是不是同一个？
+>    - **C**：唯一被执行的任务 run2=`003`、run3=`107`、run4=`107`；把它们的 cline session trace 与 20 个 failed task 对比（首尾各 20 条消息、最后 5 次 tool call、是否写文件、`submit.zip` / zip 结构、文件命名/路径）。
+>    - **D**：run2/3/4 的 `codegen_rejection_stats.json` 是 **0 字节**（run1 是 1573 B）；这是否意味着 codegen 阶段根本没产出 code / rejection 统计没跑？
+> 4. **优先怀疑管线而不是模型**：连续 3 次「恰好 1 条 execution_result」高度可疑；先查 `run_eval` / copy / glob / zip 解包 / 大小写 / 时间戳目录的路径 bug（此前已有 copy-path bug 前科）。**在排除管线 bug 之前，禁止**把 run2/3/4 写成「模型 degenerate collapse」。
+> 5. **最小验证**：找到根因后，用 **8 题子集**重跑 `run_eval`，必须能读出 **>=8 条** `execution_results`（若仍只有 1 条即未修好）；通过后再决定是否恢复 5-run。
+> 6. **交付**：`reports/report_posttrain_collapse_rca_zh.html`（中文 / 单文件 / 0 外链 / 0 script）：首屏一句话结论 + run1–4 对照表（completed 行数 / execution 行数 / gen_success / 唯一成功 task）+ trace 证据（文件:行）+ 根因（管线 vs 模型）+ 修复 diff + 8 题验证结果；`MEMORY_POSTTRAIN.md` 顶部一行 + daily + commit 前缀 `posttrain rca:`。
+>
+> **纪律**：RCA 出结论前，**不得**再报 5-run mean、不得起新 run、不得删任何 trace/产物、不得 kill 他线（vision / zhulong / pretrain）进程。若结论是模型行为而非管线 bug，也必须给出可操作缓解（强制写文件 / 工具校验 / 重试）并先用 8 题验证，再恢复 5-run。
+
+
 > 🔴 **用户令 · 2026-11-15 08:1x — 158 题评测必须改用 zhulong 的方式（36.15 `eda_fastmcp`）· 最高优先 · 未完成**
 
 > **用户原话**：「我明白了：post-train 由于早先不是做评测的，对评测的理解远不如 zhulong。由于泄题问题，我们在36.15的评测中，用PreToolUse hook的方式，对评测过程中agent能用的工具进行了白名单限制。只能用三个知识库工具+run_code，本机 run_commands 已经被禁。请它看看36.15 中 eda_fastmcp 这个项目，这个项目有zhulong启动评测的脚本。让post-train使用zhulong相同的方式进行158评测。」
