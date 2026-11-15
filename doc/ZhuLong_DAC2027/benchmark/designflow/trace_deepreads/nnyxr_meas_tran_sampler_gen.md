@@ -35,3 +35,12 @@
 - **k=14**：check.py 14 独立断言 (a-n)，3 hidden B configs (b1/b2/b3 结构差异)
 - 自验：ref PASS 14/14 + 3neg FAIL (stub/nochange/wrongthr) + §4.9 三假 FAIL (empty/print-expected/core-deleted)
 - byte-sync sha: 2d736057588edb23aa4830204066731cde82638cded53a4b4682ae7005307302
+
+## r730 交付记录
+
+- **case_id**: EDA-Eval-DesignFlow-MeasTranSamplerGen-001
+- **落库**: D.jsonl 419→420, ledger mark nnyxr→case, pool_reaudit 标 DELIVERED r730
+- **reframe**: 用户要 SPECIFIC 脚本(值硬编码) → 契约需隐藏B → reframe 成参数化 gen_meas.py(读 spec.json + 模板 deck → 生成 .measure deck); prompt 含逐字原话 + task_brief 说明交付接口; 关键语法牙=PARAM 布尔式 vs if()三元 + 测量名去尖括号 vs FIND v()保留
+- **k=15** (a-o): REF PASS 15/15 + 3 negs FAIL (hardcoded_A/empty_stub/if_ternary) + §4.9 三假 FAIL (empty zip/print-only/core-deleted)
+- **金标准取得**: ssh 10.129.2.10 cat /home/curryxu/gen_meas.py (3695B, 真实 on-disk) + head measure.sp; 源可达, 非 B-grade
+- **意义**: D 域罕见 produce-task revival (非 Q&A/explain), 套 SineWaveAnalysis-001 r681 B-grade 范式但源真实可达故 A-grade; prototype-proven 16/23
