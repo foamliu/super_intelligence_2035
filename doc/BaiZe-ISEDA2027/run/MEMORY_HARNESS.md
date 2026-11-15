@@ -2,15 +2,19 @@
 
 WAITING: 0
 
-> 🆕 **R2538 · 2026-11-15 19:15 — 自检全绿 + cc 28/82(4P/18F/5NA=全infra-timeout·0ConnRefused✅) + opencode 35/38(10P/17F/7NA/3NO_REWARD·4remaining in-flight·0真quota429✅) + pi 11/46(1P/9F·0ConnRefused✅) + adaptive off 10/10·0cumulative429✅ + deepseek待启动**
-> - **自检**: load 59/224 ✅·mem 1027GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ clean ✅
-> - **cc rerun**: PID 1510536 harbor alive(~15.5h)·**28/82 done**(4PASS[custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git]/18FAIL/5NA[fix-ocaml-gc=VerifierTimeout·feal-linear/differential-cryptanalysis+code-from-image=CommandTimeout@3600s·configure-git-webserver=AgentTimeout@3600s=全infra]/1NO_REWARD)·**0ConnRefused ✅ HARD VERIFIED**(grep=0 files)·cc修复判据已met: 0ConnRefused+4PASS=真能力(vs旧0/89=100%infra)·54 remaining·ETA~Nov17
-> - **opencode rerun**: PID 2804694 harbor alive(part3·~40min)·**35/38 done**(10PASS/17FAIL/7NA/3NO_REWARD)·**4 remaining in-flight**[install-windows-3.11/make-doom-for-mips/regex-log/train-fasttext]·**0真quota429 ✅**(grep 10matches=假阳性·429是stdout里的数字串如G-code坐标M862.5/大整数·非exception_info里的额度block·exception_info中0条429/quota/rate-limit)·adaptive n=10
-> - **pi rerun**: PID 3810204 harbor alive(~24min)·**11/46 done**(1PASS[build-cython-ext]/9FAIL/0NA/1NO_REWARD)·**0ConnRefused ✅**·adaptive n=10
-> - **deepseek rerun**: manifest tb21_7way_rerun_deepseek-harness_20261114_0858.txt=48 tasks ✅就绪·待opencode完成后启动(adaptive auto·weekend n=10)
-> - **adaptive**: off current=10/cap=10·0 cumulative 429 ✅·real-world validated(opencode n=10 + pi n=10 concurrent·0 429)
-> - **下一步**: opencode finishes(~4 remaining·~20min)→启动deepseek rerun(48题·adaptive auto)→pi runs(46题·~2-3h)→cc finishes(~Nov17)→3 opencode RuntimeError NA单独重跑→REGEN双报告
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈31.0KB（✅≤32KB）
+> 🆕 **R2539 · 2026-11-15 19:30 — 自检全绿 + 3zombie容器清理✅ + cc 28/82(4P·0ConnRefused✅) + opencode 35/38(10P/18F/7NA·3in-flight·0真quota429✅) + pi 11/46(1P·0ConnRefused✅) + adaptive off10/10·0cumulative429✅ + deepseek待启动**
+> - **自检**: load 53/224 ✅·mem 1029GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ clean ✅
+> - **🧹 zombie容器清理**: 3个idle zombie docker容器已清(qemu-startup×2 from hermes_rerun_qemu_v6[9h] + model-extraction-relu-logits from cc_rerun_1251[16h]·docker top=空=idle·均已完成任务的遗留环境未teardown)·4个active容器保留(compile-compcert/build-pmars=pi·gpt2-codegolf/install-windows-3.11=opencode)
+> - **cc rerun**: PID 1510536 harbor alive(~15.6h)·**28/82 done**(4P/18F/5NA=全infra-timeout)·**0ConnRefused ✅ HARD VERIFIED**(grep=0 files)·cc修复判据已met·54 remaining·ETA~Nov17
+> - **opencode rerun**: PID 2804694 harbor alive(part3)·**35/38 done**(10P/18F/7NA)·**3 in-flight**[install-windows-3.11/regex-log/train-fasttext]·make-doom-for-mips已完成(reward=0.0)·**0真quota429 ✅**·adaptive n=10
+> - **opencode NA分析(7个)**: 4×RuntimeError[OpenCode exited code 1: cobol-modernization/distribution-search/dna-assembly → 需fixed adapter单独重跑] + 2×RuntimeError[CommandTimeout@3600s: caffe-cifar-10/extract-moves-from-video → agent timeout=能力] + 2×VerifierTimeout[filter-js-from-html@900s/fix-ocaml-gc@3600s → verifier infra] → 3个"exited code 1"需单独重跑(RuntimeError fix=verifier-always-run已在claude_code.py L236确认·opencode adapter需同样验证)
+> - **pi rerun**: PID 3810204 harbor alive·**11/46 done**(1P[build-cython-ext]/10F/0NA)·**0ConnRefused ✅**·adaptive n=10
+> - **deepseek rerun**: manifest=48 tasks ✅就绪·待opencode完成后启动(adaptive auto·weekend n=10)
+> - **adaptive**: off current=10/cap=10·0 cumulative 429 ✅·real-world validated
+> - **下一步**: opencode 3 in-flight finishes→启动deepseek rerun(48题)→pi continues(35remaining)→cc finishes(~Nov17)→3 opencode NA单独重跑→REGEN双报告
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈28.7KB（✅≤32KB）
+
+> 📦 R2538 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 28/82(4P·0ConnRefused✅)+opencode 35/38(10P/17F/7NA·4in-flight)+pi 11/46(1P)+adaptive off10/10·0 429✅。需要时再读。
 
 > 📦 R2537 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+adaptive验收4时刻全过✅+cc 28/82(4P·0ConnRefused✅)+opencode 34/38+pi 10/46+research日报SatisFix/EvoX记为future ref。需要时再读。
 
