@@ -83,26 +83,46 @@ run_one(){
   local rc=0
   $SSH "$cmd" >>"$LOG" 2>&1 || rc=$?
   log "[run $runidx] 36.15 流水线退出 rc=$rc"
-  # 找最新 batch 目录（cli_data/code/stats；BATCH_ID = 目录名）
-  local latest batch_id
-  latest=$($SSH 'ls -dt ~/eda_code_eval/*/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
-  batch_id=$(basename "${latest%/}")
-  log "[run $runidx] 最新 batch=$latest (BATCH_ID=$batch_id)"
-  if [ -z "$latest" ]; then log "[run $runidx] ⚠ 未找到 batch 目录"; return 1; fi
-  # ⚠ copy-path 修复（2026-11-15）：final_report.json + execution_results.jsonl 在
-  # EDA-Eval-Framework/output_evaluation/<时间戳>/，不在 ~/eda_code_eval/<batch>/。
-  # 旧脚本从 batch 目录 cat 这些文件 → 永远空 → Pass@1=NA。现从正确位置取。
+  # ═══ RCA 修复（2026-11-15）：精确归属 batch↔eval，杜绝陈旧拷贝 ═══
+  # 旧逻辑 `ls -dt ... | head -1` 抓"最新"目录 → 当某 run 的 eval 未产新 output_evaluation
+  # 时抓到上一个 run 的陈旧目录 → run3==run4 字节相同（sha256 一致，已实测）。
+  # 新逻辑：按 final_report.json 的 generations_file 字段精确匹配 batch↔eval；
+  #         无匹配则标 INVALID，绝不拷陈旧产物。
+  # 注：抽取丢码（format_cline_cli_output.py 只读 ws/pyAether_code，drop no-ws）的修复
+  #     见 reports/report_posttrain_collapse_rca_zh.html 与 run/rca_recover_extract.py。
+  local batch_dir batch_id
+  batch_dir=$($SSH 'ls -dt ~/eda_code_eval/*/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
+  batch_id=$(basename "${batch_dir%/}")
+  log "[run $runidx] batch=$batch_dir (BATCH_ID=$batch_id)"
+  if [ -z "$batch_dir" ]; then log "[run $runidx] ⚠ 未找到 batch 目录 → INVALID"; echo "INVALID"; return 0; fi
+  local gen_jsonl="completed_code_generation_${batch_id}.jsonl"
+  # 精确匹配 output_evaluation：其 final_report.json 的 generations_file 含 $gen_jsonl
   local latest_oe
-  latest_oe=$($SSH 'ls -dt /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/*_app.e0031982/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
-  log "[run $runidx] 最新 output_evaluation=$latest_oe"
+  latest_oe=$($SSH "GEN_JSONL='$gen_jsonl' python3 - <<'PYEOF'
+import json, glob, os
+target = os.environ['GEN_JSONL']; hit = ''
+for d in sorted(glob.glob('/nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/*_app.e0031982/'), key=lambda p: os.path.getmtime(p), reverse=True):
+    fr = os.path.join(d, 'final_report.json')
+    if os.path.isfile(fr):
+        try:
+            if target in json.load(open(fr)).get('generations_file', ''): hit = d; break
+        except Exception: pass
+print(hit)
+PYEOF" 2>/dev/null | tr -d '\r')
+  if [ -z "$latest_oe" ]; then
+    log "[run $runidx] ⚠ 无 output_evaluation 匹配 $gen_jsonl → INVALID-noeval（不拷陈旧）"
+    echo "INVALID-noeval"
+    return 0
+  fi
+  log "[run $runidx] 匹配 output_evaluation=$latest_oe"
   # 1) final_report.json + execution_results.jsonl ← output_evaluation（评分产物）
   for f in final_report.json execution_results.jsonl; do
     $SSH "cat '${latest_oe}${f}' 2>/dev/null" >"$dest/$f" 2>/dev/null || true
   done
-  # 2) completed_code_generation_<BATCH_ID>.jsonl ← ~/eda_code_eval/（生成产物，EVAL_ROOT 级）
-  $SSH "cat ~/eda_code_eval/completed_code_generation_${batch_id}.jsonl 2>/dev/null" >"$dest/completed_code_generation.jsonl" 2>/dev/null || true
+  # 2) completed_code_generation ← ~/eda_code_eval/（生成产物，EVAL_ROOT 级）
+  $SSH "cat ~/eda_code_eval/${gen_jsonl} 2>/dev/null" >"$dest/completed_code_generation.jsonl" 2>/dev/null || true
   # 3) codegen_rejection_stats.json ← best-effort（run1 的系手动生成；本管线可能不产）
-  $SSH "find '$latest' -maxdepth 3 -name 'codegen_rejection_stats.json' 2>/dev/null | head -1 | xargs -r cat 2>/dev/null" >"$dest/codegen_rejection_stats.json" 2>/dev/null || true
+  $SSH "find '$batch_dir' -maxdepth 3 -name 'codegen_rejection_stats.json' 2>/dev/null | head -1 | xargs -r cat 2>/dev/null" >"$dest/codegen_rejection_stats.json" 2>/dev/null || true
   local pr
   pr=$(python3 -c "import json;d=json.load(open('$dest/final_report.json'));m=d.get('metrics',{});print(m.get('pass_rate', d.get('pass_rate','NA')))" 2>/dev/null || echo NA)
   log "[run $runidx] Pass@1=$pr （产物→ $dest）"

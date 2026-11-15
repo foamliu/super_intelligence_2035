@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Train 5-run 坍塌 RCA · 2026-11-15</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1080px;margin:0 auto;padding:24px;color:#222;line-height:1.6}
+  h1{font-size:1.5em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+  h2{font-size:1.2em;margin-top:32px;border-left:5px solid #2c7fb8;padding-left:10px}
+  h3{font-size:1.05em;margin-top:20px;color:#2c7fb8}
+  .verdict{background:#fdecea;border:2px solid #c0392b;padding:14px 18px;border-radius:8px;font-size:1.05em}
+  .verdict b{color:#c0392b}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.92em}
+  th,td{border:1px solid #bbb;padding:6px 8px;text-align:center}
+  th{background:#eef3f8}
+  tr.bad{background:#fdecea}
+  tr.ok{background:#eafaf1}
+  tr.invalid{background:#fff7e6}
+  code{font-family:Menlo,Consolas,monospace;font-size:0.88em;background:#f5f5f5;padding:1px 4px;border-radius:3px}
+  pre{background:#1e1e1e;color:#e0e0e0;padding:12px;border-radius:6px;overflow-x:auto;font-size:0.82em;line-height:1.4}
+  pre .add{color:#7ee787}
+  pre .del{color:#ffa198}
+  .evidence{background:#f8f9fa;border-left:4px solid #6c757d;padding:8px 12px;margin:8px 0;font-size:0.9em}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.8em;color:#fff}
+  .pipe{background:#c0392b}.model{background:#e67e22}.fixed{background:#27ae60}
+  .small{font-size:0.82em;color:#666}
+</style>
+</head>
+<body>
+<h1>BaiZe Post-Train · 5-run 坍塌根因分析（RCA）</h1>
+<p class="small">报告时间 2026-11-15 23:xx · 提交前缀 <code>posttrain rca:</code> · 单文件自包含 / 0 外链 / 0 script</p>
+<div class="verdict">
+<b>一句话结论：</b>run2/3/4「各仅 1 条 execution_result、Pass@1=0.0%」的<b>主因是管线 bug，不是模型 degenerate collapse</b>。
+① 抽取脚本 <code>format_cline_cli_output.py:166</code> 只从 <code>code/&lt;task&gt;/ws/pyAether_code/</code> 取代码，agent 实际常把代码写到 <code>code/&lt;task&gt;/pyAether_code/</code>（无 <code>ws</code>）→ <b>48/37 个真实代码文件被 silently drop</b>（run2/run3）；
+② 链脚本 <code>ls -dt|head -1</code> 抓「最新」目录，run4 的 eval 未产新目录时<b>拷了 run3 的陈旧产物</b>（run3==run4 sha256 字节相同）。模型真实生成率约 <b>31–34%</b>，而非「1/158=0.6%」。<b>8 题回补验证：run_eval 读出 10 条 execution_results（≥8 通过）</b>。
+</div>
+
+<h2>1. 现场封存与停链</h2>
+<p>已 <code>kill</code> 5-run 链 PID 43678/332739、run5 ssh 子树 PID 335903、auto-eval watcher PID 4109314；<b>未 kill</b> vision cline(381251) / posttrain loop(3487780)。run5 标 <span class="tag model">INVALID-partial</span>（23:04 被 kill，无产物）。所有 trace/产物<b>一律保留未删</b>。</p>
+<table>
+<tr><th>run</th><th>final_report</th><th>execution_results</th><th>completed_code_gen</th><th>rejection_stats</th><th>sha256(final_report)</th></tr>
+<tr class="ok"><td>run1</td><td>73344B</td><td>36 行</td><td>158 行</td><td>1509B</td><td>253640ad…b69832</td></tr>
+<tr class="bad"><td>run2</td><td>74205B</td><td><b>1 行</b></td><td>158 行</td><td>MISSING</td><td>54968153…d7b7da0</td></tr>
+<tr class="bad"><td>run3</td><td>74199B</td><td><b>1 行</b></td><td>158 行</td><td>0B</td><td>74eacea2…483e1f93</td></tr>
+<tr class="invalid"><td>run4</td><td>74199B</td><td><b>1 行</b></td><td>158 行</td><td>0B</td><td><b>74eacea2…483e1f93（与 run3 相同）</b></td></tr>
+</table>
+
+<h2>2. run1–run4 对照表</h2>
+<table>
+<tr><th>run</th><th>batch</th><th>eval 目录</th><th>completed 行</th><th>execution 行</th><th>gen_success</th><th>唯一执行 task</th><th>Pass@1</th><th>真实性</th></tr>
+<tr class="ok"><td>run1</td><td>2026_1114_180019</td><td>(其 final_report)</td><td>158</td><td>36</td><td>36</td><td>36 题</td><td><b>18.99%</b></td><td>真实</td></tr>
+<tr class="bad"><td>run2</td><td>2026_1115_110506</td><td>20261115_1417</td><td>158</td><td>1</td><td>1</td><td>003</td><td>0.0%</td><td>真实(被抽取 bug 压低)</td></tr>
+<tr class="bad"><td>run3</td><td>2026_1115_144001</td><td>20261115_1834</td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td>真实(被抽取 bug 压低)</td></tr>
+<tr class="invalid"><td>run4</td><td>无 fresh eval</td><td><b>拷了 run3 的 1834</b></td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td><b>INVALID(陈旧拷贝)</b></td></tr>
+</table>
+
+<h2>3. 模型真实代码产出（被管线 bug 掩盖的关键证据）</h2>
+<table>
+<tr><th>batch</th><th>ws/pyAether_code/*.py（抽取目标）</th><th>pyAether_code/*.py <b>无 ws（被丢）</b></th><th>任意 .py task 数</th><th>真实生成率</th></tr>
+<tr><td>run2 (2026_1115_110506)</td><td>1</td><td><b>48</b></td><td>54</td><td><b>54/158=34%</b></td></tr>
+<tr><td>run3 (2026_1115_144001)</td><td>1</td><td><b>37</b></td><td>49</td><td><b>49/158=31%</b></td></tr>
+</table>
+<div class="evidence">被丢的 no-ws 文件确为真实代码（run2 batch）：
+<pre>code/EDA-Eval-PyAether-004/pyAether_code/transform_box.py → import pyAether as pyScript; def apply_geometric_transform_to_box(...)
+code/EDA-Eval-PyAether-010/pyAether_code/add_inst_to_schematic.py → def add_instance_to_schematic(...)
+code/EDA-Eval-PyAether-013/pyAether_code/wire.py → def create_schematic_wire(...)</pre>
+仅因落在「无 ws」路径就被 <code>format_cline_cli_output.py</code> 跳过。</div>
+<svg width="520" height="200" viewBox="0 0 520 200" style="display:block;margin:10px 0">
+  <rect x="10" y="20" width="34" height="160" fill="#27ae60"/><text x="27" y="195" text-anchor="middle" font-size="11">ws(抽取)</text>
+  <rect x="60" y="40" width="48" height="140" fill="#c0392b"/><text x="84" y="195" text-anchor="middle" font-size="11">no-ws(被丢)</text>
+  <rect x="110" y="90" width="34" height="110" fill="#95a5a6"/><text x="127" y="195" text-anchor="middle" font-size="11">无代码</text>
+  <text x="160" y="55" font-size="12" fill="#27ae60">run2: ws=1</text>
+  <text x="160" y="75" font-size="12" fill="#c0392b">run2: no-ws=48（被丢）</text>
+  <text x="160" y="95" font-size="12" fill="#95a5a6">run2: 无代码=104</text>
+  <text x="160" y="125" font-size="12" fill="#c0392b">run3: no-ws=37（被丢）</text>
+  <text x="160" y="145" font-size="12" fill="#95a5a6">run3: 无代码=109</text>
+  <text x="10" y="15" font-size="12" font-weight="bold">run2 代码产出分布（158 题）</text>
+</svg>
+
+
+<h2>4. 四个异常的逐一解释（A/B/C/D）</h2>
+<h3>异常 A：completed 158 行 vs execution 仅 1 行；run_eval「有效生成」判定在哪？</h3>
+<p><b>判定位置</b>：<code>run_cline_script.sh:556-578</code>(Step 7.1) 调用 <code>run_eval.py -g completed_code_generation_&lt;BATCH&gt;.jsonl</code>；该 jsonl 由 <code>complete_code_generation.py</code> 生成，<code>completion</code> 为真实代码的题才被 <code>assemble_for_execution.py</code> 拼装送沙盒 → 产生 execution_results。<b>completion 为 <code>"pass"</code>（哨兵）= 该题无 .py 被抽取</b>。</p>
+<div class="evidence"><b>complete_code_generation.py:69</b>（无 .py 的题写哨兵）：<pre>record = {"task_id": task_id, "completion": "pass", "status": status}</pre>
+<b>format_cline_cli_output.py:166</b>（只读 ws 子目录）：<pre>folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")</pre>
+→ run2/run3 仅 1 题落 ws/pyAether_code → 仅 1 条 execution_result。run1 有 36 题落 ws（36 条），其产物真实。</div>
+<p><b>run4 的 1 行另有原因</b>：run4 未产新 output_evaluation 目录，链脚本 <code>ls -dt|head -1</code> 拷了 run3 的 <code>20261115_1834</code> → 与 run3 字节相同。</p>
+
+<h3>异常 B：completion/status 字段语义？谁写？和 run_eval 读的是同一个吗？</h3>
+<p>由 <b>Step 6 <code>complete_code_generation.py</code></b> 写。<b>completion</b>=抽取到的代码原文（无代码时哨兵 <code>"pass"</code>）；<b>status</b>=success(有代码)/fail(无)/timeout。run_eval <b>正是读这个文件</b>（<code>-g</code> 指定 → <code>patch_config</code> 写 config.yaml 的 <code>generations_file</code> → assemble 读取）。<b>是同一个文件</b>。run1 本机那份「全 pass」是<b>链脚本串文件拷错</b>（从另一 degenerate batch 拷来），与其真实 final_report(generation_success=36) 不符。</p>
+
+<h3>异常 C：唯一被执行 task vs failed task trace 对比</h3>
+<p>trace 在 <code>~/eda_code_eval/&lt;batch&gt;/cli_data/worker_*/data/sessions/*/*.messages.json</code>。run2 batch 抽样：</p>
+<table>
+<tr><th>task</th><th>有代码?</th><th>messages</th><th>最后 assistant 摘录</th><th>画像</th></tr>
+<tr class="ok"><td>003（被执行）</td><td>ws/pyAether_code ✓</td><td>18</td><td>“The code is saved. I'll complete the task… function find_invali…”</td><td>产出生成</td></tr>
+<tr class="bad"><td>001（无代码）</td><td>无</td><td>49</td><td>“The user keeps reminding me to call submit_and_exit. I've done that many times now…”</td><td><b>submit_and_exit 风暴</b></td></tr>
+<tr class="bad"><td>005（无代码）</td><td>无</td><td>903</td><td>“The directory doesn't exist. Let me check what directories exist.”</td><td><b>长循环退化</b></td></tr>
+</table>
+<p>另有 48 题（run2）把代码写到 <code>pyAether_code/</code>（无 ws）→ <b>trace 里写了文件、但被抽取丢弃</b>。「failed task」分两群：① 真没写代码（submit_and_exit/循环，约 104 题）；② <b>写了代码但被管线丢</b>（48 题）。后者是坍塌数字主因。</p>
+
+<h3>异常 D：codegen_rejection_stats.json 为 0 字节</h3>
+<p>该文件<b>不是 codegen 阶段产出</b>，是此前 RCA 手动统计的拒绝画像（run1 的 1509B 是手算的 1304 次拒绝）。eda_fastmcp 管线本身<b>不产此文件</b> → run2 缺失 / run3·4 为 0B 属<b>预期</b>，不代表「codegen 没产码」。<b>真实产码见 §3（code/ 实测 54/49 题）</b>。</p>
+
+<h2>5. 根因定论：管线 vs 模型</h2>
+<table>
+<tr><th>层级</th><th>性质</th><th>证据</th><th>影响</th></tr>
+<tr class="bad"><td><b>主因</b> 抽取路径 bug</td><td><span class="tag pipe">管线</span></td><td>format_cline_cli_output.py:166 只读 ws/pyAether_code；run2 丢 48、run3 丢 37 个真实 .py</td><td>generation_success 被压成 1；execution_results 被压成 1</td></tr>
+<tr class="bad"><td><b>次因</b> 链脚本陈旧拷贝</td><td><span class="tag pipe">管线</span></td><td>ls -dt|head -1；run4 无 fresh eval → 拷 run3 的 1834；sha256 字节相同</td><td>run4 INVALID；completed/execution 串文件</td></tr>
+<tr><td><b>次因</b> 模型零代码</td><td><span class="tag model">模型</span></td><td>~104/158 题无 .py；trace 见 submit_and_exit 风暴 / 903 msg 循环</td><td>真实生成率 31–34%（非 0.6%，但也非健康）</td></tr>
+</table>
+<p><b>结论</b>：排除管线 bug 之前，<b>不得</b>将 run2/3/4 写成「模型 degenerate collapse」。坍塌数字（1/158）由管线抽取 bug 主导；模型真实生成率约 1/3，代码质量通过率需回补后重测定论（8 题验证 1/10=10% 通过）。</p>
+<h2>6. 修复 diff</h2>
+<h3>6.1 主修复：抽取路径回补（eda_fastmcp，建议与 zhulong 协调应用）</h3>
+<pre><span class="del">-        folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")</span>
+<span class="add">+        folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")</span>
+<span class="add">+        if not os.path.exists(folder_path):</span>
+<span class="add">+            # RCA fix (2026-11-15): agent 常把代码写到 code/&lt;task&gt;/pyAether_code（无 ws）</span>
+<span class="add">+            # 只读 ws/pyAether_code 会 silently drop 这些真实生成 → generation_success 被压成 1</span>
+<span class="add">+            alt = os.path.join(cli_output, folder_name, "pyAether_code")</span>
+<span class="add">+            if os.path.exists(alt):</span>
+<span class="add">+                folder_path = alt</span></pre>
+<p class="small">文件：<code>/nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/script/format_cline_cli_output.py:166</code>。遵守 08:1x「不改 eda_fastmcp」纪律，本轮<b>未直接改 eda_fastmcp</b>；改用 post-pipeline 回补 wrapper（6.3）。正式应用建议经 zhulong 协调。</p>
+
+<h3>6.2 次修复：链脚本精确归属 batch↔eval（已应用 <span class="tag fixed">FIXED</span>）</h3>
+<p>文件：<code>baize_posttrain_zhulong_baseline_5run_chain.sh</code> <code>run_one()</code>。把 <code>ls -dt|head -1</code> 改为按 <code>final_report.json</code> 的 <code>generations_file</code> 字段精确匹配 batch↔eval；无匹配标 <code>INVALID-noeval</code>，<b>绝不拷陈旧产物</b>。<code>bash -n</code> 通过。</p>
+
+<h3>6.3 回补 wrapper：rca_recover_extract.py（已交付 <span class="tag fixed">DELIVERED</span>）</h3>
+<p>文件：<code>run/rca_recover_extract.py</code>。batch 跑完后把 no-ws 的 <code>pyAether_code/*.py</code> 回补进 <code>completed_code_generation_*.jsonl</code>，再 <code>run_eval -g</code> 重跑。不修改 eda_fastmcp，作为外部 wrapper。</p>
+
+<h2>7. 最小验证：8 题回补重跑 run_eval</h2>
+<p>从 run2 batch（2026_1115_110506）选 <b>10 个被抽取丢弃的 no-ws 代码题</b>（004,010,013,016,033,043,045,046,048,049），构建 <code>completed_code_generation_rca_verify.jsonl</code>，在 36.15 以同一套 run_eval（未改）重跑（沙盒端口 8652）。</p>
+<table>
+<tr><th>验证项</th><th>判定标准</th><th>实测</th><th>结果</th></tr>
+<tr class="ok"><td>execution_results 条数</td><td>≥ 8</td><td><b>10</b>（generated: 10 ok, 0 fail, 0 exec_err）</td><td><b>PASS</b></td></tr>
+<tr><td>通过率</td><td>—</td><td>1/10 = 10.0%</td><td>（代码质量参考）</td></tr>
+</table>
+<div class="evidence">run_eval 输出（<code>rca_collapse_evidence/rca_verify_runeval.log</code>）：
+<pre>  ✅ verify: 1/10 pass (10.0%) | generated: 10 ok, 0 fail, 0 exec_err
+  verify: 1/10 pass (10.0%) | generated: 10 ok, 0 fail</pre>
+→ <b>同一条 run_eval 管线，喂入被丢代码后立即读出 10 条 execution_results</b>，证明「1 条」是抽取 bug 造成，而非模型/eval 无法产出。</div>
+
+<h2>8. 结论与后续</h2>
+<ul>
+<li><b>根因</b>：管线抽取路径 bug（主）+ 链脚本陈旧拷贝 bug（次）。run4 = run3 陈旧拷贝，<b>作废</b>。</li>
+<li><b>模型</b>：真实生成率约 31–34%，存在 submit_and_exit 风暴/长循环退化（约 2/3 题零代码），属<b>真实但非「1/158 坍塌」级别</b>，需修复管线后重测才能定通过率。</li>
+<li><b>5-run mean 在 RCA 结论前不得引用</b>；run2/3/4 的 0.0% 是管线 bug 压制结果，<b>不可作为模型能力结论</b>。</li>
+<li><b>后续</b>：① 经 zhulong 协调应用 6.1 抽取回补（或沿用 6.3 wrapper）；② 用 6.2 已修链脚本重跑 5-run；③ 重测后再与 run1(18.99%) 同表对比；④ 模型侧 submit_and_exit 退化缓解（强制写文件/工具校验/重试）另列。</li>
+</ul>
+<p class="small">产物索引：<code>run/rca_collapse_evidence/</code>（summary.json + rca_verify_runeval.log）、<code>run/rca_recover_extract.py</code>、链脚本修复 <code>baize_posttrain_zhulong_baseline_5run_chain.sh</code>。</p>
+</body>
+</html>
+

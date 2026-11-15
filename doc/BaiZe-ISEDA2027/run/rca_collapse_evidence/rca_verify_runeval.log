@@ -1,0 +1,92 @@
+2026-11-15 23:15:57,073 - INFO - --- [阶段2] 开始：组装可执行脚本 ---
+2026-11-15 23:15:57,078 - INFO - 配置 'clean_main_block' 为 True。将从 'completion' 中移除 __main__ 代码块。
+2026-11-15 23:15:57,079 - WARNING - 输出目录 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions 已存在。将清空该目录以确保干净的运行环境。
+2026-11-15 23:15:57,095 - INFO - 已创建并清空输出目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-11-15 23:15:57,096 - INFO - 从 benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl 读取评测问题...
+2026-11-15 23:15:57,098 - INFO - 成功加载 158 个问题的测试代码。
+2026-11-15 23:15:57,098 - INFO - 从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_rca_verify.jsonl 流式读取生成的代码...
+2026-11-15 23:15:57,099 - INFO - 开始组装脚本...
+组装脚本:   0%|          | 0/10 [00:00<?, ?it/s]组装脚本: 100%|██████████| 10/10 [00:00<00:00, 596.01it/s]
+2026-11-15 23:15:57,123 - INFO - 成功组装并保存了 10 个脚本到 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+2026-11-15 23:15:57,123 - INFO - --- [阶段2] 完成：所有脚本已准备就绪，可以进行外部执行。 ---
+2026-11-15 23:15:57,291 - INFO - 已从 config.yaml 加载配置
+2026-11-15 23:15:57,293 - INFO - 找到 10 个脚本。
+2026-11-15 23:15:57,293 - INFO - 沙盒 URL: http://10.129.32.75:8664/v1/run_code
+2026-11-15 23:15:57,293 - INFO - 超时时间: 150 秒
+2026-11-15 23:15:57,293 - INFO - 最大重试次数: 3
+2026-11-15 23:15:57,293 - INFO - 重试延迟: 10 秒
+2026-11-15 23:15:57,293 - INFO - 工作进程数: 1
+2026-11-15 23:15:57,293 - INFO - 结果将写入: output_evaluation/tmp/execution_results.jsonl
+Executing scripts:   0%|          | 0/10 [00:00<?, ?script/s]Executing scripts:   0%|          | 0/10 [00:00<?, ?script/s, passed=0, failed=1, other=0]Executing scripts:  10%|█         | 1/10 [00:00<00:01,  8.06script/s, passed=0, failed=1, other=0]Executing scripts:  10%|█         | 1/10 [00:00<00:01,  8.06script/s, passed=0, failed=2, other=0]Executing scripts:  20%|██        | 2/10 [00:00<00:01,  4.71script/s, passed=0, failed=2, other=0]Executing scripts:  20%|██        | 2/10 [00:00<00:01,  4.71script/s, passed=0, failed=3, other=0]Executing scripts:  30%|███       | 3/10 [00:00<00:01,  6.00script/s, passed=0, failed=3, other=0]Executing scripts:  30%|███       | 3/10 [00:00<00:01,  6.00script/s, passed=0, failed=4, other=0]Executing scripts:  40%|████      | 4/10 [00:00<00:01,  4.17script/s, passed=0, failed=4, other=0]Executing scripts:  40%|████      | 4/10 [00:00<00:01,  4.17script/s, passed=0, failed=5, other=0]Executing scripts:  50%|█████     | 5/10 [00:01<00:01,  4.17script/s, passed=0, failed=6, other=0]Executing scripts:  60%|██████    | 6/10 [00:01<00:00,  5.97script/s, passed=0, failed=6, other=0]Executing scripts:  60%|██████    | 6/10 [00:01<00:00,  5.97script/s, passed=0, failed=7, other=0]Executing scripts:  70%|███████   | 7/10 [00:01<00:00,  5.97script/s, passed=1, failed=7, other=0]Executing scripts:  80%|████████  | 8/10 [00:01<00:00,  8.01script/s, passed=1, failed=7, other=0]Executing scripts:  80%|████████  | 8/10 [00:01<00:00,  8.01script/s, passed=1, failed=8, other=0]Executing scripts:  90%|█████████ | 9/10 [00:01<00:00,  8.01script/s, passed=1, failed=9, other=0]2026-11-15 23:15:58,560 - INFO - 进度: 10/10 个脚本。状态: failed: 9, passed: 1
+Executing scripts: 100%|██████████| 10/10 [00:01<00:00,  7.95script/s, passed=1, failed=9, other=0]
+2026-11-15 23:15:58,562 - INFO - 所有脚本已通过沙盒执行完成。
+
+========================================
+           沙盒执行摘要
+========================================
+总执行脚本数: 10
+  - Failed: 9
+  - Passed: 1
+按运行时 (lang, host) 分组:
+  - pyAether_aether: 10
+========================================
+2026-11-15 23:15:58,775 - INFO - --- [阶段 4] 开始：计算结果、生成报告并归档 ---
+2026-11-15 23:15:58,815 - INFO - 已为此运行创建唯一输出目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261115_2315_app.e0031982
+2026-11-15 23:15:58,815 - INFO - 正在从 /nasdata/app.e0031982/code/EDA-Eval-Framework/../../../../home/app.e0031982/eda_code_eval/completed_code_generation_rca_verify.jsonl 读取生成结果...
+2026-11-15 23:15:58,815 - INFO - 成功加载 10 条生成记录。
+2026-11-15 23:15:58,815 - INFO - 正在从 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/tmp/execution_results.jsonl 读取执行结果...
+2026-11-15 23:15:58,816 - INFO - 成功加载并处理了 10 条执行记录。
+2026-11-15 23:15:58,816 - INFO - 生成状态统计: {'success': 10, 'failure': 0, 'timeout': 0}
+2026-11-15 23:15:58,816 - INFO - 总合并结果数: 10
+2026-11-15 23:15:58,816 - INFO - 结果已聚合为 10 个独立任务。
+2026-11-15 23:15:58,816 - INFO - 通过率: 0.1000 (1/10 个任务通过)
+2026-11-15 23:15:58,816 - INFO - 运行时 pyAether_aether (lang=pyAether, host=aether): 任务=10 样本=10 正确=1 指标={'pass_rate': 0.1}
+2026-11-15 23:15:58,816 - INFO - 未找到总执行时间文件，跳过时间报告
+2026-11-15 23:15:58,816 - INFO - 正在将最终 JSON 报告写入 /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261115_2315_app.e0031982/final_report.json...
+2026-11-15 23:15:58,818 - INFO - Generating Markdown report with full logs and error analysis to /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261115_2315_app.e0031982/final_report.md...
+2026-11-15 23:15:58,819 - INFO - 正在归档执行结果到: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261115_2315_app.e0031982/execution_results.jsonl
+2026-11-15 23:15:58,829 - INFO - 此运行的所有报告和结果已保存到: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20261115_2315_app.e0031982
+2026-11-15 23:15:58,829 - INFO - --- [阶段 4] 完成：评测流程结束。 ---
+
+==================================================
+           EDA-Eval 最终评测报告
+==================================================
+评测模式: pass_rate
+总评测问题数: 10
+总生成样本数: 10
+总正确样本数: 1
+--------------------------------------------------
+指标 (全局):
+  - PASS_RATE: 0.1000
+--------------------------------------------------
+指标 (按运行时分桶):
+  - pyAether_aether (lang=pyAether, host=aether, 样本 1/10): PASS_RATE=0.1000
+==================================================
+  lang=pyAether → 框架: EDA-Eval-Framework
+  benchmark 覆盖: benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl
+
+======================================================================
+  评估轮次: verify (completed_code_generation_rca_verify.jsonl)
+======================================================================
+  config.yaml patched
+
+--- Step 1: Assemble ---
+  $ /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/assemble_for_execution.py --config config.yaml
+
+--- Step 2: Sandbox ---
+  $ /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/run_on_sandbox.py --scripts-dir output_code_generation/generated_solutions --output-file output_evaluation/tmp/execution_results.jsonl --workers 1 --config-file config.yaml
+
+--- Step 3: Calculate ---
+  $ /nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python scripts/calculate_results.py --config config.yaml
+
+  ✅ verify: 1/10 pass (10.0%) | generated: 10 ok, 0 fail, 0 exec_err
+  🧹 已清理中间脚本目录: /nasdata/app.e0031982/code/EDA-Eval-Framework/output_code_generation/generated_solutions
+
+config.yaml restored to original
+
+======================================================================
+  评估结果汇总
+======================================================================
+  verify: 1/10 pass (10.0%) | generated: 10 ok, 0 fail
+
+Done!

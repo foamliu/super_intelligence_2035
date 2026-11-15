@@ -1,0 +1,16 @@
+{
+  "conclusion": "run2/3/4 各仅 1 条 execution_result 的主因是管线抽取路径 bug（format_cline_cli_output.py 只读 ws/pyAether_code，drop 掉 no-ws 的 48/37 个真实代码），叠加链脚本陈旧拷贝 bug（run4==run3 字节相同）。模型真实生成率约 31-34%，非 0.6% degenerate collapse。8 题回补验证 run_eval 读出 10 条 execution_results（>=8 通过）。",
+  "runs": {
+    "run1": {"batch":"2026_1114_180019","eval_generations_file":"completed_code_generation_2026_1114_180019.jsonl","completed_lines":158,"execution_lines":36,"gen_success":36,"correct":30,"pass_rate":0.1899,"unique_exec_task":"(36 tasks)","rejection_stats_bytes":1509,"genuine":true,"note":"completed_code_generation.jsonl 拷贝串文件(全 pass)，但 final_report/execution_results 真实"},
+    "run2": {"batch":"2026_1115_110506","eval_dir":"20261115_1417","completed_lines":158,"execution_lines":1,"gen_success":1,"correct":0,"pass_rate":0.0,"unique_exec_task":"EDA-Eval-PyAether-003","rejection_stats":"MISSING","ws_code":1,"no_ws_code":48,"any_py_tasks":54,"genuine":true},
+    "run3": {"batch":"2026_1115_144001","eval_dir":"20261115_1834","completed_lines":158,"execution_lines":1,"gen_success":1,"correct":0,"pass_rate":0.0,"unique_exec_task":"EDA-Eval-PyAether-107","rejection_stats_bytes":0,"ws_code":1,"no_ws_code":37,"any_py_tasks":49,"genuine":true},
+    "run4": {"batch":"(无 fresh eval)","eval_dir":"(stale copy of 20261115_1834)","completed_lines":158,"execution_lines":1,"gen_success":1,"correct":0,"pass_rate":0.0,"unique_exec_task":"EDA-Eval-PyAether-107","rejection_stats_bytes":0,"genuine":false,"note":"无新建 output_evaluation 目录；ls -dt|head -1 拷了 run3 的陈旧目录 → sha256 与 run3 字节相同"},
+    "run5": {"genuine":false,"note":"INVALID-partial：23:04 被 kill，无产物"}
+  },
+  "verification": {"tasks":10,"source":"run2 batch no-ws pyAether_code (被抽取丢弃的真实代码)","execution_results":10,"pass":1,"pass_rate":0.10,"criterion":">=8 execution_results","status":"PASS","log":"rca_collapse_evidence/rca_verify_runeval.log"},
+  "root_cause": {
+    "primary":"PIPELINE 抽取路径 bug: format_cline_cli_output.py:166 只读 code/<task>/ws/pyAether_code/，drop code/<task>/pyAether_code/(无 ws)",
+    "secondary":"PIPELINE 链脚本拷贝 bug: ls -dt|head -1 抓陈旧 output_evaluation (run4==run3)",
+    "tertiary":"MODEL: ~104/158 题零代码(submit_and_exit storm / 903 msg 循环)；真实生成率 run2=54/158=34%, run3=49/158=31%"
+  }
+}
