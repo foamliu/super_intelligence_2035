@@ -2,19 +2,19 @@
 
 WAITING: 1
 
-> 🆕 **R2560 · 2026-11-16 05:21 — 监控轮·自检全绿 + cc rerun 53/82(13P/31F/9NA·0ConnRefused✅HARD VERIFIED·+3 tasks vs R2559·polyglot-c-py在跑) + adaptive off10/10·quiet347m·0 429✅ + gateway 9092 functional(403=listening) + reports/ porcelain=0✅ + git ZhuLong conflict cleared(restore --ours to HEAD·0 diff) + research日报11-16已读**
-> - **自检**: load29.68/224 ✅(pretrain dominant)·mem 1038GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun 0%·harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
-> - **git**: `git pull` up to date ✅·ZhuLong designflow conflict cleared(restore --ours to HEAD=7044 lines·0 diff·no content change) ✅·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(91919s≈25.5h·n=1·jobs-dir=0348·overlay-network-host.yml IN USE✅)·**53/82 done**(13P/31F/9NA·守恒✅)·**29 remaining**·当前task=polyglot-c-py(C+Python polyglot Fibonacci)·ETA~Nov17
-> - **0 ConnRefused HARD VERIFIED ✅**: python script全量扫描exception_info ConnRefused=0·cc修复(overlay --network host·fix=R2463)confirmed·模型真正运行(13题PASS=真能力)·vs旧0/89=100%infra
-> - **gateway 9092**: curl http_code=403(=listening·鉴权正常)✅
-> - **502 infra**: 11 tasks with 502 in agent_result.stdout·infra rerun manifest备妥(`terminalbench/manifests/tb21_cc_rerun_round2_infra_timeout_20261116.txt`)·**待82完成后rerun**(adaptive auto·同口径)
-> - **adaptive**: off 10/10·quiet=347m·0 429✅·策略 work4/off10 clean20m cool20m dwell10m·累计429=0
-> - **research日报11-16**: harness建议3条(①记忆设计=最小种子+可枚举组件 ②判分=q_neg/q_pos分列 ③静默错误率S列)·均属未来方法论改进·当前cc rerun未完·非阻塞·纳入未来计划
-> - **7way报告**: cc仍0/89待merge(82完成→rerun infra/timeout→merge→REGEN·cc行换真实数字+502单列infra)
-> - **下一步**: ①cc 82完成(~Nov16-17)→rerun infra/timeout题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈28.5KB（✅≤32KB）
+> 🆕 **R2561 · 2026-11-16 06:0x — 监控轮·自检全绿 + cc rerun 54/82(12P/31F/11NA·0ConnRefused✅HARD VERIFIED·authoritative recount via verifier_result.rewards.reward·portfolio-optimization在跑) + 11NA全=timeout-infra(10×3600s timeout+1 verifier-timeout+502 fix-ocaml-gc) + 502-in-stdout=11(10 FAIL-contaminated+1 NA)·infra rerun manifest备妥 + adaptive off10/10·quiet385m·0 429✅ + gateway 403 + reports porcelain=0✅**
+> - **自检**: load29.01/224 ✅(pretrain dominant)·mem 1026GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%·cline hub 30%=loop自身)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> - **git**: `git pull` up to date ✅·harness line clean ✅
+> - **cc rerun**: PID 1510521 alive(94336s≈26.2h·n=1·jobs-dir=0348·overlay-network-host.yml IN USE✅)·**54/82 done**(12P/31F/11NA·守恒✅)·**28 remaining**·当前task=portfolio-optimization(C扩展)·ETA~Nov17
+> - **0 ConnRefused HARD VERIFIED ✅**: agent_exception_info ConnRefused scan=0·cc修复(overlay --network host·fix=R2463)confirmed·模型真正运行(12题PASS=真能力)·vs旧0/89=100%infra·(4个grep ConnRefused命中=verifier test-stdout里的Python ConnectionRefusedError测试输出·非agent infra)
+> - **11NA分类(全infra/timeout·非能力)**: code-from-image/configure-git-webserver/feal-differential/feal-linear/llm-inference-batching/make-doom-for-mips/mcmc-sampling-stan/model-extraction-relu-logits/mteb-leaderboard=RuntimeError/AgentTimeoutError 3600s·overfull-hbox=AgentTimeout 3000s·fix-ocaml-gc=VerifierTimeout+502 connection-reset
+> - **502 infra**: 11 tasks with 502 in stdout(10 reward=0 FAIL-contaminated + fix-ocaml-gc NA)·infra rerun manifest备妥(`terminalbench/manifests/tb21_cc_rerun_round2_infra_timeout_20261116.txt`)·**待82完成后rerun**(adaptive auto·同口径)·10 FAIL-with-502须rerun后才能定cc能力分
+> - **adaptive**: off 10/10·quiet=385m·0 429✅·策略 work4/off10 clean20m cool20m dwell10m·累计429=0
+> - **7way报告**: cc仍0/89待merge(82完成→rerun infra/timeout+502→merge→REGEN·cc行换真实数字+502/timeout单列infra)
+> - **下一步**: ①cc 82完成(~Nov17)→rerun infra/timeout/502题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.0KB（✅≤32KB）
 >
+> 📦 R2560 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 53/82(0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
 > 📦 R2559 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 50/82(13P·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
 > 📦 R2558 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 49/82(12P·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
 > 📦 R2557 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 49/82(12P·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
