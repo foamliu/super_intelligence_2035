@@ -42,12 +42,12 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        用户令2026-11-13a+b执行阶段（StepA DONE / StepB DONE / StepC tokenizing RUNNING PID1677655 8workers new-shard phase 76.5%） → WAITING=0
-已完成:       ✅分词全DONE(4600shard);✅EDA分析DONE;✅2TB下载DONE;✅batch1-7全DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅tokenize脚本修复v3/v4;✅rsync 2TB→/nas_user(校验通过);✅源删除DONE;✅rsync 926GB分词→/nas_user(校验通过);✅/nas_train源删除DONE(0json实测);✅/nas_inference源删除DONE(0parquet实测);✅StepB全量下载DONE(8192parquet/0inc/3.3TB);✅StepC脚本修补(fsync+maxtasksperchild50+BrokenPipeError处理+8workers);✅StepC崩溃分析完成;✅orphan进程清理(3个已kill);✅StepC SKIP phase COMPLETE(4600 shards0-4599)
-当前动作:     ①StepA DONE;②StepB DONE;③StepC RUNNING:PID1677655(8workers,nice19/ionice3,elapsed~47111s≈13.1h),6266/8192processed(76.5%);SKIP phase DONE(4600);new shard phase RUNNING(1666 new OK,rate~22.4s/shard wall);0ERR;.json=6267/.bin=6273/.idx=6268/du=1.4T;no failed_shards.txt;MANIFEST.json exists
-下一步:       ①等新shard分词全部完成(1926remaining,real ETA~12.0h@~22.4s/shard wall,⚠️script ETA~4.0h misleading);②StepD校验du+find.json=8192+failed_shards.txt空;③更新DATA_MAPPING.md(新位置/总token/总字节);④commit data stackv3-full-tok:+push
-阻塞:         无(StepC RUNNING 8workers 0ERR,new shard phase,WAITING=0短睡巡检)
-ERROR_COUNT:  1(前次16workers BrokenPipeError崩溃,已修复:减至8workers+fsync+maxtasksperchild+异常处理;orphan进程已清理;当前run 0ERR)
+PHASE:        用户令2026-11-15 IFM数学/代码下载+5agent评估+调研 → StepC tokenizing RUNNING 80% → P0下载Toucan83%+MegaMath batch1进行中 → WAITING=0
+已完成:       ✅分词全DONE(4600shard);✅EDA分析DONE;✅2TB下载DONE;✅2TB ROI复盘;✅vision图文对调研报告;✅StepA/B DONE;✅StepC SKIP phase(4600);✅5agent datasets HfApi探测全DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md(15/22下~85GB);✅agent-data-protocol clone DONE;✅DATA_MAPPING.md D1-D4节写入;✅调研报告report_data_math_code_datasets_survey_zh.html(19KB)生成;✅IFM/MegaMath≡LLM360/MegaMath SHA级验证(同一份);✅污染检查结论写入DATA_MAPPING D3
+当前动作:     ①StepC RUNNING:PID1677655(8workers,nice19/ionice3),6588/8192processed(80.4%),.json=6588,ETA~3.7h;②P0 Toucan下载112/136(83%)PID336376;③MegaMath batch1下载45parquet(megamath-code done/megamath-qa 84%)PID1164207;④master_dl_chain.sh等待Toucan完成后自动起AgentTrove+ADP;⑤master_ifm_chain.sh等待MegaMath batch1完成后自动起Math-Reasoning+Code-Reasoning
+下一步:       ①等StepC分词完成(ETA~3.7h)→StepD校验+DATA_MAPPING更新;②等Toucan完成→自动起AgentTrove→ADP非重叠子集;③等MegaMath batch1完成→自动起Math-Reasoning→Code-Reasoning;④下载完成后更新DATA_MAPPING.md状态;⑤污染检查:AgentTrove下载后需逐题核对SWE-bench重叠
+阻塞:         无(WAITING=0短睡巡检,所有下载nice19/ionice3/max-workers2不挤S1)
+ERROR_COUNT:  0(当前run 0ERR)
 未完成指令:   有(StepC分词RUNNING,new shard phase,real ETA~12h全量完成)→WAITING=0
 ```
 
