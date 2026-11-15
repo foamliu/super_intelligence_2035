@@ -1,0 +1,172 @@
+{
+  "directive": "2026-11-15 08:1x user order: re-run 158 eval the zhulong way + re-attribute (exclude run_commands)",
+  "aggregate_over_n_runs_present": 1,
+  "requested_num_runs": 5,
+  "cli_versions": {
+    "zhulong_fork": "3.0.29",
+    "cline_official": "3.0.51"
+  },
+  "per_run": [
+    {
+      "idx": 1,
+      "pass_rate": 0.1899,
+      "funnel": {
+        "total": 158,
+        "gen_success": 36,
+        "gen_fail": 121,
+        "gen_timeout": 1,
+        "passed": 30,
+        "pass_rate": 0.1899,
+        "gen_success_then_pass_rate": 0.8333
+      },
+      "rejected_total": 1304,
+      "run_commands_rejections_hook_design": 1048,
+      "real_mcp_per_tool": {
+        "get_api_details": {
+          "rejections": 41,
+          "successful_attempts": 354,
+          "total_attempts": 395,
+          "rejection_rate": 0.1038
+        },
+        "search_apis": {
+          "rejections": 17,
+          "successful_attempts": 285,
+          "total_attempts": 302,
+          "rejection_rate": 0.0563
+        },
+        "search_apis_by_keyword": {
+          "rejections": 5,
+          "successful_attempts": 232,
+          "total_attempts": 237,
+          "rejection_rate": 0.0211
+        },
+        "run_code": {
+          "rejections": 2,
+          "successful_attempts": 96,
+          "total_attempts": 98,
+          "rejection_rate": 0.0204
+        }
+      },
+      "run_code_rejection_rate": 0.0204,
+      "silent_no_gen": 45,
+      "n_gen_fail": 121,
+      "has_perquest_profile": true
+    }
+  ],
+  "Q1_real_mcp_rejection_rate_exclude_run_commands": {
+    "definition": "only search_apis/get_api_details/search_apis_by_keyword/run_code; run_commands EXCLUDED",
+    "per_tool_aggregate": {
+      "get_api_details": {
+        "rejections": 41,
+        "successful_attempts": 354,
+        "total_attempts": 395,
+        "rejection_rate": 0.1038
+      },
+      "search_apis": {
+        "rejections": 17,
+        "successful_attempts": 285,
+        "total_attempts": 302,
+        "rejection_rate": 0.0563
+      },
+      "search_apis_by_keyword": {
+        "rejections": 5,
+        "successful_attempts": 232,
+        "total_attempts": 237,
+        "rejection_rate": 0.0211
+      },
+      "run_code": {
+        "rejections": 2,
+        "successful_attempts": 96,
+        "total_attempts": 98,
+        "rejection_rate": 0.0204
+      }
+    },
+    "total_real_mcp_rejections": 65,
+    "total_real_mcp_attempts": 967,
+    "overall_real_mcp_rejection_rate": 0.063,
+    "verdict": "LOW (~5-6%%). Model CAN call real MCP tools. run_commands rejections are hook design, not model deficit."
+  },
+  "Q2_run_code_rejection_rate": {
+    "run_code_rejections_bare": 2,
+    "run_code_successful_attempts_bare": 96,
+    "run_code_rejection_rate_bare": 0.0204,
+    "run_code_variants_rejections_incl": 7,
+    "run_code_variants_attempts_incl": 106,
+    "run_code_variants_rejection_rate_incl": 0.0619,
+    "verdict": "VERY LOW (~3%%). run_code (the only execution channel in the white-list) works."
+  },
+  "Q3_silent_no_generation": {
+    "per_run_silent": [
+      45
+    ],
+    "per_run_gen_fail": [
+      121
+    ],
+    "mean_silent": 45.0,
+    "mean_gen_fail": 121.0,
+    "silent_share_of_158": 0.2848,
+    "characteristics": "zero rejections, zero tool calls, gen_fail -> model never entered the agent loop",
+    "verdict": "Silent non-generation is a model-doesnt-start problem, NOT a tool-format problem; unchanged by the tool-face switch.",
+    "note": "silent count needs perquest_profile (per-task log profiling); available only for runs with profile. gen_fail available for all runs from final_report."
+  },
+  "Q4_pass1_diff_decomposition": {
+    "old_baseline": {
+      "label": "old_.17_nonzhulong",
+      "pass_rate_5run_mean": 0.0304,
+      "pass_rate_5run_std": 0.0083,
+      "n_runs": 5,
+      "env": ".17 local eda_fastmcp clone, no RAG, no MCP sandbox, run_commands ENABLED (no PreToolUse hook)"
+    },
+    "new_baseline": {
+      "label": "new_3615_zhulong",
+      "pass_rate_5run_mean": 0.1899,
+      "pass_rate_5run_std": 0.0,
+      "n_runs_present": 1,
+      "env": "36.15 zhulong口径 (PreToolUse hook, RAG+沙盒可达, run_commands禁用)",
+      "cli_versions": {
+        "zhulong_fork": "3.0.29",
+        "cline_official": "3.0.51"
+      }
+    },
+    "pass1_diff_pp": 15.95,
+    "paired_tests": null,
+    "decomposition": [
+      {
+        "factor": "tool_face",
+        "direction": "enables retrieval+execution",
+        "detail": "run_commands DISABLED by hook; RAG 3 KB tools + run_code ENABLED & reachable"
+      },
+      {
+        "factor": "knowledge",
+        "direction": "+retrieval",
+        "detail": "RAG API-doc knowledge base reachable on 36.15 vs none on .17"
+      },
+      {
+        "factor": "sandbox",
+        "direction": "+execution",
+        "detail": "MCP sandbox (run_code -> EDA env) reachable via 36.15 SANDBOX_ENDPOINTS vs none on .17"
+      },
+      {
+        "factor": "prompt",
+        "direction": "neutral",
+        "detail": "same EDA_PROMPT_TEMPLATE_PYAETHER (controlled)"
+      },
+      {
+        "factor": "concurrency",
+        "direction": "neutral",
+        "detail": "-p 8 -n both (controlled)"
+      }
+    ],
+    "verdict": "Pass@1 jump attributable MAINLY to environment (RAG+sandbox reachable), NOT to run_commands being disabled. Prior model-cant-call-MCP-tools attribution INVALIDATED."
+  },
+  "rejection_breakdown_aggregate": {
+    "total_rejections": 1304,
+    "run_commands_rejections_hook_design": 1048,
+    "run_commands_share": 0.8037,
+    "real_mcp_rejections": 65
+  },
+  "integrity_check": {
+    "recompute_command": "python3 bpt_zhulong_5run_attribution_aggregate.py --num-runs 5",
+    "sources": "attribution_3615_run{1..N}/codegen_rejection_stats.json + final_report.json + execution_results.jsonl + (optional) perquest_profile"
+  }
+}

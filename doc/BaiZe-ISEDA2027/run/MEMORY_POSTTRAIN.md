@@ -3,7 +3,7 @@
 > ⭐ 本文件每次唤醒被全文读进 cline 上下文 ⇒ ≤32KB；超限滚动到 `daily-memories-posttrain/`。
 > `WAITING:` 只在顶部出现一次；正文/流水/快照里不得再出现以 `WAITING:` 开头的行。
 
-WAITING: 0
+WAITING: 1
 
 > 🔧 **隧道复盘结论（wake507 · 2026-11-14 23:5x · posttrain infra:）**：隧道**坏过现已恢复**——最后通点 **20:41:50**（36.15 run1 完整 18.99% 落盘）/ 首断点 **22:4x wake505**（.17:3333 未监听+直连36.15:22超时）/ 恢复确认 **23:26 wake506**（中继 tunnel.ps1 重新在线）/ 故障域=**中继侧①+②**（排除SSH认证/36.15 sshd/.17端口重启）/ **非本线造成亦非本线修复**（20:41–23:30 posttrain 未碰中继与隧道，wake505 纯CPU、wake506 kill 仅作用36.15评测进程于恢复后）/ 当前隧道健康三条验证命令实测PASS。报告 `reports/report_infra_tunnel_postmortem_zh.html`（项目根 reports/ + 本线 run/reports/ 各一份）。隧道恢复后已接回 A1/A3+P0dev（归因链 PID3707027，A1 23:30 起跑）。[wake复验 2026-11-15 07:43：三验证命令实测全 PASS（3333 LISTEN / ssh -p3333→hfeg0tedaap02 / 18096→minicpm5-2b-sft-v39-final）+ anchor final_report.json mtime=20:41:50 pass_rate=0.18987=18.99% 实测确认；ping 36.15 0% loss、nc:22 timeout 符合基线防火墙；.17 uptime 123 天未重启；报告 spec 合规（首屏三句+六问+三命令+无记录标注）。postmortem 任务完成。]
 
@@ -87,6 +87,8 @@ WAITING: 0
 > 📦 wake540 R540 已归档要点 → 双链健康监控+08:1x 令交付物完整性核验 PASS（详见 EXPERIMENTS §R540 / daily 2026-11-15 wake540）。
 
 > 📦 wake541 R541 已归档要点 → 08:1x 令交付链端到端去风险 PASS（R2 run5 codegen 活跃+zhulong GATE 健康+反向隧道+serve 实测 PASS+分析脚本 dry-run PASS[delta_pp=+15.95]+5 份旧报告 banner 复核无缺口；详见 daily 2026-11-15 wake541）。
+
+> 🔧 **wake543 R543（2026-11-15 11:2x · posttrain eval:）**：**08:1x 令 zhulong 口径链健康复核 + 5-run 归因聚合器交付**。①链健康：PID4099520 活，run2 codegen on 36.15 实测 33/158 done/19 success/127 queued（11:2x），PreToolUse hook 实测在位（run_commands 不在白名单→被拒，MCP+submit+spawn 放行），反向隧道 18096→.17:8096 实测返回 minicpm5-2b-sft-v39-final（root=global_step_105），cline 版本已记（zhulong fork 3.0.29 / official 3.0.51）。②5 份旧报告 PENDING-REMOTEST banner 复核在位（baseline_pyaether_rca / pyaether_rca_v2 / attribution_overnight / attribution_t6 / zhulong_reattribution）。③**新交付 `bpt_zhulong_5run_attribution_aggregate.py`**（py_compile OK + run1-only dry-run PASS：Q1 real MCP 6.3%/Q2 run_code 2.0%/Q3 silent 45/Q4 +15.95pp，与 wake534 再归因一致）——链 5 run 齐后一键出最终 5-run 归因（per-tool 拒绝率跨 run 聚合 + McNemar/Wilcoxon from 5run_zhulong_baseline_analysis.json）。④caveat：36.15 上 zhulong opencode 消融 agent（PID3561718 glm-5.2）与本线 run2 并发，共享沙盒端口，非本线进程不碰，记为结果 caveat。0 infra 误操作，只读未改 eda_fastmcp。详见 daily 2026-11-15 wake543。
 
 > 🔧 **wake542 R542（2026-11-15 11:0x · posttrain eval:）**：**08:1x 令 zhulong 口径 5-run 基线链修复并起跑 RUNNING**。①**R2 链全树 kill**（PID2322797 等）——R2 run1-4 mean≈0.475% decisively 负（Wilcoxon p=0.0025），run5 仅 26/158 .py/7h+ 卡住不改变结论，按「最新令优先」释放给最高优先 08:1x 令。②**发现+修复 gate self-match bug**：`pgrep -f "scripts/run_cline_script.sh"` 匹配 SSH shell 自身→rem_busy 永远非空→gate 永不放行；改用 `ps|grep "[r]un_cline_script.sh"` [r] 技巧修复。③**发现+修复 36.15 远程环境三缺失**（照抄 ZhuLong ops/outbox.md L4364）：PYTHON=eda_fastmcp/venv/bin/python（系统 python 缺 pydantic）+EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework（.env 默认路径缺失）+bash -lc（非交互 SSH 缺 zhulong/bun PATH,Exit 127）。④**zhulong 基线链 RUNNING**（PID4099520,run2 codegen 11:05 起 on 36.15,8 worker -t 2500,PreToolUse hook 已部署 run_commands 禁用,反向隧道 18096→.17:8096 step105 serve OK,模型 curl 实测返回 minicpm5-2b-sft-v39-final）；run1=18.99% 已有,run2-5 串行 ETA~21:00-23:00→5run_zhulong_baseline_analysis.json。0 infra 误操作,只读未改 eda_fastmcp,只改本线 chain 脚本。详见 daily 2026-11-15 wake542。
 
