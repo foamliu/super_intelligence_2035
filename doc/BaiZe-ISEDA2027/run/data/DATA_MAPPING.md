@@ -668,9 +668,9 @@
 
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
-| `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | 🔄 第一批下载中(5子集) |
-| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | ⏳ 排队(MegaMath后) |
-| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | ⏳ 排队(Math-Reasoning后) |
+| `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 第一批完成(5子集/252 parquet/153GB/0 inc; megamath-web~1TB第二批按需) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(9.2GB/PID1829139/nice19/max-workers2) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(PID3194782/刚启动/nice19/max-workers2) |
 
 **MegaMath 子集详情**：
 - `megamath-web` (279B tokens, ~1TB) — 第二批按需
@@ -687,8 +687,8 @@
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
 | `Agent-Ark/Toucan-1.5M` | SFT | MCP工具调用 | 136 | 21.81 | apache-2.0 | ✅ 495 MCP server/2000+工具 | 否 | 独立 | `0df3cf3` | ✅ 已落盘(134 parquet/21GB/0 incomplete) |
-| `open-thoughts/AgentTrove` | SFT/RL | Agent轨迹(含SWE/CF) | 40 | 19.55 | apache-2.0 | ✅ 真实agent轨迹 | ✅ reward(0/1) | 与harness线Nemotron Terminal同格式 | `b395a43` | 🔄 下载中(40文件/19.55GB/PID32820) |
-| `neulab/agent-data-collection` | SFT | ADP统一协议 | 130 | 498.66 | 各子集不同 | 混合 | 混合 | 部分与Toucan/AgentTrove重叠 | `31a76bf` | ⏳ 只下15个非重叠子集(AgentTrove后) |
+| `open-thoughts/AgentTrove` | SFT/RL | Agent轨迹(含SWE/CF) | 40 | 19.55 | apache-2.0 | ✅ 真实agent轨迹 | ✅ reward(0/1) | 与harness线Nemotron Terminal同格式 | `b395a43` | 🔄 下载中(50文件/6.0GB/2 cache inc/PID32820) |
+| `neulab/agent-data-collection` | SFT | ADP统一协议 | 130 | 498.66 | 各子集不同 | 混合 | 混合 | 部分与Toucan/AgentTrove重叠 | `31a76bf` | ✅ 15个非重叠子集已落盘(79GB/0 inc/16子目录) |
 | `microsoft/orca-agentinstruct-1M-v1` | SFT | 纯合成指令 | 22 | 2.38 | cdla-permissive-2.0 | ❌ 无真实工具执行 | 否 | ADP含orca子集 | `86d6091` | 🚫 不下(低价值) |
 | `harvardMadsys/freeinference_agentic_trace` | 分析 | workload元数据 | 217 | 8.93 | cc-by-4.0 | N/A | N/A | N/A | `bb26cf7` | 🚫 不下(无消息文本) |
 
