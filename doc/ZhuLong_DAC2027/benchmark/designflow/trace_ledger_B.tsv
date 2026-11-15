@@ -859,7 +859,7 @@ kakcd	kenwang	hfeg017216808192	5	non_spice	parked		2026-11-10 09:06	DRC rule dev
 1793082564833_dhqmb	reedchen	hfeg0plg93	102	characterization	case	EDA-Eval-DesignFlow-McPvtVmEval-001	2026-11-10 21:07	
 1793608841437_53e2m	victorq	hfeg0plg96	315	spice_sim	case	EDA-Eval-DesignFlow-SpRcAlterGen-001	2026-11-10 21:51	
 1788513689914_ayl62	sophiaw	hfeg0plg09	46	spice_sim	case	EDA-Eval-DesignFlow-PvtCornerSubsetGen-001	2026-11-10 22:34	10corner subset deck gen produce-task
-1793771879264_qtchi	qijingx	hfeg0pjn200	70	spice_sim	parked		2026-11-10 23:23	consultation netlist-compare no produce-task
+1793771879264_qtchi	qijingx	hfeg0pjn200	70	spice_sim	case	EDA-Eval-DesignFlow-DcSimSetupFromRef-001	2026-11-15 22:52	consultation netlist-compare no produce-task
 1793931348269_d06uu	curryxu	hfeg0plg99	51	spice_sim	parked		2026-11-10 23:23	consultation circuit-opt-suggestion
 peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794208159902_v593e	t0002614	hfeg0pkn004	52	spice_sim	parked		2026-11-10 23:23	consultation netlist-extract-how-to
@@ -1213,7 +1213,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-11 19:25	reject debugging SiliconSmart char hspice rc=1
 1793264248842_f1rqc	hbpeng	hfeg0pkn004	151	spice_sim	parked		2026-11-11 19:25	reject wrong-domain tcl->skill PDK QA + /apps/imctf perm
 1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	parked		2026-11-11 19:25	reject analysis 网表功能分析报告
-1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	parked		2026-11-11 19:25	reject how-to 仿真任务运行还是卡死
+1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	case	EDA-Eval-DesignFlow-SimIncompleteWalltimeDiag-001	2026-11-15 22:25	r646 2q4mg rhyanw SMMismatch bisection sim-incomplete walltime+overload root-cause diag, spice_sim L1 debug-Q&A, k=16, ref PASS 16/16 + 4 negs FAIL
 1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	parked		2026-11-11 19:25	reject skill-authoring skill-creator meta
 1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	parked		2026-11-11 19:25	reject consultation 解释sp文件
 1793791874358_a7erh	t0002062	hfeg0pkn002	52	spice_sim	parked		2026-11-11 19:25	reject how-to 怎么仿真电路+rscalc.log
