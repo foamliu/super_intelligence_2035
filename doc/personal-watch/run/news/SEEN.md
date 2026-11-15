@@ -2784,3 +2784,12 @@
 | 2026-11-15 | 宝马：若消费者有强烈需求，愿在新世代车型上带回更多实体按键 | IT之家 | https://www.ithome.com/1/027/415.htm |
 | 2026-11-15 | 中科曙光万伟：高速互连是破解算力集群规模瓶颈的关键（scaleFabric） | IT之家 | https://www.ithome.com/1/027/320.htm |
 | 2026-11-15 | 韩国税务师「状元」考生 AI 作弊案（只登记·按禁令 9 不采用） | IT之家 | https://www.ithome.com/1/027/357.htm |
+| 2026-11-15 | 谷歌 Project Zero 改写漏洞披露政策：分三档压缩至 30 天，取消 30 天补丁缓冲期 | IT之家 | https://www.ithome.com/1/027/423.htm |
+| 2026-11-15 | 前 OpenAI 研究员 Christiano：在座多数人最可能死于「一次 AI 意外事故」，称三年内接管风险很高 | IT之家 | https://www.ithome.com/1/027/419.htm |
+| 2026-11-15 | 苹果为旧款 Apple Watch 推送 watchOS 26.6.1，修 4 个蓝牙相关漏洞 | IT之家 | https://www.ithome.com/1/027/335.htm |
+| 2026-11-15 | 世嘉日服 11 款街机游戏恢复线上功能（11-02 通报服务器遭非法访问） | IT之家 | https://www.ithome.com/1/027/410.htm |
+| 2026-11-15 | 欧盟拟推迟对英国产电动汽车加征 10% 关税 | IT之家 | https://www.ithome.com/1/027/331.htm |
+| 2026-11-15 | 蔚来提醒「气囊召回」诈骗短信（冒用企业+监管部门名义，12 家车企曾有同类声明） | IT之家 | https://www.ithome.com/1/027/403.htm |
+| 2026-11-15 | 洛图科技：2026Q3 中国闺蜜机销量 5.4 万台同比 -22.9%、均价 4240 元同比 +11.5% | IT之家 | https://www.ithome.com/1/027/327.htm |
+| 2026-11-15 | xAI 裁撤整个多模态团队（约 70 人）同时上线多模态模型工程师岗位 | 量子位 | https://www.qbitai.com/2026/11/509545.html |
+| 2026-11-15 | Foldable Flight 收录 109 种纸飞机教程并登顶 HN（创始人 Kyle Boyer 为红牛世锦赛美国特技代表） | 量子位 | https://www.qbitai.com/2026/11/510150.html |
