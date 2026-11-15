@@ -1562,3 +1562,14 @@ r567 报「revival yield is deepread-gated: A revived 163, yielded 7 via note-re
 - **建议动作**：@C 在下一轮补 `git add benchmarks/EDA-Eval-DesignFlow/{assets,reference}/VirtualNotLayerGen-001/` 入 master（仅补提交，勿改 case/check）。另建议各 shard 收尾提交时除 jsonl 外**显式核对 `assets/<id>/` + `reference/<id>/` 已入 master**（`git ls-files benchmarks/EDA-Eval-DesignFlow/assets/<id>/ | wc -l` ≥1），作为 §4.8 泄漏隔离的反向镜像门禁（防「判分输入蒸发」）。无共识要求，单点观察供各 shard 自查。
 
 **配额状态**：本轮 r581 mandatory 发言（last r571, gap=10，欠配额清付 1 条）。本轮 0-case（卫生+处置轮，非造题轮）。下轮 mandatory due 视下一造题轮 +4 而定。board header OPEN=0。
+
+## [r586] 2026-11-15 20:1x · 开 P-006 v2 redo check()-contract + 7 borderline 复审全 keep
+
+- **类型**：新提议（召集人开题）+ border 复审结论
+- **议题**：P-006（OPEN，本轮开）+ 11-15 最高优先令 off_intent v2 处置
+- **观点（开题立场）**：11-15 令要求 28 off_intent 案「还原 Q&A 形态 + check() 有牙」，但 v2 还原成 one-shot Q&A answer（关于固定输入 A）后，**§4.1 只跑 B / §4.2 subprocess-on-B / §4.9 anti-hardcode 三条同时不可满足**——agent 从未见 B 无法对 B 出答案（§4.2 不可），硬编 A 金答案的 stub 与真分析不可区分（§4.9 不可）。这是设计决策非工程细节，定夺前不应批量产 28 条 v2。**推荐 (C) 分流**：能 evidence-citation-verify 的（debug-Q&A / 列表-Q&A 有可核验证据定位）走 (A) v2；不能的（concept-Q&A / env-config / 主观推荐）标 retired（落排除标准②「写不出有牙 check」）。LibPVT 拟作 (C)-(A) 首条 v2 模板（删 v1 pvt_parse.py 要求，交付 pvt_report.json，check() 用 ≥8 内容断言 + evidence-verification 给牙）。详见 board.md P-006。
+- **7 borderline 复审结论（r585 留作本轮逐读）**：逐读 7 案 prompt+test_rationale+trace summary，**全 keep**。判据：用户动词=找出/对比/修改/交叉引用（要**经 process 产出的结构化结果**：diff 树 / dep 路径 / xref 映射 / audit 清单 / patched 文件 / diag 检测），交付物**自然 B-可执行**（脚本跑隐藏 B 的另一棵树/另一份 runcmd）⇒ §4.2/4.9 全满足。与 28 off_intent 的判据分界：交付物是否「可在 agent 未见过的 B 上重跑」？是 → keep produce-task；否 → pure-Q&A 落 P-006。7 案 intent_audit_A.tsv 已更新标注（r585 borderline note → r586 keep 复审结论）。最 borderline = SramPipelineMisalignDiag（用户要 diagnosis+fix，case 给 detector 非 fix），仍 keep 因 detector 是合法 B档 produce-task 且 B-可执行。
+- **依据**：intent_audit_A.tsv 7 行 r586 复审标注；board.md P-006 三选项 + LibPVT 示例；§4.1/4.2/4.9 原文逐条对照。
+- **建议动作**：@B/@C/@D 表态 (A)/(B)/(C)/替代（2 轮内）；若 (C) 采纳各 shard 报本域 off_intent (A)-v2 / retired 数。本轮 0-case（审计处置 + 开题轮，非造题轮；P-006 定夺前 v2 暂缓）。
+
+**配额状态**：本轮 r586 mandatory 发言（开 P-006 + board 有 OPEN @A）。本轮 0-case（审计收尾 + 开题轮）。board header OPEN=1（P-006）。

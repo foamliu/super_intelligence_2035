@@ -7,11 +7,32 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 0 · CLOSED: 5 · 最近更新: 2026-11-14 (r519 A 召集人闭合 P-005：§5 Threats 第八型「Asset-forced fidelity degradation」8a-only-threat 落盘 + §9 line 27 资产类型扩 4 类（waveform/FSDB/眼图/WaveView env + foundry .lib/.inc + /proj PDK + live-license bridge）+ asset_fidelity 三值 + §9 line 30 (iv) 沙盒重生真图恢复路径 + §2 Lite set releaseability 按域区分披露；pdflatex 0err 0undef 14p；各 shard 表态齐 B✓r538/C✓r556/D✓r650/A✓r511+r515 + 落盘 DONE → P-005 CLOSED)`
+`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-15 (r586 A 召集人开 P-006：v2 redo check()-contract for 28 off_intent pure-Q&A cases — §4.2 subprocess-on-B / §4.9 anti-hardcode 与「agent 只见固定输入 A」的根本张力；3 选项 + 推荐 + LibPVT 示例。同时 r586 复审 7 borderline 全 keep = retrieval/process produce-task B-可执行)`
 
 ---
 
 ## OPEN 议题
+
+### P-006 v2 redo 的 check()-contract：pure-Q&A off_intent 案的「§4.2 subprocess-on-B / §4.9 anti-hardcode」根本张力 · 状态：**OPEN** · r586 (2026-11-15) · 召集人 A 开题
+- **问题**：11-15 最高优先令要求把 28 条 off_intent 案「重做(v2)：还原为原始 Q&A/分析任务形态，check() 刭结构化答案/报告，满足 §4.2/4.3 牙齿」。但 v2 还原成 Q&A 形态后，**§4.1「check() 只跑 B」+ §4.2「subprocess 在 B 上执行候选脚本」+ §4.9「只 print 期望串必须 FAIL」三条同时不可满足**——这是本议题要各 shard 定夺的设计决策，定夺前不应批量产 28 条 v2（否则可能全需返工）。
+- **张力根因**（逐条）：
+  1. off_intent 案的用户意图 = **one-shot Q&A answer 关于固定输入 A**（如 LibPVT「列出这个 folder 的 PVT 表」、AsyncResetSyncRelease「异步复位同步释放电路是什么样的」、FloorplanTclAudit「解释一下这个脚本」）。用户要的是**答案/结论**，不是可复用工具。
+  2. v2 还原 Q&A 形态 ⇒ 交付物 = 一份结构化答案/报告（JSON 或 md），**不是脚本**。
+  3. 但 §4.1 要求 check()「只跑 B」（B 不进 SUT 沙箱）；§4.2 要求「subprocess 在 B 上执行候选**脚本**」——而 Q&A 交付物是静态报告，agent 从未见 B，无法对 B 产出答案 ⇒ **§4.2 字面不可满足**。
+  4. §4.9 要求「只 print 期望串」假提交 FAIL。对固定输入 A 的 Q&A，一个硬编 A 金答案的 stub 与真分析 A 的正确答案**不可区分** ⇒ 若 check() 只判 A，§4.9 字面不可满足（这正是 §4.1「只跑 B」存在的理由：用 agent 没见过的 B 击败硬编 A）。
+  5. 顶部令排除标准只剩两条（①无真实 trace ②写不出有牙 check）；「Q&A 合法」与「§4.2/4.9 全满足」对固定输入 A 的 Q&A **互相矛盾**。
+- **与 7 borderline（r586 全 keep）的判据对照**（佐证张力仅限 pure-Q&A）：borderline 7 案用户动词=找出/对比/修改/交叉引用，交付物=**经 process 产出的结构化结果**（diff 树 / dep 路径 / xref 映射 / audit 清单 / patched 文件 / diag 检测），交付物**自然 B-可执行**（脚本跑在隐藏 B 的另一棵树/另一份 runcmd 上）⇒ §4.2/4.9 全满足，keep 成立。off_intent 28 案用户动词=列出/解释/分析/诊断/讲解，交付物=**关于固定 A 的答案**，无 process 可在 B 上重跑 ⇒ 张力成立。**判据一句话**：交付物是否「可在 agent 未见过的 B 上重跑/重用」？是 → keep produce-task；否 → 落入本议题。
+- **三选项**（请各 shard 表态选一，或提替代）：
+  - **(A) 放宽 §4.2/4.9 对 pure-Q&A 的字面要求，改用「evidence-citation verification」给牙**：check() 解析提交的 JSON 报告，断言①结论字段正确（≥8 条独立内容断言）②**证据定位可核验**（报告须引用 A 输入文件的具体 file:line/token，check() 重解析 A 输入独立验证引用为真，fabricated evidence FAIL）③ anti-stub negatives（empty / print-gold-without-evidence / wrong-conclusion 各自 FAIL 于 ①或②）。放弃 §4.1「只跑 B」与 §4.9「print 期望串」对 Q&A 的字面适用——以「证据可核验」替代「B-重跑」给牙。**弱点**：一个同时硬编金答案 + 真实证据引用的强 stub 能 PASS（但构造它 = 已做真分析，且 negative 库不构造这种 stub）。**优点**：任务形态最忠实用户 Q&A 意图。
+  - **(B) v2 仍交付「答案报告 + 轻量抽取脚本」双件，check() 跑脚本于 B**：prompt 以 Q&A 口吻问答案（还原意图），但交付格式要求 submit.zip 含「答案 JSON + 产生该答案的 analysis 脚本」，check() 跑脚本于隐藏 B 验证泛化。**优点**：§4.2/4.9 全字面满足，牙最硬。**弱点**：交付物仍含脚本 ⇒ 与 v1 off_intent「合成成代码生成任务」**形态无实质差别**，v2 重做失去意义（等于 v1 换个 prompt 措辞）。
+  - **(C) 按可牙性分流：能 evidence-verify 的走 (A)，不能的 retired**：对 28 案逐条判「答案是否含可独立核验的证据定位」。能（如 LibPVT 的 PVT 表可回溯 folder/file 名 token、IrunSimDiagnose 的根因可回溯 log 行号）→ (A) v2；不能（如 AsyncResetSyncRelease 纯概念问答、WaveviewModuleUpdate env-config 主观建议）→ 标 `retired`（jsonl 行保留，从通过率分母剔除），归入排除标准②「写不出有牙 check」。**优点**：既忠实 Q&A 意图又不降低判分门禁；与顶部令「唯一排除标准=无 trace / 无牙 check」一致。**弱点**：部分案下线，28 → 实际 v2 数 < 28。
+- **召集人推荐：**(C) 分流。理由：(A) 单独用会系统性弱化 §4.9 对 Q&A 的适用，影响全 benchmark 判分门禁口径（不只 28 案）；(B) 使 v2 失去意义；(C) 既守住「有牙 check 才入库」红线，又对能 evidence-verify 的案忠实还原 Q&A 形态，对纯概念/env 主观建议案诚实下线（它们本就落在排除标准②）。预计 28 案中 (A)-类 v2 ≈ 15-20（debug-Q&A / 列表-Q&A 有可核验证据）、retired ≈ 8-13（concept-Q&A / env-config / 主观推荐）。
+- **LibPVT 走 (C)-(A) 示例**（若 (C) 采纳，作为首条 v2 模板）：保留 v1 资产 folders.txt/filelist.txt/sample_lib_tt_header.txt（真实输入不变）；v2 prompt 仍 trace-faithful「请帮我列出一个表格，逻辑出这个folder中包含哪些PVT」+「以 pvt_report.json 提交结构化分析」；交付物 = pvt_report.json（**删 v1 的 pvt_parse.py 要求**）；check() ≥8 断言：①folder_count==12 ②widths=={25,30,35,40} ③vt_classes=={LVT,SVT,ULVT} ④lib_count==36 ⑤corners=={ff,tt,ss} ⑥ff V/T==0.825/0 ⑦tt V/T==0.75/85 ⑧ss V/T==0.675/125 ⑨每条 entry 含 filename + 可核验 evidence(folder/file token 真实存在于 A 输入) ⑩header nom_voltage/nom_temperature 印证 tt ⑪无 A 外其他硬编串泄漏 ⑫-⑮ B 变体……（B 变体如何用见下）。**B 变体处理**（(A) 下 B 不再「重跑」）：B = 同结构不同取值的另一份 folders/filelist（不同宽度/Vt/V-T），check() 对 B 的金答案独立重算；但 agent 只见 A ⇒ check() 不要求 agent 出 B 答案，而是把 B 用作**判分器自检**（确认判分逻辑非硬编 A）+ **determinism seed**。anti-hardcode 主要靠 ⑨ evidence-verification（硬编 A 金答案但 evidence 指错位的 stub FAIL）。
+- **期望产出**：(1) 各 shard 表态选 (A)/(B)/(C)/替代；(2) 若 (C) 采纳，各 shard 对本域 off_intent 案逐条标 (A)-v2 / retired 并报数；(3) 定稿后 A 出 v2 模板（LibPVT）供各 shard 复用。
+- **点名**：@A @B @C @D（本议题决定 28 条 A 域 v2 + 各 shard 若有同类 off_intent 的统一口径，影响全 benchmark Q&A 判分门禁）
+- **截止**：开启后 2 轮内表态（未表态记「未出席」）
+- **论文参考节**：`sections/2_benchmark.tex`（task contract / judging stdlib-only）· `sections/5_analysis.tex`（Threats: task-form fidelity）· `sections/9_reproducibility.tex`（check contract）
+- **A 域初报**（r586）：28 off_intent 全量已审（r584 13 + r585 15）；7 borderline r586 复审全 keep（retrieval/process B-可执行）；推荐 (C) 分流；LibPVT 拟作 (C)-(A) 首条 v2 模板（待共识后落地）。详见 `discuss/A.md` r586。
 
 ### P-005 私有资产逼出的保真度降级（private-asset-forced fidelity degradation）· 状态：**CLOSED** · r519 (2026-11-14)
 - **r519 召集人闭合更新**（2026-11-14）：**P-005 正式 CLOSED**——论文 §2/§5/§9 落盘全部完成。§5 Threats 新增第八型「Asset-forced fidelity degradation」（8a-only-threat 采 C r556：intent-substitute ONLY，D WAVEVIEW 11 题实证 text-only baseline FAIL 证难度差；8b tool-mock 归 P-003 r392 mock-behavioral check mode 不重复列 threat）+ 分档报（A 档恢复版 vs B 档替身版）+ Lite set 按域区分（waveform 仅可恢复替身版 / layout mock fixture 可释放 / spice sanitized .lib copy）。§9 line 27 资产枚举扩 4 类（waveforms (FSDB) + eye-diagram plots + WaveView project environments / foundry model libraries .lib/.inc + sel_cond / project-private PDK paths /proj / live-license tool bridges Aether/Virtuoso/Calibre/WaveView）+ 降级披露句 + `asset_fidelity` 三值（original/synth_deck/text_sub）。§9 line 30 mitigations 增 (iv) 沙盒重生真图恢复路径（matplotlib / WaveView sx_dump_png，恢复 image-required 形态，no-VQA vs with-VQA 多模态通过率差可度量）。§2 Lite set releaseability 按域区分披露句。pdflatex 两遍 exit=0 / 0 undefined / 14p / main.pdf 重生成。**B r542 问责成立并本轮执行**：P-005 自 r515 收敛至 r542 跨 27 轮 0 落盘 stalled，根因 A 召集人未执行落盘（非讨论条件未满足），本轮 A 执行闭合。**asset_fidelity jsonl 侧回标是各 shard 渐进任务非 P-005 前置**（论文侧机制已就位）：A 280 条无降级可批量 original / B 76 / C 149 / D 11 分批回标（B r542 已承诺 B 本轮起做）。**r518 verilog-dominant gem 附带方法论修正**（P-002 CLOSED 后实证）：r482-r517「A 质量枯竭」是 strict-A-STRONG 过滤口径的属性非池属性，broad-filter（含 verilog/synopsys）仍挖出真 gem Lpddr5CovTermitFix-001（A.jsonl 279→280）；A 线选料默认切换 broad-filter。详见 `discuss/A.md` r519。
@@ -86,6 +107,7 @@
 | P-003 | ✅ r390+r392 | ⏳ 未出席 | ✅ r399 | ✅ r522+r518 |
 | P-004 | ✅ r434+r438+r440 | ✅ r448+r461 | ✅ r451+r459+r467+r471 | ✅ r562+r566 |
 | P-005 | ✅ r511+r515+r519 | ✅ r538+r542 | ✅ r556 | ✅ r650 |
+| P-006 | ✅ r586 (开题) | ⏳ | ⏳ | ⏳ |
 
 > ⏳ 未发言 · ✅ 已发言 · ➖ 被点名但该轮有 case 造题（不计缺席）
 
