@@ -1,0 +1,307 @@
+session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务形态
+1792488619552_mt7ua.messages.json	johnl	hfeg0plg49	679	pnr_signoff	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792297573507_9knot	vincelu	hfeg0plg55	862	digital	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1789887279405_ve67l	mike	10.129.32.80	279	pnr_signoff	weak/analysis-only(旧) | asset-inaccessible(B档)	可造	B档合成 | 私有资产不可达:B档合成,check 在隐藏 B 上判
+1792490325235_wvhcg					不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1789090020843_b9bop					不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1791788736494_t2qp9	leo27li	hfeg0pkn001	156	pnr_signoff	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792497366260_giuwf					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792572105701_exwpt					不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1793089887669_4c5ws					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793078585671_z2knw					不可造(旧) | precondition	不可造	— | 依赖前会话状态,gold fuzzy
+1789630394053_3dekw					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1791940499909_2pdn0	e0045128	hfeg0pkn001	34	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792142855712_2h3mf	e0045128	hfeg0pkn001	27	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1790662286657_8356t	fxian	hfeg0pkn002	32	digital	weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+1791447139857_poxvz					不可造(旧) | precondition	不可造	— | 依赖前会话状态,gold fuzzy
+1792571144969_ph3ku					不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1791443950843_b7y8t.messages.json	shaoyou	hfeg0pkn004	107	eda_other	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1793165088136_0suhi	e0046686	hfeg0pkn005	149	pnr_signoff	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1788853067089_zggtc	lorikx	hfeg0pjn200	16	verification	不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1789038497364_qvkte	e0039503	hfeg0plg49	22	digital	不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1788775118036_48swh	lorikx	hfeg0pjn200	10	eda_other	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1783323056207_rc0jh	e0014566	hfeg0plg49	71	pnr_signoff	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792386615426_npf2k	e0045488	hfeg0pkn002	103	pnr_signoff	weak/analysis-only(旧) | asset-inaccessible(B档)	可造	B档合成 | 私有资产不可达:B档合成,check 在隐藏 B 上判
+1793167986392_7bqnr	oshen	hfeg0plg36	96	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1789882246438_m1cve.messages.json	johnl	hfeg0pfn119	61	digital	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1792552971568_dnkz8.messages.json	johnl	hfeg0plg99	99	pnr_signoff	weak/analysis-only(旧) | asset-inaccessible(B档)	可造	B档合成 | 私有资产不可达:B档合成,check 在隐藏 B 上判
+1792120944014_78z8d	e0045128	hfeg0pkn001	30	pnr_signoff	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791796982758_nc938					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792207124614_65efs					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1790058749132_f0qtv					不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1792027020710_k8vvn	claire1l	hfeg0pkn004	80	eda_other	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1792550261464_ztom2	johnl	hfeg0pfn119	72	pnr_signoff	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1789990755473_xgcnn	jalenwei	hfeg0pfn108	21	pnr_signoff	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1789090752430_4xt0p	zhigangw	hfeg0pkn002	24	eda_other	不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1792574299462_d75a9	johnl	hfeg0pfn119	17	eda_other	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1793583471152_fbuip	alan3zh	hfeg0pkn001	108	pnr_signoff	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793584882491_ggmdz	alan3zh	hfeg0pkn001	108	pnr_signoff	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793587958955_0yyhj	e0046913	hfeg0pkn003	89	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792118902296_4efo6	e0039102	hfeg0pkn002	567	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791870002859_kvv66	e0045128	hfeg0plg78	22	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793616198613_fefaj	shaoyou	NA	102	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1792495095612_vke2w	pdong	NA	691	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793151946022_18ry4	hbpeng	NA	11	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1789697789283_fg7ey	t0002596	NA	13	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793002542135_ijm3f	wei9liu	NA	35	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1790219471445_pnokd					不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1792047122523_sqxy6					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1788763403419_gqt57					不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1793167611680_ahtlt					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1791962616204_7j1bw.messages.json	caozhang	hfhds209	111	digital	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1793004375421_dse5n.messages.json	e0046913	hfeg0pkn003	13	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792981676632_bxnc8	zhengc	hfeg0plg66	28	eda_other	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1790126403703_fj73q	e02141	hfeg0pkn002	55	digital	weak/analysis-only(旧) | env-config	可造	env 诊断报告 | 环境配置/调试:check 刭诊断报告
+1792739133486_74dww					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792056947936_36yj3	thomas1w		347	verification	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1788591418561_g9e41	haoyut		152	verification	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1792205134941_5hbdw	hengbow		144	pnr_signoff	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1792829965577_rser7	jkxu		98	verification	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1792568990736_5c450	han1li		56	verification	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1791973347667_tx5s5	e04201		46	verification	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1791964914156_it6n4	e0039102	hfeg0pkn002	134	verification	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1793775927024_1stc5	shaoyou	hfeg0pkn003	20	verification	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1793260818025_aw9d7	dsgao	hfhds201	273	verification	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1792042544705_d1cg3	t0002441	hfhds201	103	eda_other	weak/analysis-only(旧) | doc-search/study	可造	文档检索/study-note | 文档检索/学习:check 刭结构化笔记
+1793776046349_80yiq	shaoyou	hfeg0pkn003	0	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793776433431_z6kn6	shaoyou	hfeg0pkn003	0	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793777039061_elali	shaoyou	hfeg0pkn003	0	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793777957678_cch2o	shaoyou	hfeg0pkn003	0	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1789528229737_7f3c4	jcgu	hfeg0pin003	175	pnr_signoff	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1793167889332_bfl29	jascperc	hfeg0pkn001	69	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793170209567_2mfi6					不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1789552395398_wt5s2					不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793091608908_lzt3e	dummy	dummy	0		weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1791946315674_hg1xu.messages.json	shanliny	hfeg0pkn001	72	verification	weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+1792992278510_lku2o.messages.json	e0045144	hfeg0pkn002	129	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1792724746849_gu1m2.messages.json	lorikx	hfeg0pkn001	80	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1790596559451_9p8g2.messages.json	clwang	hfeg0pkn005	100	digital	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1793946881286_z34dy	t0002965	hfhds222	88	pnr_signoff	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1789979923847_aq5lg.messages.json	johnl	hfeg0pkn001	131	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793584116177_ox6r3	e0047722	hfeg0pkn002	166	eda_other	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1793953398904_e5my5					不可造(旧) | self-leak	不可造	— | trace 含本 benchmark spec,非真实用户任务
+1789451741660_7uwtz					不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1793245121084_56j3w	e0023936	hfhds201	114	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1792140744683_z5ett	jessegao	hfeg0pkn005	137	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793070934364_gtyj5.messages.json	easont	hfeg0pkn004	592	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793070934364_gtyj5					不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793688761923_zqew3					不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1792052682006_dnu1x					不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793600222866_dswuv.messages.json	e0047722	hfeg0pkn004	62	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793098161450_74bnn	lorikx	10.129.2.10	29	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793097775623_cwx19	lorikx	10.129.2.10	29	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1791797325736_lc81i	jason17w	hfeg0pnd002	0	verification	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1791897088355_b460k	jason17w	hfeg0pnd002	0	verification	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1791940907353_xh3mj	jason17w	hfeg0pnd002	0	verification	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1791942913378_xm22u	jason17w	hfeg0pnd002	0	verification	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1791944071628_pwhqb	jason17w	hfeg0pnd002	0	verification	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1794227785944_i555n	e0046913	hfeg0pkn003	0	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793945103405_x8v81	dsgao	hfhds201	99	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794221830421_oclzn	dandans	hfhds201	94	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1794193758706_gwm47	tongfanl	hfhds201	63	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	343	verification	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792551877743_4i1w4.messages.json	fernandoy	hfeg0plg76	329	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793762019450_22gh5.messages.json	e0039102	hfeg0plg74	106	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793770222949_u5daf.messages.json	e0039102	hfeg0plg74	112	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793079745856_epy3m.messages.json	t0002470	hfeg0plg101	139	verification	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1791961260627_mejpi.messages.json	e13zhang	hfeg0pgn012	207	verification	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1792480126204_y737t.messages.json	e13zhang	hfeg0pgn012	139	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1790600533401_vnze7.messages.json	clwang	hfeg0pkn005	165	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793779533537_k7668.messages.json	e0039602	hfeg0pkn002	307	verification	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	422	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793937823141_zdo8r.messages.json	t0002038	hfeg0plg86	585	eda_other	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1794010590146_aqtdv.messages.json	xinqiaoz	hfeg0pkn005	358	pnr_signoff	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1792047975640_tdmdj.messages.json	qi3wang	hfhds209	105	digital	weak/analysis-only(旧) | asset-inaccessible(B档)	可造	B档合成 | 私有资产不可达:B档合成,check 在隐藏 B 上判
+1792053812772_9qa9d	aocao	hfhds227	129	verification	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793949945535_873cy.messages.json					weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1793706026720_4q4w1	weihanwu	hfeg0pfn104	134	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793170209567_2mfi6.messages.json	jascperc	hfeg0pkn001	64	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1792054934836_7adgf	aocao	hfhds227	128	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1792055475403_wuuc7	e0039102	hfeg0plg74	97	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793268918911_brnqb	e02141	hfeg0plg56	717	digital	weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+1792902413837_3p5vl	alanji	hfeg0plg99	275	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793237499232_nph58	jkxu	hfeg0pkn002	297	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1792137927597_f4kc0	jackliu	hfeg0pkn003	279	verification	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1788871441686_fieju	harrys	hfeg0pkn002	495	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793953438523_pzo6g	e0039602	hfeg0pkn002	269	verification	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1794201552569_r2yjr	e0039602	hfeg0pkn002	287	digital	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1792399916731_sbaad	zmzhang	hfeg0pjn140	122	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793756662778_nfb5r	xmxu	hfeg0plg93	73	digital	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1792389512614_7z9re	williang	10.129.2.12	74	pnr_signoff	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793165432787_o5o6p	e0046913	10.129.2.12	186	digital	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1789898322144_yhqp5	mike	10.129.2.12	119	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1790652004587_8zuqr	mike	10.129.2.12	201	digital	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1792135280846_sr426	jackliu	10.129.2.12	166	digital	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1793189553608_5uqoi	dsgao	10.129.32.75	126	eda_other	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1792992278510_lku2o	e0045144	10.129.2.11	129	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1790133793674_jwwqf	e02141	10.129.2.10	82	eda_other	weak/analysis-only(旧) | env-config	可造	env 诊断报告 | 环境配置/调试:check 刭诊断报告
+1793084065593_fg1kv	ghyang	10.129.2.12	33	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793069063742_76i4q	wnyu	10.129.2.13	18	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793603696817_p16i1	shanliny	10.129.2.10	20	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791968010913_mnn5q.messages.json	e04605	10.129.2.11	77	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	21	verification	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1793003840562_382ay.messages.json	harrys	10.129.2.11	46	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792041543395_mss1b.messages.json	e0039102	10.129.2.11	45	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793186643056_muf2k	thomas1w	10.129.40.109	87	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1790490968281_6vy3t	mike	10.129.32.80	58	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1792060840051_yrdts	shanliny	10.129.2.10	57	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791974855202_32935	shanliny	10.129.2.10	51	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1791536684137_lpn8o	mike	10.129.32.80	39	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1789375537537_uh4tz	lorikx	10.129.2.13	36	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1791537885417_6h27d	mike	10.129.32.80	35	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793179564697_11cny	clwang	10.129.2.14	29	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793244457637_k7z23	e0046913	10.129.2.12	18	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792133360129_whu5z	lorikx	10.129.2.13	22	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1790415942692_xbexl	jinhaoli	10.129.2.13	35	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792841088751_bg11w	congyi	10.129.32.75	77	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1789449816263_xinm9.messages.json	e0025522	hfeg0plg103	208	digital	不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1789868617686_y7550.messages.json	t0002470	hfeg0plg76	197	eda_other	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	183	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792548360759_l8989.messages.json	tongfanl	hfhds201	16	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793240477462_vf2q3.messages.json	ruisongs	10.129.33.216	25	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793704285912_k2x6m.messages.json	daiweilu	10.129.32.83	22	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1794187704615_bmqho.messages.json	e0039602	10.129.2.11	23	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792804747547_8bgtd.messages.json	ruisongs	10.129.33.216	17	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793969287953_187i0.messages.json	johnl	10.129.33.246	12	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793154396942_2idq4.messages.json	mwhu	10.129.35.74	18	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793931604619_df52y.messages.json	chunfang	10.129.2.10	20	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	21	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791792527981_q4skx	e0045128	hfeg0pkn005	21	pnr_signoff	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793790637246_aafag.messages.json	e0046718	hfeg0plg76	12	pnr_signoff	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793330336899_zh3eq	lorikx	hfeg0pkn004	45	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793326182885_wyezr	stevenh	hfeg0pgn145	35	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793177058917_hzyu6	fernandoy	hfeg0plg76	326	digital	weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+1793259975527_lilaj.messages.json	lorikx	hfeg0pkn004	58	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1792742776753_6yrpu	lorikx	hfeg0pkn004	152	digital	weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+1792983391097_swhjl	stevenh	10.129.35.244	103	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793172758983_0kv56.messages.json	jascperc	hfeg0pkn001	160	digital	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1794395853966_tef8l	yinyus	hfeg0plg66	894	digital	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1794386548710_l4tre	xinqiaoz	hfeg0pkn002	575	pnr_signoff	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1794206548447_artkz					不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1794466237270_iyyzq	jerrychu	hfeg0pkn003	15	eda_other	不可造(旧) | false-positive	不可造	— | 关键词噪声,无真实任务
+1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793343472817_6tswp	e0039602	hfeg0plg95	119	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794382021638_eadk1	alanji	hfeg0plg99	107	digital	weak/analysis-only(旧) | debug-Q&A	可造	debug-Q&A 诊断 | debug-Q&A:check 刭诊断结论+证据
+1794449150836_cdrm1	daiweilu	hfeg0pgn145	107	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794571860576_p0fqe	johnl	hfeg0pkn001	224	pnr_signoff	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794465633184_9scu4	e0045128	hfeg0pkn005	27	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1794468675464_p5pi7	dsgao	hfeg0pkn001	236	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794385756928_jeij7	e0039102	hfeg0pbn16	143	verification	weak/analysis-only(旧) | flow-driving	可造	flow-driving 提交+报告 | flow-driving:check 刭提交+报告解析
+1794290494748_5u1j9	e0039102	hfeg0pbn16	129	verification	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1794291542588_oh5bd	e0039102	hfeg0pbn16	129	verification	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793180163442_wz7gy	e03179	hfeg0plg15	281	eda_other	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1792052491292_p5laa	xinqiaoz	hfeg0plg15	267	pnr_signoff	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1790824372525_3f13i	sophiaw	hfeg0plg09	17	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1791771378239_ceyvq	e0042624	hfeg0pkn003	15	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1794363187550_713t3	miccao	hfeg0plg37	40	eda_other	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1793675227759_8mmd6	junwangt	hfeg0plg07	32	eda_other	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1791947206474_jhsi9	tongfanl	hfhds206	23	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792485371006_tma34	claire1l	hfeg0pkn004	129	eda_other	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1794190756187_ipil7	jasminej	hfeg0plg52	22	eda_other	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1791960224780_tj1kl	hengbow	hfeg0plg94	21	eda_other	weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1791769075277_w7us0	e0017906	hfeg0plg96	21	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793272345438_5avgh	gokuguo	hfeg0plg53	20	eda_other	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1791960240913_4drpt	hengbow	hfeg0plg94	21	eda_other	不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
+1793156257609_xqkry	daiweilu	hfeg0pgn145	62	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794453586384_srob6	jason17w	hfeg0pnd002	77	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1794539090854_vqpd5	wenfeiz	hfeg0pkn004	64	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794446207194_gaopz	ericw	hfhds201	90	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794445729302_9kc99	e0039602	hfeg0pkn005	77	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794397613511_dwr4p	guomings	hfeg0pkn003	70	digital	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1792569513787_jq6lq	mwxi	hfhds228	85	eda_other	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1789453406100_p28m8	e0017484	hfeg0plg54	75	digital	不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1793867092418_uemp5	e0039602	hfeg0pkn005	66	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793873301625_fg7hf	e0039602	hfeg0pkn005	56	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794482509558_n7ot5	szcao	hfeg0pgn145	55	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1791854347080_pits0	johnl	hfeg0pkn001	52	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	weak/analysis-only(旧) | debug-Q&A	可造	debug-Q&A 诊断 | debug-Q&A:check 刭诊断结论+证据
+1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791280343229_bp54q	mwxi	hfeg0pkn003	76	digital	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1794377042867_o5njo	xrxiong	hfeg0pkn001	67	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793169406310_49kzt	e0039602	hfeg0pkn005	55	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794469877801_685bd	eric1ch	hfeg0pkn001	50	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793704618870_pz29g	e0039602	hfeg0pkn005	48	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791785549996_uaa3b	kiaray	hfeahpc505	45	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1793865143182_nwmze	e0039602	hfeg0pkn005	41	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791956799319_0ykok	e0046686	hfeg0pkn005	36	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791602750335_dtdfk	jason17w	hfeg0pnd002	36	digital	weak/analysis-only(旧) | flow-driving	可造	flow-driving 提交+报告 | flow-driving:check 刭提交+报告解析
+1791896374185_vc5uj	e0014566	hfeg0plg58	34	digital	不可造(旧) | no-verifiable-goal	不可造	— | 指令过薄/无可验证目标,写不出有牙 check
+1793694635228_d56nb	ruisongs	hfeg0pfn087	33	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793611777735_q9ulk	ruisongs	hfeg0pfn087	31	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793250981130_kq81c	thqu	hfeg0pkn099	31	digital	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792459025453_8o316	max7c	hfeg0pkn004	13	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	18	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1792717840232_bx87p.messages.json	adaml	hfeg0pkn002	18	eda_other	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794394549939_ia08o.messages.json	xy1zhang	hfeg0pgn145	24	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791266472578_d7u53.messages.json	adminai	hfeg0pkn004	29	eda_other	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1792046360526_bbflu.messages.json	e0046686	hfeg0pkn005	22	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1791337441726_g31h2	adminai	hfeg0pkn004	29	digital	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1794364808289_9fptm	e0041392	hfeg0pkn001	20	digital	不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1793927271206_0ekf9	e0030085	hfeg0plg80	352	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793692750441_cydnq	e0039602	hfeg0plg95	422	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1794446541461_udmg8	lein	hfeg0plg69	396	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793092177260_yseg9	fernandoy	hfeg0plg76	343	pnr_signoff	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1792551877743_4i1w4	fernandoy	hfeg0plg76	329	pnr_signoff	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1789976011359_06htj	mike	hfhds211	275	pnr_signoff	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1790650962650_7bg20	fxian	hfeg0plg74	221	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1791962616204_7j1bw	caozhang	hfhds208	218	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793778069961_gf2ud	tongfanl	hfhds206	213	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1791784530809_sr0ca	tongfanl	hfhds206	173	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1791686047150_w4uy2	jason17w	hfeg0pnd002	169	pnr_signoff	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1793348917218_h8pcp	jinhaoli	hfeg0plg107	156	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1794385786325_gaekj	e0039102	hfeg0plg74	154	digital	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1794550682017_axn69	zhengc	hfeg0pgn145	273	verification	不可造(旧) | no-trace	不可造	— | NOFILE/已删除/被rotation蒸发,无真实 trace
+1794635703422_kem74	ericw	hfeg0pfn034	147	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794548666331_7y20f					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794551642078_rqp94.messages.json	chuanqiz	hfeg0plg79	165	verification	不可造(旧) | non-A-domain	不可造	移交对应 shard | trace 属 C/B/D 域,移交对应 shard
+1794551446322_sco0b.messages.json	eva1li	hfeg0plg74	85	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794557869660_0g9n6.messages.json	thomas1w	hfeg0plg98	42	verification	weak/analysis-only(旧) | debug-Q&A	可造	debug-Q&A 诊断 | debug-Q&A:check 刭诊断结论+证据
+1794561779908_voyfu	e0014036	hfeg0plg76	202	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794555284506_lopt8	congyi	hfeg0plg97	58	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794551664857_x41qu	chuanqiz	hfeg0pkn005	158	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794550196398_kqydq	e02141	hfeg0pkn005	133	eda_other	weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1794550071403_m8srw	e02141	hfeg0pkn005	122	eda_other	weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+1792671863382_ibrpp	jkxu	hfhds206	11	verification	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+as306	e02141	hfeg0plg56	15		weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+nn77i	t0002470	hfeg0plg76	15		weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+7gvna	thomasz	hfeg0plg92	14		weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+5qlqi	lorikx	hfeg0plg52	13		weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+lxord	eva1li	hfeg0plg74	10		weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+azuve	xingx	hfeg0plg98	11		weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+f4n69	laryu	hfeg0plg92	12		weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+ay35u	e13zhang	hfeg0plg15	13		weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+jka85	jason17w	hfeg0pnd002	11		weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1x0zd	e0030085	hfeg0plg80	17		weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+sucst	e0039602	hfeg0plg95	17		weak/analysis-only(旧) | debug-Q&A	可造	debug-Q&A 诊断 | debug-Q&A:check 刭诊断结论+证据
+p6glk	e0039102	hfeg0plg74	17		weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+qwx61	thomasz	hfeg0plg92	16		weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+iyqdr	thomasz	hfeg0plg92	15		weak/analysis-only(旧) | overlap-existing	可造	差异化 v2 | 同族不同角度:可造差异化 v2
+bftii	jason17w	hfeg0pnd002	11		weak/analysis-only(旧) | flow-driving	可造	flow-driving 提交+报告 | flow-driving:check 刭提交+报告解析
+1793762245106_h1of4	jason17w	hfeg0pnd002		digital	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1793762224725_qrd72	jason17w	hfeg0pnd002		digital	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1793762194315_dvchf	jason17w	hfeg0pnd002		digital	不可造(旧) | GUI-live	不可造	— | GUI/live-Aether,无法沙盒判分
+1789539770606_2ga1l					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793930174180_1suhd					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1790837731203_a6f23					不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1791785530444_aaqrb					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1792135972903_3si95					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791942254525_bd1k2					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1783080146131_ebokr					weak/analysis-only(旧) | other-needs-deepread	可造	待深读 | 未明确落入硬排除,需深读确认
+1790230242506_8h59z					不可造(旧) | non-authentic	不可造	— | 模板/触发式 canned session,非真实意图
+1792995847117_mon3r					weak/analysis-only(旧) | debug-Q&A	可造	debug-Q&A 诊断 | debug-Q&A:check 刭诊断结论+证据
+1793607738033_9ufjy					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1789884434870_ilkea					weak/analysis-only(旧) | analysis	可造	分析结论 | 只读分析:check 刭分析结论
+1791507262889_xotf3					不可造(旧) | not-EDA	不可造	— | 非 EDA 任务
+1793241105381_nurc0	shanliny	hfeg0pkn005	9	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1791946267022_oqri7	xingx	hfeg0pkn002	9	digital	weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1794187704615_bmqho					不可造(旧) | precondition	不可造	— | 依赖前会话状态,gold fuzzy
+1793931604619_df52y					weak/analysis-only(旧) | Q&A	可造	Q&A 结构化答案 | Q&A/咨询/代码理解:check 判结构化答案
+1793240477462_vf2q3					不可造(旧) | dup-existing	不可造	— | 与既有 case 重复
