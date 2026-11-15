@@ -2,49 +2,23 @@
 
 WAITING: 0
 
-> 🆕 **R2546 · 2026-11-15 20:27 — 自检全绿 + git rebase up-to-date + cc 33/82(5P·0ConnRefused✅) + opencode 41results(10P·train-fasttext running 35min) + pi 29/46(5P) + deepseek 25/48(0P) + adaptive off10/10·0 429✅**
-> - **自检**: load~45/224(pretrain-dominated) ✅·mem 1037GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ porcelain=0 ✅
-> - **git**: `git pull` 报 "Cannot rebase onto multiple branches" → workaround `git fetch origin main && git rebase origin/main` ✅ (HEAD=39e456cb1)
-> - **cc rerun**: PID 1510534 harbor alive(16.6h)·**33/82 done**(5P/23F/5NA·3RuntimeError+1VerifierTimeout+1job-summary)·**0ConnRefused ✅ HARD VERIFIED**(grep 0/33)·49 pending·ETA~Nov17
-> - **opencode rerun**: PID 135257 part4 alive(35min)·**41 results**(10P/19F/12NA)·train-fasttext=last task(running 35min)·0 429 ✅
-> - **pi rerun**: PID 2365018 part3 alive(5min)·**29/46 done**(5P/22F/4NA)·17 remaining·n=10 adaptive
-> - **deepseek rerun**: PID 726880 part2 alive(27min)·**25/48 done**(0P/21F/4NA)·23 remaining·n=10 adaptive
-> - **adaptive**: off current=10/10 cap=10·quiet=109m·累计429=0 ✅·实跑验证✅(周末off模式)
-> - **cc NA归因**: 3RuntimeError(code-from-image/feal-diff/feal-linear·非exit-code路径·adapter L237 fix仅覆盖exit≠0)+1VerifierTimeoutError(fix-ocaml-gc)·待cc完成后单独重跑
-> - **下一步**: ①opencode train-fasttext finishes→COMPLETE→regen opencode行 ②pi 17 remaining ③deepseek 23 remaining ④cc 49 remaining(~Nov17)→REGEN双报告 ⑤opencode 12NA重跑 ⑥cc 3RuntimeError+1VerifierTimeout NA重跑 ⑦cc失败题EvoX三分法打标 ⑧成本补采 ⑨hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.6KB / MEMORY≈30.0KB（✅≤32KB）
+> 🆕 **R2547 · 2026-11-15 20:40 — 自检全绿 + cc 44/82(12P/27F/5EXC·0ConnRefused✅ HARD VERIFIED) + opencode 38/38 COMPLETE(10P/20F/8EXC) + pi 35/46(5P/28F/2EXC) + deepseek 24/48(0P/22F/2EXC) + adaptive off10/10·0 429✅**
+> - **自检**: load~60/224(pretrain-dominated) ✅·mem 1035GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ porcelain=0 ✅
+> - **git**: `git pull` up-to-date ✅ (HEAD=17c0f6dc5 designflow)
+> - **cc rerun**: PID 1510536 harbor alive(16.9h·jobs-dir=0348)·**44/82 done**(12P/27F/5EXC·reward=verifier_result.rewards.reward口径)·**0ConnRefused ✅ HARD VERIFIED**(grep 0/44)·38 pending·ETA~Nov17
+> - **opencode rerun**: PID 135257 part4 finishing·**38/38 COMPLETE**(10P/20F/8EXC)·train-fasttext=last task·0 429 ✅
+> - **pi rerun**: PID 3809768 alive·**35/46 done**(5P/28F/2EXC)·11 remaining·n=10 adaptive
+> - **deepseek rerun**: PID 4039988 alive·**24/48 done**(0P/22F/2EXC)·24 remaining·n=10 adaptive
+> - **adaptive**: off current=10/10 cap=10·quiet=118m·累计429=0 ✅·实跑验证✅(周末off模式)
+> - **cc修复验收**: cc rerun 0ConnRefused✅(44 results全0)·12P vs 旧0/89(88ConnRefused)→fix confirmed·待cc完成(38remaining)→REGEN双报告
+> - **下一步**: ①opencode COMPLETE→regen opencode行 ②pi 11 remaining ③deepseek 24 remaining ④cc 38 remaining(~Nov17)→REGEN双报告(cc行从0/89换真实数字) ⑤opencode 8EXC重跑 ⑥cc 5EXC重跑 ⑦cc失败题EvoX三分法打标 ⑧成本补采 ⑨hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈27.5KB（✅≤32KB）
+>
+> 📦 R2546 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 33/82(5P·0ConnRefused✅)+opencode 41results(10P·train-fasttext running)+pi 29/46(5P)+deepseek 25/48(0P)+adaptive off10/10·0 429✅。需要时再读。
 
-> 📦 R2545 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 31/82(5P·0ConnRefused✅)+opencode 41results(10P)+pi 25/46(5P)+deepseek 25/48(0P)+adaptive off10/10·0 429✅。需要时再读。
+> 📦 R2545-R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 29→33/82渐进(4→5P·0ConnRefused✅)+opencode 35→41results(10P)+pi 11→29/46(1→5P)+deepseek 0→25/48(0P)+adaptive 8→10实跑验证✅。需要时再读。
 
-> 📦 R2544 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 31/82(5P·0ConnRefused✅)+opencode 41results(10P·train-fasttext last task)+pi 25/46(5P)+deepseek 25/48(0P)+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2543 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82(4P·0ConnRefused✅)+opencode 37/38(10P·1remaining)+pi 22/46(5P)+deepseek 22/48(0P)+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2542 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82(4P·0ConnRefused✅)+opencode part4/4(last 2 tasks)+pi 20/46(4P)+deepseek 12/48(0P)+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2541 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82(4P·0ConnRefused✅)+opencode 38/38(10P/18F/10NA·COMPLETE标记过早·实际part4/4仍在跑)+pi 12/46+deepseek LAUNCHED 0/48+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82+opencode 35/38+pi 11/46+adaptive 8→9→10实跑验证✅+deepseek待启动。需要时再读。
-
-> 📦 R2539 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+3zombie容器清理✅+cc 28/82(4P·0ConnRefused✅)+opencode 35/38(10P/18F/7NA·3in-flight)+pi 11/46(1P)+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2538 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 28/82(4P·0ConnRefused✅)+opencode 35/38(10P/17F/7NA·4in-flight)+pi 11/46(1P)+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2537 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+adaptive验收4时刻全过✅+cc 28/82(4P·0ConnRefused✅)+opencode 34/38+pi 10/46+research日报SatisFix/EvoX记为future ref。需要时再读。
-
-> 📦 R2536 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 28/82+opencode 33/38+pi rerun LAUNCHED(n=10 adaptive)+adaptive off 10/10·0 429✅+自检全绿+git pull FF。需要时再读。
-
-> 📦 R2535 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 26/82(4P/5EXC/8×502infra/9maxturn·0ConnRefused✅)+opencode 24/38(10P/7F/7EXC·chunk3 10in-flight·adaptive n=10·0 429✅)+adaptive off 10/10+自检全绿+git pull up-to-date。需要时再读。
-
-> 📦 R2534 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 27/82(4P/18F/5NO_VER·0ConnRefused✅)+opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)+adaptive自测全过✅+自检全绿+git pull up-to-date。需要时再读。
-
-> 📦 R2533 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 27/82(4P/18F/5NO_VER·0ConnRefused✅)+opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)+自检全绿+git push OK+reports/清理4.txt。需要时再读。
-
-> 📦 R2532 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 27/82(4P/18F/5NA·0ConnRefused✅)+opencode 23/38(9P/7F/7NA·adaptive n=10·0 429✅)+自检全绿+git push BLOCKED(proxy 503)。需要时再读。
-
-> 📦 R2531 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/4NA·0ConnRefused✅)+opencode 21/38(9P/7F/5NA·adaptive n=10·0 429✅)+RuntimeError fix verified in source+3 opencode NA需重跑+自检全绿。需要时再读。
-
-> 📦 R2530 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 23/82(4P/16F/3NA·0ConnRefused✅)+opencode 20/38(9P/6F/5NA·adaptive n=10·0 429✅)+4适配器RuntimeError修复(verifier-always-run)+自检全绿。需要时再读。
+> 📦 R2539-R2530 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 23→29/82(4P·0ConnRefused✅)+opencode 20→38/38(9→10P)+pi 10→12/46+adaptive验收4/4✅+4适配器RuntimeError修复+3zombie清理+自检全绿。需要时再读。
 
 > 📦 R2528 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4P/16F/3NA·fix-ocaml-gc running·0ConnRefused✅)+opencode 21/38(9P/6F/6NA·adaptive n=10·0 429✅)+自检全绿。需要时再读。
 
@@ -68,12 +42,12 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2541 cc rerun 29/82(4P/20F/5NA·0ConnRefused✅) + opencode COMPLETE 38/38(10P/18F/10NA) + pi 12/46(2P) + deepseek LAUNCHED 0/48(n=10 adaptive) + adaptive off10/10·0 429✅
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2540(cc rerun 6→29/82+adaptive落码+验收4/4✅+opencode rerun COMPLETE 38/38+adaptive real-world 8→10+4适配器RuntimeError修复+pi rerun LAUNCHED+git push recovered)
-当前动作:     R2541: cc rerun PID1510536 harbor alive(~16h)·29/82(4P/20F/5NA)·0ConnRefused✅·opencode COMPLETE 38/38(harbor idle)·pi PID3810219 12/46(2P)·deepseek PID4040004 LAUNCHED 0/48(n=10 adaptive·installing SDK)·adaptive off10/10·0 429✅·load68/224✅·mem1043GB✅·0runaway✅·reports/ porcelain=0✅·W:0
-下一步:       ①deepseek 48题跑完(adaptive auto·weekend n=10) ②pi 46题继续(34remaining) ③cc 82题完成(~Nov17 20:00)→REGEN双报告(cc行从0/89换真实数字) ④opencode 5×RuntimeError NA单独重跑(fixed adapter) ⑤cc完成后失败题按EvoX三分法打标(来自research日报11-15) ⑥成本补采(适配器写回token+wall) ⑦hermes qemu 2题=BLOCKED(Py3.9<3.11)
+PHASE:        R2547 cc rerun 44/82(12P/27F/5EXC·0ConnRefused✅) + opencode COMPLETE 38/38(10P/20F/8EXC) + pi 35/46(5P/28F/2EXC) + deepseek 24/48(0P/22F/2EXC) + adaptive off10/10·0 429✅
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2546(cc rerun 6→44/82+adaptive落码+验收4/4✅+opencode rerun COMPLETE 38/38+adaptive real-world 8→10+4适配器RuntimeError修复+pi/deepseek rerun LAUNCHED+git push recovered)
+当前动作:     R2547: cc rerun PID1510536 harbor alive(~17h·jobs-dir=0348)·44/82(12P/27F/5EXC)·0ConnRefused✅·opencode 38/38 COMPLETE(10P/20F/8EXC)·pi PID3809768 35/46(5P)·deepseek PID4039988 24/48(0P)·adaptive off10/10·0 429✅·load60/224✅·mem1035GB✅·0runaway✅·reports/ porcelain=0✅·W:0
+下一步:       ①opencode COMPLETE→regen opencode行 in 7way report ②deepseek 48题跑完(adaptive auto·weekend n=10) ③pi 46题继续(11remaining) ④cc 82题完成(~Nov17 20:00)→REGEN双报告(cc行从0/89换真实数字) ⑤opencode 8EXC重跑(fixed adapter) ⑥cc 5EXC重跑 ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15) ⑧成本补采(适配器写回token+wall) ⑨hermes qemu 2题=BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
- 体积: TASK=25.6KB / MEMORY≈26.5KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
+ 体积: TASK=25.6KB / MEMORY≈24.4KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
