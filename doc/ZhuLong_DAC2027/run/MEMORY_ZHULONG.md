@@ -1,8 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-15 wake#977·**心跳·A3 blocker (b) 已清除**：baseline eval PID1910477/1910486 已结束，沙盒无 run_cline_script 占用；blocker 现仅剩 (c) 用户裁决 A3-A6 起跑顺序。**wake#977 实测**：loop PID243810 + `https_proxy=http://172.19.92.23:13128`✅（log 20:23 fresh）·df `/home 5.8G✅ /nasdata 32G✅`·沙盒 6 端口 8664/8665/8653/8669/8657/8668 全 OPEN✅·HEAD==origin ✅（849132302）·H2 无进程·ops relay PID118463 活✅。**A3 blocker 复核**：(a)磁盘✅ (b)**eval 已结束✅（新）** (c)用户裁决 A3-A6 起跑顺序**未收到** (d)沙盒全 OPEN✅。**A3-A6 报告 §5 可行性预检已 done**：A3/A0′ 需 wrapper 扩展（inputTokens hook + maxTokens）= 需开发；A4/A5/A6 需装 H2 wrapper v3.0.74+INHERIT_MCP=1（已 build 未装默认）。**四臂 prep 路径分歧**⇒ 07:2x 令「等用户裁决 A3-A6 起跑顺序」属协调决策（非「防尝试」禁令）⇒ 去禁令化清理后仍有效，本轮不擅自起 80h A0′ run。infra: §7 PHASE=h2_stopped_by_user。**下一步**：等用户 1 字 GO（A3 / A4 / A5 / A6 任一）⇒ 即起对应 prep（A3=开发预算 hook；A4/A5/A6=装 H2 wrapper+smoke）⇒ 再起 A0′ 预算基线（仅 A3 线需要）。详情见下 + daily-memories §[wake#977]）
+WAITING: 1（2026-11-15 wake#978·**🔴用户令 20:5x 放行 A3-A6·A0′ prep+smoke 已起跑**。blocker (c)「用户裁决」**已清除**。**关键发现**：cline 预算旋钮=纯 config（models.json contextWindow/maxInputTokens 控 in-budget · providers.json maxTokens 控 out-budget · global-settings compaction=basic）→ **A0′ 不需 wrapper 开发**；A0(compaction-basic) 已 in≤32K(contextWindow=32000)·out≤16384·无 spawn=69.2% ⇒ **A0′ = A0 + maxTokens 16384→4096**（单变量 vs A0；A3 vs A0′=spawn 单变量）。**另一发现**：A1/A2 models.json contextWindow=1000000（setup_subagent_arm_dirs.py）≠A0 的 32000 → A1/A2 无强制压缩 regime（历史 confound，A0′/A3 改用 32000 修正）。**沙盒错峰**：A0′ 用 8650 池（8650/8651/8652/8654 全 OPEN·workdir t0002997_{1,2,3,4}）·post-train eval PID1910477 在 8664 池**仍在跑**（2h36m·wake#977「已结束」为误报·本令硬约束#1 不 kill）·两池独立无干扰。**A0′ 8-task smoke 跑中**（PID2680158·-p 4·8650 池·maxTokens=4096·验证 out≤4K 可存活）。infra: §7 PHASE=a0prime_prep。**下一步**：smoke 完→看 gen-rate/ITT→若可存活即起 A0′ 全量 3 轮×40 题；若 out≤4K 崩→改 8192+写 MEMORY 理由。详情见下 + daily-memories §[wake#978]）
 
-- [2026-11-15 wake#977·**心跳·A3 blocker (b) 清除·四臂 prep 路径分歧⇒守「等用户裁决」**] prompt=ZHULONG_TASK.md 原文重发·无新指令。**实测**：loop PID243810 + `https_proxy=http://172.19.92.23:13128`✅（/tmp/zhulong_loop.log 20:23:18 fresh）·df `/home 5.8G✅ /nasdata 32G✅`·沙盒 .75 六端口 8664/8665/8653/8669/8657/8668 **全 OPEN✅**·HEAD==origin/main ✅（849132302）·H2 无进程·ops relay PID118463 活✅·designflow 线 benchmark/ 有未提交改动（非我线·不碰）。**关键变化（vs wake#976）**：baseline eval PID1910477/1910486 **已结束** → A3 blocker (b)「eval 占沙盒」**清除**。**blocker 四项现状**：(a)磁盘✅ (b)**eval 已结束✅** (c)用户裁决 A3-A6 起跑顺序**未收到** (d)沙盒全 OPEN✅ ⇒ 仅剩 (c)。**A3-A6 报告 §5 可行性预检状态**：已 done（`reports/report_zhulong_a3a6_arms_zh.html:326-359`）—— A3/A0′=wrapper 扩展需开发（inputTokens hook 强制 spawn + maxTokens 控 output）·A4/A5/A6=装 H2 wrapper v3.0.74+INHERIT_MCP=1（commit 39ccd44cc 已 build 未装默认）。**判断**：四臂 prep 路径**分歧**（A3 走预算 hook / A4-A6 走 INHERIT_MCP 装机），且 A0′ 80h run 仅 A3 线需要 ⇒ 07:2x 令「等用户裁决 A3-A6 起跑顺序」是**协调/优先级决策**（非「防尝试」禁令）⇒ 去禁令化清理后**仍有效**，本轮**不擅自起 run**。**去禁令化自主权边界**：§四.4 自主权覆盖「设计臂/小实验」；80h A0′ 主 run + 选定 prep 路径属重大提交，仍归用户裁决。**交付**：本流水 + daily-memories §[wake#977] + commit `zhulong heartbeat:`。WAITING=1（等用户 1 字 GO：A3 / A4 / A5 / A6）。
+- [2026-11-15 wake#978·**🔴A3-A6 放行·A0′ prep+smoke 起跑**] prompt=ZHULONG_TASK.md（用户令 20:5x 放行 A3-A6·commit dce8c0e43）。**实测**：loop PID243810+proxy✅·df `/home 5.8G(99%) /nasdata 32G(95%)`·沙盒 .75 八端口 8650/8651/8652/8654/8656/8658/8661/8662 **全 OPEN✅**（8650 池可用）·8664 池 post-train eval PID1910477/1910486 **仍在跑**（etime 2h36m·`-p 8 -b EDA-Eval-PyAether-v20260311_fixed`·parent sshd·非我线·**不 kill**）·2609758=本 opencode session（非 H2·pgrep 误匹配）·H2 无进程·ops relay PID118432 活✅。**A0′ 设计定稿**（见下「子 agent 消融」表后预注册块）：A0′=A0(compaction-basic)+maxTokens 16384→4096·in≤32K(contextWindow=32000)不变·compaction=basic·无 spawn·compact@28.8K。**A0′ arm dir 已建** `/nasdata/app.e0031982/subagent_ablation/A0prime/`（providers.json maxTokens=4096·models.json contextWindow=32000·global-settings 无 enableSpawnAgent·globalState dsv4-pro/cloud/v1·无 agents/）。**run 脚本** `run_a0prime_ablation.sh`（-p 4·8650 池·每轮 .env backup→sed 改 8650→trap 还原·post-train eval 内存持 8664 不受影响·dry-run 验证✅）。**8-task smoke 跑中**（smoke8_a0prime.txt·ROUNDS=1·PID2680158·21:11 起·/tmp/a0prime_smoke.log）。**交付**：本流水+预注册块+daily §[wake#978]+report §1 状态更新+commit `zhulong arms:`。WAITING=1（smoke 跑中·下轮看结果起全量）。
+
+- [2026-11-15 wake#977 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[wake#977]（心跳·blocker(b) eval 已结束误报·已被 wake#978 取代：用户放行 A3-A6 + A0′ prep+smoke 起跑）
 
 - [2026-11-15 wake#976 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[wake#976]（📦12:5x 清盘令归档收口·任务书瘦身 33.3KB→26.9KB·df /home 5.8G /nasdata 33G 双达标·baseline eval 1910477/1910486 存活·已被 wake#977 取代：eval 已结束 blocker (b) 清除）
 
@@ -103,6 +105,22 @@ WAITING: 1（2026-11-15 wake#977·**心跳·A3 blocker (b) 已清除**：baselin
 | **A2** | 验证型 spawn（adversarial QA·写后 spawn）| **53.3 ± 3.8%** | 87.6% | 23-26/40 | 0.80-0.85 | [50.0, 57.5, 52.5]（20/40, 23/40, 21/40）|
 
 **Δ**：A1 vs A0 = −2.5pp（~0.3σ·证据不足）·**A2 vs A0 = −15.9pp**·**A2 vs A1 = −13.4pp**。**关键发现**：三臂 gen-rate（pass/generated）持平 ~87%→能力质量不变；A2 cline_ok(60%) << A1(72-90%) → 验证 spawn 流程更长→更多 timeout→生成率低→ITT 被吞吐拖垮。**McNemar 配对检验 ✅已做**（`mcnemar_subagent_results.json`）：majority vote A0=72.5%/A1=65%/A2=50%→A0vsA1 b=4,c=1,p=0.37 不显著·**A0vsA2 b=9,c=0,p=0.008 显著**·A1vsA2 b=8,c=2,p=0.11 趋势。per-round(120obs)：**A0vsA2 b=24,c=5,p=0.0008 高度显著**·**A1vsA2 b=23,c=7,p=0.006 显著·满足预注册≥6:6**。**H1 裁决**：A0vsA1 证据不足（spawn 调研型不显著伤/助）·A0vsA2 & A1vsA2 **验证型 spawn 显著有害**（主因吞吐降非质量降）。H2 源码 commit 39ccd44cc+wrapper v3.0.74 已 build 未装→待装+smoke→B2-B5。
+
+### A3-A6 起跑预注册（2026-11-15 wake#978 · 用户令 20:5x 放行）
+
+> 起跑顺序：A0′ → A3 → A6 → A4 → A5。每臂起跑前在此写一行「臂号+唯一变量+判据+数据子集+资源/并发+对照臂」（未写不得起跑）。
+
+**A0′（预算基线 · 🔵 prep done · smoke 跑中）**
+- 唯一变量：out-budget `maxTokens 16384→4096`（in≤32K 经 `models.json contextWindow=32000` **不变**·compaction=basic **不变**·无 spawn **不变**）→ A0′ = A0 + out-budget 收紧
+- 预注册判据：A0′ 为 **A3 的预注册锚点**（`A3 ITT ≥ A0′ ITT + 3pp`·McNemar b≥6 c≥6 方向一致）；A0′ 本身无 pass/fail，记 ITT mean±std + gen-rate + compaction 次数
+- 数据子集：`compaction_subset_40.txt`（40 题·与 A0/A1/A2 同子集）
+- 资源/并发：`-p 4` · **8650 池错峰**（8650/8651/8652/8654·workdir t0002997_{1,2,3,4}·不干扰 8664 池 post-train eval）·3 轮 · trace 落 `/tmp/zhulong_a0prime_trace`
+- 对照臂：**A0**（compaction-basic 69.2±1.4%·in≤32K/out≤16384/无 spawn）。**A0′ vs A0 = out-budget 效应（单变量）**；**A3 vs A0′ = spawn 效应（单变量）**
+- 关键修正：A1/A2 用 `setup_subagent_arm_dirs.py` 的 `contextWindow=1000000`（无强制压缩 regime·历史 confound）；A0′/A3 改用 `contextWindow=32000`（=A0·强制 compaction@28.8K = H_ctx regime）
+- arm dir：`/nasdata/app.e0031982/subagent_ablation/A0prime/` · run：`run_a0prime_ablation.sh` · smoke：`smoke8_a0prime.txt` ROUNDS=1
+
+**A3 / A6 / A4 / A5**：待 A0′ 跑完后逐臂补写预注册（A3 需 spawn-at-boundary hook 开发；A4/A5/A6 需装 H2 wrapper v3.0.74+INHERIT_MCP=1）。
+
 
 
 ## 成绩记录（N=5 mean±std，Pass@1 %）

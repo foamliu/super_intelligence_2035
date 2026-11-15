@@ -75,8 +75,10 @@
   <b>A4</b>＝序列分段接力（段间传文件+摘要，非并行）；
   <b>A5</b>＝严格「写后只挑刺」（verifier 只出 issue list，主 agent 逐条 triage）；
   <b>A6</b>＝门槛 spawn（仅高风险任务才 spawn）。
-  <span class="neg">四臂当前全部未起跑</span>（仓库内不存在任何 A3–A6 实验报告/结果，仅有 idea 与可行性预检）；
+  <span class="pos">起跑状态（2026-11-15 wake#978·用户令 20:5x 放行 A3-A6）：</span>
+  <b>A0′ 预算基线 prep done · 8-task smoke 跑中</b>（maxTokens 16384→4096·in≤32K 不变·无 spawn·8650 池错峰）；A3/A4/A5/A6 待 A0′ 跑完后逐臂起跑。
   <span class="neg">A3 的「自然超窗」路径已被 §5/§6 实测判死（40 题 max 112K、158 题 max 100,115，0/1116 超 128K 且峰值被 compaction 截断），唯一可行路径是「强制小预算」，且必须先测 A0′ 预算基线才能有可比锚点。</span>
+  <span class="pos">关键技术发现（wake#978）</span>：cline 预算旋钮=纯 config（<code>models.json</code> contextWindow/maxInputTokens 控 in-budget · <code>providers.json</code> maxTokens 控 out-budget · <code>global-settings</code> compaction=basic）→ <b>A0′ 不需 wrapper 开发</b>；A0(compaction-basic) 已 in≤32K(contextWindow=32000)·out≤16384=69.2% ⇒ <b>A0′ = A0 + maxTokens→4096</b>（单变量）。另发现 A1/A2 用 contextWindow=1000000（≠A0 的 32000·历史 confound·A0′/A3 已修正为 32000）。
 </div>
 
 <div class="hint">
@@ -103,6 +105,19 @@
 <tr>
 <th>臂号</th><th>一句话定义</th><th>唯一变量</th><th class="l">机制（谁 spawn·何时·子 agent 看到什么·结果如何回传）</th>
 <th>预注册判据</th><th class="l">为什么可能超过 A0（69.2%）</th><th class="l">风险 / 失效模式</th><th>预估成本</th><th>当前状态</th>
+</tr>
+
+<!-- A0′ 预算基线 (2026-11-15 wake#978 新增 · A3 的预注册锚点) -->
+<tr>
+<td><b>A0′</b><br><span class="hint">预算基线</span></td>
+<td class="l">同小预算下无 spawn 的单 agent（A3 的预注册锚点）</td>
+<td class="l">out-budget <code>maxTokens 16384→4096</code>（in≤32K 经 <code>contextWindow=32000</code> 不变·compaction=basic 不变·无 spawn 不变）</td>
+<td class="l">无 spawn。主 agent 在 in≤32K / out≤4K 预算下跑；context 达 ~28.8K 时 cline compaction=basic 自动压缩（=A0 的压缩机制，唯一差异是 out-budget 收紧）。<b>不需 wrapper/hook</b>（纯 config）</td>
+<td>A0′ 为 A3 锚点：<code>A3 ITT ≥ A0′ ITT + 3pp</code>·McNemar b≥6 c≥6 方向一致。A0′ 本身无 pass/fail，记 ITT mean±std + gen-rate + compaction 次数</td>
+<td class="l"><b>这是基线，不要求超过 A0</b>。A0′ vs A0 = out-budget 收紧效应（预期 ITT ≤ A0=69.2%）；A3 vs A0′ = spawn 效应（H_ctx 检验对象）</td>
+<td class="l">① out≤4K 过小→agent 每轮输出被截→更多轮→timeout→ITT 崩（smoke 验证中，若崩改 8192+写 MEMORY）；② compaction@28.8K 丢细节→ITT 降（这正是 H_ctx 要测的「单 agent 压缩损失」）</td>
+<td>3 轮 × 40 题 · -p 4 · 8650 池错峰 ≈ <b>~7-8h</b></td>
+<td class="status-running">🔵 prep done<br>smoke 跑中<br>（PID2680158·8650 池）</td>
 </tr>
 
 <!-- A3 -->
@@ -486,10 +501,33 @@ H2 wrapper：源码 commit 39ccd44cc · v3.0.74 · 已 build 未装为默认 →
 </div>
 
 <hr>
+<h2>§9 结果（逐臂跑完后原地填写 · 2026-11-15 wake#978 新增）</h2>
+
+<div class="panel">
+<p>本节按用户令 20:5x「每臂跑完（或判定不可行）→ 原地更新本报告」填写。旧 A0/A1/A2 数字不动（见配套 trace 报告）。</p>
+
+<h3>A0′ 预算基线</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>状态</td><td class="status-running">🔵 prep done · 8-task smoke 跑中（PID2680158·21:11 起·8650 池·maxTokens=4096）</td></tr>
+<tr><td>配置</td><td class="l">in≤32K(contextWindow=32000) · out≤4096(maxTokens) · compaction=basic · 无 spawn · base=deepseek-v4-pro-cloud · cline 3.0.51 · -p 4 · 8650 池错峰</td></tr>
+<tr><td>ITT mean±std</td><td><b>待填</b>（3 轮跑完后）</td></tr>
+<tr><td>各轮 ITT</td><td><b>待填</b></td></tr>
+<tr><td>gen-rate / cline_ok</td><td><b>待填</b>（smoke 验证 out≤4K 可存活后起全量）</td></tr>
+<tr><td>compaction 次数</td><td><b>待填</b>（H_ctx regime 实证：预期 ~28 任务触发）</td></tr>
+<tr><td>Δ vs A0(69.2%)</td><td><b>待填</b>（= out-budget 收紧效应）</td></tr>
+</table>
+<p class="mut">smoke 判据：8-task smoke gen-rate ≥ 60% 且无大规模 timeout → out≤4K 可存活 → 起全量 3 轮×40 题；若 gen-rate < 40% 或 ITT 崩 → out≤4K 过小 → 改 maxTokens=8192 并在 MEMORY 写理由后重 smoke。</p>
+
+<h3>A3 / A6 / A4 / A5</h3>
+<p><b>待 A0′ 跑完后逐臂补写</b>（A3 需 spawn-at-boundary hook 开发；A4/A5/A6 需装 H2 wrapper v3.0.74 + INHERIT_MCP=1）。</p>
+</div>
+
+<hr>
 <p class="mut">
-报告生成：2026-11-15 · 纯文档（不跑实验、不改 A0/A1/A2 任何数字/判据/trace）·
+报告生成：2026-11-15 · 最初纯文档（commit afc4c83a9）· 2026-11-15 wake#978 更新：§1 增 A0′ 行 + §9 结果节（A3-A6 放行后）· 不改 A0/A1/A2 任何数字/判据/trace ·
 证据来源：MEMORY_ZHULONG.md · mcnemar_subagent_results.json · 配套报告 report_zhulong_subagent_a0a1a2_trace_zh.html（§2 idea 表 / §3 H_ctx / §5 40 题 / §6 158 题）·
-commits a6f78b8bc（trace 报告）· 6d2d8f422（§5 预检）· 712247549（§6 预检）· 39ccd44cc（H2 wrapper 源码）·
+commits a6f78b8bc（trace 报告）· 6d2d8f422（§5 预检）· 712247549（§6 预检）· 39ccd44cc（H2 wrapper 源码）· dce8c0e43（用户令 20:5x 放行 A3-A6）·
 本报告顶部互链指向配套报告；配套报告顶部已加 STATUS 指针指向本报告（不删不改其数字）。
 </p>
 
