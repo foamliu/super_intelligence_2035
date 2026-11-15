@@ -12,7 +12,7 @@ WAITING: 1
 > - **7way报告**: cc仍0/89待merge(82完成→rerun infra/timeout+502→merge→REGEN·cc行换真实数字+502/timeout单列infra)
 > - **research日报2026-11-16**: harness建议=①记忆双落盘(摘要+原文可回查)②静默错误率列(S=格式合法但语义错/总数)③工具调用判分(unknown-tool rate/wrong-arg rate)·均为future work·纳入计划待cc rerun交付后
 > - **下一步**: ①cc 82完成(~Nov17)→rerun 24 infra/timeout/502题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈23.3KB（✅≤32KB）
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈28.3KB（✅≤32KB）
 >
 > 📦 R2561 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 54/82(12P/31F/11NA·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
 > 📦 R2560 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 53/82(0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
