@@ -1512,3 +1512,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794567952569_788sj	yuchens	hfeg0pkn002	11	spice_sim	parked		2026-11-15 00:09	non-produce: py script path-error Q&A, not spice_sim characterization task
 1793353212592_38quf	gurmanli	hfeg0pkn005	597	spice_sim	case	EDA-Eval-DesignFlow-AetherAutoloadDiag-001	2026-11-15 14:30	
 1793603977814_gobna	steveny	hfeg0pkn005	107	spice_sim	case	EDA-Eval-DesignFlow-FineSimIntroGuide-001	2026-11-15 19:05	
+1793672369557_fx2mf	johnl	hfeg0pkn001	104	spice_sim	case	EDA-Eval-DesignFlow-MatrixRunDirExplain-001	2026-11-15 19:33	
