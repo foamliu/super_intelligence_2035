@@ -607,7 +607,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792636294858_tzf35	e0035227	hfeg0plg55	86	layout_virtuoso	case	EDA-Eval-DesignFlow-LibPinManifest-001	2026-11-10 07:20	
 1792671070682_6widi	sherlock	hfeg0pfn011	73	physical_verify	case	EDA-Eval-DesignFlow-DrcExactWaiver-001	2026-11-10 07:45	
 1794225997663_uxowi	e0023936	hfhds201	27	physical_verify	case	EDA-Eval-DesignFlow-DrcBad2gridLshape-001	2026-11-10 08:37	
-1792026663236_uo1hv	xxchen	hfeg0pkn001	106	physical_verify	parked		2026-11-10 09:09	r323: requirements-doc task, weak check, deferred
+1792026663236_uo1hv	xxchen	hfeg0pkn001	106	physical_verify	case	EDA-Eval-DesignFlow-DrcSearchReqGen-001	2026-11-15 17:31	r609 REVIVE r323 parked→case: requirements-doc generation task (xxchen searchDRC tool, 5 FRs→9-chapter spec, B档 mock-behavioral reframe, k=14 a-n)
 1793669946013_xnk5l	kenwang	hfeg0plg16	212	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckCmpGen-001	2026-11-10 09:40	r323 DrcDeckCmpGen-001 kenwang physical_verify L1 faithful k=12 a-l; host corrected hfeg0plg49->hfeg0plg16 (172.16.8.192 per summary.tsv)
 1791514218543_hkyyj	t0002962	hfeg0plg90	129	layout_aether	case	EDA-Eval-DesignFlow-OaLayoutM1RectEdit-001	2026-11-10 10:33	
 1789545001824_x0t2m	ethanw	hfhds201	145	physical_verify	case	EDA-Eval-DesignFlow-NetlistMatchCkGen-001	2026-11-10 11:09	
