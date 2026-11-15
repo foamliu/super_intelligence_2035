@@ -11950,3 +11950,33 @@ python3 bpt_attribution_p0_dev_compare.py \
 **09:00 及格线**：5/6✅ [A1=0/40 · A3=2/40 · T6 归因表 · 合并 HTML · EXPERIMENTS]，**唯一未闭环=P0 dev 前后对比**（p0_dev ETA~09:55，略过 09:00，codegen 吞吐限非 infra 非阻塞；下一 wake 数据齐 → auto-rescue 产出 final_report → 跑 compare 出 delta_pp + McNemar + 预注册判定 → 填报告 §4 前后对比表）。
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面；未引用未跑完的 run（P0 标 pending）；仅只读诊断 + 脚本 py_compile/help 验证（未执行 compare 实跑，因 p0_dev final_report 未落盘）。MEMORY 归档 wake530 全文→指针控体积。
+
+## §R533-sandbox-nondeterminism（wake533, 2026-11-15 08:2x）— 沙盒非确定性发现 + baseline_dev direct/rescue 不一致 + 双轨 compare 方法论（本轮实质，服务 19:2x 归因口径令）
+
+**触发**：复核 relaunch515b 干净链 baseline_dev 落盘数时，发现 chain 日志打印的 direct pass_rate（0.012658）与落盘 final_report.json（0.0）不一致 → 深挖根因。
+
+**核心发现 = EDA-Eval-PyAether 沙盒 run_eval 非确定性**（同一份生成代码，两次评测结果不同）：
+
+| 评测轨 | 代码恢复 | gen-success | 通过(dev 79) | 来源 |
+|:--|:--|--:|--:|:--|
+| direct（harness 首跑） | format 仅读 10/16 任务代码（path-fix 下部分代码仍在 `pyAether_code/`，未完全归一） | 10 | **2/79** | `output_evaluation/20261115_0515_app.e0031982/final_report.json`（已 cp 为 `final_report_direct.json`） |
+| rescue（移码 + 重跑 run_eval） | 恢复 15/16 任务代码 | 15 | **0/79** | `/tmp/posttrain_attribution_prompt/baseline_dev/final_report.json` |
+
+- **根因双重**：① `bpt_attribution_prompt_dev_eval.sh` L117 把 direct final_report 复制到 ARM_DIR；L119-148 RESCUE 块**无条件**（L142 `cp "${RD}final_report.json" "$ARM_DIR/final_report.json"`）用 rescue 重跑结果覆写 direct —— 在 path-fix 干净链里 direct 本已有效，rescue 重跑 run_eval（第二条 trace）引入沙盒非确定性（2 pass→0 pass）。② direct 的 `format_cline_cli_output.py`（line 166）只读 `ws/pyAether_code/`，path-fix 下部分代码仍在 `pyAether_code/` → direct 漏收 6 份代码。
+- **A1/A3 不受影响**：A1 direct=rescue=0（无差异）；A3 rescue「eval 未产出 final_report」（见 relaunch515b.log）→ direct（2/40, 10 gen）被保留，无覆写。**唯一不一致 = baseline_dev**。
+- **对归因分辨率的冲击（重要）**：A1=0/40、A3=2/40、baseline_dev∈[0,2]/79 —— 单 seed delta 量级（0–2 题）< 沙盒 run-to-run 方差 ⇒ **单 seed 消融/补丁对比不可定论**；归因结论须以多 seed（≥3）mean±std 为准。这直接服务于 19:2x 令「钉死评测口径」—— 揭示了 Pass@1 的非确定性 floor 限制「基线→SFT→RL」三段比较的最小可检测差异。
+
+**本轮实质产出**：
+1. **回收 baseline_dev direct final_report**：36.15 `cp output_evaluation/20261115_0515_app.e0031982/final_report.json /tmp/posttrain_attribution_prompt/baseline_dev/final_report_direct.json`（correct=2, gen_success=10，实测确认）。p0_dev 完成后同样回收其 direct（从其 output_evaluation 源目录，chain log 会记 `final_report -> ... (from ...)`）。
+2. **双轨 compare 方法论（写入报告 §4 + compare 脚本调用口径）**：下一 wake p0_dev 数据齐后，跑两次 `bpt_attribution_p0_dev_compare.py`：(A) direct-vs-direct = baseline_dev `final_report_direct.json` vs p0_dev `final_report_direct.json`；(B) rescue-vs-rescue = baseline_dev `final_report.json` vs p0_dev `final_report.json`。两轨各出 delta_pp + McNemar + 预注册判据；**仅当两轨判据一致才采信**，否则判 INCONCLUSIVE（沙盒噪声 > 单 seed delta）。compare 脚本本身无需改（已支持 `--baseline-report`/`--patch-report` 任意路径）。
+3. **修法记入报告（待 chain 空闲，不改运行中脚本）**：runner 应在首跑 eval 前先做 `pyAether_code→ws/` 归一（单条 trace 拿全代码），且 rescue 仅在 direct 缺 final_report 或 gen_success=0 时触发（不无条件覆写）。
+
+**报告更新**：`reports/report_posttrain_attribution_overnight_zh.html` §4 baseline_dev bullet 改为 direct 2/79 vs rescue 0/79（不再单取落盘 0/79）+ 新增「沙盒非确定性发现」caveat box（含根因/对归因冲击/修法）+ 首屏句③与状态 kpi 同步更新。HTML 校验 PASS（tag stack 空，无错）。
+
+**R2 5-run eval 进度（RL 替身里程碑，旁路监控）**：per-run Pass@1 = run1 1/158(0.63%) · run2 2/158(1.27%) · run3 0 · run4 0 · run5 codegen RUNNING@03:33:34（.17 PID3721157，ETA≈10:00-10:30）。4-run mean = 3/632 = **0.475%** << step105 5-run mean 3.04%±0.83 ⇒ **decisively 负**（RL R2 未提分反降）。待 run5 完成 → 5run_rl_analysis_R2.json → 诚实负结果里程碑报告 `report_posttrain_rl_surrogate_zh.html`（标替身预演）+ 按预注册「负则修 ppo_epochs≥2 + old_logp 冻结使 clip 生效再跑 R3」（wake504 已 prep）。
+
+**双链健康**：p0_dev codegen RUNNING（relaunch515b PID700233 活，08:14 实测 p0_dev 段 codegen 进行中，baseline_dev 耗 ~2h20min ⇒ p0_dev ETA≈09:55-10:00）/ R2 run5 codegen RUNNING（ETA≈10:00-10:30）。隧道 08:14 三命令全 PASS。
+
+**09:00 及格线**：5/6✅，唯一未闭环=P0 dev 前后对比（p0_dev ETA~10:00，略过 09:00；codegen 吞吐限非 infra 非阻塞；本轮已把 compare 方法论去风险为双轨，下一 wake 数据齐即出判定）。
+
+**纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面/运行中脚本（p0_dev 正用 dev-eval runner，编辑运行中 bash 有风险，按 AGENTS.md 不动）；仅只读诊断 + 36.15 cp 回收 direct final_report（只写 /tmp，不改 repo 脚本）+ 报告/EXPERIMENTS 更新。
