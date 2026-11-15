@@ -4067,3 +4067,68 @@ commit `pretrain 项目:`。✅ 已完成：commit e1c6be4 pushed, 28 files（�
 > **用户原话**：「pretrain 全量 eval 需要时间这么久吗？已经使用 llama.cpp 了吗？线程并发多一点有帮助吗」
 
 > **结论**：✅ 报告 `reports/report_pretrain_cpu_eval_speedup_zh.html`（17KB，commit 08dfed490 前已交付）已交付。llama.cpp `_fixed_` 版本精度回归通过（Δacc≈0），7× 提速已用于万整数 ckpt limit=100 评测（运维令 11-09 口径）。任务级多进程并行方案已评估但木桶效应（hellaswag 占 40%+ 请求）打折，当前采用单 server 串行（-t 4, nice 19）以保护训练吞吐。
+
+---
+
+## 归档 2026-11-15（11-10 论文刷新详细指令 → 被 21:2x 更正 + 11-11 新方向取代）
+
+### 🚨 运维令 · 2026-11-10（刷新 ISEDA2027 论文预训练章节）· 用户直令 · 已被 21:2x 更正 + 11-11 取代
+
+> **本轮最高优先（2026-11-10 用户直令 · 优先于一切状态确认 / 评测排期 / 归档）**：
+> **刷新 ISEDA2027 论文的预训练章节。**
+>
+> ⛔️ **2026-11-10 21:2x 用户更正（效力高于下面全部内容，务必先读）**：
+> **「评测结果不用写在论文里。评测是为了监控，训练还处于早期。」**
+> → 即：**8 集 zero-shot / 任何 benchmark 数字都不许进 `main.tex` 体系**。这些数只用于
+> 训练监控，落在 `EXPERIMENTS_PRETRAIN_2B.md`、`MEMORY_PRETRAIN_2B.md`、`reports/*.html`。
+> → 原 §4.7 `Checkpoint Scaling on General Benchmarks` + `tab:ckpt-scaling` **已由主 agent 撤回**
+> （2026-11-10 21:2x，commit 见 git log）；论文只保留 §4.6 的**训练状态句**（iter / tok·s⁻¹ / loss）。
+> → 本轮及以后：**不要再把评测表/评测曲线加回论文**，直到用户明确要求（例如正式训练结束后写
+> camera-ready 结果）。若你认为该加，先在 MEMORY 提建议，**不要直接改 tex**。
+> → 若发现论文里还有残留的 benchmark 数字（包括摘要），同样视为 bug，删掉并在 MEMORY 记一行。
+> 论文根目录：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`（`main.tex` + `ISEDA2027/4_llm_pretrain.tex` + `main.pdf`）
+>
+> **一、现状（主 agent 实测，勿再核对，直接改）**
+> 1. §4.6 `sec:llm-results` 的进度句仍是 **"At the time of writing, the run has passed
+>    iteration 30,660 of 700,000 at ≈598K tok/s, training loss 2.151"**，而实际已到 **iter ≈154k**；
+>    `tab:prod-budget` 的 Status 仍写 `30.7k done`。
+> 2. **全文没有任何基准评测结果**（grep 过 ARC/HellaSwag/PIQA 均 0 命中）：15 个 ckpt（10k–150k）
+>    已在 8 个 zero-shot 集上评完（Avg(harness) 51.50% → 58.00%），论文完全没收录。
+>    → 这是审稿人必问的"你这个 2.2B 到底什么水平"，缺它就是硬伤。
+>
+> **二、任务（只动 §4.6 + 新增 §4.7 + main.pdf）**
+> 1. **§4.6 进度句**：改成实测值（iteration / tok/s / loss / 0 NaN / `as of <日期>`），
+>    同步 `tab:prod-budget` 的 Status（`30.7k done` → `Xk done`）与 wall-clock 估算
+>    （用实测 tok/s 重算 `700k×4{,}194{,}304 / tok_s`，别照抄 56 d）。
+>    **取数必须落盘可查**：`.29` 训练日志（`tail /tmp/baize_xmodel25_decay_v2_train.log`
+>    或 `/proc/<pid>/fd/1`）+ `nvidia-smi`；**把实际执行的命令原样贴进 MEMORY**。
+>    注意：主训练跑在 **.29**、watcher 在 **.12**，判活必须 `ssh 10.239.2.29` 后再查（老坑）。
+> 2. **新增 §4.7 `\subsection{Checkpoint Scaling on General Benchmarks}\label{sec:ckpt-scaling}`**
+>    （位置：§4.6 之后、§4.8 长上下文之前）：
+>    - 口径：8 个 zero-shot 集（ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA /
+>      PIQA / SciQ / Winogrande），`limit=100`，llama.cpp F16 GGUF CPU 推理（与线上一致）；
+>    - **一张 booktabs 表**：`iter`（抽 6 行：10k/30k/50k/80k/110k/150k）× `已训 token`
+>      （iter×4,194,304）× `Avg(harness)`；**不要 15 行塞满**；
+>    - 正文 2–3 句：51.50%(10k) → 58.00%(110k/130k 峰值) → 57.12%(150k)；**必须写明**
+>      `limit=100` 的抽样波动（acc_stderr ≈ ±4.5%）与"这是 harness 均值口径、非官方全量"；
+>      160k–200k 尚在评（写清 `pending`，别写成结果）；
+>    - 可选图：本模板**只有 tikz，没有 pgfplots**，要画就用纯 `\draw` 折线；画不好就只留表，
+>      **不要为了图牺牲编译**。
+> 3. **编译并提交 PDF**：`cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && latexmk -pdf -interaction=nonstopmode main.tex`
+>    → **必须 0 error**（无 latexmk 则 `pdflatex main && bibtex main && pdflatex main && pdflatex main`），
+>    然后 `git add main.pdf`。本机确实没有 LaTeX 时记 `PAPER_SKIP(no latexmk)`、只交 .tex。
+>
+> **三、数据来源（唯一可信，按优先级）**
+> 1. `doc/BaiZe-ISEDA2027/reports/report_pretrain_llamacpp_scaling_zh.html`（15 ckpt 汇总表）；
+> 2. 底层结果：`.29:nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/`；
+> 3. **若 1 与 2 冲突 → 以 2 为准**，并在 MEMORY 记一行差异（我们要的是可复核，不是好看）。
+>
+> **四、护栏**
+> - 只改 `ISEDA2027/4_llm_pretrain.tex` 与 `main.pdf`；**不碰** abstract / intro / 2_related_work /
+>   3_architecture / 5_llm_posttrain / 9_conclusion / 参考文献；不碰其它线（designflow/harness/...）的文件。
+> - 数字**不许估、不许外推**；取不到就写 `\todo{...}` 并在 MEMORY 标 `BLOCKED: <原因>`。
+> - 收尾：`EXPERIMENTS_PRETRAIN_2B.md` 加一节记录（iter/表格数据/命令/编译结果），
+>   MEMORY 首行写 `paper: ISEDA2027 §4.6 refreshed (iter=X) + §4.7 scaling table (6 rows) added, pdf=Yp, ERR=0`。
+> - 本轮先做这一件；做完回到训练监控（`WAITING: 1`）。若你在过程中发现**明显更值得做的问题**（如数据 bug、指标异常），可以直接追，但要在 MEMORY 记清「为什么优先于原任务」。
+>
+> **归档原因**：§4.7 task 被 21:2x 更正撤销（评测数字不进论文）；11-11 用户令将关注点转向四层评测拿结果。仅保留「§4.6 进度句需更新为实测值」为仍有效任务。

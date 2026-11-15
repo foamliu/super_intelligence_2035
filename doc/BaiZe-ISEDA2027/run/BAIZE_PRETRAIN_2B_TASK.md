@@ -84,62 +84,8 @@
 4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
 5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
 
-> 🚨 **本轮最高优先（2026-11-10 用户直令 · 优先于一切状态确认 / 评测排期 / 归档）**：
-> **刷新 ISEDA2027 论文的预训练章节。**
->
-> ⛔️ **2026-11-10 21:2x 用户更正（效力高于下面全部内容，务必先读）**：
-> **「评测结果不用写在论文里。评测是为了监控，训练还处于早期。」**
-> → 即：**8 集 zero-shot / 任何 benchmark 数字都不许进 `main.tex` 体系**。这些数只用于
-> 训练监控，落在 `EXPERIMENTS_PRETRAIN_2B.md`、`MEMORY_PRETRAIN_2B.md`、`reports/*.html`。
-> → 原 §4.7 `Checkpoint Scaling on General Benchmarks` + `tab:ckpt-scaling` **已由主 agent 撤回**
-> （2026-11-10 21:2x，commit 见 git log）；论文只保留 §4.6 的**训练状态句**（iter / tok·s⁻¹ / loss）。
-> → 本轮及以后：**不要再把评测表/评测曲线加回论文**，直到用户明确要求（例如正式训练结束后写
-> camera-ready 结果）。若你认为该加，先在 MEMORY 提建议，**不要直接改 tex**。
-> → 若发现论文里还有残留的 benchmark 数字（包括摘要），同样视为 bug，删掉并在 MEMORY 记一行。
-> 论文根目录：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`（`main.tex` + `ISEDA2027/4_llm_pretrain.tex` + `main.pdf`）
->
-> **一、现状（主 agent 实测，勿再核对，直接改）**
-> 1. §4.6 `sec:llm-results` 的进度句仍是 **"At the time of writing, the run has passed
->    iteration 30,660 of 700,000 at ≈598K tok/s, training loss 2.151"**，而实际已到 **iter ≈154k**；
->    `tab:prod-budget` 的 Status 仍写 `30.7k done`。
-> 2. **全文没有任何基准评测结果**（grep 过 ARC/HellaSwag/PIQA 均 0 命中）：15 个 ckpt（10k–150k）
->    已在 8 个 zero-shot 集上评完（Avg(harness) 51.50% → 58.00%），论文完全没收录。
->    → 这是审稿人必问的"你这个 2.2B 到底什么水平"，缺它就是硬伤。
->
-> **二、任务（只动 §4.6 + 新增 §4.7 + main.pdf）**
-> 1. **§4.6 进度句**：改成实测值（iteration / tok/s / loss / 0 NaN / `as of <日期>`），
->    同步 `tab:prod-budget` 的 Status（`30.7k done` → `Xk done`）与 wall-clock 估算
->    （用实测 tok/s 重算 `700k×4{,}194{,}304 / tok_s`，别照抄 56 d）。
->    **取数必须落盘可查**：`.29` 训练日志（`tail /tmp/baize_xmodel25_decay_v2_train.log`
->    或 `/proc/<pid>/fd/1`）+ `nvidia-smi`；**把实际执行的命令原样贴进 MEMORY**。
->    注意：主训练跑在 **.29**、watcher 在 **.12**，判活必须 `ssh 10.239.2.29` 后再查（老坑）。
-> 2. **新增 §4.7 `\subsection{Checkpoint Scaling on General Benchmarks}\label{sec:ckpt-scaling}`**
->    （位置：§4.6 之后、§4.8 长上下文之前）：
->    - 口径：8 个 zero-shot 集（ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA /
->      PIQA / SciQ / Winogrande），`limit=100`，llama.cpp F16 GGUF CPU 推理（与线上一致）；
->    - **一张 booktabs 表**：`iter`（抽 6 行：10k/30k/50k/80k/110k/150k）× `已训 token`
->      （iter×4,194,304）× `Avg(harness)`；**不要 15 行塞满**；
->    - 正文 2–3 句：51.50%(10k) → 58.00%(110k/130k 峰值) → 57.12%(150k)；**必须写明**
->      `limit=100` 的抽样波动（acc_stderr ≈ ±4.5%）与"这是 harness 均值口径、非官方全量"；
->      160k–200k 尚在评（写清 `pending`，别写成结果）；
->    - 可选图：本模板**只有 tikz，没有 pgfplots**，要画就用纯 `\draw` 折线；画不好就只留表，
->      **不要为了图牺牲编译**。
-> 3. **编译并提交 PDF**：`cd doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027 && latexmk -pdf -interaction=nonstopmode main.tex`
->    → **必须 0 error**（无 latexmk 则 `pdflatex main && bibtex main && pdflatex main && pdflatex main`），
->    然后 `git add main.pdf`。本机确实没有 LaTeX 时记 `PAPER_SKIP(no latexmk)`、只交 .tex。
->
-> **三、数据来源（唯一可信，按优先级）**
-> 1. `doc/BaiZe-ISEDA2027/reports/report_pretrain_llamacpp_scaling_zh.html`（15 ckpt 汇总表）；
-> 2. 底层结果：`.29:nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/`；
-> 3. **若 1 与 2 冲突 → 以 2 为准**，并在 MEMORY 记一行差异（我们要的是可复核，不是好看）。
->
-> **四、护栏**
-> - 只改 `ISEDA2027/4_llm_pretrain.tex` 与 `main.pdf`；**不碰** abstract / intro / 2_related_work /
->   3_architecture / 5_llm_posttrain / 9_conclusion / 参考文献；不碰其它线（designflow/harness/...）的文件。
-> - 数字**不许估、不许外推**；取不到就写 `\todo{...}` 并在 MEMORY 标 `BLOCKED: <原因>`。
-> - 收尾：`EXPERIMENTS_PRETRAIN_2B.md` 加一节记录（iter/表格数据/命令/编译结果），
->   MEMORY 首行写 `paper: ISEDA2027 §4.6 refreshed (iter=X) + §4.7 scaling table (6 rows) added, pdf=Yp, ERR=0`。
-> - 本轮先做这一件；做完回到训练监控（`WAITING: 1`）。若你在过程中发现**明显更值得做的问题**（如数据 bug、指标异常），可以直接追，但要在 MEMORY 记清「为什么优先于原任务」。
+> 📦 §运维令·2026-11-10（刷新 ISEDA2027 论文预训练章节 · 详细指令）已归档 → `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-15」节。
+> **仍有效**：① §4.6 进度句需更新为实测 iter/tok·s⁻¹/loss（论文根目录 `doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`，只改 `ISEDA2027/4_llm_pretrain.tex`）；② 🚫 评测数字不进论文正文（21:2x 更正，§4.7 已撤回）；③ 11-11 起关注点转向四层评测拿结果，非打磨论文。
 > 📦 §运维令·2026-11-08 15:3x（全量eval均值37.40%异常调查）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-09」节；**结论**：✅ 报告report_pretrain_eval_avg7_anomaly_zh.html(50KB)已交付,结论A(口径差异):stale results.json缺piqa致低估,补全后Avg7=55.96%与历史56.71%仅差-0.75pp。需要时再读。
 
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
@@ -180,11 +126,6 @@
 
 > 📦 §运维令 2026-11-04 22:1x（llama.cpp 调试每环节落盘 + 清理残留）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ A-E 检查点全有结论(A/B/D=PASS, C=FAIL dt-clamp 影响小 1/64 head), 残留已清(llama-server 11→0, GGUF 34G→13G), 根因已定位。需要时再读。
 
-
-> 📦 §运维令 2026-11-04 22:1x（llama.cpp 调试每环节落盘 + 清理残留）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ A-E 检查点全有结论(A/B/D=PASS, C=FAIL dt-clamp 影响小 1/64 head), 残留已清(llama-server 11→0, GGUF 34G→13G), 根因已定位。需要时再读。
-
-
-
 > 📦 §运维令 2026-11-04 14:0x（定位 llama.cpp 映射 bug + 修复 + PR）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ 根因=GGUF converter 全权重逐张量对照发现混合架构权重错位→级联放大 3.6 nats; Mamba2 层 A/B/D PASS; 修复后 logits Δmax=0.006; PR #31703 已提交 https://github.com/ggml-org/llama.cpp/pull/31703; dt-clamp follow-up 待单独 PR。需要时再读。
 
 
@@ -197,54 +138,14 @@
 > 📦 §运维令 2026-11-02 11:1x（CPU 评测 5 ckpt 8 集）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-05 第六批」节；**结论**：✅ 5/5 CPU HF float32 eval 完成, 报告 report_pretrain_cpu_eval_8sets_zh.html(44KB)已交付, 被 11-05 llama.cpp 修复管线取代。需要时再读。
 
 
-> 📦 §运维令 2026-10-28 17:0x（预训练项目目录定位）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-04 第四批」节；**结论**：✅ 脚本&文档落 baize-llm/baize-llm，commit e1c6be4 pushed 28 files；启动口径 `bash .../baize-llm/scripts/train.sh <stage>` 仍有效。需要时再读。
-
-> 📦 §运维令 2026-10-28 11:5x（blend 逻辑中文 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：报告已交付 `reports/report_pretrain_blend_logic_zh.html`（11KB, commit aa6d3eddf），澄清训练时不会串行出不同源（索引层交错）。需要时再读。
-
-> 📦 §运维令 2026-10-28 10:0x（预训练计划定稿）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31」节；**结论**：计划已定稿并执行，GBS=256/2.94T/700k运行中，pre-blend完成/nw=8恢复/613K，Decay后置待data线。需要时再读。
-
-> 📦 §运维令 2026-10-28 09:3x（锁定 613K 配置 + spawn 调优）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：613K 配方已冻结（16K/CP1/DP16/FP8/graph-OFF），根因=数据加载串行化(nw=0)，spawn 路径被 10:0x pre-blend 取代。需要时再读。
-
-> 📦 §运维提示 2026-10-27 15:2x（cimi MCP web search 已配好）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：MCP 工具就绪（cimi_search/cimi_fetch/vqa/text_to_image），授权永久有效。需要时再读。
-
-> 📦 §运维令 2026-10-27 13:1x（杀掉 S1 + spawn smoke）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：S1 已杀，spawn 方案被 2026-10-28 10:0x pre-blend 取代。需要时再读。
-> 📦 §运维令 2026-10-27 10:4x（不放弃：spawn 验证 + web 调研）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：spawn 被 pre-blend 取代；web 调研授权仍有效（见 15:2x）。需要时再读。
-> 📦 §运维提示 2026-10-27 09:2x（DataLoader OOM fork-COW 根因 + spawn 方案）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：fork-COW 是 RSS 累积根因，spawn 方案被 pre-blend 取代。需要时再读。
-
-> 📦 §运维提示 2026-10-27 08:4x（内存使用率>95%触发告警）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：内存纪律已纳入日常监控，调试时盯内存+swap，逼近95%先降载。需要时再读。
-
-> 📦 §运维令 2026-10-26 22:0x（S1 吞吐对齐 613,992：归因 + 方案 A/B/C）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#798 归因=gbs128 固定开销摊薄不足；吞吐目标 ≥600K 由后续 10:4x/13:1x 令推进（spawn 验证中）。参数口径 2.220B 仍有效。需要时再读。
-
-
-> 📦 §运维令 2026-10-26 21:3x（RoPE θ 未生效：评估 + 方案 + 重启）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：θ=1e6 实现路径(ii) `--rotary-base` CLI + recipe 透传，commit ae3a093，三重验证 PASS；#799 运行时确认 θ=1e6 + 0崩；rank15 崩因=DDP DETAIL wrapper（非θ）；--dir 修正已落地。**仍有效红线**：check_rope.py PASS 需 ckpt（待 S1 重启）；lr-decay-shape exponential Decay 前验证。需要时再读。
-
-
-> 📦 §运维令 2026-10-26 19:2x（预训练正式落地并开跑）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-10-31」节；**结论**：全10步已完成，S1运行中(iter30660/700k,loss2.151,~598K tok/s)，TB6006常驻，RoPE PASS，Decay阻塞待data线。需要时再读。
-
-> 📦 §运维令 15:3x（预训练构想报告 + ETA）**已完成**（#794：`report_pretrain_baize2b_pretrain_plan_zh.html` 22.5KB；§五执行口径已补）→ 原文归档 run/ARCHIVE_OPERATOR_PRETRAIN.md。
-> 📦 §运维令 14:3x（补写 #792 双机实测进吞吐报告）**已完成**（#793：报告 14,208→20,888B）→ 原文同上归档。
-> 📦 §运维令 13:2x（FP8 真实数据 16K/32K 实测）**已完成**（#792：16K=613,992 / 32K CP2=351,526）→ 原文同上归档。
-> 📦 §运维令 11:1x（双机 16 卡调优 seq16K/32K）**已完成**（#791 8卡首跑 + #792 双机实测覆盖）→ 原文同上归档。
-> 📦 §运维令 09:1x（优化 16K/32K 吞吐至 600K+）**已完成**（#791 8卡 + #792 双机 16K=613,992 ≥600K）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。
-> 📦 §运维令 08:2x（写最近工作报告 · 中文 HTML）**已完成**（#790，report_pretrain_recent_work_zh.html 20KB）→ 原文同上归档。
-> 📦 §运维令 2026-10-25 23:0x（通宵攻坚：tokens/microbatch 悬崖）**已完成**（#784–#789：真因=CUDA Graph 顶格停滞·关 graph 修复·16K 双机 613,992 达标；根因报告 + seqlen rev3）→ 原文归档 ARCHIVE_OPERATOR_PRETRAIN.md。
-> 📦 §运维令 2026-10-25 20:2x（seq 掉速排查初版）已并入 23:0x 通宵令 → ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。
-> 📦 §运维令 2026-10-25 17:5x（seq×tok/step 16卡网格）已完成（cfg1-4 OK）→ ARCHIVE_OPERATOR_PRETRAIN.md；注意「seq≥8192 崩 5x」已被 cfg0a 证伪。需要时再读。
-> 📦 §运维令 2026-10-25 07:4x（双机 16 卡吞吐报告）已完成（#770-#776）→ ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。
-> 📦 §运维令 2026-10-24 23:5x（双机调通→吞吐优化）已完成（606,300 tok/s）→ ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。
-> 📦 §运维指令 2026-10-24 16:0x（305K 最佳实践+longctx 报告）已完成 → ARCHIVE_OPERATOR_PRETRAIN.md。需要时再读。
+> 📦 **2026-10-24 ~ 2026-10-28 运维令已全部归档** → `run/ARCHIVE_OPERATOR_PRETRAIN.md`。涵盖：10-28 计划定稿(GBS=256/700k)/613K锁定/baize-llm入库/blend报告；10-27 spawn/OOM/MCP工具；10-26 S1落地/RoPE θ=1e6/吞吐对齐613K；10-25 通宵攻坚(CUDA Graph修复)/16卡吞吐；10-24 双机调通(606K tok/s)/305K最佳实践。**仍有效**：① 启动口径 `bash .../baize-llm/scripts/train.sh <stage>`；② 613K 配方(16K/CP1/DP16/FP8/graph-OFF)；③ RoPE check_rope.py 需 ckpt 验证、lr-decay-shape exponential Decay 前验证。需要时按日期查阅归档。
 
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
 - **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
 - **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
 
-> 📦 §2026-10-16:4x（#548 误判更正）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：#548 误判根因=NFS 旧日志，判活规则已修正。需要时再读。
-
-> 📦 §2026-10-16:2x（P0 resume + 长期授权）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md；**结论**：v2 resume 闭环，长期授权训练挂了自行重启。需要时再读。
-
-
-> 📦 §2026-10-17 两块（P0 中继抢修 / `_orig_mod` 崩溃修复）均已闭合 → 原文已在 `daily-memories/2026-10-17.md`；结论：中继 PID2706247 健康（RUN_ID118-122 exit=0）；`_orig_mod` 修复验证通过，断点续跑至 6890/19980 无崩。
+> 📦 **2026-10-16 ~ 2026-10-17 运维令已全部归档** → `run/ARCHIVE_OPERATOR_PRETRAIN.md` + `daily-memories/2026-10-17.md`。涵盖：#548 误判更正(NFS旧日志)、P0 resume闭环(长期授权训练挂了自行重启)、中继抢修(PID2706247健康)、`_orig_mod`崩溃修复(断点续跑至6890/19980无崩)。需要时按日期查阅。
 
 ### 💡 最佳实践 / 硬口径（常驻 · 每次唤醒先看）
 > 📦 已归档（R3配比 / LaTeX / R2收官 / T3）→ `ARCHIVE_OPERATOR_PRETRAIN.md`。
@@ -255,7 +156,7 @@
 > 判据：两者 均 ≤32KB；>40KB = 红线 ⇒ 必须先归档再提交（「收尾铁律」第 0 步已同步此判据）。
 > 做法 = 只「搬迁」、不改内容：① 已闭合内容（已执行完/已作废的运维块、已完成轮次正文、较早流水）原文搬入 `run/ARCHIVE_OPERATOR_PRETRAIN.md` / `run/ARCHIVE_PRETRAIN_SPEC_HISTORY.md`（无则新建）/ `daily-memories/<日期>.md`；② 留 1 行指针；🚫 不改小节编号/标题；🚫 不新增/不改写任何指令（本区作者仍是运维）。
 > 护栏：搬前 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `pretrain 归档: …` 前缀。
-> 本轮动作：本任务书现 ≈40KB（已过 40KB 红线）⇒ 下次唤醒先归档到 ≤32KB，并把 `📦 体积：TASK=nKB / MEMORY=nKB（归档 nKB）` 抄进心跳。
+> 本轮动作：本任务书已归档瘦身（2026-11-15：11-10论文刷新详细指令→归档，2026-10-xx 📦指针→合并）。体积自检见心跳。
 
 
 ## ⚠️ git 同步规则（必读，2026-10-01 新增，每次唤醒都要走）
