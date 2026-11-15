@@ -2,6 +2,15 @@
 
 WAITING: 1
 
+> 🆕 **R2518 · 2026-11-15 14:44 — cc rerun 监控(19/82·task20 filter-js-from-html 跑中) + 429误报核验 + 自检全绿**
+> - **cc rerun**: PID 1510521 alive(~10.9h·etimes 39306s)·**19/82 done**(task20 filter-js-from-html in progress)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)
+> - **429核验**: grep 3 hits = **全部误报** ✅(circuit-fibsqrt verifier test-stdout Fibonacci数 `267914296`含子串"429"·dna-insert/build-pmars result.json timestamp `429209Z`)→**真实429/quota=0** ✅·429归因红线:无quota-blocked题
+> - **归因(19题·verifier_result=ground truth)**: **2PASS**(custom-memory-heap-crash+dna-assembly·reward=1.0)·**7× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert·reward=0.0)·**1× timeout=能力**(configure-git-webserver·AgentTimeoutError 3600s·verifier仍跑通 reward=0.0)·**6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video·stdout="API Error: 502 gw-proxy upstream error: [Errno 104] Connection reset by peer")·**3× NA timeout**(code-from-image/feal-differential-cryptanalysis/feal-linear-cryptanalysis·reward=None·3600s超时verifier未跑)
+> - **公平能力评估(排除6×502+3NA)**: 2PASS/10=20%·(含infra: 2/19=10.5%不公平)
+> - **自检**: load 26.66/224 ✅·mem 1047GB avail ✅·harness CPU max=0.0%(top=pretrain 145%非本线) ✅·0 runaway ✅·reports clean ✅·adaptive_concurrency: mode=off cur=8/10 next=9(quiet=187m·累计429=0) ✅
+> - **ETA**: rate~2 tasks/h·(82-19)/2≈31.5h·cc 完成 ETA ~Nov16 22:00
+> - **cc修复根因(已落码·adapter L188-201)**: 11-09原跑88/89 ConnRefused=transient gw_proxy outage(19:38-19:51窗口·同URL 127.0.0.1:9092的其余6路全0失败)·FIX=no_proxy/NO_PROXY belt-and-suspenders pin(L200-201)+CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000(R2494)+去RuntimeError→verifier恒跑(R2498)·11-14起rerun=0 ConnRefused
+>
 > 🆕 **R2517 · 2026-11-15 14:0x — cc rerun 监控(18/82·task19 feal-linear-cryptanalysis 跑~25min中) + 归因修正 + 自检全绿**
 > - **cc rerun**: PID 1510521 alive(~10.3h·etimes 37022s)·**18/82 done**(task19 feal-linear-cryptanalysis in progress·跑~25min)·**0ConnRefused HARD VERIFIED ✅**(grep=0 files)·0 quota/429 ✅
 > - **归因(18题·修正1项)**: **2PASS**(custom-memory-heap-crash+dna-assembly·reward=1.0)·**7× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert·stdout="Reached max turns (80)")·**1× timeout=能力**(configure-git-webserver·AgentTimeoutError after 3600s·reward=0.0·**修正**:R2515误归类为max-turns·实为timeout·verifier确认FAIL·均=能力)·**6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video·stdout="502 gw-proxy upstream error: Connection reset by peer")·**2NA**(code-from-image+feal-differential-cryptanalysis·reward=None·timeout 3600s)·502归因红线:6题不得计入能力失败·cc全量完成后rerun
@@ -40,12 +49,12 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2516 cc rerun 17/82 monitoring(2PASS/8max-turns=6×502infra/1NA·0ConnRefused✅)·adaptive_concurrency验收✅·hermes COMPLETE 38/89
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2515(cc rerun monitoring+adaptive验收+TASK归档+归因精化)
-当前动作:     R2516: cc rerun PID1510521 alive(9.7h)·17/82(2PASS/8max-turns=能力+6×502=infra+1NA=timeout·0ConnRefused✅)·task18 feal-differential-cryptanalysis 跑~1h中·adaptive off cur=8/10 quiet=113m·load30/224✅·mem1051G✅·CPU 0.0%✅·0runaway✅·reports clean✅·W:1
+PHASE:        R2518 cc rerun 19/82 monitoring(2PASS/8ability=7maxturns+1timeout/6×502infra/3NA·0ConnRefused✅·0real429✅)·hermes COMPLETE 38/89
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2518(cc rerun monitoring 6→19/82+adaptive验收+TASK归档+归因精化+429误报核验)
+当前动作:     R2518: cc rerun PID1510521 alive(10.9h)·19/82(2PASS/8ability=7maxturns+1timeout+6×502=infra+3NA=timeout·0ConnRefused✅·0real429✅)·task20 filter-js-from-html 跑中·adaptive off cur=8/10 quiet=187m·load26.66/224✅·mem1047G✅·CPU 0.0%✅·0runaway✅·reports clean✅·W:1
 下一步:       ①cc 82题完成(ETA~Nov16 22:00)→merge→rerun 6×502→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto·chunk=12) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
- 体积: TASK=25.0KB / MEMORY=~23KB（归档~209KB）·✅TASK≤32KB
+ 体积: TASK=25.0KB / MEMORY=~28KB（归档~209KB）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
