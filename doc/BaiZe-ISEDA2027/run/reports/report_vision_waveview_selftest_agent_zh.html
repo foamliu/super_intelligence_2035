@@ -118,4 +118,41 @@ At t=6.5us on the fall …[truncated]</code></li><li><b>β9</b> (EDA-Eval-Design
 <p><b>下一步</b>：① 把卡点量（精确计数/精确数值/跨面板反推）做成专项 SFT/RL 数据，扩真实波形分布 + GRPO 群体奖励，目标把单题推到全过；② 待 designflow task2（评测机→.17:30002 可达性解阻）做端到端 cline+SUT+VQA 对照，量 end-to-end 翻转；③ 若 agent re-ask 仍读不稳某量，给「该量对 2B VLM 不可解」的边界证据。</p>
 </div>
 <p class="muted">产物：waveview_selftest_agent_run.py · G/&#123;G0,G1,G2&#125;/*.json · summary_agent.json · audit_agent.json。本报告单文件自包含、0 外链、0 script、2 内联 SVG。Single changed variable across G0/G1/G2 = the agent's VQA tool backend (none / base / base+rft2). Same 10 cases, same gen() PNGs, same check_case/oracle/tols, same glm-5.2 backbone @ temperature=0, randomized order. Agent gets task_brief + required key descriptions (no oracle values) and chooses its own queries / re-asks.</p>
+
+<hr>
+<h1 style="margin-top:28px">附录 · 真题(真实 designflow PNG)三段重跑（2026-11-15 07:2x 用户令 任务②）</h1>
+<p class="muted">vision 线 · 自行 SSH 到 36.15 检出 WaveView 真题(用户放行) · 真题 PNG sha256 校验只读复制 · 2026-11-15</p>
+<div class="card">
+<p><b>口径变更(重要)</b>：本附录的题是 <b>designflow 在 36.15 上已恢复原形态的真实 WaveView PNG</b>(sha256 与源一致, 只读复制到 <code>run/vision/real_waveview_images/&lt;case&gt;/</code>),
+<b>非上方 §1–§7 的等价重建(replica)题</b>。两节口径不同, 数字不可混。上方 G 臂跑在 replica PNG 上, 本附录三段跑在真实 PNG 上。</p>
+<p><b>检出结果(诚实)</b>：实际可用 = <b>10 道</b>。交底清单原写 11(α4+β7), 但 <b>β5 FsdbNetToggleDiag-001 案例不存在</b>(convener r508 核实, 4 shard jsonl 全量 grep 0 命中), 故真·可恢复分母 = 10, 不是 11。🚫 未拿合成集冒充真题。另有 5 个 wave 名 case 有 check.py 但 assets 下无 visible PNG, 不计入。每题: domain=waveform/图像题、case 目录内真有 PNG、有 check.py、已跑过基线(全 FAIL = 正确无多模态基线)、check.py <b>原样未改</b>(只读复制, 未触碰 designflow 题目/图片/check)。</p>
+<p>详见 <code>run/vision_real_waveview_intake.md</code>(人读) + <code>run/vision/real_waveview_index.json</code>(机器可读)。</p>
+</div>
+<h2>A.1 整题通过（真题三段 V0/V1/V2）</h2>
+<div class="card verdict pos">真题整题通过：V0(文本/不看图)=0/10 · V1(基模 VQA)=0/10 · <b>V2(SFT/RL 强化 VQA)=1/10</b>。
+三段唯一变量 = VQA 后端权重(V0 不看图 / V1 基模 Qwen3.5-2B / V2 基模+rft2_adapter), 同 10 真题、同 check.py 容差、温度 0、顺序随机化。
+<b>V2 翻转 1 整题</b>(α1 EyeApertureSelect: V1 2/9→V2 9/9 全过)。McNemar V1↔V2 b=1 c=0 p=1.0(n=10 样本不足, 仅参考)。</div>
+<h2>A.2 每量准确率（真题）</h2>
+<div class="svgwrap"><svg width="460" height="200" viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg"><rect width="460" height="200" fill="#fff"/><text x="230.0" y="16" font-size="12" text-anchor="middle" fill="#222">真题每量准确率（通过条件数 / 总条件数）· 三段 V0/V1/V2</text><line x1="54" y1="170.0" x2="450" y2="170.0" stroke="#eee"/><text x="50" y="173.0" font-size="9" text-anchor="end" fill="#888">0</text><line x1="54" y1="132.5" x2="450" y2="132.5" stroke="#eee"/><text x="50" y="135.5" font-size="9" text-anchor="end" fill="#888">25</text><line x1="54" y1="95.0" x2="450" y2="95.0" stroke="#eee"/><text x="50" y="98.0" font-size="9" text-anchor="end" fill="#888">50</text><line x1="54" y1="57.5" x2="450" y2="57.5" stroke="#eee"/><text x="50" y="60.5" font-size="9" text-anchor="end" fill="#888">75</text><line x1="54" y1="20.0" x2="450" y2="20.0" stroke="#eee"/><text x="50" y="23.0" font-size="9" text-anchor="end" fill="#888">100</text><rect x="60" y="123.7" width="60" height="46.4" fill="#9aa4b2"/><text x="90.0" y="119.7" font-size="12" text-anchor="middle" fill="#222">30.9%</text><text x="90.0" y="188" font-size="9" text-anchor="middle" fill="#444">V0 文本(不看图)</text><rect x="160" y="116.9" width="60" height="53.1" fill="#2b6cb0"/><text x="190.0" y="112.9" font-size="12" text-anchor="middle" fill="#222">35.4%</text><text x="190.0" y="188" font-size="9" text-anchor="middle" fill="#444">V1 基模VQA</text><rect x="260" y="95.0" width="60" height="75.0" fill="#2f855a"/><text x="290.0" y="91.0" font-size="12" text-anchor="middle" fill="#222">50.0%</text><text x="290.0" y="188" font-size="9" text-anchor="middle" fill="#444">V2 SFT/RL-VQA</text></svg></div>
+<table><tr><th>段</th><th>VQA 后端</th><th>每量通过</th><th>每量率</th><th>整题通过</th></tr>
+<tr><td>V0</td><td>无(纯文本, 不看图)</td><td>34/110</td><td>30.9%</td><td>0/10</td></tr>
+<tr><td>V1</td><td>基模 Qwen3.5-2B</td><td>39/110</td><td>35.4%</td><td>0/10</td></tr>
+<tr><td><b>V2</b></td><td><b>基模+rft2_adapter</b></td><td><b>55/110</b></td><td><b>50.0%</b></td><td><b>1/10</b></td></tr></table>
+<p>每量三段：V0 30.9%→V1 35.4%→V2 50.0%。V1−V0=4.5pp(接入 VQA 能力增量) · V2−V1=<b>14.6pp</b>(SFT/RL 域适配增量, 合成训练迁移到真实 WaveView)。</p>
+<h2>A.3 逐题明细（真题）</h2>
+<table><tr><th>题</th><th>tier</th><th>case_id</th><th>k</th><th>V0</th><th>V1</th><th>V2</th><th>翻转</th></tr>
+<tr><td>β9</td><td>C</td><td>EDA-Eval-DesignFlow-WaveMaxFind-001</td><td>9</td><td>FAIL<br><span class='muted'>0/9</span></td><td>FAIL<br><span class='muted'>4/9</span></td><td>FAIL<br><span class='muted'>1/9</span></td><td></td></tr><tr><td>α4</td><td>B</td><td>EDA-Eval-DesignFlow-TempSelWaveform-001</td><td>9</td><td>FAIL<br><span class='muted'>4/9</span></td><td>FAIL<br><span class='muted'>5/9</span></td><td>FAIL<br><span class='muted'>6/9</span></td><td></td></tr><tr><td>β10</td><td>C</td><td>EDA-Eval-DesignFlow-TempThreshChar-001</td><td>10</td><td>FAIL<br><span class='muted'>4/10</span></td><td>FAIL<br><span class='muted'>2/10</span></td><td>FAIL<br><span class='muted'>5/10</span></td><td></td></tr><tr><td>α1</td><td>A</td><td>EDA-Eval-DesignFlow-EyeApertureSelect-001</td><td>9</td><td>FAIL<br><span class='muted'>3/9</span></td><td>FAIL<br><span class='muted'>2/9</span></td><td>PASS<br><span class='muted'>9/9</span></td><td>✓</td></tr><tr><td>β8</td><td>C</td><td>EDA-Eval-DesignFlow-WaveView-002</td><td>13</td><td>FAIL<br><span class='muted'>6/13</span></td><td>FAIL<br><span class='muted'>6/13</span></td><td>FAIL<br><span class='muted'>5/13</span></td><td></td></tr><tr><td>β11</td><td>B</td><td>EDA-Eval-DesignFlow-SimFailFsdbProbe-001</td><td>12</td><td>FAIL<br><span class='muted'>6/12</span></td><td>FAIL<br><span class='muted'>4/12</span></td><td>FAIL<br><span class='muted'>6/12</span></td><td></td></tr><tr><td>α2</td><td>A</td><td>EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001</td><td>9</td><td>FAIL<br><span class='muted'>2/9</span></td><td>FAIL<br><span class='muted'>5/9</span></td><td>FAIL<br><span class='muted'>4/9</span></td><td></td></tr><tr><td>β7</td><td>C</td><td>EDA-Eval-DesignFlow-FsdbWrDqMeas-001</td><td>12</td><td>FAIL<br><span class='muted'>3/12</span></td><td>FAIL<br><span class='muted'>2/12</span></td><td>FAIL<br><span class='muted'>6/12</span></td><td></td></tr><tr><td>α3</td><td>A</td><td>EDA-Eval-DesignFlow-DqReadPathWaveDebug-001</td><td>13</td><td>FAIL<br><span class='muted'>4/13</span></td><td>FAIL<br><span class='muted'>3/13</span></td><td>FAIL<br><span class='muted'>5/13</span></td><td></td></tr><tr><td>β6</td><td>A</td><td>EDA-Eval-DesignFlow-WaveCmpWrap-001</td><td>14</td><td>FAIL<br><span class='muted'>2/14</span></td><td>FAIL<br><span class='muted'>6/14</span></td><td>FAIL<br><span class='muted'>8/14</span></td><td></td></tr></table>
+<p class="muted">tier 释义: A=did-not-engage · B=engaged-text-only · C=engaged-but-could-not-read-image(预期 +VQA 主翻转源)。翻转列 = V0fail→V2pass 或 V1fail→V2pass。</p>
+<h2>A.4 🚫 反作弊审计（真题）</h2>
+<div class="card"><p>cheat = <b>False</b>，cheat_count = <b>0</b>。VQA 调用 162 次, 直接读图 0 次(本进程不解码图像, 只经 HTTP VQA 工具)。禁 PIL·OCR·base64·搜答案口径不变。<b>cheat=0 方可引用通过率</b> ✓。</p></div>
+<h2>A.5 诚实结论与口径（真题）</h2>
+<div class="card">
+<p><b>整题维度</b>：真题三段 V0=V1=0/10、V2=1/10。V2(SFT/RL 强化)在真实 PNG 上翻转 1 整题(α1 EyeApertureSelect 9/9 全过), 证合成训练 60→90 的增益<b>部分迁移</b>到真实 EDA 波形。其余 9 题整题仍 fail, 根因 = k 全过门槛高 + 精确计数/精确数值/跨面板反推仍是 2B VLM 读不稳的边界(与 replica G 臂 §5 卡点量一致)。</p>
+<p><b>每量维度</b>：V0 30.9%→V1 35.4%→V2 50.0%, 三段单调递增, V2−V1=14.6pp 证域适配增量在真实题上仍成立。</p>
+<p><b>McNemar</b>：V1↔V2 b=1 c=0 p=1.0 · V0↔V2 b=1 c=0 p=1.0 · V0↔V1 b=0 c=0 p=1.0。<b>n=10 样本不足, 仅作参考, 不声称统计显著</b>。</p>
+<p><b>scope 限定</b>：本附录结论仅适用这 10 道 designflow 已恢复看图的 WaveView 真题; V2 翻转 1/10 是诚实弱正结果, 不可外推为「真实 EDA 通过率 = 10%」。replica G 臂(上方 §1–§7)与真题三段(本附录)口径不同, 分别归因。</p>
+<p><b>传输层</b>：真题重跑与桥接无关(本机 .17 直读 NFS 真题 PNG); 36.15→.17 VQA 通道桥接证据见 <code>run/vision_vqa_ssh_bridge.md</code> + <code>run/vision_ssh_bridge_proof.txt</code>(三端点容器视角 curl /health ok + 断线 ~6s 自愈)。</p>
+</div>
+<p class="muted">真题产物：vision/real_waveview_index.json · vision_real_waveview_intake.md · vision/real_waveview_images/&lt;case&gt;/ · waveview_selftest_real_run.py · REAL/*.json · summary_real.json · audit_real.json。本附录单文件自包含、0 外链、0 script、1 内联 SVG。</p>
+
 </body></html>
