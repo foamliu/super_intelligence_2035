@@ -1,5 +1,7 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线与防破坏约束**（不改题/图/check、不 clean/reset/stash 他人改动、不编造数字/trace、`git add -A` 会污染共享副本）。判断标准只有一条：**这条约束是为了「防止说谎/防止毁坏他人数据」还是「防止尝试」？** 前者保留，后者删除。**默认立场：选料策略、造题目、深读方法由你自主决定；用产出说话。**
+
 > 🆕 **用户令 · WAVEVIEW 协作 · 2026-11-14（vision ↔ designflow 协作 · 空闲时认领）**
 >
 > **用户原话**：「请你帮助 vision 完成跟 designflow 的工作协调（#3 / #4）」
@@ -280,12 +282,12 @@ metadata:    { trace_source{...}, domain, test_rationale }
 
 **单轮闭环 + 交付定义（DoD）**
 
-一轮 = 一条 case 从选料到落库，**不要拆成两轮**：
+一轮 = 一条 case 从选料到落库，**建议不要拆成两轮**（拆开会拉长交付周期）：
 
 - **深读是硬闸门，但不是独立的一轮**：必须先解析完整对话流（`scp` `messages.json` → user 意图 / assistant 工具链 / 关键产物 → `designflow/trace_deepreads/<sid>_<主题>.md`）才允许合成；已有笔记可直接复用，不重复深读。
 - **DoD（交付定义）**：1 条 case 通过自验并写进 `EDA-Eval-DesignFlow.jsonl` 才算交付；**深读笔记是中间产物，不算交付**。
 - **每轮只做 1 条 case**：做完即收尾，**不在同一轮开第二条**（控制上下文不膨胀）；交付后首行 `WAITING: 0`，loop 60s 后唤醒做下一条。
-- **唯一例外**：单条 trace 过大（>2MB 或 >600 msgs）允许本轮只深读，但**下一轮必须先交付 case**，心跳记 `DEBT: 1 deepread 未合成`；🚫 禁止连续两轮只深读。
+- **单条 trace 过大时**（>2MB 或 >600 msgs）可以本轮只深读，心跳记 `DEBT: 1 deepread 未合成`，下一轮交付 case。连续多轮只深读会让产出滞后——如果确实需要（例如在追一个大线索），说明理由并给出交付 ETA。
 - **选 trace 一律走台账（唯一去重口径）**：`python3 designflow/trace_ledger.py next --n 5` → 按它给出的 awk 在 `.75` 上取候选（**已自动排除台账里的 session**）→ 选第一条 → `claim` 落台账。
   - 出完 case：`mark --session <s> --status case --case-id <EDA-Eval-DesignFlow-XXX>`（覆盖率的唯一分子）；
   - 暂缓：`mark --session <s> --status parked --note "<原因>"`（如 aether 超时），**不重复捡**。

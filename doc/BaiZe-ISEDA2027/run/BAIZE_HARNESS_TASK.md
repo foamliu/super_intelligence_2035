@@ -1,5 +1,7 @@
 # BAIZE_HARNESS_TASK.md
 
+> 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不编造数字、infra≠能力、判据不放宽）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定排查路径、复现手段与修复方案。**
+
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
 
 1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
@@ -69,11 +71,11 @@
 **2.3 表二：各 Harness 失败分析（列固定）**
 列：**Harness | Failed | Infra | 能力不足 | 其他(未评测/未跑)**
 - `Failed = 89 − Passed`（**必须守恒**：Failed = Infra + 能力不足 + 其他，逐行校验并在表下断言）。
-- 桶定义（沿用你线现有判定，不要新造）：
+- 桶定义（可沿用你线现有判定；若现有判定不合理，可以重新定义并说明理由）：
   - **Infra** = quota_exhausted + connection_refused + timeout + ECONNRESET + setup/env 失败（如 python3 not found）+ CLI/adapter bug + gateway 502 + 未真跑/假结果。
   - **能力不足** = 模型真正运行、有 run_result、有 token 消耗，但 verifier 判 fail（含 Reached max turns）。
   - **其他** = 未出现在任何 result.json（not_evaluated）等。
-- 🚫 **不再出现「mixed_fail」这种 mixed 桶**（额度+非额度混在一起无法归因）：请按**每个 trial** 拆开再归题（任一 trial 有 proper 证据+verifier fail ⇒ 记能力；全部 trial 都是 infra ⇒ 记 infra）。
+- 🚫 **不再出现「mixed_fail」这种 mixed 桶**（额度+非额度混在一起无法归因）：请按**每个 trial** 拆开再归题（任一 trial 有 proper 证据+verifier fail ⇒ 记能力；全部 trial 都是 infra ⇒ 记 infra）。（注：这是**归因要求**，不是限制你的分类自由——你完全可以设计更好的分桶，只要能逐题追溯且加总守恒。）
 
 **2.4 终态目标：Infra 列必须归零**
 - 这张表的**存在意义**就是作为「infra 已清零」的验收证据：**每个 harness 的 Infra 数最终都应为 0**。
@@ -200,7 +202,7 @@
 > **用户原话**：「安排 harness 查一下，cline 和其他 harness 是否仍然有（网关 token 额度耗尽）导致失败的 Case，有则重跑。现在是周末。」
 
 - **下发时的现状（08:0x 复核，勿重复劳动）**：cline 侧 `quota_lost` 已 = **0**（R2460：main+2nd+3rd+4th-batch ALL MERGED，cline=38/90=42.2%）；R2460 另发现 **8 个 synthetic placeholder**（2nd-batch 来源 `rerun_2nd_batch_synthetic`、`has_run_result=false`、`stdout=0` ⇒ **agent 从未真跑**）已起 5th-batch。**⇒ cline 的「额度」问题已闭环，本令剩余价值只在两处：① 其他 6 路从未做过额度口径归因；② 用同一口径复核「假结果/未真跑」是否也存在于其他路。**
-- **范围（勿扩大）**：只做 **TB-2.1 / 89 题 / 7 路**。**SWE-bench 侧不查不跑**（cline 专项 C2 已证：网关额度 429 = 0 题 0.0%，66 个失败 100% 能力）。
+- **范围**：本令聚焦 **TB-2.1 / 89 题 / 7 路**。SWE-bench 侧不在本令范围（cline 专项 C2 已证：网关额度 429 = 0 题 0.0%，66 个失败 100% 能力）；但若你发现 TB-2.1 的结论依赖 SWE-bench 的某个事实，可以引用它。
 
 **A. 诊断（必做，只读）— 覆盖全部 7 路，而不是只有 cline**
 
@@ -214,9 +216,9 @@
 
 1. 前置：`curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9092/v1/models` = 200；确认**无 SWE-bench predict 抢同一额度池**（周末窗口独占）；S1 训练（10.239.2.29 pretrain）不挤；`df`/`nvidia-smi` 自检照常。
 2. 排队顺序：**5th-batch（8 synthetic）先跑完** → 再跑本次审计新增的 `quota_only`/`synthetic` 题；**逐路串行，一路 merge 完再起下一路**（避免 R2454 踩过的 cline-hub 冲突）。
-3. cline 路：沿用 `rerun_tb21_cline_quota.py --launch`（判定口径不许改）。
+3. cline 路：默认沿用 `rerun_tb21_cline_quota.py --launch`（判定口径保持不变，这样可与旧结果对齐）。
 4. 其他路：把 `rerun_tb21_cline_quota.py::launch()` 的 `HARNESS`/`AGENT` **参数化**（新增 `--harness <name>`，或另建 `rerun_tb21_quota_7way.py`，**沿用其 judge/merge/落盘逻辑**），agent 映射照抄 `launch_tb21_glm53_7way.sh:67-73`：`codex=terminalbench.agents.codex:CodexTB` · `hermes=…hermes:HermesTB` · `opencode=…opencode:OpenCodeTB` · `claude-code=…claude_code:ClaudeCodeTB` · `deepseek-harness=…deepseek_harness:DeepseekHarnessTB` · `pi=…pi:PiTB`。
-5. 参数不得放宽：`-k 1`、`--n-concurrent 1`、`nice -n 19`、`TB_AGENT_TIMEOUT=3600`、`sg docker` 兜底、jobs-dir=/tmp。
+5. **参数基线**：`-k 1`、`--n-concurrent 1`、`nice -n 19`、`TB_AGENT_TIMEOUT=3600`、`sg docker` 兜底、jobs-dir=/tmp（为保证跨路可比，先按这个跑）。若你判断提高并发/超时对**硬件利用率或诊断效率**明显有利，可以调——但必须：① 在心跳记录改动前后值与理由；② 同一 harness 的旧/新参数结果**分开记账、不混算**；③ 结论里写清「参数差异是否影响归因」。
 6. 跑完：`--merge /tmp/tb21_glm53_jobs/<harness>_rerun_<tag>` → `gen_report_tb21_7way.py` + `../gen_cline_special.py` REGEN → commit（`harness:` 前缀，只 add 本线路径）。
 
 **C. 报告口径修正（本轮必做）**

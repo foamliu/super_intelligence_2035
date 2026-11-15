@@ -1,5 +1,7 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
+> 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不估不编、评测数字口径真实）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权判断什么最值得做、并主动追异常。**
+
 > ✅ **用户令 · 2026-11-12（L1/L2 评测脚本入库 + L4 移交）· 用户直令 · 已完成（commit ed6ea54e4 · 12 脚本 + README §4.6 · L4→HANDOFF→post-train）**
 >
 > **用户原话**：「Pretrain：把修好的 L1/L2 评测脚本提交到 baize-llm 仓库，相应刷新 README。」「既然后训练说『隧道第 4 次复验 OK』，那么 Pretrain 说的 L4 BLOCKED 就不成立了。这件事 Pretrain 不要管，由 Post-Train 负责。」
@@ -67,7 +69,7 @@
 >
 > - 每轮 MEMORY 记一行：`#<轮次> 四层评测 · L1=<avg> L2=<key> L3=<status> L4=<status> · 本轮动作：<一句话>`
 > - 新建/维护 `reports/report_pretrain_eval_4tier_zh.html`（中文 · 单文件自包含）—— **这是评测报告，不是论文建议**。
-> - 发现某层需配方调整 ⇒ 写进 MEMORY「待决策」区等用户拍板，🚫 不自行改生产配置。
+> - 发现某层需配方调整 ⇒ 写进 MEMORY「待决策」区并给出你的建议方案（含预期收益与风险）；生产配置由用户拍板后改。
 
 
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
@@ -137,7 +139,7 @@
 > - 数字**不许估、不许外推**；取不到就写 `\todo{...}` 并在 MEMORY 标 `BLOCKED: <原因>`。
 > - 收尾：`EXPERIMENTS_PRETRAIN_2B.md` 加一节记录（iter/表格数据/命令/编译结果），
 >   MEMORY 首行写 `paper: ISEDA2027 §4.6 refreshed (iter=X) + §4.7 scaling table (6 rows) added, pdf=Yp, ERR=0`。
-> - 本轮**不要**顺带做其它评测/运维令；做完这一件就回到训练监控（`WAITING: 1`）。
+> - 本轮先做这一件；做完回到训练监控（`WAITING: 1`）。若你在过程中发现**明显更值得做的问题**（如数据 bug、指标异常），可以直接追，但要在 MEMORY 记清「为什么优先于原任务」。
 > 📦 §运维令·2026-11-08 15:3x（全量eval均值37.40%异常调查）已归档 → run/ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-09」节；**结论**：✅ 报告report_pretrain_eval_avg7_anomaly_zh.html(50KB)已交付,结论A(口径差异):stale results.json缺piqa致低估,补全后Avg7=55.96%与历史56.71%仅差-0.75pp。需要时再读。
 
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
