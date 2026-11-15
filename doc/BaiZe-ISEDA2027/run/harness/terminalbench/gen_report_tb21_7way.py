@@ -161,7 +161,7 @@ INFRA_LEDGER = {
     "hermes": (
         "39 quota + 2 mteb + 2 qemu + synthetic",
         "_ensure_python (apt/apk/dnf install python3) + _ensure_pip (Py3.9 legacy get-pip.py); 额度重跑",
-        "65/65 done+merged (quota✅); 2 mteb=BLOCKED(hermes-agent 不在容器 PyPI); 2 qemu 待 post-rerun",
+        "65/65 done+merged (quota✅); 2 mteb=BLOCKED(hermes-agent 不在容器 PyPI); 2 qemu=BLOCKED(容器 Py3.9 < hermes-agent 最低要求 3.11, R2510 确认)",
     ),
     "opencode": (
         "15 quota + 23 synthetic",
@@ -313,7 +313,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "<li><strong>claude-code</strong>: 89 ConnectionRefused → 适配器已修, rerun 11/82 done (0 ConnRefused✅), "
              "ETA ~2026-11-16 14:00; 完成后 merge → Infra 降为 0（剩余真实失败记能力）。卡点: rerun 仍在跑, 不中断。</li>"
              "<li><strong>hermes</strong>: 2 mteb = BLOCKED (hermes-agent 不在容器 PyPI 镜像, 非能力); "
-             "2 qemu 待 post-rerun (_ensure_pip Py3.9 已修 R2499, harbor 缓存旧模块需重跑)。</li>"
+             "2 qemu = BLOCKED (容器 debian:bullseye-slim Python 3.9 < hermes-agent 最低要求 ≥3.11, "
+             "PyPI 全版本均 requires-python≥3.11, R2510 确认: _ensure_pip 修复成功→pip 可用, "
+             "但 hermes-agent 无兼容版本→HERMES_PY_TOO_OLD)。</li>"
              "<li><strong>opencode / pi / deepseek / codex</strong>: synthetic(未真跑) + quota 残留 → 逐路串行重跑 "
              "(cc 完成后启动, 避免网关额度竞争)。</li>"
              "<li><strong>cline</strong>: 额度已清零; 余 1 conn_refused + 4 synthetic 待补跑。</li></ul></div>")

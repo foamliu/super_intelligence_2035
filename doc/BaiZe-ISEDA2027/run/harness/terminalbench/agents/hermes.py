@@ -102,6 +102,31 @@ class HermesTB(TBBaseAgent):
         # 0) Ensure pip is available; bootstrap if the TB4 image lacks it.
         await self._ensure_pip(environment)
 
+        # FIX (2026-11-15, R2510): Check Python version BEFORE attempting to
+        # install hermes-agent.  All versions of hermes-agent require Python
+        # >=3.11 (verified via PyPI JSON API).  TB-2.1 qemu task containers
+        # (qemu-startup, qemu-alpine-ssh) are debian:bullseye-slim with only
+        # Python 3.9.  This is a hard infra constraint — hermes CANNOT run
+        # on these tasks.  Raise a clear BLOCKED error with evidence so it's
+        # not miscounted as a model ability failure.
+        py_ver = await environment.exec(
+            command="python3 -c 'import sys; print(\"%d.%d\" % sys.version_info[:2])'"
+        )
+        py_ver_str = (py_ver.stdout or "").strip()
+        try:
+            major, minor = map(int, py_ver_str.split("."))
+            if (major, minor) < (3, 11):
+                raise RuntimeError(
+                    f"HERMES_PY_TOO_OLD: Python {py_ver_str} in task image "
+                    f"but hermes-agent requires >=3.11 (all versions on PyPI). "
+                    f"This is an INFRA limitation, not a model ability failure. "
+                    f"Task should be excluded from hermes route or marked BLOCKED."
+                )
+        except (ValueError, RuntimeError):
+            raise
+        except Exception:
+            pass  # couldn't determine version, try install anyway
+
         # 1) install hermes-agent.
         # FIX (2026-10-25, R492): the old `pip install ...` flaked on task images
         # where `pip` is not on PATH (36/50 trials → "hermes: command not found",

@@ -312,18 +312,18 @@ class TBBaseAgent(BaseInstalledAgent):
             "export DEBIAN_FRONTEND=noninteractive "
             "PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
             "if command -v apt-get >/dev/null 2>&1; then "
-            "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 && "
+            "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 || true ; "
             "  apt-get install -y --no-install-recommends "
             "    -o Acquire::https::Verify-Peer=false "
-            "    python3 python3-pip python3-venv 2>&1 | tail -5 ; "
+            "    python3 python3-pip python3-venv 2>&1 | tail -5 || true ; "
             "elif command -v apk >/dev/null 2>&1; then "
-            "  apk add --no-cache python3 py3-pip 2>&1 | tail -5 ; "
+            "  apk add --no-cache python3 py3-pip 2>&1 | tail -5 || true ; "
             "elif command -v dnf >/dev/null 2>&1; then "
-            "  dnf install -y python3 python3-pip 2>&1 | tail -5 ; "
+            "  dnf install -y python3 python3-pip 2>&1 | tail -5 || true ; "
             "elif command -v yum >/dev/null 2>&1; then "
-            "  yum install -y python3 python3-pip 2>&1 | tail -5 ; "
+            "  yum install -y python3 python3-pip 2>&1 | tail -5 || true ; "
             "else echo 'HERMES_NO_PKG_MANAGER: no apt-get/apk/dnf/yum to "
-            "install python3' >&2; exit 127; fi"
+            "install python3' >&2; exit 127; fi ; true"
         )
         await self.exec_as_root(environment, command=install_cmd, timeout_sec=600)
 
@@ -399,20 +399,38 @@ class TBBaseAgent(BaseInstalledAgent):
         # "This script does not work on Python 3.9".
         # Standard practice: prefer the distro package manager for pip — it
         # always installs a pip version compatible with the system Python.
+        # FIX (2026-11-15, R2510): The package-manager install may fail (e.g.
+        # Debian Bullseye's security mirror 404s on python3-pip packages).
+        # exec_as_root raises NonZeroAgentExitCodeError on ANY non-zero exit,
+        # which would abort before reaching the legacy get-pip.py fallback below.
+        # Append ``; true`` so the command always exits 0; the recheck below
+        # determines whether pip was actually installed, and if not we fall
+        # through to the legacy get-pip.py for Python 3.9.
+        # FIX (2026-11-15, R2510b): Install python3-distutils SEPARATELY from
+        # python3-pip — python3-pip may 404 on Bullseye's security mirror, and
+        # if both are in one apt-get install command the 404 aborts BOTH.
+        # python3-distutils is in the MAIN archive (not security) so it doesn't
+        # 404.  It's required because pip 26.x (from get-pip.py) imports
+        # distutils.cmd which is NOT present on Bullseye unless this package
+        # is installed.
         await self.exec_as_root(
             environment,
             command=(
                 "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
                 "if command -v apt-get >/dev/null 2>&1; then "
-                "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 && "
+                "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 || true ; "
                 "  apt-get install -y --no-install-recommends "
-                "    -o Acquire::https::Verify-Peer=false python3-pip 2>&1 | tail -5 ; "
+                "    -o Acquire::https::Verify-Peer=false "
+                "    python3-distutils 2>&1 | tail -5 || true ; "
+                "  apt-get install -y --no-install-recommends "
+                "    -o Acquire::https::Verify-Peer=false "
+                "    python3-pip 2>&1 | tail -5 || true ; "
                 "elif command -v apk >/dev/null 2>&1; then "
-                "  apk add --no-cache py3-pip 2>&1 | tail -5 ; "
+                "  apk add --no-cache py3-pip 2>&1 | tail -5 || true ; "
                 "elif command -v dnf >/dev/null 2>&1; then "
-                "  dnf install -y python3-pip 2>&1 | tail -5 ; "
+                "  dnf install -y python3-pip 2>&1 | tail -5 || true ; "
                 "elif command -v yum >/dev/null 2>&1; then "
-                "  yum install -y python3-pip 2>&1 | tail -5 ; fi"
+                "  yum install -y python3-pip 2>&1 | tail -5 || true ; fi ; true"
             ),
             timeout_sec=300,
         )
@@ -444,30 +462,28 @@ class TBBaseAgent(BaseInstalledAgent):
             pass  # if we can't determine version, try the bundled one
 
         if use_legacy_getpip:
-            # Download legacy get-pip.py for Python 3.9 from the bootstrap
-            # mirror.  Uses the overlay's proxy + aliyun mirror.
-            await self.exec_as_root(
-                environment,
-                command=(
-                    "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
-                    "curl -kfsSL "
-                    "https://bootstrap.pypa.io/pip/3.9/get-pip.py "
-                    "-o /tmp/get-pip.py 2>&1 | tail -3"
-                ),
-                timeout_sec=120,
-            )
-            # Verify download succeeded
-            gp_check = await environment.exec(
-                command="test -s /tmp/get-pip.py && echo GP_OK || echo GP_FAIL"
-            )
-            if "GP_OK" in (gp_check.stdout or ""):
+            # FIX (2026-11-15, R2510): The previous approach (curl to
+            # bootstrap.pypa.io from inside the container) failed because the
+            # MITM proxy's TLS interception breaks urllib/curl downloads even
+            # with -k.  Instead, upload the pre-downloaded legacy get-pip.py
+            # for Python 3.9 from the host (downloaded with the proxy on the
+            # host where it works).  The file has a prepended SSL bypass
+            # (ssl._create_default_https_context = ssl._create_unverified_context)
+            # so its internal urllib downloads survive the proxy's TLS
+            # interception — same approach as the bundled get-pip.py.
+            legacy_getpip = Path(__file__).resolve().parent / "get-pip-3.9.py"
+            if legacy_getpip.exists():
+                await environment.upload_file(legacy_getpip, "/tmp/get-pip.py")
+                # FIX (2026-11-15, R2510): ``|| true`` — get-pip.py may fail
+                # (e.g. network issues); the final check below determines if
+                # pip was actually installed and raises a clear error if not.
                 await self.exec_as_root(
                     environment,
                     command=(
                         "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
                         "python3 /tmp/get-pip.py "
                         "--break-system-packages "
-                        "--trusted-host mirrors.aliyun.com 2>&1 | tail -8"
+                        "--trusted-host mirrors.aliyun.com 2>&1 | tail -8 || true"
                     ),
                     timeout_sec=300,
                 )
@@ -482,7 +498,7 @@ class TBBaseAgent(BaseInstalledAgent):
                     )
                 return  # legacy get-pip.py worked
 
-            # Download failed → fall through to bundled get-pip.py as last resort
+            # Pre-downloaded file not found → fall through to bundled get-pip.py
             # (will likely fail on 3.9, but the error message will be clear)
 
         if not getpip_src.exists():
@@ -496,13 +512,17 @@ class TBBaseAgent(BaseInstalledAgent):
             tf.write(getpip_src.read_bytes())
             local_getpip = Path(tf.name)
         await environment.upload_file(local_getpip, "/tmp/get-pip.py")
+        # FIX (2026-11-15, R2510): ``|| true`` — on Python 3.9 the bundled
+        # get-pip.py exits non-zero ("This script does not work on Python 3.9").
+        # Without this, exec_as_root raises NonZeroAgentExitCodeError before
+        # the final pip check below can produce a clear error message.
         await self.exec_as_root(
             environment,
             command=(
                 "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
                 "python3 /tmp/get-pip.py "
                 "--break-system-packages "
-                "--trusted-host mirrors.aliyun.com 2>&1 | tail -8"
+                "--trusted-host mirrors.aliyun.com 2>&1 | tail -8 || true"
             ),
             timeout_sec=300,
         )
