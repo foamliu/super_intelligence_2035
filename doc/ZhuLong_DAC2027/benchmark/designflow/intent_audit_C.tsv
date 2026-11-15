@@ -1,0 +1,28 @@
+case_id	user_intent_from_trace	判定	理由	处置
+EDA-Eval-DesignFlow-DrcLog4ModTruncOpt-001	写 Python 脚本解析截断的 Calibre DRC-H rundrc.log 产四模块拆解报告	keep	prompt=trace-faithful 脚本任务，user 调 calibre-drc-log-analysis skill 分析 log，case 要求写 drc_log_analysis.py 产同类报告；check 12 条 a-l 对报告结构/数值/行号断言，未超意图	保留
+EDA-Eval-DesignFlow-AutoViaEncFix-001	优化 IMCleAutoVia.py V4 via 阵列生成+per-axis enclosure 覆盖修复	keep	prompt=trace-faithful，user 要求 5 条算法修改(标签数/per-axis enclosure/V4 回退/阵列方向/saveas)，case 要求写 auto_via_fix.py 实现同样 5 条；check 12 条 a-l 对 via 阵列/enclosure/方向断言，未超意图	保留
+EDA-Eval-DesignFlow-SpfRccCmod-001	修改 SPF_RCC 寄生电容文件：合并 HBL+tBL + tBLfar 相邻对耦合电容改注	keep	prompt 用 user 原话逐字(读取文件并按照下面规则修改spf_RCC...)，case 要求写 modify_tblfar_caps.py 实现同样规则；check 12 条 a-l 对电容改注/相邻对/通配/反硬编断言，未超意图	保留
+EDA-Eval-DesignFlow-GdsLvlStructDiff-001	对比 AutoCell 生成的 GDS 与参考 GDS 的层差异，定位根因	keep	prompt 用 user 原话逐字(你生成的gds中有些层和这个gds里的不一样...)，case 要求写 gds_diff.py 逐结构逐层比对；check 12 条 a-l 对 diff 结构/层/计数断言，未超意图	保留
+EDA-Eval-DesignFlow-RsCalcRtextCheckpoints-001	读 rscalc.config 获取目标 layout，拷贝 layout，分析 powernet RTEXT，设计 ~50 checkPoints	keep	prompt 用 user 原话逐字(先看一下配置参数 rscalc.config...)，case 要求写脚本实现同样流程；check 12 条 a-l 对 newCellName/pwrNets/checkPoints 断言，未超意图	保留
+EDA-Eval-DesignFlow-PatternPortOpcMark-001	把 Pass 脚本 shield pattern 移植到 Fail 脚本，在 space 区域框 OPC01_mark1	keep	prompt=trace-faithful，user 要求移植 shield pattern + OPC mark，case 要求写 port_opc_mark.py 实现同样操作；check 12 条 a-l 对 n_ported/opc_markers/rows 断言，未超意图	保留
+EDA-Eval-DesignFlow-PcellNcxnrReplace-001	抓取选中 pcell，按 nc/nr 参数构造 cell name，aeReplaceInstMaster 替换	keep	prompt=trace-faithful，user 要求 pcell nc/nr 替换，case 要求写 replace_pcell_ncxnr.py 实现同样逻辑；check 14 条 a-n 对 total_selected/counts/instances 断言，未超意图	保留
+EDA-Eval-DesignFlow-NetMetalLayerTrace-001	追踪版图 net 经过的金属层级并统计各层走线长度	keep	prompt=trace-faithful，user 要求 net 追踪+长度统计(不准遍历每个 cell)，case 要求写 net_trace.py 实现层级化追踪；check 13 条 a-m 对 metal_layers/total_length 断言，未超意图	保留
+EDA-Eval-DesignFlow-QaPatternWidthSpace-001	依据 DRC 规则 CSV 生成 good/bad 测试 pattern，优先 width/space	keep	prompt=trace-faithful，user 要求 QA pattern 生成脚本，case 要求写 qa_pattern*.py 实现同样生成逻辑；check 15 条 a-o 对 rule_list/patterns/skipped 断言，未超意图	保留
+AutoViaV4Dir3DY-001	给 IMCleAutoVia.py 加 V4 孔功能(R90/dir_3D_Y/补 M4 fill)	keep	prompt=trace-faithful，user 要求 V4 孔功能，case 要求写脚本实现同样几何；check 16 条 a-p 对 vias/m4_fills/R90 断言，未超意图	保留
+WireWidthSpaceRuler-001	对选中线打 width 标尺，对同层相邻平行线打 space 标尺	keep	prompt=trace-faithful，user 要求标尺标注，case 要求写脚本实现同样标注；check 对 width/space 标尺断言，未超意图	保留
+EDA-Eval-DesignFlow-DrcExactSpacingArgusSafe-001	Calibre/Argus SVRF DRC deck BLR_S_004_00 改精确间距+绕过 Argus 不支持 EXT>	keep	prompt=trace-faithful，user 要求 deck 编辑，case 要求写脚本实现同样 SVRF 修改；check 对 deck 语法/Argus safe 断言，未超意图	保留
+EDA-Eval-DesignFlow-RdlRsCreatePort-001	Virtuoso SKILL cxmt_createRs() 移植到 pyAether	keep	prompt 用 user 原文代码逐字，case 要求写脚本实现同样 RDL 电阻+RTEXT/RNODE；check 对 port/rs 创建断言，未超意图	保留
+EDA-Eval-DesignFlow-SelectByLineGroup-001	pyAether 选中对象 point-to-line 转换 + aeSelectByLine + figGroup 批量选择	keep	prompt 用 user 原文代码逐字，case 要求写脚本实现同样 figGroup 累积算法；check 对 line_list/figGroup 断言，未超意图	保留
+EDA-Eval-DesignFlow-RcDiffStarGloryReport-001	新建 skill 分析 StarRC 和 Glory RC 网表 rc 值差异	keep	prompt=trace-faithful，user 要求新建分析 skill，case 要求写脚本实现同样 diff_pct 分析；check 对 CSV 解析/匹配/diff_pct 断言，未超意图	保留
+EDA-Eval-DesignFlow-LayoutAether-001	pyAether 驱动 and2CSx1 版图绘制 + calibre LVS CORRECT + DRC 179→32 修复	keep	trace 原为 L3 多工具链路(布局+LVS+DRC 修复)，case 收敛为 offline LVS 比对(L1)。收敛原因为 check() 需离线可跑(无 calibre license)，非为配额降级；意图核心(验证版图正确性)保留	保留(B档离线简化，非配额降级)
+EDA-Eval-DesignFlow-LayoutVirtuoso-001	virtuoso SKILL 扫 Array16G_B RTEXT/RNODE label 审计+清理	keep	prompt=trace-faithful，user 要求 label 审计+清理，case 要求写脚本实现同样审计+去重；check 17 条 a-q 对 MISALIGNED/dup/names 断言，未超意图	保留
+EDA-Eval-DesignFlow-ResFlow-001	Virtuoso 版图电阻优化 flow：分析 rscalc+autovia 配置去重+构建迭代循环	keep	prompt=trace-faithful，user 要求 flow 编排，case 要求写脚本实现同样 config 去重+循环；check 对 config/flow 断言，未超意图	保留
+EDA-Eval-DesignFlow-ToolchainID-001	理解 V0_LOGICTOP 文件来自什么 EDA 工具，给流程框图	keep	prompt 用 user 原话逐字，A档 analysis 任务。旧规则下 analysis-only 可能被判 weak，但本案已入库——符合新标准(analysis 是真实用户意图)	保留(新标准下 analysis 任务合法)
+EDA-Eval-DesignFlow-PGLayout-001	写 PG_check.tcl 用 Empyrean Skipper 批处理拼接 MOS+RES GDS	keep	prompt=trace-faithful，user 要求写 tcl 脚本拼接 GDS，case 要求写脚本实现同样拼接；check 对 GDS 结构/层断言，未超意图	保留
+EDA-Eval-DesignFlow-PRBoundary-001	Innovus P&R of addr_to_rowcol_v7 满足时序约束	keep	trace 为 L2 真 P&R，case 收敛为 prBoundary 提取子任务。收敛原因为 isolating clean verifiable sub-task(非配额降级)；prBoundary 提取是 trace 中 agent 实际执行的关键步骤	保留(B档子任务隔离，非配额降级)
+EDA-Eval-DesignFlow-DummyDeck-001	调 calibre Dummy 生成 deck，部分 mask 零输出静默失败排查	keep	prompt=trace-faithful，user 要求 deck 调试，case 要求写脚本分析静默零输出；check 对 deck/zero-output 断言，未超意图	保留
+EDA-Eval-DesignFlow-DummyMeas-001	Skipper 批处理量测 dummy GDS 尺寸	keep	prompt=trace-faithful，user 要求量测 dummy，case 要求写脚本实现同样量测；check 对量测结果断言，未超意图	保留
+EDA-Eval-DesignFlow-DummyQA-001	pdkQaSystem Dummy QA 模块测试(DummySyntaxCheck+LayerDuplicatesCheck)	keep	prompt=trace-faithful，user 要求 QA 模块测试，case 要求写脚本实现同样检查；check 对 syntax/duplicates 断言，未超意图	保留
+EDA-Eval-DesignFlow-ERCFilter-001	ERC AI-check pipeline 过滤 rules 2.1-2.8	keep	prompt=trace-faithful，case 隔离 2.1-2.8 过滤子任务(trace 中 agent 实际执行)；check 16 条 a-p 对过滤/CSV 断言，未超意图	保留
+EDA-Eval-DesignFlow-LVSLogFilter-001	扫描 argusLVS.log 按 4 标准过滤问题 LVS 结果	keep	prompt=trace-faithful，user 要求 LVS log 排查，case 要求写脚本实现同样过滤；check 对 4 标准断言，未超意图	保留
+EDA-Eval-DesignFlow-LibCellList-001	从 cell list + SPICE 网表生成 lib_cell.list(Library Cell 对)	keep	prompt 用 user 原话逐字(我提供cell list文件和netlist...)，case 要求写脚本实现同样生成；check 对 lib_cell.list 断言，未超意图	保留
