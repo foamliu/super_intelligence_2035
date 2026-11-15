@@ -29,6 +29,7 @@ MASTER_LOG="/tmp/zhulong_a0prime_ablation.log"
 SUBSET_FILE="${SUBSET_FILE:-$REPO_RUN/compaction_subset_40.txt}"
 PARALLEL="${PARALLEL:-4}"
 ROUNDS="${ROUNDS:-3}"
+START_ROUND="${START_ROUND:-1}"   # 向后兼容: 默认 1 (原行为). makeup 轮用 START_ROUND=4 ROUNDS=1
 
 # 8650 池 (错峰 · 与 8664 池 post-train eval 隔离)
 POOL_8650_PORTS="8650,8651,8652,8654"
@@ -143,7 +144,7 @@ log "subset=${SUBSET_FILE##*/}  -p $PARALLEL  rounds=$ROUNDS  sandbox=8650pool(�
 log "对照: A0(compaction-basic 69.2±1.4%) · 唯一变量=out-budget 16384->4096"
 log "=========================================="
 
-for round in $(seq 1 "$ROUNDS"); do
+for round in $(seq "$START_ROUND" "$((START_ROUND+ROUNDS-1))"); do
   run_round "$round"
 done
 
