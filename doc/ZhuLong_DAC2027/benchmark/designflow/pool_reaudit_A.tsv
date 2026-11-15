@@ -1,0 +1,323 @@
+session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务形态
+1792488619552_mt7ua	johnl	hfeg0plg49	n/a	pnr_signoff	trivial	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1792297573507_9knot	vincelu	hfeg0plg55	n/a	digital	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1789887279405_ve67l	mike	10.129.32.80	n/a	pnr_signoff	debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1792490325235_wvhcg			n/a		retrieval/code-comprehension;wrong-domain;not-authentic	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1789090020843_b9bop			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1790566107917_f1rqc	hbpeng	10.129.2.14	n/a	eda_other	skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1791788736494_t2qp9	leo27li	hfeg0pkn001	n/a	pnr_signoff	analysis-Q&A	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1792497366260_giuwf			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792572105701_exwpt			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1793089887669_4c5ws			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793078585671_z2knw			n/a		wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1789630394053_3dekw			n/a		wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1789624027491_t45kv			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791940499909_2pdn0	e0045128	hfeg0pkn001	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1788770994295_x4b0p	xinqiaoz	hfeg0pkn004	n/a	pnr_signoff	debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1792142855712_2h3mf	e0045128	hfeg0pkn001	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790662286657_8356t	fxian	hfeg0pkn002	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791447139857_poxvz			n/a		debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1792571144969_ph3ku			n/a		duplicate;weak-deliverable(old)	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791443950843_b7y8t	shaoyou	hfeg0pkn004	n/a	eda_other	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793165088136_0suhi	e0046686	hfeg0pkn005	n/a	pnr_signoff	doc-search;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1788853067089_zggtc	lorikx	hfeg0pjn200	n/a	verification	not-authentic;weak-deliverable(old)	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1789038497364_qvkte	e0039503	hfeg0plg49	n/a	digital	not-authentic;weak-deliverable(old)	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1788775118036_48swh	lorikx	hfeg0pjn200	n/a	eda_other	analysis-Q&A;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1783323056207_rc0jh	e0014566	hfeg0plg49	n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792386615426_npf2k	e0045488	hfeg0pkn002	n/a	pnr_signoff	trivial;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793167986392_7bqnr	oshen	hfeg0plg36	n/a	eda_other	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1789882246438_m1cve	johnl	hfeg0pfn119	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1792552971568_dnkz8	johnl	hfeg0plg99	n/a	pnr_signoff	NOFILE;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792120944014_78z8d	e0045128	hfeg0pkn001	n/a	pnr_signoff	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791796982758_nc938			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792207124614_65efs			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790058749132_f0qtv			n/a		debug/env-config;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1792027020710_k8vvn	claire1l	hfeg0pkn004	n/a	eda_other	not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1792550261464_ztom2	johnl	hfeg0pfn119	n/a	pnr_signoff	not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1789990755473_xgcnn	jalenwei	hfeg0pfn108	n/a	pnr_signoff	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1789090752430_4xt0p	zhigangw	hfeg0pkn002	n/a	eda_other	wrong-domain;not-authentic	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792574299462_d75a9	johnl	hfeg0pfn119	n/a	eda_other	not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1793006622937_6kot7	weizhao	hfeg0pkn004	n/a	eda_other	explain	可造 (revived: retrieval/explain (old weak filter retired))	retrieval/explain case: deliverable=structured walkthrough; check() verifies correct identification of constructs/paths/signals
+1793583471152_fbuip	alan3zh	hfeg0pkn001	n/a	pnr_signoff	setup;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793584882491_ggmdz	alan3zh	hfeg0pkn001	n/a	pnr_signoff	setup;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793620820813_7qn0b	e0045128	hfeg0pkn005	n/a	verification	analysis;explain	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793587958955_0yyhj	e0046913	hfeg0pkn003	n/a	digital	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792118902296_4efo6	e0039102	hfeg0pkn002	n/a	digital	analysis-Q&A;retrieval/code-comprehension	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791870002859_kvv66	e0045128	hfeg0plg78	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793616198613_fefaj	shaoyou	NA	n/a	digital	analysis-Q&A;NOFILE;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792495095612_vke2w	pdong	NA	n/a	digital	analysis-Q&A;NOFILE;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793151946022_18ry4	hbpeng	NA	n/a	digital	analysis-Q&A;NOFILE;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1789697789283_fg7ey	t0002596	NA	n/a	digital	analysis-Q&A;NOFILE;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793002542135_ijm3f	wei9liu	NA	n/a	digital	analysis-Q&A;NOFILE;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1790219471445_pnokd			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1792047122523_sqxy6			n/a		setup	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1788763403419_gqt57			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1793167611680_ahtlt			n/a		uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1791962616204_7j1bw	caozhang	hfhds209	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793004375421_dse5n	e0046913	hfeg0pkn003	n/a	eda_other	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1792981676632_bxnc8	zhengc	hfeg0plg66	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790126403703_fj73q	e02141	hfeg0pkn002	n/a	digital	debug/env-config;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792739133486_74dww			n/a		analysis-Q&A;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792056947936_36yj3	thomas1w		n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1788591418561_g9e41	haoyut		n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792205134941_5hbdw	hengbow		n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792829965577_rser7	jkxu		n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792568990736_5c450	han1li		n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1791973347667_tx5s5	e04201		n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1791964914156_it6n4	e0039102	hfeg0pkn002	n/a	verification	analysis-Q&A;retrieval/code-comprehension;weak-deliverable(old)	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793775927024_1stc5	shaoyou	hfeg0pkn003	n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793260818025_aw9d7	dsgao	hfhds201	n/a	verification	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792042544705_d1cg3	t0002441	hfhds201	n/a	eda_other	doc-search;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793776046349_80yiq	shaoyou	hfeg0pkn003	n/a	verification	NOFILE;wrong-domain	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793776433431_z6kn6	shaoyou	hfeg0pkn003	n/a	verification	NOFILE;wrong-domain	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793777039061_elali	shaoyou	hfeg0pkn003	n/a	verification	NOFILE;wrong-domain	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793777957678_cch2o	shaoyou	hfeg0pkn003	n/a	verification	NOFILE;wrong-domain	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1789528229737_7f3c4	jcgu	hfeg0pin003	n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793167889332_bfl29	jascperc	hfeg0pkn001	n/a	verification	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793170209567_2mfi6			n/a		duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1789552395398_wt5s2			n/a		duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793786351814_mmmtz	e0046913	hfeg0pkn003	n/a	digital	analysis;flow-driving	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793091608908_lzt3e	dummy	dummy	n/a		wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793603150610_nr884	thomas1w	hfeg0pkn005	n/a	digital	analysis	可造 (revived: retrieval/explain (old weak filter retired))	retrieval/explain case: deliverable=structured walkthrough; check() verifies correct identification of constructs/paths/signals
+1791946315674_hg1xu	shanliny	hfeg0pkn001	n/a	verification	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792992278510_lku2o	e0045144	hfeg0pkn002	n/a	digital	setup;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792724746849_gu1m2	lorikx	hfeg0pkn001	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1790596559451_9p8g2	clwang	hfeg0pkn005	n/a	digital	duplicate;wrong-domain	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793946881286_z34dy	t0002965	hfhds222	n/a	pnr_signoff	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1789979923847_aq5lg	johnl	hfeg0pkn001	n/a	digital	uncategorized	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1792488619552_mt7ua	johnl	hfeg0pkn001	n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793584116177_ox6r3	e0047722	hfeg0pkn002	n/a	eda_other	debug/env-config;wrong-domain;weak-deliverable(old)	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793953398904_e5my5			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1789451741660_7uwtz			n/a		wrong-domain;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1793245121084_56j3w	e0023936	hfhds201	n/a	eda_other	analysis;duplicate;wrong-domain	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792140744683_z5ett	jessegao	hfeg0pkn005	n/a	eda_other	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793070934364_gtyj5	easont	hfeg0pkn004	n/a	eda_other	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793070934364_gtyj5			n/a		analysis;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793688761923_zqew3			n/a		NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792052682006_dnu1x			n/a		NOFILE;wrong-domain	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793600222866_dswuv	e0047722	hfeg0pkn004	n/a	eda_other	analysis;duplicate;wrong-domain	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793932600947_c5gwq	johnl	hfeg0pkn001	n/a	digital	setup;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792409159286_g7hcn	shanliny	hfeg0pkn001	n/a	verification	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793098161450_74bnn	lorikx	10.129.2.10	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793097775623_cwx19	lorikx	10.129.2.10	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791797325736_lc81i	jason17w	hfeg0pnd002	n/a	verification	skill;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791897088355_b460k	jason17w	hfeg0pnd002	n/a	verification	skill;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791940907353_xh3mj	jason17w	hfeg0pnd002	n/a	verification	skill;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791942913378_xm22u	jason17w	hfeg0pnd002	n/a	verification	skill;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791944071628_pwhqb	jason17w	hfeg0pnd002	n/a	verification	skill;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1794227785944_i555n	e0046913	hfeg0pkn003	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793945103405_x8v81	dsgao	hfhds201	n/a	eda_other	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794221830421_oclzn	dandans	hfhds201	n/a	eda_other	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1794193758706_gwm47	tongfanl	hfhds201	n/a	eda_other	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1794129973388_q54e4	tongfanl	hfhds201	n/a	eda_other	analysis	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1793092177260_yseg9	fernandoy	hfeg0plg76	n/a	verification	uncategorized	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1792551877743_4i1w4	fernandoy	hfeg0plg76	n/a	verification	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793762019450_22gh5	e0039102	hfeg0plg74	n/a	eda_other	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793770222949_u5daf	e0039102	hfeg0plg74	n/a	eda_other	analysis;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793079745856_epy3m	t0002470	hfeg0plg101	n/a	verification	analysis	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1791961260627_mejpi	e13zhang	hfeg0pgn012	n/a	verification	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1792480126204_y737t	e13zhang	hfeg0pgn012	n/a	verification	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790600533401_vnze7	clwang	hfeg0pkn005	n/a	eda_other	trivial	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793779533537_k7668	e0039602	hfeg0pkn002	n/a	verification	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793692750441_cydnq	e0039602	hfeg0pkn002	n/a	eda_other	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793937823141_zdo8r	t0002038	hfeg0plg86	n/a	eda_other	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1794010590146_aqtdv	xinqiaoz	hfeg0pkn005	n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792047975640_tdmdj	qi3wang	hfhds209	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792053812772_9qa9d	aocao	hfhds227	n/a	verification	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793949945535_873cy			n/a		analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793706026720_4q4w1	weihanwu	hfeg0pfn104	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793170209567_2mfi6	jascperc	hfeg0pkn001	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792054934836_7adgf	aocao	hfhds227	n/a	verification	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792055475403_wuuc7	e0039102	hfeg0plg74	n/a	verification	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793268918911_brnqb	e02141	hfeg0plg56	n/a	digital	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792902413837_3p5vl	alanji	hfeg0plg99	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792033394584_xd7ut	tongfanl	hfhds201	n/a	digital	analysis	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1793237499232_nph58	jkxu	hfeg0pkn002	n/a	verification	analysis-Q&A	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1791446512697_3s3zx	xuebaok	hfeg0pkn002	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792378797897_0gv3z	thomas1w	hfeg0pkn002	n/a	verification	analysis;weak-deliverable(old)	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1792137927597_f4kc0	jackliu	hfeg0pkn003	n/a	verification	uncategorized	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1788871441686_fieju	harrys	hfeg0pkn002	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793779533537_k7668	e0039602	hfeg0pkn002	n/a	verification	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793953438523_pzo6g	e0039602	hfeg0pkn002	n/a	verification	skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1794201552569_r2yjr	e0039602	hfeg0pkn002	n/a	digital	duplicate;wrong-domain	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793861526761_lu4zi	daiweilu	hfeg0pfn090	n/a	verification	uncategorized	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1792399916731_sbaad	zmzhang	hfeg0pjn140	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1794189717347_1yqtd	lein	hfeg0pkn001	n/a	verification	analysis;retrieval/code-comprehension	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1793756662778_nfb5r	xmxu	hfeg0plg93	n/a	digital	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1792389512614_7z9re	williang	10.129.2.12	n/a	pnr_signoff	analysis-Q&A;analysis;skill	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793165432787_o5o6p	e0046913	10.129.2.12	n/a	digital	analysis;debug/env-config;setup	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1789898322144_yhqp5	mike	10.129.2.12	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1790652004587_8zuqr	mike	10.129.2.12	n/a	digital	skill;weak-deliverable(old)	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1792135280846_sr426	jackliu	10.129.2.12	n/a	digital	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793189553608_5uqoi	dsgao	10.129.32.75	n/a	eda_other	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792992278510_lku2o	e0045144	10.129.2.11	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790133793674_jwwqf	e02141	10.129.2.10	n/a	eda_other	debug/env-config;setup	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1793084065593_fg1kv	ghyang	10.129.2.12	n/a	eda_other	analysis-Q&A;analysis;wrong-domain	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793069063742_76i4q	wnyu	10.129.2.13	n/a	eda_other	analysis-Q&A;doc-search	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793603696817_p16i1	shanliny	10.129.2.10	n/a	digital	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791968010913_mnn5q	e04605	10.129.2.11	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792654922770_87wu6	tongfanl	10.129.2.13	n/a	verification	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793003840562_382ay	harrys	10.129.2.11	n/a	digital	analysis-Q&A;doc-search;skill	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792041543395_mss1b	e0039102	10.129.2.11	n/a	digital	analysis-Q&A;retrieval/code-comprehension;explain	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793186643056_muf2k	thomas1w	10.129.40.109	n/a	verification	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790490968281_6vy3t	mike	10.129.32.80	n/a	verification	NOFILE;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792060840051_yrdts	shanliny	10.129.2.10	n/a	verification	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791974855202_32935	shanliny	10.129.2.10	n/a	verification	analysis-Q&A;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791536684137_lpn8o	mike	10.129.32.80	n/a	eda_other	analysis-Q&A;setup	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1789375537537_uh4tz	lorikx	10.129.2.13	n/a	verification	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1791537885417_6h27d	mike	10.129.32.80	n/a	eda_other	analysis-Q&A;setup;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793179564697_11cny	clwang	10.129.2.14	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793244457637_k7z23	e0046913	10.129.2.12	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1789893226302_sh8uf	shanliny	10.129.2.10	n/a	verification	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792133360129_whu5z	lorikx	10.129.2.13	n/a	verification	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1790415942692_xbexl	jinhaoli	10.129.2.13	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1788421090460_fzx8i	jason17w	10.129.32.190	n/a	digital	flow-driving;skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1792841088751_bg11w	congyi	10.129.32.75	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1789449816263_xinm9	e0025522	hfeg0plg103	n/a	digital	flow-driving;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1789868617686_y7550	t0002470	hfeg0plg76	n/a	eda_other	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1792043028504_5szsv	alanji	hfeg0pgn145	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792053321007_ux82s	gracew	hfeg0pkn004	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1792548360759_l8989	tongfanl	hfhds201	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793240477462_vf2q3	ruisongs	10.129.33.216	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793704285912_k2x6m	daiweilu	10.129.32.83	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1794187704615_bmqho	e0039602	10.129.2.11	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1792804747547_8bgtd	ruisongs	10.129.33.216	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793969287953_187i0	johnl	10.129.33.246	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793154396942_2idq4	mwhu	10.129.35.74	n/a	eda_other	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793931604619_df52y	chunfang	10.129.2.10	n/a	digital	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1792112971082_l8ljo	e13zhang	10.129.35.111	n/a	digital	analysis-Q&A;analysis;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791792527981_q4skx	e0045128	hfeg0pkn005	n/a	pnr_signoff	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793790637246_aafag	e0046718	hfeg0plg76	n/a	pnr_signoff	analysis-Q&A;explain;trivial	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794215537758_5or9z	e0046913	hfeg0pkn003	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793330336899_zh3eq	lorikx	hfeg0pkn004	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793326182885_wyezr	stevenh	hfeg0pgn145	n/a	digital	analysis-Q&A;analysis;explain	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793177058917_hzyu6	fernandoy	hfeg0plg76	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793259975527_lilaj	lorikx	hfeg0pkn004	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1794208637739_ddprg	daiweilu	hfhds209	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792742776753_6yrpu	lorikx	hfeg0pkn004	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1792983391097_swhjl	stevenh	10.129.35.244	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793172758983_0kv56	jascperc	hfeg0pkn001	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1794395853966_tef8l	yinyus	hfeg0plg66	n/a	digital	duplicate;wrong-domain	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1794386548710_l4tre	xinqiaoz	hfeg0pkn002	n/a	pnr_signoff	trivial	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1794206548447_artkz			n/a		analysis-Q&A;skill	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794466237270_iyyzq	jerrychu	hfeg0pkn003	n/a	eda_other	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1794466250329_uqvno	zhengc	hfeg0pkn003	n/a	digital	analysis-Q&A;analysis;setup	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793343472817_6tswp	e0039602	hfeg0plg95	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793950397255_x9i0b	e0039602	hfeg0plg95	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794382021638_eadk1	alanji	hfeg0plg99	n/a	digital	analysis;debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1794449150836_cdrm1	daiweilu	hfeg0pgn145	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794571860576_p0fqe	johnl	hfeg0pkn001	n/a	pnr_signoff	analysis-Q&A;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794465633184_9scu4	e0045128	hfeg0pkn005	n/a	digital	trivial;NOFILE;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794468675464_p5pi7	dsgao	hfeg0pkn001	n/a	verification	analysis-Q&A;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794385756928_jeij7	e0039102	hfeg0pbn16	n/a	verification	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794290494748_5u1j9	e0039102	hfeg0pbn16	n/a	verification	analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1794291542588_oh5bd	e0039102	hfeg0pbn16	n/a	verification	analysis;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793180163442_wz7gy	e03179	hfeg0plg15	n/a	eda_other	NOFILE;INFRA;wrong-domain	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792052491292_p5laa	xinqiaoz	hfeg0plg15	n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1790824372525_3f13i	sophiaw	hfeg0plg09	n/a	eda_other	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791771378239_ceyvq	e0042624	hfeg0pkn003	n/a	eda_other	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794363187550_713t3	miccao	hfeg0plg37	n/a	eda_other	analysis;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1793675227759_8mmd6	junwangt	hfeg0plg07	n/a	eda_other	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1791947206474_jhsi9	tongfanl	hfhds206	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792485371006_tma34	claire1l	hfeg0pkn004	n/a	eda_other	analysis;doc-search	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1794190756187_ipil7	jasminej	hfeg0plg52	n/a	eda_other	analysis-Q&A;weak-deliverable(old)	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791960224780_tj1kl	hengbow	hfeg0plg94	n/a	eda_other	analysis;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1791769075277_w7us0	e0017906	hfeg0plg96	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793272345438_5avgh	gokuguo	hfeg0plg53	n/a	eda_other	analysis-Q&A;analysis;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1791960240913_4drpt	hengbow	hfeg0plg94	n/a	eda_other	analysis;duplicate;wrong-domain	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793156257609_xqkry	daiweilu	hfeg0pgn145	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794453586384_srob6	jason17w	hfeg0pnd002	n/a	digital	trivial	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1794539090854_vqpd5	wenfeiz	hfeg0pkn004	n/a	digital	doc-search	可造 (revived: doc-search (old weak filter retired))	doc case: deliverable=doc/summary; check() verifies correct coverage of required topics
+1792571741703_ui4hv	ruisongs	hfeg0pfn087	n/a	digital	analysis-Q&A;debug/env-config;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794446207194_gaopz	ericw	hfhds201	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794445729302_9kc99	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794397613511_dwr4p	guomings	hfeg0pkn003	n/a	digital	trivial	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1792569513787_jq6lq	mwxi	hfhds228	n/a	eda_other	debug/env-config;INFRA;not-authentic	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1789453406100_p28m8	e0017484	hfeg0plg54	n/a	digital	analysis-Q&A;analysis;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1793867092418_uemp5	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;retrieval/code-comprehension	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793873301625_fg7hf	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794482509558_n7ot5	szcao	hfeg0pgn145	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1791854347080_pits0	johnl	hfeg0pkn001	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793172663300_7hv1e	ruisongs	hfeg0pfn087	n/a	digital	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794206891160_wvtya	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794450614593_7oy74	thomas1w	hfeg0pjn099	n/a	digital	debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1789975587201_fniqj	alanji	hfeg0pjn100	n/a	digital	analysis;weak-deliverable(old)	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1793003474253_vgpcy	harrys	hfeg0pkn002	n/a	digital	analysis-Q&A;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791280343229_bp54q	mwxi	hfeg0pkn003	n/a	digital	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794377042867_o5njo	xrxiong	hfeg0pkn001	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793169406310_49kzt	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794469877801_685bd	eric1ch	hfeg0pkn001	n/a	digital	skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1793704618870_pz29g	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791785549996_uaa3b	kiaray	hfeahpc505	n/a	digital	skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1793865143182_nwmze	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791956799319_0ykok	e0046686	hfeg0pkn005	n/a	digital	doc-search	可造 (revived: doc-search (old weak filter retired))	doc case: deliverable=doc/summary; check() verifies correct coverage of required topics
+1791602750335_dtdfk	jason17w	hfeg0pnd002	n/a	digital	skill;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791896374185_vc5uj	e0014566	hfeg0plg58	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1793694635228_d56nb	ruisongs	hfeg0pfn087	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793611777735_q9ulk	ruisongs	hfeg0pfn087	n/a	verification	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793250981130_kq81c	thqu	hfeg0pkn099	n/a	digital	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792459025453_8o316	max7c	hfeg0pkn004	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794398653895_gl3jy	e0045144	hfeg0pkn005	n/a	digital	analysis-Q&A;doc-search	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1792717840232_bx87p	adaml	hfeg0pkn002	n/a	eda_other	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794394549939_ia08o	xy1zhang	hfeg0pgn145	n/a	verification	analysis-Q&A;analysis;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791266472578_d7u53	adminai	hfeg0pkn004	n/a	eda_other	doc-search;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792046360526_bbflu	e0046686	hfeg0pkn005	n/a	eda_other	doc-search	可造 (revived: doc-search (old weak filter retired))	doc case: deliverable=doc/summary; check() verifies correct coverage of required topics
+1791337441726_g31h2	adminai	hfeg0pkn004	n/a	digital	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794364808289_9fptm	e0041392	hfeg0pkn001	n/a	digital	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793927271206_0ekf9	e0030085	hfeg0plg80	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793692750441_cydnq	e0039602	hfeg0plg95	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794446541461_udmg8	lein	hfeg0plg69	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793092177260_yseg9	fernandoy	hfeg0plg76	n/a	pnr_signoff	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1792551877743_4i1w4	fernandoy	hfeg0plg76	n/a	pnr_signoff	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1789976011359_06htj	mike	hfhds211	n/a	pnr_signoff	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1790650962650_7bg20	fxian	hfeg0plg74	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791962616204_7j1bw	caozhang	hfhds208	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793778069961_gf2ud	tongfanl	hfhds206	n/a	verification	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791784530809_sr0ca	tongfanl	hfhds206	n/a	verification	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791686047150_w4uy2	jason17w	hfeg0pnd002	n/a	pnr_signoff	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1793348917218_h8pcp	jinhaoli	hfeg0plg107	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794385786325_gaekj	e0039102	hfeg0plg74	n/a	digital	NOFILE	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794550682017_axn69	zhengc	hfeg0pgn145	n/a	verification	NOFILE;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1794635703422_kem74	ericw	hfeg0pfn034	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794548666331_7y20f			n/a		analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794551642078_rqp94	chuanqiz	hfeg0plg79	n/a	verification	analysis-Q&A;analysis;trivial;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1794551446322_sco0b	eva1li	hfeg0plg74	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794557869660_0g9n6	thomas1w	hfeg0plg98	n/a	verification	analysis;debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1794561779908_voyfu	e0014036	hfeg0plg76	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794555284506_lopt8	congyi	hfeg0plg97	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794551664857_x41qu	chuanqiz	hfeg0pkn005	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1794550196398_kqydq	e02141	hfeg0pkn005	n/a	eda_other	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1794550071403_m8srw	e02141	hfeg0pkn005	n/a	eda_other	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+1792671863382_ibrpp	jkxu	hfhds206	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+as306	e02141	hfeg0plg56	n/a		wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
+nn77i	t0002470	hfeg0plg76	n/a		uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+7gvna	thomasz	hfeg0plg92	n/a		retrieval/code-comprehension	可造 (revived: retrieval/explain (old weak filter retired))	retrieval/explain case: deliverable=structured walkthrough; check() verifies correct identification of constructs/paths/signals
+5qlqi	lorikx	hfeg0plg52	n/a		analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+lxord	eva1li	hfeg0plg74	n/a		analysis-Q&A;skill	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+azuve	xingx	hfeg0plg98	n/a		trivial	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+f4n69	laryu	hfeg0plg92	n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+ay35u	e13zhang	hfeg0plg15	n/a		analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+jka85	jason17w	hfeg0pnd002	n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1x0zd	e0030085	hfeg0plg80	n/a		analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+sucst	e0039602	hfeg0plg95	n/a		debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+p6glk	e0039102	hfeg0plg74	n/a		retrieval/code-comprehension;skill	可造 (revived: retrieval/explain (old weak filter retired))	retrieval/explain case: deliverable=structured walkthrough; check() verifies correct identification of constructs/paths/signals
+qwx61	thomasz	hfeg0plg92	n/a		skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+iyqdr	thomasz	hfeg0plg92	n/a		skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+bftii	jason17w	hfeg0pnd002	n/a		doc-search	可造 (revived: doc-search (old weak filter retired))	doc case: deliverable=doc/summary; check() verifies correct coverage of required topics
+1793762245106_h1of4	jason17w	hfeg0pnd002	n/a	digital	analysis-Q&A;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793762224725_qrd72	jason17w	hfeg0pnd002	n/a	digital	analysis-Q&A;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1793762194315_dvchf	jason17w	hfeg0pnd002	n/a	digital	analysis-Q&A;duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
+1789539770606_2ga1l			n/a		analysis-Q&A;analysis;skill	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1793930174180_1suhd			n/a		uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1790837731203_a6f23			n/a		INFRA;not-authentic	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1791785530444_aaqrb			n/a		skill	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1792135972903_3si95			n/a		analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791942254525_bd1k2			n/a		skill;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
+1783080146131_ebokr			n/a		uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1790230242506_8h59z			n/a		skill;not-authentic	可造 (revived: skill (old weak filter retired))	skill case: deliverable=skill script; check() verifies execution on hidden input
+1792995847117_mon3r			n/a		debug/env-config	可造 (revived: debug/env-config (old weak filter retired))	debug case: deliverable=root-cause diagnosis; check() verifies correct error id + fix direction
+1793607738033_9ufjy			n/a		analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1789884434870_ilkea			n/a		analysis	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
+1791507262889_xotf3			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
+1793241105381_nurc0	shanliny	hfeg0pkn005	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
+1791946267022_oqri7	xingx	hfeg0pkn002	n/a	digital	retrieval/code-comprehension;trivial	可造 (revived: retrieval/explain (old weak filter retired))	retrieval/explain case: deliverable=structured walkthrough; check() verifies correct identification of constructs/paths/signals
