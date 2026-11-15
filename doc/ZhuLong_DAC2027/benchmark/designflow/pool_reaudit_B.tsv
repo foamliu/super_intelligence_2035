@@ -112,7 +112,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1793326532932_fxfox.messages.json	tongni	hfeg0pkn001	209	spice_sim	rtl_python_dup	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793257968522_mp3us.messages.json	tongni	hfeg0pkn001	164	spice_sim	vcc2sc_dup	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793600748187_dq8bz.messages.json	adaml	hfeg0pkn002	621	spice_sim	no_user_text	待定	待深读 trace 后定
-1793866732639_cr42l					consulting: k库流程 explanation (johnl)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793866732639_cr42l					consulting: k库流程 explanation (johnl)	不可造	cross-shard false-pos (r656 dedup): 已是 shard D case EDA-Eval-DesignFlow-PrimeLibFlowAnalyze-001; 旧判定=consulting: k库流程 explanation (johnl)
 1793932600947_c5gwq					digital: DC synthesis script migration non-spice (johnl)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793969287953_187i0					consulting: which synthesis version (johnl)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1793956931048_y1tu4					handoff resume context summary (xinqiaoz)	待定	待深读 trace 后定
@@ -121,7 +121,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1793963596117_aftvk					layout shardC: netlist file path (jieran)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793948987582_oylx6					DRC shardC resume: DNW_ENC bad pattern fix (xxchen)	待定	待深读 trace 后定
 1793967043660_sbaad					digital: verilog signal name search (zmzhang)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1793872363785_ty6oq					consulting: pcell script organization (chengleiy)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793872363785_ty6oq					consulting: pcell script organization (chengleiy)	不可造	cross-shard false-pos (r656 dedup): 已是 shard C case EDA-Eval-DesignFlow-VirtuosoStartupDiag-001; 旧判定=consulting: pcell script organization (chengleiy)
 1793879392010_hyalb					LVS shardC: license timeout diagnosis (chengleiy)	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
 1793943237527_wojbr					consulting: TASK_REV_CALI_BACKEND execute (e0046686)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1793965015681_q3lrp					digital shardA: verilog signal search (graywang)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -129,7 +129,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1793600858808_la00c.messages.json	e0029308	hfeg0pkn001	339	spice_sim	collaborative-continuation (e0029308 '修改DFF仿真结果判定 先从hold来 我来给你方案' - multi-turn c	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793345773037_65daa					prior-rejected dup (重题, MEMORY line 4/8)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793243641918_xcuds					prior-rejected consulting (咨询)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
-1793779465508_q9aja					prior-rejected consulting (咨询)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793779465508_q9aja					prior-rejected consulting (咨询)	不可造	cross-shard false-pos (r656 dedup): 已是 shard A case EDA-Eval-DesignFlow-WaveviewModuleUpdate-001; 旧判定=prior-rejected consulting (咨询)
 1793685165147_ga396					prior-rejected (MEMORY line 4)	待定	待深读 trace 后定
 1788946694927_w5knw					prior-rejected old+software-dev	待定	待深读 trace 后定
 1792045605929_rp1xk					prior-rejected (MEMORY line 4)	待定	待深读 trace 后定
@@ -187,7 +187,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1793847299644_hu27g					root-cause: why sim exited (thomasz@pkn002)	待定	待深读 trace 后定
 1783323056207_rc0jh					GUI trivial: connect virtuoso (e0014566@pkn005)	待定	待深读 trace 后定
 1793668301608_71ttn					continuation fragments (tongni@pkn001)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1793150158938_6rvi0					DRC report consulting (michael1l@pkn003)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793150158938_6rvi0					DRC report consulting (michael1l@pkn003)	不可造	cross-shard false-pos (r656 dedup): 已是 shard C case EDA-Eval-DesignFlow-DRCReportIpAudit-001; 旧判定=DRC report consulting (michael1l@pkn003)
 1790047784806_lsc1e					run existing RC flow (simplec@pkn002)	待定	待深读 trace 后定
 1791877271220_1fnn2					root-cause+batch scheduling (rongtaoy@pkn002)	待定	待深读 trace 后定
 1793093482443_38unc					sysadmin: adjust display (e0047695@pkn005)	待定	待深读 trace 后定
@@ -252,7 +252,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1790575149766_y8vwx					alenxu@pkn003: 首轮'2' = 单字符菜单选择, 无意图	待定	待深读 trace 后定
 1793668468329_3qaax					mwxi@pkn002: Disk_Usage scan_os V5 脚本编辑 = Python disk工具, 非spice(spice匹配假阳性)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1791961257165_nohd9					xinweif@pkn005: '你可以干什么' = trivial greeting	待定	待深读 trace 后定
-1791509106344_8zuer					consulting: 学习分析sp文件组织结构+总结仿真方案	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
+1791509106344_8zuer					consulting: 学习分析sp文件组织结构+总结仿真方案	不可造	cross-shard false-pos (r656 dedup): 已是 shard D case EDA-Eval-DesignFlow-DQTXStim-001; 旧判定=consulting: 学习分析sp文件组织结构+总结仿真方案
 1790735750467_9wlpy					consulting: 分析run.py+解释CPM流程	可造	explain/介绍 Q&A → 造「结构化讲解报告」check 验关键概念/端口/拓扑点覆盖
 1783578981323_btryq					non-spice FP: 优化.bashrc	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1790906016531_6iesh					non-spice FP: LSF queue proj tagging	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -299,7 +299,7 @@ qnm9e					Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, no
 1791444783469_mwoue					scout_1108_20: pkn003 miccao DRC deck modify from DFIM report, physical_verify, 	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1791963281932_4a852					scout_1108_20: pkn004 e0039602 netlist cell->simlib_base.sv mapping, schematic_n	待定	待深读 trace 后定
 1789895218929_1xhgy					scout_1108_20: pkn003 miccao AutoCell TCL flow gen (stdcell), layout/tcl, REJECT	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1793794350956_fi203					scout_1108_20: pkn005 chengleiy innovus project analysis, APR/innovus, REJECT sh	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
+1793794350956_fi203					scout_1108_20: pkn005 chengleiy innovus project analysis, APR/innovus, REJECT sh	不可造	cross-shard false-pos (r656 dedup): 已是 shard C case EDA-Eval-DesignFlow-InnovusProjLogDiag-001; 旧判定=scout_1108_20: pkn005 chengleiy innovus project analysis, APR/innovus, REJECT sh
 1789545344007_xchvr					scout_1108_20: pkn005 ellawu calibre STIcmp.rule OPEN1 LVS error, physical_verif	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793260065712_n78nn					scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user	待定	待深读 trace 后定
 1793684384632_6dmno					scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user	待定	待深读 trace 后定
@@ -679,7 +679,7 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1793021121702_24h7g	hemiao1w	hfeg0plg75	227	characterization	schematic annotation: U#1 read path, U#2 insert hierarchical text labels into sc	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793964715214_ddg83	zhililu	hfeg0pkn002	46	spice_sim	netlist-creation error debug: U#1 paste ADE netlister error (failed at creating 	待定	待深读 trace 后定
 1794293848674_wy85y	xinqiaoz	hfeg0plg58	0	spice_sim	handoff skill continuation	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1793857124040_5i5bo	zqzhan	hfeg0plg52	0	spice_sim	feishu doc fetch consultation	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793857124040_5i5bo	zqzhan	hfeg0plg52	0	spice_sim	feishu doc fetch consultation	不可造	cross-shard false-pos (r656 dedup): 已是 shard D case EDA-Eval-DesignFlow-TwoStepOcNetlistAudit-001; 旧判定=feishu doc fetch consultation
 1794291677559_d6tzr	zhenglu	hfeg0plg52	0	spice_sim	PDK model info summarize consultation	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1794279080046_z999w	aocao	hfeg0plg52	0	spice_sim	hammer_count.rpt collect verilog regr wrong-shard A	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794288882731_kjeit	e0039602	hfeg0plg07	0	spice_sim	verilog_lib diff consultation	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
@@ -702,7 +702,7 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1794311735311_4msuj	xinqiaoz	hfeg0plg58	0	spice_sim	PDK QA issue-handler wrong-domain	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794278956495_qw3n6	xinqiaoz	hfeg0plg58	0	spice_sim	context-summary continuation PDK QA	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794296966966_l4tfv	shushengz	hfeg0pkn005	0	spice_sim	find LP6 waveform file-search consultation	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
-1794221506176_tdt0k	boyangma	hfeg0plg58	0	spice_sim	电源 explanation consultation	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1794221506176_tdt0k	boyangma	hfeg0plg58	0	spice_sim	电源 explanation consultation	不可造	cross-shard false-pos (r656 dedup): 已是 shard D case EDA-Eval-DesignFlow-PowerSupplyHierInventory-001; 旧判定=电源 explanation consultation
 1794298878710_riotl	lein	hfeg0pkn005	0	spice_sim	lpddr6 netlist path analysis wrong-shard A	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793869480489_7kote	e0027609	hfeg0pkn005	0	spice_sim	查看电路图结构 explanation	待定	待深读 trace 后定
 1794224138220_25gxe	ziyuny	hfeg0plg52	0	spice_sim	session history meta	待定	待深读 trace 后定
@@ -742,7 +742,7 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1793150137494_widtp	unknown	unknown	0	spice_sim	DDR6 spec translation	待定	待深读 trace 后定
 1793788828764_coodr	unknown	unknown	0	spice_sim	DRC/LVS conn_layer wrong-shard C	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794317548962_pksze	unknown	unknown	0	spice_sim	PDK_QA DRC handoff wrong-shard	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1793006622937_6kot7	unknown	unknown	0	spice_sim	calibre doc study note consultation	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793006622937_6kot7	unknown	unknown	0	spice_sim	calibre doc study note consultation	不可造	cross-shard false-pos (r656 dedup): 已是 shard C case EDA-Eval-DesignFlow-SVRFDeckCatalog-001; 旧判定=calibre doc study note consultation
 1793176301340_bme92	my7li	hfeg0pkn004	0	spice_sim	skill-loading: dqtool skill_tracer.py dev	待定	待深读 trace 后定
 1793688752516_jd1wq	e0045488	hfeg0pkn004	0	spice_sim	wrong-shard C: Virtuoso highlight gen_hilight.py	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794214637465_iqj11	shaoyou	hfeg0plg105	0	spice_sim	wrong-shard D: waveform display	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
