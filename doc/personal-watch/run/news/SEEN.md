@@ -2757,3 +2757,30 @@
 | 2026-11-15 | 联想提出「词元工厂」：绿电进、Token 出，称年产 2000 万亿 Token、成本降 70% | 量子位 | https://www.qbitai.com/2026/11/510094.html |
 | 2026-11-15 | 量子位：英伟达员工集体请愿「让老黄回家」，并传董事会接触 Arm CEO 作为潜在继任者 | 量子位 | https://www.qbitai.com/2026/11/510297.html |
 | 2026-11-15 | 消息称松下计划下周二发布 L 卡口电影摄影机：类似索尼 FX3，不支持拍照 | IT之家 | https://www.ithome.com/1/027/300.htm |
+| 2026-11-15 | 三星 One UI 9.5 将为高端 Galaxy 设备带来系统级 AI 智能体 Personal Agent Core | IT之家 | https://www.ithome.com/1/027/349.htm |
+| 2026-11-15 | 开发者借助 Claude 开发出体积仅 97KB 的水下探索模拟 Abyssal Garden | IT之家 | https://www.ithome.com/1/027/406.htm |
+| 2026-11-15 | 索尼新专利：PlayStation 手柄或支持与手机一碰传输付款与账户信息 | IT之家 | https://www.ithome.com/1/027/407.htm |
+| 2026-11-15 | 华为 MateBook Fold S 开启预订：折叠 10.2 / 展开 14.7 英寸，配 Live 小方屏 | IT之家 | https://www.ithome.com/1/027/341.htm |
+| 2026-11-15 | 谋先飞发布物理仿真引擎 MotrixSim 1.0，CPU 版基于 Rust、兼容 MJCF | IT之家 | https://www.ithome.com/1/027/340.htm |
+| 2026-11-15 | 京成电铁 Skyliner 座位预约系统遭非法访问：最多约 337 万条用户信息或泄露 | IT之家 | https://www.ithome.com/1/027/356.htm |
+| 2026-11-15 | 研究员越狱 Switch 2 并用 CAN Commander 经 CAN 总线操控特斯拉 | IT之家 | https://www.ithome.com/1/027/355.htm |
+| 2026-11-15 | May Mobility 将自动驾驶系统整合到大众 ID.Buzz，计划 2031 年投放 1 万辆 | IT之家 | https://www.ithome.com/1/027/358.htm |
+| 2026-11-15 | Microsoft 365 宕机时日本企业重启传真机：超 78% 受访企业依赖微软产品 | IT之家 | https://www.ithome.com/1/027/342.htm |
+| 2026-11-15 | Somnium Space 将重返 Steam，Steam 版预计全面清除加密货币与 NFT 内容 | IT之家 | https://www.ithome.com/1/027/405.htm |
+| 2026-11-15 | 快手公益启动「启智星」AI 赋能教育计划：三年覆盖 2000 余所乡村学校 | IT之家 | https://www.ithome.com/1/027/400.htm |
+| 2026-11-15 | 首款获 HSK 官方授权的中文学习机（荣耀 HSK 专业版）在世界中文大会首秀 | IT之家 | https://www.ithome.com/1/027/408.htm |
+| 2026-11-15 | GDC 调查：40% 游戏从业者使用生成式 AI，55% 认为对行业有负面影响 | IT之家 | https://www.ithome.com/1/027/323.htm |
+| 2026-11-15 | 特斯拉 Cybercab 买断后仍须订阅每月 299 美元 Autonomy，禁贴膜禁改装 | IT之家 | https://www.ithome.com/1/027/350.htm |
+| 2026-11-15 | Sensor Tower：《GTA6》预购 1213 万份、收入约 11.8 亿美元，PS 占 75% | IT之家 | https://www.ithome.com/1/027/362.htm |
+| 2026-11-15 | 《GTA6》官方原声专辑曲目经经销商货架提前曝光，原定 11 月 19 日上架 | IT之家 | https://www.ithome.com/1/027/322.htm |
+| 2026-11-15 | 消息称黄仁勋参与英伟达继任遴选，已与至少一位新 CEO 候选人通话 | IT之家 | https://www.ithome.com/1/027/418.htm |
+| 2026-11-15 | Politico：科技界预期黄仁勋将重回硅谷，多家公司有意伸出橄榄枝 | IT之家 | https://www.ithome.com/1/027/354.htm |
+| 2026-11-15 | 黄仁勋辞职令 AI 初创融资承压：英伟达今年参与 105 轮融资、常为最大投资方 | IT之家 | https://www.ithome.com/1/027/339.htm |
+| 2026-11-15 | SK 海力士加快 HBM4 设备投资：主攻封装与测试，目标明年上半年投产 | IT之家 | https://www.ithome.com/1/027/392.htm |
+| 2026-11-15 | TCL 华星赵军：内存飙涨抑制 OLED 需求；2026 年折叠机需求约 2800 万台 | IT之家 | https://www.ithome.com/1/027/372.htm |
+| 2026-11-15 | 游族网络子公司获 14.28 亿元闪存颗粒订单（此前已签 42.25 亿元 GPU 采购） | IT之家 | https://www.ithome.com/1/027/399.htm |
+| 2026-11-15 | 消息称 iPhone 18 Pro 系列销量达 782.87 万台（截至 11 月 7 日，博主口径） | IT之家 | https://www.ithome.com/1/027/411.htm |
+| 2026-11-15 | 洛图科技：2026Q3 中国电视零售量 554 万台同比 -5.3%、均价 4055 元同比 +3.4% | IT之家 | https://www.ithome.com/1/027/393.htm |
+| 2026-11-15 | 宝马：若消费者有强烈需求，愿在新世代车型上带回更多实体按键 | IT之家 | https://www.ithome.com/1/027/415.htm |
+| 2026-11-15 | 中科曙光万伟：高速互连是破解算力集群规模瓶颈的关键（scaleFabric） | IT之家 | https://www.ithome.com/1/027/320.htm |
+| 2026-11-15 | 韩国税务师「状元」考生 AI 作弊案（只登记·按禁令 9 不采用） | IT之家 | https://www.ithome.com/1/027/357.htm |

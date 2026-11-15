@@ -81,6 +81,18 @@
 
 ---
 
+## §E.1 本轮采编工具链（2026-11-15 18:0x 第 281 轮 · 实测可用）
+
+| 工具 | 用途 | 说明 |
+|:--|:--|:--|
+| `run/news/fetch.py` | **一切抓取**（RSS / 正文 / 配图） | 零依赖，只用 `urllib`。🚫 **不要用 requests / urllib3**：本机 `~/.local/lib/python3*/site-packages/urllib3/_collections.py` 行为异常，会**静默截断正文**。用法：`get(url, referer=None)` → `{status,ctype,body,url,err}`；`get_text(url, referer)` → str。IT之家图片需 `referer='https://www.ithome.com/'` 否则防盗链。 |
+| `run/news/ith_dedup.py` | IT之家 RSS 60 条去重 | `python3 news/ith_dedup.py` → 打印 `RSS_ITEMS / SEEN_HIT / NEW` + NEW 列表；判重用**子串**（`'1/027/<id>.htm' in SEEN`）。 |
+| 采编工作区 | `run/news/batch281/` | 每条新闻一个 `NL-*.md`（人工判读结论：入账 / 弃用 + 理由），`INDEX.tsv` 汇总；`news/2026-11-15.md` 第 281 轮**只**从这些文件组装，不凭记忆写。 |
+
+⚠️ **本机环境两坑（必须记）**：
+1. 🚫 **禁止 `re` 里用「前导 `/` 的路径式 pattern」** —— 实测 `re.search('/1/027/', 'x/1/027/302.htm')` 返回 **None**（去掉前导 `/` 就正常）。去重判据一律 `substr in text` 或 `text.find(substr)`。
+2. 🚫 **不要在 `run/` 目录下跑 `python3 - <<'PY'` 读 SEEN.md** —— 同目录内的工作文件会干扰读取（实测同一脚本输出会在两段 SEEN 之间漂移：一会儿说 `1/027/320` 在、一会儿说不在）。**一律写脚本文件到 `/tmp/` 再跑**（`/tmp/*.py`），或改用 `news/ith_dedup.py`。
+
 ## §E 更新纪律
 - **每 +20 篇作品**，或**风格明显变化**时 → 更新本文件（保留旧版对比）。
 - 每次发文前 **自检四项**：**开头（直给/反问）· 句长（1–2 句）· emoji（不用）· 结尾（开放问题）**。
