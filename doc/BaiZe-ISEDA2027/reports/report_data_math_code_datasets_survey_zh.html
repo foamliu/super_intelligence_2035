@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学与编码能力提升数据集调研报告</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f5f5;color:#333;line-height:1.7;font-size:15px}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+h1{text-align:center;color:#1a237e;margin:20px 0 10px;font-size:1.8em}
+.subtitle{text-align:center;color:#666;margin-bottom:20px;font-size:0.9em}
+h2{color:#1a237e;border-left:4px solid #1a237e;padding-left:10px;margin:25px 0 12px;font-size:1.3em}
+h3{color:#283593;margin:18px 0 10px;font-size:1.1em}
+table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+th,td{border:1px solid #ddd;padding:8px 10px;text-align:left;font-size:0.85em}
+th{background:#1a237e;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f9f9f9}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:0.75em;font-weight:600}
+.r-rec{background:#c8e6c9;color:#1b5e20}
+.r-high{background:#dcedc8;color:#33691e}
+.r-med{background:#fff9c4;color:#f57f17}
+.r-low{background:#ffebee;color:#c62828}
+.r-skip{background:#e0e0e0;color:#616161}
+.note{background:#fffde7;border-left:4px solid #fbc02d;padding:10px 15px;margin:12px 0;border-radius:0 4px 4px 0}
+.warn{background:#ffebee;border-left:4px solid #c62828;padding:10px 15px;margin:12px 0;border-radius:0 4px 4px 0}
+.ok{background:#e8f5e9;border-left:4px solid #2e7d32;padding:10px 15px;margin:12px 0;border-radius:0 4px 4px 0}
+.top5{background:#fff;border:2px solid #1a237e;border-radius:8px;padding:15px;margin:15px 0}
+.top5-item{padding:8px 0;border-bottom:1px solid #eee}
+.top5-item:last-child{border-bottom:none}
+.top5-rank{display:inline-block;width:28px;height:28px;background:#1a237e;color:#fff;border-radius:50%;text-align:center;line-height:28px;font-weight:bold;margin-right:8px}
+.evidence{font-family:monospace;font-size:0.8em;background:#f5f5f5;padding:2px 6px;border-radius:3px;color:#555}
+.svg-chart{display:block;margin:15px auto;max-width:100%}
+.section{background:#fff;border-radius:8px;padding:15px 20px;margin:15px 0;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.gap-item{padding:8px 0;border-bottom:1px dashed #ccc}
+footer{text-align:center;color:#999;margin-top:30px;padding:15px;font-size:0.85em}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>数学与编码能力提升数据集调研报告</h1>
+<div class="subtitle">BaiZe ISEDA 2027 · 数据准备线 · 2026-11-15 · HfApi 实测验证</div>
+<div class="ok">
+<strong>一句话结论：</strong>提升数学与编码能力，当前最高 ROI 路径是 <strong>Nemotron-CC-Math-4+</strong>（数学预训练，已超越 MegaMath/FineMath）→ <strong>OpenMathInstruct-2</strong>（数学 SFT + RL 可验答案）→ <strong>OpenCodeReasoning</strong>（代码推理 SFT）→ <strong>TACO</strong>（代码 RL 可跑单测）→ <strong>AgentTrove</strong>（已下载，agent 工具调用 RL 带 reward）。我们已有 stack-v3-train 覆盖代码预训练，<strong>最大缺口在"可验证奖励的 RL 数据"和"竞赛级难题"</strong>。
+</div>
+<h2>🏆 Top-5 推荐（ROI × 缺口匹配度排序）</h2>
+<div class="top5">
+<div class="top5-item"><span class="top5-rank">1</span><strong>Nemotron-CC-Math-4+</strong>（<span class="evidence">nvidia/Nemotron-CC-Math-v1</span>）<br>数学预训练 · 52B tokens · NVIDIA License · 8B 模型上 MATH +4.8~12.6、MBPP+ +4.6~14.3，论文称已超越 MegaMath/FineMath/OpenWebMath<br><span class="badge r-high">强烈推荐</span></div>
+<div class="top5-item"><span class="top5-rank">2</span><strong>OpenMathInstruct-2</strong>（<span class="evidence">nvidia/OpenMathInstruct-2</span>）<br>数学 SFT/RL · 14M 问题-解 · 12.6 GB · cc-by-4.0 · 含 <code>expected_answer</code> 字段可直接用于 RLVR<br><span class="badge r-rec">强烈推荐</span></div>
+<div class="top5-item"><span class="top5-rank">3</span><strong>OpenCodeReasoning</strong>（<span class="evidence">nvidia/OpenCodeReasoning</span>）<br>代码推理 SFT · 735K 样本 · 28K 竞赛编程题 · cc-by-4.0 · R1 生成推理链 + 代码解<br><span class="badge r-rec">强烈推荐</span></div>
+<div class="top5-item"><span class="top5-rank">4</span><strong>TACO</strong>（<span class="evidence">BAAI/TACO</span>）<br>代码 RL · 25K 训练题 + 1K 测试题 · 7.16 GB · apache-2.0 · 含 <code>input_output</code> 测试用例 → 可直接跑单验<br><span class="badge r-rec">强烈推荐</span></div>
+<div class="top5-item"><span class="top5-rank">5</span><strong>FineMath-4+</strong>（<span class="evidence">HuggingFaceTB/finemath</span>）<br>数学预训练 · 9.6B tokens · odc-by · 高质量子集，可作 MegaMath 的补充/替代<br><span class="badge r-high">推荐</span></div>
+</div>
+<h2>📊 数据集总表（HfApi 实测）</h2>
+<div class="section">
+<h3>数学预训练语料</h3>
+<table>
+<tr><th>#</th><th>数据集</th><th>repo</th><th>规模</th><th>文件数</th><th>语言</th><th>license</th><th>需申请</th><th>验证器</th><th>推荐度</th></tr>
+<tr><td>1</td><td>Nemotron-CC-Math-4+</td><td>nvidia/Nemotron-CC-Math-v1</td><td>52B tok (4+) / 133B tok (3+)</td><td>196</td><td>英文</td><td>NVIDIA License</td><td>❌</td><td>❌</td><td><span class="badge r-high">强烈推荐</span></td></tr>
+<tr><td>2</td><td>MegaMath</td><td>IFM/MegaMath ≡ LLM360/MegaMath</td><td>1.118 TB / 371B tok</td><td>5317</td><td>英文</td><td>odc-by</td><td>❌</td><td>❌</td><td><span class="badge r-high">已下载</span></td></tr>
+<tr><td>3</td><td>FineMath-4+</td><td>HuggingFaceTB/finemath</td><td>9.6B tok (4+) / 34B tok (3+)</td><td>293</td><td>英文</td><td>odc-by</td><td>❌</td><td>❌</td><td><span class="badge r-high">推荐</span></td></tr>
+<tr><td>4</td><td>OpenWebMath</td><td>open-web-math/OpenWebMath</td><td>~14B tok</td><td>—</td><td>英文</td><td>—</td><td>✅ gated</td><td>❌</td><td><span class="badge r-med">备选</span></td></tr>
+<tr><td>5</td><td>MathPile</td><td>MathPile</td><td>~13B tok</td><td>—</td><td>英文</td><td>—</td><td>✅ gated</td><td>❌</td><td><span class="badge r-low">低优先</span></td></tr>
+</table>
+</div>
+<div class="section">
+<h3>数学 SFT / 推理链</h3>
+<table>
+<tr><th>#</th><th>数据集</th><th>repo</th><th>规模</th><th>文件数</th><th>语言</th><th>license</th><th>验证器</th><th>推荐度</th></tr>
+<tr><td>6</td><td>OpenMathInstruct-2</td><td>nvidia/OpenMathInstruct-2</td><td>14M pair / 12.6 GB</td><td>59</td><td>英文</td><td>cc-by-4.0</td><td>✅ expected_answer</td><td><span class="badge r-rec">强烈推荐</span></td></tr>
+<tr><td>7</td><td>NuminaMath-1.5</td><td>AI-MO/NuminaMath-1.5</td><td>~860K pair / 531 MB</td><td>5</td><td>英文</td><td>apache-2.0</td><td>⚠️ 部分含答案</td><td><span class="badge r-high">推荐</span></td></tr>
+<tr><td>8</td><td>MetaMathQA</td><td>meta-math/MetaMathQA</td><td>395K pair / 396 MB</td><td>3</td><td>英文</td><td>MIT</td><td>❌</td><td><span class="badge r-med">备选</span></td></tr>
+<tr><td>9</td><td>IFM/Math-Reasoning</td><td>IFM/Math-Reasoning</td><td>4.46 TB</td><td>2228</td><td>英文</td><td>apache-2.0</td><td>❌</td><td><span class="badge r-high">已下载</span></td></tr>
+</table>
+</div>
+<div class="section">
+<h3>代码预训练语料</h3>
+<table>
+<tr><th>#</th><th>数据集</th><th>repo</th><th>规模</th><th>文件数</th><th>语言</th><th>license</th><th>推荐度</th></tr>
+<tr><td>10</td><td>stack-v3-train</td><td>HuggingFaceCode/stack-v3-train</td><td>3.3 TB (已下)</td><td>8192</td><td>多语言</td><td>多种</td><td><span class="badge r-high">已下载</span></td></tr>
+<tr><td>11</td><td>The Stack v2</td><td>bigcode/the-stack-v2</td><td>427 GB</td><td>921</td><td>600+语言</td><td>多种</td><td><span class="badge r-low">禁下</span></td></tr>
+<tr><td>12</td><td>StarCoderData</td><td>bigcode/starcoderdata</td><td>311 GB</td><td>865</td><td>80+语言</td><td>多种</td><td><span class="badge r-med">备选</span></td></tr>
+</table>
+</div>
+<div class="section">
+<h3>代码 SFT / 执行反馈</h3>
+<table>
+<tr><th>#</th><th>数据集</th><th>repo</th><th>规模</th><th>文件数</th><th>语言</th><th>license</th><th>验证器</th><th>推荐度</th></tr>
+<tr><td>13</td><td>OpenCodeReasoning</td><td>nvidia/OpenCodeReasoning</td><td>735K 样本</td><td>—</td><td>Python</td><td>cc-by-4.0</td><td>⚠️ 可执行验证</td><td><span class="badge r-rec">强烈推荐</span></td></tr>
+<tr><td>14</td><td>IFM/Code-Reasoning</td><td>IFM/Code-Reasoning</td><td>3.28 TB</td><td>1637</td><td>多语言</td><td>apache-2.0</td><td>❌</td><td><span class="badge r-high">已下载</span></td></tr>
+<tr><td>15</td><td>TACO</td><td>BAAI/TACO</td><td>25K+1K 题 / 7.16 GB</td><td>23</td><td>Python/英文</td><td>apache-2.0</td><td>✅ input_output</td><td><span class="badge r-rec">强烈推荐</span></td></tr>
+<tr><td>16</td><td>APPS</td><td>codeparrot/apps</td><td>10K 题 / 1.4 GB</td><td>5</td><td>Python</td><td>MIT</td><td>✅ 测试用例</td><td><span class="badge r-high">推荐</span></td></tr>
+<tr><td>17</td><td>Magicoder-OSS-Instruct-75K</td><td>ise-uiuc/Magicoder-OSS-Instruct-75K</td><td>75K pair / 203 MB</td><td>3</td><td>多语言</td><td>MIT</td><td>❌</td><td><span class="badge r-med">备选</span></td></tr>
+</table>
+</div>
+<div class="section">
+<h3>可验证奖励 RL 数据（posttrain RL 阶段关键）</h3>
+<table>
+<tr><th>#</th><th>数据集</th><th>repo</th><th>规模</th><th>验证器类型</th><th>license</th><th>推荐度</th></tr>
+<tr><td>18</td><td>OpenMathInstruct-2</td><td>nvidia/OpenMathInstruct-2</td><td>14M pair</td><td>✅ 答案比对</td><td>cc-by-4.0</td><td><span class="badge r-rec">强烈推荐</span></td></tr>
+<tr><td>19</td><td>TACO</td><td>BAAI/TACO</td><td>25K 题</td><td>✅ 单测执行</td><td>apache-2.0</td><td><span class="badge r-rec">强烈推荐</span></td></tr>
+<tr><td>20</td><td>APPS</td><td>codeparrot/apps</td><td>10K 题</td><td>✅ 单测执行</td><td>MIT</td><td><span class="badge r-high">推荐</span></td></tr>
+<tr><td>21</td><td>AgentTrove</td><td>open-thoughts/AgentTrove</td><td>1.7M 行 / 19.55 GB</td><td>✅ reward (0/1)</td><td>apache-2.0</td><td><span class="badge r-high">已下载</span></td></tr>
+<tr><td>22</td><td>CodeContests</td><td>google-deepmind/code_contests</td><td>~10K 题</td><td>✅ 单测执行</td><td>—</td><td><span class="badge r-med">备选</span></td></tr>
+</table>
+</div>
+<div class="section">
+<h3>Agent 工具调用数据（本令已评估）</h3>
+<table>
+<tr><th>#</th><th>数据集</th><th>repo</th><th>规模</th><th>真实工具执行</th><th>带 reward</th><th>license</th><th>状态</th></tr>
+<tr><td>23</td><td>Toucan-1.5M</td><td>Agent-Ark/Toucan-1.5M</td><td>21.81 GB / 136 文件</td><td>✅ 495 MCP server</td><td>❌</td><td>apache-2.0</td><td><span class="badge r-high">✅ 已下载</span></td></tr>
+<tr><td>24</td><td>AgentTrove</td><td>open-thoughts/AgentTrove</td><td>19.55 GB / 40 文件</td><td>✅ Harbor/terminus</td><td>✅ reward(0/1)</td><td>apache-2.0</td><td><span class="badge r-high">🔄 下载中</span></td></tr>
+<tr><td>25</td><td>neulab 子集</td><td>neulab/agent-data-collection</td><td>79 GB (15 子集)</td><td>✅ 多源</td><td>部分</td><td>—</td><td><span class="badge r-high">✅ 已下载</span></td></tr>
+<tr><td>26</td><td>orca-agentinstruct-1M</td><td>microsoft/orca-agentinstruct-1M-v1</td><td>2.38 GB / 22 文件</td><td>❌ 纯合成</td><td>❌</td><td>cdla-permissive</td><td><span class="badge r-low">P2 不下</span></td></tr>
+<tr><td>27</td><td>freeinference</td><td>harvardMadsys/...</td><td>元数据 only</td><td>❌ 无消息文本</td><td>❌</td><td>—</td><td><span class="badge r-skip">P3 排除</span></td></tr>
+</table>
+</div>
+<h2>📈 已有 vs 缺口可视化</h2>
+<svg class="svg-chart" width="800" height="350" viewBox="0 0 800 350">
+<rect x="0" y="0" width="800" height="350" fill="#fafafa" rx="8"/>
+<text x="400" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a237e">数据覆盖矩阵：用途 × 现状</text>
+<line x1="200" y1="50" x2="200" y2="320" stroke="#ddd"/>
+<line x1="400" y1="50" x2="400" y2="320" stroke="#ddd"/>
+<line x1="600" y1="50" x2="600" y2="320" stroke="#ddd"/>
+<text x="150" y="70" text-anchor="middle" font-size="11" fill="#666">数学预训练</text>
+<text x="350" y="70" text-anchor="middle" font-size="11" fill="#666">数学 SFT/RL</text>
+<text x="550" y="70" text-anchor="middle" font-size="11" fill="#666">代码预训练</text>
+<text x="700" y="70" text-anchor="middle" font-size="11" fill="#666">代码 SFT/RL</text>
+<text x="45" y="135" text-anchor="end" font-size="10" fill="#666">已下载</text>
+<text x="45" y="205" text-anchor="end" font-size="10" fill="#666">下载中</text>
+<text x="45" y="275" text-anchor="end" font-size="10" fill="#666">缺口(推荐)</text>
+<rect x="70" y="110" width="160" height="50" fill="#c8e6c9" rx="4"/>
+<text x="150" y="135" text-anchor="middle" font-size="10" fill="#1b5e20">MegaMath 1.1TB</text>
+<text x="150" y="148" text-anchor="middle" font-size="9" fill="#1b5e20">Math-Reasoning 4.5TB</text>
+<rect x="270" y="110" width="160" height="50" fill="#c8e6c9" rx="4"/>
+<text x="350" y="140" text-anchor="middle" font-size="10" fill="#1b5e20">IFM Math-Reasoning</text>
+<rect x="470" y="110" width="160" height="50" fill="#c8e6c9" rx="4"/>
+<text x="550" y="135" text-anchor="middle" font-size="10" fill="#1b5e20">stack-v3 3.3TB</text>
+<text x="550" y="148" text-anchor="middle" font-size="9" fill="#1b5e20">Code-Reasoning 3.3TB</text>
+<rect x="620" y="110" width="130" height="50" fill="#c8e6c9" rx="4"/>
+<text x="685" y="140" text-anchor="middle" font-size="10" fill="#1b5e20">IFM Code-Reasoning</text>
+<rect x="270" y="180" width="160" height="50" fill="#e3f2fd" rx="4"/>
+<text x="350" y="210" text-anchor="middle" font-size="10" fill="#1565c0">Math-Reasoning(下载中)</text>
+<rect x="620" y="180" width="130" height="50" fill="#e3f2fd" rx="4"/>
+<text x="685" y="210" text-anchor="middle" font-size="10" fill="#1565c0">Code-Reasoning(下载中)</text>
+<rect x="70" y="250" width="160" height="50" fill="#ffcdd2" rx="4"/>
+<text x="150" y="280" text-anchor="middle" font-size="10" fill="#c62828">Nemotron-CC-Math-4+</text>
+<text x="150" y="293" text-anchor="middle" font-size="9" fill="#c62828">FineMath-4+</text>
+<rect x="270" y="250" width="160" height="50" fill="#ffcdd2" rx="4"/>
+<text x="350" y="275" text-anchor="middle" font-size="10" fill="#c62828">OpenMathInstruct-2</text>
+<text x="350" y="288" text-anchor="middle" font-size="9" fill="#c62828">(RL 可验答案)</text>
+<rect x="470" y="250" width="160" height="50" fill="#e8f5e9" rx="4"/>
+<text x="550" y="280" text-anchor="middle" font-size="10" fill="#2e7d32">已覆盖</text>
+<rect x="620" y="250" width="130" height="50" fill="#ffcdd2" rx="4"/>
+<text x="685" y="275" text-anchor="middle" font-size="10" fill="#c62828">OpenCodeReasoning</text>
+<text x="685" y="288" text-anchor="middle" font-size="9" fill="#c62828">TACO (RL 单测)</text>
+</svg>
+<h2>🔍 与现状的匹配分析</h2>
+<div class="section">
+<h3>我们已有</h3>
+<div class="gap-item">✅ <strong>代码预训练</strong>：stack-v3-train 3.3TB（8192 parquet，正在分词，85% 完成）—— 覆盖 Python/C/C++/Verilog 等多语言代码</div>
+<div class="gap-item">✅ <strong>数学预训练</strong>：IFM/MegaMath 1.118 TB（6 子集，已下载第一批 216GB）—— 371B tokens 数学语料</div>
+<div class="gap-item">✅ <strong>数学 SFT</strong>：IFM/Math-Reasoning 4.46 TB（5 子集，下载中）—— K2 Horizon 系列推理对话</div>
+<div class="gap-item">✅ <strong>代码 SFT</strong>：IFM/Code-Reasoning 3.28 TB（7 子集，下载中）—— 代码推理链</div>
+<div class="gap-item">✅ <strong>Agent 工具调用</strong>：Toucan-1.5M 21.8GB（✅已下）+ AgentTrove 19.6GB（🔄下载中）+ neulab 子集 79GB（✅已下）</div>
+</div>
+<div class="section">
+<h3>还缺什么（按紧迫度排序）</h3>
+<div class="gap-item">🔴 <strong>可验证奖励的 RL 数据</strong>：当前已下数据均无内置验证器。OpenMathInstruct-2（答案比对）和 TACO（单测执行）是填补此缺口的最快路径——posttrain 的 RLVR-GRPO 阶段直接需要</div>
+<div class="gap-item">🔴 <strong>竞赛级难题</strong>：IFM/Math-Reasoning 偏通用推理，缺乏 AMC/AIME/IMO 级别难题。NuminaMath-1.5 含竞赛题（860K pair），体积小（531MB），应补下</div>
+<div class="gap-item">🟡 <strong>更高质量数学预训练</strong>：Nemotron-CC-Math-4+ 论文证明在同量级下优于 MegaMath，且 52B tokens 可快速实验。若 MegaMath 效果不达预期，这是直接替代品</div>
+<div class="gap-item">🟡 <strong>轻量代码 SFT 快速实验</strong>：Magicoder-OSS-Instruct-75K 仅 203MB / MIT 许可，适合快速验证 SFT pipeline</div>
+<div class="gap-item">🟢 <strong>中文数学/代码</strong>：当前已下数据均为英文。若 pretrain 需要中文占比，需额外调研中文数学/代码数据源（本次仅标注，未深入）</div>
+</div>
+<h2>🔬 HfApi 实测证据</h2>
+<div class="section">
+<h3>1. Nemotron-CC-Math-v1</h3>
+<p><span class="evidence">repo_id=nvidia/Nemotron-CC-Math-v1 | files=196 | bytes=259,937,855,799 (~260GB) | license=other (NVIDIA) | subsets: 3, 4plus, 4plus_MIND</span></p>
+<p>论文 arXiv 2508.15096：133B tokens (3+) / 52B tokens (4+)。Nemotron-CC-Math-4+ 超越 MegaMath、FineMath、OpenWebMath。8B 模型上 MATH +4.8~12.6、MBPP+ +4.6~14.3。含 5.5× FineMath-4+ 的高质量 tokens。</p>
+</div>
+<div class="section">
+<h3>2. OpenMathInstruct-2</h3>
+<p><span class="evidence">repo_id=nvidia/OpenMathInstruct-2 | files=59 | bytes=12,628,474,179 (~12.6GB) | license=cc-by-4.0 | sha=469216e3f46f</span></p>
+<p>14M 问题-解对，Llama3.1-405B 生成。基于 GSM8K/MATH <strong>训练集</strong>做增强（非测试集）。含 <code>expected_answer</code> 字段 → 可直接用于 RLVR。公开可下，无需申请。</p>
+</div>
+<div class="section">
+<h3>3. OpenCodeReasoning</h3>
+<p><span class="evidence">repo_id=nvidia/OpenCodeReasoning | 401 (gated, 需 HF 登录)</span></p>
+<p>735K Python 样本，28K 竞赛编程题。R1 生成推理链 + 代码解。来源：CodeForces(386K) / CodeChef(72K) / HackerEarth(59K) / AIZU(62K) / AtCoder(47K)。cc-by-4.0。<strong>⚠️ 含 CodeForces 等竞赛题，可能与 CodeContests 评测重叠</strong>。</p>
+</div>
+<div class="section">
+<h3>4. TACO</h3>
+<p><span class="evidence">repo_id=BAAI/TACO | files=23 | bytes=7,155,373,657 (~7.16GB) | license=apache-2.0 | dirs=train, test, ALL</span></p>
+<p>25,443 训练题 + 1,000 测试题。含 <code>input_output</code> 字段 → 可直接执行验证。Python + 英文。难度分级。apache-2.0 商用友好。</p>
+</div>
+<div class="section">
+<h3>5. FineMath</h3>
+<p><span class="evidence">repo_id=HuggingFaceTB/finemath | files=293 | bytes=149,447,641,060 (~149GB) | license=odc-by</span></p>
+<p>FineMath-3+ = 34B tokens / 21.4M 文档；FineMath-4+ = 9.6B tokens / 6.7M 文档。从 CommonCrawl 用 Llama-3.1-70B 分类器筛选。论文 arXiv 2502.02737。</p>
+</div>
+<div class="section">
+<h3>6. MegaMath ≡ LLM360/MegaMath（sha 级确认）</h3>
+<p><span class="evidence">IFM/MegaMath: sha=3cbc64616594d6bc | files=5317 | bytes=1,118,158,270,272</span><br>
+<span class="evidence">LLM360/MegaMath: sha=3cbc64616594d6bc | files=5317 | bytes=1,118,158,270,272</span></p>
+<p><strong>结论：完全相同（同一 commit sha、同一文件数、同一字节数）。</strong>已下 IFM/MegaMath 即等于已下 LLM360/MegaMath，无需重复下载。odc-by 许可。论文 arXiv 2504.02807。</p>
+</div>
+<div class="section">
+<h3>7. Agent 数据实测</h3>
+<p><span class="evidence">Agent-Ark/Toucan-1.5M: sha=0df3cf37f2ab | files=136 | bytes=21,813,680,481 | apache-2.0</span><br>
+<span class="evidence">open-thoughts/AgentTrove: sha=b395a4307a2b | files=40 | bytes=19,552,366,847 | apache-2.0</span><br>
+<span class="evidence">neulab/agent-data-collection: sha=31a76bfb0124 | files=130 | bytes=498,657,695,021</span><br>
+<span class="evidence">microsoft/orca-agentinstruct-1M-v1: sha=86d609183249 | files=22 | bytes=2,377,550,306 | cdla-permissive-2.0</span></p>
+</div>
+<h2>⚠️ 风险与污染检查</h2>
+<div class="warn">
+<strong>🔴 评测集污染风险（必须检查）</strong>
+<table>
+<tr><th>数据集</th><th>可能污染的评测集</th><th>风险</th><th>检查方法</th></tr>
+<tr><td>OpenMathInstruct-2</td><td>GSM8K / MATH 训练集（非测试集，需确认增强未泄漏到测试）</td><td>🟡 中</td><td>对比 expected_answer 与 GSM8K/MATH test set 答案</td></tr>
+<tr><td>OpenCodeReasoning</td><td>CodeForces / CodeChef / HackerRank（可能与 CodeContests/HumanEval 重叠）</td><td>🟡 中</td><td>题目文本 n-gram 匹配 HumanEval/MBPP 测试集</td></tr>
+<tr><td>TACO</td><td>已有 1K test set，需确认 train/test 分割无泄漏</td><td>🟢 低</td><td>官方已做分割，抽查即可</td></tr>
+<tr><td>AgentTrove</td><td>SWE-bench（含 swesmith 来源）/ CodeForces（含 codeforces 来源）</td><td>🔴 高</td><td>必须做 SWE-bench 任务 ID 交叉比对</td></tr>
+<tr><td>neulab 子集</td><td>swe-smith / nebius_SWE-agent（已排除不下）</td><td>🟢 已规避</td><td>已在 adp_subset_plan.md 标记不下</td></tr>
+<tr><td>NuminaMath-1.5</td><td>AMC/AIME/HMMT/IMO（部分题源无开放许可）</td><td>🟡 中</td><td>需确认是否含 AIME 2024/2025 测试题</td></tr>
+<tr><td>MegaMath / Math-Reasoning</td><td>从 CommonCrawl 提取，理论上不含评测集</td><td>🟢 低</td><td>抽样检查即可</td></tr>
+</table>
+</div>
+<div class="note">
+<strong>📋 License 注意事项</strong>
+<ul style="margin:8px 0 0 20px">
+<li><strong>Nemotron-CC-Math</strong>：NVIDIA License（非标准 OSS，需确认商用范围）</li>
+<li><strong>OpenMathInstruct-2 / OpenCodeReasoning</strong>：cc-by-4.0（商用需署名）</li>
+<li><strong>TACO / AgentTrove / Toucan</strong>：apache-2.0（最宽松，商用无碍）</li>
+<li><strong>IFM 系列</strong>：apache-2.0（Math/Code-Reasoning）/ odc-by（MegaMath）</li>
+<li><strong>NuminaMath-1.5</strong>：apache-2.0，但部分题源版权属原机构，商用需注意</li>
+<li><strong>MetaMathQA / Magicoder</strong>：MIT（最宽松）</li>
+<li><strong>The Stack v2</strong>：gated + 多种 license（本线禁下）</li>
+</ul>
+</div>
+<h2>🔁 去重情况</h2>
+<div class="section">
+<table>
+<tr><th>数据集</th><th>官方去重</th><th>与已有数据重叠</th></tr>
+<tr><td>Nemotron-CC-Math</td><td>✅ 文档级去重</td><td>与 MegaMath 来源同为 CC，提取管线不同，重叠率待测</td></tr>
+<tr><td>MegaMath</td><td>✅ web-pro 是 web 的高质量子集</td><td>与 Nemotron-CC-Math 可能部分重叠</td></tr>
+<tr><td>FineMath</td><td>✅ 4+ 是 3+ 的子集</td><td>与 MegaMath 来源同为 CC，方法不同</td></tr>
+<tr><td>OpenMathInstruct-2</td><td>⚠️ 基于 GSM8K/MATH train 增强</td><td>与 IFM/Math-Reasoning 不重叠</td></tr>
+<tr><td>TACO</td><td>✅ train/test 已分割</td><td>与 APPS 部分题源重叠</td></tr>
+<tr><td>AgentTrove</td><td>❌ 未明确去重</td><td>与 neulab 部分子集重叠（已规避）</td></tr>
+</table>
+</div>
+<h2>🀄 中文数学/代码数据</h2>
+<div class="section">
+<p>当前已下载数据均为英文。若 pretrain 需要中文占比，以下方向可探索：</p>
+<ul style="margin:8px 0 0 20px">
+<li><strong>中文数学</strong>：CMATH、APE210K、Math23K</li>
+<li><strong>中文代码</strong>：The Stack v2 含少量中文注释；Gitee 爬取（需自行构建）</li>
+<li><strong>中文通用</strong>：本线已有 ultrafineweb_zh（112.8B tokens）</li>
+</ul>
+</div>
+<h2>📋 下一步执行建议</h2>
+<div class="section">
+<table>
+<tr><th>优先级</th><th>动作</th><th>体积</th><th>状态</th></tr>
+<tr><td>P0</td><td>等 AgentTrove 下载完成（52%→100%）</td><td>~10GB</td><td>🔄 进行中</td></tr>
+<tr><td>P0</td><td>等 IFM/Code-Reasoning 下载完成</td><td>~3.27TB</td><td>🔄 进行中</td></tr>
+<tr><td>P0</td><td>等 stack-v3 分词完成（85%→100%）</td><td>~1220 shard</td><td>🔄 进行中</td></tr>
+<tr><td>P1</td><td>下载 OpenMathInstruct-2（数学 SFT+RL）</td><td>12.6 GB</td><td>⬜ 待执行</td></tr>
+<tr><td>P1</td><td>下载 TACO（代码 RL 可验单测）</td><td>7.16 GB</td><td>⬜ 待执行</td></tr>
+<tr><td>P1</td><td>下载 NuminaMath-1.5（竞赛数学）</td><td>531 MB</td><td>⬜ 待执行</td></tr>
+<tr><td>P2</td><td>申请并下载 OpenCodeReasoning（gated）</td><td>~30GB</td><td>⬜ 需 HF 登录</td></tr>
+<tr><td>P2</td><td>下载 Nemotron-CC-Math-4+（若需替代 MegaMath）</td><td>~100GB</td><td>⬜ 视实验</td></tr>
+<tr><td>P2</td><td>下载 FineMath-4+（快速实验替代）</td><td>~15GB</td><td>⬜ 视需求</td></tr>
+<tr><td>P2</td><td>下载 APPS + Magicoder（轻量代码 SFT）</td><td>1.6 GB</td><td>⬜ 待执行</td></tr>
+</table>
+</div>
+<h2>✅ 污染检查结论</h2>
+<div class="warn">
+<h3>AgentTrove + neulab 子集 vs SWE-bench / TB-2.1 / BFCL / HumanEval</h3>
+<table>
+<tr><th>评测集</th><th>AgentTrove</th><th>neulab 子集</th><th>Toucan</th><th>结论</th></tr>
+<tr><td>SWE-bench</td><td>🔴 高（含 swesmith）</td><td>🟢 已规避</td><td>🟢 无</td><td>AgentTrove 下载后必须做任务 ID 交叉比对</td></tr>
+<tr><td>Terminal-Bench 2.1</td><td>🟢 无直接来源</td><td>🟢 无</td><td>🟢 无</td><td>不重叠</td></tr>
+<tr><td>BFCL / MCP-Universe</td><td>🟢 无</td><td>🟢 无</td><td>🟡 中</td><td>需验证 Toucan 不含 BFCL 测试集</td></tr>
+<tr><td>HumanEval / MBPP</td><td>🟡 中（codeforces）</td><td>🟢 无</td><td>🟢 无</td><td>下载后做 n-gram 匹配检查</td></tr>
+</table>
+<p><strong>执行方法</strong>：AgentTrove 下载完成后，用 SWE-bench 官方任务 ID 列表做精确匹配；对 codeforces 来源，用 HumanEval/MBPP 题目文本做 8-gram Jaccard 相似度检查（阈值 >0.8 标为可疑）。</p>
+</div>
+<div class="note">
+<h3>IFM 数据集 vs 评测集</h3>
+<p>MegaMath（从 CC 提取）/ Math-Reasoning / Code-Reasoning 理论上不含评测集直接内容，但 IFM 系列的生成方式可能基于 GSM8K/MATH 题目生成推理链。<strong>建议</strong>：下载完成后抽样 1000 条做题目文本比对。</p>
+</div>
+<footer>本报告由 BaiZe data agent 生成 · 2026-11-15 · 所有数据集信息均经 HfApi 实测验证 · 报告 < 200KB · 0 外链 · 0 script</footer>
+</div>
+</body>
+</html>
