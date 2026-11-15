@@ -2,18 +2,19 @@
 
 WAITING: 0
 
-> 🆕 **R2534 · 2026-11-15 18:2x — cc 27/82 + opencode 26/38(25done+1in-flight) + adaptive自测全过✅ + 自检全绿 + git pull up-to-date**
-> - **cc rerun**: PID 1510536 harbor alive(~14.6h)·**27/82 done**(4P/18F/5NO_VER)·**0ConnRefused ✅**(grep result.json exception_info=0)·1 in-flight(git-multibranch)·54 remaining·ETA~Nov17
->   - 5NO_VER明细=infra非能力: 3×agent timeout(code-from-image/feal-diff/feal-linear @3600s) + 1×verifier timeout(fix-ocaml-gc @3600s) + 1×empty task(placeholder)
->   - 4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git(rewards.reward=1.0)
->   - cc修复判据已met: 0ConnRefused + 4PASS=真能力(vs旧0/89=100%infra)
-> - **opencode rerun**: PID 773163 harbor alive(~1.2h)·**25/38 done**(10P/7F/8NO_VER)·1 in-flight(fix-ocaml-gc)·12 remaining·ETA~Nov15 21:00·adaptive n=10·0 429✅
-> - **adaptive_concurrency 自测全过✅**(temp state file): ①周末03:00→off cap10(start 8) ②工作日10:00→work cap4 ③429→cooldown 5min no-change ④25min→cooldown expired hold ⑤off 429→halve 4→25min +1=5(clean_ramp)·live state cleaned(10/10·0 429·reset后)
-> - **自检**: load 31.67/224 ✅·mem 1033GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·/tmp 40% ✅
+> 🆕 **R2535 · 2026-11-15 18:38 — cc 26/82(4P/5EXC/8×502infra/9maxturn) + opencode 24/38(10P/7F/7EXC·chunk3启动10in-flight) + adaptive off 10/10·0 429✅ + 自检全绿 + git pull up-to-date**
+> - **cc rerun**: PID 1510536 harbor alive(~14.8h)·**26/82 TRIAL done**·**0ConnRefused ✅**(exception_info grep=0)·1 in-flight(git-multibranch)·55 remaining·ETA~Nov17
+>   - 归因: 4PASS(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git) + 5EXC=infra(3×agent timeout@3600s + 1×AgentTimeout + 1×VerifierTimeout) + 8×502=infra(gw-proxy upstream Errno104) + ~9×maxturn=capability(80 turns用完) + 1×wrong-answer(git-leak-recovery: agent自认done但verifier=0)
+>   - cc修复判据已met: 0ConnRefused + 4PASS=真能力(vs旧0/89=100%infra) ✅
+> - **opencode rerun**: PID 773163 harbor alive(~1.4h)·**24/38 TRIAL done**(10P/7F/7EXC[5RuntimeError+2Timeout])·**10 in-flight**(chunk3@18:37: polyglot-rust-c/polyglot-c-py/make-doom-for-mips/largest-eigenval/install-windows-3.11/prove-plus-comm/mteb-retrieve/model-extraction-relu-logits/qemu-alpine-ssh/path-tracing-reverse)·4 remaining·adaptive n=10·0 429✅
+> - **adaptive_concurrency**: `status`→mode=off/current=10/cap=10/0 cumulative 429 ✅(weekend)·实跑验证中(opencode chunk3 n=10 real-world)
+> - **自检**: load 31.84/224 ✅·mem 1029GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·/tmp 40% ✅·reports/ clean ✅
 > - **git pull**: ✅ Already up to date
-> - **research 日报 2026-11-15**: SatisFix(specification satisficing前报告机制·harness自评改规则判)·仅作输入参考·无新指令
-> - **下一步**: opencode完成→启动pi rerun(46题·adaptive auto·task-list已就绪)→再deepseek(task-list待生成)→cc完成后更新双报告
-> - **📦 体积**: TASK=25.6KB / MEMORY≈27.5KB（✅≤32KB）
+> - **research 日报 2026-11-15**: SatisFix(specification satisficing前报告机制)·仅作输入参考·无新指令·本轮不采纳
+> - **下一步**: opencode chunk3完成(~1h)→启动pi rerun(46题·adaptive auto·task-list已就绪)→再deepseek(48题·task-list已就绪)→cc完成后更新双报告(report_harness_cc_tb21_attribution_zh.html + report_harness_tb21_7way_zh.html)
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈27.5KB（✅≤32KB）
+
+> 📦 R2534 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 27/82(4P/18F/5NO_VER·0ConnRefused✅)+opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)+adaptive自测全过✅+自检全绿+git pull up-to-date。需要时再读。
 
 > 📦 R2533 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 27/82(4P/18F/5NO_VER·0ConnRefused✅)+opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)+自检全绿+git push OK+reports/清理4.txt。需要时再读。
 
