@@ -2168,7 +2168,46 @@
 
 
 
-1. **一次一作者**：同一作者 / 同一论文 ≤1 封；同一机构 ≤2 封/天（`RESEARCH_MAIL_SPEC §3`）。
+### 148. Bo An（安波）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bo An（安波，中文姓名族属 ⇒ 中文信） |
+| 机构 | **Nanyang Technological University（NTU, Singapore）**（NOPO 论文署名 + 通讯邮箱 `@ntu.edu.sg`） |
+| 代表论文 | NOPO: Negative-Only Policy Optimization for One-Sided Verifiable Rewards（arXiv `2611.17287`，**通讯作者**，A 轨 2026-11-16 #4；NeurIPS 2026 Spotlight） |
+| 邮箱 | **`boan@ntu.edu.sg`**（本人主页 `https://personal.ntu.edu.sg/boan/` 的 `mailto:` 明文，`HTTP 200` / 17,351 B；与 PDF 首页通讯地址**双源一致**，2026-11-16 实测） |
+| 主页 | <https://personal.ntu.edu.sg/boan/>（`200` / 17,351 B） |
+| X 账号 | **未找到**（本轮未检索到可核实 handle，不猜） |
+| 状态 | **已发信**（2026-11-16 03:03 CST，作者请教信第 58 封，**中文 230 字**） |
+| 备注 | `语言=中文(判据=中文姓名族属+NTU；论文五位作者全为华人姓名)`。信里问：① group-level adapter 按「组内非被伪证比例」缩放，比例接近 1（表 1 中 OlympiadBench 负类召回最低）时更新是否趋零、有无下限或靠参考模型项兜住；② 表 2 中 Qwen3-8B 平均 52.13（GRPO 48.27）但 OlympiadBench 76.52 低于 76.97，表 9 也出现 +0.89 / −0.45 的格子，能否给**事前可算**的 verifier 统计量决定用 NOPO 还是 w-Reinforce；③ `G=16` 降到 8/4 时负样本-only 的方差是否吃掉收益（决定长上下文 RL 是否采用）。 |
+
+### 149. Qingyun Wu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Qingyun Wu（中文姓名族属 ⇒ 中文信） |
+| 机构 | **AG2**（X bio 自述 `Building … at AG2; Cofounder and CEO`）；页面内另有 `Professor` / `Penn` 提及 ⇒ 曾任 Penn State 教职（**未逐字核证书，仅记页面显示**） |
+| 代表论文 | AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation（arXiv `2308.08155`，**一作**，B 轨 #156） |
+| 邮箱 | **未找到**（主页 `https://qingyun-wu.github.io/` `HTTP 200` / 5,918 B，通读页头未见 `mailto:`；🚫 不拼装） |
+| 主页 | <https://qingyun-wu.github.io/>（`200` / 5,918 B） |
+| X 账号 | **`@qingyun_wu`**（`GET x.com/qingyun_wu` `200`；`og:title` = `Qingyun Wu (@qingyun_wu) on X`，`og:description` = `Building … at AG2; Cofounder and CEO`，身份双源一致） |
+| 状态 | **待跟踪**（无可用邮箱 ⇒ 本轮不发信；X 写操作需登录态 ⇒ 未 follow，🚫 不假装已 follow） |
+| 备注 | `语言=中文(判据=中文拼音姓名族属)`。AutoGen 是 harness 线「多 agent 编排」的原始框架论文（#156），但作者已从学术转创业、邮箱不可核 ⇒ **先跟踪言论，不发信**。 |
+
+### 150. Umar Ahmed
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Umar Ahmed（俄语区机构 + 非中/日/韩姓名 ⇒ 俄语称谓问候 + 英文正文） |
+| 机构 | **ITMO University**（圣彼得堡；论文 PDF 首页作者块 5 人全部署名 ITMO） |
+| 代表论文 | Parsed, Plausible, Wrong: Output Format Controls Silent Errors in Small-Model Semantic Parsing（arXiv `2611.17169`，**一作**，A 轨 2026-11-16 #5） |
+| 邮箱 | **`uakhmed@itmo.ru`**（PDF 首页作者块明文，与 `mvdunaev@itmo.ru` / `svivanov@itmo.ru` 同域；2026-11-16 下载 492,936 B，`pdftotext` 可解析） |
+| 主页 | 未找到（论文未给个人主页；机构页未逐条检索） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **已发信**（2026-11-16 03:03 CST，作者请教信第 59 封，**俄语问候 + 英文正文 195 词**） |
+| 备注 | `语言=俄语称谓问候+英文正文(判据=俄罗斯机构 ITMO + 非中/日/韩姓名族属)`。信里问：① WORDS 87.5% vs EXR 85.8% 且 4.1× 更短，收益该归因于复用预训练 token 统计还是词汇化否定，有无「无否定目标」的对照；② 否定类错误 EXR 2.0% vs WORDS 0.2%，给符号格式补「仅否定样本」能否缩小差距；③ 拒识真实订单代价 2.1–5.4%，阈值如何定、跨池是否稳定。 |
+
+
 2. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 3. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 4. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

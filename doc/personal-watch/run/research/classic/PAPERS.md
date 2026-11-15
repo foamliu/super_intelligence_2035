@@ -2667,6 +2667,74 @@
 
 ---
 
+## 154. Small-scale proxies for large-scale Transformer training instabilities
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Small-scale proxies for large-scale Transformer training instabilities |
+| 作者（前 3） | Mitchell Wortsman · Peter J. Liu · Lechao Xiao（共 **16** 位；arXiv 作者字段逐字核） |
+| 年份 | **2023**（`2023-09-25`，v2 `2023-10-16`） |
+| 会议 / 期刊 | **ICLR 2023**（arXiv `comment` 与 `journal_ref` 均为空；会场取自 Semantic Scholar `venue` 字段） |
+| 被引数 | **218**（Semantic Scholar Graph `arXiv:2309.14322`，查询日 **2026-11-16**；⚠️ 本轮 OpenAlex 返回 `429`（免费额度用尽）⇒ 改用 S2，口径与往轮 OpenAlex 不同） |
+| arXiv / DOI | <https://arxiv.org/abs/2309.14322> ｜ DOI `10.48550/arxiv.2309.14322` |
+| 一句话贡献 | 提出用「**LR sensitivity**」（学习率 vs 损失的敏感度）作为跨规模诊断量：两类在大模型上出现的训练不稳（**attention logit growth** 与 **output logit divergence**）在小模型以高学习率训练时同样出现；**qk-layernorm** 与 **z-loss（系数 1e-4）** 能降低 LR sensitivity 并使训练稳定，且不稳可在其显性出现前被预测。 |
+| 与我们工作的关系 | **pretrain（稳定性判据，主目标）**：2B 主跑最大的隐性成本是「跑完 3 天才发现不稳」⇒ <b>动作</b>：把「小模型 × 三档学习率」的 LR sensitivity 扫描做成 2B 主跑前的**预注册探针**，判据 = 目标 LR 处 sensitivity 是否落在小模型稳定区；不稳时先试 qk-layernorm，再试 z-loss 1e-4。<br>**data / zhulong（不稳的成本口径）**：不稳浪费的算力要单列 ⇒ <b>动作</b>：实验记录新增「不稳导致的重复训练 GPU 小时」一列，与最终 loss 并列。<br>**风险**：① 218 引用（S2 口径）远低于同期方法论文，属「工程报告」性质；② 结论绑定 decoder-only Transformer + AdamW 的默认配置，换优化器 / 换归一化位置需重测；③ 预印本 + ICLR 会场为二手字段，未见正式 proceedings 页码。 |
+
+首次收录: 2026-11-16（第四十轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：16 作者、`published=2023-09-25T17:48:51Z`、`updated=2023-10-16T18:43:25Z`；S2 `200` 218；PDF `200` `application/pdf` 10,685,777 B，`pdftotext` 核对 `LR sensitivity` / `qk-layernorm` / `z-loss` / `coefficient 1e-4` / `attention logit growth` / `divergence of the output logits`）
+
+---
+
+## 155. DataComp: In search of the next generation of multimodal datasets
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DataComp: In search of the next generation of multimodal datasets |
+| 作者（前 3） | Samir Yitzhak Gadre · Gabriel Ilharco · Alex Fang（共 **34** 位，含 Ludwig Schmidt；arXiv 作者字段逐字核） |
+| 年份 | **2023**（`2023-04-27`，v2 `2023-10-20`） |
+| 会议 / 期刊 | **NeurIPS 2023 Datasets and Benchmarks Track**（arXiv `comment` 原文逐字） |
+| 被引数 | **821**（Semantic Scholar Graph `arXiv:2304.14108`，查询日 **2026-11-16**；OpenAlex 本轮 `429`） |
+| arXiv / DOI | <https://arxiv.org/abs/2304.14108> ｜ DOI `10.48550/arxiv.2304.14108` |
+| 一句话贡献 | 把「图文数据筛选」变成可比基准：公开 **CommonPool 12.8B** 图文对 + **四档算力规模（12.8M → 12.8B 候选池）**，固定 CLIP ViT-B/32 训练预算下比 filter；结论是**过滤方法的排序跨规模大体一致**（可小规模选型）、12.8B 档最优过滤比不过滤 **+6.9pp** ImageNet 零样本、组合两个最优过滤得到 **DataComp-1B** 训练 CLIP ViT-L/14 达 **79.2%**；BYOD 轨道追加 **109M**（<1% 池）数据可再 **+1.2pp**。 |
+| 与我们工作的关系 | **data（过滤基线与规模一致性，主目标）**：域内数据少时最贵的问题是「该不该重过滤」⇒ <b>动作</b>：data 线先用同比例缩小规模比较 2–3 种过滤策略，再上 2B 主跑；判据 = 小规模排序与主跑排序是否一致（本文证据支持一致，但需在本域复核）。<br>**vision（图文对质量口径）**：CLIP 分数过滤不是万灵药，需报「过滤后保留率」⇒ <b>动作</b>：图文对登记表新增「过滤前 / 后条数 + CLIP 阈值」，禁止只报最终条数。<br>**风险**：① 79.2% 是 CLIP ViT-L/14 + 1.4B 训练样本的特定组合，不能直接搬到 2B 语言模型；② 结论以英文网页图文为主，半导体 / 工程图文分布差异大；③ 34 人作者名单意味着后续维护与版本可能分叉。 |
+
+首次收录: 2026-11-16（第四十轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：34 作者、`comment=NeurIPS 2023 Datasets and Benchmarks Track`；S2 `200` 821；PDF `200` `application/pdf` 2,783,491 B，`pdftotext` 核对 `12.8B` / `12.8M` / `+6.9 percentage points` / `79.2%` / `109M` / `rankings … consistent across scale`）
+
+---
+
+## 156. AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation |
+| 作者（前 3） | Qingyun Wu · Gagan Bansal · Jieyu Zhang（共 **14** 位，含 Chi Wang；arXiv 作者字段逐字核） |
+| 年份 | **2023**（`2023-08-16`，v2 `2023-10-03`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 仅 `43 pages (10 pages for the main text, …)`；Semantic Scholar `venue` 为空） |
+| 被引数 | **3,218**（Semantic Scholar Graph `arXiv:2308.08155`，查询日 **2026-11-16**；OpenAlex 本轮 `429`） |
+| arXiv / DOI | <https://arxiv.org/abs/2308.08155> ｜ DOI `10.48550/arxiv.2308.08155` |
+| 一句话贡献 | 提出 **conversable agent**（每个 agent 可自主多轮对话、也可按需请求人类输入）+ **conversation programming**（用自然语言与代码两种方式编排对话流程）+ 内置代码执行器；把多 agent 协作统一成「对话」这一原语，示例在 MATH 上以交互式检索 + 代码执行达 **69.48%**（同文对比 GPT-4 单模型 **55.18%**）。 |
+| 与我们工作的关系 | **harness（多 agent 编排原语，主目标）**：我们的 harness 需要「写→跑→改」的闭环 ⇒ <b>动作</b>：把「发言权轮转 + 工具执行 + 人工介入点」三项抽成可配置对象，先把单 agent 的失败模式分类（工具返回空 / 解析失败 / 循环），再加第二个 agent。<br>**zhulong（成本口径）**：对话式多 agent 的代价是 token 倍增 ⇒ <b>动作</b>：任何多 agent 实验必须同时报「每任务 token / 工具调用次数 / 成功率的分子分母」，禁止只报成功率。<br>**风险**：① 3,218 引用含大量框架式引用，不等于方法优越；② MATH 69.48% 依赖 GPT-4 + 交互式检索的特定组合，与开源小模型不可比；③ 框架本身后来有重大 API 变更，复现需锁版本。 |
+
+首次收录: 2026-11-16（第四十轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：14 作者、`comment` 43 页；S2 `200` 3,218；PDF `200` `application/pdf` 3,571,809 B，`pdftotext` 核对 `conversable` / `69.48%` / `55.18%` / `conversation programming`）
+
+---
+
+## 157. Ring Attention with Blockwise Transformers for Near-Infinite Context
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Ring Attention with Blockwise Transformers for Near-Infinite Context |
+| 作者（前 3） | Hao Liu · Matei Zaharia · Pieter Abbeel（共 **3** 位；arXiv 作者字段逐字核） |
+| 年份 | **2023**（`2023-10-03`，v2 `2023-11-27`） |
+| 会议 / 期刊 | **ICLR 2024**（arXiv `comment` 仅给代码链接；会场取自 Semantic Scholar `venue`） |
+| 被引数 | **656**（Semantic Scholar Graph `arXiv:2310.01889`，查询日 **2026-11-16**；OpenAlex 本轮 `429`） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.01889> ｜ DOI `10.48550/arxiv.2310.01889` |
+| 一句话贡献 | 把 self-attention 与 FFN 都**分块**算，并在设备间组成**环**传递 KV 块（传输与计算重叠，配对块计算量 ≥ 传输量时零额外开销），从而把「序列维」也从单卡显存里拿出来；在**不做近似**的前提下比此前 memory-efficient 方案支持**长 500 倍以上**的序列，可训练 **>100M token**（示例：batch=1 处理 100M token 原本要 **>1000GB**，环式后可放进 **100GB HBM**）。 |
+| 与我们工作的关系 | **pretrain（长上下文的主选项对照，主目标）**：RoPE 插值 / 窗口注意力都是「改模型」，Ring Attention 是「改并行」⇒ <b>动作</b>：长上下文实验表新增一行「并行策略（DP/TP/环式）」；判据 = 目标长度下有效吞吐（token/s/卡）与 PPL，不能只报可支持长度。<br>**zhulong（成本口径）**：文章把瓶颈从算力换成**卡间带宽** ⇒ <b>动作</b>：成本表把「KV 块传输字节 / 每 token」单列，与 DRAM 字节数并列。<br>**harness（长文档输入）**：真·百万 token 输入可行后，评测要改成「必须跨块引用」的题，否则长上下文只是摆设。<br>**风险**：① 656 引用（S2 口径）低于同期 FlashAttention 系；② 零开销的前提是「块计算 ≥ 块传输」，低带宽互联（如以太网）下不成立；③ 需要多卡，单卡小规模实验无法验证。 |
+
+首次收录: 2026-11-16（第四十轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：3 作者、`comment` 给代码 `github.com/lhao499/llm_large_context`；S2 `200` 656 + venue ICLR；PDF `200` `application/pdf` 1,766,025 B，`pdftotext` 核对 `blockwise` / `500 times longer` / `100 million` / `1000GB` / `100GB of high-bandwidth memory`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > ✅ **第三十六轮（2026-11-15 15:0x）转正 4 条**：Whisper `2212.04356`（#138，3,720）· Gato `2205.06175`（#139，876，TMLR 2022）· SGLang `2312.07104`（#140，812，NeurIPS 2024）· Self-Consistency `2203.11171`（#141，5,587，ICLR 2023）⇒ B 轨累计 **141**。

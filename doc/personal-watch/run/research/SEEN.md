@@ -5681,3 +5681,5 @@
 | 2026-11-16 | 2611.17068 | Discovering Effective Agent Memory Designs through Program Evolution | cs.CL | 收录 |
 | 2026-11-16 | 2611.16882 | Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models | cs.CL | 收录 |
 | 2026-11-16 | 2611.17108 | LazyWeights: Decode-on-Demand Edge LLMs | cs.LG | 收录 |
+| 2026-11-16 | 2611.17287 | Negative-Only Policy Optimization for One-Sided Verifiable Rewards | cs.LG | 收录 |
+| 2026-11-16 | 2611.17169 | Parsed, Plausible, Wrong: Output Format Controls Silent Errors in Small-Model Semantic Parsing | cs.CL | 收录 |

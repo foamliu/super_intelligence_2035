@@ -545,3 +545,5 @@
 
 
 > **2026-11-14 06:00 轮（r170 · A 轨复核 + B 轨第二十六轮）**：A 轨单分类 5 查询 5/5 `200`+atom，`totalResults` 与 11-13 逐值相同、`published` 上界仍 `2026-11-12T18:59:55Z` ⇒ 当日 5/5 已收口、**0 新收**（新候选 384 落盘 `raw/2026-11-14-06h-candidates-r170.json`）；B 轨 **+4 → 103**（Adam `1412.6980` 101,807 · BatchNorm `1502.03167` 34,937 · GAN `1406.2661` 9,668 · DREAMPlace DAC 2019 177，无 arXiv）；作者网 **+7 → 106**（`@goodfellow_ian` / `@DrJimFan` / David Z. Pan 已发信）；作者信 **+1（累计 35）**；交付 `daily/2026-11-14.html` **65,131 B**。
+
+> **2026-11-16 03:00 轮（r184 · A 轨补满 5/5 + B 轨第四十轮 +4）**：A 轨 2 篇（NOPO `2611.17287` / Parsed-Plausible-Wrong `2611.17169`，均按公告批例外收录、≈72.3h / ≈73.4h 已标）；B 轨累计 **157**（#154 Small-scale proxies 218 · #155 DataComp 821 · #156 AutoGen 3,218 · #157 Ring Attention 656；**OpenAlex `429` ⇒ 被引改取 Semantic Scholar**）；作者网 **152**（X 已核验 **84**）；作者信 **59**（#58 中文 / #59 俄语问候+英文，回信率 **0/59**）；`SEEN.md` +2、`papers.jsonl` 361 行（JSON 全通过）；日报 `daily/2026-11-16.html` **36.7 KB / 5 卡**。
