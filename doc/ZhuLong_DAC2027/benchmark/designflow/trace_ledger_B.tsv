@@ -874,7 +874,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792572197494_0rj7b	e0022089	hfeg0pkn002	24	spice_sim	parked		2026-11-10 23:23	consultation explain-model-purpose
 1792572922387_8pl7h	e0022089	hfeg0pkn002	24	spice_sim	parked		2026-11-10 23:23	consultation explain-model-purpose dup
 1792722310323_1e0xa	sagequan	hfeg0pbn04	11	spice_sim	parked		2026-11-10 23:23	skill-loading cimi-kb-search
-1793857356226_kubzy	zhililu	hfeg0pkn002	169	spice_sim	parked		2026-11-10 23:23	consultation resistor-TRIM-netlist-explain
+1793857356226_kubzy	zhililu	hfeg0pkn002	169	spice_sim	case	EDA-Eval-DesignFlow-ResistorTrimNetlistExplain-001	2026-11-15 15:25	consultation resistor-TRIM-netlist-explain
 1792398188240_i0cnz	mwxi	hfeg0plg52	84	spice_sim	parked		2026-11-10 23:23	wrong-shard ops-crontab-sync
 1792550155026_cn4bl	steveny	hfeg0pnd001	20	spice_sim	parked		2026-11-10 23:23	consultation navigate-to-host
 1792936692635_f1pj5	jingc	hfeg0pkn001	16	spice_sim	parked		2026-11-10 23:23	consultation what-is-DSA
