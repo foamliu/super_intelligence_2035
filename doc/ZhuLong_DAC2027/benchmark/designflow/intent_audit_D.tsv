@@ -1,5 +1,5 @@
 case_id	user_intent_from_trace	判定	理由	处置
-#	本表为 shard D 意图审计（2026-11-15 用户令 · 最高优先）	header	分批进行，本轮审 35 条（最近 30 条 #367-#396 + 5 条红旗抽样 #26/#222/#238/#250/#300）	审计进度 35/396
+#	本表为 shard D 意图审计（2026-11-15 用户令 · 最高优先）	header	分批进行，本轮审 35 条（最近 30 条 #367-#396 + 5 条红旗抽样 #26/#222/#238/#250/#300）	审计进度 65/397（batch2: #337-#366 全 keep）
 EDA-Eval-DesignFlow-IddCellFilter-001	(#367 maggiew mc14) FineSim dou-fulltoggle idd CSV 后处理：筛 idd>5 行导出 idd+cellName 明细，6 轮迭代澄清 keep	用户提 produce-task（筛 CSV 导明细），prompt 忠实重述，check 验交付的筛选脚本输出结构 = 用户要的「明细」	保留
 EDA-Eval-DesignFlow-DspfRLvlAggregate-001	(#368 e0024852 mc25) GloryEX PEX DSPF 寄生电阻按 $lvl 分层汇总找贡献最大层 + 定位 lvl=37 电阻两端节点版图坐标 keep	用户 produce-task（分层汇总+定位坐标），prompt 忠实，B-grade reframe 因原 DSPF 私有不可达，check 验分层汇总+坐标取中点	保留
 EDA-Eval-DesignFlow-SpiceMeasInject-001	(#369 jiangbaol mc146) HSPICE/Finesim slicer deck 追加 .measure 语句测功耗/延时 keep	用户 produce-task（追加 measure 语句），prompt 忠实重述继承既有采样窗口，check 验注入的 .measure 语法+语义	保留
@@ -35,3 +35,33 @@ EDA-Eval-DesignFlow-RsCalcReport-001	(#222 e0014566 mc183) RsCalc 流程：生�
 EDA-Eval-DesignFlow-HierNetTrace-001	(#238 junweix mc50) 用户问「aether 怎么可以跨层级点亮信号线」（GUI Q&A），agent 未交付用户未接受 off_intent	用户真实意图=aether GUI 跨层级高亮的操作问答，case 把主题迁移到 SPICE 网表解析 produce-task（Python CLI），域+交付形态均偏离用户原意。按新指令 Q&A 合法，应重做成忠实 Q&A（交付=操作步骤解释，check 验答案覆盖 aether Trace Net 跨层级选项）或下线	重做 v2（Q&A 形态）或下线；v1 标 retired 备注
 EDA-Eval-DesignFlow-InvSpiceSim-001	(#250 jie23z mc134) 'write a .sp file for me to simulaiton an INV circuit'，agent 未产出会话即结束 keep	用户意图清晰（写 .sp 仿真 INV），虽 trace 无 accepted gold（agent 未完成），但意图明确，B-grade 合成金标合理。check 验 .sp 网表+解析仿真报告。非 off_intent（意图真实）	保留（备注：无 accepted gold，合成金标）
 EDA-Eval-DesignFlow-DriverTrace-001	(#300 daiweilu mc110) '帮我看 cm0_ts_DumEdgeWL_nearDrv 这个模块，DumWL 是谁驱动的？'（debug/analysis） keep	用户意图=理解驱动链（debug），case 结晶成「driver_trace.py→report.json」产出结构化驱动溯源报告，报告即用户要的理解。debug 任务按新指令合法，交付形态合理。边界：用户问特定模块，case 泛化为通用工具——B-grade reframe 合理泛化以可 check	保留（备注：debug→结构化报告，泛化合理）
+(no task_id field)	(#337 rongjiez mc23) SRAMAutoSim mainwindow.cpp CSV 回填表格更新（fullFlow 脚本回填后的 CSV 更新到 instance 表格显示 Netlist/Vector） keep	用户 produce-task（CSV 回填表格更新），prompt 含真实原话+场景，check 验 csv_backfill_table_update.py 输出结构 = 用户要的表格更新	保留
+(no task_id field)	(#338 e0023936 mc21) WaveView Tcl proc get_version_and_filepath：打开仿真波形文件取出 ACE 版本号与磁盘路径 keep	用户 produce-task（写可复用 Tcl proc），prompt 忠实，check 验 proc 定义+参数+版本/路径提取	保留
+(no task_id field)	(#339 dorisz mc59) FineSim IDD 仿真 raw/*.fsdb 批量用 wv 打开 keep	用户 produce-task（批量打开 fsdb），prompt 忠实，check 验 wv_fsdb_batch_open.py 批量打开逻辑	保留
+(no task_id field)	(#340 rongtaoy mc76) sacap detail CSV 解析成稀疏 CSL 边表并做解析校验（CSL<->BL 耦合电容） keep	用户 produce-task（CSV 解析+校验），prompt 忠实，check 验 parse_net1+边表+校验	保留
+(no task_id field)	(#341 yanxvwei mc112) drjqa 两套 Perl 波形比较脚本切分逻辑分歧 写独立 Python 单信号比较器 keep	用户 produce-task（写独立比较器定位 grid 分歧），prompt 忠实含真实背景，check 验 vec-table 解析+grid 逻辑	保留
+(no task_id field)	(#342 rose3wang mc18) TimingLib cell_area.csv 注解到 template_verbose（area 权威值回填模板） keep	用户 produce-task（area CSV 注解），prompt 忠实，check 验 tcl_area_csv_annotate.py 注解逻辑	保留
+(no task_id field)	(#343 rongjiez mc25) ModelQA FineSimPro .md0 批量 QA（measure 输出按测量类型分目录校验） keep	用户 produce-task（.md0 批量 QA），prompt 忠实，check 验 QA 流程+分类校验	保留
+(no task_id field)	(#344 qilongw mc18) pwr.sp 电源激励 deck 向量比特展开（bit-blast） keep	用户 produce-task（bit-blast 展开），prompt 忠实，check 验 pwr_sp_bit_expand.py 展开逻辑	保留
+(no task_id field)	(#345 shanliny mc12) .mt0 测量文件 BL 一致性总结（现有 datasum.py 只总结 WL，加 BL） keep	用户 produce-task（BL 一致性总结），prompt 忠实含真实差距描述，check 验 mt0_bl_consist.py BL 总结	保留
+(no task_id field)	(#346 kaixuanx mc26) PVT 45 角点瞬态波形窗口平均功耗提取 keep	用户 produce-task（窗口平均功耗），prompt 忠实，check 验 pvt_pwr_winavg.py 窗口平均算法	保留
+(no task_id field)	(#347 jianwang mc23) FineSim IDD iddblk.csv 双 corner cellName 对比高亮 keep	用户 produce-task（双文件对比高亮），prompt 忠实，check 验 idd_blk_cmp.py 对比+高亮	保留
+(no task_id field)	(#348 dsgao mc10) CDL 门级网表 Ras_Tscodecomp 真值表分析 keep	用户 produce-task（真值表分析），prompt 含原话，check 验 tscodecomp_truth_table.py 真值表推导	保留
+(no task_id field)	(#349 shanksw mc21) flat SPICE 网表前缀 testmode 信号电压域分类 + 目标单元实例计数（CMLeft） keep	用户 produce-task（电压域分类+计数），prompt 含原话，check 验分类+计数	保留
+(no task_id field)	(#350 qinqinl mc25) DSPF 寄生网表 BL sense-amp 耦合电容汇总（sacap_1027.pl 后处理） keep	用户 produce-task（耦合电容汇总），prompt 含原话，check 验 sacap 后处理+耦合电容统计	保留
+(no task_id field)	(#351 zjqiao mc98) LVS hcell 与 SPICE netlist 改过名字的 block 检索（148MB 网表） keep	用户 produce-task（block 检索），prompt 忠实，check 验检索逻辑+hcell 关联	保留
+(no task_id field)	(#352 yifansun mc137) FineSim DPmux8 多 W/L/TYPE 变体仿真结果归类分类排名 keep	用户 produce-task（归类排名），prompt 含原话，check 验 parse_results.py 归类+排名	保留
+(no task_id field)	(#353 yazhuok mc21) FineSim 单管 AC 电容扫描仿真结果整理（ntk_hwl_m AC 100kHz） keep	用户 produce-task（结果整理），prompt 忠实，check 验 finesim_lis_organize.py 整理逻辑	保留
+(no task_id field)	(#354 reedchen mc36) FineSim 蒙特卡洛 VM 电压裕量仿真结果整理（domino_Receiver） keep	用户 produce-task（MC VM 整理），prompt 忠实，check 验 MC VM 统计+整理	保留
+(no task_id field)	(#355 yinyus mc894) ALPS 网表实例抽取成 CSV + net-pair pivot（Y-decoder 电容单元库） keep	用户 produce-task（CSV+pivot），prompt 含原话，check 验 netlist_csv.py 抽取+pivot	保留
+(no task_id field)	(#356 vincentz mc56) HSPICE .sp deck 扫描生成 + bsub 批量提交（bitline sense-amp corner 扫描） keep	用户 produce-task（deck 生成+批量提交），prompt 忠实，check 验 sp_sweep_gen.py 生成+bsub	保留
+(no task_id field)	(#357 t0003117 mc473) SPICE 网表故障注入（Wordline Driver lwdrx8_2d5T Wl 开路故障，fault_inject_V3.py） keep	用户 produce-task（故障注入），prompt 含原话，check 验 fault_inject.py 注入+out_a.sp/json	保留
+(no task_id field)	(#358 chengwen mc37) SPICE 网表 vdleq 用况整理（cell name + hierarchy） keep	用户 produce-task（vdleq 用况整理），prompt 含原话，check 验 vdleq_analyze.py 整理+报告。备注：与 #394 VdleqNetlistExtract-001 同用户 chengwen 同概念 vdleq，可能概念重复，待 dup-triage（非意图问题）	保留（备注：与 #394 概念重复待 triage）
+(no task_id field)	(#359 byliu mc20) SPICE 网表电容行筛选（Chip_Power_Model 同行含 C_ 与 -10/-11/-12） keep	用户 produce-task（电容行筛选），prompt 含原话，check 验筛选+行数	保留
+(no task_id field)	(#360 joeyl mc23) SPICE 网表 ulvt 器件 vth 调整（pulvt_ckt/nulvt_ckt 追加 _delvto） keep	用户 produce-task（vth 调整），prompt 含原话，check 验 _delvto 追加+行数	保留
+(no task_id field)	(#361 claire1l mc11) ITF（Calibre PEX 工艺文件）到 CSV 转换（TSI 2.0b 层叠 CSV，供 LPE QA） keep	用户 produce-task（ITF->CSV），prompt 忠实，check 验 itf2csv.py 转换+层叠结构	保留
+EDA-Eval-DesignFlow-CapfitNetExtract-001	(#362 shanliny mc37) SPF/RC 网表电容拟合走线提取（RC 可视化工具新增功能，多轮明确范围/端子/屏蔽族/电容命名） keep	用户 produce-task（capfit 走线提取），prompt 含 U0 原话，check 验 capfit_extract.py 提取+屏蔽+命名	保留
+EDA-Eval-DesignFlow-BsmFailAnalyzer-001	(#363 zoeyr mc25) SRAM Sense Margin 二分法仿真通用失败分析器 bsm_analyzer.py keep	用户 produce-task（失败分析器），prompt 忠实，check 验 bsm_analyzer.py 二分法+失败定位	保留
+EDA-Eval-DesignFlow-SpfCouplingCapExtract-001	(#364 gallopc mc16) StarRC DSPF/SPF 目标信号总寄生耦合电容统计（XDecGap 后处理） keep	用户 produce-task（耦合电容统计），prompt 忠实，check 验总耦合电容计算+反硬编码	保留
+EDA-Eval-DesignFlow-SpIncludeTrace-001	(#365 ghyang mc77) SPICE 仿真 deck include 引用追踪与分组（DDGOA SRAM 多仿真文件夹 sim*.sp） keep	用户 produce-task（include 追踪+分组），prompt 忠实，check 验 include 解析+分组+反硬编码文件夹名	保留
+EDA-Eval-DesignFlow-SpfBitcellParmHack-001	(#366 e0046686 mc13) DSPF/SPF 寄生网表 DDR bitcell mismatch 参数注入 parm_hack_spf.py keep	用户 produce-task（参数注入），prompt 忠实，check 验 parm_hack_spf.py 注入+反硬编码 TOPMOD_A	保留
