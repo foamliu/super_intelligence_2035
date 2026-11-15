@@ -2735,6 +2735,74 @@
 
 ---
 
+## 158. Gorilla: Large Language Model Connected with Massive APIs
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Gorilla: Large Language Model Connected with Massive APIs |
+| 作者（前 3） | Shishir G. Patil · Tianjun Zhang · Xin Wang（共 **4** 位，末位 Joseph E. Gonzalez；arXiv `id_list` 作者字段逐字核） |
+| 年份 | **2023**（`2023-05-24`） |
+| 会议 / 期刊 | **NeurIPS**（arXiv `comment` 为空；`venue` 取自 OpenAlex `primary_location.source`，`type=conference`，未给届次年份 ⇒ **不代填年份**） |
+| 被引数 | **1,151**（OpenAlex `10.48550/arxiv.2305.15334`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.15334> ｜ DOI `10.48550/arxiv.2305.15334` |
+| 一句话贡献 | 用 LLaMA-7B 微调出「调用百万级真实 API」的模型，并给出可自动判分的 **APIBench**（TorchHub / TensorHub / HuggingFace 三个来源）；判分靠 **AST 子树立匹配**（只匹配 `repo_or_dir` / `model` 等登记键，`pretrained=True` 这类可选参数不参与），同时把「调用了数据库里不存在的 API」单列为 **hallucination**、与「调用错参数」的 error 区分；再把检索文档拼进训练指令（**Retrieval-Aware Training**），使模型能跟上文档版本变化。 |
+| 与我们工作的关系 | **harness（工具调用判分口径，主目标）**：把「幻觉」与「错误」拆成两类再分别报，是评测表该有的粒度 ⇒ <b>动作</b>：工具调用评测加两列 `unknown-tool rate` / `wrong-arg rate`，并要求判分器说明「哪些参数参与匹配、哪些忽略」。<br>**data（中文 API 文档可行性）**：RAT 依赖文档可检索且可截断 ⇒ <b>动作</b>：先做「中文文档 BM25 命中率」小实验（50 个常用库），命中率 &lt;60% 就不要急着训 RAT。<br>**pretrain（规模）**：论文是 7B；2B 是否仍能吃下 RAT 的增益未知 ⇒ <b>动作</b>：2B / 7B 各训一版，判据 = unknown-tool rate 的相对降幅，而不是总准确率。<br>**风险**：① APIBench 是自建 **16,450 条 {instruction, API} 对**（HuggingFace 过滤后 **925** 个模型 + TF Hub v2 **626** 个 + TorchHub），规模远小于真实工具生态；② AST 匹配的「登记键」是人工选择，换一组键数会变；③ 论文未给 2B 级结果。 |
+
+首次收录: 2026-11-16（第四十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` 查询得 `published=2023-05-24T17:41:29Z`、4 作者、`comment` 空；OpenAlex `200` 1,151 / venue NeurIPS；PDF `200` `application/pdf` 1,247,664 B / 18 页，`pdftotext` 核对 `AST sub-tree` / `retrieval-aware` / `pretrained=True` / `APIBench`）
+
+---
+
+## 159. Let's Verify Step by Step
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Let's Verify Step by Step |
+| 作者（前 3） | Hunter Lightman · Vineet Kosaraju · Yura Burda（共 **10** 位；含 Jan Leike / John Schulman / Ilya Sutskever / Karl Cobbe；arXiv `id_list` 逐字核） |
+| 年份 | **2023**（`2023-05-31`；仅 v1） |
+| 会议 / 期刊 | **arXiv 预印本**（`comment` 为空；OpenAlex `type=preprint`）⇒ 其他渠道所称会议版本本轮**未取得一手出处**，不写 |
+| 被引数 | **2,226**（OpenAlex `10.48550/arxiv.2305.20050`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.20050> ｜ DOI `10.48550/arxiv.2305.20050` |
+| 一句话贡献 | 把「奖励每一步推理」与「只看最终答案」直接对比：在同一生成器上，**过程监督 PRM 78.2% / 结果监督 ORM 72.4% / 多数投票 69.6%**（best-of-1860，500 道 MATH 测试题），并用**主动学习**把标注效率提高 **2.6×**，同时公开 **PRM800K**（80 万条 step-level 人工标签）。作者自陈该数据集被主动学习偏置到「答案错误」一侧。 |
+| 与我们工作的关系 | **posttrain（推理后训练的主对照，主目标）**：给了「过程奖励值不值标注成本」的第一个可量化答案 ⇒ <b>动作</b>：后训练实验表加一行「奖励粒度（outcome / step）」，判据 = 同等标注预算下的 pass@1 与标注人时。<br>**zhulong（thinking 轴）**：PRM 只做 reranker 也能涨 5.8 个点（72.4 → 78.2），这条「不加训练、只加挑选」的路线成本更低 ⇒ <b>动作</b>：先在推理评测上跑 PRM reranker 基线，再决定是否进 RL。<br>**harness（评测口径）**：「first mistake」判据在 MATH 上良定义，换到 Verilog / EDA 流程未必 ⇒ <b>动作</b>：造题时标注「错误可定位步数」，只对 ≤2 步可定位的题采 step label。<br>**风险**：① 只覆盖 MATH，且 best-of-N 的收益随 N 饱和；② PRM800K 有主动学习偏置，直接照抄配比会带来分布偏差；③ 作者群已有多人离开 OpenAI，维护状态未知。 |
+
+首次收录: 2026-11-16（第四十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：10 作者、`published=2023-05-31T17:24:00Z`、`comment` 空；OpenAlex `200` 2,226；PDF `200` 4,384,742 B / 29 页，`pdftotext` 核对 `78.2` / `72.4` / `69.6` / `PRM800K` / `2.6×`）
+
+---
+
+## 160. Qwen2.5-VL Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Qwen2.5-VL Technical Report |
+| 作者（前 3） | Shuai Bai · Keqin Chen · Xuejing Liu（共 **27** 位，署名 **Qwen Team, Alibaba Group**；arXiv `id_list` 逐字核） |
+| 年份 | **2025**（`2025-02-19`；仅 v1） |
+| 会议 / 期刊 | **技术报告 / arXiv 预印本**（`comment` 为空；OpenAlex `type=preprint`） |
+| 被引数 | **8,551**（OpenAlex `10.48550/arxiv.2502.13923`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2502.13923> ｜ DOI `10.48550/arxiv.2502.13923` |
+| 一句话贡献 | 一套可直接照抄的**原生动态分辨率**视觉语言配方：视觉端从零训 ViT（patch `stride 14`、窗口 **112×112 = 8×8 patch** 的 window attention，小于窗口的区域不补齐），时间端把 **MRoPE 对齐到绝对时间**并配 **dynamic FPS** 采样以支持小时级视频；预训练语料从 **1.2T 扩到 4.1T token**。 |
+| 与我们工作的关系 | **vision（视觉编码器配方，主目标）**：native dynamic resolution + window attention 是我们正在比较的两条路线 ⇒ <b>动作</b>：视觉消融表把「初始化（CLIP / 从零）」与「注意力（全图 / 窗口）」拆成 2×2，判据 = 固定视觉 token 预算下的 OCR 与文档理解分数。<br>**pretrain（多模态 token 配比）**：4.1T 里视觉占多少论文未直接给 ⇒ <b>动作</b>：我们自己按「图像 token / 文本 token」分开记账，别只报总 token。<br>**data（中英图文配比）**：中文 OCR 与文档理解是强项，说明中文图文数据质量关键 ⇒ <b>动作</b>：数据线建「中文文档截图 → OCR 标注」子集并做污染检查。<br>**风险**：① 技术报告，未给消融的绝对训练成本；② 从零训 ViT 需要大量图文对，2B 级复现未必划算；③ 8,551 引用含大量「用它当基座」的引用，不等于方法被独立验证。 |
+
+首次收录: 2026-11-16（第四十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：27 作者、`published=2025-02-19T18:00:14Z`、`comment` 空；OpenAlex `200` 8,551；PDF `200` 2,219,929 B / 23 页，`pdftotext` 核对 `window attention` / `112×112` / `stride of 14` / `absolute time` / `4.1 trillion`）
+
+---
+
+## 161. DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model |
+| 作者（前 3） | DeepSeek-AI · Aixin Liu · Bei Feng（共 **157** 位；arXiv `id_list` 逐字核） |
+| 年份 | **2024**（`2024-05-07`，v5 `2024-06-19`） |
+| 会议 / 期刊 | **技术报告 / arXiv 预印本**（`comment` 为空；OpenAlex `type=preprint`） |
+| 被引数 | **1,552**（OpenAlex `10.48550/arxiv.2405.04434`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.04434> ｜ DOI `10.48550/arxiv.2405.04434` |
+| 一句话贡献 | 给出「**236B 总参 / 21B 激活**」的 MoE 配方，核心是 **MLA（Multi-head Latent Attention）**：对 KV 做低秩联合压缩，使 **KV cache 减少 93.3%**、最大生成吞吐提升 **5.76×**，并在 **8.1T token** 上预训练的同时**节省 42.5% 训练成本**（相对同规模稠密模型）。 |
+| 与我们工作的关系 | **pretrain（架构与成本口径，主目标）**：MLA 是「省 KV cache」而非「省参数」⇒ <b>动作</b>：2B 级实验里把 `KV cache 字节/token` 作为一等指标记录，与 PPL 同表；判据 = 同等显存下可服务的并发数。<br>**zhulong（成本口径）**：论文把「训练成本 −42.5%」与「吞吐 ×5.76」分开报，这种拆法可直接搬到我们的成本表 ⇒ <b>动作</b>：成本表分「训练侧」与「推理侧」两栏，不合并成「效率提升」。<br>**data**：8.1T 语料以中英为主，且作者明确提到用数据质量治理幻觉 ⇒ <b>动作</b>：数据线把「幻觉相关清洗」列为单独实验组。<br>**风险**：① 157 人署名，细节问题难以定位到具体作者；② 42.5% 是与「同规模稠密模型」比，不是与上一代 DeepSeek 比；③ 2B 规模下 MoE 稀疏度收益远小于 236B，结论不能直接下移。 |
+
+首次收录: 2026-11-16（第四十一轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：157 作者、`published=2024-05-07T15:56:43Z`、`comment` 空；OpenAlex `200` 1,552；PDF `200` 1,586,880 B / 52 页，`pdftotext` 核对 `236B` / `21B` / `93.3%` / `42.5%` / `5.76` / `8.1T`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > ✅ **第三十六轮（2026-11-15 15:0x）转正 4 条**：Whisper `2212.04356`（#138，3,720）· Gato `2205.06175`（#139，876，TMLR 2022）· SGLang `2312.07104`（#140，812，NeurIPS 2024）· Self-Consistency `2203.11171`（#141，5,587，ICLR 2023）⇒ B 轨累计 **141**。
