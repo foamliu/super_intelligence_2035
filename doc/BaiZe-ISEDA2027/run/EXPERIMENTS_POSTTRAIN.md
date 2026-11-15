@@ -11980,3 +11980,32 @@ python3 bpt_attribution_p0_dev_compare.py \
 **09:00 及格线**：5/6✅，唯一未闭环=P0 dev 前后对比（p0_dev ETA~10:00，略过 09:00；codegen 吞吐限非 infra 非阻塞；本轮已把 compare 方法论去风险为双轨，下一 wake 数据齐即出判定）。
 
 **纪律**：0 infra；未碰 GPU0-5/运行中 eval/别线/隧道进程；未改 benchmark/check.py/题面/运行中脚本（p0_dev 正用 dev-eval runner，编辑运行中 bash 有风险，按 AGENTS.md 不动）；仅只读诊断 + 36.15 cp 回收 direct final_report（只写 /tmp，不改 repo 脚本）+ 报告/EXPERIMENTS 更新。
+
+## §R534-zhulong-reattribution（wake534, 2026-11-15 09:0x）— zhulong 口径再归因（排除 run_commands）
+
+**起因**：2026-11-15 08:1x 用户令。此前归因（v2 RCA / overnight / T6）把 run_commands 1051 次拒绝（80.6%）算作「模型不会调 MCP 工具」的能力缺陷；事实是 36.15 PreToolUse hook **主动禁用** run_commands（白名单仅 3 知识库工具 + run_code），属评测环境设计行为。
+
+**口径确认（run1 即 zhulong 口径新基线）**：attribution_3615_run1（18.99%，完整 158，2026-11-14T20:08 落盘）= 36.15 官方 `scripts/run_cline_script.sh -p 8 -n` 流水线 + PreToolUse hook 生效 + minicpm5-2b-sft-v39-final 经反向隧道 18096→.17:8096（providers.json 实测确认；final_report model_name=zhulong_deepseek_v32 为 config.yaml 陈旧标签）+ EDA_PROMPT_TEMPLATE_PYAETHER=eval_sys_prompt_template_old.md。两 benchmark（v20260311.jsonl / _fixed.jsonl）均 158 题。
+
+**cline 版本（补齐硬缺口）**：zhulong fork 3.0.29（~/.local/zhulong/bin/zhulong）/ cline official 3.0.51（~/.local/bin/cline），36.15 实测。
+
+**PreToolUse hook 白名单（只读核验）**：放行 = MCP 工具（mcp__/pyaether_mcp_server__ 前缀）+ submit_and_exit + spawn 工具 + workspace 内 read/list/write；拦截 = run_commands/bash/execute_command → overrideInput 改写为 echo ACCESS RESTRICTED（非 cancel，trace 不中断）；workspace 外 read/list/write → /dev/null。另含 Φ-budget hook（EDA_PHI_BUDGET，超预算 run_code→no-op print；run1 中 EDA_PHI_BUDGET=0=无限）。
+
+**再归因四问**（`bpt_zhulong_reattribution.py` → `attribution_zhulong_reattribution.json`，源 attribution_3615_run1/）：
+
+| 问 | 答 | 数 |
+|:--|:--|:--|
+| Q1 真 MCP 拒绝率（排除 run_commands） | 6.0% | get_api_details 41/395=10.4% · search_apis 17/302=5.6% · search_apis_by_keyword 5/237=2.1% · run_code 3/99=3.0%；run_commands 1051/1304=80.6% 属 hook 设计排除 |
+| Q2 run_code 拒绝率 | 3.0% | 96 成功 / 3 拒 |
+| Q3 静默未生成 | 45 题=28.5% | 零拒绝零调工具=未进入 agent 回路；121 gen-fail 中 used_search_apis=0/used_run_code=0 |
+| Q4 Pass@1 差异 | +15.95pp | 旧 .17 3.04%±0.83(5-run) vs 新 36.15 18.99%(1-run)；主因环境 RAG+沙盒可达；5-run 检验待补 |
+
+**漏斗**：158 → gen_success 36 → passed 30 = Pass@1 18.99%（生成后通过率 83.3%）。gen_fail 121（T6_tool_format 121 / T4 5 / T5 1 / T3 1）。
+
+**拒绝全景**：total 1304 = run_commands 1051(80.6%,hook 设计) + read_files 104(workspace 沙盒) + 真 MCP 66(5.1%,真实格式问题量小) + submit/write/其余。拒绝原因：missing-required-field 527 / other-type-error 378 / string-not-array 321 / unavailable-tool 41 / wrong-type-boolean 37（多为 run_commands 被以错误 schema 调用）。
+
+**结论**：旧「模型不会调 MCP 工具 / 损失在提交协议 / P0 +20pp+13.4pp」归因**作废（PENDING-REMOTEST）**。真归因：模型会检索（6.0%）、会执行（run_code 3.0%）；真损失大头 = 45 题静默未进入 agent 回路（28.5%）+ 76 题把 turn 烧在被禁 run_commands 上。+15.95pp 跳升主因环境（RAG+沙盒可达），非 prompt 非工具协议。
+
+**产物**：bpt_zhulong_reattribution.py / bpt_zhulong_reattribution_report.py / attribution_zhulong_reattribution.json / reports/report_posttrain_zhulong_reattribution_zh.html（11.9KB,0 script）。旧报告 4 份加 PENDING-REMOTEST banner。
+
+**复算**：`python3 bpt_zhulong_reattribution.py`；`python3 bpt_zhulong_reattribution_report.py`。
