@@ -1,12 +1,13 @@
 {
-  "generated_at": "2026-11-15T18:55:08",
+  "generated_at": "2026-11-15T21:52:21",
   "protocol": "EDA-Eval-PyAether-158, Pass@1, 5-run mean±std, -p 8 -n",
   "new_zhulong_baseline": {
-    "n": 3,
-    "mean": 0.0633,
-    "std": 0.1096,
+    "n": 4,
+    "mean": 0.0475,
+    "std": 0.0822,
     "values": [
       0.1899,
+      0.0,
       0.0,
       0.0
     ],
@@ -28,7 +29,7 @@
     "env": ".17 非zhulong (无RAG/无沙盒, run_commands启用)",
     "source": "/tmp/posttrain_5run_eval/step105"
   },
-  "delta_pp": 3.29,
+  "delta_pp": 1.71,
   "paired_test_passany_mcnemar": {
     "n11_both_pass": 0,
     "n00_both_fail": 106,
@@ -38,7 +39,7 @@
     "discordant": 52
   },
   "paired_test_passfrac_wilcoxon": {
-    "n_nonzero": 31,
+    "n_nonzero": 32,
     "error": "No module named 'scipy'"
   },
   "note": "5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。"
