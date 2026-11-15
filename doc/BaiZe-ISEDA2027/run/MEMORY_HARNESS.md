@@ -2,30 +2,19 @@
 
 WAITING: 0
 
-> 🆕 **R2537 · 2026-11-15 19:02 — 自检全绿 + adaptive验收4时刻全过✅(state已reset) + cc 28/82(4P/18F/5NA·0ConnRefused✅) + opencode 34/38(10P/16F/7NA·5remaining·0quota429✅) + pi 10/46(1P/8F·0ConnRefused✅) + deepseek 48题manifest就绪待opencode完成后启动 + research日报SatisFix/EvoX记为future ref**
-> - **自检**: load 34/224 ✅·mem 1031GB avail ✅·harness 0 runaway ✅·/tmp 40% ✅·reports/ clean ✅
-> - **adaptive_concurrency 验收(11-15令)**: `status`=off current=10/10 cap=10 quiet=24m 0cumulative429 ✅·`--now` 4时刻注入全通过(Sat03:00 off 10/10✅·Mon10:00 work clamp 10→4✅·record 429→halve 10→5 cooldown✅·5min后冷却不减不加✅·25min后work cap=4限制不加✅)·**state已reset**(测试时record了假429·已清除·current=10/429_total=0/last_429=null)✅
-> - **cc rerun**: PID 1510536 harbor alive(~15.2h)·**28/82 done**(4PASS[custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git]/18FAIL/5NA[3×3600s-timeout+1×AgentTimeout+1×VerifierTimeout=全infra]/1NO_REWARD)·**0ConnRefused ✅✅✅ HARD VERIFIED**(vs旧0/89=88ConnRefused=98.9%infra)·running gpt2-codegolf·54 remaining·ETA~Nov17
-> - **opencode rerun**: PID 2804696 harbor alive(chunk3·~28min)·**34/38 done**(10PASS/16FAIL/7NA/3NO_REWARD)·**0 quota-429 ✅**·5 remaining[install-windows-3.11(running)/make-doom-for-mips/path-tracing-reverse/regex-log/train-fasttext]·adaptive n=10·**3 RuntimeError NA**(cobol-modernization/distribution-search/dna-assembly="exited code 1"=pre-fix adapter bug·需主rerun后单独重跑)·2 timeout NA(caffe-cifar-10/extract-moves-from-video=3600s=infra)
-> - **pi rerun**: PID 3810204 harbor alive(~10min)·**10/46 done**(1PASS[build-cython-ext]/8FAIL/1NO_REWARD)·**0ConnRefused ✅**·adaptive n=10·just started
+> 🆕 **R2538 · 2026-11-15 19:15 — 自检全绿 + cc 28/82(4P/18F/5NA=全infra-timeout·0ConnRefused✅) + opencode 35/38(10P/17F/7NA/3NO_REWARD·4remaining in-flight·0真quota429✅) + pi 11/46(1P/9F·0ConnRefused✅) + adaptive off 10/10·0cumulative429✅ + deepseek待启动**
+> - **自检**: load 59/224 ✅·mem 1027GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ clean ✅
+> - **cc rerun**: PID 1510536 harbor alive(~15.5h)·**28/82 done**(4PASS[custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git]/18FAIL/5NA[fix-ocaml-gc=VerifierTimeout·feal-linear/differential-cryptanalysis+code-from-image=CommandTimeout@3600s·configure-git-webserver=AgentTimeout@3600s=全infra]/1NO_REWARD)·**0ConnRefused ✅ HARD VERIFIED**(grep=0 files)·cc修复判据已met: 0ConnRefused+4PASS=真能力(vs旧0/89=100%infra)·54 remaining·ETA~Nov17
+> - **opencode rerun**: PID 2804694 harbor alive(part3·~40min)·**35/38 done**(10PASS/17FAIL/7NA/3NO_REWARD)·**4 remaining in-flight**[install-windows-3.11/make-doom-for-mips/regex-log/train-fasttext]·**0真quota429 ✅**(grep 10matches=假阳性·429是stdout里的数字串如G-code坐标M862.5/大整数·非exception_info里的额度block·exception_info中0条429/quota/rate-limit)·adaptive n=10
+> - **pi rerun**: PID 3810204 harbor alive(~24min)·**11/46 done**(1PASS[build-cython-ext]/9FAIL/0NA/1NO_REWARD)·**0ConnRefused ✅**·adaptive n=10
 > - **deepseek rerun**: manifest tb21_7way_rerun_deepseek-harness_20261114_0858.txt=48 tasks ✅就绪·待opencode完成后启动(adaptive auto·weekend n=10)
 > - **adaptive**: off current=10/cap=10·0 cumulative 429 ✅·real-world validated(opencode n=10 + pi n=10 concurrent·0 429)
-> - **research 日报 2026-11-15**: SatisFix(不把agent放法官位·自评→报告选择+理由)·EvoX(harness失败三分法:tool-call mismatch/interrupted workflow/unsupported completion claims·harness版本须写进报表)·均记为future eval design参考·非本轮actionable
-> - **下一步**: opencode finishes(~5 remaining·~30min)→启动deepseek rerun(48题·adaptive auto)→pi runs(46题·~2-3h)→cc finishes(~Nov17)→3 opencode RuntimeError NA单独重跑→REGEN双报告(report_harness_cc_tb21_attribution_zh.html + report_harness_tb21_7way_zh.html)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈28.3KB（✅≤32KB）
+> - **下一步**: opencode finishes(~4 remaining·~20min)→启动deepseek rerun(48题·adaptive auto)→pi runs(46题·~2-3h)→cc finishes(~Nov17)→3 opencode RuntimeError NA单独重跑→REGEN双报告
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈31.0KB（✅≤32KB）
 
-> 🆕 **R2536 · 2026-11-15 18:51 — cc 28/82(4P/19F/5NA·0ConnRefused✅) + opencode 33/38(10P/13F/10NA·0quota429✅·5remaining) + **pi rerun LAUNCHED**(n=10 adaptive·46 tasks·jobs-dir=/tmp/tb21_glm53_jobs/pi_rerun_20261115_1851) + adaptive off 10/10·0 429✅ + 自检全绿 + git pull FF**
-> - **cc rerun**: PID 1510536 harbor alive(~15h)·**28/82 TRIAL done**(4PASS/19FAIL/5NA)·**0ConnRefused ✅**(grep=0)·currently running gpt2-codegolf·54 remaining·ETA~Nov17
->   - 5NA=infra(3×Command timeout@3600s + 1×AgentTimeout + 1×VerifierTimeout)·19FAIL含~12×502=infra(gw-proxy upstream Errno104)+~7×capability(maxturns/wrong-answer)
->   - cc修复判据已met: 0ConnRefused + 4PASS=真能力(vs旧0/89=100%infra) ✅
-> - **opencode rerun**: PID 2804696 harbor alive(chunk3)·**33/38 TRIAL done**(10PASS/13FAIL/10NA)·6 in-flight·5 remaining·**0 quota-429 in exception_info ✅**·adaptive n=10
-> - **pi rerun** 🆕: PID 3809768→3810204 harbor run `--agent terminalbench.agents.pi:PiTB --n-concurrent 10`(adaptive auto→10 weekend)·46 tasks·task-list=manifests/tb21_7way_rerun_pi_20261114_0858.txt·jobs-dir=/tmp/tb21_glm53_jobs/pi_rerun_20261115_1851·just started(initializing)
-> - **adaptive_concurrency**: `status`→mode=off/current=10/cap=10/0 cumulative 429 ✅(weekend)·real-world validated(opencode n=10 + pi n=10 concurrent)
-> - **自检**: load 39/224 ✅·mem 1032GB avail ✅·harness CPU max=qemu 98%(1核) ✅·0 runaway ✅·/tmp 40% ✅·reports/ clean ✅
-> - **git pull**: ✅ Fast-forward(designflow changes only·0 harness touch)
-> - **research 日报 2026-11-15**: SatisFix(specification satisficing前报告机制)·仅作输入参考·无新指令·本轮不采纳
-> - **下一步**: opencode finishes(~5 remaining·~30min)→启动deepseek rerun(48题·adaptive auto)→pi runs(46题·~2-3h with n=10)→cc finishes(~Nov17)→REGEN双报告(report_harness_cc_tb21_attribution_zh.html + report_harness_tb21_7way_zh.html)
-> - **📦 体积**: TASK≈25.6KB / MEMORY≈27.9KB（✅≤32KB）
+> 📦 R2537 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+adaptive验收4时刻全过✅+cc 28/82(4P·0ConnRefused✅)+opencode 34/38+pi 10/46+research日报SatisFix/EvoX记为future ref。需要时再读。
+
+> 📦 R2536 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 28/82+opencode 33/38+pi rerun LAUNCHED(n=10 adaptive)+adaptive off 10/10·0 429✅+自检全绿+git pull FF。需要时再读。
 
 > 📦 R2535 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 26/82(4P/5EXC/8×502infra/9maxturn·0ConnRefused✅)+opencode 24/38(10P/7F/7EXC·chunk3 10in-flight·adaptive n=10·0 429✅)+adaptive off 10/10+自检全绿+git pull up-to-date。需要时再读。
 
