@@ -1,0 +1,12 @@
+path	bytes	human	reason	timestamp
+/nasdata/app.e0031982/cline-cli-20260309-130628/	~85983232	82M	extracted old cline CLI distro (Mar9), superseded [content ~82M per du -sh, dir deleted before exact byte count]	2026-11-15 13:30
+/nasdata/app.e0031982/zhulong-cli-20260722-105617.tar.gz	264157989	253M	old CLI distro archive (Jul22), superseded	2026-11-15 13:30
+/nasdata/app.e0031982/zhulong-cli-20260526-161634.tar.gz	517141688	496M	old CLI distro archive (May26), superseded by current /home/.local/bin/cline ELF	2026-11-15 13:30
+/nasdata/app.e0031982/node-v20.18.1-linux-x64.tar.xz	25792116	25M	node installer (Feb11), re-downloadable; .local/node-20 install kept	2026-11-15 13:30
+/nasdata/app.e0031982/zhulong-cli-20260724-132839/	~338688000	323M	extracted old CLI distro (Jul24), redundant [content ~323M per du -sh]	2026-11-15 13:30
+/nasdata/app.e0031982/zhulong-cli-20260724-132839.tar.gz	264157191	253M	old CLI distro archive (Jul24), superseded	2026-11-15 13:30
+/nasdata/app.e0031982/zhulong-cli-20260526-161634/	~619708416	591M	extracted old CLI distro (May26), redundant with archive/superseded [content ~591M per du -sh]	2026-11-15 13:30
+/nasdata/app.e0031982/zhulong.tar.gz	493894409	473M	old CLI distro archive (Mar6), superseded	2026-11-15 13:30
+/nasdata/app.e0031982/Miniforge3-Linux-x86_64.sh	73400320	71M	miniforge installer (Aug11), re-downloadable; miniforge3/ install kept	2026-11-15 13:30
+/nasdata/app.e0031982/cline-cli-20260309-130628.tar.gz	13886141	14M	old cline CLI distro archive (Mar9), superseded	2026-11-15 13:30
+/nasdata/app.e0031982/.npm/_cacache	1949236531	1.9G	npm cache (regenerable, step a); no npm download running	2026-11-15 13:32
