@@ -1742,7 +1742,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793070301949_21ltn	thomasz	hfeg0pkn002	17	schematic_netlist	parked		2026-11-14 08:24	r641 Q&A run.py waveform-usage inspection not produce
 1793775784925_ps0zi	rongjiez	hfeg0pkn005	13	schematic_netlist	parked		2026-11-14 08:45	thin script edit (remove 1 sed line in testcase_copy.sh) + near-dup user rongjiez/compare_wave family (r640); too thin for 8+ check conds
 1793686972994_l9sqg	rongjiez	hfeg0pkn005	12	waveform	parked		2026-11-14 08:45	code comparison Q&A (compare_wave new vs old skip handling) + near-dup user rongjiez/compare_wave (r640); Q&A non-produce
-1793082430174_aihrj	amberh	hfeg0plg67	28	schematic_netlist	parked		2026-11-14 08:45	how-to Q&A 'aether如何点亮电路中的线'; non-produce
+1793082430174_aihrj	amberh	hfeg0plg67	28	schematic_netlist	case	EDA-Eval-DesignFlow-AetherNetHighlightQA-001	2026-11-15 17:35	how-to Q&A 'aether如何点亮电路中的线'; non-produce
 1791972643413_0uitr	thomasz	hfeg0pkn002	29	analog_context	parked		2026-11-14 08:45	debug Q&A '看下为啥报错了' ESD log; non-produce
 1793675048268_3j9q3	t0003117	hfeg0pkn001	11	schematic_netlist	parked		2026-11-14 08:45	GUI trivial '打开ddcpb_top-LP5TOP-schematic'; non-produce single-open
 1794462985990_5wkof	t0002912	hfeg0pkn003	39	schematic_netlist	parked		2026-11-14 08:45	onboarding chat '新手什么都不会'; non-produce intro session
