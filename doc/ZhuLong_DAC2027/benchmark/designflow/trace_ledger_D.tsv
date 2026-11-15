@@ -1627,7 +1627,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792473479665_sbxpq	rongjiez	hfeg0plg98	20	schematic_netlist	parked		2026-11-13 12:33	r612 peek: Q&A analyze two copied scripts testcase_copy/run.sh (analysis, not produce)
 1793944477338_r7cwn	zhililu	hfhds219	18	analog_context	parked		2026-11-13 12:33	r612 peek: modify circuit add auto multi-conversion (produce-flavored BUT needs live Aether cell asset filter, infeasible like r611 481m5)
 1793865170230_lzsx1	kevinc	hfeg0plg84	17	schematic_netlist	parked		2026-11-13 12:33	r612 peek: debug perl script SPF IO signal extraction incomplete (debug, not produce)
-1792394160673_546be	rongjiez	hfeg0plg98	17	waveform	parked		2026-11-13 12:33	r612 peek: Q&A analyze/compare compare_wave.pl vs compare_wave_ddr5.pl for merge (analysis, not produce)
+1792394160673_546be	rongjiez	hfeg0plg98	17	waveform	case	EDA-Eval-DesignFlow-ScriptCompareMergeReviewQA-001	2026-11-16 02:45	r612 peek: Q&A analyze/compare compare_wave.pl vs compare_wave_ddr5.pl for merge (analysis, not produce)
 1791965206462_7qa0k	yanxvwei	hfeg0plg99	16	waveform	parked		2026-11-13 12:33	r612 peek: Q&A compare two waveform-compare scripts difference (analysis, not produce)
 1793417510254_02cw7	feng1z	hfeg0plg89	15	schematic_netlist	parked		2026-11-13 12:33	r612 peek: vague greeting help me process data (not clean produce)
 1792482513976_f2dzi	zxtu	hfhds208	15	schematic_netlist	parked		2026-11-13 12:33	r612 peek: Q&A what is nicap concept + find bmatrix script location (Q&A, not produce)
