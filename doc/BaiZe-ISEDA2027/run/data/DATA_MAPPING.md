@@ -695,8 +695,8 @@
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
 | `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 第一批完成(5子集/1093 files/231.6GB/0 inc; megamath-web~1TB第二批按需) |
-| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(448/2228parquet/20.1%/840GB/3inc/PID1829139/nice19/ionice3/max-workers2; 当前下载math-dialogue子集(5子集中第1个); rate~130s/file且降速中; ETA~64h→预计11-18 21:00CST) |
-| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(166/1637parquet/10.1%/312GB/2inc/PID922699/nice19/ionice3/max-workers2; 当前下载code-no-thinking-hard子集(7子集中第1个); rate~60s/file; ETA~24h→预计11-17 05:00CST) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(450/2228parquet/20.2%/843GB/3inc/PID1829139/nice19/ionice3/max-workers2; 当前下载math-dialogue子集(5子集中第1个); rate~135s/file且降速中; ETA~66h→预计11-18 22:00CST; 11-16 05:31巡检活跃) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(202/1637parquet/12.3%/380GB/2inc/PID922699/nice19/ionice3/max-workers2; 当前下载code-no-thinking-hard子集(7子集中第1个); 11-16 05:29最近parquet活跃; 有过ProxyError 503但进程恢复继续下载; ETA~24h→预计11-17 06:00CST) |
 
 **MegaMath 子集详情**：
 - `megamath-web` (279B tokens, ~1TB) — 第二批按需
