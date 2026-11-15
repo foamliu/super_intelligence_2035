@@ -2,16 +2,18 @@
 
 WAITING: 0
 
-> 🆕 **R2522 · 2026-11-15 16:28 — cc rerun 24/82 监控(23trial done+1running·0ConnRefused✅·4PASS) + opencode 10done+9running(3PASS·adaptive n=9) + 自检全绿**
-> - **cc rerun**: PID 1510521 alive(~12.7h·etimes 45557s)·**23 trial-level done + 1 running(fix-ocaml-gc) = 24/82**·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 real 429 ✅
-> - **cc归因(verifier_result.rewards.reward 精确核实)**: **4PASS=1.0**(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git)·**16 FAIL=0.0**(8×max-turns=能力[adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert/financial-document-processor]+7×502 gw-proxy=infra[circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video/filter-js-from-html]+1×timeout=configure-git-webserver[verifier ran→0.0])·**3 NO_VERIFIER=RuntimeError timeout**(feal-linear/feal-differential/code-from-image·3600s超时→RuntimeError阻塞verifier·fix在claude_code.py L236但harbor进程已缓存旧module→需batch后rerun这3题)·1 running(fix-ocaml-gc)
-> - **cc公平能力评估(排除7×502+3 NO_VER=10 infra)**: **4PASS/13=30.8%**(含1 timeout-FAIL) 或 4PASS/12=33.3%(排除timeout)·vs 旧0/89=0% → **修复有效✅**
-> - **opencode rerun**: PID 517594 alive(~19min·etimes 1116s)·`--n-concurrent auto --chunk-size 12`·**10 done**(3PASS=1.0/3FAIL=0.0/4 in-progress NO_VER)+**9 running**·chunk1 of 38tasks·与cc并行(周末off-mode cap=10)
-> - **adaptive_concurrency**: mode=off current=9/10 next=9(quiet=18m·累计429=0) ✅
-> - **自检**: load 25.98/224 ✅·mem 1047GB avail ✅·harness CPU max=4.9%(opencode) ✅·0 runaway ✅·reports clean ✅
+> 🆕 **R2523 · 2026-11-15 16:38 — cc rerun 24/82 监控续(fix-ocaml-gc still running·0ConnRefused✅) + opencode 10done+9running(3PASS·adaptive n=9→10) + 自检全绿**
+> - **cc rerun**: PID 1510521 alive(~12.9h·etimes 46327s)·**23 trial-level done + 1 running(fix-ocaml-gc) = 24/82**·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 real 429 ✅(2 grep hit=timestamp .429209Z false positive)
+> - **cc归因**: 4PASS=1.0(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git)·16FAIL=0.0(8max-turns=ability+7×502=infra+1timeout)·3 NO_VER=RuntimeError timeout(需batch后rerun)·1 running(fix-ocaml-gc)
+> - **opencode rerun**: PID 517594 alive(~31min·etimes 1847s)·`--n-concurrent auto --chunk-size 12`·**10 task-level done**(3PASS/4FAIL/3NO_VER)+**9 running**·chunk1 of 38tasks·与cc并行(周末off-mode)
+> - **adaptive_concurrency**: mode=off current=9/10 next=10(quiet=28m·累计429=0) ✅·即将ramp→10
+> - **自检**: load 31.13/224 ✅·mem 1045GB avail ✅·harness CPU max<4% ✅·0 runaway ✅·reports clean(git status porcelain=0) ✅·/tmp 40% ✅
 > - **ETA**: cc (82-24)/2≈29h→~Nov16 21:00·opencode (38-10)/9≈3h→~Nov15 20:00
-> - **RuntimeError fix**: claude_code.py L236-237 注释确认在码✅·但harbor PID1510536缓存旧module→3 timeout题verifier被阻塞→**batch完成后rerun这3题**(不重启当前进程以免82题从头跑)
-> - **📦 体积**: TASK=25.6KB / MEMORY≈29KB（✅≤32KB）
+> - **RuntimeError fix**: claude_code.py L236-237 注释确认在码✅·harbor进程缓存旧module→3 timeout题verifier被阻塞→**batch完成后rerun这3题**
+> - **research日报11-15**: EvoX三分法(已在下一步⑦)·SatisFix前置报告switch(post-rerun低优先) noted
+> - **📦 体积**: TASK=25.6KB / MEMORY≈23.6KB（✅≤32KB）
+
+> 📦 R2522 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4PASS/8maxturns/7×502infra/3NO_VER·0ConnRefused✅)+opencode 10done+9running(3PASS·adaptive n=9)+自检全绿。需要时再读。
 
 > 📦 R2521 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 24/82(4PASS/8maxturns/7×502infra/4timeout·0ConnRefused✅)+opencode rerun 9tasks launched(adaptive auto n=9)。需要时再读。
 
@@ -23,9 +25,9 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2522 cc rerun 24/82 monitoring(23trial+1running·4PASS/8maxturns=ability/7×502=infra/3NO_VER=timeout RuntimeError·0ConnRefused✅) + opencode 10done+9running(3PASS·adaptive n=9)·hermes COMPLETE 38/89
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2521(cc rerun 6→24/82+adaptive落码+验收+TASK归档+opencode rerun LAUNCHED+verifier精确归因)
-当前动作:     R2522: cc rerun PID1510521 alive(12.7h)·23trial done+1running=24/82(4PASS=1.0/16FAIL=0.0[8maxturns+7×502+1timeout]/3NO_VER=RuntimeError timeout·0ConnRefused✅)·fix-ocaml-gc running·opencode rerun PID517594 alive(10done[3PASS]+9running·adaptive n=9)·load25.98/224✅·mem1047G✅·CPU max=4.9%✅·0runaway✅·reports clean✅·W:0
+PHASE:        R2523 cc rerun 24/82 monitoring续(fix-ocaml-gc running·0ConnRefused✅) + opencode 10done+9running(3PASS·adaptive n=9→10)·hermes COMPLETE 38/89
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2522(cc rerun 6→24/82+adaptive落码+验收+TASK归档+opencode rerun LAUNCHED+verifier精确归因)
+当前动作:     R2523: cc rerun PID1510521 alive(12.9h)·23trial done+1running=24/82(4PASS/16FAIL[8maxturns+7×502+1timeout]/3NO_VER·0ConnRefused✅)·fix-ocaml-gc running·opencode rerun PID517594 alive(10done[3PASS]+9running·adaptive n=9)·load31/224✅·mem1045G✅·CPU<4%✅·0runaway✅·reports clean✅·W:0
 下一步:       ①cc 82题完成(ETA~Nov16 21:00)→rerun 3 NO_VER timeout题(RuntimeError fix生效)→rerun 7×502→REGEN报告(cc行从0/89换真实数字) ②opencode 38tasks完成(ETA~Nov15 20:00) ③pi46→deepseek48逐路串行(用adaptive_concurrency auto·chunk=12) ④hermes qemu 2题=BLOCKED(Py3.9<3.11) ⑤hermes 2 mteb=infra BLOCKED ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
  体积: TASK=25.6KB / MEMORY≈27KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
