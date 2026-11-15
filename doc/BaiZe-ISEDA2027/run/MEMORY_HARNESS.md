@@ -12,12 +12,12 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2510 qemu BLOCKED(Py3.9<3.11)·cc rerun 14/82 monitoring·hermes COMPLETE 38/89
+PHASE:        R2512 cc rerun 15/82 monitoring(2PASS/11FAIL/1NA·0ConnRefused✅)·adaptive_concurrency验收✅·hermes COMPLETE 38/89
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494(cc toklimit fix)·R2498(cc adapter RuntimeError fix)·R2499(_ensure_pip Py3.9 fix)·R2502(hermes rerun 65/65 COMPLETE→MERGED→hermes=38/89)·R2503(cc rerun RESTARTED with fixed adapter)·R2504-R2509(cc rerun monitoring)·R2508(11-15报告重构令✅:2表+Infra台账+守恒✅)·R2510(qemu post-rerun=BLOCKED:Py3.9<hermes-agent≥3.11·_ensure_pip fix verified→exec_as_root||true+host-download get-pip-3.9.py+Py版本前置检查HERMES_PY_TOO_OLD·v6 merged→报告更新)
-当前动作:     R2510: qemu post-rerun v6 DONE(2/2 BLOCKED:HERMES_PY_TOO_OLD·Py3.9<hermes-agent≥3.11·pip成功但hermes-agent无兼容版本)·_base.py 3处exec_as_root加||true(pkg-mgr/curl/get-pip)·get-pip-3.9.py host下载+SSL prepend+upload_file替代curl·hermes.py加Py版本前置检查→clean RuntimeError·v6 merged 5 trials→hermes·报告REGEN(qemu=BLOCKED✅)·cc rerun PID1510521 alive(5.3h)·14/82(1PASS/11FAIL/2err/1run/68pend)·W:1
-下一步:       ①cc 82题完成(ETA~Nov16 11:00)→merge→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11✅已确认) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标
+当前动作:     R2512: 自检(adaptive_concurrency status=off 8/10✅+--now 4时刻注入✅:Sat03:00 off 8→Mon10:00 work clamp4→429+5min cooldown→25min hold@cap+gateway200✅+load30/224✅+0harness runaway✅+reports clean 0json/log/txt✅)·cc rerun PID1510521 alive(7.1h)·15/82(14task-level:2PASS/11FAIL/1NA·0ConnRefused HARD VERIFIED✅·0real429=2false positive:timestamp.429209Z+Fibonacci267914296·rate2.11/h·ETA~Nov16 16:00)·research日报11-15 harness建议(SatisFix:不把agent放法官位→自评改报告选择+理由)noted非本轮actionable·W:1
+下一步:       ①cc 82题完成(ETA~Nov16 16:00)→merge→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标
 ERROR_COUNT:  0
- 体积: TASK=34.4KB / MEMORY=~22KB（归档~210KB）
+ 体积: TASK=37.0KB / MEMORY=~22KB（归档~210KB）·⚠️TASK超32KB需归档(下次唤醒先做)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
@@ -27,6 +27,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [10:5x] R2512 **adaptive_concurrency 验收 + cc rerun monitoring**: 自检(gateway200✅·load30/224=pretrain only no harness runaway✅·mem OK·0 harness proc>8000% CPU✅·reports/ 0 json/log/txt✅)·**adaptive_concurrency 验收(11-15令)**: `status`=off current=8/10 cap=10✅·`--now` 4时刻注入全通过(Sat03:00 off起步8→Mon10:00 work clamp 8→4→record 429+5min cooldown no change→25min hold@cap=4因work cap限制✅)·`--dry-run` support confirmed in rerun script✅·**cc rerun 0348**: PID1510521 alive(etimes25554s~7.1h)·15 result.json(14 task-level:2PASS(custom-memory-heap-crash+dna-assembly)/11FAIL(reward=0.0)/1NA(code-from-image timeout))·**0ConnRefused HARD VERIFIED**(grep=0 files)·**0 real 429**(2 grep hits=false positive:build-pmars timestamp `.429209Z`+circuit-fibsqrt Fibonacci `267914296`)·rate=2.11/h·67 remaining·ETA~31.7h→Nov16~16:00·**cc修复确认**: 模型真正运行(tokens>0·iterations>0·2题PASS=真能力)·vs旧0/89=100%infra(88ConnRefused)→修复后ConnRefused=0✅判据met·research日报2026-11-15 harness建议(SatisFix:不把agent放法官位·自评→报告选择+理由·同预算对照pass@1)noted=future eval design参考·非本轮actionable·W:1
 
 > 📦 R2492-R2497 流水已归档 → daily-memories-harness/2026-11-15.md。结论：dual rerun监控(hermes 36→50/65·cc 24→30/82·0py3fail✅·0ConnRefused✅·cc NA精分=8maxturns+6gw502+3toklimit+1OOM)·cc toklimit CONFIG fix(R2494)·cc adapter RuntimeError fix(R2498 prepared)。需要时再读。
 
