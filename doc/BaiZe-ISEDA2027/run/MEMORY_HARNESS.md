@@ -2,6 +2,13 @@
 
 WAITING: 1
 
+> 🆕 **R2516 · 2026-11-15 13:3x — cc rerun 监控(17/82·task18 feal-differential-cryptanalysis 跑~1h中) + 自检全绿**
+> - **cc rerun**: PID 1510521 alive(~9.7h·etimes 34859s)·**17/82 done**(task18 in progress·跑~1h)·**0ConnRefused HARD VERIFIED ✅**(grep=0)·0 quota/429 in log ✅
+> - **归因(17题不变)**: **2PASS**(custom-memory-heap-crash+dna-assembly)·**8× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert/configure-git-webserver)·**6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/extract-moves-from-video·502=1 grep确认)·**1NA**(code-from-image·timeout)·502归因红线:6题不得计入能力失败·cc全量完成后rerun
+> - **自检**: load 30/224 ✅·mem 1051GB avail ✅·harness CPU max=0.0% ✅·0 runaway ✅·reports clean(git status --porcelain reports/=empty) ✅·adaptive_concurrency: mode=off cur=8/10 next=9(quiet=113m·0 total 429) ✅·manifests gitignored ✅
+> - **ETA**: rate~2 tasks/h·(82-17)/2≈32.5h·cc 完成 ETA ~Nov16 22:00
+> - **research 日报 11-15**: harness建议(SatisFix/EvoX/harness版本号写报表头) 已在R2513 noted·cc未完成=非本轮actionable
+
 > 🆕 **R2515 · 2026-11-15 12:5x — cc rerun 监控(17/82) + 归因精化(extract-moves-from-video→6th 502 infra)**
 > - **cc rerun**: PID 1510521 alive(~9.1h·etimes 32681s)·**17/82 done**·正在跑第18题 feal-differential-cryptanalysis·**0ConnRefused HARD VERIFIED ✅**(grep=0)
 > - **归因精化(17题)**: **2PASS**(custom-memory-heap-crash+dna-assembly·reward=1.0)·**14FAIL**(① **8× max-turns=能力**(adaptive-rejection-sampler/build-cython-ext/build-pmars/build-pov-ray/caffe-cifar-10/chess-best-move/compile-compcert/configure-git-webserver·stdout="Reached max turns (80)") ② **6× 502 gw-proxy=infra**(circuit-fibsqrt/cobol-modernization/crack-7z-hash/dna-insert/extract-elf/**extract-moves-from-video**·stdout="502 gw-proxy upstream error: Connection reset by peer")·R2514 误计 5× 502+2NA·实为 6× 502+1NA(extract-moves-from-video 从 NA→502 infra·verifier 现已跑通 reward=0.0))·**1NA**(code-from-image·Command timed out after 3600s)
@@ -25,10 +32,10 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2515 cc rerun 17/82 monitoring(2PASS/8max-turns/6×502infra/1NA·0ConnRefused✅)·adaptive_concurrency验收✅·hermes COMPLETE 38/89
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2514(cc rerun monitoring+adaptive验收+TASK归档)
-当前动作:     R2515: cc rerun PID1510521 alive(9.1h)·17/82(2PASS/14FAIL/1NA·0ConnRefused✅)·归因精化:8×max-turns=能力+6×502=infra(extract-moves-from-video新归502)+1NA=timeout·adaptive status mode=off cur=8/10·load31/224✅·mem1051G✅·CPU max1.5%✅·0runaway✅·reports clean✅·W:1
-下一步:       ①cc 82题完成(ETA~Nov16 21:00)→merge→rerun 6×502→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto·chunk=12) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
+PHASE:        R2516 cc rerun 17/82 monitoring(2PASS/8max-turns=6×502infra/1NA·0ConnRefused✅)·adaptive_concurrency验收✅·hermes COMPLETE 38/89
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2515(cc rerun monitoring+adaptive验收+TASK归档+归因精化)
+当前动作:     R2516: cc rerun PID1510521 alive(9.7h)·17/82(2PASS/8max-turns=能力+6×502=infra+1NA=timeout·0ConnRefused✅)·task18 feal-differential-cryptanalysis 跑~1h中·adaptive off cur=8/10 quiet=113m·load30/224✅·mem1051G✅·CPU 0.0%✅·0runaway✅·reports clean✅·W:1
+下一步:       ①cc 82题完成(ETA~Nov16 22:00)→merge→rerun 6×502→REGEN报告(cc行从0/89换真实数字) ②hermes qemu 2题=BLOCKED(Py3.9<3.11) ③hermes 2 mteb=infra BLOCKED ④opencode38→pi46→deepseek48逐路串行(after cc·用adaptive_concurrency auto·chunk=12) ⑤deepseek也受_ensure_python/_ensure_pip影响→重跑 ⑥成本补采(适配器写回token+wall) ⑦cc完成后失败题按EvoX三分法打标(来自research日报11-15)
 ERROR_COUNT:  0
  体积: TASK=25.0KB / MEMORY=~23KB（归档~209KB）·✅TASK≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
