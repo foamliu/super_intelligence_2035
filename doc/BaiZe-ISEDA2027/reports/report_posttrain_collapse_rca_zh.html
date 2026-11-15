@@ -54,8 +54,8 @@
 <table>
 <tr><th>run</th><th>batch</th><th>eval 目录</th><th>completed 行</th><th>execution 行</th><th>gen_success</th><th>唯一执行 task</th><th>Pass@1</th><th>真实性</th></tr>
 <tr class="ok"><td>run1</td><td>2026_1114_180019</td><td>(其 final_report)</td><td>158</td><td>36</td><td>36</td><td>36 题</td><td><b>18.99%</b></td><td>真实</td></tr>
-<tr class="bad"><td>run2</td><td>2026_1115_110506</td><td>20261115_1417</td><td>158</td><td>1</td><td>1</td><td>003</td><td>0.0%</td><td>真实(被共享 temp race 压低)</td></tr>
-<tr class="bad"><td>run3</td><td>2026_1115_144001</td><td>20261115_1834</td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td>真实(被共享 temp race 压低)</td></tr>
+<tr class="bad"><td>run2</td><td>2026_1115_110506</td><td>20261115_1417</td><td>158</td><td>1</td><td>1</td><td>003</td><td>0.0%</td><td>真实(被 ws/no-ws 路径失配压低)</td></tr>
+<tr class="bad"><td>run3</td><td>2026_1115_144001</td><td>20261115_1834</td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td>真实(被 ws/no-ws 路径失配压低)</td></tr>
 <tr class="invalid"><td>run4</td><td>2026_1115_183438</td><td><b>拷了 run3 的 1834</b></td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td><b>INVALID(陈旧拷贝)</b></td></tr>
 </table>
 <p class="small">「completed 行」= 各 <code>completed_code_generation.jsonl</code> 行数（run1–4 均 158，但绝大多数 <code>completion</code> 是哨兵 <code>"pass"</code>，不是真代码）。</p>
@@ -168,7 +168,7 @@ EDA-Eval-PyAether-033  passed=False  FAIL: NameError: name 'calculate_extent_and
 EDA-Eval-PyAether-043  passed=False  FAIL: AssertionError: Expected 2 views (schematic, symbol), but got 0
 EDA-Eval-PyAether-045  passed=False  FAIL: AttributeError: module 'pyAether' has no attribute 'get_dm_object'
 EDA-Eval-PyAether-046  passed=True   OK</pre>
-→ <b>同一套 eval 框架，绕过共享 temp 喂入被丢代码后立即读出 8 条 execution_results</b>，证明「run2 仅 1 条」是共享 temp race 造成，而非模型/eval 无法产出。</div>
+→ <b>同一套 eval 框架，绕过共享 temp 与 ws-only 抽取器限制（直接从 no-ws 的 <code>code/&lt;task&gt;/pyAether_code/</code> 抽取被丢代码）后立即读出 8 条 execution_results</b>，证明「run2 仅 1 条」是<b>管线 bug（ws/no-ws 路径失配为主、共享 temp race 为次）</b>造成，而非模型/eval 无法产出。</div>
 
 <h2>8. 全量回补 + 干净重评测（05:xx 新增 · 定论性证据）</h2>
 <p>8 题验证（§7）只是子集。05:xx 对 run2/3/4 的<b>全部存活 .py</b>做了回补 + 干净重评测：<code>rca_recover_extract.py</code> 从 <code>code/&lt;task&gt;/pyAether_code/</code>（无 ws，被抽取器跳过的）+ <code>ws/pyAether_code/</code> 回补进 jsonl（原件备份 <code>.rca_orig_bak.jsonl</code> 保留），再在 36.15 用 <code>run_eval.py -g &lt;recovered&gt; --benchmark EDA-Eval-pyAether-158.jsonl</code> 重跑（gated：等沙盒空闲；run_eval 自恢复 config）。与 run1 同口径。</p>
