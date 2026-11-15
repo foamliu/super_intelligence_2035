@@ -1,6 +1,6 @@
 {
   "directive": "2026-11-15 08:1x user order: re-run 158 eval the zhulong way + re-attribute (exclude run_commands)",
-  "aggregate_over_n_runs_present": 1,
+  "aggregate_over_n_runs_present": 2,
   "requested_num_runs": 5,
   "cli_versions": {
     "zhulong_fork": "3.0.29",
@@ -51,6 +51,27 @@
       "silent_no_gen": 45,
       "n_gen_fail": 121,
       "has_perquest_profile": true
+    },
+    {
+      "idx": 2,
+      "pass_rate": 0.0,
+      "funnel": {
+        "total": 158,
+        "gen_success": 1,
+        "gen_fail": 156,
+        "gen_timeout": 1,
+        "passed": 0,
+        "pass_rate": 0.0,
+        "gen_success_then_pass_rate": 0.0
+      },
+      "rejected_total": null,
+      "run_commands_rejections_hook_design": null,
+      "real_mcp_per_tool": "unavailable (pipeline 不产 codegen_rejection_stats.json; run1 的系 wake500 手动从 cli_data 生成)",
+      "run_code_rejection_rate": null,
+      "silent_no_gen": 157,
+      "n_gen_fail": 156,
+      "has_perquest_profile": true,
+      "collapse_finding": "run2 code-gen collapse: 仅 1/158 产出可执行代码(cline session 成功 139 但提取出有效代码仅 1)→ execution_results 仅 1 行 → 0 pass. batch_cline.log 无连接/500/超时错误, 端点全程健康 → 非infra, 系 2B 模型 agent 回路退化(degenerate non-generation). 与 run1(36/158 gen, 30 pass) 形成 36→1 极端 swing, 证实模型 run-to-run 高方差."
     }
   ],
   "Q1_real_mcp_rejection_rate_exclude_run_commands": {
@@ -182,5 +203,10 @@
   "integrity_check": {
     "recompute_command": "python3 bpt_zhulong_5run_attribution_aggregate.py --num-runs 5",
     "sources": "attribution_3615_run{1..N}/codegen_rejection_stats.json + final_report.json + execution_results.jsonl + (optional) perquest_profile"
+  },
+  "run2_collapse_note": {
+    "date": "2026-11-15",
+    "finding": "run2=0.0% (1/158 valid codegen) is a real model code-gen collapse, NOT infra (endpoint healthy, no conn errors in batch_cline.log). Confirms Q3 silent-non-generation is a model-doesnt-complete-agent-loop problem, with extreme run-to-run variance (run1=36 valid gen vs run2=1).",
+    "implication": "5-run mean±std is essential to capture this variance; a single run is unrepresentative."
   }
 }

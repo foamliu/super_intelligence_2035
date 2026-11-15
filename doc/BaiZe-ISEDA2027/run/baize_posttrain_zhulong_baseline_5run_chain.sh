@@ -59,6 +59,17 @@ run_one(){
   local runidx="$1"
   local dest="$RUN_DIR/attribution_3615_run${runidx}"
   mkdir -p "$dest"
+  # 幂等：若本 run 已有可解析 pass_rate 的 final_report.json → 跳过，复用既有产物
+  # （pass_rate=0.0 也算有效，不会被误判为缺失）
+  if [ -f "$dest/final_report.json" ]; then
+    local ex_pr
+    ex_pr=$(python3 -c "import json;d=json.load(open('$dest/final_report.json'));m=d.get('metrics',{});print(m.get('pass_rate', d.get('pass_rate','NA')))" 2>/dev/null || echo NA)
+    if [ "$ex_pr" != "NA" ]; then
+      log "[run $runidx] 既有有效 Pass@1=$ex_pr → 跳过（幂等复用）"
+      echo "$ex_pr"
+      return 0
+    fi
+  fi
   log "[run $runidx] GATE 开始"
   gate_wait "$R2_CHAIN_PID"
   log "[run $runidx] 在 36.15 启动全量158（zhulong 口径, -p 8 -n, CLI_AGENT=zhulong）..."
@@ -72,15 +83,26 @@ run_one(){
   local rc=0
   $SSH "$cmd" >>"$LOG" 2>&1 || rc=$?
   log "[run $runidx] 36.15 流水线退出 rc=$rc"
-  # 找最新 batch 的 final_report.json
-  local latest
+  # 找最新 batch 目录（cli_data/code/stats；BATCH_ID = 目录名）
+  local latest batch_id
   latest=$($SSH 'ls -dt ~/eda_code_eval/*/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
-  log "[run $runidx] 最新 batch=$latest"
+  batch_id=$(basename "${latest%/}")
+  log "[run $runidx] 最新 batch=$latest (BATCH_ID=$batch_id)"
   if [ -z "$latest" ]; then log "[run $runidx] ⚠ 未找到 batch 目录"; return 1; fi
-  # 拷回关键产物
-  for f in final_report.json execution_results.jsonl completed_code_generation.jsonl codegen_rejection_stats.json; do
-    $SSH "cat '$latest$f' 2>/dev/null" >"$dest/$f" 2>/dev/null || true
+  # ⚠ copy-path 修复（2026-11-15）：final_report.json + execution_results.jsonl 在
+  # EDA-Eval-Framework/output_evaluation/<时间戳>/，不在 ~/eda_code_eval/<batch>/。
+  # 旧脚本从 batch 目录 cat 这些文件 → 永远空 → Pass@1=NA。现从正确位置取。
+  local latest_oe
+  latest_oe=$($SSH 'ls -dt /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/*/ 2>/dev/null | head -1' 2>/dev/null | tr -d '\r')
+  log "[run $runidx] 最新 output_evaluation=$latest_oe"
+  # 1) final_report.json + execution_results.jsonl ← output_evaluation（评分产物）
+  for f in final_report.json execution_results.jsonl; do
+    $SSH "cat '${latest_oe}${f}' 2>/dev/null" >"$dest/$f" 2>/dev/null || true
   done
+  # 2) completed_code_generation_<BATCH_ID>.jsonl ← ~/eda_code_eval/（生成产物，EVAL_ROOT 级）
+  $SSH "cat ~/eda_code_eval/completed_code_generation_${batch_id}.jsonl 2>/dev/null" >"$dest/completed_code_generation.jsonl" 2>/dev/null || true
+  # 3) codegen_rejection_stats.json ← best-effort（run1 的系手动生成；本管线可能不产）
+  $SSH "find '$latest' -maxdepth 3 -name 'codegen_rejection_stats.json' 2>/dev/null | head -1 | xargs -r cat 2>/dev/null" >"$dest/codegen_rejection_stats.json" 2>/dev/null || true
   local pr
   pr=$(python3 -c "import json;d=json.load(open('$dest/final_report.json'));m=d.get('metrics',{});print(m.get('pass_rate', d.get('pass_rate','NA')))" 2>/dev/null || echo NA)
   log "[run $runidx] Pass@1=$pr （产物→ $dest）"
