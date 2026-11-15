@@ -2674,7 +2674,7 @@
 | 标题 | Small-scale proxies for large-scale Transformer training instabilities |
 | 作者（前 3） | Mitchell Wortsman · Peter J. Liu · Lechao Xiao（共 **16** 位；arXiv 作者字段逐字核） |
 | 年份 | **2023**（`2023-09-25`，v2 `2023-10-16`） |
-| 会议 / 期刊 | **ICLR 2023**（arXiv `comment` 与 `journal_ref` 均为空；会场取自 Semantic Scholar `venue` 字段） |
+| 会议 / 期刊 | **ICLR**（arXiv `comment` 与 `journal_ref` 均为空；`venue` 取自 Semantic Scholar，但 S2 未给届次年份 ⇒ **不代填年份**） |
 | 被引数 | **218**（Semantic Scholar Graph `arXiv:2309.14322`，查询日 **2026-11-16**；⚠️ 本轮 OpenAlex 返回 `429`（免费额度用尽）⇒ 改用 S2，口径与往轮 OpenAlex 不同） |
 | arXiv / DOI | <https://arxiv.org/abs/2309.14322> ｜ DOI `10.48550/arxiv.2309.14322` |
 | 一句话贡献 | 提出用「**LR sensitivity**」（学习率 vs 损失的敏感度）作为跨规模诊断量：两类在大模型上出现的训练不稳（**attention logit growth** 与 **output logit divergence**）在小模型以高学习率训练时同样出现；**qk-layernorm** 与 **z-loss（系数 1e-4）** 能降低 LR sensitivity 并使训练稳定，且不稳可在其显性出现前被预测。 |
@@ -2725,7 +2725,7 @@
 | 标题 | Ring Attention with Blockwise Transformers for Near-Infinite Context |
 | 作者（前 3） | Hao Liu · Matei Zaharia · Pieter Abbeel（共 **3** 位；arXiv 作者字段逐字核） |
 | 年份 | **2023**（`2023-10-03`，v2 `2023-11-27`） |
-| 会议 / 期刊 | **ICLR 2024**（arXiv `comment` 仅给代码链接；会场取自 Semantic Scholar `venue`） |
+| 会议 / 期刊 | **ICLR**（arXiv `comment` 仅给代码链接；`venue` 取自 Semantic Scholar，但 S2 未给届次年份 ⇒ **不代填年份**） |
 | 被引数 | **656**（Semantic Scholar Graph `arXiv:2310.01889`，查询日 **2026-11-16**；OpenAlex 本轮 `429`） |
 | arXiv / DOI | <https://arxiv.org/abs/2310.01889> ｜ DOI `10.48550/arxiv.2310.01889` |
 | 一句话贡献 | 把 self-attention 与 FFN 都**分块**算，并在设备间组成**环**传递 KV 块（传输与计算重叠，配对块计算量 ≥ 传输量时零额外开销），从而把「序列维」也从单卡显存里拿出来；在**不做近似**的前提下比此前 memory-efficient 方案支持**长 500 倍以上**的序列，可训练 **>100M token**（示例：batch=1 处理 100M token 原本要 **>1000GB**，环式后可放进 **100GB HBM**）。 |
