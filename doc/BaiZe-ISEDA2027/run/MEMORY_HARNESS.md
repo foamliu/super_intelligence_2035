@@ -2,12 +2,18 @@
 
 WAITING: 0
 
-> 🆕 **R2540 · 2026-11-15 19:40 — 自检全绿 + cc 29/82(4P·0ConnRefused✅) + opencode 35/38(10P/18F/7NA·3in-flight·install-windows-3.11 in verifier) + pi 11/46(1P) + adaptive 8→9→10 clean ramp实跑验证✅ + deepseek待启动**
-> - **自检**: load 52/224 ✅·mem 1038GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ clean ✅
-> - **cc rerun**: PID 1510536 harbor alive(~15.8h)·**29/82 done**(4P/20F/5NA)·**0ConnRefused ✅ HARD VERIFIED**(grep=0)·53 remaining·ETA~Nov17
-> - **opencode rerun**: PID 2804696 harbor alive(part3)·**35/38 done**(10P/18F/7NA)·**3 in-flight**[install-windows-3.11(in verifier chown stage)/regex-log/train-fasttext]·**0真quota429 ✅**·adaptive n=10
-> - **opencode NA(7个)**: 3×exited-code-1[cobol-modernization/distribution-search/dna-assembly · 全在part1(16:10)·fix在R2530后才生效→需单独重跑] + 2×CommandTimeout@3600s[caffe-cifar-10/extract-moves-from-video=ability] + 2×VerifierTimeout[filter-js-from-html@900s/fix-ocaml-gc@3600s=infra]·**opencode adapter fix已在源码L150-155确认✅**(verifier-always-run·同cc fix)
-> - **pi rerun**: PID 3810219 harbor alive·**11/46 done**(1P[build-cython-ext]/9F/1NA)·35 remaining·adaptive n=10
+> 🆕 **R2541 · 2026-11-15 19:50 — 自检全绿 + cc 29/82(4P·0ConnRefused✅) + opencode COMPLETE 38/38(10P/18F/10NA) + pi 12/46(2P) + deepseek LAUNCHED 0/48(n=10 adaptive) + adaptive off10/10·0 429✅**
+> - **自检**: load 68/224 ✅(qemu编译cc1~1.3%×N非失控)·mem 1043GB avail ✅·0 harness proc >8000% CPU ✅·/tmp 40% ✅·reports/ porcelain=0 ✅
+> - **cc rerun**: PID 1510536 harbor alive(~16h)·**29/82 done**(4P/20F/5NA: RuntimeError×2/VerifierTimeout×1/NA×2)·**0ConnRefused ✅ HARD VERIFIED**(grep=0)·53 remaining·ETA~Nov17 20:00
+> - **opencode rerun**: **COMPLETE 38/38**(10P/18F/10NA)·harbor PID2804696 idle(0 containers·last result 19:23)·**10NA=5×RuntimeError[dna-assembly/cobol-modernization/distribution-search/caffe-cifar-10/extract-moves-from-video·需fixed-adapter单独重跑]+2×VerifierTimeout[filter-js-from-html/fix-ocaml-gc=infra]+3×其他NA**·0真quota429 ✅
+> - **pi rerun**: PID 3810219 harbor alive·**12/46 done**(2P[build-cython-ext/compile-compcert]/9F/1NA)·34 remaining·adaptive n=10
+> - **deepseek rerun**: **LAUNCHED ✅** PID 4040004 harbor(n=10 adaptive·overlay-network-host.yml)·jobs-dir=/tmp/tb21_glm53_jobs/deepseek-harness_rerun_20261115_1950·48 tasks·first task(build-cython-ext)installing deepseek-harness-sdk
+> - **adaptive**: off current=10/10 cap=10·quiet=72m·累计429=0 ✅·实跑验证✅(8→9→10 clean ramp in opencode log)
+> - **research日报11-15**: EvoX三分法(tool-call mismatch/interrupted workflow/unsupported completion)→cc完成后失败题打标·SatisFix(不自评·先记录选择+理由再独立判)→future ref·已纳入下一步
+> - **下一步**: ①deepseek 48题跑完(adaptive auto·weekend n=10) ②pi 46题继续(34remaining) ③cc 82题完成(~Nov17)→REGEN双报告(cc行从0/89换真实数字) ④opencode 5×RuntimeError NA单独重跑(fixed adapter) ⑤cc完成后失败题按EvoX三分法打标 ⑥成本补采 ⑦hermes qemu 2题=BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈29.0KB（✅≤32KB）
+
+> 📦 R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 29/82(4P·0ConnRefused✅)+opencode 35/38(3in-flight)+pi 11/46+adaptive 8→9→10实跑验证✅+deepseek待启动。需要时再读。
 > - **deepseek rerun**: manifest=48 tasks ✅就绪·待opencode完成后启动(adaptive auto·weekend n=10)
 > - **adaptive**: off current=10/cap=10·0 cumulative 429 ✅·**实跑日志验证✅** `[adaptive] 8->9(clean_ramp quiet=273m)` + `9->10(clean_ramp quiet=61m)` in /tmp/tb21_opencode_rerun.log
 > - **下一步**: opencode 3 in-flight finishes→启动deepseek rerun(48题)→pi continues(35remaining)→cc finishes(~Nov17)→3 opencode NA单独重跑(fixed adapter)→REGEN双报告
@@ -55,10 +61,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2533 cc rerun 27/82(4P/18F/5NO_VER·0ConnRefused✅) + opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)·hermes COMPLETE 38/89·git push OK·reports/ 清理4 .txt
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2532(cc rerun 6→27/82+adaptive落码+验收4/4✅+opencode rerun LAUNCHED+adaptive real-world 8→10+opencode 20→25/38+4适配器RuntimeError修复+git push proxy 503→recovered)
-当前动作:     R2533: cc rerun PID1510536 harbor alive(~14.4h)·27 task-level(4P/18F/5NO_VER)·0ConnRefused✅·running git-multibranch·opencode rerun PID773163·25done(10P/7F/8NO_VER)+4in-flight+9pending·adaptive n=10·0 429✅·load33.30/224✅·CPU<1.2%✅·0runaway✅·git push OK✅·reports/ 清理4 .txt✅·W:0
-下一步:       ①opencode 38tasks完成(ETA~Nov15 21:00)→merge→REGEN报告 ②cc 82题完成(ETA~Nov17 20:00)→REGEN报告(cc行从0/89换真实数字) ③pi46→deepseek48逐路串行(adaptive auto·chunk=12) ④hermes qemu 2题=BLOCKED(Py3.9<3.11) ⑤成本补采(适配器写回token+wall) ⑥cc完成后失败题按EvoX三分法打标(来自research日报11-15)
+PHASE:        R2541 cc rerun 29/82(4P/20F/5NA·0ConnRefused✅) + opencode COMPLETE 38/38(10P/18F/10NA) + pi 12/46(2P) + deepseek LAUNCHED 0/48(n=10 adaptive) + adaptive off10/10·0 429✅
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2540(cc rerun 6→29/82+adaptive落码+验收4/4✅+opencode rerun COMPLETE 38/38+adaptive real-world 8→10+4适配器RuntimeError修复+pi rerun LAUNCHED+git push recovered)
+当前动作:     R2541: cc rerun PID1510536 harbor alive(~16h)·29/82(4P/20F/5NA)·0ConnRefused✅·opencode COMPLETE 38/38(harbor idle)·pi PID3810219 12/46(2P)·deepseek PID4040004 LAUNCHED 0/48(n=10 adaptive·installing SDK)·adaptive off10/10·0 429✅·load68/224✅·mem1043GB✅·0runaway✅·reports/ porcelain=0✅·W:0
+下一步:       ①deepseek 48题跑完(adaptive auto·weekend n=10) ②pi 46题继续(34remaining) ③cc 82题完成(~Nov17 20:00)→REGEN双报告(cc行从0/89换真实数字) ④opencode 5×RuntimeError NA单独重跑(fixed adapter) ⑤cc完成后失败题按EvoX三分法打标(来自research日报11-15) ⑥成本补采(适配器写回token+wall) ⑦hermes qemu 2题=BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
  体积: TASK=25.6KB / MEMORY≈26.5KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
