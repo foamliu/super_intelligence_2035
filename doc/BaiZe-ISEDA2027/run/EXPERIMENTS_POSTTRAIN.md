@@ -12009,3 +12009,20 @@ python3 bpt_attribution_p0_dev_compare.py \
 **产物**：bpt_zhulong_reattribution.py / bpt_zhulong_reattribution_report.py / attribution_zhulong_reattribution.json / reports/report_posttrain_zhulong_reattribution_zh.html（11.9KB,0 script）。旧报告 4 份加 PENDING-REMOTEST banner。
 
 **复算**：`python3 bpt_zhulong_reattribution.py`；`python3 bpt_zhulong_reattribution_report.py`。
+
+## §R535-zhulong-baseline-5run-launch（wake535, 2026-11-15 09:1x）— 5-run 统计检验补齐链起跑
+
+**起因**：R534 再归因已交付，但新基线仅 1-run（18.99%），旧基线 5-run（3.04%±0.74%）；总纲 §2 冻结协议要求 5-run mean±std + 配对检验。用户令「重测跑起来后正常 push，别等全跑完才交」。
+
+**36.15 现状勘察（经隧道 ssh -p 3333）**：
+- 反向隧道 18096→.17:8096 健康（curl 返回 minicpm5-2b-sft-v39-final）；CLI_DATA_DIR(`~/.cline/data/settings/providers.json`) model=minicpm5-2b-sft-v39-final @ 18096 ✅；PreToolUse hook `~/.cline/hooks/PreToolUse`(mtime 11-15 07:35) ✅；`.env` `CLI_AGENT=${CLI_AGENT:-zhulong}`（默认 zhulong fork 3.0.29，与 run1 一致）。
+- **36.15 沙盒争用实测**：本线 P0 dev eval（`bpt_attribution_prompt_dev_eval.sh --patch p0 --split dev`，PID 2281659→run_cline_script.sh PID 2281677，80-task 子集，batch 2026_1115_073454）+ `zhulong_loop.sh`(PID 243810) + 4×`designflow_bench_loop_shard.sh`(PID 1723625-8, opencode/glm-5.2) 同时在跑；.17 侧 R2 5-run eval 链(PID 2322797) run5 进行中（经隧道占沙盒 8664-8668）。⇒ 直接起跑会争用 4 端口沙盒池。
+
+**链路设计（避让沙盒争用）**：`baize_posttrain_zhulong_baseline_5run_chain.sh`（PID 4014235）。run1(18.99%) 已存在=第1run；再跑 run2–run5(NUM_NEW_RUNS=4)凑 5-run。每跑前 **GATE**：`kill -0 2322797`(R2链)死 + 36.15 `pgrep run_cline_script.sh`空 → 放行；否则 300s 再探。照抄 zhulong 入口 `run_cline_script.sh -p 8 -n -b EDA-Eval-PyAether-v20260311_fixed.jsonl`（CLI_AGENT=zhulong，hook 白名单 run_commands 禁用，不改 eda_fastmcp 代码）。每 run 拷回 `attribution_3615_run{2..5}/`（final_report.json+execution_results.jsonl+拒绝统计）。
+
+**分析**：`bpt_zhulong_baseline_5run_analysis.py` → `5run_zhulong_baseline_analysis.json`。pass_rate 取 `metrics.pass_rate`；per-question 取 `details_per_task`/`execution_results.jsonl`；McNemar(pass@any 二值) + Wilcoxon(每题 pass-fraction 配对) vs 旧 `/tmp/posttrain_5run_eval/step105`。**预演验证**（run1+旧5run）：new n=1 mean=18.99% / old n=5 mean=3.04%±0.74% [3.8,1.9,2.53,3.16,3.8]% / delta +15.95pp / McNemar discordant=52 chi2=0.94（new=1run 偏倚，5-run 齐后公平）/ scipy 不可用→Wilcoxon 降级报 n。两脚本 `bash -n`/`py_compile` PASS。
+
+**起跑确认**：日志 `[run 1] 既有 Pass@1=0.189873417721519` + `[run 2] GATE ... 仍忙（r2alive=1 rem_busy=2281677）→ 300s 后再探` = GATE 正确避让。ETA run2–run5 各 ~6–7h，5-run 齐 ≈ 2026-11-16。
+
+**纪律**：🚫 run_commands 保持禁用（防泄题）；🚫 不改 eda_fastmcp 代码（只复用入口）；✅ 旧报告/数字全保留（PENDING-REMOTEST banner）；✅ 起跑即 push。0 infra 误操作，未碰 GPU/运行中 R2 eval/隧道/别线。
+

@@ -78,8 +78,17 @@ code{background:#eef;padding:1px 5px;border-radius:3px;font-size:0.9em}
 <li><b>旧归因作废（PENDING-REMOTEST）</b>：「模型不会按 MCP 协议调工具」「损失大头在提交协议」——前提（80.6% run_commands 拒绝=能力缺陷）<b>错误</b>。run_commands 是被 hook 主动禁用的内置工具。</li>
 <li><b>真归因</b>：真 MCP 拒绝率 6.0%、run_code 3.0%——模型<b>会</b>检索、<b>会</b>执行。损失大头 = <b>45 题静默未进入 agent 回路</b>（28.5%）+ 76 题把 turn 烧在被禁的 run_commands 上。</li>
 <li><b>5× 跳升</b>：+15.95pp 主因 = 环境（RAG+沙盒可达），非 prompt、非工具协议。</li>
-<li><b>下一步</b>：5-run zhulong 口径复测 + 针对「静默未进入回路」的 prompt/系统提示迭代（而非工具格式补丁）。</li>
+<li><b>下一步</b>：5-run zhulong 口径复测 <b>已起跑（2026-11-15 09:15）</b>——见 §10；针对「静默未进入回路」的 prompt/系统提示迭代（而非工具格式补丁）。</li>
 </ol></div>
+<h2>10. 5-run 复测状态（2026-11-15 09:15 起跑 · 进行中）</h2>
+<div class="box">
+<p><b>链路</b>：<code>baize_posttrain_zhulong_baseline_5run_chain.sh</code>（PID 4014235，日志 <code>/tmp/posttrain_zhulong_baseline_5run_chain.log</code>）。
+照抄 zhulong 入口 <code>run_cline_script.sh -p 8 -n -b EDA-Eval-PyAether-v20260311_fixed.jsonl</code>，CLI_AGENT=zhulong fork 3.0.29，PreToolUse hook 白名单生效（run_commands 禁用），model=minicpm5-2b-sft-v39-final(step105) 经反向隧道 18096→.17:8096。</p>
+<p><b>设计</b>：run1(18.99%) 已存在 = 第 1 run；本链再跑 run2–run5 凑齐 5-run mean±std（总纲 §2 冻结协议）。每跑前 <b>GATE</b>：等 .17 R2 eval 链(PID 2322797, run5)死 + 36.15 无 <code>run_cline_script.sh</code> → <b>避让沙盒争用</b>（36.15 同时在跑本线 P0 dev eval + zhulong loop + designflow 4 shard）。</p>
+<p><b>当前</b>：GATE 等待中（r2alive=1, 36.15 rem_busy=2281677=P0 dev eval）→ R2 run5 与 P0 dev eval 完成后放行 run2。ETA：run2–run5 各 ~6–7h，5-run 齐 ≈ 2026-11-16。</p>
+<p><b>产物</b>：每 run 拷回 <code>attribution_3615_run{2..5}/</code>（final_report.json + execution_results.jsonl + 拒绝统计）；5 run 齐后 <code>bpt_zhulong_baseline_5run_analysis.py</code> → <code>5run_zhulong_baseline_analysis.json</code>（mean±std + McNemar/Wilcoxon vs 旧 .17 5-run 3.04%±0.74%）。</p>
+<p class="small">预演分析（run1+旧5run）：new n=1 mean=18.99% / old n=5 mean=3.04%±0.74% [3.8,1.9,2.53,3.16,3.8]% / delta +15.95pp / McNemar(pass@any) discordant=52 chi2=0.94（new=1run 偏倚，5-run 齐后公平）。scipy 不可用→Wilcoxon 降级报 n。</p>
+</div>
 <h2>9. 可复算命令</h2>
 <div class="box"><pre style="font-size:12px;white-space:pre-wrap">python3 bpt_zhulong_reattribution.py        # 重算四问 + attribution_zhulong_reattribution.json
 python3 bpt_zhulong_reattribution_report.py # 生成本报告
