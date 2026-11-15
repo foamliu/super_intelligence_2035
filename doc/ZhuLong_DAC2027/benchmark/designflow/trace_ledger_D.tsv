@@ -1608,7 +1608,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1786589935783_6u6yk				analog_context	parked		2026-11-13 12:10	r611 peek: session NOT FOUND on .75 at expected path
 1793944646737_eb49z		hfeg0plg(172.16.8.190)		analog_context	parked		2026-11-13 12:10	r611 peek: ssh to 172.16.8.190 timed out, could not peek
 1791602523481_i33cs	rongtaoy	hfeg0pkn002	92	schematic_netlist	case	EDA-Eval-DesignFlow-ScriptCatalogQA-001	2026-11-15 20:45	r611 peek: Q&A 解释 coupling_compare 脚本都干啥 (analysis, not produce)
-1792546653992_vwgeo	deniss	hfeg0plg91	74	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A @gen_run.py 分析文件功能 (analysis, not produce)
+1792546653992_vwgeo	deniss	hfeg0plg91	74	analog_context	case	EDA-Eval-DesignFlow-GenRunFuncExplainQA-001	2026-11-15 22:11	r611 peek: Q&A @gen_run.py 分析文件功能 (analysis, not produce)
 1791983748341_mx4t6	colinxu	hfeg0plg55	69	layout_aether	parked		2026-11-13 12:11	r611 peek: CLEAN produce (add TOP label to open cell+save) BUT view=and2Lx1/layout = layout_aether (shard C), wrong domain for D
 1785807430385_n4nt5	t0002638	hfeg0plg49	64	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 172.16.8.106:64657 端口是不是通的 (not produce)
 1792388192011_xy2jx	colinxu	hfeg0plg55	63	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 解释 zhulong agent policy destructivePatterns 作用 (analysis)
