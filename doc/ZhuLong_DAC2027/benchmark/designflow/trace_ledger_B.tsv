@@ -867,7 +867,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793870551130_jr0o3	ronghu	hfeg0pkn005	44	spice_sim	parked		2026-11-10 23:23	debug power-meas-inst fix-iteration
 1791787377751_frxg5	hswang	hfeg0plg64	54	spice_sim	case	EDA-Eval-DesignFlow-AgingScriptAnalyze-001	2026-11-16 00:24	consultation analyze-aging-script
 1791513972290_bih9j	thomasz	hfeg0pfn060	99	spice_sim	parked		2026-11-10 23:23	debug IR-result-missing-vcc-vblh
-1793875415367_oue4a	eva1wu	hfeg0plg52	49	spice_sim	parked		2026-11-10 23:23	consultation what-is-cm generic
+1793875415367_oue4a	eva1wu	hfeg0plg52	49	spice_sim	case	EDA-Eval-DesignFlow-CfgMemNetlistExplain-001	2026-11-16 06:04	r661 reaudit revival #42 (parked r435 what-is-cm generic -> reaudit 可造 explain/介绍 Q&A)
 1794212917714_ibwba	zhililu	hfeg0pkn002	154	spice_sim	case	EDA-Eval-DesignFlow-VirtuosoSfeLangDiag-001	2026-11-15 17:23	consultation virtuoso-netlist-sim debug-sfe
 1793879303886_7l4sx	e0017906	hfeg0pkn002	122	spice_sim	case	EDA-Eval-DesignFlow-AetherHierNavAnalyze-001	2026-11-15 18:22	r637 复活池变现 #19: Aether 层级导航+电路分析 Q&A (mc122 spice_sim, 旧 parked -> 可造), L1 B档, k=13, ref PASS+4neg FAIL
 1792045004436_fdrqq	zxtu	hfeg0pkn001	70	spice_sim	case	EDA-Eval-DesignFlow-PipeStdinBlockDiag-001	2026-11-16 03:12	consultation perl-python pipe finesim-automation
