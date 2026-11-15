@@ -657,6 +657,32 @@
 >
 > **污染隔离实测**：Phase B 抽样 3200 文件中搜索 eda-eval/pyaether/zhulong/designflow/baize 关键词 → 命中 0，未发现评测集污染。全量入库仍需跑 13-gram 闸门。
 
+### H.14 全量分词完成（用户令 2026-11-13a/13b · StepA→D 全链路 · ✅ 2026-11-15 20:51）
+
+> **用户令 2026-11-13a**：把 stack-v3-train 全量下载到 /nas_user（8192 parquet / 3.3TB / 0 inc）
+> **用户令 2026-11-13b**：分词数据搬到 /nas_user + 下载完成后立即分词新数据（跳过已分词的 4600 shard）
+
+| 项 | 值 | 证据 |
+|:--|:--|:--|
+| **源 parquet** | 8192 shard / 3,545,762,968,481 B (3.22 TiB) | `/nas_user/.../stack-v3-train/data/` `find -name '*.parquet' \| wc -l` |
+| **源位置** | `/nas_user/app.e0031982/datasets/HuggingFaceCode/stack-v3-train/data/` | 从 `/nas_inference` rsync → `/nas_user` 后删源 |
+| **分词产物位置** | `/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train/` | `du -sh` = 1.8T |
+| **.json / .bin / .idx** | 8192 / 8192 / 8192 | `find -name '*.json' ! -name MANIFEST.json \| wc -l` 等 |
+| **MANIFEST.json** | 1,499,883 B (1.5MB)，2026-11-15 20:51 | `ls -la MANIFEST.json` |
+| **总字节** | **1,910,110,396,174 B = 1.78 TiB** | `du -sb` |
+| **总 tokens** | **475,961,563,275 = ~476B tokens** | MANIFEST.json `total_tokens` |
+| **总 docs** | 328,654,460 = ~329M docs | tokenize log `Docs` |
+| **错误数** | 0 | tokenize log `Errors: 0` |
+| **跳过（已分词）** | 4365 | tokenize log `Skipped: 4365`（部分 shard 在 2TB 阶段已分词） |
+| **failed_shards.txt** | 不存在（✅ 无失败） | `ls failed_shards.txt` → No such file |
+| **zero-byte .bin** | 0 | `find -name '*.bin' -size 0 \| wc -l` = 0 |
+| **分词器** | Qwen3-Coder-Next-Base (vocab 129,281, EOD 129,408) | `stackv3_tokenize.py` |
+| **耗时** | 92,041s (~25.6h, 8 workers, nice19/ionice3) | `/tmp/tokenize_stackv3_new.log` 末行 |
+| **源清理** | `/nas_train` tokenized=0 files ✅ / `/nas_inference` parquet=0 files ✅ | `find ... \| wc -l` = 0 |
+
+> **对比 2TB 阶段（4600 shard）**：2TB 阶段产出 245.8B tokens / 926GB；全量 8192 shard 产出 476B tokens / 1.78TB → 新增 3592 shard 贡献 ~230B tokens / ~856GB，与比例吻合。
+> **vs HF 官方 token 估算**：HF `totals.json` 估算 ~3.6T tokens（全量解压内容 × Qwen3-Coder-Next-Base）；实测分词 476B → 差异因 HF 估算含全语言/全文件（含 vendor/minified），分词脚本可能有过滤。以**实测分词 476B 为准**。
+
 ---
 
 ## D. 新增数据集（2026-11-15 用户令 · IFM 数学/代码 + Agent datasets）
@@ -669,8 +695,8 @@
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
 | `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 第一批完成(5子集/1093 files/231.6GB/0 inc; megamath-web~1TB第二批按需) |
-| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(357GB/192 data files/PID1829139/nice19/max-workers2/2228total=8.6%; 下载math-dialogue子集) |
-| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载重启v4(42GB/24 data files/PID916265/nice19/ionice3/max-workers2/1637total; 旧PID2531833已死→清75stale.lock→重启; 下code-no-thinking-hard子集) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(285/2228parquet/530GB/PID1829139/nice19/max-workers2/13.0%; 下载math-dialogue子集; ETA~64h) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(42/1637parquet/77GB/PID916265/nice19/ionice3/max-workers2/2.6%; 下code-no-thinking-hard子集; ETA~100h+) |
 
 **MegaMath 子集详情**：
 - `megamath-web` (279B tokens, ~1TB) — 第二批按需
