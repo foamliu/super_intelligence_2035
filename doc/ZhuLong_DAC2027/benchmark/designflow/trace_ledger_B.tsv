@@ -1428,7 +1428,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794551102851_uvwbt	yangyli	hfeg0pkn003	45	spice_sim	parked		2026-11-14 01:01	empty input '1', not a task
 1794559210459_ct4gh	alexli	hfeg0pkn004	1649	spice_sim	parked		2026-11-14 01:01	interactive job-polling/monitoring (cluster PEND), not produce-task
 1794551024957_jc45u	e0044979	hfeg0pkn003	459	spice_sim	parked		2026-11-14 01:01	Q&A diagnosis conly resistor instance PEX netlist issue, C-domain
-1794549248472_sjaal	e0024852	hfeg0pkn005	971	spice_sim	parked		2026-11-14 01:01	Q&A inspection 'look at CH336_FS post-pe netlist', not produce-task
+1794549248472_sjaal	e0024852	hfeg0pkn005	971	spice_sim	case	EDA-Eval-DesignFlow-SimModelMismatchDiag-001	2026-11-15 10:55	Q&A inspection 'look at CH336_FS post-pe netlist', not produce-task
 1794548454276_0xbsc	jiangbaol	hfeg0pkn004	1569	spice_sim	parked		2026-11-14 01:01	Q&A debug duplicated-subckt-defn error fix; jiangbaol P-004 cluster
 1794551152849_i2ubt	joeyl	hfeg0pkn004	630	spice_sim	parked		2026-11-14 01:01	P-004 joeyl WCK cluster sibling
 1794547133373_7uaan	e0046913	hfeg0pkn003	83	spice_sim	parked		2026-11-14 01:01	Q&A diagnosis PrimeTime/LSF lsb_init config error, A-domain STA
