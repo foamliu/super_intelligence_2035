@@ -50,19 +50,34 @@
 1. **先核实再下**（不要信我和网上的说法）：对每个要下的 repo 用 `HfApi().dataset_info(repo_id, files_metadata=True)` 拿**精确文件数/字节数/子集列表/license**，写进 MEMORY
 2. **下载队列（按优先级）**：
    - **P0（本轮就下）**：`Agent-Ark/Toucan-1.5M`、`open-thoughts/AgentTrove`
-   - **P1（核实后下）**：`neulab/agent-data-collection` 的**非重叠子集**（先出清单给我确认）
-   - **P2（暂不下）**：`microsoft/orca-agentinstruct-1M-v1`（理由见上，若你认为该下，说明理由后下）
-   - **P3（排除）**：`harvardMadsys/freeinference_agentic_trace`（无文本）
+   - **P1（自己判断后直接下，不必回来确认）**：`neulab/agent-data-collection` —— **只下「非重叠子集」，禁止全量 499GB**。判定规则给你，自己执行：
+     - **不许下**（与 P0 重复 / 可从 P0 派生）：`toucan_1_5m`、`orca_agentinstruct`、`nemotron_terminal_corpus`、`swe-smith`、`swe-gym_*`、`nebius_SWE-agent-trajectories`（若 AgentTrove 已覆盖）
+     - **要下**（AgentTrove/Toucan 里没有、且对"工具调用能力"有新信息）：`code_feedback`、`codeactinstruct`、`mind2web`、`nnetnav-live`、`nnetnav-wa`、`go-browse-wa`、`synatra`、`agenttuning_*`（alfworld/db/kg/mind2web/os/webshop）、`openhands`、`CharlieDreemur_OpenManus-RL`、`mini-coder`、`logicstar_swe-star`、`swe-play-trajectories`
+     - **执行方式**：`hf download neulab/agent-data-collection --include "<子集>/*"` 逐子集下，**每下完一个报体积 + `df -h /nas_user`**
+     - **额外收货（别漏）**：把 ADP 转换脚本也拉下来（`git clone https://github.com/neulab/agent-data-protocol`，代码很小）——它把异构 agent 轨迹统一成 SFT 格式，**以后转换我们自己的 cline trace 也要用它**
+     - **判定依据落盘**：写 `run/data/adp_subset_plan.md`（每个子集：下/不下 + 理由 + 与其他源的重复情况）。**你自行决定，不要回来问我**
+   - **P2（不下，但可改判）**：`microsoft/orca-agentinstruct-1M-v1` —— 纯合成、无真实工具执行，判低价值。**若你核实后发现它的 messages 里其实含 function-call 结构，可在 MEMORY 写明后改判并下**
+   - **P3（排除训练）**：`harvardMadsys/freeinference_agentic_trace` —— `No message text is released`，无对话内容。**不要下**；只需在 MEMORY 记一行转告 harness 线（14 种 harness / 267 账户 / 16 周真实 workload / 1.19M 请求 / 1.21M 工具调用，可用于 workload 分析，非训练用）
+
 3. **落盘**：`/nas_user/app.e0031982/datasets/<org>/<name>/`（与 IFM 那批同级）
 4. **护栏不变**：`nice -n 19` + `ionice -c3` + `max-workers 2` + `setsid` 后台；**不挤 StepC 分词与 pretrain 训练**；`/nas_user` 余量 <5T 暂停报运维
-5. **登记**：`DATA_MAPPING.md` 记录每个 repo 的 `repo_id / 类型(预训练·SFT·RL) / 规模 / license / 是否含真实工具执行 / 是否带 reward / 与我们已有数据的重叠情况`
-6. **污染检查**（关键，不可省）：这些 agent 数据是否混入 **SWE-bench / Terminal-Bench / BFCL / MCP-Universe / HumanEval** 测试集 —— 尤其 `AgentTrove` 含 `swesmith`/`codeforces`，`neulab` 含 `swe-smith`，**必须核对是否与我们的评测集重叠**，重叠的要么剔除、要么在评测时换题
+5. **执行顺序（重要，别四批一起抢带宽）**：
+   - **Step 1**：先 `HfApi` 探测全部 5 个 repo + 写 `adp_subset_plan.md`（纯元数据，几分钟，不占带宽）
+   - **Step 2**：P0 两个（Toucan → AgentTrove）**串行**下载
+   - **Step 3**：P0 完成后，再按 `adp_subset_plan.md` 下 P1 的非重叠子集
+   - **Step 4**：边下边做调研报告（调研纯 web，不占 NAS 带宽，可与下载并行）
+   - ⚠️ 若 StepC 分词（PID1677655）出现速率下降，**立刻把下载让位**，等分词跑完再继续
+6. **登记**：`DATA_MAPPING.md` 记录每个 repo 的 `repo_id / 类型(预训练·SFT·RL) / 规模 / license / 是否含真实工具执行 / 是否带 reward / 与我们已有数据的重叠情况`
+7. **污染检查**（关键，不可省）：这些 agent 数据是否混入 **SWE-bench / Terminal-Bench / BFCL / MCP-Universe / HumanEval** 测试集 —— 尤其 `AgentTrove` 含 `swesmith`/`codeforces`，`neulab` 含 `swe-smith`，**必须核对是否与我们的评测集重叠**，重叠的要么剔除、要么在评测时换题
+
 
 **验收**
-1. 5 个 repo 的实测元数据（文件数/字节/license），与我的初判对照，**若我判断错了要指出**
-2. P0 两个已落盘 + DATA_MAPPING 登记 + `df -h /nas_user` 前后对比
-3. `neulab` 的重叠清单 + 建议子集清单（等确认）
-4. 与 SWE-bench / TB / BFCL 的污染检查结论
+1. 5 个 repo 的实测元数据（文件数/字节/license），与我的初判对照，**若我判断错了要指出并说明**
+2. P0 两个已落盘 + `DATA_MAPPING.md` 登记 + `df -h /nas_user` 前后对比
+3. `run/data/adp_subset_plan.md`（P1 每个子集的下/不下决策 + 理由）+ 实际下了哪些、共多少 GB
+4. ADP 转换脚本已 clone 到位（`agent-data-protocol`）
+5. 与 SWE-bench / TB-2.1 / BFCL / HumanEval 的**污染检查结论**（重叠 or 不重叠，要有依据）
+6. 调研报告 `reports/report_data_math_code_datasets_survey_zh.html` 已交付
 
 
 > 🔴 **用户令 · 2026-11-15 08:5x（下载 3 个 IFM 数学/代码数据集 + 调研更多可用数据集）· 最高优先 · 未完成**
@@ -256,11 +271,10 @@
 
 ---
 
-### ✅ 用户令 · 2026-11-12（**分析 stack-v3-train 里哪些数据最能提升 EDA 脚本能力**）· ✅ 已交付 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-12 EDA脚本价值分析」；结论：V1~828文件/~0.01B tok, V2~6854文件/~0.04B tok, V3~139518文件；Tcl唯一显著EDA命中39.2%/SKILL未检出/PyAether 0命中；报告 `reports/report_data_stackv3_eda_script_value_zh.html`；commit a6370ce60。
-
-### ✅ 用户令 · 2026-11-12（**把 stack-v3-train 2TB 分词**）· ✅ 已完成 → 4600/4600shard DONE(245.8B tok/926GB)；rerun 40shard DONE(0ERR)；分词产物已搬至 /nas_user。详见 MEMORY_DATA 唤醒1478。
-
-### ✅ 用户令 · 2026-11-11（**为 vision encoder 找图文对**）· ✅ 已交付 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-11 vision图文对调研」；结论：归因+盘点25源+推荐Top5；报告 `reports/report_vision_textpair_sourcing_zh.html` 28KB 6节 0外链。
+### 📦 归档指针 · 2026-11-11 ~ 11-12 三条已交付令（原文见 `ARCHIVE_OPERATOR_DATA.md`）
+- **11-12 EDA 脚本价值分析** → V1~828 文件/~0.01B tok、V2~6854/~0.04B tok、V3~139518；Tcl 唯一显著命中 39.2% / SKILL 未检出 / PyAether 0；报告 `reports/report_data_stackv3_eda_script_value_zh.html`
+- **11-12 stack-v3-train 2TB 分词** → 4600/4600 shard DONE（245.8B tok / 926GB）；rerun 40 shard 0 ERR；产物已搬 `/nas_user`
+- **11-11 vision 图文对** → 归因 + 25 源盘点 + Top5；报告 `reports/report_vision_textpair_sourcing_zh.html`
 
 
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
@@ -284,55 +298,21 @@
 > 用法：每次唤醒 `git pull` 后先看索引最新一期；若「本线建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
 > 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
 
-### ✅ 运维令 · 2026-11-07 10:10（**`stack-v3-train` 正式放行：ROI 高，先下 2TB 优质子集**）· 用户直令 · 最高优先 · ✅ 已交付（2TB/7批/4600parquet/0inc/ROI复盘✅有价值/97.6%独特）
+### 📦 归档指针 · 2026-11-07 10:10「stack-v3-train 正式放行」· ✅ 已交付（2TB / 7 批 / 4600 parquet / 0 inc / ROI 复盘有价值 / 97.6% 独特）。原文见 `ARCHIVE_OPERATOR_DATA.md`
 
-> **用户原话**：「data：stack-v3-train 从 ROI 来讲，I 比较高，因此 ROI 有限。可以选择下载部分优质的（比如先下 2TB）。」
->
-> 解读（按上下文最合理口径）：**stack-v3-train 的 ROI 高，但整库太大（15.9TB train / 113.7TB full）导致实际可拿的收益有限，因此只挑优质子集，首批 2TB。**
-
-#### 1. 授权范围（本令即批文）
-
-| 项 | 口径 |
-|:--|:--|
-| 数据集 | `HuggingFaceCode/stack-v3-train`（**仅 train 分片**，🚫 full 113.7TB） |
-| 首批体量 | **2TB 上限**（含 `.incomplete` 已下部分；不再走"单集 >=1TB 需报批"流程） |
-| 批次粒度 | 每批 <=300GB，逐批实测/校验/回填后 commit，再起下一批 |
-| 总量红线 | 本批次总占用 <=2TB；批间须复核 `/nas_inference` 余量 >=5T，不足则暂停报运维 |
-| 并发/带宽 | `nice -n 10`（或 19）、`--max-workers <=2`、断点续传；🚫 不得与 S1 抢带宽 |
-
-#### 2. "优质"的判定（自定但必须写清并留证据）
-
-1. **语言优先序（EDA/PyAether 相关性）**：Python（含 PyAether/EDA 工具链脚本）> C/C++ > Verilog/SystemVerilog > Tcl > Makefile/CMake/Shell/Bazel。
-2. **质量过滤**：剔除 minified / generated / vendored 第三方 / test fixture / 纯配置大文件 / 单文件 >1MB 的生成物；剔除低质量仓库（无 license、星数极低、空仓库、纯文档仓库）。
-3. 用 HF `--include` 按子集/语言/分片挑选（整库 113TB 不现实，按需精确拉取）；挑选规则与命中量写进 `DATA_MAPPING.md`。
-4. 若发现 stack-v3-train 的分片结构不支持按语言筛，则按分片号 + 抽样质检的方式挑选，并说明抽样方法与置信度。
-
-#### 3. 每批必交付（否则视为未完成）
-
-1. `du -sb` 实测字节 + `find | wc -l` 文件数 + `.incomplete` 数量；
-2. 语言分布与 token 估算（给出估算方法）；
-3. 质量过滤规则命中数（剔除量/保留量）；
-4. `DATA_MAPPING.md` 增行（源/字节/文件数/存储形态/证据命令），并更新 ROI 表；
-5. commit 前缀 `data stackv3:`。
-
-#### 4. 2TB 完成后的复盘（后一批须运维再批）
-
-- 给一份**实测 ROI 复盘**：每 TB 带来的 token / 独特性 / 与现有 UltraData-Code L2/L3 的重叠度（可抽样 1 万文件估 n-gram 重叠）。
-- 明显低效则停；确有价值再报下一批。**2TB 不是要"下满"，够用即停。**
-
-> 与原 08:5x 令的关系：08:5x 令的">=1TB 先报批"由本令对该 2TB 批次**豁免**；`the-stack-v2` 仍**禁下**，其余单集 <1TB 口径不变。
+> **现行口径（不必回读原文）**：
+> - **授权范围**：`HuggingFaceCode/stack-v3-train` **仅 train 分片**（🚫 full 113.7TB）；总量红线 2TB；每批 ≤300GB，逐批实测/校验/回填后 commit 再起下一批；`/nas_user` 余量 ≥5T 不足则暂停报运维
+> - **"优质"判定**：Python（含 PyAether/EDA 工具链）> C/C++ > Verilog/SV > Tcl > Makefile/CMake/Shell/Bazel；剔除 minified / generated / vendored / test fixture / 纯配置大文件 / 单文件 >1MB 生成物；剔除无 license / 星数极低 / 空仓库 / 纯文档仓库
+> - **每批必交付**：`du -sb` 字节 + 文件数 + `.incomplete` 数 + 语言分布与 token 估算（给方法）+ 过滤命中数 + `DATA_MAPPING.md` 增行
+> - **2TB 完成后要复盘**：每 TB 的 token / 独特性 / 与 UltraData-Code L2/L3 重叠度（抽样 1 万文件估 n-gram）；**2TB 不是要"下满"，够用即停**
+> - `the-stack-v2` 仍**禁下**；其余单集 <1TB 按 ROI 自排
 
 ---
 
 
 ### 📦 归档指针 · 2026-11-07 08:5x「代码语料放行 stack-v3-train」· ✅ 已交付（ROI表+8源25.14GB+stack-v3调研+2TB全下+ROI复盘）。现行要点：`the-stack-v2` 🚫禁下；`stack-v3-train` 仅 train 15.9TB（🚫 full 113.7TB）；其它单集 <1TB 按 ROI 自排；code 补料属**低压力背景任务**（用户：有也行无也行、不急、不挤 S1 带宽）。原文见 ARCHIVE「归档块 · 2026-11-11」
 
-> 📦 **归档指针 · 2026-10-31 ~ 11-04 五条旧令**（原文均已在 `ARCHIVE_OPERATOR_DATA.md`）：
-> - **11-04 13:2x「B 类 agentic 数据下载」** → ✅ 已交付 12/12，落地 78.73 GiB
-> - **11-04 13:2x「RL + 数学 + agentic 调研」+ 09:4x「复杂推理 + 代码 SFT 调研」** → ✅ 已交付 `report_data_reasoning_code_sft_survey_zh.html`(79KB) + `report_data_rl_math_survey_zh.html`(38KB)。口径：**只调研不下载**；真去 hf.co 核实 repo/体量/license/gated/字段；奖励信号类型单列；与盘上 12 源去重
-> - **11-04 09:2x「A 类长上下文数据下载」** → ✅ 已交付
-> - **11-04 09:1x「确认 85M 下载完成」** → ✅ 已完成
-> - **10-31 17:3x「HF 两类数据集调研：长上下文 + agentic」** → ✅ 已交付 `reports/report_data_lc_agentic_survey_zh.html`(117KB)。关键口径：decay-B 闸门 = `en_v1_4` 里 ≥32K 文档仅 2.52% token、≥128K 仅 0.03%，目标 ≥20%/≥1%；须给每个候选的「≥32K/≥128K 占比」证据或标「未标注需实测」
+> 📦 **归档指针 · 2026-10-31 ~ 11-04 五条旧令**（原文见 `ARCHIVE_OPERATOR_DATA.md`）：11-04 B 类 agentic 下载 12/12 落地 78.73GiB ｜ 11-04 RL+数学+agentic 调研 + 复杂推理+代码 SFT 调研 → `report_data_reasoning_code_sft_survey_zh.html`(79KB)+`report_data_rl_math_survey_zh.html`(38KB)，口径=只调研不下载、真去 hf.co 核实、奖励信号单列、与盘上 12 源去重 ｜ 11-04 A 类长上下文下载 ｜ 11-04 85M 确认 ｜ 10-31 长上下文+agentic 调研 → `report_data_lc_agentic_survey_zh.html`(117KB)，decay-B 闸门 = `en_v1_4` 里 ≥32K 仅 2.52% token、≥128K 仅 0.03%，目标 ≥20%/≥1%
 ### ⚖️ 口径仲裁（2026-10-25 13:3x · **与下文任何旧条冲突时，一律以本表为准**）
 | 冲突点 | 旧说法 | **现在按这个做** |
 |---|---|---|
