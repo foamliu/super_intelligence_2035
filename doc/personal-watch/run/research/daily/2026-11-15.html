@@ -518,16 +518,16 @@
   </tr>
   <tr>
     <td>Furu Wei（韦福如）</td>
-    <td>Microsoft Research（BitNet b1.58 <b>通讯作者 ⋄</b>；MSRA 大模型研究线）</td>
+    <td>Microsoft Research（BitNet b1.58 <b>通讯作者 ⋄</b>；论文脚注：F. Wei 等 with Microsoft Research）</td>
     <td><code>fuwei@microsoft.com</code>（本人主页 <code>thegenerality.com</code> <code>200</code> / 10,937 B，明文出现 <b>4 次</b>）</td>
     <td><b>未找到 X</b>（<code>x.com/furuwei</code> 实测 <b><code>404</code></b>；不尝试其它拼写猜测）</td>
     <td><b>已发信</b>（第 54 封，中文 186 汉字）</td>
   </tr>
   <tr>
     <td>Shuming Ma</td>
-    <td>Microsoft Research Asia（BitNet b1.58 <b>一作</b>）</td>
+    <td>Microsoft Research（BitNet b1.58 <b>一作</b>）</td>
     <td><b>未找到</b>（<code>shumingma.com</code> <code>200</code> / 9,464 B，无 <code>mailto:</code>、无明文邮箱；PDF 亦无作者邮箱 ⇒ <b>不猜地址</b>）</td>
-    <td><b>未找到 X</b>（<code>x.com/shumingma</code> <code>200</code> 但 <code>og:description</code> = <code>6 followers · 538 following</code>、Oakland CA ⇒ 与 MSRA 作者身份不符，<b>不登记</b>）</td>
+    <td><b>未找到 X</b>（<code>x.com/shumingma</code> <code>200</code> 但 <code>og:description</code> = <code>6 followers · 538 following</code>、Oakland CA ⇒ 与论文作者身份不符，<b>不登记</b>）</td>
     <td>待跟踪（同论文已发通讯作者 ⇒ 不重复发）</td>
   </tr>
   <tr>
@@ -539,7 +539,7 @@
   </tr>
 </table>
 <div class="note">
-  <b>本轮三个「找不到 / 不是本人」的反向例子（宁缺勿猜）</b>：① <code>x.com/furuwei</code> <b><code>404</code></b> ⇒ Furu Wei 不登记 X，但邮箱从本人主页明文取到，故发信；② <code>x.com/shumingma</code> 虽 <code>200</code>，但 <b>6 followers / Oakland CA</b> 与 MSRA 一作身份不符 ⇒ 不登记（与 Jong Wook Kim 的 <code>x.com/jongwook</code> 同类）；③ Alexei Baevski 的主页 <code>alexeib.github.io</code> 与 <code>x.com/alexeib</code> 均 <b><code>404</code></b> ⇒ 只建档不发信。
+  <b>本轮三个「找不到 / 不是本人」的反向例子（宁缺勿猜）</b>：① <code>x.com/furuwei</code> <b><code>404</code></b> ⇒ Furu Wei 不登记 X，但邮箱从本人主页明文取到，故发信；② <code>x.com/shumingma</code> 虽 <code>200</code>，但 <b>6 followers / Oakland CA</b> 与 Microsoft Research 一作身份不符 ⇒ 不登记（与 Jong Wook Kim 的 <code>x.com/jongwook</code> 同类）；③ Alexei Baevski 的主页 <code>alexeib.github.io</code> 与 <code>x.com/alexeib</code> 均 <b><code>404</code></b> ⇒ 只建档不发信。
   <b>两个「同名不同人」的坑，本轮都踩到了</b>：① HELM 作者列表里的 <code>Tianyi Zhang</code> <b>不是</b> Purdue 这位（已在 AUTHORS.md 备注，🚫 不合并建档）；② OpenAlex 把 Codex 一作写成了 <code>Mark I-Cheng Chen</code>（把两个人合并了）⇒ METADATA 一律以 arXiv 为准。<br>
   <b>09:00 轮的反向例子（宁缺勿猜）</b>：③ <code>x.com/aman_madaan</code> 身份不可确认 ⇒ 不登记；④ <code>x.com/tridao_</code> <b><code>404</code></b>（Mamba 二作 Tri Dao 的 handle 未找到）⇒ 不登记；⑤ Joon Sung Park 主页与 CV 都<b>没有公开邮箱</b> ⇒ 只建档、不发信。
 </div>
@@ -632,14 +632,14 @@
     <td>54</td>
     <td><b>Furu Wei（韦福如）</b> · Microsoft Research（BitNet b1.58 <b>通讯作者 ⋄</b>）</td>
     <td>关于 BitNet b1.58 三值权重的两个工程问题</td>
-    <td><b>中文</b>（判据 = 华人姓名族属 Wei Furu + 微软亚洲研究院（北京）；<b>机构在美国 / 论文英文 均未据此判英文</b>；汉字 <b>186</b> / 总字符 397 ≤300）</td>
+    <td><b>中文</b>（判据 = 华人姓名族属 Wei Furu + Microsoft Research（论文脚注）；<b>机构在美国 / 论文英文 均未据此判英文</b>；汉字 <b>186</b> / 总字符 397 ≤300）</td>
     <td>权重三值 <code>{-1,0,1}</code>=<b>1.58 bit</b> · <code>BitLinear</code> 替换 <code>nn.Linear</code> + <b>absmean 量化</b> + 8-bit 激活 · 摘要 <b>3.55× 显存 / 2.71× 加速</b>（3.9B <b>2.4× / 3.32×</b>，70B <b>4.1×</b>）· 7nm 矩阵乘能耗 <b>1/71.4</b></td>
     <td><code>SENT OK 18:02:28</code></td>
   </tr>
 </table>
 
 <div class="note">
-  <b>18:00 轮追加自检（第 54 封 · BitNet b1.58）</b>：① 回信跟踪 —— 台账跟踪表新增 #54（到期 <b>2026-11-29</b>），<b>累计回信率 0/54</b>、<b>0 封到期</b>（最早 2026-11-25），按用户令每轮报一次，0 回信继续当<b>待诊断信号</b>；② 署名统一 <code>Yang Liu</code>，落款严格两行 <code>祝好，</code> / <code>Yang Liu</code>，<b>其后无任何行</b>，三个项目名均未进落款；③ <b>抗模板</b> —— 起句「我们正在评估 2B 级主干在推理侧的显存与延迟预算」与今日 #52（自建 harness 对照）、#53（韩文敬语）无一句共用，三个问题句式也与本轮及前几封不同（「能否作为预警指标 / 测量条件是什么 / 差距多大、要多少 token」）；④ <b>母语判据</b> —— 华人姓名族属 + MSRA ⇒ 中文，<b>未以「机构在美国 / 论文英文 / 邮箱 microsoft.com」判英文</b>；⑤ 发送前 <code>grep 2402.17764</code> / <code>grep fuwei</code> 均 <b>0 命中</b>；今日累计 <b>11 封</b>（≤12）、本时窗 <b>1 封</b>（≤3）、Microsoft 今日第 1 封（≤2）。<br>
+  <b>18:00 轮追加自检（第 54 封 · BitNet b1.58）</b>：① 回信跟踪 —— 台账跟踪表新增 #54（到期 <b>2026-11-29</b>），<b>累计回信率 0/54</b>、<b>0 封到期</b>（最早 2026-11-25），按用户令每轮报一次，0 回信继续当<b>待诊断信号</b>；② 署名统一 <code>Yang Liu</code>，落款严格两行 <code>祝好，</code> / <code>Yang Liu</code>，<b>其后无任何行</b>，三个项目名均未进落款；③ <b>抗模板</b> —— 起句「我们正在评估 2B 级主干在推理侧的显存与延迟预算」与今日 #52（自建 harness 对照）、#53（韩文敬语）无一句共用，三个问题句式也与本轮及前几封不同（「能否作为预警指标 / 测量条件是什么 / 差距多大、要多少 token」）；④ <b>母语判据</b> —— 华人姓名族属 + Microsoft Research ⇒ 中文，<b>未以「机构在美国 / 论文英文 / 邮箱 microsoft.com」判英文</b>；⑤ 发送前 <code>grep 2402.17764</code> / <code>grep fuwei</code> 均 <b>0 命中</b>；今日累计 <b>11 封</b>（≤12）、本时窗 <b>1 封</b>（≤3）、Microsoft 今日第 1 封（≤2）。<br>
   <b>四条硬要求逐条自检</b>：① 回信跟踪制度化 —— 台账 <code>发送记录.md</code> 已加 #44 / #45 / #46 跟踪行（到期 2026-11-29），<b>累计回信率 0/46</b>，0 封到期（最早 2026-11-25），按<b>待诊断信号</b>处理、不记为成功；② 署名统一 <code>Yang Liu</code>，落款固定两行（中文 <code>祝好，</code> / 日文 <code>どうぞよろしくお願いいたします。</code> + <code>Yang Liu</code>），<b>其后无任何行</b>，项目名不进落款；③ 抗模板 —— 三封开头句各不相同（「读到您与王睿鑫的…」/「我们用每美元换多少胜率…」/「劉楊と申します…」），问题句式不同，各含只对本文成立的数字（5.09% / 7.06% · $200–400 档 · λ=0.01 与「0.02 以内」例外）；④ 语言按姓名族属判：#44 / #45 为华人学者用中文；#46 姓名族属为日文且 X bio 自写「日本語 DMs Open」⇒ <b>日文全文</b>，<b>未以「机构在美国 / 论文英文 / 邮箱 gatech.edu」判英文</b>（这正是 2026-11-14 谢赛宁事故的反向校准）。<br>
   <b>防重复事故</b>：发送前按台账查重（<code>grep</code> 收件人 / arXiv ID 均为 0 命中），三封依次发送、不同收件人；同论文其余作者不发（SatisFix 一作 Ruixin Wang、LoRA 二作 Kartik Goyal 仅建档）。<br>
   <b>06:00 轮追加自检（第 47 封 · ToolLLM）</b>：① 回信跟踪 —— 台账跟踪表新增 #47（到期 2026-11-29），<b>累计回信率 0/47</b>、0 封到期（最早 2026-11-25）；② 署名 <code>Yang Liu</code>，落款两行 <code>祝好，</code> + <code>Yang Liu</code>，<b>其后无任何行</b>；③ 抗模板 —— 开头句与前三封完全不同（直接以「我们在搭工具调用 agent 的评测与训练数据流程」切入，不写「读到您与某某的…」），问题句式是「同一预算吗 / 有没有具体数字 / 判据是什么」，且含 126,486 与 4096→8192 两个只对本文成立的细节；④ 语言按姓名族属判为<b>中文</b>（RUC + 中文本人页），未以「论文英文」判英文。<br>
@@ -1015,7 +1015,7 @@
   ① <b>A 轨复核：公告批仍未前进（连续第 11 个时窗）</b>——<code>cat:cs.CL</code> 列表 <b><code>200</code> + atom</b>（50,083 B），<code>published</code> 上界仍是 <code>2026-11-12T18:59:52Z</code>；<code>cat:cs.SE</code> <b><code>200</code></b>（51,683 B），上界 <code>2026-11-12T18:58:22Z</code>；今日已 5/5 ⇒ <b>0 新收</b>，不拿超窗条目凑数。<br>
   ② <b>B 轨 141 → 145</b>：wav2vec 2.0（3,140）· Multi-Query Attention（872）· BitNet b1.58（496，<code>Work in progress</code> 预印本）· RM Overoptimization（291）。四篇过三关（abs 页元数据 4/4 <code>200</code> / OpenAlex 4/4 <code>200</code> / PDF 4/4 <code>200</code> + <code>pdftotext</code> 核对）；<b>后两篇低于 500 阈值</b>，分别按「开创范式」「方法论常青」入选，已在条目内显式标注。<br>
   ③ <b>作者网 140 → 143</b>：Furu Wei 韦福如（本人主页明文 <code>fuwei@microsoft.com</code> ⇒ <b>已发信</b>）· Shuming Ma（主页无邮箱、<code>x.com/shumingma</code> 非本人 ⇒ <b>只建档</b>）· Alexei Baevski（主页与 X 均 <code>404</code> ⇒ <b>只建档</b>）；X 已核验 <b>80 → 80</b>（本轮 3 个候选均 404 或身份不符，无一登记）。<br>
-  ④ <b>作者信 53 → 54</b>：#54 <b>中文</b>（186 汉字，判据 = 华人姓名族属 + MSRA；机构在美国 / 论文英文 <b>均未据此判英文</b>）。落款严格两行（<code>祝好，</code> + <code>Yang Liu</code>），其后无任何行；发送前 <code>grep</code> 两项均 <b>0 命中</b>；与今日 #52 / #53 开头句与问题句式<b>零共用</b>，含只对本篇成立的细节（三值权重 + absmean + 3.55× / 2.71× / 4.1× / 1/71.4）。<b>本轮只发 1 封而不是 3 封</b>：另外三篇的一作 / 通讯均无可核公开地址，按「不猜地址」纪律不硬凑（用户令：鼓励的是「发得对」，不是「发得多」）。<br>
+  ④ <b>作者信 53 → 54</b>：#54 <b>中文</b>（186 汉字，判据 = 华人姓名族属 Wei Furu；机构在美国 / 论文英文 <b>均未据此判英文</b>）。落款严格两行（<code>祝好，</code> + <code>Yang Liu</code>），其后无任何行；发送前 <code>grep</code> 两项均 <b>0 命中</b>；与今日 #52 / #53 开头句与问题句式<b>零共用</b>，含只对本篇成立的细节（三值权重 + absmean + 3.55× / 2.71× / 4.1× / 1/71.4）。<b>本轮只发 1 封而不是 3 封</b>：另外三篇的一作 / 通讯均无可核公开地址，按「不猜地址」纪律不硬凑（用户令：鼓励的是「发得对」，不是「发得多」）。<br>
   ⑤ <b>回信率 0/54</b>：<b>0 封到期</b>（最早 2026-11-25）；发件通道<b>只发不收</b>（无 IMAP/POP3）仍是本线最需运维介入的一项，继续按待诊断信号处理而不是成功；本轮新增分层变量：<b>课题组个人主页明文邮箱</b>。<br>
   ⑥ <b>voice_ready 0 新增</b>（本期仍 1 条）：本轮 3 个 X 候选均 404 / 非本人，没有可核推文正文 ⇒ 按「必须原文 + 链接」不采用；<code>news_ready</code> 仍 0（无新增论文）。<br>
   ⑦ <b>新增 6 条可执行建议</b>（逐线覆盖，designflow 明写「无」）：pretrain 精度档位 + <code>tokens_to_target_ppl</code>；vision 冻结视觉塔 vs 全量微调的小样本两臂；harness 判分器可被刷的上限写进评测卡；data 「无标注/有标注」两列 + 五档曲线；zhulong 成本表拆 compute / bandwidth + MHA/GQA/MQA 三档；designflow 本轮无。<br>
