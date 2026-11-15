@@ -1215,7 +1215,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	parked	EDA-Eval-DesignFlow-TspcNetlistAnalyze-001	2026-11-15 23:52	stale slug variant; real trace=1791980431476_gsmj2.messages.json (delivered as EDA-Eval-DesignFlow-TspcNetlistAnalyze-001 @ r649). revival-pool slug kept parked to avoid double-count
 1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	case	EDA-Eval-DesignFlow-SimIncompleteWalltimeDiag-001	2026-11-15 22:25	r646 2q4mg rhyanw SMMismatch bisection sim-incomplete walltime+overload root-cause diag, spice_sim L1 debug-Q&A, k=16, ref PASS 16/16 + 4 negs FAIL
 1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	parked		2026-11-11 19:25	reject skill-authoring skill-creator meta
-1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	parked		2026-11-11 19:25	reject consultation 解释sp文件
+1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	case	EDA-Eval-DesignFlow-SpiceDeckExplain-001	2026-11-16 00:55	r651 junweix 解释sp文件 8_commode.sp DC sweep deck 结构化讲解报告 B档synthesized
 1793791874358_a7erh	t0002062	hfeg0pkn002	52	spice_sim	parked		2026-11-11 19:25	reject how-to 怎么仿真电路+rscalc.log
 1792056845394_o8w1u	e0024852	hfeg0pkn002	18	spice_sim	parked		2026-11-11 19:25	reject consultation (schematic 看文件)
 1792207956030_8anm0	lanxinz	hfeg0pkn002	57	spice_sim	parked		2026-11-11 19:25	park 1109 fresh unassessed-low
