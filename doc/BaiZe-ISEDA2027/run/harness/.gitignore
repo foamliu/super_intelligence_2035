@@ -9,3 +9,8 @@ swebench_verified_full/reports/progress_*.json
 swebench_verified_full/logs/evaluation/
 **/baseline_rewards*.json
 *.nfs*
+
+# ── adaptive_concurrency 运行时状态（非配置，不应入库）─────────────────
+manifests/adaptive_concurrency_state.json
+manifests/adaptive_concurrency_events.jsonl
+manifests/adaptive_state_test.json
