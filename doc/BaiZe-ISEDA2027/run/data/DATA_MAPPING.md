@@ -695,8 +695,8 @@
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
 | `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 第一批完成(5子集/1093 files/231.6GB/0 inc; megamath-web~1TB第二批按需) |
-| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(347/2228parquet/645GB/PID1829139/nice19/max-workers2/15.6%; 下载math-dialogue子集; ETA~61h) |
-| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(56/1637parquet/102GB/PID916265/nice19/ionice3/max-workers2/3.4%; 下code-no-thinking-hard子集; ETA~136h/rate降速~309s/file) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(403/2228parquet/18.1%/755GB/PID1829139/nice19/max-workers2; 下载math-dialogue子集; rate~118s/file; ETA~60h→预计11-18 10:00CST) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(67/1637parquet/4.1%/126GB/PID916265/nice19/max-workers2; 下code-no-thinking-hard子集; rate~360s/file(大文件1.9GB/file+间歇proxy503但恢复); ETA~157h→预计11-22 14:00CST) |
 
 **MegaMath 子集详情**：
 - `megamath-web` (279B tokens, ~1TB) — 第二批按需
