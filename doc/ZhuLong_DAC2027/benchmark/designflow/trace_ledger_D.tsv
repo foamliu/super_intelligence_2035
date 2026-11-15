@@ -1507,7 +1507,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792563679865_57rrw	e0039602	hfeg0pkn002	60	schematic_netlist	parked		2026-11-12 22:17	r560 peek: Q&A read project config maxtoken tuning
 1793944946103_46wrm	rongjiez	hfeg0plg54	57	schematic_netlist	parked		2026-11-12 22:17	r560 peek: DUP of 1gfgc (same compare_wave_new.pl debug)
 1793929018140_trfp9	xiaoyu1d	hfeahpc501	40	waveform	parked		2026-11-12 22:17	r560 peek: how-to Q&A reuse probe signals across waveforms
-1793791322730_l2vvy	justind	hfeg0plg53	42	schematic_netlist	parked		2026-11-12 22:17	r560 peek: Q&A 'can you read circuits' + explain netlist
+1793791322730_l2vvy	justind	hfeg0plg53	42	schematic_netlist	case	EDA-Eval-DesignFlow-LFSRCircuitIdentQA-001	2026-11-15 18:56	r560 peek: Q&A 'can you read circuits' + explain netlist
 1794208561548_1tymw	t0002616	hfeg0plg101	40	schematic_netlist	parked		2026-11-12 22:17	r560 peek: debug Q&A why fast/fastest .sp same wr_time
 1789115083875_tcqqs	sagequan	hfeg0pbn04	97	analog_context	parked		2026-11-12 22:17	r560 peek: debug SimDiag VPS fail count 0 vs 42 (code-fix)
 1789386764132_phgjl	sagequan	hfeg0pbn04	86	analog_context	parked		2026-11-12 22:17	r560 peek: skill-only simdiag skill launch
