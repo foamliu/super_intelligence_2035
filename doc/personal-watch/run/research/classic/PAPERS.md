@@ -2599,6 +2599,74 @@
 
 ---
 
+## 150. Longformer: The Long-Document Transformer
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Longformer: The Long-Document Transformer |
+| 作者（前 3） | Iz Beltagy · Matthew E. Peters · Arman Cohan（共 **3** 位；arXiv 作者字段逐字核） |
+| 年份 | **2020**（`2020-04-10`，v2 `2020-12-02`，v2 增加 LED） |
+| 会议 / 期刊 | **预印本**（arXiv `journal_ref` 为空；OpenAlex 出版源显示 `arXiv (Cornell University)`） |
+| 被引数 | **6,470**（OpenAlex `10.48550/arxiv.2004.05150`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2004.05150> ｜ DOI `10.48550/arxiv.2004.05150` |
+| 一句话贡献 | 把 self-attention 换成「**滑动窗口（w = 512，与 RoBERTa 等算力）+ 按 head 配置的 dilation + 少量任务相关的 global attention**」组合，复杂度从 O(n²) 降到 **O(n)**；位置编码用「把 RoBERTa 的 512 个学习式位置编码**复制**扩到 4,096」的办法续上，避免从头学长程位置；v2 给出 encoder-decoder 版 **LED**（23 处提及）用于长文档生成。 |
+| 与我们工作的关系 | **pretrain（长上下文续训，主目标）**：2B 模型要喂进整份时序报告 / 网表摘要，全注意力在 30k token 上不可行 ⇒ <b>动作</b>：把「窗口 + dilation + 少量 global token」作为长上下文 baseline 之一，与 RoPE 插值对照，判据用「训练长度之外的 PPL 是否先崩」。<br>**harness / zhulong（长文档输入的成本口径）**：global attention 钉在哪些 token，等价于「让模型看哪里」，直接影响长文档任务的成本与可解释性 ⇒ <b>动作</b>：评测 agent 读长设计文档时，把 global token 的选择规则（结构标记 vs 学习型 slot）记为一列元数据，禁止只报总分。<br>**风险**：① 6,470 引用中含大量「长文档 baseline」式引用，不等于方法在长上下文上最优（2023 后 RoPE 插值 / FlashAttention 路线已改写默认选项）；② 预印本无正式评审版本；③ 复制位置编码的做法只在 ≤4,096 被验证过。 |
+
+首次收录: 2026-11-16（第三十九轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：3 作者、`comment` = `Version 2 introduces the Longformer-Encoder-Decoder (LED) model`；OpenAlex `200` 6,470；PDF `200` `application/pdf` 539,211 B / 17 页，`pdftotext` 核对 `window size of 512` / `dilation` 14 处 / `O(n)` / `2,048` / `copy position embeddings` / `position 4,096`）
+
+---
+
+## 151. Flamingo: a Visual Language Model for Few-Shot Learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Flamingo: a Visual Language Model for Few-Shot Learning |
+| 作者（前 3） | Jean-Baptiste Alayrac · Jeff Donahue · Pauline Luc（共 **27** 位，含 Antoine Miech；arXiv 作者字段逐字核） |
+| 年份 | **2022**（`2022-04-29`，v2 `2022-11-15`） |
+| 会议 / 期刊 | **NeurIPS 2022**（arXiv `comment` 原文：`54 pages. In Proceedings of Neural Information Processing Systems (NeurIPS) 2022`） |
+| 被引数 | **2,333**（OpenAlex `10.48550/arxiv.2204.14198`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2204.14198> ｜ DOI `10.48550/arxiv.2204.14198` |
+| 一句话贡献 | 用「**冻结的语言模型 + Perceiver Resampler（把变长视觉特征压成固定数量 latent）+ 层间插入的 GATED XATTN-DENSE 交叉注意力**」把图像/视频接进 80B LM（`80B` 11 处），只在 **43 million** 网页图文交错数据上训练，就能在 16 个多模态任务上做 few-shot；消融显示 **0 初始化的 tanh gating 是必需项**（去掉后总分掉 **4.2%** 并出现训练不稳），**每层插一块**优于隔层插但更贵。 |
+| 与我们工作的关系 | **vision（域内图文对稀少时的架构选择，主目标）**：数万张版图 / SEM / 波形图 + 冻结 LM 的设定与 Flamingo 最接近 ⇒ <b>动作</b>：vision 线做「Resampler latent 数 ∈ {32, 64, 128} × gating 是否 0 初始化」的小网格，先确认瓶颈是 latent 数还是数据量。<br>**pretrain（跨模态注入的冷启动）**：0 初始化门控是可复现的稳定化手段 ⇒ <b>动作</b>：pretrain 线在「冻结主干 + 新增适配层」的任何实验里默认把新增门控参数零初始化，并写进配置模板。<br>**风险**：① 80B / 43M 网页数据的规模在 2B 上不可直接外推；② 论文自述 interleaved 数据不可公开，配比无法复现；③ 2,333 引用里含大量「多模态 baseline」引用。 |
+
+首次收录: 2026-11-16（第三十九轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：27 作者；OpenAlex `200` 2,333；PDF `200` `application/pdf` 31,579,390 B / 54 页，`pdftotext` 核对 `80B` / `43 million` / `Perceiver Resampler` 23 处 / `tanh gating` 9 处 / `alpha_xattn … init at 0` / 去掉 0 初始化掉 `4.2%` 且训练不稳）
+
+---
+
+## 152. RoBERTa: A Robustly Optimized BERT Pretraining Approach
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RoBERTa: A Robustly Optimized BERT Pretraining Approach |
+| 作者（前 3） | Yinhan Liu · Myle Ott · Naman Goyal（共 **10** 位，含 Jingfei Du；arXiv 作者字段逐字核） |
+| 年份 | **2019**（`2019-07-26`，仅有 v1） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 与 `journal_ref` 均为空；OpenAlex 出版源为 `arXiv (Cornell University)`） |
+| 被引数 | **33,672**（OpenAlex `10.48550/arxiv.1907.11692`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/1907.11692> ｜ DOI `10.48550/arxiv.1907.11692` |
+| 一句话贡献 | 证明「**BERT 是被显著训练不足的**」（`significantly undertrained` 2 处），给出更稳的预训练配方：**动态掩码**（每步重新生成掩码）、**去掉 NSP** 改用整段句子、**160GB** 语料（原文 16GB 的 10 倍）、**batch 8K × 500K steps**、byte-level BPE；不改模型结构即可超过同期 BERT 变体。 |
+| 与我们工作的关系 | **pretrain（配方等价性清单，主目标）**：这是「同样的算力，改配方比改结构更划算」的原始证据 ⇒ <b>动作</b>：2B 主跑把「动态掩码 / 去 NSP / 数据量 ×10 / 大 batch + 长步数」逐项做成单变量消融表，任一项不做必须写明理由。<br>**data（语料规模的阈值感）**：160GB 是当时可复现的最大公开混合语料 ⇒ <b>动作</b>：data 线在配比表里同时记「原始语料 GB」与「去重后 GB」，避免用去重前体积对外比较。<br>**风险**：① 33,672 引用中含大量「base 模型就是 RoBERTa」的顺手引用；② 结论绑定在 2019 年的算力与数据可得性上，不能直接搬到 2B / 中文 / 代码语料；③ 预印本，无正式评审版本。 |
+
+首次收录: 2026-11-16（第三十九轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：10 作者；OpenAlex `200` 33,672；PDF `200` `application/pdf` 209,675 B / 13 页，`pdftotext` 核对 `160GB` 6 处 / `dynamic masking` 4 处 / `batch size of 8K` / `500K steps` 2 处 / `significantly undertrained`）
+
+---
+
+## 153. Emerging Properties in Self-Supervised Vision Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Emerging Properties in Self-Supervised Vision Transformers |
+| 作者（前 3） | Mathilde Caron · Hugo Touvron · Ishan Misra（共 **7** 位，含 Hervé Jégou；arXiv 作者字段逐字核） |
+| 年份 | **2021**（`2021-04-29`，v2 `2021-05-24`） |
+| 会议 / 期刊 | **ICCV 2021**（arXiv `comment` 仅 `21 pages`；出版源取自 OpenAlex = `IEEE/CVF International Conference on Computer Vision (ICCV)`） |
+| 被引数 | **7,104**（OpenAlex `10.48550/arxiv.2104.14294`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.14294> ｜ DOI `10.48550/arxiv.2104.14294` |
+| 一句话贡献 | **DINO**：把「**无标签自蒸馏**（student 走梯度分支、teacher 用 momentum encoder）+ **multi-crop** + **centering / sharpening 防塌缩**」用到 ViT 上，得到的特征既是强 k-NN 分类器（小 ViT 上 ImageNet **78.3%** top-1），又自带语义分割式的显式结构；并指出 momentum encoder、multi-crop、小 patch 是三个关键项。 |
+| 与我们工作的关系 | **vision（自监督视觉塔的原始配方，主目标）**：域内标注图稀少时，「先自监督预训练编码器再接线」比纯监督更抗过拟合 ⇒ <b>动作</b>：vision 线把 DINO 式 self-distillation 作为编码器初始化候选，与「冻结 CLIP/SigLIP」并列对照，判据用下游 agent 任务而非线性探测。<br>**pretrain（防塌缩的两个旋钮）**：centering（teacher 输出中心化）与 sharpening（低温 softmax）可直接搬运 ⇒ <b>动作</b>：pretrain 线在任何 teacher-student 结构里把这两个超参显式写进配置（默认值取本文），不靠框架默认。<br>**data（无标注数据的用法）**：只用 ImageNet 无标签数据即得可用特征 ⇒ <b>动作</b>：data 线单列「可无标注使用」的图像池规模，作为 vision 自监督的数据口径。<br>**风险**：① 78.3% 是**小 ViT + k-NN** 口径，不等于线性探测或下游任务 SOTA；② momentum teacher 需额外显存与两次前向，2B 级训练的吞吐代价文中未给；③ ICCV 会场取自 OpenAlex（arXiv `journal_ref` 为空）。 |
+
+首次收录: 2026-11-16（第三十九轮）｜ 状态: 元数据 + 被引已核（arXiv `id_list` `200` + atom：7 作者；OpenAlex `200` 7,104 且源为 ICCV；PDF `200` `application/pdf` 30,930,829 B / 21 页，`pdftotext` 核对 `78.3%` 3 处 / `momentum encoder` 14 处 / `multi-crop` 32 处 / `centering` 22 处 / `sharpening` 13 处 / `self-distillation`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > ✅ **第三十六轮（2026-11-15 15:0x）转正 4 条**：Whisper `2212.04356`（#138，3,720）· Gato `2205.06175`（#139，876，TMLR 2022）· SGLang `2312.07104`（#140，812，NeurIPS 2024）· Self-Consistency `2203.11171`（#141，5,587，ICLR 2023）⇒ B 轨累计 **141**。

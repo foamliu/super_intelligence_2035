@@ -1,0 +1,14 @@
+Bonjour Dr Alayrac,
+
+Je suis Yang Liu, chercheur travaillant sur les agents LLM ; mes travaux sont sur https://foamliu.github.io/.
+
+We build a ~2B multimodal model that must read domain images (layout plots, SEM cross-sections, waveform screenshots), where in-domain image-text pairs number only in the tens of thousands. Flamingo is our reference for keeping the LM frozen and inserting gated cross-attention.
+
+1. You report that removing the 0-initialized tanh gating costs 4.2% overall and causes training instabilities, and that inserting GATED XATTN-DENSE at every layer is better but expensive. Did you measure the degradation curve when inserting every N layers (N = 2, 4)? At 2B with ~20 layers, is every-layer insertion still worth it, or does every-other-layer recover most of the gain?
+
+2. The Perceiver Resampler's output length equals its number of latent queries. Did you ablate that number? What degrades first when it is reduced — fine spatial detail, or binding several images in one interleaved context?
+
+3. With only tens of thousands of in-domain pairs, would you keep the vision encoder frozen as in Flamingo, or unfreeze it on a short schedule with a small learning rate, as you mention for the long-video setting?
+
+Best regards,
+Yang Liu

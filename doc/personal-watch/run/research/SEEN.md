@@ -5678,3 +5678,6 @@
 | 2026-11-15 | 2611.16895 | Human or Synthetic? What a Fixed Budget Buys for Post-Training | cs.CL | 收录 |
 | 2026-11-15 | 2611.17191 | Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off | cs.LG | 收录 |
 | 2026-11-15 | 2611.15006 | EvoX: Rethinking the Agent Harness as a Runtime Policy | cs.AI | 收录 |
+| 2026-11-16 | 2611.17068 | Discovering Effective Agent Memory Designs through Program Evolution | cs.CL | 收录 |
+| 2026-11-16 | 2611.16882 | Pretraining Data Statistics Shape the Phases of Learning Entity Comparison in Language Models | cs.CL | 收录 |
+| 2026-11-16 | 2611.17108 | LazyWeights: Decode-on-Demand Edge LLMs | cs.LG | 收录 |

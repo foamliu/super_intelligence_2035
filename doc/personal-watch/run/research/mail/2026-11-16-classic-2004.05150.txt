@@ -1,0 +1,14 @@
+Dear Dr. Beltagy,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.
+
+We run long design documents (netlists, timing reports) through a ~2B model, and Longformer is still our reference for "local window plus a few global tokens". Two questions:
+
+1. You used a sliding window of 512 (the same compute as RoBERTa) and varied dilation across heads. How did you decide head-level dilation versus simply stacking more layers? Was there a measurable criterion — effective receptive field, or a downstream score — that told you when the window was long enough?
+
+2. Global attention was tied to task tokens such as [CLS] and the question. In our case the query is implicit ("summarize this 30-page report"), so no token is naturally global. Would you attach global attention to structural markers (section headers, net names) or learn a small set of global slots?
+
+3. Beyond 4,096 tokens you copied RoBERTa's 512 position embeddings repeatedly. Extending to 32k today, would you keep that copy trick in continued pretraining, or switch to interpolated RoPE? What broke first when you pushed past the trained length?
+
+Best regards,
+Yang Liu

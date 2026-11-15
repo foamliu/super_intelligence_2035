@@ -2127,7 +2127,46 @@
 | 状态 | 待跟踪（**本轮不发信**：今日已发 12 封 = 每日硬上限；且邮箱为旧论文地址，下轮先核当前地址） |
 | 备注 | GSM8K / verifier 路线是 harness 判分上限与 zhulong best-of-n 预算的直接源头；下轮若核到现行地址优先发信（英文，问题聚焦 `n` 与 `test@n` 的关系、verifier 与生成器隔离的最小代价）。 |
 
-## 四、维护纪律
+### 145. Iz Beltagy
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Iz Beltagy（英语姓名族属 ⇒ 英文信） |
+| 机构 | **Allen Institute for AI（Ai2）**（X bio 自述 `Director of AI leading Olmo Scaling at @allenai_org, Cofounder @SpiffyAI, formerly @UTCompSci PhD.`；2026-06-02 推文自述「After 3 years in startup land … I'm returning to @allen_ai to lead the Olmo Scaling team」） |
+| 代表论文 | Longformer（arXiv `2004.05150`，**一作**，B 轨 #150） |
+| 邮箱 | **`iz@beltagy.net`**（本人主页 `https://beltagy.net/` 的 `mailto:` **明文**，`HTTP 200` / 20,158 B，2026-11-16 实测） |
+| 主页 | <https://beltagy.net/>（`200` / 20,158 B） |
+| X 账号 | **`@i_beltagy`**（`x_fetch.py` profile `200`，bio 与主页 `/twitter`→`twitter.com/i_beltagy` 链接双源一致） |
+| 状态 | **已发信**（2026-11-16 00:03 CST，经典论文请教信第 56 封，**英文 194 词**） |
+| 备注 | `语言=英文(判据=姓名族属非中/日/韩 + 机构在美国 AI2)`。信里问：① 窗口 512 + 按 head 的 dilation，如何区分「该加 dilation」与「该堆层」，有无可测判据（有效感受野 / 下游分数）；② 全局注意力原本钉 `[CLS]`/问句，隐式查询下该钉结构标记还是学 global slot；③ 4,096 靠复制 RoBERTa 的 512 个位置编码，扩到 32k 是继续复制还是换插值 RoPE。⚠️ 他的时间线以 Olmo / 开源模型为主，**可做 `voice_ready` 候选**（本轮未取：最新一条为 2026-10-09，超过 30 天降级线）。 |
+
+### 146. Jean-Baptiste Alayrac
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jean-Baptiste Alayrac（法文姓名族属 ⇒ 法文称谓问候 + 英文正文） |
+| 机构 | **Google DeepMind**（Flamingo 论文署名 DeepMind） |
+| 代表论文 | Flamingo（arXiv `2204.14198`，**一作**，B 轨 #151） |
+| 邮箱 | **`jeanbaptiste.alayrac@gmail.com`**（本人主页 `https://www.jbalayrac.com` 的 `mailto:` **明文**，`HTTP 200` / 24,757 B，2026-11-16 实测） |
+| 主页 | <https://www.jbalayrac.com>（`200` / 24,757 B） |
+| X 账号 | **未找到**（本轮未检索到可核实 handle，不猜） |
+| 状态 | **已发信**（2026-11-16 00:03 CST，经典论文请教信第 57 封，**法文问候 + 英文正文 179 词**） |
+| 备注 | `语言=法文称谓问候+英文正文(判据=法文姓名族属；机构在英国 ⇒ 按姓名族属优先，未以「人在英国/论文英文/gmail」判英文)`。信里问：① 0 初始化 tanh gating 去掉掉 4.2% 且不稳、每层插 GATED XATTN-DENSE 更优但更贵 ⇒ N=2/4 的退化曲线、2B/~20 层下隔层插是否够；② Perceiver Resampler 输出长度 = latent query 数，有没有 latent 数消融、先坏在细粒度空间细节还是多图绑定；③ 数万域内图文对时冻结视觉塔还是短程小 LR 解冻。 |
+
+### 147. Mathilde Caron
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mathilde Caron（法文姓名族属 ⇒ 法文称谓问候 + 英文正文） |
+| 机构 | **Google Research**（IEEE Xplore 作者档案 affiliation = `Google Research`；DINO 发表时为 Inria / Facebook AI Research） |
+| 代表论文 | DINO / Emerging Properties in Self-Supervised Vision Transformers（arXiv `2104.14294`，**一作**，B 轨 #153） |
+| 邮箱 | **未采用**：仅论文 PDF 首页 `mathilde@fb.com`（2021 年旧域；她现已离开 Meta/FAIR ⇒ 视为失效，🚫 不发信）。**未找到现行个人邮箱** |
+| 主页 | **未找到个人主页**（`mathilde-caron.github.io` 实测 **`404`**） |
+| X 账号 | **未找到 X**（本轮未检索到可核实 handle，不猜） |
+| 状态 | 待跟踪（只建档，不发信） |
+| 备注 | `语言=法文称谓问候+英文正文(判据=法文姓名族属+机构在美国 Google Research)`。DINO 的 centering / sharpening / momentum teacher 是 vision 线自监督配方的一手出处；等找到现行邮箱（如 Google Scholar 主页或 OpenReview 公开地址）再发。⚠️ 2021 年 PDF 内的 `@fb.com` 地址**不作为发信依据**（与 #143 的 `fb.com` 同属旧域风险，且她已换机构）。 |
+
+
 
 1. **一次一作者**：同一作者 / 同一论文 ≤1 封；同一机构 ≤2 封/天（`RESEARCH_MAIL_SPEC §3`）。
 2. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
