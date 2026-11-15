@@ -1079,3 +1079,10 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1789535640317_e0r20	ziyuny	hfeg0plg104	44	layout_aether	parked		2026-11-16 03:36	env-recon Q&A: find open aether - thin single-turn no artifact
 1794381700945_93dkg	wenhanz	hfeg0plg69	40	layout_aether	parked		2026-11-16 03:36	conceptual hotkey Q&A: P vs Shift+P wire - single-turn explain no artifact
 1792549371930_2cuyw	hongyuy	hfeg0plg64	37	physical_verify	case	PgSvrfRuleAnalyze-001	2026-11-16 04:18	
+1789697772892_cqtax.messages.json	miccao	hfeg0plg37	36	physical_verify	case	EDA-Eval-DesignFlow-AutoCellConfigDiffCompare-001	2026-11-16 04:43	
+1793078869613_0jmau.messages.json					parked		2026-11-16 04:36	r636 peek-reject: near-dup r627 / run-existing / ops-debug / D-sim / env-launcher
+1793082109015_g45d9.messages.json					parked		2026-11-16 04:36	r636 peek-reject: near-dup r627 / run-existing / ops-debug / D-sim / env-launcher
+1789978168832_po6m1.messages.json					parked		2026-11-16 04:36	r636 peek-reject: near-dup r627 / run-existing / ops-debug / D-sim / env-launcher
+1792477362487_diglq.messages.json					parked		2026-11-16 04:36	r636 peek-reject: near-dup r627 / run-existing / ops-debug / D-sim / env-launcher
+1791526393866_9n5th.messages.json					parked		2026-11-16 04:36	r636 peek-reject: near-dup r627 / run-existing / ops-debug / D-sim / env-launcher
+1789551535410_1kbzp.messages.json					parked		2026-11-16 04:36	r636 peek-reject: near-dup r627 / run-existing / ops-debug / D-sim / env-launcher
