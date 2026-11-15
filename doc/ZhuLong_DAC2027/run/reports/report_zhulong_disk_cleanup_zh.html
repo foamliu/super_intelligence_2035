@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZhuLong 硬盘清盘报告 · 2026-11-15 14:00</title>
+<title>ZhuLong 硬盘清盘报告 · 2026-11-15 19:02（第三轮·达标）</title>
 <style>
-  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#222;background:#fafafa;line-height:1.6}
-  h1{font-size:1.5em;border-bottom:3px solid #c0392b;padding-bottom:8px}
-  h2{font-size:1.2em;margin-top:28px;border-left:5px solid #2c7fb8;padding-left:10px}
-  .verdict{padding:14px 18px;border-radius:8px;font-weight:bold;font-size:1.05em;margin:10px 0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHeang",sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#222;background:#fafafa;line-height:1.6}
+  h1{font-size:1.45em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+  h2{font-size:1.18em;margin-top:28px;border-left:5px solid #2c7fb8;padding-left:10px}
+  .verdict{padding:14px 18px;border-radius:8px;font-weight:bold;font-size:1.02em;margin:10px 0}
   .ok{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
   .warn{background:#fff3cd;color:#856404;border:1px solid #ffeaa7}
   .bad{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
@@ -19,110 +19,91 @@
   code{background:#eef;padding:1px 4px;border-radius:3px;font-size:0.88em}
   .small{font-size:0.85em;color:#666}
   .tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:0.78em;color:#fff}
-  .t-cache{background:#17a2b8}.t-log{background:#6c757d}.t-backup{background:#8e44ad}.t-product{background:#e67e22}.t-stale{background:#34495e}
-  ul{margin:6px 0}
-  li{margin:3px 0}
+  .t-product{background:#e67e22}.t-archive{background:#8e44ad}.t-protect{background:#34495e}
+  ul{margin:6px 0} li{margin:3px 0}
   .bar{height:18px;border-radius:3px;display:inline-block}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 </style>
 </head>
 <body>
 
-<h1>🧹 ZhuLong 硬盘清盘报告 · 2026-11-15 14:00（wake#968，运维令 12:5x「安排 zhulong 清理硬盘」）</h1>
+<h1>🧹 ZhuLong 硬盘清盘报告 · 2026-11-15 19:02（第三轮 · <span style="color:#155724">达标</span>）</h1>
 
-<div class="small">本报告为同文件名报告的更新版（wake#967 13:30 首轮已清 ~6G：npm 缓存 + 旧 CLI 归档/解压 + 安装器）。本轮（14:00）为继 wake#967 之后的<b>第二轮深挖</b>，对 wake#967 标记「归属不确定/当日活跃」的目录做了进一步核验后安全删除。删除清单 TSV：<code>run/zhulong_disk_cleanup_20261115_1400.tsv</code>（1221 项 / 4.93 GB），证据日志：<code>run/zhulong_disk_cleanup_20261115_1400_evidence.log</code>，可复现脚本：<code>run/zhulong_disk_cleanup_20261115_1400.sh</code>。</div>
+<div class="small">运维令 12:5x「安排 zhulong 清理硬盘」· 目标 /home ≥5G、/nasdata ≥25G。本报告为同文件名报告的更新版，合并三轮清盘的最终状态。前两轮（wake#967 13:30 / wake#968 14:00）已清 ~6G + 4.93G（npm 缓存 / 旧 CLI 归档 / 旧安装器 / 归档日志等，详见各自 TSV）。<b>本轮（19:02）为第三轮，找到并处置前两轮漏看的一项 11G 大目录</b>，使 /nasdata 首次达标。删除清单 TSV：<code>run/zhulong_disk_cleanup_20261115_1902.tsv</code>。</div>
 
 <h2>一、首屏结论（before / after）</h2>
 
 <div class="verdict ok">
-  BEFORE（14:00 本轮起）：/home 可用 <b>7.3 G</b>（99% 满）｜/nasdata 可用 <b>14 G</b>（98% 满）<br>
-  AFTER（14:21 本轮毕）：/home 可用 <b>7.3 G</b>（99% 满，<b>✅ 达标 ≥5G</b>）｜/nasdata 可用 <b>20 G</b>（97% 满，<b>⚠️ 未达 25G，仍差 ~5G</b>）
+  BEFORE（19:02 本轮起）：/home 可用 <b>5.8 G</b>（99% 满，✅ 已达标）｜/nasdata 可用 <b>20 G</b>（97% 满，⚠️ 差 ~5G）<br>
+  AFTER（19:04 本轮毕）：/home 可用 <b>5.8 G</b>（99% 满，<b>✅ 达标 ≥5G</b>）｜/nasdata 可用 <b>29 G</b>（95% 满，<b>✅ 达标 ≥25G</b>）
 </div>
 
-<p><b>本轮删除总量：4.93 GB（1221 项）</b>。/home 无变化属预期：<code>~/.cache</code>、<code>~/.local</code>、<code>~/.npm</code> 均为指向 /nasdata 的符号链接，故全部清理落在 /nasdata 上；/home LV（394G）99% 被其它用户占用，我侧真实文件仅 ~230M，已无我可清的空间，但 7.3G 已满足 ≥5G 目标。</p>
+<p><b>一句话结论</b>：前两轮清盘结论「/nasdata 结构性缺口、需运维 VACUUM opencode.db」<b>被本轮推翻</b>——根因不是「活库无法清」，而是前两轮<b>没往 ZhuLong_DAC2027 论文树里看</b>。该树下的 <code>trace_ablation_think_lang/</code>（think×lang 两轴消融的 11G 原始 trace，实验已于 11-07 交付 30/30、结果入论文）被压缩为 1G 归档 <code>.tar.zst</code> 后删除原件，净释放 ~10G，/nasdata 直接达标。<b>无需运维 VACUUM opencode.db</b>。</p>
 
-<div class="verdict warn">
-  <b>/nasdata 未达标说明</b>：14G → 20G（释放 6G 含本轮 4.93G + 期间他线自然波动），距 25G 目标仍差 ~5G。剩余可释放项几乎全为<b>硬护栏禁区 / 活库 / 在用 venv</b>（见第四节），需运维介入授权或择机清理 opencode.db（活库，见第五节）。
-</div>
+<h2>二、本轮删除清单</h2>
 
-<h2>二、验收四项核对</h2>
 <table>
-<tr><th>验收项</th><th>结果</th><th>证据</th></tr>
-<tr><td><code>df -h /home /nasdata</code> before/after</td><td>✅ 见首屏</td><td>before: /home 7.3G /nasdata 14G；after: /home 7.3G /nasdata 20G</td></tr>
-<tr><td>baseline eval 存活<b>或已正常结束</b></td><td>✅ 已正常结束</td><td>batch <code>2026_1115_110506</code> 进程已退出；<code>completed_code_generation_2026_1115_110506.jsonl</code> 于 14:17 写入（12838 B）；trace 含 <code>submit_and_exit</code> + <code>status:completed</code>；batch 目录完整保留未删</td></tr>
-<tr><td><code>git status -sb</code> 正常</td><td>✅ 正常</td><td><code>## main...origin/main</code>；仅有他线 designflow 在途改动（非本线，未碰）+ 本轮 3 个清理产物未跟踪</td></tr>
-<tr><td>loop 进程未挂</td><td>✅ 存活</td><td><code>pgrep -f zhulong_loop.sh</code> = PID 243810；<code>/proc/243810/environ</code> 含 <code>https_proxy=http://172.19.92.23:13128</code>（proxy 自检通过）</td></tr>
+<tr><th>路径</th><th>大小</th><th>类别</th><th>理由</th><th>核验</th></tr>
+<tr>
+  <td class="mono">/nasdata/app.e0031982/code/ZhuLong_DAC2027/<br>trace_ablation_think_lang/</td>
+  <td>~11 G<br><span class="small">(30 个 run 子目录·82695 文件)</span></td>
+  <td><span class="tag t-product">归档实验产物</span></td>
+  <td>think×lang 两轴消融（A_high/low/medium/none/xhigh×3 + B_en/es/fr/ru/zh×3 = 30 run）的原始 cline trace。<b>实验已于 2026-11-07 归档交付 30/30</b>（ZHULONG_TASK.md「已归档·2026-11-07 08:3x」），Pass@1 结果已写入 <code>zhulong_results.md</code> 与论文表。<b>属「本线已归档、被取代」的旧产物</b>（当前活跃实验为 subagent A0/A1/A2→A3-A6，与此无关）。<b>处置方式：压缩归档而非直接 rm</b>——证据保全，符合「宁可少清」。</td>
+  <td>✅ <code>tar --zstd -tf</code> VERIFY_OK<br>82695 条目·30 run 目录与原件 <code>ls</code> 一致</td>
+</tr>
 </table>
 
-<h2>三、删除清单 Top 20（路径 / 大小 / 理由）</h2>
+<h3>归档产物（保留，非删除）</h3>
 <table>
-<tr><th>#</th><th>大小</th><th>路径</th><th>理由</th></tr>
-<tr><td>1</td><td>949M</td><td><code>~/.cache/cline_eval</code></td><td><span class="tag t-cache">cache</span> DesignFlow 逐题 eval 缓存（非本轮 PyAether eval；lsof 无占用、2h 内无写入；可由重跑再生）。注：designflow 权威 ledger/trace 在 <code>benchmark/designflow/</code>，未碰</td></tr>
-<tr><td>2</td><td>532M</td><td><code>~/.vscode-server/cli/servers</code></td><td><span class="tag t-stale">stale</span> VS Code 远程服务器安装（我账号无活跃 vscode 进程；下次连接自动重下）</td></tr>
-<tr><td>3</td><td>448M</td><td><code>code/eda_code_eval/2026_1112_085105</code></td><td><span class="tag t-product">old product</span> 11-12 批次（任务书已归档 commit e09c7e238/a909fe482）</td></tr>
-<tr><td>4</td><td>332M</td><td><code>code/eda_code_eval/2026_1112_161042</code></td><td><span class="tag t-product">old product</span> 11-12 批次（同上，已归档）</td></tr>
-<tr><td>5</td><td>266M</td><td><code>eda_code_eval/2026_1019_071104</code></td><td><span class="tag t-product">old product</span> 10 月批次（mtime>3d，已被取代）</td></tr>
-<tr><td>6</td><td>239M</td><td><code>~/.local/share/opencode/snapshot/&lt;hash&gt;</code></td><td><span class="tag t-cache">cache</span> opencode 旧会话快照（10-28，非当前会话）</td></tr>
-<tr><td>7</td><td>230M</td><td><code>eda_code_eval/2026_1021_104432</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>8</td><td>227M</td><td><code>eda_code_eval/2026_1019_145634_BACKUP_223148</code></td><td><span class="tag t-backup">backup</span> 显式 BACKUP 副本</td></tr>
-<tr><td>9</td><td>227M</td><td><code>eda_code_eval/2026_1019_145634</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>10</td><td>201M</td><td><code>eda_code_eval/2026_1019_035502</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>11</td><td>136M</td><td><code>eda_code_eval/2026_1020_161451</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>12</td><td>127M</td><td><code>eda_code_eval/2026_1019_005714</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>13</td><td>121M</td><td><code>eda_code_eval/2026_1020_090900</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>14</td><td>119M</td><td><code>eda_code_eval/2026_1019_235040</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>15</td><td>115M</td><td><code>eda_code_eval/2026_1020_215918</code></td><td><span class="tag t-product">old product</span> 10 月批次（取代）</td></tr>
-<tr><td>16</td><td>111M</td><td><code>~/.local/share/uv</code></td><td><span class="tag t-cache">cache</span> uv python 下载缓存（可再生，规则 a）</td></tr>
-<tr><td>17</td><td>90M</td><td><code>miniforge3/install_tmp</code></td><td><span class="tag t-log">temp</span> conda 安装临时残留</td></tr>
-<tr><td>18</td><td>82M</td><td><code>eda_code_eval/2026_1113_215002</code></td><td><span class="tag t-product">old product</span> 11-13 posttrain-baseline 前序尝试（结果 <code>.jsonl</code> 摘要已留存父目录；运行中 110506 保留）</td></tr>
-<tr><td>19</td><td>60M</td><td><code>~/.local/share/opencode/snapshot/&lt;hash&gt;</code></td><td><span class="tag t-cache">cache</span> opencode 旧会话快照（10-12）</td></tr>
-<tr><td>20</td><td>54M</td><td><code>eda_code_eval/2026_1114_161225</code></td><td><span class="tag t-product">old product</span> 11-14 前序 baseline 尝试（摘要留存）</td></tr>
+<tr><th>路径</th><th>大小</th><th>说明</th></tr>
+<tr><td class="mono">…/ZhuLong_DAC2027/<br>trace_ablation_think_lang.tar.zst</td><td>1,048,277,655 B（1004 M）</td><td>zstd 压缩归档·压缩比 ~10.8:1（JSON trace 高度可压）·tar exit=0·<code>tar -t</code> 完整性校验通过。需要时可 <code>tar --zstd -xf …</code> 还原。</td></tr>
 </table>
 
-<p class="small">另含：所有 10 月 eda_code_eval 批次（共 53 个）+ 11-13~11-15 前序 baseline 批次（结果摘要 <code>completed_*.jsonl</code> 均保留于父目录）+ 旧 <code>app.log.2/3/4</code>（Nov 9-12，>3d）+ <code>cli.mjs.map</code> sourcemap + opencode tool-output &gt;2d 旧文件（346 个）+ judge_* 临时缓存 + 各 *.bak/scratch 目录。完整 1221 项见 TSV。</p>
+<h2>三、三轮汇总</h2>
 
-<h2>四、未删项及原因（守硬护栏 · 宁少删不误删）</h2>
 <table>
-<tr><th>路径</th><th>大小</th><th>未删原因</th></tr>
-<tr><td><code>~/.local/share/opencode/opencode.db</code></td><td>2.1G</td><td><b>活库</b>：opencode 当前会话正在写入（WAL 模式，db-wal 15M 活跃）。VACUUM/DELETE 需无会话连接时进行，本轮在会话内做有锁/损坏风险 → 留运维择机（见第五节，预计可回收 ~1.5G+）</td></tr>
-<tr><td><code>~/.local/share/opencode/tool-output</code>（今日）</td><td>~0.1G</td><td>今日（&lt;2d）文件可能属当前会话，按令「mtime 很新先列不删」保留</td></tr>
-<tr><td><code>eda_fastmcp/venv</code> + <code>kb/</code></td><td>~6.1G</td><td><b>硬护栏禁区</b>：eval 在用 venv（<code>/proc/.../environ</code> PYTHON 指向它）+ eda_fastmcp 源码/KB（guardrail #3）</td></tr>
-<tr><td><code>~/.local/node-20</code></td><td>2.0G</td><td><b>在用</b>：PATH 内 <code>cline</code> 真实路径 <code>~/.local/node-20/bin/cline</code>（AGENTS.md 明示），删除会断 loop</td></tr>
-<tr><td><code>~/.local/share/zhulong/node_modules</code> + <code>cli.mjs</code></td><td>124M + 53M</td><td>zhulong CLI 运行时（node_modules 不可删；仅删了 sourcemap <code>cli.mjs.map</code>）</td></tr>
-<tr><td><code>~/.local/node-22</code></td><td>365M</td><td>不确定归属（可能他线 pi 在用），按令「不确定先列不删」</td></tr>
-<tr><td><code>langfuse/node_modules</code></td><td>62M</td><td>langfuse 服务运行时依赖，非纯缓存</td></tr>
-<tr><td><code>~/.cline_*</code>（zhulong/doubao/dsv4flash/glm/kimi/prof4/posttrain_baseline 共 7 个）</td><td>~1.0G</td><td><b>硬护栏 #1「任何 cline session 目录」</b>明令禁删，即使 .cline_zhulong 自 10-04 起未写入也未碰</td></tr>
-<tr><td><code>EDA-LiveFlow-Bench_ICML2027/figures/.venv</code></td><td>192M</td><td>目录 mtime = 今日 13:04（很新），按令「mtime 很新先列不删」→ 疑他线（ICML2027 相关）在写，<b>需运维确认归属</b></td></tr>
-<tr><td><code>super_intelligence_2035</code> / <code>EDA-Flow-Bench</code> / <code>eda_fastmcp</code> 等源码树 + <code>.git</code></td><td>—</td><td><b>硬护栏 #3</b>：git 仓库 / 源码 / 题面禁删</td></tr>
-<tr><td><code>benchmark/designflow/</code> 下 ledger / trace / <code>_tmp/ledger_sessions.b64</code></td><td>—</td><td><b>硬护栏 #3</b>：/nasdata 上 designflow 的 ledger/trace 禁删（且为 git 在途文件，他线在写）</td></tr>
-<tr><td><code>/nasdata/app.e0023936</code> 等其它用户目录</td><td>—</td><td>非我账号所有（permission denied），无权清；/nasdata 507G 已用大量为他用户</td></tr>
+<tr><th>轮次</th><th>时间</th><th>主要动作</th><th>释放</th><th>/home after</th><th>/nasdata after</th></tr>
+<tr><td>第一轮 wake#967</td><td>11-15 13:30</td><td>npm 缓存 + 旧 CLI 归档/解压件 + 安装器</td><td>~6 G</td><td>—</td><td>14 G（仍差 11G）</td></tr>
+<tr><td>第二轮 wake#968</td><td>11-15 14:00</td><td>归档日志 / 旧 tmp / 重复编码件等 1221 项</td><td>4.93 G</td><td>7.3 G ✅</td><td>20 G（仍差 5G·结论误判为「结构性缺口」）</td></tr>
+<tr><td><b>第三轮 wake#975</b></td><td><b>11-15 19:02</b></td><td><b>trace_ablation_think_lang 11G → 1G 归档</b></td><td><b>~10 G（净）</b></td><td><b>5.8 G ✅</b></td><td><b>29 G ✅ 达标</b></td></tr>
+</table>
+
+<h2>四、未删项及原因（守四类硬护栏）</h2>
+
+<table>
+<tr><th>项</th><th>大小</th><th>未删原因</th></tr>
+<tr><td class="mono">.local/share/opencode/opencode.db</td><td>2.24 G</td><td><b>live SQLite</b>·18:52 仍在写（designflow shard D 的 opencode agent PID 1867821 正在跑）·我是 opencode 内运行·删则自毁当前会话。前两轮据此判定「结构性缺口」；本轮用归档 trace 达标，<b>此项不再阻塞</b>，但运维若要进一步增厚余量可考虑离线 <code>VACUUM</code>（需停 opencode 期间执行）。</td></tr>
+<tr><td class="mono">eda_fastmcp/{venv,.git,kb}</td><td>6.1G + 4.0G + 984M</td><td>硬护栏 #3：eda_fastmcp 源码/题面受保护·<code>venv</code> 是 baseline eval（PID 1910477/1910486，cwd=eda_fastmcp）正在用的 conda/venv·<code>.git</code> 受保护。</td></tr>
+<tr><td class="mono">.local/node-20 / node-22</td><td>2.0G / 365M</td><td>正在用的 node 运行时（cline / opencode 在 node-20）·硬护栏 #3「正在用的 conda/venv」类。node-22 虽疑似冗余但未确认无依赖，按「不确定先列不删」保留。</td></tr>
+<tr><td class="mono">super_intelligence_2035/.git</td><td>1.3 G</td><td>硬护栏 #3：git 仓库受保护。</td></tr>
+<tr><td class="mono">.cache/*（scratch 子目录 ~79M）</td><td>79 M</td><td>多为 designflow 线共享 scratch，该线<b>正在跑</b>（PID 1867821）·归属不确定 + 体量小·按「不确定先列不删」「禁改他人文件」保留。</td></tr>
+<tr><td class="mono">.cline / .cline_posttrain_baseline</td><td>37M / 28K</td><td>硬护栏 #1：cline session 目录受保护（baseline eval 在用）。</td></tr>
+<tr><td class="mono">trace_ablation_subagent (60M)</td><td>60 M</td><td><b>当前</b> A0/A1/A2 subagent 消融的原始证据·刚刚交付的 trace 报告依赖它·「最新一版与正在用的绝不删」。</td></tr>
+<tr><td class="mono">trace_retest (683M)</td><td>683 M</td><td>10-19 readback_none 重测 trace·属 S1 保真度证据·虽旧但未确认已被取代·按「不确定先列不删」保留（可作下一轮候选，需先核 zhulong_results.md 是否已收其结果）。</td></tr>
+<tr><td class="mono">eda_code_eval 旧 batch（11-14 及更早）</td><td>~30 M</td><td>体量小 + 与 posttrain/baize 线共享该目录·归属不确定·保留。</td></tr>
+<tr><td class="mono">/home 其他用户目录</td><td>~372 G</td><td>/home 99% 满但 <b>我（app.e0031982）仅占 326M</b>；压力来自 app.e0023936 / app.t0002147 等其他用户的 cline 历史·<b>非我所能清</b>·硬护栏 #2/#3。/home 5.8G 已达标，无需我介入。</td></tr>
 </table>
 
 <h2>五、若仍不足，下一步需要谁做什么</h2>
-<p>/nasdata 当前 20G，距 25G 差 ~5G。可达 25G 的可行路径（按性价比排序）：</p>
-<table>
-<tr><th>动作</th><th>预计回收</th><th>由谁</th><th>前提/风险</th></tr>
-<tr><td><b>VACUUM opencode.db</b>：无 opencode 会话时 <code>sqlite3 ~/.local/share/opencode/opencode.db "VACUUM;"</code>，或用 opencode 自带会话清理删旧 session 后 VACUUM</td><td>~1.0–1.5G</td><td>运维（需先关闭所有 opencode 会话）</td><td>会话内做有锁/损坏风险；2.1G 库 VACUUM 需数分钟 + 临时等额空间</td></tr>
-<tr><td>确认 <code>EDA-LiveFlow-Bench_ICML2027/figures/.venv</code> 归属后删（gitignored，可 <code>python -m venv</code> 重建）</td><td>192M</td><td>运维确认非他线在写 → 授权删</td><td>mtime 今日很新，疑 ICML2027 线在用</td></tr>
-<tr><td>确认 <code>~/.local/node-22</code> 归属后删（若他线 pi 已不用）</td><td>365M</td><td>运维确认 pi 线状态</td><td>误删会影响使用 node-22 的线</td></tr>
-<tr><td><code>~/.cline_*</code> 旧 session 目录：逐个核验 mtime 后删非在用的（如 .cline_zhulong 自 10-04 未写）</td><td>~1.0G</td><td><b>需运维明确放宽 guardrail #1「任何 cline session 目录」</b>（当前明令禁删）</td><td>违反当前硬护栏，须先获授权</td></tr>
-<tr><td>eda_fastmcp/venv 瘦身：eval 已结束，可 <code>pip cache purge</code> 或重建精简 venv</td><td>~0.5–1G</td><td>运维 / 本线</td><td>下次 eval 前须确认 venv 可用</td></tr>
-</table>
-<div class="verdict bad">
-  <b>结构性结论</b>：/nasdata（527G）已用 507G 中，我账号可安全清理的「缓存/旧产物/临时」已基本清尽（两轮共 ~11G）。剩余占用主体为<b>源码树 + git + 在用 venv + 其它用户目录 + 活库 opencode.db</b>，均属硬护栏禁区或需跨线协调。<b>仅靠我侧自主清理，25G 目标不可达</b>；要达标需运维介入：①授权清旧 cline session 目录（~1G）+ ②择机 VACUUM opencode.db（~1.5G）+ ③确认并删 node-22/LiveFlow .venv（~0.5G）+ ④venv 瘦身（~0.5G），合计可补 ~3.5G，仍可能差 ~1.5G —— 此时需运维评估是否清理其它用户目录或放宽目标。
-</div>
 
-<h2>六、纪律遵守自检</h2>
+<div class="verdict ok">两项目标<b>均已达标</b>（/home 5.8G ✅、/nasdata 29G ✅），<b>无缺口</b>，本轮无未尽事项。</div>
+
+<p><b>增厚余量（可选，非必需）</b>：</p>
 <ul>
-<li>✅ <b>未删运行中 eval 产物</b>：batch <code>2026_1115_110506</code> 全程保留（已正常结束，<code>.jsonl</code> 摘要在）；其 <code>/tmp</code> 工作区未碰</li>
-<li>✅ <b>未 kill 任何进程</b>：loop PID 243810、eval PID 3506378/3506387 均自然运行/结束</li>
-<li>✅ <b>未碰硬护栏禁区</b>：git 仓库、eda_fastmcp/EDA-Eval-PyAether/EDA-Flow-Bench 源码与题面、模型权重、<code>~/.ssh</code>、token、在用 conda/venv、designflow ledger/trace、所有 <code>.cline_*</code> session 目录 —— 均未删</li>
-<li>✅ <b>先列后删</b>：每项删除前 <code>du -sh</code> + <code>ls -lt</code> 留证（证据日志 509K）；仅对<b>明确路径</b> <code>rm -rf</code>，无 <code>rm -rf /home/*</code> / <code>rm -rf ~/*</code> 通配</li>
-<li>✅ <b>删除清单落 TSV 入库</b>：<code>zhulong_disk_cleanup_20261115_1400.tsv</code>（路径/字节/人类可读/理由，1221 行）随 commit</li>
-<li>✅ <b>未碰他线在途文件</b>：git status 中 designflow 的 M/?? 文件非本线，未 add/commit/stash</li>
-<li>✅ <b>proxy 常驻自检</b>：loop 进程 environ 含 <code>https_proxy</code>，无需重启</li>
+  <li><b>运维</b>：可选在 opencode 全停窗口对 <code>opencode.db</code> 做 <code>VACUUM</code>（2.24G 活库，可能有大量已删会话的空页），或对 eda_fastmcp <code>.git</code>（4G）做 <code>git gc --aggressive</code>——二者均需停相关服务，不宜 agent 自行操作。</li>
+  <li><b>下一轮 agent</b>：若 /nasdata 再度紧张，可评估 <code>trace_retest</code>（683M）是否已被 zhulong_results.md 收口，若已收口可同样压缩归档；以及 <code>trace_ablation_compaction</code>（29M，11-13 mtime，compaction 消融已归档）可压缩。</li>
 </ul>
 
-<p class="small">报告生成时间：2026-11-15 14:25 ｜ 生成者：ZhuLong agent wake#968 ｜ 单文件自包含，0 外链 / 0 script。</p>
+<h2>六、验收清单（缺一不可）</h2>
+<ul>
+  <li>✅ <code>df -h /home /nasdata</code> before/after 对比（见 §一）</li>
+  <li>✅ <code>ps -ef | grep run_cline_script</code> 仍见 baseline eval 存活（PID 1910477/1910486）</li>
+  <li>✅ loop 进程未挂（PID 243810）+ <code>https_proxy</code> 注入正常</li>
+  <li>✅ 删除清单 TSV <code>run/zhulong_disk_cleanup_20261115_1902.tsv</code>（路径/字节/理由）</li>
+  <li>✅ 本报告中文、单文件、0 外链 / 0 script</li>
+</ul>
+
+<div class="small" style="margin-top:24px;border-top:1px solid #ddd;padding-top:8px">报告生成：2026-11-15 19:0x · wake#975 · commit 前缀 <code>zhulong disk:</code> · 数据可复现：<code>df -h /home /nasdata</code>、<code>ls -lh …/trace_ablation_think_lang.tar.zst</code>、<code>tar --zstd -tf …/trace_ablation_think_lang.tar.zst | wc -l</code></div>
 
 </body>
 </html>
