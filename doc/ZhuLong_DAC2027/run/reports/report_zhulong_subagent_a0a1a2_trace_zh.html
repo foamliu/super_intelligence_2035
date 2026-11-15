@@ -411,8 +411,40 @@ trace 证据：/tmp/zhulong_subagent_trace/A2/2026_1114_210739/EDA-Eval-PyAether
 </ol>
 </div>
 
+<h2>§5 A3 可行性预检结果（上下文分布实测 · 2026-11-15 wake#959 增补）</h2>
+
+<div class="panel">
+<p><b>一句话结论</b>：40 题子集 <b>不自然超窗</b>（实测峰值 112K &lt; 128K 窗口），<b>H_ctx 在当前子集上不可检验</b>——但 ~17–19% 任务已逼近窗口（&gt;100K），且峰值可能受 cline 压缩机制截断，故 A3「强制小预算」路径可行、且直接对标「多 agent 交接 vs 单 agent 压缩」。</p>
+
+<p><b>方法</b>：从 <code>/tmp/zhulong_subagent_trace/{A1,A2}/</code> 全 3 轮 trace 提取每个主 agent 会话的 <code>metrics.inputTokens</code> 峰值（= 单次 API 调用的累积输入 token，随对话增长，最大值即「峰值上下文」）。<b>A0 的 messages.json 已被清理</b>（compaction trace 仅存 <code>*.json</code> 元数据 + <code>*.compaction.json</code>，full sessions skipped；原始 /tmp 会话已删）→ <b>用 A1 作 A0 的上界代理</b>：A1 = A0 + 1 次 researcher spawn，主 agent 工作量 ≥ A0，故 <b>A0 峰值 ≤ A1 峰值</b>。模型窗口 W ≈ 128K（deepseek-v4-pro/flash）。</p>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse">
+<caption>表 §5-1 · 主 agent 峰值上下文分布（inputTokens，pooled 3 轮）</caption>
+<tr style="background:#e8e8e8"><th>臂</th><th>n</th><th>min</th><th>median</th><th>mean</th><th>p90</th><th>p95</th><th>p99</th><th>max</th><th>&gt;80K</th><th>&gt;100K</th><th>&gt;128K</th></tr>
+<tr><td><b>A1</b>（=A0 上界）</td><td>120</td><td>25,006</td><td>90,385</td><td>78,417</td><td>103,063</td><td>108,294</td><td>112,088</td><td><b>112,318</b></td><td>69 (57.5%)</td><td>23 (19.2%)</td><td><b>0 (0%)</b></td></tr>
+<tr><td><b>A2</b>（spawn 开销更高）</td><td>121</td><td>25,118</td><td>92,661</td><td>82,773</td><td>101,631</td><td>103,174</td><td>107,961</td><td><b>108,740</b></td><td>81 (66.9%)</td><td>20 (16.5%)</td><td><b>0 (0%)</b></td></tr>
+</table>
+
+<p><b>结论（逐条）</b>：</p>
+<ol>
+<li><b>40 题不自然超窗</b>：两臂 pooled 最大峰值 112,318（A1）/ 108,740（A2），均 &lt; 128K 窗口；<b>0/241 个观测 &gt; 128K</b>。由 A0 ≤ A1 ≤ A2 不等式，<b>A0 峰值亦 &lt; 128K</b>。⇒ <b>H_ctx（「超窗子集上 Δ&gt;0」）在当前 40 题上不可检验</b>——这与 §3 诚实说明的预判一致，<b>40 题上的「无差异」不能否定 H_ctx（检验力问题，非结论）</b>。</li>
+<li><b>但 ~17–19% 任务已逼近窗口</b>：A1 19.2% / A2 16.5% 的任务峰值 &gt; 100K（窗口的 78%），p95 ~108K。这些是「近超窗」任务——单 agent 已在靠压缩维持，最可能暴露「压缩丢细节」的代价。</li>
+<li><b>关键混杂：峰值可能被 cline 压缩截断</b>。观测峰值 ~112K 可能不是模型窗口上限，而是 <b>cline 自身 compaction 的触发阈值</b>——即本会超 128K 的任务被 cline 压回 ~110K，故我们「看不到」&gt;128K。若如此，则「0 任务超窗」部分是压缩的产物，<b>反而强化 A3 的科学意义</b>：A3 用「人为小预算 + 多 agent 交接」直接对标「cline 压缩」，检验「结构化交接 vs 摘要压缩」谁保细节更好。<b>补法</b>：开 cline compaction 日志阈值确认（<code>grep -i 'compact\|context.*limit\|window' &lt;cline.log&gt;</code>），或读 A0 <code>*.compaction.json</code> 统计压缩触发点分布。</li>
+<li><b>A3 在当前子集上仍可行（走「强制小预算」路径）</b>：把主 agent maxTokens（输出）或上下文预算人为压到 32K/16K → 所有任务被迫「超窗」→ 多 agent 交接 vs 单 agent 压缩在同子集上可比。<b>但这是「强制超窗」，不是 H_ctx 的自然超窗</b>，外推到真实长任务需谨慎；且必须先测「预算基线 A0'」（同等小预算下单 agent 退化多少），否则没有可比锚点。</li>
+<li><b>要自然检验 H_ctx</b>：须取 158 全集里 trace 最长的 top-k 任务（用 A0 的 <code>n_assistant_msgs</code> / <code>wall_sec</code> / <code>total_tokens</code> 排序选 top-20~30），构造「自然超窗」子集。A0 summary 里已有 <code>mean_n_msgs=47.6</code>、<code>mean_wall_sec=978</code>、<code>mean_prompt_tokens=2.5M</code>（累计），可据此排序。</li>
+</ol>
+
+<p><b>对推荐起跑顺序的修正</b>：</p>
+<ul>
+<li>原 §2 末顺序 ①「测 A0' 预算基线 + 40 题上下文分布」——<b>本节已完成 40 题上下文分布</b>（结论：不超窗），剩「A0' 预算基线」仍需一次实跑（改 maxTokens + 3 轮）；</li>
+<li><b>A0' 预算基线是否值得跑，取决于是否走「强制小预算」路径</b>——若改走「158 top-k 自然超窗子集」，则 A0' 预算基线可跳过，直接在长任务子集上跑 A0/A1/A2 重测 + A3/A4；</li>
+<li><b>建议</b>：先做「158 top-k 长任务子集」选取（纯分析、零资源），再看是否值得跑 A0'；A6/A4/A5 仍需先装 H2 wrapper（INHERIT_MCP=1）。</li>
+</ul>
+<p class="mut">§5 数据源：/tmp/zhulong_subagent_trace/{A1,A2}/*.messages.json · 脚本 /tmp/measure_a3_feasibility.py → /tmp/a3_feasibility_ctx_dist.json · A0 代理论证：A0 无 spawn → 主 agent 峰值 ≤ A1 · compaction 截断假设待 compaction.json 核验</p>
+</div>
+
 <hr>
-<p class="mut">报告生成：2026-11-15 · 数据源：trace /tmp/zhulong_subagent_trace/{A1,A2}/ · cost_S_{A1,A2}_r{1,2,3}.json · ablation_compaction_results.json · EDA-Eval-Framework output_evaluation/*/final_report.json · 分析脚本 analyze_subagent_traces.py + build_report_data.py → report_data.json · McNemar 与 mcnemar_subagent_results.json 交叉验证一致</p>
+<p class="mut">报告生成：2026-11-15 · 数据源：trace /tmp/zhulong_subagent_trace/{A1,A2}/ · cost_S_{A1,A2}_r{1,2,3}.json · ablation_compaction_results.json · EDA-Eval-Framework output_evaluation/*/final_report.json · 分析脚本 analyze_subagent_traces.py + build_report_data.py → report_data.json · McNemar 与 mcnemar_subagent_results.json 交叉验证一致 · §5 增补于 wake#959（A3 可行性预检·上下文分布实测）</p>
 
 </div>
 </body>
