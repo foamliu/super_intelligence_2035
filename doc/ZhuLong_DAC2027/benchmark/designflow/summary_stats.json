@@ -28,7 +28,8 @@
   "mc5_recompute": {
     "auto_stop": {
       "a_ratio_below_50pct": true,
-      "consecutive_zero_case_rounds": 2,
+      "consecutive_zero_case_rounds": 0,
+      "note": "r615 RESET: found viable A-domain candidate 3p5vl (analysis-Q&A pkg-var DUT/TB pass, evidence-anchor strong, revived from r316 parked, deepread done DEBT synthesize). New 11-15 令判据=有无能忠实还原意图且可判分的候选, 非纯 0-case 计数 → 不触发止损",
       "threshold_rounds": 3
     },
     "computed_at": "2026-11-15T18:50:00+08:00",
@@ -182,7 +183,7 @@
   },
   "sessions": 39103,
   "shard_mc": {
-    "A": 10,
+    "A": 5,
     "B": 10,
     "C": 10,
     "D": 10
@@ -265,7 +266,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-16 04:44",
+  "updated_at": "2026-11-16 05:55",
   "users_mc10": 581,
   "users_mc100": 182,
   "users_mc30": 401,

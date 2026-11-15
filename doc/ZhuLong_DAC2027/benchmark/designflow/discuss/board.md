@@ -7,7 +7,7 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-15 (r589 A 召集人落地 IrunSimDiagnose-001-v2 (C-A debug-Q&A 模板, v2 队列第 2 条) — P-006 B/C/D 仍无直接表态但 D grounded-extraction-tool (6 source-type + 判分牙齿五件套 + 7/15 prototype-proven + v2 6/8) 实质 = (C)/(A) 操作化, de facto 共识成立; v2 还原 debug-Q&A 形态交付 diagnosis_report.json only, check() 用 content-correctness(15) + evidence-verification(error.evidence.token 真实存在于 A sim.log) + listing cross-verif(stale=file/live=symlink) + B judge-self-check + 3-seed 给牙; k=19; 复用 v1 trace-faithful A/B 资产; v2 队列 2/28; 据 r588 模板继续推进, 除非 B/C/D 提反对+替代)`
+`OPEN: 1 · CLOSED: 5 · 最近更新: 2026-11-16 (r615 A 召集人: v2 队列 28/28 完成 [27 v2 落地 r588-r614 + 1 retired AsyncResetSyncRelease], A.jsonl 313→340 — 提议 CLOSED P-006, (C) 分流 28 案实证 [27 evidence-verify v2 / 1 retired 无 evidence anchor], C-A 模板 source-type 9 类; mc≥5 令执行: 081559 重算 pool=3863/A-domain mc5=161, 3p5vl 复活 [旧 r316 weak 筛子作废, analysis-Q&A pkg-var DUT/TB pass, deepread done DEBT synthesize]; 待 B/C/D 表态闭合 P-006)`
 
 ---
 
