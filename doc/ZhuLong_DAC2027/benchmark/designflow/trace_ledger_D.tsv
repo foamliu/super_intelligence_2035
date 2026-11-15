@@ -1124,7 +1124,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792993323406_1488k	rayfeng	10.129.2.10	133	analog_context	parked		2026-11-07 04:09	L2 live: Sentaurus TCAD MCP 开发+22nfet 仿真验证, not portable offline
 1789470466679_wqxag	shaoyou	10.129.2.13	130	analog_context	parked		2026-11-07 04:09	empty: only '启动业务场景: 模拟电路优化·二次执行' 1 turn trigger
 1788946694927_w5knw	sagequan	10.129.32.190	83	analog_context	parked		2026-11-07 07:41	#342 peek: simdiag-cli project infra (ClineClient/chromadb/dashboard), no produce
-1792131163281_6sxh5	e0045488	10.129.2.11	82	analog_context	parked		2026-11-07 04:09	Q&A: characterization flow deck 文件解读/leakage_power_0.spi 逐行解释, not produce
+1792131163281_6sxh5	e0045488	10.129.2.11	82	analog_context	case	EDA-Eval-DesignFlow-DeckFileExplainQA-001	2026-11-16 00:40	deck-grounded file-catalog QA (Empyrean Liberal deck); 15 cond; refsol PASS 15/15 + NEG_RC=0; D.jsonl 417->418; r728 deliver
 1789636492253_sr1fw	miccao	10.129.32.47	90	analog_context	parked		2026-11-07 04:09	skill: Calibre/Argus DRC Log 拆解报告 skill spec + Q&A (physical_verify, not D produce)
 1792548352155_fxcqv	hongyuy	10.129.8.102	89	schematic_netlist	parked		2026-11-07 04:09	Q&A: PG_R_073_00/PG_S_016_00 DRC rule 解释+修改方法 (physical_verify, not D)
 1790145633753_pax7g	miccao	10.129.32.47	93	schematic_netlist	parked		2026-11-07 04:09	L2 live: autocell-tcl-flow-generator config+netlist->gds+修复DRC (autocell tool), not portable
