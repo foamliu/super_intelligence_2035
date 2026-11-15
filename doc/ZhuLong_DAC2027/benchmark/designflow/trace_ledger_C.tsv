@@ -1015,3 +1015,4 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1794640817284_nli4g.messages.json	jzeng	hfeg0plg93	40	physical_verify	case	EDA-Eval-DesignFlow-AutoViaEncFix-001	2026-11-15 07:57	r587 physical_verify AutoViaEncFix k=12 B/B2 mock-behavioral
 1792052900749_j4w3o	miccao	hfeg0plg92	93	physical_verify	case	EDA-Eval-DesignFlow-DrcLog4ModTruncOpt-001	2026-11-15 08:37	r588 physical_verify L2-boundary B-synthesized k=12 a-l; miccao calibre-drc-log-analysis truncated rundrc.log 4-module teardown report generator
 1790065302917_0c5yk	weizhao	hfeg0pkn001	409	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckValueCompare-001	2026-11-15 10:21	
+1790216513217_vvhhs.messages.json	lizwen	hfeg0pkn002	84	physical_verify	case	EDA-Eval-DesignFlow-DeckRuleParseExtract-001	2026-11-15 10:50	
