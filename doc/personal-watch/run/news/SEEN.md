@@ -2807,3 +2807,32 @@
 | 2026-11-15 | 长城汽车：冒用哈弗 / 坦克名义的虚假召回短信，已向公安机关报案 | IT之家 | https://www.ithome.com/1/027/446.htm |
 | 2026-11-15 | SpaceX 星舰第 15 次试飞：首次筷子夹住飞船，助推器燃料不足改降墨西哥湾 | IT之家 | https://www.ithome.com/1/027/434.htm |
 | 2026-11-15 | 初代 XBOX 上市 25 周年：累计销量 2400 万台 | IT之家 | https://www.ithome.com/1/027/435.htm |
+| 2026-11-16 | 微软 XBOX 明确 Project Helix 定位：首先是能运行 PC 游戏的主机 | IT之家 | https://www.ithome.com/1/027/463.htm |
+| 2026-11-16 | TCL 华星展示蓝色磷光敏化荧光 OLED 成果，覆盖三大产品形态 | IT之家 | https://www.ithome.com/1/027/456.htm |
+| 2026-11-16 | RGB 基础上引入第四基色 X，TCL 华星展出三款全球首款 10.95 英寸 OLED 平板屏幕 | IT之家 | https://www.ithome.com/1/027/452.htm |
+| 2026-11-16 | 韦布望远镜发现迄今最古老类星体双星，现有黑洞成长理论难以解释 | IT之家 | https://www.ithome.com/1/027/457.htm |
+| 2026-11-16 | 被诉人为制造 DRAM 短缺，三星、SK 海力士、美光申请撤诉遭美国法院驳回 | IT之家 | https://www.ithome.com/1/027/442.htm |
+| 2026-11-16 | 气候变暖导致干旱加剧，仙人掌也难存活 | IT之家 | https://www.ithome.com/1/027/438.htm |
+| 2026-11-16 | 消息称飞利浦显示器工厂价格本月迎来上涨：部分电竞机型成本涨价 30-50 元不等 | IT之家 | https://www.ithome.com/1/027/413.htm |
+| 2026-11-16 | 因零件成本涨价，任天堂明起上调日本市场 Switch 初代 / 二代维修价格 | IT之家 | https://www.ithome.com/1/027/397.htm |
+| 2026-11-16 | ULA 成立 20 年来首次发射任务完全失败，火神火箭升空 10 分钟后出现异常 | IT之家 | https://www.ithome.com/1/027/462.htm |
+| 2026-11-16 | FURIA 成功卫冕《CS2》BLAST 香港对抗赛，赛事明年 11 月回归 | IT之家 | https://www.ithome.com/1/027/436.htm |
+| 2026-11-16 | 2026 年度电影总票房破 320 亿，《飞驰人生 3》《欢迎来龙餐馆》《功夫女足》暂列前三 | IT之家 | https://www.ithome.com/1/027/431.htm |
+| 2026-11-16 | 零刻 ME Pro 358H 四盘位 NAS 开售，32GB + 1TB 起价 11499 元 | IT之家 | https://www.ithome.com/1/027/461.htm |
+| 2026-11-16 | 微星推出 PRO CORELIQUID R13 360 液冷，399 / 419 元 | IT之家 | https://www.ithome.com/1/027/460.htm |
+| 2026-11-16 | 《GTA 6》通关时长爆料：主线约 50 小时，白金全成就预计 200 小时 | IT之家 | https://www.ithome.com/1/027/459.htm |
+| 2026-11-16 | 鸿蒙智行尚界 Z7T 星野套装实车图曝光，新增行李架、跨界套件、黑色尾翼等 | IT之家 | https://www.ithome.com/1/027/454.htm |
+| 2026-11-16 | 上汽大通 27 款大拿 V1L 上市：标配宁德时代电池，11.68 万起 | IT之家 | https://www.ithome.com/1/027/449.htm |
+| 2026-11-16 | 魅族 MIFI N1 随身 Wi-Fi 上架官网，79 元 | IT之家 | https://www.ithome.com/1/027/447.htm |
+| 2026-11-16 | 疑似英伟达 GeForce RTX 4090 Ti 显卡“非 FE 版”工程样品现身网络 | IT之家 | https://www.ithome.com/1/027/441.htm |
+| 2026-11-16 | 当地极端最低温可达 -48℃，中国最北蔚来换电站在黑龙江黑河上线运营 | IT之家 | https://www.ithome.com/1/027/396.htm |
+| 2026-11-16 | 新世代宝马 iX4 正式投产：WLTP 续航最高 828 公里，明年 3 月上市 | IT之家 | https://www.ithome.com/1/027/398.htm |
+| 2026-11-16 | 达摩鲨 28g 指握鼠标 AIR28 国行预售，到手价 499 元 | IT之家 | https://www.ithome.com/1/027/444.htm |
+| 2026-11-16 | 当贝 H5 第二代电视盒子发售：升级全志 H626 处理器、支持双频 Wi-Fi 6，469 元 | IT之家 | https://www.ithome.com/1/027/404.htm |
+| 2026-11-16 | 瓦尔基里 PG 铂金 ATX 电源发售：提供 850/1000/1200W 款，599 元起 | IT之家 | https://www.ithome.com/1/027/402.htm |
+| 2026-11-16 | 倍思推出 60W 单 USB-C 充电头：支持 AVS 协议，89 元 | IT之家 | https://www.ithome.com/1/027/374.htm |
+| 2026-11-16 | 999 → 699 元起：酷派 COOL X Wide 阔直板手机再降价，搭载联发科曦力 G99 芯片 | IT之家 | https://www.ithome.com/1/027/417.htm |
+| 2026-11-16 | 美国全国航班停飞影响持续多日（不采用·政治表态） | IT之家 | https://www.ithome.com/1/027/464.htm |
+| 2026-11-16 | 韩国税务师考试头名 AI 作弊·政府全面调查（不采用·司法） | IT之家 | https://www.ithome.com/1/027/453.htm |
+| 2026-11-16 | 利用 AI 将国漫角色改成情色形象 7 人获刑（不采用·司法） | IT之家 | https://www.ithome.com/1/027/395.htm |
+| 2026-11-16 | 乘联分会崔东树：新车平均车长 4.74 米、SUV 56%（不采用·非事件） | IT之家 | https://www.ithome.com/1/027/412.htm |
