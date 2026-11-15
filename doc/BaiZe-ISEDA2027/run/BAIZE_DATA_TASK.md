@@ -2,6 +2,73 @@
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」检查**：限制探索的禁令已删除；**数据安全类约束全部保留**（删源前校验、不挤他人带宽、不碰他人产物、磁盘红线）——它们防的是**数据损毁**，不是防尝试。**默认立场：数据筛选规则、抽样方法、质检策略由你自主决定，写清依据即可。**
 
+> 🔴 **用户令 · 2026-11-15 08:5x（下载 3 个 IFM 数学/代码数据集 + 调研更多可用数据集）· 最高优先 · 未完成**
+
+> **用户原话**：「安排data下载：https://huggingface.co/datasets/IFM/MegaMath 、 https://huggingface.co/datasets/IFM/Math-Reasoning 、 https://huggingface.co/datasets/IFM/Code-Reasoning。同时请它调研一下，要提升LLM的数学和编码能力，还有那些数据集可以用。」「放在 /nas_user 下面」
+
+**一、落盘位置（用户指定）**
+
+```
+/nas_user/app.e0031982/datasets/IFM/MegaMath/
+/nas_user/app.e0031982/datasets/IFM/Math-Reasoning/
+/nas_user/app.e0031982/datasets/IFM/Code-Reasoning/
+```
+（与既有 `stack-v3-train` 同级，沿用 `/nas_user/app.e0031982/datasets/` 规范）
+
+**二、三个数据集的已知情报（我查到的，你要自己复核）**
+
+| repo | 性质 | 规模（查到的） | 备注 |
+|:--|:--|:--|:--|
+| **IFM/MegaMath** | **数学预训练语料**（非 SFT） | **1.12 TB**；论文口径 371B tokens | 子集：`megamath-web`(279B) / `megamath-web-pro`(15B 高质量) / `megamath-code`(28B) / `megamath-qa` / `megamath-text-code-block` / `megamath-translated-code`。arXiv 2504.02807，license odc-by |
+| **IFM/Math-Reasoning** | **数学推理 SFT 风格** | 待核实（K2 Horizon 系列，5 个子集） | "Mathematical problem solving and dialogue data for training models to **reason rather than to recall**" |
+| **IFM/Code-Reasoning** | **代码推理 SFT 风格** | 待核实（K2 Horizon 系列，**7 个子集**） | "Code problem solving data with the reasoning shown, split into worked solutions / direct answers / synthesised tasks" |
+
+⚠️ **重要提醒（必须自己核实，不要照抄网上的说法）**：`IFM/MegaMath` 与 `LLM360/MegaMath` **可能是同一份数据的镜像/同名仓库**（论文作者相同、子集命名一致）。请用 `hf api` 或 `HfApi().dataset_info()` 核实**两者的 file tree 与 commit sha**：
+- 若**确为同一份** ⇒ 仍按用户令下 `IFM/MegaMath`，但在 `DATA_MAPPING.md` 注明「≡ LLM360/MegaMath（按 sha 校验）」，避免后续重复下载。
+- 若**不同** ⇒ 记录差异（文件数/大小/子集）。
+
+**三、执行要求**
+
+1. **先探测再下载**：`HfApi().dataset_info(repo_id=..., files_metadata=True)` 拿到**精确文件数 / 总字节 / 子集列表**，把数字写进 MEMORY，**再决定下载策略**（MegaMath 1.12TB 属大件，见第 2 条）。
+2. **MegaMath 分层下载（不要一把梭全量）**：1.12TB 全量下载会让 StepC 分词期间磁盘/带宽吃紧。按用途分层：
+   - **第一批（必下）**：`megamath-web-pro/*`（15B tokens 高质量）+ `megamath-code/*`（28B）+ `megamath-qa/*` + `megamath-text-code-block/*` + `megamath-translated-code/*`（这些是"提升数学能力"ROI 最高的部分）
+   - **第二批（按需）**：`megamath-web/*` 全量 279B tokens ≈ 1TB，**先算 `/nas_user` 余量再决定下多少**（可按 `CC-MAIN-<年份>` 分批）
+   - 用 `--include` 精确控制，**下完第一批就先报一次进度**，不要闷头下 1TB。
+3. **护栏（沿用既有规范）**：
+   - `nice -n 19` + `ionice -c3`，`--max-workers 2`，`setsid` 后台 + 日志落 `/tmp/`
+   - **不挤 StepC 分词**（当前 PID1677655，6124/8192=74.8%，ETA ~21:00）与 pretrain 训练（`.29`）
+   - **磁盘红线**：`/nas_user` 余量 < 5T 就暂停报运维
+   - 🚫 不碰 `/nas_train`、不碰他人数据集、不删源文件
+4. **落盘后登记**：更新 `doc/BaiZe-ISEDA2027/run/data/DATA_MAPPING.md`（repo / 子集 / 文件数 / 字节 / sha256 / license / 用途），并在 MEMORY 写一行。
+
+**四、调研任务：还有哪些数据集能提升数学与编码能力**
+
+产出 **中文 HTML 报告**（`reports/report_data_math_code_datasets_survey_zh.html`，**≤200KB / 0 script / 0 外链 / 内联 SVG**），**只调研不下载**（与 11-04 那次调研口径一致）。
+
+**至少要覆盖这些方向（我给的起点，你可以补充/推翻）**：
+
+- **数学预训练语料**：`Nemotron-CC-Math`（ICLR2026，133B tokens，3+/4+ 两档；论文称 8B 模型上 MATH +4.8~12.6、MBPP+ +4.6~14.3，**已超越 MegaMath/FineMath/OpenWebMath**）、`FineMath`（4+/3+ 两档）、`OpenWebMath`、`DeepSeek-Math` 语料（未公开，仅作参照）、`MathPile`
+- **数学 SFT / 推理链**：`OpenMathInstruct-2`、`NuminaMath-1.5`、`MetaMathQA`、`Orca-Math`、`MathScale/MathInstruct`
+- **代码预训练**：`The Stack v2`、`Stack-Edu`、`SmolLM-Corpus` 里的 code 部分、`StarCoderData`
+- **代码 SFT / 执行反馈**：`OpenCodeReasoning`（NVIDIA）、`Self-OSS-Instruct`、`CodeFeedback`、`Magicoder`、`APPS`/`TACO`/`CodeContests` 训练切分
+- **可验证奖励的 RL 数据**（对 posttrain 的 RL 阶段有用）：数学可验答案集、代码单测可跑集 —— 要特别标注**是否自带可执行验证器**，因为这决定能不能直接用于 RL
+- **中文数学/代码**（如果 pretrain 需要中文占比）：标注语言覆盖
+
+**报告必含**：
+
+1. **一句话结论** + Top-5 推荐（按"ROI × 与我们缺口的匹配度"排序，不是单纯比规模）
+2. **总表**：`数据集 | repo | 领域(数学/代码) | 用途(预训练/SFT/RL) | 规模(tokens或GB) | 语言 | license | 是否需申请 | 是否自带验证器 | 推荐度`
+3. **与我们现状的匹配分析**：我们已有 `stack-v3-train`（代码预训练）+ 本令新增的 3 个 IFM 集 ⇒ **还缺什么**（例如：可验证 RL 数据、竞赛级难题、多语言代码）
+4. **每个推荐项的去 HF 实测证据**（repo 存在、体量、license），🚫 **不许只抄二手描述**——这条是我们踩过坑的
+5. **风险与坑**：license 限制、是否含 benchmark 污染（**尤其要检查是否混入 GSM8K/MATH/HumanEval/MBPP 测试集**，这对我们的评测有直接威胁）、去重情况
+
+**五、验收**
+1. 三个 repo 的**精确文件数与字节数**（`HfApi` 实测，不是估）
+2. `IFM/MegaMath` 与 `LLM360/MegaMath` 是否同一份（sha 级证据）
+3. 第一批下载落盘 + `DATA_MAPPING.md` 登记 + `df -h /nas_user` 前后对比
+4. 调研报告交付，含 Top-5 推荐 + 污染检查结论
+
+
 ### ✅ 用户令 · 2026-11-13 18:5x（ETA 审计）· ✅ 已确认 → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-13 ETA审计」；结论：本次下载 3.546TB（非15.9TB），剩余1.195TB，ETA保守~14.7h，StepC护栏已修复。
 
 ---
