@@ -2,17 +2,20 @@
 
 WAITING: 0
 
-> 🆕 **R2533 · 2026-11-15 18:1x — cc rerun 27/82(4P/18F/5NO_VER·0ConnRefused✅) + opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅) + 自检全绿 + git push OK + reports/ 清理4 .txt**
-> - **cc rerun**: PID 1510536 harbor alive(~14.4h)·**27 task-level**=4PASS/18FAIL/5NO_VERIFIER·**0ConnRefused HARD VERIFIED ✅**(grep 0 files)·4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git·18FAIL(reward=0=ability)·5NO_VER(verifier未跑或仍在跑)·currently running git-multibranch(claude --max-turns 80)·55 remaining·ETA~Nov17 20:00
-> - **opencode rerun**: PID 517594+773163 harbor part2 alive·`--n-concurrent auto --chunk-size 12`·**25 task-level**=10PASS/7FAIL/8NO_VERIFIER·adaptive n=10·0 429✅(grep 0 files)·10PASS=cancel-async/chess-best-move/break-filter-js/build-pmars/git-multibranch/git-leak-recovery/fix-code-vulnerability/fix-git/feal-differential/financial-document·4 in-flight(caffe-cifar-10/cobol-modernization/distribution-search/dna-assembly)+9 pending·13 remaining·ETA~Nov15 21:00
-> - **adaptive_concurrency**: status mode=off current=10/10 quiet=62m 累计429=0 ✅(Sunday off-peak cap=10)
-> - **自检**: load 33.30/224 ✅(pretrain dominant)·mem 1032GB avail ✅·harness CPU max<1.2% ✅·0 runaway ✅·/tmp 40% ✅
-> - **reports/ 清理**: git rm 4 tracked .txt(cline_quota_rerun IDs·11-13遗留·违反 reports/只放HTML规则)✅·porcelain reports/ clean✅
-> - **cc ConnectionRefused fix**: 0ConnRefused across 27 trials✅(vs旧0/89=100%infra)·cc修复判据已met(模型真正运行·4题PASS=真能力)
-> - **git push**: ✅ proxy recovered(Everything up-to-date)·R2532 commit已上远端
-> - **research 日报 2026-11-15**: 2篇harness相关(SatisFix=specification satisficing前报告机制·EvoX=harness as runtime policy GLM-5.3 +10.7)·仅作输入参考·无新指令
-> - **下一步**: opencode完成后启动pi rerun(46题·adaptive auto)→再deepseek(48题)
-> - **📦 体积**: TASK=25.6KB / MEMORY≈26.5KB（✅≤32KB）
+> 🆕 **R2534 · 2026-11-15 18:2x — cc 27/82 + opencode 26/38(25done+1in-flight) + adaptive自测全过✅ + 自检全绿 + git pull up-to-date**
+> - **cc rerun**: PID 1510536 harbor alive(~14.6h)·**27/82 done**(4P/18F/5NO_VER)·**0ConnRefused ✅**(grep result.json exception_info=0)·1 in-flight(git-multibranch)·54 remaining·ETA~Nov17
+>   - 5NO_VER明细=infra非能力: 3×agent timeout(code-from-image/feal-diff/feal-linear @3600s) + 1×verifier timeout(fix-ocaml-gc @3600s) + 1×empty task(placeholder)
+>   - 4PASS=custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git(rewards.reward=1.0)
+>   - cc修复判据已met: 0ConnRefused + 4PASS=真能力(vs旧0/89=100%infra)
+> - **opencode rerun**: PID 773163 harbor alive(~1.2h)·**25/38 done**(10P/7F/8NO_VER)·1 in-flight(fix-ocaml-gc)·12 remaining·ETA~Nov15 21:00·adaptive n=10·0 429✅
+> - **adaptive_concurrency 自测全过✅**(temp state file): ①周末03:00→off cap10(start 8) ②工作日10:00→work cap4 ③429→cooldown 5min no-change ④25min→cooldown expired hold ⑤off 429→halve 4→25min +1=5(clean_ramp)·live state cleaned(10/10·0 429·reset后)
+> - **自检**: load 31.67/224 ✅·mem 1033GB avail ✅·harness CPU max<1% ✅·0 runaway ✅·/tmp 40% ✅
+> - **git pull**: ✅ Already up to date
+> - **research 日报 2026-11-15**: SatisFix(specification satisficing前报告机制·harness自评改规则判)·仅作输入参考·无新指令
+> - **下一步**: opencode完成→启动pi rerun(46题·adaptive auto·task-list已就绪)→再deepseek(task-list待生成)→cc完成后更新双报告
+> - **📦 体积**: TASK=25.6KB / MEMORY≈27.5KB（✅≤32KB）
+
+> 📦 R2533 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 27/82(4P/18F/5NO_VER·0ConnRefused✅)+opencode 25/38(10P/7F/8NO_VER·adaptive n=10·0 429✅)+自检全绿+git push OK+reports/清理4.txt。需要时再读。
 
 > 📦 R2532 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 27/82(4P/18F/5NA·0ConnRefused✅)+opencode 23/38(9P/7F/7NA·adaptive n=10·0 429✅)+自检全绿+git push BLOCKED(proxy 503)。需要时再读。
 
