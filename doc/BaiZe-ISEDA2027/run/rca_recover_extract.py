@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 """
-rca_recover_extract.py — RCA 抽取丢码回补工具（2026-11-15）
+rca_recover_extract.py — RCA 抽取丢码回补工具（2026-11-16 取证更正）
 
-根因：eda_fastmcp/pyAether-eval/script/format_cline_cli_output.py:166 只从
-  code/<task>/ws/pyAether_code/*.py 抽取代码，但 zhulong agent 常把代码写到
-  code/<task>/pyAether_code/*.py（无 ws 子目录）→ 被 silently drop。
-  实测 run2 丢 48/54、run3 丢 37/49 个真实代码文件 → generation_success 被压成 1。
+根因（已取证，推翻早先「ws vs no-ws」假说）：
+  eda_fastmcp/pyAether-eval/script/format_cline_cli_output.py 的 Step5 用
+  **共享相对临时目录** `./pyAether-eval/temp/pyAether_code`（L95/L156-157），
+  且 process_cline_gene_files 开头 `shutil.rmtree` 清空它。当 36.15 上多个 eval
+  并发跑 Step5 时，后启动者的 rmtree 会踩空前者已拷进去的 .py → generations
+  jsonl 只剩 0~1 行。extractor 读的目标路径其实是对的（`code/<task>/pyAether_code`，
+  L165，不是 ws/ 子目录；实测仅 1 个 task 有 ws/）。
+  实测：run2 batch code/ 有 44 个真实 .py（全 mtime ≤ 14:17:31），
+        但 code_generation_2026_1115_110506.jsonl 只 1 行；run3=37→1 行；run4=43→0 字节。
 
-本工具：把 no-ws 路径的 .py 回补进 completed_code_generation_<batch>.jsonl，
-        再由 run_eval 重跑即可恢复真实 execution_results。
-  （不修改 eda_fastmcp 代码；作为 post-pipeline 回补 wrapper，遵守 08:1x 纪律。）
+本工具：直接从 `code/<task>/pyAether_code/`（及 `ws/pyAether_code/` 兜底）重新抽取
+        .py 写回 generations jsonl，**完全绕过共享 temp**，再由 run_eval 重跑即可
+        恢复真实 execution_results。并发安全（读 code/ 直写独立文件，不经共享 temp）。
+  （不改 eda_fastmcp 代码；作为 post-pipeline 回补 wrapper，遵守 08:1x 纪律。）
 
 用法（在 36.15 上，batch 跑完 run_cline_script.sh 之后）：
   python rca_recover_extract.py <batch_dir> <completed_code_generation_NAME.jsonl>
