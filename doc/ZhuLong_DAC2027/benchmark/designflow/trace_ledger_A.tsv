@@ -516,7 +516,7 @@
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	parked		2026-11-14 10:10	r503: 分析log error怎么导致 debug Q&A
 1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	parked		2026-11-14 10:10	r503: 三个版本项目有什么不同 version-diff analysis Q&A
 1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	parked		2026-11-14 10:10	r503: sim-path+pattern-path debug (truncated) debug pattern
-1789975587201_fniqj	alanji	hfeg0pjn100	36	digital	parked		2026-11-14 10:10	r503: write python script add keyword vague + netlist-diff analysis
+1789975587201_fniqj	alanji	hfeg0pjn100	36	digital	case	EDA-Eval-DesignFlow-AddKeywordFile-001	2026-11-15 15:06	r503: write python script add keyword vague + netlist-diff analysis
 1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	parked		2026-11-14 10:10	r503: workspace have what infra Q&A
 1791280343229_bp54q	mwxi	hfeg0pkn003	76	digital	parked		2026-11-14 10:51	r505: crontab task-recovery infra REJECT (verilog kw from workspace, task=infra)
 1794377042867_o5njo	xrxiong	hfeg0pkn001	67	digital	parked		2026-11-14 10:51	r505: irun.log sim-error analysis Q&A REJECT
@@ -611,3 +611,6 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1792738846439_266sb	xing1z	hfeg0plg07	8	pnr_signoff	case	EDA-Eval-DesignFlow-SdcCdcFix-001	2026-11-15 09:32	
 1793241105381_nurc0	shanliny	hfeg0pkn005	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .sv attached but Q&A not produce-task
 1791946267022_oqri7	xingx	hfeg0pkn002	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: pwd start, 0 write tool calls, read-only code-comprehension
+1794187704615_bmqho					parked		2026-11-15 15:07	r571 deepread: dir-comparison Q&A depends on private verilog_lib_trans project dirs, not self-contained for check()
+1793931604619_df52y					parked		2026-11-15 15:07	r571 deepread: 0 write tool_calls, pure pinyin analysis Q&A about mrr_exp.pl script, type-b scattered knowledge Q&A
+1793240477462_vf2q3					parked		2026-11-15 15:07	r571 deepread: ODT error scanner (scan_odt.py) duplicates existing OdtErrScan-001 (gbzuy trace, same task pattern)
