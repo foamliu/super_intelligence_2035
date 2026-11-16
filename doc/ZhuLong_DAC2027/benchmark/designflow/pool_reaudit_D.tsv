@@ -1,5 +1,5 @@
 session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务形态
-#	本表为 shard D 候选池重审（2026-11-15 用户令 · 最高优先）						重审进度 19/1357（noted-parked 全审；1338 empty-note 待分批 re-triage）
+#	本表为 shard D 候选池重审（2026-11-15 用户令 · 最高优先）						重审进度 226/1357（noted-parked weak 全审完成；44 empty-note parked 非「旧判 weak」=仅 timestamp 无 weak 判定，不在「复活」范围内，留 normal `next` 选取即可；r772 收尾）
 #	新标准只剩两条排除：①无真实 trace ②写不出有牙 check()。旧 weak/analysis-only/Q&A/doc-search/debug-Q&A/env-config/flow-driving/setup/retrieval/explain 全部恢复可造						D-purity 是筛选偏好不是初衷，跨域工作照样造
 #	---- 19 条 noted-parked 重审 ----						
 1791425782404_rn6pm	yohannw	hfeg0pkn003	?	schematic_netlist	SKILL source-code analysis/documentation (tooling infra)	不可造	无真实用户设计意图（分析 agent 自身 skill 源码，非用户 EDA 任务）；保留排除
