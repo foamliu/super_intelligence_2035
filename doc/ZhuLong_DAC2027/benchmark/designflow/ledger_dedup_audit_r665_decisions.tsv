@@ -1,0 +1,17 @@
+# ledger_dedup_audit_r665_decisions.tsv — r665 5 COLLISION pair-wise quality audit
+# 生成于 r665. 承 r663 ledger_dedup_audit_r663.tsv (session-suffix dup audit) 中
+# 标记 KEEP_BOTH 的 5 个 COLLISION 组, 本轮逐对比较质量定去留.
+#
+# 列:
+#   session          台账 session_file
+#   pair             "caseA vs caseB"
+#   case_keep        保留的 case_id (KEEP_BOTH 时填两个, 用逗号分隔)
+#   case_retire      下线的 case_id (无则填 "-")
+#   decision         KEEP_BOTH | RETIRE_LEFT | RETIRE_RIGHT
+#   rationale        判定理由 (引用 §3/§4.3/§4.6 条款)
+#   retire_reason    下线 case 的具体缺陷 (无则填 "-")
+1792843726821_uiqz1	DesignListGen-001 vs CxdpLintMakefileGen-001	DesignListGen-001,CxdpLintMakefileGen-001	-	KEEP_BOTH	两 case 是同 session (mc212, e0043890 CXDP lint flow) 上的独立 produce-task: DesignListGen 产 gen_design_list.pl (k=15), CxdpLintMakefileGen 产 Makefile 编排 (k=14, Makefile 资产含 gen_design_list.pl 作输入). 关联但不重复, k_rationale==k_check 均 >=8 达 §4.6 硬闸门, prompt 均自然语言 (1106/1945 字符). 按 §1 真实 trace 才有资格, 两者皆 faithful; 不下线.	-
+1793069875156_c6xow	TbAlignReport-001 vs CrCheckAudit-001	CrCheckAudit-001	TbAlignReport-001	RETIRE_RIGHT	TbAlignReport metadata k_rationale=None / k_check=None, 违 §4.6 硬闸门 (k_rationale==k_check>=8); test_rationale 文本存在 (14 断言) 但 k 字段缺失. 跨域 dup (digital vs verification); CrCheckAudit 有完整 k=16/16, 作 canonical 保留.	metadata.k_rationale/k_check 缺失, 违 §4.6; 跨域同 session dup
+1793091129423_vxorx	FmRtl2RtlFlow-001 vs FmR2rFlowGen-001	FmR2rFlowGen-001	FmRtl2RtlFlow-001	RETIRE_LEFT	FmRtl2RtlFlow metadata k_rationale=None / k_check=None, 违 §4.6; prompt_len=136 是裸任务签名 (e.g. "RTL2RTL formality flow"), 违 §3 (prompt: 自然语言). FmR2rFlowGen k=13/13 + prompt_len=2131 自然语言, 作 canonical 保留.	metadata.k_rationale/k_check 缺失 + prompt 裸签名违 §3
+1793849459663_qo3pd	Upf579Patch-001 vs UpfSupplyConnect-001	UpfSupplyConnect-001	Upf579Patch-001	RETIRE_LEFT	两 case k=16/16 同等, 同 session (mc39, e0046913 qo3pd UPF-579 fix). Upf579Patch prompt_len=76 是裸任务签名 (e.g. "patch UPF-579 ..."), 违 §3 (prompt: 自然语言). UpfSupplyConnect prompt_len=1298 完整自然语言描述同任务, 作 canonical 保留.	prompt 裸签名违 §3 自然语言要求
+1794021023245_u54d9	SignalXrefBuilder-001 vs SignalXrefMap-001	SignalXrefBuilder-001	SignalXrefMap-001	RETIRE_RIGHT	SignalXrefMap metadata k_rationale=None / k_check=None, 违 §4.6; 跨域 dup (verification vs digital). SignalXrefBuilder k=14/14 + 17 附件, 作 canonical 保留.	metadata.k_rationale/k_check 缺失, 违 §4.6; 跨域同 session dup
