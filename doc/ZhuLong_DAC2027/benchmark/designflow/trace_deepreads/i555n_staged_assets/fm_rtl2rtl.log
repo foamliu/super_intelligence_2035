@@ -1,0 +1,527 @@
+
+                                 Formality (R)
+
+               Version V-2023.12-SP5 for linux64 - Jul 03, 2024
+
+                    Copyright (c) 1988 - 2024 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+    communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity & Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+
+Build: 9050468
+Hostname: hfeg0pkn059
+Current time: Mon Nov  9 20:33:43 2026
+
+Loading db file '/apps/synopsys/SRB/formality/V-2023.12-SP5/libraries/syn/gtech.db'
+
+Script: /rundata/lacaa/TV1_digital/simdir/yutingq/FM_1109/scripts/fm.tcl
+
+/proj/lacaa/TV1_digital/simdir/yutingq/FM_1109/data/sync_level2level_impl_pass.f
+#################################################################################
+# Formality Verification Script
+#################################################################################
+source /apps/imctf/cad/script/digital_flow/utilities/procs_global.tcl
+source /apps/imctf/cad/script/digital_flow/utilities/procs_dc.tcl
+rm_source -file ../setup/common_setup.tcl
+RM-info    : SCRIPT_START : /rundata/lacaa/TV1_digital/simdir/yutingq/FM_1109/setup/common_setup.tcl : Mon Nov  9 20:33:44 2026
+##########################################################################################
+# Variables for Design Compiler methodology scripts
+##########################################################################################
+##################################################################
+# Input variable defaults
+# These variables are typically passed via Makefile -x.
+# Defaults prevent Tcl errors when a tool doesn't receive all variables.
+##################################################################
+if {![info exists ROOT_DIR]}     { set ROOT_DIR     "." }
+if {![info exists RTL_FILELIST]} { set RTL_FILELIST "" }
+if {![info exists SDC]}          { set SDC          "" }
+if {![info exists FM_MODE]}      { set FM_MODE      "" }
+if {![info exists PT_CORNER]}    { set PT_CORNER    "" }
+if {![info exists FM_REF_NETLIST]}    { set FM_REF_NETLIST     "" }
+if {![info exists FM_IMPL_NETLIST]}    { set FM_IMPL_NETLIST   "" }
+if {![info exists FM_IMPL_RTL_FILELIST]}    { set FM_IMPL_RTL_FILELIST   "" }
+##################################################################
+# Design common variables
+##################################################################
+set DESIGN_NAME                            $DESIGN
+set DCRM_NDM_LIBRARY_NAME                  ${DESIGN_NAME}.ndm
+set INSERT_SELF_GATES                      false ;# Insert self-gating during compile
+set ANALYZE_RTL_CONGESTION                 false ;# Include pre-synthesis analyze_rtl_congestion in final reports
+set REPORT_CONGESTION                      false ;# Include report_congestion in final reports
+set ENHANCED_TNS_OPTIMIZATION              false ;# Enable enhanced TNS optimization
+set OPTIMIZATION_FLOW                      none  ;# Specify one flow out of: none | hplp | hc | tim
+set ENABLE_REDUCED_EFFORT                  false ;# Use reduced effort for lower runtime in hplp and tim flows (false | true)
+set SET_QOR_STRATEGY_MODE                  "balanced" ;# balanced|early_design; default is balanced;
+# Specify one mode for set_qor_strategy -mode option and the settings will be configured for the target mode
+set CREATES_PG_NETLIST                     false  ;# Include PG network when writing netlist
+set ADDITION_TIM_CHECK_LIST                "clock_crossing \
+                                            clock_no_period \
+                                            data_check_multiple_clock \
+                                            data_check_no_clock \
+                                            gated_clock ideal_clocks \
+                                            net_no_driving_info \
+                                            no_driving_cell \
+                                            partial_input_delay \
+                                            object_collection \
+                                            multicycle_path \
+                                            create_clock \
+                                            set_case_analysis"
+##########################################################################################
+# Tool Setup Variables
+##########################################################################################
+set DC_MAX_CORES     8 ;# Max number of cores used by DC
+set DCRM_ALIB_CACHE  . ;# Location to store analyze library data
+##########################################################################################
+# Library Setup Variables
+##########################################################################################
+###/home/lucienj/InnoFlow/libs/HL22/hl_porting/hl22_porting_lvt_tt0p8v25c.db
+set TARGET_LIBRARY_FILES          "/proj/lagat/V0_digital/HL22/hl_porting_pdk05/hl22_porting_pdk05_lvt_ss0p72vm40c_ccs.db \
+                                   /proj/lagat/V0_digital/HL22/hl_porting_pdk05/hl22_porting_pdk05_ulvt_ss0p72vm40c_ccs.db "  ;# Target technology logical libraries, DB and Fusion Library formats supported
+set REFERENCE_LIBRARY             ""  ;# NDM reference library, optional when using Fusion Library format only
+set ADDITIONAL_SEARCH_PATH        ""  ;# Additional search path to be added to the default search path (used by all tools)
+set ADDITIONAL_LINK_LIB_FILES     ""  ;# Extra link logical libraries not included in TARGET_LIBRARY_FILES, DB and Fusion Library formats supported
+set LOWEST_VTH_PERCENTAGE 30
+###/proj/lagat/V0/workdir/frostc/T22/PRTF_ICC2_22nm_001_Syn_V19a/PR_tech/Synopsys/TechFile/HVH/PRTF_ICC2_N22_10M_5X2Y2Z_UTRDL_9T.19a.tf
+set MAP_FILE                      ""  ;# Mapping file for TLUplus  (used by DCNXT)
+set TECH_FILE                     ""  ;# Milkyway technology file (used by DCNXT)
+set MIN_ROUTING_LAYER             ""  ;# Min routing layer (used by DCNXT)
+set MAX_ROUTING_LAYER             ""  ;# Max routing layer (used by DCNXT)
+set TECHNOLOGY_NODE               ""  ;# Choose library node: 28nm, 16nm, etc
+set LIBRARY_DONT_USE_FILE                  "${ROOT_DIR}/setup/hl22_syn_dont_use.tcl" ;# Tcl file with library modifications for dont_use
+set LIBRARY_DONT_USE_PRE_COMPILE_LIST      "" ;# Tcl file for customized don't use list before first compile
+set LIBRARY_DONT_USE_PRE_INCR_COMPILE_LIST "" ;# Tcl file with library modifications for dont_use before incr compile
+##########################################################################################
+# Design Input Files
+##########################################################################################
+set RTL_SOURCE_FORMAT                                   verilog ;# verilog | vhdl | sverilog | autoread | ddc
+set RTL_SOURCE_FILES                                    $RTL_FILELIST
+set DCRM_SDC_INPUT_FILE                                 ""
+set DCRM_CONSTRAINTS_INPUT_FILE                         $SDC
+set DCRM_DESIGN_PLANNING                                false ;# true for fast compile flow for Design Planning
+set INSERT_DFT                                          false ;# true for enable insert_dft
+set DCRM_PHYSICAL_CONSTRAINTS_INPUT_FILE                ""
+set DCRM_DP_PHYSICAL_CONSTRAINTS_INPUT_FILE             "" ;# Minimal physical constraints for design planning
+set DCRM_DEF_INPUT_FILE                                 ""
+set DCRM_MCMM_SCENARIOS_SETUP_FILE                      ""
+set DCRM_FLOORPLAN_INPUT_FILE                           ""
+set DCRM_MV_SET_VOLTAGE_INPUT_FILE                      ""
+set SAIF_FILE                                   ""    ;# SAIF file path
+set SAIF_FILE_SOURCE_INSTANCE                   ""    ;# Name of the instance of the current design as it appears in SAIF file.
+set SAIF_FILE_TARGET_INSTANCE                   ""    ;# Name of the target instance on which activity is to be annotated.
+set SAIF_FILE_POWER_SCENARIO                    ""    ;# Specify a power scenario where the SAIF is to be applied
+set SAIF_FILE_SCALING_FACTOR                    ""    ;# Scaling factor for toggle rate annotated from SAIF file
+set SAIF_FILE_SCALING_UNIT                      ""    ;# Time unit annotated in SAIF file
+set GENERATE_SAIFMAP_WITHOUT_SAIF               false ;# Initialize SAIF map when there is no SAIF_FILE
+####################
+# Pre/Post scripts #
+####################
+set DCRM_PRE_ELABORATE_SCRIPT          "" ;# Optional file to insert user code prior to elaboration
+set DCRM_POST_ELABORATE_SCRIPT         "" ;# Optional file to insert user code after elaboration
+set DCRM_PRE_COMPILE_SCRIPT            "" ;# Optional file to insert user code prior to compile
+set DCRM_POST_COMPILE_SCRIPT           "" ;# Optional file to insert user code after compile
+set DCRM_POST_DFT_SCRIPT               "" ;# Optional file to insert user code after DFT insertion
+set DCRM_PRE_INCR_COMPILE_SCRIPT       "" ;# Optional file to insert user code prior to incremental compile
+##########################################################################################
+# Hierarchical Flow Design Variables
+##########################################################################################
+set DESIGN_STYLE                                "flat"   ;# Specify the design style; flat|hier; default is flat;
+set PHYSICAL_HIERARCHY_LEVEL                    "bottom" ;# Specify the current level of hierarchy for the hierarchical flow; top|bottom;
+set BLOCK_DESIGN_HAS_SV_INTERFACE_PORTS         false    ;# Set to true if in top level and integrating a block that has SystemVerilog interface ports
+set CTL_FOR_ICC2_ABSTRACT_BLOCKS                ""       ;# provide a list of the full path to each ctl model required by top level compile
+##########################################################################################
+# Hierarchical Flow Blocks
+##########################################################################################
+set DDC_HIER_DESIGNS                            ""    ;# List of Design Compiler hierarchical design names (.ddc will be read)
+set DC_BLOCK_ABSTRACTION_DESIGNS                ""    ;# List of Design Compiler block abstraction hierarchical designs (.ddc will be read)
+# without transparent interface optimization
+set ICC2_BLOCK_ABSTRACTION_NDM                  ""    ;# List of Fusion Compiler and/or IC Compiler II block abstraction hierarchical design names and NDM path
+# Use format: {<design_name1> <ndm_path1>:<block_name1> <design_name2> <ndm_path2>:<block_name2> ...}
+##########################################################################################
+# Wrapper Design name For Hierarchical Design with Interface ports
+##########################################################################################
+set SV_WRAPPER_DESIGN_NAME                      ""    ;# Define the wrapper design name to correctly
+# elaborate the hierachical design
+################
+# Output Files #
+################
+set REPORTS_DIR reports
+set OUTPUTS_DIR results
+set DCRM_FINAL_DESIGN_ICC2                              ICC2_files
+#################################################################################
+# DFT Flow Files
+#################################################################################
+###################################
+# DFT Config vars and Input Files #
+###################################
+set DFT_CONFIGURATION                           SCAN  ;# DFT Configuration options are: DC-CODEC_COREWRAP_TP_SCAN | THIRDPARTY-CODEC_COREWRAP-MM_TP_SCAN | TP_SCAN | SCAN
+set DFT_CLOCK_LIST                              ""    ;# Block specific clocks used as dft signals
+set DFT_RESET_INFO                              ""    ;# Block specific resets and presets used as dft signals. Specify as pairs showing {name sense}. e.g. {{reset 0} {preset_n 1}}
+set DFT_CONSTANT_INFO                           ""    ;# Block specific constants used as dft signals. Specify as pairs showing {name sense}. e.g. {{scan_mode 0}}
+set DFT_INTERNAL_SCAN_CHAIN_COUNT               8     ;# Scan chain count for Internal_scan test mode (see dft_ports.tcl and scan_configuration.dc.tcl)
+set DFT_WRAPPER_CHAIN_COUNT                     8     ;# Scan chain count used for core wrap DFT (see dft_ports.tcl and scan_configuration.dc.tcl)
+set DFT_COMPRESSION_SCAN_CHAIN_COUNT            64    ;# Scan chain count used in compression DFT (see dft_ports.tcl and scan_configuration.dc.tcl)
+set DFT_SETUP_FILE                                  "scan_configuration.dc.tcl" ;# DFT scan configuration setup file
+set DFT_PORTS_FILE                                  "dft_ports.tcl"             ;# DFT related port creation file
+set DFT_TEST_POINT_FILE                             "dft_test_point.example.tcl"
+#################################################################################
+# MV Flow Files
+#################################################################################
+###################
+# MV Input Files  #
+###################
+set UPF_FILE                                            ""
+set UPF_MODE                                            none ;# prime | golden | none
+############################################################################################
+# FM Variables                                                                             #
+############################################################################################
+set FMRM_RTL_READ_SCRIPT                                "" ;# Read RTL script for Formality
+set FM_MODE               $FM_MODE ;# rtl2gate | gate2gate | rtl2rtl
+;# rtl2gate: RTL vs DC mapped netlist (default)
+;# gate2gate: reference netlist vs implementation netlist
+;# rtl2rtl: reference RTL filelist vs implementation RTL filelist
+set FM_REF_NETLIST       "$FM_REF_NETLIST" ;# reference gate-level netlist (gate2gate mode)
+set FM_IMPL_NETLIST      "$FM_IMPL_NETLIST" ;# implementation gate-level netlist (gate2gate mode)
+set FM_IMPL_RTL_FILELIST      "$FM_IMPL_RTL_FILELIST" ;# implementation RTL filelist (rtl2rtl mode)
+###########################################################################################
+# VCLP Variables                                                                          #
+###########################################################################################
+set VCLP_RUN                                            "NETLIST" ;# Choose the stage you want to run VC Static. Allowed values are RTL or NETLIST
+set VCLPRM_RTL_READ_SCRIPT                              ""        ;# Read RTL script for VCLP
+##########################################################################################
+# PT Variables                                                                           #
+##########################################################################################
+set PT_CORNER  $PT_CORNER
+set PT_LIB_VT_TYPES   "lvt ulvt"
+foreach vt_type $PT_LIB_VT_TYPES {
+    append ANALYSIS_LIBRARY_FILES "/proj/lagat/V0_digital/HL22/hl_porting_pdk05/hl22_porting_pdk05_${vt_type}_${PT_CORNER}_ccs.db "
+}
+set ANALYSIS_LIBRARY_FILES [string trimright $ANALYSIS_LIBRARY_FILES]
+# If your project is not LAGAT, please manually configure this variable below.
+#set ANALYSIS_LIBRARY_FILES          ""
+# Power Analysis Setup Section
+set ACTIVITY_FILE ""                                               ;# switching activity (VCD/SAIF) file
+set STRIP_PATH ""                                                  ;# strip_path setting for the activity file
+set NAME_MAP_FILE ""                                               ;# name map file
+# --- Power Analysis Mode ---
+set PT_POWER_ANALYSIS_MODE             "averaged" ;# averaged | time_based
+;# averaged: fast estimation, uses default activity when no VCD/SAIF
+;# time_based: accurate, requires VCD/FSIF
+set PT_DEFAULT_TOGGLE_RATE             0.1   ;# default toggle rate (fraction of clock) for unannotated nodes
+;# only effective when ACTIVITY_FILE is empty; typical: 0.1~0.2
+set PT_DEFAULT_STATIC_PROBABILITY      0.5   ;# default static probability for unannotated nodes (0.0~1.0)
+### Define to Enable POCV ###
+#Provide one or a list of pocv derate files
+set POCVM_FILES          ""
+##Provide one or a list of pocv distance files if avaliable
+set POCVM_DISTANCE_FILES    ""
+######################################
+# Back Annotation File Section
+######################################
+# The recommended order is to put the block spefs first then the top so that block spefs are read 1st then top
+set PARASITIC_FILES	 ""
+set PARASITIC_PATHS	 ""
+######################################
+# Physically Aware ECO Setup
+######################################
+set LEF_FILES ""
+set DEF_FILES ""
+######################################
+# IR Drop Aware STA Setup
+# Setup DvD mode to 0 or 1
+#   mode 0 : 0 VSS mode
+#   mode 1 : non 0 VSS mode
+######################################
+set DVD_FILE_PATH ""
+set DVD_MODE ""
+######################################
+# Context Budgeting Setup
+######################################
+set CONTEXT_BUDGETING_BLOCKS ""
+RM-info    : SCRIPT_STOP : /rundata/lacaa/TV1_digital/simdir/yutingq/FM_1109/setup/common_setup.tcl : Mon Nov  9 20:33:44 2026
+1
+set_app_var search_path ". ${ADDITIONAL_SEARCH_PATH} $search_path"
+.
+#################################################################################
+# Synopsys Auto Setup Mode
+#################################################################################
+# Note: The Synopsys Auto Setup mode is less conservative than the Formality default
+# mode, and is more likely to result in a successful verification out-of-the-box.
+set_app_var synopsys_auto_setup true
+true
+set_app_var verification_timeout_limit "24:0:0"
+24:0:0
+set_app_var verification_failing_point_limit 0
+0
+# Using the Setting this variable will change the default values of the variables
+# listed here below.  You may change any of these variables back to their default
+# settings to be more conservative.
+# set_app_var hdlin_ignore_parallel_case true
+# set_app_var hdlin_ignore_full_case true
+# set_app_var verification_verify_directly_undriven_output true
+# set_app_var hdlin_ignore_embedded_configuration false
+# set_app_var svf_ignore_unqualified_fsm_information true
+# set_app_var signature_analysis_allow_subset_match true
+#################################################################################
+# Setup for handling undriven signals in the design
+#################################################################################
+# The Synopsys Auto Setup mode sets undriven signals in the reference design to
+# "0" or "BINARY" (as done by DC), and the undriven signals in the impl design are
+# forced to "BINARY".
+## set_app_var verification_set_undriven_signals synthesis
+# Revert back to the more conservative default setting
+set_app_var verification_set_undriven_signals BINARY:X
+BINARY:X
+#################################################################################
+# Setup for simulation/synthesis mismatch messaging
+#################################################################################
+# The Synopsys Auto Setup mode will produce warning messages, not error messages,
+# when Formality encounters potential differences between simulation and synthesis.
+# Uncomment the next line to revert back to the more conservative default setting:
+## remove_mismatch_message_filter -all
+#################################################################################
+# Setup for Clock-gating
+#################################################################################
+# Notify Formality of clock-gating
+set_app_var verification_clock_gate_reverse_gating true
+true
+#################################################################################
+# Setup for instantiated DesignWare or function-inferred DesignWare components
+#################################################################################
+# Set this variable if the design contains instantiated DW or function-inferred DW.
+## set_app_var hdlin_dwroot "" ;# Enter the pathname to the top-level of the DC tree
+#################################################################################
+# Setup for handling missing design modules
+#################################################################################
+# Formality can complete linking each design has missing components in designs
+## set_app_var hdlin_unresolved_modules black_box
+#################################################################################
+# Read in the SVF file(s)
+#################################################################################
+# Set this variable to point to individual SVF file(s) or to a directory containing SVF files.
+if {$FM_MODE == "gate2gate" | $FM_MODE == "rtl2rtl"} {
+    puts "RM-Info: Skipping SVF for $FM_MODE mode"
+} else {
+    set_svf ${OUTPUTS_DIR}/${DESIGN_NAME}.mapped.svf
+}
+RM-Info: Skipping SVF for rtl2rtl mode
+#################################################################################
+# Read in the libraries
+#################################################################################
+foreach tech_lib "${TARGET_LIBRARY_FILES} ${ADDITIONAL_LINK_LIB_FILES}" {
+  read_db -technology_library $tech_lib
+}
+Loading db file '/proj/lagat/V0_digital/HL22/hl_porting_pdk05/hl22_porting_pdk05_lvt_ss0p72vm40c_ccs.db'
+Loading db file '/proj/lagat/V0_digital/HL22/hl_porting_pdk05/hl22_porting_pdk05_ulvt_ss0p72vm40c_ccs.db'
+#################################################################################
+# Read in the Reference Design as verilog/vhdl source code
+#################################################################################
+# Even for a top-level only verification, read in the RTL for the complete
+# design, then the hierarchical designs will be removed and power model
+# will be read in and use
+if {$FM_MODE == "gate2gate"} {
+    puts "RM-Info: Reading reference netlist: $FM_REF_NETLIST"
+    read_verilog -r $FM_REF_NETLIST
+} else {
+    switch $RTL_SOURCE_FORMAT {
+      autoread {
+        # Source the script generated by autoread in Design Compiler
+        rm_source -file ${OUTPUTS_DIR}/${DESIGN_NAME}.autoread_rtl.tcl
+      }
+      script {
+        # The following setting allows the read script to be found in the search path
+        set_app_var sh_source_uses_search_path true
+        rm_source -file ${FMRM_RTL_READ_SCRIPT} -print FMRM_RTL_READ_SCRIPT
+      }
+      vhdl {
+        read_vhdl -r ${RTL_SOURCE_FILES} -work_library WORK
+      }
+      sverilog {
+        read_sverilog -r -vcs "-f ${RTL_SOURCE_FILES}" -work_library WORK
+      }
+      verilog {
+        read_verilog -r -vcs "-f ${RTL_SOURCE_FILES}" -work_library WORK
+      }
+    }
+}
+Information: Loading VCS options file '/proj/lacaa/TV1_digital/simdir/yutingq/FM_1109/data/syn_filelist.f'. (FM-263)
+Loading verilog file '/proj/lacaa/TV1_digital/simdir/yutingq/FM_1109/data/rtl_ref/sync_level2level.v'
+Current container set to 'r'
+1
+if {$DESIGN_STYLE == "hier" && $PHYSICAL_HIERARCHY_LEVEL == "top"} {
+  set HIER_DESIGNS [concat ${DDC_HIER_DESIGNS} ${DC_BLOCK_ABSTRACTION_DESIGNS} ${ICC2_BLOCK_ABSTRACTION_NDM}]
+
+  # Remove the hierarchical designs for a top-only verification
+  foreach design ${HIER_DESIGNS} {
+    remove_design r:/WORK/${design}
+  }
+
+  # Read power models for the reference container
+  foreach design ${HIER_DESIGNS} {
+    read_power_model -r ${design}.ref.fpm -libname WORK
+  }
+}
+# Note: If retention registers are instantiated in the RTL then replace the
+#       technology retention register models here.  See the implementation read
+#       section below for details.  This should be done before set_top.
+#       Most designs do not have retention registers until after mapping so
+#       this is not needed.
+# The following setting is needed to exclude instantiated ICG cells from being
+# retained inside retention domains (same behavior as Design Compiler)
+set_app_var upf_use_additional_db_attributes true
+true
+set_top r:/WORK/${DESIGN_NAME}
+Error: Unknown name: 'r:/WORK/sync_level2level' (FM-036)
+0
+#################################################################################
+# For a UPF MV flow, read in the UPF file for the Reference Design
+#################################################################################
+if { $UPF_MODE != "none" } {
+  load_upf -r ${UPF_FILE}
+}
+#################################################################################
+# Read in the Implementation Design from DC-RM results
+#
+# Choose the format that is used in your flow.
+#################################################################################
+# For DDC
+#read_ddc -i ${OUTPUTS_DIR}/${DESIGN_NAME}.mapped.ddc
+# OR
+# For Verilog
+if {$FM_MODE == "gate2gate"} {
+    puts "RM-Info: Reading implementation netlist: $FM_IMPL_NETLIST"
+    read_verilog -i $FM_IMPL_NETLIST
+} elseif {$FM_MODE == "rtl2rtl"} {
+    puts "RM-Info: Reading implementation RTL: $FM_IMPL_RTL_FILELIST"
+    switch $RTL_SOURCE_FORMAT {
+      verilog  { read_verilog    -i -vcs "-f ${FM_IMPL_RTL_FILELIST}" -work_library WORK }
+      sverilog { read_sverilog   -i -vcs "-f ${FM_IMPL_RTL_FILELIST}" -work_library WORK }
+      vhdl     { read_vhdl       -i ${FM_IMPL_RTL_FILELIST} -work_library WORK }
+      default  { puts "RM-Error: rtl2rtl requires verilog/sverilog/vhdl implementation RTL" }
+    }
+} else {
+    read_verilog -i ${OUTPUTS_DIR}/${DESIGN_NAME}.mapped.v
+}
+RM-Info: Reading implementation RTL: /proj/lacaa/TV1_digital/simdir/yutingq/FM_1109/data/sync_level2level_impl_pass.f
+Information: Loading VCS options file '/proj/lacaa/TV1_digital/simdir/yutingq/FM_1109/data/sync_level2level_impl_pass.f'. (FM-263)
+Error: Top design has not been successfully linked in container 'r' (FM-236)
+0
+if {$DESIGN_STYLE == "hier" && $PHYSICAL_HIERARCHY_LEVEL == "top"} {
+  # Read power models for the Implementation container
+  foreach design ${HIER_DESIGNS} {
+    read_power_model -i ${design}.impl.fpm
+  }
+}
+#################################################################################
+# Read in Retention Register Simulation Models
+#################################################################################
+# If you are mapping to retention registers in your design, you need to replace the
+# technology library models of those cells with Verilog simulation models for
+# Formality verification.  Please see the following SolvNet article for details:
+# https://solvnetplus.synopsys.com/retrieve/024106.html
+# set_top should be run only after the retention register models have been replaced.
+set_top i:/WORK/${DESIGN_NAME}
+Error: Unknown name: 'i:/WORK/sync_level2level' (FM-036)
+0
+#################################################################################
+# For a UPF MV flow, read in the UPF file for the Implementation Design
+#################################################################################
+if { $UPF_MODE != "none"} {
+  set load_upf_cmd "load_upf -i"
+  if {$UPF_MODE == "golden"} {
+    lappend load_upf_cmd -strict_check false
+    lappend load_upf_cmd -target dc_netlist ${UPF_FILE}
+    lappend load_upf_cmd -supplemental ${OUTPUTS_DIR}/${DESIGN_NAME}.supplement.upf
+  } elseif { $UPF_MODE == "prime" } {
+    lappend load_upf_cmd ${OUTPUTS_DIR}/${DESIGN_NAME}.mapped.upf
+  }
+  puts "RM-info: Running $load_upf_cmd"
+  eval ${load_upf_cmd}
+}
+#################################################################################
+# Configure constant ports
+#
+# When using the Synopsys Auto Setup mode, the SVF file will convey information
+# automatically to Formality about how to disable scan.
+#
+# Otherwise, manually define those ports whose inputs should be assumed constant
+# during verification.
+#
+# Example command format:
+#
+#   set_constant -type port i:/WORK/${DESIGN_NAME}/<port_name> <constant_value>
+#
+#################################################################################
+#################################################################################
+# Report design statistics, design read warning messages, and user specified setup
+#################################################################################
+# report_setup_status will create a report showing all design statistics,
+# design read warning messages, and all user specified setup.  This will allow
+# the user to check all setup before proceeding to run the more time consuming
+# commands "match" and "verify".
+# report_setup_status
+#################################################################################
+# Note in using the UPF MV flow with Formality:
+#
+# By default Formality verifies low power designs with all UPF supplies
+# constrained to their ON state.  This is only a partial verification result.
+# To cover all operational power states, uncomment the following variable setting:
+#
+# set_app_var verification_force_upf_supplies_on false
+#
+#################################################################################
+#################################################################################
+# Match compare points and report unmatched points
+#################################################################################
+preverify
+Error: Reference design not set (FM-045)
+0
+match
+Error: Reference design not set (FM-045)
+0
+save_session -replace ${OUTPUTS_DIR}/${DESIGN_NAME}_match
+Error: Top design has not been successfully linked in container 'r' (FM-236)
+Error: No session file generated. Reason : No such file or directory. (FM-427)
+0
+redirect -file ${REPORTS_DIR}/${DESIGN_NAME}.fmv_unmatched_points.rpt {report_unmatched_points}
+#################################################################################
+# Verify and Report
+#
+# If the verification is not successful, the session will be saved and reports
+# will be generated to help debug the failed or inconclusive verification.
+#################################################################################
+if { ![verify] }  {
+  redirect -file ${REPORTS_DIR}/${DESIGN_NAME}.fmv_failing_points.rpt {report_failing_points}
+  redirect -file ${REPORTS_DIR}/${DESIGN_NAME}.fmv_aborted_points.rpt {report_aborted}
+  # Use analyze_points to help determine the next step in resolving verification
+  # issues. It runs heuristic analysis to determine if there are potential causes
+  # other than logical differences for failing or hard verification points.
+  redirect -file ${REPORTS_DIR}/${DESIGN_NAME}.fmv_analyze_points.rpt {analyze_points -all}
+}
+Error: Reference design not set (FM-045)
+save_session -replace ${OUTPUTS_DIR}/${DESIGN_NAME}_verify
+Error: Top design has not been successfully linked in container 'r' (FM-236)
+Error: No session file generated. Reason : No such file or directory. (FM-427)
+0
+if {$DESIGN_STYLE == "hier" && $PHYSICAL_HIERARCHY_LEVEL == "bottom"} {
+  write_power_model -r -replace ${OUTPUTS_DIR}/${DESIGN_NAME}.ref.fpm
+  write_power_model -i -replace ${OUTPUTS_DIR}/${DESIGN_NAME}.impl.fpm
+}
+exit
+
+Maximum memory usage for this session: 850 MB
+CPU usage for this session: 2.33 seconds ( 0.00 hours )
+Current time: Mon Nov  9 20:33:51 2026
+Elapsed time: 17 seconds ( 0.00 hours )
+
+Thank you for using Formality (R)!
