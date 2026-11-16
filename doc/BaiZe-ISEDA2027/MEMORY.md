@@ -2,6 +2,17 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-16 22:0x — 用户令「找 4 个空闲沙盒口起新 MCP，别跟 zhulong 互等」→ 已下「先判共用、再判自建」两步令
+
+- **用户原话**：「post-train：要不在 8650-8670 之间找 4 个没人用的沙盒端口，起个新的 MCP 用？这样就不用跟 zhulong 互相等了」。
+- **运维先澄清的事实**（wake599 实测，避免 agent 重复扫）：`10.129.32.75` 上 8650-8654=本 8090 池（`t0002997_1..4`）、**8655 唯一 closed**、8656-8670 全 OPEN 但**属他人项目 daemon**（`t0002441_*`）。**OPEN≠可用**：每个沙盒口绑一个 workdir，抢口=抢别人 workdir。
+- **已下发**（`run/BAIZE_POSTTRAIN_TASK.md` 顶部 🔴 令 22:0x），两步：
+  1. **优先「共用 8090 池」**：只读 `exec_code.py` 的 `SandboxEndpointPool`（池满是否排队、cap 语义）→ 若是**独占租借+排队**，直接 `-p 2` 起 run5 与 zhulong `-p 4` 共存 ⇒ **同 4 个 workdir、同 MCP ⇒ 与 run1-4 同口径，可并入 5-run mean**；无需新 MCP。
+  2. **兜底「自建 MCP」**：枚举 8656-8670 每口的 workdir 归属，**只有 ≥4 口属本账号且空闲**才允许起 8090→**8093** 新实例（独立 `.env` 副本 + 隔离 `HOME` 指向 8093），且**必须声明 run5 变 env-variant、不得并入 run1-4 mean**；<4 口则停手报运维，禁占他人 workdir。
+- 两条路径都要求：跑前 1–2 题冒烟、`env_fingerprint.json` 记录 `pool_mode/mcp_url/workdir_set/shared_with_zhulong`、不启 `clean_5run.sh`、不改 run1-4、不 kill 他线。
+- **运维判断**：第 1 步大概率就是答案——zhulong 与本线本来就用同一批 `t0002997_1..4`（zhulong 也写「8650 池」），只要池是独占排队，`-p 2 + -p 4` 共池是**既省事又不引入新变量**的唯一解；新 MCP 只在有我们自己的 workdir 时才值得做。
+
+
 ## 2026-11-16 21:2x — 用户问「vision 能不能自己去 36.15 找 designflow 的 jsonl 选 waveview case」→ 已授权并下令
 
 - **用户原话**：「vision：可以自己去 36.15 找 designflow 的 jsonl 文件，自己筛选 waveview 的 case 吗」。**答：可以**——designflow 的 task2（VQA 对照）长期 infra-block，继续等无意义；题池 `A/B/C/D.jsonl` 只在 36.15，而 vision 在 `.17` 本就有 `ssh -p 3333 app.e0031982@localhost`（与 posttrain 同一条通道）。

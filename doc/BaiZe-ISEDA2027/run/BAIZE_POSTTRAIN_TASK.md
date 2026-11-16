@@ -1,5 +1,26 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+> 🔴 **用户令 · 2026-11-16 22:0x（自建沙盒池/MCP，别再跟 zhulong 互相等）· 最高优先 · 未完成**
+>
+> **用户原话**：「post-train：要不在 8650-8670 之间找 4 个没人用的沙盒端口，起个新的 MCP 用？这样就不用跟 zhulong 互相等了」
+> **运维补充事实（wake599 已实测，别再重扫一遍）**：`10.129.32.75` 上 8650-8654 = 本 8090 池（`t0002997_1..4`）、**8655 是唯一 closed**、8656-8670 全部 OPEN **但都是他人项目 daemon**（`.env` 注释池 8656/8658/8661/8662 → `t0002441_*`）。⇒ 「OPEN」≠「可用」：**每个沙盒口绑定一个 workdir，抢口就等于抢别人的 workdir**。
+>
+> **执行顺序（先判后动；只读能定的不要动服务）**
+> 1. **判「能不能共用 8090 的 4 个口」**（最快、且唯一不引入新变量的路）：只读 `grep -nE 'class SandboxEndpointPool|def acquire|def release|cap' server/sandbox_server/exec_code.py`，回答两个问题：
+>    - 池满时是**排队等待**还是**报错/复用同一个 endpoint**？
+>    - `cap` 语义是「每 endpoint 并发上限」还是「池总并发」？
+>    → 若**独占租借 + 池满排队** ⇒ **直接以 `-p 2` 起 run5，与 zhulong 的 `-p 4` 共存于同一 8090 池**（同一批 workdir `t0002997_1..4`、同一 MCP ⇒ **与 run1-4 完全同口径，可并入 5-run mean**）。这条优先，**不需要新 MCP**。
+>    → 若**不排队/会复用同一 endpoint** ⇒ 不可并发，转第 2 步。
+> 2. **枚举 8656–8670 的 daemon 归属**（只读）：对每个 OPEN 口做 `curl -sS -m 3 http://10.129.32.75:<port>/health` 或 `/v1/info`（取不到就用已有文档/`.env` 注释），**逐口记录 workdir 与归属账号**，输出分类表：`属本账号 e0031982 / 属 t0002997 / 属 t0002441 / 未知`。
+> 3. **分叉**：
+>    - **若 ≥4 个口的 workdir 属本账号（或明确允许我们使用）且当前无活跃会话** ⇒ 允许**起第二个 MCP 实例**：端口取 **8093**（不是 86xx，86xx 是沙盒宿主侧端口不得占用），`SANDBOX_ENDPOINTS` 用第 2 步选出的 4 条 `port:workdir`，配置放**独立副本**（🚫 不改共享 `.env`、🚫 重启 8090、🚫 改 `eda_fastmcp` 源码）；run5 用**隔离 HOME**（如 `HOME=/tmp/pt_cline_home`）放一份指向 8093 的 `cline_mcp_settings.json`，避免污染共享配置。
+>      ⚠️ **必须同时告知运维**：新 MCP + 新 workdir = **新的 EDA 环境变量**，run5 因此**不能直接并入 run1-4 的 5-run mean**，只能作为「env-variant」单独一行；若你要的是「可比的第 5 个点」，应优先走第 1 步。
+>    - **若 <4 个可用口** ⇒ **停手报运维**（贴分类表 + 每口归属证据），**不得**占用他人 workdir、不得改他人 daemon、不得 kill 他线。
+> 4. **冒烟（任何路径起跑前必做）**：1–2 题走通 `run_code` → `execution_results` 有行 → 才放 158 全量；把 MCP 实例 pid/端口/workdir 写进 `attribution_3615_run5/env_fingerprint.json`（含 `pool_mode`、`mcp_url`、`workdir_set`、`shared_with_zhulong` bool）。
+> 5. **纪律不变**：🚫 不启 `clean_5run.sh`、🚫 不改 run1-4 产物、🚫 不 kill 他线、🚫 不得用 n<5 冒充 5-run；`memory`/`daily` 必须写清 run5 走的是哪条路径（共用 8090 = 可比；新 MCP = env-variant）。
+> 6. **交付**：起跑后立刻 push（不等跑完），commit 前缀 `posttrain 5run:`。
+
+
 > 🔴 **用户令 · 2026-11-16 20:5x（取消全局排队 · 改用 8650–8670 端口池并行 · 最高优先）· 未完成**
 >
 > **用户原话**：「为啥要排队，扫一下 8650-8670 之间的沙盒端口，都可以用。」
