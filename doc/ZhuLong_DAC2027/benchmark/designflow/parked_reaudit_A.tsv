@@ -84,7 +84,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792480126204_y737t.messages.json	e13zhang	hfeg0pgn012	verification	r295 peek: USER#0=7.2GHz时钟 Q&A + Makefile compile error debug, not produce-task	OTHER	maybe		n/a
 1790600533401_vnze7.messages.json	clwang	hfeg0pkn005	eda_other	r295 peek: USER#0=拆分10GB xrun.log成20份 trivial log-split, verilog keyword from lo	REVIVABLE_QA	yes	trivial-Q&A	EXISTS
 1793779533537_k7668.messages.json	e0039602	hfeg0pkn002	verification	r295 deepread: verilog_lib_trans_v2 tb fix, USER#4/#40/#73 3-turn evolved comple	COMPLEX_DEFER	maybe		n/a
-1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	eda_other	r295 peek: USER#0=告诉我tb_family作用 analysis Q&A, same verilog_lib_trans project	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	eda_other	r295 peek: USER#0=告诉我tb_family作用 analysis Q&A, same verilog_lib_trans project	REVIVABLE_QA	done	CASE-TbFamilyRoleAnalyze-001 (r638 synthesized)	EXISTS
 1793937823141_zdo8r.messages.json	t0002038	hfeg0plg86	eda_other	r295: aether:1035/transistor:818/pyaether:427 schematic = analog/layout WRONG SH	WRONG_SHARD	no		n/a
 1794010590146_aqtdv.messages.json	xinqiaoz	hfeg0pkn005	pnr_signoff	r295: pdk:1067/drc:253/calibre:50 = calibre DRC WRONG SHARD (C), rtl:40 minor	WRONG_SHARD	no		n/a
 1792047975640_tdmdj.messages.json	qi3wang	hfhds209	digital	inaccessible: .messages.json not at /home/qi3wang/.cline on hfhds209/hfeg0pjn178	NOFILE	no		n/a
