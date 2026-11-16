@@ -617,3 +617,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793704285912_k2x6m	daiweilu	10.129.32.83	0	digital	case	TmDqSwitchAdaptRestore-001	2026-11-15 16:57	
 1792548360759_l8989	tongfanl	hfhds201	0	digital	case	EDA-Eval-DesignFlow-ReadExpdataWireAudit-001	2026-11-15 19:19	r582 deepread done (l8989_ddr5_readcmd_expdata.md), B-synth ReadExpdataWireAudit-001 viable next-round fast-path, budget-constrained this round
 1793762019450_22gh5	e0039102	hfeg0plg74	0	eda_other	case	EDA-Eval-DesignFlow-RunRegrArchAnalyze-001	2026-11-16 20:20	
+1794394549939_ia08o	xy1zhang	hfeg0pgn145	927	verification	case	EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	2026-11-16 21:03	r645 C-A debug-Q&A compare_tasks.sv dup-assign + xrun TRZDGOC root-cause, k=15

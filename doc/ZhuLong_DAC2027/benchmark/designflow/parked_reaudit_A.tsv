@@ -211,7 +211,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792459025453_8o316	max7c	hfeg0pkn004	digital	r506 REJECT usage Q&A '如何执行这个脚本'	OTHER	maybe		n/a
 1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	digital	r509 doc-gen Q&A: summarize perl script acc_auto_connect.pl functionality+valida	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792717840232_bx87p.messages.json	adaml	hfeg0pkn002	eda_other	r509 usage Q&A: check python packages for data-analysis/plotting. rtl:34 keyword	REVIVABLE_QA	yes	env-config/how-to	EXISTS
-1794394549939_ia08o.messages.json	xy1zhang	hfeg0pgn145	verification	r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但	REVIVABLE_QA	yes	debug-Q&A	EXISTS
+1794394549939_ia08o.messages.json	xy1zhang	hfeg0pgn145	verification	r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但	DONE_r645	debug-Q&A	EXISTS (deepread+synthesized+landed r645 CmpTaskZeroDelayOscDiagnose-001, A.jsonl 349->350)
 1791266472578_d7u53.messages.json	adminai	hfeg0pkn004	eda_other	r512 peek: ObsidianVault 运维项目 scaffolding + mwxi 账号可见 file-perm, infra/doc-gen n	INFRA	no		n/a
 1792046360526_bbflu.messages.json	e0046686	hfeg0pkn005	eda_other	r512 peek: README 3.1 代码块 markdown 渲染优化, doc-gen non-EDA, verilog kw from worksp	INFRA	no		n/a
 1791337441726_g31h2	adminai	hfeg0pkn004	digital	ObsidianVault 运维项目 scaffolding infra, rtl kw from workspace 非 task, REJECT r513	INFRA	no		n/a
