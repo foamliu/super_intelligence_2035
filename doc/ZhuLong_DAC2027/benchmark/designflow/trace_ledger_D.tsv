@@ -1563,7 +1563,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791524223726_bgrlw	xrxiong	hfeg0plg74	38	schematic_netlist	case	EDA-Eval-DesignFlow-RfIPRHRaddModuleExplainQA-001	2026-11-15 17:13	netlist module-purpose explain Q&A (R_RfIPRHRadd/SecEnDly作用), no deliverable
 1793923081404_s6bse	e0030760	hfeg0plg74	39	schematic_netlist	parked		2026-11-13 03:56	desktop file-move task, non-EDA (hspice kw incidental)
 1791522635010_ikvky	clarawu	hfeg0plg106	40	schematic_netlist	parked		2026-11-13 03:56	.vimrc gvim config, non-EDA (schematic kw incidental)
-1793350203105_0l5zn	chentong	hfeg0plg76	37	schematic_netlist	parked		2026-11-13 03:56	greeting '你好', no task
+1793350203105_0l5zn	chentong	hfeg0plg76	37	schematic_netlist	case	EDA-Eval-DesignFlow-ClcTruthTableFlowExplainQA-001	2026-11-16 08:25	greeting '你好', no task
 1794205389348_ina0a	thomasz	hfeg0plg92	40	waveform	parked		2026-11-13 03:56	debug /rundata log报错 + /rundata asset unreachable
 1792023179795_wpxqf	e0042624	hfeg0plg76	39	analog_context	parked		2026-11-13 03:56	'hi'+'create Schematic' vague, no concrete deliverable
 1794216750374_d5x87	hktklin	hfeg0plg87	332	analog_context	parked		2026-11-13 03:56	PCELL SKILL sed text-replace on /proj (unreachable) + interactive Virtuoso CDF
