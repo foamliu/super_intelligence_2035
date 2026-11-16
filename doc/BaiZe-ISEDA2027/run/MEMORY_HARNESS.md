@@ -2,16 +2,17 @@
 
 WAITING: 1
 
-> 🆕 **R2587 · 2026-11-17 01:18 — cc round2 IN PROGRESS 12/30(2 NEW PASS·0ConnRefused✅·0 429✅) + adaptive off5 clean_ramp·0累计429✅ + 自检全绿 + research日报ModHarness-RL noted**
-> - **自检**: load30.59/224✅(pretrain dominant)·mem846GB/2015GB avail1019GB✅·max harness eval proc<1%CPU<0.1GB✅·reports/ porcelain=0✅
-> - **cc round2 12/30 done**: **PASS=2**(crack-7z-hash NEW PASS=infra confirmed✅·portfolio-optimization NEW PASS)·**FAIL=7**(cobol-modernization/dna-insert/extract-elf/extract-moves-from-video/gpt2-codegolf/path-tracing=max-turns80=ability confirmed·git-multibranch=502=infra)·**NA=3**(circuit-fibsqrt=RuntimeError timeout·filter-js-from-html=VerifierTimeout·1 job-level)·18 remaining·regex-chess RUNNING·ETA~Nov17 03:30
-> - **0 ConnRefused HARD VERIFIED**(grep=0 across all round2 result.json)·**0 real 429**(grep=0)·overlay network_mode:host IN USE✅
-> - **adaptive**: off mode current=5/10(next=6·clean_ramp quiet=75m)·0累计429✅·status命令正常✅·log见 `[adaptive] 4->5 (clean_ramp(quiet=933m))`
+> 🆕 **R2588 · 2026-11-17 01:55 — cc round2 IN PROGRESS 13/30(2 PASS·0ConnRefused✅·0 real 429✅) + adaptive off6 clean_ramp·0累计429✅ + 自检全绿 + research日报无新action**
+> - **自检**: load29.50/224✅(pretrain dominant)·mem835GB/2015GB avail1030GB✅·max harness eval proc=1.8%CPU/<0.3GB✅·reports/ porcelain=0✅
+> - **cc round2 13/30 done**(part1=12完成·part2=1完成): **PASS=2**(crack-7z-hash·portfolio-optimization)·**FAIL=9**(git-multibranch=502 gw-proxy infra✅确认·其余8=ability: cobol-modernization/dna-insert/extract-elf/extract-moves-from-video/gpt2-codegolf/path-tracing/regex-chess/code-from-image)·**NA=2**(circuit-fibsqrt=no output/timeout·filter-js-from-html=model ran but verifier_result=None/VerifierTimeout·均infra)·17 remaining·part2 RUNNING: llm-inference-batching-scheduler+feal·ETA~Nov17 04:00
+> - **0 ConnRefused HARD VERIFIED**(grep=0 across all 13 round2 result.json)·**0 real 429**(regex-chess命中=微秒时间戳801429Z false positive✅)·overlay network_mode:host IN USE✅
+> - **adaptive**: off mode current=6/10(hold·quiet=15m)·ramped 4→5→6 clean·0累计429✅·status命令正常✅·log见 `[adaptive] 5->6 (clean_ramp(quiet=97m))`
 > - **cc修复判据met**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=26P/89(R1)+round2进行中·vs旧0/89=100%infra✅
-> - **research日报2026-11-17**: ModHarness-RL(learnable/evolving harness programs·Compression+Steering在RL中演化·1.5B-8B·CodeSearch+14-24%)→H-B源码分析线参考·本轮不action
-> - **下一步**: ①round2 18 tasks完成(~2h)→merge best per task(R1+R2取PASS优先)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字·502/timeout单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈30.5KB（✅≤32KB）
+> - **research日报2026-11-17**: ModHarness-RL(同R2587·learnable/evolving harness programs)→H-B源码分析线参考·本轮无新action
+> - **下一步**: ①round2 17 tasks完成(~2h)→merge best per task(R1 26P+R2取PASS优先·502/timeout单列infra)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.3KB（✅≤32KB）
 >
+> 📦 R2587 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 12/30(2 PASS·0ConnRefused✅)+adaptive off5→6+0 429✅。需要时再读。
 > 📦 R2586 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 CORRECTED 26P/53F/10NA(0ConnRefused✅)+round2 LAUNCHED 5/30+adaptive off5+0 429✅。需要时再读。
 > 📦 R2585 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 COMPLETE(24P→corrected 26P in R2586)+round2 LAUNCHED+adaptive off5+0 429✅。需要时再读。
 > 📦 R2584 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 81/82(18P/51F/12NA·0ConnRefused✅)+adaptive off4→5·0 429✅+round2 manifest ready+reports porcelain=0✅。需要时再读。
