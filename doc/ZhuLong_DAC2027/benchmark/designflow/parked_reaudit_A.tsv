@@ -111,7 +111,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793189553608_5uqoi	dsgao	10.129.32.75	eda_other	r375 peek: U#0 = paste of Verdi FSDB dumper loading error (libsscore_vcs202312.s	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1792992278510_lku2o	e0045144	10.129.2.11	digital	r375 peek: U#0 "你会做什么" + U#2 "你会根据spec写完整的RTL code吗" = capability-exploration me	INFRA	no		n/a
 1790133793674_jwwqf	e02141	10.129.2.10	eda_other	env-config (SWB python api setup), weak	REVIVABLE_QA	yes	env-config/how-to	EXISTS
-1793084065593_fg1kv	ghyang	10.129.2.12	eda_other	SPICE analysis Q&A, weak	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1793084065593_fg1kv	ghyang	10.129.2.12	eda_other	SPICE analysis Q&A, weak	REVIVABLE_QA	yes	analysis-Q&A	EXISTS (deepread+synthesized+landed r646 PtempCondUsageAnalyze-001, A.jsonl 350->351)
 1793069063742_76i4q	wnyu	10.129.2.13	eda_other	doc-search Q&A, weak	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1793603696817_p16i1	shanliny	10.129.2.10	digital	Python script debug Q&A, weak	REVIVABLE_QA	yes	debug-Q&A	EXISTS
 1791968010913_mnn5q.messages.json	e04605	10.129.2.11	digital	r379 peek: U#0=onboarding Q&A(你好请问你可以做什么), verilog:828 from pasted content, no p	OTHER	maybe		n/a

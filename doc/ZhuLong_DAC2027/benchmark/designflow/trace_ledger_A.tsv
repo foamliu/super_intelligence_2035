@@ -358,7 +358,7 @@
 1793189553608_5uqoi	dsgao	10.129.32.75	126	eda_other	case	EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001	2026-11-16 17:19	r639 case landed: Verdi FSDB 4-cascade root-cause diagnosis, k=16, A.jsonl 345->346
 1792992278510_lku2o	e0045144	10.129.2.11	129	digital	parked		2026-11-11 13:24	r375 peek: U#0 "你会做什么" + U#2 "你会根据spec写完整的RTL code吗" = capability-exploration meta Q&A. No actual task/attachment. synopsys:368/rtl:283/verilog:153 from agent self-intro examples not real work.
 1790133793674_jwwqf	e02141	10.129.2.10	82	eda_other	parked		2026-11-11 13:48	env-config (SWB python api setup), weak
-1793084065593_fg1kv	ghyang	10.129.2.12	33	eda_other	parked		2026-11-11 13:48	SPICE analysis Q&A, weak
+1793084065593_fg1kv	ghyang	10.129.2.12	33	eda_other	case	EDA-Eval-DesignFlow-PtempCondUsageAnalyze-001	2026-11-16 22:04	r646 ptemp cond-usage analysis-Q&A; A/B 9/9 anti-hardcode dims differ; 16 conds; §4.9 fakes a/b/m FAIL
 1793069063742_76i4q	wnyu	10.129.2.13	18	eda_other	parked		2026-11-11 13:48	doc-search Q&A, weak
 1793603696817_p16i1	shanliny	10.129.2.10	20	digital	parked		2026-11-11 13:48	Python script debug Q&A, weak
 1790038213566_y4c5b	rongjiez	10.129.2.14	19	eda_other	case	EDA-Eval-DesignFlow-JobmonitorFeatPatch-001	2026-11-11 14:21	REFRAME-PREPARED for r377: B档 offline-patch L1 (Qt Jobmonitor feature). base=jobmonitor.cpp446L/h51L/ui231L(728L total, small). A-faithful(U0需求未给实现). check=patch-apply+structural-grep≥8cond, 3fake-submit FAIL. Build next round.
