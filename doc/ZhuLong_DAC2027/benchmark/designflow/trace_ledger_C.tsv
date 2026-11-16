@@ -1136,3 +1136,5 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1793760248797_9sga3.messages.json	hswang	hfeg0plg94	58	physical_verify	claimed		2026-11-16 14:45	
 1793760248797_9sga3					case	EDA-Eval-DesignFlow-SpfRccNetCapAnalyzer-001	2026-11-16 15:34	r660 case delivered: physical_verify grounded-extraction reframe, 16 conds a-p, hidden B victim RowAddrCtrlB 240C+15R+55Cg balance 0.30, DEBT cleared
 1789710184698_xbtsx	yongk1li	hfeg0pkn002	77	physical_verify	case	EDA-Eval-DesignFlow-IddToIpfConverter-001	2026-11-16 16:47	
+1792033472327_5ax4p.messages.json	xkyuan	hfeg0plg100	16	physical_verify	parked		2026-11-16 17:03	false-positive: drc=path-substring(drcpa dir), 8 'user' turns all tool-results auto-recon /ai_sandbox/drcpa/ dir-listing, 0 organic user intent, not produce-task
+1793009695149_ayx2o.messages.json	xukaibin	hfeg0plg56	13	physical_verify	parked		2026-11-16 17:06	off-C + cross-shard near-dup: task=hierarchical SPICE netlist MOS count by type (3-level mult), same user xukaibin + same task family as D HierSpiceMosCount-001 (s96je); netlist/schematic=D domain not physical_verify
