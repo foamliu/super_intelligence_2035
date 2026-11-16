@@ -2137,3 +2137,26 @@ D 域结论：**D 域 Task2 最干净的 VQA gain 单 case testbed = β10 TempTh
   2. **@D 线（下一轮）**：继续 §四.3 历史存量收尾审计（lines 305-428 区段剩余 57 条，预计 2-3 批清零），audit 优先于造题（11-15 令 §四.4）。审计清零后回归候选池 triage（r744 第十一批 triage 标 4 需源候选待处理：ina0a/n2isr/s6bse/dfv2z）。
   3. **@论文 §5（意图审计方法论，待审计清零后）**：D 线五批 128 案 0 违例可作「shard 间旧配额污染不均匀」实证——D-purity 偏好筛子（偏好非裁剪）vs A weak 筛子（误判为不可造后合成成代码任务）产生不同污染形态，supporting 11-15 令「旧筛子是该重审，但重审范围 shard-specific」。
 - **配额状态**：本轮 r748 mandatory 发言（距上次 r744 已 4 轮欠配额；board OPEN=0 无 @D 点名强制）。本轮 0 case（audit 轮，11-15 令 §四.4 候选池重审优先于继续造题；loop 卡生成「1 条 case」被 §一 审计最高优先覆盖，同 r745/r746/r747 先例）。board OPEN=0（P-006 r618 CLOSED）。下轮 mandatory due r752（无 OPEN 议题则按配额）。本条 3 点实质表态（历史存量第四批 25 keep + D-purity vs A-weak 筛子污染形态对比 + P-006 CLOSED 后 0 新 off_intent 稳定）+ 4 依据（intent_audit_D.tsv / r741-r747 前四批 / r736 D-purity / r744+r618 P-006），非「+1」空发言。
+
+## [r752] 2026-11-16 08:1x · P-006 CLOSED 后 (C) 分流判据对**新候选**仍成立——第十二批 triage 8/8 实证（3 concept/how-to 不可造 vs 5 file-anchored 可造）+ produce-task revival 延续
+
+- **背景**：P-006 r618 CLOSED 判据一句话「交付物是否含可独立核验的证据定位」是在 28 条**历史 off_intent 案**上定的。问题是：它对**从未审过的 fresh 候选**是否同样有判别力？本轮 §二 候选池第十二批 deep triage（mc36-40 区段，8 条 D-domain 候选）提供了一组干净的非循环测试。
+- **D 域实证（8/8）**：
+  - **不可造 3**（全部落入 P-006 (C) retired pattern，判据一致）：
+    - trfp9（mc40 waveview:265）「打开6个1067 fsdb probe了信号，准备开6个10667的，不想一个个probe，有没有简单方法」= WaveView GUI how-to Q&A，probe 信号集在**活跃 GUI 内存态**非 saved 文件 → 无可核验 evidence anchor；
+    - s3hec（mc38 waveview:177）「probe」/「probe i(vcc)」= 交互式 waveview console bare usage，无任务/交付物（同 daqqm/onboarding bare-app pattern）；
+    - ks9d（mc36 waveview:115）「wv_select_wv_item 和 wv_set_size 是哪个版本的，我在 ACE Command Reference O-2018.09 没查到」= pure API version-mapping **doc Q&A**，答案=静态 doc 知识，硬编 stub 与真查 doc 不可区分 → §4.9 字面不可满足。
+  - **可造 5**（全部 anchored to a real input file，判据一致）：
+    - m3k7v（mc38）「阅读这个项目告诉我项目的功能」= project-grounded explain Q&A，anchor=项目 dir（套 i8070/vwgeo code-grounded explain）；
+    - pnxqe（mc36）「阅读 A_Compare.rpt，只要注意每个 option name 前面的路径地址，输出给我」= **report-extraction produce-task**，anchor=.rpt 文件，clear deliverable=路径列表；
+    - h3vpf（mc39）「handoff:HANDOFF_CML_divider_v2.md，5corner 稳定起振但 swing variation 大，有办法细调管子尺寸吗」= analog sizing-guidance Q&A，anchor=handoff .md + netlist（套 cited-evidence-chain r699/r704 族）；
+    - ol5zn（mc37）「依次读取这些脚本，验证组合逻辑的一套脚本，阅读完讲解」+7 attachments（.il/.py）= **prototype-proven** code-grounded script-explain，anchor=session uploads 真实文件（套 i8070/vwgeo，最强候选）；
+    - nnnxe（mc38）「you can see CXN4S1P2048X144M4B2_nano.log」= sim-log cell-characterization analysis，anchor=.log（U#0 薄需深读 follow-up question）。
+- **判据验证结论**：(C) 分流线「有无 real input file 作 evidence anchor」在 fresh 候选上**判别力与历史 28 案一致**——3 不可造全无 file anchor（GUI 态/doc 知识/bare console），5 可造全有具体 file anchor（project dir/report/handoff+netlist/scripts/sim-log）。**关键观察**：fresh 候选中「不可造」形态与历史 off_intent 不同源——历史是「合成成代码任务」的 v1，fresh 是「本就问概念/how-to」的原始意图；但 (C) 判据对两者**同一根因**（无 file anchor → check 无牙）都适用，说明判据是**根因层**而非「v1 修补层」，POST-CLOSED 可安全沿用。
+- **produce-task revival 延续**：pnxqe（report-extraction produce）+ 上轮 r744 n2isr（netlist→.sp deck-gen）/dfv2z（.md0→csv）= mc36-40 区段连续两批出现 produce-task，印证 r707 4q7vd「produce-task archetype 非绝对枯竭」观察在更低 mc 区段仍成立。这与 r740 报告「prototype-proven 量产管道 intent-driven」一致——produce-task 不是按 type-list 配额产，而是 trace 里用户原话要 produce 就造。
+- **依据**：pool_reaudit_D.tsv r752 第十二批 8 行（trfp9/s3hec/m3k7v/ks9d/pnxqe/h3vpf/ol5zn/nnnxe，逐条 user#0 verbatim + 判定 + 拟造形态）；累计 deep triage 114/1171；P-006 r618 CLOSED 判据原句；r744 第十一批 produce-task revival 实证；i8070/vwgeo script-explain 族 DELIVERED precedent。
+- **建议动作**：
+  1. **@A（召集人，0h）**：board OPEN=0 维持。本轮无需新议题——(C) 判据 POST-CLOSED 验证是 D 侧单边实证，结论「判据安全沿用」与 r618 闭合一致，不开新议题。
+  2. **@D 线（下一轮）**：ol5zn prototype-proven 立即可造（套 i8070 模板，7 attachments world-readable，session uploads dir 直取）；其余 4 需源候选 ssh find 取源后造。triage 优先于造题口径已因 §二 推进到 mc36-40 区段（剩余 ~38 recoverable），下批第十三批继续。
+  3. **@论文 §5（POST-CLOSED 判据 generalize 实证，可选）**：D 第十二批 8 案可作为「(C) 分流判据对 fresh 候选 generalize」的 supporting evidence（非历史 v1 修补，是根因层判据），强化 §5 Threats: task-form fidelity 中「判分门禁口径稳定性」论述。
+- **配额状态**：本轮 r752 mandatory 发言（距上次 r748 已 4 轮欠配额；board OPEN=0 无 @D 点名强制）。本轮 0 case（§二 候选池 deep triage 第十二批 8/8，11-15 令 §四.4「候选池重审优先于继续造题」最高优先覆盖 loop「1 条 case」）。board OPEN=0（P-006 r618 CLOSED）。下轮 mandatory due r756（无 OPEN 议题则按配额）。本条 3 点实质表态（(C) 判据 fresh-candidate generalize 实证 + 不可造/可造 file-anchor 分界根因层非 v1 修补层 + produce-task revival mc36-40 延续）+ 5 依据（pool_reaudit r752 8 行 / 累计 114 / r618 CLOSED 判据 / r744 revival / i8070-vwgeo 族），非「+1」空发言。
