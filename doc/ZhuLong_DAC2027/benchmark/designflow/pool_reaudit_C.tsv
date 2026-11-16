@@ -653,7 +653,7 @@ o1yhw	steveny	hfeg0pnd001	78	layout_virtuoso	parked: setup/run-existing symlink+
 5cigt	yuankong	hfhds211	76	physical_verify	parked: explain Q&A analyze script how to use	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 u29lu	cwei	hfeg0plg93	76	layout_aether	parked: setup/run-existing load call skill	可造	env-config/skill:check验配置或产物正确性+hidden B
 ezpne	yinxingj	hfeg0plg13	76	layout_aether	parked: Q&A how to make a tool	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-wy27j	jzeng	hfeg0plg85	77	layout_aether	parked: modify-existing IMCleAutoVia via gen optimize	可造	脚本/审计:check验修改或审计结果+hidden B
+wy27j	jzeng	hfeg0plg85	77	layout_aether	parked: modify-existing IMCleAutoVia via gen optimize	不可造	r651 复核：已 case r568 = AutoViaV4Dir3DY-001（2026-11-14 20:36 落库），本行系 stale reaudit 条目；且 trace U#3 "测试之后没有办法生成V4" = gold 未达成，assistant 未恢复
 x67j4	t0002609	hfeg0plg76	77	physical_verify	parked: config/ops/Q&A policy writableRoots	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 djvnv	e0014566	hfeg0plg58	79	layout_virtuoso	parked: run-existing/follow-instructions prompt_autovia.md	可造	run-existing:check验运行结果+hidden B
 0pfvw	hybeaml	hfeg0plg88	76	layout_aether	parked: thin-produce hotkey layer-switch below bar	可造	分析/Q&A或脚本(需deepread)
