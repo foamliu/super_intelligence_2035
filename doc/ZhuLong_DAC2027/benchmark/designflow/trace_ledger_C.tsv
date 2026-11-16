@@ -1195,3 +1195,8 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1792497033564_goryy	ellawu	10.129.2.10	136	pg_layout	parked		2026-11-17 03:05	r686 peek: PG dummy fill SVRF rule deck line-by-line explanation Q&A (43 user turns, 0 edits, 0 bash), G4C_AA_PG_dummy_fill_for_Logic.rule, explain-Q&A teeth-fail (line explanation no objective check; reframe to structured deck-parse possible but over-constrains user intent)
 1793242571158_hfv5q	miccao	10.129.32.47	172	physical_verify	parked		2026-11-17 03:05	r686 peek: calibre.rule debug-Q&A (EXT6 overlap / Superfluous input / rep format), 11 user turns, 17 edits to fix rule, debug-Q&A teeth-fail (correctness needs calibre run, mock reframe hard)
 1792976136186_31iga	gokuguo	10.129.35.74	115	physical_verify	parked		2026-11-17 03:05	r686 peek: LVS deck two-file structured diff (Rev06_Test07 vs Rev13_S10), 5 user turns, produce-task viable-intent (categorized diff table), deferred - wimgg rule-authoring优先 (stronger produce-task); iga31 reframe=lvs-deck-structured-diff可后续轮重评
+1793017242561_zdwid	ziyuny	10.129.8.236	141	physical_verify	case	EDA-Eval-DesignFlow-SvrfPvrsConvert-001	2026-11-17 03:43	
+1794529802472_qcrl8					parked		2026-11-17 03:32	run-existing TASK_EXTRA_SPF_M4B4.md, 1 thin user turn, intent in external md, teeth-fail
+1790133815976_z9yjw					parked		2026-11-17 03:32	BCenterCA RsCalc env-config/license/permission debug-Q&A, run-existing handoff prompt, teeth-fail
+1789520357933_3duob					parked		2026-11-17 03:32	DFM SPEC FILL via Q&A/explain, 47 msgs 20 tool_use search_codebase-heavy, explain-Q&A teeth-fail
+1787742497412_aneeo					parked		2026-11-17 03:32	run-existing prompt_flow.md + 5 reports, intent in external md, 680 run_commands run-existing, teeth-fail
