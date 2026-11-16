@@ -2,22 +2,20 @@
 
 WAITING: 1
 
-> 🆕 **R2576 · 2026-11-16 16:3x — 监控轮·自检全绿 + cc rerun 73/82(17P/15×502infra/30×ability/11NA·+2 PASS·8 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + round2 manifest修正(17→26题) + reports porcelain=0✅**
-> - **自检**: load26.22/224 ✅(pretrain dominant·无harness runaway)·mem 827GB/2015GB avail 1037GB ✅·0 harness proc >8000%CPU ✅·reports/ porcelain=0✅
-> - **git**: Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~36.7h·n=1·overlay IN USE✅)·**73/82**(73 result.json: **17P**/45F(15×502+30×ability)/11NA·守恒73✅)·**1 running**(sqlite-with-gcov·PID919146·~9min)+**8 remaining**(queued)·ETA~Nov16 21:00–23:00
-> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 73 per-task result.json·cc修复(overlay network_mode:host·R2463)confirmed IN USE·17 PASS=真能力·vs旧0/89=100%infra
-> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 17P/73done(82total)·vs旧0/89
-> - **PASS 17**(+2 since R2575: sparql-university,sqlite-db-truncate): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate
-> - **NA 11**(all 3600s timeout·reward=None): code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli,reshard-c4-data
-> - **FAIL 45**=15×502-infra(circuit-fibsqrt,cobol-modernization,crack-7z-hash,dna-insert,extract-elf,extract-moves-from-video,filter-js-from-html,git-multibranch,gpt2-codegolf,path-tracing,portfolio-optimization,regex-chess,rstan-to-pystan,sam-cell-seg,schemelike-metacircular-eval)+30×ability·502检测修正=检查agent_result.metadata.stdout(非exception_info)
-> - **round2 manifest修正✅**: 15×502-infra+11×3600s-timeout=**26题**(旧版17题少算5×502+4×timeout·fix-ocaml-gc误归502实为timeout·configure-git-webserver误归timeout实为ability)·`tb21_cc_rerun_round2_infra_timeout_20261116.txt`已更新
-> - **adaptive**: work 4/4·quiet=483m·0 cumulative 429✅(today=Monday work hours)
-> - **research日报2026-11-16**: harness建议=记忆系统三联对照(无记忆/摘要式/摘要+原文+意图组合)·research级建议·本轮不actionable(cc rerun在跑)·已读
-> - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun round2 26题(502+timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> 🆕 **R2577 · 2026-11-16 17:1x — 监控轮·自检全绿 + cc rerun 74/82(17P/15×502infra/30×ability/12NA·+1 timeout·7 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
+> - **自检**: load26.81/224 ✅(pretrain dominant·无harness runaway)·mem 827GB/2015GB avail 1038GB ✅·0 harness proc >8000%CPU ✅·reports/ porcelain=0✅
+> - **git**: fetch+merge=Already up to date·harness line clean ✅
+> - **cc rerun**: PID 1510521 alive(~37h·n=1·overlay IN USE✅)·**74/82**(74 result.json: **17P**/45F(15×502+30×ability)/12NA·守恒74✅)·**1 running**(sqlite-with-gcov·PID919146·~50min)+**7 remaining**(queued)·ETA~Nov16 21:00–23:00
+> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 74 per-task result.json·cc修复(overlay network_mode:host·R2463)confirmed IN USE·17 PASS=真能力·vs旧0/89=100%infra
+> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 17P/74done(82total)·vs旧0/89
+> - **PASS 17**(unchanged since R2576): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate
+> - **NA 12**(all 3600s timeout·reward=None·+1 since R2576): code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli,reshard-c4-data,+1new(task_name=?)
+> - **FAIL 45**=15×502-infra(circuit-fibsqrt,cobol-modernization,crack-7z-hash,dna-insert,extract-elf,extract-moves-from-video,filter-js-from-html,git-multibranch,gpt2-codegolf,path-tracing,portfolio-optimization,regex-chess,rstan-to-pystan,sam-cell-seg,schemelike-metacircular-eval)+30×ability
+> - **adaptive**: work 4/4·quiet=525m·0 cumulative 429✅(today=Monday work hours)
+> - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun round2 26题(15×502+11×timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
 > - **📦 体积**: TASK≈25.0KB / MEMORY≈27.0KB（归档~4KB·✅≤32KB）
 >
-> 📦 R2575 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 72/82(15P/45F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
+> 📦 R2576 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 73/82(17P/15×502infra/30×ability/11NA·+2 PASS·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+round2 manifest修正(17→26题)+reports porcelain=0✅。需要时再读。
 > 📦 R2574 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 70/82(15P/44F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2573 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 69/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2572 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
@@ -61,9 +59,9 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2576 cc rerun 73/82(17P/15×502infra/30×ability/11NA·0ConnRefused✅HARD VERIFIED·+2 PASS·8 remaining) + adaptive work模式(cap=4)·0 429✅ + round2 manifest修正(17→26题)·等cc 82完成
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2575(cc rerun 6→73/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复+round2 manifest修正)
-当前动作:     R2576: 监控轮·cc rerun PID1510521 alive(36.7h·n=1)·73/82(17P/45F/11NA)·0ConnRefused✅HARD VERIFIED·当前task=sqlite-with-gcov(PID919146)·8 remaining·adaptive work模式cap=4·0 429✅·load26.22/224✅·mem827GB✅·0runaway✅·reports/ porcelain=0✅·W:1
+PHASE:        R2577 cc rerun 74/82(17P/15×502infra/30×ability/12NA·0ConnRefused✅HARD VERIFIED·+1 timeout·7 remaining) + adaptive work模式(cap=4)·0 429✅·等cc 82完成
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2576(cc rerun 6→74/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复+round2 manifest修正)
+当前动作:     R2577: 监控轮·cc rerun PID1510521 alive(37h·n=1)·74/82(17P/45F/12NA)·0ConnRefused✅HARD VERIFIED·当前task=sqlite-with-gcov(PID919146·~50min)·7 remaining·adaptive work模式cap=4·0 429✅·load26.81/224✅·mem827GB✅·0runaway✅·reports/ porcelain=0✅·W:1
 下一步:       ①cc 82完成(~Nov16 21:00)→rerun round2 26题(15×502+11×timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
  体积: TASK≈25.0KB / MEMORY≈27.0KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
@@ -77,7 +75,7 @@ ERROR_COUNT:  0
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
 
-> [16:3x] R2576 **监控轮·cc rerun 73/82(17P/15×502infra/30×ability/11NA·+2 PASS·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+round2 manifest修正(17→26题)+reports porcelain=0✅**: 自检(load26.22/224✅=pretrain dominant·mem827GB avail1037GB✅·harness CPU max<1%✅·0 runaway✅·reports porcelain=0✅)·git pull(up to date)·**cc rerun PID1510521** alive(~36.7h·n=1·overlay IN USE✅)·**73/82**(73 result.json·proper analysis via agent_result.metadata.stdout·17P/45F(15×502+30×ability)/11NA·守恒73✅)·**0 ConnRefused HARD VERIFIED**(grep=0 across 73)·**+2 PASS**(sparql-university+sqlite-db-truncate·since R2575)·**1 running**(sqlite-with-gcov PID919146)+**8 remaining**(queued·ETA~Nov16 21:00–23:00)·**502检测修正**: 旧版grep全文件→误报(502出现在agent stdout=metadata.stdout非exception_info)→proper analysis检查agent_result.metadata.stdout→15×真502infra·**round2 manifest修正✅**: 15×502+11×timeout=26题(旧版17题少算5×502+4×timeout·fix-ocaml-gc误归502实为timeout·configure-git-webserver误归timeout实为ability)·**adaptive**: work 4/4·quiet=483m·累计429=0✅·**research日报2026-11-16**: harness建议=记忆系统三联对照(research级·本轮不actionable)·不打断cc rerun·W:1
+> [17:1x] R2577 **监控轮·cc rerun 74/82(17P/15×502infra/30×ability/12NA·+1 timeout·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅**: 自检(load26.81/224✅=pretrain dominant·mem827GB avail1038GB✅·harness CPU max<1%✅·0 runaway✅·reports porcelain=0✅)·git fetch+merge(up to date·ZhuLong unstaged D files=别线不碰)·**cc rerun PID1510521** alive(~37h·n=1·overlay IN USE✅)·**74/82**(74 result.json: 17P/45F(15×502+30×ability)/12NA·守恒74✅)·**0 ConnRefused HARD VERIFIED**(grep=0 across 74)·**+1 timeout**(since R2576: 11→12NA·新完成题=3600s timeout)·**1 running**(sqlite-with-gcov PID919146·~50min)+**7 remaining**(queued·ETA~Nov16 21:00–23:00)·**adaptive**: work 4/4·quiet=525m·累计429=0✅·不打断cc rerun·W:1
 
 > 📦 R2575 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 72/82(15P/45F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 
