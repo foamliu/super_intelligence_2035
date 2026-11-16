@@ -1,20 +1,33 @@
 #!/usr/bin/env python3
 """
-rca_recover_extract.py — RCA 抽取丢码回补工具（2026-11-16 取证更正）
+rca_recover_extract.py — RCA 抽取丢码回补工具（2026-11-16 源码取证终版）
 
-根因（已取证，推翻早先「ws vs no-ws」假说）：
-  eda_fastmcp/pyAether-eval/script/format_cline_cli_output.py 的 Step5 用
-  **共享相对临时目录** `./pyAether-eval/temp/pyAether_code`（L95/L156-157），
-  且 process_cline_gene_files 开头 `shutil.rmtree` 清空它。当 36.15 上多个 eval
-  并发跑 Step5 时，后启动者的 rmtree 会踩空前者已拷进去的 .py → generations
-  jsonl 只剩 0~1 行。extractor 读的目标路径其实是对的（`code/<task>/pyAether_code`，
-  L165，不是 ws/ 子目录；实测仅 1 个 task 有 ws/）。
-  实测：run2 batch code/ 有 44 个真实 .py（全 mtime ≤ 14:17:31），
-        但 code_generation_2026_1115_110506.jsonl 只 1 行；run3=37→1 行；run4=43→0 字节。
+根因（经 format_cline_cli_output.py 源码取证，05:xx 终版；更正早先 02:xx 误判）：
+  eda_fastmcp/pyAether-eval/script/format_cline_cli_output.py 的 process_cline_gene_files：
+    **主因 = ws/no-ws 路径失配**：L166 `folder_path = os.path.join(cli_output,
+    folder_name, "ws", "pyAether_code")` 只读 `code/<task>/ws/pyAether_code`（带 ws）；
+    L168-170 `if not os.path.exists(folder_path): skip_tasks.append(...); continue`
+    无 no-ws 回退。模型把 .py 写到 `code/<task>/pyAether_code`（无 ws）→ 整题跳过
+    → generations jsonl 只剩写到 ws/ 的那几条。
+    **次因 = 共享 temp race**：L156-157 共享相对 temp `./pyAether-eval/temp/pyAether_code`
+    + `shutil.rmtree` 清空；36.15 并发 eval 互踩（真实但非 run2/3/4 主因，因其 ws
+    条目本就只有 1/1/0）。
+  源码取证（36.15 经 3333 隧道 sed 实读 L155-170）：
+    L156 pyAether_code = "./pyAether-eval/temp/pyAether_code"   # 共享相对 temp
+    L157 shutil.rmtree(pyAether_code, ignore_errors=True) ...
+    L166 folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")  # 带 ws
+    L168 if not os.path.exists(folder_path): skip_tasks.append(folder_name); continue  # 无回退
+  实测 run2 batch(2026_1115_110506)：ws/ 目录 1 个、no-ws pyAether_code 目录 53 个、
+    真实 .py 52 个 → 抽取器只取到 1 → jsonl 真码 1 行(task 003)；
+    run3(144001)=1 ws/39 no-ws→1 行(task 107)；run4(183438)=0 ws/45 no-ws→0 行。
+    run1=36 ws 段全取到→18.99%。
+  （02:xx 版曾误判「extractor 读 no-ws pyAether_code、主因=共享 temp race」——
+    该声称与源码 L166 不符，已更正。共享 temp race 降为次因。）
 
-本工具：直接从 `code/<task>/pyAether_code/`（及 `ws/pyAether_code/` 兜底）重新抽取
-        .py 写回 generations jsonl，**完全绕过共享 temp**，再由 run_eval 重跑即可
-        恢复真实 execution_results。并发安全（读 code/ 直写独立文件，不经共享 temp）。
+本工具：从 `code/<task>/ws/pyAether_code/`（原管线目标）+ `code/<task>/pyAether_code/`
+        （无 ws，被抽取器跳过的）两路重新抽取 .py 写回 generations jsonl，
+        **同时绕过抽取器的 ws-only 限制与共享 temp**，再由 run_eval 重跑即可恢复
+        真实 execution_results。并发安全（读 code/ 直写独立文件，不经共享 temp）。
   （不改 eda_fastmcp 代码；作为 post-pipeline 回补 wrapper，遵守 08:1x 纪律。）
 
 用法（在 36.15 上，batch 跑完 run_cline_script.sh 之后）：
