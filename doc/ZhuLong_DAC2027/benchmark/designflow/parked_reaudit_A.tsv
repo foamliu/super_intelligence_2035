@@ -71,7 +71,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1791942913378_xm22u	jason17w	hfeg0pnd002	verification	redundant dup of 6i6lk/VerilogrunPreserve-001 (same conversation resumed, verilo	DUP	no		n/a
 1791944071628_pwhqb	jason17w	hfeg0pnd002	verification	redundant dup of 6i6lk/VerilogrunPreserve-001 (same conversation resumed, verilo	DUP	no		n/a
 1794227785944_i555n	e0046913	hfeg0pkn003	verification	FM log analysis Q&A (解读fm log情况), 23msgs/121KB, 1 user-turn diagnostic not produ	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1793945103405_x8v81	dsgao	hfhds201	eda_other	analysis Q&A: 两个netlist有区别吗为什么后仿真delay有差异, not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1793945103405_x8v81	dsgao	hfhds201	eda_other	analysis Q&A: 两个netlist有区别吗为什么后仿真delay有差异, not produce-task	REVIVABLE_QA	done	CASE-NetlistDiffDelayAnalyze-001 (r637 synthesized)	EXISTS
 1794221830421_oclzn	dandans	hfhds201	eda_other	MatrixRun directory listing comparison, operational not produce-task	OTHER	maybe		n/a
 1794193758706_gwm47	tongfanl	hfhds201	eda_other	MatrixRun dir listing comparison dup of oclzn, operational not produce-task	DUP	no		n/a
 1794129973388_q54e4	tongfanl	hfhds201	eda_other	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
