@@ -1110,6 +1110,16 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1790578902694_vvgdy	e02141	hfeg0pkn005	25	physical_verify	parked		2026-11-16 08:14	r643: env-config zl-cli-auth off-C
 1794377368528_zaaea	wenhanz	hfeg0plg69	18	physical_verify	parked		2026-11-16 08:14	r643: conceptual how-to Q&A 如何从DRC报告发现layout问题 thin no artifact 11msgs
 1789981638078_5qzt4	t0002987	hfhds201	17	layout_aether	parked		2026-11-16 08:14	r643: meta 分析你自己的agent结构 off-C self-analysis
-1794473787245_radb5	yuxin1z	hfeg0pkn003	14	physical_verify	parked		2026-11-16 08:14	r643: ACCEPT-alt-future: code-explain Q&A lpePatternQA.pl reframeable extraction-tool needs deepread 84msgs
-1793070098758_1jmfa	cliu	hfeg0pkn002	18	physical_verify	parked		2026-11-16 08:14	r643: ACCEPT-alt-future: modify-existing vsim_report script add-counts+ion-exclude domain-borderline sim/DRC needs deepread 19msgs
+1794473787245_radb5	yuxin1z	hfeg0pkn003	14	physical_verify	parked		2026-11-16 08:41	r644 deepread REJECT: lpePatternQA.pl=LPE/PEX via-resistance QA from SPF+EDR=characterization(shard B) NOT physical_verify/layout/pg; code-explain reframe would poach B
+1793070098758_1jmfa	cliu	hfeg0pkn002	18	physical_verify	parked		2026-11-16 08:41	r644 deepread REJECT: vsim_report_new=sim/regression report script(VCS) off-C; intent ambiguous(ion unclear) agent asked clarification user never answered NO gold
 1793340163540_cw0qt	e0048306	hfeg0pkn001	14	layout_virtuoso	parked		2026-11-16 08:14	r643: thin hi single-turn 16msgs
+1788423849799_5ochj					parked		2026-11-16 08:41	r644 REJECT e0039102 open firefox URL DRCOA regression web UI=env/ops launcher off-C drc keyword incidental
+1789892107914_4j5mz					parked		2026-11-16 08:41	r644 REJECT rongtaoy skill-list meta Q&A off-C .def keyword incidental
+1791166969702_w8mtk					parked		2026-11-16 08:41	r644 REJECT yohannw zl-launch-fail+bjobs/bpeek LSF env ops debug off-C
+1791447163446_5ciq7					parked		2026-11-16 08:41	r644 REJECT johnl auto-approve/meta config Q&A off-C
+1791459365735_uj5kg					parked		2026-11-16 08:41	r644 REJECT johnl modify run_signal_measure_trtf_duty.sh+load primesim=sim(B) drc=drcoa path incidental
+1791785236340_doto3					parked		2026-11-16 08:41	r644 REJECT johnl finesim sim fsdb top-signal-no-toggle sim debug(B/D)
+1791940740961_2r2nt					parked		2026-11-16 08:41	r644 REJECT e0045291 write wait-test1.sh hello-world + summarize agent-policy-engine/index.js = env/meta off-C
+1792042776292_jzove					parked		2026-11-16 08:41	r644 REJECT t0002441 Finesim DC-non-convergence sim Q&A(B)
+1792042973916_8h5q5					parked		2026-11-16 08:41	r644 REJECT t0002441 Finesim DC-non-convergence sim Q&A(B) same as jzove/ry9f4
+1792048349487_ry9f4					parked		2026-11-16 08:41	r644 REJECT t0002441 Finesim DC-non-convergence sim Q&A(B) same as jzove/8h5q5
