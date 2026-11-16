@@ -1757,7 +1757,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1787646969865_5z1pb	e0025730	hfeg0plg49	24	waveform	parked		2026-11-14 09:15	skill-command /sense-margin-test
 1794479075270_q3nek	joeyl	hfeg0plg74	28	waveform	parked		2026-11-14 09:15	CML divider swing optimization Q&A (advice not produce)
 1793166175139_ec6bz	e03179	hfeg0plg15	23	waveform	parked		2026-11-14 09:15	unpeekable NO_USER_MSG
-1794365610027_metn5	tongfanl	hfhds206	22	waveform	parked		2026-11-14 09:15	WTM write_check.v code review Q&A
+1794365610027_metn5	tongfanl	hfhds206	22	waveform	case	EDA-Eval-DesignFlow-WtmWriteCheckReviewQA-001	2026-11-17 00:22	r786 revival (11-15令): 旧判'WTM write_check.v code review Q&A' parked 11-14 under 'not produce' rule→11-15令code-review Q&A合法；ssh peek 10.129.8.230:/home/tongfanl/.cline/data/sessions/1794365610027_metn5/✓；user#0 verbatim「/home/tongfanl/DDR6/DSCQA/analogsim/WTM 帮我看下WTM006_write_check.v写的有没有问题」+ user#13「检查下我新增的基本读写有没有问题？」; 套 #254 v2 code-grounded review (proven 86g62 pattern); A档trace-faithful
 1789882357975_vov8r	xrxiong	hfeg0plg74	23	waveform	parked		2026-11-14 09:15	sim env file relationship analysis Q&A
 1793166827009_5xfs0	e0039602	hfeg0plg95	23	waveform	parked		2026-11-14 09:15	directory content explanation Q&A
 1794394443468_y229p	irene1li	hfeg0pkn004	71	waveform	case	EDA-Eval-DesignFlow-DqTrtfMeasure-001	2026-11-14 15:37	
