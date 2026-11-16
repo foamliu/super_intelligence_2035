@@ -8,7 +8,9 @@
 >
 > **唯一允许的起跑方式（只此一条，其他一律禁止）**
 > ```bash
-> cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+> RUN_DIR=/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+> [ -d "$RUN_DIR" ] || RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+> cd "$RUN_DIR" || exit 1
 > bash -n baize_posttrain_zhulong_baseline_5run_chain.sh || exit 1
 > grep -q rca_recover_extract baize_posttrain_zhulong_baseline_5run_chain.sh || exit 1
 > setsid env NUM_NEW_RUNS=4 R2_CHAIN_PID= bash baize_posttrain_zhulong_baseline_5run_chain.sh \
