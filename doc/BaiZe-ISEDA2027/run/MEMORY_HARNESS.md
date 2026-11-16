@@ -2,20 +2,18 @@
 
 WAITING: 1
 
-> 🆕 **R2571 · 2026-11-16 13:0x — 监控轮·自检全绿 + cc rerun 68/82(unchanged vs R2570·sam-cell-seg running ~35min hard CPU ML task·14 remaining·0ConnRefused✅HARD VERIFIED) + NA分类完成(11 real NA=全3600s timeout·0 502/0 OOM/0 maxturns) + adaptive work4·0 429✅ + reports porcelain=0✅**
-> - **自检**: load26.74/224 ✅(pretrain dominant·无harness runaway)·mem 828GB used/1038GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
-> - **git**: `git pull --rebase --autostash` = Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~33.2h·n=1·jobs-dir=0348·overlay-network-host.yml IN USE✅)·**68/82 per-task result.json**(authoritative recount: **15P/42F/11NA·守恒68=68✅**·1 aggregate job-level excluded)·**14 remaining**·当前task=sam-cell-seg(PID459461 etimes~35min·MobileSAM CPU推理=hard task)·ETA~Nov16 21:00–Nov17 00:00(剩余含qemu/compile-compcert等重任务)
-> - **0 ConnRefused HARD VERIFIED ✅**: python scan=0 across 68 per-task result.json(exception_info+verifier_result全量)·cc修复(overlay --network host·fix=R2463)confirmed·15题PASS=真能力·vs旧0/89=100%infra
-> - **PASS 15**(unchanged vs R2570): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log
-> - **NA分类(11 real)**: 全3600s timeout·0×502·0×OOM·0×maxturns·0×ConnRefused → code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc(verifier timeout 3600s),llm-inference-batching-scheduler,make-doom-for-mips(agent timeout 3600s),mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli(verifier timeout 900s),reshard-c4-data → infra/timeout rerun候选(同3600s口径不改判据)
-> - **429归因**: exception_info全无429✅·reward=0=能力失败·非额度·✅红线守住
-> - **adaptive**: status=work current=4/4 cap=4 quiet=271m 累计429=0 ✅(11-15验收全通过已记R2569·本轮仅status确认)
+> 🆕 **R2572 · 2026-11-16 13:40 — 监控轮·自检全绿 + cc rerun 68/82(unchanged vs R2571·sam-cell-seg verifier ~20min·14 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
+> - **自检**: load27.92/224 ✅(pretrain 146% dominant·无harness runaway)·mem 828GB/1036GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> - **git**: Already up to date·harness line clean ✅
+> - **cc rerun**: PID 1510521 alive(~34h·n=1·overlay IN USE✅)·**68/82**(15P/42F/11NA·守恒68✅·recount via verifier_result.rewards.reward=1.0)·**14 remaining**·sam-cell-seg verifier running(docker compose exec test.sh ~20min·MobileSAM CPU)·ETA~Nov16 21:00–Nov17 00:00
+> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 68 per-task result.json·cc修复(overlay --network host·R2463)confirmed·15 PASS=真能力·vs旧0/89=100%infra
+> - **PASS 15**(unchanged): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log
+> - **adaptive**: work 4/4·quiet=311m·0 429✅(11-15验收全通过R2569)
 > - **7way报告**: cc仍0/89待merge(82完成→rerun 11 timeout NA(同口径)→merge→REGEN·cc行换真实数字+timeout单列infra)
-> - **research日报2026-11-16**: 已在R2567阅·harness建议=①记忆双落盘②静默错误率列③工具调用判分·均future work·无新增actionable
 > - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun 11 timeout NA(同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈30.5KB（✅≤32KB）
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈31.0KB（✅≤32KB）
 >
+> 📦 R2571 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+NA分类完成(11 real=全3600s timeout)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2570 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+gateway 403✅+reports porcelain=0✅。需要时再读。
 > 📦 R2569 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(14P·0ConnRefused✅HARD VERIFIED)+adaptive验收全通过(--now 4时刻+--dry-run·修自测state污染)+gateway functional+reports porcelain=0✅。需要时再读。
 > 📦 R2568 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 66/82(15P/41F/10NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
@@ -25,18 +23,9 @@ WAITING: 1
 > 📦 R2564 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 59/82(14P/35F/10NA·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2563 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 56/82(13P/34F/9NA·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+reports porcelain=0✅。需要时再读。
 >
-> 📦 R2562 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 56/82(13P/34F/9NA·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2561 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 54/82(12P/31F/11NA·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
-> 📦 R2560 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 53/82(0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
-> 📦 R2559 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 50/82(13P·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
-> 📦 R2558 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 49/82(12P·0ConnRefused✅)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
-> 📦 R2557 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 49/82(12P·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
-> 📦 R2556 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 44/82(9P·0ConnRefused✅)+adaptive off10/10·0 429·gateway 200✅。需要时再读。
+> 📦 R2562-R2556 流水已归档 → daily-memories-harness/2026-11-16.md。结论：7轮监控·cc 44→56/82(9→13P·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
 >
-> 📦 R2551 流水已归档 → daily-memories-harness/2026-11-15.md。结论：监控轮·cc 40/82(7P·0ConnRefused)+pi COMPLETE 45/46(8P)+adaptive off10/10·0 429·7way REGEN(pi35/89)。注意:R2551的NA归因已被R2552修正。需要时再读。
-> 📦 R2550 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+pi rerun merge→REGEN 7way(pi27→35/89)+adaptive state修复(测试污染→reset)+cc 37/82(7P)+pi 45/46(8P)+adaptive off10/10·0 429✅。需要时再读。
-
-> 📦 R2548 流水已归档 → daily-memories-harness/2026-11-15.md。结论：自检全绿+cc 35/82(0ConnRefused✅)+pi 38+deepseek 25+opencode 41results+adaptive off10/10·0 429✅。需要时再读。
+> 📦 R2551-R2548 流水已归档 → daily-memories-harness/2026-11-15.md。结论：4轮监控·cc 35→40/82(7P·0ConnRefused✅)+pi COMPLETE 45/46(8P)+opencode 41results(10P)+adaptive off10/10·0 429✅+7way REGEN(pi35/89)·adaptive state修复(测试污染→reset)。需要时再读。
 
 > 📦 R2545-R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 29→33/82渐进(4→5P·0ConnRefused✅)+opencode 35→41results(10P)+pi 11→29/46(1→5P)+deepseek 0→25/48(0P)+adaptive 8→10实跑验证✅。需要时再读。
 
