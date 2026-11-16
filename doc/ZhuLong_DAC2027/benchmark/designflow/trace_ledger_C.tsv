@@ -1123,3 +1123,7 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1792042776292_jzove					parked		2026-11-16 08:41	r644 REJECT t0002441 Finesim DC-non-convergence sim Q&A(B)
 1792042973916_8h5q5					parked		2026-11-16 08:41	r644 REJECT t0002441 Finesim DC-non-convergence sim Q&A(B) same as jzove/ry9f4
 1792048349487_ry9f4					parked		2026-11-16 08:41	r644 REJECT t0002441 Finesim DC-non-convergence sim Q&A(B) same as jzove/8h5q5
+1793608841437_53e2m	victorq	hfeg0pkn002	422	physical_verify	parked		2026-11-16 09:54	r647 REJECT victorq sim waveform debug (finesim fsdb BLSG/EQSG pulse BLa/b vad2) = D-domain spice_sim, aether keyword incidental path
+1794296631536_zyqoe	gabrielh	hfeg0pjn200	413	physical_verify	parked		2026-11-16 09:54	r647 REJECT gabrielh Qt/C++ pdkqa GUI code-reading + PyQt5 reimplementation = software dev off-C, drc/calibre/lvs keyword incidental (GUI is DRC-settings app but task=GUI code not DRC)
+1794143556321_ejp6w	yuchens	hfeg0pkn002	347	physical_verify	parked		2026-11-16 09:54	r647 REJECT yuchens netlist reading+compare two CBCC netlists = D-domain schematic_netlist, aether keyword incidental (AEHTER-SE netlist header)
+1794450066854_jk0on	jackjia	hfeg0pkn002	384	physical_verify	parked		2026-11-16 09:54	r647 REJECT jackjia schematic hierarchy CMD decode logic trace (WOWTOP/DDR5TOP/Channel/BCenter/Controller CA<13:0>) = D-domain verification/schematic-logic, aether/lvs keyword incidental
