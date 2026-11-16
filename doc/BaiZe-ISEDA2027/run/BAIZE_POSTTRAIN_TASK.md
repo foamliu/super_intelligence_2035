@@ -1,5 +1,35 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+> 🔴 **用户令 · 2026-11-16 18:3x（恢复「干净 5-run」· 已授权 · 最高优先）· 未完成**
+>
+> **用户原话**：「post-train 恢复「干净 5-run」」——即 23:0x item5「8 题验证通过后再决定是否恢复 5-run」的**恢复授权已下**。
+>
+> **前置（运维已核，本线不必重查，只需 `bash -n` 复验一次）**：RCA 六项已交付（`reports/report_posttrain_collapse_rca_zh.html`，主因=抽取器 ws/no-ws 路径失配，非模型 collapse）；回补干净版已落盘 **run1=18.99%(ws-only 锚点) / run2=4.43%(43 行) / run3=2.53%(28 行) / run4=3.80%(35 行)**；**run5 缺失**；修好的链脚本 `run/baize_posttrain_zhulong_baseline_5run_chain.sh` 已接入 `rca_recover_extract.py` 回补 + `run_eval.py -g` 干净重评测 + batch↔eval 精确归属。
+>
+> **唯一允许的起跑方式（只此一条，其他一律禁止）**
+> ```bash
+> cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+> bash -n baize_posttrain_zhulong_baseline_5run_chain.sh || exit 1
+> grep -q rca_recover_extract baize_posttrain_zhulong_baseline_5run_chain.sh || exit 1
+> setsid env NUM_NEW_RUNS=4 R2_CHAIN_PID= bash baize_posttrain_zhulong_baseline_5run_chain.sh \
+>   > /tmp/posttrain_zhulong_baseline_5run_chain.log 2>&1 < /dev/null &
+> ```
+> - `NUM_NEW_RUNS=4`：链会幂等跳过已有有效 `final_report.json` 的 run1-4，**只实跑 run5**；
+> - `R2_CHAIN_PID=` 置空：R2 链（原 PID 2322797）早已结束，置空避免 PID 复用误判 gate 永不放行；
+> - 起跑后**立刻 push**（用户令「跑起来后正常 push 别等全跑完」），之后每唤醒只做监控心跳。
+>
+> **禁止事项（违者按 23:0x 纪律纠偏处理）**
+> 1. 🚫 不得启动 `baize_posttrain_clean_5run.sh`（它会把 run1-4 成品 `mv` 走重跑，破坏封存；该脚本继续留在磁盘作证据，**不删也不用**）。
+> 2. 🚫 不得改动 / 删除 / 覆盖 `attribution_3615_run1..run4` 任何既有产物（原坍塌版 `final_report_collapsed.jsonl` 亦保留）。
+> 3. 🚫 不得改 `eda_fastmcp` 源码；不得 kill 他线进程（vision / zhulong / pretrain）；gate 只在 36.15 无 `run_cline_script.sh` 时放行，**若被 zhulong eval 连续占用 >6h，报运维，不抢**。
+> 4. 🚫 不得用 n=4 冒充 5-run；run5 未落盘前**不得引用任何 5-run mean**。
+>
+> **验收（run5 完成后一次做完）**
+> 1. `attribution_3615_run5/final_report.json` 存在且 `execution_results.jsonl` 行数 ≫1（若只有 1 行 = 回补/评测仍坏，标 `INVALID-partial` 并报运维）；
+> 2. `bash run/bpt_zhulong_5run_finalize.sh --num-runs 5` → `run/5run_zhulong_baseline_analysis.json`（n=5 mean±std + 配对检验 vs 旧 .17 3.04%±0.83%），并把 `rca_status` 由 `INVALID` 改为 `CLEAN`；
+> 3. 报告 `reports/report_posttrain_zhulong_reattribution_zh.html` §10 改为 5-run 同表，**必须带口径 caveat**：run1=ws-only 锚点（batch 2026_1114_180019 已清理不可回补）、run2-5=recovered 口径（ws+no-ws 回补）；并单列一句「run1 18.99% vs run2-4 2.5-4.4% 的落差待 fresh 5-run 定论」；
+> 4. `MEMORY_POSTTRAIN.md` 顶部一行结论 + daily 2026-11-16 + commit 前缀 `posttrain 5run:`。
+
 > 🔴 **用户令 · 2026-11-15 23:0x（停止盲跑 · 先查 trace/管线 · 最高优先）· 未完成**
 >
 > **用户原话**：「post-train：run2/3/4：各只有 1 个有效生成 → 0.0%，都这样了还继续跑呢？不会看一眼trace排查一下吗？」

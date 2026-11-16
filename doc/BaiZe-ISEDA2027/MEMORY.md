@@ -2,6 +2,15 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-16 18:3x — 用户令「post-train 恢复干净 5-run」→ 恢复授权已下发任务书
+
+- **用户原话**：「post-train 恢复「干净 5-run」」。这是 23:0x item5（「8 题验证通过后再决定是否恢复 5-run」）的**正式放行**；run5 禁令解除，其余纪律（不删 trace / 不改 eda_fastmcp / 不动他线 / 不用 n=4 冒充 5-run）继续有效。
+- **下发位置**：`run/BAIZE_POSTTRAIN_TASK.md` **顶部新增 🔴 令**（2026-11-16 18:3x），写定唯一允许的起跑命令 `setsid env NUM_NEW_RUNS=4 R2_CHAIN_PID= bash baize_posttrain_zhulong_baseline_5run_chain.sh > /tmp/posttrain_zhulong_baseline_5run_chain.log 2>&1 < /dev/null &`，并明令 🚫 不得启用 wake590 已停的 `baize_posttrain_clean_5run.sh`（会把 run1-4 成品 mv 走重跑）、🚫 不得改 run1-4 产物。
+- **口径（运维已核，写入任务书让本线只 bash -n 复验）**：run1=18.99%（ws-only 锚点）/ run2=4.43%（43 行）/ run3=2.53%（28 行）/ run4=3.80%（35 行）均已回补干净版 ⇒ 链幂等复用 run1-4、**只实跑 run5**；`R2_CHAIN_PID=` 置空因原 PID 2322797 早已结束（防 PID 复用致 gate 永不放行）。
+- **验收**：run5 `execution_results` ≫1 行 → `bpt_zhulong_5run_finalize.sh --num-runs 5` → `5run_zhulong_baseline_analysis.json`（n=5，`rca_status=CLEAN`）→ 报告 §10 5-run 同表（必带 caveat：run1 ws-only 锚点、run2-5 recovered 口径）→ MEMORY + daily + commit `posttrain 5run:`。
+- **运维侧执行方式的说明**：本机（Windows 中转）当前到 10.252.32.17:22 / 10.251.36.15:22 **TCP 均超时**，无法从本会话直接起进程；posttrain loop 在 .17 每 15 分钟唤醒并全文读任务书 ⇒ 令于最新提交生效，**下一唤醒（≤15 min）即起跑**。起跑后运维从提交/日志核对（`git log` + 报告 §10），不再逐次批复。
+
+
 ## 2026-11-15 12:5x — 用户令「安排 zhulong 清理硬盘」→ 清盘令已下发
 
 - **现状（zhulong wake#966 自报）**：`/home` **267M（100% 满）**、`/nasdata` **9.8G**；A3–A6 的磁盘前置（/nasdata≥25G 或 /home≥12G）无法满足。11-14 23:4x 已清过一次（done_all），本次为**复发**。
