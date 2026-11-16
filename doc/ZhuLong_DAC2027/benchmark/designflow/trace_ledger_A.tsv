@@ -502,7 +502,7 @@
 1791960240913_4drpt	hengbow	hfeg0plg94	21	eda_other	parked		2026-11-14 10:10	r503: dup of tj1kl finesim analysis (B-domain)
 1793156257609_xqkry	daiweilu	hfeg0pgn145	62	digital	parked		2026-11-14 10:10	r503: lpddr5 TB regression snippet Q&A (只跑了一个pattern吗) analysis not produce
 1794453586384_srob6	jason17w	hfeg0pnd002	77	digital	parked		2026-11-14 10:10	r503: empty user_input (image/file-only) cannot synthesize
-1794539090854_vqpd5	wenfeiz	hfeg0pkn004	64	digital	claimed		2026-11-16 11:46	r630: revived from r503 parked (old weak 'doc-gen not produce-task' retired per 11-15 order); deepread done (lpddr5 TB study doc, analysis-Q&A, C-A); DEBT 1 case next round
+1794539090854_vqpd5	wenfeiz	hfeg0pkn004	64	digital	case	EDA-Eval-DesignFlow-Lpddr5TbStudyDoc-001	2026-11-16 12:16	r630: revived from r503 parked (old weak 'doc-gen not produce-task' retired per 11-15 order); deepread done (lpddr5 TB study doc, analysis-Q&A, C-A); DEBT 1 case next round
 1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	parked		2026-11-14 10:10	r503: sim log problem debug Q&A + cache-clear infra question
 1794446207194_gaopz	ericw	hfhds201	90	digital	parked		2026-11-14 10:10	r503: 激励exp值compare相关东西吗 single Q&A analysis
 1794445729302_9kc99	e0039602	hfeg0pkn005	77	digital	parked		2026-11-14 10:10	r503: 阅读目录告诉我项目在做什么/TB怎么构建 pure analysis Q&A
