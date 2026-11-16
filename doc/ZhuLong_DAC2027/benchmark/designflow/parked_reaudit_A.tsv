@@ -1,16 +1,16 @@
 session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_avail
-1792488619552_mt7ua.messages.json	johnl	hfeg0plg49	pnr_signoff	Innovus PnR+GenLEF trace (johnl/591msgs/2.04MB). Innovus 22.31 headless on .75 u	COMPLEX_DEFER	maybe		n/a
+1792488619552_mt7ua.messages.json	johnl	hfeg0plg49	pnr_signoff	Innovus PnR+GenLEF trace (johnl/591msgs/2.04MB). Innovus 22.31 headless on .75 u	REVIVABLE_QA	yes	Innovus PnR+GenLEF flow sub-slice (produce/Q&A), pending deepread to extract checkable sub-task	n/a
 1792297573507_9knot	vincelu	hfeg0plg55	digital	characterization domain (SiliconSmart .inst/.tcl liberty gen) belongs to shard C	WRONG_SHARD	no		n/a
-1789887279405_ve67l	mike	10.129.32.80	pnr_signoff	ops/build-automation trace (execute README step1/2/3, DDR6 cosim, VCS license sw	COMPLEX_DEFER	maybe		n/a
+1789887279405_ve67l	mike	10.129.32.80	pnr_signoff	ops/build-automation trace (execute README step1/2/3, DDR6 cosim, VCS license sw	REVIVABLE_QA	yes	ops/build-automation DDR6 cosim VCS run sub-slice (produce/run), pending deepread	n/a
 1791788736494_t2qp9	leo27li	hfeg0pkn001	pnr_signoff	pure QA consultation: 0 write calls, 61 RAG searches; not a design_flow delivery	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1791940499909_2pdn0	e0045128	hfeg0pkn001	eda_other	surveyed r37: pure Q&A (genus/DC/starRC eat TLUPlus or QRC, milkyway suffix). 20	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1792142855712_2h3mf	e0045128	hfeg0pkn001	digital	Q&A: genus keep_hierarchy how-to (AskEDA query), no delivery	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1790662286657_8356t	fxian	hfeg0pkn002	digital	consultative: 阅读总结+3 alt TCL proposals (genus/dc/yosys), no single verified/acce	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
-1791443950843_b7y8t.messages.json	shaoyou	hfeg0pkn004	eda_other	GUI highlight net7 side-effect; live-Aether cellview fixture (named-net+figs) in	COMPLEX_DEFER	maybe		n/a
+1791443950843_b7y8t.messages.json	shaoyou	hfeg0pkn004	eda_other	GUI highlight net7 side-effect; live-Aether cellview fixture (named-net+figs) in	GUI_NONREPRO	no	不可造: live-Aether GUI cellview fixture, not reproducible for hidden-B/check	n/a
 1793165088136_0suhi	e0046686	hfeg0pkn005	pnr_signoff	autosim doc-gen trace (L1 markdown/mermaid); doesn't fit design_flow hidden-B + 	WRONG_SHARD	no		n/a
 1788853067089_zggtc	lorikx	hfeg0pjn200	verification	templated '启动业务场景: 时序分析'; assistant only explored sos2 flow dir, no deliverable,	REVIVABLE_QA	yes	templated-no-deliverable	EXISTS
 1789038497364_qvkte	e0039503	hfeg0plg49	digital	templated '启动业务场景: 数字 RTL 设计'; assistant only explored /proj/ddjoc/V0, no delive	REVIVABLE_QA	yes	templated-no-deliverable	EXISTS
-1788775118036_48swh	lorikx	hfeg0pjn200	eda_other	r375 peek: U#0 "如何在系统上输入中文" = system input-method config Q&A. U#2 "你不能帮我直接尝试操作吗"	INFRA	no		n/a
+1788775118036_48swh	lorikx	hfeg0pjn200	eda_other	"r375 peek: U#0 ""如何在系统上输入中文"" = system input-method config Q&A. U#2 ""你不能帮我直接尝试操作吗"""	INFRA	no		n/a
 1783323056207_rc0jh	e0014566	hfeg0plg49	pnr_signoff	'请尝试连接virtuoso' analog connect request; not digital/pnr task	WRONG_SHARD	no		n/a
 1792386615426_npf2k	e0045488	hfeg0pkn002	pnr_signoff	StarRC DSPF SPF resistor-layer QA. Asset /proj/drexp/V0/ver/pex/e0045488/invBx2/	NOFILE	no		n/a
 1793167986392_7bqnr	oshen	hfeg0plg36	eda_other	Aether launch / drcqa V0 exploration. User turns are infra requests (launch aeth	INFRA	no		n/a
@@ -18,7 +18,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792552971568_dnkz8.messages.json	johnl	hfeg0plg99	pnr_signoff	StarRC RCC extract on /proj/drcoa/V0/ver/pex/johnl/T_IsmTop. Two blockers: (1) A	NOFILE	no		n/a
 1792120944014_78z8d	e0045128	hfeg0pkn001	pnr_signoff	pure Q&A about genus/PT time units + netlist hierarchy; no deliverable artifact,	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1792027020710_k8vvn	claire1l	hfeg0pkn004	eda_other	web interactive timeline build (JS/CSS), not EDA; 80 innovus markers are noise; 	INFRA	no		n/a
-1792550261464_ztom2	johnl	hfeg0pfn119	pnr_signoff	user#1=meta-question 'where is the original conversation file'; 14 msgs; not a d	OTHER	maybe		n/a
+1792550261464_ztom2	johnl	hfeg0pfn119	pnr_signoff	user#1=meta-question 'where is the original conversation file'; 14 msgs; not a d	NO_REAL_TASK	no	不可造: meta-question (where is conversation file), not a real EDA task	n/a
 1789990755473_xgcnn	jalenwei	hfeg0pfn108	pnr_signoff	user#1='start virtuoso' infra request; 24 msgs; no build deliverable	WRONG_SHARD	no		n/a
 1789090752430_4xt0p	zhigangw	hfeg0pkn002	eda_other	user#1='启动业务场景:模拟电路优化' = analog circuit opt (zhigangw pyAether-heavy 826); wrong	WRONG_SHARD	no		n/a
 1792574299462_d75a9	johnl	hfeg0pfn119	eda_other	user#1=context-summary Cline session watchdog tool (cline_watchdog.py zenity pop	INFRA	no		n/a
@@ -33,7 +33,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1789697789283_fg7ey	t0002596	NA	digital	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey	WRONG_SHARD	no		n/a
 1793002542135_ijm3f	wei9liu	NA	digital	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey	WRONG_SHARD	no		n/a
 1791962616204_7j1bw.messages.json	caozhang	hfhds209	digital	cross-shard collision: AsyncFifoSim-001 is shard D case (commit 3e9a310); shard 	DUP	no		n/a
-1793004375421_dse5n.messages.json	e0046913	hfeg0pkn003	eda_other	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
+1793004375421_dse5n.messages.json	e0046913	hfeg0pkn003	eda_other	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
 1792981676632_bxnc8	zhengc	hfeg0plg66	eda_other	pure capabilities Q&A (6 msgs, user 你能做什么), no real task/deliverable; mc28 from 	REVIVABLE_QA	yes	capability-Q&A	NOFILE
 1790126403703_fj73q	e02141	hfeg0pkn002	digital	TCAD/Sentaurus swb-python-api env config task; L1-only (eda_flow MCP has no Sent	WRONG_SHARD	no		n/a
 1792056947936_36yj3	thomas1w		verification	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2	WRONG_SHARD	no		n/a
@@ -42,10 +42,10 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792829965577_rser7	jkxu		verification	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2	WRONG_SHARD	no		n/a
 1792568990736_5c450	han1li		verification	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2	WRONG_SHARD	no		n/a
 1791973347667_tx5s5	e04201		verification	surveyed r148: kw-mention only, analog/netlist session, unfit shard-A L2	WRONG_SHARD	no		n/a
-1791964914156_it6n4	e0039102	hfeg0pkn002	verification	USER#1 find-file-by-logname too thin for >=8 cond A-faithful; USER#3 teach-me no	OTHER	maybe		n/a
+1791964914156_it6n4	e0039102	hfeg0pkn002	verification	USER#1 find-file-by-logname too thin for >=8 cond A-faithful; USER#3 teach-me no	THIN_NO_CHECK	no	不可造: find-file-by-logname too thin + teach-me, no checkable artifact	n/a
 1793775927024_1stc5	shaoyou	hfeg0pkn003	verification	waveview/fsdb user (signal average), shard D not A; deepread USER[0]=计算信号v(Vb)平均	WRONG_SHARD	no		n/a
 1793260818025_aw9d7	dsgao	hfhds201	verification	spice_sim TM testbench for DRAM array (finesim proxd flat transistor netlist 47K	WRONG_SHARD	no		n/a
-1792042544705_d1cg3	t0002441	hfhds201	eda_other	finesim DC non-convergence knowledge query (AskEDA/doc search, 1 user turn, no d	OTHER	maybe		n/a
+1792042544705_d1cg3	t0002441	hfhds201	eda_other	finesim DC non-convergence knowledge query (AskEDA/doc search, 1 user turn, no d	NO_DELIVERABLE	no	不可造: pure knowledge query (finesim DC non-convergence), 1 turn no deliverable	n/a
 1793776046349_80yiq	shaoyou	hfeg0pkn003	verification	r170 daily-log fishing: shaoyou waveview shard D (r166 deepread 80yiq/elali/cch2	NOFILE	no		n/a
 1793776433431_z6kn6	shaoyou	hfeg0pkn003	verification	r170 daily-log fishing: shaoyou waveview shard D (r166 deepread 80yiq/elali/cch2	NOFILE	no		n/a
 1793777039061_elali	shaoyou	hfeg0pkn003	verification	r170 daily-log fishing: shaoyou waveview shard D (r166 deepread 80yiq/elali/cch2	NOFILE	no		n/a
@@ -57,7 +57,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792724746849_gu1m2.messages.json	lorikx	hfeg0pkn001	digital	DUPLICATE of bw2u5/r84 VCSMakefile-001: same user lorikx+identical USER#0 (sim M	DUP	no		n/a
 1790596559451_9p8g2.messages.json	clwang	hfeg0pkn005	digital	CROSS-SHARD COLLISION: shard C (3f4fb5c0 Nov6 18:36) already created EDA-Eval-De	DUP	no		n/a
 1793946881286_z34dy	t0002965	hfhds222	pnr_signoff	session file not found on any of 4 hosts (hfhds222/230/224/pnd008) nor .75; scan	NOFILE	no		n/a
-1789979923847_aq5lg.messages.json	johnl	hfeg0pkn001	digital	assistant diagnosis WRONG (claimed change_names split bus->scalar but AFTER netl	OTHER	maybe		n/a
+1789979923847_aq5lg.messages.json	johnl	hfeg0pkn001	digital	assistant diagnosis WRONG (claimed change_names split bus->scalar but AFTER netl	REVIVABLE_QA	yes	debug-Q&A change_names bus/scalar netlist diagnosis report (assistant was WRONG, real root-cause case), pending deepread	n/a
 1793584116177_ox6r3	e0047722	hfeg0pkn002	eda_other	failed trace: WaveView Tcl sandbox never connected, user spent 6 msgs debugging 	WRONG_SHARD	no		n/a
 1793245121084_56j3w	e0023936	hfhds201	eda_other	duplicate of WvSineWaveAnalyze-001 (sine wave gen in WaveView tcl); pivot to giv	DUP	no		n/a
 1792140744683_z5ett	jessegao	hfeg0pkn005	eda_other	dup of r248 8g8rx LDO design (same user jessegao, identical specs 1.1V->0.9V/10u	DUP	no		n/a
@@ -72,7 +72,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1791944071628_pwhqb	jason17w	hfeg0pnd002	verification	redundant dup of 6i6lk/VerilogrunPreserve-001 (same conversation resumed, verilo	DUP	no		n/a
 1794227785944_i555n	e0046913	hfeg0pkn003	verification	FM log analysis Q&A (解读fm log情况), 23msgs/121KB, 1 user-turn diagnostic not produ	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1793945103405_x8v81	dsgao	hfhds201	eda_other	analysis Q&A: 两个netlist有区别吗为什么后仿真delay有差异, not produce-task	REVIVABLE_QA	done	CASE-NetlistDiffDelayAnalyze-001 (r637 synthesized)	EXISTS
-1794221830421_oclzn	dandans	hfhds201	eda_other	MatrixRun directory listing comparison, operational not produce-task	OTHER	maybe		n/a
+1794221830421_oclzn	dandans	hfhds201	eda_other	MatrixRun directory listing comparison, operational not produce-task	THIN_NO_CHECK	no	不可造: operational MatrixRun directory-listing comparison, too thin to check	n/a
 1794193758706_gwm47	tongfanl	hfhds201	eda_other	MatrixRun dir listing comparison dup of oclzn, operational not produce-task	DUP	no		n/a
 1794129973388_q54e4	tongfanl	hfhds201	eda_other	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS | DONE_r640
 1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	verification	r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (US	INFRA	no		n/a
@@ -81,9 +81,9 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793770222949_u5daf.messages.json	e0039102	hfeg0plg74	eda_other	r295 peek: sibling of 22gh5 same analysis task	DUP	no		n/a
 1793079745856_epy3m.messages.json	t0002470	hfeg0plg101	verification	r295 peek: resumed context-summary, USER asks 能否只预编译coverage + find指令序列 analysis	INFRA	no		n/a
 1791961260627_mejpi.messages.json	e13zhang	hfeg0pgn012	verification	r295 peek: USER#0=分析RTL+check是否有补充 analysis-only, not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1792480126204_y737t.messages.json	e13zhang	hfeg0pgn012	verification	r295 peek: USER#0=7.2GHz时钟 Q&A + Makefile compile error debug, not produce-task	OTHER	maybe		n/a
+1792480126204_y737t.messages.json	e13zhang	hfeg0pgn012	verification	r295 peek: USER#0=7.2GHz时钟 Q&A + Makefile compile error debug, not produce-task	REVIVABLE_QA	yes	debug-Q&A Makefile compile-error + 7.2GHz clock diagnosis, pending deepread	n/a
 1790600533401_vnze7.messages.json	clwang	hfeg0pkn005	eda_other	r295 peek: USER#0=拆分10GB xrun.log成20份 trivial log-split, verilog keyword from lo	REVIVABLE_QA	yes	trivial-Q&A	EXISTS
-1793779533537_k7668.messages.json	e0039602	hfeg0pkn002	verification	r295 deepread: verilog_lib_trans_v2 tb fix, USER#4/#40/#73 3-turn evolved comple	COMPLEX_DEFER	maybe		n/a
+1793779533537_k7668.messages.json	e0039602	hfeg0pkn002	verification	r295 deepread: verilog_lib_trans_v2 tb fix, USER#4/#40/#73 3-turn evolved comple	REVIVABLE_QA	yes	debug-Q&A verilog_lib_trans_v2 tb fix sub-slice (3-turn evolved), pending deepread	n/a
 1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	eda_other	r295 peek: USER#0=告诉我tb_family作用 analysis Q&A, same verilog_lib_trans project	REVIVABLE_QA	done	CASE-TbFamilyRoleAnalyze-001 (r638 synthesized)	EXISTS
 1793937823141_zdo8r.messages.json	t0002038	hfeg0plg86	eda_other	r295: aether:1035/transistor:818/pyaether:427 schematic = analog/layout WRONG SH	WRONG_SHARD	no		n/a
 1794010590146_aqtdv.messages.json	xinqiaoz	hfeg0pkn005	pnr_signoff	r295: pdk:1067/drc:253/calibre:50 = calibre DRC WRONG SHARD (C), rtl:40 minor	WRONG_SHARD	no		n/a
@@ -98,24 +98,24 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1791446512697_3s3zx	xuebaok	hfeg0pkn002	digital	how-to-change-tran-10ps-to-500ps-in-matrixrun-script	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1792378797897_0gv3z	thomas1w	hfeg0pkn002	verification	vague-analysis-look-at-netlist-structure-and-content	VAGUE_NO_TASK	no		n/a
 1792137927597_f4kc0	jackliu	hfeg0pkn003	verification	capability-question-can-you-read-waveform-trn-file	REVIVABLE_QA	yes	capability-Q&A	EXISTS
-1788871441686_fieju	harrys	hfeg0pkn002	digital	clean-A-faithful-produce-3MCU-plus-compile-sim-L3-too-complex-for-checkable-case	COMPLEX_DEFER	maybe		n/a
-1793953438523_pzo6g	e0039602	hfeg0pkn002	verification	context-coupled-verilog-lib-trans-skill-packaging	OTHER	maybe		n/a
+1788871441686_fieju	harrys	hfeg0pkn002	digital	clean-A-faithful-produce-3MCU-plus-compile-sim-L3-too-complex-for-checkable-case	TOO_COMPLEX	no	不可造: L3 3MCU+compile+sim too complex, no checkable sub-slice found in survey	n/a
+1793953438523_pzo6g	e0039602	hfeg0pkn002	verification	context-coupled-verilog-lib-trans-skill-packaging	TOOLING_META	no	不可造: skill-packaging tooling-meta, not user EDA task	n/a
 1794201552569_r2yjr	e0039602	hfeg0pkn002	digital	r319 DUPLICATE-ABORT: r2yjr trace already built by shard D as EDA-Eval-DesignFlo	DUP	no		n/a
 1792399916731_sbaad	zmzhang	hfeg0pjn140	digital	r320: near-duplicate of SignalXrefBuilder-001 (u54d9) — same 3-level signal xref	DUP	no		n/a
 1793756662778_nfb5r	xmxu	hfeg0plg93	digital	analysis-only: agent searched TYPE_BANK_INFO 35msgs no deliverable; U#0 gives co	REVIVABLE_QA	parked_ambiguous	analysis-Q&A/debug-Q&A	EXISTS (r643 deepread: error1 blmonitor_if EXPSMC root cause AMBIGUOUS - 5 monitor classes all in proj_package unimported but only blmonitor_if errors; errors 2&3 TYPE_BANK_INFO clear. Cannot build fair check. Park until ddr6_package source or xmvlog verifiable)
-1792389512614_7z9re	williang	10.129.2.12	pnr_signoff	r374 survey: 241msgs/40 user-turns heterogeneous pasted snippets (.lib cell / SB	OTHER	maybe		n/a
+1792389512614_7z9re	williang	10.129.2.12	pnr_signoff	r374 survey: 241msgs/40 user-turns heterogeneous pasted snippets (.lib cell / SB	REVIVABLE_QA	yes	analysis-Q&A heterogeneous .lib/SB snippets, need checkable turn, pending deepread	n/a
 1793165432787_o5o6p	e0046913	10.129.2.12	digital	r374 survey: 131msgs/6 user-turns = UPF low-power VCLP flow setup + demo run (U#	REVIVABLE_QA	yes	flow-driving	EXISTS
-1789898322144_yhqp5	mike	10.129.2.12	digital	r374 survey: 382msgs/6 user-turns = install riscv-isa-sim-1.1.0.tar.gz + run REA	OTHER	maybe		n/a
-1790652004587_8zuqr	mike	10.129.2.12	digital	r375 peek: U#0 "home目录下有个skill你找一下" = vague env-exploration of /home/mike. No pr	VAGUE_NO_TASK	no		n/a
-1792135280846_sr426	jackliu	10.129.2.12	digital	r375 peek: U#0 "你可以读取verilog波形文件吗 比如 ncsim.trn" = waveform read request on binar	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1789898322144_yhqp5	mike	10.129.2.12	digital	r374 survey: 382msgs/6 user-turns = install riscv-isa-sim-1.1.0.tar.gz + run REA	REVIVABLE_QA	yes	produce/run install riscv-isa-sim + README steps, pending deepread	n/a
+1790652004587_8zuqr	mike	10.129.2.12	digital	"r375 peek: U#0 ""home目录下有个skill你找一下"" = vague env-exploration of /home/mike. No pr"	VAGUE_NO_TASK	no		n/a
+1792135280846_sr426	jackliu	10.129.2.12	digital	"r375 peek: U#0 ""你可以读取verilog波形文件吗 比如 ncsim.trn"" = waveform read request on binar"	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1793189553608_5uqoi	dsgao	10.129.32.75	eda_other	r375 peek: U#0 = paste of Verdi FSDB dumper loading error (libsscore_vcs202312.s	REVIVABLE_QA	yes	env-config/how-to	EXISTS
-1792992278510_lku2o	e0045144	10.129.2.11	digital	r375 peek: U#0 "你会做什么" + U#2 "你会根据spec写完整的RTL code吗" = capability-exploration me	INFRA	no		n/a
+1792992278510_lku2o	e0045144	10.129.2.11	digital	"r375 peek: U#0 ""你会做什么"" + U#2 ""你会根据spec写完整的RTL code吗"" = capability-exploration me"	INFRA	no		n/a
 1790133793674_jwwqf	e02141	10.129.2.10	eda_other	env-config (SWB python api setup), weak	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1793084065593_fg1kv	ghyang	10.129.2.12	eda_other	SPICE analysis Q&A, weak	REVIVABLE_QA	yes	analysis-Q&A	EXISTS (deepread+synthesized+landed r646 PtempCondUsageAnalyze-001, A.jsonl 350->351)
 1793069063742_76i4q	wnyu	10.129.2.13	eda_other	doc-search Q&A, weak	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1793603696817_p16i1	shanliny	10.129.2.10	digital	Python script debug Q&A, weak	REVIVABLE_QA	yes	debug-Q&A	EXISTS
-1791968010913_mnn5q.messages.json	e04605	10.129.2.11	digital	r379 peek: U#0=onboarding Q&A(你好请问你可以做什么), verilog:828 from pasted content, no p	OTHER	maybe		n/a
-1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	verification	r379 peek: U#0=check DDR6 DSCQA WTM 3 patterns is4phase misuse(检查型 analysis), no	OTHER	maybe		n/a
+1791968010913_mnn5q.messages.json	e04605	10.129.2.11	digital	r379 peek: U#0=onboarding Q&A(你好请问你可以做什么), verilog:828 from pasted content, no p	NO_REAL_TASK	no	不可造: onboarding Q&A (你好请问你可以做什么), no real task	n/a
+1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	verification	r379 peek: U#0=check DDR6 DSCQA WTM 3 patterns is4phase misuse(检查型 analysis), no	REVIVABLE_QA	yes	analysis-Q&A DDR6 DSCQA WTM 3-pattern is4phase misuse check (检查型), pending deepread	n/a
 1793003840562_382ay.messages.json	harrys	10.129.2.11	digital	r379 peek: U#0=workspace.cxmt.com link info-exploration Q&A(use skill), doc-sear	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792041543395_mss1b.messages.json	e0039102	10.129.2.11	digital	r379 peek: U#0=逐行带我读 vcim/verilogrun 文件(walk-through explanation Q&A), verilog:2	REVIVABLE_QA	yes	code-comprehension	EXISTS
 1793186643056_muf2k	thomas1w	10.129.40.109	verification	UVM hdl-path debug Q&A, env-dependent /rundata/ddgoa	REVIVABLE_QA	yes	debug-Q&A	EXISTS
@@ -128,21 +128,21 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793179564697_11cny	clwang	10.129.2.14	digital	code-search Q&A (mr27在哪配置, grep specdef)	REVIVABLE_QA	yes	code-comprehension	EXISTS
 1793244457637_k7z23	e0046913	10.129.2.12	eda_other	doc/criteria-writing Q&A (写出衡量标准, iterate text)	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792133360129_whu5z	lorikx	10.129.2.13	verification	sim-failure debug Q&A (smoke.log FAIL)	REVIVABLE_QA	yes	debug-Q&A	EXISTS	done_r642
-1790415942692_xbexl	jinhaoli	10.129.2.13	digital	r383 peek weak: 1790415942692_xbexl jinhaoli U#0=SV-syntax-check Q&A	OTHER	maybe		n/a
+1790415942692_xbexl	jinhaoli	10.129.2.13	digital	r383 peek weak: 1790415942692_xbexl jinhaoli U#0=SV-syntax-check Q&A	THIN_NO_CHECK	no	不可造: SV-syntax-check single Q&A, thin no deliverable	n/a
 1792841088751_bg11w	congyi	10.129.32.75	eda_other	r383 peek weak: 1792841088751_bg11w congyi U#0=background-task query Q&A	INFRA	no		n/a
 1789449816263_xinm9.messages.json	e0025522	hfeg0plg103	digital	U#0=启动业务场景:仿真与验证 generic flow-driving, 11/09scan direct peek r384	REVIVABLE_QA	yes	flow-driving	EXISTS
-1789868617686_y7550.messages.json	t0002470	hfeg0plg76	eda_other	U#0=filter JSON for non-REF/RFM/SRE/SRX, analysis-on-file hard to hidden-B, r384	OTHER	maybe		n/a
+1789868617686_y7550.messages.json	t0002470	hfeg0plg76	eda_other	U#0=filter JSON for non-REF/RFM/SRE/SRX, analysis-on-file hard to hidden-B, r384	NO_HIDDEN_B	no	不可造: analysis-on-file hard to hidden-B (no variant B possible)	n/a
 1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	digital	U#0=analyze netlist diff between 2 paths, analysis Q&A weak, r384	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	digital	U#2=write similar .v pattern (produce-intent) BUT 0 write tool_calls (agent neve	OTHER	maybe		n/a
-1792548360759_l8989.messages.json	tongfanl	hfhds201	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1793240477462_vf2q3.messages.json	ruisongs	10.129.33.216	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1793704285912_k2x6m.messages.json	daiweilu	10.129.32.83	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1794187704615_bmqho.messages.json	e0039602	10.129.2.11	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1792804747547_8bgtd.messages.json	ruisongs	10.129.33.216	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1793969287953_187i0.messages.json	johnl	10.129.33.246	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1793154396942_2idq4.messages.json	mwhu	10.129.35.74	eda_other	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1793931604619_df52y.messages.json	chunfang	10.129.2.10	digital	r385 mc10-29-slice peek: 	OTHER	maybe		n/a
-1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	digital	r386 A-dominant peek: 17msgs, U#0-5 same repeated SDF SDFCOM_NL negative-limit w	COMPLEX_DEFER	maybe		n/a
+1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	digital	U#2=write similar .v pattern (produce-intent) BUT 0 write tool_calls (agent neve	REVIVABLE_QA	yes	produce .v pattern (user produce-intent, agent didn't deliver), pending deepread	n/a
+1792548360759_l8989.messages.json	tongfanl	hfhds201	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1793240477462_vf2q3.messages.json	ruisongs	10.129.33.216	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1793704285912_k2x6m.messages.json	daiweilu	10.129.32.83	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1794187704615_bmqho.messages.json	e0039602	10.129.2.11	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1792804747547_8bgtd.messages.json	ruisongs	10.129.33.216	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1793969287953_187i0.messages.json	johnl	10.129.33.246	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1793154396942_2idq4.messages.json	mwhu	10.129.35.74	eda_other	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1793931604619_df52y.messages.json	chunfang	10.129.2.10	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
+1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	digital	r386 A-dominant peek: 17msgs, U#0-5 same repeated SDF SDFCOM_NL negative-limit w	REVIVABLE_QA	yes	debug-Q&A SDF SDFCOM_NL negative-limit diagnosis, pending deepread	n/a
 1791792527981_q4skx	e0045128	hfeg0pkn005	pnr_signoff	r391 peek: Primetime STA consultation Q&A, 15 user-turns (DMSA/hold-timing/UPF/m	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1793790637246_aafag.messages.json	e0046718	hfeg0plg76	pnr_signoff	r394 deepread: trivial typo Q&A (user typed 'innouvs', agent explained Cadence I	REVIVABLE_QA	yes	trivial-Q&A	EXISTS
 1793330336899_zh3eq	lorikx	hfeg0pkn004	digital	dup of TqvVrefreshBuild-001 (r398 wbhv1): same lorikx TQV 4-script-combine task	DUP	no		n/a
@@ -153,8 +153,8 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792983391097_swhjl	stevenh	10.129.35.244	digital	Q&A-only single-turn (U#0 tell-me-how-to-improve-task-reusability -> essay asst[	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1793172758983_0kv56.messages.json	jascperc	hfeg0pkn001	digital	DUPLICATE-TRACE DOWNLINE r454: same session 0kv56 as PatStatSpeed-001 (ledger li	DUP	no		n/a
 1794395853966_tef8l	yinyus	hfeg0plg66	digital	cross-shard dup: C=NicapNetlistPivot-001(physical_verify, same pivot task) + D=N	DUP	no		n/a
-1794386548710_l4tre	xinqiaoz	hfeg0pkn002	pnr_signoff	false-positive: genReleaseNote.py Python script maintenance (HTML/backup/empty-f	OTHER	maybe		n/a
-1794466237270_iyyzq	jerrychu	hfeg0pkn003	eda_other	false-positive: sed text-processing of PDK corner names (ssgnp_0p675v_0c -> ssgn	OTHER	maybe		n/a
+1794386548710_l4tre	xinqiaoz	hfeg0pkn002	pnr_signoff	false-positive: genReleaseNote.py Python script maintenance (HTML/backup/empty-f	FALSE_POSITIVE	no	不可造: false-positive (genReleaseNote.py general Python maintenance, not EDA)	n/a
+1794466237270_iyyzq	jerrychu	hfeg0pkn003	eda_other	false-positive: sed text-processing of PDK corner names (ssgnp_0p675v_0c -> ssgn	FALSE_POSITIVE	no	不可造: false-positive (sed text-processing PDK corner names, not EDA)	n/a
 1794466250329_uqvno	zhengc	hfeg0pkn003	digital	r496 peek: USER#0 tell me where setup/hold tis defined+give datapath, analysis Q	REVIVABLE_QA	yes	analysis-Q&A	NOFILE
 1793343472817_6tswp	e0039602	hfeg0plg95	digital	r496 peek: USER#0 read project+tell me truth-table-check principle+compare v1.4 	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1793950397255_x9i0b	e0039602	hfeg0plg95	digital	r496 peek: USER#0 read project+tell me what the review prompt is, analysis Q&A, 	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
@@ -164,7 +164,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1794465633184_9scu4	e0045128	hfeg0pkn005	digital	trivial+unreachable: mc27 synthesis:3 pyAether only (too low signal for produce-	NOFILE	no		n/a
 1794468675464_p5pi7	dsgao	hfeg0pkn001	verification	r501 RE-PEEK (infra lifted): gvim Q&A (syntax highlighting for .sv), NOT produce	INFRA	no		n/a
 1794385756928_jeij7	e0039102	hfeg0pbn16	verification	r501 PEEK: VPS run_regr config generation produce-task (306 msgs). User asks to 	NOFILE	no		n/a
-1794290494748_5u1j9	e0039102	hfeg0pbn16	verification	r501 PEEK: run_regr framework analysis (98 msgs). User asks to understand config	OTHER	maybe		n/a
+1794290494748_5u1j9	e0039102	hfeg0pbn16	verification	r501 PEEK: run_regr framework analysis (98 msgs). User asks to understand config	REVIVABLE_QA	yes	analysis-Q&A run_regr framework config understanding (cf RunRegrArchAnalyze-001), pending deepread	n/a
 1794291542588_oh5bd	e0039102	hfeg0pbn16	verification	r501 PEEK: duplicate of 5u1j9 (same user msgs, ~17min apart). run_regr framework	DUP	no		n/a
 1793180163442_wz7gy	e03179	hfeg0plg15	eda_other	r502: infra-block(load-balancer NOFILE 6/6 MISSDIR, same as r498 p0fqe) + D-doma	NOFILE	no		n/a
 1792052491292_p5laa	xinqiaoz	hfeg0plg15	pnr_signoff	r502: re-confirm r497 peek C-domain(drc:1876/pdk:873/calibre:295) non-A-produce;	WRONG_SHARD	no		n/a
@@ -182,23 +182,23 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793156257609_xqkry	daiweilu	hfeg0pgn145	digital	r503: lpddr5 TB regression snippet Q&A (只跑了一个pattern吗) analysis not produce	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1794453586384_srob6	jason17w	hfeg0pnd002	digital	r503: empty user_input (image/file-only) cannot synthesize	INFRA	no		n/a
 1792571741703_ui4hv	ruisongs	hfeg0pfn087	digital	r503: sim log problem debug Q&A + cache-clear infra question	INFRA	no		n/a
-1794446207194_gaopz	ericw	hfhds201	digital	r503: 激励exp值compare相关东西吗 single Q&A analysis	OTHER	maybe		n/a
+1794446207194_gaopz	ericw	hfhds201	digital	r503: 激励exp值compare相关东西吗 single Q&A analysis	THIN_NO_CHECK	no	不可造: single thin Q&A (激励exp值compare), no deliverable	n/a
 1794445729302_9kc99	e0039602	hfeg0pkn005	digital	r503: 阅读目录告诉我项目在做什么/TB怎么构建 pure analysis Q&A	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1794397613511_dwr4p	guomings	hfeg0pkn003	digital	r503: nihao/nij greetings no task	INFRA	no		n/a
 1792569513787_jq6lq	mwxi	hfhds228	eda_other	r503: crontab/file-sync (hfds<->shds) infra debug not EDA produce	INFRA	no		n/a
 1789453406100_p28m8	e0017484	hfeg0plg54	digital	r503: 启动业务场景仿真与验证/分析TM在仿真中的作用 analysis Q&A	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1793867092418_uemp5	e0039602	hfeg0pkn005	digital	r503: verilog-lib-trans tool retrieval-logic Q&A (LLM tooling meta)	OTHER	maybe		n/a
-1793873301625_fg7hf	e0039602	hfeg0pkn005	digital	r503: LLM-conversion-model评审prompt/stdcell相似匹配 Q&A (tooling meta)	OTHER	maybe		n/a
-1794482509558_n7ot5	szcao	hfeg0pgn145	digital	r503: gen_pattern_files.pl tweak (fill cmlist->test.run) dependent-on-existing-f	OTHER	maybe		n/a
+1793867092418_uemp5	e0039602	hfeg0pkn005	digital	r503: verilog-lib-trans tool retrieval-logic Q&A (LLM tooling meta)	TOOLING_META	no	不可造: verilog-lib-trans retrieval-logic Q&A tooling-meta	n/a
+1793873301625_fg7hf	e0039602	hfeg0pkn005	digital	r503: LLM-conversion-model评审prompt/stdcell相似匹配 Q&A (tooling meta)	TOOLING_META	no	不可造: LLM-conversion-model评审 prompt Q&A tooling-meta	n/a
+1794482509558_n7ot5	szcao	hfeg0pgn145	digital	r503: gen_pattern_files.pl tweak (fill cmlist->test.run) dependent-on-existing-f	DEPENDENT_FILES	no	不可造: dependent-on-existing-files, can't self-contain A	n/a
 1791854347080_pits0	johnl	hfeg0pkn001	digital	r503: 看下仿真激励在哪里 analysis Q&A	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	digital	r503: 分析log error怎么导致 debug Q&A	REVIVABLE_QA	yes	debug-Q&A	EXISTS
 1794206891160_wvtya	e0039602	hfeg0pkn005	digital	r503: 三个版本项目有什么不同 version-diff analysis Q&A	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1794450614593_7oy74	thomas1w	hfeg0pjn099	digital	r503: sim-path+pattern-path debug (truncated) debug pattern	OTHER	maybe		n/a
+1794450614593_7oy74	thomas1w	hfeg0pjn099	digital	r503: sim-path+pattern-path debug (truncated) debug pattern	THIN_NO_CHECK	no	不可造: truncated thin sim-path/pattern-path debug, no checkable slice	n/a
 1793003474253_vgpcy	harrys	hfeg0pkn002	digital	r503: workspace have what infra Q&A	INFRA	no		n/a
 1791280343229_bp54q	mwxi	hfeg0pkn003	digital	r505: crontab task-recovery infra REJECT (verilog kw from workspace, task=infra)	INFRA	no		n/a
 1794377042867_o5njo	xrxiong	hfeg0pkn001	digital	r505: irun.log sim-error analysis Q&A REJECT	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1793169406310_49kzt	e0039602	hfeg0pkn005	digital	r505: xcelium usage Q&A (user: dont execute just tell me) REJECT	OTHER	maybe		n/a
-1794469877801_685bd	eric1ch	hfeg0pkn001	digital	r505: LPDDR6 JEDEC KG skill-usage REJECT	OTHER	maybe		n/a
+1793169406310_49kzt	e0039602	hfeg0pkn005	digital	r505: xcelium usage Q&A (user: dont execute just tell me) REJECT	NO_DELIVERABLE	no	不可造: usage Q&A (dont execute just tell me), no deliverable	n/a
+1794469877801_685bd	eric1ch	hfeg0pkn001	digital	r505: LPDDR6 JEDEC KG skill-usage REJECT	NO_DELIVERABLE	no	不可造: skill-usage Q&A (LPDDR6 JEDEC KG), no deliverable	n/a
 1793704618870_pz29g	e0039602	hfeg0pkn005	digital	r505: A_Compare.rpt error analysis Q&A REJECT	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1791785549996_uaa3b	kiaray	hfeahpc505	digital	r506 REJECT skill-orchestration build-d6/run-d6 skill-invocation env-specific no	INFRA	no		n/a
 1793865143182_nwmze	e0039602	hfeg0pkn005	digital	r506 REJECT Q&A log-scripts + delete-logs infra destructive non-produce	INFRA	no		n/a
@@ -208,7 +208,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793694635228_d56nb	ruisongs	hfeg0pfn087	verification	r506 REJECT sim-failure analysis Q&A '分析仿真失败原因'	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1793611777735_q9ulk	ruisongs	hfeg0pfn087	verification	r506 REJECT xrun.log err debug Q&A	REVIVABLE_QA	yes	debug-Q&A	EXISTS
 1793250981130_kq81c	thqu	hfeg0pkn099	digital	r506 REJECT host 10.129.2.99 ssh connection timed out unreachable infra-block	NOFILE	no		n/a
-1792459025453_8o316	max7c	hfeg0pkn004	digital	r506 REJECT usage Q&A '如何执行这个脚本'	OTHER	maybe		n/a
+1792459025453_8o316	max7c	hfeg0pkn004	digital	r506 REJECT usage Q&A '如何执行这个脚本'	NO_DELIVERABLE	no	不可造: usage Q&A (如何执行这个脚本), no deliverable	n/a
 1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	digital	r509 doc-gen Q&A: summarize perl script acc_auto_connect.pl functionality+valida	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792717840232_bx87p.messages.json	adaml	hfeg0pkn002	eda_other	r509 usage Q&A: check python packages for data-analysis/plotting. rtl:34 keyword	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1794394549939_ia08o.messages.json	xy1zhang	hfeg0pgn145	verification	r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但	DONE_r645	debug-Q&A	EXISTS (deepread+synthesized+landed r645 CmpTaskZeroDelayOscDiagnose-001, A.jsonl 349->350)
