@@ -2,7 +2,57 @@
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不改题/图/check、不编造数字、不删他人数据）。判断标准只有一条：**这条约束是为了「防止说谎/防止破坏」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主设计消融臂、判据与实验路线；A3/A4/… 的 idea 由你提，不要等我给。**
 
-> 🔴 **运维令 · 2026-11-15 20:5x（用户令：放行 A3–A6 · 最高优先 · 允许起实验）· 未完成**
+> 🔴 **运维令 · 2026-11-16 09:0x（用户令：修正 A0′/A3 实验设计 · 限制 input 而非 output · 最高优先 · 覆盖前令）· 未完成**
+>
+> **用户原话**：「这个实验设计很糟糕。应该限制 input 预算而非 output 预算。逻辑是：subagent 能够成立，是因为通过分工，让不同的 agent 上下文更少。不同 agent 专注不同的事情。上下文更少，限制的是 input 而非 output。限制 output 是让 agent 写代码迭代尝试更少，对不对？我们是想通过更少的输入上下文，让多 agent 相对于单 agent 优势更加明显对不对？」
+>
+> **覆盖前令范围**：本令**修正** 2026-11-15 20:5x 运维令中关于 A0′/A3 的预算施压维度。前令的"放行 A3–A6 / 起跑顺序 / 判据纪律 / 硬约束"框架**仍有效**；仅"小预算 = 砍 out-budget（maxTokens 16K→4K）"这一条**作废**，改为"小预算 = 砍 in-budget（contextWindow）"。
+>
+> **设计错误诊断（必读）**：
+> - **A0′（maxTokens 4K, 无 spawn）与 A2（maxTokens 4K, 强制 spawn）限制的是 output** → 杀的是"写代码迭代次数" → 吞吐崩塌（gen-rate 75%）→ 158-scale 17% 测的是"out-budget 对吞吐的影响"，**与 subagent 分工价值无关**。
+> - **subagent 的核心价值 = 分工让每个 agent 的上下文更小**：单 agent 一个上下文要同时装 API 文档 + 探索历史 + 代码 → input 大；多 agent 分工后 subagent 只装 API 查询结果（小 input），主 agent 只装代码 + API 摘要（小 input）→ **每个 agent 的 input 都天然小**。
+> - 所以施压维度必须是 **input 预算（contextWindow）**：让单 agent 在小 input 下塞不下完整 API 文档 → 频繁 compaction → 信息丢失 → 质量下降；而多 agent 分工后每个 agent 上下文天然小 → 不触发 compaction 或触发更少 → 质量保持。**这才是让多 agent 相对单 agent 优势显现的正确施压方式**。
+>
+> **A0′ 处置**：
+> - **A0′（out 4K baseline）结果作废**：r2=15.8% / r3=17.1% / r4=17.1% **不用于 A3 对照**，仅在报告里标"设计错误 · out-budget 施压 · 与 subagent 价值无关"；
+> - A0′ data-dir（`/nasdata/app.e0031982/subagent_ablation/A0prime`）保留为历史档，**不再追加轮次**；
+> - 若 A0′ 已扩到 158-scale 的评分流水，**保留产物不删**，仅标注作废理由。
+>
+> **修正后的实验设计（立即起跑）**：
+>
+> | 臂 | contextWindow (in) | maxTokens (out) | spawn | 含义 | 对照 |
+> |----|--------------------|-----------------|-------|------|------|
+> | A0 | 32K | 16K | 无 | 原 baseline（已跑 69.2%） | — |
+> | **A0′′** | **8K** | **16K（不变）** | 无 | 单 agent 小 input 基线 | — |
+> | **A0′′′** | **4K** | **16K（不变）** | 无 | 更激进小 input 基线 | — |
+> | **A3** | **8K** | **16K（不变）** | 有 | 多 agent 小 input | 对照 A0′′ |
+> | **A3′** | **4K** | **16K（不变）** | 有 | 多 agent 更激进小 input | 对照 A0′′′ |
+>
+> **关键规则**：
+> 1. **output 预算恒定 16K**（不限制写代码迭代），唯一施压变量是 **input 预算（contextWindow）**；
+> 2. **compaction=basic 不变**（@0.9×contextWindow 触发，即 8K→@7.2K / 4K→@3.6K）；
+> 3. spawn 机制：A3/A3′ 沿用 A1 的"主 agent 自主 spawn + 强提示注入 subagent_researcher"（已验证调用率 100%），不用 A2 的强制小预算 spawn；
+> 4. subagent 的 input 预算**独立设**（不继承主 agent 的 contextWindow）——这是分工的关键：subagent 只装 API 查询结果（几 K 即够），主 agent 只装代码 + API 摘要。若 cline wrapper 当前不支持 subagent 独立 contextWindow，先 smoke 证明并在 MEMORY 写清限制。
+>
+> **判据（覆盖前令）**：
+> - **A3 ITT ≥ A0′′ ITT + 3pp**（同 in=8K 下，有 spawn 比无 spawn 好），McNemar 方向一致；
+> - **A3′ ITT ≥ A0′′′ ITT + 3pp**（同 in=4K 下，有 spawn 比无 spawn 好），McNemar 方向一致；
+> - 若 8K 下单 agent 已不受损（A0′′ ≈ A0），说明 8K 还不够小，直接跑 A0′′′/A3′ 的 4K 梯度；
+> - 若 4K 下多 agent 也崩（A3′ ≈ A0′′′），说明施压过猛，回退到 8K 报告并标"4K 不可行"。
+>
+> **起跑顺序（覆盖前令）**：
+> 1. **A0′′**（in=8K, out=16K, 无 spawn）——新 baseline，A3 的预注册判据依赖它，**先做**；
+> 2. **A3**（in=8K, out=16K, 有 spawn）——A0′′ 跑完立即起；
+> 3. 若 A0′′ ≈ A0（8K 不够小）→ 跳到 A0′′′/A3′（4K 梯度）；
+> 4. A6 / A4 / A5 顺序沿用前令。
+>
+> **起跑前必做（沿用前令）**：在 `MEMORY_ZHULONG.md` 写一行「臂号 + 唯一变量（=in-budget）+ 预注册判据 + 数据子集 + 资源/并发 + 对照臂」；未写不得起跑。
+>
+> **交付**：沿用前令（原地更新 `reports/report_zhulong_a3a6_arms_zh.html` + MEMORY 结论行 + daily 流水 + commit 前缀 `zhulong arms:`）。
+>
+> **优先级**：本令高于一切 standby/心跳；A0′′ 是当前唯一无前置的起跑项，**立即做**。
+
+> 🔴 **运维令 · 2026-11-15 20:5x（用户令：放行 A3–A6 · 最高优先 · 允许起实验）· ⚠️ A0′/A3 预算维度已被 2026-11-16 09:0x 令修正，其余条款仍有效**
 >
 > **用户原话**：「zhulong 放行 A3-A6」
 >
