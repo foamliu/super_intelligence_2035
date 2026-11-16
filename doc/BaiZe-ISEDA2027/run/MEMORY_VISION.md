@@ -175,10 +175,6 @@ WAITING: 0
 
 > 📦 **wake #1226 · 2026-11-14 14:48** 例行巡检·全交付态·零新增·designflow 无新 WAVEVIEW 交付(仍 restored_count=5·#3 后半阻塞 D 推进中)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 📦 **wake #1223 · 2026-11-14 14:18** 例行巡检·全交付态·designflow 新交付 β10(r654·restored_count 4→5)·#3 后半阻塞 D 推进中·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-> 📦 **wake #1212 · 2026-11-14 12:4x** 任务书瘦身归档(TASK 39389→27127B·两 11-07 已交付用户令 verbatim 搬至 ARCHIVE_OPERATOR_VISION.md+留指针·4 个 11-14 活跃令原样保留)+例行巡检·designflow 无新交付(仍 D 恢复 3 题)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
 
 ## 状态头
 
