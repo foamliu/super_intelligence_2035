@@ -1172,3 +1172,12 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794288111148_w3pk1	zlhou	10.129.35.68	33	physical_verify	parked		2026-11-17 00:42	r680 teeth-fail: U#0 list/explain Q&A (查看PEX运行目录中的脚本文件), 9msgs/4tooluse/0edits, deliverable=prose分类表无runnable gold; pex:413=path-substring inflation (目录路径命中); (C)-(A) v2 potential noted (PEX script classification + evidence anchors) but shallow task 8+独立断言难, 留后续轮评估
 1785807719102_aur8p	e0014566	10.129.35.82	34	physical_verify	parked		2026-11-17 00:42	r680 teeth-fail: U#0 read prompt_autovia.md and do the job = run-existing Virtuoso AutoVia skill flow, 24msgs/12tooluse/0edits/8bash, deliverable=Virtuoso flow output log/GDS judge不可跑真工具; drc:120/virtuoso:87=path-substring+tool-name inflation; 同 r675 2vuso/8du7m run-existing cluster
 1794377141256_03wfm	shanliny	10.129.2.14	34	physical_verify	parked		2026-11-17 00:42	r680 off-C park: U#1 produce-task (基于PEX网表写RC连线+晶体管位置关系可视化+两点电阻估算脚本), 75msgs/35tooluse/15edits, deliverable=netlist-parse+viz+R-estim Python脚本; domain=D (netlist:69/transistor:28 dominant, P-005 keyword软优先级 netlist→D), 同 D r779 RcNetVizRcalc-001 pattern (numpy节点分析+matplotlib可视化); defer→@D
+1794363187550_713t3	miccao	10.129.32.47	40	physical_verify	case	EDA-Eval-DesignFlow-CalibreDfmCmdExtract-001	2026-11-17 01:05	
+1792571639391_fowlb					parked		2026-11-17 01:05	r681 peek teeth-fail: analysis-Q&A on GDS layout (prose deliverable)
+1793066749861_oj793					parked		2026-11-17 01:05	r681 peek off-C+teeth-fail: meta-Q&A about zhulong agent system (not physical_verify)
+1794446722100_1snh8					parked		2026-11-17 01:05	r681 peek teeth-fail: vague GUI launch (single user turn 'aether')
+1790039746600_vbr3y					parked		2026-11-17 01:05	r681 peek off-C: README writing for context-infrastructure dir (not EDA)
+1793583505644_866fc					parked		2026-11-17 01:05	r681 peek teeth-fail: analysis-Q&A on a log file (prose deliverable)
+1792463051213_e2nuq					parked		2026-11-17 01:05	r681 peek teeth-fail: analysis-Q&A on calibre PG dummy fill rule script
+1794294853309_rytsm					parked		2026-11-17 01:05	r681 peek teeth-fail: how-to Q&A on LVS debugging (prose advice)
+1794447784831_8pdow					parked		2026-11-17 01:05	r681 peek viable-intent DSPF R-by-lvl grouping but lvl=37 coord-location needs GDS cross-ref (teeth-fail for coord step); deferred
