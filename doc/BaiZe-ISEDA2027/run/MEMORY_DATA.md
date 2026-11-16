@@ -6,7 +6,7 @@ WAITING: 1
 
 > 🔴 **用户令 2026-11-13b**：分词数据搬到/nas_user→✅StepA DONE; 分词新shard→✅StepC全DONE(8192/8192/476B tok); StepD校验→✅通过→DATA_MAPPING更新→commit
 
-> 🔴 **用户令 2026-11-15 08:5x（IFM 3个数学/代码数据集+调研）**：✅IFM/MegaMath第一批DONE(364parquet/216GB/0inc/5子集); 🔄IFM/Math-Reasoning下载中(464/2228parquet/20.8%/863GB/3inc/PID1829139/ni=19/elapsed~24.6h/rate~189s/it降速中/当前下math-dialogue子集1/5/ETA~93h→预计~11-20~12CST); 🔄IFM/Code-Reasoning下载中(451/1637parquet/27.6%/839GB/2inc/PID922699/ni=19/elapsed~10.5h/rate~83.5s/it/code-no-thinking-hard✅235parquet完成+code-no-thinking子集216parquet下载中/log→/tmp/ifm_code_reasoning_v2.log健康无错误/ETA~27.5h→预计~11-17~15CST); ✅MegaMath≡LLM360/MegaMath(sha 3cbc646 一致); ✅调研报告report_data_math_code_datasets_survey_zh.html落reports/(17KB/Top5+总表+污染+重叠+SVG); ⏳MegaMath第二批(megamath-web~1TB)待Code-Reasoning完成后启动(避免三路并发挤带宽)
+> 🔴 **用户令 2026-11-15 08:5x（IFM 3个数学/代码数据集+调研）**：✅IFM/MegaMath第一批DONE(364parquet/216GB/0inc/5子集); 🔄IFM/Math-Reasoning下载中(464/2228parquet/20.8%/870GB/3inc/PID1829139/ni=19/elapsed~25.7h/rate~200s/it/当前下math-dialogue子集1/5/.incomplete 1.7GB活跃@13:18/ETA~98h→预计~11-20~15CST); 🔄IFM/Code-Reasoning下载中(485/1637parquet/29.6%/907GB/2inc/PID922699/ni=19/elapsed~11.5h/rate~85s/it/code-no-thinking-hard✅235parquet完成+code-no-thinking子集250+parquet下载中/log→/tmp/ifm_code_reasoning_v2.log健康无错误/ETA~27h→预计~11-17~16CST); ✅MegaMath≡LLM360/MegaMath(sha 3cbc646 一致); ✅调研报告report_data_math_code_datasets_survey_zh.html落reports/(17KB/Top5+总表+污染+重叠+SVG); ⏳MegaMath第二批(megamath-web~1TB)待Code-Reasoning完成后启动(避免三路并发挤带宽)
 
 > ✅ **用户令 2026-11-15 09:0x（5个agent datasets评估+下载）→全部验收项已满足**：✅Toucan-1.5M(409files/21GB/0inc); ✅AgentTrove(121files/19GB/0inc); ✅neulab ADP 15子集(277files/79GB/0inc); ✅adp_subset_plan.md; ✅agent-data-protocol clone; ✅污染检查CONTAMINATION_CHECK_AGENT_IFM.md; ✅DATA_MAPPING.md D1-D4; 🚫orca P2/🚫freeinference P3; 📝转告harness线freeinference workload(已记MEMORY+DATA_MAPPING)
 
@@ -39,12 +39,12 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        IFM Math/Code-Reasoning后台下载中(Math 21%/Code 28%) → WAITING=1(30min长睡监控)
+PHASE:        IFM Math/Code-Reasoning后台下载中(Math 21%/Code 30%) → WAITING=1(30min长睡监控)
 已完成:       ✅分词全DONE(8192shard/476B tok/1.8TB/0ERR);✅StepA/B/D全完成;✅EDA分析DONE;✅2TB下载DONE+ROI复盘;✅vision图文对调研报告;✅5agent datasets DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md;✅agent-data-protocol clone;✅DATA_MAPPING.md D1-D4+H.14;✅调研报告report_data_math_code_datasets_survey_zh.html;✅IFM/MegaMath≡LLM360/MegaMath SHA验证;✅污染检查结论;✅Toucan(21GB)+AgentTrove(19GB)+neulab(79GB);✅MegaMath batch1(216GB/5子集);✅P3 freeinference转告harness线
-当前动作:     例行巡检:两路IFM下载后台运行中(Math-Reasoning 464/2228=21%/863GB/PID1829139/ni=19/ETA~93h;Code-Reasoning 451/1637=28%/839GB/PID922699/ni=19/ETA~27.5h);nice19/max-workers2不挤S1;磁盘/nas_user 113T/51T可用(56%)✅;IFM总1.9T/1275parquet/5inc
-下一步:       ①等IFM Code-Reasoning完成(ETA~27.5h→~11-17 15:00)→更新DATA_MAPPING+commit+启动MegaMath batch2(megamath-web~1TB);②等IFM Math-Reasoning完成(ETA~93h→~11-20 12:00)→更新DATA_MAPPING+commit;③所有下载完成后做逐题污染检查→闭合IFM令
+当前动作:     例行巡检:两路IFM下载后台运行中(Math-Reasoning 464/2228=21%/870GB/PID1829139/ni=19/elapsed25.7h/ETA~98h;Code-Reasoning 485/1637=30%/907GB/PID922699/ni=19/elapsed11.5h/ETA~27h);nice19/max-workers2不挤S1;磁盘/nas_user 113T/50T可用(56%)✅;IFM总1.99T/1313parquet/5inc
+下一步:       ①等IFM Code-Reasoning完成(ETA~27h→~11-17 16:00)→更新DATA_MAPPING+commit+启动MegaMath batch2(megamath-web~1TB);②等IFM Math-Reasoning完成(ETA~98h→~11-20 15:00)→更新DATA_MAPPING+commit;③所有下载完成后做逐题污染检查→闭合IFM令
 阻塞:         无(IFM下载nice19/max-workers2后台运行,WAITING=1长睡30min监控)
-ERROR_COUNT:  0(StepC 0ERR;IFM下载正常运行;Code-Reasoning v2.log健康无错误;Math-Reasoning master orchestrator log无错误)
+ERROR_COUNT:  0(StepC 0ERR;IFM下载正常运行;Code-Reasoning v2.log健康无错误;Math-Reasoning .incomplete活跃写入正常)
 未完成指令:   有(IFM Math/Code-Reasoning下载未完成)→WAITING=1(后台下载,30min长睡监控)
 ```
 
@@ -53,8 +53,8 @@ ERROR_COUNT:  0(StepC 0ERR;IFM下载正常运行;Code-Reasoning v2.log健康无�
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [11-16 12:1x] 唤醒1532（IFM下载巡检+MEMORY体积清理+commit）：①✅MegaMath batch1 DONE(364parquet/216GB/5子集/0inc); ②🔄Math-Reasoning RUNNING(PID1829139/ppid=1829136/ni=19/elapsed~24.6h/464parquet/3inc/863GB/20.8%/当前下math-dialogue子集(5子集中第1个)/rate~189s/it降速中/最近parquet@12:11活跃/ETA~93h→预计~11-20~12CST); ③🔄Code-Reasoning RUNNING(PID922699/ppid=922695/ni=19/elapsed~10.5h/451parquet/2inc/839GB/27.6%/code-no-thinking-hard✅235parquet完成+code-no-thinking子集216parquet下载中/最近parquet@12:11活跃/rate~83.5s/it/v2.log健康无错误/ETA~27.5h→预计~11-17~15CST); ④✅调研报告DONE(17KB); ⑤磁盘/nas_user 113T/51T可用(56%)→✅(红线≥5T); ⑥IFM总1.9T/1275parquet/5inc; ⑦两路下载并行各max-workers2/ni=19→总4并发HF请求不挤S1(pretrain torchrun在.12运行中); ⑧728个.lock文件(正常); ⑨MegaMath第二批(megamath-web~1TB)待Code-Reasoning完成后启动; ⑩体积维护：清理1522-1531旧详细条目→归档指针,MEMORY 28KB→~20KB; ⑪下一步：等Code-Reasoning完成(~27.5h,~11-17 15:00)→更新DATA_MAPPING+commit+启动MegaMath第二批→等Math-Reasoning完成(~93h,~11-20 12:00)→最终校验+登记→闭合IFM令
-> 📦 唤醒1473-1530 原文已归档 → daily-memories-data/2026-11-13.md~2026-11-16.md（分词DONE+全量下载+EDA分析+Agent datasets+IFM下载启动+多轮巡检,详见日文件）
+> [11-16 13:1x] 唤醒1533（IFM下载巡检+进度更新+commit）：①✅MegaMath batch1 DONE(364parquet/216GB/5子集/0inc); ②🔄Math-Reasoning RUNNING(PID1829139/ppid=1829136/ni=19/elapsed~25.7h/464parquet/3inc/870GB/20.8%/当前下math-dialogue子集(5子集中第1个)/rate~200s/it/最近parquet@13:11活跃/.incomplete 1.7GB活跃@13:18/ETA~98h→预计~11-20~15CST); ③🔄Code-Reasoning RUNNING(PID922699/ppid=922695/ni=19/elapsed~11.5h/485parquet/2inc/907GB/29.6%/code-no-thinking-hard✅235parquet完成+code-no-thinking子集250+parquet下载中/最近parquet@13:16活跃/rate~85s/it/v2.log健康无错误/ETA~27h→预计~11-17~16CST); ④✅调研报告DONE(17KB); ⑤磁盘/nas_user 113T/50T可用(56%)→✅(红线≥5T); ⑥IFM总1.99T/1313parquet/5inc; ⑦两路下载并行各max-workers2/ni=19→总4并发HF请求不挤S1; ⑧下一步：等Code-Reasoning完成(~27h,~11-17 16:00)→更新DATA_MAPPING+commit+启动MegaMath第二批→等Math-Reasoning完成(~98h,~11-20 15:00)→最终校验+登记→闭合IFM令
+> 📦 唤醒1522-1532 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC完成+IFM下载启动+Code-Reasoning崩溃修复重启+多轮巡检,共11轮,详见日文件）
 > 📦 唤醒1457-1465 原文已归档 → daily-memories-data/2026-11-12.md~2026-11-13.md（例行巡检×9轮,stack-v3-train稳定1.9T,无新data令,详见日文件）
 > 📦 唤醒1458 原文已归档 → daily-memories-data/2026-11-13.md（例行巡检,无新data令,详见日文件）
 > 📦 唤醒1410-1420 原文已归档 → daily-memories-data/2026-11-13.md（batch6-7进度巡检×11轮,batch6完成1.813TB+batch7启动,2TB预算92.4%,详见日文件）
