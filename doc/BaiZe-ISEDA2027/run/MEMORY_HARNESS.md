@@ -2,19 +2,22 @@
 
 WAITING: 1
 
-> 🆕 **R2577 · 2026-11-16 17:1x — 监控轮·自检全绿 + cc rerun 74/82(17P/15×502infra/30×ability/12NA·+1 timeout·7 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
-> - **自检**: load26.81/224 ✅(pretrain dominant·无harness runaway)·mem 827GB/2015GB avail 1038GB ✅·0 harness proc >8000%CPU ✅·reports/ porcelain=0✅
+> 🆕 **R2578 · 2026-11-16 17:5x — 监控轮·自检全绿 + cc rerun 74/82(17P/15×502infra/31×ability/11NA·sqlite-with-gcov completed FAIL·1 running+7 remaining·0ConnRefused✅HARD VERIFIED) + adaptive off4/10·0 429✅ + gateway 200✅ + round2 manifest(26题)created + reports porcelain=0✅**
+> - **自检**: load27.21/224 ✅(pretrain dominant·无harness runaway)·mem 827GB/2015GB avail 1038GB ✅·0 harness proc >8000%CPU ✅·reports/ porcelain=0✅
 > - **git**: fetch+merge=Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~37h·n=1·overlay IN USE✅)·**74/82**(74 result.json: **17P**/45F(15×502+30×ability)/12NA·守恒74✅)·**1 running**(sqlite-with-gcov·PID919146·~50min)+**7 remaining**(queued)·ETA~Nov16 21:00–23:00
-> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 74 per-task result.json·cc修复(overlay network_mode:host·R2463)confirmed IN USE·17 PASS=真能力·vs旧0/89=100%infra
+> - **cc rerun**: PID 1510521 alive(~38h·n=1·overlay IN USE✅)·**74/82 per-task**(75 result.json inc job-level: **17P**/46F(15×502+31×ability)/11NA·守恒74✅)·sqlite-with-gcov completed since R2577(FAIL-ability)·**1 running**(torch-pipeline-parallelism·~27min)+**7 remaining**(queued)·ETA~Nov16 21:00–23:00
+> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 75 result.json·cc修复(overlay network_mode:host·R2463)confirmed IN USE·17 PASS=真能力·vs旧0/89=100%infra
 > - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 17P/74done(82total)·vs旧0/89
 > - **PASS 17**(unchanged since R2576): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate
-> - **NA 12**(all 3600s timeout·reward=None·+1 since R2576): code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli,reshard-c4-data,+1new(task_name=?)
-> - **FAIL 45**=15×502-infra(circuit-fibsqrt,cobol-modernization,crack-7z-hash,dna-insert,extract-elf,extract-moves-from-video,filter-js-from-html,git-multibranch,gpt2-codegolf,path-tracing,portfolio-optimization,regex-chess,rstan-to-pystan,sam-cell-seg,schemelike-metacircular-eval)+30×ability
-> - **adaptive**: work 4/4·quiet=525m·0 cumulative 429✅(today=Monday work hours)
-> - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun round2 26题(15×502+11×timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈27.0KB（归档~4KB·✅≤32KB）
+> - **NA 11**(all timeout·reward=None): code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli(900s verifier),reshard-c4-data
+> - **FAIL 46**=15×502-infra(circuit-fibsqrt,cobol-modernization,crack-7z-hash,dna-insert,extract-elf,extract-moves-from-video,filter-js-from-html,git-multibranch,gpt2-codegolf,path-tracing,portfolio-optimization,regex-chess,rstan-to-pystan,sam-cell-seg,schemelike-metacircular-eval)+31×ability(incl sqlite-with-gcov NEW)
+> - **gateway**: curl 127.0.0.1:9092/v1/models=200✅(healthy·502 was transient→round2 rerun should get real results)
+> - **adaptive**: off 4/10(17:52 past work hours 17:30)·quiet=563m·0 cumulative 429✅·state clean(test state separated✅)
+> - **round2 manifest**: `manifests/tb21_cc_round2_rerun_20261116.txt` 26 tasks(15×502+11×timeout)·gitignored✅·ready for round1 completion
+> - **下一步**: ①cc 82完成(~Nov16 21:00)→round2 rerun 26题(adaptive auto·同3600s口径·jobs-dir=/tmp)→merge best result per task→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈28.9KB（归档~4KB·✅≤32KB）
 >
+> 📦 R2577 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 74/82(17P/15×502infra/30×ability/12NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2576 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 73/82(17P/15×502infra/30×ability/11NA·+2 PASS·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+round2 manifest修正(17→26题)+reports porcelain=0✅。需要时再读。
 > 📦 R2574 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 70/82(15P/44F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2573 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 69/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
