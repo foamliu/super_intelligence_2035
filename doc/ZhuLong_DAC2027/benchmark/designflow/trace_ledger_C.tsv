@@ -1182,3 +1182,4 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794294853309_rytsm					parked		2026-11-17 01:05	r681 peek teeth-fail: how-to Q&A on LVS debugging (prose advice)
 1794447784831_8pdow					parked		2026-11-17 01:05	r681 peek viable-intent DSPF R-by-lvl grouping but lvl=37 coord-location needs GDS cross-ref (teeth-fail for coord step); deferred
 1788937019731_ccgt1	jiaqis	10.129.8.124	251	physical_verify	case	EDA-Eval-DesignFlow-DrcEnclosureRuleExtract-001	2026-11-17 01:30	
+1788743635326_keqfx	miccao	10.129.32.47	623	physical_verify	case	EDA-Eval-DesignFlow-DrcLogPerfAnalysis-001	2026-11-17 02:04	
