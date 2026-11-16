@@ -1,12 +1,15 @@
 {
-  "generated_at": "2026-11-15T12:17:47",
+  "generated_at": "2026-11-16T11:31:20",
   "protocol": "EDA-Eval-PyAether-158, Pass@1, 5-run mean±std, -p 8 -n",
   "new_zhulong_baseline": {
-    "n": 1,
-    "mean": 0.1899,
-    "std": 0.0,
+    "n": 4,
+    "mean": 0.0744,
+    "std": 0.067,
     "values": [
-      0.1899
+      0.1899,
+      0.0443,
+      0.0253,
+      0.038
     ],
     "env": "36.15 zhulong口径 (PreToolUse hook, RAG+沙盒可达, run_commands禁用)",
     "cli_agent": "zhulong fork 3.0.29",
@@ -26,17 +29,17 @@
     "env": ".17 非zhulong (无RAG/无沙盒, run_commands启用)",
     "source": "/tmp/posttrain_5run_eval/step105"
   },
-  "delta_pp": 15.95,
+  "delta_pp": 4.4,
   "paired_test_passany_mcnemar": {
-    "n11_both_pass": 0,
-    "n00_both_fail": 106,
-    "n10_new_only": 30,
-    "n01_old_only": 22,
-    "chi2_corrected": 0.9423,
-    "discordant": 52
+    "n11_both_pass": 9,
+    "n00_both_fail": 100,
+    "n10_new_only": 36,
+    "n01_old_only": 13,
+    "chi2_corrected": 9.8776,
+    "discordant": 49
   },
   "paired_test_passfrac_wilcoxon": {
-    "n_nonzero": 30,
+    "n_nonzero": 49,
     "error": "No module named 'scipy'"
   },
   "note": "5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。"
