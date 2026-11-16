@@ -1,14 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-16 wake#1009·**A0′′ r1 健康续跑·§7 step A do-nothing 心跳**·`run_cline_script.sh -p 4 -n` PID3796513 ALIVE(13:58 起·16:56 实测 elapsed 2:58·父 wrapper PID3796464 已自然退出子进程仍在跑)·/tmp/a0pp_r1.log 9.82MB mtime 16:56≈now 实时增长✓(16:21 时 8.16MB→16:56 时 9.82MB·+1.66MB/35min 健康)·**36 task 目录已起**(从 31 增至 36/40·4 题待起)·无 `pass (` 评分行(r1 未完·ETA ~2-4h/轮·已跑 2:58 仍预期内)·trace→/tmp/zhulong_a0pp_trace。infra: loop PID243810 **proxy ✅**(https_proxy+http_proxy 均在·cline 在 PATH)·/home 3.9G(99%)·A0′′ 写 /tmp(13G·74%)不写 /home·✅ /nasdata **15G(98%·从 wake#1008 的 4.3G 回升 ~11G·他线释放·硬约束#1 不干预·解除警觉)**。下轮:pgrep run_cline_script 有输出→do-nothing；无输出→打分 r1(grep `pass (`)→起 r2(3 轮→3 valid mean±std→若 A0′′≈A0=69.2% 则 8K 不够小→跳 A0′′′/A3′ 4K 梯度；若 A0′′<A0→起 A3(in=8K,spawn)对照)。详情见下 + daily §[wake#1008]）
+WAITING: 1（2026-11-16 wake#1010·**A0′′ r1 健康续跑·§7 step A do-nothing 心跳**·`run_cline_script.sh -p 4 -n` PID3796513 ALIVE(13:58 起·17:31 实测 elapsed 3:33·父 wrapper PID3796464 同期活·3 cline worker 活:task144/151/158)·/tmp/a0pp_r1.log 11.45MB mtime 17:31≈now 实时增长✓(16:56 时 9.82MB→17:31 时 11.45MB·+1.63MB/35min 健康)·**36+ task 目录已起**(4 题待起或 straggler·-p 4)·无 `pass (` 真评分行(r1 未完·grep 命中为模型推理文本片段·ETA ~2-4h/轮·已跑 3:33 仍预期内·可能接近收尾)·trace→/tmp/zhulong_a0pp_trace(1.2M)。infra: loop PID243810 **proxy ✅**(https_proxy+http_proxy 均在·cline 在 PATH `/home/app.e0031982/.local/bin/cline`)·/home 2.8G(100%⚠)·A0′′ 写 /tmp(13G)不写 /home·✅ /nasdata **27G(96%·从 wake#1009 的 15G 回升 ~12G·他线释放·硬约束#1 不干预)**。下轮:pgrep run_cline_script 有输出→do-nothing；无输出→打分 r1(grep `pass (` 真评分行)→起 r2(3 轮→3 valid mean±std→若 A0′′≈A0=69.2% 则 8K 不够小→跳 A0′′′/A3′ 4K 梯度；若 A0′′<A0→起 A3(in=8K,spawn)对照)。详情见下 + daily §[wake#1010]）
 
-- [2026-11-16 wake#1008 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1008]（A0′′ r1 健康续跑 do-nothing 心跳·16:21 实测 elapsed 2:23·log 8.16MB·31 task dirs·proxy ✅·/home 3.9G·⚠️/nasdata 4.3G·已被 wake#1009 取代：16:56 elapsed 2:58·log 9.82MB·36 task dirs·/nasdata 回升 15G）
+- [2026-11-16 wake#1005~#1009 原文已滚出] → 见 daily-memories/2026-11-16.md（A0′′ r1 健康续跑 do-nothing 心跳序列·14:33 elapsed 35m→15:08 1:10→15:44 1:46→16:56 2:58·log 2.2MB→11.45MB·17→36 task dirs·proxy ✅·/home 3.9G·/nasdata 4.3G→15G）
 
-- [2026-11-16 wake#1007 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1007]（A0′′ r1 健康续跑 do-nothing 心跳·15:44 实测 elapsed 1:46·log 6.2MB·24 task dirs·proxy ✅·/home 4.0G /nasdata 13G）
-
-- [2026-11-16 wake#1006 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1006]（A0′′ r1 健康续跑 do-nothing 心跳·15:08 实测 elapsed 1:10·log 4.2MB·19 task dirs·proxy ✅·/home 3.9G /nasdata 13G）
-
-- [2026-11-16 wake#1005 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1005]（A0′′ r1 健康续跑 do-nothing 心跳·14:33 实测 elapsed 35m·log 2.2MB·17 task dirs·proxy ✅·/home 4.0G /nasdata 14G）
+- [2026-11-16 wake#1010 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1010]（A0′′ r1 健康续跑 do-nothing 心跳·17:31 实测 elapsed 3:33·log 11.45MB·3 cline workers 活 task144/151/158·proxy ✅·/home 2.8G⚠·/nasdata 27G·体积维护:滚出 wake#911~#991 旧指针块 MEMORY 39522B→目标<32KB）
 
 - [2026-11-16 wake#1004 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1004]（🔴09:0x 令首次到达→停 A3 r1(voided out-budget)→建 A0′′(in=8K,out=16K,no spawn)→起 A0′′ 全量 r1 PID3796464·A0′(out-budget)作废=16.7±0.8% 标「设计错误」·A3 r1 trace 69M 保留归档标 VOID）
 
