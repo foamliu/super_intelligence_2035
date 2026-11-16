@@ -1,30 +1,15 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-16 wake#994·**r4 跑中 do-nothing 心跳**·§7 step A pgrep 有输出⇒退出·06:55 wrapper PID953001+run_cline PID953043/953044 ALIVE(05:48起✓)·r4 log 6.18MB mtime=06:54:56 增长中✓·0 评分行·ETA ~08:30 不变·2 valid(r2=15.8%,r3=17.1%)·r1废·**计划**：r4完成→打分→3 valid mean±std→**A3 预注册**（唯一变量=spawn·判据=A3 ITT≥A0′ ITT+3pp·McNemar方向一致·158-scale·子集=40题·对照=A0′·8650池/-p4·per-task data-dir隔离）→A3起跑。infra: loop PID243810 proxy ✅(常驻自检通过)·df /home 5.8G✅ /nasdata 30G✅·无他线 eval 冲突(他线 cline 属其他用户非 eval)·HEAD=f099be625(他线)·run/ 无未提交。详情见下 + daily §[wake#991]）
+WAITING: 1（2026-11-16 wake#995·**r4 跑中 do-nothing 心跳**·§7 step A pgrep 有输出⇒退出·07:59 wrapper PID953001+run_cline PID953043/953044 ALIVE(05:48起✓·elapsed~2h11m)·r4 log 10.6MB mtime=07:59:30 增长中✓·grep 9 行匹配经核**全为 agent 中间推理文本**（"completed tasks..."/"FAIL I need..."嵌入思绪）非评分行·agent 正在 task 142 深探 pyAether API·ETA ~08:30 不变(剩~30min)·2 valid(r2=15.8%,r3=17.1%)·r1废·**计划**：r4完成→打分→3 valid mean±std→**A3 预注册**(唯一变量=spawn·判据=A3 ITT≥A0′ ITT+3pp·McNemar方向一致·158-scale·子集=40题·对照=A0′·8650池/-p4·per-task data-dir隔离)→A3起跑。infra: loop PID243810 proxy ✅(常驻自检通过)·df /home 5.8G✅ /nasdata 30G✅·无他线 eval 冲突·run/ 无未提交。详情见下 + daily §[wake#994]）
 
-- [2026-11-16 wake#994·**r4 跑中 do-nothing 心跳**] prompt=ZHULONG_TASK.md（用户令 11-15 20:5x·续 wake#993）。§7 step A：pgrep 有输出 → 什么都不做退出。06:55 实测 wrapper PID953001 + run_cline PID953043/953044 均 ALIVE（05:48 起✓）·r4 log `/tmp/a0prime_r4.log` 6.18MB mtime=06:54:56 增长中✓·0 评分行（未结束）·ETA ~08:30 不变。proxy 常驻自检：loop PID243810 environ `https_proxy=http://172.19.92.23:13128` ✅ 通过。infra：df /home 5.8G✅ /nasdata 30G✅（较 wake#993 的 31G 微降 1G·仍达标）·无他线 eval 冲突（pgrep 见到的其他 cline 进程属用户 t0002949/e0030544 等非 zhulong eval）。git：HEAD=f099be625(designflow 他线)·run/ 无未提交改动。计划不变：r4 完成→打分→3 valid mean±std→A3 预注册→A3 起跑。WAITING=1（r4 跑中）。
+- [2026-11-16 wake#995·**r4 跑中 do-nothing 心跳**] prompt=ZHULONG_TASK.md（用户令 11-15 20:5x·续 wake#994）。§7 step A：pgrep 有输出 → 什么都不做退出。07:59 实测 wrapper PID953001 + run_cline PID953043/953044 均 ALIVE（05:48 起✓·elapsed ~2h11m）·r4 log `/tmp/a0prime_r4.log` 10.6MB mtime 07:59:30 持续增长✓·**9 行 grep 匹配经核全为 agent 中间推理文本**（"completed tasks in the code"/"FAIL I need to understand" 等嵌入思绪流，非最终评分行）·agent 正在 task 142 深探 pyAether API（dbCreateLib/techSetTechLibName/aeNewLib）·ETA ~08:30 不变（剩 ~30min）·配置与 r2/r3 逐字节一致。proxy 常驻自检：loop PID243810 environ `https_proxy=http://172.19.92.23:13128` ✅ 通过。infra：df /home 5.8G✅ /nasdata 30G✅·无他线 eval 在跑（pgrep 仅见 r4 自身）·HEAD=02518dcb5(harness 他线)·run/ 无未提交改动。计划不变：r4 完成→打分→3 valid(r2=15.8%,r3=17.1%,r4) mean±std→A3 预注册→A3 起跑。纪律全守：未 kill 任何进程·未碰 r4/data-dir/.env/eda_fastmcp/他线文件·未删 trace。交付：MEMORY+daily+commit `zhulong arms:`。WAITING=1（r4 跑中·下轮看 r4 是否完成）。
 
+- [2026-11-16 wake#994 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#994]（A0′ r4 跑中 do-nothing 心跳·**已被 wake#995 取代：r4 仍跑中 10.6MB 增长中·9 grep 行经核为中间推理非评分**）
 - [2026-11-16 wake#993 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#993]（A0′ r4 跑中 do-nothing 心跳·**已被 wake#994 取代：r4 仍跑中 6.18MB 增长中**）
 
 - [2026-11-16 wake#992·**r3 ✅完成=17.1% + r4 makeup 已起跑**] prompt=ZHULONG_TASK.md（用户令 11-15 20:5x·续 wake#991）。承接 wake#991「r3 跑中 28/40 ETA ~06:18」。**r3 已自然结束并打分**：05:46 实测 wrapper PID2912482+run_cline PID101371/101372 均 DEAD·r3 log `/tmp/a0prime_r3.log` 13.7MB mtime 05:31:15 停止增长·**r3 ✅ = 17.1%（27/158 pass · 158-scale）**·gen 32 ok / 126 fail / 0 exec_err / 0 timeout·batch `2026_1116_024659`·trace→/tmp/zhulong_a0prime_trace/r3/。**有效轮汇总**：r1=废(SIGTERM 外杀·log 无评分行)·r2 ✅=15.8%(25/158)·r3 ✅=17.1%(27/158) ⇒ **仅 2 valid**·wrapper ROUNDS=3 已尽。**起 r4 makeup**（§7 step A：打分成功 ROUND+=1 ROUND≤5→启动下一轮）：给 `run_a0prime_ablation.sh` 加向后兼容 `START_ROUND` 偏移（默认 1 行为不变）·`setsid env START_ROUND=4 ROUNDS=1 bash run_a0prime_ablation.sh`·wrapper PID953001 detached·05:48 起·r4 log `/tmp/a0prime_r4.log` 增长中·配置与 r2/r3 逐字节一致（8650 池·-p 4·in<=32K·out<=4096·no spawn·compact@28.8K·deepseek-v4-pro-cloud·cline 3.0.51·compaction=basic·thinking=medium·CLINE_UNIFIED_DATA_DIR=1 per-task 隔离）·ETA ~08:30（r3 耗 2h44m）·.env 已 swap 到 8650 池(bak=.env.bak.a0prime.953001·trap 还原)。**proxy 常驻自检**：loop PID243810 environ `https_proxy=http://172.19.92.23:13128` ✅ 通过。**infra**：df /home 5.8G✅ /nasdata 31G✅·8 端口全 OPEN(8650/8651/8652/8654/8664/8665/8653/8669)✅·无他线 eval 在跑·沙盒错峰 8650 池不干扰 8664 池。**计划不变**：r4 完成→打分→3 valid(r2=15.8%,r3=17.1%,r4) mean±std→**A3 预注册**（唯一变量=spawn·判据=A3 ITT≥A0′ ITT+3pp·McNemar 方向一致·158-scale·子集=40题·对照=A0′·资源同 A0′/8650池/-p4·per-task data-dir 隔离·起跑前必做 MEMORY 一行预注册）→A3 起跑。纪律全守：未 kill 任何进程·未碰 r3/data-dir/.env(仅 wrapper 内 swap-restore)/eda_fastmcp/他线文件·未删 trace·wrapper 改动仅加 START_ROUND 向后兼容(已记)。交付：MEMORY+daily+commit `zhulong arms:`。WAITING=1（r4 跑中·下轮看 r4 完成否）。
-- [2026-11-16 wake#991 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#991]（A0′ r3 跑中 28/40 心跳 do-nothing·**已被 wake#992 取代：r3 ✅完成=17.1% + r4 makeup 已起跑**）
+- [wake#982~#991 旧指针合并·原文见 daily-memories/2026-11-1{5,6}.md] wake#991 r3跑中28/40心跳→#990 r3 22/40→#988 r3 15/40+baseline eval仍在跑→#987 r2✅完成=15.8%(158-scale)+r3跑中→#986 r2 27/40→#985 r2 24/40→#984 r2 20/40健康但慢(慢因=out-budget 4096)→#983 r2 20/40活过00:10风险节点(r1 SIGTERM一次性特例)→#982 r2 15/40+straggler死+他线eval结束。均已被 wake#992(r3✅17.1%+r4起跑)→#993/994/995(r4跑中) 取代。
 
-
-- [2026-11-16 wake#990 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#990]（A0′ r3 跑中 22/40 心跳 do-nothing·**已被 wake#991 取代：r3 28/40 推进中 ETA ~06:18**）
-
-- [2026-11-16 wake#988 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#988]（A0′ r3 跑中 15/40 心跳 do-nothing·baseline eval 仍在跑·**已被 wake#989 取代：r3 18/40 + baseline eval 已自然结束**）
-
-- [2026-11-16 wake#987 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#987]（A0′ r2 ✅完成=15.8%(158-scale)·25/158 pass·29 gen·gen-quality 86.2%·r3 跑中·分母flag·proxy 纠正·**已被 wake#988 取代：r3 跑中 15/40 心跳**）
-
-- [2026-11-16 wake#986 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#986]（A0′ r2 跑中 27/40 持续推进健康·**已被 wake#987 取代：r2 ✅完成=15.8% + r3 跑中**）
-
-- [2026-11-16 wake#985 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#985]（A0′ r2 跑中 24/40·**已被 wake#987 取代：r2 ✅完成=15.8% + r3 跑中**）
-
-- [2026-11-16 wake#984 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#984]（A0′ r2 跑中 20/40 + 健康但慢 + 慢因=out-budget 4096 致长题多轮小工具调用·**已被 wake#985/986 取代：r2 27/40 持续推进**）
-
-- [2026-11-15 wake#983 原文已滚出] → 见 daily-memories/2026-11-15.md §[wake#983]（A0′ r2 跑中 20/40 + 活过 00:10 风险节点 ⇒ r1 SIGTERM 一次性特例·**已被 wake#984 取代：r2 仍 20/40 健康但慢 + 38min 无新 .py**）
-
-- [2026-11-15 wake#982 原文已滚出] → 见 daily-memories/2026-11-15.md §[wake#982]（A0′ r2 跑中 15/40 + straggler 死 + 他线 eval 结束 + kill 机制只读调查·**已被 wake#983/984 取代：r2 活过风险节点 + 仍健康**）
 
 - [2026-11-15 wake#981 原文已滚出] → 见 daily-memories/2026-11-15.md §[wake#981]（A0′ r1 失效 + r2 起跑 + straggler 风险·**已被 wake#982 取代：straggler 已死 + r2 进展 15/40 + 他线 eval 结束**）
 
