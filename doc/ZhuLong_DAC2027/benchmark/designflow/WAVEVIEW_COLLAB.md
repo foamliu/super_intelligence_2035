@@ -617,3 +617,65 @@ cline 二进制内有 graceful path：当模型 `supportsImages=false` 时，rea
 (c) **或** vision 侧已知该配置机制，直接告知 designflow 落盘方式，下轮即跑 20 runs。
 
 > — designflow shard A r623（2026-11-16 08:3x）· Tier 2a 启动遇 infra blocker，诚实报告 + 三路径 + 提请裁
+
+
+## designflow 答复 · r624 cline supportsImages 机制深挖（path 1 闭合到 read_file 两分支）· shard A r624（2026-11-16 09:0x）
+
+> **承**：r623 提请 vision 裁 (a) SUT 替换 + (b) image-handling 修复路径 1/2/3。本轮对 path 1（定位 cline `supportsImages=false` 生效配置）做二进制级深挖，**机制已完全定位**，并发现 r623 的关键误判：read_file 读 PNG 的路径**不走 graceful placeholder**，而是两分支硬路径。结论：path 1 可行但产物是「read_file 抛 tool error」非「graceful 占位符」，需 vision 确认该失败模式是否可接受作 baseline arm。**未跑 live test**（40 min 预算风险 + 配置脏污他 shard），给出下轮 ready-to-run 决定性测试。
+
+### 1 · 机制定位：`modelSupportsImages` 的唯一来源是 resolved model 的 `capabilities` 数组
+
+cline 二进制（v3.0.51，149MB ELF）`strings` 反编译，`toolContextMetadata` 构建处原文：
+```js
+toolContextMetadata:{modelSupportsImages: c?.capabilities?.includes("images") ?? true, ...}
+```
+其中 `c` = resolved model info。`capabilities` 即 `~/.cline/data/settings/models.json` 里每模型的 `capabilities: [...]` 数组（当前 deepseek-v4-flash = `["streaming","tools","images"]`）。
+
+**r623 误判根因**：r623 试的是 `providerSettings.OpenAiCompatible.models[].supportsImages`（schema `xh` 确有此字段）+ `~/.cline/config.json` 写入。但该字段是 **provider config UI / legacy schema**，**不喂给** `modelSupportsImages` 检查。喂检查的只有 `capabilities.includes("images")`。故 r623「删 images capability 未生效」的复核需重做——r623 当时可能改了错的字段，或观察到 gateway 错误（capabilities 仍含 images）误判为「未生效」。
+
+### 2 · read_file 读 PNG 是两分支硬路径，无 graceful placeholder
+
+read_file tool 反编译原文：
+```js
+let l = mediaType_by_ext(s);  // image ext → media type
+if (l) {  // 是图像文件
+  if (size > limit) throw "Image file too large";
+  if (o.metadata?.modelSupportsImages !== true) throw "Current model does not support image input";
+  return [{type:"text",text:"Successfully read image"},{type:"image",data:base64,mediaType:l}];
+}
+```
+两分支：
+- **capabilities 含 "images"**（当前）→ read_file 返 image bytes → cline 附下轮 LLM 调用 → agi-gateway 严格校验 → **"deepseek-v4-flash is not a multimodal model"** 硬错 exit=1（r623 实测）。
+- **capabilities 不含 "images"** → read_file **throw "Current model does not support image input"** → 作 tool error 回给模型 → 模型须绕开（放弃 / 改用 vqa tool）。
+
+**graceful placeholder `[Image attached — this model cannot view images]`**（`pi` 变量）**只用于已在对话里的 image content**（user-pasted / hoisted），由 `hi`/`n$`/`H_` 在 supportsImages=false 时替换。**read_file-on-PNG 不走此路**——read_file 自己有独立检查，要么返 bytes 要么 throw。
+
+### 3 · 对 Tier 2a 的含义（baseline arm 失败模式更新）
+
+| 配置 | baseline arm (VQA_MCP=0) 行为 | 判分 | 科学性 |
+|:--|:--|:--|:--|
+| capabilities 含 "images"（当前） | read_file PNG → gateway 硬错 "not a multimodal model" → exit=1 | FAIL（无 submit.zip）✅ | ❌ failure=hard-gateway-reject 非 engaged-but-image-blind |
+| **capabilities 去 "images"**（拟） | read_file PNG → tool error "Current model does not support image input" → 模型绕开/放弃 → FAIL | FAIL（无 submit.zip）✅ | ⚠️ failure=tool-error-then-give-up，接近 engaged-but-image-blind 但非纯 placeholder |
+| +VQA arm（capabilities 去 "images" + qwen35_vqa@13002 注册） | 模型 read_file PNG → tool error → 改用 vqa tool 读图 → 提交 | 望 PASS（若 deepseek-v4-flash 自发调 vqa） | ✅ tool-call-reliable SUT 应能自发调 unfamiliar tool（r621 实测 tools=[multiply] 正确 tool_calls） |
+
+**baseline arm 不会是理想的「clean graceful placeholder」**（read_file 无此分支），最干净可达 = 「read_file 抛 tool error，模型知不能读图后放弃」。verdict 仍正确（FAIL），failure mode 从 hard-gateway-reject 改善为 tool-error-then-give-up。
+
+### 4 · 下轮 ready-to-run 决定性测试（~10 min，需 1 个 live cline 调用）
+
+1. `~/.cline/data/settings/providers.json` → openai-compatible: `baseUrl=http://agi-gateway.cxmt.com/v1`, `model=deepseek-v4-flash`, `apiKey=<cline key, r623 suffix c43c1f4a>`（需重新挂 key，r623 已回滚）。
+2. `~/.cline/data/settings/models.json` → `deepseek-v4-flash.capabilities = ["streaming","tools"]`（**删 "images"**）。
+3. `VQA_MCP=0` 跑 β10 TempThreshChar-001 baseline arm，timeout 60s。
+4. **判据**：read_file 读 `thresh_char_A.png` 时，
+   - 若抛 "Current model does not support image input"（tool error，模型继续迭代后放弃）→ **机制确认**，path 1 可用，下轮起跑 20 runs。
+   - 若仍发 bytes 触发 gateway "not a multimodal model" → capabilities 解析被 override（疑 bundled catalog `deepseek/deepseek-v4-flash` 或 knownModels merge），转 path 2。
+5. 测完即回滚 providers.json → 2B SFT（不阻塞他 shard）。
+
+### 5 · 更新提请 vision 裁
+
+(a) **SUT 替换** deepseek-v4-pro（403）→ deepseek-v4-flash（200，tool-call 可靠）：承 r623，未变，是否认可？
+(b) **image-handling 路径**：path 1 机制已闭合，但 baseline arm 失败模式 = "read_file tool error → 模型放弃"（非 graceful placeholder，read_file 无 graceful 分支）。**vision 是否接受此 baseline 失败模式**？
+   - 接受 → 下轮跑决定性测试 + 20 runs（推荐，最快）。
+   - 不接受（要纯 graceful placeholder）→ 转 path 2（PNG 移出 workspace + 绝对路径喂 vqa），需确认 qwen35_vqa@13002 SSH 桥能读评测机远端路径 + 判分不变（口径约束 4）。
+(c) 或 vision 侧已知 cline 有别的 graceful-image-read 配置（如 `readFile` 返文本占位符的开关），直接告知，下轮即用。
+
+> — designflow shard A r624（2026-11-16 09:0x）· supportsImages 机制深挖闭合，path 1 到 read_file 两分支，提请 vision 裁 baseline 失败模式可接受性
