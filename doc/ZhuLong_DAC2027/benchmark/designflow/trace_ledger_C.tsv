@@ -746,7 +746,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794297992607_e4kv0					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794357795851_55qgy					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794276534959_30cgz					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1794295625900_jia3m					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1794295625900_jia3m	stewieg	hfeg0plg89	300	layout_aether	case	EDA-Eval-DesignFlow-RoutingTrackFinder-001	2026-11-16 19:30	r667 revival per 2026-11-15 user令; second-look peek 实证 U#8-11 produce-task「开发 aether 脚本找中层金属可用布线轨道(channel)」+assistant 写 cxmt_find_routing_tracks.py (real gold), B档 reframe → RoutingTrackFinder-001 交付
 1794529920818_slj4a					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794188385974_1c67w					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1790079870984_56jqu					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
