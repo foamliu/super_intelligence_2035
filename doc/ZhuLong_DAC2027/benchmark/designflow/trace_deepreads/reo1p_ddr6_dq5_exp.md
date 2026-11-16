@@ -1,6 +1,6 @@
 # Deepread: reo1p — DDR6 ddr6_test.sv 期望值根因分析 (DEBT, r659 deepread, 待 r660 合成)
 
-> **状态**: DEBT 1 (r660 合成). r659 deepread 闭合, 根因假说已定位至精确代码行, 待 r660 验证 read-expected 路径后合成 case.
+> **状态**: DONE (r660 合成落地 EDA-Eval-DesignFlow-Ddr6Dq5ExpZero-001, A.jsonl 357→358). r659 deepread 闭合, r660 补 read-expected (dq_exp DSDM 段) + write_mem_arr md_mask 双路确认根因后合成.
 
 ## trace 溯源
 - session: `1791191409174_reo1p` (dandans / hfhds201=10.129.32.75 / mc=113 / 64 msgs / 1.46MB / agent=lead)
