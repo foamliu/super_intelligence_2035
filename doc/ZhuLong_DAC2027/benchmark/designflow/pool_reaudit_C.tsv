@@ -114,7 +114,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked: user turns all fix-direction (改ae.dmDeleteObj->dbDelCV)	可造	debug/analysis:check验根因+修复+hidden B
 1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked: sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 	不可造	—
 1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked: meta: UI#0 policy engine caching/permission debug, UI#2	不可造(deepread r592)	r592 deepread 确认: trace=Cline policy-engine caching/permission debug(UI#0 'policy engine cached old values at session startup'/UI#2 'grant permission to change file'); 非EDA非design-flow; r590 'debug' keyword 批量 revival=FALSE POSITIVE, 原 parked 判定正确
-1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked: generic launch: UI#0 启动业务场景:时序分析, UI#264 report product	可造	analysis:check验报告结构+关键事实+hidden B
+1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked: generic launch: UI#0 启动业务场景:时序分析, UI#264 report product	可造-低优(peek r649)	peek r649: U#0="启动业务场景:时序分析"(canned launcher) + U#1="can you report product yield"(vague)；keyword profile pyaether:592/innovus:424 强 但 user turn canned+vague，疑无 clean produce-task gold。需 deepread 确认 assistant 是否产 report artifact
 1790236124444_8orer	lvyy	hfeg0pkn002	165	layout_aether	parked: schematic domain: UI#135 复制电路 CkIbDiffM6+子电路到新library=s	不可造	—
 1791788736494_t2qp9	leo27li	hfeg0pkn001	156	layout_virtuoso	parked: STA/Innovus PnR Q&A: UI#0 setup/hold sta, UI#5 innovus 	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1785738164906_rqpb4.messages.json	t0002638	hfeg0plg49	517	layout_aether	parked: meta-infra session: bench author t0002638 building EDA-	可造-低优	同已覆盖case形态(需deepread)
@@ -148,7 +148,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1791944224191_6i6lk	jason17w	hfeg0pnd002	328	physical_verify	parked: VPS verilog regression orchestration (run_approved_comm	不可造	—
 1792836135136_zpb6g.messages.json	keviny	hfeg0plg57	44	layout_virtuoso	parked: slash command /anasimpro-gui-start unresolved; assistan	可造	分析/Q&A或脚本(需deepread)
 1792215882223_qv6pl	adaml	hfeg0pkn001	324	layout_aether	parked: wrong domain: waveview/fsdb spice_sim skill dev, not la	不可造	—
-1792479341771_hacfk	jianwang	hfhds201	98	pg_layout	parked: already parked	可造	分析/Q&A或脚本(需deepread)
+1792479341771_hacfk	jianwang	hfhds201	98	pg_layout	parked: already parked	不可造-for-C(deepread r649)	peek r649: U#0/U#1 = primesim 仿真 inst-path block 仿真精度 Q&A = shard B spice_sim, off-C; reaudit pg_layout 标记系 keyword 误判
 1792491091764_qk0vo	pdong	hfeg0plg98	49	pg_layout	parked: env-debug: how to launch innovus(module/bsub/libssl) no	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1791443950843_b7y8t	shaoyou	hfeg0pkn004	107	layout_aether	parked: schematic net highlight net7 = schematic domain + overl	可造-低优	同已覆盖case形态(需deepread)
 1792380407268_opm9y	willashi	hfeg0plg55	279	layout_virtuoso	parked: schematic fix + spectre pre-sim debug = schematic/sim d	可造	debug/analysis:check验根因+修复+hidden B
@@ -313,10 +313,10 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked: r298: idle-empty	不可造	—
 1793088659672_4lwqr	e0047472	hfeg0plg53	225	pg_layout	parked: completed-non-EDA-vim-NERDtree-troubleshoot	可造	分析/Q&A或脚本(需deepread)
 1794193951052_zg8vo	e0047695	hfeg0pkn001	329	pg_layout	parked: r543 reject Q&A/setup: U#1=禁用virtuoso layout鼠标拖动器件功能cds	不可造	—
-1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked: r299: how-to Q&A (pcell instance array), idle, prose go	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked: r299: how-to Q&A (pcell instance array), idle, prose go	可造-低优(deepread r649)	deepread r649: 48msgs/6 user turns/0 writes。U#0-U#2 = Virtuoso pcell array/copy how-to (prose 答案，无 artifact)；U#3 = DRC density rule "Minimum metal density in window 125x125... 怎么改" **UNANSWERED**（session 末 U#4/U#5="？"×2 无 assistant 回复 → 无 gold）。答了的 turn 是 prose how-to，§4.3 teeth-able check 未证实（需 structured-glossary B档 reframe）；唯一可 teeth 的 DRC-rule-modify turn 无 gold → 不可造。保留低优待 B档 reframe 验证
 1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked: r299: failed, wrong-shard web-dev (HTML UI export for P	不可造	—
 1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked: r299: cancelled, trivial prompt=你好, A-rule2 fail	不可造	—
-1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked: r299: idle, capability Q&A prompt=你可以使用Aether吗, no prod	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked: r299: idle, capability Q&A prompt=你可以使用Aether吗, no prod	可造-低优(deepread r649)	deepread r649: 198msgs/27 user turns/**0 writes**。纯 conceptual Q&A（Aether 测长/calibre cell 命名/EXPAND CELL/SINGULAR+ABUT 语义/layer.map 路径/snap mode/ruler 等），gold = prose 解释无 artifact。旧判 "capability Q&A" 仅合 U#0，余 26 轮真实 DRC/Aether 概念 Q&A（新规则下合法意图）。但 §4.3 teeth-able check 未证实：prose 概念答案难拆 ≥8 独立非子串条件 + hidden B 结构异 + 3 negative。保留低优待 B档 structured-glossary reframe 验证
 1791611768210_xnqkp					parked: r312 data-analysis on aether crash CSV (wrong-shard, no	不可造	—
 1793094734633_bn62m					parked: r312 pex-fail diagnose-fix (no clean produce deliverabl	可造	debug/analysis:check验根因+修复+hidden B
 1793015068991_s8p63					parked: r312 aether-launcher skill-enable (not produce)	不可造	—
