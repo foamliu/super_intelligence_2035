@@ -1227,7 +1227,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792462491236_ccaea	weidong	hfeg0pkn002	133	spice_sim	parked		2026-11-11 19:25	reject L1 filename->CSV too simple for new case
 1790658262664_zjzz8	e03179	hfeg0pkn002	168	spice_sim	parked		2026-11-11 19:25	reject skill-use vam-agent 建模
 1793755992968_1ip4z	reedchen	hfeg0pkn004	68	spice_sim	parked		2026-11-11 19:25	reject near-dup McPvtVmEval-001/PostSimDeckBatch-001
-1791437695704_3pn6a	thomasz	hfeg0pkn002	24	spice_sim	parked		2026-11-11 19:25	reject diagnostic 波形打不开
+1791437695704_3pn6a	thomasz	hfeg0pkn002	24	spice_sim	case	EDA-Eval-DesignFlow-FsdbNfsIncompleteDiag-001	2026-11-16 09:49	reject diagnostic 波形打不开
 1793104325523_ad0nq	jackjia	hfeg0pkn002	34	spice_sim	parked		2026-11-11 19:25	reject empty nmsg=0
 1794133519350_jesvi	joeyl	hfeg0plg53	49	spice_sim	parked		2026-11-11 19:25	near-dup DutySkewAvg-001 (7ycbz same .sp path)
 1793341820971_f5ser	wzj	hfeg0pkn002	96	characterization	case	EDA-Eval-DesignFlow-G5TbGen-001	2026-11-11 19:25	
