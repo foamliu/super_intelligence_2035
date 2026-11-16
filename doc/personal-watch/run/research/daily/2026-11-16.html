@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-16（5/5 ＋ B 轨第四十一轮 161 篇 · 作者网 155 人 · 作者信 62 封）· research 线</title>
+<title>论文观察日报 · 2026-11-16（5/5 ＋ B 轨第四十二轮 166 篇 · 作者网 158 人 · 作者信 65 封）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -53,7 +53,7 @@
 <div class="wrap">
 <header class="hero">
   <h1>论文观察日报 · 2026-11-16</h1>
-  <div class="sub"><b>06:00 时窗（B 轨第四十一轮）</b> · A 轨进度 <b>5/5</b> · 全报 5 篇「借鉴」＋ 🅱 B 轨第四十一轮 <b>+4 → 161</b> 篇 ＋ 👥 作者网 <b>155</b> 人 ＋ ✉ 作者请教信第 <b>60–62</b> 封（累计 <b>62</b>，回信率 <b>0/62</b>）</div>
+  <div class="sub"><b>09:00 时窗（B 轨第四十二轮）</b> · A 轨进度 <b>5/5</b> · 全报 5 篇「借鉴」＋ 🅱 B 轨第四十二轮 <b>+5 → 166</b> 篇 ＋ 👥 作者网 <b>158</b> 人 ＋ ✉ 作者请教信第 <b>63–65</b> 封（累计 <b>65</b>，回信率 <b>0/65</b>）</div>
   <div class="meta">
     <span>📅 2026-11-16（周一）06:0x CST</span>
     <span>📚 数据源：arXiv API（Atom）+ OpenAlex（被引，本轮恢复）+ PDF 全文</span>
@@ -293,9 +293,65 @@
   <b>去重与诚实记录</b>：① 本轮 5 篇均不在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> 中（按 arXiv ID 去版本号比对；03:00 轮新增两篇发送前另在 <code>发送记录.md</code> 查重 0 命中）；② 5 篇中 <b>3 篇略超 72h</b>（2611.16882 ≈73.2h / 2611.17287 ≈72.3h / 2611.17169 ≈73.4h），仅因公告批连续 14 个时窗未前进而按「最近一次公告批」例外收录，逐条标注；③ 所有数字均为<b>论文作者自报、未复现</b>；④ 本轮 B 轨 4 篇未逐条打开 abs 页（走 <code>id_list</code> + Semantic Scholar + PDF 全文），与往轮差异如实记录；⑤ <b>被引口径变更</b>：OpenAlex 本轮 <code>429</code>，改取 Semantic Scholar，数值与往轮 OpenAlex 不可直接对比。
 </div>
 
+<div class="note">
+  <b>09:00 时窗变更说明（相对 06:00 轮）</b>：① <b>A 轨 0 新收</b> —— 今日 5/5 配额仍满；<code>cat:cs.CL</code> 20-entry 复核 <code>200</code> + atom（<b>50,083 B / 20 entry</b>，与 00:00 / 03:00 / 06:00 三轮逐值一致），<code>published</code> 上界仍 <code>2026-11-12T18:59:52Z</code> ⇒ <b>连续第 16 个时窗未前进</b>（周一公告批未如预期在 09:00 出现）；余量按令让给 B 轨。② B 轨 <b>161 → 166</b>（第四十二轮 +5）。③ 作者网 <b>+3 人 → 158</b>（条目编号 154–156）。④ 作者信 <b>62 → 65</b>（#63 日文 / #64 中文 / #65 中文）。⑤ 回信率仍 <b>0/65</b>，0 封到期（最早 2026-11-25）。⑥ <code>voice_ready</code> / <code>news_ready</code> 均 0 条。
+</div>
+
+<h2 class="sec">🅱 B 轨 · 经典论文第四十二轮（+5 → 166 篇）</h2>
+<table>
+  <tr><th>#</th><th>论文（原题照抄）</th><th>年份 / 会场</th><th>被引（OpenAlex，2026-11-16）</th><th>一句话</th><th>归属线</th></tr>
+  <tr><td>162</td><td><a href="https://arxiv.org/abs/2006.16668">GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding</a></td><td>2020 · 预印本</td><td><b>1,633</b></td><td>每隔一层 FFN 换 top-2 稀疏 MoE + 自动分片，2,048 块 TPU v3 训到 <b>600B</b>；37.5B→600B（16×）算力仅 6→22 core-year（3.6×）</td><td>pretrain / data</td></tr>
+  <tr><td>163</td><td><a href="https://arxiv.org/abs/2401.04088">Mixtral of Experts</a></td><td>2024 · 预印本</td><td><b>4,372</b></td><td>8 专家 / token 选 top-2，<b>总参 47B、激活 13B</b>，32k 上下文；把「总参 ≠ 单 token 算力」写成对照表</td><td>pretrain / zhulong / data</td></tr>
+  <tr><td>164</td><td><a href="https://arxiv.org/abs/2310.11511">Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection</a></td><td>2023 · 预印本（会场未核）</td><td><b>1,091</b></td><td>生成时插入 <code>Retrieve</code> / <code>ISREL</code> / <code>ISSUP</code> / <code>ISUSE</code> 反思 token，推理端用段级 beam search 加权打分</td><td>harness / data / zhulong</td></tr>
+  <tr><td>165</td><td><a href="https://arxiv.org/abs/2308.14508">LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding</a></td><td>2023 · <b>ACL 2024</b></td><td><b>1,169</b></td><td>21 数据集 / 6 类任务 / <b>4,750 条</b>中英双语长上下文基准；写明「超长输入中间截断」口径</td><td>harness / zhulong / data</td></tr>
+  <tr><td>166</td><td><a href="https://arxiv.org/abs/2406.16860">Cambrian-1: A Fully Open, Vision-Centric Exploration of Multimodal LLMs</a></td><td>2024 · <b>NeurIPS 2024 Oral</b></td><td><b>514</b></td><td>20 多个视觉编码器横向对照 + SVA 把 <b>576 → 36</b> 视觉 token；开源 Cambrian-7M（OCR 27.6%）与 CV-Bench</td><td>vision / data / harness</td></tr>
+</table>
+<div class="note">
+  <b>核验与诚实记录</b>：① 5 篇均走 <b>abs 页 <code>200</code></b>（43,816 / 46,189 / 42,906 / 45,172 / 45,385 B）逐字核标题、作者数（9 / 26 / 5 / 13 / 14）、<code>published</code> 与 <code>comment</code>；② <b>PDF 5/5 <code>200</code> + <code>application/pdf</code></b>（1,747,868 / 2,475,990 / 1,405,127 / 11,630,690 / 6,427,380 B；35 / 13 / 30 / 19 / 51 页，<code>pdftotext</code> 全部可解析），关键数字逐字核对；③ <b>Self-RAG 会场未写</b>：arXiv <code>comment</code> 只写「30 pages, 2 figures, 12 tables」，未取得一手会场页 ⇒ 不写 ICLR 2024（🚫 不凭记忆代填）；④ GShard 2020 年的 TPU v3 成本不可与今天硬件直接比较；⑤ 被引均为 OpenAlex 口径、查询日 2026-11-16，与 Semantic Scholar 口径（03:00 轮）不可直接对比；⑥ LongBench PDF 11.6 MB、Cambrian-1 6.4 MB 均 &gt;5 MB ⇒ 只留本地 <code>research/pdf/</code>（gitignore），不入 git。
+</div>
+
+<h2 class="sec">👥 作者关系网 +3（编号 154–156）· ✉ 作者请教信 +3 → 65 封</h2>
+<table>
+  <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱（来源）</th><th>X</th><th>语言（判据）</th></tr>
+  <tr><td>154</td><td>Akari Asai · CMU SCS 助理教授 + Ai2</td><td>Self-RAG</td><td><code>aasai@andrew.cmu.edu</code>（主页 <code>mailto:</code> 百分号编码，解码核对）</td><td><code>@AkariAsai</code>（og:title + bio 双源）</td><td><b>日本語</b>（日文姓名族属 + 日本出身；机构在美国不改变判定）</td></tr>
+  <tr><td>155</td><td>白雨石 Yushi Bai · 清华大学（现 Tencent Hunyuan）</td><td>LongBench</td><td><code>bys22@mails.tsinghua.edu.cn</code>（主页 <code>mailto:</code> 明文）</td><td><code>@realYushiBai</code>（og:title + bio 双源）</td><td><b>中文</b>（拼音可还原中文名 + 中文主页 + 中国机构）</td></tr>
+  <tr><td>156</td><td>童晟邦 Shengbang Tong · AMI Labs / NYU Courant 博士</td><td>Cambrian-1</td><td><code>tsb@berkeley.edu</code>（主页 <code>mailto:</code> 明文；个人邮箱非机构分配）</td><td><code>@TongPetersb</code>（og:title + bio 双源）</td><td><b>中文</b>（拼音可还原中文名；🚫 不因 NYU / berkeley.edu 判英文）</td></tr>
+</table>
+<table>
+  <tr><th>信 #</th><th>收件人</th><th>发送时间（CST）</th><th>篇幅</th><th>只对这篇成立的技术细节</th><th>问的三点（回填线）</th></tr>
+  <tr><td>63</td><td>Akari Asai</td><td>09:04:43</td><td>日文 300 字</td><td>5 类反思 token、段级 beam search 的加权线性和、<code>Retrieve=Yes</code> 阈值</td><td>阈值是否按领域重校准（data）· beam 权重与成本上限（zhulong）· 7B/13B 反转条件（harness）</td></tr>
+  <tr><td>64</td><td>白雨石</td><td>09:04:50</td><td>中文 215 汉字</td><td>4,750 条 / 21 数据集；英文 6,711 词、中文 13,386 字；中间截断保留首尾各 M/2</td><td>截断口径差如何控制（harness）· 自动指标偏差（harness）· 搬到 EDA 长文档先改哪处（designflow）</td></tr>
+  <tr><td>65</td><td>童晟邦</td><td>09:04:55</td><td>中文 207 汉字</td><td>20 多个编码器对照、SVA 576→36、Cambrian-7M OCR 27.6%、CV-Bench</td><td>只解冻最后一层时选哪类编码器（vision）· 压缩到多少 token 开始掉（vision）· 芯片版图场景的 OCR 配比（data）</td></tr>
+</table>
+<div class="note">
+  <b>抗模板与红线自检</b>：三封开头句互不相同（日文敬语问候 / 「给长上下文 agent 定评测口径」/「这对我们选视觉塔是少见的可照抄证据」），问题句式分别为「三点うかがいます + 归因式」/「三点 + 口径控制式」/「三点想请教 + 选型式」，无共用短句；落款严格两行（<code>どうぞよろしくお願いいたします。</code> / <code>祝好，</code> + <code>Yang Liu</code>），其后无任何行；正文不含项目名；发送前台账 <code>grep</code> 三个 ID 与三个地址均 <b>0 命中</b>；本时窗 3 封 = 每轮上限，今日 10 封 ≤12。
+</div>
+
+<h2 class="sec">🧩 09:00 轮 · 6 线增量建议（在上两轮基础上追加）</h2>
+<table>
+  <tr><th>线</th><th>可执行建议（增量）</th></tr>
+  <tr><td><b>pretrain</b></td><td>MoE 试点把「总参 / 激活参 / 每 token FLOPs / core-year」四列并排记账（GShard 600B 的 16× 容量 / 3.6× 算力是最干净对照）；判据 = 同算力下 loss 低于 dense 基线才算赢，否则回退。</td></tr>
+  <tr><td><b>vision</b></td><td>视觉消融表按「编码器族 × 冻结策略」二维排布，连接器做 576 / 144 / 36 三档 token 预算（Cambrian-1 的 SVA 结论），判据 = 固定 token 预算下 OCR 与定位分数不掉超 1 个点。</td></tr>
+  <tr><td><b>harness</b></td><td>长上下文评测表强制新增两列「截断策略」「有效输入长度」（LongBench 的中间截断会改变同一样本的实际输入）；同时把「是否检索 / 是否被证据支持」拆成两列独立指标（Self-RAG 反思 token 的最小可用版本）。</td></tr>
+  <tr><td><b>data</b></td><td>用教师模型造过程标签（Self-RAG 的 GPT-4 反思数据）先做 <b>1,000 条可行性试验</b>并记录许可与成本，不默认可商用；同时按 Cambrian-7M 的 OCR 27.6% 做同构配比表，先小规模验证再放大。</td></tr>
+  <tr><td><b>zhulong</b></td><td>把「检索率」（Self-RAG 的 <code>Retrieve=Yes</code> 阈值）与「上下文长度」（LongBench 的单调下降）各作为一条独立实验轴，画准确率-成本曲线；成本表把「显存」与「单 token 算力」分栏（Mixtral 47B / 13B）。</td></tr>
+  <tr><td><b>designflow</b></td><td>造题时先定义「长文档截断策略」与「有效长度」两个字段（EDA 规格书 / 网表 / 日志的长度分布差异极大），判据 = 同一题在不同截断下分数差 ≤ 2 个点才允许入正式集。</td></tr>
+</table>
+
+<h2 class="sec">🧾 附录 · 09:00 轮新增检索与核验</h2>
+<table>
+  <tr><th>查询 / 端点</th><th>结果</th><th>说明</th></tr>
+  <tr><td><code>cat:cs.CL</code> 20-entry 复核</td><td><code>200</code> · atom · <b>50,083 B / 20 entry</b></td><td>上界仍 <code>2026-11-12T18:59:52Z</code> ⇒ 连续第 16 个时窗未前进</td></tr>
+  <tr><td><code>id_list=2006.16668,2401.04088,2310.11511,2308.14508</code></td><td><code>429</code> ×3（重试仍限流）</td><td>改用 abs 页逐篇核验（4/4 <code>200</code>），未凭记忆写元数据</td></tr>
+  <tr><td>abs 页 5/5</td><td><code>200</code></td><td>43,816 / 46,189 / 42,906 / 45,172 / 45,385 B；标题 / 作者数 / 日期 / <code>comment</code> 逐字核</td></tr>
+  <tr><td>OpenAlex <code>works/doi:10.48550/arxiv.*</code></td><td><code>200</code> ×5</td><td>被引：GShard <b>1,633</b> · Mixtral <b>4,372</b> · Self-RAG <b>1,091</b> · LongBench <b>1,169</b> · Cambrian-1 <b>514</b>（查询日 2026-11-16）</td></tr>
+  <tr><td>PDF 5/5</td><td><code>200</code> · <code>application/pdf</code></td><td>1,747,868 / 2,475,990 / 1,405,127 / 11,630,690 / 6,427,380 B；35 / 13 / 30 / 19 / 51 页；<code>pdftotext</code> 全通过</td></tr>
+  <tr><td>作者主页 3/3 + X profile 3/3</td><td><code>200</code></td><td><code>akariasai.github.io</code> 19,016 B · <code>bys0318.github.io</code> 34,756 B · <code>tsb0601.github.io</code> 43,451 B；<code>@AkariAsai</code> 193,094 B · <code>@realYushiBai</code> 159,528 B · <code>@TongPetersb</code> 213,233 B（均核 <code>og:title</code> + <code>og:description</code>）</td></tr>
+</table>
+
 <footer>
-  <div>论文观察日报 · 2026-11-16（06:00 时窗：A 轨 5/5 配额已满，B 轨第四十一轮）· research 线自动生成</div>
-  <div>B 轨经典 <b>161</b> 篇（第四十一轮 +4：Qwen2.5-VL 8,551 · Let's Verify 2,226 · DeepSeek-V2 1,552 · Gorilla 1,151，OpenAlex 口径）· 👥 作者网 <b>155</b> 人（X 已核验 <b>86</b>）· ✉ 作者信累计 <b>62</b> 封（回信率 <b>0/62</b>，0 封到期，最早到期 2026-11-25）</div>
+  <div>论文观察日报 · 2026-11-16（09:00 时窗：A 轨 5/5 配额已满，B 轨第四十二轮）· research 线自动生成</div>
+  <div>B 轨经典 <b>166</b> 篇（第四十二轮 +5：GShard 1,633 · Mixtral 4,372 · Self-RAG 1,091 · LongBench 1,169 · Cambrian-1 514，OpenAlex 口径）· 👥 作者网 <b>158</b> 人（X 已核验 <b>89</b>）· ✉ 作者信累计 <b>65</b> 封（回信率 <b>0/65</b>，0 封到期，最早到期 2026-11-25）</div>
   <div>本页为自包含单文件（内联 CSS、零外链）；推荐 = 待读线索，非结论；不构成投资 / 采购建议。</div>
 </footer>
 </div>

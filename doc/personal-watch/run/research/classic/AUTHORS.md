@@ -2250,6 +2250,45 @@
 | 备注 | 对我们**designflow / harness** 两条线价值最高的 EDA-LLM 一作（VerilogEval 是造题与判分的常用参照）。与 Alec Radford（#33）、Scott Reed（#138）、Alexei Baevski（#141）同属「身份可核、联系方式全无 ⇒ 只建档不发信」的纪律执行；**🚫 不用 `first.last@nvidia.com` 之类模式拼装地址**。 |
 
 
+### 154. Akari Asai
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Akari Asai（日文姓名族属；未确证汉字写法 ⇒ **只记罗马字**） |
+| 机构 | **Carnegie Mellon University（SCS 助理教授）** + Allen Institute for AI（研究科学家；X bio 自述） |
+| 代表论文 | Self-RAG（arXiv `2310.11511`，**一作**，B 轨 #164）· Retrieval-Augmented Multilingual LM（`arXiv 2112.07899`） |
+| 邮箱 | **`aasai@andrew.cmu.edu`**（本人主页 `akariasai.github.io` 的 `mailto:` **百分号编码** `%61%61%73%61%69@%61%6E%64%72%65%77.%63%6D%75.%65%64%75`，解码后即该地址；`HTTP 200` / 19,016 B） |
+| 主页 | <https://akariasai.github.io/>（`<title>` 与正文自述 CMU） |
+| X 账号 | **`@AkariAsai`**（`x.com/AkariAsai` `200` / 193,094 B；`og:title` = `Akari Asai (@AkariAsai) on X`，`og:description` = `Assistant Professor @SCSatCMU & research scientist @allen_ai` ⇒ 身份双源） |
+| 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 63 封，**日文 300 字（非空白字符）**） |
+| 备注 | `语言=日本語(判据=日文姓名族属 Asai+日本出身；机构在美国不影响语言判定)`。信里问：① 用 GPT-4 造 ISREL/ISSUP 监督时，`Retrieve=Yes` 阈值是否需按领域重新校准；② 段级 beam search 的权重是否按任务调整、搜索成本上限；③ 7B 与 13B 上 Self-RAG 效果反转的条件。 |
+
+### 155. Yushi Bai（白雨石）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yushi Bai 白雨石（本人主页明文中文名 ⇒ 中文） |
+| 机构 | **Tsinghua University**（博士；X bio 自述 PhD from Tsinghua，现 Tencent Hunyuan） |
+| 代表论文 | LongBench（arXiv `2308.14508`，**一作**，B 轨 #165）· LongAlign（arXiv `2401.18058`） |
+| 邮箱 | **`bys22@mails.tsinghua.edu.cn`**（本人主页 `bys0318.github.io` 的 `mailto:` 明文；`HTTP 200` / 34,756 B） |
+| 主页 | <https://bys0318.github.io/>（`<title>` = `GitHub Pages - Yushi Bai`，正文自述 `白雨石` / 清华姚班 / 导师 Juanzi Li） |
+| X 账号 | **`@realYushiBai`**（`x.com/realYushiBai` `200` / 159,528 B；`og:title` = `Yushi Bai (@realYushiBai) on X`，`og:description` = `Ph.D. from @Tsinghua_Uni, Prev @Zai_org, currently scaling at @TencentHunyuan` ⇒ 身份双源） |
+| 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 64 封，**中文 215 汉字 / 343 非空白字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「白雨石」+中文主页明文+中国机构 Tsinghua)`。信里问：① 中间截断保留首尾各 M/2 造成的跨模型口径差如何控制，是否改首段截断或按长度分桶；② 中文子集 13,386 字上 F1/ROUGE-L/Edit Sim 与人工判断的偏差，哪类任务应弃用自动指标；③ 搬到代码与 EDA 长文档时先改任务切分、长度分桶还是指标。 |
+
+### 156. Shengbang Tong（童晟邦）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shengbang Tong 童晟邦（本人主页明文「also go by the name Shengbang Tong (童晟邦)」⇒ 中文） |
+| 机构 | **AMI Labs（Member of Technical Staff）**；NYU Courant CS 博士（导师 Yann LeCun / Saining Xie；主页自述） |
+| 代表论文 | Cambrian-1（arXiv `2406.16860`，**一作**，B 轨 #166）· Cambrian-S（空间超感知视频，OpenReview 2025） |
+| 邮箱 | **`tsb@berkeley.edu`**（本人主页 `tsb0601.github.io` 的 `mailto:` 明文；`HTTP 200` / 43,451 B；⚠️ 为伯克利域名的个人邮箱，非机构分配邮箱） |
+| 主页 | <https://tsb0601.github.io/>（`<title>` = `Peter Tong`，正文自述 `Peter Tong … also go by the name Shengbang Tong (童晟邦)`） |
+| X 账号 | **`@TongPetersb`**（`x.com/TongPetersb` `200` / 213,233 B；`og:title` = `Peter Tong (@TongPetersb) on X`，`og:description` 含 `MTS @ AMILabs | Berkeley 23', CS PhD Student in NYU Courant` ⇒ 身份双源） |
+| 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 65 封，**中文 207 汉字 / 347 非空白字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「童晟邦」+主页明文+华人学者；🚫 不因 NYU/berkeley.edu 判英文)`。信里问：① 只能解冻最后一层、图文对规模约 1/10 时优先 CLIP 还是 DINOv2；② SVA 576→36 时 OCR/文档任务的掉点版面与「开始掉」的 token 阈值；③ 目标场景为芯片版图与规格书截图时，OCR 27.6% 应上调还是下调。**注意与 #34 Saining Xie（NYU，同一实验室）区分：不是同一人，未合并条目。** |
+
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

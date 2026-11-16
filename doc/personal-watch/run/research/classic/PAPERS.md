@@ -2803,6 +2803,91 @@
 
 ---
 
+## 162. GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding |
+| 作者（前 3） | Dmitry Lepikhin · HyoukJoong Lee · Yuanzhong Xu（共 **9** 位；arXiv abs 页逐字核） |
+| 年份 | **2020**（`2020-06-30`；仅 v1） |
+| 会议 / 期刊 | **技术报告 / arXiv 预印本**（arXiv `comment` 空；OpenAlex `type=preprint`） |
+| 被引数 | **1,633**（OpenAlex `10.48550/arxiv.2006.16668`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2006.16668> ｜ DOI `10.48550/arxiv.2006.16668` |
+| 一句话贡献 | 把 Transformer 的**每隔一层 FFN 换成 top-2 门控的稀疏 MoE 层**，配一套「用户只标注关键张量、编译器自动切分」的分片标注（SPMD）系统，使多语言翻译模型在 **2,048 块 TPU v3 上 4 天**训到 **600B 参数**（37.5B → 600B 共 16×，算力 6 → 22 TPU v3 core-year 仅 3.6×）。 |
+| 与我们工作的关系 | **pretrain（MoE 扩展的成本曲线，主目标）**：这是「容量涨 16 倍、算力只涨 3.6 倍」最干净的公开证据 ⇒ <b>动作</b>：2B 级 MoE 试点把「总参 / 激活参 / core-year」三列并排记账，判据 = 同算力下 loss 是否低于 dense 基线。<br>**data（多语言配比）**：100 语种 → 英语的收益随专家数增长 ⇒ <b>动作</b>：数据线按语种簇分桶统计，专家路由熵作为配比失衡的探针。<br>**风险**：① 2020 年的 TPU v3 与今天的硬件不可比；② 翻译任务收益不能直接外推到代码 / EDA；③ 论文未给显存与通信开销的绝对值；④ 1,633 引用多为 MoE 背景引用，不等于方法被独立复现。 |
+
+首次收录: 2026-11-16（第四十二轮）｜ 状态: 元数据 + 被引已核（arXiv abs 页 `200` / 43,816 B：9 作者、`Submitted on 30 Jun 2020`、`comment` 空；OpenAlex `200` 1,633；PDF `200` 1,747,868 B / 35 页，`pdftotext` 核对 `600 billion` / `2048 TPU v3` / `37.5B to 600B` / `6 to 22 years` / `top-2 gating`）
+
+---
+
+## 163. Mixtral of Experts
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mixtral of Experts |
+| 作者（前 3） | Albert Q. Jiang · Alexandre Sablayrolles · Antoine Roux（共 **26** 位；arXiv abs 页逐字核） |
+| 年份 | **2024**（`2024-01-08`；仅 v1） |
+| 会议 / 期刊 | **技术报告 / arXiv 预印本**（`comment` = "See more details at this https URL"；OpenAlex `type=preprint`） |
+| 被引数 | **4,372**（OpenAlex `10.48550/arxiv.2401.04088`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2401.04088> ｜ DOI `10.48550/arxiv.2401.04088` |
+| 一句话贡献 | 每层 **8 个专家、每个 token 由 router 选 top-2**，总参 **47B** 但推理只用 **13B 激活参数**，并以 **32k 上下文**预训练；它把「总参 ≠ 单 token 计算量」这层成本结构写成可直接抄的对照表（Mixtral 8x7B vs Llama 2 7B/13B/70B）。 |
+| 与我们工作的关系 | **pretrain（MoE 的最小可用配方，主目标）**：8 专家 / top-2 / 32k 是 2B 级复现最省算力的起点 ⇒ <b>动作</b>：预训练配置表增加「总参 / 激活参 / 每 token FLOPs」三行，禁止只报总参。<br>**zhulong（成本口径）**：论文反复强调「13B 激活」与「47B 显存占用」是两回事 ⇒ <b>动作</b>：成本表把「显存」与「单 token 算力」分栏，避免把 MoE 说成「13B 的成本」。<br>**data（多语言）**：Mixtral 明确用多语言语料 ⇒ <b>动作</b>：数据线给出语种配比表，并标注 router 负载均衡的辅助损失系数。<br>**harness**：32k 上下文的长文召回是自评，无第三方复现 ⇒ <b>动作</b>：评测时自带长文检索子集，不引用其自报数字当基线。<br>**风险**：① 未公布训练 token 数与训练成本；② 47B 总参的显存占用对小团队仍是硬门槛；③ 13B 激活是「每 token 平均」，负载不均时实际算力高于此值。 |
+
+首次收录: 2026-11-16（第四十二轮）｜ 状态: 元数据 + 被引已核（arXiv abs 页 `200` / 46,189 B：26 作者、`Submitted on 8 Jan 2024`；OpenAlex `200` 4,372；PDF `200` 2,475,990 B / 13 页，`pdftotext` 核对 `47B` / `13B active` / `8 distinct groups` / `two experts` / `32k tokens`）
+
+---
+
+## 164. Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection |
+| 作者（前 3） | Akari Asai · Zeqiu Wu · Yizhong Wang（共 **5** 位；arXiv abs 页逐字核） |
+| 年份 | **2023**（`2023-10-17`；仅 v1） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` = `30 pages, 2 figures, 12 tables`，**未标会场**；OpenAlex `type=preprint`）⚠️ 常被引作 ICLR 2024，本轮**未取得一手会场页** ⇒ 不写会场 |
+| 被引数 | **1,091**（OpenAlex `10.48550/arxiv.2310.11511`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.11511> ｜ DOI `10.48550/arxiv.2310.11511` |
+| 一句话贡献 | 让模型在生成时分段插入**反思 token**（检索类 `Retrieve`/`Continue` + 评判类 `ISREL`/`ISSUP`/`ISUSE`），把「何时检索、检索到的是否相关、生成是否被支持、是否有用」变成可训练、可在推理期调节的显式信号；推理端用**段级 beam search**，以反思 token 概率的**加权线性和**作段打分，7B/13B 即可超过 ChatGPT 与 retrieval-augmented Llama2-chat。 |
+| 与我们工作的关系 | **harness（可插拔的自评判分，主目标）**：反思 token 是一种「模型自带裁判」的接口 ⇒ <b>动作</b>：agent 评测框架把「是否检索 / 是否被证据支持」做成两列独立指标，而不是塞进一个总分。<br>**data（用强模型造标签）**：训练反思 token 的监督来自 GPT-4 生成的反思数据 ⇒ <b>动作</b>：数据线评估「用教师模型造过程标签」的许可与成本，先做小规模可行性，不默认可商用。<br>**zhulong（推理期可调成本旋钮）**：`Retrieve=Yes` 概率阈值直接控制检索次数 ⇒ <b>动作</b>：把「检索率」列为与准确率并列的实验轴，画准确率-检索次数曲线。<br>**风险**：① 监督依赖专有模型（GPT-4），复现受许可限制；② 段级 beam search 使推理成本随 beam 宽度上升；③ 1,091 引用中相当部分是「RAG 综述式引用」，不等于被独立复现。 |
+
+首次收录: 2026-11-16（第四十二轮）｜ 状态: 元数据 + 被引已核（arXiv abs 页 `200` / 42,906 B：5 作者、`Submitted on 17 Oct 2023`、`comment` = 30 pages；OpenAlex `200` 1,091；PDF `200` 1,405,127 B / 30 页，`pdftotext` 核对 `reflection tokens` / `ISREL` / `ISSUP` / `ISUSE` / `segment-level beam search` / `weighted linear sum` / `threshold`）
+
+---
+
+## 165. LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding |
+| 作者（前 3） | Yushi Bai · Xin Lv · Jiajie Zhang（共 **13** 位；arXiv abs 页逐字核；机构含清华大学 / 智谱 AI / 中科院自动化所） |
+| 年份 | **2023**（v1 `2023-08-28`；v2 `2024-06-19`） |
+| 会议 / 期刊 | **ACL 2024**（arXiv `comment` = `ACL 2024`；OpenAlex `type=conference-paper`，venue = ACL） |
+| 被引数 | **1,169**（OpenAlex `10.48550/arxiv.2308.14508`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2308.14508> ｜ DOI `10.48550/arxiv.2308.14508` |
+| 一句话贡献 | 把长上下文理解拆成 **21 个数据集 / 6 类任务**（单文档 QA、多文档 QA、摘要、少样本学习、合成任务、代码补全）的中英双语基准，共 **4,750 条测试样本**，英文平均 **6,711 词**、中文平均 **13,386 字**；并明确写出「超长输入从中间截断」的评测口径，使不同上下文窗口的模型可在同一张表上比较。 |
+| 与我们工作的关系 | **harness（长上下文评测口径，主目标）**：中间截断会改变同一样本在不同模型上实际看到的内容 ⇒ <b>动作</b>：我们的长上下文评测表必须写明「截断策略」，并加一列「有效输入长度」。<br>**zhulong（长度-成本权衡）**：论文发现商业模型仍随长度下降，且缩放位置编码 / 长序列微调能显著改善 ⇒ <b>动作</b>：把「上下文长度」当作消融轴，固定任务集、只改长度，报分数-延迟双曲线。<br>**data（中文长文来源）**：中文子集来自百度搜索等来源，平均长度高于英文 ⇒ <b>动作</b>：数据线建立中文长文（规格书 / 手册）子集时，先做长度分布统计再定配额。<br>**风险**：① 自动指标（F1 / ROUGE-L / Edit Sim）与人工判断有偏差，长文摘要尤甚；② 4,750 条样本量小，单任务 150–200 条，置信区间宽；③ 论文评测的模型已过时，分数不可当今天的基线。 |
+
+首次收录: 2026-11-16（第四十二轮）｜ 状态: 元数据 + 被引已核（arXiv abs 页 `200` / 45,172 B：13 作者、`Submitted on 28 Aug 2023 (v1), last revised 19 Jun 2024`、`comment` = ACL 2024；OpenAlex `200` 1,169、`conference-paper`；PDF `200` 11,630,690 B / 19 页，`pdftotext` 核对 `4,750 test instances` / `21 datasets` / `6,711 words` / `13,386 characters` / `truncate the input sequence`）
+
+---
+
+## 166. Cambrian-1: A Fully Open, Vision-Centric Exploration of Multimodal LLMs
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Cambrian-1: A Fully Open, Vision-Centric Exploration of Multimodal LLMs |
+| 作者（前 3） | Shengbang Tong · Ellis Brown · Penghao Wu（共 **14** 位，末位 Saining Xie；arXiv abs 页逐字核；机构 New York University） |
+| 年份 | **2024**（v1 `2024-06-24`；v2 `2024-12-04`） |
+| 会议 / 期刊 | **NeurIPS 2024（Oral）**（arXiv `comment` = `NeurIPS 2024 (Oral). Website at this https URL`；OpenAlex `conference-paper`，venue = NeurIPS） |
+| 被引数 | **514**（OpenAlex `10.48550/arxiv.2406.16860`，查询日 **2026-11-16**） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.16860> ｜ DOI `10.48550/arxiv.2406.16860` |
+| 一句话贡献 | 用 **20 多个视觉编码器**做「只改视觉塔、其余尽量固定」的横向对照（CLIP / SigLIP / DINOv2 / MAE / I-JEPA / SAM / MoCo v3 等），提出 **SVA（Spatial Vision Aggregator）**：以可学习 latent token 做多层、空间感知的跨注意力聚合，把单个编码器的 **576 个视觉 token 压到 36 个**仍保留定位能力；并开源 **Cambrian-7M** 指令数据配比（OCR 占 27.6%）与视觉中心基准 **CV-Bench**。 |
+| 与我们工作的关系 | **vision（视觉塔选型与 token 预算，主目标）**：这是目前唯一把「换编码器」与「冻结 / 解冻」拆开做完整对照的公开实验 ⇒ <b>动作</b>：视觉消融表按「编码器族 × 冻结策略」二维排布，判据 = 固定视觉 token 预算下的 OCR 与定位分数。<br>**vision（连接器）**：SVA 的「576 → 36」给出 token 压缩的可测区间 ⇒ <b>动作</b>：把连接器实验做成 576/144/36 三档，记录压缩率与定位指标的折点。<br>**data（指令数据配比）**：Cambrian-7M 的 OCR 27.6%、Filtered DVQA 1550K 等是可照抄的量级 ⇒ <b>动作</b>：数据线做同构配比表，先小规模验证再放大。<br>**harness**：CV-Bench 是自建的视觉中心基准 ⇒ <b>动作</b>：评测时同时报通用基准与视觉中心基准，避免只报综合分掩盖定位退化。<br>**风险**：① 514 引用（2026-11-16）刚过 500 线，方法尚未经过多年独立复现；② 7M 数据与训练成本对我们偏大；③ SVA 的 576 → 36 结论在更高分辨率 / 更小模型上未必成立。 |
+
+首次收录: 2026-11-16（第四十二轮）｜ 状态: 元数据 + 被引已核（arXiv abs 页 `200` / 45,385 B：14 作者、`Submitted on 24 Jun 2024 (v1), last revised 4 Dec 2024`、`comment` = NeurIPS 2024 Oral；OpenAlex `200` 514、`conference-paper`；PDF `200` 6,427,380 B / 51 页，`pdftotext` 核对 `Spatial Vision Aggregator` / `576` / `36 tokens` / `CV-Bench` / `OCR (27.6%)`）
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 > ✅ **第三十六轮（2026-11-15 15:0x）转正 4 条**：Whisper `2212.04356`（#138，3,720）· Gato `2205.06175`（#139，876，TMLR 2022）· SGLang `2312.07104`（#140，812，NeurIPS 2024）· Self-Consistency `2203.11171`（#141，5,587，ICLR 2023）⇒ B 轨累计 **141**。
