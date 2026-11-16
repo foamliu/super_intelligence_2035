@@ -1,151 +1,194 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8">
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BaiZe post-train 5-run 坍塌 RCA（中文）</title>
+<title>BaiZe Post-Train 5-run 坍塌 RCA · 2026-11-16</title>
 <style>
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1180px;margin:0 auto;padding:24px;color:#222;background:#fafbfc;line-height:1.55}
-h1{font-size:22px;border-bottom:3px solid #c0392b;padding-bottom:8px}
-h2{font-size:18px;margin-top:28px;border-left:5px solid #2a6496;padding-left:10px;background:#eef4fa}
-h3{font-size:15px;margin-top:18px;color:#225}
-table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px}
-th,td{border:1px solid #ccd;padding:5px 8px;text-align:center}
-th{background:#2a6496;color:#fff}
-tr.ok{background:#e7f6e7}tr.warn{background:#fff6e0}tr.bad{background:#fde8e8}
-code,pre{font-family:Menlo,Consolas,monospace}
-pre{background:#1e1e2e;color:#d4d4d4;padding:12px;border-radius:6px;overflow-x:auto;font-size:12px;line-height:1.4}
-.verdict{background:#fff3cd;border:1px solid #ffe08a;border-radius:8px;padding:14px 18px;font-size:15px;margin:14px 0}
-.kbox{background:#eef4fa;border-left:4px solid #2a6496;padding:10px 14px;margin:10px 0;font-size:13px}
-.evi{font-size:12px;color:#555;font-family:monospace}
-.fix{background:#e7f6e7;border-left:4px solid #2a7f2a;padding:10px 14px;margin:10px 0}
-.unfix{background:#fde8e8;border-left:4px solid #c0392b;padding:10px 14px;margin:10px 0}
-.small{font-size:11px;color:#777}
-</style></head><body>
-
-<h1>BaiZe post-train 5-run 坍塌根因分析（RCA）</h1>
-<p class="small">报告时间：2026-11-16 01:5x · commit 前缀 <code>posttrain rca:</code> · 单文件 / 0 外链 / 0 script</p>
-
-<div class="verdict"><b>一句话结论：</b>run2/3/4「各仅 1 条 execution_result、Pass@1=0.0%」<b>是评测管线的 bug，不是模型 degenerate collapse</b>。核心根因：eda_fastmcp 抽取脚本 <code>format_cline_cli_output.py</code> 使用<b>共享相对临时目录</b> <code>./pyAether-eval/temp/pyAether_code</code>，并在每次调用开头 <code>shutil.rmtree</code> 清空它；当 36.15 上有多个 eval 并发时，互相踩踏导致本 run 已写到 <code>code/&lt;task&gt;/pyAether_code/</code> 的真实 .py 被<b>丢弃</b>（run2 丢 43/44、run3 丢 36/37、run4 丢 43/43）。次因：posttrain 5-run 链脚本旧逻辑 <code>ls -dt|head -1</code> 抓陈旧 output_evaluation → <b>run4 复用 run3 评分产物（sha256 字节相同）→ run4 INVALID</b>。<b>8 题回补验证 PASS</b>：绕过共享 temp、把 8 个真实 .py 喂给 run_eval，assemble 出 8 脚本 → 沙盒产 <b>8 条 execution_results</b>（1/8 pass），满足「≥8 条」判据。</div>
-
-<h2>1. run1–run4 对照表</h2>
-<table>
-<tr><th>run</th><th>batch_id</th><th>completed行</th><th>execution行</th><th>gen_success</th><th>pass</th><th>Pass@1</th><th>code/真实.py</th><th>唯一成功task</th><th>判定</th></tr>
-<tr class="ok"><td>run1</td><td>2026_1114_180019</td><td>158</td><td>36</td><td>36</td><td>30</td><td>18.99%</td><td>(已清理)</td><td>36题</td><td style="text-align:left">真实（并发少/共享temp未被踩）</td></tr>
-<tr class="warn"><td>run2</td><td>2026_1115_110506</td><td>158</td><td>1</td><td>1</td><td>0</td><td>0.0%</td><td>44</td><td>003</td><td style="text-align:left">管线bug：共享temp race（丢43个真实.py）</td></tr>
-<tr class="warn"><td>run3</td><td>2026_1115_144001</td><td>158</td><td>1</td><td>1</td><td>0</td><td>0.0%</td><td>37</td><td>107</td><td style="text-align:left">管线bug：共享temp race（丢36个真实.py）</td></tr>
-<tr class="bad"><td>run4</td><td>2026_1115_183438</td><td>158</td><td>1</td><td>1</td><td>0</td><td>0.0%</td><td>43</td><td>107(=run3)</td><td style="text-align:left">INVALID：自身codegen抽取=0 + eval复用run3产物</td></tr>
-</table>
-<p class="small">注：<code>completed行</code>=<code>completed_code_generation_&lt;batch&gt;.jsonl</code> 行数（恒158，Step6补全）；<code>execution行</code>=<code>execution_results.jsonl</code> 行数=run_eval真正执行的题数。<code>code/真实.py</code>=在36.15 batch的<code>code/&lt;task&gt;/pyAether_code/</code>下实测存在的.py数（extractor的目标路径）。run1 batch已被清理，真实.py数无，但其gen_success=36说明抽取未被踩。</p>
-
-<h2>2. 四个异常的逐一解释（含证据）</h2>
-
-<h3>异常 A：completed=158 行但 execution 只有 1 行 —— run_eval 的「有效生成」判定在哪？</h3>
-<div class="kbox">run_eval.py 把一个 task 计为「有效生成（gen_success）」的判据是 <b>completion 字段非空且不为 "pass"</b>：
-<pre>run_eval.py:570   info.get("completion", "").strip() not in ("", "pass")   # 有效生成
-run_eval.py:577   info.get("completion", "").strip() in ("", "pass")       # 无效（gen_fail）</pre>
-run_eval 读的「generations 文件」是 <code>completed_code_generation_&lt;batch&gt;.jsonl</code>（经 <code>patch_config()</code> 写入 config.yaml 的 <code>generations_file:</code> 字段，见 run_eval.py:145-148）。该文件由 Step6 <code>complete_code_generation.py</code> 产出，恒 158 行（为 158 题逐行补全）。run2 该文件里 157 行 completion="pass"、仅 1 行是代码 → gen_success=1 → execution_results=1 行。<b>158 行是「补全后的全量占位」，不是「158 个有效生成」</b>。</div>
-
-<h3>异常 B：completion 多为 "pass" —— 谁写的？语义？和 run_eval 读的是同一个吗？</h3>
-<div class="kbox">
-<b>关键区分：存在两个名字相近、但完全不同的文件。</b>
-<table>
-<tr><th>文件</th><th>产出步骤</th><th>写入者</th><th>completion 语义</th><th>run_eval是否读</th></tr>
-<tr><td><code>code_generation_&lt;batch&gt;.jsonl</code></td><td>Step5 抽取</td><td><code>format_cline_cli_output.py</code></td><td>真实代码（被抽取的.py内容）</td><td>否（Step6输入）</td></tr>
-<tr><td><code>completed_code_generation_&lt;batch&gt;.jsonl</code></td><td>Step6 补全</td><td><code>complete_code_generation.py</code></td><td>有代码则保留；<b>无代码则填"pass"</b></td><td><b>是</b></td></tr>
-<tr><td><code>completed_code_generation.jsonl</code>（无batch后缀，attribution目录里的）</td><td>链脚本拷贝</td><td>就是上面那个&lt;batch&gt;文件的副本</td><td>同上</td><td>否（副本）</td></tr>
-</table>
-<pre>complete_code_generation.py:60-69
-  if task_id in completion_tasks and status == "success":
-      record = completion_tasks[task_id].copy()   # 有抽取代码 → 保留
-  else:
-      record = {"task_id": task_id, "completion": "pass", "status": status}  # 无代码 → "pass"</pre>
-<b>所以 "pass" = 「Step5 没抽到这个 task 的代码」，不是「session 通过」。</b>run1 的 attribution 副本 158 行全 "pass"（0 行代码），但 run1 gen_success=36 —— 因为 attribution 副本与 run_eval 实际读的 generations 文件<b>不是同一份</b>（run1 的真实 generations 文件 36 行有代码，已在 36.15 被清理；attribution 副本是错拷）。MEMORY 早期「run1 全 pass→0 行代码」的读法混淆了这两个文件。</div>
-
-<h3>异常 C：唯一被执行 task run2=003 / run3=107 / run4=107 —— 为什么恰好这 1 个？</h3>
-<div class="kbox">这 1 个不是「模型只写出 1 个」，而是<b>共享临时目录 race 下唯一幸存</b>到 <code>code_generation_&lt;batch&gt;.jsonl</code> 的那 1 个 .py。实测（36.15）：
-<pre>run2 batch code/ 下 44 个真实 .py（全部 mtime ≤ 14:17:31）；
-  但 code_generation_2026_1115_110506.jsonl（Step5产物，mtime 14:17:31）只有 1 行 = task 003。
-run3 batch code/ 下 37 个真实 .py；code_generation_2026_1115_144001.jsonl 只有 1 行 = task 107。
-run4 batch code/ 下 43 个真实 .py；code_generation_2026_1115_183438.jsonl = 0 字节（被踩更彻底，一个都没剩）。</pre>
-extractor 读的目标路径是对的（<code>code/&lt;task&gt;/pyAether_code</code>，format_cline_cli_output.py:165）；44/37/43 个 .py 当时都在那。它们被丢是因为 extractor 先把 .py <b>拷进共享 temp</b> 再从 temp 读 jsonl，而共享 temp 被并发进程清空了（见第 3 节）。</div>
-
-<h3>异常 D：codegen_rejection_stats.json run2/3/4 是 0 字节（run1 是 1573B）</h3>
-<div class="kbox"><code>codegen_rejection_stats.json</code> 是 <b>posttrain 链脚本侧</b>从 cline session 日志聚合的 PreToolUse hook 拒绝统计（非 eda_fastmcp 产出；写入者：<code>posttrain_attribution_trace_analysis.py</code> / <code>baize_posttrain_zhulong_baseline_5run_chain.sh</code> 等）。run1 的 1573B 内容：rejected_total=1304（run_commands 1048 / read_files 103 / get_api_details 41 …），即 08:1x 令提到的「PreToolUse 禁 run_commands」的设计性拒绝。run2/3/4 为 0 字节 = <b>该聚合步骤对这几个 batch 没产出</b>（链脚本 trace 分析未跑通 / session 日志未找到），是链脚本侧的次要缺陷，<b>不是 0% 的原因</b>（0% 的原因是异常 A/C 的共享 temp race）。底层拒绝数据仍存在于各 batch 的 cline session 日志中。</div>
-
-<h2>3. 根因：管线 bug，不是模型 collapse</h2>
-
-<h3>3.1 主因 —— 共享临时目录 race（eda_fastmcp <code>format_cline_cli_output.py</code>）</h3>
-<div class="unfix">
-<pre># format_cline_cli_output.py:155-157  (process_cline_gene_files)
-    temp_path = "./pyAether-eval/temp"
-    pyAether_code = "./pyAether-eval/temp/pyAether_code"      # ← 共享、相对路径
-    shutil.rmtree(pyAether_code, ignore_errors=True) or shutil.os.makedirs(pyAether_code)  # ← 每次先清空
-
-# format_cline_cli_output.py:95  (format_cli_gene_code2jsonl)
-    pyAether_code = "./pyAether-eval/temp/pyAether_code"      # ← 同一个共享路径</pre>
-流水线 Step5 分两段：先把 <code>code/&lt;task&gt;/pyAether_code/*.py</code> 拷进共享 temp，再从共享 temp 读出写 jsonl。该 temp 是 <b>项目级共享、相对 CWD（=eda_fastmcp 根）的固定路径</b>，且 <code>process_cline_gene_files</code> 开头 <code>shutil.rmtree</code> 清空它。<b>当 36.15 上同时有 ≥2 个 eval 在跑 Step5</b>（posttrain 链 + zhulong 自身 eval / 其他用户 eval），后启动者的 rmtree 会清空前者的拷贝 → 前者从 temp 读到空/残缺 → jsonl 只剩 0~1 个文件。
-</div>
-<p><b>证据链：</b></p>
-<ul>
-<li>run2 batch <code>code/</code> 下 <b>44 个</b>真实 .py，<b>全部 mtime ≤ 14:17:31</b>（format 运行时刻），format 理应全部抽到；但 <code>code_generation_2026_1115_110506.jsonl</code> 只有 <b>1 行</b>。<span class="evi">（36.15 实测 find + stat）</span></li>
-<li>extractor 读的是正确路径 <code>code/&lt;task&gt;/pyAether_code</code>（format_cline_cli_output.py:165），<b>不是</b>早先 MEMORY 猜的 <code>ws/pyAether_code</code>（实测仅 1 个 task 有 ws/ 子目录）。<span class="evi">→ 推翻「ws vs no-ws」假说</span></li>
-<li>36.15 上有并发 <code>run_cline_script.sh</code> 实时运行（PID 3245417，<code>-p 4 -n</code>，5 个 run_cli.sh worker）；且 batch <code>2026_1115_110406</code> 在 run2（110506）前 1 分钟启动 —— 并发是常态。</li>
-<li>run1=18.99%（gen_success=36）恰恰是因为它跑得早/并发少，共享 temp 未被踩；run2/3/4 跑在并发窗口内 → 被踩 → 1 或 0。</li>
-</ul>
-
-<h3>3.2 次因 —— 链脚本陈旧拷贝（run4==run3）</h3>
-<div class="kbox">posttrain 5-run 链脚本旧逻辑用 <code>ls -dt ~/eda_code_eval/*/ | head -1</code> 抓「最新」batch 目录配对 eval；当某 run 的 eval 未产生新 output_evaluation 时，会抓到上一个 run 的目录。run4 自身 codegen 抽取=0（共享 temp 被踩空），其 eval 又复用了 run3 的 generations 文件 <code>completed_code_generation_2026_1115_144001.jsonl</code>：
-<pre>sha256(run3/final_report.json)        = 74eacea2...3e1f93
-sha256(run4/final_report.json)        = 74eacea2...3e1f93   ← 字节相同
-sha256(run3/execution_results.jsonl)  = 374bf0ca...0422b
-sha256(run4/execution_results.jsonl)  = 374bf0ca...0422b   ← 字节相同</pre>
-→ <b>run4 INVALID</b>（无论看自身 codegen=0 还是看 eval=run3 复用，都不能作数）。</div>
-
-<h2>4. 修复</h2>
-
-<div class="fix"><b>4.1 主因修复（eda_fastmcp 侧，需 zhulong 协调应用）</b>：把共享 temp 改成<b>按 batch 隔离</b>的临时目录，消除 rmtree 互相踩踏。建议 diff（示意，不改 eda_fastmcp，交 zhulong）：
-<pre># process_cline_gene_files(cli_output) 内
--    pyAether_code = "./pyAether-eval/temp/pyAether_code"
-+    _bid = os.path.basename(cli_output.rstrip("/"))          # batch_id
-+    pyAether_code = f"./pyAether-eval/temp/pyAether_code_{_bid}"   # 隔离
-# format_cli_gene_code2jsonl 同步接收该 pyAether_code 路径作参数（不再写死相对路径）
-# main() 把隔离路径同时传给两个函数</pre>
-</div>
-
-<div class="fix"><b>4.2 即时可用的回补 wrapper（已写好，不改 eda_fastmcp）</b>：<code>run/rca_recover_extract.py</code> 在 <code>run_cline_script.sh</code> 跑完后，直接从 <code>code/&lt;task&gt;/pyAether_code/</code>（及 <code>ws/pyAether_code/</code>）重新抽取 .py 写回 generations jsonl，<b>完全绕过共享 temp</b>，再喂 run_eval。（注：本工具早先 docstring 写的「ws vs no-ws」机理<b>已被本次取证推翻</b>，但其「直接读 code/&lt;task&gt;/pyAether_code」的实际行为对当前共享-temp 丢码同样有效，作为 post-pipeline 回补成立；docstring 待更正。）</div>
-
-<div class="fix"><b>4.3 次因修复（已应用）</b>：链脚本 <code>baize_posttrain_zhulong_baseline_5run_chain.sh:86-117</code> 已改为「按 final_report.json 的 <code>generations_file</code> 字段精确匹配 batch↔eval」，不再 <code>ls -dt|head -1</code> 抓陈旧目录；无匹配则标 <code>INVALID-noeval</code> 不拷陈旧。<code>bash -n</code> 通过。</div>
-
-<h2>5. 8 题最小验证（≥8 条 execution_results 判据）</h2>
-<div class="kbox">
-从 run2 batch（2026_1115_110506）取 8 个在 <code>code/&lt;task&gt;/pyAether_code/</code> 下有真实 .py 的 task（004/010/013/016/033/043/045/046），<b>绕过共享 temp</b> 直接拼成 generations jsonl（8 行，8 行均为有效代码，非 "pass"），在 36.15 上跑评测三步（assemble → run_on_sandbox → calculate）：
-<pre>assemble_for_execution.py --config /tmp/rca_verify_config.yaml
-  → 成功加载 158 个问题；组装脚本 8/8 → generated_solutions/ 8 个 .py
-run_on_sandbox.py（端口 8650）
-  → 总执行 8：Passed 1 / Failed 7；写入 execution_results.jsonl 8 行
-→ execution_results 行数 = 8  (≥8 ✅ 判据通过；run2 原管线仅 1 行 = 未修好)</pre>
-</div>
-<table>
-<tr><th>task_id</th><th>lang/host</th><th>结果</th><th>status</th></tr>
-<tr><td>EDA-Eval-PyAether-004</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-010</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-013</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-016</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-033</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-043</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-045</td><td>pyAether</td><td>FAIL</td><td>failed</td></tr>
-<tr><td>EDA-Eval-PyAether-046</td><td>pyAether</td><td><b>PASS</b></td><td>passed</td></tr>
-</table>
-<p class="small">验证产物已落盘：<code>run/rca_verify8_execution_results.jsonl</code>（8 行）；36.15 侧 <code>output_evaluation/rca_verify8/execution_results.jsonl</code>。1/8 pass 与 run2 仅 1 个幸存代码被抽取的事实一致 —— 说明即便修复抽取，模型在这批 8 题上的真实通过率仍低，但「生成」远不止 1 个。<b>本验证只证「抽取管线」可恢复 ≥8 条 execution_results，不重算 158 题基线。</b></p>
-
-<h2>6. 结论与纪律</h2>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1080px;margin:0 auto;padding:24px;color:#222;line-height:1.6}
+  h1{font-size:1.5em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+  h2{font-size:1.2em;margin-top:32px;border-left:5px solid #2c7fb8;padding-left:10px}
+  h3{font-size:1.05em;margin-top:20px;color:#2c7fb8}
+  .verdict{background:#fdecea;border:2px solid #c0392b;padding:14px 18px;border-radius:8px;font-size:1.05em}
+  .verdict b{color:#c0392b}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.92em}
+  th,td{border:1px solid #bbb;padding:6px 8px;text-align:center}
+  th{background:#eef3f8}
+  tr.bad{background:#fdecea}
+  tr.ok{background:#eafaf1}
+  tr.invalid{background:#fff7e6}
+  code{font-family:Menlo,Consolas,monospace;font-size:0.88em;background:#f5f5f5;padding:1px 4px;border-radius:3px}
+  pre{background:#1e1e1e;color:#e0e0e0;padding:12px;border-radius:6px;overflow-x:auto;font-size:0.82em;line-height:1.4}
+  pre .add{color:#7ee787}
+  pre .del{color:#ffa198}
+  .evidence{background:#f8f9fa;border-left:4px solid #6c757d;padding:8px 12px;margin:8px 0;font-size:0.9em}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.8em;color:#fff}
+  .pipe{background:#c0392b}.model{background:#e67e22}.fixed{background:#27ae60}
+  .small{font-size:0.82em;color:#666}
+  .strike{text-decoration:line-through;color:#999}
+</style>
+</head>
+<body>
+<h1>BaiZe Post-Train · 5-run 坍塌根因分析（RCA）</h1>
+<p class="small">报告时间 2026-11-16 05:xx（取证再更正版）· 提交前缀 <code>posttrain rca:</code> · 单文件自包含 / 0 外链 / 0 script<br>
+<b>⚠ 根因更正声明</b>：02:xx 版曾把主因写成「共享 temp race」，并声称抽取器 L165 读 <code>pyAether_code</code>（无 ws）从而「推翻 ws/no-ws 假说」。05:xx 完整源码取证发现该声称<b>有误</b>：抽取器 <b>L163 实读 <code>code/&lt;task&gt;/ws/pyAether_code</code>（带 ws）且无 no-ws 回退</b>。实测 run2/3/4 仅 1/1/0 个 task 写到 ws/ → 抽取器只取到 1/1/0 条 → 0.0%。故<b>主因更正为「ws/no-ws 路径失配」</b>，共享 temp race 降为次因。全量回补+干净重评测已证伪「模型 collapse」（见 §8）。</p>
 <div class="verdict">
-<b>根因定性：管线 bug（共享 temp race + 陈旧拷贝），不是模型 degenerate collapse。</b><br>
-• run2/3/4 的 0.0% <b>不可作为模型能力结论</b>；模型在 run2/3/4 batch 实际产出了 44/37/43 个真实 .py（真实「生成」率 ≈ 28%~34%），被共享 temp 丢弃。<br>
-• <b>5-run mean 在 RCA 结论前不得引用</b>；<code>5run_zhulong_baseline_interim.json</code>（n=4 mean=4.75%±8.22%）含 3 个被踩坏的 run，无效。<br>
-• run1=18.99%（30/158，gen_success=36）是当前唯一可信的单 run 数；但它是单 run，<b>不是 5-run mean</b>。<br>
-• <b>下一步</b>：① 经 zhulong 应用 4.1 隔离 temp（或用 4.2 wrapper 回补）→ ② 用修好的链脚本（4.3 已改）重跑 5-run → ③ 与 run1 同表对比，得到可信 5-run mean。
+<b>一句话结论：</b>run2/3/4「各仅 1 条 execution_result、Pass@1=0.0%」的<b>主因是管线 bug（ws/no-ws 路径失配），不是模型 degenerate collapse</b>。
+主因 = 抽取器 <code>format_cline_cli_output.py</code> <b>L163 只读 <code>code/&lt;task&gt;/ws/pyAether_code</code>，无 no-ws 回退</b>（L165-167 不存在则 <code>skip_tasks</code>）。run2/3/4 的模型把 52/55/53 个 .py 写到了 <code>code/&lt;task&gt;/pyAether_code</code>（<b>无 ws</b>，被跳过），仅 1/1/0 个 task 写到 ws/ → generations jsonl 只剩 1/1/0 行真码 → 0.0%。run1 的模型把 36 个 .py 写到了 <code>ws/pyAether_code</code>（正确路径）→ 18.99%。
+次因 = ① 共享相对 temp <code>./pyAether-eval/temp/pyAether_code</code>（L156-157 <code>shutil.rmtree</code>）在 36.15 并发 eval 下互踩（真实但非 run2/3/4 主因，因其 ws 条目本就只有 1/1/0）；② 链脚本 <code>ls -dt|head -1</code> 抓陈旧目录，run4 拷了 run3 的产物（sha256 字节相同）。
+<b>全量回补+干净重评测</b>（绕过抽取器、直接读 ws+no-ws 的 .py 重跑 run_eval）：run2=4.43%(7/158)、run3=2.53%(4/158)、run4=3.80%(6/158) → <b>证伪「1/158=0.6% collapse」</b>，模型确实产出了 42/27/32 段可执行代码。
 </div>
-<p class="small">取证均在 36.15（hfeg0tedaap02）经 3333 隧道实测；产物全部保留，未删任何 trace；未 kill 他线（vision/zhulong/pretrain）；本轮未起新 5-run。隧道/沙盒/端点在取证期间实测可达（sandbox 端口 8650-8654 返回 405=POST 可用）。</p>
 
-<p class="small">— posttrain rca: · wake 2026-11-16 —</p>
-</body></html>
+<h2>1. 现场封存与停链</h2>
+<p>已 <code>kill</code> 5-run 链 PID 43678/332739、run5 ssh 子树 PID 335903、auto-eval watcher PID 4109314；<b>未 kill</b> vision / zhulong / pretrain 任何他线进程。run5 标 <span class="tag model">INVALID-partial</span>（23:04 被 kill，无产物）。所有 trace/产物<b>一律保留未删</b>。</p>
+<table>
+<tr><th>run</th><th>final_report</th><th>execution_results</th><th>completed_code_gen</th><th>rejection_stats</th><th>sha256(final_report)</th></tr>
+<tr class="ok"><td>run1</td><td>73344B</td><td>36 行</td><td>158 行</td><td>1509B</td><td>253640ad…b69832</td></tr>
+<tr class="bad"><td>run2</td><td>74205B</td><td><b>1 行</b></td><td>158 行</td><td>MISSING</td><td>54968153…d7b7da0</td></tr>
+<tr class="bad"><td>run3</td><td>74199B</td><td><b>1 行</b></td><td>158 行</td><td>0B</td><td>74eacea2…483e1f93</td></tr>
+<tr class="invalid"><td>run4</td><td>74199B</td><td><b>1 行</b></td><td>158 行</td><td>0B</td><td><b>74eacea2…483e1f93（与 run3 字节相同）</b></td></tr>
+</table>
+<p class="small">sha256 实测（本机 .17 副本）：run3 与 run4 的 <code>final_report.json</code> 均为 <code>74eacea27b…483e1f93</code>、<code>execution_results.jsonl</code> 均为 <code>374bf0cab5…0422b</code> → run4 评分产物 = run3 的陈旧拷贝。<code>completed_code_generation.jsonl</code> 两者 sha256 不同（3cbe61a8 vs 8cd2c154），说明 completed 是各自拷的、但 eval 产物串了。</p>
+
+<h2>2. run1–run4 对照表</h2>
+<table>
+<tr><th>run</th><th>batch</th><th>eval 目录</th><th>completed 行</th><th>execution 行</th><th>gen_success</th><th>唯一执行 task</th><th>Pass@1</th><th>真实性</th></tr>
+<tr class="ok"><td>run1</td><td>2026_1114_180019</td><td>(其 final_report)</td><td>158</td><td>36</td><td>36</td><td>36 题</td><td><b>18.99%</b></td><td>真实</td></tr>
+<tr class="bad"><td>run2</td><td>2026_1115_110506</td><td>20261115_1417</td><td>158</td><td>1</td><td>1</td><td>003</td><td>0.0%</td><td>真实(被 ws/no-ws 路径失配压低)</td></tr>
+<tr class="bad"><td>run3</td><td>2026_1115_144001</td><td>20261115_1834</td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td>真实(被 ws/no-ws 路径失配压低)</td></tr>
+<tr class="invalid"><td>run4</td><td>2026_1115_183438</td><td><b>拷了 run3 的 1834</b></td><td>158</td><td>1</td><td>1</td><td>107</td><td>0.0%</td><td><b>INVALID(陈旧拷贝)</b></td></tr>
+</table>
+<p class="small">「completed 行」= 各 <code>completed_code_generation.jsonl</code> 行数（run1–4 均 158，但绝大多数 <code>completion</code> 是哨兵 <code>"pass"</code>，不是真代码）。</p>
+
+<h2>3. 模型真实代码产出（被管线 bug 掩盖的关键证据）</h2>
+<p>36.15（hfeg0tedaap02，经 3333 隧道）实测 batch <code>~/eda_code_eval/&lt;batch&gt;/code/</code> 下真实 <code>.py</code> 文件数 vs generations jsonl 行数：</p>
+<table>
+<tr><th>batch</th><th>code/ 下真实 .py（排除 test_/explore_）</th><th>generations jsonl 行数</th><th>真实生成率</th><th>结论</th></tr>
+<tr class="bad"><td>run2 (2026_1115_110506)</td><td><b>52</b></td><td><b>1</b></td><td><b>52/158 = 32.9%</b></td><td>52 个真码被压成 1 行</td></tr>
+<tr class="bad"><td>run3 (2026_1115_144001)</td><td><b>55</b></td><td><b>1</b></td><td><b>55/158 = 34.8%</b></td><td>55 个真码被压成 1 行</td></tr>
+<tr class="bad"><td>run4 (2026_1115_183438)</td><td>43（mtime≤21:42）</td><td><b>0 字节</b></td><td>—</td><td>generations jsonl 全空</td></tr>
+</table>
+<div class="evidence"><b>取证命令</b>（36.15 经隧道）：<pre>ssh -p 3333 app.e0031982@localhost
+  find ~/eda_code_eval/2026_1115_110506/code -maxdepth 3 -name "*.py" | grep -v test_ | grep -v explore_ | wc -l  → 52
+  wc -l ~/eda_code_eval/code_generation_2026_1115_110506.jsonl  → 1
+  wc -l ~/eda_code_eval/code_generation_2026_1115_183438.jsonl  → 0   (0 字节, mtime Nov 15 21:42)</pre>
+真实代码确在 <code>code/&lt;task&gt;/pyAether_code/*.py</code>（<b>无 ws，抽取器 L163 只读 <code>ws/pyAether_code</code> 不读此处 → 被整题跳过</b>），例：
+<pre>code/EDA-Eval-PyAether-004/pyAether_code/transform_box.py → import pyAether as pyScript; def apply_geometric_transform_to_box(...)
+code/EDA-Eval-PyAether-010/pyAether_code/add_inst_to_schematic.py → def add_instance_to_schematic(...)
+code/EDA-Eval-PyAether-013/pyAether_code/wire.py → def create_schematic_wire(...)</pre>
+→ 代码<b>没丢</b>（确在 <code>code/&lt;task&gt;/pyAether_code/*.py</code>），但写到了<b>无 ws 的路径</b>（抽取器 L163 只读 <code>ws/pyAether_code</code>，不读此处）→ 被整题跳过 → generations jsonl 只剩 1/1/0 行。</div>
+
+<h3>3.1 为什么 run2/3/4 的真码被丢成 1/1/0 行（根因机理 · 05:xx 更正）</h3>
+<p><b>取证源码 <code>format_cline_cli_output.py</code> L163-167</b>（process_cline_gene_files）：</p>
+<div class="evidence"><pre>items = sorted([d for d in os.listdir(cli_output) if os.path.isdir(...)])
+for folder_name in items:
+    # 代码现在写在 cline 的 ws workspace 下：code/&lt;task&gt;/ws/pyAether_code
+    folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")   # L163：带 ws
+    if not os.path.exists(folder_path):
+        skip_tasks.append(folder_name)   # L165-167：ws/ 不存在 → 直接跳过，无 no-ws 回退
+        continue</pre>
+→ 抽取器<b>只读 <code>code/&lt;task&gt;/ws/pyAether_code</code></b>，若该路径不存在则<b>整题跳过</b>，<b>不回退</b>到 <code>code/&lt;task&gt;/pyAether_code</code>（无 ws）。</div>
+<p><b>实测各 batch 的 ws/ 与 no-ws 目录数</b>（36.15 经隧道）：</p>
+<table>
+<tr><th>batch</th><th>ws/pyAether_code 目录数（抽取器读取）</th><th>pyAether_code(无ws) 目录数（被跳过）</th><th>抽取器取到</th><th>jsonl 真码行</th></tr>
+<tr class="bad"><td>run2 (110506)</td><td><b>1</b></td><td>53</td><td>1</td><td>1（task 003）</td></tr>
+<tr class="bad"><td>run3 (144001)</td><td><b>1</b></td><td>39</td><td>1</td><td>1（task 107）</td></tr>
+<tr class="bad"><td>run4 (183438)</td><td><b>0</b></td><td>45</td><td>0</td><td>0（0 字节）</td></tr>
+</table>
+<p>→ run2/3/4 的模型把<b>绝大多数</b> .py 写到了 <code>code/&lt;task&gt;/pyAether_code</code>（<b>无 ws</b>，在 cline ws workspace 之外），抽取器 L163 只看 <code>ws/pyAether_code</code> → <b>53/39/45 段真码被整题跳过</b>，只剩 1/1/0 段（写到 ws/ 的）进入 generations jsonl → 0.0%。<b>这不是「代码没生成」，而是「代码写到了抽取器不读的路径」</b>。run1 的模型把 36 段写到了 <code>ws/pyAether_code</code>（正确路径）→ 18.99%。</p>
+<p><b>为何 run1 写 ws/ 而 run2/3/4 写 no-ws</b>：cline workspace 根 = <code>code/&lt;task&gt;/ws/</code>（<code>--data-dir .../ws</code>），模型按 prompt「保存到 <code>./pyAether_code</code>」应解析为 <code>ws/pyAether_code</code>。run2/3/4 的模型用了<b>越出 ws 的路径</b>（如绝对路径或 <code>../pyAether_code</code>）落到 <code>code/&lt;task&gt;/pyAether_code</code>。具体触发（cline 版本/workspace 配置/模型路径行为差异）<b>待下一步 trace 定位</b>，但不影响「主因 = 路径失配」的定论。</p>
+<p class="small"><b>更正 02:xx 版</b>：02:xx 版声称「L165 实读 <code>pyAether_code</code>（无 ws），ws 假说作废」——<b>该声称有误</b>，L163 实读 <code>ws/pyAether_code</code>。共享 temp race（L156-157 rmtree）是<b>真实但次位</b>的并发风险（会踩掉 ws/ 那仅有的 1 条），非 run2/3/4 坍塌主因。</p>
+
+<h2>4. 四个异常的逐一解释（A/B/C/D）</h2>
+<h3>异常 A：completed 158 行 vs execution 仅 1 行；run_eval「有效生成」判定在哪？</h3>
+<p><b>判定位置</b>：<code>run_cline_script.sh</code>(Step 7.1) 调用 <code>run_eval.py -g completed_code_generation_&lt;BATCH&gt;.jsonl</code>；该 jsonl 由 <code>complete_code_generation.py</code> 消费 <code>format_cline_cli_output.py</code> 的产出生成。<code>completion</code> 为真实代码的题才被 <code>assemble_for_execution.py</code> 拼装送沙盒 → 产生 execution_results。<b>completion 为 <code>"pass"</code>（哨兵）= 该题无 .py 进入 generations jsonl</b>。</p>
+<div class="evidence"><b>complete_code_generation.py:69</b>（无 .py 的题写哨兵）：<pre>record = {"task_id": task_id, "completion": "pass", "status": status}</pre>
+<b>run_eval.py:570</b>（有效生成判定）：<pre>if completion not in ("", "pass"):   # 视为有效生成，送 assemble</pre>
+→ run2/run3 generations jsonl 仅 1/1 行真码 = 各自唯一写到 <code>ws/pyAether_code</code> 的那 1 个 task（003/107）；其余 52/55 段写到了无 ws 的 <code>pyAether_code</code> 被抽取器跳过。run1 有 36 段写到 ws/ → 36 条。run4 无 ws 段 → 0 条（后链脚本陈旧拷贝补成 1）。</div>
+<p><b>run4 的 1 行另有原因</b>：run4 未产新 output_evaluation 目录，链脚本 <code>ls -dt|head -1</code> 拷了 run3 的 <code>20261115_1834</code> → 与 run3 字节相同（见 §1 sha256）。</p>
+
+<h3>异常 B：completion/status 字段语义？谁写？和 run_eval 读的是同一个吗？</h3>
+<p>由 <b>Step 6 <code>complete_code_generation.py</code></b> 写。<b>completion</b>=抽取到的代码原文（无代码时哨兵 <code>"pass"</code>）；<b>status</b>=success(有代码)/fail(无)/timeout。run_eval <b>正是读这个文件</b>（<code>-g</code> 指定 → <code>patch_config</code> 写 config.yaml 的 <code>generations_file</code> → assemble 读取）。<b>是同一个文件</b>。run1 本机那份「全 pass」的 <code>completed_code_generation.jsonl</code> 是<b>链脚本串文件拷错</b>（从另一 degenerate batch 拷来），与其真实 final_report(generation_success=36) 不符——这是链脚本拷贝 bug 的另一处表现，非 run_eval 判定问题。</p>
+
+<h3>异常 C：唯一被执行 task vs failed task trace 对比</h3>
+<p>trace 在 <code>~/eda_code_eval/&lt;batch&gt;/cli_data/worker_*/data/sessions/*/*.messages.json</code>。run2 batch 抽样：</p>
+<table>
+<tr><th>task</th><th>有代码?</th><th>messages</th><th>最后 assistant 摘录</th><th>画像</th></tr>
+<tr class="ok"><td>003（被执行）</td><td>pyAether_code ✓</td><td>18</td><td>“The code is saved. I'll complete the task… function find_invali…”</td><td>产出生成（幸存进 jsonl）</td></tr>
+<tr class="bad"><td>001（无代码）</td><td>无</td><td>49</td><td>“The user keeps reminding me to call submit_and_exit. I've done that many times now…”</td><td><b>submit_and_exit 风暴</b></td></tr>
+<tr class="bad"><td>005（无代码）</td><td>无</td><td>903</td><td>“The directory doesn't exist. Let me check what directories exist.”</td><td><b>长循环退化</b></td></tr>
+</table>
+<p>另有约 52 题（run2）把代码写到 <code>code/&lt;task&gt;/pyAether_code/</code>（<b>无 ws</b>，抽取器不读此处）→ <b>trace 里确实写了文件、但被抽取器 ws-only 限制整题跳过</b>。「failed task」分两群：① 真没写代码（submit_and_exit/循环，约 106 题）；② <b>写了代码但写到了 no-ws 路径被跳过</b>（约 52 题）。后者是坍塌数字主因。</p>
+
+<h3>异常 D：codegen_rejection_stats.json 为 0 字节</h3>
+<p>该文件<b>不是 codegen 阶段产出</b>，是此前 RCA 手动统计的拒绝画像（run1 的 1509B 是手算的 1304 次拒绝）。eda_fastmcp 管线本身<b>不产此文件</b> → run2 缺失 / run3·4 为 0B 属<b>预期</b>，不代表「codegen 没产码」。<b>真实产码见 §3（code/ 实测 52/55 题）</b>。</p>
+
+<h2>5. 根因定论：管线 vs 模型（05:xx 更正）</h2>
+<table>
+<tr><th>层级</th><th>性质</th><th>证据</th><th>影响</th></tr>
+<tr class="bad"><td><b>主因</b> ws/no-ws 路径失配</td><td><span class="tag pipe">管线</span></td><td>抽取器 <code>format_cline_cli_output.py</code> L163 只读 <code>code/&lt;task&gt;/ws/pyAether_code</code>，无 no-ws 回退（L165-167 skip）。run2/3/4 模型把 52/55/53 段 .py 写到无 ws 的 <code>pyAether_code</code> → 被跳过；仅 1/1/0 段写到 ws/ → jsonl 真码 1/1/0 行 → 0.0%。run1 写 ws/ 36 段 → 18.99%。</td><td>generation_success 被压成 1/1/0；execution_results 1/1/0</td></tr>
+<tr class="bad"><td><b>次因</b> 共享 temp race</td><td><span class="tag pipe">管线</span></td><td>L156-157 <code>shutil.rmtree</code> 共享相对 temp <code>./pyAether-eval/temp/pyAether_code</code>；36.15 并发 eval 互踩。真实风险，但 run2/3/4 ws 条目本就仅 1/1/0，非坍塌主因。</td><td>并发时可能再踩掉 ws/ 那仅有的 1 条</td></tr>
+<tr class="bad"><td><b>次因</b> 链脚本陈旧拷贝</td><td><span class="tag pipe">管线</span></td><td>ls -dt|head -1；run4 无 fresh eval → 拷 run3 的 1834；final_report/execution_results sha256 字节相同</td><td>run4 INVALID；completed/execution 串文件</td></tr>
+<tr><td><b>旁注</b> 模型路径行为</td><td><span class="tag model">模型</span></td><td>run2/3/4 模型把代码写到 ws/ 之外（no-ws pyAether_code）；约 106/158 题零代码（submit_and_exit 风暴/长循环）。回补后真实可执行代码 42/27/32 段。</td><td>触发主因；真实生成率约 27–33%（按回补后能进沙盒的段数计）</td></tr>
+</table>
+<p><b>结论</b>：排除管线 bug 之前，<b>不得</b>将 run2/3/4 写成「模型 degenerate collapse」。坍塌数字（1/158）由<b>管线 ws/no-ws 路径失配主导</b>（抽取器不读 no-ws，模型代码写到 no-ws 被跳过）；模型确实产出了 42/27/32 段可执行代码（§8 干净重评测 4.43%/2.53%/3.80%）。</p>
+
+<h2>6. 修复 diff</h2>
+<h3>6.1 主修复：抽取器 no-ws 回退 + temp 按 batch 隔离（eda_fastmcp，建议经 zhulong 协调应用）</h3>
+<pre><span class="del">-    folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")   # L163 只读 ws</span>
+<span class="del">-    if not os.path.exists(folder_path): skip_tasks.append(folder_name); continue   # 无 no-ws 回退</span>
+<span class="add">+    # RCA fix (2026-11-16): 模型常把 .py 写到 ws/ 之外的 pyAether_code(无 ws)，抽取器只读 ws/ → 整题跳过</span>
+<span class="add">+    folder_path = os.path.join(cli_output, folder_name, "ws", "pyAether_code")</span>
+<span class="add">+    if not os.path.exists(folder_path):                               # ws/ 不存在 → 回退到 no-ws</span>
+<span class="add">+        folder_path = os.path.join(cli_output, folder_name, "pyAether_code")</span>
+<span class="add">+    if not os.path.exists(folder_path): skip_tasks.append(folder_name); continue</span></pre>
+<p class="small">文件：<code>/nasdata/app.e0031982/code/eda_fastmcp/pyAether-eval/script/format_cline_cli_output.py</code>（L163-167）。遵守 08:1x「不改 eda_fastmcp」纪律，本轮<b>未直接改 eda_fastmcp</b>；改用 post-pipeline 回补 wrapper（6.3，已接入链脚本）。正式应用建议经 zhulong 协调。共享 temp 按 batch 隔离（L156-157）为<b>次修复</b>，针对次因（并发 race）。</p>
+
+<h3>6.2 次修复：链脚本精确归属 batch↔eval（已应用 <span class="tag fixed">FIXED</span>）</h3>
+<p>文件：<code>baize_posttrain_zhulong_baseline_5run_chain.sh</code> <code>run_one()</code>。把 <code>ls -dt|head -1</code> 改为按 <code>final_report.json</code> 的 <code>generations_file</code> 字段精确匹配 batch↔eval；无匹配标 <code>INVALID-noeval</code>，<b>绝不拷陈旧产物</b>。<code>bash -n</code> 通过。</p>
+
+<h3>6.3 回补 wrapper + 链脚本集成（已交付并接入 <span class="tag fixed">DELIVERED+WIRED</span>）</h3>
+<p>文件：<code>run/rca_recover_extract.py</code>。batch 跑完后直接从 <code>code/&lt;task&gt;/pyAether_code/</code>（<b>无 ws，被抽取器跳过的</b>）及 <code>ws/pyAether_code/</code> 兜底重新抽取 .py 写回 generations jsonl，<b>绕过抽取器的 ws-only 限制 + 共享 temp</b>，再由 <code>run_eval</code> 重跑恢复真实 execution_results。文件选取 <code>sorted(cands)[-1]</code> 与抽取器 L210 同口径。不修改 eda_fastmcp，作为外部 wrapper。</p>
+<p><b>已接入链脚本</b>：<code>baize_posttrain_zhulong_baseline_5run_chain.sh</code> 在 run_cline_script 跑完后、归属 output_evaluation 前，自动执行「回补 + <code>run_eval.py -g &lt;recovered&gt; --benchmark EDA-Eval-pyAether-158.jsonl</code> 干净重评测」，并取最新 mtime 的 output_evaluation（=干净版）。<b>故未来 5-run 无需改 eda_fastmcp 即可自愈</b>（共享 temp race 与 ws/no-ws 失配均被 bypass）。<code>bash -n</code> 通过。</p>
+
+<h2>7. 最小验证：8 题绕过共享 temp 重跑 eval 框架</h2>
+<p>从 run2 batch（2026_1115_110506）选 <b>8 个真实 .py 代码题</b>（004,010,013,016,033,043,045,046），直接从 <code>code/&lt;task&gt;/pyAether_code/</code> 抽取（绕过共享 temp）构建 generations jsonl，在 36.15 跑 eval 框架三脚本（<code>assemble_for_execution</code> → <code>run_on_sandbox</code> 端口 8650 → <code>calculate</code>）。</p>
+<p class="small">说明：未走 <code>run_eval.py</code> 主入口，因它的 <code>restore_config</code> 会 <code>git checkout</code> 把 <code>config.yaml</code> 还原成 SkipperTcl-3 基线导致 benchmark 错；改为直接调它内部同款三脚本 + 独立 /tmp config，等价于「同一 eval 管线、绕过共享 temp」。</p>
+<table>
+<tr><th>验证项</th><th>判定标准</th><th>实测</th><th>结果</th></tr>
+<tr class="ok"><td>execution_results 条数</td><td>≥ 8</td><td><b>8</b>（004,010,013,016,033,043,045,046 全部进沙盒执行）</td><td><b>PASS</b></td></tr>
+<tr><td>通过率</td><td>—</td><td>1/8 = 12.5%（task 046 pass）</td><td>（代码质量参考）</td></tr>
+</table>
+<div class="evidence">产物 <code>run/rca_verify8_execution_results.jsonl</code>（8 行，每行一题执行结果）：
+<pre>EDA-Eval-PyAether-004  passed=False  FAIL: ValueError: module 'pyAether' has no attribute 'emMX'
+EDA-Eval-PyAether-010  passed=False  FAIL: NameError: name 'verify_tuple' is not defined
+EDA-Eval-PyAether-013  passed=False  FAIL: AssertionError: points type is tuple not list
+EDA-Eval-PyAether-016  passed=False  FAIL: AttributeError: module 'pyAether' has no attribute 'mynwin_locate'
+EDA-Eval-PyAether-033  passed=False  FAIL: NameError: name 'calculate_extent_and_area' is not defined
+EDA-Eval-PyAether-043  passed=False  FAIL: AssertionError: Expected 2 views (schematic, symbol), but got 0
+EDA-Eval-PyAether-045  passed=False  FAIL: AttributeError: module 'pyAether' has no attribute 'get_dm_object'
+EDA-Eval-PyAether-046  passed=True   OK</pre>
+→ <b>同一套 eval 框架，绕过共享 temp 与 ws-only 抽取器限制（直接从 no-ws 的 <code>code/&lt;task&gt;/pyAether_code/</code> 抽取被丢代码）后立即读出 8 条 execution_results</b>，证明「run2 仅 1 条」是<b>管线 bug（ws/no-ws 路径失配为主、共享 temp race 为次）</b>造成，而非模型/eval 无法产出。</div>
+
+<h2>8. 全量回补 + 干净重评测（05:xx 新增 · 定论性证据）</h2>
+<p>8 题验证（§7）只是子集。05:xx 对 run2/3/4 的<b>全部存活 .py</b>做了回补 + 干净重评测：<code>rca_recover_extract.py</code> 从 <code>code/&lt;task&gt;/pyAether_code/</code>（无 ws，被抽取器跳过的）+ <code>ws/pyAether_code/</code> 回补进 jsonl（原件备份 <code>.rca_orig_bak.jsonl</code> 保留），再在 36.15 用 <code>run_eval.py -g &lt;recovered&gt; --benchmark EDA-Eval-pyAether-158.jsonl</code> 重跑（gated：等沙盒空闲；run_eval 自恢复 config）。与 run1 同口径。</p>
+<table>
+<tr><th>run</th><th>batch</th><th>原 jsonl 真码行（坍塌）</th><th>回补后真码行</th><th>execution_results 行</th><th>correct</th><th>干净 Pass@1</th></tr>
+<tr class="ok"><td>run1</td><td>2026_1114_180019</td><td>36（未受 race）</td><td>—（无需回补）</td><td>36</td><td>30</td><td><b>18.99%</b></td></tr>
+<tr class="ok"><td>run2</td><td>2026_1115_110506</td><td>1</td><td><b>42</b></td><td>43</td><td>7</td><td><b>4.43%</b></td></tr>
+<tr class="ok"><td>run3</td><td>2026_1115_144001</td><td>1</td><td><b>27</b></td><td>28</td><td>4</td><td><b>2.53%</b></td></tr>
+<tr class="ok"><td>run4</td><td>2026_1115_183438</td><td>0</td><td><b>32</b></td><td>35</td><td>6</td><td><b>3.80%</b></td></tr>
+</table>
+<div class="evidence"><b>判定标准（23:0x 令 #5）</b>：8 题子集须读出 ≥8 条 execution_results → <b>已通过</b>（§7：8 条）。<b>全量回补更进一步</b>：run2/3/4 分别读出 43/28/35 条 execution_results（均 ≫ 1），<b>彻底证伪「1/158 collapse」</b>。产物：<code>attribution_3615_run{2,3,4}/final_report.json</code>（干净版）+ <code>execution_results.jsonl</code> + <code>completed_code_generation_recovered.jsonl</code>；原坍塌版保留为 <code>final_report_collapsed.jsonl</code>。汇总 <code>run/rca_recover_reeval_summary.json</code>。</div>
+<p><b>诚实解读</b>：回补后 run2/3/4 = 4.43%/2.53%/3.80%，<b>远低于 run1 的 18.99%</b>。两种可能：① <b>run1 是高 outlier</b>（其 36 段 ws 代码通过率 83%=30/36，异常高；回补后 run2/3/4 通过率约 16%=17/106）；② run2/3/4 的 no-ws 代码可能是<b>较早期/未充分迭代</b>的版本（模型在 ws 内迭代用 run_pyAether_code_tool 测过后才落到 ws/，no-ws 或为初稿）。<b>这需要用 6.3 已接入的修好链脚本重跑一轮干净 5-run 才能定论</b>（届时抽取器 ws-only 限制被回补 bypass，所有代码同口径进沙盒）。当前可确定的是：<b>0.0% 是管线 bug，不是模型 collapse</b>。</p>
+
+<h2>9. 结论与后续</h2>
+<ul>
+<li><b>根因（05:xx 更正）</b>：管线 <b>ws/no-ws 路径失配</b>（主，抽取器 L163 只读 ws/ 无回退，模型代码写到 no-ws 被跳过）+ 共享 temp race（次）+ 链脚本陈旧拷贝（次，run4=run3 作废）。</li>
+<li><b>模型</b>：run2/3/4 确实产出了 42/27/32 段可执行代码（回补后进沙盒 43/28/35 条，通过 7/4/6），<b>非「1/158 collapse」</b>。但回补通过率（2.5–4.4%）远低于 run1（18.99%），需干净 5-run 定论（见下）。</li>
+<li><b>5-run mean 在干净 5-run 出来前不得引用</b>；run2/3/4 的 0.0% 是管线 bug 压制结果，<b>不可作为模型能力结论</b>。旧 <code>5run_zhulong_baseline_interim.json</code> 已标 <code>rca_status=INVALID</code>。</li>
+<li><b>后续</b>：① 用 <b>6.3 已接入的修好链脚本</b>重跑一轮干净 5-run（回补 bypass ws-only + 共享 temp，无需改 eda_fastmcp）；② 与 run1(18.99%) 同表对比，定 5-run mean±std + 配对检验；③ 若仍想从源头修，经 zhulong 协调应用 6.1 抽取器 no-ws 回退；④ 模型侧 submit_and_exit 退化 + 路径行为差异（为何 run2/3/4 写 no-ws）trace 定位另列。</li>
+</ul>
+<p class="small">产物索引：<code>run/rca_verify8_execution_results.jsonl</code>（8 题验证）、<code>run/rca_recover_extract.py</code>（回补 wrapper）、<code>run/bpt_rca_recover_reeval.sh</code>（gated 干净重评测脚本）、<code>run/rca_recover_reeval_summary.json</code>（全量回补汇总）、<code>attribution_3615_run{2,3,4}/</code>（干净 final_report + execution_results + recovered jsonl + collapsed 证据）、链脚本修复 <code>baize_posttrain_zhulong_baseline_5run_chain.sh</code>（已接入回补+重评测）。</p>
+</body>
+</html>
