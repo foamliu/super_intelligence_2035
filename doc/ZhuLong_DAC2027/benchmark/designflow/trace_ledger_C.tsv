@@ -815,7 +815,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791946991037_9io52	yan1zh	hfeg0pkn005	108	physical_verify	parked		2026-11-14 07:46	r548 peek reject (non-produce)
 1794376048465_g9gw3	zhenglu	hfeg0pkn001	104	physical_verify	case	EDA-Eval-DesignFlow-OpcModelExtract-001	2026-11-14 08:13	
 1794401820069_uz3bp	hktklin	hfeg0plg87	181	layout_virtuoso	case	EDA-Eval-DesignFlow-PcellMutexCdfCfg-001	2026-11-14 08:39	
-1794474504276_uqz0b	jcgu	hfeg0plg81	145	layout_aether	case	EDA-Eval-DesignFlow-AetherSmashCliPort-001	2026-11-14 09:09	
+1794474504276_uqz0b	jcgu	hfeg0plg81	145	layout_aether	parked	EDA-Eval-DesignFlow-AetherSmashCliPort-001	2026-11-17 04:00	off-C GUI flicker opt (flow_gui_demo.py), app-dev not physical_verify/layout, r689 peek
 1792478058523_kn0te	hongyuy	hfeg0plg73	103	layout_aether	case	SkillTclMetalPort-001	2026-11-14 09:48	
 1791460442634_dzbpb					case	LayerMapReleaseNote-001	2026-11-14 10:47	weizhao@hfeg0pkn001 mc=124 physical_verify L2-boundary k=15(a-o) B档 synthesized layer.map diff+releasenote
 1790237454328_68dpw					parked		2026-11-14 10:38	jcgu meta load skill
@@ -1200,3 +1200,7 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1790133815976_z9yjw					parked		2026-11-17 03:32	BCenterCA RsCalc env-config/license/permission debug-Q&A, run-existing handoff prompt, teeth-fail
 1789520357933_3duob					parked		2026-11-17 03:32	DFM SPEC FILL via Q&A/explain, 47 msgs 20 tool_use search_codebase-heavy, explain-Q&A teeth-fail
 1787742497412_aneeo					parked		2026-11-17 03:32	run-existing prompt_flow.md + 5 reports, intent in external md, 680 run_commands run-existing, teeth-fail
+1789558343185_2y59d					parked		2026-11-17 04:00	debug-Q&A two programs (SKILL .il + Calibre implant fill IMCleFillIm), borderline reframe-eval deferred, r689 peek
+1789632393597_0zg87					parked		2026-11-17 04:03	DFM SPEC FILL + private 3.4MB calbr_drv_ref.pdf attachment, explain-Q&A teeth-fail (same as r686 3duob), r689 peek
+1792486961623_bm8t8					parked		2026-11-17 04:03	retrieval-Q&A 'which lib for last successful RCC PEX' over private /proj/drcoa path, find_success*.py grep private tree, teeth-fail, r689 peek
+1793674727236_necxj					parked		2026-11-17 04:03	PEX one-click提参 (oneclick_pex.sh+_validate_pex.sh) mixed how-to Q&A + path-dependent produce /proj/lacaa, 双意图 both sub-intents teeth-hard (A r657 taxon), reframe-eval deferred, r689 peek
