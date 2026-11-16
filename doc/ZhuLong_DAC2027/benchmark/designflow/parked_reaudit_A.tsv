@@ -25,7 +25,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793583471152_fbuip	alan3zh	hfeg0pkn001	pnr_signoff	duplicate of 97tse AprSetupAudit-001: same user轮0 verbatim 'get basic configurat	DUP	no		n/a
 1793584882491_ggmdz	alan3zh	hfeg0pkn001	pnr_signoff	duplicate of 97tse AprSetupAudit-001: identical user轮0 to fbuip/97tse; 36 msgs r	DUP	no		n/a
 1793587958955_0yyhj	e0046913	hfeg0pkn003	digital	USER#1='解读README/.md/LICENSE并说明.md格式'=doc-explanation Q&A, not design_flow; e004	REVIVABLE_QA	yes	doc-search/study	EXISTS
-1792118902296_4efo6	e0039102	hfeg0pkn002	digital	USER#1='帮我看下run_vsim_uvs_vps.pl文件框架'=perl-script code-comprehension Q&A, not des	REVIVABLE_QA	yes	code-comprehension	EXISTS
+1792118902296_4efo6	e0039102	hfeg0pkn002	digital	USER#1='帮我看下run_vsim_uvs_vps.pl文件框架'=perl-script code-comprehension Q&A, not des	REVIVABLE_QA	yes	code-comprehension	DONE_r664
 1791870002859_kvv66	e0045128	hfeg0plg78	digital	pure concept Q&A (recovery-time/wireload-model/WLM原理), no artifact, not design_f	REVIVABLE_QA	yes	concept-Q&A	EXISTS
 1793616198613_fefaj	shaoyou	NA	digital	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey	WRONG_SHARD	no		n/a
 1792495095612_vke2w	pdong	NA	digital	analog/mixed or pruned-file (fefaj=NanoSpice SPICE Q&A analog; vke2w/18ry4/fg7ey	WRONG_SHARD	no		n/a
