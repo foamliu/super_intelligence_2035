@@ -643,7 +643,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794203361928_17trm	e0039602	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1794204930558_vgi1y	e0047600	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1793927511932_p9dvv	e0048255	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
-1794210761770_t9j7w	owench	hfeg0pkn002	24	spice_sim	parked		2026-11-09 16:07	kw=24 reject: jigeshixing PDK model analysis(分析这个model/都有哪些管子), vague consulting+multi-turn-dep(这部分 refs prior ctx), L1 parse no spice-run, gold=prose inventory ambiguous
+1794210761770_t9j7w	owench	hfeg0pkn002	24	spice_sim	case	EDA-Eval-DesignFlow-PdkModelWlExtract-001	2026-11-16 10:19	kw=24 reject: jigeshixing PDK model analysis(分析这个model/都有哪些管子), vague consulting+multi-turn-dep(这部分 refs prior ctx), L1 parse no spice-run, gold=prose inventory ambiguous
 1794209737398_a5mxr	ruminji	hfeg0pkn002	6	spice_sim	parked		2026-11-09 16:07	kw=6 reject: 仿真ac怎么语句=Q&A consulting(RAG api search x40), no produce-task
 1794197643242_8b0og	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1794209742408_8aer9	xinqiaoz	hfeg0pkn002	0	spice_sim	parked		2026-11-10 08:26	fresh-window 11-10 0 spice_kw non-spice (xinqiaoz)
