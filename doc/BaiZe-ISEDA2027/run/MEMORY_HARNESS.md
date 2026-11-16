@@ -4,6 +4,13 @@ WAITING: 1
 
 > 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
 
+> 🆕 **R2595 · 2026-11-17 06:4x — 监控轮心跳（用户令·例行·不改结论不重跑）**
+> - **自检**: load25.35/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅·adaptive off7/10 quiet174m 累计429=0✅
+> - **git**: 共享NFS已最新(commit dd4b07c7b R2594 06:08)·harness文件clean·git pull proxy503(infra·共享NFS已最新)
+> - **无未完成用户指令**: cc修复✅+adaptive✅均done·任务书无"未完成"块
+> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research日报建议纳入下次报告迭代(harness维度+judge视图) ③cc归因adapter_error=6细分 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤MEMORY 32.4KB→下轮滚动旧📦指针
+> - **📦 体积**: TASK≈23.2KB / MEMORY≈32.4KB（<40KB红线·下轮滚动）
+
 > 🆕 **R2594 · 2026-11-17 05:5x — 任务书bookkeeping(cc修复块归档) + token回采调查=BLOCKED(framework不采集) + research日报纳入**
 > - **自检**: load25.19/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅
 > - **git pull**: proxy 503(infra·非code·共享NFS已最新commit 3eeaab604 05:54)
