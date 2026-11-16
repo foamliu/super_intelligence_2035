@@ -1539,7 +1539,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794387569294_u5vqi					parked		2026-11-12 23:57	dailylog-post1109 peek r568: first msg=policy-engine/dir-listing, no real user text, file-exploration
 1794362708761_hvfis					parked		2026-11-12 23:57	dailylog-post1109 peek r568: '根据log分析本次sta的情况' STA log analysis = A-domain verification, not D
 1793930888265_7sgr2.messages.json	rongjiez	hfeg0plg54	40	netlist	case	EDA-Eval-DesignFlow-WaveCmpMismatchDiagQA-001	2026-11-15 18:24	r569 peek: debug Q&A 'why compare_wave_new.pl reports Matched when should Mismatch' (fsdb shift logic)
-1793184126106_xe3s8.messages.json	bensonh	hfeg0plg104	37	netlist	parked		2026-11-13 00:21	r569 peek: greeting->code-review of FineSim job-submit bash script (netlist:147 from script strings)
+1793184126106_xe3s8.messages.json	bensonh	hfeg0plg104	37	netlist	case	EDA-Eval-DesignFlow-FineSimJobMonitorImproveQA-001	2026-11-17 07:04	r569 peek: greeting->code-review of FineSim job-submit bash script (netlist:147 from script strings)
 1792478844725_i8070.messages.json	chengk	hfeg0plg74	31	netlist	parked		2026-11-13 00:21	r569 peek: code-paste Tcl ProcOneInst cckSearchInst proc (code-review/debug)
 1793686536776_0g146.messages.json	bensonh	hfeg0plg104	27	netlist	parked		2026-11-13 00:21	r569 peek: setup/config 'change cwd + create debug folder, remember for future'
 1793251739525_86g62.messages.json	tongfanl	hfhds201	29	analog_context	parked		2026-11-13 00:21	r569 peek: code-review 'check gen_wtm_write_data for unreasonable parts'
