@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 23/23done(10k-230k,**PEAK 200k=60.12%**·210k=58.50%·220k=57.75%·**230k=58.88% COMPLETE✅**)**·**240k autoqueue POLLING✅(PID1543473,waiting for iter_0240000 ckpt,ETA~14.0h,train iter≈232810)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·**四层报告已刷新✅(report_pretrain_eval_4tier_zh.html)**·训练健康iter≈232810/700k(33.3%) GPU 8×100%/75GB✅ step≈6.9-7.1s(✅<7.4s)**）
-> 2026-11-17 05:56 #2385: **例行监控·训练健康iter=232810/700k(33.3%) GPU 8×100%/~75GB✅ step~6900-7133ms✅(<7.4s)**·**动作**：①git pull→already up to date✅ ②训练健康(PID146283,train stdout iter=232810 at 05:55:09,step~6900-7133ms,loss~2.00,GPU 8×100%/~75GB,0 NaN/skip) ③240k autoqueue POLLING✅(PID1543473,ppid=1,etimes=20197s,train iter=232810,~7190 iters to go,ETA~14.0h(~20:00 today)) ④llama-server count=0✅ ⑤research日报11-17已查(pretrain明写「无」,无行动项) ⑥四层报告已在#2360刷新,无新eval数据 ⑦MEMORY self-check✅(26.5KB<32KB)·**四层评测 · L1=58.88%@230k(23done,PEAK 200k=60.12%) L2=🟢@200k 6/6done(plateau,MMLU=26.34%) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+commit+push·未完成指令：无(WAITING:0)。
+WAITING: 0（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-train」已完成·**L1 23/23done(10k-230k,**PEAK 200k=60.12%**·210k=58.50%·220k=57.75%·**230k=58.88% COMPLETE✅**)**·**240k autoqueue POLLING✅(PID1543473,waiting for iter_0240000 ckpt,ETA~13.9h,train iter≈232830)**·**L2 160k🟢HF五重+L2@200k🟢HF六重ALL COMPLETE(plateau confirmed)**·**L3 📜pipeline脚本已创建·blocked:GPU 100%满**·**L4 HANDOFF→post-train**·**论文§4.6已刷新✅·红线PASS**·**四层报告已刷新✅(report_pretrain_eval_4tier_zh.html)**·训练健康iter≈232830/700k(33.3%) GPU 8×97-100%/75GB✅ step≈6.9-7.1s(✅<7.4s)**）
+> 2026-11-17 06:03 #2386: **例行监控·训练健康iter=232830/700k(33.3%) GPU 8×97-100%/~75GB✅ step~6.9-7.1s✅(<7.4s)**·**动作**：①git pull→already up to date✅ ②训练健康(latest ckpt=iter_0232000,autoqueue log train iter=232830 at 05:57,GPU 8×97-100%/~75GB,step~6.9-7.1s,0 NaN/skip) ③240k autoqueue POLLING✅(PID1543473,ppid=1,etimes=20576s,train iter=232830,~7170 iters to go,ETA~13.9h(~20:00 today)) ④llama-server count=0✅ ⑤research日报11-17已查(1篇pretrain相关:2611.17876 weight decay评估时点,方法论参考,无行动项) ⑥四层报告已在#2360刷新,无新eval数据 ⑦MEMORY self-check✅(27.0KB<32KB)·**四层评测 · L1=58.88%@230k(23done,PEAK 200k=60.12%) L2=🟢@200k 6/6done(plateau,MMLU=26.34%) L3=📜pipeline ready(blocked GPU) L4=🟦HANDOFF** · 本轮动作：例行监控+MEMORY归档瘦身+commit+push·未完成指令：无(WAITING:0)。
+> 📦 #2385（11-17 05:56, 例行监控·训练健康iter232810 step~6900-7133ms✅·240k autoqueue polling ETA~14.0h·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2384（11-17 05:50, 例行监控·训练健康iter232760 step~6900-7100ms✅·240k autoqueue polling ETA~14.1h·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2383（11-17 05:45, 例行监控·训练健康iter232720 step~6898-7052ms✅·240k autoqueue polling ETA~14.2h·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2382（11-17 05:42, 例行监控·训练健康iter232680 step~6922-7134ms✅·240k autoqueue polling ETA~14.5h·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
@@ -15,19 +16,8 @@ WAITING: 0（✅ 2026-11-12 用户令「L1/L2评测脚本入库+L4移交post-tra
 > 📦 #2373（11-17 04:49, 例行监控·训练健康iter232220 step~7100ms✅·240k autoqueue polling ETA~15.3h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2372（11-17 04:45, 例行监控·训练健康iter232200 step~6937ms✅·240k autoqueue polling ETA~15h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2371（11-17 04:36, 例行监控+MEMORY归档瘦身·训练健康iter232130 step~6936ms✅·240k autoqueue polling ETA~15.3h·MEMORY 30.7→24.4KB）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2370（11-17 04:31, 例行监控·训练健康iter232080 step~6906ms✅·240k autoqueue polling ETA~15.4h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2369（11-17 04:27, 例行监控·训练健康iter232040 step~6913ms✅·240k autoqueue polling ETA~15.5h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2368（11-17 04:22, 例行监控·训练健康iter232010 step~7000ms✅·240k autoqueue polling ETA~15.6h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2367（11-17 04:16, 例行监控·训练健康iter231960 step7213ms✅·240k autoqueue polling ETA~15.9h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2366（11-17 04:11, 例行监控·训练健康iter231920 step7007ms✅·240k autoqueue polling ETA~15.9h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2365（11-17 04:06, 例行监控·训练健康iter231840 step6670ms✅·240k autoqueue polling ETA~15.1h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2364（11-17 04:02, 例行监控·训练健康iter231830 step6924ms✅·240k autoqueue polling ETA~15.9h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2363（11-17 04:00, 例行监控·训练健康iter231750 step~7160ms✅·240k autoqueue polling ETA~16.4h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2362（11-17 03:52, 例行监控·训练健康iter231710 step~7112ms✅·240k autoqueue polling ETA~16.7h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2361（11-17 03:46, 例行监控·训练健康iter231700 step7112ms✅·240k autoqueue polling ETA~16.4h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2360（11-17 03:33, 例行监控+四层报告刷新·训练健康iter231580 step7044ms✅·240k autoqueue polling·report_pretrain_eval_4tier_zh.html刷新(补L1 180k-230k+L2 200k MMLU)）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2359（11-17 03:28, 例行监控·训练健康iter231540 step7007ms✅·240k autoqueue polling ETA~16.6h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2357（11-17 03:19, 例行监控·训练健康iter231460 step7070ms✅·240k autoqueue polling ETA~16.8h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
+> 📦 #2357–#2370, #2359（11-17 03:19–04:31, 14轮例行监控·训练健康iter231460–232080 step<7.4s✅·240k autoqueue polling·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2356（11-17 03:11, 例行监控·训练健康iter231410 step7143ms✅·240k autoqueue polling ETA~16.9h·research日报11-17已查·MEMORY归档瘦身）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2355（11-17 03:06, 例行监控·训练健康iter231350 step7001ms✅·240k autoqueue polling ETA~16.8h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
 > 📦 #2354（11-17 02:59, 例行监控·训练健康iter231310 step7060ms✅·240k autoqueue polling ETA~17h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
