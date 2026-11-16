@@ -120,7 +120,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792041543395_mss1b.messages.json	e0039102	10.129.2.11	digital	r379 peek: U#0=逐行带我读 vcim/verilogrun 文件(walk-through explanation Q&A), verilog:2	REVIVABLE_QA	yes	code-comprehension	EXISTS
 1793186643056_muf2k	thomas1w	10.129.40.109	verification	UVM hdl-path debug Q&A, env-dependent /rundata/ddgoa	REVIVABLE_QA	yes	debug-Q&A	EXISTS
 1790490968281_6vy3t	mike	10.129.32.80	verification	VCS SFCOR missing .svp, near-dup of SimIncludeMissDiag-001	DUP	no		n/a
-1792060840051_yrdts	shanliny	10.129.2.10	verification	SV UVM code-review Q&A (审查代码找bug)	REVIVABLE_QA	yes	code-comprehension	EXISTS
+1792060840051_yrdts	shanliny	10.129.2.10	verification	SV UVM code-review Q&A (审查代码找bug)	REVIVABLE_QA	DONE_r669	CASE-SramTbBugReview-001 (r669 synthesized+landed, A.jsonl 361->362)	EXISTS
 1791974855202_32935	shanliny	10.129.2.10	verification	SV UVM code-review Q&A, sibling of yrdts	DUP	no		n/a
 1791536684137_lpn8o	mike	10.129.32.80	eda_other	env-setup Q&A (重构环境 for new dir)	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1789375537537_uh4tz	lorikx	10.129.2.13	verification	r381 re-eval: near-DUP of SramVcsLogDiagnose-001 (same user lorikx + sp_sram SRA	DUP	no		n/a
