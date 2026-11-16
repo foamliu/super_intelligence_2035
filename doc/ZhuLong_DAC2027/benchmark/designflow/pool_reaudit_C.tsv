@@ -45,13 +45,13 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1785994889000_x5tcq	e0014566	hfeg0plg58	484	pg_layout	weak: r334 idle+handoff-resume	不可造	idle+handoff-resume 强状态依赖；操作性障碍	—
 1787742497412_aneeo.messages.json	e0014566	hfeg0plg58	826	layout_virtuoso	parked: 4.5MB/1605msgs too large for single-round synth+verify;	可造-低优	同已覆盖case形态(需deepread)
 1785735994579_tckme.messages.json	e0014566	hfeg0plg58	654	layout_virtuoso	parked: 同 e0014566 PowerFill flow 重复 itvhk/PowerFill-001，避免同域重复	可造-低优	同已覆盖case形态(需deepread)
-1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	layout_virtuoso	parked: RTEXT/RNODE 打齐同 LayoutVirtuoso-001 主题，避免重复	可造-低优	同已覆盖case形态(需deepread)
+1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	layout_virtuoso	parked: RTEXT/RNODE 打齐同 LayoutVirtuoso-001 主题，避免重复	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-RscalcRtextRnodePlan-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792679003281_z44lk.messages.json	xinqiaoz	hfeg0pkn004	610	physical_verify	parked: near-dup of DummyDeck-001 (BORD NOT empty-derived-layer	可造-低优	同已覆盖case形态(需deepread)
 1788577896116_33zw1.messages.json	haoyut	172.16.8.191	584	layout_virtuoso	parked: cross-shard near-dup C down D keep (A r440 ruling); C s	不可造	—
-1792715254915_8z5a8	xinqiaoz	hfeg0pkn004	611	physical_verify	parked: gold file (make_fix_gds.py+fixed deck/config) on hfeg0p	可造	分析/Q&A或脚本(需deepread)
+1792715254915_8z5a8	xinqiaoz	hfeg0pkn004	611	physical_verify	parked: gold file (make_fix_gds.py+fixed deck/config) on hfeg0p	已交付-见case	r653 stale-cleanup: ledger_C case=DummyDeckMaskDiag-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792297573507_9knot.messages.json	vincelu	hfeg0plg55	862	physical_verify	parked: netlist+schematic+hspice 非纯 shard C,4.2MB>2MB(r43)	不可造	—
 1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	parked: pdk QA handoff 起手不纯需求(r43)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	parked: handoff resume PDK QA test fixes 强状态依赖(r47)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	parked: handoff resume PDK QA test fixes 强状态依赖(r47)	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-SshTestProfileBuilder-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked: UI hello/runme 太薄元任务(r47)	可造	分析/Q&A或脚本(需deepread)
 1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked: handoff 弃(r46)	可造	analysis:check验报告结构+关键事实+hidden B
 1786592143567_5jmnc.messages.json	e0014566	hfeg0plg58	539	layout_virtuoso	parked: RsCalc/AutoVia/PowerFill 重叠既有(r45)	可造-低优	同已覆盖case形态(需deepread)
@@ -78,9 +78,9 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1787897609476_ooyxi.messages.json	sophiaw	hfeg0plg49	394	physical_verify	parked: skill-gen 弃(r41)	可造	env-config/skill:check验配置或产物正确性+hidden B
 1786967377211_bf4yc.messages.json	e0014566	hfeg0plg58	449	layout_virtuoso	parked: meta read prompt_flow.md + RsCalc/AutoVia/PowerFill 重叠(	可造-低优	同已覆盖case形态(需deepread)
 1786349419937_ipbrb.messages.json	e0014566	hfeg0plg58	449	layout_virtuoso	parked: meta read prompt.md + Array16G_B autovia/powerfill 分析重叠	可造-低优	同已覆盖case形态(需deepread)
-1790133815976_z9yjw.messages.json	e0014566	hfeg0plg58	416	layout_virtuoso	parked: handoff resume BCenterCA 降阻迭代 强状态依赖(r47)	可造	analysis:check验报告结构+关键事实+hidden B
+1790133815976_z9yjw.messages.json	e0014566	hfeg0plg58	416	layout_virtuoso	parked: handoff resume BCenterCA 降阻迭代 强状态依赖(r47)	已交付-见case	r653 stale-cleanup: ledger_C case=RscalcHandoffDocGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1783580842066_09kkp.messages.json	e0014566	hfeg0plg58	396	layout_virtuoso	parked: meta read prompt_powerfill.md + PowerFill 重叠(r47)	可造-低优	同已覆盖case形态(需deepread)
-1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked: Array16G_B RTEXT/RNODE rscalc 重叠 RNodePlan-001(r47)	可造-低优	同已覆盖case形态(需deepread)
+1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked: Array16G_B RTEXT/RNODE rscalc 重叠 RNodePlan-001(r47)	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-RscalcLabel-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1783504511275_fvpye.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked: meta read prompt_powerfill.md + PowerFill 重叠(r47)	可造-低优	同已覆盖case形态(需deepread)
 1785498914896_8du7m.messages.json	e0014566	hfeg0plg58	390	layout_virtuoso	parked: meta read prompt_flow.md + RsCalc flow 重叠(r47)	可造-低优	同已覆盖case形态(需deepread)
 1792055923522_tqmu1.messages.json	cynthiaz	hfeg0plg93	404	layout_aether	parked: Strongarm 比较器 schematic 搭建 域非 layout(r47)	不可造	—
@@ -97,7 +97,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1788147634807_soqbk.messages.json					parked: handoff prompt_flow.md + 5 reports; overlaps RsCalc/Pow	可造-低优	同已覆盖case形态(需deepread)
 1785761013677_e0mmo.messages.json					parked: handoff prompt_flow.md bare	可造	analysis:check验报告结构+关键事实+hidden B
 1783568117344_9iqwf.messages.json					parked: handoff prompt_powerfill.md; overlaps PowerFill	可造-低优	同已覆盖case形态(需deepread)
-1788353323015_rjizk.messages.json					parked: RTEXT/checkPoints task identical to RTextChkPlan-001 (r	可造-低优	同已覆盖case形态(需deepread)
+1788353323015_rjizk.messages.json					parked: RTEXT/checkPoints task identical to RTextChkPlan-001 (r	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-RtextChkPlan-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1789866007933_m14th.messages.json					parked: meta issue-handler workflow spec, not a specific EDA ta	可造	分析/Q&A或脚本(需deepread)
 1789384598319_agzjb.messages.json					parked: meta code-review of DrcPatternCheck.py vs proposal doc;	可造-低优	同已覆盖case形态(需deepread)
 1792460489351_tb0xk.messages.json					parked: empty prompt	不可造	—
@@ -109,9 +109,9 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1792063193685_1vto1.messages.json	e0023936	hfeg0pkn001	305	layout_virtuoso	parked: schematic-domain (highlight nets/MOS in schematic), not	不可造	—
 1783585721814_kkzh8.messages.json	e0014566	hfeg0pkn001	322	layout_virtuoso	parked: same powerfill-merge domain as r62 PFMergeDupAudit (53n	可造-低优	同已覆盖case形态(需deepread)
 1788764026073_8hdj3.messages.json	ziyuny	hfeg0pnd002	305	layout_aether	parked: env-setup+generic launch (UI#160 启动业务场景:模拟电路优化·二次执行=gen	可造	env-config/skill:check验配置或产物正确性+hidden B
-1789960398048_ajqj4.messages.json	lizwen	hfeg0pkn002	298	layout_aether	parked: same drc_pattern_gen skill domain as r63 DRCPatManifest	可造-低优	同已覆盖case形态(需deepread)
+1789960398048_ajqj4.messages.json	lizwen	hfeg0pkn002	298	layout_aether	parked: same drc_pattern_gen skill domain as r63 DRCPatManifest	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-DrcPatternPkgGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1789017399621_cmsbu	chenyue	hfeg0plg85	129	layout_aether	parked: near-dup of M2PathLayout-001 (i1gjh): same chenyue/hfeg	可造-低优	同已覆盖case形态(需deepread)
-1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked: user turns all fix-direction (改ae.dmDeleteObj->dbDelCV)	可造	debug/analysis:check验根因+修复+hidden B
+1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	parked: user turns all fix-direction (改ae.dmDeleteObj->dbDelCV)	已交付-见case	r653 stale-cleanup: ledger_C case=LayoutRemainTopPinVirtualFix-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked: sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 	不可造	—
 1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked: meta: UI#0 policy engine caching/permission debug, UI#2	不可造(deepread r592)	r592 deepread 确认: trace=Cline policy-engine caching/permission debug(UI#0 'policy engine cached old values at session startup'/UI#2 'grant permission to change file'); 非EDA非design-flow; r590 'debug' keyword 批量 revival=FALSE POSITIVE, 原 parked 判定正确
 1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked: generic launch: UI#0 启动业务场景:时序分析, UI#264 report product	可造-低优(peek r649)	peek r649: U#0="启动业务场景:时序分析"(canned launcher) + U#1="can you report product yield"(vague)；keyword profile pyaether:592/innovus:424 强 但 user turn canned+vague，疑无 clean produce-task gold。需 deepread 确认 assistant 是否产 report artifact
@@ -132,7 +132,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1783080403465_aneq6.messages.json					parked: autovia IMCleAutoVia.il GUI-removal - overlaps AutoViaG	可造-低优	同已覆盖case形态(需deepread)
 1783413531894_o8i0o.messages.json					parked: autovia run_autovia_agent.il exec - overlaps existing a	可造-低优	同已覆盖case形态(需deepread)
 1789632393597_0zg87.messages.json					parked: fragmented intent (DFM SPEC FILL / print(f)deyongfa), 0	可造	分析/Q&A或脚本(需deepread)
-1792672720715_02kcl.messages.json	kevinc	hfeg0plg84	87	physical_verify	parked: DUPLICATE trace - already covered by DRConnTiming-001 (	可造-低优	同已覆盖case形态(需deepread)
+1792672720715_02kcl.messages.json	kevinc	hfeg0plg84	87	physical_verify	parked: DUPLICATE trace - already covered by DRConnTiming-001 (	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-DRConnTiming-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792115444722_relly.messages.json					parked: SVRF SETLAYER rule paste + RAG Q&A, 0 write ops, concep	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1791852261815_1pxm7.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1791795655205_1ln5m.messages.json					parked: screened r109: not shard-C deliverable (Q&A or OOS doma	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
@@ -176,7 +176,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1792637789324_aakue	xinqiaoz	hfeg0pkn002	375	physical_verify	parked: xinqiaoz PDK_QA calibre session; same pdkQaSystem codeb	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1789622204418_k1qtw	xinqiaoz	hfeg0pkn002	352	physical_verify	parked: PDK_QA sync_to_stable commit sync workflow; same pdkQaS	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1791965422114_8lf0t	xinqiaoz	hfeg0pkn002	334	physical_verify	parked: xinqiaoz PDK_QA calibre session; same pdkQaSystem codeb	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-1793581640305_t2r9f	xinqiaoz	hfeg0pkn002	457	physical_verify	parked: xinqiaoz PDK_QA calibre session (13 calibre uses); same	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1793581640305_t2r9f	xinqiaoz	hfeg0pkn002	457	physical_verify	parked: xinqiaoz PDK_QA calibre session (13 calibre uses); same	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-SyncBatchArchivePlan-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1793773107836_90vlt	e0045291	hfeg0pkn005	455	layout_aether	parked: token-burn session: user asked to consume 280k tokens r	不可造	—
 1792739133486_74dww	e0047434	hfeg0pkn002	91	layout_aether	parked: env-recon/how-to: user asks 'what software can show gds	不可造	—
 1790145633753_pax7g	miccao	hfeg0plg37	106	physical_verify	parked: AutoCell TCL flow gen + calibre VCO aok/aoi mismatch DR	可造-低优	同已覆盖case形态(需deepread)
@@ -307,7 +307,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1793858875143_wzws0	adaml	hfeg0pkn002	5542	physical_verify	parked: r298 REJECT: adaml skill-builder multi-task session (99	不可造	—
 1794021094674_ds1vt	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	可造	analysis:check验报告结构+关键事实+hidden B
 1794017030283_ob5f7	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	可造	analysis:check验报告结构+关键事实+hidden B
-1794192534501_fju0e	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	可造	analysis:check验报告结构+关键事实+hidden B
+1794192534501_fju0e	xinqiaoz	hfeg0pkn002			parked: r298: idle-handoff	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-DrcDensityParseJudge-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1793000520129_g37na	xinqiaoz	hfeg0pkn002			parked: r298: failed-drcqa	不可造	—
 1792480534403_xgfip	xinqiaoz	hfeg0pkn002			parked: r298: failed-handoff	可造	analysis:check验报告结构+关键事实+hidden B
 1793706326923_qiqs7	alan3zh	hfeg0pkn002			parked: r298: idle-empty	不可造	—
@@ -359,7 +359,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1794227785944_i555n	e0046913	hfeg0pkn003	38	verification	parked: wrong-shard A: formal verification fm log interpret (st	不可造	—
 1794227337092_vuj95	marryma	hfeg0pkn002	128	layout_aether	parked: how-to find layout: 'find SA/SWD layouts' (status=runni	不可造	—
 1794224138220_25gxe	ziyuny	hfeg0pnd002	69	misc	parked: how-to Q&A: 'can you see history of session id' (status	不可造	—
-1792026663236_uo1hv	xxchen	hfeg0pkn001	106	physical_verify	parked: r323: requirements-doc task, weak check, deferred	可造	分析/Q&A或脚本(需deepread)
+1792026663236_uo1hv	xxchen	hfeg0pkn001	106	physical_verify	parked: r323: requirements-doc task, weak check, deferred	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-DrcSearchReqGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1790219463471_6zy8a	e0041123	hfeg0pjn049	98	physical_verify	parked: r507 deep-read REJECT: skill-injection + heavy Aether e	可造	分析/Q&A或脚本(需deepread)
 1792391697681_a4w9c	thomasz	hfeg0pfn060	132	physical_verify	parked: diagnose-log-stuck-no-deliverable	可造	debug/analysis:check验根因+修复+hidden B
 1792400577461_8u3iw	thomasz	hfeg0pfn060	114	physical_verify	parked: compare-paths-no-script-written-inline-only	可造	分析/Q&A或脚本(需deepread)
@@ -417,11 +417,11 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1785500517076_mbx8u	e0014566	hfeg0pkn005	148	physical_verify	parked: r394 screen: NOT seed. auto-via SKILL meta-prompt + deb	可造	debug/analysis:check验根因+修复+hidden B
 1793774943418_sih3i	xinqiaoz	hfeg0pkn005	364	physical_verify	parked: near-dup of StarrcReleaseNoteGen-001 (r387 v23sb): same	可造-低优	同已覆盖case形态(需deepread)
 1793687763129_30a1n	jcgu	hfeg0pin003	265	layout_aether	parked: r396 screen: group_gen_sdl.py is pure pyAether bridge-w	可造-低优	同已覆盖case形态(需deepread)
-1789561002781_mqop7	ziyuny	hfeg0pnd002	579	physical_verify	parked: dup of LVSLogFilter-001 (same trace ziyuny/mqop7, alrea	可造-低优	同已覆盖case形态(需deepread)
+1789561002781_mqop7	ziyuny	hfeg0pnd002	579	physical_verify	parked: dup of LVSLogFilter-001 (same trace ziyuny/mqop7, alrea	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-LVSLogFilter-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1793879524880_3h21t.messages.json					parked: r419 peek: e0047527 newbie env-setup Q&A (modulecmd/sta	不可造	—
 1789636492253_sr1fw.messages.json					parked: r419 peek: miccao, USER#1 = Calibre/Argus DRC Log 拆解报告 	可造-低优	同已覆盖case形态(需deepread)
 1789699043373_y91i6.messages.json					parked: r419 peek: ericw(NEW user), coverage-bin filtering (drc	可造	分析/Q&A或脚本(需deepread)
-1794010590146_aqtdv.messages.json					parked: r419 peek: xinqiaoz PDK-QA genReleaseNote refactor (mer	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794010590146_aqtdv.messages.json					parked: r419 peek: xinqiaoz PDK-QA genReleaseNote refactor (mer	已交付-见case	r653 stale-cleanup: ledger_C case=GenReleaseNoteMerge-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1793000252239_9jz8x.messages.json					parked: r419 profile-reject: xinqiaoz drc:2341;pdk:776 = PDK-QA	可造-低优	同已覆盖case形态(需deepread)
 1789628116508_kxmzc.messages.json					parked: r419: rongtaoy PEX (pex:195), near-dup b48ma PexBlCoupl	可造-低优	同已覆盖case形态(需deepread)
 1789645785974_iuoie.messages.json					parked: r419: rongtaoy PEX (pex:178), near-dup b48ma+vtz09 same	可造-低优	同已覆盖case形态(需deepread)
@@ -446,10 +446,10 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1792981991715_yaddy	xinqiaoz	10.129.2.14	277	physical_verify	parked: r527 peek REJECT: agent-infra design (handoff/flight-re	可造	analysis:check验报告结构+关键事实+hidden B
 1793604943151_j1mi3	e0047488	10.129.2.10	38	physical_verify	parked: r527 peek REJECT: zhulong LLM-adapter integration (llm_	可造	分析/Q&A或脚本(需deepread)
 1794480485564_nphvz					parked: r537 peek REJECT (Q&A/sim/run-existing/done)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-1790078216880_4g0i9	lizwen	10.129.2.12	241		parked: r538 peek REJECT (skill-orch: DRC pattern gen into skil	可造	分析/Q&A或脚本(需deepread)
+1790078216880_4g0i9	lizwen	10.129.2.12	241		parked: r538 peek REJECT (skill-orch: DRC pattern gen into skil	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-DrcPatternPlan-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792055923522_tqmu1	cynthiaz	10.129.2.13	406		parked: r538 peek REJECT (wrong-domain: schematic creation Stro	可造	分析/Q&A或脚本(需deepread)
 1794400409399_njh7p	jackjia	10.129.32.100	459		parked: r538 peek REJECT (Q&A: analyze MROPT fanout)	不可造-for-C(deepread r592)	r592 deepread 确认: trace=Aether schematic hierarchy Q&A(MROPT<1>/PMRW/PMWRR 信号 tracing across WOWTOP->Ictop->DDR5TOP->I_Channel->...->I_C_MrwSetMr2, 57 user_input, 71 SandBox run_code); 域=schematic_netlist(D-shard)非C(physical_verify); r538 'Q&A' revival 对 C 是域错 FALSE POSITIVE
-1793953739742_3hw3m	ruifan	10.129.32.46	525		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
+1793953739742_3hw3m	ruifan	10.129.32.46	525		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-HeadlessLatchSkillGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794376149228_dr7mm	fxian	10.129.8.112	446		parked: r538 peek REJECT (wrong-domain: schematic pin script = 	可造	分析/Q&A或脚本(需deepread)
 1793952785938_fmd3i	ruifan	10.129.32.46	434		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
 1793950309060_k8y6h	ruifan	10.129.32.46	433		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
@@ -461,10 +461,10 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1794470022094_e7s2r	chapinc	10.129.2.10	324		parked: r538 peek REJECT (Q&A: count MOSFET in block)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1793607437978_fzngm	yazhuok	10.129.8.228	245		parked: r538 peek REJECT (analysis: netlist RC compare cross-do	不可造	—
 1792564023249_i4laj	colinxu	10.129.35.74	236		parked: r538 peek REJECT (interactive cellview edit: delete pin	可造	分析/Q&A或脚本(需deepread)
-1794469565658_ltzuo	youmingz	10.129.8.225	273		parked: r538 peek REJECT (analysis: highlight+measure routing l	可造	analysis:check验报告结构+关键事实+hidden B
+1794469565658_ltzuo	youmingz	10.129.8.225	273		parked: r538 peek REJECT (analysis: highlight+measure routing l	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-NetLayerLength-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794383524797_n9szu	xdwang	10.129.2.14	231		parked: r538 peek REJECT (wrong-domain: add inverter to schemat	可造	分析/Q&A或脚本(需deepread)
 1792572179617_nvnc3	e0022089	10.129.2.11	223		parked: r538 peek REJECT (Q&A: hierarchy shortcuts + module ana	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-1789112462640_pb4ei	davidwu	10.129.35.118	260		parked: r538 peek REJECT (run-existing: auto-placement step 3)	可造	run-existing:check验运行结果+hidden B
+1789112462640_pb4ei	davidwu	10.129.35.118	260		parked: r538 peek REJECT (run-existing: auto-placement step 3)	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-APRRoutePrecondDiag-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794466059561_pm7mp	chapinc	10.129.2.10	267		parked: r538 peek REJECT (analysis: Dbus metal-layer signal-flo	可造	analysis:check验报告结构+关键事实+hidden B
 1793949237063_wsxpm	ruifan	10.129.32.46	400		parked: r538 peek REJECT (run-existing: df2_LP + skill script)	可造	run-existing:check验运行结果+hidden B
 1794468995675_xyj6b	rayfeng	10.129.2.10	227		parked: r538 peek REJECT (wrong-domain: TCAD MCP server dev)	可造	分析/Q&A或脚本(需deepread)
@@ -473,8 +473,8 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1789954294975_4chsl	xrxiong	10.129.2.10	497		parked: r538 peek REJECT (wrong-domain: verilog RTL analysis = 	可造	analysis:check验报告结构+关键事实+hidden B
 1792025124250_ebwqh	xinqiaoz	10.129.2.11	520		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
 1790046433855_egji4	xinqiaoz	10.129.2.11	698		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
-1791787171667_hx63x	xinqiaoz	10.129.2.11	576		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
-1789436856855_nptmy	xinqiaoz	10.129.2.11	570		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
+1791787171667_hx63x	xinqiaoz	10.129.2.11	576		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-SshTestProfileBuilder-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
+1789436856855_nptmy	xinqiaoz	10.129.2.11	570		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-MVVarNamingAudit-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792675302417_puv3q	xinqiaoz	10.129.2.11	470		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
 1790164140533_q2upl	xinqiaoz	10.129.2.11	643		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
 1790067900307_qy90r	xinqiaoz	10.129.2.11	666		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
@@ -496,12 +496,12 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1794444917328_1x34y					parked: alexli Q&A setup	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1794394227255_yxqia					parked: e0046686 debug Q&A autosim	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1793955340134_ni86q					parked: cliu sim/run-existing	可造	run-existing:check验运行结果+hidden B
-1794463125342_751rt					parked: jie23z Q&A SVRF rules	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794463125342_751rt					parked: jie23z Q&A SVRF rules	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-AntennaRuleFamilyExtract-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1790080023760_8rlou					parked: lizwen run-existing skill spec	可造	run-existing:check验运行结果+hidden B
 1792485371006_tma34					parked: claire1l HFSS out-of-domain	不可造	—
 1794374467290_8itz4					parked: lizwen Q&A analyze scripts	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1794474528744_qy45g					parked: fhwang near-dup r547 pcell	可造-低优	同已覆盖case形态(需deepread)
-1794537778378_6jg00	e0024852	hfeg0plg78	134	physical_verify	parked: ACCEPT-alt future deep-read: e0024852 PEX batch_pex.py 	可造	分析/Q&A或脚本(需deepread)
+1794537778378_6jg00	e0024852	hfeg0plg78	134	physical_verify	parked: ACCEPT-alt future deep-read: e0024852 PEX batch_pex.py 	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-BatchPexGdsPathRewrite-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794537737374_td0m5	xinqiaoz	hfeg0plg56	230	physical_verify	parked: xinqiaoz known-reject r545 skill-orch	可造	分析/Q&A或脚本(需deepread)
 1793754683186_j0ndr	xinqiaoz	hfeg0plg56	213	physical_verify	parked: xinqiaoz known-reject r545 issue-handler	可造	分析/Q&A或脚本(需deepread)
 1789717635081_qr3gr	xinqiaoz	hfeg0plg56	207	physical_verify	parked: xinqiaoz known-reject r545 merge-scripts	可造	分析/Q&A或脚本(需deepread)
@@ -517,7 +517,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1789696486678_lg5f2	xinqiaoz	hfeg0plg56	114	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1789717386998_vnknn	xinqiaoz	hfeg0plg56	113	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1792635668782_8hiwm	xinqiaoz	hfeg0plg56	110	physical_verify	parked: xinqiaoz DRC/PDK Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-1794531720896_vpabb	xxchen	hfeg0plg53	184	physical_verify	parked: xxchen known-reject r547 modify-existing	可造	脚本/审计:check验修改或审计结果+hidden B
+1794531720896_vpabb	xxchen	hfeg0plg53	184	physical_verify	parked: xxchen known-reject r547 modify-existing	已交付-见case	r653 stale-cleanup: ledger_C case=CornerSpacePatternGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794375180864_lwzz2	xxchen	hfeg0plg53	161	physical_verify	parked: xxchen known-reject r547 label-modify	可造	分析/Q&A或脚本(需deepread)
 1794542962301_1q921	xxchen	hfeg0plg53	154	physical_verify	parked: xxchen known-reject r547 editor-fault	可造	分析/Q&A或脚本(需deepread)
 1792198270473_rgxd6	xxchen	hfeg0plg53	141	physical_verify	parked: xxchen known-reject r547 drc-modify	可造	分析/Q&A或脚本(需deepread)
@@ -555,8 +555,8 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1794645532852_dq1ol	jzeng	hfeg0plg85	205	physical_verify	parked: r572 peek: jzeng same_trace_group near-dup of r568 wy27	可造-低优	同已覆盖case形态(需deepread)
 1794552458120_tgpup	yinyus	hfeg0plg66	510	physical_verify	parked: r572 peek: yinyus D-domain schematic construction	可造	分析/Q&A或脚本(需deepread)
 1794550428633_s4vkc	yinyus	hfeg0plg66	495	physical_verify	parked: r572 peek: yinyus D-domain schematic construction	可造	分析/Q&A或脚本(需deepread)
-1794645596542_ebctc	xxchen	hfeg0plg19	318	physical_verify	parked: r573: xxchen known-reject user drc/.gds modify-existing	可造	脚本/审计:check验修改或审计结果+hidden B
-1794546636932_2tppk	e0024852	hfeg0plg78	156	physical_verify	parked: r567 peek: e0024852 modify-existing config	可造	脚本/审计:check验修改或审计结果+hidden B
+1794645596542_ebctc	xxchen	hfeg0plg19	318	physical_verify	parked: r573: xxchen known-reject user drc/.gds modify-existing	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-WaiveParamMultiParse-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
+1794546636932_2tppk	e0024852	hfeg0plg78	156	physical_verify	parked: r567 peek: e0024852 modify-existing config	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-BatchPexDspfExtract-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794453555751_gklsl	pdsong	hfeg0plg74	129	physical_verify	parked: r566 peek: pdsong analysis Q&A	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1794478125354_p7xx6	dsgao	hfhds201	106	physical_verify	parked: r568 peek: dsgao Q&A capability patron EM sim	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1794535679588_rk2g7	chapinc	hfeg0plg96	93	layout_aether	parked: r575 peek: chapinc USER#0 context-summary continuation,	不可造	—
@@ -580,8 +580,8 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1792141858109_fy3k2	colinxu	hfeg0plg81	68	layout_aether	parked: Q&A check cell properties r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1790212962899_ge5tf	e0041123	hfeg0plg104	67	physical_verify	parked: skill-loading+run-existing drc-pattern DNW testpattern 	不可造	—
 1792651065355_6ty3f	thomasz	hfeg0plg92	66	physical_verify	parked: debug-Q&A drcoa ESD stuck log compare r576	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
-1794636165058_j8uux	xxchen	hfeg0plg19	468	physical_verify	parked: known-reject xxchen r577 top500-fresh drc-dominant	可造	分析/Q&A或脚本(需deepread)
-1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	parked: known-reject xxchen r577 top500-fresh drc-dominant	可造	分析/Q&A或脚本(需deepread)
+1794636165058_j8uux	xxchen	hfeg0plg19	468	physical_verify	parked: known-reject xxchen r577 top500-fresh drc-dominant	已交付-见case	r653 stale-cleanup: ledger_C case=VirtualNotLayerGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
+1794626078120_7hx32	xxchen	hfeg0plg19	370	physical_verify	parked: known-reject xxchen r577 top500-fresh drc-dominant	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-EncloseSide1PatternGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792484214005_w1dp0	zqzhan	hfeg0pkn002	77	physical_verify	parked: r578 peek REJECT debug-sim off-domain D (primesim/fsdb 	不可造	—
 1794381807398_hcd0c	hktklin	hfeg0plg87	65	layout_virtuoso	parked: r578 peek REJECT text-sub tap_p->lacaa_common on SKILL 	可造	分析/Q&A或脚本(需deepread)
 1789973566279_0cjq2	davidwu	hfeg0pgn019	61	layout_aether	parked: r578 peek REJECT run-existing auto-placement step3 (dup	可造-低优	同已覆盖case形态(需deepread)
@@ -596,7 +596,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1789700694389_u0w9t	jiaqis	hfeg0plg76	59	physical_verify	parked: r578 peek REJECT comprehension/doc-gen markdown of proj	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1791954600423_5g0nl	colinxu	hfeg0plg55	72	layout_aether	parked: r578 peek REJECT Q&A+run-existing delete opened lib/cel	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1789090361589_54h58	e0044455	hfeg0pkn004	66	physical_verify	parked: r578 peek REJECT meta scenario-loading DRC/LVS + which-	可造	分析/Q&A或脚本(需deepread)
-1794380399121_8dkdw	claire1l	hfeg0plg76	70	physical_verify	parked: r578 peek REJECT comprehension/doc layer_setup syntax s	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794380399121_8dkdw	claire1l	hfeg0plg76	70	physical_verify	parked: r578 peek REJECT comprehension/doc layer_setup syntax s	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-QuantusLayerSetupDocGen-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1794449589306_y3azi	yohannw	hfeg0pnd001	72	layout_aether	parked: r578 peek REJECT DevOps agent-policy allowedScriptRoots	可造	env-config/skill:check验配置或产物正确性+hidden B
 1794656882029_saflm	thomasz	hfeg0pfn058		physical_verify	parked: r579 peek REJECT debug-Q&A ESD PathFinder sim-time comp	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
 1793254775583_g4jab	e0047434	hfeg0pnd001	55	physical_verify	parked: r580 meta/test session (all 'test' msgs, 0 real task)	不可造	—
