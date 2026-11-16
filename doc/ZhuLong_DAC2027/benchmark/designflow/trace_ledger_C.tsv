@@ -1204,3 +1204,8 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1789632393597_0zg87					parked		2026-11-17 04:03	DFM SPEC FILL + private 3.4MB calbr_drv_ref.pdf attachment, explain-Q&A teeth-fail (same as r686 3duob), r689 peek
 1792486961623_bm8t8					parked		2026-11-17 04:03	retrieval-Q&A 'which lib for last successful RCC PEX' over private /proj/drcoa path, find_success*.py grep private tree, teeth-fail, r689 peek
 1793674727236_necxj					parked		2026-11-17 04:03	PEX one-click提参 (oneclick_pex.sh+_validate_pex.sh) mixed how-to Q&A + path-dependent produce /proj/lacaa, 双意图 both sub-intents teeth-hard (A r657 taxon), reframe-eval deferred, r689 peek
+1794311735311_4msuj	xinqiaoz	10.129.2.11	315	physical_verify	case	EDA-Eval-DesignFlow-DrcVarMisMatchDiag-001	2026-11-17 04:32	
+1792744168464_n1k2a					parked		2026-11-17 04:19	off-intent: U#0 'consume 280k tokens, only-read' synthetic stress-test session, not real EDA user task (per 任务初衷)
+1794532305061_szlie					parked		2026-11-17 04:19	off-C B-domain: SPICE param sweep (.sp generation for 9 Sanadj/Sapadj/R_BL variables), belongs to spice_sim/characterization shard B
+1791941227075_le1s7					parked		2026-11-17 04:19	off-C: U#0 skill-creator task for VPS CLI guide (verification perf sim skill authoring), not C-domain physical_verify task
+1792679003281_z44lk					parked		2026-11-17 04:19	path-dependent produce: G5_CIP Dummy deck mask GDS issue in /home/pdk/xinqiaoz/01_dummy (private, not in sandbox); run-existing + handoff skill chain; deliverable ambiguous
