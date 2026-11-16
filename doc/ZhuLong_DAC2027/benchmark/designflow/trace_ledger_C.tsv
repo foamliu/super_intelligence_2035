@@ -742,15 +742,15 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792639733537_qwreb					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793790199273_ge424					case	EDA-Eval-DesignFlow-DrcDeckStatsAnalyzer-001	2026-11-16 17:43	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793264574506_nx2ac					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1793686357167_wlw3b					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1793686357167_wlw3b					parked		2026-11-16 19:20	r668 revival-REJECT: debug-Q&A (explain DrcQa.py + fix PermissionError pdkQa.log), 1 editor on private asset hbpeng/LoggerUtil.py, drc:1658=PATH-SUBSTRING inflation; e0047722 2-host mc85
 1794297992607_e4kv0					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794357795851_55qgy					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1794276534959_30cgz					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1794276534959_30cgz					parked		2026-11-16 19:20	r668 revival-REJECT: pure concept-Q&A/learning (linux howto U#0-10 + DRC QA steps U#12/47 + virtuoso howto U#87-93), 0 write/create/edit, no fixture/evidence -> P-006 (C) retired; hongl 2-host mc148
 1794295625900_jia3m	stewieg	hfeg0plg89	300	layout_aether	case	EDA-Eval-DesignFlow-RoutingTrackFinder-001	2026-11-16 19:30	r667 revival per 2026-11-15 user令; second-look peek 实证 U#8-11 produce-task「开发 aether 脚本找中层金属可用布线轨道(channel)」+assistant 写 cxmt_find_routing_tracks.py (real gold), B档 reframe → RoutingTrackFinder-001 交付
 1794529920818_slj4a					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794188385974_1c67w					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1790079870984_56jqu					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1792223700738_pebvu					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1792223700738_pebvu					parked		2026-11-16 19:20	r668 revival-REJECT: auto-trigger U#0 auto stdcell only organic turn, 0 write, thin; confirms D r271; liwan 2-host mc90 off-C aether/schematic
 1794363615663_goeio					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794480485564_nphvz					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794292352673_gjzyg					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
