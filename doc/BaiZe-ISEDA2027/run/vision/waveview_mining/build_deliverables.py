@@ -55,6 +55,7 @@ for c in cands:
         "check_exists": c["check_exists"],
         "sha256_check": c["sha256_check"],
         "k_conditions": c["k_conditions"],
+        "modified": False,
         "baseline_pass": (dfc or {}).get("baseline_pass", None),
         "baseline_source": (dfc or {}).get("baseline_source", ""),
         "failure_mode_tier": (dfc or {}).get("failure_mode_tier", ""),
