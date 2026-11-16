@@ -2356,7 +2356,7 @@
 | 邮箱 | **`liuzeeeee@gmail.com`**（本人主页 <https://zeliu98.github.io/> 的 `mailto:` 明文；2026-11-16 实测 `200` / 27,094 B） |
 | 主页 | <https://zeliu98.github.io/> |
 | X 账号 | **`@zeliu_`**（本人主页 `href` 指向 `x.com/zeliu_`；X 页 `200` / 189,651 B，`og:title` = `Ze Liu (@zeliu_) on X`，`og:description` = `@xAI (Grok Video Gen, Grok Vision, Grok Voice Mode, Grok3). ICCV 21 Marr Prize.` ⇒ 双源一致） |
-| 状态 | **待跟踪**（今日 12 封 = 每日硬上限已满 ⇒ 本轮建档不发信；下轮可发） |
+| 状态 | **已发信**（2026-11-17 00:03:14 第 70 封，中文 262 字） |
 | 备注 | `语言=中文(判据=中文姓名 + 本人主页中文名「刘泽」+ 中文本科背景)`。**未因「人在 xAI / 论文英文 / 邮箱 gmail」判英文**（2026-11-14 事故口径）。问题候选：① shifted window 在 448² 下的 token 数与吞吐拐点（vision 分辨率预算）；② 分层特征图对 OCR / 定位类任务的增益是否只在 detection head 上成立（vision 编码器选型）；③ 若把 Swin 当图文模型的视觉塔，patch merging 的层数该不该与文本长度联动（vision/pretrain 接口）。 |
 
 ### 162. Junyi Ao
@@ -2408,7 +2408,7 @@
 | 邮箱 | **`xiaoguangxuan@gmail.com`**（本人主页 `mailto:` 明文，1 处） |
 | 主页 | <https://guangxuanx.com/> |
 | X 账号 | **`@Guangxuan_Xiao`**（**仅主页 `href` 单源**；`x.com/Guangxuan_Xiao` 两次抓取均 `000`（代理超时）⇒ **未核验**，不计入「X 已核验」计数，🚫 不当作已 follow 对象） |
-| 状态 | **待跟踪**（有可核邮箱；X 待下轮复抓核验；今日 12 封额度已满 ⇒ 下轮可发） |
+| 状态 | **已发信**（2026-11-17 00:03:07 第 69 封，中文 287 字） |
 | 备注 | `语言=中文(判据=拼音姓名 + 论文署名为华人团队（Song Han / Beidi Chen）)`。问题候选：① 保留初始 4 个 token 的 KV 是否在 2B、中文语料上同样成立（sink 位置是否随分词/语言漂移）；② 预训练加占位 sink token 的代价（有效序列长度损失）与收益如何量化；③ 4M token 流式下 PPL 平稳的判据是什么（局部窗口 vs 全注意力对照的偏差上界）。 |
 
 
@@ -2435,7 +2435,7 @@
 | 邮箱 | **`pengfei@sjtu.edu.cn`**（SJTU 教师页明文；同页另有院系公共邮箱 `scs@sjtu.edu.cn`，🚫 不用公共邮箱发学术请教信） |
 | 主页 | <https://cs.sjtu.edu.cn/en/jiaoshiml/liupengfei.html>（学院教师页；未找到独立个人主页） |
 | X 账号 | **未找到 X**（教师页与检索均未命中个人 handle；🚫 不猜） |
-| 状态 | **待跟踪**（邮箱可核；X 未找到；今日 12 封额度已满 ⇒ 下轮可发中文） |
+| 状态 | **已发信**（2026-11-17 00:03:01 第 68 封，中文 229 字） |
 | 备注 | `语言=中文(判据=中文姓名 刘鹏飞 + 中国大陆机构 SJTU)`。问题候选：① GAIR 在做中文指令数据时，如何把 LIMA 的「质量优先」落到可执行的筛选判据上（谁打分、几人复核、冲突怎么裁）；② LIMA 的 1k 示例里**是否含多轮样本**（论文写零对话样本仍能多轮），中文场景是否同样成立；③ 对齐阶段的数据量与预训练 token 预算之间有没有可用的配比经验值。 |
 
 ### 168. Eric Wallace
@@ -2451,6 +2451,45 @@
 | 状态 | **待跟踪**（X 已核、可做 `voice_ready` 跟踪；邮箱为旧域 ⇒ 发信优先级低） |
 | 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。若后续拿到现行邮箱，问题候选：① 众包评分与定向自动评测的**分歧阈值**怎么定（多少 pt 就判「风格模仿」）；② 模仿数据收益枯竭的结论在今天的强模型 + 更广任务覆盖下是否仍成立；③ 有没有可公开的「covered task cluster」标注口径，便于我们把中文 / 代码域对齐到同一套簇。 |
 
+
+### 169. Thomas Wolf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Thomas Wolf（法语姓名 ⇒ 按 SPEC §2「母语称谓问候 + 英文正文」处理，下一封若发用法语称谓） |
+| 机构 | **Hugging Face（联合创始人 / Chief Science Officer）**（HF 个人页 <https://huggingface.co/thomwolf> 2026-11-17 实测 `200` / 页面内 `href` 指向 `twitter.com/Thom_wolf`；BLOOM 末位作者，B 轨 #184） |
+| 代表论文 | **BLOOM: A 176B-Parameter Open-Access Multilingual LM**（arXiv `2211.05100`，394 位作者，末位）· Transformers 生态作者 |
+| 邮箱 | **未找到公开邮箱**（HF 个人页无 `mailto:`；🚫 不用猜测地址、🚫 不用 GitHub 提交邮箱） |
+| 主页 | <https://huggingface.co/thomwolf> |
+| X 账号 | **`@Thom_Wolf`**（核验：HF 个人页 `href` → `twitter.com/Thom_wolf`；`x.com/Thom_wolf` `200` / 197,536 B，`og:title` = `Thomas Wolf (@Thom_Wolf) on X` ⇒ 双源一致） |
+| 状态 | **待跟踪**（X 已核；无公开邮箱 ⇒ 暂不列发信对象） |
+| 备注 | `语言=法文称谓问候+英文正文(判据=法语姓名族属 + 法国受教育背景；机构为美/法分布式)`。问题候选（若日后取得地址）：① ROOTS 的 46 自然语言配额里中文占比与去重口径；② 394 位作者的协作方式对数据治理（许可 / opt-out）的影响；③ 176B 下多语言 tokenizer 的压缩率与英文的差距如何量化。 |
+
+### 170. Loubna Ben Allal
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Loubna Ben Allal（阿拉伯语姓名族属 ⇒ 英文正文） |
+| 机构 | **Hugging Face（Research）**（HF 个人页 <https://huggingface.co/loubnabnl> 2026-11-17 实测 `200` / 446,340 B，页内 `href` → `twitter.com/LoubnaBenAllal1`；StarCoder 第 2 作者，B 轨 #185） |
+| 代表论文 | **StarCoder: may the source be with you!**（arXiv `2305.06161`，第 2 作者）· The Stack / BigCode 数据治理系列 |
+| 邮箱 | **未找到公开邮箱**（HF 个人页无 `mailto:`） |
+| 主页 | <https://huggingface.co/loubnabnl> |
+| X 账号 | **`@LoubnaBenAllal1`**（核验：HF 个人页 `href` → `twitter.com/LoubnaBenAllal1`；`x.com/LoubnaBenAllal1` `200` / 178,650 B，`og:title` = `Loubna Ben Allal (@LoubnaBenAllal1) on X`，`og:description` = `Research @huggingface` ⇒ 双源一致） |
+| 状态 | **待跟踪**（X 已核；无公开邮箱） |
+| 备注 | `语言=英文(判据=阿拉伯语姓名族属 + HF 研究岗，无中日韩信号)`。问题候选：① The Stack 的 opt-out 比例与对代码模型能力的影响；② 1T token 训练里注释 / 测试 / 文档的配比；③ 多查询注意力在大 batch 推理上的实测吞吐。 |
+
+### 171. Oriol Vinyals
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Oriol Vinyals（加泰罗尼亚语姓名 ⇒ 西班牙语称谓问候 + 英文正文） |
+| 机构 | **Google DeepMind（VP / Distinguished Researcher）**（AlphaCode 末位作者，B 轨 #183；机构取自论文署名与 X bio 常述，本表未逐字核 bio） |
+| 代表论文 | **Competition-Level Code Generation with AlphaCode**（arXiv `2203.07814`，Science 2022，末位）· seq2seq / AlphaStar / Gemini 系列 |
+| 邮箱 | **未找到公开邮箱**（`oriolvinyals.com` 实测为**同名西班牙治疗师**站点 ⇒ 已丢弃，🚫 不据此建档） |
+| 主页 | 未找到（同名站点假阳性，见上） |
+| X 账号 | **`@OriolVinyalsML`**（**单源**：`x.com/OriolVinyalsML` `200` / 169,237 B，`og:title` = `Oriol Vinyals (@OriolVinyalsML) on X`；⚠️ 未取到 `og:description`/主页链接做第二源 ⇒ **不计入「X 已核验」计数**，🚫 不当作已 follow） |
+| 状态 | **待跟踪**（handle 单源待复核；无邮箱） |
+| 备注 | `语言=西班牙语称谓问候+英文正文(判据=加泰罗尼亚语姓名 + 西班牙出身；机构美/英)`。问题候选：① 百万级采样 + 过滤（10 选 1 聚类）的算力配比在今天的推理模型上是否还划算；② 竞赛题分布外的泛化判据；③ 执行反馈作为过滤信号的最小规模。 |
 
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。

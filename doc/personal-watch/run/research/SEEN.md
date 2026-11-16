@@ -5683,3 +5683,6 @@
 | 2026-11-16 | 2611.17108 | LazyWeights: Decode-on-Demand Edge LLMs | cs.LG | 收录 |
 | 2026-11-16 | 2611.17287 | Negative-Only Policy Optimization for One-Sided Verifiable Rewards | cs.LG | 收录 |
 | 2026-11-16 | 2611.17169 | Parsed, Plausible, Wrong: Output Format Controls Silent Errors in Small-Model Semantic Parsing | cs.CL | 收录 |
+| 2026-11-17 | 2611.18533 | ModHarness-RL: Recasting Harnesses as Learnable and Evolving Programs for Agentic RL | cs.AI | 收录 |
+| 2026-11-17 | 2611.17876 | Delayed Effects of Temporary Weight Decay in Muon Pretraining | cs.LG | 收录 |
+| 2026-11-17 | 2611.18397 | Gamer: A Generalist Vision-Language-Action Foundation Model for Long-Horizon Real-Time Game Agent | cs.CL | 收录 |

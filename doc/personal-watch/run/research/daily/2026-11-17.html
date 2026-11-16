@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-17（早报 3/5） · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.75; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:12px; font-size:13px; opacity:.9; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:18px; }
+  .card h2 { margin:0 0 10px; font-size:18px; color:var(--primary); line-height:1.5; }
+  .card .no { display:inline-block; background:var(--primary); color:#fff; border-radius:6px; padding:1px 9px;
+              font-size:13px; margin-right:8px; vertical-align:2px; }
+  .kv { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  .kv th, .kv td { border-top:1px solid var(--border); padding:7px 8px; text-align:left; vertical-align:top; }
+  .kv th { width:110px; color:var(--muted); font-weight:600; background:#fafbfc; }
+  tag { display:inline-block; font-size:12px; border-radius:5px; padding:1px 8px; margin-right:6px; }
+  .t-borrow { background:#e7f0ff; color:#0b3d6e; border:1px solid #b9d0f5; }
+  .t-pop { background:#eaf7ee; color:#1a7f37; border:1px solid #b7e0c3; }
+  .rm { background:#f6f8fa; border-left:3px solid var(--accent); padding:8px 14px; font-size:14px; color:#2b3b4a; margin-top:10px; border-radius:0 6px 6px 0; }
+  details { border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-top:12px; background:#fcfdff; }
+  details summary { cursor:pointer; font-weight:600; color:var(--primary); font-size:14.5px; }
+  details ul { margin:10px 0 2px; padding-left:22px; font-size:14px; }
+  details li { margin:5px 0; }
+  h3.sec { font-size:17px; color:var(--primary); margin:28px 0 10px; }
+  table.plain { width:100%; border-collapse:collapse; font-size:14px; background:var(--card); }
+  table.plain th, table.plain td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.plain th { background:#eef3f8; color:var(--primary); }
+  a { color:var(--accent); word-break:break-all; }
+  code { background:#f2f4f7; border-radius:4px; padding:1px 5px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul.tight li { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-17</h1>
+  <div class="sub"><b>早报（00:00 时窗）</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 00:1x CST ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
+</header>
+
+<div class="note">
+  <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> 列表 <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（260,090 B / 100 entry），最新 <code>published</code> 上界仍为 <b><code>2026-11-13T18:45:49Z</code></b> ⇒ 公告批<b>连续第 14 个时窗未前进</b>（arXiv 周末不公告，周一 20:00 ET 的批次要到 11-17 09:00 CST 才出现）。
+  按 §0.1「最近一次公告批次」例外条款，本轮从该批<b>尚未消费</b>的候选（<code>cs.CL</code> 100 条中 93 条未见于 <code>SEEN.md</code> / <code>papers.jsonl</code>）里按与在研工作的相关性收 3 篇，<b>如实标注实际提交日期为 2026-11-13</b>，不伪装成 72h 内。
+</div>
+
+<h2 style="font-size:19px;color:var(--primary);margin:26px 0 6px;">A 轨 · 今日推荐（3/5）</h2>
+
+<div class="card">
+  <h2><span class="no">1</span>ModHarness-RL: Recasting Harnesses as Learnable and Evolving Programs for Agentic RL</h2>
+  <table class="kv">
+    <tr><th>中文一句话</th><td>把 agent 的「外壳」（把哪段历史塞进上下文、偏离时给什么提示）当成<b>可学习、随训练演化的程序</b>：Compression 与 Steering 两个程序在 RL 中由轨迹提出候选、执行验证、回放评估，1.5B–8B 模型上多数设置优于固定外壳基线。</td></tr>
+    <tr><th>作者 / 机构</th><td>Zelin He · Siyu Zhu · Jacob Helwig 等 8 位（末位 Alborz Geramifard）｜ <b>The Pennsylvania State University + LinkedIn</b>（PDF 首页脚注：部分工作为 LinkedIn 实习期间完成）</td></tr>
+    <tr><th>提交 / 更新</th><td><code>2026-11-13T18:45:49Z</code>（v1，无更新）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.AI</code>（cross: cs.CL, cs.LG）｜ <tag class="t-borrow">借鉴</tag></td></tr>
+    <tr><th>arXiv</th><td><a href="https://arxiv.org/abs/2611.18533">https://arxiv.org/abs/2611.18533</a></td></tr>
+    <tr><th>推荐理由</th><td>直接命中 <b>harness</b> 线最贵的一处手工设计：上下文压缩与失败提示过去靠人写死，这篇给出「程序化 + 用执行结果验证」的自动演化路径；且评测覆盖 CodeSearch / ALFWorld / BIRD SQL 三类，可对照我们的工具调用评测。</td></tr>
+  </table>
+  <div class="rm"><b>可核验要点（PDF <code>pdftotext</code> 实测）</b>：交互被记录为结构化 <code>State</code>（typed blocks）；<code>Compression</code> 程序重组历史、<code>Steering</code> 程序在行为偏离时给提示；CodeSearch 上相对固定外壳基线在<b>每个设置</b>提升 <b>14–24%</b>，相对最强的基线（memory / skill / prompt / harness evolution）再高 <b>5–12%</b>；模型规模 <b>1.5B–8B</b>。图 1 注明评测含上下文预算「中途耗尽（limited）」与「很少触达（sufficient）」两种情形。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">2</span>Delayed Effects of Temporary Weight Decay in Muon Pretraining</h2>
+  <table class="kv">
+    <tr><th>中文一句话</th><td>临时性 weight decay 的收益<b>不在撤掉那一刻出现</b>：撤掉时验证损失可能更差，但到训练预算终点反而更好 —— 机制是早期衰减留下「权重范数亏空」，使后续相对步长变大，收敛很慢。</td></tr>
+    <tr><th>作者 / 机构</th><td>Md Rifat Arefin · Ravid Shwartz-Ziv · Ernie Chang 等 9 位（末位 Patrick Huber）｜ <b>Meta · Mila-Quebec AI Institute · Université de Montréal · Samsung SAIL Montreal</b></td></tr>
+    <tr><th>提交 / 更新</th><td><code>2026-11-13T08:05:19Z</code>（v1，无更新）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.LG</code>（cross: cs.CL）｜ <tag class="t-borrow">借鉴</tag></td></tr>
+    <tr><th>arXiv</th><td><a href="https://arxiv.org/abs/2611.17876">https://arxiv.org/abs/2611.17876</a></td></tr>
+    <tr><th>推荐理由</th><td>命中 <b>pretrain</b> 线最实际的一个坑：优化器干预的<b>评估时点</b>。它说明「按撤除点判优劣」会系统性误判调度，而这正是小规模扫参后往大模型搬运时最容易出错的环节。</td></tr>
+  </table>
+  <div class="rm"><b>可核验要点（PDF <code>pdftotext</code> 实测）</b>：模型 162M / 405M / 1.4B / 3.4B；162M 上选出、<b>不经重调</b>直接搬到 1.4B 的调度，撤除时比「不衰减」差 <b>0.26 nats</b>，训练到 <b>73%</b> 才反超，最终好 <b>0.0275 nats</b>，并优于采样到的最好常数衰减基线；主配置 <code>λ = 0.15</code>、衰减施加于训练前 <b>44%</b>、<b>28,000</b> updates；162M/405M 的 norm-reset 实验显示「衰减窗口结束时的权重范数更小」解释了大部分最终收益。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">3</span>Gamer: A Generalist Vision-Language-Action Foundation Model for Long-Horizon Real-Time Game Agent</h2>
+  <table class="kv">
+    <tr><th>中文一句话</th><td>米哈游团队用<b>数万小时真实键鼠操作轨迹</b>做继续预训练，再以「稀疏思考」指令微调与多轮 RL 训练一个通用 VLA agent，在多个 3D 开放世界游戏里达到与熟练玩家相当的泛化与操作效率。</td></tr>
+    <tr><th>作者 / 机构</th><td>Run Luo · Kuan Zhang · Qi Deng 等（末位 Dawei Jian）｜ <b>miHoYo Honkai AI R&amp;D Team</b>（PDF 首页署名为团队，完整作者见 Contributions 节）</td></tr>
+    <tr><th>提交 / 更新</th><td><code>2026-11-13T16:39:30Z</code>（v1，无更新）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.CL</code>（cross: cs.AI, cs.CV）｜ <tag class="t-borrow">借鉴</tag> <tag class="t-pop">科普</tag></td></tr>
+    <tr><th>arXiv</th><td><a href="https://arxiv.org/abs/2611.18397">https://arxiv.org/abs/2611.18397</a> ｜ 项目页 <a href="https://mihoyo-gamer.github.io/">https://mihoyo-gamer.github.io/</a></td></tr>
+    <tr><th>推荐理由</th><td>对 <b>vision</b> 线：统一的「像素进 / 键鼠出」动作空间如何把 2D 界面与 3D 世界接进同一条训练-部署管线；对 <b>zhulong</b> 线：长程 RL 里「有限上下文 + rollout 误差累积 + 稀疏奖励」三个工程问题的解法（TA-GRPO 分段优势）值得对照 thinking 轴的消融设计。</td></tr>
+  </table>
+  <div class="rm"><b>可核验要点（PDF <code>pdftotext</code> 实测）</b>：继续预训练数据 = <b>数万小时</b>设备级键鼠交互轨迹；由该语料生成<b>一千小时以上</b>的指令数据，用于 sparse-thinking 指令微调；推理侧云边引擎含 <b>speculative decoding + BF16 验证 + streaming action dispatch</b>；支持 <b>Qwen3-VL</b> dense 2B / 4B / 8B / 32B 与 30B-A3B MoE、<b>Qwen3.5</b> 0.8B / 2B / 9B / 27B 与 35B-A3B MoE，实验覆盖 <b>A800 / H200</b>。<b>注意</b>：摘要只写「与熟练玩家相当（comparable to skilled players）」，<b>未给出可引用的胜率/分数数字</b>。</div>
+
+  <details class="news-ready">
+    <summary>📰 news_ready · 可发头条（本期 1 条）</summary>
+    <ul>
+      <li><b>大众标题</b>：米哈游让 AI 看屏幕、动键鼠，在 3D 游戏里打到「像熟练玩家」</li>
+      <li><b>一句话事实</b>：miHoYo 团队用数万小时真实键鼠操作训练通用游戏 AI「Gamer」，在多个 3D 开放世界游戏中表现与熟练玩家相当。</li>
+      <li><b>可用数字</b>：
+        <ul class="tight">
+          <li>「数万小时」设备级键鼠轨迹 → 论文摘要（p.1）</li>
+          <li>「一千小时以上」指令数据 → 论文正文 p.1–2 数据构建段</li>
+          <li>支持模型 2B / 4B / 8B / 32B 与 30B-A3B MoE → 论文推理引擎一节</li>
+        </ul>
+      </li>
+      <li><b>配图</b>：论文 Figure 1（架构图，p.1）—— 引用请标「图：miHoYo Honkai AI R&amp;D Team, Gamer, arXiv 2611.18397」</li>
+      <li><b>一手信源</b>：miHoYo（米哈游）Honkai AI R&amp;D Team ｜ <a href="https://arxiv.org/abs/2611.18397">arXiv 2611.18397</a> ｜ 项目页 mihoyo-gamer.github.io</li>
+      <li><b>话题点</b>：游戏是普通玩家最直观能「看懂 AI 会不会操作」的场景，比榜单分数更易传播。</li>
+      <li><b>不适合发的理由</b>：<b>没有可引用的量化胜率</b>（只有定性「comparable to skilled players」）；若 news 需要硬数字，建议先向作者确认或等后续版本 —— 因此本条只作候选，不硬推。</li>
+    </ul>
+  </details>
+</div>
+
+<h3 class="sec">🅱 B 轨 · 经典论文与作者关系网（本轮 +4 篇 / +3 人）</h3>
+
+<div class="card">
+  <table class="plain">
+    <tr><th style="width:26%;">维度</th><th>本轮增量（含可核验证据）</th></tr>
+    <tr>
+      <td>📚 经典论文清单</td>
+      <td><b>186 篇</b>（第四十七轮 +4，全部被引数当场实测）：
+        <ul class="tight">
+          <li><b>AlphaCode</b> <code>2203.07814</code> — 被引 <b>1,787</b>，<b>Science 2022</b>（OpenAlex DOI <code>10.1126/science.abq1158</code>）｜ 大规模采样 + 执行过滤 + 行为聚类，只提交 10 个候选；Codeforces &gt;5,000 人比赛平均排名前 <b>54.3%</b>（模拟评测）→ 归 <b>harness</b> / <b>zhulong</b></li>
+          <li><b>BLOOM</b> <code>2211.05100</code> — 被引 <b>2,860</b>，预印本技术报告（394 位作者）｜ 176B，ROOTS 覆盖 <b>46 种自然语言 + 13 种编程语言（59）</b> → 归 <b>data</b> / <b>pretrain</b></li>
+          <li><b>StarCoder</b> <code>2305.06161</code> — 被引 <b>1,518</b>，预印本技术报告（67 位作者）｜ The Stack 上 <b>1 万亿 token</b>、许可过滤 + <b>opt-out</b>、MQA 支撑大 batch 推理 → 归 <b>data</b> / <b>zhulong</b></li>
+          <li><b>HH-RLHF</b> <code>2204.05862</code> — 被引 <b>5,138</b>，预印本技术报告（31 位作者）｜ 离线偏好 vs <b>在线迭代 RLHF</b>（最大 52B），公开 HH-RLHF 数据集 → 归 <b>posttrain</b> / <b>harness</b></li>
+        </ul>
+        证据：arXiv API <code>id_list</code> <b><code>200</code> + atom</b>（39,958 B / 4 entry）；OpenAlex <b>4/4 <code>200</code></b>（1,787 / 2,860 / 1,518 / 5,138）；PDF <b>4/4 <code>200</code> + <code>application/pdf</code></b>（3,797,220 / 3,029,243 / 1,174,499 / 9,503,688 B，均 &lt;5MB），<code>pdftotext</code> 逐篇核到上列数字。<br>
+        ✅ 必读清单（用户 2026-11-11 直令）<b>37/37 条目仍全覆盖</b>，本轮为清单外补充。
+      </td>
+    </tr>
+    <tr>
+      <td>👥 作者关系网</td>
+      <td><b>171 人</b>（编号 169–171 新增；<b>X 已核验 98 人</b>）：
+        <ul class="tight">
+          <li><b>Thomas Wolf</b>（Hugging Face 联合创始人 / BLOOM 末位）— <code>@Thom_Wolf</code> <b>双源已核</b>（HF 个人页 <code>href</code> → X + <code>x.com/Thom_wolf</code> <code>200</code> / <code>og:title</code> 一致）；<b>无公开邮箱 ⇒ 暂不列发信对象</b></li>
+          <li><b>Loubna Ben Allal</b>（Hugging Face Research / StarCoder 第 2 作者）— <code>@LoubnaBenAllal1</code> <b>双源已核</b>（HF 页 <code>href</code> → X + <code>og:title</code> / <code>og:description = Research @huggingface</code>）；无公开邮箱</li>
+          <li><b>Oriol Vinyals</b>（Google DeepMind / AlphaCode 末位）— <code>@OriolVinyalsML</code> <b>单源</b>（仅 X 页 <code>og:title</code>）⇒ <b>不计入已核验</b>；⚠️ 同名站点 <code>oriolvinyals.com</code> 实为西班牙治疗师主页，已丢弃不建档</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>✉ 作者请教信</td>
+      <td>本轮 <b>3 封</b>（今日 3 / 12，累计 <b>70</b> 封）：<b>#68</b> 刘鹏飞（SJTU，LIMA <code>2305.11206</code>）｜ <b>#69</b> Guangxuan Xiao（MIT，StreamingLLM <code>2309.17453</code>）｜ <b>#70</b> 刘泽（xAI，Swin <code>2103.14030</code>）—— 三封均<b>中文</b>（判据 = 姓名族属 + 机构），正文 229 / 287 / 262 字（≤300），落款固定两行 <code>祝好，</code> / <code>Yang Liu</code>。同轮<b>抗模板</b>：开头句与问题落点无一句共用。<br>
+        <b>累计回信率：0 / 70</b>（<code>mail/replies/</code> 无任何回信摘录；<b>0 封到期</b>，最早到期 2026-11-25）⇒ <b>0 回信按待诊断信号处理，不记为成功</b>；发件通道<b>只发不收</b>（无 IMAP/POP3），回信可能已到但读不到 —— 仍需运维介入。
+      </td>
+    </tr>
+    <tr>
+      <td>🗣 voice_ready</td>
+      <td><b>本期无（0 条）</b>。候选与落选理由：① 本轮 X 可达（<code>x.com</code> <code>200</code>），抓到 <code>@LoubnaBenAllal1</code> 8 条 / <code>@Thom_Wolf</code> 9 条；② 两条看似可用（MoE 训练手册、Fable 5.2 评测自省）经单条推文页 <code>og:title</code> 核对，作者分别是 <code>@Nouamanetazi</code> 与 <code>@andonlabs</code> ⇒ 属转推，<b>丢弃</b>；③ 两条作者核对通过的原创推文（FineDNA、Vending-Bench 观察）正文在页面 <code>og:description</code> 缺失、时间线摘录被截断 ⇒ 按「正文不完整不采用」<b>弃用</b>。🚫 不用二手转述冒充原文。</td>
+    </tr>
+  </table>
+</div>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线覆盖 · 无则明写「无」）</h3>
+
+<div class="card">
+  <table class="plain">
+    <tr><th style="width:16%;">线</th><th>可执行动作（附判据 / 命令 / 实验设计）</th></tr>
+    <tr>
+      <td><b>pretrain</b></td>
+      <td><b>把「优化器干预的评估点」写进训练报告</b>：借 <code>2611.17876</code> 的结论（撤除时差 0.26 nats、73% 处才反超、终点好 0.0275 nats），在 WSD / 临时 weight decay 类实验里<b>预注册两个评估点</b>：<code>t_remove</code>（干预撤除时）与 <code>t_final</code>（预算终点），两处都记 val loss + layer-averaged weight norm。<b>判据</b>：若 <code>t_remove</code> 与 <code>t_final</code> 的排序相反，则该调度不得据 <code>t_remove</code> 判死。日志建议列：<code>opt=muon|adamw</code> / <code>wd</code> / <code>wd_window=[start,end]</code> / <code>wnorm_layer_avg</code>。</td>
+    </tr>
+    <tr>
+      <td><b>vision</b></td>
+      <td><b>统一动作空间的可复用性验证</b>：<code>2611.18397</code> 把 2D GUI 与 3D 世界的键鼠动作压进同一接口，支持 Qwen3-VL 2B–32B。<b>动作</b>：在视觉塔选型实验里加一组「同一编码器 + 两套动作接口（离散 token vs 连续增量）」的对照，主指标 = 新任务上 N 步内成功率，副指标 = 每步推理延迟。<b>判据</b>：若动作接口换成连续增量后延迟上升 &gt;30% 而成功率提升 &lt;5%，则判定该域不需要连续动作头。</td>
+    </tr>
+    <tr>
+      <td><b>harness</b></td>
+      <td><b>把「外壳」纳入评测变量、把「采样-过滤」计入报告</b>：① 借 <code>2611.18533</code>，评测配置表新增 <code>harness=fixed|learned</code>、<code>context_budget=limited|sufficient</code>，并<b>分别</b>报分数（该文两种预算下增益从 14% 到 24% 不等）；② 借 <code>2203.07814</code>，任何 pass@1 旁必须并列 <code>n_samples</code> / <code>n_after_filter</code> / <code>k_submitted</code>，🚫 只报单点成功率。</td>
+    </tr>
+    <tr>
+      <td><b>data</b></td>
+      <td><b>代码语料台账补三列</b>：借 <code>2305.06161</code>（The Stack 1T token、许可过滤 + opt-out），在代码语料登记表加 <code>许可判定方式</code> / <code>opt-out 命中数</code> / <code>质量分类器版本</code>；并借 <code>2211.05100</code>（ROOTS 59 种语言）把多语配额表按「来源数 / 许可 / 去重前后 token」三列拆开。<b>判据</b>：任一语种若无「去重前后 token」比值，不得进入配比实验。</td>
+    </tr>
+    <tr>
+      <td><b>zhulong</b></td>
+      <td><b>成本表加两列，消融加一个指标</b>：① <code>生成 token / 有效提交</code>（AlphaCode 式「多采样 + 过滤」的等价成本），用于和「单次采样 + 自一致性」对照；② 后训练表把 <code>online_iterations</code>（在线迭代轮数，见 <code>2204.05862</code>）与 <code>over_refusal_rate</code>（过度拒答率）列为必填 —— 长思考轨迹下无害性训练更容易触发拒答，需与 thinking 轴一起消融。</td>
+    </tr>
+    <tr>
+      <td><b>designflow</b></td>
+      <td><b>无</b>（本轮 3 篇与造题 / L1–L5 保真度 / 判分可验证性无直接可落地接口；唯一相关点是 AlphaCode 的「公开示例 + 隐藏用例」双轨，已并入 data / harness 建议，此处不重复计数）。</td>
+    </tr>
+  </table>
+</div>
+
+<h3 class="sec">🧾 附录 · 检索式与去重（可核验）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>检索式 1</b>：<code>search_query=cat:cs.CL&amp;sortBy=submittedDate&amp;sortOrder=descending&amp;max_results=100</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml; charset=utf-8</code> / 260,090 B / <b>100 entry</b>；最新 <code>published</code> = <code>2026-11-13T18:45:49Z</code>。</li>
+    <li><b>入账复核</b>：<code>id_list=2611.18533,2611.17876,2611.18397</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml</code> / 10,065 B / 3 entry；abs 与 PDF 均 <code>200</code>，PDF 头校验 <code>%PDF-</code> 通过。</li>
+    <li><b>去重</b>：与 <code>SEEN.md</code>（5,424 条 ID）＋ <code>papers.jsonl</code>（359 条）比对 ⇒ 该批 100 条中 <b>93 条未被消费</b>，本轮取 3 条；其余 90 条按领域相关性淘汰（占比最高的是临床 / 文学 / 水印 / 安全类）。</li>
+    <li><b>B 轨复核</b>：<code>id_list=2211.05100,2203.07814,2305.06161,2204.05862</code> ⇒ <code>HTTP 200</code> + atom（39,958 B / 4 entry）；OpenAlex 4/4 <code>200</code>；PDF 4/4 <code>200</code>。</li>
+    <li><b>X 抓取</b>：<code>x_fetch.py</code> 只读串行（≥3s），<code>@LoubnaBenAllal1</code> / <code>@Thom_Wolf</code> 各 <code>200</code>；单条推文页逐条核 <code>og:title</code>（转推一律丢弃）。</li>
+    <li><b>⚠️ 时窗说明</b>：本轮为 00:00 时窗，A 轨目标 3 篇（早报），18:00 前需补齐至 5/5 并追加「晚报变更说明（AM → PM）」。</li>
+  </ul>
+</div>
+
+<footer>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 00:1x CST ｜ 早报 3/5 ｜ A 轨 3 篇 ＋ B 轨 186 篇（+4）｜ 作者网 171 人（X 已核验 98）｜ 作者信累计 70 封（回信率 0/70）｜ voice_ready 0 ｜ news_ready 1<br>
+  免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
+</footer>
+
+</div>
+</body>
+</html>

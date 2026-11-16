@@ -1,0 +1,10 @@
+主题：请教 StreamingLLM 的 attention sink 在中文语料与 2B 规模上的可迁移性
+
+光轩老师，您好：
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我们正在 2B 规模上做长上下文训练。StreamingLLM 里「保留最初四个 token 即可让 4M token 流式困惑度保持平稳」这一点，直接决定我们能否省掉滑窗重算，有三个问题想请教：① 这 4 个 sink token 的位置是否随分词器与语种漂移，换成中文语料是否仍是第 0 个 token；② 预训练阶段加占位 sink token 会损失多少有效序列长度，这个代价你们是怎么量化的；③ 判定 4M 流式「平稳」时用的局部窗口长度是多少，与全注意力对照的偏差上界怎么给。
+
+祝好，
+Yang Liu
