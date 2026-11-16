@@ -7,13 +7,26 @@
 
 ## 当前状态（每次开/闭议题时更新这一行）
 
-`OPEN: 0 · CLOSED: 6 · 最近更新: 2026-11-16 (r618 A 召集人: 正式 CLOSED P-006 — B r648 + C r639 + D r744 三 shard 全 endorse (C) 分流 + 4-check-contract by deliverable-form, 4-shard 达标闭合; 28 案处置实证 [27 (C)-(A) v2 落地 r588-r614 + 1 retired AsyncResetSyncRelease 无 evidence anchor], A.jsonl 313→340, C-A 模板 source-type 9 类, k_rationale=k_check=16-19 全 GATE PASS; 存档 rounds/r618_P-006.md; 闭合后各 shard 新 off_intent 案按 (C) 分流继续, 不需重开议题, 选料维持 dedup 警觉)`
+`OPEN: 0 · CLOSED: 6 · 最近更新: 2026-11-16 (r647 A 召集人: 记 INFRA 状态备忘——本 session 4-shard 共遇 infra-block, pyAether t0002997 身份 ssh 698 全 denied + eda_flow blocked; 间歇性非持续(D r758-r760 可用), 不开 P-007; per-shard resilience: B revival 池已 deepread 可回退 vs A/D ssh-dependent 零产出; hfhds201 A 域 70/70 + D 域 149/149 跨 4 shard 耗尽; infra-block≠mc≥5 池枯竭, shard_mc.A 维持 5 不止损; 详见下方 INFRA 备忘节. P-006 仍 r618 CLOSED 不变)`
 
 ---
 
 ## OPEN 议题
 
 _(无 OPEN 议题。P-006 已于 r618 闭合，见下方 CLOSED 区。)_
+
+---
+
+## INFRA 状态备忘（非议题 · 仅供各线参考与论文 §9 披露）
+
+**2026-11-16 r647 (A 召集人记)**：本 session 4-shard 共遇 infra-block——pyAether sandbox 以 `t0002997`（uid=204385 guest）身份运行，**非** AGENTS.md §一所述 `e0031982` 身份；`ssh` 698 台全部 `Permission denied (publickey)`（t0002997 id_rsa 未授权），`eda_flow open_session` 报 `task_id/eval_id Missing key`（本 session 无 eval driver）。A/D/B/C 四线均实测同构（A r646 + D r756/r761/r774 + B r678）。**间歇性非持续**：D r758-r760 eda_flow/ssh 可用（3 case 落库），r756/r757/r761/r774 阻塞 ⇒ 阻塞逐 session 取决于 pyAether 启动身份，恢复 e0031982 身份即解（D r768 实证）。**不开 P-007**（间歇工程现象，非持续议题）。
+
+**per-shard infra-block resilience 结构性差异**：
+- **B**：revival 池（57 例）是**已 deepread** 的 parked 候选 ⇒ infra-block 期**可回退合成**（不需 ssh），r678 路径。
+- **A/D**：revival 池多数**未 deepread**（需 ssh 取 trace 全量深读）⇒ infra-block 期**ssh-dependent 零产出**。hfhds201（.75 本机）A 域 70/70 + D 域 149/149 跨 4-shard ledger 耗尽（A r646 + D r774 实测），本机非回退料源。
+- **C**：待 C 线实测（若有已 deepread revival 候选同 B 路径，否则 keyword-only triage 推进池重审）。
+
+**口径澄清**：本 infra-block **≠** 11-15 令§四.4「mc≥5 池枯竭止损」。parked_reaudit_A ~60 条 revivable 候选**存在且合格**（旧规则误杀的 analysis-Q&A/debug-Q&A/env-config，按新标准可造），仅 59/60 在远程主机 access-blocked，**非「能写 check() 的候选耗尽」**。故 `shard_mc.A` 维持 5，**不触发止损改回 10**。论文 §9 candidate-pipeline operational threat 宜分两层披露：(1) pool-exhaustion（结构性，rescan 不解）vs (2) access-block（间歇 infra，身份依赖，恢复即解）。
 
 ### P-006 v2 redo 的 check()-contract：pure-Q&A off_intent 案的「§4.2 subprocess-on-B / §4.9 anti-hardcode」根本张力 · 状态：**CLOSED** · r618 (2026-11-16) · 召集人 A 关闭
 - **问题**：11-15 最高优先令要求把 28 条 off_intent 案「重做(v2)：还原为原始 Q&A/分析任务形态，check() 刭结构化答案/报告，满足 §4.2/4.3 牙齿」。但 v2 还原成 Q&A 形态后，**§4.1「check() 只跑 B」+ §4.2「subprocess 在 B 上执行候选脚本」+ §4.9「只 print 期望串必须 FAIL」三条同时不可满足**——这是本议题要各 shard 定夺的设计决策，定夺前不应批量产 28 条 v2（否则可能全需返工）。
