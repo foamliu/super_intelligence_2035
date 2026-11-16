@@ -620,3 +620,5 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1794394549939_ia08o	xy1zhang	hfeg0pgn145	927	verification	case	EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	2026-11-16 21:03	r645 C-A debug-Q&A compare_tasks.sv dup-assign + xrun TRZDGOC root-cause, k=15
 1794734620660_00p77	jzeng	10.129.32.75	416	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4Diagnose-001	2026-11-17 01:29	
 1791191409174_reo1p	dandans	hfhds201	113	verification	case	EDA-Eval-DesignFlow-Ddr6Dq5ExpZero-001	2026-11-17 04:01	r659 deepread DEBT 1: ddr6_test.sv dq5 D16-D23 exp=0 root-cause analysis-Q&A (X1P6+MD_8b+CRC-off); deepread done, synthesis DEBT r660; .75-local fresh A-domain (exhaustion claim corrected)
+1788763403419_gqt57.messages.json	harrys	hfeg0pkn002	195	digital	parked		2026-11-17 04:25	generic opener 启动业务场景, mmmtz stronger specific task
+1793786351814_mmmtz.messages.json	e0046913	hfeg0plg90	169	digital	deepread		2026-11-17 04:29	r661 deepread done, RPT-181/vt_group debug-Q&A, DEBT1 r662 synthesize
