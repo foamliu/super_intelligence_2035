@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-16（5/5 ＋ B 轨第四十三轮 170 篇 · 作者网 162 人 · 作者信 67 封）· research 线</title>
+<title>论文观察日报 · 2026-11-16（5/5 ＋ B 轨第四十四轮 174 篇 · 作者网 165 人 · 作者信 67 封）· research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
           --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
@@ -405,9 +405,59 @@
 </table>
 
 
+<div class="note">
+  <b>15:00 时窗变更说明（相对 12:00 轮）</b>：① <b>A 轨 0 新收</b> —— 今日 5/5 配额已满；<code>cat:cs.CL</code> 20-entry 复核 <code>200</code> + atom（<b>50,794 B / 20 entry</b>），<code>published</code> 上界继续前进到 <b><code>2026-11-13T18:45:49Z</code></b>，候选留待下个自然日按 ≤72h 评估。② B 轨 <b>170 → 174</b>（第四十四轮 +4：Swin / SpeechT5 / GPipe / Scaling Data-Constrained）。③ 作者网 <b>+3 → 165</b>（编号 161–163）。④ 作者信 <b>67 → 67</b>（今日 12 封 = 每日硬上限，本轮只建档不发信）。⑤ 回信率仍 <b>0/67</b>，0 封到期（最早 2026-11-25）。⑥ <code>voice_ready</code> / <code>news_ready</code> 均 0 条（四篇无事件点，四问逐条否）。
+</div>
+
+
+<h2 class="sec">🅱 B 轨 · 经典论文第四十四轮（+4 → 174 篇）</h2>
+<table>
+  <tr><th>#</th><th>论文（原题照抄）</th><th>年份 / 会场</th><th>被引（OpenAlex，2026-11-16）</th><th>一句话</th><th>归属线</th></tr>
+  <tr><td>171</td><td><a href="https://arxiv.org/abs/2103.14030">Swin Transformer: Hierarchical Vision Transformer using Shifted Windows</a></td><td>2021 · <b>ICCV 2021</b></td><td><b>38,712</b></td><td>层级式 ViT：4×4 patch 起步 + 逐级 patch merging + <b>shifted window</b>，注意力对图像尺寸<b>线性</b>；ImageNet-1K <b>87.3 top-1</b>（Swin-L @384²）、COCO <b>58.7 box AP / 51.1 mask AP</b>、ADE20K <b>+3.2 mIoU</b></td><td>vision / harness / designflow</td></tr>
+  <tr><td>172</td><td><a href="https://arxiv.org/abs/2110.07205">SpeechT5: Unified-Modal Encoder-Decoder Pre-Training for Spoken Language Processing</a></td><td>2021 · <b>ACL 2022 main</b></td><td><b>141</b>（&lt;500，按「开创统一模态范式」收）</td><td>共享 encoder-decoder + <b>6 个模态特定 pre/post-net</b>；960h LibriSpeech + 400M 句文本预训练，一套权重覆盖 ASR / TTS / ST / VC / SE，论文自报 ASR 优于 wav2vec 2.0 / HuBERT base</td><td>vision / pretrain / data / harness</td></tr>
+  <tr><td>173</td><td><a href="https://arxiv.org/abs/1811.06965">GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism</a></td><td>2018 · <b>NeurIPS 2019</b></td><td><b>1,280</b></td><td>层切 stage + micro-batch 流水 + 重算：AmoebaNet 82M → <b>1.8B（25×）</b>、<b>84.4% top-1</b>；同参数 Transformer <b>3.5× 加速</b>；气泡可忽略的经验条件 <b>M ≥ 4×K</b></td><td>pretrain / zhulong / data</td></tr>
+  <tr><td>174</td><td><a href="https://arxiv.org/abs/2305.16264">Scaling Data-Constrained Language Models</a></td><td>2023 · <b>NeurIPS 2023</b></td><td><b>254</b>（&lt;500，按「方法论常青」收）</td><td><b>&gt;400 个模型</b>（10M–9B，最多 <b>1500 epochs</b>）：重复 <b>≤4 epoch 几乎等效新数据</b>，40 epochs 近乎无用；给出 <b>effective data</b> 折算公式，数据受限时应「小模型 + 多 epoch」</td><td>data / pretrain / zhulong</td></tr>
+</table>
+<div class="note">
+  <b>核验与诚实记录</b>：① abs 页 <b>4/4 <code>200</code></b>（44,906 / 43,773 / 45,691 / 42,834 B），标题 / 作者 / <code>Submitted on … last revised …</code> / <code>comment</code> 逐字核；② <b>PDF 4/4 <code>200</code> + <code>application/pdf</code></b>（1,360,315 / 1,710,946 / 539,195 / 2,160,774 B），<code>pdftotext</code> 全通过并核到：Swin <code>87.3 top-1</code> / <code>58.7 box AP and 51.1 mask AP</code> / <code>linear computational complexity</code>；SpeechT5 <code>960</code> / <code>outperforms wav2vec 2.0</code> / <code>shared encoder-decoder</code>；GPipe <code>1.8 billion</code> / <code>25x</code> / <code>84.4%</code> / <code>3.5× speedup</code> / <code>M ≥ 4 × K</code>；Scaling DC <code>Up to 4 epochs</code> / <code>At 40 epochs</code> / <code>400 models</code> / <code>1500 epochs</code>；③ <b>先验 ID 错误已纠正</b>：候选池旧记 SpeechT5 = <code>2010.00718</code>，本轮实测该 ID 是 <code>When to Impute? Imputation before and during cross-validation</code>（Jaeger et al.）⇒ 真 ID = <code>2110.07205</code>（标题检索 + abs 逐字核后才收，🚫 未凭记忆写元数据）；④ 两篇 &lt;500 引用（SpeechT5 141 / Scaling DC 254）已按「开创范式 / 方法论常青」收并显式标注，不冒充「高引经典」；⑤ GPipe 的会议与预印本两口径并列（NeurIPS 2019 proceedings / ACM DL <code>10.5555/3454287.3454297</code>；OpenAlex 该 arXiv DOI 仍记 <code>preprint</code>）。
+</div>
+
+<h2 class="sec">👥 作者关系网 +3（编号 161–163）· ✉ 作者请教信 0（今日 12 封硬上限已满）</h2>
+<table>
+  <tr><th>#</th><th>人物</th><th>机构</th><th>邮箱（来源）</th><th>X（核验方式）</th><th>状态</th></tr>
+  <tr><td>161</td><td>Ze Liu 刘泽</td><td>xAI（论文署名 USTC / MSRA）</td><td><code>liuzeeeee@gmail.com</code>（本人主页 <code>mailto:</code>，27,094 B）</td><td><code>@zeliu_</code>（主页 <code>href</code> + <code>og:title</code> / <code>og:description</code> 双源）</td><td>待跟踪（下轮可发中文信）</td></tr>
+  <tr><td>162</td><td>Junyi Ao</td><td>CUHK-Shenzhen 博士生（论文时为 MSRA）</td><td><code>junyiao1@link.cuhk.edu.cn</code>（本人主页 <code>mailto:</code>，19,157 B）</td><td>未找到（不猜）</td><td>待跟踪（下轮可发中文信）</td></tr>
+  <tr><td>163</td><td>Long Zhou</td><td>Microsoft Research Asia</td><td><code>wszlong@gmail.com</code>（本人主页明文，18,505 B）</td><td>未找到（<code>@longzhou</code> 经 <code>og:title</code> 判为他人账号）</td><td>待跟踪（同论文优先发 #162）</td></tr>
+</table>
+<div class="note">
+  <b>本轮不发信的原因</b>：今日（11-16）已发 <b>12 封</b>（#56–#67）= 每日硬上限 ⇒ 15:00 时窗只做「收录 → 建档」，<b>不硬发</b>；下轮（18:00）若额度未重置亦只做草稿。三个「不猜 / 不硬发」记录：① <code>x.com/zeliu98</code> <code>404</code> ⇒ 改按本人主页给的 <code>@zeliu_</code> 核验；② <code>@yanping_huang</code> 虽 <code>200</code> 但 <code>og:description</code> 仅 <code>0 followers · 38 following</code>、无 bio ⇒ 无法确认是 GPipe 一作本人，按「未找到 X」处理；③ <code>@longzhou</code> 的 <code>og:title</code> = <code>Long Jiu Zhou Kaskus</code>（他人）⇒ 不登记。<b>累计回信率仍 0 / 67</b>，0 封到期（最早 2026-11-25，#1–#7）；发件通道只发不收（无 IMAP/POP3）仍是最需运维介入的一项。
+</div>
+
+<h2 class="sec">🧩 15:00 轮 · 6 线增量建议（在上四轮基础上追加）</h2>
+<table>
+  <tr><th>线</th><th>可执行建议（增量）</th></tr>
+  <tr><td><b>pretrain</b></td><td>并行配置表把 <code>pp_stages</code> / <code>micro_batches</code> / <code>recompute</code> 与 <code>zero_stage</code> 同表记录；预注册判据 = bubble 占比 &gt;15% 时先加 micro-batch（GPipe 的 <code>M ≥ 4×K</code>），recompute 使 step time 上升 &gt;20% 则只对最深若干 stage 开启。</td></tr>
+  <tr><td><b>vision</b></td><td>视觉塔对照表新增 <code>window_size</code> / <code>patch_merging_stages</code> / <code>tokens@224/448</code> 三列；判据 = 448² 下 tokens 约 4× 而吞吐下降 &gt;30% 时退回「全局 attention + 早期下采样」，不先调窗口（Swin 线性复杂度是相对全图 attention 而言）。</td></tr>
+  <tr><td><b>harness</b></td><td>引用检测 / 分割分数必须同时写 backbone 与 head / schedule（Swin 的 58.7 AP 绑定 HTC++）；多任务模型（SpeechT5 式共享主干）按任务分列报分，禁止只报平均分掩盖单任务退化。</td></tr>
+  <tr><td><b>data</b></td><td>语料账本新增 <code>unique_tokens</code> / <code>epochs</code> / <code>effective_data</code> 三列；判据 = 任一子集重复 &gt;4 epoch 时先单独拟合该子集折旧率（≥3 个重复档位），显著差于全局值才追加新数据（Scaling Data-Constrained 的 4-epoch 拐点为英文平均口径，🚫 不直接套中文 / 代码 / EDA）。</td></tr>
+  <tr><td><b>zhulong</b></td><td>成本表把「重复 epoch 的训练成本」与「新增数据采集成本」并列，禁止默认加数据更贵；长轨迹 RL 先报「不开 recompute 能否放下」，再决定用时间换显存（GPipe 的显存-吞吐折中）。</td></tr>
+  <tr><td><b>designflow</b></td><td>若视觉前端接版图 / 图形类输入，先做「单尺度 vs 层级特征」小对照，再决定是否引入 Swin 式多尺度；判据 = 同一题集上定位类指标提升且吞吐不降 &gt;15% 才采用。</td></tr>
+</table>
+
+<h2 class="sec">🧾 附录 · 15:00 轮新增检索与核验</h2>
+<table>
+  <tr><th>查询 / 端点</th><th>结果</th><th>说明</th></tr>
+  <tr><td><code>cat:cs.CL</code> 20-entry</td><td><code>200</code> · atom · <b>50,794 B / 20 entry</b></td><td><code>published</code> 上界 <code>2026-11-13T18:45:49Z</code>（较 12:00 的 <code>08:40:07Z</code> 继续前进）；今日 A 轨 5/5 配额已满 ⇒ 0 新收，候选留待下个自然日按 ≤72h 评估</td></tr>
+  <tr><td><code>id_list</code> 4 篇</td><td><code>200</code> · <code>application/atom+xml; charset=utf-8</code> · 10,649 B</td><td>一次调用取回 4 条 entry；发现 <code>2010.00718</code> 非 SpeechT5 ⇒ 改用标题检索 + <code>2110.07205</code> 单篇复核（3,749 B）</td></tr>
+  <tr><td>abs 页 4/4</td><td><code>200</code></td><td>44,906 / 43,773 / 45,691 / 42,834 B；标题、作者数、版本日期、<code>comment</code> 逐字核</td></tr>
+  <tr><td>OpenAlex 4/4</td><td><code>200</code></td><td>被引：Swin <b>38,712</b> · SpeechT5 <b>141</b> · GPipe <b>1,280</b> · Scaling DC <b>254</b>（查询日 2026-11-16；S2 未查）</td></tr>
+  <tr><td>PDF 4/4</td><td><code>200</code> · <code>application/pdf</code></td><td>1,360,315 / 1,710,946 / 539,195 / 2,160,774 B；<code>pdftotext</code> 全通过（关键数字见上「核验与诚实记录」）</td></tr>
+  <tr><td>作者主页 3/3 + X profile</td><td><code>200</code></td><td><code>zeliu98.github.io</code> 27,094 B · <code>ajyy.github.io</code> 19,157 B · <code>long-zhou.github.io</code> 18,505 B；<code>@zeliu_</code> 189,651 B（<code>og:title</code> + <code>og:description</code> 双源）；<code>@Muennighoff</code> 186,268 B（复核既有 #67）</td></tr>
+</table>
+
 <footer>
-  <div>论文观察日报 · 2026-11-16（12:00 时窗：A 轨 5/5 配额已满，B 轨第四十三轮）· research 线自动生成</div>
-  <div>B 轨经典 <b>170</b> 篇（第四十三轮 +4：Gemini 1.5 4,633 · RTLLM 301 · VerilogEval 359 · PIM Benchmarking 285，OpenAlex 口径）· 👥 作者网 <b>162</b> 人（X 已核验 <b>92</b>）· ✉ 作者信累计 <b>67</b> 封（回信率 <b>0/67</b>，0 封到期，最早到期 2026-11-25）</div>
+  <div>论文观察日报 · 2026-11-16（15:00 时窗：A 轨 5/5 配额已满，B 轨第四十四轮）· research 线自动生成</div>
+  <div>B 轨经典 <b>174</b> 篇（第四十四轮 +4：Swin 38,712 · SpeechT5 141 · GPipe 1,280 · Scaling Data-Constrained 254，OpenAlex 口径）· 👥 作者网 <b>165</b> 人（X 已核验 <b>93</b>）· ✉ 作者信累计 <b>67</b> 封（回信率 <b>0/67</b>，0 封到期，最早到期 2026-11-25）</div>
   <div>本页为自包含单文件（内联 CSS、零外链）；推荐 = 待读线索，非结论；不构成投资 / 采购建议。</div>
 </footer>
 </div>
