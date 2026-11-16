@@ -4,6 +4,17 @@ WAITING: 1
 
 > 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
 
+> 🆕 **R2594 · 2026-11-17 05:5x — 任务书bookkeeping(cc修复块归档) + token回采调查=BLOCKED(framework不采集) + research日报纳入**
+> - **自检**: load25.19/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅
+> - **git pull**: proxy 503(infra·非code·共享NFS已最新commit 3eeaab604 05:54)
+> - **cc修复验证CONFIRMED**: 4报告全在(05:23更新)·7way报告 claude-code=30/89=33.7%✅·cc归因报告 "0 ConnRefused HARD VERIFIED"✅·根因=容器内127.0.0.1·修复=overlay network_mode:host
+> - **任务书更新**: cc修复块(原"未完成·最高优先")→归档ARCHIVE+1行指针✅·adaptive块状态→"✅已交付+验收4/4通过(R2512)+实跑验证(R2503-R2593)"✅·TASK 25.6KB→23.2KB✅
+> - **token回采调查=BLOCKED**: 扫20+route dirs(/tmp/tb21_glm53_jobs/)·job-level stats n_input/output_tokens全None·per-trial agent_result全None·rollout_details全None·model_usage全None→**harbor framework经gw_proxy时不采集token**·非数据位置问题·回采不可行·需改adapter/gw_proxy才能采集(框架级修改)
+> - **research日报2026-11-17**: 2条harness建议纳入→①ModHarness-RL(2611.18533):eval配置表加 harness=fixed|learned + context_budget=limited|sufficient 分别报分②judge跨视图可靠性(2611.18471):加 view=native|macro|delegation|compaction + abstain_rate/wrong_verdict_rate
+> - **无未完成用户指令**: cc修复✅+adaptive✅均done·任务书无"未完成"块
+> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research日报建议纳入下次报告迭代(harness维度+judge视图) ③cc归因adapter_error=6可细分 ④hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈23.2KB / MEMORY≈31.5KB（✅≤32KB）
+
 > 🆕 **R2593 · 2026-11-17 05:2x — cc修复 COMPLETE: 30/89=33.7% (R1+R2 merged·0ConnRefused✅HARD VERIFIED) + 4报告全REGEN + 4生成器全更新**
 > - **cc修复判据MET**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=30/89=33.7%·vs旧0/89✅
 > - **round2 COMPLETE**: 3/3 parts done(rc=0·0 ConnRefused·0 429)·R1(82题)+R2(30题)merged=30P/42F/4INFRA/13NA/0RUNNING
