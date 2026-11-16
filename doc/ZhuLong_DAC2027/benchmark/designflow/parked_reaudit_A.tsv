@@ -115,7 +115,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793069063742_76i4q	wnyu	10.129.2.13	eda_other	doc-search Q&A, weak	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1793603696817_p16i1	shanliny	10.129.2.10	digital	Python script debug Q&A, weak	REVIVABLE_QA	yes	debug-Q&A	EXISTS
 1791968010913_mnn5q.messages.json	e04605	10.129.2.11	digital	r379 peek: U#0=onboarding Q&A(你好请问你可以做什么), verilog:828 from pasted content, no p	NO_REAL_TASK	no	不可造: onboarding Q&A (你好请问你可以做什么), no real task	n/a
-1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	verification	r379 peek: U#0=check DDR6 DSCQA WTM 3 patterns is4phase misuse(检查型 analysis), no	REVIVABLE_QA	yes	analysis-Q&A DDR6 DSCQA WTM 3-pattern is4phase misuse check (检查型), pending deepread	n/a
+1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	verification	r379 peek: U#0=check DDR6 DSCQA WTM 3 patterns is4phase misuse(检查型 analysis), no	REVIVABLE_QA	yes	DONE_r650	CASE-WtmIs4PhaseMisuseCheck-001 (r650 synthesized+landed, A.jsonl 352->353)	EXISTS
 1793003840562_382ay.messages.json	harrys	10.129.2.11	digital	r379 peek: U#0=workspace.cxmt.com link info-exploration Q&A(use skill), doc-sear	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792041543395_mss1b.messages.json	e0039102	10.129.2.11	digital	r379 peek: U#0=逐行带我读 vcim/verilogrun 文件(walk-through explanation Q&A), verilog:2	REVIVABLE_QA	yes	code-comprehension	EXISTS
 1793186643056_muf2k	thomas1w	10.129.40.109	verification	UVM hdl-path debug Q&A, env-dependent /rundata/ddgoa	REVIVABLE_QA	yes	debug-Q&A	EXISTS
