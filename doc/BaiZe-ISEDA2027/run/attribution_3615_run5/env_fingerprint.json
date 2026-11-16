@@ -87,5 +87,53 @@
     "did_not_change_dotenv": true,
     "did_not_restart_8090_mcp": true,
     "did_not_edit_live_running_chain_script": true
+  },
+  "wake599_reverification_2026-11-16_21:4x": {
+    "wake": "wake599",
+    "purpose": "Re-verify wake598 item4 server-side conclusion with airtight evidence; correct user premise '8650-8670 都可以用'.",
+    "cline_mcp_settings_json_verbatim": {
+      "pyAether_MCP_server_url": "http://10.251.36.15:8090/mcp",
+      "type": "streamableHttp",
+      "autoApprove": ["search_apis", "get_api_details", "search_apis_by_keyword", "run_code"],
+      "source": "cat ~/.cline/data/settings/cline_mcp_settings.json on 36.15",
+      "conclusion": "CONFIRMED hardcoded to 8090. run_cli.sh copies it verbatim into each worker (no env substitution). The cline agent's run_code ALWAYS targets the 8090 MCP. Client cannot redirect code-gen to a different MCP/port."
+    },
+    "main_py_sandbox_routing_evidence": {
+      "line36_comment": "启动时读取; 改 .env 须重启 MCP 生效(与工具可见性同语义)。",
+      "line44": "from server.sandbox_server.exec_code import SANDBOX_ENDPOINTS, SandboxEndpointPool",
+      "line49": "_SANDBOX_POOL = SandboxEndpointPool(SANDBOX_ENDPOINTS, cap=cap)  # built ONCE at MCP startup",
+      "line87_106": "_run_code_with_endpoint: each run_code call acquires an EXCLUSIVE endpoint from the fixed _SANDBOX_POOL, executes, returns it in finally.",
+      "conclusion": "The sandbox endpoint pool is fixed at 8090 MCP startup from SANDBOX_ENDPOINTS env. Every run_code uses that pool. A client-side SANDBOX_ENDPOINTS/PROXY_PORTS export cannot reroute code-gen. CONFIRMED item4 = server-side branch."
+    },
+    "sandbox_host_10_129_32_75_port_scan_8650_8670": {
+      "method": "via 36.15 tunnel: for p in 8650..8670; /dev/tcp/10.129.32.75/$p connect test",
+      "result": "8650 OPEN, 8651 OPEN, 8652 OPEN, 8653 OPEN, 8654 OPEN (our 8090 pool), 8655 CLOSED(free), 8656 OPEN, 8657 OPEN, 8658 OPEN, 8659 OPEN, 8660 OPEN, 8661 OPEN, 8662 OPEN, 8663 OPEN, 8664 OPEN, 8665 OPEN, 8666 OPEN, 8667 OPEN, 8668 OPEN, 8669 OPEN, 8670 OPEN",
+      "finding": "Only 8655 is free on the sandbox host. 8650-8654 = our pool; 8656-8670 = OTHER projects' sandbox daemons (per .env commented alt pool 8656/8658/8661/8662 -> workdirs t0002441_* not ours). User premise '8650-8670 都可以用' is FACTUALLY INCORRECT: there is NO free 4-port pool available for a separate post-train pool.",
+      "implication": "Even a server-side new-MCP-instance path (Path A) cannot provision a 4-port separate pool from the 8650-8670 range on 10.129.32.75 right now — would need free ports outside the range AND new dedicated workdirs with correct EDA env (lib.defs/TECHLIB)."
+    },
+    "shared_workdir_contention": {
+      "active_pool_workdirs": "8650:t0002997_1, 8651:t0002997_2, 8652:t0002997_3, 8654:t0002997_4",
+      "shared_with": "zhulong eval (PID1443679, -p 4) uses the SAME 8090 MCP -> SAME 4 workdirs",
+      "risk": "Concurrent run5 + zhulong on the shared pool = SandboxEndpointPool queues run_code (cap=4) BUT the 4 workdirs are SHARED -> persistent code/state contamination between the two evals (each task's files linger in the same workdir). This is WHY the chain gate_wait waits for zhulong to finish. The recover wrapper protects the JSONL (per-batch code/ dirs) but does NOT protect the shared sandbox workdir state. So shared-pool concurrency is UNSAFE.",
+      "confounding_variable": "run1-4 used workdirs t0002997_1..4. A separate pool would use DIFFERENT workdirs = different EDA env state (lib.defs/TECHLIB) = a NEW confounding variable vs run1-4 (item6 explicitly requires flagging this)."
+    },
+    "recommendation": {
+      "primary": "The serial global-wait chain (PID1192182, legacy GATE) is the CORRECT path for data integrity: run5 runs on the SAME workdirs t0002997_1..4 as run1-4 (consistent EDA env, no confounding variable) once zhulong releases the sandbox.",
+      "zhulong_eval_elapsed_at_21:4x": "PID1443679 etimes~10950s = 3.04h, UNDER the 6h escalation threshold (item3 of 18:3x order). No ops escalation needed yet; chain auto-starts run5 when zhulong finishes.",
+      "parallel_path_blocked": "Client-side override impossible (MCP hardcoded) AND no free 4-port pool on sandbox host (only 8655 free). A true separate-pool parallel run requires an OPS-level action: provision new dedicated sandbox workdirs (correct EDA env) + sandbox daemons on free ports (outside 8650-8670, since only 8655 free in range) + a new MCP instance + posttrain-specific cline_mcp_settings.json. AND it introduces a workdir confounding variable vs run1-4.",
+      "gate_mode_ports_status": "GATE_MODE=ports enhancement remains ready-to-apply (specified, not applied to live chain PID1192182 to avoid AGENTS.md byte-offset risk on shared NFS). It would NOT help alone: ports-mode needs a separate pool which doesn't exist client-side."
+    },
+    "discipline_check_wake599": {
+      "did_not_change_edafastmcp_source": true,
+      "did_not_change_dotenv": true,
+      "did_not_restart_8090_mcp": true,
+      "did_not_launch_new_mcp_instance": true,
+      "did_not_kill_other_lines": true,
+      "did_not_start_clean_5run_sh": true,
+      "did_not_modify_run1_to_run4_products": true,
+      "did_not_fake_n5": true,
+      "kept_serial_chain_PID1192182_running": true,
+      "read_only_scan_only": true
+    }
   }
 }
