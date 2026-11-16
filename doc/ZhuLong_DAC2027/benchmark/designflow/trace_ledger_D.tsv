@@ -1808,3 +1808,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793263785862_7yjuj	thomasz	hfeg0plg184	24	analog_context	case	EDA-Eval-DesignFlow-FineSimLicDcmatchDiagQA-001	2026-11-16 12:12	
 1782871301636_zy2q7	e0025730	hfeg0plg49	29	schematic_netlist	case	EDA-Eval-DesignFlow-LvlshftScenarioReportQA-001	2026-11-16 13:08	
 1791955225693_250y8	e0035227	hfeg0plg55	28	schematic_netlist	case	EDA-Eval-DesignFlow-ModelLibStructInventoryQA-001	2026-11-16 13:52	r764 case: model.lib aggregator structure inventory (fork/section/.lib include/.param parser); A档 trace-faithful prompt=verbatim msg50-54; 2 fork DBC/FS x 7 section; k=14 cond a-n; ref PASS + 5neg NEG_RC=0; hidden B = renamed DBC2/FS2 + B-only tt_hir_dbc2 section
+1794280510073_twt2n.messages.json	yuyingc	hfeg0plg93	20	schematic_netlist	claimed		2026-11-16 14:15	
