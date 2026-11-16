@@ -1130,3 +1130,4 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1789883369982_reaxa.messages.json	steveny	10.129.32.189	38	physical_verify	parked		2026-11-16 12:27	r654 peek-reject: pure API-search Q&A (search_apis 6/run_code 4), 0 writes, no artifact, U#4 user confused 你看不见, 0-gold (steveny Q&A cluster r538/r637 confirm)
 1789881024823_e5zat.messages.json	steveny	10.129.32.189	15	physical_verify	parked		2026-11-16 12:27	r654 peek-reject: env-recon U#0 介绍工作目录 -> U#2 nginx反向代理合肥部署 off-C infra/devops, 0 writes, list_allowed_files 18/read_files 7, 0-gold off-C
 1794463882487_g1olj.messages.json	e0047488	hfeg0pkn003	76	physical_verify	case	EDA-Eval-DesignFlow-PolygonOrientationVerify-001	2026-11-16 12:48	
+1793951935526_nckh5	laryu	hfeg0pkn003	66	physical_verify	case	EDA-Eval-DesignFlow-ViaEnclosureDistCheck-001	2026-11-16 13:07	
