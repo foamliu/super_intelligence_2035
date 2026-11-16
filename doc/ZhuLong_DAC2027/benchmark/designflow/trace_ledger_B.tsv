@@ -1039,7 +1039,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793843578065_vamug	rongtaoy	hfeg0pkn005	274	spice_sim	parked		2026-11-11 11:19	post-snap fresh: IO-extract Q&A turn1+script-modify goal; spice ratio 7%; /proj/ddgoa perm risk; borderline parked
 1794357676593_s5o5k	e0047527	hfeg0pkn005	153	eda_other	case	EDA-Eval-DesignFlow-BridgeCfgDiag-001	2026-11-15 12:06	post-snap fresh: bridge-connection diagnostics not produce
 1794359298326_ho1cr	e0039602	hfeg0pkn005	57	eda_other	parked		2026-11-11 11:19	post-snap fresh: LLM-review-code refactor not EDA
-1794362790365_5kysh	e0039602	hfeg0pkn005	57	eda_other	parked		2026-11-11 11:19	post-snap fresh: similar-model-match Q&A not produce
+1794362790365_5kysh	e0039602	hfeg0pkn005	57	eda_other	case	EDA-Eval-DesignFlow-SimlibMatchAnalyze-001	2026-11-16 19:54	r686 复活池变现 #65: 5kysh->SimlibMatchAnalyze-001 (Verilog stdcell simlib similar-model matching: family-name extraction w/ digit + exact/similar matching + tb_family-removable; 32 断言; cross-input guard hidden B and/nand/nor/oai; A-leak; 真跑+确定性+4 假提交); trace 子目录 1794362790365_5kysh/; ref 32/32 PASS + 4 negs FAIL
 1794362305034_y7tif	lein	hfeg0pkn005	49	eda_other	parked		2026-11-11 11:19	post-snap fresh: regression-diff Q&A not produce
 1794363314971_wjyi5	junweix	hfeg0pkn005	8	spice_sim	parked		2026-11-11 11:19	post-snap fresh: tran.sp analyze Q&A 8 tool_use too short
 1794363743004_v11bs	my7li	hfeg0pkn005	41	eda_other	parked		2026-11-11 11:19	post-snap fresh: status-check not produce
