@@ -1516,3 +1516,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794193758706_gwm47					case	EDA-Eval-DesignFlow-FineSimJobStatusDiag-001	2026-11-15 20:30	
 1793587429686_gxlr2	shunlinp	hfeg0pkn002	71	spice_sim	case	EDA-Eval-DesignFlow-SkillPkgCapabilityExplain-001	2026-11-16 04:23	real trace skill_pkg explain (1793864695856_gxlr2 in pool was stale/missing on host; actual surviving session 1793587429686_gxlr2 used)
 1793347339807_a3qxh	e0024852	hfeg0pkn002	23	spice_sim	case	EDA-Eval-DesignFlow-SolidoSimlogLocateGuide-001	2026-11-16 13:35	
+1792649502711_qrr6j	thqu	hfeahpc501	14	spice_sim	case	EDA-Eval-DesignFlow-IddStimHowtoGuide-001	2026-11-16 20:36	
