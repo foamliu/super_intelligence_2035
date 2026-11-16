@@ -125,7 +125,7 @@ ztoza					parked		2026-11-05 02:24	scout_1105: false-positive/non-spice/explain-
 1789350621467_fymcr	miccao	hfeg0plg37	407	characterization	parked		2026-11-05 10:29	autocell GDS gen from netlist, layout non-spice
 1786541065533_cgqd1	e0014566	hfeg0pkn001	772	characterization	parked		2026-11-05 10:29	rsCalc resistance/RTEXT-RNODE layout, non-spice
 1792297746172_kyref	vincelu	hfeg0plg55	476	characterization	parked		2026-11-05 10:29	std-cell library add-cells/inst automation + emy2netlist, non-sim
-1793017339067_jhdvn	t0002805	hfeg0pgn145	492	characterization	parked		2026-11-05 10:29	circuit analysis (schematic+netlist explanation), no sim
+1793017339067_jhdvn	t0002805	hfeg0pgn145	492	characterization	case	EDA-Eval-DesignFlow-MBistTopAnalyze-001	2026-11-16 11:31	r671 复活池变现 #51 jhdvn->MBistTopAnalyze-001 (MBIST 顶层网表结构化分析报告首例 + 5 子模块角色分类 + 6/4/5 cross-input guard + 22 断言 + A-leak + 真跑 + 确定性 + 4 假提交); trace 298msgs/2.7MB; A=mBistTop 真实命名 verbatim, B=MbistTopInt 5/3/4 同构
 1792563683776_pwep8	jianhaiq	hfeg0pkn004	517	characterization	parked		2026-11-05 10:29	PG_check.py CDL/GDS power-ground net check (netlist-DB), non-spice-sim
 1793078405436_t0aom	easont	hfhds207	650	spice_sim	case	EDA-Eval-DesignFlow-PostsimToggleDiag-001	2026-11-05 11:21	FineSim post-sim fsdb+netlist analysis + netlist optimization/iteration + diff report; deepread shard B 2026-11-05
 1790576052982_qc0nn	chengk	hfeg0pgn022	26	spice_sim	case	EDA-Eval-DesignFlow-SpiceCfgDirMerge-001	2026-11-05 14:42	park-reframe: spice config dir tree merge tool (shdc+apps->merged) with specific-file diff report + iddsim hspice.sim.template keep-apps policy + non-specific backup + temp-file skip + whitespace-normalized diff; B-档 synthesized, L1, k=15
