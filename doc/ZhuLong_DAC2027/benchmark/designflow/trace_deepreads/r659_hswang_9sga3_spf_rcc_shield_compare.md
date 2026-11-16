@@ -52,7 +52,7 @@
 - **gold 有牙** ✓ (analyze_refi.py 产出结构化数值，可断言 count/sum/balance/top-aggressor)
 - **reframe 子型** = `spf-rcc-net-cap-structured-extract`（承 r630 LVS-report-extract / r631 ERC-deck-extract 模式，distinct vs r652=pex-batch-path-resolve / r657=3dlvs-gui-config）
 
-## 5. 资产可达性（r659 实测）
+## 5. 资产可达性（r659 实测） — 见 r674 落地
 
 - **live RCC 文件** `/proj/drcpa/.../D_WrC10.spf_RCC`：ssh 10.129.8.226 以 e0031982 身份 → **Permission denied**（hswang 私有项目目录）。
 - **trace 内含完整数据** ✓：assistant 的 editor tool_use（MSG#61–87）逐字保存了 refi_p1.txt..refi_p13.txt 的全部 C/Cg 行 + analyze_refi.py 源码（MSG#89 new_text）。**下轮从 trace tool_use input.new_text 提取**即可获得 grounded asset，无需 live 文件访问。
