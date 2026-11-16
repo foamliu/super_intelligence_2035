@@ -1237,7 +1237,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1788946494214_rp39a	rongjiez	hfeg0pkn005	49	spice_sim	parked		2026-11-11 20:22	reject wrong-domain Qt/C++ mainwindow probe GUI
 1793669959152_3123n	lvyy	10.129.2.13	576	spice_sim	case	EDA-Eval-DesignFlow-CmlPvtAcReport-001	2026-11-11 21:38	
 1792732271802_olayh	junweix	hfeg0pkn002	21	spice_sim	case	EDA-Eval-DesignFlow-VtscMcDeckExplain-001	2026-11-16 14:12	r676 复活池变现 #56: VtscMcDeckExplain-001 (spice_sim L1 explain/Q&A, HSPICE MC deck 结构化讲解报告, 25 断言, cross-input guard, A-leak, 4 negs FAIL)
-1792543801789_ftbpz	ruminji	hfeg0pkn004	14	spice_sim	parked		2026-11-11 21:28	consultation: 0 tool_calls, Q on LDE effect, asst tangents to DRAM half-density, no produce-task (1111 21:2x peek)
+1792543801789_ftbpz	ruminji	hfeg0pkn004	14	spice_sim	case	EDA-Eval-DesignFlow-HspiceAcMergeDiag-001	2026-11-17 05:16	r704 reaudit revival: ftbpz HSpice AC merge diag Q&A, trace 15msgs rich content, building case
 1793759635878_p53dt	rongtaoy	hfeg0pnd002	419	spice_sim	case	EDA-Eval-DesignFlow-NetlistWLReduce-001	2026-11-11 22:40	
 1792040981126_o5xjq					parked		2026-11-11 22:36	scout_1111: advisory 'which CAD tools for analog opt' — not design_flow
 1788764026073_8hdj3					parked		2026-11-11 22:36	scout_1111: aether/skills GUI connection session — not spice
@@ -1328,7 +1328,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793176752981_ikfrw.messages.json	joeyl	hfeg0plg49	34	spice_sim	case	EDA-Eval-DesignFlow-C2cRfbCmStab-001	2026-11-12 07:55	spice_sim/L2/B-synthesized/k=14/c2c RFB cm stabilization/.75 selftest 9/9 PASS
 1791784036591_y9y0f.messages.json	joeyl	hfeg0plg53	34	spice_sim	case	EDA-Eval-DesignFlow-JitterTieRerun-001	2026-11-12 07:45	
 1790731913166_ki1x0.messages.json	chengk	hfeg0plg102	27	spice_sim	parked		2026-11-12 08:18	code-reading+flowchart task (IddFlowCode/test), no SPICE sim, L1 docs, not design-flow sim deliverable
-1792204849864_ly0mw.messages.json	e0039516	hfeg0plg76	19	spice_sim	parked		2026-11-12 08:19	ambiguous 'DDJOB Auto 315B' consultation, RAG search+ask_question, no SPICE sim, not design-flow deliverable
+1792204849864_ly0mw.messages.json	e0039516	hfeg0plg76	19	spice_sim	parked		2026-11-17 05:05	r704 re-peek: trace 19msgs/531KB but agent found 0 real content (search_codebase only self-refs, RAG empty, cimi-kb API key unconfigured, no final answer); too thin to ground >=8 assertion check with cross-input guard
 1782803097375_exstf.messages.json	e0025730	hfeg0plg49	25	spice_sim	parked		2026-11-12 08:19	lvlshft skill sizing/code-reading on private devops tree, no real HSPICE run (only python soa_selector), not portable design-flow sim
 1792649502711_qrr6j.messages.json	thqu	hfeahpc503	14	spice_sim	parked		2026-11-12 08:21	IDD仿真激励怎么写 consultation/how-to, KB search+read scripts, no sim run, not design-flow deliverable
 1788751406721_c385l.messages.json	sophiaw	hfeg0plg09	36	spice_sim	parked		2026-11-12 08:21	AnasimPro benchmark pyAether sim-verification scenario (/rundata/ieda_agent_test), not real spice_sim, GUI automation
@@ -1519,3 +1519,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1792649502711_qrr6j	thqu	hfeahpc501	14	spice_sim	case	EDA-Eval-DesignFlow-IddStimHowtoGuide-001	2026-11-16 20:36	
 1794280510073_twt2n.messages.json					case	EDA-Eval-DesignFlow-DumWLDeckExplainQA-001	2026-11-16 21:23	r688 复活池变现 #67: deck-grounded explain Q&A, deck_analyze.py 解析 SPICE deck→结构化 JSON, 63 条断言 + cross-input guard (HSPICE FF/125C vs FineSim SS/-40C) + A-leak guard
 1791875313313_ztoza	t0002965	hfhds201	142	spice_sim	case	EDA-Eval-DesignFlow-SimSetupExplainQA-001	2026-11-17 01:22	
+1792204849864_ly0mw	e0039516	hfeg0plg76	19	spice_sim	claimed		2026-11-17 05:02	
