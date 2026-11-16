@@ -2,31 +2,19 @@
 
 WAITING: 1
 
-> 🆕 **R2585 · 2026-11-17 00:03 — cc round1 COMPLETE 89/89(24P/53F/12NA·0ConnRefused✅HARD VERIFIED·write-compressor PASSED 22:41) + round2 LAUNCHED 30 tasks(PID500396·adaptive auto n=5·overlay IN USE✅) + adaptive off5·0累计429✅ + reports porcelain=0✅**
-> - **自检**: load29.52/224✅(pretrain dominant)·mem834GB/2015GB avail1031GB✅·max harness eval proc 3.3%CPU✅·reports/ porcelain=0✅
-> - **cc round1 COMPLETE**: 89 unique tasks·**24 PASS/53 FAIL/12 NA**·0 ConnRefused across all 89 result.json·results in /tmp/tb21_glm53_jobs/claude-code_rerun_20261115_0348/(83)+earlier batches
-> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=24P/89done·vs旧0/89=100%infra✅
-> - **PASS 24**(↑6 since R2584): break-filter-js-from-html,cancel-async-tasks,constraints-scheduling,count-dataset-tokens,custom-memory-heap-crash,distribution-search,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate,vulnerable-secret,write-compressor
-> - **53 FAIL**: 22含502 infra(gateway)·31真能力失败(reward=0·模型跑了但答错)
-> - **12 NA**: 全timeout→round2 rerun targets
-> - **round2 LAUNCHED**: PID500396·`rerun_tb21_cline_quota.py --harness claude-code --task-list manifests/tb21_cc_round2_rerun_20261116.txt --launch --timeout 3600 --n-concurrent auto --chunk-size 12 --agent-timeout-multiplier 4.0`·jobs-dir=/tmp/tb21_glm53_jobs/claude-code_rerun_20261117_0003·30 tasks(22×502+12×timeout-重叠)·5 running(circuit-fibsqrt/cobol-modernization/crack-7z-hash/extract-elf/dna-insert)·log=/tmp/tb21_cc_round2_rerun.log
-> - **adaptive**: off mode current=5(quiet=933m·clean_ramp)·0累计429✅·status命令正常✅
-> - **下一步**: ①round2 30 tasks完成(~数h)→merge best result per task(round1+round2取PASS优先)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实24+数字·502/timeout单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.0KB（✅≤32KB）
+> 🆕 **R2586 · 2026-11-17 00:39 — cc round1 CORRECTED 26P/53F/10NA(merged 5 batches·0ConnRefused✅HARD VERIFIED) + round2 IN PROGRESS 5/30(crack-7z-hash NEW PASS=infra confirmed·0ConnRefused·0 429) + adaptive off5·0累计429✅ + reports porcelain=0✅**
+> - **自检**: load34.08/224✅(pretrain dominant)·mem847GB/2015GB avail1018GB✅·max harness eval proc<1%CPU✅·reports/ porcelain=0✅
+> - **cc round1 CORRECTED**: merged 5 batches(0950:1/0951:24/1251:18/0348:83/1529:0)·89 unique tasks·**26 PASS/53 FAIL/10 NA**·0 ConnRefused across all result.json✅HARD VERIFIED·FAIL=38 ability+15 with-502-infra·NA=9 timeout+1 with-502
+> - **CORRECTION vs R2585**: R2585 said 24P/53F/12NA but missed dna-insert+feal-differential-cryptanalysis PASS from batch 1251→correct=26P·also 2 batch-dir false positives(2026-11-14/2026-11-15)removed from NA(12→10)
+> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=26P/89done·vs旧0/89=100%infra✅
+> - **PASS 26**: break-filter-js-from-html,cancel-async-tasks,constraints-scheduling,count-dataset-tokens,custom-memory-heap-crash,distribution-search,dna-assembly,dna-insert,feal-differential-cryptanalysis,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate,vulnerable-secret,write-compressor
+> - **round2 IN PROGRESS**: PID500396·5/30 done·**crack-7z-hash NEW PASS**(was FAIL+502 in R1→now PASS=infra confirmed✅)·cobol-modernization/extract-elf/extract-moves-from-video/dna-insert=FAIL(no 502=ability confirmed)·25 remaining·ETA~Nov17 03:00·log=/tmp/tb21_cc_round2_rerun.log
+> - **adaptive**: off mode current=5(quiet=35m·clean_ramp)·0累计429✅·status命令正常✅
+> - **下一步**: ①round2 30 tasks完成(~2-3h)→merge best per task(R1+R2取PASS优先)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实26+数字·502/timeout单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈31.0KB（✅≤32KB）
 >
+> 📦 R2585 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 COMPLETE(24P→corrected 26P in R2586)+round2 LAUNCHED+adaptive off5+0 429✅。需要时再读。
 > 📦 R2584 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 81/82(18P/51F/12NA·0ConnRefused✅)+adaptive off4→5·0 429✅+round2 manifest ready+reports porcelain=0✅。需要时再读。
-> - **自检**: load30.14/224 ✅(pretrain dominant·无harness runaway)·mem 829GB/2015GB avail 1036GB ✅·max harness eval proc 0.0%CPU(host·30%cline hub daemon=infra非eval)✅·reports/ porcelain=0✅
-> - **git**: main...origin/main in sync(ZhuLong unstaged deletions=别线·不动)·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~40.8h·n=1·overlay IN USE✅)·**78 unique done**(79 result.json·1 duplicate)·breakdown **17P(reward1)/49F(reward0)/12NA(rewardNone)**·**1 running**(video-processing·setup phase)+**3 remaining**(queued: vulnerable-secret/winning-avg-corewars/write-compressor)·ETA~Nov17 00:00–02:00
-> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 79 result.json·cc修复(overlay network_mode:host·R2463)confirmed IN USE·17 PASS=真能力·vs旧0/89=100%infra
-> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 17P/78done(82total)·vs旧0/89
-> - **PASS 17**(unchanged since R2576): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate
-> - **502 infra**: 18 tasks with 502 Bad Gateway in exception/stdout→round2 rerun targets
-> - **gateway**: curl 127.0.0.1:9092/v1/models=200✅(healthy)
-> - **adaptive**: off mode current=4→5 ramp(quiet=724m·clean_ramp)·0 cumulative 429✅·state clean
-> - **round2 manifest**: `terminalbench/manifests/tb21_cc_round2_rerun_20261116.txt` 26 tasks(15×502+11×timeout)·gitignored✅·ready for round1 completion
-> - **下一步**: ①cc 82完成(~Nov17 00:00)→round2 rerun 26题(adaptive auto·同3600s口径·jobs-dir=/tmp)→merge best result per task→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.2KB（✅≤32KB）
 >
 > 📦 R2581 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 77/82(17P/48F/12NA·0ConnRefused✅HARD VERIFIED)+adaptive off4→5·0 429✅+round2 manifest(26题)ready+reports porcelain=0✅。需要时再读。
 > 📦 R2580 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 76/82(17P/48F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive off4→5·0 429✅+round2 manifest(26题)ready+reports porcelain=0✅。需要时再读。
