@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🚀 wake#1478 2026-11-17 02:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin**：host=.17(s0pgpuap12)。git：fetch→behind1(pretrain patrol wake#2346·0触视觉)→pull --rebase --autostash→ff 同步 HEAD=`ceb765a4d`=origin/main(posttrain 5run wake611 并发提交·0触视觉)·工作树仅 posttrain 在途(`?? baize_posttrain_clean_5run.sh`)·不触视觉·不 add 不 stash。无新运维令(**TASK md5=3caf5e1e** 不变·同 wake#1462 归档后态)·inbox RUN_ID 276 TARGET=12 属 data 线非 vision。WAVEVIEW_COLLAB tail 止于 vision wake#1421 节·无新 designflow r629 task2·#3 报告仍待 r629(glm-5.2)。**live 复验(本轮实跑)**：watchdog `vision/vqa_tool/vqa_ssh_bridge_watchdog.sh` pid 3961251 etimes≈150903s(~41.9h)在线(ppid=3961245)·`ss -ltn` 三端点 LISTEN(:30001/:30002/:30003)·`curl /health`: :30001 ok Qwen3.5-2B load_s=2.6·:30003 ok Qwen3.5-2B+rft2_adapter_seed11 load_s=46.0·:30002 GET /mcp 返 jsonrpc server-error(需 SSE)=MCP 服务存活·watchdog 日志 `/tmp/vqa_ssh_bridge_watchdog.log` `grep -c exited`=1(08:31:05 rc=0→08:31:11 [launch] 后无新 [exited])=隧道稳定无新断线~41.9h。交付物复验 in 位：`vision/waveview_cases_mined.jsonl`(273 行·303454B)·三报告(mining 14547/cot 23410/agent 31875B·0外链0script)·`vision/real_waveview_index.json`(10·11489B)·`vision_ssh_bridge_proof.txt` 7115B·`6_domain_rl.tex`(doc/BaiZe-ISEDA2027/BaiZe-NeurIPS2027/NeurIPS2027/)`grep -c TBD`=0。research 日报 2026-11-17 vision 建议=统一动作空间可复用性验证(2611.18397·2D GUI+3D world 键鼠动作同接口·Qwen3-VL 2B-32B·encoder 线)输入参考非新指令·需 GPU·待 pretrain ckpt 后另议·本轮无新纳入·来自 research 日报 2026-11-17。体积：fold wake#1477→指针(原文已入 daily-memories-vision/2026-11-17.md) 后 MEMORY<32KB·TASK=18658B<32KB。git：add MEMORY+daily→commit→push·仅 add 本线2文件(不 add 不 stash posttrain 在途)。**所有 🔴 用户令已交付·验收四问全可答**(①三端点 /health+/mcp ok ②watchdog ~41.9h 自愈在案·无断线 ③真题 10 道·check.py 原样未改 ④V0=0/V1=0/V2=1 α1 翻转·agent G0=0/G1=5/G2=4·n=10 仅参考)·**WAITING: 0**。
+> 🚀 wake#1479 2026-11-17 02:4x 例行巡检 patrol·全交付态·零新增·非 idle-spin**：host=.17(s0pgpuap12)。git：fetch→behind2(pretrain #2349+harness R2589·0触视觉)→pull --rebase→ff 同步 HEAD=`a175ef155`→再 behind(posttrain 5run wake612+pretrain #2350 并发 push)→pull --rebase 同步 HEAD=`fb7c633df`=origin/main(0触视觉)·工作树仅 posttrain 在途(`?? baize_posttrain_clean_5run.sh`)·不触视觉·不 add 不 stash。无新运维令(**TASK md5=3caf5e1e** 不变·同 wake#1462 归档后态)·inbox RUN_ID 276 TARGET=12 属 data 线非 vision。WAVEVIEW_COLLAB tail 止于 vision wake#1421 节(.15 侧文件·本机不在 checkout)·无新 designflow r629 task2·#3 报告仍待 r629(glm-5.2)。**live 复验(本轮实跑)**：watchdog `vision/vqa_tool/vqa_ssh_bridge_watchdog.sh` pid 3961251 etimes≈151749s(~42.1h)在线(ppid=3961245)·`ss -ltn` 三端点 LISTEN(:30001/:30002/:30003)·`curl /health`: :30001 ok Qwen3.5-2B load_s=2.6·:30003 ok Qwen3.5-2B+rft2_adapter_seed11 load_s=46.0·:30002 GET /mcp 返 jsonrpc server-error(需 SSE)=MCP 服务存活·watchdog 日志 `/tmp/vqa_ssh_bridge_watchdog.log` `grep -c exited`=1(08:31:05 rc=0→08:31:11 [launch] 后无新 [exited])=隧道稳定无新断线~42.1h。交付物复验 in 位：`vision/waveview_cases_mined.jsonl`(273 行)·三报告(mining 14547/cot 23410/agent 31875B·0外链0script)·`vision/real_waveview_index.json`(10·11489B)·`vision_ssh_bridge_proof.txt` 7115B·`6_domain_rl.tex` `grep -c TBD`=0。research 日报 2026-11-17 vision 建议=统一动作空间可复用性验证(2611.18397·encoder 线·需 GPU)输入参考非新指令·本轮无新纳入·来自 research 日报 2026-11-17。体积：fold wake#1478→指针+trim wake#122x→daily(原文已入 daily-memories-vision) 后 MEMORY<32KB·TASK=18658B<32KB。git：add MEMORY+daily→commit→push·仅 add 本线2文件(不 add 不 stash posttrain 在途)。**所有 🔴 用户令已交付·验收四问全可答**(①三端点 /health+/mcp ok ②watchdog ~42.1h 自愈在案·无断线 ③真题 10 道·check.py 原样未改 ④V0=0/V1=0/V2=1 α1 翻转·agent G0=0/G1=5/G2=4·n=10 仅参考)·**WAITING: 0**。
+
+> 📦 wake#1478 2026-11-17 02:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1477 2026-11-17 02:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
@@ -147,9 +149,7 @@ WAITING: 0
 > 📦 **wake#1230 · 2026-11-14 17:2x** 用户令 17:2x v2 成果报告 ✅ 已交付（`reports/report_vision_cot_vqa_result_zh.html`·60→90 p=0.0156）·原文已归档 → daily-memories-vision/2026-11-14.md。需要时再读。
 
 > 📦 **wake#1229 · 2026-11-14 16:5x** 用户令 09:1x #4 round-2 强化 ✅ 显著正结果（v2 CoT 推理链 SFT+RFT·60→90·McNemar p=0.0156·预注册判据全满足）·原文已归档 → daily-memories-vision/2026-11-14.md。需要时再读。
-> 📦 wake#1228 2026-11-14 16:0x #3 后半 round-2 探针+6 题合并报告（6 题合并 14/46=30.4% vs 基线 0/46·稳定 gap 模式·preliminary 非 #3 官方对照）·原文已归档 → daily-memories-vision/2026-11-14.md。需要时再读。
 
-> 📦 wake#1220~#1225（2026-11-14 13:5x~14:34，5 轮）例行巡检 patrol one-liners 已归档原文 → daily-memories-vision/2026-11-14.md（designflow β8/β10 渐次交付·restored_count 3→5·#3 后半阻塞 D 推进中）。需要时再读。
 
 > 📦 **wake #1227 · 2026-11-14 15:1x** #3 后半可并行半 round-1 探针(β9/α4/β10 重生成忠实副本·6/22 量 27.3% vs 基线 0/22·诚实弱增量+α判断修正+缺口指向#4)·报告+脚本+MEMORY+daily·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
@@ -158,8 +158,6 @@ WAITING: 0
 > 📦 **wake #1223 · 2026-11-14 14:18** 例行巡检·全交付态·designflow 新交付 β10(r654·restored_count 4→5)·#3 后半阻塞 D 推进中·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 📦 **wake #1212 · 2026-11-14 12:4x** 任务书瘦身归档(TASK 39389→27127B·两 11-07 已交付用户令 verbatim 搬至 ARCHIVE_OPERATOR_VISION.md+留指针·4 个 11-14 活跃令原样保留)+例行巡检·designflow 无新交付(仍 D 恢复 3 题)·已fold(详情 daily-memories-vision/2026-11-14.md)。
-
-
 
 
 ## 状态头
