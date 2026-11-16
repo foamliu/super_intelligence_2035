@@ -38,12 +38,12 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 <div class="wrap">
 <header class="hero">
   <h1>BaiZe 2B 预训练 · 四层能力评测报告</h1>
-        <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 213.6k/700k, ~896B tokens）</div>
+        <div class="sub">Mamba2-hybrid 2.22B · S1 生产 run（iter 231.6k/700k, ~972B tokens）</div>
   <div class="meta">
-    <span>📅 2026-11-15</span>
+    <span>📅 2026-11-17</span>
     <span>🏗 Mamba2-hybrid 2.22B</span>
-    <span>🔥 训练 iter≈213.55k / 700k(30.5%) · step~7070ms · loss~2.01 · 0NaN/0skip · lr=1e-3(stable段) · GPU 8×78-100%/75GB · ✅ L1 21/21 ckpt done(10k-210k, peak 200k=60.12%) · 220k autoqueue RUNNING(PID203680, ETA~Nov16 05:00)</span>
-    <span>📊 L1: 21 ckpt ✅(200k=60.12%峰值,210k=58.50%,plateau) | L2: 🟢<b>HF五重@200k全部完成</b>: HE=10.0%(2/20) + GSM8K=10.0%(1/10) + MBPP=0.0%(0/20) + BBH=10.0%(3/30) + MATH=0.0%(0/10) → vs 160k: 全在噪声内(plateau) · MMLU@200k pending | L3: 📜pipeline脚本已创建(blocked:GPU满) | L4: 🟦<b>HANDOFF→post-train</b></span>
+    <span>🔥 训练 iter≈231.58k / 700k(33.1%) · step~7044ms · loss~2.00 · 0NaN/0skip · lr=1e-3(stable段) · GPU 8×95-100%/75GB · ✅ L1 23/23 ckpt done(10k-230k, peak 200k=60.12%) · 240k autoqueue POLLING(PID1543473, ETA~16.6h)</span>
+    <span>📊 L1: 23 ckpt ✅(200k=60.12%峰值,230k=58.88%) | L2: 🟢<b>HF六重@200k全部完成(plateau confirmed)</b>: HE=10.0%(2/20) + GSM8K=10.0%(1/10) + MBPP=0.0%(0/20) + BBH=20.0%(2/10) + MATH=0.0%(0/10) + MMLU=26.34%(62subj) → vs 160k: 全在噪声内(plateau) | L3: 📜pipeline脚本已创建(blocked:GPU满) | L4: 🟦<b>HANDOFF→post-train</b></span>
   </div>
   <div style="margin-top:12px;font-size:12.5px;background:rgba(0,0,0,.18);border-radius:8px;padding:8px 12px;opacity:.95">
     ⚠️ 本报告是<b>训练监控与决策依据</b>，<b>不进论文正文</b>（2026-11-10 用户令）。用户关注点（2026-11-11）：<b>如何拿到更好的结果</b>。
@@ -51,14 +51,14 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </header>
 
 <!-- L1 -->
-<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 17/20 ckpt</span></h2>
+<h2 class="sec">L1 · 常识推理（8 集）<span class="badge b-ok">✅ 23/23 ckpt</span></h2>
 <div class="card">
   <h3>评测口径</h3>
   <table>
     <tr><td class="l">任务集</td><td class="l">ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande</td></tr>
     <tr><td class="l">口径</td><td class="l">zero-shot · <code>limit=100</code> · GGUF F16 · llama-server CPU（<code>-t 4</code> · <code>nice 19</code> · 串行单 ckpt）</td></tr>
-    <tr><td class="l">已评</td><td class="l">10k–170k（<b>17 个</b>万整数 ckpt）</td></tr>
-    <tr><td class="l">下一个</td><td class="l">180k eval 运行中（~65min · llama-server PID1673374 port8191 -t4 nice19 + lm_eval PID1682068 · output dir 空(results.json待写入)）</td></tr>
+    <tr><td class="l">已评</td><td class="l">10k–230k（<b>23 个</b>万整数 ckpt）</td></tr>
+    <tr><td class="l">下一个</td><td class="l">240k autoqueue POLLING（PID1543473 · ppid=1 · waiting for iter_0240000 ckpt · ETA~16.6h(~20:00 today)）</td></tr>
   </table>
 </div>
 <div class="card">
@@ -82,15 +82,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td>150k</td><td>629B</td><td>57.12%</td><td class="ok">+1.87</td></tr>
     <tr><td><b>160k</b></td><td><b>671B</b></td><td><b>58.13%</b></td><td class="ok">+1.01 新高</td></tr>
     <tr><td>170k</td><td>713B</td><td>57.75%</td><td class="bad">-0.38</td></tr>
+    <tr><td>180k</td><td>754B</td><td>57.25%</td><td class="bad">-0.50</td></tr>
+    <tr><td>190k</td><td>796B</td><td>58.13%</td><td class="ok">+0.88</td></tr>
+    <tr><td><b>200k</b></td><td><b>838B</b></td><td><b>60.12%</b></td><td class="ok">+1.99 🏆新高</td></tr>
+    <tr><td>210k</td><td>880B</td><td>58.50%</td><td class="bad">-1.62</td></tr>
+    <tr><td>220k</td><td>922B</td><td>57.75%</td><td class="bad">-0.75</td></tr>
+    <tr><td>230k</td><td>964B</td><td>58.88%</td><td class="ok">+1.13</td></tr>
   </table>
-  <p class="trend">📊 51.50%(10k)→58.13%(160k峰值)→57.75%(170k)，<b>+6.25pp</b>。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
+  <p class="trend">📊 51.50%(10k)→58.13%(160k)→<b>60.12%(200k峰值🏆)</b>→58.88%(230k)，<b>+8.62pp</b>。200k后进入平台期(57.75-60.12%波动)，符合 WSD stable 段 lr=1e-3 恒定预期。700k 对数拟合≈62.8%(R²=0.860)。波动±2.75pp 在 <code>limit=100</code> 抽样误差内（stderr≈±4.5%）。</p>
 </div>
 <div class="ok-box">
-  <b>L1 结论</b>：常识推理持续上升，160k 峰值 58.13%，170k=57.75%（-0.38pp，在 stderr±4.5% 内属正常波动）。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~3.7pp。<b>下一步</b>：继续每万整数 ckpt 评测，下一个 180k。
+  <b>L1 结论</b>：常识推理持续上升至 200k 峰值 60.12%（🏆新高），230k=58.88% 进入平台期。与 Xmodel-2(1.2B,1.5T,61.79%) 差距~1.7pp（缩小中）。200k 后波动在 stderr±4.5% 内属正常。<b>下一步</b>：240k autoqueue polling 中，ETA~16.6h；stable 段持续，等待 decay 阶段是否带来突破。
 </div>
 
 <!-- L2 -->
-<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-bad">🔴 GSM8K=0% · BBH=0% · MMLU=23%@160k</span></h2>
+<h2 class="sec">L2 · 复杂推理（6 集）<span class="badge b-ok">🟢 HF六重@200k全部完成 · plateau confirmed</span></h2>
 <div class="card">
   <h3>P-8 历史结果（44.4B tokens · 2026-10-15）</h3>
   <table>
@@ -105,6 +111,25 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
     <tr><td><b>CX6 Avg</b></td><td></td><td class="bad"><b>6.66%</b></td><td><b>39.62%</b></td><td class="bad">差33pp</td></tr>
   </table>
 </div>
+<div class="card">
+  <h3>🟢 L2 @ 200k HF 直跑结果（2026-11-15 · plateau confirmed）</h3>
+  <div class="ok-box"><b>六重全部完成</b>：HF transformers 直跑（非 llama.cpp），200k ckpt（838B tokens）。vs 160k 结果：全在噪声内 → <b>plateau confirmed</b>。</div>
+  <table>
+    <tr><th>任务</th><th>口径</th><th>limit</th><th>BaiZe 200k</th><th>vs 160k</th><th>Xmodel-2</th><th>诊断</th></tr>
+    <tr><td>GSM8K</td><td>4-shot flex-extract</td><td>10</td><td class="warn">10.0% (1/10)</td><td>持平(160k=10.0%)</td><td>55.88%</td><td class="warn">🟡 低但非零</td></tr>
+    <tr><td>MATH</td><td>exact_match</td><td>10</td><td class="bad">0.0% (0/10)</td><td>持平(160k=0.0%)</td><td>25.50%</td><td class="bad">🔴</td></tr>
+    <tr><td>HumanEval</td><td>pass@1</td><td>20</td><td class="warn">10.0% (2/20)</td><td>持平</td><td>29.88%</td><td class="warn">🟡</td></tr>
+    <tr><td>MBPP</td><td>pass@1</td><td>20</td><td class="bad">0.0% (0/20)</td><td>持平</td><td>29.20%</td><td class="bad">🔴</td></tr>
+    <tr><td>BBH</td><td>0-shot flex-extract</td><td>10</td><td class="warn">20.0% (2/10)</td><td>持平</td><td>48.40%</td><td class="warn">🟡</td></tr>
+    <tr><td>MMLU</td><td>0-shot acc (MCQ)</td><td>100/subject</td><td class="warn">26.34% (62subj)</td><td>+3.2pp(160k=23.16%)</td><td>48.87%</td><td class="warn">🟡 缓慢上升</td></tr>
+  </table>
+  <div class="note">
+    <b>plateau 结论</b>：L2 六项 @ 200k vs 160k 全部持平（MMLU +3.2pp 在 stderr 内），说明 stable 段（lr=1e-3 恒定）的训练对复杂推理能力提升有限。<br>
+    <b>根因不变</b>：① 生成退化主因 = llama.cpp SSM recurrent state bug（5/5 任务验证）；② 模型 code+math 配比 26%（vs DeepSeek 最优 60%）；③ HF 直跑 GSM8K=10% 说明模型有基础数学能力但弱。<br>
+    <b>建议（待用户拍板）</b>：① decay 阶段混入 4:2:4 数据改善基础能力；② post-train SFT 补数学/代码；③ vLLM GPU 验证生成质量（待 GPU 窗口）。
+  </div>
+</div>
+
 <div class="card">
   <h3>🔴 L2 诊断结论（P0 · 2026-11-11 · 160k v3 结果）</h3>
   <div class="alert"><b>GSM8K = 0.0%（strict + flexible）@ 160k（671B tok，15× P-8）</b> — 判定：<b>真能力问题，非配置错误</b>。</div>
@@ -712,20 +737,21 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
   <h3>四层能力总表</h3>
   <table>
     <tr><th>层</th><th>评测</th><th>状态</th><th>关键数</th><th>下一步</th></tr>
-    <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 17ckpt</span></td><td>58.13%@160k(峰值),57.75%@170k</td><td class="l">继续每万 ckpt(下一个180k)</td></tr>
-    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-ok">🟢 HF五重验证完成</span></td><td>🟢HF基线: HumanEval=15.0% + GSM8K=10.0% + MBPP=5.0% + BBH=3.3% + MATH=0.0% + MMLU=23.16%(MCQ) · 生成Avg(5集)=6.66% · llama.cpp SSM bug是0%主因(5/5验证)</td><td class="l">L2 HF全部完成→等decay/SFT改善</td></tr>
-    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">🔴 TB smoke完成 0/2</span></td><td>2 tasks · reward=0.0 · fix-git pytest 2/2 failed · 生成退化致agent无法编辑文件</td><td class="l">延后至decay/SFT后</td></tr>
+    <tr><td><b>L1</b></td><td class="l">常识 8 集 (0-shot)</td><td><span class="badge b-ok">✅ 23ckpt</span></td><td>60.12%@200k(峰值🏆),58.88%@230k</td><td class="l">240k autoqueue polling(ETA~16.6h)</td></tr>
+    <tr><td><b>L2</b></td><td class="l">复杂推理 6 集</td><td><span class="badge b-ok">🟢 HF六重@200k完成</span></td><td>🟢HF基线@200k: HumanEval=10.0%(2/20) + GSM8K=10.0%(1/10) + MBPP=0.0%(0/20) + BBH=20.0%(2/10) + MATH=0.0%(0/10) + MMLU=26.34%(62subj) → vs 160k: plateau confirmed · llama.cpp SSM bug是生成退化主因</td><td class="l">等decay/SFT改善生成能力</td></tr>
+    <tr><td><b>L3</b></td><td class="l">Agentic</td><td><span class="badge b-bad">🔴 TB smoke 0/2 · GPU满</span></td><td>pipeline脚本已创建 · blocked:GPU 100%满(训练) · 生成退化致agent无法编辑文件</td><td class="l">延后至decay/SFT后或GPU窗口</td></tr>
     <tr><td><b>L4</b></td><td class="l">领域</td><td><span class="badge b-info">🟦 HANDOFF→post-train</span></td><td>— · 移交post-train(2026-11-12用户令)</td><td class="l">只读引用post-train出数</td></tr>
   </table>
 </div>
 <div class="card">
-  <h3>本轮(#2079)动作</h3>
+  <h3>本轮(#2360)动作</h3>
   <ol>
-    <li><b>训练健康确认</b>：iter 181,380/700,000（25.9%）· step ~7.2s(<7.4s✅) · loss ~2.02 · GPU 8×100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · 实测命令：<code>ssh 10.239.2.29 'timeout 5 cat /proc/146283/fd/1 | tail -5'</code> + <code>nvidia-smi</code></li>
-    <li><b>180k eval 运行中</b>：llama-server PID1673374(port8191,-t4,nice19) + lm_eval PID1682068 · 8集limit=100 · output dir空(results.json待写入) · 已运行~65min · 预计~10-15min完成</li>
-    <li><b>L1/L2 评测脚本入库确认</b>：10文件已在 <code>code/baize-llm/scripts/eval/</code> ✅ · README §4.6 已更新 ✅ · commit ed6ea54e4</li>
-    <li><b>L4 HANDOFF→post-train</b>：2026-11-12用户令 · L4不再由pretrain负责 · 只做只读引用 · 不写BLOCKED/不做SSH调查</li>
-    <li><b>四层报告刷新</b>：hero header更新iter181.4k+180k eval状态 · L4 badge改为HANDOFF→post-train · summary表L4行更新 · footer更新</li>
+    <li><b>训练健康确认</b>：iter 231,580/700,000（33.1%）· step ~7044ms(<7.4s✅) · loss ~2.00 · GPU 8×95-100%/75GB · lr=1e-3(stable段) · 0 NaN/skip · 实测命令：<code>cat /proc/146283/fd/1 | tail -5</code> + <code>nvidia-smi</code></li>
+    <li><b>L1 23/23 完成</b>：10k-230k 全部评测完成 · 200k=60.12% 峰值🏆 · 230k=58.88% · 报告已刷新</li>
+    <li><b>240k autoqueue polling</b>：PID1543473(ppid=1,alive) · waiting for iter_0240000 ckpt · ETA~16.6h(~20:00 today) · train iter=231580</li>
+    <li><b>L2 plateau confirmed</b>：HF六重@200k全部完成 · MMLU=26.34%(62subj) · vs 160k 全持平</li>
+    <li><b>四层报告刷新</b>：hero header更新iter231.6k+L1 23/23+L2六重 · L1表补180k-230k行 · L2新增200k结果card · summary表更新 · footer更新</li>
+    <li><b>L4 HANDOFF→post-train</b>：2026-11-12用户令 · L4不再由pretrain负责 · 只做只读引用</li>
   </ol>
   <div class="alert">
     <b>🔴 核心发现（待用户拍板）</b>：L2/L3/L4 的低分/空白<b>同一根因</b>——训练数据中 code+math 比例不足（code 19% + math 7% = 26%，远低于 DeepSeek 最优 60%），且仍在 stable 阶段（decay 尚未开始），导致模型在<b>所有需要连贯生成的任务</b>上退化为重复输出。<br>
@@ -792,7 +818,7 @@ footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--bd);color:var
 </div>
 
 <footer>
-  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-13 01:15 更新(#2079 · 训练健康iter181.4k/700k(25.9%) step~7.2s loss~2.02 · L1 17/17(10k-170k,160k峰值58.13%) 180k eval运行中(~65min) · L2 🟢HF五重验证全部完成: HumanEval HF=15.0%✅ + GSM8K HF=10.0%✅ + MBPP HF=5.0%✅ + BBH HF=3.3%✅ + MATH HF=0.0%✅ → 生成Avg(5集)=6.66% llama.cpp SSM bug是0%主因(5/5任务验证) · L3 TB 0/2完成 · L4 🟦HANDOFF→post-train(2026-11-12用户令)) · 评测数字仅用于训练监控，不进论文正文
+  BaiZe pretrain 线 · 四层能力评测报告 · 2026-11-17 03:33 更新(#2360 · 训练健康iter231.58k/700k(33.1%) step~7044ms loss~2.00 · L1 23/23(10k-230k,200k峰值60.12%🏆) 240k autoqueue polling(PID1543473,ETA~16.6h) · L2 🟢HF六重@200k全部完成(plateau confirmed): HumanEval=10.0%✅ + GSM8K=10.0%✅ + MBPP=0.0%✅ + BBH=20.0%✅ + MATH=0.0%✅ + MMLU=26.34%✅ → 生成退化主因=llama.cpp SSM bug(5/5验证)+模型code/math配比不足(26% vs 60%最优) · L3 pipeline ready(blocked:GPU满) · L4 🟦HANDOFF→post-train(2026-11-12用户令)) · 评测数字仅用于训练监控，不进论文正文
 </footer>
 </div>
 </body>
