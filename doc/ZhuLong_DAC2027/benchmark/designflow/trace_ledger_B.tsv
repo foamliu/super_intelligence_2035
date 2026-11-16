@@ -655,7 +655,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793783668558_b6rfa	t0002805	hfeg0pkn004	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1793877308530_kzwvo	e0014036	hfeg0pkn005	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
 1793870649495_xxlek	rongjiez	hfeg0pkn005	0	spice_sim	parked		2026-11-09 16:07	kw=0 non-spice, fresh 15:30
-1794210513201_rx7v2	t0002802	hfeg0pkn005	17	spice_sim	parked		2026-11-09 16:07	kw=17 reject: 帮我检查这个文件中说了什么(FineSim lsf_job_error.log)=explanation/diagnostic, no produce-task, L1 read-log
+1794210513201_rx7v2	t0002802	hfeg0pkn005	17	spice_sim	case	EDA-Eval-DesignFlow-FinesimLogExplainDiag-001	2026-11-09 16:07	kw=17 reject: 帮我检查这个文件中说了什么(FineSim lsf_job_error.log)=explanation/diagnostic, no produce-task, L1 read-log
 1793945103405_x8v81.messages.json	dsgao	hfeg0pkn001	11	spice_sim	case	EDA-Eval-DesignFlow-NetlistSelectInvDiag-001	2026-11-09 16:49	
 1794212090584_3gk8d.messages.json	rescan1109_1617	hfeg0pkn001	0	non_spice	parked		2026-11-09 16:51	11-09 16:17 fresh-window peek: kw=0 non-spice or low-kw/trivial, reject
 1794211304209_apago.messages.json	rescan1109_1617	hfeg0pkn001	0	non_spice	parked		2026-11-09 16:51	11-09 16:17 fresh-window peek: kw=0 non-spice or low-kw/trivial, reject
