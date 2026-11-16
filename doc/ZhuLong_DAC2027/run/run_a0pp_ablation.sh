@@ -36,6 +36,15 @@ PARALLEL="${PARALLEL:-4}"
 ROUNDS="${ROUNDS:-3}"
 START_ROUND="${START_ROUND:-1}"
 
+# Input budget proxy (2026-11-16 wake#1011: cline 3.0.51 ignores models.json contextWindow/maxInputTokens
+# for openai-compatible custom models → compacts at 116K not 7.2K → 8K input budget NOT enforced.
+# This proxy truncates API requests to 8K tokens, enforcing the input budget externally.)
+PROXY_SCRIPT="$REPO_RUN/a0pp_input_budget_proxy.py"
+PROXY_PORT="${PROXY_PORT:-19099}"
+PROXY_UPSTREAM="http://agi-gateway.cxmt.com/cloud/v1"
+PROXY_PID=""
+PROXY_LOG="/tmp/a0pp_proxy.log"
+
 # 8650 池 (错峰)
 POOL_8650_PORTS="8650,8651,8652,8654"
 POOL_8650_ENDPOINTS="8650:/proj/train/AI/workdir/t0002997_1,8651:/proj/train/AI/workdir/t0002997_2,8652:/proj/train/AI/workdir/t0002997_3,8654:/proj/train/AI/workdir/t0002997_4"
@@ -68,7 +77,28 @@ restore_env() {
     log "  .env restored from backup"
   fi
 }
-trap restore_env EXIT INT TERM
+trap 'restore_env; stop_proxy' EXIT INT TERM
+
+# ---- proxy start/stop ----
+start_proxy() {
+  if [[ ! -f "$PROXY_SCRIPT" ]]; then log "❌ proxy script missing: $PROXY_SCRIPT"; return 1; fi
+  setsid python3 "$PROXY_SCRIPT" --port "$PROXY_PORT" --upstream "$PROXY_UPSTREAM" > "$PROXY_LOG" 2>&1 < /dev/null &
+  PROXY_PID=$!
+  sleep 2
+  if kill -0 "$PROXY_PID" 2>/dev/null; then
+    log "  proxy ALIVE PID=$PROXY_PID port=$PROXY_PORT (truncates to 8K input)"
+  else
+    log "❌ proxy FAILED to start"; cat "$PROXY_LOG"; return 1
+  fi
+}
+stop_proxy() {
+  if [[ -n "$PROXY_PID" ]] && kill -0 "$PROXY_PID" 2>/dev/null; then
+    kill -TERM "$PROXY_PID" 2>/dev/null
+    wait "$PROXY_PID" 2>/dev/null
+    log "  proxy stopped (PID=$PROXY_PID)"
+  fi
+  PROXY_PID=""
+}
 
 run_round() {
   local ROUND="$1"
@@ -77,25 +107,27 @@ run_round() {
 
   if [[ ! -d "$ARM_DIR/settings" ]]; then log "❌ arm dir 缺失: $ARM_DIR"; return 1; fi
 
-  # providers.json 防御性重写 (out=16K) + models.json 防御性重写 (in=8K)
-  "$PYTHON" - <<'PYEOF'
+  # providers.json 防御性重写 (out=16K · baseUrl→proxy for 8K input enforcement) + models.json (in=8K, 记录用)
+  "$PYTHON" - <<PYEOF
 import json
 # providers.json: maxTokens=16384 (out=16K, 与 A0 一致, 不限制 output)
+# baseUrl → proxy (http://127.0.0.1:$PROXY_PORT/v1) which truncates input to 8K then forwards to upstream
 p1="/nasdata/app.e0031982/subagent_ablation/A0pp/settings/providers.json"
 d1=json.load(open(p1))
 d1["providers"]["openai-compatible"]["settings"]["maxTokens"]=16384
 d1["providers"]["openai-compatible"]["settings"]["model"]="deepseek-v4-pro-cloud"
-d1["providers"]["openai-compatible"]["settings"]["baseUrl"]="http://agi-gateway.cxmt.com/cloud/v1"
+d1["providers"]["openai-compatible"]["settings"]["baseUrl"]="http://127.0.0.1:$PROXY_PORT/v1"
 json.dump(d1,open(p1,"w"),ensure_ascii=False,indent=2)
 print("providers.json maxTokens=",d1["providers"]["openai-compatible"]["settings"]["maxTokens"])
-# models.json: contextWindow=8000 + maxInputTokens=8000 (in=8K, 唯一施压变量)
+print("providers.json baseUrl=",d1["providers"]["openai-compatible"]["settings"]["baseUrl"])
+# models.json: contextWindow=8000 + maxInputTokens=8000 (记录用 — cline 3.0.51 忽略此字段, 实际施压由 proxy 完成)
 p2="/nasdata/app.e0031982/subagent_ablation/A0pp/settings/models.json"
 d2=json.load(open(p2))
 m=d2["providers"]["openai-compatible"]["models"]["deepseek-v4-pro-cloud"]
 m["contextWindow"]=8000
 m["maxInputTokens"]=8000
 json.dump(d2,open(p2,"w"),ensure_ascii=False,indent=2)
-print("models.json contextWindow=",m["contextWindow"],"maxInputTokens=",m["maxInputTokens"])
+print("models.json contextWindow=",m["contextWindow"],"maxInputTokens=",m["maxInputTokens"],"(记录用, cline 忽略)")
 PYEOF
 
   export CLI_AGENT=cline
@@ -146,16 +178,26 @@ PYEOF
 # ===== main =====
 mkdir -p "$EVAL_ROOT_OVERRIDE" "$TRACE_BASE"
 log "=========================================="
-log "ZhuLong A0'' 预算基线 (in<=8K · out<=16K · no spawn · compact@7.2K)"
+log "ZhuLong A0'' 预算基线 (in<=8K via PROXY · out<=16K · no spawn)"
 log "base=deepseek-v4-pro-cloud  harness=cline 3.0.51  compaction=basic  thinking=medium"
+log "INPUT BUDGET: 8K (enforced by truncation proxy on port $PROXY_PORT, NOT by models.json)"
+log "  cline 3.0.51 ignores models.json contextWindow → compacts at 116K not 7.2K"
+log "  proxy truncates each API request to 8K tokens (keeps system + recent msgs, pairs intact)"
 log "subset=${SUBSET_FILE##*/}  -p $PARALLEL  rounds=$ROUNDS  sandbox=8650pool(错峰)"
 log "对照: A0(in=32K,out=16K,69.2%) · 唯一施压变量=input预算 32K->8K · A0'' 是 A3(in=8K,spawn) 锚点"
 log "判据(09:0x令): A3 ITT>=A0'' ITT+3pp + McNemar 方向一致(b>=6,c>=6)"
 log "=========================================="
 
+# Start input budget proxy
+log "starting input budget proxy (port $PROXY_PORT)..."
+start_proxy || { log "❌ proxy start failed — ABORT"; exit 1; }
+
 for round in $(seq "$START_ROUND" "$((START_ROUND+ROUNDS-1))"); do
   run_round "$round"
 done
+
+# Stop proxy
+stop_proxy
 
 log "=========================================="
 log "A0'' 全部 $ROUNDS 轮完成 — 评分见本日志 + /tmp/a0pp_r*.log"
