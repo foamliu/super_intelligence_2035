@@ -1183,7 +1183,7 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794447784831_8pdow					parked		2026-11-17 01:05	r681 peek viable-intent DSPF R-by-lvl grouping but lvl=37 coord-location needs GDS cross-ref (teeth-fail for coord step); deferred
 1788937019731_ccgt1	jiaqis	10.129.8.124	251	physical_verify	case	EDA-Eval-DesignFlow-DrcEnclosureRuleExtract-001	2026-11-17 01:30	
 1788743635326_keqfx	miccao	10.129.32.47	623	physical_verify	case	EDA-Eval-DesignFlow-DrcLogPerfAnalysis-001	2026-11-17 02:04	
-1789895218929_1xhgy	miccao	10.129.32.47	434	physical_verify	claimed		2026-11-17 02:28	
+1789895218929_1xhgy	miccao	10.129.32.47	434	physical_verify	case	EDA-Eval-DesignFlow-AutoCellTclFlowValidate-001	2026-11-17 02:51	
 1789370647360_ukkn7					parked		2026-11-17 02:28	r684 peek: run-existing ERC_AI_CHECK pipeline + env-debug (virtuoso vs aether, login node, tbcload lib), 11 user turns, 341 run_commands, 0 produce-task deliverable, teeth-fail (no runnable gold)
 1790142100320_n91pk					parked		2026-11-17 02:28	r684 peek: SpiceAgent CTLE/DFE sim R1/C1 register scan + eye width/height, 65 user turns, off-C B-domain (spice_sim/characterization), P-005 r519 keyword 软优先级 spice->B
 1785846039627_itvhk					parked		2026-11-17 02:28	r684 peek: run-existing prompt_flow.md + debug PowerFill empty powernet + GDS override vs reuse + autovia .il fix (strmout->leoXstreamOut), 11 user turns, run-existing + debug-Q&A, teeth-fail
