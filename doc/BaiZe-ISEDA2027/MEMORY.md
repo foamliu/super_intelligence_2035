@@ -2,6 +2,15 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-16 20:5x — 用户令「别排队，扫 8650–8670 端口池并行」→ 已改 run5 起跑口径
+
+- **用户原话**：「为啥要排队，扫一下 8650-8670 之间的沙盒端口，都可以用。」背景：run5 自 18:52 起一直卡在 `gate_wait`（判据＝36.15 无 `run_cline_script.sh`），因 zhulong 自身 eval（PID 1443679，~1h51m）占用沙盒，已空等 ~2h。
+- **已下发**（`run/BAIZE_POSTTRAIN_TASK.md` 顶部 🔴 令 20:5x）：run5 不再全局排队，改为**按端口分配**；允许给本线链脚本加 `GATE_MODE=ports`（默认仍 `global`）；先只读扫 `ss -ltn/-tnp` + `grep .env` → 判「LISTEN 且无他人 ESTABLISHED 且不在 zhulong 占用集合」→ 能客户端指定就直接 `SANDBOX_ENDPOINTS/PROXY_PORTS` 起跑（≥4 口即起，≥8 更佳）。
+- **红线（写在令里）**：`SANDBOX_ENDPOINTS/PROXY_PORTS` 历史上是 **eda_fastmcp 服务端 `.env`**，改它需重启 8090、会打断他线 → 若确认只能在服务端生效，**停手报运维**，🚫 不改 `.env`、🚫 不重启 8090、🚫 不 kill 他线；仍禁 `clean_5run.sh`、禁改 run1–4。
+- **新增要求**：先 1–2 题冒烟（确认 `run_code` 通、`execution_results` 有行）再放 158；写 `attribution_3615_run5/env_fingerprint.json`（端口/workdir/SANDBOX_HOST/.env 行/起跑命令/GATE_MODE）——**换 workdir＝换 EDA 环境状态（lib.defs/TECHLIB），是相对 run1–4 的新混杂变量**，报告必须标注。
+- **运维口径**：这是用户对基础设施可用性的直接判定（该端口段都可用），按令执行；若实测与判定不符（端口不通/被他人占/无法按 run 指定），以证据为准并立刻回报，不许硬跑。
+
+
 ## 2026-11-16 18:3x — 用户令「post-train 恢复干净 5-run」→ 恢复授权已下发任务书
 
 - **用户原话**：「post-train 恢复「干净 5-run」」。这是 23:0x item5（「8 题验证通过后再决定是否恢复 5-run」）的**正式放行**；run5 禁令解除，其余纪律（不删 trace / 不改 eda_fastmcp / 不动他线 / 不用 n=4 冒充 5-run）继续有效。

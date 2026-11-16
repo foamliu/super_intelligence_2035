@@ -1,5 +1,28 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+> 🔴 **用户令 · 2026-11-16 20:5x（取消全局排队 · 改用 8650–8670 端口池并行 · 最高优先）· 未完成**
+>
+> **用户原话**：「为啥要排队，扫一下 8650-8670 之间的沙盒端口，都可以用。」
+> ⇒ **run5 不再等「36.15 无 run_cline_script.sh」**。用户已判定该端口段全部可用；本线改为**按端口分配**，与 zhulong eval 分口并行。
+>
+> **立即动作（按序；做完即起跑，不要再空等）**
+> 1. **放宽 gate（只对本次 run5 生效，不改历史语义）**：允许修改本线链脚本，加 `GATE_MODE=ports`（默认仍为旧 `global` 行为）：`gate_wait` 在 `ports` 模式下判据 =「存在 ≥4 个本线可用沙盒口」，不再看 36.15 有没有 `run_cline_script.sh`。🚫 仍然不改 `eda_fastmcp` 源码、🚫 不重启 8090 MCP、🚫 不 kill 任何他线进程。
+> 2. **只读扫描（在 36.15 上，经 `ssh -p 3333 app.e0031982@localhost`）**，把结果贴进 daily：
+>    ```bash
+>    ss -ltn  | grep -E ':86(5|6|7)[0-9]'          # 哪些口在 LISTEN
+>    ss -tnp  | grep -E ':86(5|6|7)[0-9]'          # 已被谁 ESTABLISHED（含他线）
+>    ss -ltnp | grep 8090                          # MCP 实例/PID
+>    grep -nE 'PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|SANDBOX_PORT' <eda_fastmcp>/.env   # 只读
+>    ```
+> 3. **判「本线可用」**＝该口 LISTEN **且** 无他人 `ESTABLISHED` **且** 不在 zhulong 当前 eval 的占用集合内；同时记下每口绑定的 **workdir**（映射以 `.env` 实际行为准，**禁止臆造**）。
+> 4. **关键分叉（先判后动）**：确认 `SANDBOX_ENDPOINTS` / `PROXY_PORTS` 是否可由**客户端**（`run_cline_script.sh` 的 env / MCP 配置块）按 run 指定 —
+>    - **能指定** ⇒ 直接用扫出的可用口起跑：`SANDBOX_ENDPOINTS='<port:workdir,...>' PROXY_PORTS='<port,...>' bash scripts/run_cline_script.sh -p N -n -b <bench>`，`N` = 可用口数（≥4 即起，≥8 更佳；不足 4 才报运维）；
+>    - **只能在服务端 `.env` 生效** ⇒ **停手，立即报运维**（贴 `PROXY_PORTS=` 现状行 + 8090 PID + zhulong eval 占用端口证据），**不得**改 `.env`、**不得**重启 8090（会打断他线 eval）。
+> 5. **必须先冒烟再全量**：用 1–2 题走通 `run_code` → 确认 `execution_results` 有行 → 再放 158 全量；冒烟不通按第 4 条报运维。
+> 6. **写 env fingerprint**（新增 `attribution_3615_run5/env_fingerprint.json`）：实际端口集合、各口 workdir、`SANDBOX_HOST`、`.env` 相关行（原样）、起跑命令、`GATE_MODE`。原因：**换 workdir＝换 EDA 环境状态（lib.defs/TECHLIB）**，这是相对 run1–4 的新混杂变量，报告里必须显式标注。
+> 7. **纪律不变**：🚫 不启动 `baize_posttrain_clean_5run.sh`；🚫 不改 run1–4 产物；🚫 不 kill 他线；🚫 不得用 n<5 冒充 5-run（若最终只跑成 n=4，如实标 `n=4 recovered`）。
+> 8. **交付**：起跑后**立刻 push**（不等跑完），commit 前缀 `posttrain 5run:`；daily 里留上面扫描命令的原始输出。
+
 > 🔴 **用户令 · 2026-11-16 18:3x（恢复「干净 5-run」· 已授权 · 最高优先）· 未完成**
 >
 > **用户原话**：「post-train 恢复「干净 5-run」」——即 23:0x item5「8 题验证通过后再决定是否恢复 5-run」的**恢复授权已下**。
