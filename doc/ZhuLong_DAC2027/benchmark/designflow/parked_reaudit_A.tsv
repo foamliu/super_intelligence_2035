@@ -125,7 +125,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1791536684137_lpn8o	mike	10.129.32.80	eda_other	env-setup Q&A (重构环境 for new dir)	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1789375537537_uh4tz	lorikx	10.129.2.13	verification	r381 re-eval: near-DUP of SramVcsLogDiagnose-001 (same user lorikx + sp_sram SRA	DUP	no		n/a
 1791537885417_6h27d	mike	10.129.32.80	eda_other	env-setup Q&A, sibling of lpn8o	DUP	no		n/a
-1793179564697_11cny	clwang	10.129.2.14	digital	code-search Q&A (mr27在哪配置, grep specdef)	REVIVABLE_QA	yes	code-comprehension	EXISTS
+1793179564697_11cny	clwang	10.129.2.14	digital	code-search Q&A (mr27在哪配置, grep specdef)	REVIVABLE_QA	yes	DONE_r667	EXISTS
 1793244457637_k7z23	e0046913	10.129.2.12	eda_other	doc/criteria-writing Q&A (写出衡量标准, iterate text)	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792133360129_whu5z	lorikx	10.129.2.13	verification	sim-failure debug Q&A (smoke.log FAIL)	REVIVABLE_QA	yes	debug-Q&A	EXISTS	done_r642
 1790415942692_xbexl	jinhaoli	10.129.2.13	digital	r383 peek weak: 1790415942692_xbexl jinhaoli U#0=SV-syntax-check Q&A	THIN_NO_CHECK	no	不可造: SV-syntax-check single Q&A, thin no deliverable	n/a
