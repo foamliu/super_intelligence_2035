@@ -1819,3 +1819,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791945162141_qo7xn.messages.json	yansonw	hfeg0plg15	35	schematic_netlist	parked		2026-11-16 22:53	collision: already case SrcPy3Analyze-001 by other shard (B.jsonl), same trace qo7xn/AutoModelSimulation
 1789713289092_h01fd	shanliny	hfeg0pkn005	15	schematic_netlist	case	EDA-Eval-DesignFlow-LvsPrfLogicDiagQA-001	2026-11-17 00:07	r785 落库 debug-Q&A A档; diagnose.py+diagnosis.json; check.py 12 cond a-l; hidden B=1prf_B GBL_RED<0>vs<1>; selftest 12/12 PASS + 4neg FAIL distinct (a/d/e/g)
 1794208159902_v593e.messages.json	t0002614	hfeg0pkn004	82	schematic_netlist	case	EDA-Eval-DesignFlow-AetherPartialNetlistExtractQA-001	2026-11-17 02:11	
+1794574783120_vzhk2	thomas1w	hfeg0pkn003	72	schematic_netlist	case	EDA-Eval-DesignFlow-RedBistBroadcastErrAddrQA-001	2026-11-17 03:42	
