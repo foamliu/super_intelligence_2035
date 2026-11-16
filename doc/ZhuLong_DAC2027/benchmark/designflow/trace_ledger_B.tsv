@@ -895,7 +895,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794276772104_yicdk	hengbow	hfeg0pkn001	9	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
 1794278751082_g8en5	jinsongl	hfeg0pkn005	7	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: raw SKILL cckExplore log, not cline session
 1794280189538_742yv	rhyanw	hfeg0pkn001	8	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
-1794291924966_ws1x6	mwxi	hfhds228	9	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: consultation 'finesim.*总' + ObsidianVault ls
+1794291924966_ws1x6	mwxi	hfhds228	9	spice_sim	case	EDA-Eval-DesignFlow-FineSimCoreCounter-001	2026-11-17 06:14	11-11 fresh spice>=5: consultation 'finesim.*总' + ObsidianVault ls
 1794293298759_nk0hg	e0042624	hfeg0pkn001	5	spice_sim	parked		2026-11-11 04:50	project how-to consultation
 1794296961043_fessi	t0002113	hfeg0pkn001	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: tool discovery 'which finesim finesime hspice'
 1794299623303_khbvq	yuchens	hfeg0pkn004	5	spice_sim	parked		2026-11-11 00:56	11-11 fresh spice>=5: trivial 1msg
