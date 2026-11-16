@@ -2,18 +2,20 @@
 
 WAITING: 1
 
-> 🆕 **R2573 · 2026-11-16 14:25 — 监控轮·自检全绿 + cc rerun 69/82(68 results: 15P/42F/11NA + sam-cell-seg in verifier·13 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
-> - **自检**: load26.68/224 ✅(pretrain 146% dominant·无harness runaway)·mem 827GB/2TB avail 1TB ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> 🆕 **R2574 · 2026-11-16 15:00 — 监控轮·自检全绿 + cc rerun 70/82(15P/44F/11NA·sam-cell-seg DONE→FAIL·12 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
+> - **自检**: load27.78/224 ✅(pretrain 146% dominant·无harness runaway)·mem 827GB/2015GB avail 1039GB ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
 > - **git**: Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~34.5h·n=1·overlay IN USE✅ confirmed in ps cmdline)·**69/82**(68 result.json: 15P/42F/11NA·守恒68✅ + sam-cell-seg in verifier ~62min stuck on git fetch MobileSAM GitHub ~22min 0%CPU NOT runaway)·**13 remaining**·ETA~Nov16 21:00–Nov17 00:00
-> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 68 per-task result.json·cc修复(overlay-network-host.yml network_mode:host·R2463)confirmed IN USE·15 PASS=真能力·vs旧0/89=100%infra
+> - **cc rerun**: PID 1510521 alive(~35.2h·n=1·overlay IN USE✅ confirmed in ps cmdline)·**70/82**(70 result.json: 15P/44F/11NA·守恒70✅)·**12 remaining**(schemelike-metacircular-eval running + 11 queued)·ETA~Nov16 21:00–Nov17 00:00
+> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 70 per-task result.json·cc修复(overlay-network-host.yml network_mode:host·R2463)confirmed IN USE·15 PASS=真能力·vs旧0/89=100%infra
+> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 15P/70done(82total)·vs旧0/89
 > - **PASS 15**(unchanged): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log
-> - **NA 11**(all timeout): 9×Command timeout 3600s + 1×AgentTimeout 3600s(make-doom-for-mips) + 1×VerifierTimeout 900s(pytorch-model-cli) + 1×VerifierTimeout 3600s(fix-ocaml-gc)
-> - **adaptive**: work 4/4·quiet=351m·0 cumulative 429✅(11-15验收全通过R2569)
-> - **7way报告**: cc仍0/89待merge(82完成→rerun 11 timeout NA(同口径)→merge→REGEN·cc行换真实数字+timeout单列infra)
-> - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun 11 timeout NA(同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.5KB（✅≤32KB）
+> - **NA 11**(all timeout·reward=None·exc空): code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli,reshard-c4-data
+> - **FAIL 44**=14 suspected-502-infra+30 ability-fail·**adaptive**: work 4/4·quiet=391m·0 cumulative 429✅(today=Monday work hours)
+> - **round2 manifest备妥**: 10×502-infra+7×3600s-timeout=17题·等cc 82完成后rerun(同3600s口径·adaptive auto)
+> - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun round2 17题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈26.0KB（归档~4KB·✅≤32KB）
 >
+> 📦 R2573 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 69/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2572 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2571 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+NA分类完成(11 real=全3600s timeout)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2570 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+gateway 403✅+reports porcelain=0✅。需要时再读。
@@ -55,12 +57,12 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2568 cc rerun 66/82(15P/41F/10NA·0ConnRefused✅HARD VERIFIED·+1 vs R2567·regex-log新PASS·当前verifying reshard-c4-data) + adaptive work模式(cap=4·clamped10→4)·0 429✅ + gateway functional + infra rerun manifest备妥(24题)·等cc 82完成
+PHASE:        R2574 cc rerun 70/82(15P/44F/11NA·0ConnRefused✅HARD VERIFIED·sam-cell-seg DONE→FAIL·12 remaining) + adaptive work模式(cap=4)·0 429✅ + gateway functional + round2 manifest备妥(17题)·等cc 82完成
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2567(cc rerun 6→66/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复)
-当前动作:     R2568: 监控轮·cc rerun PID1510521 alive(31.2h·n=1)·66/82(15P/41F/10NA)·0ConnRefused✅·当前task=reshard-c4-data(verifier running ~33min)·16 remaining·adaptive work模式cap=4·0 429✅·load28/224✅·mem827GB✅·0runaway✅·reports/ porcelain=0✅·W:0
-下一步:       ①cc 82完成(~Nov16 20:00)→rerun 24 infra/timeout/502题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu 2题=BLOCKED(Py3.9<3.11)
+当前动作:     R2574: 监控轮·cc rerun PID1510521 alive(35.2h·n=1)·70/82(15P/44F/11NA)·0ConnRefused✅HARD VERIFIED·当前task=schemelike-metacircular-eval·12 remaining·adaptive work模式cap=4·0 429✅·load27.78/224✅·mem827GB✅·0runaway✅·reports/ porcelain=0✅·W:1
+下一步:       ①cc 82完成(~Nov16 21:00)→rerun round2 17题(502+timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
- 体积: TASK≈25.6KB / MEMORY≈30.4KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
+ 体积: TASK≈25.0KB / MEMORY≈27.2KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
@@ -75,11 +77,11 @@ ERROR_COUNT:  0
 
 > 📦 R2530 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 23/82(4P/16F/3NA·0ConnRefused✅)+opencode 20/38(9P/6F/5NA)+4适配器RuntimeError修复(verifier-always-run)+自检全绿。需要时再读。
 
-> [10:5x] R2512 **adaptive_concurrency 验收 + cc rerun monitoring**: 自检(gateway200✅·load30/224=pretrain only no harness runaway✅·mem OK·0 harness proc>8000% CPU✅·reports/ 0 json/log/txt✅)·**adaptive_concurrency 验收(11-15令)**: `status`=off current=8/10 cap=10✅·`--now` 4时刻注入全通过(Sat03:00 off起步8→Mon10:00 work clamp 8→4→record 429+5min cooldown no change→25min hold@cap=4因work cap限制✅)·`--dry-run` support confirmed in rerun script✅·**cc rerun 0348**: PID1510521 alive(etimes25554s~7.1h)·15 result.json(14 task-level:2PASS(custom-memory-heap-crash+dna-assembly)/11FAIL(reward=0.0)/1NA(code-from-image timeout))·**0ConnRefused HARD VERIFIED**(grep=0 files)·**0 real 429**(2 grep hits=false positive:build-pmars timestamp `.429209Z`+circuit-fibsqrt Fibonacci `267914296`)·rate=2.11/h·67 remaining·ETA~31.7h→Nov16~16:00·**cc修复确认**: 模型真正运行(tokens>0·iterations>0·2题PASS=真能力)·vs旧0/89=100%infra(88ConnRefused)→修复后ConnRefused=0✅判据met·research日报2026-11-15 harness建议(SatisFix:不把agent放法官位·自评→报告选择+理由·同预算对照pass@1)noted=future eval design参考·非本轮actionable·W:1
+> 📦 R2512 流水已归档 → daily-memories-harness/2026-11-15.md。结论：adaptive_concurrency验收4/4全通过✅·cc rerun monitoring·0ConnRefused✅HARD VERIFIED·15 PASS=真能力·修复后ConnRefused=0判据met。需要时再读。
 
 > 📦 R2492-R2497 流水已归档 → daily-memories-harness/2026-11-15.md。结论：dual rerun监控(hermes 36→50/65·cc 24→30/82·0py3fail✅·0ConnRefused✅·cc NA精分=8maxturns+6gw502+3toklimit+1OOM)·cc toklimit CONFIG fix(R2494)·cc adapter RuntimeError fix(R2498 prepared)。需要时再读。
 
-> [10:02] R2510 **qemu post-rerun + _ensure_pip R2510 fix**: 自检(gateway200✅·load30/224✅·mem827GB/1038GB avail✅)·qemu post-rerun 3次迭代: v1(09:54)=exec_as_root exit100→NonZeroAgentExitCodeError(apt-get 404 Bullseye security mirror)·**FIX1**: _base.py 3处exec_as_root加`|| true`(pkg-mgr L402+curl L456+get-pip L513+_ensure_python L311)·v2(09:59)=RuntimeError"HERMES_PIP_STILL_MISSING"(curl GP_FAIL→容器内MITM proxy TLS坏→fall through bundled get-pip.py→Py3.9不兼容)·**FIX2**: host下载`get-pip-3.9.py`(2.1MB·bootstrap.pypa.io/pip/3.9·proxy 172.19.92.25:13128✅)+SSL prepend(ssl._create_unverified_context)+`upload_file`替代容器内curl·v5(10:12)=qemu-alpine-ssh pip成功(get-pip-3.9.py worked!)但hermes-agent install fail("Ignored versions require-python>=3.11")·**ROOT CAUSE CONFIRMED**: hermes-agent PyPI全版本requires-python≥3.11·qemu容器debian:bullseye-slim=Python 3.9·**FIX3**: hermes.py L105-128加Py版本前置检查→clean `HERMES_PY_TOO_OLD` RuntimeError·v6(10:18)=2/2 BLOCKED(HERMES_PY_TOO_OLD✅·clean error message)·merge 5 trials→hermes·**判据**: qemu=BLOCKED(infra·非能力)·_ensure_pip修复验证成功(pip可用)但hermes-agent无Py3.9兼容版本=硬约束·报告REGEN(qemu BLOCKED✅)·cc rerun继续不中断·W:1
+> 📦 R2510 流水已归档 → daily-memories-harness/2026-11-15.md。结论：qemu post-rerun 3次迭代→BLOCKED(hermes-agent requires-python≥3.11·qemu容器Py3.9=硬约束)·_ensure_pip修复验证成功·hermes.py加Py版本前置检查→clean HERMES_PY_TOO_OLD。需要时再读。
 > 📦 R2503-R2508 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun RESTARTED with fixed adapter(R2503)·cc monitoring 6→14/82(R2504-R2509)·0ConnRefused✅ HARD VERIFIED·all reward=0.0=ability·11-15报告重构令交付(R2508:gen_report_tb21_7way.py重写+2表+Infra台账+守恒✅)·R2498 RuntimeError fix·R2499 Py3.9 fix·R2500 hermes 60/65 setup_fail 4→0·R2502 hermes COMPLETE+MERGED 38/89。需要时再读。
 
 
@@ -87,7 +89,7 @@ ERROR_COUNT:  0
 
 > 📦 R2505-R2506 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc rerun 7-8/82·0ConnRefused✅·0RuntimeError✅·6-7maxturns=ability+2gw502=infra·research日报EvoX纳入诊断。需要时再读。
 
-> [23:2x] R2498 **dual rerun monitoring + cc adapter RuntimeError FIX**: 自检(gateway200✅·load35/224=pretrain no harness runaway✅·mem811GB/2015GB 1054GB avail✅·disk/tmp40% OK·0 harness proc>8000% CPU)·git pull(up to date)·**hermes rerun 52/65**(dir1057=52 result.json·PID3305789 etimes45514s~12.6h alive): 23PASS/22abilityfail/7NA·**0py3fail✅**(2 mteb HERMES_NO_PYTHON grep-match=FALSE POSITIVE=bash script text·py3 installed by _ensure_python✅·real fail=hermes-agent not in container PyPI=infra BLOCKED)·13remaining·**cc rerun 31/82**(dir1251=31 result.json·PID3314848 etimes38651s~10.7h alive): 6PASS/6FAIL/18NA·**0ConnRefused✅ HARD VERIFIED**(grep=0 files)·**cc NA deep analysis**: all 18 NA have verifier_result=None→RuntimeError blocked verifier·17 exit-code-1(exception_message="Claude-Code exited with code 1: "·stderr empty·durations 1-53min=model RAN)·1 exit-137(caffe-cifar-10 OOM)·R2497 had classified via metadata.stdout(8maxturns+6gw502+3toklimit+1OOM)·**BUT RuntimeError at claude_code.py:222-226 prevented verifier from running→reward=NA instead of proper 0.0/1.0**·**FIX APPLIED**:removed raise RuntimeError→verifier always runs now(claude_code.py L222-226→comment)·**BUT current harbor process(PID3314862) has module cached→fix won't take effect until restart·NOT restarting**(restart risks re-running all 82 tasks from scratch=27h vs let finish 17h+re-run NA only 7.5h)·51remaining·reports/ clean✅·W:1
+> 📦 R2498 流水已归档 → daily-memories-harness/2026-11-15.md。结论：dual rerun监控+cc adapter RuntimeError FIX(removed raise→verifier always runs)·cc 31/82·0ConnRefused✅·hermes 52/65·0py3fail✅。需要时再读。
 
 
 
