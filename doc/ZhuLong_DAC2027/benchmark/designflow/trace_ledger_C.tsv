@@ -1209,3 +1209,16 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794532305061_szlie					parked		2026-11-17 04:19	off-C B-domain: SPICE param sweep (.sp generation for 9 Sanadj/Sapadj/R_BL variables), belongs to spice_sim/characterization shard B
 1791941227075_le1s7					parked		2026-11-17 04:19	off-C: U#0 skill-creator task for VPS CLI guide (verification perf sim skill authoring), not C-domain physical_verify task
 1792679003281_z44lk					parked		2026-11-17 04:19	path-dependent produce: G5_CIP Dummy deck mask GDS issue in /home/pdk/xinqiaoz/01_dummy (private, not in sandbox); run-existing + handoff skill chain; deliverable ambiguous
+1791513972290_bih9j	thomasz	hfeg0pfn058	99	physical_verify	parked		2026-11-17 04:58	IR debug Q&A: user asks why vcc/vblh missing from IR results, debug-Q&A teeth-check viable per 11-15 std but low C-domain signal (drc kw from scan false-positive, actual task is IR analysis)
+1794208159902_v593e	t0002614	hfeg0pkn004	82	layout_aether	parked		2026-11-17 04:58	netlist extraction how-to Q&A: user asks 'how to extract BLSA+BL loading netlist from DRAM', doc-Q&A viable per 11-15 std
+1793879303886_7l4sx	e0017906	hfeg0plg96	171	physical_verify	parked		2026-11-17 04:58	circuit analysis Q&A: '当前电路层级是什么'+'分析当前电路'+'你能跑仿真吗' exploration Q&A, viable per 11-15 std
+1794308420196_3hfbw	eric9zhu	hfeg0plg52	84	layout_aether	parked		2026-11-17 04:59	aether auto-routing Q&A+error diagnosis: 'aether can auto-route analog?' + 'Constraint group foundry no valid trace rule error', strongest C-domain fresh candidate (aether:1276/floorplan:303/lvs:57), viable produce-task reframe per 11-15 std (doc-search+error-diag), deepread done r691
+1793151811279_nrep6	thqu	hfeg0plg99	215	physical_verify	parked		2026-11-17 04:59	off-C B-domain: circuit optimization skill creation (DOE/netlist-check/sim-submit/results-report), strong produce-task but spice_sim/characterization not physical_verify
+1794299623303_khbvq	yuchens	hfeg0plg99	83	physical_verify	parked		2026-11-17 04:59	waveform file search Q&A: user looks for FSDB files, drc:1264 kw is scan false-positive, actual task is waveview file retrieval
+1794298060155_ma0ui	yunfat	hfeg0plg94	49	layout_aether	parked		2026-11-17 04:59	power analysis Q&A: 'R_RHDlutFull_PRAC analyze power consumption', analysis-task viable per 11-15 std, aether:86/pyaether:106
+1792567034258_hasla	zqzhan	hfeg0pkn002	41	physical_verify	parked		2026-11-17 04:59	off-C B-domain: SPICE deck paste, finesim simulation, spice_sim/characterization
+1791787377751_frxg5	hswang	hfeg0plg94	54	physical_verify	parked		2026-11-17 04:59	aging script analysis Q&A: 'analyze matrixrun_aging script aging code', 16msgs 7tool, analysis-task
+1793870551130_jr0o3	ronghu	hfeg0pkn005	44	physical_verify	parked		2026-11-17 04:59	power measurement inst debug: add_back_bias_supplies for DbusDrv_NN_1st, B/D-domain sim setup
+1794212917714_ibwba	zhililu	hfeg0plg52	48	layout_virtuoso	parked		2026-11-17 04:59	virtuoso sim debug Q&A: 'how to use generated netlist for sim in virtuoso' + SFE errors, debug-Q&A
+1793857356226_kubzy	zhililu	hfeg0plg52	29	layout_aether	parked		2026-11-17 04:59	resistor TRIM netlist Q&A: 'why parallel resistance halved but size same', debug-Q&A
+1792936692635_f1pj5	jingc	hfeg0pkn001	27	layout_aether	parked		2026-11-17 04:59	DSA evaluation Q&A: 'how to evaluate DSA', 28msgs, doc-Q&A
