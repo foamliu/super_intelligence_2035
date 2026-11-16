@@ -32,16 +32,16 @@ def merge():
                 if not line.strip():
                     continue
                 d = json.loads(line)
-                tid = d.get("task_id") or d.get("id")
+                tid = d.get("task_id") or d.get("id") or d.get("case_id")
                 if not tid:
-                    print("  ⚠ skip line %d in shard %s: no task_id/id (keys=%s)" % (n+1, sid, list(d.keys())[:6]))
+                    print("  ⚠ skip line %d in shard %s: no task_id/id/case_id (keys=%s)" % (n+1, sid, list(d.keys())[:6]))
                     continue
                 cases[tid] = (line, d)
                 n += 1
         print("  shard %s: %d cases" % (sid, n))
 
-    # sort by domain then task_id
-    sorted_items = sorted(cases.values(), key=lambda x: (x[1].get("metadata", {}).get("domain", ""), x[1].get("task_id") or x[1].get("id","")))
+    # sort by domain then task_id/case_id
+    sorted_items = sorted(cases.values(), key=lambda x: (x[1].get("metadata", {}).get("domain", ""), x[1].get("task_id") or x[1].get("id") or x[1].get("case_id","")))
     with open(MAIN_JSONL, "w", encoding="utf-8") as f:
         for line, _ in sorted_items:
             f.write(line)

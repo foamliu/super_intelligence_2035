@@ -5,7 +5,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1791788736494_t2qp9	leo27li	hfeg0pkn001	pnr_signoff	pure QA consultation: 0 write calls, 61 RAG searches; not a design_flow delivery	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1791940499909_2pdn0	e0045128	hfeg0pkn001	eda_other	surveyed r37: pure Q&A (genus/DC/starRC eat TLUPlus or QRC, milkyway suffix). 20	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1792142855712_2h3mf	e0045128	hfeg0pkn001	digital	Q&A: genus keep_hierarchy how-to (AskEDA query), no delivery	REVIVABLE_QA	yes	env-config/how-to	EXISTS
-1790662286657_8356t	fxian	hfeg0pkn002	digital	consultative: 阅读总结+3 alt TCL proposals (genus/dc/yosys), no single verified/acce	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
+1790662286657_8356t	fxian	hfeg0pkn002	digital	consultative: 阅读总结+3 alt TCL proposals (genus/dc/yosys), no single verified/acce	REVIVABLE_QA	yes	consultative-Q&A	DONE_r668
 1791443950843_b7y8t.messages.json	shaoyou	hfeg0pkn004	eda_other	GUI highlight net7 side-effect; live-Aether cellview fixture (named-net+figs) in	GUI_NONREPRO	no	不可造: live-Aether GUI cellview fixture, not reproducible for hidden-B/check	n/a
 1793165088136_0suhi	e0046686	hfeg0pkn005	pnr_signoff	autosim doc-gen trace (L1 markdown/mermaid); doesn't fit design_flow hidden-B + 	WRONG_SHARD	no		n/a
 1788853067089_zggtc	lorikx	hfeg0pjn200	verification	templated '启动业务场景: 时序分析'; assistant only explored sos2 flow dir, no deliverable,	REVIVABLE_QA	yes	templated-no-deliverable	EXISTS
