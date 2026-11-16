@@ -52,7 +52,7 @@
 - **gold 有牙** ✓ (analyze_refi.py 产出结构化数值，可断言 count/sum/balance/top-aggressor)
 - **reframe 子型** = `spf-rcc-net-cap-structured-extract`（承 r630 LVS-report-extract / r631 ERC-deck-extract 模式，distinct vs r652=pex-batch-path-resolve / r657=3dlvs-gui-config）
 
-## 5. 资产可达性（r659 实测） — 见 r674 落地
+## 5. 资产可达性（r659 实测） — r660 已交付；r674 重选重复已 revert
 
 - **live RCC 文件** `/proj/drcpa/.../D_WrC10.spf_RCC`：ssh 10.129.8.226 以 e0031982 身份 → **Permission denied**（hswang 私有项目目录）。
 - **trace 内含完整数据** ✓：assistant 的 editor tool_use（MSG#61–87）逐字保存了 refi_p1.txt..refi_p13.txt 的全部 C/Cg 行 + analyze_refi.py 源码（MSG#89 new_text）。**下轮从 trace tool_use input.new_text 提取**即可获得 grounded asset，无需 live 文件访问。
@@ -69,4 +69,5 @@
 
 ## 7. 台账状态
 - r659 claim ✓ (ledger_C: 1793760248797_9sga3 status=claimed)
-- **未 mark case**（DEBT:1，下轮 r660 合成后 mark）
+- **r660 已 mark case** ✓ `EDA-Eval-DesignFlow-SpfRccNetCapAnalyzer-001`（16 conds a-p, hidden B victim RowAddrCtrlB, DEBT cleared）
+- **r674 重选重复 → REVERT**：r674 据 r659 deepread「claimed 待合成」视图重选 9sga3，未察觉 r660 已交付；构建 SpfRccNetCapExtract-001(20 conds, 更全) 后 review 命中「同 trace 同 visible-A 同任务」→ C.jsonl line 419 + reference/assets 全 revert(commit 8603317d9)，ledger 9sga3 → parked(duplicate-caught)。教训：选料须先 grep session 于 shard jsonl + ledger case 行双复核。
