@@ -1,8 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-16 wake#1019·**A0′′ r1(proxy) 跑中·35/40 完成(4 workers 活 tasks 147/148/151/157·task 158 queued)·proxy 截断 8900 次·⚠️21 Exit-137 + 8 Exit-1 = 29 失败 / 6 成功·8K 施压显化为 per-task timeout(55%→83% 失败率)**。**机制印证**：成功率 6/35≈17%（vs A0=69.2%）= 用户预测的「小 input → 信息丢失 → 无法推进 → 超时」机制显化（非 OOM/非 infra：a0pp 写 /tmp+/nasdata；Exit-137=timeout 2500s SIGKILL 非 OOM）。183804 batch 正轮健康推进。infra: loop PID243810 https_proxy ✅·proxy PID1443459 ✅·/home 2.8G(100%⚠·非本线)·/nasdata 27G(95%)。下轮：run_a0pp 有输出→do-nothing；无输出→打分 r1(40 题 ITT=x/40·Exit-137/1 计 fail)→起 r2。详情见下 + daily §[wake#1015~#1018]）
+WAITING: 1（2026-11-16 wake#1020·**A0′′ r1(proxy) ✅完成=4/40=10.0%·r2(proxy) 跑中(batch 235057)·proxy 截断 9382 次**。**🎯r1 结果（关键）**：`4/158 pass (2.5%)`=4/40 ITT=10.0%（generated 4 ok/154 fail·36/40 timeout@2500s Exit-137）·vs A0(in=32K)=69.2%·Δ≈−59pp=**H_ctx 单 agent 退化强证据**（小 input→API 文档/探索历史丢失→无法推进→2500s 超时 SIGKILL·非 OOM/非 infra）。8K input budget 经 proxy 真正施压（cline 3.0.51 忽略 models.json contextWindow，proxy 在请求前截断到 8K）。需 r2/r3 出 mean±std 后才能定论。infra: loop PID243810 https_proxy ✅·proxy PID1443459 ✅·/home 2.8G(100%⚠·非本线)·/nasdata 26G(96%)。下轮：run_a0pp 有输出→do-nothing；无输出→打分 r2→起 r3（ROUNDS=3）→3 轮 mean±std → 若 A0′′<A0 显著 → 起 A3(in=8K via proxy,spawn) 对照。详情见下 + daily §[wake#1019]）
 
-- **[2026-11-16 wake#1019] ❤️ A0′′ r1(proxy) 心跳·do-nothing**：run_a0pp_ablation.sh PID1443422 ✅活(etime 4:32:15)·batch `/tmp/zhulong_a0pp_eval/2026_1116_183804`·40 题/-p 4·**35/40 完成**（+4 自 #1018 的 31·4 workers 活 tasks 147/148/151/157·task 158 仍在 .task_queue 未起）·proxy port 19099 ✅**截断 8900 次**（+1446 自 #1018 的 7454·最新 23:00-23:07 tasks 142/143/144/145 全 Exit-137·每任务耗时 2620s 后 SIGKILL）。**⚠️机制印证（关键）**：Exit code 分布=**21 Exit-137 + 8 Exit-1 = 29 失败 / 6 成功**（stats/success=6·stats/failure=29）→ 成功率 6/35≈**17%**（vs A0=69.2%·Δ≈−52pp）= 用户预测的「小 input → API 文档/探索历史丢失 → 无法推进 → 2620s 超时 SIGKILL」机制**显化**（非 OOM：a0pp 写 /tmp+/nasdata 不写 /home；/home 100% 是他线；Exit-137=`timeout 2500` 的 SIGKILL 非 OOM-killer）。**这是 H_ctx 假设的单 agent 退化证据**——若 A3(spawn) 在同 in=8K 下保持质量，则分工价值成立。**观察②**：.py 生成仅 3 题(038/059/125)有 pyAether_code/*.py（success=6 可能含非 .py 路径或 regrade 时再核）→ 最终 ITT 以打分时 `pass (xx.x%)` 为准。**观察③**：a0pp_r1.log mtime 23:10(=当前)·25MB·活跃写入中。infra：loop PID243810 https_proxy ✅自检通过·proxy PID1443459 ✅·/home 2.8G(100%⚠·非本线)·/nasdata 27G(95%)·8650 池。§7 Step A：run_a0pp 有输出→**什么都不做退出·WAITING 保持 1**。下轮：run_a0pp 无输出→打分 r1(40 题 ITT=x/40·21 Exit-137+8 Exit-1 计 fail)→起 r2。prompt=ZHULONG_TASK.md 原文重发·无新指令。
+- **[2026-11-16 wake#1020] ❤️ A0′′ r1(proxy) ✅=10.0%·r2 跑中·do-nothing**：r1(proxy) batch `2026_1116_183804` 23:50 完成·`4/158 pass (2.5%)`→**ITT=4/40=10.0%**（36/40 timeout@2500s→Exit-137·proxy 截断 9382 次）·vs A0=69.2% Δ≈−59pp=**H_ctx 单 agent 退化强证据**（小 input→信息丢失→超时·非 OOM/非 infra）。r2(proxy) 23:50:57 起跑·batch `2026_1116_235057`·-p 4·40 题·log `/tmp/a0pp_r2.log` 活跃。run_a0pp PID1443422 ✅活·ROUNDS=3→r2/r3 待跑 mean±std。r1 no-proxy(135805)=15.2% VOIDED 不计入。判据：A3 ITT≥A0′′ ITT+3pp——A0′′ 3 轮 mean±std 是 A3 锚点先跑完。infra：loop PID243810 https_proxy ✅·proxy PID1443459 ✅·/home 2.8G(100%⚠非本线)·/nasdata 26G(96%)·8650 池·他线 baseline eval(223524)不干预。§7 Step A：run_a0pp 有输出→**do-nothing·WAITING=1**。下轮：无输出→打分 r2→起 r3→mean±std。详情见 daily §[wake#1020]。
+
+- [2026-11-16 wake#1019 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1019]（A0′′ r1(proxy) 心跳 35/40·proxy 截断 8900·21 Exit-137/6 成功·已被 wake#1020 取代：r1 ✅完成=10.0% + r2 起跑）
 
 - [2026-11-16 wake#1018 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1018]（A0′′ r1(proxy) 心跳 31/40·proxy 截断 7454·17 Exit-137·已被 wake#1019 取代）
 
@@ -20,32 +22,14 @@ WAITING: 1（2026-11-16 wake#1019·**A0′′ r1(proxy) 跑中·35/40 完成(4 w
 
 - [2026-11-16 wake#1011 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1011]（A0′′ r1(no-proxy)=60% VOIDED·cline 3.0.51 忽略 contextWindow=8K→建 truncation proxy(port 19099) smoke ✅→A0′′ r1(proxy) 起跑）
 
-- [wake#994~#1004 旧指针合并·原文见 daily-memories/2026-11-16.md] #1004 09:0x令到达→建A0′′→#1003-#998 A3/A0′ r1-r4 全程。均已被 wake#1011(A0′′ proxy 修复) 取代。
+- [wake#982~#1004 旧指针合并·原文见 daily-memories/2026-11-1{5,6}.md] #1004 09:0x令到达→建A0′′·#998-#1003 A3/A0′ r1-r4·#992 r3✅17.1%+r4起跑·#982-#991 A0′ r2/r3 跑中(慢因=out-budget 4096)。均已被 wake#1011(A0′′ proxy 修复) 取代。
 
-- [2026-11-16 wake#992 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#992]（r3 ✅完成=17.1% + r4 makeup 已起跑·**已被 wake#998 取代：r4 ✅完成 + A0′ 收口 + A3 smoke 起跑**）
-- [wake#982~#991 旧指针合并·原文见 daily-memories/2026-11-1{5,6}.md] wake#991 r3跑中28/40心跳→#990 r3 22/40→#988 r3 15/40+baseline eval仍在跑→#987 r2✅完成=15.8%(158-scale)+r3跑中→#986 r2 27/40→#985 r2 24/40→#984 r2 20/40健康但慢(慢因=out-budget 4096)→#983 r2 20/40活过00:10风险节点(r1 SIGTERM一次性特例)→#982 r2 15/40+straggler死+他线eval结束。均已被 wake#992(r3✅17.1%+r4起跑)→#993/994/995(r4跑中) 取代。
-
-
-- [2026-11-15 wake#981 原文已滚出] → 见 daily-memories/2026-11-15.md §[wake#981]（A0′ r1 失效 + r2 起跑 + straggler 风险·**已被 wake#982 取代：straggler 已死 + r2 进展 15/40 + 他线 eval 结束**）
+- [2026-11-15 wake#981 原文已滚出] → 见 daily-memories/2026-11-15.md §[wake#981]（A0′ r1 失效 + r2 起跑·**已被 wake#982 取代**）
 
 - [wake#962~#975 旧指针合并·原文见 daily-memories/2026-11-15.md] #975 清盘第三轮双达标(/nasdata 29G /home 5.8G)·#974 归档15:0x块·#973/#972/#971 心跳(A3 4 blocker·/nasdata 差~5G 结构性)·#970 A3-A6 HTML 报告交付 commit afc4c83a9·#969 心跳·#968/#967 清盘二/一轮·#966/#965/#964/#963 心跳(沙盒 CLOSED 误测纠正→.75 全 OPEN)·#962 省 token。均已被 wake#976(归档收口)→#981(A0′ r1 失效+r2 起跑) 取代。
 
-- [wake#960 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[wake#960]（158题上下文实测 max100K·H_ctx子集=30题·报告增补§6）
+- [wake#952~#960 旧指针合并·原文见 daily-memories/2026-11-15.md] #960 158题上下文实测 max100K·H_ctx子集=30题·#959 A3可行性预检40题max112K不超窗·#958 报告Q1 gap-fill·#957 H2停止+A0/A1/A2 trace报告·#956 运维令23:4x全闭合·#955/#954 H2 B1-B5跑中+hint修正·#953 H2三项smoke✅·#952 A2三轮全完53.3±3.8%。均已被 wake#981(A0′ r1)→#1011(A0′′ proxy) 取代。
 
-- [wake#959 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[wake#959]（A3可行性预检①a·40题max112K不超窗）
-
-- [wake#958 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[wake#958]（报告Q1 gap-fill·A2 abort 19.6%·任务书瘦身26.2KB）
-
-- [2026-11-15 wake#957 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#957 归档]（H2 停止 + A0/A1/A2 trace 报告交付·已被 wake#958 增补 Q1 gap-fill + 任务书瘦身）
-- [2026-11-15 wake#956 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#956 归档]（运维令23:4x全闭合·①清盘/home 9.4G·nasdata 19.4G✅ ②隧道复盘报告交付·4端口全OPEN·结论仍成立·A2三轮全完ITT 53.3%·H2健康·已被wake#957取代）
-
-- [2026-11-15 wake#955 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#955 归档]（H2 B1-B5跑中修正wake#954 hint错误·改A2 verifier hint·重起PID2017148·已被wake#957取代：用户叫停H2+trace报告交付）
-
-- [2026-11-15 wake#954 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#954 归档]（loop agent H2双smoke复证+B1-B5起跑·**但用了researcher hint=错误**·已被wake#955修正：kill→改A2 verifier hint→重起）
-
-- [2026-11-15 wake#953 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#953 归档]（H2三项smoke全✅：bcompat子=父dsv4-pro无MCP·弱模型子=dsv4-flash(/v1)·MCP转发子调MCP工具=NoSuchToolError bug修复·build wrapper /home/.local/bin/h2/cline v3.0.74·已被wake#954取代：双smoke复证+B1-B5五臂起跑）
-
-- [2026-11-15 wake#952 原文已滚出] → 见 `daily-memories/2026-11-15.md` §[rolled-out wake#952 归档]（A2三轮全完ITT 53.3±3.8%+McNemar✅ A0vsA2 p=0.0008·A1vsA2 p=0.006·验证型spawn显著有害·已被wake#953取代：H2向后兼容smoke✅+弱模型smoke跑中）
 
 - [wake#948~#951 旧指针合并·原文见 daily-memories/2026-11-15.md] wake#951 A2 r3 heartbeat→#950→#949→#948 清盘+A2 r2✅88.46%·详见 daily-memories/2026-11-15.md
 
@@ -64,7 +48,7 @@ WAITING: 1（2026-11-16 wake#1019·**A0′′ r1(proxy) 跑中·35/40 完成(4 w
 | STAGE | **✅ 两轴消融 think×lang 已交付（2026-11-07 08:3x 用户直令 + 22:4x 令③⑤ + 15:4x 令 B_en_r1 重跑对齐基座 全执行完）**：cline `--thinking` 档位 × 思维链语言·EDA-Eval-PyAether 158·harness=cline 3.0.51·`-p 8 -n`·每变体 3 轮。**30/30 ✅ 全完 + B_zh_r2 regrade ✅ + B_zh_r3 重跑 ✅ + B_en_r1 重跑对齐基座 ✅ + 报告刷新 ✅**。✅ **轴 B 基座已对齐**：15/15 轮 = deepseek-v4-pro-cloud（B_en_r1 已于 11-12 重跑对齐，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）。轴 A 15/15=glm-5.2 ✅ 恒定合规。报告 `gen_report_zhulong_ablation_think_lang_zh.py` banner 已改写绿色「轴 B 基座已对齐」+ §⑦ 升级「5 语言同基座可横比·与基线 Δpp 不可单归因」·HTML 已原地覆盖。baseline `B.glm-5.2=83.3±3.1%` 作 Δpp+McNemar 锚点（轴 A 同基座可比；轴 B 与基线基座+thinking 模式均不同，Δpp 不可单归因为语言效应）。 |
 | CONFIG | **两轴消融**：CLI_AGENT=cline / 基座=glm-5.2@/cloud/v1 key c2759d74 / maxTokens=16384 / reasoning 跟随 `--thinking` flag（providers.json reasoning.enabled=false 被 CLI flag 覆盖）。**轴 A** LANG_HINT=空, CLINE_THINKING∈{none,low,medium,high,xhigh}。**轴 B** CLINE_THINKING=medium, LANG_HINT∈{en,zh,es,fr,ru}。harness 3 处向后兼容改动（eda_fastmcp·off-by-default）：`.env` CLI_AGENT `${CLI_AGENT:-zhulong}` · `run_cli.sh` CLINE_THINKING/LANG_HINT 透传 · `run_cline_script.sh:40` EVAL_ROOT_DIR_OVERRIDE（batch→/nasdata）。EVAL_FW_DIR=/nasdata/.../EDA-Eval-Framework。 |
 | ROUND | **30/30 ✅ 全完 + B_zh_r2 regrade ✅ + B_zh_r3 重跑 ✅ + B_en_r1 重跑对齐基座 ✅ + 报告刷新 ✅**。轴 A（glm-5.2 恒定 ✅）：none 79.5±2.6 Δ−3.8·low 84.2±1.1 Δ+0.9·medium 85.4±0.7 峰 Δ+2.1·high 85.4±2.7 Δ+2.1·xhigh 82.3±1.1 Δ−1.0（**倒 U 形**）。轴 B（thinking=medium·✅ 基座已对齐 15/15=deepseek-v4-pro-cloud·B_en_r1 已重跑）：**en 81.0±2.9 [r1 78.5 重跑 / r2 80.4 / r3 84.2]**·zh 81.2±3.2 [r1 84.2 / r2 81.6 / r3 重跑 77.8]·es 80.8±0.3·fr 76.2±2.6·ru 79.3±2.5。旧 B_en_r1 75.3% (glm-5.2) + 旧 B_zh_r3 78.5% 均标 SUPERSEDED 留档。结果 JSON=`run/ablation_think_lang_results.json`（不入 git·32 rounds 含 2 SUPERSEDED）·trace=`/nasdata/.../ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/`（不入 git）·cost=`cost_B_en_r1.json` 等。轴 B 注入核验 ✅ + audit 抽查（en真切换/zh confound/es未生效/fr部分生效/ru部分漂移）已入报告 §4.2。 |
-| PHASE | `09:0x 令(11-16)修正设计→A0′(out-budget)voided→A0′′(in=8K,out=16K,no spawn)·**wake#1011 发现 cline 3.0.51 忽略 models.json contextWindow=8K → compaction@116K 非 7.2K → 8K input budget 未生效 → 建 truncation proxy(a0pp_input_budget_proxy.py) smoke ✅ → run_a0pp_ablation.sh 改用 proxy(port 19099) → A0′′ r1(no-proxy)=60%(24/40) VOIDED → A0′′ r1(proxy) 起跑中**（subagent 消融：A0=69.2±1.4%·A1=66.7±7.2%·A2=53.3±3.8%·A0′(out-budget)voided=16.7±0.8%·**A0′′(no-proxy)voided=60%**(24/40,8K 未施压)）·下一步 A0′′(proxy) 3 轮 mean±std → 若 A0′′(proxy)<A0 → A3(in=8K via proxy,spawn)对照` |
+| PHASE | `09:0x 令(11-16)修正设计→A0′(out-budget)voided→A0′′(in=8K,out=16K,no spawn)·**wake#1011 发现 cline 3.0.51 忽略 models.json contextWindow=8K → 建 truncation proxy(port 19099) → A0′′ r1(no-proxy)=60% VOIDED → A0′′ r1(proxy)✅=10.0%(4/40) → r2(proxy) 跑中**（subagent 消融：A0=69.2±1.4%·A1=66.7±7.2%·A2=53.3±3.8%·A0′(out-budget)voided=16.7±0.8%·A0′′(no-proxy)voided=60%·**A0′′(proxy) r1=10.0%**)·下一步 A0′′(proxy) r2/r3 → 3 轮 mean±std → 若 A0′′(proxy)<<A0(已显化) → A3(in=8K via proxy,spawn)对照` |
 | WAITING | 1（2026-11-15 wake#965·**心跳 + 🔴沙盒 CLOSED 误报纠正 + 🟠baseline eval 在跑**。prompt=ZHULONG_TASK.md 原文重发·无新指令。**🔴纠正**：#963/#964 查 127.0.0.1 误报"沙盒4端口全CLOSED"，实际 .75(10.129.32.75) 的 8664/8665/8653/8669/8657/8668 **全 OPEN✅**，run_code 实测 SANDBOX_ALIVE✅⇒blocker (d) 实际已满足·#963 据误报增补的 (d) 条件应撤销。**🟠发现**：batch 2026_1115_110506（full 基线·-p 8·cline/bun 8 workers）11:05 经 ssh(parent=sshd:notty·非 loop·非我)启动，正写 /nasdata/app.e0031982/eda_code_eval/，.env=full·**不干预**（疑用户/平行 wake 手动起基线·沙盒健康应出有效分）。**A0' 条件复核**：(a)nasdata 22G(<25G)·/home 9.4G(<12G) 未满足 (b)有 run_cline_script 在跑(疑本线基线) (c)用户裁决 A3-A6 未收到 (d)沙盒 OPEN✅满足(纠正)。infra: loop PID243810 proxy ✅·H2 无进程·run/ 子树 0 ahead/0 behind·§7 PHASE=h2_stopped_by_user） |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
