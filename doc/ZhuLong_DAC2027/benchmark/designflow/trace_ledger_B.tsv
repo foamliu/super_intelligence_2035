@@ -1047,7 +1047,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794361820675_nqb2j	e0030760	hfeg0plg100	144	eda_other	parked		2026-11-11 11:19	post-snap fresh: desktop-file-move not EDA
 1794291355248_7bjc8	daiweilu	hfeg0plg101	36	eda_other	parked		2026-11-11 11:19	post-snap fresh: verilog .v explanation not spice
 1794357306964_9d0eh	e02141	hfeg0plg20	21	eda_other	parked		2026-11-11 11:19	post-snap fresh: Sentaurus TCAD deck search not spice/char
-1794361050224_6ipfr	phoebeli	hfeg0plg96	18	spice_sim	parked		2026-11-11 11:19	post-snap fresh: how-to-PWL-vsource Q&A not produce
+1794361050224_6ipfr	phoebeli	hfeg0plg96	18	spice_sim	case	EDA-Eval-DesignFlow-FinesimVhDiagGuide-001	2026-11-16 12:32	post-snap fresh: how-to-PWL-vsource Q&A not produce
 1794361655307_euuvj	xinqiaoz	hfeg0pkn002	67	eda_other	parked		2026-11-11 11:19	post-snap fresh: handoff-context-restore not produce
 1794362986412_knsmj	cadmin	hfeg0plg55	4	eda_other	parked		2026-11-11 11:19	post-snap fresh: strmIn-log warning-type layout not spice 4 tool_use short
 1793173193409_mx7xh	junweix	hfeg0pkn002	77	spice_sim	parked		2026-11-11 11:52	remote pkn002 junweix file others-r=0, not readable by e0031982 sandbox identity
