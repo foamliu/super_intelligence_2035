@@ -876,7 +876,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792722310323_1e0xa	sagequan	hfeg0pbn04	11	spice_sim	parked		2026-11-10 23:23	skill-loading cimi-kb-search
 1793857356226_kubzy	zhililu	hfeg0pkn002	169	spice_sim	case	EDA-Eval-DesignFlow-ResistorTrimNetlistExplain-001	2026-11-15 15:25	consultation resistor-TRIM-netlist-explain
 1792398188240_i0cnz	mwxi	hfeg0plg52	84	spice_sim	parked		2026-11-10 23:23	wrong-shard ops-crontab-sync
-1792550155026_cn4bl	steveny	hfeg0pnd001	20	spice_sim	parked		2026-11-10 23:23	consultation navigate-to-host
+1792550155026_cn4bl	steveny	hfeg0pnd001	20	spice_sim	case	EDA-Eval-DesignFlow-SshHostAlgDiag-001	2026-11-16 16:41	consultation navigate-to-host
 1792936692635_f1pj5	jingc	hfeg0pkn001	16	spice_sim	parked		2026-11-10 23:23	consultation what-is-DSA
 1793189553608_5uqoi	dsgao	hfeg0pkn001	12	spice_sim	parked		2026-11-10 23:23	consultation verdi-fsdb-warning-paste
 1793882229682_mk098	yazhuok	hfeg0pahpc501	21	spice_sim	case	EDA-Eval-DesignFlow-SimCapLisParse-001	2026-11-10 23:51	
