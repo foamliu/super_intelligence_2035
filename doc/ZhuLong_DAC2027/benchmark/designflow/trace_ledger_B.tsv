@@ -1447,7 +1447,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794382869159_h23wf					parked		2026-11-14 05:20	joeyl:dup of ULVTDelvtoNetlistMod-001 (same delvto task)
 1794453725522_twknv					parked		2026-11-14 05:20	alexli:Q&A code-comprehension (r502 已判, csv/sp 作用解释)
 1794382119688_xhb7v					parked		2026-11-14 05:20	zhililu:Q&A diagnosis (比较器2mV误差原因, r514 已判)
-1794461037123_hxrml					parked		2026-11-14 05:20	e0030760:Q&A code-comprehension (mc_snm_analyzer.py 逻辑, r511 已判)
+1794461037123_hxrml					case	EDA-Eval-DesignFlow-SnmAnalyzerExplain-001	2026-11-16 08:49	e0030760:Q&A code-comprehension (mc_snm_analyzer.py 逻辑, r511 已判)
 1794479681958_s1ogl					parked		2026-11-14 05:20	joeyl:Q&A+P004 (CML divider swing opinion + overlap DutySkewAvg/CML cases)
 1794532519466_3qout					parked		2026-11-14 05:20	joeyl:file gone (r516 已判)
 1794538116856_7s3gj					parked		2026-11-14 05:20	joeyl:file not found on .75
