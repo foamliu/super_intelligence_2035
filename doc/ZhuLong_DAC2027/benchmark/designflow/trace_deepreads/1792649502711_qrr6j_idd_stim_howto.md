@@ -42,7 +42,7 @@
 - **A 输入** (SUT 可见): 4 个真实项目文件 (stimulus.sp / gen_stimulus_v2.py / analyze_power.py / TECHLIB_ALL_power_voltage_table.md) + requirements.json + scenario.txt + hidden_manifest.json
 - **B 输入** (hidden cross-input guard): DDR4 项目 (DDR4_BankActive_Idd_opt) — 不同 DRAM family / 不同信号名 (CKE/CS_n/RAS_n/CAS_n/WE_n/DQ<>/DQS_p/DQS_n) / 不同 helper (gen_dc_source/gen_pwl_step/gen_command_pulse/gen_idd_test_pattern) / 不同电压表 (VDD 1.2V/VPP 2.5V/VTT 0.6V) / 不同 JEDEC 项集 (11 项含 IDD0/1/2P/3P/7)
 - **任务**: 写 `idd_stim_guide.py(workdir, out_dir)` 读 `doc/` 下输入产出 `idd_stim_guide_report.json` 结构化指南
-- **check.py**: 54 条独立断言 (k_check==k_rationale==54, ≥8 硬闸门)
+- **check.py**: 55 条独立断言 (k_check==k_rationale==55, ≥8 硬闸门)
   - a0-a4c (7 条): 交付件存在 / zip 含脚本 / 可解 / py_compile / B 输入齐全 / B family=DDR4 / B project=DDR4_BankActive_Idd_opt
   - a5_run1-3 + a5_file1-3 + a5_det (7 条): 3 次重跑 exit 0 + 产报告 + sha256 一致 (确定性)
   - a6-a7 (2 条): JSON dict / 14 顶层键齐全
@@ -63,7 +63,7 @@
   - a22_proj/family (2 条): report_overview 提到 B project / family
   - a23_sources (1 条): methodology 引用 stimulus.sp + gen_stimulus_v2.py
 - **negative samples**: 4 个 (stub_empty / stub_print_a_constants [A-leak + non-determinism] / stub_delete_core_logic [空 JEDEC/methods/helpers] / stub_minimal_b_print [最小 B 但缺项])
-- **自验**: ref 54/54 PASS + 4 negatives 全 FAIL ✓
+- **自验**: ref 55/55 PASS + 4 negatives 全 FAIL ✓
 - **cross-input guard**: A=LPDDR5+WaveView-PWL, B=DDR4+JEDEC-timing-driven；A-leak 16 token / B-grounding 16 token，互斥
 
 ## 关键 quirk / 注意事项
