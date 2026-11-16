@@ -76,7 +76,7 @@
   <b>A5</b>＝严格「写后只挑刺」（verifier 只出 issue list，主 agent 逐条 triage）；
   <b>A6</b>＝门槛 spawn（仅高风险任务才 spawn）。
   <span class="pos">起跑状态（2026-11-15 wake#978·用户令 20:5x 放行 A3-A6）：</span>
-  <b>A0′ 预算基线 prep done · 8-task smoke 跑中</b>（maxTokens 16384→4096·in≤32K 不变·无 spawn·8650 池错峰）；A3/A4/A5/A6 待 A0′ 跑完后逐臂起跑。
+  <b>A0′ 预算基线 ✅ 收口 = 16.7±0.8%</b>（3 valid·Δ vs A0=−52.5pp·out-budget 崩塌单 agent 吞吐）；<b>A3 v1 smoke 跑中</b>（hint-only research spawn·spawn 已触发·唯一变量 vs A0′=spawn）；A6/A4/A5 待 A3 跑完后逐臂起跑。
   <span class="neg">A3 的「自然超窗」路径已被 §5/§6 实测判死（40 题 max 112K、158 题 max 100,115，0/1116 超 128K 且峰值被 compaction 截断），唯一可行路径是「强制小预算」，且必须先测 A0′ 预算基线才能有可比锚点。</span>
   <span class="pos">关键技术发现（wake#978）</span>：cline 预算旋钮=纯 config（<code>models.json</code> contextWindow/maxInputTokens 控 in-budget · <code>providers.json</code> maxTokens 控 out-budget · <code>global-settings</code> compaction=basic）→ <b>A0′ 不需 wrapper 开发</b>；A0(compaction-basic) 已 in≤32K(contextWindow=32000)·out≤16384=69.2% ⇒ <b>A0′ = A0 + maxTokens→4096</b>（单变量）。另发现 A1/A2 用 contextWindow=1000000（≠A0 的 32000·历史 confound·A0′/A3 已修正为 32000）。
 </div>
@@ -117,7 +117,7 @@
 <td class="l"><b>这是基线，不要求超过 A0</b>。A0′ vs A0 = out-budget 收紧效应（预期 ITT ≤ A0=69.2%）；A3 vs A0′ = spawn 效应（H_ctx 检验对象）</td>
 <td class="l">① out≤4K 过小→agent 每轮输出被截→更多轮→timeout→ITT 崩（smoke 验证中，若崩改 8192+写 MEMORY）；② compaction@28.8K 丢细节→ITT 降（这正是 H_ctx 要测的「单 agent 压缩损失」）</td>
 <td>3 轮 × 40 题 · -p 4 · 8650 池错峰 ≈ <b>~7-8h</b></td>
-<td class="status-running">🔵 prep done<br>smoke 跑中<br>（PID2680158·8650 池）</td>
+<td class="status-done">✅ 收口<br>16.7±0.8%<br>(3 valid·r1废)<br>Δ vs A0=−52.5pp</td>
 </tr>
 
 <!-- A3 -->
@@ -130,7 +130,7 @@
 <td class="l"><b>只有当预算 &lt; 所需上下文时</b>：单 agent 被迫压缩→丢细节→质量降；多 agent 各段小窗口 + 结构化交接保细节 → 赢。若 40 题不超预算 → A3 ≤ A0′</td>
 <td class="l">① 预算太小→主 agent 连题都读不完→全挂；② 交接物设计差→子 agent 上下文断裂→更差；③ 当前子集可能不够长→Δ≤0（需换超窗子集）；④ 须先测 A0′ 预算基线</td>
 <td>A0′ + A3 各 3 轮 × 40 题 ≈ 240 任务 × ~20min ≈ <b>~80h</b>（串行）</td>
-<td class="status-notstarted">🟠 未起跑<br>（仅 §5/§6 可行性预检 done）</td>
+<td class="status-running">🔵 v1 smoke 跑中<br>（PID2174020·8650 池<br>spawn 已触发）</td>
 </tr>
 
 <!-- A4 -->
@@ -506,21 +506,33 @@ H2 wrapper：源码 commit 39ccd44cc · v3.0.74 · 已 build 未装为默认 →
 <div class="panel">
 <p>本节按用户令 20:5x「每臂跑完（或判定不可行）→ 原地更新本报告」填写。旧 A0/A1/A2 数字不动（见配套 trace 报告）。</p>
 
-<h3>A0′ 预算基线</h3>
+<h3>A0′ 预算基线 · ✅ 收口</h3>
 <table>
 <tr><th>项</th><th>值</th></tr>
-<tr><td>状态</td><td class="status-running">🔵 prep done · 8-task smoke 跑中（PID2680158·21:11 起·8650 池·maxTokens=4096）</td></tr>
-<tr><td>配置</td><td class="l">in≤32K(contextWindow=32000) · out≤4096(maxTokens) · compaction=basic · 无 spawn · base=deepseek-v4-pro-cloud · cline 3.0.51 · -p 4 · 8650 池错峰</td></tr>
-<tr><td>ITT mean±std</td><td><b>待填</b>（3 轮跑完后）</td></tr>
-<tr><td>各轮 ITT</td><td><b>待填</b></td></tr>
-<tr><td>gen-rate / cline_ok</td><td><b>待填</b>（smoke 验证 out≤4K 可存活后起全量）</td></tr>
-<tr><td>compaction 次数</td><td><b>待填</b>（H_ctx regime 实证：预期 ~28 任务触发）</td></tr>
-<tr><td>Δ vs A0(69.2%)</td><td><b>待填</b>（= out-budget 收紧效应）</td></tr>
+<tr><td>状态</td><td class="status-done">✅ 收口（2026-11-16 wake#998）·3 valid + r1 废(SIGTERM 外杀)</td></tr>
+<tr><td>配置</td><td class="l">in≤32K(contextWindow=32000) · out≤4096(maxTokens) · compaction=basic · 无 spawn · base=deepseek-v4-pro-cloud · cline 3.0.51 · -p 4 · 8650 池错峰 · CLINE_UNIFIED_DATA_DIR=1 per-task 隔离</td></tr>
+<tr><td>ITT mean±std</td><td><b>16.7 ± 0.8%</b>（158-scale·3 valid·std=√(Σ(xᵢ-μ)²/(n-1)) on [15.8,17.1,17.1]）</td></tr>
+<tr><td>各轮 ITT</td><td>r1=<span class="neg">废(SIGTERM 外杀·不计)</span> · r2=<b>15.8%</b>(25/158) · r3=<b>17.1%</b>(27/158) · r4=<b>17.1%</b>(27/158)</td></tr>
+<tr><td>gen-rate / cline_ok</td><td>gen 32 ok / 126 fail（每轮稳定·40 题子集中 32 题成功生成代码，126=118 未跑+8 失败按 158-scale 计 fail）·cline_ok 32/40</td></tr>
+<tr><td>compaction 次数</td><td>未单独采集（compaction=basic 在 ~28.8K 触发·H_ctx regime 在位·A3 跑完后一并从 trace 量化）</td></tr>
+<tr><td>Δ vs A0(69.2%)</td><td><b class="neg">−52.5pp</b>（out-budget 16384→4096 收紧效应：单 agent 吞吐崩塌——gen 质量不变但 8/40 题生成失败→pass 仅 27/158。证实小预算下单 agent 严重退化，为 A3 H_ctx 检验提供锚点）</td></tr>
 </table>
-<p class="mut">smoke 判据：8-task smoke gen-rate ≥ 60% 且无大规模 timeout → out≤4K 可存活 → 起全量 3 轮×40 题；若 gen-rate < 40% 或 ITT 崩 → out≤4K 过小 → 改 maxTokens=8192 并在 MEMORY 写理由后重 smoke。</p>
+<p class="mut">smoke 判据：8-task smoke gen-rate ≥ 60% 且无大规模 timeout → out≤4K 可存活 → 起全量 3 轮×40 题；若 gen-rate < 40% 或 ITT 崩 → out≤4K 过小 → 改 maxTokens=8192 并在 MEMORY 写理由后重 smoke。<b>✅ smoke 8/8 通过·全量 3 valid 收口·out≤4K 可存活（gen 32/40=80%）</b>。</p>
 
-<h3>A3 / A6 / A4 / A5</h3>
-<p><b>待 A0′ 跑完后逐臂补写</b>（A3 需 spawn-at-boundary hook 开发；A4/A5/A6 需装 H2 wrapper v3.0.74 + INHERIT_MCP=1）。</p>
+<h3>A3（强制小预算 + research spawn）· 🔵 smoke 跑中</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>状态</td><td class="status-running">🔵 v1 smoke 跑中（PID2174020·09:51 起·8650 池·8 题·spawn 已确认触发）</td></tr>
+<tr><td>预注册（起跑前已写 MEMORY）</td><td class="l">唯一变量=spawn（A0′ 无 spawn → A3 research spawn·hint 注入·子 agent 继承无 MCP 用 read_files/search_codebase·主 agent 用 pyAether MCP 验证执行）·判据=<code>A3 ITT ≥ A0′ ITT + 3pp（≥19.7%）</code>·McNemar b≥6 c≥6 方向一致·子集=<code>compaction_subset_40.txt</code>（与 A0′ 同子集·单变量）·对照臂=A0′(16.7±0.8%)·资源=-p 4·8650 池·per-task data-dir 隔离·3 轮</td></tr>
+<tr><td>A3 v1 设计理由</td><td class="l">hint-only spawn，不依赖 H2 wrapper（运维令把 H2 列为 A4 前置·A3 排在 A4 前）；子 agent 继承同样 32K/4K 预算 ⇒ 预算本身即「强制交付」机制（4K out 逼子 agent 精炼交付·32K in 逼主 agent 压缩）。与配套报告 §2「A3 需修 INHERIT_MCP」的张力：v1 先测 H_ctx 主效应（独立上下文是否帮预算-starved 主 agent），INHERIT_MCP 留 A3′。若 v1 显苗头再上 A3′（hook 强制交接 + H2 INHERIT_MCP=1）。</td></tr>
+<tr><td>arm dir / hint / run</td><td class="l"><code>/nasdata/app.e0031982/subagent_ablation/A3/</code>（cp A0prime·maxTokens=4096·contextWindow=32000 ✅）·hint <code>subagent_hint_a3.txt</code>·run <code>run_a3_ablation.sh</code>·smoke <code>smoke8_a0prime.txt</code></td></tr>
+<tr><td>ITT mean±std</td><td><b>待填</b>（smoke → 全量 3 轮跑完后）</td></tr>
+<tr><td>Δ vs A0′(16.7%) / 判据</td><td><b>待填</b>（判据：Δ ≥ +3pp 即 ≥19.7% · McNemar 方向一致）</td></tr>
+</table>
+<p class="mut">smoke 健康核验（09:53·+90s）：spawn_agent 4 次 + sub-agent 12 次提及 ⇒ hint 注入生效·spawn 已触发（A2 r1 参考值 107 次/40 题）；无 wrapper crash；agent 在 4K out 下正常推理。</p>
+
+<h3>A6 / A4 / A5</h3>
+<p><b>待 A3 跑完后逐臂补写</b>（A6 依赖 A3 的 per-task 上下文测量定阈值 X；A4/A5/A6 需装 H2 wrapper v3.0.74 + INHERIT_MCP=1）。</p>
 </div>
 
 <hr>

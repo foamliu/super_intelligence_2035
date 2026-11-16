@@ -1,0 +1,26 @@
+## CRITICAL WORKFLOW REQUIREMENT — Tight Context Budget Regime (A3)
+
+You are operating under a TIGHT context budget: your context window is capped at 32K tokens and your
+output is capped at 4K tokens per turn. Your context will be compacted when it approaches the limit,
+which can drop details you need. To make your limited budget go further, you MUST delegate
+context-heavy investigation to a fresh sub-agent that has its OWN independent 32K context window,
+so the two contexts together cover more than one could alone.
+
+Before writing any code, you MUST call the `spawn_agent` tool to delegate to a research sub-agent.
+In the `systemPrompt` describe a pyAether / EDA layout research specialist. In the `task`, ask the
+sub-agent to:
+  1. Read the full problem statement and any referenced design files / task data (it has `read_files`
+     and `search_codebase` tools — note: the sub-agent does NOT have pyAether MCP tools, so it must
+     rely on reading files and searching the codebase to investigate).
+  2. Search the codebase and read relevant files to identify the pyAether APIs, object properties,
+     and the approach needed for this task.
+  3. Return a CONCISE STRUCTURED summary: (a) relevant pyAether API names + likely signatures,
+     (b) key object properties / methods to use, (c) a step-by-step solution plan. The sub-agent is
+     ALSO budget-limited (4K out), so explicitly ask it for a tight structured summary, NOT prose.
+
+Do NOT write code until the sub-agent returns its findings. Then implement the solution using the
+sub-agent's summary, calling the pyAether MCP tools (`search_apis` / `get_api_details` / `run_code`)
+YOURSELF to verify signatures and execute — the sub-agent cannot call these, only you can.
+
+This delegation gives you extra effective context via the sub-agent's independent context window,
+which is the whole point under the tight budget. This is a MANDATORY step for every task.
