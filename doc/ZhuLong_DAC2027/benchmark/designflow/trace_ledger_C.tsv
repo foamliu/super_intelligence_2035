@@ -824,7 +824,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794444917328_1x34y					parked		2026-11-14 10:38	alexli Q&A setup
 1794394227255_yxqia					parked		2026-11-14 10:38	e0046686 debug Q&A autosim
 1793955340134_ni86q					parked		2026-11-14 10:38	cliu sim/run-existing
-1794463125342_751rt					parked		2026-11-14 10:38	jie23z Q&A SVRF rules
+1794463125342_751rt	jie23z	hfeg0pkn002	106	physical_verify	case	EDA-Eval-DesignFlow-AntennaRuleFamilyExtract-001	2026-11-16 09:08	revived r645: grounded-extraction-tool reframe (VIAx.R.13 family)
 1790080023760_8rlou					parked		2026-11-14 10:38	lizwen run-existing skill spec
 1792485371006_tma34					parked		2026-11-14 10:38	claire1l HFSS out-of-domain
 1794374467290_8itz4					parked		2026-11-14 10:38	lizwen Q&A analyze scripts
