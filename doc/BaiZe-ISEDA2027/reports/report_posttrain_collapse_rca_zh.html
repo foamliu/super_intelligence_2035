@@ -72,7 +72,7 @@
   find ~/eda_code_eval/2026_1115_110506/code -maxdepth 3 -name "*.py" | grep -v test_ | grep -v explore_ | wc -l  → 52
   wc -l ~/eda_code_eval/code_generation_2026_1115_110506.jsonl  → 1
   wc -l ~/eda_code_eval/code_generation_2026_1115_183438.jsonl  → 0   (0 字节, mtime Nov 15 21:42)</pre>
-真实代码确在 <code>code/&lt;task&gt;/pyAether_code/*.py</code>（即抽取器 L165 读的<b>正确</b>路径），例：
+真实代码确在 <code>code/&lt;task&gt;/pyAether_code/*.py</code>（<b>无 ws，抽取器 L163 只读 <code>ws/pyAether_code</code> 不读此处 → 被整题跳过</b>），例：
 <pre>code/EDA-Eval-PyAether-004/pyAether_code/transform_box.py → import pyAether as pyScript; def apply_geometric_transform_to_box(...)
 code/EDA-Eval-PyAether-010/pyAether_code/add_inst_to_schematic.py → def add_instance_to_schematic(...)
 code/EDA-Eval-PyAether-013/pyAether_code/wire.py → def create_schematic_wire(...)</pre>
