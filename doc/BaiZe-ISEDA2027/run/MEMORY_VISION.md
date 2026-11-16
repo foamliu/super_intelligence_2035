@@ -117,9 +117,7 @@ WAITING: 0
 
 > 📦 **wake #1212 · 2026-11-14 12:4x** 任务书瘦身归档(TASK 39389→27127B·两 11-07 已交付用户令 verbatim 搬至 ARCHIVE_OPERATOR_VISION.md+留指针·4 个 11-14 活跃令原样保留)+例行巡检·designflow 无新交付(仍 D 恢复 3 题)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 📦 **wake #1211 · 2026-11-14 12:3x** waveview 分析报告 β5 勘误补注交付（TLDR 勘误 box + §2.2 β5 划线/案例未落库 badge + §3.3 t0aom 注·分类口径 α4/β7/γ26 不变·HTML div19/table14/0script/0外链）·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
-> 📦 **wake #1210 · 2026-11-14 12:2x** designflow 协作进展接收 + 交底清单勘误：D 已恢复 3 题(α1/β9/α4·全 FAIL 正确)；接受 convener r508 裁定(β5 案例不存在/分母订正=4/β8 归 D)；handoff 清单勘误落地，报告 β5 补注留下一轮(wake#1211 已落地)·已fold(详情 daily-memories-vision/2026-11-14.md)。
 
 > 🆕 **【wake #1209 · 2026-11-14 12:1x】用户令 09:1x #4 强化波形识图能力 ✅ 已交付（SFT+RFT，合成波形 held-out，诚实结果：有提升但未达预注册判据）**：
 > - **做了什么**：`vision/vqa_tool/sft_rl_strengthen.py`（LoRA r=8/α=16，3 seed×3 epoch SFT + rejection-sampling FT 轻量 RL）。训练集 150 条（seed=20261114，25/技能×6 技能）；**held-out 评估集 30 条 seed=20261115≠训练 seed → cheat_rate=0 由构造保证**（旧 synth_selftest_baseline 用训练 seed 有重叠，已弃作对照）。
