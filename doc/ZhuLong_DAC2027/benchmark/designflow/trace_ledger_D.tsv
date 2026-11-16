@@ -1590,7 +1590,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793882229682_mk098	yazhuok	hfeg0plg37	21	analog_context	case	EDA-Eval-DesignFlow-FinesimLisOrganize-001	2026-11-13 11:06	
 1794107992133_1zrp7	sxdong	hfeg0pkn001	17	analog_context	parked		2026-11-13 11:22	r608 peek: workflow-controller /wf_state.json Q&A not produce-task
 1794107100324_f3abw	sxdong	hfeg0pkn001	17	analog_context	parked		2026-11-13 11:22	r608 peek: workflow-controller /wf_state.json Q&A not produce-task
-1793934795764_snqni	cong3li	hfeg0pkn004	21	analog_context	parked		2026-11-13 11:22	r608 peek: circuit-conn-check Q&A (FBCC straping) not produce-task
+1793934795764_snqni	cong3li	hfeg0pkn004	21	analog_context	case	EDA-Eval-DesignFlow-SAConnCheckQA-001	2026-11-17 05:25	r793 deliver: netlist-grounded SA conn-check Q&A (套 bgrlw r710/#29 v2); A=sa_netlist.sp real DRAM SA cell, gold=conn self-consistent; B=identifier-renamed SAMP/BLP/BLN/VPSE/VNSE/CSL/DOP/DON/PFET/NFET/pmos_m/nmos_m + planted PFET2 self-tied-gate bug; 13 assertions a-m; 5 negatives distinct labels a/c/d/k/g; §4.9 three FAIL; ref PASS; k_check=13>=8
 1794224570631_afkmz	zjqiao	hfeg0pgn043	20	analog_context	parked		2026-11-13 11:22	r608 peek: sim_setup folder analysis Q&A not produce-task
 1794215078177_pawzp	zlhou	hfeg0pjn200	33	analog_context	parked		2026-11-13 11:22	r608 peek: file-view exploration Q&A not produce-task
 1791503922175_spcmy	e02141	hfeg0pkn001	220	analog_context	parked		2026-11-13 12:10	r611 peek: study/summarize sentaurus deck examples (analysis, not produce)
