@@ -85,7 +85,7 @@ _(无 OPEN 议题。P-006 已于 r618 闭合，见下方 CLOSED 区。)_
 - **结论**：域级 depth 标签系统性错配 case 级真实 grounding demand，跨 3 域同构——A r390（12/12 近期 case actual_tool_demand = pure_text/parse，9/12 被域级标签上调 2-4 档）/ C r399（depth 7+ bin 内 physical_verify 9/9 gold 不 drive vs layout_aether 3/3 gold 真 drive，同 bin 取均值 2.9% 抹平对立）/ D r522（近 5 轮 5/5 pure_text + 5/5 synthesized，错配 +2.6 档均值）。**修法**：§5.2 改按 `actual_tool_demand(3) × asset_fidelity(2)` 双轴 sub-bin，depth 7+ 须拆 (a) drive-and-iterate / (b) parse-multi-MB-output 两个 sub-bin 分别报 Pass@1（C r399）；abstract/§4 的「7.1× 域差距 → grounding depth 是因」headline 须加限定「按 case 级 actual_tool_demand，非域级标签」。A r392 补 post-scan 增量新证（11/10+11/11 daily log 13 genuinely-new session，0/13 A-domain dominant）⇒ A 域 depth 4/5 bin 修复只能靠改标注，无法靠补 case。3-shard 门槛达（A+C+D），B 未出席（同 P-002）。存档见 `rounds/r392_P-003.md`。
 
 ### P-001 论文最大薄弱点 + 两周行动优先级 · 状态：**CLOSED** · r371 (2026-11-11)
-- **问题**：`EDA-LiveFlow-Bench_ICML2027` 现在最容易被 ICML 审稿人打穿的一个环节是什么？只有两周的话，四个 shard 该按什么顺序补？
+- **问题**：`EDA-Flow-Bench_ICML2027` 现在最容易被 ICML 审稿人打穿的一个环节是什么？只有两周的话，四个 shard 该按什么顺序补？
 - **背景**：论文当前事实源 —— `\Ntasks`=1032（A203+B242+C289+D298）；冻结评测 696 runs（2026-11-09）；**Pass@1 = 10.0%（62/620 已判定，ERROR 70 不计分母）**。B 线已在 r<待填> 提交了一份研究组视角的建议（`reports/report_designflow_paper_next_steps_zh.html`），本议题要求其余 shard 就其结论表态或提出替代方案。
 - **期望产出**：形成一份「按 shard 分工的两周行动清单」，每条含 负责人 / 工时 / 依赖。
 - **点名**：@A @B @C @D

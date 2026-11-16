@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="560" viewBox="0 0 940 560" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#666"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2ca57a"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7a3ec9"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#aaa"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Subgraph 1: Isolated agent workdir (orange dashed) ===== -->
+  <rect x="30" y="90" width="440" height="270" rx="10" fill="none" stroke="#e88a1a" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="48" y="82" font-size="12.5" font-style="italic" fill="#e88a1a">Isolated agent workdir</text>
+
+  <!-- ===== Subgraph 2: Remote EDA server (green dashed) ===== -->
+  <rect x="520" y="90" width="390" height="270" rx="10" fill="none" stroke="#2ca57a" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="538" y="82" font-size="12.5" font-style="italic" fill="#2ca57a">Remote EDA server</text>
+
+  <!-- ===== Subgraph 3: Separate judge dir (purple dashed) ===== -->
+  <rect x="30" y="400" width="440" height="140" rx="10" fill="none" stroke="#7a3ec9" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="48" y="392" font-size="12.5" font-style="italic" fill="#7a3ec9">Separate judge dir</text>
+
+  <!-- ===== Boxes (pill shape: rx = half height) ===== -->
+  <!-- Task assets -->
+  <rect x="70" y="110" width="360" height="44" rx="22" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.2"/>
+  <text x="250" y="138" font-size="13" text-anchor="middle" fill="#1a1a1a">Task assets (prompt.txt, input files)</text>
+
+  <!-- PreToolUse hook -->
+  <rect x="70" y="175" width="360" height="44" rx="22" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.2"/>
+  <text x="250" y="203" font-size="13" text-anchor="middle" fill="#1a1a1a">PreToolUse hook (anti-leakage)</text>
+
+  <!-- Cline agent -->
+  <rect x="70" y="245" width="200" height="46" rx="23" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.2"/>
+  <text x="170" y="274" font-size="13.5" font-weight="bold" text-anchor="middle" fill="#1a1a1a">Cline agent</text>
+
+  <!-- MCP bridge -->
+  <rect x="300" y="245" width="130" height="46" rx="23" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.2"/>
+  <text x="365" y="274" font-size="12.5" text-anchor="middle" fill="#1a1a1a">MCP bridge</text>
+
+  <!-- outputs/submit.zip -->
+  <rect x="70" y="310" width="360" height="44" rx="22" fill="#f5f5f5" stroke="#999" stroke-width="1.2"/>
+  <text x="250" y="338" font-size="13" text-anchor="middle" fill="#1a1a1a">outputs/submit.zip (deliverable)</text>
+
+  <!-- EDA tools -->
+  <rect x="560" y="240" width="310" height="66" rx="33" fill="#d5e8d4" stroke="#82b366" stroke-width="1.2"/>
+  <text x="715" y="268" font-size="13" text-anchor="middle" fill="#1a1a1a">EDA tools</text>
+  <text x="715" y="288" font-size="11.5" text-anchor="middle" fill="#444">(run_code / run_commands)</text>
+
+  <!-- check.py -->
+  <rect x="70" y="425" width="360" height="48" rx="24" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.2"/>
+  <text x="250" y="448" font-size="13" text-anchor="middle" fill="#1a1a1a">check.py</text>
+  <text x="250" y="465" font-size="11.5" text-anchor="middle" fill="#444">(&#8805; 8 assertions)</text>
+
+  <!-- PASS / FAIL -->
+  <rect x="130" y="495" width="240" height="38" rx="19" fill="#f5f5f5" stroke="#999" stroke-width="1.2"/>
+  <text x="250" y="520" font-size="14" font-weight="bold" text-anchor="middle" fill="#1a1a1a">PASS / FAIL</text>
+
+  <!-- ===== Arrows ===== -->
+  <!-- assets -> hook -->
+  <line x1="250" y1="154" x2="250" y2="173" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- hook -> agent (blocks, dotted gray) -->
+  <line x1="170" y1="219" x2="170" y2="243" stroke="#aaa" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arrow-gray)"/>
+  <text x="112" y="234" font-size="10" fill="#999" font-style="italic">blocks</text>
+  <!-- agent -> MCP -->
+  <line x1="270" y1="268" x2="298" y2="268" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- MCP -> EDA (tool call) -->
+  <path d="M 430 265 C 480 265, 510 270, 558 268" fill="none" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="475" y="255" font-size="10.5" fill="#666">tool call</text>
+  <!-- EDA -> MCP (results, green) -->
+  <path d="M 558 283 C 510 285, 480 282, 432 280" fill="none" stroke="#2ca57a" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  <text x="475" y="298" font-size="10.5" fill="#2ca57a">results</text>
+  <!-- agent -> outputs -->
+  <line x1="170" y1="291" x2="170" y2="308" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- outputs -> check.py (agent exits, purple) -->
+  <line x1="250" y1="354" x2="250" y2="423" stroke="#7a3ec9" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+  <text x="265" y="392" font-size="10" fill="#7a3ec9" font-style="italic">agent exits</text>
+  <!-- check.py -> verdict -->
+  <line x1="250" y1="473" x2="250" y2="493" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>

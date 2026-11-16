@@ -1,0 +1,8 @@
+[696/696] [████████████████████] 100% | PASS:62 FAIL:558 | 24:10:11<0:00, 0.01/s, 125.0s/it | running: none | EDA-Eval-DesignFlow-WvStimExtract-001 -> FAIL
+
+========== 批次汇总 ==========
+batch: /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261109_171201
+jsonl: /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl
+total: 696 cases, 8 workers
+结果: {'ERROR': 70, 'FAIL': 558, 'PASS': 62, 'ABSENT': 6}
+通过率: 62/626 = 9.9%

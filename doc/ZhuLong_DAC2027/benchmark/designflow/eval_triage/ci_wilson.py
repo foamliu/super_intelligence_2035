@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Wilson-score 95% confidence intervals for EDA-LiveFlow-Bench pass rates.
+"""Wilson-score 95% confidence intervals for EDA-Flow-Bench pass rates.
 
 stdout only, stdlib only.  Ground truth = run_batch_20261109_171201:
     total 696, PASS 62, FAIL 558, ERROR 70, ABSENT 6

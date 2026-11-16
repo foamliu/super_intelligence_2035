@@ -10,7 +10,7 @@ import re
 from pathlib import Path
 
 PAPER = Path(r"D:\Users\Administrator\code\super_intelligence_2035\doc\ZhuLong_DAC2027"
-             r"\EDA-LiveFlow-Bench_ICML2027")
+             r"\EDA-Flow-Bench_ICML2027")
 FILES = ["main.tex", "sections/0_abstract.tex", "sections/1_intro.tex",
          "sections/2_benchmark.tex", "sections/3_harness.tex",
          "sections/4_experiments.tex", "sections/5_analysis.tex",

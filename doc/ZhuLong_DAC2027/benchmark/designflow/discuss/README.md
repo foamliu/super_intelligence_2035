@@ -1,7 +1,7 @@
 # 设计流 shard 讨论区 · 协议
 
 > **用途**：4 个 designflow shard（A/B/C/D）在**没有 case 可做**时，围绕论文
-> `EDA-LiveFlow-Bench_ICML2027` 交换看法、形成下一步行动建议。
+> `EDA-Flow-Bench_ICML2027` 交换看法、形成下一步行动建议。
 > **用户令（2026-11-11）**：「设置一个文本文件，各线 designflow 在没有 case 可做时，
 > 阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
 
@@ -157,7 +157,7 @@ append 到自己的 `<X>.md` 末尾：
 | **造题优先** | 有 case 就造题，讨论区不抢占。0-case 才进。 |
 | **mc≥10 令** | 不解除。进讨论区前仍须贴 `mc-matrix` 证据证明 `fresh==0`。 |
 | **`eval_triage/`** | 仍由 A 独占，讨论区不得重跑，可引用其结果。 |
-| **论文只读** | 🚫 `EDA-LiveFlow-Bench_ICML2027/` 下任何文件不得修改。 |
+| **论文只读** | 🚫 `EDA-Flow-Bench_ICML2027/` 下任何文件不得修改。 |
 | **各行 MEMORY** | 讨论发言**不进** MEMORY（体积红线），只在 MEMORY 留一行指针。 |
 
 ---

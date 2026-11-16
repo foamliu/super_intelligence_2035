@@ -1,0 +1,29 @@
+\section{Discussion and Conclusion}
+\label{sec:conclusion}
+
+% 注：原 §7 仅 Conclusion，现合并 Discussion 内容（SWE-bench 惯例：Discussion 单独成节或与 Conclusion 合并）。
+% 注：原第 7 节仅含结论，现合并讨论内容（SWE-bench 惯例：讨论可单独成节或与结论合并）。
+
+We presented \bench, the first benchmark for LLM agents on multi-step circuit design flow orchestration, built from real user interaction traces across 13 EDA domains (a living set of \Ntasks{} cases, evaluated here on a frozen \Neval{}-run snapshot). The evaluation yields a clear result: a single frontier backbone reaches 10.0\% Pass@1 on multi-step flow orchestration (62/620 decided runs), against 76.5\% reported for single-script EDA tasks. The ordering across domains---pnr\_signoff 20.8\% at the top, physical\_verify and layout\_aether at 2.9\% at the bottom---is stable even though the individual ratios are not: current agents do well when the deliverable is a script or template and poorly when deep live-tool interaction (DRC/LVS runs, GUI-driven layout editing) is required.
+% 我们提出了 \bench，这是首个面向 LLM 智能体多步电路设计流编排的基准，构建于 13 个 EDA 领域的真实用户交互轨迹之上（活集 \Ntasks{} 例，本文在冻结的 \Neval{}-run 快照上评测）。
+% 评测给出清晰结果：单一前沿骨干在多步流程编排上取得 10.0\% Pass@1（62/620 已判定 run），而单脚本 EDA 任务上报告为 76.5\%。
+% 领域间排序——pnr_signoff 20.8\% 居首，physical_verify 与 layout_aether 均 2.9\% 垫底——稳健，但单个比值并不稳健：当交付件是脚本/模板时当前智能体表现尚可，需要深度实时工具交互（DRC/LVS 运行、GUI 版图编辑）时则失败。
+
+\textbf{Implications.} The grounding-depth bottleneck suggests two research directions: (i) \emph{retrieval-augmented tool use}, where the agent retrieves tool documentation and prior execution traces to ground its tool calls, and (ii) \emph{execution-feedback loops}, where intermediate tool outputs are explicitly fed back as context. Neither is fully solved by scaling the backbone alone. Our benchmark provides a testbed for evaluating such interventions.
+% \textbf{启示。} 接地深度瓶颈提示了两个研究方向：(i)"检索增强的工具使用"——智能体检索工具文档和历史执行轨迹来为自己的工具调用接地；(ii)"执行反馈回路"——把中间工具输出显式回填为上下文。两者都无法仅靠扩大骨干模型来解决。我们的基准为评估此类干预手段提供了测试床。
+
+\textbf{Future work.}
+% \textbf{未来工作。}
+\begin{itemize}
+    \item \textbf{Expand domain coverage}: supplement digital synthesis and verification tasks to balance the distribution.
+    % \textbf{扩展领域覆盖}：补充数字综合与验证任务以均衡分布。
+    \item \textbf{Multi-agent evaluation}: evaluate agent frameworks beyond Cline (SWE-agent, OpenHands).
+    % \textbf{多智能体评测}：评估 Cline 之外的智能体框架（SWE-agent、OpenHands）。
+    \item \textbf{Open-source EDA}: extend the benchmark to open-source tool chains (Yosys, OpenROAD, Magic) for reproducibility.
+    % \textbf{开源 EDA}：将基准扩展到开源工具链（Yosys、OpenROAD、Magic）以提升可复现性。
+    \item \textbf{Grounding interventions}: develop and evaluate techniques to improve tool-chain grounding (retrieval-augmented tool use, execution-feedback loops, tool-documentation pretraining).
+    % \textbf{接地干预}：开发并评估改善工具链接地的技术（检索增强工具使用、执行反馈回路、工具文档预训练）。
+\end{itemize}
+
+\bench{} is built from proprietary user interaction traces that constitute company intellectual property and therefore cannot be publicly released in their original form. To balance reproducibility with these confidentiality constraints, we commit to releasing: (i) the evaluation harness (\texttt{run\_one.sh}, \texttt{run\_batch.sh}, anti-leakage hook, MCP bridge configuration) as open-source scripts; (ii) a \emph{sanitized task specification set} with prompts, reference assertions, and \texttt{check.py} judges for a representative subset of tasks whose underlying designs have been approved for external release; and (iii) a \emph{mock-EDA mode} enabling harness testing without commercial tool licenses. Full details of the release plan, the sanitization protocol, and the open-source-EDA extension roadmap are described in the Reproducibility Statement (Section~\ref{sec:reproducibility}).
+% \bench{} 构建于构成公司知识产权的专有用户交互轨迹之上，因此无法以原始形式公开发布。为在可复现性与保密约束之间取得平衡，我们承诺发布：(i) 评测框架（\texttt{run\_one.sh}、\texttt{run\_batch.sh}、防泄题钩子、MCP 网桥配置）作为开源脚本；(ii) 一套\emph{脱敏任务规格集}，包含经批准可对外发布的代表性子集任务的提示词、参考断言和 \texttt{check.py} 判分器；以及 (iii) 一套\emph{mock-EDA 模式}，无需商业工具许可证即可测试框架。发布计划、脱敏协议和开源 EDA 扩展路线图的完整细节见可复现性声明（第~\ref{sec:reproducibility}~节）。

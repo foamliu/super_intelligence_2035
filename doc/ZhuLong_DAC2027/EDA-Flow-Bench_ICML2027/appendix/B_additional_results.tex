@@ -1,0 +1,216 @@
+\section{Additional Results}
+\label{sec:additional-results}
+
+% 附录 B：扩展实验结果（参考 SWE-bench Appendix C "Additional Results"）
+% 附录 B：扩展实验结果（参考 SWE-bench Appendix C "Additional Results"）
+
+\subsection{Full Per-Domain Results}
+\label{sec:full-per-domain}
+% \subsection{完整的各领域结果}
+
+Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 frozen evaluation (\Neval{} runs across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers). The overall Pass@1 is 10.0\% (62 PASS / 620 decided runs); 70 ERROR and 6 ABSENT runs are excluded from the denominator but reported per domain. Column sums are 62/558/70/6/696, and for every row PASS$+$FAIL$+$ERROR$+$ABSENT$=$Total.
+% 表~\ref{tab:full-domain-results} 报告 2026-11-09 冻结评测（\Neval{} 个 run，覆盖全部 13 个领域，
+% DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers）的完整各领域分解。
+% 总体 Pass@1 为 10.0\%（62 PASS / 620 已判定 run）；70 个 ERROR 与 6 个 ABSENT 不计入分母但逐域列出。
+% 列合计 62/558/70/6/696，且每行 PASS+FAIL+ERROR+ABSENT=Total。
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Full Pass@1 (\%) by domain on the 2026-11-09 full evaluation (696 cases, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers, 2400s timeout). Pass\% = PASS/(PASS+FAIL); ERROR and ABSENT are excluded from the denominator.}
+% \caption{2026-11-09 完整评测（696 例，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers、超时 2400s）各领域 Pass@1 (\%)。Pass\% = PASS/(PASS+FAIL)；ERROR 与 ABSENT 不计入分母。}
+\label{tab:full-domain-results}
+\scriptsize
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Domain} & \textbf{PASS} & \textbf{FAIL} & \textbf{ERROR} & \textbf{ABSENT} & \textbf{Total} & \textbf{Pass\%} \\
+\midrule
+schematic\_netlist & 13 & 100 & 18 & 0 & 131 & 11.5 \\
+spice\_sim         & 8  & 87  & 7  & 2 & 104 & 8.4  \\
+physical\_verify   & 2  & 66  & 4  & 1 & 73  & 2.9  \\
+digital            & 5  & 40  & 6  & 0 & 51  & 11.1 \\
+analog\_context    & 4  & 39  & 12 & 0 & 55  & 9.3  \\
+waveform           & 2  & 37  & 8  & 0 & 47  & 5.1  \\
+layout\_virtuoso   & 4  & 35  & 0  & 1 & 40  & 10.3 \\
+layout\_aether     & 1  & 33  & 4  & 0 & 38  & 2.9  \\
+verification       & 3  & 30  & 5  & 0 & 38  & 9.1  \\
+eda\_other         & 6  & 27  & 4  & 1 & 38  & 18.2 \\
+pg\_layout         & 4  & 24  & 0  & 0 & 28  & 14.3 \\
+characterization   & 5  & 21  & 2  & 0 & 28  & 19.2 \\
+pnr\_signoff       & 5  & 19  & 0  & 1 & 25  & 20.8 \\
+\midrule
+\textbf{Total}     & \textbf{62} & \textbf{558} & \textbf{70} & \textbf{6} & \textbf{696} & \textbf{10.0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Per-Model Results}
+\label{sec:per-model}
+% \subsection{各模型结果}
+
+This submission reports a \emph{single-backbone} evaluation: only DeepSeek-V4-Pro
+has been run to completion over the full \Neval{}-run snapshot (10.0\% Pass@1,
+62/620 decided). GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash and Doubao-Seed-2.0-Pro
+are configured in the same harness but their sweeps are still running, so we
+report no numbers for them rather than a table of dashes. At the observed batch
+cost (696 runs in $\approx$24\,h at 8 workers), the remaining four backbones
+amount to roughly five machine-days; we will report the sweep in the
+camera-ready version and repeat it as the multi-backbone test of RQ3
+(Section~\ref{sec:model-scaling}).
+% 本投稿给出的是\emph{单骨干}评测：只有 DeepSeek-V4-Pro 在完整的 \Neval{}-run 快照上跑到完成
+% （10.0\% Pass@1，62/620 已判定）。GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro
+% 已接入同一框架但扫描仍在跑，因此这里不报数字，也不放一张全是 "---" 的表。
+% 按本批实测成本（696 run / 8 workers ≈ 24 小时），余下四个骨干约需五个机器日；camera-ready
+% 版本将给出该扫描，并用它作为 RQ3 的多骨干检验。
+
+\subsection{Failure Taxonomy by Domain}
+\label{sec:failure-by-domain}
+% \subsection{各领域失败分类法}
+
+The batch runner records one terminal status per run, so the per-domain failure
+\emph{categories} cannot be derived from the released logs alone. We therefore
+report (i) the run-level outcome anchors per domain (Table~\ref{tab:full-domain-results})
+and (ii) a triage tool that recovers the categories from each run's judge log and
+agent session, which accompanies this benchmark
+(\texttt{eval\_triage/05\_batch\_triage.py}, with an explicit UNKNOWN share so that
+unclassified runs are never silently folded into another bucket). Applying it to
+the \Neval{}-run batch yields the per-domain category matrix in
+Table~\ref{tab:failure-by-domain} (PASS runs are out of scope here; rows sum to
+the FAIL+ERROR count per domain). Class abbreviations: TO=ERROR\_TIMEOUT,
+INFRA=ERROR\_INFRA, NOSUB=NO\_SUBMIT, FMT=FORMAT\_CONTRACT, RT=ASSERT\_RUNTIME,
+SEM=ASSERT\_SEMANTIC, ANTI=ASSERT\_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR.
+The UNKNOWN column is dominated by the ERROR-status runs (aborted pre-judging,
+counted in mode (i) of \S\ref{sec:failure-taxonomy} by terminal status) whose
+abort reason carries no timeout/infrastructure signature; the remaining
+FAIL-with-submit UNKNOWN (49 runs, 7.0\% of the batch) is detailed in
+\S\ref{sec:failure-taxonomy}. A stacked-bar view and a Cohen's $\kappa$ agreement
+statistic between the tool and a human labeler on a 100-run sample are deferred
+to the camera-ready version.
+% 批次 runner 每个 run 只记录一个终态，因此仅凭已发布的日志无法推导各领域的失败\emph{类别}。
+% 故我们给出：(i) 各领域 run 级结果锚点（表~\ref{tab:full-domain-results}）；
+% (ii) 一个逐 run 归因工具，它从每个 run 的判分日志与智能体会话中恢复类别
+% （eval_triage/05_batch_triage.py，并显式报告 UNKNOWN 比例，避免未分类 run 被悄悄并入别的桶）。
+% 将其应用于 \Neval{}-run 批次得到表~\ref{tab:failure-by-domain} 的逐域类别矩阵（PASS run 不在此表
+% 范围；各行加和为该域 FAIL+ERROR 数）。列缩写：TO=ERROR_TIMEOUT, INFRA=ERROR_INFRA,
+% NOSUB=NO_SUBMIT, FMT=FORMAT_CONTRACT, RT=ASSERT_RUNTIME, SEM=ASSERT_SEMANTIC,
+% ANTI=ASSERT_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR。UNKNOWN 列以 ERROR 终态 run（判分前中止，
+% 按 \S\ref{sec:failure-taxonomy} 模式 (i) 的终态计入）为主，其中止原因无 timeout/infra 签名；
+% 其余 FAIL-with-submit UNKNOWN（49 run，占批次 7.0\%）见 \S\ref{sec:failure-taxonomy}。
+% 堆叠柱状图与工具对人工标注者在 100-run 样本上的 Cohen's kappa 一致性推迟到 camera-ready。
+
+\begin{table}[ht]
+\centering
+\caption{Per-domain failure-category matrix for the \Neval{}-run batch, recovered by \texttt{eval\_triage/05\_batch\_triage.py} from per-run judge logs. PASS runs are excluded; each row sums to that domain's FAIL+ERROR count. UNKNOWN is reported as its own column, not folded into another class. Pass\% is PASS/(PASS+FAIL) per domain (62/620 = 10.0\% overall).}
+\label{tab:failure-by-domain}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Domain & TO & INFRA & NOSUB & FMT & RT & SEM & ANTI & UNK & F+E \\
+\midrule
+analog\_context & 0 & 0 & 3 & 1 & 9 & 20 & 0 & 18 & 51 \\
+characterization & 0 & 0 & 5 & 0 & 7 & 8 & 0 & 3 & 23 \\
+digital & 0 & 0 & 3 & 0 & 7 & 28 & 0 & 8 & 46 \\
+eda\_other & 0 & 0 & 5 & 0 & 3 & 16 & 0 & 7 & 31 \\
+layout\_aether & 0 & 0 & 4 & 0 & 4 & 25 & 0 & 4 & 37 \\
+layout\_virtuoso & 0 & 0 & 4 & 1 & 7 & 20 & 0 & 3 & 35 \\
+pg\_layout & 0 & 0 & 3 & 0 & 7 & 11 & 0 & 3 & 24 \\
+physical\_verify & 0 & 0 & 8 & 0 & 18 & 37 & 0 & 7 & 70 \\
+pnr\_signoff & 0 & 0 & 2 & 0 & 1 & 16 & 0 & 0 & 19 \\
+schematic\_netlist & 0 & 0 & 5 & 0 & 26 & 54 & 0 & 33 & 118 \\
+spice\_sim & 0 & 0 & 8 & 0 & 26 & 48 & 0 & 12 & 94 \\
+verification & 0 & 0 & 5 & 0 & 11 & 11 & 0 & 8 & 35 \\
+waveform & 0 & 0 & 15 & 0 & 6 & 11 & 0 & 13 & 45 \\
+\midrule
+\textbf{Total} & \textbf{0} & \textbf{0} & \textbf{70} & \textbf{2} & \textbf{132} & \textbf{305} & \textbf{0} & \textbf{119} & \textbf{628} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Token Usage and Cost Analysis}
+\label{sec:token-cost}
+% \subsection{Token 用量与成本分析}
+
+We can report \emph{behavioural} cost from the archived pilot sessions. For the 30
+runs that carry an authoritative \texttt{run\_result.aggregateUsage} record, the
+median run consumes 0.71M input and 55.6k output tokens (mean 0.86M/52.5k; totals
+25.7M/1.58M), on top of a median of 26.5 tool calls (IQR 13.8--38.0) over 20.5
+iterations and 1{,}047\,s of wall-clock time (IQR 552--1{,}495). The input:output
+ratio of ${\sim}13{:}1$ is the signature of a long-horizon agent loop that re-sends
+its context each iteration, and it is the main cost driver of flow orchestration.
+A per-task token/cost table for the full \Neval{}-run batch is pending because the
+batch summary records only terminal status and wall time; the per-run session logs
+are retained and will be aggregated with the same parser
+(\texttt{eval\_triage/trace\_anatomy.py}) in the camera-ready version.
+% 我们能报告的是\emph{行为学}成本。对 30 份带有权威 run_result.aggregateUsage 记录的 run：
+% 中位每 run 消耗 0.71M input / 55.6k output token（均值 0.86M / 52.5k；合计 25.7M / 1.58M），
+% 同时中位发出 26.5 次工具调用（IQR 13.8--38.0）、跨 20.5 轮迭代、耗 1,047 秒墙钟（IQR 552--1,495）。
+% 约 13:1 的 input:output 比是长时程智能体回路的特征——每轮迭代都要重发上下文，这也是流程编排的主要成本来源。
+% 全量 \Neval{}-run 批次的逐任务 token/成本表待补：批次摘要只记录终态与墙钟，逐 run 会话日志已留存，
+% 将在 camera-ready 用同一解析器（eval_triage/trace_anatomy.py）聚合给出。
+
+\subsection{Context-Compaction Ablation}
+\label{sec:compaction-ablation}
+% \subsection{上下文压缩消融}
+
+Long-horizon agent loops accumulate context until the coding agent's compaction
+mechanism must summarize earlier turns to fit the context window. Cline offers
+two compaction strategies: \emph{basic} (a structured summarization that
+preserves tool-call I/O verbatim) and \emph{agentic} (an LLM-generated free-form
+summary). Because compaction is triggered deep into a run and its effect is
+entangled with task difficulty, we isolate it with an ABBA-designed ablation on
+a fixed 40-task subset of the Lite set, holding everything else constant
+(DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=medium}, 2400s timeout, single
+trace per task). The ABBA order (basic, agentic, agentic, basic, basic, agentic)
+balances position effects across six rounds.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Context-compaction ablation (ABBA, 6 rounds, 40-task subset). Pass\% is
+PASS/40. Basic compaction consistently outperforms agentic by ${\sim}10$pp while
+keeping wall-clock time lower, suggesting that preserving tool-call I/O verbatim
+is more valuable than a lossy semantic summary for EDA flow orchestration.}
+\label{tab:compaction-ablation}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+\textbf{Round} & \textbf{Variant} & \textbf{Pass\%} & \textbf{PASS/40} & \textbf{Wall (h)} & \textbf{Tok/task (M)} \\
+\midrule
+r1 & basic   & 67.5 & 27 & 1.54 & 2.59 \\
+r1 & agentic & 57.5 & 23 & 2.39 & 1.90 \\
+r2 & agentic & 60.0 & 24 & 1.88 & 2.03 \\
+r2 & basic   & 70.0 & 28 & 1.83 & 2.06 \\
+r3 & basic   & 70.0 & 28 & 1.80 & 2.03 \\
+r3 & agentic & 60.0 & 24 & 1.93 & 1.82 \\
+\midrule
+\multicolumn{2}{l}{basic mean}   & 69.2 & 27.7 & 1.72 & 2.23 \\
+\multicolumn{2}{l}{agentic mean} & 59.2 & 23.7 & 2.07 & 1.92 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Across the three basic rounds the pass rate is 67.5/70.0/70.0 (mean 69.2\%) and
+across the three agentic rounds 57.5/60.0/60.0 (mean 59.2\%), a stable
+${\sim}10$pp gap in favour of basic compaction. The ABBA design rules out a
+pure ordering artifact, and the gap is consistent in direction across all three
+round pairs. Interestingly, basic compaction is also \emph{faster} (1.72\,h vs
+2.07\,h mean batch wall time) despite consuming slightly more tokens (2.23\,M vs
+1.92\,M per task): the agentic summarizer spends extra iterations re-deriving
+information that the basic summarizer keeps verbatim. We interpret this as
+evidence that in EDA flow orchestration the high-value context is tool-call I/O
+(exact commands, exact tool responses, exact file paths), which a free-form
+semantic summary tends to lose. The ablation uses \texttt{thinking=medium}
+rather than the \texttt{thinking=low} of the main evaluation, so the absolute
+pass rates are not directly comparable to Table~\ref{tab:full-domain-results};
+the relative comparison between the two compaction strategies is the point.
+% 长时程智能体回路不断累积上下文，直到编程智能体的压缩机制必须摘要早期轮次以适配上下文窗口。
+% Cline 提供两种压缩策略：\emph{basic}（保留工具调用 I/O 原文的结构化摘要）与 \emph{agentic}
+% （LLM 生成的自由式摘要）。由于压缩在 run 深处触发且其效果与任务难度耦合，我们用 ABBA 设计的消融
+% 在 Lite 集的固定 40 任务子集上隔离该因素，其余保持恒定（DeepSeek-V4-Pro、Cline v3.0.51、
+% \texttt{thinking=medium}、2400s 超时、每任务单轨迹）。ABBA 顺序（basic, agentic, agentic, basic,
+% basic, agentic）在六轮间平衡位置效应。三轮 basic 的通过率为 67.5/70.0/70.0（均值 69.2\%），
+% 三轮 agentic 为 57.5/60.0/60.0（均值 59.2\%），basic 稳定优 ${\sim}10$pp。ABBA 设计排除了纯顺序假象，
+% 且三轮对的方向一致。有趣的是 basic 同时更快（均值 1.72h vs 2.07h）但略多耗 token（2.23M vs 1.92M/任务）：
+% agentic 摘要器需额外迭代重新推导 basic 摘要器保留为原文的信息。我们将此解读为：在 EDA 流程编排中，
+% 高价值上下文是工具调用 I/O（精确命令、精确工具响应、精确文件路径），自由式语义摘要倾向于丢失这些。
+% 该消融使用 \texttt{thinking=medium} 而非主评测的 \texttt{thinking=low}，故绝对通过率与
+% 表~\ref{tab:full-domain-results} 不可直接比较；两种压缩策略的相对比较才是重点。

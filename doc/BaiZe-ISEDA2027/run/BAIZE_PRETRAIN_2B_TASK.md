@@ -12,7 +12,7 @@
 > - 你的职责：训练机上以 `scripts/eval/` 为**唯一启动入口**跑评测；如脚本再修，直接改这里，不要再散落回 `run/`。
 >
 > **② L4 移交 Post-Train（即刻生效）**
-> - **L4（zhulong 消融评测 + designflow / EDA-LiveFlow-Bench）不再由 pretrain 负责**，由 post-train 主责（其隧道已 4 次复验 OK、run_code 端到端 PASS）。
+> - **L4（zhulong 消融评测 + designflow / EDA-Flow-Bench）不再由 pretrain 负责**，由 post-train 主责（其隧道已 4 次复验 OK、run_code 端到端 PASS）。
 > - 你从本轮起：**L4 状态统一写「HANDOFF→post-train」，不写 BLOCKED、不再做 L4 资源调查、不再尝试 .15/.17 直连**。
 > - 四层口径调整为：L1 / L2 / L3 由你负责；L4 只做**只读引用**（post-train 出数后引用）。
 >
@@ -36,7 +36,7 @@
 > | **L1 常识推理（8 集）** | ARC-e/ARC-c/BoolQ/HellaSwag/OBQA/PiQA/SciQ/Winogrande | ✅ 已有（160k: Avg 58.13%） | 继续推高 |
 > | **L2 复杂推理（6 集）** | GSM8K / MATH / MMLU / BBH / HumanEval / MBPP | ✅ 已有，但 **GSM8K 1.52% / MMLU 23.79% / BBH 14.04% 明显偏低** | **重点补** |
 > | **L3 Agentic** | **SWE-bench（verified）/ Terminal-bench** + Kimi/DeepSeek 在意的其他（τ-bench / WebArena / GAIA） | ❌ **完全空白** | **从 0 建立** |
-> | **L4 领域能力** | **zhulong 消融评测 + designflow（EDA-LiveFlow-Bench）** | ❌ **未接**（两个 bench 都有成品可跑） | **接上并跑** |
+> | **L4 领域能力** | **zhulong 消融评测 + designflow（EDA-Flow-Bench）** | ❌ **未接**（两个 bench 都有成品可跑） | **接上并跑** |
 >
 > #### 2. 每轮该做什么（按优先级）
 >

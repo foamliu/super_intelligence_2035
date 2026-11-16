@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 PAPER = Path(r"D:\Users\Administrator\code\super_intelligence_2035\doc\ZhuLong_DAC2027"
-             r"\EDA-LiveFlow-Bench_ICML2027")
+             r"\EDA-Flow-Bench_ICML2027")
 
 
 def rows_of(rel, start, end):

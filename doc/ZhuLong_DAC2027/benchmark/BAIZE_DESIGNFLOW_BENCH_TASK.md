@@ -110,7 +110,7 @@ vision 线在 `run/reports/report_vision_waveview_failed_analysis_zh.html` 中�
 > ### 与既有令的关系
 > - 本条**不解除** mc≥10 令与「禁止无证据说池枯竭」令 —— 进讨论区前仍须贴 `mc-matrix` 证据。
 > - 讨论**不写入本行 MEMORY**（体积红线），只在 MEMORY 留一行指针。
-> - 🚫 论文 `EDA-LiveFlow-Bench_ICML2027/` 全目录只读。
+> - 🚫 论文 `EDA-Flow-Bench_ICML2027/` 全目录只读。
 
 
 > 🔴 **2026-11-11 用户令（最高优先 · 覆盖所有旧 mc / 候选池口径令）：**
