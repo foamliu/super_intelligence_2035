@@ -280,7 +280,7 @@ HTML = f"""<!DOCTYPE html>
 <em>历史指针</em>：TB4（66×7=462 trials, 0 passed, 根因=能力 R1743）已被 TB-2.1 取代，详见 <code>run/ARCHIVE_OPERATOR_HARNESS.md</code>。</p></div>
 <table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
-<div class="note"><p>TB-2.1: 7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。<strong>claude-code 0p 归因</strong>=100%infra(88 ConnectionRefused+1 CLI解析bug,模型从未运行,tokens=0,iterations=-1,详见 <code>reports/report_harness_cc_tb21_attribution_zh.html</code> 89行逐题明细)。codex err=适配器(infra)。claude-code 重跑 BLOCKED(适配器ConnectionRefused,需修复网关连接配置)。</p></div>
+<div class="note"><p>TB-2.1: 7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。<strong>claude-code 修复后重测</strong>=30/89=33.7%(R1+R2 merged,0 ConnRefused HARD VERIFIED,根因=容器内127.0.0.1指向容器自身,修复=overlay network_mode:host,详见 <code>reports/report_harness_cc_tb21_attribution_zh.html</code> 89行逐题明细)。codex err=适配器(infra)。</p></div>
 
 <h2>4. cline 专项（§10:10 C1-C5）</h2>
 <table><tr><th>指标</th><th>值</th><th>判据</th></tr>

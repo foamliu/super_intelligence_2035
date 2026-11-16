@@ -54,13 +54,21 @@ def count_route(h):
 
     用 result.json 的 task_name 字段做去重键 (canonical), 避免 dir-name
     split('__')[0] 把 dated job 级 result.json 误算成 task (旧 bug: 90/91>89).
+
+    §2026-11-17: 扫描 original dir + 所有 <h>_rerun_* dir (R1/R2 重跑结果).
+    PASS 优先 (任一 trial reward==1.0 即记 passed), 与 merge_cc_r1r2.py 逻辑一致.
     """
     d = JOBS / h
     tasks = {}
     trials = 0
     errors = 0
-    if d.exists():
-        for f in _iter_task_results(d):
+    # Scan original dir + all rerun dirs (R1/R2/quota rerun 等)
+    scan_dirs = [d] if d.exists() else []
+    for rd in sorted(JOBS.glob(f"{h}_rerun_*")):
+        if rd.is_dir():
+            scan_dirs.append(rd)
+    for sd in scan_dirs:
+        for f in _iter_task_results(sd):
             try:
                 r = json.loads(f.read_text())
             except Exception:
@@ -185,8 +193,8 @@ INFRA_LEDGER = {
     ),
     "claude-code": (
         "89 ConnectionRefused (适配器无法连接网关, 模型从未运行)",
-        "适配器 base_url/network 修复 (容器内 127.0.0.1 → 宿主可达地址 + overlay-network-host)",
-        "rerun 11/82 done (0 ConnRefused✅ HARD VERIFIED), ETA ~2026-11-16 14:00, 完成后 merge 刷新",
+        "适配器 base_url/network 修复 (容器内 127.0.0.1 → overlay network_mode:host)",
+        "rerun COMPLETE R1+R2 merged: 30P/89=33.7%, 0 ConnRefused✅ HARD VERIFIED",
     ),
 }
 
@@ -310,8 +318,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                  f"<td class='num {i_cls}'>{infra_now}</td></tr>")
     H.append("</tbody></table>")
     H.append("<div class='info'><p><strong>尚未归零的修复计划 + ETA</strong>:</p><ul>"
-             "<li><strong>claude-code</strong>: 89 ConnectionRefused → 适配器已修, rerun 11/82 done (0 ConnRefused✅), "
-             "ETA ~2026-11-16 14:00; 完成后 merge → Infra 降为 0（剩余真实失败记能力）。卡点: rerun 仍在跑, 不中断。</li>"
+             "<li><strong>claude-code</strong>: 89 ConnectionRefused → 适配器已修 (overlay network_mode:host), "
+             "rerun COMPLETE R1+R2 merged: <strong>30P/89=33.7%</strong>, 0 ConnRefused✅ HARD VERIFIED. "
+             "Infra 残留 4 (502/503), 余 42 能力不足 + 13 timeout。</li>"
              "<li><strong>hermes</strong>: 2 mteb = BLOCKED (hermes-agent 不在容器 PyPI 镜像, 非能力); "
              "2 qemu = BLOCKED (容器 debian:bullseye-slim Python 3.9 < hermes-agent 最低要求 ≥3.11, "
              "PyPI 全版本均 requires-python≥3.11, R2510 确认: _ensure_pip 修复成功→pip 可用, "

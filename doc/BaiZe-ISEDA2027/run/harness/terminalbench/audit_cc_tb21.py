@@ -12,55 +12,89 @@ from pathlib import Path
 from collections import Counter
 
 JOBS = Path('/tmp/tb21_glm53_jobs/claude-code')
+# §2026-11-17: scan original + all rerun dirs (R1 20261114-15 + R2 20261117)
+CC_DIRS = [
+    Path('/tmp/tb21_glm53_jobs/claude-code'),
+    Path('/tmp/tb21_glm53_jobs/claude-code_rerun_20261114_0951'),
+    Path('/tmp/tb21_glm53_jobs/claude-code_rerun_20261114_1251'),
+    Path('/tmp/tb21_glm53_jobs/claude-code_rerun_20261115_0348'),
+    Path('/tmp/tb21_glm53_jobs/claude-code_rerun_20261117_0003'),
+]
 OUT = Path(__file__).resolve().parents[3] / 'reports' / 'report_harness_cc_tb21_attribution_zh.html'
 
 
+def _classify_one(r):
+    """Classify a single result.json into a category + extract fields."""
+    vr = r.get('verifier_result') or {}
+    reward = (vr.get('rewards') or {}).get('reward', 0)
+    ei = r.get('exception_info') or {}
+    ar = r.get('agent_result') or {}
+    meta = ar.get('metadata') or {}
+    stdout = (meta.get('stdout', '') or '').strip()
+    exc_type = ei.get('exception_type', '')
+    exc_msg = (ei.get('exception_message') or '')[:200]
+    m = re.search(r'"iterations":(\d+)', stdout)
+    iterations = int(m.group(1)) if m else -1
+    in_tok = ar.get('n_input_tokens', 0) or 0
+    out_tok = ar.get('n_output_tokens', 0) or 0
+    task = None  # set by caller
+
+    if reward == 1.0:
+        cat = 'passed'
+    elif 'ConnectionRefused' in stdout or 'ConnectionRefused' in exc_msg:
+        cat = 'connection_refused'
+    elif '502' in exc_msg or 'Bad Gateway' in exc_msg or '502' in stdout:
+        cat = 'infra_502'
+    elif '503' in exc_msg or 'Service Unavailable' in exc_msg or '503' in stdout:
+        cat = 'infra_503'
+    elif "unknown option" in stdout or "unknown option" in exc_msg:
+        cat = 'cli_parse_bug'
+    elif 'AgentTimeoutError' in exc_type:
+        cat = 'timeout'
+    elif 'VerifierTimeoutError' in exc_type:
+        cat = 'verifier_timeout'
+    elif iterations > 1 and out_tok > 0:
+        cat = 'ability'
+    elif exc_type:
+        cat = 'adapter_error'
+    else:
+        cat = 'ability'  # reward=0, no infra/timeout/exception = model ran but verifier judged wrong
+    return cat, reward, exc_type, exc_msg, iterations, in_tok, out_tok, stdout
+
+
 def scan():
-    rows = []
-    for f in sorted(JOBS.rglob('result.json')):
-        if '/20' not in str(f).replace('\\', '/'): continue
-        if re.match(r'^\d{4}-\d{2}-\d{2}__', f.parent.name): continue
-        try:
-            r = json.loads(f.read_text())
-        except: continue
-        vr = r.get('verifier_result') or {}
-        reward = (vr.get('rewards') or {}).get('reward', 0)
-        ei = r.get('exception_info') or {}
-        ar = r.get('agent_result') or {}
-        meta = ar.get('metadata') or {}
-        stdout = (meta.get('stdout', '') or '').strip()
-        exc_type = ei.get('exception_type', '')
-        exc_msg = (ei.get('exception_message') or '')[:200]
-        m = re.search(r'"iterations":(\d+)', stdout)
-        iterations = int(m.group(1)) if m else -1
-        in_tok = ar.get('n_input_tokens', 0) or 0
-        out_tok = ar.get('n_output_tokens', 0) or 0
-        task = str(f.parent.name).split('__')[0]
-
-        # Classify
-        if reward == 1.0:
-            cat = 'passed'
-        elif 'ConnectionRefused' in stdout or 'ConnectionRefused' in exc_msg:
-            cat = 'connection_refused'
-        elif "unknown option" in stdout or "unknown option" in exc_msg:
-            cat = 'cli_parse_bug'
-        elif 'AgentTimeoutError' in exc_type:
-            cat = 'timeout'
-        elif iterations > 1 and out_tok > 0:
-            cat = 'ability'
-        elif exc_type:
-            cat = 'adapter_error'
-        else:
-            cat = 'other'
-
-        rows.append({
-            'task': task, 'reward': reward, 'cat': cat,
-            'exc_type': exc_type, 'exc_msg': exc_msg,
-            'iterations': iterations, 'in_tok': in_tok, 'out_tok': out_tok,
-            'stdout': stdout[:80], 'stdout_len': len(stdout),
-            'dir': str(f.parent),
-        })
-    return rows
+    """Scan original + all rerun dirs; deduplicate by task (PASS wins, then latest rerun)."""
+    by_task = {}  # task -> (dir_index, row)
+    for di, d in enumerate(CC_DIRS):
+        if not d.exists():
+            continue
+        for f in sorted(d.rglob('result.json')):
+            if '/20' not in str(f).replace('\\', '/'): continue
+            if re.match(r'^\d{4}-\d{2}-\d{2}__', f.parent.name): continue
+            try:
+                r = json.loads(f.read_text())
+            except: continue
+            task = str(f.parent.name).split('__')[0]
+            cat, reward, exc_type, exc_msg, iterations, in_tok, out_tok, stdout = _classify_one(r)
+            row = {
+                'task': task, 'reward': reward, 'cat': cat,
+                'exc_type': exc_type, 'exc_msg': exc_msg,
+                'iterations': iterations, 'in_tok': in_tok, 'out_tok': out_tok,
+                'stdout': stdout[:80], 'stdout_len': len(stdout),
+                'dir': str(f.parent), 'dir_index': di,
+            }
+            # Priority: PASS always wins; otherwise newer dir (higher di) wins
+            if task not in by_task:
+                by_task[task] = (di, row)
+            else:
+                old_di, old_row = by_task[task]
+                if row['cat'] == 'passed':
+                    by_task[task] = (di, row)
+                elif old_row['cat'] == 'passed':
+                    pass  # keep existing PASS
+                elif di > old_di:
+                    by_task[task] = (di, row)  # newer rerun wins
+    return [v[1][1] for v in sorted(by_task.items(), key=lambda x: x[0])]
 
 
 def build_html(rows):
@@ -71,8 +105,11 @@ def build_html(rows):
 
     cat_desc = {
         'connection_refused': 'claude-code 适配器无法连接 API 网关 (ConnectionRefused) — infra, 非能力',
+        'infra_502': '网关返回 502 Bad Gateway — infra, 非能力',
+        'infra_503': '网关返回 503 Service Unavailable — infra, 非能力',
         'cli_parse_bug': 'claude-code CLI 将 task instruction 解析为未知选项 — 适配器 bug, 非能力',
-        'timeout': 'AgentTimeoutError (900s 超时) — 可能与网关无响应相关',
+        'timeout': 'AgentTimeoutError (agent 超时) — 可能与网关无响应相关',
+        'verifier_timeout': 'VerifierTimeoutError (verifier 超时) — eval 阶段超时, 非能力',
         'ability': '模型真正运行 (iterations>1, output_tokens>0) 但 verifier 判错 — 真能力差',
         'adapter_error': '其他适配器异常 (exception_type 非空) — infra, 非能力',
         'other': '未分类 — 需人工检查',
@@ -80,8 +117,11 @@ def build_html(rows):
     }
     cat_color = {
         'connection_refused': '#e74c3c',
+        'infra_502': '#e74c3c',
+        'infra_503': '#e74c3c',
         'cli_parse_bug': '#e67e22',
         'timeout': '#f39c12',
+        'verifier_timeout': '#f39c12',
         'ability': '#c0392b',
         'adapter_error': '#9b59b6',
         'other': '#95a5a6',
@@ -102,34 +142,42 @@ def build_html(rows):
            ".bar{display:inline-block;height:20px;border-radius:3px;vertical-align:middle}")
     H = ['<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">',
          f'<title>claude-code TB-2.1 逐题归因 {now}</title><style>{css}</style></head><body>']
-    H.append(f'<h1>claude-code TB-2.1 逐题归因报告 — {now}</h1>')
+    H.append(f'<h1>claude-code TB-2.1 逐题归因报告 (R1+R2 merged) — {now}</h1>')
     H.append(f'<p><strong>模型</strong>: glm-5.3-flash | <strong>基准</strong>: TB-2.1 (89 题) | '
-             f'<strong>矛盾点</strong>: Q0/S0/E89 但 0 passed</p>')
+             f'<strong>状态</strong>: 适配器已修 (overlay network_mode:host), R1+R2 合并后 0 ConnRefused</p>')
 
     # Conclusion
+    passed_n = cat_counts.get('passed', 0)
+    infra_n = (cat_counts.get('connection_refused', 0) + cat_counts.get('infra_502', 0)
+               + cat_counts.get('infra_503', 0) + cat_counts.get('adapter_error', 0))
+    timeout_n = cat_counts.get('timeout', 0) + cat_counts.get('verifier_timeout', 0)
     H.append('<h2>一句话结论</h2>')
-    H.append(f'<div class="caveat"><p><strong>claude-code TB-2.1 = 0/89 = 0% 的失败 '
-             f'<strong>100% 是 infra/适配器问题，非模型能力</strong>。</p>'
+    H.append(f'<div class="info"><p><strong>claude-code TB-2.1 = {passed_n}/{total} = {passed_n/total*100:.1f}%</strong> '
+             f'(R1+R2 merged, 0 ConnRefused HARD VERIFIED)。</p>'
              f'<ul>'
-             f'<li><strong>ConnectionRefused</strong>: {cat_counts.get("connection_refused",0)}/89 = '
-             f'{cat_counts.get("connection_refused",0)/total*100:.1f}% — '
-             f'claude-code 适配器无法连接 API 网关 (OPENAI_BASE_URL/代理配置问题)'
-             f', 模型从未运行, tokens=0, iterations=-1</li>'
-             f'<li><strong>CLI 解析 bug</strong>: {cat_counts.get("cli_parse_bug",0)}/89 = '
-             f'{cat_counts.get("cli_parse_bug",0)/total*100:.1f}% — '
-             f'task instruction 以 "-" 开头被 claude-code CLI 解析为未知选项</li>'
-             f'<li><strong>真正"模型跑过且答错"</strong>: '
-             f'<strong style="color:#c039b;font-size:1.2em">{ability_n}</strong> 题 '
-             f'(需 iterations>1 且 output_tokens>0)</li>'
+             f'<li><strong>Passed</strong>: {passed_n}/{total} = {passed_n/total*100:.1f}%</li>'
+             f'<li><strong>能力不足 (ability)</strong>: {ability_n} 题 '
+             f'(模型真运行 iterations>1 + output_tokens>0 但 verifier 判错)</li>'
+             f'<li><strong>Infra 残留</strong>: {infra_n} 题 '
+             f'(ConnectionRefused={cat_counts.get("connection_refused",0)}, '
+             f'502={cat_counts.get("infra_502",0)}, '
+             f'503={cat_counts.get("infra_503",0)}, '
+             f'adapter_error={cat_counts.get("adapter_error",0)})</li>'
+             f'<li><strong>Timeout</strong>: {timeout_n} 题 '
+             f'(AgentTimeout={cat_counts.get("timeout",0)}, VerifierTimeout={cat_counts.get("verifier_timeout",0)})</li>'
              f'</ul>'
-             f'<p><strong>归因红线</strong>: 🚫 不得将 ConnectionRefused 记为能力差。'
-             f'claude-code 的真实能力 <strong>无法从本批数据中评估</strong> (模型从未成功连接网关)。'
-             f'需修复网关连接后重跑才能获得能力数字。</p></div>')
+             f'<p><strong>修复摘要</strong>: 根因 = 容器内 127.0.0.1 指向容器自身 (非宿主机), '
+             f'导致 claude-code 适配器无法连接 gw_proxy 9092。修复 = overlay network_mode:host '
+             f'(容器与宿主共享网络栈)。R1 (82 题) + R2 (30 题) 合并后 0 ConnRefused。'
+             f'vs 旧 0/89 (100% infra, 88 ConnRefused) -> 修复后 {passed_n}/{total} = {passed_n/total*100:.1f}%。</p>'
+             f'<p><strong>归因红线</strong>: 不得将 infra (502/503/ConnRefused) 记为能力差。'
+             f'剩余 {ability_n} 题能力不足 + {infra_n} 题 infra + {timeout_n} 题 timeout 为真实分类。</p></div>')
 
     # Stacked bar
     H.append('<h2>归因分类堆叠表</h2>')
     H.append('<table><tr><th>归因类别</th><th>题数</th><th>占比</th><th>可视化</th><th>说明</th></tr>')
-    for cat in ['connection_refused', 'cli_parse_bug', 'timeout', 'ability', 'adapter_error', 'other', 'passed']:
+    for cat in ['passed', 'ability', 'connection_refused', 'infra_502', 'infra_503',
+                'cli_parse_bug', 'timeout', 'verifier_timeout', 'adapter_error', 'other']:
         n = cat_counts.get(cat, 0)
         if n == 0: continue
         pct = f'{n/total*100:.1f}%'
@@ -159,11 +207,13 @@ def build_html(rows):
 
     # Evidence
     H.append('<h2>证据路径</h2>')
-    H.append(f'<div class="info"><p><strong>数据源</strong>: <code>/tmp/tb21_glm53_jobs/claude-code/</code><br>'
+    dir_list = '<br>'.join(f'<code>{d}</code>' for d in CC_DIRS if d.exists())
+    H.append(f'<div class="info"><p><strong>数据源 (original + R1 + R2)</strong>:<br>{dir_list}<br>'
              f'<strong>扫描脚本</strong>: <code>run/harness/terminalbench/audit_cc_tb21.py</code><br>'
+             f'<strong>合并脚本</strong>: <code>run/harness/terminalbench/merge_cc_r1r2.py</code> '
+             f'-> <code>manifests/cc_r1r2_merged.json</code><br>'
              f'<strong>复算命令</strong>: <code>cd run/harness/terminalbench && python3 audit_cc_tb21.py</code><br>'
-             f'<strong>样本 exception_message</strong>: <code>Claude-Code exited with code 1: API Error: Unable to connect to API (ConnectionRefused)</code><br>'
-             f'<strong>样本 stdout</strong>: <code>API Error: Unable to connect to API (ConnectionRefused)</code></p></div>')
+             f'<strong>去重逻辑</strong>: 同 task 多 dir 结果, PASS 优先; 无 PASS 则取最新 rerun dir 结果</p></div>')
 
     H.append(f'<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">'
              f'BaiZe Harness claude-code TB-2.1 归因 {now} | glm-5.3-flash | '

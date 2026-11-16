@@ -2,17 +2,17 @@
 
 WAITING: 1
 
-> 📦 R2591 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 24/30(3P·0ConnRefused✅)+adaptive off7/10+0 429✅。需要时再读。
+> 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
 
-> 🆕 **R2592 · 2026-11-17 04:27 — cc round2 26/30(4 PASS·0ConnRefused✅·4 remaining RUNNING) + merge脚本就绪(30P/89=33.7%·partial) + adaptive off7/10 + 自检全绿**
-> - **自检**: load27.06/224✅(pretrain dominant 146%)·mem837GB/2015GB avail1028GB✅·max harness proc~1.3%CPU/<1GB✅·reports/ porcelain=0✅
-> - **cc round2 26/30 done**: **PASS=4**(crack-7z-hash·feal-linear-cryptanalysis·portfolio-optimization·torch-tensor-parallelism←NEW)·**3 infra(502/503)**: git-multibranch+regex-chess=502·llm-inference-batching-scheduler=503·**11 ability-FAIL**(reward=0: cobol-modernization/code-from-image/dna-insert/extract-elf/extract-moves-from-video/gpt2-codegolf/make-doom-for-mips/path-tracing/protein-assembly/rstan-to-pystan/video-processing[maxturns])·**8 NA/timeout**(5 agent 3600s: circuit-fibsqrt+mcmc-sampling-stan+mteb-leaderboard+sam-cell-seg+schemelike-metacircular-eval·3 VerifierTimeout: filter-js-from-html 900s+feal-differential-cryptanalysis 1800s+fix-ocaml-gc 3600s)·**4 remaining RUNNING**(pytorch-model-cli·reshard-c4-data·torch-pipeline-parallelism·train-fasttext·part3 chunk3)
-> - **0 ConnRefused HARD VERIFIED**✅·**0 real 429**✅·overlay network_mode:host IN USE✅
-> - **merge脚本就绪**: `merge_cc_r1r2.py` 创建+测试→`manifests/cc_r1r2_merged.json`·R1 prefer-PASS扫描(3 dirs)·partial结果=**30P/40F/4INFRA/11NA/4RUNNING/89total=33.7%**·ConnRefused=0✅·vs旧0/89=100%infra✅
-> - **adaptive**: off mode current=7/10(clean_ramp quiet=40m)·0累计429✅
-> - **cc修复判据met**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=26P(R1)+4P(R2 partial)=30P merged/89=33.7%·vs旧0/89✅
-> - **下一步**: ①round2 4 tasks完成(~1-3h·不打断)→re-run merge脚本→更新`gen_cline_special.py`(cc 0/89→merged真实数字)+`gen_report_glm53_7way.py`(cc行)→REGEN两报告 ②成本补采(token=None·从rollout_details回采) ③hermes qemu BLOCKED
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈30.5KB（✅≤32KB）
+> 🆕 **R2593 · 2026-11-17 05:2x — cc修复 COMPLETE: 30/89=33.7% (R1+R2 merged·0ConnRefused✅HARD VERIFIED) + 4报告全REGEN + 4生成器全更新**
+> - **cc修复判据MET**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=30/89=33.7%·vs旧0/89✅
+> - **round2 COMPLETE**: 3/3 parts done(rc=0·0 ConnRefused·0 429)·R1(82题)+R2(30题)merged=30P/42F/4INFRA/13NA/0RUNNING
+> - **4报告REGEN**: ①cc归因(report_harness_cc_tb21_attribution_zh.html·89行R1+R2 merged·passed=30/ability=41/infra=4/timeout=7) ②7way(report_harness_tb21_7way_zh.html·cc行30/89=33.7%) ③cline_special(report_harness_cline_special_zh.html·cc修复后重测文本) ④glm53_7way(report_harness_glm53_7way_swebench_tb_zh.html·cc修复后重测文本)
+> - **4生成器更新**: audit_cc_tb21.py(scan 5 dirs+dedup+新分类)·gen_report_tb21_7way.py(count_route scan rerun dirs)·gen_cline_special.py(tb21_data scan rerun dirs+cc文本)·gen_report_glm53_7way.py(cc文本)
+> - **7way最新**: opencode43/89=48.3%·cline42/89=47.2%·hermes38/89=42.7%·pi35/89=39.3%·**cc30/89=33.7%**·deepseek11/89=12.4%·codex1/89=1.1%
+> - **自检**: load28.28/224✅·mem837GB avail1029GB✅·0 harness procs✅·reports/ porcelain=0✅
+> - **下一步**: ①成本补采(token=None·从rollout_details回采) ②hermes qemu BLOCKED(Py3.9<3.11) ③cc归因报告adapter_error=6可进一步细分
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈30.8KB（✅≤32KB）
 
 > 📦 R2589 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 16/30(2P·0ConnRefused✅)+adaptive off6→7+0 429✅。需要时再读。
 >
@@ -71,14 +71,14 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2592 cc round2 IN PROGRESS 26/30(4 PASS·0ConnRefused✅·4 remaining RUNNING) + merge脚本就绪(partial 30P/89=33.7%)·等round2完成
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2589(cc rerun COMPLETE 82/82→merged 26P/53F/10NA·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE+pi merge→REGEN 7way pi35/89+round2 22/30 done)·R2592(merge脚本就绪·partial 30P/89=33.7%)
-当前动作:     R2592: 监控轮·cc round2 PID500396 alive(~4.4h·n=auto=7)·26/30(4 PASS/3 infra 502·503+11 ability-FAIL/8 NA timeout·4 RUNNING)·0ConnRefused✅·0 429✅·adaptive off7/10 clean_ramp·load27.06/224✅·mem837GB avail1028GB✅·harness procs~1.3%CPU✅·reports/ porcelain=0✅·W:1
-下一步:       ①round2 4 tasks完成(~1-3h·不打断)→re-run merge_cc_r1r2.py→更新gen_cline_special.py(cc 0/89→merged)+gen_report_glm53_7way.py(cc行)→REGEN report_harness_cc_tb21_attribution_zh.html+report_harness_tb21_7way_zh.html ②成本补采(token=None·从rollout_details回采) ③hermes qemu BLOCKED(Py3.9<3.11)
+PHASE:        R2593 cc修复COMPLETE 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED)+4报告全REGEN+4生成器全更新·cc修复令已交付
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2589(cc rerun COMPLETE 82/82→merged 26P/53F/10NA·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE+pi merge→REGEN 7way pi35/89)·R2592(merge脚本就绪·partial 30P/89=33.7%)·R2593(cc修复COMPLETE 30/89=33.7%·R1+R2 merged·4报告REGEN·4生成器更新·cc修复令已交付)
+当前动作:     R2593: cc修复COMPLETE·round2 30/30 done(3/3 parts rc=0)·R1+R2 merged=30P/42F/4INFRA/13NA/0RUNNING·0ConnRefused✅HARD VERIFIED·4报告REGEN(cc归因/7way/cline_special/glm53_7way)·4生成器更新(audit_cc_tb21/gen_report_tb21_7way/gen_cline_special/gen_report_glm53_7way)·自检全绿(load28.28/224✅·mem837GB✅·reports/ porcelain=0✅)·W:1
+下一步:       ①成本补采(token=None·从rollout_details回采·7路token/wall全null·宁缺勿编) ②hermes qemu BLOCKED(Py3.9<3.11) ③cc归因报告adapter_error=6可进一步细分 ④等运维新令
 ERROR_COUNT:  0
- 体积: TASK≈25.0KB / MEMORY≈30.5KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
-  7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
-  cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
+ 体积: TASK≈25.0KB / MEMORY≈30.8KB（✅≤32KB）
+  7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
+  cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
   cline TB-2.1根因: 原始10/89=11.2%=网关额度耗尽(65/80=81%)·**RERUN DONE**(quota_lost=65→0·cline=**38/89=42.7%**)·8synthetic→5th-batch DONE(4/8PASS:feal-diff/feal-linear/fix-git/fix-ocaml-gc)·**7路审计发现**: opencode仍有Q15·hermes仍有Q39(rerun中)·pi/deepseek大量synthetic(45/48=未真跑)
 

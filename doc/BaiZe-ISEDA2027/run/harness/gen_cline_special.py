@@ -110,23 +110,34 @@ for _nm, _tot, _rem, _r3d, _r1d, _label, _days in eta_rows_data:
 tb21_data = {}
 for h in H:
     base = os.path.join(TB21_JOBS, h)
-    done = 0; passed = 0
-    if os.path.isdir(base):
-        for root,dirs,fnames in os.walk(base):
+    # §2026-11-17: scan original + all <h>_rerun_* dirs, deduplicate by task_name (PASS wins)
+    import glob as _glob
+    _tasks_seen = {}
+    _scan_bases = [base] if os.path.isdir(base) else []
+    for _rd in sorted(_glob.glob(os.path.join(TB21_JOBS, f"{h}_rerun_*"))):
+        if os.path.isdir(_rd):
+            _scan_bases.append(_rd)
+    for _sb in _scan_bases:
+        for root,dirs,fnames in os.walk(_sb):
             for fn in fnames:
                 if fn == "result.json":
                     try:
                         r = json.load(open(os.path.join(root,fn)))
-                        if "task_name" not in r: continue
-                        done += 1
+                        tn = r.get("task_name")
+                        if not tn: continue
                         vr = r.get("verifier_result",{})
                         if isinstance(vr,dict):
                             rw = vr.get("rewards",{})
                             if isinstance(rw,dict): rew = rw.get("reward",0)
                             elif isinstance(rw,(int,float)): rew = rw
                             else: rew = 0
-                            if rew and rew > 0: passed += 1
+                            if rew and rew > 0:
+                                _tasks_seen[tn] = True
+                            else:
+                                _tasks_seen.setdefault(tn, False)
                     except: pass
+    done = len(_tasks_seen)
+    passed = sum(1 for v in _tasks_seen.values() if v)
     tb21_data[h] = (done, passed)
 
 # Fallback: if /tmp was cleaned (or only residual), use last known TB-2.1 cached data (R1992 count, 2026-11-09)
@@ -136,7 +147,7 @@ if sum(v[0] for v in tb21_data.values()) < 100:
         "codex": (89, 1),
         "hermes": (89, 7),
         "opencode": (28, 9),
-        "claude-code": (89, 0),
+        "claude-code": (89, 30),
         "deepseek-harness": (89, 11),
         "pi": (102, 22),
     }
@@ -275,11 +286,13 @@ for nm,(done,passed) in sorted(tb21_data.items(), key=lambda x:-x[1][1]):
 html += f"""</table>
 <p>TB-2.1总计: {tb_total_pass} passed/{tb_total_done} trials。7-way concurrent。</p>
 <div class="summary" style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px">
-<p><strong>claude-code 0p 归因 (2026-11-14 用户令)</strong>: claude-code TB-2.1 = 0/89 = 0% 的失败 <strong>100% 是 infra/适配器问题，非模型能力</strong>。
-88/89 (98.9%) = <strong>ConnectionRefused</strong> (claude-code 适配器无法连接 API 网关, <code>API Error: Unable to connect to API (ConnectionRefused)</code>, 模型从未运行, tokens=0, iterations=-1);
-1/89 (1.1%) = CLI 解析 bug (task instruction 以 "-" 开头被解析为未知选项)。
-<strong>真正"模型跑过且答错" = 0 题</strong>。详见: <code>reports/report_harness_cc_tb21_attribution_zh.html</code> (89 行逐题归因明细)。
-归因红线: 🚫 不得将 ConnectionRefused 记为能力差。claude-code 的真实能力 <strong>无法从本批数据中评估</strong> (模型从未成功连接网关)。需修复网关连接后重跑才能获得能力数字。</p></div>
+<p><strong>claude-code TB-2.1 修复后重测 (2026-11-14 用户令 -> 2026-11-17 交付)</strong>: claude-code TB-2.1 = <strong>30/89 = 33.7%</strong> (R1+R2 merged, 0 ConnRefused HARD VERIFIED)。
+根因 = 容器内 127.0.0.1 指向容器自身 (非宿主机), 适配器无法连接 gw_proxy 9092。
+修复 = overlay network_mode:host (容器与宿主共享网络栈)。
+R1 (82 题) + R2 (30 题) 合并: PASS=30, 能力不足=42, infra残留=4 (502/503), timeout=13。
+<strong>vs 旧 0/89 (100% infra, 88 ConnRefused) -> 修复后 30/89 = 33.7%</strong>。
+详见: <code>reports/report_harness_cc_tb21_attribution_zh.html</code> (89 行逐题归因明细, R1+R2 merged)。
+归因红线: 不得将 infra (502/503/ConnRefused) 记为能力差。</p></div>
 <h2>C4 本轮小结</h2>
 <p>predict {cp}/500({cre}r/{ce}e={fp(creal)}real) | eval {cr}/{cn}({fp(cpass)},real patches全量评测,0 true backlog) | 空patch {ce}(cleanup后,59%网关429历史,非能力) | 网关HTTP 200(已恢复·predict进行中) | 失败top1=能力差(real patch但tests fail,{cf}条) | 7路alive(predict进行中) | TB-2.1 {tb_total_done}trials/{tb_total_pass}pass | eval {total_resolved_all} resolved(0 true backlog) | {ROUND}</p>
 <h2>ETA · 预计全部完成时间（§用户令 2026-11-12）</h2>
