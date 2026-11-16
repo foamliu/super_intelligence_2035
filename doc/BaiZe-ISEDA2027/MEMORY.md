@@ -2,6 +2,14 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-16 21:2x — 用户问「vision 能不能自己去 36.15 找 designflow 的 jsonl 选 waveview case」→ 已授权并下令
+
+- **用户原话**：「vision：可以自己去 36.15 找 designflow 的 jsonl 文件，自己筛选 waveview 的 case 吗」。**答：可以**——designflow 的 task2（VQA 对照）长期 infra-block，继续等无意义；题池 `A/B/C/D.jsonl` 只在 36.15，而 vision 在 `.17` 本就有 `ssh -p 3333 app.e0031982@localhost`（与 posttrain 同一条通道）。
+- **已下发**（`run/BAIZE_VISION_TASK.md` 顶部 🔴 令 21:2x）：通道自检 → `find` 只读定位四库 + 评测根（绝对路径必须写进报告）→ 字段/语义双判筛选（`domain=waveform` 或 wave/fsdb/vcd/wlf/波形/eye/transient/…）→ **两级分类**：V-A（answer-validation，不需 EDA 沙盒）立即纳入 V0/V1 扩样；V-B（需 wv/FineSim 沙盒）只出清单等窗口 → 三方对账（vision index 10 × designflow 导出 10 × 本次挖掘，用 case_id + sha256(check.py) 判重）。
+- **防伪底线写死**：不读 `hidden/` B 图/隐藏答案、不放宽 check.py（k 原样）、**不改 designflow 任何文件**、图缺失标 `image_missing` 不计入可跑集、asset_fidelity 三分。
+- **判据**：V-A 新增 ≥3 题就本轮跑 V0/V1 并出逐题翻转表（n 不足写清统计力）。交付 `vision/waveview_cases_mined.jsonl` + `reports/report_vision_waveview_mining_zh.html` + MEMORY/daily + `vision mining:` 提交。
+
+
 ## 2026-11-16 20:5x — 用户令「别排队，扫 8650–8670 端口池并行」→ 已改 run5 起跑口径
 
 - **用户原话**：「为啥要排队，扫一下 8650-8670 之间的沙盒端口，都可以用。」背景：run5 自 18:52 起一直卡在 `gate_wait`（判据＝36.15 无 `run_cline_script.sh`），因 zhulong 自身 eval（PID 1443679，~1h51m）占用沙盒，已空等 ~2h。

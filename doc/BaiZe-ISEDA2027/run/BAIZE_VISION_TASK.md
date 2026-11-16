@@ -1,5 +1,27 @@
 # BAIZE_VISION_TASK.md
 
+> 🔴 **用户令 · 2026-11-16 21:2x（vision 自行到 36.15 挖 waveview case · 不再等 designflow task2）· 未完成**
+>
+> **用户原话**：「vision：可以自己去 36.15 找 designflow 的 jsonl 文件，自己筛选 waveview 的 case 吗」→ **答案：可以，本令授权你自行挖掘并跑，不必等 designflow 交付 task2。**
+>
+> **背景（运维已核）**：designflow 的 task2（VQA 对照）长期 infra-block；waveview 题池 `A.jsonl / B.jsonl / C.jsonl / D.jsonl` **只在 36.15**（本仓只有导出的 10 题 `doc/ZhuLong_DAC2027/benchmark/designflow/waveview_real_cases.jsonl`）；vision 在 `.17` 已有 `ssh -p 3333 app.e0031982@localhost` 通道（与 posttrain 同一条，`~/.ssh` 已免密）。
+>
+> **执行步骤**
+> 1. **通道自检**：`ssh -p 3333 -o BatchMode=yes -o ConnectTimeout=15 app.e0031982@localhost 'hostname; date'`。不通 ⇒ 报运维，🚫 自建新隧道/改防火墙。
+> 2. **只读定位题池**：`find /nasdata/app.e0031982/code -maxdepth 7 -name 'A.jsonl' -o -name 'B.jsonl' -o -name 'C.jsonl' -o -name 'D.jsonl' 2>/dev/null`；同时定位 designflow 评测根（含 `cline_eval/` 与 `reference/`）。**把绝对路径 + 每个 jsonl 行数写进报告**（路径不许估）。
+> 3. **筛选（字段级 + 语义级双判）**：`domain=waveform`，或 case 名 / skill 标签 / prompt 正文含 `wave|fsdb|vcd|wlf|waveform|waveview|波形|eye|transient|sweep|duty|jitter`；且必须**可判分**（`check.py` 文件存在、`k_conditions` 可数）。逐条记录：`source_pool`、`pool_line`、`case_id`、`check_path`、`sha256(check.py)`、`image_paths`、`asset_fidelity`。
+> 4. **两级分类（关键，决定能不能立刻跑）**：
+>    - **V-A 型 = answer-validation（check.py 只校验答案文件/图读数，不需要 EDA 沙盒执行）** ⇒ **立刻纳入 V0（无 VQA）/ V1（+VQA）跑**，这批才是能扩样的；
+>    - **V-B 型 = 需 `wv`/FineSim/沙盒执行（L2 工具型）** ⇒ 只出**清单 + 依赖项 + 预计耗时**，等沙盒窗口（当前 8090 池被 zhulong 占用）再跑，🚫 硬跑。
+> 5. **三方对账**：`vision/real_waveview_index.json`（10 题）× designflow `waveview_real_cases.jsonl`（10 题）× 本次挖掘结果 ⇒ **新增 / 重合 / 缺失** 表。重合判定用 `case_id` + `sha256(check.py)`，别用名字模糊匹配。
+> 6. **防伪底线（不变）**：🚫 不读 `hidden/` 的 B 图或隐藏答案来构造 prompt；🚫 不为凑数放宽 `check.py`（k 数原样，导出一律 `modified=false`）；🚫 **不改 designflow 任何文件**（全只读）；`image_paths=[]` 的 case 照样登记但标 `image_missing`，**不计入可跑集**；`asset_fidelity` 必须区分 `real-private / synthesized-image-restored / synthesized-reframe`。
+> 7. **交付**
+>    - `vision/waveview_cases_mined.jsonl`（一行一题，字段沿用 designflow 口径 + `vision_run_type`(A/B) + `source_pool` + `pool_line`）；
+>    - `reports/report_vision_waveview_mining_zh.html`（中文 / 单文件 / 0 外链 / 0 script）：首屏三行结论（挖掘 N 题 / V-A 可跑 M 题 / 三方新增 K 题）+ 筛选漏斗表（总池 → waveview → 可判分 → A/B 型）+ 三方对账 + V-A 清单 + V-B 依赖清单；
+>    - `MEMORY_VISION.md` 一行 + daily + commit 前缀 `vision mining:`。
+> 8. **若 V-A 型新增 ≥3 题**：本轮就按既有自测规格跑 V0/V1 并出**逐题翻转表**；n 不足要写清统计力（McNemar 需 ≥6 不一致对），别硬报 p 值。
+
+
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不编造数字/文献、负结果照写）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定技术路线、实验设计与工具选择；用证据说话，用结果说服。**
 
 ### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
