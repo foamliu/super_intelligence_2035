@@ -1166,3 +1166,6 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1792549409878_s97z0	jialeshan	10.129.35.68	35	physical_verify	parked		2026-11-16 23:53	off-C: U#16 完善邮件后缀 C++ 代码 (@cxmt->@cublazer), 非 EDA physical; drc/lvs 关键词=path 通胀
 1790236842861_n8ozx	jcgu	10.129.32.236	34	physical_verify	parked		2026-11-16 23:53	thin: U#0 加载 skill + U#7 DRC testpattern (21 msgs/10 tool_use), 意图模糊无明确 produce-task deliverable
 1793259404077_0ufar	miccao	10.129.32.47	35	physical_verify	parked		2026-11-16 23:53	teeth-fail: U#0 总结 Argus 工具包开源库+LVS 算法脉络, open-ended 分析 deliverable=prose 无 runnable gold (同 r672 peek)
+1792379734870_9vzo0	joelchen	10.129.33.128	35	physical_verify	case	EDA-Eval-DesignFlow-LvsGuiConfigGen-001	2026-11-17 00:13	
+1789551535410_1kbzp					parked		2026-11-17 00:06	r679 GUI-launch aether start, no produce-task, teeth-fail
+1794314899739_8dr7s					parked		2026-11-17 00:06	r679 open-ended prose analysis of .spz pre_sim, check no teeth (排除标准②), task type legal but unmakeable
