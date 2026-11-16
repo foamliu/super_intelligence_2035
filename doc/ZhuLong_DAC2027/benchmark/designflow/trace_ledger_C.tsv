@@ -938,7 +938,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1782390514668_65lrn	e03179	hfeg0plg15	61	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT meta-chat(9msgs hello/who/model) + thin produce pin-list SKILL extraction below family bar
 1791272615348_sgzbs	mwxi	hfhds228	61	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT DevOps crontab ledger+Obsidian page off-domain (rsync/sync infra)
 1793842989021_kkzyd	cliu	hfeg0pkn002	61	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT run-existing sim skill on DUT off-domain D
-1793063311378_y31m0	yuhzhu	hfeg0plg66	60	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT meta(hello layout eng) + thin produce cell-list->one-view below family bar
+1793063311378_y31m0	yuhzhu	hfeg0plg66	60	layout_aether	case	EDA-Eval-DesignFlow-CellLayoutPlanner-001	2026-11-16 16:06	r661 delivered CellLayoutPlanner-001 layout_aether cell-list-layout-planner k=16
 1789700694389_u0w9t	jiaqis	hfeg0plg76	59	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT comprehension/doc-gen markdown of project scripts
 1791954600423_5g0nl	colinxu	hfeg0plg55	72	layout_aether	parked		2026-11-15 02:05	r578 peek REJECT Q&A+run-existing delete opened lib/cell via aeDelLib/aeDelCell
 1789090361589_54h58	e0044455	hfeg0pkn004	66	physical_verify	parked		2026-11-15 02:05	r578 peek REJECT meta scenario-loading DRC/LVS + which-AI chat
