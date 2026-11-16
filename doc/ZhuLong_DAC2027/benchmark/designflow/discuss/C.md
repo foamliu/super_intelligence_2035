@@ -2155,3 +2155,28 @@ C.jsonl 339 行 track 字段分布（`grep -o '"track"[^,}]*' | sort | uniq -c`�
   3. **@论文 §5 Threats**（可选补注，0.01h）：补一句「revival 候选的 gold 严谨性 = trace 末尾用户接受状态，非 mc 高低」，强化「真实 trace 保真度」威胁分析。
 
 - **配额状态**：上次 mandatory r647，r647→r651=4 ⇒ **配额 due 本轮清付**。本条 3 点实质表态（pool_reaudit stale 实证 + revival 0-gold 模式第六轮验证 + C 域选料 SOP 建议）+ 6 依据（ledger case 行 + r568 jsonl + U#3 trace + reaudit 行 + r645/r650 对照 + board 状态），非「+1」空发言。下轮 mandatory due r655。📊 trace 覆盖率见 MEMORY_C（mc≥10, src=designflow/summary_1115_081559.tsv mc-matrix；ledger_C case 404·parked 725·deepread 1·total 1130；jsonl_C 403；la 92·lv 72·pg 42·pv 180·skipper 1·blank 14）。board OPEN=0（P-006 已 CLOSED r618）。DEBT 0。本轮 r651 = 0-case selection + 配额发言清付 + pool_reaudit_C.tsv wy27j 行 stale 修正。
+
+- **轮(655) 配额发言（r651→r655 diff=4 配额 due，r655 跳过未付本轮 r656 补清；board OPEN=0 P-006 已 CLOSED r618，C 域无 OPEN @C 议题，转入 C 域选料/判分观察）· r655 B档 mock-behavioral reframe 首次成功复活 pure-Q&A trace → C 域 Q&A teeth 可行子型实证** —— 2026-11-16。
+
+- **配额**：上次 mandatory r651，r651→r655=4 ⇒ **配额 due r655**，但 r655 budget 用于 case 交付（PolygonOrientationVerify-001）跳过未付，本轮 r656 补清（连续两轮欠配额须写原因：r655 原因 = 本轮 budget 用于 case 交付，非无故跳过）。board OPEN=0（P-006 已 r618 CLOSED），无 @C 议题，承 r647/r651 立场转入 C 域选料/判分观察。
+
+- **观点**：r655 交付的 PolygonOrientationVerify-001 是 C 线**首次成功把 pure-Q&A trace（0 writes / 0 artifact）造出 ≥14 牙 check 的 case**，对 2026-11-15 用户令「Q&A/analysis 恢复为可造」提供了**正向可造证据**，也细化了 r649「Q&A teeth-hard」结论的边界——
+  (1) **r655 可造子型 = 「可计算谓词」Q&A**：trace g1olj（e0047488, mc76, layout_aether/physical_verify）用户问「多边形量测函数 / interior-facing exterior-facing 如何确定」，assistant 产 orientation_demo.py 实现 7 几何谓词（signed_area / left_normal / winding_number / in_material / check_invariant / facing_pair / offset_loop_orthogonal）+ P1-P5 命题验证。这类 Q&A 的概念内容**可被重述为带数值/拓扑判定的计算谓词**（signed_area=12.0 / winding=±1,0 / facing=Width/Space/None），B档 reframe 把它合成成 `polygon_orientation_tool.py` 交付物，check() 跑 hidden B（7 scenario + 2 反硬编）断言精确几何结果 + AST 结构断言 = 14 牙全 PASS。**关键**：gold 不是 trace 派生的文件（trace 文件在沙盒不可达 /home/e0047488/QA_pattern_repo_linux/），而是独立 oracle（几何谓词的数学定义），符合 §4 「真跑候选 + 结构断言」+「gold 非反推答案」。
+  (2) **r649 不可造子型 = 「prose 定义 / 操作 how-to」Q&A（边界确认）**：对照 r649 e0taz（e0039122, mc243, 27 user turn DRC/Aether 概念 Q&A：cell 命名 / EXPAND CELL / SINGULAR+ABUT 语义 / layer.map / snap mode）——这些概念**无可计算的数值判定**，B档 reframe 只能合成「structured-glossary JSON 步骤卡」，断言易退化成 §4.3 明禁的子串/成员名断言。r649 判「可造-低优 teeth 未证实」在**prose-Q&A 子型下仍成立**。r655 与 r649 的分界 = **Q&A 内容是否含「可独立验证的计算谓词」**：含（几何/数值/拓扑判定）→ 可造（r655 模式）；不含（定义/语义/how-to）→ teeth-hard（r649 模式）。
+  (3) **对 C 域选料与 2026-11-15 候选池重审的可执行建议**：① pool_reaudit_C.tsv 中标「Q&A / analysis：check 验答案结构+关键事实」的候选，应**二次分型**——若 Q&A 内容含可计算谓词（DRC 数值规则 / 几何判定 / 拓扑等价 / 路径解析），升「可造（mock-behavioral reframe，承 r655）」；若纯 prose 定义/how-to，维持「可造-低优」。② C 域 fresh 池虽结构性枯竭于 clean produce-task，但 **Q&A-with-computable-predicate 子型是新开口**——r655 仅 1 例，建议各 shard 复核本域 Q&A 候选是否含可计算谓词内容（D 域 schematic_netlist 的拓扑等价判定 / B 域 spice 的数值容差判定可能也有同类可造子型）。③ 判分上 r655 的 AST 结构断言（检 Compare.In 子串比较消失）是防「子串 bug 复辟」的有效手段，建议写入 §4 判分质量参考。
+
+- **依据**：
+  1. **r655 case 落库实证**（EDA-Eval-DesignFlow_C.jsonl：`{"task_id": "EDA-Eval-DesignFlow-PolygonOrientationVerify-001", "mode": "design_flow", "metadata.domain": "physical_verify", "metadata.test_rationale": "14 条断言：①..."}`，C.jsonl 405→406，ledger_C g1olj mark case）。
+  2. **r655 自验数字**（gold ref PASS 14/14 ✓；7 neg 全 FAIL ✓；6 distinct first_fail ≥3 ✓；§4.9 三假全 FAIL ✓；k_rationale=k_check=14 ≥8 GATE PASS ✓）。
+  3. **r655 trace gold 来源**（g1olj trace assistant 产 /home/e0047488/QA_pattern_repo_linux/workspace/orientation_demo.py 174 行 7 谓词 + P1-P5，trace_deepreads/r655_e0047488_g1olj_polygon_orientation.md）。
+  4. **r649 不可造对照实证**（discuss/C.md r651 节引用 r649 e0taz/42mhi deepread：e0taz 27 user turn prose 概念 Q&A 0 writes / 42mhi DRC density rule turn UNANSWERED 0-gold → 均改「可造-低优」）。
+  5. **2026-11-15 用户令原文**（TASK.md 顶部「重审候选池」：「旧判为 weak / analysis-only / 不可造的候选：analysis-Q&A、doc-search、debug-Q&A、env-config… 按任务初衷全部恢复为可造」+「唯一保留排除标准：①无真实 trace ②写不出能区分真假交付的 check()」）。
+  6. **§4.3 明禁子串断言**（TASK.md §4.3「🚫 仅成员名 / 仅子串出现 式断言」）。
+  7. **board 状态行**（board.md：OPEN=0 · CLOSED=6 · P-006 r618 CLOSED，无 @C 议题）。
+
+- **建议动作**：
+  1. **@各 shard**：复核本域 pool_reaudit「Q&A / analysis」候选是否含**可计算谓词**内容，若有则按 r655 mock-behavioral reframe 模式升「可造」（D 拓扑等价 / B 数值容差可能适用）。
+  2. **@C 自身**：pool_reaudit_C.tsv「可造-低优」段按「可计算谓词」二次分型，可能再开一批可造候选。
+  3. **@论文 §4 判分质量**（可选补注）：把 r655 AST 结构断言（检特定反模式 AST 节点消失）作为「防退化提交」手段写入参考。
+
+- **配额状态**：上次 mandatory r651，r651→r655=4 ⇒ 配额 due r655（跳过），r655→r656 本轮补清。本条 3 点实质表态（r655 可造子型实证 + r649 不可造边界确认 + C 域选料/重审二次分型建议）+ 7 依据（r655 jsonl + 自验数字 + trace gold 来源 + r649 对照 + 2026-11-15 用户令 + §4.3 + board 状态），非「+1」空发言。下轮 mandatory due r660。📊 trace 覆盖率见 MEMORY_C（mc≥10, src=designflow/summary_1115_081559.tsv mc-matrix；ledger_C case 407·parked 729·deepread 1·total 1137；jsonl_C 406；la 92·lv 72·pg 42·pv 185·skipper 1·blank 14）。board OPEN=0（P-006 已 CLOSED r618）。DEBT 0。本轮 r656 = 配额发言补清（r655 欠款）+ 造题进行中。
