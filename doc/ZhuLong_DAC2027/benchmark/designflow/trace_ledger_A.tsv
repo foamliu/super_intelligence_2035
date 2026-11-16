@@ -293,7 +293,7 @@
 1793945103405_x8v81	dsgao	hfhds201	99	eda_other	case	EDA-Eval-DesignFlow-NetlistDiffDelayAnalyze-001	2026-11-16 15:48	r636 deepread: netlist-diff+delay-root-cause analysis-Q&A, case_id=EDA-Eval-DesignFlow-NetlistDiffDelayAnalyze-001, DEBT 1 synthesize next round
 1794221830421_oclzn	dandans	hfhds201	94	eda_other	parked		2026-11-09 22:36	MatrixRun directory listing comparison, operational not produce-task
 1794193758706_gwm47	tongfanl	hfhds201	63	eda_other	parked		2026-11-09 22:36	MatrixRun dir listing comparison dup of oclzn, operational not produce-task
-1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	parked		2026-11-09 22:36	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task
+1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	case	EDA-Eval-DesignFlow-CornerStrUndefDiagnose-001	2026-11-16 17:43	r640 case landed: Perl cornerStr undef root-cause diagnosis, k=14, A.jsonl 346->347
 1793927271206_0ekf9.messages.json	e0030085	hfeg0pkn002	352	eda_other	case	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	2026-11-10 00:06	
 1793865788118_b7otd.messages.json	xy1zhang	hfeg0plg70	360	verification	case	EDA-Eval-DesignFlow-SvTbBugFix-001	2026-11-10 01:03	
 1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	343	verification	parked		2026-11-10 01:53	r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (USER#0=context state), too large to synthesize

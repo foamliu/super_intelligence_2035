@@ -74,7 +74,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793945103405_x8v81	dsgao	hfhds201	eda_other	analysis Q&A: 两个netlist有区别吗为什么后仿真delay有差异, not produce-task	REVIVABLE_QA	done	CASE-NetlistDiffDelayAnalyze-001 (r637 synthesized)	EXISTS
 1794221830421_oclzn	dandans	hfhds201	eda_other	MatrixRun directory listing comparison, operational not produce-task	OTHER	maybe		n/a
 1794193758706_gwm47	tongfanl	hfhds201	eda_other	MatrixRun dir listing comparison dup of oclzn, operational not produce-task	DUP	no		n/a
-1794129973388_q54e4	tongfanl	hfhds201	eda_other	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1794129973388_q54e4	tongfanl	hfhds201	eda_other	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS | DONE_r640
 1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	verification	r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (US	INFRA	no		n/a
 1792551877743_4i1w4.messages.json	fernandoy	hfeg0plg76	verification	r295: sibling of yseg9 resumed UVM 801msgs/3MB, same project	DUP	no		n/a
 1793762019450_22gh5.messages.json	e0039102	hfeg0plg74	eda_other	r295 peek: USER#0=告诉我配置思路 run_regr analysis-only Q&A, not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
