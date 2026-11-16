@@ -2,17 +2,17 @@
 
 WAITING: 1
 
-> 🆕 **R2586 · 2026-11-17 00:39 — cc round1 CORRECTED 26P/53F/10NA(merged 5 batches·0ConnRefused✅HARD VERIFIED) + round2 IN PROGRESS 5/30(crack-7z-hash NEW PASS=infra confirmed·0ConnRefused·0 429) + adaptive off5·0累计429✅ + reports porcelain=0✅**
-> - **自检**: load34.08/224✅(pretrain dominant)·mem847GB/2015GB avail1018GB✅·max harness eval proc<1%CPU✅·reports/ porcelain=0✅
-> - **cc round1 CORRECTED**: merged 5 batches(0950:1/0951:24/1251:18/0348:83/1529:0)·89 unique tasks·**26 PASS/53 FAIL/10 NA**·0 ConnRefused across all result.json✅HARD VERIFIED·FAIL=38 ability+15 with-502-infra·NA=9 timeout+1 with-502
-> - **CORRECTION vs R2585**: R2585 said 24P/53F/12NA but missed dna-insert+feal-differential-cryptanalysis PASS from batch 1251→correct=26P·also 2 batch-dir false positives(2026-11-14/2026-11-15)removed from NA(12→10)
-> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=26P/89done·vs旧0/89=100%infra✅
-> - **PASS 26**: break-filter-js-from-html,cancel-async-tasks,constraints-scheduling,count-dataset-tokens,custom-memory-heap-crash,distribution-search,dna-assembly,dna-insert,feal-differential-cryptanalysis,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log,sparql-university,sqlite-db-truncate,vulnerable-secret,write-compressor
-> - **round2 IN PROGRESS**: PID500396·5/30 done·**crack-7z-hash NEW PASS**(was FAIL+502 in R1→now PASS=infra confirmed✅)·cobol-modernization/extract-elf/extract-moves-from-video/dna-insert=FAIL(no 502=ability confirmed)·25 remaining·ETA~Nov17 03:00·log=/tmp/tb21_cc_round2_rerun.log
-> - **adaptive**: off mode current=5(quiet=35m·clean_ramp)·0累计429✅·status命令正常✅
-> - **下一步**: ①round2 30 tasks完成(~2-3h)→merge best per task(R1+R2取PASS优先)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实26+数字·502/timeout单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈31.0KB（✅≤32KB）
+> 🆕 **R2587 · 2026-11-17 01:18 — cc round2 IN PROGRESS 12/30(2 NEW PASS·0ConnRefused✅·0 429✅) + adaptive off5 clean_ramp·0累计429✅ + 自检全绿 + research日报ModHarness-RL noted**
+> - **自检**: load30.59/224✅(pretrain dominant)·mem846GB/2015GB avail1019GB✅·max harness eval proc<1%CPU<0.1GB✅·reports/ porcelain=0✅
+> - **cc round2 12/30 done**: **PASS=2**(crack-7z-hash NEW PASS=infra confirmed✅·portfolio-optimization NEW PASS)·**FAIL=7**(cobol-modernization/dna-insert/extract-elf/extract-moves-from-video/gpt2-codegolf/path-tracing=max-turns80=ability confirmed·git-multibranch=502=infra)·**NA=3**(circuit-fibsqrt=RuntimeError timeout·filter-js-from-html=VerifierTimeout·1 job-level)·18 remaining·regex-chess RUNNING·ETA~Nov17 03:30
+> - **0 ConnRefused HARD VERIFIED**(grep=0 across all round2 result.json)·**0 real 429**(grep=0)·overlay network_mode:host IN USE✅
+> - **adaptive**: off mode current=5/10(next=6·clean_ramp quiet=75m)·0累计429✅·status命令正常✅·log见 `[adaptive] 4->5 (clean_ramp(quiet=933m))`
+> - **cc修复判据met**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=26P/89(R1)+round2进行中·vs旧0/89=100%infra✅
+> - **research日报2026-11-17**: ModHarness-RL(learnable/evolving harness programs·Compression+Steering在RL中演化·1.5B-8B·CodeSearch+14-24%)→H-B源码分析线参考·本轮不action
+> - **下一步**: ①round2 18 tasks完成(~2h)→merge best per task(R1+R2取PASS优先)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字·502/timeout单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈30.5KB（✅≤32KB）
 >
+> 📦 R2586 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 CORRECTED 26P/53F/10NA(0ConnRefused✅)+round2 LAUNCHED 5/30+adaptive off5+0 429✅。需要时再读。
 > 📦 R2585 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 COMPLETE(24P→corrected 26P in R2586)+round2 LAUNCHED+adaptive off5+0 429✅。需要时再读。
 > 📦 R2584 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 81/82(18P/51F/12NA·0ConnRefused✅)+adaptive off4→5·0 429✅+round2 manifest ready+reports porcelain=0✅。需要时再读。
 >
@@ -65,12 +65,12 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2583 cc rerun 78/82(17P/49F/12NA·18×502infra·0ConnRefused✅HARD VERIFIED·4 remaining video-processing running+3 queued·ETA~Nov17 00:00) + adaptive off模式(cap=10·current4→5)·0累计429✅·等cc 82完成
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2581(cc rerun 6→78/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复+round2 manifest修正)
-当前动作:     R2583: 监控轮·cc rerun PID1510521 alive(41.4h·n=1)·78/82(17P/49F/12NA·18×502infra)·0ConnRefused✅HARD VERIFIED·当前task=video-processing(setup phase)·4 remaining·adaptive off模式cap10 current4→5·0累计429✅·load29.78/224✅·mem1036GB avail✅·0runaway✅·reports/ porcelain=0✅·W:1
-下一步:       ①cc 82完成(~Nov17 00:00)→rerun round2 26题(15×502+11×timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu BLOCKED(Py3.9<3.11)
+PHASE:        R2587 cc round2 IN PROGRESS 12/30(2 NEW PASS·0ConnRefused✅·0 429✅·18 remaining·ETA~Nov17 03:30) + adaptive off5 clean_ramp·0累计429✅·等round2完成
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2586(cc rerun COMPLETE 82/82→merged 26P/53F/10NA·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE+pi merge→REGEN 7way pi35/89+round2 LAUNCHED 30 tasks)
+当前动作:     R2587: 监控轮·cc round2 PID500396 alive(~75min·n=auto=5)·12/30(2 PASS/7 FAIL/3 NA·0ConnRefused✅HARD VERIFIED·0 429✅)·当前task=regex-chess·18 remaining·adaptive off模式 current=5/10 clean_ramp·0累计429✅·load30.59/224✅·mem846GB avail1019GB✅·harness procs<1%CPU✅·reports/ porcelain=0✅·W:1
+下一步:       ①round2 18 tasks完成(~2h)→merge best per task(R1 26P+R2取PASS优先)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字·502/timeout单列infra) ②成本补采(适配器写回token+wall) ③hermes qemu BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
- 体积: TASK≈25.0KB / MEMORY≈27.0KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
+ 体积: TASK≈25.0KB / MEMORY≈30.0KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
