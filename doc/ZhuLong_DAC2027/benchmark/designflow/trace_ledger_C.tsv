@@ -99,7 +99,7 @@
 1783580842066_09kkp.messages.json	e0014566	hfeg0plg58	396	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt_powerfill.md + PowerFill 重叠(r47)
 1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked		2026-11-03 11:11	Array16G_B RTEXT/RNODE rscalc 重叠 RNodePlan-001(r47)
 1783504511275_fvpye.messages.json	e0014566	hfeg0plg58	393	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt_powerfill.md + PowerFill 重叠(r47)
-1785498914896_8du7m.messages.json	e0014566	hfeg0plg58	390	layout_virtuoso	parked		2026-11-03 11:11	meta read prompt_flow.md + RsCalc flow 重叠(r47)
+1785498914896_8du7m.messages.json	e0014566	hfeg0plg58	390	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcFlowCompare-001	2026-11-17 06:05	meta read prompt_flow.md + RsCalc flow 重叠(r47)
 1792055923522_tqmu1.messages.json	cynthiaz	hfeg0plg93	404	layout_aether	parked		2026-11-03 11:11	Strongarm 比较器 schematic 搭建 域非 layout(r47)
 1792742447012_djml8.messages.json	wnyu	hfeg0plg06	401	layout_aether	parked		2026-11-03 11:11	PFD delay symbol 查找 schematic 域非 layout(r47)
 1792400027384_ahjnv.messages.json	zhukaic	hfeg0plg94	397	layout_aether	parked		2026-11-03 11:11	OTA 2-stage 调参 skill-driven sim 域非 layout(r47)
