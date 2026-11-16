@@ -1,0 +1,73 @@
+{
+ "handle": "ysu_nlp",
+ "name": "Yu Su (@ysu_nlp) / X",
+ "bio": "co-founder @NeoCognition | prof. @osunlp | building towards abundance of specialized intelligence",
+ "tweets": [
+  {
+   "id": "2120220873311601127",
+   "created_at": "2026-11-10 18:23 UTC",
+   "created_at_ms": 1794335022000,
+   "text": "Impressive results from a small team",
+   "url": "https://x.com/ysu_nlp/status/2120220873311601127",
+   "handle_guess": "ysu_nlp"
+  },
+  {
+   "id": "2120214931731775587",
+   "created_at": "2026-11-10 18:00 UTC",
+   "created_at_ms": 1794333606000,
+   "text": "Introducing NovaAtom-Lite, an all-atom structure prediction model for drug discovery.\\\n\\\nIt predicts the structures of proteins, nucleic acids, and the molecules they bind, including how they fit together.\\\n\\\nNovaAtom-Lite outperforms both IsoDDE and AlphaFold 3 on FoldBench https://t.co/VCkksM6alo",
+   "url": "https://x.com/ysu_nlp/status/2120214931731775587",
+   "handle_guess": "Geodesiclab"
+  },
+  {
+   "id": "2119995103100190939",
+   "created_at": "2026-11-10 03:26 UTC",
+   "created_at_ms": 1794281194000,
+   "text": "- Looped LLM\\\n- Pretrained from scratch in an academic lab\\\n- Outperforms Qwen\\\n- Fully open\\\n\\\nOne of the best open resources for looped transformers/LLMs",
+   "url": "https://x.com/ysu_nlp/status/2119995103100190939",
+   "handle_guess": "ysu_nlp"
+  },
+  {
+   "id": "2119982422259622086",
+   "created_at": "2026-11-10 02:36 UTC",
+   "created_at_ms": 1794278171000,
+   "text": "Looped LLMs are heating up🔥. Open weights are becoming available, but the recipes to train these models remain hard to find.\\\n\\\nIntroducing ARLoop, a family of strong, fully-open pretrained looped transformers with Attention Residuals! Our strongest model, ARLoop-1.2B, outperforms https://t.co/FdxA4s14SB",
+   "url": "https://x.com/ysu_nlp/status/2119982422259622086",
+   "handle_guess": "yuekun_yao"
+  },
+  {
+   "id": "2119908340251930850",
+   "created_at": "2026-11-09 21:41 UTC",
+   "created_at_ms": 1794260508000,
+   "text": "small models will play a critical role in the future of knowledge work. Glad to see a strong contender.",
+   "url": "https://x.com/ysu_nlp/status/2119908340251930850",
+   "handle_guess": "ysu_nlp"
+  },
+  {
+   "id": "2119853374158032950",
+   "created_at": "2026-11-09 18:03 UTC",
+   "created_at_ms": 1794247404000,
+   "text": "1/ announcing our smallest, most efficient little model is here: muse ember 🔥\\\n\\\nbuilt for work that agents repeat all day, it gets you more intelligence per dollar than Haiku, Luna, and all other flash models at any reasoning setting and does it at a third of the cost or less! https://t.co/ClmgPOTrsR",
+   "url": "https://x.com/ysu_nlp/status/2119853374158032950",
+   "handle_guess": "alexandr_wang"
+  },
+  {
+   "id": "2118794401283821667",
+   "created_at": "2026-11-06 19:55 UTC",
+   "created_at_ms": 1793994925000,
+   "text": "The highest avg rating in my ICLR'27 SAC batch (200+ subs) is 3 (= weak accept). that's kind of depressing.",
+   "url": "https://x.com/ysu_nlp/status/2118794401283821667",
+   "handle_guess": "ysu_nlp"
+  },
+  {
+   "id": "2046688193815413037",
+   "created_at": "2026-04-21 20:31 UTC",
+   "created_at_ms": 1776803465000,
+   "text": "Introducing @NeoCognition, the agent lab for specialized intelligence.\\\n\\\nEveryone needs experts, but human expertise does not scale.\\\n\\\nBacked by $40M seed funding, we build self-learning agents that specialize across domains to make expertise abundant. https://t.co/Oh4VawqlwP",
+   "url": "https://x.com/ysu_nlp/status/2046688193815413037",
+   "handle_guess": "ysu_nlp"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-17 03:02:19"
+}

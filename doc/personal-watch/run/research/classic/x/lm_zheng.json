@@ -1,0 +1,89 @@
+{
+ "handle": "lm_zheng",
+ "name": "Lianmin Zheng (@lm_zheng) / X",
+ "bio": "Inference @meta | Prev: Engineer @xAI, Ph.D. @UCBerkeley, Co-founder @lmsysorg",
+ "tweets": [
+  {
+   "id": "2120957121948963128",
+   "created_at": "2026-11-12 19:09 UTC",
+   "created_at_ms": 1794510558000,
+   "text": "A great milestone. What a journey!",
+   "url": "https://x.com/lm_zheng/status/2120957121948963128",
+   "handle_guess": "lm_zheng"
+  },
+  {
+   "id": "2120944999416377762",
+   "created_at": "2026-11-12 18:21 UTC",
+   "created_at_ms": 1794507667000,
+   "text": "Announcing SGLang v1.0 at SGLang Summit 🚀\\\nHigh-performance inference for LLMs and multimodal models, built for production at scale.\\\n\\\nv1.0 brings together:\\\n⋅Faster inference: zero-overhead scheduling, performance-critical paths rewritten in Rust, speculative decoding, and https://t.co/ddHwB5nLWm",
+   "url": "https://x.com/lm_zheng/status/2120944999416377762",
+   "handle_guess": "sgl_project"
+  },
+  {
+   "id": "2120623203618058404",
+   "created_at": "2026-11-11 21:02 UTC",
+   "created_at_ms": 1794430945000,
+   "text": "Another mega kernel drop!\\\nOne kernel per layer. Up to 1000 token/s on muse spark open.\\\n\\\nThe finding of instruction cache is very interesting.",
+   "url": "https://x.com/lm_zheng/status/2120623203618058404",
+   "handle_guess": "lm_zheng"
+  },
+  {
+   "id": "2120580907828732306",
+   "created_at": "2026-11-11 18:14 UTC",
+   "created_at_ms": 1794420861000,
+   "text": "Megakernel blog is out now\\\n\\\nWe implement a full layer (MoE + Attention) megakernel, achieving 1100 toks/s for Muse Spark, 2.1x faster than baseline.\\\n\\\nNvidia's Instruction cache makes it really hard to write bigger kernels. We ended up tuning both instruction and data caches at https://t.co/1WaUmXRdXj",
+   "url": "https://x.com/lm_zheng/status/2120580907828732306",
+   "handle_guess": "pranjalssh"
+  },
+  {
+   "id": "2120566740560261237",
+   "created_at": "2026-11-11 17:18 UTC",
+   "created_at_ms": 1794417483000,
+   "text": "Muse Spark Open: 517 → 1,109 tokens/s on 8× GB300 with SGLang megakernels.\\\nOne kernel launch per layer, overlapping compute, memory loads and communication. Total launches per decode step drop from 1,450 to 97.\\\n\\\nhttps://t.co/Bn03f8OCPJ\\\n\\\nIn our new technical post, Pranjal",
+   "url": "https://x.com/lm_zheng/status/2120566740560261237",
+   "handle_guess": "lmsysorg"
+  },
+  {
+   "id": "2120364413735895510",
+   "created_at": "2026-11-11 03:54 UTC",
+   "created_at_ms": 1794369245000,
+   "text": "Excited to be speaking at SGLang summit!\\\n\\\nI'll share how we use SGLang for production serving at Meta, tackling tough correctness and performance challenges at massive scale to serve billions of users across Muse and the Meta family of apps.\\\n\\\nCome join me and an amazing lineup of https://t.co/GYRFO9OK6H",
+   "url": "https://x.com/lm_zheng/status/2120364413735895510",
+   "handle_guess": "lm_zheng"
+  },
+  {
+   "id": "2120363382021017817",
+   "created_at": "2026-11-11 03:49 UTC",
+   "created_at_ms": 1794368999000,
+   "text": "🤣",
+   "url": "https://x.com/lm_zheng/status/2120363382021017817",
+   "handle_guess": "lm_zheng"
+  },
+  {
+   "id": "2120247224802374136",
+   "created_at": "2026-11-10 20:08 UTC",
+   "created_at_ms": 1794341305000,
+   "text": "SGLang is everywhere in San Francisco this week! 👀🚌\\\n\\\nFrom buses and billboards to street kiosks and LED trucks, we're getting the city ready for SGLang Summit.\\\n\\\nJust 2 days to go! See you at Fort Mason, Nov 12–13.\\\n\\\nhttps://t.co/kaVVWS1JIh https://t.co/mdgs8IyTz8",
+   "url": "https://x.com/lm_zheng/status/2120247224802374136",
+   "handle_guess": "sgl_project"
+  },
+  {
+   "id": "2114206304453734690",
+   "created_at": "2026-10-25 04:03 UTC",
+   "created_at_ms": 1792901037000,
+   "text": "This is the power of open source. Sharing knowledge accelerates progress across the entire community.",
+   "url": "https://x.com/lm_zheng/status/2114206304453734690",
+   "handle_guess": "lm_zheng"
+  },
+  {
+   "id": "2114071115605877043",
+   "created_at": "2026-10-24 19:06 UTC",
+   "created_at_ms": 1792868806000,
+   "text": "DeepInfer set the bar. SGLang pushed it higher! 🚀\\\n\\\nSGLang now matches DeepInfer performance on BOTH prefill and decode:\\\n\\\n• Prefill: Up to 1.04× throughput on 4× GB300 and 4× B300\\\n• Decode: Up to 7.4% throughput on 64× GB300\\\n\\\nWe also provide an end-to-end reproduction guide and https://t.co/KME71si9wJ",
+   "url": "https://x.com/lm_zheng/status/2114071115605877043",
+   "handle_guess": "sgl_project"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-17 03:02:23"
+}

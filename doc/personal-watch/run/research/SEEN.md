@@ -5686,3 +5686,5 @@
 | 2026-11-17 | 2611.18533 | ModHarness-RL: Recasting Harnesses as Learnable and Evolving Programs for Agentic RL | cs.AI | 收录 |
 | 2026-11-17 | 2611.17876 | Delayed Effects of Temporary Weight Decay in Muon Pretraining | cs.LG | 收录 |
 | 2026-11-17 | 2611.18397 | Gamer: A Generalist Vision-Language-Action Foundation Model for Long-Horizon Real-Time Game Agent | cs.CL | 收录 |
+| 2026-11-17 | 2611.16816 | Outcome-Mass Alignment: Controlling Length-Dependent Trajectory Influence in Multi-Turn LLM Agent Reinforcement Learning | cs.CL | 收录 |
+| 2026-11-17 | 2611.18471 | Do Verifier Judgments Survive Abstraction? Measuring Verification Transport for LLM Agent Evaluation | cs.CL | 收录 |

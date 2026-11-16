@@ -47,17 +47,18 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-17</h1>
-  <div class="sub"><b>早报（00:00 时窗）</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 00:1x CST ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>晚报（03:00 时窗补齐）</b> · 今日进度 <b>5 / 5</b>（早报 3/5 → 晚报 5/5） · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 03:0x CST（早报 00:1x / 晚报补齐 03:0x）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
 <div class="note">
   <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> 列表 <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（260,090 B / 100 entry），最新 <code>published</code> 上界仍为 <b><code>2026-11-13T18:45:49Z</code></b> ⇒ 公告批<b>连续第 14 个时窗未前进</b>（arXiv 周末不公告，周一 20:00 ET 的批次要到 11-17 09:00 CST 才出现）。
   按 §0.1「最近一次公告批次」例外条款，本轮从该批<b>尚未消费</b>的候选（<code>cs.CL</code> 100 条中 93 条未见于 <code>SEEN.md</code> / <code>papers.jsonl</code>）里按与在研工作的相关性收 3 篇，<b>如实标注实际提交日期为 2026-11-13</b>，不伪装成 72h 内。
+  <br>③ <b>03:00 晚报复核</b>：公告批上界<b>仍为</b> <code>2026-11-13T18:45:49Z</code>（连续第 15 个时窗未前进），按同一例外条款再收 <b>2 篇</b>（<code>2611.16816</code> / <code>2611.18471</code>）补齐 5/5，<b>均为 2026-11-12 / 11-13 提交，如实标注</b>；不拿超窗或低质条目凑数。
 </div>
 
-<h2 style="font-size:19px;color:var(--primary);margin:26px 0 6px;">A 轨 · 今日推荐（3/5）</h2>
+<h2 style="font-size:19px;color:var(--primary);margin:26px 0 6px;">A 轨 · 今日推荐（5/5）</h2>
 
 <div class="card">
   <h2><span class="no">1</span>ModHarness-RL: Recasting Harnesses as Learnable and Evolving Programs for Agentic RL</h2>
@@ -117,6 +118,32 @@
   </details>
 </div>
 
+<div class="card">
+  <h2><span class="no">4</span>Outcome-Mass Alignment: Controlling Length-Dependent Trajectory Influence in Multi-Turn LLM Agent Reinforcement Learning</h2>
+  <table class="kv">
+    <tr><th>中文一句话</th><td>多轮 agent 的 GRPO 把一条轨迹展开成多行、并把 token 目标质量按行摊开，于是<b>长失败轨迹</b>会被隐式加权；OMA 只改「怎么记账」（结果统计按<b>唯一源轨迹</b>去重、目标质量在轨迹内聚合后归一到统一预算），不动优化器与裁剪，ALFWorld 上端点成功率提升 <b>7.0–9.4 个百分点</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Dawei Zhang · Yubin Huangfu · Jessica Fan 等 8 位（末位 Zhu Teng；通讯 Ming He）｜ 中国科学院大学 / 中科院软件所 · 联想研究院 AI Lab · 天津大学 · UNC Chapel Hill</td></tr>
+    <tr><th>提交 / 更新</th><td><code>2026-11-12T13:52:12Z</code>（v1，无更新）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.CL</code>｜ <tag class="t-borrow">借鉴</tag></td></tr>
+    <tr><th>arXiv</th><td><a href="https://arxiv.org/abs/2611.16816">https://arxiv.org/abs/2611.16816</a></td></tr>
+    <tr><th>推荐理由</th><td>直击 <b>zhulong</b> 线多轮长轨迹 RL 的一个隐蔽记账错误：同一 episode 的结果被多行重复统计，而 token 级归约又把不同长度轨迹的目标质量拉平。它给的是「与优化器正交」的两行改动，2B 级可复现，且明确报告了「普通 WebShop 上混合/反转」的负结果 —— 这种讲失败条件的论文最适合当消融设计的基线。</td></tr>
+  </table>
+  <div class="rm"><b>可核验要点（PDF <code>pdftotext</code> 实测）</b>：ALFWorld 的失败轨迹常打满 <b>50 轮</b>、成功轨迹更早终止 ⇒ 展开行数与结果强相关；Qwen2.5-<b>1.5B / 3B</b>-Instruct 上 ALFWorld 端点成功率 <b>0.734 → 0.828</b>（1.5B）与 <b>0.742 → 0.812</b>（3B）；<b>WebShop-SOL</b> 端点 <b>0.648 → 0.734</b>、success nAUC <b>0.399 → 0.511</b>；<b>普通 WebShop</b> 展开-结果耦合弱或反向，效应「mixed or reversed」；另做 GiGPO / GSPO 适配对照，作者自报两者均为正向。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">5</span>Do Verifier Judgments Survive Abstraction? Measuring Verification Transport for LLM Agent Evaluation</h2>
+  <table class="kv">
+    <tr><th>中文一句话</th><td>同一个 agent 执行，被「宏动作」「委派边界」「历史压缩」三种抽象改变可见证据后，LLM 判分器还能不能给出同样的判定？答案是不能：宏抽象与委派下约 <b>31%</b> 的判定会翻转，而把执行溯源补回去能救回 <b>85.5%</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Disha Sheshanarayana · Sai Linisha Reddy Goli（2 位，Manipal University Jaipur）</td></tr>
+    <tr><th>提交 / 更新</th><td><code>2026-11-13T17:44:01Z</code>（v1，无更新）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.CL</code>（NeurIPS 2026 Workshop on Who Verifies the Agents?）｜ <tag class="t-borrow">借鉴</tag></td></tr>
+    <tr><th>arXiv</th><td><a href="https://arxiv.org/abs/2611.18471">https://arxiv.org/abs/2611.18471</a></td></tr>
+    <tr><th>推荐理由</th><td>把「判分器可靠性」从「同一视图下准不准」推进到「换一种执行视图还稳不稳」，这正是 <b>harness</b> 线与 <b>zhulong</b> 线共同的盲区：我们把轨迹压缩 / 工具封装 / 子 agent 委派后交给 judge，却默认判定不变。它给出可直接抄的对照协议（任务、轨迹、结果、真值、判据、judge 全固定，只改可见性）。</td></tr>
+  </table>
+  <div class="rm"><b>可核验要点（PDF <code>pdftotext</code> 实测）</b>：4 个 agent 评测基准 × <b>7 个 judge 主干</b>（Gemini-3.7-Flash / Gemini-2.5-Flash / GPT-OSS-120B / GPT-OSS-20B / Gemma-4-31B / Gemma-4-26B-A4B / Llama-4-Maverick）× 4 种验证协议 × 3 种抽象边界；transplant 失败率 <b>31.0%（宏抽象）/ 30.9%（委派）/ 20.3%（历史压缩）</b>；失败模式分化 —— 直接验证更常给出<b>错误判定</b>，证据锚定 / 审议式协议更常<b>弃权</b>；恢复溯源后救回 <b>85.5%</b>。<b>注意</b>：作者自报，未复现；benchmark 样本量见原文第 4 节。</div>
+</div>
+
 <h3 class="sec">🅱 B 轨 · 经典论文与作者关系网（本轮 +4 篇 / +3 人）</h3>
 
 <div class="card">
@@ -124,36 +151,41 @@
     <tr><th style="width:26%;">维度</th><th>本轮增量（含可核验证据）</th></tr>
     <tr>
       <td>📚 经典论文清单</td>
-      <td><b>186 篇</b>（第四十七轮 +4，全部被引数当场实测）：
+      <td><b>190 篇</b>（第四十八轮 +4，全部被引数当场实测）：
         <ul class="tight">
-          <li><b>AlphaCode</b> <code>2203.07814</code> — 被引 <b>1,787</b>，<b>Science 2022</b>（OpenAlex DOI <code>10.1126/science.abq1158</code>）｜ 大规模采样 + 执行过滤 + 行为聚类，只提交 10 个候选；Codeforces &gt;5,000 人比赛平均排名前 <b>54.3%</b>（模拟评测）→ 归 <b>harness</b> / <b>zhulong</b></li>
-          <li><b>BLOOM</b> <code>2211.05100</code> — 被引 <b>2,860</b>，预印本技术报告（394 位作者）｜ 176B，ROOTS 覆盖 <b>46 种自然语言 + 13 种编程语言（59）</b> → 归 <b>data</b> / <b>pretrain</b></li>
-          <li><b>StarCoder</b> <code>2305.06161</code> — 被引 <b>1,518</b>，预印本技术报告（67 位作者）｜ The Stack 上 <b>1 万亿 token</b>、许可过滤 + <b>opt-out</b>、MQA 支撑大 batch 推理 → 归 <b>data</b> / <b>zhulong</b></li>
-          <li><b>HH-RLHF</b> <code>2204.05862</code> — 被引 <b>5,138</b>，预印本技术报告（31 位作者）｜ 离线偏好 vs <b>在线迭代 RLHF</b>（最大 52B），公开 HH-RLHF 数据集 → 归 <b>posttrain</b> / <b>harness</b></li>
+          <li><b>Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena</b> <code>2306.05685</code> — 被引 <b>5,326</b>，NeurIPS 2023 Datasets &amp; Benchmarks（OpenAlex <code>conference-paper</code>）｜ 80 道多轮题 + 3K 专家票，GPT-4 判分与人类一致率 <b>超 80%</b>（与人类-人类一致率同量级）→ 归 <b>harness</b> / <b>zhulong</b></li>
+          <li><b>Self-Rewarding Language Models</b> <code>2401.10020</code> — 被引 <b>664</b>，<b>ICML 2024</b>｜ Llama-2-70B 上用 LLM-as-a-Judge 自造偏好做迭代 DPO，3 轮后对 GPT-4-Turbo 胜率 <b>9.94% → 15.38% → 20.44%</b> → 归 <b>posttrain</b> / <b>data</b></li>
+          <li><b>TinyStories</b> <code>2305.07759</code> — 被引 <b>589</b>，预印本（Microsoft Research）｜ 用约 <b>1,500</b> 个 3–4 岁词汇的合成故事，训练 1M–33M 参数模型仍能产出连贯英文，并提出 GPT-4 打分范式 → 归 <b>data</b> / <b>SLM</b></li>
+          <li><b>Mind2Web</b> <code>2306.06070</code> — 被引 <b>503</b>，<b>NeurIPS 2023 Spotlight</b>｜ <b>137 个真实网站 / 31 个域 / 逾 2,000 条</b>任务，三种泛化切分（跨任务 / 跨网站 / 跨域）→ 归 <b>harness</b> / <b>designflow</b></li>
         </ul>
-        证据：arXiv API <code>id_list</code> <b><code>200</code> + atom</b>（39,958 B / 4 entry）；OpenAlex <b>4/4 <code>200</code></b>（1,787 / 2,860 / 1,518 / 5,138）；PDF <b>4/4 <code>200</code> + <code>application/pdf</code></b>（3,797,220 / 3,029,243 / 1,174,499 / 9,503,688 B，均 &lt;5MB），<code>pdftotext</code> 逐篇核到上列数字。<br>
+        证据：arXiv API <code>id_list</code> <b><code>200</code> + atom</b>（11,227 B / 4 entry）；OpenAlex <b>4/4 <code>200</code></b>（5,326 / 664 / 589 / 503）；PDF <b>4/4 <code>200</code> + <code>application/pdf</code></b>（1,580,141 / 1,136,245 / 4,069,571 / 7,635,816 B；末篇 &gt;5MB ⇒ 只留 <code>/tmp</code> 不入 git），<code>pdftotext</code> 逐篇核到上列数字。<br>
         ✅ 必读清单（用户 2026-11-11 直令）<b>37/37 条目仍全覆盖</b>，本轮为清单外补充。
       </td>
     </tr>
     <tr>
       <td>👥 作者关系网</td>
-      <td><b>171 人</b>（编号 169–171 新增；<b>X 已核验 98 人</b>）：
+      <td><b>174 人</b>（编号 172–174 新增；<b>X 已核验 99 人</b>）：
         <ul class="tight">
-          <li><b>Thomas Wolf</b>（Hugging Face 联合创始人 / BLOOM 末位）— <code>@Thom_Wolf</code> <b>双源已核</b>（HF 个人页 <code>href</code> → X + <code>x.com/Thom_wolf</code> <code>200</code> / <code>og:title</code> 一致）；<b>无公开邮箱 ⇒ 暂不列发信对象</b></li>
-          <li><b>Loubna Ben Allal</b>（Hugging Face Research / StarCoder 第 2 作者）— <code>@LoubnaBenAllal1</code> <b>双源已核</b>（HF 页 <code>href</code> → X + <code>og:title</code> / <code>og:description = Research @huggingface</code>）；无公开邮箱</li>
-          <li><b>Oriol Vinyals</b>（Google DeepMind / AlphaCode 末位）— <code>@OriolVinyalsML</code> <b>单源</b>（仅 X 页 <code>og:title</code>）⇒ <b>不计入已核验</b>；⚠️ 同名站点 <code>oriolvinyals.com</code> 实为西班牙治疗师主页，已丢弃不建档</li>
+          <li><b>Yu Su 苏禹</b>（Ohio State University 副教授 / Mind2Web 末位）— <code>@ysu_nlp</code> <b>已核</b>（<code>x.com/ysu_nlp</code> <code>200</code> / 118 KB，<code>og:title</code> = <code>Yu Su (@ysu_nlp) on X</code>，<code>og:description</code>/bio = <code>co-founder @NeoCognition | prof. @osunlp</code> ⇒ 与 OSU 主页机构一致）；邮箱 <code>su.809@osu.edu</code> <b>取自本人主页 <code>mailto:</code> 明文</b>（<code>ysu1989.github.io</code> <code>200</code> / 97,338 B）</li>
+          <li><b>Ming He</b>（天津大学 / OMA 通讯作者）— 邮箱 <code>heming01@foxmail.com</code> <b>取自 PDF 首页通讯标注</b>；X 未找到（不猜 handle）</li>
+          <li><b>Disha Sheshanarayana</b>（Manipal University Jaipur / Verification Transport 一作）— 邮箱 <code>disha.229301161@muj.manipal.edu</code> 取自 PDF 首页；X 未找到</li>
         </ul>
       </td>
     </tr>
     <tr>
       <td>✉ 作者请教信</td>
-      <td>本轮 <b>3 封</b>（今日 3 / 12，累计 <b>70</b> 封）：<b>#68</b> 刘鹏飞（SJTU，LIMA <code>2305.11206</code>）｜ <b>#69</b> Guangxuan Xiao（MIT，StreamingLLM <code>2309.17453</code>）｜ <b>#70</b> 刘泽（xAI，Swin <code>2103.14030</code>）—— 三封均<b>中文</b>（判据 = 姓名族属 + 机构），正文 229 / 287 / 262 字（≤300），落款固定两行 <code>祝好，</code> / <code>Yang Liu</code>。同轮<b>抗模板</b>：开头句与问题落点无一句共用。<br>
-        <b>累计回信率：0 / 70</b>（<code>mail/replies/</code> 无任何回信摘录；<b>0 封到期</b>，最早到期 2026-11-25）⇒ <b>0 回信按待诊断信号处理，不记为成功</b>；发件通道<b>只发不收</b>（无 IMAP/POP3），回信可能已到但读不到 —— 仍需运维介入。
+      <td>本轮 <b>3 封</b>（03:00 时窗；今日 6 / 12，累计 <b>73</b> 封）：<b>#71</b> 苏禹（OSU，Mind2Web <code>2306.06070</code>）｜ <b>#72</b> Ming He（天津大学，OMA <code>2611.16816</code>）｜ <b>#73</b> Disha Sheshanarayana（Manipal University Jaipur，Verification Transport <code>2611.18471</code>）—— 语言按「姓名族属 + 机构」判定：<b>#71 / #72 中文</b>（华人姓名 + 中/美机构不影响族属判据）、<b>#73 英文</b>（印度姓名族属 + 印度机构）；正文分别 <b>CJK 251 / 260 字</b>（≤300 字）与 <b>193 词</b>（英文 ≤200 词），落款固定两行（英文 <code>Best regards,</code> / 中文 <code>祝好，</code>，下一行一律 <code>Yang Liu</code>）。三封开头句、问题落点、所引技术细节<b>零共用</b>；各自含只对本篇成立的细节（Mind2Web 的 <code>Recall@50</code> 三切分 / OMA 的 <code>50 轮</code>失败轨迹与 <code>nAUC 0.399→0.511</code> / Transport 的 <code>31.0% / 30.9% / 20.3%</code> 与 <code>85.5%</code> 恢复）。<br>
+        <b>累计回信率：0 / 73</b>（<code>mail/replies/</code> 仍无任何回信摘录；<b>0 封到期</b>，最早到期 2026-11-25）⇒ <b>0 回信按待诊断信号处理，不记为成功</b>；发件通道<b>只发不收</b>（无 IMAP/POP3），回信可能已到但读不到 —— 仍需运维介入。
       </td>
     </tr>
     <tr>
       <td>🗣 voice_ready</td>
-      <td><b>本期无（0 条）</b>。候选与落选理由：① 本轮 X 可达（<code>x.com</code> <code>200</code>），抓到 <code>@LoubnaBenAllal1</code> 8 条 / <code>@Thom_Wolf</code> 9 条；② 两条看似可用（MoE 训练手册、Fable 5.2 评测自省）经单条推文页 <code>og:title</code> 核对，作者分别是 <code>@Nouamanetazi</code> 与 <code>@andonlabs</code> ⇒ 属转推，<b>丢弃</b>；③ 两条作者核对通过的原创推文（FineDNA、Vending-Bench 观察）正文在页面 <code>og:description</code> 缺失、时间线摘录被截断 ⇒ 按「正文不完整不采用」<b>弃用</b>。🚫 不用二手转述冒充原文。</td>
+      <td><b>本期 2 条</b>（均<b>单推页双源</b>核验：<code>og:title</code> = 作者本人 + <code>og:description</code> 全文；时间 ≤30 天）：
+        <ul class="tight">
+          <li><b>V31 · Lianmin Zheng</b> <code>@lm_zheng</code>（Meta 推理团队 / LMSYS 联合创始人；SGLang 一作）｜ 2026-11-11：<i>“Excited to be speaking at SGLang summit! I'll share how we use SGLang for production serving at Meta, tackling tough correctness and performance challenges at massive scale to serve billions of users across Muse and the Meta family of apps.”</i>（节选，原文尾部链接被页面截断）。话题点：开源推理栈被 Meta 以「数十亿用户」量级用于生产 —— 开源工程与超大厂部署的交集。风险：属会议预告 + 自述，非性能数据；🚫 不得据此写「性能 SOTA」。</li>
+          <li><b>V32 · Yu Su 苏禹</b> <code>@ysu_nlp</code>（Ohio State 副教授 / NeoCognition 联合创始人；Mind2Web 末位）｜ 2026-11-06：<i>“The highest avg rating in my ICLR'27 SAC batch (200+ subs) is 3 (= weak accept). that's kind of depressing.”</i>（全文）。话题点：顶会评审分数与投稿量（200+ 篇/资深领域主席批次）的现实压力。风险：<b>个人观察、单批次，不是统计结论</b>；🚫 不得写成「ICLR 接收标准变化」。</li>
+        </ul>
+        落选与纪律：本轮先抓到两条高热推（ARLoop 开源循环 Transformer / SGLang v1.0 发布），单推页 <code>og:title</code> 分别显示作者为 <code>@yuekun_yao</code> 与 <code>@sgl_project</code> ⇒ <b>属转推，一律丢弃</b>（沿用 V10/V11 教训）。🚫 不用二手转述冒充原文。</td>
     </tr>
   </table>
 </div>
@@ -190,20 +222,63 @@
   </table>
 </div>
 
+<h3 class="sec">🎯 对各线的可执行建议（PM 增量 · 6 线覆盖 · 无则明写「无」）</h3>
+
+<div class="card">
+  <table class="plain">
+    <tr><th style="width:16%;">线</th><th>可执行动作（附判据 / 命令 / 实验设计）</th></tr>
+    <tr>
+      <td><b>pretrain</b></td>
+      <td><b>无</b>（晚报两篇均为多轮 agent RL / 判分可靠性，与预训练配方、WSD、长上下文无直接接口；不凑数）。</td>
+    </tr>
+    <tr>
+      <td><b>vision</b></td>
+      <td><b>判分器在「压缩截图序列」上的稳定性要单独测</b>：<code>2611.18471</code> 证明历史压缩（compaction）会让 <b>20.3%</b> 判定翻转。<b>动作</b>：对视觉 agent 轨迹（截图 + 动作）加一组「原始逐步截图 vs 压缩成关键帧摘要」的同轨迹对照，judge 固定为同一模型；<b>判据</b>：若压缩视图下判定翻转率 &gt;10%，则视觉评测报告必须同时报两套视图的分数，🚫 只报压缩视图。</td>
+    </tr>
+    <tr>
+      <td><b>harness</b></td>
+      <td><b>把「抽象边界」列为判分器的必测维度</b>：借 <code>2611.18471</code>，在 harness 回归里新增三项 <code>view=native|macro|delegation|compaction</code>，固定任务 / 轨迹 / 真值 / judge 只改视图；并记录 <code>abstain_rate</code>（弃权率）与 <code>wrong_verdict_rate</code>（错误判定率）两列 —— 该文发现「直接验证更易错判、证据锚定更易弃权」，低翻转率 ≠ 高可靠。另借 <code>2306.06070</code>，把 Web 类任务的评测按 <b>cross-task / cross-website / cross-domain</b> 三切分分别报，🚫 只报同分布成功率。</td>
+    </tr>
+    <tr>
+      <td><b>data</b></td>
+      <td><b>合成数据加「词汇域」一列，做小模型数据效率对照</b>：借 <code>2305.07759</code>（约 1,500 词的合成故事，1M–33M 参数仍连贯），在 data 登记表新增 <code>vocab_domain_size</code>（受控词表规模）与 <code>synthetic_source</code>（生成模型 + 版本）。<b>判据</b>：任何「合成数据提升小模型」的结论必须同时报词表规模与生成器版本，否则不可比。</td>
+    </tr>
+    <tr>
+      <td><b>zhulong</b></td>
+      <td><b>先修记账，再调超参</b>：借 <code>2611.16816</code>，在多轮 RL 日志里强制打印两项诊断 —— <code>rows_per_trajectory</code>（每条源轨迹展开行数）与 <code>objective_mass_per_trajectory</code>（轨迹聚合目标质量）；<b>判据</b>：若失败轨迹的平均展开行数 &gt; 成功轨迹 1.5 倍，则必须先开 <code>outcome_unique + mass_balance</code> 再谈 group size / 裁剪。阶段评估点按该文设在 <code>update=50 / 110</code>，同时报端点成功率与 nAUC（该文普通 WebShop 上出现「端点升、nAUC 降」的反例）。</td>
+    </tr>
+    <tr>
+      <td><b>designflow</b></td>
+      <td><b>隐藏判分证据的「可复原性」写成造题规范</b>：借 <code>2611.18471</code> 的结论（补回执行溯源可救回 <b>85.5%</b> 翻转判定），在 L3–L5 题面模板里要求每题附 <code>provenance_ref</code>（可复原的中间证据指针：网表 / 命令输出 / 日志行号），并设一条硬规则：<b>判分所依赖的证据必须能从题面给定材料复原</b>；<b>判据</b>：抽 20 题做「只给抽象摘要 vs 给完整溯源」双视图试判，翻转率 &gt;10% 的题判为证据不足，退回重造。</td>
+    </tr>
+  </table>
+</div>
+
+<h3 class="sec">🕕 晚报变更说明（AM → PM）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>进度</b>：3/5 → <b>5/5</b>。新增第 4 篇 <code>2611.16816</code>（OMA）、第 5 篇 <code>2611.18471</code>（Verification Transport）。</li>
+    <li><b>为什么是这两篇</b>：公告批上界仍停在 <code>2026-11-13T18:45:49Z</code>（连续第 15 个时窗），按 §0.1 最近公告批例外，从同一批未消费候选里按与在研工作的相关性补；两篇分别补 <b>zhulong（多轮 RL 记账）</b> 与 <b>harness（判分器跨视图可靠性）</b> 的空白，均为 2B 级可复现设置，且都<b>明确报告了负结果 / 失败条件</b>。</li>
+    <li><b>改了什么</b>：① 页头与 A 轨标题由「早报 3/5」改为「晚报 5/5」；② 采集口径说明加第 ③ 条（晚报复核 + 例外条款）；③ B 轨快照由 186/171 更新为 <b>190 / 174</b>；④ voice_ready 由 0 条改为 <b>2 条</b>（V31 / V32，均单推页双源核验）；⑤ 新增 PM 增量 6 线建议表（designflow 由「无」改为有可落地接口）。</li>
+    <li><b>没有改的</b>：早报 3 篇的标题、数字、结论一字未动；news_ready 仍为 1 条（未新增，不硬凑）。</li>
+  </ul>
+</div>
+
 <h3 class="sec">🧾 附录 · 检索式与去重（可核验）</h3>
 <div class="card">
   <ul class="tight" style="font-size:14px;">
-    <li><b>检索式 1</b>：<code>search_query=cat:cs.CL&amp;sortBy=submittedDate&amp;sortOrder=descending&amp;max_results=100</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml; charset=utf-8</code> / 260,090 B / <b>100 entry</b>；最新 <code>published</code> = <code>2026-11-13T18:45:49Z</code>。</li>
-    <li><b>入账复核</b>：<code>id_list=2611.18533,2611.17876,2611.18397</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml</code> / 10,065 B / 3 entry；abs 与 PDF 均 <code>200</code>，PDF 头校验 <code>%PDF-</code> 通过。</li>
-    <li><b>去重</b>：与 <code>SEEN.md</code>（5,424 条 ID）＋ <code>papers.jsonl</code>（359 条）比对 ⇒ 该批 100 条中 <b>93 条未被消费</b>，本轮取 3 条；其余 90 条按领域相关性淘汰（占比最高的是临床 / 文学 / 水印 / 安全类）。</li>
-    <li><b>B 轨复核</b>：<code>id_list=2211.05100,2203.07814,2305.06161,2204.05862</code> ⇒ <code>HTTP 200</code> + atom（39,958 B / 4 entry）；OpenAlex 4/4 <code>200</code>；PDF 4/4 <code>200</code>。</li>
-    <li><b>X 抓取</b>：<code>x_fetch.py</code> 只读串行（≥3s），<code>@LoubnaBenAllal1</code> / <code>@Thom_Wolf</code> 各 <code>200</code>；单条推文页逐条核 <code>og:title</code>（转推一律丢弃）。</li>
-    <li><b>⚠️ 时窗说明</b>：本轮为 00:00 时窗，A 轨目标 3 篇（早报），18:00 前需补齐至 5/5 并追加「晚报变更说明（AM → PM）」。</li>
+    <li><b>检索式 1</b>：<code>search_query=cat:cs.CL&amp;sortBy=submittedDate&amp;sortOrder=descending&amp;max_results=100</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml; charset=utf-8</code> / 260,090 B / <b>100 entry</b>；最新 <code>published</code> = <code>2026-11-13T18:45:49Z</code>（早报 00:1x 与晚报 03:0x 两次采集<b>一致</b>）。</li>
+    <li><b>入账复核（早报）</b>：<code>id_list=2611.18533,2611.17876,2611.18397</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml</code> / 10,065 B / 3 entry；abs 与 PDF 均 <code>200</code>，PDF 头校验 <code>%PDF-</code> 通过。</li>
+    <li><b>入账复核（晚报）</b>：<code>id_list=2611.18471,2611.16816</code> ⇒ <code>HTTP 200</code> / <code>application/atom+xml</code> / 17,991 B（6 entry 复合查询）；PDF <b>2/2 <code>200</code> + <code>%PDF-</code></b>（3,031,805 / 848,210 B）。</li>
+    <li><b>去重</b>：与 <code>SEEN.md</code>（5,688 行）＋ <code>papers.jsonl</code>（364 行）比对 ⇒ 两篇晚报候选此前<b>均未出现</b>；同批 100 条中剩余未消费条目按领域相关性淘汰（临床 / 文学 / 水印 / 安全类占比最高）。</li>
+    <li><b>B 轨复核</b>：<code>id_list=2406.08464,2401.10020,2207.01206,2306.06070</code> ⇒ <code>HTTP 200</code> + atom（11,227 B / 4 entry）；OpenAlex 4/4 <code>200</code>（300 / 664 / 358 / 503 —— 其中 <b>Magpie 300 / WebShop 358 &lt;500</b>，故本轮<b>不收录</b>，留候选池）；PDF 4/4 <code>200</code>。</li>
+    <li><b>X 抓取</b>：<code>x_fetch.py</code> 只读串行（≥3s），<code>@ysu_nlp</code>（8 条）/ <code>@lm_zheng</code>（10 条）各 <code>200</code>；拟引用推文逐条打开单推页核 <code>og:title</code> 作者名 —— 两条高热推（ARLoop / SGLang v1.0）判为转推<b>丢弃</b>。</li>
+    <li><b>⚠️ 时窗说明</b>：本文件为 03:00 时窗补齐后的当日终版（5/5）；下一时窗 09:00 若公告批前进（周一 20:00 ET 批次），按 72h 正常口径另起新条目，<b>不改本轮 5 篇</b>。</li>
   </ul>
 </div>
 
 <footer>
-  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 00:1x CST ｜ 早报 3/5 ｜ A 轨 3 篇 ＋ B 轨 186 篇（+4）｜ 作者网 171 人（X 已核验 98）｜ 作者信累计 70 封（回信率 0/70）｜ voice_ready 0 ｜ news_ready 1<br>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 03:0x CST（早报 00:1x / 晚报补齐）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 190 篇（+4）｜ 作者网 174 人（X 已核验 99）｜ 作者信累计 73 封（回信率 0/73）｜ voice_ready 2 ｜ news_ready 1<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
