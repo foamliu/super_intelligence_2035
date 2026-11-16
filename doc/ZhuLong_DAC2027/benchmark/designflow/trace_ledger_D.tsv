@@ -678,7 +678,7 @@
 1792135941514_8n60f	adaml	hfeg0pnd001	3566	analog_context	parked		2026-11-05 15:01	TSPC spice stimulus gen + setup/hold/tCLK2Q extraction + bisection + transistor sizing optimization (broad multi-turn L2/L3 sim+optimization); not single-turn produce
 1793669959152_3123n	lvyy	hfeg0pkn002	3554	analog_context	parked		2026-11-05 15:01	CML circuit sizing Q&A (why sweeping mp5 size changes current; what W/L range for 100uA); analysis+tuning not produce-task
 1793763989902_37j9u	lvyy	hfeg0pkn002	3373	analog_context	parked		2026-11-05 15:01	duplicate of 3123n (same lvyy CML circuit sizing Q&A); analysis not produce-task
-1793792759786_ujw1y	qiang3xu	hfeg0pkn005	2921	analog_context	parked		2026-11-05 15:01	summarize PRBS_TM circuit + review sim results/give optimization suggestions; analysis/advice not produce-task
+1793792759786_ujw1y	qiang3xu	hfeg0pkn005	2921	analog_context	case	EDA-Eval-DesignFlow-PrbsTmCircuitSummaryQA-001	2026-11-17 04:53	r792 revive: 11-15 mandate, circuit-summary Q&A (PRBS_TM), gold=trace msg41
 1789545001824_x0t2m	ethanw	hfhds201	2068	schematic_netlist	case	EDA-Eval-DesignFlow-LatchListMatch-001	2026-11-05 15:46	
 1793260410545_zh4v9					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
 1793669867866_iby9j					parked		2026-11-05 15:31	peek274 unfit (Q&A/continuation/ops/NO_USER_MSG)
