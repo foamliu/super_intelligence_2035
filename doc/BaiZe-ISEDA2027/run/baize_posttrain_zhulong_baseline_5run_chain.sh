@@ -22,6 +22,8 @@ REMOTE_BASE="/nasdata/app.e0031982/code/eda_fastmcp"
 BENCH="EDA-Eval-PyAether-v20260311_fixed.jsonl"
 NUM_NEW_RUNS="${NUM_NEW_RUNS:-4}"          # run2..run(1+NUM)，与 run1 凑 5-run
 R2_CHAIN_PID="${R2_CHAIN_PID:-2322797}"    # .17 上 R2 5-run eval 链 PID（死后释放沙盒隧道）
+PARALLELISM="${PARALLELISM:-8}"            # run_cline_script -p 并发（22:0x 令：share 8090 池时用 2，与 zhulong -p 4 共存）
+GATE_MODE="${GATE_MODE:-global}"           # global=旧(等 36.15 无 eval 才放行) | share=22:0x(独占租借+池满排队, 不等 zhulong, 共用 8090 池)
 LOG="/tmp/posttrain_zhulong_baseline_5run_chain.log"
 ANALYSIS_PY="$RUN_DIR/bpt_zhulong_baseline_5run_analysis.py"
 ANALYSIS_OUT="$RUN_DIR/5run_zhulong_baseline_analysis.json"
@@ -32,6 +34,10 @@ log(){ echo "[$(ts)] $*" | tee -a "$LOG"; }
 # ---- GATE：等沙盒空闲 ----
 gate_wait(){
   local r2pid="$1"
+  if [ "$GATE_MODE" = "share" ]; then
+    log "[gate] GATE_MODE=share → 跳过等待（22:0x：池为独占租借+asyncio.Queue 池满排队，与 zhulong 共用同一 8090 池/同 workdir t0002997_1..4 ⇒ 与 run1-4 同口径）"
+    return 0
+  fi
   log "[gate] 等待沙盒空闲：R2链PID=$r2pid 死 + 36.15 无 run_cline_script.sh ..."
   while :; do
     # 1) .17 上 R2 eval 链是否仍活（活→占沙盒隧道 8664-8668）
@@ -79,7 +85,7 @@ run_one(){
   local eval_fw="/nasdata/app.e0031982/code/EDA-Eval-Framework"
   # 用 bash -lc（登录 shell）确保 PATH 含 ~/.local/bin(zhulong) + node-20/bin(bun)，
   # 否则非交互 SSH 找不到 zhulong 命令（Exit 127）。
-  local cmd="bash -lc 'cd $REMOTE_BASE && PYTHON=$py_venv EVAL_FW_DIR=$eval_fw timeout --signal=TERM --kill-after=120 80000 bash scripts/run_cline_script.sh -p 8 -n -b $BENCH'"
+  local cmd="bash -lc 'cd $REMOTE_BASE && PYTHON=$py_venv EVAL_FW_DIR=$eval_fw timeout --signal=TERM --kill-after=120 80000 bash scripts/run_cline_script.sh -p $PARALLELISM -n -b $BENCH'"
   local rc=0
   $SSH "$cmd" >>"$LOG" 2>&1 || rc=$?
   log "[run $runidx] 36.15 流水线退出 rc=$rc"
