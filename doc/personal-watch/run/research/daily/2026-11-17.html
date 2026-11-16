@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-17（早报 3/5） · research 线</title>
+<title>论文观察日报 · 2026-11-17（晚报 5/5 + 06:00 增量） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-17</h1>
-  <div class="sub"><b>晚报（03:00 时窗补齐）</b> · 今日进度 <b>5 / 5</b>（早报 3/5 → 晚报 5/5） · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 03:0x CST（早报 00:1x / 晚报补齐 03:0x）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>晚报（03:00 时窗补齐）</b> · 今日进度 <b>5 / 5</b>（早报 3/5 → 晚报 5/5 → <b>06:00 增量</b>） · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 06:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -277,8 +277,28 @@
   </ul>
 </div>
 
+<h3 class="sec">🕕 06:00 时窗增量（B 轨 +4 · 作者网 +3 · 作者信 2 封）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>A 轨 0 新收</b>：今日 5/5 已满；复核 <code>cat:cs.CL</code> 列表 <code>HTTP 200</code> + <code>application/atom+xml</code>（260,090 B / 100 entry），<code>published</code> 上界仍为 <code>2026-11-13T18:45:49Z</code> ⇒ 公告批<b>连续第 16 个时窗未前进</b>。</li>
+    <li><b>B 轨 +4 → 194</b>：The Stack <code>2211.15533</code>（<b>553</b>）· Code Llama <code>2308.12950</code>（<b>4,881</b>）· Qwen2-VL <code>2409.12191</code>（<b>6,157</b>）· LiveCodeBench <code>2403.07974</code>（<b>1,802</b>）；arXiv <code>id_list</code> <code>200</code> + atom（12,622 B / 4 entry）、OpenAlex 4/4 <code>200</code>、PDF 4/4 <code>200</code>（Qwen2-VL <b>35.9 MB &gt;5MB</b> ⇒ 仅 <code>/tmp</code>，不入 git）。</li>
+    <li><b>作者网 +3 → 177</b>：Naman Jain（UC Berkeley，<b>已发信</b>）· King Han（UC Berkeley）· Alex Gu（MIT）—— 邮箱均取自 PDF 首页邮箱块（<code>pdftotext</code> 逐字核）；主页 <code>404</code> / TLS 失败一律写「未核到」，X 未找到（不猜 handle）。</li>
+    <li><b>作者信 2 封</b>：<code>#74</code> Naman Jain（LiveCodeBench，英文 <b>189</b> 词）· <code>#75</code> Junyi Ao（SpeechT5，中文 CJK <b>196</b> 字）—— 落款两行、其后无任何行；累计 <b>75 封</b>，<b>回信率 0 / 75</b>，0 封到期（最早 2026-11-25）。<b>撤回 1 封</b>：原计划给 Xuezhe Ma 的 LIMA 信因同论文已由 <code>#68</code>（Pengfei Liu）覆盖 ⇒ 按「同一论文 ≤1 封」停发。</li>
+    <li><b>voice_ready / news_ready</b>：均 <b>0</b>（本时窗未抓 timeline；四篇经典论文无发布型事件点，不硬凑）。</li>
+  </ul>
+  <table class="plain" style="margin-top:12px;">
+    <tr><th style="width:16%;">线</th><th>06:00 增量可执行动作（附判据）</th></tr>
+    <tr><td><b>pretrain</b></td><td>借 Code Llama：<b>训练长度 16k、推理到 100k</b> 可先于全量长训验证 ⇒ 长上下文消融表新增 <code>train_len</code> / <code>eval_len</code> 两列；<b>判据</b>：若 100k 外推相对 16k 的增益不足全量长训预期的一半，先不投长训算力。另把 <code>FIM</code> 目标按模型规模单列（该文 34B 未用 infilling）。</td></tr>
+    <tr><td><b>vision</b></td><td>借 Qwen2-VL：视觉塔配置表新增 <code>dynamic_resolution</code> / <code>token_merge_factor</code> / <code>tokens_per_image</code>；<b>判据</b>：图像 token 数翻倍而下游任务增益 &lt;1pt 时回退到合并系数 2×2，并把 M-RoPE 作为单变量消融项（先小规模）。</td></tr>
+    <tr><td><b>harness</b></td><td>借 LiveCodeBench：题库 schema 增加 <code>release_date</code> / <code>model_cutoff</code>，报告默认只算 <code>release_date &gt; model_cutoff</code> 子集，并同时给全量与切窗两行；<b>判据</b>：同模型两口径差值 &gt;5pt 时，禁止只报全量分。</td></tr>
+    <tr><td><b>data</b></td><td>借 The Stack：代码语料流水线加 <code>license</code> / <code>license_source</code> / <code>opt_out_checked</code> 三列，账本同时记 <code>raw_bytes</code> / <code>near_dedup_bytes</code> / <code>tokens</code>；<b>判据</b>：许可字段缺失的批次一律不进训练集。</td></tr>
+    <tr><td><b>zhulong</b></td><td>借 LiveCodeBench 的污染证据：成本-效果曲线的每个点标注<b>题集发布时间窗</b>；<b>判据</b>：若某模型在旧题上的优势在新题窗口消失，该点不得用于成本口径结论。</td></tr>
+    <tr><td><b>designflow</b></td><td>借 LiveCodeBench 的「官方测试判分」：L3–L5 题面必须挂可执行测试（或可复原的判分脚本）；<b>判据</b>：随机抽 20 题做「题面→测试」人工对齐，无法对齐的题退回重造。</td></tr>
+  </table>
+</div>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 03:0x CST（早报 00:1x / 晚报补齐）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 190 篇（+4）｜ 作者网 174 人（X 已核验 99）｜ 作者信累计 73 封（回信率 0/73）｜ voice_ready 2 ｜ news_ready 1<br>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 06:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>194</b> 篇（+4）｜ 作者网 <b>177</b> 人（X 已核验 99）｜ 作者信累计 <b>75</b> 封（回信率 <b>0/75</b>）｜ voice_ready 2 ｜ news_ready 1<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
