@@ -48,7 +48,7 @@
 1789649163024_r15ih					parked		2026-11-03 03:36	SKILL noConn instTerm 连通性遍历属 schematic 非本 shard C, status failed
 1793152046824_iacrk					parked		2026-11-03 03:36	解析 calibreDummy.rule BWZ dummy 逻辑=prose 解释非 script
 1791959556511_kkjsm					parked		2026-11-03 03:36	解析 CT_F rule 24 轮 prose Q&A 非 script-deliverable
-1792465550373_n9l88					parked		2026-11-03 03:36	用户指出脚本 layer/purpose 解析 bug=debug 轮非 A-档 seed
+1792465550373_n9l88					case	EDA-Eval-DesignFlow-CutLayerIdxBugFix-001	2026-11-16 11:07	用户指出脚本 layer/purpose 解析 bug=debug 轮非 A-档 seed
 1792025924814_xk5uw					parked		2026-11-03 03:36	查找 PDK drc 文件+层含义 QA 非 design-flow seed
 1791785748768_pvl8c					parked		2026-11-03 03:36	T0=skill 路由定义(meta-skill)非 design-flow seed
 1792547960320_eabca					parked		2026-11-03 03:36	T0='aeGetSelSet 怎么查看选中对象信息'=QA 非 design-flow
