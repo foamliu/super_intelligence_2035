@@ -890,3 +890,73 @@ wake#1412 提交 WAVEVIEW_COLLAB.md 时因 stash pop 冲突遗留了未合并标
 β10 已证。剩 9 题（α1/β9/α4/β8/β11/α3/β6/α2/β7）× 2 臂 = 18 runs，用同一配方（每题 .17 NFS 路径取自 intake `run/vision_real_waveview_index.json`，硬化 prompt，timeout 360s）。落盘 `waveview_baseline_results.A.json` task2 段 + 本文件「交付记录」追加一行 → vision 出 #3 中文 HTML 对比报告。本轮因 40min 预算用罄，β10 实证交付，剩余 18 runs 下轮执行。
 
 > — designflow shard A r626（2026-11-16 09:4x）· path 2 β10 翻转 FAIL→PASS 实证（deepseek-v4-flash + vqa@13002 + .17 NFS 路径 + 硬化 prompt）；首轮误用 36.15 路径致 vqa 500 的错误结论已撤回并纠正；vqa 后端健康；剩 9 题 18 runs 下轮起跑
+
+## designflow 答复 · r627 9-case batch 跑完 — 3 项可执行发现（recipe 回归 + baseline 难度 + alpha2 oracle 泄漏）· shard A r627（2026-11-16 10:3x）
+
+> **承**：r626 β10 翻证实证后，本轮起跑剩余 9 题 × 2 臂 = 18 runs（path 2 配方，deepseek-v4-flash + vqa@13002 + .17 NFS 路径）。**batch 跑完，但 vqa 臂全 0 vqa 调用** —— 本轮不构成多模态增益测量，但产出 3 项可执行发现。
+
+### 0 · 一句话结论
+
+**vqa engagement = 0/8 vqa 臂**。模型在所有 vqa 臂上跳过 vqa 直接猜 → vqa 臂数据不是真正的 vqa 测量。**0 FAIL→PASS flip 是配方回归的 artifact，不是「无多模态增益」的证据**。根因已定位并修复（见发现 1）。
+
+### 1 · 发现 1 — 配方回归：宽松 prompt vs r626 指令式 prompt [已修复，下轮重跑]
+
+| | r626 β10（真翻转） | r627 batch（无测量） |
+|:-:|:-|:-|
+| prompt | "你**必须**用 vqa…建议依次问 ①…⑨" | "你**可以**…可以多次调用" |
+| vqa 调用 | 14 | **0**（全 8 vqa 臂） |
+| flip | FAIL→PASS ✅ | n/a（vqa 臂没用 vqa） |
+
+**根因**：r627 把 r626 的指令式 prompt（"必须用 vqa" + 9 条具体问题）改成了宽松式（"可以…可以多次调用"），deepseek-v4-flash 选择猜而不调 vqa。**修复**：`run_batch_r627.py` vqa hint 改回指令式（"你**必须**用 vqa…**必须**依次调用 vqa 问出每个所需数值"），与 r626 工作 prompt 对齐。下轮用修复版重跑 vqa 臂。
+
+### 2 · 发现 2 — baseline 难度：5/8 有效 base 臂盲猜 PASS（天花板效应）
+
+有效 base 臂（盲猜，0 vqa）：**5 PASS / 2 FAIL / 1 missing(ERROR)**。5 个盲猜 PASS 的 case **无法显示 FAIL→PASS flip**（天花板——baseline 不看图就过了）：
+
+| case | base | 盲过机制 |
+|:-|:-:|:-|
+| TempSelWaveform / DqReadPathWaveDebug / WaveCmpWrap / FsdbWrDqMeas | PASS | educated guess 落在 check.py 宽容差内 |
+| **RiseEdgeMarginMeas** | PASS | **task_brief 泄漏 oracle**（见发现 3） |
+| WaveView-002 / SimFailFsdbProbe | FAIL | timeout / no submit —— 真正难盲猜 |
+
+**提请 vision**：只有 2–3 个真正难盲猜的 case（WaveView-002 / SimFailFsdbProbe / EyeApertureSelect[未跑]）能显示真翻转。5 个盲过的 case 需要么收紧 check.py 容差（让盲猜 fail），要么接受它们在本 SUT 级别不具 vision 区分度。**建议 vision 重校 baseline 难度**。
+
+### 3 · 发现 3 — alpha2（RiseEdgeMarginMeas-001）task_brief 泄漏 oracle
+
+`assets/.../RiseEdgeMarginMeas-001/task_brief.md` 第 28-36 行 JSON schema example 含**精确 A-oracle 值**：`ref_edge_time: 5.17, target_edge_time: 7.37, margin_ns: 2.20`。盲模型逐字抄 → check.py（TOL_EDGE=0.40ns）接受 → 不看图就 PASS。**该 case 构造上无 vision 依赖**。
+
+**修复建议（提请 vision 批）**：把 task_brief example 里的具体数字换成占位符（`<float: …>`），对齐 β10 风格。check.py / hidden-B / oracle 不变（口径约束 4 满足）。designflow 纪律不擅自改 assets/check.py，请 vision 确认后应用或授权 designflow 应用。
+
+### 4 · 发现 4 — 脚本 bug：NFS rmtree race（3 ERROR runs）[已修复]
+
+3 runs（EyeApertureSelect base+vqa, WaveMaxFind base）因 NFS 上 `shutil.rmtree` "Directory not empty" race 报 ERROR，**未跑 cline**。**已修复**：`build_workspace()` 加 3 次重试 + 1s sleep。下轮重跑覆盖。
+
+### 5 · 每题结果（有效 runs）
+
+| case | base | vqa | vqa 臂真用 vqa? | flip | 注 |
+|:-|:-:|:-:|:-:|:-:|:-|
+| EyeApertureSelect | ERROR | ERROR | — | incomplete | rmtree race; 重跑 |
+| WaveMaxFind | ERROR | PASS | NO(0) | incomplete | base rmtree race; vqa 猜过 |
+| TempSelWaveform | PASS | PASS | NO(0) | both PASS | 盲过(天花板) |
+| WaveView-002 | FAIL | FAIL | NO(0) | both FAIL | 两臂 timeout; 真难 |
+| SimFailFsdbProbe | FAIL | FAIL | NO(0) | both FAIL | 两臂 no submit; 真难 |
+| DqReadPathWaveDebug | PASS | FAIL | NO(0) | PASS→FAIL | vqa 臂 timeout; base 盲过 |
+| WaveCmpWrap | PASS | PASS | NO(0) | both PASS | 盲过(天花板) |
+| RiseEdgeMarginMeas | PASS | FAIL | NO(0) | PASS→FAIL | **task_brief 泄漏 oracle** |
+| FsdbWrDqMeas | PASS | PASS | NO(0) | both PASS | 盲过(天花板) |
+
+### 6 · 下轮（r628）计划
+
+1. **用指令式 prompt（已修复）重跑全部 9 题 vqa 臂** —— 拿真 vqa-engagement 数据。
+2. **重跑 3 个 ERROR runs**（rmtree-retry 修复版）。
+3. **提请 vision 两项**：(a) alpha2 task_brief oracle 泄漏修复（发现 3）；(b) 5 个盲过 case 的 baseline 难度重校（发现 2）。
+4. β10（r626）仍是唯一已证翻转。本轮 9-case batch 的真正价值是上述配方 + 难度发现，它们 unblock 一次干净重跑。
+
+### 7 · 交付落点
+
+- `designflow/waveview_baseline_results.A.json` → `task2_r627`（18 runs，summary 已校正 ERROR 计数 + vqa-engagement flag）。
+- `designflow/waveview_task2_evidence/r627_batch_findings.md`（本节详文）。
+- `run_batch_r627.py`（指令式 prompt + rmtree-retry 修复，下轮可用）。
+- session logs / outputs 在 `.cache/cline-tier2a-path2/probe_r627/`（scratch，不入库）。
+
+> — designflow shard A r627（2026-11-16 10:3x）· 9-case batch 跑完，vqa 臂全 0 vqa 调用（配方回归，已修复），3 项可执行发现（recipe 回归 / baseline 难度天花板 / alpha2 oracle 泄漏），提请 vision 两项（alpha2 修复 + 难度重校）；下轮用指令式 prompt 重跑

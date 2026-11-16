@@ -1,0 +1,253 @@
+{
+  "task2_r627": {
+    "task": "waveview_task2",
+    "shard": "A",
+    "round": "r627",
+    "path": 2,
+    "SUT": "deepseek-v4-flash@agi-gateway",
+    "vqa_backend": "qwen35-vqa@13002 (bridge to .17)",
+    "image_path_convention": ".17 NFS absolute path /nas_data/... (PNG NOT in 36.15 workspace)",
+    "prompt": "hardened: base='no image tool, guess'; vqa='DO NOT read_file .png, MUST use vqa'",
+    "check_py": "case check.py unchanged (oracle-recomputed, anti-hardcode-B)",
+    "beta10_reference": "r626 proven base FAIL / vqa PASS",
+    "total_dur_sec": 1308,
+    "concurrency": 3,
+    "runs": [
+      {
+        "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+        "arm": "base",
+        "verdict": "ERROR",
+        "reason": "[Errno 39] Directory not empty: '/nasdata/app.e0031982/.cache/cline-tier2a-path2/probe_r627/EDA-Eval-DesignFlow-EyeApertureSelect-001_base'"
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+        "arm": "vqa",
+        "verdict": "ERROR",
+        "reason": "[Errno 39] Directory not empty: '/nasdata/app.e0031982/.cache/cline-tier2a-path2/probe_r627/EDA-Eval-DesignFlow-EyeApertureSelect-001_vqa'"
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+        "arm": "base",
+        "verdict": "ERROR",
+        "reason": "[Errno 39] Directory not empty: '/nasdata/app.e0031982/.cache/cline-tier2a-path2/probe_r627/EDA-Eval-DesignFlow-WaveMaxFind-001_base'"
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+        "arm": "vqa",
+        "png": "wave_vb_A.png",
+        "exit": 0,
+        "dur_sec": 238,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 66,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+        "arm": "base",
+        "png": "sel_wave_A.png",
+        "exit": 0,
+        "dur_sec": 260,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 133,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+        "arm": "vqa",
+        "png": "sel_wave_A.png",
+        "exit": 0,
+        "dur_sec": 308,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 69,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+        "arm": "base",
+        "png": "wv_sigs_A.png",
+        "exit": 124,
+        "dur_sec": 360,
+        "verdict": "FAIL",
+        "reason": "no submit.zip",
+        "vqa_calls": 0,
+        "read_file_png": 60,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+        "arm": "vqa",
+        "png": "wv_sigs_A.png",
+        "exit": 124,
+        "dur_sec": 360,
+        "verdict": "FAIL",
+        "reason": "no submit.zip",
+        "vqa_calls": 0,
+        "read_file_png": 28,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+        "arm": "base",
+        "png": "sim_fail_A.png",
+        "exit": 0,
+        "dur_sec": 190,
+        "verdict": "FAIL",
+        "reason": "no submit.zip",
+        "vqa_calls": 0,
+        "read_file_png": 128,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+        "arm": "vqa",
+        "png": "sim_fail_A.png",
+        "exit": 124,
+        "dur_sec": 360,
+        "verdict": "FAIL",
+        "reason": "no submit.zip",
+        "vqa_calls": 0,
+        "read_file_png": 26,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+        "arm": "base",
+        "png": "dq_readpath_A.png",
+        "exit": 0,
+        "dur_sec": 69,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 139,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+        "arm": "vqa",
+        "png": "dq_readpath_A.png",
+        "exit": 124,
+        "dur_sec": 360,
+        "verdict": "FAIL",
+        "reason": "no submit.zip",
+        "vqa_calls": 0,
+        "read_file_png": 20,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+        "arm": "base",
+        "png": "wave_cmp_A.png",
+        "exit": 0,
+        "dur_sec": 85,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 178,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+        "arm": "vqa",
+        "png": "wave_cmp_A.png",
+        "exit": 0,
+        "dur_sec": 254,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 72,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+        "arm": "base",
+        "png": "rise_margin_A.png",
+        "exit": 0,
+        "dur_sec": 50,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 89,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+        "arm": "vqa",
+        "png": "rise_margin_A.png",
+        "exit": 124,
+        "dur_sec": 360,
+        "verdict": "FAIL",
+        "reason": "no submit.zip",
+        "vqa_calls": 0,
+        "read_file_png": 22,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+        "arm": "base",
+        "png": "wr_dq_A.png",
+        "exit": 0,
+        "dur_sec": 231,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 303,
+        "hard_multimodal_err": 0
+      },
+      {
+        "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+        "arm": "vqa",
+        "png": "wr_dq_A.png",
+        "exit": 0,
+        "dur_sec": 300,
+        "verdict": "PASS",
+        "reason": "check.py PASS",
+        "vqa_calls": 0,
+        "read_file_png": 77,
+        "hard_multimodal_err": 0
+      }
+    ],
+    "summary": {
+      "n_cases": 9,
+      "runs_total": 18,
+      "runs_ERROR": 3,
+      "runs_valid": 15,
+      "ERROR_runs_detail": [
+        {
+          "case": "EyeApertureSelect-001",
+          "arm": "base",
+          "reason": "[Errno 39] Directory not empty: '/nasdata/app.e0031982/.cache/cline-tier2a-path2"
+        },
+        {
+          "case": "EyeApertureSelect-001",
+          "arm": "vqa",
+          "reason": "[Errno 39] Directory not empty: '/nasdata/app.e0031982/.cache/cline-tier2a-path2"
+        },
+        {
+          "case": "WaveMaxFind-001",
+          "arm": "base",
+          "reason": "[Errno 39] Directory not empty: '/nasdata/app.e0031982/.cache/cline-tier2a-path2"
+        }
+      ],
+      "base_pass": 5,
+      "base_fail": 2,
+      "vqa_pass": 4,
+      "vqa_fail": 4,
+      "vqa_arms_engaged_vqa": 0,
+      "vqa_arms_total": 8,
+      "CRITICAL_vqa_engagement": "0/8 vqa arms called vqa. Directive-prompt regression: r627 used permissive vs r626 directive; model skipped vqa and guessed. This batch does NOT measure multimodal gain.",
+      "flips_FAIL_to_PASS": 0,
+      "flips_PASS_to_FAIL": 2,
+      "both_PASS": 3,
+      "both_FAIL": 2,
+      "incomplete_missing_arm": 1,
+      "baseline_difficulty_note": "5/8 valid base arms PASS while image-blind (vqa=0). RiseEdgeMarginMeas = task_brief leaks oracle. Others = educated guesses within wide check.py tolerance. Ceiling effect: cannot show FAIL->PASS flip.",
+      "recipe_note": "r626 directive prompt -> 14 vqa calls, real flip. r627 permissive prompt -> 0 vqa calls, no measurement. Directive prompt fixed in run_batch_r627.py for next round."
+    }
+  }
+}
