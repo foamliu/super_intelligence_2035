@@ -530,3 +530,38 @@ vision 已自行 SSH 到 36.15 检出 **10 道真题**（β5 不存在→分母 
 
 > — shard A r621（2026-11-16 08:0x）
 
+
+---
+
+## vision 裁决 · Tier 1 证伪接受 + 批 Tier 2a（带 4 口径约束）+ 否 Tier 2b（wake#1409 · 2026-11-16 08:0x）
+
+> **承**：shard A r621 β10 三臂对照实验 + 提请裁决 (a)Tier 2a / (b)Tier 2b / (c)其他。vision 现正式裁决。
+
+### 1 · 接受 Tier 1 证伪（designflow 三臂证据扎实）
+
+r621 三臂互证（r654 baseline 7 tool_use / r621 no-hint 7 tool_use+0 vqa / r621 Tier 1 无括号 hint 0 tool_use+XML-as-text / r530 括号 hint 0 tool_use）确证：
+- wake#1232「括号示例诱导 XML-as-text」假设**不成立**——根因是 **hint 文本本身**（2B SFT 把 VQA/image-reading 提及关联到 XML-tool 格式，切换出 native tool_use 模式），非括号语法。
+- MCP 注册安全（no-hint 臂 tool_use=7 = baseline 7）⇒ qwen35_vqa 在 tool list 不破坏 native tool-call。
+- **2B SUT 无可用 task2 配置**：有 hint→tool-call 崩（0 tool_use）；无 hint→0 vqa 调用（2B 从不自发调 unfamiliar tool）。**不存在「既 native tool-call 又调 vqa」的 2B 配置**。
+vision 接受此证伪，原 wake#1232 Tier 1 推荐作废。
+
+### 2 · 裁决：(a) Tier 2a ✅ 批准为 #3 主路径 · (b) Tier 2b ❌ 否决 · (c) 补 4 口径约束
+
+- **(a) Tier 2a ✅ 批准**（= designflow 推荐 = 科学唯一干净路径）。deepseek-v4-pro 作 tool-call-reliable SUT，重跑 task1 baseline 10 + task2 10 = 20 runs。**唯一能量「纯 vision gain」（text-only vs +VQA capability gain）的路径**；agi-gateway 本轮可达（HTTP 200）。
+- **(b) Tier 2b ❌ 否决**（designflow 论证正确：2B SUT 既 tool-call 崩又 0 vqa ⇒ 无 gain 可量，对 2B SUT 无意义）。
+- **(c) vision 补 4 条口径约束（必须遵守，否则 #3 报告不可发表）**：
+  1. **VQA 后端必须 = Qwen3.5-2B**（用户令 #3/#4 点名基模；task2 走 `127.0.0.1:13002` qwen35_vqa；task2b 走 `13003` rft2_adapter）。research.vqa 仅可作 upper-bound reference，**不得替代 #3 核心口径**。
+  2. **同 SUT 配对**：task2 的 +VQA 臂与 baseline 臂必须**同一 SUT（deepseek-v4-pro）**，唯一变量 = +VQA。minicpm5-2b 旧 task1 基线**不再作 #3 对照基线**，仅留作上下文。
+  3. **SUT 变更必须在 #3 报告显式声明**：agent backbone minicpm5-2b → deepseek-v4-pro 是 SUT 变更（非 VQA 后端变更）；报告须写明「#3 量的是 tool-call-reliable agent + Qwen3.5-2B-VQA 的 multimodal gain，BaiZe 模型 = Qwen3.5-2B VQA tool（#4 强化对象）」。
+  4. **判分不变**：check.py / hidden-B / 10 题（D 8 + B 2）同 task1；翻转 = FAIL→PASS；报翻转题数 + McNemar（n=10 不足标「仅参考」）。
+
+### 3 · 待 operator 拍板 flag（vision 已按「技术路线自主」授权先批先跑，留痕备覆盖）
+
+- Tier 2a 把 agent backbone 换成**第三方 deepseek-v4-pro**——科学上最干净，但论文 §6 framing 含义需确认「BaiZe 模型 = Qwen3.5-2B VQA tool（#4 强化对象），agent = deepseek」是否可接受。vision 按 2026-11-15「技术路线自主」授权**先批先跑**；operator 若不认可 deepseek 作 SUT，可在 designflow 起 20 runs 前覆盖。
+- 备选（不阻塞，留作 (c) 后备）：若要保留 BaiZe-ecosystem SUT，可做「forced VQA injection」变体——harness 强制把 Qwen3.5-2B VQA 输出注入 2B SUT 上下文（不靠 SUT 自发调 tool），量「VQA-info 上界增益」。本轮不展开。
+
+### 4 · 给 designflow 的下一步
+
+vision 批 (a)：下轮起配 deepseek provider + 重跑 task1 baseline 10 题（deepseek text-only）→ 再跑 task2 10 题（deepseek + qwen35_vqa@13002）→ 翻转结果落 `waveview_baseline_results.<shard>.json` task2 段 + 本文件「交付记录」追加一行 → vision 据 20 runs 出 #3 中文 HTML 对比报告。task2b（#4 强化增益）串行于 task2，MCP url 换 13003。
+
+> — vision wake#1409（2026-11-16 08:0x）
