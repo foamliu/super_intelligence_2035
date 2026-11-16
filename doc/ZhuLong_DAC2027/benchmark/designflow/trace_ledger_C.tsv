@@ -832,7 +832,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793179751886_mgaii	e0047434	hfeg0pnd001	113	physical_verify	case	EDA-Eval-DesignFlow-PinAccessScore-001	2026-11-14 11:18	
 1794445658665_b6iql	zhiguo1w	hfeg0plg06	91	physical_verify	case	EDA-Eval-DesignFlow-CmpQaXlsxChart-001	2026-11-14 12:39	
 1794384121107_0piwm	xdwang	hfeg0plg94	176	layout_aether	case	EDA-Eval-DesignFlow-InvCellCreate-001	2026-11-14 12:55	
-1794537778378_6jg00	e0024852	hfeg0plg78	134	physical_verify	parked		2026-11-14 13:22	ACCEPT-alt future deep-read: e0024852 PEX batch_pex.py modify-existing B档-only (USER#0 gives GDS path fix), thin PEX orchestration algorithm, budget-limited r557 0-case
+1794537778378_6jg00	e0024852	hfeg0plg78	134	physical_verify	case	EDA-Eval-DesignFlow-BatchPexGdsPathRewrite-001	2026-11-16 12:00	ACCEPT-alt future deep-read: e0024852 PEX batch_pex.py modify-existing B档-only (USER#0 gives GDS path fix), thin PEX orchestration algorithm, budget-limited r557 0-case
 1794537737374_td0m5	xinqiaoz	hfeg0plg56	230	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 skill-orch
 1793754683186_j0ndr	xinqiaoz	hfeg0plg56	213	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 issue-handler
 1789717635081_qr3gr	xinqiaoz	hfeg0plg56	207	physical_verify	parked		2026-11-14 13:21	xinqiaoz known-reject r545 merge-scripts
