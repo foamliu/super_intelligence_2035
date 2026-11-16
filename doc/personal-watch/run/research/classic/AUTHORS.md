@@ -2412,6 +2412,46 @@
 | 备注 | `语言=中文(判据=拼音姓名 + 论文署名为华人团队（Song Han / Beidi Chen）)`。问题候选：① 保留初始 4 个 token 的 KV 是否在 2B、中文语料上同样成立（sink 位置是否随分词/语言漂移）；② 预训练加占位 sink token 的代价（有效序列长度损失）与收益如何量化；③ 4M token 流式下 PPL 平稳的判据是什么（局部窗口 vs 全注意力对照的偏差上界）。 |
 
 
+### 166. Xuezhe Ma（马学哲，中文名按拼音回写，本表不臆造汉字）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xuezhe Ma（**拼音姓名 ⇒ 按中文处理**；汉字写法本表不臆造） |
+| 机构 | **University of Southern California · Information Sciences Institute（USC ISI）**；X bio 原文 `Research Lead @USC_ISI and Research Assistant Professor @CSatUSC`（本人主页 <https://xuezhemax.github.io/> 2026-11-16 实测 `200` / 113,218 B；USC Viterbi 目录页 `200` / 6,784 B） |
+| 代表论文 | **LIMA: Less Is More for Alignment**（arXiv `2305.11206`，共同作者（第 7 位），B 轨 #179；一作为 Chunting Zhou） |
+| 邮箱 | **`xuezhema@usc.edu`**（USC Viterbi 教师目录页 <https://viterbi.usc.edu/directory/faculty/Ma/Xuezhe> 明文，2026-11-16 `200` / 6,784 B） |
+| 主页 | <https://xuezhemax.github.io/> |
+| X 账号 | **`@MaxMa1987`**（核验：主页 `href` 指向 `twitter.com/MaxMa1987`；`x.com/MaxMa1987` `200` / 214,005 B，`og:title` = `Xuezhe Ma (Max) (@MaxMa1987) on X`，`og:description` = `Research Lead @USC_ISI and Research Assistant Professor @CSatUSC …` ⇒ 双源一致） |
+| 状态 | **待跟踪**（邮箱可核 + X 已核；今日 12 封额度已满 ⇒ 下轮可发中文） |
+| 备注 | `语言=中文(判据=拼音姓名 + CMU LTI 博士、中文圈常见拼法)`。问题候选：① LIMA 里 1,000 条示例的**任务簇配额**如何分配（43% 这个数字对提示集多样性的敏感度）；② 65B + 1k 的结论在 2B 上是否需要改变「质量优先于数量」的次序；③ 消融里「加量不加多样性」收益递减的拐点是否随模型规模移动。<br>⚠️ **同名站点陷阱（本轮实测）**：`https://chunting.me/` 目前是**另一位医师的博客**（标题 `葉峻榳醫師`），**不是** LIMA 一作 Chunting Zhou 的主页 ⇒ 🚫 不得据此给 Chunting Zhou 建邮箱 / X 档案。 |
+
+### 167. Pengfei Liu（刘鹏飞）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pengfei Liu（**中文名 刘鹏飞**，SJTU 中文页原文） |
+| 机构 | **上海交通大学计算机学院（副教授）· 生成式人工智能研究组 GAIR 负责人**（SJTU 计算机学院教师页 <https://cs.sjtu.edu.cn/en/jiaoshiml/liupengfei.html> 2026-11-16 `200` / 38,344 B，页面含中文简介与 `pengfei@sjtu.edu.cn`） |
+| 代表论文 | **LIMA: Less Is More for Alignment**（arXiv `2305.11206`，**第 2 作者**，B 轨 #179） |
+| 邮箱 | **`pengfei@sjtu.edu.cn`**（SJTU 教师页明文；同页另有院系公共邮箱 `scs@sjtu.edu.cn`，🚫 不用公共邮箱发学术请教信） |
+| 主页 | <https://cs.sjtu.edu.cn/en/jiaoshiml/liupengfei.html>（学院教师页；未找到独立个人主页） |
+| X 账号 | **未找到 X**（教师页与检索均未命中个人 handle；🚫 不猜） |
+| 状态 | **待跟踪**（邮箱可核；X 未找到；今日 12 封额度已满 ⇒ 下轮可发中文） |
+| 备注 | `语言=中文(判据=中文姓名 刘鹏飞 + 中国大陆机构 SJTU)`。问题候选：① GAIR 在做中文指令数据时，如何把 LIMA 的「质量优先」落到可执行的筛选判据上（谁打分、几人复核、冲突怎么裁）；② LIMA 的 1k 示例里**是否含多轮样本**（论文写零对话样本仍能多轮），中文场景是否同样成立；③ 对齐阶段的数据量与预训练 token 预算之间有没有可用的配比经验值。 |
+
+### 168. Eric Wallace
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Eric Wallace（英语姓名 ⇒ 英文信） |
+| 机构 | **OpenAI**（X bio 原文 `research @openai`；本人主页 <https://www.ericswallace.com/> 2026-11-16 `200` / 42,734 B，自述 `co-lead a team named "Alignment Training"`）· PhD UC Berkeley（Dan Klein / Dawn Song） |
+| 代表论文 | **The False Promise of Imitating Proprietary LLMs**（arXiv `2305.15717`，**第 2 作者**，B 轨 #180）· 主页另有 alignment / memorization 方向论文（未逐条核） |
+| 邮箱 | ⚠️ **未取到现行机构邮箱**：主页无 `mailto:`；主页所挂 `CV.pdf`（`200` / 179,967 B，`application/pdf`）内写 `E-mail: ericwallace@berkeley.edu` —— **Berkeley 域名与其现职 OpenAI 不一致**，按本表第 1 条纪律**记录但不建议直接发**（可能已不读） |
+| 主页 | <https://www.ericswallace.com/> |
+| X 账号 | **`@Eric_Wallace_`**（核验：主页 `href` 指向 `twitter.com/Eric_Wallace_`；`x.com/Eric_Wallace_` `200` / 191,343 B，`og:title` = `Eric Wallace (@Eric_Wallace_) on X`，`og:description` = `research @openai` ⇒ 双源一致） |
+| 状态 | **待跟踪**（X 已核、可做 `voice_ready` 跟踪；邮箱为旧域 ⇒ 发信优先级低） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。若后续拿到现行邮箱，问题候选：① 众包评分与定向自动评测的**分歧阈值**怎么定（多少 pt 就判「风格模仿」）；② 模仿数据收益枯竭的结论在今天的强模型 + 更广任务覆盖下是否仍成立；③ 有没有可公开的「covered task cluster」标注口径，便于我们把中文 / 代码域对齐到同一套簇。 |
+
+
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
