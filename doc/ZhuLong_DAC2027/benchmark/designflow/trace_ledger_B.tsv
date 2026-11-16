@@ -1236,7 +1236,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792045829835_j93p1	warrenm	hfeg0pkn002	131	spice_sim	case	EDA-Eval-DesignFlow-TrnToVcdConvertGuide-001	2026-11-15 17:45	r636 revived-pool #18 trn->vcd
 1788946494214_rp39a	rongjiez	hfeg0pkn005	49	spice_sim	parked		2026-11-11 20:22	reject wrong-domain Qt/C++ mainwindow probe GUI
 1793669959152_3123n	lvyy	10.129.2.13	576	spice_sim	case	EDA-Eval-DesignFlow-CmlPvtAcReport-001	2026-11-11 21:38	
-1792732271802_olayh	junweix	hfeg0pkn002	21	spice_sim	parked		2026-11-11 21:28	consultation: read .sp path + explain MC netlist, 4 tool_calls all read_files, no produce-task (1111 21:2x peek)
+1792732271802_olayh	junweix	hfeg0pkn002	21	spice_sim	case	EDA-Eval-DesignFlow-VtscMcDeckExplain-001	2026-11-16 14:12	r676 复活池变现 #56: VtscMcDeckExplain-001 (spice_sim L1 explain/Q&A, HSPICE MC deck 结构化讲解报告, 25 断言, cross-input guard, A-leak, 4 negs FAIL)
 1792543801789_ftbpz	ruminji	hfeg0pkn004	14	spice_sim	parked		2026-11-11 21:28	consultation: 0 tool_calls, Q on LDE effect, asst tangents to DRAM half-density, no produce-task (1111 21:2x peek)
 1793759635878_p53dt	rongtaoy	hfeg0pnd002	419	spice_sim	case	EDA-Eval-DesignFlow-NetlistWLReduce-001	2026-11-11 22:40	
 1792040981126_o5xjq					parked		2026-11-11 22:36	scout_1111: advisory 'which CAD tools for analog opt' — not design_flow
