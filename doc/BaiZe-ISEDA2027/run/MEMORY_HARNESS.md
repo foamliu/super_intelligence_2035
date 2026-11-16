@@ -4,6 +4,14 @@ WAITING: 1
 
 > 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
 
+> 🆕 **R2597 · 2026-11-17 07:5x — 监控轮心跳（用户令·例行·无未完成指令·不改结论不重跑）**
+> - **自检**: load30.82/224✅(pretrain dominant)·mem836GB avail1030GB✅·0 harness eval procs✅(0 harbor/rerun/terminalbench·opencode PID4072970 5.8%/1GB 非runaway不碰)·0 runaway✅·reports/ porcelain=0✅·adaptive off7/10 quiet252m 累计429=0✅
+> - **git**: fetch(带proxy)成功·`## main...origin/main` in-sync✅·harness文件clean
+> - **research日报2026-11-17**: 已在R2594/R2596纳入(ModHarness-RL 2611.18533 + judge跨视图 2611.18471)→留待下次报告迭代·本次无新action
+> - **无未完成用户指令**: cc修复✅(30/89=33.7%)+adaptive✅(验收4/4+实跑)·任务书无"未完成"块
+> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research建议纳入下次报告迭代 ③cc归因adapter_error=6细分 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
+> - **📦 体积**: TASK≈22.6KB / MEMORY≈30.6KB（✅≤32KB）
+
 > 🆕 **R2596 · 2026-11-17 07:2x — 监控轮心跳 + MEMORY滚动归档(R2511-R2528合并+R2577/R2531归档)**
 > - **自检**: load27.75/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅(0 harbor/rerun·opencode PID4072970 5.8%/1GB 非runaway不碰)·0 runaway✅·reports/ porcelain=0✅·adaptive off7/10 quiet210m 累计429=0✅
 > - **git**: 共享NFS已最新(无新commit·git fetch up to date)·harness文件clean
