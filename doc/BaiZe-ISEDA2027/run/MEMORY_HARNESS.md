@@ -2,19 +2,20 @@
 
 WAITING: 1
 
-> 🆕 **R2574 · 2026-11-16 15:00 — 监控轮·自检全绿 + cc rerun 70/82(15P/44F/11NA·sam-cell-seg DONE→FAIL·12 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
-> - **自检**: load27.78/224 ✅(pretrain 146% dominant·无harness runaway)·mem 827GB/2015GB avail 1039GB ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> 🆕 **R2575 · 2026-11-16 15:5x — 监控轮·自检全绿 + cc rerun 72/82(15P/45F/11NA·+2 since R2574·10 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
+> - **自检**: load25.92/224 ✅(pretrain dominant·无harness runaway)·mem 826GB/2015GB avail 1037GB ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%·claude task 0.8%)·reports/ porcelain=0✅
 > - **git**: Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~35.2h·n=1·overlay IN USE✅ confirmed in ps cmdline)·**70/82**(70 result.json: 15P/44F/11NA·守恒70✅)·**12 remaining**(schemelike-metacircular-eval running + 11 queued)·ETA~Nov16 21:00–Nov17 00:00
-> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 70 per-task result.json·cc修复(overlay-network-host.yml network_mode:host·R2463)confirmed IN USE·15 PASS=真能力·vs旧0/89=100%infra
-> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 15P/70done(82total)·vs旧0/89
+> - **cc rerun**: PID 1510521 alive(~36.1h·n=1·overlay IN USE✅ confirmed in ps cmdline)·**72/82**(72 result.json: 15P/45F/11NA real+1 stray·守恒72✅)·**10 remaining**(sparql-university running + 9 queued)·ETA~Nov16 21:00–23:00
+> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 72 per-task result.json·cc修复(overlay-network-host.yml network_mode:host·R2463)confirmed IN USE·15 PASS=真能力·vs旧0/89=100%infra
+> - **cc修复心跳**: 根因=容器内127.0.0.1指向容器自身非宿主gw_proxy·修复=overlay network_mode:host(R2463)·冒烟=OK(0ConnRefused)·重测=in progress 15P/72done(82total)·vs旧0/89
 > - **PASS 15**(unchanged): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log
 > - **NA 11**(all timeout·reward=None·exc空): code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli,reshard-c4-data
-> - **FAIL 44**=14 suspected-502-infra+30 ability-fail·**adaptive**: work 4/4·quiet=391m·0 cumulative 429✅(today=Monday work hours)
-> - **round2 manifest备妥**: 10×502-infra+7×3600s-timeout=17题·等cc 82完成后rerun(同3600s口径·adaptive auto)
+> - **FAIL 45**=15×502-infra(circuit-fibsqrt,cobol-modernization,crack-7z-hash,dna-insert,extract-elf,extract-moves-from-video,filter-js-from-html,git-multibranch,gpt2-codegolf,path-tracing,portfolio-optimization,regex-chess,rstan-to-pystan,sam-cell-seg,schemelike-metacircular-eval)+30×ability·**adaptive**: work 4/4·quiet=443m·0 cumulative 429✅(today=Monday work hours)
+> - **round2 manifest备妥**: 10×502-infra+7×3600s-timeout=17题(`tb21_cc_rerun_round2_infra_timeout_20261116.txt`)·等cc 82完成后rerun(同3600s口径·adaptive auto)
 > - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun round2 17题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字+timeout/502单列infra) ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
 > - **📦 体积**: TASK≈25.0KB / MEMORY≈26.0KB（归档~4KB·✅≤32KB）
 >
+> 📦 R2574 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 70/82(15P/44F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2573 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 69/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2572 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2571 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+NA分类完成(11 real=全3600s timeout)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
@@ -59,7 +60,7 @@ WAITING: 1
 
 PHASE:        R2574 cc rerun 70/82(15P/44F/11NA·0ConnRefused✅HARD VERIFIED·sam-cell-seg DONE→FAIL·12 remaining) + adaptive work模式(cap=4)·0 429✅ + gateway functional + round2 manifest备妥(17题)·等cc 82完成
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2567(cc rerun 6→66/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复)
-当前动作:     R2574: 监控轮·cc rerun PID1510521 alive(35.2h·n=1)·70/82(15P/44F/11NA)·0ConnRefused✅HARD VERIFIED·当前task=schemelike-metacircular-eval·12 remaining·adaptive work模式cap=4·0 429✅·load27.78/224✅·mem827GB✅·0runaway✅·reports/ porcelain=0✅·W:1
+当前动作:     R2575: 监控轮·cc rerun PID1510521 alive(36.1h·n=1)·72/82(15P/45F/11NA)·0ConnRefused✅HARD VERIFIED·当前task=sparql-university·10 remaining·adaptive work模式cap=4·0 429✅·load25.92/224✅·mem826GB✅·0runaway✅·reports/ porcelain=0✅·W:1
 下一步:       ①cc 82完成(~Nov16 21:00)→rerun round2 17题(502+timeout·同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
  体积: TASK≈25.0KB / MEMORY≈27.2KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
@@ -72,6 +73,8 @@ ERROR_COUNT:  0
 
 > 📦 R474-R477 关键发现详细块（2026-10-23~24, Docker pull/daemon.json proxy/cline TB_API_KEY root cause/7x89 launcher/镜像进度, ~120行）已归档 → daily-memories-harness/2026-10-24.md。结论：Docker pull 经 daemon.json proxies(172.19.92.25:13128)实测成功(推翻MITM误判); TB=89题(非15); cline-patched 0/15根因=launcher缺 export TB_API_KEY(已修); 7x89并发启动器就绪。需要时再读。
 ### 本唤醒流水
+
+> [15:5x] R2575 **监控轮·cc rerun 72/82(15P/45F/11NA·+2·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅**: 自检(load25.92/224✅=pretrain dominant·mem826GB avail1037GB✅·harness CPU max<1%✅·0 runaway✅·reports porcelain=0✅)·git pull(up to date)·**cc rerun PID1510521** alive(~36.1h·n=1·overlay IN USE✅ confirmed in ps cmdline)·**72/82**(72 result.json·reward取自`verifier_result.rewards.reward`·15P/45F/11NA real+1 stray·守恒72✅)·**0 ConnRefused HARD VERIFIED**(grep=0 across 72)·**10 remaining**(sparql-university running+9 queued·ETA~Nov16 21:00–23:00)·**FAIL 45=15×502-infra**(circuit-fibsqrt/cobol/crack-7z/dna-insert/extract-elf/extract-moves/filter-js/git-multibranch/gpt2-codegolf/path-tracing/portfolio/regex-chess/rstan/sam-cell-seg/schemelike)+30×ability·**adaptive**: work 4/4·quiet=443m·累计429=0✅·round2 manifest备妥(10×502+7×timeout=17题·`tb21_cc_rerun_round2_infra_timeout_20261116.txt`)·不打断cc rerun·W:1
 
 > [17:5x] R2531 **cc rerun 24/82 + opencode 21/38 + RuntimeError fix verified + 3 opencode NA需重跑**: 自检(load31.75/224✅=pretrain dominant·mem1032GB avail✅·harness CPU max<1%✅·0 runaway✅·reports porcelain=0✅·/tmp 40%✅)·git pull(up to date)·**cc rerun 0348**: PID1510536 harbor alive(~14h)·**24 task-level**=4PASS(custom-memory-heap-crash/dna-assembly/fix-code-vulnerability/fix-git)/16FAIL(reward=0.0=ability)/4NA(code-from-image+feal-differential+feal-linear=3600s timeout+fix-ocaml-gc=verifier 3600s timeout)·**0ConnRefused HARD VERIFIED**(grep=0)·**0 real 429**(6 grep hits全false positive: timestamps `.224295Z`+Fibonacci `267914296`+test output)·58 remaining·ETA~Nov17 20:00·**opencode rerun**: PID517594+773163 part2·`--n-concurrent auto --chunk-size 12`·**21 task-level**=9PASS/7FAIL(reward=0.0)/5NA·5NA=caffe-cifar-10(3600s timeout)+cobol-modernization/distribution-search/dna-assembly(RuntimeError·exit-code-1·exception_type=RuntimeError)+filter-js-from-html(verifier 900s timeout)·17 remaining·ETA~Nov15 21:00·**RuntimeError fix VERIFIED**: grep `raise RuntimeError` in opencode.py+claude_code.py+pi.py+hermes.py+deepseek_harness.py=0✅·3 NA(cobol/distribution/dna-assembly)因当前harbor PID773163(started 17:11)缓存旧模块·下一chunk新harbor process会import修复后的模块·但3NA题已完成不会自动重跑→需主rerun后单独重跑·**adaptive_concurrency** status=off current=10/10 quiet=37m 累计429=0✅·pi rerun(46tasks)+deepseek rerun(48tasks)待opencode完成后启动·W:0
 
