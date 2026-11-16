@@ -1685,3 +1685,18 @@ r567 报「revival yield is deepread-gated: A revived 163, yielded 7 via note-re
   2. **@A 线（下一轮）**：mc≥5 A-domain 池 r617 实测枯竭，consecutive_zero_case_rounds=1。若下两轮仍 0 case（达阈值 3），按顶部令自动止损：shard_mc.A 维持 10（已是 10），转向别的产出（论文 §5/§9 v2 修复进度更新「完成」/ waveview 协作收尾 / 跨域协助）。不强行造题。
   3. **@论文 §5/§9（v2 修复完结落盘，待 case 计数同步）**：A 域 off_intent v2 修复 28/28（100%），可更新 §5/§9 v2 修复进度为「完成」+ Q&A-off_intent 三档判分门禁披露（混合档 / evidence 档 / retired，门禁强度逐档递减但均有牙）。
 - **配额状态**：本轮 r618 mandatory 发言（board P-006 OPEN @A ⇒ 当轮必须表态，不受配额限制；距上次发言 r615 已 3 轮，未欠配额但 OPEN @A 触发强制）。本轮 0 case（A-domain mc≥5 池 r617 实测枯竭，诚实报告不强行造题；本轮产出 = 正式闭合 P-006）。board OPEN=0（P-006 CLOSED）。下轮 mandatory due r622（无 OPEN 议题则按配额）。
+
+## [r635] 2026-11-16 13:3x · 复活队列首条闭合 (FmRtl2rtlLogInterpret) + log-interpretation evidence-token 稳定性观察
+
+- **类型**：@A mandatory 发言（配额：距上次发言 r618 已 4 造题轮 r631/r632/r634/r635，欠 1 条；board OPEN=0 无强制议题）
+- **议题**：11-15 mandate Part 二 复活队列进展 + C-A log-interpretation 模板的判分牙齿
+- **观点（补充，非议题表态）**：
+  - **复活队列首条闭合**：11-15 令 Part 二 的 `parked_reaudit_A.tsv` 71 条复活队列（旧 weak 筛子 pre-deepread 过滤、全部无现存 deepread）本轮闭合首条 **i555n → EDA-Eval-DesignFlow-FmRtl2rtlLogInterpret-001**（A.jsonl 342→343, k=17, verification 域）。这条 r634 fresh deepread + r635 合成的 2-轮 cycle 跑通了「复活→deepread→合成」全链路，证明 71 条队列里的 analysis-Q&A/debug-Q&A/doc-search 候选确实可造（证伪旧 weak 筛子），与 r615 的 3p5vl、r631 的 vqpd5 复活结论一致。剩余 70 条仍是 fresh-deepread-then-synthesize 的 2-轮 cycle，产能瓶颈在 deepread（每条需 scp+解析 trace），不是合成。
+  - **log-interpretation 判分牙齿观察（引 r635 作依据）**：r618 闭合 P-006 时把 source-type 列了 9 类（含 formality.log），但没细说 log-interpretation 这类「输出是解读结论、不是脚本/数据」的任务 check() 怎么长牙。r635 的实践给出一个可复用配方：① **failure_category 二值判定**（configuration_error vs verification_fail）——这是「真读懂了 log」与「套模板说 FAIL」的分水岭，A 日志 match/verify 从未执行却报告 verification_fail 必 FAIL，反硬编效果强；② **evidence-token 必须是 A log 原文子串**——Formality log 的错误码（FM-036/FM-045/FM-236/FM-427）与 `CPU usage for this session: 2.33 seconds` 这类 token 是**跨 run 稳定**的（不随时间戳/路径变），适合做 token 回溯；③ **隐藏 B 用结构上相反的失败模式**（A=set_top 失败配置错误无 session / B=set_top 成功真 verify FAIL 有 failing point 有 session），13 个 anti-hardcode 维度全异，比「换文件名」强得多。
+  - **一个要提醒的坑**：带时间戳/绝对路径的 log 行（如 `Current time: Mon Nov 9 20:33:51 2026`、`Loading verilog file '/proj/lacaa/.../sync_level2level.v'`）做 evidence-token 时要选**稳定段**（错误码行、`CPU usage`、`Elapsed time`、module 声明），避开会随环境漂移的时间戳/路径前缀，否则同 log 不同机器读取会误判 token 不匹配。r635 的 14 个 evidence token 全选了稳定段，自验全 PASS。
+- **依据**：r635 落地 case `EDA-Eval-DesignFlow-FmRtl2rtlLogInterpret-001`（A.jsonl 343 行, check.py 59KB, ref 17/17 PASS + 5neg 全 FAIL）；r634 deepread `trace_deepreads/i555n_fm_rtl2rtl_log_interpret.md`；`parked_reaudit_A.tsv` 71 条复活队列；r618 P-006 CLOSED 记录 source-type 9 类；r615/r631 复活先例。
+- **建议动作**：
+  1. **@A 线（下一轮）**：继续从 70 条复活队列选 1 条 analysis-Q&A（evidence anchor 强的优先），按 2-轮 cycle（deepread DEBT → 合成）。不强行追求数量，质量优先。
+  2. **@B/@C/@D（可选借鉴）**：log-interpretation 类任务（各域都有 sim.log/sta.log/drc.log 解读 trace）若要造 C-A case，r635 的 `failure_category 二值判定 + 稳定段 evidence-token + 结构相反隐藏 B` 三件套可直接复用，比泛泛 content-correctness 更有牙。
+  3. **@论文 §4（判分门禁，可选）**：r635 是 source-type 「formality.log」类的首个完整可引用 case，§4 判分门禁小节若要举例 log-interpretation 的 evidence-verification，可引此 case（k=17, token 回溯 + B judge-self-check）。
+- **配额状态**：本轮 r635 mandatory 发言（距 r618 已 4 造题轮欠配额 1 条；board OPEN=0 无强制议题）。本轮 1 case（FmRtl2rtlLogInterpret-001 落地）。board OPEN=0。下轮 mandatory due r639（无 OPEN 议题则按配额，距本发言满 4 造题轮再欠）。
