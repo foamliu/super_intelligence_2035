@@ -2,16 +2,17 @@
 
 WAITING: 1
 
-> 🆕 **R2590 · 2026-11-17 03:12 — cc round2 22/30(3 PASS·0ConnRefused✅·6 NA全infra-timeout·9 infra(3×502/503+6 timeout)·10 ability-FAIL·8 remaining·~1.5h) + adaptive off6→7 clean_ramp·0累计429✅ + 自检全绿 + research日报note(REGEN时并报n_samples/k_submitted)**
-> - **自检**: load29.36/224✅(pretrain dominant)·mem837GB/2015GB avail1027GB✅·max harness eval proc=1.5%CPU/<0.3GB✅·reports/ porcelain=0✅
-> - **cc round2 22/30 done**(part1=12·part2=10): **PASS=3**(crack-7z-hash·feal-linear-cryptanalysis·portfolio-optimization)·**FAIL=13**(其中3 infra: git-multibranch+regex-chess=502 gw-proxy upstream Errno104(iterations=0)·llm-inference-batching-scheduler=503 ServiceUnavailable(iterations=0)·其余10=ability verifier reward=0: cobol-modernization/code-from-image/dna-insert/extract-elf/extract-moves-from-video/gpt2-codegolf/make-doom-for-mips/path-tracing/protein-assembly/rstan-to-pystan)·**NA=6全infra**(circuit-fibsqrt+mcmc-sampling-stan+mteb-leaderboard=agent 3600s timeout·filter-js-from-html=VerifierTimeout 900s·feal-differential-cryptanalysis=VerifierTimeout 1800s·fix-ocaml-gc=VerifierTimeout 3600s)·8 remaining·part2 RUNNING·ETA~Nov17 04:45
-> - **0 ConnRefused HARD VERIFIED**(grep=0 across all 22 round2 result.json)·**0 real 429**✅·overlay network_mode:host IN USE✅
-> - **adaptive**: off mode current=6/10→7(clean_ramp quiet=92m)·0累计429✅·status命令正常✅
-> - **cc修复判据met**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=26P/89(R1)+round2进行中(22/30·3P)·vs旧0/89=100%infra✅
-> - **research日报2026-11-17**: ModHarness-RL→建议REGEN报告时并报 n_samples/n_after_filter/k_submitted(pass@1旁)·纳入后续REGEN·本轮无阻断action
-> - **下一步**: ①round2 8 tasks完成(~1.5h)→merge best per task(R1 26P+R2取PASS优先·502/503/timeout单列infra)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字) ②成本补采(适配器agent_result n_input/output_tokens=None·需从rollout_details/model_usage回采) ③hermes qemu BLOCKED(Py3.9<3.11)
+> 🆕 **R2591 · 2026-11-17 03:50 — cc round2 24/30 监控轮(3 PASS·0ConnRefused✅·0 429✅·6 remaining RUNNING·ETA~Nov17 05:00) + adaptive off7/10 clean_ramp·0累计429✅ + 自检全绿**
+> - **自检**: load27.32/224✅(pretrain dominant)·mem841GB/2015GB avail1025GB✅·max harness eval proc<1%CPU/<1GB✅·reports/ porcelain=0✅
+> - **cc round2 24/30 done**: **PASS=3**(crack-7z-hash·feal-linear-cryptanalysis·portfolio-optimization)·**3 infra(502/503·模型从未运行)**: git-multibranch+regex-chess=502 gw-proxy upstream Errno104(iterations=0)·llm-inference-batching-scheduler=503 ServiceUnavailable(iterations=0)·**10 ability-FAIL**(verifier reward=0: cobol-modernization/code-from-image/dna-insert/extract-elf/extract-moves-from-video/gpt2-codegolf/make-doom-for-mips/path-tracing/protein-assembly/rstan-to-pystan)·**8 NA全infra-timeout**(5 agent 3600s timeout: circuit-fibsqrt+mcmc-sampling-stan+mteb-leaderboard+sam-cell-seg+schemelike-metacircular-eval·3 VerifierTimeout: filter-js-from-html 900s+feal-differential-cryptanalysis 1800s+fix-ocaml-gc 3600s)·**6 remaining RUNNING**(pytorch-model-cli·reshard-c4-data·torch-pipeline-parallelism·torch-tensor-parallelism·train-fasttext·video-processing·part3 n=7·docker exec可见3+)
+> - **0 ConnRefused HARD VERIFIED**(grep=0 across all 24 round2 result.json)·**0 real 429**✅·overlay network_mode:host IN USE✅
+> - **adaptive**: off mode current=7/10(dwell 6m_left)·0累计429✅·status命令正常✅
+> - **cc修复判据met**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=26P/89(R1)+round2进行中(24/30·3P)·vs旧0/89=100%infra✅
+> - **下一步**: ①round2 6 tasks完成(~1h·不打断)→merge best per task(R1 26P+R2取PASS优先·502/503/timeout单列infra)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字·并报n_samples/k_submitted·research日报note) ②成本补采(适配器agent_result n_input/output_tokens=None·需从rollout_details/model_usage回采) ③hermes qemu BLOCKED(Py3.9<3.11)
 > - **📦 体积**: TASK≈25.0KB / MEMORY≈30.4KB（✅≤32KB）
 >
+> 📦 R2590 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 22/30(3P·0ConnRefused✅)+adaptive off6→7+0 429✅。需要时再读。
+
 > 📦 R2589 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 16/30(2P·0ConnRefused✅)+adaptive off6→7+0 429✅。需要时再读。
 >
 > 📦 R2588 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 13/30(2P·0ConnRefused✅)+adaptive off6+0 429✅。需要时再读。
@@ -69,10 +70,10 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2590 cc round2 IN PROGRESS 22/30(3 PASS·0ConnRefused✅·0 429✅·8 remaining·ETA~Nov17 04:45) + adaptive off6→7 clean_ramp·0累计429✅·等round2完成
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2588(cc rerun COMPLETE 82/82→merged 26P/53F/10NA·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE+pi merge→REGEN 7way pi35/89+round2 16/30 done)
-当前动作:     R2590: 监控轮·cc round2 PID500396 alive(~3.1h·n=auto=6)·22/30(3 PASS/13 FAIL[3 infra 502/503+10 ability]/6 NA[全infra-timeout]·0ConnRefused✅HARD VERIFIED·0 429✅)·8 remaining·adaptive off模式 current=6/10→7 clean_ramp·0累计429✅·load29.36/224✅·mem837GB avail1027GB✅·harness procs=1.5%CPU✅·reports/ porcelain=0✅·W:1
-下一步:       ①round2 8 tasks完成(~1.5h)→merge best per task(R1 26P+R2取PASS优先·502/503/timeout单列infra)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字) ②成本补采(适配器agent_result token=None·从rollout_details/model_usage回采) ③hermes qemu BLOCKED(Py3.9<3.11)
+PHASE:        R2591 cc round2 IN PROGRESS 24/30(3 PASS·0ConnRefused✅·0 429✅·6 remaining RUNNING·ETA~Nov17 05:00) + adaptive off7/10 clean_ramp·0累计429✅·等round2完成
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2589(cc rerun COMPLETE 82/82→merged 26P/53F/10NA·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE+pi merge→REGEN 7way pi35/89+round2 22/30 done)
+当前动作:     R2591: 监控轮·cc round2 PID500396 alive(~3.8h·n=auto=7)·24/30(3 PASS/3 infra 502·503+10 ability-FAIL/8 NA全infra-timeout[5 agent 3600s+3 VerifierTimeout]·0ConnRefused✅HARD VERIFIED·0 429✅)·6 remaining RUNNING(pytorch-model-cli·reshard-c4-data·torch-pipeline-parallelism·torch-tensor-parallelism·train-fasttext·video-processing)·adaptive off模式 current=7/10·0累计429✅·load27.32/224✅·mem841GB avail1025GB✅·harness procs<1%CPU✅·reports/ porcelain=0✅·W:1
+下一步:       ①round2 6 tasks完成(~1h·不打断)→merge best per task(R1 26P+R2取PASS优先·502/503/timeout单列infra)→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行换真实数字·并报n_samples/k_submitted) ②成本补采(适配器agent_result token=None·从rollout_details/model_usage回采) ③hermes qemu BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
  体积: TASK≈25.0KB / MEMORY≈30.5KB（归档~4KB本轮+~210KB历史）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
