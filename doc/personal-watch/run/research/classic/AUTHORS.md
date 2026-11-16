@@ -2288,6 +2288,59 @@
 | X 账号 | **`@TongPetersb`**（`x.com/TongPetersb` `200` / 213,233 B；`og:title` = `Peter Tong (@TongPetersb) on X`，`og:description` 含 `MTS @ AMILabs | Berkeley 23', CS PhD Student in NYU Courant` ⇒ 身份双源） |
 | 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 65 封，**中文 207 汉字 / 347 非空白字符**） |
 | 备注 | `语言=中文(判据=拼音姓名可还原中文名「童晟邦」+主页明文+华人学者；🚫 不因 NYU/berkeley.edu 判英文)`。信里问：① 只能解冻最后一层、图文对规模约 1/10 时优先 CLIP 还是 DINOv2；② SVA 576→36 时 OCR/文档任务的掉点版面与「开始掉」的 token 阈值；③ 目标场景为芯片版图与规格书截图时，OCR 27.6% 应上调还是下调。**注意与 #34 Saining Xie（NYU，同一实验室）区分：不是同一人，未合并条目。** |
+### 157. Zhiyao Xie（谢知遥）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhiyao Xie 谢知遥（本人主页 `<title>` = `Zhiyao Xie (谢知遥) - Home` ⇒ 中文） |
+| 机构 | **香港科技大学（HKUST）ECE 系助理教授**（主页自述 `Assistant Professor at HKUST, Ph.D. at Duke University, B.Eng. at CityU HK`） |
+| 代表论文 | RTLLM（arXiv `2308.05345`，通讯作者，B 轨 #168）· ChipNeMo 之外的 EDA-LLM 线（RTLLM 2.0 / OpenLLM-RTL `2503.15112`） |
+| 邮箱 | **`eezhiyao@ust.hk`**（本人主页 `zhiyaoxie.com` 明文；`HTTP 200` / 33,297 B；同址亦见于 RTLLM PDF 首页作者块） |
+| 主页 | <https://zhiyaoxie.com/> |
+| X 账号 | **未找到**（`site:x.com` 检索只命中他人转述，未发现本人 profile ⇒ 按纪律不登记、不猜 handle） |
+| 状态 | **已发信**（2026-11-16 12:05 CST，作者请教信第 66 封，**中文 186 汉字 / 391 非空白字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「谢知遥」+主页明文中文名+中国香港机构 HKUST；🚫 不因论文英文/邮箱英文判英文)`。信里问：① 表 IV 中 accu 的生成设计（231 µm² / 18K µW）小于人工参考（239 µm² / 19K µW）时如何区分「真更优」与「testbench 漏覆盖」；② timing 列（−0.42 ns）按 slack 理解是否正确、换自有 PDK 是否必须重跑综合与如何归一化；③ multi 8bit（640 µm² vs 参考 52 µm²）的失败更像位宽推理还是规划长度。 |
+
+### 158. Machel Reid
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Machel Reid（英语姓名，无中文/日文/韩文信号） |
+| 机构 | **Google DeepMind**（本人 X bio 自述 `research @googledeepmind`；Gemini 1.5 报告作者名单内） |
+| 代表论文 | Gemini 1.5（arXiv `2403.05530`，作者之一，B 轨 #167）· 长上下文 / 数据相关工作 |
+| 邮箱 | **`machelreid@google.com`**（本人主页 `machelreid.github.io` 明文；`HTTP 200` / 9,199 B） |
+| 主页 | <https://machelreid.github.io/> |
+| X 账号 | **`@machelreid`**（主页挂 `twitter.com/machelreid`；`x.com/machelreid` `200` / 172,591 B，`og:title` = `Machel Reid (@machelreid) on X`，`og:description` = `research @googledeepmind` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-16 12:05 CST，作者请教信第 67 封，**英文 187 词**） |
+| 备注 | `语言=英文(判据=英语姓名族属+Google DeepMind；无母语非英语信号)`。信里问：① 文本 NLL 幂律在 1M（文档）/ 约 2M（代码）后偏离，是位置/注意力容量还是语料构成，有没有不重训就能区分的消融；② needle recall 在 1M 已 >99.7% 后，预测小模型下游长文 QA 更该看多针 recall、固定位置 NLL 还是证据落地；③ 长上下文数据是预训练期混入还是单独适配阶段，2B 模型只做一次 128K 扩展该选哪个、该记什么日志防「静默失效」。 |
+
+### 159. Juan Gómez-Luna
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Juan Gómez-Luna（西语姓名） |
+| 机构 | **ETH Zurich · SAFARI Research Group 高级研究员 / 讲师**（主页自述；PhD University of Córdoba） |
+| 代表论文 | Benchmarking a New Paradigm（真实 PIM 系统实测，arXiv `2105.03814`，**一作**，B 轨 #170）· PyGim（真实 PIM 上的 GNN 库） |
+| 邮箱 | **未找到**（`safari.ethz.ch/juan-gomez-luna/` `HTTP 200` / 64,672 B，页面无明文 `mailto:`，无百分号编码地址；IEEE 作者传记记为 `juang@ethz.ch`，**未取得一手页面核验 ⇒ 不用于发信**） |
+| 主页 | <https://safari.ethz.ch/juan-gomez-luna/> |
+| X 账号 | **`@el1goluj`**（主页挂 `twitter.com/el1goluj`；`x.com/el1goluj` `200` / 146,754 B，`og:title` = `Juan Gómez Luna (@el1goluj) on X`，`og:description` = `Senior Researcher and Lecturer at SAFARI@ETHz` ⇒ 双源一致） |
+| 状态 | **待跟踪**（只建档，未发信：缺一手可核邮箱） |
+| 备注 | `语言=待定(若发信：西语称谓问候 + 英文正文，判据=西语姓名+ETH)`。若下轮从 ETH 人员页或新论文 PDF 拿到明文地址再发；问题候选：UPMEM bank 内/跨 bank 的带宽-延迟拐点、PrIM 16 workload 的访存画像如何映射到 HBM-PIM。 |
+
+### 160. Onur Mutlu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Onur Mutlu（土耳其姓名） |
+| 机构 | **ETH Zurich 教授 + Carnegie Mellon University 教授**（本人 X bio 与主页自述；SAFARI 组负责人） |
+| 代表论文 | Ramulator 2.0（arXiv `2308.11030`）· RowHammer（ISCA 2014）· Benchmarking a New Paradigm（arXiv `2105.03814`，末位作者，B 轨 #170）· A Case for Intelligent RAM（IEEE Micro 1997） |
+| 邮箱 | **`omutlu@gmail.com`**（本人当前机构主页 `people.inf.ethz.ch/omutlu/` 的 `mailto:` 明文；`HTTP 200` / 19,850 B） |
+| 主页 | <https://people.inf.ethz.ch/omutlu/> |
+| X 账号 | **`@_onurmutlu_`**（`x.com/_onurmutlu_` `200` / 168,824 B，`og:title` = `Onur Mutlu (@_onurmutlu_) on X`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University … Group: @SAFARI_ETH_CMU` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-12 15:03 CST，作者请教信第 16 封，**英文 177 词**，主题为 Ramulator 2.0 的保真度与可靠性模型） |
+| 备注 | `语言=英文(判据=土耳其姓名族属 + 瑞士/美国机构；按 §2 对照表「其他语种 ⇒ 英文」兜底)`。**同一作者 ≤1 封** ⇒ PIM 论文（#170）本轮只建档、不再向他发信；未回信不发第二封。 |
+
+
 
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
