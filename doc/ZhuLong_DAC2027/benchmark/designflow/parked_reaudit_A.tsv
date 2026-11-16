@@ -142,7 +142,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793969287953_187i0.messages.json	johnl	10.129.33.246	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
 1793154396942_2idq4.messages.json	mwhu	10.129.35.74	eda_other	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
 1793931604619_df52y.messages.json	chunfang	10.129.2.10	digital	r385 mc10-29-slice peek: 	EMPTY_PEEK	no	不可造: mc10-29 slice peek recorded no notable user task (empty peek note)	n/a
-1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	digital	r386 A-dominant peek: 17msgs, U#0-5 same repeated SDF SDFCOM_NL negative-limit w	REVIVABLE_QA	yes	debug-Q&A SDF SDFCOM_NL negative-limit diagnosis, pending deepread	n/a
+1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	digital	r386 A-dominant peek: 17msgs, U#0-5 same repeated SDF SDFCOM_NL negative-limit w	REVIVABLE_QA	yes	DONE_r649	CASE-SdfNegLimitDiagnose-001 (r649 synthesized+landed, A.jsonl 351->352)	EXISTS
 1791792527981_q4skx	e0045128	hfeg0pkn005	pnr_signoff	r391 peek: Primetime STA consultation Q&A, 15 user-turns (DMSA/hold-timing/UPF/m	REVIVABLE_QA	yes	consultative-Q&A	EXISTS
 1793790637246_aafag.messages.json	e0046718	hfeg0plg76	pnr_signoff	r394 deepread: trivial typo Q&A (user typed 'innouvs', agent explained Cadence I	REVIVABLE_QA	yes	trivial-Q&A	EXISTS
 1793330336899_zh3eq	lorikx	hfeg0pkn004	digital	dup of TqvVrefreshBuild-001 (r398 wbhv1): same lorikx TQV 4-script-combine task	DUP	no		n/a
