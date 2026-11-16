@@ -1821,3 +1821,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794208159902_v593e.messages.json	t0002614	hfeg0pkn004	82	schematic_netlist	case	EDA-Eval-DesignFlow-AetherPartialNetlistExtractQA-001	2026-11-17 02:11	
 1794574783120_vzhk2	thomas1w	hfeg0pkn003	72	schematic_netlist	case	EDA-Eval-DesignFlow-RedBistBroadcastErrAddrQA-001	2026-11-17 03:42	
 1793147699495_as67p	easont	10.129.32.82	806	schematic_netlist	case	EDA-Eval-DesignFlow-TempHalfWLModuleFuncExplainQA-001	2026-11-17 04:19	r791;netlist-grounded module-func Q&A;12断言;.TempHalfWL/VoltTierDec;ref PASS+neg FAIL verified
+1794721664329_phcjm	yohannw	hfeg0pnd001	290	waveform	parked		2026-11-17 06:33	r795 false-positive: waveview/aether/virtuoso keywords from zl.sh launcher script references; actual task=create generate_eda_launch.py config (eda_other/tooling, not D-domain)
