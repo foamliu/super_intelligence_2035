@@ -77,7 +77,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1794129973388_q54e4	tongfanl	hfhds201	eda_other	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS | DONE_r640
 1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	verification	r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (US	INFRA	no		n/a
 1792551877743_4i1w4.messages.json	fernandoy	hfeg0plg76	verification	r295: sibling of yseg9 resumed UVM 801msgs/3MB, same project	DUP	no		n/a
-1793762019450_22gh5.messages.json	e0039102	hfeg0plg74	eda_other	r295 peek: USER#0=告诉我配置思路 run_regr analysis-only Q&A, not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1793762019450_22gh5	e0039102	hfeg0plg74	eda_other	r295 peek: USER#0=告诉我配置思路 run_regr analysis-only Q&A, not produce-task	REVIVABLE_QA	DEBT_r643	analysis-Q&A/code-comprehension	EXISTS (deepread done r643, synthesize r644 RunRegrArchAnalyze-001)
 1793770222949_u5daf.messages.json	e0039102	hfeg0plg74	eda_other	r295 peek: sibling of 22gh5 same analysis task	DUP	no		n/a
 1793079745856_epy3m.messages.json	t0002470	hfeg0plg101	verification	r295 peek: resumed context-summary, USER asks 能否只预编译coverage + find指令序列 analysis	INFRA	no		n/a
 1791961260627_mejpi.messages.json	e13zhang	hfeg0pgn012	verification	r295 peek: USER#0=分析RTL+check是否有补充 analysis-only, not produce-task	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
@@ -102,7 +102,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793953438523_pzo6g	e0039602	hfeg0pkn002	verification	context-coupled-verilog-lib-trans-skill-packaging	OTHER	maybe		n/a
 1794201552569_r2yjr	e0039602	hfeg0pkn002	digital	r319 DUPLICATE-ABORT: r2yjr trace already built by shard D as EDA-Eval-DesignFlo	DUP	no		n/a
 1792399916731_sbaad	zmzhang	hfeg0pjn140	digital	r320: near-duplicate of SignalXrefBuilder-001 (u54d9) — same 3-level signal xref	DUP	no		n/a
-1793756662778_nfb5r	xmxu	hfeg0plg93	digital	analysis-only: agent searched TYPE_BANK_INFO 35msgs no deliverable; U#0 gives co	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1793756662778_nfb5r	xmxu	hfeg0plg93	digital	analysis-only: agent searched TYPE_BANK_INFO 35msgs no deliverable; U#0 gives co	REVIVABLE_QA	parked_ambiguous	analysis-Q&A/debug-Q&A	EXISTS (r643 deepread: error1 blmonitor_if EXPSMC root cause AMBIGUOUS - 5 monitor classes all in proj_package unimported but only blmonitor_if errors; errors 2&3 TYPE_BANK_INFO clear. Cannot build fair check. Park until ddr6_package source or xmvlog verifiable)
 1792389512614_7z9re	williang	10.129.2.12	pnr_signoff	r374 survey: 241msgs/40 user-turns heterogeneous pasted snippets (.lib cell / SB	OTHER	maybe		n/a
 1793165432787_o5o6p	e0046913	10.129.2.12	digital	r374 survey: 131msgs/6 user-turns = UPF low-power VCLP flow setup + demo run (U#	REVIVABLE_QA	yes	flow-driving	EXISTS
 1789898322144_yhqp5	mike	10.129.2.12	digital	r374 survey: 382msgs/6 user-turns = install riscv-isa-sim-1.1.0.tar.gz + run REA	OTHER	maybe		n/a
