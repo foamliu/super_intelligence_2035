@@ -1054,7 +1054,7 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1793188016291_mxpkd	ellawu	hfeg0pkn001	79	physical_verify	case	ImplFillFillcellGate-001	2026-11-16 00:57	
 1790239013077_r1iqi					parked		2026-11-16 01:16	r628 peek: e0041123 skill-orch DRC pattern gen (load skill+gen pattern), near-dup DRC testpattern cluster
 1790151981511_hn72n					parked		2026-11-16 01:16	r628 peek: oliverz env-recon Q&A (怎么看自己的模型在哪个文件看), no produce-task
-1794450183857_2dyfr					parked		2026-11-16 01:16	r628 peek: hktklin trivial text-sub tap_p->lacaa_common + _SKILL delete (known-reject text-sub pattern d5x87/w5ajz)
+1794450183857_2dyfr					case	EDA-Eval-DesignFlow-SkillFileBatchTransform-001	2026-11-17 05:45	r694 re-eval per 11-15 standard: text-sub IS real user intent, 16-cond check with teeth, B/B2 hidden
 1790055622847_hhl2j					parked		2026-11-16 01:16	r628 peek: simplec glory RC flow run-existing + dspf cap extract thin + 封装skill skill-orch, overlaps r623 BatchPexDspfExtract
 1793870529521_49aua					parked		2026-11-16 01:16	r628 peek: e0018590 T-coil EM de-embedding methodology Q&A + thin RF Z0 script, off C-domain (RF/EM not physical_verify/layout/pg)
 1789700770987_trawk					parked		2026-11-16 01:16	r628 peek: ziyuny 配置glm token plan + 学习lvs-debug-flow.md + doc-edit, env-setup/doc-curation no produce-task
