@@ -1102,3 +1102,14 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1792546154938_tnu8h.messages.json	jxwang	hfeg0pkn005	11	physical_verify	parked		2026-11-16 06:41	r640 peek: LSF bjobs/bqueues/bhosts job-status how-to Q&A, off-C ops/env, aether keyword incidental
 1793794370969_p58bd.messages.json	aristaw	hfeg0plg68	15	physical_verify	case	PitchRuleSvrfGen-001	2026-11-16 07:12	
 1794642438159_m8n71.messages.json	jzeng	hfeg0pkn003	25	physical_verify	case	EDA-Eval-DesignFlow-ViaEncChoiceR90Force-001	2026-11-16 07:44	
+1792138120570_fubmt	e0042624	hfeg0pkn002	23	physical_verify	parked		2026-11-16 08:14	r643: skill-orch ddr5-jedec-kg skill_instructions paste 1-turn 16msgs
+1789648777235_s0t0e	joelchen	hfeg0pfn002	22	physical_verify	parked		2026-11-16 08:14	r643: skill-orch calibre-drc-log-analysis skill paste near-dup r627 pqhdr
+1791961770165_3tuyb	e0026456	hfeg0plg76	20	layout_aether	parked		2026-11-16 08:14	r643: thin single-turn 你好 24msgs no produce-task
+1791516741483_jo0ts	t0002962	hfeg0plg90	29	physical_verify	parked		2026-11-16 08:14	r643: env-config check-policy-run_pyaether-valid meta off-C
+1793178632287_xs19d	e0018590	hfeg0pkn005	40	physical_verify	parked		2026-11-16 08:14	r643: handoff-continuation T-coil EM de-embedding off-C RF near-dup r627 49aua
+1790578902694_vvgdy	e02141	hfeg0pkn005	25	physical_verify	parked		2026-11-16 08:14	r643: env-config zl-cli-auth off-C
+1794377368528_zaaea	wenhanz	hfeg0plg69	18	physical_verify	parked		2026-11-16 08:14	r643: conceptual how-to Q&A 如何从DRC报告发现layout问题 thin no artifact 11msgs
+1789981638078_5qzt4	t0002987	hfhds201	17	layout_aether	parked		2026-11-16 08:14	r643: meta 分析你自己的agent结构 off-C self-analysis
+1794473787245_radb5	yuxin1z	hfeg0pkn003	14	physical_verify	parked		2026-11-16 08:14	r643: ACCEPT-alt-future: code-explain Q&A lpePatternQA.pl reframeable extraction-tool needs deepread 84msgs
+1793070098758_1jmfa	cliu	hfeg0pkn002	18	physical_verify	parked		2026-11-16 08:14	r643: ACCEPT-alt-future: modify-existing vsim_report script add-counts+ion-exclude domain-borderline sim/DRC needs deepread 19msgs
+1793340163540_cw0qt	e0048306	hfeg0pkn001	14	layout_virtuoso	parked		2026-11-16 08:14	r643: thin hi single-turn 16msgs
