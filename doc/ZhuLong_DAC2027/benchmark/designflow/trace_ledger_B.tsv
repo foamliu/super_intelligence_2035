@@ -689,7 +689,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794202378967_ihvqf	xinqiaoz	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	handoff-resume not-clean-produce
 1794213041594_yhfm0	xinqiaoz	hfeg0pkn002	8	spice_sim	parked		2026-11-09 17:45	handoff-resume not-clean-produce
 1793587957934_hupl6	yanxvwei	hfeg0pkn002	8	spice_sim	case	EDA-Eval-DesignFlow-WvModalPopupTclFix-001	2026-11-17 05:46	tcl-source how-to Q&A
-1794187969151_dhy10	e0046686	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	rev_cali analysis-only no-produce 305msg
+1794187969151_dhy10	e0046686	hfeg0pkn001	8	spice_sim	case	EDA-Eval-DesignFlow-LibCoordMapper-001	2026-11-17 06:43	r707 revival #84: rev_cali (i,c,q)<->template_table mapper, 22 断言, cross-input guard template_lib/k_lib var-order opposite
 1794190076806_fj81a	tongni	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	session-resume context-summary opener
 1794099712365_olheg	ellawu	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	SVRF-calibre wrong-shard(phys-verify/C)
 1794205462149_hc9mk	xxchen	hfeg0pkn001	8	spice_sim	parked		2026-11-09 17:45	DRC-tool-analysis wrong-shard(phys-verify/C)
