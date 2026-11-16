@@ -290,7 +290,7 @@
 1794201834116_6ajm4	e0023936	hfhds201	74	eda_other	case	EDA-Eval-DesignFlow-WvDataeyeMeasure-001	2026-11-09 21:27	
 1794120938612_mpmdp	e0023936	hfhds201	195	eda_other	case	EDA-Eval-DesignFlow-WvPropDelayMeasure-001	2026-11-09 21:53	
 1794227785944_i555n	e0046913	hfeg0pkn003	0	verification	case	EDA-Eval-DesignFlow-FmRtl2rtlLogInterpret-001	2026-11-16 13:39	r634 revival (11-15 mandate Part 二): FM log analysis-Q&A, fresh deepread DEBT
-1793945103405_x8v81	dsgao	hfhds201	99	eda_other	case	EDA-Eval-DesignFlow-NetlistDiffDelayAnalyze-001	2026-11-16 15:17	r636 deepread: netlist-diff+delay-root-cause analysis-Q&A, case_id=EDA-Eval-DesignFlow-NetlistDiffDelayAnalyze-001, DEBT 1 synthesize next round
+1793945103405_x8v81	dsgao	hfhds201	99	eda_other	case	EDA-Eval-DesignFlow-NetlistDiffDelayAnalyze-001	2026-11-16 15:48	r636 deepread: netlist-diff+delay-root-cause analysis-Q&A, case_id=EDA-Eval-DesignFlow-NetlistDiffDelayAnalyze-001, DEBT 1 synthesize next round
 1794221830421_oclzn	dandans	hfhds201	94	eda_other	parked		2026-11-09 22:36	MatrixRun directory listing comparison, operational not produce-task
 1794193758706_gwm47	tongfanl	hfhds201	63	eda_other	parked		2026-11-09 22:36	MatrixRun dir listing comparison dup of oclzn, operational not produce-task
 1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	parked		2026-11-09 22:36	diagnostic: 为啥报这个错 cornerStr uninitialized, 14msgs analysis not produce-task
