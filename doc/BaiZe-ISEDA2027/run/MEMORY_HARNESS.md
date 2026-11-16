@@ -2,17 +2,19 @@
 
 WAITING: 1
 
-> 🆕 **R2572 · 2026-11-16 13:40 — 监控轮·自检全绿 + cc rerun 68/82(unchanged vs R2571·sam-cell-seg verifier ~20min·14 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
-> - **自检**: load27.92/224 ✅(pretrain 146% dominant·无harness runaway)·mem 828GB/1036GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> 🆕 **R2573 · 2026-11-16 14:25 — 监控轮·自检全绿 + cc rerun 69/82(68 results: 15P/42F/11NA + sam-cell-seg in verifier·13 remaining·0ConnRefused✅HARD VERIFIED) + adaptive work4·0 429✅ + reports porcelain=0✅**
+> - **自检**: load26.68/224 ✅(pretrain 146% dominant·无harness runaway)·mem 827GB/2TB avail 1TB ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
 > - **git**: Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~34h·n=1·overlay IN USE✅)·**68/82**(15P/42F/11NA·守恒68✅·recount via verifier_result.rewards.reward=1.0)·**14 remaining**·sam-cell-seg verifier running(docker compose exec test.sh ~20min·MobileSAM CPU)·ETA~Nov16 21:00–Nov17 00:00
-> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 68 per-task result.json·cc修复(overlay --network host·R2463)confirmed·15 PASS=真能力·vs旧0/89=100%infra
+> - **cc rerun**: PID 1510521 alive(~34.5h·n=1·overlay IN USE✅ confirmed in ps cmdline)·**69/82**(68 result.json: 15P/42F/11NA·守恒68✅ + sam-cell-seg in verifier ~62min stuck on git fetch MobileSAM GitHub ~22min 0%CPU NOT runaway)·**13 remaining**·ETA~Nov16 21:00–Nov17 00:00
+> - **0 ConnRefused HARD VERIFIED ✅**: scan=0 across 68 per-task result.json·cc修复(overlay-network-host.yml network_mode:host·R2463)confirmed IN USE·15 PASS=真能力·vs旧0/89=100%infra
 > - **PASS 15**(unchanged): custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log
-> - **adaptive**: work 4/4·quiet=311m·0 429✅(11-15验收全通过R2569)
+> - **NA 11**(all timeout): 9×Command timeout 3600s + 1×AgentTimeout 3600s(make-doom-for-mips) + 1×VerifierTimeout 900s(pytorch-model-cli) + 1×VerifierTimeout 3600s(fix-ocaml-gc)
+> - **adaptive**: work 4/4·quiet=351m·0 cumulative 429✅(11-15验收全通过R2569)
 > - **7way报告**: cc仍0/89待merge(82完成→rerun 11 timeout NA(同口径)→merge→REGEN·cc行换真实数字+timeout单列infra)
 > - **下一步**: ①cc 82完成(~Nov16 21:00)→rerun 11 timeout NA(同3600s口径·adaptive auto)→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈31.0KB（✅≤32KB）
+> - **📦 体积**: TASK≈25.0KB / MEMORY≈29.5KB（✅≤32KB）
 >
+> 📦 R2572 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2571 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+NA分类完成(11 real=全3600s timeout)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2570 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+gateway 403✅+reports porcelain=0✅。需要时再读。
 > 📦 R2569 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(14P·0ConnRefused✅HARD VERIFIED)+adaptive验收全通过(--now 4时刻+--dry-run·修自测state污染)+gateway functional+reports porcelain=0✅。需要时再读。
