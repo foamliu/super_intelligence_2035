@@ -118,4 +118,6 @@ WAITING: 1
 
 > **wake590（2026-11-16 17:2x · posttrain rca:）**：纪律纠偏轮——停未授权起新 run 的 `baize_posttrain_clean_5run.sh`(违反 23:0x item1)+恢复 run2 封存(git diff HEAD 空)；详见上方 wake590 块 + daily 2026-11-16 wake590。
 
+> **wake592（2026-11-16 18:33 · posttrain rca:）**：23:0x RCA 稳态复核轮——执行复测全 PASS(报告27516B/0外链0script/§1-9齐备/rca_verify8=8行/run2-4 exec43/28/35≫1证伪collapse/产物全在位/run5 INVALID-partial/无未授权新run/git synced)。结论不变(主因=管线ws-no-ws路径失配非模型collapse)。**5-run mean待干净run5落盘前不得引用;恢复干净5-run仍待用户定夺**。未删trace/未动他线/未改eda_fastmcp/未起run。详见daily 2026-11-16 wake592。
+
 > **wake591（2026-11-16 ~18:0x · posttrain rca:）**：23:0x RCA 交付物执行复测轮（verification by execution）。全六项复测 PASS：①报告 `reports/report_posttrain_collapse_rca_zh.html`=27516B/`grep -c '<script|http://|https://'`=0/ends`</html>`✅ ②rca_verify8_execution_results.jsonl=8 行(≥8)✅ ③run2/3/4 recovered execution_results=43/28/35 行≫1(证伪 1/158 collapse)✅ ④run1-4 产物全在位、run5=INVALID-partial✅ ⑤无未授权新 run(进程表仅 loop+本 cline)✅ ⑥git synced with origin/main✅。结论不变（主因=管线 ws/no-ws 路径失配，非模型 collapse；干净回补 run2/3/4=4.43/2.53/3.80%）。体积维护：压缩 R-round 历史 + 归档 wake587 流水块→daily 指针，MEMORY 36533B→34850B。**5-run mean 在干净 5-run 落盘前不得引用；恢复干净 5-run 仍待用户定夺**。未删 trace/未动他线/未改 eda_fastmcp/未起 run。详见 daily 2026-11-16 wake591。
