@@ -1222,3 +1222,7 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794212917714_ibwba	zhililu	hfeg0plg52	48	layout_virtuoso	parked		2026-11-17 04:59	virtuoso sim debug Q&A: 'how to use generated netlist for sim in virtuoso' + SFE errors, debug-Q&A
 1793857356226_kubzy	zhililu	hfeg0plg52	29	layout_aether	parked		2026-11-17 04:59	resistor TRIM netlist Q&A: 'why parallel resistance halved but size same', debug-Q&A
 1792936692635_f1pj5	jingc	hfeg0pkn001	27	layout_aether	parked		2026-11-17 04:59	DSA evaluation Q&A: 'how to evaluate DSA', 28msgs, doc-Q&A
+1788956640950_p7aav					parked		2026-11-17 05:26	r693 peek: U#0 thin trigger 'DRC/LVS business scenario', assistant lists Desktop files, debug/setup-Q&A teeth-fail (no clear deliverable), park
+1791939157598_7vr7w					parked		2026-11-17 05:26	r693 peek: U#0 SVRF SETLAYER rule paste, concept/explain-Q&A about rule semantics, teeth-fail (explanation correctness unverifiable w/o calibre), too similar to r682 DrcEnclosureRuleExtract, park
+1793865811251_737pe					parked		2026-11-17 05:26	r693 peek: U#0 '你了解calibre的drc吗' + U#4 'calibre-RVE DRC 描述没有了怎么点出来' = UI/debug-Q&A, teeth-fail (UI click path unverifiable), park
+1791515463198_50mu7					parked		2026-11-17 05:26	r693 peek: U#0 'cd /home/xiao5w/SpiceAgent_Skill' = SpiceAgent skill development, off-C (B-domain spice_sim skill-dev), park
