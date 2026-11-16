@@ -1,0 +1,40 @@
+# ledger_dedup_audit_r663.tsv — trace_ledger_A.tsv session-suffix dup audit
+# 生成于 r663. 根因: 台账 session_file 混存 bare/.messages.json/.json, 旧 claim/upsert 用 == 精确匹配 → 同会话多行.
+# r663 已修 trace_ledger.py (cmd_claim + _upsert 改用 _norm_sid), 防止新增 dup. 本文件记录存量 dup 供后续对账.
+# 列: session_slug | n_rows | kind | case_ids | row_statuses | disposition
+# kind: COLLISION(2+不同case_id) | SAME_CASE_ID | CASE_PLUS_OTHER | SAME_NONCASE
+# disposition: KEEP_BOTH(待人工对账) | MERGED_SAFE(已合并,保留case行/ informative note)
+1788763403419_gqt57	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1788871441686_fieju	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-NandMcuAsm-001	case;parked	MERGED_SAFE
+1790650962650_7bg20	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-DrvqaGateNetlist-001	case;parked	MERGED_SAFE
+1791962616204_7j1bw	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1792386615426_npf2k	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-StarRCDspfFlow-001	parked;case	MERGED_SAFE
+1792488619552_mt7ua	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-GenLefConsistAudit-001	parked;case	MERGED_SAFE
+1792548360759_l8989	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-ReadExpdataWireAudit-001	parked;case	MERGED_SAFE
+1792551877743_4i1w4	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1792552971568_dnkz8	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-CdlVbnBulkRemap-001	case;parked	MERGED_SAFE
+1792742776753_6yrpu	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-SimMakefileVCS-001	case;parked	MERGED_SAFE
+1792843726821_uiqz1	2	COLLISION	EDA-Eval-DesignFlow-DesignListGen-001;EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	case;case	KEEP_BOTH
+1792992278510_lku2o	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1793069875156_c6xow	2	COLLISION	EDA-Eval-DesignFlow-TbAlignReport-001;EDA-Eval-DesignFlow-CrCheckAudit-001	case;case	KEEP_BOTH
+1793070934364_gtyj5	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1793091129423_vxorx	2	COLLISION	EDA-Eval-DesignFlow-FmRtl2RtlFlow-001;EDA-Eval-DesignFlow-FmR2rFlowGen-001	case;case	KEEP_BOTH
+1793092177260_yseg9	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1793170209567_2mfi6	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1793172758983_0kv56	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-PatStatSpeed-001	case;parked	MERGED_SAFE
+1793240332278_86t8o	2	SAME_CASE_ID	EDA-Eval-DesignFlow-TclAreaUpdate-001;EDA-Eval-DesignFlow-TclAreaUpdate-001	case;case	MERGED_SAFE
+1793240477462_vf2q3	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1793259975527_lilaj	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-XsCheckReportDiag-001	parked;case	MERGED_SAFE
+1793692750441_cydnq	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	case;parked	MERGED_SAFE
+1793704285912_k2x6m	2	CASE_PLUS_OTHER	TmDqSwitchAdaptRestore-001	parked;case	MERGED_SAFE
+1793762019450_22gh5	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-RunRegrArchAnalyze-001	parked;case	MERGED_SAFE
+1793779533537_k7668	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-FfModReplace-001	parked;case	MERGED_SAFE
+1793786351814_mmmtz	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-DcSynthAnalyze-001	case;parked	MERGED_SAFE
+1793849459663_qo3pd	2	COLLISION	EDA-Eval-DesignFlow-Upf579Patch-001;EDA-Eval-DesignFlow-UpfSupplyConnect-001	case;case	KEEP_BOTH
+1793927271206_0ekf9	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	case;parked	MERGED_SAFE
+1793931604619_df52y	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1794021023245_u54d9	2	COLLISION	EDA-Eval-DesignFlow-SignalXrefBuilder-001;EDA-Eval-DesignFlow-SignalXrefMap-001	case;case	KEEP_BOTH
+1794187704615_bmqho	2	SAME_NONCASE	-	parked;parked	MERGED_SAFE
+1794385786325_gaekj	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	case;parked	MERGED_SAFE
+1794394549939_ia08o	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	parked;case	MERGED_SAFE
+1794446541461_udmg8	2	CASE_PLUS_OTHER	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	case;parked	MERGED_SAFE

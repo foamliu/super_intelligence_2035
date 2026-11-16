@@ -4,7 +4,7 @@
 1792400029503_0na23	t0002948	hfeg0plg49		digital	case	EDA-Eval-DesignFlow-Digital-023	2026-10-30 21:42	seeded
 1789370647360_ukkn7	e0031668	hfeg0plg91	1478	verification	case	EDA-Eval-DesignFlow-Verification-001	2026-10-30 21:42	seeded
 1787798131361_82ybr	haoyut	hfeg0plg49		pnr_signoff	case	EDA-Eval-DesignFlow-Backannot-001	2026-10-30 21:42	seeded
-1792488619552_mt7ua.messages.json	johnl	hfeg0plg49	679	pnr_signoff	parked		2026-10-31 05:01	Innovus PnR+GenLEF trace (johnl/591msgs/2.04MB). Innovus 22.31 headless on .75 unstable: report_library_sets SEGFAULT; create_library_set loads set but get_libs/get_lib_cells empty until init_design (needs tech-LEF+cell-LEF+netlist=trace's own blocker); read_lef invalid cmd. No self-contained L2 grader feasible. GenLEF/ski-genlef are PyQt5/Aether-GUI (not headless). Trace deepread preserved. Better as L1-structural (deferred) or skip.
+1792488619552_mt7ua	johnl	hfeg0pkn001	773	pnr_signoff	case	EDA-Eval-DesignFlow-GenLefConsistAudit-001	2026-11-15 12:03	r564: B档 L1 LEF consistency auditor (GenLefConsistAudit-001, pnr_signoff, k=16). Phase B GenLEF prBoundary consistency (SIZE/FOREIGN/origin/pin-dir/OBS/source) solidified into offline Python LEF auditor. Old L2/L3-only rule parked this; new standard (L1 allowed, analysis/Q&A legal) revived. deepread mt7ua_innovus_pr_genlef reused. | r663-merged-dup-notes: Innovus PnR+GenLEF trace (johnl/591msgs/2.04MB). Innovus 22.31 headless on .75 unstable: report_library_sets SEGFAULT; create_library_set loads set but get_libs/get_lib_cells empty until init_design (needs tech-LEF+cell-LEF+netlist=trace's own blocker); read_lef invalid cmd. No self-contained L2 grader feasible. GenLEF/ski-genlef are PyQt5/Aether-GUI (not headless). Trace deepread preserved. Better as L1-structural (deferred) or skip.
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	eda_other	case	EDA-Eval-DesignFlow-TotemSC-001	2026-10-31 08:18	
 1792572733650_pfubi	e0046913	hfeg0plg52	153	verification	case	EDA-Eval-DesignFlow-TimingECO-001	2026-11-02 15:32	seeded
 1793087996513_u78sz	hengbow	hfeg0plg49	407	verification	case	EDA-Eval-DesignFlow-CoreTimingSig-001	2026-11-02 16:41	
@@ -70,12 +70,11 @@
 1788775118036_48swh	lorikx	hfeg0pjn200	10	eda_other	parked		2026-11-11 13:24	r375 peek: U#0 "如何在系统上输入中文" = system input-method config Q&A. U#2 "你不能帮我直接尝试操作吗". Wrong-domain (Linux IM config), not EDA produce-task. rtl:204/verilog:68 from agent env-probing not RTL work.
 1783323056207_rc0jh	e0014566	hfeg0plg49	71	pnr_signoff	parked		2026-11-03 22:41	'请尝试连接virtuoso' analog connect request; not digital/pnr task
 1793584942223_nrkph	alan3zh	hfeg0pkn003	1367	pnr_signoff	case	EDA-Eval-DesignFlow-RedhawkGenInputs-001	2026-11-04 00:17	
-1792552971568_dnkz8	johnl	hfeg0plg99	99	pnr_signoff	case	EDA-Eval-DesignFlow-CdlVbnBulkRemap-001	2026-11-04 00:45	
+1792552971568_dnkz8	johnl	hfeg0plg99	99	pnr_signoff	case	EDA-Eval-DesignFlow-CdlVbnBulkRemap-001	2026-11-04 00:45	 | r663-merged-dup-notes: StarRC RCC extract on /proj/drcoa/V0/ver/pex/johnl/T_IsmTop. Two blockers: (1) A-track rule② disqualifies turn0 (user states root cause 'I37底层没map vbn→vss vbp→vcc' + fix '要改cdl'); (2) /proj/drcoa/johnl/ Permission denied from e0031982 (owner johnl) — real CDL/StarRC assets inaccessible, same pattern as npf2k. Parked.
 1792133398859_0t5o9	claire1l	hfeg0pkn004	143	eda_other	case	EDA-Eval-DesignFlow-ItfCompare-001	2026-11-04 01:16	
-1792386615426_npf2k	e0045488	hfeg0pkn002	103	pnr_signoff	parked		2026-11-04 01:35	StarRC DSPF SPF resistor-layer QA. Asset /proj/drexp/V0/ver/pex/e0045488/invBx2/lpe/invBx2/invBx2.spf Permission denied from e0031982 ssh (owner e0045488); SPF content not in trace (read_files result empty). Cannot build real-asset A. Revisit if /proj access granted or in-trace-asset trace found.
+1792386615426_npf2k.messages.json					case	EDA-Eval-DesignFlow-StarRCDspfFlow-001	2026-11-05 00:08	r72 re-claim: B-synthesized StarRC DSPF flow + SPF resistor-layer parser; parked→active (asset /proj denied → B-synth like tzth7); .75 HAS real StarRC for self-verify | r663-merged-dup-notes: StarRC DSPF SPF resistor-layer QA. Asset /proj/drexp/V0/ver/pex/e0045488/invBx2/lpe/invBx2/invBx2.spf Permission denied from e0031982 ssh (owner e0045488); SPF content not in trace (read_files result empty). Cannot build real-asset A. Revisit if /proj access granted or in-trace-asset trace found.
 1793167986392_7bqnr	oshen	hfeg0plg36	96	eda_other	parked		2026-11-04 01:35	Aether launch / drcqa V0 exploration. User turns are infra requests (launch aether / access files); all run_approved_command attempts fail (profile/filePath errors); no verifiable deliverable produced, no accepted result. Not a valid design_flow case.
 1789882246438_m1cve.messages.json	johnl	hfeg0pfn119	61	digital	parked		2026-11-04 01:47	User turn 6 'verilog+VCS+DC' is clean A-track need. But deliverable=cnt16 fixed design+cnt16-specific scripts (run_all/run_vcs/run_dc hardcode rtl/cnt16.v,tb_cnt16,cnt16_synth.tcl), NOT a reusable flow driver. Cross-input guard B inapplicable (SUT sees only vague prompt, can't feed hidden RTL). Vague prompt (no spec) => weak <8-cond check or L1-structural, violates §5 new-case L2/L3 + §4.3. Parked.
-1792552971568_dnkz8.messages.json	johnl	hfeg0plg99	99	pnr_signoff	parked		2026-11-04 01:48	StarRC RCC extract on /proj/drcoa/V0/ver/pex/johnl/T_IsmTop. Two blockers: (1) A-track rule② disqualifies turn0 (user states root cause 'I37底层没map vbn→vss vbp→vcc' + fix '要改cdl'); (2) /proj/drcoa/johnl/ Permission denied from e0031982 (owner johnl) — real CDL/StarRC assets inaccessible, same pattern as npf2k. Parked.
 1790760787103_0rlp4.messages.json	e0014566	hfeg0pkn001	51	eda_other	case	EDA-Eval-DesignFlow-CalibrePdf2md-001	2026-11-04 02:31	
 1792120944014_78z8d	e0045128	hfeg0pkn001	30	pnr_signoff	parked		2026-11-04 02:46	pure Q&A about genus/PT time units + netlist hierarchy; no deliverable artifact, no accepted result, knowledge questions only; unfit design_flow contract
 1791796982758_nc938					parked		2026-11-15 13:18	r567 revived-candidate deepread RE-PARK: pure multi-topic knowledge Q&A (6 unrelated Qs: PT UPF/DC wireload/Fmax/clock-uncertainty/DFT-learning), 18msgs 0 tool_use, no focused produce-task capability extractable, prose-answer check() forbidden by 4.2 => NOT makeable (写不出区分真假交付的 check). 不可造 per pool-reaudit exclusion #2
@@ -117,19 +116,19 @@
 1793361216165_nqgxe	hbpeng	hfeg0pin004	460	eda_other	case	EDA-Eval-DesignFlow-RunsetVer-001	2026-11-04 16:07	
 1791963281932_4a852.messages.json	e0039602	hfeg0plg85	661	digital	case	EDA-Eval-DesignFlow-NetCellMap-001	2026-11-04 16:50	
 1792983438277_cwhbi	xxchen	hfeg0plg53	37	eda_other	case	EDA-Eval-DesignFlow-DrcDocConvert-001	2026-11-04 18:22	
-1792742776753_6yrpu.messages.json	lorikx	hfeg0pkn005	40	digital	case	EDA-Eval-DesignFlow-SimMakefileVCS-001	2026-11-04 18:23	deepread: sim Makefile iverilog->VCS/FSDB/verdi slim (lorikx); A-faithful turn0; L2 via vcs R-2020.12 (VCD path, vcs_wrap strips DUMP_FSDB)
-1793091129423_vxorx.messages.json	e0046913	hfeg0pkn003	64	verification	case	EDA-Eval-DesignFlow-FmRtl2RtlFlow-001	2026-11-04 19:03	
-1790650962650_7bg20.messages.json	fxian	hfeg0pkn002	131	digital	case	EDA-Eval-DesignFlow-DrvqaGateNetlist-001	2026-11-04 19:57	
+1792742776753_6yrpu.messages.json	lorikx	hfeg0pkn005	40	digital	case	EDA-Eval-DesignFlow-SimMakefileVCS-001	2026-11-04 18:23	deepread: sim Makefile iverilog->VCS/FSDB/verdi slim (lorikx); A-faithful turn0; L2 via vcs R-2020.12 (VCD path, vcs_wrap strips DUMP_FSDB) | r663-merged-dup-notes: dup: already case SimMakefileVCS-001 (same session 1792742776753_6yrpu, A-internal, built 2026-11-04; slug-suffix normalization let it slip through hand filter r441)
+1793091129423_vxorx.messages.json	e0046913	hfeg0pkn003	64	verification	case	EDA-Eval-DesignFlow-FmRtl2RtlFlow-001	2026-11-04 19:03	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-FmRtl2RtlFlow-001;EDA-Eval-DesignFlow-FmR2rFlowGen-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1793091129423_vxorx	e0046913	hfeg0pkn003	159	verification	case	EDA-Eval-DesignFlow-FmR2rFlowGen-001	2026-11-12 03:11	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-FmRtl2RtlFlow-001;EDA-Eval-DesignFlow-FmR2rFlowGen-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1790650962650_7bg20.messages.json	fxian	hfeg0pkn002	131	digital	case	EDA-Eval-DesignFlow-DrvqaGateNetlist-001	2026-11-04 19:57	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1791852620999_5u8d5	ellawu	10.129.2.14	293	eda_other	case	EDA-Eval-DesignFlow-FloatPinToTop-001	2026-11-04 20:42	
 1792314492243_drv8a	e0035227	hfeg0pkn004	34	digital	case	EDA-Eval-DesignFlow-LibArcExtract-001	2026-11-04 21:34	
 1792031425233_njd2w	simplec	hfeg0pkn002	118	pnr_signoff	case	EDA-Eval-DesignFlow-StarRCFlow-001	2026-11-04 22:21	
 1790219471445_pnokd					parked		2026-11-04 22:02	surveyed r69: 10 msgs, 1 garbled 'user turn' (copy-paste UI text), agent only read_files/list/search, NO run/NO edit, NO deliverable. dc_addr_to_region synth.tcl exploration only. Unfit design_flow.
 1792047122523_sqxy6					parked		2026-11-04 22:02	surveyed r69: 474 msgs but PURE ops/IT admin task (LSF cluster SSH免密 setup for 1017 machines, disk alarm, server inventory xlsx, finesim core counting, ops knowledge base). ZERO EDA design content; icc2:20 in KW was incidental. Not design_flow, wrong domain (ops not pnr_signoff).
-1788763403419_gqt57					parked		2026-11-04 22:02	surveyed r69: user turn 0 = canned trigger '启动业务场景: 数字 RTL 设计' (BLOCKER: canned triggers not authentic user intent, cf b9bop). Only 2 user turns, turn0 canned. VCS sim + simvision waveform viewing. Weak A-track framing.
+1788763403419_gqt57					parked		2026-11-04 22:02	surveyed r69: user turn 0 = canned trigger '启动业务场景: 数字 RTL 设计' (BLOCKER: canned triggers not authentic user intent, cf b9bop). Only 2 user turns, turn0 canned. VCS sim + simvision waveform viewing. Weak A-track framing. | r663-merged-dup-notes: generic opener 启动业务场景, mmmtz stronger specific task
 1793167611680_ahtlt					parked		2026-11-04 22:02	surveyed r69: 1 real user turn 'gvim soc dft demo include differnt clock domain .dft include EDT OCC etc DFT' = open-ended 'generate a SoC DFT demo from scratch'. Agent builds whole project tree (RTL+scripts) but never RUNS dc_shell (only check_project.py static). Open-ended generation, hard to make focused hidden-B + >=8-cond check; no real L2 tool run. Unfit focused design_flow.
 1793081732674_ole38	e0030085	hfeg0pkn005	21	verification	case	EDA-Eval-DesignFlow-DFTTestmaxFlow-001	2026-11-04 23:17	
-1791962616204_7j1bw.messages.json	caozhang	hfhds209	111	digital	parked		2026-11-04 23:55	cross-shard collision: AsyncFifoSim-001 is shard D case (commit 3e9a310); shard A abandons; see trace_deepreads/7j1bw_async_fifo_sim.md for full-formula fix
-1792386615426_npf2k.messages.json					case	EDA-Eval-DesignFlow-StarRCDspfFlow-001	2026-11-05 00:08	r72 re-claim: B-synthesized StarRC DSPF flow + SPF resistor-layer parser; parked→active (asset /proj denied → B-synth like tzth7); .75 HAS real StarRC for self-verify
+1791962616204_7j1bw.messages.json	caozhang	hfhds209	111	digital	parked		2026-11-04 23:55	cross-shard collision: AsyncFifoSim-001 is shard D case (commit 3e9a310); shard A abandons; see trace_deepreads/7j1bw_async_fifo_sim.md for full-formula fix | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793004375421_dse5n.messages.json	e0046913	hfeg0pkn003	13	eda_other	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
 1791967220671_pdxr9	alrenc	hfeg0pkn004	22	eda_other	case	EDA-Eval-DesignFlow-LsfPrimesimSubmit-001	2026-11-05 01:31	
 1792981676632_bxnc8	zhengc	hfeg0plg66	28	eda_other	parked		2026-11-05 01:31	pure capabilities Q&A (6 msgs, user 你能做什么), no real task/deliverable; mc28 from keyword noise in assistant capabilities listing
@@ -168,11 +167,11 @@
 1793795209038_ru6mx	e0046913	hfeg0pkn003	108	digital	case	EDA-Eval-DesignFlow-UpfGen-001	2026-11-06 22:56	
 1791967805126_c084j	caozhang	hfeg0pkn004	218	digital	case	EDA-Eval-DesignFlow-AsyncFifoSim-001	2026-11-06 23:27	
 1792042281846_vb4si	e0039102	hfeg0pkn002	162	verification	case	EDA-Eval-DesignFlow-RegLogFind-001	2026-11-06 23:55	
-1793172758983_0kv56	jascperc	hfeg0pkn001	160	digital	case	EDA-Eval-DesignFlow-PatStatSpeed-001	2026-11-07 00:19	
+1793172758983_0kv56	jascperc	hfeg0pkn001	160	digital	case	EDA-Eval-DesignFlow-PatStatSpeed-001	2026-11-07 00:19	 | r663-merged-dup-notes: DUPLICATE-TRACE DOWNLINE r454: same session 0kv56 as PatStatSpeed-001 (ledger line 171, built 2026-11-07); r451 re-claimed 0kv56 w/o .messages.json suffix evading ledger anchor; case removed from A.jsonl + assets/reference deleted
 1793167889332_bfl29	jascperc	hfeg0pkn001	69	verification	parked		2026-11-07 00:32	duplicate of 0kv56/PatStatSpeed-001 (same jascperc+PTE_20260624_1/dvprog pattern-speed task)
-1793170209567_2mfi6					parked		2026-11-07 00:33	duplicate of 0kv56/PatStatSpeed-001 (same jascperc+PTE pattern-speed task, earlier 184-msg session)
+1793170209567_2mfi6					parked		2026-11-07 00:33	duplicate of 0kv56/PatStatSpeed-001 (same jascperc+PTE pattern-speed task, earlier 184-msg session) | r663-merged-dup-notes: duplicate of 0kv56/PatStatSpeed-001 (A:97); r313 build aborted, NOT appended
 1792658984406_7j9b9	nevinrao	hfeg0pkn001	205	verification	case	EDA-Eval-DesignFlow-SimFailParse-001	2026-11-07 00:48	
-1788871441686_fieju.messages.json	harrys	hfeg0pkn002	495	digital	case	EDA-Eval-DesignFlow-NandMcuAsm-001	2026-11-07 01:25	
+1788871441686_fieju.messages.json	harrys	hfeg0pkn002	495	digital	case	EDA-Eval-DesignFlow-NandMcuAsm-001	2026-11-07 01:25	 | r663-merged-dup-notes: clean-A-faithful-produce-3MCU-plus-compile-sim-L3-too-complex-for-checkable-case-defer-future
 1793005700370_jzlbn	lorikx	hfeg0pkn001	395	verification	case	EDA-Eval-DesignFlow-FsdbVerdiInteg-001	2026-11-07 02:07	
 1791774925790_tyk6x	shanliny	hfeg0pkn001	102	verification	case	EDA-Eval-DesignFlow-VcheckMacroAdd-001	2026-11-07 02:47	
 1793082695144_reixr	lorikx	hfeg0pkn001	183	digital	case	EDA-Eval-DesignFlow-CrEdgeAlignFix-001	2026-11-07 03:18	
@@ -185,14 +184,16 @@
 1792461218411_hojhc	aocao	hfhds224	258	verification	case	EDA-Eval-DesignFlow-SimSpeedupMonitor-001	2026-11-07 06:25	
 1791879279182_rfcu4.messages.json	shanliny	hfeg0pkn001	72	verification	case	EDA-Eval-DesignFlow-CrStateDesyncFix-001	2026-11-07 07:39	
 1791774991665_uks7k	lorikx	hfeg0pkn004	44	digital	case	EDA-Eval-DesignFlow-RtlBistInventory-001	2026-11-07 08:12	
-1793786351814_mmmtz	e0046913	hfeg0pkn003	169	digital	case	EDA-Eval-DesignFlow-DcSynthAnalyze-001	2026-11-15 12:59	r375 peek: 213msgs/20 user-turns = DC synthesis -> formality -> STA multi-turn flow analysis (U#0 analyze syn, U#5 user-given VT-ratio fix, U#10 env-structure, U#13/U#15 ask FM/STA run cmds, U#16 pt_shell error paste). env-dependent full-flow driving + U#5 user-gives-fix (A-faithful 不合格). Not single deliverable. icc2:345/rtl:276 from flow dir.
+1793786351814_mmmtz	e0046913	hfeg0pkn003	169	digital	case	EDA-Eval-DesignFlow-DcSynthAnalyze-001	2026-11-15 12:59	r375 peek: 213msgs/20 user-turns = DC synthesis -> formality -> STA multi-turn flow analysis (U#0 analyze syn, U#5 user-given VT-ratio fix, U#10 env-structure, U#13/U#15 ask FM/STA run cmds, U#16 pt_shell error paste). env-dependent full-flow driving + U#5 user-gives-fix (A-faithful 不合格). Not single deliverable. icc2:345/rtl:276 from flow dir. | r663-merged-dup-notes: dup-trace r662 retract: same session as ledger L188 (DcSynthAnalyze-001) + v2 (L318) which already covers RPT-181/vt_group_details. DcRpt181VtGroupDiag-001 synthesized+fully-verified but RETRACTED pre-commit (dup). r661 deepread missed L188 due to session-string suffix mismatch (no .messages.json) + host mismatch (hfeg0pkn003 vs hfeg0plg90). ledger dedup bug to fix.
 1793261933061_z7stj	ypzheng	hfeg0pkn003	273	digital	case	EDA-Eval-DesignFlow-SimRunDepExtract-001	2026-11-07 09:36	
 1793091608908_lzt3e	dummy	dummy	0		parked		2026-11-07 09:52	accidental dummy claim r193, not a real candidate (out-of-shard waveview)
 1789367633495_9uwcw	lorikx	hfeg0pkn001	250	digital	case	EDA-Eval-DesignFlow-SpecNotifClassify-001	2026-11-07 10:06	
 1793603150610_nr884	thomas1w	hfeg0pkn005	159	digital	case	EDA-Eval-DesignFlow-RedBistFlowRecon-001	2026-11-15 12:59	r375 peek: U#0 "看下redbist的测试流程和数据流 怎么产生测试期望值 记忆错误的地址" = redbist netlist analysis request. Deliverable=prose analysis of complex memory-BIST logic, env-dependent (netlist at /rundata). B档 reframe would need faithful redbist netlist fragment (hard). verilog:936/netlist:292.
 1793772666905_bgkn6	lorikx	hfeg0pkn001	54	digital	case	EDA-Eval-DesignFlow-SramGrpStructAnalyze-001	2026-11-07 11:18	
-1792843726821_uiqz1.messages.json	e0043890	hfeg0pnd002	212	digital	case	EDA-Eval-DesignFlow-DesignListGen-001	2026-11-07 12:50	
-1793849459663_qo3pd.messages.json	e0046913	hfeg0pkn003	39	digital	case	EDA-Eval-DesignFlow-Upf579Patch-001	2026-11-07 14:35	
+1792843726821_uiqz1.messages.json	e0043890	hfeg0pnd002	212	digital	case	EDA-Eval-DesignFlow-DesignListGen-001	2026-11-07 12:50	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-DesignListGen-001;EDA-Eval-DesignFlow-CxdpLintMakefileGen-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1792843726821_uiqz1	e0043890	hfeg0pnd002	212	digital	case	EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	2026-11-11 09:48	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-DesignListGen-001;EDA-Eval-DesignFlow-CxdpLintMakefileGen-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1793849459663_qo3pd.messages.json	e0046913	hfeg0pkn003	39	digital	case	EDA-Eval-DesignFlow-Upf579Patch-001	2026-11-07 14:35	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-Upf579Patch-001;EDA-Eval-DesignFlow-UpfSupplyConnect-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1793849459663_qo3pd	e0046913	hfeg0pkn003	39	digital	case	EDA-Eval-DesignFlow-UpfSupplyConnect-001	2026-11-13 05:50	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-Upf579Patch-001;EDA-Eval-DesignFlow-UpfSupplyConnect-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
 1793343432760_iqvz3.messages.json	thomas1w	hfeg0pkn005	149	digital	case	EDA-Eval-DesignFlow-MbistTwincellDiag-001	2026-11-07 15:24	
 1793772253112_8uaii.messages.json	e0046913	hfeg0pkn003	145	pnr_signoff	case	EDA-Eval-DesignFlow-FmRtl2GateConfig-001	2026-11-07 15:50	
 1791977055190_ckulq.messages.json	e0045144	hfeg0pkn002	129	verification	case	EDA-Eval-DesignFlow-RdcViolCatalog-001	2026-11-07 16:24	
@@ -200,7 +201,7 @@
 1792746530652_5erm4.messages.json	shanliny	hfeg0pkn001	80	verification	case	EDA-Eval-DesignFlow-SvIntegrateGen-001	2026-11-07 18:05	
 1791946315674_hg1xu.messages.json	shanliny	hfeg0pkn001	72	verification	parked		2026-11-07 18:14	shanliny 3-conn (r189+5erm4 sibling); 4 sids identical kw = same SV task retry; defer for diversity
 1793861357108_vagnh.messages.json	tabtao	hfeg0pkn004	29	pnr_signoff	case	EDA-Eval-DesignFlow-DcLogErrDiagnose-001	2026-11-07 18:28	
-1792992278510_lku2o.messages.json	e0045144	hfeg0pkn002	129	digital	parked		2026-11-07 18:55	DUPLICATE of ckulq/r200 RdcViolCatalog-001: same user e0045144+host hfeg0pkn002+mc129+identical keywords+identical user turns (USER#5 list setup/corruption violation types = r200 selected turn). Retry of same RDC userguide task. Not a new case.
+1792992278510_lku2o.messages.json	e0045144	hfeg0pkn002	129	digital	parked		2026-11-07 18:55	DUPLICATE of ckulq/r200 RdcViolCatalog-001: same user e0045144+host hfeg0pkn002+mc129+identical keywords+identical user turns (USER#5 list setup/corruption violation types = r200 selected turn). Retry of same RDC userguide task. Not a new case. | r663-merged-dup-notes: r375 peek: U#0 "你会做什么" + U#2 "你会根据spec写完整的RTL code吗" = capability-exploration meta Q&A. No actual task/attachment. synopsys:368/rtl:283/verilog:153 from agent self-intro examples not real work.
 1792724746849_gu1m2.messages.json	lorikx	hfeg0pkn001	80	digital	parked		2026-11-07 18:57	DUPLICATE of bw2u5/r84 VCSMakefile-001: same user lorikx+identical USER#0 (sim Makefile iverilog->VCS/FSDB/verdi)+identical subsequent turns (中文重发/查Fail/vcode 80 refclk/讲parameter/改rtl_synth). Same freq_calibration_model task retry. Not a new case.
 1790596559451_9p8g2.messages.json	clwang	hfeg0pkn005	100	digital	parked		2026-11-07 19:09	CROSS-SHARD COLLISION: shard C (3f4fb5c0 Nov6 18:36) already created EDA-Eval-DesignFlow-ToggleCounterBindGen-001 from this same trace 9p8g2 (cell_define_B.sv+cellname_B.sv+add_toggle_counter_ref.py+check.py 16cond a-p, schematic_netlist/faithful/L1). Shard D (b48c686e Nov7 19:12) also added to D.jsonl same task_id. Main merged jsonl kept D's 16cond version (canonical). A's case (15cond verification/L1-static, evolved lib-modification interp) deviated from verbatim prompt (deliverable should be toggle_counter.sv not modified lib files) AND duplicate task_id. A case ABANDONED: A.jsonl line reverted, A stray assets/reference files removed, D/C canonical files restored + self-verified GREEN (16/16 ref PASS, all 10 negs FAIL, §4.9 three fakes FAIL). Trace covered by shard C/D — not available for A.
 1793777251915_s3noo.messages.json	e0045128	hfeg0pkn005	54	pnr_signoff	case	EDA-Eval-DesignFlow-LefFilelistGen-001	2026-11-07 19:49	
@@ -234,7 +235,6 @@
 1791871316059_iih6g	laryu	hfeg0pkn001	265	eda_other	case	EDA-Eval-DesignFlow-ViewCopyInstCount-001	2026-11-08 13:04	
 1789979923847_aq5lg.messages.json	johnl	hfeg0pkn001	131	digital	parked		2026-11-08 13:31	assistant diagnosis WRONG (claimed change_names split bus->scalar but AFTER netlist keeps output [4:0] BA bus form, 0 scalar BA_); user challenged '你确定吗 你要做实验验证' twice; no accepted gold result; not A档-eligible
 1793596522277_e4fk8.messages.json	e0045128	hfeg0pkn005	53	digital	case	EDA-Eval-DesignFlow-D2pHandoffDirGen-001	2026-11-08 13:45	
-1792488619552_mt7ua	johnl	hfeg0pkn001	773	pnr_signoff	case	EDA-Eval-DesignFlow-GenLefConsistAudit-001	2026-11-15 12:03	r564: B档 L1 LEF consistency auditor (GenLefConsistAudit-001, pnr_signoff, k=16). Phase B GenLEF prBoundary consistency (SIZE/FOREIGN/origin/pin-dir/OBS/source) solidified into offline Python LEF auditor. Old L2/L3-only rule parked this; new standard (L1 allowed, analysis/Q&A legal) revived. deepread mt7ua_innovus_pr_genlef reused.
 1791943493253_tjzn5	tongfanl	hfeg0pkn004	114	verification	case	EDA-Eval-DesignFlow-VecgenPortModeAnalyze-001	2026-11-08 14:25	
 1790128216866_kbs81	e02141	hfeg0pkn001	96	eda_other	case	EDA-Eval-DesignFlow-SwbProjectCreate-001	2026-11-08 15:03	
 1792551270043_d3opd	xinqiaoz	hfeg0pkn002	48	eda_other	case	EDA-Eval-DesignFlow-ClineWorkdirDiagnose-001	2026-11-08 15:50	
@@ -256,11 +256,11 @@
 1793084506490_ytldc	dsgao	hfhds201	175	eda_other	case	EDA-Eval-DesignFlow-CdlNetlistAnalyze-001	2026-11-09 00:20	
 1793858909531_b9fua.messages.json	e0039102	hfeg0pkn002	34	eda_other	case	EDA-Eval-DesignFlow-AutoTmscanScriptAnalyze-001	2026-11-09 00:53	
 1792108868745_dyijn	xinqiaoz	hfeg0pkn002	69	eda_other	case	EDA-Eval-DesignFlow-PdkQaModuleAnalyze-001	2026-11-09 01:30	
-1793070934364_gtyj5.messages.json	easont	hfeg0pkn004	592	eda_other	parked		2026-11-09 09:56	DUP of okq91 (confirmed r254), stale claimed->parked
-1793070934364_gtyj5					parked		2026-11-09 02:01	DUP of okq91/NetlistCompareReport-001 (r247): same easont TempHalfWL workflow, same U#383 verbatim task '对比修改后的网表和原先的网表生成markdown形式的报告', same netlist_AI/netlist_pro_clean assets. r253 deepread missed this distinctness check (only checked CosimFlowAnalyze r238). Parked r254.
+1793070934364_gtyj5					parked		2026-11-09 02:01	DUP of okq91/NetlistCompareReport-001 (r247): same easont TempHalfWL workflow, same U#383 verbatim task '对比修改后的网表和原先的网表生成markdown形式的报告', same netlist_AI/netlist_pro_clean assets. r253 deepread missed this distinctness check (only checked CosimFlowAnalyze r238). Parked r254. | r663-merged-dup-notes: DUP of okq91 (confirmed r254), stale claimed->parked
 1793688761923_zqew3					parked		2026-11-09 03:53	r257 daily-log fallback: rose3wang@hfeg0pkn003 mc20 netlist-dom; file MISSING on disk (rotated, only t054x/hyhxt/4a8d3 remain). Unviable.
 1792052682006_dnu1x					parked		2026-11-09 03:53	r257 daily-log fallback: e00399@hfeg0pnd007 mc12 calibre-dom(physical_verify shard C not A); file MISSING on disk (rotated). Unviable.
-1793069875156_c6xow.messages.json	lorikx	hfeg0pkn001	158	digital	case	EDA-Eval-DesignFlow-TbAlignReport-001	2026-11-09 04:47	
+1793069875156_c6xow.messages.json	lorikx	hfeg0pkn001	158	digital	case	EDA-Eval-DesignFlow-TbAlignReport-001	2026-11-09 04:47	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-CrCheckAudit-001;EDA-Eval-DesignFlow-TbAlignReport-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1793069875156_c6xow	lorikx	10.129.2.10	158	digital	case	EDA-Eval-DesignFlow-CrCheckAudit-001	2026-11-12 16:16	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-CrCheckAudit-001;EDA-Eval-DesignFlow-TbAlignReport-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
 1790126012653_7i0aj	t0002987	hfhds201	37	eda_other	case	EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001	2026-11-09 05:22	
 1793252859649_p5x6n	e0023936	hfhds201	92	eda_other	case	EDA-Eval-DesignFlow-CosWaveTclGen-001	2026-11-09 05:53	
 1793006362279_0zrzc.messages.json	e0023936	hfhds201	90	eda_other	case	EDA-Eval-DesignFlow-WvCursorApiGen-001	2026-11-09 06:18	
@@ -270,7 +270,6 @@
 1793081212647_xyj1z.messages.json	eva1wu	hfeg0pkn002	77	eda_other	case	EDA-Eval-DesignFlow-DecoderSchemGen-001	2026-11-09 08:25	
 1788347732612_bhs4z	e0025768	hfeg0pkn001	38	eda_other	case	EDA-Eval-DesignFlow-RtlDesignScenarioBoot-001	2026-11-09 09:00	
 1789904654090_nzxx2.messages.json	ziyuny	hfeg0pnd002	44	eda_other	case	EDA-Eval-DesignFlow-GgFlowReport-001	2026-11-09 09:43	
-1793240332278_86t8o.messages.json	rose3wang	hfeg0pkn003	278	digital	case	EDA-Eval-DesignFlow-TclAreaUpdate-001	2026-11-09 13:43	
 1793932600947_c5gwq	johnl	hfeg0pkn001	306	digital	case	EDA-Eval-DesignFlow-DcLsfQueueMigrate-001	2026-11-15 17:44	r578 B-档 DcLsfQueueMigrate-001 delivered (digital, L1-B, k=15). DC synthesis script migration: manifest-parameterized migrate_dc.py emits 5 migrated scripts (run_dc.sh bsub+env-strip / run_dc_local.sh module-load / synth.tcl relative+cell-policy / timing_constraints.tcl absent-port-removal / setup.sh). deepread note c5gwq_johnl_dc_migrate.md reused. Renamed from DcScriptMigrate-001 to avoid task_id collision with i7eyp case.
 1792409159286_g7hcn	shanliny	hfeg0pkn001	15	verification	case	EDA-Eval-DesignFlow-SvClockblockAudit-001	2026-11-15 10:36	analysis-only trace, 0 write/edit, no executable golden; A-faithful #0=analysis task, #18/19=give fix=hint; not design_flow viable
 1793098169771_pvx74	lorikx	hfeg0pkn001	29	digital	case	EDA-Eval-DesignFlow-RwConflictBackstop-001	2026-11-09 15:33	B-档 digital code-fix (sp_2pram.v rw_conflict backstop insert line2573); golden=on-disk post-fix; deepread done, case-build queued r276
@@ -294,18 +293,18 @@
 1794221830421_oclzn	dandans	hfhds201	94	eda_other	parked		2026-11-09 22:36	MatrixRun directory listing comparison, operational not produce-task
 1794193758706_gwm47	tongfanl	hfhds201	63	eda_other	parked		2026-11-09 22:36	MatrixRun dir listing comparison dup of oclzn, operational not produce-task
 1794129973388_q54e4	tongfanl	hfhds201	14	eda_other	case	EDA-Eval-DesignFlow-CornerStrUndefDiagnose-001	2026-11-16 17:43	r640 case landed: Perl cornerStr undef root-cause diagnosis, k=14, A.jsonl 346->347
-1793927271206_0ekf9.messages.json	e0030085	hfeg0pkn002	352	eda_other	case	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	2026-11-10 00:06	
+1793927271206_0ekf9.messages.json	e0030085	hfeg0pkn002	352	eda_other	case	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	2026-11-10 00:06	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793865788118_b7otd.messages.json	xy1zhang	hfeg0plg70	360	verification	case	EDA-Eval-DesignFlow-SvTbBugFix-001	2026-11-10 01:03	
-1793092177260_yseg9.messages.json	fernandoy	hfeg0plg76	343	verification	parked		2026-11-10 01:53	r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (USER#0=context state), too large to synthesize
-1792551877743_4i1w4.messages.json	fernandoy	hfeg0plg76	329	verification	parked		2026-11-10 01:53	r295: sibling of yseg9 resumed UVM 801msgs/3MB, same project
-1793762019450_22gh5.messages.json	e0039102	hfeg0plg74	106	eda_other	parked		2026-11-10 01:53	r295 peek: USER#0=告诉我配置思路 run_regr analysis-only Q&A, not produce-task
+1793092177260_yseg9	fernandoy	hfeg0plg76	343	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool | r663-merged-dup-notes: r295 deepread: resumed UVM sim context-summary 836msgs/3.2MB, not A-faithful (USER#0=context state), too large to synthesize
+1792551877743_4i1w4	fernandoy	hfeg0plg76	329	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool | r663-merged-dup-notes: r295: sibling of yseg9 resumed UVM 801msgs/3MB, same project
+1793762019450_22gh5	e0039102	hfeg0plg74	0	eda_other	case	EDA-Eval-DesignFlow-RunRegrArchAnalyze-001	2026-11-16 20:20	 | r663-merged-dup-notes: r295 peek: USER#0=告诉我配置思路 run_regr analysis-only Q&A, not produce-task
 1793770222949_u5daf.messages.json	e0039102	hfeg0plg74	112	eda_other	parked		2026-11-10 01:53	r295 peek: sibling of 22gh5 same analysis task
 1793079745856_epy3m.messages.json	t0002470	hfeg0plg101	139	verification	parked		2026-11-10 01:53	r295 peek: resumed context-summary, USER asks 能否只预编译coverage + find指令序列 analysis/search, not produce
 1791961260627_mejpi.messages.json	e13zhang	hfeg0pgn012	207	verification	parked		2026-11-10 01:53	r295 peek: USER#0=分析RTL+check是否有补充 analysis-only, not produce-task
 1792480126204_y737t.messages.json	e13zhang	hfeg0pgn012	139	verification	parked		2026-11-10 01:53	r295 peek: USER#0=7.2GHz时钟 Q&A + Makefile compile error debug, not produce-task
 1790600533401_vnze7.messages.json	clwang	hfeg0pkn005	165	eda_other	parked		2026-11-10 01:53	r295 peek: USER#0=拆分10GB xrun.log成20份 trivial log-split, verilog keyword from log content not real digital
-1793779533537_k7668.messages.json	e0039602	hfeg0pkn002	307	verification	parked		2026-11-10 01:53	r295 deepread: verilog_lib_trans_v2 tb fix, USER#4/#40/#73 3-turn evolved complex task needs xrun+actual files, too complex to parameterize for check.py
-1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	422	eda_other	case	EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	2026-11-16 16:59	r638 case: C-A analysis-Q&A tb_family role; user U@0 verbatim 请你阅读这个项目，告诉我下面的tb_family/的作用是什么; e0039602/hfeg0pkn002/mc422/eda_other; 8 A files trace-embedded (README/Readme/SKILL_v2/config/run.sh/tb_and2/project_tree/tb_family_tree), asset_fidelity=original; B=CellCheck TB synth (40 nor2 nor2HSx1 OK·REPAIR_OK·BAD·NO_REF lat_high rsnor22-A=置位 mxi-非反相 PWR_ON), 8 anti-hardcode dims全异; check 17 cond a-q, ref 17/17 PASS, 5neg+3fake all FAIL distinct (a,c,d,g); 3-seed stable
+1793779533537_k7668	e0039602	hfeg0pkn002	307	verification	case	EDA-Eval-DesignFlow-FfModReplace-001	2026-11-15 15:32	r572 B档 FfModReplace-001: verilog module replacement by name (k=12). old parked r295 'too complex' revived under new standard — B档 extracts core capability (module-name replace), A档 full multi-turn not parameterizable | r663-merged-dup-notes: r295 deepread: verilog_lib_trans_v2 tb fix, USER#4/#40/#73 3-turn evolved complex task needs xrun+actual files, too complex to parameterize for check.py
+1793692750441_cydnq.messages.json	e0039602	hfeg0pkn002	422	eda_other	case	EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	2026-11-16 16:59	r638 case: C-A analysis-Q&A tb_family role; user U@0 verbatim 请你阅读这个项目，告诉我下面的tb_family/的作用是什么; e0039602/hfeg0pkn002/mc422/eda_other; 8 A files trace-embedded (README/Readme/SKILL_v2/config/run.sh/tb_and2/project_tree/tb_family_tree), asset_fidelity=original; B=CellCheck TB synth (40 nor2 nor2HSx1 OK·REPAIR_OK·BAD·NO_REF lat_high rsnor22-A=置位 mxi-非反相 PWR_ON), 8 anti-hardcode dims全异; check 17 cond a-q, ref 17/17 PASS, 5neg+3fake all FAIL distinct (a,c,d,g); 3-seed stable | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793937823141_zdo8r.messages.json	t0002038	hfeg0plg86	585	eda_other	parked		2026-11-10 01:53	r295: aether:1035/transistor:818/pyaether:427 schematic = analog/layout WRONG SHARD (C), rtl:45 minor
 1794010590146_aqtdv.messages.json	xinqiaoz	hfeg0pkn005	358	pnr_signoff	parked		2026-11-10 01:53	r295: pdk:1067/drc:253/calibre:50 = calibre DRC WRONG SHARD (C), rtl:40 minor
 1793779591197_cdvwc	e0046472	hfeg0plg76	255	digital	case	EDA-Eval-DesignFlow-CkmuxXlsxExport-001	2026-11-10 03:30	r297 BUILD DONE (DEBT:1 from r296 CLEARED): reframed to spec-driven generator gen_ckmux_parser.py + static-verify (openpyxl unavailable in grading env — py_compile doesn't execute imports so emitted `import openpyxl` compiles fine without openpyxl installed); gold=parse_ckmux_v2.py xlsx->CSV->JSON clock-tree (8 sheets, 7 CSV parsers, 12-key model); A=spec_a faithful (CKMUX.xlsx/decrypted_csvs/cksys_v2.json/xtal_26m); hidden B=spec_b isomorphic (CKMUX_chipB.xlsx/ckmux_csvs_b/cksys_v2b.json/xtal_38m/n_cksel=6); 16 conds a-p; ref PASS 16/16; 6 negs (noop/stub/fake_print/hardcode_a/fake_core/keep_windows) all FAIL; A.jsonl 190->191; test_sha8=f8666921; deepread note trace_deepreads/cdvwc_ckmux_xlsx_export.md
@@ -318,10 +317,10 @@
 1794024347310_fkhb8.messages.json	graywang	hfeg0plg108	59	digital_front	case	EDA-Eval-DesignFlow-RunTaskMapExtractor-001	2026-11-10 09:12	
 1792053812772_9qa9d	aocao	hfhds227	129	verification	parked		2026-11-10 09:31	r308: unreachable - ssh publickey denied on hfhds227/226 (10.129.32.111/110); key auth unavailable this round; deepread done prev session but messages.json purged from workdir; cannot verify verbatim USER#0 — parked to preserve faithfulness gate
 1793949945535_873cy.messages.json					parked		2026-11-10 09:59	r308 peek: analysis-only (U#2 detect-errors) + user-named-fix (U#14 align monitor interface -> excluded A-faithful); not clean produce; .75-local
-1794021023245_u54d9.messages.json	eason1z	hfeg0plg100	108	digital	case	EDA-Eval-DesignFlow-SignalXrefBuilder-001	2026-11-10 10:53	
+1794021023245_u54d9.messages.json	eason1z	hfeg0plg100	108	digital	case	EDA-Eval-DesignFlow-SignalXrefBuilder-001	2026-11-10 10:53	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-SignalXrefBuilder-001;EDA-Eval-DesignFlow-SignalXrefMap-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
+1794021023245_u54d9	eason1z	hfeg0plg100	108	digital	case	EDA-Eval-DesignFlow-SignalXrefMap-001	2026-11-13 22:46	r663-dedup-audit COLLISION: 2 cases from 1 session (EDA-Eval-DesignFlow-SignalXrefBuilder-001;EDA-Eval-DesignFlow-SignalXrefMap-001) — suffix dedup bug; 待人工对账见 ledger_dedup_audit_r663.tsv. 
 1793863355565_acaey	stevenh	hfeg0pgn145	110	verification	case	EDA-Eval-DesignFlow-SvHierRefDiag-001	2026-11-10 12:00	r311 peek: A-faithful USER#0=diagnose xmelab CUUVUNF elaboration error (proj_special.sv:6127 TOP hierarchical ref at $unit scope). 48msgs ALL read_files/search_codebase, 0 writes. Agent output=root-cause analysis report (IDX43); fix proposed by USER(44) not agent. analysis-only NOT produce-task. park.
 1793706026720_4q4w1	weihanwu	hfeg0pfn104	134	verification	parked		2026-11-10 11:33	r311 peek: USER#0=how-to (怎么在tb上把mr值送到dq_exp). 106msgs, 39 read_files+16 search_codebase+0 writes. Agent final(105)=explanation of existing MRR data-flow path, no code produced. analysis/explanation-only NOT produce-task. park.
-1793170209567_2mfi6.messages.json	jascperc	hfeg0pkn001	64	digital	parked		2026-11-10 12:41	duplicate of 0kv56/PatStatSpeed-001 (A:97); r313 build aborted, NOT appended
 1792053769843_7huyr	aocao	hfhds227	129	verification	case	EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001	2026-11-10 13:53	
 1792054934836_7adgf	aocao	hfhds227	128	verification	parked		2026-11-10 13:17	duplicate of 7huyr (same aocao user, identical first user msg, RHR queue-bounds diagnosis); 7huyr claimed for r314 deepread
 1792055475403_wuuc7	e0039102	hfeg0plg74	97	verification	parked		2026-11-10 13:17	duplicate task of shard-D RegrCaseFilter-001 (same e0039102 user, identical regression-case-filtering prompt, jason17w lpddr5 ddgoa.0812 dir); NOT a shard-A case
@@ -333,8 +332,6 @@
 1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	parked		2026-11-10 15:59	how-to-change-tran-10ps-to-500ps-in-matrixrun-script
 1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	parked		2026-11-10 15:59	vague-analysis-look-at-netlist-structure-and-content
 1792137927597_f4kc0	jackliu	hfeg0pkn003	279	verification	parked		2026-11-10 15:59	capability-question-can-you-read-waveform-trn-file
-1788871441686_fieju	harrys	hfeg0pkn002	495	digital	parked		2026-11-10 16:00	clean-A-faithful-produce-3MCU-plus-compile-sim-L3-too-complex-for-checkable-case-defer-future
-1793779533537_k7668	e0039602	hfeg0pkn002	307	verification	case	EDA-Eval-DesignFlow-FfModReplace-001	2026-11-15 15:32	r572 B档 FfModReplace-001: verilog module replacement by name (k=12). old parked r295 'too complex' revived under new standard — B档 extracts core capability (module-name replace), A档 full multi-turn not parameterizable
 1793953438523_pzo6g	e0039602	hfeg0pkn002	269	verification	parked		2026-11-10 16:00	context-coupled-verilog-lib-trans-skill-packaging
 1794201552569_r2yjr	e0039602	hfeg0pkn002	287	digital	parked		2026-11-10 17:12	r319 DUPLICATE-ABORT: r2yjr trace already built by shard D as EDA-Eval-DesignFlow-TbFamilyMergeConverted-001 (schematic_netlist domain, same session 1794201552569_r2yjr.messages.json, same tb_family-check->merged-converted-sv task, 16 conds static-verify reframe). r318 deepread compared only vs bghqo/TbFamilyResultVerify-001 (different session), missed cross-shard r2yjr dup. NOT appended to A.jsonl (maintains 200). Lesson reinforced: cross-shard grep session_file BEFORE claim.
 1793861526761_lu4zi	daiweilu	hfeg0pfn090	120	verification	case	EDA-Eval-DesignFlow-TmBusToggleAnalyze-001	2026-11-15 16:20	r320: 30 editor writes = active fix-session not pure diagnosis; diagnosis-generator PIVOT needs 0-writes (acaey/zxb65 pattern); UNDIDN+CUVUNF fix-loop L2/L3 too complex to parameterize
@@ -344,7 +341,6 @@
 1794131904136_0rtkh	jkxu	hfeg0pkn002	479	verification	case	EDA-Eval-DesignFlow-RegrunMakefileGen-001	2026-11-10 20:05	
 1793589539062_ow6zk	wenzhuod	hfeg0pkn003	40	digital	case	EDA-Eval-DesignFlow-FuseUncalledAudit-001	2026-11-10 20:51	
 1793177004095_tsn3o	fernandoy	hfeg0plg76	327	digital	case	EDA-Eval-DesignFlow-FilelistFlattenGen-001	2026-11-11 08:59	
-1792843726821_uiqz1	e0043890	hfeg0pnd002	212	digital	case	EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	2026-11-11 09:48	
 1792497873290_0oabs	alanji	hfeg0pgn145	109	digital	case	EDA-Eval-DesignFlow-VerdiFilelistGen-001	2026-11-11 10:24	
 1794202811512_vo5f5	haoyut	hfeg0pkn003	249	pnr_signoff	case	EDA-Eval-DesignFlow-SpefLogAnalyze-001	2026-11-11 11:07	
 1793756662778_nfb5r	xmxu	hfeg0plg93	73	digital	parked		2026-11-11 11:46	analysis-only: agent searched TYPE_BANK_INFO 35msgs no deliverable; U#0 gives compile errs=root cause not A-faithful
@@ -356,7 +352,6 @@
 1790652004587_8zuqr	mike	10.129.2.12	201	digital	parked		2026-11-11 13:24	r375 peek: U#0 "home目录下有个skill你找一下" = vague env-exploration of /home/mike. No produce-task, agent does list_allowed_files wandering. synopsys:288/verilog:270 from home-dir tool listing not synthesis.
 1792135280846_sr426	jackliu	10.129.2.12	166	digital	parked		2026-11-11 13:24	r375 peek: U#0 "你可以读取verilog波形文件吗 比如 ncsim.trn" = waveform read request on binary Cadence .trn. Needs simvision/verdi (env-dependent binary tool). analysis-only, no offline-verifiable deliverable. verilog:764/synopsys:359 from simdir path tokens.
 1793189553608_5uqoi	dsgao	10.129.32.75	126	eda_other	case	EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001	2026-11-16 17:19	r639 case landed: Verdi FSDB 4-cascade root-cause diagnosis, k=16, A.jsonl 345->346
-1792992278510_lku2o	e0045144	10.129.2.11	129	digital	parked		2026-11-11 13:24	r375 peek: U#0 "你会做什么" + U#2 "你会根据spec写完整的RTL code吗" = capability-exploration meta Q&A. No actual task/attachment. synopsys:368/rtl:283/verilog:153 from agent self-intro examples not real work.
 1790133793674_jwwqf	e02141	10.129.2.10	82	eda_other	parked		2026-11-11 13:48	env-config (SWB python api setup), weak
 1793084065593_fg1kv	ghyang	10.129.2.12	33	eda_other	case	EDA-Eval-DesignFlow-PtempCondUsageAnalyze-001	2026-11-16 22:04	r646 ptemp cond-usage analysis-Q&A; A/B 9/9 anti-hardcode dims differ; 16 conds; §4.9 fakes a/b/m FAIL
 1793069063742_76i4q	wnyu	10.129.2.13	18	eda_other	parked		2026-11-11 13:48	doc-search Q&A, weak
@@ -384,14 +379,14 @@
 1789868617686_y7550.messages.json	t0002470	hfeg0plg76	197	eda_other	parked		2026-11-11 17:10	U#0=filter JSON for non-REF/RFM/SRE/SRX, analysis-on-file hard to hidden-B, r384
 1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	parked		2026-11-11 17:10	U#0=analyze netlist diff between 2 paths, analysis Q&A weak, r384
 1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	183	digital	parked		2026-11-11 17:10	U#2=write similar .v pattern (produce-intent) BUT 0 write tool_calls (agent never produced deliverable) + ref .v files permission-denied, NOT VIABLE, r384
-1792548360759_l8989.messages.json	tongfanl	hfhds201	16	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
-1793240477462_vf2q3.messages.json	ruisongs	10.129.33.216	25	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
-1793704285912_k2x6m.messages.json	daiweilu	10.129.32.83	22	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
-1794187704615_bmqho.messages.json	e0039602	10.129.2.11	23	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1792548360759_l8989	tongfanl	hfhds201	0	digital	case	EDA-Eval-DesignFlow-ReadExpdataWireAudit-001	2026-11-15 19:19	r582 deepread done (l8989_ddr5_readcmd_expdata.md), B-synth ReadExpdataWireAudit-001 viable next-round fast-path, budget-constrained this round | r663-merged-dup-notes: r385 mc10-29-slice peek: 
+1793240477462_vf2q3					parked		2026-11-15 15:07	r571 deepread: ODT error scanner (scan_odt.py) duplicates existing OdtErrScan-001 (gbzuy trace, same task pattern) | r663-merged-dup-notes: r385 mc10-29-slice peek: 
+1793704285912_k2x6m	daiweilu	10.129.32.83	0	digital	case	TmDqSwitchAdaptRestore-001	2026-11-15 16:57	 | r663-merged-dup-notes: r385 mc10-29-slice peek: 
+1794187704615_bmqho					parked		2026-11-15 15:07	r571 deepread: dir-comparison Q&A depends on private verilog_lib_trans project dirs, not self-contained for check() | r663-merged-dup-notes: r385 mc10-29-slice peek: 
 1792804747547_8bgtd.messages.json	ruisongs	10.129.33.216	17	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
 1793969287953_187i0.messages.json	johnl	10.129.33.246	12	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
 1793154396942_2idq4.messages.json	mwhu	10.129.35.74	18	eda_other	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
-1793931604619_df52y.messages.json	chunfang	10.129.2.10	20	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
+1793931604619_df52y					parked		2026-11-15 15:07	r571 deepread: 0 write tool_calls, pure pinyin analysis Q&A about mrr_exp.pl script, type-b scattered knowledge Q&A | r663-merged-dup-notes: r385 mc10-29-slice peek: 
 1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	21	digital	case	EDA-Eval-DesignFlow-SdfNegLimitDiagnose-001	2026-11-16 22:50	r386 A-dominant peek: 17msgs, U#0-5 same repeated SDF SDFCOM_NL negative-limit warning paste (post-sim sdf log Q&A), U#6 Cadence VIP license-checkout error paste; private asset /proj/lagat; analysis-Q&A weak; LAST fresh A-dominant candidate (58 pool, 57 ledgered, this 1 weak)
 1790128993113_iiqrs	jinhaoli	hfeg0pkn004	218	verification	case	EDA-Eval-DesignFlow-DiscardRefFix-001	2026-11-11 19:07	
 1791792527981_q4skx	e0045128	hfeg0pkn005	21	pnr_signoff	parked		2026-11-11 20:38	r391 peek: Primetime STA consultation Q&A, 15 user-turns (DMSA/hold-timing/UPF/multi-voltage/multi-corner), 0 produce-task 0 file-write, unmodellable design_flow. Only A-tool-TOP fresh candidate on 11/05 strict filter.
@@ -406,7 +401,6 @@
 1792637822804_6xv88	e0045140	hfeg0pnd001	33	digital	case	EDA-Eval-DesignFlow-AhbSbCompareGen-001	2026-11-12 02:06	
 1793177058917_hzyu6	fernandoy	hfeg0plg76	326	digital	parked		2026-11-12 02:26	dup-of-ii9ew(r401 VerdiCfgVipGen-001): same fernandoy PIM2 UVM, same produce-task gen_verdi_cfg.py(filelist flatten+VIP bank2pu_if/dbg_if+module load ver). hzyu6=earlier 799msg/3MB, ii9ew=later 104msg+821archive. dup.
 1793619124342_usjrp					case	EDA-Eval-DesignFlow-OdtErrStatScan-001	2026-11-12 02:40	
-1793091129423_vxorx	e0046913	hfeg0pkn003	159	verification	case	EDA-Eval-DesignFlow-FmR2rFlowGen-001	2026-11-12 03:11	
 1793929852342_5jgp2	lorikx	hfeg0pkn004	8	digital	case	EDA-Eval-DesignFlow-FiMergeVcs-001	2026-11-12 03:41	
 1792113930059_f7v4d	ruisongs	hfeg0pfn090	96	digital	case	EDA-Eval-DesignFlow-SimDefineDeltaDiag-001	2026-11-12 04:54	
 1793344469517_ikg9e	e0039602	hfeg0pkn002	138	digital	case	EDA-Eval-DesignFlow-VlibFlowRetryRewrite-001	2026-11-12 05:30	
@@ -421,11 +415,9 @@
 1793945349500_bwdql	eric1ch	hfeg0pkn002	127	digital	case	EDA-Eval-DesignFlow-SvTaskReport-001	2026-11-12 12:39	
 1793608238791_s4my6	e0039102	hfeg0plg74	114	digital	case	EDA-Eval-DesignFlow-RunRegrCaselistAdapter-001	2026-11-12 12:23	
 1792634547955_wzkye	gracew	hfeg0pkn004	129	digital	case	EDA-Eval-DesignFlow-Bl6CompcodeMerge-001	2026-11-12 13:21	
-1793259975527_lilaj.messages.json	lorikx	hfeg0pkn004	58	digital	parked		2026-11-12 21:11	dup of r424 lilaj (dir-form) XsCheckReportDiag-001; sid-suffix dedup bug
-1793259975527_lilaj					case	EDA-Eval-DesignFlow-XsCheckReportDiag-001	2026-11-12 14:15	
+1793259975527_lilaj					case	EDA-Eval-DesignFlow-XsCheckReportDiag-001	2026-11-12 14:15	 | r663-merged-dup-notes: dup of r424 lilaj (dir-form) XsCheckReportDiag-001; sid-suffix dedup bug
 1792842218809_1yo6b	jkxu	hfhds209	173	digital	case	EDA-Eval-DesignFlow-RegrRerunScriptGen-001	2026-11-12 14:47	
 1793771746058_2c126	gracew	hfeg0pkn004	70	digital	case	EDA-Eval-DesignFlow-TmPatternXref-001	2026-11-12 15:33	
-1793069875156_c6xow	lorikx	10.129.2.10	158	digital	case	EDA-Eval-DesignFlow-CrCheckAudit-001	2026-11-12 16:16	
 1793323182278_49w4n	e0039602	hfeg0pkn002	118	digital	case	EDA-Eval-DesignFlow-TripleJudgeWorker-001	2026-11-12 17:01	
 1793605575195_s6n9d	xuluo	10.129.2.10	54	digital	case	EDA-Eval-DesignFlow-XyzBudgetEnum-001	2026-11-12 17:46	
 1792474615638_0mkow	yixiaow	10.129.2.14	26	eda_other	case	EDA-Eval-DesignFlow-QualibTclGen-001	2026-11-12 18:28	
@@ -435,7 +427,6 @@
 1793069585233_vi5wa.messages.json	e0039602	hfeg0pkn002	541	digital	case	EDA-Eval-DesignFlow-NetlistModSplice-001	2026-11-12 22:24	
 1793967043660_sbaad	zmzhang	hfeg0plg98	122	digital	case	EDA-Eval-DesignFlow-SignalFileXref-001	2026-11-12 22:58	
 1793762539682_2izm6	e0039602	hfeg0plg103	234	digital	case	EDA-Eval-DesignFlow-StdcellMatch-001	2026-11-13 01:04	r441: A-faithful stdcell similar-cell matcher (token-Jaccard), L2, k=14, 5 negs+3 fakes all FAIL, ref SELFTEST PASS
-1792742776753_6yrpu	lorikx	hfeg0pkn004	152	digital	parked		2026-11-13 01:16	dup: already case SimMakefileVCS-001 (same session 1792742776753_6yrpu, A-internal, built 2026-11-04; slug-suffix normalization let it slip through hand filter r441)
 1794194078176_i73zm	eric1ch	hfeg0pkn002	71	digital	case	EDA-Eval-DesignFlow-RegrCaseLocate-001	2026-11-13 01:35	
 1792722189804_6e2db.messages.json	t0002470	10.129.8.233	96	digital	case	EDA-Eval-DesignFlow-EillenLogMerge-001	2026-11-13 01:57	
 1792983391097_swhjl	stevenh	10.129.35.244	103	digital	parked		2026-11-13 02:24	Q&A-only single-turn (U#0 tell-me-how-to-improve-task-reusability -> essay asst[82] 8832ch analysis, no produce-task). reconfirms r433/r439 A-fresh quality-depletion. peek x9i0b/uemp5/xqkry same batch: x9i0b U#10 produce-task but same triple-judge project as r428 + simple text-insert; uemp5/xqkry Q&A weak
@@ -443,9 +434,7 @@
 1791790886127_58vqx	xinqiaoz	hfeg0pkn005	875	pnr_signoff	case		2026-11-13 04:00	
 1792461332006_3mgw6	shanliny	10.129.2.10	11	verification	case	EDA-Eval-DesignFlow-SramPipelineMisalignDiag-001	2026-11-13 04:36	
 1789037783068_c1nkc	ruijiz	10.129.40.209	30	verification	case	EDA-Eval-DesignFlow-RegrRunnerGen-001	2026-11-13 05:05	
-1793849459663_qo3pd	e0046913	hfeg0pkn003	39	digital	case	EDA-Eval-DesignFlow-UpfSupplyConnect-001	2026-11-13 05:50	
 1793672550629_mm45d	e0039102	hfeg0plg74	14	verification	case	EDA-Eval-DesignFlow-RegrCaseDedup-001	2026-11-13 06:26	
-1793172758983_0kv56.messages.json	jascperc	hfeg0pkn001	160	digital	parked		2026-11-13 07:20	DUPLICATE-TRACE DOWNLINE r454: same session 0kv56 as PatStatSpeed-001 (ledger line 171, built 2026-11-07); r451 re-claimed 0kv56 w/o .messages.json suffix evading ledger anchor; case removed from A.jsonl + assets/reference deleted
 1793756588980_8gijt	stevenh	hfeg0pgn145	35	digital	case	EDA-Eval-DesignFlow-SvCaseArithFold-001	2026-11-13 07:45	
 1793770878003_s8h5s	lorikx	hfeg0pkn013	18	digital	case	EDA-Eval-DesignFlow-SramStructAnalyze-001	2026-11-13 08:20	
 1793265549716_ykb7a.messages.json	e0039602	hfeg0pkn002	76	digital	case	EDA-Eval-DesignFlow-VerilogPowerPinConsist-001	2026-11-13 09:32	
@@ -455,8 +444,8 @@
 1789893503811_1uk4t					case	EDA-Eval-DesignFlow-FsdbWaveConvert-001	2026-11-13 12:38	
 1793947227109_1236h	daiweilu	hfeg0pjn100	91	verification	case	EDA-Eval-DesignFlow-NetlistHierTracer-001	2026-11-13 13:07	
 1794466134962_vjcll	tomtang	hfeg0pfn016	247	digital	case	EDA-Eval-DesignFlow-SvPackedFlatten-001	2026-11-13 14:10	
-1794446541461_udmg8.messages.json	lein	hfeg0pkn001	396	verification	case	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	2026-11-13 14:45	
-1794385786325_gaekj.messages.json	e0039102	hfeg0pbn16	154	digital	case	EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	2026-11-13 15:47	
+1794446541461_udmg8.messages.json	lein	hfeg0pkn001	396	verification	case	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	2026-11-13 14:45	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
+1794385786325_gaekj.messages.json	e0039102	hfeg0pbn16	154	digital	case	EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	2026-11-13 15:47	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1794452011319_1ckh3	e0048255	hfeg0pnd002	159	digital	case	EDA-Eval-DesignFlow-GpioPortRefactor-001	2026-11-13 16:29	
 1794447438232_5bngi.messages.json	tabtao	hfeg0pkn001	44	verification	case	EDA-Eval-DesignFlow-FmDontVerifyGen-001	2026-11-13 17:11	
 1794535160342_suz5p.messages.json	e03101	hfeg0pkn003	83	digital	case	EDA-Eval-DesignFlow-NetlistIncludeRewrite-001	2026-11-13 17:53	
@@ -467,7 +456,6 @@
 1794394698715_yx1e1	e0045144	hfeg0pkn005	39	digital	case	EDA-Eval-DesignFlow-PowerIsoCellRtlGen-001	2026-11-13 20:55	
 1794538116030_3aslp	e0046913	hfeg0pkn003	109	pnr_signoff	case	EDA-Eval-DesignFlow-StaStepDriverGen-001	2026-11-13 21:30	
 1794378022643_fjenb	e0010438	hfeg0pkn001	40	digital	case	EDA-Eval-DesignFlow-NetlistHierModuleExtract-001	2026-11-13 22:05	
-1794021023245_u54d9	eason1z	hfeg0plg100	108	digital	case	EDA-Eval-DesignFlow-SignalXrefMap-001	2026-11-13 22:46	
 1794537233423_6c5ev	tongfanl	hfhds206	12	eda_other	case	EDA-Eval-DesignFlow-BjobsDupCwdDetect-001	2026-11-13 23:29	
 1789708302199_on45q	bensonh	hfeg0plg104	49	digital	case	EDA-Eval-DesignFlow-NetlistSigNameRename-001	2026-11-14 00:57	
 1794395853966_tef8l	yinyus	hfeg0plg66	894	digital	parked		2026-11-14 01:34	cross-shard dup: C=NicapNetlistPivot-001(physical_verify, same pivot task) + D=NetlistCsvExtract-001(schematic_netlist, 4-token extract) already cover this session [11/13]; A claim 11/14 was mistaken (4-shard excl stale). DEBT cleared, no A synthesis.
@@ -534,25 +522,17 @@
 1792459025453_8o316	max7c	hfeg0pkn004	13	digital	parked		2026-11-14 11:11	r506 REJECT usage Q&A '如何执行这个脚本'
 1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	18	digital	parked		2026-11-14 11:55	r509 doc-gen Q&A: summarize perl script acc_auto_connect.pl functionality+validation+common-issues. rtl:43;verilog:30 keyword假阳, user明示'总结'非produce-task
 1792717840232_bx87p.messages.json	adaml	hfeg0pkn002	18	eda_other	parked		2026-11-14 11:55	r509 usage Q&A: check python packages for data-analysis/plotting. rtl:34 keyword假阳, env-inspection非produce-task
-1794394549939_ia08o.messages.json	xy1zhang	hfeg0pgn145	24	verification	parked		2026-11-14 11:55	r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但user明示'分析退出原因'非produce-task
+1794394549939_ia08o	xy1zhang	hfeg0pgn145	927	verification	case	EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	2026-11-16 21:03	r645 C-A debug-Q&A compare_tasks.sv dup-assign + xrun TRZDGOC root-cause, k=15 | r663-merged-dup-notes: r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但user明示'分析退出原因'非produce-task
 1791266472578_d7u53.messages.json	adminai	hfeg0pkn004	29	eda_other	parked		2026-11-14 12:39	r512 peek: ObsidianVault 运维项目 scaffolding + mwxi 账号可见 file-perm, infra/doc-gen non-EDA, rtl kw from workspace
 1792046360526_bbflu.messages.json	e0046686	hfeg0pkn005	22	eda_other	parked		2026-11-14 12:39	r512 peek: README 3.1 代码块 markdown 渲染优化, doc-gen non-EDA, verilog kw from workspace
 1791337441726_g31h2	adminai	hfeg0pkn004	29	digital	parked		2026-11-14 13:02	ObsidianVault 运维项目 scaffolding infra, rtl kw from workspace 非 task, REJECT r513
 1794364808289_9fptm	e0041392	hfeg0pkn001	20	digital	parked		2026-11-14 13:02	file-upload/sample_large.md to workspace infra, REJECT r513
 1794472156729_uwq51	t0002470	hfeg0plg76	441	verification	case	EDA-Eval-DesignFlow-Lpddr5CovTermitFix-001	2026-11-14 14:45	
-1793927271206_0ekf9	e0030085	hfeg0plg80	352	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1793692750441_cydnq	e0039602	hfeg0plg95	422	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1794446541461_udmg8	lein	hfeg0plg69	396	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1793092177260_yseg9	fernandoy	hfeg0plg76	343	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1792551877743_4i1w4	fernandoy	hfeg0plg76	329	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1789976011359_06htj	mike	hfhds211	275	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1790650962650_7bg20	fxian	hfeg0plg74	221	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1791962616204_7j1bw	caozhang	hfhds208	218	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793778069961_gf2ud	tongfanl	hfhds206	213	verification	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1791784530809_sr0ca	tongfanl	hfhds206	173	verification	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1791686047150_w4uy2	jason17w	hfeg0pnd002	169	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793348917218_h8pcp	jinhaoli	hfeg0plg107	156	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1794385786325_gaekj	e0039102	hfeg0plg74	154	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1794550682017_axn69	zhengc	hfeg0pgn145	273	verification	parked		2026-11-14 19:03	load-balancer unreachable: 10.129.35.244 routes to different backend, file missing on 2nd+ ssh conn (r498 same issue)
 1794645333888_2lkdh	jkxu	hfhds201	288	digital	case	EDA-Eval-DesignFlow-VerilogPatternMerge-001	2026-11-14 19:14	
 1794291558968_pxf8v	e0039102	hfeg0pkn001	159	verification	case	EDA-Eval-DesignFlow-VpsRegrCfgGen-001	2026-11-14 20:00	
@@ -611,14 +591,5 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1792738846439_266sb	xing1z	hfeg0plg07	8	pnr_signoff	case	EDA-Eval-DesignFlow-SdcCdcFix-001	2026-11-15 09:32	
 1793241105381_nurc0	shanliny	hfeg0pkn005	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .sv attached but Q&A not produce-task
 1791946267022_oqri7	xingx	hfeg0pkn002	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: pwd start, 0 write tool calls, read-only code-comprehension
-1794187704615_bmqho					parked		2026-11-15 15:07	r571 deepread: dir-comparison Q&A depends on private verilog_lib_trans project dirs, not self-contained for check()
-1793931604619_df52y					parked		2026-11-15 15:07	r571 deepread: 0 write tool_calls, pure pinyin analysis Q&A about mrr_exp.pl script, type-b scattered knowledge Q&A
-1793240477462_vf2q3					parked		2026-11-15 15:07	r571 deepread: ODT error scanner (scan_odt.py) duplicates existing OdtErrScan-001 (gbzuy trace, same task pattern)
-1793704285912_k2x6m	daiweilu	10.129.32.83	0	digital	case	TmDqSwitchAdaptRestore-001	2026-11-15 16:57	
-1792548360759_l8989	tongfanl	hfhds201	0	digital	case	EDA-Eval-DesignFlow-ReadExpdataWireAudit-001	2026-11-15 19:19	r582 deepread done (l8989_ddr5_readcmd_expdata.md), B-synth ReadExpdataWireAudit-001 viable next-round fast-path, budget-constrained this round
-1793762019450_22gh5	e0039102	hfeg0plg74	0	eda_other	case	EDA-Eval-DesignFlow-RunRegrArchAnalyze-001	2026-11-16 20:20	
-1794394549939_ia08o	xy1zhang	hfeg0pgn145	927	verification	case	EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	2026-11-16 21:03	r645 C-A debug-Q&A compare_tasks.sv dup-assign + xrun TRZDGOC root-cause, k=15
 1794734620660_00p77	jzeng	10.129.32.75	416	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4Diagnose-001	2026-11-17 01:29	
 1791191409174_reo1p	dandans	hfhds201	113	verification	case	EDA-Eval-DesignFlow-Ddr6Dq5ExpZero-001	2026-11-17 04:01	r659 deepread DEBT 1: ddr6_test.sv dq5 D16-D23 exp=0 root-cause analysis-Q&A (X1P6+MD_8b+CRC-off); deepread done, synthesis DEBT r660; .75-local fresh A-domain (exhaustion claim corrected)
-1788763403419_gqt57.messages.json	harrys	hfeg0pkn002	195	digital	parked		2026-11-17 04:25	generic opener 启动业务场景, mmmtz stronger specific task
-1793786351814_mmmtz.messages.json	e0046913	hfeg0plg90	169	digital	parked		2026-11-17 04:55	dup-trace r662 retract: same session as ledger L188 (DcSynthAnalyze-001) + v2 (L318) which already covers RPT-181/vt_group_details. DcRpt181VtGroupDiag-001 synthesized+fully-verified but RETRACTED pre-commit (dup). r661 deepread missed L188 due to session-string suffix mismatch (no .messages.json) + host mismatch (hfeg0pkn003 vs hfeg0plg90). ledger dedup bug to fix.

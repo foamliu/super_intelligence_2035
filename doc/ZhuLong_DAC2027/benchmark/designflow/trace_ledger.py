@@ -163,8 +163,13 @@ def bar(pct, width=28):
 
 def _upsert(session, **kw):
     rows = load()
+    # r663 修：台账 session_file 混存 bare / .messages.json / .json 三种后缀形式
+    # （如 L188 "1793786351814_mmmtz" bare vs L624 "..._mmmtz.messages.json"），
+    # 旧实现用 == 精确匹配 → 同会话产生两行（dup）→ r662 在已造 case 上重复合成。
+    # 现用 _norm_sid 规范化后比较；命中则在原行就地更新，不新增行。
+    norm = _norm_sid(session)
     for r in rows:
-        if r["session_file"] == session:
+        if _norm_sid(r["session_file"]) == norm:
             for k, v in kw.items():
                 if v not in (None, ""):
                     r[k] = str(v)
@@ -365,10 +370,18 @@ def cmd_next(args):
 
 
 def cmd_claim(args):
-    for r in load():
-        if r["session_file"] == args.session and r["status"] in TOUCHED:
-            print("REFUSED: 该 session 已在台账（status=%s, case_id=%s, %s）"
-                  % (r["status"], r["case_id"] or "-", r["updated_at"]))
+    # r663 修：refusal 检查同时修两个 bug ——
+    #   (1) 后缀规范化：台账混存 bare/.messages.json/.json，旧 == 精确匹配漏判同会话
+    #       → r662 在 L188 已 case 的 mmmtz 上又 claim 了 mmmtz.messages.json (dup)。
+    #       现用 _norm_sid 规范化后比较。
+    #   (2) 跨 shard 互斥（r549 next 已修但 claim 漏修）：refusal 检查必须覆盖 4 shard
+    #       并集，否则 B/C/D 已 ledger 的 session 仍能在 A 重复 claim。
+    norm = _norm_sid(args.session)
+    for r in load_all_shards():
+        if _norm_sid(r["session_file"]) == norm and r["status"] in TOUCHED:
+            print("REFUSED: 该 session 已在台账（status=%s, case_id=%s, %s, shard_row=%s）"
+                  % (r["status"], r["case_id"] or "-", r["updated_at"],
+                     r["session_file"]))
             return 1
     _upsert(args.session, user=args.user, host=args.host, match_count=args.match,
             domain=args.domain, status="claimed", note=args.note)
