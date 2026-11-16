@@ -1227,3 +1227,4 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1793865811251_737pe					parked		2026-11-17 05:26	r693 peek: U#0 '你了解calibre的drc吗' + U#4 'calibre-RVE DRC 描述没有了怎么点出来' = UI/debug-Q&A, teeth-fail (UI click path unverifiable), park
 1791515463198_50mu7					parked		2026-11-17 05:26	r693 peek: U#0 'cd /home/xiao5w/SpiceAgent_Skill' = SpiceAgent skill development, off-C (B-domain spice_sim skill-dev), park
 1792496117600_3hwld	ellawu	10.129.2.10	46	pg_layout	case	EDA-Eval-DesignFlow-PgDummyFillFlowOrganize-001	2026-11-17 07:00	TVF deck flow organize, 16-cond, B anti-hardcode disjoint
+1793669028784_nmanu	gokuguo	10.129.35.74	13	physical_verify	case	EDA-Eval-DesignFlow-ErcRulecheckStatsScan-001	2026-11-17 07:24	
