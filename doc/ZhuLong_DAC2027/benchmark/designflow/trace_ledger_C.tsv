@@ -740,7 +740,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792203098166_zp3rn	sherlock	10.129.35.107	169	physical_verify	case	EDA-Eval-DesignFlow-PctAgtSpacingDeck-001	2026-11-13 23:28	
 1794012967757_ouzip	xxchen	hfeg0pkn001	427	physical_verify	case	EDA-Eval-DesignFlow-EncloseSide2Good5-001	2026-11-14 00:06	
 1792639733537_qwreb					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1793790199273_ge424					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1793790199273_ge424					case	EDA-Eval-DesignFlow-DrcDeckStatsAnalyzer-001	2026-11-16 17:43	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793264574506_nx2ac					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793686357167_wlw3b					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794297992607_e4kv0					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
