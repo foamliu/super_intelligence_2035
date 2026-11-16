@@ -885,7 +885,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794314373226_6eas3	e0030760	hfeg0pkn004	204	spice_sim	parked		2026-11-11 00:31	devops desktop-cleanup
 1794308888937_ddye0	haoliu	hfeg0pkn004	189	spice_sim	parked		2026-11-11 00:31	devops netlist-cleanup
 1794292541692_gu0ry	t0001988	hfeg0pkn002	46	spice_sim	parked		2026-11-11 00:31	trivial hello+paste
-1794195576366_jp8n9	xiwang	hfeg0pkn002	34	spice_sim	parked		2026-11-11 00:31	consultation floating-tool
+1794195576366_jp8n9	xiwang	hfeg0pkn002	34	spice_sim	case	EDA-Eval-DesignFlow-FloatingNetChecker-001	2026-11-16 08:19	r665 复活池变现 #46 floating-net checker tool-building
 1794295775296_m64s7	zqzhan	hfeg0pkn002	19	spice_sim	parked		2026-11-11 00:31	archive-JSONL low-hspice
 1794280510073_twt2n	yuyingc	hfeg0pkn001	15	spice_sim	parked		2026-11-11 00:31	consultation explain-script
 1794301691470_zg7xg	jinsongl	hfeg0pkn005	14	spice_sim	parked		2026-11-11 00:31	wrong-shard ERC
