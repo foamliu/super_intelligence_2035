@@ -206,7 +206,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793356935781_jqx69.messages.json	adaml	hfeg0pkn002	17	spice_sim	parked		2026-11-06 13:31	no_user_text
 1793266716067_bw8qq.messages.json	tongni	hfeg0pkn001	22	spice_sim	parked		2026-11-06 13:31	no_user_text
 1793774598225_ydt6x.messages.json	kaixuanx	hfeg0pkn002	18	spice_sim	parked		2026-11-06 13:31	cleanup_py_sh
-1791513539900_7bxtm.messages.json	adaml	hfeg0pkn002	21	spice_sim	parked		2026-11-06 13:31	gvim_encoding_howto
+1791513539900_7bxtm.messages.json	adaml	hfeg0pkn002	21	spice_sim	case	EDA-Eval-DesignFlow-GvimCjkConfigGen-001	2026-11-16 15:33	r679 revival #58: gvim CJK config gen (env-config/howto Q&A->generative vimrc+report, 21 断言 cross-input guard, A-leak, 确定性, 4 negs)
 1793669959152_3123n.messages.json	lvyy	hfeg0pkn004	576	spice_sim	parked		2026-11-06 13:31	why_current_diff_diag
 1793763989902_37j9u.messages.json	lvyy	hfeg0pkn004	516	spice_sim	parked		2026-11-06 13:31	dup_of_3123n_diag
 1793260410545_zh4v9.messages.json	lvyy	hfeg0pkn004	488	spice_sim	parked		2026-11-06 13:31	dup_of_3123n_diag
