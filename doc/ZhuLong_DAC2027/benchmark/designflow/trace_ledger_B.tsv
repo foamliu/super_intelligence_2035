@@ -1518,3 +1518,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1793347339807_a3qxh	e0024852	hfeg0pkn002	23	spice_sim	case	EDA-Eval-DesignFlow-SolidoSimlogLocateGuide-001	2026-11-16 13:35	
 1792649502711_qrr6j	thqu	hfeahpc501	14	spice_sim	case	EDA-Eval-DesignFlow-IddStimHowtoGuide-001	2026-11-16 20:36	
 1794280510073_twt2n.messages.json					case	EDA-Eval-DesignFlow-DumWLDeckExplainQA-001	2026-11-16 21:23	r688 复活池变现 #67: deck-grounded explain Q&A, deck_analyze.py 解析 SPICE deck→结构化 JSON, 63 条断言 + cross-input guard (HSPICE FF/125C vs FineSim SS/-40C) + A-leak guard
+1791875313313_ztoza	t0002965	hfhds201	142	spice_sim	case	EDA-Eval-DesignFlow-SimSetupExplainQA-001	2026-11-17 01:22	
