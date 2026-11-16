@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>白泽视觉线 · 总体方案与进展报告</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--teal:#39d0d8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;line-height:1.7;padding:24px;max-width:1100px;margin:0 auto}
+h1{font-size:1.7em;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:8px}
+h2{font-size:1.35em;color:var(--accent);margin:28px 0 12px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:1.12em;color:var(--purple);margin:20px 0 8px}
+h4{font-size:1.0em;color:var(--teal);margin:14px 0 6px}
+.subtitle{color:var(--muted);font-size:.9em;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th,td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+th{background:#1c2330;color:var(--accent);font-weight:600}
+tr:nth-child(even){background:#1c2330}
+code{background:#1c2330;padding:2px 6px;border-radius:4px;font-size:.88em;color:var(--teal)}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.8em;font-weight:600}
+.badge-green{background:rgba(63,185,80,.15);color:var(--green);border:1px solid var(--green)}
+.badge-red{background:rgba(248,81,73,.15);color:var(--red);border:1px solid var(--red)}
+.badge-yellow{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid var(--yellow)}
+.badge-blue{background:rgba(88,166,255,.15);color:var(--accent);border:1px solid var(--accent)}
+.badge-gray{background:rgba(139,148,158,.15);color:var(--muted);border:1px solid var(--muted)}
+.note{background:rgba(210,153,34,.08);border-left:3px solid var(--yellow);padding:10px 14px;margin:10px 0;border-radius:0 4px 4px 0;font-size:.9em}
+.note-ok{background:rgba(63,185,80,.08);border-left-color:var(--green)}
+.note-warn{background:rgba(248,81,73,.08);border-left-color:var(--red)}
+.note-info{background:rgba(88,166,255,.08);border-left-color:var(--accent)}
+ul,ol{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+.footer{color:var(--muted);font-size:.82em;text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)}
+.phase-box{display:flex;align-items:center;gap:12px;margin:8px 0;padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card)}
+.phase-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em}
+.phase-done{background:rgba(63,185,80,.15);color:var(--green);border:2px solid var(--green)}
+.phase-active{background:rgba(210,153,34,.15);color:var(--yellow);border:2px solid var(--yellow)}
+.phase-blocked{background:rgba(248,81,73,.15);color:var(--red);border:2px solid var(--red)}
+.phase-pending{background:rgba(88,166,255,.15);color:var(--accent);border:2px solid var(--accent)}
+.phase-body{flex-grow:1}
+.phase-body h4{margin:0 0 4px}
+.phase-body p{margin:0;font-size:.88em;color:var(--muted)}
+</style>
+</head>
+<body>
+<h1>白泽视觉线 · 总体方案与进展报告</h1>
+<p class="subtitle">报告日期：2026-11-16 · 服务器：10.252.32.17 (.17) · 撰写人：opencode 操作员</p>
+
+<h2>一、使命与主线</h2>
+<div class="card">
+<p><strong>一句话目标</strong>：验证 MLLM（多模态大模型）作为 EDA agent 系统一部分，在 WaveView 波形图识图任务上带来显著增益，并交付可引用的统计检验结果。</p>
+<h3>技术路线</h3>
+<ol>
+<li><strong>合成数据 SFT/RL</strong>：在合成波形数据上验证 SFT → RFT → GRPO 的训练管线有效性</li>
+<li><strong>真实题迁移</strong>：用 designflow WaveView 真题（等价重建）验证合成训练的迁移效果</li>
+<li><strong>Agent 编排</strong>：MLLM 作为 agent 系统一部分（非单打独斗），通过 VQA 工具编排获取增益</li>
+<li><strong>统计交付</strong>：McNemar / Bootstrap 配对检验，cheat rate = 0</li>
+</ol>
+<div class="note note-info"><strong>迁移说明</strong>：视觉线于 2026-11-13 从 .12（CPU-only，GPU 被 pretrain 占用）迁至 .17（8×A40，与 posttrain 共享）。基座模型从 qwen3vl_2b（困在 .12）切换为 Qwen3.5-2B（.17 本地可用）。</div>
+</div>
+
+<h2>二、已完成实验与结果</h2>
+
+<h3>2.1 合成波形 RL 实验序列（v1-v11）</h3>
+<div class="card">
+<table>
+<tr><th>版本</th><th>任务</th><th>方法</th><th>SFT 后</th><th>RL 后</th><th>统计检验</th><th>结论</th></tr>
+<tr><td>v1</td><td>周期回归</td><td>GRPO 离散奖励</td><td>9.2%</td><td>6.2%</td><td>—</td><td><span class="badge badge-red">负结果</span></td></tr>
+<tr><td>v2</td><td>周期回归</td><td>GRPO 离散 15 步</td><td>9.2%</td><td>9.2%</td><td>p=0.625</td><td><span class="badge badge-red">不显著</span></td></tr>
+<tr><td>v3</td><td>周期回归</td><td>GRPO 连续奖励</td><td>34.0%</td><td>25.0%</td><td>—</td><td><span class="badge badge-red">负结果</span></td></tr>
+<tr><td>v4</td><td>周期回归</td><td>RFT</td><td>34.0%</td><td>34.0%</td><td>p=1.000</td><td><span class="badge badge-red">NULL</span></td></tr>
+<tr><td><strong>v5</strong></td><td><strong>波形类型分类</strong></td><td><strong>SFT→RFT</strong></td><td><strong>16%</strong></td><td><strong>37%→53%</strong></td><td><strong>p=0.0009</strong></td><td><span class="badge badge-green">✅ 显著</span></td></tr>
+<tr><td>v6</td><td>类型分类</td><td>GRPO outcome-only</td><td>35%</td><td>40%</td><td>p=0.267</td><td><span class="badge badge-red">不显著</span></td></tr>
+<tr><td>v7</td><td>类型分类</td><td>GRPO+process reward</td><td>~40%</td><td>49.3%±6.4%</td><td>NS（6/6 判据通过但 B 偏高）</td><td><span class="badge badge-yellow">混合</span></td></tr>
+<tr><td>v8</td><td>频率比较</td><td>SFT→GRPO</td><td>0%</td><td>45%→52.5%</td><td>p=0.0312 (s0 only)</td><td><span class="badge badge-yellow">混合</span></td></tr>
+<tr><td>v9</td><td>频率比较（放大）</td><td>SFT→GRPO</td><td>—</td><td>—</td><td>2/6 NS</td><td><span class="badge badge-red">不显著</span></td></tr>
+<tr><td>v10</td><td>频率比较（Qwen3.5-2B）</td><td>SFT→GRPO</td><td>—</td><td>—</td><td>2/6 NS</td><td><span class="badge badge-red">不显著</span></td></tr>
+<tr><td>v11</td><td>回归 vs 生成</td><td>三臂对照</td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-red">负结果</span></td></tr>
+</table>
+<p><strong>核心发现</strong>：</p>
+<ul>
+<li><span class="badge badge-green">v5 唯一显著正结果</span>：SFT→RFT 在波形类型分类上 16%→53%，p=0.0009。RFT（rejection sampling FT）有效，GRPO 不行。</li>
+<li><span class="badge badge-red">GRPO 连续 6 轮无显著提升</span>：v1-v4/v6-v7 均未超过 SFT baseline。根因：group 内 advantage 方差=0（78.7% 的 group 所有 rollout 获得相同奖励 → 梯度无信号）。</li>
+<li><span class="badge badge-yellow">v8 混合</span>：频率比较任务 GRPO 在 seed0 显著（p=0.0312），但 3 seed 中仅 1 个显著，不稳定。</li>
+</ul>
+</div>
+
+<h3>2.2 WaveView 真题自测（10 题）</h3>
+<div class="card">
+<p>用 designflow 公开参数等价重建的 10 道 WaveView 真题（非合成集），测试 MLLM 识图能力。</p>
+
+<h4>单模型臂（V 系列：Python harness 一次提问，非 agent）</h4>
+<table>
+<tr><th>臂</th><th>设置</th><th>整题通过</th><th>每量准确率</th></tr>
+<tr><td>V0</td><td>文本 only（不看图）</td><td>0/10</td><td>30.9%</td></tr>
+<tr><td>V1</td><td>基模 Qwen3.5-2B VQA</td><td>0/10</td><td>38.2%</td></tr>
+<tr><td>V2</td><td>基模 + rft2_adapter VQA</td><td>0/10</td><td>55.5%</td></tr>
+<tr><td>V2c</td><td>V2 + 单位/标度 CoT 提示</td><td><strong>1/10</strong></td><td>50.0%</td></tr>
+</table>
+<p><span class="badge badge-green">首次整题 PASS</span>：V2c 通过 CoT 提示让 VQA 读出坐标轴 <code>x1e6</code> 标度并乘开，修复了 β11 题的单位误差（1363→1,363,000 ps）。这是<strong>提示杠杆</strong>，非权重变化。</p>
+
+<h4>Agent 臂（G 系列：glm-5.2 编排 + VQA 工具，正式测法）</h4>
+<table>
+<tr><th>臂</th><th>设置</th><th>整题通过</th><th>每量准确率</th><th>VQA 调用</th><th>重问</th></tr>
+<tr><td>G0</td><td>agent 无 VQA</td><td>0/10</td><td>18.2%</td><td>0</td><td>—</td></tr>
+<tr><td>G1</td><td>agent + 基模 VQA</td><td><strong>5/10</strong></td><td>82.7%</td><td>202</td><td>124</td></tr>
+<tr><td>G2</td><td>agent + rft2 VQA</td><td>4/10</td><td>82.7%</td><td>182</td><td>102</td></tr>
+</table>
+<p><span class="badge badge-green">Agent 编排带来 5 整题翻转</span>：G0→G1 = +5 整题（McNemar b=5 c=0 p=0.0625，n=10 不足仅参考）。agent 通过自检、交叉验证、换问法等编排策略，把每量准确率从 18.2% 推到 82.7%。</p>
+<p><span class="badge badge-yellow">G2 < G1 诚实负结果</span>：rft2 adapter 在 agent 设置下未额外增益（4 < 5），需扩样复验。</p>
+<p><span class="badge badge-gray">cheat=0</span>：所有臂 cheat_rate=0，image_reads=0，通过率可引用。</p>
+</div>
+
+<h3>2.3 v2-RFT 强化 adapter（合成集验证）</h3>
+<div class="card">
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>SFT baseline</td><td>60/90</td></tr>
+<tr><td>RFT 后</td><td>90/90</td></tr>
+<tr><td>McNemar p</td><td>0.0156</td></tr>
+<tr><td>cheat rate</td><td>0</td></tr>
+</table>
+<p><span class="badge badge-green">✅ 预注册判据全满足</span>：RFT 在合成集上显著有效（60→90, p=0.0156）。但迁移到真题仅翻转 1/10（V2c），说明合成→真实存在 domain gap。</p>
+</div>
+
+<h2>三、当前进展</h2>
+<div class="card">
+<h3>正在运行</h3>
+<ul>
+<li><strong>VQA 服务三端点</strong>：:30001（Qwen3.5-2B 基模）/ :30002（MCP）/ :30003（+rft2_adapter），watchdog 自愈在线</li>
+<li><strong>SSH 桥</strong>：36.15 → .17 三端点反向转发，断线 ~6s watchdog 自愈</li>
+<li><strong>vision loop</strong>（PID 1236761）：全交付态，例行巡检</li>
+</ul>
+<h3>闲置资源</h3>
+<ul>
+<li><strong>GPU5</strong>（10.6GB）：VQA serve，无查询时 idle，正常</li>
+</ul>
+</div>
+
+<h2>四、下一步计划</h2>
+<div class="card">
+
+<div class="phase-box">
+<div class="phase-num phase-active">1</div>
+<div class="phase-body">
+<h4>真题扩样（进行中，最高优先）</h4>
+<p>当前 10 题 → 扩到 30-50 题。针对精确计数（β10 vth）/ 精确数值（β8 clk_period）/ 跨面板反推（β11 edge_count）做 SFT/RL。目标：推高真题整题通过率。</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-pending">2</div>
+<div class="phase-body">
+<h4>designflow Tier 2a 评测</h4>
+<p>用 deepseek-v4-pro 作 SUT + 20 runs 跑 task1/task2 各 10 runs，验证 agent 系统端到端效果。需 .15 评测机可达。</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-pending">3</div>
+<div class="phase-body">
+<h4>CoT 提示杠杆推广</h4>
+<p>β11 的单位/标度 CoT 成功翻转 1 题 → 推广到所有时间量/数值量。非时间量（精确计数/跨面板）需设计专用 CoT 模板。</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-pending">4</div>
+<div class="phase-body">
+<h4>G2 < G1 扩样复验</h4>
+<p>n=10 不足以判定 rft2 adapter 是否在 agent 设置下无效。扩到 30+ 题后重做 G1/G2 对照。</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-blocked">5</div>
+<div class="phase-body">
+<h4>正式训练（阻塞）</h4>
+<p>.12/.29 GPU 全被 pretrain 占用（ETA ~2026-12-24-25）。新 SFT/RL 训练需等 GPU 释放。</p>
+</div>
+</div>
+
+</div>
+
+<h2>五、卡点与风险</h2>
+<div class="card">
+<table>
+<tr><th>卡点</th><th>影响</th><th>缓解措施</th><th>ETA</th></tr>
+<tr><td>.12/.29 GPU 被 pretrain 占用</td><td>无法做新 SFT/RL 训练</td><td>用 .17 GPU5 做 LoRA 微调；等 pretrain 完成</td><td>~2026-12-24</td></tr>
+<tr><td>原基座 qwen3vl_2b 困在 .12</td><td>无法用原模型</td><td>已切换 Qwen3.5-2B，v10+ 全部基于此</td><td>已解决</td></tr>
+<tr><td>真题样本量太小（n=10）</td><td>统计力不足（McNemar p=1.0）</td><td>扩样到 30-50 题</td><td>待执行</td></tr>
+<tr><td>合成→真实 domain gap</td><td>合成集 p=0.0156 但真题仅 1/10 翻转</td><td>针对真题卡点量设计 SFT 数据</td><td>待执行</td></tr>
+<tr><td>designflow .15 评测机可达性</td><td>Tier 2a 20 runs 无法启动</td><td>SSH 桥已建，但 designflow 原始 check.py 在 .15</td><td>待验证</td></tr>
+<tr><td>GRPO 连续 6 轮无显著提升</td><td>RL 路线可行性存疑</td><td>已转向 RFT + CoT 提示 + agent 编排</td><td>—</td></tr>
+</table>
+</div>
+
+<h2>六、诚实总结</h2>
+<div class="card">
+<div class="note note-ok"><strong>正向结论（可引用）</strong>：
+<ul>
+<li>v5 RFT 在波形类型分类上显著有效（16%→53%, p=0.0009, cheat=0）</li>
+<li>v2-RFT 在合成集上显著有效（60→90, p=0.0156, cheat=0）</li>
+<li>Agent 编排（G1）比单模型（V1）多翻转 5 整题，每量 38.2%→82.7%</li>
+<li>CoT 提示杠杆可修复单位/标度误差，翻转 1 整题</li>
+</ul>
+</div>
+<div class="note note-warn"><strong>负向结论（诚实记录）</strong>：
+<ul>
+<li>GRPO 连续 6 轮（v1-v4/v6-v7）均无显著提升，advantage 方差=0 是结构性瓶颈</li>
+<li>v8-v11 频率比较任务 RL 不显著（2/6 seed only）</li>
+<li>合成训练→真题迁移 gap 大：合成 90/90 但真题仅 1/10 整题通过</li>
+<li>rft2 adapter 在 agent 设置下未额外增益（G2=4 < G1=5），需扩样确认</li>
+</ul>
+</div>
+<div class="note note-info"><strong>路线判断</strong>：RFT > GRPO（在当前 2B+LoRA 规模下）；Agent 编排 > 单模型；CoT 提示 > 权重微调（对单位/标度类误差）。下一步重心应放在真题扩样 + 针对 domain gap 的 SFT 数据设计，而非继续调 GRPO 超参。</div>
+</div>
+
+<h2>七、已交付报告清单</h2>
+<div class="card">
+<table>
+<tr><th>报告</th><th>大小</th><th>内容</th></tr>
+<tr><td>report_vision_migration_workplan_zh.html</td><td>23KB</td><td>迁移后工作计划（3 阶段 8 任务）</td></tr>
+<tr><td>report_vision_cpu_rl_waveform_zh.html</td><td>10KB</td><td>CPU RL 波形实验</td></tr>
+<tr><td>report_vision_waveview_selftest_zh.html</td><td>20KB</td><td>WaveView 10 题自测 V0/V1</td></tr>
+<tr><td>report_vision_waveview_selftest_agent_zh.html</td><td>32KB</td><td>Agent 臂 G0/G1/G2 + 真题附录</td></tr>
+<tr><td>report_vision_waveview_failed_analysis_zh.html</td><td>41KB</td><td>WaveView failed 识图可解性分析</td></tr>
+</table>
+</div>
+
+<div class="footer">
+<p>白泽 ISEDA 2027 · 视觉线 · 2026-11-16</p>
+</div>
+</body>
+</html>

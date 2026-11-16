@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>白泽后训练线 · 总体方案与进展报告</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--teal:#39d0d8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;line-height:1.7;padding:24px;max-width:1100px;margin:0 auto}
+h1{font-size:1.7em;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:8px}
+h2{font-size:1.35em;color:var(--accent);margin:28px 0 12px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:1.12em;color:var(--purple);margin:20px 0 8px}
+h4{font-size:1.0em;color:var(--teal);margin:14px 0 6px}
+.subtitle{color:var(--muted);font-size:.9em;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th,td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+th{background:#1c2330;color:var(--accent);font-weight:600}
+tr:nth-child(even){background:#1c2330}
+code{background:#1c2330;padding:2px 6px;border-radius:4px;font-size:.88em;color:var(--teal)}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.8em;font-weight:600}
+.badge-green{background:rgba(63,185,80,.15);color:var(--green);border:1px solid var(--green)}
+.badge-red{background:rgba(248,81,73,.15);color:var(--red);border:1px solid var(--red)}
+.badge-yellow{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid var(--yellow)}
+.badge-blue{background:rgba(88,166,255,.15);color:var(--accent);border:1px solid var(--accent)}
+.badge-gray{background:rgba(139,148,158,.15);color:var(--muted);border:1px solid var(--muted)}
+.note{background:rgba(210,153,34,.08);border-left:3px solid var(--yellow);padding:10px 14px;margin:10px 0;border-radius:0 4px 4px 0;font-size:.9em}
+.note-ok{background:rgba(63,185,80,.08);border-left-color:var(--green)}
+.note-warn{background:rgba(248,81,73,.08);border-left-color:var(--red)}
+.note-info{background:rgba(88,166,255,.08);border-left-color:var(--accent)}
+ul,ol{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+.footer{color:var(--muted);font-size:.82em;text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)}
+.phase-box{display:flex;align-items:center;gap:12px;margin:8px 0;padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card)}
+.phase-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em}
+.phase-done{background:rgba(63,185,80,.15);color:var(--green);border:2px solid var(--green)}
+.phase-active{background:rgba(210,153,34,.15);color:var(--yellow);border:2px solid var(--yellow)}
+ phase-blocked{background:rgba(248,81,73,.15);color:var(--red);border:2px solid var(--red)}
+.phase-pending{background:rgba(88,166,255,.15);color:var(--accent);border:2px solid var(--accent)}
+.phase-body{flex-grow:1}
+.phase-body h4{margin:0 0 4px}
+.phase-body p{margin:0;font-size:.88em;color:var(--muted)}
+.kpi{display:inline-block;margin:4px 8px 4px 0;padding:4px 12px;border-radius:6px;font-size:.85em}
+.kpi-pos{background:rgba(63,185,80,.1);border:1px solid var(--green)}
+.kpi-neg{background:rgba(248,81,73,.1);border:1px solid var(--red)}
+.kpi-neutral{background:rgba(88,166,255,.1);border:1px solid var(--accent)}
+</style>
+</head>
+<body>
+<h1>白泽后训练线 · 总体方案与进展报告</h1>
+<p class="subtitle">报告日期：2026-11-16 · 服务器：10.252.32.17 (.17) · 撰写人：opencode 操作员</p>
+
+<h2>一、使命与主线</h2>
+<div class="card">
+<p><strong>一句话目标</strong>：把 2B 基模在 EDA 脚本任务上的通过率，用 SFT → RL 做显著提升，并出可引用的 5-run mean±std + 配对检验结果。</p>
+<h3>技术路线（四步）</h3>
+<ol>
+<li><strong>基线评测</strong>：MiniCPM5-2B 在 EDA-Eval-PyAether 158 题，5-run Pass@1</li>
+<li><strong>领域 SFT</strong>：用 agentic 轨迹数据做监督微调</li>
+<li><strong>RL (GRPO)</strong>：可验证奖励强化学习</li>
+<li><strong>评测对比</strong>：同测法下 SFT/RL 前后显著提升</li>
+</ol>
+<div class="note note-warn"><strong>替身预演说明</strong>：白泽预训练 ckpt 预计 2026-12-25 收敛。在此之前，本线用 MiniCPM5-2B 作替身模型验证 SFT/RL 全流程。替身结论不可直接迁移到白泽，但验证了管线可行性和方法论有效性。</div>
+</div>
+
+<h2>二、已完成实验与结果</h2>
+
+<h3>2.1 基线评测</h3>
+<div class="card">
+<table>
+<tr><th>口径</th><th>环境</th><th>Pass@1</th><th>统计</th><th>结论</th></tr>
+<tr><td>旧基线（.17 口径）</td><td>.17 无 RAG / 无沙盒 / run_commands 启用</td><td>3.04%</td><td>5-run mean±std = 0.0304±0.0083</td><td><span class="badge badge-red">环境缺失</span></td></tr>
+<tr><td>新基线（zhulong 口径）</td><td>36.15 有 RAG + 沙盒 + PreToolUse hook 禁 run_commands</td><td>18.99%</td><td>run1 = 30/158（单 run）</td><td><span class="badge badge-green">环境正确</span></td></tr>
+</table>
+<p><strong>Δ = +15.95pp</strong>（McNemar discordant=52）。差异来源：36.15 有 API 文档知识库（RAG）+ EDA 沙盒 MCP 可达 + PreToolUse hook 禁用 <code>run_commands</code>（反作弊设计）。</p>
+<div class="note note-info"><strong>干净 5-run 进行中</strong>：run1 复用 18.99%，run2/3/4 幂等复用回补干净版（4.43%/2.53%/3.80%），run5 正在 36.15 上执行。5-run mean 在 run5 落盘前不得引用。</div>
+</div>
+
+<h3>2.2 SFT 替身预演（v39）</h3>
+<div class="card">
+<table>
+<tr><th>模型</th><th>数据</th><th>训练</th><th>结果</th></tr>
+<tr><td>MiniCPM5-2B + SFT v39</td><td>PyAether API 语料合成训练对（v5v6v7 合并 1725 pairs）</td><td>105 步 / GPU6-7 TP=2</td><td>step105 = 3.04%（.17 口径 5-run locked）</td></tr>
+</table>
+<p><strong>关键修复</strong>：v11v38 SFT 出现格式崩溃（117/158 parse failures, 0% Pass@1），v39 通过修正 tool-call parser 修复，parse failure 降至 0%。SFT 后模型能正确组装 pyAether 代码。</p>
+<p><span class="kpi kpi-neutral">SFT 有效：生成后通过率 83.3%（36 题生成成功中 30 题通过）</span></p>
+<p><span class="kpi kpi-neg">SFT 瓶颈：121 题生成失败（76.6%），主因 = 工具格式问题（T6_tool_format）</span></p>
+</div>
+
+<h3>2.3 RL 替身预演</h3>
+<div class="card">
+<h4>R0：静态字符串奖励 GRPO（200 步）</h4>
+<table>
+<tr><th>指标</th><th>值</th><th>说明</th></tr>
+<tr><td>训练 reward</td><td>0.36 → 0.92 → 平台 0.90</td><td>字符串匹配 proxy 饱和</td></tr>
+<tr><td>评测 Pass@1</td><td>待 R0 5-run eval</td><td>—</td></tr>
+<tr><td>cheat rate</td><td>0/1600</td><td>反作弊全绿</td></tr>
+</table>
+<p><span class="badge badge-yellow">诚实负结果预警</span>：reward↑ ≠ Pass@1↑，模型把字符串匹配 proxy 优化到饱和，但 EDA-Eval 真实正确性未必提升。</p>
+
+<h4>R2：沙盒执行奖励 GRPO（200 步）</h4>
+<table>
+<tr><th>指标</th><th>R2 (GRPO+sandbox)</th><th>step105 基线</th><th>Δ</th></tr>
+<tr><td>4-run mean Pass@1</td><td>0.47%±0.61%</td><td>3.04%±0.83%</td><td><span class="badge badge-red">−2.56pp</span></td></tr>
+<tr><td>Wilcoxon p</td><td colspan="3">p=0.0025，decisively 负</td></tr>
+<tr><td>Bootstrap 95% CI</td><td colspan="3">[−3.89pp, −1.33pp]，全 < 0</td></tr>
+<tr><td>训练 reward</td><td>0.053→0.111→平台 0.090</td><td>—</td><td>梯度流动，非塌缩</td></tr>
+<tr><td>cheat rate</td><td>0/1600</td><td>—</td><td>反作弊全绿</td></tr>
+</table>
+<p><strong>负结果归因</strong>：训练 reward ↑ 但评测 Pass@1 ↓ ⇒ <strong>proxy reward（沙盒执行判定）与 EDA-Eval 任务正确性未对齐</strong>。非 infra 问题、非 cheat、非模型塌缩。GRPO 有效优化了错误目标。</p>
+<p><strong>技术问题</strong>：ppo_epochs=1 导致 PPO clip 全程失效（mean_ratio≡1.0），clip 机制未实际工作。R3 修复方案：ppo_epochs=2 + old_logp 冻结。</p>
+</div>
+
+<h3>2.4 管线 bug 排查（5-run 坍塌 RCA）</h3>
+<div class="card">
+<p><strong>现象</strong>：5-run 中 run2/3/4 报 0.0%，仅 run1 正常。</p>
+<p><strong>根因</strong>：抽取器只读 <code>code/&lt;task&gt;/ws/pyAether_code/</code>，但模型代码写到无 ws 路径 → 只取到 1/1/0 条 → 0.0%。<strong>不是模型 collapse，是管线 ws/no-ws 路径失配</strong>。</p>
+<p><strong>修复</strong>：回补 wrapper（归一化路径）+ 精确 batch↔eval 匹配。回补后干净数字：run2=4.43%、run3=2.53%、run4=3.80%（exec 43/28/35 ≫ 1，证伪 collapse）。</p>
+<p><span class="badge badge-green">已修复</span> <span class="badge badge-blue">产物全保留</span></p>
+</div>
+
+<h2>三、当前进展</h2>
+<div class="card">
+<h3>正在运行</h3>
+<ul>
+<li><strong>干净 5-run 评测链</strong>（PID 912262）：run5 正在 36.15 上执行 <code>run_cline_script.sh -p 4 -n</code>，预计今天内出 5-run mean±std</li>
+<li><strong>GPU6 serve</strong>（:8096）：minicpm5-2b-sft-v39-final，供 5-run 评测使用</li>
+</ul>
+<h3>闲置资源</h3>
+<ul>
+<li><strong>GPU4 serve</strong>（:8098）：minicpm5-2b baseline，无调用方，可关</li>
+<li><strong>GPU7 serve</strong>（:8095）：minicpm5-2b-grpo-R2-step200，R2 已明确负结果，可关</li>
+</ul>
+</div>
+
+<h2>四、下一步计划</h2>
+<div class="card">
+
+<div class="phase-box">
+<div class="phase-num phase-active">1</div>
+<div class="phase-body">
+<h4>出干净 5-run 基线（进行中）</h4>
+<p>等 run5 落盘 → 计算 zhulong 口径 5-run mean±std → 此为可引用的 SFT 后基线</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-pending">2</div>
+<div class="phase-body">
+<h4>R3 GRPO 修复再跑（等 5-run 完成后）</h4>
+<p>修 ppo_epochs=2 使 clip 生效 + 重新设计 reward（对齐 EDA-Eval 正确性而非沙盒执行 proxy）+ 8 题最小验证后扩量</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-pending">3</div>
+<div class="phase-body">
+<h4>Prompt 补丁消融实验（已设计，待执行）</h4>
+<p>P0 工具格式补丁（预期 +13~20pp）/ P1 degenerate guard / P2 submit 风暴 / P3 检索落地。一次只加一条，dev 79 题验证后扩量。</p>
+</div>
+</div>
+
+<div class="phase-box">
+<div class="phase-num phase-blocked">4</div>
+<div class="phase-body">
+<h4>白泽正式 SFT/RL（阻塞）</h4>
+<p>等白泽预训练 ckpt 收敛（ETA ≈ 2026-12-25）→ 从 BaiZe ckpt resume → 领域退火 → SFT → RL → 评测</p>
+</div>
+</div>
+
+</div>
+
+<h2>五、成功阶梯（预注册 · 先定后测）</h2>
+<div class="card">
+<table>
+<tr><th>里程碑</th><th>Pass@1</th><th>含义</th><th>当前状态</th></tr>
+<tr><td>起点</td><td>~3%</td><td>MiniCPM5-2B 基模，无适配</td><td><span class="badge badge-green">已实测</span> 3.04%±0.83%</td></tr>
+<tr><td>M1</td><td>50%</td><td>工具协议修好 + 环境正确</td><td><span class="badge badge-yellow">环境已修对</span> 18.99%（单 run），prompt 补丁待验证</td></tr>
+<tr><td>M2</td><td>65%</td><td>+ 领域 SFT</td><td><span class="badge badge-gray">SFT 已跑</span> 替身 v39 = 3.04%（.17 口径），zhulong 口径 5-run 待出</td></tr>
+<tr><td>M3</td><td>75%</td><td>+ RL</td><td><span class="badge badge-red">RL 负结果</span> R0/R2 均未提升，reward 设计需重做</td></tr>
+<tr><td>M4</td><td>85%+</td><td>逼近 DeepSeek-V4-Pro</td><td><span class="badge badge-gray">远期</span></td></tr>
+</table>
+<div class="note"><strong>诚实评价</strong>：当前处于 M1 阶段。环境口径已修对（3%→19%），但 SFT 在正确口径下的增量尚待 5-run 确认，RL 两条路线（静态奖励 / 沙盒奖励）均出负结果，reward 设计是最大瓶颈。</div>
+</div>
+
+<h2>六、卡点与风险</h2>
+<div class="card">
+<table>
+<tr><th>卡点</th><th>影响</th><th>缓解措施</th><th>ETA</th></tr>
+<tr><td>白泽 pretrain ckpt 未收敛</td><td>正式 SFT/RL 无法启动</td><td>替身预演验证方法论</td><td>~2026-12-25</td></tr>
+<tr><td>RL reward 与任务正确性不对齐</td><td>R0/R2 均负结果</td><td>R3 重新设计 reward + 修 ppo_epochs</td><td>5-run 完成后起跑</td></tr>
+<tr><td>5-run mean 尚未落盘</td><td>无可引用基线数字</td><td>run5 正在跑</td><td>今天内</td></tr>
+<tr><td>GPU 利用率低</td><td>GPU4/7 闲置浪费</td><td>建议关掉闲置 serve，释放显存</td><td>即时</td></tr>
+</table>
+</div>
+
+<h2>七、已交付报告清单</h2>
+<div class="card">
+<table>
+<tr><th>报告</th><th>大小</th><th>内容</th></tr>
+<tr><td>report_posttrain_collapse_rca_zh.html</td><td>27KB</td><td>5-run 坍塌 RCA（管线 bug，非模型 collapse）</td></tr>
+<tr><td>report_posttrain_rl_surrogate_zh.html</td><td>12KB</td><td>R2 RL 诚实负结果</td></tr>
+<tr><td>report_posttrain_zhulong_reattribution_zh.html</td><td>18KB</td><td>zhulong 口径再归因（排除 run_commands）</td></tr>
+<tr><td>report_posttrain_attribution_t6_zh.html</td><td>13KB</td><td>T6 工具格式归因表</td></tr>
+<tr><td>report_posttrain_pyaether_rca_v2_zh.html</td><td>38KB</td><td>基线 RCA v2（旧口径，已标 SUPERSEDED）</td></tr>
+<tr><td>report_posttrain_baseline_3model_zh.html</td><td>22KB</td><td>三模型基线横评骨架</td></tr>
+<tr><td>report_infra_tunnel_postmortem_zh.html</td><td>20KB</td><td>隧道故障复盘</td></tr>
+</table>
+</div>
+
+<div class="footer">
+<p>白泽 ISEDA 2027 · 后训练线 · 2026-11-16</p>
+</div>
+</body>
+</html>
