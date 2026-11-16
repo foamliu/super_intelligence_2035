@@ -2,22 +2,22 @@
 
 WAITING: 1
 
-> 🆕 **R2567 · 2026-11-16 10:2x — 监控轮·自检全绿 + cc rerun 65/82(14P/40F/11NA·0ConnRefused✅HARD VERIFIED·+0 vs R2566·2NA→FAIL(RuntimeError fix生效)·17 remaining·当前running regex-chess·ETA~today 20:00) + adaptive work模式(cap=4·clamped10→4)·0 real 429✅ + gateway 200✅ + reports porcelain=0✅**
-> - **自检**: load25.57/224 ✅(pretrain dominant)·mem 826GB used/1040GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
+> 🆕 **R2568 · 2026-11-16 11:0x — 监控轮·自检全绿 + cc rerun 66/82(15P/41F/10NA·0ConnRefused✅HARD VERIFIED·+1 vs R2567·regex-log新PASS·1NA→FAIL·16 remaining·当前running reshard-c4-data ~33min) + adaptive work模式(cap=4·clamped10→4)·0 real 429✅ + gateway functional✅ + reports porcelain=0✅**
+> - **自检**: load28.26/224 ✅(pretrain dominant)·mem 827GB used/1038GB avail ✅·0 harness proc >8000%CPU ✅(cc rerun harbor 0%·gw_proxy 0.4%)·disk /nas_train87%/tmp40% ✅·reports/ porcelain=0✅
 > - **git**: `git pull --rebase --autostash` = Already up to date·harness line clean ✅
-> - **cc rerun**: PID 1510521 alive(~30.5h·n=1·jobs-dir=0348·overlay-network-host.yml IN USE✅)·**65/82 done**(14P/40F/11NA·守恒65=65✅)·**17 remaining**·ETA~Nov16 20:00·当前task=regex-chess(verifier running via docker compose exec)
-> - **0 ConnRefused HARD VERIFIED ✅**: python scan=0 across 65 result.json(exception_info)·cc修复(overlay --network host·fix=R2463)confirmed·14题PASS=真能力·vs旧0/89=100%infra
-> - **NA→FAIL reclassification**: R2566 had 13NA→now 11NA(2→FAIL)·RuntimeError fix(claude_code.py L222-226 removed raise→verifier always runs)took effect for post-fix tasks·configure-git-webserver+overfull-hbox moved NA→FAIL(reward=0.0=能力)·1 job-level result.json(2026-11-15__03-48-59 batch dir)counted in glob but not task-level
-> - **PASS 14**: custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server
-> - **NA(11)**: code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli·(+1 job-level dir=2026-11-15__03-48-59)
-> - **429归因**: exception_info全无429✅·14处"429"grep命中=verifier测试内容(HTTP 429断言)·reward=0=能力失败·非额度·✅红线守住
-> - **502 infra**: 9/10 manifest tasks still reward=0.0(502 in stdout=infra)·1 fix-ocaml-gc=NA(VerifierTimeout)·rerun manifest 24 tasks备妥·待82完成后rerun(adaptive auto·同口径)
-> - **adaptive**: mode=work(周一10:21·cap=4·clamped 10→4)·0 real 429✅·累计429=0·--now验收已在R2519全通过✅
+> - **cc rerun**: PID 1510521 alive(~31.2h·n=1·jobs-dir=0348·overlay-network-host.yml IN USE✅)·**66/82 done**(15P/41F/10NA·守恒66=66✅)·**16 remaining**·ETA~Nov16 20:00·当前task=reshard-c4-data(verifier running via docker compose exec·~33min·within 3600s timeout)
+> - **0 ConnRefused HARD VERIFIED ✅**: python scan=0 across 66 result.json(exception_info)·cc修复(overlay --network host·fix=R2463)confirmed·15题PASS=真能力·vs旧0/89=100%infra
+> - **PASS 15**: custom-memory-heap-crash,dna-assembly,fix-code-vulnerability,fix-git,hf-model-inference,large-scale-text-editing,log-summary-date-ranges,model-extraction-relu-logits,modernize-scientific-stack,mteb-retrieve,multi-source-data-merger,openssl-selfsigned-cert,password-recovery,pypi-server,regex-log
+> - **NA(10)**: code-from-image,feal-differential-cryptanalysis,feal-linear-cryptanalysis,fix-ocaml-gc,llm-inference-batching-scheduler,make-doom-for-mips,mcmc-sampling-stan,mteb-leaderboard,protein-assembly,pytorch-model-cli
+> - **429归因**: exception_info全无429✅·reward=0=能力失败·非额度·✅红线守住
+> - **502 infra**: 9/10 manifest tasks still reward=0.0(502 in stdout=infra)·rerun manifest 24 tasks备妥·待82完成后rerun(adaptive auto·同口径)
+> - **adaptive**: mode=work(周一11:00·cap=4·clamped 10→4)·0 real 429✅·累计429=0·--now验收已在R2519全通过✅
 > - **7way报告**: cc仍0/89待merge(82完成→rerun infra/timeout+502→merge→REGEN·cc行换真实数字+502/timeout单列infra)
-> - **research日报2026-11-16**: harness建议=①记忆双落盘②静默错误率列③工具调用判分·均future work·已阅无新增actionable
+> - **research日报2026-11-16**: 已在R2567阅·harness建议=①记忆双落盘②静默错误率列③工具调用判分·均future work·无新增actionable
 > - **下一步**: ①cc 82完成(~Nov16 20:00)→rerun 24 infra/timeout/502题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html` ②成本补采 ③hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈25.6KB / MEMORY≈29.9KB（✅≤32KB）
+> - **📦 体积**: TASK≈25.6KB / MEMORY≈30.4KB（✅≤32KB）
 >
+> 📦 R2567 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 65/82(14P/40F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2566 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 65/82(14P/38F/13NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2565 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 63/82(14P/38F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
 > 📦 R2564 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 59/82(14P/35F/10NA·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+reports porcelain=0✅。需要时再读。
@@ -62,12 +62,12 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2565 cc rerun 63/82(14P/38F/11NA·0ConnRefused✅HARD VERIFIED·+4 vs R2564·当前verifying query-optimize) + adaptive work模式(cap=4·clamped10→4)·0 429✅ + gateway functional + infra rerun manifest备妥(24题)·等cc 82完成
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2564(cc rerun 6→63/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复)
-当前动作:     R2565: 监控轮·cc rerun PID1510521 alive(28.7h·n=1)·63/82(14P/38F/11NA)·0ConnRefused✅·当前task=query-optimize(verifier running)·19 remaining·adaptive work模式cap=4·0 429✅·load28/224✅·mem1037GB✅·0runaway✅·reports/ porcelain=0✅·W:0
-下一步:       ①cc 82完成(~Nov17)→rerun 24 infra/timeout/502题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu 2题=BLOCKED(Py3.9<3.11)
+PHASE:        R2568 cc rerun 66/82(15P/41F/10NA·0ConnRefused✅HARD VERIFIED·+1 vs R2567·regex-log新PASS·当前verifying reshard-c4-data) + adaptive work模式(cap=4·clamped10→4)·0 429✅ + gateway functional + infra rerun manifest备妥(24题)·等cc 82完成
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2567(cc rerun 6→66/82+adaptive落码+验收4/4✅+opencode/deepseek rerun COMPLETE+pi rerun 45/46+pi merge→REGEN 7way pi35/89+adaptive state修复)
+当前动作:     R2568: 监控轮·cc rerun PID1510521 alive(31.2h·n=1)·66/82(15P/41F/10NA)·0ConnRefused✅·当前task=reshard-c4-data(verifier running ~33min)·16 remaining·adaptive work模式cap=4·0 429✅·load28/224✅·mem827GB✅·0runaway✅·reports/ porcelain=0✅·W:0
+下一步:       ①cc 82完成(~Nov16 20:00)→rerun 24 infra/timeout/502题→merge→REGEN `report_harness_cc_tb21_attribution_zh.html`+`report_harness_tb21_7way_zh.html`(cc行从0/89换真实数字) ②成本补采(适配器写回token+wall) ③hermes qemu 2题=BLOCKED(Py3.9<3.11)
 ERROR_COUNT:  0
- 体积: TASK≈25.0KB / MEMORY≈28.5KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
+ 体积: TASK≈25.6KB / MEMORY≈30.4KB（归档~210KB）·✅TASK≤32KB·✅MEMORY≤32KB
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=89/E=89 | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 0/89 = 100%infra(88 ConnectionRefused+1 CLI bug·模型从未运行·tokens=0·iterations=-1)·真正"模型跑过且答错"=0题·详见reports/report_harness_cc_tb21_attribution_zh.html
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
