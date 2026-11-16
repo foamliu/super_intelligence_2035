@@ -97,7 +97,17 @@
 - `DOM.querySelectorAll('input[type=file]')` 返回 **2 个** ⇒ 只用 **`nodeIds[0]`**。
 - 正文段落用 `Input.insertText` **逐段 + Enter**，27–30 段可一次灌完；末段补空格 + 退格触发同步。
 
-## §E.1 本轮采编工具链（2026-11-15 18:0x 第 281 轮 · 实测可用）
+## §A.3 第 286 轮实测要点（2026-11-16 12:0x · **复核四条硬标准的正确读法**）
+
+| # | 要点 | 实证 |
+|:--|:--|:--|
+| 1 | **公开页直开会被重定向到首页** | 第一次 `open /article/7708615594404266538/` 后 `location.href` 变成 `https://www.toutiao.com/`、`document.title` 为空、`article` 里读不到图 ⇒ **必须再 `Page.navigate` 一次**才停在 `/article/…` |
+| 2 | **公开页首图是懒加载** | 不滚动时 `<img class="syl-page-img syl-img-loading">` 的 `src` 恒为 `data:image/gif;base64…`、`naturalWidth=1`、`currentSrc` 也是占位；**`window.scrollTo(0,300)` 后**才切为 `p3-sign.toutiaoimg.com/…`、`nw1440 nh810`、渲染 `676×380`。⇒ **第 ② 条判据必须在滚动之后读**，否则会把正常图误判为破图 |
+| 3 | **「低质/违规」字样可能是推荐流别人的正文** | 本轮公开页 `innerText` 命中「低质」「违规」，逐字回溯上下文发现来自**推荐流里一篇讲网文清退的别人文章**，本号 `<article>` 内为 0 ⇒ 判第 ③ 条时要**限定在 `<article>` 范围**或回溯上下文，不能全文 match |
+| 4 | **评论「输入成功≠落库」** | 黄仁勋帖两次尝试：第一次 `ERR_FILL_MISMATCH`；第二次 `len 30` 且 `submit-btn` 无 `disable`、点击后无报错，但重导航 **724 → 724**、列表无本号文本 ⇒ 该条未落库。另一次（RSI 帖）第一次 `FILLED len 64`（输入 35 字）却仍提交失败 ⇒ **回读长度须严格等于输入长度** |
+| 5 | **首页/频道页候选多为禁令 9 题材** | `/ch/tech`、`/ch/finance` 首屏前 12 条大量时政/军事/司法/突发伤亡 ⇒ 选题时先按标题过滤，再进楼 |
+
+
 
 | 工具 | 用途 | 说明 |
 |:--|:--|:--|
