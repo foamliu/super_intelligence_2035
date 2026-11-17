@@ -1,4 +1,47 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 146 -->
+## RUN_ID 146 — **确认 zhulong agent 工作副本是否已拉到新任务书（只读）**
+
+> 背景：22:43 已在 `doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md` 顶部下发「EDA-Flow-Bench 重定位 + 消融设计 + 计划书」新令；
+> 但 wake#1166（22:44）仍记「prompt=原文·无新指令」⇒ 疑为 **prompt 在 pull 前捕获（一轮滞后）** 或 **工作副本未 pull**。
+> 本块只读：看本地 HEAD / 任务书版本 / 标记命中 / loop 与 cline 进程；**不 pull、不改文件、不 kill**。
+
+```bash
+set -u
+echo "=== RUN_ID 146 | zhulong workcopy freshness (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+for GR in /nasdata/app.e0031982/code/super_intelligence_2035 /nas_train/app.e0031982/code/super_intelligence_2035; do
+  echo
+  echo "[repo] $GR"
+  if [ ! -d "$GR/.git" ]; then echo "  (不存在)"; continue; fi
+  cd "$GR" || continue
+  echo "  HEAD=$(git log -1 --pretty='%h %ad %s' --date=format:'%F %T' | cut -c1-110)"
+  echo "  vs origin: $(git rev-list --left-right --count origin/main...HEAD 2>/dev/null | awk '{print "behind="$1" ahead="$2}')"
+  echo "  TASK 最近提交: $(git log -1 --pretty='%h %ad %s' --date=format:'%F %T' -- doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md | cut -c1-110)"
+  F=doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md
+  if [ -f "$F" ]; then
+    echo "  本地 TASK: lines=$(wc -l < "$F") bytes=$(stat -c %s "$F") mtime=$(stat -c %y "$F" | cut -c1-19)"
+    echo "  标记命中(新令): $(grep -c 'EDA-Flow-Bench 论文重定位' "$F" 2>/dev/null)"
+    echo "  标记命中(结案令): $(grep -c '结案令 · 2026-11-17 09:3x' "$F" 2>/dev/null)"
+    echo "  首行: $(head -1 "$F" | cut -c1-90)"
+  else
+    echo "  TASK 文件不存在"
+  fi
+  echo "  git status(前3): $(git status --porcelain 2>/dev/null | head -3 | tr '\n' ' ')"
+done
+
+echo
+echo "[进程] zhulong loop / cline / relay"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -E 'zhulong_loop\.sh|zhulong_ops_relay\.sh' | grep -v grep | cut -c1-150
+echo "  -- 最近的 cline（含 zhulong 任务书者）--"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -F 'doc/ZhuLong_DAC2027/run' | grep -v grep | cut -c1-150 | head -5
+
+echo
+echo "[时钟] now=$(date '+%F %T')"
+echo "=== DONE 146 ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 145 -->
 ## RUN_ID 145 — **pretrain agent loop 存活体检（只读，备份通道）**
 
