@@ -74,6 +74,37 @@ EDA-Flow-Bench commit `487667419`「feat: per-case 文件方式 — jsonl 降级
 
 **未 apply**：SiOutDiag-001（reframe_note）—— cases/B/ 未迁移（13 case 之一，旧 jsonl 407→cases/B 394 时被剔除），待迁移后补。
 
+## 6. r718 跨 shard 迁移复核（2026-11-17，本轮完成）
+
+r717 假设 SiOutDiag-001「待迁移到 cases/B/」后由 B 补 apply reframe_note。本轮 r718 复核 cases/ 实际分布发现
+**该假设不成立**——SiOutDiag-001 已被 cases/ 重构正确放入 **cases/D/**（按 `metadata.domain=schematic_netlist`
+归 D 域），而非 cases/B/。这是**正确的**域归属：schematic_netlist 是 D 域，SiOutDiag-001 用户 `kli` 在
+hfhds206 上做 FineSim/PrimeSim DDR5 fullchip transient 仿真诊断，本质是网表/仿真日志分析（D 域 schematic_netlist），
+非 B 域 spice_sim/characterization。旧 B jsonl 含此 case 是历史合并口径遗留，cases/ 重构已修正。
+
+**实证**（r718 本轮跑）：
+```
+cases/ per shard: {'A': 348, 'B': 394, 'C': 435, 'D': 455} total: 1632
+B cases domain distribution: {'spice_sim': 330, 'characterization': 64}  # 全 B 域, 干净
+SiOutDiag-001: shard=D domain=schematic_netlist reframe_note=False
+```
+B cases/ 394 全部 spice_sim/characterization（B 域），SiOutDiag-001 不在其中；它在 cases/D/ 且 domain=schematic_netlist（D 域）。
+
+**结论**：
+- B 的 r713 spotcheck 当时因 SiOutDiag-001 在 B 旧 jsonl 内而抽样审，判 `keep_reframe_for_teeth` 成立（reframe
+  必要性判断与域归属无关，§4 有牙结构性必要）。该判断**仍有效**——SiOutDiag-001 的 diagnose-Q&A→produce 重构
+  确为 §4.2 subprocess + §4.1 hidden-B 有牙所必需，无论 case 落哪个 shard。
+- 但 **apply reframe_note 到文件是 D 的职责**（case 在 cases/D/，B 依同步纪律 🚫 不改 D shard 文件）。
+- B 的 metadata-fix 工作收口：**7/8 已 apply 到 cases/B/（r717），第 8 条（SiOutDiag-001 reframe_note）
+  连同 reframe_note 文案移交 D 线 apply**。
+
+**移交 D 线的 reframe_note 文案**（D 线 apply 到 `cases/D/EDA-Eval-DesignFlow-SiOutDiag-001.json` metadata）：
+```
+reframe_note: "diagnose Q&A→produce (§4 有牙必要, r713 spotcheck): 用户问仿真时间变长/memory 变大原因(diagnose)，重构为产诊断工具 siout_diag.py 输出 JSON；工具产出诊断结论即交付诊断，§4 有牙结构性必要，保留。"
+```
+依据：r713 spotcheck（designflow/intent_audit_B_r713_spotcheck.tsv）+ r716 §2 文案定稿 + r718 本节域归属复核。
+D 线 apply 后 B 线 r713 audit 的 5 条 keep_reframe_for_teeth 全部闭合。
+
 **自验**：① 7 文件 JSON 合法（json.load 全过）② `python3 scripts/build_jsonl.py --check` 通过（cases/ 总计 1631，B=394）③ `--shard B` 重建 jsonl = 394 行 ④ test 字段未动 ⇒ test_rationale k 不变，670/670 断言达标不受影响 ⑤ 仅 stage 本轮 7 文件，别线在途（RonMono 资产删除等）未碰。
 **commit**：EDA-Flow-Bench master `326751e5a`「designflow shard B #r717: apply r716 metadata-fix to 7 cases...」已 push。
 
