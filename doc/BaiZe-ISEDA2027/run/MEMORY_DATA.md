@@ -6,7 +6,7 @@ WAITING: 1
 
 > 🔴 **用户令 2026-11-13b**：分词数据搬到/nas_user→✅StepA DONE; 分词新shard→✅StepC全DONE(8192/8192/476B tok); StepD校验→✅通过→DATA_MAPPING更新→commit
 
-> 🔴 **用户令 2026-11-17 下载优先级调整**：按S2落地需求排序,预训练语料优先。下载优先级#1 MegaMath-web(887GB/4950files)已启动PID26529/log→/tmp/dl_megamath_web.log; #2 Nemotron-CC-Math-v1(122/196files/177GB/62%/PID3734806); #3 finemath→✅DONE(288parquet/140GB/0inc); #4 Code-Reasoning(1292/1637/79%/2.4TB/PID3734799); #5 Math-Reasoning(797/2228/36%/1.5TB/PID3734800); #6-10小数据集全✅DONE(OpenMathInstruct-2 12GB/OpenCodeReasoning 9.1GB/OpenCodeInstruct 6.4GB/code_contests 7.2GB/NuminaMath-1.5 507MB); 所有日志→/tmp/dl_*; nice19/ionice3/max-workers2/HF_HUB_DISABLE_XET=1; /nas_user 48T可用✅(≥5T红线)
+> 🔴 **用户令 2026-11-17 下载优先级调整**：按S2落地需求排序,预训练语料优先。下载优先级#1 MegaMath-web(142/4950files/3%/PID26529/log→/tmp/dl_megamath_web.log); #2 Nemotron-CC-Math-v1(130/196files/184GB/66%)→原PID3734806因ProxyError503崩溃,已重启PID318055/log→/tmp/dl_nemotron_math_v3.log(--token认证); #3 finemath→✅DONE(288parquet/140GB/0inc); #4 Code-Reasoning(1301/1637/80%/2.4TB/PID3734799); #5 Math-Reasoning(809/2228/36%/1.5TB/PID3734800); #6-10小数据集全✅DONE(OpenMathInstruct-2 12GB/OpenCodeReasoning 9.1GB/OpenCodeInstruct 6.4GB/code_contests 7.2GB/NuminaMath-1.5 507MB); 所有日志→/tmp/dl_*; nice19/ionice3/max-workers2/HF_HUB_DISABLE_XET=1; /nas_user 48T可用✅(≥5T红线)
 >
 > ✅ **用户令 2026-11-17 — S1/S2报告两份均已交付并commit**：①可行性报告report_s1s2_split_data.md(28KB/7节/commit cb4c93743) ②细化方案v2 report_s1s2_split_data_v2_zh.html(52KB/中文HTML/7节含blend TSV/甘特图/epoch核算/污染检查/Go-NoGo)。结论：4:4:2可行，stack-v3补code缺口(476B→过滤后286~405B)，MegaMath补math缺口(92~371B)，关键路径PC-1~PC-4预计11-23前就绪
 >
