@@ -1,8 +1,9 @@
 # Stable 段 S1/S2 等分可行性报告（Pretrain 线）
 
-> **撰写**: BaiZe Pretrain Agent · 2026-11-17
+> **撰写**: BaiZe Pretrain Agent · 2026-11-17（2026-11-18 更新）
 > **用户令**: 2026-11-17 — "把 Stable 的 700k 等分成 S1 和 S2，S1 配置不变，S2 中 web:code:math 按 4:4:2 配比"
 > **数据口径**: 所有 token 数来自 `DATA_MAPPING.md` 实测（`INDEX.tsv` + `du -sb`），非估算；评测数字来自 `EXPERIMENTS_PRETRAIN_2B.md` 实跑记录。
+> **交叉引用**: 数据线报告 `report_s1s2_split_data.md`（v1）及 `report_s1s2_split_data_v2_zh.html`（v2，2026-11-18）——数据线 v2 提供了 stack-v3-train + MegaMath 补入后的 shard 级 blend TSV，证明 4:4:2 在新数据就绪后可行（所有 epoch <1.2）。本报告 §4 和 §7 已据 v2 更新。
 
 ---
 
@@ -75,24 +76,33 @@ S1 阶段各类别总消耗：Web 1,086B / Code 279B / Math 103B — **均在 1 
 | Code | 40% | 586.8 | 279 | 866 | 550 | **1.57** | **316** |
 | Math | 20% | 293.4 | 103 | 396 | 242 | **1.64** | **154** |
 
-> ⚠️ **关键发现**：Code 和 Math 在 S1+S2 累计将分别达到 **1.57 和 1.64 epoch**，意味着约 36–39% 的 code/math 数据将被模型看到第二次。Web 则只用了 67%，完全无虞。
+> ⚠️ **关键发现（v1 11-17）**：仅用现有 blend 内数据，Code 和 Math 在 S1+S2 累计将分别达到 **1.57 和 1.64 epoch**，意味着约 36–39% 的 code/math 数据将被模型看到第二次。
+>
+> ✅ **更新（11-18，据数据线 v2）**：补入 stack-v3-train（476B 已分词，L4 过滤后 ~286–405B）+ MegaMath（Batch1+web ~371B）后，Code epoch 降到 **0.91–1.04**、Math epoch 降到 **0.65**，过拟合风险从🟠中-高降为🟢低。Web 则只用了 67%，完全无虞。详见 §4 数据量核算。
 
-#### S2 具体配比表（shard 级建议）
+#### S2 具体配比表（shard 级建议 · 2026-11-18 据数据线 v2 更新）
 
-S2 的 web:code:math = 4:4:2 需要映射到 7 个数据源。建议方案：
+S2 的 web:code:math = 4:4:2 需要映射到 9 个数据源（含新增 stack-v3-train + MegaMath）。建议方案（与数据线 v2 主方案一致）：
 
-| 数据源 | 建议 prop | S2 tokens (B) | 理由 |
-|:--|--:|--:|:--|
-| en_v1_4 | 0.35 | 513.4 | Web 主体，占 S2 web 的 87.5% |
-| ufw_l1_en_hq | 0.03 | 44.0 | HQ 补充，降低占比节省高质量语料给 decay |
-| ufw_zh | 0.02 | 29.3 | 中文保留少量 |
-| code_l2 | 0.28 | 410.8 | Code 主体，L2 质量较高 |
-| code_l3 | 0.12 | 176.0 | Code 补充，L3 更难 |
-| math_l1 | 0.12 | 176.0 | Math 主体 |
-| math_l3 | 0.08 | 117.4 | Math 补充 |
-| **合计** | **1.00** | **1,466.9** | — |
+| # | 数据源 | key | 建议 prop | S2 tokens (B) | 可用 (B) | S1+S2 累计 (B) | 累计 epoch | 备注 |
+|--:|:--|:--|--:|--:|--:|--:|--:|:--|
+| 1 | Ultra-FineWeb en_v1_4 | `en_v1_4` | 0.35 | 513.3 | 2,237.1 | 1,466.9 | 0.66 | Web 主体 |
+| 2 | Ultra-FineWeb L1 EN HQ | `ufw_l1_en_hq` | 0.03 | 44.0 | 150.2 | 117.4 | 0.78 | HQ 补充 |
+| 3 | Ultra-FineWeb ZH | `ufw_zh` | 0.02 | 29.3 | 112.8 | 88.0 | 0.78 | 中文保留少量 |
+| — | **Web 小计** | — | **0.40** | **586.6** | **2,500.1** | **1,672.3** | **0.67** | ✅ |
+| 4 | UltraData-Code L2 | `code_l2` | 0.18 | 264.0 | 421.5 | 484.1 | 1.15 | Code 主体 |
+| 5 | UltraData-Code L3 | `code_l3` | 0.05 | 73.3 | 128.6 | 132.0 | 1.03 | Code 补充 |
+| 6 | **stack-v3-train (L4 filt.)** | `stackv3_filt` | 0.17 | 249.3 | 286~405 | 249.3 | 0.62~0.87 | **新增**，97.6% 独特 |
+| — | **Code 小计** | — | **0.40** | **586.6** | **836~955** | **865.4** | **0.91~1.04** | ✅ |
+| 7 | UltraData-Math L1 | `math_l1` | 0.06 | 88.0 | 164.4 | 161.4 | 0.98 | Math 主体 |
+| 8 | UltraData-Math L3 | `math_l3` | 0.03 | 44.0 | 78.0 | 73.3 | 0.94 | Math 补充 |
+| 9 | **MegaMath (Batch1+web)** | `megamath` | 0.11 | 161.3 | ~371 | 161.3 | 0.43 | **新增**，Batch1~92B + web~279B |
+| — | **Math 小计** | — | **0.20** | **293.3** | **613.4** | **396.0** | **0.65** | ✅ |
+| — | **合计** | — | **1.00** | **1,466.5** | — | **2,933.7** | — | ✅ 加和=1.0 |
 
-> 注：以上为 pretrain 线基于 token 量核算的建议，最终 shard 级配比需 data 线确认数据可用性并做 pre-blend。
+> 类别校验：Web = 0.35+0.03+0.02 = **0.40** ✅ | Code = 0.18+0.05+0.17 = **0.40** ✅ | Math = 0.06+0.03+0.11 = **0.20** ✅
+>
+> 注：以上为 pretrain 线基于数据线 v2 报告的 shard 级配比建议。最终 blend TSV 由 data 线生成（PC-4），需根据 PC-1（stack-v3 L4 过滤）/ PC-2（MegaMath 分词）实际产出调整 prop。如 MegaMath-web 延迟，使用 fallback 方案（仅 Batch1，math 类别 epoch 1.18）。
 
 ---
 
@@ -224,9 +234,9 @@ Decay 段（700k–720k）维持不变：
   - 参考：MiniCPM 2.4B 在 code 数据上做 ~1.3 epoch，DeepSeek 2B 的 code 数据 epoch ≈1.2
 
 **缓解措施**：
-1. **data 线正在下载新 code 数据**：IFM/Code-Reasoning（3.28TB / ~1635 parquet）正在下载中，ETA ~2026-11-17 20:00 完成。如能在 S2 启动前完成分词并入 blend，可显著降低 code 的 epoch
-2. **stack-v3-train** 已完成分词（476B tokens），可作为 code 补充源（需去重 + 质量过滤）
-3. 如不补充新数据，建议 S2 code 占比从 40% 降到 30–35%（降低 epoch 到 ~1.3）
+1. **stack-v3-train 已分词（476B tokens）**——这是最关键的补充源。经 L4 语言过滤后预估 ~286–405B 有效 token，与 UDC 550B 合计 836–955B，正好覆盖 866B 需求（epoch 0.91–1.04）。数据线 v2 报告已确认可用，仅需 L4 过滤（目标语言筛选，~2–4h）。
+2. **IFM/Code-Reasoning 不入 stable 段**——该数据为 SFT 风格（含 reasoning chain / dialogue），格式与预训练语料不统一，更适合 decay 段或 post-train SFT/RL（与数据线 v2 结论一致）。
+3. **如不补充新数据**（fallback），建议 S2 code 占比从 40% 降到 30–35%（降低 epoch 到 ~1.3）。
 
 ### 4.2 Math 数据：第二瓶颈
 
@@ -245,9 +255,10 @@ Decay 段（700k–720k）维持不变：
 - 但 2B 模型的 math 能力天花板本就有限（DeepSeek 2B MATH ≈ 5–10%），过拟合的实际危害可能不显著
 
 **缓解措施**：
-1. **data 线正在下载新 math 数据**：MegaMath batch1 已完成（216GB / ~48B tokens），Math-Reasoning 在下载中（ETA ~11-18 05:00，~4.5TB / ~371B tokens）。如完成分词，math 数据量可从 242B 增至 600B+，epoch 降到 ~0.66
-2. **Nemotron-CC-Math-v1**（133B tokens）也是高质量补充候选
-3. 如不补充新数据，建议 S2 math 占比从 20% 降到 12–15%（降低 epoch 到 ~1.3）
+1. **MegaMath 是核心补充源**：Batch1 已下载（216GB / ~48B tokens），web 子集（~887GB / ~279B tokens）已调整为下载优先级 #1。Batch1 + web 合计 ~371B tokens，补入后 math 可用 = 242 + 371 = 613B，epoch 降到 **0.65** ✅。仅 Batch1 则 334B，epoch 1.18（可接受但不理想）。
+2. **Nemotron-CC-Math-v1**（133B tokens，ICLR2026 实测最优）已调整为下载优先级 #2，ETA ~11-23 分词完成，可作为 math 补充备选。
+3. **IFM/Math-Reasoning 不入 stable 段**——同 Code-Reasoning，SFT 风格数据留给 decay/post-train。
+4. 如不补充新数据，建议 S2 math 占比从 20% 降到 12–15%（降低 epoch 到 ~1.3）。
 
 ### 4.3 Web 数据：充裕
 
@@ -261,14 +272,22 @@ Web 数据完全充足，无过拟合风险。
 
 ### 4.4 新数据就绪时间线 vs S2 启动时间
 
-| 数据源 | 状态 | 预计分词完成 | S2 启动时间 | 能否赶上？ |
-|:--|:--|:--|:--|:--|
-| IFM/Code-Reasoning | 下载中（66%，ETA ~11-17 20:00） | ~11-19（2 天分词） | ~12-10（350k ≈ 350k-234.9k = 115k steps × 7s ≈ 9.0 天） | ✅ 可赶上 |
-| IFM/Math-Reasoning | 下载中（28%，ETA ~11-18 05:00） | ~11-22（4 天分词） | ~12-10 | ✅ 可赶上 |
-| MegaMath batch2 | 待启动 | ~11-25 | ~12-10 | ⚠️ 偏紧 |
-| Nemotron-CC-Math | 未下载 | ~12-01 | ~12-10 | ⚠️ 偏紧 |
+> **S2 启动时间修正**（2026-11-18）：当前 iter ≈ 235k（11-17），350k − 235k = 115k steps × 7s ≈ 9.3 天 → **S2 切换点 ETA ≈ 2026-11-26**（非此前估算的 ~12-10，该数字有误）。700k 终点 ETA ≈ 2026-12-25 不变。
 
-> **结论**：如果 data 线能在 S2 启动（~12-10）前完成新 code/math 数据的分词，则 code/math 的 epoch 可分别降到 ~1.1 和 ~0.7，过拟合风险大幅降低。**建议 S2 启动前提条件：至少 Code-Reasoning 和 MegaMath batch1 完成分词并入 blend**。
+| 数据源 | 状态（11-18） | 预计分词完成 | S2 启动时间 | 能否赶上？ |
+|:--|:--|:--|:--|:--|
+| **stack-v3-train** | ✅ 已分词（476B，8192 shard） | L4 过滤 ~11-19 | ~11-26 | ✅ **核心来源，必赶上** |
+| MegaMath Batch1 | ✅ 已下载（216GB / ~48B tok） | ~11-20 | ~11-26 | ✅ 可赶上 |
+| MegaMath-web (Batch2) | ⏳ 下载优先级 #1（~887GB / ~279B tok） | ~11-25 | ~11-26 | ⚠️ 偏紧（soft deadline） |
+| Nemotron-CC-Math-v1 | ⏳ 下载优先级 #2（260GB / ~133B tok） | ~11-23 | ~11-26 | ✅ 可赶上 |
+| IFM/Code-Reasoning | 🔄 下载中（66%）→ 已降为优先级 #4 | ~11-22（但 SFT 风格，留 decay） | — | ❌ 不入 stable（留 decay/post-train） |
+| IFM/Math-Reasoning | 🔄 下载中（28%）→ 已降为优先级 #5 | ~11-25（但 SFT 风格，留 decay） | — | ❌ 不入 stable（留 decay/post-train） |
+
+> **修正后结论**（2026-11-18，据数据线 v2 报告）：
+> - **Code**：stack-v3-train（476B 已分词，L4 过滤后 ~286–405B）补入后，code 可用 = 550 + 286~405 = 836~955B，累计需求 866B → **epoch 0.91~1.04** ✅
+> - **Math**：MegaMath Batch1（~92B）+ MegaMath-web（~279B）补入后，math 可用 = 242 + 371 = 613B，累计需求 396B → **epoch 0.65** ✅；仅 Batch1 则 334B → epoch 1.18（可接受）
+> - **前提条件**：data 线完成 PC-1（stack-v3 L4 过滤）→ PC-2（MegaMath 分词）→ PC-3（污染闸门扩展）→ PC-4（blend TSV 生成），预计 **11-23 前全部就绪**，不阻塞 S2（~11-26 启动）
+> - **此前"建议等 Code-Reasoning 分词"的结论作废**——Code-Reasoning 是 SFT 风格数据，应留给 decay/post-train，不入 stable 段（与数据线 v2 一致）
 
 ---
 
@@ -291,7 +310,7 @@ Web 数据完全充足，无过拟合风险。
 1. **R3 BO 的 89:6:4 是在 5k-step proxy 上优化的短地平线结果**，优化目标是 L1 loss。它不代表长跑最优配比——事实上当前生产配比（74:19:7）已经大幅偏离 BO 结果，说明用户和团队已判定 BO 结果不适用于长跑。
 2. **提议 S2（4:4:2）= DeepSeek 4:2:4**：DeepSeek 论文（arXiv 2401.02954）在 1.3B 模型 200B token 消融中验证 code:math:lang=4:2:4 最优（MMLU 48.3 / HumanEval 20.1 / GSM8K 15.4 / Avg 31.5），超过 4:2:4 时语言理解急剧下降。用户提议的 web:code:math=4:4:2 与之完全等价（仅排序不同），是有论文支撑的推理导向配比。
 3. **DeepSeek 4:2:4 是在 1.3B 模型 + 200B token 上验证的**，本项目 2.22B + 1.47T（S2 段）规模更大，但 2B 模型直接套用激进配比仍需关注数据 epoch。DeepSeek 2B 实际配比可能更接近 60:25:15（大模型才用得起 40% code）。
-4. **S2 的 code 40% 在 2B 模型上前所未有**——但 DeepSeek 1.3B 已验证 40% code 可行（HumanEval 20.1%），2B 模型参数更多，理论承受力更强。关键约束是数据量（550B code vs 587B 需求 → epoch 1.57），而非模型容量。
+4. **S2 的 code 40% 在 2B 模型上前所未有**——但 DeepSeek 1.3B 已验证 40% code 可行（HumanEval 20.1%），2B 模型参数更多，理论承受力更强。关键约束是数据量（仅现有 550B code vs 587B 需求 → epoch 1.57），而非模型容量。**补入 stack-v3-train 后此约束解除**（epoch 0.91–1.04，见 §4.1）。
 
 ### 5.2 Agentic 能力提升的机理
 
@@ -329,10 +348,11 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
 |:--|:--|--:|:--|
 | **通用能力回退**（L1 下降 >5pp） | 🟡 中 | 30% | Web 仍有 40%，S1 已建立基础；监控 L1 每 20k |
 | **Loss spike**（切换点 >0.3） | 🟢 低 | 15% | S4 实验显示配比切换 loss 反降；如出现可加 ramp |
-| **Code 过拟合**（epoch 1.57） | 🟠 中-高 | 50% | 补充新 code 数据（Code-Reasoning）；或降 code 到 30-35% |
-| **Math 过拟合**（epoch 1.64） | 🟠 中-高 | 55% | 补充新 math 数据（MegaMath）；或降 math 到 12-15% |
+| **Code 过拟合**（仅现有数据 epoch 1.57） | 🟢 低（补 stack-v3 后 0.91–1.04） | 20% | stack-v3-train L4 过滤后补入；如不补则降 code 到 30% |
+| **Math 过拟合**（仅现有数据 epoch 1.64） | 🟢 低（补 MegaMath 后 0.65–1.18） | 25% | MegaMath Batch1+web 补入；如不补则降 math 到 12-15% |
 | **训练不稳定**（NaN/skip） | 🟢 低 | 5% | LR 不变、精度不变、arch 不变，稳定性有保障 |
 | **评测解耦困难** | 🟢 低 | 10% | S1/S2 分界点有 ckpt（每 2k 存一次），可精确对比 |
+| **数据线 PC-1~PC-4 延迟** | 🟡 中 | 30% | Fallback 到 5:3:2（方案 B），不阻塞 S2 启动 |
 
 ### 5.4 利总结
 
@@ -348,32 +368,33 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
 
 ### 5.5 弊总结
 
-| 弊 | 说明 |
-|:--|:--|
-| ⚠️ 通用能力可能微降 | L1 可能 plateau 或降 1-3pp（web 从 74%→40%） |
-| ⚠️ Code 数据 epoch >1.5 | 550B 可用 vs 866B 需要，过拟合风险中等 |
-| ⚠️ Math 数据 epoch >1.6 | 242B 可用 vs 396B 需要，过拟合风险中-高 |
-| ⚠️ 需要新数据就绪 | 最好等 Code-Reasoning/MegaMath 分词完成再启动 S2 |
-| ⚠️ 切换点短暂数据分布偏移 | 可能 2-5k 步的 loss 波动 |
-| ⚠️ 2B 模型用 40% code 数据量受限 | DeepSeek 1.3B 验证 4:2:4 可行，但本项目 code 数据仅 550B（epoch 1.57）是主要约束 |
+| 弊 | 说明 | 缓解状态（11-18 更新） |
+|:--|:--|:--|
+| ⚠️ 通用能力可能微降 | L1 可能 plateau 或降 1-3pp（web 从 74%→40%） | 不可缓解，但 S1 350k 已建立基础 |
+| ⚠️ Code 数据 epoch >1.5（仅现有数据） | 550B 可用 vs 866B 需要 | ✅ stack-v3 补入后 epoch 0.91–1.04 |
+| ⚠️ Math 数据 epoch >1.6（仅现有数据） | 242B 可用 vs 396B 需要 | ✅ MegaMath 补入后 epoch 0.65–1.18 |
+| ⚠️ 需要新数据就绪 | stack-v3 L4 过滤 + MegaMath 分词 + 污染闸门 | data 线预计 11-23 前完成（PC-1~PC-4） |
+| ⚠️ 切换点短暂数据分布偏移 | 可能 2-5k 步的 loss 波动 | S4 实验显示 loss 反降，风险低 |
+| ⚠️ 2B 模型用 40% code | DeepSeek 1.3B 验证可行，但 2B 无先例 | code 数据已充足（836–955B），约束解除 |
+| ⚠️ 数据线延迟风险 | PC-1~PC-4 可能无法 11-23 前完成 | Fallback 到 5:3:2，不阻塞 S2 启动 |
 
 ---
 
 ## 6. 替代方案
 
-### 方案 A：原方案（4:4:2，直接切换）— 用户提议
+### 方案 A：原方案（4:4:2，直接切换）— 用户提议 · Pretrain 线推荐（v2 更新）
 
 | 项 | 值 |
 |:--|:--|
 | S2 配比 | web:code:math = 40:40:20 |
-| Code epoch | 1.57 |
-| Math epoch | 1.64 |
+| Code epoch | 0.91–1.04（补 stack-v3 后）|
+| Math epoch | 0.65–1.18（补 MegaMath 后）|
 | 实现难度 | 🟢 低 |
 | Code/Math 提升 | 🟢 高 |
 | 通用能力风险 | 🟡 中 |
-| **推荐度** | ⭐⭐⭐⭐ |
+| **推荐度** | ⭐⭐⭐⭐⭐（v2 上调，前提：data 线 PC-1~PC-4 在 11-23 前完成）|
 
-### 方案 B：温和方案（5:3:2，降低 code epoch）— Pretrain 线推荐
+### 方案 B：温和方案（5:3:2，降低 code epoch）— Fallback（如数据线延迟）
 
 | 项 | 值 |
 |:--|:--|
@@ -384,7 +405,7 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
 | Code 提升 | 🟡 中 |
 | Math 提升 | 🟢 高 |
 | 通用能力风险 | 🟢 低 |
-| **推荐度** | ⭐⭐⭐⭐⭐ |
+| **推荐度** | ⭐⭐⭐⭐（fallback，如 PC-1~PC-4 延迟时使用）|
 
 > Code 在 S2 占 30% → S2 code = 440B，S1+S2 = 719B，epoch = 1.31
 
@@ -432,19 +453,24 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
 
 ## 7. Pretrain 线综合建议
 
-### 7.1 推荐方案：方案 B（5:3:2）+ 等待新数据就绪
+### 7.1 推荐方案：4:4:2（前提：数据线 PC-1~PC-4 在 11-23 前完成）· 2026-11-18 更新
+
+> **推荐变更说明**（2026-11-18）：本报告 v1（11-17）推荐 5:3:2，基于"不补新数据"的保守假设。数据线 v2 报告（11-18）确认 stack-v3-train（476B 已分词）+ MegaMath 可在 11-23 前就绪，使 4:4:2 的所有 epoch 降到 <1.2（Code 0.91–1.04 / Math 0.65–1.18）。因此 **pretrain 线上调推荐为 4:4:2**，与数据线一致。如数据线 PC-1~PC-4 延迟，则回退到 5:3:2（方案 B）。
 
 **具体建议**：
 
 1. **S1 保持不变**：0–350k，配比 74:19:7，LR 1e-3 恒定
-2. **S2 采用 50:30:20** 而非 40:40:20：
-   - Code 30%（而非 40%）：epoch 从 1.57 降到 1.31，过拟合风险显著降低
-   - Math 20%（保持）：用户最关注 math 提升
-   - Web 50%（而非 40%）：L1 通用能力风险更低
-3. **S2 启动前提条件**：
-   - ✅ IFM/Code-Reasoning 分词完成（预计 ~11-19）
-   - ✅ MegaMath batch1 分词完成（预计 ~11-20）
-   - 如两个条件满足，code 可用量从 550B → 750B+，epoch 降到 ~1.0
+2. **S2 采用 40:40:20**（用户提议的 4:4:2）：
+   - Code 40%：stack-v3-train 补入后 epoch 0.91–1.04 ✅
+   - Math 20%：MegaMath 补入后 epoch 0.65–1.18 ✅
+   - Web 40%：epoch 0.67 ✅（完全充裕）
+3. **S2 启动前提条件**（据数据线 v2）：
+   - ✅ PC-1：stack-v3-train L4 语言过滤完成（~11-19）
+   - ✅ PC-2：MegaMath Batch1 分词完成（~11-20）
+   - ✅ PC-3：污染闸门扩展（HumanEval/MBPP/GSM8K/MATH/SWE-bench + 13-gram 全量扫描，~11-21）
+   - ✅ PC-4：blend_s2_preblend.tsv 生成（~11-23）
+   - ⚠️ PC-5（建议）：MegaMath-web 下载 + 分词（~11-25，soft deadline，如延迟用 fallback 启动 + S2 中途刷新 blend）
+   - **如以上条件全部满足 → 启动 4:4:2**；如 PC-1/PC-2 延迟 → 回退到 5:3:2（方案 B）
 4. **切换点处理**：直接切换（方案 A），不做 warmup/ramp。如 loss spike >0.3 再考虑 ramp。
 5. **评测监控**：
    - 350k（切换点）做 L1 + L2 全量评测，作为 S2 基线
@@ -452,27 +478,29 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
    - 重点观察 HumanEval / GSM8K 是否如预期提升
 6. **Decay 段不变**：700k–720k，blend_decay.tsv，LR 指数衰减
 
-### 7.2 如果用户坚持 4:4:2
+### 7.2 Fallback 方案：5:3:2（如数据线 PC-1~PC-4 延迟）
 
-如果用户确定采用 40:40:20，建议：
-1. **必须等待 Code-Reasoning + MegaMath 分词完成**，否则 code 1.57 epoch + math 1.64 epoch 的过拟合风险过高
-2. **在 S2 的 code blend 中加入 stack-v3-train**（476B tokens 已分词），增加 code 多样性
-3. **S2 的 code_l2 : code_l3 比例调整为 2:1**（而非当前的 ~4:1），因为 L3 难度更高、多样性更好，过拟合风险更低
+如果 data 线无法在 11-23 前完成 PC-1~PC-4（stack-v3 L4 过滤 / MegaMath 分词 / 污染闸门 / blend TSV），则回退到方案 B（5:3:2）：
+1. S2 code 占比从 40% 降到 30%（epoch 从 1.57 降到 1.31）
+2. S2 math 保持 20%（epoch 1.64，风险中-高但 2B 模型 math 天花板有限）
+3. Web 提到 50%（L1 通用能力风险更低）
 4. **加密 L1 评测频率**（每 10k 一次），如 L1 下降 >5pp 则考虑回退
 
 ### 7.3 关键数字汇总
 
-| 指标 | 方案 A (4:4:2) | 方案 B (5:3:2) | 当前 (74:19:7) |
+| 指标 | 方案 A (4:4:2) + 新数据 | 方案 B (5:3:2) 不补新数据 | 当前 (74:19:7) |
 |:--|--:|--:|--:|
 | S2 code tokens | 587B | 440B | — |
 | S2 math tokens | 293B | 293B | — |
-| Code 累计 epoch | 1.57 | 1.31 | 1.00 |
-| Math 累计 epoch | 1.64 | 1.64 | 1.00 |
+| Code 累计 epoch | **0.91–1.04** ✅ | 1.31 | 1.00 |
+| Math 累计 epoch | **0.65–1.18** ✅ | 1.64 | 1.00 |
 | L1 预期变化 | −1~3pp | −0~2pp | baseline |
 | HumanEval 预期 | 20–30% | 15–25% | 15.0% |
 | GSM8K 预期 | 15–25% | 15–25% | 10% |
-| 过拟合风险 | 🟠 中-高 | 🟡 中 | 🟢 低 |
+| 过拟合风险 | 🟢 低（epoch <1.1） | 🟡 中（math 1.64） | 🟢 低 |
 | 实现难度 | 🟢 低 | 🟢 低 | — |
+| **推荐度** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | — |
+| **前提** | data 线 PC-1~PC-4 在 11-23 前完成 | 无额外前提 | — |
 
 ---
 
@@ -495,15 +523,17 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
 | 11 | UltraData-SFT-2605 | 94 | 18.9 | 71 | 镜像完整（decay 用） |
 | 12 | UltraData-SFT-Agent-2609 | 13 | 6.0 | 22 | 镜像完整（decay 用） |
 
-### 8.2 新数据下载状态（截至 2026-11-17 10:00）
+### 8.2 新数据下载状态（截至 2026-11-18，据数据线 v2 报告）
 
-| 数据源 | 状态 | 体积 | 预计 tokens (B) | 分词 ETA |
-|:--|:--|--:|--:|:--|
-| IFM/MegaMath batch1 | ✅ 完成 | 216 GB | ~48 | ~11-20 |
-| IFM/Math-Reasoning | 🔄 28% | ~4.46 TB (est) | ~371 | ~11-25 |
-| IFM/Code-Reasoning | 🔄 66% | ~3.28 TB (est) | ~273 | ~11-22 |
-| MegaMath batch2 (web) | ⏳ 待启动 | ~887 GB | ~148 | ~11-28 |
-| Nemotron-CC-Math-v1 | ⏳ 未下载 | ~260 GB | ~133 | ~12-05 |
+| 数据源 | 优先级 | 状态 | 体积 | 预计 tokens (B) | 分词 ETA | S2 用途 |
+|:--|--:|:--|--:|--:|:--|:--|
+| MegaMath-web (Batch2) | #1 | ⏳ 下载优先级 #1 | ~887GB | ~279 | ~11-25 | S2 Math 核心 |
+| Nemotron-CC-Math-v1 | #2 | ⏳ 下载优先级 #2 | ~260GB | ~133 | ~11-23 | S2 Math 备选 |
+| finemath | #3 | ⏳ 下载优先级 #3 | ~149GB | ~34+10 | ~11-22 | S2 Math 补充 |
+| stack-v3-train | — | ✅ 已分词（476B） | — | 476 | L4 过滤 ~11-19 | **S2 Code 核心** |
+| MegaMath Batch1 | — | ✅ 已下载 | 216GB | ~48 | ~11-20 | S2 Math |
+| IFM/Code-Reasoning | #4 | 🔄 下载中（66%） | ~3.28TB | ~273 | ~11-22 | ❌ 留 decay/post-train |
+| IFM/Math-Reasoning | #5 | 🔄 下载中（28%） | ~4.46TB | ~371 | ~11-25 | ❌ 留 decay/post-train |
 
 ### 8.3 R3 BO 结果参考
 
@@ -519,18 +549,20 @@ Code 数据 (40%)          Math 数据 (20%)         Web 数据 (40%)
 | 维度 | 评估 |
 |:--|:--|
 | **可行性** | ✅ 技术可行——只需在 350k 处切换 blend TSV，不涉及架构/LR/精度变更 |
-| **数据充足性** | ⚠️ Code/Math 数据不足——需等待新数据分词完成，或降低 S2 配比 |
+| **数据充足性** | ✅ 补入 stack-v3 + MegaMath 后充足——Code epoch 0.91–1.04 / Math epoch 0.65–1.18（据数据线 v2） |
 | **LR 影响** | ✅ 无需调整——WSD stable 段 LR 恒定，配比切换不影响 LR schedule |
 | **L1 影响** | 🟡 轻微下降（1-3pp）——web 减少的代价，但不至于 catastrophic |
 | **L2/L3 影响** | ✅ 显著提升——code/math 翻倍直接利好 HumanEval/GSM8K |
 | **Agentic 机理** | ✅ 合理——code→工具使用，math→多步推理，为 post-train 打基础 |
-| **过拟合风险** | 🟠 中-高（方案 A）/ 🟡 中（方案 B）——取决于是否补充新数据 |
-| **推荐** | 方案 B（5:3:2）+ 等待新数据就绪 |
+| **过拟合风险** | 🟢 低（4:4:2 + 新数据）/ 🟡 中（5:3:2 fallback） |
+| **推荐** | **4:4:2**（前提：data 线 PC-1~PC-4 在 11-23 前完成）；否则回退 5:3:2 |
+| **S2 切换点 ETA** | ~2026-11-26（当前 iter ≈ 235k，115k steps × 7s ≈ 9.3 天） |
 
-**一句话结论**：S1/S2 等分在技术上可行且方向正确，但 4:4:2 的配比在 2B 模型 + 550B code / 242B math 的数据约束下偏激进（epoch >1.5）。建议采用 5:3:2 的温和方案，并等待 IFM 新数据分词完成后启动 S2，以将 epoch 控制在 1.3 以内。
+**一句话结论**（2026-11-18 更新）：S1/S2 等分在技术上可行且方向正确。数据线 v2 报告确认 stack-v3-train（476B 已分词）+ MegaMath 可在 11-23 前就绪，使 4:4:2 的所有 epoch 降到 <1.2（Code 0.91–1.04 / Math 0.65–1.18），过拟合风险从🟠中-高降为🟢低。**Pretrain 线推荐采用 4:4:2**（与数据线一致），前提是 data 线完成 PC-1~PC-4；如延迟则回退到 5:3:2。S2 切换点 ETA ≈ 2026-11-26。
 
 ---
 
 > **报告路径**: `run/reports/report_s1s2_split_pretrain.md`
-> **数据来源**: `DATA_MAPPING.md`（token 实测）/ `EXPERIMENTS_PRETRAIN_2B.md`（评测实跑）/ `MEMORY_PRETRAIN_2B.md`（训练状态）/ `configs/*.env` / `configs/blend_*.tsv`
+> **数据来源**: `DATA_MAPPING.md`（token 实测）/ `EXPERIMENTS_PRETRAIN_2B.md`（评测实跑）/ `MEMORY_PRETRAIN_2B.md`（训练状态）/ `configs/*.env` / `configs/blend_*.tsv` / 数据线 v2 报告 `report_s1s2_split_data_v2_zh.html`（shard 级配比 + 下载优先级 + PC-1~PC-5 计划）
 > **口径声明**: 所有 token 数来自 `INDEX.tsv` 实测，非估算；评测数字来自 `gguf_iter_*_fixed_8set/results.json` 实跑。无估算、无编造。
+> **更新历史**: v1（2026-11-17）初版，推荐 5:3:2（保守，基于不补新数据假设）；v2（2026-11-18）据数据线 v2 报告更新，上调推荐为 4:4:2（stack-v3 + MegaMath 补入后 epoch <1.2），修正 S2 ETA 从 ~12-10 到 ~11-26。
