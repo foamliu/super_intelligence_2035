@@ -1703,7 +1703,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794448471152_wiocz					parked		2026-11-14 06:06	netlist FIFO inspection Q&A
 1794461415971_4on6p					parked		2026-11-14 06:06	TCAD Sentaurus physics Q&A (not design-flow)
 1794377992905_h1qiv					parked		2026-11-14 06:06	Aether GUI how-to Q&A
-1793242667594_smzfi					parked		2026-11-14 06:06	SKILL source-locating Q&A env-dep
+1793242667594_smzfi					case	EDA-Eval-DesignFlow-BboxHierProbeAnalysis-001	2026-11-18 06:09	r858 revival: U30 analysis env-independent, .il as text asset
 1794296365532_wivn8					parked		2026-11-14 06:06	waveview GUI trivial (draw sin/fourier)
 1794382001446_2r1ji					parked		2026-11-14 06:06	live schematic edit env-dep (add inverter)
 1794474077262_ui0hu					parked		2026-11-14 06:06	CML divider live sim env-dep (near-dup q3nek)
