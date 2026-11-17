@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-17 wake#1136·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2482446 活 ✅**·无本线 subagent 消融 eval ✅·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`740fdca6d`（非本线 commit·zhulong 无变更）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
+WAITING: 0（2026-11-17 wake#1137·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2482446 活 ✅**·无本线 subagent 消融 eval ✅·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`740fdca6d`（非本线 commit·zhulong 无变更）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -21,6 +21,8 @@ WAITING: 0（2026-11-17 wake#1136·**🟠 subagent 消融线结案·done_all·st
 - [wake#1128~#1131 详条已滚出·2026-11-17 wake#1132] → `daily-memories/2026-11-17.md` §[wake#1122~#1131 rolled-out]（standby 心跳·done_all·repo HEAD 推进·非本线 commit·worktree 干净）。
 
 - [wake#1132~#1135 详条已滚出·2026-11-17 wake#1136] → `daily-memories/2026-11-17.md` §[wake#1132~#1135 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过）。
+
+- **[2026-11-17 wake#1137] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2509239 活 ✅**·**无本线 subagent 消融 eval ✅**·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`729d29c76`（wake#1136 commit·本线·已最新）。⚠️ `git pull --rebase` 因 `../benchmark/` designflow 线未提交改动失败（非本线·不触碰）。⚠️ 磁盘紧张（/home 2.3G/100%·/nasdata 13G/98%）属清盘线 done_all 范畴·非本线 subagent 消融待办。**WAITING=0 standby**。
 
 - **[2026-11-17 wake#1136] 🟠 standby 心跳·done_all·无待办**：用户手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2482446 活 ✅**·**无本线 subagent 消融 eval ✅**（`ps -ef|grep` 复核无 `subagent_ablation|A0prime|run_h2_ablation|A0pp` 进程）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`740fdca6d`（非本线 commit·zhulong 无变更）。本轮滚出 wake#1132~#1135 详条入 daily-memories·MEMORY ~39KB→降回软上限下。**WAITING=0 standby**。
 
