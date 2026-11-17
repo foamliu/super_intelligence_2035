@@ -1,0 +1,32 @@
+此为外部邮件，请注意内容是否涉及敏感信息is an external E-mail, please note if the content involves sensitive information.
+Yang Liu, Shiwei Hou, Xiyuan Chen, Yu Wang, Sen Yuan, Qirui Gan, Shao You, Feifan Chen, Wencheng Li, Shuyang Hu, Yongzhou Liu, Emma Xia, Xiaojing Lu, Hao Wang, Fan Xu, Yanfeng Li, you for submitting your paper to ASP-DAC.regret to inform you that the ASP-DAC 2027 Technical Program Committee was not able to include the paper below in the conference. 
+ID: 636: ZhuLong: Execution-Grounded LLM Agent for EDA Scripting with Offline API Self-Exploration(s): Yang Liu, Shiwei Hou, Xiyuan Chen, Yu Wang, Sen Yuan, Qirui Gan, Shao You, Feifan Chen, Wencheng Li, Shuyang Hu, Yongzhou Liu, Emma Xia, Xiaojing Lu, Hao Wang, Fan Xu, Yanfeng Li year’s ASP-DAC was highly competitive. We received 935 valid submissions and accepted 276, resulting in a 29.5% acceptance rate. Although your paper was not accepted, this does not mean it lacks technical merit. We encourage you to revise it based on the reviewers’ feedback and consider resubmitting to one of our sister conferences. detailed review comments are included below. Thank you again for your interest in ASP-DAC 2027. We warmly encourage you to join the conference to enjoy both the technical discussions and the professional networking opportunities. We look forward to seeing you there. yours,Kang, TPC Chair, ASP-DAC 2027-Ming Chen, TPC Vice Chair, ASP-DAC 2027
+
+---------------- The reviewers' comments ----------------------
+: 636: ZhuLong: Execution-Grounded LLM Agent for EDA Scripting with Offline API Self-Exploration
+
+----------------------- REVIEW 1 ---------------------
+: 636: ZhuLong: Execution-Grounded LLM Agent for EDA Scripting with Offline API Self-Exploration
+----------- Overall evaluation -----------
+: 0 (borderline paper)
+----- TEXT:
+paper claims dual-platform support via the unified lang parameter, yet SKILL is evaluated only on the 20 interactive tasks (50.0%, single attempt, self-exploration disabled) while the 158-task main benchmark is PyAether-only. Either a SKILL subset of the main benchmark or an explicit scoping of the claims to PyAether (with SKILL as preliminary) is needed to align the evidence with the dual-platform framing.
+
+----------------------- REVIEW 2 ---------------------
+: 636: ZhuLong: Execution-Grounded LLM Agent for EDA Scripting with Offline API Self-Exploration
+----------- Overall evaluation -----------
+: 0 (borderline paper)
+----- TEXT:
+paper presents ZhuLong, an execution-grounded LLM scripting agent for PyAether and SKILL.:
+- The system demonstrates strong engineering value by integrating API retrieval, script generation, sandbox execution, and iterative error correction into a unified workflow for commercial EDA scripting.
+- Validation is rigorous: generated scripts are executed in a real commercial EDA environment and verified via automated assertions, which is far more reliable than static or human-judged evaluation.
+- The ablation study is well-structured and clearly quantifies the individual contributions of retrieval, sandbox execution, and self-exploration.:
+- The core claimed contribution, offline API self-exploration, yields only a marginal +3.2 pp gain over the already strong sandbox-execution baseline. Given the relatively small benchmark size (158 tasks), this improvement may not hold up under repeated trials or statistical significance testing.
+- The self-exploration mechanism lacks crucial implementation details: the total scale of APIs explored, computational cost, stopping criteria for the exploration agent, and the degree of human intervention are not reported, making the method difficult to assess or reproduce.
+
+----------------------- REVIEW 3 ---------------------
+: 636: ZhuLong: Execution-Grounded LLM Agent for EDA Scripting with Offline API Self-Exploration
+----------- Overall evaluation -----------
+: 0 (borderline paper)
+----- TEXT:
+This paper presents ZhuLong, an LLM agent for PyAether and SKILL scripting that combines API retrieval, documentation lookup, sandbox execution, and offline API self-exploration. It also introduces a 158-task PyAether benchmark with assertion-based execution for evaluation. . The use of real execution feedback is practical and much more convincing than evaluating scripts by text similarity or human judgment. The paper also provides a reasonably detailed ablation study and error analysis, which makes it clear where the performance gains come from. . The claimed self-exploration contribution improves Pass@1 by only 3.2 points, while sandbox execution accounts for most of the gain, making the core algorithmic novelty rather modest. . Generality is also unclear: the main benchmark is PyAether-only, and SKILL is evaluated on just 20 interactive tasks without the full execution and self-exploration loop.

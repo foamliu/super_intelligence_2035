@@ -1,0 +1,51 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{makecell}  % 用于表头换行
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+GLM5.2 cloud
+
+- Total Correct Samples: 118
+
+- Total Failed Samples: 40
+
+- **Overall Sample Accuracy:** 0.7468
+
+GLM5.2-shengbo
+
+- Total Correct Samples: 109
+
+- Total Failed Samples: 49
+
+- **Overall Sample Accuracy:** 0.6899
+
+pass rate: 0.5443
+
+
+\begin{table*}[htbp]
+\centering
+\scriptsize
+\caption{Experiments}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\makecell{Knowledge} & \makecell{Patterns} & \makecell{Patterns\\shengbo} & \makecell{Skills} & \makecell{Skills\\shengbo} & \makecell{Pass@1 (train)\\\#case:~98} & \makecell{Pass@1 (train)\\shengbo} & \makecell{Pass@1 (val)\\\#case:~20} & \makecell{Pass@1 (val)\\shengbo} & \makecell{Pass@1 (test)} & \makecell{Pass@1 (test)\\shengbo} \\
+\hline
+bare & - & - & - & - & 90.8\% (89/98) & 94.9\% & {} & 78.3\%$\pm$5.77 & {} & 66.0\%$\pm$7.2 \\
+\hline
+round1 & 235 & 256 & 12 & 16 & 87.8\% (86/98) & 98.0\% & 84.0\%$\pm$9.6 & 81.0\%$\pm$8.2 & 76.5\%$\pm$5.2 & 78.0\%$\pm$9.9 \\
+\hline
+round2 & 325 & 334 & 22 & 20 & 95.9\% (94/98) & 96.9\% & 82.0\%$\pm$7.6 & 88.0\%$\pm$2.7 & 74\%$\pm$5.8 & 80.0\%$\pm$3.1 \\
+\hline
+round3 & 381 & 386 & 29 & 25 & 96.9\% (95/98) & {} & 83.0\%$\pm$4.0 & 80.0\%$\pm$3.5 & 77.5\%$\pm$4.7 & 75.5\%$\pm$6.7 \\
+\hline
+round4 & 440 & {} & 32 & {} & {} & {} & 84.0\%$\pm$2.2 & {} & 74.0\%$\pm$5.4 & {} \\
+\hline
+\end{tabular}
+\end{table*}
+
+
+
+\end{document}
