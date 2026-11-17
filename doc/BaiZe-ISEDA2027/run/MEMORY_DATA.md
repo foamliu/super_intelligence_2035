@@ -6,7 +6,7 @@ WAITING: 1
 
 > 🔴 **用户令 2026-11-13b**：分词数据搬到/nas_user→✅StepA DONE; 分词新shard→✅StepC全DONE(8192/8192/476B tok); StepD校验→✅通过→DATA_MAPPING更新→commit
 
-> 🔴 **用户令 2026-11-17 15:4x（继续下载+≥4星数据下载）**：IFM下载已于11-17崩溃(xet/cas ConnectionError)→✅已用`HF_HUB_DISABLE_XET=1`修复重启9路下载；🔄IFM/Code-Reasoning(1203/1637parquet/2.2TB/73%/PID3734799/log→/tmp/dl_code_reasoning_v2.log); 🔄IFM/Math-Reasoning(700/2228parquet/1.3TB/31%/PID3734800/log→/tmp/dl_math_reasoning_v2.log); 🔄P0下载: nvidia/Nemotron-CC-Math-v1(196files/260GB/PID3734806) + nvidia/OpenMathInstruct-2(59files/12.6GB/PID3734802) + nvidia/OpenCodeReasoning(42files/9.7GB/PID3734804); 🔄P1下载: nvidia/OpenCodeInstruct(52files/6.9GB/PID3734809) + deepmind/code_contests(44files/7.6GB/PID3734811) + HuggingFaceTB/finemath(293files/149GB/PID3734812) + project-numina/NuminaMath-1.5(5files/0.5GB/PID3734813); 所有日志→/tmp/dl_*_v2.log或/tmp/dl_*.log; nice19/ionice3/max-workers2; /nas_user 49T可用✅; MegaMath batch2(megamath-web 887GB)待IFM完成后启动
+> 🔴 **用户令 2026-11-17 下载优先级调整**：按S2落地需求排序,预训练语料优先。下载优先级#1 MegaMath-web(887GB/4950files)已启动PID26529/log→/tmp/dl_megamath_web.log; #2 Nemotron-CC-Math-v1(122/196files/177GB/62%/PID3734806); #3 finemath→✅DONE(288parquet/140GB/0inc); #4 Code-Reasoning(1292/1637/79%/2.4TB/PID3734799); #5 Math-Reasoning(797/2228/36%/1.5TB/PID3734800); #6-10小数据集全✅DONE(OpenMathInstruct-2 12GB/OpenCodeReasoning 9.1GB/OpenCodeInstruct 6.4GB/code_contests 7.2GB/NuminaMath-1.5 507MB); 所有日志→/tmp/dl_*; nice19/ionice3/max-workers2/HF_HUB_DISABLE_XET=1; /nas_user 48T可用✅(≥5T红线)
 >
 > ✅ **用户令 2026-11-17 — S1/S2报告两份均已交付并commit**：①可行性报告report_s1s2_split_data.md(28KB/7节/commit cb4c93743) ②细化方案v2 report_s1s2_split_data_v2_zh.html(52KB/中文HTML/7节含blend TSV/甘特图/epoch核算/污染检查/Go-NoGo)。结论：4:4:2可行，stack-v3补code缺口(476B→过滤后286~405B)，MegaMath补math缺口(92~371B)，关键路径PC-1~PC-4预计11-23前就绪
 >
@@ -45,13 +45,13 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        IFM Math/Code-Reasoning后台下载中(Math 24%/Code 55%) → WAITING=1(30min长睡监控)
-已完成:       ✅分词全DONE(8192shard/476B tok/1.8TB/0ERR);✅StepA/B/D全完成;✅EDA分析DONE;✅2TB下载DONE+ROI复盘;✅vision图文对调研报告;✅5agent datasets DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md;✅agent-data-protocol clone;✅DATA_MAPPING.md D1-D4+H.14;✅调研报告report_data_math_code_datasets_survey_zh.html;✅IFM/MegaMath≡LLM360/MegaMath SHA验证;✅污染检查结论;✅Toucan(21GB)+AgentTrove(19GB)+neulab(79GB);✅MegaMath batch1(216GB/5子集);✅P3 freeinference转告harness线
-当前动作:     例行巡检:两路IFM下载后台运行中(Math-Reasoning 540/2228=24%/1010GB/PID2351909/ni=19/elapsed~1h/ETA~108h;Code-Reasoning 898/1637=55%/1.7TB/PID3336545/ni=19/elapsed~1.7h/ETA~1.3h→~04:22);nice19/max-workers2不挤S1;磁盘/nas_user 113T/50T可用(57%)✅;IFM总~2.93T/1802parquet/6inc;新Math restart log 0error;orchestrator log有8条旧ProxyError(503)已被restart替代
-下一步:       ①等IFM Code-Reasoning完成(ETA~1.3h→~04:22)→更新DATA_MAPPING+commit+启动MegaMath batch2(megamath-web~1TB);②等IFM Math-Reasoning完成(ETA~108h→~11-21)→更新DATA_MAPPING+commit;③所有下载完成后做逐题污染检查→闭合IFM令
-阻塞:         无(IFM下载nice19/max-workers2后台运行,WAITING=1长睡30min监控)
-ERROR_COUNT:  0(StepC 0ERR;IFM下载正常运行;Code-Reasoning orchestrator.log 0新错误;Math-Reasoning restart.log 0error;orchestrator log 8条旧ProxyError已被restart替代)
-未完成指令:   有(IFM Math/Code-Reasoning下载未完成)→WAITING=1(后台下载,30min长睡监控)
+PHASE:        S2预训练数据下载中(MegaMath-web#1刚启动/Nemotron#2 62%/Code-R#4 79%/Math-R#5 36%) → WAITING=1(30min长睡监控)
+已完成:       ✅分词全DONE(8192shard/476B tok/1.8TB/0ERR);✅StepA/B/D全完成;✅EDA分析DONE;✅2TB下载DONE+ROI复盘;✅vision图文对调研报告;✅5agent datasets DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md;✅agent-data-protocol clone;✅DATA_MAPPING.md D1-D4+H.14;✅调研报告;✅MegaMath≡LLM360 SHA验证;✅MegaMath batch1(216GB/5子集);✅S1/S2可行性报告+细化方案v2报告(v2.6已修正350k~11-26/700k~12-25/余量~3天);✅小数据集#6-10全DONE;✅finemath#3 DONE(140GB)
+当前动作:     巡检+启动MegaMath-web下载(优先级#1,4950files/887GB/PID26529/刚启动/log→/tmp/dl_megamath_web.log);3路大下载后台运行中(Nemotron 122/196=62%/PID3734806;Code-R 1292/1637=79%/PID3734799;Math-R 797/2228=36%/PID3734800);nice19/ionice3/max-workers2不挤S1;/nas_user 48T可用✅;所有小数据集已完成
+下一步:       ①监控MegaMath-web下载进度(4950files/887GB,ETA~2-3天)②等Nemotron完成(~196files,ETA~6h)→更新DATA_MAPPING③等Code-R完成(79%,ETA~2.5h)④等Math-R完成(36%,ETA~17h→~11-19)⑤全部完成后逐题污染检查→闭合IFM令
+阻塞:         无(4路下载nice19/max-workers2后台运行,WAITING=1长睡30min监控)
+ERROR_COUNT:  0(所有下载正常运行;MegaMath-web刚启动无错误;3路大下载均正常)
+未完成指令:   有(MegaMath-web/Nemotron/Code-R/Math-R下载未完成)→WAITING=1(后台下载,30min长睡监控)
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）

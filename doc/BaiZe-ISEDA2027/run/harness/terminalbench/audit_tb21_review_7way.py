@@ -152,8 +152,14 @@ def classify_merged(task_data, all_tasks):
         # (exc_type=RuntimeError) 误判成 ability。修复：若有 rate_limit 信号且
         # 无任何「干净跑完」trial (exit_code==0 且无 rate_limit 信号)，归 infra。
         any_rate_limit = any(t.get("rate_limit") for t in trials)
+        # §2026-11-18: any_clean 也认 reconstructed rerun trial —— 它们没有
+        # exit_code (聚合 result.json 重建)，但有 exc_type (AgentTimeoutError 等)
+        # 或 has_verifier (verifier 跑了给了分) = agent 确实在非 429 状态下跑过。
+        # 这类 trial 证明该题已获公平重跑，不再归 rate_limit (pending rerun)。
         any_clean = any(
-            t.get("exit_code") == 0 and not t.get("rate_limit") for t in trials)
+            (t.get("exit_code") == 0 or t.get("exc_type")
+             or t.get("has_verifier"))
+            and not t.get("rate_limit") for t in trials)
         # §2026-11-17 14:5x point④: codex 适配器「掐断」检测。
         # stdout 有 agent 事件 (agent 确实在跑) 但 verifier 没跑 (has_verifier=False)
         # = 适配器把「单命令非 0 退出」误当「整个 agent 失败」→ raise RuntimeError
