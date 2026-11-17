@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **R2646 · 2026-11-17 19:0x — 🔴 codex修复重跑 监控轮(精确复算·修正schema): 38/83 done·7 rerun PASS·8 merged PASS(=1 original code-from-image + 7 rerun)·codex 8/89=9.0%·0 per-task verifier_null(修复①深度验证✅: original 84 verifier_null→rerun 0·注:3条aggregate记录非per-task已排除)·0 RuntimeError(修复①彻底消除exit-code误杀)·27 AgentTimeoutError(3600s·agent确实在跑·verifier判0.0=能力非infra)·4 clean-fail(ability)·0真实429(修复②✅·adaptive 4→5 clean_ramp)·自检clean(load26.4/224·MemAvail1025GB·0 runaway>8000%)·part3 RUNNING(PID221619 ALIVE·etimes~2451s·3 timestamp dirs=part1/2/3)·chained非codex37题WAITING(PID43417 ALIVE·等codex PID348003)·14:5x余项=③重跑完成(45 left·part4-7未启动·ETA~4h)→merge→重算真实Pass%→REGEN report_harness_tb21_7way_zh.html·WAITING=0**: 本轮修正result.json schema读取(reward在verifier_result.rewards.reward·metadata在agent_result.metadata)·rerun 7 PASS=build-pov-ray/cancel-async-tasks/fix-git/git-leak-recovery/hf-model-inference/kv-store-grpc/largest-eigenval·codex从1/89=1.1%假低分→8/89=9.0%(仍进行中·45 left)·10:2x已交付(撤回修正后Pass%✅)·7way interim: cline47.2/codex9.0/opencode48.3/cc33.7/pi39.3/hermes44.9/deepseek12.4
+> 🆕 **R2647 · 2026-11-17 19:3x — 🔴 codex修复重跑 监控轮(status quo): 38/83 done(unchanged·fix-ocaml-gc OCaml编译器题仍在跑·part3 harbor PID221619 etimes~3053s)·7 rerun PASS·8 merged PASS·codex 8/89=9.0%·0 per-task verifier_null(修复①✅)·0 RuntimeError(修复①✅)·27 timeout+4 clean-fail=能力·0真实429(修复②✅·adaptive 4→5 clean_ramp)·自检clean(load26.0/224·MemAvail1077GB·0 runaway>8000%)·part3 RUNNING(PID221619 ALIVE·fix-ocaml-gc task in docker exec)·chained非codex37题WAITING(PID43417 ALIVE·等codex PID348003)·45 left·part4-7未启动·ETA~3h·14:5x余项=③重跑完成→merge→重算真实Pass%→REGEN report·WAITING=0**: 本轮无新完成题(fix-ocaml-gc是复杂OCaml编译器bootstrap题·3600s超时内仍在跑)·codex.py fix①②③已commit(541a47e59+0cdd1d1b1+7f41cee52)·10:2x已交付(撤回修正后Pass%✅)·7way interim: cline47.2/codex9.0/opencode48.3/cc33.7/pi39.3/hermes44.9/deepseek12.4
+
+> 📦 R2646 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 38/83 done 7 rerun PASS 8 merged=9.0% 0 verifier_null(修复①深度验证) 0 RuntimeError 27 timeout=能力 0真实429 自检clean part3 RUNNING。需要时再读。
 
 > 📦 R2645 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 33/83 done 5 rerun PASS 6 merged=6.7% 0 verifier_null(修复①) 0真实429 自检clean part3 RUNNING。需要时再读。
 
@@ -31,9 +33,9 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2646 codex修复重跑监控轮·38/83 done·7 rerun PASS·8 merged=9.0%·0 per-task verifier_null(修复①✅)·0 RuntimeError·27 AgentTimeoutError=能力·0真实429·part3 RUNNING(PID221619 ALIVE)·chained非codex37题WAITING·WAITING=0
+PHASE:        R2647 codex修复重跑监控轮·38/83 done(unchanged·fix-ocaml-gc在跑)·7 rerun PASS·8 merged=9.0%·0 per-task verifier_null(修复①✅)·0 RuntimeError·27 timeout=能力·0真实429·part3 RUNNING(PID221619 ALIVE)·chained非codex37题WAITING·WAITING=0
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2620(stale prose修复+三报告REGEN)·R2626(codex 88失败重排)·R2627(codex.py point①修复+audit point④+83题429重跑LAUNCHED)·R2628(regex收紧+pending_rerun bug修复+三报告REGEN)·R2629(codex修复验证+chained非codex重跑LAUNCHED+fresh audit)·R2630-R2640(chunk1 COMPLETE 2/12 PASS监控+修复深度验证+chunk2 RUNNING监控)
-当前动作:     R2646: codex 83题重跑RUNNING(launcher PID348003 ALIVE·harbor PID221619 part3·38/83 done·7 rerun PASS=build-pov-ray/cancel-async-tasks/fix-git/git-leak-recovery/hf-model-inference/kv-store-grpc/largest-eigenval·0 per-task verifier_null=修复①生效·0 RuntimeError·27 AgentTimeoutError=能力·4 clean-fail=能力)·merged codex 8/89=9.0%·chained非codex 37题WAITING(PID43417 ALIVE·等codex完)
+当前动作:     R2647: codex 83题重跑RUNNING(launcher PID348003 ALIVE·harbor PID221619 part3·38/83 done·7 rerun PASS·0 per-task verifier_null=修复①生效·0 RuntimeError·27 timeout+4 clean-fail=能力)·merged codex 8/89=9.0%·fix-ocaml-gc(OCaml编译器题)仍在跑·chained非codex 37题WAITING(PID43417 ALIVE·等codex完)
 下一步:       ①监控codex 83题重跑(ETA~6h·part3进行中·57 left@~5 concurrent) ②监控chained非codex 37题(自动启动·6路串行) ③全部跑完→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html(更新codex行+stale叙事)+glm53_7way ④SWE-bench predict续推
 ERROR_COUNT:  0
  体积: TASK≈29.7KB / MEMORY≈22KB（✅≤32KB）
