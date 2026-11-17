@@ -9,22 +9,15 @@ WAITING: 0
 > - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN 双报告(cline用0932 tag单独merge) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
 > - **📦 体积**: TASK≈23.2KB / MEMORY≈31.9KB（✅≤32KB·本轮删R2595/R2596/R2597冗余同日📦指针腾位）
 
-> 🆕 **R2600 · 2026-11-17 09:1x — 用户令·失败归因复核(08:5x) ✅ 已交付**
-> - **本轮动作**：执行 11-17 08:5x 用户令「复核 7-way 失败 case：是否均为能力不足，而非 infra」→ 写 `audit_tb21_review_7way.py`（合并 original+rerun 后四桶归因）→ 更新两份报告
-> - **TB-2.1 修正后 Pass%**（合并后·纯infra剔除）：cline 47.2%→47.7%(inf=1) · codex 1.1%→1.1%(inf=2·86 ability=真能力) · opencode 48.3%→54.4%(inf=10) · cc 33.7%→34.1%(inf=1) · pi 39.3%→47.3%(inf=15) · hermes 42.7%→50.0%(inf=13) · deepseek 12.4%→13.1%(inf=5)
-> - **SWE-bench patch 非空初筛**：cline 329/332=99.1% · codex 137/139=98.6% · deepseek 175/175=100% → 失败为能力(tests fail)非 infra
-> - **核心结论**：各路失败以**能力不足**为主；纯 infra 题数少（synthetic 为主·opencode10/pi14/hermes13/deepseek5/codex2 + cline/cc各1 conn_ref）。codex 86/89=ability=低分是真能力。详见 `reports/report_harness_tb21_7way_zh.html` §失败归因复核 + `report_harness_glm53_7way_swebench_tb_zh.html` §5b
-> - **重跑清单**：opencode synthetic10 + pi synthetic14 + hermes synthetic13(qemu部分BLOCKED) + deepseek synthetic5 + codex synthetic2 + cline/cc各1 conn_ref(pytorch-model-recovery)
-> - **自检**: 0 script/0外链✅·reports/ porcelain=0✅·0 harness eval procs✅·TASK26.7KB✅·MEMORY≈31KB✅
-> - **📦 体积**: TASK≈26.7KB / MEMORY≈31KB（✅≤32KB）
-> - **下一步**: ①等运维审阅复核结论②synthetic题rerun(adaptive auto)③SWE-bench predict续推④等运维新令
+> 🆕 **R2603 · 2026-11-17 10:0x — 监控心跳轮·v2 rerun 进行中(codex part1)·自检全绿·无未完成指令**
+> - **自检**: load29.57/28.83/28.21/224✅(~13%·pretrain dominant·非本线)·mem837GB/2015GB avail1029GB✅·0 harness eval runaway✅(codex container低CPU·cline hub daemon 30%/7GB=非eval·opencode serve 6%/1.3GB=旧进程·均远低阈值)·reports/ porcelain=0✅·manifests+traces gitignore命中✅·adaptive mode=work current=4/4 hold(quiet=29m)·累计429=0✅·git本地=origin=011cd0e2d✅(rebased·vision commit)
+> - **运维指令区**: 全部✅已交付·无未完成离散指令
+> - **本轮动作**: v2 7way rerun(R2602启动)进行中——orchestrator顺序跑 codex(2)→hermes(13)→opencode(10)→pi(15)→deepseek(5)→cc(1)=47trial·当前codex route part1(bn-fit-modify容器内运行+break-filter-js-from-html队列·1 result.json reward=None=未eval)·cline用0932 tag单独merge·不打断正在跑的路(per 11-15令)
+> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research 4条建议纳入下次报告迭代 ④等运维新令
+> - **📦 体积**: TASK≈24.0KB / MEMORY≈31.5KB（✅≤32KB·本轮归档R2600/R2601腾位）
 
-> 🆕 **R2601 · 2026-11-17 09:1x — 监控心跳轮·自检全绿·无未完成指令·research日报4条harness建议纳入下次报告迭代**
-> - **自检**: load28.1/27.6/27.4/224✅(pretrain dominant·非本线)·mem837GB/2015GB avail1028GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅·manifests+traces gitignore命中✅
-> - **运维指令区**: 全部✅已交付·无未完成离散指令(R2600失败归因复核09:13刚交付·待运维审阅)
-> - **research日报2026-11-17**(09:08更新·来自research日报2026-11-17): 4条harness建议→①ModHarness-RL(2611.18533):报告加harness=fixed|learned+context_budget列+pass@1旁报n_samples/n_after_filter ②判分器跨视图(2611.18471):加view=native|macro|delegation|compaction+abstain_rate/wrong_verdict_rate ③LiveCodeBench:加release_date/model_cutoff切窗 ④Gemma:绝对分+成对胜率双口径。均纳入下次报告迭代(非本轮action)
-> - **下一步**: ①等运维审阅R2600复核结论 ②synthetic题rerun(opencode10+pi14+hermes13+deepseek5+codex2+cline/cc各1·adaptive auto·待归因结论确认后启动) ③SWE-bench predict续推 ④等运维新令
-> - **📦 体积**: TASK≈24.5KB / MEMORY≈31.5KB（✅≤32KB·R2598已归档腾位）
+> 📦 R2600 流水已归档 → daily-memories-harness/2026-11-17.md。结论：失败归因复核✅已交付·四桶归因·各路失败以能力不足为主·详见两报告§失败归因复核。需要时再读。
+> 📦 R2601 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控心跳·自检全绿·research日报4条harness建议纳入下次报告迭代。需要时再读。
 
 
 > 📦 R2598/R2599 流水已归档 → daily-memories-harness/2026-11-17.md（两份7way中文HTML报告已交付+combined生成器TB计数bug修复）。需要时再读。
