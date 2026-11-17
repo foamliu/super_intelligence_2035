@@ -148,7 +148,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <table style="margin:8px 0;">
 <tr><th style="width:100px;">工作内容</th><td>对 MegaMath Batch1（364 parquet / 216GB / 5 子集：web-pro + code + qa + text-code-block + translated-code）分词，使用 tokenizer_eod (vocab 129,281)。产出 .bin/.idx/.json + MANIFEST.json。分词后实测 token 数（与论文对比，标注偏差）。</td></tr>
 <tr><th>预估耗时</th><td>1–2 天（8 workers, nice 19 + ionice -c3）</td></tr>
-<tr><th>截止日期</th><td><b>2026-11-20</b></td></tr>
+<tr><th>截止日期</th><td><b>2026-11-21</b></td></tr>
 <tr><th>当前状态</th><td>⏳ 待执行 — MegaMath Batch1 已下载（364 parquet / 0 incomplete），脚本 stackv3_tokenize.py 可复用</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 0 ERR ② MANIFEST total_tokens ≥ 70B ③ 产物落 /nas_user/.../tokenized/IFM/MegaMath/</td></tr>
@@ -170,7 +170,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <table style="margin:8px 0;">
 <tr><th style="width:100px;">工作内容</th><td>按 §1.2（主方案）或 §1.3（fallback）生成 blend_s2_preblend.tsv，格式与 blend_s1_preblend.tsv 一致（key→prop 映射）。需根据 PC-1/PC-2/PC-3 实际产出调整 prop。同步生成 blend_s2_preblend_fallback.tsv 备用。</td></tr>
 <tr><th>预估耗时</th><td>0.5 天（脚本生成 + 校验加和=1.0 + 类别校验）</td></tr>
-<tr><th>截止日期</th><td><b>2026-11-22</b></td></tr>
+<tr><th>截止日期</th><td><b>2026-11-23</b></td></tr>
 <tr><th>当前状态</th><td>⏳ 待执行 — 依赖 PC-1/PC-2/PC-3 完成</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① prop 加和=1.0 ② 类别校验 web=0.40/code=0.40/math=0.20 ③ 所有 key 对应 shard 目录存在且 triplet 完整</td></tr>
@@ -263,7 +263,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>关键路径</b>（fallback, 必做）：PC-1 (11-17→11-19) → PC-2 (11-17→11-21) → PC-3 (11-19→11-21) → PC-4 (11-21→11-23) → <b>S2 数据就绪 11-23</b> → 等 3 天 → <b>🚀 S2 启动 ~11-26</b><br>
 <b>优化路径</b>（主方案, 含 PC-5）：+ MegaMath-web 下载 (11-17→11-21, #1 优先级) + 分词 (11-19→11-26) → <b>S2 数据就绪 ~11-26 ≈ S2 启动</b> ⚠️ <b>余量≈0</b> → 建议先用 fallback 启动 S2 (~11-26)，PC-5 完成后立即刷新 blend TSV 为主方案（Math epoch 1.18→0.65）<br>
 <b>S2 训练区间</b>：~11-26 → ~12-25（350k→700k，共 350k 步 × 7s ≈ 28.4 天）<br>
-<b>IFM/NVIDIA 下载完成节点</b>：MegaMath-web (#1优先) ~11-21 ｜ Nemotron-CC-Math (#2优先) ~11-19 ｜ finemath (#3优先) ~11-19 ｜ Code-Reasoning (#4) ~11-19 ｜ Math-Reasoning (#5) ~11-21 ｜ SFT/RL 小数据集 (#6~#10) 穿插空闲时下
+<b>IFM/NVIDIA 下载完成节点</b>：MegaMath-web (#1优先) ~11-21 ｜ Nemotron-CC-Math (#2优先) ~11-21 ｜ finemath (#3优先) ~11-21 ｜ Code-Reasoning (#4) ~11-19 ｜ Math-Reasoning (#5) ~11-21 ｜ SFT/RL 小数据集 (#6~#10) 穿插空闲时下
 </div>
 <!-- §4 -->
 <h2 id="s4">§4 — Epoch 核算表（S1+S2 累计消耗 vs 可用量）</h2>
@@ -370,7 +370,7 @@ Nemotron-CC-Math-v1（#2优先，133B tok）+ finemath（#3优先，43.6B tok）
 <tr><td>5</td><td><b>Web 压缩到 40% 损失通用能力</b></td><td class="amber">🟡 中</td><td>MMLU/ARC 等下降</td><td>~35%</td><td>① Web 40% = 587B tokens 绝对量仍大 ② S1 已建立通用能力基础（1,086B Web） ③ 有意 trade-off：S2 目标是 code/math/agentic ④ 与 DeepSeek 4:2:4 相比 Web 占比相同</td></tr>
 <tr><td>6</td><td><b>IFM 下载延迟</b> — MegaMath-web 速度慢</td><td class="amber">🟡 中</td><td>PC-5 无法在 S2 启动前完成</td><td>~30%</td><td>① PC-5 须在 11-25 前完成才能纳入初始 S2 blend；如延迟用 fallback (§1.3) 启动 S2 ② MegaMath-web 已调整为 #1 下载优先级，不等 Code/Math-Reasoning ③ 如 PC-5 在 S2 启动后完成，可中途刷新 blend TSV（需 pretrain 线配合热加载）</td></tr>
 <tr><td>7</td><td><b>code_l2 epoch 1.15 接近边界</b></td><td class="green">🟢 低</td><td>轻微过拟合</td><td>~50%</td><td>① 1.15 < 1.2 红线，UDC L2 是最高质量 code 数据，适当复用可接受 ② 可选：code_l2 0.18→0.15，stack-v3 0.17→0.20，epoch 降到 1.01</td></tr>
-<tr><td>8</td><td><b>时间余量仅 ~3 天</b> — PC-1~PC-4 须在 11-23 前全部完成</td><td class="red">🔴 高</td><td>S2 启动推迟</td><td>~40%</td><td>① 严格按截止日期执行：PC-1 11-19 / PC-2 11-20 / PC-3 11-21 / PC-4 11-22 ② 如某项延误 >2 天，立即评估是否切换 fallback（跳过 PC-5） ③ S2 可推迟 1-2 天（~11-28），不影响 700k 终点 ~12-27 ④ 与 pretrain 线保持沟通，确认 350k ETA 稳定</td></tr>
+<tr><td>8</td><td><b>时间余量仅 ~3 天</b> — PC-1~PC-4 须在 11-23 前全部完成</td><td class="red">🔴 高</td><td>S2 启动推迟</td><td>~40%</td><td>① 严格按截止日期执行：PC-1 11-19 / PC-2 11-21 / PC-3 11-21 / PC-4 11-23 ② 如某项延误 >2 天，立即评估是否切换 fallback（跳过 PC-5） ③ S2 可推迟 1-2 天（~11-28），不影响 700k 终点 ~12-27 ④ 与 pretrain 线保持沟通，确认 350k ETA 稳定</td></tr>
 </table>
 <!-- §7 -->
 <h2 id="s7">§7 — 结论：可行性判定 + 关键路径 + Go/No-Go 条件</h2>
@@ -398,7 +398,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <div class="card" style="border-left-color:#4caf50;">
 <h4>优化路径（含 PC-5，推荐）</h4>
 <div class="formula" style="font-size:11px;">
-[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) + Nemotron-CC-Math 下载(#2优先, 11-17→11-19, 260GB) + finemath 下载(#3优先, 11-17→11-19, 149GB) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅（含 Nemotron-CC-Math 则 0.85，含 finemath 则 0.78） → <b>建议：先用 fallback 启动 S2 (~11-26)，#1~#3 到货后刷新 blend TSV 为主方案</b>
+[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) + Nemotron-CC-Math 下载(#2优先, 11-17→11-21, 260GB) + finemath 下载(#3优先, 11-17→11-21, 149GB) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅（含 Nemotron-CC-Math 则 0.85，含 finemath 则 0.78） → <b>建议：先用 fallback 启动 S2 (~11-26)，#1~#3 到货后刷新 blend TSV 为主方案</b>
 </div>
 </div>
 <h3>7.3 Go/No-Go 条件</h3>
@@ -433,7 +433,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
-<b>生成时间</b>: 2026-11-17（v2.4 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30 / 新增 §2.1 下载优先级表（10 项）/ 甘特图增 Nemotron-CC-Math + finemath 下载行 / Epoch 核算增 #2/#3 改善分析 / Risk + Go-NoGo 更新；v2.3 修正甘特图「S2 数据就绪（主方案）」里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐——从 11-27 列移至 11-25 列，与 ~11-26 时间点一致，并全文复核确认所有时间项正确）
+<b>生成时间</b>: 2026-11-17（v2.5 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30；v2.3 修正甘特图里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐；v2.5 修正 PC-2/PC-4 截止日期与甘特图一致（PC-2: 11-20→11-21, PC-4: 11-22→11-23）、修正 Nemotron-CC-Math/finemath 下载完成时间与甘特图一致（~11-19→~11-21）、修正 §7.2 优化路径下载时间、修正风险#8截止日期引用）
 </p>
 </div>
 </body>
