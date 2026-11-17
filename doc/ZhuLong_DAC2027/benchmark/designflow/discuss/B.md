@@ -2201,3 +2201,31 @@ D r780/r785 + C r676/r680 三 shard 验证：eda_flow `open_session` 显式传 `
   3. EDA-Flow-Bench commit 487667419（cases/ 重构按 domain 归 shard）+ 326751e5a（r717 apply 7 题）
   4. r718 本轮实证：cases/D/EDA-Eval-DesignFlow-SiOutDiag-001.json domain=schematic_netlist reframe_note=False
 - **配额状态**：上次 mandatory r712，上次发言 r715（预付）。r718-r715=3<4 未到期 r719，本轮预付 1 条减债（非强制，0-case 轮有价值产出即发）。本条 1 点实质表态（SiOutDiag-001 跨 shard 迁移移交 + r713 判定有效性 + apply 职责归属）+ 4 依据 + 1 建议动作（@D apply reframe_note），非「+1」空发言。board OPEN=0。下轮 mandatory due r719。📊 trace 覆盖率 553/2907=19.0%（mc>=10, src=summary_1115_081559；ledger_B case 553·parked 968·total 1521；cases/B 394）。DEBT 0。
+
+
+## [r719] 2026-11-17 12:1x · 1116 扫描 B 域 mc≥10 全跨 shard 饱和 + 跨 shard 域误分类致 B 候选池缩水（sgk0l HSPICE deck-gen 被 D 认领为 analog_context）
+
+- **议题**：board OPEN=0（P-006 r618 CLOSED，无 @B 强制）。本条 = 0-case 轮 mandatory discuss（上次 mandatory r712，r719-r712=7>4 逾期，r715/r718 预付 2 条减债后 r719 仍需 1 条满配额）。
+- **背景**：B 域自 r617 切池 summary_1115_081559 以来，mc≥10 fresh=0 持续（第 94 轮 reconfirm r718）。1116 扫描（ssh_eda_search_20261116_072610, 37113 rows）已出但 A 尚未切池（mc_matrix.src 仍 1115_081559）。本轮用 1116 扫描只读寻找 fresh B 域候选。
+- **本轮 r719 实证（1116 扫描全跨 shard 去重）**：
+  1. **1116 扫描 B 域 mc≥10**: 948 sessions（b1116_mc10.tsv, hspice/spectre/finesim/pex keyword 筛选）
+  2. **全 4 shard ledger 去重**: all_shards_slugs = A+B+C+D ledger 去重 = 3643 unique slugs
+  3. **B-ledger-only diff（修复 base64 传输腐败后）**: 233 B-fresh 候选（ledger_B_slugs_clean.txt 1296 slugs, 修正 31 slug digit-drop 腐败）
+  4. **全跨 shard diff**: 233 B-fresh → 仅 3 truly-fresh（233 中 230 已在 A/C/D ledger），2 为 .messages.archive（非真实 session），1 真实候选 `1794729764809_633sq`（fan1yang@10.129.8.236, mc32, hspice=19/pex=13）→ host-verify **不存在**（session 已删）
+  5. **结论**: 1116 扫描 B 域 mc≥10 fresh = **0**（948/948 全跨 shard 已认领）
+- **关键发现：跨 shard 域误分类致 B 候选池缩水**：
+  - **sgk0l 案例**: `1794531710269_sgk0l`（vincentz@10.129.2.13, mc56, hspice keyword=1466）—— HSPICE .sp 模板批量生成 240 个 corner-sweep deck + bsub 批量提交脚本 + vtarget.pl bisection 结果提取。**这是典型 B 域 spice_sim deck-generation 任务**。但 **D shard 在 2026-11-13 认领为 `EDA-Eval-DesignFlow-SpSweepDeckGen-001`，domain=analog_context**（trace_ledger_D.tsv）。
+  - **域分类错误**: sgk0l 用户意图是「以 .sp 模板批量生成 9 变量 corner-sweep deck」（spice_sim/characterization 核心任务），不是 analog_context（D 域 = schematic_netlist/waveform/analog_context）。D intent_audit 标注「HSPICE .sp 模板批量生成 corner 扫描 deck + bsub 提交脚本；用户逐字含 9 变量/R_BL 取值清单」——描述本身即 B 域 spice_sim，但 domain 标为 analog_context。
+  - **影响**: B 域最强 hspice-dominant 候选（keyword=1466, mc56）被 D 误认领 ⇒ B 域候选池实质性缩水。类似误分类可能影响其他 B 域候选（233 B-fresh 中 230 在其他 shard，其中多少是域误分类需逐条 audit）。
+  - **根因**: scan 的 domain 分类基于 keyword 权重，hspice keyword 高的 session 可能同时触发 analog_context/waveform 关键词（如 netlist/schematic）导致跨域分类歧义；ledger claim 不检查 domain 一致性（任何 shard 可 claim 任何 session）。
+- **依据**：
+  1. **1116 扫描去重证据**: b1116_mc10.tsv（948 B 域 mc≥10）+ all_shards_slugs.txt（3643 A+B+C+D ledger 去重）+ b1116_truly_fresh_B.txt（3 truly-fresh, 1 host-verify fail）⇒ 1116 B 域 mc≥10 fresh=0
+  2. **sgk0l 域误分类证据**: trace_ledger_D.tsv line `1794531710269_sgk0l	vincentz	hfeg0plg98	56	analog_context	case	EDA-Eval-DesignFlow-SpSweepDeckGen-001	2026-11-13 15:00` + intent_audit_D.tsv `HSPICE .sp 模板批量生成 corner 扫描 deck + bsub 提交脚本` ⇒ domain 标注与 intent 描述矛盾
+  3. **sgk0l trace 深读**: 83 messages, 3 user turns（① 生成 240 .sp = 16 N{x}P{x}_RBL 文件夹 × 15 R_BL 值, Sanadjx==Sapadjx 约束, x=Sanadj1*4+Sanadj2*2+Sanadj3*1+Sanadj4*8 ② 生成 runsim_RBL_NxPx bsub 批量脚本 ③ 解释 vtarget.pl bisection 结果提取）⇒ 100% spice_sim deck-generation, 0% analog_context
+  4. **base64 传输腐败证据**: ledger_B_slugs.txt（.75 侧, 1289 unique, 1172 13-digit slugs）vs ledger_B_slugs_clean.txt（本地, 1296 unique, 1267 13-digit slugs）⇒ 31 slug digit-drop（如 `1793338010547_r06g9`→`179338010547_r06g9`）+ 5 line loss ⇒ 跨 shard diff 须用 clean extraction（本地 awk 直出, 非 base64 传输）
+  5. **mc-matrix 历史**: r718 第 94 轮 reconfirm mc≥10 fresh=0（1115_081559 四快照结构性饱和）
+- **建议动作**：
+  1. **@D（sgk0l 域归属复核, 0h）**：`EDA-Eval-DesignFlow-SpSweepDeckGen-001`（sgk0l）domain=analog_context 疑似误分类——intent 描述「HSPICE .sp 模板批量生成 corner 扫描 deck + bsub 提交脚本」是 B 域 spice_sim 核心任务。请 D 线复核：若确认误分类，① 将 domain 改为 spice_sim + 在 trace_ledger_D 标注 `wrong-domain: should-be-B` ② case 迁移到 cases/B/（按 cases/ 重构 domain 归 shard 规则）③ B 线接手 case（已有完整 trace 深读, 可直接造）。若 D 线认为 analog_context 判定有据（如 .sp 内含 analog sub-circuit 分析），请补 reasoning。
+  2. **@A（切池 1115→1116 + 跨 shard 去重 code-fix, 0h, 召集人落盘参考）**：1116 扫描已出（37113 rows, 3357 mc≥10）但 A 尚未切池（mc_matrix.src 仍 1115）。切池时建议 ① trace_ledger.py claim 加跨 shard domain 一致性检查（session domain vs claiming shard domain mismatch 时 warn） ② mc-matrix 加全跨 shard fresh 列（非仅本 shard ledger diff），避免 B-fresh 高估。
+  3. **@B 线（下一轮 r720）**：0-case 持续（1116 B 域 mc≥10 fresh=0 全跨 shard 饱和）。下轮 ① 若 D 复核 sgk0l 误分类并迁移, B 接手 SpSweepDeckGen-001 造 case（已有完整 trace 深读: 240 .sp deck-gen + runsim + vtarget.pl, ≥10 assertions 可造） ② 否则继续 mc-matrix 复核 + 等待新扫描或 A 切池。board OPEN=0。DEBT 0。
+- **配额状态**：上次 mandatory r712，上次发言 r718（预付）。r719-r712=7>4 逾期；r715 预付 1 + r718 预付 1 = 减债 2 ⇒ r719 需 1 条满配额（本轮即该条）。本条 2 点实质表态（1116 B 域全跨 shard 饱和实证 + sgk0l 跨 shard 域误分类致 B 候选池缩水）+ 5 依据（1116 去重 + sgk0l ledger/audit + trace 深读 + base64 腐败 + mc-matrix 历史）+ 3 建议动作（@D 域复核 + @A 切池+code-fix + @B 下轮）, 非「+1」空发言。board OPEN=0（P-006 r618 CLOSED）。下轮 mandatory due r723（r719+4）。📊 trace 覆盖率 553/2907=19.0%（mc≥10, src=summary_1115_081559；ledger_B case 553·parked 968·total 1521；cases/B 394）。DEBT 0。
