@@ -21,147 +21,19 @@
 > 6. **交付**：起跑后立刻 push（不等跑完），commit 前缀 `posttrain 5run:`。
 
 
-> 🔴 **用户令 · 2026-11-16 20:5x（取消全局排队 · 改用 8650–8670 端口池并行 · 最高优先）· 未完成**
->
-> **用户原话**：「为啥要排队，扫一下 8650-8670 之间的沙盒端口，都可以用。」
-> ⇒ **run5 不再等「36.15 无 run_cline_script.sh」**。用户已判定该端口段全部可用；本线改为**按端口分配**，与 zhulong eval 分口并行。
->
-> **立即动作（按序；做完即起跑，不要再空等）**
-> 1. **放宽 gate（只对本次 run5 生效，不改历史语义）**：允许修改本线链脚本，加 `GATE_MODE=ports`（默认仍为旧 `global` 行为）：`gate_wait` 在 `ports` 模式下判据 =「存在 ≥4 个本线可用沙盒口」，不再看 36.15 有没有 `run_cline_script.sh`。🚫 仍然不改 `eda_fastmcp` 源码、🚫 不重启 8090 MCP、🚫 不 kill 任何他线进程。
-> 2. **只读扫描（在 36.15 上，经 `ssh -p 3333 app.e0031982@localhost`）**，把结果贴进 daily：
->    ```bash
->    ss -ltn  | grep -E ':86(5|6|7)[0-9]'          # 哪些口在 LISTEN
->    ss -tnp  | grep -E ':86(5|6|7)[0-9]'          # 已被谁 ESTABLISHED（含他线）
->    ss -ltnp | grep 8090                          # MCP 实例/PID
->    grep -nE 'PROXY_PORTS|SANDBOX_ENDPOINTS|SANDBOX_HOST|SANDBOX_PORT' <eda_fastmcp>/.env   # 只读
->    ```
-> 3. **判「本线可用」**＝该口 LISTEN **且** 无他人 `ESTABLISHED` **且** 不在 zhulong 当前 eval 的占用集合内；同时记下每口绑定的 **workdir**（映射以 `.env` 实际行为准，**禁止臆造**）。
-> 4. **关键分叉（先判后动）**：确认 `SANDBOX_ENDPOINTS` / `PROXY_PORTS` 是否可由**客户端**（`run_cline_script.sh` 的 env / MCP 配置块）按 run 指定 —
->    - **能指定** ⇒ 直接用扫出的可用口起跑：`SANDBOX_ENDPOINTS='<port:workdir,...>' PROXY_PORTS='<port,...>' bash scripts/run_cline_script.sh -p N -n -b <bench>`，`N` = 可用口数（≥4 即起，≥8 更佳；不足 4 才报运维）；
->    - **只能在服务端 `.env` 生效** ⇒ **停手，立即报运维**（贴 `PROXY_PORTS=` 现状行 + 8090 PID + zhulong eval 占用端口证据），**不得**改 `.env`、**不得**重启 8090（会打断他线 eval）。
-> 5. **必须先冒烟再全量**：用 1–2 题走通 `run_code` → 确认 `execution_results` 有行 → 再放 158 全量；冒烟不通按第 4 条报运维。
-> 6. **写 env fingerprint**（新增 `attribution_3615_run5/env_fingerprint.json`）：实际端口集合、各口 workdir、`SANDBOX_HOST`、`.env` 相关行（原样）、起跑命令、`GATE_MODE`。原因：**换 workdir＝换 EDA 环境状态（lib.defs/TECHLIB）**，这是相对 run1–4 的新混杂变量，报告里必须显式标注。
-> 7. **纪律不变**：🚫 不启动 `baize_posttrain_clean_5run.sh`；🚫 不改 run1–4 产物；🚫 不 kill 他线；🚫 不得用 n<5 冒充 5-run（若最终只跑成 n=4，如实标 `n=4 recovered`）。
-> 8. **交付**：起跑后**立刻 push**（不等跑完），commit 前缀 `posttrain 5run:`；daily 里留上面扫描命令的原始输出。
+### 📦 用户令 · 2026-11-16 20:5x（取消全局排队·8650–8670 端口池并行）· ✅ 已闭合（被 22:0x STEP1 取代）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：客户端不可重路由 code-gen（cline_mcp_settings.json 硬编码 8090、main.py 启动建池），8656–8670 均他人 daemon（t0002441_*）无可用 4 口独立池；改由 22:0x「共用 8090 池 + -p2」路径取代。需要时再读。
 
-> 🔴 **用户令 · 2026-11-16 18:3x（恢复「干净 5-run」· 已授权 · 最高优先）· 未完成**
->
-> **用户原话**：「post-train 恢复「干净 5-run」」——即 23:0x item5「8 题验证通过后再决定是否恢复 5-run」的**恢复授权已下**。
->
-> **前置（运维已核，本线不必重查，只需 `bash -n` 复验一次）**：RCA 六项已交付（`reports/report_posttrain_collapse_rca_zh.html`，主因=抽取器 ws/no-ws 路径失配，非模型 collapse）；回补干净版已落盘 **run1=18.99%(ws-only 锚点) / run2=4.43%(43 行) / run3=2.53%(28 行) / run4=3.80%(35 行)**；**run5 缺失**；修好的链脚本 `run/baize_posttrain_zhulong_baseline_5run_chain.sh` 已接入 `rca_recover_extract.py` 回补 + `run_eval.py -g` 干净重评测 + batch↔eval 精确归属。
->
-> **唯一允许的起跑方式（只此一条，其他一律禁止）**
-> ```bash
-> RUN_DIR=/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-> [ -d "$RUN_DIR" ] || RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
-> cd "$RUN_DIR" || exit 1
-> bash -n baize_posttrain_zhulong_baseline_5run_chain.sh || exit 1
-> grep -q rca_recover_extract baize_posttrain_zhulong_baseline_5run_chain.sh || exit 1
-> setsid env NUM_NEW_RUNS=4 R2_CHAIN_PID= bash baize_posttrain_zhulong_baseline_5run_chain.sh \
->   > /tmp/posttrain_zhulong_baseline_5run_chain.log 2>&1 < /dev/null &
-> ```
-> - `NUM_NEW_RUNS=4`：链会幂等跳过已有有效 `final_report.json` 的 run1-4，**只实跑 run5**；
-> - `R2_CHAIN_PID=` 置空：R2 链（原 PID 2322797）早已结束，置空避免 PID 复用误判 gate 永不放行；
-> - 起跑后**立刻 push**（用户令「跑起来后正常 push 别等全跑完」），之后每唤醒只做监控心跳。
->
-> **禁止事项（违者按 23:0x 纪律纠偏处理）**
-> 1. 🚫 不得启动 `baize_posttrain_clean_5run.sh`（它会把 run1-4 成品 `mv` 走重跑，破坏封存；该脚本继续留在磁盘作证据，**不删也不用**）。
-> 2. 🚫 不得改动 / 删除 / 覆盖 `attribution_3615_run1..run4` 任何既有产物（原坍塌版 `final_report_collapsed.jsonl` 亦保留）。
-> 3. 🚫 不得改 `eda_fastmcp` 源码；不得 kill 他线进程（vision / zhulong / pretrain）；gate 只在 36.15 无 `run_cline_script.sh` 时放行，**若被 zhulong eval 连续占用 >6h，报运维，不抢**。
-> 4. 🚫 不得用 n=4 冒充 5-run；run5 未落盘前**不得引用任何 5-run mean**。
->
-> **验收（run5 完成后一次做完）**
-> 1. `attribution_3615_run5/final_report.json` 存在且 `execution_results.jsonl` 行数 ≫1（若只有 1 行 = 回补/评测仍坏，标 `INVALID-partial` 并报运维）；
-> 2. `bash run/bpt_zhulong_5run_finalize.sh --num-runs 5` → `run/5run_zhulong_baseline_analysis.json`（n=5 mean±std + 配对检验 vs 旧 .17 3.04%±0.83%），并把 `rca_status` 由 `INVALID` 改为 `CLEAN`；
-> 3. 报告 `reports/report_posttrain_zhulong_reattribution_zh.html` §10 改为 5-run 同表，**必须带口径 caveat**：run1=ws-only 锚点（batch 2026_1114_180019 已清理不可回补）、run2-5=recovered 口径（ws+no-ws 回补）；并单列一句「run1 18.99% vs run2-4 2.5-4.4% 的落差待 fresh 5-run 定论」；
-> 4. `MEMORY_POSTTRAIN.md` 顶部一行结论 + daily 2026-11-16 + commit 前缀 `posttrain 5run:`。
+### 📦 用户令 · 2026-11-16 18:3x（恢复「干净 5-run」· 已授权）· ✅ 已闭合（wake628）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：run5 完成 Pass@1=4.43%(7/158, exec44 行 VALID)；5-run 收口 n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]% rca_status=CLEAN，McNemar chi2=13.5 p<0.001 vs 旧.17 3.04%±0.74%；报告 §10/§8 已改 5-run 同表+口径 caveat。需要时再读。
 
-> 🔴 **用户令 · 2026-11-15 23:0x（停止盲跑 · 先查 trace/管线 · 最高优先）· 未完成**
->
-> **用户原话**：「post-train：run2/3/4：各只有 1 个有效生成 → 0.0%，都这样了还继续跑呢？不会看一眼trace排查一下吗？」
->
-> **立即动作（本轮第一件事，做完再谈别的）**
-> 1. **停链**：`kill` 5-run 链 `PID43678` 及当前 run5 的 `run_cline_script` / `run_cli.sh` 子树；**不要再起任何新 run**。run5 若未完成，标 `INVALID-partial`；若 5-run 汇总已自动生成，也标 `INVALID` 并**不得用于任何结论**。产物一律保留，不删。
-> 2. **封存现场**：run1–run4 的 `final_report.json` / `execution_results.jsonl` / `completed_code_generation.jsonl` / `codegen_rejection_stats.json`，以及 36.15 对应 batch 的 `output_evaluation/<ts>/`、`eda_code_eval/<batch>/`、`code/EDA-Eval-PyAether-*/`、cline session 日志；记录路径 + mtime + 大小（小文件 sha256）。
-> 3. **必须解释的 4 个异常（先复现，再下结论；每条给证据）**：
->    - **A**：run2/3/4 的 `completed_code_generation.jsonl` 都是 **158 行**，但 `execution_results.jsonl` **只有 1 行**（run1 是 36 行）。`run_eval` 的「有效生成」判定在哪一行？依据哪个文件 / glob / 字段？把代码贴出来。
->    - **B**：run2 的 `completed_code_generation.jsonl` 里只有 1 行 `completion` 是代码（task 003），run3 是 1 行（task 107），run1 是 0 行（全 `pass`）——这个文件到底谁写的？`completion` / `status` 字段语义是什么？它和 `run_eval` 读的文件是不是同一个？
->    - **C**：唯一被执行的任务 run2=`003`、run3=`107`、run4=`107`；把它们的 cline session trace 与 20 个 failed task 对比（首尾各 20 条消息、最后 5 次 tool call、是否写文件、`submit.zip` / zip 结构、文件命名/路径）。
->    - **D**：run2/3/4 的 `codegen_rejection_stats.json` 是 **0 字节**（run1 是 1573 B）；这是否意味着 codegen 阶段根本没产出 code / rejection 统计没跑？
-> 4. **优先怀疑管线而不是模型**：连续 3 次「恰好 1 条 execution_result」高度可疑；先查 `run_eval` / copy / glob / zip 解包 / 大小写 / 时间戳目录的路径 bug（此前已有 copy-path bug 前科）。**在排除管线 bug 之前，禁止**把 run2/3/4 写成「模型 degenerate collapse」。
-> 5. **最小验证**：找到根因后，用 **8 题子集**重跑 `run_eval`，必须能读出 **>=8 条** `execution_results`（若仍只有 1 条即未修好）；通过后再决定是否恢复 5-run。
-> 6. **交付**：`reports/report_posttrain_collapse_rca_zh.html`（中文 / 单文件 / 0 外链 / 0 script）：首屏一句话结论 + run1–4 对照表（completed 行数 / execution 行数 / gen_success / 唯一成功 task）+ trace 证据（文件:行）+ 根因（管线 vs 模型）+ 修复 diff + 8 题验证结果；`MEMORY_POSTTRAIN.md` 顶部一行 + daily + commit 前缀 `posttrain rca:`。
->
-> **纪律**：RCA 出结论前，**不得**再报 5-run mean、不得起新 run、不得删任何 trace/产物、不得 kill 他线（vision / zhulong / pretrain）进程。若结论是模型行为而非管线 bug，也必须给出可操作缓解（强制写文件 / 工具校验 / 重试）并先用 8 题验证，再恢复 5-run。
+### 📦 用户令 · 2026-11-15 23:0x（停止盲跑·先查 trace/管线）· ✅ 已闭合（RCA 交付）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：run2/3/4「各仅 1 条 execution_result=0.0%」主因=管线 ws/no-ws 路径失配（抽取器 format_cline_cli_output.py:163 ws-only 无回退），非模型 collapse；rca_recover_extract.py 回补后干净 Pass@1 run2/3/4=4.43/2.53/3.80% exec43/28/35≫1，已接入链脚本自愈。报告 reports/report_posttrain_collapse_rca_zh.html。需要时再读。
 
-
-> 🔴 **用户令 · 2026-11-15 08:1x — 158 题评测必须改用 zhulong 的方式（36.15 `eda_fastmcp`）· 最高优先 · 未完成**
-
-> **用户原话**：「我明白了：post-train 由于早先不是做评测的，对评测的理解远不如 zhulong。由于泄题问题，我们在36.15的评测中，用PreToolUse hook的方式，对评测过程中agent能用的工具进行了白名单限制。只能用三个知识库工具+run_code，本机 run_commands 已经被禁。请它看看36.15 中 eda_fastmcp 这个项目，这个项目有zhulong启动评测的脚本。让post-train使用zhulong相同的方式进行158评测。」
-
-**一、先说清楚：你的归因结论已经站不住了**
-
-你昨夜的核心结论是「损失大头不在会不会写，而在**会不会按 MCP 协议调工具/提交**」——**这个结论的前提是错的**。
-
-| 你报告里的数 | 事实 | 后果 |
-|:--|:--|:--|
-| 1304 次拒绝，其中 `run_commands` **1051 次 = 80.6%** | 36.15 的 PreToolUse hook **本来就禁掉了 `run_commands`**（白名单只放 3 个知识库工具 + `run_code`） | 这 1051 次「拒绝」**是评测环境的设计行为，不是模型能力缺陷**。你把「撞墙」算成了「不会调工具」 |
-| 「模型不会按 MCP 协议调工具」 | `run_commands` 是 **cline 内置工具**，根本不是 MCP 工具；且它被 hook 屏蔽，模型**无论怎么调都会被拒** | 真正的 MCP 工具（`search_apis`/`get_api_details`/`search_apis_by_keyword`/`run_code`）的真实拒绝率**从未被独立统计** |
-| 121 个 gen-fail 里 76 个「拒绝致死」 | 其中大部分是反复尝试被禁的 `run_commands` 直到耗尽 turn | P0 补丁「+20pp / +13.4pp」的 ROI 预估**建立在错误归因上，暂不可信** |
-
-⇒ **在换成 zhulong 口径重测之前，不要再用「MCP 协议格式」的说法写结论，报告相应小节要标 `PENDING-REMOTEST`（待重测）。**
-
-**二、你要做的事：照 zhulong 的方式跑 158 题**
-
-1. **读代码（只读，不改）**：`/nasdata/app.e0031982/code/eda_fastmcp`（36.15 上，即 `BASE_DIR`）。重点看：
-   - `scripts/cline_hooks/PreToolUse` — **反作弊白名单**，搞清楚放行哪些工具、拒绝时的返回格式
-   - `scripts/run_cline_script.sh` — zhulong 的启动入口（`EDA_PROMPT_TEMPLATE` / `EDA_PROMPT_TEMPLATE_PYAETHER` 怎么生效）
-   - `scripts/format_eval_task.py` — 题面构造
-   - `scripts/set_ablation.py` — 臂的配置切换
-   - 判分脚本（`check()` / eval 入口）与 `-p` 并发、`-k` 重试等默认参数
-2. **照抄它的调用方式**跑 **EDA-Eval-PyAether-158**：
-   - 同一套 **PreToolUse 白名单**（3 个知识库工具 + `run_code`；`run_commands` 保持禁用——**这是防泄题必需，不要在评测里打开**）
-   - 同一套 prompt 模板路径与题面构造
-   - 同一套判分口径与并发/超时参数
-   - **记录 cline 版本**（`cline --version`）——你的 MEMORY 里现在**一条版本记录都没有**，这是硬缺口
-3. **产出新的 158 题基线**，并与旧基线**同表并列**（旧基线标「口径非 zhulong 方式 · 含被禁工具」，新基线标「zhulong 口径」）。**不要求新旧相等，但必须解释差异来源。**
-
-**三、重测后必须回答的问题（这才是真归因）**
-
-1. **真 MCP 工具的拒绝率**是多少？（只统计 `search_apis` / `get_api_details` / `search_apis_by_keyword` / `run_code`，**不含 `run_commands`**）——按工具分列拒绝次数与原因。
-2. **`run_code` 的拒绝率**（这是白名单里唯一能执行代码的通道，也是真实执行能力的唯一出口）。
-3. **「静默未生成」45 题**在 zhulong 口径下还剩多少？它们零拒绝、从不调工具——这部分**不是格式问题，是模型根本没进入 agent 回路**。
-4. 新旧基线的 **Pass@1 差异**及差异来源分解（工具面变化 / prompt 变化 / 并发参数变化）。
-
-**四、纪律**
-- 🚫 **不要在 36.15 评测里打开 `run_commands`**（泄题风险）——这是用户明确保留的反作弊设计。
-- 🚫 **不要改 `eda_fastmcp` 的任何代码**；要复用就复用它的入口，缺什么先问，别自己另造一套评测。
-- ✅ 旧报告与旧数字**全部保留**，但要在报告顶部加一行：「**口径失配 · 工具面含被 PreToolUse 禁用的 `run_commands` · 佐证结论 PENDING-REMOTEST**」。
-- ✅ 重测跑起来后正常 push，别等全跑完才交。
-
+### 📦 用户令 · 2026-11-15 08:1x（158 评测改用 zhulong 方式·36.15 eda_fastmcp）· ✅ 已闭合（wake628 全流程闭环）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：36.15 zhulong 口径重测完成（PreToolUse 白名单 run_commands 禁用 + RAG + 沙盒 MCP）；cline 版本补齐(zhulong fork 3.0.29 / cline 3.0.51)；真 MCP 拒绝率(排除 run_commands)=6.3%；5-run mean=6.84%±6.12% rca_status=CLEAN；旧 .17 报告已加 PENDING-REMOTEST banner。需要时再读。
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不猜不编、infra≠能力、失败分类由你自己提炼）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定 SFT/RL 技术路线、超参与实验设计；结果说话。**
 
-> 🔴 **用户令 · 2026-11-14 23:4x — 隧道怎么坏的？自己查清楚并出报告（最高优先，压过今夜其余动作）**
->
-> **用户原话**：「原来隧道好的，现在坏了么？怎么坏的？什么情况？让它自己报告」。
->
-> **完整规格 → `run/INFRA_TUNNEL_POSTMORTEM_SPEC.md`（先读再做）**。要点：
-> 1. 中继在 **Windows `172.19.195.133`（`tunnel.ps1`）**；运维这台 Win11 **不是**中继，只能由你从 `.17` 侧取证。
-> 2. 已知：**20:0x–22:0x 通**（36.15 run1 完整跑出 18.99%）；**22:4x 首次确认断**（`.17` 3333 未监听、直连 `36.15:22` 被防火墙阻）。**中间发生了什么，就是你要查的时间线。**
-> 3. 必须回答六问：最后通点 / 首断点 / 时间线 / 故障域（中继机离线·ps1 死·SSH 认证·36.15 拒连·本侧端口） / 是否我们造成 / 修复路径 + 三条验证命令。
-> 4. 交付 `reports/report_infra_tunnel_postmortem_zh.html`（首屏三句话：坏没坏 / 怎么坏 / 谁修）+ MEMORY 一行结论。
-> 5. 🚫 不猜不编；查不到写「无记录」。**隧道恢复后**立即接回 `POSTTRAIN_PLAN_NEXT.md` 的 A1/A3 与 P0 dev 对比。
+### 📦 用户令 · 2026-11-14 23:4x（隧道怎么坏的·自己查清出报告）· ✅ 已闭合（wake507）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：隧道坏过现已恢复（最后通 20:41:50 / 首断 22:4x / 恢复 23:26 / 故障域=中继侧 / 非本线造成亦非本线修复）。报告 reports/report_infra_tunnel_postmortem_zh.html。需要时再读。
 
-> 🟠 **用户令 · 2026-11-14 21:5x — 今晚自己出计划并直接执行，不等批复（明早看结果）**
->
-> **用户原话**：「基于这份结果，下一步可以请 post-train 出一份计划，然后按此办理。现在夜了，让 post-train 出计划后直接执行，不用等运维批复，明早我看结果即可。」
->
-> **要做的事**：填 `run/POSTTRAIN_PLAN_NEXT.md`（计划 + 时间表 + 判据 + 预算 + 回滚）→ **立刻按计划执行，无需运维批复**。
-> **起点数字已订正**：36.15 run1 完整 = **18.99%（30/158）**；生成成功 36 / 生成失败 121 → **生成后通过率 83.3%**；头号失败 **T6_tool_format 占 76.6%**；全局被拒 **1304** 次（`run_commands` 1048 / `missing-field` 527 / `string-not-array` 321）。
-> **因此今夜 ROI 排序**：① T6 工具格式/提交协议（最大损失项）② P1/P2/P3 补丁 ③ 口径统一（A1/A3 两臂优先）。
-> **明早 09:00 及格线**：A1 与 A3 两臂 40 题结果 + T6 归因表 + 至少一条补丁的 dev 前后对比 + 中文 HTML 报告 + EXPERIMENTS 新节。
-> 🚫 不许只写「进行中」；没跑完就写卡在哪、谁在卡、ETA。
+### 📦 用户令 · 2026-11-14 21:5x（今晚自己出计划并直接执行）· ✅ 已闭合 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：POSTTRAIN_PLAN_NEXT.md 已填并执行；归因夜报 + A1/A3 两臂 40 题 + T6 归因表 + 补丁 dev 前后对比交付。需要时再读。
 
 ## 🎯 本线使命（常驻 · 2026-11-14 用户订正 · **每轮开始先读这一块**）
 
@@ -210,65 +82,9 @@
 > **结论**：v2 RCA 报告已交付并独立复验 PASS（`reports/report_posttrain_pyaether_rca_v2_zh.html`）；工具调用画像已入报告核心章（MCP 6051 / submit_and_exit 13,699 次 91.77% 报错 / degenerate pass 479-790=60.63% / 仅 9.88% 题进入「检索→执行→修错」）。
 > **仍有效**：15:4x「在 36.15 启动评测」与 09:0x「先分析基线」两条仍在办（5-run RUNNING），正文保留。需要时再读
 
-### 🔴 用户令 · 2026-11-14 15:4x（**PyAether 评测必须在 36.15 上启动，不是 .17** —— 你的 3.04% 基线口径存疑）· 未完成 · 最高优先
+### 📦 用户令 · 2026-11-14 15:4x（PyAether 评测必须在 36.15 启动·非 .17）· ✅ 已闭合（wake628）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：36.15 zhulong 口径重测完成，旧 .17 3.04% 基线口径存疑已用 6.84%±6.12%(n=5) 取代；环境差异已标注（旧=.17 无 RAG/无 MCP vs 新=36.15 有 RAG+MCP+沙盒）；旧 RCA 报告已加 SUPERSEDED/PENDING-REMOTEST 声明。需要时再读。
 
-> **用户原话**：「通过阅读报告 `report_posttrain_baseline_pyaether_rca_zh.html` 我发现了问题：
-> EDA-Eval-PyAether-v20260311_fixed.jsonl 评测 cline agent 是在 .17 服务器（跟 post-train 相同）启动的吧，这样不对。
-> 需要跟 zhulong agent 一样，从 36.15 服务器启动。因为只有 36.15 服务器才：1）部署了 API 文档知识库（RAG）服务；
-> 2）部署了可以访问沙盒（EDA 环境）的 MCP。所以需要跟 zhulong agent 协调：
-> 1）先 serve minicpm5-2b；2）从 36.15 通过隧道打通到 .17 的大模型调用通道；3）zhulong agent 对于如何启动评测非常熟悉。」
-
-**一、这意味着什么（先想清楚再动手）**
-
-- 若基线评测确实在 **.17** 启动，那么 agent **拿不到 RAG（API 文档知识库）**、**也拿不到沙盒 MCP（EDA 环境）**。
-- ⇒ **3.04% 这个数不能代表"模型能力"**：它是在缺少工具与知识库的环境下测的，属于**环境缺失**，不是能力上限。
-- ⇒ 你已交付的 RCA 报告（`report_posttrain_baseline_pyaether_rca_zh.html`）里的**失败分类与 fix 方案，全部建立在错误口径上**，必须重新评估。
-- ⚠️ **不要**把这个当作"模型就是不行"的结论；也**不要**急着重写 RCA —— 先按下面把评测环境修对、重测，再谈归因。
-
-**二、要做的事（与 zhulong 协调，三步）**
-
-1. **serve minicpm5-2b**：在 36.15 上起模型服务（复用你已有的 serve 脚本口径，注意 36.15 路径前缀是 `/nasdata/` 而非 `/nas_train/`）。
-2. **打通隧道**：从 36.15 通过 ssh 隧道，把**模型调用通道**暴露给 .17（或反之，按实际调用方向确定；你是被测端，模型端点要可达）。
-3. **学 zhulong 的启动方式**：zhulong 的评测 `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`（36.15），
-   它的 RAG 服务在 `:9006`、沙盒 MCP 在 `:18891`、沙盒端口 `8650-8654`。
-   **启动命令与环境变量口径参考 zhulong 的**（`RAG_RECALL_URL` / `PROXY_PORTS` / `SANDBOX_ENDPOINTS`），能照抄就省事；若你有更好的做法，说明差异与理由即可。
-
-**三、协作方式（我已下发）**
-
-- 我已通过 zhulong 的 ops 中继下发 **RUN_ID 144**：`doc/ZhuLong_DAC2027/run/ops/inbox.md`
-  —— 内容 = 在 36.15 上体检 RAG/MCP/沙盒端口/GPU/现有 serve/.17 隧道/SFT ckpt 路径/eda_fastmcp 启动脚本与环境变量口径。
-- **你看它的结果**：`doc/ZhuLong_DAC2027/run/ops/outbox.md` 搜 `RUN_ID 144`，拿到实测现状后按它给的路径起跑。
-- 你也可以在本线 MEMORY 写一行协作请求，但**不要改 zhulong 的文件**。
-
-**四、判据**
-
-- 重测后给出**新基线**（同 158 题、同判据），并**明确标注两次评测的环境差异**：
-  `旧 = .17 无 RAG/无 MCP` vs `新 = 36.15 有 RAG + 有 MCP + 沙盒可达`。
-- **旧 RCA 报告的处置**：在报告顶部加一个显著声明，注明「本次分析基于 .17 环境，缺 RAG/MCP，结论仅作参考；
-  `新口径见 <新报告>`」。过期结论要显式标 SUPERSEDED，别让它继续当定论。
-- 若新基线与 3.04% 差异很大，**如实写**——那说明旧数字是环境问题，这是重要发现，不是失误。
-
----
-
-### 🔴 用户令 · 2026-11-14 09:0x（**暂停 RL，改为分析 MiniCPM5-2B 基线在 EDA-Eval-PyAether(158) 的 3.04% 与 trace**）· 未完成 · 最高优先
-
-> **用户原话**：「post-train 先花时间分析基线 MiniCPM5-2B 在 EDA-Eval-PyAether（158）跑出的 3.04% 的结果和 trace，暂时不忙做 RL。把失败逐个统计和归因，绘制饼图和表格，挨个类别提出 fix 方案。先给出这份中文 HTML 报告来。」
-
-> ⚠️ **归类方式由你定**：失败分成哪几类，**由你基于 158 题的实际情况（结果 + trace 原文）自行提炼**。下发方不预设类别、不预设数量——分类本身也是你研究结论的一部分。
-
-- **暂停**：不再起新 RL 轮次/调参/写 RL 论证；5-run eval 链不 kill（自动跑、结果照常归档），R2 负信号暂不处置。
-- **唯一交付物**：一份中文 HTML 报告，落 `reports/report_posttrain_baseline_pyaether_rca_zh.html`（单文件自包含、0 外链、0 script、图表用内联 SVG）。
-- **必须包含**：
-  1. 基线口径（哪个 ckpt / serve 配置）+ **158 题逐题结果**，pass 数用原始文件核对（与 3.04% 对账）；
-  2. **失败逐个统计与归因**：类别由你提炼，每个类别给题数、占比、**trace 原文摘引 + 文件路径**；
-  3. **饼图 + 表格**；
-  4. **逐类别 fix 方案**：根因 → 具体改动点 → 预期提升（说明依据）→ 成本 → 优先级，最后给"先做哪几件"的排序；
-  5. 结论：3.04% 主要卡在哪一层。
-- **纪律**：所有数字可复算（路径 + 命令）；取不到就标 `TODO`，🚫 不许估、不许编 trace 原文。
-- **完成后** MEMORY 心跳一行写结论。
-
----
-
+### 📦 用户令 · 2026-11-14 09:0x（暂停 RL·分析基线 3.04% 与 trace）· ✅ 已闭合（RCA 交付）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：基线 RCA 报告交付（reports/report_posttrain_baseline_pyaether_rca_zh.html + v2），158 题逐题结果核对 3.04% 对账，失败逐类统计+饼图+表格+逐类 fix 方案；后经 15:4x 令在 36.15 重测取代。需要时再读。
 
 ### 🔴 用户令 · 2026-11-12（**L4 领域评测改由 post-train 主责**）· 用户直令 · 最高优先 · 未完成
 
@@ -293,75 +109,7 @@
 
 ### 📦 用户令 · 2026-11-10 17:10（serve 占住 GPU5-7 防挖用）· ✅ 已闭合（前提已消失：沙盒已通）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：占位目的达成后 GPU5 转交 vision R9、GPU6/7 转为 step105/R2 eval serve。需要时再读。
 
-### 🔴 用户令 · 2026-11-10 13:40（**GPU 4-7 已到位，三阶段替身计划启动**）· 用户直令 · 最高优先 · 未完成
-
-> **用户原话**：「后四卡已腾出。GPU4 serve MiniCPM5-2B，GPU5 serve Qwen3.5-2B，GPU6-7训练。Qwen3.5-2B先不铺了，剩下的卡用于训练。」
-
-#### 0. 当前 GPU 状态（2026-11-10 实测）
-
-| GPU | 用途 | 状态 |
-|:--:|:--|:--|
-| 0-3 | root SGLang Qwen3.8-27B（:8099） | 占用中，不可动 |
-| **4** | **vLLM serve MiniCPM5-2B（:8098）** | ✅ 已启动，正常响应 |
-| 5 | 空闲→**按 17:10 令占住** | 待 serve |
-| **6-7** | 空闲→**按 17:10 令占住** | 待 serve |
-
-- vLLM venv：`/tmp/vllm_venv/bin/python`（vLLM 0.7.3 + torch 2.5.1 + CUDA 12.4）
-- 环境变量：`HF_HOME=/tmp/hf_home HF_MODULES_CACHE=/tmp/hf_home/modules`
-- 驱动限制：NVIDIA 550.54.14 → CUDA 12.4 max（不能用 cu128/cu130）
-- 模型路径：`/nas_data/app.e0031982/models/{MiniCPM5-2B,Qwen3.5-2B,gemma-4-E2B-it,Llama-3.2-3B-Instruct}`
-- ⚠️ **transformers 版本**：必须 4.49.x；agent 若之前升到 5.x 需降回来（`uv pip install --python /tmp/vllm_venv/bin/python "transformers>=4.45,<4.50"`）
-
-#### 1. Phase 1：基线评测（立即开始，仅用 GPU4 评测 + GPU0-3 的 Qwen3.8-27B）
-
-**目标**：用 EDA-Eval 158 任务，同口径横评三个模型，5-run mean±std。
-
-| 模型 | 端点 | 评测方式 |
-|:--|:--|:--|
-| MiniCPM5-2B | `http://localhost:8098` (vLLM, GPU4) | cline auth → EDA-Eval harness |
-| Qwen3.8-27B | `http://localhost:8099` (root SGLang, GPU0-3) | cline auth → EDA-Eval harness |
-| DeepSeek（云端） | `http://agi-gateway.cxmt.com/cloud/v1` (glm-5.2 替身) | 已有 P0 诊断数据 |
-
-- 每模型 5-run，报 mean±std + 配对检验
-- 采集真实失败轨迹，**用实测替换 P0 D1-D6 的假设值**
-- anti-cheat 全程开，报 cheat rate
-- 158 任务污染隔离闸门必须 PASS
-- 评测协议冻结，不改
-
-**交付物**：`reports/report_posttrain_baseline_3model_zh.html`（里程碑报告，非 rXXXX）
-
-#### 2. Phase 2：替身 SFT 端到端验证（Phase 1 完成后立即开始，GPU6-7 训练 + GPU4 评测）
-
-- 模型：MiniCPM5-2B（2B, Llama 架构, Apache 2.0）作 BaiZe 替身
-- 数据：UltraData-SFT-2605 子集（已在 `.29`/`.12` NFS 分词镜像）
-- 脚本：`baize_posttrain_anneal.sh` → `baize_posttrain_sft.sh`
-- A40 显存约束：48GB/卡，2B SFT 用 2 卡 TP=2 或 DP=2，batch/seq 按 R92 校准配方
-- SFT 前后跑 EDA-Eval 评测，验证 SFT recipe 是否提分
-- 报告显著标注「替身预演，收益不可迁移到 BaiZe」
-
-**交付物**：`reports/report_posttrain_sft_surrogate_zh.html`
-
-#### 3. Phase 3：替身 RL/GRPO 端到端验证（Phase 2 SFT ckpt 完成后开始，GPU4-7 全部投入）
-
-- 取 Phase 2 SFT ckpt → `baize_posttrain_rl_grpo.sh`
-- 激活 R130-R143 设计的 6 个 hook
-- 吞吐预估 666 R/hr → ~3000 步约 2-3 天
-- 验证：GRPO 是否在 EDA-Eval 上产生正向增益、hook 系统是否稳定
-- 报告显著标注「替身预演，收益不可迁移到 BaiZe」
-
-**交付物**：`reports/report_posttrain_rl_surrogate_zh.html`
-
-#### 4. 执行纪律
-
-- GPU4 的 vLLM serve 是**常驻服务**，不要 kill
-- Phase 1 和 Phase 2 可以**并行**：GPU4 评测的同时 GPU6-7 跑 SFT
-- 训练脚本用 `--dry-run` 先验证再正式跑
-- CUDA 限制：只能用 cu124，不能装 cu128/cu130 的包
-- vLLM venv 在 `/tmp`（本地磁盘），重启机器后会丢——需要时重建
-- 🚫 不碰 GPU 0-3（root 的 SGLang）
-- commit 前缀：`posttrain eval:` / `posttrain sft:` / `posttrain rl:`
-
----
+### 📦 用户令 · 2026-11-10 13:40（GPU 4-7 到位·三阶段替身计划启动）· ✅ 已闭合（三阶段均交付）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：Phase1 基线评测完成（MiniCPM5-2B 36% / step105 3.04%±0.83% locked）；Phase2 替身 SFT 完成（v39 step105）；Phase3 替身 RL/GRPO 完成（R0 200步诚实负结果 + R2 200步 4-run mean≈0.475% decisively 负）。报告 report_posttrain_{baseline_3model,sft_surrogate,rl_surrogate}_zh.html。需要时再读。
 
 ### 📦 §用户令·2026-11-07 10:10（GPU 11/9 到位是既定安排，不要再问；等待期继续深入调研）· ✅ 已闭合 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：R1-R143 调研全完成（EDA交互RL方案/造题/奖励设计/失败模式/GRPO超参/rollout调度/verl hooks），GPU 11/9 已到位并启动 Phase 1。
 
