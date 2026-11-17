@@ -142,8 +142,14 @@ def classify_merged(task_data, all_tasks):
             continue
         all_quota = all(t["quota"] for t in trials)
         all_conn = all(t["conn_refused"] or t["cli_bug"] for t in trials)
+        # §2026-11-18: has_verifier 也加入判定 —— verifier 跑了给了真实分 (哪怕 0.0)
+        # = agent 确实在非 infra 状态下跑过且被公平判分 = ability 失败, 不是 synthetic。
+        # pi/opencode 等适配器不写 stdout 到 result.json → stdout_len=0, 但 verifier
+        # 仍跑了 (has_verifier=True) → 旧逻辑误归 synthetic → 现在正确归为 ability。
         all_synthetic = all(
-            (not t["has_run_result"]) and t["stdout_len"] < 50 for t in trials)
+            (not t["has_run_result"]) and t["stdout_len"] < 50
+            and not t["has_verifier"]
+            for t in trials)
         has_proper = any(
             t["iterations"] > 1 or t["has_run_result"] or
             t["exc_type"] or t["econn"] for t in trials)

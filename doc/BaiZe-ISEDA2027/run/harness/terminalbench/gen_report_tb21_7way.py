@@ -425,8 +425,8 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "该口径把未真跑 / 额度 / 连接拒绝的题直接从分母剔除，等价于<strong>默认这些题「真跑就能通过」</strong>，"
                   "这是凭空抬分，不是复核准绳。<strong>未真跑题的处置只有一个正解: 重跑拿真实结果</strong>。"
                   "真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong> (分母恒 89)。</p>"
-                  "<p><strong>当前状态</strong>: 非codex 6路串行重跑进行中 (deepseek✅cc✅cline-patched✅hermes✅ → opencode RUNNING → pi pending), "
-                  f"codex 83题429重跑已COMPLETE+merge→19/89=21.3% (从1/89回升), 但55题重跑窗口仍429→codex-55第三轮重跑已排队 (网关已清, 等非codex chain完成后自动启动)。"
+                  "<p><strong>当前状态</strong>: 非codex 6路重跑全部COMPLETE (deepseek✅cc✅cline-patched✅hermes✅opencode✅pi✅, 待重跑=0). "
+                  f"codex-55第三轮重跑RUNNING (55题·10并发·网关已清), 当前codex=21/89=23.6% (从1/89回升), 待重跑={_total_pending} (全部为codex). "
                   "重跑完成后将重算真实 Pass%, "
                   "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。"
                   "环境硬约束 (BLOCKED) 题显式注明原因, 不误算为通过: hermes qemu/mteb (Py3.9&lt;3.11), "
@@ -439,7 +439,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "后三桶 = <strong>待重跑</strong> (infra), 重跑后按真实 reward 归入 passed 或 ability。</p>"
                   "<p><strong>audit 修复 (R2616)</strong>: 新增 <code>has_verifier</code> 字段 (verifier_result.rewards 存在=验证器真跑了)。"
                   "当 <code>has_verifier=True</code> 且 <code>not all_synthetic</code> (agent 有产出 stdout≥50) 时归 <code>ability</code>，"
-                  "修正了旧启发式仅查 stdout 中 'run_result'/'iterations' 字符串导致 hermes/deepseek 等 agent 的真实 0.0-reward 被误标 synthetic 的问题。</p>"
+                  "修正了旧启发式仅查 stdout 中 'run_result'/'iterations' 字符串导致 hermes/deepseek 等 agent 的真实 0.0-reward 被误标 synthetic 的问题。"
+                  "§2026-11-18 再修复: <code>all_synthetic</code> 判定新增 <code>not has_verifier</code> 条件 —— verifier 跑了给了真实分 (哪怕 0.0) = agent 确实在非 infra 状态下跑过且被公平判分 = ability 失败, 不是 synthetic。"
+                  "修正了 pi (11题) + opencode (1题) 原误归 synthetic → 现正确归 ability (pi/opencode 适配器不写 stdout 到 result.json → stdout_len=0, 但 verifier 真跑了 reward=0.0)。</p>"
                   "<p><strong>合并逻辑</strong>: 任一 trial (跨 original + rerun) reward==1.0 即记 PASS。</p></div>")
         # 四桶表 (去掉修正后 Pass% 列, 改为真实 Pass% + 待重跑列)
         H.append("<h3>表四 · 四桶归因 + 重跑状态 (合并后)</h3>")
