@@ -417,7 +417,7 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "这是凭空抬分，不是复核准绳。<strong>未真跑题的处置只有一个正解: 重跑拿真实结果</strong>。"
                   "真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong> (分母恒 89)。</p>"
                   "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2=ability (Δ=0), "
-                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes 11/12 done (2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 9 ability (8 AgentTimeoutError + regex-chess ran+verifier 0.0), 1 running=sam-cell-seg), "
+                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes part1 12/12 done (2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 10 ability: 8 AgentTimeoutError + regex-chess agent ran+verifier 0.0 + sam-cell-seg confirmed ability), part2 video-processing running (original=ability), "
                   f"opencode 2→pi 13→deepseek 0→cc 1 依次排队 (真待重跑={_total_pending}; audit 修复后多路 synthetic 重归 ability)。"
                   "重跑完成后将重算真实 Pass%, "
                   "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。"
@@ -446,7 +446,7 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
             "opencode": (10, "排队中"),
             "claude-code": (1, "排队中"),
             "pi": (15, "排队中"),
-            "hermes": (13, "running (11/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 9 ability (8 AgentTimeoutError + regex-chess agent ran+verifier 0.0), 1 running=sam-cell-seg; video-processing not in batch but original=ability (stdout≥50+verifier))"),
+            "hermes": (13, "running (part1 12/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 10 ability (8 AgentTimeoutError + regex-chess agent ran+verifier 0.0 + sam-cell-seg confirmed ability); part2 video-processing running, original=ability (stdout≥50+verifier))"),
             "deepseek-harness": (5, "排队中"),
         }
         for i, (name, up, ev, tr, er) in enumerate(rows, 1):

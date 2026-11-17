@@ -304,7 +304,7 @@ _rerun_status_map = {
     "cline-patched": "BLOCKED(infra): cline CLI exit1 静默崩溃, 3 attempts (orig+reruns 0932/1143), 非能力",
     "codex": "done (2/2: both reward=0=ability; bn-fit-modify=AgentTimeoutError, break-filter-js-from-html=agent ran+verifier 0.0)",
     "opencode": "排队中 (真待重跑=2)", "claude-code": "排队中",
-    "pi": "排队中 (真待重跑=13)", "hermes": "running (11/12 done: 2 PASS Δ=+2, 9 ability, 1 running=sam-cell-seg; video-processing original=ability)",
+    "pi": "排队中 (真待重跑=13)", "hermes": "running (part1 12/12 done: 2 PASS Δ=+2, 10 ability; part2 video-processing running, original=ability)",
     "deepseek-harness": "排队中 (全5已归ability, rerun=确认)",
 }
 _tb21_review_parts = []
@@ -390,13 +390,13 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,当前{GW_NOTE_SHORT})</td><td class='warn'>infra(当前{GW_NOTE_SHORT})</td></tr>
 <tr><td>TB-2.1 codex 1/89=1.1%</td><td>89题仅1通过;适配器wire_api解析异常+能力不足(codex慢,单题超时居多)</td><td class='warn'>infra+能力</td></tr>
 <tr><td>TB-2.1 claude-code 30/89=33.7%</td><td>历史0/89=100%infra(88 ConnRefused,模型从未运行);已修复(overlay network_mode:host)→R1+R2 merged 30P。失败59:能力41+infra4(502/503)+timeout7+adapter_error6+cli1</td><td class='pass'>能力为主(infra已修复·0ConnRefused✅HARD VERIFIED)</td></tr>
-<tr><td>TB-2.1 hermes 38/89=42.7%</td><td>历史7/89(39quota+43synthetic未真跑);rerun COMPLETE 38/89。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class='warn'>能力为主(qemu=infra BLOCKED)</td></tr>
+<tr><td>TB-2.1 hermes 40/89=44.9%</td><td>历史7/89(39quota+43synthetic未真跑);rerun 进行中 40/89 (part1 12/12 done Δ=+2, part2 video-processing running)。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class='warn'>能力为主(qemu=infra BLOCKED)</td></tr>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
 
 <h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes 11/12 done 2 PASS Δ=+2 1 running=sam-cell-seg，opencode 2→pi 13→deepseek 0→cc 1 排队；audit 修复后真待重跑={_total_pending}）。重跑完成后重算真实 Pass%。</p></div>
+<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes part1 12/12 done 2 PASS Δ=+2 10 ability, part2 video-processing running，opencode 2→pi 13→deepseek 0→cc 1 排队；audit 修复后真待重跑={_total_pending}）。重跑完成后重算真实 Pass%。</p></div>
 <h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
 <table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
