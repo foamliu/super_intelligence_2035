@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1181·**🟠 standby·无待办·plan v1 已交付（commit `decf1a62e`='zhulong plan: ...v1'）·第十四次独立复核通过**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付并经 wake#1168~#1180 十三次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·repo HEAD=`611a240ba`（up to date ✅）·无真实 subagent eval。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
+WAITING: 0（2026-11-18 wake#1182·**🟠 standby·无待办·plan v1 已交付（commit `decf1a62e`='zhulong plan: ...v1'）·第十五次独立复核通过**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付并经 wake#1168~#1181 十四次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·repo HEAD=`c838698ce`（designflow shard 他线提交·本线无改动）·无真实 subagent eval。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -19,6 +19,8 @@ WAITING: 0（2026-11-18 wake#1181·**🟠 standby·无待办·plan v1 已交付�
 - [wake#1180 详条已滚出·2026-11-18 wake#1181] → `daily-memories/2026-11-18.md`（plan v1 第十三次复核 standby 心跳·判据全过·被 wake#1181 代表）。
 
 - **[2026-11-18 wake#1181] 🟠 standby 心跳·plan v1 第十四次独立复核通过·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。独立复核 `reports/report_edafb_icml2027_plan_zh.html`（73938B·commit `decf1a62e`）：size>25KB ✅·0 `<script>`（grep=0）✅·0 外链 0 CDN（唯一 `cdn` 命中是「0 CDN」自描述 ✅）✅·§0-§9+附录 11 节齐全 ✅·8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2（≥6·N1 等 token 预算无记忆长 prompt 杀手级对照 + N2 错误记忆对照）✅·H1-H4 每条含证伪条件（31 处命中）✅·§3 delta 表 ✅·§7 ICML2027 倒推时间线 ✅·21 处路径:行号可追溯 + UNKNOWN 4 处 ✅。未改 main.tex/sections/appendix·未动 designflow cases·未起进程·未覆盖已有报告。infra: loop PID243810 活·https_proxy=http://172.19.92.23:13128 ✅·ops relay PID118432/118463 活 ✅·repo HEAD=`611a240ba` up to date ✅（dirty=他线 designflow 文件不碰）·无真实 subagent eval。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C: PHASE=done_all→什么都不做退出。**WAITING=0 standby·待用户裁决起跑**。
+
+- **[2026-11-18 wake#1182] 🟠 standby 心跳·plan v1 第十五次独立复核通过·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。独立复核 `reports/report_edafb_icml2027_plan_zh.html`（73938B·commit `decf1a62e`）：size>25KB ✅·0 `<script>`（grep=0）✅·0 外链 0 CDN ✅·§0-§9+附录 11 节齐全 ✅·8 臂（M0/M1/M2/M3/S1/M3+S1/N1 等 token 预算无记忆长 prompt 杀手级对照 + N2 错误记忆对照）✅·H1-H4 每条含证伪条件 ✅·§3 delta 表 ✅·§7 ICML2027 倒推时间线 ✅·数字可追溯 ✅。未改 main.tex/sections/appendix·未动 designflow cases·未起进程·未覆盖已有报告。infra: loop PID243810 活·https_proxy=http://172.19.92.23:13128 ✅·ops relay PID118432/118463 活 ✅·repo HEAD=`c838698ce`（designflow shard 他线提交·dirty=`benchmark/designflow/_real_ledger_keys_r844.txt` 他线文件不碰）·无真实 subagent eval。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C: PHASE=done_all→什么都不做退出。**WAITING=0 standby·待用户裁决起跑**。
 
 - [wake#1177/#1180 详条已滚出·2026-11-18 wake#1181] → `daily-memories/2026-11-18.md`（plan v1 第十/十三次复核 standby 心跳·均判据全过·被 wake#1181 代表）。
 
