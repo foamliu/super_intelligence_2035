@@ -118,7 +118,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1792654922770_87wu6.messages.json	tongfanl	10.129.2.13	verification	r379 peek: U#0=check DDR6 DSCQA WTM 3 patterns is4phase misuse(检查型 analysis), no	REVIVABLE_QA	yes	DONE_r650	CASE-WtmIs4PhaseMisuseCheck-001 (r650 synthesized+landed, A.jsonl 352->353)	EXISTS
 1793003840562_382ay.messages.json	harrys	10.129.2.11	digital	r379 peek: U#0=workspace.cxmt.com link info-exploration Q&A(use skill), doc-sear	REVIVABLE_QA	yes	doc-search/study	EXISTS
 1792041543395_mss1b.messages.json	e0039102	10.129.2.11	digital	r379 peek: U#0=逐行带我读 vcim/verilogrun 文件(walk-through explanation Q&A), verilog:2	REVIVABLE_QA	yes	code-comprehension	EXISTS
-1793186643056_muf2k	thomas1w	10.129.40.109	verification	UVM hdl-path debug Q&A, env-dependent /rundata/ddgoa	REVIVABLE_QA	yes	DEBT_r673_deepread	EXISTS
+1793186643056_muf2k	thomas1w	10.129.40.109	verification	UVM hdl-path debug Q&A, env-dependent /rundata/ddgoa	REVIVABLE_QA	yes	DONE_r674_case	EXISTS
 1790490968281_6vy3t	mike	10.129.32.80	verification	VCS SFCOR missing .svp, near-dup of SimIncludeMissDiag-001	DUP	no		n/a
 1792060840051_yrdts	shanliny	10.129.2.10	verification	SV UVM code-review Q&A (审查代码找bug)	REVIVABLE_QA	DONE_r669	CASE-SramTbBugReview-001 (r669 synthesized+landed, A.jsonl 361->362)	EXISTS
 1791974855202_32935	shanliny	10.129.2.10	verification	SV UVM code-review Q&A, sibling of yrdts	DUP	no		n/a

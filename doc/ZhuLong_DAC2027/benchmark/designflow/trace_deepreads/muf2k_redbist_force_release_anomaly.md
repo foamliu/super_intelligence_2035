@@ -1,4 +1,4 @@
-# Deepread — muf2k → RedBistForceReleaseInstAnomalyDiagnose-001（候选 · DEBT 未合成）
+# Deepread — muf2k → RedBistForceReleaseInstAnomalyDiagnose-001（✅ r674 合成落地）
 
 ## trace
 
