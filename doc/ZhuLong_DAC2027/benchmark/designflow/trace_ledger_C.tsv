@@ -19,7 +19,7 @@
 1788577896116_33zw1.messages.json	haoyut	172.16.8.191	584	layout_virtuoso	parked	EDA-Eval-DesignFlow-NetPathHL-001	2026-11-13 00:18	cross-shard near-dup C down D keep (A r440 ruling); C self-mislabel layout_virtuoso->schematic_netlist (NetPathHL parses schematic netpath not layout); executed r474
 1789454632664_t1xjg	e0031668	hfeg0pkn003	704	layout_aether	case	EDA-Eval-DesignFlow-ERCFlowAether-001	2026-11-02 15:49	
 1790487462826_wb03t.messages.json	cwei	hfeahpc504	691	layout_aether	case	EDA-Eval-DesignFlow-CTLEAether-001	2026-11-02 16:53	deepread shows spice_sim CTLE AC flow (CTLESpec-001 designed), not layout_aether; misclassified by keyword filter; belongs to spice_sim shard
-1791444783469_mwoue.messages.json	miccao	hfeg0plg92	401	physical_verify	case	EDA-Eval-DesignFlow-DRCKDeckOpt-001	2026-11-02 17:13	
+1791444783469_mwoue.messages.json	miccao	hfeg0plg92	401	physical_verify	case	EDA-Eval-DesignFlow-DRCDeckOpt-001	2026-11-17 18:47	
 1791362457881_awgyg	hbpeng	hfeg0plg55	445	physical_verify	parked		2026-11-02 17:31	multi-topic fragmented 20-turn session; gold LVL/DRC/LVS scripts import IMCP.* from /apps/imctf/develop/PDK_QA/pdkQaSystem codebase unreachable in .75 sandbox; no clean self-contained verifiable sub-task
 1791171109524_llns7	yohannw	hfeg0pkn003	442	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcMesh-001	2026-11-02 18:01	
 1790057439320_dc4bw	lizwen	hfeg0pkn002	244	layout_aether	case	EDA-Eval-DesignFlow-DRCPatGen-001	2026-11-02 18:46	
@@ -380,7 +380,7 @@
 1793696115600_i3fk2	leozhao	hfeg0plg36	106	physical_verify	case	EDA-Eval-DesignFlow-WlDrcClusterPairParse-001	2026-11-08 07:35	
 1793237820834_ihw8c	xxchen	hfeg0pkn002	189	physical_verify	case	EDA-Eval-DesignFlow-DiffNetConnLayerSelect-001	2026-11-08 08:13	
 1793872363785_ty6oq	chengleiy	hfeg0pkn005	90	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoStartupDiag-001	2026-11-08 08:51	
-1793324531319_9o809	e0047722	hfeg0pkn002	332	layout_aether	parked		2026-11-08 09:10	env-recon+prose design doc (CLI wrapper 方案设计说明书); final deliverable msg#209 prose 30KB violates §4.2/§4.3; same class as r225 74dww
+1793324531319_9o809	e0047722	hfeg0pkn002	332	layout_aether	case	EDA-Eval-DesignFlow-AetherSePermAudit-001	2026-11-17 18:44	env-recon+prose design doc (CLI wrapper 方案设计说明书); final deliverable msg#209 prose 30KB violates §4.2/§4.3; same class as r225 74dww
 1789629651143_l5349	rongjiez	hfeg0pkn005	137	layout_aether	case	EDA-Eval-DesignFlow-SkillPyaetherTransAudit-001	2026-11-08 09:29	
 1782880367712_jzzsv.messages.json	e03179	hfeg0pkn002	495	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillM1ShapeDeleteAudit-001	2026-11-08 10:13	
 1793240378933_kck7n.messages.json					parked		2026-11-08 09:58	env-recon/how-to Q&A (查gds工具/启klayout/how to use virtuoso), no real task deliverable, non-seed
