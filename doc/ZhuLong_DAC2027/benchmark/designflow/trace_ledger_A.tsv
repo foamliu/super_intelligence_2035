@@ -510,7 +510,7 @@
 1794377042867_o5njo	xrxiong	hfeg0pkn001	67	digital	parked		2026-11-14 10:51	r505: irun.log sim-error analysis Q&A REJECT
 1793169406310_49kzt	e0039602	hfeg0pkn005	55	digital	parked		2026-11-14 10:51	r505: xcelium usage Q&A (user: dont execute just tell me) REJECT
 1794469877801_685bd	eric1ch	hfeg0pkn001	50	digital	parked		2026-11-14 10:51	r505: LPDDR6 JEDEC KG skill-usage REJECT
-1793704618870_pz29g	e0039602	hfeg0pkn005	48	digital	parked		2026-11-14 10:51	r505: A_Compare.rpt error analysis Q&A REJECT
+1793704618870_pz29g	e0039602	hfeg0pkn005	48	digital	parked		2026-11-17 11:19	r675 re-park: host hfeg0pkn005 (10.129.2.14) unreachable/timeout from .75 this round
 1791785549996_uaa3b	kiaray	hfeahpc505	45	digital	parked		2026-11-14 11:11	r506 REJECT skill-orchestration build-d6/run-d6 skill-invocation env-specific not self-contained produce-task
 1793865143182_nwmze	e0039602	hfeg0pkn005	41	digital	parked		2026-11-14 11:11	r506 REJECT Q&A log-scripts + delete-logs infra destructive non-produce
 1791956799319_0ykok	e0046686	hfeg0pkn005	36	digital	parked		2026-11-14 11:11	r506 REJECT doc-gen onboarding summary of buddy workdir not produce-task
@@ -593,3 +593,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1791946267022_oqri7	xingx	hfeg0pkn002	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: pwd start, 0 write tool calls, read-only code-comprehension
 1794734620660_00p77	jzeng	10.129.32.75	416	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4Diagnose-001	2026-11-17 01:29	
 1791191409174_reo1p	dandans	hfhds201	113	verification	case	EDA-Eval-DesignFlow-Ddr6Dq5ExpZero-001	2026-11-17 04:01	r659 deepread DEBT 1: ddr6_test.sv dq5 D16-D23 exp=0 root-cause analysis-Q&A (X1P6+MD_8b+CRC-off); deepread done, synthesis DEBT r660; .75-local fresh A-domain (exhaustion claim corrected)
+1794723288564_svmca.messages.json	jzeng	hfhds201	575	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4M4M5FillAnalyze-001	2026-11-17 11:31	r675: code-comprehension/analysis-Q&A, V4 M4-M5 fill logic analyze, k=16, eda_other, A.jsonl 348
