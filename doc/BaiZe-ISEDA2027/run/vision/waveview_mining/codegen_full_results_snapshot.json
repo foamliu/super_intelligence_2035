@@ -1834,6 +1834,58 @@
    "detail": "",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-WaveviewModuleUpdate-001-v2/V0/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveviewModuleUpdate-001-v2",
+   "arm": "V1",
+   "k_conditions": 44,
+   "pi_seconds": 123.3,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-WaveviewModuleUpdate-001-v2/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveviewModuleUpdate-001-v2",
+   "arm": "V2",
+   "k_conditions": 44,
+   "pi_seconds": 116.3,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-WaveviewModuleUpdate-001-v2/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WvCursorApiGen-001",
+   "arm": "V0",
+   "k_conditions": 43,
+   "pi_seconds": 360.0,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WvCursorApiGen-001",
+   "arm": "V1",
+   "k_conditions": 43,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
