@@ -1,4 +1,69 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 145 -->
+## RUN_ID 145 — **pretrain agent loop 存活体检（只读，备份通道）**
+
+> 本站中继在 36.15（host `hfeg0tedaap02`）；本块从 36.15 依次 ssh 到 `10.239.2.29`（训练机）
+> 与 `10.239.2.12`（watchdog loop 机）做只读探测，并附带本机快照。
+> 只读：不 kill、不重启、不起跑、不改仓库文件（仅 /tmp 临时脚本，用完删除）。
+
+```bash
+set -u
+echo "=== RUN_ID 145 | pretrain loop liveness (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+hostname -I 2>/dev/null | sed 's/^/  local IPs: /'
+
+GR=/nasdata/app.e0031982/code/super_intelligence_2035
+[ -d "$GR/.git" ] || GR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+echo
+echo "[A] 共享仓库侧最后活动"
+git -C "$GR" log -5 --date=format:'%F %T' --pretty='  %ad %h %s' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-150
+stat -c '  MEMORY mtime=%y size=%s' "$GR/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md" 2>/dev/null || true
+echo "  now=$(date '+%F %T')"
+
+cat > /tmp/pretrain_probe_$$.sh <<'EOS'
+#!/bin/bash
+set -u
+echo "  host=$(hostname) ip=$(hostname -I 2>/dev/null | awk '{print $1}') now=$(date '+%F %T')"
+echo "  --- [1] pretrain watchdog loop ---"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -F 'baize_pretrain_loop.sh' | grep -v grep | grep -viE 'cline|bun|node' | cut -c1-180
+echo "  --- [2] loop log ---"
+if [ -f /tmp/baize_pretrain_loop.log ]; then
+  stat -c '      mtime=%y size=%s' /tmp/baize_pretrain_loop.log
+  echo "      silence_sec=$(( $(date +%s) - $(stat -c %Y /tmp/baize_pretrain_loop.log) ))"
+  tail -n 8 /tmp/baize_pretrain_loop.log | cut -c1-170 | sed 's/^/      | /'
+else echo "      (no /tmp/baize_pretrain_loop.log)"; fi
+echo "  --- [3] cline/bun ---"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E 'cline|bun' | grep -v grep | cut -c1-140 | head -5
+echo "  --- [4] train proc ---"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E 'baize_xmodel25_decay_v2|torchrun' | grep -v grep | cut -c1-180 | head -6
+echo "  --- [5] train log ---"
+if [ -f /tmp/baize_xmodel25_decay_v2_train.log ]; then
+  stat -c '      mtime=%y size=%s' /tmp/baize_xmodel25_decay_v2_train.log
+  echo "      silence_sec=$(( $(date +%s) - $(stat -c %Y /tmp/baize_xmodel25_decay_v2_train.log) ))"
+  tail -n 4 /tmp/baize_xmodel25_decay_v2_train.log | cut -c1-170 | sed 's/^/      | /'
+else echo "      (no train log)"; fi
+echo "  --- [6] GPU ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | sed 's/^/      /'
+echo "  --- [7] local relays / loops ---"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'ops_relay|baize_(pretrain|vision|data|harness|posttrain)_loop\.sh|watch_.*_loop\.sh|zhulong_ops_relay' | grep -v grep | grep -viE 'cline|bun' | cut -c1-150 | head -12
+EOS
+P=/tmp/pretrain_probe_$$.sh
+
+echo
+echo "[B] 本机（36.15）"
+bash "$P"
+for H in 10.239.2.29 10.239.2.12; do
+  echo
+  echo "[C] ssh $H"
+  timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no "$H" 'bash -s' < "$P" 2>&1 | sed 's/^/  /'
+  echo "  (ssh exit=${PIPESTATUS[0]})"
+done
+rm -f "$P"
+echo
+echo "=== DONE 145 ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 144 -->
 
 ## RUN_ID 144 — 协助 post-train 从 36.15 启动 PyAether 评测（serve minicpm5-2b + 隧道 + 起跑）
