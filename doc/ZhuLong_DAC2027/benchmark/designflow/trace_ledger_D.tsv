@@ -1836,3 +1836,12 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791869784917_1r058	e0014566	10.129.35.82	23	schematic_netlist	case	EDA-Eval-DesignFlow-SchematicMOSHilite-001	2026-11-17 20:21	
 1784267301134_k3qx4	e0014566	10.129.35.82	34	schematic_netlist	parked		2026-11-17 21:06	collision: same user e0014566 + same intent as NetHighlightProbe-001 (zd84z, already in cases/D/); also overlaps NetPrefixHighlight-001 (steveny/8rxb1). r829 abandoned k3qx4 case-making to avoid 3rd duplicate.
 1794277030341_l1ngd	zhililu	hfeg0pnd001			case	EDA-Eval-DesignFlow-VddSensTDCRootCause-001	2026-11-17 21:47	
+1791442441803_cdf1w	e04201	10.129.2.11	35	schematic_netlist	parked		2026-11-17 22:35	r832: input-method-install+vague-circuit-analysis, policy-blocked, non-D-produce
+1791985369685_g9eow	e0014566	10.129.35.82	17	schematic_netlist	parked		2026-11-17 22:35	r832: skill-instruction-injection Q&A, 1 user turn, non-produce
+1794206889382_163xg	yunfat	10.129.2.13	20	schematic_netlist	parked		2026-11-17 22:35	r832: GUI-open-layout, policy-blocked, incomplete
+1794384162821_db8vi	e0047722	10.129.8.125	19	analog_context	parked		2026-11-17 22:35	r832: get-cellview-name, 1 API call too-thin for >=8 assertions
+1793872388405_70yip	jason17w	10.129.32.190	18	waveform	parked		2026-11-17 22:35	r832: skill-loading-debug Q&A, wrong-domain (cline-infra not netlist/waveform)
+1794453084906_azj7y	steveny	10.129.32.189	39	waveform	parked		2026-11-17 22:35	r832: doc/index-update task, wrong-domain (doc-mgmt not waveform)
+1791704311841_vyzed	kiaray	10.129.8.225	15	schematic_netlist	parked		2026-11-17 22:35	r832: skill-creation/update (logiccosim-build), wrong-domain (skill-mgmt)
+1789720113845_7gck9	yongk1li	10.129.2.11	14	schematic_netlist	parked		2026-11-17 22:35	r832: API-verification (glm5.2 vs glm5.5), wrong-domain (infra)
+1793094727666_nbd38	yuyingc	10.129.2.10	11	schematic_netlist	parked		2026-11-17 22:35	r832: testbench+SPF intent but INCOMPLETE (shell-runner SIGKILL'd, no produce/gold)
