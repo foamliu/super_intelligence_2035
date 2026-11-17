@@ -17034,3 +17034,69 @@ echo "=== DONE 145 ==="
 
 === DONE 145 ===
 ```
+
+---
+
+## RUN_ID 146 · 2026-11-17 22:48:17 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 146 | zhulong workcopy freshness (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+for GR in /nasdata/app.e0031982/code/super_intelligence_2035 /nas_train/app.e0031982/code/super_intelligence_2035; do
+  echo
+  echo "[repo] $GR"
+  if [ ! -d "$GR/.git" ]; then echo "  (不存在)"; continue; fi
+  cd "$GR" || continue
+  echo "  HEAD=$(git log -1 --pretty='%h %ad %s' --date=format:'%F %T' | cut -c1-110)"
+  echo "  vs origin: $(git rev-list --left-right --count origin/main...HEAD 2>/dev/null | awk '{print "behind="$1" ahead="$2}')"
+  echo "  TASK 最近提交: $(git log -1 --pretty='%h %ad %s' --date=format:'%F %T' -- doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md | cut -c1-110)"
+  F=doc/ZhuLong_DAC2027/run/ZHULONG_TASK.md
+  if [ -f "$F" ]; then
+    echo "  本地 TASK: lines=$(wc -l < "$F") bytes=$(stat -c %s "$F") mtime=$(stat -c %y "$F" | cut -c1-19)"
+    echo "  标记命中(新令): $(grep -c 'EDA-Flow-Bench 论文重定位' "$F" 2>/dev/null)"
+    echo "  标记命中(结案令): $(grep -c '结案令 · 2026-11-17 09:3x' "$F" 2>/dev/null)"
+    echo "  首行: $(head -1 "$F" | cut -c1-90)"
+  else
+    echo "  TASK 文件不存在"
+  fi
+  echo "  git status(前3): $(git status --porcelain 2>/dev/null | head -3 | tr '\n' ' ')"
+done
+
+echo
+echo "[进程] zhulong loop / cline / relay"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -E 'zhulong_loop\.sh|zhulong_ops_relay\.sh' | grep -v grep | cut -c1-150
+echo "  -- 最近的 cline（含 zhulong 任务书者）--"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -F 'doc/ZhuLong_DAC2027/run' | grep -v grep | cut -c1-150 | head -5
+
+echo
+echo "[时钟] now=$(date '+%F %T')"
+echo "=== DONE 146 ==="
+```
+
+**输出**
+```
+=== RUN_ID 146 | zhulong workcopy freshness (READ-ONLY) | 2026-11-17 22:48:17 | host=hfeg0tedaap02 ===
+
+[repo] /nasdata/app.e0031982/code/super_intelligence_2035
+  HEAD=6e10e0569 2026-11-17 22:47:20 zhulong ops relay: RUN_ID 146 check zhulong workcopy task freshness (read-only)
+  vs origin: behind=0 ahead=0
+  TASK 最近提交: 7b895987f 2026-11-17 22:43:01 zhulong plan: 用户令 22:5x - EDA-Flow-Bench ICML2027 重定位+消融设计+�
+  本地 TASK: lines=449 bytes=47327 mtime=2026-11-17 22:43:52
+  标记命中(新令): 1
+  标记命中(结案令): 1
+  首行: # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
+  git status(前3): M  doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW_A.md M  doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW_D.md M  doc/ZhuLong_DAC2027/benchmark/daily-memories-designflow/daily_A_2026-11-17.md 
+
+[repo] /nas_train/app.e0031982/code/super_intelligence_2035
+  (不存在)
+
+[进程] zhulong loop / cline / relay
+ 118463  118432 22-14:07:25  0.0 bash zhulong_ops_relay.sh
+ 243810       1  3-09:36:48  0.0 bash zhulong_loop.sh
+3307451  118463       00:00  0.0 bash zhulong_ops_relay.sh
+  -- 最近的 cline（含 zhulong 任务书者）--
+
+[时钟] now=2026-11-17 22:48:18
+=== DONE 146 ===
+```
