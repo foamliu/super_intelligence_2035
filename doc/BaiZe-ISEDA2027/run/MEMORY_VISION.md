@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 📦 wake#1527 2026-11-17 12:50 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind2(designflow r723+zhulong wake#1056)pull --rebase ff 同步 HEAD=`93160f0df`·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog ~52.3h+三端点(:30001/30003 /health ok·:30002 MCP qwen35-vqa v1.30.0)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+6_domain_rl.tex TBD=0·research 2026-11-17 不变(vision 建议=VLA 不相关·忽略)·体积 MEMORY 30.4KB/TASK 23KB 均达标。**WAITING: 0**。
+> 🚀 wake#1528 2026-11-17 12:58 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind3(zhulong #1057/designflow D r807/pretrain·0触视觉)→pull --rebase 共享 NFS HEAD 已前进至 `04aaa47a2`(posttrain fix wake634·0触视觉)·工作树干净(他线在途已由 posttrain 提交)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈188841s(~52.4h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 index mtime 12:30 更新·vision 建议=Qwen2-VL 视觉塔 dynamic_resolution/InternVL 6B 塔/CNN 1D temporal 基线(均 encoder/GPU 线·输入参考非新指令·本轮无纳入)·体积 MEMORY 31.0KB/TASK 23KB 均达标·fold wake#1527→daily。**WAITING: 0**。
+
+> 📦 wake#1527 2026-11-17 12:50 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1526 2026-11-17 12:39 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind3 designflow+zhulong·0触视觉→ff 同步 HEAD=`2b6cf8616`·无新运维令(TASK md5=378c30879=wake#1525 交付态不变)·live 复验 watchdog ~52.1h+三端点(:30001/30003 /health ok·:30002 /mcp qwen35-vqa v1.30.0)+WaveView 子集 224 行 sha256 623842b5 一致+三报告+6_domain_rl.tex TBD=0·research 2026-11-17 vision 建议=VLA 统一动作空间(2611.18397·与 EDA WaveView 不相关)忽略）·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
