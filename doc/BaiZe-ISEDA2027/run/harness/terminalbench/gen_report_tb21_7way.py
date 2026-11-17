@@ -89,6 +89,38 @@ def count_route(h):
     upass = sum(1 for v in tasks.values() if v)
     return upass, len(tasks), trials, errors
 
+
+def count_route_before_rerun(h):
+    """§2026-11-17 10:2x 用户令 item 3: 重跑前 passed 计数 = 合并 original + 所有 *早期* rerun
+    目录, 但 **排除** 本次 post-R2600 重跑目录 (匹配 ``*_rerun_7way_20261117_*``)。
+    这样「重跑前」= R2600 基线 (已含 cline 额度重跑 / cc R1+R2 / hermes 重跑等早期 rerun),
+    「重跑后」= count_route (含本次 post-R2600 rerun), Δ 即本次重跑的真实增益。
+    按 task_name 去重, 任一 trial reward==1.0 即记 passed。"""
+    d = JOBS / h
+    tasks = {}
+    scan_dirs = [d] if d.exists() else []
+    for rd in sorted(JOBS.glob(f"{h}_rerun_*")):
+        if rd.is_dir() and "7way_20261117" not in rd.name:
+            scan_dirs.append(rd)
+    for sd in scan_dirs:
+        for f in _iter_task_results(sd):
+            try:
+                r = json.loads(f.read_text())
+            except Exception:
+                continue
+            tn = r.get("task_name") or str(f.parent.name).split("__")[0]
+            vr = r.get("verifier_result")
+            if vr:
+                rew = vr.get("rewards", {}).get("reward", 0)
+                if rew == 1.0:
+                    tasks[tn] = True
+                else:
+                    tasks.setdefault(tn, False)
+            else:
+                tasks.setdefault(tn, False)
+    return sum(1 for v in tasks.values() if v)
+
+
 # ---------------------------------------------------------------------------
 # §七路额度归因 (复用 audit_tb21_quota_7way.py)
 # ---------------------------------------------------------------------------
@@ -243,7 +275,7 @@ INFRA_LEDGER = {
 }
 
 
-def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=None, review_data=None):
+def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=None, review_data=None, before_counts=None):
     css = ("body{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;"
            "max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}"
            "h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}"
@@ -465,6 +497,43 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "(2026-11-17 用户令)</li>"
                   "</ul></div>")
 
+    # ---- 表五 · 重跑前后真实 Pass% 对比 (§2026-11-17 10:2x 用户令 item 3) ----
+    H.append("<h2>表五 · 重跑前后真实 Pass% 对比 (2026-11-17 用户令)</h2>")
+    H.append("<div class='caveat'><p><strong>口径</strong>: "
+              "<strong>重跑前</strong> = 仅 original 目录的 passed/89; "
+              "<strong>重跑后</strong> = 合并 original+rerun 的 passed/89 (分母恒 89)。"
+              "Δ = 重跑后 − 重跑前。重跑进行中的路, 「重跑后」为当前合并值 (随重跑完成实时更新); "
+              "重跑完成后 Δ 即最终增益。<strong>能力题一旦重跑仍 fail, 必须计为 fail</strong>, "
+              "不许因想好看归到 infra; BLOCKED(infra) 硬约束题单列, 不误算为通过。</p></div>")
+    H.append("<table><thead><tr><th>#</th><th>Harness</th><th>重跑前<br>passed/89</th>"
+             "<th>重跑前<br>Pass%</th><th>重跑后<br>passed/89</th><th>重跑后<br>Pass%</th>"
+             "<th>Δ</th><th>待重跑<br>(infra)</th><th>状态</th></tr></thead><tbody>")
+    for i, (name, up, ev, tr, er) in enumerate(rows, 1):
+        hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
+        before = (before_counts or {}).get(hkey, 0)
+        after = up
+        delta = after - before
+        rd = review_data.get(hkey, {}) if review_data else {}
+        pending = rd.get("pending_rerun", 0)
+        status = ("重跑完成 ✅" if pending == 0
+                  else f"重跑中 (待重跑 {pending})")
+        d_cls = "pass" if delta > 0 else ("" if delta == 0 else "fail")
+        delta_txt = f"+{delta}" if delta > 0 else str(delta)
+        pend_cls = "warn" if pending > 0 else "pass"
+        H.append(f"<tr><td class='num'>{i}</td><td><strong>{esc(name)}</strong></td>"
+                 f"<td class='num'>{before}/{total_tasks}</td>"
+                 f"<td class='num'>{before/total_tasks*100:.1f}%</td>"
+                 f"<td class='num pass'>{after}/{total_tasks}</td>"
+                 f"<td class='num'><strong>{after/total_tasks*100:.1f}%</strong></td>"
+                 f"<td class='num {d_cls}'>{delta_txt}</td>"
+                 f"<td class='num {pend_cls}'>{pending}</td>"
+                 f"<td style='font-size:0.85em'>{esc(status)}</td></tr>")
+    H.append("</tbody></table>")
+    H.append("<div class='info'><p><strong>读法</strong>: codex 重跑前 1/89 → 重跑后 1/89 "
+             "(2 synthetic 已重跑, 均 reward=0=ability, Δ=0, 证实低分=真能力, 无凭空抬分)。"
+             "其余各路重跑进行中/排队, 完成后 Δ 自动更新: 重跑 pass 的题 +1, 重跑 fail 的题计失败 (Δ 不变)。"
+             "BLOCKED(infra) 题 (如 hermes qemu 容器 Py3.9&lt;3.11) 显式注明原因、单列, 不误算为通过。</p></div>")
+
     H.append(f"<hr><p style='text-align:center;color:#7f8c8d;font-size:0.9em'>"
              f"BaiZe Harness TB-2.1 7way {now} | glm-5.3-flash | "
              f"数据源: /tmp/tb21_glm53_jobs (gen_report_tb21_7way.py) | "
@@ -492,8 +561,10 @@ def main():
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     audit_7way = _quota_audit_7way()
     review_data = _review_7way_merged()
+    before_counts = {h: count_route_before_rerun(h) for h in HARNESSES}
     _build_html(rows, total_tasks, total_passed, total_trials, now,
-                audit_7way=audit_7way, review_data=review_data)
+                audit_7way=audit_7way, review_data=review_data,
+                before_counts=before_counts)
 
 
 if __name__ == "__main__":

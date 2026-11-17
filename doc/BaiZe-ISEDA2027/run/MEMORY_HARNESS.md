@@ -2,15 +2,16 @@
 
 WAITING: 0
 
-> 🆕 **R2609 · 2026-11-17 11:1x — rerun监控(hermes 4并发running)+报告口径二次复核✅+reports/ hygiene✅**
-> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已**撤回**——把未真跑题从分母剔除=假设真跑就能通过=凭空抬分。能力 vs infra 只能靠 trace 证据,不能靠调分母;诚实优先于好看。**唯一可对外引用口径 = 真实 Pass% = passed/89 (分母恒89)**:
->   - **真实 Pass% (重跑完成前·标「待重跑」)**: cline 42/89=47.2%(待重跑1) · codex 1/89=1.1%(待重跑2·**rerun done=0/2=能力**✅) · opencode 43/89=48.3%(待重跑10) · cc 30/89=33.7%(待重跑1) · pi 35/89=39.3%(待重跑15) · hermes 38/89=42.7%(待重跑13·qemu BLOCKED 显式注明 Py3.9<3.11) · deepseek 11/89=12.4%(待重跑5)
-> - **自检**: load27/224✅(~12%·pretrain dominant·非本线)·CPU90%idle✅·mem840GB avail1025GB✅·0 harness eval runaway✅(最高hermes0.5%cpu·<0.1GB RSS)·adaptive work4/4·累计429=0✅
-> - **报告口径二次复核**: TB21+glm53 双报告 grep「修正后」各仅2处=撤回声明✅(「🔴口径纠正声明…已撤回…不再有修正后Pass%」)·「待重跑」10×/「真实Pass%」5×/「重跑中」/「分母恒89」2×/「BLOCKED」7× 全在位✅·reports/ porcelain=0✅·reports/ 无 tracked .json/.log/.txt(1 stray JSON=gitignore命中非tracked)✅
-> - **运维指令区**: 2026-11-17 10:2x **部分交付**: ①撤回修正后Pass%✅ ②报告改「重跑中」真实口径✅ ③47trial重跑(进行中·codex done=能力✅·**hermes running 4并发**(bn-fit-modify/build-cython-ext/chess-best-move/gcode-to-text)·opencode10+pi15+deepseek5+cc1+cline1排队·清单无遗漏低分路全含✅) ④重跑后重算真实Pass%(待rerun完成) — 其余旧令全✅已交付
-> - **本轮动作**: ①自检全绿(load/mem/CPU/0runaway) ②报告口径二次grep复核✅ ③rerun进度: orchestrator PID1217002 alive·hermes PID1455134(842s·4并发4task)·codex 2/2 done=ability ④reports/ hygiene=0 tracked junk✅ ⑤体积TASK27.2KB/MEMORY29.1KB✅≤32KB
-> - **下一步**: ①v2 rerun跑完→逐路 --merge + REGEN双报告(重算真实Pass%=passed/89·重跑前后对比表) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
-> - **📦 体积**: TASK≈27.2KB / MEMORY≈29.1KB（✅≤32KB）
+> 🆕 **R2610 · 2026-11-17 11:2x — 表五(重跑前后对比表)入报告✅+rerun监控(hermes running)+自检全绿**
+> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass%」已撤回; 唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)。未真跑题处置=重跑拿真实结果, 不剔除分母假设通过。
+> - **真实 Pass% (重跑完成前·标「待重跑」)**: cline 42/89=47.2%(待1) · codex 1/89=1.1%(待1·rerun done=0/2=能力✅) · opencode 43/89=48.3%(待10) · cc 30/89=33.7%(待1) · pi 35/89=39.3%(待15) · hermes 38/89=42.7%(待10·running·qemu BLOCKED Py3.9<3.11) · deepseek 11/89=12.4%(待5)
+> - **本轮交付 (10:2x item 3/4)**: gen_report_tb21_7way.py 新增 `count_route_before_rerun`(扫 original+早期rerun, 排除本次 `*_rerun_7way_20261117_*` = R2600基线) + **表五·重跑前后真实Pass%对比**(重跑前passed/89|Pass%|重跑后passed/89|Pass%|Δ|待重跑|状态); 报告已REGEN(21043B); 7路 Δ全=0(重跑中·codex rerun done=ability无增益·余路排队/running); 重跑完成Δ自动更新(pass+1/fail计失败Δ不变)。修 __pycache__ 坑(旧函数缓存致cc before误显0→清cache后30正确✅)。
+> - **自检**: load26/224✅·CPU88%idle✅·mem838GB avail1028GB✅·0 harness runaway✅(hermes rerun 1-2%cpu/130MB·cline@100%=pretrain线非本线)·reports/ porcelain=0✅
+> - **运维指令区**: 10:2x **部分交付**: ①撤回✅ ②报告重跑中口径✅ ③47trial重跑(进行中·codex done·hermes running 37min 4并发·opencode10+pi15+deepseek5+cc1+cline1排队) ④**表五前后对比表已加✅**(Δ全0=重跑中) — 余: rerun跑完→Δ自动更新→REGEN双报告
+> - **下一步**: ①v2 rerun跑完→逐路REGEN(表五Δ自动出) ②SWE-bench predict续推 ③等运维新令
+> - **📦 体积**: TASK≈27.2KB / MEMORY≈29.4KB（✅≤32KB）
+
+> 📦 R2609 流水已归档 → daily-memories-harness/2026-11-17.md。结论：rerun监控+报告口径二次复核✅(表五未加→本轮R2610补)。需要时再读。
 
 
 > 📦 R2608 流水已归档 → daily-memories-harness/2026-11-17.md。结论：红线复述+rerun监控(hermes running·codex done=能力)+报告口径复核✅。需要时再读。
