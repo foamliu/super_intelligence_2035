@@ -10,7 +10,13 @@
 
 **第四十四轮增量（2026-11-16 15:0x）**：作者网 162 → **165**（#161 Ze Liu 刘泽 / #162 Junyi Ao / #163 Long Zhou）；已发信 **67 → 67**（今日 12 封 = 每日硬上限已满，本轮**只建档不发信**）；X 已核验 92 → **93**（`@zeliu_`：本人主页 `href` + X 页 `og:title` / `og:description` 双源）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① `x.com/zeliu98` `404` ⇒ 不登记，改按本人主页给的 `x.com/zeliu_` 核验；② `@yanping_huang` 虽 `200` 但 `og:description` 仅 `0 followers · 38 following`、无 bio ⇒ 无法确认是 GPipe 一作本人，**按「未找到 X」处理**；③ `@longzhou` `og:title` = `Long Jiu Zhou Kaskus`（他人账号）⇒ 不登记，Long Zhou 记为「未找到 X」。
 
-> **本轮计数（2026-11-17 12:0x）**：作者 **183** 人（编号最大 **183**）· X 已核验 **102** · 已发信 **78** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **本轮计数（2026-11-17 18:0x）**：作者 **187** 人（编号最大 **187**）· X 已核验 **103** · 已发信 **79** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+**第五十二轮增量（2026-11-17 18:0x）**：作者网 183 → **187**（#184–#187，均来自本轮 B 轨四篇经典）；已发信 78 → **79**（#79 Wenhu Chen · MMMU，中文 CJK **248** 字，`SENT OK 18:03:16`）；X 已核验 102 → **103**（`@WenhuChen`：本人主页 `href="twitter.com/WenhuChen"` + `x.com/WenhuChen` 页 `og:title`=`Wenhu Chen (@WenhuChen) on X`、`og:description` 自述「I led PoT, MMMU, MMLU-Pro, MAmmoTH, General-Reasoner」⇒ 双源且能对上本论文）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜」记录：① `@DanHendrycks` 实测 `x.com/DanHendrycks` **`404`**（`og:title`=`User Profile Not Found`）⇒ Dan Hendrycks 记「未找到 X」，🚫 不换猜变体；② Xiang Yue 主页 `xiangyue.site` 直连 `000` / `http` `502` ⇒ 邮箱与 X 均「未找到」，只按论文作者块建档；③ David Rein 邮箱取 PDF 首页 `idavidrein@gmail.com`（2023 年论文内地址，**非当前主页**，送达率不可验证 ⇒ 本轮不发、只建档）。
+
+
+
+
 
 **第五十一轮增量（2026-11-17 12:0x）**：作者网 180 → **183**（#181 Jifeng Dai 代季峰 / #182 Wenhai Wang 王文海 / #183 Zhe Chen 陈喆，均来自 **InternVL** #199）；已发信 77 → **78**（#78 Jifeng Dai，中文 CJK **241** 字，`SENT OK 12:04:53`）；X 已核验 99 → **99 不变**（三人主页均无 x.com/twitter 链接 ⇒ 一律写「未找到 X」，**不猜 handle、不计数**）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① 同论文 #199 已发末位作者 Jifeng Dai ⇒ 三作 Wenhai Wang（有邮箱）与一作 Zhe Chen（有邮箱）本轮**均不发**，守「同一论文 ≤1」；② Wenhai Wang 的邮箱是 `whwang[at]ie.cuhk.edu.hk` 反爬写法，登记时明确标「拼装、发送前须再核」；③ Zhe Chen 主页另有一个 `wztxy89[at]163.com`（他人地址）⇒ 不采用。**本轮 `voice_ready` 0**：`@giffmana` 时间线里 1 条（Perturbing Inputs Improves Pretraining Distillation）经单推页 `og:title` 核出作者是 **Jack Ziyang Cai（@jackcai1206）** ⇒ 他人推文，丢弃；另 1 条（蒸馏 + mixup）确为本人但 `og:description` 只到首段、正文需上下文 ⇒ 按「正文不完整不采用」弃。
 
@@ -2654,6 +2660,58 @@
 | X 账号 | **未找到 X**（页内无 twitter / x.com 链接 ⇒ 不猜） |
 | 状态 | **待跟踪**（同论文已发 Jifeng Dai ⇒ 本轮不发；后续若发，按一作优先并换问题角度） |
 | 备注 | `语言=中文(判据=华人姓名族属 + 南京大学机构)`。该篇的「像素重排 + 动态分辨率」实现细节多在一作侧 ⇒ 若 Dai 无回音，可改问一作同一问题的工程侧细节（不催的例外：不同收件人、不同论文角度，仍受「同论文 ≤1」约束 ⇒ 须先等 14 天窗口）。 |
+
+### 184. Wenhu Chen（陈）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenhu Chen（华人姓名族属 ⇒ 中文信；**名字汉字未核 ⇒ 信中只写「陈老师」，不猜汉字**） |
+| 机构 | **University of Waterloo**（Cheriton School of CS 助理教授；论文时为 UCSB）；X bio 自述现兼 **Meta-MSL**（`Exploring the Pareto frontier of LLMs @ Meta-MSL`） |
+| 代表论文 | **MMMU**（arXiv `2311.16502`，B 轨 #204；**通讯作者**）· X bio 自述另主导 PoT / MMLU-Pro / MAmmoTH / General-Reasoner（**其自述，本线未逐条核论文**） |
+| 邮箱 | **`hustchenwenhu@gmail.com`**（本人主页 `wenhuchen.github.io` 正文 `Email: hustchenwenhu [at] gmail [dot] com / wenhuchen [at] meta [dot] com`，`HTTP 200` / 8,842 B，按页面 `[at]/[dot]` 规则还原）；旁证 PDF 首页通讯标注 `wenhuchen@uwaterloo.ca`（同人） |
+| 主页 | <https://wenhuchen.github.io/>（`200` / 8,842 B） |
+| X 账号 | **`@WenhuChen`**（本人主页 `href="twitter.com/WenhuChen"`；`x.com/WenhuChen` `200`，`og:title`=`Wenhu Chen (@WenhuChen) on X`，`og:description` 含 `MMMU` ⇒ 双源可核） |
+| 状态 | **已发信**（第 79 封，2026-11-17 18:03；中文 CJK 248 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 拼音主页；机构在加拿大不改判据)`。信问：① 答案抽取失败（无效应答「选择题随机选 / 开放题判错」）在 test 上占比多少，决定 harness 是否加人工复核；② val ≈900 题上做 prompt 选型是否有 val/test 排名一致性数据；③ 图表类 vs 文本类差距是否同质、中文 + EDA 波形/版图子集该优先补哪类图。回填 harness 判分口径 / vision 分辨率预算 / zhulong 读图分层。 |
+
+### 185. Xiang Yue
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xiang Yue（华人姓名族属 ⇒ 中文信；**汉字未核 ⇒ 不写汉字名**） |
+| 机构 | **University of Waterloo**（论文作者块 `2 University of Waterloo`，MMMU **一作**，与 Wenhu Chen 同组） |
+| 代表论文 | **MMMU**（arXiv `2311.16502`，B 轨 #204；**一作**） |
+| 邮箱 | **未找到**（主页 `xiangyue.site` 直连 `000`、`http://` `502` ⇒ 按纪律**不猜地址**，同类拼装写法一律不用） |
+| 主页 | <https://xiangyue.site/>（**本轮不可达**：`000` / `502`） |
+| X 账号 | **未找到 X**（主页不可达 ⇒ 无来源可读，🚫 不猜 handle） |
+| 状态 | **待跟踪**（同论文 `2311.16502` 已发通讯作者 Wenhu Chen ⇒ 守「同一论文 ≤1」本轮不发） |
+| 备注 | `语言=中文(判据=华人姓名族属；机构在加拿大不改判据)`。若 Wenhu Chen 无回音，一作侧的「图像类型 × 分辨率」工程细节可作 14 天后的备选收件人（仍受同论文 ≤1 约束）。 |
+
+### 186. David Rein
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Rein（英语姓名族属 ⇒ 英文信） |
+| 机构 | **New York University**（论文作者块 `1 New York University` / `2 Cohere`；GPQA **一作**） |
+| 代表论文 | **GPQA**（arXiv `2311.12022`，B 轨 #203；**一作**） |
+| 邮箱 | **`idavidrein@gmail.com`**（PDF 首页作者块明文，`pdftotext` 实测 1 处；⚠️ **2023 年论文内地址、非当前主页** ⇒ 送达率不可验证） |
+| 主页 | **未找到**（本轮未取到可访问的个人主页；NYU 通用页不作个人页用） |
+| X 账号 | **未找到 X**（无可访问个人页提供 handle ⇒ 不猜） |
+| 状态 | **待跟踪**（邮箱属论文内旧地址 ⇒ 本轮不发；待核到现行主页地址后再评估） |
+| 备注 | `语言=英文(判据=英语姓名族属 + NYU 机构)`。若后续发信，问题方向：448 题中 198 道 diamond 的筛选阈值、非专家 34% 的招募与限时设置、以及题库是否按「可被检索解决」做过二次复核。 |
+
+### 187. Dan Hendrycks
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Dan Hendrycks（英语姓名族属 ⇒ 英文信） |
+| 机构 | **Center for AI Safety（CAIS）主任**（`safe.ai` 首页 `200` / 70,168 B 原文 `Dan Hendrycks` / `Director, Center for AI Safety`）；论文时为 UC Berkeley |
+| 代表论文 | **MATH**（arXiv `2103.03874`，B 轨 #206；**一作**）· 另为 CAIS 多篇安全评测报告作者（`safe.ai` 首页可见署名） |
+| 邮箱 | **未找到现行地址**（`hendrycks.me` 直连与代理均 `000`；PDF 首页 `hendrycks@berkeley.edu` 为 **2021 年**地址 ⇒ 按「不用旧地址」纪律**不采用**） |
+| 主页 | <https://hendrycks.me/>（**本轮不可达 `000`**）· 机构页 <https://safe.ai/>（`200`，仅列姓名与职务、无邮箱） |
+| X 账号 | **未找到 X**（`x.com/DanHendrycks` 实测 **`404`**，`og:title`=`User Profile Not Found - X` ⇒ 不换猜变体） |
+| 状态 | **待跟踪**（无现行邮箱 ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。MATH 的价值主要在 harness 的「抽取 + 判等」两步与难度 1–5 分层口径；若日后拿到现行地址，问题方向应聚焦判分器实现（抽取失败率、等价判定边界），而非数据集规模。 |
 
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。

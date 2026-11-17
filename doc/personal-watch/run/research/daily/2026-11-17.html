@@ -373,8 +373,31 @@
 </div>
 
 
+<h3 class="sec">🕕 18:00 时窗增量（✅ 网络恢复 · B 轨 +4 → 206 · 作者网 +4 → 187 · 作者信 1 封 → 79 · voice_ready 0）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>网络恢复自检（15:00 的 BLOCKED 解除）</b>：<code>export.arxiv.org/api/query</code> <code>200</code> / <code>arxiv.org/abs/...</code> <code>200</code> / <code>api.openalex.org</code> <code>200</code> / <code>x.com</code> 直连 <code>200</code>＋经代理 <code>200</code> ⇒ 本轮把 15:00 被阻断的 <b>4 条经典候选逐条重跑</b>（arXiv API + OpenAlex + PDF 三源），🚫 无一条凭记忆补数字。</li>
+    <li><b>A 轨 0 新收（配额满，不是阻断）</b>：今日 <b>5/5</b> 已满、本不新增。顺带复核公告批：<code>cat:cs.CL</code> 列表 <code>HTTP 200</code> + <code>application/atom+xml</code>（<b>13,973 B</b>），<code>published</code> 上界由 <code>2026-11-14T06:49:09Z</code> <b>前进到 <code>2026-11-16T18:59:38Z</code></b>（最新样本 <code>2611.21608</code> / <code>2611.21602</code> / <code>2611.21600</code>）⇒ 新批<b>留给 11-18 06:00 窗</b>，不重开今日 5 篇、不拿新批凑数。</li>
+    <li><b>B 轨 +4 → 206</b>：GPQA <code>2311.12022</code>（<b>2,204</b>，预印本）· MMMU <code>2311.16502</code>（<b>2,994</b>，CVPR 2024 Oral）· LAION-5B <code>2210.08402</code>（<b>1,963</b>，NeurIPS 2022 D&amp;B）· MATH <code>2103.03874</code>（<b>7,734</b>，NeurIPS 2021）。实测证据：arXiv <code>id_list</code> <code>200</code> + atom（<b>12,365 B / 4 entry</b>）、OpenAlex 4/4 <code>200</code>、PDF 4/4 <code>200</code> + <code>%PDF-</code>（617,128 / 16,874,947 / 17,686,858 / 2,030,715 B；后两篇 <b>&gt;5 MB 仅存 <code>/tmp</code></b>、不入 git），<code>pdftotext</code> 逐篇核到关键数字（<code>448</code>/<code>198</code>/<code>65%</code>/<code>34%</code>；<code>11.5K</code>/<code>30 subjects</code>/<code>183</code>/<code>150:900:10500</code>/<code>88.6</code>/<code>56.8</code>；<code>5.85 billion</code>/<code>2.32 billion</code>/<code>2.26 billion</code>/<code>1.27 billion</code>；<code>12,500</code>/<code>7,500</code>/<code>5,000</code>/<code>5.4%</code>/<code>AMPS</code>）。</li>
+    <li><b>作者网 +4 → 187</b>（#184–#187）：Wenhu Chen（Waterloo / 现兼 Meta-MSL；X <code>@WenhuChen</code> 双源已核）· Xiang Yue（MMMU 一作，主页 <code>xiangyue.site</code> <code>000</code>/<code>502</code> ⇒ 邮箱与 X 均「未找到」）· David Rein（NYU，PDF 内 2023 年 gmail，<b>非现行主页 ⇒ 不发</b>）· Dan Hendrycks（CAIS 主任，<code>safe.ai</code> <code>200</code> 核实职务；<code>hendrycks.me</code> 不可达、<code>x.com/DanHendrycks</code> <b><code>404</code></b> ⇒ 无现行邮箱、未找到 X）。X 已核验 <b>102 → 103</b>。</li>
+    <li><b>作者信 1 封</b>：<code>#79</code> Wenhu Chen（MMMU 通讯作者，中文 CJK <b>248</b> 字，<code>SENT OK 18:03:16</code>），落款两行其后无任何行。累计 <b>79</b> 封，<b>回信率 0 / 79</b>、<b>0 封到期</b>（最早 2026-11-25）；今日 <b>12 / 12</b> 已满。主动少发：Xiang Yue（同论文 ≤1）· Rein / Hendrycks（旧地址）· LAION-5B（只有项目信箱 <code>contact@laion.ai</code>，疑似列表）。</li>
+    <li><b>voice_ready 0 / news_ready 0（不硬凑）</b>：X 本轮可达，但 4 篇均为 2021–2024 旧文、<b>无发布型事件点</b>；抓到的只有 profile bio（不是原推正文）⇒ 按 §5 不得标 <code>voice_ready</code>；A 轨本轮 0 新入库 ⇒ 无 <code>news_ready</code>。</li>
+  </ul>
+  <table class="plain" style="margin-top:12px;">
+    <tr><th style="width:16%;">线</th><th>18:00 增量可执行动作（附判据）</th></tr>
+    <tr><td><b>pretrain</b></td><td>借 LAION-5B 的语种切分（英文 2.32B / 多语 2.26B）⇒ 多语种配比做 <b>10% / 30%</b> 两档，中文评测单列；<b>判据</b>：多语占比 30% 时中文评测增益 &lt;1pt 且英文回归掉分 &gt;0.5pt，则回退 10%。</td></tr>
+    <tr><td><b>vision</b></td><td>借 MMMU 的 <b>30 种图像类型 + 183 子领域</b>⇒ 视觉塔选型表加「图表 / 示意图 / 表格」三个分层子集，各自记输入分辨率；<b>判据</b>：分辨率翻倍在「表格」子集增益 &lt;1pt 而显存涨 &gt;30%，则该子集改用切图而非提分辨率。</td></tr>
+    <tr><td><b>harness</b></td><td>三篇口径合并成一份判分契约：GPQA 加 <code>retrieval_solvable</code> 分层、MMMU 的「无效应答」单列计数、MATH 的 <code>extract</code>/<code>compare</code> 分离单测；<b>判据</b>：抽取失败率 &gt;2% 时，所有历史分数作废重跑，不得跨判分器版本比较。</td></tr>
+    <tr><td><b>data</b></td><td>借 LAION-5B 的 <code>clip_score_threshold</code> / <code>lang_bucket</code> / <code>kept_after_dedup</code> 三列记账 + MATH 的 AMPS 辅助语料思路；<b>判据</b>：阈值上调后留存率掉 &gt;50% 而下游探针无改善，则该阈值无收益、回退。</td></tr>
+    <tr><td><b>zhulong</b></td><td>借 GPQA（448 题、单题人类中位 30 分钟）与 MATH（难度 1–5）做<b>双层难度轴</b>：上限探针只用 198 道 diamond 级、回归集按 level 分层报分；<b>判据</b>：平均分提升但 level 4–5 掉分 &gt;1pt ⇒ 判为「低成本刷分」、不进成本结论。</td></tr>
+    <tr><td><b>designflow</b></td><td>借 MMMU 的「图像类型 × 科目」双维标注 ⇒ 题面元数据加 <code>image_type</code>（波形 / 版图 / 表格 / 框图）与 <code>subject</code> 两列并统计分布；<b>判据</b>：某 <code>image_type</code> 题量 &lt;10% 时不得对外声称覆盖该类输入。</td></tr>
+  </table>
+  <p style="font-size:13px;color:#666;margin:8px 0 0;">跨线运维提醒（非建议项）：<b>0 回信已累计 79 封</b>（最早一批 2026-11-25 到期）⇒ 到期后按「选题不对 / 问题太泛 / 发错人 / 地址过期」四层归因排查；发件通道<b>只发不收</b>（无 IMAP/POP3）仍是最大盲区，需运维决定是否补收信通道。</p>
+</div>
+
+
 <footer>
-  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 15:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量 / 12:00 增量 / 15:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>202</b> 篇（12:00 +4 / 15:00 +0 ⚠️ 外网阻断）｜ 作者网 <b>183</b> 人（X 已核验 102）｜ 作者信累计 <b>78</b> 封（回信率 <b>0/78</b>）｜ voice_ready 3 ｜ news_ready 1<br>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 18:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量 / 12:00 增量 / 15:00 增量 / 18:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>206</b> 篇（12:00 +4 / 15:00 +0 ⚠️ 外网阻断 / 18:00 +4 ✅ 恢复）｜ 作者网 <b>187</b> 人（X 已核验 103）｜ 作者信累计 <b>79</b> 封（回信率 <b>0/79</b>）｜ voice_ready 3 ｜ news_ready 1<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
