@@ -1,5 +1,7 @@
 WAITING: 0
 
+> 🚀 wake#1529 2026-11-17 13:1x 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind1(harness R2616·0触视觉)pull --rebase ff 同步 HEAD=`3485242b4`·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈189279s(~52.6h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=视觉塔配置(encoder 线·输入参考·无纳入)·体积 MEMORY 达标·fold wake#1520~#1524→daily。**WAITING: 0**。
+
 > 🚀 wake#1528 2026-11-17 12:58 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind3(zhulong #1057/designflow D r807/pretrain·0触视觉)→pull --rebase 共享 NFS HEAD 已前进至 `04aaa47a2`(posttrain fix wake634·0触视觉)·工作树干净(他线在途已由 posttrain 提交)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈188841s(~52.4h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 index mtime 12:30 更新·vision 建议=Qwen2-VL 视觉塔 dynamic_resolution/InternVL 6B 塔/CNN 1D temporal 基线(均 encoder/GPU 线·输入参考非新指令·本轮无纳入)·体积 MEMORY 31.0KB/TASK 23KB 均达标·fold wake#1527→daily。**WAITING: 0**。
 
 > 📦 wake#1527 2026-11-17 12:50 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
@@ -7,15 +9,7 @@ WAITING: 0
 > 📦 wake#1526 2026-11-17 12:39 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind3 designflow+zhulong·0触视觉→ff 同步 HEAD=`2b6cf8616`·无新运维令(TASK md5=378c30879=wake#1525 交付态不变)·live 复验 watchdog ~52.1h+三端点(:30001/30003 /health ok·:30002 /mcp qwen35-vqa v1.30.0)+WaveView 子集 224 行 sha256 623842b5 一致+三报告+6_domain_rl.tex TBD=0·research 2026-11-17 vision 建议=VLA 统一动作空间(2611.18397·与 EDA WaveView 不相关)忽略）·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 🚀 wake#1525 2026-11-17 16:3x 🔴用户令交付·WaveView 子集自建**：自主 SSH 36.15 全量扫描 `EDA-Eval-DesignFlow.jsonl`(1647 行 A/B/C/D 合并)→入选 **224**(波形相关 keyword 223 + 仅图非波形 1·诚实排除 IRReportPdf-001)。by_source: original_png=10/text_only=181/no_check=32/image_only_non_waveform=1；**vqa_runnable=10**(波形∧可见图∧check)。`EDA-Eval-DesignFlow-WaveView.jsonl` 36.15 与本地 `vision/` 双份·**sha256 `623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd` 224 行一致**。每条含 task_id/shard/domain/waveform_relevant/image_required/image_path/has_check/k_conditions/kw_match/baseline_verdict/failure_mode_tier/source/exclusion_reason/vqa_runnable。三段对照(同 check.py 同口径)：**V0=0/10·V1=0/10·V2=1/10**·每量 30.9%→35.5%→50%(+19.1pp)·McNemar V0 vs V2 b=1 c=0 **p=1.0**(n=10 仅 1 不一致对·弱正仅参考·不外推)。report `report_vision_waveview_selftest_agent_zh.html` §0 原地覆盖 **39986B·0外链0script**。可复现脚本 `vision/waveview_mining/build_waveview_subset.py`(36.15 同份·重生 jsonl)+`append_subset_section.py`(重生报告 §0)。用户三问全答：①已建立 ②基线 V0=0/10 每量 30.9% ③+Qwen3.5-2B VQA V2=1/10 每量 50%。**WAITING: 0**。
-> 📦 wake#1524 2026-11-17 10:32 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1523 2026-11-17 10:21 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1522 2026-11-17 09:5x 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1521 2026-11-17 09:33 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1520 2026-11-17 09:19 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
+> 📦 wake#1520~#1524（2026-11-17 09:19~10:32，5 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 0触视觉同步·无新运维令·TASK md5 不变·live 复验 watchdog+三端点(:30001/30003 /health ok·:30002 MCP)+WaveView 子集 224 行 sha256 623842b5 一致+三报告+6_domain_rl.tex TBD=0）。需要时再读。
 
 > 📦 wake#1506~#1519（2026-11-17 06:46~09:05，14 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 behind0–1 ff-only 0触视觉同步·无新运维令·TASK md5=3caf5e1e 不变·live 复验 watchdog ~46–48.8h+三端点(:30001/30003 /health ok·:30002 MCP)+10真题+三报告+6_domain_rl.tex TBD=0）。需要时再读。
 
