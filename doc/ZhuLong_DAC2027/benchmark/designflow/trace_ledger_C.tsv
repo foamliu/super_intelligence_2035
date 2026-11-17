@@ -67,7 +67,7 @@
 1792977240005_1mvxt	yohannw	hfeg0pkn003	565	physical_verify	case	EDA-Eval-DesignFlow-LVSDiag-001	2026-11-03 09:58	
 1790130588724_141n0	xinqiaoz	hfeg0pkn004	915	physical_verify	case	EDA-Eval-DesignFlow-DeckIncludeResolve-001	2026-11-03 10:38	
 1792297573507_9knot.messages.json	vincelu	hfeg0plg55	862	physical_verify	parked		2026-11-03 11:01	netlist+schematic+hspice 非纯 shard C,4.2MB>2MB(r43)
-1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	parked		2026-11-17 20:25	r724 deepread: complex 3-phase PDK QA sync flow-driving, viable sub-task U#1 analysis-Q&A (pdk-qa-sync-workflow-analyze), needs >1 round fixture construction; 11-15 flow-driving legit
+1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	case	EDA-Eval-DesignFlow-PdkQaSyncWorkflowAnalyze-001	2026-11-17 20:55	r725 case: PdkQaSyncWorkflowAnalyze-001 (physical_verify, mock pdk-qa-sync-workflow-analyze, k=16 a-p, B=LVS QA C1-C4 + B2=ERC QA E1, anti-hardcode A)
 1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	case	EDA-Eval-DesignFlow-SshTestProfileBuilder-001	2026-11-15 18:08	handoff resume PDK QA test fixes 强状态依赖(r47)
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked		2026-11-15 20:07	r616 re-park: deepread reveals domain=spice_sim/analog_context (FineSim/Totem-SC PowerIREM), NOT C (layout/pv); belongs to shard B/D. 2 prior deepreads exist. C-domain misclassify in pool_reaudit.
 1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked		2026-11-03 11:01	handoff 弃(r46)

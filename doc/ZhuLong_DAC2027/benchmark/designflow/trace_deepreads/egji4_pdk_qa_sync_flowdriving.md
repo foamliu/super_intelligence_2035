@@ -34,3 +34,14 @@ editor:107 · run_approved_command:64 · read_files:27 · list_allowed_files:5 �
 
 ## Next-round plan
 若选 egji4 合成：取子任务 (1) U#1 analysis-Q&A，构造 mock PDK-QA-sync-state fixture（sync_phase/文件列表/已做步骤/待做步骤/已知陷阱），reframe 为 workflow-analysis-report-gen（承 r645-r723 family 新子型 `pdk-qa-sync-workflow-analyze`，physical_verify）。预估 k≈14-18。
+
+---
+
+## r725 outcome — CASE DELIVERED: PdkQaSyncWorkflowAnalyze-001
+- **执行 Next-round plan**：取子任务 (1) U#1 analysis-Q&A，构造 mock PDK-QA-sync-state fixture，reframe 为 `pdk-qa-sync-workflow-analyze`（physical_verify, r645-r724 family 新子型 workflow-analysis）。
+- **fixtures**：A=DRC QA sync(5 batches B1-B5, 6 phases, 4 rules, 3 questions) / hidden B=LVS QA sync(4 batches C1-C4, 5 phases, 3 rules, 2 questions) / hidden B2=ERC QA minimal(1 batch E1, 2 phases, 2 rules, 0 questions)。
+- **check.py**：16 条件 a-p（zip/py_compile/B+B2 run/workflow_summary/final_goal/progress/next_steps/open_questions/determinism+anti-hardcode）。k=16 GATE PASS。
+- **teeth 验证**：3 negatives FAIL distinct（empty→c / print_expected→h 硬编码A / delete_core→e），round-trip PASS，determinism 3x md5 identical。
+- **落库**：cases/C/PdkQaSyncWorkflowAnalyze-001.json + assets/ + reference/ 已 commit EDA-Flow-Bench master；build_jsonl --shard C → 449 lines（jsonl 现 gitignored build 产物）。
+- **台账**：ledger_C egji4 r724 parked→r725 case(case_id=EDA-Eval-DesignFlow-PdkQaSyncWorkflowAnalyze-001)；pool_reaudit_C.tsv egji4 行→已造-case。
+- **状态**：egji4 deepread→case 闭环 ✓。trace 覆盖率 covered=453/target=2907=15.6%。

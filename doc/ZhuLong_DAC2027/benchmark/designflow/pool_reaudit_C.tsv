@@ -50,7 +50,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1788577896116_33zw1.messages.json	haoyut	172.16.8.191	584	layout_virtuoso	parked: cross-shard near-dup C down D keep (A r440 ruling); C s	不可造	—
 1792715254915_8z5a8	xinqiaoz	hfeg0pkn004	611	physical_verify	parked: gold file (make_fix_gds.py+fixed deck/config) on hfeg0p	已交付-见case	r653 stale-cleanup: ledger_C case=DummyDeckMaskDiag-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1792297573507_9knot.messages.json	vincelu	hfeg0plg55	862	physical_verify	parked: netlist+schematic+hspice 非纯 shard C,4.2MB>2MB(r43)	不可造	—
-1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	parked: pdk QA handoff 起手不纯需求(r43)	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	已造-case	r725: PdkQaSyncWorkflowAnalyze-001 (k=16, B=LVS C1-C4 + B2=ERC E1)
 1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	parked: handoff resume PDK QA test fixes 强状态依赖(r47)	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-SshTestProfileBuilder-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked: UI hello/runme 太薄元任务(r47)	可造	分析/Q&A或脚本(需deepread)
 1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked: handoff 弃(r46)	可造	analysis:check验报告结构+关键事实+hidden B
