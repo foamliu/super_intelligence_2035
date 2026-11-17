@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1180·**🟠 standby·无待办·plan v1 已交付（commit `decf1a62e`='zhulong plan: ...v1'）·第十三次独立复核通过**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付并经 wake#1168~#1179 十二次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·repo HEAD=`aab5a46f9`（up to date ✅）·无真实 subagent eval。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
+WAITING: 0（2026-11-18 wake#1181·**🟠 standby·无待办·plan v1 已交付（commit `decf1a62e`='zhulong plan: ...v1'）·第十四次独立复核通过**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付并经 wake#1168~#1180 十三次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·repo HEAD=`611a240ba`（up to date ✅）·无真实 subagent eval。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -10,15 +10,17 @@ WAITING: 0（2026-11-18 wake#1180·**🟠 standby·无待办·plan v1 已交付�
 
 - [wake#1176 详条已滚出·2026-11-18 wake#1178] → `daily-memories/2026-11-18.md`（plan v1 第九次复核 standby 心跳·判据全过·被 wake#1178 代表）。
 
-- **[2026-11-18 wake#1177] 🟠 standby 心跳·plan v1 第十次复核通过·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。独立复核 `reports/report_edafb_icml2027_plan_zh.html`（73938B·commit `decf1a62e`）：① 六问全答（§1 现稿诊断/§2 贡献重定位/§3 delta/§4 命题/§5 消融/§6 大纲/§7 矩阵时间线/§8 风险/§9 资产映射）✅；② 8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2（≥6·含 N1 等 token 预算无记忆长 prompt 杀手级对照 + N2 错误记忆对照）✅；③ H1-H4 每条含证伪条件 ✅；④ §3 delta 表 + §7.2 ICML2027 倒推时间线 ✅；⑤ 0 外链 0 `<script>` 0 CDN（grep 命中=0）✅；⑥ 全文数字带 `路径:行号` 可追溯 + UNKNOWN 纪律 4 处 ✅。size 73938B>25KB ✅。未改 main.tex/sections/appendix·未动 designflow cases·未起进程·未覆盖已有报告。infra: **loop PID243810 活·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·repo HEAD=`f7e4e4479`（designflow shard C·非本线·up to date ✅）·无真实 subagent eval。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C: PHASE=done_all→什么都不做退出。**WAITING=0 standby·待用户裁决起跑**。
+- [wake#1177 详条已滚出·2026-11-18 wake#1181] → `daily-memories/2026-11-18.md`（plan v1 第十次复核 standby 心跳·判据全过·被 wake#1181 代表）。
 
-- **[2026-11-18 wake#1179] 🟠 standby 心跳·plan v1 第十二次独立复核通过·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。**本轮独立复核（重读源文 + 报告交叉核）**：① 读 `EDA-Flow-Bench_ICML2027/main.tex`（\Ntasks=1665·\LiteSet=500·\Neval=696）+ sections/0-7 + appendix A/B + `ZhuLong_DAC2027/DAC2027/8_conclusion.tex`（Future work 原句"long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking"）+ DATE27 `4_self_evolve.tex`/`5_exp.tex` 确认报告数字与 delta 表引用真实；② 独立核报告 `reports/report_edafb_icml2027_plan_zh.html`（73938B·commit `87cdb56f8`）：size>25KB ✅·0 真实 `<script>`（grep=0）✅·0 外链 0 CDN（grep=0）✅·§0-§9+附录 11 节齐全 ✅·8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2（≥6·N1 等 token 预算杀手级对照 + N2 错误记忆对照）✅·H1-H4 每条含证伪条件（31 处命中）✅·§3 delta 表 ✅·§7 ICML2027 倒推时间线 ✅·全文 154 处路径:行号可追溯 + UNKNOWN 4 处 ✅。未改 main.tex/sections/appendix·未动 designflow cases·未起进程·未覆盖已有报告。infra: **loop PID243810 活·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·repo HEAD=`8c2ef904e`（up to date ✅·含他线 data/designflow commit）。无真实 subagent eval。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C: PHASE=done_all→什么都不做退出。**WAITING=0 standby·待用户裁决起跑**。
+- [wake#1179 详条已滚出·2026-11-18 wake#1181] → `daily-memories/2026-11-18.md`（plan v1 第十二次独立复核 standby 心跳·重读源文+报告交叉核·判据全过·被 wake#1181 代表）。
 
 - [wake#1178 详条已滚出·2026-11-18 wake#1179] → `daily-memories/2026-11-18.md`（plan v1 第十一次独立复核 standby 心跳·判据全过·重读 main.tex/sections/appendix/results.txt + DATE27 + DAC 8_conclusion + zhulong_review.txt 交叉核·被 wake#1179 代表）。
 
-- **[2026-11-18 wake#1180] 🟠 standby 心跳·plan v1 第十三次独立复核通过·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。独立复核 `reports/report_edafb_icml2027_plan_zh.html`（73938B·commit `decf1a62e`）：size>25KB ✅·0 `<script>`（grep=0）✅·0 外链 0 CDN（grep=0）✅·§0-§9+附录 11 节齐全 ✅·8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2（≥6·N1 等 token 预算无记忆长 prompt 杀手级对照 + N2 错误记忆对照）✅·H1-H4 每条含证伪条件 ✅·§3 delta 表 ✅·§7 ICML2027 倒推时间线 ✅·128 处路径:行号可追溯 + UNKNOWN 4 处 ✅。未改 main.tex/sections/appendix·未动 designflow cases·未起进程·未覆盖已有报告。infra: loop 活·https_proxy=http://172.19.92.23:13128 ✅·repo HEAD=`aab5a46f9` up to date ✅。无真实 subagent eval。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C: PHASE=done_all→什么都不做退出。**WAITING=0 standby·待用户裁决起跑**。
+- [wake#1180 详条已滚出·2026-11-18 wake#1181] → `daily-memories/2026-11-18.md`（plan v1 第十三次复核 standby 心跳·判据全过·被 wake#1181 代表）。
 
-- [wake#1175 详条已滚出·2026-11-18 wake#1176] → `daily-memories/2026-11-18.md`（plan v1 第八次复核 standby 心跳·判据全过·被 wake#1176 代表）。
+- **[2026-11-18 wake#1181] 🟠 standby 心跳·plan v1 第十四次独立复核通过·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。独立复核 `reports/report_edafb_icml2027_plan_zh.html`（73938B·commit `decf1a62e`）：size>25KB ✅·0 `<script>`（grep=0）✅·0 外链 0 CDN（唯一 `cdn` 命中是「0 CDN」自描述 ✅）✅·§0-§9+附录 11 节齐全 ✅·8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2（≥6·N1 等 token 预算无记忆长 prompt 杀手级对照 + N2 错误记忆对照）✅·H1-H4 每条含证伪条件（31 处命中）✅·§3 delta 表 ✅·§7 ICML2027 倒推时间线 ✅·21 处路径:行号可追溯 + UNKNOWN 4 处 ✅。未改 main.tex/sections/appendix·未动 designflow cases·未起进程·未覆盖已有报告。infra: loop PID243810 活·https_proxy=http://172.19.92.23:13128 ✅·ops relay PID118432/118463 活 ✅·repo HEAD=`611a240ba` up to date ✅（dirty=他线 designflow 文件不碰）·无真实 subagent eval。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C: PHASE=done_all→什么都不做退出。**WAITING=0 standby·待用户裁决起跑**。
+
+- [wake#1177/#1180 详条已滚出·2026-11-18 wake#1181] → `daily-memories/2026-11-18.md`（plan v1 第十/十三次复核 standby 心跳·均判据全过·被 wake#1181 代表）。
 
 - [wake#1172/#1173/#1174 详条已滚出·2026-11-18 wake#1177] → `daily-memories/2026-11-18.md`（plan v1 第五~七次复核 standby 心跳×3·均判据全过·被 wake#1176/#1177 代表）。
 
