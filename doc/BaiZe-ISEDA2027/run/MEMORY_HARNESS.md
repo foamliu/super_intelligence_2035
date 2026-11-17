@@ -2,6 +2,14 @@
 
 WAITING: 0
 
+> 🆕 **R2605 · 2026-11-17 10:1x — 监控心跳轮·v2 rerun 进行中(codex route 1/2)·自检全绿·无未完成指令**
+> - **自检**: load25.64/26.84/27.70/224✅(~12%·pretrain dominant·非本线)·mem837GB/2015GB avail1028GB✅·0 harness eval runaway✅(codex container低CPU·cline hub daemon 30.1%/7GB=非eval daemon·opencode serve旧进程6.6%/1.2GB=远低阈值·均未触>8000%/80%红线)·reports/ porcelain=0✅(audit json=gitignored✅非tracked)·manifests+traces gitignore命中✅·adaptive mode=work current=4/4 hold(quiet=44m)·累计429=0✅·git本地=origin in sync✅(pull=Already up to date)
+> - **运维指令区**: 全部✅已交付·无未完成离散指令
+> - **本轮动作**: 监控心跳·v2 7way rerun(R2602启动)进行中——orchestrator(PID1217002)alive etimes~26min·codex route(2题)**1/2 done**(bn-fit-modify per-trial done·break-filter-js-from-html容器内运行~25min/60min timeout·正常)·剩余hermes13→opencode10→pi15→deepseek5→cc1=47trial队列·cline用0932 tag单独merge·不打断正在跑的路(per 11-15令)·rerun日志0B=orchestrator无stdout(harbor子进程alive=正常)
+> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research 6条建议纳入下次报告迭代 ④等运维新令
+> - **📦 体积**: TASK≈24.0KB / MEMORY≈31.0KB（✅≤32KB·本轮无需归档）
+
+
 > 🆕 **R2602 · 2026-11-17 09:3x — 监控心跳 + 启动 post-R2600 synthetic rerun(adaptive auto)**
 > - **自检**: load27.7/28.1/27.8/224✅(pretrain dominant·非本线)·mem839GB/2015GB avail1026GB✅·0 harness eval runaway✅(opencode 6%/1.3GB=旧serve进程·远低阈值)·reports/ porcelain=0✅·adaptive mode=work 7→clamp4·累计429=0✅·git本地=origin=613fa811e✅
 > - **运维指令区**: 全部✅已交付·无未完成离散指令
@@ -76,12 +84,12 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2602 监控心跳 + 启动 post-R2600 synthetic rerun(adaptive auto·47trial串行)·自检全绿·WAITING=0
+PHASE:        R2605 监控心跳·v2 7way rerun 进行中(codex route 1/2·break-filter容器内)·自检全绿·WAITING=0
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2589(cc rerun COMPLETE 82/82·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE)·R2593(cc修复COMPLETE 30/89=33.7%·4报告REGEN)·R2598(两份7way报告交付)·R2600(失败归因复核·四桶归因)·R2602(post-R2600 synthetic rerun LAUNCHED)
-当前动作:     R2602: 从R2600 review导出精确synthetic+conn_ref rerun清单(47trial:opencode10/pi15/hermes13/deepseek5/codex2/cline1/cc1·非陈旧0859 audit)→manifests/tb21_rerun_plan_postR2600_20261117.json→RERUN_N_CONCURRENT=auto CHUNK=12后台启动7way编排器→已在跑(cline1 rc=0/0×429✅→codex2进行中→hermes13→opencode10→pi15→deepseek5→cc1·串行·adaptive work4)·日志/tmp/tb21_rerun_postR2600_20261117.log+traces/
+当前动作:     R2605: 监控心跳·v2 7way rerun(R2602启动)进行中——orchestrator(PID1217002)alive·codex route 1/2(bn-fit done·break-filter容器内~25min/60min)·剩余hermes13→opencode10→pi15→deepseek5→cc1·串行·adaptive work4·不打断正在跑的路
 下一步:       ①rerun跑完逐路 --merge + REGEN 双报告 ②SWE-bench predict续推至500(codex瓶颈) ③token回采=BLOCKED(框架不采集) ④research建议纳入下次报告迭代 ⑤hermes qemu BLOCKED(Py3.9<3.11) ⑥等运维新令
 ERROR_COUNT:  0
- 体积: TASK≈23.2KB / MEMORY≈31.9KB（✅≤32KB·本轮删R2595/R2596/R2597冗余同日📦指针腾位）
+ 体积: TASK≈24.0KB / MEMORY≈31.0KB（✅≤32KB·本轮加R2605心跳·无需归档）
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
