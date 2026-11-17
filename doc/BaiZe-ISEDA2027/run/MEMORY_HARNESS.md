@@ -1,32 +1,23 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
+
+> 🆕 **R2598 · 2026-11-17 08:3x — 用户令·交付 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告 ✅**
+> - **交付物**：① `reports/report_harness_glm53_7way_swebench_tb_zh.html`（SWE-bench Verified 500 + TB-2.1 89 × 7路·主表+失败归因+kimi对照·13.1KB）② `reports/report_harness_tb21_7way_zh.html`（TB-2.1 7路专项·10.6KB）
+> - **TB-2.1 7路 Pass（两报告一致）**：opencode 43/89=48.3% · cline 42/89=47.2% · hermes 38/89=42.7% · pi 35/89=39.3% · cc 30/89=33.7% · deepseek 11/89=12.4% · codex 1/89=1.1%
+> - **SWE-bench Verified（进行中/partial·非最终）**：cline 249/332 · codex 91/144 · opencode 414/498 · cc 286/348 · pi 216/296 · hermes 435/480 · deepseek 141/175（分母=已评测N·N<500不可跨行比·codex最慢ETA见报告§7）
+> - **修复**：combined生成器(gen_report_glm53_7way.py) TB-2.1 计数 bug——旧不去重+只扫original dir→cline64/opencode55/cc0；改为 task_name去重+扫rerun dir+PASS优先(与gen_report_tb21_7way.py count_route一致)→cline42/opencode43/cc30✅。同步更新失败归因行(cc 0/89→30/89已修复·hermes 7/89→38/89 rerun done)+SWE-bench「进行中/partial」红线+口径说明(backbone/7路/判据/infra单列)
+> - **自检**: 0 script/0 外链✅(grep验证)·reports/ porcelain=0✅(无.json/.log/.txt)·0 harness eval procs✅·load25.6/224✅·mem836GB avail1030GB✅
+> - **下一步**: ①SWE-bench predict续推至500(codex瓶颈) ②token回采=BLOCKED ③research建议纳入下次报告迭代 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
+> - **📦 体积**: TASK≈23.0KB / MEMORY≈31.2KB（✅≤32KB）
 
 > 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
 
-> 🆕 **R2597 · 2026-11-17 07:5x — 监控轮心跳（用户令·例行·无未完成指令·不改结论不重跑）**
-> - **自检**: load30.82/224✅(pretrain dominant)·mem836GB avail1030GB✅·0 harness eval procs✅(0 harbor/rerun/terminalbench·opencode PID4072970 5.8%/1GB 非runaway不碰)·0 runaway✅·reports/ porcelain=0✅·adaptive off7/10 quiet252m 累计429=0✅
-> - **git**: fetch(带proxy)成功·`## main...origin/main` in-sync✅·harness文件clean
-> - **research日报2026-11-17**: 已在R2594/R2596纳入(ModHarness-RL 2611.18533 + judge跨视图 2611.18471)→留待下次报告迭代·本次无新action
-> - **无未完成用户指令**: cc修复✅(30/89=33.7%)+adaptive✅(验收4/4+实跑)·任务书无"未完成"块
-> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research建议纳入下次报告迭代 ③cc归因adapter_error=6细分 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
-> - **📦 体积**: TASK≈22.6KB / MEMORY≈30.6KB（✅≤32KB）
+> 📦 R2597 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·自检全绿·0 eval procs·adaptive off7/10·0累计429·无未完成指令。需要时再读。
 
-> 🆕 **R2596 · 2026-11-17 07:2x — 监控轮心跳 + MEMORY滚动归档(R2511-R2528合并+R2577/R2531归档)**
-> - **自检**: load27.75/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅(0 harbor/rerun·opencode PID4072970 5.8%/1GB 非runaway不碰)·0 runaway✅·reports/ porcelain=0✅·adaptive off7/10 quiet210m 累计429=0✅
-> - **git**: 共享NFS已最新(无新commit·git fetch up to date)·harness文件clean
-> - **research日报2026-11-17**: ModHarness-RL(2611.18533)建议(eval配置表加harness=fixed|learned+context_budget=limited|sufficient分别报分)+judge跨视图(2611.18471)→已在R2594纳入·本次不重跑·留待下次报告迭代
-> - **无未完成用户指令**: cc修复✅+adaptive✅均done·任务书无"未完成"块
-> - **MEMORY滚动**: R2511-R2528(10个📦指针→1个range指针)+R2577/R2531(2个full流水→📦指针·原文已append daily-memories-harness/2026-11-17.md)·33305B→29420B✅
-> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research建议纳入下次报告迭代 ③cc归因adapter_error=6细分 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
-> - **📦 体积**: TASK≈23.2KB / MEMORY≈28.7KB（✅≤32KB）
+> 📦 R2596 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮+MEMORY滚动归档(R2511-R2528合并+R2577/R2531→📦指针)·33305B→29420B✅·0累计429。需要时再读。
 
-> 🆕 **R2595 · 2026-11-17 06:4x — 监控轮心跳（用户令·例行·不改结论不重跑）**
-> - **自检**: load25.35/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅·adaptive off7/10 quiet174m 累计429=0✅
-> - **git**: 共享NFS已最新(commit dd4b07c7b R2594 06:08)·harness文件clean·git pull proxy503(infra·共享NFS已最新)
-> - **无未完成用户指令**: cc修复✅+adaptive✅均done·任务书无"未完成"块
-> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research日报建议纳入下次报告迭代(harness维度+judge视图) ③cc归因adapter_error=6细分 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤MEMORY 32.4KB→下轮滚动旧📦指针
-> - **📦 体积**: TASK≈23.2KB / MEMORY≈32.4KB（<40KB红线·下轮滚动）
+> 📦 R2595 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·自检全绿·git pull proxy503(infra)·0累计429。需要时再读。
 
 > 🆕 **R2594 · 2026-11-17 05:5x — 任务书bookkeeping(cc修复块归档) + token回采调查=BLOCKED(framework不采集) + research日报纳入**
 > - **自检**: load25.19/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅
@@ -88,10 +79,10 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        R2596 监控轮心跳+MEMORY滚动归档(R2511-R2528合并+R2577/R2531→📦指针)·自检全绿·无未完成用户指令·adaptive off7/10·0累计429
+PHASE:        R2598 用户令·交付 TB-2.1+SWE-bench Verified 两份 7-way 中文 HTML 报告✅(combined生成器TB计数bug修复)·自检全绿·WAITING=0
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun(quota_lost=65→0·cline=38/89)·R2461(7路额度审计A+C DONE)·R2462(报告整改+cc归因)·R2463(cc修复smoke+cc LAUNCHED)·R2464(hermes python3修复)·R2494-R2502(hermes rerun COMPLETE 38/89)·R2503-R2589(cc rerun COMPLETE 82/82→merged 26P/53F/10NA·0ConnRefused✅+adaptive落码+验收4/4✅+opencode/deepseek/pi rerun COMPLETE+pi merge→REGEN 7way pi35/89)·R2592(merge脚本就绪·partial 30P/89=33.7%)·R2593(cc修复COMPLETE 30/89=33.7%·R1+R2 merged·4报告REGEN·4生成器更新·cc修复令已交付)
-当前动作:     R2596: 监控轮心跳·自检全绿(load27.75/224✅·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅)·adaptive off7/10 quiet210m 累计429=0✅·research日报2026-11-17已查(ModHarness-RL已在R2594纳入)·MEMORY滚动归档(33305B→✅)·W:1
-下一步:       ①token回采=BLOCKED(框架不采集·需改adapter) ②research建议纳入下次报告迭代(harness维度+judge视图) ③cc归因adapter_error=6细分 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
+当前动作:     R2598: 用户令交付两份7way报告✅·①report_harness_glm53_7way_swebench_tb_zh.html(SWE-bench Verified 500+TB-2.1 89×7路·13.1KB)②report_harness_tb21_7way_zh.html(TB-2.1 7路专项·10.6KB)·TB-2.1 7路:opencode48.3/cline47.2/hermes42.7/pi39.3/cc33.7/deepseek12.4/codex1.1·SWE-bench partial(cline249/332·codex91/144·opencode414/498·cc286/348·pi216/296·hermes435/480·deepseek141/175)·0script/0外链✅·W:0
+下一步:       ①SWE-bench predict续推至500(codex瓶颈·ETA见报告§7) ②token回采=BLOCKED(框架不采集·需改adapter) ③research建议纳入下次报告迭代(harness维度+judge视图) ④cc归因adapter_error=6细分 ⑤hermes qemu BLOCKED(Py3.9<3.11) ⑥等运维新令
 ERROR_COUNT:  0
  体积: TASK≈23.2KB / MEMORY≈28.7KB（✅≤32KB）
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227

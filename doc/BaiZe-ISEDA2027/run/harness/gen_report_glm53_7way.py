@@ -118,69 +118,73 @@ eta_html_rows = ""
 for _nm, _tot, _rem, _r3d, _r1d, _label, _days in eta_rows_data:
     eta_html_rows += f"<tr><td>{esc(_nm)}</td><td>{_tot}/500</td><td>{_rem}</td><td>{_r3d}</td><td>{_r1d}</td><td>{_label}</td></tr>\n"
 
-# ---- TB-2.1 results ----
+# ---- TB-2.1 results (§2026-11-17 修正: task_name 去重 + 扫描 rerun 目录, PASS 优先) ----
+# 与 gen_report_tb21_7way.py 的 count_route 完全一致, 确保两份报告 TB-2.1 数字相同.
+# 旧 bug: 不去重 + 只扫 original dir → 同一 task 多 trial 重复计数 (如 cline 64 而非 42).
+import re as _re
+def _is_dated_dir(name):
+    return bool(_re.match(r"^\d{4}-\d{2}-\d{2}__", name))
+def _iter_task_results(root):
+    """只取 task 级 result.json (跳过 dated job 级 result.json), 与 count_route 一致."""
+    if not os.path.isdir(root):
+        return
+    for dirpath, _dirs, fnames in os.walk(root):
+        for fn in fnames:
+            if fn != "result.json":
+                continue
+            fp = os.path.join(dirpath, fn)
+            if "/20" not in fp.replace("\\", "/"):
+                continue
+            if _is_dated_dir(os.path.basename(dirpath)):
+                continue
+            yield fp
+def _count_route_tb21(h):
+    """返回 (unique_passed, evaluated_unique_tasks, total_trials, trial_errors).
+    扫 original dir + 所有 <h>_rerun_* dir; PASS 优先 (任一 trial reward==1.0 即 passed)."""
+    d = os.path.join(TB21_JOBS, h)
+    tasks = {}; trials = 0; errors = 0
+    scan_dirs = [d] if os.path.isdir(d) else []
+    for rd in sorted(glob.glob(os.path.join(TB21_JOBS, f"{h}_rerun_*"))):
+        if os.path.isdir(rd):
+            scan_dirs.append(rd)
+    for sd in scan_dirs:
+        for fp in _iter_task_results(sd):
+            try:
+                r = json.load(open(fp))
+            except Exception:
+                continue
+            trials += 1
+            if r.get("exception_info"):
+                errors += 1
+            tn = r.get("task_name") or os.path.basename(os.path.dirname(fp)).split("__")[0]
+            vr = r.get("verifier_result")
+            if vr:
+                rw = vr.get("rewards", {}).get("reward", 0) if isinstance(vr, dict) else 0
+                if rw == 1.0:
+                    tasks[tn] = True
+                else:
+                    tasks.setdefault(tn, False)
+            else:
+                tasks.setdefault(tn, False)
+    upass = sum(1 for v in tasks.values() if v)
+    return upass, len(tasks), trials, errors
+
 tb21_data = {}
+_ps_out = subprocess.run(["ps", "-eo", "args="], capture_output=True, text=True).stdout
 for h in HARNESSES:
-    hd = os.path.join(TB21_JOBS, h)
-    passed = 0; completed = 0; errored = 0; total = 89; status = "unknown"
-    # --- Primary: count task-level result.json (has 'task_name' + verifier_result) ---
-    if os.path.isdir(hd):
-        for root, dirs, fnames in os.walk(hd):
-            for fn in fnames:
-                if fn == "result.json":
-                    try:
-                        d = json.load(open(os.path.join(root, fn)))
-                        if "task_name" not in d:
-                            continue
-                        completed += 1
-                        vr = d.get("verifier_result", {})
-                        if isinstance(vr, dict):
-                            rw = vr.get("rewards", {})
-                            if isinstance(rw, dict): rew = rw.get("reward", 0)
-                            elif isinstance(rw, (int, float)): rew = rw
-                            else: rew = 0
-                            if rew and rew > 0: passed += 1
-                    except: pass
-    # --- Fallback 1: run-dir level stats (if no task-level results found) ---
-    if passed == 0 and completed == 0 and os.path.isdir(hd):
-        for run_dir in sorted(os.listdir(hd)):
-            rj = os.path.join(hd, run_dir, "result.json")
-            if os.path.isfile(rj):
-                try:
-                    d = json.load(open(rj))
-                    stats = d.get("stats", {})
-                    nc = stats.get("n_completed_trials", 0)
-                    ne = stats.get("n_errored_trials", 0)
-                    nr = stats.get("n_running_trials", 0)
-                    np = stats.get("n_pending_trials", 0)
-                    total = d.get("n_total_trials", 89)
-                    completed = max(completed, nc)
-                    errored = max(errored, ne)
-                    evals = stats.get("evals", {})
-                    for ek, ev in evals.items():
-                        rs = ev.get("reward_stats", {}).get("reward", {})
-                        passed = max(passed, len(rs.get("1.0", [])))
-                    if nr > 0: status = "running"
-                    elif np > 0: status = "partial"
-                    else: status = "done"
-                except: pass
-    # --- Fallback 2: parse log files ---
-    if passed == 0 and completed == 0:
-        for logname in [f"tb21_{h}_restart_run.log", f"tb21_{h}_run2.log"]:
-            lf = os.path.join(TB21_TRACES, logname)
-            if os.path.isfile(lf):
-                content = open(lf).read()
-                m = re.search(r'│\s*1\.0\s*│\s*(\d+)\s*│', content)
-                if m: passed = int(m.group(1))
-                m0 = re.search(r'│\s*0\.0\s*│\s*(\d+)\s*│', content)
-                if m0: completed = int(m0.group(1)) + passed
-                if "Total runtime" in content: status = "done"
-    if status in ("unknown",):
-        r = subprocess.run(["ps", "-eo", "args="], capture_output=True, text=True)
-        if f"/tmp/tb21_glm53_jobs/{h}" in r.stdout: status = "running"
-        else: status = "done" if completed >= total else "partial"
-    remaining = max(0, total - completed - errored)
-    tb21_data[h] = {"passed": passed, "completed": completed, "errored": errored, "remaining": remaining, "total": total, "status": status}
+    total = 89
+    passed, evaluated, trials, errors = _count_route_tb21(h)
+    running = any(f"/tmp/tb21_glm53_jobs/{h}" in line for line in _ps_out.splitlines())
+    if running:
+        status = "running"
+    elif evaluated >= total:
+        status = "done"
+    else:
+        status = "partial"
+    remaining = max(0, total - evaluated)
+    tb21_data[h] = {"passed": passed, "completed": evaluated, "errored": errors,
+                    "remaining": remaining, "total": total, "status": status,
+                    "trials": trials}
 
 # ---- TB-2.1 ETA (after tb21_data is built) ----
 _tb_all_done = all(tb21_data[h]["completed"] + tb21_data[h]["errored"] >= 89 for h in HARNESSES)
@@ -232,14 +236,14 @@ status_map = {"done":"✅ 已完成","running":"🔄 运行中","partial":"⚠�
 for h in HARNESSES:
     d = tb21_data[h]
     rate = f"{d['passed']/d['total']*100:.1f}%" if d['total'] else "—"
-    tb_rows += f"<tr><td>{esc(disp(h))}</td><td>{d['completed']+d['errored']}/{d['total']}</td><td class='pass'>{d['passed']}</td><td class='fail'>{d['errored']}</td><td>{d['remaining']}</td><td><strong>{rate}</strong></td><td>{status_map.get(d['status'],d['status'])}</td></tr>\n"
+    tb_rows += f"<tr><td>{esc(disp(h))}</td><td>{d['completed']}/{d['total']}</td><td class='pass'>{d['passed']}</td><td class='fail'>{d['errored']}</td><td>{d['remaining']}</td><td><strong>{rate}</strong></td><td>{status_map.get(d['status'],d['status'])}</td></tr>\n"
 
 total_pred = sum(t for _,t,_,_ in predict)
 total_real = sum(r for _,_,r,_ in predict)
 
 # ---- TB-2.1 aggregates + ranking (dynamic) ----
 tb_total_pass = sum(tb21_data[h]["passed"] for h in HARNESSES)
-tb_total_trials = sum(tb21_data[h]["completed"] + tb21_data[h]["errored"] for h in HARNESSES)
+tb_total_trials = sum(tb21_data[h]["trials"] for h in HARNESSES)
 tb_rank = sorted(((disp(h), tb21_data[h]["passed"], tb21_data[h]["status"]) for h in HARNESSES), key=lambda x: -x[1])
 tb_rank_str = "，".join(f"{n} {p}p({'rerun中' if st=='running' else 'done'})" for n,p,st in tb_rank if p > 0) or "全部0p"
 # ---- SWE-bench leading routes (dynamic, by pass rate) ----
@@ -265,10 +269,11 @@ HTML = f"""<!DOCTYPE html>
 </div>
 <div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 {GW_EMOJI} {GW_NOTE_SHORT}</p></div>
 
-<h2>1. SWE-bench Verified · 7 路结果</h2>
+<h2>1. SWE-bench Verified · 7 路结果（进行中 / partial）</h2>
+<div class="critical"><p><strong>⚠️ 进行中 / partial（非最终）</strong>：题集=500 题，但各路 predict 尚未满 500（codex 最慢，ETA 见 §7）。下表 Pass% 分母=该路已评测题数 N（非 500），<strong>N&lt;500 时各路 Pass% 不可跨行直接比大小</strong>。已评测题内 Resolved+Failed+Infra=N（守恒）。</p></div>
 <table><tr><th>#</th><th>Harness</th><th>Predict(attempt/500)</th><th>Real</th><th>Empty</th><th>Eval N</th><th>Resolved</th><th>Pass%(resolved/N)</th><th>状态</th></tr>
 {merged_rows}</table>
-<div class="note"><p><strong>合计</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%，real={total_real}，empty={total_pred-total_real}。eval {total_resolved} resolved/{total_evaluated} evaluated，0 backlog。Empty 主因=429额度期+sphinx-doc能力放弃。领先: {sw_lead_str}。</p></div>
+<div class="note"><p><strong>合计</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%，real={total_real}，empty={total_pred-total_real}。eval {total_resolved} resolved/{total_evaluated} evaluated，0 backlog。Empty 主因=429额度期+sphinx-doc能力放弃。领先: {sw_lead_str}。<strong>口径</strong>：backbone=glm-5.3-flash；7路=cline/codex/opencode/claude-code/pi/hermes/deepseek；判据=SWE-bench Verified 官方 test patch(FAIL_TO_PASS+PASS_TO_PASS)；infra=网关502/503/429等，单列不计入能力失败。</p></div>
 
 <h2>2. 与 kimi-k2.6-cloud 对照</h2>
 <table><tr><th>Harness</th><th>kimi(resolved/500)</th><th>glm53(resolved/N)</th><th>可比性</th></tr>
@@ -278,7 +283,7 @@ HTML = f"""<!DOCTYPE html>
 <h2>3. Terminal-Bench 2.1（89 题 × 7 路）</h2>
 <div class="info"><p>口径：TB-2.1/89题/7-way concurrent（与旧 TB4 不可比）。Oracle 5/5 ✅（break-filter/bn-fit/log-summary/cancel-async/fix-git 全 reward=1）。§15:2x判据MET ✅。<br>
 <em>历史指针</em>：TB4（66×7=462 trials, 0 passed, 根因=能力 R1743）已被 TB-2.1 取代，详见 <code>run/ARCHIVE_OPERATOR_HARNESS.md</code>。</p></div>
-<table><tr><th>Harness</th><th>已完成</th><th>Passed</th><th>Errored</th><th>Remaining</th><th>通过率</th><th>状态</th></tr>
+<table><tr><th>Harness</th><th>已评测(题/89)</th><th>Passed</th><th>试次错误</th><th>剩余</th><th>通过率</th><th>状态</th></tr>
 {tb_rows}</table>
 <div class="note"><p>TB-2.1: 7路concurrent,{tb_total_pass}p/{tb_total_trials}t。领先: {tb_rank_str}。<strong>claude-code 修复后重测</strong>=30/89=33.7%(R1+R2 merged,0 ConnRefused HARD VERIFIED,根因=容器内127.0.0.1指向容器自身,修复=overlay network_mode:host,详见 <code>reports/report_harness_cc_tb21_attribution_zh.html</code> 89行逐题明细)。codex err=适配器(infra)。</p></div>
 
@@ -295,9 +300,9 @@ HTML = f"""<!DOCTYPE html>
 <h2>5. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
 <tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,当前{GW_NOTE_SHORT})</td><td class='warn'>infra(当前{GW_NOTE_SHORT})</td></tr>
-<tr><td>TB-2.1 codex 1/89</td><td>适配器 wire_api 解析异常</td><td class='warn'>infra</td></tr>
-<tr><td>TB-2.1 claude-code 0/89</td><td>88 ConnectionRefused(适配器无法连接API网关)+1 CLI解析bug,模型从未运行(tokens=0)</td><td class='warn'>infra(BLOCKED·需修复网关连接配置后重跑)</td></tr>
-<tr><td>TB-2.1 hermes 7/89</td><td>39 quota_only+43 synthetic(未真跑),rerun进行中</td><td class='warn'>infra(rerun中)</td></tr>
+<tr><td>TB-2.1 codex 1/89=1.1%</td><td>89题仅1通过;适配器wire_api解析异常+能力不足(codex慢,单题超时居多)</td><td class='warn'>infra+能力</td></tr>
+<tr><td>TB-2.1 claude-code 30/89=33.7%</td><td>历史0/89=100%infra(88 ConnRefused,模型从未运行);已修复(overlay network_mode:host)→R1+R2 merged 30P。失败59:能力41+infra4(502/503)+timeout7+adapter_error6+cli1</td><td class='pass'>能力为主(infra已修复·0ConnRefused✅HARD VERIFIED)</td></tr>
+<tr><td>TB-2.1 hermes 38/89=42.7%</td><td>历史7/89(39quota+43synthetic未真跑);rerun COMPLETE 38/89。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class='warn'>能力为主(qemu=infra BLOCKED)</td></tr>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
 
