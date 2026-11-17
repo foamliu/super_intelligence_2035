@@ -1,4 +1,57 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 281 | TARGET: both -->
+## RUN_ID 281 — **抢救日志根因分析（只读·both 通道重发）**：10:06→12:57 时间线 + 空转诱因 + 进程状态
+
+> 说明：RUN_ID 280（TARGET 29）因 `.29` 用 no-fetch 版中继、依赖共享副本被 pull 更新，至今未执行；
+> 本块改 `both`（`.12` 执行即可 push 结果，日志在 `/nas_train` 共享 NFS 上两机都能读）。
+> 仍为**只读**：只看日志/进程，不 kill、不改文件。
+
+```bash
+set -u
+echo "=== RUN_ID 281 | salvaged loop log analysis (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+F=$(ls -t /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs/pretrain_loop_salvage_*.log 2>/dev/null | head -1)
+echo "[1] 文件"
+if [ -z "${F:-}" ] || [ ! -f "$F" ]; then echo "  未找到 salvage 文件"; echo "=== DONE 281 (no file) ==="; exit 0; fi
+stat -c '  size=%s mtime=%y' "$F"; echo "  path=$F"; echo "  lines=$(wc -l < "$F")"
+
+echo
+echo "[2] loop 时间线（2026-11-17，最后 45 行）"
+grep -a -E '^\[loop\]|^\[push\]' "$F" | grep -a '2026-11-17' | tail -45 | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-160
+
+echo
+echo "[3] 关键计数"
+for p in 'DeprecationWarning' 'run_commands' 'Forbidden' '429' 'Error' 'approve'; do
+  printf '  %-20s %s\n' "$p" "$(grep -a -c -- "$p" "$F" 2>/dev/null)"
+done
+
+echo
+echo "[4] 重复命令 Top10（有界：最多取 20000 条样本）"
+grep -a -o -- '\[run_commands\].\{0,140\}' "$F" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | head -n 20000 | sort | uniq -c | sort -rn | head -10 | cut -c1-180
+
+echo
+echo "[5] 日志最后 25 行（去 ANSI）"
+tail -n 25 "$F" | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-200 | sed 's/^/  | /'
+
+echo
+echo "[6] pretrain cline 进程（本机优先，否则 ssh .29）"
+if ps -eo args 2>/dev/null | grep -Fq '.cline_pretrain'; then
+  ps -eo pid,ppid,etime,stat,pcpu,rss,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | cut -c1-150
+else
+  timeout 15 ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no 10.239.2.29 'ps -eo pid,ppid,etime,stat,pcpu,rss,args | grep -F .cline_pretrain | grep -v grep | cut -c1-150' 2>&1 | sed 's/^/  /'
+fi
+echo "  -- sessions 最新 3 个 --"
+ls -lt --time-style=+%F_%T /nas_train/app.e0031982/.cline_pretrain/sessions 2>/dev/null | head -4 | cut -c1-120
+
+echo
+echo "[7] 训练侧与 pretrain 提交"
+nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/    /'
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log -3 --date=format:'%F %T' --pretty='  %ad %h %s' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo "  now=$(date '+%F %T')"
+echo "=== DONE 281 ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 280 | TARGET: 29 -->
 ## RUN_ID 280 — **抢救日志根因分析（只读）**：10:06→12:57 时间线 + 空转诱因 + 新 cline 状态
 
