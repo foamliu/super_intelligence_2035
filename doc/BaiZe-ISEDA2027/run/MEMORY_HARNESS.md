@@ -16,6 +16,14 @@ WAITING: 0
 > - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research 4条建议纳入下次报告迭代 ④等运维新令
 > - **📦 体积**: TASK≈24.0KB / MEMORY≈31.5KB（✅≤32KB·本轮归档R2600/R2601腾位）
 
+> 🆕 **R2604 · 2026-11-17 10:0x — 监控心跳轮·v2 rerun 进行中(codex route 1/2 done)·自检全绿·无未完成指令**
+> - **自检**: load27.89/28.72/28.42/224✅(~12%·pretrain dominant·非本线)·mem837GB/2015GB avail1028GB✅·0 harness eval runaway✅(codex container低CPU·cline hub daemon 30%/7.3GB=非eval daemon·opencode serve旧进程6.6%/1.2GB=远低阈值)·reports/ porcelain=0✅·manifests gitignore命中✅(traces实路径=terminalbench/traces/·任务书harness/traces为简写)·adaptive mode=work current=4/4 hold(quiet=36m)·累计429=0✅·git fetch=0/0 in sync✅
+> - **运维指令区**: 全部✅已交付·无未完成离散指令
+> - **本轮动作**: v2 7way rerun(R2602启动)进行中——orchestrator(PID1217002)alive·codex route(2题)1/2 done(bn-fit-modify result.json@09:51:59·break-filter-js-from-html仍容器内运行)·剩余hermes13→opencode10→pi15→deepseek5→cc1=47trial队列·cline用0932 tag(2 result.json已落盘·待merge)·不打断正在跑的路(per 11-15令)
+> - **research日报2026-11-17**(09:08): harness建议6条→ModHarness-RL(harness=fixed|learned+context_budget列)+pass@1旁报n_samples/n_after_filter+judge跨视图(view+abstain/wrong_verdict率)+Mind2Web cross-split+LiveCodeBench release_date切窗+Gemma成对胜率·均纳入下次报告迭代(非本轮action·R2594已记2条核心)
+> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research 6条建议纳入下次报告迭代 ④等运维新令
+> - **📦 体积**: TASK≈24.0KB / MEMORY≈29.8KB（✅≤32KB·本轮归档R2593/R2594腾位）
+
 > 📦 R2600 流水已归档 → daily-memories-harness/2026-11-17.md。结论：失败归因复核✅已交付·四桶归因·各路失败以能力不足为主·详见两报告§失败归因复核。需要时再读。
 > 📦 R2601 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控心跳·自检全绿·research日报4条harness建议纳入下次报告迭代。需要时再读。
 
@@ -26,26 +34,8 @@ WAITING: 0
 
 > 📦 R2595/R2596/R2597 流水已归档 → daily-memories-harness/2026-11-17.md（监控轮·自检全绿·0 eval procs·adaptive off7/10·0累计429·MEMORY滚动归档33305→29420B）。需要时再读。
 
-> 🆕 **R2594 · 2026-11-17 05:5x — 任务书bookkeeping(cc修复块归档) + token回采调查=BLOCKED(framework不采集) + research日报纳入**
-> - **自检**: load25.19/224✅(pretrain dominant)·mem836GB avail1029GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅
-> - **git pull**: proxy 503(infra·非code·共享NFS已最新commit 3eeaab604 05:54)
-> - **cc修复验证CONFIRMED**: 4报告全在(05:23更新)·7way报告 claude-code=30/89=33.7%✅·cc归因报告 "0 ConnRefused HARD VERIFIED"✅·根因=容器内127.0.0.1·修复=overlay network_mode:host
-> - **任务书更新**: cc修复块(原"未完成·最高优先")→归档ARCHIVE+1行指针✅·adaptive块状态→"✅已交付+验收4/4通过(R2512)+实跑验证(R2503-R2593)"✅·TASK 25.6KB→23.2KB✅
-> - **token回采调查=BLOCKED**: 扫20+route dirs(/tmp/tb21_glm53_jobs/)·job-level stats n_input/output_tokens全None·per-trial agent_result全None·rollout_details全None·model_usage全None→**harbor framework经gw_proxy时不采集token**·非数据位置问题·回采不可行·需改adapter/gw_proxy才能采集(框架级修改)
-> - **research日报2026-11-17**: 2条harness建议纳入→①ModHarness-RL(2611.18533):eval配置表加 harness=fixed|learned + context_budget=limited|sufficient 分别报分②judge跨视图可靠性(2611.18471):加 view=native|macro|delegation|compaction + abstain_rate/wrong_verdict_rate
-> - **无未完成用户指令**: cc修复✅+adaptive✅均done·任务书无"未完成"块
-> - **下一步**: ①token回采=BLOCKED(框架不采集·需改adapter) ②research日报建议纳入下次报告迭代(harness维度+judge视图) ③cc归因adapter_error=6可细分 ④hermes qemu BLOCKED(Py3.9<3.11)
-> - **📦 体积**: TASK≈23.2KB / MEMORY≈31.5KB（✅≤32KB）
-
-> 🆕 **R2593 · 2026-11-17 05:2x — cc修复 COMPLETE: 30/89=33.7% (R1+R2 merged·0ConnRefused✅HARD VERIFIED) + 4报告全REGEN + 4生成器全更新**
-> - **cc修复判据MET**: 根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·冒烟=OK·重测=30/89=33.7%·vs旧0/89✅
-> - **round2 COMPLETE**: 3/3 parts done(rc=0·0 ConnRefused·0 429)·R1(82题)+R2(30题)merged=30P/42F/4INFRA/13NA/0RUNNING
-> - **4报告REGEN**: ①cc归因(report_harness_cc_tb21_attribution_zh.html·89行R1+R2 merged·passed=30/ability=41/infra=4/timeout=7) ②7way(report_harness_tb21_7way_zh.html·cc行30/89=33.7%) ③cline_special(report_harness_cline_special_zh.html·cc修复后重测文本) ④glm53_7way(report_harness_glm53_7way_swebench_tb_zh.html·cc修复后重测文本)
-> - **4生成器更新**: audit_cc_tb21.py(scan 5 dirs+dedup+新分类)·gen_report_tb21_7way.py(count_route scan rerun dirs)·gen_cline_special.py(tb21_data scan rerun dirs+cc文本)·gen_report_glm53_7way.py(cc文本)
-> - **7way最新**: opencode43/89=48.3%·cline42/89=47.2%·hermes38/89=42.7%·pi35/89=39.3%·**cc30/89=33.7%**·deepseek11/89=12.4%·codex1/89=1.1%
-> - **自检**: load28.28/224✅·mem837GB avail1029GB✅·0 harness procs✅·reports/ porcelain=0✅
-> - **下一步**: ①成本补采(token=None·从rollout_details回采) ②hermes qemu BLOCKED(Py3.9<3.11) ③cc归因报告adapter_error=6可进一步细分
-> - **📦 体积**: TASK≈25.0KB / MEMORY≈30.8KB（✅≤32KB）
+> 📦 R2594 流水已归档 → daily-memories-harness/2026-11-17.md。结论：任务书bookkeeping(cc块归档)+token回采=BLOCKED(框架不采集)+research 2条建议纳入。需要时再读。
+> 📦 R2593 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc修复COMPLETE 30/89=33.7%(0ConnRefused✅)+4报告REGEN+4生成器更新。需要时再读。
 
 > 📦 R2589 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 16/30(2P·0ConnRefused✅)+adaptive off6→7+0 429✅。需要时再读。
 >
