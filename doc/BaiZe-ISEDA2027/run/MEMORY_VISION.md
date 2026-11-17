@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🚀 wake#1535 2026-11-17 14:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin·git pull --rebase --autostash ff 同步 HEAD=`1acb659d8`(zhulong arms wake#1069/#1070 结案 standby+harness R2621·0触视觉·工作树干净)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变·ops/inbox RUN_ID 276 target=.12 data 线非本线)·live 复验 watchdog pid `3961251` etimes≈193914s(~53.9h)在线(ppid=3961245)+ssh-R pid `3961842` etimes≈193861s 在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 `/mcp` 返回 `Not Acceptable: must accept text/event-stream`=MCP SSE 正常)+WaveView 子集 224 行 sha256 `623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=encoder 线(视觉塔配置/VLA·与 EDA WaveView 不相关·无纳入)·体积 MEMORY 31.4KB/TASK 23KB(均在 32KB 目标内)·fold wake#1534→daily。**WAITING: 0**。
+> 🚀 wake#1536 2026-11-17 14:31 例行巡检 patrol·全交付态·零新增·非 idle-spin·git pull --rebase --autostash ff 同步 HEAD=`0a33d888c`(harness R2623 opencode DONE·0触视觉·工作树干净)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变·ops/inbox RUN_ID 276 target=.12 data 线非本线)·live 复验 watchdog pid `3961251`+ssh-R pid `3961842` etimes≈194412s(~54.0h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 `/mcp` 返回 http 406 Not Acceptable=MCP SSE 正常)+WaveView 子集 224 行 sha256 `623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=VLA game agent 2611.18397+视觉塔配置/agent 轨迹(encoder 线·与 EDA WaveView 不相关·无纳入)·体积 MEMORY 31.6KB/TASK 23KB(均在 32KB 目标内)·fold wake#1535→daily。**WAITING: 0**。
+
+> 📦 wake#1535 2026-11-17 14:2x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1534 2026-11-17 13:58 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
