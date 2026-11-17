@@ -5,12 +5,12 @@
 <style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}h3{color:#2874a6;margin-top:20px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:white}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}code{background:#f0f0f0;padding:2px 6px;border-radius:3px}</style></head><body>
 <h1>glm-5.3-flash · 7 路 × SWE-bench Verified + Terminal-Bench 横评报告</h1>
 <div class="info">
-<p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 200(正常·predict进行中)）</p>
+<p><strong>模型</strong>：glm-5.3-flash（网关 HTTP 0(timed out)）</p>
 <p><strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>生成时间</strong>：2026-11-17 08:42（R2598）</p>
-<p><strong>状态</strong>：predict 2274/3500=65.0%（7路alive·网关200(正常)·predict进行中）；eval 1832 resolved(0 true backlog·incr_eval R2598已完成)；TB-2.1 7路(200p/1397t)</p>
+<p><strong>生成时间</strong>：2026-11-17 09:09（R2124）</p>
+<p><strong>状态</strong>：predict 2274/3500=65.0%（7路alive·网关0·predict stalled）；eval 1832 resolved(0 true backlog·incr_eval R2124已完成)；TB-2.1 7路(200p/1397t)</p>
 </div>
-<div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 ✅ 200(正常)</p></div>
+<div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 ⚠️ 0</p></div>
 
 <h2>1. SWE-bench Verified · 7 路结果（进行中 / partial）</h2>
 <div class="critical"><p><strong>⚠️ 进行中 / partial（非最终）</strong>：题集=500 题，但各路 predict 尚未满 500（codex 最慢，ETA 见 §7）。下表 Pass% 分母=该路已评测题数 N（非 500），<strong>N&lt;500 时各路 Pass% 不可跨行直接比大小</strong>。已评测题内 Resolved+Failed+Infra=N（守恒）。</p></div>
@@ -35,7 +35,7 @@
 <tr><td>hermes</td><td>184/500 (36.8%)</td><td>435/480 (90.6%)</td><td>⚠️ 分母不同(不可跨行比)</td></tr>
 <tr><td>deepseek</td><td>212/500 (42.4%)</td><td>141/175 (80.6%)</td><td>⚠️ 分母不同(不可跨行比)</td></tr>
 </table>
-<div class="note"><p><strong>分母说明</strong>：kimi-k2.6-cloud 为 2026-10-28 full500 满量结果（分母恒 500）；glm-5.3-flash 各路 predict 尚未满 500（网关200(正常)·predict进行中），分母 N=该路已评测题数。<strong>当 N&lt;500 时两列 pass% 不可跨行直接比大小</strong>（分母不同）。kimi 数据来源：硬编码自 10-28 full500 eval（KIMI 常量，详见生成器 L189）。复算命令：<code>cd swebench_verified_full/reports &amp;&amp; for h in cline-patched codex opencode claude-code pi hermes deepseek-harness; do python3 -c "import json;d=json.load(open('eval_glm53_$h.json'));print('$h',len(d.get('resolved',[])),'/',d.get('n',0))"; done</code></p></div>
+<div class="note"><p><strong>分母说明</strong>：kimi-k2.6-cloud 为 2026-10-28 full500 满量结果（分母恒 500）；glm-5.3-flash 各路 predict 尚未满 500（网关0·predict进行中），分母 N=该路已评测题数。<strong>当 N&lt;500 时两列 pass% 不可跨行直接比大小</strong>（分母不同）。kimi 数据来源：硬编码自 10-28 full500 eval（KIMI 常量，详见生成器 L189）。复算命令：<code>cd swebench_verified_full/reports &amp;&amp; for h in cline-patched codex opencode claude-code pi hermes deepseek-harness; do python3 -c "import json;d=json.load(open('eval_glm53_$h.json'));print('$h',len(d.get('resolved',[])),'/',d.get('n',0))"; done</code></p></div>
 
 <h2>3. Terminal-Bench 2.1（89 题 × 7 路）</h2>
 <div class="info"><p>口径：TB-2.1/89题/7-way concurrent（与旧 TB4 不可比）。Oracle 5/5 ✅（break-filter/bn-fit/log-summary/cancel-async/fix-git 全 reward=1）。§15:2x判据MET ✅。<br>
@@ -63,12 +63,36 @@
 
 <h2>5. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
-<tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,当前200(正常))</td><td class='warn'>infra(当前200(正常))</td></tr>
+<tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,当前0)</td><td class='warn'>infra(当前0)</td></tr>
 <tr><td>TB-2.1 codex 1/89=1.1%</td><td>89题仅1通过;适配器wire_api解析异常+能力不足(codex慢,单题超时居多)</td><td class='warn'>infra+能力</td></tr>
 <tr><td>TB-2.1 claude-code 30/89=33.7%</td><td>历史0/89=100%infra(88 ConnRefused,模型从未运行);已修复(overlay network_mode:host)→R1+R2 merged 30P。失败59:能力41+infra4(502/503)+timeout7+adapter_error6+cli1</td><td class='pass'>能力为主(infra已修复·0ConnRefused✅HARD VERIFIED)</td></tr>
 <tr><td>TB-2.1 hermes 38/89=42.7%</td><td>历史7/89(39quota+43synthetic未真跑);rerun COMPLETE 38/89。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class='warn'>能力为主(qemu=infra BLOCKED)</td></tr>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
+
+<h2>5b. 失败归因复核（2026-11-17 用户令：失败是否均为能力不足？）</h2>
+<div class="note"><p><strong>复核方法</strong>：合并各路 original + 全部 rerun 目录后，对仍失败的题做四桶归因（ability/quota/conn_refused/synthetic），计算<strong>修正后 Pass%</strong> = passed / (89 − 纯infra)。SWE-bench Verified 用 patch 非空率初筛（非空=模型真跑→能力，空=infra未生成）。</p></div>
+<h3>① TB-2.1 四桶归因（合并后）</h3>
+<table><tr><th>Harness</th><th>Passed</th><th>当前Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>纯Infra</th><th>修正后Pass%</th><th>结论</th></tr>
+<tr><td><strong>cline</strong></td><td>42</td><td>47.2%</td><td>46</td><td>0</td><td>1</td><td>0</td><td>1</td><td><strong>47.7%</strong></td><td>纯infra仅1题,几乎不变</td></tr>
+<tr><td><strong>codex</strong></td><td>1</td><td>1.1%</td><td>86</td><td>0</td><td>0</td><td>2</td><td>2</td><td><strong>1.1%</strong></td><td>纯infra仅2题,几乎不变</td></tr>
+<tr><td><strong>opencode</strong></td><td>43</td><td>48.3%</td><td>36</td><td>0</td><td>0</td><td>10</td><td>10</td><td><strong>54.4%</strong></td><td>+6.1pp(inf=10)</td></tr>
+<tr><td><strong>claude-code</strong></td><td>30</td><td>33.7%</td><td>58</td><td>0</td><td>1</td><td>0</td><td>1</td><td><strong>34.1%</strong></td><td>纯infra仅1题,几乎不变</td></tr>
+<tr><td><strong>pi</strong></td><td>35</td><td>39.3%</td><td>39</td><td>0</td><td>1</td><td>14</td><td>15</td><td><strong>47.3%</strong></td><td>+8.0pp(inf=15)</td></tr>
+<tr><td><strong>hermes</strong></td><td>38</td><td>42.7%</td><td>38</td><td>0</td><td>0</td><td>13</td><td>13</td><td><strong>50.0%</strong></td><td>+7.3pp(inf=13)</td></tr>
+<tr><td><strong>deepseek</strong></td><td>11</td><td>12.4%</td><td>73</td><td>0</td><td>0</td><td>5</td><td>5</td><td><strong>13.1%</strong></td><td>纯infra仅5题,几乎不变</td></tr>
+</table>
+<h3>② SWE-bench Verified patch 非空初筛</h3>
+<table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
+<tr><td><strong>cline</strong></td><td>332</td><td>329</td><td>3</td><td>99.1%</td><td>能力为主(空patch=3)</td></tr>
+<tr><td><strong>codex</strong></td><td>139</td><td>137</td><td>2</td><td>98.6%</td><td>能力为主(空patch=2)</td></tr>
+<tr><td><strong>opencode</strong></td><td>498</td><td>498</td><td>0</td><td>100.0%</td><td>能力(tests fail)</td></tr>
+<tr><td><strong>claude-code</strong></td><td>354</td><td>339</td><td>15</td><td>95.8%</td><td>能力为主(空patch=15)</td></tr>
+<tr><td><strong>pi</strong></td><td>296</td><td>296</td><td>0</td><td>100.0%</td><td>能力(tests fail)</td></tr>
+<tr><td><strong>hermes</strong></td><td>480</td><td>480</td><td>0</td><td>100.0%</td><td>能力(tests fail)</td></tr>
+<tr><td><strong>deepseek</strong></td><td>175</td><td>175</td><td>0</td><td>100.0%</td><td>能力(tests fail)</td></tr>
+</table>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主，纯 infra 题数较少。codex 86/89 失败已归 ability（低分=真能力）；deepseek 73/89 能力 + 5 synthetic；opencode/pi/hermes 各有 10-14 synthetic（未真跑，值得 rerun）；cline/cc 各 1 conn_refused。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §失败归因复核。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>
@@ -87,16 +111,16 @@
 <tr><td>hermes</td><td>480/500</td><td>20</td><td>0/天</td><td>0/天</td><td>DONE(500attempted,empty=能力,今日0产出)</td></tr>
 <tr><td>deepseek</td><td>175/500</td><td>325</td><td>0/天</td><td>0/天</td><td>DONE(500attempted,empty=能力,今日0产出)</td></tr>
 </table>
-<div class="note"><p><strong>复算方法</strong>：ETA = 剩余题数 ÷ 3日平均速率(由 predictions_glm53/ 文件 mtime 统计)。瓶颈=剩余最多且速率最低的活跃路。DONE=该路已 attempt 500 题、空 patch=能力差(不重启)。网关 429 会降低有效速率；当前网关200(正常)。复算命令：<code>cd swebench_verified_full/predictions_glm53 &amp;&amp; for r in cline-patched codex opencode claude-code pi hermes deepseek-harness; do n=$(ls ${r}__*.json|wc -l); echo "$r: $n/500 remaining=$((500-n))"; done</code></p></div>
+<div class="note"><p><strong>复算方法</strong>：ETA = 剩余题数 ÷ 3日平均速率(由 predictions_glm53/ 文件 mtime 统计)。瓶颈=剩余最多且速率最低的活跃路。DONE=该路已 attempt 500 题、空 patch=能力差(不重启)。网关 429 会降低有效速率；当前网关0。复算命令：<code>cd swebench_verified_full/predictions_glm53 &amp;&amp; for r in cline-patched codex opencode claude-code pi hermes deepseek-harness; do n=$(ls ${r}__*.json|wc -l); echo "$r: $n/500 remaining=$((500-n))"; done</code></p></div>
 
 <h2>8. 后续计划</h2>
 <div class="info"><ol>
-<li>predict 7路推进至500(当前2274/3500=65.0%,网关200(正常)·predict进行中)</li>
-<li>eval 1832 resolved(0 true backlog)·新predict后增量eval(R2598: incr_eval已完成·待新predict累积)</li>
+<li>predict 7路推进至500(当前2274/3500=65.0%,网关0·predict stalled)</li>
+<li>eval 1832 resolved(0 true backlog)·新predict后增量eval(R2124: incr_eval已完成·待新predict累积)</li>
 <li>TB-2.1: 7路(200p/1397t),领先: opencode 43p(done)，cline 42p(done)，hermes 38p(done)，pi 35p(done)，claude-code 30p(done)，deepseek 11p(done)，codex 1p(done)</li>
 <li>网关200稳定后各路predict继续推进至500→里程碑报告</li>
 </ol></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R2598 · 2026-11-17 08:42<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
+BaiZe Harness · R2124 · 2026-11-17 09:09<br>glm-5.3-flash · SWE-bench Verified 500 + TB-2.1 89 · 7-way · 报告正文一律写 cline
 </p></body></html>

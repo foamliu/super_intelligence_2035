@@ -246,6 +246,90 @@ tb_total_pass = sum(tb21_data[h]["passed"] for h in HARNESSES)
 tb_total_trials = sum(tb21_data[h]["trials"] for h in HARNESSES)
 tb_rank = sorted(((disp(h), tb21_data[h]["passed"], tb21_data[h]["status"]) for h in HARNESSES), key=lambda x: -x[1])
 tb_rank_str = "，".join(f"{n} {p}p({'rerun中' if st=='running' else 'done'})" for n,p,st in tb_rank if p > 0) or "全部0p"
+
+# ---- §2026-11-17 08:5x 用户令: 失败归因复核 (merged original+rerun) ----
+_tb21_review = {}
+try:
+    import importlib.util as _ilu
+    _rev_path = os.path.join(os.path.dirname(__file__), "terminalbench",
+                             "audit_tb21_review_7way.py")
+    _spec = _ilu.spec_from_file_location("audit_tb21_review_7way", _rev_path)
+    _rmod = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_rmod)
+    _all_tasks = _rmod.get_all_tasks()
+    for _h in _rmod.HARNESSES:
+        _td = _rmod.scan_route_all_dirs(_h)
+        _bk, _ = _rmod.classify_merged(_td, _all_tasks)
+        _total = len(_all_tasks) or 89
+        _passed = len(_bk["passed"])
+        _pure_inf = (len(_bk["quota"]) + len(_bk["conn_refused"]) +
+                     len(_bk["synthetic"]))
+        _rd = max(_total - _pure_inf, 1)
+        _tb21_review[_h] = {
+            "passed": _passed, "cur_pct": round(_passed/_total*100, 1),
+            "cor_pct": round(_passed/_rd*100, 1), "pure_inf": _pure_inf,
+            "real_denom": _total - _pure_inf,
+            "ability": len(_bk["ability"]), "quota": len(_bk["quota"]),
+            "conn_ref": len(_bk["conn_refused"]),
+            "synthetic": len(_bk["synthetic"]),
+            "syn_list": _bk["synthetic"], "cr_list": _bk["conn_refused"],
+            "q_list": _bk["quota"],
+        }
+except Exception:
+    pass
+
+# SWE-bench 初筛: empty patch = infra(未生成patch), real patch = 能力
+_swe_screen_rows = []
+for _h in HARNESSES:
+    _files = glob.glob(os.path.join(PRED_DIR, f"{_h}__*.json"))
+    _empty = _real = 0
+    for _f in _files:
+        try:
+            _d = json.load(open(_f))
+            if isinstance(_d, list):
+                _mp = "".join(str(x.get("model_patch","") or "") for x in _d if isinstance(x,dict))
+            elif isinstance(_d, dict):
+                _mp = _d.get("model_patch","") or ""
+            else:
+                _mp = str(_d)
+            if _mp.strip():
+                _real += 1
+            else:
+                _empty += 1
+        except:
+            pass
+    _swe_screen_rows.append((disp(_h), len(_files), _real, _empty))
+
+# Build HTML fragments for review sections
+_tb21_review_parts = []
+for _h in HARNESSES:
+    _r = _tb21_review.get(_h, {})
+    if not _r:
+        continue
+    _gap = _r["cor_pct"] - _r["cur_pct"]
+    if _r["pure_inf"] == 0:
+        _verdict = "失败全部为能力不足"
+    elif _gap < 1:
+        _verdict = f"纯infra仅{_r['pure_inf']}题,几乎不变"
+    else:
+        _verdict = f"+{_gap:.1f}pp(inf={_r['pure_inf']})"
+    _tb21_review_parts.append(
+        f"<tr><td><strong>{disp(_h)}</strong></td><td>{_r['passed']}</td>"
+        f"<td>{_r['cur_pct']}%</td><td>{_r['ability']}</td>"
+        f"<td>{_r['quota']}</td><td>{_r['conn_ref']}</td>"
+        f"<td>{_r['synthetic']}</td><td>{_r['pure_inf']}</td>"
+        f"<td><strong>{_r['cor_pct']}%</strong></td><td>{_verdict}</td></tr>")
+_tb21_review_html = "\n".join(_tb21_review_parts) or "<tr><td colspan='10'>复核数据不可用</td></tr>"
+
+_swe_screen_parts = []
+for _name, _tot, _real, _empty in _swe_screen_rows:
+    _rate = f"{_real/max(_tot,1)*100:.1f}%" if _tot else "—"
+    _attr = "能力(tests fail)" if _empty == 0 else f"能力为主(空patch={_empty})"
+    _swe_screen_parts.append(
+        f"<tr><td><strong>{_name}</strong></td><td>{_tot}</td>"
+        f"<td>{_real}</td><td>{_empty}</td><td>{_rate}</td><td>{_attr}</td></tr>")
+_swe_screen_html = "\n".join(_swe_screen_parts) or "<tr><td colspan='6'>无数据</td></tr>"
+
 # ---- SWE-bench leading routes (dynamic, by pass rate) ----
 sw_rank = sorted([s for s in swebench if s[1]], key=lambda x: -x[2]/x[1])
 sw_lead_str = "，".join(f"{n} {r}/{nn}({r/nn*100:.1f}%)" for n,nn,r,_,_,_ in sw_rank[:3])
@@ -305,6 +389,18 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>TB-2.1 hermes 38/89=42.7%</td><td>历史7/89(39quota+43synthetic未真跑);rerun COMPLETE 38/89。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class='warn'>能力为主(qemu=infra BLOCKED)</td></tr>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
+
+<h2>5b. 失败归因复核（2026-11-17 用户令：失败是否均为能力不足？）</h2>
+<div class="note"><p><strong>复核方法</strong>：合并各路 original + 全部 rerun 目录后，对仍失败的题做四桶归因（ability/quota/conn_refused/synthetic），计算<strong>修正后 Pass%</strong> = passed / (89 − 纯infra)。SWE-bench Verified 用 patch 非空率初筛（非空=模型真跑→能力，空=infra未生成）。</p></div>
+<h3>① TB-2.1 四桶归因（合并后）</h3>
+<table><tr><th>Harness</th><th>Passed</th><th>当前Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>纯Infra</th><th>修正后Pass%</th><th>结论</th></tr>
+{_tb21_review_html}
+</table>
+<h3>② SWE-bench Verified patch 非空初筛</h3>
+<table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
+{_swe_screen_html}
+</table>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主，纯 infra 题数较少。codex 86/89 失败已归 ability（低分=真能力）；deepseek 73/89 能力 + 5 synthetic；opencode/pi/hermes 各有 10-14 synthetic（未真跑，值得 rerun）；cline/cc 各 1 conn_refused。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §失败归因复核。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>

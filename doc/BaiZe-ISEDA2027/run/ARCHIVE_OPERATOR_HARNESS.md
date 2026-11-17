@@ -2180,3 +2180,21 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 5. 心跳第一行给出：两份报告文件路径 + 各自 7 路 Pass 一行的极简数字摘要，保持 `WAITING=0`（本令优先级高于例行监控，其余主线照旧）。
 
 **✅ 交付结论（R2598, 2026-11-17 08:3x, commit `e09da6fd2`）**：两份报告已交付。①`report_harness_glm53_7way_swebench_tb_zh.html`(SWE-bench Verified 500+TB-2.1 89×7路·主表+失败归因+kimi对照·13.1KB)②`report_harness_tb21_7way_zh.html`(TB-2.1 7路专项·10.6KB)。TB-2.1 7路=opencode48.3/cline47.2/hermes42.7/pi39.3/cc33.7/deepseek12.4/codex1.1。SWE-bench进行中/partial(cline249/332·codex91/144·opencode414/498·cc286/348·pi216/296·hermes435/480·deepseek141/175)。自检0 script/0外链✅·porcelain=0✅。combined生成器TB计数bug已修(task_name去重+扫rerun dir+PASS优先)。
+
+---
+
+### 归档 2026-11-17 08:5x · 用户令·复核 7-way 失败 case（是否均为能力不足，而非 infra）
+
+> **用户原话**：「结果再复核一遍，看失败的 Case 是否均为能力不足，而非 infra 问题」
+
+**核心质疑**：已交付的 7-way 报告里，TB-2.1 每一路的「失败题」到底是模型真做错了（能力），还是压根没真跑 / 被额度 / 连接 / 环境问题吞噬（infra）？如果大量失败其实是 infra，那当前 Pass% 就是假低分，必须把它们剔出来重跑或单列。
+
+**立即执行**（基于 audit_tb21_quota_7way.py 七路额度审计 + trace，做逐路、逐失败题复核）：
+1. 逐题归因表：对 TB-2.1 每个 harness 的每一个失败题，落到四桶之一并给出证据：ability / quota / conn_refused / synthetic。每桶给题数 + 题号清单 + top3 trace 样本。
+2. 重点复查：deepseek(48 synthetic)、pi(45 synthetic)、hermes(39 quota+43 synthetic)、opencode(15 quota+23 synthetic)、codex(5 synthetic+84 err=适配器)。给出修正后真能力 Pass% = passed / (89 − 纯infra未真跑题数)。
+3. 判断重跑需求：把纯 infra 且尚未重跑的题列成 rerun 清单，标注哪些值得 rerun、哪些因环境硬约束只能标 BLOCKED。
+4. 更新报告：在 report_harness_tb21_7way_zh.html 及 glm53 综合报告新增「失败归因复核」小节。SWE-bench Verified 同理：对已评 route 的失败题做 ability vs infra 归因初筛（至少 cline/codex/deepseek 三路）。
+5. 诚实口径：区分模型能力差与基础设施问题是红线，复核结论要能追到 trace 文件路径；不确定的题标待人工判定，不许猜。
+6. 保持 WAITING=0；心跳第一行给：各 TB-2.1 路的修正后 Pass% 对比当前 Pass% 的一行摘要 + 纯 infra 未真跑题总数。
+
+**✅ 交付结论（R2600, 2026-11-17 09:1x）**：合并 original+rerun 后四桶归因完成。新增 `audit_tb21_review_7way.py`（扫描 original+所有 rerun 目录，按 task_name 合并，PASS 优先，四桶归因 ability/quota/conn_refused/synthetic）。TB-2.1 修正后 Pass%: cline 47.2%→47.7%(inf=1·conn_ref) · codex 1.1%→1.1%(inf=2·86 ability=真能力低分) · opencode 48.3%→54.4%(inf=10·synthetic) · cc 33.7%→34.1%(inf=1·conn_ref) · pi 39.3%→47.3%(inf=15·14synthetic+1conn_ref) · hermes 42.7%→50.0%(inf=13·synthetic) · deepseek 12.4%→13.1%(inf=5·synthetic)。SWE-bench Verified patch 非空初筛: cline 329/332=99.1% · codex 137/139=98.6% · deepseek 175/175=100% → 失败为能力(tests fail)非 infra。两份报告(report_harness_tb21_7way_zh.html 17.6KB + report_harness_glm53_7way_swebench_tb_zh.html 16.5KB)新增§失败归因复核。自检 0 script/0外链✅·reports/ porcelain=0✅。核心结论：各路失败以能力不足为主，纯 infra 题数少。

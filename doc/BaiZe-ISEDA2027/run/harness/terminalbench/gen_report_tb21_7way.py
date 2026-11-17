@@ -153,6 +153,48 @@ def _reclassify(audit_entry):
     return infra, ability, other
 
 
+def _review_7way_merged():
+    """§2026-11-17 08:5x 用户令: 合并 original+rerun 后的失败归因复核。
+
+    返回 dict: harness_key -> {display, passed, current_pct, corrected_pct,
+    pure_infra, real_denom, bucket_counts, buckets} 或 {} (失败时)。
+    """
+    try:
+        import importlib.util
+        rev_path = Path(__file__).parent / "audit_tb21_review_7way.py"
+        spec = importlib.util.spec_from_file_location(
+            "audit_tb21_review_7way", rev_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    except Exception:
+        return {}
+    all_tasks = mod.get_all_tasks()
+    result = {}
+    for h in mod.HARNESSES:
+        task_data = mod.scan_route_all_dirs(h)
+        buckets, _ = mod.classify_merged(task_data, all_tasks)
+        total = len(all_tasks) or 89
+        passed = len(buckets["passed"])
+        pure_infra = (len(buckets["quota"]) + len(buckets["conn_refused"])
+                      + len(buckets["synthetic"]))
+        real_denom = total - pure_infra
+        result[h] = {
+            "display": mod.DISP[h], "passed": passed, "total": total,
+            "current_pct": round(passed / total * 100, 1),
+            "corrected_pct": round(passed / max(real_denom, 1) * 100, 1),
+            "pure_infra": pure_infra, "real_denom": real_denom,
+            "bucket_counts": {
+                "ability": len(buckets["ability"]),
+                "quota": len(buckets["quota"]),
+                "conn_refused": len(buckets["conn_refused"]),
+                "synthetic": len(buckets["synthetic"]),
+                "not_evaluated": len(buckets["not_evaluated"]),
+            },
+            "buckets": buckets,
+        }
+    return result
+
+
 def esc(s):
     return (str(s).replace("&", "&amp;").replace("<", "&lt;")
             .replace(">", "&gt;").replace('"', "&quot;"))
@@ -199,7 +241,7 @@ INFRA_LEDGER = {
 }
 
 
-def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=None):
+def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=None, review_data=None):
     css = ("body{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;"
            "max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}"
            "h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}"
@@ -329,6 +371,99 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "(cc 完成后启动, 避免网关额度竞争)。</li>"
              "<li><strong>cline</strong>: 额度已清零; 余 1 conn_refused + 4 synthetic 待补跑。</li></ul></div>")
 
+    # ---- §2026-11-17 08:5x 用户令: 失败归因复核 (merged original+rerun) ----
+    if review_data:
+        H.append("<h2>失败归因复核 (2026-11-17 用户令)</h2>")
+        H.append("<div class='caveat'><p><strong>复核目的</strong>: 用户质疑「失败的 Case 是否均为能力不足，"
+                  "而非 infra 问题」。本节合并各路 original + 全部 rerun 目录后，对仍失败的题做四桶归因，"
+                  "并计算<strong>修正后 Pass%</strong> = passed / (89 − 纯 infra 题数)，与当前 Pass% 并排对比。</p>"
+                  "<p><strong>四桶定义</strong>: <code>ability</code> = 模型真跑且答错 "
+                  "(有 run_result / iterations&gt;1 / exc_type 等真实证据); "
+                  "<code>quota</code> = 全部 trial 命中网关额度耗尽; "
+                  "<code>conn_refused</code> = 全部 trial 连接被拒 / CLI bug; "
+                  "<code>synthetic</code> = 无 run_result、stdout≈空，占位假结果 / 未真跑。</p>"
+                  "<p><strong>合并逻辑</strong>: 任一 trial (跨 original + rerun) reward==1.0 即记 PASS。"
+                  "失败题若任何 trial 有 proper evidence → 归 ability (模型至少跑过一次)。</p></div>")
+        # 四桶表
+        H.append("<h3>表四 · 四桶归因 (合并后)</h3>")
+        H.append("<table><thead><tr><th>#</th><th>Harness</th><th>Passed</th>"
+                  "<th>当前 Pass%</th><th>能力不足</th><th>Quota</th>"
+                  "<th>ConnRefused</th><th>Synthetic</th><th>纯Infra</th>"
+                  "<th>修正后分母</th><th>修正后 Pass%</th></tr></thead><tbody>")
+        for i, (name, up, ev, tr, er) in enumerate(rows, 1):
+            hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
+            rd = review_data.get(hkey, {})
+            if not rd:
+                H.append(f"<tr><td class='num'>{i}</td><td>{esc(name)}</td>"
+                         f"<td colspan='9'>复核数据不可用</td></tr>")
+                continue
+            bc = rd["bucket_counts"]
+            cur = f"{rd['current_pct']}%"
+            cor = f"{rd['corrected_pct']}%"
+            inf_cls = "fail" if rd["pure_infra"] > 0 else "pass"
+            cor_cls = "pass" if rd["corrected_pct"] > rd["current_pct"] else ""
+            H.append(f"<tr><td class='num'>{i}</td><td><strong>{esc(name)}</strong></td>"
+                     f"<td class='num pass'>{rd['passed']}</td>"
+                     f"<td class='num'>{cur}</td>"
+                     f"<td class='num'>{bc['ability']}</td>"
+                     f"<td class='num'>{bc['quota']}</td>"
+                     f"<td class='num'>{bc['conn_refused']}</td>"
+                     f"<td class='num'>{bc['synthetic']}</td>"
+                     f"<td class='num {inf_cls}'>{rd['pure_infra']}</td>"
+                     f"<td class='num'>{rd['real_denom']}</td>"
+                     f"<td class='num {cor_cls}'><strong>{cor}</strong></td></tr>")
+        H.append("</tbody></table>")
+        # 关键结论
+        H.append("<div class='info'><p><strong>关键结论</strong>:</p><ul>")
+        for name, up, ev, tr, er in rows:
+            hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
+            rd = review_data.get(hkey, {})
+            if not rd:
+                continue
+            bc = rd["bucket_counts"]
+            gap = rd["corrected_pct"] - rd["current_pct"]
+            if rd["pure_infra"] == 0:
+                verdict = f"<strong>失败全部为能力不足</strong>，修正后 Pass% 不变"
+            elif gap < 1:
+                verdict = f"纯 infra 仅 {rd['pure_infra']} 题，修正后 Pass% 几乎不变"
+            else:
+                verdict = (f"纯 infra {rd['pure_infra']} 题 (synthetic {bc['synthetic']}"
+                           f" + conn_ref {bc['conn_refused']} + quota {bc['quota']})，"
+                           f"修正后 Pass% {rd['current_pct']}% → {rd['corrected_pct']}% (+{gap:.1f}pp)")
+            H.append(f"<li><strong>{esc(name)}</strong>: {verdict}</li>")
+        H.append("</ul></div>")
+        # Infra 题清单
+        H.append("<h3>纯 Infra 题清单 (synthetic + conn_refused + quota)</h3>")
+        H.append("<table><thead><tr><th>Harness</th><th>桶</th><th>题数</th>"
+                  "<th>题号清单</th></tr></thead><tbody>")
+        for name, up, ev, tr, er in rows:
+            hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
+            rd = review_data.get(hkey, {})
+            if not rd:
+                continue
+            b = rd["buckets"]
+            for bucket_name, label in [("synthetic", "synthetic/未真跑"),
+                                       ("conn_refused", "conn_refused"),
+                                       ("quota", "quota")]:
+                tasks = b.get(bucket_name, [])
+                if tasks:
+                    H.append(f"<tr><td><strong>{esc(name)}</strong></td>"
+                             f"<td>{label}</td><td class='num'>{len(tasks)}</td>"
+                             f"<td style='font-size:0.85em'>{esc(', '.join(tasks))}</td></tr>")
+        H.append("</tbody></table>")
+        # 重跑需求
+        H.append("<div class='caveat'><p><strong>重跑需求评估</strong>: "
+                  "上述 synthetic 题为「合并后仍无 run_result」的纯 infra，"
+                  "理论上值得 rerun（排除 infra 后才能测出真能力）。"
+                  "但部分题受环境硬约束:</p><ul>"
+                  "<li><strong>hermes</strong>: qemu 类题 BLOCKED (容器 Py3.9 &lt; hermes-agent 最低 3.11)</li>"
+                  "<li><strong>codex</strong>: 86/89 失败已归 ability (适配器 err 前科已排除, "
+                  "合成后仅 2 synthetic) → 低分=真能力, rerun 无意义</li>"
+                  "<li><strong>deepseek</strong>: 73/89 失败已归 ability, 仅 5 synthetic → rerun 收益有限</li>"
+                  "<li><strong>opencode/pi</strong>: synthetic 各 10/14 题 → rerun 可提升修正后 Pass%</li>"
+                  "<li><strong>cline/cc</strong>: 各 1 conn_refused (pytorch-model-recovery) → 单题重跑即可</li>"
+                  "</ul></div>")
+
     H.append(f"<hr><p style='text-align:center;color:#7f8c8d;font-size:0.9em'>"
              f"BaiZe Harness TB-2.1 7way {now} | glm-5.3-flash | "
              f"数据源: /tmp/tb21_glm53_jobs (gen_report_tb21_7way.py) | "
@@ -355,7 +490,9 @@ def main():
     total_trials = sum(r[3] for r in rows)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     audit_7way = _quota_audit_7way()
-    _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=audit_7way)
+    review_data = _review_7way_merged()
+    _build_html(rows, total_tasks, total_passed, total_trials, now,
+                audit_7way=audit_7way, review_data=review_data)
 
 
 if __name__ == "__main__":

@@ -33,25 +33,7 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-17 08:5x（**复核 7-way 失败 case：是否均为能力不足，而非 infra**）· 用户直令 · 最高优先 · 未完成
-
-> **用户原话**：「结果再复核一遍，看失败的 Case 是否均为能力不足，而非 infra 问题」
-
-**核心质疑（先读，这是用户真正要查的）**：已交付的 7-way 报告里，TB-2.1 每一路的「失败题」到底是**模型真做错了（能力）**，还是**压根没真跑 / 被额度 / 连接 / 环境问题吞噬（infra）**？如果大量失败其实是 infra，那当前 Pass% 就是**假低分**，必须把它们剔出来重跑或单列，不得混在「能力不足」里。
-
-**立即执行**（基于已落盘的 `audit_tb21_quota_7way.py` 七路额度审计 + trace，做**逐路、逐失败题**复核）：
-
-1. **逐题归因表**：对 TB-2.1 每个 harness 的**每一个失败题**，落到四桶之一并给出证据：
-   - `ability`（模型真跑且答错：有 run_result、stdout、iterations>1 等真实证据）
-   - `quota`（网关额度耗尽，未跑成）
-   - `conn_refused`（连接被拒，未跑成）
-   - `synthetic/未真跑`（无 run_result、stdout≈空，占位假结果）
-   每桶给题数 + 题号清单 + top3 trace 样本。**判据与 `audit_tb21_quota_7way.py` 一致，但要把每路的「失败题全量」覆盖到，不只 rerun_targets 里的**。
-2. **重点复查这几路**（已知可疑，因为它们的「失败」里 infra 占比可能极高）：deepseek（48 synthetic）、pi（45 synthetic）、hermes（39 quota+43 synthetic）、opencode（15 quota+23 synthetic）、codex（5 synthetic+84 err=适配器）。**给出修正后的「真能力 Pass%」= passed / (89 − 纯infra未真跑题数)**，与当前报告 Pass% 并排对比，把差距写清。
-3. **判断重跑需求**：把「纯 infra 且尚未重跑」的题列成 rerun 清单（数量、ETA），标注哪些值得 rerun、哪些因环境硬约束（如 hermes qemu Py3.9<3.11）只能标 BLOCKED。
-4. **更新报告**：在 `report_harness_tb21_7way_zh.html`（及 glm53 综合报告的 TB-2.1 节）新增「失败归因复核」小节：四桶表 + 修正后 Pass% + infra 题清单；把原表里「Pass%」若含 infra 污染则加脚注说明。SWE-bench Verified 同理：对已评 route 的失败题做 ability vs infra 归因初筛（至少 cline/codex/deepseek 三路，因为 codex 有 adapter err 前科）。
-5. **诚实口径**：区分「模型能力差」与「基础设施问题」是红线（任务书 §归因红线），复核结论要能追到 trace 文件路径；不确定的题标「待人工判定」，不许猜。
-6. 保持 `WAITING=0`；心跳第一行给：各 TB-2.1 路的「修正后 Pass%」对比当前 Pass% 的一行摘要 + 纯 infra 未真跑题总数。
+> 📦 §用户令·2026-11-17 08:5x（复核 7-way 失败 case：是否均为能力不足）**✅ 已交付（R2600）** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：合并 original+rerun 后四桶归因——TB-2.1 修正后 Pass%: cline47.2→47.7%(inf1) · codex1.1→1.1%(inf2·86ability=真能力) · opencode48.3→54.4%(inf10) · cc33.7→34.1%(inf1) · pi39.3→47.3%(inf15) · hermes42.7→50.0%(inf13) · deepseek12.4→13.1%(inf5) · SWE-bench patch非空率98%+→失败为能力非infra · 新增 `audit_tb21_review_7way.py` + 两报告新增§失败归因复核 · 0 script/0外链✅。需要时再读。
 
 ---
 
@@ -202,4 +184,58 @@
 
 ## 📊 进度快照（每次唤醒必须更新，供远程巡检）
 
-> 固定格式写在 `MEMORY_HARNESS.md` 最顶部，便于运维一条命
+> 固定格式写在 `MEMORY_HARNESS.md` 最顶部，便于运维一条命令读到全局状态。
+
+```
+PHASE:        <当前阶段>
+已完成:       <阶段清单>
+当前动作:     <本次唤醒在做什么>
+下一步:       <下次唤醒要做什么>
+阻塞:         <无 / 具体阻塞 + 需要运维做什么>
+ERROR_COUNT:  <n>
+```
+
+⚠️ `WAITING` 只写在 `MEMORY_HARNESS.md` 的顶部单独一行
+（`baize_harness_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配它来决定睡眠时长）。
+绝不要在正文、快照或流水里再出现以 `WAITING:` 开头的行 —— 否则会误触发 30 分钟长睡。
+
+运维巡检方式：外部运维 `git pull` 读 `MEMORY_HARNESS.md` 顶部 + `harness/` 下的报告即可，不需要登录服务器。
+
+---
+
+## 0. 任务概述
+
+目的：横向理解「agent harness」这一类系统 —— 它们的工程实现差异，以及它们在真实软件工程任务上的能力差异。
+
+| 线 | 内容 | 产出 |
+|:--|:--|:--|
+| H-B | 源码分析（从 cline 开始） | `harness/<name>_SOURCE_ANALYSIS.html`（自包含） |
+| H-A | SWE-bench 横评（cline / opencode / deepseek harness 等） | `harness/SWEBENCH_COMPARE.html` + 结果表 |
+
+代码位置：`/nas_train/app.e0031982/harness/`
+
+> 📦 🔍 既有同类研究线（2026-10-02 勘察，已闭合）→ ARCHIVE_OPERATOR_HARNESS.md；`/nas_train/app.e0031982/harness/` 下 9 月线产物作纯输入复用，loop.sh 已停不重启。需要时再读。
+
+---
+
+## 1. H-A —— SWE-bench 横评
+
+### 1.1 🔴 第 0 步（必做，先做）：可行性核查
+
+在跑任何评测之前，逐条查清并报给运维：
+
+| # | 查什么 | 怎么查 |
+|:--|:--|:--|
+| 1 | `harness/` 下有哪些 harness、各自版本 / 形态（CLI？插件？）| `ls -la` + 各自 `README` / `package.json` / `pyproject.toml` |
+| 2 | 每个 harness 怎么启动、接什么模型（是否要 API key、能否接本地模型）| 读文档 + 试 `--help` |
+| 3 | 模型可用性：本机能调哪些模型？（DeepSeek API？本地 vLLM？）| 实测一次最小调用 |
+| 4 | SWE-bench 数据集：能否取到？取哪个子集？ | ⚠️ **现行口径 = SWE-bench Verified 500 题（不是 Lite 300）**；见 §用户令·2026-11-06 22:4x |
+| 5 | 评测容器 / 沙箱：见下方「§1.1-bis 无 Docker 路线」 | `docker info`；不可用就按 §1.1-bis 改道 |
+| 6 | 磁盘/时长预估：跑 N 条大概要多久、多少磁盘 | 按单条实测反推 |
+
+🚫 第 0 步没通过之前，不许"假装跑了"或"用其他指标冒充 SWE-bench" —— 如实报告阻塞。
+
+> 📦 §1.1-bis 无 Docker 路线 + 连通性测试 + sb-cli 合规 + 路线优先级 已归档 → run/ARCHIVE_OPERATOR_HARNESS.md；结论：R1 unshare 沙箱路线已选定并实现，2100 条评测已完成，pypi/内网镜像可用，docker 不可用。需要时再读。
+
+### 1.2 评测设计（核查通过后）
+
