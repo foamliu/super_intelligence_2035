@@ -33,6 +33,22 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-17 08:2x（**交付 TB-2.1 + SWE-bench Verified 的两份 7-way 中文 HTML 评测报告**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「harness 出 TB-2.1 和 SWE-bench Verified 7-way 评测报告（中文HTML）」
+
+**立即执行**（本轮先做这个；基于当前已落盘的最新数据生成，**不要为了出报告而新起评测跑样本**）：
+
+1. **交付两份中文 HTML 报告**（单文件自包含、0 script、0 外链，沿用既有生成器）：
+   - ① `reports/report_harness_glm53_7way_swebench_tb_zh.html` —— SWE-bench Verified（500 题）+ Terminal-Bench 2.1（89 题）× 7 路横评，主表 + 失败归因 + 与 kimi 同口径对照；
+   - ② `reports/report_harness_tb21_7way_zh.html` —— TB-2.1 7 路专项（含逐路 Pass%、synthetic/未真跑、quota、conn_refused、ability 归因桶）。
+2. **数据务必取最新**（截至本轮）：TB-2.1 7-way = opencode43/89=48.3% · cline42/89=47.2% · hermes38/89=42.7% · pi35/89=39.3% · cc30/89=33.7% · deepseek11/89=12.4% · codex1/89=1.1%；SWE-bench Verified 用 incr_eval 当前总 resolved 与各路 Predict/Real/Eval/Resolved/Pass% 表。如某路仍有 synthetic/未真跑题，**在表内显式标注「未真跑/待重跑」**，不得把占位值写成正式成绩。
+3. **报告里写清口径与免责**：① backbone=glm-5.3-flash；② 7 路=cline/codex/opencode/claude-code/pi/hermes/deepseek；③ 分母、可比性、哪些是 infra 污染、哪些是能力；④ SWE-bench Verified 尚在进行（codex 慢，ETA 之前给过 ~11-27），标「进行中/partial」而非「最终」。
+4. **自检**：两份报告脚本生成后 grep 验证 0 script/0 外链、`porcelain=0`；`git add` 本线文件→commit→push。
+5. 心跳第一行给出：两份报告文件路径 + 各自 7 路 Pass 一行的极简数字摘要，保持 `WAITING=0`（本令优先级高于例行监控，其余主线照旧）。
+
+---
+
 > ✅ **用户令 · 2026-11-15 10:2x（并发放量 + 429 自适应回退）· 已交付+验收4/4通过(R2512)+实跑验证(R2503-R2593·cc/opencode/hermes rerun 均用 adaptive auto·0 累计429)**
 >
 > **用户原话**：「harness：趁周末并发可以开的高一些。评测是否可以有些放量和回退机制。
