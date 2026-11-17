@@ -233,7 +233,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1794635703422_kem74	ericw	hfeg0pfn034	verification	analysis Q&A only: 3 user questions all 'where defined/why different' about vecg	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1794551642078_rqp94.messages.json	chuanqiz	hfeg0plg79	verification	produce-task too trivial: single-line # removal from hcells_merge_CVPS L3375 (wo	WRONG_SHARD	no		n/a
 1794551446322_sco0b.messages.json	eva1li	hfeg0plg74	verification	analysis Q&A only: 8/8 user inputs are search/where/what questions (CMD_JUMP_cov	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
-1794557869660_0g9n6.messages.json	thomas1w	hfeg0plg98	verification	debug/analysis only: 1 user input '仿真卡死帮我看下' (sim hang), agent wrote diagnostic 	REVIVABLE_QA	yes	debug-Q&A	EXISTS
+1794557869660_0g9n6.messages.json	thomas1w	hfeg0plg98	verification	debug/analysis only: 1 user input '仿真卡死帮我看下' (sim hang), agent wrote diagnostic 	REVIVABLE_QA	parked_thematic_dup	r700 deepread: TRZDGOC zero-delay gate oscillation @1914941946ps in lpddr5_tb/compare_tasks.sv; SAME root-cause class as r645 CmpTaskZeroDelayOscDiagnose-001 (ia08o) -> park, no synth (见 trace_deepreads/r700_0g9n6_sim_hang_trzdgoc.md)	EXISTS
 1794561779908_voyfu	e0014036	hfeg0plg76	verification	analysis Q&A only: 13/13 user inputs are read-file/analyze-signal-origin/analyze	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1794555284506_lopt8	congyi	hfeg0plg97	verification	analysis Q&A only: 7/7 user inputs are how-to-read-testbench/summarize-PRAC/scen	REVIVABLE_QA	yes	env-config/how-to	EXISTS
 1794551664857_x41qu	chuanqiz	hfeg0pkn005	verification	r541 peeked analysis Q&A (6 user inputs all 分析作用/如何实现); r545 park (r541 forgot t	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
