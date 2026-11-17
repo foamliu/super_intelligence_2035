@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🚀 wake#1568 2026-11-18 02:1x 🔴用户令16:3x重做·**巡检+全队列 interim 刷新**：`git fetch` origin 360d91641→724872d85(behind2·harness R2653+zhulong plan·0 视觉文件)·ff-only 同步 HEAD=`724872d85`(无新运维令·TASK 16:3x 重做块不变)。SSH 隧道(:3333 -R 三端点)pid3961842 alive(~65.6h/236261s)。36.15 实况 runner PID3714813 alive(~116min/6953s·resumable·`python3 run_codegen_full.py`)+watchdog PID1977546 alive(~6.8h/24623s·rows≥546 自停)。VQA 桥复验：:30001 Qwen3.5-2B `{ok:true,ready:true,load_s:2.6}`·:30003 +rft2_adapter_seed11 `{ok:true,ready:true,load_s:46.0}`·:30002 MCP SSE(非 SSE GET 返回 -32600=服务在位)。`scp /tmp/wv_cg_full/results.json`→`/tmp/wv_cg_full_fetch.json`(1214 行/36220B)·跑 `update_report_full_interim.py`(WAKE=wake#1568)。**截至本 wake 79 行/546·26 case 三臂齐全(↑自 76/25·新增 3 行+1 三臂齐全)**：V0 5/27(18.5%)·V1 8/26(30.8%)·V2 8/26(30.8%)·超时(pi_rc=-99)=15。**McNemar(仅 26 case·n 严重不足仅参考)**：V0 vs V1 b=4 c=1 p=0.375·V0 vs V2 b=3 c=0 p=0.250·V1 vs V2 b=2 c=2 p=1.000(与上轮持平)。**VQA 翻转 5 例保持(信号不作结论)**：FsdbDumpConvert-001(V0超时→V1/V2 PASS·最干净)·AvgValueCalc-001 V1=PASS·CrStateDesyncFix-001 V2=PASS·NandMcuAsm-001 V1=V2=PASS·McuAsmGen-001 V1=PASS。报告 §0.6 进度`<li>`刷新为 79 行+McNemar interim·**52685B(43024chars)·0外链(仅SVG namespace)·0script**·本地快照 `codegen_full_results_snapshot.json`(79 行)已存。**诚实说明**：字典序最前高 k 复杂题多 360s 超时无 submit.zip(硬题前载·样本有偏)·当前 79 行暂不构成可引用全队列通过率·全队列 546 行 ~30+h cloud-agent 推理跨多 wake·待积聚足够三臂齐全 case 再报率+McNemar 定显著性。体积 fold wake#1567→daily(2026-11-18.md)+prune 2026-11-15 批归档两 one-liner 后 MEMORY<32KB。仅 commit 本线文件(报告+快照+MEMORY/daily)·不碰 attribution_3615_run* 别线在途。**WAITING: 0**。
+> 🚀 wake#1569 2026-11-18 02:2x 🔴用户令16:3x重做·**巡检+全队列 interim 刷新**：`git fetch` origin 82c9e6450→0c6d1b228(behind2·zhulong wake#1189 standby+designflow shard B r779·0 视觉文件)·清 stale `.git/index.lock`(02:19 残留·无 git 进程)后 ff-only 同步 HEAD=`0c6d1b228`(无新运维令·TASK 16:3x 重做块不变)。SSH 隧道(:3333 -R 三端点)pid3961842 alive(~66.0h/237564s)。36.15 实况 runner PID3714813 alive(~137min/8222s·resumable·`python3 run_codegen_full.py`)+watchdog PID1977546 alive(~7.2h/25893s·rows≥546 自停)。VQA 桥复验(36.15 本机 curl)：:30001 Qwen3.5-2B `{ok:true,ready:true,load_s:2.6}`·:30003 +rft2_adapter_seed11 `{ok:true,ready:true,load_s:46.0}`·:30002 MCP(GET 返回 Not Found=服务在位)。`scp /tmp/wv_cg_full/results.json`→`/tmp/wv_cg_full_fetch.json`(1240 行)·跑 `update_report_full_interim.py`(WAKE=wake#1569)。**截至本 wake 81 行/546·27 case 三臂齐全(↑自 79/26·新增 2 行+1 三臂齐全)**：V0 5/27(18.5%)·V1 8/27(29.6%)·V2 8/27(29.6%)·超时(pi_rc=-99)=17。**McNemar(仅 27 case·n 严重不足仅参考)**：V0 vs V1 b=4 c=1 p=0.375·V0 vs V2 b=3 c=0 p=0.250·V1 vs V2 b=2 c=2 p=1.000(与上轮持平)。**VQA 翻转 5 例保持(信号不作结论)**：FsdbDumpConvert-001(V0超时→V1/V2 PASS·最干净)·AvgValueCalc-001 V1=PASS·CrStateDesyncFix-001 V2=PASS·NandMcuAsm-001 V1=V2=PASS·McuAsmGen-001 V1=PASS。报告 §0.6 进度`<li>`刷新为 81 行+McNemar interim·**52685B·0外链(仅SVG namespace)·0script**·本地快照 `codegen_full_results_snapshot.json`(81 行)已存。**诚实说明**：字典序最前高 k 复杂题多 360s 超时无 submit.zip(硬题前载·样本有偏)·当前 81 行暂不构成可引用全队列通过率·全队列 546 行 ~30+h cloud-agent 推理跨多 wake·待积聚足够三臂齐全 case 再报率+McNemar 定显著性。体积 fold wake#1568→daily(2026-11-18.md)后 MEMORY<32KB。仅 commit 本线文件(报告+快照+MEMORY/daily)·不碰 attribution_3615_run* 别线在途。**WAITING: 0**。
+
+> 📦 wake#1568（2026-11-18 02:1x，巡检+全队列 interim 刷新轮）one-liner 已归档 → daily-memories-vision/2026-11-18.md（behind2 ff-only 同步 HEAD=`724872d85`·SSH/runner(3714813 ~116min)/watchdog 健康·results.json 79 行/26 三臂齐全·V0 5/27 V1 8/26 V2 8/26·McNemar V0vV1 b=4 c=1 p=0.375 V0vV2 b=3 c=0 p=0.250·5 翻转保持·报告 §0.6 interim 刷新 79 行·52685B 0外链0script）。需要时再读。
 
 > 📦 wake#1567（2026-11-18 01:5x，巡检+全队列 interim 刷新轮）one-liner 已归档 → daily-memories-vision/2026-11-18.md（behind2 ff-only 同步 HEAD=`cc8ab94ec`·SSH/runner(3714813 ~99min)/watchdog 健康·results.json 76 行/25 三臂齐全·V0 5/26 V1 8/25 V2 8/25·McNemar V0vV1 b=4 c=1 p=0.375 V0vV2 b=3 c=0 p=0.250·5 翻转保持·报告 §0.6 interim 刷新 76 行·52680B 0外链0script）。需要时再读。
 
@@ -41,11 +43,9 @@ WAITING: 0
 
 > 📦 wake#1494~#1505（2026-11-17 05:03~06:3x，12 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 0/0 ff-only/pull --rebase 同步·无新运维令·TASK md5=3caf5e1e 不变·live 复验 watchdog ~46–47h+三端点(:30001/30003 /health ok·:30002 MCP)+10真题+三报告+6_domain_rl.tex TBD=0）。需要时再读。
 
-
 > 📦 wake#1493 2026-11-17 04:49 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1481~#1491（2026-11-17 02:59~04:26，11 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 behind0–1 ff-only/pull --rebase 0触视觉同步·无新运维令·TASK md5=3caf5e1e 不变·live 复验 watchdog ~42.3–43.9h+三端点(:30001/30003 /health ok·:30002 MCP qwen35-vqa v1.30.0)+10真题+三报告+6_domain_rl.tex TBD=0·无新 designflow r629 task2·#3 报告待 r629 glm-5.2）。需要时再读。
-
 
 > 📦 wake#1480 2026-11-17 02:5x 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
@@ -73,7 +73,6 @@ WAITING: 0
 
 > 📦 wake#1459 2026-11-16 22:5x patrol·全交付态+体积维护·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
-
 > 📦 wake#1458 2026-11-16 21:4x 用户令21:2x执行·waveview题池挖掘交付·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
 > 📦 wake#1457 2026-11-16 21:1x patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
@@ -92,7 +91,6 @@ WAITING: 0
 
 > 📦 wake#1450 2026-11-16 19:3x 例行巡检 patrol·全交付态·零新增·非 idle-spin·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
-
 > 📦 wake#1449 2026-11-16 19:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind1 designflow shard C #668 ff-only 同步 HEAD=b902fb36b·live 复验 watchdog ~34.9h+三端点 /health+/mcp ok+10 真题+三报告+6_domain_rl.tex TBD=0·无新运维令(TASK md5=cf4185d6不变)·#3 报告待 designflow r629(glm-5.2)）·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
 > 📦 wake#1448 2026-11-16 19:1x 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind2(data #1537+designflow C·0触视觉)→ff-only 同步 HEAD=`8e46d9234`·live 复验 watchdog ~34.7h+三端点 /health+/mcp ok+10 真题+三报告+6_domain_rl.tex TBD=0·无新运维令(TASK md5=cf4185d6不变)·#3 报告待 designflow r629(glm-5.2)）·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
@@ -102,7 +100,6 @@ WAITING: 0
 > 📦 wake#1446 2026-11-16 18:51 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind1 designflow D ff-only 同步 HEAD=c7e6dfd84·live 复验 watchdog ~34.3h+三端点 /health+/mcp ok+10 真题+三报告+6_domain_rl.tex TBD=0·无新运维令·fold wake#1445→daily）·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
 > 📦 wake#1445 2026-11-16 18:4x 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind8 ff-only 同步 HEAD=d5bf89869·live 复验 watchdog ~34.2h+三端点(:30001/30003 /health ok·:30002 MCP qwen35-vqa v1.30.0)+10 真题+三报告+6_domain_rl.tex TBD=0·无新运维令·#3 报告待 designflow r629·fold wake#1444→daily）·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
-
 
 > 📦 wake#1436~#1439（2026-11-16 16:1x~17:1x，4 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-16.md（全交付态·零新增·非 idle-spin·各轮 behind0–2 ff-only 0触视觉同步·无新运维令·live 复验 watchdog ~31.7–32.6h+三端点(:30001/30003 /health ok·:30002 MCP qwen35-vqa v1.30.0)+10真题+三报告+6_domain_rl.tex TBD=0·无新 designflow r629 task2·#3 报告待 r629 glm-5.2）。需要时再读。
 
@@ -123,7 +120,6 @@ WAITING: 0
 
 > 📦 wake#1421 2026-11-16 11:3x #3协作实质应答·r628接收+两项更正(β10 r626 翻转推翻为 artifact/配方回归证伪)+task2 路径裁决(Path 1 换 SUT=glm-5.2·Path 2 预授权后备·Path 3 诚实次级)·r629 起跑条件 7 条·#3 报告待 r629·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
-
 > 📦 wake#1420 2026-11-16 11:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind0 0/0 同步·无新运维令·live 复验 watchdog ~26.8h+三端点(:30001/30003 /health ok·:30002 MCP qwen35-vqa v1.30.0)+10 真题+三报告在位·6_domain_rl.tex TBD=0·WAVEVIEW_COLLAB 止于 wake#1419 节·designflow r628 尚未交付）·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
 > 📦 wake#1419 2026-11-16 11:1x patrol+#3协作应答·r627接收+两项提请已答（git ff-only behind3同步·designflow A r627 9-case batch接收:r627 vqa臂全0 vqa调用=配方回归非测量·~~β10(r626)仍唯一已证翻转~~【已更正见wake#1421：r628推翻为artifact·真实toolName:vqa=0】·3项诚实发现(recipe回归/baseline难度天花板/alpha2 oracle泄漏)·已在WAVEVIEW_COLLAB.md追加vision wake#1419节答复:(a)✅批准alpha2 task_brief oracle泄漏修复·check.py/hidden-B/oracle不变·(b)🚫不改check.py·5盲过case为天花板排除出增益分母·#3报告待r628干净重跑后出·live复验 watchdog~26.3h+三端点·交付物in位·所有🔴用户令已交付·验收四问全可答）·已 fold(原文已入 daily-memories-vision/2026-11-16.md + WAVEVIEW_COLLAB.md wake#1419 节)。需要时再读。
@@ -136,7 +132,6 @@ WAITING: 0
 
 > 📦 wake#1410/#1411（2026-11-16 08:2x~08:35，2 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-16.md（全交付态·零新增·非 idle-spin·ff-only 合并 designflow A/C/D+pretrain+zhulong 0触视觉·0/0 同步·live 复验 watchdog pid3961251 ~23.8–24.0h+三端点·10 真题+三报告在位·6_domain_rl.tex TBD=0·designflow r622 已 ack 批 Tier2a+产线转 WAVEVIEW task2·尚未交付 20runs）。需要时再读。
 
-
 > 📦 wake#1409 2026-11-16 08:0x #3 task2 裁决·designflow r621 Tier1 证伪接受+批 Tier 2a(带4口径约束)+否 Tier 2b（git ff-only 同步·读 cline dist 源码核实 supportsImages 运行时机制·裁决写入 WAVEVIEW_COLLAB·Path1 换 SUT=glm-5.2·Path2 预授权后备·r629 起跑条件7条·live 复验 watchdog ~23.4h+三端点+10真题+三报告在位·6_domain_rl.tex TBD=0）·原文已归档 → daily-memories-vision/2026-11-16.md。需要时再读。
 
 > 📦 wake#1405/#1406/#1407/#1408（2026-11-16 07:27~07:5x，4 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-16.md（全交付态·零新增·非 idle-spin·各轮 ff-only Already up to date / 合并 designflow B/D 0触视觉·0/0 同步·live 复验 watchdog pid3961251 ~22.97–23.4h+ssh-R pid3961842+三端点(:30001/30003 /health ok·:30002 MCP)+10 真题+三报告在位·6_domain_rl.tex TBD=0·验收四问全可答·wake#1408 rebase 后发现 designflow r621 task2 Tier1 新交付→wake#1409 裁决）。需要时再读。
@@ -145,33 +140,18 @@ WAITING: 0
 
 > 📦 wake#1381~#1383（2026-11-16 02:18~02:41，3 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-16.md（全交付态·零新增·非 idle-spin·各轮 behind2–3 ff-only 合并 designflow A/B/C/D·zhulong·pretrain·0 触视觉·无新运维令·TASK md5=cf4185d6 不变·live 复验 watchdog pid3961251+ssh-R pid3961842+三端点 /health ok+10真题+三报告在位·验收四问全可答）。需要时再读。
 
-
 > 📦 wake#1338~#1347（2026-11-15 19:1x~20:30，8 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·各轮 behind0–3 ff-only 合并 designflow/harness/pretrain·0 触视觉·无新运维令·TASK md5=cf4185d6 不变·live 复验 watchdog pid3961251+ssh-R pid3961842+三端点(:30001/30003 ok)+10真题+三报告在位·验收四问全可答）。需要时再读。
 
-
 > 📦 wake#1329 2026-11-15 17:3x 巡检+实质推进·#3 task2 解阻通知下发（向 WAVEVIEW_COLLAB.md 追加 vision 节：宣布 SSH 桥上线·旧 infra-blocked 作废·给 designflow 桥地址+MCP 配置+请跑全 10 题 task2/task2b·#3 官方对照 ball 回 designflow·live 复验交付物全在位·验收四问全可答）·已 fold(原文已入 daily-memories-vision/2026-11-15.md)。需要时再读。
-
-
-> 📦 wake#1328 2026-11-15 17:24 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind0 0/0 同步 HEAD=4c9985dac·无新运维令·live 复验 watchdog pid3961251+三端点(:30001/30003 /health ok·:30002 MCP qwen35-vqa v1.30.0)+10 真题+三报告在位·research 日报 vision 建议=BLIP-2 桥接对照=输入参考非新指令·验收四问全可答）·已 fold(原文已入 daily-memories-vision/2026-11-15.md)。需要时再读。
-
-
-> 📦 wake#1289~#1327（2026-11-15 09:3x~17:1x，含 #1295~#1311/#1313~#1317/#1320~#1326 批归档）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·各轮 behind0–7 ff-only 合并 designflow/pretrain/harness/zhulong·0 触视觉·无新运维令·TASK md5=cf4185d6 不变·WAVEVIEW_COLLAB wake#1329 后无新 task2·waveview_real_cases.jsonl 仍未落地·live 复验 watchdog pid3961251+三 VQA 端点(:30001/30002/30003)+10 真题+三报告在位·验收四问全可答）。需要时再读。
-
-> 📦 wake#1288 2026-11-15 09:1x 用户令 07:2x 任务①+②全交付（SSH 反向转发桥三端点容器视角 /health ok + watchdog 自愈 + 36.15 调 VQA 答对真题 / 自检真题 10 道 β5 不存在 / 三段重跑 V0=0 V1=0 V2=1 α1 翻转 +14.5pp / 三报告 / 两真阻塞解除）·已 fold(原文已入 daily-memories-vision/2026-11-15.md)。需要时再读。
-
-> 📦 wake#1241 2026-11-15 00:23 G0/G1/G2 agent 臂✅全交付（单模型 V0/V1/V2=0/10→agent G0=0/G1=5/G2=4·G0→G1 翻转5·McNemar p=0.0625 n=10仅参考·cheat=False·产物 G/*.json+summary_agent+audit_agent+报告+EXPERIMENTS §26）·已 fold(原文入 daily-memories-vision/2026-11-15.md)。需要时再读。
-
-> 📦 wake#1242~#1329（2026-11-15，含 patrol 批 #1242~#1273/#1274~#1286/#1289~#1327 + #1241/#1287/#1288/#1328/#1329）one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·各轮 ff-only 合并别线 0 触视觉·复验 wake#1241 交付物在位·VQA 端点健康·#3 task2 infra-blocked 后被 wake#1288 SSH 桥解除）。需要时再读。
-
 
 ## 状态头
 
 | 字段 | 值 |
 |:---|:---|
-| PHASE | 🔴 **wake#1539+ 用户令 16:3x 重做·WaveView 子集全队列 V0/V1/V2 实跑 RUNNING**：36.15 cloud-agent runner(`run_codegen_full.py`)+watchdog 增量写 `/tmp/wv_cg_full/results.json`，截至 wake#1568 **79 行/546·26 case 三臂齐全**·V0 5/27(18.5%)·V1 8/26(30.8%)·V2 8/26(30.8%)·McNemar V0vV1 b=4 c=1 p=0.375·V0vV2 b=3 c=0 p=0.250(n 严重不足仅参考)·5 例 VQA 翻转保持(信号不作结论)。子集 `vision/EDA-Eval-DesignFlow-WaveView.jsonl`(225 行·全波形相关 case)已交付并维护。报告 `report_vision_waveview_selftest_agent_zh.html` §0.6 interim 滚动刷新。前序：wake#1241 G0/G1/G2 agent 臂✅(整题 0→5·§26)·wake#1288 SSH 桥+真题三段✅·#1 NeurIPS §6✅·#4 v2-RFT 90% p=0.0156✅·v5 p=0.0009。端点 .17: HTTP :30001/MCP :30002/适配器 :30003。**WAITING: 0** |
+| PHASE | 🔴 **wake#1539+ 用户令 16:3x 重做·WaveView 子集全队列 V0/V1/V2 实跑 RUNNING**：36.15 cloud-agent runner(`run_codegen_full.py`)+watchdog 增量写 `/tmp/wv_cg_full/results.json`，截至 wake#1569 **81 行/546·27 case 三臂齐全**·V0 5/27(18.5%)·V1 8/27(29.6%)·V2 8/27(29.6%)·McNemar V0vV1 b=4 c=1 p=0.375·V0vV2 b=3 c=0 p=0.250(n 严重不足仅参考)·5 例 VQA 翻转保持(信号不作结论)。子集 `vision/EDA-Eval-DesignFlow-WaveView.jsonl`(225 行·全波形相关 case)已交付并维护。报告 `report_vision_waveview_selftest_agent_zh.html` §0.6 interim 滚动刷新。前序：wake#1241 G0/G1/G2 agent 臂✅(整题 0→5·§26)·wake#1288 SSH 桥+真题三段✅·#1 NeurIPS §6✅·#4 v2-RFT 90% p=0.0156✅·v5 p=0.0009。端点 .17: HTTP :30001/MCP :30002/适配器 :30003。**WAITING: 0** |
 | WAITING | 0 |
 | 已完成 | wake#1241 G0/G1/G2 agent 臂✅(整题 0→5·§26) · wake#1239 V3 CoT✅(首次整题翻转 §25) · wake#1235 三段自测✅(§24) · v9 RUNNING(2026-11-13) · v8频率比较✅(MIXED p=0.0312) · v7 sweep 18/18✅ · v6 GRPO连续奖励✅(p=0.267 NS) · v5波形类型分类✅(p=0.0009显著) · v4 RFT(NULL) · v3 GRPO(负结果) · advantage方差诊断 · 阶段1 SFT验收PASS · CPU训练循环7/7 PASS · 数据泄漏验证+报告HTML · GRPO CPU冒烟PASS · 2B文本骨干1.72B · 数据集均衡化9013条 · 波形RL计划书 · 论文改稿 · ArmE-R2/ArmD-R2 · #1 NeurIPS §6✅ · #4 v2-RFT✅ · waveview 分析报告✅ |
-| 当前动作 | **wake#1568 巡检+全队列 interim 刷新**：git ff-only 同步 origin(harness+zhulong·0 触视觉)·SSH 隧道 pid3961842 alive·36.15 runner PID3714813+watchdog PID1977546 健康·VQA 三端点 /health ok·scp results.json(1214 行)→跑 `update_report_full_interim.py`·报告 §0.6 刷新 79 行/26 三臂齐全+McNemar interim(52685B)·快照存盘·体积 fold wake#1567→daily+prune→MEMORY<32KB。全队列实跑跨多 wake 进行中(每轮 patrol 刷新 interim)。 |
+| 当前动作 | **wake#1569 巡检+全队列 interim 刷新**：git ff-only 同步 origin(zhulong+designflow·0 触视觉)·清 stale index.lock·SSH 隧道 pid3961842 alive·36.15 runner PID3714813+watchdog PID1977546 健康·VQA 三端点 /health ok·scp results.json(1240 行)→跑 `update_report_full_interim.py`·报告 §0.6 刷新 81 行/27 三臂齐全+McNemar interim(52685B)·快照存盘·体积 fold wake#1568→daily。全队列实跑跨多 wake 进行中(每轮 patrol 刷新 interim)。 |
 | 下一步 | ① 全队列 546 行 V0/V1/V2 实跑进行中(~30+h cloud-agent 跨多 wake)→待积聚足够三臂齐全 case 报整题通过率+McNemar 定显著性，用扩大题集的对照结果覆盖报告。② 当前 5 例 VQA 翻转(FsdbDumpConvert-001 最干净)为信号不作结论，待 n 增大验证。③ 体积 MEMORY/TASK ≤32KB 持续滚动(TASK 现 24.5KB 在限内)。 |
 | 阻塞 | .12+.29 GPU全占(pretrain baize2b ETA≈12/24-25) · ~~.17+.75 SSH不可达~~(wake#1288 已自建 SSH 反向转发桥·36.15↔.17:3333 通) · ~~#3 task2 评测机→.17:30002 TCP BLOCKED~~(wake#1288 已基于 SSH 自建三端点桥·容器视角 curl /health ok·断线自愈) |
-| 更新 | **2026-11-18 02:1x (wake #1568)**：用户令 16:3x 重做·WaveView 子集全队列 V0/V1/V2 实跑 RUNNING。本轮 patrol：git ff-only 同步 origin(behind2 harness R2653+zhulong·0 触视觉)·SSH 隧道+36.15 runner/watchdog 健康·VQA :30001/:30003 /health ok·scp results.json(1214 行/36220B)→`update_report_full_interim.py`→报告 §0.6 interim 刷新 79 行/546·26 三臂齐全·V0 5/27 V1 8/26 V2 8/26·McNemar V0vV1 b=4 c=1 p=0.375 V0vV2 b=3 c=0 p=0.250(n 不足仅参考)·5 例 VQA 翻转保持(信号不作结论)·报告 52685B 0外链 0script·快照存盘·体积 fold+prune MEMORY<32KB。前序 wake#1567 patrol(76 行)。**WAITING=0**。 |
+| 更新 | **2026-11-18 02:2x (wake #1569)**：用户令 16:3x 重做·WaveView 子集全队列 V0/V1/V2 实跑 RUNNING。本轮 patrol：git ff-only 同步 origin(behind2 zhulong+designflow·0 触视觉)·清 stale index.lock·SSH 隧道+36.15 runner/watchdog 健康·VQA :30001/:30003 /health ok·scp results.json(1240 行)→`update_report_full_interim.py`→报告 §0.6 interim 刷新 81 行/546·27 case 三臂齐全·V0 5/27 V1 8/27 V2 8/27·McNemar V0vV1 b=4 c=1 p=0.375 V0vV2 b=3 c=0 p=0.250(n 不足仅参考)·5 例 VQA 翻转保持(信号不作结论)·报告 52685B 0外链 0script·快照存盘·体积 fold wake#1568→daily。前序 wake#1568 patrol(79 行)。**WAITING=0**。 |
