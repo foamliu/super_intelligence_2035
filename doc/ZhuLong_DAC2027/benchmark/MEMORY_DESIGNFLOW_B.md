@@ -13,6 +13,7 @@ POOL_SWITCH: 1105→1109 @ r462 → 1113 (r490+) → **r501 对账落盘** 切�
 `⏳ DEBT: 0（β7 WrDqMeas-001 基线 run 已清付 r552；post_vqa actual run 待 task2 infra 解阻）。
 🧾 断言: 本轮 r706 1-case(FineSimCoreCounter k=23 k_check=k_rationale=23 ✓) · 存量 576/576 达标(本轮新增 1 case k=23 → 576+23=599) · k_rationale==k_check 一致率 599/599 ✓
 `⚠️ cross-shard dedup 缺口(r434)：trace_ledger.py dedup 只对本 shard ledger ⇒ fresh 高估。本轮手动对 4 shard ledger+main jsonl 三式去重。修法待 CI 守门。`
+`⚠️ r740 共享工作区事故(2026-11-17)：本轮 4 个 B 文件(MEMORY_B/daily_B/intent_audit_B_r740/ARCHIVE_B)被 shard A 的 commit 450ec65af「shard A #r689」一并扫入提交并 push(共享 index hazard, §同步纪律 事故 1/2 同源)。内容完整无丢失(已验证 4 文件全在 HEAD+origin), 仅归属错乱(A commit 含 B 文件)。未 rewrite history(防 rebase clobber)。下次: git add 后立即 commit, 缩短 staged 窗口。`
 `⚠️ 11-05 dedup bug：bare/full/+.messages.json 三式匹配（已修，本轮 la00c archive 仍漏 1 条因 .messages.archive.json 未覆盖第四式）。
 `⚠️ r636 env/ gitignore 坑：根 .gitignore line 123 有 `env/` 规则（python venv 用），会忽略任何 `env/` 目录。本 case 用 `assets/<id>/env/` 作 fixture 目录名 ⇒ `git add` 不追踪、`git status` 不显示。已 `git add -f` 强制入库。**今后造 case 的 fixture 目录别用 `env/`，用 `sim/`/`probe/`/`ctx/` 等避开**；若必须用 env/ 则 `git add -f` 强加。另：shard C 的 broad `git add` (commit f92e7e06) 误扫进本 case 的 reference/ + task_spec.json + hidden_manifest.json（内容正确，已留在其 commit，不重写）。
 
