@@ -1834,3 +1834,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793945136541_98qkn	e0039102	10.129.2.10	48	schematic_netlist	case	EDA-Eval-DesignFlow-TmScanScriptAnalysisQA-001	2026-11-17 17:00	
 1789889636409_cv1d2.messages.json	ziyuny	10.129.8.236	40	analog_context	case	EDA-Eval-DesignFlow-KeepaliveToPopupPatch-001	2026-11-17 19:58	
 1791869784917_1r058	e0014566	10.129.35.82	23	schematic_netlist	case	EDA-Eval-DesignFlow-SchematicMOSHilite-001	2026-11-17 20:21	
+1784267301134_k3qx4	e0014566	10.129.35.82	34	schematic_netlist	parked		2026-11-17 21:06	collision: same user e0014566 + same intent as NetHighlightProbe-001 (zd84z, already in cases/D/); also overlaps NetPrefixHighlight-001 (steveny/8rxb1). r829 abandoned k3qx4 case-making to avoid 3rd duplicate.
