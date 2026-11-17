@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🆕 **R2658 · 2026-11-18 03:2x — 全面验证+fresh audit轮(14:5x+10:2x执行)·自检clean(load30/224·MemAvail1075GB·0 runaway>8000%·topCPU=opencode容器内单核)·codex.py fix①②③代码review+实跑验证✅(12/55 rerun done·2PASS(count-dataset-tokens+db-wal-recovery)·10FAIL全verifier_ran=True=真实能力失败非infra=fix①生效)·audit point④✅(codex_agent_worked&&!has_verifier→rate_limit=infra·lines173-179)·"修正后Pass%"两报告仅retraction context✅(tb21 line42+53·glm53 line74+96·均为撤回声明)·gen_report直接算real_pct=passed/89无corrected✅·fresh audit:cline42/89=47.2%(待0✅)·codex21/89=23.6%(待5·55题rerun RUNNING 12/55 done·PID3623310 alive 6353s)·opencode45/89=50.6%(待0✅)·cc30/89=33.7%(待0✅)·pi35/89=39.3%(待0✅)·hermes41/89=46.1%(待0✅)·deepseek11/89=12.4%(待0✅)·6/7路DONE·companion PID3308709 ALIVE(chain done→opencode10+pi12 reconstructed✅→等codex-55)·codex rerun完成→companion自动reconstruct+final audit+REGEN三报告·WAITING=0**: codex-55 rerun完成(~43题剩余ETA~2h)→companion自动reconstruct→final audit→重算7路真实Pass%→REGEN三报告→14:5x+10:2x全部交付
+
 > 🆕 **R2656 · 2026-11-18 03:0x — fresh audit+codex rerun监控轮(14:5x+10:2x执行)·自检clean(load31/224·0 runaway>8000%·topCPU=opencode容器内单核非失控)·🔴codex适配器fix确认生效:rerun 10/55完成中9/10题verifier_ran=True(修复前82/89题verifier=null=适配器掐断)→exit-code非0+agent_worked→不raise→verifier照常判分=fix①核心逻辑验证通过·2 PASS(db-wal-recovery+count-dataset-tokens)·8 FAIL(全verifier_ran=True=真实能力失败非infra)·fresh audit:cline42/89=47.2%(待0✅)·codex21/89=23.6%(待5·55题rerun RUNNING part1/5 n_concurrent=10)·opencode45/89=50.6%(待0✅)·cc30/89=33.7%(待0✅)·pi35/89=39.3%(待0✅)·hermes41/89=46.1%(待0✅)·deepseek11/89=12.4%(待0✅)·6/7路DONE·companion PID3308709健康(chain done→opencode10+pi12 reconstructed✅→等codex-55 PID3623310 alive)·codex rerun完成→companion自动reconstruct+final audit+REGEN三报告·WAITING=0**: codex-55 rerun完成(~45题剩余ETA~1.5h)→companion自动reconstruct→final audit→重算7路真实Pass%→REGEN三报告→14:5x+10:2x全部交付
 
 > 🆕 **R2655 · 2026-11-18 02:5x — audit all_synthetic fix(has_verifier)+三报告REGEN轮(14:5x+10:2x执行)·自检clean(companion PID3308709+codex-55 followup PID3623310 RUNNING·0 runaway)·🔴audit关键fix:all_synthetic判定新增`not has_verifier`条件——verifier跑了给真实分(哪怕0.0)=agent确实在非infra状态下跑过且被公平判分=ability失败不是synthetic·修正pi 11题+opencode 1题原误归synthetic→现正确归ability(pi/opencode适配器不写stdout→stdout_len=0但verifier真跑了reward=0.0)·fresh audit after fix:非codex 6路synthetic=0✅待重跑=0✅(cline47.2·codex23.6待5·opencode50.6·cc33.7·pi39.3·hermes46.1·deepseek12.4)·codex-55 rerun RUNNING(8/12 done 2PASS·fixed adapter working 1/89→21/89 improving)·三报告REGEN✅(tb21 24.7KB·glm53·cline_special 11.9KB)·0 stale text✅·porcelain=0✅·companion+codex-55 followup仍运行:codex-55完成→reconstruct→final audit→REGEN三报告·WAITING=0**: codex-55 rerun完成→companion自动reconstruct+final audit+REGEN三报告→14:5x+10:2x全部交付
@@ -51,10 +53,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2657 codex fix独立验证+监控轮·6/7路DONE(待重跑=0)·codex21/89=23.6%(5 rate_limit pending·55题rerun RUNNING chunk1/5)·适配器fix独立验证通过(chunk1:2PASS+9FAIL全verifier_ran=True)·WAITING=0
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·eval 7/7·双7way报告·codex.py fix①②③✅·audit rate_limit桶✅·"修正后Pass%"撤回✅·6/7路rerun DONE(cline47.2·opencode50.6·cc33.7·pi39.3·hermes46.1·deepseek12.4)·codex rerun RUNNING
-当前动作:     R2657: codex-55 rerun监控(PID3623310 ALIVE·chunk1/5 n_concurrent=10·11/12 done 2PASS)·companion PID3308709 ALIVE(等codex-55)·codex rerun完成→companion自动reconstruct+final audit+REGEN三报告
-下一步:       ①codex-55 rerun完成(剩余~4 chunks ETA~2h)→companion自动reconstruct codex ②final fresh audit→重算7路真实Pass% ③REGEN三报告(tb21_7way+glm53_7way+cline_special)·codex行更新为修复后真实分 ④14:5x+10:2x标记已交付
+PHASE:        R2658 全面验证+fresh audit轮·6/7路DONE(待重跑=0)·codex21/89=23.6%(5 rate_limit pending·55题rerun RUNNING 12/55 done)·适配器fix验证通过(12 rerun·2PASS+10FAIL全verifier_ran=True)·WAITING=0
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·eval 7/7·双7way报告·codex.py fix①②③✅·audit rate_limit桶+point④✅·"修正后Pass%"撤回✅·6/7路rerun DONE(cline47.2·opencode50.6·cc33.7·pi39.3·hermes46.1·deepseek12.4)·codex rerun RUNNING(12/55)
+当前动作:     R2658: codex-55 rerun监控(PID3623310 ALIVE 6353s·n_concurrent=10 adaptive·12/55 done 2PASS)·companion PID3308709 ALIVE(等codex-55)·codex rerun完成→companion自动reconstruct+final audit+REGEN三报告
+下一步:       ①codex-55 rerun完成(剩余~43题 ETA~2h)→companion自动reconstruct codex ②final fresh audit→重算7路真实Pass% ③REGEN三报告(tb21_7way+glm53_7way+cline_special)·codex行更新为修复后真实分 ④14:5x+10:2x标记已交付
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK≈29.7KB / MEMORY≈22KB（✅≤32KB）
