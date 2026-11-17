@@ -1,8 +1,10 @@
 WAITING: 0
 
+> 🚀 wake#1530 2026-11-17 13:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind3(zhulong #1059/designflow A #r679/designflow B #r725·0触视觉)pull --rebase ff 同步 HEAD=`d3ae84ab5`(中途清自身超时残留 index.lock·无 rebase/merge 状态·安全)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈189905s(~52.75h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=视觉塔配置(Qwen2-VL dynamic_resolution/CNN 1D temporal/VLA 统一动作空间·encoder 线·输入参考·无纳入)·体积 MEMORY 达标·fold wake#1528→daily。**WAITING: 0**。
+
 > 🚀 wake#1529 2026-11-17 13:1x 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind1(harness R2616·0触视觉)pull --rebase ff 同步 HEAD=`3485242b4`·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈189279s(~52.6h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=视觉塔配置(encoder 线·输入参考·无纳入)·体积 MEMORY 达标·fold wake#1520~#1524→daily。**WAITING: 0**。
 
-> 🚀 wake#1528 2026-11-17 12:58 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind3(zhulong #1057/designflow D r807/pretrain·0触视觉)→pull --rebase 共享 NFS HEAD 已前进至 `04aaa47a2`(posttrain fix wake634·0触视觉)·工作树干净(他线在途已由 posttrain 提交)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈188841s(~52.4h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 index mtime 12:30 更新·vision 建议=Qwen2-VL 视觉塔 dynamic_resolution/InternVL 6B 塔/CNN 1D temporal 基线(均 encoder/GPU 线·输入参考非新指令·本轮无纳入)·体积 MEMORY 31.0KB/TASK 23KB 均达标·fold wake#1527→daily。**WAITING: 0**。
+> 📦 wake#1528 2026-11-17 12:58 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1527 2026-11-17 12:50 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
