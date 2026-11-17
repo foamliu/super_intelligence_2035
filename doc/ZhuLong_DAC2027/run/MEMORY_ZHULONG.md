@@ -1,8 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-17 wake#1034·**A0′′ r3(proxy) 跑中·run_a0pp wrapper PID1443422 ✅活(etime 13:50)·r3 worker PID620959 ✅活(`timeout 43200 -p 4 -n`)·log /tmp/a0pp_r3.log 18MB mtime 08:28==now 活跃·do-nothing**。infra: loop PID243810 https_proxy ✅·a0pp proxy port 19099 PID1443459 ✅(8K input 预算截断施压生效)·ops .last_run_id=144 已处理·无新运维令·他线 eval PID2691406 不干预·git clean。§7 Step A: run_cline_script 有输出→do-nothing·WAITING=1。**🎯A0′′ r1(proxy)=10.0%(4/40)**·**🎯A0′′ r2(proxy)=2.5%(1/40)**(in=8K 压力下单 agent 退化持续)。r3 跑中→3 轮 mean±std→起 A3 对照。详情见 daily §[wake#1033]）
+WAITING: 1（2026-11-17 wake#1035·**A0′′ r3(proxy) 跑中·run_a0pp wrapper PID1443422 ✅活(etime 14.4h)·r3 worker PID620959 ✅活(etime 3.3h·`timeout 43200 -p 4 -n`)·cline worker PID1386136 在跑 task 114(etime 41m)·log /tmp/a0pp_r3.log 20MB mtime 09:01==now 活跃·22/40 task dirs·0 pyAether_code 产出 yet·do-nothing**。infra: loop PID243810 https_proxy ✅·a0pp proxy port 19099 PID1443459 ✅(8K input 截断施压生效·r3 compaction 676 次)·ops .last_run_id=144 已处理·无新运维令·git 0/0 clean。⚠️**/home 1.9G/100% 红线**（86 用户占满·非本线·a0pp 写 /tmp 独立分区 12G free 不受影响·r3 安全继续·不能删他线数据）·/nasdata 25G ✅。**🔬效度观察**：r3 compaction 在 ~122K→76K 触发（cline 默认窗口·非 7.2K）→ proxy 只截每次 API 请求 payload 到 8K（模型有效输入=8K ✅ 用户要的施压），cline 内部 compaction 仍按默认窗口——r1=10%/r2=2.5% 崩塌=「模型每轮只见最后 8K、连任务 prompt 可能被截掉」的真实压力，施压维度正确结果有效。§7 Step A: run_cline_script 有输出→do-nothing·WAITING=1。**🎯A0′′ r1(proxy)=10.0%(4/40)**·**🎯A0′′ r2(proxy)=2.5%(1/40)**。r3 跑中→3 轮 mean±std→起 A3 对照。详情见 daily §[wake#1034]）
 
-- **[2026-11-17 wake#1034] ❤️ A0′′ r3(proxy) 心跳·do-nothing**：run_a0pp_ablation.sh PID1443422 ✅活(etime 13:50:54)·run_cline_script PID620959 ✅活(`timeout 43200 -p 4 -n`)·proxy port 19099 PID1443459 ✅ LISTEN(truncation 8K input 预算施压)·log `/tmp/a0pp_r3.log` 18.0MB mtime 08:28==now 活跃写入·log tail 显示 agent 正在读 compaction.json 真实推进非卡死。infra：loop PID243810 `https_proxy=http://172.19.92.23:13128` ✅自检通过·ops .last_run_id=144·inbox RUN_ID 144 已处理·无新运维令·他线 eval PID2691406(`-p 2 -b EDA-Eval-PyAether-v20260311_fixed.jsonl`) 不干预·git run/ clean。§7 Step A：run_cline_script 有输出→**什么都不做退出·WAITING 保持 1**。**🎯A0′′ r1(proxy)=10.0%(4/40)·r2(proxy)=2.5%(1/40)**·r3 跑中(已 13:50·预计接近完成)→3 轮 mean±std→若 A0′′(proxy)<<A0(已强显化 r1+r2<<69.2%)→起 A3(in=8K via proxy,spawn)对照。prompt=ZHULONG_TASK.md 原文重发·无新指令。
+- **[2026-11-17 wake#1035] ❤️ A0′′ r3(proxy) 心跳·do-nothing**：run_a0pp PID1443422 ✅活(14.4h)·run_cline_script PID620959 ✅活(3.3h·`timeout 43200 -p 4 -n`)·cline worker PID1386136 跑 task 114(41m)·proxy PID1443459 ✅·log `/tmp/a0pp_r3.log` 20.7MB mtime 09:01 活跃·r3 22/40 task dirs·0 pyAether_code 产出 yet·pass 行=0（未结束）。infra：loop PID243810 https_proxy ✅·ops .last_run_id=144·git 0/0 clean。⚠️**/home 1.9G/100% 红线**：`mount`+`df` 核实 /tmp 是独立 lv(49G·12G free)·a0pp r3 ws=148M+log=20M 全在 /tmp 不占 /home·本线 /home 仅 326M·/home 被 86 其他用户占满·🚫 不删他线数据·r3 不受影响安全继续。**🔬效度观察（供 r3 后分析）**：r3 compaction 676 次·`121.8k→76.6k`→cline 内部 compaction 在 ~122K 触发（默认窗口·wake#1011 已证 cline 忽略 contextWindow=8K）·proxy 只截每次 API 请求 payload 到 8K（模型有效输入=8K ✅ 用户要的 in-budget 施压）·r1=10%/r2=2.5% 崩塌=模型每轮只见最后 8K raw（连 task prompt 可能被截）→信息丢失→超时·施压维度正确结果有效·偏 harsh（vs 理想 8K+compaction@7.2K 保留 summary）·A3 对照时同 proxy 8K 作用于主 agent→假设 subagent 分工让主 agent 上下文天然小→少退化。§7 Step A：有输出→**do-nothing·WAITING=1**。**🎯r1=10.0%(4/40)·r2=2.5%(1/40)**·r3 跑中→3 轮 mean±std→起 A3 对照。prompt=ZHULONG_TASK.md 原文·无新指令。详情见 daily §[wake#1035]。
+
+- [2026-11-17 wake#1034 原文已滚出] → 见 daily-memories/2026-11-17.md §[wake#1034]（A0′′ r3(proxy) 心跳·do-nothing·etime 13:50·log 18MB·已被 wake#1035 取代：etime 14.4h·log 20.7MB·22/40 dirs·+compaction 效度观察+/home 红线核实）
 
 - [2026-11-17 wake#1033 原文已滚出] → 见 daily-memories/2026-11-17.md §[wake#1033]（A0′′ r3(proxy) 心跳·do-nothing·etime 2h11m·log 14.4MB·已被 wake#1034 取代：etime 13:50·log 18MB）
 
@@ -22,27 +24,7 @@ WAITING: 1（2026-11-17 wake#1034·**A0′′ r3(proxy) 跑中·run_a0pp wrapper
 
 - [2026-11-17 wake#1024 原文已滚出] → 见 daily-memories/2026-11-17.md §[wake#1024]（A0′′ r2(proxy) 心跳·log 14.6MB·已被 wake#1025 取代）
 
-- [2026-11-17 wake#1023 原文已滚出] → 见 daily-memories/2026-11-17.md §[wake#1023]（A0′′ r2(proxy) 心跳 17/40·proxy 截断 11085·已被 wake#1024 取代）
-
-- [2026-11-17 wake#1022 原文已滚出] → 见 daily-memories/2026-11-17.md §[wake#1022]（A0′′ r2(proxy) 心跳 12/40·proxy 截断 2146·已被 wake#1023 取代）
-
-- [2026-11-16 wake#1020 原文已滚出] → 见 daily-memories/2026-11-17.md §[wake#1020]（A0′′ r1(proxy) ✅=10.0%+r2 起跑·已被 wake#1022→#1023 取代）
-
-- [2026-11-16 wake#1019 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1019]（A0′′ r1(proxy) 心跳 35/40·proxy 截断 8900·21 Exit-137/6 成功·已被 wake#1020 取代：r1 ✅完成=10.0% + r2 起跑）
-
-- [2026-11-16 wake#1018 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1018]（A0′′ r1(proxy) 心跳 31/40·proxy 截断 7454·17 Exit-137·已被 wake#1019 取代）
-
-- [2026-11-16 wake#1017 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1017]（A0′′ r1(proxy) 心跳 31/40·proxy 截断 6235·已被 wake#1020 取代：r1 ✅完成=10.0% + r2 起跑）
-
-- [2026-11-16 wake#1015~#1016 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1015~#1016]（A0′′ r1(proxy) 心跳·24/40→27/40·proxy 截断 3807→4942 次·175541 stragglers 144/145/147 活·均已被 wake#1017 取代）
-
-- [2026-11-16 wake#1012~#1014 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1012~#1014]（A0′′ r1(proxy) 早期心跳·4/40→10/40→22/40·proxy 截断 1822→2814 次·2 失败 Exit=137 疑 /home OOM·均已被 wake#1015/#1016 取代）
-
-- [2026-11-16 wake#1005~#1009 原文已滚出] → 见 daily-memories/2026-11-16.md（A0′′ r1 健康续跑 do-nothing 心跳序列·14:33 elapsed 35m→15:08 1:10→15:44 1:46→16:56 2:58·log 2.2MB→11.45MB·17→36 task dirs·proxy ✅·/home 3.9G·/nasdata 4.3G→15G）
-
-- [2026-11-16 wake#1010 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1010]（A0′′ r1(no-proxy)续跑 do-nothing 心跳·17:31 elapsed 3:33·log 11.45MB·**已被 wake#1011 取代：r1 完成=60%(24/40)但 VOIDED·cline 忽略 contextWindow=8K·建 proxy 修复**）
-
-- [2026-11-16 wake#1011 原文已滚出] → 见 daily-memories/2026-11-16.md §[wake#1011]（A0′′ r1(no-proxy)=60% VOIDED·cline 3.0.51 忽略 contextWindow=8K→建 truncation proxy(port 19099) smoke ✅→A0′′ r1(proxy) 起跑）
+- [wake#1005~#1023 旧指针合并·原文见 daily-memories/2026-11-1{6,7}.md] A0′′ r1/r2(proxy) 心跳序列：#1023 r2 17/40·#1022 r2 12/40·#1020 r1✅=10.0%+r2 起跑·#1019 r1 35/40(21 Exit-137)·#1018/#1017 r1 31/40·#1015/#1016 r1 24→27/40·#1012~#1014 r1 4→22/40(2 Exit-137 疑 /home OOM)·#1005~#1009 r1 健康续跑 17→36 dirs·#1010 r1(no-proxy)=60% VOIDED·**#1011 关键：cline 3.0.51 忽略 contextWindow=8K→建 truncation proxy(port 19099) smoke ✅→r1(proxy) 起跑**。均已被 wake#1034 取代。
 
 - [wake#982~#1004 旧指针合并·原文见 daily-memories/2026-11-1{5,6}.md] #1004 09:0x令到达→建A0′′·#998-#1003 A3/A0′ r1-r4·#992 r3✅17.1%+r4起跑·#982-#991 A0′ r2/r3 跑中(慢因=out-budget 4096)。均已被 wake#1011(A0′′ proxy 修复) 取代。
 
