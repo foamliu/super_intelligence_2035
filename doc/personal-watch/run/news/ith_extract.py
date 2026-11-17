@@ -119,6 +119,10 @@ def extract(key):
         txt = txt.replace(a, b)
     lines = [" ".join(x.split()) for x in txt.split("\n")]
     lines = [x for x in lines if x and not x.startswith("感谢IT之家网友")]
+    # 首行常残留容器标签尾巴（`id="paragraph">`），去掉
+    if lines and ('id="paragraph"' in lines[0] or lines[0].endswith('>')):
+        lines[0] = lines[0].split(">", 1)[1].strip() if ">" in lines[0] else ""
+        lines = [x for x in lines if x]
     out["text"] = "\n".join(lines)
     out["chars"] = len(out["text"].replace("\n", ""))
     if out["imgs"]:
