@@ -11,6 +11,7 @@ Run:     codex exec --cd <cwd> --model kimi-k2.6-cloud \
 from __future__ import annotations
 
 import asyncio
+import json
 import re
 import shlex
 from typing import Annotated, Any, override
@@ -175,18 +176,35 @@ class CodexTB(TBBaseAgent):
             "OPENAI_BASE_URL": TB_GW_PROXY_URL,
         })
 
-        # 2026-11-17 FIX (用户令 14:4x): codex 走 wire_api="responses" 经
+        # 2026-11-17 FIX (用户令 14:5x): codex 走 wire_api="responses" 经
         # gw_proxy 翻译，其请求模式触发上游 429 后 codex 内部 retry 耗尽 →
-        # turn.failed → exit 1 → 原逻辑直接 raise RuntimeError → reward=0。
+        # turn.failed → exit 1 → 原逻辑直接 raise RuntimeError → reward=0
+        # 且 verifier 根本没跑 → 被误判为「能力失败」(假低分)。
         # 实测 87/88 失败题 = 429/rate_limit/exceeded retry（infra，非能力）。
-        # 修复：检测 stdout/stderr 含 429 / rate limit / exceeded retry →
-        # 指数退避 (2/4/8/16s) 重试整次 codex exec，上限 4 次。
+        #
+        # 修复 ② (429 退避重试): 检测 stdout/stderr 含 429 / rate limit /
+        # exceeded retry → 指数退避 (2/4/8/16s) 重试整次 codex exec，上限 4 次。
         # 注意 429 出现在 codex 的 JSON 事件 stdout（非 stderr），故两路都查。
+        #
+        # 修复 ① (exit code 非 0 不再误杀): codex 用 --json 输出完整 NDJSON 事件流。
+        # 应从 stdout 的 JSON 事件判断 agent 是否真的在工作（turn.started /
+        # agent_message / command_execution / turn.completed），而不是看 shell
+        # exit code。若 stdout 里有正常的 agent 事件（agent 确实在跑），exit code
+        # 非 0 不作为失败依据 —— 不 raise，让 verifier 照常运行判分。
+        # 只有「agent 从未开始工作」（stdout 无任何 agent 事件）且 exit code 非 0
+        # 才 raise RuntimeError（真正的 agent 崩溃/启动失败）。
+        # turn.failed 事件单独记录到 metadata.codex_turn_failed，供 audit 归因。
         _RATE_LIMIT_RE = re.compile(
             r"429|rate[ _-]?limit|Too Many Requests|exceeded.{0,12}retry|"
             r"retry.{0,12}exceeded|retries? exceeded",
             re.I,
         )
+        # agent 活动事件类型 —— 出现任一即证明 codex 确实在跑（非启动崩溃）
+        _AGENT_ACTIVITY_TYPES = {
+            "turn.started", "turn.completed", "turn.failed",
+            "agent_message", "command_execution", "file_change",
+            "reasoning",
+        }
         backoff_delays = [2, 4, 8, 16]  # 上限 4 次重试
         result = None
         attempts = 0
@@ -203,24 +221,65 @@ class CodexTB(TBBaseAgent):
             if result.return_code == 0:
                 break  # 干净跑完
             if not hit_rate_limit:
-                break  # 非 429 错误 → 不重试，直接走下面的 raise
+                break  # 非 429 错误 → 不重试，走下面的 exit-code 判定
             last_rate_limit = True
             if attempts > len(backoff_delays):
-                break  # 退避上限耗尽 → 走下面的 raise
+                break  # 退避上限耗尽 → 走下面的 exit-code 判定
             delay = backoff_delays[attempts - 1]
             # 退避：让网关从 429 恢复后再重试整次 codex exec
             await asyncio.sleep(delay)
 
+        # 解析 stdout NDJSON 事件流，判断 agent 是否真的在工作
+        stdout_text = result.stdout or ""
+        agent_worked = False
+        turn_failed = False
+        turn_failed_msg = ""
+        for _line in stdout_text.splitlines():
+            _line = _line.strip()
+            if not _line or not _line.startswith("{"):
+                continue
+            try:
+                _evt = json.loads(_line)
+            except Exception:
+                continue
+            _etype = _evt.get("type", "")
+            # 顶层 turn.* 事件
+            if _etype in _AGENT_ACTIVITY_TYPES:
+                agent_worked = True
+            if _etype == "turn.failed":
+                turn_failed = True
+                _err = _evt.get("error") or {}
+                turn_failed_msg = _err.get("message", "")
+            # item.completed 内嵌的 item.type
+            _item = _evt.get("item") or {}
+            _itype = _item.get("type", "")
+            if _itype in _AGENT_ACTIVITY_TYPES:
+                agent_worked = True
+
         context.metadata = {
-            "stdout": result.stdout or "",
+            "stdout": stdout_text,
             "stderr": result.stderr or "",
             "exit_code": result.return_code,
             "codex_429_retries": attempts - 1,
+            "codex_agent_worked": agent_worked,
+            "codex_turn_failed": turn_failed,
+            "codex_turn_failed_msg": turn_failed_msg[:300],
         }
 
         if result.return_code != 0:
-            tag = " (gateway 429/rate-limit, backoff exhausted)" if last_rate_limit else ""
-            raise RuntimeError(
-                f"Codex exited with code {result.return_code}{tag}: "
-                f"{(result.stderr or '')[:500]}"
-            )
+            if agent_worked:
+                # 修复 ① 核心：agent 确实在跑（stdout 有 agent 事件），exit code
+                # 非 0 不作为失败依据 —— 不 raise，让 verifier 照常运行判分。
+                # turn.failed(429) 退避耗尽的情况也走这里：agent 部分工作了，
+                # verifier 会判分（很可能 0 分），audit 据 metadata 归为
+                # rate_limit/infra 而非 ability —— 不再产生「假低分=能力」误判。
+                pass
+            else:
+                # agent 从未开始工作（stdout 无任何 agent 事件）→ 真正的启动
+                # 崩溃 / CLI 故障 → raise，让 harness 记为 exception。
+                tag = " (gateway 429/rate-limit, backoff exhausted)" if last_rate_limit else ""
+                raise RuntimeError(
+                    f"Codex exited with code {result.return_code}{tag} "
+                    f"and produced no agent activity: "
+                    f"{(result.stderr or '')[:500]}"
+                )

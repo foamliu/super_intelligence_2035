@@ -2,16 +2,17 @@
 
 WAITING: 0
 
-> 🆕 **R2626 · 2026-11-17 15:1x — 🔴 用户令 14:4x codex 专项复查: codex 88 失败重排 = adapter/infra=87 · ability=1 · passed=1 · infra比例 87/89=97.8% (**坐实假低分·1.1%非能力**) · 87=83×429('exceeded retry limit, last status: 429 Too Many Requests')+4×AgentTimeoutError · 1 真能力=break-filter-js-from-html(exit0干净跑完+verifier0.0) · codex 干净跑完题 Pass率 1/2=50% 与 SWE-bench Verified 63.2% 同档(落差60pp=适配器429所致) · **修复**: codex.py:run() 已加 429 检测+指数退避重试(2/4/8/16s·上限4次·检测stdout+stderr) py_compile✅ · **重跑决策**: 87题待重跑(429退避后)·pi rerun 仍在跑(n_concurrent=4·0累计429)·codex重跑排在pi完成后启动(避免网关429竞争·守10:2x串行纪律)**
-> - **codex 适配器根因(逐题trace实证)**: codex走wire_api=responses经gw_proxy翻译·请求模式触发上游429→codex内部retry耗尽→turn.failed→exit1→codex.py:188原逻辑直接raise RuntimeError(无退避重试)→reward=0。trace原文(build-cython-ext): codex跑了多个command_execution成功(exit0)→命中`{"type":"error","message":"exceeded retry limit, last status: 429 Too Many Requests"}`→turn.failed→exit1。**这不是能力失败**。
-> - **audit 修复(消除codex盲区)**: audit_tb21_review_7way.py 新增 rate_limit 桶(检测429/rate_limit/exceeded retry·codex把429打印到stdout JSON非stderr)·codex归因修正: 旧 ability=88(全误判)→新 rate_limit=83+ability=5(4×AgentTimeoutError+1真ability)·audit_codex_88_rebin.py 新建(87 infra权威codex分析·含timeout_1800/ECONNRES/config_toml信号)
-> - **报告更新**: report_harness_tb21_7way_zh.html REGEN(28.8KB)·codex归因行改为"1.1%=适配器缺陷假低分·非能力"·表四新增429/RateLimit列·stale claim "codex低分=真能力"已清0✅·INFRA_LEDGER codex行更新
-> - **各路真实 Pass% (audit 15:09, 分母恒89)**: cline 42/89=47.2%(待重跑=26含25 rate_limit) · codex 1/89=1.1%(待重跑=83 rate_limit·**适配器缺陷假低分**) · opencode 43/89=48.3%(待重跑=19) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=17·跑中) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=3)
-> - **rerun 进展 (v2 PID1217002 活)**: codex prior DONE(2/2·仅补synthetic·未触及429 infra题) · hermes DONE · opencode DONE · cc RUNNING · deepseek DONE(5/5 setup-timeout=infra·original ability Δ=0) · pi RUNNING(caffe-cifar-10=ability 0.0真结果)·adaptive 0累计429✅
-> - **自检**: load27.99/224=12.5%✅·MemAvailable 1026GB✅·0 harness runaway✅·top CPU=pretrain(146%·非harness)✅
-> - **14:4x 交付状态**: ①逐题翻trace重排✅(87 infra/1 ability) ②假设验证✅(97.8%>50%坐实) ③修复✅(codex.py 429退避重试)·重跑=排队(pi后启动) ④报告✅(codex归因改"适配器缺陷假低分") — 余: pi跑完→codex 87题重跑(429退避后)→merge→REGEN最终真实Pass%
-> - **下一步**: ①pi跑完→启动codex 87题重跑(用修好的codex.py·adaptive·avoid 429竞争) ②merge all→逐路Δ→最终REGEN ③SWE-bench predict续推
+> 🆕 **R2627 · 2026-11-17 15:2x — 🔴 用户令 14:5x codex 适配器修复+重跑: codex.py point①修复完成(exit code非0不再误杀:解析stdout NDJSON事件,agent_worked=True→不raise→让verifier照常判分;仅agent从未工作才raise) + point②429退避重试(已有·2/4/8/16s上限4次) + 新增metadata codex_agent_worked/codex_turn_failed · audit point④增强:adapter_cutoff检测(agent_worked但verifier没跑=infra非ability) · **codex 83题429重跑已启动**(PID348003·harbor n_concurrent=4·jobs-dir codex_rerun_20261117_1526·5task in progress·adaptive auto·gw9092 200✅) · pi rerun DONE(进程已退出) · v2 PID1217002 已完成全部routes · py_compile✅✅**
+> - **codex.py 修复详情**: run()方法重写exit-code判定——解析stdout的NDJSON事件流(turn.started/agent_message/command_execution/turn.completed/turn.failed),若含agent活动事件→agent_worked=True→exit code非0不raise RuntimeError→verifier照常运行(假低分根因消除);turn.failed单独记metadata供audit归因;仅stdout无任何agent事件+exit code非0才raise(真启动崩溃)。import json已加。
+> - **audit 增强**: scan新增codex_agent_worked(优先读metadata·兜底扫stdout事件)+codex_turn_failed字段;classify新增any_adapter_cutoff检测(agent_worked且has_verifier=False→rate_limit/infra·不是ability)·作为rate_limit regex之外的第二道安全网。
+> - **重跑清单**: manifests/tb21_codex_429_rerun_list_20261117.txt(83题·从audit rate_limit桶提取·已gitignore)
+> - **各路真实 Pass% (audit 15:25, 分母恒89)**: cline 42/89=47.2%(待重跑=26) · codex 1/89=1.1%(待重跑=83·**重跑中**) · opencode 43/89=48.3%(待重跑=19) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=17) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=3)
+> - **自检**: load32.33/224=14.4%✅·MemAvailable 1078GB✅·0 harness runaway✅·harbor CPU 0.5%✅
+> - **14:5x 交付状态**: ①codex.py point①修复✅ ②429退避重试✅(已有) ③83题重跑 LAUNCHED(跑中) ④audit point④增强✅ ⑤报告=待重跑完成后REGEN — 余: codex 83题跑完→merge→重算真实Pass%→REGEN报告
+> - **下一步**: ①监控codex 83题重跑(7 chunks×12·ETA~7h) ②跑完→merge codex_rerun_20261117_1526 ③重算codex真实Pass%→REGEN report_harness_tb21_7way_zh.html ④SWE-bench predict续推
 > - **📦 体积**: TASK≈26.5KB / MEMORY≈21KB（✅≤32KB）
+
+> 📦 R2626 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex 88失败重排=87infra(83×429+4×timeout)/1ability·97.8%infra坐实假低分·codex.py 429退避重试已加·报告codex归因改"适配器缺陷假低分"·pi rerun RUNNING。需要时再读。
 
 > 📦 R2620-R2602 流水已归档 → daily-memories-harness/2026-11-17.md。结论：18轮监控+post-R2600 47trial rerun v2 launched·codex/hermes DONE(Δ=0)·cline BLOCKED(infra)·audit has_verifier修复·stale prose修复·三报告REGEN·真待重跑47→17·0累计429。需要时再读。
 
@@ -23,10 +24,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2625 监控轮+诊断·deepseek rerun DONE=infra(5 setup-timeout·original ability Δ=0)·pi RUNNING(真结果: caffe-cifar-10 ability 0.0·setup正常)·v2 活·跑完须手动--merge-all·WAITING=0
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2610(表五前后对比)·R2611(cline BLOCKED+hermes Δ=+1)·R2616(audit has_verifier修复+真待重跑47→17)·R2620(stale prose修复+三报告REGEN)·R2621(hermes+codex route DONE)·R2622(opencode RUNNING)·R2623(opencode DONE Δ=0)·R2624(cc DONE Δ=0·纠正--launch不自动merge)·R2625(deepseek DONE=infra Δ=0·pi RUNNING 真结果·overlay env诊断·不杀rerun)
-当前动作:     R2625: 监控轮——deepseek rerun DONE(5/5 AgentSetupTimeoutError=infra·original ability Δ=0·分不变)·pi rerun RUNNING(caffe-cifar-10 DONE reward=0.0=ability 真结果·3task running·setup正常 npm装好)·诊断: overlay env全传播到容器·aliyun mirror 200·npm可达·pi无挂死风险·v2 PID1217002 活·自检全绿
-下一步:       ①等 pi 15task 跑完→v2 退出 ②手动 --merge-all(merge 6路 rerun + REGEN双报告) ③逐路Δ核对·deepseek infraΔ=0·pi 真结果 ④SWE-bench predict续推 ⑤等运维新令
+PHASE:        R2627 codex适配器修复+83题429重跑LAUNCHED·codex.py point①(exit-code不误杀)+audit point④(adapter_cutoff)已完成·harbor n_concurrent=4跑中·WAITING=0
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2620(stale prose修复+三报告REGEN)·R2626(codex 88失败重排=87infra·codex.py 429退避重试)·R2627(codex.py point①修复+audit point④+83题429重跑LAUNCHED)
+当前动作:     R2627: codex.py point①修复完成(解析stdout NDJSON·agent_worked→不raise·verifier照常判分)·audit point④增强(adapter_cutoff=infra)·codex 83题429重跑已启动(PID348003·harbor n_concurrent=4·5task in progress)·pi rerun DONE·v2全部routes DONE
+下一步:       ①监控codex 83题重跑(7 chunks·ETA~7h) ②跑完→merge codex_rerun_20261117_1526 ③重算codex真实Pass%→REGEN报告 ④SWE-bench predict续推
 ERROR_COUNT:  0
  体积: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB）
  真实 Pass% (audit 1355, 分母=89): cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE·待重跑=0) · opencode 43/89=48.3%(待重跑=2·跑中) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(DONE·待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · 真待重跑=17

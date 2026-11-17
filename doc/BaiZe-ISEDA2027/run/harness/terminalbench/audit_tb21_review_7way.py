@@ -84,6 +84,22 @@ def scan_route_all_dirs(h):
                 r"exceeded.{0,12}retry|retry.{0,12}exceeded|retries? exceeded",
                 stdout + "\n" + (meta.get("stderr", "") or ""), re.I))
             exit_code = meta.get("exit_code")
+            # §2026-11-17 14:5x point④: codex 适配器「掐断」检测。
+            # codex.py 修复后会在 metadata 写 codex_agent_worked / codex_turn_failed。
+            # 对旧 trial (无此字段) 用 stdout 事件兜底：含 turn.started /
+            # agent_message / command_execution 即证明 agent 确实在跑。
+            codex_agent_worked = bool(meta.get("codex_agent_worked"))
+            if not codex_agent_worked and stdout:
+                for _ln in stdout.splitlines():
+                    _ln = _ln.strip()
+                    if _ln.startswith("{") and (
+                        '"turn.started"' in _ln or '"agent_message"' in _ln
+                        or '"command_execution"' in _ln
+                        or '"turn.completed"' in _ln):
+                        codex_agent_worked = True
+                        break
+            codex_turn_failed = bool(meta.get("codex_turn_failed")) or \
+                '"turn.failed"' in stdout
             task_data.setdefault(tn, []).append({
                 "dir": str(f.parent),
                 "source": "rerun" if "_rerun_" in str(sd) else "original",
@@ -100,6 +116,9 @@ def scan_route_all_dirs(h):
                 "has_run_result": '"run_result"' in stdout,
                 "has_verifier": bool(vr.get("rewards")),
                 "stdout_len": len(stdout),
+                # §2026-11-17 14:5x point④: codex 适配器掐断信号
+                "codex_agent_worked": codex_agent_worked,
+                "codex_turn_failed": codex_turn_failed,
             })
     return task_data
 
@@ -129,7 +148,17 @@ def classify_merged(task_data, all_tasks):
         any_rate_limit = any(t.get("rate_limit") for t in trials)
         any_clean = any(
             t.get("exit_code") == 0 and not t.get("rate_limit") for t in trials)
+        # §2026-11-17 14:5x point④: codex 适配器「掐断」检测。
+        # stdout 有 agent 事件 (agent 确实在跑) 但 verifier 没跑 (has_verifier=False)
+        # = 适配器把「单命令非 0 退出」误当「整个 agent 失败」→ raise RuntimeError
+        # → verifier 根本没跑 → 假低分。这是 infra (adapter缺陷)，不是 ability。
+        any_adapter_cutoff = any(
+            t.get("codex_agent_worked") and not t.get("has_verifier")
+            for t in trials)
         if any_rate_limit and not any_clean:
+            cat = "rate_limit"
+        elif any_adapter_cutoff and not any_clean:
+            # agent 跑了但 verifier 没跑 = 适配器掐断 (infra)，不是能力不足
             cat = "rate_limit"
         elif has_proper and not all_conn:
             cat = "ability"
