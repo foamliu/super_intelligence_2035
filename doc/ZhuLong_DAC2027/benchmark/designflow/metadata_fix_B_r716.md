@@ -55,6 +55,30 @@ SiOutDiag-001 待 cases/ 重构迁移后再 apply（当前仅在旧 jsonl）。
 - **apply 本文件 §1+§2 到 cases/B/**：待 EDA-Flow-Bench 仓 cases/ 重构落定（cases/B/ 全量 407 + .gitignore +
   build_jsonl.py 入 git）后，下一轮第一件事 apply 7 题（§1 三题 + §2 六题中 cases/B/ 已有的，SiOutDiag-001 待迁移）。
 
+## 5. r717 apply 落地（2026-11-17，本轮完成）
+
+r716 因 cases/ 重构在途未 apply；本轮 r717 复核发现重构已落定——
+EDA-Flow-Bench commit `487667419`「feat: per-case 文件方式 — jsonl 降级为 build 产物 (gitignored)」已入 git，
+`scripts/build_jsonl.py` 已 tracked，`cases/B/` = 394 = `EDA-Eval-DesignFlow_B.jsonl` 行数（jsonl 现为 gitignored build 产物）。
+新 source of truth = `cases/B/<case>.json`。本轮把 §1 + §2 的 7 题 apply 到 cases/B/：
+
+| task_id | 修复 | 旧值 → 新值 |
+|---|---|---|
+| DelaySigma-001 | layer + layer_rationale | `spice_sim` → `L2` + rationale |
+| SpGen-001 | layer + layer_rationale | `spice_sim` → `L2` + rationale |
+| SpiceSim-001 | layer + layer_rationale | `spice_sim` → `L2` + rationale |
+| InstCurrentMeasGen-001 | reframe_note | `<none>` → how-to→produce note |
+| FineSimOomDiag-001 | reframe_note | `<none>` → diagnose→produce note |
+| StackedMOSOpAnalysis-001 | reframe_note | `<none>` → OP→produce note |
+| TrimMarginSpec-001 | reframe_note | `<none>` → explain→produce note |
+
+**未 apply**：SiOutDiag-001（reframe_note）—— cases/B/ 未迁移（13 case 之一，旧 jsonl 407→cases/B 394 时被剔除），待迁移后补。
+
+**自验**：① 7 文件 JSON 合法（json.load 全过）② `python3 scripts/build_jsonl.py --check` 通过（cases/ 总计 1631，B=394）③ `--shard B` 重建 jsonl = 394 行 ④ test 字段未动 ⇒ test_rationale k 不变，670/670 断言达标不受影响 ⑤ 仅 stage 本轮 7 文件，别线在途（RonMono 资产删除等）未碰。
+**commit**：EDA-Flow-Bench master `326751e5a`「designflow shard B #r717: apply r716 metadata-fix to 7 cases...」已 push。
+
+**layer 分布修后**（cases/B 394）：L2 = 76+3 = 79 / spice_sim = 0（旧 spice_sim=3 已清零）。
+
 ## 4. r716 0-case 证据（mc≥10 硬规则）
 
 ```
