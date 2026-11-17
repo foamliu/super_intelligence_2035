@@ -45,13 +45,13 @@ WAITING: 1
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2预训练数据下载中(MegaMath-web#1刚启动/Nemotron#2 62%/Code-R#4 79%/Math-R#5 36%) → WAITING=1(30min长睡监控)
-已完成:       ✅分词全DONE(8192shard/476B tok/1.8TB/0ERR);✅StepA/B/D全完成;✅EDA分析DONE;✅2TB下载DONE+ROI复盘;✅vision图文对调研报告;✅5agent datasets DONE;✅3 IFM datasets HfApi探测全DONE;✅adp_subset_plan.md;✅agent-data-protocol clone;✅DATA_MAPPING.md D1-D4+H.14;✅调研报告;✅MegaMath≡LLM360 SHA验证;✅MegaMath batch1(216GB/5子集);✅S1/S2可行性报告+细化方案v2报告(v2.6已修正350k~11-26/700k~12-25/余量~3天);✅小数据集#6-10全DONE;✅finemath#3 DONE(140GB)
-当前动作:     巡检+启动MegaMath-web下载(优先级#1,4950files/887GB/PID26529/刚启动/log→/tmp/dl_megamath_web.log);3路大下载后台运行中(Nemotron 122/196=62%/PID3734806;Code-R 1292/1637=79%/PID3734799;Math-R 797/2228=36%/PID3734800);nice19/ionice3/max-workers2不挤S1;/nas_user 48T可用✅;所有小数据集已完成
-下一步:       ①监控MegaMath-web下载进度(4950files/887GB,ETA~2-3天)②等Nemotron完成(~196files,ETA~6h)→更新DATA_MAPPING③等Code-R完成(79%,ETA~2.5h)④等Math-R完成(36%,ETA~17h→~11-19)⑤全部完成后逐题污染检查→闭合IFM令
-阻塞:         无(4路下载nice19/max-workers2后台运行,WAITING=1长睡30min监控)
-ERROR_COUNT:  0(所有下载正常运行;MegaMath-web刚启动无错误;3路大下载均正常)
-未完成指令:   有(MegaMath-web/Nemotron/Code-R/Math-R下载未完成)→WAITING=1(后台下载,30min长睡监控)
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2🔄 PC-3✅ PC-4待 PC-5🔄 → WAITING=1(30min长睡监控)
+已完成:       ✅分词全DONE(8192shard/476B tok/1.8TB/0ERR);✅PC-1 L4过滤✅(430.7B/90.5%保留/脚本+报告+白名单TSV);✅PC-3污染闸门✅(5 benchmark下载9277tasks);✅Nemotron-CC-Math下载✅(243GB/196files);✅finemath下载✅(140GB/288parquet);✅S1/S2报告v2.7(更新PC-1/PC-3实测结果);✅小数据集#6-10全DONE;✅MegaMath batch1(216GB/5子集)
+当前动作:     PC-2 MegaMath分词4路并行运行中(web-pro 2/100/112s per shard/ETA~3h; text-code-block 0/200; qa 0/32; translated-code 0/16); MegaMath-web下载12%(599/4950); finemath+Nemotron已完成
+下一步:       ①等PC-2分词完成(ETA~3-6h)→更新报告G2 ②PC-4 blend TSV生成(依赖PC-1+PC-2) ③MegaMath-web下载完成后PC-5分词 ④全部完成后逐题污染扫描
+阻塞:         无(PC-2分词4路并行nice19/ionice3后台运行;MegaMath-web下载后台运行)
+ERROR_COUNT:  0
+未完成指令:   有(PC-2分词进行中/MegaMath-web下载12%/PC-4待PC-2完成)→WAITING=1(后台任务,30min长睡监控)
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）
