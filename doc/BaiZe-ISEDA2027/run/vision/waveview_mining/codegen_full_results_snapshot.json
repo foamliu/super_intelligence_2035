@@ -1392,6 +1392,71 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SweepMeasFix-001",
+   "arm": "V0",
+   "k_conditions": 35,
+   "pi_seconds": 194.1,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "SweepMeasFix-001 PASS 16/16 conditions",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-SweepMeasFix-001/V0/outputs/submit.zip",
+   "n_zip_members": 3
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SweepMeasFix-001",
+   "arm": "V1",
+   "k_conditions": 35,
+   "pi_seconds": 142.0,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "SweepMeasFix-001 PASS 16/16 conditions",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-SweepMeasFix-001/V1/outputs/submit.zip",
+   "n_zip_members": 3
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SweepMeasFix-001",
+   "arm": "V2",
+   "k_conditions": 35,
+   "pi_seconds": 217.7,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "SweepMeasFix-001 PASS 16/16 conditions",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-SweepMeasFix-001/V2/outputs/submit.zip",
+   "n_zip_members": 3
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SweepParallel-001",
+   "arm": "V0",
+   "k_conditions": 15,
+   "pi_seconds": 306.5,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-SweepParallel-001/V0/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SweepParallel-001",
+   "arm": "V1",
+   "k_conditions": 15,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
