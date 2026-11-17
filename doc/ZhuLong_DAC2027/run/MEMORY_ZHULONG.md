@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-17 wake#1153·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2900388 活 ✅**·无本线 subagent 消融 eval ✅·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`2d991aa4a`（本线 wake#1152 commit·up to date with origin/main·0 behind）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令·wake#1152 心跳同情境不再赘述）
+WAITING: 0（2026-11-17 wake#1154·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2925595 活 ✅**·无本线 subagent 消融 eval ✅·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`7c30ce75c`（本线 wake#1153 commit·up to date with origin/main·0 behind）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令·wake#1153 心跳同情境不再赘述）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -8,17 +8,11 @@ WAITING: 0（2026-11-17 wake#1153·**🟠 subagent 消融线结案·done_all·st
 
 - [wake#1095~#1141 详条/指针已滚出·2026-11-17 wake#1142 合并] → `daily-memories/2026-11-17.md`（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过·含 wake#1104 纠正 wake#1103 误判·§结案节在 `run/reports/report_zhulong_a3a6_arms_zh.html` commit `5f092f33e` grep '结案'=8 命中）。
 
-- **[2026-11-17 wake#1153] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2900388 活 ✅**·**无本线 subagent 消融 eval ✅**（`ps -ef|grep` 复核无 `subagent_ablation|A0prime|run_h2_ablation|A0pp` 进程）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`2d991aa4a`（wake#1152 本线 commit·已最新·`up to date with 'origin/main'`·0 behind）。§结案节仍在 `run/reports/report_zhulong_a3a6_arms_zh.html`（grep '结案'=8 命中✅）。磁盘观察：`/home` 2.3G / `/nasdata` 9.1G 偏紧·但 done_all 不启动 eval·无需处置。本轮滚出 wake#1149~#1151 入 daily-memories。**WAITING=0 standby**。
+- **[2026-11-17 wake#1154] 🟠 standby 心跳·done_all·无待办**：用户手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra 自检通过：**loop PID243810 活 ✅·https_proxy ✅**·**ops relay PID118432/118463/2925595 活 ✅**·**无本线 subagent 消融 eval ✅**·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`7c30ce75c`（wake#1153 本线 commit·up to date with origin/main·0 behind）。§结案节 grep '结案'=8 命中✅。注：`benchmark/designflow/trace_ledger_{A,D}.tsv` 有 designflow 线在途改动·非本线·不触碰。本轮滚出 wake#1148~#1153 入 daily-memories·MEMORY 36319B→35.4KB（<40KB 硬上限 ✅）。**WAITING=0 standby**。
 
-- **[2026-11-17 wake#1152] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e` 起全部正确完成。infra 自检通过：**loop PID243810 活 ✅·https_proxy ✅**·**ops relay PID118432/118463/2878822 活 ✅**·**无本线 subagent 消融 eval ✅**·zhulong run 工作树空 ✅·repo HEAD=`755cdcf86`（designflow 线 commit·非本线·已最新·0 behind）。§结案节 grep '结案'=8 命中✅。本轮滚出 wake#1148 入 daily-memories。**WAITING=0 standby**。
+- [wake#1153 详条已滚出·2026-11-17 wake#1154] → `daily-memories/2026-11-17.md` §[wake#1153 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·滚出 wake#1149~#1151）。
 
-- [wake#1148 详条已滚出·2026-11-17 wake#1152] → `daily-memories/2026-11-17.md` §[wake#1148 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·滚出 wake#1142~#1146）。
-
-- [wake#1149~#1151 详条已滚出·2026-11-17 wake#1153] → `daily-memories/2026-11-17.md` §[wake#1149~#1151 rolled-out]（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过）。
-
-- **[2026-11-17 wake#1149] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。
-
-- [wake#1142~#1146 详条已滚出·2026-11-17 wake#1148] → `daily-memories/2026-11-17.md` §[wake#1142~#1146 rolled-out]（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过）。
+- [wake#1148~#1152 详条已滚出·2026-11-17 wake#1154] → `daily-memories/2026-11-17.md` §[wake#1148~#1152 rolled-out]（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过）。
 
 - [wake#1036 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1036 rolled-out]（subagent 消融线结案·done_all·用户令 09:3x·⚠️ 任务#2 report §结案节当时虚假✅→wake#1103 补做·❌ wake#1103 补做本身误判→wake#1104 纠正）。
 
