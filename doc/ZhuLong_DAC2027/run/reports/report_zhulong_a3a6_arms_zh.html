@@ -81,6 +81,58 @@
   <span class="pos">关键技术发现（wake#978）</span>：cline 预算旋钮=纯 config（<code>models.json</code> contextWindow/maxInputTokens 控 in-budget · <code>providers.json</code> maxTokens 控 out-budget · <code>global-settings</code> compaction=basic）→ <b>A0′ 不需 wrapper 开发</b>；A0(compaction-basic) 已 in≤32K(contextWindow=32000)·out≤16384=69.2% ⇒ <b>A0′ = A0 + maxTokens→4096</b>（单变量）。另发现 A1/A2 用 contextWindow=1000000（≠A0 的 32000·历史 confound·A0′/A3 已修正为 32000）。
 </div>
 
+<!-- ==================== §结案 · 用户认知结论（2026-11-17 09:3x） ==================== -->
+
+<h2>§结案 · 用户认知结论（2026-11-17 09:3x · subagent 消融线结案）</h2>
+
+<div class="conclusion" style="border-color:var(--ok);background:linear-gradient(135deg,#16241a,#1b2e22)">
+  <span class="pos">🟢 subagent 消融线结案 · 不再追加新臂 · agent 回 standby</span>
+  <br><br>
+  <b>用户原话</b>（2026-11-17 09:3x，覆盖一切前令）：「结果比较差，让 zhulong agent 把评测停下来吧。」
+  <br><br>
+  <b>用户认知结论（本线最终结论 · 必写进报告 + MEMORY）</b>：
+  <blockquote style="margin:8px 0;padding:8px 14px;border-left:3px solid var(--ok);background:rgba(63,185,80,.06)">
+  「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：<br>
+  <b>1. 单 agent 表现优于多 agent；</b><br>
+  <b>2. 在多 agent 中，自主 spawn subagent 优于用户定制。</b><br>
+  上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
+  </blockquote>
+</div>
+
+<h3>本线实验全部结果汇总</h3>
+
+<div class="panel">
+<table>
+<tr><th>臂</th><th>含义</th><th>ITT 结果</th><th>状态</th></tr>
+<tr><td><b>A0</b></td><td class="l">baseline（单 agent · in≤32K · out≤16K · 无 spawn）</td><td><b>69.2±1.4%</b></td><td class="ok">✅ 正式锚点</td></tr>
+<tr><td><b>A1</b></td><td class="l">主 agent 自主 spawn + 强提示注入 subagent_researcher（无 MCP）</td><td><b>66.7±7.2%</b></td><td>Δ vs A0 = −2.5pp（p=0.68 · 无显著差异）</td></tr>
+<tr><td><b>A2</b></td><td class="l">强制 spawn + 小预算 out=4K（用户定制 verifier）</td><td><b>53.3±3.8%</b></td><td class="bad">Δ vs A0 = −15.9pp（p=0.0008 · 显著恶化）</td></tr>
+<tr><td><b>A0′</b></td><td class="l">out-budget 施压基线（maxTokens 16K→4K · 无 spawn）</td><td><b>VOID</b>（16.7±0.8% 作废）</td><td class="bad">❌ 设计错误 · out-budget 施压与 subagent 价值无关 · 不用于 A3 对照</td></tr>
+<tr><td><b>A0′′</b></td><td class="l">in-budget 施压基线（in=8K via truncation proxy · out=16K · 无 spawn）</td><td>r1=10.0% · r2=2.5% · <b>r3=未完成</b></td><td class="warn">⚠️ 探索性数据保留 · r3 缺失无法算 mean±std · 不作正式结论</td></tr>
+<tr><td><b>H2</b></td><td class="l">子模型梯度（继承父模型 wrapper 验证）</td><td>—</td><td class="bad">❌ smoke 叫停（A2 弱于 A0 ⇒ 在 A2 基础上做子模型梯度无科学意义）</td></tr>
+</table>
+<p class="mut">注：A3 / A3′ / A4 / A5 / A6 / A0′′′ 全部取消，不再追加新臂。A0pp r1/r2 作为「input-budget 施压下单 agent 退化」的探索性数据保留为历史档（不作正式结论，因 r3 缺失无法计算 mean±std）。</p>
+</div>
+
+<h3>结案执行动作（ops 侧已完成）</h3>
+<div class="panel">
+<ul>
+<li>A0pp eval 全部进程已 kill（wrapper PID1443422 / worker PID620959 / proxy PID1443459 / 10 个 cline worker）✅</li>
+<li>A0pp r3 未完成，<b>不评分、不计入最终结果</b> ✅</li>
+<li>A0pp r1=10.0% / r2=2.5% 作为「input-budget 施压下单 agent 退化」探索性数据保留，<b>不作为正式结论</b>（r3 缺失，无法算 mean±std）✅</li>
+<li><b>保留产物不删</b>：A0pp data-dir / proxy 脚本 / cost JSON / trace / daily-memories 均保留为历史档，供后续研究引用 ✅</li>
+</ul>
+</div>
+
+<h3>归档覆盖关系</h3>
+<div class="panel">
+<ul>
+<li>2026-11-15 20:5x（放行 A3-A6）→ 已归档 · 被 2026-11-17 09:3x 结案令覆盖</li>
+<li>2026-11-16 09:0x（修正 input 预算）→ 已归档 · 被 2026-11-17 09:3x 结案令覆盖</li>
+<li>2026-11-17 09:3x（结案令）→ 当前最高优先 · 覆盖一切前令 · subagent 消融线 done_all</li>
+</ul>
+</div>
+
 <div class="hint">
   <b>证据来源总览</b>（本报告所有结论均给可核验出处）：
   <ul style="margin:4px 0">
@@ -537,7 +589,7 @@ H2 wrapper：源码 commit 39ccd44cc · v3.0.74 · 已 build 未装为默认 →
 
 <hr>
 <p class="mut">
-报告生成：2026-11-15 · 最初纯文档（commit afc4c83a9）· 2026-11-15 wake#978 更新：§1 增 A0′ 行 + §9 结果节（A3-A6 放行后）· 不改 A0/A1/A2 任何数字/判据/trace ·
+报告生成：2026-11-15 · 最初纯文档（commit afc4c83a9）· 2026-11-15 wake#978 更新：§1 增 A0′ 行 + §9 结果节（A3-A6 放行后）· <b>2026-11-17 wake#1036 更新：增「§结案·用户认知结论」节（用户令 09:3x 结案·覆盖一切前令·subagent 消融线 done_all·不再追加新臂）</b>· 不改 A0/A1/A2 任何数字/判据/trace ·
 证据来源：MEMORY_ZHULONG.md · mcnemar_subagent_results.json · 配套报告 report_zhulong_subagent_a0a1a2_trace_zh.html（§2 idea 表 / §3 H_ctx / §5 40 题 / §6 158 题）·
 commits a6f78b8bc（trace 报告）· 6d2d8f422（§5 预检）· 712247549（§6 预检）· 39ccd44cc（H2 wrapper 源码）· dce8c0e43（用户令 20:5x 放行 A3-A6）·
 本报告顶部互链指向配套报告；配套报告顶部已加 STATUS 指针指向本报告（不删不改其数字）。
