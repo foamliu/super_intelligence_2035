@@ -516,7 +516,7 @@
 1791956799319_0ykok	e0046686	hfeg0pkn005	36	digital	parked		2026-11-14 11:11	r506 REJECT doc-gen onboarding summary of buddy workdir not produce-task
 1791602750335_dtdfk	jason17w	hfeg0pnd002	36	digital	parked		2026-11-14 11:11	r506 REJECT skill-authoring/version-rollback run-regression skill infra
 1791896374185_vc5uj	e0014566	hfeg0plg58	34	digital	parked		2026-11-14 11:11	r506 REJECT vague 'create rtl sample code' no specific deliverable
-1793694635228_d56nb	ruisongs	hfeg0pfn087	33	verification	parked		2026-11-14 11:11	r506 REJECT sim-failure analysis Q&A '分析仿真失败原因'
+1793694635228_d56nb	ruisongs	hfeg0pfn087	33	verification	case	EDA-Eval-DesignFlow-XmsimInterrDiagnose-001	2026-11-18 00:56	r703 revival: xmsim INTERNAL EXCEPTION probe-setup crash debug-Q&A, A档 trace-faithful
 1793611777735_q9ulk	ruisongs	hfeg0pfn087	31	verification	case	EDA-Eval-DesignFlow-XrunTypeerrDiagnose-001	2026-11-17 22:44	r699 revival: xrun TYPEERR bit-select string-index diagnose, A档 trace-faithful
 1793250981130_kq81c	thqu	hfeg0pkn099	31	digital	parked		2026-11-14 11:11	r506 REJECT host 10.129.2.99 ssh connection timed out unreachable infra-block
 1792459025453_8o316	max7c	hfeg0pkn004	13	digital	parked		2026-11-14 11:11	r506 REJECT usage Q&A '如何执行这个脚本'
