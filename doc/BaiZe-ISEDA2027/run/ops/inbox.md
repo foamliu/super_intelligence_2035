@@ -1,4 +1,58 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 280 | TARGET: 29 -->
+## RUN_ID 280 — **抢救日志根因分析（只读）**：10:06→12:57 时间线 + 空转诱因 + 新 cline 状态
+
+> 承 RUN_ID 279（已 KILL 卡死 cline 2054633，loop 自动在 +60s 起了新 cline 2642407，训练未受影响）。
+> 本块只读：分析 `run/logs/pretrain_loop_salvage_*.log`（130 MB，含 loop 自 19 天前起的完整 fd1 历史），
+> 回答 ① 10:06 之后 loop 何时醒来、跑了几轮；② 卡死轮在重复什么命令；③ 新 cline 是否正常工作。
+
+```bash
+set -u
+echo "=== RUN_ID 280 | salvaged loop log analysis (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+F=$(ls -t /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs/pretrain_loop_salvage_*.log 2>/dev/null | head -1)
+echo "[1] 文件"
+if [ -z "${F:-}" ] || [ ! -f "$F" ]; then echo "  未找到 salvage 文件"; else
+  stat -c '  size=%s mtime=%y' "$F"; echo "  path=$F"; echo "  lines=$(wc -l < "$F")"
+fi
+[ -n "${F:-}" ] && [ -f "$F" ] || { echo "=== DONE 280 (no file) ==="; exit 0; }
+
+echo
+echo "[2] loop 自身时间线（2026-11-17，最后 45 行）"
+grep -a -E '^\[loop\]|^\[push\]' "$F" | grep -a '2026-11-17' | tail -45 | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-160
+
+echo
+echo "[3] 空转诱因：各类计数"
+for p in 'DeprecationWarning' 'run_commands' 'Forbidden' '429' 'tool_result' 'Error' 'approve'; do
+  printf '  %-20s %s\n' "$p" "$(grep -a -c -- "$p" "$F" 2>/dev/null)"
+done
+
+echo
+echo "[4] 重复命令 Top10（run_commands 行去重）"
+grep -a -o -- '\[run_commands\].\{0,150\}' "$F" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | sort | uniq -c | sort -rn | head -10 | cut -c1-190
+
+echo
+echo "[5] 日志最后 25 行（去 ANSI）"
+tail -n 25 "$F" | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-200 | sed 's/^/  | /'
+
+echo
+echo "[6] 新 cline / sessions / 训练状态"
+ps -eo pid,ppid,etime,stat,pcpu,rss,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | cut -c1-150
+echo "  -- sessions 最新 3 个 --"
+ls -lt --time-style=+%F_%T /nas_train/app.e0031982/.cline_pretrain/sessions 2>/dev/null | head -4 | cut -c1-120
+echo "  -- GPU --"
+nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/    /'
+echo "  -- 训练 worker --"
+echo "    torchrun(4177347) workers=$(ps -eo ppid= 2>/dev/null | awk '$1==4177347' | wc -l)"
+
+echo
+echo "[7] pretrain 线最新提交（判断新 cline 是否产出）"
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log -3 --date=format:'%F %T' --pretty='  %ad %h %s' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo "  now=$(date '+%F %T')"
+echo "=== DONE 280 ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 279 | TARGET: 29 -->
 ## RUN_ID 279 — **处置：杀掉卡死的 pretrain cline（用户直令·第一步）**
 
