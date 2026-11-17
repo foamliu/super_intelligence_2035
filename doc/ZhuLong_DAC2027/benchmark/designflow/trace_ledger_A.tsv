@@ -597,3 +597,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793672071904_ciqim	dsgao	hfhds201	1	digital	case	EDA-Eval-DesignFlow-SaNPCtrlTruthTable-001	2026-11-17 12:04	
 1793350215948_sucst	e0039602	hfeg0pkn012	17	eda_other	case	EDA-Eval-DesignFlow-Http429Diagnose-001	2026-11-17 14:17	
 1793866097938_fl4rh					case	EDA-Eval-DesignFlow-VerilogDriveFsmBlockGen-001	2026-11-17 14:48	
+1791883133340_l0x4z	yuankong	hfhds201	8	eda_other	parked		2026-11-17 18:01	r690: unmakable - AddressParameter.v does not exist in user workspace or .75; no evidence anchor; single-turn Q&A with no file to verify against
