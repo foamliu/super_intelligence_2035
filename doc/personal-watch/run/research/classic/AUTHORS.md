@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-18 00:0x）**：作者 **190** 人（编号最大 **190**）· X 已核验 **103** · 已发信 **82** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-18 03:0x）**：作者 **194** 人（编号最大 **194**）· X 已核验 **104** · 已发信 **84** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+**第五十四轮增量（2026-11-18 03:0x）**：作者网 190 → **194**（#191 Hammond Pearce / #192 Shailja Thakur / #193 Zeynab Anbiaee / #194 Arunkumar V）；已发信 82 → **84**（#83 Pearce 英文 195 词 · #84 Arunkumar 英文 197 词，`SENT OK 03:04:49 / 03:04:53`）；X 已核验 103 → **104**（`@kiwihammond`：`x.com/kiwihammond` 的 `og:title` = `Hammond Pearce (@kiwihammond) on X` + bio 一致 ⇒ 双源；**本轮 X 直连 `200`、无需代理**）。两人无公开邮箱（Thakur / Anbiaee）⇒ 只建档不发信，不猜地址。
 
 **第五十三轮增量（2026-11-18 00:0x）**：作者网 187 → **190**（#188 Hao Wang / #189 Rohit Gandikota / #190 Srinath Srinivasan）；已发信 79 → **82**（本轮 3 封，今日 3/12）；X 已核验 **103（不变）** —— `x.com` 直连 `000`、代理 `7897` 亦 `000`（`mihomo` active、端口在听）⇒ 判上游节点故障，本轮**不猜 handle、不补地址**。
 
@@ -2753,6 +2755,57 @@
 | X 账号 | **未核验**（本轮 X 不可达） |
 | 状态 | **已发信**（#82，2026-11-18 00:08:39，英文 195 词） |
 | 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。问题方向：27/35 Pareto 步「统计不可分」所用不确定度与停点选择、成本口径差 11.7× 的来源与预算控制器需要的修正项、无任务成本先验时的替代方案。 |
+
+### 191. Hammond Pearce
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hammond Pearce（英语姓名族属 ⇒ 英文信） |
+| 机构 | **UNSW Sydney**（School of Computer Science and Engineering；机构现行主页 `unsw.edu.au/staff/hammond-pearce` `HTTP 200` / 232,605 B）。⚠️ 其 X bio 仍写 `Research Assistant Professor @ NYU Center for Cybersecurity`（历史身份）⇒ **以机构主页为准** |
+| 代表论文 | **VeriGen**（arXiv `2308.00708`，三作；B 轨 #210）· LLM 硬件安全 / 漏洞修复方向（其 X 时间线自述，未逐篇核） |
+| 邮箱 | **`hammond.pearce@unsw.edu.au`**（UNSW 人员页明文，2026-11-18 实测；🚫 不用 PDF 首页旧地址 `hp2265@nyu.edu`） |
+| 主页 | <https://www.cyberhammond.com/>（`200` / 216,706 B；页内无明文邮箱） |
+| X 账号 | **@kiwihammond**（双源：`x.com/kiwihammond` 的 `og:title` = `Hammond Pearce (@kiwihammond) on X` + `og:description` 与其身份一致；`x_fetch.py` 只读抓取 `200`，5 条推文） |
+| 状态 | **已发信**（#83，2026-11-18 03:04:49，英文 195 词） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 澳大利亚机构)`。问题方向：编译失败 vs 仿真不一致的比例及跨 2B/6B/16B 漂移、参考实现与 test bench 同源泄漏如何防、7B 级 base 下预算该投数据精选还是采样重排。 |
+
+### 192. Shailja Thakur
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shailja Thakur（印度语族姓名 ⇒ 英文信） |
+| 机构 | **IBM Research**（本人主页 `shailja-thakur.github.io` `200` / 6,422 B；IBM 人员页 `research.ibm.com/people/shailja-thakur` `200` / 45,829 B） |
+| 代表论文 | **VeriGen**（arXiv `2308.00708`，一作；B 轨 #210） |
+| 邮箱 | **未找到**（本人主页与 IBM 人员页均无明文/`mailto:`/`[at]` 混淆串，`grep` 0 命中）⇒ **按纪律不发信**，只建档 |
+| 主页 | <https://shailja-thakur.github.io/>（`200`；正文自述现研究「small LMs in agentic settings：harness search、按角色的 adapter 分解、跨长流程的记忆、agentic 调试」） |
+| X 账号 | **未找到**（未在主页 / IBM 页 / 搜索结果中核到 handle；🚫 不猜） |
+| 状态 | **待跟踪** |
+| 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。**与 harness 线高度相关**：其自述的三个方向（harness search / 角色分解 / 长流程记忆）正是我们在做的外壳问题 ⇒ 若能由运维提供可用邮箱，应优先发信。 |
+### 193. Zeynab Anbiaee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zeynab Anbiaee（波斯语族姓名 ⇒ 英文信） |
+| 机构 | **University of New Brunswick**（Faculty of Computer Science / Canadian Institute for Cybersecurity, CIC；ORCID `0009-0008-5409-2648`、IEEE Xplore 作者页均标 UNB CIC） |
+| 代表论文 | **When Tool Names Are Not Identities: Measuring Provider Misbinding in MCP-Based AI Agents**（arXiv `2611.21577`，一作；A 轨 2026-11-18 03:00 时窗已核候选） |
+| 邮箱 | **未找到**（PDF 全文 `pdftotext` 扫 `@` 0 命中；UNB CIC 成员页只列姓名、未列其邮箱）⇒ **不发信**，只建档 |
+| 主页 | **未找到**（LinkedIn 页需登录，不算可核来源） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪** |
+| 备注 | `语言=英文(判据=波斯语族姓名 + 加拿大机构)`。价值点：它把「工具名 / 描述 / schema 完全相同但 provider 不同」当作**控制面身份缺失**问题——我们 harness 里任何「按工具名路由」的实现都暴露在同一类风险下；若能拿到邮箱，问题应聚焦「同 schema 不同 provider 时客户端的消歧信号」。 |
+
+### 194. Arunkumar V
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Arunkumar V（印度语族姓名 ⇒ 英文信） |
+| 机构 | **Anna University**（University College of Engineering, BIT Campus, Tiruchirappalli, India；PDF 首页机构块） |
+| 代表论文 | **Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle**（arXiv `2611.21538`，一作；A 轨 2026-11-18 03:00 时窗 #5） |
+| 邮箱 | **`arunkumarv1530@gmail.com`**（PDF 首页明文，`pdftotext` 实测；2026 年论文 ⇒ 时效可） |
+| 主页 | **未找到** |
+| X 账号 | **未找到** |
+| 状态 | **已发信**（#84，2026-11-18 03:04:53，英文 197 词） |
+| 备注 | `语言=英文(判据=印度语族姓名 + 印度机构)`。问题方向：padding 的具体形态与按理由数归一化后的表型去向、model-free audit 能否预测饱和步、10 个复制单元里量级不复制时五条预解释的相对可信度。 |
 
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。

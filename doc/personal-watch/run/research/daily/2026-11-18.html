@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-18（早报 3/5） · research 线</title>
+<title>论文观察日报 · 2026-11-18（5/5 · 03:00 补齐） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,14 +47,15 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-18</h1>
-  <div class="sub"><b>早报（00:00 时窗）</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>早报（00:00 时窗）+ 03:00 补齐</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
 <div class="note">
   <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> / <code>cs.CV</code> / <code>cs.AI</code> / <code>cs.SE</code> / <code>cs.LG</code> 五路列表均 <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（142,955–153,948 B / 各 60 entry），最新 <code>published</code> = <b><code>2026-11-16T18:59:38Z</code></b>（较上一轮 <code>2026-11-14T06:49:09Z</code> 前进两天）⇒ 按 72h 窗口正常取 11-16 批，<b>未启用</b>「最近公告批」例外。
   三篇均实测验过 <code>id_list</code> <code>200</code> + atom + PDF <code>200</code> + <code>%PDF-</code> 头。
+  <br><b>03:00 补齐</b>：第 4 篇 <code>2611.21457</code>、第 5 篇 <code>2611.21538</code> 同式验过（PDF <code>200</code> + <code>%PDF-</code>，1,000,947 / 788,000 B）；<code>cat:cs.CL</code> 复核最新 <code>published</code> 仍 <code>2026-11-16T18:59:38Z</code>（公告批<b>未前进</b>）⇒ 本轮不引入超窗论文。
 </div>
 
 <div class="card">
@@ -93,34 +94,78 @@
   <div class="rm"><b>推荐理由</b>：直接命中我们的 harness 判分口径——只读 exit code 会把「什么都没写出来」的运行记成通过。论文用预注册对比 + Holm 校正控制多重比较，并明确「4 个规模不足以判定效应随规模变大还是变小」，这种自我限定正是我们要照搬的写法。</div>
 </div>
 
-<h3 class="sec">🅱 B 轨 · 经典论文（第五十三轮 +3 → 209）</h3>
+<div class="card">
+  <h2><span class="no">4</span>Out of Sight, Into Memory: Compact Visual Latents Retain Local Evidence in Ultra-High-Resolution Remote Sensing</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Meng Tang（Aberystwyth University）, Siyuan Du（Nanjing University）, Yuxin Liu（Central South University）, Shuaishuai Cao（Peking University）, Di Wang（Wuhan University）, Haonan Guo（Wuhan University）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-16（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CV ｜ <tag class="t-borrow">借鉴</tag> 视觉 token 压缩 / 高分辨率遥感 / 潜在记忆</td></tr>
+    <tr><th>中文一句话</th><td>把「看过的 crop」压成 <b>64 个连续 latent token</b> 当作视觉记忆，再丢掉原始 crop token：在两代 Qwen-VL 的 LRS-GRO 上实现 <b>7.6–9.9×</b> 压缩，比只用降采样全图高 <b>2.5–4.8 个百分点</b>，并基本追平直接给高分辨率 crop 的收益；而把记忆换成「另一张图 / 同图另一区域」会掉 <b>5.8–7.4 点</b>，比直接删掉记忆还差。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.21457">abs: 2611.21457</a> ｜ <a href="https://arxiv.org/pdf/2611.21457">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：它把「模型到底有没有读这段 latent」做成了可证伪的实验——替换 / 置零 / 删除三组对照，并用「同一模型里把原始 crop 放回上下文」证明依赖来自<b>证据可得性</b>而不是 latent 通道本身。对我们的价值：<b>视觉线不必先上大分辨率</b>，可以先验证「64-token 记忆」是否在我们的图表 / 波形截图上也能保住细节；若替换对照掉点不明显，说明模型没在读，压缩再狠也没用。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">5</span>Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Arunkumar V, Manoranjan Gandhudi, Gangadharan G. R., Arun Prakash, S. Senthilkumar（Anna University, BIT Campus, Tiruchirappalli）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-16（v1；30 页；短版《The Verifier Gap》见 NeurIPS 2026 Meta-Agents Workshop，non-archival）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.LG ｜ <tag class="t-borrow">借鉴</tag> RLVR / 判分器退化 / 奖励攻击</td></tr>
+    <tr><th>中文一句话</th><td>在 <b>124,416 条</b>可执行授权策略上下文上，用「精确 process oracle」当金标准，逐轴退化判分器（仅结果 / 充分性 / 仅召回 / 抽取噪声 / 粗分类 / 过期策略 / LLM 裁判），结果出现四种表型：<b>乐观判分器被「堆理由」刷分</b>——充分性代理停在 <b>0.940</b>，而真实忠实度从 <b>0.731 掉到 0.667</b>（96 个留出 episode）；仅结果判分器很快饱和、噪声只是稀释、保序偏差无害。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.21538">abs: 2611.21538</a> ｜ <a href="https://arxiv.org/pdf/2611.21538">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：这是本线第一次看到「奖励上涨 ≠ 能力上涨」被<b>定量拆开</b>的干净实验：它给了三个可直接搬的审计动作——判分器的选择误差、gap 的符号、以及一个很短的饱和 pilot。对我们最大的提醒是：<b>凡是判分器只能看到部分证据（充分性 / 召回）的任务，都要先测「多写理由会不会加分」</b>；另外它诚实报告「损伤量级在 10 个复制单元里没有复现」，这种自我限定比结论本身更值钱。</div>
+</div>
+
+<h3 class="sec">🅱 B 轨 · 经典论文（第五十四轮 +3 → 212）</h3>
 <table class="plain">
   <tr><th style="width:6%;">#</th><th>论文</th><th style="width:14%;">被引（2026-11-18）</th><th style="width:9%;">归线</th></tr>
   <tr><td>207</td><td><b>DataComp-LM（DCLM）</b> <code>2406.11794</code>（NeurIPS 2024 D&amp;B）<br>240T token 标准化语料 + 53 项评测，412M–7B 规模上的数据配比消融；基线 7B 达到 64% 5-shot MMLU、比 Llama 2 7B 少 40% 计算</td><td><b>627</b></td><td>data</td></tr>
   <tr><td>208</td><td><b>Decoupled Weight Decay Regularization（AdamW）</b> <code>1711.05101</code>（ICLR 2019）<br>证明 Adam 中 L2 与 weight decay 不等价，提出解耦 decay，并给出 λ 与学习率联动规律</td><td><b>34,224</b></td><td>pretrain</td></tr>
   <tr><td>209</td><td><b>Prismatic VLMs</b> <code>2402.07865</code>（ICML 2024）<br>视觉主干 / 是否解冻 / 单或多阶段训练的设计空间消融，被视为 VLM 标准对照</td><td><b>325</b>（&lt;500，按「方法论常青」收）</td><td>vision</td></tr>
+  <tr><td>210</td><td><b>VeriGen: A LLM for Verilog Code Generation</b> <code>2308.00708</code>（ACM TODAES；前身 DATE 2023）<br>GitHub + 教科书 Verilog 微调 CodeGen（2B/6B/16B），自建 problem set + test bench 按<b>功能正确性</b>判分；摘要称整体超 GPT-3.5-turbo <b>1.1%</b>、语法正确率相对预训练版提升 <b>41%</b></td><td><b>533</b>（00:00 轮 531 ⇒ 本轮复测）</td><td>zhulong · designflow</td></tr>
+  <tr><td>211</td><td><b>WebShop</b> <code>2207.01206</code>（NeurIPS 2023）<br>118 万商品 + <b>12,087</b> 条众包指令 + 1,600+ 演示；按终态（属性/选项/价格）判分，最好模型 <b>29%</b> vs 规则 <b>9.6%</b> vs 人类 <b>59%</b>，并测 sim-to-real</td><td><b>1,765</b>（⚠️ 早前候选池写 358 为误记）</td><td>harness · data</td></tr>
+  <tr><td>212</td><td><b>ChipNeMo: Domain-Adapted LLMs for Chip Design</b> <code>2311.00176</code>（预印本技术报告，NVIDIA）<br>领域分词器 + 继续预训练 + 指令对齐 + 领域检索四件套；三场景（助手 / EDA 脚本 / bug 总结）中 <b>70B 在两个场景超过 GPT-4</b></td><td><b>472</b>（&lt;500，按「本领域权威」收）</td><td>zhulong · designflow · data</td></tr>
 </table>
 
 <details>
 <summary>本轮否决与更正（如实记录，可核验）</summary>
 <ul>
-  <li><b>ID 更正</b>：记忆中「VeriGen = <code>2308.00113</code>」错误 —— 该 ID 实测为 <i>Three Bricks to Consolidate Watermarks for LLMs</i>（WIFS 2023）。VeriGen 真 ID = <code>2308.00708</code>（TODAES 2024，OpenAlex 被引 <b>531</b>）。</li>
-  <li><b>VeriGen 未进表</b>：abs 页 <code>200</code>、OpenAlex <code>200</code>，但 PDF 三个端点实测 <code>000</code>/<code>404</code>，多次重试与后台下载未拿到完整文件 ⇒ 按「三源实测」纪律不进表，留 06:00 首选项。</li>
-  <li><b>重复不收</b>：Scaling Data-Constrained LMs <code>2305.16264</code> 已在第四十四轮收录（当时 254 被引）⇒ 本轮不重复。</li>
-  <li>三源核验：arXiv <code>id_list</code> <code>200</code> + atom（4 entry）；OpenAlex 3/3 <code>200</code>；PDF 3/3 <code>200</code> + <code>%PDF-</code>（1.66 / 6.06 / 9.72 MB，后两篇 &gt;5 MB 仅存 <code>/tmp</code>）。</li>
+  <li><b>VeriGen 解除暂缓</b>：00:00 轮因 PDF 三端点 <code>000</code>/<code>404</code> 未进表；本轮三端点复测 PDF <code>200</code> + <code>%PDF-</code>（2,636,063 B）⇒ 正式进表（#210）。</li>
+  <li><b>被引更正</b>：候选池早前记 WebShop <code>2207.01206</code> 为「358」；本轮 OpenAlex 实测 <b>1,765</b> ⇒ 旧数字作废，以本轮为准。</li>
+  <li><b>重复不收</b>：Dolma <code>2402.00159</code> 已在表内（本轮 grep 复核）；Magpie <code>2406.08464</code> 实测 <b>353</b> &lt;500 ⇒ 只留候选池。</li>
+  <li><b>三源核验</b>：arXiv <code>id_list</code> <code>200</code> + atom（4 entry）；OpenAlex 3/3 <code>200</code>（533 / 1,765 / 472）；PDF 3/3 <code>200</code> + <code>%PDF-</code>（2,636,063 / 8,878,628 / 1,135,269 B，WebShop &gt;5 MB 仅存 <code>/tmp</code>）。</li>
 </ul>
 </details>
 
-<h3 class="sec">👥 作者关系网（+3 → 190）</h3>
+<h3 class="sec">👥 作者关系网（+4 → 194）</h3>
 <table class="plain">
   <tr><th style="width:24%;">姓名 / 机构</th><th style="width:27%;">邮箱（来源）</th><th>X</th><th style="width:13%;">状态</th></tr>
-  <tr><td>Hao Wang（王浩）· 北京科技大学</td><td><code>wanghao994916959@163.com</code>（PDF 首页）</td><td><b>未核验</b>（X 不可达，不猜 handle）</td><td>已发信 #80</td></tr>
+  <tr><td>Hao Wang（王浩）· 北京科技大学</td><td><code>wanghao994916959@163.com</code>（PDF 首页）</td><td><b>未核验</b>（X 当时不可达，不猜 handle）</td><td>已发信 #80</td></tr>
   <tr><td>Rohit Gandikota · Northeastern University</td><td><code>gandikota.ro@northeastern.edu</code>（PDF 首页）</td><td><b>未核验</b>（同上）</td><td>已发信 #81</td></tr>
   <tr><td>Srinath Srinivasan · NC State University</td><td><code>ssrini27@ncsu.edu</code>（PDF 首页）</td><td><b>未核验</b>（同上）</td><td>已发信 #82</td></tr>
+  <tr><td>Hammond Pearce · UNSW Sydney</td><td><code>hammond.pearce@unsw.edu.au</code>（<b>机构现行主页</b>，非 PDF 旧地址）</td><td><b>@kiwihammond</b>（<code>og:title</code> + bio 双源）</td><td>已发信 #83</td></tr>
+  <tr><td>Shailja Thakur · IBM Research</td><td><b>未找到</b>（主页 / IBM 人员页均无明文）</td><td>未找到（不猜）</td><td>待跟踪（只建档）</td></tr>
+  <tr><td>Zeynab Anbiaee · UNB（CIC）</td><td><b>未找到</b>（PDF 全文 0 命中）</td><td>未找到（不猜）</td><td>待跟踪（只建档）</td></tr>
+  <tr><td>Arunkumar V · Anna University</td><td><code>arunkumarv1530@gmail.com</code>（PDF 首页，2026 年论文）</td><td>未找到（不猜）</td><td>已发信 #84</td></tr>
 </table>
 
+<details class="voice-ready">
+<summary>🗣 voice_ready · 研究者言论（可发头条）</summary>
+<ul>
+  <li><b>人物</b>：Jason Wei <b>@_jasonwei</b>（Meta / 前 OpenAI、Google；CoT、Flan 系列作者，ReAct 同圈）</li>
+  <li><b>言论</b>：原文 ——“Given that there are only 66 problems in TerminalBench v4.1 and literally every frontier lab tracks TerminalBench performance, at some point it will be more prestigious and impactful to have authored a TerminalBench problem than to get a paper accepted in Nature or Science.”<br>中文 ——「TerminalBench v4.1 只有 66 道题，而几乎所有前沿实验室都在盯着这个榜单；照这个趋势，做出一道 TerminalBench 题目，迟早会比发一篇 Nature 或 Science 更有声望、更有影响。」</li>
+  <li><b>时间</b>：2026-11-14（距采集 4 天，&lt;30 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/_jasonwei/status/2121691386043089133">x.com/_jasonwei/status/2121691386043089133</a>（单推页 <code>og:title</code> = <code>Jason Wei (@_jasonwei) on X</code>；<code>og:description</code> 与 profile 时间线文本逐字一致 ⇒ 双源）</li>
+  <li><b>话题点</b>：一句话能讲清「评测题本身成了稀缺资产」——大众能理解「考试题太少，出题人比考生更值钱」这个反直觉现象。</li>
+  <li><b>风险</b>：① 这是<b>个人判断</b>，不是行业事实，🚫 不可写成「学界已公认」；② 66 这个数字来自作者推文，本线<b>未独立核</b> TerminalBench v4.1 题数；③ 提到 Nature / Science 属夸张修辞，引用时要保留原句语气，避免被当成正式比较。</li>
+</ul>
+</details>
+
 <div class="note" style="margin-top:14px;">
-  <b>voice_ready 0 / news_ready 0</b>：<code>x.com</code> 直连 <code>000</code>、经 <code>127.0.0.1:7897</code> 亦 <code>000</code>（<code>mihomo</code> active、端口在听）⇒ 无原推可核，🚫 不用二手报道冒充 <code>voice_ready</code>；三篇均无「发布 / 开源 / 首次」事件点 ⇒ 按四问第 ② 条不标 <code>news_ready</code>，不硬凑。
+  <b>voice_ready 1 / news_ready 0</b>：本轮 <code>x.com</code> <b>直连 <code>200</code></b>（不再依赖 <code>127.0.0.1:7897</code>），<code>x_fetch.py</code> 只读抓取 6 个 handle 全部 <code>200</code>；唯 Jason Wei 这条满足「原文 + 链接 + 双源一致」。其余候选（Shunyu Yao 的「Thats the plan!」、Tri Dao 的 Together Compiler、Hammond Pearce 的 2023 年旧推）分别因<b>信息量不足 / 属产品发布 / 超 30 天</b>不采用。<br>
+  <b>news_ready 0</b>：第 4 篇无发布/开源/首次事件点；第 5 篇虽发布 testbed 与 14 条移植策略，但受众是研究者而非大众（四问第 ① 条不过）⇒ 按「宁缺勿滥」不标，🚫 不硬凑。
 </div>
 
 <h3 class="sec">🎯 对各线的可执行建议（6 线）</h3>
@@ -130,24 +175,44 @@
   <tr><td><b>vision</b></td><td><b>加一条「同图多轮追问」口径</b>：固定图像连续问 N 轮，测第 1 轮与第 N 轮定位/读数准确率差；若差 &gt;3 点，再考虑把高分辨率 crop 压成 64-token latent memory（参照 <code>2611.21457</code> 的 7.6–9.9× 压缩与 2.5–4.8 点增益）。依据：<code>2611.21600</code> + <code>2611.21457</code>。</td></tr>
   <tr><td><b>harness</b></td><td><b>判分器改为「产物存在性 + 空跑记 0」，exit code 只做旁证</b>：先统计自有 18–20 个产物型任务上「exit code 判分 vs 产物判分」的分数差；差 &gt;5 点即改口径。依据：<code>2611.21407</code> 的 127/357 无产物、85 个正常退出。</td></tr>
   <tr><td><b>data</b></td><td><b>把 DCLM 的 fastText 质量分类器与混合比例作为基线重建</b>：在自有语料上复现「过滤 + 比例搜索」，报告等价评测子集分数；预注册判据 = 相对未过滤基线 ≥2 点且不增加训练 token。依据：<code>2406.11794</code>。</td></tr>
-  <tr><td><b>zhulong</b></td><td><b>Verilog 代码模型的历史基线先补 VeriGen 而非追新</b>：等 06:00 拿到 <code>2308.00708</code> PDF 后复现其「问题-描述-代码」构造与 pass@k 口径；在此之前只用已收 VerilogEval <code>2309.07544</code> / RTLLM <code>2308.05327</code> 对照，🚫 不引用未核数字。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>Verilog 代码模型的历史基线先补 VeriGen 而非追新</b>：VeriGen <code>2308.00708</code> 的 PDF 本轮已取到（2,636,063 B）→ 直接复现其「问题-描述-代码 + test bench」构造与功能正确性口径；与已收 VerilogEval <code>2309.07544</code> / RTLLM <code>2308.05327</code> 对照时，🚫 不把「语法正确率 41%」当成功能正确率引用。</td></tr>
   <tr><td><b>designflow</b></td><td><b>把「外壳版本」当成实验因子写进消融表</b>：同一模型 + 同一题集，至少 3 个 harness 版本 × 2 个 checkpointer 设置，报告「有产物率」与「空跑率」两列（不只报通过率），服务于 L1–L5 保真度判分的可复算性。依据：<code>2611.21407</code>。</td></tr>
+</table>
+
+<h3 class="sec">🎯 对各线的可执行建议 · 03:00 增量（6 线，逐条可执行）</h3>
+<table class="plain">
+  <tr><th style="width:13%;">线</th><th>建议（可直接执行）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>「奖励在涨、能力在掉」的判分器审计先做一个最小版</b>：在自有可验证任务上，把判分器换成「只给部分证据」的代理（仅看结论、或只看是否列出理由），同一模型训练 2 个短 run（各 ≤5% 总步数），比较「代理分」与「人工/精确分」的差；预注册判据 = 代理分升 ≥0.05 而精确分不升即判为乐观判分器，停止加训。依据：<code>2611.21538</code>（sufficiency 代理 0.940 vs 真实 0.731→0.667）。</td></tr>
+  <tr><td><b>vision</b></td><td><b>先做「64-token 视觉记忆」的三组对照，而不是先提分辨率</b>：① 仅降采样全图 ② 全图 + 64-token crop 记忆 ③ 全图 + 128-token 记忆；再各加一组「把记忆换成另一张图」的替换对照。判据 = ②−① ≥2 点且替换对照掉点 ≥4 点，才认定模型真在读记忆。依据：<code>2611.21457</code>（7.6–9.9× 压缩、2.5–4.8 点增益、替换掉 5.8–7.4 点）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>给工具路由加「provider 绑定」检查</b>：在自有 MCP 式工具集里故意注册一个同名 + 同 schema + 不同来源的工具，跑 20 个应选原工具的请求，统计「错 provider 执行 / 反问澄清 / 不稳定解析」三类的比例；判据 = 错执行 &gt;0 即必须在客户端加 provider 白名单。依据：<code>2611.21577</code>（五个客户端均出现错 provider 执行或不可消歧）。</td></tr>
+  <tr><td><b>data</b></td><td><b>把 WebShop 的指令覆盖度当造题检查表</b>：按「属性数 × 选项数 × 价格/约束」三维分层抽样，统计现有题集在每格的题数；空格 &gt;20% 的格子补题后再训练。依据：<code>2207.01206</code> 的 12,087 条众包指令设计 + <code>2611.21407</code> 的「产物型任务」口径。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>VeriGen 的判分闸门立刻可落地</b>：把 Verilog 评测从「文本相似 / pass@k 单一数」改为三级闸门 —— 编译通过 → 仿真通过（test bench）→ 断言/波形一致，并分别统计三级失败率；同时在自有题集上核对「语法正确率」与「功能正确率」的差值（VeriGen 报告的 41% 只是语法项）。依据：<code>2308.00708</code> + <code>2311.00176</code>。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>按 ChipNeMo 的三场景把题分三类，并各配可验证判据</b>：问答（是否命中内部术语）、脚本生成（脚本能否在工具里跑通）、bug 摘要（是否含根因/影响/修复三要素）；每类先各造 10 题做小样本校准。依据：<code>2311.00176</code> + <code>2308.00708</code> 的 test bench 式判分。</td></tr>
 </table>
 
 <h3 class="sec">📎 附录 · 本轮检索式与命中（可核验）</h3>
 <table class="plain">
   <tr><th style="width:62%;">请求</th><th>结果</th></tr>
-  <tr><td><code>id_list=2611.21608,2611.21602,2611.21600</code></td><td><code>200</code> / 9,062 B / 3 entry</td></tr>
-  <tr><td><code>cat:cs.CL</code> 列表（60 条，按提交日倒序）</td><td><code>200</code> / 153,948 B / 60 entry</td></tr>
-  <tr><td><code>cat:cs.CV</code> / <code>cs.AI</code> / <code>cs.SE</code> / <code>cs.LG</code> 同式</td><td>4/4 <code>200</code>（146,005 / 149,715 / 152,683 / 142,955 B）</td></tr>
-  <tr><td><code>id_list=2611.21407,2611.21608,2611.21600</code> + PDF ×3</td><td><code>200</code>（8,413 B）+ PDF 3/3 <code>200</code> + <code>%PDF-</code></td></tr>
-  <tr><td><code>id_list=2406.11794,2308.00113,1711.05101,2402.07865</code></td><td><code>200</code>（13,290 B / 4 entry；<code>2308.00113</code> 实测为水印论文 ⇒ ID 更正）</td></tr>
-  <tr><td>OpenAlex：<code>2406.11794</code> / <code>1711.05101</code> / <code>2402.07865</code> / <code>2308.00708</code></td><td>4/4 <code>200</code>（627 / 34,224 / 325 / 531）</td></tr>
-  <tr><td>去重剔除</td><td>3 篇 A 轨 ID 无命中；B 轨 <code>2305.16264</code> 命中已收 ⇒ 剔除</td></tr>
+  <tr><td><code>id_list=2611.21538,2611.21577,2611.21457,2611.21608,2611.21600,2611.21407</code></td><td><code>200</code> / <code>application/atom+xml</code> / 16,390 B / 6 entry</td></tr>
+  <tr><td><code>cat:cs.CL</code> 列表（按提交日倒序，5 条）</td><td><code>200</code> / 13,973 B；最新 <code>published</code> = <b>2026-11-16T18:59:38Z</b>（较 00:00 轮<b>未前进</b>）</td></tr>
+  <tr><td>PDF ×5：<code>2611.21457</code> / <code>2611.21538</code> / <code>2308.00708</code> / <code>2207.01206</code> / <code>2311.00176</code></td><td>5/5 <code>200</code> + <code>%PDF-</code>（1,000,947 / 788,000 / 2,636,063 / 8,878,628 / 1,135,269 B；WebShop &gt;5 MB 仅存 <code>/tmp</code>）</td></tr>
+  <tr><td><code>id_list=2308.00708,2207.01206,2611.21538,2311.00176</code></td><td><code>200</code> / 13,166 B / 4 entry；<code>comment</code> 逐条读取（WebShop = NeurIPS camera ready；ChipNeMo = 未提会议）</td></tr>
+  <tr><td>OpenAlex：<code>2308.00708</code> / <code>2207.01206</code> / <code>2311.00176</code> / <code>2406.08464</code></td><td>4/4 <code>200</code>（533 / 1,765 / 472 / 353）</td></tr>
+  <tr><td><code>x.com</code> 直连（无代理）+ <code>x_fetch.py</code> 6 个 handle</td><td><code>200</code>（<code>_jasonwei</code> / <code>tri_dao</code> / <code>PercyLiang</code> / <code>TheGregYang</code> / <code>ShunyuYao12</code> / <code>kiwihammond</code>）；单推页 <code>og:title</code> + <code>og:description</code> 双源核验</td></tr>
+  <tr><td>去重剔除</td><td><code>2611.21577</code> 本轮只核不进表（名额给文档型两篇）；B 轨 Dolma <code>2402.00159</code> 已在表内 ⇒ 不收</td></tr>
 </table>
 
+<h3 class="sec">🔁 本轮变更说明（00:00 早报 → 03:00 补齐）</h3>
+<ul class="tight">
+  <li><b>A 轨 3/5 → 5/5</b>：新增第 4 篇 <code>2611.21457</code>（视觉 latent 记忆）、第 5 篇 <code>2611.21538</code>（判分器退化 / 奖励攻击）；第 1–3 篇未改写，仅补充后续建议。</li>
+  <li><b>B 轨 209 → 212</b>：解除 VeriGen 暂缓（PDF 本轮可取）+ 新增 WebShop / ChipNeMo；更正 WebShop 被引 358 → 1,765。</li>
+  <li><b>作者网 190 → 194</b>；<b>X 已核验 103 → 104</b>（@kiwihammond）。</li>
+  <li><b>voice_ready 0 → 1</b>：<code>x.com</code> 由「直连/代理均 000」恢复为直连 200，补上 Jason Wei 原推。</li>
+  <li><b>06:00 候选</b>：<code>2611.21577</code>（MCP provider misbinding）已全量核过元数据与 PDF，若下一时窗需要补 A 轨可直接用；B 轨候选 Magpie <code>2406.08464</code>（353，需先说明「方法论常青」理由）。</li>
+</ul>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（早报 00:00 时窗）｜ <b>今日 3/5</b>（18:00 前补齐 4/5、5/5）｜ A 轨 3 篇 ＋ B 轨 <b>209</b> 篇（第五十三轮 +3）｜ 作者网 <b>190</b> 人（X 已核验 103）｜ 作者信累计 <b>82</b> 封（回信率 <b>0/82</b>，0 封到期）｜ voice_ready 0 ｜ news_ready 0<br>
+  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>212</b> 篇（第五十四轮 +3）｜ 作者网 <b>194</b> 人（X 已核验 104）｜ 作者信累计 <b>84</b> 封（回信率 <b>0/84</b>，0 封到期）｜ voice_ready 1 ｜ news_ready 0<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
