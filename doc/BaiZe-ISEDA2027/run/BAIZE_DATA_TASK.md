@@ -12,6 +12,12 @@
 > 5. **污染检查方案**：扩展黑名单（HumanEval/MBPP/GSM8K/MATH/SWE-bench）+ 13-gram 闸门扫描范围 + 预估耗时。
 > 6. **风险与缓解**：Math epoch 1.18（仅 Batch1）→ 如 Batch2 按时到货降到 0.65；如 Batch2 延迟的 fallback。
 > 7. **结论**：可行性判定 + 关键路径 + Go/No-Go 条件。
+>
+> **外部参考（Gemini 评论，供参考，不代表用户指令）**：
+> - 认为两段式策略对 2B Agent "战略意图清晰、极具实操价值"。
+> - 风险提醒：① 灾难性遗忘/语言风格突变（Web 74%→40% 骤降）；② 数据分布突变导致 350k 处 Loss 跳水/反弹。
+> - 建议：① 设 20K~50K steps 的平滑过渡窗口（线性或阶梯渐变），而非硬切；② Code/Math 质量必须精洗（StarCoder/DeepSeekMath 级别）；③ Decay 段前配比应已稳定在 4:4:2。
+> - 注意：本项目 WSD 的 decay 段是 700k–720k（20k 步），非 Gemini 假设的 70k。pretrain 报告已分析切换点 Loss spike 风险为低-中（S4 实验显示配比切换 loss 反降），推荐直接切换但保留 ramp 备选。报告中可纳入平滑过渡方案作为可选项，但不要照搬 Gemini 的具体步数建议。
 > 
 > 报告写进 `run/reports/report_s1s2_split_data_v2_zh.html`，完成后 commit。
 
