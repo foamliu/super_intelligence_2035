@@ -10,6 +10,8 @@ Run:     codex exec --cd <cwd> --model kimi-k2.6-cloud \
 
 from __future__ import annotations
 
+import asyncio
+import re
 import shlex
 from typing import Annotated, Any, override
 
@@ -173,20 +175,52 @@ class CodexTB(TBBaseAgent):
             "OPENAI_BASE_URL": TB_GW_PROXY_URL,
         })
 
-        result = await environment.exec(
-            command=cmd,
-            env=env,
-            timeout_sec=self._timeout,
+        # 2026-11-17 FIX (用户令 14:4x): codex 走 wire_api="responses" 经
+        # gw_proxy 翻译，其请求模式触发上游 429 后 codex 内部 retry 耗尽 →
+        # turn.failed → exit 1 → 原逻辑直接 raise RuntimeError → reward=0。
+        # 实测 87/88 失败题 = 429/rate_limit/exceeded retry（infra，非能力）。
+        # 修复：检测 stdout/stderr 含 429 / rate limit / exceeded retry →
+        # 指数退避 (2/4/8/16s) 重试整次 codex exec，上限 4 次。
+        # 注意 429 出现在 codex 的 JSON 事件 stdout（非 stderr），故两路都查。
+        _RATE_LIMIT_RE = re.compile(
+            r"429|rate[ _-]?limit|Too Many Requests|exceeded.{0,12}retry|"
+            r"retry.{0,12}exceeded|retries? exceeded",
+            re.I,
         )
+        backoff_delays = [2, 4, 8, 16]  # 上限 4 次重试
+        result = None
+        attempts = 0
+        last_rate_limit = False
+        while True:
+            attempts += 1
+            result = await environment.exec(
+                command=cmd,
+                env=env,
+                timeout_sec=self._timeout,
+            )
+            combined = f"{result.stdout or ''}\n{result.stderr or ''}"
+            hit_rate_limit = bool(_RATE_LIMIT_RE.search(combined))
+            if result.return_code == 0:
+                break  # 干净跑完
+            if not hit_rate_limit:
+                break  # 非 429 错误 → 不重试，直接走下面的 raise
+            last_rate_limit = True
+            if attempts > len(backoff_delays):
+                break  # 退避上限耗尽 → 走下面的 raise
+            delay = backoff_delays[attempts - 1]
+            # 退避：让网关从 429 恢复后再重试整次 codex exec
+            await asyncio.sleep(delay)
 
         context.metadata = {
             "stdout": result.stdout or "",
             "stderr": result.stderr or "",
             "exit_code": result.return_code,
+            "codex_429_retries": attempts - 1,
         }
 
         if result.return_code != 0:
+            tag = " (gateway 429/rate-limit, backoff exhausted)" if last_rate_limit else ""
             raise RuntimeError(
-                f"Codex exited with code {result.return_code}: "
+                f"Codex exited with code {result.return_code}{tag}: "
                 f"{(result.stderr or '')[:500]}"
             )

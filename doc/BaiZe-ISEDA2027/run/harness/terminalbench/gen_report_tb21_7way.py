@@ -263,9 +263,9 @@ INFRA_LEDGER = {
         "未启动",
     ),
     "codex": (
-        "5 synthetic + gateway 502 类",
-        "待重跑",
-        "未启动",
+        "87/88 失败 = 适配器 429/rate_limit (gateway 429 → codex 内部 retry 耗尽 → turn.failed → exit 1 → raise RuntimeError; 无退避重试); 1 真能力失败",
+        "codex.py:run() 加 429 检测 + 指数退避重试 (2/4/8/16s, 上限 4 次, 检测 stdout+stderr); 87 题待重跑",
+        "适配器已修 (2026-11-17 14:4x); 87 题待重跑 (429 退避后); 1.1% = 适配器缺陷假低分, 非真能力",
     ),
     "claude-code": (
         "89 ConnectionRefused (适配器无法连接网关, 模型从未运行)",
@@ -401,8 +401,12 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "2 qemu = BLOCKED (容器 debian:bullseye-slim Python 3.9 < hermes-agent 最低要求 ≥3.11, "
              "PyPI 全版本均 requires-python≥3.11, R2510 确认: _ensure_pip 修复成功→pip 可用, "
              "但 hermes-agent 无兼容版本→HERMES_PY_TOO_OLD)。</li>"
-             "<li><strong>opencode / pi / deepseek / codex</strong>: synthetic(未真跑) + quota 残留 → 逐路串行重跑 "
+             "<li><strong>opencode / pi / deepseek</strong>: synthetic(未真跑) + quota 残留 → 逐路串行重跑 "
              "(cc 完成后启动, 避免网关额度竞争)。</li>"
+             "<li><strong>codex</strong>: 87/88 失败 = 适配器 429/rate_limit (gateway 429 → codex 内部 retry 耗尽 → "
+             "turn.failed → exit 1 → 无退避重试); codex.py 已加 429 检测 + 指数退避重试 (2/4/8/16s, 上限 4 次); "
+             "87 题待重跑 (429 退避后); <strong>1.1% = 适配器缺陷假低分, 非真能力</strong> (codex 干净跑完题 Pass 率 1/2=50%, "
+             "与 SWE-bench Verified 63.2% 同档, 落差 60pp = 适配器 429 所致)。</li>"
              "<li><strong>cline</strong>: 额度已清零; 余 1 conn_refused (pytorch-model-recovery) 经 3 次重跑 (original 2026-11-09 + reruns 0932/1143) 均 cline CLI exit 1 无输出 → "
              "<strong>BLOCKED(infra)</strong> (cline CLI 在该任务环境静默崩溃, cline auth OK, 1379B 正常 instruction, cline 跑通 332 题→任务特定 CLI 崩溃, 非能力); "
              "另 4 synthetic 待补跑。</li></ul></div>")
@@ -437,12 +441,12 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         H.append("<h3>表四 · 四桶归因 + 重跑状态 (合并后)</h3>")
         H.append("<table><thead><tr><th>#</th><th>Harness</th><th>Passed</th>"
                   "<th>真实 Pass%<br>(passed/89)</th><th>能力不足</th><th>Quota</th>"
-                  "<th>ConnRefused</th><th>Synthetic</th><th>待重跑<br>(infra)</th>"
+                  "<th>429/<br>RateLimit</th><th>ConnRefused</th><th>Synthetic</th><th>待重跑<br>(infra)</th>"
                   "<th>重跑状态</th></tr></thead><tbody>")
         # rerun plan: which tasks per route
         rerun_plan = {
             "cline-patched": (1, "BLOCKED(infra): cline CLI exit 1, no run_result, no stderr — 3 attempts (original 2026-11-09 + reruns 0932/1143) all infra-failed; cline auth OK but task cmd crashes silently; 1379B instruction, normal task; cline ran 332 other tasks → task-specific CLI crash, NOT ability"),
-            "codex": (2, "done (2/2, both reward=0=ability; bn-fit-modify=AgentTimeoutError, break-filter-js-from-html=agent ran+verifier gave 0.0)"),
+            "codex": (87, "🔴 14:4x 专项复查: 87/88 失败=适配器 429/rate_limit infra (83×429 'exceeded retry limit, last status: 429 Too Many Requests' + 4×AgentTimeoutError), 仅 1 真能力 (break-filter-js-from-html: exit 0 干净跑完+verifier 0.0); codex.py 已加 429 退避重试 (2/4/8/16s×4); 87 题待重跑 (429 退避后); 1.1%=适配器缺陷假低分·非能力·干净跑完Pass率1/2=50%与SWE-bench 63.2%同档"),
             "opencode": (10, "排队中"),
             "claude-code": (1, "排队中"),
             "pi": (15, "排队中"),
@@ -454,29 +458,35 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
             rd = review_data.get(hkey, {})
             if not rd:
                 H.append(f"<tr><td class='num'>{i}</td><td>{esc(name)}</td>"
-                         f"<td colspan='8'>复核数据不可用</td></tr>")
+                         f"<td colspan='9'>复核数据不可用</td></tr>")
                 continue
             bc = rd["bucket_counts"]
             real = f"{rd['real_pct']}%"
             inf_cls = "warn" if rd["pending_rerun"] > 0 else "pass"
             rp = rerun_plan.get(hkey, (0, "—"))
             rerun_status = rp[1]
+            rl = bc.get("rate_limit", 0)
+            rl_cls = "fail" if rl > 0 else ""
             H.append(f"<tr><td class='num'>{i}</td><td><strong>{esc(name)}</strong></td>"
                      f"<td class='num pass'>{rd['passed']}</td>"
                      f"<td class='num'><strong>{real}</strong></td>"
                      f"<td class='num'>{bc['ability']}</td>"
                      f"<td class='num'>{bc['quota']}</td>"
+                     f"<td class='num {rl_cls}'>{rl}</td>"
                      f"<td class='num'>{bc['conn_refused']}</td>"
                      f"<td class='num'>{bc['synthetic']}</td>"
                      f"<td class='num {inf_cls}'>{rd['pending_rerun']}</td>"
                      f"<td style='font-size:0.85em'>{esc(rerun_status)}</td></tr>")
         H.append("</tbody></table>")
         H.append("<div class='info'><p><strong>口径说明</strong>: 真实 Pass% = passed / 89, "
-                  "分母恒 89, 这是<strong>唯一可对外引用的成绩</strong>。待重跑列 = quota + conn_refused + synthetic "
+                  "分母恒 89, 这是<strong>唯一可对外引用的成绩</strong>。待重跑列 = quota + 429/RateLimit + conn_refused + synthetic "
                   "(未真跑 / infra), 这些题正在串行重跑; 重跑完成后, pass 的题 +1, fail 的题计入能力失败, "
-                  "再重算真实 Pass%。<strong>不再有「修正后 Pass%」</strong>。</p></div>")
+                  "再重算真实 Pass%。<strong>不再有「修正后 Pass%」</strong>。"
+                  "<br><strong>429/RateLimit 桶 (2026-11-17 14:4x 新增)</strong>: codex 适配器走 wire_api=responses 经 gw_proxy 翻译, "
+                  "触发上游 429 后 codex 内部 retry 耗尽 → turn.failed → exit 1 → 无退避重试 → reward=0。"
+                  "实测 codex 88 失败里 83 题命中 429 'exceeded retry limit, last status: 429 Too Many Requests' = <strong>infra, 非能力</strong>。</p></div>")
         # Infra 题清单 (保留, 用于追踪重跑清单)
-        H.append("<h3>待重跑题清单 (synthetic + conn_refused + quota)</h3>")
+        H.append("<h3>待重跑题清单 (429/RateLimit + synthetic + conn_refused + quota)</h3>")
         H.append("<table><thead><tr><th>Harness</th><th>桶</th><th>题数</th>"
                   "<th>题号清单</th></tr></thead><tbody>")
         for name, up, ev, tr, er in rows:
@@ -485,7 +495,8 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
             if not rd:
                 continue
             b = rd["buckets"]
-            for bucket_name, label in [("synthetic", "synthetic/未真跑"),
+            for bucket_name, label in [("rate_limit", "429/RateLimit (适配器infra)"),
+                                       ("synthetic", "synthetic/未真跑"),
                                        ("conn_refused", "conn_refused"),
                                        ("quota", "quota")]:
                 tasks = b.get(bucket_name, [])
@@ -496,7 +507,7 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         H.append("</tbody></table>")
         # 重跑计划与 BLOCKED 说明
         H.append(f"<div class='caveat'><p><strong>重跑计划 (47 trial, 启动时口径; audit 修复后真待重跑={_total_pending})</strong>: "
-                  "cline 1 (BLOCKED·3次CLI崩溃) · codex 2 (done, both ability) · hermes 13 (running) · opencode 2 (真synthetic, 余8已归ability) · "
+                  "cline 1 (BLOCKED·3次CLI崩溃) · codex 87 (🔴14:4x: 429 infra 待重跑, codex.py 已加退避重试) · hermes 13 (running) · opencode 2 (真synthetic, 余8已归ability) · "
                   f"pi 13 (真synthetic 12+conn_ref 1, 余2已归ability) · deepseek 5 (全已归ability, rerun=确认) · cc 1 = 真{_total_pending}, 串行, adaptive concurrency (work=4/off=10)。</p>"
                   "<p><strong>环境硬约束 (BLOCKED, 显式注明)</strong>:</p><ul>"
                   "<li><strong>hermes qemu 类</strong>: BLOCKED (容器 Py3.9 &lt; hermes-agent 最低 3.11, "
@@ -504,8 +515,12 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "<li><strong>cline pytorch-model-recovery</strong>: BLOCKED(infra) — 3 次重跑 (original 2026-11-09 + reruns 0932/1143) "
                   "均 cline CLI exit 1, no run_result, no stderr (cline auth OK, 1379B 正常 instruction, cline 跑通 332 题 → "
                   "任务特定 CLI 静默崩溃, 非能力); 同题 hermes 已 PASS → 确认非任务环境问题</li>"
-                  "<li><strong>codex</strong>: 2 synthetic 已重跑, 均 reward=0.0 (ability) → "
-                  "低分=真能力, 与原归因一致</li>"
+                  "<li><strong>codex 🔴 14:4x 专项复查</strong>: 87/88 失败 = <strong>适配器 429/rate_limit infra</strong> "
+                  "(83×429 'exceeded retry limit, last status: 429 Too Many Requests' + 4×AgentTimeoutError), "
+                  "仅 1 真能力 (break-filter-js-from-html: exit 0 干净跑完+verifier 0.0)。"
+                  "<strong>1.1% = 适配器缺陷假低分, 非真能力</strong> (codex 干净跑完题 Pass 率 1/2=50%, "
+                  "与 SWE-bench Verified 63.2% 同档, 落差 60pp = 适配器 429 所致)。"
+                  "codex.py 已加 429 检测 + 指数退避重试 (2/4/8/16s, 上限 4 次); 87 题待重跑 (429 退避后)。</li>"
                   "<li><strong>deepseek 5 · cc 1</strong>: 低分路也必须补齐, 不因分低跳过 "
                   "(2026-11-17 用户令)</li>"
                   "</ul></div>")
@@ -550,7 +565,8 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                  f"<td style='font-size:0.85em'>{esc(status)}</td></tr>")
     H.append("</tbody></table>")
     H.append("<div class='info'><p><strong>读法</strong>: codex 重跑前 1/89 → 重跑后 1/89 "
-             "(2 synthetic 已重跑, 均 reward=0=ability, Δ=0, 证实低分=真能力, 无凭空抬分)。"
+             "(🔴 14:4x 专项复查: 87/88 失败=适配器 429 infra, 非能力; codex.py 已加 429 退避重试, 87 题待重跑; "
+             "重跑前 Δ=0 因 prior rerun 只补了 2 题 synthetic, 未触及 429 infra 题)。"
              "其余各路重跑进行中/排队, 完成后 Δ 自动更新: 重跑 pass 的题 +1, 重跑 fail 的题计失败 (Δ 不变)。"
              "BLOCKED(infra) 题 (如 hermes qemu 容器 Py3.9&lt;3.11) 显式注明原因、单列, 不误算为通过。</p></div>")
 

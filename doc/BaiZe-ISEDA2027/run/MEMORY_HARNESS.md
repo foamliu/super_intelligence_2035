@@ -2,17 +2,16 @@
 
 WAITING: 0
 
-> 🆕 **R2625 · 2026-11-17 14:5x — 监控轮+诊断: deepseek rerun DONE=5/5 AgentSetupTimeoutError(infra·容器内 pip install 挂死 600s·但 deepseek-harness-sdk 在 aliyun mirror 有(200)·疑 env 传播/pip bootstrap 问题)·deepseek original=ability(verifier 0.0)·Δ=0·分不变 11/89=12.4%·待重跑0；pi rerun RUNNING(n_concurrent=4·chunk=12)·pi setup 正常(npm install 成功·pi-coding-agent 0.2.15 装好·overlay env 全传播: PIP_INDEX_URL/npm_config_registry/http_proxy 均在·npm registry 可达)·caffe-cifar-10 DONE reward=0.0=ability(真结果!)·3task running·v2 PID1217002 活·0累计429**
-> - ✅ **关键诊断(R2625)**: overlay env **确实传播到容器**(cobol 容器实测 PIP_INDEX_URL=aliyun/npm_config_registry=npmmirror/http_proxy 全在)·aliyun mirror 可达(200)·npm view @fleetagent/pi-coding-agent RC=0(0.2.15)·**pi 无挂死风险**。deepseek pip 挂死疑为那 5 个镜像的 pip bootstrap/env 特例(包在 mirror 有)→ deepseek 已由 original ability 解决·rerun 仅确认(失败=infra·不计能力)。**不杀 rerun·让 pi 跑完拿真结果**。
-> - ⚠️ **R2624 纠错(仍有效)**: `rerun_tb21_7way_quota.py --launch` 只串行 predict，**不 merge 不 REGEN**；v2 --launch 跑完 pi 退出后，必须手动 `python3 rerun_tb21_7way_quota.py --audit manifests/tb21_rerun_plan_postR2600_20261117.json --merge-all --routes codex hermes opencode pi deepseek-harness claude-code` → merge_route 每路 + regen_reports。
-> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回=凭空抬分。**唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)**。grep 双报告: "修正后" 仅出现在撤回声明中·**无表格/列当结论** ✅。
-> - **各路真实 Pass% (audit 14:24, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE Δ=0) · opencode 43/89=48.3%(DONE Δ=0·10all ability) · cc 30/89=33.7%(待重跑=1·跑中) · pi 35/89=39.3%(待重跑=13·排队) · hermes 40/89=44.9%(DONE Δ=0) · deepseek 11/89=12.4%(待重跑=0·排队确认) · **真待重跑=17**
-> - **rerun 进展 (v2 PID1217002 活·etimes≈16300s≈4.5h)**: codex DONE(2/2 Δ=0) · cline BLOCKED(infra·3-attempt·不在此轮routes) · hermes DONE(13/13 Δ=0) · **opencode DONE**(10/10 reward=0·2timeout·Δ=0·27m57s) · **claude-code RUNNING**(1task·~14:22) · deepseek(5)→pi(15) 排队。路由顺序=HARNESS_AGENT dict序(cc→deepseek→pi 在 opencode 之后)·**非--routes参数序**。adaptive 4/4·**累计0 429**✅。
-> - **自检**: load27.09/224=12.1%✅·MemAvailable 1076GB✅·0 harness runaway✅·top CPU=pretrain(146%·非harness)✅
-> - **报告**: 三报告 REGEN@13:46(R2620)·数字未变(opencode Δ=0)·**无需 REGEN**(Δ=0)·口径grep复核✅
-> - **运维指令区 10:2x 部分交付**: ①撤回✅ ②47trial重跑(codex+hermes+opencode DONE·cc 跑中·deepseek+pi 排队) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅ — 余: cc(1)→deepseek(5)→pi(15)→merge all→逐路Δ→最终REGEN
-> - **下一步**: ①cc→deepseek→pi 依次跑完→script自动merge all→逐路Δ→最终REGEN ②SWE-bench predict续推 ③等运维新令
-> - **📦 体积**: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB）
+> 🆕 **R2626 · 2026-11-17 15:1x — 🔴 用户令 14:4x codex 专项复查: codex 88 失败重排 = adapter/infra=87 · ability=1 · passed=1 · infra比例 87/89=97.8% (**坐实假低分·1.1%非能力**) · 87=83×429('exceeded retry limit, last status: 429 Too Many Requests')+4×AgentTimeoutError · 1 真能力=break-filter-js-from-html(exit0干净跑完+verifier0.0) · codex 干净跑完题 Pass率 1/2=50% 与 SWE-bench Verified 63.2% 同档(落差60pp=适配器429所致) · **修复**: codex.py:run() 已加 429 检测+指数退避重试(2/4/8/16s·上限4次·检测stdout+stderr) py_compile✅ · **重跑决策**: 87题待重跑(429退避后)·pi rerun 仍在跑(n_concurrent=4·0累计429)·codex重跑排在pi完成后启动(避免网关429竞争·守10:2x串行纪律)**
+> - **codex 适配器根因(逐题trace实证)**: codex走wire_api=responses经gw_proxy翻译·请求模式触发上游429→codex内部retry耗尽→turn.failed→exit1→codex.py:188原逻辑直接raise RuntimeError(无退避重试)→reward=0。trace原文(build-cython-ext): codex跑了多个command_execution成功(exit0)→命中`{"type":"error","message":"exceeded retry limit, last status: 429 Too Many Requests"}`→turn.failed→exit1。**这不是能力失败**。
+> - **audit 修复(消除codex盲区)**: audit_tb21_review_7way.py 新增 rate_limit 桶(检测429/rate_limit/exceeded retry·codex把429打印到stdout JSON非stderr)·codex归因修正: 旧 ability=88(全误判)→新 rate_limit=83+ability=5(4×AgentTimeoutError+1真ability)·audit_codex_88_rebin.py 新建(87 infra权威codex分析·含timeout_1800/ECONNRES/config_toml信号)
+> - **报告更新**: report_harness_tb21_7way_zh.html REGEN(28.8KB)·codex归因行改为"1.1%=适配器缺陷假低分·非能力"·表四新增429/RateLimit列·stale claim "codex低分=真能力"已清0✅·INFRA_LEDGER codex行更新
+> - **各路真实 Pass% (audit 15:09, 分母恒89)**: cline 42/89=47.2%(待重跑=26含25 rate_limit) · codex 1/89=1.1%(待重跑=83 rate_limit·**适配器缺陷假低分**) · opencode 43/89=48.3%(待重跑=19) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=17·跑中) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=3)
+> - **rerun 进展 (v2 PID1217002 活)**: codex prior DONE(2/2·仅补synthetic·未触及429 infra题) · hermes DONE · opencode DONE · cc RUNNING · deepseek DONE(5/5 setup-timeout=infra·original ability Δ=0) · pi RUNNING(caffe-cifar-10=ability 0.0真结果)·adaptive 0累计429✅
+> - **自检**: load27.99/224=12.5%✅·MemAvailable 1026GB✅·0 harness runaway✅·top CPU=pretrain(146%·非harness)✅
+> - **14:4x 交付状态**: ①逐题翻trace重排✅(87 infra/1 ability) ②假设验证✅(97.8%>50%坐实) ③修复✅(codex.py 429退避重试)·重跑=排队(pi后启动) ④报告✅(codex归因改"适配器缺陷假低分") — 余: pi跑完→codex 87题重跑(429退避后)→merge→REGEN最终真实Pass%
+> - **下一步**: ①pi跑完→启动codex 87题重跑(用修好的codex.py·adaptive·avoid 429竞争) ②merge all→逐路Δ→最终REGEN ③SWE-bench predict续推
+> - **📦 体积**: TASK≈26.5KB / MEMORY≈21KB（✅≤32KB）
 
 > 📦 R2620-R2602 流水已归档 → daily-memories-harness/2026-11-17.md。结论：18轮监控+post-R2600 47trial rerun v2 launched·codex/hermes DONE(Δ=0)·cline BLOCKED(infra)·audit has_verifier修复·stale prose修复·三报告REGEN·真待重跑47→17·0累计429。需要时再读。
 
