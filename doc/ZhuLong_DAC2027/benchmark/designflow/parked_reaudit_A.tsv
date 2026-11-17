@@ -196,7 +196,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1794450614593_7oy74	thomas1w	hfeg0pjn099	digital	r503: sim-path+pattern-path debug (truncated) debug pattern	THIN_NO_CHECK	no	不可造: truncated thin sim-path/pattern-path debug, no checkable slice	n/a
 1793003474253_vgpcy	harrys	hfeg0pkn002	digital	r503: workspace have what infra Q&A	INFRA	no		n/a
 1791280343229_bp54q	mwxi	hfeg0pkn003	digital	r505: crontab task-recovery infra REJECT (verilog kw from workspace, task=infra)	INFRA	no		n/a
-1794377042867_o5njo	xrxiong	hfeg0pkn001	digital	r505: irun.log sim-error analysis Q&A REJECT	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1794377042867_o5njo	xrxiong	hfeg0pkn001	digital	r505: irun.log sim-error analysis Q&A REJECT	REVIVABLE_QA	done	CASE: IrunCuvpomDiagnose-001 (r701, C-A debug-Q&A CUVPOM/ELBERR, B-synthesized)	EXISTS
 1793169406310_49kzt	e0039602	hfeg0pkn005	digital	r505: xcelium usage Q&A (user: dont execute just tell me) REJECT	NO_DELIVERABLE	no	不可造: usage Q&A (dont execute just tell me), no deliverable	n/a
 1794469877801_685bd	eric1ch	hfeg0pkn001	digital	r505: LPDDR6 JEDEC KG skill-usage REJECT	NO_DELIVERABLE	no	不可造: skill-usage Q&A (LPDDR6 JEDEC KG), no deliverable	n/a
 1793704618870_pz29g	e0039602	hfeg0pkn005	digital	r505: A_Compare.rpt error analysis Q&A REJECT	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
