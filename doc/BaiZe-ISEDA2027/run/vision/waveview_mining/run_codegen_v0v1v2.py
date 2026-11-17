@@ -246,17 +246,28 @@ def grade(case, arm, wd):
         shutil.rmtree(gdir, ignore_errors=True)
     verdict = bool(res.get("pass") or res.get("ok"))
     conds = res.get("conditions") or []
+    failures = res.get("failures")
+    ff = ""
     if conds:
         k_total = len(conds)
-        k_pass = sum(1 for c in conds if c.get("ok"))
+        if all(isinstance(c, dict) for c in conds):
+            # list-of-dicts with per-condition "ok" flags
+            k_pass = sum(1 for c in conds if c.get("ok"))
+            ff = next((c.get("detail") for c in conds if not c.get("ok")), "")
+        else:
+            # conditions are labels (tuples/strings, e.g. McuuAsmGen returns
+            # [(id, desc), ...] + a "failures" list of failed ids). Count via
+            # failures; never assume .get() on non-dict elements.
+            nfail = len(failures) if isinstance(failures, (list, tuple)) else 0
+            k_pass = max(0, k_total - nfail)
+            if isinstance(failures, (list, tuple)) and failures:
+                ff = "; ".join(str(f) for f in failures[:3])
     elif res.get("k_total"):
         k_total = int(res["k_total"]); k_pass = int(res.get("k_pass", 0))
     else:
         k_total = 0; k_pass = 1 if verdict else 0
     detail = res.get("err") or res.get("detail") or res.get("ret") or ""
-    if conds:
-        ff = next((c.get("detail") for c in conds if not c.get("ok")), "")
-        detail = ff or detail
+    detail = ff or detail
     return {"verdict": verdict, "k_pass": k_pass, "k_total": k_total,
             "detail": str(detail)[:200], "submit_path": submit,
             "n_zip_members": _zip_n(submit)}
