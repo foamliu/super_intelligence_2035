@@ -247,7 +247,7 @@ tb_total_trials = sum(tb21_data[h]["trials"] for h in HARNESSES)
 tb_rank = sorted(((disp(h), tb21_data[h]["passed"], tb21_data[h]["status"]) for h in HARNESSES), key=lambda x: -x[1])
 tb_rank_str = "，".join(f"{n} {p}p({'rerun中' if st=='running' else 'done'})" for n,p,st in tb_rank if p > 0) or "全部0p"
 
-# ---- §2026-11-17 08:5x 用户令: 失败归因复核 (merged original+rerun) ----
+# ---- §2026-11-17 10:2x 用户令: 撤回「修正后 Pass%」, 改为真实 Pass% = passed/89 ----
 _tb21_review = {}
 try:
     import importlib.util as _ilu
@@ -262,13 +262,11 @@ try:
         _bk, _ = _rmod.classify_merged(_td, _all_tasks)
         _total = len(_all_tasks) or 89
         _passed = len(_bk["passed"])
-        _pure_inf = (len(_bk["quota"]) + len(_bk["conn_refused"]) +
-                     len(_bk["synthetic"]))
-        _rd = max(_total - _pure_inf, 1)
+        _pending = (len(_bk["quota"]) + len(_bk["conn_refused"]) +
+                    len(_bk["synthetic"]))
         _tb21_review[_h] = {
-            "passed": _passed, "cur_pct": round(_passed/_total*100, 1),
-            "cor_pct": round(_passed/_rd*100, 1), "pure_inf": _pure_inf,
-            "real_denom": _total - _pure_inf,
+            "passed": _passed, "real_pct": round(_passed/_total*100, 1),
+            "pending_rerun": _pending,
             "ability": len(_bk["ability"]), "quota": len(_bk["quota"]),
             "conn_ref": len(_bk["conn_refused"]),
             "synthetic": len(_bk["synthetic"]),
@@ -300,25 +298,29 @@ for _h in HARNESSES:
             pass
     _swe_screen_rows.append((disp(_h), len(_files), _real, _empty))
 
-# Build HTML fragments for review sections
+# Build HTML fragments for review sections (§2026-11-17 10:2x: no 修正后 Pass%, real Pass% only)
+_rerun_status_map = {
+    "cline-patched": "done", "codex": "done (2/2 ability)",
+    "opencode": "排队中", "claude-code": "排队中",
+    "pi": "排队中", "hermes": "排队中 (qemu BLOCKED)",
+    "deepseek-harness": "排队中",
+}
 _tb21_review_parts = []
 for _h in HARNESSES:
     _r = _tb21_review.get(_h, {})
     if not _r:
         continue
-    _gap = _r["cor_pct"] - _r["cur_pct"]
-    if _r["pure_inf"] == 0:
+    _st = _rerun_status_map.get(_h, "—")
+    if _r["pending_rerun"] == 0:
         _verdict = "失败全部为能力不足"
-    elif _gap < 1:
-        _verdict = f"纯infra仅{_r['pure_inf']}题,几乎不变"
     else:
-        _verdict = f"+{_gap:.1f}pp(inf={_r['pure_inf']})"
+        _verdict = f"待重跑 {_r['pending_rerun']} 题 ({_st})"
     _tb21_review_parts.append(
         f"<tr><td><strong>{disp(_h)}</strong></td><td>{_r['passed']}</td>"
-        f"<td>{_r['cur_pct']}%</td><td>{_r['ability']}</td>"
+        f"<td>{_r['real_pct']}%</td><td>{_r['ability']}</td>"
         f"<td>{_r['quota']}</td><td>{_r['conn_ref']}</td>"
-        f"<td>{_r['synthetic']}</td><td>{_r['pure_inf']}</td>"
-        f"<td><strong>{_r['cor_pct']}%</strong></td><td>{_verdict}</td></tr>")
+        f"<td>{_r['synthetic']}</td><td>{_r['pending_rerun']}</td>"
+        f"<td>{_st}</td><td>{_verdict}</td></tr>")
 _tb21_review_html = "\n".join(_tb21_review_parts) or "<tr><td colspan='10'>复核数据不可用</td></tr>"
 
 _swe_screen_parts = []
@@ -390,17 +392,18 @@ HTML = f"""<!DOCTYPE html>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
 
-<h2>5b. 失败归因复核（2026-11-17 用户令：失败是否均为能力不足？）</h2>
-<div class="note"><p><strong>复核方法</strong>：合并各路 original + 全部 rerun 目录后，对仍失败的题做四桶归因（ability/quota/conn_refused/synthetic），计算<strong>修正后 Pass%</strong> = passed / (89 − 纯infra)。SWE-bench Verified 用 patch 非空率初筛（非空=模型真跑→能力，空=infra未生成）。</p></div>
-<h3>① TB-2.1 四桶归因（合并后）</h3>
-<table><tr><th>Harness</th><th>Passed</th><th>当前Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>纯Infra</th><th>修正后Pass%</th><th>结论</th></tr>
+<h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
+<div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
+<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes→opencode→pi→deepseek→cc 排队）。重跑完成后重算真实 Pass%。</p></div>
+<h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
+<table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
 </table>
 <h3>② SWE-bench Verified patch 非空初筛</h3>
 <table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
 {_swe_screen_html}
 </table>
-<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主，纯 infra 题数较少。codex 86/89 失败已归 ability（低分=真能力）；deepseek 73/89 能力 + 5 synthetic；opencode/pi/hermes 各有 10-14 synthetic（未真跑，值得 rerun）；cline/cc 各 1 conn_refused。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §失败归因复核。</p></div>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主，但部分题为 infra（未真跑/quota/conn_refused），<strong>正在重跑中</strong>（47 trial）。重跑完成前，真实 Pass% = passed/89（分母恒89，<strong>不再有「修正后 Pass%」</strong>）。codex 2 synthetic 已重跑，均 reward=0=ability → 低分=真能力；deepseek 5 · cc 1 · cline 1 低分路也必须补齐。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §重跑中。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>

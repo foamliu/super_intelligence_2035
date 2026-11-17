@@ -4,9 +4,17 @@
 用户令 (2026-11-17 08:5x):
   「结果再复核一遍，看失败的 Case 是否均为能力不足，而非 infra 问题」
 
+用户令 (2026-11-17 10:2x) — 纠正归因口径:
+  「有 x 未真跑，那举措不应该是重跑吗？你把分直接加上去算什么？」
+  → 撤回「修正后 Pass% = passed / (89 − pure_infra)」(它把未真跑题从分母剔除，
+     等价于假设这些题真跑就能通过 = 凭空抬分)。未真跑题的处置只有一个正解:
+     重跑拿真实结果。真正的可对外引用成绩只有 passed / 89 (分母恒 89)。
+     BLOCKED(infra) 题单列, 不误算为通过, 剔除时必须显式注明原因。
+
 扫描 original + 所有 rerun 目录，按 task_name 合并（PASS 优先），
 对合并后仍失败的题做四桶归因：ability / quota / conn_refused / synthetic。
-修正后 Pass% = passed / (89 − pure_infra)。
+真实 Pass% = passed / 89 (分母恒 89, 唯一可对外引用口径)。
+infra 桶 (quota/conn_refused/synthetic) = 待重跑, 不从分母剔除。
 产物落 manifests/（已 gitignore）。
 """
 from __future__ import annotations
@@ -137,25 +145,24 @@ def main():
         passed = len(buckets["passed"])
         pure_infra = (len(buckets["quota"]) + len(buckets["conn_refused"])
                       + len(buckets["synthetic"]))
-        real_denom = total - pure_infra
-        cur_pct = passed / total * 100
-        cor_pct = passed / max(real_denom, 1) * 100
+        # §2026-11-17 10:2x: 真实 Pass% = passed / 89 (分母恒 89).
+        # 不再计算 corrected_pass_pct = passed/(89-pure_infra) — 那是凭空抬分.
+        # infra 桶 (quota/conn_refused/synthetic) = 待重跑, 重跑后 pass 就 +1, fail 计失败.
+        real_pct = passed / total * 100
         bc = {"ability": len(buckets["ability"]), "quota": len(buckets["quota"]),
               "conn_refused": len(buckets["conn_refused"]),
               "synthetic": len(buckets["synthetic"]),
               "not_evaluated": len(buckets["not_evaluated"])}
         result["harnesses"][h] = {
             "display": DISP[h], "evaluated": len(task_data), "passed": passed,
-            "current_pass_pct": round(cur_pct, 1), "buckets": buckets,
-            "bucket_counts": bc, "pure_infra": pure_infra,
-            "real_denom": real_denom,
-            "corrected_pass_pct": round(cor_pct, 1), "detail": detail}
+            "real_pass_pct": round(real_pct, 1), "buckets": buckets,
+            "bucket_counts": bc, "pending_rerun": pure_infra,
+            "detail": detail}
         print(f"[review] {DISP[h]:16s}: pass={passed:2d}/{total} "
-              f"({cur_pct:.1f}%) | ability={bc['ability']:2d} "
+              f"({real_pct:.1f}%) | ability={bc['ability']:2d} "
               f"quota={bc['quota']:2d} conn_ref={bc['conn_refused']:2d} "
               f"synthetic={bc['synthetic']:2d} not_eval={bc['not_evaluated']:2d} "
-              f"| pure_infra={pure_infra} real_denom={real_denom} "
-              f"corrected={cor_pct:.1f}%")
+              f"| 待重跑(infra)={pure_infra} (重跑完成后重算真实 Pass%)")
     MANIFESTS.mkdir(parents=True, exist_ok=True)
     out = MANIFESTS / f"tb21_review_7way_{time.strftime('%Y%m%d_%H%M')}.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2))
@@ -163,8 +170,8 @@ def main():
     parts = []
     for h in HARNESSES:
         r = result["harnesses"][h]
-        parts.append(f"{DISP[h]}:{r['passed']}/{total}={r['current_pass_pct']}%"
-                     f"->cor{r['corrected_pass_pct']}%(inf={r['pure_infra']})")
+        parts.append(f"{DISP[h]}:{r['passed']}/{total}={r['real_pass_pct']}%"
+                     f"(待重跑={r['pending_rerun']})")
     print("[review] MEMORY line: " + " | ".join(parts))
     return 0
 
