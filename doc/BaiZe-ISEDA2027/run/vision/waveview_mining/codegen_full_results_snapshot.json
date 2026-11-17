@@ -1080,6 +1080,32 @@
    "detail": "",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-NetlistHierModuleExtract-001/V2/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PortCatch-001",
+   "arm": "V0",
+   "k_conditions": 38,
+   "pi_seconds": 360.0,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "PortCatch-001 FAILED conditions: o: source contains hardcoded identifiers: ['XI1']",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-PortCatch-001/V0/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PortCatch-001",
+   "arm": "V1",
+   "k_conditions": 38,
+   "pi_seconds": 360.0,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
