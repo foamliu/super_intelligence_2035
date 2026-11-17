@@ -33,19 +33,29 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-17 08:2x（**交付 TB-2.1 + SWE-bench Verified 的两份 7-way 中文 HTML 评测报告**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-17 08:5x（**复核 7-way 失败 case：是否均为能力不足，而非 infra**）· 用户直令 · 最高优先 · 未完成
 
-> **用户原话**：「harness 出 TB-2.1 和 SWE-bench Verified 7-way 评测报告（中文HTML）」
+> **用户原话**：「结果再复核一遍，看失败的 Case 是否均为能力不足，而非 infra 问题」
 
-**立即执行**（本轮先做这个；基于当前已落盘的最新数据生成，**不要为了出报告而新起评测跑样本**）：
+**核心质疑（先读，这是用户真正要查的）**：已交付的 7-way 报告里，TB-2.1 每一路的「失败题」到底是**模型真做错了（能力）**，还是**压根没真跑 / 被额度 / 连接 / 环境问题吞噬（infra）**？如果大量失败其实是 infra，那当前 Pass% 就是**假低分**，必须把它们剔出来重跑或单列，不得混在「能力不足」里。
 
-1. **交付两份中文 HTML 报告**（单文件自包含、0 script、0 外链，沿用既有生成器）：
-   - ① `reports/report_harness_glm53_7way_swebench_tb_zh.html` —— SWE-bench Verified（500 题）+ Terminal-Bench 2.1（89 题）× 7 路横评，主表 + 失败归因 + 与 kimi 同口径对照；
-   - ② `reports/report_harness_tb21_7way_zh.html` —— TB-2.1 7 路专项（含逐路 Pass%、synthetic/未真跑、quota、conn_refused、ability 归因桶）。
-2. **数据务必取最新**（截至本轮）：TB-2.1 7-way = opencode43/89=48.3% · cline42/89=47.2% · hermes38/89=42.7% · pi35/89=39.3% · cc30/89=33.7% · deepseek11/89=12.4% · codex1/89=1.1%；SWE-bench Verified 用 incr_eval 当前总 resolved 与各路 Predict/Real/Eval/Resolved/Pass% 表。如某路仍有 synthetic/未真跑题，**在表内显式标注「未真跑/待重跑」**，不得把占位值写成正式成绩。
-3. **报告里写清口径与免责**：① backbone=glm-5.3-flash；② 7 路=cline/codex/opencode/claude-code/pi/hermes/deepseek；③ 分母、可比性、哪些是 infra 污染、哪些是能力；④ SWE-bench Verified 尚在进行（codex 慢，ETA 之前给过 ~11-27），标「进行中/partial」而非「最终」。
-4. **自检**：两份报告脚本生成后 grep 验证 0 script/0 外链、`porcelain=0`；`git add` 本线文件→commit→push。
-5. 心跳第一行给出：两份报告文件路径 + 各自 7 路 Pass 一行的极简数字摘要，保持 `WAITING=0`（本令优先级高于例行监控，其余主线照旧）。
+**立即执行**（基于已落盘的 `audit_tb21_quota_7way.py` 七路额度审计 + trace，做**逐路、逐失败题**复核）：
+
+1. **逐题归因表**：对 TB-2.1 每个 harness 的**每一个失败题**，落到四桶之一并给出证据：
+   - `ability`（模型真跑且答错：有 run_result、stdout、iterations>1 等真实证据）
+   - `quota`（网关额度耗尽，未跑成）
+   - `conn_refused`（连接被拒，未跑成）
+   - `synthetic/未真跑`（无 run_result、stdout≈空，占位假结果）
+   每桶给题数 + 题号清单 + top3 trace 样本。**判据与 `audit_tb21_quota_7way.py` 一致，但要把每路的「失败题全量」覆盖到，不只 rerun_targets 里的**。
+2. **重点复查这几路**（已知可疑，因为它们的「失败」里 infra 占比可能极高）：deepseek（48 synthetic）、pi（45 synthetic）、hermes（39 quota+43 synthetic）、opencode（15 quota+23 synthetic）、codex（5 synthetic+84 err=适配器）。**给出修正后的「真能力 Pass%」= passed / (89 − 纯infra未真跑题数)**，与当前报告 Pass% 并排对比，把差距写清。
+3. **判断重跑需求**：把「纯 infra 且尚未重跑」的题列成 rerun 清单（数量、ETA），标注哪些值得 rerun、哪些因环境硬约束（如 hermes qemu Py3.9<3.11）只能标 BLOCKED。
+4. **更新报告**：在 `report_harness_tb21_7way_zh.html`（及 glm53 综合报告的 TB-2.1 节）新增「失败归因复核」小节：四桶表 + 修正后 Pass% + infra 题清单；把原表里「Pass%」若含 infra 污染则加脚注说明。SWE-bench Verified 同理：对已评 route 的失败题做 ability vs infra 归因初筛（至少 cline/codex/deepseek 三路，因为 codex 有 adapter err 前科）。
+5. **诚实口径**：区分「模型能力差」与「基础设施问题」是红线（任务书 §归因红线），复核结论要能追到 trace 文件路径；不确定的题标「待人工判定」，不许猜。
+6. 保持 `WAITING=0`；心跳第一行给：各 TB-2.1 路的「修正后 Pass%」对比当前 Pass% 的一行摘要 + 纯 infra 未真跑题总数。
+
+---
+
+> 📦 §用户令·2026-11-17 08:2x（交付 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告）**✅ 已交付（R2598·commit e09da6fd2）** → run/ARCHIVE_OPERATOR_HARNESS.md；**结论**：两份报告已交付(①`report_harness_glm53_7way_swebench_tb_zh.html`·SWE-bench Verified 500+TB-2.1 89×7路·13.1KB ②`report_harness_tb21_7way_zh.html`·TB-2.1 7路专项·10.6KB)·TB-2.1 7路=opencode48.3/cline47.2/hermes42.7/pi39.3/cc33.7/deepseek12.4/codex1.1·SWE-bench进行中/partial(cline249/332·codex91/144·opencode414/498·cc286/348·pi216/296·hermes435/480·deepseek141/175)·0 script/0外链✅·porcelain=0✅·combined生成器TB计数bug已修(task_name去重+扫rerun dir+PASS优先)。需要时再读。
 
 ---
 
