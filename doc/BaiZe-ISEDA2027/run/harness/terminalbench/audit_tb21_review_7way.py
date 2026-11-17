@@ -88,6 +88,7 @@ def scan_route_all_dirs(h):
                 "iterations": int(m.group(1)) if m else -1,
                 "exc_type": ei.get("exception_type", ""),
                 "has_run_result": '"run_result"' in stdout,
+                "has_verifier": bool(vr.get("rewards")),
                 "stdout_len": len(stdout),
             })
     return task_data
@@ -119,6 +120,11 @@ def classify_merged(task_data, all_tasks):
         elif all_quota:
             cat = "quota"
         elif has_proper:
+            cat = "ability"
+        elif any(t.get("has_verifier") for t in trials) and not all_synthetic:
+            # verifier ran (gave a real score) AND agent produced output
+            # (not all_synthetic => some trial has stdout_len>=50) => real
+            # ability failure, not 未真跑/synthetic
             cat = "ability"
         else:
             cat = "synthetic"

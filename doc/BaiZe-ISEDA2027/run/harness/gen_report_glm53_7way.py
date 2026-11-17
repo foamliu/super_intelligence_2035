@@ -301,10 +301,10 @@ for _h in HARNESSES:
 # Build HTML fragments for review sections (§2026-11-17 10:2x: no 修正后 Pass%, real Pass% only)
 _rerun_status_map = {
     "cline-patched": "BLOCKED(infra): cline CLI exit1 静默崩溃, 3 attempts (orig+reruns 0932/1143), 非能力",
-    "codex": "done (2/2: bn-fit-modify=ability, break-filter-js-from-html=model started no run_result → synthetic 待补)",
-    "opencode": "排队中", "claude-code": "排队中",
-    "pi": "排队中", "hermes": "running (10/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 8 ability, 2 running; video-processing 待补)",
-    "deepseek-harness": "排队中",
+    "codex": "done (2/2: both reward=0=ability; bn-fit-modify=AgentTimeoutError, break-filter-js-from-html=agent ran+verifier 0.0)",
+    "opencode": "排队中 (真待重跑=2)", "claude-code": "排队中",
+    "pi": "排队中 (真待重跑=13)", "hermes": "running (11/12 done: 2 PASS Δ=+2, 9 ability, 1 running=sam-cell-seg; video-processing original=ability)",
+    "deepseek-harness": "排队中 (全5已归ability, rerun=确认)",
 }
 _tb21_review_parts = []
 for _h in HARNESSES:
@@ -395,7 +395,7 @@ HTML = f"""<!DOCTYPE html>
 
 <h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done，hermes 10/12 done 2 PASS Δ=+2，2 running=regex-chess/sam-cell-seg，opencode→pi→deepseek→cc 排队）。重跑完成后重算真实 Pass%。</p></div>
+<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes 11/12 done 2 PASS Δ=+2 1 running=sam-cell-seg，opencode 2→pi 13→deepseek 0→cc 1 排队；audit 修复后真待重跑=16）。重跑完成后重算真实 Pass%。</p></div>
 <h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
 <table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
@@ -404,7 +404,7 @@ HTML = f"""<!DOCTYPE html>
 <table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
 {_swe_screen_html}
 </table>
-<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主，但部分题为 infra（未真跑/quota/conn_refused），<strong>正在重跑中</strong>（47 trial）。重跑完成前，真实 Pass% = passed/89（分母恒89，<strong>不再有「修正后 Pass%」</strong>）。codex 2 synthetic 已重跑，均 reward=0=ability → 低分=真能力；deepseek 5 · cc 1 · cline 1 低分路也必须补齐。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §重跑中。</p></div>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主。audit 修复（has_verifier+not all_synthetic→ability）后，多路原 synthetic 重归 ability（agent 真跑+verifier 给 0.0），真待重跑从 47 降至 16（opencode 2·pi 12·cline 1·cc 1）。重跑完成前，真实 Pass% = passed/89（分母恒89，<strong>不再有「修正后 Pass%」</strong>）。codex 2 已重跑均 ability；deepseek 5 原始均 ability（agent ran+verifier 0.0），rerun=确认；pi 12 真未真跑（stdout=0）待重跑。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §重跑中。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>

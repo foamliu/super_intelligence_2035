@@ -416,18 +416,21 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "这是凭空抬分，不是复核准绳。<strong>未真跑题的处置只有一个正解: 重跑拿真实结果</strong>。"
                   "真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong> (分母恒 89)。</p>"
                   "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2=ability (Δ=0), "
-                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes 10/12 done (2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 8 ability=AgentTimeoutError, 2 running), "
-                  "opencode 10→pi 15→deepseek 5→cc 1 依次排队)。"
+                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes 11/12 done (2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 9 ability (8 AgentTimeoutError + regex-chess ran+verifier 0.0), 1 running=sam-cell-seg), "
+                  "opencode 2→pi 13→deepseek 0→cc 1 依次排队 (真待重跑=16; audit 修复后多路 synthetic 重归 ability)。"
                   "重跑完成后将重算真实 Pass%, "
                   "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。"
                   "环境硬约束 (BLOCKED) 题显式注明原因, 不误算为通过: hermes qemu/mteb (Py3.9&lt;3.11), "
                   "cline pytorch-model-recovery (cline CLI 静默崩溃, 3 attempts)。</p>"
                   "<p><strong>四桶定义</strong>: <code>ability</code> = 模型真跑且答错 "
-                  "(有 run_result / iterations&gt;1 / exc_type 等真实证据); "
+                  "(有 run_result / iterations&gt;1 / exc_type / verifier_result+stdout≥50 等真实证据); "
                   "<code>quota</code> = 全部 trial 命中网关额度耗尽; "
                   "<code>conn_refused</code> = 全部 trial 连接被拒 / CLI bug; "
-                  "<code>synthetic</code> = 无 run_result、stdout≈空，占位假结果 / 未真跑。"
+                  "<code>synthetic</code> = 无 run_result、stdout&lt;50 且无 verifier 证据，占位假结果 / 未真跑。"
                   "后三桶 = <strong>待重跑</strong> (infra), 重跑后按真实 reward 归入 passed 或 ability。</p>"
+                  "<p><strong>audit 修复 (R2616)</strong>: 新增 <code>has_verifier</code> 字段 (verifier_result.rewards 存在=验证器真跑了)。"
+                  "当 <code>has_verifier=True</code> 且 <code>not all_synthetic</code> (agent 有产出 stdout≥50) 时归 <code>ability</code>，"
+                  "修正了旧启发式仅查 stdout 中 'run_result'/'iterations' 字符串导致 hermes/deepseek 等 agent 的真实 0.0-reward 被误标 synthetic 的问题。</p>"
                   "<p><strong>合并逻辑</strong>: 任一 trial (跨 original + rerun) reward==1.0 即记 PASS。</p></div>")
         # 四桶表 (去掉修正后 Pass% 列, 改为真实 Pass% + 待重跑列)
         H.append("<h3>表四 · 四桶归因 + 重跑状态 (合并后)</h3>")
@@ -438,11 +441,11 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         # rerun plan: which tasks per route
         rerun_plan = {
             "cline-patched": (1, "BLOCKED(infra): cline CLI exit 1, no run_result, no stderr — 3 attempts (original 2026-11-09 + reruns 0932/1143) all infra-failed; cline auth OK but task cmd crashes silently; 1379B instruction, normal task; cline ran 332 other tasks → task-specific CLI crash, NOT ability"),
-            "codex": (2, "done (2/2, both reward=0; bn-fit-modify=AgentTimeoutError=ability, break-filter-js-from-html=model started but no run_result → audit classifies synthetic, 待补 rerun)"),
+            "codex": (2, "done (2/2, both reward=0=ability; bn-fit-modify=AgentTimeoutError, break-filter-js-from-html=agent ran+verifier gave 0.0)"),
             "opencode": (10, "排队中"),
             "claude-code": (1, "排队中"),
             "pi": (15, "排队中"),
-            "hermes": (13, "running (10/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 8 ability=AgentTimeoutError, 2 running=regex-chess/sam-cell-seg; video-processing 1 not in batch 待补)"),
+            "hermes": (13, "running (11/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 9 ability (8 AgentTimeoutError + regex-chess agent ran+verifier 0.0), 1 running=sam-cell-seg; video-processing not in batch but original=ability (stdout≥50+verifier))"),
             "deepseek-harness": (5, "排队中"),
         }
         for i, (name, up, ev, tr, er) in enumerate(rows, 1):
@@ -491,9 +494,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                              f"<td style='font-size:0.85em'>{esc(', '.join(tasks))}</td></tr>")
         H.append("</tbody></table>")
         # 重跑计划与 BLOCKED 说明
-        H.append("<div class='caveat'><p><strong>重跑计划 (47 trial)</strong>: "
-                  "cline 1 (BLOCKED·3次CLI崩溃) · codex 2 (done, both ability) · hermes 13 (running) · opencode 10 · "
-                  "pi 15 · deepseek 5 · cc 1 = 47 trial, 串行, adaptive concurrency (work=4/off=10)。</p>"
+        H.append("<div class='caveat'><p><strong>重跑计划 (47 trial, 启动时口径; audit 修复后真待重跑=16)</strong>: "
+                  "cline 1 (BLOCKED·3次CLI崩溃) · codex 2 (done, both ability) · hermes 13 (running) · opencode 2 (真synthetic, 余8已归ability) · "
+                  "pi 13 (真synthetic 12+conn_ref 1, 余2已归ability) · deepseek 5 (全已归ability, rerun=确认) · cc 1 = 真16, 串行, adaptive concurrency (work=4/off=10)。</p>"
                   "<p><strong>环境硬约束 (BLOCKED, 显式注明)</strong>:</p><ul>"
                   "<li><strong>hermes qemu 类</strong>: BLOCKED (容器 Py3.9 &lt; hermes-agent 最低 3.11, "
                   "PyPI 全版本均 requires-python≥3.11) — 从分母剔除时显式注明原因, 不误算为通过</li>"
