@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-16 15:0x）**：作者 **165** 人（编号最大 **163**）· X 已核验 **93** · 已发信 **67** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-18 00:0x）**：作者 **190** 人（编号最大 **190**）· X 已核验 **103** · 已发信 **82** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+**第五十三轮增量（2026-11-18 00:0x）**：作者网 187 → **190**（#188 Hao Wang / #189 Rohit Gandikota / #190 Srinath Srinivasan）；已发信 79 → **82**（本轮 3 封，今日 3/12）；X 已核验 **103（不变）** —— `x.com` 直连 `000`、代理 `7897` 亦 `000`（`mihomo` active、端口在听）⇒ 判上游节点故障，本轮**不猜 handle、不补地址**。
 
 **第四十四轮增量（2026-11-16 15:0x）**：作者网 162 → **165**（#161 Ze Liu 刘泽 / #162 Junyi Ao / #163 Long Zhou）；已发信 **67 → 67**（今日 12 封 = 每日硬上限已满，本轮**只建档不发信**）；X 已核验 92 → **93**（`@zeliu_`：本人主页 `href` + X 页 `og:title` / `og:description` 双源）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① `x.com/zeliu98` `404` ⇒ 不登记，改按本人主页给的 `x.com/zeliu_` 核验；② `@yanping_huang` 虽 `200` 但 `og:description` 仅 `0 followers · 38 following`、无 bio ⇒ 无法确认是 GPipe 一作本人，**按「未找到 X」处理**；③ `@longzhou` `og:title` = `Long Jiu Zhou Kaskus`（他人账号）⇒ 不登记，Long Zhou 记为「未找到 X」。
 
@@ -2712,6 +2714,45 @@
 | X 账号 | **未找到 X**（`x.com/DanHendrycks` 实测 **`404`**，`og:title`=`User Profile Not Found - X` ⇒ 不换猜变体） |
 | 状态 | **待跟踪**（无现行邮箱 ⇒ 不发信） |
 | 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。MATH 的价值主要在 harness 的「抽取 + 判等」两步与难度 1–5 分层口径；若日后拿到现行地址，问题方向应聚焦判分器实现（抽取失败率、等价判定边界），而非数据集规模。 |
+
+### 188. Hao Wang（王浩）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hao Wang（王浩；华人姓名族属 ⇒ 中文信） |
+| 机构 | **北京科技大学数理学院**（PDF 首页 `a School of Mathematics and Physics, University of Science and Technology Beijing, Beijing, China`） |
+| 代表论文 | **Harness Leverage Across Model Size**（arXiv `2611.21407`，A 轨 2026-11-18 早报；一作，共同一作标注 `∗`） |
+| 邮箱 | **`wanghao994916959@163.com`**（PDF 首页明文，`pdftotext` 实测 1 处；2026-11-16 论文内地址 ⇒ 新近，按可用处理） |
+| 主页 | **未找到**（本轮未取到个人主页） |
+| X 账号 | **未核验**（`x.com` 直连 `000`、代理 `127.0.0.1:7897` 亦 `000` ⇒ 无页面可读，按纪律**不猜 handle**） |
+| 状态 | **已发信**（#80，2026-11-18 00:08:34，中文 CJK 300 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构)`。问题方向：禁用六个可执行检查后四个均值增量与 repeat-blocking 规则 0.411 的关系、exit code vs 产物判分口径、外部工具任务下 Mingbird 优势是否被超时吃掉。 |
+
+### 189. Rohit Gandikota
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rohit Gandikota（印度语族姓名 ⇒ 英文信） |
+| 机构 | **Northeastern University**（PDF 首页作者块，与 David Bau 同组） |
+| 代表论文 | **How VLMs Plan What's Next**（arXiv `2611.21600`，A 轨 2026-11-18 早报；一作） |
+| 邮箱 | **`gandikota.ro@northeastern.edu`**（PDF 首页明文，`pdftotext` 实测 1 处） |
+| 主页 | 项目页 <https://plan.baulab.info/>（团队页，非本人页） |
+| X 账号 | **未核验**（本轮 X 不可达） |
+| 状态 | **已发信**（#81，2026-11-18 00:08:33，英文 199 词） |
+| 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。问题方向：2B/32B 上 binding/gaze head 是否同层、自然照片相对合成字母面板的 binding 精度损失、多轮追问时游标是否重置。 |
+
+### 190. Srinath Srinivasan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Srinath Srinivasan（印度语族姓名 ⇒ 英文信） |
+| 机构 | **North Carolina State University**（PDF 首页 `Dept. of Computer Science ... Email: ssrini27@ncsu.edu`） |
+| 代表论文 | **Beyond Leaderboard Ranks: Selecting Software Engineering Agents Under Budget Constraints**（arXiv `2611.21515`，2026-11-18 时窗候选；一作） |
+| 邮箱 | **`ssrini27@ncsu.edu`**（PDF 首页明文，`pdftotext` 实测） |
+| 主页 | **未找到** |
+| X 账号 | **未核验**（本轮 X 不可达） |
+| 状态 | **已发信**（#82，2026-11-18 00:08:39，英文 195 词） |
+| 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。问题方向：27/35 Pareto 步「统计不可分」所用不确定度与停点选择、成本口径差 11.7× 的来源与预算控制器需要的修正项、无任务成本先验时的替代方案。 |
 
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。

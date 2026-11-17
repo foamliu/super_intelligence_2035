@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-18（早报 3/5） · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.75; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:12px; font-size:13px; opacity:.9; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:18px; }
+  .card h2 { margin:0 0 10px; font-size:18px; color:var(--primary); line-height:1.5; }
+  .card .no { display:inline-block; background:var(--primary); color:#fff; border-radius:6px; padding:1px 9px;
+              font-size:13px; margin-right:8px; vertical-align:2px; }
+  .kv { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  .kv th, .kv td { border-top:1px solid var(--border); padding:7px 8px; text-align:left; vertical-align:top; }
+  .kv th { width:110px; color:var(--muted); font-weight:600; background:#fafbfc; }
+  tag { display:inline-block; font-size:12px; border-radius:5px; padding:1px 8px; margin-right:6px; }
+  .t-borrow { background:#e7f0ff; color:#0b3d6e; border:1px solid #b9d0f5; }
+  .t-pop { background:#eaf7ee; color:#1a7f37; border:1px solid #b7e0c3; }
+  .rm { background:#f6f8fa; border-left:3px solid var(--accent); padding:8px 14px; font-size:14px; color:#2b3b4a; margin-top:10px; border-radius:0 6px 6px 0; }
+  details { border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-top:12px; background:#fcfdff; }
+  details summary { cursor:pointer; font-weight:600; color:var(--primary); font-size:14.5px; }
+  details ul { margin:10px 0 2px; padding-left:22px; font-size:14px; }
+  details li { margin:5px 0; }
+  h3.sec { font-size:17px; color:var(--primary); margin:28px 0 10px; }
+  table.plain { width:100%; border-collapse:collapse; font-size:14px; background:var(--card); }
+  table.plain th, table.plain td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.plain th { background:#eef3f8; color:var(--primary); }
+  a { color:var(--accent); word-break:break-all; }
+  code { background:#f2f4f7; border-radius:4px; padding:1px 5px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul.tight li { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-18</h1>
+  <div class="sub"><b>早报（00:00 时窗）</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
+</header>
+
+<div class="note">
+  <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> / <code>cs.CV</code> / <code>cs.AI</code> / <code>cs.SE</code> / <code>cs.LG</code> 五路列表均 <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（142,955–153,948 B / 各 60 entry），最新 <code>published</code> = <b><code>2026-11-16T18:59:38Z</code></b>（较上一轮 <code>2026-11-14T06:49:09Z</code> 前进两天）⇒ 按 72h 窗口正常取 11-16 批，<b>未启用</b>「最近公告批」例外。
+  三篇均实测验过 <code>id_list</code> <code>200</code> + atom + PDF <code>200</code> + <code>%PDF-</code> 头。
+</div>
+
+<div class="card">
+  <h2><span class="no">1</span>Latent Lattice Language Models</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Shivam Duggal, Zongze Wu, William T. Freeman, Antonio Torralba, Richard Zhang, Eli Shechtman（MIT CSAIL + Adobe）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-16（v1；本轮未见 v2）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.LG ｜ <tag class="t-borrow">借鉴</tag> 预训练 / 残差流 / 循环状态</td></tr>
+    <tr><th>中文一句话</th><td>在垂直残差流之外，给每层加一组沿时间循环的「横向 latent 流」，直接参与 attention、KV-cache 写入、MLP 与解码；20B FineWeb-Edu token 上 406M 参数模型验证困惑度从 <b>15.41 降到 14.40</b>（参数对齐 Transformer），叠加 hyper-connections 与输入残差后 14.22 → <b>13.61</b>。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.21608">abs: 2611.21608</a> ｜ <a href="https://arxiv.org/pdf/2611.21608">pdf</a> ｜ <a href="https://shivamduggal4.github.io/latent-lattice-language-model/">项目页</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：把「每 token 计算量」与「每层常驻状态数」拆成两个可独立放大的轴，且给出与 hyper-connections / Gated DeltaNet / Mamba-2 的组合结果（Lattice-GDN 在相同困惑度下只需 1/4 原生状态）。对我们的价值是<b>可复算的小规模消融</b>：406M × 20B token 的单点即可判断「加状态」是否比「加深 / 循环」更划算。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">2</span>How VLMs Plan What's Next</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Rohit Gandikota, Arnab Sen Sharma, Adam Belfki, David Bau（Northeastern University）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-16（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CV ｜ <tag class="t-borrow">借鉴</tag> VLM 机制解释 / 视觉检索 / 多步规划</td></tr>
+    <tr><th>中文一句话</th><td>用因果 patching 拆出 VLM 描述图像时的四段机制：<b>binding heads</b> 把文本 token 对到图像区域、同一批 heads 用逗号 token 把已写答案变成「游标」、<b>select</b> 选游标之后最近的未写区域或停止、<b>gaze heads</b> 取回该区域内容；主要在 Qwen3-VL-8B-Instruct 上验证，并称该结构在 2B–32B 各规模均出现。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.21600">abs: 2611.21600</a> ｜ <a href="https://arxiv.org/pdf/2611.21600">pdf</a> ｜ <a href="https://plan.baulab.info/">项目页</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：把「模型先看哪儿」变成可观测的几个注意力头与一个显式的进度变量（游标），这给我们两个可落地的东西：① 读密集图表时可定位「证据取回失败」发生在 binding 还是 gaze；② 多轮追问的游标语义决定能否复用同一张图的中间结果。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">3</span>Harness Leverage Across Model Size: A Ladder of Five Local Agent Harnesses from 0.75B to 4.7B</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Hao Wang（北京科技大学数理学院）, Ting Huang（荣耀终端）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-16（v1；56 页 / 12 表 / 5 图）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.AI ｜ <tag class="t-borrow">借鉴</tag> agent harness / 评测口径 / 小模型</td></tr>
+    <tr><th>中文一句话</th><td>5 个 harness × 18 个产物型任务 × 4 个本地模型（0.75B–4.7B）+ 1 个 35.5B 锚点，用同一确定性 checker 打满 360 格：Mingbird 在每个规模均值最高；关掉六个可执行检查均值只动 <b>+0.080 / +0.117 / +0.003 / −0.004</b>，而单去一条 repeat-blocking 规则在 0.75B 就掉 <b>0.411</b>；357 个可用单元里 <b>127 个没有留下声明的产物</b>、其中 <b>85 个正常退出</b>。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.21407">abs: 2611.21407</a> ｜ <a href="https://arxiv.org/pdf/2611.21407">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：直接命中我们的 harness 判分口径——只读 exit code 会把「什么都没写出来」的运行记成通过。论文用预注册对比 + Holm 校正控制多重比较，并明确「4 个规模不足以判定效应随规模变大还是变小」，这种自我限定正是我们要照搬的写法。</div>
+</div>
+
+<h3 class="sec">🅱 B 轨 · 经典论文（第五十三轮 +3 → 209）</h3>
+<table class="plain">
+  <tr><th style="width:6%;">#</th><th>论文</th><th style="width:14%;">被引（2026-11-18）</th><th style="width:9%;">归线</th></tr>
+  <tr><td>207</td><td><b>DataComp-LM（DCLM）</b> <code>2406.11794</code>（NeurIPS 2024 D&amp;B）<br>240T token 标准化语料 + 53 项评测，412M–7B 规模上的数据配比消融；基线 7B 达到 64% 5-shot MMLU、比 Llama 2 7B 少 40% 计算</td><td><b>627</b></td><td>data</td></tr>
+  <tr><td>208</td><td><b>Decoupled Weight Decay Regularization（AdamW）</b> <code>1711.05101</code>（ICLR 2019）<br>证明 Adam 中 L2 与 weight decay 不等价，提出解耦 decay，并给出 λ 与学习率联动规律</td><td><b>34,224</b></td><td>pretrain</td></tr>
+  <tr><td>209</td><td><b>Prismatic VLMs</b> <code>2402.07865</code>（ICML 2024）<br>视觉主干 / 是否解冻 / 单或多阶段训练的设计空间消融，被视为 VLM 标准对照</td><td><b>325</b>（&lt;500，按「方法论常青」收）</td><td>vision</td></tr>
+</table>
+
+<details>
+<summary>本轮否决与更正（如实记录，可核验）</summary>
+<ul>
+  <li><b>ID 更正</b>：记忆中「VeriGen = <code>2308.00113</code>」错误 —— 该 ID 实测为 <i>Three Bricks to Consolidate Watermarks for LLMs</i>（WIFS 2023）。VeriGen 真 ID = <code>2308.00708</code>（TODAES 2024，OpenAlex 被引 <b>531</b>）。</li>
+  <li><b>VeriGen 未进表</b>：abs 页 <code>200</code>、OpenAlex <code>200</code>，但 PDF 三个端点实测 <code>000</code>/<code>404</code>，多次重试与后台下载未拿到完整文件 ⇒ 按「三源实测」纪律不进表，留 06:00 首选项。</li>
+  <li><b>重复不收</b>：Scaling Data-Constrained LMs <code>2305.16264</code> 已在第四十四轮收录（当时 254 被引）⇒ 本轮不重复。</li>
+  <li>三源核验：arXiv <code>id_list</code> <code>200</code> + atom（4 entry）；OpenAlex 3/3 <code>200</code>；PDF 3/3 <code>200</code> + <code>%PDF-</code>（1.66 / 6.06 / 9.72 MB，后两篇 &gt;5 MB 仅存 <code>/tmp</code>）。</li>
+</ul>
+</details>
+
+<h3 class="sec">👥 作者关系网（+3 → 190）</h3>
+<table class="plain">
+  <tr><th style="width:24%;">姓名 / 机构</th><th style="width:27%;">邮箱（来源）</th><th>X</th><th style="width:13%;">状态</th></tr>
+  <tr><td>Hao Wang（王浩）· 北京科技大学</td><td><code>wanghao994916959@163.com</code>（PDF 首页）</td><td><b>未核验</b>（X 不可达，不猜 handle）</td><td>已发信 #80</td></tr>
+  <tr><td>Rohit Gandikota · Northeastern University</td><td><code>gandikota.ro@northeastern.edu</code>（PDF 首页）</td><td><b>未核验</b>（同上）</td><td>已发信 #81</td></tr>
+  <tr><td>Srinath Srinivasan · NC State University</td><td><code>ssrini27@ncsu.edu</code>（PDF 首页）</td><td><b>未核验</b>（同上）</td><td>已发信 #82</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px;">
+  <b>voice_ready 0 / news_ready 0</b>：<code>x.com</code> 直连 <code>000</code>、经 <code>127.0.0.1:7897</code> 亦 <code>000</code>（<code>mihomo</code> active、端口在听）⇒ 无原推可核，🚫 不用二手报道冒充 <code>voice_ready</code>；三篇均无「发布 / 开源 / 首次」事件点 ⇒ 按四问第 ② 条不标 <code>news_ready</code>，不硬凑。
+</div>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线）</h3>
+<table class="plain">
+  <tr><th style="width:13%;">线</th><th>建议（可直接执行）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>把「临时 weight decay 调度」做成一次可复算小实验</b>：162M 模型 × 20B token，比较 ① 全程 λ=0.15 ② 前 44% λ=0.15 后撤除 ③ 前 44% 撤除后恢复；预注册判据 = 终点验证困惑度差 ≥0.01 nats 且撤除后 ≥73% 步数才反超。依据：<code>2611.21608</code> + <code>1711.05101</code> + <code>2611.17876</code>。</td></tr>
+  <tr><td><b>vision</b></td><td><b>加一条「同图多轮追问」口径</b>：固定图像连续问 N 轮，测第 1 轮与第 N 轮定位/读数准确率差；若差 &gt;3 点，再考虑把高分辨率 crop 压成 64-token latent memory（参照 <code>2611.21457</code> 的 7.6–9.9× 压缩与 2.5–4.8 点增益）。依据：<code>2611.21600</code> + <code>2611.21457</code>。</td></tr>
+  <tr><td><b>harness</b></td><td><b>判分器改为「产物存在性 + 空跑记 0」，exit code 只做旁证</b>：先统计自有 18–20 个产物型任务上「exit code 判分 vs 产物判分」的分数差；差 &gt;5 点即改口径。依据：<code>2611.21407</code> 的 127/357 无产物、85 个正常退出。</td></tr>
+  <tr><td><b>data</b></td><td><b>把 DCLM 的 fastText 质量分类器与混合比例作为基线重建</b>：在自有语料上复现「过滤 + 比例搜索」，报告等价评测子集分数；预注册判据 = 相对未过滤基线 ≥2 点且不增加训练 token。依据：<code>2406.11794</code>。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>Verilog 代码模型的历史基线先补 VeriGen 而非追新</b>：等 06:00 拿到 <code>2308.00708</code> PDF 后复现其「问题-描述-代码」构造与 pass@k 口径；在此之前只用已收 VerilogEval <code>2309.07544</code> / RTLLM <code>2308.05327</code> 对照，🚫 不引用未核数字。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>把「外壳版本」当成实验因子写进消融表</b>：同一模型 + 同一题集，至少 3 个 harness 版本 × 2 个 checkpointer 设置，报告「有产物率」与「空跑率」两列（不只报通过率），服务于 L1–L5 保真度判分的可复算性。依据：<code>2611.21407</code>。</td></tr>
+</table>
+
+<h3 class="sec">📎 附录 · 本轮检索式与命中（可核验）</h3>
+<table class="plain">
+  <tr><th style="width:62%;">请求</th><th>结果</th></tr>
+  <tr><td><code>id_list=2611.21608,2611.21602,2611.21600</code></td><td><code>200</code> / 9,062 B / 3 entry</td></tr>
+  <tr><td><code>cat:cs.CL</code> 列表（60 条，按提交日倒序）</td><td><code>200</code> / 153,948 B / 60 entry</td></tr>
+  <tr><td><code>cat:cs.CV</code> / <code>cs.AI</code> / <code>cs.SE</code> / <code>cs.LG</code> 同式</td><td>4/4 <code>200</code>（146,005 / 149,715 / 152,683 / 142,955 B）</td></tr>
+  <tr><td><code>id_list=2611.21407,2611.21608,2611.21600</code> + PDF ×3</td><td><code>200</code>（8,413 B）+ PDF 3/3 <code>200</code> + <code>%PDF-</code></td></tr>
+  <tr><td><code>id_list=2406.11794,2308.00113,1711.05101,2402.07865</code></td><td><code>200</code>（13,290 B / 4 entry；<code>2308.00113</code> 实测为水印论文 ⇒ ID 更正）</td></tr>
+  <tr><td>OpenAlex：<code>2406.11794</code> / <code>1711.05101</code> / <code>2402.07865</code> / <code>2308.00708</code></td><td>4/4 <code>200</code>（627 / 34,224 / 325 / 531）</td></tr>
+  <tr><td>去重剔除</td><td>3 篇 A 轨 ID 无命中；B 轨 <code>2305.16264</code> 命中已收 ⇒ 剔除</td></tr>
+</table>
+
+<footer>
+  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（早报 00:00 时窗）｜ <b>今日 3/5</b>（18:00 前补齐 4/5、5/5）｜ A 轨 3 篇 ＋ B 轨 <b>209</b> 篇（第五十三轮 +3）｜ 作者网 <b>190</b> 人（X 已核验 103）｜ 作者信累计 <b>82</b> 封（回信率 <b>0/82</b>，0 封到期）｜ voice_ready 0 ｜ news_ready 0<br>
+  免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
+</footer>
+
+</div>
+</body>
+</html>
+

@@ -5688,3 +5688,6 @@
 | 2026-11-17 | 2611.18397 | Gamer: A Generalist Vision-Language-Action Foundation Model for Long-Horizon Real-Time Game Agent | cs.CL | 收录 |
 | 2026-11-17 | 2611.16816 | Outcome-Mass Alignment: Controlling Length-Dependent Trajectory Influence in Multi-Turn LLM Agent Reinforcement Learning | cs.CL | 收录 |
 | 2026-11-17 | 2611.18471 | Do Verifier Judgments Survive Abstraction? Measuring Verification Transport for LLM Agent Evaluation | cs.CL | 收录 |
+| 2026-11-18 | 2611.21608 | Latent Lattice Language Models | cs.LG | 收录 |
+| 2026-11-18 | 2611.21600 | How VLMs Plan What's Next | cs.CV | 收录 |
+| 2026-11-18 | 2611.21407 | Harness Leverage Across Model Size: A Ladder of Five Local Agent Harnesses from 0.75B to 4.7B | cs.AI | 收录 |
