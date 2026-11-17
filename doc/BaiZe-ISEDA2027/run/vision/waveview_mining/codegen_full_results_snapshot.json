@@ -1483,6 +1483,45 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TmBusToggleAnalyze-001-v2",
+   "arm": "V1",
+   "k_conditions": 87,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TmBusToggleAnalyze-001-v2",
+   "arm": "V2",
+   "k_conditions": 87,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TmPatternXref-001",
+   "arm": "V0",
+   "k_conditions": 46,
+   "pi_seconds": 244.7,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "TmPatternXref-001 FAIL: l | rc=0 stderr=",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-TmPatternXref-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
   }
  ]
 }
