@@ -595,3 +595,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1791191409174_reo1p	dandans	hfhds201	113	verification	case	EDA-Eval-DesignFlow-Ddr6Dq5ExpZero-001	2026-11-17 04:01	r659 deepread DEBT 1: ddr6_test.sv dq5 D16-D23 exp=0 root-cause analysis-Q&A (X1P6+MD_8b+CRC-off); deepread done, synthesis DEBT r660; .75-local fresh A-domain (exhaustion claim corrected)
 1794723288564_svmca.messages.json	jzeng	hfhds201	575	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4M4M5FillAnalyze-001	2026-11-17 11:31	r675: code-comprehension/analysis-Q&A, V4 M4-M5 fill logic analyze, k=16, eda_other, A.jsonl 348
 1793672071904_ciqim	dsgao	hfhds201	1	digital	case	EDA-Eval-DesignFlow-SaNPCtrlTruthTable-001	2026-11-17 12:04	
+1793350215948_sucst	e0039602	hfeg0pkn012	17	eda_other	case	EDA-Eval-DesignFlow-Http429Diagnose-001	2026-11-17 14:17	
