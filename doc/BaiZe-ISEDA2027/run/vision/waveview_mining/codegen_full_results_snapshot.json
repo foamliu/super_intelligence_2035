@@ -1288,6 +1288,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001",
+   "arm": "V1",
+   "k_conditions": 13,
+   "pi_seconds": 355.1,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "cond n FAIL: B-specific token 'BANK_ROWS' not found in output (expected present)",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001/V1/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001",
+   "arm": "V2",
+   "k_conditions": 13,
+   "pi_seconds": 313.7,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "cond n FAIL: B-specific token 'BANK_ROWS' not found in output (expected present)",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-RhrQueueBoundsDiag-001/V2/outputs/submit.zip",
+   "n_zip_members": 2
   }
  ]
 }
