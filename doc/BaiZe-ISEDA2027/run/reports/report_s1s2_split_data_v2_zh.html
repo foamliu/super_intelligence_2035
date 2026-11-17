@@ -56,7 +56,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>目录</b>
 <ul>
 <li>§1 — <a href="#s1">最终配比表（S2 shard 级 blend TSV）</a></li>
-<li>§2 — <a href="#s2">前置工作清单（PC-1 ~ PC-5）</a></li>
+<li>§2 — <a href="#s2">前置工作清单（PC-1 ~ PC-5）</a> · <a href="#s2-1">§2.1 下载优先级表（10 项）</a></li>
 <li>§3 — <a href="#s3">时间线甘特图（11-17 → 11-30）</a></li>
 <li>§4 — <a href="#s4">Epoch 核算表（S1+S2 累计消耗 vs 可用量）</a></li>
 <li>§5 — <a href="#s5">污染检查方案</a></li>
@@ -179,13 +179,33 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="pc-card" style="border-left-color:#ff9800;">
 <h4>PC-5: MegaMath-web (Batch2) 下载 + 分词 ⏳ 待启动（建议）</h4>
 <table style="margin:8px 0;">
-<tr><th style="width:100px;">工作内容</th><td>下载 MegaMath-web 子集（~4950 files / ~887GB / ~279B tokens），落盘 /nas_user/.../IFM/MegaMath/。下载完成后立即分词（同 PC-2）。<b>已调整为 #1 下载优先级</b>，11-17 立即启动，不等 Code/Math-Reasoning 完成。</td></tr>
+<tr><th style="width:100px;">工作内容</th><td>下载 MegaMath-web 子集（~4950 files / ~887GB / ~279B tokens），落盘 /nas_user/.../IFM/MegaMath/。下载完成后立即分词（同 PC-2）。<b>已调整为 §2.1 下载优先级 #1</b>，11-17 立即启动，不等 Code/Math-Reasoning 完成。详见 §2.1 下载优先级表（共 10 项，#1~#3 为 S2 预训练语料）。</td></tr>
 <tr><th>预估耗时</th><td>下载 2–3 天（nice 19, --max-workers 2）+ 分词 1–2 天 = 合计 3–5 天</td></tr>
 <tr><th>截止日期</th><td><b>2026-11-25</b>（Soft deadline — S2 ~11-26 启动，须在此之前完成才能纳入初始 S2 blend；如延迟则用 fallback 启动 + S2 中途刷新 blend TSV）</td></tr>
-<tr><th>当前状态</th><td>⏳ 待启动 — MegaMath-web 已调整为 #1 下载优先级（11-17 立即启动），不等 Code/Math-Reasoning；Code-Reasoning (66%, ETA ~11-18) + Math-Reasoning (28%, ETA ~11-21) 继续但不抢带宽</td></tr>
+<tr><th>当前状态</th><td>⏳ 待启动 — MegaMath-web 已调整为 §2.1 下载优先级 #1（11-17 立即启动）；#2 Nemotron-CC-Math（260GB）+ #3 finemath（149GB）同步启动作为 S2 预训练数学补充；Code-Reasoning (#4, 66%, ETA ~11-18) + Math-Reasoning (#5, 28%, ETA ~11-21) 继续但不抢带宽；SFT/RL 小数据集 (#6~#10) 穿插空闲时下</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 下载 0 incomplete ② 分词 0 ERR ③ 实测 tokens ≥ 200B ④ 更新 blend TSV 为 §1.2 主方案</td></tr>
 </table>
+</div>
+<h3 id="s2-1">2.1 下载优先级表（10 项，按 S2 落地需求排序）</h3>
+<p style="font-size:12px;color:#666;">用户令（2026-11-17）：调整下载次序，跟 S1/S2 split 相关的预训练数据先下载。S2 预训练需要的（MegaMath-web / Nemotron-CC-Math / finemath）排最前；IFM 已在下的继续但不抢带宽；SFT/RL 小数据集穿插在带宽空闲时下。<code>aimo-validation-aime</code> 不下。磁盘红线：<code>/nas_user</code> 可用 ≥5TB。</p>
+<table>
+<tr><th style="width:30px;">#</th><th>repo_id</th><th>类型</th><th class="num">体积</th><th>用途</th><th>理由</th></tr>
+<tr><td><b>1</b></td><td><code>IFM/MegaMath</code> batch2 (megamath-web)</td><td><b>预训练</b></td><td class="num">887GB</td><td>S2 Math</td><td>S2 数学预训练核心来源，batch1 已完成，batch2 是消除 math 缺口的关键</td></tr>
+<tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code></td><td><b>预训练</b></td><td class="num">260GB</td><td>S2 Math</td><td>133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85</td></tr>
+<tr><td><b>3</b></td><td><code>HuggingFaceTB/finemath</code></td><td><b>预训练</b></td><td class="num">149GB</td><td>S2 Math</td><td>34B+9.6B tok，数学预训练补充</td></tr>
+<tr><td>4</td><td><code>IFM/Code-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">3.28TB</td><td>decay/post-train</td><td>已下 66%，继续完成，但<b>不是 S2 预训练瓶颈</b>（stack-v3 已解决 code 缺口）</td></tr>
+<tr><td>5</td><td><code>IFM/Math-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">4.46TB</td><td>decay/post-train</td><td>已下 28%，继续完成，但<b>不是 S2 预训练瓶颈</b></td></tr>
+<tr><td>6</td><td><code>nvidia/OpenMathInstruct-2</code></td><td>SFT</td><td class="num">12.6GB</td><td>post-train</td><td>体积小，快速下完</td></tr>
+<tr><td>7</td><td><code>nvidia/OpenCodeReasoning</code></td><td>SFT</td><td class="num">9.7GB</td><td>post-train</td><td>体积小，快速下完</td></tr>
+<tr><td>8</td><td><code>nvidia/OpenCodeInstruct</code></td><td>SFT</td><td class="num">6.9GB</td><td>post-train</td><td>体积小</td></tr>
+<tr><td>9</td><td><code>deepmind/code_contests</code></td><td>RL</td><td class="num">7.6GB</td><td>post-train RL</td><td>自带验证器</td></tr>
+<tr><td>10</td><td><code>project-numina/NuminaMath-1.5</code></td><td>SFT</td><td class="num">0.5GB</td><td>post-train</td><td>体积小</td></tr>
+</table>
+<div class="info" style="font-size:12px;">
+<b>原则</b>：S2 预训练需要的（#1~#3）排最前，立即启动；IFM 已在下的（#4~#5）继续但不抢带宽；SFT/RL 小数据集（#6~#10）穿插在带宽空闲时下。<br>
+<b>磁盘红线</b>：<code>/nas_user</code> 可用 ≥5TB，随时检查。<br>
+<b>注意</b>：data loop 进程和下载进程均已停，需要先重启 data loop，再按此优先级启动下载。<code>aimo-validation-aime</code> 不下。
 </div>
 <!-- §3 -->
 <h2 id="s3">§3 — 时间线甘特图（11-17 → 11-30）</h2>
@@ -209,6 +229,12 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </tr>
 <tr><td class="row-label">Math-Reasoning 下载 (续传)</td>
 <td style="background:#ffe0b2">🟠28%</td><td style="background:#ffe0b2">🟠</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">Nemotron-CC-Math 下载 (#2优先)</td>
+<td style="background:#bbdefb">🔵启动</td><td style="background:#ffe0b2">🟠下载</td><td style="background:#c8e6c9">✅260GB</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">finemath 下载 (#3优先)</td>
+<td style="background:#bbdefb">🔵启动</td><td style="background:#ffe0b2">🟠下载</td><td style="background:#c8e6c9">✅149GB</td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-1: stack-v3 L4 过滤</td>
 <td style="background:#bbdefb">🔵2-4h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td>
@@ -237,7 +263,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>关键路径</b>（fallback, 必做）：PC-1 (11-17→11-19) → PC-2 (11-17→11-21) → PC-3 (11-19→11-21) → PC-4 (11-21→11-23) → <b>S2 数据就绪 11-23</b> → 等 3 天 → <b>🚀 S2 启动 ~11-26</b><br>
 <b>优化路径</b>（主方案, 含 PC-5）：+ MegaMath-web 下载 (11-17→11-21, #1 优先级) + 分词 (11-19→11-26) → <b>S2 数据就绪 ~11-26 ≈ S2 启动</b> ⚠️ <b>余量≈0</b> → 建议先用 fallback 启动 S2 (~11-26)，PC-5 完成后立即刷新 blend TSV 为主方案（Math epoch 1.18→0.65）<br>
 <b>S2 训练区间</b>：~11-26 → ~12-25（350k→700k，共 350k 步 × 7s ≈ 28.4 天）<br>
-<b>IFM 下载完成节点</b>：MegaMath-web (#1优先) ~11-21 ｜ Code-Reasoning ~11-19 ｜ Math-Reasoning ~11-21
+<b>IFM/NVIDIA 下载完成节点</b>：MegaMath-web (#1优先) ~11-21 ｜ Nemotron-CC-Math (#2优先) ~11-19 ｜ finemath (#3优先) ~11-19 ｜ Code-Reasoning (#4) ~11-19 ｜ Math-Reasoning (#5) ~11-21 ｜ SFT/RL 小数据集 (#6~#10) 穿插空闲时下
 </div>
 <!-- §4 -->
 <h2 id="s4">§4 — Epoch 核算表（S1+S2 累计消耗 vs 可用量）</h2>
@@ -282,8 +308,17 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>Code</td><td class="num">865.4</td><td class="num">836~955</td><td class="num green">0.91~1.04</td><td class="green">✅</td></tr>
 <tr><td>Math</td><td class="num">396.0</td><td class="num">334.4</td><td class="num amber">1.18</td><td class="amber">🟡 <1.2 可接受</td></tr>
 </table>
+<div class="info" style="font-size:12px;margin-top:10px;">
+<b>📊 新增预训练数学数据源的 Epoch 改善</b>（用户令 2026-11-17 下载优先级 #2/#3）：<br>
+Nemotron-CC-Math-v1（#2优先，133B tok）+ finemath（#3优先，43.6B tok）均为 S2 预训练数学语料。补入后 Fallback 方案 Math epoch 改善：<br>
+① 仅 Batch1：Math 可用 334B → epoch <b>1.18</b> 🟡<br>
+② + Nemotron-CC-Math（133B）：Math 可用 467B → epoch <b>0.85</b> ✅<br>
+③ + finemath（43.6B）：Math 可用 511B → epoch <b>0.78</b> ✅<br>
+④ + MegaMath-web（主方案，279B）：Math 可用 613B → epoch <b>0.65</b> ✅<br>
+<b>结论</b>：即使 MegaMath-web 延迟，仅靠 #2+#3 即可将 fallback epoch 降到 <1.0，消除所有 >1.2 风险。
+</div>
 <div class="warn" style="font-size:12px;">
-<b>标红规则</b>：>1.2 标红🔴，1.0~1.2 标黄🟡，<1.0 标绿✅。主方案所有项 < 1.2 ✅。Fallback 单源 megamath_b1 = 1.28 🔴（首训新数据），Math 类别级 1.18 🟡。<br>
+<b>标红规则</b>：>1.2 标红🔴，1.0~1.2 标黄🟡，<1.0 标绿✅。主方案所有项 < 1.2 ✅。Fallback 单源 megamath_b1 = 1.28 🔴（首训新数据），Math 类别级 1.18 🟡（补入 #2/#3 后降至 0.85/0.78 ✅）。<br>
 <b>code_l2 = 1.15 🟡</b>（两方案均如此）：可选调整 code_l2 prop 0.18→0.15，差额给 stack-v3 0.17→0.20，则 code_l2 epoch 降到 1.01 ✅，stack-v3 升到 1.02 ✅。
 </div>
 <!-- §5 -->
@@ -328,7 +363,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h2 id="s6">§6 — 风险与缓解</h2>
 <table>
 <tr><th style="width:25px;">#</th><th>风险</th><th>等级</th><th>影响</th><th>概率</th><th>缓解措施</th></tr>
-<tr><td>1</td><td><b>Math epoch 1.18（仅 Batch1）</b> — MegaMath-web 未按时到货</td><td class="amber">🟡 中</td><td>Math 数据部分重复</td><td>~30%</td><td>① 主缓解：PC-5 尽早启动 MegaMath-web 下载，到货后 epoch 降到 0.65 ✅ ② Fallback：使用 §1.3，Math 类别级 1.18 < 1.2 可接受 ③ 备选：下载 Nemotron-CC-Math（133B），补入后 epoch 0.85 ✅ ④ 极端：将 S2 math prop 从 20% 降到 15%</td></tr>
+<tr><td>1</td><td><b>Math epoch 1.18（仅 Batch1）</b> — MegaMath-web 未按时到货</td><td class="amber">🟡 中</td><td>Math 数据部分重复</td><td>~30%</td><td>① 主缓解：PC-5 尽早启动 MegaMath-web 下载（#1优先），到货后 epoch 降到 0.65 ✅ ② 次优：Nemotron-CC-Math（#2下载优先级，133B），补入后 epoch 0.85 ✅ ③ 补充：finemath（#3下载优先级，43.6B），补入后 epoch 0.78 ✅ ④ Fallback：使用 §1.3，Math 类别级 1.18 < 1.2 可接受 ⑤ 极端：将 S2 math prop 从 20% 降到 15%</td></tr>
 <tr><td>2</td><td><b>stack-v3 L4 过滤后 token 不足</b> — 保留率 < 60%</td><td class="amber">🟡 中</td><td>Code epoch 上升</td><td>~20%</td><td>① 放宽语言过滤（保留 Top-15 而非 Top-32）② 直接使用全量 476B（epoch 更低但引入噪声）③ 保守 286B → Code 836B vs 需求 866B → epoch 1.04 仍可接受</td></tr>
 <tr><td>3</td><td><b>评测集污染</b> — stack-v3 含 benchmark 测试代码</td><td class="amber">🟡 中</td><td>评测分数虚高</td><td>~40%</td><td>① PC-3 污染闸门扩展，13-gram 全量扫描 ② ≥1 命中 → 剔除 ③ 0 命中才放行</td></tr>
 <tr><td>4</td><td><b>配比切换 Loss spike</b> — Web 74%→40% 骤变</td><td class="green">🟢 低-中</td><td>训练暂态不稳定</td><td>~30%</td><td>① pretrain 线：S4 实验显示切换时 loss 反降 ② 备选：5K~10K steps 平滑过渡窗口 ③ 监控：切换后前 1000 步密切监控 ④ decay 段在 700k–720k，S2 有 350k 步充分恢复</td></tr>
@@ -363,7 +398,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <div class="card" style="border-left-color:#4caf50;">
 <h4>优化路径（含 PC-5，推荐）</h4>
 <div class="formula" style="font-size:11px;">
-[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅ → <b>建议：先用 fallback 启动 S2 (~11-26)，PC-5 完成后刷新 blend TSV 为主方案</b>
+[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) + Nemotron-CC-Math 下载(#2优先, 11-17→11-19, 260GB) + finemath 下载(#3优先, 11-17→11-19, 149GB) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅（含 Nemotron-CC-Math 则 0.85，含 finemath 则 0.78） → <b>建议：先用 fallback 启动 S2 (~11-26)，#1~#3 到货后刷新 blend TSV 为主方案</b>
 </div>
 </div>
 <h3>7.3 Go/No-Go 条件</h3>
@@ -371,7 +406,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <table>
 <tr><th style="width:25px;">#</th><th>Go/No-Go 条件</th><th>检查方法</th><th>当前状态</th><th>不满足时处置</th></tr>
 <tr><td>G1</td><td><b>stack-v3 L4 过滤后 ≥ 250B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-1</td><td>放宽过滤或使用全量 476B</td></tr>
-<tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-2</td><td>启动 Nemotron-CC-Math 备选（133B）</td></tr>
+<tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-2</td><td>启动 Nemotron-CC-Math（#2 下载优先级，133B）或 finemath（#3，43.6B）补入</td></tr>
 <tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="amber">⏳ 待 PC-3</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验 web/code/math prop</td><td class="amber">⏳ 待 PC-4</td><td>手动调整 prop 至满足</td></tr>
 <tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-26）</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k，ETA ~11-26）</td><td>如异常推迟 S2 切换（每推迟 1 天，700k 终点延后 1 天）</td></tr>
@@ -398,7 +433,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
-<b>生成时间</b>: 2026-11-17（v2.1 修正版 — 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30 / 下载优先级调整）
+<b>生成时间</b>: 2026-11-17（v2.2 修正版 — 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30 / 新增 §2.1 下载优先级表（10 项）/ 甘特图增 Nemotron-CC-Math + finemath 下载行 / Epoch 核算增 #2/#3 改善分析 / Risk + Go-NoGo 更新）
 </p>
 </div>
 </body>
