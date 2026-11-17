@@ -2,109 +2,33 @@
 
 WAITING: 0
 
-> 📦 R2615 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·hermes 10/12·三报告REGEN·报告口径复核✅。需要时再读。
+> 🆕 **R2621 · 2026-11-17 13:5x — 监控轮: 自检全绿·hermes route COMPLETE(part2 video-processing=AgentTimeout→reward0=能力·Δ=0·final 40/89)·codex COMPLETE(Δ=0)·opencode route STARTED(PID1993894·~13:53)·audit 13:55=数字未变·报告无需REGEN(Δ=0)·0 累计429**
+> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回=凭空抬分。**唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)**。grep 双报告: "修正后" 仅出现在撤回声明中·**无表格/列当结论** ✅。
+> - **各路真实 Pass% (audit 13:55, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE Δ=0) · opencode 43/89=48.3%(待重跑=2·跑中) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(DONE Δ=0) · deepseek 11/89=12.4%(待重跑=0) · **真待重跑=17**
+> - **rerun 进展 (v2 PID1217002 活·etimes≈14600s)**: codex DONE(2/2 reward=0·1 timeout=能力·Δ=0) · cline BLOCKED(infra·3-attempt确认) · **hermes DONE**(part1 12trial 2P/8F/9exc·part2 1trial video-processing timeout→reward0=能力·Δ=0) · **opencode STARTED**(~13:53 PID1993894·2 tasks) · pi(13)→cc(1) 排队(deepseek 待重跑=0·已由前轮完成)。adaptive work 4/4·**累计0 429**(grep 3 hit 均为 "429_hits=0" 信息行)✅。
+> - **自检**: load28.58/224=12.8%✅·MemAvailable 1077GB✅·0 harness runaway(无 proc >8000%CPU / >50GB RSS)✅·top CPU=pretrain(8.8%·非harness)✅
+> - **报告**: 三报告 REGEN@13:46(R2620)·audit 13:55 数字未变·**无需 REGEN**(Δ=0)·报告口径 grep 复核✅
+> - **运维指令区 10:2x 部分交付**: ①撤回✅ ②47trial重跑(codex+hermes DONE·opencode 跑中·真待重跑=17) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅ — 余: opencode(2)→pi(13)→cc(1)→逐路Δ→最终REGEN
+> - **下一步**: ①opencode 跑完→audit→若Δ≠0则REGEN ②pi(13)→cc(1)依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
+> - **📦 体积**: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB·归档后瘦身 31.0→20.6KB）
 
-> 📦 R2619 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·audit 13:30 复核(数字未变)·hermes video-processing 末题跑中·报告口径复核✅·0 累计429。需要时再读。
-
-> 🆕 **R2620 · 2026-11-17 13:4x — 监控轮: 自检全绿·audit 13:39 复核(数字未变)·修复报告 stale prose(11/12 done→part1 12/12 done·hermes 38/89→40/89)·三报告 REGEN@13:45·hermes video-processing 跑中(~47min/3600s)·0 累计429**
-> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回=凭空抬分。**唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)**。grep 双报告: "修正后" 仅 2×(tb21)+2×(glm53)·均仅出现在撤回声明中·**无表格/列当结论** ✅。
-> - **各路真实 Pass% (audit 13:39, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1) · codex 1/89=1.1%(done Δ=0) · opencode 43/89=48.3%(待重跑=2) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · **真待重跑=17**(与 R2618 一致·无变化)
-> - **rerun 进展 (v2 PID1217002 活·etimes≈13600s)**: codex DONE(Δ=0) · cline BLOCKED(infra) · **hermes part1 12/12 done·part2 video-processing 跑中**(docker compose exec·et≈2850s/3600s) · opencode(2)→pi(13)→deepseek(5)→cc(1) 排队。adaptive work 4/4·**累计0 429**✅。
-> - **🔧 本轮修复 stale prose**: gen_report_tb21_7way.py L420+L449 + gen_report_glm53_7way.py L307+L399+L393 — "hermes 11/12 done 1 running=sam-cell-seg" → "hermes part1 12/12 done 10 ability, part2 video-processing running" · glm53 §5 hermes "38/89=42.7% rerun COMPLETE" → "40/89=44.9% rerun 进行中"。三报告 REGEN@13:45·grep 验证 stale terms 已清(sam-cell-seg 仅在 "confirmed ability" 正确语境)✅。
-> - **自检**: load27.78/224=12.4%✅·MemAvailable 1078GB✅·0 harness runaway(无 proc >8000%CPU / >50GB RSS)✅·top CPU=非harness✅
-> - **运维指令区 10:2x 部分交付**: ①撤回✅(grep 复核) ②47trial重跑(进行中·hermes 末题; 真待重跑=17·低分路 deepseek5/codex2/cc1 均在清单) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅(三报告 REGEN@13:45·stale prose 修复·去掉修正后Pass%表) — 余: hermes 末题跑完→opencode(2)→pi(13)→deepseek(5)→cc(1)→逐路Δ→最终REGEN
-> - **下一步**: ①等 hermes video-processing 跑完→merge→audit→若 Δ≠0 则 REGEN ②opencode/pi/deepseek/cc 依次跑完→逐路 Δ→最终 REGEN ③SWE-bench predict 续推 ④等运维新令
-> - **📦 体积**: TASK≈26.5KB / MEMORY≈30.5KB（✅≤32KB）
+> 📦 R2620-R2602 流水已归档 → daily-memories-harness/2026-11-17.md。结论：18轮监控+post-R2600 47trial rerun v2 launched·codex/hermes DONE(Δ=0)·cline BLOCKED(infra)·audit has_verifier修复·stale prose修复·三报告REGEN·真待重跑47→17·0累计429。需要时再读。
 
 
-> 📦 R2618 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·修复报告prose残留16/pi12→audit动态计算17/pi13·双报告REGEN·audit13:18复核·自检全绿·hermes video-processing跑中·真待重跑=17。需要时再读。
-
-> 📦 R2617 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·v2 rerun 健康推进(hermes part2 video-processing 跑中)·audit 13:06 复核·报告口径✅·发现R2616 prose残留「16/pi12」(R2618修复)。需要时再读。
-
-> 📦 R2616 流水已归档 → daily-memories-harness/2026-11-17.md。结论：audit has_verifier 修复+三报告REGEN+真待重跑47→16(实为17,见R2617注)。需要时再读。
-
-> 📦 R2614 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·hermes 8/12 done(Δ=+2)·三报告REGEN。需要时再读。
-
-> 📦 R2612 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·hermes 6/12·报告口径复核✅。需要时再读。
-
-> 📦 R2611 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cline BLOCKED(infra) 3-attempt确认+hermes Δ=+1+双报告REGEN。需要时再读。
-
-> 📦 R2611 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cline BLOCKED(infra) 3-attempt确认+hermes Δ=+1+双报告REGEN。需要时再读。
-
-> 📦 R2610 流水已归档 → daily-memories-harness/2026-11-17.md。结论：表五(重跑前后对比)入报告+rerun监控(hermes running)+自检全绿。需要时再读。
-
-> 📦 R2609 流水已归档 → daily-memories-harness/2026-11-17.md。结论：rerun监控+报告口径二次复核✅(表五未加→本轮R2610补)。需要时再读。
+> 📦 R2619-R2600 流水已归档 → daily-memories-harness/2026-11-17.md（20轮: v2 rerun launched→codex/hermes DONE·cline BLOCKED·hermes 0→12/12 done·stale prose 修复·三报告 REGEN·真待重跑47→17·0 累计429）。需要时再读。
 
 
-> 📦 R2608 流水已归档 → daily-memories-harness/2026-11-17.md。结论：红线复述+rerun监控(hermes running·codex done=能力)+报告口径复核✅。需要时再读。
-> 📦 R2605/R2606 流水已归档 → daily-memories-harness/2026-11-17.md。结论：2轮监控·v2 rerun codex route进行中·自检全绿·0 429·reports/ hygiene(27 debug文件清出)。需要时再读。
-
-
-> 📦 R2602 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控+启动post-R2600 synthetic rerun(47trial·adaptive auto·v2 relaunch修复--harness bug·codex agent=CodexTB HARD VERIFIED)。需要时再读。
-
-> 📦 R2603 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·v2 rerun codex part1进行中·自检全绿·0 429。需要时再读。
-
-> 📦 R2604 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·codex route 1/2 done·自检全绿·research 6条建议已记。需要时再读。
-
-> 📦 R2600 流水已归档 → daily-memories-harness/2026-11-17.md。结论：失败归因复核✅已交付·四桶归因·各路失败以能力不足为主·详见两报告§失败归因复核。需要时再读。
-> 📦 R2601 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控心跳·自检全绿·research日报4条harness建议纳入下次报告迭代。需要时再读。
-
-
-> 📦 R2598/R2599 流水已归档 → daily-memories-harness/2026-11-17.md（两份7way中文HTML报告已交付+combined生成器TB计数bug修复）。需要时再读。
-
-> 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
-
-> 📦 R2595/R2596/R2597 流水已归档 → daily-memories-harness/2026-11-17.md（监控轮·自检全绿·0 eval procs·adaptive off7/10·0累计429·MEMORY滚动归档33305→29420B）。需要时再读。
-
-> 📦 R2594 流水已归档 → daily-memories-harness/2026-11-17.md。结论：任务书bookkeeping(cc块归档)+token回采=BLOCKED(框架不采集)+research 2条建议纳入。需要时再读。
-> 📦 R2593 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc修复COMPLETE 30/89=33.7%(0ConnRefused✅)+4报告REGEN+4生成器更新。需要时再读。
-
-> 📦 R2589 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 16/30(2P·0ConnRefused✅)+adaptive off6→7+0 429✅。需要时再读。
->
-> 📦 R2588 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 13/30(2P·0ConnRefused✅)+adaptive off6+0 429✅。需要时再读。
-> 📦 R2587 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 12/30(2 PASS·0ConnRefused✅)+adaptive off5→6+0 429✅。需要时再读。
-> 📦 R2586 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 CORRECTED 26P/53F/10NA(0ConnRefused✅)+round2 LAUNCHED 5/30+adaptive off5+0 429✅。需要时再读。
-> 📦 R2585 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round1 COMPLETE(24P→corrected 26P in R2586)+round2 LAUNCHED+adaptive off5+0 429✅。需要时再读。
-> 📦 R2584 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 81/82(18P/51F/12NA·0ConnRefused✅)+adaptive off4→5·0 429✅+round2 manifest ready+reports porcelain=0✅。需要时再读。
->
-> 📦 R2581 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 77/82(17P/48F/12NA·0ConnRefused✅HARD VERIFIED)+adaptive off4→5·0 429✅+round2 manifest(26题)ready+reports porcelain=0✅。需要时再读。
-> 📦 R2580 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 76/82(17P/48F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive off4→5·0 429✅+round2 manifest(26题)ready+reports porcelain=0✅。需要时再读。
-> 📦 R2579 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 75/82(17P/17×502infra/30×ability/11NA·0ConnRefused✅HARD VERIFIED)+adaptive off4·0 429✅+round2 manifest(26题)ready+reports porcelain=0✅。需要时再读。
-> 📦 R2578 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 74/82(17P/15×502infra/31×ability/11NA·0ConnRefused✅HARD VERIFIED)+adaptive off4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2577 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 74/82(17P/15×502infra/30×ability/12NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2576 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 73/82(17P/15×502infra/30×ability/11NA·+2 PASS·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+round2 manifest修正(17→26题)+reports porcelain=0✅。需要时再读。
-> 📦 R2574 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 70/82(15P/44F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2573 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 69/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2572 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2571 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P/42F/11NA·0ConnRefused✅HARD VERIFIED)+NA分类完成(11 real=全3600s timeout)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2570 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(15P·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+gateway 403✅+reports porcelain=0✅。需要时再读。
-> 📦 R2569 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 68/82(14P·0ConnRefused✅HARD VERIFIED)+adaptive验收全通过(--now 4时刻+--dry-run·修自测state污染)+gateway functional+reports porcelain=0✅。需要时再读。
-> 📦 R2568 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 66/82(15P/41F/10NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2567 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 65/82(14P/40F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2566 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 65/82(14P/38F/13NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2565 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 63/82(14P/38F/11NA·0ConnRefused✅HARD VERIFIED)+adaptive work4·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2564 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 59/82(14P/35F/10NA·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+reports porcelain=0✅。需要时再读。
-> 📦 R2563 流水已归档 → daily-memories-harness/2026-11-16.md。结论：监控轮·cc 56/82(13P/34F/9NA·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+reports porcelain=0✅。需要时再读。
->
-> 📦 R2562-R2556 流水已归档 → daily-memories-harness/2026-11-16.md。结论：7轮监控·cc 44→56/82(9→13P·0ConnRefused✅HARD VERIFIED)+adaptive off10/10·0 429✅+gateway functional。需要时再读。
->
-> 📦 R2551-R2548 流水已归档 → daily-memories-harness/2026-11-15.md。结论：4轮监控·cc 35→40/82(7P·0ConnRefused✅)+pi COMPLETE 45/46(8P)+opencode 41results(10P)+adaptive off10/10·0 429✅+7way REGEN(pi35/89)·adaptive state修复(测试污染→reset)。需要时再读。
-
-> 📦 R2545-R2540 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 29→33/82渐进(4→5P·0ConnRefused✅)+opencode 35→41results(10P)+pi 11→29/46(1→5P)+deepseek 0→25/48(0P)+adaptive 8→10实跑验证✅。需要时再读。
-
-> 📦 R2539-R2530 流水已归档 → daily-memories-harness/2026-11-15.md。结论：cc 23→29/82(4P·0ConnRefused✅)+opencode 20→38/38(9→10P)+pi 10→12/46+adaptive验收4/4✅+4适配器RuntimeError修复+3zombie清理+自检全绿。需要时再读。
-
-> 📦 R2511-R2528 流水已归档 → daily-memories-harness/2026-11-15.md。结论：18轮·cc rerun 15→24/82渐进(4P/16F/NA渐变·0ConnRefused✅HARD VERIFIED)+opencode rerun 0→21/38(9P·adaptive auto n=9→10·0 429✅)+adaptive_concurrency落码+验收4/4✅+4适配器RuntimeError修复。需要时再读。
+> 📦 R2599-R2511 流水已归档 → daily-memories-harness/2026-11-15~17.md（cc rerun 0→30/89=33.7%(0ConnRefused✅)·opencode→48.3%·pi→39.3%·deepseek→12.4%·adaptive_concurrency落码+验收✅·两份7way报告交付·0累计429）。需要时再读。
 
 ## 📊 进度快照
 
-PHASE:        R2620 监控轮·audit 13:39 复核·stale prose 修复+三报告REGEN@13:45·hermes part1 12/12 done part2 video-processing 跑中·真待重跑=17·v2 rerun 进行中·WAITING=0
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2502(hermes rerun)·R2503-R2589(cc/opencode/deepseek/pi rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2610(表五前后对比)·R2611(cline BLOCKED+hermes Δ=+1)·R2614-R2619(hermes rerun 监控 8→12/12 done)·R2616(audit has_verifier修复+真待重跑47→17)·R2620(stale prose 修复+三报告REGEN)
-当前动作:     R2620: 监控轮——audit 13:39 复核(数字未变)·修复报告 stale prose(gen_report_tb21_7way.py L420+L449·gen_report_glm53_7way.py L307+L399+L393: 11/12 done→part1 12/12 done·hermes 38/89→40/89)·三报告 REGEN@13:45·自检全绿(load27.78/224=12.4%·0 harness runaway)·报告口径 grep 复核✅
-下一步:       ①等hermes video-processing跑完→merge→audit→若Δ≠0则REGEN ②opencode(2)→pi(13)→deepseek(5)→cc(1)依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
+PHASE:        R2621 监控轮·hermes route COMPLETE(Δ=0)·codex COMPLETE(Δ=0)·opencode STARTED·audit 13:55 数字未变·真待重跑=17·v2 rerun 进行中·WAITING=0
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2610(表五前后对比)·R2611(cline BLOCKED+hermes Δ=+1)·R2616(audit has_verifier修复+真待重跑47→17)·R2620(stale prose修复+三报告REGEN)·R2621(hermes+codex route DONE·opencode STARTED)
+当前动作:     R2621: 监控轮——audit 13:55 复核(数字未变)·hermes route COMPLETE(part2 video-processing=timeout=能力·Δ=0·final 40/89)·codex COMPLETE(Δ=0)·opencode route STARTED(PID1993894 ~13:53·2 tasks)·自检全绿(load28.58/224=12.8%·Mem 1077GB·0 runaway)·报告无需REGEN(Δ=0)
+下一步:       ①opencode(2)跑完→audit→若Δ≠0则REGEN ②pi(13)→cc(1)依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
 ERROR_COUNT:  0
- 体积: TASK≈26.5KB / MEMORY≈30.5KB（✅≤32KB）
- 真实 Pass% (audit 1339, 分母=89): cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(done·待重跑=0) · opencode 43/89=48.3%(待重跑=2) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · 真待重跑=17
+ 体积: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB）
+ 真实 Pass% (audit 1355, 分母=89): cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE·待重跑=0) · opencode 43/89=48.3%(待重跑=2·跑中) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(DONE·待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · 真待重跑=17
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
