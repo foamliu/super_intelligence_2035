@@ -1548,6 +1548,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TotemSC-001",
+   "arm": "V0",
+   "k_conditions": 28,
+   "pi_seconds": 280.1,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "grader: FineSim not found on this host",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-TotemSC-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TotemSC-001",
+   "arm": "V1",
+   "k_conditions": 28,
+   "pi_seconds": 311.4,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "grader: FineSim not found on this host",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-TotemSC-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
   }
  ]
 }
