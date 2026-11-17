@@ -11,13 +11,17 @@ WAITING: 0
 > - **下一步**: ①等hermes跑完→merge→REGEN ②后续路依次跑完→逐路Δ更新→REGEN ③SWE-bench predict续推
 > - **📦 体积**: TASK≈27.2KB / MEMORY≈30.7KB（✅≤32KB）
 
-> 🆕 **R2612 · 2026-11-17 12:0x — 监控轮: hermes rerun 6/12(4 running·2 pending)·报告口径复核✅·自检全绿·0累计429**
-> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass%」已撤回; 唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)。复核两份报告: "修正后 Pass%" 仅出现在**撤回声明**中(2处×2报告=4次, 均为"已撤回"/"不再有"语境), 表格列头 = "真实 Pass%(passed/89)" + 表五"重跑前/后 Pass%", **无任何将修正后 Pass% 当结论的表格/列** ✅。
-> - **rerun 进展 (v2 process 1217002 仍在跑·etimes≈7600s)**: codex DONE(2/2=ability·Δ=0) · cline BLOCKED(infra·1题) · **hermes running 6/12 done(1 PASS=bn-fit-modify·5 AgentTimeoutError=ability·4 running·2 pending)** · opencode 10 → pi 15 → deepseek 5 → cc 1 排队。hermes result.json: n_total=12, completed=6, running=4, pending=2。
-> - **自检**: load29/224✅·CPU87.7%idle✅·mem1052GB avail✅·0 harness runaway(harbor进程均<0.1%CPU)✅·adaptive work4/4·累计0 429✅
-> - **运维指令区 10:2x**: ①撤回✅(报告仅撤回声明) ②报告重跑中口径✅ ③47trial重跑(进行中·hermes 6/12) ④表五前后对比✅(hermes Δ=+1·cline BLOCKED) — 余: hermes跑完→opencode→pi→deepseek→cc→逐路Δ→REGEN
-> - **下一步**: ①等hermes跑完→merge→REGEN ②后续路依次跑完→逐路Δ更新→REGEN ③SWE-bench predict续推
-> - **📦 体积**: TASK≈27.2KB / MEMORY≈30.4KB（✅≤32KB）
+> 🆕 **R2614 · 2026-11-17 12:2x — 监控轮: hermes rerun 8/12 done(2 PASS Δ=+2·6 ability·4 running)·三报告REGEN(hermes 40/89=44.9%)·audit重跑·自检全绿·0累计429**
+> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回; 唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)。本轮 grep 三份报告: "修正后 Pass%" 仅出现在撤回声明中, **无任何表格/列将其当结论** ✅。
+> - **rerun 进展 (v2 process PID1217002 仍在跑·etimes≈8600s)**: codex DONE(2/2: bn-fit-modify=AgentTimeoutError=ability·break-filter-js-from-html=model started no run_result→audit classifies synthetic 待补) · cline BLOCKED(infra·1题·3次CLI崩溃) · **hermes 8/12 done**(2 PASS=bn-fit-modify+portfolio-optimization Δ=+2·6 AgentTimeoutError=ability·4 running=regex-chess/sam-cell-seg/sanitize-git-repo/tune-mjcf·video-processing 1 not in batch 待补) · opencode 10 → pi 15 → deepseek 5 → cc 1 排队(串行·adaptive auto)。
+> - **真实 Pass% (重跑中, 分母=89, audit 1217)**: cline 42/89=47.2%(1 BLOCKED) · codex 1/89=1.1%(done·Δ=0·1 synthetic 待补) · opencode 43/89=48.3%(待10) · cc 30/89=33.7%(待1) · pi 35/89=39.3%(待15) · **hermes 40/89=44.9%(running·Δ=+2·待5)** · deepseek 11/89=12.4%(待5)
+> - **本轮动作**: audit_tb21_review_7way.py 重跑→manifests/tb21_review_7way_20261117_1217.json · gen_report_tb21_7way.py + gen_report_glm53_7way.py + gen_cline_special.py 三报告REGEN(hermes 38→40 Δ=+2) · 生成器caveat+rerun_plan文字更新(hermes 3/12→8/12·codex edge case 标注)
+> - **自检**: load28.98/224✅·mem1028GB avail✅·0 harness runaway(docker compose均<0.1%CPU)✅·adaptive work4/4·累计0 429✅
+> - **运维指令区 10:2x 部分交付**: ①撤回✅(报告仅撤回声明·grep复核无当结论用) ②报告重跑中口径✅(三报告REGEN) ③47trial重跑(进行中·hermes 8/12·codex done·cline BLOCKED·余排队) ④表五前后对比✅(hermes Δ=+2) — 余: hermes跑完→video-processing待补→opencode→pi→deepseek→cc→逐路Δ→最终REGEN
+> - **下一步**: ①等hermes 4 running跑完→video-processing待补→merge→REGEN ②后续路依次跑完→逐路Δ更新→REGEN ③SWE-bench predict续推
+> - **📦 体积**: TASK≈27.2KB / MEMORY≈30.7KB（✅≤32KB）
+
+> 📦 R2612 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·hermes 6/12·报告口径复核✅。需要时再读。
 
 > 📦 R2611 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cline BLOCKED(infra) 3-attempt确认+hermes Δ=+1+双报告REGEN。需要时再读。
 

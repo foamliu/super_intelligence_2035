@@ -415,8 +415,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "该口径把未真跑 / 额度 / 连接拒绝的题直接从分母剔除，等价于<strong>默认这些题「真跑就能通过」</strong>，"
                   "这是凭空抬分，不是复核准绳。<strong>未真跑题的处置只有一个正解: 重跑拿真实结果</strong>。"
                   "真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong> (分母恒 89)。</p>"
-                  "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2=ability, "
-                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes running 3/12=ability, opencode→pi→deepseek→cc 依次排队)。"
+                  "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2=ability (Δ=0), "
+                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes 8/12 done (2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 6 ability=AgentTimeoutError, 4 running), "
+                  "opencode 10→pi 15→deepseek 5→cc 1 依次排队)。"
                   "重跑完成后将重算真实 Pass%, "
                   "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。"
                   "环境硬约束 (BLOCKED) 题显式注明原因, 不误算为通过: hermes qemu/mteb (Py3.9&lt;3.11), "
@@ -437,11 +438,11 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         # rerun plan: which tasks per route
         rerun_plan = {
             "cline-patched": (1, "BLOCKED(infra): cline CLI exit 1, no run_result, no stderr — 3 attempts (original 2026-11-09 + reruns 0932/1143) all infra-failed; cline auth OK but task cmd crashes silently; 1379B instruction, normal task; cline ran 332 other tasks → task-specific CLI crash, NOT ability"),
-            "codex": (2, "done (2/2, both reward=0=ability)"),
+            "codex": (2, "done (2/2, both reward=0; bn-fit-modify=AgentTimeoutError=ability, break-filter-js-from-html=model started but no run_result → audit classifies synthetic, 待补 rerun)"),
             "opencode": (10, "排队中"),
             "claude-code": (1, "排队中"),
             "pi": (15, "排队中"),
-            "hermes": (13, "running (3/12 done, all AgentTimeoutError=ability; qemu类=BLOCKED Py3.9<3.11)"),
+            "hermes": (13, "running (8/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 6 ability=AgentTimeoutError, 4 running=regex-chess/sam-cell-seg/sanitize-git-repo/tune-mjcf; video-processing 1 not in batch 待补)"),
             "deepseek-harness": (5, "排队中"),
         }
         for i, (name, up, ev, tr, er) in enumerate(rows, 1):
