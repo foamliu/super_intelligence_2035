@@ -79,9 +79,15 @@ def scan_route_all_dirs(h):
             # §2026-11-17 14:4x: codex 适配器盲区修复 — 检测 429/rate_limit/
             # exceeded retry (codex 把 429 事件打印到 stdout JSON, 非 stderr)。
             # 命中 = adapter/infra, 不是能力 (实测 87/88 codex 失败 = 429 infra)。
+            # §2026-11-17 15:3x: 收紧 429 匹配 —— 裸 '429' 会误命中 ISO 时间戳
+            # (.429Z)、会话 ID (conv_...429...)、durationMs (62429) 等。改为只在
+            # HTTP 错误上下文中匹配：'429 Too Many' / 'status: 429' / 'HTTP 429'。
+            # codex 真实 429 = "exceeded retry limit, last status: 429 Too Many
+            # Requests" → 仍被 '429 Too Many' + 'exceeded.{0,20}retry' 命中 ✅。
             rate_limit = bool(re.search(
-                r"429|rate[ _-]?limit|Too Many Requests|"
-                r"exceeded.{0,12}retry|retry.{0,12}exceeded|retries? exceeded",
+                r"429 Too Many|status[ _:]?\s*429|HTTP[ _]?429|"
+                r"rate[ _-]?limit|Too Many Requests|"
+                r"exceeded.{0,20}retry|retry.{0,20}exceeded|retries? exceeded",
                 stdout + "\n" + (meta.get("stderr", "") or ""), re.I))
             exit_code = meta.get("exit_code")
             # §2026-11-17 14:5x point④: codex 适配器「掐断」检测。

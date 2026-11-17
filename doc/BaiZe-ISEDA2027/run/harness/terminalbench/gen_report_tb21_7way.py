@@ -212,7 +212,7 @@ def _review_7way_merged():
         total = len(all_tasks) or 89
         passed = len(buckets["passed"])
         pending_rerun = (len(buckets["quota"]) + len(buckets["conn_refused"])
-                         + len(buckets["synthetic"]))
+                         + len(buckets["synthetic"]) + len(buckets["rate_limit"]))
         result[h] = {
             "display": mod.DISP[h], "passed": passed, "total": total,
             "real_pct": round(passed / total * 100, 1),
@@ -220,6 +220,7 @@ def _review_7way_merged():
             "bucket_counts": {
                 "ability": len(buckets["ability"]),
                 "quota": len(buckets["quota"]),
+                "rate_limit": len(buckets["rate_limit"]),
                 "conn_refused": len(buckets["conn_refused"]),
                 "synthetic": len(buckets["synthetic"]),
                 "not_evaluated": len(buckets["not_evaluated"]),
@@ -263,9 +264,9 @@ INFRA_LEDGER = {
         "未启动",
     ),
     "codex": (
-        "87/88 失败 = 适配器 429/rate_limit (gateway 429 → codex 内部 retry 耗尽 → turn.failed → exit 1 → raise RuntimeError; 无退避重试); 1 真能力失败",
-        "codex.py:run() 加 429 检测 + 指数退避重试 (2/4/8/16s, 上限 4 次, 检测 stdout+stderr); 87 题待重跑",
-        "适配器已修 (2026-11-17 14:4x); 87 题待重跑 (429 退避后); 1.1% = 适配器缺陷假低分, 非真能力",
+        "修复前 88 失败 = 82 适配器 429/rate_limit (gateway 429 → codex 内部 retry 耗尽 → turn.failed → exit 1 → raise RuntimeError; 无退避重试) + 4 AgentTimeoutError + 1 timeout + 1 真能力; regex 收紧后 81 rate_limit + 6 ability",
+        "codex.py:run() 修复①(exit-code非0不误杀:解析stdout NDJSON·agent_worked→verifier照常判分) + 修复②(429退避重试2/4/8/16s上限4次); 83题429重跑中(PID348003·n_concurrent=4·已出1 PASS=build-pov-ray)",
+        "适配器已修 (2026-11-17 14:5x); 83题429重跑中; 修复前1/89=1.1%=适配器缺陷假低分, 重跑后2/89=2.2%(进行中)",
     ),
     "claude-code": (
         "89 ConnectionRefused (适配器无法连接网关, 模型从未运行)",
@@ -403,13 +404,12 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "但 hermes-agent 无兼容版本→HERMES_PY_TOO_OLD)。</li>"
              "<li><strong>opencode / pi / deepseek</strong>: synthetic(未真跑) + quota 残留 → 逐路串行重跑 "
              "(cc 完成后启动, 避免网关额度竞争)。</li>"
-             "<li><strong>codex</strong>: 87/88 失败 = 适配器 429/rate_limit (gateway 429 → codex 内部 retry 耗尽 → "
-             "turn.failed → exit 1 → 无退避重试); codex.py 已加 429 检测 + 指数退避重试 (2/4/8/16s, 上限 4 次); "
-             "87 题待重跑 (429 退避后); <strong>1.1% = 适配器缺陷假低分, 非真能力</strong> (codex 干净跑完题 Pass 率 1/2=50%, "
-             "与 SWE-bench Verified 63.2% 同档, 落差 60pp = 适配器 429 所致)。</li>"
+             "<li><strong>codex</strong>: 修复前 88 失败 = 适配器 429/rate_limit (gateway 429 → codex 内部 retry 耗尽 → "
+             "turn.failed → exit 1 → 无退避重试); codex.py 修复①(exit-code非0不误杀·解析stdout NDJSON·agent_worked→verifier照常判分) + ②(429退避重试2/4/8/16s上限4次); "
+             "83题429重跑中 (PID348003·n_concurrent=4·已出1 PASS=build-pov-ray); <strong>修复前1/89=1.1%=适配器缺陷假低分, 当前2/89=2.2%(重跑进行中)</strong>。</li>"
              "<li><strong>cline</strong>: 额度已清零; 余 1 conn_refused (pytorch-model-recovery) 经 3 次重跑 (original 2026-11-09 + reruns 0932/1143) 均 cline CLI exit 1 无输出 → "
              "<strong>BLOCKED(infra)</strong> (cline CLI 在该任务环境静默崩溃, cline auth OK, 1379B 正常 instruction, cline 跑通 332 题→任务特定 CLI 崩溃, 非能力); "
-             "另 4 synthetic 待补跑。</li></ul></div>")
+             "另 2 rate_limit 待重跑 (regex 收紧后识别)。</li></ul></div>")
 
     # ---- §2026-11-17 10:2x 用户令: 撤回「修正后 Pass%」, 改为「重跑中」真实口径 ----
     if review_data:
@@ -445,13 +445,13 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "<th>重跑状态</th></tr></thead><tbody>")
         # rerun plan: which tasks per route
         rerun_plan = {
-            "cline-patched": (1, "BLOCKED(infra): cline CLI exit 1, no run_result, no stderr — 3 attempts (original 2026-11-09 + reruns 0932/1143) all infra-failed; cline auth OK but task cmd crashes silently; 1379B instruction, normal task; cline ran 332 other tasks → task-specific CLI crash, NOT ability"),
-            "codex": (87, "🔴 14:4x 专项复查: 87/88 失败=适配器 429/rate_limit infra (83×429 'exceeded retry limit, last status: 429 Too Many Requests' + 4×AgentTimeoutError), 仅 1 真能力 (break-filter-js-from-html: exit 0 干净跑完+verifier 0.0); codex.py 已加 429 退避重试 (2/4/8/16s×4); 87 题待重跑 (429 退避后); 1.1%=适配器缺陷假低分·非能力·干净跑完Pass率1/2=50%与SWE-bench 63.2%同档"),
-            "opencode": (10, "排队中"),
-            "claude-code": (1, "排队中"),
-            "pi": (15, "排队中"),
-            "hermes": (13, "running (part1 12/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 10 ability (8 AgentTimeoutError + regex-chess agent ran+verifier 0.0 + sam-cell-seg confirmed ability); part2 video-processing running, original=ability (stdout≥50+verifier))"),
-            "deepseek-harness": (5, "排队中"),
+            "cline-patched": (3, "待重跑: 2 rate_limit + 1 conn_ref (cline CLI exit 1 静默崩溃, 3 attempts, BLOCKED)"),
+            "codex": (81, "🔴 14:5x: 修复前88失败=适配器429/rate_limit infra(82×429+4timeout+1exit2+1ability); codex.py修复①(exit-code不误杀)+②(429退避重试); 83题429重跑中(PID3480003·n_concurrent=4·已出1 PASS=build-pov-ray→2/89=2.2%); regex收紧后81 rate_limit+6 ability"),
+            "opencode": (10, "待重跑: 9 rate_limit + 1 synthetic"),
+            "claude-code": (2, "待重跑: 1 rate_limit + 1 conn_ref"),
+            "pi": (12, "待重跑: 1 conn_ref + 11 synthetic=未真跑"),
+            "hermes": (9, "待重跑: 9 rate_limit (qemu/mteb BLOCKED Py3.9<3.11)"),
+            "deepseek-harness": (1, "待重跑: 1 rate_limit"),
         }
         for i, (name, up, ev, tr, er) in enumerate(rows, 1):
             hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
@@ -507,20 +507,19 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         H.append("</tbody></table>")
         # 重跑计划与 BLOCKED 说明
         H.append(f"<div class='caveat'><p><strong>重跑计划 (47 trial, 启动时口径; audit 修复后真待重跑={_total_pending})</strong>: "
-                  "cline 1 (BLOCKED·3次CLI崩溃) · codex 87 (🔴14:4x: 429 infra 待重跑, codex.py 已加退避重试) · hermes 13 (running) · opencode 2 (真synthetic, 余8已归ability) · "
-                  f"pi 13 (真synthetic 12+conn_ref 1, 余2已归ability) · deepseek 5 (全已归ability, rerun=确认) · cc 1 = 真{_total_pending}, 串行, adaptive concurrency (work=4/off=10)。</p>"
+                  "cline 3 (2 rate_limit + 1 conn_ref·BLOCKED) · codex 81 (🔴14:5x: 429 infra, 83题重跑中·已出1 PASS) · hermes 9 (rate_limit·qemu/mteb BLOCKED Py3.9<3.11) · opencode 10 (9 rate_limit + 1 synthetic) · "
+                  f"pi 12 (1 conn_ref + 11 synthetic=未真跑) · deepseek 1 (rate_limit) · cc 2 (1 rate_limit + 1 conn_ref) = 真{_total_pending}, 串行, adaptive concurrency (work=4/off=10)。</p>"
                   "<p><strong>环境硬约束 (BLOCKED, 显式注明)</strong>:</p><ul>"
                   "<li><strong>hermes qemu 类</strong>: BLOCKED (容器 Py3.9 &lt; hermes-agent 最低 3.11, "
                   "PyPI 全版本均 requires-python≥3.11) — 从分母剔除时显式注明原因, 不误算为通过</li>"
                   "<li><strong>cline pytorch-model-recovery</strong>: BLOCKED(infra) — 3 次重跑 (original 2026-11-09 + reruns 0932/1143) "
                   "均 cline CLI exit 1, no run_result, no stderr (cline auth OK, 1379B 正常 instruction, cline 跑通 332 题 → "
                   "任务特定 CLI 静默崩溃, 非能力); 同题 hermes 已 PASS → 确认非任务环境问题</li>"
-                  "<li><strong>codex 🔴 14:4x 专项复查</strong>: 87/88 失败 = <strong>适配器 429/rate_limit infra</strong> "
-                  "(83×429 'exceeded retry limit, last status: 429 Too Many Requests' + 4×AgentTimeoutError), "
-                  "仅 1 真能力 (break-filter-js-from-html: exit 0 干净跑完+verifier 0.0)。"
-                  "<strong>1.1% = 适配器缺陷假低分, 非真能力</strong> (codex 干净跑完题 Pass 率 1/2=50%, "
-                  "与 SWE-bench Verified 63.2% 同档, 落差 60pp = 适配器 429 所致)。"
-                  "codex.py 已加 429 检测 + 指数退避重试 (2/4/8/16s, 上限 4 次); 87 题待重跑 (429 退避后)。</li>"
+                  "<li><strong>codex 🔴 14:5x 专项复查</strong>: 修复前 88 失败 = <strong>适配器 429/rate_limit infra</strong> "
+                  "(82×429 'exceeded retry limit, last status: 429 Too Many Requests' + 4×AgentTimeoutError + 1 exit2 + 1 真能力)。"
+                  "<strong>修复前 1/89=1.1% = 适配器缺陷假低分, 非真能力</strong> (codex.py 修复①: exit-code非0不误杀, 解析stdout NDJSON, agent_worked→verifier照常判分; "
+                  "修复②: 429退避重试 2/4/8/16s 上限4次)。"
+                  "83题429重跑中 (PID348003·n_concurrent=4·adaptive auto), 已出1 PASS (build-pov-ray) → 当前 2/89=2.2% (重跑进行中)。</li>"
                   "<li><strong>deepseek 5 · cc 1</strong>: 低分路也必须补齐, 不因分低跳过 "
                   "(2026-11-17 用户令)</li>"
                   "</ul></div>")
@@ -564,9 +563,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                  f"<td class='num {pend_cls}'>{pending}</td>"
                  f"<td style='font-size:0.85em'>{esc(status)}</td></tr>")
     H.append("</tbody></table>")
-    H.append("<div class='info'><p><strong>读法</strong>: codex 重跑前 1/89 → 重跑后 1/89 "
-             "(🔴 14:4x 专项复查: 87/88 失败=适配器 429 infra, 非能力; codex.py 已加 429 退避重试, 87 题待重跑; "
-             "重跑前 Δ=0 因 prior rerun 只补了 2 题 synthetic, 未触及 429 infra 题)。"
+    H.append("<div class='info'><p><strong>读法</strong>: codex 重跑前 1/89=1.1% → 重跑后 2/89=2.2% "
+             "(🔴 14:5x: 修复前88失败=适配器429 infra(82×429+4timeout+1exit2+1ability), 非能力; codex.py修复①(exit-code不误杀)+②(429退避重试); "
+             "83题429重跑中·已出1 PASS=build-pov-ray; regex收紧后81 rate_limit+6 ability)。"
              "其余各路重跑进行中/排队, 完成后 Δ 自动更新: 重跑 pass 的题 +1, 重跑 fail 的题计失败 (Δ 不变)。"
              "BLOCKED(infra) 题 (如 hermes qemu 容器 Py3.9&lt;3.11) 显式注明原因、单列, 不误算为通过。</p></div>")
 

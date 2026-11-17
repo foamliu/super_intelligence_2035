@@ -2,11 +2,13 @@
 
 WAITING: 0
 
-> 🆕 **R2627 · 2026-11-17 15:2x — 🔴 用户令 14:5x codex 适配器修复+重跑: codex.py point①修复完成(exit code非0不再误杀:解析stdout NDJSON事件,agent_worked=True→不raise→让verifier照常判分;仅agent从未工作才raise) + point②429退避重试(已有·2/4/8/16s上限4次) + 新增metadata codex_agent_worked/codex_turn_failed · audit point④增强:adapter_cutoff检测(agent_worked但verifier没跑=infra非ability) · **codex 83题429重跑已启动**(PID348003·harbor n_concurrent=4·jobs-dir codex_rerun_20261117_1526·5task in progress·adaptive auto·gw9092 200✅) · pi rerun DONE(进程已退出) · v2 PID1217002 已完成全部routes · py_compile✅✅**
+> 🆕 **R2628 · 2026-11-17 15:5x — 🔴 regex 收紧+pending_rerun bug修复+三报告REGEN+codex重跑2 PASS**: audit_tb21_review_7way.py 的 rate_limit regex 从裸 `429` 收紧为 `429 Too Many|status: 429|HTTP 429` (裸429误命中ISO时间戳/会话ID/durationMs) → codex rate_limit 82→81(-1 rerun PASS) · opencode 19→10 · cline 26→3 · pi 17→12 · deepseek 3→1 · 全路真待重跑 158→118(-40假阳性) · codex.py _RATE_LIMIT_RE 同步收紧 · gen_report_tb21_7way.py+gen_report_glm53_7way.py 的 pending_rerun 漏 rate_limit bucket bug 修复 (两处) · stale prose 全部更新 · 三报告 REGEN (15:53) · **codex 83题429重跑进行中: 6/83 done, 2 PASS (build-pov-ray+cancel-async-tasks)**
 > - **codex.py 修复详情**: run()方法重写exit-code判定——解析stdout的NDJSON事件流(turn.started/agent_message/command_execution/turn.completed/turn.failed),若含agent活动事件→agent_worked=True→exit code非0不raise RuntimeError→verifier照常运行(假低分根因消除);turn.failed单独记metadata供audit归因;仅stdout无任何agent事件+exit code非0才raise(真启动崩溃)。import json已加。
 > - **audit 增强**: scan新增codex_agent_worked(优先读metadata·兜底扫stdout事件)+codex_turn_failed字段;classify新增any_adapter_cutoff检测(agent_worked且has_verifier=False→rate_limit/infra·不是ability)·作为rate_limit regex之外的第二道安全网。
 > - **重跑清单**: manifests/tb21_codex_429_rerun_list_20261117.txt(83题·从audit rate_limit桶提取·已gitignore)
-> - **各路真实 Pass% (audit 15:25, 分母恒89)**: cline 42/89=47.2%(待重跑=26) · codex 1/89=1.1%(待重跑=83·**重跑中**) · opencode 43/89=48.3%(待重跑=19) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=17) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=3)
+> - **各路真实 Pass% (audit 15:43 regex收紧后, 分母恒89)**: cline 42/89=47.2%(待重跑=3) · codex 2/89=2.2%(待重跑=81·**重跑中·2 PASS**) · opencode 43/89=48.3%(待重跑=10) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=12) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=1) · **真待重跑=118**(rate_limit=102+conn_ref=4+synthetic=12)
+> - **regex 收紧根因**: 裸 `429` 误命中 ISO时间戳(.429Z)/会话ID(conv_...429...)/durationMs(62429) → 假阳性 rate_limit 覆盖 ability 失败 → 120 题被误判为 infra 而非 ability
+> - **codex 重跑验证**: codex.py 修复后, 4 个完成题 verifier 全部照常运行(verifier=True), 2 PASS(build-pov-ray+cancel-async-tasks) + 2 ability(reward=0.0) — 假低分根因已消除
 > - **自检**: load32.33/224=14.4%✅·MemAvailable 1078GB✅·0 harness runaway✅·harbor CPU 0.5%✅
 > - **14:5x 交付状态**: ①codex.py point①修复✅ ②429退避重试✅(已有) ③83题重跑 LAUNCHED(跑中) ④audit point④增强✅ ⑤报告=待重跑完成后REGEN — 余: codex 83题跑完→merge→重算真实Pass%→REGEN报告
 > - **下一步**: ①监控codex 83题重跑(7 chunks×12·ETA~7h) ②跑完→merge codex_rerun_20261117_1526 ③重算codex真实Pass%→REGEN report_harness_tb21_7way_zh.html ④SWE-bench predict续推
@@ -24,13 +26,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2627 codex适配器修复+83题429重跑LAUNCHED·codex.py point①(exit-code不误杀)+audit point④(adapter_cutoff)已完成·harbor n_concurrent=4跑中·WAITING=0
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2620(stale prose修复+三报告REGEN)·R2626(codex 88失败重排=87infra·codex.py 429退避重试)·R2627(codex.py point①修复+audit point④+83题429重跑LAUNCHED)
-当前动作:     R2627: codex.py point①修复完成(解析stdout NDJSON·agent_worked→不raise·verifier照常判分)·audit point④增强(adapter_cutoff=infra)·codex 83题429重跑已启动(PID348003·harbor n_concurrent=4·5task in progress)·pi rerun DONE·v2全部routes DONE
-下一步:       ①监控codex 83题重跑(7 chunks·ETA~7h) ②跑完→merge codex_rerun_20261117_1526 ③重算codex真实Pass%→REGEN报告 ④SWE-bench predict续推
+PHASE:        R2628 regex收紧+pending_rerun bug修复+三报告REGEN·codex 83题429重跑6/83 done 2 PASS·WAITING=0
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2620(stale prose修复+三报告REGEN)·R2626(codex 88失败重排)·R2627(codex.py point①修复+audit point④+83题429重跑LAUNCHED)·R2628(regex收紧+pending_rerun bug修复+三报告REGEN)
+当前动作:     R2628: audit regex 收紧(裸429→429 Too Many)+codex.py _RATE_LIMIT_RE 同步+pending_rerun bug修复(两生成器漏rate_limit)+stale prose更新+三报告REGEN·codex 83题429重跑6/83 done 2 PASS(build-pov-ray+cancel-async-tasks)
+下一步:       ①监控codex 83题重跑(ETA~6h) ②跑完→merge codex_rerun_20261117_1526→重算codex真实Pass%→REGEN报告 ③SWE-bench predict续推 ④其余5路待重跑(118题·codex完成后串行)
 ERROR_COUNT:  0
- 体积: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB）
- 真实 Pass% (audit 1355, 分母=89): cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE·待重跑=0) · opencode 43/89=48.3%(待重跑=2·跑中) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(DONE·待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · 真待重跑=17
+ 体积: TASK≈26.5KB / MEMORY≈21KB（✅≤32KB）
+ 真实 Pass% (audit 1543 regex收紧后, 分母=89): cline 42/89=47.2%(待重跑=3) · codex 2/89=2.2%(待重跑=81·重跑中·2PASS) · opencode 43/89=48.3%(待重跑=10) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=12) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=1) · 真待重跑=118
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差

@@ -195,8 +195,9 @@ class CodexTB(TBBaseAgent):
         # 才 raise RuntimeError（真正的 agent 崩溃/启动失败）。
         # turn.failed 事件单独记录到 metadata.codex_turn_failed，供 audit 归因。
         _RATE_LIMIT_RE = re.compile(
-            r"429|rate[ _-]?limit|Too Many Requests|exceeded.{0,12}retry|"
-            r"retry.{0,12}exceeded|retries? exceeded",
+            r"429 Too Many|status[ _:]?\s*429|HTTP[ _]?429|"
+            r"rate[ _-]?limit|Too Many Requests|exceeded.{0,20}retry|"
+            r"retry.{0,20}exceeded|retries? exceeded",
             re.I,
         )
         # agent 活动事件类型 —— 出现任一即证明 codex 确实在跑（非启动崩溃）

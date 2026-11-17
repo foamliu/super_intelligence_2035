@@ -263,7 +263,7 @@ try:
         _total = len(_all_tasks) or 89
         _passed = len(_bk["passed"])
         _pending = (len(_bk["quota"]) + len(_bk["conn_refused"]) +
-                    len(_bk["synthetic"]))
+                    len(_bk["synthetic"]) + len(_bk["rate_limit"]))
         _tb21_review[_h] = {
             "passed": _passed, "real_pct": round(_passed/_total*100, 1),
             "pending_rerun": _pending,
@@ -301,11 +301,13 @@ for _h in HARNESSES:
 
 # Build HTML fragments for review sections (§2026-11-17 10:2x: no 修正后 Pass%, real Pass% only)
 _rerun_status_map = {
-    "cline-patched": "BLOCKED(infra): cline CLI exit1 静默崩溃, 3 attempts (orig+reruns 0932/1143), 非能力",
-    "codex": "done (2/2: both reward=0=ability; bn-fit-modify=AgentTimeoutError, break-filter-js-from-html=agent ran+verifier 0.0)",
-    "opencode": "排队中 (真待重跑=2)", "claude-code": "排队中",
-    "pi": "排队中 (真待重跑=13)", "hermes": "running (part1 12/12 done: 2 PASS Δ=+2, 10 ability; part2 video-processing running, original=ability)",
-    "deepseek-harness": "排队中 (全5已归ability, rerun=确认)",
+    "cline-patched": "待重跑=3 (2 rate_limit + 1 conn_ref·cline CLI 崩溃 BLOCKED)",
+    "codex": "重跑中 (83题429 rerun PID348003·n_concurrent=4·已出1 PASS(build-pov-ray)·修复前1/89系适配器假低分)",
+    "opencode": "待重跑=10 (9 rate_limit + 1 synthetic)",
+    "claude-code": "待重跑=2 (1 rate_limit + 1 conn_ref)",
+    "pi": "待重跑=12 (1 conn_ref + 11 synthetic=未真跑)",
+    "hermes": "待重跑=9 (9 rate_limit·qemu/mteb=BLOCKED Py3.9<3.11)",
+    "deepseek-harness": "待重跑=1 (1 rate_limit)",
 }
 _tb21_review_parts = []
 for _h in HARNESSES:
