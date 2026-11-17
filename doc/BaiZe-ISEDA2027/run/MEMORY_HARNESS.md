@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **R2648 · 2026-11-17 19:1x — 🔴 codex修复重跑 监控轮(status quo): 38/83 done(unchanged·fix-ocaml-gc OCaml编译器题达3600s超时边界·etimes=3594s·即将timeout=ability)·7 rerun PASS·8 merged PASS·codex 8/89=9.0%·0 per-task verifier_null(修复①✅深度验证35题全有verifier)·0 RuntimeError(修复①✅)·27 timeout+4 clean-fail=能力·0真实429(修复②✅·adaptive 4→5 clean_ramp·log确认)·自检clean(load26.8/224·MemAvail1025GB·0 harness runaway>8000%·唯一重进程=pretrain PID146285 8.6%CPU)·part3 RUNNING(PID221619 ALIVE·fix-ocaml-gc task in docker exec·达超时边界)·chained非codex37题WAITING(PID43417 ALIVE·sleep60·等codex PID348003)·45 left·ETA~3h·14:5x余项=③重跑完成→merge→重算真实Pass%→REGEN report·10:2x已交付(撤回修正后Pass%✅·grep确认2报告仅含撤回声明非指标)·WAITING=0**: 本轮无新完成题(fix-ocaml-gc是复杂OCaml编译器bootstrap题·35题task级result全0 verifier_null=修复①生效铁证)·codex.py fix①②③已commit·7way interim: cline47.2/codex9.0/opencode48.3/cc33.7/pi39.3/hermes44.9/deepseek12.4
+> 🆕 **R2649 · 2026-11-18 01:0x — 🔴 codex修复重跑后真实Pass%=19/89=21.3%(✅14:5x③merge完成·18 rerun PASS+1 original code-from-image·0 RuntimeError掐断=fix①生效·38 verifier_null=AgentTimeoutError=能力非infra)·codex rerun 7parts COMPLETE(81 trials·18 PASS·54 timeout·已merge到/tmp/tb21_glm53_jobs/codex)·chained非codex IN PROGRESS: deepseek✅cc✅cline-patched✅hermes RUNNING(route4/6)·opencode+pi pending·非codex rerun dirs未merge(待chain完成)·自检clean(load26.9/224·MemAvail1024GB·0 harness runaway>8000%·topCPU=pretrain146%非本线·旧opencode PID4072970 6.9%非runaway留观)·10:2x已交付(撤回修正后Pass%✅)·各路真实Pass%(非codex标待重跑): cline47.2/codex21.3✅重跑后/opencode48.3待/cc33.7待/pi39.3待/hermes44.9待/deepseek12.4待·WAITING=0**: 14:5x余项=⑤报告codex行REGEN(待非codex chain完成一并REGEN避免半更新)·10:2x余项=③全部重跑完成→merge全部→重算7路真实Pass%→REGEN两报告
+
+> 📦 R2648 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 status quo 38/83 done 7 rerun PASS 8 merged=9.0% 0 verifier_null 0 RuntimeError 27 timeout=能力 0真实429 自检clean part3 RUNNING(fix-ocaml-gc在跑)。需要时再读。
 
 > 📦 R2647 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 status quo 38/83 done 7 rerun PASS 8 merged=9.0% 0 verifier_null(修复①) 0 RuntimeError 27 timeout=能力 0真实429 自检clean part3 RUNNING(fix-ocaml-gc在跑)。需要时再读。
 
@@ -14,9 +16,9 @@ WAITING: 0
 
 > 📦 R2640 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 21/83 done 2 PASS 2 clean FAIL 17 AgentTimeoutError 0 verifier_null(修复①深度验证) 0真实429 自检clean part2/7 RUNNING。需要时再读。
 > 📦 R2639 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 19/83 done 2 PASS 0 verifier_null(修复①深度验证) 0真实429 自检clean part2/7 RUNNING。需要时再读。
-> - **14:5x 交付状态**: ①codex.py point①修复✅(R2627·本轮全文复验确认·26 results全0 verifier_null) ②429退避重试✅(R2626) ③83题重跑 RUNNING(26/83·4 PASS·0 verifier_null=修复①生效·0真实429·part3/7) ④audit point④增强✅(R2627·codex adapter-cutoff→rate_limit/infra) ⑤报告=待重跑完成后REGEN — 余: codex跑完→merge→重算→REGEN
-> - **10:2x 交付状态**: ①撤回修正后Pass%✅(R2607+R2628·两报告🔴口径纠正声明·grep确认) ②全路串行重跑: codex RUNNING + 非codex chained LAUNCHED ③重跑后重算真实Pass%=待完成 ④报告口径已改(三报告REGEN R2628) — 余: 全部重跑完成→重算→REGEN
-> - **下一步**: ①监控codex 83题重跑(ETA~6h·part3/7进行中·57 left) ②监控chained非codex 37题(自动启动·6路串行) ③全部跑完→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html(更新codex行+stale叙事)+glm53_7way ④SWE-bench predict续推 ⑤(未来)报告加harness=fixed|learned+n_samples列(research日报建议)
+> - **14:5x 交付状态**: ①codex.py fix①✅(R2627) ②429退避✅(R2626) ③83题重跑✅COMPLETE+✅MERGE→codex真实19/89=21.3%(R2649) ④audit增强✅(R2627) ⑤报告codex行REGEN=待非codex chain完成一并REGEN(避免半更新) — 余: chain完成→merge非codex→REGEN
+> - **10:2x 交付状态**: ①撤回修正后Pass%✅(R2607+R2628·grep确认两报告仅撤回声明非指标) ②全路串行重跑: codex✅DONE+非codex chain IN PROGRESS(hermes route4/6·opencode+pi pending) ③重跑后重算真实Pass%=待chain完成 ④报告口径已改✅(三报告REGEN R2628) — 余: chain完成→merge→重算→REGEN
+> - **下一步**: ①监控chained非codex(hermes RUNNING→opencode→pi·ETA~2-3h) ②chain完成→merge非codex6路→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html(更新codex行=21.3%+stale叙事)+glm53_7way ③SWE-bench predict续推 ④(未来)报告加harness=fixed|learned+n_samples列(research日报建议)
 > - **📦 体积**: TASK≈29.7KB / MEMORY≈22KB（✅≤32KB）
 
 > 📦 R2629 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑验证(3/89=3.4%)+chained非codex37题重跑LAUNCHED+fresh audit(真待重跑115)。需要时再读。
