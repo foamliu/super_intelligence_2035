@@ -184,13 +184,44 @@ def main():
                 source = "image_only_non_waveform"; n_nonwf += 1
                 exclusion_reason = EXCLUDE_NON_WAVEFORM.get(
                     tid, "has visible image but no waveform keyword; not a "
-                    "waveform-viewing task -> excluded from V0/V1/V2.")
+                    "waveform-viewing task -> honestly excluded (non-waveform).")
             elif imgs:
                 source = "original_png"; n_orig += 1
             elif not has_check:
                 source = "no_check"; n_nocheck += 1
             else:
                 source = "text_only"; n_text += 1
+            # --- Corrected classification (user 2026-11-17 2nd correction) ---
+            # Do NOT pre-judge "this case needs an image". The V0/V1/V2 eval
+            # cohort = ALL waveform-relevant cases that have a check.py
+            # (so they can be graded). Whether an image is present only marks
+            # the image-bearing sub-cohort (where the VQA tool can read an
+            # image); text_only cases are STILL run through V0/V1/V2 -- the
+            # agent attempts them and check.py grades. For text_only cases
+            # V1/V2 have no image to read, so V0~=V1~=V2 is the *expected*
+            # empirical outcome, not a foregone exclusion. Let the experiment
+            # speak (user: "通过率有没有变就是答案").
+            eval_included = wf_rel and has_check
+            if not wf_rel:
+                cohort = "excluded_non_waveform"
+                exclusion_reason = exclusion_reason or (
+                    "no waveform keyword hit; not a waveform-viewing task -> "
+                    "honestly excluded from V0/V1/V2 (user 'honestly exclude "
+                    "unrelated' clause).")
+            elif not has_check:
+                cohort = "excluded_no_check"
+                exclusion_reason = (
+                    "waveform-relevant but no check.py -> cannot be graded -> "
+                    "excluded from V0/V1/V2 pass-rate (no oracle).")
+            else:
+                cohort = "full_eval"
+                if not imgs:
+                    exclusion_reason = (
+                        "INCLUDED in full V0/V1/V2 cohort (waveform-relevant + "
+                        "check.py). No visible image asset -> VQA tool has no "
+                        "image to read -> V0~=V1~=V2 expected, but the agent "
+                        "still attempts the case and check.py grades it. Not "
+                        "pre-judged; let the experiment speak.")
             real = rmap.get(tid, {})
             rows.append({
                 "task_id": tid,
@@ -203,35 +234,49 @@ def main():
                 "has_check": has_check,
                 "k_conditions": k_cond,
                 "kw_match": kw.group(0) if kw else None,
+                "eval_included": eval_included,
+                "cohort": cohort,
                 "baseline_verdict": real.get("verdict", "not_run"),
                 "failure_mode_tier": real.get("tier", "unknown"),
                 "source": source,
                 "exclusion_reason": exclusion_reason,
+                # image-bearing sub-cohort (waveform ∧ image ∧ check): where
+                # the VQA tool can actually read a raster image.
                 "vqa_runnable": wf_rel and bool(imgs) and has_check,
             })
-    rows.sort(key=lambda r: (not r["vqa_runnable"], r["shard"], r["task_id"]))
+    rows.sort(key=lambda r: (not r["eval_included"], not r["vqa_runnable"],
+                             r["shard"], r["task_id"]))
     out = os.path.join(BENCH, "EDA-Eval-DesignFlow-WaveView.jsonl")
     with open(out, "w", encoding="utf-8") as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     n_run = sum(1 for r in rows if r["vqa_runnable"])
+    n_inc = sum(1 for r in rows if r["eval_included"])
     n_wf = sum(1 for r in rows if r["waveform_relevant"])
+    from collections import Counter
+    coh = dict(Counter(r["cohort"] for r in rows))
     print(f"[scan] total={n_total} selected={n_sel} waveform_relevant={n_wf} "
           f"kw_hit={n_kw} with_image={n_img}")
     print(f"[source] original_png={n_orig} text_only={n_text} "
           f"no_check={n_nocheck} image_only_non_waveform={n_nonwf}")
-    print(f"[vqa_runnable] {n_run} (waveform_relevant & image_required & has_check)")
+    print(f"[cohort] {coh}")
+    print(f"[eval_included] {n_inc} (waveform_relevant & has_check) = FULL V0/V1/V2 cohort")
+    print(f"[vqa_runnable] {n_run} (waveform_relevant & image_required & has_check) "
+          f"= image-bearing sub-cohort")
     print(f"[wrote] {out} ({len(rows)} lines)")
-    print("\n=== vqa_runnable (waveform_relevant & image_required & has_check) ===")
+    print("\n=== eval_included FULL cohort: image-bearing sub-cohort (vqa_runnable) ===")
     for r in rows:
         if r["vqa_runnable"]:
             print(f"  [{r['shard']}] {r['task_id']}  dom={r['domain']}  "
                   f"k={r['k_conditions']}  verdict={r['baseline_verdict']}  "
                   f"tier={r['failure_mode_tier']}  img={r['image_path']}")
-    print("\n=== image_only_non_waveform (excluded from V0/V1/V2) ===")
+    print("\n=== eval_included FULL cohort: text_only (no image, STILL run) count ===")
+    txt = [r for r in rows if r["eval_included"] and not r["vqa_runnable"]]
+    print(f"  {len(txt)} cases (waveform-relevant + check.py, no image asset)")
+    print("\n=== honestly excluded (non-waveform / no_check) ===")
     for r in rows:
-        if r["source"] == "image_only_non_waveform":
-            print(f"  [{r['shard']}] {r['task_id']}  dom={r['domain']}  "
+        if not r["eval_included"]:
+            print(f"  [{r['shard']}] {r['task_id']}  cohort={r['cohort']}  "
                   f"reason={r['exclusion_reason'][:80]}")
 
 
