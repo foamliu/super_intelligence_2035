@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vision WaveView 10 题 · agent 臂自测（G0/G1/G2）· MLLM 作为 agent 系统一部分</title>
+<title>Vision WaveView 子集(224题/10可跑) + agent 臂自测 · agent 臂自测（G0/G1/G2）· MLLM 作为 agent 系统一部分</title>
 <style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1080px;margin:24px auto;color:#222;line-height:1.6;padding:0 16px}
 h1,h2,h3{color:#1a3a5c}table{margin:8px 0;font-size:13px;border-collapse:collapse}th{background:#eef3f8}td,th{border:1px solid #ccc;padding:5px 8px;vertical-align:top}
 .card{background:#f7f9fc;border:1px solid #dce3ec;border-radius:8px;padding:14px 18px;margin:14px 0}
@@ -8,6 +8,51 @@ h1,h2,h3{color:#1a3a5c}table{margin:8px 0;font-size:13px;border-collapse:collaps
 code{background:#eef;padding:1px 4px;border-radius:3px;font-size:12px}.muted{color:#888;font-size:12px}.svgwrap{text-align:center}ul{margin:6px 0}</style></head>
 <body>
 <h1>Vision WaveView 10 题 · agent 臂自测（G0 / G1 / G2）</h1>
+
+
+<h1 style="margin-top:24px">§0 WaveView 评测子集 · EDA-Eval-DesignFlow-WaveView.jsonl（2026-11-17 16:3x 用户令）</h1>
+<p class="muted">vision 线 · 自主 SSH 36.15 全量扫描 EDA-Eval-DesignFlow.jsonl 自建并维护子集 · 用户原话三问：①评测集建立了吗 ②基线(EDA_Flow_Bench)分数 ③加 Qwen3.5-2B VQA 后分数</p>
+<div class="card verdict pos">
+<b>三问回答</b>：<br>
+① <b>已建立</b>。36.15 与本地 <code>vision/EDA-Eval-DesignFlow-WaveView.jsonl</code> 各一份（sha256 <code>623842b5341cc089…</code>，224 行）。<br>
+② <b>基线 V0（无 VQA、纯文本不看图）</b>：整题 <b>0/10</b>，每量 <b>34/110=30.9%</b>。<br>
+③ <b>+ Qwen3.5-2B VQA</b>：V1（基模）整题 <b>0/10</b>、每量 35.4%；<b>V2（基模+rft2 适配器）整题 1/10、每量 50.0%</b>。
+McNemar V0 vs V2：b=1 c=0 p=1.0（仅 1 个不一致对，n=10 样本不足，p 仅参考）。
+</div>
+<h2>0.1 筛选口径与子集构成</h2>
+<div class="card"><ul>
+<li><b>全量扫描</b>：36.15 上 <code>EDA-Eval-DesignFlow.jsonl</code>（A/B/C/D 四 shard 合并，224 题含合并冗余）逐行解析。</li>
+<li><b>入选判据（自定、可复算）</b>：(K) task_id/prompt/metadata/attachments/expected_artifacts 命中波形关键词
+<code>waveform|waveview|fsdb|vcd|eye[-_ ]?diagram|oscilloscope?|edge[-_ ]?timing|signal[-_ ]?extract|波形|\bwave\b</code>；或 (I) <code>assets/&lt;task_id&gt;/</code> 下有可见光栅图。有 check.py 单独不充分（所有题都有）。</li>
+<li><b>子集构成</b>：入选 <b>224</b> = 波形相关(keyword) <b>223</b> + 仅图片非波形 <b>1</b>；
+按 source：original_png=10 · text_only=181 · no_check=32 · image_only_non_waveform=1；有可见图 11。</li>
+<li><b>可跑集 vqa_runnable = 波形相关 ∧ 有可见图 ∧ 有 check.py = 10</b>。即 V0/V1/V2 实际运行的 10 道（designflow 已恢复原形态、sha256 校验只读复制的真题 PNG）。
+每条记录含 task_id/shard/domain/waveform_relevant/image_required/image_path/has_check/k_conditions/kw_match/baseline_verdict/failure_mode_tier/source/exclusion_reason/vqa_runnable。</li>
+<li><b>用户第二条修正落地</b>：不预设「这道题需不需要看图」——让 V0 vs V1/V2 通过率差异说话。181 道 text_only 题无图，VQA 无图可读，V0=V1=V2 平凡相等，故实验聚焦 10 道有图可跑集；它们仍登记在子集内（完整性）。</li>
+</ul></div>
+<div class='card'><b>诚实排除（非波形）</b>：EDA-Eval-DesignFlow-IRReportPdf-001 (shard C, domain=pg_layout) 有 14 张 PNG 但 <b>零波形关键词命中</b> → <code>source=image_only_non_waveform</code>, <code>vqa_runnable=false</code>，不进入 V0/V1/V2。理由：pg_layout IR voltage-drop report task; 14 IR heat-map PNGs but zero waveform/信号/wave keyword hit; not a waveform-viewing task -&gt; excluded from V0/V1/V2 waveform experiment per user &#x27;honestly exclude unrelated&#x27; clause (2026-11-17 2nd correction).</div>
+<h2>0.2 V0 / V1 / V2 三段对照（10 道可跑真题，同 check.py 同口径）</h2>
+<table><tr><th>tag</th><th>tier</th><th>case</th><th>V0 文本</th><th>V1 基模VQA</th><th>V2 rft2-VQA</th><th>k</th><th>V0→V2翻转</th></tr>
+<tr><td>β9</td><td>C</td><td>WaveMaxFind-001</td><td class='neg'>FAIL<br><span class='muted'>0/9</span></td><td class='neg'>FAIL<br><span class='muted'>4/9</span></td><td class='neg'>FAIL<br><span class='muted'>1/9</span></td><td>9</td><td></td></tr><tr><td>α4</td><td>B</td><td>TempSelWaveform-001</td><td class='neg'>FAIL<br><span class='muted'>4/9</span></td><td class='neg'>FAIL<br><span class='muted'>5/9</span></td><td class='neg'>FAIL<br><span class='muted'>6/9</span></td><td>9</td><td></td></tr><tr><td>β10</td><td>C</td><td>TempThreshChar-001</td><td class='neg'>FAIL<br><span class='muted'>4/10</span></td><td class='neg'>FAIL<br><span class='muted'>2/10</span></td><td class='neg'>FAIL<br><span class='muted'>5/10</span></td><td>10</td><td></td></tr><tr><td>α1</td><td>A</td><td>EyeApertureSelect-001</td><td class='neg'>FAIL<br><span class='muted'>3/9</span></td><td class='neg'>FAIL<br><span class='muted'>2/9</span></td><td class='pos'>PASS<br><span class='muted'>9/9</span></td><td>9</td><td>✓</td></tr><tr><td>β8</td><td>C</td><td>WaveView-002</td><td class='neg'>FAIL<br><span class='muted'>6/13</span></td><td class='neg'>FAIL<br><span class='muted'>6/13</span></td><td class='neg'>FAIL<br><span class='muted'>5/13</span></td><td>13</td><td></td></tr><tr><td>β11</td><td>B</td><td>SimFailFsdbProbe-001</td><td class='neg'>FAIL<br><span class='muted'>6/12</span></td><td class='neg'>FAIL<br><span class='muted'>4/12</span></td><td class='neg'>FAIL<br><span class='muted'>6/12</span></td><td>12</td><td></td></tr><tr><td>α2</td><td>A</td><td>RiseEdgeMarginMeas-001</td><td class='neg'>FAIL<br><span class='muted'>2/9</span></td><td class='neg'>FAIL<br><span class='muted'>5/9</span></td><td class='neg'>FAIL<br><span class='muted'>4/9</span></td><td>9</td><td></td></tr><tr><td>β7</td><td>C</td><td>FsdbWrDqMeas-001</td><td class='neg'>FAIL<br><span class='muted'>3/12</span></td><td class='neg'>FAIL<br><span class='muted'>2/12</span></td><td class='neg'>FAIL<br><span class='muted'>6/12</span></td><td>12</td><td></td></tr><tr><td>α3</td><td>A</td><td>DqReadPathWaveDebug-001</td><td class='neg'>FAIL<br><span class='muted'>4/13</span></td><td class='neg'>FAIL<br><span class='muted'>3/13</span></td><td class='neg'>FAIL<br><span class='muted'>5/13</span></td><td>13</td><td></td></tr><tr><td>β6</td><td>A</td><td>WaveCmpWrap-001</td><td class='neg'>FAIL<br><span class='muted'>2/14</span></td><td class='neg'>FAIL<br><span class='muted'>6/14</span></td><td class='neg'>FAIL<br><span class='muted'>8/14</span></td><td>14</td><td></td></tr><tr style='font-weight:bold;background:#eef3f8'><td colspan='3'>每量合计</td><td>34/110<br>30.9%</td><td>39/110<br>35.4%</td><td>55/110<br>50.0%</td><td>110</td><td>1</td></tr></table>
+<p class="muted">tier：α=未engage · β=只看文本 · γ=engage但读不懂图。V2 唯一整题 PASS = EyeApertureSelect（α1，9/9）。每量准确率 V0 30.9% → V1 35.4% → V2 50.0%（+19.1pp）。数据源 <code>summary_real.json</code>（REAL/ 目录，真题 PNG 重跑）。</p>
+
+<h2>0.3 🚫 反作弊审计</h2>
+<div class="card">cheat = <b>False</b>，cheat_count = 0，VQA 调用 162 次，runner 源码内 image_reads = 0（无 PIL/cv2/OCR/base64/读字节；V1/V2 仅经 HTTP VQA 工具读图，V0 不看图）。审计源 <code>audit_real.json</code>。</div>
+<h2>0.4 可复现性</h2>
+<div class="card"><ul>
+<li>构建脚本：<code>vision/waveview_mining/build_waveview_subset.py</code>（36.15 上同份）。在 36.15 bench 目录 <code>python3 build_waveview_subset.py</code> 重跑即可重生 jsonl。</li>
+<li>子集文件：36.15 <code>/nasdata/.../EDA-Eval-DesignFlow/EDA-Eval-DesignFlow-WaveView.jsonl</code> + 本地 <code>vision/EDA-Eval-DesignFlow-WaveView.jsonl</code>（sha256 <code>623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd</code>，224 行）。</li>
+<li>三段结果：<code>vision/vqa_tool/waveview_selftest/REAL/</code>（V1/V2）+ <code>V0/</code> + <code>summary_real.json</code> + <code>audit_real.json</code>。VQA 后端 :30001（基模）/ :30003（rft2_adapter）。</li>
+</ul></div>
+<h2>0.5 诚实结论与口径</h2>
+<div class="card"><ul>
+<li><b>MLLM 价值度量（用户裁定）</b>：WaveView 子集上 <b>有 VQA vs 无 VQA 通过率差异</b>。V0=0/10 → V2=1/10，每量 30.9%→50.0%（+19.1pp），方向正向但 <b>n=10、仅 1 个不一致对，McNemar p=1.0，统计不可分辨</b>。</li>
+<li><b>不编造</b>：181 text_only 题未单跑（无图，VQA 无作用，平凡相等）；IRReportPdf 非波形已诚实排除并写明理由；未拿合成集冒充真题。</li>
+<li><b>下方正文</b>为 2026-11-14 agent 臂（G0/G1/G2）自测与 11-15 真题三段附录，保留以供溯源；本节为 11-17 扩大子集重跑的交付。</li>
+</ul></div>
+<hr>
+
+
 <p class="muted">vision 线 · 用户令 2026-11-14 21:5x「补 agent 臂：MLLM 作为 agent 系统一部分带来的增益」· SUT = glm-5.2（vision cline 文本底座）经 OpenAI 兼容 function-calling API · 2026-11-15T00:23:05</p>
 <div class="card verdict pos">整题通过：单模型工具天花板 V0=0/10 · V1=0/10 · V2=0/10；
 <b>agent 臂 G0=0/10 · G1=5/10 · G2=4/10</b>。

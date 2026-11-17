@@ -33,7 +33,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· ✅ 已交付（wake#1525：SSH 36.15 全量扫描 1647→入选 224·vqa_runnable=10·36.15+本地双份 sha256 623842b5 一致·V0=0/V1=0/V2=1/10 每量30.9→50% McNemar p=1.0·report §0 39986B 0外链0script·脚本可复现）
 
 > **用户原话**：「vision：1. designflow_waveview 评测集建立了吗？2. 基线（EDA_Flow_Bench) 在#1分数多少？3. 加上 Qwen3.5-2B作为VQA工具后，#1分数多少？……既然有 .17→36.15 SSH 隧道，vision 为什么不能自己去 36.15 的 EDA-Eval-DesignFlow.jsonl 去筛选 WaveView Case。为什么都要指望别人？在同一目录生成并维护 EDA-Eval-DesignFlow-WaveView.jsonl」
 

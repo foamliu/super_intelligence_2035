@@ -44,13 +44,20 @@ ASSETS = os.path.join(BENCH, "assets")
 REFERENCE = os.path.join(BENCH, "reference")
 REAL_INDEX = os.environ.get(
     "WAVEVIEW_REAL_INDEX",
-    "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/real_waveview_index.json")
+    os.path.join(BENCH, "_real_waveview_index.json"))
 
 KW_RE = re.compile(
     r"waveform|waveview|fsdb|\bvcd\b|eye[\s\-_]?diagram|oscil(?:loscope)?"
     r"|edge[\s\-_]?timing|signal[\s_\-]?extract|波形|\bwave\b", re.IGNORECASE)
 IMG_EXT = ("png", "jpg", "jpeg", "bmp", "gif", "tiff", "tif")
 TIER_MAP = {"A": "alpha", "B": "beta", "C": "gamma"}
+EXCLUDE_NON_WAVEFORM = {
+    "EDA-Eval-DesignFlow-IRReportPdf-001":
+    "pg_layout IR voltage-drop report task; 14 IR heat-map PNGs but zero "
+    "waveform/信号/wave keyword hit; not a waveform-viewing task -> excluded "
+    "from V0/V1/V2 waveform experiment per user 'honestly exclude unrelated' "
+    "clause (2026-11-17 2nd correction).",
+}
 
 
 def shard_map():
@@ -129,7 +136,8 @@ def real_index_map():
             continue
         tier = ci.get("baseline", {}).get("failure_mode_tier")
         m[cid] = {"verdict": ci.get("baseline", {}).get("verdict", "FAIL"),
-                  "tier": TIER_MAP.get(tier, "unknown")}
+                  "tier": TIER_MAP.get(tier, "unknown"),
+                  "tag": ci.get("id")}
     return m
 
 
@@ -138,7 +146,7 @@ def main():
     rmap = real_index_map()
     print(f"[shard_map] {len(smap)} task_ids; [real_index] {len(rmap)} verified cases")
     rows = []
-    n_total = n_sel = n_kw = n_img = n_orig = n_text = n_nocheck = 0
+    n_total = n_sel = n_kw = n_img = n_orig = n_text = n_nocheck = n_nonwf = 0
     with open(MERGED, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
@@ -158,6 +166,7 @@ def main():
             if not (kw or imgs):
                 continue
             n_sel += 1
+            wf_rel = bool(kw)
             if kw:
                 n_kw += 1
             if imgs:
@@ -170,7 +179,13 @@ def main():
                     meta = {}
             domain = meta.get("domain") if isinstance(meta, dict) else None
             task_name = meta.get("task_name") if isinstance(meta, dict) else None
-            if imgs:
+            exclusion_reason = None
+            if imgs and not wf_rel:
+                source = "image_only_non_waveform"; n_nonwf += 1
+                exclusion_reason = EXCLUDE_NON_WAVEFORM.get(
+                    tid, "has visible image but no waveform keyword; not a "
+                    "waveform-viewing task -> excluded from V0/V1/V2.")
+            elif imgs:
                 source = "original_png"; n_orig += 1
             elif not has_check:
                 source = "no_check"; n_nocheck += 1
@@ -182,6 +197,7 @@ def main():
                 "shard": smap.get(tid, "?"),
                 "domain": domain,
                 "task_name": task_name,
+                "waveform_relevant": wf_rel,
                 "image_required": bool(imgs),
                 "image_path": imgs,
                 "has_check": has_check,
@@ -190,7 +206,8 @@ def main():
                 "baseline_verdict": real.get("verdict", "not_run"),
                 "failure_mode_tier": real.get("tier", "unknown"),
                 "source": source,
-                "vqa_runnable": bool(imgs) and has_check,
+                "exclusion_reason": exclusion_reason,
+                "vqa_runnable": wf_rel and bool(imgs) and has_check,
             })
     rows.sort(key=lambda r: (not r["vqa_runnable"], r["shard"], r["task_id"]))
     out = os.path.join(BENCH, "EDA-Eval-DesignFlow-WaveView.jsonl")
@@ -198,16 +215,24 @@ def main():
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     n_run = sum(1 for r in rows if r["vqa_runnable"])
-    print(f"[scan] total={n_total} selected={n_sel} kw_hit={n_kw} with_image={n_img}")
-    print(f"[source] original_png={n_orig} text_only={n_text} no_check={n_nocheck}")
-    print(f"[vqa_runnable] {n_run} (image_required & has_check)")
+    n_wf = sum(1 for r in rows if r["waveform_relevant"])
+    print(f"[scan] total={n_total} selected={n_sel} waveform_relevant={n_wf} "
+          f"kw_hit={n_kw} with_image={n_img}")
+    print(f"[source] original_png={n_orig} text_only={n_text} "
+          f"no_check={n_nocheck} image_only_non_waveform={n_nonwf}")
+    print(f"[vqa_runnable] {n_run} (waveform_relevant & image_required & has_check)")
     print(f"[wrote] {out} ({len(rows)} lines)")
-    print("\n=== vqa_runnable (image_required & has_check) ===")
+    print("\n=== vqa_runnable (waveform_relevant & image_required & has_check) ===")
     for r in rows:
         if r["vqa_runnable"]:
             print(f"  [{r['shard']}] {r['task_id']}  dom={r['domain']}  "
                   f"k={r['k_conditions']}  verdict={r['baseline_verdict']}  "
                   f"tier={r['failure_mode_tier']}  img={r['image_path']}")
+    print("\n=== image_only_non_waveform (excluded from V0/V1/V2) ===")
+    for r in rows:
+        if r["source"] == "image_only_non_waveform":
+            print(f"  [{r['shard']}] {r['task_id']}  dom={r['domain']}  "
+                  f"reason={r['exclusion_reason'][:80]}")
 
 
 if __name__ == "__main__":
