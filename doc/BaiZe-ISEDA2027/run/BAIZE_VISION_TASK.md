@@ -50,31 +50,19 @@
    - 有 `check.py` 的 case
    - **不要只挑已有 PNG 的 10 道**——对没有 PNG 但原意图需看图的 case，你有权**自行生成波形图**（用 case 定义中的公开参数重建），纳入子集
 
-   > ⚠️ **2026-11-17 用户修正：「读波形图」不等于「读数」——pattern recognition 更重要**
+   > ⚠️ **2026-11-17 用户修正（第二条）：不要把 MLLM 价值矮化为 OCR 或 pattern recognition**
    >
-   > 你可能倾向于把"需要看图"窄义理解为"check.py 直接判图像读数"。**这是错误的**。波形图的多模态理解至少包含两个层面：
+   > 上一条修正举了 pattern recognition 的例子，但**那只是个例子，不是新的狭义定义**。MLLM 在 WaveView 子集上的价值是**任何一个维度**的：
    >
-   > **层面 1 · 读数**：从坐标轴读出具体数值（幅值、时刻、周期）——这对应已有的 10 道带 PNG 的题。
+   > - 读数（从坐标轴读值）
+   > - pattern 识别（眼图形态、毛刺、违例区间）
+   > - agent 调 VQA 问细节问题，得到回答后通过率上升
+   > - 以前解决不了的问题，加上 VQA 后能解决了
+   > - **任何**有 VQA 工具 vs 无 VQA 工具导致通过率提升的机制
    >
-   > **层面 2 · pattern recognition**：识别波形的**形态模式**——眼图张开度/闭合度、信号毛刺、时序违例区间、边沿序列对比（波形 diff）、阻尼振荡形态、过零模式、占空比模式、抖动分布等。**这些能力不依赖精确读数，但依赖对波形视觉模式的认知。**
+   > **唯一的度量标准**：WaveView 子集上，**有 VQA（V1/V2）vs 无 VQA（V0）的通过率差异 = MLLM 的价值**。不需要分类"这种帮助算数、那种不算"。
    >
-   > 很多 noPng case 的 deliverable 虽然是脚本（Tcl/Python），但其**任务理解、参数选择、错误诊断**都依赖对波形形态的认知。例如：
-   > - `WvDataeyeMeasure`：data eye 测量——理解眼图形态是核心，不是简单脚本生成
-   > - `WvPropDelayMeasure`：描述了"用鼠标框选波形测传播延迟"的手动 WaveView 工作流
-   > - `SineWaveAnalysis`：正弦波分析——频率/峰值/过零点的 pattern-level 理解
-   > - `WvEdgeTiming`：边沿时序——边沿 pattern 识别
-   > - `WaveCmpReuseMode` / `WaveCmpWarnPort`：波形对比——视觉 diff
-   > - `FsdbPulseFilter`：脉冲过滤——脉冲 pattern 识别
-   > - `ToggleTrTf`：翻转测试——信号翻转 pattern
-   >
-   > **一个从未"看过"波形的模型生成的脚本，和见过上万张波形图的模型生成的，质量会不同。** 这正是多模态增益的度量点。
-   >
-   > **因此**：WaveView 子集应包含**所有与波形理解相关的 case**，不限于"check.py 判图像读数"的 case。对 noPng case，你可以：
-   > 1. 用 case 定义中的参数**自行生成波形图**，让 VQA 工具"看图后"辅助生成更好的脚本
-   > 2. 或者直接在评测中对比"有波形图辅助 vs 无图"的脚本质量差异
-   > 3. 即使 check.py 判的是脚本输出，"看图后生成的脚本"和"不看图生成的脚本"的通过率差异就是多模态增益
-   >
-   > **不要因为 check.py 判的是脚本就排除这些 case**——多模态增益可能体现在脚本质量上，而非直接读数上。
+   > **因此**：WaveView 子集应包含**所有与波形相关的 case**。只要这道题跟波形/信号/波形查看工具有关，就纳入子集。V0 跑一遍、V1/V2 跑一遍，**通过率有没有变就是答案**。不需要预先判断"这道题需不需要看图"——让实验说话，让数据说话。
 
 2. **在 36.15 同目录下生成并维护 `EDA-Eval-DesignFlow-WaveView.jsonl`**：
    - 路径：`/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow-WaveView.jsonl`
@@ -102,11 +90,10 @@
 - **你可以写入 36.15 上的 `EDA-Eval-DesignFlow-WaveView.jsonl`**——这是你负责维护的文件
 
 **三、判据**
-- WaveView 子集 **≥10 道**（越多越好，但每道都要满足你的筛选口径）
-- 子集应覆盖**两个层面**的波形理解：读数类（已有 10 道 PNG 题）+ pattern recognition 类（noPng 但与波形形态认知相关的题）
-- 基线 V0 + V1/V2 对照跑完
+- WaveView 子集应包含**所有与波形/信号/波形查看工具相关的 case**——不预设"这道题需不需要看图"，让 V0 vs V1/V2 的实验结果说话
+- 基线 V0 + V1/V2 对照跑完，**通过率差异 = MLLM 价值**
 - 报告更新，数字可复算
-- 如果某 noPng case 确实与波形形态认知无关（纯文本 Q&A / 软件更新指南等），诚实排除并写明理由
+- 如果某 case 确实与波形完全无关（纯文本 Q&A / 软件安装指南等），诚实排除并写明理由
 
 ---
 ### 📦 §用户令·2026-11-15 07:2x（解两条真阻塞：① SSH 自建 VQA 通道 ② 自行 SSH 36.15 取 WaveView 真题）✅ 已交付（wake#1288：① 反向转发 `ssh -p3333 -R 1300x`+forwarder·容器视角 10.247.64.1:3000x curl /health 三端口全 ok·MCP initialize 成功·断线 ~6s watchdog 自愈·桥接后答对真题；② 真题 10 道·check.py 原样·sha256 校验只读复制；③ 真题三段 V0=0/V1=0/V2=1/10·McNemar p=1.0(n=10 不足仅参考)·cheat=0。交付 vision_vqa_ssh_bridge.md+vision_ssh_bridge_proof.txt+vision/real_waveview_index.json+vision_real_waveview_intake.md+原地覆盖 report_vision_waveview_selftest_agent_zh.html 31875B）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`（2026-11-16 wake#1462 归档）。需要时再读。
