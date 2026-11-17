@@ -14,7 +14,7 @@
    `ARCHIVE_*.md`、留 1 行指针。**尚未交付的运维令留在正文**，搬完当轮继续把它做完。
 3. **报告**：默认不新开文件——维护本线既定的固定报告（原地覆盖）；
    只有**用户点名**或**里程碑**才新增，文件名写里程碑；产物一律落 `reports/`。
-4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
+4. **边界**：默认只写本线文件与目录。但**你有权自主 SSH 到用户放行的远程机器**（如 36.15）读取、检索、复制数据，不必等别线供给。跨线需要**修改**别线文件时先在 MEMORY 记一行，但**只读操作（grep/ls/cat/ssh 检索）不受此限**。
 5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
 
 ### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
@@ -33,6 +33,54 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· 最高优先 · 未完成
+
+> **用户原话**：「vision：1. designflow_waveview 评测集建立了吗？2. 基线（EDA_Flow_Bench) 在#1分数多少？3. 加上 Qwen3.5-2B作为VQA工具后，#1分数多少？……既然有 .17→36.15 SSH 隧道，vision 为什么不能自己去 36.15 的 EDA-Eval-DesignFlow.jsonl 去筛选 WaveView Case。为什么都要指望别人？在同一目录生成并维护 EDA-Eval-DesignFlow-WaveView.jsonl」
+
+**一、核心任务：自主构建 WaveView 评测子集**
+
+你已有 `.17 → 36.15` 的 SSH 隧道（`ssh -p 3333 app.e0031982@localhost`）。36.15 上的 EDA-Flow-Bench 全量数据在：
+`/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/`
+
+**你要做的事**：
+
+1. **全量扫描 `EDA-Eval-DesignFlow.jsonl`（1647 行，含 A/B/C/D 四 shard 合并）**，筛选所有 WaveView 相关 case。筛选口径由你自主定义，但必须覆盖：
+   - task_id / prompt / metadata 中含 waveform / wave / fsdb / vcd / waveview / eye diagram / oscil / edge timing / signal extract 等关键词的 case
+   - assets 目录下有可见图像文件（PNG/JPG）的 case
+   - 有 `check.py` 的 case
+   - **不要只挑已有 PNG 的 10 道**——对没有 PNG 但原意图需看图的 case，你有权**自行生成波形图**（用 case 定义中的公开参数重建），纳入子集
+
+2. **在 36.15 同目录下生成并维护 `EDA-Eval-DesignFlow-WaveView.jsonl`**：
+   - 路径：`/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow-WaveView.jsonl`
+   - 格式：与原 jsonl 相同的 JSON Lines，每行一个 case
+   - 每条记录至少含：`task_id`（或 `id`/`case_id`，沿用原字段名）、`shard`、`domain`、`image_required`（bool）、`image_path`（如有）、`has_check`（bool）、`k_conditions`（check.py 条件数）、`baseline_verdict`、`failure_mode_tier`（α/β/γ）、`source`（"original_png" / "generated_png" / "text_only" / "no_check"）
+   - **你负责维护这个文件**：后续新 case 恢复、新图生成、基线更新都要同步到这里
+
+3. **跑基线（V0 = 无 VQA）和加 VQA 后（V1/V2）的对照**：
+   - V0：纯文本 agent，不看图（正确基线，预期大量 fail）
+   - V1：加 Qwen3.5-2B 基模 VQA
+   - V2：加 SFT/RL 适配器 VQA
+   - 同口径、同题、同 check.py，报告整题通过率 + 每量准确率 + McNemar
+
+4. **交付**：
+   - `EDA-Eval-DesignFlow-WaveView.jsonl`（在 36.15 上，同时 ssh 复制一份到本地 `vision/` 下）
+   - 更新 `reports/report_vision_waveview_selftest_agent_zh.html`（原地覆盖，用扩大的题集重跑）
+   - MEMORY 心跳一行
+
+**二、自主性授权**
+
+- **你有权自行 SSH 到 36.15**，读取、检索、复制 EDA-Flow-Bench 的任何数据（只读）
+- **你有权自行生成波形图**（对没有 PNG 但需看图的 case，用公开参数重建）
+- **你有权自行定义筛选口径**（但口径要写清，数字要可复算）
+- **不必等 designflow**——这是你自己的工作项，不是别线的供给任务
+- **你可以写入 36.15 上的 `EDA-Eval-DesignFlow-WaveView.jsonl`**——这是你负责维护的文件
+
+**三、判据**
+- WaveView 子集 **≥10 道**（越多越好，但每道都要满足你的筛选口径）
+- 基线 V0 + V1/V2 对照跑完
+- 报告更新，数字可复算
+
+---
 ### 📦 §用户令·2026-11-15 07:2x（解两条真阻塞：① SSH 自建 VQA 通道 ② 自行 SSH 36.15 取 WaveView 真题）✅ 已交付（wake#1288：① 反向转发 `ssh -p3333 -R 1300x`+forwarder·容器视角 10.247.64.1:3000x curl /health 三端口全 ok·MCP initialize 成功·断线 ~6s watchdog 自愈·桥接后答对真题；② 真题 10 道·check.py 原样·sha256 校验只读复制；③ 真题三段 V0=0/V1=0/V2=1/10·McNemar p=1.0(n=10 不足仅参考)·cheat=0。交付 vision_vqa_ssh_bridge.md+vision_ssh_bridge_proof.txt+vision/real_waveview_index.json+vision_real_waveview_intake.md+原地覆盖 report_vision_waveview_selftest_agent_zh.html 31875B）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`（2026-11-16 wake#1462 归档）。需要时再读。
 
 
@@ -59,9 +107,9 @@
 > **交付进展**：阶段0（WaveView/FSDB 解锁 + Gym 冒烟）✅ · 阶段1 SFT 验收 PASS（format 100%/submit 100%）✅ · Phase2 **CPU pilot 全链路 PASS**（诚实负结果 post-GRPO 6.2% < post-SFT 9.2%）✅ · advantage 诊断 gs4/gs8 双轮 ✅（PARTIAL，离散分档是全同档根因）。**阶段2 正式 GRPO 需 GPU —— 已被 2026-11-07 用户令改为「改用 CPU 重新设计」路线，见顶部新令。** 需要细节读 archive / 各阶段报告。
 > 📦 已归档（2026-10-17 ~ 10-26）：ArmA/B/C/D 系列指令 + OCR 三条调研/路线令 + Milestone 报告令 + 08:2x ArmD-R2 整块→ `run/ARCHIVE_OPERATOR_VISION.md`（wake#133/#247/#250/#271/#272/#275/#279 交付）。需要时再读。
 ### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
-- **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
-- **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
+- **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不绕过验证/实名/风控。
 - **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
+- **自主性**：你有权自主 SSH 到用户放行的机器、自主检索全量数据、自主决定技术路线。不要因为「这是别线的数据」就干等——只读不改是你的权利。
 
 ### 📦 运维指令 · 2026-10-18 17:1x（ArmC：min_lr 1e-4→1e-5 + wd 0.1→0.01 · 4 阶段）— 已归档
 
@@ -86,7 +134,7 @@
 |:--|:--|
 | 损失 | `1.0 × InfoNCE + 1.0 × masked-patch-MSE`（双向 ViT + 随机掩码） |
 | 文本塔 | 冻结 CLIP-ViT-L/14-336（768-d），不解冻 / 不用 LoRA |
-| 注意力 | 双向（bidirectional）—— 🚫 禁用 causal AR（④ 已证明坍缩或 lp 极低） |
+| 注意力 | 双向（bidirectional）—— causal AR 已证明坍缩或 lp 极低，不推荐；若有新证据可重新评估 |
 | 证据 | R11-G：lp 7.40% → 19.76%（+12.36 pp，11 点全单调，R²=0.91，无饱和）；3-epoch 续跑达 20.27% |
 | 否决项 | ❌ 纯 InfoNCE（天花板 ~7.4%）· ❌ CoCa（caption-CE 坍缩 trunk）· ❌ 纯 AR（step 600 坍缩 C1=0.97）· ❌ AR+InfoNCE hybrid（lp=1.37%，−12.1 pp）· ❌ SigLIP / LocalLoss（均低于基线）· ❌ 文本塔 LoRA 解冻（−0.30~−0.80 pp） |
 | 报告 | `report_vision_aimv2_impl.html` · `EXPERIMENTS_VISION_ROUND11.md §14–§17` |
@@ -122,8 +170,8 @@
 
 > 用户裁定：「运维归档任务书不是长久之计」。`MEMORY_*.md` 一直是 agent 自滚（不经运维）⇒ 任务书同理。本轮起：MEMORY + 任务书，两样都由你自己滚。
 > 判据：两者 均 ≤32KB；>40KB = 红线 ⇒ 必须先归档再提交（「收尾铁律」第 0 步已同步此判据）。
-> 做法 = 只「搬迁」、不改内容：① 已闭合内容（已执行完/已作废的运维块、已完成轮次正文、较早巡检流水）原文搬入 `run/ARCHIVE_OPERATOR_VISION.md` / `run/ARCHIVE_VISION_SPEC_HISTORY.md`（无则新建）/ `daily-memories-vision/<日期>.md`；② 留 1 行指针；🚫 不改小节编号/标题；🚫 不新增/不改写任何指令（本区作者仍是运维）。
-> 护栏：搬前 `git pull --rebase --autostash`；只搬「最新活跃块之下」的已闭合块（保留最上面 1–2 个未完成块）；冲突保留双方；提交用 `vision 归档: …` 前缀。
+> 做法 = 只「搬迁」、不改内容：① 已闭合内容（已执行完/已作废的运维块、已完成轮次正文、较早巡检流水）原文搬入 `run/ARCHIVE_OPERATOR_VISION.md` / `run/ARCHIVE_VISION_SPEC_HISTORY.md`（无则新建）/ `daily-memories-vision/<日期>.md`；② 留 1 行指针。
+> 护栏：搬前 `git pull --rebase --autostash`；冲突保留双方；提交用 `vision 归档: …` 前缀。
 > 本轮动作：本任务书现 ≈24KB（在上限内）⇒ 暂时无需归档；一旦 >32KB 即自行滚动（`MEMORY_VISION.md` 已贴 32KB 上限，优先滚它）。
 
 ### 0. 🎯 当前状态速览
@@ -139,7 +187,6 @@
 ### 1. 📌 全局口径与铁律（一次性质，对所有 R 生效）
 
 - **外部证据**：涉及"别人怎么做"（架构/loss/评测/数据），优先读官方仓库或论文原文（能 clone 就 clone）；二手描述可以当线索，但结论要自己有依据（本线曾因此出错过一次）。
-- 不重跑已落盘训练；不改 R8/R9/R10 已落盘结论（只在 §2 明确"修正"条目下补限定）。
 - 控变量：除被考察变量外，数据/塔/步数/优化器/评测口径全部固定。
 - 公平性：加 decoder 的臂需报「参数量 + 训练 token + 每步耗时」，与 acc 并列（否则不是同一把尺子）。
 - **判据先行**：判据在测之前定好，测完就按那个判；若中途发现判据本身有问题，写清「原判据 → 为何要改 → 改后的结论是否仍成立」。
