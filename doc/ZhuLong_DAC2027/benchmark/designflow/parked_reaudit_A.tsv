@@ -192,7 +192,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1794482509558_n7ot5	szcao	hfeg0pgn145	digital	r503: gen_pattern_files.pl tweak (fill cmlist->test.run) dependent-on-existing-f	DEPENDENT_FILES	no	不可造: dependent-on-existing-files, can't self-contain A	n/a
 1791854347080_pits0	johnl	hfeg0pkn001	digital	r503: 看下仿真激励在哪里 analysis Q&A	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	digital	r503: 分析log error怎么导致 debug Q&A	REVIVABLE_QA	yes	debug-Q&A	EXISTS
-1794206891160_wvtya	e0039602	hfeg0pkn005	digital	r503: 三个版本项目有什么不同 version-diff analysis Q&A	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1794206891160_wvtya	e0039602	hfeg0pkn005	digital	r503: 三个版本项目有什么不同 version-diff analysis Q&A	REVIVABLE_QA	yes	DONE_r672	EXISTS
 1794450614593_7oy74	thomas1w	hfeg0pjn099	digital	r503: sim-path+pattern-path debug (truncated) debug pattern	THIN_NO_CHECK	no	不可造: truncated thin sim-path/pattern-path debug, no checkable slice	n/a
 1793003474253_vgpcy	harrys	hfeg0pkn002	digital	r503: workspace have what infra Q&A	INFRA	no		n/a
 1791280343229_bp54q	mwxi	hfeg0pkn003	digital	r505: crontab task-recovery infra REJECT (verilog kw from workspace, task=infra)	INFRA	no		n/a
