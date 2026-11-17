@@ -1847,3 +1847,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793094727666_nbd38	yuyingc	10.129.2.10	11	schematic_netlist	parked		2026-11-17 22:35	r832: testbench+SPF intent but INCOMPLETE (shell-runner SIGKILL'd, no produce/gold)
 1791796777274_h1v18	lizwen	hfeg0pkn002	67	schematic_netlist	parked		2026-11-18 00:03	r839: pure shortcut-Q&A (smash/连续copy), not design_flow; kw from aether-tool-qa skill KB
 1789980079217_7gvna	thomasz	hfeg0pfn058	14	schematic_netlist	case	EDA-Eval-DesignFlow-CVPSHierSearchFix-001	2026-11-18 00:17	r839: CVPSHierSearch SKILL fix task, k=12, B-grade synthesized
+1792055462058_i6kiq	simplec	10.129.2.11	38	schematic_netlist	claimed		2026-11-18 01:24	
