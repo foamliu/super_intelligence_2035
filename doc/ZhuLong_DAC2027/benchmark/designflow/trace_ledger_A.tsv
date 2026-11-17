@@ -589,7 +589,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1789884434870_ilkea					parked		2026-11-15 07:54	r553: project analysis (look at dir), analysis not produce-task
 1791507262889_xotf3					parked		2026-11-15 07:54	r553: NetApp IO monitoring + script cleanup, IT-ops not EDA
 1792738846439_266sb	xing1z	hfeg0plg07	8	pnr_signoff	case	EDA-Eval-DesignFlow-SdcCdcFix-001	2026-11-15 09:32	
-1793241105381_nurc0	shanliny	hfeg0pkn005	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .sv attached but Q&A not produce-task
+1793241105381_nurc0	shanliny	hfeg0pkn005	9	digital	case	EDA-Eval-DesignFlow-RandAddrOverflowDiagnose-001	2026-11-17 08:29	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .sv attached but Q&A not produce-task
 1791946267022_oqri7	xingx	hfeg0pkn002	9	digital	parked		2026-11-15 08:56	mc5-recompute peek: pwd start, 0 write tool calls, read-only code-comprehension
 1794734620660_00p77	jzeng	10.129.32.75	416	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4Diagnose-001	2026-11-17 01:29	
 1791191409174_reo1p	dandans	hfhds201	113	verification	case	EDA-Eval-DesignFlow-Ddr6Dq5ExpZero-001	2026-11-17 04:01	r659 deepread DEBT 1: ddr6_test.sv dq5 D16-D23 exp=0 root-cause analysis-Q&A (X1P6+MD_8b+CRC-off); deepread done, synthesis DEBT r660; .75-local fresh A-domain (exhaustion claim corrected)

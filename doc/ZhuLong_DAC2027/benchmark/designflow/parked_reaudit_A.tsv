@@ -243,5 +243,5 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1793762245106_h1of4	jason17w	hfeg0pnd002	digital	r553: Q&A explanation task (vps run_regr meaning + VPSUserGuide.pdf), no deliver	DUP	no		n/a
 1793762224725_qrd72	jason17w	hfeg0pnd002	digital	r553: Q&A explanation task (vps run_regr meaning + VPSUserGuide.pdf), no deliver	DUP	no		n/a
 1793762194315_dvchf	jason17w	hfeg0pnd002	digital	r553: Q&A explanation task (vps run_regr meaning + VPSUserGuide.pdf), no deliver	DUP	no		n/a
-1793241105381_nurc0	shanliny	hfeg0pkn005	digital	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .s	REVIVABLE_QA	yes	analysis-Q&A	EXISTS
+1793241105381_nurc0	shanliny	hfeg0pkn005	digital	mc5-recompute peek: analysis-only (tell me why random addr exceeds depth), 13 .s	DONE_r670	debug-Q&A	EXISTS (r670 synthesized+landed RandAddrOverflowDiagnose-001, A.jsonl 362->363)
 1791946267022_oqri7	xingx	hfeg0pkn002	digital	mc5-recompute peek: pwd start, 0 write tool calls, read-only code-comprehension	REVIVABLE_QA	yes	code-comprehension	EXISTS
