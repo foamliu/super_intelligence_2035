@@ -29413,3 +29413,173 @@ echo "=== DONE 277 ==="
 
 === DONE 277 ===
 ```
+
+---
+
+## RUN_ID 277 · 2026-11-17 22:05:01 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 277 | pretrain loop liveness (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+hostname -I 2>/dev/null | sed 's/^/  local IPs: /'
+
+GR=/nas_train/app.e0031982/code/super_intelligence_2035
+[ -d "$GR/.git" ] || GR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+echo
+echo "[A] 共享仓库侧最后活动"
+git -C "$GR" log -5 --date=format:'%F %T' --pretty='  %ad %h %s' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-150
+stat -c '  MEMORY mtime=%y size=%s' "$GR/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md" 2>/dev/null || true
+echo "  now=$(date '+%F %T')"
+
+cat > /tmp/pretrain_probe_$$.sh <<'EOS'
+#!/bin/bash
+set -u
+echo "  host=$(hostname) ip=$(hostname -I 2>/dev/null | awk '{print $1}') now=$(date '+%F %T')"
+echo "  --- [1] pretrain watchdog loop ---"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -F 'baize_pretrain_loop.sh' | grep -v grep | grep -viE 'cline|bun|node' | cut -c1-180
+echo "  --- [2] loop log ---"
+if [ -f /tmp/baize_pretrain_loop.log ]; then
+  stat -c '      mtime=%y size=%s' /tmp/baize_pretrain_loop.log
+  echo "      silence_sec=$(( $(date +%s) - $(stat -c %Y /tmp/baize_pretrain_loop.log) ))"
+  tail -n 8 /tmp/baize_pretrain_loop.log | cut -c1-170 | sed 's/^/      | /'
+else echo "      (no /tmp/baize_pretrain_loop.log)"; fi
+echo "  --- [3] cline/bun ---"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E 'cline|bun' | grep -v grep | cut -c1-140 | head -5
+echo "  --- [4] train proc ---"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E 'baize_xmodel25_decay_v2|torchrun' | grep -v grep | cut -c1-180 | head -6
+echo "  --- [5] train log ---"
+if [ -f /tmp/baize_xmodel25_decay_v2_train.log ]; then
+  stat -c '      mtime=%y size=%s' /tmp/baize_xmodel25_decay_v2_train.log
+  echo "      silence_sec=$(( $(date +%s) - $(stat -c %Y /tmp/baize_xmodel25_decay_v2_train.log) ))"
+  tail -n 4 /tmp/baize_xmodel25_decay_v2_train.log | cut -c1-170 | sed 's/^/      | /'
+else echo "      (no train log)"; fi
+echo "  --- [6] GPU ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | sed 's/^/      /'
+echo "  --- [7] local relays / loops ---"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'ops_relay|baize_(pretrain|vision|data|harness|posttrain)_loop\.sh|watch_.*_loop\.sh' | grep -v grep | grep -viE 'cline|bun' | cut -c1-150 | head -10
+EOS
+P=/tmp/pretrain_probe_$$.sh
+
+echo
+echo "[B] 本机"
+bash "$P"
+for H in 10.239.2.29 10.239.2.12; do
+  echo
+  echo "[C] ssh $H"
+  timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no "$H" 'bash -s' < "$P" 2>&1 | sed 's/^/  /'
+  echo "  (ssh exit=${PIPESTATUS[0]})"
+done
+rm -f "$P"
+echo
+echo "=== DONE 277 ==="
+```
+
+**输出**
+```
+=== RUN_ID 277 | pretrain loop liveness (READ-ONLY) | 2026-11-17 22:05:01 | host=whag0pgpuap29 ===
+  local IPs: 10.239.8.29 10.239.9.29 10.239.10.29 10.239.11.29 10.239.22.29 10.239.12.29 10.239.13.29 10.239.14.29 10.239.15.29 10.247.36.1 10.239.23.29 10.239.2.29 10.247.35.1 10.247.34.1 
+
+[A] 共享仓库侧最后活动
+  2026-11-17 10:06:02 ba628dd71 pretrain: #2428 routine monitoring - iter~234943/700k step~7.0s, 240k autoqueue polling ETA~9.7h, all healthy
+  2026-11-17 10:00:09 09a1caf5a pretrain: #2427 routine monitoring - iter234880/700k step~7.0s, 240k autoqueue polling ETA~9.9h, all healthy
+  2026-11-17 09:52:17 7127e96f4 pretrain: #2426 routine monitoring - iter234790/700k step~7s, 240k autoqueue polling ETA~10h, all healthy
+  2026-11-17 09:45:46 8c21c4cf1 pretrain: #2425 routine monitoring - iter234750/700k step~6.9s, 240k autoqueue polling ETA~10.1h, all healthy
+  2026-11-17 09:39:59 aaab49173 pretrain: #2424 routine monitoring - iter234710/700k step~7.0s, 240k autoqueue polling ETA~10.3h, all healthy
+  MEMORY mtime=2026-11-17 10:05:55.409455280 +0800 size=25851
+  now=2026-11-17 22:05:02
+
+[B] 本机
+  host=whag0pgpuap29 ip=10.239.8.29 now=2026-11-17 22:05:02
+  --- [1] pretrain watchdog loop ---
+3165013 3165004 19-12:55:00  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  --- [2] loop log ---
+      (no /tmp/baize_pretrain_loop.log)
+  --- [3] cline/bun ---
+ 348001    06:38:19  0.0 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench && PY
+ 348002    06:38:19  0.0 bash -c python3 rerun_tb21_cline_quota.py --task-list manifests/tb21_codex_429_rerun_list_20261117.txt --launch --h
+ 348003    06:38:19  0.0 python3 rerun_tb21_cline_quota.py --task-list manifests/tb21_codex_429_rerun_list_20261117.txt --launch --harness c
+2054633    09:07:47  100 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/do
+2471489 36-07:09:31  0.1 /nas_train/app.e0030758/envs/node-v24.12.0-linux-x64/lib/node_modules/bun/bin/bun.exe /home/app.e0030758/.claude/pl
+  --- [4] train proc ---
+4163745 15-02:13:43  0.0 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 && cd /nas_train/app.e0031982/code/BaiZe-ISEDA202
+4177347 15-02:13:33  0.1 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --node_rank=1 --nproc_per_no
+  --- [5] train log ---
+      (no train log)
+  --- [6] GPU ---
+      0, 74939 MiB, 100 %
+      1, 74961 MiB, 100 %
+      2, 74841 MiB, 100 %
+      3, 75161 MiB, 100 %
+      4, 75141 MiB, 100 %
+      5, 74961 MiB, 100 %
+      6, 75221 MiB, 100 %
+      7, 74961 MiB, 100 %
+  --- [7] local relays / loops ---
+ 744116       00:01 bash /tmp/ops_relay_v2_29_fixed.sh
+2514952  9-09:02:38 bash /tmp/ops_relay_v2_29_fixed.sh
+3165005 19-12:55:00 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+3165013 19-12:55:00 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+
+[C] ssh 10.239.2.29
+    host=whag0pgpuap29 ip=10.239.8.29 now=2026-11-17 22:05:03
+    --- [1] pretrain watchdog loop ---
+  3165013 3165004 19-12:55:01  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+    --- [2] loop log ---
+        (no /tmp/baize_pretrain_loop.log)
+    --- [3] cline/bun ---
+   348001    06:38:20  0.0 bash -c cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench && PY
+   348002    06:38:20  0.0 bash -c python3 rerun_tb21_cline_quota.py --task-list manifests/tb21_codex_429_rerun_list_20261117.txt --launch --h
+   348003    06:38:20  0.0 python3 rerun_tb21_cline_quota.py --task-list manifests/tb21_codex_429_rerun_list_20261117.txt --launch --harness c
+  2054633    09:07:48  100 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/do
+  2471489 36-07:09:32  0.1 /nas_train/app.e0030758/envs/node-v24.12.0-linux-x64/lib/node_modules/bun/bin/bun.exe /home/app.e0030758/.claude/pl
+    --- [4] train proc ---
+  4163745 15-02:13:44  0.0 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 && cd /nas_train/app.e0031982/code/BaiZe-ISEDA202
+  4177347 15-02:13:34  0.1 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --node_rank=1 --nproc_per_no
+    --- [5] train log ---
+        (no train log)
+    --- [6] GPU ---
+        0, 74939 MiB, 100 %
+        1, 74961 MiB, 100 %
+        2, 74841 MiB, 100 %
+        3, 75161 MiB, 100 %
+        4, 75141 MiB, 100 %
+        5, 74961 MiB, 100 %
+        6, 75221 MiB, 100 %
+        7, 74961 MiB, 100 %
+    --- [7] local relays / loops ---
+   744116       00:02 bash /tmp/ops_relay_v2_29_fixed.sh
+  2514952  9-09:02:39 bash /tmp/ops_relay_v2_29_fixed.sh
+  3165005 19-12:55:01 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+  3165013 19-12:55:01 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  (ssh exit=0)
+
+[C] ssh 10.239.2.12
+    host=whag0pgpuap12 ip=10.239.8.12 now=2026-11-17 22:05:04
+    --- [1] pretrain watchdog loop ---
+    --- [2] loop log ---
+        (no /tmp/baize_pretrain_loop.log)
+    --- [3] cline/bun ---
+  2829444       40:56  0.0 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e003
+  2829451       40:56  4.4 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c 
+  3041408 74-04:46:38  2.0 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 -
+    --- [4] train proc ---
+  2612442 15-02:13:45  0.1 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --node_rank=0 --nproc_per_no
+    --- [5] train log ---
+        (no train log)
+    --- [6] GPU ---
+        0, 75459 MiB, 100 %
+        1, 75079 MiB, 100 %
+        2, 75077 MiB, 100 %
+        3, 74979 MiB, 100 %
+        4, 75219 MiB, 100 %
+        5, 74699 MiB, 100 %
+        6, 74923 MiB, 100 %
+        7, 75139 MiB, 100 %
+    --- [7] local relays / loops ---
+  1032513 24-02:30:40 bash ./ops_relay_v2.sh
+  1943222  9-07:25:26 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_data_loop.sh
+  (ssh exit=0)
+
+=== DONE 277 ===
+```
