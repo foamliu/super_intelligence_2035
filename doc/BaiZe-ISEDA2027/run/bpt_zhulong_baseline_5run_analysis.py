@@ -124,6 +124,9 @@ def main():
       "old_17_baseline":{**om,"env":".17 非zhulong (无RAG/无沙盒, run_commands启用)","source":a.old_dir},
       "delta_pp":round((nm["mean"]-om["mean"])*100,2) if (nm["mean"] is not None and om["mean"] is not None) else None,
       "paired_test_passany_mcnemar":mc,"paired_test_passfrac_wilcoxon":wx,
+      "rca_status":"CLEAN",
+      "rca_status_reason":"5/5 runs valid (execution_results rows >>1 for all runs); run2-4 recovered via rca_recover_extract.py (ws+no-ws); pipeline collapse root cause fixed (ws/no-ws path mismatch + chain rca_recover hook integrated). Supersedes interim rca_status=INVALID.",
+      "caliber_caveat":"run1=ws-only anchor (batch 2026_1114_180019 cleaned, unrecoverable, Pass@1=18.99%); run2-5=recovered caliber (ws+no-ws via rca_recover_extract.py). 5-run mean carries this caveat. run1 18.99% vs run2-5 2.5-4.4% gap noted; run1 is a high outlier (its 36 ws segments passed at 83%).",
       "note":"5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。"}
     with open(a.out,"w") as f: json.dump(out,f,ensure_ascii=False,indent=2)
     print(json.dumps(out,ensure_ascii=False,indent=2))

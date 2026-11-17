@@ -1,6 +1,6 @@
 {
   "directive": "2026-11-15 08:1x user order: re-run 158 eval the zhulong way + re-attribute (exclude run_commands)",
-  "aggregate_over_n_runs_present": 2,
+  "aggregate_over_n_runs_present": 5,
   "requested_num_runs": 5,
   "cli_versions": {
     "zhulong_fork": "3.0.29",
@@ -54,24 +54,183 @@
     },
     {
       "idx": 2,
-      "pass_rate": 0.0,
+      "pass_rate": 0.0443,
       "funnel": {
         "total": 158,
-        "gen_success": 1,
-        "gen_fail": 156,
+        "gen_success": 43,
+        "gen_fail": 114,
         "gen_timeout": 1,
-        "passed": 0,
-        "pass_rate": 0.0,
-        "gen_success_then_pass_rate": 0.0
+        "passed": 7,
+        "pass_rate": 0.0443,
+        "gen_success_then_pass_rate": 0.1628
       },
-      "rejected_total": null,
-      "run_commands_rejections_hook_design": null,
-      "real_mcp_per_tool": "unavailable (pipeline 不产 codegen_rejection_stats.json; run1 的系 wake500 手动从 cli_data 生成)",
-      "run_code_rejection_rate": null,
-      "silent_no_gen": 157,
-      "n_gen_fail": 156,
-      "has_perquest_profile": true,
-      "collapse_finding": "run2 code-gen collapse: 仅 1/158 产出可执行代码(cline session 成功 139 但提取出有效代码仅 1)→ execution_results 仅 1 行 → 0 pass. batch_cline.log 无连接/500/超时错误, 端点全程健康 → 非infra, 系 2B 模型 agent 回路退化(degenerate non-generation). 与 run1(36/158 gen, 30 pass) 形成 36→1 极端 swing, 证实模型 run-to-run 高方差."
+      "rejected_total": 0,
+      "run_commands_rejections_hook_design": 0,
+      "real_mcp_per_tool": {
+        "get_api_details": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis_by_keyword": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "run_code": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        }
+      },
+      "run_code_rejection_rate": 0.0,
+      "silent_no_gen": null,
+      "n_gen_fail": 114,
+      "has_perquest_profile": false
+    },
+    {
+      "idx": 3,
+      "pass_rate": 0.0253,
+      "funnel": {
+        "total": 158,
+        "gen_success": 28,
+        "gen_fail": 130,
+        "gen_timeout": 0,
+        "passed": 4,
+        "pass_rate": 0.0253,
+        "gen_success_then_pass_rate": 0.1429
+      },
+      "rejected_total": 0,
+      "run_commands_rejections_hook_design": 0,
+      "real_mcp_per_tool": {
+        "get_api_details": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis_by_keyword": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "run_code": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        }
+      },
+      "run_code_rejection_rate": 0.0,
+      "silent_no_gen": null,
+      "n_gen_fail": 130,
+      "has_perquest_profile": false
+    },
+    {
+      "idx": 4,
+      "pass_rate": 0.038,
+      "funnel": {
+        "total": 158,
+        "gen_success": 35,
+        "gen_fail": 123,
+        "gen_timeout": 0,
+        "passed": 6,
+        "pass_rate": 0.038,
+        "gen_success_then_pass_rate": 0.1714
+      },
+      "rejected_total": 0,
+      "run_commands_rejections_hook_design": 0,
+      "real_mcp_per_tool": {
+        "get_api_details": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis_by_keyword": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "run_code": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        }
+      },
+      "run_code_rejection_rate": 0.0,
+      "silent_no_gen": null,
+      "n_gen_fail": 123,
+      "has_perquest_profile": false
+    },
+    {
+      "idx": 5,
+      "pass_rate": 0.0443,
+      "funnel": {
+        "total": 158,
+        "gen_success": 44,
+        "gen_fail": 113,
+        "gen_timeout": 1,
+        "passed": 7,
+        "pass_rate": 0.0443,
+        "gen_success_then_pass_rate": 0.1591
+      },
+      "rejected_total": 0,
+      "run_commands_rejections_hook_design": 0,
+      "real_mcp_per_tool": {
+        "get_api_details": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "search_apis_by_keyword": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        },
+        "run_code": {
+          "rejections": 0,
+          "successful_attempts": 0,
+          "total_attempts": 0,
+          "rejection_rate": 0.0
+        }
+      },
+      "run_code_rejection_rate": 0.0,
+      "silent_no_gen": null,
+      "n_gen_fail": 113,
+      "has_perquest_profile": false
     }
   ],
   "Q1_real_mcp_rejection_rate_exclude_run_commands": {
@@ -121,10 +280,14 @@
       45
     ],
     "per_run_gen_fail": [
-      121
+      121,
+      114,
+      130,
+      123,
+      113
     ],
     "mean_silent": 45.0,
-    "mean_gen_fail": 121.0,
+    "mean_gen_fail": 120.2,
     "silent_share_of_158": 0.2848,
     "characteristics": "zero rejections, zero tool calls, gen_fail -> model never entered the agent loop",
     "verdict": "Silent non-generation is a model-doesnt-start problem, NOT a tool-format problem; unchanged by the tool-face switch.",
@@ -140,30 +303,30 @@
     },
     "new_baseline": {
       "label": "new_3615_zhulong",
-      "pass_rate_5run_mean": 0.1899,
-      "pass_rate_5run_std": 0.0,
-      "n_runs_present": 1,
+      "pass_rate_5run_mean": 0.0684,
+      "pass_rate_5run_std": 0.0612,
+      "n_runs_present": 5,
       "env": "36.15 zhulong口径 (PreToolUse hook, RAG+沙盒可达, run_commands禁用)",
       "cli_versions": {
         "zhulong_fork": "3.0.29",
         "cline_official": "3.0.51"
       }
     },
-    "pass1_diff_pp": 15.95,
+    "pass1_diff_pp": 3.8,
     "paired_tests": {
       "mcnemar_passany": {
-        "n11_both_pass": 0,
-        "n00_both_fail": 106,
-        "n10_new_only": 30,
-        "n01_old_only": 22,
-        "chi2_corrected": 0.9423,
-        "discordant": 52
+        "n11_both_pass": 9,
+        "n00_both_fail": 95,
+        "n10_new_only": 41,
+        "n01_old_only": 13,
+        "chi2_corrected": 13.5,
+        "discordant": 54
       },
       "wilcoxon_passfrac": {
-        "n_nonzero": 30,
+        "n_nonzero": 55,
         "error": "No module named 'scipy'"
       },
-      "delta_pp_from_analysis": 15.95
+      "delta_pp_from_analysis": 3.8
     },
     "decomposition": [
       {
@@ -203,10 +366,5 @@
   "integrity_check": {
     "recompute_command": "python3 bpt_zhulong_5run_attribution_aggregate.py --num-runs 5",
     "sources": "attribution_3615_run{1..N}/codegen_rejection_stats.json + final_report.json + execution_results.jsonl + (optional) perquest_profile"
-  },
-  "run2_collapse_note": {
-    "date": "2026-11-15",
-    "finding": "run2=0.0% (1/158 valid codegen) is a real model code-gen collapse, NOT infra (endpoint healthy, no conn errors in batch_cline.log). Confirms Q3 silent-non-generation is a model-doesnt-complete-agent-loop problem, with extreme run-to-run variance (run1=36 valid gen vs run2=1).",
-    "implication": "5-run mean±std is essential to capture this variance; a single run is unrepresentative."
   }
 }
