@@ -8,7 +8,9 @@ WAITING: 1
 
 > 🔴 **用户令 2026-11-17 15:4x（继续下载+≥4星数据下载）**：IFM下载已于11-17崩溃(xet/cas ConnectionError)→✅已用`HF_HUB_DISABLE_XET=1`修复重启9路下载；🔄IFM/Code-Reasoning(1203/1637parquet/2.2TB/73%/PID3734799/log→/tmp/dl_code_reasoning_v2.log); 🔄IFM/Math-Reasoning(700/2228parquet/1.3TB/31%/PID3734800/log→/tmp/dl_math_reasoning_v2.log); 🔄P0下载: nvidia/Nemotron-CC-Math-v1(196files/260GB/PID3734806) + nvidia/OpenMathInstruct-2(59files/12.6GB/PID3734802) + nvidia/OpenCodeReasoning(42files/9.7GB/PID3734804); 🔄P1下载: nvidia/OpenCodeInstruct(52files/6.9GB/PID3734809) + deepmind/code_contests(44files/7.6GB/PID3734811) + HuggingFaceTB/finemath(293files/149GB/PID3734812) + project-numina/NuminaMath-1.5(5files/0.5GB/PID3734813); 所有日志→/tmp/dl_*_v2.log或/tmp/dl_*.log; nice19/ionice3/max-workers2; /nas_user 49T可用✅; MegaMath batch2(megamath-web 887GB)待IFM完成后启动
 >
-> ✅ **用户令 2026-11-17 — S1/S2报告两份均已交付并commit**：①可行性报告report_s1s2_split_data.md(28KB/7节/commit cb4c93743) ②细化方案v2 report_s1s2_split_data_v2_zh.html(44KB/中文HTML/7节含blend TSV/甘特图/epoch核算/污染检查/Go-NoGo/commit 0a3c4b21b)。结论：4:4:2可行，stack-v3补code缺口(476B→过滤后286~405B)，MegaMath补math缺口(92~371B)，关键路径PC-1~PC-4预计11-22前就绪
+> ✅ **用户令 2026-11-17 — S1/S2报告两份均已交付并commit**：①可行性报告report_s1s2_split_data.md(28KB/7节/commit cb4c93743) ②细化方案v2 report_s1s2_split_data_v2_zh.html(52KB/中文HTML/7节含blend TSV/甘特图/epoch核算/污染检查/Go-NoGo)。结论：4:4:2可行，stack-v3补code缺口(476B→过滤后286~405B)，MegaMath补math缺口(92~371B)，关键路径PC-1~PC-4预计11-23前就绪
+>
+> ✅ **用户令 2026-11-17 16:3x — 修正v2报告重大错误·已完成(v2.6, commit 53986ea18, pushed)**：①350k切换点修正为~11-26(原误为12-25) ②700k终点修正为~12-25 ③甘特图改为11-17→11-30 ④余量修正为~3天(原误为4周) ⑤Go/No-Go时间项全部更新 ⑥前置截止日期前移(PC-1 11-19/PC-2 11-21/PC-3 11-21/PC-4 11-23/PC-5 11-25) ⑦新增§2.1下载优先级表(10项,S2预训练语料#1~#3优先) ⑧epoch核算增Nemotron-CC-Math/finemath改善分析 ⑨全文数值审计通过(prop/epoch/timing均一致)
 >
 > 🔴 **用户令 2026-11-15 08:5x（IFM 3个数学/代码数据集+调研）**：✅IFM/MegaMath第一批DONE(364parquet/216GB/0inc/5子集); ✅MegaMath≡LLM360/MegaMath(sha 3cbc646); ✅调研报告DONE(17KB/6节含Top5+总表+污染检查+SVG); ✅HfApi实测3repo精确文件数/字节已写入DATA_MAPPING(MegaMath=5314parquet/1.118TB/Math-Reasoning=2226parquet/4.463TB/Code-Reasoning=1635parquet/3.277TB); ⏳MegaMath第二批(megamath-web 4950files/887GB)待IFM完成后启动; /nas_user 49T可用→✅红线≥5T
 
