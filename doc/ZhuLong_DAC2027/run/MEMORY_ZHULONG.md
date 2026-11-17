@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-17 wake#1121·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e`（09:45 ops Paul Liu）起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·无本线 subagent 消融 eval ✅（pgrep 命中的 PID1910305/1910306/1910315 = ops 起 baseline run @ `/tmp/ops_clean_run3.log`·非 subagent_ablation·硬约束#1 不干扰）·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`0810ad7ad`（他线 designflow 推进·非本线·本线 HEAD=`1e8557993`）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令。详情见 daily §[wake#1118~#1120 rolled-out]）
+WAITING: 0（2026-11-17 wake#1122·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e`（09:45 ops Paul Liu）起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·无本线 subagent 消融 eval ✅（pgrep 命中的 PID1910305/1910306/1910315 = ops 起 baseline run @ `/tmp/ops_clean_run3.log`·非 subagent_ablation·硬约束#1 不干扰）·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`06c5a8d0f`（他线 designflow 推进·非本线）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令。详情见 daily §[wake#1108~#1113 rolled-out]）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -14,15 +14,9 @@ WAITING: 0（2026-11-17 wake#1121·**🟠 subagent 消融线结案·done_all·st
 - [wake#1105 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1105 rolled-out]。
 - [wake#1106 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1106 rolled-out]。
 - [wake#1107 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1107 rolled-out]。
-- [wake#1108 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1108 rolled-out]（standby 心跳·done_all·infra 自检通过·repo HEAD=`2e75ea6e1`）。
-- [wake#1109 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1109 rolled-out]（standby 心跳·done_all·infra 自检通过·repo HEAD=`5f1b9f5a2`）。
+- **[2026-11-17 wake#1122] 🟠 standby 心跳·done_all·无待办**：用户手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e`（09:45 ops Paul Liu）起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）：①MEMORY 顶部结案结论 ✅·②report `report_zhulong_a3a6_arms_zh.html` §结案节 ✅·③ZHULONG_TASK.md 11-15 20:5x + 11-16 09:0x 两令标「已归档·被 09:3x 结案令覆盖」✅·④不再起新臂 ✅·⑤commit `zhulong arms: 结案` ✅。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·**无本线 subagent 消融 eval ✅**（pgrep `subagent_ablation|A0prime|run_h2_ablation` 无命中；pgrep 命中的 PID1910305/1910306/1910315 = ops 起 baseline run @ `/tmp/ops_clean_run3.log`·非 subagent_ablation·硬约束#1 不干扰）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`06c5a8d0f`（他线推进·非本线）。MEMORY 体积维护：37.3KB 超 32KB 软上限→本轮滚出 wake#1108~#1113 详条 → daily §[wake#1108~#1113 rolled-out]·滚出后回落软上限下。**WAITING=0 standby**。
 
-- [wake#1110 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1110 rolled-out]。
-- [wake#1111 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1111 rolled-out]。
-
-- [wake#1112 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1112 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·repo HEAD=`ced1483e4`）。
-
-- [wake#1113 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1113 rolled-out]（standby 心跳·done_all·infra 自检通过·repo HEAD=`c4d23c66f`）。
+- [wake#1108~#1113 详条已滚出·2026-11-17 wake#1122] → `daily-memories/2026-11-17.md` §[wake#1108~#1113 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过）。
 
 - [wake#1118~#1120 详条已滚出·2026-11-17 wake#1121] → `daily-memories/2026-11-17.md` §[wake#1118~#1120 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过）。
 
