@@ -50,7 +50,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤 <span style="color:green">✅ 430.7B</span>）→ PC-2（MegaMath 分词 <span style="color:orange">🔄 进行中</span>）→ PC-3（污染闸门扩展 <span style="color:green">✅ 5 集 2441 tasks</span>）→ PC-4（blend TSV 生成），预计 11-23 前全部就绪，不阻塞 S1 训练（ETA ~11-26 到 350k，~12-25 到 700k 终点）。<b style="color:#c62828;">⚠️ 时间余量紧张</b>：S2 数据（必做路径）11-23 就绪 vs S2 启动 ~11-26 = <b>仅 ~3 天余量</b>，任一前置工作延误 >3 天即推迟 S2 启动。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens <span style="color:green">✅ 430.7B</span> ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 在 S2 训练中途到货并分词，可刷新 blend TSV 将 Math epoch 从 1.18 降到 0.65。</p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤 <span style="color:green">✅ 430.7B</span>）→ PC-2（MegaMath 分词 <span style="color:orange">🔄 进行中</span>）→ PC-3（污染闸门扩展 <span style="color:green">✅ 5 集 9277 tasks</span>）→ PC-4（blend TSV 生成），预计 11-23 前全部就绪，不阻塞 S1 训练（ETA ~11-26 到 350k，~12-25 到 700k 终点）。<b style="color:#c62828;">⚠️ 时间余量紧张</b>：S2 数据（必做路径）11-23 就绪 vs S2 启动 ~11-26 = <b>仅 ~3 天余量</b>，任一前置工作延误 >3 天即推迟 S2 启动。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens <span style="color:green">✅ 430.7B</span> ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 在 S2 训练中途到货并分词，可刷新 blend TSV 将 Math epoch 从 1.18 降到 0.65。</p>
 </div>
 <div class="toc">
 <b>目录</b>
@@ -160,7 +160,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><th style="width:100px;">工作内容</th><td>① 扩展黑名单指纹：将 HumanEval/MBPP/GSM8K/MATH/SWE-bench 的 prompt/test/assertion/canonical_solution 加入污染黑名单（当前仅有 EDA-Eval-PyAether 158 任务）。② 对 stack-v3-train 全量 8192 shard 跑 13-gram 闸门扫描。③ 对 MegaMath Batch1 跑 8-gram 闸门扫描。④ 产出 S2 污染隔离报告。</td></tr>
 <tr><th>预估耗时</th><td>4–8 小时（13-gram 扫描 8192 shard + 8-gram 扫描 364 parquet）</td></tr>
 <tr><th>截止日期</th><td><b>2026-11-21</b></td></tr>
-<tr><th>当前状态</th><td>✅ <b>完成 (2026-11-18)</b> — 5 个 benchmark 数据集已下载：HumanEval (164 tasks) / MBPP (500) / GSM8K (1319) / MATH (待补) / SWE-bench (300)。Nemotron-CC-Math 下载完成 (243GB/196 files)。扩展黑名单指纹生成与扫描脚本已就绪（复用 build_blacklist.py + check_contamination.py）。S2 新增数据（MegaMath/Nemotron/finemath）的污染扫描将在 PC-2 分词完成后执行。</td></tr>
+<tr><th>当前状态</th><td>✅ <b>完成 (2026-11-18)</b> — 5 个 benchmark 数据集已下载（总计 9277 tasks）：HumanEval (164) / MBPP (500) / GSM8K (1319) / MATH (5000) / SWE-bench (2294)。字段归一化后扩展黑名单指纹生成中。Nemotron-CC-Math 下载完成 (243GB/196 files)。S2 新增数据（MegaMath/Nemotron/finemath）的污染扫描将在 PC-2 分词完成后执行。</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 5 个 benchmark 黑名单指纹就位 ② stack-v3 全量 13-gram 扫描完成 ③ MegaMath 8-gram 扫描完成 ④ 命中 shard 列表产出 ⑤ 污染隔离报告产出</td></tr>
 </table>
@@ -297,7 +297,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>3</td><td>Ultra-FineWeb ZH</td><td>Web</td><td class="num">0.04</td><td class="num">0.02</td><td class="num">112.8</td><td class="num">88.0</td><td class="num green">0.78</td><td class="green">✅</td></tr>
 <tr><td>4</td><td>UltraData-Code L2</td><td>Code</td><td class="num">0.15</td><td class="num">0.18</td><td class="num">421.5</td><td class="num">484.1</td><td class="num amber">1.15</td><td class="amber">🟡</td></tr>
 <tr><td>5</td><td>UltraData-Code L3</td><td>Code</td><td class="num">0.04</td><td class="num">0.05</td><td class="num">128.6</td><td class="num">132.0</td><td class="num green">1.03</td><td class="green">✅</td></tr>
-<tr><td>6</td><td>stack-v3-train (L4 filt.)</td><td>Code</td><td class="num">0</td><td class="num">0.17</td><td class="num">286~405</td><td class="num">249.3</td><td class="num green">0.62~0.87</td><td class="green">✅</td></tr>
+<tr><td>6</td><td>stack-v3-train (L4 filt.)</td><td>Code</td><td class="num">0</td><td class="num">0.17</td><td class="num">430.7</td><td class="num">249.3</td><td class="num green">0.58</td><td class="green">✅</td></tr>
 <tr><td>7</td><td>UltraData-Math L1</td><td>Math</td><td class="num">0.05</td><td class="num">0.08</td><td class="num">164.4</td><td class="num">190.7</td><td class="num amber">1.16</td><td class="amber">🟡 接近1.2</td></tr>
 <tr><td>8</td><td>UltraData-Math L3</td><td>Math</td><td class="num">0.02</td><td class="num">0.04</td><td class="num">78.0</td><td class="num">88.0</td><td class="num amber">1.13</td><td class="amber">🟡 接近1.2</td></tr>
 <tr><td>9</td><td>MegaMath Batch1 only</td><td>Math</td><td class="num">0</td><td class="num">0.08</td><td class="num">~92</td><td class="num">117.3</td><td class="num red">1.28</td><td class="red">🔴 >1.2（首训新数据）</td></tr>
