@@ -501,7 +501,7 @@
 1793873301625_fg7hf	e0039602	hfeg0pkn005	56	digital	parked		2026-11-14 10:10	r503: LLM-conversion-model评审prompt/stdcell相似匹配 Q&A (tooling meta)
 1794482509558_n7ot5	szcao	hfeg0pgn145	55	digital	parked		2026-11-14 10:10	r503: gen_pattern_files.pl tweak (fill cmlist->test.run) dependent-on-existing-files weak verifiability
 1791854347080_pits0	johnl	hfeg0pkn001	52	digital	parked		2026-11-14 10:10	r503: 看下仿真激励在哪里 analysis Q&A
-1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	parked		2026-11-14 10:10	r503: 分析log error怎么导致 debug Q&A
+1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	case	EDA-Eval-DesignFlow-XrunCuvmurDiagnose-001	2026-11-17 22:20	r503: 分析log error怎么导致 debug Q&A
 1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	case	EDA-Eval-DesignFlow-ProjVersionDiffAnalyze-001	2026-11-17 10:06	r503: 三个版本项目有什么不同 version-diff analysis Q&A
 1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	parked		2026-11-14 10:10	r503: sim-path+pattern-path debug (truncated) debug pattern
 1789975587201_fniqj	alanji	hfeg0pjn100	36	digital	case	EDA-Eval-DesignFlow-AddKeywordFile-001	2026-11-15 15:06	r503: write python script add keyword vague + netlist-diff analysis
