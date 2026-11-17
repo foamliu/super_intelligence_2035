@@ -937,6 +937,32 @@
    "detail": "no submit.zip produced",
    "n_zip_members": 0,
    "submit_path": null
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-McuAsmGen-001",
+   "arm": "V1",
+   "k_conditions": 39,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 15,
+   "k_total": 15,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-McuAsmGen-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-McuAsmGen-001",
+   "arm": "V2",
+   "k_conditions": 39,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
