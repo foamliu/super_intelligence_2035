@@ -16929,3 +16929,108 @@ echo "=== DONE 144 ==="
 
 === DONE 144 ===
 ```
+
+---
+
+## RUN_ID 145 · 2026-11-17 22:04:27 · host=`hfeg0tedaap02` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 145 | pretrain loop liveness (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+hostname -I 2>/dev/null | sed 's/^/  local IPs: /'
+
+GR=/nasdata/app.e0031982/code/super_intelligence_2035
+[ -d "$GR/.git" ] || GR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
+echo
+echo "[A] 共享仓库侧最后活动"
+git -C "$GR" log -5 --date=format:'%F %T' --pretty='  %ad %h %s' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-150
+stat -c '  MEMORY mtime=%y size=%s' "$GR/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md" 2>/dev/null || true
+echo "  now=$(date '+%F %T')"
+
+cat > /tmp/pretrain_probe_$$.sh <<'EOS'
+#!/bin/bash
+set -u
+echo "  host=$(hostname) ip=$(hostname -I 2>/dev/null | awk '{print $1}') now=$(date '+%F %T')"
+echo "  --- [1] pretrain watchdog loop ---"
+ps -eo pid,ppid,etime,pcpu,args 2>/dev/null | grep -F 'baize_pretrain_loop.sh' | grep -v grep | grep -viE 'cline|bun|node' | cut -c1-180
+echo "  --- [2] loop log ---"
+if [ -f /tmp/baize_pretrain_loop.log ]; then
+  stat -c '      mtime=%y size=%s' /tmp/baize_pretrain_loop.log
+  echo "      silence_sec=$(( $(date +%s) - $(stat -c %Y /tmp/baize_pretrain_loop.log) ))"
+  tail -n 8 /tmp/baize_pretrain_loop.log | cut -c1-170 | sed 's/^/      | /'
+else echo "      (no /tmp/baize_pretrain_loop.log)"; fi
+echo "  --- [3] cline/bun ---"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E 'cline|bun' | grep -v grep | cut -c1-140 | head -5
+echo "  --- [4] train proc ---"
+ps -eo pid,etime,pcpu,args 2>/dev/null | grep -E 'baize_xmodel25_decay_v2|torchrun' | grep -v grep | cut -c1-180 | head -6
+echo "  --- [5] train log ---"
+if [ -f /tmp/baize_xmodel25_decay_v2_train.log ]; then
+  stat -c '      mtime=%y size=%s' /tmp/baize_xmodel25_decay_v2_train.log
+  echo "      silence_sec=$(( $(date +%s) - $(stat -c %Y /tmp/baize_xmodel25_decay_v2_train.log) ))"
+  tail -n 4 /tmp/baize_xmodel25_decay_v2_train.log | cut -c1-170 | sed 's/^/      | /'
+else echo "      (no train log)"; fi
+echo "  --- [6] GPU ---"
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader 2>/dev/null | sed 's/^/      /'
+echo "  --- [7] local relays / loops ---"
+ps -eo pid,etime,args 2>/dev/null | grep -E 'ops_relay|baize_(pretrain|vision|data|harness|posttrain)_loop\.sh|watch_.*_loop\.sh|zhulong_ops_relay' | grep -v grep | grep -viE 'cline|bun' | cut -c1-150 | head -12
+EOS
+P=/tmp/pretrain_probe_$$.sh
+
+echo
+echo "[B] 本机（36.15）"
+bash "$P"
+for H in 10.239.2.29 10.239.2.12; do
+  echo
+  echo "[C] ssh $H"
+  timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no "$H" 'bash -s' < "$P" 2>&1 | sed 's/^/  /'
+  echo "  (ssh exit=${PIPESTATUS[0]})"
+done
+rm -f "$P"
+echo
+echo "=== DONE 145 ==="
+```
+
+**输出**
+```
+=== RUN_ID 145 | pretrain loop liveness (READ-ONLY) | 2026-11-17 22:04:27 | host=hfeg0tedaap02 ===
+  local IPs: 172.17.0.1 10.251.36.15 10.250.0.1 10.247.64.1 
+
+[A] 共享仓库侧最后活动
+  2026-11-17 10:06:02 ba628dd71 pretrain: #2428 routine monitoring - iter~234943/700k step~7.0s, 240k autoqueue polling ETA~9.7h, all healthy
+  2026-11-17 10:00:09 09a1caf5a pretrain: #2427 routine monitoring - iter234880/700k step~7.0s, 240k autoqueue polling ETA~9.9h, all healthy
+  2026-11-17 09:52:17 7127e96f4 pretrain: #2426 routine monitoring - iter234790/700k step~7s, 240k autoqueue polling ETA~10h, all healthy
+  2026-11-17 09:45:46 8c21c4cf1 pretrain: #2425 routine monitoring - iter234750/700k step~6.9s, 240k autoqueue polling ETA~10.1h, all healthy
+  2026-11-17 09:39:59 aaab49173 pretrain: #2424 routine monitoring - iter234710/700k step~7.0s, 240k autoqueue polling ETA~10.3h, all healthy
+  MEMORY mtime=2026-11-17 10:06:11.788105000 +0800 size=25851
+  now=2026-11-17 22:04:29
+
+[B] 本机（36.15）
+  host=hfeg0tedaap02 ip=172.17.0.1 now=2026-11-17 22:04:29
+  --- [1] pretrain watchdog loop ---
+  --- [2] loop log ---
+      (no /tmp/baize_pretrain_loop.log)
+  --- [3] cline/bun ---
+  19820 55-08:06:44  0.0 /bin/bash -c cd /home/app.t0002949/T0002949/zhulong/apps/cline-hub && export http_proxy=http://172.19.92.23:13128 h
+  19866 55-08:06:44  0.5 bun run src/server.ts
+  20041 55-08:06:43  0.6 /home/app.t0002949/.local/bin/bun --conditions=development /home/app.t0002949/T0002949/zhulong/sdk/packages/core/sr
+  28673 55-08:04:50  0.0 /home/app.t0002949/.local/bin/bun --inspect=127.0.0.1:0 --enable-source-maps -e const createJiti = require("/home/a
+  54611    06:47:20  0.0 bun run dev:web
+  --- [4] train proc ---
+  --- [5] train log ---
+      (no train log)
+  --- [6] GPU ---
+  --- [7] local relays / loops ---
+ 118463 22-13:23:37 bash zhulong_ops_relay.sh
+3044153       00:02 bash zhulong_ops_relay.sh
+
+[C] ssh 10.239.2.29
+  ssh: connect to host 10.239.2.29 port 22: Connection timed out
+  (ssh exit=255)
+
+[C] ssh 10.239.2.12
+  ssh: connect to host 10.239.2.12 port 22: Connection timed out
+  (ssh exit=255)
+
+=== DONE 145 ===
+```
