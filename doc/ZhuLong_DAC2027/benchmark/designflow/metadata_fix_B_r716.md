@@ -145,3 +145,21 @@ reframe_note 文案统一格式：`<intent> Q&A→produce (§4 有牙必要, r72
 **自验**：① 9 文件 json.load 全过 ② `python3 scripts/build_jsonl.py --check` 通过（cases/B=394 不变）③ git diff 仅新增 metadata.reframe_note 行（test_rationale 内容不变，仅末尾加逗号；test 字段未动）⇒ 670/670 断言达标不受影响 ④ trace_source(user/host/session_file/mc) 全部完整保留 ⑤ 仅 stage 本轮 9 文件，别线在途（WaveView.jsonl/waveview_scan_candidates.json untracked）未碰。
 
 **B 线 reframe_note apply 收口**：r713 batch1 5 条（r717 apply 4 + SiOutDiag-001 移交 D）+ r720 batch2 9 条（本轮 r721 apply 9）= 14 条全部闭合。r713/r720 audit 的 keep_reframe_for_teeth 落地项清零。
+
+## 8. r729 apply metadata-fix batch（2026-11-17，本轮完成）
+
+r728 audit batch8 逐题溯源 11-12 cash-in spike 时新发现 2 条 metadata bug（intent 无问题，keep），
+本轮 r729 apply 闭合。
+
+**apply 列表**（2 题，均 cases/B/ 已存在）：
+
+| task_id | r728 发现 | apply 操作 | 依据 |
+|---|---|---|---|
+| EDA-Eval-DesignFlow-DspfTailorNetFix-001 | 缺 `asset_fidelity` 标签（同 RonCurveEvaluator-001/CmlDivOscDiag-001 synth_deck 模式但未标） | metadata 新增 `asset_fidelity: "synth_deck"`（layer=L2 保留、layer_rationale 保留——已含「真实 FineSim/DSPF 全链受沙箱无项目目录权限限制…合成自包含可跑版本」） | check.py subprocess 在 hidden B design 上跑 submitted detect_map.py 解析 node->net，独立复算 oracle + 随机化 design + ':'/'.' 守卫；真实 /rundata/lacaa 权限不可达 ⇒ B档合成 deck，与同族 RonCurveEvaluator/CmlDivOscDiag 口径一致 |
+| EDA-Eval-DesignFlow-FinesimLaunchAgent-001 | `level: "L2"`（错误键名 `level` 且值 L2 与 check 行为不符） | metadata `level` 键 → `layer: "L1"` + 新增 `layer_rationale` | check.py L68 `cmd=[sys.executable, agent_path, "--config", config_path, "--dry-run"]`——仅以 --dry-run 跑候选生成的 agent.py，agent 只组装并打印 matrixrun 启动命令，**不实际启动 FineSim**；判分器 shlex 解析打印命令参数结构 + 跨输入 config_A/B guard + 非硬编码探针。无真实 EDA 沙盒工具（HSPICE/FineSim/Virtuoso）被调用 ⇒ §5 L1 离线 Python 复刻，非 L2。与同族 FinesimMatrixrunAgent-001（layer=L1, --dry-run）口径一致 |
+
+**自验**：① 2 文件 json.load 全过 ② `python3 scripts/build_jsonl.py --check` 通过（cases/B=394 不变, cases/ 总 1635）③ git diff 仅改 metadata（test/prompt/attachments/trace_source 未动）⇒ 670/670 断言达标不受影响 ④ trace_source(user/host/session_file/mc) 完整保留 ⑤ 仅 stage 本轮 2 文件，别线在途未碰。
+
+**layer/asset_fidelity 分布变化（cases/B, has layer key）**：layer L2 79→79 不变（FinesimLaunchAgent L2→L1：L2 79→78, L1 62→63；但 DspfTailorNetFix 原本已 L2 不变 ⇒ 净 L2=79? 实测 L2=79/L1=63——因 FinesimLaunchAgent 之前用 `level` 键不计入旧 L2=79 计数，迁到 `layer` 后 L1+1 ⇒ L1=63, L2=79 不变）。asset_fidelity: synth_deck 76→77（+DspfTailorNetFix）。
+
+**B 线 metadata-fix 候选队列收口**：r717 apply 7 题（3 layer spice_sim→L2 + 4 reframe_note）+ r718 SiOutDiag-001 移交 D + r721 apply 9 reframe_note + r725 apply 13 reframe_note + r726 apply 6 reframe_note + r729 apply 2（本轮）= 累计 37 题 apply，**r728 新发现 2 条已清零**。遗留：~110 legacy task_id=None（r618 template-B，量大留后续批量）+ 若干 `level` 键名非规范（同 FinesimLaunchAgent 模式，键名 `level` 而非 `layer`，值多已正确，留后续批量 normalize）。
