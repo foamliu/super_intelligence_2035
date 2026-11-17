@@ -74,6 +74,45 @@
   报告类型：<span class="badge b-bad">负结果（NO-GO）</span> &nbsp; 生成时间：2026-11-14 · 自包含 / 0 外链
 </p>
 
+<!-- ===================== 0. §结案 · 用户认知结论（2026-11-17 09:3x 用户令） ===================== -->
+<h2 id="s0" style="color:#f85149">§结案 · 用户认知结论（subagent 消融线结案 · 2026-11-17 09:3x 用户令）</h2>
+
+<div class="banner banner-bad">
+  <strong>🟢 subagent 消融线结案 · 不再追加新臂。</strong>
+  用户令（2026-11-17 09:3x，覆盖一切前令）：停止 subagent 消融评测，结案归档。A0pp eval 已由 ops kill，r3 未完成、不评分、不计入最终结果；r1=10.0% / r2=2.5% 作为「input-budget 施压下单 agent 退化」的探索性数据保留，<b>不作为正式结论</b>（r3 缺失，无法算 mean±std）。
+</div>
+
+<h3>0.1 用户认知结论（原文引用 · 本线最终结论）</h3>
+<div class="qbox">
+  「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：<br>
+  <b>1. 单 agent 表现优于多 agent；</b><br>
+  <b>2. 在多 agent 中，自主 spawn subagent 优于用户定制。</b><br>
+  上述两条由 2026 年暑假清华大学博士研究积累的认知仍然稳固。」
+</div>
+<p class="small">来源：用户 2026-11-17 09:3x 结案令（原文）。标注：2026 暑假清华博士研究积累的认知。</p>
+
+<h3>0.2 本线实验全部结果汇总</h3>
+<table>
+  <tr><th>臂</th><th>配置</th><th>ITT mean±std</th><th>状态 / 备注</th></tr>
+  <tr><td><b>A0</b></td><td>无 spawn（baseline）</td><td><b>69.2 ± 1.4%</b></td><td>正式结果 · 40 题子集 × 3 轮</td></tr>
+  <tr><td><b>A1</b></td><td>调研型 spawn（researcher · 写前 spawn）</td><td><b>66.7 ± 7.2%</b></td><td>正式结果 · Δ vs A0 = −2.5pp（证据不足）</td></tr>
+  <tr><td><b>A2</b></td><td>验证型 spawn（adversarial QA · 写后 spawn）</td><td><b>53.3 ± 3.8%</b></td><td>正式结果 · Δ vs A0 = −15.9pp（McNemar p=0.0008 显著有害）</td></tr>
+  <tr><td><b>A0′</b></td><td>无 spawn + 小预算(out=4K)</td><td><b>VOID</b></td><td>设计错误 · out-budget 施压与 subagent 价值无关 · 结果作废（r2=15.8% / r3=17.1% / r4=17.1% 留档不用于结论）</td></tr>
+  <tr><td><b>A0′′</b></td><td>无 spawn + 小 input(in=8K) + truncation proxy</td><td>r1=10.0% · r2=2.5% · <b>r3=未完成</b></td><td>探索性数据保留 · r3 缺失无法算 mean±std · <b>不作正式结论</b></td></tr>
+  <tr><td><b>H2</b></td><td>子模型梯度（改 cline 源码 + wrapper v3.0.74）</td><td>—</td><td>smoke 阶段被 11-15 07:2x 用户令叫停（A2 弱于 A0，做子模型梯度无科学意义）</td></tr>
+</table>
+<p class="small">McNemar 配对检验（per-round 120 obs）：A0vsA2 b=24,c=5,p=0.0008 高度显著；A1vsA2 b=23,c=7,p=0.006 显著；A0vsA1 b=4,c=1,p=0.37 不显著。</p>
+
+<h3>0.3 结案处置</h3>
+<ul>
+  <li><b>不再起任何新臂</b>：A3 / A3′ / A4 / A5 / A6 / A0′′′ <b>全部取消</b>。subagent 消融线 <b>done_all</b>。</li>
+  <li><b>保留产物不删</b>：A0pp data-dir / proxy 脚本 / cost JSON / trace / daily-memories 均保留为历史档，供后续研究引用。</li>
+  <li><b>归档覆盖</b>：2026-11-15 20:5x（放行 A3–A6）+ 2026-11-16 09:0x（修正 input 预算）两令均被本结案令覆盖。</li>
+  <li>本节为 subagent 消融线最终结论，覆盖下方 P1 pilot 报告的所有早期判断。</li>
+</ul>
+
+<hr class="hr">
+
 <div class="banner banner-bad">
   <strong>🔴 核心结论：实验无法成立。</strong>
   P1 pilot（8 臂 × 8 题 × 1 轮）trace 审计发现 <b>subagent 实际执行成功率 = 0%</b>（所有臂所有 spawn 调用全部 <code>finishReason=error</code>、<code>usage=0/0</code>、subagent session <code>n_msgs=0</code>）。
@@ -83,6 +122,7 @@
 <div class="toc">
   <b>目录</b>
   <ol>
+    <li><a href="#s0">§结案 · 用户认知结论（2026-11-17 结案令）</a></li>
     <li><a href="#s1">摘要（三问结论）</a></li>
     <li><a href="#s2">实验机制与 P0 验证盲区</a></li>
     <li><a href="#s3">主结果表（P1 pilot）</a></li>
