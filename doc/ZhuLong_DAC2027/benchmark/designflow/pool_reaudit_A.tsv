@@ -359,3 +359,153 @@ bftii	jason17w	hfeg0pnd002	n/a		doc-search	可造 (revived: doc-search (old weak
 1792120944014_78z8d	e0045128	hfeg0pkn001	30	pnr_signoff	analysis-Q&A	可造 (r692 peek: genus time-unit-ns + timing-report-unit + netlist-hierarchy-flattened Q&A, 28 msgs, list_allowed_files/search_codebase/RAG/skills/run_approved_command/SandBox/read_files; config-Q&A form, pending deepread)	pending deepread for exact checkable facts
 1793587958955_0yyhj	e0046913	hfeg0pkn003	89	digital	analysis-Q&A;produce	可造 (r692 peek: 188 msgs opene902 RTL解读+verdi+harden划分+cr_ifu_ibuf_entry综合+gvim Nerdtree; 26 run_approved_command+26 editor; rich multi-turn; U#72/U#86/U#88 synthesis sub-slices checkable but need /proj/lacaa remote fetch; old r37 park 'doc-explanation' was superficial U#0-only read)	pending deepread of U#72/U#86/U#88 sub-slices + /proj/lacaa fetch
 # r692 SUMMARY: r678's 11 remote slugs (18 w/ multi-host) ALL C/B-domain by keyword profile (aether/netlist/schematic/drc/virtuoso/lvs/pex/spectre dominant; A-keywords verilog/rtl/synopsys/innovus only weak noise) => r678/r691 'remote fresh truly-A' characterization INACCURATE. Remote mc>=5 r678-list = 0 true A-domain viable. Combined w/ r691 hfhds201 mc5-9 0/18 + r689 mc>=10 0 fresh => mc>=5 全可达池 (hfhds201 local + r678 remote) 在 faithful-A-domain+checkable 口径下确证耗尽. BUT parked_reaudit_A.tsv 69 EXISTS revival queue (11-15 new-standard revival, A-domain, trace EXISTS, checkable e.g. 2pdn0 deepread-confirmed) => pool NOT exhausted under revival口径, auto-stop NOT triggered, shard_mc.A stays. Next r693: synthesize 2pdn0 (DEBT 1) ToolRcFormatMapQa-001.
+1788172501150_w4x70	haoyut	10.129.2.12	1575	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 verify: .messages.json/.archive 均不存在))	-
+1791790886127_58vqx	xinqiaoz	10.129.2.11	875	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:3140/drc:2078/calibre:1456 dominant, rtl:3 weak noise)	-
+1793147699495_as67p	easont	10.129.32.82	806	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:2323/schematic:776/cmos:619 dominant, verilog:123 weak noise)	-
+1785846039627_itvhk	e0014566	10.129.35.82	760	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:1419/drc:889/.gds:535 dominant, rtl:42 weak noise)	-
+1791611498731_wg5u2	zjqiao	10.129.32.84	738	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:11231/cmos:9606/schematic:8411 dominant, verilog:33 weak noise)	-
+1790130179096_bmhid	lizwen	10.129.2.11	704	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3021/aether:792/techfile:625 dominant, rtl:202 weak noise)	-
+1790487462826_wb03t	cwei	10.129.33.27	698	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:1114/pyaether:403/hspice:281 dominant, synopsys:125 weak noise)	-
+1791963281932_4a852	e0039602	10.129.2.12	688	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:2752/lvs:164/schematic:44 dominant, verilog:94;rtl:8 weak noise)	-
+1790067900307_qy90r	xinqiaoz	10.129.2.11	666	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:6508/pdk:1973/calibre:254 dominant, rtl:1 weak noise)	-
+1789960398048_ajqj4	lizwen	10.129.2.11	663	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:2227/aether:570/pyaether:487 dominant, rtl:713 weak noise)	-
+1793524556149_f86ll	sinanz	10.129.2.12	655	C(schematic)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: schematic:1705/aether:1072/pyaether:756 dominant, verilog:493 weak noise)	-
+1793102773959_okq91	easont	10.129.32.82	654	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1999/schematic:776/cmos:619 dominant, verilog:74 weak noise)	-
+1793078405436_t0aom	easont	10.129.32.82	654	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1999/schematic:776/cmos:619 dominant, verilog:74 weak noise)	-
+1789893440245_qzgr0	xinqiaoz	10.129.2.11	642	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:6099/pdk:1208/calibre:803 dominant, rtl:2 weak noise)	-
+1785502291442_6mdxh	e0014566	10.129.35.82	636	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:757/virtuoso:587/dbopencellviewbytype:137 dominant, rtl:56 weak noise)	-
+1790064242187_1dh6s	e0031668	10.129.2.12	626	B(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: analog:1838/drc:675/netlist:516 dominant, synopsys:7 weak noise)	-
+1793930786851_my769	e0017906	10.129.8.228	620	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:1867/netlist:868/pyaether:261 dominant, verilog:562 weak noise)	-
+1793872363785_ty6oq	chengleiy	10.129.2.14	613	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:2547/virtuoso:1126/lvs:481 dominant, innovus:280 weak noise)	-
+1793001881089_dek1i	easont	10.129.32.82	592	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1942/schematic:575/analog:445 dominant, verilog:46 weak noise)	-
+1793614737757_3y3vq	sinanz	10.129.2.12	590	C(schematic)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: schematic:1197/aether:697/pyaether:479 dominant, verilog:292;rtl:102 weak noise)	-
+1791787171667_hx63x	xinqiaoz	10.129.2.11	576	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:2403/drc:1979/calibre:900 dominant, rtl:6 weak noise)	-
+1789436856855_nptmy	xinqiaoz	10.129.2.11	570	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:8809/pdk:872/calibre:286 dominant, rtl:1 weak noise)	-
+1793672454901_bg39v	tongfanl	10.129.32.80	550	B(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: analog:1165/pyaether:58/netlist:36 dominant, verilog:601;systemverilog:22 weak noise)	-
+1792573537545_enbl7	e0039602	10.129.2.12	545	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1841/drc:212/lvs:90 dominant, verilog:14;rtl:10 weak noise)	-
+1786592143567_5jmnc	e0014566	10.129.35.82	542	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:967/calibre:515/.gds:126 dominant, synopsys:22 weak noise)	-
+1793069585233_vi5wa	e0039602	10.129.2.12	541	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 verify: .messages.json/.archive 均不存在))	-
+1792149907675_axjv8	xinqiaoz	10.129.2.11	536	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:2008/calibre:1080/drc:1072 dominant, synopsys:24 weak noise)	-
+1791944224191_6i6lk	jason17w	10.129.32.190	536	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 verify: .messages.json/.archive 均不存在))	-
+1794209380351_1bu1m	e0044131	10.129.2.12	534	C(schematic)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: schematic:735/cellview:474/pyaether:470 dominant, verilog:12 weak noise)	-
+1791362457881_awgyg	hbpeng	10.129.2.11	532	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:1573/drc:1444/lvs:774 dominant, synopsys:42 weak noise)	-
+1792563683776_pwep8	jianhaiq	10.129.35.74	530	C(skipper)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: skipper:2564/pdk:1331/aether:940 dominant, synopsys:192 weak noise)	-
+1793953739742_3hw3m	ruifan	10.129.32.46	525	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:2921/cadence:168/pyaether:92 dominant, synopsys:67 weak noise)	-
+1792025124250_ebwqh	xinqiaoz	10.129.2.11	520	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:1944/drc:1700/calibre:252 dominant, rtl:2 weak noise)	-
+1788853586047_k45c2	ziyuny	10.129.8.236	517	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:1442/pyaether:516/drc:386 dominant, verilog:48 weak noise)	-
+1793775672932_5j455	e0047722	10.129.8.125	517	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:10932/pdk:2464/calibre:961 dominant, synopsys:14 weak noise)	-
+1791861649073_wj4ab	kenwang	172.16.8.192	511	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:4166/calibre:1257/hspice:6 dominant, verilog:24 weak noise)	-
+1791941227075_le1s7	jason17w	10.129.32.190	511	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 verify: .messages.json/.archive 均不存在))	-
+1792205753795_x5t0t	brian	10.129.8.231	506	C(lvs)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: lvs:1434/hspice:461/aether:319 dominant, synopsys:100 weak noise)	-
+1791805925563_jbqzl	xinqiaoz	10.129.2.11	503	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:2931/drc:1650/calibre:419 dominant, rtl:2 weak noise)	-
+1792297746172_kyref	vincelu	10.129.35.74	502	C(cmos)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: cmos:9910/netlist:5865/schematic:4112 dominant, verilog:4496 weak noise)	-
+1789954294975_4chsl	xrxiong	10.129.2.10	497	C(lvs)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: lvs:1895/schematic:583/netlist:444 dominant, verilog:373 weak noise)	-
+1791940740396_atgt9	jason17w	10.129.32.190	497	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 verify: .messages.json/.archive 均不存在))	-
+1783577039866_4dd1i	e0014566	10.129.35.82	497	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:1095/aether:228/lib.defs:173 dominant, synopsys:13 weak noise)	-
+1793017339067_jhdvn	t0002805	10.129.8.125	496	C(cmos)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: cmos:9030/schematic:1848/netlist:738 dominant, verilog:40 weak noise)	-
+1793180092850_scaqk	xinqiaoz	10.129.2.11	495	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:1363/drc:370/calibre:243 dominant, rtl:1 weak noise)	-
+1793328354943_p7jfx	tongni	10.129.2.13	481	B(hspice)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: hspice:1446/netlist:916/analog:649 dominant, synopsys:26 weak noise)	-
+1794378055746_1s79t	mike	10.129.2.12	479	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 verify: .messages.json/.archive 均不存在))	-
+1788914570061_39qja	xinqiaoz	10.129.2.11	469	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:2257/pdk:757/calibre:375 dominant, rtl:4 weak noise)	-
+1792724929127_2vuso	tongni	10.129.2.13	468	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1388/hspice:874/schematic:436 dominant, rtl:10 weak noise)	-
+1790061986818_gpdus	johnl	10.129.2.10	465	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:2627/netlist:1301/drc:880 dominant, verilog:306;synopsys:209 weak noise)	-
+1791526217197_87257	t0002962	10.129.8.222	460	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:10705/pyaether:1975/netlist:175 dominant, rtl:111;verilog:16 weak noise)	-
+1793605193788_j26fe	e0039602	10.129.2.12	460	C(lvs)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: lvs:889/netlist:837/drc:132 dominant, verilog:989 weak noise)	-
+1794203361928_17trm	e0039602	10.129.2.12	458	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1788932125428_zqelb	ziyuny	10.129.8.236	447	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:944/cellview:609/schematic:543 dominant, verilog:683 weak noise)	-
+1793879524880_3h21t	e0047527	10.129.8.134	447	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:2187/pyaether:1576/hspice:370 dominant, synopsys:348 weak noise)	-
+1793755896858_9dytw	e0039602	10.129.2.12	446	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1794472156729_uwq51	t0002470	10.129.2.11	445	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1789866007933_m14th	xinqiaoz	10.129.2.11	442	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:2795/pdk:1848/calibre:220 dominant, rtl:10 weak noise)	-
+1790057385284_xpsbw	t0002470	10.129.2.11	441	B(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: analog:3402/drc:440/cadence:3 dominant, verilog:198;systemverilog:99 weak noise)	-
+1793865788118_b7otd	xy1zhang	10.129.8.106	435	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1791786289725_wyuzh	xxchen	10.129.2.10	435	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:876/.gds:65/pdk:10 dominant, rtl:20 weak noise)	-
+1790060113870_jr97m	xinqiaoz	10.129.2.11	434	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3450/pdk:1664/calibre:205 dominant, rtl:1 weak noise)	-
+1793952785938_fmd3i	ruifan	10.129.32.46	434	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:2298/cadence:156/pyaether:90 dominant, synopsys:67 weak noise)	-
+1788918895118_cp5wk	xinqiaoz	10.129.2.11	433	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3081/pdk:948/calibre:616 dominant, rtl:22 weak noise)	-
+1793950309060_k8y6h	ruifan	10.129.32.46	433	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:2290/cadence:156/pyaether:90 dominant, synopsys:68 weak noise)	-
+1792031875998_68gc9	kli	10.129.32.80	431	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:2748/pex:1358/schematic:955 dominant, synopsys:180 weak noise)	-
+1790133815976_z9yjw	e0014566	10.129.35.82	430	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:2204/drc:746/cadence:384 dominant, synopsys:125 weak noise)	-
+1794299476374_y9sz2	michael1l	10.129.2.13	421	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:3187/pyaether:1767/skipper:943 dominant, verilog:140;synopsys:132 weak noise)	-
+1794474138453_xbl88	zjqiao	10.129.32.84	420	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:4693/pyaether:21/cadence:9 dominant, verilog:97 weak noise)	-
+1793329833544_jyrvi	xxchen	10.129.2.10	417	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:650/.gds:143/dbcreatelabel:110 dominant, rtl:104 weak noise)	-
+1790849679042_bjkmi	tongfanl	10.129.32.80	417	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1794473890903_7aypg	zjqiao	10.129.32.84	414	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:4657/pyaether:21/cadence:9 dominant, verilog:97 weak noise)	-
+1793243267055_5hjg7	zjqiao	10.129.32.84	414	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:4657/pyaether:21/cadence:9 dominant, verilog:97 weak noise)	-
+1794401065591_eo84n	xdwang	10.129.2.14	413	C(schematic)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: schematic:1579/pyaether:560/netlist:369 dominant, verilog:96 weak noise)	-
+1793322259360_bisir	sierraw	10.129.32.46	412	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:1700/schematic:916/netlist:349 dominant, synopsys:72 weak noise)	-
+1793087996513_u78sz	hengbow	10.129.8.226	411	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1102/waveview:641/cmos:94 dominant, synopsys:1013;verilog:31 weak noise)	-
+1793945031575_7l5ub	ruifan	10.129.32.46	408	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:2228/cadence:156/pyaether:76 dominant, synopsys:66 weak noise)	-
+1792376698189_1nsgi	e0039602	10.129.2.12	408	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1801/drc:116/transistor:95 dominant, verilog:23 weak noise)	-
+1792055923522_tqmu1	cynthiaz	10.129.2.13	406	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:1530/pyaether:664/schematic:663 dominant, verilog:117 weak noise)	-
+1792742447012_djml8	wnyu	10.129.2.11	405	C(hspice)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: hspice:1041/netlist:703/schematic:359 dominant, synopsys:53 weak noise)	-
+1794474782925_5ityn	zjqiao	10.129.32.84	404	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:4480/pyaether:22/cadence:9 dominant, verilog:96 weak noise)	-
+1792042618272_wl9i4	xingx	10.129.2.11	404	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1789624635745_u0vle	xinqiaoz	10.129.2.11	403	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:2516/drc:859/calibre:10 dominant, rtl:4 weak noise)	-
+1791526663956_p64wo	tongfanl	10.129.32.80	403	B(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: analog:4036/drc:2298/netlist:106 dominant, verilog:124;systemverilog:100 weak noise)	-
+1792389346933_uiykd	t0002470	10.129.2.11	403	B(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: analog:4573/drc:1784/lvs:1 dominant, verilog:42;systemverilog:32 weak noise)	-
+1793949237063_wsxpm	ruifan	10.129.32.46	400	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:2189/cadence:156/pyaether:76 dominant, synopsys:66 weak noise)	-
+1794357676593_s5o5k	e0047527	10.129.8.134	400	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:3324/pyaether:594/skipper:69 dominant, synopsys:85 weak noise)	-
+1792400027384_ahjnv	zhukaic	10.129.32.46	397	C(hspice)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: hspice:521/aether:492/netlist:226 dominant, synopsys:85 weak noise)	-
+1787897609476_ooyxi	sophiaw	10.129.32.46	396	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:671/hspice:317/netlist:145 dominant, synopsys:42 weak noise)	-
+1789892841041_i4c8d	xinqiaoz	10.129.2.11	394	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:4369/pdk:714/calibre:414 dominant, rtl:2 weak noise)	-
+1789892820566_17cgk	xinqiaoz	10.129.2.11	394	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:4369/pdk:714/calibre:414 dominant, rtl:2 weak noise)	-
+1789874220542_wiait	xinqiaoz	10.129.2.11	394	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:4369/pdk:714/calibre:414 dominant, rtl:2 weak noise)	-
+1789540996998_8qjr2	xinqiaoz	10.129.2.11	394	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:6460/calibre:764/pdk:693 dominant, rtl:1 weak noise)	-
+1794542962301_1q921	xxchen	10.129.2.10	392	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:1146/.gds:323/analog:17 dominant, rtl:8 weak noise)	-
+1793957377461_s9bc9	e0039602	10.129.2.12	391	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1794185877917_jkvft	jinhaoli	10.129.35.244	390	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1553/cmos:53/schematic:38 dominant, verilog:821;systemverilog:3 weak noise)	-
+1793839606322_bghqo	e0039602	10.129.2.12	386	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1789975805926_42jk5	t0002470	10.129.2.11	384	B(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: analog:4557/drc:1784/lvs:1 dominant, verilog:42;systemverilog:27 weak noise)	-
+1788147634807_soqbk	e0014566	10.129.35.82	382	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:710/.gds:189/drc:99 dominant, synopsys:24 weak noise)	-
+1793668301608_71ttn	tongni	10.129.2.13	381	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:1765/hspice:759/schematic:170 dominant, rtl:4 weak noise)	-
+1792214696328_c5y74	tongni	10.129.2.13	379	C(cellview)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: cellview:717/pyaether:703/aether:620 dominant, verilog:30 weak noise)	-
+1787903140887_314mt	sophiaw	10.129.32.46	378	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:585/hspice:561/transistor:103 dominant, synopsys:37 weak noise)	-
+1794535376790_xbcoz	xxchen	10.129.2.10	373	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:1101/.gds:198/pdk:6 dominant, rtl:10 weak noise)	-
+1792463960005_7frw8	zqzhan	10.129.2.11	372	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:2932/schematic:903/netlist:392 dominant, verilog:255 weak noise)	-
+1793670518248_ap4dl	e0029495	10.129.2.10	372	B(hspice)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: hspice:893/pdk:529/virtuoso:33 dominant, verilog:352;synopsys:68 weak noise)	-
+1794626078120_7hx32	xxchen	10.129.2.10	370	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:1135/.gds:199/analog:10 dominant, rtl:1 weak noise)	-
+1793427492496_njt15	tongfanl	10.129.32.80	367	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1789893408070_cu2a6	xinqiaoz	10.129.2.11	366	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3890/pdk:665/calibre:312 dominant, rtl:2 weak noise)	-
+1789893385737_zi4oj	xinqiaoz	10.129.2.11	366	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3890/pdk:665/calibre:312 dominant, rtl:2 weak noise)	-
+1789892897583_g9f56	xinqiaoz	10.129.2.11	366	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3890/pdk:665/calibre:312 dominant, rtl:2 weak noise)	-
+1789892850910_sp2d6	xinqiaoz	10.129.2.11	366	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3889/pdk:675/calibre:312 dominant, rtl:2 weak noise)	-
+1793174925139_f0vya	e0030760	10.129.32.46	366	B(hspice)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD B: hspice:1348/netlist:185/spectre:100 dominant, synopsys:65 weak noise)	-
+1794211552381_4o1b4	e0047527	10.129.8.134	365	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:2471/pyaether:1153/waveview:334 dominant, synopsys:325;verilog:231 weak noise)	-
+1793067588685_cpv3d	taodu	10.129.33.138	356	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:2660/cmos:132/analog:118 dominant, verilog:22 weak noise)	-
+1789699043373_y91i6	ericw	10.129.32.80	353	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:706 dominant, verilog:353 weak noise)	-
+1789622204418_k1qtw	xinqiaoz	10.129.2.11	352	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:5926/pdk:706/calibre:153 dominant, rtl:1 weak noise)	-
+1793843123624_u65cq	e0047472	10.129.40.209	352	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:564/pex:349/pyaether:321 dominant, innovus:958 weak noise)	-
+1794143556321_ejp6w	yuchens	10.129.2.11	347	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:1046/netlist:941/schematic:767 dominant, verilog:198 weak noise)	-
+1793683605769_xt9ag	e0045144	10.129.2.14	347	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1792215355014_rcx51	boblv	10.129.40.208	346	C(analog)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: analog:602/netlist:503/cmos:378 dominant, verilog:390 weak noise)	-
+1793000252239_9jz8x	xinqiaoz	10.129.2.11	345	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:2341/pdk:776/calibre:81 dominant, rtl:1 weak noise)	-
+1794484700419_2ntgh	lein	10.129.2.10	345	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1791796775106_b1w28	tongfanl	10.129.32.80	344	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1785898505302_zfrbu	xu1wu	10.129.8.121	342	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:457/aether:375/cadence:188 dominant, synopsys:46 weak noise)	-
+1783568117344_9iqwf	e0014566	10.129.35.82	341	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:752/aether:196/.gds:30 dominant, synopsys:11 weak noise)	-
+1794290207905_qhx2f	cliu	10.129.2.11	336	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1792570431387_vdqlw	ypzheng	10.129.2.12	335	C(cmos)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: cmos:3023/netlist:1320/aether:740 dominant, verilog:105 weak noise)	-
+1794200810852_wmv7m	xinqiaoz	10.129.2.11	335	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:4477/pdk:1305/calibre:459 dominant, rtl:1 weak noise)	-
+1794382596033_jrawb	jackjia	10.129.2.11	335	C(netlist)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: netlist:2693/cmos:218/schematic:144 dominant, synopsys:66;verilog:55 weak noise)	-
+1791965422114_8lf0t	xinqiaoz	10.129.2.11	334	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:3883/pdk:1084/calibre:439 dominant, rtl:4 weak noise)	-
+1793605487158_evxj6	xuluo	10.129.2.10	333	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1794549413194_eoxs4	gracew	10.129.2.10	333	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1792559768471_mc7z1	fxian	10.129.8.112	333	C(schematic)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: schematic:999/pyaether:465/cellview:380 dominant, rtl:79 weak noise)	-
+1793324531319_9o809	e0047722	10.129.8.125	332	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:5451/aether:2667/drc:1321 dominant, verilog:83 weak noise)	-
+1792149393076_8ylkn	xuluo	10.129.2.10	331	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1794193951052_zg8vo	e0047695	172.16.8.176	329	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:939/cadence:298/aether:271 dominant, verilog:140 weak noise)	-
+1789460368622_jlxyk	xinqiaoz	10.129.2.11	327	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:5042/pdk:1063/calibre:590 dominant, rtl:2 weak noise)	-
+1794398936151_55a3n	wnyu	10.129.2.11	327	C(hspice)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: hspice:691/lvs:372/netlist:336 dominant, synopsys:216 weak noise)	-
+1792302557875_myvdg	xinqiaoz	10.129.2.11	326	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:963/.gds:575/calibre:441 dominant, rtl:5 weak noise)	-
+1790584795049_ij4uu	e04201	10.129.2.11	326	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1792215882223_qv6pl	adaml	10.129.2.11	325	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1791958054953_qrb1b	yan1zh	10.129.2.14	324	C(aether)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: aether:2661/schematic:322/drc:291 dominant, verilog:32 weak noise)	-
+1793953276084_x88fx	eric1ch	10.129.2.10	324	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1793760774987_u7mv3	alan3zh	10.129.40.209	324	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1794396010329_k7jjm	xxchen	10.129.2.10	322	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:1350/.gds:489/pex:5 dominant, rtl:1 weak noise)	-
+1793864423469_6c7d2	sinanz	10.129.2.12	322	C(schematic)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: schematic:611/netlist:583/lvs:278 dominant, verilog:152 weak noise)	-
+1794274042713_jr2g5	jingjiew	10.129.2.12	321	(待判定)	可造(mc≥10候选池入库)	不可造 (NOFILE/INFRA (trace rotated/evicted, ssh 11-18 batch verify: .messages.json/.archive 均不存在))	-
+1792204811067_m61nd	xinqiaoz	10.129.2.11	320	C(pdk)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: pdk:1807/drc:876/calibre:766 dominant, rtl:1 weak noise)	-
+1783596713423_53n4v	e0014566	10.129.35.82	320	C(virtuoso)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: virtuoso:485/dbopencellviewbytype:180/cellview:79 dominant, rtl:29 weak noise)	-
+1794645596542_ebctc	xxchen	10.129.2.10	318	C(drc)	可造(mc≥10候选池入库)	不可造 (WRONG-SHARD C: drc:874/.gds:204/pdk:9 dominant, rtl:1 weak noise)	-
