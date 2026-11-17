@@ -1,5 +1,41 @@
 ﻿# BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-17 16:3x — 修正 v2 HTML 报告重大错误（最高优先）**
+
+> **用户原话**：「data 写的 report_s1s2_split_data_v2_zh.html 错漏百出。比如时间线甘特图（11-17 → 12-25）还在说 350K 在 12-25，实际上 12-25 是 700K，根本来不及。」
+
+> **核心事实错误**：
+> - 当前 iter ~235k，step ~7.0s
+> - **350k 切换点 ≈ 11-26**（(350k-235k) × 7s ≈ 9.3 天），不是 12-25
+> - **700k 终点 ≈ 12-25**（(700k-235k) × 7s ≈ 37.7 天）
+> - 报告中所有「~12-25 到 350k」「S2 启动 ~12-25」「4 周余量」**全错**
+> - 正确余量：数据 11-23 就绪 vs S2 启动 ~11-26 = **仅 ~3 天余量**，非常紧
+>
+> **要求**：全文逐处修正 350k 切换时间为 **~11-26**，700k 终点为 **~12-25**。甘特图时间轴改为 11-17 → 11-30（聚焦切换点前后），不再延伸到 12-25。余量重新核算。Go/No-Go 条件中时间相关项全部更新。前置工作截止日期相应前移。
+>
+> **同时检查其他错漏**，修正后重新 commit。
+
+> **用户原话**：「调整下载次序，跟 S1/S2 split 相关的预训练数据先下载」
+
+> **调整后的下载优先级**（按 S2 落地需求排序，预训练语料优先，SFT/RL 数据靠后）：
+>
+> | 序号 | repo_id | 类型 | 体积 | 用途 | 理由 |
+> |:--|:--|:--|--:|:--|:--|
+> | **1** | `IFM/MegaMath` batch2 (megamath-web) | **预训练** | 887GB | S2 Math | S2 数学预训练核心来源，batch1 已完成，batch2 是消除 math 缺口的关键 |
+> | **2** | `nvidia/Nemotron-CC-Math-v1` | **预训练** | 260GB | S2 Math | 133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85 |
+> | **3** | `HuggingFaceTB/finemath` | **预训练** | 149GB | S2 Math | 34B+9.6B tok，数学预训练补充 |
+> | **4** | `IFM/Code-Reasoning` (恢复断点续传) | SFT | 3.28TB | decay/post-train | 已下 66%，继续完成，但**不是 S2 预训练瓶颈**（stack-v3 已解决 code 缺口） |
+> | **5** | `IFM/Math-Reasoning` (恢复断点续传) | SFT | 4.46TB | decay/post-train | 已下 28%，继续完成，但**不是 S2 预训练瓶颈** |
+> | **6** | `nvidia/OpenMathInstruct-2` | SFT | 12.6GB | post-train | 体积小，快速下完 |
+> | **7** | `nvidia/OpenCodeReasoning` | SFT | 9.7GB | post-train | 体积小，快速下完 |
+> | **8** | `nvidia/OpenCodeInstruct` | SFT | 6.9GB | post-train | 体积小 |
+> | **9** | `deepmind/code_contests` | RL | 7.6GB | post-train RL | 自带验证器 |
+> | **10** | `project-numina/NuminaMath-1.5` | SFT | 0.5GB | post-train | 体积小 |
+>
+> **原则**：S2 预训练需要的（MegaMath-web / Nemotron-CC-Math / finemath）排最前；IFM 已在下的继续但不抢带宽；SFT/RL 小数据集穿插在带宽空闲时下。`aimo-validation-aime` 不下。
+> **磁盘红线**：`/nas_user` 可用 ≥5TB，随时检查。
+> **注意**：data loop 进程和下载进程均已停，需要先重启 data loop，再按此优先级启动下载。
+
 > 🔴 **用户令 · 2026-11-17 — S2 采用 4:4:2，刷新细化方案（中文 HTML）（最高优先）**
 
 > **用户裁定**：S1/S2 等分 + S2 采用 web:code:math = 4:4:2。当前 iter ~235k，预计 ~11-26 到 350k，时间来得及。请 data 线基于已出的两份报告，**刷新并细化**出一版**可执行的落地方案**，以**中文 HTML** 单文件交付。
