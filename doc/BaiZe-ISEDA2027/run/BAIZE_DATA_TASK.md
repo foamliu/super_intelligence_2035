@@ -1,5 +1,20 @@
 ﻿# BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-17 — S2 采用 4:4:2，刷新细化方案（中文 HTML）（最高优先）**
+
+> **用户裁定**：S1/S2 等分 + S2 采用 web:code:math = 4:4:2。当前 iter ~235k，预计 ~11-26 到 350k，时间来得及。请 data 线基于已出的两份报告，**刷新并细化**出一版**可执行的落地方案**，以**中文 HTML** 单文件交付。
+
+> **HTML 报告要求**：
+> 1. **最终配比表**：S2 的 shard 级 blend TSV（哪些数据源、各自 prop、类别校验 web=40%/code=40%/math=20%、加和=1.0）。含 stack-v3-train（L4 过滤后）+ MegaMath（Batch1 + 尽量含 Batch2-web）。
+> 2. **前置工作清单**：逐项列出 PC-1 ~ PC-5（L4 过滤 / MegaMath 分词 / 污染闸门扩展 / blend TSV 生成 / MegaMath-web 下载），每项含：工作内容、预估耗时、截止日期、当前状态、负责人。
+> 3. **时间线甘特图**（HTML table 或 CSS 模拟）：从 11-17 到 ~12-25（350k 切换点），标注各前置工作起止、IFM 下载完成节点、S2 启动节点。
+> 4. **epoch 核算表**：S1+S2 累计消耗 vs 可用量，逐类别（web/code/math）逐数据源，标红 >1.2 的项。
+> 5. **污染检查方案**：扩展黑名单（HumanEval/MBPP/GSM8K/MATH/SWE-bench）+ 13-gram 闸门扫描范围 + 预估耗时。
+> 6. **风险与缓解**：Math epoch 1.18（仅 Batch1）→ 如 Batch2 按时到货降到 0.65；如 Batch2 延迟的 fallback。
+> 7. **结论**：可行性判定 + 关键路径 + Go/No-Go 条件。
+> 
+> 报告写进 `run/reports/report_s1s2_split_data_v2_zh.html`，完成后 commit。
+
 > 🔴 **用户令 · 2026-11-17 — Stable 段 S1/S2 等分可行性报告（最高优先）**
 
 > **用户原话**：「我有点想把 Stable 的 700k 等分成 S1 和 S2，S1 配置不变，S2 中 web:code:math 按 4:4:2 配比，以提升数学、代码、agentic 能力。请 pretrain 和 data 分别写个报告，分析可行性和利弊。」
