@@ -89,7 +89,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr style="background:#e8f5e9;"><td>—</td><td><b>Code 小计</b></td><td>—</td><td>—</td><td class="num"><b>0.40</b></td><td class="num"><b>586.6</b></td><td class="num"><b>836~955</b></td><td class="num"><b>278.8</b></td><td class="num"><b>865.4</b></td><td class="num"><b>0.91~1.04</b></td><td>✅ code=40%</td></tr>
 <tr><td>7</td><td>UltraData-Math L1</td><td><code>math_l1</code></td><td>Math</td><td class="num">0.06</td><td class="num">88.0</td><td class="num">164.4</td><td class="num">73.4</td><td class="num">161.4</td><td class="num green">0.98</td><td>Math 主体</td></tr>
 <tr><td>8</td><td>UltraData-Math L3</td><td><code>math_l3</code></td><td>Math</td><td class="num">0.03</td><td class="num">44.0</td><td class="num">78.0</td><td class="num">29.3</td><td class="num">73.3</td><td class="num green">0.94</td><td>Math 补充</td></tr>
-<tr><td>9</td><td>MegaMath (Batch1+web)</td><td><code>megamath</code></td><td>Math</td><td class="num">0.11</td><td class="num">161.3</td><td class="num">~371</td><td class="num">0</td><td class="num">161.3</td><td class="num green">0.43</td><td>新增，Batch1~92B+web~69B</td></tr>
+<tr><td>9</td><td>MegaMath (Batch1+web)</td><td><code>megamath</code></td><td>Math</td><td class="num">0.11</td><td class="num">161.3</td><td class="num">~371</td><td class="num">0</td><td class="num">161.3</td><td class="num green">0.43</td><td>新增，可用~371B（Batch1~92B + web~279B）</td></tr>
 <tr style="background:#e8f5e9;"><td>—</td><td><b>Math 小计</b></td><td>—</td><td>—</td><td class="num"><b>0.20</b></td><td class="num"><b>293.3</b></td><td class="num"><b>613.4</b></td><td class="num"><b>102.7</b></td><td class="num"><b>396.0</b></td><td class="num green"><b>0.65</b></td><td>✅ math=20%</td></tr>
 <tr style="background:#c8e6c9;font-weight:700;"><td>—</td><td><b>合计</b></td><td>—</td><td>—</td><td class="num"><b>1.00</b></td><td class="num"><b>1,466.5</b></td><td>—</td><td class="num"><b>1,467.2</b></td><td class="num"><b>2,933.7</b></td><td>—</td><td>✅ 加和=1.0</td></tr>
 </table>
@@ -313,12 +313,12 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 Nemotron-CC-Math-v1（#2优先，133B tok）+ finemath（#3优先，43.6B tok）均为 S2 预训练数学语料。补入后 Fallback 方案 Math epoch 改善：<br>
 ① 仅 Batch1：Math 可用 334B → epoch <b>1.18</b> 🟡<br>
 ② + Nemotron-CC-Math（133B）：Math 可用 467B → epoch <b>0.85</b> ✅<br>
-③ + finemath（43.6B）：Math 可用 511B → epoch <b>0.78</b> ✅<br>
+③ 在②基础上叠加 finemath（43.6B）：Math 可用 511B → epoch <b>0.78</b> ✅（注：仅加 finemath 不加 Nemotron 则 epoch 1.05）<br>
 ④ + MegaMath-web（主方案，279B）：Math 可用 613B → epoch <b>0.65</b> ✅<br>
 <b>结论</b>：即使 MegaMath-web 延迟，仅靠 #2+#3 即可将 fallback epoch 降到 <1.0，消除所有 >1.2 风险。
 </div>
 <div class="warn" style="font-size:12px;">
-<b>标红规则</b>：>1.2 标红🔴，1.0~1.2 标黄🟡，<1.0 标绿✅。主方案所有项 < 1.2 ✅。Fallback 单源 megamath_b1 = 1.28 🔴（首训新数据），Math 类别级 1.18 🟡（补入 #2/#3 后降至 0.85/0.78 ✅）。<br>
+<b>标红规则</b>：>1.2 标红🔴，1.0~1.2 标黄🟡，<1.0 标绿✅。主方案所有项 < 1.2 ✅。Fallback 单源 megamath_b1 = 1.28 🔴（首训新数据），Math 类别级 1.18 🟡（补入 #2 后 0.85，叠加 #3 后 0.78 ✅）。<br>
 <b>code_l2 = 1.15 🟡</b>（两方案均如此）：可选调整 code_l2 prop 0.18→0.15，差额给 stack-v3 0.17→0.20，则 code_l2 epoch 降到 1.01 ✅，stack-v3 升到 1.02 ✅。
 </div>
 <!-- §5 -->
@@ -363,7 +363,7 @@ Nemotron-CC-Math-v1（#2优先，133B tok）+ finemath（#3优先，43.6B tok）
 <h2 id="s6">§6 — 风险与缓解</h2>
 <table>
 <tr><th style="width:25px;">#</th><th>风险</th><th>等级</th><th>影响</th><th>概率</th><th>缓解措施</th></tr>
-<tr><td>1</td><td><b>Math epoch 1.18（仅 Batch1）</b> — MegaMath-web 未按时到货</td><td class="amber">🟡 中</td><td>Math 数据部分重复</td><td>~30%</td><td>① 主缓解：PC-5 尽早启动 MegaMath-web 下载（#1优先），到货后 epoch 降到 0.65 ✅ ② 次优：Nemotron-CC-Math（#2下载优先级，133B），补入后 epoch 0.85 ✅ ③ 补充：finemath（#3下载优先级，43.6B），补入后 epoch 0.78 ✅ ④ Fallback：使用 §1.3，Math 类别级 1.18 < 1.2 可接受 ⑤ 极端：将 S2 math prop 从 20% 降到 15%</td></tr>
+<tr><td>1</td><td><b>Math epoch 1.18（仅 Batch1）</b> — MegaMath-web 未按时到货</td><td class="amber">🟡 中</td><td>Math 数据部分重复</td><td>~30%</td><td>① 主缓解：PC-5 尽早启动 MegaMath-web 下载（#1优先），到货后 epoch 降到 0.65 ✅ ② 次优：Nemotron-CC-Math（#2下载优先级，133B），补入后 epoch 0.85 ✅ ③ 在②基础上叠加 finemath（#3下载优先级，43.6B），补入后 epoch 0.78 ✅（注：仅加 finemath 不加 Nemotron 则 epoch 1.05，改善有限） ④ Fallback：使用 §1.3，Math 类别级 1.18 < 1.2 可接受 ⑤ 极端：将 S2 math prop 从 20% 降到 15%</td></tr>
 <tr><td>2</td><td><b>stack-v3 L4 过滤后 token 不足</b> — 保留率 < 60%</td><td class="amber">🟡 中</td><td>Code epoch 上升</td><td>~20%</td><td>① 放宽语言过滤（保留 Top-15 而非 Top-32）② 直接使用全量 476B（epoch 更低但引入噪声）③ 保守 286B → Code 836B vs 需求 866B → epoch 1.04 仍可接受</td></tr>
 <tr><td>3</td><td><b>评测集污染</b> — stack-v3 含 benchmark 测试代码</td><td class="amber">🟡 中</td><td>评测分数虚高</td><td>~40%</td><td>① PC-3 污染闸门扩展，13-gram 全量扫描 ② ≥1 命中 → 剔除 ③ 0 命中才放行</td></tr>
 <tr><td>4</td><td><b>配比切换 Loss spike</b> — Web 74%→40% 骤变</td><td class="green">🟢 低-中</td><td>训练暂态不稳定</td><td>~30%</td><td>① pretrain 线：S4 实验显示切换时 loss 反降 ② 备选：5K~10K steps 平滑过渡窗口 ③ 监控：切换后前 1000 步密切监控 ④ decay 段在 700k–720k，S2 有 350k 步充分恢复</td></tr>
@@ -398,7 +398,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <div class="card" style="border-left-color:#4caf50;">
 <h4>优化路径（含 PC-5，推荐）</h4>
 <div class="formula" style="font-size:11px;">
-[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) + Nemotron-CC-Math 下载(#2优先, 11-17→11-21, 260GB) + finemath 下载(#3优先, 11-17→11-21, 149GB) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅（含 Nemotron-CC-Math 则 0.85，含 finemath 则 0.78） → <b>建议：先用 fallback 启动 S2 (~11-26)，#1~#3 到货后刷新 blend TSV 为主方案</b>
+[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) + Nemotron-CC-Math 下载(#2优先, 11-17→11-21, 260GB) + finemath 下载(#3优先, 11-17→11-21, 149GB) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅（含 Nemotron-CC-Math 则 0.85，在 Nemotron 基础上叠加 finemath 则 0.78；仅 finemath 则 1.05 改善有限） → <b>建议：先用 fallback 启动 S2 (~11-26)，#1~#3 到货后刷新 blend TSV 为主方案</b>
 </div>
 </div>
 <h3>7.3 Go/No-Go 条件</h3>
@@ -433,7 +433,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
-<b>生成时间</b>: 2026-11-17（v2.5 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30；v2.3 修正甘特图里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐；v2.5 修正 PC-2/PC-4 截止日期与甘特图一致（PC-2: 11-20→11-21, PC-4: 11-22→11-23）、修正 Nemotron-CC-Math/finemath 下载完成时间与甘特图一致（~11-19→~11-21）、修正 §7.2 优化路径下载时间、修正风险#8截止日期引用）
+<b>生成时间</b>: 2026-11-17（v2.6 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30；v2.3 修正甘特图里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐；v2.5 修正 PC-2/PC-4 截止日期与甘特图一致、修正下载完成时间与甘特图一致、修正 §7.2 优化路径下载时间、修正风险#8截止日期引用；v2.6 修正 finemath epoch 表述歧义 — 明确 0.78 为 Nemotron+finemath 叠加结果（仅 finemath 则 1.05）、修正 §1.2 megamath 备注为可用量分解）
 </p>
 </div>
 </body>
