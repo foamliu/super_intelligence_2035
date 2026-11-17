@@ -499,7 +499,7 @@
 1789453406100_p28m8	e0017484	hfeg0plg54	75	digital	parked		2026-11-14 10:10	r503: 启动业务场景仿真与验证/分析TM在仿真中的作用 analysis Q&A
 1793867092418_uemp5	e0039602	hfeg0pkn005	66	digital	parked		2026-11-14 10:10	r503: verilog-lib-trans tool retrieval-logic Q&A (LLM tooling meta)
 1793873301625_fg7hf	e0039602	hfeg0pkn005	56	digital	parked		2026-11-14 10:10	r503: LLM-conversion-model评审prompt/stdcell相似匹配 Q&A (tooling meta)
-1794482509558_n7ot5	szcao	hfeg0pgn145	55	digital	parked		2026-11-14 10:10	r503: gen_pattern_files.pl tweak (fill cmlist->test.run) dependent-on-existing-files weak verifiability
+1794482509558_n7ot5	szcao	hfeg0pgn145	55	digital	claimed		2026-11-18 01:29	r704 reaudit revived: produce-task cmlist->test.run+run_script (digital, U#8/U#26/U#34); all dep files in trace read_files tool_result=self-contained; deepread DONE trace_deepreads/n7ot5_cmlist_run_gen.md; synth DEBT 1 next round (CmPatternRunGen-001)
 1791854347080_pits0	johnl	hfeg0pkn001	52	digital	parked		2026-11-14 10:10	r503: 看下仿真激励在哪里 analysis Q&A
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	case	EDA-Eval-DesignFlow-XrunCuvmurDiagnose-001	2026-11-17 22:20	r503: 分析log error怎么导致 debug Q&A
 1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	case	EDA-Eval-DesignFlow-ProjVersionDiffAnalyze-001	2026-11-17 10:06	r503: 三个版本项目有什么不同 version-diff analysis Q&A

@@ -26,7 +26,7 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1783323056207_rc0jh	e0014566	hfeg0plg49	n/a	pnr_signoff	wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
 1792386615426_npf2k	e0045488	hfeg0pkn002	n/a	pnr_signoff	trivial;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
 1793167986392_7bqnr	oshen	hfeg0plg36	n/a	eda_other	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
-1789882246438_m1cve	johnl	hfeg0pfn119	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1789882246438_m1cve	johnl	hfeg0pfn119	n/a	digital	weak-deliverable(old)	不可造 (r704 deepread: OFF-DOMAIN agent-harness/token-plan/agent-policy authoring dominant U#136-#414; verilog+VCS+DC U#6 vague no-spec -> NOT-AUTHENTIC; SSH可达但意图非EDA)	-
 1792552971568_dnkz8	johnl	hfeg0plg99	n/a	pnr_signoff	NOFILE;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
 1792120944014_78z8d	e0045128	hfeg0pkn001	n/a	pnr_signoff	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1791796982758_nc938			n/a		analysis-Q&A	不可造 (r567 deepread: NO-CHECKABLE-DELIVERABLE, pure multi-topic knowledge Q&A 6 unrelated Qs 0 tool_use, prose answer check() forbidden by 4.2, B-synth would over_constrain)	-
@@ -217,7 +217,7 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1790824372525_3f13i	sophiaw	hfeg0plg09	n/a	eda_other	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
 1791771378239_ceyvq	e0042624	hfeg0pkn003	n/a	eda_other	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
 1794363187550_713t3	miccao	hfeg0plg37	n/a	eda_other	analysis;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
-1793675227759_8mmd6	junwangt	hfeg0plg07	n/a	eda_other	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1793675227759_8mmd6	junwangt	hfeg0plg07	n/a	eda_other	weak-deliverable(old)	不可造 (r704 deepread: NOT-SELF-CONTAINED, "之前的脚本"来自前序session不在trace, 无speedup spec/验收标准, check()无牙; 仅1个真实user turn)	-
 1791947206474_jhsi9	tongfanl	hfhds206	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1792485371006_tma34	claire1l	hfeg0pkn004	n/a	eda_other	analysis;doc-search	可造 (revived: analysis (old weak filter retired))	analysis case: deliverable=analysis report; check() verifies correct findings vs hidden input
 1794190756187_ipil7	jasminej	hfeg0plg52	n/a	eda_other	analysis-Q&A;weak-deliverable(old)	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
@@ -236,7 +236,7 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1789453406100_p28m8	e0017484	hfeg0plg54	n/a	digital	analysis-Q&A;analysis;not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
 1793867092418_uemp5	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;retrieval/code-comprehension	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1793873301625_fg7hf	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
-1794482509558_n7ot5	szcao	hfeg0pgn145	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1794482509558_n7ot5	szcao	hfeg0pgn145	n/a	digital	weak-deliverable(old)	可造 (revived r704: produce-task cmlist->merged test.run + run_script, U#8/U#26/U#34 三turn真实意图; 所有依赖文件(cmlist/test.run/run_script/gen_pattern_files.pl/convert_signals.pl)均在trace read_files tool_result逐字可取=self-contained; deepread DONE r704 trace_deepreads/n7ot5_cmlist_run_gen.md, 参考解gen_pattern_files.py+gen_run_script.py已逐字核对; synth DEBT 1 下轮fast-path)	CmPatternRunGen-001 (digital, L1 produce-task, k>=10 拟)
 1791854347080_pits0	johnl	hfeg0pkn001	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	n/a	digital	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1794206891160_wvtya	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
@@ -252,7 +252,7 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1793865143182_nwmze	e0039602	hfeg0pkn005	n/a	digital	analysis-Q&A;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
 1791956799319_0ykok	e0046686	hfeg0pkn005	n/a	digital	doc-search	可造 (revived: doc-search (old weak filter retired))	doc case: deliverable=doc/summary; check() verifies correct coverage of required topics
 1791602750335_dtdfk	jason17w	hfeg0pnd002	n/a	digital	skill;INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
-1791896374185_vc5uj	e0014566	hfeg0plg58	n/a	digital	weak-deliverable(old)	待复审 (BORDERLINE: old weak-deliverable; needs deepread to confirm check() teeth feasible)	-
+1791896374185_vc5uj	e0014566	hfeg0plg58	n/a	digital	weak-deliverable(old)	不可造 (r704 deepread: NOT-AUTHENTIC, 'create rtl sample code' 无spec/功能/接口, check()无牙; 仅1个user turn)	-
 1793694635228_d56nb	ruisongs	hfeg0pfn087	n/a	verification	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1793611777735_q9ulk	ruisongs	hfeg0pfn087	n/a	verification	analysis-Q&A;debug/env-config	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1793250981130_kq81c	thqu	hfeg0pkn099	n/a	digital	INFRA	不可造 (NOFILE/INFRA (trace inaccessible, cannot deepread))	-
