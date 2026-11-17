@@ -29836,3 +29836,183 @@ echo "=== DONE 279 ==="
 
 === DONE 279 ===
 ```
+
+---
+
+## RUN_ID 280 · 2026-11-17 22:33:57 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 280 | salvaged loop log analysis (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+F=$(ls -t /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs/pretrain_loop_salvage_*.log 2>/dev/null | head -1)
+echo "[1] 文件"
+if [ -z "${F:-}" ] || [ ! -f "$F" ]; then echo "  未找到 salvage 文件"; else
+  stat -c '  size=%s mtime=%y' "$F"; echo "  path=$F"; echo "  lines=$(wc -l < "$F")"
+fi
+[ -n "${F:-}" ] && [ -f "$F" ] || { echo "=== DONE 280 (no file) ==="; exit 0; }
+
+echo
+echo "[2] loop 自身时间线（2026-11-17，最后 45 行）"
+grep -a -E '^\[loop\]|^\[push\]' "$F" | grep -a '2026-11-17' | tail -45 | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-160
+
+echo
+echo "[3] 空转诱因：各类计数"
+for p in 'DeprecationWarning' 'run_commands' 'Forbidden' '429' 'tool_result' 'Error' 'approve'; do
+  printf '  %-20s %s\n' "$p" "$(grep -a -c -- "$p" "$F" 2>/dev/null)"
+done
+
+echo
+echo "[4] 重复命令 Top10（run_commands 行去重）"
+grep -a -o -- '\[run_commands\].\{0,150\}' "$F" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | sort | uniq -c | sort -rn | head -10 | cut -c1-190
+
+echo
+echo "[5] 日志最后 25 行（去 ANSI）"
+tail -n 25 "$F" | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-200 | sed 's/^/  | /'
+
+echo
+echo "[6] 新 cline / sessions / 训练状态"
+ps -eo pid,ppid,etime,stat,pcpu,rss,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | cut -c1-150
+echo "  -- sessions 最新 3 个 --"
+ls -lt --time-style=+%F_%T /nas_train/app.e0031982/.cline_pretrain/sessions 2>/dev/null | head -4 | cut -c1-120
+echo "  -- GPU --"
+nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/    /'
+echo "  -- 训练 worker --"
+echo "    torchrun(4177347) workers=$(ps -eo ppid= 2>/dev/null | awk '$1==4177347' | wc -l)"
+
+echo
+echo "[7] pretrain 线最新提交（判断新 cline 是否产出）"
+git -C /nas_train/app.e0031982/code/super_intelligence_2035 log -3 --date=format:'%F %T' --pretty='  %ad %h %s' -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null | cut -c1-140
+echo "  now=$(date '+%F %T')"
+echo "=== DONE 280 ==="
+```
+
+**输出**
+```
+=== RUN_ID 280 | salvaged loop log analysis (READ-ONLY) | 2026-11-17 22:33:57 | host=whag0pgpuap29 ===
+[1] 文件
+  size=130044196 mtime=2026-11-17 22:29:55.290736900 +0800
+  path=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs/pretrain_loop_salvage_20261117_222955.log
+  lines=1236009
+
+[2] loop 自身时间线（2026-11-17，最后 45 行）
+[loop] 2026-11-17 09:36:20 wake up, invoking cline ...
+[loop] 2026-11-17 09:40:37 cline returned (exit 0), checking git push ...
+[push] 2026-11-17 09:40:37 push interval reached, syncing ...
+[loop] 2026-11-17 09:40:39 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 09:41:39 wake up, invoking cline ...
+[loop] 2026-11-17 09:47:44 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 09:47:44 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 09:48:44 wake up, invoking cline ...
+[loop] 2026-11-17 09:53:11 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 09:53:11 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 09:54:11 wake up, invoking cline ...
+[loop] 2026-11-17 10:01:49 cline returned (exit 0), checking git push ...
+[push] 2026-11-17 10:01:49 push interval reached, syncing ...
+[loop] 2026-11-17 10:01:51 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:02:51 wake up, invoking cline ...
+[loop] 2026-11-17 10:06:19 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 10:06:19 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:07:19 wake up, invoking cline ...
+[loop] 2026-11-17 10:19:27 cline returned (exit 0), checking git push ...
+[push] 2026-11-17 10:19:27 push interval reached, syncing ...
+[loop] 2026-11-17 10:19:33 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:20:33 wake up, invoking cline ...
+[loop] 2026-11-17 10:23:09 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 10:23:09 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:24:09 wake up, invoking cline ...
+[loop] 2026-11-17 10:35:15 cline returned (exit 0), checking git push ...
+[push] 2026-11-17 10:35:15 push interval reached, syncing ...
+[loop] 2026-11-17 10:35:18 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:36:18 wake up, invoking cline ...
+[loop] 2026-11-17 10:38:09 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 10:38:09 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:39:09 wake up, invoking cline ...
+[loop] 2026-11-17 10:41:18 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 10:41:18 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 10:42:18 wake up, invoking cline ...
+[loop] 2026-11-17 12:45:39 cline returned (exit 0), checking git push ...
+[push] 2026-11-17 12:45:39 push interval reached, syncing ...
+[loop] 2026-11-17 12:45:42 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 12:46:42 wake up, invoking cline ...
+[loop] 2026-11-17 12:48:36 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 12:48:36 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 12:49:36 wake up, invoking cline ...
+[loop] 2026-11-17 12:56:15 cline returned (exit 0), checking git push ...
+[loop] 2026-11-17 12:56:15 WAITING=0（无阻塞）→ sleep 60s
+[loop] 2026-11-17 12:57:15 wake up, invoking cline ...
+
+[3] 空转诱因：各类计数
+  DeprecationWarning   75724
+  run_commands         30417
+  Forbidden            11
+  429                  187
+  tool_result          0
+  Error                438
+  approve              22
+
+[4] 重复命令 Top10（run_commands 行去重）
+    923 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git add -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md d...
+    554 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && for f in doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md...
+    210 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git add doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md doc/...
+    178 [run_commands]
+    143 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git fetch origin 2>&1 | tail -3 && git status -sb 2>&1 | h...
+    136 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git status -sb 2>&1 | head -3; cd /nas_train/app.e0031982/...
+    134 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git fetch origin 2>&1 | tail -5 && echo '---STATUS---' && ...
+    126 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git push origin main 2>&1 | tail -5; cd /nas_train/app.e00...
+    124 [run_commands] wc -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md /nas_train/a...
+    121 [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git push origin main 2>&1; cd /nas_train/app.e0031982/code...
+
+[5] 日志最后 25 行（去 ANSI）
+  | [thinking] The report has already been written and committed to git (commits `87640bf19` and `e085f96ef`). The file is already in the repo, clean (no uncommitted changes), and covers all 6 required se
+  | 
+  | 1. **方案描述** (§1) - Architecture, current blend, S1/S2 split with shard-level ratio tables ✅
+  | 2. **LR schedule 影响** (§2) - WSD analysis, warmup/transition considerations, decay段 ✅
+  | 3. **L1 评测趋势分析** (§3) - Historical eval data, prediction for S2 impact on L1/L2/L3 ✅
+  | 4. **数据量核算** (§4) - Code/Math/Web token accounting, epoch calculations, timeline ✅
+  | 5. **利弊分析** (§5) - DeepSeek comparison, R3 BO comparison, agentic mechanism, risks ✅
+  | 6. **替代方案** (§6/§7) - 5 alternative schemes, recommendations ✅
+  | 
+  | The report is complete, committed, and the data line's report is also done. Let me read the remaining lines (420-536) to make sure the full report is complete, but from what I've already read, this is
+  | 
+  | Let me also verify the git status is clean and the report has been pushed.
+  | [read_files] {"files":[{"end_line":536,"path":"/nas_train/app.e0031982...
+  | DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+  |       at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+  |       at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+  |       at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+  | 
+  | DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+  |       at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+  |       at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+  |       at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+  | 
+  |    ⎿ 420 |  421 | | 项 | 值 | 422 | |:--|:--| 423 | | S1 | 0–200k（当前峰值点），配比 74:19:7 ...
+  | [run_commands] cd /nas_train/app.e0031982/code/super_intelligence_2035 && git log --oneline -1 origin/main; wc -l /nas_train/app.e00...
+
+[6] 新 cline / sessions / 训练状态
+2642407 3165013       02:50 Rl    123 578060 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligen
+  -- sessions 最新 3 个 --
+total 16600
+drwxr-x--- 2 app.e0031982 app.adm 4096 2026-11-17_22:31:12 1794925871901_q558g
+drwxr-x--- 2 app.e0031982 app.adm 4096 2026-11-17_12:57:17 1794891437091_myl8n
+drwxr-x--- 2 app.e0031982 app.adm 4096 2026-11-17_12:49:38 1794890977723_ujuxk
+  -- GPU --
+    0, 96 %
+    1, 96 %
+    2, 100 %
+    3, 100 %
+    4, 100 %
+    5, 95 %
+    6, 96 %
+    7, 96 %
+  -- 训练 worker --
+    torchrun(4177347) workers=8
+
+[7] pretrain 线最新提交（判断新 cline 是否产出）
+  2026-11-17 10:06:02 ba628dd71 pretrain: #2428 routine monitoring - iter~234943/700k step~7.0s, 240k autoqueue polling ETA~9.7h, all health
+  2026-11-17 10:00:09 09a1caf5a pretrain: #2427 routine monitoring - iter234880/700k step~7.0s, 240k autoqueue polling ETA~9.9h, all healthy
+  2026-11-17 09:52:17 7127e96f4 pretrain: #2426 routine monitoring - iter234790/700k step~7s, 240k autoqueue polling ETA~10h, all healthy
+  now=2026-11-17 22:34:39
+=== DONE 280 ===
+```
