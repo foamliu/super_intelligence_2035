@@ -1938,6 +1938,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001",
+   "arm": "V0",
+   "k_conditions": 18,
+   "pi_seconds": 307.9,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001: 1/1 conditions FAILED",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-WvPropDelayMeasure-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WvPropDelayMeasure-001",
+   "arm": "V1",
+   "k_conditions": 18,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
