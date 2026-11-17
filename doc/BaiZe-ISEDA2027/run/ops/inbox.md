@@ -1,4 +1,67 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 278 | TARGET: 29 -->
+## RUN_ID 278 — **pretrain loop / cline 深探（只读）**：fd 实指日志、进程状态、会话写入、训练进度
+
+> 承 RUN_ID 277（结论：`.29` 上 loop PID 3165013 与训练 torchrun 都活着，GPU 8×100%；
+> 但 `cline --data-dir .cline_pretrain` PID 2054633 已跑 **9h07m / 100% CPU** ⇒ 疑似卡死）。
+> 本块只读：不 kill、不重启；读 `/proc` 与文件 mtime，确定 **loop 日志真实路径** 与 **cline 是否在空转**。
+
+```bash
+set -u
+echo "=== RUN_ID 278 | pretrain loop/cline deep probe (READ-ONLY) | $(date '+%F %T') | host=$(hostname) ==="
+hostname -I 2>/dev/null | awk '{print "  local IPs: "$0}'
+LPID=3165013
+CPID=2054633
+
+echo
+echo "[1] loop 进程与 fd（日志真实去向）"
+ps -o pid,ppid,etime,stat,pcpu,args -p $LPID 2>/dev/null | cut -c1-200
+echo "  fd1 -> $(readlink /proc/$LPID/fd/1 2>/dev/null || echo '?')"
+echo "  fd2 -> $(readlink /proc/$LPID/fd/2 2>/dev/null || echo '?')"
+
+echo
+echo "[2] 相关进程（loop / 其父 / cline）"
+ps -eo pid,ppid,etime,stat,pcpu,rss,args 2>/dev/null | grep -E "^ *(3165013|3165004|3165005|$CPID) " | cut -c1-200
+
+echo
+echo "[3] cline $CPID 状态"
+awk '{print "  state=" $3 "  utime_ticks=" $14 "  stime_ticks=" $15 "  threads=" $20}' /proc/$CPID/stat 2>/dev/null || echo "  (no /proc/$CPID/stat)"
+echo "  wchan=$(cat /proc/$CPID/wchan 2>/dev/null)"
+grep -E '^(State|Threads|VmRSS|voluntary_ctxt_switches|nonvoluntary_ctxt_switches)' /proc/$CPID/status 2>/dev/null | sed 's/^/  /'
+
+echo
+echo "[4] loop 日志尾部（按 fd 实指路径）"
+for f in "$(readlink /proc/$LPID/fd/1 2>/dev/null)" "$(readlink /proc/$LPID/fd/2 2>/dev/null)"; do
+  case "$f" in
+    /*) if [ -f "$f" ]; then
+          stat -c '  mtime=%y size=%s path=%n' "$f"
+          echo "  silence_sec=$(( $(date +%s) - $(stat -c %Y "$f") ))"
+          tail -n 25 "$f" | cut -c1-180 | sed 's/^/  | /'
+        else echo "  $f 不存在（fd 指向已删除文件？）"; fi ;;
+  esac
+done
+
+echo
+echo "[5] cline 会话目录最新写入（判断是否真的在产出）"
+ls -lt /nas_train/app.e0031982/.cline_pretrain 2>/dev/null | head -6 | cut -c1-160
+echo "  -- 最近 3h 内有写入的文件（最多 8 条）--"
+find /nas_train/app.e0031982/.cline_pretrain -maxdepth 3 -type f -mmin -180 2>/dev/null | head -8
+
+echo
+echo "[6] 训练侧进度取样"
+ls -dt /nas_train/app.e0031982/*/checkpoints/iter_* 2>/dev/null | head -3
+ls -dt /nas_train/app.e0031982/*/*/checkpoints/iter_* 2>/dev/null | head -3
+echo "  -- torchrun 子进程数（8 worker 应在）--"
+ps -eo ppid=,pid=,etime=,args= 2>/dev/null | awk '$1==4177347' | wc -l
+
+echo
+echo "[7] 判活汇总"
+echo "  loop_alive=$(kill -0 $LPID 2>/dev/null && echo yes || echo no)  cline_alive=$(kill -0 $CPID 2>/dev/null && echo yes || echo no)"
+echo "=== DONE 278 ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 277 | TARGET: both -->
 ## RUN_ID 277 — **pretrain agent loop 存活体检（只读）**：loop 进程 / 日志静默 / cline 卡死 / 训练与 GPU
 
