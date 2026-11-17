@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **R2643 · 2026-11-17 18:24 — 🔴 codex修复重跑 监控轮: 26/83 done·4 PASS·22 FAIL(20 AgentTimeoutError+2 clean)·0 verifier_null·0真实429·自检clean(load29.7/224·MemAvail1025GB·harness proc~0%CPU·0 runaway·pretrain=1.46核非本线不碰)·part3 RUNNING(5并发·PID348003 ALIVE·currently gpt2-codegolf/fix-ocaml-gc/headless-terminal)·chained非codex37题WAITING(PID43417 ALIVE·polling codex PID348003)·audit interim codex 5/89=5.6%·reports porcelain clean·14:5x余项=③重跑完成→重算→REGEN(ETA~6h·57 left)·WAITING=0**: 本轮8min无新完成(codex+glm53单题~30-60min·属预期)·26 task-level result.json 全 verifier_ran=True·0 verifier_null(修复①深度验证✅·修复前82/89→0)·0真实429(修复②✅)·PASS=build-pov-ray/cancel-async-tasks/fix-git/git-leak-recovery·clean FAIL=constraints-scheduling/crack-7z-hash(真能力)·20 AgentTimeoutError(3600s超时·codex偏慢)·
+> 🆕 **R2644 · 2026-11-17 18:32 — 🔴 codex修复重跑 监控轮: 35/83 done·6 PASS(merged·audit codex 6/89=6.7%)·0 verifier_null(rerun dir·修复①深度验证✅: original 83 verifier_null→rerun 0)·0真实429(修复②✅)·自检clean(load27.6/224·MemAvail1.05TB·最高本线proc=codex exec 2.0%·0 runaway>8000%·pretrain cline 100%=1核非本线不碰)·part3 RUNNING(5并发·PID221619 ALIVE·etimes1440s·currently fix-ocaml-gc/eigen/sentiment-service)·chained非codex37题WAITING(PID43417 ALIVE·sleep60轮询codex)·14:5x余项=③重跑完成(~48 left·ETA~4h)→merge→重算真实Pass%→REGEN report_harness_tb21_7way_zh.html·WAITING=0**: 本轮4min·codex rerun产出33 task-level result(passed=5·clean_fail=28·0 timeout·0 verifier_null)+早期rerun 2+original 89(verifier_null=83=假低分根因·passed=1)·6 PASS=build-pov-ray/cancel-async-tasks/fix-git/git-leak-recovery/eigen+1·codex从1/89=1.1%假低分→6/89=6.7%(仍进行中)·10:2x已交付(撤回修正后Pass%✅)·7way interim: cline47.2/codex6.7/opencode48.3/cc33.7/pi39.3/hermes44.9/deepseek12.4
+
+> 📦 R2643 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 26/83 done 4 PASS 22 FAIL(20 timeout+2 clean) 0 verifier_null(修复①深度验证) 0真实429 自检clean part3 RUNNING(5并发)。需要时再读。
 
 > 📦 R2642 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 26/83 done 4 PASS 22 FAIL(20 timeout+2 clean) 0 verifier_null(修复①深度验证) 0真实429 自检clean part3 RUNNING(5并发)。需要时再读。
 
@@ -29,7 +31,7 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2643 codex修复重跑监控轮·26/83 done·4 PASS·22 FAIL(20 timeout+2 clean)·0 verifier_null·0真实429·part3 RUNNING(5并发)·audit interim codex 5/89=5.6%·自检clean·chained非codex37题WAITING·WAITING=0
+PHASE:        R2644 codex修复重跑监控轮·35/83 done·6 PASS(merged)·0 verifier_null(rerun)·0真实429·part3 RUNNING(5并发·PID221619)·audit interim codex 6/89=6.7%·自检clean·chained非codex37题WAITING·WAITING=0
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2620(stale prose修复+三报告REGEN)·R2626(codex 88失败重排)·R2627(codex.py point①修复+audit point④+83题429重跑LAUNCHED)·R2628(regex收紧+pending_rerun bug修复+三报告REGEN)·R2629(codex修复验证+chained非codex重跑LAUNCHED+fresh audit)·R2630-R2640(chunk1 COMPLETE 2/12 PASS监控+修复深度验证+chunk2 RUNNING监控)
 当前动作:     R2642: codex 83题重跑RUNNING(PID348003 ALIVE·harbor PID221619 part3 5并发·26/83 done·5 running·4 PASS·0 verifier_null=修复①生效·20 AgentTimeoutError)·fresh audit interim codex 5/89=5.6%·chained非codex 37题WAITING(PID43417 ALIVE·等codex完)
 下一步:       ①监控codex 83题重跑(ETA~6h·part3进行中·57 left@~5 concurrent) ②监控chained非codex 37题(自动启动·6路串行) ③全部跑完→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html(更新codex行+stale叙事)+glm53_7way ④SWE-bench predict续推
