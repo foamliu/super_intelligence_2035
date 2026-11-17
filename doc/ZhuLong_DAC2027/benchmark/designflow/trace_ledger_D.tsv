@@ -1825,3 +1825,6 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794369748866_dpjal	yunfat	hfeg0pkn004	66	waveform	parked		2026-11-17 08:18	trace incomplete: agent never finished DQ/DQS alignment analysis (license/bsub issues), no gold standard answer; 74msgs/287KB
 1794377137999_56kzh	shanliny	hfeg0pkn005	34	schematic_netlist	parked		2026-11-17 08:21	duplicate of RcNetVizRcalc-001 (session 03wfm, same user/task, 3s timestamp diff)
 1793267105856_nabcd	e0039602	hfeg0pkn003	64	schematic_netlist	case	EDA-Eval-DesignFlow-PromptRuleInhPrefixFixQA-001	2026-11-17 08:33	
+1793706097887_hhm3n	xuelianf	hfeg0pkn001	21	analog_context	parked	-	2026-11-17 09:04	r800 peek reject: read/explain Q&A with private /rundata + /proj/drgqa assets (Permission denied); 46 msgs
+1791957992288_v46uj	yzwang	hfeg0pkn001	21	schematic_netlist	parked	-	2026-11-17 09:04	r800 peek reject: pure concept Q&A 'LVS 器件不写 NETLIST MODEL/ELEMENT 会怎样'; no file-anchored evidence (P-006 retired criterion)
+1791944864965_ps5ix	e0039602	hfeg0pkn003	67	schematic_netlist	parked	-	2026-11-17 09:04	r800 peek reject: concept Q&A about simlib_base logic gate composition (inv_base→nand2/nand3); 45 msgs, explain-dominant not produce-task
