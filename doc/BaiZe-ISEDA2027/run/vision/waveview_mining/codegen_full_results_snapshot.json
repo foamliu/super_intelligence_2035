@@ -1600,6 +1600,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-VCSMakefile-001",
+   "arm": "V1",
+   "k_conditions": 21,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-VCSMakefile-001",
+   "arm": "V2",
+   "k_conditions": 21,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
