@@ -1,8 +1,11 @@
 WAITING: 0
 
+> 🚀 wake#1531 2026-11-17 13:3x 例行巡检 patrol·全交付态·零新增·非 idle-spin·git pull --rebase --autostash→up to date(HEAD=`412b9364b`=origin/main)·工作树仅 posttrain 在途(M MEMORY_POSTTRAIN.md+daily-posttrain·非本线·不 add 不 stash)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈190554s(~52.93h)在线+ssh-R pid `3961842` 在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 /health Not Found=MCP SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=视觉塔配置(Qwen2-VL dynamic_resolution/CNN 1D temporal/InternVL 6B·encoder 线·输入参考·无纳入)·体积 MEMORY 31.8KB/TASK 23KB 达标·fold wake#1529→daily。**WAITING: 0**。
+
+
 > 🚀 wake#1530 2026-11-17 13:2x 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind3(zhulong #1059/designflow A #r679/designflow B #r725·0触视觉)pull --rebase ff 同步 HEAD=`d3ae84ab5`(中途清自身超时残留 index.lock·无 rebase/merge 状态·安全)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈189905s(~52.75h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=视觉塔配置(Qwen2-VL dynamic_resolution/CNN 1D temporal/VLA 统一动作空间·encoder 线·输入参考·无纳入)·体积 MEMORY 达标·fold wake#1528→daily。**WAITING: 0**。
 
-> 🚀 wake#1529 2026-11-17 13:1x 例行巡检 patrol·全交付态·零新增·非 idle-spin·behind1(harness R2616·0触视觉)pull --rebase ff 同步 HEAD=`3485242b4`·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈189279s(~52.6h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 MCP 需 SSE 正常)+WaveView 子集 224 行 sha256 `623842b5` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=视觉塔配置(encoder 线·输入参考·无纳入)·体积 MEMORY 达标·fold wake#1520~#1524→daily。**WAITING: 0**。
+> 📦 wake#1529 2026-11-17 13:1x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1528 2026-11-17 12:58 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
@@ -122,7 +125,6 @@ WAITING: 0
 
 > 📦 wake#1381~#1383（2026-11-16 02:18~02:41，3 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-16.md（全交付态·零新增·非 idle-spin·各轮 behind2–3 ff-only 合并 designflow A/B/C/D·zhulong·pretrain·0 触视觉·无新运维令·TASK md5=cf4185d6 不变·live 复验 watchdog pid3961251+ssh-R pid3961842+三端点 /health ok+10真题+三报告在位·验收四问全可答）。需要时再读。
 
-> 📦 wake#1367~#1380（2026-11-16 00:04~02:09，含 #1367/#1368/#1369/#1370/#1371/#1372/#1379/#1380，8 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-16.md（全交付态·零新增·非 idle-spin·各轮 behind0–4 ff-only 合并 designflow shard A/B/C/D·pretrain·harness·zhulong·research·0 触视觉·无新运维令·TASK md5=cf4185d6 不变·live 复验 watchdog pid3961251+ssh-R pid3961842+三端点(:30001/30003 /health ok)+10真题+三报告在位·验收四问全可答）。需要时再读。
 
 > 📦 wake#1338~#1347（2026-11-15 19:1x~20:30，8 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-15.md（全交付态·零新增·非 idle-spin·各轮 behind0–3 ff-only 合并 designflow/harness/pretrain·0 触视觉·无新运维令·TASK md5=cf4185d6 不变·live 复验 watchdog pid3961251+ssh-R pid3961842+三端点(:30001/30003 ok)+10真题+三报告在位·验收四问全可答）。需要时再读。
 
