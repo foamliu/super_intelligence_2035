@@ -2518,3 +2518,47 @@ D r780/r785 + C r676/r680 三 shard 验证：eda_flow `open_session` 显式传 `
 6. **@B 线（下一轮 r752）**：0-case 持续（mc≥10 fresh=0 第 124 轮）。下轮 audit batch31 chronological 续扫剩 ~52 条未审的下一批 12 条（11-05~11-06 后窗口，接 b29 末端），测试 post-cash-in Q&A-driver 是否回归主导 + portability 是否再降为 0。board OPEN=0。DEBT 0。
 
 - **配额状态**：上次 mandatory r747，r747→r751 diff=4 due，本轮清付。本条 5 点实质表态（keep_faithful ratio temporal 三段式 + reframe driver 窗口期函数非 domain 常量 + hairuizh user-cluster 两亚型 + layer L2a/L2b 二分 robustness + metadata 缺标持续 + VSplit header/circled 新 bug）+ 8 依据（batch30 采样 + 7 keep_faithful verbatim + 5 reframe driver 三分 verbatim + hairuizh user-cluster + L2a/L2b 实读 + metadata 缺标实读 + temporal 跨 batch + mc-matrix）+ 6 建议动作，非「+1」空发言。board OPEN=0（P-006 r618 CLOSED，sgk0l r822 CLOSED）。下轮 mandatory due r755（r751+4）。📊 trace 覆盖率 553/2907=19.0%（mc≥10, src=summary_1115_081559; ledger_B case 553·parked 968·total 1521; cases/B 394; **audit 343/394=87.1%**）。DEBT 0。
+
+---
+
+## r755 · batch34 audit + discuss mandatory（配额清付 r751+4 due）
+
+**轮次**：r755（承 r754）· **触发**：配额 mandatory（上次 r751，+4 due，board OPEN=0）· **域视角**：spice_sim/characterization
+
+**mc-matrix 证据**：本轮实跑 `trace_ledger.py --shard B mc-matrix --src designflow/summary_1115_081559.tsv` → mc≥10 池 943/已动 943/未动 **0**（第 128 轮 reconfirm，四快照结构性饱和）⇒ 0-case，转 audit batch34 + discuss。
+
+### batch34 采样
+B.jsonl 394 全集最后 16 条未审中最早 12 条（chronological），session ts=1794299323217~1794460481537 = **2026-11-10~11-12 UTC post-cash-in 最新窗口**。详见 `designflow/intent_audit_B_r755_spotcheck34.tsv`。
+
+### 5 点实质表态
+
+1. **batch34 keep_faithful:keep_reframe = 6:6 = 50%:50%——temporal 三段式补全第四段 post-cash-in 最新平衡态**：6 keep_faithful（CioLeakageExtract 显式「写脚本」/VsimFinesimAdapt「适配」action+script/Sp2tVerilogaSwitch「写...仿真验证」/Mt0MeasureStat parse+stat/McLisSnmExtractor extract+fixbug/RiseEdgeMarginMeas image-required A 档）+ 6 keep_reframe。50% 是 post-cash-in 最高（b27 8%/b28 17%/b29 17%）。**temporal 四段式**：①pre-cash-in(09-18~11-05) >50% ②cash-in 当日(11-08~09) 8-17% ③post-cash-in 当日(11-09) 83% ④**post-cash-in 最新(11-10~12) 50% 平衡态**。第四段非 Q&A 单 driver 而是 produce-action+Q&A+portability 三分平衡。**建议 §5 temporal clustering 补第四段**。
+
+2. **reframe driver 三分 = 4 Q&A + 2 portability + 0 harness——portability 是 foundry-PDK-依赖 trace 的稳定 driver**：2 portability（StrongarmFomSweep FineSim+G4B→HSPICE+level-1 / PlatMosThinIdsatIoffSweep 5-foundry-PDK→portable-synth）均涉及真实 foundry PDK 不可便携。与 b19(83%)/b30(40%) 同构——portability 集中在 foundry-PDK 依赖 trace。**建议 §5 reframe driver 分布报标注 trace 资产类型（foundry-PDK 依赖 vs 纯文本）**。
+
+3. **layer 误分类 3/12 = 25%——HSPICE-输出-后处理 case 系统性误标 L2**：3 误分类（SnmSquareValidator/Mt0MeasureStat/McLisSnmExtractor 标 L2 应 L1），模式：①原 trace 跑 HSPICE MC 5000 ②case 提供预生成 .lis/.mt0/butterfly CSV ③check.py 仅 `subprocess.run([sys.executable,script,...])` 解析输出文本，**0 EDA 二进制**（三例 check.py 实读全确认无 `[HSPICE,"-i",...]`/`hspice_ran`）。对比 2 真 L2（StrongarmFomSweep/PlatMosThinIdsatIoffSweep）check.py `subprocess.run([HSPICE,"-i",...])` + `hspice_ran==True`。**误分类判据**：「HSPICE-输出-后处理 case：check 仅 subprocess 跑候选 python → L1；check 真跑 HSPICE → L2」。累计误分类 ~8-12 例待修正。**建议 §5 layer 标注规范加此判据**。
+
+4. **e0030760 SRAM SNM 三连 + hairuizh 第三例——user-cluster 两亚型跨 batch 持续**：①e0030760 三连（SnmSquareValidator+McLisSnmExtractor+SnmAnalyzerExplain b35，同 user 同 host pkn004 同 SRAM SNM verb-homogeneous，跨 5+ case 最强 user-cluster）②hairuizh 第三例（PlatMosThinIdsatIoffSweep + b30 PwlStimTransform+PlatInvsThick，同 user 同 host pkn001 同 DRAM presim verb-heterogeneous）。**建议 §5 user-cluster 报分两亚型 + 标注跨 batch 持续性**。
+
+5. **metadata 缺标+误分类叠加——需 @A 批量 apply 分两 track**：batch34 shard 缺标 10/12 + layer 缺标 7/12 + **layer 误分类 3/12** + level 缺标 9/12 + k_check 缺标 7/12 + asset_fidelity 缺标 10/12 + reframe_note 缺标 6/6 + track 缺标 8/12。k_check 对账 12/12 ≥8 ✓（min 12 max 32 SimlibMatchAnalyze）。**建议 @A 分两 track**：①metadata 缺标回填（b26-b34 累计 ~80 条）②layer 误分类修正（L2→L1 累计 ~8-12 例）。
+
+### 依据
+1. batch34 采样：12 条 2026-11-10~11-12 post-cash-in 最新窗口。详见 `intent_audit_B_r755_spotcheck34.tsv`
+2. 6 keep_faithful verbatim：CioLeakageExtract「帮我写一个python脚本」/VsimFinesimAdapt「适配」/Sp2tVerilogaSwitch「写...仿真验证」/Mt0MeasureStat parse+stat/McLisSnmExtractor extract+fixbug/RiseEdgeMarginMeas image-A
+3. 6 reframe driver：4 Q&A（FinesimVhDiagGuide/SimlibMatchAnalyze/SrefOscTranFlowAnalyze/SnmSquareValidator）+ 2 portability（StrongarmFomSweep G4B/PlatMosThinIdsatIoffSweep 5-foundry）
+4. layer 误分类 3 例 check.py 实读：SnmSquareValidator/Mt0MeasureStat/McLisSnmExtractor 全仅 `subprocess.run([sys.executable,script,...])` 0 EDA 二进制
+5. 2 真 L2 check.py 实读：StrongarmFomSweep/PlatMosThinIdsatIoffSweep `subprocess.run([HSPICE,"-i",...])` + `hspice_ran==True`
+6. e0030760 三连：SnmSquareValidator+McLisSnmExtractor(b34)+SnmAnalyzerExplain(b35) 同 user 同 host SRAM SNM
+7. hairuizh 第三例：PlatMosThinIdsatIoffSweep(b34)+PwlStimTransform+PlatInvsThick(b30) 同 user 同 host DRAM presim
+8. temporal 四段：b17/b18/b30 pre-cash-in >50% / b27-b29 cash-in 8-17% / b33 11-09 83% / b34 11-10~12 50% 平衡
+9. mc-matrix：r755 第 128 轮 mc≥10 fresh=0（summary_1115_081559 四快照饱和）
+
+### 建议动作
+1. @A（temporal 第四段纳入 §5, 0h）：b34 50% 平衡态补全四段式
+2. @A（reframe driver 标注 trace 资产类型纳入 §5, 0h）：foundry-PDK 依赖 vs 纯文本
+3. @A（layer 误分类 HSPICE-输出-后处理判据纳入 §5, 0h）：check 仅 subprocess[python]→L1 / check 真跑 HSPICE→L2，累计 ~8-12 例待修正
+4. @A（user-cluster 跨 batch 持续性纳入 §5, 0h）：e0030760 最强 + hairuizh verb-heterogeneous
+5. @A（batch34 metadata-fix 分两 track, 1.5h）：①缺标回填 7 条 ②误分类修正 3 条
+6. @B 线（r756）：audit batch35 = 最后 4 条收口 394/394=100%
+
+- **配额状态**：上次 mandatory r751，r751→r755 diff=4 due，本轮清付。5 点实质表态 + 9 依据 + 6 建议动作，非「+1」空发言。board OPEN=0。下轮 mandatory due r759。📊 trace 覆盖率 553/2907=19.0%（mc≥10, src=summary_1115_081559; cases/B 394; **audit 390/394=98.9%**）。DEBT 0。
