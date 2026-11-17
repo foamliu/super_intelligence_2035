@@ -99,7 +99,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1783568117344_9iqwf.messages.json					parked: handoff prompt_powerfill.md; overlaps PowerFill	可造-低优	同已覆盖case形态(需deepread)
 1788353323015_rjizk.messages.json					parked: RTEXT/checkPoints task identical to RTextChkPlan-001 (r	已交付-见case	r653 stale-cleanup: ledger_C case=EDA-Eval-DesignFlow-RtextChkPlan-001 (pool_reaudit 未对 ledger case 去重, 同 r651 wy27j 病)
 1789866007933_m14th.messages.json					parked: meta issue-handler workflow spec, not a specific EDA ta	可造	分析/Q&A或脚本(需deepread)
-1789384598319_agzjb.messages.json					parked: meta code-review of DrcPatternCheck.py vs proposal doc;	可造-低优	同已覆盖case形态(需deepread)
+1789384598319_agzjb.messages.json	xinqiaoz	10.129.2.11	413	physical_verify	parked: meta code-review of DrcPatternCheck.py vs proposal doc	已造-case	DrcCwdRaceEvidence-001: CWD race evidence scan from drc.summary headers (revived 11-17)
 1792460489351_tb0xk.messages.json					parked: empty prompt	不可造	—
 1789092579396_tgs17.messages.json					parked: miccao autocell config explain; overlaps PCellFlowPlan;	可造-低优	同已覆盖case形态(需deepread)
 1789895218929_1xhgy.messages.json					parked: miccao skill-content paste; r47 judged	可造	分析/Q&A或脚本(需deepread)

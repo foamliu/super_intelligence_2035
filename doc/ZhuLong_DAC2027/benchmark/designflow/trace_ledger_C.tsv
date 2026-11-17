@@ -121,7 +121,7 @@
 1783568117344_9iqwf.messages.json					parked		2026-11-03 14:23	handoff prompt_powerfill.md; overlaps PowerFill
 1788353323015_rjizk.messages.json					parked		2026-11-03 14:23	RTEXT/checkPoints task identical to RTextChkPlan-001 (r49 pj0ax); overlap
 1789866007933_m14th.messages.json					parked		2026-11-03 14:23	meta issue-handler workflow spec, not a specific EDA task
-1789384598319_agzjb.messages.json					parked		2026-11-03 14:23	meta code-review of DrcPatternCheck.py vs proposal doc; overlaps DRCPatGen/Plan; judgment task
+1789384598319_agzjb.messages.json	xinqiaoz	10.129.2.11	413	physical_verify	case	EDA-Eval-DesignFlow-DrcCwdRaceEvidence-001	2026-11-17 20:05	DrcCwdRaceEvidence-001: CWD race evidence scan from issue_dir/work/<cell>/{good,bad}/drc.summary headers; revived from parked (11-15 令 §二 analysis/judgment tasks valid)
 1792460489351_tb0xk.messages.json					parked		2026-11-03 14:23	empty prompt
 1789092579396_tgs17.messages.json					parked		2026-11-03 14:23	miccao autocell config explain; overlaps PCellFlowPlan; r47 judged
 1789895218929_1xhgy.messages.json					parked		2026-11-03 14:23	miccao skill-content paste; r47 judged
