@@ -2,14 +2,14 @@
 
 WAITING: 0
 
-> 🆕 **R2622 · 2026-11-17 14:1x — 监控轮: 自检全绿(load27.09/224=12.1%·Mem1076GB·0 runaway)·opencode route RUNNING(PID1993894·~24min·3tasks verifying: model-extraction-relu-logits+regex-chess+regex-log·10tasks total@4concurrent)·codex+hermes DONE(Δ=0)·pi(15)→deepseek(5)→cc(1) 排队·0 累计429**
+> 🆕 **R2623 · 2026-11-17 14:2x — 监控轮: opencode route COMPLETE(Δ=0·10/10 reward=0.0=ability·2 AgentTimeout·27m57s·rc=0)·claude-code RUNNING(1task pytorch-model-recovery·PID4030494)·deepseek(5)→pi(15) 排队(路由顺序=HARNESS_AGENT dict序: codex→hermes→opencode→claude-code→deepseek→pi·--routes 仅过滤非排序)·0累计429**
 > - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回=凭空抬分。**唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)**。grep 双报告: "修正后" 仅出现在撤回声明中·**无表格/列当结论** ✅。
-> - **各路真实 Pass% (audit 14:17, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE Δ=0) · opencode 43/89=48.3%(待重跑=2·跑中) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(DONE Δ=0) · deepseek 11/89=12.4%(待重跑=0) · **真待重跑=17**
-> - **rerun 进展 (v2 PID1217002 活·etimes≈15900s≈4.4h)**: codex DONE(2/2 reward=0·1 timeout=能力·Δ=0) · cline BLOCKED(infra·3-attempt确认) · hermes DONE(part1 12trial 2P/8F/9exc·part2 1trial video-processing timeout→reward0=能力·Δ=0) · **opencode RUNNING**(~13:54 PID1993894·10tasks@4concurrent·3 verifying now·ETA依各题超时3600s) · pi(15)→deepseek(5)→cc(1) 排队。adaptive work 4/4·**累计0 429**(grep 3 hit 均为 "429_hits=0" 信息行)✅。
-> - **自检**: load27.09/224=12.1%✅·MemAvailable 1076GB✅·0 harness runaway(无 proc >8000%CPU / >50GB RSS)✅·top CPU=pretrain(146%·非harness)✅·harness rerun procs 全低CPU(0.x%)✅
-> - **报告**: 三报告 REGEN@13:46(R2620)·数字未变·**无需 REGEN**(Δ=0)·报告口径 grep 复核✅(修正后仅出现在撤回声明)
-> - **运维指令区 10:2x 部分交付**: ①撤回✅ ②47trial重跑(codex+hermes DONE·opencode 跑中·真待重跑=17) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅ — 余: opencode(跑中)→pi(15)→deepseek(5)→cc(1)→逐路Δ→最终REGEN
-> - **下一步**: ①opencode 跑完→merge→audit→若Δ≠0则REGEN ②pi(15)→deepseek(5)→cc(1)依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
+> - **各路真实 Pass% (audit 14:24, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE Δ=0) · opencode 43/89=48.3%(DONE Δ=0·10all ability) · cc 30/89=33.7%(待重跑=1·跑中) · pi 35/89=39.3%(待重跑=13·排队) · hermes 40/89=44.9%(DONE Δ=0) · deepseek 11/89=12.4%(待重跑=0·排队确认) · **真待重跑=17**
+> - **rerun 进展 (v2 PID1217002 活·etimes≈16300s≈4.5h)**: codex DONE(2/2 Δ=0) · cline BLOCKED(infra·3-attempt·不在此轮routes) · hermes DONE(13/13 Δ=0) · **opencode DONE**(10/10 reward=0·2timeout·Δ=0·27m57s) · **claude-code RUNNING**(1task·~14:22) · deepseek(5)→pi(15) 排队。路由顺序=HARNESS_AGENT dict序(cc→deepseek→pi 在 opencode 之后)·**非--routes参数序**。adaptive 4/4·**累计0 429**✅。
+> - **自检**: load27.09/224=12.1%✅·MemAvailable 1076GB✅·0 harness runaway✅·top CPU=pretrain(146%·非harness)✅
+> - **报告**: 三报告 REGEN@13:46(R2620)·数字未变(opencode Δ=0)·**无需 REGEN**(Δ=0)·口径grep复核✅
+> - **运维指令区 10:2x 部分交付**: ①撤回✅ ②47trial重跑(codex+hermes+opencode DONE·cc 跑中·deepseek+pi 排队) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅ — 余: cc(1)→deepseek(5)→pi(15)→merge all→逐路Δ→最终REGEN
+> - **下一步**: ①cc→deepseek→pi 依次跑完→script自动merge all→逐路Δ→最终REGEN ②SWE-bench predict续推 ③等运维新令
 > - **📦 体积**: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB）
 
 > 📦 R2620-R2602 流水已归档 → daily-memories-harness/2026-11-17.md。结论：18轮监控+post-R2600 47trial rerun v2 launched·codex/hermes DONE(Δ=0)·cline BLOCKED(infra)·audit has_verifier修复·stale prose修复·三报告REGEN·真待重跑47→17·0累计429。需要时再读。
@@ -22,10 +22,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2622 监控轮·opencode route RUNNING(10tasks@4concurrent·3 verifying)·codex+hermes DONE(Δ=0)·pi(15)→deepseek(5)→cc(1) 排队·真待重跑=17·v2 rerun 进行中·WAITING=0
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2610(表五前后对比)·R2611(cline BLOCKED+hermes Δ=+1)·R2616(audit has_verifier修复+真待重跑47→17)·R2620(stale prose修复+三报告REGEN)·R2621(hermes+codex route DONE·opencode STARTED)·R2622(opencode RUNNING·自检全绿)
-当前动作:     R2622: 监控轮——自检全绿(load27.09/224=12.1%·Mem1076GB·0 runaway)·opencode route RUNNING(PID1993894 ~13:54·~24min·10tasks@4concurrent·3 verifying: model-extraction-relu-logits+regex-chess+regex-log)·codex+hermes DONE(Δ=0)·报告无需REGEN(数字未变)
-下一步:       ①opencode 跑完→merge→audit→若Δ≠0则REGEN ②pi(15)→deepseek(5)→cc(1)依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
+PHASE:        R2623 监控轮·opencode DONE(Δ=0)·claude-code RUNNING(1task)·deepseek(5)→pi(15) 排队·路由顺序=HARNESS_AGENT dict序·真待重跑=17·v2 rerun 进行中·WAITING=0
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2610(表五前后对比)·R2611(cline BLOCKED+hermes Δ=+1)·R2616(audit has_verifier修复+真待重跑47→17)·R2620(stale prose修复+三报告REGEN)·R2621(hermes+codex route DONE)·R2622(opencode RUNNING)·R2623(opencode DONE Δ=0·claude-code RUNNING·路由顺序澄清)
+当前动作:     R2623: 监控轮——opencode route COMPLETE(10/10 reward=0=ability·Δ=0·27m57s)·claude-code RUNNING(1task pytorch-model-recovery·PID4030494·~14:22)·deepseek(5)→pi(15) 排队(路由顺序=HARNESS_AGENT dict序·非--routes参数序)·自检全绿·报告无需REGEN(Δ=0)
+下一步:       ①cc→deepseek→pi 依次跑完→script自动merge all→逐路Δ→最终REGEN ②SWE-bench predict续推 ③等运维新令
 ERROR_COUNT:  0
  体积: TASK≈26.5KB / MEMORY≈20.6KB（✅≤32KB）
  真实 Pass% (audit 1355, 分母=89): cline 42/89=47.2%(待重跑=1·BLOCKED) · codex 1/89=1.1%(DONE·待重跑=0) · opencode 43/89=48.3%(待重跑=2·跑中) · cc 30/89=33.7%(待重跑=1) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(DONE·待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · 真待重跑=17
