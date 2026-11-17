@@ -300,9 +300,10 @@ for _h in HARNESSES:
 
 # Build HTML fragments for review sections (§2026-11-17 10:2x: no 修正后 Pass%, real Pass% only)
 _rerun_status_map = {
-    "cline-patched": "done", "codex": "done (2/2 ability)",
+    "cline-patched": "BLOCKED(infra): cline CLI exit1 静默崩溃, 3 attempts (orig+reruns 0932/1143), 非能力",
+    "codex": "done (2/2 ability)",
     "opencode": "排队中", "claude-code": "排队中",
-    "pi": "排队中", "hermes": "排队中 (qemu BLOCKED)",
+    "pi": "排队中", "hermes": "running (3/12 done=ability; qemu BLOCKED)",
     "deepseek-harness": "排队中",
 }
 _tb21_review_parts = []

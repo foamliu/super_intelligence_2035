@@ -239,8 +239,8 @@ def esc(s):
 INFRA_LEDGER = {
     "cline-patched": (
         "65 quota + 1 conn_refused + 8 synthetic",
-        "额度重跑 (quota_lost 65→0) + synthetic 5th-batch",
-        "额度✅清零; synthetic 4/8 PASS; 余 1 conn_refused + 4 synthetic 待重跑",
+        "额度重跑 (quota_lost 65→0) + synthetic 5th-batch + pytorch-model-recovery 3次重跑",
+        "额度✅清零; synthetic 4/8 PASS; pytorch-model-recovery=BLOCKED(infra) (3次重跑 cline CLI exit1 无输出, 任务特定CLI崩溃, 非能力); 余 4 synthetic 待重跑",
     ),
     "hermes": (
         "39 quota + 2 mteb + 2 qemu + synthetic",
@@ -403,7 +403,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "但 hermes-agent 无兼容版本→HERMES_PY_TOO_OLD)。</li>"
              "<li><strong>opencode / pi / deepseek / codex</strong>: synthetic(未真跑) + quota 残留 → 逐路串行重跑 "
              "(cc 完成后启动, 避免网关额度竞争)。</li>"
-             "<li><strong>cline</strong>: 额度已清零; 余 1 conn_refused + 4 synthetic 待补跑。</li></ul></div>")
+             "<li><strong>cline</strong>: 额度已清零; 余 1 conn_refused (pytorch-model-recovery) 经 3 次重跑 (original 2026-11-09 + reruns 0932/1143) 均 cline CLI exit 1 无输出 → "
+             "<strong>BLOCKED(infra)</strong> (cline CLI 在该任务环境静默崩溃, cline auth OK, 1379B 正常 instruction, cline 跑通 332 题→任务特定 CLI 崩溃, 非能力); "
+             "另 4 synthetic 待补跑。</li></ul></div>")
 
     # ---- §2026-11-17 10:2x 用户令: 撤回「修正后 Pass%」, 改为「重跑中」真实口径 ----
     if review_data:
@@ -413,9 +415,12 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "该口径把未真跑 / 额度 / 连接拒绝的题直接从分母剔除，等价于<strong>默认这些题「真跑就能通过」</strong>，"
                   "这是凭空抬分，不是复核准绳。<strong>未真跑题的处置只有一个正解: 重跑拿真实结果</strong>。"
                   "真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong> (分母恒 89)。</p>"
-                  "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2, "
-                  "hermes→opencode→pi→deepseek→cc 依次排队)。重跑完成后将重算真实 Pass%, "
-                  "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。</p>"
+                  "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2=ability, "
+                  "cline 1=BLOCKED(infra·3次CLI崩溃), hermes running 3/12=ability, opencode→pi→deepseek→cc 依次排队)。"
+                  "重跑完成后将重算真实 Pass%, "
+                  "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。"
+                  "环境硬约束 (BLOCKED) 题显式注明原因, 不误算为通过: hermes qemu/mteb (Py3.9&lt;3.11), "
+                  "cline pytorch-model-recovery (cline CLI 静默崩溃, 3 attempts)。</p>"
                   "<p><strong>四桶定义</strong>: <code>ability</code> = 模型真跑且答错 "
                   "(有 run_result / iterations&gt;1 / exc_type 等真实证据); "
                   "<code>quota</code> = 全部 trial 命中网关额度耗尽; "
@@ -431,12 +436,12 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "<th>重跑状态</th></tr></thead><tbody>")
         # rerun plan: which tasks per route
         rerun_plan = {
-            "cline-patched": (1, "done (tag 0932)"),
+            "cline-patched": (1, "BLOCKED(infra): cline CLI exit 1, no run_result, no stderr — 3 attempts (original 2026-11-09 + reruns 0932/1143) all infra-failed; cline auth OK but task cmd crashes silently; 1379B instruction, normal task; cline ran 332 other tasks → task-specific CLI crash, NOT ability"),
             "codex": (2, "done (2/2, both reward=0=ability)"),
             "opencode": (10, "排队中"),
             "claude-code": (1, "排队中"),
             "pi": (15, "排队中"),
-            "hermes": (13, "排队中 (qemu类=BLOCKED Py3.9<3.11)"),
+            "hermes": (13, "running (3/12 done, all AgentTimeoutError=ability; qemu类=BLOCKED Py3.9<3.11)"),
             "deepseek-harness": (5, "排队中"),
         }
         for i, (name, up, ev, tr, er) in enumerate(rows, 1):
@@ -486,14 +491,17 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         H.append("</tbody></table>")
         # 重跑计划与 BLOCKED 说明
         H.append("<div class='caveat'><p><strong>重跑计划 (47 trial)</strong>: "
-                  "cline 1 (done) · codex 2 (done, both ability) · hermes 13 · opencode 10 · "
+                  "cline 1 (BLOCKED·3次CLI崩溃) · codex 2 (done, both ability) · hermes 13 (running) · opencode 10 · "
                   "pi 15 · deepseek 5 · cc 1 = 47 trial, 串行, adaptive concurrency (work=4/off=10)。</p>"
                   "<p><strong>环境硬约束 (BLOCKED, 显式注明)</strong>:</p><ul>"
                   "<li><strong>hermes qemu 类</strong>: BLOCKED (容器 Py3.9 &lt; hermes-agent 最低 3.11, "
                   "PyPI 全版本均 requires-python≥3.11) — 从分母剔除时显式注明原因, 不误算为通过</li>"
+                  "<li><strong>cline pytorch-model-recovery</strong>: BLOCKED(infra) — 3 次重跑 (original 2026-11-09 + reruns 0932/1143) "
+                  "均 cline CLI exit 1, no run_result, no stderr (cline auth OK, 1379B 正常 instruction, cline 跑通 332 题 → "
+                  "任务特定 CLI 静默崩溃, 非能力); 同题 hermes 已 PASS → 确认非任务环境问题</li>"
                   "<li><strong>codex</strong>: 2 synthetic 已重跑, 均 reward=0.0 (ability) → "
                   "低分=真能力, 与原归因一致</li>"
-                  "<li><strong>deepseek 5 · cc 1 · cline 1</strong>: 低分路也必须补齐, 不因分低跳过 "
+                  "<li><strong>deepseek 5 · cc 1</strong>: 低分路也必须补齐, 不因分低跳过 "
                   "(2026-11-17 用户令)</li>"
                   "</ul></div>")
 
@@ -515,8 +523,15 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
         delta = after - before
         rd = review_data.get(hkey, {}) if review_data else {}
         pending = rd.get("pending_rerun", 0)
-        status = ("重跑完成 ✅" if pending == 0
-                  else f"重跑中 (待重跑 {pending})")
+        # §2026-11-17: cline pytorch-model-recovery = BLOCKED(infra) after 3 failed rerun attempts
+        # (cline CLI exit 1, no output); not "待重跑" — it's a hard infra constraint.
+        BLOCKED_ROUTES = {"cline-patched"}
+        if hkey in BLOCKED_ROUTES and pending > 0:
+            status = f"BLOCKED(infra) ({pending} 题 cline CLI 崩溃, 3 attempts)"
+        elif pending == 0:
+            status = "重跑完成 ✅"
+        else:
+            status = f"重跑中 (待重跑 {pending})"
         d_cls = "pass" if delta > 0 else ("" if delta == 0 else "fail")
         delta_txt = f"+{delta}" if delta > 0 else str(delta)
         pend_cls = "warn" if pending > 0 else "pass"
