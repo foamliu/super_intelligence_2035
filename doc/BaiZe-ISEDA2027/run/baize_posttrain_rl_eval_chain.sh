@@ -99,6 +99,16 @@ fi
 
 # Kill any vLLM api_server serve occupying GPU<g> (frees the card + its RAM).
 # Mirrors baize_posttrain_r2_autofire_chain.sh::kill_gpu_serve.
+#
+# wake634 fix (child-PID bug): nvidia-smi --query-compute-apps=pid returns the
+# PID that *holds the CUDA context*, which for vLLM is frequently a
+# multiprocessing child (`python -c "from multiprocessing.spawn..."`) whose argv
+# does NOT contain `vllm.entrypoints.openai.api_server`. The old code therefore
+# mis-classified it as "not vLLM serve" and skipped the kill, leaving the GPU
+# occupied (wake433 OOM mitigation had to kill the parent by hand). We now walk
+# the parent chain (ppid) of every compute-app PID; if any ancestor is a vLLM
+# api_server, we kill that ancestor (and the CUDA-holding child) so the GPU is
+# actually freed.
 kill_gpu_serve() {
   local g="$1"
   local pids
@@ -107,10 +117,32 @@ kill_gpu_serve() {
   for pid in $pids; do
     local cmd
     cmd=$(ps -o args= -p "$pid" 2>/dev/null)
+    # Resolve the vLLM serve PID to kill: this PID itself, or the nearest
+    # ancestor whose argv contains vllm.entrypoints.openai.api_server.
+    local serve_pid=""
     if echo "$cmd" | grep -q "vllm.entrypoints.openai.api_server"; then
-      echo "[chain] pre-teardown: killing vLLM serve PID $pid on GPU${g}..."
-      kill -TERM "$pid" 2>/dev/null || true; sleep 4
-      kill -9 "$pid" 2>/dev/null || true
+      serve_pid="$pid"
+    else
+      local cur="$pid" ppid args
+      for _ in $(seq 1 16); do
+        ppid=$(ps -o ppid= -p "$cur" 2>/dev/null | tr -d ' ')
+        [ -z "$ppid" ] && break
+        [ "$ppid" -eq 1 ] || [ "$ppid" -eq 0 ] && break
+        args=$(ps -o args= -p "$ppid" 2>/dev/null)
+        if echo "$args" | grep -q "vllm.entrypoints.openai.api_server"; then
+          serve_pid="$ppid"
+          break
+        fi
+        cur="$ppid"
+      done
+    fi
+    if [ -n "$serve_pid" ]; then
+      echo "[chain] pre-teardown: killing vLLM serve PID $serve_pid (compute-app PID $pid) on GPU${g}..."
+      # Graceful TERM then KILL on the serve ancestor, then the CUDA-holding
+      # child so the context is released.
+      kill -TERM "$serve_pid" 2>/dev/null || true; sleep 4
+      kill -9 "$serve_pid" 2>/dev/null || true
+      [ "$serve_pid" != "$pid" ] && { kill -9 "$pid" 2>/dev/null || true; }
     else
       echo "[chain] pre-teardown: GPU${g} PID $pid is not vLLM serve (skip): ${cmd:0:70}"
     fi
