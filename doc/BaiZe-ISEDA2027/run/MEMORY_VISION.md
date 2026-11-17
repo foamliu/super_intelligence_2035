@@ -1,33 +1,11 @@
 WAITING: 0
 
+> 🚀 wake#1556 2026-11-17 23:0x 🔴用户令16:3x重做·**巡检+全队列 interim 刷新**：SSH 隧道(:3333)ok·36.15 runner PID1702701 alive(~4.5h)+watchdog PID1977546 alive·forwarder/vqa 桥 alive·runner 日志最后 23:03:34 正跑 `FsdbVerdiInteg-001 V2`(V0 超时/V1 产出 zip 但逻辑错 FAIL)。VQA 桥健康(:30001 Qwen3.5-2B load_s=2.6·:30003 rft2_adapter load_s=46.0·:30002 MCP)。`scp results.json`→`/tmp/wv_cg_full_fetch.json`·跑 `update_report_full_interim.py`(WAKE=wake#1556)·**脚本信号段改为数据驱动(auto 列翻转 case)**。**截至本 wake 50 行/546·17 case 有行·16 case 三臂齐全**：V0 2/17·V1 4/17·V2 4/16·超时 36/50。**McNemar(16 case·n 不足仅参考)**：V0 vs V1 b=2 c=0 p=0.500·V0 vs V2 b=2 c=0 p=0.500·V1 vs V2 b=1 c=1 p=1.000。**3 例 VQA 翻转(信号不作结论)**：FsdbDumpConvert-001 V0 超时→V1=172.4s PASS·V2=66.5s PASS(k=1/33·最干净)·AvgValueCalc-001 V1=184.3s PASS·CrStateDesyncFix-001 V2=PASS；三臂全 PASS=FilelistFlattenGen-001/FmFreqVsTAnalyze-001。报告 §0.6 `<li>` 刷新(50 行+3 翻转)·**50649B·0外链·0script**·快照 codegen_full_results_snapshot.json(50 行)已存。诚实说明：硬题前载样本有偏·当前 50 行暂不构成可引用全队列通过率·全队列 546 行 ~30+h 跨多 wake·待积聚足够三臂齐全 case 再定显著性。体积 fold wake#1540~#1554→daily 后 MEMORY<32KB。**WAITING: 0**。
+
+
 > 🚀 wake#1555 2026-11-17 22:5x 🔴用户令16:3x重做·**巡检+全队列 interim 刷新**：SSH 隧道(:3333)ok·36.15 实况 runner PID1702703 alive(~4.3h/15390s)+watchdog PID1977546 alive(~3.6h/12901s·resumable·rows≥546 自停)+forwarder vqa_fwd/fwd2 alive·runner 日志最后 22:51:43 `FsdbTogglePatch-001 V2 TIMEOUT`·现处理 `FsdbVerdiInteg-001 V0`。VQA 桥健康(本 wake 复验 :30001 Qwen3.5-2B load_s=2.6·:30003 rft2_adapter load_s=46.0)。`scp /tmp/wv_cg_full/results.json`→`/tmp/wv_cg_full_fetch.json`·跑 `update_report_full_interim.py`(WAKE=wake#1555)。**截至本 wake 48 行/546·16 case 三臂齐全(↑自 42/14)**：V0 2/16(12.5%)·V1 4/16(25.0%)·V2 4/16(25.0%)·超时 35/48(pi_rc=-99·nzip=0·硬题 360s 内完不成=真实失败·三臂同口径公平)。**McNemar(仅 16 case·n 不足仅参考)**：V0 vs V1 b=2 c=0 p=0.500·V0 vs V2 b=2 c=0 p=0.500·V1 vs V2 b=1 c=1 p=1.000。**新信号**：`FsdbDumpConvert-001` V0=360s 超时 FAIL·V1=172.4s PASS·V2=66.5s PASS(k=33)——全队列第二例「有 VQA(V1/V2)通过·无 VQA(V0)超时未通过」翻转·b 由 1 升至 2·p 由 1.0 降至 0.500。既有保持：AvgValueCalc-001 V1=PASS+CrStateDesyncFix-001 V2=PASS(n=2·cloud-agent 非确定性·仅信号不作结论)·FilelistFlattenGen-001/FmFreqVsTAnalyze-001 三臂全 PASS。报告 §0.6 进度 `<li>` 刷新为 48 行+McNemar interim·**50649B·0外链(3 http 仅 SVG namespace)·0script**·本地快照 `vision/waveview_mining/codegen_full_results_snapshot.json`(48 行)已存。**诚实说明**：字典序最前高 k 复杂题多 360s 超时无 submit.zip(硬题前载·样本有偏)·当前 48 行暂不构成可引用全队列通过率·全队列 546 行 ~30+h cloud-agent 推理跨多 wake·待积聚足够三臂齐全 case 再报率+McNemar 定显著性。体积 fold wake#1554→daily 后 MEMORY 29369B<32KB。**WAITING: 0**。
 
-> 📦 wake#1554 2026-11-17 22:3x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+git 同步(infra 兜底) 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1553 2026-11-17 22:1x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+git 同步 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1551 2026-11-17 21:4x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+git 同步 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1550 2026-11-17 21:2x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+git 同步 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1549 2026-11-17 21:0x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+git 同步 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1548 2026-11-17 20:5x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+git 同步 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1546 2026-11-17 20:2x 🔴用户令16:3x重做·全队列 interim 刷新+git push 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1545 2026-11-17 20:1x 🔴用户令16:3x重做·巡检+全队列 interim 刷新+报告更新 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1544 2026-11-17 19:4x 🔴用户令16:3x重做·巡检+全队列进度刷新+报告 interim 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-
-> 📦 wake#1543 2026-11-17 19:2x 🔴用户令16:3x重做·巡检+watchdog修复+报告 interim 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1542 2026-11-17 19:0x 🔴用户令16:3x重做·git同步+36.15全队列看护+wake#1541落盘 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1541 2026-11-17 18:3x 🔴用户令16:3x重做·判分bug修正+code_gen试点+全182队列链式启动 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1540 2026-11-17 🔴用户令16:3x重做·WaveView子集（审计细化）原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
+> 📦 wake#1540~#1554（2026-11-17 18:3x~22:3x，巡检+全队列 interim 刷新轮）one-liners 已归档 → daily-memories-vision/2026-11-17.md（各轮：SSH/runner/watchdog 健康·results.json 增量·报告 §0.6 interim 刷新·V0/V1/V2 三臂通过率与 McNemar interim·信号逐步累积）。需要时再读。
 
 > 📦 wake#1539 2026-11-17 16:4x 🔴用户令16:3x重做·WaveView子集分类改判交付(详见本wake#1540在其基础上审计细化)·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 

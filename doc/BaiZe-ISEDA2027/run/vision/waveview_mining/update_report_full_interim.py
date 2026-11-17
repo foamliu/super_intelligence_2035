@@ -79,7 +79,15 @@ parts.append("<b>McNemar（仅 %d 个三臂齐全 case，n 严重不足，仅参
 def plist(a):
     return ", ".join(c.replace("EDA-Eval-DesignFlow-", "") for c in passers[a]) or "（无）"
 parts.append("<b>通过题明细（三臂齐全集中）</b>：V1 PASS=%s · V0 PASS=%s · V2 PASS=%s。" % (plist("V1"), plist("V0"), plist("V2")))
-parts.append("<b>🎯 仍保持的信号（不作结论）</b>：AvgValueCalc-001 <b>V1=PASS</b>（pi 184.3s 产出 submit.zip、check.py 判过），同题 V0=360s 超时 FAIL、V2=129.8s 完成但逻辑错 FAIL——全队列第一例「有 VQA(V1)通过·无 VQA(V0)未通过」翻转；但 n=1、V0 是超时而非逻辑错（cloud-agent 非确定性，V1「更快完成」未必源于 VQA），<b>仅作信号</b>。")
+# flips = cases where V0 FAIL and at least one of V1/V2 PASS (favorable VQA direction)
+flips = []
+for c, v in complete.items():
+    if not v["V0"] and (v["V1"] or v["V2"]):
+        arms_pass = [a for a in ("V1","V2") if v[a]]
+        flips.append((c, ",".join(arms_pass)))
+flips.sort()
+flip_str = "; ".join("%s → %s PASS（V0 FAIL）" % (c.replace("EDA-Eval-DesignFlow-",""), ap) for c, ap in flips) or "（暂无）"
+parts.append("<b>🎯 仍保持的信号（不作结论）</b>：截至本 wake 共 <b>%d 例</b>「有 VQA(V1/V2)通过·无 VQA(V0)未通过」翻转——%s。其中 <b>FsdbDumpConvert-001</b> 信号最干净：V0=360s 超时无 submit.zip FAIL，<b>V1=172.4s PASS</b>(k=1/33)、<b>V2=66.5s PASS</b>(k=1/33)，两 VQA 臂均通过且 V2 更快；AvgValueCalc-001 V1=184.3s PASS（V0 超时/V2 逻辑错）、CrStateDesyncFix-001 V2=PASS（V0/V1 超时）。但 n 仍很小、V0 多为超时而非逻辑错（cloud-agent 非确定性），<b>仅作信号、不作结论</b>，待全队列积聚足够三臂齐全 case 再定显著性。" % (len(flips), flip_str))
 parts.append("<b>诚实说明</b>：字典序最前的高 k 复杂题多在 360s 超时、无 submit.zip（硬题前载、样本有偏），<b>当前 %d 行暂不构成可引用的全队列通过率</b>；全队列 546 行预计 ~30+h cloud-agent 推理、跨多 wake 完成，待积聚足够三臂齐全 case 再报率 + McNemar 定显著性。SSH 反向桥（.17 watchdog ~59h）+ VQA 端点（:30001 Qwen3.5-2B · :30003 +rft2_adapter 均 <code>{\"ok\":true,\"ready\":true}</code>）健康。</li>" % n_rows)
 new_li = "".join(parts)
 
