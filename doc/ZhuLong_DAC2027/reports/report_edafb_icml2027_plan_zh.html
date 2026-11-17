@@ -116,7 +116,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <ol class="risk">
   <li><span class="tag p0">R1</span> <b>H2 负结果</b>（自改进收益不随链长单调，甚至转负）—— Plan B：写成「在真实 design flow 上自改进的边界条件」诚实路线，这本身是可发表认知（§8）。</li>
   <li><span class="tag p0">R2</span> <b>不可开源被审稿人质疑复现性</b> —— Plan B：受限评审复现包 + mock-EDA 模式 + Lite 集 500 题脱敏构造方法开源 + 第三方可在 mock 沙盒复跑 harness（§2.3 / §8）。</li>
-  <li><span class="tag p1">R3</span> <b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1653 仍在增长，696-run 冻结快照可能过期）—— Plan B：所有论文数字绑定冻结快照 + Lite 集 500 题固定 + 多骨干扫描在 camera-ready 补（§8）。</li>
+  <li><span class="tag p1">R3</span> <b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1684 仍在增长，696-run 冻结快照可能过期）—— Plan B：所有论文数字绑定冻结快照 + Lite 集 500 题固定 + 多骨干扫描在 camera-ready 补（§8）。</li>
 </ol>
 </div>
 
@@ -135,7 +135,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 下面逐节标注「benchmark 叙事」与「可升格为认知叙事」的位置。</p>
 
 <h3>§1.1 Abstract（0_abstract.tex）</h3>
-<p><b>现稿主张</b>：首句定位「现有 EDA benchmark 只评单函数代码生成或开源 flow 修复，无人评多步编排」；贡献 = EDA-Flow-Bench（\Ntasks=1653 任务、13 域、真实 trace 构建）；结果 = DeepSeek-V4-Pro 10.0% Pass@1 vs 单脚本 76.5%；分析 = tool-chain grounding depth（pnr_signoff 20.8% vs physical_verify/layout_aether 2.9%，7.1×）。
+<p><b>现稿主张</b>：首句定位「现有 EDA benchmark 只评单函数代码生成或开源 flow 修复，无人评多步编排」；贡献 = EDA-Flow-Bench（\Ntasks=1684 任务、13 域、真实 trace 构建）；结果 = DeepSeek-V4-Pro 10.0% Pass@1 vs 单脚本 76.5%；分析 = tool-chain grounding depth（pnr_signoff 20.8% vs physical_verify/layout_aether 2.9%，7.1×）。
 <span class="src">0_abstract.tex:2-10 · \Ntasks main.tex:76 · \Neval main.tex:104 · 10.0% 62/620 4_experiments.tex:66</span></p>
 <p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 全文是「我们造了一个 bench + 跑了一个数字 + 解释一个 gap」——<b>没有可证伪的认知命题</b>，grounding depth 是「事后解释的描述性标注」而非「事前预注册的预测」；② <span class="tag mut">可升格</span> 10.0% vs 76.5% 的 7.6× 跨任务难度跳变 + grounding-depth 排序的稳定性，可升格为「<b>任务链长放大了 harness（观测/记忆/自改进）轴相对于基座轴的决定性</b>」这一认知命题（继承 DAC 的 grounding-gap 框架）；③ 10.0% 是<b>单点数字</b>，会随基座更新迅速过期——这正是用户指出的第三条硬伤。</p>
 
@@ -179,14 +179,14 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 
 <div class="callout bad">
 <p><b>硬伤 ①：trace 源自公司生产资产，不可开源 ⇒ 外部不可复现</b></p>
-<p>EDA-Flow-Bench 的 1653 个任务构建于「IC 设计工程师在生产环境中使用 Cline 编程智能体的真实交互轨迹」之上，trace_source 记录 host/user/session_file，且「用户标识保留（不做哈希）以保证可复现性」。
+<p>EDA-Flow-Bench 的 1684 个任务构建于「IC 设计工程师在生产环境中使用 Cline 编程智能体的真实交互轨迹」之上，trace_source 记录 host/user/session_file，且「用户标识保留（不做哈希）以保证可复现性」。
 <span class="src">2_benchmark.tex:8-9 · 2_benchmark.tex:14</span>
 这意味着<b>原始 trace 是公司 IP</b>，不能离开保密边界。一个外部研究者拿到 Lite 集 500 题的 prompt + check.py，<b>无法复现</b>「从真实 trace 构建 bench」的过程，也无法验证任务是否真正代表真实工程实践。审稿人会问：「如果数据不可发布，这个 benchmark 的社区价值是什么？」</p>
 </div>
 
 <div class="callout bad">
 <p><b>硬伤 ②：数据不可发布 ⇒ benchmark 论文的社区价值被大幅削弱</b></p>
-<p>Benchmark 论文的价值在于「社区可在其上比较方法」。但 EDA-Flow-Bench 的 Full 集（1653 题）<b>完全不发布</b>，Lite 集 500 题虽有可释放性筛选（2_benchmark.tex:86-97），但<b>需 mock-EDA 模式</b>（7_conclusion.tex:28）才能在没有商业工具许可证的环境下跑——这意味着外部研究者只能在 mock 沙盒上复跑，而 mock 沙盒无法复现真实工具的 grounding depth 差距（physical_verify 2.9% 的 DRC/LVS 真跑在 mock 下不存在）。一个「真实商业工具编排」的卖点在开源后变成「mock 工具编排」，benchmark 的差异化优势被削弱。</p>
+<p>Benchmark 论文的价值在于「社区可在其上比较方法」。但 EDA-Flow-Bench 的 Full 集（1684 题）<b>完全不发布</b>，Lite 集 500 题虽有可释放性筛选（2_benchmark.tex:86-97），但<b>需 mock-EDA 模式</b>（7_conclusion.tex:28）才能在没有商业工具许可证的环境下跑——这意味着外部研究者只能在 mock 沙盒上复跑，而 mock 沙盒无法复现真实工具的 grounding depth 差距（physical_verify 2.9% 的 DRC/LVS 真跑在 mock 下不存在）。一个「真实商业工具编排」的卖点在开源后变成「mock 工具编排」，benchmark 的差异化优势被削弱。</p>
 </div>
 
 <div class="callout bad">
@@ -291,7 +291,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <tr>
 <td><b>可迁移性主张</b></td>
 <td>单一 EDA 域（PyAether 158 题），自进化在 instance-disjoint held-out 上 +2.5pp（80.0% vs 77.5%）<br><span class="src">DATE27 0_abstract.tex:4 · 6_conclusion.tex:3</span></td>
-<td>13 EDA 域（1653 题 flow 任务），主张「<b>认知可从脚本层迁移到 flow 层</b>」——若 H1-H4 在 flow 层复现则认知可迁移，若不复现则界定边界条件</td>
+<td>13 EDA 域（1684 题 flow 任务），主张「<b>认知可从脚本层迁移到 flow 层</b>」——若 H1-H4 在 flow 层复现则认知可迁移，若不复现则界定边界条件</td>
 <td><b>继承</b>预注册假设 + 受控消融 + 负结果照写的纪律；<b>差异</b>从「单域 +2.5pp」到「跨 13 域可迁移性检验」</td>
 </tr>
 </table>
@@ -489,7 +489,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
   <li><b>Formulate</b> 4 条预注册、可证伪假设（H1-H4）on long-term memory + recursive self-improvement in long-chain EDA flow orchestration, each with falsification conditions（§4）。</li>
   <li><b>Design</b> an 8-arm ablation（含等 token 预算杀手级对照 N1 + 错误记忆对照 N2）that separates「memory works」from「prompt just got longer」——a control absent from prior EDA self-evolution work（DATE27）（§5）。</li>
   <li><b>Introduce</b> long-chain flow orchestration as a new task modality（design_flow 契约：submit.zip + ≥8 断言 + 不指定 lang/host）with a released evaluation protocol + harness + mock-EDA mode + 500-task sanitized Lite set（§2.3）。</li>
-  <li><b>Report</b> falsifiable results on 13 EDA domains（1653 flow tasks）, including negative results as publishable boundary conditions on RSI in long-chain orchestration（§4 §8）。</li>
+  <li><b>Report</b> falsifiable results on 13 EDA domains（1684 flow tasks）, including negative results as publishable boundary conditions on RSI in long-chain orchestration（§4 §8）。</li>
 </ol>
 
 <h3>§6.3 章节大纲（与两篇 zhulong 同构）</h3>
@@ -582,7 +582,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 </tr>
 <tr>
 <td><span class="tag p1">R3</span></td>
-<td><b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1653 仍在增长，696 快照可能过期）</td>
+<td><b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1684 仍在增长，696 快照可能过期）</td>
 <td>数字时效性</td>
 <td>① 所有论文数字绑定冻结快照（2026-11-09，main.tex:100）+ Lite 集 500 题固定；② 新跑的臂都在 Lite 集上（固定）；③ 多骨干扫描在 camera-ready 补；④ <b>认知命题不依赖绝对数字</b>（H1 判据是 M3 − M0 的相对 Δ，不依赖 10.0% 的绝对值）。</td>
 </tr>
@@ -640,7 +640,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 
 <h3>§9.2 需新造题（缺口）</h3>
 <ul>
-  <li><b>长链 flow 任务缺口</b>：现有 13 域的 grounding depth 分布中，深度 7+（physical_verify/layout_aether）仅占 696 快照的 ~16%（73+38=111/696）。H2 的 long 层（&gt;38 calls）需确认 top-120 子集中 long 层 ≥ 40 题——若不足，需从 Full 集 1653 题中补选长链 case（不造新题，只从现有 case 中选）。</li>
+  <li><b>长链 flow 任务缺口</b>：现有 13 域的 grounding depth 分布中，深度 7+（physical_verify/layout_aether）仅占 696 快照的 ~16%（73+38=111/696）。H2 的 long 层（&gt;38 calls）需确认 top-120 子集中 long 层 ≥ 40 题——若不足，需从 Full 集 1684 题中补选长链 case（不造新题，只从现有 case 中选）。</li>
   <li><b>开源 EDA 等价 bench（理想矩阵 / Plan B for R2）</b>：若用 Yosys/OpenROAD/Magic 重造一个等价 bench 来证明命题可迁移，需新造题——这是 R2 的 Plan B，资源允许时做，非最小矩阵必需。</li>
   <li><b>不需要新造的</b>：M1 的 EDA 工具 SOP（从 DATE27 4 skills + 1 rule 扩展，用现有 13 域知识整理，不需新 case）；N1 的无关填充文本（预生成随机 EDA 文档片段）；N2 的错误记忆条目（人工构造错误 API 用法，不需新 case）。</li>
 </ul>
@@ -672,8 +672,8 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <h3>A. EDA-Flow-Bench_ICML2027（现稿）</h3>
 <table>
 <tr><th>引用项</th><th>来源</th></tr>
-<tr><td>\Ntasks=1653</td><td>EDA-Flow-Bench_ICML2027/main.tex:76</td></tr>
-<tr><td>cases 构成 A352+B394+C447+D460=1653</td><td>EDA-Flow-Bench_ICML2027/main.tex:77</td></tr>
+<tr><td>\Ntasks=1684</td><td>EDA-Flow-Bench_ICML2027/main.tex:76</td></tr>
+<tr><td>cases 构成 A363+B395+C460+D466=1684</td><td>EDA-Flow-Bench_ICML2027/main.tex:77</td></tr>
 <tr><td>\LiteSet=500</td><td>EDA-Flow-Bench_ICML2027/main.tex:99</td></tr>
 <tr><td>\Neval=696（冻结快照 2026-11-09）</td><td>EDA-Flow-Bench_ICML2027/main.tex:100-104</td></tr>
 <tr><td>10.0% Pass@1 (62/620 decided)</td><td>EDA-Flow-Bench_ICML2027/sections/0_abstract.tex:8 · 4_experiments.tex:66</td></tr>

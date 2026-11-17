@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1216·**🟠 standby·无待办·plan v1 已交付（commit `decf1a62e`='zhulong plan: ...v1'）·第四十九次独立复核通过**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付并经 wake#1168~#1215 四十八次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·ops relay 活 ✅·repo HEAD=`b157dba50`（他线推进·本线 run/reports 无 dirty·dirty=0）✅·有他线未提交改动（benchmark/ designflow 线·不动）·无真实 subagent eval。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
+WAITING: 0（2026-11-18 wake#1217·**🟠 standby·无待办·plan v1 已交付（commit `decf1a62e`='zhulong plan: ...v1'）·第五十次独立复核通过 + 数字保真刷新**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付并经 wake#1168~#1216 四十九次复核通过。本轮刷新：报告 `report_edafb_icml2027_plan_zh.html` 中 10 处 \Ntasks 由 1653→1684（cases 构成 A363+B395+C460+D466，源 main.tex:76-77）以与引用源对齐；0 外链/0 script 复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·ops relay 活 ✅·repo HEAD=`b157dba50`（他线推进·本线 run/reports 无 dirty·dirty=0）✅·有他线未提交改动（benchmark/ designflow 线·不动）·无真实 subagent eval。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
