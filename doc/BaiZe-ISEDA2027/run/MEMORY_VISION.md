@@ -1,6 +1,8 @@
 WAITING: 0
 
-> 🚀 wake#1539 2026-11-17 16:4x 🔴用户令16:3x重做·WaveView子集分类改判交付：自主 SSH 36.15 重跑改判 build_waveview_subset.py→jsonl 225行(bench增1波形case)·sha256 `aa8c04693e51871f9fdf4f6254f33c82af01c6a943683e9332f3ad39c7e92b8d` 36.15与本地双份一致。废除旧「214 text_only→image_required=False+排除V0/V1/V2外」口径：新 eval_included=波形相关∧has_check=192全队列(cohort=full_eval)·182 text_only不再排除(让实验说话)·10 image子队列(vqa_runnable)·33诚实排除(32 no_check+1非波形IRReportPdf)。报告 report_vision_waveview_selftest_agent_zh.html §0 原地覆盖 43555B·0外链0script·新增§0.6全队列状态。图像子队列10道V0/V1/V2沿用(V0=0/V1=0/V2=1·每量30.9→35.4→50%·McNemar p=1.0 n=10仅参考)。全192队列V0/V1/V2=待跑(需36.15 cline harness 192case×3臂=576session·designflow线占用中·其VQA后端kimi-k2.6-cloud非本线Qwen3.5-2B :30001/:30003·接入需跨线配置)·下一wake harness空闲窗口启动全队列V0基线再接V1/V2。live watchdog pid 3961251+ssh-R 3961842+三端点 /health ok。体积 MEMORY~31KB/TASK~25KB。**WAITING: 0**。
+> 🚀 wake#1540 2026-11-17 16:5x 🔴用户令16:3x重做·WaveView子集**审计细化**交付：在 wake#1539 分类改判基础上，按 check.py 实判内容给 192 全队列加 `audit_category`+`vqa_mechanism` 字段→**image_reading=10**(有真题PNG·交付物=波形读数·VQA直接读图产出被判分读数)·**code_gen=182**(无图·交付物=代码·check.py校验代码·VQA机制=agent把Qwen3.5-2B当MCP工具问波形细节→是否提升通过率不预设由实跑说话·即用户第二条修正的「调VQA问细节→通过率上升」不矮化为OCR)·no_check=32·excluded_nonwaveform=1。废除了wake#1539报告里「text_only无图→V0≈V1≈V2预期」的预判，改为按机制写清不剔除。jsonl 225行 新sha256 `f5ca63180efa12c35560c1b4e5ad285b1b47e0a8eae81d904ae5768e935cc126` 36.15+本地双份一致。审计脚本 vision/waveview_mining/audit_waveview_category.py+refine_jsonl_audit.py。报告 §0 原地覆盖 37540B·0外链0script·更新两类VQA机制说明+sha256+可复现脚本。10道image_reading V0/V1/V2复跑校验中(waveview_selftest_real_run.py 后台·:30001/:30003 live)。全192队列V0/V1/V2仍需EDA-Eval harness(deepseek agent+共享sandbox·designflow线占用中)·不强行并发避让。live watchdog+ssh-R+三端点 /health ok。体积 MEMORY~31KB/TASK~25KB。**WAITING: 0**。
+
+> 📦 wake#1539 2026-11-17 16:4x 🔴用户令16:3x重做·WaveView子集分类改判交付(详见本wake#1540在其基础上审计细化)·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1538 2026-11-17 15:09 例行巡检 patrol·全交付态·零新增·已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
