@@ -45,7 +45,11 @@ def path_key(link):
     last = seg[2]
     if not last.endswith(".htm") or not last[:-4].isdigit():
         return None
-    return "/".join(seg[:3])
+    # ⚠️ 2026-11-17 第 294 轮修（真因）：原来 `"/".join(seg[:3])` 会带出**前导 `/`**
+    # （`/1/028/437.htm`）⇒ `k in seen` **永远 False**，去重彻底失效（第 291 轮报的 `SEEN_HIT 8`
+    # 实际来自 SEEN.md 里带前导 `/` 的 8 行历史条目）。改为去前导 `/`，与 SEEN.md 主流口径
+    # （`1/028/256` 式）一致，另外在 main() 里对首个 `/` 变体做兜底匹配。
+    return "/".join(seg[:3]).lstrip("/")
 
 
 def parse_items(xml):
@@ -99,7 +103,7 @@ def main():
         rows.append({"id": k.rsplit("/", 1)[1][:-4], "key": k, "link": link,
                      "title": field(it, "title"),
                      "date": field(it, "pubDate"),
-                     "hit": k in seen})
+                     "hit": (k in seen) or ("/" + k in seen)})
     new = [r for r in rows if not r["hit"]]
     if "--json" in sys.argv:
         print(json.dumps({"total": len(rows), "hit": len(rows) - len(new),
