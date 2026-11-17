@@ -29690,3 +29690,149 @@ drwxr-x---    2 app.e0031982 app.adm   4096 Oct 27 13:17 data
   loop_alive=yes  cline_alive=yes
 === DONE 278 ===
 ```
+
+---
+
+## RUN_ID 279 · 2026-11-17 22:29:54 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+echo "=== RUN_ID 279 | pretrain hung-cline kill (AUTHORIZED) | $(date '+%F %T') | host=$(hostname) ==="
+LPID=3165013
+CPID=2054633
+LOGDIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs
+
+echo
+echo "[0] 前置核对（任一不满足 → ABORT，不做任何 kill）"
+cmd="$(tr '\0' ' ' < /proc/$CPID/cmdline 2>/dev/null || true)"
+ppid="$(ps -o ppid= -p $CPID 2>/dev/null | tr -d ' ')"
+echo "  cpid=$CPID ppid=${ppid:-none}"
+echo "  cmdline=${cmd:0:220}"
+ok=1
+case "$cmd" in *'.cline_pretrain'*) ;; *) echo "  ABORT: cmdline 不含 .cline_pretrain"; ok=0;; esac
+[ "${ppid:-0}" = "$LPID" ] || { echo "  ABORT: ppid=${ppid:-none} != loop $LPID"; ok=0; }
+kill -0 $LPID 2>/dev/null || { echo "  ABORT: loop $LPID 不在"; ok=0; }
+[ "$ok" = "1" ] || { echo "=== ABORTED (no kill) 279 ==="; exit 0; }
+
+echo
+echo "[1] kill 前证据"
+ps -o pid,ppid,etime,stat,pcpu,rss,args -p $CPID | cut -c1-150
+awk '{print "  utime_ticks=" $14 " stime_ticks=" $15 " state=" $3}' /proc/$CPID/stat 2>/dev/null
+stat -c '  .cline_pretrain/sessions mtime=%y' /nas_train/app.e0031982/.cline_pretrain/sessions 2>/dev/null || true
+
+echo
+echo "[2] 抢救 loop 日志（fd 指向已删除文件）"
+mkdir -p "$LOGDIR"
+SALV="$LOGDIR/pretrain_loop_salvage_$(date '+%Y%m%d_%H%M%S').log"
+if [ -r /proc/$LPID/fd/1 ]; then
+  timeout 20 cat /proc/$LPID/fd/1 > "$SALV" 2>/dev/null; rc=$?
+  echo "  salvage rc=$rc size=$(stat -c %s "$SALV" 2>/dev/null || echo 0)"
+  echo "  path=$SALV"
+  tail -n 12 "$SALV" 2>/dev/null | cut -c1-170 | sed 's/^/  | /'
+else
+  echo "  /proc/$LPID/fd/1 不可读，跳过抢救"
+fi
+
+echo
+echo "[3] kill：TERM → 10s → KILL"
+kill -TERM $CPID 2>/dev/null && echo "  TERM sent @ $(date '+%T')" || echo "  TERM failed"
+gone=0
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  sleep 1
+  if ! kill -0 $CPID 2>/dev/null; then echo "  已退出（TERM 生效，用时 ${i}s）"; gone=1; break; fi
+done
+if [ "$gone" = "0" ]; then
+  echo "  10s 未退 → KILL"
+  kill -KILL $CPID 2>/dev/null
+  sleep 2
+  if kill -0 $CPID 2>/dev/null; then echo "  ⚠️ STILL ALIVE（需人工）"; else echo "  已退出（KILL 生效）"; fi
+fi
+
+echo
+echo "[4] 校验 loop 未受影响"
+ps -o pid,ppid,etime,stat,args -p $LPID | cut -c1-140
+echo "  loop_alive=$(kill -0 $LPID 2>/dev/null && echo yes || echo no)"
+
+echo
+echo "[5] 等 loop 下一轮（push + sleep 60s + 新 cline），最多 120s"
+NEW=""
+for i in $(seq 1 24); do
+  sleep 5
+  NEW="$(ps -eo pid,ppid,etime,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | grep -vE "^ *${CPID} " | head -2 | cut -c1-140)"
+  if [ -n "$NEW" ]; then echo "  @+$((i*5))s 检测到新 cline:"; echo "$NEW" | sed 's/^/    /'; break; fi
+done
+[ -z "$NEW" ] && echo "  120s 内未见新 cline（loop 可能仍在 push/sleep，稍后自然恢复；不影响训练）"
+
+echo
+echo "[6] 当前 .cline_pretrain 下的 cline"
+ps -eo pid,ppid,etime,stat,pcpu,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | cut -c1-150
+
+echo
+echo "[7] 训练未受影响抽查"
+nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/  /'
+echo "  torchrun(4177347) workers=$(ps -eo ppid= 2>/dev/null | awk '$1==4177347' | wc -l)"
+echo
+echo "=== DONE 279 ==="
+```
+
+**输出**
+```
+=== RUN_ID 279 | pretrain hung-cline kill (AUTHORIZED) | 2026-11-17 22:29:54 | host=whag0pgpuap29 ===
+
+[0] 前置核对（任一不满足 → ABORT，不做任何 kill）
+  cpid=2054633 ppid=3165013
+  cmdline=cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1
+
+[1] kill 前证据
+    PID    PPID     ELAPSED STAT %CPU   RSS COMMAND
+2054633 3165013    09:32:40 Rl    100 549228 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligen
+  utime_ticks=3454324 stime_ticks=1485 state=R
+  .cline_pretrain/sessions mtime=2026-11-17 12:57:17.574368090 +0800
+
+[2] 抢救 loop 日志（fd 指向已删除文件）
+  salvage rc=0 size=130044196
+  path=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs/pretrain_loop_salvage_20261117_222955.log
+  | DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+  |       at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+  |       at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+  |       at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+  | 
+  | DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+  |       at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+  |       at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+  |       at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+  | 
+  |    [90m⎿ [0m[2m420 |  421 | | 项 | 值 | 422 | |:--|:--| 423 | | S1 | 0–200k（当前峰值点），配比 74:19:7 ...[0m
+  | [36m[run_commands][0m cd /nas_train/app.e0031982/code/super_intelligence_2035 && git log --oneline -1 origin/main; wc -l /nas_train/app.e00...
+
+[3] kill：TERM → 10s → KILL
+  TERM sent @ 22:29:55
+  10s 未退 → KILL
+  已退出（KILL 生效）
+
+[4] 校验 loop 未受影响
+    PID    PPID     ELAPSED STAT COMMAND
+3165013 3165004 19-13:20:05 Ss   bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  loop_alive=yes
+
+[5] 等 loop 下一轮（push + sleep 60s + 新 cline），最多 120s
+  @+60s 检测到新 cline:
+    2642407 3165013       00:03 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035
+
+[6] 当前 .cline_pretrain 下的 cline
+2642407 3165013       00:03 Rl    197 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035
+
+[7] 训练未受影响抽查
+  0, 100 %
+  1, 100 %
+  2, 100 %
+  3, 100 %
+  4, 95 %
+  5, 100 %
+  6, 100 %
+  7, 100 %
+  torchrun(4177347) workers=8
+
+=== DONE 279 ===
+```
