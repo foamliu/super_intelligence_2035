@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-17（晚报 5/5 + 06:00 增量） · research 线</title>
+<title>论文观察日报 · 2026-11-17（晚报 5/5 + 12:00 增量） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -48,7 +48,7 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-17</h1>
   <div class="sub"><b>晚报（03:00 时窗补齐）</b> · 今日进度 <b>5 / 5</b>（早报 3/5 → 晚报 5/5 → <b>06:00 增量</b>） · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 09:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 12:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量 / 12:00 增量）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -329,8 +329,29 @@
   </table>
 </div>
 
+<h3 class="sec">🕛 12:00 时窗增量（B 轨 +4 → 202 · 作者网 +3 → 183 · 作者信 1 封 · voice_ready 0）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>A 轨 0 新收（但公告批终于前进）</b>：今日 5/5 已满；复核 <code>cat:cs.CL</code> 列表 <code>HTTP 200</code> + <code>application/atom+xml</code>（<b>49,030 B / 20 entry</b>），<code>published</code> 上界从 <code>2026-11-13T18:45:49Z</code> 前进到 <b><code>2026-11-14T06:49:09Z</code></b>（连续 17 个时窗未前进后首次更新）⇒ 仍不重开当日 5 篇、不拿新批凑数；已登记 <code>2611.19202</code> Omni-Workspace 等 3 条给 11-18 06:00 窗先核后收。</li>
+    <li><b>B 轨 +4 → 202</b>：InternVL <code>2312.14238</code>（<b>3,950</b>，CVPR 2024）· Phi-3 <code>2404.14219</code>（<b>3,285</b>，预印本）· FineWeb <code>2406.17557</code>（<b>1,799</b>，NeurIPS 2024 D&amp;B）· OLMo <code>2402.00838</code>（<b>908</b>，ACL 2024）；arXiv abs 4/4 <code>200</code>（43,416 / 65,710 / 42,466 / 47,839 B）、OpenAlex 4/4 <code>200</code>、PDF 4/4 <code>200</code> + <code>%PDF-</code>（1.32 / 3.91 / 3.14 / 0.56 MB，均 &lt;5 MB ⇒ 不入 git）。</li>
+    <li><b>先查重后改选（本轮教训）</b>：原拟 ViT <code>2010.11929</code> / DINOv2 <code>2304.07193</code> / MAE <code>2111.06377</code> / Dolma <code>2402.00159</code> 经全量正则比对发现<b>全部已在表内</b>（#88 / #89 / #97 / 已收）⇒ 作废并换收上面 4 条；此前用「grep 标题 + 带反引号 ID 正则」漏检，已改用全量正则。</li>
+    <li><b>作者网 +3 → 183</b>：Jifeng Dai 代季峰（清华电子系副教授，<b>已发信</b>）· Wenhai Wang 王文海（CUHK MMLab + 上海 AI Lab）· Zhe Chen 陈喆（南京大学博士在读，InternVL 一作）—— 三人主页均<b>无 x.com 链接</b> ⇒ 一律「未找到 X」，不猜 handle、不计入已核验（仍 102）。</li>
+    <li><b>作者信 1 封</b>：<code>#78</code> Jifeng Dai（InternVL，中文 CJK <b>241</b> 字，<code>SENT OK 12:04:53</code>），落款两行、其后无任何行；累计 <b>78 封</b>，<b>回信率 0 / 78</b>，0 封到期（最早 2026-11-25）。<b>主动少发 1 封</b>：同论文另两位作者（Zhe Chen / Wenhai Wang）有邮箱也不发（同一论文 ≤1）；Kaiming He / Saining Xie / Iz Beltagy 均已发过（同作者 ≤1）；Dosovitskiy / Oquab / Penedo / Kydlíček / Microsoft 团队 / Groeneveld 无公开邮箱；<code>olmo@allenai.org</code> 为项目信箱、疑似列表 ⇒ 不用。</li>
+    <li><b>voice_ready 0 / news_ready 0</b>：抓 <code>@giffmana</code> 12 条，1 条经单推页 <code>og:title</code> 核出作者其实是 <b>Jack Ziyang Cai（@jackcai1206）</b> ⇒ 他人推文丢弃；另 1 条本人推文 <code>og:description</code> 仅到首段 ⇒ 正文不完整不采用。四篇经典无发布型事件点 ⇒ 不硬凑。</li>
+  </ul>
+  <table class="plain" style="margin-top:12px;">
+    <tr><th style="width:16%;">线</th><th>12:00 增量可执行动作（附判据）</th></tr>
+    <tr><td><b>pretrain</b></td><td>借 Phi-3 的同架构×数据质量对照（3.8B / 3.3T token ≈ <b>868 token/参数</b>）⇒ 2B 配方表加 <code>tokens_per_param</code> / <code>synthetic_ratio</code> 两列，合成占比做 10% / 30% 消融；<b>判据</b>：占比翻三倍而 val loss 改善 &lt;0.01 则回退 10%。</td></tr>
+    <tr><td><b>vision</b></td><td>借 InternVL 的 6B 视觉塔 + 像素重排 ⇒ 配置表加 <code>vision_params</code> / <code>pixels_per_token</code> / <code>dynamic_resolution</code>，并建「小字密集图 200 题」子集；<b>判据</b>：300M→6B 在该子集增益 &lt;2pt 则维持小塔 + 更高输入分辨率。</td></tr>
+    <tr><td><b>harness</b></td><td>借 FineWeb 用「固定小模型 + 固定评测集」当数据判据 ⇒ 提供 <code>1B / 8k step</code> 探针脚本；<b>判据</b>：同配比两次探针差值 &gt;0.02 nats 视为噪声、不作结论。</td></tr>
+    <tr><td><b>data</b></td><td>借 FineWeb 四段消融（抽取 / 语种识别 / MinHash 去重 / 过滤模型）⇒ 四段可独立开关并逐段记 <code>kept_tokens</code>；<b>判据</b>：关掉某段后探针 loss 无变化，则该段当前无收益、可下线省算力。</td></tr>
+    <tr><td><b>zhulong</b></td><td>借 OLMo 的「权重 + 数据 + 代码 + 日志」四件套 ⇒ 消融预注册表加「日志与中间 checkpoint 保留」栏；<b>判据</b>：缺日志的实验不得进入成本结论。</td></tr>
+    <tr><td><b>designflow</b></td><td>借 InternVL 的 32 基准覆盖思路 ⇒ 题面元数据加 <code>modality</code>（图 / 表 / 波形 / 文本）列并统计分布；<b>判据</b>：某模态题量 &lt;10% 时不得对外声称覆盖该模态。</td></tr>
+  </table>
+</div>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 09:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>198</b> 篇（+4）｜ 作者网 <b>180</b> 人（X 已核验 102）｜ 作者信累计 <b>77</b> 封（回信率 <b>0/77</b>）｜ voice_ready 3 ｜ news_ready 1<br>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 12:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量 / 12:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>202</b> 篇（+4）｜ 作者网 <b>183</b> 人（X 已核验 102）｜ 作者信累计 <b>78</b> 封（回信率 <b>0/78</b>）｜ voice_ready 3 ｜ news_ready 1<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 

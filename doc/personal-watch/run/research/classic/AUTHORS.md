@@ -10,6 +10,10 @@
 
 **第四十四轮增量（2026-11-16 15:0x）**：作者网 162 → **165**（#161 Ze Liu 刘泽 / #162 Junyi Ao / #163 Long Zhou）；已发信 **67 → 67**（今日 12 封 = 每日硬上限已满，本轮**只建档不发信**）；X 已核验 92 → **93**（`@zeliu_`：本人主页 `href` + X 页 `og:title` / `og:description` 双源）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① `x.com/zeliu98` `404` ⇒ 不登记，改按本人主页给的 `x.com/zeliu_` 核验；② `@yanping_huang` 虽 `200` 但 `og:description` 仅 `0 followers · 38 following`、无 bio ⇒ 无法确认是 GPipe 一作本人，**按「未找到 X」处理**；③ `@longzhou` `og:title` = `Long Jiu Zhou Kaskus`（他人账号）⇒ 不登记，Long Zhou 记为「未找到 X」。
 
+> **本轮计数（2026-11-17 12:0x）**：作者 **183** 人（编号最大 **183**）· X 已核验 **102** · 已发信 **78** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+**第五十一轮增量（2026-11-17 12:0x）**：作者网 180 → **183**（#181 Jifeng Dai 代季峰 / #182 Wenhai Wang 王文海 / #183 Zhe Chen 陈喆，均来自 **InternVL** #199）；已发信 77 → **78**（#78 Jifeng Dai，中文 CJK **241** 字，`SENT OK 12:04:53`）；X 已核验 99 → **99 不变**（三人主页均无 x.com/twitter 链接 ⇒ 一律写「未找到 X」，**不猜 handle、不计数**）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① 同论文 #199 已发末位作者 Jifeng Dai ⇒ 三作 Wenhai Wang（有邮箱）与一作 Zhe Chen（有邮箱）本轮**均不发**，守「同一论文 ≤1」；② Wenhai Wang 的邮箱是 `whwang[at]ie.cuhk.edu.hk` 反爬写法，登记时明确标「拼装、发送前须再核」；③ Zhe Chen 主页另有一个 `wztxy89[at]163.com`（他人地址）⇒ 不采用。**本轮 `voice_ready` 0**：`@giffmana` 时间线里 1 条（Perturbing Inputs Improves Pretraining Distillation）经单推页 `og:title` 核出作者是 **Jack Ziyang Cai（@jackcai1206）** ⇒ 他人推文，丢弃；另 1 条（蒸馏 + mixup）确为本人但 `og:description` 只到首段、正文需上下文 ⇒ 按「正文不完整不采用」弃。
+
 > **本轮计数（2026-11-17 09:0x）**：作者 **180** 人（编号最大 **180**）· X 已核验 **102** · 已发信 **77** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 
 **第五十轮增量（2026-11-17 09:0x）**：作者网 177 → **180**（#178 Cheng Chi / #179 Yilun Du / #180 Shuran Song，均来自 Diffusion Policy #197）；已发信 75 → **77**（#76 Yilun Du · Diffusion Policy，中文 294 字，`SENT OK 09:04:12`；#77 Hao Su 苏昊 · Open X-Embodiment，中文 295 字，`SENT OK 09:04:14`；Hao Su 本次只发信、档案下轮补）；X 已核验 99 → **102**（`@chichengcc` / `@du_yilun` / `@SongShuran`，均 `og:title` + `og:description` 双源）；言论台账 V30–V32 之后新增 **V33**（Yilun Du 2026-11-06 原推：`RAX is able to directly allow coding agents to unscrew a jar using real dexterous hands!`，单推页 `og:title` + `og:description` 双源且正文完整）；已 follow 仍 **0**（需登录态，未假装）。两条「不猜 / 不硬发」记录：① Cheng Chi、Shuran Song 主页均无明文邮箱 ⇒ 只建档不发信；② 同论文 #197 已发 Yilun Du ⇒ Russ Tedrake 有邮箱也不发（同论文 ≤1）。
@@ -2611,6 +2615,45 @@
 | X 账号 | **`@SongShuran`**（`x.com/SongShuran` `200`；`og:title` = `Shuran Song (@SongShuran) on X`，`og:description` = `Assistant Professor @Stanford University working on #Robotics #AI #ComputerVision` ⇒ 双源可核） |
 | 状态 | **待跟踪**（无公开邮箱 ⇒ 不发信；X 已核验，待用户手动 follow） |
 | 备注 | `语言=中文(判据=华人姓名族属；机构在美国不改判据)`。言论线索：2026-11-04 推文讨论「pretraining 的科学性 / 何时停训 / 为下游 SFT 或 RL 优化预训练」，与 pretrain 线的停训判据直接相关（该推文 `og:description` 以省略号截断 ⇒ 本轮**不标 voice_ready**）。 |
+
+### 181. Jifeng Dai（代季峰）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jifeng Dai（代季峰；华人姓名族属 ⇒ 中文信） |
+| 机构 | **清华大学电子工程系 副教授**（本人主页自述 `Associate Professor, Department of Electronic Engineering, Tsinghua University`；InternVL 末位作者，论文时为 Shanghai AI Lab） |
+| 代表论文 | **InternVL**（arXiv `2312.14238`，B 轨 #199；末位作者）· Deformable DETR / 检测与视觉基础模型线 |
+| 邮箱 | **`daijifeng@tsinghua.edu.cn`**（双源：本人主页 `jifengdai.org` 的 `mailto:` **明文**，`HTTP 200` / 44,389 B；同页正文亦写 `tsinghua.edu.cn` 邮箱；**且 PDF 首页通讯作者块给出同一地址**，`pdftotext` 逐字核） |
+| 主页 | <https://jifengdai.org/>（`200` / 44,389 B） |
+| X 账号 | **未找到 X**（主页无 twitter / x.com 链接 ⇒ 按令不猜） |
+| 状态 | **已发信**（第 78 封，2026-11-17 12:04；中文 CJK 241 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 清华机构)`。信问：① 6B 塔相对小塔的收益在小字密集的文档/图表上是否同样成立、开训前有无可测量（线性探针 / token 熵）预判；② 像素重排与保留高分辨率二选一时，需读细线的工程图哪一侧先失效；③ 只有几万张领域图文对时是否先冻结 6B 塔只训对齐层。分别回填 vision 视觉塔选型、zhulong 读图入口、data 图文对门槛。 |
+
+### 182. Wenhai Wang（王文海）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenhai Wang（王文海；华人姓名族属 ⇒ 中文信） |
+| 机构 | **香港中文大学 MMLab 博士后** + 与 **Shanghai AI Laboratory** 合作（本人主页自述；博士毕业于南京大学，导师 Tong Lu） |
+| 代表论文 | **InternVL**（arXiv `2312.14238`，B 轨 #199；三作）· 视觉-语言与 OCR 基础模型线 |
+| 邮箱 | **`whwang@ie.cuhk.edu.hk`**（本人主页 `whai362.github.io` `HTTP 200` / 48,946 B 以 `whwang[at]ie.cuhk.edu.hk` 反爬写法给出；按页面规则还原，**属拼装而非 `mailto:` 明文** ⇒ 发送前须再核） |
+| 主页 | <https://whai362.github.io/>（`200`） |
+| X 账号 | **未找到 X**（页内仅 GitHub `github.com/whai362`，无 twitter / x.com 链接 ⇒ 不猜 handle） |
+| 状态 | **待跟踪**（同论文 `2312.14238` 已发末位作者 Jifeng Dai ⇒ 守「同一论文 ≤1」本轮不发） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 港中深/上海 AI Lab 机构)`。言论线索：主页与 GitHub 以代码发布为主，暂无可引用原推。 |
+
+### 183. Zhe Chen（陈喆）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhe Chen（陈喆；华人姓名族属 ⇒ 中文信） |
+| 机构 | **南京大学 计算机学院**（博士在读，导师 Tong Lu；InternVL 一作，论文时与 Shanghai AI Lab 合作） |
+| 代表论文 | **InternVL**（arXiv `2312.14238`，B 轨 #199；**一作**） |
+| 邮箱 | **`chenzhe98@smail.nju.edu.cn`**（本人主页 `czczup.github.io` `HTTP 200` / 69,953 B 页内明文；⚠️ 同页另有 `wztxy89[at]163.com` —— 系他人的写死地址，**不采用**） |
+| 主页 | <https://czczup.github.io/>（`200`） |
+| X 账号 | **未找到 X**（页内无 twitter / x.com 链接 ⇒ 不猜） |
+| 状态 | **待跟踪**（同论文已发 Jifeng Dai ⇒ 本轮不发；后续若发，按一作优先并换问题角度） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 南京大学机构)`。该篇的「像素重排 + 动态分辨率」实现细节多在一作侧 ⇒ 若 Dai 无回音，可改问一作同一问题的工程侧细节（不催的例外：不同收件人、不同论文角度，仍受「同论文 ≤1」约束 ⇒ 须先等 14 天窗口）。 |
 
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
