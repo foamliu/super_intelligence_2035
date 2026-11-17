@@ -394,7 +394,7 @@ qnm9e					Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, no
 1793583717674_opbrl	jinsongl	hfeg0pkn005	15	spice_sim	L1 explain-code-logic (erc_ai_signoff tools); wrong-shard C(ERC); spice ratio 5%	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793843108682_lgbx4	thomasz	hfeg0pkn002	16	spice_sim	L1 read-log diagnostic (FineSim pvt.log explain); no produce deliverable; spice 	可造	explain/介绍 Q&A → 造「结构化讲解报告」check 验关键概念/端口/拓扑点覆盖
 1793860510641_abico	e0030760	hfeg0pkn004	19	spice_sim	L1 explain-schematic-port-function; no produce deliverable; spice ratio 6%	可造	explain/介绍 Q&A → 造「结构化讲解报告」check 验关键概念/端口/拓扑点覆盖
-1793949156546_i6kg9	t0002607	hfeg0pkn005	28	spice_sim	L1 meta-consulting (how to show circuit); no produce deliverable; fresh 11-09 bu	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793949156546_i6kg9	t0002607	hfeg0pkn005	28	spice_sim	L1 meta-consulting (how to show circuit); no produce deliverable; fresh 11-09 bu	不可造	r712 host-verify: session 不存在于 t0002607@hfeg0pkn005 (stale pool entry) -> no-trace
 1793941518837_i4kkz	e0044979	hfeg0pkn001	20	spice_sim	L1 consulting (peeked prior round); no produce deliverable; spice ratio 7%	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1793616198613_fefaj.messages.json	shaoyou	hfeg0pkn003	10	spice_sim	L1 ask-eda consulting (Nanospice 仿真精度); tools innovus/netlist 主导=wrong-shard A; 	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1791515463198_50mu7.messages.json	e0042624	hfeg0pkn001	85	spice_sim	explore others skill repo (SpiceAgent_Skill); aether:881/calibre/lvs 主导=wrong-sh	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -403,7 +403,7 @@ qnm9e					Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, no
 1793685492215_twnbr	adaml	hfeg0pkn002	3	spice_sim	spice3/3=100% peek: sim-report-writer skill输出格式配置 非produce-task	待定	待深读 trace 后定
 1792031228311_sbmcj	e0023936	hfeg0pkn004	4	spice_sim	spice4/6=67% peek: AnasimPro GUI启动 非spice	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1792392597029_q92x8	e0046686	hfeg0pkn005	4	spice_sim	spice4/6=67% peek: git版本排障 spice假阳性	待定	待深读 trace 后定
-1793870006104_003q6	shaoyou	hfeg0pkn003	4	spice_sim	spice4/6=67% peek: bashrc分析 spice假阳性	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
+1793870006104_003q6	shaoyou	hfeg0pkn003	4	spice_sim	spice4/6=67% peek: bashrc分析 spice假阳性	不可造	r712 host-verify+深读: trace 存在但用户问分析~/.bashrc=env-config, 非 spice_sim/characterization -> wrong-domain
 1792660894966_ukk5v	mike	hfeg0pkn003	4	spice_sim	spice4/7=57% peek: DDR6 SystemC/VCS build-fix 440msgs wrong-shard(digital/verifi	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1790585671436_vatpl	e0014566	hfeg0pkn001	4	spice_sim	spice4/8=50% peek: 裸hi问候 spice假阳性	待定	待深读 trace 后定
 1790578790015_xcbxf	t0002987	hfeg0pkn005	4	spice_sim	spice4/8=50% peek: shell命令检查 spice假阳性	待定	待深读 trace 后定
@@ -542,11 +542,11 @@ qnm9e					Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, no
 1793264248842_ezukw.messages.json	e0024852	hfeg0pkn002	325	spice_sim	no-gold: 174msgs FineSim XA SRAM debug; U#15(msg157) timing-extraction produce-r	不可造	no-trace/perm-blocked: 无可溯源 trace 或沙盒不可达 (新标准排除①)
 1793178284228_y3h0j	yanxvwei	hfeg0pkn002	236	spice_sim	off-domain: WaveformCompare tooling (compare_wave_ddr5.pl vs compare_wave_new.pl	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1792744686252_m8y0q	jiashengz	hfeg0plg92	22	spice_sim	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
-1788845510771_5xxsm	sophiaw	hfeg0plg09	15	non_spice	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
+1788845510771_5xxsm	sophiaw	hfeg0plg09	15	non_spice	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)	不可造	r712 host-verify: trace 存在但 pool domain 标 non_spice, 非 B 域 -> wrong-domain
 1793264956869_hxfhy	jasminej	hfeg0plg52	14	spice_sim	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
 1793350875865_f1u4t	chentong	hfeg0plg76	13	spice_sim	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
 1794200811873_k36er	e0041392	hfeg0plg75	12	spice_sim	consultation/diagnostic non-produce-task (rescan_1110_0735 peek)	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
-1794202571966_v87lq	e0030760	hfhds201	941	characterization	fresh-window 11-10 consultation-dominant (HSV/aether 怎么/解释/操作步骤), U#5 doc-only	可造	how-to Q&A → 造「产出生成式 how-to 指南」check 验关键步骤/命令/参数覆盖
+1794202571966_v87lq	e0030760	hfhds201	941	characterization	fresh-window 11-10 consultation-dominant (HSV/aether 怎么/解释/操作步骤), U#5 doc-only	不可造	r712 confirm r658 改判: no-trace 不可造
 m8ma9	e0045128	hfeg0plg49	604	non_spice	consultation-dominant, wrong domain	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 enroe	mwxi	hfeg0plg49	1678	non_spice	ops/diagnostic, wrong domain	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 b7otd	xy1zhang	hfeg0plg49	4048	non_spice	digital verification, wrong shard A	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -645,11 +645,11 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1794278751082_g8en5	jinsongl	hfeg0pkn005	7	spice_sim	11-11 fresh spice>=5: raw SKILL cckExplore log, not cline session	待定	待深读 trace 后定
 1794280189538_742yv	rhyanw	hfeg0pkn001	8	spice_sim	11-11 fresh spice>=5: trivial 1msg	待定	待深读 trace 后定
 1794291924966_ws1x6	mwxi	hfhds228	9	spice_sim	11-11 fresh spice>=5: consultation 'finesim.*总' + ObsidianVault ls	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
-1794293298759_nk0hg	e0042624	hfeg0pkn001	5	spice_sim	project how-to consultation	可造	how-to Q&A → 造「产出生成式 how-to 指南」check 验关键步骤/命令/参数覆盖
+1794293298759_nk0hg	e0042624	hfeg0pkn001	5	spice_sim	project how-to consultation	不可造	r712 host-verify+深读: trace 存在但用户任务=Spice-Agent 软件项目 Codex/LLM provider 检测, 非 spice 仿真 -> wrong-domain(software-infra)
 1794296961043_fessi	t0002113	hfeg0pkn001	5	spice_sim	11-11 fresh spice>=5: tool discovery 'which finesim finesime hspice'	待定	待深读 trace 后定
 1794299623303_khbvq	yuchens	hfeg0pkn004	5	spice_sim	11-11 fresh spice>=5: trivial 1msg	待定	待深读 trace 后定
 1794302513665_soa79	chuanqiz	hfeg0pkn001	10	spice_sim	11-11 fresh spice>=5: trivial 1msg, cellview:385 layout-domain	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1794309772651_z3xy1	mwxi	hfhds228	5	spice_sim	11-11 fresh spice>=5: consultation/diagnostic desktop scripts	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
+1794309772651_z3xy1	mwxi	hfhds228	5	spice_sim	11-11 fresh spice>=5: consultation/diagnostic desktop scripts	不可造	r712 host-verify: session 不存在于 mwxi@hfhds228 (stale) -> no-trace
 1794298060155_ma0ui	fresh1111	fresh-scan	0	spice_sim	no-gold: R_RHDlutFull_PRAC IDD analysis, pyAether sandbox unresponsive, session 	不可造	no-trace/perm-blocked: 无可溯源 trace 或沙盒不可达 (新标准排除①)
 1794308420196_3hfbw	fresh1111	fresh-scan	0	spice_sim	consultation 'aether自动绕线', not produce-task	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1792977240005_1mvxt	fresh1111	fresh-scan	0	spice_sim	CDL/Aether code-fixing continuation (context summary start), not clean spice_cha	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -808,7 +808,7 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1785907092176_vdeyi	e0025768	hfeg0pkn001	65	spice_sim	reject debugging optimize报错	待定	待深读 trace 后定
 1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	reject debugging SiliconSmart char hspice rc=1	待定	待深读 trace 后定
 1793264248842_f1rqc	hbpeng	hfeg0pkn004	151	spice_sim	reject wrong-domain tcl->skill PDK QA + /apps/imctf perm	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	reject analysis 网表功能分析报告	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
+1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	reject analysis 网表功能分析报告	不可造	r712 host-verify: pool entry 1792547194816 不存在于 adaml@hfeg0pkn002 (host 仅有 1791980431476 已入 jsonl) -> stale-dup
 1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	reject how-to 仿真任务运行还是卡死	可造	how-to Q&A → 造「产出生成式 how-to 指南」check 验关键步骤/命令/参数覆盖
 1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	reject skill-authoring skill-creator meta	待定	待深读 trace 后定
 1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	reject consultation 解释sp文件	可造	explain/介绍 Q&A → 造「结构化讲解报告」check 验关键概念/端口/拓扑点覆盖
@@ -819,7 +819,7 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1791773204994_wotp5	e0024597	hfeg0pkn004	136	spice_sim	reject wrong-domain ERC tcl + /home/e0031668 perm	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793176175395_5i5wz	e03179	hfeg0pkn002	147	spice_sim	reject skill-use vam-agent	待定	待深读 trace 后定
 1792220242064_duzjh	jinsongl	hfeg0pkn002	123	spice_sim	reject skill-authoring zigzag skill	待定	待深读 trace 后定
-1793864695856_gxlr2	shunlinp	hfeg0pkn002	71	spice_sim	reject skill-install/demo Q&A	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
+1793864695856_gxlr2	shunlinp	hfeg0pkn002	71	spice_sim	reject skill-install/demo Q&A	不可造	r712 host-verify: pool entry 1793864695856 不存在于 shunlinp@hfeg0pkn002 (host 仅有 1793587429686 已入 jsonl) -> stale-dup
 1792462491236_ccaea	weidong	hfeg0pkn002	133	spice_sim	reject L1 filename->CSV too simple for new case	待定	待深读 trace 后定
 1790658262664_zjzz8	e03179	hfeg0pkn002	168	spice_sim	reject skill-use vam-agent 建模	待定	待深读 trace 后定
 1793755992968_1ip4z	reedchen	hfeg0pkn004	68	spice_sim	reject near-dup McPvtVmEval-001/PostSimDeckBatch-001	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
