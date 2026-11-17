@@ -1,0 +1,10 @@
+主题：Swin 的 shifted window 在 448² 分辨率下的吞吐拐点
+
+刘泽老师，您好：
+
+我是刘杨，做 LLM agent 与多模态方向的研究，主页 https://foamliu.github.io/。
+
+我们正在给图文模型选视觉塔，重读 Swin 时对三点拿不准：① 448² 输入下 window=7 与 shifted window 的显存/吞吐拐点落在哪，patch merging 各层的 token 数如何影响它；② 分层特征图对 OCR、定位类任务的增益，是否只在 detection head 上成立，换成图文对比目标后还保留多少；③ 若把 Swin 当视觉塔，patch merging 的层数该不该随文本长度联动。
+
+祝好，
+Yang Liu

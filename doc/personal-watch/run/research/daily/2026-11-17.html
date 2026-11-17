@@ -396,8 +396,31 @@
 </div>
 
 
+<h3 class="sec">🕘 21:00 时窗增量（⚠️ 上游抖动再次阻断 · A / B 两轨 0 新增 · 作者信 0 封（今日额度已满）· 合规审计落文档）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>网络自检（再次阻断，且是「先通后断」）</b>：21:00:0x 首测 <code>export.arxiv.org</code> / <code>arxiv.org/abs</code> / <code>api.openalex.org</code> <b>全部 <code>200</code></b>，4 分钟后再测<b>全部 <code>000</code></b>（<code>SSL_ERROR_SYSCALL</code>）；明文 <code>http://export.arxiv.org</code> 返回 <code>502</code>；<code>x.com</code> 直连与经代理（<code>127.0.0.1:7897</code>）均 <code>000</code>。对照 <code>baidu.com</code> / <code>yeah.net</code> 均 <code>200</code>；<code>mihomo</code> <b>active</b>、<code>7897</code> 在听 ⇒ 判<b>上游节点间歇性失效</b>（与 15:00 同型，但本轮是抖动而非持续断）。</li>
+    <li><b>为什么不抢写</b>：抖动窗口内取回的 atom / 计数可能是半截或旧缓存，违反「<code>200 ≠ 有料</code>」⇒ 本轮<b>不写被引、不写 DOI、不进表</b>。</li>
+    <li><b>A 轨 0 新收（配额满）</b>：今日 <b>5/5</b> 已满，本不新增；公告批<b>复核未做成</b>（外网不可达）⇒ 如实写「未复核」，🚫 不写「无新增」。</li>
+    <li><b>B 轨 0 条（候选已选定，未实测）</b>：DCLM <code>2406.11794</code>（data）· VeriGen <code>2308.00113</code>（zhulong / EDA）· Decoupled Weight Decay <code>1711.05101</code>（pretrain）· Prismatic VLMs <code>2402.07865</code>（vision）。四条<b>均已查重确认不在表内</b>，但 arXiv / OpenAlex / PDF 三源皆不可达 ⇒ 留作 <b>11-18 首选项</b>。</li>
+    <li><b>作者网 0 / voice_ready 0 / news_ready 0</b>：X 不可达 ⇒ 不猜 handle、不补地址、不用二手转述冒充原推。</li>
+    <li><b>本时窗唯一实质产出 = 作者信合规审计</b>：新建 <code>research/mail/LETTER_AUDIT.md</code>，把 11-14 四条硬要求变成可复算结果 —— 回信状态 <b>79/79</b> 三值合规（本轮先纠了自己「误读最后一列」的假阳性）；署名 <b>73/73</b> 可核正文末行为 <code>Yang Liu</code>，11-14 后<b>零新增</b>落款多余行；语言 73 封实测 <b>37 中文 / 35 英文 / 1 한국어</b>，中文占比由 11-12 的 <b>17%</b> 升到 11-17 的 <b>82%</b>；回信率仍 <b>0/79</b>、<b>0 封到期</b>（最早 2026-11-25）。</li>
+    <li><b>修掉一个真实缺陷</b>：11-17 的 9 封正文原只写 <code>/tmp/r19xmail/</code>，<code>/tmp</code> 清理即永久丢失 ⇒ 已归档到 <code>research/mail/bodies/</code>（#71–#78），连同 #68–#70 / #79 ⇒ <b>当日 12/12 仓内可复核</b>，且实测 12 封全部「两行落款 + 其后无行 + 篇幅达标」。</li>
+  </ul>
+  <table class="plain" style="margin-top:12px;">
+    <tr><th style="width:16%;">线</th><th>21:00 增量（本轮 0 新材料 ⇒ 如实写「无」，不凑数）</th></tr>
+    <tr><td><b>pretrain</b></td><td><b>无（本轮无新材料）</b>。候选 <code>1711.05101</code> 已选定但外网阻断未实测 ⇒ 不下结论，沿用 18:00 判据。</td></tr>
+    <tr><td><b>vision</b></td><td><b>无（本轮无新材料）</b>。候选 <code>2402.07865</code> 同上，未实测不收。</td></tr>
+    <tr><td><b>harness</b></td><td><b>无（本轮无新材料）</b>。沿用 18:00「判分契约」三条（GPQA 分层 / MMMU 无效应答计数 / MATH 抽取判等分离）。</td></tr>
+    <tr><td><b>data</b></td><td><b>无（本轮无新材料）</b>。候选 <code>2406.11794</code> 同上，未实测不收。</td></tr>
+    <tr><td><b>zhulong</b></td><td><b>无（本轮无新材料）</b>。候选 <code>2308.00113</code> 同上，未实测不收。</td></tr>
+    <tr><td><b>designflow</b></td><td><b>无（本轮无新材料）</b>。沿用 18:00 的 <code>image_type</code> / <code>subject</code> 双列标注判据。</td></tr>
+  </table>
+  <p style="font-size:13px;color:#666;margin:8px 0 0;">跨线运维项（非建议）：<b>① 上游代理节点 4 分钟内由 <code>200</code> 转全 <code>000</code></b>，需看 <code>mihomo</code> 节点健康；<b>② 发件通道只发不收</b>（无 IMAP/POP3）；<b>③ SMTP 显示名仍为 <code>AI+EDA 招聘 · 自动</code></b> —— 无需重发即可修、且是最可能压低回信率的单点。明日（11-18）为 11-11 批的 <b>7 天观察点</b>。</p>
+</div>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 18:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量 / 12:00 增量 / 15:00 增量 / 18:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>206</b> 篇（12:00 +4 / 15:00 +0 ⚠️ 外网阻断 / 18:00 +4 ✅ 恢复）｜ 作者网 <b>187</b> 人（X 已核验 103）｜ 作者信累计 <b>79</b> 封（回信率 <b>0/79</b>）｜ voice_ready 3 ｜ news_ready 1<br>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 21:0x CST（早报 00:1x / 03:0x / 06:00 / 09:00 / 12:00 / 15:00 / 18:00 / 21:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>206</b> 篇（12:00 +4 / 15:00 +0 ⚠️ 外网阻断 / 18:00 +4 ✅ 恢复 / 21:00 +0 ⚠️ 上游抖动）｜ 作者网 <b>187</b> 人（X 已核验 103）｜ 作者信累计 <b>79</b> 封（回信率 <b>0/79</b>，0 封到期）｜ voice_ready 3 ｜ news_ready 1 ｜ 作者信合规审计 <b>73/73</b> 署名合规<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
