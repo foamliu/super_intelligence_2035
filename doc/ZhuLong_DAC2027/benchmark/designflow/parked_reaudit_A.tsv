@@ -89,7 +89,7 @@ session	user	host	domain	old_reason_short	new_cat	revivable	new_task_form	trace_
 1794010590146_aqtdv.messages.json	xinqiaoz	hfeg0pkn005	pnr_signoff	r295: pdk:1067/drc:253/calibre:50 = calibre DRC WRONG SHARD (C), rtl:40 minor	WRONG_SHARD	no		n/a
 1792047975640_tdmdj.messages.json	qi3wang	hfhds209	digital	inaccessible: .messages.json not at /home/qi3wang/.cline on hfhds209/hfeg0pjn178	NOFILE	no		n/a
 1792053812772_9qa9d	aocao	hfhds227	verification	r308: unreachable - ssh publickey denied on hfhds227/226 (10.129.32.111/110); ke	NOFILE	no		n/a
-1793706026720_4q4w1	weihanwu	hfeg0pfn104	verification	r311 peek: USER#0=how-to (怎么在tb上把mr值送到dq_exp). 106msgs, 39 read_files+16 search_	REVIVABLE_QA	yes	env-config/how-to	EXISTS
+1793706026720_4q4w1	weihanwu	hfeg0pfn104	verification	r311 peek: USER#0=how-to (怎么在tb上把mr值送到dq_exp). 106msgs, 39 read_files+16 search_	REVIVABLE_QA	done	CASE-MrrDqExpFlowAnalyze-001 (r702 synthesized, C-A data-flow extraction, B-synthesized REVD variant 16/16 dims diff)	EXISTS
 1793170209567_2mfi6.messages.json	jascperc	hfeg0pkn001	digital	duplicate of 0kv56/PatStatSpeed-001 (A:97); r313 build aborted, NOT appended	DUP	no		n/a
 1792054934836_7adgf	aocao	hfhds227	verification	duplicate of 7huyr (same aocao user, identical first user msg, RHR queue-bounds 	DUP	no		n/a
 1792055475403_wuuc7	e0039102	hfeg0plg74	verification	duplicate task of shard-D RegrCaseFilter-001 (same e0039102 user, identical regr	DUP	no		n/a
