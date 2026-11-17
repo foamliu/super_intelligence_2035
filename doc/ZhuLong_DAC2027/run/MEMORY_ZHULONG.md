@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-17 wake#1161·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·**无本线 subagent 消融 eval ✅**（`.cline` comm 进程=ops/user 驱动 doubao×zhulong-CLI clean baseline run5·非 subagent 臂·按硬约束#1 不 kill 不干扰）·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`59976b79d`（=wake#1160·本线 zhulong run 最后 commit·up to date with origin/main·0 behind）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
+WAITING: 0（2026-11-17 wake#1162·**🟠 subagent 消融线结案·done_all·standby·无待办**。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。结案 5 项任务自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重核）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·**无本线 subagent 消融 eval ✅**（`.cline` comm 进程=ops/user 驱动 doubao×zhulong-CLI clean baseline run5·非 subagent 臂·按硬约束#1 不 kill 不干扰）·zhulong run 工作树 `git status -- .` 空✅·repo HEAD=`a6813fb2a`（=wake#1161·本线 zhulong run 最后 commit·up to date with origin/main·0 behind）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -8,25 +8,9 @@ WAITING: 0（2026-11-17 wake#1161·**🟠 subagent 消融线结案·done_all·st
 
 - [wake#1095~#1141 详条/指针已滚出·2026-11-17 wake#1142 合并] → `daily-memories/2026-11-17.md`（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过·含 wake#1104 纠正 wake#1103 误判·§结案节在 `run/reports/report_zhulong_a3a6_arms_zh.html` commit `5f092f33e` grep '结案'=8 命中）。
 
-- **[2026-11-17 wake#1161] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**（loop log mtime 22:23 新鲜）·**ops relay PID118432/118463 活 ✅**·**无本线 subagent 消融 eval ✅**（ps/grep 假阳性=本 opencode 会话 cmdline 含 prompt 全文·改用 `/proc/*/comm` 核：仅 `.cline` 进程=ops/user 驱动 doubao×zhulong-CLI clean baseline run5·非 subagent 臂·按硬约束#1 不 kill 不干扰）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`59976b79d`（=wake#1160）·up to date with origin/main·0 behind ✅。结案 5 项自 commit `5f092f33e` 起全部正确完成·不再重核。**WAITING=0 standby**。
+- **[2026-11-17 wake#1162] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·**无本线 subagent 消融 eval ✅**（`ps -eo comm` 命中多条 `.cline`=ops/user 驱动 doubao×zhulong-CLI clean baseline run5·非 subagent 臂·按硬约束#1 不 kill 不干扰）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`a6813fb2a`（=wake#1161）·up to date with origin/main·0 behind ✅。结案 5 项自 commit `5f092f33e` 起全部正确完成·不再重核。**WAITING=0 standby**。
 
-- [wake#1160 详条已滚出·2026-11-17 wake#1161] → `daily-memories/2026-11-17.md` §[wake#1160 rolled-out]（standby 心跳·done_all·infra 自检通过·pgrep 假阳性排查·ops_clean_run5 非 subagent 臂·不干扰）。
-
-- **[2026-11-17 wake#1159] 🟠 standby 心跳·done_all·无待办**：用户再次手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463 活 ✅**·**无本线 subagent 消融 eval ✅**（pgrep `run_cline_script` 命中 2816644/2816645/2816654=一条 `bash scripts/run_cline_script.sh -p 8 -n` eval 链·日志 `/tmp/ops_clean_run5.log`·trace 模型=`doubao-seed-2.0-pro-cloud`·grep `spawn_agent|subagent|A0|A1|A2|A0pp|A3`=0 命中 ⇒ **ops/user 驱动 doubao×zhulong-CLI clean baseline run5·非 subagent 臂·按硬约束#1 不 kill 不干扰**）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`be1a8216d`（=wake#1158·up to date with origin/main·0 behind ✅）。结案 5 项自 commit `5f092f33e` 起全部正确完成·不再重核。**WAITING=0 standby**。
-
-- [wake#1158 详条已滚出·2026-11-17 wake#1160] → `daily-memories/2026-11-17.md` §[wake#1158 rolled-out]（standby 心跳·done_all·infra 自检通过·核验 ops_clean_run5=doubao×zhulong-CLI clean baseline 非 subagent 臂·不干扰）。
-
-- [wake#1157 详条已滚出·2026-11-17 wake#1159] → `daily-memories/2026-11-17.md` §[wake#1157 rolled-out]（standby 心跳·done_all·infra 自检通过·loop/ops relay/git 全绿）。
-
-- [wake#1156 详条已滚出·2026-11-17 wake#1158] → `daily-memories/2026-11-17.md` §[wake#1156 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·loop/ops relay/git 全绿）。
-
-- [wake#1155 详条已滚出·2026-11-17 wake#1156] → `daily-memories/2026-11-17.md` §[wake#1155 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·loop/ops relay/git 全绿）。
-
-- [wake#1154 详条已滚出·2026-11-17 wake#1155] → `daily-memories/2026-11-17.md` §[wake#1154 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·滚出 wake#1148~#1153）。
-
-- [wake#1153 详条已滚出·2026-11-17 wake#1154] → `daily-memories/2026-11-17.md` §[wake#1153 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·滚出 wake#1149~#1151）。
-
-- [wake#1148~#1152 详条已滚出·2026-11-17 wake#1154] → `daily-memories/2026-11-17.md` §[wake#1148~#1152 rolled-out]（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过）。
+- [wake#1148~#1161 详条已滚出·2026-11-17 wake#1162] → `daily-memories/2026-11-17.md` §[wake#1148~#1161 rolled-out]（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过·含 wake#1161 HEAD=a6813fb2a·pgrep/comm 假阳性排查·ops_clean_run5 非 subagent 臂·不干扰）。
 
 - [wake#1036 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1036 rolled-out]（subagent 消融线结案·done_all·用户令 09:3x·⚠️ 任务#2 report §结案节当时虚假✅→wake#1103 补做·❌ wake#1103 补做本身误判→wake#1104 纠正）。
 
