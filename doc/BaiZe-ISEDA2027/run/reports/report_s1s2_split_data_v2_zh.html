@@ -249,7 +249,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <td></td><td></td><td style="background:#bbdefb">🔵0.5d</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-5: MM-web 分词</td>
-<td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE<br>~11-26</td><td></td>
+<td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE<br>~11-26</td><td></td><td></td>
 </tr>
 <tr><td class="row-label">S2 数据就绪 (fallback §1.3)</td>
 <td></td><td></td><td></td><td class="milestone">✅11-23</td><td></td><td></td><td></td>
@@ -433,7 +433,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
-<b>生成时间</b>: 2026-11-17（v2.3 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30 / 新增 §2.1 下载优先级表（10 项）/ 甘特图增 Nemotron-CC-Math + finemath 下载行 / Epoch 核算增 #2/#3 改善分析 / Risk + Go-NoGo 更新；v2.3 修正甘特图「S2 数据就绪（主方案）」里程碑列对齐至 11-25 列，与 S2 启动/S1 350k 标记一致）
+<b>生成时间</b>: 2026-11-17（v2.4 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30 / 新增 §2.1 下载优先级表（10 项）/ 甘特图增 Nemotron-CC-Math + finemath 下载行 / Epoch 核算增 #2/#3 改善分析 / Risk + Go-NoGo 更新；v2.3 修正甘特图「S2 数据就绪（主方案）」里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐——从 11-27 列移至 11-25 列，与 ~11-26 时间点一致，并全文复核确认所有时间项正确）
 </p>
 </div>
 </body>
