@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **R2637 · 2026-11-17 17:2x — 🔴 codex修复重跑 监控轮: 17/83 done(无新完成·chunk2/7 RUNNING 4并发)·2 PASS·15 FAIL·0 verifier_null·0真实429·自检clean·WAITING=0**: codex 83题重跑RUNNING(PID348003 ALIVE etimes~6955s·harbor PID1359744 ALIVE part2 4并发·17/83 done=chunk1(12)+chunk2(5)·4 in-flight)·**修复①再验证✅**(build-pov-ray reward=1.0 agent_worked=True exit_code=0·crack-7z-hash reward=0.0 agent_worked=True·bn-fit-modify timeout但verifier仍跑reward=0.0→verifier不再被exit-code掐断)·**修复②429退避✅**(0真实429·429retries=0)·adaptive work=4/4 累计429=0✅·chained非codex 37题WAITING(PID43417 ALIVE)·自检clean(load29.30/224=13%·MemAvail1077GB·top harness proc 0%CPU·0 runaway·pretrain占GPU正常)·**audit fresh 1724 7-way**: cline42/89=47.2%(待重跑3)·codex3/89=3.4%(待重跑78·重跑中·2PASS confirmed)·opencode43/89=48.3%(待重跑10)·cc30/89=33.7%(待重跑2)·pi35/89=39.3%(待重跑12)·hermes40/89=44.9%(待重跑9)·deepseek11/89=12.4%(待重跑1)·总待重跑115·codex.py①②③✅·audit④✅·10:2x①✅·ETA codex~2.75h(66 left@4并发@~10min/题)+chained~2h
+> 🆕 **R2638 · 2026-11-17 18:0x — 🔴 codex修复重跑 监控轮: 19/83 done(+2)·2 PASS·17 FAIL·0 verifier_null·0真实429·自检clean·WAITING=0**: codex 83题重跑RUNNING(PID348003 ALIVE·harbor PID1359744 ALIVE part2 4并发·19/83 done·4 in-flight)·**修复①深度验证✅**(本轮精确计数: 19 task-level result.json 全部 verifier=ran=0 null·17 reward=0.0+2 reward=1.0 PASS·agent_result.metadata.stdout 含 turn.started/agent_message/command_execution 事件=agent确实在工作·verifier不再被exit-code掐断=修复①生效)·**修复②429退避✅**(0真实429)·adaptive work=4/4·chained非codex 37题WAITING(PID43417 ALIVE·等codex完)·自检clean(load31.26/224=14%·MemAvail1024GB·top harness proc codex 0.2%CPU·0 runaway)·**audit fresh 1724 7-way未变**: cline42/89=47.2%·codex3/89=3.4%(待重跑78·重跑中19/83·2PASS confirmed)·opencode43/89=48.3%·cc30/89=33.7%·pi35/89=39.3%·hermes40/89=44.9%·deepseek11/89=12.4%·codex.py①②③✅·audit④✅·10:2x①✅·ETA codex~2.7h(64 left@4并发@~10min/题)+chained~2h
 
-> 📦 R2636 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 17/83 done 2 PASS 0 verifier_null(修复①深度验证) 0真实429 自检clean audit fresh 1707。需要时再读。
+> 📦 R2637 流水已归档 → daily-memories-harness/2026-11-17.md。结论：codex修复重跑监控轮 17/83 done 2 PASS 0 verifier_null(修复①深度验证) 0真实429 自检clean audit fresh 1707。需要时再读。
 > - **14:5x 交付状态**: ①codex.py point①修复✅(R2627·本轮全文复验确认) ②429退避重试✅(R2626) ③83题重跑 RUNNING(13/83·2 PASS·0 verifier_null=修复①生效·0真实429) ④audit point④增强✅(R2627) ⑤报告=待重跑完成后REGEN — 余: codex跑完→merge→重算→REGEN
 > - **10:2x 交付状态**: ①撤回修正后Pass%✅(R2607) ②全路串行重跑: codex RUNNING + 非codex chained LAUNCHED ③重跑后重算真实Pass%=待完成 ④报告口径已改(三报告REGEN R2628) — 余: 全部重跑完成→重算→REGEN
 > - **下一步**: ①监控codex 83题重跑(ETA~4h·chunk2/7进行中) ②监控chained非codex 37题(自动启动) ③全部跑完→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html+glm53_7way ④SWE-bench predict续推
@@ -26,10 +26,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2637 codex修复重跑监控轮·17/83 done(无新完成·chunk2/7 RUNNING)·2 PASS·15 FAIL·0 verifier_null·0真实429·自检clean·WAITING=0
+PHASE:        R2638 codex修复重跑监控轮·19/83 done(+2)·2 PASS·17 FAIL·0 verifier_null·0真实429·自检clean·WAITING=0
 已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2589(各路 rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%)·R2620(stale prose修复+三报告REGEN)·R2626(codex 88失败重排)·R2627(codex.py point①修复+audit point④+83题429重跑LAUNCHED)·R2628(regex收紧+pending_rerun bug修复+三报告REGEN)·R2629(codex修复验证+chained非codex重跑LAUNCHED+fresh audit)·R2630-R2636(chunk1 COMPLETE 2/12 PASS监控+修复深度验证+chunk2/7 RUNNING监控)
-当前动作:     R2637: codex 83题重跑RUNNING(PID348003 ALIVE etimes~6955s·harbor PID1359744 part2 4并发·17/83 done·4 in-flight)·chained非codex 37题WAITING(PID43417 ALIVE)
-下一步:       ①监控codex 83题重跑(ETA~2.75h·66 left@4并发) ②监控chained非codex 37题(自动启动) ③全部跑完→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html+glm53_7way ④SWE-bench predict续推
+当前动作:     R2638: codex 83题重跑RUNNING(PID348003 ALIVE·harbor PID1359744 part2 4并发·19/83 done·4 in-flight·2 PASS·0 verifier_null=修复①生效)·chained非codex 37题WAITING(PID43417 ALIVE·等codex完)
+下一步:       ①监控codex 83题重跑(ETA~2.7h·64 left@4并发) ②监控chained非codex 37题(自动启动) ③全部跑完→fresh audit→重算7路真实Pass%→REGEN report_harness_tb21_7way_zh.html+glm53_7way ④SWE-bench predict续推
 ERROR_COUNT:  0
  体积: TASK≈29.7KB / MEMORY≈22KB（✅≤32KB）
  真实 Pass% (fresh audit 1724, 分母=89): cline 42/89=47.2%(待重跑=3) · codex 3/89=3.4%(待重跑=78·重跑中·2PASS confirmed via reward=1.0) · opencode 43/89=48.3%(待重跑=10) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=12) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=1) · 真待重跑=115(codex78+非codex37)
