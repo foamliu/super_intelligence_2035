@@ -6,31 +6,9 @@ WAITING: 0（2026-11-17 wake#1063·**🟢 subagent 消融线结案·done_all·st
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
-- **[2026-11-17 wake#1063] 🟢 standby 心跳·done_all·无待办**：PHASE=done_all·§7 Step C 什么都不做退出（subagent 消融线已结案·用户令 2026-11-17 09:3x·覆盖一切前令·无新指令）。infra 自检：loop PID243810 `/proc/environ` `https_proxy=http://172.19.92.23:13128` ✅·ops relay PID118463 活 ✅·无本线 eval 进程 ✅（`ps -eo pid,args | grep -E 'run_cline_script|run_h2_ablation'`=NO_ZHULONG_EVAL）·git fetch 同步 HEAD=`f80046931`=origin/main（zhulong 末次 commit=`4afdce597`=wake#1062 standby·新增 commit 全他线 posttrain/harness/designflow·无 zhulong 新工作）·reports §结案节在位 ✅·ZHULONG_TASK 两令标归档 ✅（11-15 20:5x + 11-16 09:0x 均标「⚠️ 被 2026-11-17 09:3x 结案令覆盖」）。⚠️ 磁盘：`/home` 100%但**2.2G avail**（与 wake#1062 持平·红线·非本线·cleanup 已 done_all 不再起) / `/nasdata` 97% (19G avail·repo .git 在 /nasdata·commit 不影响 /home)。MEMORY 体积维护：滚出 wake#1060/#1061/#1062 → daily-memories/2026-11-17.md §[rolled-out wake#1060/#1061/#1062]（3 条冗余 standby 心跳·均已被 wake#1036(结案)+wake#1063(最新 standby) 代表）。**WAITING=0 standby**。
+- **[2026-11-17 wake#1064] 🟢 standby 心跳·done_all·无待办**：PHASE=done_all·§7 Step C 什么都不做退出（subagent 消融线已结案·用户令 2026-11-17 09:3x·覆盖一切前令·无新指令）。infra 自检全绿：loop PID243810 `/proc/environ` `https_proxy=http://172.19.92.23:13128` ✅·ops relay 活（PID 118432/118463/3405265）✅·无本线 eval 进程 ✅（`ps -eo pid,args | grep -E 'run_cline_script|run_h2_ablation|a0pp'`=NO_ZHULONG_EVAL）·git fetch 同步 HEAD=`651694cef`=origin/main（zhulong 末次 commit=`6b30d162e`=wake#1063 standby·新增 commit 全他线 posttrain/harness/designflow/vision·无 zhulong 新工作）·reports §结案节在位 ✅（`grep '结案' report_zhulong_a3a6_arms_zh.html`=8 命中·含「subagent 消融线结案·不再追加新臂·agent 回 standby」）·ZHULONG_TASK 两令标归档 ✅（11-15 20:5x + 11-16 09:0x 均标「⚠️ 被 2026-11-17 09:3x 结案令覆盖」）。⚠️ 磁盘：`/home` 100%但 **2.1G avail**（较 wake#1063 再降 0.1G·红线·非本线·cleanup 已 done_all 不再起）/ `/nasdata` 97%（18G avail·repo .git 在 /nasdata·commit 不影响 /home）。MEMORY 体积维护：滚出 wake#1063 → daily-memories/2026-11-17.md §[wake#1063 rolled-out]·合并 wake#1047~#1062 共 12 条「旧指针已滚出」meta-指针为 1 行（均已被 wake#1036(结案)+wake#1064(最新 standby) 代表）。**WAITING=0 standby**。
 
-- [wake#1062 旧指针已滚出·2026-11-17 wake#1063 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1062]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1063(最新 standby) 代表）。
-
-- [wake#1061 旧指针已滚出·2026-11-17 wake#1063 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1061]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1063(最新 standby) 代表）。
-
-- [wake#1060 旧指针已滚出·2026-11-17 wake#1063 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1060]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1063(最新 standby) 代表）。
-
-- [wake#1059 旧指针已滚出·2026-11-17 wake#1062 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1059]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1062(最新 standby) 代表）。
-
-- [wake#1058 旧指针已滚出·2026-11-17 wake#1061 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1058]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1061(最新 standby) 代表）。
-
-- [wake#1056 旧指针已滚出·2026-11-17 wake#1060 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1056]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1060(最新 standby) 代表）。
-
-- [wake#1055 旧指针已滚出·2026-11-17 wake#1059 合并] 原文搬入 `daily-memories/2026-11-17.md` §[rolled-out wake#1055]（冗余 standby 心跳·已被 wake#1036(结案)+wake#1059(最新 standby) 代表）。
-
-- [wake#1054 旧指针已滚出·2026-11-17 wake#1057 合并] 原文搬入 `daily-memories/2026-11-17.md`（冗余 standby 心跳·已被 wake#1036(结案)+wake#1057(最新 standby) 代表）。
-
-- [wake#1053 旧指针已滚出·2026-11-17 wake#1054 合并] 原文搬入 `daily-memories/2026-11-17.md`（冗余 standby 心跳·已被 wake#1036(结案)+wake#1054(最新 standby) 代表）。
-
-- [wake#1052 旧指针已滚出·2026-11-17 wake#1053 合并] 原文搬入 `daily-memories/2026-11-17.md`（冗余 standby 心跳·已被 wake#1036(结案)+wake#1053(最新 standby) 代表）。
-
-- [wake#1051/#1047/#1048 旧指针已滚出·2026-11-17 wake#1052 合并] 原文搬入 `daily-memories/2026-11-17.md`（冗余 standby 心跳·已被 wake#1036(结案)+wake#1053(最新 standby) 代表）。
-
-- [wake#1047/#1048 旧指针已滚出·2026-11-17 wake#1049 合并] 原文搬入 `daily-memories/2026-11-17.md`（冗余 standby 心跳·已被 wake#1036(结案)+wake#1049(最新 standby) 代表）。
+- [wake#1047~#1062 旧指针已滚出·2026-11-17 wake#1064 合并] 12 条冗余 standby 心跳（#1047/#1048/#1051~#1056/#1058~#1062）原文均已在 `daily-memories/2026-11-17.md`·已被 wake#1036(结案)+wake#1064(最新 standby) 代表。
 
 - **[2026-11-17 wake#1036] 🟢 subagent 消融线结案·done_all·standby**：用户令 2026-11-17 09:3x「结果比较差，让 zhulong agent 把评测停下来吧」·覆盖一切前令。**执行**：①核 A0pp eval 已被 ops kill ✅（wrapper PID1443422 / worker PID620959 / proxy PID1443459 / 10 cline worker 全 kill）·A0pp r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论；②MEMORY 顶部写结案结论（原文引用用户两条认知·标「2026 暑假清华博士研究积累的认知」）✅；③reports 侧 `report_zhulong_a3a6_arms_zh.html` 补「§结案·用户认知结论」节（汇总 A0/A1/A2/A0′/A0′′/H2 全结果 + 用户两条认知原文 + 标「subagent 消融线结案不再追加新臂」）✅；④ZHULONG_TASK.md 11-15 20:5x + 11-16 09:0x 两令已标「已归档·被 2026-11-17 09:3x 结案令覆盖」✅；⑤不再起任何新臂（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。commit + push 前缀 `zhulong arms: 结案`（`5f092f33e`）。**保留产物不删**：A0pp data-dir / proxy 脚本 / cost JSON / trace / daily-memories 均保留为历史档。§7 Step C：PHASE=done_all→什么都不做退出·**WAITING=0 standby**。详情见 daily §[wake#1036]。
 
