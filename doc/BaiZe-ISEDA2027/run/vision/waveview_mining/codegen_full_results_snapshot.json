@@ -1912,6 +1912,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WvDataeyeMeasure-001",
+   "arm": "V1",
+   "k_conditions": 21,
+   "pi_seconds": 153.6,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "EDA-Eval-DesignFlow-WvDataeyeMeasure-001: 1/2 conditions FAILED",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-WvDataeyeMeasure-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WvDataeyeMeasure-001",
+   "arm": "V2",
+   "k_conditions": 21,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
