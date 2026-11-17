@@ -12,17 +12,18 @@ WAITING: 0
 > - **📦 体积**: TASK≈26.7KB / MEMORY≈31KB（✅≤32KB）
 > - **下一步**: ①等运维审阅复核结论②synthetic题rerun(adaptive auto)③SWE-bench predict续推④等运维新令
 
+> 🆕 **R2601 · 2026-11-17 09:1x — 监控心跳轮·自检全绿·无未完成指令·research日报4条harness建议纳入下次报告迭代**
+> - **自检**: load28.1/27.6/27.4/224✅(pretrain dominant·非本线)·mem837GB/2015GB avail1028GB✅·0 harness eval procs✅·0 runaway✅·reports/ porcelain=0✅·manifests+traces gitignore命中✅
+> - **运维指令区**: 全部✅已交付·无未完成离散指令(R2600失败归因复核09:13刚交付·待运维审阅)
+> - **research日报2026-11-17**(09:08更新·来自research日报2026-11-17): 4条harness建议→①ModHarness-RL(2611.18533):报告加harness=fixed|learned+context_budget列+pass@1旁报n_samples/n_after_filter ②判分器跨视图(2611.18471):加view=native|macro|delegation|compaction+abstain_rate/wrong_verdict_rate ③LiveCodeBench:加release_date/model_cutoff切窗 ④Gemma:绝对分+成对胜率双口径。均纳入下次报告迭代(非本轮action)
+> - **下一步**: ①等运维审阅R2600复核结论 ②synthetic题rerun(opencode10+pi14+hermes13+deepseek5+codex2+cline/cc各1·adaptive auto·待归因结论确认后启动) ③SWE-bench predict续推 ④等运维新令
+> - **📦 体积**: TASK≈24.5KB / MEMORY≈31.5KB（✅≤32KB·R2598已归档腾位）
+
+
 > 📦 R2599 流水已归档 → 11-17 08:2x 块已归档(两份7way报告已R2598交付)。需要时再读。
 
 
-> 🆕 **R2598 · 2026-11-17 08:3x — 用户令·交付 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告 ✅**
-> - **交付物**：① `reports/report_harness_glm53_7way_swebench_tb_zh.html`（SWE-bench Verified 500 + TB-2.1 89 × 7路·主表+失败归因+kimi对照·13.1KB）② `reports/report_harness_tb21_7way_zh.html`（TB-2.1 7路专项·10.6KB）
-> - **TB-2.1 7路 Pass（两报告一致）**：opencode 43/89=48.3% · cline 42/89=47.2% · hermes 38/89=42.7% · pi 35/89=39.3% · cc 30/89=33.7% · deepseek 11/89=12.4% · codex 1/89=1.1%
-> - **SWE-bench Verified（进行中/partial·非最终）**：cline 249/332 · codex 91/144 · opencode 414/498 · cc 286/348 · pi 216/296 · hermes 435/480 · deepseek 141/175（分母=已评测N·N<500不可跨行比·codex最慢ETA见报告§7）
-> - **修复**：combined生成器(gen_report_glm53_7way.py) TB-2.1 计数 bug——旧不去重+只扫original dir→cline64/opencode55/cc0；改为 task_name去重+扫rerun dir+PASS优先(与gen_report_tb21_7way.py count_route一致)→cline42/opencode43/cc30✅。同步更新失败归因行(cc 0/89→30/89已修复·hermes 7/89→38/89 rerun done)+SWE-bench「进行中/partial」红线+口径说明(backbone/7路/判据/infra单列)
-> - **自检**: 0 script/0 外链✅(grep验证)·reports/ porcelain=0✅(无.json/.log/.txt)·0 harness eval procs✅·load25.6/224✅·mem836GB avail1030GB✅
-> - **下一步**: ①SWE-bench predict续推至500(codex瓶颈) ②token回采=BLOCKED ③research建议纳入下次报告迭代 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
-> - **📦 体积**: TASK≈23.0KB / MEMORY≈31.2KB（✅≤32KB）
+> 📦 R2598 流水已归档 → daily-memories-harness/2026-11-17.md。结论：两份7way中文HTML报告已交付(TB-2.1 89×7路+SWE-bench Verified partial)+combined生成器TB计数bug修复(task_name去重+扫rerun dir+PASS优先)。需要时再读。
 
 > 📦 R2592 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cc round2 26/30(4P·0ConnRefused✅)+merge脚本就绪(30P/89=33.7% partial)+adaptive off7/10+0 429✅。需要时再读。
 
