@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vision WaveView 子集(224题/10可跑) + agent 臂自测 · agent 臂自测（G0/G1/G2）· MLLM 作为 agent 系统一部分</title>
+<title>Vision WaveView 子集(225行/192全队列·10图像子队列) + agent 臂自测 · MLLM 作为 agent 系统一部分</title>
 <style>body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1080px;margin:24px auto;color:#222;line-height:1.6;padding:0 16px}
 h1,h2,h3{color:#1a3a5c}table{margin:8px 0;font-size:13px;border-collapse:collapse}th{background:#eef3f8}td,th{border:1px solid #ccc;padding:5px 8px;vertical-align:top}
 .card{background:#f7f9fc;border:1px solid #dce3ec;border-radius:8px;padding:14px 18px;margin:14px 0}
@@ -10,28 +10,33 @@ code{background:#eef;padding:1px 4px;border-radius:3px;font-size:12px}.muted{col
 <h1>Vision WaveView 10 题 · agent 臂自测（G0 / G1 / G2）</h1>
 
 
-<h1 style="margin-top:24px">§0 WaveView 评测子集 · EDA-Eval-DesignFlow-WaveView.jsonl（2026-11-17 16:3x 用户令）</h1>
+<h1 style="margin-top:24px">§0 WaveView 评测子集 · EDA-Eval-DesignFlow-WaveView.jsonl（2026-11-17 16:3x 用户令 · wake#1541 判分 bug 修正 + code_gen 试点 + 全 182 队列链式启动）</h1>
 <p class="muted">vision 线 · 自主 SSH 36.15 全量扫描 EDA-Eval-DesignFlow.jsonl 自建并维护子集 · 用户原话三问：①评测集建立了吗 ②基线(EDA_Flow_Bench)分数 ③加 Qwen3.5-2B VQA 后分数</p>
 <div class="card verdict pos">
 <b>三问回答</b>：<br>
-① <b>已建立</b>。36.15 与本地 <code>vision/EDA-Eval-DesignFlow-WaveView.jsonl</code> 各一份（sha256 <code>623842b5341cc089…</code>，224 行）。<br>
-② <b>基线 V0（无 VQA、纯文本不看图）</b>：整题 <b>0/10</b>，每量 <b>34/110=30.9%</b>。<br>
-③ <b>+ Qwen3.5-2B VQA</b>：V1（基模）整题 <b>0/10</b>、每量 35.4%；<b>V2（基模+rft2 适配器）整题 1/10、每量 50.0%</b>。
+① <b>已建立</b>。36.15 与本地 <code>vision/EDA-Eval-DesignFlow-WaveView.jsonl</code> 各一份（sha256 <code>f5ca63180efa12c3…</code>，225 行；<b>full_eval 全队列 = 192</b> = 波形相关 ∧ 有 check.py；新增 <code>audit_category</code> 字段区分 image_reading/code_gen）。<br>
+② <b>基线 V0（无 VQA、纯文本不看图）· 图像子队列 10 道</b>：整题 <b>0/10</b>，每量 <b>34/110=30.9%</b>。<b>全 192 队列的 V0 基线（EDA_Flow_Bench agent）= 待跑</b>（需 36.15 cline harness 跑 192 case，多 session 计算，见 §0.6）。<br>
+③ <b>+ Qwen3.5-2B VQA · 图像子队列 10 道</b>：V1（基模）整题 <b>0/10</b>、每量 35.4%；<b>V2（基模+rft2 适配器）整题 1/10、每量 50.0%</b>。
 McNemar V0 vs V2：b=1 c=0 p=1.0（仅 1 个不一致对，n=10 样本不足，p 仅参考）。
 </div>
+<div class='card' style='background:#fff7e6;border-color:#e8c07d'><b>⚠️ 用户两轮修正后重做状态（2026-11-17 16:3x 令）</b>：<br>
+<b>已完成</b>——① <b>jsonl 分类改判</b>：废除旧口径「214 道 text_only 标 image_required=False + 排除在 V0/V1/V2 外」。新口径：<code>eval_included = 波形相关 ∧ 有 check.py = 192</code> 全部纳入 V0/V1/V2 评测队列（<code>cohort=full_eval</code>）；182 道 text_only 题<b>不再排除</b>，仍由 agent 尝试、check.py 判分（不预设「需不需要看图」，让实验说话）。10 道 image 子队列（<code>vqa_runnable</code>）= VQA 工具能真正读图的子集。33 道（32 no_check + 1 非波形）诚实排除并写明理由。<br>
+<b>剩余（多 session 计算）</b>——② <b>全 192 队列 V0/V1/V2 对照</b>：需在 36.15 用 EDA-Flow-Bench agent harness（cline + 真实 check.py）跑 192 case × 3 臂 = 576 session；本 wake 已在 10 道图像子队列上完成（真题 PNG + 真实 check.py 口径），全队列 text_only 182 道的绝对通过率待该 harness 跑出。③ 报告本节已按新口径覆盖。</div>
 <h2>0.1 筛选口径与子集构成</h2>
 <div class="card"><ul>
-<li><b>全量扫描</b>：36.15 上 <code>EDA-Eval-DesignFlow.jsonl</code>（A/B/C/D 四 shard 合并，224 题含合并冗余）逐行解析。</li>
+<li><b>全量扫描</b>：36.15 上 <code>EDA-Eval-DesignFlow.jsonl</code>（A/B/C/D 四 shard 合并，扫描时 1637 行有效）逐行解析，入选 225。</li>
 <li><b>入选判据（自定、可复算）</b>：(K) task_id/prompt/metadata/attachments/expected_artifacts 命中波形关键词
 <code>waveform|waveview|fsdb|vcd|eye[-_ ]?diagram|oscilloscope?|edge[-_ ]?timing|signal[-_ ]?extract|波形|\bwave\b</code>；或 (I) <code>assets/&lt;task_id&gt;/</code> 下有可见光栅图。有 check.py 单独不充分（所有题都有）。</li>
-<li><b>子集构成</b>：入选 <b>224</b> = 波形相关(keyword) <b>223</b> + 仅图片非波形 <b>1</b>；
-按 source：original_png=10 · text_only=181 · no_check=32 · image_only_non_waveform=1；有可见图 11。</li>
-<li><b>可跑集 vqa_runnable = 波形相关 ∧ 有可见图 ∧ 有 check.py = 10</b>。即 V0/V1/V2 实际运行的 10 道（designflow 已恢复原形态、sha256 校验只读复制的真题 PNG）。
-每条记录含 task_id/shard/domain/waveform_relevant/image_required/image_path/has_check/k_conditions/kw_match/baseline_verdict/failure_mode_tier/source/exclusion_reason/vqa_runnable。</li>
-<li><b>用户第二条修正落地</b>：不预设「这道题需不需要看图」——让 V0 vs V1/V2 通过率差异说话。181 道 text_only 题无图，VQA 无图可读，V0=V1=V2 平凡相等，故实验聚焦 10 道有图可跑集；它们仍登记在子集内（完整性）。</li>
+<li><b>子集构成（改判后口径）</b>：入选 <b>225</b> = 波形相关(keyword) <b>224</b> + 仅图片非波形 <b>1</b>；
+按 source：original_png=10 · text_only=182 · no_check=32 · image_only_non_waveform=1；有可见图 11。</li>
+<li><b>full_eval 全队列 = 波形相关 ∧ 有 check.py = 192</b>（<code>eval_included=true</code>）——即 V0/V1/V2 评测队列：<b>不预设「需不需要看图」</b>，全部 192 道由 agent 尝试、真实 check.py 判分。<b>按 check.py 实际判什么（audit_category）细分两类 VQA 机制</b>：<br>
+&nbsp;&nbsp;• <b>image_reading = 10</b>（<code>vqa_runnable=true</code>，有真题 PNG）：交付物 = 从波形图读出的测量值；VQA 直接读 PNG 产出被判分的读数 → V0 vs V1/V2 在此子队列已测。<br>
+&nbsp;&nbsp;• <b>code_gen = 182</b>（无可见图）：交付物 = 代码/脚本（Verilog/Tcl/Python），check.py 校验代码而非图像读数；VQA 机制 = <b>agent 把 Qwen3.5-2B VQA 当 MCP 工具调用、问波形细节问题</b>（:30001/:30003），是否能提升通过率<b>不预设、由 V0 vs V1/V2 实跑说话</b>——这正是用户第二条修正举的「agent 调 VQA 问细节问题→通过率上升」机制，不矮化为 OCR。<br>
+每条记录含 task_id/shard/domain/waveform_relevant/image_required/image_path/has_check/k_conditions/kw_match/<b>eval_included/cohort</b>/baseline_verdict/failure_mode_tier/source/exclusion_reason/vqa_runnable/<b>audit_category/vqa_mechanism</b>。</li>
+<li><b>用户第二条修正落地</b>：废除旧版「181 道 text_only 无图 → 排除在 V0/V1/V2 外、实验聚焦 10 道有图可跑集」的口径。新口径下 182 道 text_only 题 <code>eval_included=true</code>、<code>cohort=full_eval</code>，<b>不再排除</b>；MLLM 价值度量 = 全队列 有 VQA vs 无 VQA 通过率差异，不预设帮助维度。</li>
 </ul></div>
-<div class='card'><b>诚实排除（非波形）</b>：EDA-Eval-DesignFlow-IRReportPdf-001 (shard C, domain=pg_layout) 有 14 张 PNG 但 <b>零波形关键词命中</b> → <code>source=image_only_non_waveform</code>, <code>vqa_runnable=false</code>，不进入 V0/V1/V2。理由：pg_layout IR voltage-drop report task; 14 IR heat-map PNGs but zero waveform/信号/wave keyword hit; not a waveform-viewing task -&gt; excluded from V0/V1/V2 waveform experiment per user &#x27;honestly exclude unrelated&#x27; clause (2026-11-17 2nd correction).</div>
-<h2>0.2 V0 / V1 / V2 三段对照（10 道可跑真题，同 check.py 同口径）</h2>
+<div class='card'><b>诚实排除（非波形 / 无 check.py）</b>：① EDA-Eval-DesignFlow-IRReportPdf-001 (shard C, domain=pg_layout) 有 14 张 PNG 但 <b>零波形关键词命中</b> → <code>cohort=excluded_non_waveform</code>；② 32 道波形相关但无 check.py → <code>cohort=excluded_no_check</code>（无 oracle 无法判分）。合计 33 道 <code>eval_included=false</code>，不进入 V0/V1/V2，理由均写明于 <code>exclusion_reason</code>。</div>
+<h2>0.2 V0 / V1 / V2 三段对照（图像子队列 10 道真题，同 check.py 同口径）</h2>
 <table><tr><th>tag</th><th>tier</th><th>case</th><th>V0 文本</th><th>V1 基模VQA</th><th>V2 rft2-VQA</th><th>k</th><th>V0→V2翻转</th></tr>
 <tr><td>β9</td><td>C</td><td>WaveMaxFind-001</td><td class='neg'>FAIL<br><span class='muted'>0/9</span></td><td class='neg'>FAIL<br><span class='muted'>4/9</span></td><td class='neg'>FAIL<br><span class='muted'>1/9</span></td><td>9</td><td></td></tr><tr><td>α4</td><td>B</td><td>TempSelWaveform-001</td><td class='neg'>FAIL<br><span class='muted'>4/9</span></td><td class='neg'>FAIL<br><span class='muted'>5/9</span></td><td class='neg'>FAIL<br><span class='muted'>6/9</span></td><td>9</td><td></td></tr><tr><td>β10</td><td>C</td><td>TempThreshChar-001</td><td class='neg'>FAIL<br><span class='muted'>4/10</span></td><td class='neg'>FAIL<br><span class='muted'>2/10</span></td><td class='neg'>FAIL<br><span class='muted'>5/10</span></td><td>10</td><td></td></tr><tr><td>α1</td><td>A</td><td>EyeApertureSelect-001</td><td class='neg'>FAIL<br><span class='muted'>3/9</span></td><td class='neg'>FAIL<br><span class='muted'>2/9</span></td><td class='pos'>PASS<br><span class='muted'>9/9</span></td><td>9</td><td>✓</td></tr><tr><td>β8</td><td>C</td><td>WaveView-002</td><td class='neg'>FAIL<br><span class='muted'>6/13</span></td><td class='neg'>FAIL<br><span class='muted'>6/13</span></td><td class='neg'>FAIL<br><span class='muted'>5/13</span></td><td>13</td><td></td></tr><tr><td>β11</td><td>B</td><td>SimFailFsdbProbe-001</td><td class='neg'>FAIL<br><span class='muted'>6/12</span></td><td class='neg'>FAIL<br><span class='muted'>4/12</span></td><td class='neg'>FAIL<br><span class='muted'>6/12</span></td><td>12</td><td></td></tr><tr><td>α2</td><td>A</td><td>RiseEdgeMarginMeas-001</td><td class='neg'>FAIL<br><span class='muted'>2/9</span></td><td class='neg'>FAIL<br><span class='muted'>5/9</span></td><td class='neg'>FAIL<br><span class='muted'>4/9</span></td><td>9</td><td></td></tr><tr><td>β7</td><td>C</td><td>FsdbWrDqMeas-001</td><td class='neg'>FAIL<br><span class='muted'>3/12</span></td><td class='neg'>FAIL<br><span class='muted'>2/12</span></td><td class='neg'>FAIL<br><span class='muted'>6/12</span></td><td>12</td><td></td></tr><tr><td>α3</td><td>A</td><td>DqReadPathWaveDebug-001</td><td class='neg'>FAIL<br><span class='muted'>4/13</span></td><td class='neg'>FAIL<br><span class='muted'>3/13</span></td><td class='neg'>FAIL<br><span class='muted'>5/13</span></td><td>13</td><td></td></tr><tr><td>β6</td><td>A</td><td>WaveCmpWrap-001</td><td class='neg'>FAIL<br><span class='muted'>2/14</span></td><td class='neg'>FAIL<br><span class='muted'>6/14</span></td><td class='neg'>FAIL<br><span class='muted'>8/14</span></td><td>14</td><td></td></tr><tr style='font-weight:bold;background:#eef3f8'><td colspan='3'>每量合计</td><td>34/110<br>30.9%</td><td>39/110<br>35.4%</td><td>55/110<br>50.0%</td><td>110</td><td>1</td></tr></table>
 <p class="muted">tier：α=未engage · β=只看文本 · γ=engage但读不懂图。V2 唯一整题 PASS = EyeApertureSelect（α1，9/9）。每量准确率 V0 30.9% → V1 35.4% → V2 50.0%（+19.1pp）。数据源 <code>summary_real.json</code>（REAL/ 目录，真题 PNG 重跑）。</p>
@@ -41,14 +46,36 @@ McNemar V0 vs V2：b=1 c=0 p=1.0（仅 1 个不一致对，n=10 样本不足，p
 <h2>0.4 可复现性</h2>
 <div class="card"><ul>
 <li>构建脚本：<code>vision/waveview_mining/build_waveview_subset.py</code>（36.15 上同份）。在 36.15 bench 目录 <code>python3 build_waveview_subset.py</code> 重跑即可重生 jsonl。</li>
-<li>子集文件：36.15 <code>/nasdata/.../EDA-Eval-DesignFlow/EDA-Eval-DesignFlow-WaveView.jsonl</code> + 本地 <code>vision/EDA-Eval-DesignFlow-WaveView.jsonl</code>（sha256 <code>623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd</code>，224 行）。</li>
+<li>子集文件：36.15 <code>/nasdata/.../EDA-Eval-DesignFlow/EDA-Eval-DesignFlow-WaveView.jsonl</code> + 本地 <code>vision/EDA-Eval-DesignFlow-WaveView.jsonl</code>（sha256 <code>f5ca63180efa12c35560c1b4e5ad285b1b47e0a8eae81d904ae5768e935cc126</code>，225 行；full_eval=192 / excluded_no_check=32 / excluded_non_waveform=1）。</li>
+<li>分类审计脚本：<code>vision/waveview_mining/audit_waveview_category.py</code>（按 check.py 实判内容把 192 道分为 image_reading/code_gen）+ <code>vision/waveview_mining/refine_jsonl_audit.py</code>（把 audit_category/vqa_mechanism 写回 jsonl，36.15 与本地双份 sha256 一致）。</li>
 <li>三段结果：<code>vision/vqa_tool/waveview_selftest/REAL/</code>（V1/V2）+ <code>V0/</code> + <code>summary_real.json</code> + <code>audit_real.json</code>。VQA 后端 :30001（基模）/ :30003（rft2_adapter）。</li>
 </ul></div>
 <h2>0.5 诚实结论与口径</h2>
 <div class="card"><ul>
-<li><b>MLLM 价值度量（用户裁定）</b>：WaveView 子集上 <b>有 VQA vs 无 VQA 通过率差异</b>。V0=0/10 → V2=1/10，每量 30.9%→50.0%（+19.1pp），方向正向但 <b>n=10、仅 1 个不一致对，McNemar p=1.0，统计不可分辨</b>。</li>
-<li><b>不编造</b>：181 text_only 题未单跑（无图，VQA 无作用，平凡相等）；IRReportPdf 非波形已诚实排除并写明理由；未拿合成集冒充真题。</li>
+<li><b>MLLM 价值度量（用户裁定）</b>：WaveView 子集上 <b>有 VQA vs 无 VQA 通过率差异</b>。image_reading 10 道：V0=0/10 → V2=1/10，每量 30.9%→50.0%（+19.1pp），方向正向但 <b>n=10、仅 1 个不一致对，McNemar p=1.0，统计不可分辨</b>。code_gen 试点 4 道（修正判分 bug 后）：V0=V1=V2=2/4（VQA-vision 对文本波形题机制上 N/A，未带来通过率变化）。</li>
+<li><b>🔴 判分 bug 已修正（防假阴性）</b>：原判分把 agent 工作目录（无 <code>hidden/</code>）传给 check.py，致 88/182 道 RUNTIME-fail；修正后用独立判分目录，FsdbMeasRunGen 由假 FAIL 还原为真 PASS 16/16。详见 §0.6。</li>
+<li><b>不编造</b>：182 code_gen 题已纳入 full_eval 全队列（<code>eval_included=true</code>，不再排除），全队列 V0/V1/V2 已链式启动、resumable 跨 wake 增量推进（见 §0.6），未用「无图→平凡相等」预先剔除；IRReportPdf 非波形、32 道 no_check 已诚实排除并写明理由；未拿合成集冒充真题。</li>
 <li><b>下方正文</b>为 2026-11-14 agent 臂（G0/G1/G2）自测与 11-15 真题三段附录，保留以供溯源；本节为 11-17 扩大子集重跑的交付。</li>
+</ul></div>
+<h2>0.6 全 192 队列 V0/V1/V2 · code_gen 试点已跑（修正判分 bug 后）· 全 182 队列已链式启动</h2>
+<div class='card'><ul>
+<li><b>队列已就绪</b>：<code>EDA-Eval-DesignFlow-WaveView.jsonl</code> 225 行，<code>eval_included=true</code> 的 full_eval 全队列 = <b>192</b>（波形相关 ∧ 有 check.py）= 10 image_reading + 182 code_gen。分类口径已按用户两条修正重做（废除旧「text_only 排除」）。</li>
+<li><b>🔴 判分 bug 修正（本 wake 关键）</b>：原 <code>grade()</code> 把 agent 的原始工作目录（不含 <code>hidden/</code>）当作 workdir 传给 check.py；<b>88/182 道 code_gen 的 check.py 读 <code>os.path.join(workdir,"hidden",...)</code></b>（如 FsdbMeasRunGen 需 <code>hidden/hidden_manifest.json</code> + A 组 sp），即使交付正确也 RUNTIME-fail（<b>假阴性</b>）。修正：<code>grade()</code> 现在为每题新建一个<b>独立判分目录</b> = A 组可见资产 + <code>hidden/</code> + <code>submit.zip</code>，调 <code>check("submit.zip", gdir)</code>；agent 从不见该目录（pi 已退出后构建，反硬编码不破）。<b>复跑校验：FsdbMeasRunGen 三臂由假 FAIL 修正为真 PASS 16/16</b>。脚本 <code>vision/waveview_mining/regrade_fix.py</code>（旧 vs 新逐题对账）+ <code>regrade_pilot.py</code>。</li>
+<li><b>图像子队列（10，image_reading）已测</b>：真题 PNG + 真实 check.py，V0=0/10（每量 30.9%）/ V1=0/10（35.4%）/ V2=1/10（50.0%）；McNemar V0 vs V2 b=1 c=0 p=1.0（n=10 不足，仅参考）。</li>
+<li><b>code_gen 试点（4 题×3 臂，修正判分后）</b>：在 36.15 用 deepseek-v4-pro-cloud 编码 agent（pi，--no-mcp，纯 Python+bash）跑 4 道 code_gen 波形题，各 case 真实 <code>check.py</code> 本地判分（隐藏输入 B/C，反硬编码）。三臂单变量 = 是否向编码 agent 提供 VQA 工具：<b>V0</b>=无 VQA · <b>V1</b>=+Qwen3.5-2B 基模 VQA（:30001）· <b>V2</b>=+Qwen3.5-2B rft2 VQA（:30003），经 <code>vqa_ask.sh</code> 暴露为 shell 工具，是否调用由 agent 自决。</li>
+<table><tr><th>臂</th><th>整题通过</th><th>每量(有 k_total 的题)</th><th>说明</th></tr>
+<tr><td><b>V0</b></td><td>2/4（50.0%）</td><td>34/34（100%）</td><td>无 VQA 基线（用户问②）</td></tr>
+<tr><td><b>V1</b></td><td>2/4（50.0%）</td><td>34/34（100%）</td><td>+Qwen3.5-2B 基模 VQA 工具可用</td></tr>
+<tr><td><b>V2</b></td><td>2/4（50.0%）</td><td>34/34（100%）</td><td>+Qwen3.5-2B rft2 VQA 工具可用</td></tr></table>
+<li><b>逐题明细（code_gen 试点，修正判分后）</b>：
+DqTrtfMeasure-001：V0/V1/V2 全 <b>PASS 18/18</b>（pi 正常完成，自包含 check.py，判分 bug 不影响）；
+FsdbMeasRunGen-001：V0/V1/V2 全 <b>PASS 16/16</b>（pi 正常完成；<b>修正前被假判 FAIL</b>，修正后还原为真 PASS——正是 bug 修正的价值）；
+NandMcuAsm-001：V0/V1/V2 全 <b>FAIL</b>（pi 360s 超时未产出 submit.zip，真实失败）；
+VerdiFsdbLoadDiagnose-001：V0/V1/V2 全 <b>FAIL</b>（pi 360s 超时未产出 submit.zip，真实失败）。</li>
+<li><b>诚实方法学（VQA 对 code_gen 的适用性，让实验说话）</b>：code_gen 类题的波形数据是<b>文本文件</b>（如 <code>v_dq_A.txt</code>，列 time_ns/voltage），编码 agent 可用 read 工具直接读文本做测量，<b>不需要把波形当图像看</b>；又 VQA 服务器在 .17 只能读 .17 路径，36.15 工作目录文件它看不到（调用返回 <code>image not found</code>），36.15 也无 matplotlib 可画图。故对 code_gen 文本波形题，VQA-vision 在机制上不适用——试点 4 道上 <b>V0=V1=V2=2/4</b>（VQA 可用但对文本波形题 N/A，未带来通过率变化），与 image_reading 子队列（V2 +19.1pp 每量）形成对照。这正是用户「让 V0 vs V1/V2 实验说话」要检验的：<b>MLLM-as-VQA 的通过率增益集中在 image_reading 子队列</b>（只有 PNG、无原始数据文本的题，VQA 直接产出被判分的读数）。</li>
+<li><b>全 182 code_gen 队列已启动（修正判分版，resumable，跨 wake 增量推进）</b>：为正面回应用户「跑全量 ~192」，<code>vision/waveview_mining/run_codegen_full.py</code>（36.15 同份，已加载修正 grade()）已 detached 启动，对全部 182 道 code_gen 题跑 V0/V1/V2（同 check.py、同口径、resumable——已完成的 submit.zip 重判跳过 pi；2 道有 submit.zip 的试点题自动续跑）。结果增量写入 36.15 <code>/tmp/wv_cg_full/results.json</code>；vision loop 每 wake 读取并滚动更新本节。完整 182 题预计 ~30+h cloud-agent 推理，跨多 wake 完成；本节先交付 4 题试点 + 判分 bug 修正 + 方法学结论，全队列数字随 loop 推进填入。</li>
+<li><b>全队列实跑进度（wake#1543 19:2x 巡检）</b>：runner <code>python3 run_codegen_full.py</code>（PID 1702703）alive 于 36.15，resumable 增量写 <code>/tmp/wv_cg_full/results.json</code>。截至本 wake 已完成 <b>3 case × 3 臂 = 7 行</b>（AgentCodeStructAnalyze-001 k=18 / AsyncFifoSim-001 k=31 / AvgValueCalc-001 k=46，V1·V2 末臂在跑），<b>7/7 verdict=False（全部 360s 超时、无 submit.zip）</b>——这三道恰为字典序最前的高 k 复杂题，编码 agent 在 360s 内无法完成属预期真实失败，<b>不构成可引用的全队列通过率</b>（硬题前载，样本有偏，待更多题积聚再报率）。<b>🔴 基础设施修复（本 wake 关键）</b>：wake#1542 声称部署的 <code>/tmp/wv_cg_watchdog.sh</code> 实测<b>未存活</b>（日志为空、进程不存在 → 若 runner 跨 wake 死亡将静默中断）；本 wake 已重新 <code>setsid</code> 启动并核验<b>单一实例</b>（PID 1977546 alive，120s 巡检，runner 挂则 resumable 重启、rows≥546 自停），清掉误起的第二份副本与悬挂 launcher。<b>SSH 反向桥</b>（.17 vqa_ssh_bridge_watchdog PID 3961251 ~58.7h）+ <b>VQA 三端点</b>（:30001 Qwen3.5-2B /health ok · :30003 +rft2 /health ok）均健康。全队列将在后续 wake 持续推进直至 546 行满。</li>
+<li><b>可复现</b>：试点 <code>run_codegen_v0v1v2.py</code>（4 题）·全队列 <code>run_codegen_full.py</code>（182 题，import 试点模块仅覆盖 CASES/OUTD）·判分=各 case 真实 check.py（修正版独立判分目录）·试点结果=<code>/tmp/wv_cg/results.json</code>（已复制到本地 <code>vision/waveview_mining/codegen_pilot_results.json</code>）·全队列结果=<code>/tmp/wv_cg_full/results.json</code>·模型=deepseek-v4-pro-cloud·pi --no-mcp。</li>
 </ul></div>
 <hr>
 

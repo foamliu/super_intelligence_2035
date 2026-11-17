@@ -22,7 +22,7 @@ B input are co-located there, so check.py runs locally on 36.15 with no external
 
 Runner never decodes any image (vqa_ask.sh just forwards an HTTP call) -> audit stays clean.
 """
-import json, os, re, sys, time, shutil, subprocess, importlib.util, zipfile
+import json, os, re, sys, time, shutil, subprocess, importlib.util, zipfile, tempfile
 
 BASE = "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow"
 OUTD = "/tmp/wv_cg"
@@ -30,8 +30,8 @@ RESULTS = os.path.join(OUTD, "results.json")
 LOG = os.path.join(OUTD, "runner.log")
 PI = "/nasdata/app.e0031982/.local/node-22/bin/pi"
 NODE22 = "/nasdata/app.e0031982/.local/node-22/bin"
-VQA = {"V1": "http://127.0.0.1:30001/vqa", "V2": "http://127.0.0.1:30003/vqa"}
-PER_TIMEOUT = 480
+VQA = {"V1": "http://10.247.64.1:30001/vqa", "V2": "http://10.247.64.1:30003/vqa"}
+PER_TIMEOUT = 360
 MODEL = "deepseek-v4-pro-cloud"
 
 CASES = [
@@ -65,14 +65,17 @@ def vqa_script(arm):
 
 
 VQA_NOTE = """
-## 可选 VQA 工具（vision 模型问答）
+## 可选 VQA 工具（vision 模型问答）——对本题的诚实说明
 你还可以调用一个 VQA 视觉问答工具：`bash vqa_ask.sh "<image_path>" "<question>"`，
-它会用 Qwen3.5-2B 视觉模型回答关于一张波形/plot 图像的问题（读数、pattern、细节）。
-image_path 必须是 VQA 服务器可读的路径（.17 NFS）。当前可用的真题波形 PNG 在：
-`/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/real_waveview_images/<case_id>/*.png`
-（这些是其它 WaveView 题的波形图，未必与本题数据一致）。如果本题有波形数据文件，
-你也可先用 python/matplotlib 把它画成 PNG 存到一个 .17 NFS 可读路径，再问 VQA。
-是否使用 VQA 完全由你决定；不用也完全可以。
+它会把图像路径 + 问题发给 Qwen3.5-2B 视觉模型回答（读数/pattern/细节）。
+**重要限制（请知悉，避免浪费轮次）**：
+1. VQA 服务器运行在**另一台机器**（.17），它只能读取 **.17 上的**路径；本题工作目录里的
+   文件在 36.15 上，VQA 服务器**看不到**这些路径，调用会返回 `image not found`。
+2. 本题（code_gen 类）的波形数据是**文本文件**（如 `v_dq_A.txt`，列为 time_ns / voltage）——
+   你可以用 read 工具**直接读文本**做测量，**不需要**把波形当图像看。VQA-vision 对纯文本波形数据
+   并不适用。
+3. 因此：是否使用 VQA 完全由你决定。对这类文本波形题，直接读文本通常更可靠；VQA 主要对
+   **只有 PNG 图、没有原始数据文本**的题才有意义。不用 VQA 完全可以，不影响你拿分。
 """
 
 
@@ -170,6 +173,29 @@ def _zip_n(p):
         return 0
 
 
+def build_gdir(case, submit_zip):
+    """Fresh grading workdir matching the check.py contract:
+       workdir = dir with A assets (visible) + hidden/ (hidden B) + submit.zip.
+    The agent never sees this dir (built AFTER pi has exited) so anti-hardcode
+    is preserved.  Fixes the bug where grade() passed the agent's raw workdir
+    (which excludes hidden/) -> check.py that read os.path.join(workdir,
+    "hidden", ...) RUNTIME-failed on correct submissions (false negatives)."""
+    os.makedirs(os.path.join(OUTD, "_grade"), exist_ok=True)
+    gdir = tempfile.mkdtemp(prefix="g_", dir=os.path.join(OUTD, "_grade"))
+    adir = os.path.join(BASE, "assets", case)
+    if os.path.isdir(adir):
+        for fn in os.listdir(adir):
+            src = os.path.join(adir, fn)
+            if not os.path.isfile(src) or fn == "hidden" or fn.startswith("."):
+                continue
+            shutil.copy2(src, os.path.join(gdir, fn))
+        hsrc = os.path.join(adir, "hidden")
+        if os.path.isdir(hsrc):
+            shutil.copytree(hsrc, os.path.join(gdir, "hidden"))
+    shutil.copy2(submit_zip, os.path.join(gdir, "submit.zip"))
+    return gdir
+
+
 def grade(case, arm, wd):
     submit = os.path.join(wd, "outputs", "submit.zip")
     if not os.path.isfile(submit):
@@ -183,28 +209,51 @@ def grade(case, arm, wd):
     if not os.path.isfile(cp):
         return {"verdict": False, "k_pass": 0, "k_total": 0,
                 "detail": "check.py not found", "submit_path": submit, "n_zip_members": _zip_n(submit)}
-    grader = ("import importlib.util, json, sys\n"
+    gdir = build_gdir(case, submit)
+    grader = ("import importlib.util, json, sys, re\n"
               "spec = importlib.util.spec_from_file_location('chk', %r)\n"
               "m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)\n"
-              "try:\n    r = m.check(%r, %r)\n"
-              "except AssertionError as e:\n    print(json.dumps({'pass': False, 'err': str(e)})); sys.exit()\n"
-              "except Exception as e:\n    print(json.dumps({'pass': False, 'err': 'RUNTIME:' + str(e)[:300]})); sys.exit()\n"
-              "if isinstance(r, dict):\n    print(json.dumps(r, default=str))\n"
-              "elif r is True:\n    print(json.dumps({'pass': True}))\n"
-              "else:\n    print(json.dumps({'pass': False, 'ret': str(r)}))\n"
-              % (cp, submit, wd))
+              "out = {'pass': False}\n"
+              "try:\n"
+              "    r = m.check('submit.zip', %r)\n"
+              "except AssertionError as e:\n"
+              "    out = {'pass': False, 'err': str(e)}\n"
+              "except Exception as e:\n"
+              "    out = {'pass': False, 'err': 'RUNTIME:' + str(e)[:300]}\n"
+              "else:\n"
+              "    if isinstance(r, dict):\n"
+              "        out = r\n"
+              "    elif isinstance(r, bool):\n"
+              "        out = {'pass': bool(r)}\n"
+              "    elif isinstance(r, str):\n"
+              "        m2 = re.search(r'(\\d+)\\s*/\\s*(\\d+)', r)\n"
+              "        kp, kt = (int(m2.group(1)), int(m2.group(2))) if m2 else (None, None)\n"
+              "        out = {'pass': r.strip().upper().startswith('PASS'), 'ret': r[:200]}\n"
+              "        if kp is not None:\n"
+              "            out['k_pass'] = kp; out['k_total'] = kt\n"
+              "    else:\n"
+              "        out = {'pass': False, 'ret': str(r)[:200]}\n"
+              "print(json.dumps(out, default=str))\n"
+              % (cp, gdir))
     try:
         p = subprocess.run([sys.executable, "-c", grader], capture_output=True,
-                           text=True, timeout=120)
+                           text=True, timeout=120, cwd=gdir)
         out = (p.stdout or "").strip()
         res = json.loads(out.splitlines()[-1]) if out else {"pass": False, "err": "no output"}
     except Exception as e:
         res = {"pass": False, "err": "grade error: " + str(e)[:200]}
+    finally:
+        shutil.rmtree(gdir, ignore_errors=True)
     verdict = bool(res.get("pass") or res.get("ok"))
     conds = res.get("conditions") or []
-    k_total = len(conds) if conds else 0
-    k_pass = sum(1 for c in conds if c.get("ok")) if conds else (1 if verdict else 0)
-    detail = res.get("err") or res.get("detail") or ""
+    if conds:
+        k_total = len(conds)
+        k_pass = sum(1 for c in conds if c.get("ok"))
+    elif res.get("k_total"):
+        k_total = int(res["k_total"]); k_pass = int(res.get("k_pass", 0))
+    else:
+        k_total = 0; k_pass = 1 if verdict else 0
+    detail = res.get("err") or res.get("detail") or res.get("ret") or ""
     if conds:
         ff = next((c.get("detail") for c in conds if not c.get("ok")), "")
         detail = ff or detail
@@ -243,10 +292,17 @@ def main():
         k_sub = (sub.get(case) or {}).get("k_conditions", "?")
         for arm in ["V0", "V1", "V2"]:
             log("=== %s / %s (k=%s) ===" % (case, arm, k_sub))
-            wd = setup_workdir(case, arm, full.get(case, {}))
-            prompt = build_prompt(case, arm, full.get(case, {}))
-            dt, rc = run_pi(case, arm, wd, prompt)
-            g = grade(case, arm, wd)
+            wd = os.path.join(OUTD, case, arm)
+            submit_existing = os.path.join(wd, "outputs", "submit.zip")
+            if os.path.isfile(submit_existing):
+                log("  resume: re-grade existing submit.zip (skip pi)")
+                g = grade(case, arm, wd)
+                dt, rc = 0.0, "resume"
+            else:
+                wd = setup_workdir(case, arm, full.get(case, {}))
+                prompt = build_prompt(case, arm, full.get(case, {}))
+                dt, rc = run_pi(case, arm, wd, prompt)
+                g = grade(case, arm, wd)
             row = {"case_id": case, "arm": arm, "k_conditions": k_sub,
                    "pi_seconds": round(dt, 1), "pi_rc": rc, **g}
             rows.append(row)

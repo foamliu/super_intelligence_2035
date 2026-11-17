@@ -1,6 +1,13 @@
 WAITING: 0
 
-> 🚀 wake#1540 2026-11-17 16:5x 🔴用户令16:3x重做·WaveView子集**审计细化**交付：在 wake#1539 分类改判基础上，按 check.py 实判内容给 192 全队列加 `audit_category`+`vqa_mechanism` 字段→**image_reading=10**(有真题PNG·交付物=波形读数·VQA直接读图产出被判分读数)·**code_gen=182**(无图·交付物=代码·check.py校验代码·VQA机制=agent把Qwen3.5-2B当MCP工具问波形细节→是否提升通过率不预设由实跑说话·即用户第二条修正的「调VQA问细节→通过率上升」不矮化为OCR)·no_check=32·excluded_nonwaveform=1。废除了wake#1539报告里「text_only无图→V0≈V1≈V2预期」的预判，改为按机制写清不剔除。jsonl 225行 新sha256 `f5ca63180efa12c35560c1b4e5ad285b1b47e0a8eae81d904ae5768e935cc126` 36.15+本地双份一致。审计脚本 vision/waveview_mining/audit_waveview_category.py+refine_jsonl_audit.py。报告 §0 原地覆盖 37540B·0外链0script·更新两类VQA机制说明+sha256+可复现脚本。10道image_reading V0/V1/V2复跑校验中(waveview_selftest_real_run.py 后台·:30001/:30003 live)。全192队列V0/V1/V2仍需EDA-Eval harness(deepseek agent+共享sandbox·designflow线占用中)·不强行并发避让。live watchdog+ssh-R+三端点 /health ok。体积 MEMORY~31KB/TASK~25KB。**WAITING: 0**。
+> 🚀 wake#1543 2026-11-17 19:2x 🔴用户令16:3x重做·**巡检+watchdog修复+报告 interim**：`git pull --rebase --autostash` 干净同步 origin/main=`6e2f98b92`(rebase 上 2 个 vision auto-commit·无冲突)。36.15 全 182 code_gen 队列实况：runner PID1702703 alive·resumable·`/tmp/wv_cg_full/results.json` 增量写·**截至本 wake 3 case×3 臂=7 行·7/7 verdict=False(全部 360s 超时无 submit.zip)**——AgentCodeStructAnalyze k=18/AsyncFifoSim k=31/AvgValueCalc k=46 恰为字典序最前高 k 硬题·编码 agent 360s 内完不成属预期真实失败·**硬题前载样本有偏·不构成可引用全队列通过率**·待更多题积聚再报率。**🔴 基础设施修复(本 wake 关键)**：wake#1542 声称部署的 `/tmp/wv_cg_watchdog.sh` 实测**未存活**(日志空·进程不存在→runner 跨 wake 死亡将静默中断)；本 wake 重新 setsid 启动并核验**单一实例**(PID1977546 alive·120s 巡检·runner 挂则 resumable 重启·rows≥546 自停)·清掉误起的第二份副本+悬挂 launcher。SSH 反向桥(.17 watchdog PID3961251 ~58.7h)+VQA :30001/:30003 /health ok。报告 §0.6 增「全队列实跑进度+watchdog 修复」interim bullet·50131B·0外链(仅 SVG 命名空间)0script。体积 fold wake#1541→daily 后 MEMORY<32KB。全队列后续 wake 持续推进至 546 行满。**WAITING: 0**。
+
+
+> 📦 wake#1542 2026-11-17 19:0x 🔴用户令16:3x重做·git同步+36.15全队列看护+wake#1541落盘 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
+
+> 📦 wake#1541 2026-11-17 18:3x 🔴用户令16:3x重做·判分bug修正+code_gen试点+全182队列链式启动 原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
+
+> 📦 wake#1540 2026-11-17 🔴用户令16:3x重做·WaveView子集（审计细化）原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
 > 📦 wake#1539 2026-11-17 16:4x 🔴用户令16:3x重做·WaveView子集分类改判交付(详见本wake#1540在其基础上审计细化)·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
@@ -10,7 +17,7 @@ WAITING: 0
 
 > 📦 wake#1526 2026-11-17 12:39 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind3 designflow+zhulong·0触视觉→ff 同步 HEAD=`2b6cf8616`·无新运维令(TASK md5=378c30879=wake#1525 交付态不变)·live 复验 watchdog ~52.1h+三端点(:30001/30003 /health ok·:30002 /mcp qwen35-vqa v1.30.0)+WaveView 子集 224 行 sha256 623842b5 一致+三报告+6_domain_rl.tex TBD=0·research 2026-11-17 vision 建议=VLA 统一动作空间(2611.18397·与 EDA WaveView 不相关)忽略）·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
-> 🚀 wake#1525 2026-11-17 16:3x 🔴用户令交付·WaveView 子集自建**：自主 SSH 36.15 全量扫描 `EDA-Eval-DesignFlow.jsonl`(1647 行 A/B/C/D 合并)→入选 **224**(波形相关 keyword 223 + 仅图非波形 1·诚实排除 IRReportPdf-001)。by_source: original_png=10/text_only=181/no_check=32/image_only_non_waveform=1；**vqa_runnable=10**(波形∧可见图∧check)。`EDA-Eval-DesignFlow-WaveView.jsonl` 36.15 与本地 `vision/` 双份·**sha256 `623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd` 224 行一致**。每条含 task_id/shard/domain/waveform_relevant/image_required/image_path/has_check/k_conditions/kw_match/baseline_verdict/failure_mode_tier/source/exclusion_reason/vqa_runnable。三段对照(同 check.py 同口径)：**V0=0/10·V1=0/10·V2=1/10**·每量 30.9%→35.5%→50%(+19.1pp)·McNemar V0 vs V2 b=1 c=0 **p=1.0**(n=10 仅 1 不一致对·弱正仅参考·不外推)。report `report_vision_waveview_selftest_agent_zh.html` §0 原地覆盖 **39986B·0外链0script**。可复现脚本 `vision/waveview_mining/build_waveview_subset.py`(36.15 同份·重生 jsonl)+`append_subset_section.py`(重生报告 §0)。用户三问全答：①已建立 ②基线 V0=0/10 每量 30.9% ③+Qwen3.5-2B VQA V2=1/10 每量 50%。**WAITING: 0**。
+> 📦 wake#1525 2026-11-17 🔴用户令16:3x重做·WaveView子集（初版交付(被否决)）原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 > 📦 wake#1520~#1524（2026-11-17 09:19~10:32，5 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 0触视觉同步·无新运维令·TASK md5 不变·live 复验 watchdog+三端点(:30001/30003 /health ok·:30002 MCP)+WaveView 子集 224 行 sha256 623842b5 一致+三报告+6_domain_rl.tex TBD=0）。需要时再读。
 
 > 📦 wake#1506~#1519（2026-11-17 06:46~09:05，14 轮）例行巡检 patrol one-liners 已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 behind0–1 ff-only 0触视觉同步·无新运维令·TASK md5=3caf5e1e 不变·live 复验 watchdog ~46–48.8h+三端点(:30001/30003 /health ok·:30002 MCP)+10真题+三报告+6_domain_rl.tex TBD=0）。需要时再读。

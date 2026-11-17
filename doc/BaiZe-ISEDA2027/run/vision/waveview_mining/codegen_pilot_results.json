@@ -1,0 +1,190 @@
+{
+  "cases": [
+    "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+    "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+    "EDA-Eval-DesignFlow-NandMcuAsm-001",
+    "EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001"
+  ],
+  "rows": [
+    {
+      "case_id": "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+      "arm": "V0",
+      "k_conditions": 3,
+      "pi_seconds": 201.8,
+      "pi_rc": 0,
+      "verdict": true,
+      "k_pass": 18,
+      "k_total": 18,
+      "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
+      "submit_path": "/tmp/wv_cg/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V0/outputs/submit.zip",
+      "n_zip_members": 2
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+      "arm": "V1",
+      "k_conditions": 3,
+      "pi_seconds": 262.3,
+      "pi_rc": 0,
+      "verdict": true,
+      "k_pass": 18,
+      "k_total": 18,
+      "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
+      "submit_path": "/tmp/wv_cg/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V1/outputs/submit.zip",
+      "n_zip_members": 2
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+      "arm": "V2",
+      "k_conditions": 3,
+      "pi_seconds": 223.8,
+      "pi_rc": 0,
+      "verdict": true,
+      "k_pass": 18,
+      "k_total": 18,
+      "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
+      "submit_path": "/tmp/wv_cg/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V2/outputs/submit.zip",
+      "n_zip_members": 2
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+      "arm": "V0",
+      "k_conditions": 6,
+      "pi_seconds": 157.0,
+      "pi_rc": 0,
+      "verdict": true,
+      "k_pass": 16,
+      "k_total": 16,
+      "detail": "PASS 16/16",
+      "submit_path": "/tmp/wv_cg/EDA-Eval-DesignFlow-FsdbMeasRunGen-001/V0/outputs/submit.zip",
+      "n_zip_members": 1
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+      "arm": "V1",
+      "k_conditions": 6,
+      "pi_seconds": 174.7,
+      "pi_rc": 0,
+      "verdict": true,
+      "k_pass": 16,
+      "k_total": 16,
+      "detail": "PASS 16/16",
+      "submit_path": "/tmp/wv_cg/EDA-Eval-DesignFlow-FsdbMeasRunGen-001/V1/outputs/submit.zip",
+      "n_zip_members": 1
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+      "arm": "V2",
+      "k_conditions": 6,
+      "pi_seconds": 184.1,
+      "pi_rc": 0,
+      "verdict": true,
+      "k_pass": 16,
+      "k_total": 16,
+      "detail": "PASS 16/16",
+      "submit_path": "/tmp/wv_cg/EDA-Eval-DesignFlow-FsdbMeasRunGen-001/V2/outputs/submit.zip",
+      "n_zip_members": 1
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-NandMcuAsm-001",
+      "arm": "V0",
+      "k_conditions": 6,
+      "pi_seconds": 360.1,
+      "pi_rc": -99,
+      "verdict": false,
+      "k_pass": 0,
+      "k_total": 0,
+      "detail": "no submit.zip produced",
+      "submit_path": null,
+      "n_zip_members": 0
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-NandMcuAsm-001",
+      "arm": "V1",
+      "k_conditions": 6,
+      "pi_seconds": 360.1,
+      "pi_rc": -99,
+      "verdict": false,
+      "k_pass": 0,
+      "k_total": 0,
+      "detail": "no submit.zip produced",
+      "submit_path": null,
+      "n_zip_members": 0
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-NandMcuAsm-001",
+      "arm": "V2",
+      "k_conditions": 6,
+      "pi_seconds": 360.1,
+      "pi_rc": -99,
+      "verdict": false,
+      "k_pass": 0,
+      "k_total": 0,
+      "detail": "no submit.zip produced",
+      "submit_path": null,
+      "n_zip_members": 0
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001",
+      "arm": "V0",
+      "k_conditions": 7,
+      "pi_seconds": 360.1,
+      "pi_rc": -99,
+      "verdict": false,
+      "k_pass": 0,
+      "k_total": 0,
+      "detail": "no submit.zip produced",
+      "submit_path": null,
+      "n_zip_members": 0
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001",
+      "arm": "V1",
+      "k_conditions": 7,
+      "pi_seconds": 360.1,
+      "pi_rc": -99,
+      "verdict": false,
+      "k_pass": 0,
+      "k_total": 0,
+      "detail": "no submit.zip produced",
+      "submit_path": null,
+      "n_zip_members": 0
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001",
+      "arm": "V2",
+      "verdict": false,
+      "k_pass": 0,
+      "k_total": 0,
+      "detail": "no submit.zip produced (pi timeout)",
+      "pi_rc": -99,
+      "pi_seconds": 0.0
+    }
+  ],
+  "summary": {
+    "V0": {
+      "n": 4,
+      "pass": 2,
+      "rate": 0.5,
+      "k_pass": 34,
+      "k_total": 34,
+      "k_rate": 1.0
+    },
+    "V1": {
+      "n": 4,
+      "pass": 2,
+      "rate": 0.5,
+      "k_pass": 34,
+      "k_total": 34,
+      "k_rate": 1.0
+    },
+    "V2": {
+      "n": 4,
+      "pass": 2,
+      "rate": 0.5,
+      "k_pass": 34,
+      "k_total": 34,
+      "k_rate": 1.0
+    }
+  },
+  "note": "regraded with fixed grade() (fresh gdir + hidden/) on existing pilot submit.zips"
+}
