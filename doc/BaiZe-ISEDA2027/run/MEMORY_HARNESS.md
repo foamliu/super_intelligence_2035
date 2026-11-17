@@ -4,15 +4,17 @@ WAITING: 0
 
 > 📦 R2615 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·hermes 10/12·三报告REGEN·报告口径复核✅。需要时再读。
 
-> 🆕 **R2617 · 2026-11-17 13:0x — 监控轮: v2 rerun 健康推进(hermes part2 video-processing 跑中)·audit 13:06 复核·报告口径✅·自检全绿**
-> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回——它把未真跑题从分母剔除=凭空抬分。**唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)**。本轮 grep: "修正后" 仅出现在撤回声明中(tb21 2×+glm53 2×+cline_special 0×), **无表格/列当结论** ✅。reports/ porcelain=仅3×.html✅。
-> - **各路真实 Pass% (audit 13:06, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1·conn_refused·BLOCKED infra) · codex 1/89=1.1%(待重跑=0·done Δ=0) · opencode 43/89=48.3%(待重跑=2·synthetic) · claude-code 30/89=33.7%(待重跑=1·conn_refused) · pi 35/89=39.3%(待重跑=13·12synthetic+1conn_refused) · hermes 40/89=44.9%(待重跑=0·part2 video-processing 跑中) · deepseek 11/89=12.4%(待重跑=0) · **真待重跑=17**(cline1+opencode2+cc1+pi13)。〔注: R2616 把 pi 在合计里误记为12致合计16, 实际 per-route=13, 正确合计=17〕
-> - **rerun 进展 (v2 PID1217002 活·etimes≈11710s)**: codex DONE(2/2=ability·Δ=0) · cline BLOCKED(infra·Py3.9<3.11) · **hermes part2 进行中**(2026-11-17__10-53-13 已14个result.json·12-50-20 新批 video-processing 跑中 et≈936s) · opencode→pi→deepseek→cc 排队。adaptive auto·累计0 429✅。
-> - **本轮动作**: 唤醒首事自检(CPU/mem)·audit 13:06 复核(数字与R2616一致·hermes仍40/89)·报告口径grep复核✅(无需REGEN, 数字未变)·research 2026-11-17 harness 建议=Harness-RL 论文参考(输入参考·无纳入)
-> - **自检**: load29.68/224=13.2%✅·mem1028GB avail✅·0 harness runaway(harbor/hermes/video-processing 均<1%CPU·RSS<0.3GB)✅·top CPU=pretrain 146%(非harness)✅·累计0 429✅
-> - **运维指令区 10:2x 部分交付**: ①撤回✅ ②47trial重跑(进行中·hermes part2跑中·codex done·cline BLOCKED·余排队; 真待重跑=17) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅(三报告已REGEN·去掉修正后Pass%表) — 余: hermes part2跑完→opencode→pi→deepseek→cc→逐路Δ→最终REGEN
-> - **下一步**: ①等hermes part2(video-processing)跑完→audit→若Δ≠0则REGEN ②后续路依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
-> - **📦 体积**: TASK≈26.5KB / MEMORY≈30.2KB（✅≤32KB·R2616 已归档降体积）
+> 🆕 **R2618 · 2026-11-17 13:2x — 监控轮: 修复报告 prose 残留「真待重跑=16/pi 12」(R2616 遗留) → 改为 audit 动态计算=17/pi 13·双报告 REGEN·audit 13:18 复核·自检全绿**
+> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回=凭空抬分。**唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)**。本轮 grep: "修正后" 仅出现在撤回声明中(tb21 2×+glm53 2×+cline_special 0×), **无表格/列当结论** ✅。
+> - **本轮修复**: R2617 发现报告 prose 仍硬编码「真待重跑=16 / pi 12」(R2616 遗漏·表四表五动态列正确但散文 stale)。修 `gen_report_tb21_7way.py`+`gen_report_glm53_7way.py`: prose 改为 `_total_pending = sum(rd["pending_rerun"])` 动态计算 → 现=17, pi=13(12synthetic+1conn_ref)。双报告 REGEN 后 grep: stale「16」=0✅·「17」=3×✅(tb21) / 0 stale·3×「17/pi13」✅(glm53)。
+> - **各路真实 Pass% (audit 13:18, 分母恒89, 重跑完成前标「待重跑」)**: cline 42/89=47.2%(待重跑=1·conn_refused·BLOCKED infra) · codex 1/89=1.1%(待重跑=0·done Δ=0) · opencode 43/89=48.3%(待重跑=2·synthetic) · cc 30/89=33.7%(待重跑=1·conn_refused) · pi 35/89=39.3%(待重跑=13) · hermes 40/89=44.9%(待重跑=0) · deepseek 11/89=12.4%(待重跑=0) · **真待重跑=17**(cline1+opencode2+cc1+pi13)
+> - **rerun 进展 (v2 PID1217002 活·etimes≈12330s)**: codex DONE(Δ=0) · cline BLOCKED(infra) · **hermes part2 video-processing 跑中**(et≈1681s·3600s timeout) · opencode→pi→deepseek→cc 排队。adaptive auto·累计0 429✅。
+> - **自检**: load28.72/224=12.8%✅·mem1028GB avail✅·0 harness runaway(hermes/video-processing <3%CPU·<0.3GB)✅·top CPU=pretrain 146%(非harness)✅
+> - **运维指令区 10:2x 部分交付**: ①撤回✅ ②47trial重跑(进行中·hermes video-processing跑中; 真待重跑=17) ③重跑完成后重算真实Pass%(进行中) ④报告口径✅(双报告 REGEN·16→17 修复·去掉修正后Pass%表) — 余: hermes video-processing跑完→opencode(2)→pi(13)→cc(1)→逐路Δ→最终REGEN
+> - **下一步**: ①等hermes video-processing 跑完→audit→若Δ≠0则REGEN ②opencode/pi/cc 依次跑完→逐路Δ→最终REGEN ③SWE-bench predict续推 ④等运维新令
+> - **📦 体积**: TASK≈26.5KB / MEMORY≈30.2KB（✅≤32KB）
+
+> 📦 R2617 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·v2 rerun 健康推进(hermes part2 video-processing 跑中)·audit 13:06 复核·报告口径✅·发现R2616 prose残留「16/pi12」(R2618修复)。需要时再读。
 
 > 📦 R2616 流水已归档 → daily-memories-harness/2026-11-17.md。结论：audit has_verifier 修复+三报告REGEN+真待重跑47→16(实为17,见R2617注)。需要时再读。
 

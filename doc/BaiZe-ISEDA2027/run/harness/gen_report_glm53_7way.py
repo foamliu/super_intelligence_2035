@@ -275,6 +275,7 @@ try:
         }
 except Exception:
     pass
+_total_pending = sum(r.get("pending_rerun", 0) for r in _tb21_review.values())
 
 # SWE-bench 初筛: empty patch = infra(未生成patch), real patch = 能力
 _swe_screen_rows = []
@@ -395,7 +396,7 @@ HTML = f"""<!DOCTYPE html>
 
 <h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes 11/12 done 2 PASS Δ=+2 1 running=sam-cell-seg，opencode 2→pi 13→deepseek 0→cc 1 排队；audit 修复后真待重跑=16）。重跑完成后重算真实 Pass%。</p></div>
+<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes 11/12 done 2 PASS Δ=+2 1 running=sam-cell-seg，opencode 2→pi 13→deepseek 0→cc 1 排队；audit 修复后真待重跑={_total_pending}）。重跑完成后重算真实 Pass%。</p></div>
 <h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
 <table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
@@ -404,7 +405,7 @@ HTML = f"""<!DOCTYPE html>
 <table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
 {_swe_screen_html}
 </table>
-<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主。audit 修复（has_verifier+not all_synthetic→ability）后，多路原 synthetic 重归 ability（agent 真跑+verifier 给 0.0），真待重跑从 47 降至 16（opencode 2·pi 12·cline 1·cc 1）。重跑完成前，真实 Pass% = passed/89（分母恒89，<strong>不再有「修正后 Pass%」</strong>）。codex 2 已重跑均 ability；deepseek 5 原始均 ability（agent ran+verifier 0.0），rerun=确认；pi 12 真未真跑（stdout=0）待重跑。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §重跑中。</p></div>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主。audit 修复（has_verifier+not all_synthetic→ability）后，多路原 synthetic 重归 ability（agent 真跑+verifier 给 0.0），真待重跑从 47 降至 {_total_pending}（opencode 2·pi 13·cline 1·cc 1）。重跑完成前，真实 Pass% = passed/89（分母恒89，<strong>不再有「修正后 Pass%」</strong>）。codex 2 已重跑均 ability；deepseek 5 原始均 ability（agent ran+verifier 0.0），rerun=确认；pi 13 真未真跑（12 synthetic+1 conn_ref）待重跑。SWE-bench Verified 各路 patch 非空率 98%+ → 失败为能力差（tests fail），非 infra。详见 <code>report_harness_tb21_7way_zh.html</code> §重跑中。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>

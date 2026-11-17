@@ -409,6 +409,7 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
 
     # ---- §2026-11-17 10:2x 用户令: 撤回「修正后 Pass%」, 改为「重跑中」真实口径 ----
     if review_data:
+        _total_pending = sum(rd.get("pending_rerun", 0) for rd in review_data.values())
         H.append("<h2>失败归因复核 → 重跑中 (2026-11-17 用户令)</h2>")
         H.append("<div class='caveat'><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x 用户令)</strong>: "
                   "此前 R2600 的「修正后 Pass% = passed / (89 − 纯 infra 题数)」已<strong>撤回</strong>。"
@@ -417,7 +418,7 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong> (分母恒 89)。</p>"
                   "<p><strong>当前状态</strong>: 47 trial 串行重跑进行中 (R2602 启动, codex 路已完成 2/2=ability (Δ=0), "
                   "cline 1=BLOCKED(infra·3次CLI崩溃), hermes 11/12 done (2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 9 ability (8 AgentTimeoutError + regex-chess ran+verifier 0.0), 1 running=sam-cell-seg), "
-                  "opencode 2→pi 13→deepseek 0→cc 1 依次排队 (真待重跑=16; audit 修复后多路 synthetic 重归 ability)。"
+                  f"opencode 2→pi 13→deepseek 0→cc 1 依次排队 (真待重跑={_total_pending}; audit 修复后多路 synthetic 重归 ability)。"
                   "重跑完成后将重算真实 Pass%, "
                   "pass 就 +1, fail 计失败。<strong>重跑完成前, infra 桶标「待重跑」, 不从分母剔除</strong>。"
                   "环境硬约束 (BLOCKED) 题显式注明原因, 不误算为通过: hermes qemu/mteb (Py3.9&lt;3.11), "
@@ -494,9 +495,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                              f"<td style='font-size:0.85em'>{esc(', '.join(tasks))}</td></tr>")
         H.append("</tbody></table>")
         # 重跑计划与 BLOCKED 说明
-        H.append("<div class='caveat'><p><strong>重跑计划 (47 trial, 启动时口径; audit 修复后真待重跑=16)</strong>: "
+        H.append(f"<div class='caveat'><p><strong>重跑计划 (47 trial, 启动时口径; audit 修复后真待重跑={_total_pending})</strong>: "
                   "cline 1 (BLOCKED·3次CLI崩溃) · codex 2 (done, both ability) · hermes 13 (running) · opencode 2 (真synthetic, 余8已归ability) · "
-                  "pi 13 (真synthetic 12+conn_ref 1, 余2已归ability) · deepseek 5 (全已归ability, rerun=确认) · cc 1 = 真16, 串行, adaptive concurrency (work=4/off=10)。</p>"
+                  f"pi 13 (真synthetic 12+conn_ref 1, 余2已归ability) · deepseek 5 (全已归ability, rerun=确认) · cc 1 = 真{_total_pending}, 串行, adaptive concurrency (work=4/off=10)。</p>"
                   "<p><strong>环境硬约束 (BLOCKED, 显式注明)</strong>:</p><ul>"
                   "<li><strong>hermes qemu 类</strong>: BLOCKED (容器 Py3.9 &lt; hermes-agent 最低 3.11, "
                   "PyPI 全版本均 requires-python≥3.11) — 从分母剔除时显式注明原因, 不误算为通过</li>"
