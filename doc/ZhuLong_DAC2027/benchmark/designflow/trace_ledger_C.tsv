@@ -954,7 +954,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794555697503_fue87	e0048410	hfeg0plg98	52	layout_aether	parked		2026-11-15 03:16	r580 Q&A how-to (array instance usage in aether)
 1792040490093_hi28t	alanji	hfeg0plg99	53	layout_aether	parked		2026-11-15 03:16	r580 terse/vague (imc save exclude file)
 1794555070143_of5rg	snqin	hfeg0plg89	127	layout_aether	parked		2026-11-15 03:31	meta/skill-qa aether-tool-qa invocation
-1794548956455_scouo	laryu	hfeg0plg92	100	physical_verify	parked		2026-11-15 03:31	debug-Q&A DRC NTKSV1 interpretation user-asks-how
+1794548956455_scouo	laryu	hfeg0plg92	100	physical_verify	case	EDA-Eval-DesignFlow-DrcResultsCornerExtract-001	2026-11-18 00:34	debug-Q&A DRC NTKSV1 interpretation user-asks-how
 1794478728090_2tzcp	e0047488	hfeg0plg97	85	layout_aether	parked		2026-11-15 03:31	conceptual-Q&A polygon data-structure + doc-md
 1794474528605_5qb0p	e0047488	hfeg0plg97	79	layout_aether	parked		2026-11-15 03:31	near-dup 2tzcp conceptual-Q&A
 1794394457042_wqrrp	e0047527	hfeg0plg83	77	layout_aether	parked		2026-11-15 03:31	setup/GUI-forwarding zhulong-on-49
