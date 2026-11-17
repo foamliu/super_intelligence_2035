@@ -286,7 +286,27 @@ def main():
                for l in open(os.path.join(BASE, "EDA-Eval-DesignFlow-WaveView.jsonl"))}
     except Exception:
         pass
-    log("RUNNER start | %d cases x 3 arms | model=%s" % (len(CASES), MODEL))
+    # No-submit (timeout / no-deliverable) verdict cache. Each case x arm is
+    # attempted EXACTLY ONCE: arms that produced a submit.zip are re-graded on
+    # resume (existing logic); arms that produced NO submit.zip are recorded
+    # here so a restart does not re-run pi for them. This removes the previous
+    # asymmetry (successes cached after one attempt, timeouts re-run on every
+    # restart -> timeouts got many attempts, biasing the paired comparison and
+    # wasting ~4h/restart). Precedence on resume: submit.zip > cache > run pi.
+    TCACHE = os.path.join(OUTD, "timeout_cache.json")
+    tcache = {}
+    try:
+        tcache = json.load(open(TCACHE))
+    except Exception:
+        tcache = {}
+
+    def save_tcache():
+        try:
+            json.dump(tcache, open(TCACHE, "w"), ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+    log("RUNNER start | %d cases x 3 arms | model=%s | tcache=%d" % (len(CASES), MODEL, len(tcache)))
     rows = []
     for case in CASES:
         k_sub = (sub.get(case) or {}).get("k_conditions", "?")
@@ -294,15 +314,30 @@ def main():
             log("=== %s / %s (k=%s) ===" % (case, arm, k_sub))
             wd = os.path.join(OUTD, case, arm)
             submit_existing = os.path.join(wd, "outputs", "submit.zip")
+            key = case + "|" + arm
             if os.path.isfile(submit_existing):
                 log("  resume: re-grade existing submit.zip (skip pi)")
                 g = grade(case, arm, wd)
                 dt, rc = 0.0, "resume"
+            elif key in tcache:
+                log("  resume: use cached no-submit verdict (skip pi)")
+                g = dict(tcache[key])
+                # ensure grade fields are complete (cache stores verdict/k_pass/
+                # k_total/detail/n_zip_members; submit_path stays None)
+                g.setdefault("submit_path", None)
+                g.setdefault("n_zip_members", 0)
+                dt, rc = 0.0, "cached"
             else:
                 wd = setup_workdir(case, arm, full.get(case, {}))
                 prompt = build_prompt(case, arm, full.get(case, {}))
                 dt, rc = run_pi(case, arm, wd, prompt)
                 g = grade(case, arm, wd)
+                # Cache arms that produced NO submit.zip so a restart does not
+                # re-run pi for them (one attempt per case x arm).
+                if not os.path.isfile(os.path.join(wd, "outputs", "submit.zip")):
+                    tcache[key] = {k: v for k, v in g.items()
+                                   if k not in ("submit_path",)}
+                    save_tcache()
             row = {"case_id": case, "arm": arm, "k_conditions": k_sub,
                    "pi_seconds": round(dt, 1), "pi_rc": rc, **g}
             rows.append(row)
