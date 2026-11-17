@@ -1255,3 +1255,5 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1791968855823_4mwz5	ellawu	10.129.2.10	41	physical_verify	case	EDA-Eval-DesignFlow-DrcSvrfSetlayerExplain-001	2026-11-18 01:57	r734 mock-behavioral drc-svrf-setlayer-explain physical_verify analysis-Q&A revival; k=14 a-n; B=8 SETLAYER same op-family diff layer names B2=EXT×2/EXPAND_NOT×2/SIZE cross-input guard; 3 neg FAIL distinct (b/c/d); judge early-return guard anti-KeyError; per-case cases/C json (source of truth), jsonl build product
 1784165207680_djvnv	e0014566	10.129.35.82	79	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoviaAgentScriptGen-001	2026-11-18 02:25	
 1792999100763_yl9sr	xinqiaoz	10.129.2.11	76	physical_verify	case	EDA-Eval-DesignFlow-PolicyWritableRootMerge-001	2026-11-18 04:58	
+1793170662028_kegkw	e0047600	10.129.2.11	141	physical_verify	parked		2026-11-18 06:46	r743: session file archived/missing on 10.129.2.11, only 3 recent sessions present; un-claim
+1793839605549_ungjj	cliu	10.129.32.83	55	physical_verify	parked		2026-11-18 06:48	r743: keywords drc/lvs misleading; actual task=digital sim verification (xrun/LSF/sv std-cell lib), A shard not C
