@@ -596,8 +596,8 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1794723288564_svmca.messages.json	jzeng	hfhds201	575	eda_other	case	EDA-Eval-DesignFlow-AutoViaV4M4M5FillAnalyze-001	2026-11-17 11:31	r675: code-comprehension/analysis-Q&A, V4 M4-M5 fill logic analyze, k=16, eda_other, A.jsonl 348
 1793672071904_ciqim	dsgao	hfhds201	1	digital	case	EDA-Eval-DesignFlow-SaNPCtrlTruthTable-001	2026-11-17 12:04	
 1793350215948_sucst	e0039602	hfeg0pkn012	17	eda_other	case	EDA-Eval-DesignFlow-Http429Diagnose-001	2026-11-17 14:17	
-1793866097938_fl4rh					case	EDA-Eval-DesignFlow-VerilogDriveFsmBlockGen-001	2026-11-17 14:48	
+1793866097938_fl4rh					case	EDA-Eval-DesignFlow-VerilogDriveFsmBlockGen-001	2026-11-18 04:07	r682 A档 trace-faithful; r708 待 retire 决议
 1791883133340_l0x4z	yuankong	hfhds201	8	eda_other	parked		2026-11-17 18:01	r690: unmakable - AddressParameter.v does not exist in user workspace or .75; no evidence anchor; single-turn Q&A with no file to verify against
 1791513972290_bih9j.messages.json					case	EDA-Eval-DesignFlow-IrResultMissingNetDiagnose-001	2026-11-17 19:56	r692 reaudit: pnr_signoff Totem IR-drop debug-Q&A, viable B-synthesized lead, DEBT1 deepread done
 1789979327643_ce2xm	devonma	10.129.2.14	32	eda_other	case	EDA-Eval-DesignFlow-SimLibGuiAnalyze-001	2026-11-17 21:50	
-1792043847420_76s5j	t0002441	10.129.32.75	18	eda_other	claimed		2026-11-18 03:55	
+1792043847420_76s5j	t0002441	10.129.32.75	18	eda_other	case	EDA-Eval-DesignFlow-FinesimDcConvCatalogAnalyze-001	2026-11-18 04:01	
