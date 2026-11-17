@@ -46,18 +46,18 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>撰写</b>: BaiZe Data Agent · 2026-11-17<br>
 <b>用户令</b>: 2026-11-17 — S2 采用 4:4:2，刷新细化方案（中文 HTML）<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。<br>
-<b>当前进度</b>: iter ≈ 235k / 700k（33.6%），预计 ~2026-12-25 到 350k 切换点
+<b>当前进度</b>: iter ≈ 235k / 700k（33.6%），step ≈ 7.0s；预计 ~2026-11-26 到 350k 切换点（(350k−235k)×7s ≈ 9.3 天），~2026-12-25 到 700k 终点（(700k−235k)×7s ≈ 37.7 天）
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤）→ PC-2（MegaMath 分词）→ PC-3（污染闸门扩展）→ PC-4（blend TSV 生成），预计 11-22 前全部就绪，不阻塞 S1 训练（ETA ~12-25 到 350k）。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 按时到货，Math epoch 从 1.18 降到 0.65，全面消除 >1.2 风险。</p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤）→ PC-2（MegaMath 分词）→ PC-3（污染闸门扩展）→ PC-4（blend TSV 生成），预计 11-23 前全部就绪，不阻塞 S1 训练（ETA ~11-26 到 350k，~12-25 到 700k 终点）。<b style="color:#c62828;">⚠️ 时间余量紧张</b>：S2 数据（必做路径）11-23 就绪 vs S2 启动 ~11-26 = <b>仅 ~3 天余量</b>，任一前置工作延误 >3 天即推迟 S2 启动。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 在 S2 训练中途到货并分词，可刷新 blend TSV 将 Math epoch 从 1.18 降到 0.65。</p>
 </div>
 <div class="toc">
 <b>目录</b>
 <ul>
 <li>§1 — <a href="#s1">最终配比表（S2 shard 级 blend TSV）</a></li>
 <li>§2 — <a href="#s2">前置工作清单（PC-1 ~ PC-5）</a></li>
-<li>§3 — <a href="#s3">时间线甘特图（11-17 → 12-25）</a></li>
+<li>§3 — <a href="#s3">时间线甘特图（11-17 → 11-30）</a></li>
 <li>§4 — <a href="#s4">Epoch 核算表（S1+S2 累计消耗 vs 可用量）</a></li>
 <li>§5 — <a href="#s5">污染检查方案</a></li>
 <li>§6 — <a href="#s6">风险与缓解</a></li>
@@ -179,63 +179,65 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="pc-card" style="border-left-color:#ff9800;">
 <h4>PC-5: MegaMath-web (Batch2) 下载 + 分词 ⏳ 待启动（建议）</h4>
 <table style="margin:8px 0;">
-<tr><th style="width:100px;">工作内容</th><td>下载 MegaMath-web 子集（~4950 files / ~887GB / ~279B tokens），落盘 /nas_user/.../IFM/MegaMath/。下载完成后立即分词（同 PC-2）。需等 IFM/Code-Reasoning + Math-Reasoning 两路下载完成后启动。</td></tr>
+<tr><th style="width:100px;">工作内容</th><td>下载 MegaMath-web 子集（~4950 files / ~887GB / ~279B tokens），落盘 /nas_user/.../IFM/MegaMath/。下载完成后立即分词（同 PC-2）。<b>已调整为 #1 下载优先级</b>，11-17 立即启动，不等 Code/Math-Reasoning 完成。</td></tr>
 <tr><th>预估耗时</th><td>下载 2–3 天（nice 19, --max-workers 2）+ 分词 1–2 天 = 合计 3–5 天</td></tr>
-<tr><th>截止日期</th><td><b>2026-11-26</b>（Soft deadline — 如延迟则用 fallback）</td></tr>
-<tr><th>当前状态</th><td>⏳ 待启动 — 等 Code-Reasoning (ETA ~11-17 20:00) + Math-Reasoning (ETA ~11-20 21:00) 完成后启动</td></tr>
+<tr><th>截止日期</th><td><b>2026-11-25</b>（Soft deadline — S2 ~11-26 启动，须在此之前完成才能纳入初始 S2 blend；如延迟则用 fallback 启动 + S2 中途刷新 blend TSV）</td></tr>
+<tr><th>当前状态</th><td>⏳ 待启动 — MegaMath-web 已调整为 #1 下载优先级（11-17 立即启动），不等 Code/Math-Reasoning；Code-Reasoning (66%, ETA ~11-18) + Math-Reasoning (28%, ETA ~11-21) 继续但不抢带宽</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 下载 0 incomplete ② 分词 0 ERR ③ 实测 tokens ≥ 200B ④ 更新 blend TSV 为 §1.2 主方案</td></tr>
 </table>
 </div>
 <!-- §3 -->
-<h2 id="s3">§3 — 时间线甘特图（11-17 → 12-25）</h2>
-<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点</p>
+<h2 id="s3">§3 — 时间线甘特图（11-17 → 11-30）</h2>
+<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点 ⚠️=风险点。<b>350k 切换点 ≈ 11-26</b>（(350k−235k)×7s ≈ 9.3 天），<b>700k 终点 ≈ 12-25</b>（超出本图范围，S2 训练持续至 ~12-25）。</p>
 <table class="gantt">
 <tr>
-<th class="row-label" style="width:150px;">任务 \ 日期</th>
-<th class="week-header">11-17</th><th class="week-header">11-19</th><th class="week-header">11-21</th><th class="week-header">11-23</th><th class="week-header">11-25</th><th class="week-header">11-27</th><th class="week-header">11-29</th><th class="week-header">12-01</th><th class="week-header">12-05</th><th class="week-header">12-09</th><th class="week-header">12-13</th><th class="week-header">12-17</th><th class="week-header">12-21</th><th class="week-header">12-25</th>
+<th class="row-label" style="width:160px;">任务 \ 日期</th>
+<th class="week-header">11-17</th><th class="week-header">11-19</th><th class="week-header">11-21</th><th class="week-header">11-23</th><th class="week-header">11-25</th><th class="week-header">11-27</th><th class="week-header">11-29</th>
 </tr>
 <tr><td class="row-label">S1 训练 (235k→350k)</td>
-<td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td>
-<td class="milestone">🎯350k</td>
+<td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td class="milestone">🎯350k<br>~11-26</td><td></td><td></td>
 </tr>
-<tr><td class="row-label">IFM/Code-Reasoning 下载</td>
-<td style="background:#ffe0b2">🟠66%</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<tr><td class="row-label">S2 训练 (350k→700k)</td>
+<td></td><td></td><td></td><td></td><td style="background:#ef5350;color:#fff;font-weight:700">🚀S2<br>~11-26</td><td style="background:#ffe0b2">🟠→12-25</td><td style="background:#ffe0b2">🟠</td>
 </tr>
-<tr><td class="row-label">IFM/Math-Reasoning 下载</td>
-<td style="background:#ffe0b2">🟠28%</td><td style="background:#ffe0b2">🟠</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<tr><td class="row-label">MegaMath-web 下载 (#1优先)</td>
+<td style="background:#bbdefb">🔵启动</td><td style="background:#ffe0b2">🟠下载</td><td style="background:#c8e6c9">✅~887GB</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">Code-Reasoning 下载 (续传)</td>
+<td style="background:#ffe0b2">🟠66%</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">Math-Reasoning 下载 (续传)</td>
+<td style="background:#ffe0b2">🟠28%</td><td style="background:#ffe0b2">🟠</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-1: stack-v3 L4 过滤</td>
-<td style="background:#bbdefb">🔵2-4h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<td style="background:#bbdefb">🔵2-4h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-2: MegaMath Batch1 分词</td>
-<td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-3: 污染闸门扩展</td>
-<td></td><td style="background:#bbdefb">🔵4-8h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<td></td><td style="background:#bbdefb">🔵4-8h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td>
 </tr>
-<tr><td class="row-label">PC-4: blend TSV 生成</td>
-<td></td><td></td><td style="background:#bbdefb">🔵0.5d</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<tr><td class="row-label">PC-4: blend TSV 生成 (fallback)</td>
+<td></td><td></td><td style="background:#bbdefb">🔵0.5d</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td>
 </tr>
-<tr><td class="row-label">PC-5: MegaMath-web 下载</td>
-<td></td><td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵下载</td><td style="background:#bbdefb">🔵下载</td><td style="background:#bbdefb">🔵分词</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<tr><td class="row-label">PC-5: MM-web 分词</td>
+<td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE<br>~11-26</td><td></td>
 </tr>
-<tr><td class="row-label">S2 数据就绪 (PC-4)</td>
-<td></td><td></td><td></td><td class="milestone">✅</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<tr><td class="row-label">S2 数据就绪 (fallback §1.3)</td>
+<td></td><td></td><td></td><td class="milestone">✅11-23</td><td></td><td></td><td></td>
 </tr>
-<tr><td class="row-label">S2 数据就绪 (含PC-5)</td>
-<td></td><td></td><td></td><td></td><td></td><td></td><td class="milestone">✅</td><td></td><td></td><td></td><td></td><td></td><td></td>
-</tr>
-<tr><td class="row-label">S2 训练启动</td>
-<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-<td style="background:#ef5350;color:#fff;font-weight:700">🚀S2</td>
+<tr><td class="row-label">S2 数据就绪 (主方案 §1.2)</td>
+<td></td><td></td><td></td><td></td><td></td><td class="milestone">✅11-26<br>⚠️≈S2启动</td><td></td>
 </tr>
 </table>
-<div class="info" style="font-size:12px;">
-<b>关键路径</b>（不含 PC-5）：PC-1 (11-17→11-19) → PC-2 (11-17→11-21) → PC-3 (11-19→11-21) → PC-4 (11-21→11-23) → <b>S2 数据就绪 11-23</b><br>
-<b>优化路径</b>（含 PC-5）：+ PC-5 (11-21→11-29) → <b>S2 数据就绪 11-29（主方案，Math epoch 0.65）</b><br>
-<b>S2 启动</b>：~12-25（S1 到 350k），数据 11-23/11-29 就绪 → <b>有 4 周余量</b>，不阻塞<br>
-<b>IFM 下载完成节点</b>：Code-Reasoning ~11-17 20:00 ｜ Math-Reasoning ~11-20 21:00 ｜ MegaMath-web 可在 Math-Reasoning 完成后启动
+<div class="warn" style="font-size:12px;">
+<b>⚠️ 时间余量紧张</b>：S2 数据（必做路径/fallback §1.3）11-23 就绪 vs S2 启动 ~11-26 = <b>仅 ~3 天余量</b>。任一前置工作延误 >3 天即推迟 S2 启动。<br>
+<b>关键路径</b>（fallback, 必做）：PC-1 (11-17→11-19) → PC-2 (11-17→11-21) → PC-3 (11-19→11-21) → PC-4 (11-21→11-23) → <b>S2 数据就绪 11-23</b> → 等 3 天 → <b>🚀 S2 启动 ~11-26</b><br>
+<b>优化路径</b>（主方案, 含 PC-5）：+ MegaMath-web 下载 (11-17→11-21, #1 优先级) + 分词 (11-19→11-26) → <b>S2 数据就绪 ~11-26 ≈ S2 启动</b> ⚠️ <b>余量≈0</b> → 建议先用 fallback 启动 S2 (~11-26)，PC-5 完成后立即刷新 blend TSV 为主方案（Math epoch 1.18→0.65）<br>
+<b>S2 训练区间</b>：~11-26 → ~12-25（350k→700k，共 350k 步 × 7s ≈ 28.4 天）<br>
+<b>IFM 下载完成节点</b>：MegaMath-web (#1优先) ~11-21 ｜ Code-Reasoning ~11-19 ｜ Math-Reasoning ~11-21
 </div>
 <!-- §4 -->
 <h2 id="s4">§4 — Epoch 核算表（S1+S2 累计消耗 vs 可用量）</h2>
@@ -331,8 +333,9 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>3</td><td><b>评测集污染</b> — stack-v3 含 benchmark 测试代码</td><td class="amber">🟡 中</td><td>评测分数虚高</td><td>~40%</td><td>① PC-3 污染闸门扩展，13-gram 全量扫描 ② ≥1 命中 → 剔除 ③ 0 命中才放行</td></tr>
 <tr><td>4</td><td><b>配比切换 Loss spike</b> — Web 74%→40% 骤变</td><td class="green">🟢 低-中</td><td>训练暂态不稳定</td><td>~30%</td><td>① pretrain 线：S4 实验显示切换时 loss 反降 ② 备选：5K~10K steps 平滑过渡窗口 ③ 监控：切换后前 1000 步密切监控 ④ decay 段在 700k–720k，S2 有 350k 步充分恢复</td></tr>
 <tr><td>5</td><td><b>Web 压缩到 40% 损失通用能力</b></td><td class="amber">🟡 中</td><td>MMLU/ARC 等下降</td><td>~35%</td><td>① Web 40% = 587B tokens 绝对量仍大 ② S1 已建立通用能力基础（1,086B Web） ③ 有意 trade-off：S2 目标是 code/math/agentic ④ 与 DeepSeek 4:2:4 相比 Web 占比相同</td></tr>
-<tr><td>6</td><td><b>IFM 下载延迟</b> — Math-Reasoning 速度慢</td><td class="green">🟢 低</td><td>PC-5 启动推迟</td><td>~20%</td><td>① PC-5 是 Soft deadline，即使延迟到 12-01 仍有 3 周余量 ② 可不等 Math-Reasoning 直接启动 MegaMath-web（HF 支持多 repo 并发）</td></tr>
+<tr><td>6</td><td><b>IFM 下载延迟</b> — MegaMath-web 速度慢</td><td class="amber">🟡 中</td><td>PC-5 无法在 S2 启动前完成</td><td>~30%</td><td>① PC-5 须在 11-25 前完成才能纳入初始 S2 blend；如延迟用 fallback (§1.3) 启动 S2 ② MegaMath-web 已调整为 #1 下载优先级，不等 Code/Math-Reasoning ③ 如 PC-5 在 S2 启动后完成，可中途刷新 blend TSV（需 pretrain 线配合热加载）</td></tr>
 <tr><td>7</td><td><b>code_l2 epoch 1.15 接近边界</b></td><td class="green">🟢 低</td><td>轻微过拟合</td><td>~50%</td><td>① 1.15 < 1.2 红线，UDC L2 是最高质量 code 数据，适当复用可接受 ② 可选：code_l2 0.18→0.15，stack-v3 0.17→0.20，epoch 降到 1.01</td></tr>
+<tr><td>8</td><td><b>时间余量仅 ~3 天</b> — PC-1~PC-4 须在 11-23 前全部完成</td><td class="red">🔴 高</td><td>S2 启动推迟</td><td>~40%</td><td>① 严格按截止日期执行：PC-1 11-19 / PC-2 11-20 / PC-3 11-21 / PC-4 11-22 ② 如某项延误 >2 天，立即评估是否切换 fallback（跳过 PC-5） ③ S2 可推迟 1-2 天（~11-28），不影响 700k 终点 ~12-27 ④ 与 pretrain 线保持沟通，确认 350k ETA 稳定</td></tr>
 </table>
 <!-- §7 -->
 <h2 id="s7">§7 — 结论：可行性判定 + 关键路径 + Go/No-Go 条件</h2>
@@ -348,19 +351,19 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td><b>Math（仅 Batch1）</b></td><td class="amber">🟡 基本够用</td><td>334B vs 396B (epoch 1.18)</td><td>UDM 242B + MegaMath Batch1 92B</td></tr>
 <tr><td><b>质量风险</b></td><td class="amber">🟡 中</td><td>stack-v3 需 L4 过滤 + 闸门</td><td>476B 含 ~40% 非目标语言</td></tr>
 <tr><td><b>污染风险</b></td><td class="amber">🟡 → 低（闸门后）</td><td>需扩展 5 个 benchmark 黑名单</td><td>HumanEval/MBPP/GSM8K/MATH/SWE-bench</td></tr>
-<tr><td><b>时间充裕性</b></td><td class="green">✅ 充裕</td><td>数据 11-23 就绪 vs S2 ~12-25 = 4 周余量</td><td>PC-1~PC-4 不阻塞 S1</td></tr>
+<tr><td><b>时间充裕性</b></td><td class="amber">🟡 紧张</td><td>数据 11-23 就绪 vs S2 ~11-26 = 仅 ~3 天余量</td><td>PC-1~PC-4 须按期完成，无延误空间</td></tr>
 </table>
 <h3>7.2 关键路径</h3>
 <div class="card">
 <h4>必做路径（不含 PC-5）</h4>
 <div class="formula" style="font-size:11px;">
-PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (11-17→11-21, 1-2d) → PC-3 污染闸门扩展 (11-19→11-21, 4-8h) → PC-4 blend TSV 生成 (11-21→11-23, 0.5d) → <b>✅ S2 数据就绪 (11-23)</b> → 等待 S1 到 350k (~12-25) → <b>🚀 S2 启动 (12-25)</b>
+PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (11-17→11-21, 1-2d) → PC-3 污染闸门扩展 (11-19→11-21, 4-8h) → PC-4 blend TSV 生成 (11-21→11-23, 0.5d) → <b>✅ S2 数据就绪 (11-23)</b> → 等待 S1 到 350k (~11-26, 仅 ~3 天) → <b>🚀 S2 启动 (~11-26)</b>
 </div>
 </div>
 <div class="card" style="border-left-color:#4caf50;">
 <h4>优化路径（含 PC-5，推荐）</h4>
 <div class="formula" style="font-size:11px;">
-[必做路径] + PC-5 MegaMath-web 下载+分词 (11-21→11-29, 3-5d) → <b>✅ S2 数据就绪 — 主方案 (11-29)</b> → Math epoch 1.18→0.65 ✅ → 等待 S1 到 350k (~12-25) → <b>🚀 S2 启动 (12-25)</b>
+[必做路径] + PC-5 MegaMath-web 下载(#1优先, 11-17→11-21)+分词 (11-19→11-26, 5-7d) → <b>✅ S2 数据就绪 — 主方案 (~11-26) ≈ S2 启动 ⚠️ 余量≈0</b> → Math epoch 1.18→0.65 ✅ → <b>建议：先用 fallback 启动 S2 (~11-26)，PC-5 完成后刷新 blend TSV 为主方案</b>
 </div>
 </div>
 <h3>7.3 Go/No-Go 条件</h3>
@@ -371,8 +374,8 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-2</td><td>启动 Nemotron-CC-Math 备选（133B）</td></tr>
 <tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="amber">⏳ 待 PC-3</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验 web/code/math prop</td><td class="amber">⏳ 待 PC-4</td><td>手动调整 prop 至满足</td></tr>
-<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k）</td><td>如异常推迟 S2 切换</td></tr>
-<tr><td>G6</td><td><b>（可选）MegaMath-web 到货且分词完成</b></td><td>MANIFEST total_tokens ≥ 200B</td><td class="amber">⏳ 待 PC-5（Soft）</td><td>使用 fallback 方案（§1.3），epoch 1.18</td></tr>
+<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-26）</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k，ETA ~11-26）</td><td>如异常推迟 S2 切换（每推迟 1 天，700k 终点延后 1 天）</td></tr>
+<tr><td>G6</td><td><b>（可选）MegaMath-web 到货且分词完成（~11-26）</b></td><td>MANIFEST total_tokens ≥ 200B</td><td class="amber">⏳ 待 PC-5（Soft）— #1 下载优先级，11-17 启动</td><td>使用 fallback 方案（§1.3），epoch 1.18；PC-5 完成后可中途刷新 blend TSV</td></tr>
 </table>
 <h3>7.4 平滑过渡方案（可选项）</h3>
 <div class="info" style="font-size:12px;">
@@ -395,7 +398,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
-<b>生成时间</b>: 2026-11-17
+<b>生成时间</b>: 2026-11-17（v2.1 修正版 — 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30 / 下载优先级调整）
 </p>
 </div>
 </body>
