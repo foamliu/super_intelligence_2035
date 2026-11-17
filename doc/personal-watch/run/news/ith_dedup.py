@@ -21,7 +21,31 @@ from fetch import get_text  # noqa: E402
 
 SEEN = os.path.join(HERE, "SEEN.md")
 RSS = "https://www.ithome.com/rss/"
-TAG = "1/027/"
+
+# ⚠️ 2026-11-17 第 291 轮修：原来硬编码 `1/027/`（写死当天的路径段）。
+# IT之家 的 URL 路径会翻页（实测 11-17 由 `1/027/` 翻到 `1/028/`）⇒ 硬编码会把**整批新条目**
+# 静默丢掉（`art_id()` 返回 None ⇒ 被 continue 跳过），RSS 报 `RSS_ITEMS 12` 而正文其实回 60 条。
+# 改为**路径无关**：取 `/1/028/060.htm` 里的 `1/028/060.htm` 三段式 key。
+# 去重 key 沿用历史口径（**整段路径 + .htm**），与 SEEN.md 里既有 2,900+ 行格式一致。
+
+
+def path_key(link):
+    """`https://www.ithome.com/1/028/060.htm` -> `1/028/060.htm`（找不到就 None）。"""
+    i = link.find("ithome.com/")
+    if i < 0:
+        return None
+    p = link[i + len("ithome.com/"):].strip()
+    j = p.find("?")
+    if j >= 0:
+        p = p[:j]
+    seg = p.split("/")
+    # 期望 3 段：<d>/<ddd>/<id>.htm（例 `1/028/060.htm`、`1/027/993.htm`）
+    if len(seg) < 3 or not seg[0].isdigit() or not seg[1].isdigit():
+        return None
+    last = seg[2]
+    if not last.endswith(".htm") or not last[:-4].isdigit():
+        return None
+    return "/".join(seg[:3])
 
 
 def parse_items(xml):
@@ -55,14 +79,11 @@ def field(item, tag):
 
 
 def art_id(link):
-    i = link.find(TAG)
-    if i < 0:
+    """兼容旧调用：返回短 id（`1/028/060.htm` -> `060`）。"""
+    k = path_key(link)
+    if not k:
         return None
-    j = i + len(TAG)
-    k = j
-    while k < len(link) and link[k].isdigit():
-        k += 1
-    return link[j:k] or None
+    return k.rsplit("/", 1)[1][:-4] or None
 
 
 def main():
@@ -72,12 +93,13 @@ def main():
     rows = []
     for it in items:
         link = field(it, "link")
-        i = art_id(link)
-        if not i:
+        k = path_key(link)
+        if not k:
             continue
-        rows.append({"id": i, "link": link, "title": field(it, "title"),
+        rows.append({"id": k.rsplit("/", 1)[1][:-4], "key": k, "link": link,
+                     "title": field(it, "title"),
                      "date": field(it, "pubDate"),
-                     "hit": (TAG + i + ".htm") in seen})
+                     "hit": k in seen})
     new = [r for r in rows if not r["hit"]]
     if "--json" in sys.argv:
         print(json.dumps({"total": len(rows), "hit": len(rows) - len(new),
