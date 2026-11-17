@@ -94,3 +94,12 @@
 - session_file: 1793004375421_dse5n.messages.json
 - match_count: n/a (reaudit 复活候选, 旧 summary mc 列 n/a)
 - real_task_summary: 数字中端 flow 工程师从零搭建 low power flow, 参考 feint dc/fm/pt 脚本, 问流程细节/工具/前后端对齐/总指挥推进
+
+## 8. r687 兑现记录 (单轮闭环, A.jsonl 350->351)
+- eda_flow open_session 重拉 .75 feint/ 3 文件, A 资产 7/7 全落盘。
+- hidden/feint_B/ 由 _gen_b.py 生成 (11 处精确替换, 7 文件全复制)。
+- check.py k=18 (a-r) 写完, 内嵌 _parse_feint_baseline 反硬编 + 3-seed。
+- reference report 17 keys + 16 evidence 全 verbatim A 子串 (16/16 OK)。
+- 4 negatives + negative_selftest.py: 全 FAIL distinct labels {a,c,p,q}; §4.9 三假全 FAIL。
+- A.jsonl 350->351, disk round-trip OK。trace_ledger_A.tsv dse5n 行 parked->case。
+- 状态: DEBT 1 兑现, case 入库 EDA-Eval-DesignFlow-LowPowerFlowPlanAnalyze-001。
