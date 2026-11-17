@@ -5,8 +5,8 @@ WAITING: 0
 > 🆕 **R2602 · 2026-11-17 09:3x — 监控心跳 + 启动 post-R2600 synthetic rerun(adaptive auto)**
 > - **自检**: load27.7/28.1/27.8/224✅(pretrain dominant·非本线)·mem839GB/2015GB avail1026GB✅·0 harness eval runaway✅(opencode 6%/1.3GB=旧serve进程·远低阈值)·reports/ porcelain=0✅·adaptive mode=work 7→clamp4·累计429=0✅·git本地=origin=613fa811e✅
 > - **运维指令区**: 全部✅已交付·无未完成离散指令
-> - **本轮动作**: 下一步②(synthetic rerun)启动条件「待归因结论确认后启动」已被R2600满足→从R2600 review(detail.category=synthetic+conn_refused)导出**精确**rerun清单(非陈旧0859 audit·其cc=89已rerun)→写 manifests/tb21_rerun_plan_postR2600_20261117.json→`RERUN_N_CONCURRENT=auto RERUN_CHUNK_SIZE=12` 后台启动7way编排器→**已在跑**: cline1 rc=0/0×429✅→codex2进行中→hermes13→opencode10→pi15→deepseek5→cc1·共47trial串行·adaptive work4·日志/tmp/tb21_rerun_postR2600_20261117.log+traces/·qemu/mteb题预计re-BLOCKED(符合预期)
-> - **下一步**: ①rerun跑完逐路 --merge + REGEN 双报告 ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
+> - **本轮动作**: 从R2600 review导出精确rerun清单(47trial)→启动7way编排器→**发现bug**: rerun_tb21_7way_quota.py launch_route/merge_route 未传 `--harness`→非cline路误用cline agent+错误jobs-dir前缀→**已修**(两处cmd加 `--harness harness`)→kill wrong-agent codex容器+删错jobs-dir→**v2 relaunch**(6路·tag0951·codex agent=CodexTB✅jobs-dir=codex_...✅HARD VERIFIED)→cline1(0932·valid保留)+codex2→hermes13→opencode10→pi15→deepseek5→cc1·adaptive work4
+> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN 双报告(cline用0932 tag单独merge) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
 > - **📦 体积**: TASK≈23.2KB / MEMORY≈31.9KB（✅≤32KB·本轮删R2595/R2596/R2597冗余同日📦指针腾位）
 
 > 🆕 **R2600 · 2026-11-17 09:1x — 用户令·失败归因复核(08:5x) ✅ 已交付**

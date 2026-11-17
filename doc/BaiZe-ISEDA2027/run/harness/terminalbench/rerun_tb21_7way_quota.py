@@ -76,6 +76,7 @@ def launch_route(harness, tasks, tag, timeout=3600):
         sys.executable, str(HERE / "rerun_tb21_cline_quota.py"),
         "--task-list", str(task_file),
         "--launch",
+        "--harness", harness,
         "--timeout", str(timeout),
         # 2026-11-15 用户令：默认仍 1，可用环境变量开自适应（周末放量 / 429 回退）
         "--n-concurrent", os.environ.get("RERUN_N_CONCURRENT", "1"),
@@ -97,6 +98,7 @@ def merge_route(harness, tag):
     cmd = [
         sys.executable, str(HERE / "rerun_tb21_cline_quota.py"),
         "--merge", str(jobs_dir),
+        "--harness", harness,
     ]
     env = dict(os.environ)
     env["RERUN_TAG"] = f"7way_{tag}_{harness}"
