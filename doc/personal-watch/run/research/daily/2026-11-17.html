@@ -48,7 +48,7 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-17</h1>
   <div class="sub"><b>晚报（03:00 时窗补齐）</b> · 今日进度 <b>5 / 5</b>（早报 3/5 → 晚报 5/5 → <b>06:00 增量</b>） · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 06:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-17 09:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -297,8 +297,40 @@
   </table>
 </div>
 
+<h3 class="sec">🕘 09:00 时窗增量（B 轨 +4 → 198 · 作者网 +3 → 180 · 作者信 2 封）</h3>
+<div class="card">
+  <ul class="tight" style="font-size:14px;">
+    <li><b>A 轨 0 新收</b>：今日 5/5 已满；复核 <code>cat:cs.CL</code> 列表 <code>HTTP 200</code> + <code>application/atom+xml</code>（260,090 B / 100 entry），<code>published</code> 上界仍为 <code>2026-11-13T18:45:49Z</code> ⇒ 公告批<b>连续第 17 个时窗未前进</b>；不重开当日 5 篇、不拿超窗条目凑数。</li>
+    <li><b>B 轨 +4 → 198</b>：Qwen2.5 <code>2412.15115</code>（<b>11,888</b>）· Gemma <code>2403.08295</code>（<b>3,803</b>）· Diffusion Policy <code>2303.04137</code>（<b>2,313</b>，RSS 2023）· Open X-Embodiment <code>2310.08864</code>（<b>1,045</b>）；arXiv abs 4/4 <code>200</code>（49,650 / 59,441 / 43,764 / 91,646 B）、OpenAlex 4/4 <code>200</code>、PDF 4/4 <code>200</code> + <code>%PDF-</code>（Diffusion Policy 6.19 MB &gt;5MB ⇒ 仅 <code>/tmp</code>，不入 git）。</li>
+    <li><b>作者网 +3 → 180</b>：Cheng Chi（Sunday Robotics；<code>@chichengcc</code>）· Yilun Du（Harvard；<code>ydu@seas.harvard.edu</code> + <code>@du_yilun</code>，<b>已发信</b>）· Shuran Song（Stanford；<code>@SongShuran</code>）—— 三条 X 均 <code>og:title</code> + <code>og:description</code> 双源核验；Cheng Chi / Shuran Song 主页无明文邮箱 ⇒ 只建档不发信（不猜地址）。</li>
+    <li><b>作者信 2 封</b>：<code>#76</code> Yilun Du（Diffusion Policy，中文 CJK <b>294</b> 字）· <code>#77</code> Hao Su 苏昊（Open X-Embodiment，中文 CJK <b>295</b> 字）—— 落款两行、其后无任何行；累计 <b>77 封</b>，<b>回信率 0 / 77</b>，0 封到期（最早 2026-11-25）。<b>主动不发</b>：Russ Tedrake 有公开邮箱，但同论文 <code>2303.04137</code> 已发 Yilun Du ⇒ 守「同一论文 ≤1」。</li>
+  </ul>
+
+  <details class="voice-ready">
+    <summary>🗣 voice_ready · 研究者言论（可发头条）</summary>
+    <ul>
+      <li><b>人物</b>：Yilun Du（@du_yilun，Harvard Kempner Institute + CS 助理教授，Diffusion Policy 作者）</li>
+      <li><b>言论</b>：<i>“RAX is able to directly allow coding agents to unscrew a jar using real dexterous hands!”</i><br>中文：RAX 能让编码 agent 直接用真实的灵巧手拧开罐子。</li>
+      <li><b>时间</b>：2026-11-06（距今 11 天，未超 30 天降级线）</li>
+      <li><b>出处</b>：<a href="https://x.com/du_yilun/status/2118638987770220787">x.com/du_yilun/status/2118638987770220787</a>（单推页 <code>og:title</code> = <code>Yilun Du (@du_yilun) on X</code>，<code>og:description</code> 与正文逐字一致）</li>
+      <li><b>话题点</b>：coding agent 从「改代码」走到「操纵真实硬件」，是大众能理解的具身智能跨越点。</li>
+      <li><b>风险</b>：原推是成果宣称、无量化指标；「拧开罐子」为单一演示 ⇒ 易被误读为通用能力，引用须保留单任务限定。</li>
+    </ul>
+  </details>
+
+  <table class="plain" style="margin-top:12px;">
+    <tr><th style="width:16%;">线</th><th>09:00 增量可执行动作（附判据）</th></tr>
+    <tr><td><b>pretrain</b></td><td>借 Gemma 的<b>按规模分叉</b>（2B 用 MQA / 7B 用 MHA）：2B 消融把 <code>num_kv_heads</code> 与 <code>head_dim</code> 拆开扫，同时记显存 / 吞吐 / 下游三项；<b>判据</b>：若 MQA 在 2B 上吞吐提升 &lt;15% 而下游掉 &gt;1pt，则保持 MHA。另借 Qwen2.5 的四阶段上下文课程（32K→64K→128K→256K），每阶段固定 token 预算单记 val loss。</td></tr>
+    <tr><td><b>vision</b></td><td>借 Diffusion Policy 的主干对照：视觉塔下游先跑 <b>CNN 1D temporal + FiLM</b> 基线再决定是否上 Transformer；<b>判据</b>：若 CNN 基线在低频任务上已追平 Transformer 的 90%，本期不引入 Transformer 策略头。</td></tr>
+    <tr><td><b>harness</b></td><td>借 Gemma 的<b>成对胜率</b>口径（61.2% / 63.5%）：内部对比报告同时给绝对分与成对胜率，并注明裁判模型；<b>判据</b>：两口径结论相反时，以绝对分为准、胜率只作辅助。</td></tr>
+    <tr><td><b>data</b></td><td>借 Qwen2.5 的「小模型当质量过滤器」与 OXE 的跨源负迁移：配比表增加「按来源量加权 vs 等权」两列，并对最大来源做下采样消融；<b>判据</b>：若下采样后目标域掉分 &gt;2pt，说明当前配比在吃数据量而非多样性。</td></tr>
+    <tr><td><b>zhulong</b></td><td>借 Diffusion Policy 的 receding horizon：多轮动作接口改成「预测 k 步、执行 m 步（m&lt;k）」，成本表记录 <code>m/k</code>；<b>判据</b>：若 m/k≤0.5 时成功率与单步贪心差 &lt;1pt，则固定 m/k=0.5 以省调用次数。</td></tr>
+    <tr><td><b>designflow</b></td><td>借 OXE 的 <b>527 skills / 160,266 tasks</b> 两级标签：题面元数据加 <code>skill</code> / <code>task</code> 两列；<b>判据</b>：抽 30 题做双人独立标注，一致率 &lt;80% 则先改标签定义再扩题。</td></tr>
+  </table>
+</div>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 06:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>194</b> 篇（+4）｜ 作者网 <b>177</b> 人（X 已核验 99）｜ 作者信累计 <b>75</b> 封（回信率 <b>0/75</b>）｜ voice_ready 2 ｜ news_ready 1<br>
+  research 线 · <code>research/daily/2026-11-17.html</code> ｜ 生成 2026-11-17 09:0x CST（早报 00:1x / 晚报补齐 03:0x / 06:00 增量 / 09:00 增量）｜ <b>晚报 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>198</b> 篇（+4）｜ 作者网 <b>180</b> 人（X 已核验 102）｜ 作者信累计 <b>77</b> 封（回信率 <b>0/77</b>）｜ voice_ready 3 ｜ news_ready 1<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 

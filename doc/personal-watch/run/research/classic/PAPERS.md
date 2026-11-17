@@ -3364,7 +3364,76 @@
 
 ---
 
+## 195. Qwen2.5 Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Qwen2.5 Technical Report |
+| 作者（前 3） | An Yang · Baosong Yang · Beichen Zhang（Qwen Team 集体署名，abs 页 `citation_author` 共 **44** 条含团队名；arXiv abs 页逐条核） |
+| 年份 | **2024**（v1 `2024-12-19`；v2 `2025-01-03`） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv `cs.CL`；OpenAlex `preprint` ⇒ 不记会议） |
+| 被引数 | **11,888**（OpenAlex `10.48550/arxiv.2412.15115`，查询日 **2026-11-17**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2412.15115> ｜ DOI `10.48550/arxiv.2412.15115` |
+| 一句话贡献 | 把预训练语料从 Qwen2 的 **7T 扩到 18T tokens**，用 **Qwen2-Instruct 模型做多维数据质量打分与过滤**；后训练数据 **100 万+ 样本**，上下文从 4,096 起经四阶段 **32,768 → 65,536 → 131,072 → 262,144** 扩展，旗舰 **Qwen2.5-72B-Instruct** 在论文自报表中对标同级开源与闭源模型。 |
+| 与我们工作的关系 | **data（数据过滤，主目标）**：把「用小模型当质量过滤器」写成可执行管线 ⇒ <b>动作</b>：data 线在 2B 预训练前先跑一版「小模型打分 + 多维阈值」的离线过滤，与现有关键词/去重规则做 A/B，记录保留率与下游 loss。<br>**pretrain（上下文扩展课程）**：四阶段 32K→64K→128K→256K ⇒ <b>动作</b>：把长上下文训练拆成阶段式，每阶段固定 token 预算并单独记 validation loss，🚫 一次跳到目标长度。<br>**pretrain（后训练数据量）**：100 万+ SFT 样本 ⇒ <b>动作</b>：SFT 配比实验把「样本数」与「去重后唯一任务数」分列上报，避免只报条数。<br>**zhulong（长上下文成本）**：128K/8K 的输入输出上限直接影响单题成本 ⇒ <b>动作</b>：benchmark 成本表增加「输入长度桶」维度。<br>**风险**：① 11,888 为 OpenAlex 口径；② 数据管线细节（过滤器模型、阈值）论文未给全 ⇒ 不可复现为「同款过滤」；③ 对标分数为作者自报，未复现。 |
+| 首次收录 | **2026-11-17**（第五十轮） |
+| 核验状态 | arXiv abs 页 `200`（49,650 B；`cs.CL`；`citation_date 2024/12/19`）；PDF `200` / 1,938,604 B（`%PDF-`），`pdftotext` 核对 `from 7 trillion tokens to 18 trillion tokens` / `over 1 million samples` / `32,768 tokens, 65,536 tokens, 131,072 tokens, and ultimately 262,144` |
+
+---
+
+## 196. Gemma: Open Models Based on Gemini Research and Technology
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Gemma: Open Models Based on Gemini Research and Technology |
+| 作者（前 3） | Gemma Team · Thomas Mesnard · Cassidy Hardin（abs 页 `citation_author` **108** 条；团队署名） |
+| 年份 | **2024**（v1 `2024-03-13`；多版更新至 2024-04） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv `cs.CL`；OpenAlex `preprint`） |
+| 被引数 | **3,803**（OpenAlex `10.48550/arxiv.2403.08295`，查询日 **2026-11-17**） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.08295> ｜ DOI `10.48550/arxiv.2403.08295` |
+| 一句话贡献 | 2B / 7B 开源模型：**2B 用 3T tokens、7B 用 6T tokens** 预训练，上下文 **8,192**，词表沿用 Gemini 的 **256k** SentencePiece，7B 用多头注意力、2B 用 **MQA（`num_kv_heads=1`）**，激活改为近似 **GeGLU**；工程侧 7B 跨 **16 pods / 4,096 TPUv5e**，2B 用 **256-way 数据复制**；论文自报 7B IT 对 Mistral 7B v0.2 Instruct 的胜率 **61.2%**（安全集 **63.5%**）。 |
+| 与我们工作的关系 | **pretrain（小模型配方，主目标）**：2B 用 MQA、7B 用 MHA 的**按规模分叉**是有数据支撑的选择 ⇒ <b>动作</b>：BaiZe 2B 消融把 `num_kv_heads` 与 `head_dim` 分开扫，报告显存/吞吐/下游三项，不只报 loss。<br>**pretrain（数据复制策略）**：2B 用 256-way replication ⇒ <b>动作</b>：小模型训练脚本显式记录 replication factor，并在 WSD 的 decay 阶段复测是否仍需要同样复制度。<br>**data（词表）**：256k 词表来自 Gemini ⇒ <b>动作</b>：比较 128k vs 256k 词表在中文/代码/EDA 文本上的 tokens/字符比，作为是否扩词表的判据。<br>**harness（胜率评测）**：61.2% / 63.5% 是成对胜率而非绝对分 ⇒ <b>动作</b>：内部对比报告同时给绝对分与成对胜率，并注明裁判模型。<br>**风险**：① 3,803 为 OpenAlex 口径；② 训练数据未公开 ⇒ 配比不可复现；③ 胜率为作者自报、裁判口径未完全公开。 |
+| 首次收录 | **2026-11-17**（第五十轮） |
+| 核验状态 | arXiv abs 页 `200`（59,441 B；`cs.CL`）；PDF `200` / 578,815 B（`%PDF-`），`pdftotext` 核对 `3T and 6T` / `8192` / `256k entries` / `4096 TPUv5e` / `256-way` / `61.2%` / `63.5%` |
+
+---
+
+## 197. Diffusion Policy: Visuomotor Policy Learning via Action Diffusion
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Diffusion Policy: Visuomotor Policy Learning via Action Diffusion |
+| 作者（前 3） | Cheng Chi · Zhenjia Xu · Siyuan Feng（共 **8** 位，末位 Shuran Song；Columbia / Stanford / MIT / TRI；abs 页逐条核） |
+| 年份 | **2023**（v1 `2023-03-07`；v2 `2024-03-14`，为 RSS 2023 论文的扩展期刊版） |
+| 会议 / 期刊 | **RSS 2023**（DOI `10.15607/RSS.2023.XIX.026`；arXiv `comments` = "An extended journal version of the original RSS2023 paper"） |
+| 被引数 | **2,313**（OpenAlex `10.15607/rss.2023.xix.026`，查询日 **2026-11-17**） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.04137> ｜ DOI `10.15607/RSS.2023.XIX.026` |
+| 一句话贡献 | 把机器人策略学习写成**动作序列的条件去噪（DDPM）**：以观测为条件预测 `Tp` 步动作、只执行前 `Ta` 步（receding horizon），并给出 CNN（1D temporal conv + FiLM）与 Transformer 两种主干；在 **15 个任务 / 4 个基准**上平均成功率提升 **46.9%**，消融指出观测视野 **To=2**、执行视野 **Ta=8** 是多数任务的好默认值。 |
+| 与我们工作的关系 | **zhulong（动作/输出 chunk，主目标）**：一次预测多步、按步回放 ⇒ <b>动作</b>：多轮 agent 的动作接口改为「预测 k 步、执行 m 步（m<k）」并在成本表记录 m/k，对比单步贪心。<br>**vision（主干选型）**：CNN 1D temporal + FiLM 在多数任务够用、Transformer 更适合高频/多模态 ⇒ <b>动作</b>：视觉塔下游接策略头时先跑 CNN 版基线，再决定是否上 Transformer。<br>**harness（多基准一致性）**：15 任务 4 基准的排序一致性 ⇒ <b>动作</b>：内部评测不用单基准定优劣，至少两基准交叉。<br>**data（低资源门槛）**：示教量对 receding horizon 收益的影响 ⇒ <b>动作</b>：数据线做 20/50/100 条示教的缩放曲线，找退化点。<br>**风险**：① 2,313 为 OpenAlex 口径（DOI 指向 RSS 版）；② 46.9% 为作者自报、跨 4 个基准的平均，🚫 不可当单任务增益；③ 机器人控制结论迁移到 LLM agent 需重新验证。 |
+| 首次收录 | **2026-11-17**（第五十轮） |
+| 核验状态 | arXiv abs 页 `200`（43,764 B；`cs.RO`；`citation_date 2023/03/07`）；PDF `200` / 6,192,199 B（`%PDF-`，>5 MB ⇒ 仅 `/tmp`，不入 git），`pdftotext` 核对 `15 different tasks from 4` / `average improvement of 46.9%` / `horizon of 8 steps` / `observation horizon of 2` / `1D temporal` / `FiLM` |
+
+---
+
+## 198. Open X-Embodiment: Robotic Learning Datasets and RT-X Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Open X-Embodiment: Robotic Learning Datasets and RT-X Models |
+| 作者（前 3） | Embodiment Collaboration · Abby O'Neill · Abdul Rehman（abs 页 `citation_author` **294** 条，跨 21 家机构） |
+| 年份 | **2023**（v1 `2023-10-13`；后续多版更新） |
+| 会议 / 期刊 | **预印本技术报告**（arXiv `cs.RO`；OpenAlex `preprint` ⇒ 不记会议） |
+| 被引数 | **1,045**（OpenAlex `10.48550/arxiv.2310.08864`，查询日 **2026-11-17**） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.08864> ｜ DOI `10.48550/arxiv.2310.08864`（项目页见 arXiv `comments`） |
+| 一句话贡献 | 汇总 **60 个数据集 / 22 种机器人本体 / 21 家机构**的 **1M+ 真实轨迹**，用 **527 个技能（160,266 个任务）**描述覆盖；训练 **RT-1-X**（机器人专用架构）与 **RT-2-X（55B）**（VLM 策略），论文自报 RT-1-X 平均成功率比各域原方法 **高 50%**、RT-2-X 在新技能上约有 **3× 泛化**；同时报告**高数据域上的负迁移**（RT-1-X 反而不如域内原方法）。 |
+| 与我们工作的关系 | **data（跨源混配，主目标）**：22 本体 60 数据集并表的加权与负迁移 ⇒ <b>动作</b>：data 线配比表增加「按来源轨迹数加权 vs 等权」两列，并对最大来源做下采样消融，显式报告负迁移域。<br>**zhulong（跨工具迁移）**：把「换本体」类比「换 EDA 工具」 ⇒ <b>动作</b>：zhulong 设计跨工具（DC/PT/仿真）迁移实验，先测共享动作空间、再测共享观测格式。<br>**designflow（技能分类法）**：527 skills / 160,266 tasks 的标签体系 ⇒ <b>动作</b>：designflow 题面元数据加 `skill` / `task` 两级标签，抽 30 题做跨标注一致性检查。<br>**vision（VLM 策略）**：RT-2-X 55B 说明 VLM 主干 + 动作 token 化可用 ⇒ <b>动作</b>：vision 线评估把动作离散成 token 的接口成本。<br>**风险**：① 1,045 为 OpenAlex 口径；② 数据许可与本体差异大 ⇒ 不可直接照搬配比；③ 「3× 泛化」「50%」均为作者自报、定义见原文表格。 |
+| 首次收录 | **2026-11-17**（第五十轮） |
+| 核验状态 | arXiv abs 页 `200`（91,646 B；`cs.RO`；`citation_date 2023/10/13`）；PDF `200` / 4,011,306 B（`%PDF-`），`pdftotext` 核对 `60 individual datasets across 22 embodiments` / `22 robot embodiments` / `1M+ robot trajectories` / `527 skills` / `160266 tasks` / `RT-2-X (55B)` / `50% higher` / `3× generalization` |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
+> ✅ **第五十轮（2026-11-17 09:0x）转正 4 条**：Qwen2.5 `2412.15115`（#195，**11,888**，预印本）· Gemma `2403.08295`（#196，**3,803**，预印本）· Diffusion Policy `2303.04137`（#197，**2,313**，RSS 2023）· Open X-Embodiment `2310.08864`（#198，**1,045**，预印本）⇒ B 轨累计 **198**（覆盖轴：小模型数据过滤与上下文课程 / 小模型架构分叉与词表 / 动作 chunk 与 receding horizon / 跨本体数据混配与技能分类）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Magpie `2406.08464`（**300**，实测 &lt;500 ⇒ 暂留）/ WebShop `2207.01206`（**358** ⇒ 暂留）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）；⑤ 数据线可补 Dolma `2402.00159`（本轮未查被引）。
 > ✅ **第四十九轮（2026-11-17 06:0x）转正 4 条**：The Stack `2211.15533`（#191，553，预印本）· Code Llama `2308.12950`（#192，4,881，预印本）· Qwen2-VL `2409.12191`（#193，6,157，预印本）· LiveCodeBench `2403.07974`（#194，1,802，预印本）⇒ B 轨累计 **194**（覆盖轴：代码语料许可过滤 / 代码专化与 FIM 目标 / 动态分辨率视觉塔 / 免污染时间切窗评测）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Magpie `2406.08464`（**300**，实测 &lt;500 ⇒ 暂留）/ WebShop `2207.01206`（**358** ⇒ 暂留）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）；⑤ 数据线可补 Dolma `2402.00159`（本轮未查被引）。
 > ✅ **第四十八轮（2026-11-17 03:0x）转正 4 条**：MT-Bench / LLM-as-a-Judge `2306.05685`（#187，5,326，NeurIPS 2023 D&B）· Self-Rewarding LMs `2401.10020`（#188，664，ICML 2024）· TinyStories `2305.07759`（#189，589，预印本）· Mind2Web `2306.06070`（#190，503，NeurIPS 2023 Spotlight）⇒ B 轨累计 **190**（覆盖轴：judge 可靠性 / 自奖励对齐 / 受控词表合成数据 / 通用 Web agent 三切分）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① **Magpie `2406.08464`**（实测 **300** 被引，<500 ⇒ 暂不收，若按「方法论常青」需先在条目里写明理由）；② **WebShop `2207.01206`**（实测 **358**，NeurIPS 2023 D&B ⇒ 同理暂留）；③ HBM / JEDEC 一手（连续多轮未命中）；④ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；⑤ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）。<br>> ✅ **第四十七轮（2026-11-17 00:0x）转正 4 条**：AlphaCode `2203.07814`（#183，1,787，Science 2022）· BLOOM `2211.05100`（#184，2,860，预印本）· StarCoder `2305.06161`（#185，1,518，预印本）· HH-RLHF `2204.05862`（#186，5,138，预印本）⇒ B 轨累计 **186**（覆盖轴：执行式过滤 / 多语数据治理 / 代码语料许可 / 对齐偏好数据）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike）；③ 长上下文调度（Zero Bubble `2401.10241` 实测 90 被引 ⇒ 暂留候选）；④ 数据质量线「合成数据自举」后续一手工作。<br>> ✅ **第四十六轮（2026-11-16 21:0x）转正 4 条**：LIMA `2305.11206`（#179，904，NeurIPS 2023）· The False Promise `2305.15717`（#180，304，ICLR 2024 spotlight，**&lt;500 按「方法论常青」收**）· Muon is Scalable `2502.16982`（#181，622，预印本）· FlashAttention-3 `2407.08608`（#182，418，NeurIPS 2024，**&lt;500 按「开创范式 + 方法论常青」收**）⇒ B 轨累计 **182**。
 > **下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手资料（连续多轮未命中，下轮先试 `ti:` + 会议论文集）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手工作，μP 与 Muon 已收）；③ 长上下文系统的调度侧（Zero Bubble `2401.10241` 本轮实测仅 **90** 被引 ⇒ 暂不收，留候选）；④ 数据质量线「合成数据自举」的后续一手工作。
