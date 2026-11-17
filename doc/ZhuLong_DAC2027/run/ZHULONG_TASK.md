@@ -1,4 +1,66 @@
-﻿# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
+# ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
+
+> 🔴 **用户令 · 2026-11-17 22:5x — 新任务：EDA-Flow-Bench 论文重定位 + 消融实验设计 + 计划书（最高优先）**
+>
+> 本条**覆盖 standby 状态**（subagent 消融线仍保持 `done_all` 结案，**不再起 A3/A4/A5/A6/A0′′′ 等旧臂**；这是**一个新任务**，不是恢复旧实验）。
+>
+> **用户原话（逐条对齐，不得自行改题）**：
+> 1. 「这篇论文贡献光是 评测集 EDA-Flow-Bench 恐怕立不住，因为基于真实 Trace 构建，公司资产，不能开源。」
+> 2. 「论文结构恐怕还是会遵循两篇 zhulong 论文的叙事架构，也就是主线是新的认知，副线是新的评测集。」
+> 3. 「zhulong DAC 论文的结论节提到：Future work: domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking.」
+> 4. 「这个新认知，目前的想法是围绕 long-term memory and recursive self-improvement 在 EDA agent（EDA 脚本 + designflow）领域的应用。」
+> 5. 「DATE27_Zhulong 是我们早先的工作：EDA 脚本 + 自进化。」
+> 6. 「EDA-Flow-Bench_ICML2027 这篇论文的大体思路，是将 #5 向 designflow 领域拓展，向落地拓展，更进一步，通过实验检验新的认知。」
+> 7. 「请 zhulong agent 认真阅读和思考，如何设计有创造力的消融实验，如何规划这篇论文，写出计划书（中文 HTML）。」
+
+### ① 必读（读原文，禁止凭印象/二手摘要）
+
+| # | 路径 | 读什么 |
+|:--|:--|:--|
+| 1 | `doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/main.tex` | 宏定义与章节装配（注意 `\Ntasks` 与 `\Neval` 是**两个不同的数**，别混用） |
+| 2 | 同上 `sections/0_abstract.tex` `1_intro.tex` `2_benchmark.tex` `3_harness.tex` `4_experiments.tex` `5_analysis.tex` `6_related.tex` `7_conclusion.tex` | 现稿的**主张 / 证据 / 缺口**，逐节标注「benchmark 叙事」与「可升格为认知叙事」的位置 |
+| 3 | 同上 `appendix/A_benchmark_details.tex` `B_additional_results.tex` `C_experimental_details.tex` `README.md` `results.txt` | 可复现性资产、696-run 冻结快照口径、7 路横评口径 |
+| 4 | `doc/ZhuLong_DAC2027/DATE27_Zhulong/DATE2027/{0_abstract,1_intro,3_method,4_self_evolve,5_exp,6_conclusion}.tex` + `技术报告.md` + `Comment.md` + `zhulong_review.txt` | 前作（EDA 脚本 + 自进化）的**叙事骨架、方法命名、实验套路、审稿人意见** —— 新论文要显式继承这套架构 |
+| 5 | `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（DAC 版正文）| 两篇 zhulong 叙事的另一半；重点读 **Conclusion / Future work** 原文（long-term memory、recursive self-improvement、long-chain flow-orchestration 的原句） |
+| 6 | `doc/ZhuLong_DAC2027/benchmark/EXPERIMENTS_DESIGNFLOW.md`、`MEMORY_DESIGNFLOW_{A,B,C,D}.md`（只读头部状态行）、`reports/report_designflow_paper_next_steps_zh.html` | **现有可用资产**：cases 规模（A/B/C/D 四库）、B 线 audit 93%+、7 路 harness 横评、696-run 结果 —— 哪些数据现在就能当"认知检验"的证据，哪些必须新跑 |
+
+### ② 计划书必须回答的六个问题（这就是验收标准）
+
+1. **贡献重定位（为什么"只卖评测集"立不住，以及怎么修）**
+   - 从审稿人视角写清三条硬伤：① trace 源自公司生产资产、**不可开源** ⇒ 外部不可复现；② 数据一旦不可发布，"benchmark 论文"的社区价值被大幅削弱；③ 10.0% Pass@1 这类单点数字会随基座更新迅速过期。
+   - 给出**替代性贡献结构**：主线=新认知（long-term memory + recursive self-improvement 在 EDA agent 的可检验命题）；副线=新任务形态（long-chain flow orchestration）+ 评测协议/harness；bench 作为**载体与外部接口**（Lite 集 / 脱敏 mock sandbox / 协议与判据开源、原始 trace 不发布）。
+   - 明确**开源边界表**：能开（协议、判据、harness、脱敏 mock 资产、Lite 集构造方法）/ 不能开（原始 trace、真实 PDK/网表/公司脚本、隐藏答案）/ 可申请（受限评审复现包）。
+2. **与 DATE27 的继承与差异（一张 delta 表）**
+   - 维度至少：任务粒度（单脚本 → 多步 flow）、自进化的载体（脚本层 → 记忆/技能库/harness）、失败信号（编译/运行 → 工具链 grounding + 长链状态）、评测单位（单函数 → 交付件 submit.zip）、可迁移性主张。
+   - 说明"**认知的可迁移性**"是本篇的新意（把 DATE27 在脚本层的结论搬到 flow 层，看是否仍成立）。
+3. **可证伪命题（pre-registered hypotheses，必须有对照与失败条件）**
+   - 至少给 **4 条**，例如：H1 长期记忆（跨 session 的工具知识/项目约定/失败模式）提升长链任务 Pass@1；H2 递归自我改进（技能库自扩 / harness 自改）收益**随链长单调增长**；H3 记忆是自改进的前提（无记忆时自改进收益消失/转负）；H4 与已结案结论的一致性（单 agent ≥ 多 agent、自主 spawn ≥ 用户定制）在 flow 场景是否复现。
+   - 每条写：自变量、因变量、判据阈值、样本量、统计检验（McNemar / paired bootstrap CI / 预注册 α）、**证伪条件**（什么结果算"认知不成立"）。
+4. **消融实验设计（本令的核心，要求"有创造力"）**
+   - **≥6 个臂**（含对照组），例如：M0 无记忆基线 / M1 静态记忆（人工整理 SOP）/ M2 自动记忆（写入+检索，无淘汰）/ M3 记忆+淘汰与冲突消解 / S1 自改进（技能库自动扩展）/ M3+S1 组合 / 负对照（记忆注入**错误**或**无关**知识，检验是否只是 prompt 变长带来的增益）。
+   - 每臂写：实现方式、成本（token/墙钟）、污染防护（held-out 任务、时间切分、答案泄漏检查、记忆内容审计）、**样本量与统计功效**（n 不足时明确写"仅信号不作结论"）。
+   - 必须设计**一个"杀手级"对照**：能区分"记忆真的有用"与"上下文更长/prompt 更丰富"（例如同等 token 预算的无记忆长 prompt；或记忆内容随机打乱）。
+   - 给出**最小可跑矩阵**（可在 1–2 周内跑完、不重训基座、复用现有 cases 与 harness）与**理想矩阵**（若资源允许）。
+5. **论文规划**
+   - 标题候选 2–3 个；贡献列表（3–4 条，动词开头）；章节大纲（与两篇 zhulong 同构：Intro → 认知/方法 → Self-evolve → 新任务形态 → 实验 → 分析 → Related → Conclusion）；图表清单（Figure/Table 各 3–5 个，标注数据来源与是否已有）；实验矩阵表（臂 × 任务子集 × 重复次数 × 判据）。
+   - **时间线**（按 ICML 2027 截稿倒推，标出"数据冻结日""写作冻结日""内部评审日"）+ **风险清单**（H2 为负结果怎么办、cases 增长与评测口径漂移怎么办、不可开源被质疑怎么办 → 每项给 Plan B）。
+   - 明确"**负结果也发**"的诚实路线：若自改进无收益，写成"在真实 designflow 上自改进的边界条件"——这本身是可发表认知。
+6. **与现有资产的衔接**
+   - 列表说明：哪些实验**今天就能跑**（复用 696-run 快照、7 路 harness、四库 cases）、哪些需要新造题（缺口在哪个域）、哪些需要新基座/新沙盒。
+   - 明确**不得**为了论文数字去改判据/改题/挑样本（防伪底线不变）。
+
+### ③ 交付物与硬约束
+
+- **唯一交付**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`
+  - 中文、单文件自包含、**0 外链 / 0 CDN / 0 `<script>`**；首屏给「结论先行」摘要卡（一段话 + 6 条判据 + 3 个最大风险）。
+  - 结构建议：§0 结论先行 / §1 现稿诊断（逐节） / §2 贡献重定位与开源边界 / §3 与 DATE27 的 delta 表 / §4 可证伪命题 / §5 消融设计（臂表 + 污染防护 + 统计） / §6 论文大纲与图表 / §7 实验矩阵与时间线 / §8 风险与 Plan B / §9 现有资产映射 / 附录（引用清单：路径+行号）。
+- **禁止**：改 `main.tex` / `sections/*.tex` / `appendix/*.tex`（本轮只规划，不改稿）；覆盖已有报告；动 designflow 造题线的 cases/jsonl/ledger；起训练或评测进程。
+- **可追溯**：每个数字后面必须带来源（文件路径 + 行号 / json 路径 / 命令）。**不确定就写 `UNKNOWN`**，禁止编造数字或引用不存在的实验。
+- **体量**：HTML > 25 KB；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+- **提交**：`zhulong plan: EDA-Flow-Bench ICML2027 重定位与消融设计 v1`，只 add 本线文件（勿 `-A`）。
+- **判据（自检后再提交）**：① 六问全部有答案；② ≥6 臂且含"等 token 预算"负对照；③ 每条假设有证伪条件；④ 有 delta 表与时间线；⑤ 0 外链 0 script；⑥ 全文数字可追溯。
+
+
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不改题/图/check、不编造数字、不删他人数据）。判断标准只有一条：**这条约束是为了「防止说谎/防止破坏」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主设计消融臂、判据与实验路线；A3/A4/… 的 idea 由你提，不要等我给。**
 
