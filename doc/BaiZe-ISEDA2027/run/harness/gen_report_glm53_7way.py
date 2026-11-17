@@ -301,13 +301,13 @@ for _h in HARNESSES:
 
 # Build HTML fragments for review sections (§2026-11-17 10:2x: no 修正后 Pass%, real Pass% only)
 _rerun_status_map = {
-    "cline-patched": "待重跑=3 (2 rate_limit + 1 conn_ref·cline CLI 崩溃 BLOCKED)",
-    "codex": "重跑中 (83题429 rerun PID348003·n_concurrent=4·已出1 PASS(build-pov-ray)·修复前1/89系适配器假低分)",
-    "opencode": "待重跑=10 (9 rate_limit + 1 synthetic)",
-    "claude-code": "待重跑=2 (1 rate_limit + 1 conn_ref)",
-    "pi": "待重跑=12 (1 conn_ref + 11 synthetic=未真跑)",
-    "hermes": "待重跑=9 (9 rate_limit·qemu/mteb=BLOCKED Py3.9<3.11)",
-    "deepseek-harness": "待重跑=1 (1 rate_limit)",
+    "cline-patched": "待重跑=2 (rate_limit+conn_ref·pytorch-model-recovery cline CLI 崩溃 BLOCKED)",
+    "codex": "83题429重跑COMPLETE+merge→19/89=21.3%(从1/89回升); 55题重跑窗口仍429→codex-55第三轮重跑中(网关已清)",
+    "opencode": "待重跑=8 (rate_limit+synthetic)·chain RUNNING",
+    "claude-code": "待重跑=2 (rate_limit+conn_ref)",
+    "pi": "待重跑=12 (conn_ref+synthetic=未真跑)·chain pending",
+    "hermes": "待重跑=6 (rate_limit·qemu/mteb=BLOCKED Py3.9<3.11)",
+    "deepseek-harness": "待重跑=1 (rate_limit)",
 }
 _tb21_review_parts = []
 for _h in HARNESSES:
@@ -398,7 +398,7 @@ HTML = f"""<!DOCTYPE html>
 
 <h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done=ability，hermes part1 12/12 done 2 PASS Δ=+2 10 ability, part2 video-processing running，opencode 2→pi 13→deepseek 0→cc 1 排队；audit 修复后真待重跑={_total_pending}）。重跑完成后重算真实 Pass%。</p></div>
+<p><strong>当前状态</strong>：非codex 6路串行重跑进行中（deepseek✅cc✅cline-patched✅hermes✅→opencode RUNNING→pi pending）；codex 83题429重跑COMPLETE+merge→19/89=21.3%（从1/89回升），55题重跑窗口仍429→codex-55第三轮重跑已排队（网关已清，等非codex chain完成）；audit 修复后真待重跑={_total_pending}）。重跑完成后重算真实 Pass%。</p></div>
 <h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
 <table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
