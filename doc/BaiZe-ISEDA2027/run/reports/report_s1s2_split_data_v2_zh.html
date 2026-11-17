@@ -124,7 +124,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td><code>ufw_zh</code></td><td>…/tokenized/Ultra-FineWeb/ultrafineweb_zh</td><td class="num">4</td><td>DATA_MAPPING #9</td><td class="green">✅ 就绪</td></tr>
 <tr><td><code>code_l2</code></td><td>…/tokenized/UltraData-Code/UltraData-Code-L2</td><td class="num">141</td><td>DATA_MAPPING #3</td><td class="green">✅ 就绪</td></tr>
 <tr><td><code>code_l3</code></td><td>…/tokenized/UltraData-Code/UltraData-Code-L3</td><td class="num">63</td><td>DATA_MAPPING #4</td><td class="green">✅ 就绪</td></tr>
-<tr><td><code>stackv3_filt</code></td><td>…/tokenized/HuggingFaceCode/stack-v3-train</td><td class="num">8192</td><td>DATA_MAPPING H.14</td><td class="amber">🔄 已分词，待 L4 过滤</td></tr>
+<tr><td><code>stackv3_filt</code></td><td>…/tokenized/HuggingFaceCode/stack-v3-train</td><td class="num">8192</td><td>DATA_MAPPING H.14</td><td class="green">✅ 已过滤 (430.7B)</td></tr>
 <tr><td><code>math_l1</code></td><td>…/tokenized/UltraData-Math/UltraData-Math-L1</td><td class="num">149</td><td>DATA_MAPPING #5</td><td class="green">✅ 就绪</td></tr>
 <tr><td><code>math_l3</code></td><td>…/tokenized/UltraData-Math/UltraData-Math-L3</td><td class="num">67</td><td>DATA_MAPPING #6</td><td class="green">✅ 就绪</td></tr>
 <tr><td><code>megamath</code></td><td>…/tokenized/IFM/MegaMath</td><td class="num">TBD</td><td>DATA_MAPPING D1</td><td class="amber">🔄 Batch1 已下，待分词</td></tr>
@@ -149,7 +149,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><th style="width:100px;">工作内容</th><td>对 MegaMath Batch1（364 parquet / 216GB / 5 子集：web-pro + code + qa + text-code-block + translated-code）分词，使用 tokenizer_eod (vocab 129,281)。产出 .bin/.idx/.json + MANIFEST.json。分词后实测 token 数（与论文对比，标注偏差）。</td></tr>
 <tr><th>预估耗时</th><td>1–2 天（8 workers, nice 19 + ionice -c3）</td></tr>
 <tr><th>截止日期</th><td><b>2026-11-21</b></td></tr>
-<tr><th>当前状态</th><td>⏳ 待执行 — MegaMath Batch1 已下载（364 parquet / 0 incomplete），脚本 stackv3_tokenize.py 可复用</td></tr>
+<tr><th>当前状态</th><td>🔄 <b>进行中 (2026-11-18)</b> — 4 路并行分词运行中（web-pro 6/100, text-code-block 3/200, qa 3/32, translated-code 2/16），nice 19 + ionice -c3。已完成 14/348 shard，初步 token 估算 ~2.4B（单 shard ~172M tok）。ETA: web-pro ~4.5h, qa ~2.6h, translated-code ~2.2h, text-code-block ~17h（瓶颈）。megamath-code 子集无 text 列已跳过。</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 0 ERR ② MANIFEST total_tokens ≥ 70B ③ 产物落 /nas_user/.../tokenized/IFM/MegaMath/</td></tr>
 </table>
@@ -205,7 +205,8 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="info" style="font-size:12px;">
 <b>原则</b>：S2 预训练需要的（#1~#3）排最前，立即启动；IFM 已在下的（#4~#5）继续但不抢带宽；SFT/RL 小数据集（#6~#10）穿插在带宽空闲时下。<br>
 <b>磁盘红线</b>：<code>/nas_user</code> 可用 ≥5TB，随时检查。<br>
-<b>注意</b>：data loop 进程和下载进程均已停，需要先重启 data loop，再按此优先级启动下载。<code>aimo-validation-aime</code> 不下。
+<b>当前下载状态（2026-11-18）</b>：#1 MegaMath-web 13% (645/4950, ETA ~31h) 🔄 | #2 Nemotron-CC-Math <b>✅ 完成 (243GB/196 files)</b> | #3 finemath <b>✅ 完成 (140GB/288 parquet)</b> | #6~#10 小数据集 <b>✅ 全部完成</b> | #4 Code-R 79% 🔄 | #5 Math-R 36% 🔄<br>
+<b>注意</b>：<code>aimo-validation-aime</code> 不下。
 </div>
 <!-- §3 -->
 <h2 id="s3">§3 — 时间线甘特图（11-17 → 11-30）</h2>
@@ -407,7 +408,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <tr><th style="width:25px;">#</th><th>Go/No-Go 条件</th><th>检查方法</th><th>当前状态</th><th>不满足时处置</th></tr>
 <tr><td>G1</td><td><b>stack-v3 L4 过滤后 ≥ 250B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="green">✅ 430.7B PASS</td><td>放宽过滤或使用全量 476B</td></tr>
 <tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-2</td><td>启动 Nemotron-CC-Math（#2 下载优先级，133B）或 finemath（#3，43.6B）补入</td></tr>
-<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="amber">🔄 数据已就位，待扫描</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
+<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="green">✅ 黑名单就绪 (9277 tasks / 6M ngrams)</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验 web/code/math prop</td><td class="amber">⏳ 待 PC-4</td><td>手动调整 prop 至满足</td></tr>
 <tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-26）</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k，ETA ~11-26）</td><td>如异常推迟 S2 切换（每推迟 1 天，700k 终点延后 1 天）</td></tr>
 <tr><td>G6</td><td><b>（可选）MegaMath-web 到货且分词完成（~11-26）</b></td><td>MANIFEST total_tokens ≥ 200B</td><td class="amber">⏳ 待 PC-5（Soft）— #1 下载优先级，11-17 启动</td><td>使用 fallback 方案（§1.3），epoch 1.18；PC-5 完成后可中途刷新 blend TSV</td></tr>
