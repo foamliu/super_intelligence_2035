@@ -51,6 +51,8 @@
 
 ### §A.9 采集与发布链路实测（2026-11-17 第 292 轮）
 
+
+
 | # | 结论 | 依据 |
 |:--|:--|:--|
 | 1 | 🔑 **后台「作品管理」列表不给公开 `/article/` URL**。`a[href*="/article/"]` 计数为 **0**；「更多」菜单只有「加入合集 / 置顶 / 分享 / 设为仅我可见 / 删除」；本轮点「修改」与「查看评论」**均未跳转**（与 §A.5 第 4 条同类）；后台首页动态与 `document.documentElement.innerHTML` 里也搜不到 19 位 id（`article_id/item_id/group_id/pgc_id` 全空） | 本轮 4 次尝试（`moremenu.py` / `getid.py` / `viacmt.py` / `homefeed.py` / `srchid.py`）全部无 URL |
@@ -109,6 +111,20 @@
 > ✅ **仍然可用的「文风内核」**：**短 · 直 · 口语 · 有立场** —— 立场走 §1 正向表达（拥护党和国家 / 拥护民族大团结 / 爱汉文化 / 批「作为历史政权的清朝」须**附史实**，见 SPEC §2.1.1）。
 
 ---
+
+### §A.10 采集与发布链路实测（2026-11-17 第 293 轮）
+
+| # | 结论 | 依据 |
+|:--|:--|:--|
+| 1 | 🔑 **`.comment-textarea` 是 `contenteditable` div，不是 `<textarea>`**，且页面初始常把它排在视口下方（本轮 `top≈1053`，视口高 760）⇒ 只 `scrollIntoView` 后按 `getBoundingClientRect` 算坐标点击**仍会落空**，逐键输入全部丢失（`FILLED len:0` → `ERR_FILL_MISMATCH`） | 评论 A 第 1 投：`BEFORE len:0 / cls:submit-btn disable` → `FILLED len:0`；改 `window.scrollTo(0, rect.top+scrollY-300)` 后 `FILLED len:26 / cls:submit-btn`，一次落地 |
+| 2 | ✅ **评论落地判据仍用「评论计数 +1 且页面出现本人昵称」**；`AFTER` 与 `RECHECK` 各读一次，两次一致才算成功 | A `3→4`、B `0→1`、C `0→1`，三条 `mine_shown=True` |
+| 3 | ⚠️ **前台 30s 超时 ≠ 作业被终止**：批量探楼（11 帖）一定会超时 ⇒ 必须 `nohup setsid python3 … > out 2>&1 < /dev/null &`，再分段读日志 | 第 1 次前台跑被 kill；后台版 90s 内跑完 11 帖 |
+| 4 | ⚠️ **多帖连续 `nav` 有渲染延迟**：`sleep(5)` 不够，标题会串到上一帖、评论数正则读不到 ⇒ `sleep(8)` + `scrollTo(0, scrollHeight*0.55)` 后再读 | probe 版 5s 读到的 `title` 与目标帖不符，probe2 版 8s 后全部对齐 |
+| 5 | ✅ **后台首页动态把文章显示成「发布了微头条」**：这是平台「由文章生成」的微头条，**不另计配额、不重复记账**（承 §A.8 第 6 条） | `stats.py`：`11-17 15:05 发布了微头条 榜单只认机柜…`，而 `/graphic/articles` 卡片为文章形态 `已发布 已推送 首发` |
+| 6 | ✅ **「共 N 条内容」本轮即时更新**（43→44 一次读到），说明 §A.9 第 3 条的 ~40s 延迟**不是稳定现象** ⇒ 读到旧值先等 45s 复读一次再判 | `s4_confirm.py` AFTER_CONFIRM 直接读到 `共 44 条内容` |
+| 7 | ⚠️ **自赞按钮可能在视口外**（本轮 `y=200` 但实际不可点）：先 `window.scrollTo(0,400)` 再算坐标；点击后**必须 `nav` 重载复核** | 第 1 次 `AFTER_CLICK 赞`（未生效）→ 滚动后 `detail-like like 1` → 重载仍 `like 1` |
+| 8 | ⚠️ **复制旧轮 `common.py` 会覆盖旧轮截图**（脚本里 `ready.png` / `preview.png` 路径硬编码到旧目录）⇒ 复制工具时先 `sed` 改路径，否则旧轮证据被新图覆盖 | 本轮 s2 写的 `ready.png` 落到 `/tmp/r292/cdp/` |
+| 9 | 🔑 **图内嵌角标才是最容易被漏判的水印**：`1/028/187`（黄仁勋 X 主页）URL 完全干净、>`image/*` 正常、数值校验全过，但**图内右下角嵌了 `IT之家` logo + `www.ithome.com`** ⇒ 只有 `viewimg.py` 注入截图目视才能发现 | 本轮弃图 1 张；改选 Lux 官方渲染图（机身 DOE/AMD/HPE/Oracle 为设备本体标识） |
 
 ### §A.2 发布/互动三条硬纪律（2026-11-16 10:3x 第 285 轮实测 · 每轮照做）
 
