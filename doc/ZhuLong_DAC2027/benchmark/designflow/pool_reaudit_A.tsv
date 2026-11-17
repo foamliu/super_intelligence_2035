@@ -54,7 +54,7 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1788763403419_gqt57			n/a		not-authentic	不可造 (NOT-AUTHENTIC (canned/self-leak/empty/meta, not real user intent))	-
 1793167611680_ahtlt			n/a		uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
 1791962616204_7j1bw	caozhang	hfhds209	n/a	digital	duplicate	不可造 (DUPLICATE (already a case / cross-shard dup))	-
-1793004375421_dse5n	e0046913	hfeg0pkn003	n/a	eda_other	uncategorized	可造 (revived: default (no hard exclusion))	produce/Q&A deliverable, pending deepread for exact form
+1793004375421_dse5n	e0046913	hfeg0pkn003	n/a	eda_other	uncategorized	可造 (revived r686: 11-15 新标准 analysis-Q&A 合法, deepread DONE r686, 合成 DEBT r687)	Q&A case: deliverable=low_power_flow_analysis_report.json; check() 判 baseline 真值(A feint 脚本导出)+evidence token 原文子串+B judge-self-check(内嵌 _parse_feint_baseline)+3-seed; A=feint 真实树, B=变体 ≥10维全异; 见 trace_deepreads/dse5n_lowpower_flow_plan_analyze.md
 1792981676632_bxnc8	zhengc	hfeg0plg66	n/a	eda_other	analysis-Q&A	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1790126403703_fj73q	e02141	hfeg0pkn002	n/a	digital	debug/env-config;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
 1792739133486_74dww			n/a		analysis-Q&A;wrong-domain	不可造 (WRONG-SHARD (domain belongs to B/C/D))	-
