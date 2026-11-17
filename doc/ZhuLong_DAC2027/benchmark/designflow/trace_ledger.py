@@ -393,6 +393,33 @@ def cmd_mark(args):
     if args.status not in VALID_STATUS:
         print("bad status: %s (allowed: %s)" % (args.status, "/".join(VALID_STATUS)))
         return 2
+    # r708 fix (A 召集人 + 共享 code owner): cmd_mark 加跨 shard 互斥检查。
+    # 根因 (D r816 实证): cmd_claim (L372-389) 有 load_all_shards() 跨 shard refusal，
+    # 但 cmd_mark 直接 _upsert 落盘，后门敞开 → A r682 fl4rh 绕过 claim 直接 mark 造
+    # 跨 shard 重复 (D 11-08 已 case 同 session)。修复: mark 前若 session 已在**他 shard**
+    # (非当前 --shard) TOUCHED，refuse 并报已存在 case_id；--force 显式覆盖用于
+    # wrong-domain 标注等需保留 case 的例外场景 (sgk0l 类)。同 shard 内 claimed→case
+    # 是正常流程，不 refuse。仅警告不 refuse wrong-domain，因需保留 case。
+    norm = _norm_sid(args.session)
+    collisions = []
+    for s in ("A", "B", "C", "D"):
+        if _shard and s == _shard:
+            continue  # 同 shard 内 claimed→case 是正常流程，跳过
+        for r in _load_file(os.path.join(HERE, "trace_ledger_%s.tsv" % s)):
+            if _norm_sid(r["session_file"]) == norm and r["status"] in TOUCHED:
+                collisions.append((s, r))
+    if collisions and not args.force:
+        s, c = collisions[0]
+        print("REFUSED: session 已在 **他 shard %s** 台账 (status=%s, case_id=%s, %s, "
+              "shard_row=%s)。跨 shard 互斥：一 trace 一 case。" %
+              (s, c["status"], c["case_id"] or "-", c["updated_at"], c["session_file"]))
+        print("若确需保留 (如 wrong-domain 标注)，加 --force 显式覆盖。")
+        return 1
+    if collisions and args.force:
+        s, c = collisions[0]
+        print("WARN --force: session 已在他 shard %s 台账 (status=%s, case_id=%s, "
+              "%s) — 强制 mark，请在 note 记录原因。" %
+              (s, c["status"], c["case_id"] or "-", c["updated_at"]))
     _upsert(args.session, status=args.status, case_id=args.case_id, note=args.note)
     print("marked: %s -> %s%s" % (args.session, args.status,
                                   (" (%s)" % args.case_id) if args.case_id else ""))
@@ -867,6 +894,8 @@ def main():
     p.add_argument("--status", required=True)
     p.add_argument("--case-id", dest="case_id", default="")
     p.add_argument("--note", default="")
+    p.add_argument("--force", action="store_true",
+                   help="覆盖跨 shard 互斥 (仅 wrong-domain 标注等需保留 case 的例外)")
     p = sub.add_parser("refresh")
     p.add_argument("--json", required=True)
     p = sub.add_parser("seed")
