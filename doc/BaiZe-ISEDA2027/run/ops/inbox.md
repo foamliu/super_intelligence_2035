@@ -1,4 +1,99 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 279 | TARGET: 29 -->
+## RUN_ID 279 — **处置：杀掉卡死的 pretrain cline（用户直令·第一步）**
+
+> 依据 RUN_ID 278：`.29` 上 `baize_pretrain_loop.sh`(3165013) 活着，其子进程
+> `cline --data-dir .cline_pretrain`(2054633) 已 `R` 状态 100% CPU 空转 9h+、sessions 自 12:57 零写入。
+> 本块动作（用户已批准）：
+> ① 前置核对：cmdline 必含 `.cline_pretrain`、ppid 必为 3165013、loop 必活 —— **任一不满足即 ABORT，不 kill**；
+> ② 抢救 loop 日志（fd1 指向已删除的 `/tmp/baize_pretrain_loop.log`）；
+> ③ `kill -TERM` → 等 10s → 仍活则 `kill -KILL`（**只此一个 PID**）；
+> ④ 校验 loop 未受影响；等 ≤120s 观察 loop 是否自动起新 cline；
+> ⑤ 抽查训练（GPU / torchrun worker 数）未受影响。
+> 🚫 不碰 3165013 / 3165005 / 训练 torchrun / 其他线 cline。
+
+```bash
+set -u
+echo "=== RUN_ID 279 | pretrain hung-cline kill (AUTHORIZED) | $(date '+%F %T') | host=$(hostname) ==="
+LPID=3165013
+CPID=2054633
+LOGDIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs
+
+echo
+echo "[0] 前置核对（任一不满足 → ABORT，不做任何 kill）"
+cmd="$(tr '\0' ' ' < /proc/$CPID/cmdline 2>/dev/null || true)"
+ppid="$(ps -o ppid= -p $CPID 2>/dev/null | tr -d ' ')"
+echo "  cpid=$CPID ppid=${ppid:-none}"
+echo "  cmdline=${cmd:0:220}"
+ok=1
+case "$cmd" in *'.cline_pretrain'*) ;; *) echo "  ABORT: cmdline 不含 .cline_pretrain"; ok=0;; esac
+[ "${ppid:-0}" = "$LPID" ] || { echo "  ABORT: ppid=${ppid:-none} != loop $LPID"; ok=0; }
+kill -0 $LPID 2>/dev/null || { echo "  ABORT: loop $LPID 不在"; ok=0; }
+[ "$ok" = "1" ] || { echo "=== ABORTED (no kill) 279 ==="; exit 0; }
+
+echo
+echo "[1] kill 前证据"
+ps -o pid,ppid,etime,stat,pcpu,rss,args -p $CPID | cut -c1-150
+awk '{print "  utime_ticks=" $14 " stime_ticks=" $15 " state=" $3}' /proc/$CPID/stat 2>/dev/null
+stat -c '  .cline_pretrain/sessions mtime=%y' /nas_train/app.e0031982/.cline_pretrain/sessions 2>/dev/null || true
+
+echo
+echo "[2] 抢救 loop 日志（fd 指向已删除文件）"
+mkdir -p "$LOGDIR"
+SALV="$LOGDIR/pretrain_loop_salvage_$(date '+%Y%m%d_%H%M%S').log"
+if [ -r /proc/$LPID/fd/1 ]; then
+  timeout 20 cat /proc/$LPID/fd/1 > "$SALV" 2>/dev/null; rc=$?
+  echo "  salvage rc=$rc size=$(stat -c %s "$SALV" 2>/dev/null || echo 0)"
+  echo "  path=$SALV"
+  tail -n 12 "$SALV" 2>/dev/null | cut -c1-170 | sed 's/^/  | /'
+else
+  echo "  /proc/$LPID/fd/1 不可读，跳过抢救"
+fi
+
+echo
+echo "[3] kill：TERM → 10s → KILL"
+kill -TERM $CPID 2>/dev/null && echo "  TERM sent @ $(date '+%T')" || echo "  TERM failed"
+gone=0
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  sleep 1
+  if ! kill -0 $CPID 2>/dev/null; then echo "  已退出（TERM 生效，用时 ${i}s）"; gone=1; break; fi
+done
+if [ "$gone" = "0" ]; then
+  echo "  10s 未退 → KILL"
+  kill -KILL $CPID 2>/dev/null
+  sleep 2
+  if kill -0 $CPID 2>/dev/null; then echo "  ⚠️ STILL ALIVE（需人工）"; else echo "  已退出（KILL 生效）"; fi
+fi
+
+echo
+echo "[4] 校验 loop 未受影响"
+ps -o pid,ppid,etime,stat,args -p $LPID | cut -c1-140
+echo "  loop_alive=$(kill -0 $LPID 2>/dev/null && echo yes || echo no)"
+
+echo
+echo "[5] 等 loop 下一轮（push + sleep 60s + 新 cline），最多 120s"
+NEW=""
+for i in $(seq 1 24); do
+  sleep 5
+  NEW="$(ps -eo pid,ppid,etime,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | grep -vE "^ *${CPID} " | head -2 | cut -c1-140)"
+  if [ -n "$NEW" ]; then echo "  @+$((i*5))s 检测到新 cline:"; echo "$NEW" | sed 's/^/    /'; break; fi
+done
+[ -z "$NEW" ] && echo "  120s 内未见新 cline（loop 可能仍在 push/sleep，稍后自然恢复；不影响训练）"
+
+echo
+echo "[6] 当前 .cline_pretrain 下的 cline"
+ps -eo pid,ppid,etime,stat,pcpu,args 2>/dev/null | grep -F '.cline_pretrain' | grep -v grep | cut -c1-150
+
+echo
+echo "[7] 训练未受影响抽查"
+nvidia-smi --query-gpu=index,utilization.gpu --format=csv,noheader 2>/dev/null | head -8 | sed 's/^/  /'
+echo "  torchrun(4177347) workers=$(ps -eo ppid= 2>/dev/null | awk '$1==4177347' | wc -l)"
+echo
+echo "=== DONE 279 ==="
+```
+
+
+# OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 278 | TARGET: 29 -->
 ## RUN_ID 278 — **pretrain loop / cline 深探（只读）**：fd 实指日志、进程状态、会话写入、训练进度
 
