@@ -118,3 +118,30 @@ python3 designflow/trace_ledger.py --shard B mc-matrix --src designflow/summary_
 # mc>=10         943      943        0     ← 第 92 轮 re-confirm
 ```
 四快照结构性饱和（1109/1113/1114/1115_081559）+ 复活池 r712 host-verify 实质性耗尽（9 real-trace 候选 0 干净 B 域可造）⇒ 符合 mc≥10 硬规则 0-case 判据。
+
+## 7. r721 apply reframe_note batch2（2026-11-17，本轮完成）
+
+r720 spotcheck batch2（designflow/intent_audit_B_r720_spotcheck2.tsv）对 r619-r711 复活池变现的 9 条
+Q&A/Diag/Explain→produce case 逐题溯源，判 9/9=keep_reframe_for_teeth（意图偏移但 §4.2 subprocess + §4.1 hidden-B
+有牙 ⇒ 重构结构性必要）。本轮 r721 把这 9 条的 reframe_note apply 到 cases/B/，闭合 r720 audit 的落地项。
+
+**apply 列表**（9 题，全部 cases/B/ 已存在，metadata.domain=spice_sim）：
+
+| task_id | intent→reframe | check.py 断言数 |
+|---|---|---|
+| EDA-Eval-DesignFlow-AcSimHowtoGuide-001 | how-to Q&A→produce | 17 |
+| EDA-Eval-DesignFlow-AetherAutoloadDiag-001 | diagnose Q&A→produce | 13 |
+| EDA-Eval-DesignFlow-BridgeCfgDiag-001 | diagnose Q&A→produce | 13 |
+| EDA-Eval-DesignFlow-CbrForceMechanismExplain-001 | explain Q&A→produce | 20 |
+| EDA-Eval-DesignFlow-DffSeqTestPipelineExplain-001 | explain Q&A→produce | 18 |
+| EDA-Eval-DesignFlow-FineSimDatacardDiag-001 | diagnose Q&A→produce | 21 |
+| EDA-Eval-DesignFlow-FinesimLogExplainDiag-001 | diagnose Q&A→produce | 29 |
+| EDA-Eval-DesignFlow-HspiceAcMergeDiag-001 | diagnose Q&A→produce | 20 |
+| EDA-Eval-DesignFlow-DsaEvalExplainQA-001 | explain Q&A→produce | 25 |
+
+reframe_note 文案统一格式：`<intent> Q&A→produce (§4 有牙必要, r720 spotcheck batch2): 用户<user>问<原话意图>, 重构为产<工具/产物>; check.py <k> 断言 + subprocess 真跑 + hidden-B cross-input guard 使纯 Q&A 无法有牙 => 重构为 produce 工具产出结构化 JSON 是让 check() 能区分真假交付的唯一途径, §4 结构性必要, 保留。`
+逐题文案依据 r720 spotcheck2 per_case_reasoning 列（用户原话意图 + 任务交付物 + 断言数 + 重构必要性）。
+
+**自验**：① 9 文件 json.load 全过 ② `python3 scripts/build_jsonl.py --check` 通过（cases/B=394 不变）③ git diff 仅新增 metadata.reframe_note 行（test_rationale 内容不变，仅末尾加逗号；test 字段未动）⇒ 670/670 断言达标不受影响 ④ trace_source(user/host/session_file/mc) 全部完整保留 ⑤ 仅 stage 本轮 9 文件，别线在途（WaveView.jsonl/waveview_scan_candidates.json untracked）未碰。
+
+**B 线 reframe_note apply 收口**：r713 batch1 5 条（r717 apply 4 + SiOutDiag-001 移交 D）+ r720 batch2 9 条（本轮 r721 apply 9）= 14 条全部闭合。r713/r720 audit 的 keep_reframe_for_teeth 落地项清零。
