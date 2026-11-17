@@ -322,3 +322,21 @@ bftii	jason17w	hfeg0pnd002	n/a		doc-search	可造 (revived: doc-search (old weak
 1793241105381_nurc0	shanliny	hfeg0pkn005	n/a	digital	analysis-Q&A;analysis	可造 (revived: analysis-Q&A (old weak filter retired))	Q&A case: deliverable=explanation/diagnosis report; check() verifies correct root-cause/error-signature/answer-content
 1791946267022_oqri7	xingx	hfeg0pkn002	n/a	digital	retrieval/code-comprehension;trivial	可造 (revived: retrieval/explain (old weak filter retired))	retrieval/explain case: deliverable=structured walkthrough; check() verifies correct identification of constructs/paths/signals
 # r619 NOFILE verification (2026-11-16, eda_flow .75 ssh stat): 26 fresh revived A-domain (not in ledger) + 4 待复审 = 30 unclaimed candidates, ALL 30 NOFILE (cline session rotation evaporated files). Verifies reaudit actionable backlog exhausted due to file rotation, not filter logic. 20 already-case + 84 parked (rejected w/ notes) + 26 NOFILE + 4 NOFILE = 130 revived A-domain accounted. Auto-stop triggered: 3 consecutive 0-case (r617/r618/r619). shard_mc.A=10 (already). Pivot to other产出.
+# r691 (2026-11-17) hfhds201 mc 5-9 band exhaustive re-review (11-15 new standard; domain-ownership unchanged). Source: ssh_eda_search_20261116_072610. Method: full user-msg peek (not first-msg only). Conclusion: 0/18 true A-domain viable. See trace_deepreads/r691_hfhds201_mc5band_exhaustive_reaudit.md
+1792047719261_9a7jm	t0002441	hfhds201	8	B(spice_sim)	concept-Q&A	不可造 (WRONG-SHARD B + no evidence anchor)	- (Finesim DC convergence concept-Q&A, dup across 5 sessions)
+1792045482959_6sh4c	t0002441	hfhds201	7	B(spice_sim)	concept-Q&A	不可造 (WRONG-SHARD B + dup of 9a7jm)	-
+1792045722440_qnm9e	t0002441	hfhds201	5	B(spice_sim)	concept-Q&A	不可造 (WRONG-SHARD B + dup of 9a7jm)	-
+1792045847157_shssw	t0002441	hfhds201	5	B(spice_sim)	concept-Q&A	不可造 (WRONG-SHARD B + dup of 9a7jm)	-
+1792046926986_y2mlp	t0002441	hfhds201	8	B(spice_sim)	concept-Q&A	不可造 (WRONG-SHARD B + dup of 9a7jm)	-
+1791437609332_ck74p	t0002987	hfhds201	5	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN: zhulong agent self-inspection)	- (user is zhulong dev, not EDA user)
+1791448119363_b2zwp	t0002987	hfhds201	6	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN: "检查你自己的harness架构")	-
+1791448125603_ogyui	t0002987	hfhds201	5	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN)	-
+1791448191037_qhg0k	t0002987	hfhds201	6	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN: "完整检索你自己的代码结构")	-
+1791509780928_7cdxg	t0002987	hfhds201	5	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN)	-
+1791511781844_7f29h	t0002987	hfhds201	7	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN: zhulong duplicate-output bug diagnosis)	-
+1790659224643_m273z	t0002987	hfhds201	7	off-domain(agent-harness)	off-domain	不可造 (OFF-DOMAIN: zl agent 卡慢 log)	-
+1789882223617_lxajs	mike	hfhds201	7	B(spice cosim)	code-comprehension Q&A	不可造 (WRONG-SHARD B: Finesim/DDR6 cosim Makefile 阅览)	-
+1789885606035_0mx9i	mike	hfhds201	7	B(env-config)	env-config	不可造 (WRONG-SHARD B + env: "logic_cosim 路径可执行 shell 吗")	-
+1794532222212_nlwn9	t0002441	hfhds201	5	trivial	trivial	不可造 (NO-TASK: "who are you/nishishei" 问候)	-
+1794547534579_uhrnk	t0002441	hfhds201	5	C/B(layout/spice)	-	不可造 (WRONG-SHARD C/B: virtuoso/aether/hspice)	-
+# r691 SUMMARY: hfhds201 (local reachable) mc>=5 A-domain pool EXHAUSTED under "faithful-intent + checkable" criterion (mc>=10 0 fresh per r689 + mc5-9 0/18 viable). BUT auto-stop NOT triggered: remote A-domain fresh (r678's 18, reachable per r679) NOT yet re-audited under mc>=5. shard_mc.A stays 5. Next r692: audit remote A-domain fresh.
