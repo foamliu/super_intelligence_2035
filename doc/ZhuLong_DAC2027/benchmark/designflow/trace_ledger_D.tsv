@@ -1850,3 +1850,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792055462058_i6kiq	simplec	10.129.2.11	38	schematic_netlist	case	EDA-Eval-DesignFlow-GxrcCciPathArgFeature-001	2026-11-18 02:24	
 1789729630634_t5ge3	davidwu	10.129.35.118	57	schematic_netlist	parked		2026-11-18 03:12	r850: misclassified - actual task is floorplan placement+routing (C-shard layout_aether), not D; re-pick
 1782784000943_pcb1x	e03179	172.16.8.191	31	schematic_netlist	case	EDA-Eval-DesignFlow-SchemCvPinListRpt-001	2026-11-18 03:35	r850: SchemCvPinListRpt-001, schematic_netlist, 12 assertions, golden PASS + NEG_RC=0
+1793777039061_elali	shaoyou	hfeg0pkn003	80	waveform	case	EDA-Eval-DesignFlow-WvDisplaySignalInWv-001	2026-11-18 04:33	r853 D case WaveView ACE Tcl display v(vg) in active wv; A档 trace-faithful; 12 asserts + 4 neg + 3 fake all gated
