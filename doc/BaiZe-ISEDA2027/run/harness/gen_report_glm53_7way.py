@@ -303,7 +303,7 @@ _rerun_status_map = {
     "cline-patched": "BLOCKED(infra): cline CLI exit1 静默崩溃, 3 attempts (orig+reruns 0932/1143), 非能力",
     "codex": "done (2/2: bn-fit-modify=ability, break-filter-js-from-html=model started no run_result → synthetic 待补)",
     "opencode": "排队中", "claude-code": "排队中",
-    "pi": "排队中", "hermes": "running (8/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 6 ability, 4 running; video-processing 待补)",
+    "pi": "排队中", "hermes": "running (10/12 done: 2 PASS=bn-fit-modify+portfolio-optimization Δ=+2, 8 ability, 2 running; video-processing 待补)",
     "deepseek-harness": "排队中",
 }
 _tb21_review_parts = []
@@ -395,7 +395,7 @@ HTML = f"""<!DOCTYPE html>
 
 <h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done，hermes 8/12 done 2 PASS Δ=+2，opencode→pi→deepseek→cc 排队）。重跑完成后重算真实 Pass%。</p></div>
+<p><strong>当前状态</strong>：47 trial 串行重跑进行中（codex 2/2 done，hermes 10/12 done 2 PASS Δ=+2，2 running=regex-chess/sam-cell-seg，opencode→pi→deepseek→cc 排队）。重跑完成后重算真实 Pass%。</p></div>
 <h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
 <table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
