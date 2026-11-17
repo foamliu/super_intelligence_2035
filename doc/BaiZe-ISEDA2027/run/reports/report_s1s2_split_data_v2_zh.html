@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S1/S2 等分方案 · 数据落地方案 v2（4:4:2）</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333;line-height:1.65}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:10px;font-size:22px}
+h2{color:#283593;margin-top:32px;border-bottom:1px solid #ccc;padding-bottom:5px;font-size:18px}
+h3{color:#1565c0;font-size:15px}
+h4{color:#37474f;font-size:14px;margin:12px 0 6px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:12.5px}
+th,td{border:1px solid #ddd;padding:5px 8px;text-align:left}
+th{background:#e3f2fd;font-weight:600;white-space:nowrap}
+tr:nth-child(even){background:#f5f5f5}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.red{color:#c62828;font-weight:700;background:#ffebee}
+.amber{color:#e65100;font-weight:600;background:#fff8e1}
+.green{color:#2e7d32;font-weight:600;background:#e8f5e9}
+.card{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:15px 20px;margin:15px 0;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.summary{background:#e8f5e9;border-left:4px solid #4caf50;padding:15px 20px;margin:15px 0;border-radius:0 8px 8px 0}
+.warn{background:#fff3e0;border-left:4px solid #ff9800;padding:12px 18px;margin:12px 0;border-radius:0 6px 6px 0}
+.danger{background:#ffebee;border-left:4px solid #c62828;padding:12px 18px;margin:12px 0;border-radius:0 6px 6px 0}
+.info{background:#e3f2fd;border-left:4px solid #1976d2;padding:12px 18px;margin:12px 0;border-radius:0 6px 6px 0}
+.footer{margin-top:40px;padding-top:15px;border-top:1px solid #ccc;color:#888;font-size:11px}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
+.gantt{width:100%;border-collapse:collapse;font-size:11px;margin:15px 0}
+.gantt th{background:#283593;color:#fff;padding:4px 6px;text-align:center}
+.gantt td{border:1px solid #e0e0e0;padding:3px 6px;text-align:center}
+.gantt .week-header{background:#3949ab;color:#fff;font-size:10px}
+.gantt .row-label{text-align:left;font-weight:600;white-space:nowrap}
+.gantt .milestone{background:#c62828;color:#fff;font-weight:700;border-radius:50%;padding:1px 4px}
+.pc-card{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:15px 18px;margin:10px 0;border-left:4px solid #1a237e}
+.pc-card h4{margin:0 0 8px;color:#1a237e}
+.toc{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;padding:12px 20px;margin:15px 0}
+.toc a{color:#1565c0;text-decoration:none;font-size:13px}
+.toc ul{list-style:none;padding-left:0;margin:5px 0}
+.toc li{padding:2px 0}
+.formula{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:8px 12px;margin:8px 0;font-family:"Courier New",monospace;font-size:12px}
+</style>
+</head>
+<body>
+<h1>S1/S2 等分方案 · 数据落地方案 v2（web:code:math = 4:4:2）</h1>
+<p style="color:#666;font-size:12px;">
+<b>撰写</b>: BaiZe Data Agent · 2026-11-17<br>
+<b>用户令</b>: 2026-11-17 — S2 采用 4:4:2，刷新细化方案（中文 HTML）<br>
+<b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。<br>
+<b>当前进度</b>: iter ≈ 235k / 700k（33.6%），预计 ~2026-12-25 到 350k 切换点
+</p>
+<div class="summary">
+<h2 style="border:none;margin-top:0;">一句话结论</h2>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤）→ PC-2（MegaMath 分词）→ PC-3（污染闸门扩展）→ PC-4（blend TSV 生成），预计 11-22 前全部就绪，不阻塞 S1 训练（ETA ~12-25 到 350k）。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 按时到货，Math epoch 从 1.18 降到 0.65，全面消除 >1.2 风险。</p>
+</div>
+<div class="toc">
+<b>目录</b>
+<ul>
+<li>§1 — <a href="#s1">最终配比表（S2 shard 级 blend TSV）</a></li>
+<li>§2 — <a href="#s2">前置工作清单（PC-1 ~ PC-5）</a></li>
+<li>§3 — <a href="#s3">时间线甘特图（11-17 → 12-25）</a></li>
+<li>§4 — <a href="#s4">Epoch 核算表（S1+S2 累计消耗 vs 可用量）</a></li>
+<li>§5 — <a href="#s5">污染检查方案</a></li>
+<li>§6 — <a href="#s6">风险与缓解</a></li>
+<li>§7 — <a href="#s7">结论：可行性判定 + 关键路径 + Go/No-Go 条件</a></li>
+</ul>
+</div>
+<!-- §1 -->
+<h2 id="s1">§1 — 最终配比表（S2 shard 级 blend TSV）</h2>
+<h3>1.1 设计原则</h3>
+<ol style="font-size:13px;">
+<li><b>web:code:math = 4:4:2 严格满足</b>（各类别 prop 加和 = 目标值，总 prop = 1.0）</li>
+<li><b>优先使用预训练语料</b>（非 SFT）—— SFT 推理链数据留给 decay 段或 post-train</li>
+<li><b>Code 混合 3 源</b>（UDC L2 + UDC L3 + stack-v3 L4 filtered）增加多样性、降低单源 epoch</li>
+<li><b>Math 混合 3 源</b>（UDM L1 + UDM L3 + MegaMath）增加多样性</li>
+<li><b>Web 以 en_v1_4 为主体</b>，少量 L1-HQ + ZH 补充（与 S1 一致，保持连续性）</li>
+<li><b>每源累计 epoch（S1+S2）控制 < 1.2</b>，避免过拟合</li>
+</ol>
+<h3>1.2 主方案 S2 Blend TSV — 含 MegaMath-web（推荐，目标方案）</h3>
+<p style="font-size:12px;color:#666;">假设 MegaMath-web (Batch2, ~887GB, ~279B tokens) 在 S2 启动前到货并分词完成。所有 epoch 均在安全线内。</p>
+<table>
+<tr><th>#</th><th>数据源</th><th>key</th><th>类别</th><th class="num">S2 prop</th><th class="num">S2 tok (B)</th><th class="num">可用 (B)</th><th class="num">S1 消耗 (B)</th><th class="num">累计 (B)</th><th class="num">累计 epoch</th><th>备注</th></tr>
+<tr><td>1</td><td>Ultra-FineWeb en_v1_4</td><td><code>en_v1_4</code></td><td>Web</td><td class="num">0.35</td><td class="num">513.3</td><td class="num">2,237.1</td><td class="num">953.6</td><td class="num">1,466.9</td><td class="num green">0.66</td><td>Web 主体</td></tr>
+<tr><td>2</td><td>Ultra-FineWeb L1 EN HQ</td><td><code>ufw_l1_en_hq</code></td><td>Web</td><td class="num">0.03</td><td class="num">44.0</td><td class="num">150.2</td><td class="num">73.4</td><td class="num">117.4</td><td class="num green">0.78</td><td>HQ 补充</td></tr>
+<tr><td>3</td><td>Ultra-FineWeb ZH</td><td><code>ufw_zh</code></td><td>Web</td><td class="num">0.02</td><td class="num">29.3</td><td class="num">112.8</td><td class="num">58.7</td><td class="num">88.0</td><td class="num green">0.78</td><td>中文保留少量</td></tr>
+<tr style="background:#e8f5e9;"><td>—</td><td><b>Web 小计</b></td><td>—</td><td>—</td><td class="num"><b>0.40</b></td><td class="num"><b>586.6</b></td><td class="num"><b>2,500.1</b></td><td class="num"><b>1,085.7</b></td><td class="num"><b>1,672.3</b></td><td class="num"><b>0.67</b></td><td>✅ web=40%</td></tr>
+<tr><td>4</td><td>UltraData-Code L2</td><td><code>code_l2</code></td><td>Code</td><td class="num">0.18</td><td class="num">264.0</td><td class="num">421.5</td><td class="num">220.1</td><td class="num">484.1</td><td class="num amber">1.15</td><td>Code 主体</td></tr>
+<tr><td>5</td><td>UltraData-Code L3</td><td><code>code_l3</code></td><td>Code</td><td class="num">0.05</td><td class="num">73.3</td><td class="num">128.6</td><td class="num">58.7</td><td class="num">132.0</td><td class="num green">1.03</td><td>已下调 prop 防 >1.2</td></tr>
+<tr><td>6</td><td>stack-v3-train (L4 filt.)</td><td><code>stackv3_filt</code></td><td>Code</td><td class="num">0.17</td><td class="num">249.3</td><td class="num">286~405</td><td class="num">0</td><td class="num">249.3</td><td class="num green">0.62~0.87</td><td>新增，97.6% 独特</td></tr>
+<tr style="background:#e8f5e9;"><td>—</td><td><b>Code 小计</b></td><td>—</td><td>—</td><td class="num"><b>0.40</b></td><td class="num"><b>586.6</b></td><td class="num"><b>836~955</b></td><td class="num"><b>278.8</b></td><td class="num"><b>865.4</b></td><td class="num"><b>0.91~1.04</b></td><td>✅ code=40%</td></tr>
+<tr><td>7</td><td>UltraData-Math L1</td><td><code>math_l1</code></td><td>Math</td><td class="num">0.06</td><td class="num">88.0</td><td class="num">164.4</td><td class="num">73.4</td><td class="num">161.4</td><td class="num green">0.98</td><td>Math 主体</td></tr>
+<tr><td>8</td><td>UltraData-Math L3</td><td><code>math_l3</code></td><td>Math</td><td class="num">0.03</td><td class="num">44.0</td><td class="num">78.0</td><td class="num">29.3</td><td class="num">73.3</td><td class="num green">0.94</td><td>Math 补充</td></tr>
+<tr><td>9</td><td>MegaMath (Batch1+web)</td><td><code>megamath</code></td><td>Math</td><td class="num">0.11</td><td class="num">161.3</td><td class="num">~371</td><td class="num">0</td><td class="num">161.3</td><td class="num green">0.43</td><td>新增，Batch1~92B+web~69B</td></tr>
+<tr style="background:#e8f5e9;"><td>—</td><td><b>Math 小计</b></td><td>—</td><td>—</td><td class="num"><b>0.20</b></td><td class="num"><b>293.3</b></td><td class="num"><b>613.4</b></td><td class="num"><b>102.7</b></td><td class="num"><b>396.0</b></td><td class="num green"><b>0.65</b></td><td>✅ math=20%</td></tr>
+<tr style="background:#c8e6c9;font-weight:700;"><td>—</td><td><b>合计</b></td><td>—</td><td>—</td><td class="num"><b>1.00</b></td><td class="num"><b>1,466.5</b></td><td>—</td><td class="num"><b>1,467.2</b></td><td class="num"><b>2,933.7</b></td><td>—</td><td>✅ 加和=1.0</td></tr>
+</table>
+<div class="info">
+<b>类别校验（主方案）</b>：Web = 0.35+0.03+0.02 = <b>0.40</b> ✅ | Code = 0.18+0.05+0.17 = <b>0.40</b> ✅ | Math = 0.06+0.03+0.11 = <b>0.20</b> ✅ | 合计 = <b>1.00</b> ✅
+</div>
+<h3>1.3 Fallback 方案 — 仅 MegaMath Batch1（如 Batch2-web 延迟）</h3>
+<p style="font-size:12px;color:#666;">如 MegaMath-web 未能在 S2 启动前到货：Math 类别级 epoch 1.18，单源 megamath_b1 epoch 1.28 >1.2（标红，但为首训新数据）。</p>
+<table>
+<tr><th>#</th><th>数据源</th><th>key</th><th>类别</th><th class="num">S2 prop</th><th class="num">S2 tok (B)</th><th class="num">可用 (B)</th><th class="num">累计 (B)</th><th class="num">累计 epoch</th><th>备注</th></tr>
+<tr><td>1</td><td>Ultra-FineWeb en_v1_4</td><td><code>en_v1_4</code></td><td>Web</td><td class="num">0.35</td><td class="num">513.3</td><td class="num">2,237.1</td><td class="num">1,466.9</td><td class="num green">0.66</td><td>同主方案</td></tr>
+<tr><td>2</td><td>Ultra-FineWeb L1 EN HQ</td><td><code>ufw_l1_en_hq</code></td><td>Web</td><td class="num">0.03</td><td class="num">44.0</td><td class="num">150.2</td><td class="num">117.4</td><td class="num green">0.78</td><td>同主方案</td></tr>
+<tr><td>3</td><td>Ultra-FineWeb ZH</td><td><code>ufw_zh</code></td><td>Web</td><td class="num">0.02</td><td class="num">29.3</td><td class="num">112.8</td><td class="num">88.0</td><td class="num green">0.78</td><td>同主方案</td></tr>
+<tr><td>4</td><td>UltraData-Code L2</td><td><code>code_l2</code></td><td>Code</td><td class="num">0.18</td><td class="num">264.0</td><td class="num">421.5</td><td class="num">484.1</td><td class="num amber">1.15</td><td>同主方案</td></tr>
+<tr><td>5</td><td>UltraData-Code L3</td><td><code>code_l3</code></td><td>Code</td><td class="num">0.05</td><td class="num">73.3</td><td class="num">128.6</td><td class="num">132.0</td><td class="num green">1.03</td><td>同主方案</td></tr>
+<tr><td>6</td><td>stack-v3-train (L4 filt.)</td><td><code>stackv3_filt</code></td><td>Code</td><td class="num">0.17</td><td class="num">249.3</td><td class="num">286~405</td><td class="num">249.3</td><td class="num green">0.62~0.87</td><td>同主方案</td></tr>
+<tr><td>7</td><td>UltraData-Math L1</td><td><code>math_l1</code></td><td>Math</td><td class="num">0.08</td><td class="num">117.3</td><td class="num">164.4</td><td class="num">190.7</td><td class="num amber">1.16</td><td>上调 prop 补偿</td></tr>
+<tr><td>8</td><td>UltraData-Math L3</td><td><code>math_l3</code></td><td>Math</td><td class="num">0.04</td><td class="num">58.7</td><td class="num">78.0</td><td class="num">88.0</td><td class="num amber">1.13</td><td>上调 prop</td></tr>
+<tr><td>9</td><td>MegaMath Batch1 only</td><td><code>megamath_b1</code></td><td>Math</td><td class="num">0.08</td><td class="num">117.3</td><td class="num">~92</td><td class="num">117.3</td><td class="num red">1.28</td><td>⚠️ >1.2，首训新数据</td></tr>
+<tr style="background:#c8e6c9;font-weight:700;"><td>—</td><td><b>合计</b></td><td>—</td><td>—</td><td class="num"><b>1.00</b></td><td class="num"><b>1,466.5</b></td><td>—</td><td class="num"><b>2,933.7</b></td><td>—</td><td>✅ 加和=1.0</td></tr>
+</table>
+<div class="warn">
+<b>Fallback 类别校验</b>：Web=0.40 ✅ | Code=0.40 ✅ | Math=0.08+0.04+0.08=<b>0.20</b> ✅ | 合计=1.00 ✅<br>
+<b>Math 类别级 epoch</b> = 396.0/334.4 = <b>1.18</b> 🟡（< 1.2 可接受）<br>
+<b>⚠️ 单源 megamath_b1 = 1.28 > 1.2</b>：首训新数据过拟合风险低于重复数据。如分词后 < 78B，需下调 prop 或启动 Nemotron-CC-Math 备选。
+</div>
+<h3>1.4 shard 级映射说明</h3>
+<table style="font-size:11.5px;">
+<tr><th>key</th><th>分词目录</th><th class="num">shard</th><th>来源</th><th>状态</th></tr>
+<tr><td><code>en_v1_4</code></td><td>…/tokenized/Ultra-FineWeb/ultrafineweb_en_v1_4</td><td class="num">110</td><td>DATA_MAPPING #1</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>ufw_l1_en_hq</code></td><td>…/tokenized/Ultra-FineWeb/ultrafineweb_l1_en_hq</td><td class="num">94</td><td>DATA_MAPPING #8</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>ufw_zh</code></td><td>…/tokenized/Ultra-FineWeb/ultrafineweb_zh</td><td class="num">4</td><td>DATA_MAPPING #9</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>code_l2</code></td><td>…/tokenized/UltraData-Code/UltraData-Code-L2</td><td class="num">141</td><td>DATA_MAPPING #3</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>code_l3</code></td><td>…/tokenized/UltraData-Code/UltraData-Code-L3</td><td class="num">63</td><td>DATA_MAPPING #4</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>stackv3_filt</code></td><td>…/tokenized/HuggingFaceCode/stack-v3-train</td><td class="num">8192</td><td>DATA_MAPPING H.14</td><td class="amber">🔄 已分词，待 L4 过滤</td></tr>
+<tr><td><code>math_l1</code></td><td>…/tokenized/UltraData-Math/UltraData-Math-L1</td><td class="num">149</td><td>DATA_MAPPING #5</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>math_l3</code></td><td>…/tokenized/UltraData-Math/UltraData-Math-L3</td><td class="num">67</td><td>DATA_MAPPING #6</td><td class="green">✅ 就绪</td></tr>
+<tr><td><code>megamath</code></td><td>…/tokenized/IFM/MegaMath</td><td class="num">TBD</td><td>DATA_MAPPING D1</td><td class="amber">🔄 Batch1 已下，待分词</td></tr>
+</table>
+<!-- §2 -->
+<h2 id="s2">§2 — 前置工作清单（PC-1 ~ PC-5）</h2>
+<p style="font-size:13px;">以下 5 项前置工作必须在 S2 启动前完成。PC-1~PC-4 为<b>必做</b>（关键路径），PC-5 为<b>强烈建议</b>。所有工作与 S1 训练并行，不占 GPU（CPU/IO only, nice 19 + ionice -c3）。</p>
+<div class="pc-card">
+<h4>PC-1: stack-v3-train L4 语言过滤 ⏳ 待执行</h4>
+<table style="margin:8px 0;">
+<tr><th style="width:100px;">工作内容</th><td>对 stack-v3-train 全量 8192 shard (476B tokens) 执行 L4 语言过滤：保留目标语言（Python/C/C++/Verilog/SV/VHDL/Tcl/Makefile/CMake/Shell/MATLAB/Java/JS/TS/Go/Rust 等 ~32 种），剔除非目标语言（~40%）、vendor 文件（~1%）、minified/generated。产出 shard 级白名单 + 过滤后 token 统计。</td></tr>
+<tr><th>预估耗时</th><td>2–4 小时（4 workers, nice 19 + ionice -c3）</td></tr>
+<tr><th>截止日期</th><td><b>2026-11-19</b></td></tr>
+<tr><th>当前状态</th><td>⏳ 待执行 — stack-v3 已全量分词（476B/8192 shard/0 ERR），L4 过滤脚本待编写</td></tr>
+<tr><th>负责人</th><td>Data Agent</td></tr>
+<tr><th>验收标准</th><td>① 过滤后 ≥ 250B tokens ② 产出 stackv3_l4_whitelist.tsv ③ 更新 DATA_MAPPING H.14</td></tr>
+</table>
+</div>
+<div class="pc-card">
+<h4>PC-2: MegaMath Batch1 分词 ⏳ 待执行</h4>
+<table style="margin:8px 0;">
+<tr><th style="width:100px;">工作内容</th><td>对 MegaMath Batch1（364 parquet / 216GB / 5 子集：web-pro + code + qa + text-code-block + translated-code）分词，使用 tokenizer_eod (vocab 129,281)。产出 .bin/.idx/.json + MANIFEST.json。分词后实测 token 数（与论文对比，标注偏差）。</td></tr>
+<tr><th>预估耗时</th><td>1–2 天（8 workers, nice 19 + ionice -c3）</td></tr>
+<tr><th>截止日期</th><td><b>2026-11-20</b></td></tr>
+<tr><th>当前状态</th><td>⏳ 待执行 — MegaMath Batch1 已下载（364 parquet / 0 incomplete），脚本 stackv3_tokenize.py 可复用</td></tr>
+<tr><th>负责人</th><td>Data Agent</td></tr>
+<tr><th>验收标准</th><td>① 0 ERR ② MANIFEST total_tokens ≥ 70B ③ 产物落 /nas_user/.../tokenized/IFM/MegaMath/</td></tr>
+</table>
+</div>
+<div class="pc-card">
+<h4>PC-3: 污染闸门扩展 ⏳ 待执行</h4>
+<table style="margin:8px 0;">
+<tr><th style="width:100px;">工作内容</th><td>① 扩展黑名单指纹：将 HumanEval/MBPP/GSM8K/MATH/SWE-bench 的 prompt/test/assertion/canonical_solution 加入污染黑名单（当前仅有 EDA-Eval-PyAether 158 任务）。② 对 stack-v3-train 全量 8192 shard 跑 13-gram 闸门扫描。③ 对 MegaMath Batch1 跑 8-gram 闸门扫描。④ 产出 S2 污染隔离报告。</td></tr>
+<tr><th>预估耗时</th><td>4–8 小时（13-gram 扫描 8192 shard + 8-gram 扫描 364 parquet）</td></tr>
+<tr><th>截止日期</th><td><b>2026-11-21</b></td></tr>
+<tr><th>当前状态</th><td>⏳ 待执行 — 现有 phase5 闸门脚本可复用，需新增 5 个 benchmark 指纹数据</td></tr>
+<tr><th>负责人</th><td>Data Agent</td></tr>
+<tr><th>验收标准</th><td>① 5 个 benchmark 黑名单指纹就位 ② stack-v3 全量 13-gram 扫描完成 ③ MegaMath 8-gram 扫描完成 ④ 命中 shard 列表产出 ⑤ 污染隔离报告产出</td></tr>
+</table>
+</div>
+<div class="pc-card">
+<h4>PC-4: S2 blend TSV 生成 ⏳ 待执行</h4>
+<table style="margin:8px 0;">
+<tr><th style="width:100px;">工作内容</th><td>按 §1.2（主方案）或 §1.3（fallback）生成 blend_s2_preblend.tsv，格式与 blend_s1_preblend.tsv 一致（key→prop 映射）。需根据 PC-1/PC-2/PC-3 实际产出调整 prop。同步生成 blend_s2_preblend_fallback.tsv 备用。</td></tr>
+<tr><th>预估耗时</th><td>0.5 天（脚本生成 + 校验加和=1.0 + 类别校验）</td></tr>
+<tr><th>截止日期</th><td><b>2026-11-22</b></td></tr>
+<tr><th>当前状态</th><td>⏳ 待执行 — 依赖 PC-1/PC-2/PC-3 完成</td></tr>
+<tr><th>负责人</th><td>Data Agent</td></tr>
+<tr><th>验收标准</th><td>① prop 加和=1.0 ② 类别校验 web=0.40/code=0.40/math=0.20 ③ 所有 key 对应 shard 目录存在且 triplet 完整</td></tr>
+</table>
+</div>
+<div class="pc-card" style="border-left-color:#ff9800;">
+<h4>PC-5: MegaMath-web (Batch2) 下载 + 分词 ⏳ 待启动（建议）</h4>
+<table style="margin:8px 0;">
+<tr><th style="width:100px;">工作内容</th><td>下载 MegaMath-web 子集（~4950 files / ~887GB / ~279B tokens），落盘 /nas_user/.../IFM/MegaMath/。下载完成后立即分词（同 PC-2）。需等 IFM/Code-Reasoning + Math-Reasoning 两路下载完成后启动。</td></tr>
+<tr><th>预估耗时</th><td>下载 2–3 天（nice 19, --max-workers 2）+ 分词 1–2 天 = 合计 3–5 天</td></tr>
+<tr><th>截止日期</th><td><b>2026-11-26</b>（Soft deadline — 如延迟则用 fallback）</td></tr>
+<tr><th>当前状态</th><td>⏳ 待启动 — 等 Code-Reasoning (ETA ~11-17 20:00) + Math-Reasoning (ETA ~11-20 21:00) 完成后启动</td></tr>
+<tr><th>负责人</th><td>Data Agent</td></tr>
+<tr><th>验收标准</th><td>① 下载 0 incomplete ② 分词 0 ERR ③ 实测 tokens ≥ 200B ④ 更新 blend TSV 为 §1.2 主方案</td></tr>
+</table>
+</div>
+<!-- §3 -->
+<h2 id="s3">§3 — 时间线甘特图（11-17 → 12-25）</h2>
+<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点</p>
+<table class="gantt">
+<tr>
+<th class="row-label" style="width:150px;">任务 \ 日期</th>
+<th class="week-header">11-17</th><th class="week-header">11-19</th><th class="week-header">11-21</th><th class="week-header">11-23</th><th class="week-header">11-25</th><th class="week-header">11-27</th><th class="week-header">11-29</th><th class="week-header">12-01</th><th class="week-header">12-05</th><th class="week-header">12-09</th><th class="week-header">12-13</th><th class="week-header">12-17</th><th class="week-header">12-21</th><th class="week-header">12-25</th>
+</tr>
+<tr><td class="row-label">S1 训练 (235k→350k)</td>
+<td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td><td style="background:#ffe0b2">🟠</td>
+<td class="milestone">🎯350k</td>
+</tr>
+<tr><td class="row-label">IFM/Code-Reasoning 下载</td>
+<td style="background:#ffe0b2">🟠66%</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">IFM/Math-Reasoning 下载</td>
+<td style="background:#ffe0b2">🟠28%</td><td style="background:#ffe0b2">🟠</td><td style="background:#c8e6c9">✅完成</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">PC-1: stack-v3 L4 过滤</td>
+<td style="background:#bbdefb">🔵2-4h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">PC-2: MegaMath Batch1 分词</td>
+<td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">PC-3: 污染闸门扩展</td>
+<td></td><td style="background:#bbdefb">🔵4-8h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">PC-4: blend TSV 生成</td>
+<td></td><td></td><td style="background:#bbdefb">🔵0.5d</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">PC-5: MegaMath-web 下载</td>
+<td></td><td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵下载</td><td style="background:#bbdefb">🔵下载</td><td style="background:#bbdefb">🔵分词</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">S2 数据就绪 (PC-4)</td>
+<td></td><td></td><td></td><td class="milestone">✅</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">S2 数据就绪 (含PC-5)</td>
+<td></td><td></td><td></td><td></td><td></td><td></td><td class="milestone">✅</td><td></td><td></td><td></td><td></td><td></td><td></td>
+</tr>
+<tr><td class="row-label">S2 训练启动</td>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+<td style="background:#ef5350;color:#fff;font-weight:700">🚀S2</td>
+</tr>
+</table>
+<div class="info" style="font-size:12px;">
+<b>关键路径</b>（不含 PC-5）：PC-1 (11-17→11-19) → PC-2 (11-17→11-21) → PC-3 (11-19→11-21) → PC-4 (11-21→11-23) → <b>S2 数据就绪 11-23</b><br>
+<b>优化路径</b>（含 PC-5）：+ PC-5 (11-21→11-29) → <b>S2 数据就绪 11-29（主方案，Math epoch 0.65）</b><br>
+<b>S2 启动</b>：~12-25（S1 到 350k），数据 11-23/11-29 就绪 → <b>有 4 周余量</b>，不阻塞<br>
+<b>IFM 下载完成节点</b>：Code-Reasoning ~11-17 20:00 ｜ Math-Reasoning ~11-20 21:00 ｜ MegaMath-web 可在 Math-Reasoning 完成后启动
+</div>
+<!-- §4 -->
+<h2 id="s4">§4 — Epoch 核算表（S1+S2 累计消耗 vs 可用量）</h2>
+<h3>4.1 主方案逐源 Epoch 核算（含 MegaMath-web）</h3>
+<div class="formula">S1 消耗 = 350,000 × 4,194,304 × S1_prop ÷ 1e9 (B tokens) | 累计 epoch = (S1+S2) ÷ 可用</div>
+<table>
+<tr><th>#</th><th>数据源</th><th>类别</th><th class="num">S1 prop</th><th class="num">S2 prop</th><th class="num">可用 (B)</th><th class="num">S1 消耗</th><th class="num">S2 消耗</th><th class="num">累计 (B)</th><th class="num">累计 epoch</th><th>判定</th></tr>
+<tr><td>1</td><td>Ultra-FineWeb en_v1_4</td><td>Web</td><td class="num">0.65</td><td class="num">0.35</td><td class="num">2,237.1</td><td class="num">953.6</td><td class="num">513.3</td><td class="num">1,466.9</td><td class="num green">0.66</td><td class="green">✅ 安全</td></tr>
+<tr><td>2</td><td>Ultra-FineWeb L1 EN HQ</td><td>Web</td><td class="num">0.05</td><td class="num">0.03</td><td class="num">150.2</td><td class="num">73.4</td><td class="num">44.0</td><td class="num">117.4</td><td class="num green">0.78</td><td class="green">✅ 安全</td></tr>
+<tr><td>3</td><td>Ultra-FineWeb ZH</td><td>Web</td><td class="num">0.04</td><td class="num">0.02</td><td class="num">112.8</td><td class="num">58.7</td><td class="num">29.3</td><td class="num">88.0</td><td class="num green">0.78</td><td class="green">✅ 安全</td></tr>
+<tr><td>4</td><td>UltraData-Code L2</td><td>Code</td><td class="num">0.15</td><td class="num">0.18</td><td class="num">421.5</td><td class="num">220.1</td><td class="num">264.0</td><td class="num">484.1</td><td class="num amber">1.15</td><td class="amber">🟡 接近1.2</td></tr>
+<tr><td>5</td><td>UltraData-Code L3</td><td>Code</td><td class="num">0.04</td><td class="num">0.05</td><td class="num">128.6</td><td class="num">58.7</td><td class="num">73.3</td><td class="num">132.0</td><td class="num green">1.03</td><td class="green">✅ 安全</td></tr>
+<tr><td>6</td><td>stack-v3-train (L4 filt.)</td><td>Code</td><td class="num">0</td><td class="num">0.17</td><td class="num">286~405</td><td class="num">0</td><td class="num">249.3</td><td class="num">249.3</td><td class="num green">0.62~0.87</td><td class="green">✅ 首训</td></tr>
+<tr><td>7</td><td>UltraData-Math L1</td><td>Math</td><td class="num">0.05</td><td class="num">0.06</td><td class="num">164.4</td><td class="num">73.4</td><td class="num">88.0</td><td class="num">161.4</td><td class="num green">0.98</td><td class="green">✅ 安全</td></tr>
+<tr><td>8</td><td>UltraData-Math L3</td><td>Math</td><td class="num">0.02</td><td class="num">0.03</td><td class="num">78.0</td><td class="num">29.3</td><td class="num">44.0</td><td class="num">73.3</td><td class="num green">0.94</td><td class="green">✅ 安全</td></tr>
+<tr><td>9</td><td>MegaMath (Batch1+web)</td><td>Math</td><td class="num">0</td><td class="num">0.11</td><td class="num">~371</td><td class="num">0</td><td class="num">161.3</td><td class="num">161.3</td><td class="num green">0.43</td><td class="green">✅ 首训</td></tr>
+<tr style="background:#e8f5e9;font-weight:700;"><td>—</td><td>合计</td><td>—</td><td class="num">1.00</td><td class="num">1.00</td><td>—</td><td class="num">1,467.2</td><td class="num">1,466.5</td><td class="num">2,933.7</td><td>—</td><td>所有 < 1.2</td></tr>
+</table>
+<h3>4.2 类别级 Epoch 汇总（主方案）</h3>
+<table>
+<tr><th>类别</th><th class="num">S1 消耗 (B)</th><th class="num">S2 消耗 (B)</th><th class="num">累计 (B)</th><th class="num">可用 (B)</th><th class="num">累计 epoch</th><th>判定</th></tr>
+<tr><td>Web</td><td class="num">1,085.7</td><td class="num">586.6</td><td class="num">1,672.3</td><td class="num">2,500.1</td><td class="num green">0.67</td><td class="green">✅ 完全充裕（余828B）</td></tr>
+<tr><td>Code</td><td class="num">278.8</td><td class="num">586.6</td><td class="num">865.4</td><td class="num">836~955</td><td class="num green">0.91~1.04</td><td class="green">✅ 补入stack-v3后够用</td></tr>
+<tr><td>Math</td><td class="num">102.7</td><td class="num">293.3</td><td class="num">396.0</td><td class="num">613.4</td><td class="num green">0.65</td><td class="green">✅ 补入MegaMath全量后充裕</td></tr>
+</table>
+<h3>4.3 Fallback 方案 Epoch 核算（仅 MegaMath Batch1）</h3>
+<table>
+<tr><th>#</th><th>数据源</th><th>类别</th><th class="num">S1 prop</th><th class="num">S2 prop</th><th class="num">可用 (B)</th><th class="num">累计 (B)</th><th class="num">累计 epoch</th><th>判定</th></tr>
+<tr><td>1</td><td>Ultra-FineWeb en_v1_4</td><td>Web</td><td class="num">0.65</td><td class="num">0.35</td><td class="num">2,237.1</td><td class="num">1,466.9</td><td class="num green">0.66</td><td class="green">✅</td></tr>
+<tr><td>2</td><td>Ultra-FineWeb L1 EN HQ</td><td>Web</td><td class="num">0.05</td><td class="num">0.03</td><td class="num">150.2</td><td class="num">117.4</td><td class="num green">0.78</td><td class="green">✅</td></tr>
+<tr><td>3</td><td>Ultra-FineWeb ZH</td><td>Web</td><td class="num">0.04</td><td class="num">0.02</td><td class="num">112.8</td><td class="num">88.0</td><td class="num green">0.78</td><td class="green">✅</td></tr>
+<tr><td>4</td><td>UltraData-Code L2</td><td>Code</td><td class="num">0.15</td><td class="num">0.18</td><td class="num">421.5</td><td class="num">484.1</td><td class="num amber">1.15</td><td class="amber">🟡</td></tr>
+<tr><td>5</td><td>UltraData-Code L3</td><td>Code</td><td class="num">0.04</td><td class="num">0.05</td><td class="num">128.6</td><td class="num">132.0</td><td class="num green">1.03</td><td class="green">✅</td></tr>
+<tr><td>6</td><td>stack-v3-train (L4 filt.)</td><td>Code</td><td class="num">0</td><td class="num">0.17</td><td class="num">286~405</td><td class="num">249.3</td><td class="num green">0.62~0.87</td><td class="green">✅</td></tr>
+<tr><td>7</td><td>UltraData-Math L1</td><td>Math</td><td class="num">0.05</td><td class="num">0.08</td><td class="num">164.4</td><td class="num">190.7</td><td class="num amber">1.16</td><td class="amber">🟡 接近1.2</td></tr>
+<tr><td>8</td><td>UltraData-Math L3</td><td>Math</td><td class="num">0.02</td><td class="num">0.04</td><td class="num">78.0</td><td class="num">88.0</td><td class="num amber">1.13</td><td class="amber">🟡 接近1.2</td></tr>
+<tr><td>9</td><td>MegaMath Batch1 only</td><td>Math</td><td class="num">0</td><td class="num">0.08</td><td class="num">~92</td><td class="num">117.3</td><td class="num red">1.28</td><td class="red">🔴 >1.2（首训新数据）</td></tr>
+</table>
+<table>
+<tr><th>类别</th><th class="num">累计 (B)</th><th class="num">可用 (B)</th><th class="num">累计 epoch</th><th>判定</th></tr>
+<tr><td>Web</td><td class="num">1,672.3</td><td class="num">2,500.1</td><td class="num green">0.67</td><td class="green">✅</td></tr>
+<tr><td>Code</td><td class="num">865.4</td><td class="num">836~955</td><td class="num green">0.91~1.04</td><td class="green">✅</td></tr>
+<tr><td>Math</td><td class="num">396.0</td><td class="num">334.4</td><td class="num amber">1.18</td><td class="amber">🟡 <1.2 可接受</td></tr>
+</table>
+<div class="warn" style="font-size:12px;">
+<b>标红规则</b>：>1.2 标红🔴，1.0~1.2 标黄🟡，<1.0 标绿✅。主方案所有项 < 1.2 ✅。Fallback 单源 megamath_b1 = 1.28 🔴（首训新数据），Math 类别级 1.18 🟡。<br>
+<b>code_l2 = 1.15 🟡</b>（两方案均如此）：可选调整 code_l2 prop 0.18→0.15，差额给 stack-v3 0.17→0.20，则 code_l2 epoch 降到 1.01 ✅，stack-v3 升到 1.02 ✅。
+</div>
+<!-- §5 -->
+<h2 id="s5">§5 — 污染检查方案</h2>
+<h3>5.1 扩展黑名单</h3>
+<p style="font-size:13px;">S2 code/math 比例大幅提升 + 新增 stack-v3（GitHub）+ MegaMath（web crawl），benchmark 污染风险显著上升。需扩展黑名单覆盖以下 5 个评测集（当前仅有 EDA-Eval-PyAether 158 任务）：</p>
+<table>
+<tr><th>#</th><th>评测集</th><th>风险来源</th><th>风险</th><th>指纹内容</th><th>闸门</th></tr>
+<tr><td>1</td><td><b>HumanEval</b></td><td>stack-v3 含 GitHub 仓库</td><td class="amber">🟡 中</td><td>prompt + entry_point + test + canonical_solution</td><td>13-gram</td></tr>
+<tr><td>2</td><td><b>MBPP</b></td><td>stack-v3 含 GitHub 仓库</td><td class="amber">🟡 中</td><td>prompt + test_list + code</td><td>13-gram</td></tr>
+<tr><td>3</td><td><b>GSM8K</b></td><td>MegaMath web crawl 可能含题目原文</td><td class="amber">🟡 中</td><td>question + answer（含 #### 格式）</td><td>13-gram</td></tr>
+<tr><td>4</td><td><b>MATH</b></td><td>MegaMath web crawl 可能含 MATH 题目</td><td class="amber">🟡 中</td><td>problem + solution（含 LaTeX）</td><td>13-gram</td></tr>
+<tr><td>5</td><td><b>SWE-bench</b></td><td>stack-v3 含 GitHub 仓库，可能含评测 repo</td><td class="amber">🟡 中</td><td>princeton-nlp/SWE-bench 的 task_instance + patch</td><td>13-gram</td></tr>
+<tr><td>0</td><td><b>EDA-Eval-PyAether</b>（已有）</td><td>stack-v3 Phase B 抽样 0 命中</td><td class="green">🟢 低</td><td>158 任务的 prompt/entry_point/test</td><td>13-gram</td></tr>
+</table>
+<h3>5.2 闸门扫描方案</h3>
+<table>
+<tr><th>扫描目标</th><th>数据量</th><th>方法</th><th class="num">预估耗时</th><th>阈值</th><th>处置</th></tr>
+<tr><td>stack-v3-train 全量</td><td>476B / 8192 shard</td><td>13-gram（6 个评测集指纹）</td><td class="num">4–8h</td><td>≥1 命中 → 标记</td><td>命中 shard 从 blend 剔除或裁剪</td></tr>
+<tr><td>MegaMath Batch1</td><td>~92B / 364 parquet</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">1–2h</td><td>≥1 命中 → 标记</td><td>命中 parquet 裁剪或剔除</td></tr>
+<tr><td>MegaMath-web (如到货)</td><td>~279B</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">2–4h</td><td>≥1 命中 → 标记</td><td>命中 parquet 裁剪或剔除</td></tr>
+<tr><td>UDC L2/L3 + UDM L1/L3</td><td>550B + 242B</td><td>13-gram（复检，S1 已扫过）</td><td class="num">2–4h</td><td>≥1 命中 → 标记</td><td>phase5 已扫，复检确认</td></tr>
+</table>
+<h3>5.3 扫描实施细节</h3>
+<div class="card" style="font-size:12px;">
+<h4>指纹构建</h4>
+<ul>
+<li><b>HumanEval</b>：openai_humaneval 164 题 → prompt + entry_point + test + canonical_solution → 13-gram</li>
+<li><b>MBPP</b>：mbpp 974 题 → prompt + test_list + code → 13-gram</li>
+<li><b>GSM8K</b>：gsm8k main/test 1319 题 → question + answer → 13-gram</li>
+<li><b>MATH</b>：competition_math test 5000 题 → problem + solution → 13-gram</li>
+<li><b>SWE-bench</b>：princeton-nlp/SWE-bench → problem_statement + patch → 13-gram</li>
+</ul>
+<h4>扫描执行</h4>
+<ul>
+<li>nice -n 19 + ionice -c3，不挤 S1 训练；4 workers（CPU 密集型，不占 GPU）</li>
+<li>输出：contamination_s2_report.tsv（数据源 × shard ID × 命中评测集 × 命中数）</li>
+<li>命中处置：命中 shard 从 blend 白名单剔除；命中数 < 3 可裁剪命中段落而非整 shard 剔除</li>
+</ul>
+</div>
+<!-- §6 -->
+<h2 id="s6">§6 — 风险与缓解</h2>
+<table>
+<tr><th style="width:25px;">#</th><th>风险</th><th>等级</th><th>影响</th><th>概率</th><th>缓解措施</th></tr>
+<tr><td>1</td><td><b>Math epoch 1.18（仅 Batch1）</b> — MegaMath-web 未按时到货</td><td class="amber">🟡 中</td><td>Math 数据部分重复</td><td>~30%</td><td>① 主缓解：PC-5 尽早启动 MegaMath-web 下载，到货后 epoch 降到 0.65 ✅ ② Fallback：使用 §1.3，Math 类别级 1.18 < 1.2 可接受 ③ 备选：下载 Nemotron-CC-Math（133B），补入后 epoch 0.85 ✅ ④ 极端：将 S2 math prop 从 20% 降到 15%</td></tr>
+<tr><td>2</td><td><b>stack-v3 L4 过滤后 token 不足</b> — 保留率 < 60%</td><td class="amber">🟡 中</td><td>Code epoch 上升</td><td>~20%</td><td>① 放宽语言过滤（保留 Top-15 而非 Top-32）② 直接使用全量 476B（epoch 更低但引入噪声）③ 保守 286B → Code 836B vs 需求 866B → epoch 1.04 仍可接受</td></tr>
+<tr><td>3</td><td><b>评测集污染</b> — stack-v3 含 benchmark 测试代码</td><td class="amber">🟡 中</td><td>评测分数虚高</td><td>~40%</td><td>① PC-3 污染闸门扩展，13-gram 全量扫描 ② ≥1 命中 → 剔除 ③ 0 命中才放行</td></tr>
+<tr><td>4</td><td><b>配比切换 Loss spike</b> — Web 74%→40% 骤变</td><td class="green">🟢 低-中</td><td>训练暂态不稳定</td><td>~30%</td><td>① pretrain 线：S4 实验显示切换时 loss 反降 ② 备选：5K~10K steps 平滑过渡窗口 ③ 监控：切换后前 1000 步密切监控 ④ decay 段在 700k–720k，S2 有 350k 步充分恢复</td></tr>
+<tr><td>5</td><td><b>Web 压缩到 40% 损失通用能力</b></td><td class="amber">🟡 中</td><td>MMLU/ARC 等下降</td><td>~35%</td><td>① Web 40% = 587B tokens 绝对量仍大 ② S1 已建立通用能力基础（1,086B Web） ③ 有意 trade-off：S2 目标是 code/math/agentic ④ 与 DeepSeek 4:2:4 相比 Web 占比相同</td></tr>
+<tr><td>6</td><td><b>IFM 下载延迟</b> — Math-Reasoning 速度慢</td><td class="green">🟢 低</td><td>PC-5 启动推迟</td><td>~20%</td><td>① PC-5 是 Soft deadline，即使延迟到 12-01 仍有 3 周余量 ② 可不等 Math-Reasoning 直接启动 MegaMath-web（HF 支持多 repo 并发）</td></tr>
+<tr><td>7</td><td><b>code_l2 epoch 1.15 接近边界</b></td><td class="green">🟢 低</td><td>轻微过拟合</td><td>~50%</td><td>① 1.15 < 1.2 红线，UDC L2 是最高质量 code 数据，适当复用可接受 ② 可选：code_l2 0.18→0.15，stack-v3 0.17→0.20，epoch 降到 1.01</td></tr>
+</table>
+<!-- §7 -->
+<h2 id="s7">§7 — 结论：可行性判定 + 关键路径 + Go/No-Go 条件</h2>
+<h3>7.1 可行性判定</h3>
+<div class="summary">
+<p style="font-size:14px;"><b>✅ 可行 — S1/S2 等分 + S2 采用 web:code:math = 4:4:2 有充分数据支撑。</b></p>
+</div>
+<table>
+<tr><th>维度</th><th>评估</th><th>关键数字</th><th>依据</th></tr>
+<tr><td><b>Web 充足性</b></td><td class="green">✅ 无虞</td><td>2,500B vs 1,672B (epoch 0.67)</td><td>en_v1_4 + L1-HQ + ZH</td></tr>
+<tr><td><b>Code 充足性</b></td><td class="green">✅ 补入 stack-v3 后够用</td><td>836~955B vs 866B (epoch 0.91~1.04)</td><td>UDC 550B + stack-v3 L4 286~405B</td></tr>
+<tr><td><b>Math 充足性</b></td><td class="green">✅ 补入 MegaMath 全量后充裕</td><td>613B vs 396B (epoch 0.65)</td><td>UDM 242B + MegaMath 371B</td></tr>
+<tr><td><b>Math（仅 Batch1）</b></td><td class="amber">🟡 基本够用</td><td>334B vs 396B (epoch 1.18)</td><td>UDM 242B + MegaMath Batch1 92B</td></tr>
+<tr><td><b>质量风险</b></td><td class="amber">🟡 中</td><td>stack-v3 需 L4 过滤 + 闸门</td><td>476B 含 ~40% 非目标语言</td></tr>
+<tr><td><b>污染风险</b></td><td class="amber">🟡 → 低（闸门后）</td><td>需扩展 5 个 benchmark 黑名单</td><td>HumanEval/MBPP/GSM8K/MATH/SWE-bench</td></tr>
+<tr><td><b>时间充裕性</b></td><td class="green">✅ 充裕</td><td>数据 11-23 就绪 vs S2 ~12-25 = 4 周余量</td><td>PC-1~PC-4 不阻塞 S1</td></tr>
+</table>
+<h3>7.2 关键路径</h3>
+<div class="card">
+<h4>必做路径（不含 PC-5）</h4>
+<div class="formula" style="font-size:11px;">
+PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (11-17→11-21, 1-2d) → PC-3 污染闸门扩展 (11-19→11-21, 4-8h) → PC-4 blend TSV 生成 (11-21→11-23, 0.5d) → <b>✅ S2 数据就绪 (11-23)</b> → 等待 S1 到 350k (~12-25) → <b>🚀 S2 启动 (12-25)</b>
+</div>
+</div>
+<div class="card" style="border-left-color:#4caf50;">
+<h4>优化路径（含 PC-5，推荐）</h4>
+<div class="formula" style="font-size:11px;">
+[必做路径] + PC-5 MegaMath-web 下载+分词 (11-21→11-29, 3-5d) → <b>✅ S2 数据就绪 — 主方案 (11-29)</b> → Math epoch 1.18→0.65 ✅ → 等待 S1 到 350k (~12-25) → <b>🚀 S2 启动 (12-25)</b>
+</div>
+</div>
+<h3>7.3 Go/No-Go 条件</h3>
+<p style="font-size:13px;">S2 启动前必须满足以下全部条件。任一不满足 → No-Go，使用 fallback 或推迟。</p>
+<table>
+<tr><th style="width:25px;">#</th><th>Go/No-Go 条件</th><th>检查方法</th><th>当前状态</th><th>不满足时处置</th></tr>
+<tr><td>G1</td><td><b>stack-v3 L4 过滤后 ≥ 250B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-1</td><td>放宽过滤或使用全量 476B</td></tr>
+<tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-2</td><td>启动 Nemotron-CC-Math 备选（133B）</td></tr>
+<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="amber">⏳ 待 PC-3</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
+<tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验 web/code/math prop</td><td class="amber">⏳ 待 PC-4</td><td>手动调整 prop 至满足</td></tr>
+<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k）</td><td>如异常推迟 S2 切换</td></tr>
+<tr><td>G6</td><td><b>（可选）MegaMath-web 到货且分词完成</b></td><td>MANIFEST total_tokens ≥ 200B</td><td class="amber">⏳ 待 PC-5（Soft）</td><td>使用 fallback 方案（§1.3），epoch 1.18</td></tr>
+</table>
+<h3>7.4 平滑过渡方案（可选项）</h3>
+<div class="info" style="font-size:12px;">
+<b>背景</b>：外部参考建议在 S1→S2 配比切换处设平滑过渡窗口，避免 Web 74%→40% 骤变导致的 Loss spike。<br>
+<b>pretrain 线结论</b>：S4 实验显示配比切换时 loss 反降，推荐直接切换但保留 ramp 备选。<br>
+<b>数据线建议</b>：如需 ramp，Data Agent 在 PC-4 同时生成 blend_s2_ramp_5k.tsv（5K 步线性渐变）和 blend_s2_preblend.tsv（目标配比），由 pretrain 线选用。建议 ramp = 5K~10K 步（而非 20K~50K），因 decay 在 700k–720k，S2 有 350k 步充分训练。
+</div>
+<h3>7.5 与 DeepSeek 4:2:4 的差异分析</h3>
+<table style="font-size:12px;">
+<tr><th>维度</th><th>DeepSeek（参考）</th><th>本项目 S2</th><th>差异分析</th></tr>
+<tr><td>配比</td><td>web:code:math = 4:2:4</td><td>web:code:math = 4:4:2</td><td>本项目 code 更高、math 更低</td></tr>
+<tr><td>模型规模</td><td>≥7B（V2 21B / V3 671B）</td><td>2.22B</td><td>2B 对 code 40% 无先例，需监控</td></tr>
+<tr><td>Code 数据量</td><td>推测 >1T</td><td>836~955B</td><td>量级相当，受限于可用数据</td></tr>
+<tr><td>Math 数据量</td><td>推测 >1T</td><td>334~613B</td><td>偏少，是主要短板</td></tr>
+<tr><td>设计意图</td><td>数学推理优先</td><td>代码+数学平衡，兼顾 EDA</td><td>面向 EDA 领域，code ≥ math</td></tr>
+</table>
+<div class="footer">
+<p>
+<b>报告路径</b>: <code>run/reports/report_s1s2_split_data_v2_zh.html</code><br>
+<b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
+<b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
+<b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
+<b>生成时间</b>: 2026-11-17
+</p>
+</div>
+</body>
+</html>
