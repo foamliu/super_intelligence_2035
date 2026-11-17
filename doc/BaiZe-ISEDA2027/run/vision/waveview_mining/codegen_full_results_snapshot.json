@@ -560,6 +560,58 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-CrcErrBitDiag-001",
+   "arm": "V2",
+   "k_conditions": 16,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-Digital-010",
+   "arm": "V0",
+   "k_conditions": 36,
+   "pi_seconds": 360.0,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-Digital-010",
+   "arm": "V1",
+   "k_conditions": 36,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-Digital-010",
+   "arm": "V2",
+   "k_conditions": 36,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
