@@ -22,6 +22,8 @@ WAITING: 0（2026-11-17 wake#1128·**🟠 subagent 消融线结案·done_all·st
 
 - [wake#1125 详条已滚出·2026-11-17 wake#1126] → `daily-memories/2026-11-17.md` §[wake#1125 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过）。
 
+- **[2026-11-17 wake#1129] 🟠 standby 心跳·done_all·无待办**：用户手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e` 起全部正确完成。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2336896 活 ✅**·**无本线 subagent 消融 eval ✅**·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`943d29ef3`（较 wake#1128 `2e7ae0161` 前进·非本线 commit·worktree 干净）。**WAITING=0 standby**。
+
 - **[2026-11-17 wake#1128] 🟠 standby 心跳·done_all·无待办**：用户手动粘贴 ZHULONG_TASK.md 唤醒·prompt=原文·无新指令。PHASE=done_all·§7 Step C 什么都不做退出。结案 5 项自 commit `5f092f33e` 起全部正确完成（wake#1104 实证·wake#1112 spot-check 再核通过·不再重复核验）。infra 自检通过：**loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·**ops relay PID118432/118463/2311995 活 ✅**·**无本线 subagent 消融 eval ✅**（`ps -ef|grep` 复核无 `subagent_ablation|A0prime|run_h2_ablation` 真实 eval 进程）·zhulong run 工作树 `git status -- .` 空 ✅·repo HEAD=`2e7ae0161`（wake#1127 commit·本线）。**WAITING=0 standby**。
 
 - [wake#1127 详条已滚出·2026-11-17 wake#1128] → `daily-memories/2026-11-17.md` §[wake#1127 rolled-out]（standby 心跳·done_all·结案5项重核通过·infra 自检通过·commit `2e7ae0161`）。
