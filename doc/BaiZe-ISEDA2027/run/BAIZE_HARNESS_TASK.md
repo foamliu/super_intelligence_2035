@@ -33,25 +33,22 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-17 14:4x（**专项复查 codex 1.1%——疑为适配器假低分，非能力**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-17 14:5x（**修复 codex 适配器假低分 + 重跑**）· 用户直令 · 最高优先 · 未完成
 
-> **用户原话**：「codex 1.1% 有点难以置信那」
+> **用户原话**：「codex 1.1% 有点难以置信那」→ 运维已抽样完整 trace 确认根因。
 
-**背景（先读，别重复劳动）**：codex 在 TB-2.1 只有 1/89=1.1%，但同一模型在 SWE-bench Verified 是 63.2%（91/144），落差 60pp 不合理。**已知根因线索（历史文档早有点名，但修复从未实施）**：
-- `run/harness/terminalbench/agents/codex.py:176-192`：`environment.exec` 单次调用，**无 429 检测、无指数退避、无重试**；`return_code != 0` 直接 `raise RuntimeError`——把「超时 / 429 / responses API 适配错」全打成异常。
-- codex 走 `wire_api="responses"` 经 gw_proxy 翻译 `/v1/responses`→`/v1/chat/completions`；历史实测 **完成率仅 47.1%**（`tb_qa_rectification_20261028.md` + `codex_err_classification_20261025.md`：34/59 RuntimeError 真实触发链=上游 429；59 题在 1800s 内没跑完被超时杀掉）。
-- 当前 `audit_tb21_review_7way.py` 的「agent ran + verifier=0.0 → ability」判定对 codex 有盲区：codex 因 responses 适配/429/超时产生的「假 0 分」会被误判成能力。
+**根因（运维已实测，别再重复诊断）**：codex 89 题里 **82 题是 `RuntimeError: Codex exited with code 1`（stderr 空），verifier_result=null（验证器根本没跑）**，另有 3 题超时、1 题 exit code 2；真正「干净跑完 + verifier 判 0 分」的只有 2 题。抽样 `build-pmars` 的 stdout 证明：codex **实际开始工作了**（`turn.started` + agent 思考 + 执行 `/bin/bash -lc`），但 `codex exec` 整体 exit code 1，被 `codex.py:188-192` 的 `return_code != 0 → raise RuntimeError` 直接掐断。即 **82 题是适配器把「单命令非 0 退出」误当成「整个 agent 失败」→ 假低分，不是能力**。归因证据已在本轮 commit 前的诊断中（可复现：`ssh 10.239.2.29` 查 `/tmp/tb21_glm53_jobs/codex/2026-11-09__19-51-27/*/result.json`）。
 
 **立即执行**：
 
-1. **逐题翻 trace，重排 codex 88 个失败题**到四桶，判据要具体到 codex：
-   - `adapter/infra`：`return_code != 0`（RuntimeError / AgentTimeoutError / exit≠0）+ stderr 含 `429`/`rate limit`/`exceeded retry`/`responses`适配错 + 1800s 超时。**这一类 = infra，不是能力**，应重跑（修退避后）或标「适配器缺陷」。
-   - `ability`：`return_code == 0`（codex 干净跑完）且 verifier 真给出 0.0。
-   - 给出每桶题数 + 题号清单 + top3 trace/stderr 原文。
-2. **可检验假设**：先验证「codex 88 失败里，有多大比例其实是 return_code!=0 / 超时 / 429」，若 >50% 则坐实「1.1% 是适配器缺陷假低分」，而非真能力。对照：codex 在它「干净跑完」的题里 Pass 率是多少（历史约 48.8%），与 SWE-bench 63.2% 是否自洽。
-3. **修复 + 重跑**（若坐实 infra）：给 codex.py 加 429 检测 + 指数退避重试（检测 stderr 含 `429`/`rate limit` → sleep 2/4/8/16s 重试，上限 4 次；这方案 `tb_qa_rectification_20261028.md` 早提过），修完对 codex 的 88 失败题重跑（adaptive 并发上限内）。若确认只是超时（1800s 太短），评估是否给 codex 单独放宽 timeout（需报机时，勿擅自长期）。
-4. **报告**：更新 codex 归因行（`report_harness_tb21_7way_zh.html`），把「1/89=1.1%」如实标注为「适配器缺陷待重跑」或给出修复重跑后的真实 Pass%，不得再让 1.1% 冒充能力分。
-5. 红线不变：能力 vs infra 只能靠 trace 证据；诚实优先。保持 `WAITING=0`，心跳第一行给：codex 88 失败里 infra vs ability 的桶分布 + 修复重跑决策。
+1. **修 `run/harness/terminalbench/agents/codex.py`**：
+   - ① `return_code != 0` 不应直接判定 agent 失败——codex 用 `--json` 输出完整事件流，应**从 stdout 的 JSON 事件里判断是否 `turn.failed` / 是否有 `error` 项**，而不是看 shell exit code；若 stdout 里已有正常的 command_execution/agent_message 事件（agent 确实在跑），exit code 非 0 不作为失败依据。
+   - ② 加 **429/rate-limit 检测 + 指数退避重试**：检测 stdout/stderr 含 `429`/`rate limit`/`exceeded retry limit` → sleep 2/4/8/16s 重试，上限 4 次（`tb_qa_rectification_20261028.md` 早提的方案）。
+   - ③ 保留对真超时（AgentTimeoutError）的记录，但与「适配器掐断」分开归类。
+2. **重跑 codex 全部 89 题**（修完后，adaptive 并发上限内），merge 后重算真实 Pass%。预期从 1/89 大幅回升（对照：codex SWE-bench 63.2%）。
+3. **报告**：`report_harness_tb21_7way_zh.html` 里 codex 行从「1/89=1.1%」改为「修复前 1/89 系适配器假低分（82 题被 exit-code 误杀），修复重跑后 = ?/89」，给出新真实分。
+4. **审计脚本同步修正**：`audit_tb21_review_7way.py` 的 ability 判定对 codex 这类「adapter 掐断」也要正确归类（stdout 有 agent 事件但 verifier 没跑 = infra，不是 ability）。
+5. 红线不变，诚实优先。保持 `WAITING=0`，心跳第一行给：codex 修复重跑后的新 Pass%。
 
 ---
 
