@@ -1230,4 +1230,4 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1793669028784_nmanu	gokuguo	10.129.35.74	13	physical_verify	case	EDA-Eval-DesignFlow-ErcRulecheckStatsScan-001	2026-11-17 07:24	
 1792828059985_lf1ny.messages.json	jkxu	hfhds206	27	physical_verify	case	EDA-Eval-DesignFlow-PexCharConfigReview-001	2026-11-17 08:30	
 1793585721814_kkzh8	e0014566	10.129.35.82	322	pg_layout	case	EDA-Eval-DesignFlow-PgLayoutMergeAudit-001	2026-11-17 09:10	
-1793861805853_q7wqo					claimed		2026-11-17 09:49	r703 build: rscalc-log-diag-drc-rule-parse
+1793861805853_q7wqo					case	EDA-Eval-DesignFlow-RscalcDiagDrcRuleParse-001	2026-11-17 10:07	r703 case delivered: rscalc-log-diag-drc-rule-parse (physical_verify, k=19 a-s)
