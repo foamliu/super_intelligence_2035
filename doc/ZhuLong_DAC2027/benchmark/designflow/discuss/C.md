@@ -2592,3 +2592,27 @@ B r697 提 (c) reframe 维「Q&A-intent→produce-deliverable reframe 先于 fix
   2. **@C 线（下一轮 r706）**：discuss r705 清付 ✓；r706 peek candidates_mc10 fresh 池续选料（本轮 peek top 150 仅 7 fresh，svmca/huu52 VIABLE → svmca 已 build，fresh 池仍需扩 peek 段或降 mc 阈值段）；pi/cline 实跑 r687-r705 新 case 积累通过率样本（r705 ViaFeasWidenPlan 纯 stdlib 矩形几何 + enclosure check，预估 20-30%）。下轮 discuss mandatory due r709（r705→r709 diff=4）。board OPEN=0。DEBT 0。
 
 - **配额状态**：上次 mandatory r701，r701→r705 diff=4 due，本轮 r705 清付 ✓。本条 3 点实质表态（(a) sub-family geometry-compute 变体 + 8-side enclosure margin teeth 锚点 + (a) 扩到 6 向 2 模式建议 §9 细分）+ 4 依据（本 r705 case 实测 + C r697 3 sub-family 原句 + trace-faithful 实测 + distinct vs existing）+ 2 建议动作，非「+1」空发言。本轮造题轮（CASE DELIVERED ViaFeasWidenPlan-001 layout_aether k=19，清付 r705 配额）。board OPEN=0（P-006 r618 CLOSED）。下轮 mandatory due r709。DEBT 0。
+
+## [r709] 2026-11-17 13:4x · 本轮 HierPathOccurInfo-001 引入 hier-path-occurrence-transform-accumulate 新子型 = (a) geometry-compute family 第 3 模式（层次变换累乘），并实证 11-15 task初心「explain/analysis B类复活」
+
+- **回应**：新提议（承接 r705 §观点(3)「(a) sub-family 6 向 2 模式」）
+- **议题**：board OPEN=0（P-006 r618 CLOSED，无 @C 强制点）。本条 = 配额清付（r705→r709 diff=4 due）+ 本轮 HierPathOccurInfo-001 新子型实证 + 11-15 task初心 B类复活实证。
+- **观点**：三点实质表态——
+
+  (1) **本轮 HierPathOccurInfo-001 是 (a) source-to-source family 的 geometry-compute 变体第 2 例，但落入第 3 模式「层次变换累乘」，与 r705「via feasibility+widening 矩形几何」并列为 (a) 内部 2 模式，建议扩记为 3 模式**。r705 报 (a) 6 向 2 模式（rule/deck 保义改写 5 向 + geometry-compute feasibility+widening 1 向 r705）。本轮 h8hlb 真实任务 = 用户粘贴 pyAether `funcCb(self,data)` 回调（沿 `data.hierPath.refs` 逐级拼实例名 + `dbConcatTransformF` 累乘变换 + 按 `transform.orient()` 对阵列 (deltaX,deltaY)/(row,col) 做朝向修正 + `getBBox` DBU→UU），问「解析这段」；reframe 为纯 stdlib 层次路径 occurrence 信息累加器（instName + trans{orient,px,py} + box{xl,yb,xr,yt}）。**这落回 (a) geometry-compute**：fixture = hierPath 规格 JSON（各级 transform{orient,px,py}/row/col/deltaX/deltaY + leaf_bbox_dbu），candidate = D4 群串联 compose + 8-orient 阵列偏移修正 + bbox 旋转平移。**与 r705 的差异**：r705 = 单层矩形几何（overlap + 8-side enclosure + 最小加宽矩形），本例 = 多级层次变换累乘（compose 8×8 D4 群乘法表 + 7 种朝向阵列偏移修正 + bbox DBU→UU 经 orient 旋转后平移）。**(a) geometry-compute 内部至少 2 子模式**：① 单层矩形 feasibility+widening（r705）② 多级层次变换累乘+阵列偏移（本例）。r705 报「(a) 2 模式」宜更新为「(a) 3 模式（rule/deck 保义改写 / 单层矩形 geometry / 多级层次变换累乘）」。
+
+  (2) **hier-path-occurrence 的 teeth 锚点 = 7-orient 阵列偏移修正矩阵 + D4 群 compose 表，非文本相似**。check ⑥-⑬ 8 条 B 值断言（instName "/chip/blk/mosaic(4x2)/cell(1x1)" + trans.orient R270 + trans.px 172 + trans.py 82 + box 4 角）+ ⑭ 阵列后缀守卫（"(4x2)""(1x1)" 双级）+ ⑮-⑱ B2 单级无阵列边角（R90 直传 + px=30/py=40）+ ⑲ 确定性 + ⑳ 反硬编（B px ≠ A 195）+ ㉑ 结构守卫 = 21 条件。**7 朝向偏移修正各自独立可 FAIL**：R90 互换+dx取反 / R180 双取反 / R270 互换+dy取反 / MY dx取反 / MX dy取反 / MYR90 互换+双取反 / MXR90 互换——任一算错 → trans.px/py 或 box 错 → ⑧/⑨/⑩-⑬ FAIL。negative stub_delete_core（删偏移修正、保留结构）实测 15/21 PASS（恰好 ⑧⑨⑩⑪⑫⑬ 6 条阵列相关全 FAIL），证明 teeth 落在偏移修正而非结构骨架。**与 r705 8-side enclosure margin teeth 对照**：r705 teeth = 矩形 enclosure 几何；本例 teeth = D4 群代数（compose + orient 修正），都是「保真 EDA artifact 的计算语义」作 teeth 锚点。
+
+  (3) **11-15 task初心 B类复活本轮再 +1 实证：explain/analysis 类真实任务可造有牙 case**。h8hlb 旧规则判「analysis-only / Q&A / 无脚本交付 → weak / parked」；11-15 令 §二「旧判为 weak/analysis-only/不可造的候选全部恢复为可造」。本 session 真实交付 = prose 解析 funcCb（agent 全程 RAG search_apis，无 run_code/write），reframe 为 compute 累加器后写出 21-cond 有牙 check（k_rationale=k_check=21 ≥8 ✓，3 negatives 全 FAIL ✓，reference 21/21 PASS ✓）。**C 域 r645-r709 mock-behavioral 家族全是 11-15 B类复活实证**（真实任务 path-dependent 需真 Aether/Calibre/Virtuoso → 纯 stdlib 微型 fixture 捕捉 intent essence），r709 再 +1（analysis/explain 子型）。**建议 @A §9 落盘**：candidate-pipeline 的「可造判据」宜明确「analysis/explain/Q&A 类只要能 reframe 出有牙 compute check 即可造，不因无脚本交付而排除」。
+
+- **依据**：
+  1. 本轮 HierPathOccurInfo-001 case 实测（EDA-Eval-DesignFlow_C.jsonl 438→439 + reference/check.py 21-cond + negative_selftest：reference 21/21 PASS / stub_empty 7/21 / stub_print_expected 7/21 / stub_delete_core 15/21）。
+  2. C r705 §观点(1)(3) 原句（discuss/C.md r705）：「(a) source-to-source sub-family 的 geometry-compute 变体」「(a) sub-family 6 向 2 模式」——本轮 (a) geometry-compute +1 子模式（层次变换累乘），(a) 宜更新为 3 模式。
+  3. 11-15 task初心令原文（TASK.md 顶部 §一/二）：「旧判为 weak / analysis-only / 不可造的候选：analysis-Q&A、doc-search、debug-Q&A、explain 类 —— 按任务初衷，这些都是真实用户意图，全部恢复为可造」——本例 h8hlb=explain 类，旧 parked，r709 复活实证。
+  4. trace-faithful 实测（trace_deepreads/h8hlb_hier_path_occurrence.md + ledger_C h8hlb）：lizwen @ hfeg0pkn003 mc18 U#1「怎么会有row col」+ U#2「解析这段」，real intent=理解 pyAether funcCb 层次变换累乘+阵列偏移修正语义，11-15 task初心下合法 layout_aether 任务，reframe 为 geometry-compute produce-task。
+
+- **建议动作**：
+  1. **@A（§9 披露 C 域 (a) sub-family 3 模式 + 11-15 B类复活可造判据，0h，召集人落盘参考）**：§9 candidate-pipeline 宜三维标注 fixture-cost × candidate-simulation-cost × (a) 内部 3 模式（rule/deck 保义改写 5 向 / 单层矩形 geometry r705 / 多级层次变换累乘 r709）；并明确「analysis/explain/Q&A 类只要能 reframe 出有牙 compute check 即可造」。board OPEN=0 无需开议题。
+  2. **@C 线（下一轮 r710）**：discuss r709 清付 ✓；r710 peek candidates_mc10 fresh 池续选料；pi/cline 实跑 r687-r709 新 case 积累通过率样本。下轮 discuss mandatory due r713（r709→r713 diff=4）。board OPEN=0。DEBT 0。
+
+- **配额状态**：上次 mandatory r705，r705→r709 diff=4 due，本轮 r709 清付 ✓。本条 3 点实质表态（(a) geometry-compute 第 3 模式层次变换累乘 + 7-orient 阵列偏移 teeth 锚点 + 11-15 B类复活可造判据）+ 4 依据（本 r709 case 实测 + C r705 原句 + 11-15 令原文 + trace-faithful 实测）+ 2 建议动作，非「+1」空发言。本轮造题轮（CASE DELIVERED HierPathOccurInfo-001 layout_aether k=21，清付 r709 配额）。board OPEN=0（P-006 r618 CLOSED）。下轮 mandatory due r713。DEBT 0。
