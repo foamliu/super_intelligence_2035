@@ -2,25 +2,20 @@
 
 WAITING: 0
 
-> 🆕 **R2607 · 2026-11-17 10:5x — 🔴撤回「修正后 Pass%」+ 双报告改「重跑中」真实口径 + v2 rerun 进行中(codex done=ability)**
-> - **🔴 撤回声明 (用户令 2026-11-17 10:2x)**: R2600 的「修正后 Pass% = passed/(89−纯infra)」已**撤回**——它把未真跑题从分母剔除=假设真跑就能通过=凭空抬分。未真跑题的处置只有重跑。**真实 Pass% = passed/89 (分母恒89, 唯一可对外引用口径)**:
->   - **真实 Pass% (待重跑, 分母=89)**: cline 42/89=47.2%(待重跑1) · codex 1/89=1.1%(待重跑2·rerun done=ability) · opencode 43/89=48.3%(待重跑10) · cc 30/89=33.7%(待重跑1) · pi 35/89=39.3%(待重跑15) · hermes 38/89=42.7%(待重跑13·qemu BLOCKED) · deepseek 11/89=12.4%(待重跑5)
-> - **自检**: load26.9/224✅(~12%·pretrain dominant·非本线)·mem838GB avail1028GB✅·0 harness eval runaway✅·adaptive work4/0×429✅·reports/ porcelain: 仅2个HTML modified(本线)✅·manifests+traces gitignore命中✅
-> - **运维指令区**: 2026-11-17 10:2x **部分交付**: ①撤回修正后Pass%✅ ②报告改「重跑中」口径✅ ③47trial重跑(进行中·codex done) ④重跑后重算真实Pass%(待rerun完成) — 其余旧令全✅已交付
-> - **本轮动作**: ①撤回「修正后 Pass%」——audit_tb21_review_7way.py 删 corrected_pass_pct→改 real_pass_pct+pending_rerun ②gen_report_tb21_7way.py 表四改「重跑中」(真实Pass%+待重跑列+重跑状态列+撤回声明) ③gen_report_glm53_7way.py §5b 同改 ④双报告REGEN✅(TB21 17.7KB·glm53 14.3KB·grep验证修正后仅出现在撤回声明中) ⑤rerun清单核对=47trial无遗漏(deepseek5/codex2/cc1低分路全含✅) ⑥v2 rerun进行中(orchestrator PID1217002 alive·codex 2/2 done=ability·hermes→opencode→pi→deepseek→cc排队)
-> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(重算真实Pass%) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
-> - **📦 体积**: TASK≈27.2KB / MEMORY≈30.8KB（✅≤32KB·本轮归档R2605/R2606腾位）
+> 🆕 **R2608 · 2026-11-17 11:0x — 🔴红线复述+rerun监控(hermes running·codex done=能力)+报告口径复核✅**
+> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已**撤回**——把未真跑题从分母剔除=假设真跑就能通过=凭空抬分。能力 vs infra 只能靠 trace 证据,不能靠调分母;诚实优先于好看。**唯一可对外引用口径 = 真实 Pass% = passed/89 (分母恒89)**:
+>   - **真实 Pass% (重跑完成前·标「待重跑」)**: cline 42/89=47.2%(待重跑1) · codex 1/89=1.1%(待重跑2·**rerun done=0/2=能力**✅) · opencode 43/89=48.3%(待重跑10) · cc 30/89=33.7%(待重跑1) · pi 35/89=39.3%(待重跑15) · hermes 38/89=42.7%(待重跑13·qemu BLOCKED 显式注明 Py3.9<3.11) · deepseek 11/89=12.4%(待重跑5)
+> - **自检**: load28/224✅(~12%·pretrain dominant·非本线)·mem838GB avail1028GB✅·0 harness eval runaway✅(hermes 0.4%cpu)·adaptive work4/4·累计429=0✅·reports/ porcelain=0✅(双报告已committed R2607)·manifests+traces gitignore命中✅
+> - **运维指令区**: 2026-11-17 10:2x **部分交付**: ①撤回修正后Pass%✅(grep验证仅出现在撤回声明) ②报告改「重跑中」真实口径✅(待重跑/真实Pass%/重跑中·分母恒89·BLOCKED显式注明) ③47trial重跑(进行中·codex done=能力·hermes running·opencode/pi/deepseek/cc排队·清单无遗漏低分路全含✅) ④重跑后重算真实Pass%(待rerun完成) — 其余旧令全✅已交付
+> - **本轮动作**: ①复核R2607报告口径: TB21+glm53 "修正后"仅2处=撤回声明✅·"待重跑"/"真实Pass%"/"重跑中"在位✅·BLOCKED(qemu Py3.9<3.11)显式注明+分母恒89✅ ②rerun计划核对: 47trial=opencode10+pi15+hermes13+deepseek5+codex2+cline1+cc1·低分路(deepseek5/codex2/cc1)全含✅ ③codex rerun=2/2 reward=0(1 AgentTimeoutError)=能力✅ ④orchestrator PID1217002 alive·hermes route running(PID1455134) ⑤自检全绿
+> - **下一步**: ①v2 rerun跑完→逐路 --merge-all + REGEN双报告(重算真实Pass%=passed/89) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
+> - **📦 体积**: TASK≈27.2KB / MEMORY≈30.0KB（✅≤32KB·本轮归档R2607/R2602腾位）
 
 
 > 📦 R2605/R2606 流水已归档 → daily-memories-harness/2026-11-17.md。结论：2轮监控·v2 rerun codex route进行中·自检全绿·0 429·reports/ hygiene(27 debug文件清出)。需要时再读。
 
 
-> 🆕 **R2602 · 2026-11-17 09:3x — 监控心跳 + 启动 post-R2600 synthetic rerun(adaptive auto)**
-> - **自检**: load27.7/28.1/27.8/224✅(pretrain dominant·非本线)·mem839GB/2015GB avail1026GB✅·0 harness eval runaway✅(opencode 6%/1.3GB=旧serve进程·远低阈值)·reports/ porcelain=0✅·adaptive mode=work 7→clamp4·累计429=0✅·git本地=origin=613fa811e✅
-> - **运维指令区**: 全部✅已交付·无未完成离散指令
-> - **本轮动作**: 从R2600 review导出精确rerun清单(47trial)→启动7way编排器→**发现bug**: rerun_tb21_7way_quota.py launch_route/merge_route 未传 `--harness`→非cline路误用cline agent+错误jobs-dir前缀→**已修**(两处cmd加 `--harness harness`)→kill wrong-agent codex容器+删错jobs-dir→**v2 relaunch**(6路·tag0951·codex agent=CodexTB✅jobs-dir=codex_...✅HARD VERIFIED)→cline1(0932·valid保留)+codex2→hermes13→opencode10→pi15→deepseek5→cc1·adaptive work4
-> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN 双报告(cline用0932 tag单独merge) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
-> - **📦 体积**: TASK≈23.2KB / MEMORY≈31.9KB（✅≤32KB·本轮删R2595/R2596/R2597冗余同日📦指针腾位）
+> 📦 R2602 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控+启动post-R2600 synthetic rerun(47trial·adaptive auto·v2 relaunch修复--harness bug·codex agent=CodexTB HARD VERIFIED)。需要时再读。
 
 > 📦 R2603 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·v2 rerun codex part1进行中·自检全绿·0 429。需要时再读。
 
