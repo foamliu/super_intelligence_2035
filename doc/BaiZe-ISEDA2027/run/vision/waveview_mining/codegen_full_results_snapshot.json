@@ -1782,6 +1782,19 @@
    "detail": "",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-WaveSig-001/V2/outputs/submit.zip",
    "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveviewModuleUpdate-001",
+   "arm": "V0",
+   "k_conditions": 31,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
