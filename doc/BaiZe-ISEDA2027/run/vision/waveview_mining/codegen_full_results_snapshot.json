@@ -1132,6 +1132,45 @@
    "detail": "grade error: Expecting value: line 1 column 1 (char 0)",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-PwrGlobals-001/V0/outputs/submit.zip",
    "n_zip_members": 3
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PwrGlobals-001",
+   "arm": "V1",
+   "k_conditions": 8,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PwrGlobals-001",
+   "arm": "V2",
+   "k_conditions": 8,
+   "pi_seconds": 177.4,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "grade error: Expecting value: line 1 column 1 (char 0)",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-PwrGlobals-001/V2/outputs/submit.zip",
+   "n_zip_members": 3
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-RandStimVecFix-001",
+   "arm": "V0",
+   "k_conditions": 33,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
