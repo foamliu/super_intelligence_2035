@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-17 wake#1076·**🟢 subagent 消融线结案·done_all·standby**·无待办。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: loop PID243810 https_proxy ✅·ops relay PID39162 活 ✅·本线无 eval 进程 ✅·git HEAD=`3234ff813`=origin/main（zhulong 末次 commit=`3234ff813`=wake#1075·无 zhulong 新工作）。⚠️/home 185M avail·/nasdata 3.5G avail（红线持续恶化·非本线·不能删他线数据·cleanup 已 done_all 不再起）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令。详情见 daily §[wake#1036]）
+WAITING: 0（2026-11-17 wake#1076·**🟢 subagent 消融线结案·done_all·standby**·无待办。用户令 2026-11-17 09:3x 覆盖一切前令·停止 subagent 消融评测·结案归档。A0pp eval killed by ops·r3 未完成不评分不计入最终结果·r1=10%/r2=2.5% 作探索性数据保留不作正式结论。**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop/relay 均未运行**（done_all 后无 auto-wake 需求·与 standby 一致·不重启=结案令「无待办」）·本线无 eval 进程 ✅（PID3898587 = ops RUN_ID 144 post-train 线·非 zhulong·不干扰）·git HEAD=`0cdd1d1b1`=origin/main 同步（zhulong 末次 commit=`1dc01c1a3`=wake#1076·无 zhulong 新工作）。⚠️/home 185M avail·/nasdata 3.5G avail（红线持续恶化·非本线·不能删他线数据·cleanup 已 done_all 不再起）。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令。详情见 daily §[wake#1036]）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
