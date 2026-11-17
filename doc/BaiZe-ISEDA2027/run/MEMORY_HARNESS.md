@@ -2,6 +2,15 @@
 
 WAITING: 0
 
+> 🆕 **R2606 · 2026-11-17 10:2x — 监控心跳轮·v2 rerun 进行中(codex bn-fit容器内)·自检全绿·无未完成指令 + reports/ 残留27 debug文件清出**
+> - **自检**: load28.06/27.19/27.38/224✅(~13%·pretrain dominant·非本线)·mem838GB/2015GB avail1027GB✅·0 harness eval runaway✅(orchestrator+codex harbor+docker compose exec bn-fit 全0.0-0.1%CPU·cline hub daemon=非eval·opencode serve旧进程6.6%/1.2GB=远低阈值·均未触>8000%/80%红线·单进程<50GB)·reports/ tracked json/log/txt=0✅(本轮清出harness_zero_debug 27文件·git rm --cached+gitignore·盘上保留)·manifests+traces gitignore命中✅·adaptive mode=work current=4/4 hold(quiet=56m)·累计429=0✅·git本地=origin in sync✅(pull=Already up to date)
+> - **运维指令区**: 全部✅已交付·无未完成离散指令
+> - **本轮动作**: 监控心跳·v2 7way rerun(R2602启动)进行中——orchestrator(PID1217002)alive etimes~36min·codex route(2题)break-filter-js-from-html已eval reward=0.0(ability)·bn-fit-modify容器内运行(docker compose exec alive etimes~36min/60min timeout·正常)·剩余hermes13→opencode10→pi15→deepseek5→cc1=47trial队列·cline用0932 tag单独merge·不打断正在跑的路(per 11-15令)·**本轮hygiene**: reports/harness_zero_debug/ 27个R988 debug产物(.log/.py/.sh/.patch/.md·非人读HTML)违反11-14令→git rm --cached -r(盘上保留)+.gitignore加该dir→reports/ tracked json/log/txt 22→0✅
+> - **research日报2026-11-17**(已读): harness建议→ModHarness-RL(harness=fixed|learned+context_budget列)+pass@1旁报n_samples/n_after_filter/k_submitted·纳入下次报告迭代(非本轮action)
+> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
+> - **📦 体积**: TASK≈24.0KB / MEMORY≈30.4KB（✅≤32KB·本轮归档R2603/R2604同小时纯监控冗余条目腾位）
+
+
 > 🆕 **R2605 · 2026-11-17 10:1x — 监控心跳轮·v2 rerun 进行中(codex route 1/2)·自检全绿·无未完成指令**
 > - **自检**: load25.64/26.84/27.70/224✅(~12%·pretrain dominant·非本线)·mem837GB/2015GB avail1028GB✅·0 harness eval runaway✅(codex container低CPU·cline hub daemon 30.1%/7GB=非eval daemon·opencode serve旧进程6.6%/1.2GB=远低阈值·均未触>8000%/80%红线)·reports/ porcelain=0✅(audit json=gitignored✅非tracked)·manifests+traces gitignore命中✅·adaptive mode=work current=4/4 hold(quiet=44m)·累计429=0✅·git本地=origin in sync✅(pull=Already up to date)
 > - **运维指令区**: 全部✅已交付·无未完成离散指令
@@ -17,20 +26,9 @@ WAITING: 0
 > - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN 双报告(cline用0932 tag单独merge) ②SWE-bench predict续推 ③research建议纳入下次报告迭代 ④等运维新令
 > - **📦 体积**: TASK≈23.2KB / MEMORY≈31.9KB（✅≤32KB·本轮删R2595/R2596/R2597冗余同日📦指针腾位）
 
-> 🆕 **R2603 · 2026-11-17 10:0x — 监控心跳轮·v2 rerun 进行中(codex part1)·自检全绿·无未完成指令**
-> - **自检**: load29.57/28.83/28.21/224✅(~13%·pretrain dominant·非本线)·mem837GB/2015GB avail1029GB✅·0 harness eval runaway✅(codex container低CPU·cline hub daemon 30%/7GB=非eval·opencode serve 6%/1.3GB=旧进程·均远低阈值)·reports/ porcelain=0✅·manifests+traces gitignore命中✅·adaptive mode=work current=4/4 hold(quiet=29m)·累计429=0✅·git本地=origin=011cd0e2d✅(rebased·vision commit)
-> - **运维指令区**: 全部✅已交付·无未完成离散指令
-> - **本轮动作**: v2 7way rerun(R2602启动)进行中——orchestrator顺序跑 codex(2)→hermes(13)→opencode(10)→pi(15)→deepseek(5)→cc(1)=47trial·当前codex route part1(bn-fit-modify容器内运行+break-filter-js-from-html队列·1 result.json reward=None=未eval)·cline用0932 tag单独merge·不打断正在跑的路(per 11-15令)
-> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research 4条建议纳入下次报告迭代 ④等运维新令
-> - **📦 体积**: TASK≈24.0KB / MEMORY≈31.5KB（✅≤32KB·本轮归档R2600/R2601腾位）
+> 📦 R2603 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·v2 rerun codex part1进行中·自检全绿·0 429。需要时再读。
 
-> 🆕 **R2604 · 2026-11-17 10:0x — 监控心跳轮·v2 rerun 进行中(codex route 1/2 done)·自检全绿·无未完成指令**
-> - **自检**: load27.89/28.72/28.42/224✅(~12%·pretrain dominant·非本线)·mem837GB/2015GB avail1028GB✅·0 harness eval runaway✅(codex container低CPU·cline hub daemon 30%/7.3GB=非eval daemon·opencode serve旧进程6.6%/1.2GB=远低阈值)·reports/ porcelain=0✅·manifests gitignore命中✅(traces实路径=terminalbench/traces/·任务书harness/traces为简写)·adaptive mode=work current=4/4 hold(quiet=36m)·累计429=0✅·git fetch=0/0 in sync✅
-> - **运维指令区**: 全部✅已交付·无未完成离散指令
-> - **本轮动作**: v2 7way rerun(R2602启动)进行中——orchestrator(PID1217002)alive·codex route(2题)1/2 done(bn-fit-modify result.json@09:51:59·break-filter-js-from-html仍容器内运行)·剩余hermes13→opencode10→pi15→deepseek5→cc1=47trial队列·cline用0932 tag(2 result.json已落盘·待merge)·不打断正在跑的路(per 11-15令)
-> - **research日报2026-11-17**(09:08): harness建议6条→ModHarness-RL(harness=fixed|learned+context_budget列)+pass@1旁报n_samples/n_after_filter+judge跨视图(view+abstain/wrong_verdict率)+Mind2Web cross-split+LiveCodeBench release_date切窗+Gemma成对胜率·均纳入下次报告迭代(非本轮action·R2594已记2条核心)
-> - **下一步**: ①v2 rerun跑完逐路 --merge-all + REGEN双报告(cline用0932 tag) ②SWE-bench predict续推 ③research 6条建议纳入下次报告迭代 ④等运维新令
-> - **📦 体积**: TASK≈24.0KB / MEMORY≈29.8KB（✅≤32KB·本轮归档R2593/R2594腾位）
+> 📦 R2604 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控轮·codex route 1/2 done·自检全绿·research 6条建议已记。需要时再读。
 
 > 📦 R2600 流水已归档 → daily-memories-harness/2026-11-17.md。结论：失败归因复核✅已交付·四桶归因·各路失败以能力不足为主·详见两报告§失败归因复核。需要时再读。
 > 📦 R2601 流水已归档 → daily-memories-harness/2026-11-17.md。结论：监控心跳·自检全绿·research日报4条harness建议纳入下次报告迭代。需要时再读。
