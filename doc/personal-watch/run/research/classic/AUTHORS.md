@@ -2807,6 +2807,45 @@
 | 状态 | **已发信**（#84，2026-11-18 03:04:53，英文 197 词） |
 | 备注 | `语言=英文(判据=印度语族姓名 + 印度机构)`。问题方向：padding 的具体形态与按理由数归一化后的表型去向、model-free audit 能否预测饱和步、10 个复制单元里量级不复制时五条预解释的相对可信度。 |
 
+### 195. Xingyao Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xingyao Wang（拼音姓名 ⇒ 中文信） |
+| 机构 | **University of Illinois Urbana-Champaign（UIUC）**（PDF 首页作者块；OpenHands 一作） |
+| 代表论文 | **OpenHands: An Open Platform for AI Software Developers as Generalist Agents**（arXiv `2407.16741`，ICLR 2025） |
+| 邮箱 | **`xingyao6@illinois.edu`**（PDF 首页明文，`pdftotext` 实测；v3 `2025-04-18` ⇒ 时效可） |
+| 主页 | 未核（本轮未抓；🚫 不写猜测链接） |
+| X 账号 | **未找到**（本轮未抓 X，不猜 handle） |
+| 状态 | **已发信**（#85，2026-11-18 06:02:49，中文 CJK 216 字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构)`——典型「人在美国不判英文」案例。问题方向：26% 之外的失败分桶（改错位置 vs 环境跑不起来）、事件流回放丢掉内部推理后的可复现率、换 runtime 镜像是否重跑基线。 |
+
+### 196. Omar Khattab
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Omar Khattab（阿拉伯语族姓名 ⇒ 英文信） |
+| 机构 | **Stanford University**（PDF 首页作者块；DSPy 一作；同页含 Christopher Potts / Matei Zaharia） |
+| 代表论文 | **DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines**（arXiv `2310.03714`） |
+| 邮箱 | **`okhattab@cs.stanford.edu`**（PDF 首页明文，`pdftotext` 实测） |
+| 主页 | 未核（本轮未抓） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **已发信**（#86，2026-11-18 06:02:50，英文 160 词） |
+| 备注 | `语言=英文(判据=阿拉伯语族姓名 + 美国机构；无东亚语言信号)`。问题方向：指标有噪声（judge 5% 分歧）时编译器是否过拟合自举示范、770M T5 的增益里示范与权重更新的可分离性、每任务仅约 200 条标注时是否仍值得编译。 |
+
+### 197. Nathan Lambert
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nathan Lambert（英语姓名 ⇒ 英文信） |
+| 机构 | **Allen Institute for AI（Ai2）**（PDF 首页作者块；Tülu 3 一作） |
+| 代表论文 | **Tülu 3: Pushing Frontiers in Open Language Model Post-Training**（arXiv `2411.15124`） |
+| 邮箱 | **未找到个人邮箱**（PDF 全文只出现团队信箱 `tulu@allenai.org`，属分发列表 ⇒ 按惯例不发，只建档） |
+| 主页 | 未核（本轮未抓） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **待跟踪**（只建档） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：Tülu 3 正文专门写了「**没能稳定涨点的训练方法**」，是全表最稀缺的负结果材料；若能拿到个人邮箱，问题应聚焦「SFT 之后 DPO 与 RLVR 的边际贡献如何拆分」。 |
+
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
