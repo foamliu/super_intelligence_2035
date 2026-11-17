@@ -1,25 +1,8 @@
 WAITING: 0
 
-> 🚀 wake#1537 2026-11-17 15:01 例行巡检 patrol·全交付态·零新增·非 idle-spin·git pull --rebase --autostash ff 同步 HEAD=`3bb8040c7`=origin/main(designflow shard D #r815·0触视觉)·工作树仅非视觉 attribution_3615_run2 改动(他线在途·不 add 不 stash)·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变·ops/inbox RUN_ID 276 target=.12 data 线非本线)·live 复验 watchdog pid `3961251`+ssh-R pid `3961842` etimes≈196204s(~54.5h)在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 `/mcp` 返回 http 406=MCP SSE 正常)+WaveView 子集 224 行 sha256 `623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 vision 建议=VLA game agent 2611.18397+视觉塔配置/agent 轨迹(encoder 线·与 EDA WaveView 不相关·无纳入)·体积 MEMORY 31.6KB/TASK 23KB(均在 32KB 目标内)·fold wake#1536→daily。**WAITING: 0**。
+> 🚀 wake#1538 2026-11-17 15:09 例行巡检 patrol·全交付态·零新增·非 idle-spin·git fetch→behind2(designflow shard C #711+research 15:00·0触视觉)→清自身遗留 stale `.git/rebase-apply`(15:04 wake#1537 `pull --rebase --autostash` rebase 已 finished(reflog HEAD@{0} 确认·rewritten 2d66516fc→88227abb8)·autostash `d97446a1` 已 pop 回工作树=attribution_3615_run2 他线在途·非本线·不 add 不 stash；另遗留旧 stash@{0} d5427b789=Nov16 wake#1422-1424 已提交重复·不触)→`git merge --ff-only origin/main` 同步 HEAD=`852a11995`=origin/main·无新运维令(TASK md5=`378c30879`=wake#1525 交付态不变)·live 复验 watchdog pid `3961251` etimes≈197283s(~54.8h)在线+ssh-R pid `3961842` etimes≈197230s 在线+三端点(:30001/30003 `/health` ok Qwen3.5-2B load_s=2.6·rft2_adapter load_s=46.0·:30002 `/mcp` HTTP 406=MCP SSE 正常)+WaveView 子集 224 行 sha256 `623842b5341cc089c530bb7073b76690d2691c3fd36893a81c0b162ec4968bcd` 一致+三报告(selftest 39986B/cot_vqa 23410B/failed_analysis 42530B)+`6_domain_rl.tex` TBD=0·research 2026-11-17 15:00 更新 vision 建议=视觉塔配置/VLA game agent 2611.18397(encoder 线·与 EDA WaveView 不相关·输入参考·无纳入)·体积 MEMORY ~30KB/TASK 23KB 达标 fold wake#1527~#1537→daily。**WAITING: 0**。
 
-> 📦 wake#1536 2026-11-17 14:31 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1535 2026-11-17 14:2x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1534 2026-11-17 13:58 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1532 2026-11-17 13:3x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1531 2026-11-17 13:3x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-
-> 📦 wake#1530 2026-11-17 13:2x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1529 2026-11-17 13:1x 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1528 2026-11-17 12:58 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
-
-> 📦 wake#1527 2026-11-17 12:50 例行巡检 patrol·全交付态·零新增·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
+> 📦 wake#1527~#1537（2026-11-17 12:50~15:01，11 轮）例行巡检 patrol 原文已归档 → daily-memories-vision/2026-11-17.md（全交付态·零新增·非 idle-spin·各轮 0触视觉 ff/pull --rebase 同步·无新运维令·TASK md5=378c30879=wake#1525 交付态不变·live watchdog ~52–54.8h+三端点(:30001/30003 /health ok·:30002 MCP SSE)+WaveView 子集 224 行 sha256 623842b5+三报告+6_domain_rl.tex TBD=0）。需要时再读。
 
 > 📦 wake#1526 2026-11-17 12:39 例行巡检 patrol·全交付态·零新增·非 idle-spin（behind3 designflow+zhulong·0触视觉→ff 同步 HEAD=`2b6cf8616`·无新运维令(TASK md5=378c30879=wake#1525 交付态不变)·live 复验 watchdog ~52.1h+三端点(:30001/30003 /health ok·:30002 /mcp qwen35-vqa v1.30.0)+WaveView 子集 224 行 sha256 623842b5 一致+三报告+6_domain_rl.tex TBD=0·research 2026-11-17 vision 建议=VLA 统一动作空间(2611.18397·与 EDA WaveView 不相关)忽略）·原文已归档 → daily-memories-vision/2026-11-17.md。需要时再读。
 
