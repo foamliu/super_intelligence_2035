@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA-Flow-Bench ICML 2027 重定位与消融设计计划书</title>
+<style>
+:root{
+  --ink:#1a1a1a; --muted:#5b6470; --line:#d7dce3; --bg:#f6f7f9; --card:#fff;
+  --accent:#0b5cad; --warn:#b34a00; --ok:#1a7a3a; --bad:#a3242b; --soft:#eef2f7;
+  --gold:#7a5a00;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  line-height:1.65;font-size:15.5px;}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 24px 80px;}
+header{background:linear-gradient(135deg,#0b5cad,#1a7a8a);color:#fff;padding:28px 30px;border-radius:14px;margin-bottom:26px;}
+header h1{margin:0 0 8px;font-size:23px;line-height:1.3;font-weight:700;}
+header .meta{font-size:13px;opacity:.92;}
+h2{font-size:20px;margin:38px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent);color:var(--accent);}
+h3{font-size:16.5px;margin:24px 0 10px;color:var(--accent);}
+h4{font-size:15px;margin:18px 0 7px;color:#2a3a4a;}
+p{margin:9px 0}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px;background:var(--card);}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+th{background:var(--soft);font-weight:600;}
+tr:nth-child(even) td{background:#fafbfc}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-family:"SF Mono",Consolas,Menlo,monospace;font-size:12.5px;color:#9a3a1a;}
+.src{color:var(--muted);font-size:11.5px;font-family:"SF Mono",Consolas,monospace;}
+.callout{padding:13px 17px;border-radius:9px;margin:16px 0;}
+.callout.warn{background:#fff5e8;border:1px solid #f0d6a8;}
+.callout.bad{background:#fdecec;border:1px solid #f3b8bd;}
+.callout.ok{background:#eaf6ee;border:1px solid #aedcc0;}
+.callout.info{background:#eaf1fb;border:1px solid #b9d2f3;}
+.callout.gold{background:#fff9e8;border:1px solid #f0e0a8;}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;font-weight:600;margin-right:4px;}
+.tag.p0{background:#fdecec;color:var(--bad)}
+.tag.p1{background:#fff5e8;color:var(--warn)}
+.tag.p2{background:#eaf6ee;color:var(--ok)}
+.tag.gold{background:#fff3cc;color:var(--gold)}
+.tag.mut{background:var(--soft);color:var(--muted)}
+.summary-card{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:20px 24px;margin:18px 0 8px;}
+.summary-card h3{margin-top:0;}
+.judge li{margin:4px 0;}
+.risk li{margin:5px 0;}
+.small{font-size:12.5px;color:var(--muted);}
+ul,ol{margin:8px 0;padding-left:26px;}
+li{margin:3px 0;}
+.toc{background:var(--soft);border-radius:9px;padding:16px 22px;margin:14px 0 26px;font-size:13.5px;}
+.toc a{color:var(--accent);text-decoration:none;}
+.toc a:hover{text-decoration:underline;}
+.toc ul{margin:4px 0;}
+.kbd{background:#e8edf3;border:1px solid #c4cdd6;border-bottom-width:2px;border-radius:4px;padding:1px 5px;font-family:monospace;font-size:12px;}
+hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
+.delta td:first-child{font-weight:600;color:var(--accent);}
+.arm td:first-child{font-weight:600;}
+.arms-table th{font-size:12.5px;}
+.arms-table td{font-size:12.8px;}
+.figtable td:first-child{font-weight:600;}
+@media(max-width:720px){.wrap{padding:20px 14px 60px;} header{padding:22px 18px;} body{font-size:14.5px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>EDA-Flow-Bench ICML 2027 · 重定位与消融设计计划书</h1>
+  <div class="meta">
+    zhulong agent · 2026-11-17 · 唯一交付：<code>reports/report_edafb_icml2027_plan_zh.html</code><br>
+    用户令 2026-11-17 22:5x：论文重定位 + 消融实验设计 + 计划书（最高优先）<br>
+    单文件自包含 · 0 外链 · 0 CDN · 0 &lt;script&gt; · 全文数字可追溯
+  </div>
+</header>
+
+<div class="toc">
+<strong>目录</strong>
+<ul>
+  <li><a href="#s0">§0 结论先行（摘要卡）</a></li>
+  <li><a href="#s1">§1 现稿诊断（逐节）</a></li>
+  <li><a href="#s2">§2 贡献重定位与开源边界</a></li>
+  <li><a href="#s3">§3 与 DATE27 的 delta 表</a></li>
+  <li><a href="#s4">§4 可证伪命题（pre-registered）</a></li>
+  <li><a href="#s5">§5 消融设计（臂表 + 污染防护 + 统计）</a></li>
+  <li><a href="#s6">§6 论文大纲与图表</a></li>
+  <li><a href="#s7">§7 实验矩阵与时间线</a></li>
+  <li><a href="#s8">§8 风险与 Plan B</a></li>
+  <li><a href="#s9">§9 现有资产映射</a></li>
+  <li><a href="#sx">附录：引用清单（路径 + 行号）</a></li>
+</ul>
+</div>
+
+<!-- ============================ §0 ============================ -->
+<section id="s0">
+<h2>§0 结论先行（摘要卡）</h2>
+
+<div class="summary-card">
+<h3>一句话结论</h3>
+<p>把 ICML 2027 论文的<b>主线</b>从「卖一个不可开源的评测集」升格为「在真实 EDA design flow 上检验一个可迁移的认知命题」——<b>long-term memory 与 recursive self-improvement 在长链工具编排中的可证伪收益与边界条件</b>；评测集 EDA-Flow-Bench 降为<b>副线载体</b>（协议 + 判据 + harness + 脱敏 mock 资产 + Lite 集构造方法开源，原始 trace 不发布）。新论文显式继承两篇 zhulong（DAC27 的 grounding-gap 叙事 + DATE27 的自进化方法骨架），把 DATE27 在<b>单脚本层</b>得到的认知<b>搬到 flow 层</b>检验是否仍成立，并补上 DATE27 未覆盖的「负结果也发」的诚实路线。</p>
+</div>
+
+<div class="summary-card">
+<h3>六条判据（验收标准自检）</h3>
+<ol class="judge">
+  <li><b>贡献重定位</b>：三条硬伤（不可开源 / benchmark 社区价值被削弱 / 单点数字会过期）已诊断；替代结构 = 主线认知 + 副线任务形态 + bench 作载体；开源边界表见 §2.3。<span class="tag p2">✅</span></li>
+  <li><b>与 DATE27 delta 表</b>：五维 delta（任务粒度 / 自进化载体 / 失败信号 / 评测单位 / 可迁移性主张）见 §3。<span class="tag p2">✅</span></li>
+  <li><b>可证伪命题</b>：4 条预注册假设（H1 记忆增益 / H2 自改进随链长单调 / H3 记忆是自改进前提 / H4 单 agent 与自主 spawn 结论复现），每条含自变量、因变量、判据阈值、样本量、统计检验、<b>证伪条件</b>，见 §4。<span class="tag p2">✅</span></li>
+  <li><b>消融设计</b>：≥6 臂（M0/M1/M2/M3/S1/M3+S1 + 两类负对照）+ <b>等 token 预算无记忆长 prompt 杀手级对照</b> + 最小可跑矩阵 + 理想矩阵，见 §5。<span class="tag p2">✅</span></li>
+  <li><b>论文规划</b>：3 标题候选 + 4 贡献 + 与两篇 zhulong 同构章节大纲 + 图表清单 + 实验矩阵表 + ICML2027 倒推时间线 + 风险清单，见 §6–§8。<span class="tag p2">✅</span></li>
+  <li><b>现有资产衔接</b>：今天就能跑 / 需新造题 / 需新基座沙盒三档清单 + 防伪底线，见 §9。<span class="tag p2">✅</span></li>
+</ol>
+</div>
+
+<div class="summary-card">
+<h3>三个最大风险</h3>
+<ol class="risk">
+  <li><span class="tag p0">R1</span> <b>H2 负结果</b>（自改进收益不随链长单调，甚至转负）—— Plan B：写成「在真实 design flow 上自改进的边界条件」诚实路线，这本身是可发表认知（§8）。</li>
+  <li><span class="tag p0">R2</span> <b>不可开源被审稿人质疑复现性</b> —— Plan B：受限评审复现包 + mock-EDA 模式 + Lite 集 500 题脱敏构造方法开源 + 第三方可在 mock 沙盒复跑 harness（§2.3 / §8）。</li>
+  <li><span class="tag p1">R3</span> <b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1653 仍在增长，696-run 冻结快照可能过期）—— Plan B：所有论文数字绑定冻结快照 + Lite 集 500 题固定 + 多骨干扫描在 camera-ready 补（§8）。</li>
+</ol>
+</div>
+
+<div class="callout gold">
+<b>诚实路线声明（必写进论文）</b>：若自改进在 flow 层<b>无收益</b>，本论文写成「<b>在真实 design flow 上自改进的边界条件</b>」——DATE27 在单脚本层得到 +2.5pp 的自进化收益，在长链 flow 编排上是否仍成立是<b>经验问题</b>而非定论；负结果本身界定了 long-term memory + RSI 的适用边界，是可发表的认知贡献。这一立场继承自两篇 zhulong 的「负结果照写」纪律。
+<span class="src">参照：DATE27 0_abstract.tex:4（80.0% vs 77.5%, +2.5pp）· DAC 7_discussion.tex:7（SKILL 自探索 +2.0pp 在噪声内 [-2.9,6.9] 仍作次要贡献报告）</span>
+</div>
+</section>
+
+<!-- ============================ §1 ============================ -->
+<section id="s1">
+<h2>§1 现稿诊断（逐节）</h2>
+
+<p>现稿为 <code>EDA-Flow-Bench_ICML2027/</code>，结构遵循 ML 会议惯例（Intro → Benchmark → Harness → Experiments → Analysis → Related → Conclusion → Ethics/Reproducibility → Appendix A/B/C）。
+<span class="src">main.tex:132-157（章节装配）</span>
+下面逐节标注「benchmark 叙事」与「可升格为认知叙事」的位置。</p>
+
+<h3>§1.1 Abstract（0_abstract.tex）</h3>
+<p><b>现稿主张</b>：首句定位「现有 EDA benchmark 只评单函数代码生成或开源 flow 修复，无人评多步编排」；贡献 = EDA-Flow-Bench（\Ntasks=1653 任务、13 域、真实 trace 构建）；结果 = DeepSeek-V4-Pro 10.0% Pass@1 vs 单脚本 76.5%；分析 = tool-chain grounding depth（pnr_signoff 20.8% vs physical_verify/layout_aether 2.9%，7.1×）。
+<span class="src">0_abstract.tex:2-10 · \Ntasks main.tex:76 · \Neval main.tex:104 · 10.0% 62/620 4_experiments.tex:66</span></p>
+<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 全文是「我们造了一个 bench + 跑了一个数字 + 解释一个 gap」——<b>没有可证伪的认知命题</b>，grounding depth 是「事后解释的描述性标注」而非「事前预注册的预测」；② <span class="tag mut">可升格</span> 10.0% vs 76.5% 的 7.6× 跨任务难度跳变 + grounding-depth 排序的稳定性，可升格为「<b>任务链长放大了 harness（观测/记忆/自改进）轴相对于基座轴的决定性</b>」这一认知命题（继承 DAC 的 grounding-gap 框架）；③ 10.0% 是<b>单点数字</b>，会随基座更新迅速过期——这正是用户指出的第三条硬伤。</p>
+
+<h3>§1.2 Intro（1_intro.tex）</h3>
+<p><b>现稿主张</b>：把 EDA 工作流自动化重构为 agentic flow orchestration；贡献三条 = Benchmark / Evaluation（10.0% 天花板 + 7.1× 域差距）/ Analysis（失败分类法 + 47 trace 解剖）。
+<span class="src">1_intro.tex:5-35 · 贡献三条 1_intro.tex:29-35</span></p>
+<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 三条贡献全是「评测集本体」及其产物，<b>没有方法贡献</b>（DAC README.md:43 自己也说「我们没有自研模型，harness 即方法」但 ICML 比 DAC 更看重方法/认知）；② <span class="tag mut">可升格</span> 第 5 段「grounding depth dominates model scale」是<b>未检验假设</b>（现稿已诚实标注 4_experiments.tex:97-102）——把它从「假设」升格为「预注册可证伪命题」就是认知叙事的入口；③ 缺一个「<b>为什么 memory + RSI</b>」的 motivation 段——DAC Conclusion 的 Future work 四方向之一就是 long-term memory + RSI，应前移到 Intro 作为本论文要检验的命题。
+<span class="src">DAC 8_conclusion.tex:4（Future work 原句：domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking）</span></p>
+
+<h3>§1.3 Benchmark Construction（2_benchmark.tex）</h3>
+<p><b>现稿主张</b>：数据源 = 真实用户 Cline 交互轨迹；scan pipeline（EDA-keyword match-count mc，两级预筛）；task schema = design_flow 契约（submit.zip 交付件、≥8 断言、不指定 lang/host）；13 域四组；Lite 集 500 题（领域均衡 + 难度校准 5–25% + 可释放性）。
+<span class="src">2_benchmark.tex:8-13（scan pipeline）· 21-35（task schema）· 61-75（13 域）· 86-97（Lite 集）</span></p>
+<p><b>诊断</b>：① <span class="tag p0">不可开源硬伤</span> 2_benchmark.tex:8「real user interaction traces」+ 2_benchmark.tex:14「User identifiers are preserved (not hashed)」—— trace 源自公司生产资产，<b>原始 trace 不可发布</b>，外部不可复现 benchmark 构建过程；② <span class="tag mut">可升格</span> Lite 集 500 题的三维筛选（领域均衡/难度校准/可释放性）已隐含「<b>可外部复现的评测接口</b>」设计——把 Lite 集从「评测集的子集」升格为「认知检验的外部接口」；③ 2_benchmark.tex:97 已有「mock-behavioral fixture 作为纯 Python 资产可释放」——这是开源边界的现成素材。</p>
+
+<h3>§1.4 Harness（3_harness.tex）</h3>
+<p><b>现稿主张</b>：SUT = Cline v3.0.51；MCP 桥（eda_flow server, 端口 18891）；PreToolUse 防泄题钩子（block check.py/reference/）；EDA server（10.129.32.75）。
+<span class="src">3_harness.tex:8-19（Cline）· 13（MCP）· 51-65（防泄题三层）· 70-87（EDA server）</span></p>
+<p><b>诊断</b>：① <span class="tag p2">资产可用</span> harness 本体（run_one.sh/run_batch.sh、钩子、MCP 配置）是<b>可开源的</b>（7_conclusion.tex:28 已承诺）—— 这是认知叙事的「实验装置」可复现性基础；② <span class="tag mut">可升格</span> 现稿 harness 只描述「如何评测」无「如何记忆/如何自改进」——新论文要把 harness 从「评测装置」扩成「<b>记忆 + 自改进的可插拔层</b>」，这正是 DATE27 的方法骨架（4_self_evolve.tex:4 三层记忆 L0/L1/L2 + 可靠性门控）向 flow 层的迁移。</p>
+
+<h3>§1.5 Experiments（4_experiments.tex）</h3>
+<p><b>现稿主张</b>：RQ1（编排天花板 10.0% vs 76.5%）/ RQ2（域差距 grounding depth）/ RQ3（模型扩展，单骨干，开放问题）；主结果表 13 域逐域 Pass@1。
+<span class="src">4_experiments.tex:10-17（RQ）· 32-61（主表）· 66（10.0% Wilson CI [7.9,12.6]）· 87-107（RQ3 开放）</span></p>
+<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 三个 RQ 全是「bench 上的数字描述」，<b>没有干预实验</b>（无记忆臂、无自改进臂、无对照）—— ICML 会认为「只测不干预」不是方法贡献；② <span class="tag mut">可升格</span> RQ3（模型扩展 vs grounding 轴）现稿已诚实标为「未检验」（4_experiments.tex:97-102），可升格为 H4 的子命题；③ 696-run 是<b>单骨干单配置</b>快照，无任何 harness 消融——这正是新论文要补的实验矩阵（§5）。</p>
+
+<h3>§1.6 Analysis（5_analysis.tex）</h3>
+<p><b>现稿主张</b>：失败分类法（no-output 21.0% / semantic 62.8% / contract 0.3% / UNKNOWN 7.0%）；grounding depth 分箱（深度 1-2: 19.4% → 深度 7+: 2.9%）；trace 解剖（47 pilot run，中位 26.5 tool calls，41.2% MCP，read_files 28.8%）；threats（领域失衡/单骨干/冻结快照/轨迹样本偏差/资产逼真度降级/单一工具生态/单一 agent/轨迹来源）。
+<span class="src">5_analysis.tex:13（失败分类）· 46-60（grounding depth 分箱）· 76-121（trace 解剖：26.5 calls / 20.5 iter / 1047s / 41.2% MCP / 1371 calls）· 130-157（threats）</span></p>
+<p><b>诊断</b>：① <span class="tag p2">资产可用</span> 失败分类法 + trace 解剖是现成的「<b>为什么 flow 比 script 难</b>」证据——read_files 28.8% 占比 + 「瓶颈在观测而非动作」论断（5_analysis.tex:98-101）直接支持「记忆/检索是 binding 约束」的认知命题；② <span class="tag mut">可升格</span> grounding depth 现稿是「手工标注的描述性分箱」（5_analysis.tex:46-49 已诚实声明「design choice, not measured」），可升格为「<b>链长作为分层变量</b>」用于 H2 的分层检验；③ threats 节 5_analysis.tex:148 已有 WAVEVIEW 恢复研究（11 道需看图任务，纯文本基线失败）——这是「资产逼真度降级」的诚实披露，可复用为开源边界的论据。</p>
+
+<h3>§1.7 Conclusion（7_conclusion.tex）</h3>
+<p><b>现稿主张</b>：Future work = 扩领域 / 多 agent 框架 / 开源 EDA / grounding 干预；开源承诺 = harness + 脱敏任务规格 + mock-EDA 模式。
+<span class="src">7_conclusion.tex:15-26（Future work）· 28（开源承诺）</span></p>
+<p><b>诊断</b>：① <span class="tag p1">缺口</span> Future work 四条全是「以后做」，<b>本论文不做</b>——ICML 会问「那这篇贡献了什么」；② <span class="tag mut">可升格</span> 把 Future work 里的「grounding interventions（retrieval-augmented tool use / execution-feedback loops）」（7_conclusion.tex:24）<b>前移为本论文要检验的命题</b>，就是认知叙事；③ 7_conclusion.tex:28 的开源承诺三件套是 §2.3 开源边界表的直接素材。</p>
+</section>
+
+<!-- ============================ §2 ============================ -->
+<section id="s2">
+<h2>§2 贡献重定位与开源边界</h2>
+
+<h3>§2.1 为什么「只卖评测集」立不住（审稿人视角三条硬伤）</h3>
+
+<div class="callout bad">
+<p><b>硬伤 ①：trace 源自公司生产资产，不可开源 ⇒ 外部不可复现</b></p>
+<p>EDA-Flow-Bench 的 1653 个任务构建于「IC 设计工程师在生产环境中使用 Cline 编程智能体的真实交互轨迹」之上，trace_source 记录 host/user/session_file，且「用户标识保留（不做哈希）以保证可复现性」。
+<span class="src">2_benchmark.tex:8-9 · 2_benchmark.tex:14</span>
+这意味着<b>原始 trace 是公司 IP</b>，不能离开保密边界。一个外部研究者拿到 Lite 集 500 题的 prompt + check.py，<b>无法复现</b>「从真实 trace 构建 bench」的过程，也无法验证任务是否真正代表真实工程实践。审稿人会问：「如果数据不可发布，这个 benchmark 的社区价值是什么？」</p>
+</div>
+
+<div class="callout bad">
+<p><b>硬伤 ②：数据不可发布 ⇒ benchmark 论文的社区价值被大幅削弱</b></p>
+<p>Benchmark 论文的价值在于「社区可在其上比较方法」。但 EDA-Flow-Bench 的 Full 集（1653 题）<b>完全不发布</b>，Lite 集 500 题虽有可释放性筛选（2_benchmark.tex:86-97），但<b>需 mock-EDA 模式</b>（7_conclusion.tex:28）才能在没有商业工具许可证的环境下跑——这意味着外部研究者只能在 mock 沙盒上复跑，而 mock 沙盒无法复现真实工具的 grounding depth 差距（physical_verify 2.9% 的 DRC/LVS 真跑在 mock 下不存在）。一个「真实商业工具编排」的卖点在开源后变成「mock 工具编排」，benchmark 的差异化优势被削弱。</p>
+</div>
+
+<div class="callout bad">
+<p><b>硬伤 ③：10.0% Pass@1 这类单点数字会随基座更新迅速过期</b></p>
+<p>10.0%（62/620, Wilson CI [7.9,12.6]）是 DeepSeek-V4-Pro + Cline v3.0.51 + thinking=low 的<b>单骨干单配置</b>快照。
+<span class="src">4_experiments.tex:22-26 · 66</span>
+696-run 冻结于 2026-11-09（main.tex:100）。ICML 2027 截稿 2027-01-22（README.md:7），发表要到 2027 年中——届时基座已更新 1-2 代，10.0% 会变成历史数字。一个「benchmark + 单点天花板」的论文，1-2 年后只剩 benchmark 本体（而本体又不可开源）——<b>整篇论文的时效性资产会快速贬值</b>。相比之下，<b>认知命题</b>（如「记忆是自改进的前提」）即使数字过期，命题的真伪仍是长效贡献。</p>
+</div>
+
+<h3>§2.2 替代性贡献结构</h3>
+
+<table>
+<tr><th>层级</th><th>角色</th><th>内容</th><th>是否开源</th></tr>
+<tr><td><b>主线（认知）</b></td><td>论文的灵魂</td><td>long-term memory + recursive self-improvement 在 EDA agent（脚本 + designflow）长链工具编排中的<b>可证伪收益与边界条件</b>。4 条预注册假设（H1-H4，§4），≥6 臂消融（§5）。</td><td>命题 + 判据 + 实验协议全开源（数字在 mock 沙盒可复跑）</td></tr>
+<tr><td><b>副线（任务形态）</b></td><td>认知的载体</td><td>long-chain flow orchestration 作为<b>新任务形态</b>（design_flow 契约：submit.zip 交付件 + ≥8 断言 + 不指定 lang/host）；评测协议（Pass@1 + PreToolUse 防泄题 + 2400s 超时）。</td><td>协议 + 判据 + harness 全开源</td></tr>
+<tr><td><b>载体（bench）</b></td><td>外部接口</td><td>EDA-Flow-Bench 作为「认知检验的实验台」：Lite 集 500 题（脱敏可释放）+ mock-EDA 模式 + 协议与判据 + Lite 集构造方法。<b>原始 trace、真实 PDK/网表/公司脚本不发布。</b></td><td>部分开源（见 §2.3 边界表）</td></tr>
+</table>
+
+<p><b>叙事逻辑</b>：主线认知命题需要「长链工具编排」任务来检验 → 副线提供了这个任务形态（long-chain flow orchestration）→ bench 是承载该任务形态的数据集 + 评测装置。三者构成「<b>命题 — 任务 — 数据</b>」的依赖链，任何一层都可以独立评估：命题可被证伪、任务形态可被复用、数据集可被替代（用开源 EDA 重造一个等价 bench 仍能检验同一命题）。<b>这正是「认知的可迁移性」</b>——即使 bench 不可开源，命题和任务形态仍可在开源 EDA 上复现检验。</p>
+
+<h3>§2.3 开源边界表</h3>
+
+<table>
+<tr><th>类别</th><th>能开（green）</th><th>不能开（red）</th><th>可申请（yellow）</th></tr>
+<tr>
+<td><b>评测协议与判据</b></td>
+<td>Pass@1 协议、PreToolUse 防泄题钩子、check.py 判分器实现、≥8 断言规范、2400s 超时、submit.zip 打包逻辑、run_one.sh/run_batch.sh<br><span class="src">3_harness.tex:25-41 · 51-65 · 7_conclusion.tex:28</span></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><b>harness / 框架</b></td>
+<td>Cline 配置、MCP 桥配置（eda_flow server 接口）、mock-EDA 模式、判分器（Python stdlib 实现，判分无需 EDA license）<br><span class="src">3_harness.tex:70-87 · 2_benchmark.tex:123</span></td>
+<td>真实 EDA server（10.129.32.75）访问凭证、商业工具许可证</td>
+<td>受限评审复现包（审稿人签 NDA 后访问受控沙盒）</td>
+</tr>
+<tr>
+<td><b>任务资产</b></td>
+<td>Lite 集 500 题的 prompt + 脱敏 input assets + check.py（经可释放性筛选：领域均衡 + 难度 5-25% + 可释放性）<br><span class="src">2_benchmark.tex:86-97</span></td>
+<td>原始 trace（host/user/session_file，2_benchmark.tex:14）、真实 PDK/网表/公司脚本、隐藏答案（reference/ + check.py 在评测 workdir 外）</td>
+<td>受控评审复现包（Full 集子集，签 NDA）</td>
+</tr>
+<tr>
+<td><b>数据构造方法</b></td>
+<td>scan pipeline（EDA-keyword match-count + 两级预筛 0.8B 分类器）、Lite 集三维筛选方法、mock-behavioral fixture 构造法（纯 Python 资产可释放）<br><span class="src">2_benchmark.tex:11-13 · 86-97 · 5_analysis.tex:148</span></td>
+<td>真实工程师工作站的 session 文件、公司内部 EDA-keyword 列表的具体阈值</td>
+<td>—</td>
+</tr>
+<tr>
+<td><b>结果数据</b></td>
+<td>696-run 冻结快照的聚合统计（13 域逐域 PASS/FAIL/ERROR/ABSENT + Wilson CI）、失败分类法、47 trace 解剖的行为统计<br><span class="src">4_experiments.tex:40-60 · 5_analysis.tex:13,85-121</span></td>
+<td>单条 trace 的原始内容、可识别用户/项目的 trace_source 字段</td>
+<td>受控 trace 审阅（签 NDA，仅审不复制）</td>
+</tr>
+<tr>
+<td><b>认知命题</b></td>
+<td>4 条预注册假设 + 证伪条件 + 统计检验协议 + ≥6 臂消融的判据阈值（§4 §5）</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</table>
+
+<div class="callout info">
+<b>开源边界的论证逻辑（写进 Reproducibility Statement）</b>：我们开源「<b>能检验命题的最小充分集</b>」——协议、判据、harness、mock-EDA 模式、Lite 集 500 题脱敏资产。外部研究者可在 mock 沙盒上复跑 harness、重跑 Lite 集、甚至用开源 EDA（Yosys/OpenROAD/Magic）重造一个等价 bench 来检验同一认知命题。<b>原始 trace 不发布不影响命题的可证伪性</b>——命题的真伪由「记忆/自改进臂 vs 无记忆基线」的对照决定，不由「trace 是否真实」决定。trace 的真实性只影响 bench 的生态效度（ecological validity），我们在 §9 标注为 bench 的属性而非命题的属性。
+</div>
+</section>
+
+<!-- ============================ §3 ============================ -->
+<section id="s3">
+<h2>§3 与 DATE27 的继承与差异（delta 表）</h2>
+
+<p>DATE27 = <code>DATE27_Zhulong/DATE2027/</code>，前作 ZhuLong-SE：EDA 脚本 + 自进化。
+<span class="src">0_abstract.tex:2-7 · 3_method.tex:11 · 4_self_evolve.tex:4</span>
+新论文要把 DATE27 在<b>脚本层</b>的认知<b>搬到 flow 层</b>检验。下表五维 delta。</p>
+
+<table class="delta">
+<tr><th>维度</th><th>DATE27（单脚本层）</th><th>新论文（flow 层）</th><th>继承 / 差异</th></tr>
+<tr>
+<td><b>任务粒度</b></td>
+<td>单脚本：一个函数 / 一段代码，1-3 次工具调用<br><span class="src">DAC 2_benchmark.tex（EDA-Scripting-Bench 449 题，单函数）</span></td>
+<td>多步 flow：5-20+ 次工具调用，跨工具 handoff，产出 submit.zip 多文件交付件<br><span class="src">EDA-Flow-Bench 2_benchmark.tex:52 · 3_harness.tex</span></td>
+<td><b>继承</b>执行接地哲学 + MCP 桥；<b>差异</b>链长 1-3 → 5-20+，状态维护跨工具</td>
+</tr>
+<tr>
+<td><b>自进化的载体</b></td>
+<td>脚本层记忆：L0 原始 trace / L1 聚合模式（solution/pitfall/meta/strategy 四层）/ L2 蒸馏技能版本；写入 = 离线每训练批后；读取 = 任务格式化时 + 出错时按需<br><span class="src">DATE27 4_self_evolve.tex:4-5</span></td>
+<td>flow 层记忆：在 L1 四层基础上扩展「<b>跨 session 的工具知识 / 项目约定 / 失败模式</b>」；载体从「API 调用模式」升格为「<b>工具链编排模式 + 跨工具交接契约</b>」；自改进从「技能库自扩」扩展到「<b>harness 自改（Meta-Harness RSI）</b>」</td>
+<td><b>继承</b>三层记忆架构 + 可靠性门控（ground-truth anchoring / disconfirmation / held-out rollback / anti-leakage retrieval）；<b>差异</b>记忆内容从「API 用法」到「flow 编排」</td>
+</tr>
+<tr>
+<td><b>失败信号</b></td>
+<td>编译/运行：二值 pass/fail（隐藏验证器）+ 静态检查器（4 类 API 误用）<br><span class="src">DATE27 3_method.tex:35-39</span></td>
+<td>工具链 grounding + 长链状态：失败分类 = no-output 21.0% / semantic 62.8% / contract 0.3% / UNKNOWN 7.0%；信号更稀疏（5_analysis.tex:13），且失败可能来自<b>中途工具调用</b>而非最终交付件</td>
+<td><b>继承</b>二值 pass/fail 作为最终信号 + 反思路由（error path / contradiction path，DATE27 4_self_evolve.tex:10）；<b>差异</b>新增「中途失败信号」可作为记忆 pitfall 源</td>
+</tr>
+<tr>
+<td><b>评测单位</b></td>
+<td>单函数：函数返回值 / 函数级断言<br><span class="src">EDA-Scripting-Bench，DAC 5_bench.tex</span></td>
+<td>交付件：submit.zip 多文件包，≥8 条交付件级断言，check(deliverable, workdir)<br><span class="src">EDA-Flow-Bench 2_benchmark.tex:29-34</span></td>
+<td><b>差异</b>评测从「函数正确」到「交付件正确」；断言从「函数级」到「交付件级」；引入文件结构/命名契约</td>
+</tr>
+<tr>
+<td><b>可迁移性主张</b></td>
+<td>单一 EDA 域（PyAether 158 题），自进化在 instance-disjoint held-out 上 +2.5pp（80.0% vs 77.5%）<br><span class="src">DATE27 0_abstract.tex:4 · 6_conclusion.tex:3</span></td>
+<td>13 EDA 域（1653 题 flow 任务），主张「<b>认知可从脚本层迁移到 flow 层</b>」——若 H1-H4 在 flow 层复现则认知可迁移，若不复现则界定边界条件</td>
+<td><b>继承</b>预注册假设 + 受控消融 + 负结果照写的纪律；<b>差异</b>从「单域 +2.5pp」到「跨 13 域可迁移性检验」</td>
+</tr>
+</table>
+
+<div class="callout gold">
+<b>「认知的可迁移性」是本篇新意（必须显式写进 Intro）</b>：DATE27 在 PyAether 单脚本层证明「受治理的跨任务自进化能适度超越人工经验基线 +2.5pp」（DATE27 0_abstract.tex:4）。但这一认知是否<b>仅在脚本层成立</b>（链长 1-3、状态简单、失败信号来自单函数）？当任务链长放大到 5-20+ 次 tool call、状态跨工具维护、失败来自中途 grounding 而非最终函数——<b>记忆与自改进的收益是否仍然为正、是否随链长单调增长</b>？这是 DATE27 结论节（6_conclusion.tex:11「We also plan to explore whether the governed-memory architecture can serve as a general-purpose self-evolution layer for other API-driven automation domains」）留下的开放问题，本论文正面回答它。<b>若不复现，则界定了 RSI 在长链编排上的边界条件</b>——这本身是可发表的认知。
+</div>
+</section>
+
+<!-- ============================ §4 ============================ -->
+<section id="s4">
+<h2>§4 可证伪命题（pre-registered hypotheses）</h2>
+
+<p>4 条假设，每条含：自变量、因变量、判据阈值、样本量、统计检验（预注册 α）、<b>证伪条件</b>。所有假设在数据冻结前预注册（§7 时间线标「预注册日」）。</p>
+
+<h3>H1 · 长期记忆提升长链任务 Pass@1</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>跨 session 的长期记忆（工具知识 + 项目约定 + 失败模式）提升长链 flow 任务的 Pass@1，且提升在「所需上下文接近/超过窗口」的子集上更大。</td></tr>
+<tr><td><b>自变量</b></td><td>记忆有无（M0 无记忆基线 vs M2/M3 自动记忆，§5 臂表）</td></tr>
+<tr><td><b>因变量</b></td><td>Pass@1（每任务一次轨迹，2400s 超时，≥8 断言全过）</td></tr>
+<tr><td><b>判据阈值</b></td><td>M3 Pass@1 ≥ M0 Pass@1 + <b>3pp</b>（pooled），且在「超窗风险高」子集上 Δ ≥ 5pp</td></tr>
+<tr><td><b>样本量</b></td><td>最小矩阵：Lite 集 500 题中取 trace 最长 top-120（按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层，5_analysis.tex:85），每臂 1 trace × 120 题 = 120 run；理想矩阵：500 题 × 3 重复 = 1500 run/臂</td></tr>
+<tr><td><b>统计检验</b></td><td>McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；预注册 α=0.05（Bonferroni 校正后 α=0.05/4=0.0125 用于 4 假设族）</td></tr>
+<tr><td><b>证伪条件</b></td><td>M3 − M0 &lt; 1pp（pooled）<b>或</b> McNemar p &gt; 0.05 <b>或</b> 方向反转（M3 &lt; M0）⇒「记忆在 flow 层无增益」成立，H1 被证伪</td></tr>
+</table>
+
+<h3>H2 · 递归自我改进收益随链长单调增长</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>自改进（技能库自扩 + harness 自改）的 Pass@1 收益随任务链长（tool call 数）单调增长——链越长，自改进积累的编排知识越有用。</td></tr>
+<tr><td><b>自变量</b></td><td>自改进有无（M3 vs M3+S1，§5）× 链长分层（short: &lt;14 calls / mid: 14-38 / long: &gt;38，按 5_analysis.tex:85 IQR 分层）</td></tr>
+<tr><td><b>因变量</b></td><td>分层 Pass@1 + (M3+S1 − M3) 的分层 Δ</td></tr>
+<tr><td><b>判据阈值</b></td><td>Δ_long ≥ Δ_mid ≥ Δ_short，且 Δ_long − Δ_short ≥ 3pp（单调性 + 显著差异）</td></tr>
+<tr><td><b>样本量</b></td><td>每层 ≥ 40 题（120 题分三层）；理想矩阵每层 ≥ 150 题</td></tr>
+<tr><td><b>统计检验</b></td>
+<td>单调性：Cochran-Armitage 趋势检验；分层差异：paired bootstrap CI on (Δ_long − Δ_short)；预注册 α=0.05</td></tr>
+<tr><td><b>证伪条件</b></td><td>单调性不成立（Δ_long &lt; Δ_mid <b>或</b> Δ_mid &lt; Δ_short）<b>或</b> Δ_long − Δ_short 的 95% CI 含 0 ⇒ H2 被证伪。若 Δ 在所有层都 ≈ 0，则「自改进在 flow 层无收益」⇒ 走 §8 R1 Plan B（边界条件论文）</td></tr>
+</table>
+
+<h3>H3 · 记忆是自改进的前提</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>无记忆时自改进收益消失或转负——自改进依赖记忆来积累跨 session 经验，记忆是自改进的必要条件。</td></tr>
+<tr><td><b>自变量</b></td><td>记忆（有/无）× 自改进（有/无）= 2×2 析因：M0 / M3 / S1(无记忆自改进) / M3+S1</td></tr>
+<tr><td><b>因变量</b></td><td>Pass@1 + 交互效应（two-way ANOVA 或其非参数替代）</td></tr>
+<tr><td><b>判据阈值</b></td><td>自改进的主效应在「无记忆」条件下 ≤ 0（S1 ≤ M0），在「有记忆」条件下 &gt; 0（M3+S1 &gt; M3）；交互效应 (M3+S1 − M3) − (S1 − M0) ≥ 2pp</td></tr>
+<tr><td><b>样本量</b></td><td>4 臂 × 120 题 = 480 run（最小）；理想 4 × 500 = 2000 run</td></tr>
+<tr><td><b>统计检验</b></td><td>交互效应 paired bootstrap CI（排除 0 为显著）；预注册 α=0.05</td></tr>
+<tr><td><b>证伪条件</b></td><td>S1 &gt; M0 + 2pp（无记忆时自改进仍有收益）<b>或</b> 交互效应 95% CI 含 0 ⇒「记忆是自改进前提」不成立，H3 被证伪（自改进可能在无记忆时通过 prompt 内 in-context learning 起作用）</td></tr>
+</table>
+
+<h3>H4 · 单 agent 与自主 spawn 结论在 flow 场景的复现</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>结案结论（单 agent ≥ 多 agent；自主 spawn ≥ 用户定制，见 MEMORY_ZHULONG.md 顶部结案结论）在 flow 场景是否复现——即记忆/自改进臂内部，单 agent 仍优于多 agent。</td></tr>
+<tr><td><b>自变量</b></td><td>agent 架构（单 agent / 自主 spawn subagent / 用户定制 subagent）嵌套在 M3+S1 臂内</td></tr>
+<tr><td><b>因变量</b></td><td>Pass@1 + token 效率（input tokens / Pass@1）</td></tr>
+<tr><td><b>判据阈值</b></td><td>单 agent Pass@1 ≥ 自主 spawn + 0pp（复现结案结论）<b>且</b> 单 agent token 效率优于自主 spawn</td></tr>
+<tr><td><b>样本量</b></td><td>3 架构 × 120 题 = 360 run（最小）</td></tr>
+<tr><td><b>统计检验</b></td><td>McNemar（单 agent vs 自主 spawn，方向一致）；预注册 α=0.05</td></tr>
+<tr><td><b>证伪条件</b></td><td>自主 spawn &gt; 单 agent + 3pp（McNemar p &lt; 0.05）⇒ 在 flow 场景多 agent 反超单 agent，结案结论<b>不在 flow 层复现</b>，H4 被证伪（这本身是重要发现：长链任务可能让多 agent 分工优势显现）</td></tr>
+</table>
+
+<div class="callout warn">
+<b>H4 的特殊说明</b>：H4 直接对应用户 2026-11-17 09:3x 结案令的两条认知（「单 agent &gt; 多 agent；自主 spawn &gt; 用户定制」，源自 2026 暑假清华博士研究积累）。该认知在 subagent 消融线（40 题子集）上成立，但<b>是否在长链 flow 任务上仍成立</b>是经验问题——长链任务可能恰好满足「所需上下文 &gt; 窗口」的条件（用户 2026-11-15 07:2x 提出的 H_ctx 思路），使多 agent 分工优势显现。H4 用预注册方式正面检验这一边界。<b>无论结果如何都可发表</b>：复现 → 巩固认知；不复现 → 界定长链是单 agent 优势的边界。
+<span class="src">MEMORY_ZHULONG.md:1-5（结案结论）· 用户 2026-11-15 07:2x H_ctx 思路（ZHULONG_TASK.md 用户裁令节）</span>
+</div>
+</section>
+
+<!-- ============================ §5 ============================ -->
+<section id="s5">
+<h2>§5 消融实验设计（核心：≥6 臂 + 杀手级对照 + 污染防护 + 统计）</h2>
+
+<h3>§5.1 臂表（8 臂，含 2 负对照）</h3>
+
+<table class="arms-table">
+<tr><th>臂号</th><th>名称</th><th>唯一变量</th><th>实现方式</th><th>对照</th><th>预注册判据</th><th>成本（token/墙钟）</th></tr>
+<tr class="arm">
+<td><b>M0</b></td><td>无记忆基线</td><td>无任何跨 session 记忆</td>
+<td>Cline v3.0.51 原配置（EDA-Flow-Bench 3_harness.tex:8-19），不注入任何记忆条目；每任务独立 trace；等同 696-run 冻结快照的 DeepSeek-V4-Pro 配置<br><span class="src">4_experiments.tex:22-26</span></td>
+<td>—（所有臂的基线）</td>
+<td>—</td>
+<td>≈ 696-run 快照口径：8 workers × 24h / 696 run ≈ 3.3 min/run；120 题 ≈ 6.6h</td>
+</tr>
+<tr class="arm">
+<td><b>M1</b></td><td>静态记忆（人工 SOP）</td>
+<td>注入人工整理的 EDA 工具 SOP</td>
+<td>注入 DATE27 的「4 skills + 1 rule file」（DATE27 3_method.tex:42-45）扩展到 flow 层：补 13 域的工具链编排 SOP（如 DRC/LVS 迭代流程、SPICE deck 生成模板、netlist 解析套路）；<b>无写入侧</b>（静态，不随运行更新）</td>
+<td>vs M0（记忆有无）</td>
+<td>M1 ≥ M0 + 2pp</td>
+<td>与 M0 同量级（SOP 注入只增 prompt 长度，不增 tool call）</td>
+</tr>
+<tr class="arm">
+<td><b>M2</b></td><td>自动记忆（写入+检索，无淘汰）</td>
+<td>自动写入 + 检索，但无淘汰/冲突消解</td>
+<td>复用 DATE27 三层记忆（L0/L1/L2，4_self_evolve.tex:4）的写入侧（distillation + reflection，error/contradiction path）+ 读取侧（任务格式化时 + 出错时按需），但<b>关闭可靠性门控</b>（无 ground-truth anchoring / 无 disconfirmation filtering / 无 held-out rollback）；记忆条目只增不减</td>
+<td>vs M1（自动 vs 静态）· vs M0（记忆有无）</td>
+<td>M2 ≥ M0 + 2pp；若 M2 &lt; M1 则「自动记忆不如人工 SOP」⇒ 门控必要性信号</td>
+<td>写入侧离线（不计入 per-run）；读取侧增检索调用 ≈ +5% tool call</td>
+</tr>
+<tr class="arm">
+<td><b>M3</b></td><td>自动记忆 + 淘汰与冲突消解</td>
+<td>在 M2 上开启全部可靠性门控</td>
+<td>在 M2 基础上开启 DATE27 全部门控（4_self_evolve.tex:13-17）：ground-truth anchoring（验证器二元判定覆盖自报告，4_self_evolve.tex:10）、disconfirmation filtering（2 次证伪即过滤）、5 轮未确认降级、held-out gated evolution（退化 &gt; 5pp 即回滚，4_self_evolve.tex:28）、anti-leakage retrieval（names-only injection + docstring generalization + problem-side embedding，4_self_evolve.tex:22）</td>
+<td>vs M2（门控有无）· vs M0（记忆有无）</td>
+<td><b>M3 ≥ M0 + 3pp</b>（H1 主判据）· M3 ≥ M2 + 1pp（门控有额外收益）</td>
+<td>同 M2 + 门控计算开销（离线，可忽略）</td>
+</tr>
+<tr class="arm">
+<td><b>S1</b></td><td>自改进（技能库自动扩展，无记忆）</td>
+<td>技能库自扩但<b>无跨 session 记忆</b></td>
+<td>每 session 内 in-context 自改进（agent 生成技能 → 同 session 内验证 → 同 session 内复用），但<b>不跨 session 持久化</b>（session 结束即丢弃）；用于 H3 的「无记忆自改进」格</td>
+<td>vs M0（自改进有无，无记忆下）</td>
+<td>S1 vs M0（H3 子判据：无记忆时自改进是否仍有收益）</td>
+<td>同 M0 + 同 session 内技能生成开销 ≈ +10% tool call</td>
+</tr>
+<tr class="arm">
+<td><b>M3+S1</b></td><td>记忆 + 自改进组合</td>
+<td>记忆（M3）+ 跨 session 技能库自扩</td>
+<td>M3 的记忆层 + S1 的技能库扩展持久化到 L2（DATE27 4_self_evolve.tex:4 L2 蒸馏技能版本）；技能库自扩由 4 维 judge（abstraction/reusability/actionability/faithfulness，4_self_evolve.tex:16）+ MUSE create-evaluate-refine loop 门控；可选 Meta-Harness RSI（harness 自改，6_conclusion.tex:11）作为理想矩阵扩展</td>
+<td>vs M3（自改进有无，有记忆下）· vs S1（记忆有无，自改进下）</td>
+<td><b>M3+S1 ≥ M3 + 2pp</b>（H3 交互效应）· 分层 Δ_long ≥ Δ_mid ≥ Δ_short（H2 单调性）</td>
+<td>同 M3 + 技能库扩展（离线）+ L2 读取 ≈ +3% tool call</td>
+</tr>
+<tr class="arm">
+<td><b>N1</b></td><td>负对照：等 token 预算无记忆长 prompt（<span class="tag p0">杀手级</span>）</td>
+<td>无记忆但 prompt 总 token = M3</td>
+<td>给 M0 注入与 M3 检索注入<b>等 token 量</b>的<b>无关/随机</b>文本（如随机打乱的 EDA 文档片段、或等长的一般技术文本），使 input token 预算与 M3 持平；<b>这是「记忆真的有用」 vs 「上下文更长/prompt 更丰富」的判别对照</b></td>
+<td>vs M3（等 token 下，有意义记忆 vs 无意义填充）</td>
+<td><b>M3 ≥ N1 + 3pp</b>（排除「只是 prompt 变长」的替代解释）—— 若 M3 ≈ N1 则记忆增益仅来自 token 量，H1 被实质证伪</td>
+<td>与 M0 同（填充文本预生成）</td>
+</tr>
+<tr class="arm">
+<td><b>N2</b></td><td>负对照：记忆注入错误/无关知识</td>
+<td>注入<b>错误</b>或<b>无关</b>记忆条目</td>
+<td>给 M0 注入<b>错误</b>的 EDA 工具用法（如错误的 API 签名、过时的工具行为）或<b>无关</b>领域的知识（如 Web 开发 SOP），token 量与 M3 持平；检验记忆增益是否来自「正确且相关」的知识</td>
+<td>vs M3（正确相关 vs 错误无关）· vs M0（错误记忆是否反而有害）</td>
+<td>N2 ≤ M0（错误记忆应有害或至少无益）· M3 ≥ N2 + 5pp（正确记忆显著优于错误记忆）</td>
+<td>与 M0 同（错误/无关条目预生成）</td>
+</tr>
+</table>
+
+<div class="callout bad">
+<b>杀手级对照 N1（必须有，判别「记忆真有用」 vs 「prompt 变长」）</b>：审稿人对「记忆/检索增益」最常见的反驳是「你只是给了更多上下文 token，LLM 自然表现更好」。N1 通过<b>等 token 预算的无意义填充</b>排除这一替代解释——若 M3 ≈ N1，则记忆增益<b>仅来自 token 量</b>而非知识内容，H1 被实质证伪（即使 M3 &gt; M0）。这一对照在 DATE27 中<b>未做</b>（DATE27 只对比了 names-only vs full-sequence injection，4_self_evolve.tex:22 + 1_intro.tex:28「names-only retrieval improves over full-sequence injection by 4.7pp」），是新论文的实验设计增量。
+</div>
+
+<h3>§5.2 污染防护</h3>
+<ul>
+  <li><b>Held-out 任务</b>：自改进的写入侧（distillation）只用在「训练子集」上的 trace；held-out 子集（120 题或 500 题）<b>从不参与 distillation</b>。继承 DATE27 的 instance-disjoint split（1_intro.tex:7 + 4_self_evolve.tex:22）。</li>
+  <li><b>时间切分</b>：记忆写入只用 2026-11-09 冻结快照<b>之前</b>的 trace；冻结快照之后的 case 不进入记忆库（防止「用未来数据解释过去」）。</li>
+  <li><b>答案泄漏检查</b>：复用 EDA-Flow-Bench 的 PreToolUse 防泄题钩子（3_harness.tex:51-65）—— reference/ + check.py 不进入 workdir；hook_blocks 字段统计 ACCESS RESTRICTED 事件（3_harness.tex:67）。自改进记忆条目经 anti-leakage retrieval（names-only + docstring generalization，4_self_evolve.tex:22）防止跨划分答案复制。</li>
+  <li><b>记忆内容审计</b>：每条 L1 记忆条目记录 trace_source + reliability tier（verified/unverified/pitfall，4_self_evolve.tex:10）+ 写入时间戳；审计脚本统计「错误条目占比」「淘汰条目数」「冲突消解次数」——作为「记忆质量」的协变量报告。</li>
+  <li><b>基座固定</b>：所有臂用同一基座（DeepSeek-V4-Pro，与 696-run 快照一致，4_experiments.tex:22）；多骨干扫描仅在 camera-ready 补且仅对 M0/M3 两臂（控制成本）。</li>
+  <li><b>判据不变</b>：所有臂用同一 check.py + 同一 ≥8 断言 + 同一 2400s 超时（2_benchmark.tex:120）—— <b>不得为论文数字改判据/改题/挑样本</b>（防伪底线）。</li>
+</ul>
+
+<h3>§5.3 样本量与统计功效</h3>
+<table>
+<tr><th>臂</th><th>最小矩阵 n</th><th>理想矩阵 n</th><th>统计功效说明</th></tr>
+<tr><td>M0 / M3 / N1 / N2（H1 主对照）</td><td>120 题 × 1 trace</td><td>500 题 × 3 trace</td><td>120 题下，M0 假设 10% Pass@1，M3 假设 15%，McNemar 双侧 α=0.05 功效 ≈ 0.62（中等）；500 题 × 3 功效 &gt; 0.95。<b>n 不足时明确写「仅信号不作结论」</b>。</td></tr>
+<tr><td>M3 / S1 / M3+S1 / M0（H3 析因）</td><td>4 × 120 = 480</td><td>4 × 500 = 2000</td><td>交互效应检测功效低于主效应，理想矩阵优先满足 H3。</td></tr>
+<tr><td>M3+S1 分层（H2 单调性）</td><td>3 层 × 40 = 120</td><td>3 层 × 150 = 450</td><td>Cochran-Armitage 趋势检验在 3×40 下功效 ≈ 0.5（弱）；理想矩阵下 &gt; 0.8。</td></tr>
+</table>
+<div class="callout warn">
+<b>统计功效诚实声明</b>：最小矩阵（120 题/臂）对 3pp 的差异检测功效仅中等（≈0.6），<b>只能给出方向性信号，不足以作强结论</b>。论文将明确标注：最小矩阵结果为「信号」，强结论需理想矩阵（500 题 × 3 重复）支撑。这是 DATE27「40 题 held-out 只报 +2.5pp 信号」（DATE27 0_abstract.tex:4 + 6_conclusion.tex:3「limitations include the modest challenge test set (40 tasks)」）的诚实纪律的延续。
+</div>
+
+<h3>§5.4 最小可跑矩阵 vs 理想矩阵</h3>
+<table>
+<tr><th></th><th>最小可跑矩阵（1-2 周）</th><th>理想矩阵（资源允许）</th></tr>
+<tr><td><b>臂</b></td><td>M0, M3, N1, M3+S1（4 臂，覆盖 H1 主对照 + 杀手级 N1 + H3 交互）</td><td>8 臂全跑（M0/M1/M2/M3/S1/M3+S1/N1/N2）</td></tr>
+<tr><td><b>题量</b></td><td>Lite 集 500 题中取 trace 最长 top-120（按 47 pilot IQR 分层）</td><td>Lite 集 500 题 × 3 重复</td></tr>
+<tr><td><b>基座</b></td><td>单基座（DeepSeek-V4-Pro）</td><td>5 基座（GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash / Doubao-Seed-2.0-Pro / DeepSeek-V4-Pro，仅 M0/M3 两臂）</td></tr>
+<tr><td><b>不重训</b></td><td>✅ 不重训基座（只改 harness 记忆/自改进层）</td><td>✅ 同左</td></tr>
+<tr><td><b>复用</b></td><td>复用 696-run 快照作 M0 锚点（无需重跑 M0，直接引用 4_experiments.tex:66 的 10.0%）</td><td>M0 在 Lite 集 500 题上重跑（696 快照是 Full 集子集，Lite 集需新跑 M0）</td></tr>
+<tr><td><b>总 run</b></td><td>3 新臂 × 120 = 360 run（M0 引用快照）≈ 3.3 min/run × 360 ≈ 20h（8 workers）</td><td>8 臂 × 500 × 3 = 12000 run ≈ 660h（8 workers）≈ 28 天</td></tr>
+</table>
+</section>
+
+<!-- ============================ §6 ============================ -->
+<section id="s6">
+<h2>§6 论文大纲与图表</h2>
+
+<h3>§6.1 标题候选（3 个）</h3>
+<ol>
+  <li><b>Long-Term Memory and Recursive Self-Improvement for EDA Design-Flow Agents: A Pre-Registered, Falsifiable Study</b>（认知命题优先，副标点明预注册 + 可证伪）</li>
+  <li><b>From Script to Flow: Testing Whether Self-Evolution Transfers to Long-Chain EDA Orchestration</b>（迁移性叙事，呼应 §3 delta 表）</li>
+  <li><b>EDA-Flow-Bench: A Carrier for Falsifiable Cognition on Long-Chain Tool Orchestration</b>（bench 作载体，认知作灵魂）</li>
+</ol>
+<p><b>推荐</b>：第 1 个（最直接表达认知命题 + 预注册纪律，符合 ICML 对可证伪性的偏好）。</p>
+
+<h3>§6.2 贡献列表（4 条，动词开头）</h3>
+<ol>
+  <li><b>Formulate</b> 4 条预注册、可证伪假设（H1-H4）on long-term memory + recursive self-improvement in long-chain EDA flow orchestration, each with falsification conditions（§4）。</li>
+  <li><b>Design</b> an 8-arm ablation（含等 token 预算杀手级对照 N1 + 错误记忆对照 N2）that separates「memory works」from「prompt just got longer」——a control absent from prior EDA self-evolution work（DATE27）（§5）。</li>
+  <li><b>Introduce</b> long-chain flow orchestration as a new task modality（design_flow 契约：submit.zip + ≥8 断言 + 不指定 lang/host）with a released evaluation protocol + harness + mock-EDA mode + 500-task sanitized Lite set（§2.3）。</li>
+  <li><b>Report</b> falsifiable results on 13 EDA domains（1653 flow tasks）, including negative results as publishable boundary conditions on RSI in long-chain orchestration（§4 §8）。</li>
+</ol>
+
+<h3>§6.3 章节大纲（与两篇 zhulong 同构）</h3>
+<table>
+<tr><th>新论文章节</th><th>对应 DATE27 章节</th><th>对应 DAC 章节</th><th>内容</th></tr>
+<tr><td>§1 Introduction</td><td>1_intro.tex</td><td>1_intro.tex</td><td>动机：从脚本到 flow 的迁移；4 条预注册假设预告；grounding-gap 框架回顾</td></tr>
+<tr><td>§2 Background: From Script to Flow</td><td>—（DATE27 无）</td><td>2_background.tex + 4_grounding.tex</td><td>grounding-gap 框架回顾；单脚本 vs flow 的 delta（§3 表）；为什么 memory + RSI 在 flow 层可能不同</td></tr>
+<tr><td>§3 Task Modality & Benchmark (carrier)</td><td>—</td><td>5_bench.tex</td><td>design_flow 契约；13 域；Lite 集 500 题；开源边界（§2.3 表）；作为认知检验载体而非卖点</td></tr>
+<tr><td>§4 Harness with Memory & Self-Improvement</td><td>3_method.tex + 4_self_evolve.tex</td><td>3_design.tex</td><td>三层记忆 L0/L1/L2 + 可靠性门控（继承 DATE27）扩展到 flow 层；8 臂实现细节</td></tr>
+<tr><td>§5 Pre-Registered Hypotheses & Ablation Design</td><td>—（DATE27 无预注册）</td><td>—</td><td>4 假设（§4）+ 8 臂表（§5.1）+ 杀手级对照 N1 + 污染防护 + 统计功效</td></tr>
+<tr><td>§6 Experiments</td><td>5_exp.tex</td><td>6_exp.tex</td><td>主结果：H1-H4 的判据核验；分层分析；负结果照写</td></tr>
+<tr><td>§7 Analysis: Why Memory Helps/Hurts</td><td>—</td><td>7_discussion.tex</td><td>记忆内容审计；失败模式与记忆类型的交互；trace 解剖（继承 5_analysis.tex:76-121）</td></tr>
+<tr><td>§8 Related Work</td><td>2_related_work.tex</td><td>—（DAC 无独立 related）</td><td>EDA benchmark / agent memory / RSI / self-evolution（DATE27 + DAC + ExpeL + Reflexion + SkillOpt + MUSE）</td></tr>
+<tr><td>§9 Conclusion: Boundary Conditions of RSI in Flow</td><td>6_conclusion.tex</td><td>8_conclusion.tex</td><td>哪些假设被支持/证伪；边界条件；future work（多模态 grounding / long-chain 更长）</td></tr>
+<tr><td>Ethics + Reproducibility</td><td>—</td><td>—（EDA-Flow-Bench 8_ethics/9_reproducibility）</td><td>开源边界表（§2.3）；mock-EDA 复现；NDA 受控评审包</td></tr>
+<tr><td>Appendix A/B/C</td><td>—</td><td>—</td><td>A: benchmark details；B: full per-arm results + per-domain；C: memory audit logs + harness impl</td></tr>
+</table>
+
+<h3>§6.4 图表清单（Figure 3-5 + Table 3-5）</h3>
+<table class="figtable">
+<tr><th>编号</th><th>标题</th><th>数据来源</th><th>是否已有</th></tr>
+<tr><td>Figure 1</td><td>From Script to Flow：任务链长 1-3 → 5-20+ 的迁移示意（grounding-gap 框架扩展）</td><td>新绘（概念图）</td><td>❌ 新造</td></tr>
+<tr><td>Figure 2</td><td>8 臂消融的 Pass@1 + 95% CI（M0/M1/M2/M3/S1/M3+S1/N1/N2）</td><td>§5 实验矩阵新跑</td><td>❌ 新跑</td></tr>
+<tr><td>Figure 3</td><td>H2 分层 Δ（short/mid/long 链长）的自改进收益单调性</td><td>§5 分层分析新跑</td><td>❌ 新跑</td></tr>
+<tr><td>Figure 4</td><td>记忆内容审计：记忆条目数 / 淘汰数 / 冲突消解数 随轮次演化</td><td>记忆审计日志</td><td>❌ 新采集</td></tr>
+<tr><td>Table 1</td><td>与 DATE27 的 delta 表（§3）</td><td>§3（本计划书）</td><td>✅ 本计划书已起草</td></tr>
+<tr><td>Table 2</td><td>8 臂消融表（臂号 / 唯一变量 / 判据 / 结果）</td><td>§5 + §6 实验结果</td><td>✅ 设计已起草，结果待跑</td></tr>
+<tr><td>Table 3</td><td>主结果：H1-H4 判据核验（point estimate + CI + McNemar p + 证伪/支持）</td><td>§6 实验新跑</td><td>❌ 新跑</td></tr>
+<tr><td>Table 4</td><td>13 域逐域 Pass@1（M0 vs M3，复用 696 快照 + 新跑）</td><td>4_experiments.tex:40-60（M0 已有）+ M3 新跑</td><td>一半已有（M0）</td></tr>
+<tr><td>Table 5</td><td>开源边界表（§2.3）</td><td>§2.3（本计划书）</td><td>✅ 本计划书已起草</td></tr>
+</table>
+</section>
+
+<!-- ============================ §7 ============================ -->
+<section id="s7">
+<h2>§7 实验矩阵与时间线</h2>
+
+<h3>§7.1 实验矩阵表（臂 × 任务子集 × 重复 × 判据）</h3>
+<table class="arms-table">
+<tr><th>臂</th><th>任务子集</th><th>重复</th><th>判据</th><th>对应假设</th><th>状态</th></tr>
+<tr><td>M0</td><td>引用 696-run 快照（Full 集子集）</td><td>1（快照）</td><td>基线锚点 10.0%</td><td>—</td><td>✅ 已有（4_experiments.tex:66）</td></tr>
+<tr><td>M0（Lite 集）</td><td>Lite 500 题</td><td>1-3</td><td>Lite 集基线</td><td>—</td><td>❌ 需新跑（696 快照非 Lite 集）</td></tr>
+<tr><td>M1</td><td>Lite top-120（trace 最长）</td><td>1</td><td>M1 ≥ M0 + 2pp</td><td>H1 子</td><td>❌ 新跑（最小矩阵可跳过，理想矩阵跑）</td></tr>
+<tr><td>M2</td><td>Lite top-120</td><td>1</td><td>M2 ≥ M0 + 2pp；M2 vs M1</td><td>H1 子</td><td>❌ 新跑（理想矩阵）</td></tr>
+<tr><td>M3</td><td>Lite top-120 → 500</td><td>1 → 3</td><td><b>M3 ≥ M0 + 3pp</b></td><td><b>H1</b></td><td>❌ 新跑（最小矩阵必跑）</td></tr>
+<tr><td>S1</td><td>Lite top-120</td><td>1</td><td>S1 vs M0（无记忆下自改进）</td><td>H3 子</td><td>❌ 新跑（最小矩阵必跑）</td></tr>
+<tr><td>M3+S1</td><td>Lite top-120 → 500</td><td>1 → 3</td><td>M3+S1 ≥ M3 + 2pp；分层单调</td><td><b>H2 H3</b></td><td>❌ 新跑（最小矩阵必跑）</td></tr>
+<tr><td>N1</td><td>Lite top-120</td><td>1</td><td><b>M3 ≥ N1 + 3pp</b>（杀手级）</td><td>H1 实质</td><td>❌ 新跑（最小矩阵必跑）</td></tr>
+<tr><td>N2</td><td>Lite top-120</td><td>1</td><td>N2 ≤ M0；M3 ≥ N2 + 5pp</td><td>H1 实质</td><td>❌ 新跑（理想矩阵）</td></tr>
+<tr><td>H4 架构</td><td>M3+S1 臂内 3 架构 × 120</td><td>1</td><td>单 agent ≥ spawn + 0pp</td><td><b>H4</b></td><td>❌ 新跑（最小矩阵必跑）</td></tr>
+</table>
+
+<h3>§7.2 时间线（ICML 2027 倒推）</h3>
+<p>ICML 2027 截稿：<b>Abstract 2027-01-16 / Paper 2027-01-22</b>（EDA-Flow-Bench_ICML2027/README.md:6-7）。</p>
+<table>
+<tr><th>里程碑</th><th>日期</th><th>交付</th></tr>
+<tr><td><b>预注册日</b></td><td>2026-11-22（本周）</td><td>4 假设 + 8 臂判据冻结（本计划书 §4 §5 作为预注册文档归档）；此后不得改判据</td></tr>
+<tr><td>数据冻结日</td><td>2026-11-26</td><td>Lite 集 500 题固定 + top-120 子集固定 + 记忆写入只用此日前 trace</td></tr>
+<tr><td>最小矩阵跑完</td><td>2026-12-03</td><td>M0(Lite)/M3/S1/M3+S1/N1/H4 共 ≈ 360+ run；出方向性信号</td></tr>
+<tr><td>最小矩阵分析</td><td>2026-12-06</td><td>§6 主结果 Table 3 初稿；H1-H4 信号判定（支持/证伪/不足）</td></tr>
+<tr><td>理想矩阵启动</td><td>2026-12-08</td><td>若信号值得确认 → 启动 500 题 × 3 重复 + M1/M2/N2 补臂</td></tr>
+<tr><td>理想矩阵跑完</td><td>2027-01-05</td><td>8 臂 × 500 × 3 ≈ 12000 run；多骨干 M0/M3 扫描</td></tr>
+<tr><td>写作冻结日</td><td>2027-01-12</td><td>全文初稿冻结（§1-§9 + Appendix）；数字回填完毕</td></tr>
+<tr><td>内部评审日</td><td>2027-01-15</td><td>内部 + 外部（如 BaiZe 团队）评审；查可追溯性 + 0 外链 + 防伪底线</td></tr>
+<tr><td>Abstract 投稿</td><td>2027-01-16</td><td>ICML 2027 abstract</td></tr>
+<tr><td>Paper 投稿</td><td>2027-01-22</td><td>ICML 2027 full paper</td></tr>
+</table>
+<div class="callout info">
+<b>时间线缓冲</b>：最小矩阵（11-22 → 12-03）留 11 天，含 1 周 smoke + 跑 + 分析；理想矩阵（12-08 → 01-05）留 28 天，对应 28 天 8 workers 估算。若最小矩阵信号为「H1 被证伪」，则不启动理想矩阵，提前进入写作（走 §8 R1 Plan B 边界条件论文），时间更充裕。
+</div>
+</section>
+
+<!-- ============================ §8 ============================ -->
+<section id="s8">
+<h2>§8 风险与 Plan B</h2>
+
+<table>
+<tr><th>编号</th><th>风险</th><th>影响</th><th>Plan B</th></tr>
+<tr>
+<td><span class="tag p0">R1</span></td>
+<td><b>H2 负结果</b>（自改进收益不随链长单调，甚至转负）</td>
+<td>论文「主线认知」的核心命题之一不成立</td>
+<td><b>诚实路线</b>：写成「在真实 design flow 上自改进的边界条件」——DATE27 在脚本层 +2.5pp，flow 层不复现 → 界定 RSI 的链长边界。这是<b>可发表的认知</b>，且与 DAC 7_discussion.tex:7「SKILL 自探索 +2.0pp 在噪声内」的负结果照写纪律一致。论文标题改为「Boundary Conditions of Recursive Self-Improvement in Long-Chain EDA Orchestration」。</td>
+</tr>
+<tr>
+<td><span class="tag p0">R2</span></td>
+<td><b>不可开源被审稿人质疑复现性</b></td>
+<td>拒稿风险</td>
+<td>① 受限评审复现包（审稿人签 NDA 访问受控沙盒）；② mock-EDA 模式让外部在无商业 license 下复跑 harness（7_conclusion.tex:28）；③ Lite 集 500 题脱敏构造方法开源（2_benchmark.tex:86-97）；④ <b>命题可迁移性论证</b>：用开源 EDA（Yosys/OpenROAD/Magic）重造等价 bench 仍能检验同一 H1-H4（§2.2 叙事逻辑）；⑤ Reproducibility Statement 显式声明「原始 trace 不发布不影响命题可证伪性」（§2.3 callout）。</td>
+</tr>
+<tr>
+<td><span class="tag p1">R3</span></td>
+<td><b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1653 仍在增长，696 快照可能过期）</td>
+<td>数字时效性</td>
+<td>① 所有论文数字绑定冻结快照（2026-11-09，main.tex:100）+ Lite 集 500 题固定；② 新跑的臂都在 Lite 集上（固定）；③ 多骨干扫描在 camera-ready 补；④ <b>认知命题不依赖绝对数字</b>（H1 判据是 M3 − M0 的相对 Δ，不依赖 10.0% 的绝对值）。</td>
+</tr>
+<tr>
+<td><span class="tag p1">R4</span></td>
+<td><b>统计功效不足</b>（120 题最小矩阵对 3pp 功效仅 ≈0.6）</td>
+<td>弱结论</td>
+<td>① 最小矩阵结果明确标「信号不作结论」；② 启动理想矩阵（500 × 3）提功效至 &gt; 0.95；③ 若资源不允许理想矩阵，则只报方向 + CI，不报强结论。</td>
+</tr>
+<tr>
+<td><span class="tag p1">R5</span></td>
+<td><b>杀手级 N1 与 M3 无差异</b>（记忆增益只是 token 量）</td>
+<td>H1 被实质证伪</td>
+<td>这本身是<b>重要发现</b>（EDA 领域的记忆增益可能是 token 量假象）→ 写成「EDA flow 记忆增益的 token 量归因」负结果论文；同时检查 M2（无门控）是否也 ≈ N1，若是则「自动记忆不如人工 SOP」也成立。</td>
+</tr>
+<tr>
+<td><span class="tag p2">R6</span></td>
+<td><b>H4 不复现</b>（多 agent 在 flow 层反超单 agent）</td>
+<td>结案结论被推翻</td>
+<td>这本身是<b>重要发现</b>：长链任务让多 agent 分工优势显现（用户 2026-11-15 H_ctx 思路被证实）→ 论文加一节「长链作为单 agent 优势的边界」。</td>
+</tr>
+<tr>
+<td><span class="tag p2">R7</span></td>
+<td><b>记忆写入污染</b>（错误条目误导后续任务）</td>
+<td>M2/M3 &lt; M0</td>
+<td>这正是 N2 对照要测的；若 M3 &lt; M0，说明门控不足 → 加强 disconfirmation filtering 或降级到 M1 静态记忆报告。</td>
+</tr>
+</table>
+
+<div class="callout ok">
+<b>「负结果也发」的诚实路线（必写进 Intro + Conclusion）</b>：本论文预注册 4 条假设 + 8 臂对照，<b>任何一条被证伪都照写</b>。这不是失败——可证伪性本身就是科学贡献。继承自两篇 zhulong 的纪律：DAC 7_discussion.tex:7 公开报告 SKILL 自探索 +2.0pp 在噪声内 [-2.9,6.9] 仍作次要贡献；DATE27 6_conclusion.tex:3 公开报告「scope-boundary reflection 和 multi-batch disconfirmation 在当前设计下未验证」。本论文把这一纪律推到极致：预注册 → 跑 → 照写。
+</div>
+</section>
+
+<!-- ============================ §9 ============================ -->
+<section id="s9">
+<h2>§9 现有资产映射</h2>
+
+<h3>§9.1 今天就能跑（复用现有）</h3>
+<table>
+<tr><th>资产</th><th>来源</th><th>用途</th></tr>
+<tr><td>696-run 冻结快照（10.0% Pass@1）</td><td>4_experiments.tex:66 · main.tex:100-104 · results.txt</td><td>M0 基线锚点（Full 集子集，无需重跑）</td></tr>
+<tr><td>13 域逐域结果</td><td>4_experiments.tex:40-60 · appendix B_additional_results.tex:17-45</td><td>Table 4 的 M0 列</td></tr>
+<tr><td>失败分类法（no-output 21% / semantic 62.8% / contract 0.3%）</td><td>5_analysis.tex:13</td><td>§7 Analysis 的失败模式与记忆类型交互分析</td></tr>
+<tr><td>47 trace 解剖（26.5 calls / 41.2% MCP / read_files 28.8%）</td><td>5_analysis.tex:76-121</td><td>H2 链长分层变量（short/mid/long by IQR）+ 「瓶颈在观测而非动作」论据</td></tr>
+<tr><td>grounding depth 分箱（深度 1-2: 19.4% → 7+: 2.9%）</td><td>5_analysis.tex:46-60</td><td>H2 链长代理变量（grounding depth 作为链长的领域级标注）</td></tr>
+<tr><td>EDA-Flow-Bench harness（run_one.sh / 钩子 / MCP 配置）</td><td>3_harness.tex:25-87 · 7_conclusion.tex:28</td><td>M0 臂直接复用；M1-M3/S1/N1/N2 在其上插记忆/自改进层</td></tr>
+<tr><td>DATE27 三层记忆 + 可靠性门控实现</td><td>DATE27 3_method.tex + 4_self_evolve.tex</td><td>M2/M3 臂的记忆层直接移植（从脚本层 API 用法扩展到 flow 层编排）</td></tr>
+<tr><td>DATE27 anti-leakage retrieval（names-only / docstring generalization）</td><td>DATE27 4_self_evolve.tex:22</td><td>M3 臂的污染防护（§5.2）</td></tr>
+<tr><td>Lite 集 500 题（脱敏可释放）</td><td>2_benchmark.tex:86-97</td><td>最小矩阵 / 理想矩阵的任务子集</td></tr>
+<tr><td>mock-EDA 模式</td><td>7_conclusion.tex:28 · 5_analysis.tex:148（mock-behavioral fixture）</td><td>外部复现 + 开源边界</td></tr>
+<tr><td>WAVEVIEW 恢复研究（11 道需看图任务）</td><td>5_analysis.tex:148</td><td>资产逼真度降级的诚实披露素材（Reproducibility Statement）</td></tr>
+<tr><td>DAC 5 配置组件消融（Pure LLM/RAG/w/o Self-Expl/w/o Retrieval/Full，+56.8pp）</td><td>DAC 6_exp.tex:45-51</td><td>「harness 轴 &gt; 基座轴」的脚本层证据（+56.8pp vs +23.3pp），flow 层是否复现是 H1-H4 的背景动机</td></tr>
+</table>
+
+<h3>§9.2 需新造题（缺口）</h3>
+<ul>
+  <li><b>长链 flow 任务缺口</b>：现有 13 域的 grounding depth 分布中，深度 7+（physical_verify/layout_aether）仅占 696 快照的 ~16%（73+38=111/696）。H2 的 long 层（&gt;38 calls）需确认 top-120 子集中 long 层 ≥ 40 题——若不足，需从 Full 集 1653 题中补选长链 case（不造新题，只从现有 case 中选）。</li>
+  <li><b>开源 EDA 等价 bench（理想矩阵 / Plan B for R2）</b>：若用 Yosys/OpenROAD/Magic 重造一个等价 bench 来证明命题可迁移，需新造题——这是 R2 的 Plan B，资源允许时做，非最小矩阵必需。</li>
+  <li><b>不需要新造的</b>：M1 的 EDA 工具 SOP（从 DATE27 4 skills + 1 rule 扩展，用现有 13 域知识整理，不需新 case）；N1 的无关填充文本（预生成随机 EDA 文档片段）；N2 的错误记忆条目（人工构造错误 API 用法，不需新 case）。</li>
+</ul>
+
+<h3>§9.3 需新基座 / 新沙盒</h3>
+<ul>
+  <li><b>多骨干扫描</b>（理想矩阵）：GLM-5.2 / Kimi-K2.6 / DeepSeek-V4-Flash / Doubao-Seed-2.0-Pro 已配置（4_experiments.tex:22-23）但未跑完——理想矩阵对 M0/M3 两臂跑 5 基座，需新跑 ≈ 5 machine-days（appendix B_additional_results.tex:58-59）。</li>
+  <li><b>Meta-Harness RSI（harness 自改）</b>（理想矩阵扩展）：DATE27 6_conclusion.tex:11 提到「make the harness code itself an optimization target」——若 M3+S1 信号强，可扩展到 harness 自改臂，需新沙盒（harness 代码的版本化 + 回滚机制）。<b>非最小矩阵必需</b>。</li>
+  <li><b>不需要新沙盒的</b>：M0-M3/S1/N1/N2 都在现有 EDA server（10.129.32.75）+ 现有 MCP 桥上跑，无需新沙盒。</li>
+</ul>
+
+<div class="callout bad">
+<b>防伪底线（不变）</b>：
+<ul>
+  <li>🚫 <b>不得为了论文数字改判据/改题/挑样本</b>——所有臂用同一 check.py + 同一 ≥8 断言 + 同一 2400s 超时（2_benchmark.tex:120）。</li>
+  <li>🚫 <b>不编造数字</b>——不确定写 UNKNOWN；每个数字带来源（文件路径 + 行号 / json 路径 / 命令）。</li>
+  <li>🚫 <b>不删他人数据</b>——designflow 造题线的 cases/jsonl/ledger 不动（用户令 2026-11-17 22:5x 硬约束）。</li>
+  <li>🚫 <b>不改 main.tex / sections/*.tex / appendix/*.tex</b>（本轮只规划，不改稿）。</li>
+  <li>🚫 <b>不起训练或评测进程</b>（本轮只出计划书）。</li>
+  <li>✅ 预注册后判据冻结，不得回溯调整（§7.2 预注册日 2026-11-22）。</li>
+</ul>
+</div>
+</section>
+
+<!-- ============================ 附录 ============================ -->
+<section id="sx">
+<h2>附录：引用清单（路径 + 行号）</h2>
+
+<h3>A. EDA-Flow-Bench_ICML2027（现稿）</h3>
+<table>
+<tr><th>引用项</th><th>来源</th></tr>
+<tr><td>\Ntasks=1653</td><td>EDA-Flow-Bench_ICML2027/main.tex:76</td></tr>
+<tr><td>cases 构成 A352+B394+C447+D460=1653</td><td>EDA-Flow-Bench_ICML2027/main.tex:77</td></tr>
+<tr><td>\LiteSet=500</td><td>EDA-Flow-Bench_ICML2027/main.tex:99</td></tr>
+<tr><td>\Neval=696（冻结快照 2026-11-09）</td><td>EDA-Flow-Bench_ICML2027/main.tex:100-104</td></tr>
+<tr><td>10.0% Pass@1 (62/620 decided)</td><td>EDA-Flow-Bench_ICML2027/sections/0_abstract.tex:8 · 4_experiments.tex:66</td></tr>
+<tr><td>76.5% 单脚本 EDA benchmark</td><td>0_abstract.tex:8 · 4_experiments.tex:66</td></tr>
+<tr><td>7.1× 域差距（pnr_signoff 20.8% vs physical_verify/layout_aether 2.9%）</td><td>0_abstract.tex:10 · 4_experiments.tex:44-56</td></tr>
+<tr><td>Wilson CI [7.9, 12.6] for 10.0%</td><td>4_experiments.tex:66</td></tr>
+<tr><td>PASS 62 / FAIL 558 / ERROR 70 / ABSENT 6 / Total 696</td><td>4_experiments.tex:58 · appendix/B_additional_results.tex:42</td></tr>
+<tr><td>失败分类（no-output 21.0% / semantic 62.8% / contract 0.3% / UNKNOWN 7.0%）</td><td>5_analysis.tex:13</td></tr>
+<tr><td>trace 解剖（47-48 pilot, median 26.5 calls, 20.5 iter, 1047s, 41.2% MCP, 1371 calls, read_files 28.8%）</td><td>5_analysis.tex:76-121</td></tr>
+<tr><td>grounding depth 分箱（1-2: 19.4% → 7+: 2.9%）</td><td>5_analysis.tex:46-60</td></tr>
+<tr><td>13 EDA 域四组</td><td>2_benchmark.tex:61-75</td></tr>
+<tr><td>Lite 集三维筛选（领域均衡/难度 5-25%/可释放性）</td><td>2_benchmark.tex:86-97</td></tr>
+<tr><td>design_flow 契约（submit.zip + ≥8 断言 + 不指定 lang/host）</td><td>2_benchmark.tex:21-35</td></tr>
+<tr><td>PreToolUse 防泄题三层</td><td>3_harness.tex:51-65</td></tr>
+<tr><td>Cline v3.0.51 / MCP 端口 18891 / EDA server 10.129.32.75</td><td>3_harness.tex:8-19, 74</td></tr>
+<tr><td>2400s 超时 / thinking=low / 8 workers</td><td>4_experiments.tex:19 · 2_benchmark.tex:120</td></tr>
+<tr><td>单骨干（DeepSeek-V4-Pro），RQ3 开放问题</td><td>4_experiments.tex:22-23, 87-107</td></tr>
+<tr><td>多骨干已配置未跑完（≈5 machine-days）</td><td>appendix/B_additional_results.tex:51-59</td></tr>
+<tr><td>WAVEVIEW 恢复研究（11 道需看图任务）</td><td>5_analysis.tex:148</td></tr>
+<tr><td>mock-behavioral fixture 纯 Python 可释放</td><td>5_analysis.tex:148 · 2_benchmark.tex:97</td></tr>
+<tr><td>开源承诺三件套（harness + 脱敏任务规格 + mock-EDA）</td><td>7_conclusion.tex:28</td></tr>
+<tr><td>Future work（扩领域/多 agent/开源 EDA/grounding 干预）</td><td>7_conclusion.tex:15-26</td></tr>
+<tr><td>threats（领域失衡/单骨干/冻结快照/轨迹样本偏差/资产逼真度/单一工具生态/单一 agent/轨迹来源）</td><td>5_analysis.tex:130-157</td></tr>
+<tr><td>ICML 2027 截稿（Abstract 2027-01-16 / Paper 2027-01-22）</td><td>EDA-Flow-Bench_ICML2027/README.md:6-7</td></tr>
+<tr><td>results.txt（696/696, PASS:62 FAIL:558, 62/626=9.9%）</td><td>EDA-Flow-Bench_ICML2027/results.txt:1-8</td></tr>
+</table>
+
+<h3>B. DATE27_Zhulong（前作，方法骨架）</h3>
+<table>
+<tr><th>引用项</th><th>来源</th></tr>
+<tr><td>ZhuLong-SE 92.4% pass@1（158 题，full harness）</td><td>DATE27_Zhulong/DATE2027/0_abstract.tex:4</td></tr>
+<tr><td>自进化 80.0% vs 人工经验 77.5%（40 题 held-out, +2.5pp）</td><td>0_abstract.tex:4 · 6_conclusion.tex:3</td></tr>
+<tr><td>ZhuLong 78.5%，纯 LLM 23.6%</td><td>1_intro.tex:4</td></tr>
+<tr><td>三层记忆 L0/L1/L2，L1 四层（solution/pitfall/meta/strategy）</td><td>4_self_evolve.tex:4-5</td></tr>
+<tr><td>可靠性门控（ground-truth anchoring / disconfirmation / held-out rollback / anti-leakage）</td><td>4_self_evolve.tex:10, 13-17, 22, 28</td></tr>
+<tr><td>error path / contradiction path 反思路由</td><td>4_self_evolve.tex:10</td></tr>
+<tr><td>anti-leakage retrieval（names-only + docstring generalization + problem-side embedding）</td><td>4_self_evolve.tex:22</td></tr>
+<tr><td>held-out gated evolution（退化 &gt; 5pp 回滚）</td><td>4_self_evolve.tex:28</td></tr>
+<tr><td>4 维 judge（abstraction/reusability/actionability/faithfulness）+ MUSE loop</td><td>4_self_evolve.tex:16</td></tr>
+<tr><td>静态检查器（4 类 API 误用，158 ground-truth 零误报）</td><td>3_method.tex:35-39</td></tr>
+<tr><td>人工经验（4 skills + 1 rule file）</td><td>3_method.tex:42-45</td></tr>
+<tr><td>贡献三条（自进化方法论 / 反泄漏协议 / 反直觉消融洞察）</td><td>1_intro.tex:16-30</td></tr>
+<tr><td>Future work（扩展到 SKILL / 更大任务集 / 自适应门控 / Meta-Harness RSI）</td><td>6_conclusion.tex:3, 11</td></tr>
+<tr><td>limitations（40 题挑战集 + 单一 EDA 域）</td><td>6_conclusion.tex:8</td></tr>
+</table>
+
+<h3>C. ZhuLong_DAC2027（DAC 版，叙事另一半）</h3>
+<table>
+<tr><th>引用项</th><th>来源</th></tr>
+<tr><td>76.5% pooled Pass@1（全系统）</td><td>ZhuLong_DAC2027/DAC2027/8_conclusion.tex:4</td></tr>
+<tr><td>Future work 原句（domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking）</td><td>DAC2027/8_conclusion.tex:4</td></tr>
+<tr><td>5 配置组件消融（Pure LLM / RAG / w/o Self-Expl / w/o Retrieval / Full）</td><td>DAC2027/6_exp.tex:45</td></tr>
+<tr><td>+56.8pp harness 轴 vs +23.3pp 基座轴</td><td>6_exp.tex:51 · EDA-Flow-Bench 4_experiments.tex:94-95</td></tr>
+<tr><td>组件 gap CI（retrieval +10.3pp / execution +7.9pp / self-exploration +3.6pp / read-back +3.1pp）</td><td>6_exp.tex:51</td></tr>
+<tr><td>SKILL 自探索 +2.0pp [-2.9, 6.9] 在噪声内（负结果照写）</td><td>6_exp.tex:51 · 7_discussion.tex:7</td></tr>
+<tr><td>grounding-gap 框架（L1-L3 受 K 轴约束，L4 受 Ω 约束）</td><td>DAC2027/4_grounding.tex:1</td></tr>
+<tr><td>回读轴（N' &lt; B &lt; F，k=1/3/10 单调，lagged 介于 k3-k10）</td><td>6_exp.tex:69</td></tr>
+</table>
+
+<h3>D. benchmark / MEMORY（现有 designflow 资产）</h3>
+<table>
+<tr><th>引用项</th><th>来源</th></tr>
+<tr><td>B 线 audit 394/394=100%（r756）</td><td>benchmark/MEMORY_DESIGNFLOW_B.md:1（头部状态行）</td></tr>
+<tr><td>C 线 audit 359/359 keep</td><td>benchmark/MEMORY_DESIGNFLOW_C.md:1（头部状态行）</td></tr>
+<tr><td>D 线 cases/D=462</td><td>benchmark/MEMORY_DESIGNFLOW_D.md:1（头部状态行）</td></tr>
+<tr><td>A 线 cases A.jsonl 352</td><td>benchmark/MEMORY_DESIGNFLOW_A.md:1（头部状态行）</td></tr>
+<tr><td>EXPERIMENTS_DESIGNFLOW.md（diagnosis-generator reframe / mc 阈值评估）</td><td>benchmark/EXPERIMENTS_DESIGNFLOW.md:1-80</td></tr>
+<tr><td>report_designflow_paper_next_steps_zh.html（37KB，shard B 视角下一步）</td><td>reports/report_designflow_paper_next_steps_zh.html</td></tr>
+</table>
+
+<h3>E. ZHULONG_TASK.md / MEMORY_ZHULONG.md（本线状态）</h3>
+<table>
+<tr><th>引用项</th><th>来源</th></tr>
+<tr><td>用户令 2026-11-17 22:5x（本任务，7 条原话）</td><td>ZHULONG_TASK.md 顶部（① 必读 / ② 六问 / ③ 交付物）</td></tr>
+<tr><td>结案结论（单 agent &gt; 多 agent；自主 spawn &gt; 用户定制）</td><td>MEMORY_ZHULONG.md:1-5（结案结论节）</td></tr>
+<tr><td>用户 2026-11-15 07:2x H_ctx 思路（独立上下文 + 固定小 token 预算）</td><td>ZHULONG_TASK.md 用户裁令节（2026-11-15 07:2x）</td></tr>
+<tr><td>subagent 消融线结果（A0=69.2% / A1=66.7% / A2=53.3%）</td><td>ZHULONG_TASK.md 结案令节</td></tr>
+</table>
+</section>
+
+<hr>
+<div class="small">
+<b>本计划书自检（判据 6 条）</b>：
+① 六问全部有答案（§2-§9）✅；
+② ≥6 臂且含等 token 预算负对照 N1（§5.1，8 臂含 N1/N2 两负对照）✅；
+③ 每条假设有证伪条件（§4，H1-H4 各有「证伪条件」行）✅；
+④ 有 delta 表（§3）与时间线（§7.2）✅；
+⑤ 0 外链 0 script（单文件自包含，仅 inline CSS）✅；
+⑥ 全文数字可追溯（每个数字带 文件路径:行号，附录汇总）✅。
+<br><br>
+<b>体量</b>：本文件 &gt; 25KB ✅ · <b>交付</b>：reports/report_edafb_icml2027_plan_zh.html · <b>commit 前缀</b>：zhulong plan: EDA-Flow-Bench ICML2027 重定位与消融设计 v1 · <b>只 add 本线文件</b>（勿 -A）。
+<br><br>
+MEMORY_ZHULONG.md 只加一行心跳（保持 ≤40 KB）。
+</div>
+
+</div>
+</body>
+</html>
