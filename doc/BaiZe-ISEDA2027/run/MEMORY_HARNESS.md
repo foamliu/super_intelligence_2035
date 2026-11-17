@@ -2,6 +2,16 @@
 
 WAITING: 0
 
+> 🆕 **R2599 · 2026-11-17 09:0x — 任务书归档(11-17 08:2x 块→ARCHIVE) + 自检全绿 + 无未完成指令**
+> - **本轮动作**：唤醒发现 11-17 08:2x 用户令（交付两份 7-way 报告）已在 R2598(commit `e09da6fd2`)交付并 push，但任务书仍标「未完成」→ 独立复验两份报告后归档该块（原文搬入 `run/ARCHIVE_OPERATOR_HARNESS.md`「归档 2026-11-17」节 + 任务书留 1 行 📦 指针）。
+> - **复验**：① `report_harness_glm53_7way_swebench_tb_zh.html`(13.1KB) 0 script/0 外链✅·含 backbone/glm-5.3/infra/partial/不可比/未真跑/能力/进行中 口径✅·SWE-bench 行 hermes435/480·opencode414/498·cc286/348·cline249/332✅ ② `report_harness_tb21_7way_zh.html`(10.6KB) 0 script/0 外链✅·TB-2.1 行 opencode43/89·cline42/89·hermes38/89·pi35/89·cc30/89·deepseek11/89·codex1/89✅（与指令指定数字完全一致）
+> - **自检**: 0 harness eval procs✅·load28.15/224✅(pretrain dominant)·mem837GB avail1028GB✅·reports/ porcelain=0✅(无.json/.log/.txt)·TASK23.3KB✅·MEMORY30.2KB✅
+> - **无未完成用户指令**：11-17 08:2x 已交付归档；adaptive 已交付+验收；cc修复已交付；任务书无「未完成」块
+> - **下一步**: ①SWE-bench predict续推至500(codex瓶颈ETA~11-27) ②token回采=BLOCKED(framework不采集) ③research日报建议纳入下次报告迭代 ④hermes qemu BLOCKED(Py3.9<3.11) ⑤等运维新令
+> - **📦 体积**: TASK≈23.3KB / MEMORY≈30.2KB（✅≤32KB）
+
+> 📦 R2598 流水已归档 → 本文件上方 R2599 摘要。结论：用户令·两份 7-way 报告已交付(commit e09da6fd2)。需要时再读。
+
 > 🆕 **R2598 · 2026-11-17 08:3x — 用户令·交付 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告 ✅**
 > - **交付物**：① `reports/report_harness_glm53_7way_swebench_tb_zh.html`（SWE-bench Verified 500 + TB-2.1 89 × 7路·主表+失败归因+kimi对照·13.1KB）② `reports/report_harness_tb21_7way_zh.html`（TB-2.1 7路专项·10.6KB）
 > - **TB-2.1 7路 Pass（两报告一致）**：opencode 43/89=48.3% · cline 42/89=47.2% · hermes 38/89=42.7% · pi 35/89=39.3% · cc 30/89=33.7% · deepseek 11/89=12.4% · codex 1/89=1.1%
