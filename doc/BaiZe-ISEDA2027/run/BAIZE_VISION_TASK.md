@@ -33,7 +33,14 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· ✅ 已交付（wake#1525：SSH 36.15 全量扫描 1647→入选 224·vqa_runnable=10·36.15+本地双份 sha256 623842b5 一致·V0=0/V1=0/V2=1/10 每量30.9→50% McNemar p=1.0·report §0 39986B 0外链0script·脚本可复现）
+### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· ⚠️ 未完成 · 用户两轮修正后需重做
+
+> **wake#1525 初版交付被用户否决**：初版只跑了 10 道带 PNG 的题（V0=0/V1=0/V2=1/10），把 214 道 noPng case 标为 `image_required=False` + `text_only` 排除在外。用户两轮修正要求「不要把 MLLM 价值矮化为 OCR」「所有与波形相关的 case 都纳入，让 V0 vs V1/V2 的实验说话」。**当前 jsonl 224 行的分类和基线对照不满足修正后的判据，需要重做。**
+
+> **还差什么（明确）**：
+> 1. **jsonl 分类要改**：224 道里 214 道标 `image_required=False`+`text_only` 是基于旧口径（"check.py 判图像读数才算需要看图"）。按修正后口径，这些 case 应纳入评测——它们与波形相关，VQA 工具可能通过任何机制（读数/pattern/细节问答/辅助决策）帮助提升通过率。
+> 2. **V0/V1/V2 对照要跑全量**（或至少跑有 check.py 的 ~192 道），不只跑 10 道。V0 = 无 VQA 跑通过率，V1/V2 = 有 VQA 跑通过率，差异 = MLLM 价值。
+> 3. **报告要更新**：用扩大题集的对照结果覆盖 `reports/report_vision_waveview_selftest_agent_zh.html`。
 
 > **用户原话**：「vision：1. designflow_waveview 评测集建立了吗？2. 基线（EDA_Flow_Bench) 在#1分数多少？3. 加上 Qwen3.5-2B作为VQA工具后，#1分数多少？……既然有 .17→36.15 SSH 隧道，vision 为什么不能自己去 36.15 的 EDA-Eval-DesignFlow.jsonl 去筛选 WaveView Case。为什么都要指望别人？在同一目录生成并维护 EDA-Eval-DesignFlow-WaveView.jsonl」
 
