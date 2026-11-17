@@ -1,9 +1,11 @@
 # Stable 段 S1/S2 等分可行性报告（Data 线）
 
-> **撰写**: BaiZe Data Agent · 2026-11-17
+> **撰写**: BaiZe Data Agent · 2026-11-17（v1.1 时间线修正 · 2026-11-18）
 > **用户令**: 2026-11-17 — "把 Stable 的 700k 等分成 S1 和 S2，S1 配置不变，S2 中 web:code:math 按 4:4:2 配比，以提升数学、代码、agentic 能力。请 pretrain 和 data 分别写个报告，分析可行性和利弊。"
 > **数据口径**: 所有 token 数来自 `DATA_MAPPING.md` 实测（`INDEX.tsv` + `MANIFEST.json` + `du -sb`），非估算；新数据集来自 `HfApi().dataset_info(files_metadata=True)` 实测。
 > **定位**: 本报告聚焦**数据侧**（充足性、配比落地、质量、去污染），与 pretrain 线报告（聚焦 LR/评测/训练稳定性）互补，不重复其结论。
+>
+> ⚠️ **v1.1 时间线修正（2026-11-18）**：原 v1 报告中 350k 切换点误为 ~12-25、余量误为 ~5 周。**正确值**：350k 切换点 ≈ **~11-26**（(350k−235k)×7s ≈ 9.3 天），700k 终点 ≈ **~12-25**（(700k−235k)×7s ≈ 37.7 天），时间余量 = 数据 11-23 就绪 vs S2 启动 ~11-26 = **仅 ~3 天**（紧张，非充足）。前置工作截止日期已相应前移。**v2 中文 HTML 报告**（`report_s1s2_split_data_v2_zh.html` v2.6）为最新权威版本，含 shard 级 blend TSV / 甘特图 / epoch 核算 / Go/No-Go 条件。本 v1 报告保留作为可行性分析参考。
 
 ---
 
@@ -348,7 +350,7 @@ stack-v3-train 当前 476B tokens 是**全量未过滤**的。DATA_MAPPING H.12 
 | Math 数据充足 | 🟡 补入 MegaMath Batch1 后 334B vs 396B 需求 | **基本可行（epoch 1.18）**；如加 MegaMath-web 则充裕 |
 | 数据质量可控 | ✅ 需新增 L4 过滤 + 13-gram 闸门 | **可行（需前置工作）** |
 | 评测污染可控 | 🟡 需扩展黑名单 + 全量扫描 | **可行（需前置工作）** |
-| 时间窗口 | S1 预计 ~2026-12-25 到 350k → 有 ~5 周 | **充足** |
+| 时间窗口 | S1 预计 ~2026-11-26 到 350k → 仅 ~3 天余量（数据 11-23 就绪 vs S2 ~11-26） | **紧张** |
 
 **总体判定：✅ 可行**，有 2 个前置条件需在 S2 启动前完成。
 
@@ -357,13 +359,13 @@ stack-v3-train 当前 476B tokens 是**全量未过滤**的。DATA_MAPPING H.12 
 | 前置条件 | 工作内容 | 预估耗时 | 截止日期 | 状态 |
 |:--|:--|--:|:--|:--|
 | **PC-1: stack-v3 L4 过滤** | 全量 8192 shard 语言过滤，产出目标语言子集 | 2–4 小时（4 workers） | 11-19 | ⏳ 待执行 |
-| **PC-2: MegaMath Batch1 分词** | 364 parquet → .bin/.idx/.json (tokenizer_eod) | 1–2 天（8 workers, nice19） | 11-19 | ⏳ 待执行 |
-| **PC-3: 污染闸门扩展** | 扩展黑名单（HumanEval/MBPP/GSM8K/MATH/SWE-bench）+ stack-v3 全量 13-gram 扫描 + MegaMath 8-gram 扫描 | 4–8 小时 | 11-20 | ⏳ 待执行 |
-| **PC-4: S2 blend TSV 生成** | 按本报告 §3.2 的配比表生成 `blend_s2_preblend.tsv` | 0.5 天 | 11-20 | ⏳ 待执行 |
-| **PC-5（建议）: MegaMath-web 下载** | 启动 megamath-web ~1TB 下载 + 分词 | 3–4 天 | 11-23 | ⏳ 可选 |
+| **PC-2: MegaMath Batch1 分词** | 364 parquet → .bin/.idx/.json (tokenizer_eod) | 1–2 天（8 workers, nice19） | 11-21 | ⏳ 待执行 |
+| **PC-3: 污染闸门扩展** | 扩展黑名单（HumanEval/MBPP/GSM8K/MATH/SWE-bench）+ stack-v3 全量 13-gram 扫描 + MegaMath 8-gram 扫描 | 4–8 小时 | 11-21 | ⏳ 待执行 |
+| **PC-4: S2 blend TSV 生成** | 按本报告 §3.2 的配比表生成 `blend_s2_preblend.tsv` | 0.5 天 | 11-23 | ⏳ 待执行 |
+| **PC-5（建议）: MegaMath-web 下载** | 启动 megamath-web ~1TB 下载 + 分词 | 3–4 天 | 11-25 | ⏳ 可选 |
 
-> 关键路径：PC-1 + PC-2 + PC-3 + PC-4 → 11-20 完成 → S2 可启动
-> 优化路径：+ PC-5 → 11-23 完成 → Math epoch 从 1.18 降到 0.65
+> 关键路径：PC-1 + PC-2 + PC-3 + PC-4 → 11-23 完成 → S2 可启动（~11-26，仅 ~3 天余量）
+> 优化路径：+ PC-5 → 11-25 完成 → Math epoch 从 1.18 降到 0.65（余量≈0，建议先用 fallback 启动 S2）
 
 ### 6.3 推荐执行顺序
 
@@ -379,16 +381,20 @@ stack-v3-train 当前 476B tokens 是**全量未过滤**的。DATA_MAPPING H.12 
   ├── PC-5: 启动 MegaMath-web 下载 (可选)
   └── 验收 PC-1/PC-2 产出
 
-11-20
+11-21
+  ├── PC-3: 污染闸门扩展 + 全量扫描完成
+  └── PC-2: MegaMath Batch1 分词完成
+
+11-23
   ├── PC-4: 生成 blend_s2_preblend.tsv
   ├── 污染隔离报告产出
   └── DATA_MAPPING 更新（新增 stack-v3 filtered + MegaMath 分词条目）
 
-11-21 ~ 11-23
+11-23 ~ 11-25
   ├── [可选] MegaMath-web 分词完成 → 更新 blend TSV（§3.3 方案）
   └── S2 数据全部就绪，等待 pretrain 350k 切换点
 
-~12-25 (S1 到 350k)
+~11-26 (S1 到 350k)
   └── 切换到 blend_s2_preblend.tsv，启动 S2
 ```
 
@@ -429,10 +435,10 @@ stack-v3-train 当前 476B tokens 是**全量未过滤**的。DATA_MAPPING H.12 
 | **Math 充足性** | 🟡 基本够用，建议补 MegaMath-web | 334B 可用 vs 396B 需求 (epoch 1.18)；全量后 613B (epoch 0.65) |
 | **质量风险** | 🟡 中 | stack-v3 需 L4 过滤 + 13-gram 闸门 |
 | **污染风险** | 🟡 中 | 需扩展黑名单（HumanEval/MBPP/GSM8K/MATH/SWE-bench） |
-| **前置工作** | 4 项必做 + 1 项建议 | 11-20 前完成（不阻塞 S1 训练） |
+| **前置工作** | 4 项必做 + 1 项建议 | 11-23 前完成（不阻塞 S1 训练，但余量仅 ~3 天） |
 | **与 pretrain 报告的差异** | 数据线推荐 4:4:2（有数据支撑），pretrain 线推荐 5:3:2（保守） | 分歧点在 stack-v3 + MegaMath 是否及时就绪 |
 
-**一句话结论**：从数据视角看，S1/S2 等分 + S2 采用 4:4:2 **可行且有数据支撑**——stack-v3-train（476B，已分词）解决 code 缺口，MegaMath（92–371B）缓解 math 缺口。关键前置条件是 L4 语言过滤 + 污染闸门扩展 + MegaMath 分词，预计 11-20 前可全部就绪，不阻塞 S1 训练（ETA ~12-25 到 350k）。建议同步启动 MegaMath-web 下载以将 math epoch 从 1.18 降到 0.65。
+**一句话结论**：从数据视角看，S1/S2 等分 + S2 采用 4:4:2 **可行且有数据支撑**——stack-v3-train（476B，已分词）解决 code 缺口，MegaMath（92–371B）缓解 math 缺口。关键前置条件是 L4 语言过滤 + 污染闸门扩展 + MegaMath 分词，预计 11-23 前可全部就绪，不阻塞 S1 训练（ETA ~11-26 到 350k，~12-25 到 700k 终点）。⚠️ 时间余量紧张：数据 11-23 就绪 vs S2 启动 ~11-26 = 仅 ~3 天余量。建议同步启动 MegaMath-web 下载以将 math epoch 从 1.18 降到 0.65。
 
 ---
 
