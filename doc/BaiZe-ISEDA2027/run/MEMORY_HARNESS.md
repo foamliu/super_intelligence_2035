@@ -2,6 +2,15 @@
 
 WAITING: 0
 
+> 🆕 **R2613 · 2026-11-17 12:1x — 监控轮: hermes rerun 7/12 done(1 PASS Δ=+1·6 ability·4 running·1 pending)·报告口径grep复核✅(修正后Pass%仅撤回声明·无当结论用)·自检全绿·0累计429**
+> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass% = passed/(89−纯infra)」已撤回; 唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)。未真跑题处置=重跑拿真实结果, 不剔除分母假设通过。本轮 grep 两份报告: "修正后 Pass%" 仅出现在撤回声明中, **无任何表格/列将其当结论** ✅。reports/ porcelain=0 ✅。
+> - **rerun 进展 (v2 process PID1217002 仍在跑·etimes≈8060s)**: codex DONE(2/2=ability·Δ=0) · cline BLOCKED(infra·1题·3次CLI崩溃) · **hermes 7/12 done**(reward_stats: 1×1.0=bn-fit-modify PASS Δ=+1 + 6×0.0=AgentTimeoutError=ability; 4 running + 1 pending; n_total=12) · opencode 10 → pi 15 → deepseek 5 → cc 1 排队(串行·adaptive auto)。
+> - **真实 Pass% (重跑中, 分母=89)**: cline 42/89=47.2%(1 BLOCKED) · codex 1/89=1.1%(done·Δ=0) · opencode 43/89=48.3%(待10) · cc 30/89=33.7%(待1) · pi 35/89=39.3%(待15) · **hermes 39/89=43.8%(running·Δ=+1·待5·qemu/mteb BLOCKED)** · deepseek 11/89=12.4%(待5)
+> - **自检**: load30.17/224✅·mem1028GB avail✅·top CPU=pretrain 146%(非harness)✅·0 harness runaway(harbor/hermes/docker-compose均<2%CPU)✅·adaptive work4/4·累计0 429✅
+> - **运维指令区 10:2x 部分交付**: ①撤回✅(报告仅撤回声明·grep复核无当结论用) ②报告重跑中口径✅ ③47trial重跑(进行中·codex done·hermes 7/12·余opencode/pi/deepseek/cc排队) ④表五前后对比✅(hermes Δ=+1·cline BLOCKED) — 余: hermes跑完→opencode→pi→deepseek→cc→逐路Δ→REGEN
+> - **下一步**: ①等hermes跑完→merge→REGEN ②后续路依次跑完→逐路Δ更新→REGEN ③SWE-bench predict续推
+> - **📦 体积**: TASK≈27.2KB / MEMORY≈30.7KB（✅≤32KB）
+
 > 🆕 **R2612 · 2026-11-17 12:0x — 监控轮: hermes rerun 6/12(4 running·2 pending)·报告口径复核✅·自检全绿·0累计429**
 > - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass%」已撤回; 唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)。复核两份报告: "修正后 Pass%" 仅出现在**撤回声明**中(2处×2报告=4次, 均为"已撤回"/"不再有"语境), 表格列头 = "真实 Pass%(passed/89)" + 表五"重跑前/后 Pass%", **无任何将修正后 Pass% 当结论的表格/列** ✅。
 > - **rerun 进展 (v2 process 1217002 仍在跑·etimes≈7600s)**: codex DONE(2/2=ability·Δ=0) · cline BLOCKED(infra·1题) · **hermes running 6/12 done(1 PASS=bn-fit-modify·5 AgentTimeoutError=ability·4 running·2 pending)** · opencode 10 → pi 15 → deepseek 5 → cc 1 排队。hermes result.json: n_total=12, completed=6, running=4, pending=2。
@@ -12,16 +21,7 @@ WAITING: 0
 
 > 📦 R2611 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cline BLOCKED(infra) 3-attempt确认+hermes Δ=+1+双报告REGEN。需要时再读。
 
-> 🆕 **R2611 · 2026-11-17 11:4x — cline pytorch-model-recovery=BLOCKED(infra)·3次CLI崩溃确认 + hermes Δ=+1(bn-fit-modify PASS) + 双报告REGEN**
-> - **🔴 红线复述 (用户令 2026-11-17 10:2x)**: 「修正后 Pass%」已撤回; 唯一可对外引用 = 真实 Pass% = passed/89 (分母恒89)。未真跑题处置=重跑拿真实结果, 不剔除分母假设通过。BLOCKED(infra) 硬约束题显式注明原因、单列, 不误算为通过。
-> - **真实 Pass% (重跑中)**: cline 42/89=47.2%(1 BLOCKED·cline CLI崩溃) · codex 1/89=1.1%(done·2/2=能力✅Δ=0) · opencode 43/89=48.3%(待10) · cc 30/89=33.7%(待1) · pi 35/89=39.3%(待15) · **hermes 39/89=43.8%(running·Δ=+1·bn-fit-modify PASS✅·待7·qemu BLOCKED)** · deepseek 11/89=12.4%(待5)
-> - **🔴 cline BLOCKED(infra) 发现**: pytorch-model-recovery 经 **3 次重跑** (original 2026-11-09 + reruns 0932/1143+1145) 均 cline CLI exit 1, no run_result, no stderr (cline auth OK, 1379B 正常 instruction, cline 跑通 332 题 → 任务特定 CLI 静默崩溃, 非能力)。**同题 hermes 已 PASS → 确认非任务环境问题**。v2 launcher 的 --routes 排除了 cline-patched → 本轮单独重跑 1145 也失败 → 判定 BLOCKED(infra), 显式注明, 不误算为通过。
-> - **hermes rerun 进展**: 6/12 task results 出 → **bn-fit-modify reward=1.0 (NEW PASS, Δ=+1)** + 5 reward=0.0 (AgentTimeoutError=能力); 4 running + 5 pending。codex rerun DONE: 2/2 reward=0.0=ability, Δ=0 (证实低分=真能力)。
-> - **双报告 REGEN**: tb21(22346B)+combined; cline BLOCKED(infra) 3-attempt 证据写入 rerun_status(table4)+infra台账+清单item+table5状态列; hermes Δ=+1 在 table5; reports/ porcelain=0✅。
-> - **自检**: load27/224✅·CPU82%idle✅·mem1050GB avail✅·0 harness runaway✅·0 429✅(adaptive work4/4·累计0)
-> - **运维指令区**: 10:2x **部分交付**: ①撤回✅ ②报告重跑中口径✅ ③47trial重跑(进行中·codex done·cline BLOCKED·hermes running·opencode10+pi15+deepseek5+cc1排队) ④表五前后对比✅(hermes Δ=+1·cline BLOCKED) — 余: hermes→opencode→pi→deepseek→cc 跑完→逐路Δ更新→REGEN
-> - **下一步**: ①v2 rerun 跑完→逐路 REGEN(table5 Δ自动出) ②SWE-bench predict 续推 ③等运维新令
-> - **📦 体积**: TASK≈27.5KB / MEMORY≈29.5KB（✅≤32KB）
+> 📦 R2611 流水已归档 → daily-memories-harness/2026-11-17.md。结论：cline BLOCKED(infra) 3-attempt确认+hermes Δ=+1+双报告REGEN。需要时再读。
 
 > 📦 R2610 流水已归档 → daily-memories-harness/2026-11-17.md。结论：表五(重跑前后对比)入报告+rerun监控(hermes running)+自检全绿。需要时再读。
 
@@ -90,12 +90,12 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2609 rerun监控(hermes 4并发running)+报告口径二次复核✅·v2 rerun 进行中(codex done=ability)·WAITING=0
-已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2502(hermes rerun)·R2503-R2589(cc/opencode/deepseek/pi rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核·四桶归因)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%+报告改重跑中口径)·R2608(红线复述+rerun监控)
-当前动作:     R2609: rerun监控——自检全绿(load27/mem840GB/CPU90%idle/0runaway)·报告口径二次grep复核✅(修正后仅撤回声明)·hermes route running(4并发·PID1455134)·codex 2/2 done=ability·opencode/pi/deepseek/cc/cline排队
-下一步:       ①v2 rerun跑完逐路 --merge + REGEN双报告(重算真实Pass%=passed/89·重跑前后对比表) ②SWE-bench predict续推至500(codex瓶颈) ③token回采=BLOCKED(框架不采集) ④research建议纳入下次报告迭代 ⑤hermes qemu BLOCKED(Py3.9<3.11) ⑥等运维新令
+PHASE:        R2613 rerun监控(hermes 7/12 done·4 running·1 pending)+报告口径复核✅·v2 rerun 进行中(codex done·hermes running)·WAITING=0
+已完成:       H-B OK·Gate7/7·TB报告·cline专项C1-C5·TB-2.1 oracle5/5·R1789 eval 7/7·R1804双报告·R1969-R2460 cline rerun·R2461(7路额度审计)·R2462(报告整改+cc归因)·R2463(cc修复)·R2464(hermes py3修复)·R2494-R2502(hermes rerun)·R2503-R2589(cc/opencode/deepseek/pi rerun)·R2593(cc修复COMPLETE 30/89)·R2598(两份7way报告)·R2600(失败归因复核·四桶归因)·R2602(post-R2600 47trial rerun LAUNCHED)·R2607(撤回修正后Pass%+报告改重跑中口径)·R2610(表五前后对比入报告)·R2611(cline BLOCKED+hermes Δ=+1+双报告REGEN)
+当前动作:     R2613: rerun监控——自检全绿(load30/224·mem1028GB avail·0 harness runaway·top CPU=pretrain 146%)·报告口径grep复核✅(修正后Pass%仅撤回声明·无当结论用)·reports/ porcelain=0✅·hermes route 7/12 done(1 PASS bn-fit-modify Δ=+1·6 AgentTimeoutError=ability·4 running·1 pending)·codex done=ability·opencode→pi→deepseek→cc排队
+下一步:       ①v2 rerun跑完逐路 --merge + REGEN双报告(重算真实Pass%=passed/89·重跑前后对比表) ②SWE-bench predict续推至500(codex瓶颈) ③token回采=BLOCKED(框架不采集) ④research建议纳入下次报告迭代 ⑤hermes qemu BLOCKED(Py3.9<3.11)·cline pytorch-model-recovery BLOCKED(CLI崩溃3次) ⑥等运维新令
 ERROR_COUNT:  0
- 体积: TASK≈27.2KB / MEMORY≈29.1KB（✅≤32KB）
+ 体积: TASK≈27.2KB / MEMORY≈30.7KB（✅≤32KB）
   真实 Pass% (待重跑, 分母=89, 用户令10:2x撤回修正后口径): cline 42/89=47.2%(待重跑1) · codex 1/89=1.1%(待重跑2·rerun done=ability) · opencode 43/89=48.3%(待重跑10) · cc 30/89=33.7%(待重跑1) · pi 35/89=39.3%(待重跑15) · hermes 38/89=42.7%(待重跑13·qemu BLOCKED) · deepseek 11/89=12.4%(待重跑5)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
