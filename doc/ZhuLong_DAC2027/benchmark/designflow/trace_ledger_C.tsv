@@ -1238,3 +1238,4 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794462437293_wxhcf	steveny	hfeg0pnd001	52	physical_verify	parked		2026-11-17 14:04	COLLISION r710: same steveny cad_tool_cli_refactor project as r706 CadToolCliRefactorAudit-001 (ploz9); U#0 references same /home/steveny/context-infrastructure/adhoc_jobs/cad_tool_cli_refactor + U#24 same CLI化改造 主力agent analysis; near-duplicate, do not build
 1788760919556_ics15	ziyuny	hfeg0plg98	79	physical_verify	case	EDA-Eval-DesignFlow-DrcRunStatusAnalyze-001	2026-11-17 14:28	
 1791861499459_57s2p	kenwang	172.16.8.192	23	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillPatternDecoordinate-001	2026-11-17 15:00	
+29j7y	lizwen	hfeg0plg89	60	physical_verify	case	EDA-Eval-DesignFlow-NwDerivedLayerRuleExtract-001	2026-11-17 15:51	
