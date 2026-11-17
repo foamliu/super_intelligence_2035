@@ -1624,7 +1624,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791714944861_r8u7j	e0014566	hfeg0pkn001	38	schematic_netlist	parked		2026-11-13 12:11	r611 peek: first turn nihao greeting (no produce task in first turn)
 1792571639391_fowlb	dorswu	hfeg0pkn004	30	analog_context	parked		2026-11-13 12:11	r611 peek: Q&A 分析 SA 版图列出可修改的地方 (analysis, not produce)
 1793684751196_iyspj	jasonxu	hfeg0plg93	20	schematic_netlist	parked		2026-11-13 12:33	r612 peek: run existing sim script /proj/drvsa/.../runcript (execute-existing, not produce)
-1792473479665_sbxpq	rongjiez	hfeg0plg98	20	schematic_netlist	parked		2026-11-13 12:33	r612 peek: Q&A analyze two copied scripts testcase_copy/run.sh (analysis, not produce)
+1792473479665_sbxpq	rongjiez	hfeg0plg98	20	schematic_netlist	case	EDA-Eval-DesignFlow-WaveCmpScriptAnalysisQA-001	2026-11-17 11:46	r612 peek: Q&A analyze two copied scripts testcase_copy/run.sh (analysis, not produce)
 1793944477338_r7cwn	zhililu	hfhds219	18	analog_context	parked		2026-11-13 12:33	r612 peek: modify circuit add auto multi-conversion (produce-flavored BUT needs live Aether cell asset filter, infeasible like r611 481m5)
 1793865170230_lzsx1	kevinc	hfeg0plg84	17	schematic_netlist	parked		2026-11-13 12:33	r612 peek: debug perl script SPF IO signal extraction incomplete (debug, not produce)
 1792394160673_546be	rongjiez	hfeg0plg98	17	waveform	case	EDA-Eval-DesignFlow-ScriptCompareMergeReviewQA-001	2026-11-16 02:45	r612 peek: Q&A analyze/compare compare_wave.pl vs compare_wave_ddr5.pl for merge (analysis, not produce)
