@@ -1,5 +1,19 @@
 ﻿# BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-17 — Stable 段 S1/S2 等分可行性报告（最高优先）**
+
+> **用户原话**：「我有点想把 Stable 的 700k 等分成 S1 和 S2，S1 配置不变，S2 中 web:code:math 按 4:4:2 配比，以提升数学、代码、agentic 能力。请 pretrain 和 data 分别写个报告，分析可行性和利弊。」
+
+> **data 报告要求**（pretrain 线另写一份，各写各的）：
+> 1. **数据充足性**：S2 = 350k steps × ~4.19M tok/step ≈ 1.47T tokens。按 web:code:math = 4:4:2，code 需 ~588B tok、math 需 ~294B tok、web 需 ~588B tok。对照 DATA_MAPPING.md 现有库存（code L2 421B + L3 129B = 550B；math L1 164B + L3 78B = 242B；web en 2237B + zh 113B + l1 150B），逐项判断是否够、需几 epoch、是否需要新数据。
+> 2. **新数据源建议**：IFM Code-Reasoning（下载中 65%）、IFM Math-Reasoning（下载中 25%）、MegaMath、stack-v3-train（476B tok）等能否补入 S2？给出到货时间和可用量预估。
+> 3. **配比落地**：给出 S2 的 shard 级配比表（哪些 shard、各自权重、占比），确保加和 = 1.0 且 web:code:math = 4:4:2。
+> 4. **数据质量与去污染**：S2 大幅提高 code/math 比例后，质检门槛是否需要调整？评测集污染风险？
+> 5. **利弊分析**：从数据视角看，code/math 提到 40%/20% 的收益与风险；与 DeepSeek 4:2:4 的差异；现有 web 数据被压缩到 40% 是否会损失通用能力。
+> 6. **落地建议**：是否可行、有何前置条件、推荐时间线。
+> 
+> 报告写进 `run/reports/report_s1s2_split_data.md`，完成后 commit。
+
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」检查**：限制探索的禁令已删除；**数据安全类约束全部保留**（删源前校验、不挤他人带宽、不碰他人产物、磁盘红线）——它们防的是**数据损毁**，不是防尝试。**默认立场：数据筛选规则、抽样方法、质检策略由你自主决定，写清依据即可。**
 
 > ✅ **用户令 · 2026-11-15 09:0x（评估 5 个 agent datasets）· ✅ 已完成** → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§2026-11-15 09:0x」；结论：Toucan(21GB)+AgentTrove(19GB)+neulab ADP 15子集(79GB)已落盘；orca P2不下；freeinference P3排除(转告harness)；adp_subset_plan.md+污染检查+DATA_MAPPING D1-D4已交付。以下详细内容保留供参考，已闭合。
