@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2675 · 2026-11-18 14:0x — incr_eval R2675 DONE(+2 RESOLVED)·**心跳第一行**: 自检clean→incr_eval 4 real patches→7way报告REGEN·**SWE-bench Verified Pass%(cumulative resolved/500)**: hermes**440=88.0%**(+1·sympy-16792 RESOLVED)·opencode415=83.0%·cc289=57.8%(django-11400 FAILED)·cline**254=50.8%**(+1·django-12858 RESOLVED)·pi216=43.2%·dsh143=28.6%·codex91=18.2%·incr_eval R2675结果: cline 2real(1PASS+1FAIL)·hermes 1real(1PASS)·cc 1real(0PASS)·empty merge codex3+pi1+dsh3+hermes2·**predict 2312/3500**(cline341+1/cc360+1/pi300+1/codex144/hermes490/dsh177/opencode500·Δ vs R2674=+3)·6/7 predict alive(opencode COMPLETE·其余6路 RUNNING)·**自检clean**(load30/224≈13.5%busy·MemAvail1442GB·0 runaway>8000%CPU·最高cline-hub-daemon37.4%≈0.37核·远低于8000%/50GB阈值)·**research日报11-18已读**(同R2674·无新可执行指令)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.5KB(✅≤32KB)
+> 🆕 **R2676 · 2026-11-18 14:1x — 监控轮(无incr_eval·1新real-patch不足起轮)·**心跳第一行**: 自检clean→predict 2326/3500(cline343+2/codex147+3/cc360/pi300/hermes491/dsh185+8/opencode500 COMPLETE·Δ vs R2675=+14)·6/7 predict alive·新real-patch自R2675仅1题(cline-patched django__django-13033 patch=2066B)→不足≥3-5阈值→本轮不跑incr_eval·**SWE-bench Verified Pass%(cumulative·同R2675)**: hermes440=88.0%·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi216=43.2%·dsh143=28.6%·codex91=18.2%·**自检clean**(load23.02/224≈10.3%busy·MemAvail1632GB·0 runaway>8000%CPU·最高cline-hub-daemon37.4%≈0.37核·远低于8000%/50GB阈值)·**research日报11-18已读**(同R2675·无新可执行指令)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.7KB(✅≤32KB)
+> 📦 R2675 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·4 real patches·+2 RESOLVED·cline254/hermes440·7way报告REGEN·自检clean）。需要时再读。
 
 > 📦 R2674 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2309/3500·hermes+2·自检clean·无新运维令·research日报已读）。需要时再读。
 
@@ -65,9 +66,9 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2675 incr_eval DONE(4 real patches·+2 RESOLVED)→7way报告REGEN·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
+PHASE:        R2676 监控轮(1新real-patch不足起incr_eval)·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2675 DONE(cline254/hermes440/cc289/dsh143/pi216/codex91)
-当前动作:     R2675: incr_eval DONE(cline+1RESOLVED/hermes+1RESOLVED/cc+0)·7way报告REGEN(15520B)·6/7 predict alive(cline341/codex144/cc360/pi300/hermes490/dsh177·total2312/3500·remaining≈1188)·0真实429·自检clean(load30/224·MemAvail1442GB·0 runaway)
+当前动作:     R2676: 监控轮·predict 2326/3500(cline343/codex147/cc360/pi300/hermes491/dsh185/opencode500·Δ vs R2675=+14)·6/7 predict alive·新real-patch自R2675仅1题(cline django-13033)→不足≥3-5阈值→不跑incr_eval·0真实429·自检clean(load23.02/224·MemAvail1632GB·0 runaway)
 下一步:       继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→合并cumulative→刷新7way SWE-bench报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
 阻塞:         无
 ERROR_COUNT:  0
