@@ -108,7 +108,8 @@
       "implication": "A-pure pool NOT exhausted; stop-loss under mc>=5 NOT triggered; continue A-pure casemaking from remaining 8 ALIVE candidates",
       "remarked_round": "r765/r766",
       "summary": "r764/r765 directory-aware liveness recheck推翻r760/r761 EXHAUSTED_DEFINITIVE/CONFIRMED_STRENGTHENED结论. r760/r761 liveness检查查文件(messages.json file)非目录(sessions/ dir), cline rotation后文件蒸发但目录仍在=会话目录ALIVE. r765复查r761 parked 14条: 10/10真A-pure ALIVE(e0046913 cluster@pkn004 8/8 STA ALIVE: uyvi5 mc164/aqetb mc85/i7d8w mc143/8akpt mc66/najzl mc44/ejpf0 mc48/0arn6 mc20/c8v5k mc54 + e0045144@pkn002 2/2 digital ALIVE: twfqn mc39/u5wma mc46; g7hp7真NOFILE; zpla8实C-domain DRC误标). A-pure池远未枯竭可续造题.",
-      "verdict": "OVERTURNED"
+      "verdict": "OVERTURNED",
+      "superseded_by": "r773 EXHAUSTED-AFTER-6-CASES"
     },
     "all_shard_mc10": 4012,
     "all_shard_mc30": 3046,
@@ -119,7 +120,7 @@
     "new_A_pure_mc10": 2,
     "new_A_pure_nofile_checked": 2,
     "note": "r759 POOL_SWITCH: 11-16->11-18 full 698-host rescan (orchestrator.sh, 7min). all-shard mc10 3513->4012 (+499). shard_A_pool_mc10 2938->3337 (+399). new_A_domain_mc10_vs_1116=428 (but A-PURE=2: 3p6ld mc79 rose3wang, gnwy5 mc11 e0048255; both NOFILE on checked hosts - cline rotation persists). A-pure exhaustion stands on fresh 11-18 data. r760 CLOSED: checked remaining 4 unchecked hosts (plg93/plg56/plg13/pjn200) + plg17 for 3p6ld + all 3 hosts for gnwy5. All NOFILE or unreachable. A-pure exhaustion DEFINITIVE. Next-round options: (a) tighten shard A keyword filter to drop C/D false-captures (pool 3337 is broad, real A-pure=0 live); (b) discuss quota r762 due; (c) governance/paper. | r761 AUDIT: precise C/D-tool filter on 11-18 scan (5222-slug dedup): broad_A_mc10=3179, a_pure=349, a_strong_pure=106 (91 touched, 14 FRESH). All 14 FRESH ssh-checked NOFILE (e0046913 STA cluster x8 + others, hosts pkn004/pkn002/plg76). r760 exhaustion verdict CONFIRMED+STRENGTHENED (16/16 A-pure NOFILE). 14 parked. Honest pool=349 (vs 3337 broad, 89% false captures). Filter-tightening deferred to discuss/board (denominator-shift risk).",
-    "round": "r772",
+    "round": "r773",
     "scope": "shard A broad-keyword filter (A-domain pool, not all-shard total)",
     "shard_A_pool_mc10": 3337,
     "shard_A_pool_mc5": 3602,
@@ -131,7 +132,29 @@
       "a_pure_buildable_r772": "u5wma CASED(EDA-Eval-DesignFlow-DebugMonCentralReview-001) + twfqn BUILDABLE(AHB master produce-task candidate, next round) + c8v5k unbuildable on own merits(source scripts permission-denied, NOT lead label) + najzl/ejpf0 pending re-check(not r771 speculation)",
       "supersedes": "a_pure_verdict_r765 (OVERTURNED) partial; r771 'trace-format-incompatibility fourth dimension' refined: ALIVE!=buildable still holds in principle BUT lead agent is NOT the disqualifying criterion",
       "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
-      "round": "r772"
+      "round": "r772",
+      "superseded_by": "r773 CORRECTED (twfqn=fork, c8v5k/najzl/ejpf0=duplicates)"
+    },
+    "a_pure_verdict_r773": {
+      "verdict": "EXHAUSTED-AFTER-6-CASES: r765 10 ALIVE A-pure pool now 6 case'd + 4 NON-BUILDABLE(fork/duplicate). A-pure fresh pool effectively exhausted on 11-18 snapshot.",
+      "cases_built_from_r765_pool": [
+        "r765 0arn6 -> StaInterruptCauseAnalyze-001 (pnr_signoff debug-Q&A)",
+        "r766 uyvi5 -> StaRunEval-001 (pnr_signoff analysis-Q&A, log eval)",
+        "r768 aqetb -> StaSweepCfgFix-001 (pnr_signoff produce-task, makefile fix)",
+        "r769 i7d8w -> GenLibCornerEmptyAnalyze-001 (pnr_signoff debug-Q&A, cfg parse bug)",
+        "r770 8akpt -> StaSpec21Audit-001 (pnr_signoff analysis-Q&A, spec 2.1 audit)",
+        "r772 u5wma -> DebugMonCentralReview-001 (digital code-review Q&A)"
+      ],
+      "non_buildable_r773": {
+        "twfqn": "FORK of 1791793008878_o0c8y (metadata.fork.forkedFromSessionId=o0c8y, forkedAt 2026-11-16T08:52:25Z). Only 6 msgs (near-empty fork). o0c8y ALREADY case'd as AhbMasterVerilog-001. r772 BUILDABLE note was WRONG (confused fork with original 79-msg session).",
+        "najzl": "Prompt = spec 2.1 STA flow audit on SAME path 1116_pa_cpu/sta/run as 8akpt(r770 StaSpec21Audit-001). Same intent+path=dup.",
+        "ejpf0": "Prompt = spec 2.1 STA flow audit on SAME path 1116_pa_cpu/sta/run as 8akpt(r770). Same intent+path=dup.",
+        "c8v5k": "Prompt='sta_pre_WL_ssgnp_v0p675_0c.log 根据log评估本次sta结果' = SAME intent as uyvi5(r766 StaRunEval-001, log eval). Same corner ssgnp_v0p675_0c. near-dup."
+      },
+      "implication": "A-pure fresh pool exhausted on 11-18 snapshot after 6 cases. Top mc>=10 peek candidates re-confirmed C/D-dominated false positives (aether/virtuoso/drc/calibre/skipper/hspice, r759/r760 finding stands). Next options: (a) new full ssh_eda_scan for fresh snapshot; (b) mc>=5 re-pool (r771 pending phantom-check); (c) governance/discuss. No off_intent padding to satisfy loop 1-case quota.",
+      "supersedes": "a_pure_verdict_r765 (OVERTURNED, 10 ALIVE) -> r773 EXHAUSTED-AFTER-6-CASES; a_pure_verdict_r772 (BUILDABLE>=3) -> r773 CORRECTED (twfqn=fork non-buildable, u5wma was the only genuine r772 build, c8v5k/najzl/ejpf0 all duplicates)",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
+      "round": "r773"
     }
   },
   "mc_matrix_1105_hist": {
