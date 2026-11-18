@@ -43,14 +43,14 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <body>
 <h1>S1/S2 等分方案 · 数据落地方案 v2（web:code:math = 4:4:2）</h1>
 <p style="color:#666;font-size:12px;">
-<b>撰写</b>: BaiZe Data Agent · 2026-11-17<br>
+<b>撰写</b>: BaiZe Data Agent · 2026-11-18<br>
 <b>用户令</b>: 2026-11-17 — S2 采用 4:4:2，刷新细化方案（中文 HTML）<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。<br>
 <b>当前进度</b>: iter ≈ 235k / 700k（33.6%），step ≈ 7.0s；预计 ~2026-11-26 到 350k 切换点（(350k−235k)×7s ≈ 9.3 天），~2026-12-25 到 700k 终点（(700k−235k)×7s ≈ 37.7 天）
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤 <span style="color:green">✅ 430.7B</span>）→ PC-2（MegaMath 分词 <span style="color:orange">🔄 进行中</span>）→ PC-3（污染闸门扩展 <span style="color:green">✅ 5 集 9277 tasks</span>）→ PC-4（blend TSV 生成），预计 11-23 前全部就绪，不阻塞 S1 训练（ETA ~11-26 到 350k，~12-25 到 700k 终点）。<b style="color:#c62828;">⚠️ 时间余量紧张</b>：S2 数据（必做路径）11-23 就绪 vs S2 启动 ~11-26 = <b>仅 ~3 天余量</b>，任一前置工作延误 >3 天即推迟 S2 启动。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens <span style="color:green">✅ 430.7B</span> ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 在 S2 训练中途到货并分词，可刷新 blend TSV 将 Math epoch 从 1.18 降到 0.65。</p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且有数据支撑。</b>关键路径 = PC-1（stack-v3 L4 过滤 <span style="color:green">✅ 430.7B</span>）→ PC-2（MegaMath 分词 <span style="color:orange">🔄 进行中</span>）→ PC-3（污染闸门扩展 <span style="color:orange">🔄 黑名单✅ 9277 tasks / 扫描⏳待PC-2</span>）→ PC-4（blend TSV 生成），预计 11-23 前全部就绪，不阻塞 S1 训练（ETA ~11-26 到 350k，~12-25 到 700k 终点）。<b style="color:#c62828;">⚠️ 时间余量紧张</b>：S2 数据（必做路径）11-23 就绪 vs S2 启动 ~11-26 = <b>仅 ~3 天余量</b>，任一前置工作延误 >3 天即推迟 S2 启动。Go/No-Go 条件 = ① stack-v3 L4 过滤后 ≥ 250B tokens <span style="color:green">✅ 430.7B</span> ② MegaMath Batch1 分词后 ≥ 70B tokens ③ 污染闸门 0 命中。如 MegaMath-web (Batch2) 在 S2 训练中途到货并分词，可刷新 blend TSV 将 Math epoch 从 1.18 降到 0.65。</p>
 </div>
 <div class="toc">
 <b>目录</b>
@@ -155,12 +155,12 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </table>
 </div>
 <div class="pc-card">
-<h4>PC-3: 污染闸门扩展 ✅ 完成</h4>
+<h4>PC-3: 污染闸门扩展 🔄 部分完成（黑名单就绪，扫描待 PC-2）</h4>
 <table style="margin:8px 0;">
 <tr><th style="width:100px;">工作内容</th><td>① 扩展黑名单指纹：将 HumanEval/MBPP/GSM8K/MATH/SWE-bench 的 prompt/test/assertion/canonical_solution 加入污染黑名单（当前仅有 EDA-Eval-PyAether 158 任务）。② 对 stack-v3-train 全量 8192 shard 跑 13-gram 闸门扫描。③ 对 MegaMath Batch1 跑 8-gram 闸门扫描。④ 产出 S2 污染隔离报告。</td></tr>
-<tr><th>预估耗时</th><td>4–8 小时（13-gram 扫描 8192 shard + 8-gram 扫描 364 parquet）</td></tr>
-<tr><th>截止日期</th><td><b>2026-11-21</b></td></tr>
-<tr><th>当前状态</th><td>✅ <b>完成 (2026-11-18)</b> — 5 个 benchmark 数据集已下载（总计 9277 tasks）：HumanEval (164) / MBPP (500) / GSM8K (1319) / MATH (5000) / SWE-bench (2294)。字段归一化后扩展黑名单指纹生成中。Nemotron-CC-Math 下载完成 (243GB/196 files)。S2 新增数据（MegaMath/Nemotron/finemath）的污染扫描将在 PC-2 分词完成后执行。</td></tr>
+<tr><th>预估耗时</th><td>黑名单构建 4 小时（✅ 已完成）+ 13-gram/8-gram 扫描 4–8 小时（需在 PC-2 分词完成后执行）</td></tr>
+<tr><th>截止日期</th><td><b>黑名单: 2026-11-21 ✅</b> · <b>扫描完成: 2026-11-25</b>（在 S2 启动 ~11-26 前完成）</td></tr>
+<tr><th>当前状态</th><td>🔄 <b>部分完成 (2026-11-18)</b> — ① <b>黑名单指纹构建 ✅ 完成</b>：5 个 benchmark 数据集已下载（总计 9277 tasks）：HumanEval (164) / MBPP (500) / GSM8K (1319) / MATH (5000) / SWE-bench (2294)，字段归一化后黑名单指纹生成完成（6M+ ngrams）。② <b>13-gram/8-gram 扫描 ⏳ 待执行</b>：stack-v3 全量扫描 + MegaMath 扫描需在 PC-2 分词完成后执行（预计 11-21 后）。Nemotron-CC-Math 下载完成 (243GB/196 files)。③ 污染隔离报告将在扫描完成后产出。</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 5 个 benchmark 黑名单指纹就位 ② stack-v3 全量 13-gram 扫描完成 ③ MegaMath 8-gram 扫描完成 ④ 命中 shard 列表产出 ⑤ 污染隔离报告产出</td></tr>
 </table>
@@ -244,7 +244,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <td style="background:#bbdefb">🔵启动</td><td style="background:#bbdefb">🔵分词中</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-3: 污染闸门扩展</td>
-<td></td><td style="background:#bbdefb">🔵4-8h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td>
+<td></td><td style="background:#bbdefb">🔵4-8h</td><td style="background:#c8e6c9">✅黑名单</td><td style="background:#ffe0b2">🟠扫描待PC-2</td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-4: blend TSV 生成 (fallback)</td>
 <td></td><td></td><td style="background:#bbdefb">🔵0.5d</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td>
@@ -287,7 +287,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <table>
 <tr><th>类别</th><th class="num">S1 消耗 (B)</th><th class="num">S2 消耗 (B)</th><th class="num">累计 (B)</th><th class="num">可用 (B)</th><th class="num">累计 epoch</th><th>判定</th></tr>
 <tr><td>Web</td><td class="num">1,085.7</td><td class="num">586.6</td><td class="num">1,672.3</td><td class="num">2,500.1</td><td class="num green">0.67</td><td class="green">✅ 完全充裕（余828B）</td></tr>
-<tr><td>Code</td><td class="num">278.8</td><td class="num">586.6</td><td class="num">865.4</td><td class="num">836~955</td><td class="num green">0.91~1.04</td><td class="green">✅ 补入stack-v3后够用</td></tr>
+<tr><td>Code</td><td class="num">278.8</td><td class="num">586.6</td><td class="num">865.4</td><td class="num">980.8</td><td class="num green">0.88</td><td class="green">✅ 补入stack-v3后充裕</td></tr>
 <tr><td>Math</td><td class="num">102.7</td><td class="num">293.3</td><td class="num">396.0</td><td class="num">613.4</td><td class="num green">0.65</td><td class="green">✅ 补入MegaMath全量后充裕</td></tr>
 </table>
 <h3>4.3 Fallback 方案 Epoch 核算（仅 MegaMath Batch1）</h3>
@@ -306,7 +306,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <table>
 <tr><th>类别</th><th class="num">累计 (B)</th><th class="num">可用 (B)</th><th class="num">累计 epoch</th><th>判定</th></tr>
 <tr><td>Web</td><td class="num">1,672.3</td><td class="num">2,500.1</td><td class="num green">0.67</td><td class="green">✅</td></tr>
-<tr><td>Code</td><td class="num">865.4</td><td class="num">836~955</td><td class="num green">0.91~1.04</td><td class="green">✅</td></tr>
+<tr><td>Code</td><td class="num">865.4</td><td class="num">980.8</td><td class="num green">0.88</td><td class="green">✅</td></tr>
 <tr><td>Math</td><td class="num">396.0</td><td class="num">334.4</td><td class="num amber">1.18</td><td class="amber">🟡 <1.2 可接受</td></tr>
 </table>
 <div class="info" style="font-size:12px;margin-top:10px;">
@@ -408,7 +408,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <tr><th style="width:25px;">#</th><th>Go/No-Go 条件</th><th>检查方法</th><th>当前状态</th><th>不满足时处置</th></tr>
 <tr><td>G1</td><td><b>stack-v3 L4 过滤后 ≥ 250B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="green">✅ 430.7B PASS</td><td>放宽过滤或使用全量 476B</td></tr>
 <tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json total_tokens</td><td class="amber">⏳ 待 PC-2</td><td>启动 Nemotron-CC-Math（#2 下载优先级，133B）或 finemath（#3，43.6B）补入</td></tr>
-<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="green">✅ 黑名单就绪 (9277 tasks / 6M ngrams)</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
+<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv 命中=0</td><td class="amber">⏳ 黑名单就绪 (9277 tasks / 6M ngrams)，扫描待 PC-2 完成后执行</td><td>命中 shard 从 blend 剔除；> 5% 需人工审查</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验 web/code/math prop</td><td class="amber">⏳ 待 PC-4</td><td>手动调整 prop 至满足</td></tr>
 <tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-26）</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k，ETA ~11-26）</td><td>如异常推迟 S2 切换（每推迟 1 天，700k 终点延后 1 天）</td></tr>
 <tr><td>G6</td><td><b>（可选）MegaMath-web 到货且分词完成（~11-26）</b></td><td>MANIFEST total_tokens ≥ 200B</td><td class="amber">⏳ 待 PC-5（Soft）— #1 下载优先级，11-17 启动</td><td>使用 fallback 方案（§1.3），epoch 1.18；PC-5 完成后可中途刷新 blend TSV</td></tr>
@@ -424,7 +424,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <tr><th>维度</th><th>DeepSeek（参考）</th><th>本项目 S2</th><th>差异分析</th></tr>
 <tr><td>配比</td><td>web:code:math = 4:2:4</td><td>web:code:math = 4:4:2</td><td>本项目 code 更高、math 更低</td></tr>
 <tr><td>模型规模</td><td>≥7B（V2 21B / V3 671B）</td><td>2.22B</td><td>2B 对 code 40% 无先例，需监控</td></tr>
-<tr><td>Code 数据量</td><td>推测 >1T</td><td>836~955B</td><td>量级相当，受限于可用数据</td></tr>
+<tr><td>Code 数据量</td><td>推测 >1T</td><td>980.8B</td><td>量级相当，受限于可用数据</td></tr>
 <tr><td>Math 数据量</td><td>推测 >1T</td><td>334~613B</td><td>偏少，是主要短板</td></tr>
 <tr><td>设计意图</td><td>数学推理优先</td><td>代码+数学平衡，兼顾 EDA</td><td>面向 EDA 领域，code ≥ math</td></tr>
 </table>
@@ -434,7 +434,7 @@ PC-1 stack-v3 L4 过滤 (11-17→11-19, 2-4h) → PC-2 MegaMath Batch1 分词 (1
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ CONTAMINATION_CHECK_AGENT_IFM.md / report_s1s2_split_data.md v1 / report_s1s2_split_pretrain.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v1 报告关系</b>: v1 = 可行性分析（含利弊/推荐/调研），v2 = 可执行落地方案（含 shard 级 TSV / 甘特图 / epoch 核算 / Go/No-Go 条件）。<br>
-<b>生成时间</b>: 2026-11-17（v2.6 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30；v2.3 修正甘特图里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐；v2.5 修正 PC-2/PC-4 截止日期与甘特图一致、修正下载完成时间与甘特图一致、修正 §7.2 优化路径下载时间、修正风险#8截止日期引用；v2.6 修正 finemath epoch 表述歧义 — 明确 0.78 为 Nemotron+finemath 叠加结果（仅 finemath 则 1.05）、修正 §1.2 megamath 备注为可用量分解）
+<b>生成时间</b>: 2026-11-18（v2.9 修正版 — v2.2 修正 350k 切换点 ~11-26 / 700k 终点 ~12-25 / 余量 ~3 天 / 甘特图 11-17→11-30；v2.3 修正甘特图里程碑列对齐；v2.4 修正甘特图 PC-5 DONE 标记列对齐；v2.5 修正 PC-2/PC-4 截止日期与甘特图一致、修正下载完成时间与甘特图一致、修正 §7.2 优化路径下载时间、修正风险#8截止日期引用；v2.6 修正 finemath epoch 表述歧义 — 明确 0.78 为 Nemotron+finemath 叠加结果（仅 finemath 则 1.05）、修正 §1.2 megamath 备注为可用量分解；v2.7 更新 PC-1/PC-3 实测结果 — PC-1 ✅ L4=430.7B (90.5%), PC-3 ✅ 5 benchmarks (9277 tasks); v2.8 更新 PC-2 进度/下载状态/Code 小计 980.8B; <b>v2.9 修正 PC-3 状态为「部分完成」(黑名单✅/扫描⏳待PC-2) — 原标记「✅完成」与实际不符、修正 G3 Go/No-Go 为 amber — 扫描未完成不可标绿、修正 §4.2/§4.3 Code 可用量从旧值「836~955」更新为实测 980.8B (epoch 0.88) — 与 §1.2/§1.3 一致、修正 PC-3 截止日期区分黑名单与扫描两阶段、更新甘特图 PC-3 行</b>）
 </p>
 </div>
 </body>
