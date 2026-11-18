@@ -6,6 +6,7 @@ WAITING: 0（2026-11-19 wake#1374·**🟠 friend-review 已交付·写作层 5 �
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-19 wake#1375 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百二十一次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop PID243810/relay PID118463 活·cline ✅ /home/app.e0031982/.local/bin/cline·/home 29G(93%)·/nasdata 2.4T(21%)）·ops 排空（last_run_id=146·无 147 pending）·HEAD=`e2d12847e`·behind=0/ahead=0 origin/main·zhulong run 子树干净·research 日报 11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。
 - [2026-11-19 wake#1374 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百二十次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop PID243810/relay PID118463 活·cline ✅ /home/app.e0031982/.local/bin/cline·/home 29G(93%)·/nasdata 2.4T）·ops 排空（last_run_id=146=inbox 顶部·outbox DONE 146·无 147 pending）·HEAD=`34dfed91f`（pretrain 他线 commit·behind=0/ahead=0 origin/main·zhulong run 子树干净·benchmark/designflow 2 modified 属他线不碰）·research 日报 11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。
 - [2026-11-19 wake#1373 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百一十九次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop PID243810/relay PID118432 活·cline ✅ /home/app.e0031982/.local/bin/cline·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146·outbox DONE 146·无 147 pending）·HEAD=`b6dbd190f`·behind=0/ahead=0（zhulong run 子树干净·benchmark/designflow 2 modified 属他线不碰）·research 日报 11-19(00:16) zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。本轮 §10 合并 wake#1352~#1369 旧指针省空间。
 - [2026-11-19 wake#1372 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百一十八次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop PID243810/relay PID118463 活·cline ✅ /home/app.e0031982/.local/bin/cline·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146·无 147 pending）·HEAD=`7a47f64aa`·behind=0/ahead=0（vision 他线推进已 rebase 入 main·zhulong run 子树干净）·research 日报 11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。
@@ -39,13 +40,7 @@ WAITING: 0（2026-11-19 wake#1374·**🟠 friend-review 已交付·写作层 5 �
 
 - [wake#1263~#1291 详条已滚出·本轮 wake#1350 压缩] plan v1.5 第 13-41 次复核·7 判据全通过·原文见 `daily-memories/2026-11-18.md` §[wake#1263-1291 rolled-out]（含 wake#1284 TASK.md 归档债清零）。
 
-- [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·7 判据全通过·报告 119150B）。
-
-- [wake#1244-1250 详条已滚出·本轮 wake#1350 压缩] plan v1.2 第 77-78 次 + v1.4 第 10-12 次复核·6/9 判据全通过·见 `daily-memories/2026-11-18.md` §[wake#1250]。
-
-- [2026-11-18 wake#1247 详条] 见 `daily-memories/2026-11-18.md` §[wake#1247]（**plan v1.4 交付**·用户令 2026-11-18 第二批意见·核心认知升级情绪×长期记忆 + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 8 次调研 + 附录 G·自检 9 判据全通过·新臂 M4-M8 是设计不起跑）。
-
-- [2026-11-18 wake#1246 详条] 见 `daily-memories/2026-11-18.md` §[wake#1246]（**plan v1.3 交付**·用户令 2026-11-18 交互式会话·增量补两篇 zhulong 预印本 BibTeX 引用至附录 F·ZhuLong-DAC 完整 + DATE27 PLACEHOLDER·自检 7 判据全通过·不起 eval·不起臂）。
+- [wake#1244~#1251 详条已滚出·本轮 wake#1375 合并] plan v1.3/v1.4/v1.5 交付 + v1.2 第 77-78 次/v1.4 第 10-12 次复核·关键节点：wake#1246=plan v1.3（附录 F BibTeX）·wake#1247=plan v1.4（核心认知升级情绪×长期记忆+Full→Lite+附录 G）·wake#1251=plan v1.5（§6 同步 v1.4 口径·7 判据全通过·报告 119150B）·原文见 `daily-memories/2026-11-18.md` §[wake#1246]/§[wake#1247]/§[wake#1250]/§[wake#1251]（本轮 wake#1375 维护合并省 MEMORY 空间·原文不改）。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
