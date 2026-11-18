@@ -1,10 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1270·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（含 v1.5 §6 同步·已 push origin/main·0 behind 0 ahead）。本 wake 第二十次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链（grep `href="https?://"`=0）+ 0 `<script>` / M0-M8+S1/M3+S1/N1/N2 13 臂 / H1-H7 7 假设 / §4.5 Affective-Memory / §6.1 6 标题（3 情绪机制 + 3 备选）/ Fig1-9 含 Fig5-9 情绪机制图表 / diff vs v1.4 72 行全在 §6 line 605-683（§0-§5/§7-§9 本体未改）。v1.5 详细流水见 daily-memories/2026-11-18.md（wake#1251）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1271·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（含 v1.5 §6 同步·已 push origin/main）。本 wake 第二十一次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链（grep `href="https?://"`=0）+ 0 `<script>` / M0-M8+S1/M3+S1/N1/N2 13 臂 / H1-H7 7 假设 / §4.5 Affective-Memory / §6.1 6 标题（3 情绪机制 + 3 备选）/ Fig1-9 含 Fig5-9 情绪机制图表 / diff vs v1.4 72 行全在 §6 line 605-683（§0-§5/§7-§9 本体未改）。v1.5 详细流水见 daily-memories/2026-11-18.md（wake#1251）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
+
+- [2026-11-18 wake#1271 心跳·交互式 OpenCode 会话] 第二十一次复核 v1.5（commit e810dc502）·7 判据全通过（119150B>25KB / 11 h2 / 0 外链 grep `href="https?://"`=0 + 0 `<script>` / 13 臂 M0-M8+S1+M3+S1+N1+N2 / H1-H7 / §4.5 Affective-Memory / §6.1 6 标题 / Fig1-9 含 Fig5-9 情绪机制图表 / `git diff 2c4ed787d HEAD` 72 行全在 §6 line 605-683 内·§0-§5/§7-§9 本体未改）·git fetch origin 1 behind（pretrain 线 commit 3b38f0d83·非本线·designflow 未暂存改动阻 rebase·不动他线文件）·HEAD=`37bd821b1`（designflow shard C #758 推进·本线 run/reports 无 dirty）·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。状态与 wake#1270 一致，仅续编心跳。
 
 - [2026-11-18 wake#1270 心跳·交互式 OpenCode 会话] 第二十次复核 v1.5（commit e810dc502）·7 判据全通过（119150B>25KB / 11 h2 / 0 外链 grep `href="https?://"`=0 + 0 `<script>` / 13 臂 M0-M8+S1+M3+S1+N1+N2 / H1-H7 / §4.5 Affective-Memory / §6.1 6 标题 / Fig1-9 含 Fig5-9 情绪机制图表 / `git diff 2c4ed787d HEAD` 72 行全在 §6 line 605-683 内·§0-§5/§7-§9 本体未改）·git fetch origin 0 behind 0 ahead·HEAD=`70beccb32`（他线 vision patrol wake#1612 推进·本线 run/reports 无 dirty）·未暂存改动为 designflow 线文件（candidates_mc10.tsv / trace_ledger_A.tsv / trace_ledger_D.tsv / _metadata_backfill_tier2_*）·非本线不动·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。状态与 wake#1269 一致，仅续编心跳。
 
