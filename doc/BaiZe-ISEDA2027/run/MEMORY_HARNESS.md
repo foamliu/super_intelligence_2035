@@ -1,8 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2676 · 2026-11-18 14:1x — 监控轮(无incr_eval·1新real-patch不足起轮)·**心跳第一行**: 自检clean→predict 2326/3500(cline343+2/codex147+3/cc360/pi300/hermes491/dsh185+8/opencode500 COMPLETE·Δ vs R2675=+14)·6/7 predict alive·新real-patch自R2675仅1题(cline-patched django__django-13033 patch=2066B)→不足≥3-5阈值→本轮不跑incr_eval·**SWE-bench Verified Pass%(cumulative·同R2675)**: hermes440=88.0%·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi216=43.2%·dsh143=28.6%·codex91=18.2%·**自检clean**(load23.02/224≈10.3%busy·MemAvail1632GB·0 runaway>8000%CPU·最高cline-hub-daemon37.4%≈0.37核·远低于8000%/50GB阈值)·**research日报11-18已读**(同R2675·无新可执行指令)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.7KB(✅≤32KB)
-> 📦 R2675 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·4 real patches·+2 RESOLVED·cline254/hermes440·7way报告REGEN·自检clean）。需要时再读。
+> 🆕 **R2677 · 2026-11-18 14:3x — incr_eval轮(5新real-patch·+3 RESOLVED)·**心跳第一行**: incr_eval R2677 DONE(169.9s)·5新real-patch跨3路eval: cline-patched 2题→both failed(能力)·pi 2题→both RESOLVED✅·hermes 1题→RESOLVED✅·全部7路0 unevaluated·**SWE-bench Verified Pass%(cumulative·updated)**: hermes441=88.2%(+1)·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi218=43.6%(+2)·dsh143=28.6%·codex91=18.2%·predict 2335/3500(Δ vs R2676=+9·codex+2/cc+1/pi+3/hermes+1/dsh+1)·6/7 predict alive(opencode COMPLETE)·**自检clean**(0 runaway·0 Docker残留·load正常)·**research日报11-18已读**(无新可执行指令)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.7KB(✅≤32KB)
+> 📦 R2676 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·1新real-patch不足起incr_eval·predict 2326/3500·自检clean·research日报已读）。需要时再读。
 
 > 📦 R2674 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2309/3500·hermes+2·自检clean·无新运维令·research日报已读）。需要时再读。
 
@@ -66,14 +66,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2676 监控轮(1新real-patch不足起incr_eval)·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2675 DONE(cline254/hermes440/cc289/dsh143/pi216/codex91)
-当前动作:     R2676: 监控轮·predict 2326/3500(cline343/codex147/cc360/pi300/hermes491/dsh185/opencode500·Δ vs R2675=+14)·6/7 predict alive·新real-patch自R2675仅1题(cline django-13033)→不足≥3-5阈值→不跑incr_eval·0真实429·自检clean(load23.02/224·MemAvail1632GB·0 runaway)
+PHASE:        R2677 incr_eval轮(5新real-patch·+3 RESOLVED)·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2677 DONE(pi218/hermes441·+3 RESOLVED)
+当前动作:     R2677: incr_eval DONE·5新real-patch跨3路eval(cline 2 failed/pi 2 RESOLVED/hermes 1 RESOLVED)·全部7路0 unevaluated·predict 2335/3500(Δ vs R2676=+9)·6/7 predict alive·0真实429·自检clean
 下一步:       继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→合并cumulative→刷新7way SWE-bench报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈30.5KB / MEMORY≈28.5KB（✅≤32KB·R2674+R2673已fold→daily）
- SWE-bench Verified Pass%(cumulative resolved/500): hermes440=88.0%·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi216=43.2%·dsh143=28.6%·codex91=18.2%·(partial·predict still running for 6 routes·incr_eval R2675 DONE)
+ 体积: TASK≈30.5KB / MEMORY≈28.7KB（✅≤32KB）
+ SWE-bench Verified Pass%(cumulative resolved/500): hermes441=88.2%·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi218=43.6%·dsh143=28.6%·codex91=18.2%·(partial·predict still running for 6 routes·incr_eval R2677 DONE)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
