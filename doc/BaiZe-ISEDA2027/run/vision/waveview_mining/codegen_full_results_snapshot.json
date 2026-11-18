@@ -4122,6 +4122,58 @@
    "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V2/outputs/submit.zip",
    "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FMFreqVsT-001",
+   "arm": "V0",
+   "k_conditions": 9,
+   "pi_seconds": 307.1,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 18,
+   "k_total": 22,
+   "detail": "FAIL (18/22)\nPASS:a zip names: ['gen_fmfreq.py']\nPASS:b \nPASS:c rc=0 stdout_len=3132 err=\nPASS:d proc match: proc f_vs_t {sig v_thr}\nFAIL:e missing sx_create_signal inst_freq analog\nPASS:f missing sx_",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FMFreqVsT-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FMFreqVsT-001",
+   "arm": "V1",
+   "k_conditions": 9,
+   "pi_seconds": 150.3,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 18,
+   "k_total": 22,
+   "detail": "FAIL (18/22)\nPASS:a zip names: ['gen_fmfreq.py']\nPASS:b \nPASS:c rc=0 stdout_len=2991 err=\nPASS:d proc match: proc f_vs_t {sig v_thr}\nFAIL:e missing sx_create_signal inst_freq analog\nPASS:f missing sx_",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FMFreqVsT-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FMFreqVsT-001",
+   "arm": "V2",
+   "k_conditions": 9,
+   "pi_seconds": 120.6,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 18,
+   "k_total": 22,
+   "detail": "FAIL (18/22)\nPASS:a zip names: ['gen_fmfreq.py']\nPASS:b \nPASS:c rc=0 stdout_len=3354 err=\nPASS:d proc match: proc f_vs_t {sig v_thr}\nFAIL:e missing sx_create_signal inst_freq analog\nPASS:f missing sx_",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FMFreqVsT-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FifoTbStimGen-001",
+   "arm": "V0",
+   "k_conditions": 12,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
