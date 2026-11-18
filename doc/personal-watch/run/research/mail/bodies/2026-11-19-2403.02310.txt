@@ -1,0 +1,18 @@
+Dear Dr. Ramjee,
+
+In §4.3 of Sarathi-Serve you note that a chunk of 257 tokens raises prefill time by 32% over 256, purely from tile quantization. That single sentence changed how I read every serving benchmark I had collected.
+
+I am Yang Liu, a researcher working on LLM agents and evaluation infrastructure; my page is https://foamliu.github.io/.
+
+We run large batches of agent rollouts under a tail-latency budget, so your framing of TBT as the binding constraint matches our workload more closely than raw throughput does.
+
+Two questions:
+
+1. Is 256 a fixed power-of-two default, or should the token budget be re-tuned per tensor-parallel degree and prompt length? Please pick one, plus a sentence on what you would check first.
+
+2. When output lengths are heterogeneous, the decode batch keeps shrinking. Do you hold stall-free batching through admission control, or through padding? Which one costs less when the TBT SLO is the binding constraint?
+
+Thank you for releasing the scheduler and the trace tooling.
+
+Best regards,
+Yang Liu
