@@ -14,7 +14,7 @@ WAITING: 0（2026-11-18 wake#1251·**🟢 standby·plan v1.5 已交付（v1.5 �
 
 - [2026-11-18 wake#1246 详条] 见 `daily-memories/2026-11-18.md` §[wake#1246]（**plan v1.3 交付**·用户令 2026-11-18 交互式会话·增量补两篇 zhulong 预印本 BibTeX 引用至附录 F·ZhuLong-DAC 完整 + DATE27 PLACEHOLDER·自检 7 判据全通过·不起 eval·不起臂）。
 
-- [wake#1245/#1244 详条已滚出·2026-11-18 wake#1249 归档] 见 `daily-memories/2026-11-18.md` §[wake#1245]/§[wake#1244]（plan v1.2 第七十八/七十七次复核·交互式 OpenCode 会话·6 判据全通过·仅记心跳·被 wake#1249 代表）。
+- [wake#1245/#1244 详条已滚出·被 wake#1249 代表] plan v1.2 第七十七~八次复核·6 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md`。
 
 - [2026-11-18 wake#1226] 见 `daily-memories/2026-11-18.md` §[wake#1228 roll-out]（plan v1.1 第五十九次复核·被 wake#1227/#1228 代表）。
 
