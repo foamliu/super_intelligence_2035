@@ -288,7 +288,7 @@
 1793583394153_wnpwu.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1792371850786_ahp76.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793255447731_givdz.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
-1792202627785_pj7un.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792202627785_pj7un.messages.json					case	EDA-Eval-DesignFlow-NetlistChkzdomGenExplainQA-001	2026-11-18 23:50	r900 A档 trace-faithful: U#0 netlist_chkzdom 生成机制+函数调用关系分析; 14 断言 a-n; D.jsonl 483->484
 1793089704959_am99r.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1792500415268_9h3be.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793270732926_ebmf3.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
