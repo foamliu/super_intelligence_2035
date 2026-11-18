@@ -1862,3 +1862,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1791868718387_z7niq					parked		2026-11-18 09:34	dup of 9vjrk (same user e0014566 same prompt top cell name)
 1791983684940_vmnh4					parked		2026-11-18 09:34	dup of 9vjrk (same user e0014566 same prompt top cell name)
 1782784094855_g8un6					parked		2026-11-18 09:34	pin-list extraction trace INCOMPLETE (ended non-ASCII error, no user-accepted gold standard) - violates 红线#1
+1792841178220_2sexh	thomasz	hfeg0pfn060	18	netlist	parked		2026-11-18 10:05	lean-C pg_layout/IR-drop: trace is Totem-SC vss IR-drop diagnosis (DDR6TOP_IDD5B), real domain=power-integrity/pad-placement (C pg_layout), not D netlist/schematic/waveform/analog. D-confirm kw_D=96% driven by transistor:40 but semantic task is PG analysis. trace also stale-reconciled (no clean user-accepted final answer). defer to C. r870 cross-shard audit
