@@ -1,0 +1,44 @@
+[incr-eval 02:39:45] Starting incr_eval_all R2721
+[incr-eval 02:39:45] --- cline ---
+[incr-eval 02:39:45] cline: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:39:45] cline: nothing to do
+[incr-eval 02:39:45] --- codex ---
+[incr-eval 02:39:45] codex: unevaluated real_patch=3 empty_patch=1
+[incr-eval 02:39:45] codex: merged 3 new patches -> predictions_codex_new_R2721.json
+[incr-eval 02:39:45] codex: EVAL 3 instances -> run_id=verified_full_glm53_codex_incr_R2721
+[incr-eval 02:40:42] codex: eval rc=0
+[incr-eval 02:40:42]   django__django-15368: RESOLVED
+[incr-eval 02:40:42]   django__django-15380: RESOLVED
+[incr-eval 02:40:42]   django__django-15467: RESOLVED
+[incr-eval 02:40:42]   django__django-15382: EMPTY PATCH -> failed
+[incr-eval 02:40:42] codex: cumulative n=269 resolved=102 failed=167 infra=0 empty_patch=111 total_pred=263 -> eval_glm53_codex.json
+[incr-eval 02:40:42] --- cc ---
+[incr-eval 02:40:42] cc: unevaluated real_patch=1 empty_patch=0
+[incr-eval 02:40:42] cc: merged 1 new patches -> predictions_claude-code_new_R2721.json
+[incr-eval 02:40:42] cc: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2721
+[incr-eval 02:41:10] cc: eval rc=0
+[incr-eval 02:41:10]   sympy__sympy-13031: FAILED
+[incr-eval 02:41:10] cc: cumulative n=464 resolved=292 failed=172 infra=0 empty_patch=95 total_pred=464 -> eval_glm53_claude-code.json
+[incr-eval 02:41:10] --- deepseek ---
+[incr-eval 02:41:10] deepseek: unevaluated real_patch=1 empty_patch=0
+[incr-eval 02:41:10] deepseek: merged 1 new patches -> predictions_deepseek-harness_new_R2721.json
+[incr-eval 02:41:10] deepseek: EVAL 1 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2721
+[incr-eval 02:41:44] deepseek: eval rc=0
+[incr-eval 02:41:44]   django__django-13401: FAILED
+[incr-eval 02:41:44] deepseek: cumulative n=224 resolved=155 failed=69 infra=0 empty_patch=30 total_pred=224 -> eval_glm53_deepseek-harness.json
+[incr-eval 02:41:44] --- pi ---
+[incr-eval 02:41:44] pi: unevaluated real_patch=0 empty_patch=1
+[incr-eval 02:41:44]   django__django-13837: EMPTY PATCH -> failed
+[incr-eval 02:41:44] pi: cumulative n=352 resolved=229 failed=122 infra=1 empty_patch=33 total_pred=352 -> eval_glm53_pi.json
+[incr-eval 02:41:44] --- opencode ---
+[incr-eval 02:41:44] opencode: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:41:44] opencode: nothing to do
+[incr-eval 02:41:44] --- hermes ---
+[incr-eval 02:41:44] hermes: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:41:44] hermes: nothing to do
+[incr-eval 02:41:44] === SUMMARY ===
+[incr-eval 02:41:44] codex: resolved=102 failed=167 infra=0 n=269 (new_real=3 new_empty=1)
+[incr-eval 02:41:44] cc: resolved=292 failed=172 infra=0 n=464 (new_real=1 new_empty=0)
+[incr-eval 02:41:44] deepseek: resolved=155 failed=69 infra=0 n=224 (new_real=1 new_empty=0)
+[incr-eval 02:41:44] pi: resolved=229 failed=122 infra=1 n=352 (new_real=0 new_empty=1)
+[incr-eval 02:41:44] DONE
