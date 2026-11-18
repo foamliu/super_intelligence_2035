@@ -1,0 +1,35 @@
+[incr-eval 00:17:00] Starting incr_eval_all R2709
+[incr-eval 00:17:00] --- cline-patched ---
+[incr-eval 00:17:00] cline-patched: unevaluated real_patch=1 empty_patch=0
+[incr-eval 00:17:00] cline-patched: merged 1 new patches -> predictions_cline-patched_new_R2709.json
+[incr-eval 00:17:00] cline-patched: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2709
+[incr-eval 00:18:06] Starting incr_eval_all R2709
+[incr-eval 00:18:06] --- cline-patched ---
+[incr-eval 00:18:06] cline-patched: unevaluated real_patch=1 empty_patch=0
+[incr-eval 00:18:06] cline-patched: merged 1 new patches -> predictions_cline-patched_new_R2709.json
+[incr-eval 00:18:06] cline-patched: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2709
+[incr-eval 00:18:12] cline-patched: eval rc=0
+[incr-eval 00:18:12]   django__django-16116: RESOLVED
+[incr-eval 00:18:12] cline-patched: cumulative n=391 resolved=280 failed=111 infra=0 empty_patch=16 -> eval_glm53_cline-patched.json
+[incr-eval 00:18:12] --- pi ---
+[incr-eval 00:18:12] pi: unevaluated real_patch=1 empty_patch=0
+[incr-eval 00:18:12] pi: merged 1 new patches -> predictions_pi_new_R2709.json
+[incr-eval 00:18:12] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2709
+[incr-eval 00:18:45] pi: eval rc=0
+[incr-eval 00:18:45]   django__django-13028: RESOLVED
+[incr-eval 00:18:45] pi: cumulative n=333 resolved=228 failed=104 infra=1 empty_patch=15 -> eval_glm53_pi.json
+[incr-eval 00:18:45] --- codex ---
+[incr-eval 00:18:45] codex: unevaluated real_patch=0 empty_patch=7
+[incr-eval 00:18:45]   django__django-13128: EMPTY PATCH -> failed
+[incr-eval 00:18:45]   django__django-13158: EMPTY PATCH -> failed
+[incr-eval 00:18:45]   django__django-13279: EMPTY PATCH -> failed
+[incr-eval 00:18:45]   django__django-13297: EMPTY PATCH -> failed
+[incr-eval 00:18:45]   django__django-13344: EMPTY PATCH -> failed
+[incr-eval 00:18:45]   django__django-13346: EMPTY PATCH -> failed
+[incr-eval 00:18:45]   django__django-13401: EMPTY PATCH -> failed
+[incr-eval 00:18:45] codex: cumulative n=208 resolved=98 failed=110 infra=0 empty_patch=54 -> eval_glm53_codex.json
+[incr-eval 00:18:45] === SUMMARY ===
+[incr-eval 00:18:45] cline-patched: resolved=280 failed=111 infra=0 n=391 (new_real=1 new_empty=0)
+[incr-eval 00:18:45] pi: resolved=228 failed=104 infra=1 n=333 (new_real=1 new_empty=0)
+[incr-eval 00:18:45] codex: resolved=98 failed=110 infra=0 n=208 (new_real=0 new_empty=7)
+[incr-eval 00:18:45] DONE
