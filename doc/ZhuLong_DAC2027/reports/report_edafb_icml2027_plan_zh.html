@@ -67,10 +67,11 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <header>
   <h1>EDA-Flow-Bench ICML 2027 · 重定位与消融设计计划书</h1>
   <div class="meta">
-    zhulong agent · 2026-11-17（v1）· 2026-11-18（v1.3 增量补预印本引用）· 唯一交付：<code>reports/report_edafb_icml2027_plan_zh.html</code><br>
+    zhulong agent · 2026-11-17（v1）· 2026-11-18（v1.3 补预印本引用 → v1.4 核心认知升级）· 唯一交付：<code>reports/report_edafb_icml2027_plan_zh.html</code><br>
     用户令 2026-11-17 22:5x：论文重定位 + 消融实验设计 + 计划书（最高优先）<br>
-    用户令 2026-11-18（交互式会话）：v1.3 增量补丁 — 附录 F 补两篇 zhulong 预印本 BibTeX 引用（ZhuLong-DAC 已上线 + DATE27 PLACEHOLDER）<br>
-    单文件自包含 · 0 外链 · 0 CDN · 0 &lt;script&gt; · 全文数字可追溯
+    用户令 2026-11-18 第一批：v1.3 增量补丁 — 附录 F 补两篇 zhulong 预印本 BibTeX 引用（ZhuLong-DAC 已上线 + DATE27 PLACEHOLDER）<br>
+    用户令 2026-11-18 第二批：v1.4 核心认知升级 — 情绪×长期记忆（惊奇度门控 / 武器聚焦压缩 / 状态感知检索）+ 新臂 M4–M7(±M8) + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 调研（附录 G）<br>
+    单文件自包含 · 0 外链 · 0 CDN · 0 &lt;script&gt; · 全文数字可追溯 · 调研文献可追溯
   </div>
 </header>
 
@@ -89,7 +90,8 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
   <li><a href="#s9">§9 现有资产映射</a></li>
   <li><a href="#sx">附录：引用清单（路径 + 行号）</a>
     <ul>
-      <li><a href="#sf">F. 参考文献（Bibliography · 预印本引用）</a></li>
+      <li><a href="#sf">F. 参考文献（Bibliography · 预印本引用 + 调研文献）</a></li>
+      <li><a href="#sg">G. 调研文献（research.cimi_search · 情绪×记忆机制映射）</a></li>
     </ul>
   </li>
 </ul>
@@ -365,6 +367,79 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <b>H4 的特殊说明</b>：H4 直接对应用户 2026-11-17 09:3x 结案令的两条认知（「单 agent &gt; 多 agent；自主 spawn &gt; 用户定制」，源自 2026 暑假清华博士研究积累）。该认知在 subagent 消融线（40 题子集）上成立，但<b>是否在长链 flow 任务上仍成立</b>是经验问题——长链任务可能恰好满足「所需上下文 &gt; 窗口」的条件（用户 2026-11-15 07:2x 提出的 H_ctx 思路），使多 agent 分工优势显现。H4 用预注册方式正面检验这一边界。<b>无论结果如何都可发表</b>：复现 → 巩固认知；不复现 → 界定长链是单 agent 优势的边界。
 <span class="src">MEMORY_ZHULONG.md:1-5（结案结论）· 用户 2026-11-15 07:2x H_ctx 思路（ZHULONG_TASK.md 用户裁令节）</span>
 </div>
+
+<h3>§4.5 核心认知升级（v1.4）：情绪机制作为记忆写入门控与检索打分的计算原理</h3>
+
+<p>用户 2026-11-18 第二批意见指出「核心认知不够性感」，建议把<b>情绪在长期记忆巩固与提取中的作用</b>作为本论文的核心认知机制。现稿 H1-H4 是「长期记忆 + 递归自改进」的<b>纯功能主义命题</b>——只问「记忆/自改进有无收益」，<b>缺乏机制层面的可证伪性</b>（不知道收益<b>来自什么计算原理</b>）。v1.4 引入三条来自认知神经科学 + AI 情感记忆的机制，作为记忆写入门控与检索打分的<b>可计算映射</b>，把 H1-H4 从「有无收益」深化为「<b>哪种机制带来收益、收益在什么条件下消失</b>」。
+<span class="src">用户令 2026-11-18 第二批意见 ③ + Gemini 评论原文（ZHULONG_TASK.md 顶部 v1.4 令 §① 意见 3 + §③）· 调研来源见附录 G</span></p>
+
+<h4>§4.5.1 三条机制的计算映射（不停留在比喻）</h4>
+<table>
+<tr><th>认知神经科学机制</th><th>生物证据（附录 G）</th><th>→ EDA agent 记忆架构映射</th><th>可计算公式（v1.4 给出）</th></tr>
+<tr>
+<td><b>① 情绪唤醒度 → 惊奇度 / 高惩罚信号门控</b>（Surprise / High-Penalty Gating）</td>
+<td>杏仁核-海马交互：情绪唤醒度（arousal，无论正负效价）增强记忆巩固；肾上腺素/皮质醇 → 杏仁核 NE → 海马 LTP。<span class="src">McGaugh 2004 Annu Rev Neurosci 27:1-28 · McGaugh 2013 PNAS 110(S2):10402 · Richter-Levin &amp; Akirav 2003 emotional tagging</span></td>
+<td>人类不平均记流水账，只对「强烈挫败（报错/崩盘）」或「意外突破（一次性通过）」高权重写入。Agent 记忆写入<b>不应均匀采样</b>，应由<b>预测误差</b>（prediction error）或<b>高代价失败</b>触发优先级巩固。</td>
+<td>写入权重 <code>w = α·surprise + β·penalty</code>。surprise = 新事实相对记忆库先验的预测误差（KL 散度 / Shannon 自信息，Itti &amp; Baldi 2009 Bayesian surprise）；penalty = 失败代价（长链中途崩盘的已耗 tool calls / 已耗 token）。α/β 由消融标定（M5 vs M2 均匀采样）。</td>
+</tr>
+<tr>
+<td><b>② 武器聚焦效应 → 根因抽象与噪声剥离</b>（Weapon-Focus Compression）</td>
+<td>高唤醒时记忆权衡：核心刺激（central details）巩固增强，边缘背景（peripheral details）编码受抑；Easterbrook 1959 注意窄化；Loftus et al. 1987 / Steblay 1992 weapon focus；Mather &amp; Sutherland 2011 arousal-biased competition。<span class="src">Easterbrook 1959 · Kensinger 2009 Emot Rev 1(2):99 · Mather &amp; Sutherland 2011 PMC3110019</span></td>
+<td>高唤醒时大脑只记核心冲突、丢弃无关背景；同理，Agent 遇长链工具报错时，应触发高强度上下文压缩，<b>只将核心报错栈 + 根因因果链固化进 L1/L2</b>，剥离冗余中间日志。</td>
+<td>压缩比指标 <code>central_vs_peripheral_ratio = |central_tokens| / |total_tokens|</code>。central = 报错栈 + 根因因果链（M7 触发）；peripheral = 中间 tool call 日志。M7 vs M2 全量写入比较该比值与 Pass@1。</td>
+</tr>
+<tr>
+<td><b>③ 心境一致性 / 状态依赖提取 → 状态感知检索</b>（State-Aware Retrieval）</td>
+<td>Bower 1981 Network Theory of Affect：心境一致提取（mood-congruent recall，匹配效价）+ 状态依赖提取（state-dependent recall，匹配编码/检索状态）；Eich et al. 1994 自生成事件下效应更强。<span class="src">Bower 1981 Mood and Memory · Bower, Gilligan &amp; Monteiro 1981 · Eich et al. 1994</span></td>
+<td>Agent 陷入连续失败（高「挫败/风险」状态）时，检索系统应自动调高<b>防御性避坑规则与负面教训</b>权重；正常推进时优先检索<b>成功范式</b>。情绪状态成为检索的索引标签。</td>
+<td>检索打分 <code>score(query, mem) = sim(q, mem) + γ·state_match(query_state, mem_encode_state)</code>。state = (近 N 步失败率, 当前 tool 域, 链长阶段)；γ 由 M6 消融标定（M6 vs M3 状态无关检索）。</td>
+</tr>
+</table>
+
+<div class="callout info">
+<b>机制 → 假设的可证伪性升级</b>：H1（v1.2）只问「记忆有无增益」——即使 M3 &gt; M0，也不知道增益来自「正确相关记忆」还是「prompt 变长」（这正是 N1 杀手级对照要排除的）。v1.4 的 H5-H7 把问题深化为「<b>增益是否来自该具体机制</b>」：H5 检验惊奇度门控 vs 均匀采样；H6 检验状态感知检索 vs 状态无关检索；H7 检验武器聚焦压缩 vs 全量写入。每条都有<b>机制级负对照</b>（关掉该机制、保留等量 token），比 H1 的功能级对照更精细。这与 AI 情感记忆前沿（Generative Agents 用 importance score 过滤写入 Park et al. 2023、EM-LLM 用 Bayesian surprise 切分事件 arXiv:2407.09450、PsychoAgent 用 affect + conflict 检索 arXiv:2608.07438、somatic-marker emotion vector re-injection arXiv:2605.08611）同构，但<b>首次在真实 EDA long-chain flow 上预注册可证伪检验</b>。
+<span class="src">附录 G 调研文献（research.cimi_search 8 次调用）</span>
+</div>
+
+<h3>H5 · 惊奇度门控优于均匀采样写入（机制级）</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>用预测误差 / 高代价失败门控的记忆写入（M5：w = α·surprise + β·penalty）在迁移臂 M4 上 Pass@1 ≥ 均匀采样写入（M2）+ 3pp；即「只记意外与挫败」比「平均记所有」更有效。</td></tr>
+<tr><td><b>自变量</b></td><td>写入策略（M5 惊奇度门控 vs M2 均匀采样），记忆总量预算持平（控制 token 量，排除「记更多」假象）</td></tr>
+<tr><td><b>因变量</b></td><td>M4 迁移目标域 Pass@1 + 记忆库大小（验证总量持平）</td></tr>
+<tr><td><b>判据阈值</b></td><td>M5 ≥ M2 + 3pp（迁移目标域），McNemar 方向一致；记忆库 token 量差 ≤ 10%（验证不是「记更多」）</td></tr>
+<tr><td><b>样本量</b></td><td>M2/M5 各 120 题（迁移目标域），1 trace/题</td></tr>
+<tr><td><b>统计检验</b></td><td>McNemar（配对）+ paired bootstrap 95% CI；预注册 α=0.05</td></tr>
+<tr><td><b>证伪条件</b></td><td>M5 − M2 &lt; 1pp <b>或</b> McNemar p &gt; 0.05 <b>或</b> 方向反转（M5 &lt; M2）⇒「惊奇度门控在 EDA flow 层无额外收益」，H5 被证伪（均匀采样已足够 / 门控开销不划算）</td></tr>
+</table>
+
+<h3>H6 · 状态感知检索优于状态无关检索（机制级）</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>检索打分含 state_match 项（M6：score = sim + γ·state_match）在「连续失败」子集上 Pass@1 ≥ 状态无关检索（M3）+ 3pp；即「挫败时优先避坑、顺境时优先成功范式」比「只按语义相似度检索」更有效。</td></tr>
+<tr><td><b>自变量</b></td><td>检索打分函数（M6 状态感知 vs M3 状态无关），记忆库内容相同（同源 M5 写入）</td></tr>
+<tr><td><b>因变量</b></td><td>分层 Pass@1（「连续失败 ≥2 步」子集 vs「正常推进」子集）</td></tr>
+<tr><td><b>判据阈值</b></td><td>「连续失败」子集 M6 ≥ M3 + 3pp（McNemar 方向一致）；「正常推进」子集 M6 ≈ M3（不显著低于，验证状态感知不在顺境有害）</td></tr>
+<tr><td><b>样本量</b></td><td>120 题中「连续失败」子集 ≥ 40 题（按 5_analysis.tex:76-121 trace 解剖的失败模式分层）</td></tr>
+<tr><td><b>统计检验</b></td><td>分层 McNemar + 交互检验（state × 检索策略）；预注册 α=0.05</td></tr>
+<tr><td><b>证伪条件</b></td><td>「连续失败」子集 M6 − M3 &lt; 1pp <b>或</b> 方向反转 <b>或</b> 「正常推进」子集 M6 &lt; M3 − 2pp（状态感知在顺境有害）⇒ H6 被证伪</td></tr>
+</table>
+
+<h3>H7 · 武器聚焦压缩优于全量写入（机制级）</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>高唤醒时只固化 central（报错栈 + 根因因果链）的记忆（M7）在检索命中率与 Pass@1 上 ≥ 全量写入（M2），且记忆库体积显著更小——即「只记核心冲突」比「记全部中间日志」更有效且更省。</td></tr>
+<tr><td><b>自变量</b></td><td>压缩策略（M7 central-only vs M2 全量），触发条件相同（同一 surprise 阈值）</td></tr>
+<tr><td><b>因变量</b></td><td>Pass@1 + 记忆库 token 量 + 检索命中率（retrieval hit rate）</td></tr>
+<tr><td><b>判据阈值</b></td><td>M7 ≥ M2 + 2pp（Pass@1 不降反升）<b>且</b> M7 记忆库 token ≤ M2 × 0.6（体积显著小）；若 M7 ≈ M2（Pass@1）但体积更小，也记为「压缩有效但无 Pass@1 增益」的弱支持</td></tr>
+<tr><td><b>样本量</b></td><td>M2/M7 各 120 题</td></tr>
+<tr><td><b>统计检验</b></td><td>McNemar（Pass@1）+ Wilcoxon（记忆库体积，配对）；预注册 α=0.05</td></tr>
+<tr><td><b>证伪条件</b></td><td>M7 &lt; M2 − 2pp（压缩丢失了关键信息）<b>或</b> M7 记忆库体积 ≥ M2 × 0.8（压缩没生效）⇒ H7 被证伪（武器聚焦压缩在 EDA flow 层有害或无效）</td></tr>
+</table>
+
+<div class="callout gold">
+<b>诚实路线（v1.4 继承）</b>：若情绪机制（H5/H6/H7）在 EDA flow 层<b>无收益</b>，本论文写成「<b>情绪启发式在长链工具编排上的边界条件</b>」——认知神经科学的情绪-记忆机制在生物认知中成立（附录 G 文献），但<b>是否迁移到 LLM agent 的 long-chain flow 是本论文要检验的假设</b>而非定论；负结果界定了「生物启发机制在符号工具编排上的适用边界」，本身是可发表认知。这与 §8 R1（H2 负结果 Plan B）同构。
+</div>
 </section>
 
 <!-- ============================ §5 ============================ -->
@@ -437,6 +512,41 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <td>vs M3（正确相关 vs 错误无关）· vs M0（错误记忆是否反而有害）</td>
 <td>N2 ≤ M0（错误记忆应有害或至少无益）· M3 ≥ N2 + 5pp（正确记忆显著优于错误记忆）</td>
 <td>与 M0 同（错误/无关条目预生成）</td>
+</tr>
+<tr class="arm">
+<td><b>M4</b></td><td>跨域迁移臂（v1.4·污染检验）</td><td>训练域写记忆 → 迁移目标域只读</td>
+<td>选一个<b>训练域</b>（Full 集子集，如某几个 EDA 域 / 某 grounding-depth 区间），agent 在上面跑、写记忆（distillation + reflection）；选一个与训练域 <b>instance-disjoint</b> 的<b>迁移目标域</b>（另一子集），<b>不写记忆、只读记忆</b>，看训练域积累的记忆能否迁移提升目标域 Pass@1。这是对「记忆内容是<b>可迁移认知</b>还是<b>题面特定答案缓存</b>」的直接检验。<br><b>污染检测指标</b>：对迁移命中记忆逐条审计「抽象认知 vs 题面答案片段」，统计<b>答案泄露率</b>（&gt;0 则记忆机制有泄露 → anti-leakage 强化）。与 N2 互补：N2 = 内容正确性负对照，M4 = 可迁移性正检验。<span class="src">用户令 2026-11-18 第二批意见 ②（ZHULONG_TASK.md v1.4 令 §① 意见 2）</span></td>
+<td>vs M3（同源记忆但 M4 只读不写，检验迁移）· vs N2（正检验 vs 负对照）</td>
+<td>M4 迁移目标域 Pass@1 ≥ M0 + 2pp（迁移有效）；答案泄露率 = 0（无污染）；若泄露率 &gt; 0 → anti-leakage 强化后复测</td>
+<td>训练域 + 目标域各 120 题，2 trace/题 ≈ 480 run</td>
+</tr>
+<tr class="arm">
+<td><b>M5</b></td><td>惊奇度门控臂（v1.4·H5）</td><td>写入权重 w = α·surprise + β·penalty</td>
+<td>在 M2 基础上把「均匀采样写入」替换为「惊奇度 / 高惩罚信号门控写入」：surprise = 新事实相对记忆库先验的预测误差（KL 散度 / Shannon 自信息，Itti &amp; Baldi 2009）；penalty = 失败代价（长链中途崩盘的已耗 tool calls / token）。<b>记忆总量预算与 M2 持平</b>（控制 token 量，排除「记更多」假象）。<span class="src">机制 ① §4.5.1</span></td>
+<td>vs M2（门控 vs 均匀采样，等 token 预算）</td>
+<td><b>M5 ≥ M2 + 3pp</b>（H5 主判据，迁移目标域）；记忆库 token 差 ≤ 10%</td>
+<td>同 M2 + surprise 计算（离线 KDE / embedding 距离，≈ +3% tool call）</td>
+</tr>
+<tr class="arm">
+<td><b>M6</b></td><td>状态感知检索臂（v1.4·H6）</td><td>检索打分含 state_match 项</td>
+<td>在 M3 基础上把「状态无关检索（仅 sim）」替换为「状态感知检索」：score = sim + γ·state_match；state = (近 N 步失败率, 当前 tool 域, 链长阶段)。记忆库内容同源 M5 写入（控制写入侧，只改检索侧）。<span class="src">机制 ③ §4.5.1</span></td>
+<td>vs M3（状态感知 vs 状态无关，同源记忆）</td>
+<td>「连续失败」子集 <b>M6 ≥ M3 + 3pp</b>（H6）；「正常推进」子集 M6 ≈ M3</td>
+<td>同 M3 + state 编码（≈ +2% tool call）</td>
+</tr>
+<tr class="arm">
+<td><b>M7</b></td><td>武器聚焦压缩臂（v1.4·H7）</td><td>高唤醒时只固化 central</td>
+<td>在 M2 基础上把「全量写入」替换为「武器聚焦压缩」：高唤醒（surprise 超阈值）时只固化 central（报错栈 + 根因因果链）进 L1/L2，剥离 peripheral（中间 tool call 日志）；触发条件与 M5 同一 surprise 阈值。<span class="src">机制 ② §4.5.1</span></td>
+<td>vs M2（central-only vs 全量，同触发）</td>
+<td><b>M7 ≥ M2 + 2pp</b>（H7）<b>且</b> M7 记忆库 token ≤ M2 × 0.6</td>
+<td>同 M2 + central 提取（根因抽象，≈ +5% tool call）</td>
+</tr>
+<tr class="arm">
+<td><b>M8</b></td><td>负对照：负效价偏倚（v1.4·可选）</td><td>检索故意偏向负效价记忆</td>
+<td>给 M6 的检索打分加一个<b>负效价偏置</b>（无论当前状态，都调高 pitfall / 负面教训权重），检验「情绪机制总是正向」是否成立——若 M8 &lt; M6，说明过度防御有害，状态感知的正向收益来自「匹配状态」而非「偏负」。<span class="src">用户令 2026-11-18 v1.4 §① 意见 3 可选 M8</span></td>
+<td>vs M6（负效价偏倚 vs 状态匹配）</td>
+<td>M8 ≤ M6（过度防御应有害或无益）；若 M8 ≈ M6 则「偏负也无害」→ 状态感知收益不来自匹配</td>
+<td>与 M6 同（偏置项预生成）</td>
 </tr>
 </table>
 
