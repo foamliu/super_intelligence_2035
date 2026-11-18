@@ -1,43 +1,94 @@
 \section{Affective-Memory Mechanism Design Details}
 \label{sec:affective-appendix}
+% 【中文】\section{情绪记忆机制设计细节}
 
 This appendix gives full derivations of the three affective-memory mechanisms introduced in \S\ref{sec:affective}, the cognitive-neuroscience evidence, and the AI-affective-memory literature positioning. All citations were verified via the research.cimi\_search service (8 calls); BibTeX entries are in \texttt{main.bbl}.
+% 【中文】
+% 本附录给出 \S\ref{sec:affective} 引入的三个情绪记忆机制的完整推导、认知神经科学证据，以及 AI 情绪
+% 记忆文献定位。所有引用经 research.cimi\_search 服务核验（8 次调用）；BibTeX 条目见 \texttt{main.bbl}。
 
 \subsection{Mechanism 1: Surprise/Penalty-Gated Writing}
+% 【中文】\subsection{机制 1：惊异/惩罚门控写入}
 
 \textbf{Biological evidence.} Emotional arousal---regardless of valence---enhances memory consolidation via the amygdala--hippocampus interaction: adrenal epinephrine/cortisol $\rightarrow$ amygdala norepinephrine $\rightarrow$ hippocampal LTP \cite{mcgaugh2004}. Richter-Levin \& Akirav (2003) describe ``emotional tagging'' of salient events.
+% 【中文】
+% \textbf{生物证据。} 情绪觉醒——不分效价——经杏仁核-海马交互增强记忆巩固：肾上腺素/皮质醇 $\rightarrow$
+% 杏仁核去甲肾上腺素 $\rightarrow$ 海马 LTP \cite{mcgaugh2004}。Richter-Levin \& Akirav (2003) 描述了
+% 显著事件的"情绪标记"。
 
 \textbf{Computational mapping.} The write-gating weight (Eq.~\ref{eq:write-gate}) uses Bayesian surprise $\text{surprise}(e) = \text{KL}(p_{\text{posterior}} \| p_{\text{prior}})$ as the prediction-error signal \cite{ittibaldi2009}, and penalty as the sunk cost of a mid-chain failure (tool calls / tokens consumed before the crash). The agent writes an event $e$ to L1/L2 with priority $\propto w_{\text{write}}(e)$, subject to a total token budget held equal to the M2 uniform-sampling baseline. Calibrating $\alpha,\beta$: M5 sweeps $(\alpha,\beta) \in [0,1]^2$ on the transfer target domain; the Pass@1 iso-contour identifies the operating point. \textbf{Falsification (H2a):} M5 $-$ M2 $<$ 1pp or direction reversal $\Rightarrow$ surprise-gating has no advantage over uniform sampling at equal token budget.
+% 【中文】
+% \textbf{可计算映射。} 写入门控权重（Eq.~\ref{eq:write-gate}）以贝叶斯惊异
+% $\text{surprise}(e) = \text{KL}(p_{\text{posterior}} \| p_{\text{prior}})$ 作为预测误差信号
+% \cite{ittibaldi2009}，以惩罚作为链中途失败的沉没成本（崩溃前消耗的工具调用/token）。智能体以
+% $\propto w_{\text{write}}(e)$ 的优先级将事件 $e$ 写入 L1/L2，受总 token 预算约束（与 M2 均匀采样
+% 基线相等）。$\alpha,\beta$ 校准：M5 在迁移目标域上扫描 $(\alpha,\beta) \in [0,1]^2$；Pass@1 等值线
+% 确定工作点。\textbf{证伪（H2a）：} M5 $-$ M2 $<$ 1pp 或方向反转 $\Rightarrow$ 惊异门控在等 token
+% 预算下相对均匀采样无优势。
 
 \subsection{Mechanism 2: Weapon-Focus Compression}
+% 【中文】\subsection{机制 2：武器焦点压缩}
 
 \textbf{Biological evidence.} Under high arousal, the brain consolidates \emph{central} details (the threat) at the expense of \emph{peripheral} details---the ``weapon-focus effect'' \cite{loftus1987}; Easterbrook (1959) attentional narrowing; Mather \& Sutherland (2011) arousal-biased competition.
+% 【中文】
+% \textbf{生物证据。} 高觉醒下，大脑以\emph{外围}细节为代价巩固\emph{中心}细节（威胁）——"武器焦点
+% 效应"\cite{loftus1987}；Easterbrook (1959) 注意力收窄；Mather \& Sutherland (2011) 觉醒偏向竞争。
 
 \textbf{Computational mapping.} The compression ratio $r_{\text{cp}} = |\text{central tokens}|/|\text{total tokens}|$ (Eq.~\ref{eq:weapon-focus}) is triggered when surprise exceeds the same threshold as M5. \emph{Central} = error stack trace + root-cause causal chain (extracted by a root-cause abstraction step); \emph{peripheral} = intermediate tool-call logs. M7 writes only central content; M2 writes everything. \textbf{Falsification (H2b):} M7 $<$ M2 $-$ 2pp (compression lost critical info) or M7 memory $\geq$ 0.8$\times$M2 (compression ineffective) $\Rightarrow$ weapon-focus compression is harmful or inert in EDA flow.
+% 【中文】
+% \textbf{可计算映射。} 压缩比 $r_{\text{cp}} = |\text{central tokens}|/|\text{total tokens}|$
+%（Eq.~\ref{eq:weapon-focus}）在惊异超过与 M5 相同阈值时触发。\emph{中心} = 错误堆栈轨迹 + 根因因果链
+%（由根因抽象步骤提取）；\emph{外围} = 中间工具调用日志。M7 仅写中心内容；M2 写全部。
+% \textbf{证伪（H2b）：} M7 $<$ M2 $-$ 2pp（压缩丢失关键信息）或 M7 记忆 $\geq$ 0.8$\times$M2
+%（压缩无效）$\Rightarrow$ 武器焦点压缩在 EDA 流程中有害或惰性。
 
 \subsection{Mechanism 3: State-Aware Retrieval}
+% 【中文】\subsection{机制 3：状态感知检索}
 
 \textbf{Biological evidence.} Bower (1981) Network Theory of Affect: mood-congruent recall (matching valence) and state-dependent recall (matching encoding/retrieval state) \cite{bower1981}; Eich et al.\ (1994) show stronger effects under self-generated events.
+% 【中文】
+% \textbf{生物证据。} Bower (1981) 情绪网络理论：情绪一致回忆（匹配效价）与状态依赖回忆（匹配编码/检索
+% 状态）\cite{bower1981}；Eich et al.\ (1994) 显示在自我生成事件下效应更强。
 
 \textbf{Computational mapping.} The retrieval score (Eq.~\ref{eq:state-retrieval}) adds a state-match term to semantic similarity: $\text{state} = (\text{recent-}N\text{-step failure rate}, \text{current tool domain}, \text{chain stage})$. An agent in a fail-streak retrieves pitfall-avoidance memories; in smooth progress, it retrieves success templates. M6 uses state-aware retrieval on M5-sourced memory (controlling the write side); M3 uses state-agnostic (sim-only) retrieval. \textbf{Falsification (H2c):} fail-streak subset M6 $-$ M3 $<$ 1pp or reversal, or smooth-progress subset M6 $<$ M3 $-$ 2pp (state-awareness harms in good conditions) $\Rightarrow$ H2c falsified.
+% 【中文】
+% \textbf{可计算映射。} 检索评分（Eq.~\ref{eq:state-retrieval}）在语义相似度上加入状态匹配项：
+% $\text{state} = (\text{最近 }N\text{ 步失败率}, \text{当前工具领域}, \text{链阶段})$。处于失败连击的
+% 智能体检索避坑记忆；顺利推进时检索成功模板。M6 对 M5 来源记忆使用状态感知检索（控制写入侧）；M3 使用
+% 状态无关（仅 sim）检索。\textbf{证伪（H2c）：} 失败连击子集 M6 $-$ M3 $<$ 1pp 或反转，或顺利子集
+% M6 $<$ M3 $-$ 2pp（状态感知在好条件下有害）$\Rightarrow$ H2c 被证伪。
 
 \subsection{AI-Affective-Memory Literature Positioning}
+% 【中文】\subsection{AI 情绪记忆文献定位}
 
 \begin{itemize}[noitemsep,topsep=0pt]
     \item \textbf{Generative Agents} \cite{park2023}: importance-score-filtered writes---a functional precursor to H2a, but without a predictive-error formulation or pre-registered falsification.
+    % 【中文】\textbf{Generative Agents} \cite{park2023}：按重要性分数过滤写入——H2a 的功能性前驱，但无预测误差形式化或预注册证伪。
     \item \textbf{EM-LLM} (arXiv:2407.09450): segments events using Bayesian surprise---shares the surprise signal but targets episodic segmentation, not write-gating for tool orchestration.
+    % 【中文】\textbf{EM-LLM}（arXiv:2407.09450）：用贝叶斯惊异切分事件——共享惊异信号，但面向情节切分，而非工具编排的写入门控。
     \item \textbf{PsychoAgent} (arXiv:2608.07438): retrieves by affect + conflict---a functional precursor to H2c, but without state-dependent encoding or mechanism-level negative controls.
+    % 【中文】\textbf{PsychoAgent}（arXiv:2608.07438）：按情绪 + 冲突检索——H2c 的功能性前驱，但无状态依赖编码或机制级阴性对照。
     \item \textbf{Somatic-marker re-injection} (arXiv:2605.08611): re-injects emotion vectors---orthogonal to our write-gate/compression/retrieval decomposition.
+    % 【中文】\textbf{躯体标记再注入}（arXiv:2605.08611）：再注入情绪向量——与我们的写入门控/压缩/检索分解正交。
 \end{itemize}
 
 Our contribution: \emph{first pre-registered, falsifiable test} of these three bio-inspired mechanisms on real long-chain EDA flow, with mechanism-level negative controls (equal-token, mechanism-off) rather than post-hoc gain reports.
+% 【中文】
+% 我们的贡献：在真实长链 EDA 流程上对这些仿生机制的\emph{首个预注册、可证伪检验}，配以机制级阴性对照
+%（等 token、机制关闭），而非事后增益报告。
 
 \subsection{Placeholder Figures (post pre-registration)}
+% 【中文】\subsection{占位图（预注册后）}
 
 \begin{itemize}[noitemsep,topsep=0pt]
     \item Figure A1: $\alpha/\beta$ calibration iso-contour (M5 sweep, verifies H2a).
+    % 【中文】图 A1：$\alpha/\beta$ 校准等值线（M5 扫描，验证 H2a）。
     \item Figure A2: $r_{\text{cp}}$ vs.\ Pass@1 scatter (M7 vs.\ M2, verifies H2b).
+    % 【中文】图 A2：$r_{\text{cp}}$ vs.\ Pass@1 散点（M7 vs.\ M2，验证 H2b）。
     \item Figure A3: state\_match hit distribution, fail-streak vs.\ smooth (M6, verifies H2c).
+    % 【中文】图 A3：state\_match 命中分布，失败连击 vs.\ 顺利（M6，验证 H2c）。
     \item Figure A4: M4 transfer leak-rate audit (abstract cognition vs.\ answer-fragment).
+    % 【中文】图 A4：M4 迁移泄漏率审计（抽象认知 vs.\ 答案片段）。
 \end{itemize}
 All figures are \TBD{} pending post-pre-registration evaluation.
+% 【中文】所有图均为 \TBD{}，待预注册后评测。
