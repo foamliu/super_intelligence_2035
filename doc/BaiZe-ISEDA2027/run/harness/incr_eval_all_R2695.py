@@ -89,7 +89,38 @@ def parse_and_merge(harness, real_ids, empty_ids, run_id):
     cum.setdefault("failed", [])
     cum.setdefault("infra_or_quota", [])
     cum.setdefault("empty_patch", [])
+    # --- NEW: check logs/evaluation/<run_id>/results.json (swebench >= 2.0 format) ---
+    results_json = HERE / "logs" / "evaluation" / run_id / "results.json"
+    verdict_map = {}  # iid -> 'resolved' | 'failed' | 'infra'
+    if results_json.is_file():
+        try:
+            rj = json.loads(results_json.read_text())
+            for iid in rj.get("resolved_ids", []):
+                verdict_map[iid] = "resolved"
+            for iid in rj.get("unresolved_ids", []):
+                verdict_map[iid] = "failed"
+            for iid in rj.get("ambiguous_failure_ids", []):
+                verdict_map[iid] = "failed"
+            for iid in rj.get("infra_failure_ids", []):
+                verdict_map[iid] = "infra"
+            log(f"  [results.json] {len(verdict_map)} verdicts from {results_json.name}")
+        except Exception as e:
+            log(f"  [results.json] parse error: {e}")
     for iid in real_ids:
+        # 1) Try new format (results.json verdict map)
+        if iid in verdict_map:
+            v = verdict_map[iid]
+            if v == "resolved":
+                cum["resolved"].append(iid)
+                log(f"  {iid}: RESOLVED (results.json)")
+            elif v == "failed":
+                cum["failed"].append(iid)
+                log(f"  {iid}: FAILED (results.json)")
+            else:
+                cum["infra_or_quota"].append(iid)
+                log(f"  {iid}: infra (results.json)")
+            continue
+        # 2) Fall back to old format (per-instance report.json)
         rj = EVAL_LOG_ROOT / run_id / model / iid / "report.json"
         if not rj.exists():
             cands = list((EVAL_LOG_ROOT / run_id).glob(f"*/{iid}/report.json"))
