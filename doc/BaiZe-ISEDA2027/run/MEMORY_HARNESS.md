@@ -1,6 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
+> 🆕 **R2667 · 2026-11-18 12:0x — 巡检轮·SWE-bench Verified predict 监控·**自检clean**(load27.1/224≈12%busy·MemAvail1381GB·0 runaway>8000%CPU·最高harness proc=opencode7.5%/1.2GB+cline-checkpoint-off hub daemon38%=非eval不碰·均远低于kill阈值·pretrain launcher=非本线不碰·0 eval容器进程)·**7/7 predict进程alive**(etime~1062-1074s≈17.8min·同R2665 launch PID·cline2063655/codex2066009/hermes2068238/opencode2071050/cc2080921/dsh2081778/pi2082293)·各路resume正常(SKIP已done→PREDICT新题·log tail见各路活跃)·**predict进度**(predictions_glm53/): opencode498/hermes482(+1)/cc355(+1)/cline334(+1)/pi296/dsh175/codex139·total2479·remaining≈1221·**0真实429**(hermes log 1 hit=patch=4290B false-positive✅·其余6路0 hit)·gateway /health probe=HTTP000(端点不存在)但processes progressing=网关正常工作·**research日报11-18已读**(R2666已吸收·harness节=Mingbird论文exit-code vs产物存在性·无新内容)·**全部运维令✅已交付**(10:3x ability拆两层R2664+14:5x codex fix R2661+10:2x 口径纠正R2661)·无新未完成指令·**下一步**: 继续监控predict(多日run·single-concurrent故慢)·批量完成后跑增量eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈29.5KB(✅≤32KB)
+
 > 🆕 **R2666 · 2026-11-18 12:0x — 巡检轮·SWE-bench Verified predict 监控·**自检clean**(load26.6/224·MemAvail1382GB·0 runaway>8000%CPU·最高harness proc=cline bun 35.6%/376MB·opencode idle 1.3GB·均远低于kill阈值·pretrain launcher 123%CPU=非本线不碰·0 eval容器进程)·**7/7 predict进程alive**(etime~13min·cline2063655/codex2066009/hermes2068238/opencode2071050/cc2080921/dsh2081778/pi2082293)·各路均已在跑首道新预测(resume SKIP已done题→PREDICT新题)·**predict进度**(predictions_glm53/): opencode498/hermes481/cc354/cline333/pi296/dsh175/codex139·remaining≈1224·**0真实429**(hermes log 1 hit=patch=4290B false-positive✅)·gateway HTTP200✅(11:48 probe)·**research日报11-18已读**: 4条harness建议(①产物存在性判分替代exit-code·②工具provider绑定检查·③结果文件外壳指纹四元组·④代码评测按语言分桶)=输入参考不构成新指令·纳入未来计划·**全部运维令✅已交付**(10:3x ability拆两层R2664+14:5x codex fix R2661+10:2x 口径纠正R2661)·无新未完成指令·**下一步**: 继续监控predict(多日run)·批量完成后跑增量eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈27.6KB(✅≤32KB)
 
 > 🆕 **R2665 · 2026-11-18 11:4x — 续推 SWE-bench Verified predict(用户令·按既定排期)·7路resume LAUNCHED·**心跳第一行**: gateway probe HTTP=200✅(quota恢复)·harbor 9092/9093 up·launch_glm53_full500.sh predict setsid detached·7 predict进程alive(cline2063655/codex2066009/hermes2068238/opencode2071050/cc2080921/dsh2081778/pi2082293)·resume跳过已done(2274/3500)·处理remaining 1226(opencode2/hermes20/cc146/cline168/pi204/dsh325/codex361)·无429(仅false-positive patch=4290B)·自检clean(load20/224·MemAvail1384GB·最高harness proc=opencode27.9%/597MB·远低于8000%CPU/50GB阈值)·logs_glm53/predict_*_glm53.log + master_resume_20261118_1148.log·caveat: codex/dsh已done题系修复前适配器所产(empty-patch 429/timeout=infra·resume不再重试)·多日run·待完成后续增量eval+刷新7way报告·WAITING=0·📦 TASK≈29.7KB MEMORY≈28KB(✅≤32KB)
@@ -53,13 +55,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2665 SWE-bench Verified predict 7路resume RUNNING(用户令·按既定排期)
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench eval✅COMPLETE·SWE-bench predict 7路resume LAUNCHED(R2665)
-当前动作:     R2665: launch_glm53_full500.sh predict setsid detached·7 predict进程alive(cline/codex/hermes/opencode/cc/dsh/pi)·resume处理1226 remaining(opencode2/hermes20/cc146/cline168/pi204/dsh325/codex361)·gateway HTTP200 quota恢复·无429·自检clean
+PHASE:        R2667 SWE-bench Verified predict 7路resume RUNNING·监控中(用户令·按既定排期)
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench eval✅COMPLETE·SWE-bench predict 7路resume LAUNCHED(R2665)·R2666/R2667 巡检clean
+当前动作:     R2667: 7/7 predict进程alive(同R2665 PID·etime~17.8min)·progress opencode498/hermes482/cc355/cline334/pi296/dsh175/codex139·total2479·remaining≈1221·0真实429(hermes1hit=patch=4290B false-positive)·自检clean(load27/224·MemAvail1381GB·0 runaway)·gateway正常(processes progressing)
 下一步:       监控7路predict完成进度·完成后增量eval新预测·刷新7way报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈29.7KB / MEMORY≈28KB（✅≤32KB）
+ 体积: TASK≈30.5KB / MEMORY≈29.5KB（✅≤32KB）
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
