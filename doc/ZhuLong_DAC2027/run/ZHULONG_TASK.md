@@ -1,6 +1,112 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-> 🔴 **用户令 · 2026-11-18（交互式会话下发）— 补充：在计划书 `reports/report_edafb_icml2027_plan_zh.html` 适当位置补充两条预印本引用信息（最高优先 · 纯文档增量 · 不改其他内容）**
+> 🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第二批意见）— 升级 v1.4 计划书：删费力不讨好的 Lite/mock-EDA 开源、改跨题污染检验为 Full→Lite 迁移、核心认知升级为「情绪在长期记忆巩固与提取中的作用」+ 必须用 `research.cimi_search` 做调研（最高优先 · 覆盖 standby · 合并预印本引用令为子任务）**
+>
+> 本条**覆盖 standby 状态**，是 v1.2 计划书交付后的**第二批意见 + 核心认知升级**，要求产出 **v1.4 计划书**。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。**前一条 2026-11-18 预印本引用令合并为本令的子任务 ④**（同次交付，不单独出 v1.3）。
+>
+> **用户原话（逐条对齐，不得自行改题）**：
+> 1. 「"计划书提出开源 Lite 500 题 + mock-EDA 模式" 费力不讨好，不建议。」
+> 2. 「记忆与自改进的"数据泄露/跨题污染"风险。可以考虑在 Full-Lite 的用例跑 agent 积累记忆，看能否迁移到 Lite。」
+> 3. 「核心认知不够性感，建议考虑情绪在长期记忆巩固和提取中的作用。」
+> 4. 「下面是 Gemini 的一些评论供参考，请 zhulong agent 通过 `research.cimi_search` 发挥主动性和创造性，多做调研。」
+>
+> ### ① 三条意见的具体落地要求
+>
+> **意见 1（删费力不讨好的开源承诺）**：
+> - 在 §2.3 开源边界表 / §6.4 图表清单 / §9 现有资产映射 / §8 Plan B 等所有提到「Lite 500 题 + mock-EDA 模式开源」的位置，**降级或删除**这一承诺。理由（用户原话）：「费力不讨好，不建议」。
+> - **替代性开源边界**（agent 自主判断，给更轻、更可信的方案）：例如只开 harness 协议 + 判据 + 脱敏任务规格（不开 Lite 集、不开 mock-EDA）；或开「评测协议白皮书」而非可执行资产。明确写出「为什么 Lite 500 + mock-EDA 不做」（成本/维护/收益不匹配）。
+> - **连锁修订**：§5 消融矩阵中所有以「Lite 500 题」为任务子集的臂，改用 **Full 集子集**（如 top-120 by grounding depth / top-200 by chain length，从 1684 题中选，不造新题、不开源）；§7.2 时间线删除「Lite 集构造」节点；§9.2 缺口章节同步更新。
+> - **诚实披露**：在 §8 风险表加一行 R-new「开源承诺收缩可能被审稿人质疑复现性」+ Plan B（NDA 受控评审包 / 协议级开源）。
+>
+> **意见 2（跨题污染检验改为 Full→Lite 迁移）**：
+> - 现稿 §5.2 污染防护的口径是「held-out 任务从不参与 distillation」（继承 DATE27 instance-disjoint split）。用户指出**真正的风险是「记忆跨题污染」**——agent 在一个题上写的记忆可能直接泄露另一题的答案。
+> - **新设计要求**：在 **Full-Lite 用例上跑 agent 积累记忆，看能否迁移到 Lite**。具体：
+>   - 选一个 **「训练域」**（Full 集的某个子集，如某几个 EDA 域 / 某个链长区间），让 agent 在上面跑、写记忆（distillation + reflection）；
+>   - 选一个 **「迁移目标域」**（Lite 集或与训练域 instance-disjoint 的另一子集），**不写记忆、只读记忆**，看训练域积累的记忆能否迁移提升目标域 Pass@1；
+>   - 这是对「记忆内容是否为可迁移认知而非题目特定答案」的**直接检验**——若迁移有效，证明记忆是抽象知识；若迁移无效或负向，证明记忆只是题面特定的答案缓存（即污染）。
+>   - 把这一设计升格为**新的核心实验臂 M4（跨域迁移臂）** 或 **新的假设 H5（记忆的可迁移性）**，agent 自主决定是新增臂还是扩展现有 M3/S1。
+> - **污染检测指标**（必须设计）：记忆条目审计——对迁移到目标域后被检索命中的每条记忆，人工/自动判定「是抽象认知 vs 是题面特定答案片段」；统计「答案泄露率」（若 >0 则记忆机制有泄露，需 anti-leakage 强化）。
+> - **与 N2 负对照的关系**：N2 注入错误记忆是「内容正确性」负对照；M4 迁移臂是「可迁移性」正检验——两者互补，agent 在 §5.1 臂表中明确二者关系。
+>
+> **意见 3（核心认知升级：情绪在长期记忆巩固与提取中的作用）**：
+> - 这是本令的**核心**，也是用户说「核心认知不够性感」的直接回应。现稿 §4 假设 H1-H4 是「长期记忆 + 递归自改进」的纯功能主义命题——**缺乏机制层面的可证伪性**。用户建议引入**情绪唤醒度 / 心境一致性 / 武器聚焦**等认知神经科学机制，作为记忆写入门控与检索打分的**计算原理**。
+> - **必须做调研**：用 `research.cimi_search` 搜索（关键词建议：「emotional arousal memory consolidation amygdala hippocampus」「mood-congruent recall state-dependent memory」「weapon focus effect memory bias」「prediction error surprise memory gating」「affective tagging episodic memory」「emotion-modulated memory in LLM agents」「affective computing agent memory」等，agent 自主扩展查询词），把找到的**关键文献 + 机制模型**引用进报告 §4 / §5 / §8 Related Work。
+> - **形式化要求**（agent 必须给出可计算映射，不能停留在比喻）：
+>   - **情绪唤醒度 → 惊奇度 / 高惩罚信号门控**（Surprise / High-Penalty Gating）：预测误差（prediction error）或高代价失败（如长链中途崩盘）触发高权重写入；正常 pass 不写或低权重写。给出**写入权重公式**（如 `w = α·surprise + β·penalty`，α/β 由消融标定）。
+>   - **武器聚焦效应 → 根因抽象与噪声剥离**：高唤醒时只固化核心报错栈 + 根因因果链进 L1/L2，剥离冗余中间日志。给出**压缩比指标**（如 central vs peripheral tokens ratio）。
+>   - **心境一致性 / 状态依赖提取 → 状态感知检索**（State-Aware Retrieval）：agent 在连续失败状态时调高防御性避坑规则与负面教训权重；在正常推进时优先检索成功范式。给出**检索打分函数**（如 `score(query, mem) = sim + γ·state_match(query_state, mem_encode_state)`）。
+> - **新假设**（agent 自主决定编号 H5/H6 或重写 H1）：把上述三条机制各写成一条**可证伪假设**，每条含自变量/因变量/判据阈值/统计检验/证伪条件。例：H5「惊奇度门控 vs 均匀采样写入：高唤醒门控的记忆在迁移臂 M4 上 Pass@1 ≥ 均匀采样 +3pp，证伪条件：M4 迁移收益 ≤0 或显著低于均匀采样」。
+> - **新消融臂**（在 v1.2 的 8 臂基础上扩展，agent 自主编号）：
+>   - **M5 情绪唤醒度门控臂**：写入权重 = `α·surprise + β·penalty`（vs M2 均匀采样）；
+>   - **M6 状态感知检索臂**：检索打分含 `state_match` 项（vs M3 状态无关检索）；
+>   - **M7 武器聚焦压缩臂**：高唤醒时触发 central-only 抽象写入（vs M2 全量写入）；
+>   - 可选 **M8 负效价偏倚负对照**：故意让检索偏向负效价记忆，看是否过度防御导致效率下降（证伪「情绪机制总是正向」）。
+> - **诚实路线**（继承 v1.2）：若情绪机制在 EDA flow 层无收益，写成「情绪启发式在长链工具编排上的边界条件」——这本身是可发表认知。在 §8 Plan B 明确写出。
+> - **Related Work 扩展**（§6.3 §8）：把 §8 Related Work 从「EDA benchmark / agent memory / RSI / self-evolution」扩展到加一行「affective neuroscience × agent memory（情绪唤醒度巩固 / 心境一致提取 / 武器聚焦）」，引用调研到的文献。
+>
+> ### ② 调研硬要求（必须用 `research.cimi_search`）
+>
+> - **工具**：优先用 MCP 工具 `research.cimi_search`（语义检索）；若该工具在 agent 运行时不可用，回退到 `webfetch` 已知 URL（如 arXiv、Google Scholar 页面）或 `research.cimi_fetch`，**并在报告里诚实标注「用了哪个工具 + 查询词 + 命中数」**。
+> - **最少查询次数**：≥6 次 `research.cimi_search` 调用（覆盖：情绪巩固 / 心境一致提取 / 武器聚焦 / 预测误差门控 / LLM agent 情绪记忆 / affective computing agent）。
+> - **引用纪律**：每条引用必须给**来源标识**（论文标题 + 作者 + 年份 + DOI/arXiv/URL 文本，**不渲染成可点击外链**）；调研报告作为**附录 G**（新增）或合并进附录 F。
+> - **创造性**：用户原话「发挥主动性和创造性，多做调研」——agent 不仅要搜上述关键词，还要**主动扩展**到相邻领域（如睡眠巩固 / 创伤记忆 / 正负效价差异 / dopamine RPE / Bayesian surprise / 信息论惊奇度），把最相关的 3-5 个机制映射到 EDA agent 记忆架构。
+> - **防伪**：调研到的文献**不得编造**——`research.cimi_search` 返回什么就引什么；若返回结果与 EDA agent 场景距离远，诚实标注「该机制在生物认知中成立，是否迁移到 LLM agent 是本论文要检验的假设」。
+>
+> ### ③ Gemini 评论原文（用户给定 · 供参考 · 不必逐字采纳 · 可引用作 motivation）
+>
+> > 情绪在长期记忆的巩固与提取中扮演着"智能筛选器"与"状态锚点"的核心角色——它通过调动生理唤醒系统，帮助大脑在海量日常信息中优先锁定关乎生存与价值的关键经验，但也可能因此引发记忆偏倚。
+> > 结合认知神经科学（如杏仁核-海马体交互模型）及你此前关注的 Agent 记忆架构上下文，这一机制可以从以下三个核心维度理解：
+> >
+> > **1. 记忆巩固阶段：高唤醒触发"神经标签与捕获"**
+> > 并非所有经历都能进入长期记忆，情绪的生理唤醒度（Arousal）决定了记忆写入的优先级。
+> > - 生理机制：当事件引发强烈情绪（无论正负）时，交感神经系统释放肾上腺素和皮质醇，直接激活大脑的杏仁核（Amygdala）。杏仁核向负责陈述性记忆编码的海马体（Hippocampus）发送调制信号，增强突触可塑性（长时程增强，LTP），从而加速记忆巩固。
+> > - "武器聚焦效应"（记忆权衡）：情绪对记忆的增强具有非对称性。高唤醒会极度强化核心刺激（Central details）的巩固（例如"发生了什么致命错误"），但同时会抑制边缘背景信息（Peripheral details）的编码（例如"当时周围的无关环境细节"）。
+> >
+> > **2. 记忆提取阶段：情绪一致性与状态依赖**
+> > 情绪不仅是写入时的"加权系数"，也是检索时的"索引标签"。
+> > - 心境一致性提取（Mood-Congruent Recall）：人在特定情绪状态下，更容易提取与当前情绪效价（Valence，正性或负性）相匹配的记忆。例如，人在焦虑或受挫时，大脑会自动检索过往的失败与风险案例；在愉悦时，则更容易想起成功经验。
+> > - 状态依赖性提取（State-Dependent Recall）：当提取时的情绪生理状态与编码时的状态高度一致时，记忆提取的准确率显著提升（即"情绪本身成为了检索线索"）。
+> >
+> > **3. 对 AI Agent 长期记忆架构的启发（延伸视角）**
+> > 如果将人类的情绪机制映射到你正在设计的 Agent 长期记忆（L0/L1/L2）与自改进系统中，情绪本质上是一种轻量级元信号（Meta-signal）与非均匀采样机制：
+> > - 对标"情绪唤醒度" → 惊奇度与高惩罚信号（Surprise / High-Penalty Gating）：人类不会平均记录所有流水账，而是对"强烈挫败（报错/崩盘）"或"意外突破（一次性通过）"赋予极高的写入权重。Agent 记忆写入不应采用均匀采样，而应由预测误差（Prediction Error）或高代价失败触发优先级巩固。
+> > - 对标"武器聚焦效应" → 根因抽象与噪声剥离：高唤醒时大脑只记核心冲突、丢弃无关背景；同理，Agent 在遇到长链工具报错时，应触发高强度的上下文压缩，只将核心报错栈与根因因果链固化进 L1/L2，剥离冗余的中间日志。
+> > - 对标"心境一致性" → 状态感知检索（State-Aware Retrieval）：当 Agent 陷入连续工具调用失败（高"挫败/风险"状态）时，检索系统应自动调高防御性避坑规则与负面教训的权重；而在正常推进阶段，则优先检索效率优化与成功范式。
+>
+> ### ④ 子任务：预印本引用（合并自前一条 2026-11-18 用户令，不再单独出 v1.3）
+>
+> - 在 v1.4 计划书附录新增 `<h3>F. 参考文献（Bibliography · 预印本引用 + 调研文献）</h3>`，放：
+>   - **ZhuLong-DAC 预印本**（已上线）`@misc{liu2026runreadbackrefine,...eprint={2611.19056},archivePrefix={arXiv},primaryClass={cs.AR},url={https://arxiv.org/abs/2611.19056}}`（作者列表：Yang Liu, Shiwei Hou, Xiyuan Chen, Sen Yuan, Shao You, Feifan Chen, Wencheng Li, Shuyang Hu, Emma Xia, Xiaojing Lu, Wenchuan Zhang, Hao Wang, Fan Xu, Yanfeng Li, Hongwen Li, Yiming Zhu, year={2026}）
+>   - **DATE27_Zhulong 预印本**（12 月初上线）`@misc{PLACEHOLDER_DATE27_ZHULONG,...note={预印版 2026-12 上线后回填 eprint/...；当前 PLACEHOLDER，引用键用 \cite{PLACEHOLDER_DATE27_ZHULONG} 占位}}`
+>   - **调研文献**（来自 ② 的 `research.cimi_search` 结果）
+> - **0 外链纪律**：BibTeX 的 `url={...}` 与调研文献 URL **必须以纯文本呈现**（`&lt;` 转义或放 `<code>`/`<pre>`），**不得**渲染成可点击 `<a href="https://...">`。
+>
+> ### ⑤ 交付物与硬约束
+>
+> - **唯一交付**：v1.4 增量版 `doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.2 的 74356B 基础上做增量补充；新增 §4 情绪机制假设 + §5 新臂 M5/M6/M7(±M8) + §2.3 开源边界收缩 + §5.2 跨题污染检验 M4 迁移臂 + 附录 F BibTeX + 附录 G 调研文献）。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**（本轮只升级计划书，不改稿）。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写；v1.2 的 §0–§9 结构保留，§4/§5/§2.3/§8/§9 做增量修订）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`，不起任何旧臂（A3/A4/A5/A6/A0′′′ 全部取消）；**新臂 M4/M5/M6/M7/M8 是计划书设计，不是现在起跑**——本轮只出设计文档。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效（grep `href="https?://"`=0、`<script`=0）。
+> - ✅ **可追溯**：调研文献标来源；BibTeX 标「用户令 2026-11-18（交互式会话）」；计划书数字仍带 `路径:行号`，不确定写 `UNKNOWN`。
+> - ✅ **防伪底线**：不编造数字 / 不编造文献 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB（v1.4 增量只会更大）；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+> - **提交**：commit 前缀 `zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.4 — 核心认知升级（情绪 × 长期记忆）+ Full→Lite 迁移污染检验 + 开源边界收缩 + 预印本 BibTeX`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① §4 含情绪机制 3 条可证伪假设（唤醒度门控 / 武器聚焦压缩 / 状态感知检索），每条含证伪条件 ✅；
+>   ② §5 含新臂 M5/M6/M7（±M8）+ M4 跨域迁移臂，臂表更新 ✅；
+>   ③ §2.3 开源边界表删除或降级「Lite 500 + mock-EDA 开源」承诺，写出收缩理由 ✅；
+>   ④ §5.2 含跨题污染检验设计（Full 训练域 → Lite/instance-disjoint 迁移目标域 + 答案泄露率指标）✅；
+>   ⑤ 附录 F 含 ZhuLong-DAC + DATE27 PLACEHOLDER 两条 BibTeX + 调研文献（≥6 次 `research.cimi_search` 调用记录）✅；
+>   ⑥ 0 真实 `<a href="https://...">` 外链（grep=0）+ 0 `<script>` ✅；
+>   ⑦ v1.2 的所有判据继续过（size>25KB / 11+ h2 / 臂≥6 / H1-H4 证伪 / delta 表 / 时间线 / Plan B / UNKNOWN）✅；
+>   ⑧ 调研工具与查询词诚实标注（用了 `research.cimi_search` / `webfetch` / 其他 + 查询词 + 命中数）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+>
+> **agent 自主空间（鼓励发挥）**：本令明确要求「情绪机制形式化为可计算映射」+「调研」，但**具体映射公式 / 假设编号 / 新臂编号 / 调研查询词扩展 / Related Work 重写细节**由 agent 自主决定——用户给的是方向，不是逐字模板。若调研发现更有潜力的机制（如 dopamine RPE / Bayesian surprise 比情绪唤醒度更可计算），agent 可自主替换或并列，但要在报告里说明取舍理由。
+
+> 🔴 **用户令 · 2026-11-18（交互式会话下发）— 补充：在计划书 `reports/report_edafb_icml2027_plan_zh.html` 适当位置补充两条预印本引用信息（最高优先 · 纯文档增量 · 不改其他内容）** ⚠️ **已被上方 v1.4 令合并为子任务 ④，不再单独出 v1.3**
 >
 > 本条**覆盖 standby 状态**，是 v1.2 计划书交付后的**增量补丁任务**，不是重做计划书。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
 >
