@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1305·**🟢 plan v1.6 + paper v1.7 均已交付并提交**：v1.6 报告假设内聚化重组（commit `50ed2d283`·122386B·8 判据）+ v1.7 论文正文重写（commit `d12a6dbf9`+`e1bc9c0f3`·正文 6 页·10 判据全通过·0 error 0 undefined·0 作者泄漏·3 情绪机制公式显式·3 核心+7 子假设·预注册声明 2026-11-22·诚实路线·Appendix D 新增·7 新引用）。subagent 消融线仍 done_all·不起臂。infra 健康·/home 25G free·/nasdata 2.5T free·cline ✅·loop PID243810 + ops_relay PID118463 活·预注册日 2026-11-22 距 4 天）
+WAITING: 0（2026-11-18 wake#1308·**🟢 plan v1.6 + paper v1.7 均已交付并提交**：v1.6 报告假设内聚化重组（commit `50ed2d283`·122386B·8 判据）+ v1.7 论文正文重写（commit `d12a6dbf9`+`e1bc9c0f3`·正文 6 页·10 判据全通过·0 error 0 undefined·0 作者泄漏·3 情绪机制公式显式·3 核心+7 子假设·预注册声明 2026-11-22·诚实路线·Appendix D 新增·7 新引用）。subagent 消融线仍 done_all·不起臂。infra 健康·/home 35G free·/nasdata 2.5T free·cline ✅·loop PID243810 + ops_relay PID118432/118463 活·ops 队列排空 last_run_id=146·落后 origin/main 1 commit（BaiZe harness·非本线·pull 受 designflow 未提交改动受阻·不动他线）·预注册日 2026-11-22 距 4 天）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -16,6 +16,8 @@ WAITING: 0（2026-11-18 wake#1305·**🟢 plan v1.6 + paper v1.7 均已交付并
 
 - [2026-11-18 wake#1307 心跳·opencode 交互式会话·用户粘贴任务书全文无新指令] 第五十六次核验·standby·done_all·用户消息=ZHULONG_TASK.md 全文（顶部最新仍 v1.7 已归档·无新令）·infra 健康（loop PID243810/ops_relay PID118463/cline ✅ @/home/app.e0031982/.local/bin/cline·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146·inbox 顶部即 146·无 pending）·HEAD=`1733ce0f5`（0 ahead 0 behind origin/main·working tree 仍仅 designflow benchmark `doc/ZhuLong_DAC2027/benchmark/` 下 5 文件未提交·非本线·不动）·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。
 
+- [2026-11-18 wake#1308 心跳·opencode 交互式会话·用户粘贴任务书全文无新指令] 第五十七次核验·standby·done_all·用户消息=ZHULONG_TASK.md 全文（顶部最新仍 v1.7 已归档·与 MEMORY 行 3 wake#1305 交付记录一致·无新令）·infra 健康（loop PID243810/ops_relay PID118432+118463/cline ✅ @/home/app.e0031982/.local/bin/cline·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146·inbox 顶部即 146·无 pending）·fetch 后 HEAD=`96a853eb8`（本线 designflow shard D）·**落后 origin/main 1 commit**=`ab1fb8e2c`（BaiZe harness R2686 监控轮·非本线·`git pull --rebase` 因 working tree 有 designflow benchmark 未提交改动受阻·不 stash 他线改动·原地保留）·working tree 仍仅 `doc/ZhuLong_DAC2027/benchmark/` 下 designflow 文件未提交（trace_ledger_C.tsv 改 + trace_deepreads/r768_*.md 新增·非本线·不动）·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本条入后 MEMORY 触 §10 滚出·已滚 wake#911~#1243 + #1263~#1291 + #1244~#1250 三个 mega-指针至 `daily-memories/2026-11-18.md`。
+
 - [2026-11-18 wake#1303 详条·opencode 交互式会话] **plan v1.6 + paper v1.7 双交付**。v1.6（假设内聚化重组）：§4 七条并列假设 → 3 核心+7 子·总-机制-边界三层 + §5.1 对应假设列 + §6 编号同步·报告 122386B·8 判据全通过·commit `50ed2d283`。**v1.7**（放行直接改论文正文）：重写 `EDA-Flow-Bench_ICML2027/`（main.tex + 12 section files + 4 appendix files + references.bbl）·新标题「Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study」·正文 6 页（§1-§9 pages 1-5 + Ethics/Repro page 6·refs+appendix from page 7）·10 判据全通过：①正文 6 页✅ ②0 error 0 undefined✅ ③匿名 0 泄漏✅ ④§4 三情绪机制公式显式（w_write=α·surprise+β·penalty / r_cp=|central|/|total| / score=sim+γ·state_match）✅ ⑤§5 3 核心+7 子假设+三层结构图✅ ⑥§6 预注册声明（PreregDate 2026-11-22 + M0 10.0% + M1-M8/N1-N2 TBD）✅ ⑦§9 诚实路线（H1/H2 证伪写成边界条件）✅ ⑧引用含 ZhuLong-DAC + DATE27 PLACEHOLDER + McGaugh/Loftus/Bower/Itti&Baldi/Park✅ ⑨防伪底线（冻结数字带来源 + 新臂全标 TBD）✅ ⑩Appendix D 新增（情绪机制设计细节 + 调研文献 + 图表占位）✅。删旧 6 section files（2_benchmark/3_harness/4_experiments/5_analysis/6_related/7_conclusion）·新增 8 section files + Appendix D。v1.6 + v1.7 令均已归档至 ZHULONG_TASK_ARCHIVE.md。
 
 - [2026-11-18 wake#1302 心跳·loop 自动唤醒 opencode] 第五十二次核验·standby·done_all·HEAD=`7335535e1`·见上。
@@ -23,29 +25,19 @@ WAITING: 0（2026-11-18 wake#1305·**🟢 plan v1.6 + paper v1.7 均已交付并
 - [2026-11-18 wake#1300 详条已滚出·被 wake#1301 代表] plan v1.5 第五十次复核·7 判据全通过·HEAD=`660c541a4`→loop 自提交 `ea22f49ff`·原文见 `daily-memories/2026-11-18.md` §[wake#1300 rolled-out]（50th review·/home 23G 稳定·滚 wake#1298 至 daily）。
 - [wake#1298 详条已滚出·被 wake#1299 代表] 见 `daily-memories/2026-11-18.md` §[wake#1298 rolled-out]（plan v1.5 第四十八次复核·HEAD=`18a4d76e1`·/home 23G 稳定记录）。
 
-- [wake#1281~#1291 详条已滚出·被 wake#1291 代表] plan v1.5 第三十一~四十一次复核·7 判据全通过·仅记心跳·HEAD 序列 `0b33875c5`→`47e0099d6`→`67c9c352c`→`658763cf8`→`973bde986`→`c32861bc2`→`f158f3b92`（#1284 含 TASK.md 69KB→11KB 归档维护债清零）·原文见 `daily-memories/2026-11-18.md` §[wake#1281/#1282/#1283/#1284/#1285/#1286/#1287/#1288/#1289/#1290/#1291 rolled-out]（11 条独立指针合并省 MEMORY 空间）。
-
-- [wake#1277~#1280 详条已滚出·被 wake#1286 代表] plan v1.5 第二十四~二十七次复核·7 判据全通过·仅记心跳·原文见 `daily-memories/2026-11-18.md` §[wake#1277/#1278/#1279/#1280 rolled-out]（4 条独立指针合并省 MEMORY 空间）。
-
-- [wake#1266~#1276 详条已滚出·被 wake#1277/#1279 代表] plan v1.5 第十六~二十六次复核（wake#1266~#1276）·7 判据全通过·仅记心跳·5 条指针行已 wake#1279 滚出至 `daily-memories/2026-11-18.md` §[MEMORY fold · wake#1279]。
-
-- [wake#1263/#1264/#1265 详条已滚出·被 wake#1266 代表] plan v1.5 第十三~十五次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md`。
-
 - [wake#1259/#1260/#1261/#1262 详条已滚出·被 wake#1263 代表] plan v1.5 第九~十二次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1259/#1260/#1261 rolled-out]（含 wake#1259 程序性瑕疵记录：v1.5 内容被混入 designflow commit e810dc502·commit msg 偏离硬约束·内容正确无需返工·不回溯 amend）。
+
+- [wake#1263~#1291 详条/指针已滚出·2026-11-18 wake#1308 再合并] plan v1.5 第十三~四十一次复核（#1263~#1291）+ wake#1284 含 TASK.md 69KB→11KB 归档维护债清零·7 判据全通过·仅记心跳·HEAD 序列 `0b33875c5`→`47e0099d6`→`67c9c352c`→`658763cf8`→`973bde986`→`c32861bc2`→`f158f3b92`·原文见 `daily-memories/2026-11-18.md` §[wake#1263/#1264/#1265/#1266/#1277/#1279/#1281/#1286/#1291 rolled-out]（多次独立指针合并省 MEMORY 空间）。
 
 - [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·7 判据全通过·报告 119150B）。
 
-- [wake#1250/#1249/#1248 详条已滚出·被 wake#1251 代表] plan v1.4 第十~十二次复核·9 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1250]。
+- [wake#1244/#1245/#1248/#1249/#1250 详条已滚出·被 wake#1251 代表] plan v1.2 第七十七~八次 + v1.4 第十~十二次复核·6/9 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1250]。
 
 - [2026-11-18 wake#1247 详条] 见 `daily-memories/2026-11-18.md` §[wake#1247]（**plan v1.4 交付**·用户令 2026-11-18 第二批意见·核心认知升级情绪×长期记忆 + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 8 次调研 + 附录 G·自检 9 判据全通过·新臂 M4-M8 是设计不起跑）。
 
 - [2026-11-18 wake#1246 详条] 见 `daily-memories/2026-11-18.md` §[wake#1246]（**plan v1.3 交付**·用户令 2026-11-18 交互式会话·增量补两篇 zhulong 预印本 BibTeX 引用至附录 F·ZhuLong-DAC 完整 + DATE27 PLACEHOLDER·自检 7 判据全通过·不起 eval·不起臂）。
 
-- [wake#1245/#1244 详条已滚出·被 wake#1249 代表] plan v1.2 第七十七~八次复核·6 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md`。
-
-- [wake#1226~#1243 详条已滚出·2026-11-18 多次归档] 见 `daily-memories/2026-11-18.md` §[wake#1228/#1231/#1232/#1233/#1241/#1242 roll-out]（plan v1.1 第五十九~七十三次复核 + v1.2 微订正 commit `9565933b1` + v1.2 第七十五次复核·交互式 OpenCode 会话·含 #1227/#1228/#1229/#1231 子集·被 wake#1228/#1231/#1232/#1233/#1241/#1242/#1243 代表）。
-
-- [wake#911~#1224 详条/指针已滚出·2026-11-18 wake#1284 再合并] 原文均已在 `daily-memories/2026-11-{17,18}.md`（plan v1 首次交付 commit `87cdb56f8` + v1.1 第二~五十七次复核 + standby 心跳序列 + subagent 消融线结案 wake#1036 + wake#1148~#1161 done_all 重核 + A0′′ proxy 修复关键节点 #1011 cline 3.0.51 忽略 contextWindow=8K→truncation proxy port 19099 详见 daily-memories/2026-11-1{6,7}.md）·均已被 wake#1036(结案)/wake#1178(v1 首交付)/wake#1251(v1.5 交付) 代表。
+- [wake#911~#1243 详条/指针已滚出·2026-11-18 wake#1308 再合并] 原文均已在 `daily-memories/2026-11-{17,18}.md`（plan v1 首次交付 commit `87cdb56f8` + v1.1 第二~七十三次复核 + v1.2 微订正 `9565933b1` + standby 心跳序列 + subagent 消融线结案 wake#1036 + wake#1148~#1161 done_all 重核 + A0′′ proxy 修复关键节点 #1011 cline 3.0.51 忽略 contextWindow=8K→truncation proxy port 19099 详见 daily-memories/2026-11-1{6,7}.md）·均已被 wake#1036(结案)/wake#1178(v1 首交付)/wake#1251(v1.5 交付)/wake#1303(v1.6+v1.7 交付) 代表。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
@@ -175,5 +167,4 @@ WAITING: 0（2026-11-18 wake#1305·**🟢 plan v1.6 + paper v1.7 均已交付并
 **结论**：full_v3 (82.1±3.0%) **未复现** r1=88.0%（异常高值）。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，1σ 范围内重叠，自探索增益不显著。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。r1=78.5%/r2=70.9%/r3 task130 stuck 6582s（RUN_ID 83 查的根因）。
 ## 操作流水
-- [wake#836b/c/d 已滚出·2026-11-11 17:35 wake#838 归档] B 轴抽查三遍旧心跳（836b 11:20 / 836c 13:3x / 836d 15:2x）原文已搬入 `daily-memories/2026-11-11.md` §[rolled-out 17:35 wake#838 归档]。结论已被 17:35 wake#838 ru 补注版覆盖；既有报告正确，本任务已闭合。
-- [wake#388~#798 旧指针已滚出·2026-11-10 21:44 合并] 原文见 `daily-memories/2026-11-10.md` §[rolled-out 21:44 wake#815 归档·冗余指针合并]（wake#388~#479 / #537~#540 / #560~#564 / #576 / #577~#607 / #608 / #784 / #791 / #792 / #798 共 10 条旧「已滚出」指针·均已被 line 8~31 的合并指针代表·此处冗余合并省 MEMORY 空间）。
+- [wake#388~#838 旧指针已滚出·2026-11-10/11 多次合并] 原文见 `daily-memories/2026-11-{10,11}.md`（wake#388~#798 共 10 条旧指针 + wake#836b/c/d B 轴抽查三遍旧心跳·均已被上方合并指针代表·冗余合并省 MEMORY 空间）。
