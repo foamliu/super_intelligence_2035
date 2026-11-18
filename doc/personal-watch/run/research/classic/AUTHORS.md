@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-19 00:1x）**：作者 **215** 人（编号最大 **215**）· X 已核验 **106** · 已发信 **93** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-19 03:0x）**：作者 **219** 人（编号最大 **219**）· X 已核验 **106** · 已发信 **96** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十二轮增量（2026-11-19 03:0x）**：作者网 215 → **219**（#216 Nikit Srivastava / #217 Shengding Hu 胡声鼎 / #218 Mingxuan Wang 王明轩 / #219 Xueping Gao，依次来自 A 轨 `2611.23158`、B 轨 #236 MiniCPM、B 轨 #237 DAPO、A 轨 `2611.22835`）；已发信 93 → **96**（#94 英文 192 词 / #95 中文 196 字 / #96 中文 231 字，均 `SENT OK 03:03`）；X 已核验 **106 不变**（`x.com` 直连与代理均 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#217 为 **A（本人主页 mailto，`shengdinghu.github.io` `200`）**；#216 / #218 为 **C（论文 PDF 首页）**；#219 未找到公开邮箱、只建档不发。
 >
 > **第六十一轮增量（2026-11-19 00:1x）**：作者网 212 → **215**（#213 Kushagra Bainsla / #214 Hai Huang / #215 Kewei Tu 屠可伟，依次来自本轮 A 轨 `2611.23035` / `2611.23197` / `2611.23026`）；已发信 91 → **93**（#92 / #93，均 `SENT OK 00:10:13`）；X 已核验 **106 不变**（`x.com` 直连与代理均 `000` ⇒ 不猜 handle，voice_ready 0）。三人邮箱均为**论文 PDF 首页明文（地址级别 C）**；#213 / #215 的论文为 2026-11-17 新提交，地址即现行，但**仍按下限口径记录**，不写成 A/B。
 >
@@ -3092,6 +3094,58 @@
 | 备注 | `语言=中文(判据=华人姓名族属 + 中国机构)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**残差流扩展的写回多样性**（TP 分片部分输出）+ 训练时间口径（4 流 +9%、4→16 流 +19%），可直接指导 2B 级预训练的结构试验。 |
 
 
+
+### 216. Nikit Srivastava
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nikit Srivastava（印度裔姓名 ⇒ 外发英文） |
+| 机构 | **Paderborn University**（Data Science Group, Heinz Nixdorf Institute，德国；A 轨 `2611.23158` 第一作者） |
+| 代表论文 | **MoE–LoRA Methods for Multilingual Adaptation: A Systematic Empirical Study**（`2611.23158`，2026-11-17） |
+| 邮箱 | **`nikit.srivastava@upb.de`**（来源：论文 PDF 第 1 页作者块 `{nikit.srivastava, axel.ngonga}@upb.de`，`pdftotext` 实测；**地址级别 C**） |
+| 主页 | **未找到**（本轮未核到个人页） |
+| X 账号 | **未找到**（`x.com` 直连与代理均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（第 94 封，2026-11-19 03:03:09，英文 192 词） |
+| 备注 | `语言=英文(判据=印度裔姓名族属 + 德国高校；无中/日/韩信号)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**200 语言 / 9,000+ 设定的 LoRA 排名不可外推** + 「翻译变好、阅读理解变差」这一负结果，可回填我们的多语言适配准入。 |
+
+### 217. Shengding Hu 胡声鼎
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shengding Hu 胡声鼎（中文信 ≤300 字） |
+| 机构 | **清华大学**（B 轨 #236 MiniCPM 第一作者） |
+| 代表论文 | **MiniCPM: Unveiling the Potential of Small Language Models with Scalable Training Strategies**（`2404.06395`，2024） |
+| 邮箱 | **`shengdinghu@gmail.com`**（来源：本人主页 `https://shengdinghu.github.io/` `HTTP 200` 页内 `mailto:` 明文，**地址级别 A**；论文 PDF 第 1 页亦为同一地址） |
+| 主页 | <https://shengdinghu.github.io/>（`200`，8,679 B） |
+| X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（第 95 封，2026-11-19 03:03:08，中文 196 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构清华大学)`；`地址级别=A(本人现行主页 mailto)`。价值点：**WSD 的 10% decay 规则** 与 1.1T token 过训比，直接服务 2B 预训练的 checkpoint 复用与 token 预算。 |
+
+### 218. Mingxuan Wang 王明轩
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingxuan Wang 王明轩（中文信 ≤300 字） |
+| 机构 | **ByteDance Seed**（B 轨 #237 DAPO 通讯作者之一） |
+| 代表论文 | **DAPO: An Open-Source LLM Reinforcement Learning System at Scale**（`2503.14476`，2025） |
+| 邮箱 | **`wangmingxuan.89@bytedance.com`**（来源：论文 PDF 第 1 页 `Correspondence:` 行，`pdftotext` 实测；**地址级别 C**） |
+| 主页 | **未找到**（本轮未核） |
+| X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（第 96 封，2026-11-19 03:03:09，中文 231 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构字节跳动)`；`地址级别=C(论文 PDF 通讯作者行)`。价值点：**去掉 KL + Clip-Higher(εhigh=0.28) + Dynamic Sampling + Overlong Shaping** 四开关，可逐项搬到 2B 级可验证奖励 RL。 |
+
+### 219. Xueping Gao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xueping Gao（华人姓名 ⇒ 若发信应用中文） |
+| 机构 | **Alibaba Cloud Computing**（A 轨 `2611.22835` 单作者） |
+| 代表论文 | **When Passing Checks Do Not Establish Completion: Evidence Interpretation in Coding Agents**（`2611.22835`，2026-11-17） |
+| 邮箱 | **未找到**（PDF 首页无邮箱；本轮未核到个人主页） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 不发信） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构；本轮未发)`。价值点：**「事实正确 ≠ 给出所要求的有限结论」**（122 条标签全对但仅 95/128 满足事实+范围契约），可直接改 harness 的完成判据。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

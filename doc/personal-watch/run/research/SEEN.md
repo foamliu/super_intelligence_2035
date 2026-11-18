@@ -5696,3 +5696,8 @@
 | 2026-11-19 | 2611.23035 | Storing the Gemma 4 K=V Cache Once: Exact Global-KV Memory Savings in a Paged Serving Engine with Unchanged Attention Kernels | cs.LG | 收录 |
 | 2026-11-19 | 2611.23197 | Structure--Residual Inductive Biases for Language Model Pretraining | cs.CL | 收录 |
 | 2026-11-19 | 2611.22777 | CrossEnv: Synthesizing Verifiable Cross-Environment Tasks for Long-Horizon Agent Training | cs.AI | 收录 |
+| 2026-11-19 | 2611.22835 | When Passing Checks Do Not Establish Completion: Evidence Interpretation in Coding Agents | cs.CL | 收录 |
+| 2026-11-19 | 2611.23158 | MoE--LoRA Methods for Multilingual Adaptation: A Systematic Empirical Study | cs.CL | 收录 |
+| 2026-11-19 | 2205.01068 | OPT: Open Pre-trained Transformer Language Models（B 轨） | cs.CL | 收录 |
+| 2026-11-19 | 2404.06395 | MiniCPM: Unveiling the Potential of Small Language Models with Scalable Training Strategies（B 轨） | cs.CL | 收录 |
+| 2026-11-19 | 2503.14476 | DAPO: An Open-Source LLM Reinforcement Learning System at Scale（B 轨） | cs.LG | 收录 |
