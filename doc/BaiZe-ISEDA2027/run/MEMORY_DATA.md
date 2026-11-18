@@ -1,6 +1,11 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
-WAITING: 1
+WAITING: 0
+
+> 🔴 **用户令 2026-11-18 14:2x — .12 CPU 僵尸清理 + 分词分机 · 已执行**：
+> **清理清单**：KILL PID 2350098 (`pc2_fast.py --subset megamath-text-code-block`, 9449%CPU=94核, ppid=1孤儿, 跑9h, batch encode用94线程抢CPU) + KILL PID 4060821 (`pc2_v3.py`, 99%CPU=1核, 跑8.5h, 与pc2_fast重叠做text-code-block但web-pro/qa/translated-code已完成→wasteful overlap)。
+> **分机方案**：.12 `pc2_fast_split.py --subset megamath-text-code-block --start-idx 155 --end-idx 178` (shards 155-177/23个, RAYON_NUM_THREADS=8, nice=19, ionice=3, PID 2430086) + .29 `pc2_fast_split.py --subset megamath-text-code-block --start-idx 178 --end-idx 200` (shards 178-199/22个, RAYON_NUM_THREADS=16, nice=19, ionice=3, PID 3935896)。megamath-code 16 parquets schema不含text列(file_info/repo_info struct)→pc2_fast.py不兼容, 待后续单独处理。
+> **处理后负载**：.12 loadavg 214→27.9(1min) ✅ (目标<120)；.29 loadavg 39 ✅；pretrain训练(torchrun PID 2501551)拿到CPU。脚本 /tmp/pc2_fast_split.py 已部署 .12+.29。
 
 > 🔴 **用户令 2026-11-13a**：stack-v3-train 全量下载→✅StepA/B DONE(8192parquet/3.3TB); StepC分词→✅全DONE(8192/8192/476B tok/1.8TB/0ERR/92041s); StepD校验→✅通过(0ERR/no failed_shards/0 zero-byte/MANIFEST✅); ✅源清理(/nas_train+/nas_inference=0files); DATA_MAPPING H.14已更新
 
