@@ -56,7 +56,7 @@ report no numbers for them rather than a table of dashes. At the observed batch
 cost (696 runs in $\approx$24\,h at 8 workers), the remaining four backbones
 amount to roughly five machine-days; we will report the sweep in the
 camera-ready version and repeat it as the multi-backbone test of RQ3
-(Section~\ref{sec:model-scaling}).
+(Section~\ref{sec:per-model}).
 % 本投稿给出的是\emph{单骨干}评测：只有 DeepSeek-V4-Pro 在完整的 \Neval{}-run 快照上跑到完成
 % （10.0\% Pass@1，62/620 已判定）。GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro
 % 已接入同一框架但扫描仍在跑，因此这里不报数字，也不放一张全是 "---" 的表。
@@ -80,10 +80,10 @@ the FAIL+ERROR count per domain). Class abbreviations: TO=ERROR\_TIMEOUT,
 INFRA=ERROR\_INFRA, NOSUB=NO\_SUBMIT, FMT=FORMAT\_CONTRACT, RT=ASSERT\_RUNTIME,
 SEM=ASSERT\_SEMANTIC, ANTI=ASSERT\_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR.
 The UNKNOWN column is dominated by the ERROR-status runs (aborted pre-judging,
-counted in mode (i) of \S\ref{sec:failure-taxonomy} by terminal status) whose
+counted in mode (i) of \S\ref{sec:failure-by-domain} by terminal status) whose
 abort reason carries no timeout/infrastructure signature; the remaining
 FAIL-with-submit UNKNOWN (49 runs, 7.0\% of the batch) is detailed in
-\S\ref{sec:failure-taxonomy}. A stacked-bar view and a Cohen's $\kappa$ agreement
+\S\ref{sec:failure-by-domain}. A stacked-bar view and a Cohen's $\kappa$ agreement
 statistic between the tool and a human labeler on a 100-run sample are deferred
 to the camera-ready version.
 % 批次 runner 每个 run 只记录一个终态，因此仅凭已发布的日志无法推导各领域的失败\emph{类别}。
@@ -94,8 +94,8 @@ to the camera-ready version.
 % 范围；各行加和为该域 FAIL+ERROR 数）。列缩写：TO=ERROR_TIMEOUT, INFRA=ERROR_INFRA,
 % NOSUB=NO_SUBMIT, FMT=FORMAT_CONTRACT, RT=ASSERT_RUNTIME, SEM=ASSERT_SEMANTIC,
 % ANTI=ASSERT_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR。UNKNOWN 列以 ERROR 终态 run（判分前中止，
-% 按 \S\ref{sec:failure-taxonomy} 模式 (i) 的终态计入）为主，其中止原因无 timeout/infra 签名；
-% 其余 FAIL-with-submit UNKNOWN（49 run，占批次 7.0\%）见 \S\ref{sec:failure-taxonomy}。
+% 按 \S\ref{sec:failure-by-domain} 模式 (i) 的终态计入）为主，其中止原因无 timeout/infra 签名；
+% 其余 FAIL-with-submit UNKNOWN（49 run，占批次 7.0\%）见 \S\ref{sec:failure-by-domain}。
 % 堆叠柱状图与工具对人工标注者在 100-run 样本上的 Cohen's kappa 一致性推迟到 camera-ready。
 
 \begin{table}[ht]
