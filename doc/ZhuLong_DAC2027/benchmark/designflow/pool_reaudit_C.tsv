@@ -481,15 +481,15 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1789893440245_qzgr0	xinqiaoz	10.129.2.11	642		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
 1793004131427_spkav	xinqiaoz	10.129.2.11	542		parked: r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem clus	可造	分析/Q&A或脚本(需deepread)
 1794448098712_cs1zr	e0047695	hfeg0pkn003	298	physical_verify	parked: r543 reject run-existing: U#1=帮我检查drc不关注chip=run calibr	不可造	—
-1790218039885_fqzjj	e0041123	hfeg0pjn049	122	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1793929785105_2nezk	xxchen	hfeg0pkn001	133	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1790233170014_92cla	lizwen	hfeg0pkn003	167	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1794386908289_3hd5b	yanxvwei	hfeg0pkn002	136	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1792053544813_f0yt9	panruan	hfeg0plg52	111	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1791768354807_ytvn2	thomasz	hfeg0pkn002	97	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1792115466563_n1b1u	gokuguo	hfeg0plg53	119	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
-1793877875513_bcf10	ryanr	hfeg0pkn001	101	layout_aether	parked: r548 peek reject (non-produce)	不可造	—
-1791946991037_9io52	yan1zh	hfeg0pkn005	108	physical_verify	parked: r548 peek reject (non-produce)	不可造	—
+1790218039885_fqzjj	e0041123	hfeg0pjn049	122	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1793929785105_2nezk	xxchen	hfeg0pkn001	133	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1790233170014_92cla	lizwen	hfeg0pkn003	167	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1794386908289_3hd5b	yanxvwei	hfeg0pkn002	136	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1792053544813_f0yt9	panruan	hfeg0plg52	111	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1791768354807_ytvn2	thomasz	hfeg0pkn002	97	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1792115466563_n1b1u	gokuguo	hfeg0plg53	119	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1793877875513_bcf10	ryanr	hfeg0pkn001	101	layout_aether	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1791946991037_9io52	yan1zh	hfeg0pkn005	108	physical_verify	parked: r548 peek reject (non-produce)	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(peek-reject-non-produce); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
 1790237454328_68dpw					parked: jcgu meta load skill	不可造	—
 1794537198934_ddb07					parked: e0047488 EMPTY inaccessible	不可造	—
 1782994721852_qfnzk					parked: e0014566 run-existing SKILL	可造	run-existing:check验运行结果+hidden B
@@ -637,11 +637,11 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked: RAG-lookup-skill-design-in
 1794357827042_myiqd	peterch			layout_virtuoso	parked: r582 peek REJECT: setup+Q&A (U#0 访问DEJOA项目 + U#2 virtuo	不可造	—
 1793849646244_6kk7g	adaml			physical_verify	parked: r582 peek REJECT: run-existing-skill calibre-lvs (U#0 c	不可造	—
 1793588497814_536nj	yuqingc			physical_verify	parked: r582 peek REJECT: file-operation (U#0 export CSV to loc	可造	分析/Q&A或脚本(需deepread)
-1793945277123_q737d	xxchen	hfeg0pkn001	102	layout_aether	parked: not-produce r583	不可造	—
-1788758180512_5v8w1	xinqiaoz	hfeg0plg56	analysis-project-intro	layout_virtuoso	parked: not-produce r583	不可造	—
-1793788216941_zm17a	xinqiaoz	hfeg0plg56	explore-genreleasenote	layout_virtuoso	parked: not-produce r583	不可造	—
-1794470584248_uybem	steveny	hfeg0pnd001	find-powerfill-source	layout_virtuoso	parked: not-produce r583	不可造	—
-1791965390450_59idr	xinqiaoz	hfeg0plg56	model-comparison	layout_virtuoso	parked: not-produce r583	不可造	—
+1793945277123_q737d	xxchen	hfeg0pkn001	102	layout_aether	parked: not-produce r583	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(analysis-project-intro); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1788758180512_5v8w1	xinqiaoz	hfeg0plg56	analysis-project-intro	layout_virtuoso	parked: not-produce r583	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(analysis-project-intro); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1793788216941_zm17a	xinqiaoz	hfeg0plg56	explore-genreleasenote	layout_virtuoso	parked: not-produce r583	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(explore-genreleasenote); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1794470584248_uybem	steveny	hfeg0pnd001	find-powerfill-source	layout_virtuoso	parked: not-produce r583	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(find-powerfill-source); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
+1791965390450_59idr	xinqiaoz	hfeg0plg56	model-comparison	layout_virtuoso	parked: not-produce r583	可造-需deepread(§二 revival: non-produce 不再排除, 待 deepread 确认 check() 可写)	analysis/exploration(model-comparison); 需 deepread 隔离 clean sub-task + 确认可写有牙 check()
 3l3yx	ynbai	hfhds211	80	physical_verify	parked: debug/analyze si.out spice sim	可造	debug/analysis:check验根因+修复+hidden B
 mxpkd	ellawu	hfeg0plg83	79	physical_verify	parked: modify-existing IMCleFillImplantDrc add conditional	可造	脚本/审计:check验修改或审计结果+hidden B
 1495z	ellawu	hfeg0plg83	79	physical_verify	parked: Q&A SVRF SETLAYER syntax explain	不可造-dup(deepread r592)	r592 deepread 确认: trace=ellawu 多轮 Calibre TVF SETLAYER rule deck 逐行解释(AT4_NCH ENC/PG dummy fill, PRB_RANGE_ENCRegion_NMOS_Y, LENGTH ANGLE); DUPLICATES r330 TvfSetlayerExpl-001(同 ellawu 同 SETLAYER-explanation 主题); 原 r337 parked dup 判定正确, r590 revival=重复 FALSE POSITIVE
