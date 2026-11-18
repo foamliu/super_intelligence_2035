@@ -158,7 +158,7 @@ fi
 TLOG="/tmp/baize_${STAGE}_${NAME}.log"
 LOG_M="/tmp/baize_${STAGE}_${NAME}_master.log"
 LOG_W="/tmp/baize_${STAGE}_${NAME}_worker.log"
-NCCL_ENV="NCCL_DEBUG=INFO NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22"
+NCCL_ENV="NCCL_DEBUG=INFO NCCL_IB_GID_INDEX=3 NCCL_IB_MTU=4096 NCCL_IB_TC=106 NCCL_IB_TIMEOUT=22 NCCL_NVLS_ENABLE=0"
 # 2026-10-27 fix: TORCH_DISTRIBUTED_DEBUG=DETAIL removed from PYTORCH_ENV.
 # Root cause: DETAIL mode makes PyTorch wrap ProcessGroupNCCL in
 # _ProcessGroupWrapper (distributed_c10d.py:2098), which does NOT implement
