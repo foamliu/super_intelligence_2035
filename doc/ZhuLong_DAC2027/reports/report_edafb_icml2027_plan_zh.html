@@ -318,68 +318,78 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 
 <!-- ============================ §4 ============================ -->
 <section id="s4">
-<h2>§4 可证伪命题（pre-registered hypotheses）</h2>
+<h2>§4 可证伪命题（pre-registered hypotheses · v1.6 三层结构：总-机制-边界）</h2>
 
-<p>4 条假设，每条含：自变量、因变量、判据阈值、样本量、统计检验（预注册 α）、<b>证伪条件</b>。所有假设在数据冻结前预注册（§7 时间线标「预注册日」）。</p>
+<p>v1.6 将 v1.4/v1.5 的 7 条并列假设（H1-H7）重组为<b>3 条核心假设 + 7 条子假设</b>，构成「<b>总-机制-边界</b>」三层内聚结构。每条子假设含 5 字段：陈述 / 自变量 / 因变量 / 判据阈值 / 证伪条件。所有假设在数据冻结前预注册（§7 时间线标「预注册日」）。
+<span class="src">用户令 2026-11-18 第四批意见（v1.6 · 假设内聚化重组：7→3 核心+7 子·总-机制-边界三层）</span></p>
 
-<h3>H1 · 长期记忆提升长链任务 Pass@1</h3>
+<div class="callout info">
+<b>三层结构图</b>
+<pre>
+L1 总命题（功能级 · 合并现 H1/H2/H3）
+H1 · 受治理的长期记忆 + 递归自改进在长链 EDA flow 上有可迁移增益
+    ├── H1a · 长期记忆提升长链 Pass@1（现 H1，M3 vs M0）
+    ├── H1b · RSI 收益随链长单调增长（现 H2，Δ_long > Δ_mid > Δ_short）
+    └── H1c · 记忆是 RSI 的前提（现 H3，无记忆时 RSI 收益消失/转负）
+
+L2 机制级（v1.4 情绪机制 · 合并现 H5/H6/H7）
+H2 · H1 的增益来自情绪启发的三条计算机制（而非单纯 prompt 变长）
+    ├── H2a · 惊奇度门控写入 > 均匀采样（现 H5，M5 vs M2，w = α·surprise + β·penalty）
+    ├── H2b · 武器聚焦压缩 > 全量写入（现 H7，M7 vs M2，central/peripheral ratio）
+    └── H2c · 状态感知检索 > 状态无关检索（现 H6，M6 vs M3，state_match 项）
+
+L3 边界条件（附论 · 保留现 H4）
+H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案结论迁移性）
+</pre>
+<b>叙事说明</b>：H1 是总命题（记忆+RSI 有无用），H2 解释 H1 的增益来自哪个具体机制（情绪三机制），H3 是附论边界条件（结案结论迁移性）。三层构成「总-机制-边界」的内聚结构，每层独立可证伪。H3 明确标注「附论假设，非主线；与 H1/H2 独立证伪」，避免读者误以为 H3 是 H1/H2 的前提。
+</div>
+
+<div class="callout">
+<b>统计与样本量约定（v1.6 · 紧凑化后共享，适用于全部子假设）</b>：统计检验统一为 McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；预注册 α=0.05（Bonferroni 校正后 α=0.05/3=0.0167 用于 3 核心假设族）。最小矩阵：Lite 集 500 题中取 trace 最长 top-120（按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层，5_analysis.tex:85），每臂 1 trace × 120 题 = 120 run；理想矩阵：500 题 × 3 重复 = 1500 run/臂。n 不足时明确写「仅信号不作结论」。分层/析因特殊样本量见 H1b/H1c 各条。
+</div>
+
+<h3>L1 总命题 H1 · 受治理的长期记忆 + 递归自改进在长链 EDA flow 上有可迁移增益</h3>
+
+<p><b>总陈述</b>：跨 session 治理的长期记忆（工具知识 + 项目约定 + 失败模式）与递归自改进（RSI）在长链 flow 任务上联合产生可迁移的 Pass@1 增益——记忆提升长链基线 Pass@1（H1a），RSI 收益随链长单调增长（H1b），且记忆是 RSI 的前提（H1c）。</p>
+<p><b>证伪条件（析取消解）</b>：H1a ∨ H1b ∨ H1c 三条子假设中<b>任一被证伪 ⇒ H1 总命题被证伪</b>。理由：总命题断言「记忆+RSI 有联合可迁移增益」，三子命题分别是其功能级、趋势级、依赖级三个必要侧面，任一不成立即否定总命题。若 H1 被证伪 → 写成「<b>RSI 在长链 flow 的边界条件</b>」诚实路线（§8 R1 Plan B）。</p>
+
+<h4>H1a · 长期记忆提升长链 Pass@1（原 H1）</h4>
 <table>
 <tr><th>项</th><th>内容</th></tr>
 <tr><td><b>陈述</b></td><td>跨 session 的长期记忆（工具知识 + 项目约定 + 失败模式）提升长链 flow 任务的 Pass@1，且提升在「所需上下文接近/超过窗口」的子集上更大。</td></tr>
 <tr><td><b>自变量</b></td><td>记忆有无（M0 无记忆基线 vs M2/M3 自动记忆，§5 臂表）</td></tr>
 <tr><td><b>因变量</b></td><td>Pass@1（每任务一次轨迹，2400s 超时，≥8 断言全过）</td></tr>
 <tr><td><b>判据阈值</b></td><td>M3 Pass@1 ≥ M0 Pass@1 + <b>3pp</b>（pooled），且在「超窗风险高」子集上 Δ ≥ 5pp</td></tr>
-<tr><td><b>样本量</b></td><td>最小矩阵：Lite 集 500 题中取 trace 最长 top-120（按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层，5_analysis.tex:85），每臂 1 trace × 120 题 = 120 run；理想矩阵：500 题 × 3 重复 = 1500 run/臂</td></tr>
-<tr><td><b>统计检验</b></td><td>McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；预注册 α=0.05（Bonferroni 校正后 α=0.05/4=0.0125 用于 4 假设族）</td></tr>
-<tr><td><b>证伪条件</b></td><td>M3 − M0 &lt; 1pp（pooled）<b>或</b> McNemar p &gt; 0.05 <b>或</b> 方向反转（M3 &lt; M0）⇒「记忆在 flow 层无增益」成立，H1 被证伪</td></tr>
+<tr><td><b>证伪条件</b></td><td>M3 − M0 &lt; 1pp（pooled）<b>或</b> McNemar p &gt; 0.05 <b>或</b> 方向反转（M3 &lt; M0）⇒「记忆在 flow 层无增益」成立，H1a 被证伪</td></tr>
 </table>
 
-<h3>H2 · 递归自我改进收益随链长单调增长</h3>
+<h4>H1b · RSI 收益随链长单调增长（原 H2）</h4>
 <table>
 <tr><th>项</th><th>内容</th></tr>
 <tr><td><b>陈述</b></td><td>自改进（技能库自扩 + harness 自改）的 Pass@1 收益随任务链长（tool call 数）单调增长——链越长，自改进积累的编排知识越有用。</td></tr>
 <tr><td><b>自变量</b></td><td>自改进有无（M3 vs M3+S1，§5）× 链长分层（short: &lt;14 calls / mid: 14-38 / long: &gt;38，按 5_analysis.tex:85 IQR 分层）</td></tr>
 <tr><td><b>因变量</b></td><td>分层 Pass@1 + (M3+S1 − M3) 的分层 Δ</td></tr>
-<tr><td><b>判据阈值</b></td><td>Δ_long ≥ Δ_mid ≥ Δ_short，且 Δ_long − Δ_short ≥ 3pp（单调性 + 显著差异）</td></tr>
-<tr><td><b>样本量</b></td><td>每层 ≥ 40 题（120 题分三层）；理想矩阵每层 ≥ 150 题</td></tr>
-<tr><td><b>统计检验</b></td>
-<td>单调性：Cochran-Armitage 趋势检验；分层差异：paired bootstrap CI on (Δ_long − Δ_short)；预注册 α=0.05</td></tr>
-<tr><td><b>证伪条件</b></td><td>单调性不成立（Δ_long &lt; Δ_mid <b>或</b> Δ_mid &lt; Δ_short）<b>或</b> Δ_long − Δ_short 的 95% CI 含 0 ⇒ H2 被证伪。若 Δ 在所有层都 ≈ 0，则「自改进在 flow 层无收益」⇒ 走 §8 R1 Plan B（边界条件论文）</td></tr>
+<tr><td><b>判据阈值</b></td><td>Δ_long ≥ Δ_mid ≥ Δ_short，且 Δ_long − Δ_short ≥ 3pp（单调性 + 显著差异）；趋势检验 Cochran-Armitage；每层 ≥ 40 题（120 题分三层），理想每层 ≥ 150</td></tr>
+<tr><td><b>证伪条件</b></td><td>单调性不成立（Δ_long &lt; Δ_mid <b>或</b> Δ_mid &lt; Δ_short）<b>或</b> Δ_long − Δ_short 的 95% CI 含 0 ⇒ H1b 被证伪。若 Δ 在所有层都 ≈ 0，则「自改进在 flow 层无收益」⇒ 走 §8 R1 Plan B</td></tr>
 </table>
 
-<h3>H3 · 记忆是自改进的前提</h3>
+<h4>H1c · 记忆是 RSI 的前提（原 H3）</h4>
 <table>
 <tr><th>项</th><th>内容</th></tr>
 <tr><td><b>陈述</b></td><td>无记忆时自改进收益消失或转负——自改进依赖记忆来积累跨 session 经验，记忆是自改进的必要条件。</td></tr>
 <tr><td><b>自变量</b></td><td>记忆（有/无）× 自改进（有/无）= 2×2 析因：M0 / M3 / S1(无记忆自改进) / M3+S1</td></tr>
 <tr><td><b>因变量</b></td><td>Pass@1 + 交互效应（two-way ANOVA 或其非参数替代）</td></tr>
-<tr><td><b>判据阈值</b></td><td>自改进的主效应在「无记忆」条件下 ≤ 0（S1 ≤ M0），在「有记忆」条件下 &gt; 0（M3+S1 &gt; M3）；交互效应 (M3+S1 − M3) − (S1 − M0) ≥ 2pp</td></tr>
-<tr><td><b>样本量</b></td><td>4 臂 × 120 题 = 480 run（最小）；理想 4 × 500 = 2000 run</td></tr>
-<tr><td><b>统计检验</b></td><td>交互效应 paired bootstrap CI（排除 0 为显著）；预注册 α=0.05</td></tr>
-<tr><td><b>证伪条件</b></td><td>S1 &gt; M0 + 2pp（无记忆时自改进仍有收益）<b>或</b> 交互效应 95% CI 含 0 ⇒「记忆是自改进前提」不成立，H3 被证伪（自改进可能在无记忆时通过 prompt 内 in-context learning 起作用）</td></tr>
+<tr><td><b>判据阈值</b></td><td>自改进主效应在「无记忆」条件下 ≤ 0（S1 ≤ M0），在「有记忆」条件下 &gt; 0（M3+S1 &gt; M3）；交互效应 (M3+S1 − M3) − (S1 − M0) ≥ 2pp；4 臂 × 120 = 480 run（最小），理想 4 × 500 = 2000</td></tr>
+<tr><td><b>证伪条件</b></td><td>S1 &gt; M0 + 2pp（无记忆时自改进仍有收益）<b>或</b> 交互效应 95% CI 含 0 ⇒「记忆是自改进前提」不成立，H1c 被证伪（自改进可能在无记忆时通过 prompt 内 in-context learning 起作用）</td></tr>
 </table>
 
-<h3>H4 · 单 agent 与自主 spawn 结论在 flow 场景的复现</h3>
-<table>
-<tr><th>项</th><th>内容</th></tr>
-<tr><td><b>陈述</b></td><td>结案结论（单 agent ≥ 多 agent；自主 spawn ≥ 用户定制，见 MEMORY_ZHULONG.md 顶部结案结论）在 flow 场景是否复现——即记忆/自改进臂内部，单 agent 仍优于多 agent。</td></tr>
-<tr><td><b>自变量</b></td><td>agent 架构（单 agent / 自主 spawn subagent / 用户定制 subagent）嵌套在 M3+S1 臂内</td></tr>
-<tr><td><b>因变量</b></td><td>Pass@1 + token 效率（input tokens / Pass@1）</td></tr>
-<tr><td><b>判据阈值</b></td><td>单 agent Pass@1 ≥ 自主 spawn + 0pp（复现结案结论）<b>且</b> 单 agent token 效率优于自主 spawn</td></tr>
-<tr><td><b>样本量</b></td><td>3 架构 × 120 题 = 360 run（最小）</td></tr>
-<tr><td><b>统计检验</b></td><td>McNemar（单 agent vs 自主 spawn，方向一致）；预注册 α=0.05</td></tr>
-<tr><td><b>证伪条件</b></td><td>自主 spawn &gt; 单 agent + 3pp（McNemar p &lt; 0.05）⇒ 在 flow 场景多 agent 反超单 agent，结案结论<b>不在 flow 层复现</b>，H4 被证伪（这本身是重要发现：长链任务可能让多 agent 分工优势显现）</td></tr>
-</table>
+<h3>§4.5 机制级假设 H2（v1.4 情绪机制 · 总命题 H1 的机制分解）</h3>
 
-<div class="callout warn">
-<b>H4 的特殊说明</b>：H4 直接对应用户 2026-11-17 09:3x 结案令的两条认知（「单 agent &gt; 多 agent；自主 spawn &gt; 用户定制」，源自 2026 暑假清华博士研究积累）。该认知在 subagent 消融线（40 题子集）上成立，但<b>是否在长链 flow 任务上仍成立</b>是经验问题——长链任务可能恰好满足「所需上下文 &gt; 窗口」的条件（用户 2026-11-15 07:2x 提出的 H_ctx 思路），使多 agent 分工优势显现。H4 用预注册方式正面检验这一边界。<b>无论结果如何都可发表</b>：复现 → 巩固认知；不复现 → 界定长链是单 agent 优势的边界。
-<span class="src">MEMORY_ZHULONG.md:1-5（结案结论）· 用户 2026-11-15 07:2x H_ctx 思路（ZHULONG_TASK.md 用户裁令节）</span>
-</div>
-
-<h3>§4.5 核心认知升级（v1.4）：情绪机制作为记忆写入门控与检索打分的计算原理</h3>
-
-<p>用户 2026-11-18 第二批意见指出「核心认知不够性感」，建议把<b>情绪在长期记忆巩固与提取中的作用</b>作为本论文的核心认知机制。现稿 H1-H4 是「长期记忆 + 递归自改进」的<b>纯功能主义命题</b>——只问「记忆/自改进有无收益」，<b>缺乏机制层面的可证伪性</b>（不知道收益<b>来自什么计算原理</b>）。v1.4 引入三条来自认知神经科学 + AI 情感记忆的机制，作为记忆写入门控与检索打分的<b>可计算映射</b>，把 H1-H4 从「有无收益」深化为「<b>哪种机制带来收益、收益在什么条件下消失</b>」。
+<p>用户 2026-11-18 第二批意见指出「核心认知不够性感」，建议把<b>情绪在长期记忆巩固与提取中的作用</b>作为本论文的核心认知机制。L1 的 H1 是「长期记忆 + 递归自改进」的<b>纯功能主义命题</b>——只问「记忆/自改进有无收益」，<b>缺乏机制层面的可证伪性</b>（不知道收益<b>来自什么计算原理</b>）。v1.4 引入三条来自认知神经科学 + AI 情感记忆的机制，作为记忆写入门控与检索打分的<b>可计算映射</b>，把 H1 从「有无收益」深化为「<b>哪种机制带来收益、收益在什么条件下消失</b>」。
 <span class="src">用户令 2026-11-18 第二批意见 ③ + Gemini 评论原文（ZHULONG_TASK.md 顶部 v1.4 令 §① 意见 3 + §③）· 调研来源见附录 G</span></p>
+
+<p><b>总陈述</b>：H1 的增益来自情绪启发的三条计算机制——惊奇度门控写入（H2a）、武器聚焦压缩（H2b）、状态感知检索（H2c）——而非单纯 prompt 变长（N1 排除）或均匀记忆（M2 基线）。</p>
+<p><b>证伪条件（合取要求）</b>：H2a ∧ H2b ∧ H2c 三条子假设<b>全部被证伪 ⇒ H2 被证伪</b>（采用合取消解：三机制全部无效才否定「增益来自情绪机制」的总命题；若 1-2 条机制成立、其余证伪，则写成「部分机制有效」的方向性结论，H2 部分支持）。若 H2 被证伪 → 写成「<b>情绪启发式在符号工具编排上的边界条件</b>」诚实路线（见本节末）。</p>
 
 <h4>§4.5.1 三条机制的计算映射（不停留在比喻）</h4>
 <table>
@@ -405,48 +415,57 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 </table>
 
 <div class="callout info">
-<b>机制 → 假设的可证伪性升级</b>：H1（v1.2）只问「记忆有无增益」——即使 M3 &gt; M0，也不知道增益来自「正确相关记忆」还是「prompt 变长」（这正是 N1 杀手级对照要排除的）。v1.4 的 H5-H7 把问题深化为「<b>增益是否来自该具体机制</b>」：H5 检验惊奇度门控 vs 均匀采样；H6 检验状态感知检索 vs 状态无关检索；H7 检验武器聚焦压缩 vs 全量写入。每条都有<b>机制级负对照</b>（关掉该机制、保留等量 token），比 H1 的功能级对照更精细。这与 AI 情感记忆前沿（Generative Agents 用 importance score 过滤写入 Park et al. 2023、EM-LLM 用 Bayesian surprise 切分事件 arXiv:2407.09450、PsychoAgent 用 affect + conflict 检索 arXiv:2608.07438、somatic-marker emotion vector re-injection arXiv:2605.08611）同构，但<b>首次在真实 EDA long-chain flow 上预注册可证伪检验</b>。
+<b>机制 → 假设的可证伪性升级</b>：H1a 只问「记忆有无增益」——即使 M3 &gt; M0，也不知道增益来自「正确相关记忆」还是「prompt 变长」（这正是 N1 杀手级对照要排除的）。v1.6 的 H2a/H2b/H2c 把问题深化为「<b>增益是否来自该具体机制</b>」：H2a 检验惊奇度门控 vs 均匀采样；H2b 检验武器聚焦压缩 vs 全量写入；H2c 检验状态感知检索 vs 状态无关检索。每条都有<b>机制级负对照</b>（关掉该机制、保留等量 token），比 H1a 的功能级对照更精细。这与 AI 情感记忆前沿（Generative Agents 用 importance score 过滤写入 Park et al. 2023、EM-LLM 用 Bayesian surprise 切分事件 arXiv:2407.09450、PsychoAgent 用 affect + conflict 检索 arXiv:2608.07438、somatic-marker emotion vector re-injection arXiv:2605.08611）同构，但<b>首次在真实 EDA long-chain flow 上预注册可证伪检验</b>。
 <span class="src">附录 G 调研文献（research.cimi_search 8 次调用）</span>
 </div>
 
-<h3>H5 · 惊奇度门控优于均匀采样写入（机制级）</h3>
+<h4>H2a · 惊奇度门控优于均匀采样写入（原 H5 · 机制级）</h4>
 <table>
 <tr><th>项</th><th>内容</th></tr>
 <tr><td><b>陈述</b></td><td>用预测误差 / 高代价失败门控的记忆写入（M5：w = α·surprise + β·penalty）在迁移臂 M4 上 Pass@1 ≥ 均匀采样写入（M2）+ 3pp；即「只记意外与挫败」比「平均记所有」更有效。</td></tr>
 <tr><td><b>自变量</b></td><td>写入策略（M5 惊奇度门控 vs M2 均匀采样），记忆总量预算持平（控制 token 量，排除「记更多」假象）</td></tr>
 <tr><td><b>因变量</b></td><td>M4 迁移目标域 Pass@1 + 记忆库大小（验证总量持平）</td></tr>
-<tr><td><b>判据阈值</b></td><td>M5 ≥ M2 + 3pp（迁移目标域），McNemar 方向一致；记忆库 token 量差 ≤ 10%（验证不是「记更多」）</td></tr>
-<tr><td><b>样本量</b></td><td>M2/M5 各 120 题（迁移目标域），1 trace/题</td></tr>
-<tr><td><b>统计检验</b></td><td>McNemar（配对）+ paired bootstrap 95% CI；预注册 α=0.05</td></tr>
-<tr><td><b>证伪条件</b></td><td>M5 − M2 &lt; 1pp <b>或</b> McNemar p &gt; 0.05 <b>或</b> 方向反转（M5 &lt; M2）⇒「惊奇度门控在 EDA flow 层无额外收益」，H5 被证伪（均匀采样已足够 / 门控开销不划算）</td></tr>
+<tr><td><b>判据阈值</b></td><td>M5 ≥ M2 + 3pp（迁移目标域），McNemar 方向一致；记忆库 token 量差 ≤ 10%（验证不是「记更多」）；M2/M5 各 120 题（迁移目标域）</td></tr>
+<tr><td><b>证伪条件</b></td><td>M5 − M2 &lt; 1pp <b>或</b> McNemar p &gt; 0.05 <b>或</b> 方向反转（M5 &lt; M2）⇒「惊奇度门控在 EDA flow 层无额外收益」，H2a 被证伪（均匀采样已足够 / 门控开销不划算）</td></tr>
 </table>
 
-<h3>H6 · 状态感知检索优于状态无关检索（机制级）</h3>
-<table>
-<tr><th>项</th><th>内容</th></tr>
-<tr><td><b>陈述</b></td><td>检索打分含 state_match 项（M6：score = sim + γ·state_match）在「连续失败」子集上 Pass@1 ≥ 状态无关检索（M3）+ 3pp；即「挫败时优先避坑、顺境时优先成功范式」比「只按语义相似度检索」更有效。</td></tr>
-<tr><td><b>自变量</b></td><td>检索打分函数（M6 状态感知 vs M3 状态无关），记忆库内容相同（同源 M5 写入）</td></tr>
-<tr><td><b>因变量</b></td><td>分层 Pass@1（「连续失败 ≥2 步」子集 vs「正常推进」子集）</td></tr>
-<tr><td><b>判据阈值</b></td><td>「连续失败」子集 M6 ≥ M3 + 3pp（McNemar 方向一致）；「正常推进」子集 M6 ≈ M3（不显著低于，验证状态感知不在顺境有害）</td></tr>
-<tr><td><b>样本量</b></td><td>120 题中「连续失败」子集 ≥ 40 题（按 5_analysis.tex:76-121 trace 解剖的失败模式分层）</td></tr>
-<tr><td><b>统计检验</b></td><td>分层 McNemar + 交互检验（state × 检索策略）；预注册 α=0.05</td></tr>
-<tr><td><b>证伪条件</b></td><td>「连续失败」子集 M6 − M3 &lt; 1pp <b>或</b> 方向反转 <b>或</b> 「正常推进」子集 M6 &lt; M3 − 2pp（状态感知在顺境有害）⇒ H6 被证伪</td></tr>
-</table>
-
-<h3>H7 · 武器聚焦压缩优于全量写入（机制级）</h3>
+<h4>H2b · 武器聚焦压缩优于全量写入（原 H7 · 机制级）</h4>
 <table>
 <tr><th>项</th><th>内容</th></tr>
 <tr><td><b>陈述</b></td><td>高唤醒时只固化 central（报错栈 + 根因因果链）的记忆（M7）在检索命中率与 Pass@1 上 ≥ 全量写入（M2），且记忆库体积显著更小——即「只记核心冲突」比「记全部中间日志」更有效且更省。</td></tr>
 <tr><td><b>自变量</b></td><td>压缩策略（M7 central-only vs M2 全量），触发条件相同（同一 surprise 阈值）</td></tr>
 <tr><td><b>因变量</b></td><td>Pass@1 + 记忆库 token 量 + 检索命中率（retrieval hit rate）</td></tr>
-<tr><td><b>判据阈值</b></td><td>M7 ≥ M2 + 2pp（Pass@1 不降反升）<b>且</b> M7 记忆库 token ≤ M2 × 0.6（体积显著小）；若 M7 ≈ M2（Pass@1）但体积更小，也记为「压缩有效但无 Pass@1 增益」的弱支持</td></tr>
-<tr><td><b>样本量</b></td><td>M2/M7 各 120 题</td></tr>
-<tr><td><b>统计检验</b></td><td>McNemar（Pass@1）+ Wilcoxon（记忆库体积，配对）；预注册 α=0.05</td></tr>
-<tr><td><b>证伪条件</b></td><td>M7 &lt; M2 − 2pp（压缩丢失了关键信息）<b>或</b> M7 记忆库体积 ≥ M2 × 0.8（压缩没生效）⇒ H7 被证伪（武器聚焦压缩在 EDA flow 层有害或无效）</td></tr>
+<tr><td><b>判据阈值</b></td><td>M7 ≥ M2 + 2pp（Pass@1 不降反升）<b>且</b> M7 记忆库 token ≤ M2 × 0.6（体积显著小）；若 M7 ≈ M2（Pass@1）但体积更小，也记为「压缩有效但无 Pass@1 增益」的弱支持；M2/M7 各 120 题</td></tr>
+<tr><td><b>证伪条件</b></td><td>M7 &lt; M2 − 2pp（压缩丢失了关键信息）<b>或</b> M7 记忆库体积 ≥ M2 × 0.8（压缩没生效）⇒ H2b 被证伪（武器聚焦压缩在 EDA flow 层有害或无效）</td></tr>
+</table>
+
+<h4>H2c · 状态感知检索优于状态无关检索（原 H6 · 机制级）</h4>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>检索打分含 state_match 项（M6：score = sim + γ·state_match）在「连续失败」子集上 Pass@1 ≥ 状态无关检索（M3）+ 3pp；即「挫败时优先避坑、顺境时优先成功范式」比「只按语义相似度检索」更有效。</td></tr>
+<tr><td><b>自变量</b></td><td>检索打分函数（M6 状态感知 vs M3 状态无关），记忆库内容相同（同源 M5 写入）</td></tr>
+<tr><td><b>因变量</b></td><td>分层 Pass@1（「连续失败 ≥2 步」子集 vs「正常推进」子集）</td></tr>
+<tr><td><b>判据阈值</b></td><td>「连续失败」子集 M6 ≥ M3 + 3pp（McNemar 方向一致）；「正常推进」子集 M6 ≈ M3（不显著低于，验证状态感知不在顺境有害）；120 题中「连续失败」子集 ≥ 40 题（按 5_analysis.tex:76-121 trace 解剖的失败模式分层）</td></tr>
+<tr><td><b>证伪条件</b></td><td>「连续失败」子集 M6 − M3 &lt; 1pp <b>或</b> 方向反转 <b>或</b> 「正常推进」子集 M6 &lt; M3 − 2pp（状态感知在顺境有害）⇒ H2c 被证伪</td></tr>
 </table>
 
 <div class="callout gold">
-<b>诚实路线（v1.4 继承）</b>：若情绪机制（H5/H6/H7）在 EDA flow 层<b>无收益</b>，本论文写成「<b>情绪启发式在长链工具编排上的边界条件</b>」——认知神经科学的情绪-记忆机制在生物认知中成立（附录 G 文献），但<b>是否迁移到 LLM agent 的 long-chain flow 是本论文要检验的假设</b>而非定论；负结果界定了「生物启发机制在符号工具编排上的适用边界」，本身是可发表认知。这与 §8 R1（H2 负结果 Plan B）同构。
+<b>诚实路线（v1.4 继承 · v1.6 编号同步）</b>：若情绪机制（H2a/H2b/H2c）在 EDA flow 层<b>无收益</b>，本论文写成「<b>情绪启发式在长链工具编排上的边界条件</b>」——认知神经科学的情绪-记忆机制在生物认知中成立（附录 G 文献），但<b>是否迁移到 LLM agent 的 long-chain flow 是本论文要检验的假设</b>而非定论；负结果界定了「生物启发机制在符号工具编排上的适用边界」，本身是可发表认知。这与 §8 R1（H1b 负结果 Plan B）同构。
+</div>
+
+<h3>L3 边界条件 H3 · 单 agent 与自主 spawn 结论在 flow 场景的复现（原 H4 · 附论）</h3>
+<table>
+<tr><th>项</th><th>内容</th></tr>
+<tr><td><b>陈述</b></td><td>结案结论（单 agent ≥ 多 agent；自主 spawn ≥ 用户定制，见 MEMORY_ZHULONG.md 顶部结案结论）在 flow 场景是否复现——即记忆/自改进臂内部，单 agent 仍优于多 agent。<b>附论假设，非主线；与 H1/H2 独立证伪。</b></td></tr>
+<tr><td><b>自变量</b></td><td>agent 架构（单 agent / 自主 spawn subagent / 用户定制 subagent）嵌套在 M3+S1 臂内</td></tr>
+<tr><td><b>因变量</b></td><td>Pass@1 + token 效率（input tokens / Pass@1）</td></tr>
+<tr><td><b>判据阈值</b></td><td>单 agent Pass@1 ≥ 自主 spawn + 0pp（复现结案结论）<b>且</b> 单 agent token 效率优于自主 spawn；3 架构 × 120 题 = 360 run（最小）</td></tr>
+<tr><td><b>证伪条件</b></td><td>自主 spawn &gt; 单 agent + 3pp（McNemar p &lt; 0.05）⇒ 在 flow 场景多 agent 反超单 agent，结案结论<b>不在 flow 层复现</b>，H3 被证伪（这本身是重要发现：长链任务可能让多 agent 分工优势显现）</td></tr>
+</table>
+
+<div class="callout warn">
+<b>H3 的特殊说明</b>：H3 直接对应用户 2026-11-17 09:3x 结案令的两条认知（「单 agent &gt; 多 agent；自主 spawn &gt; 用户定制」，源自 2026 暑假清华博士研究积累）。该认知在 subagent 消融线（40 题子集）上成立，但<b>是否在长链 flow 任务上仍成立</b>是经验问题——长链任务可能恰好满足「所需上下文 &gt; 窗口」的条件（用户 2026-11-15 07:2x 提出的 H_ctx 思路），使多 agent 分工优势显现。H3 用预注册方式正面检验这一边界。<b>无论结果如何都可发表</b>：复现 → 巩固认知；不复现 → 界定长链是单 agent 优势的边界。
+<span class="src">MEMORY_ZHULONG.md:1-5（结案结论）· 用户 2026-11-15 07:2x H_ctx 思路（ZHULONG_TASK.md 用户裁令节）</span>
 </div>
 </section>
 
@@ -457,14 +476,14 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <h3>§5.1 臂表（v1.4：13 臂 = v1.2 的 8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2 + v1.4 新增 M4/M5/M6/M7/M8）</h3>
 
 <table class="arms-table">
-<tr><th>臂号</th><th>名称</th><th>唯一变量</th><th>实现方式</th><th>对照</th><th>预注册判据</th><th>成本（token/墙钟）</th></tr>
+<tr><th>臂号</th><th>名称</th><th>唯一变量</th><th>实现方式</th><th>对照</th><th>预注册判据</th><th>成本（token/墙钟）</th><th>对应假设（v1.6）</th></tr>
 <tr class="arm">
 <td><b>M0</b></td><td>无记忆基线</td><td>无任何跨 session 记忆</td>
 <td>Cline v3.0.51 原配置（EDA-Flow-Bench 3_harness.tex:8-19），不注入任何记忆条目；每任务独立 trace；等同 696-run 冻结快照的 DeepSeek-V4-Pro 配置<br><span class="src">4_experiments.tex:22-26</span></td>
 <td>—（所有臂的基线）</td>
 <td>—</td>
 <td>≈ 696-run 快照口径：8 workers × 24h / 696 run ≈ 3.3 min/run；120 题 ≈ 6.6h</td>
-</tr>
+<td>H1a（基线）</td></tr>
 <tr class="arm">
 <td><b>M1</b></td><td>静态记忆（人工 SOP）</td>
 <td>注入人工整理的 EDA 工具 SOP</td>
@@ -472,7 +491,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <td>vs M0（记忆有无）</td>
 <td>M1 ≥ M0 + 2pp</td>
 <td>与 M0 同量级（SOP 注入只增 prompt 长度，不增 tool call）</td>
-</tr>
+<td>H1a（静态记忆对照）</td></tr>
 <tr class="arm">
 <td><b>M2</b></td><td>自动记忆（写入+检索，无淘汰）</td>
 <td>自动写入 + 检索，但无淘汰/冲突消解</td>
@@ -480,39 +499,39 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <td>vs M1（自动 vs 静态）· vs M0（记忆有无）</td>
 <td>M2 ≥ M0 + 2pp；若 M2 &lt; M1 则「自动记忆不如人工 SOP」⇒ 门控必要性信号</td>
 <td>写入侧离线（不计入 per-run）；读取侧增检索调用 ≈ +5% tool call</td>
-</tr>
+<td>H1a（自动记忆对照）</td></tr>
 <tr class="arm">
 <td><b>M3</b></td><td>自动记忆 + 淘汰与冲突消解</td>
 <td>在 M2 上开启全部可靠性门控</td>
 <td>在 M2 基础上开启 DATE27 全部门控（4_self_evolve.tex:13-17）：ground-truth anchoring（验证器二元判定覆盖自报告，4_self_evolve.tex:10）、disconfirmation filtering（2 次证伪即过滤）、5 轮未确认降级、held-out gated evolution（退化 &gt; 5pp 即回滚，4_self_evolve.tex:28）、anti-leakage retrieval（names-only injection + docstring generalization + problem-side embedding，4_self_evolve.tex:22）</td>
 <td>vs M2（门控有无）· vs M0（记忆有无）</td>
-<td><b>M3 ≥ M0 + 3pp</b>（H1 主判据）· M3 ≥ M2 + 1pp（门控有额外收益）</td>
+<td><b>M3 ≥ M0 + 3pp</b>（H1a 主判据）· M3 ≥ M2 + 1pp（门控有额外收益）</td>
 <td>同 M2 + 门控计算开销（离线，可忽略）</td>
-</tr>
+<td>H1a（主判据 M3≥M0+3pp）</td></tr>
 <tr class="arm">
 <td><b>S1</b></td><td>自改进（技能库自动扩展，无记忆）</td>
 <td>技能库自扩但<b>无跨 session 记忆</b></td>
 <td>每 session 内 in-context 自改进（agent 生成技能 → 同 session 内验证 → 同 session 内复用），但<b>不跨 session 持久化</b>（session 结束即丢弃）；用于 H3 的「无记忆自改进」格</td>
 <td>vs M0（自改进有无，无记忆下）</td>
-<td>S1 vs M0（H3 子判据：无记忆时自改进是否仍有收益）</td>
+<td>S1 vs M0（H1c 子判据：无记忆时自改进是否仍有收益）</td>
 <td>同 M0 + 同 session 内技能生成开销 ≈ +10% tool call</td>
-</tr>
+<td>H1c（无记忆自改进）</td></tr>
 <tr class="arm">
 <td><b>M3+S1</b></td><td>记忆 + 自改进组合</td>
 <td>记忆（M3）+ 跨 session 技能库自扩</td>
 <td>M3 的记忆层 + S1 的技能库扩展持久化到 L2（DATE27 4_self_evolve.tex:4 L2 蒸馏技能版本）；技能库自扩由 4 维 judge（abstraction/reusability/actionability/faithfulness，4_self_evolve.tex:16）+ MUSE create-evaluate-refine loop 门控；可选 Meta-Harness RSI（harness 自改，6_conclusion.tex:11）作为理想矩阵扩展</td>
 <td>vs M3（自改进有无，有记忆下）· vs S1（记忆有无，自改进下）</td>
-<td><b>M3+S1 ≥ M3 + 2pp</b>（H3 交互效应）· 分层 Δ_long ≥ Δ_mid ≥ Δ_short（H2 单调性）</td>
+<td><b>M3+S1 ≥ M3 + 2pp</b>（H1c 交互效应）· 分层 Δ_long ≥ Δ_mid ≥ Δ_short（H1b 单调性）</td>
 <td>同 M3 + 技能库扩展（离线）+ L2 读取 ≈ +3% tool call</td>
-</tr>
+<td>H1b + H1c</td></tr>
 <tr class="arm">
 <td><b>N1</b></td><td>负对照：等 token 预算无记忆长 prompt（<span class="tag p0">杀手级</span>）</td>
 <td>无记忆但 prompt 总 token = M3</td>
 <td>给 M0 注入与 M3 检索注入<b>等 token 量</b>的<b>无关/随机</b>文本（如随机打乱的 EDA 文档片段、或等长的一般技术文本），使 input token 预算与 M3 持平；<b>这是「记忆真的有用」 vs 「上下文更长/prompt 更丰富」的判别对照</b></td>
 <td>vs M3（等 token 下，有意义记忆 vs 无意义填充）</td>
-<td><b>M3 ≥ N1 + 3pp</b>（排除「只是 prompt 变长」的替代解释）—— 若 M3 ≈ N1 则记忆增益仅来自 token 量，H1 被实质证伪</td>
+<td><b>M3 ≥ N1 + 3pp</b>（排除「只是 prompt 变长」的替代解释）—— 若 M3 ≈ N1 则记忆增益仅来自 token 量，H1a 被实质证伪</td>
 <td>与 M0 同（填充文本预生成）</td>
-</tr>
+<td>H1a（杀手级对照）</td></tr>
 <tr class="arm">
 <td><b>N2</b></td><td>负对照：记忆注入错误/无关知识</td>
 <td>注入<b>错误</b>或<b>无关</b>记忆条目</td>
@@ -520,42 +539,42 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <td>vs M3（正确相关 vs 错误无关）· vs M0（错误记忆是否反而有害）</td>
 <td>N2 ≤ M0（错误记忆应有害或至少无益）· M3 ≥ N2 + 5pp（正确记忆显著优于错误记忆）</td>
 <td>与 M0 同（错误/无关条目预生成）</td>
-</tr>
+<td>H2 负对照（错误记忆）</td></tr>
 <tr class="arm">
 <td><b>M4</b></td><td>跨域迁移臂（v1.4·污染检验）</td><td>训练域写记忆 → 迁移目标域只读</td>
 <td>选一个<b>训练域</b>（Full 集子集，如某几个 EDA 域 / 某 grounding-depth 区间），agent 在上面跑、写记忆（distillation + reflection）；选一个与训练域 <b>instance-disjoint</b> 的<b>迁移目标域</b>（另一子集），<b>不写记忆、只读记忆</b>，看训练域积累的记忆能否迁移提升目标域 Pass@1。这是对「记忆内容是<b>可迁移认知</b>还是<b>题面特定答案缓存</b>」的直接检验。<br><b>污染检测指标</b>：对迁移命中记忆逐条审计「抽象认知 vs 题面答案片段」，统计<b>答案泄露率</b>（&gt;0 则记忆机制有泄露 → anti-leakage 强化）。与 N2 互补：N2 = 内容正确性负对照，M4 = 可迁移性正检验。<span class="src">用户令 2026-11-18 第二批意见 ②（ZHULONG_TASK.md v1.4 令 §① 意见 2）</span></td>
 <td>vs M3（同源记忆但 M4 只读不写，检验迁移）· vs N2（正检验 vs 负对照）</td>
 <td>M4 迁移目标域 Pass@1 ≥ M0 + 2pp（迁移有效）；答案泄露率 = 0（无污染）；若泄露率 &gt; 0 → anti-leakage 强化后复测</td>
 <td>训练域 + 目标域各 120 题，2 trace/题 ≈ 480 run</td>
-</tr>
+<td>H1 + H2（可迁移性正检验）</td></tr>
 <tr class="arm">
-<td><b>M5</b></td><td>惊奇度门控臂（v1.4·H5）</td><td>写入权重 w = α·surprise + β·penalty</td>
+<td><b>M5</b></td><td>惊奇度门控臂（v1.6·H2a）</td><td>写入权重 w = α·surprise + β·penalty</td>
 <td>在 M2 基础上把「均匀采样写入」替换为「惊奇度 / 高惩罚信号门控写入」：surprise = 新事实相对记忆库先验的预测误差（KL 散度 / Shannon 自信息，Itti &amp; Baldi 2009）；penalty = 失败代价（长链中途崩盘的已耗 tool calls / token）。<b>记忆总量预算与 M2 持平</b>（控制 token 量，排除「记更多」假象）。<span class="src">机制 ① §4.5.1</span></td>
 <td>vs M2（门控 vs 均匀采样，等 token 预算）</td>
-<td><b>M5 ≥ M2 + 3pp</b>（H5 主判据，迁移目标域）；记忆库 token 差 ≤ 10%</td>
+<td><b>M5 ≥ M2 + 3pp</b>（H2a 主判据，迁移目标域）；记忆库 token 差 ≤ 10%</td>
 <td>同 M2 + surprise 计算（离线 KDE / embedding 距离，≈ +3% tool call）</td>
-</tr>
+<td>H2a（惊奇度门控）</td></tr>
 <tr class="arm">
-<td><b>M6</b></td><td>状态感知检索臂（v1.4·H6）</td><td>检索打分含 state_match 项</td>
+<td><b>M6</b></td><td>状态感知检索臂（v1.6·H2c）</td><td>检索打分含 state_match 项</td>
 <td>在 M3 基础上把「状态无关检索（仅 sim）」替换为「状态感知检索」：score = sim + γ·state_match；state = (近 N 步失败率, 当前 tool 域, 链长阶段)。记忆库内容同源 M5 写入（控制写入侧，只改检索侧）。<span class="src">机制 ③ §4.5.1</span></td>
 <td>vs M3（状态感知 vs 状态无关，同源记忆）</td>
-<td>「连续失败」子集 <b>M6 ≥ M3 + 3pp</b>（H6）；「正常推进」子集 M6 ≈ M3</td>
+<td>「连续失败」子集 <b>M6 ≥ M3 + 3pp</b>（H2c）；「正常推进」子集 M6 ≈ M3</td>
 <td>同 M3 + state 编码（≈ +2% tool call）</td>
-</tr>
+<td>H2c（状态感知检索）</td></tr>
 <tr class="arm">
-<td><b>M7</b></td><td>武器聚焦压缩臂（v1.4·H7）</td><td>高唤醒时只固化 central</td>
+<td><b>M7</b></td><td>武器聚焦压缩臂（v1.6·H2b）</td><td>高唤醒时只固化 central</td>
 <td>在 M2 基础上把「全量写入」替换为「武器聚焦压缩」：高唤醒（surprise 超阈值）时只固化 central（报错栈 + 根因因果链）进 L1/L2，剥离 peripheral（中间 tool call 日志）；触发条件与 M5 同一 surprise 阈值。<span class="src">机制 ② §4.5.1</span></td>
 <td>vs M2（central-only vs 全量，同触发）</td>
-<td><b>M7 ≥ M2 + 2pp</b>（H7）<b>且</b> M7 记忆库 token ≤ M2 × 0.6</td>
+<td><b>M7 ≥ M2 + 2pp</b>（H2b）<b>且</b> M7 记忆库 token ≤ M2 × 0.6</td>
 <td>同 M2 + central 提取（根因抽象，≈ +5% tool call）</td>
-</tr>
+<td>H2b（武器聚焦压缩）</td></tr>
 <tr class="arm">
 <td><b>M8</b></td><td>负对照：负效价偏倚（v1.4·可选）</td><td>检索故意偏向负效价记忆</td>
 <td>给 M6 的检索打分加一个<b>负效价偏置</b>（无论当前状态，都调高 pitfall / 负面教训权重），检验「情绪机制总是正向」是否成立——若 M8 &lt; M6，说明过度防御有害，状态感知的正向收益来自「匹配状态」而非「偏负」。<span class="src">用户令 2026-11-18 v1.4 §① 意见 3 可选 M8</span></td>
 <td>vs M6（负效价偏倚 vs 状态匹配）</td>
 <td>M8 ≤ M6（过度防御应有害或无益）；若 M8 ≈ M6 则「偏负也无害」→ 状态感知收益不来自匹配</td>
 <td>与 M6 同（偏置项预生成）</td>
-</tr>
+<td>H2 负对照（负效价偏倚）</td></tr>
 </table>
 
 <div class="callout bad">
@@ -623,7 +642,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <h3>§6.2 贡献列表（v1.5：5 条，动词开头）</h3>
 <div class="callout gold"><b>v1.5 同步（用户令 2026-11-18 第三批意见 ②）</b>：贡献从 4 条扩为 5 条——H1-H4→H1-H7、8 臂→13 臂、删 mock-EDA+Lite 500（§2.3 v1.4 收缩）、负结果含 RSI 与情绪机制双重边界、新增第 5 条 Formalize 三机制计算映射。<span class="src">用户令 2026-11-18 第三批意见 ②</span></div>
 <ol>
-  <li><b>Formulate</b> 7 条预注册、可证伪假设（H1-H4 功能级：长期记忆 / RSI 单调性 / 记忆-自改进依赖 / 单 agent 结论复现 + v1.4 H5/H6/H7 机制级：惊奇度门控 / 状态感知检索 / 武器聚焦压缩）on long-term memory + recursive self-improvement + affective-memory mechanisms in long-chain EDA flow orchestration, each with falsification conditions（§4 §4.5）。</li>
+  <li><b>Formulate</b> 3 条核心预注册可证伪假设（H1 总命题 + H2 机制级 + H3 边界）下设 7 条子假设（H1a/b/c · H2a/b/c · H3 独立），each with falsification conditions（§4）on long-term memory + recursive self-improvement + affective-memory mechanisms in long-chain EDA flow orchestration.</li>
   <li><b>Design</b> a 13-arm ablation（v1.2 的 8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2 + v1.4 新增 M4 跨域迁移 / M5 惊奇度门控 / M6 状态感知检索 / M7 武器聚焦压缩 / M8 负效价偏倚负对照）含等 token 预算杀手级对照 N1 + 错误记忆对照 N2 + M4 答案泄露率审计——separates「memory works」from「prompt just got longer」AND「emotion mechanism helps」from「uniform sampling」——controls absent from prior EDA self-evolution work（DATE27）（§5）。</li>
   <li><b>Introduce</b> long-chain flow orchestration as a new task modality（design_flow 契约：submit.zip + ≥8 断言 + 不指定 lang/host）with a released <b>evaluation protocol white paper</b>（harness 协议 + 判据 + 脱敏任务规格开源；<b>不开 Lite 集可执行资产、不开 mock-EDA 模式</b>，见 §2.3 v1.4 收缩）；任务子集用 Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测）。</li>
   <li><b>Report</b> falsifiable results on 13 EDA domains（1684 flow tasks, Full 集子集评测）, including negative results as publishable boundary conditions on RSI <b>AND</b> affective-memory mechanisms in long-chain orchestration（§4 §8）。</li>
@@ -634,16 +653,16 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <div class="callout gold"><b>v1.5 同步（用户令 2026-11-18 第三批意见 ③）</b>：章节大纲 9+ 行全部同步 v1.4 口径——7 假设（H1-H7）/ 13 臂 / Full 集子集（替 Lite 500）/ 协议白皮书级开源（替 mock-EDA）/ RSI+情绪双重边界 / 新增独立 §4.5 Affective-Memory Mechanisms 章节行显式承载 v1.4 §4.5 主线；§8 Related Work 行合入 v1.4 callout 的 affective neuroscience 内容。<span class="src">用户令 2026-11-18 第三批意见 ③</span></div>
 <table>
 <tr><th>新论文章节</th><th>对应 DATE27 章节</th><th>对应 DAC 章节</th><th>内容</th></tr>
-<tr><td>§1 Introduction</td><td>1_intro.tex</td><td>1_intro.tex</td><td>动机：从脚本到 flow 的迁移 + <b>从生物认知的情绪-记忆机制到 LLM agent 的可计算映射</b>；<b>7 条预注册假设预告（H1-H4 功能级 + H5-H7 情绪机制级）</b>；grounding-gap 框架回顾</td></tr>
+<tr><td>§1 Introduction</td><td>1_intro.tex</td><td>1_intro.tex</td><td>动机：从脚本到 flow 的迁移 + <b>从生物认知的情绪-记忆机制到 LLM agent 的可计算映射</b>；<b>3 条核心假设预告（H1 总 + H2 机制 + H3 边界）</b>；grounding-gap 框架回顾</td></tr>
 <tr><td>§2 Background: From Script to Flow</td><td>—（DATE27 无）</td><td>2_background.tex + 4_grounding.tex</td><td>grounding-gap 框架回顾；单脚本 vs flow 的 delta（§3 表）；为什么 memory + RSI 在 flow 层可能不同</td></tr>
 <tr><td>§3 Task Modality &amp; Benchmark (carrier)</td><td>—</td><td>5_bench.tex</td><td>design_flow 契约；13 域；<b>Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测，替 Lite 500）</b>；<b>协议白皮书级开源边界（§2.3 v1.4 收缩，替 mock-EDA）</b>；作为认知检验载体而非卖点</td></tr>
 <tr><td>§4 Harness with Memory &amp; Self-Improvement</td><td>3_method.tex + 4_self_evolve.tex</td><td>3_design.tex</td><td>三层记忆 L0/L1/L2 + 可靠性门控（继承 DATE27）扩展到 flow 层；<b>13 臂实现细节 + v1.4 三条情绪机制计算映射（写入门控 w=α·surprise+β·penalty / 武器聚焦压缩 central_vs_peripheral / 状态感知检索 score=sim+γ·state_match）</b></td></tr>
-<tr><td><b>§4.5 Affective-Memory Mechanisms: From Biology to Computation</b>（v1.5 新增独立章节行）</td><td>—（DATE27 无）</td><td>—</td><td><b>承载 v1.4 §4.5 主线</b>：情绪唤醒度→惊奇度门控 / 武器聚焦→根因抽象与噪声剥离 / 心境一致→状态感知检索；三机制的可计算映射 + 与生物认知的对应（附录 G 文献）+ 与 LLM agent 符号编排的差距论证；H5/H6/H7 机制级假设在此正式陈述</td></tr>
-<tr><td>§5 Pre-Registered Hypotheses &amp; Ablation Design</td><td>—（DATE27 无预注册）</td><td>—</td><td><b>7 假设（H1-H7）+ 13 臂表（§5.1）</b> + 杀手级对照 N1 + 污染防护 + <b>M4 Full→Lite 跨域迁移污染检验 + 答案泄露率审计</b> + 统计功效</td></tr>
-<tr><td>§6 Experiments</td><td>5_exp.tex</td><td>6_exp.tex</td><td>主结果：<b>H1-H7 的判据核验</b>；<b>情绪机制三机制消融对比（M5 vs M2 惊奇度门控 / M6 vs M3 状态感知检索 / M7 vs M2 武器聚焦压缩）</b>；分层分析；负结果照写</td></tr>
+<tr><td><b>§4.5 Affective-Memory Mechanisms: From Biology to Computation</b>（v1.5 新增独立章节行）</td><td>—（DATE27 无）</td><td>—</td><td><b>承载 v1.4 §4.5 主线</b>：情绪唤醒度→惊奇度门控 / 武器聚焦→根因抽象与噪声剥离 / 心境一致→状态感知检索；三机制的可计算映射 + 与生物认知的对应（附录 G 文献）+ 与 LLM agent 符号编排的差距论证；H2a/H2b/H2c 机制级假设在此正式陈述</td></tr>
+<tr><td>§5 Pre-Registered Hypotheses &amp; Ablation Design</td><td>—（DATE27 无预注册）</td><td>—</td><td><b>3 核心假设 + 7 子假设（H1a/b/c · H2a/b/c · H3）+ 13 臂表（§5.1）</b> + 杀手级对照 N1 + 污染防护 + <b>M4 Full→Lite 跨域迁移污染检验 + 答案泄露率审计</b> + 统计功效</td></tr>
+<tr><td>§6 Experiments</td><td>5_exp.tex</td><td>6_exp.tex</td><td>主结果：<b>H1/H2/H3 的判据核验</b>；<b>情绪机制三机制消融对比（M5 vs M2 惊奇度门控 / M6 vs M3 状态感知检索 / M7 vs M2 武器聚焦压缩）</b>；分层分析；负结果照写</td></tr>
 <tr><td>§7 Analysis: Why Memory Helps/Hurts</td><td>—</td><td>7_discussion.tex</td><td>记忆内容审计；失败模式与记忆类型的交互；trace 解剖（继承 5_analysis.tex:76-121）；<b>v1.5 新增：surprise 分布 / state_match 命中分布 / central-peripheral 压缩比 vs Pass@1 / M4 迁移答案泄露率审计 / 情绪机制在不同链长子集的异质性</b></td></tr>
 <tr><td>§8 Related Work</td><td>2_related_work.tex</td><td>—（DAC 无独立 related）</td><td>EDA benchmark / agent memory / RSI / self-evolution（DATE27 + DAC + ExpeL + Reflexion + SkillOpt + MUSE）<b>+ affective neuroscience × agent memory（情绪唤醒度巩固 McGaugh 2004/2013 / 心境一致提取 Bower 1981 / 武器聚焦 Loftus 1987 Steblay 1992 / 预测误差门控 Friston Rao &amp; Ballard 1999 Ranganath &amp; Rainer 2003 / Bayesian surprise Itti &amp; Baldi 2009 / AI 情感记忆 Generative Agents Park 2023 · EM-LLM arXiv:2407.09450 · PsychoAgent arXiv:2608.07438 · somatic-marker re-injection arXiv:2605.08611，见附录 G）</b></td></tr>
-<tr><td><b>§9 Conclusion: Boundary Conditions of RSI and Affective-Memory Mechanisms in Long-Chain EDA Flow</b>（v1.5 标题更新）</td><td>6_conclusion.tex</td><td>8_conclusion.tex</td><td><b>哪些假设被支持/证伪（H1-H7 分别）</b>；<b>情绪机制在符号工具编排上的适用边界</b>；边界条件；future work（多模态 grounding / long-chain 更长 / 效价维度细化）</td></tr>
+<tr><td><b>§9 Conclusion: Boundary Conditions of RSI and Affective-Memory Mechanisms in Long-Chain EDA Flow</b>（v1.5 标题更新）</td><td>6_conclusion.tex</td><td>8_conclusion.tex</td><td><b>哪些假设被支持/证伪（H1/H2/H3 分别）+ 子假设的方向性结论</b>；<b>情绪机制在符号工具编排上的适用边界</b>；边界条件；future work（多模态 grounding / long-chain 更长 / 效价维度细化）</td></tr>
 <tr><td>Ethics + Reproducibility</td><td>—</td><td>—（EDA-Flow-Bench 8_ethics/9_reproducibility）</td><td>开源边界表（§2.3 v1.4 收缩）；<b>协议白皮书级开源 + NDA 受控评审包（替 mock-EDA 复现）</b></td></tr>
 <tr><td>Appendix A/B/C + F/G</td><td>—</td><td>—</td><td>A: benchmark details；B: full per-arm results + per-domain；C: memory audit logs + harness impl；<b>F: Bibliography（预印本引用）；G: 调研文献（research.cimi_search）</b></td></tr>
 </table>
@@ -658,25 +677,25 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <span class="src">用户令 2026-11-18 第二批意见 ③ · 附录 G</span>
 </div>
 
-<h3>§6.4 图表清单（v1.5：Figure 1-9 + Table 1-6 · 13 臂 / H1-H7 / 情绪机制图表同步）</h3>
-<div class="callout gold"><b>v1.5 同步（用户令 2026-11-18 第三批意见 ④）</b>：Figure 2 / Table 2 / Table 3 臂数与假设数同步至 13 臂 / H1-H7；新增 5 个情绪机制图表（三机制消融对比 / α·β 标定 / 压缩比散点 / M4 泄露率审计 / state_match 分布）+ 可选 H5-H7 机制级判据核验表。<span class="src">用户令 2026-11-18 第三批意见 ④</span></div>
+<h3>§6.4 图表清单（v1.5：Figure 1-9 + Table 1-6 · 13 臂 / H1-H3 + 7 子假设 / 情绪机制图表同步）</h3>
+<div class="callout gold"><b>v1.5 同步（用户令 2026-11-18 第三批意见 ④）</b>：Figure 2 / Table 2 / Table 3 臂数与假设数同步至 13 臂 / H1-H3 + 7 子假设；新增 5 个情绪机制图表（三机制消融对比 / α·β 标定 / 压缩比散点 / M4 泄露率审计 / state_match 分布）+ 可选 H2a/H2b/H2c 机制级判据核验表。<span class="src">用户令 2026-11-18 第三批意见 ④</span></div>
 <table class="figtable">
 <tr><th>编号</th><th>标题</th><th>数据来源</th><th>是否已有</th></tr>
 <tr><td>Figure 1</td><td>From Script to Flow：任务链长 1-3 → 5-20+ 的迁移示意（grounding-gap 框架扩展）</td><td>新绘（概念图）</td><td>❌ 新造</td></tr>
 <tr><td>Figure 2</td><td><b>13 臂</b>消融的 Pass@1 + 95% CI（M0/M1/M2/M3/S1/M3+S1/N1/N2/M4/M5/M6/M7/M8）</td><td>§5 实验矩阵新跑</td><td>❌ 新跑</td></tr>
-<tr><td>Figure 3</td><td>H2 分层 Δ（short/mid/long 链长）的自改进收益单调性</td><td>§5 分层分析新跑</td><td>❌ 新跑</td></tr>
+<tr><td>Figure 3</td><td>H1b 分层 Δ（short/mid/long 链长）的自改进收益单调性</td><td>§5 分层分析新跑</td><td>❌ 新跑</td></tr>
 <tr><td>Figure 4</td><td>记忆内容审计：记忆条目数 / 淘汰数 / 冲突消解数 随轮次演化</td><td>记忆审计日志</td><td>❌ 新采集</td></tr>
 <tr><td><b>Figure 5</b>（v1.5 新增）</td><td>情绪机制三机制消融对比：M5 vs M2（惊奇度门控）/ M6 vs M3（状态感知检索）/ M7 vs M2（武器聚焦压缩）的 Pass@1 对比</td><td>§5/§6 实验新跑（M5/M6/M7 vs M2/M3）</td><td>❌ 新跑</td></tr>
-<tr><td><b>Figure 6</b>（v1.5 新增）</td><td>写入权重 α/β 标定曲线：surprise 与 penalty 不同权重下的 Pass@1 等高线/折线（M5 标定，验证 H5）</td><td>M5 标定实验新跑</td><td>❌ 新跑</td></tr>
-<tr><td><b>Figure 7</b>（v1.5 新增）</td><td>central/peripheral 压缩比 vs Pass@1 散点（M7 vs M2，验证「压缩更小且 Pass@1 不降」的 H7 判据）</td><td>M7/M2 实验新跑 + 压缩比日志</td><td>❌ 新跑</td></tr>
+<tr><td><b>Figure 6</b>（v1.5 新增）</td><td>写入权重 α/β 标定曲线：surprise 与 penalty 不同权重下的 Pass@1 等高线/折线（M5 标定，验证 H2a）</td><td>M5 标定实验新跑</td><td>❌ 新跑</td></tr>
+<tr><td><b>Figure 7</b>（v1.5 新增）</td><td>central/peripheral 压缩比 vs Pass@1 散点（M7 vs M2，验证「压缩更小且 Pass@1 不降」的 H2b 判据）</td><td>M7/M2 实验新跑 + 压缩比日志</td><td>❌ 新跑</td></tr>
 <tr><td><b>Figure 8</b>（v1.5 新增）</td><td>M4 跨域迁移污染检验的答案泄露率审计：迁移命中记忆逐条审计（抽象认知 vs 题面答案片段）分布 + 答案泄露率指标</td><td>M4 迁移审计日志</td><td>❌ 新采集</td></tr>
-<tr><td><b>Figure 9</b>（v1.5 新增）</td><td>state_match 命中分布：M6 在「连续失败子集」vs「正常推进子集」的 state_match 命中分布对比（验证 H6 状态感知在挫败时调高避坑权重）</td><td>M6 实验新跑 + state_match 日志</td><td>❌ 新跑</td></tr>
+<tr><td><b>Figure 9</b>（v1.5 新增）</td><td>state_match 命中分布：M6 在「连续失败子集」vs「正常推进子集」的 state_match 命中分布对比（验证 H2c 状态感知在挫败时调高避坑权重）</td><td>M6 实验新跑 + state_match 日志</td><td>❌ 新跑</td></tr>
 <tr><td>Table 1</td><td>与 DATE27 的 delta 表（§3）</td><td>§3（本计划书）</td><td>✅ 本计划书已起草</td></tr>
-<tr><td>Table 2</td><td><b>13 臂</b>消融表（臂号 / 唯一变量 / 判据 / 结果）</td><td>§5 + §6 实验结果</td><td>✅ 设计已起草，结果待跑</td></tr>
-<tr><td>Table 3</td><td>主结果：<b>H1-H7</b> 判据核验（point estimate + CI + McNemar p + 证伪/支持）</td><td>§6 实验新跑</td><td>❌ 新跑</td></tr>
+<tr><td>Table 2</td><td><b>13 臂</b>消融表（臂号 / 唯一变量 / 判据 / 结果 / 对应子假设）</td><td>§5 + §6 实验结果</td><td>✅ 设计已起草，结果待跑</td></tr>
+<tr><td>Table 3</td><td>主结果：<b>3 核心假设 + 7 子假设</b>判据核验（H1/H2/H3 总结论 + H1a/b/c · H2a/b/c · H3 各子假设 point estimate + CI + McNemar p + 证伪/支持）</td><td>§6 实验新跑</td><td>❌ 新跑</td></tr>
 <tr><td>Table 4</td><td>13 域逐域 Pass@1（M0 vs M3，复用 696 快照 + 新跑；<b>v1.5 可选加 M0 vs M5/M6/M7 列</b>看情绪机制臂逐域表现）</td><td>4_experiments.tex:40-60（M0 已有）+ M3/M5/M6/M7 新跑</td><td>一半已有（M0）</td></tr>
 <tr><td>Table 5</td><td>开源边界表（§2.3 v1.4 收缩）</td><td>§2.3（本计划书）</td><td>✅ 本计划书已起草</td></tr>
-<tr><td><b>Table 6</b>（v1.5 可选新增）</td><td>H5-H7 机制级判据核验表（与 Table 3 H1-H4 并列，单独给情绪机制的证伪/支持结论 + α/β/γ 标定值）</td><td>§6 实验新跑（M5/M6/M7 标定）</td><td>❌ 新跑</td></tr>
+<tr><td><b>Table 6</b>（v1.5 可选新增）</td><td>H2a/H2b/H2c 机制级判据核验表（与 Table 3 H1/H2/H3 并列，单独给情绪机制的证伪/支持结论 + α/β/γ 标定值）</td><td>§6 实验新跑（M5/M6/M7 标定）</td><td>❌ 新跑</td></tr>
 </table>
 </section>
 
