@@ -205,10 +205,17 @@
  },
  "sessions": 3791,
  "shard_mc": {
-  "A": 5,
+  "A": 10,
   "B": 10,
   "C": 10,
   "D": 10
+ },
+ "stop_loss_shardA_mc5": {
+  "triggered_at": "2026-11-18T14:1x+08:00",
+  "triggered_by": "r731 (11-15 directive auto-stop §二.4: 3 consecutive 0-case rounds at mc>=5)",
+  "evidence": "r719/r720/r722/r724/r725/r726 produced 6 cases after mc>=5 adoption (r718); then r727/r728/r730 = 3 consecutive 0-case rounds. r730 systematic exhaustion proof: strict A-pure filter (verdi|vcs|dc_shell|design_compiler|innovus|primetime|pt_shell|formality|yosys|vivado|openroad|verilint) on 20261116 snapshot = 165 mc>=5 A-pure candidates; top 25 (mc 100-773) + 12 low-mc peek ALL fresh candidates already claimed by other shards (cross-shard mutex, r728 lesson) or C/D domain. A-pure mc>=5 fresh after cross-shard mutex ~= 0.",
+  "action": "shard_mc.A reverted 5 -> 10 (matches trace_ledger.py SHARD_MC which was never changed). Pivot to intent_audit continuation + other output per 11-15 directive.",
+  "verdict": "mc>=5 pool expansion (11-15 order) measured INEFFECTIVE for shard A: produced 6 cases (r719-r726) then exhausted under cross-shard mutex. Not a threshold problem - A-pure fresh material truly consumed."
  },
  "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
  "summary_1113_dedup_sessions": 4418,
