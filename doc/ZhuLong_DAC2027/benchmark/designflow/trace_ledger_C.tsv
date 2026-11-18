@@ -1287,3 +1287,4 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 1793271148453_c6hvf	jkxu	10.129.32.83	53	physical_verify	parked		2026-11-19 06:07	wrong-domain: real task=LSF bjobs job monitoring sysadmin, keywords drc/verilog bleed from cwd /rundata/drcpa/... simdir; not physical_verify
 1792560656173_3p0xa	mwxi	10.129.32.112	41	physical_verify	parked		2026-11-19 06:07	wrong-domain: real task=AI contest report writing + storage trend analysis + waveDelete.pl cleanup; keywords drc/.gds/cmos bleed from /proj/degnt/V0_CMOS/.gds paths user pasted; not physical_verify
 1789992388375_dm280	ellawu	10.129.2.14	38	physical_verify	case	EDA-Eval-DesignFlow-PGDeckDispatch-001	2026-11-19 06:17	
+1789803471527_ypwty	ziyuny	10.129.32.190	55	layout_aether	case	EDA-Eval-DesignFlow-GroupGenCfgMerge-001	2026-11-19 06:47	
