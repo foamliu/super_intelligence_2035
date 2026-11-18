@@ -2846,6 +2846,45 @@
 | 状态 | **待跟踪**（只建档） |
 | 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：Tülu 3 正文专门写了「**没能稳定涨点的训练方法**」，是全表最稀缺的负结果材料；若能拿到个人邮箱，问题应聚焦「SFT 之后 DPO 与 RLVR 的边际贡献如何拆分」。 |
 
+### 198. Yonatan Belinkov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yonatan Belinkov（希伯来语族姓名 ⇒ 英文信） |
+| 机构 | **Technion – Israel Institute of Technology**（Jamba 共同作者，B 轨 #219；NLP / 可解释性方向） |
+| 代表论文 | **Jamba: A Hybrid Transformer-Mamba Language Model**（arXiv `2403.19887`）· 另有 NLP 可解释性与鲁棒性系列 |
+| 邮箱 | **`belinkov@technion.ac.il`**（本人现行主页 `https://www.cs.technion.ac.il/~belinkov/` 2026-11-18 实测 `200` / 13,188 B，页内明文；🚫 未用 PDF 旧地址） |
+| 主页 | <https://www.cs.technion.ac.il/~belinkov/>（`200`） |
+| X 账号 | **`@boknilev`**（来源：上述主页页内 `href` → `twitter.com/boknilev`；⚠️ 本轮 `x.com` TLS `000`，**未做 `og:title` 双源核验**，故只登记不标「已核验」） |
+| 状态 | **已发信**（#87，2026-11-18 09:07:38，英文 177 词） |
+| 备注 | `语言=英文(判据=希伯来语族姓名 + 以色列机构；无东亚语言信号)`。问题方向：1:7 比例在 1.3B→7B 的 perplexity 排序是否稳定、去掉 MoE 后 256K 收益还剩多少、128K–256K 检索内容由 attention 还是 Mamba 层承载。 |
+
+### 199. Bill Yuchen Lin（林禹臣）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bill Yuchen Lin（林禹臣；拼音姓名族属 ⇒ 中文信） |
+| 机构 | **Allen Institute for AI（Ai2）**（Magpie 末位/通讯作者，B 轨 #218；原 USC） |
+| 代表论文 | **Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing**（arXiv `2406.08464`）· 另有推理 / 常识评测系列 |
+| 邮箱 | **`bill@yuchenlin.xyz`**（本人现行主页 `https://yuchenlin.xyz/` 2026-11-18 实测 `200` / 38,590 B，页内明文） |
+| 主页 | <https://yuchenlin.xyz/>（`200`） |
+| X 账号 | **`@billyuchenlin`**（来源：上述主页页内 `href` → `twitter.com/billyuchenlin`；⚠️ 本轮 `x.com` TLS `000`，**未做 `og:title` 双源核验**） |
+| 状态 | **已发信**（#88，2026-11-18 09:07:41，中文 CJK 232 字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构)`。问题方向：300K 过滤三条规则各去掉多少、5 万预算下最不能省哪条、跨教师组合（70B 生成 / 8B 回复）质量损失、DPO 偏好对换人工奖励模型的差距。 |
+
+### 200. Anton Lozhkov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Anton Lozhkov（斯拉夫语族姓名 ⇒ 英文信） |
+| 机构 | **Hugging Face**（StarCoder 2 一作，B 轨 #217；BigCode 协作） |
+| 代表论文 | **StarCoder 2 and The Stack v2: The Next Generation**（arXiv `2402.19173`）· StarCoder / The Stack 数据治理系列 |
+| 邮箱 | **未找到公开邮箱**（StarCoder 2 PDF 全文只出现 `contact@bigcode-project.org`，属项目分发列表 ⇒ 按惯例不发，只建档） |
+| 主页 | <https://huggingface.co/anton-l>（⚠️ 本轮实测连接超时 `000`，未能核验页内内容） |
+| X 账号 | **未找到**（不猜；本轮 X 不可达，后续可补核） |
+| 状态 | **待跟踪**（只建档） |
+| 备注 | `语言=英文(判据=斯拉夫语族姓名 + Hugging Face，无中日韩信号)`。价值点：The Stack v2 的许可证过滤与 619 语言去重口径；若能拿到个人邮箱，问题应聚焦「opt-out 比例对代码能力的影响」与「3B 过训到 3.3T token 的收益曲线」。 |
+
 1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

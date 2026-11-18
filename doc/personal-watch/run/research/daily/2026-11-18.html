@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-18（5/5 · 03:00 补齐） · research 线</title>
+<title>论文观察日报 · 2026-11-18（5/5 · 09:00 增量） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -48,7 +48,7 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-18</h1>
   <div class="sub"><b>早报（00:00 时窗）+ 03:00 补齐</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b>／<b>06:0x CST（B 轨第五十五轮 + 2 封信）</b>／<b>09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -267,8 +267,70 @@
   <li><b>06:00 候选</b>：<code>2611.21577</code>（MCP provider misbinding）已全量核过元数据与 PDF，若下一时窗需要补 A 轨可直接用；B 轨候选 Magpie <code>2406.08464</code>（353，需先说明「方法论常青」理由）。</li>
 </ul>
 
+<h3 class="sec">🅱 B 轨 · 09:00 增量（第五十六轮 +3 → 219）</h3>
+<table class="plain">
+  <tr><th style="width:30%;">论文</th><th>被引</th><th>一句话贡献（数字均来自 PDF，作者自报）</th><th>与我们工作的关系</th></tr>
+  <tr><td><b>StarCoder 2 and The Stack v2</b><br><code>2402.19173</code> · 2024-02-29</td><td><b>1,095</b></td><td>The Stack v2 覆盖 <b>619</b> 种编程语言，训练集 <b>900B+ 去重 token（4× StarCoder v1）</b>；3B/7B/15B 三档各训 <b>3.3–4.3T token</b>。</td><td><b>data</b>：代码语料四列台账（来源快照 / 语言清单 / 去重前后 token / 许可证白名单）。<br><b>pretrain</b>：小模型故意过训（tokens/param ≈ 1000×）的可对照点。</td></tr>
+  <tr><td><b>Magpie: Alignment Data Synthesis from Scratch</b><br><code>2406.08464</code> · v2 2024-10-07</td><td><b>353</b><br><span style="color:#59636e;">&lt;500，按「方法论常青」收</span></td><td>只喂用户消息之前的模板，让对齐模型自己生成指令；用 Llama-3-Instruct 合成 <b>400 万条</b>，过滤后取 <b>300K</b>；DPO 组用 <b>k=5、T=0.8</b> 生成 <b>100K</b> 偏好对，奖励模型为 ArmORM-Llama3-8B。</td><td><b>data</b>：零人工指令池冷启动。<br><b>harness</b>：过滤规则必须能固定种子重建同一子集。</td></tr>
+  <tr><td><b>Jamba: A Hybrid Transformer-Mamba Language Model</b><br><code>2403.19887</code> · v2 2024-07-03</td><td><b>789</b></td><td>Transformer:Mamba = <b>1:7</b>（<code>l = 8</code>）、MoE 每 <b>2</b> 层一次（<b>16 专家 top-2</b>）；<b>52B 总参 / 12B 激活</b>，<b>256K</b> 上下文，8bit 下可装进单张 <b>80GB</b> GPU。</td><td><b>zhulong</b>：架构消融新增「混合比例」轴。<br><b>pretrain</b>：成本表必须同时报 total / active params。</td></tr>
+</table>
+<div class="rm"><b>⚠️ 本轮三处「未核」如实记</b>：① Magpie / Jamba 的 arXiv <code>id_list</code> 本轮先 <code>429</code>、后 <code>SSL_ERROR_SYSCALL 000</code> ⇒ <b>首次提交日留白</b>，只记 PDF 版本日期，🚫 不臆写；② 两篇会议信息未核；③ StarCoder 2 全文只有 <code>contact@bigcode-project.org</code>（项目分发列表），<b>无个人邮箱</b>。</div>
+
+<h3 class="sec">👥 作者关系网 · 09:00 增量（+3 → 200）</h3>
+<ul class="tight">
+  <li><b>#198 Yonatan Belinkov</b>（Technion，Jamba 共同作者）· 邮箱 <code>belinkov@technion.ac.il</code> 取自本人现行主页（<code>200</code> / 13,188 B，页内明文）· 主页链到 <code>twitter.com/boknilev</code>（⚠️ X 本轮 <code>000</code>，未做 <code>og:title</code> 双源）· <b>已发信</b>。</li>
+  <li><b>#199 Bill Yuchen Lin（林禹臣）</b>（Ai2，Magpie 末位作者）· 邮箱 <code>bill@yuchenlin.xyz</code> 取自本人主页（<code>200</code> / 38,590 B）· 主页链到 <code>twitter.com/billyuchenlin</code>（⚠️ 未双源）· <b>已发信</b>（中文）。</li>
+  <li><b>#200 Anton Lozhkov</b>（Hugging Face，StarCoder 2 一作）· 无公开个人邮箱（PDF 仅项目信箱）· HF 个人页本轮超时 <code>000</code> ⇒ <b>未找到 X</b>，只建档。</li>
+</ul>
+
+<h3 class="sec">✉️ 作者请教信 · 09:00（2 封 · 今日 9/12 · 累计 88 · 回信率 0/88）</h3>
+<ul class="tight">
+  <li><b>#87 → Yonatan Belinkov</b>（<code>belinkov@technion.ac.il</code>）· Jamba <code>2403.19887</code> · <b>英文 177 词</b> · <code>SENT OK 09:07:38</code>。三问：比例消融实际训过哪些、去掉 MoE 后 256K 还剩多少、检索内容由 attention 还是 Mamba 层承载。</li>
+  <li><b>#88 → Bill Yuchen Lin</b>（<code>bill@yuchenlin.xyz</code>）· Magpie <code>2406.08464</code> · <b>中文 CJK 232 字</b> · <code>SENT OK 09:07:41</code>。三问：300K 过滤三条各去掉多少、跨教师组合损失、DPO 换人工奖励模型的差距。</li>
+  <li><b>合规</b>：落款均严格两行（<code>Best regards,</code> / <code>祝好，</code> + <code>Yang Liu</code>），其后无任何行；正文不含项目名；同轮零共用开头句 / 问题句式；草稿与正文均已入仓。</li>
+  <li><b>主动少发</b>：StarCoder 2 只有项目分发信箱；Jamba 其余 21 位、Magpie 其余 5 位作者守「同一论文 ≤1」；A 轨今日 5/5 已满，无新写信对象。</li>
+</ul>
+
+<h3 class="sec">🛠 7 天观察点执行（11-11 批 9 封 · 0 回）</h3>
+<ul class="tight">
+  <li><b>结果</b>：11-11 批 9 封今日满 <b>7 天</b>，实测仍 <b>0 回</b> ⇒ 命中预注册判据（<code>REPLY_DIAGNOSIS.md §7</code>），<b>上调 H2 / H3 权重</b>（H2 = SMTP 显示名，H3 = 地址时效）。</li>
+  <li><b>H2 只读复核</b>：<code>~/.hr_smtp</code> 的 <code>name</code> 仍为 <code>AI+EDA 招聘 · 自动</code> ⇒ <b>未修</b>；这是本线唯一「不改内容、只改显示名」就能改善的变量，仍需运维执行。</li>
+  <li><b>同机构对照</b>：本轮 #87 / #88 都是 A 级主页明文地址，<b>不构成对照</b> ⇒ 方案已写进 <code>REPLY_DIAGNOSIS.md §9.3</code>（同机构两人、A 级 vs B/C 级、14 天比较），下一轮先查同机构第二人再发，🚫 不为凑对照违反「同一论文 ≤1」。</li>
+  <li><b>仍不能判定「选题不对」</b>：14 天到期样本为 <b>0</b>，且发件通道只发不收（无 IMAP/POP3）⇒ 回信可能已到但读不到，这是最大盲区。</li>
+</ul>
+
+<h3 class="sec">🎯 对各线的可执行建议 · 09:00 增量（6 线，逐条可执行）</h3>
+<table class="plain">
+  <tr><th style="width:13%;">线</th><th>建议（可直接执行）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>成本表加两列、并做「过训」对照</b>：所有训练配置同时记录 <code>total_params / active_params</code>（Jamba 52B/12B 的教训）；BaiZe 2B 固定 <code>tokens/param ≈ 1000×</code> 跑一档短对照，判据 = 该档验证集仍下降 ≥1% 就不按 Chinchilla 比例提前停。依据：<code>2403.19887</code> + <code>2402.19173</code>。</td></tr>
+  <tr><td><b>vision</b></td><td><b>本轮无新增建议</b>（三篇均非视觉线；不凑数）。沿用 06:00 的「视觉记忆三档消融」。</td></tr>
+  <tr><td><b>harness</b></td><td><b>代码评测按语言分桶</b>：主表之外单列长尾语言桶与「许可证来源」桶；判据 = 若长尾桶与主桶差距 &gt;10 点，禁止只报平均分。依据：StarCoder 2 的 619 语言覆盖。</td></tr>
+  <tr><td><b>data</b></td><td><b>代码语料四列台账 + 指令池 5 万条试点</b>：① 代码入库记 <code>来源快照 / 语言清单 / 去重前后 token / 许可证白名单</code>，缺列不入库；② 用 Magpie 式自举先造 5 万条，与人写种子集做同 token 对照，判据 = 下游分不低且去重后簇数 ≥ 人写集才扩量。依据：<code>2402.19173</code> + <code>2406.08464</code>。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>消融表新增「混合比例」一行</b>：固定激活参数与训练 token，跑 attention:Mamba = 1:7 / 1:3 / 1:1 三档，只测 32K→256K 的吞吐与掉点；判据 = 1:7 在 128K 以上吞吐优势 &lt;1.2× 就回到 1:3。依据：<code>2403.19887</code>（<code>l = 8, a:m = 1:7</code>）。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>造题过滤器写成可单测函数</b>：质量 / 去重 / 难度三段各留一个函数 + 固定随机种子，判据 = 同一输入必须重建同一题集（diff 为空）；另记录每段删除率，防止「题变少」被误读成「题变难」。依据：Magpie 的 300K 过滤流程。</td></tr>
+</table>
+
+<h3 class="sec">📎 附录 · 09:00 增量检索记录（可核验）</h3>
+<table class="plain">
+  <tr><th style="width:62%;">请求</th><th>结果</th></tr>
+  <tr><td><code>cat:cs.CL</code> 列表（按提交日倒序，60 条）</td><td><code>200</code> / 153,948 B / <code>application/atom+xml</code>；最新 <code>published</code> = <b>2026-11-16T18:59:38Z</b>（<b>未前进</b>）⇒ A 轨今日 5/5 已满，<b>0 新收</b></td></tr>
+  <tr><td><code>id_list=2402.19173</code></td><td><code>200</code> / 6,760 B / <code>application/atom+xml</code>（首次提交 2024-02-29）</td></tr>
+  <tr><td><code>id_list=2406.08464</code> / <code>2403.19887</code></td><td><b><code>429</code>（14 B）</b>→ 重试 <code>SSL_ERROR_SYSCALL 000</code> ⇒ 首次提交日<b>留白</b>（只记 PDF 版本日）</td></tr>
+  <tr><td>OpenAlex ×4：<code>2402.19173</code> / <code>2406.08464</code> / <code>2403.19887</code> / <code>2505.09388</code></td><td>4/4 <code>200</code>：<b>1,095 / 353 / 789 / 19,693</b>（Qwen3 被引已核，但 PDF 本轮 <code>000</code> ⇒ 不进表，留下轮）</td></tr>
+  <tr><td>PDF ×3</td><td>3/3 <code>200</code> + <code>%PDF-</code>：1,114,300 / 3,951,723 / 1,287,281 B（均 &lt;5 MB）；<code>pdftotext</code> 全部可解析</td></tr>
+  <tr><td>作者主页 ×2</td><td><code>cs.technion.ac.il/~belinkov/</code> <code>200</code> / 13,188 B（明文邮箱）；<code>yuchenlin.xyz</code> <code>200</code> / 38,590 B（明文邮箱）</td></tr>
+  <tr><td>失败项（如实记）</td><td><code>x.com</code> 直连与代理均 <code>000</code>（TLS 握手失败）⇒ <b>voice_ready 0</b>；<code>huggingface.co/anton-l</code> 超时 <code>000</code>；<code>billlyuchenlin.github.io</code> <code>404</code>（旧站点，改用 <code>yuchenlin.xyz</code>）</td></tr>
+  <tr><td>环境坑（本轮踩到）</td><td>shell 继承 <code>HTTP(S)_PROXY=127.0.0.1:7897</code> 而代理已挂 ⇒ 带代理一律 <code>000</code>；<code>env -u http_proxy -u https_proxy …</code> 直连 <code>github.com</code> / <code>api.openalex.org</code> = <code>200</code>。🚫 不得据此判「断网」。</td></tr>
+</table>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready · 09:00</h3>
+<ul class="tight">
+  <li><b>voice_ready 0</b>：<code>x.com</code> 本轮 TLS <code>000</code>，无法取原推 ⇒ 不标、不转二手当原文。</li>
+  <li><b>news_ready 0</b>：三篇经典均为方法/数据报告，无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
+</ul>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>216</b> 篇（第五十五轮 +4）｜ 作者网 <b>197</b> 人（X 已核验 104）｜ 作者信累计 <b>86</b> 封（回信率 <b>0/86</b>，0 封到期）｜ voice_ready 1 ｜ news_ready 0<br>
+  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／<b>09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>219</b> 篇（第五十六轮 +3）｜ 作者网 <b>200</b> 人（X 已核验 104）｜ 作者信累计 <b>88</b> 封（回信率 <b>0/88</b>，0 封到期）｜ voice_ready 1 ｜ news_ready 0<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 

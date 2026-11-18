@@ -3738,8 +3738,60 @@
 
 ---
 
+## 217. StarCoder 2 and The Stack v2: The Next Generation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | StarCoder 2 and The Stack v2: The Next Generation |
+| 作者（前 3） | Anton Lozhkov · Raymond Li · Loubna Ben Allal（et al.，作者 50+ 位；Hugging Face · ServiceNow Research · NVIDIA 等，BigCode 协作项目） |
+| 年份 | **2024**（arXiv 首次提交 **2024-02-29**，`cs.SE`，v1 实测） |
+| 会议 / 期刊 | **arXiv 预印本**（PDF 首页 `Under review as submission to TMLR`；正式发表版本本轮**未核验** ⇒ 不写会议名） |
+| 被引数 | **1,095**（OpenAlex `10.48550/arxiv.2402.19173`，查询日 **2026-11-18**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.19173> ｜ arXiv DOI `10.48550/arxiv.2402.19173` |
+| 一句话贡献 | 在 Software Heritage 档案上重建代码语料 **The Stack v2**（覆盖 **619** 种编程语言，含 issue / notebook / 文档，训练集 **900B+ 去重 token、比 StarCoder v1 大 4×**），并用 **3B/7B/15B** 三档模型各训 **3.3–4.3T token**；作者自报 StarCoder2-3B 在多数基准上超过 StarCoderBase-15B，15B 匹敌/超过两倍大的 CodeLlama-34B。 |
+| 与我们工作的关系 | **data（主目标：代码语料的可审计构建）**：这篇把「语料从哪来、许可证怎么筛、按语言怎么去重」写成了可复核流程 ⇒ <b>动作</b>：自有代码语料入库前，按本文口径记录 `来源快照 / 语言清单 / 去重前后 token / 许可证白名单` 四列，缺一列不许进训练集。<br>**pretrain（辅助：故意过训小模型）**：3B 模型训 3.3T+ token（远超 Chinchilla 比例）仍继续涨 ⇒ <b>动作</b>：BaiZe 2B 的 token 预算应按「推理成本优先」重算，不要用 Chinchilla 最优比例直接卡死；对照实验固定 `tokens/param ≈ 1000×` 档。<br>**harness（辅助）**：代码评测只报「高资源语言平均分」会掩盖长尾语言退化 ⇒ <b>动作</b>：评测表按语言分桶，单列长尾桶。<br>**风险**：① 900B+ 是**去重后**统计，和 v1 的「3T 原始」不是同一口径，🚫 不可直接比大小；② 3B 超 15B 的说法绑定其自有评测集与语言分布；③ 许可证过滤会系统性删掉部分代码，引用「数据更多 ⇒ 更好」时须同时报删除了多少。 |
+| 首次收录 | **2026-11-18**（第五十六轮） |
+| 核验状态 | arXiv API `id_list` `200` + `application/atom+xml`（6,760 B）；OpenAlex `200`（1,095）；PDF `200` / 1,114,300 B（`%PDF-`，<5 MB），`pdftotext` 核到 `619 programming languages` / `900B+ unique tokens` / `3B, 7B, and 15B parameters` / `3.3 to 4.3 trillion tokens` / `contact@bigcode-project.org`（全文**无个人邮箱**） |
+
+---
+
+## 218. Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing |
+| 作者（前 3） | Zhangchen Xu · Fengqing Jiang · Radha Poovendran（et al.，共 6 位；University of Washington · Allen Institute for AI） |
+| 年份 | **2024**（PDF 实测 v2 = `2024-10-07`，`cs.CL`；**首次提交日未核到**：arXiv API 本轮 `429` / `SSL_ERROR_SYSCALL 000`，不臆写） |
+| 会议 / 期刊 | **arXiv 预印本**（PDF 页眉 `Preprint`；会议信息本轮未核验） |
+| 被引数 | **353**（OpenAlex `10.48550/arxiv.2406.08464`，查询日 **2026-11-18**；**&lt;500 ⇒ 按「方法论常青」收录**：只用对齐模型的前置模板自举指令，已被后续大量数据合成工作当作基线） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.08464> ｜ arXiv DOI `10.48550/arxiv.2406.08464` |
+| 一句话贡献 | 利用对齐后 LLM 的自回归性质：只喂「用户消息之前的模板」，模型就会自己生成一条用户指令；用 Llama-3-Instruct 合成 **400 万条**指令，再走「生成回复 → 过滤」两步得到 **Magpie-Pro（1M）/ 300K 过滤子集**，作者自报其质量可接近人工对齐数据。 |
+| 与我们工作的关系 | **data（主目标：零人工指令池的合法起点）**：这是「没有标注预算时如何起步」的最省事做法 ⇒ <b>动作</b>：在自有 SFT 数据冷启动时先跑 5 万条 Magpie 式自举，与人写种子集做同 token 对照，判据 = 下游任务分 + 指令多样性（去重后簇数），不看loss。<br>**harness（辅助：过滤器的可复算性）**：本文的过滤（质量 / 去重 / 难度）决定最终 300K 子集，正是我们判分器要复现的部分 ⇒ <b>动作</b>：把过滤规则写成可单测函数，固定随机种子后必须能重建同一子集。<br>**风险**：① 自举出的指令继承教师模型的**风格与盲区**（PDF 明确只对 Llama-3-Instruct 验证），换成自家模型会漂移；② 被引 353 中多数是「拿来当数据」而非「验证方法」，🚫 不可当效果已被独立复现；③ 该做法可能触碰教师模型的使用条款，入库前须法务确认。 |
+| 首次收录 | **2026-11-18**（第五十六轮） |
+| 核验状态 | OpenAlex `200`（353）；PDF `200` / 3,951,723 B（`%PDF-`，<5 MB），`pdftotext` 核到 `generate 4 million instructions` / `1M MAGPIE-Pro` / `300K` / `two filtered datasets` / `Llama-3-Instruct`；⚠️ arXiv API 元数据本轮未取到（`429` / `000`），故**首次提交日留白**，仅记 PDF 版本日期 |
+
+---
+
+## 219. Jamba: A Hybrid Transformer-Mamba Language Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Jamba: A Hybrid Transformer-Mamba Language Model |
+| 作者（前 3） | Opher Lieber · Barak Lenz · Hofit Bata（et al.，共 22 位；AI21 Labs） |
+| 年份 | **2024**（PDF 实测 v2 = `2024-07-03`，`cs.CL`；**首次提交日未核到**：arXiv API 本轮 `429` / `000`，不臆写） |
+| 会议 / 期刊 | **arXiv 预印本**（PDF 未标会议；本轮未核验正式发表） |
+| 被引数 | **789**（OpenAlex `10.48550/arxiv.2403.19887`，查询日 **2026-11-18**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.19887> ｜ arXiv DOI `10.48550/arxiv.2403.19887` |
+| 一句话贡献 | 把 Transformer 层与 Mamba 层按 **1:7** 交错（每 8 层一块），并在部分 MLP 上插入 MoE（**每 2 层一次，16 专家、top-2**），得到 **52B 总参 / 12B 激活**的模型；作者自报在 **256K** 上下文仍保持强结果，且 8bit 权重下可装进**单张 80GB GPU**（>128K 上下文时）。 |
+| 与我们工作的关系 | **zhulong（主目标：架构消融的第三条轴）**：Transformer vs 纯 Mamba vs **混合比例**是当前最能解释「长上下文吞吐 / 显存」差异的对照 ⇒ <b>动作</b>：在 zhulong 的消融表新增一行「attention:Mamba = 1:7 / 1:3 / 1:1」，固定激活参数量与训练 token，只测 32K→256K 的吞吐与掉点。<br>**pretrain（辅助：激活参数口径）**：52B 总参 / 12B 激活说明「参数量」与「每 token 算力」必须分开报 ⇒ <b>动作</b>：所有训练成本表同时列 `total params / active params / tokens`，🚫 只报总参。<br>**风险**：① 单卡 80GB 的前提是 **8bit 权重**且上下文 >128K，不等于训练可单卡；② 1:7 比例是作者在其硬件与目标下的选择，PDF 只说「支持其他配置」，没给完整比例扫描表；③ 摘要级结论未覆盖中文任务，🚫 直接外推到中文长文。 |
+| 首次收录 | **2026-11-18**（第五十六轮） |
+| 核验状态 | OpenAlex `200`（789）；PDF `200` / 1,287,281 B（`%PDF-`，<5 MB），`pdftotext` 核到 `12B active parameters, 52B total available parameters` / `single 80GB GPU` / `l = 8, a : m = 1 : 7` / `MoE applied every e = 2 layers` / `16 experts` / `256K tokens`；⚠️ arXiv API 元数据本轮未取到（`429` / `000`），**首次提交日留白** |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
+> ✅ **第五十六轮（2026-11-18 09:0x）转正 3 条**：StarCoder 2 `2402.19173`（#217，**1,095**，预印本 TMLR under review）· Magpie `2406.08464`（#218，**353**，**&lt;500 按「方法论常青」收**，理由：只用前置模板自举指令，已被后续数据合成工作当基线）· Jamba `2403.19887`（#219，**789**，预印本）⇒ B 轨累计 **219**（覆盖轴：代码语料可审计构建 + 小模型过训 / 零人工指令自举与过滤 / Transformer-Mamba-MoE 混合比例与激活参数口径）。⚠️ **本轮如实记三处未核**：① Magpie / Jamba 的 arXiv `id_list` 本轮 `429`、随后 `SSL_ERROR_SYSCALL 000` ⇒ **首次提交日留白**，只记 PDF 版本日期；② 两篇的会议信息未核；③ StarCoder 2 全文**无个人邮箱**（仅 `contact@bigcode-project.org`）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Qwen3 `2505.09388`（本轮 OpenAlex 实测 **19,693**；PDF 因 SSL `000` 未取到 ⇒ 留待下轮三源补齐）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）；⑤ DBRX `2404.12358` / OLMoE `2409.02060`（ID 已查重未收，被引未实测）。
 > ✅ **第五十五轮（2026-11-18 06:0x）转正 4 条**：Tülu 3 `2411.15124`（#213，**1,670**，预印本技术报告）· DSPy `2310.03714`（#214，**1,261**，预印本，仅 v1）· OpenHands `2407.16741`（#215，**1,050**，ICLR 2025）· SAM 2 `2408.00714`（#216，**5,632**，预印本技术报告）⇒ B 轨累计 **216**（覆盖轴：后训练 SFT→DPO→RLVR 三段配方 / 指标驱动的 prompt 编译 / 外壳即平台（runtime + 事件流）/ 视觉 streaming memory）。四篇均 arXiv `id_list` + OpenAlex + PDF 三源实测；`pdftotext` 逐篇核到关键数字（`>25% and 65%` / `resolve rate of 26%` / `35.5M masks across 50.9K videos` / `Reinforcement Learning with Verifiable Rewards`）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Magpie `2406.08464`（实测 353，<500 ⇒ 需先写明「方法论常青」理由）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）；⑤ StarCoder 2 `2402.19173`（本轮实测 **1,095**，可作 The Stack v2 数据侧补充，下轮优先）。
 > ✅ **第五十四轮（2026-11-18 03:0x）转正 3 条**：VeriGen `2308.00708`（#210，**533**，ACM TODAES / 前身 DATE 2023）· WebShop `2207.01206`（#211，**1,765**，NeurIPS 2023）· ChipNeMo `2311.00176`（#212，**472**，预印本技术报告，**&lt;500 按「本领域权威」收**）⇒ B 轨累计 **212**。⚠️ **本轮先纠了两处历史误记**：① VeriGen 的 PDF 本轮三端点可取（2,636,063 B，`%PDF-`）⇒ 00:00 轮「PDF 不可达 ⇒ 不进表」的暂缓正式解除；② 候选池早前写 WebShop「358」被引，本轮 OpenAlex 实测 **1,765**（`2207.01206`）⇒ 以本轮实测为准，旧数字作废。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Magpie `2406.08464`（本轮实测 **353**，&lt;500 ⇒ 需先写明「方法论常青」理由才收）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）。
 > ✅ **第五十三轮（2026-11-18 00:0x）转正 3 条**：DCLM `2406.11794`（#207，**627**，NeurIPS 2024 D&B）· AdamW `1711.05101`（#208，**34,224**，ICLR 2019）· Prismatic VLMs `2402.07865`（#209，**325**，ICML 2024，**&lt;500 按「方法论常青」收**）⇒ B 轨累计 **209**。⚠️ 本轮**更正一个错误 ID**：VeriGen 不是 `2308.00113`（实测为水印论文 *Three Bricks*），真 ID = `2308.00708`（OpenAlex **531**）；但该文 PDF 三端点均 `000`/`404`（多次重试 + 后台下载未拿到完整文件）⇒ 按三源纪律**不进表**，留 06:00 首选项。
