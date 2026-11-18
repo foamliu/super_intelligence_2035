@@ -1,7 +1,11 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
-> 🔴 **用户令 · 2026-11-17 — Stable 段 S1/S2 等分可行性报告（最高优先）**
+> 🔴 **用户令 · 2026-11-18 — 训练 resume 后吞吐减半，排查原因（最高优先）**
 
+> **用户发现**：训练 resume 后吞吐只有之前的一半（step time 从 ~7.0s 变慢约 2x）。排查为什么训练速度变慢。如果需要，就重新 resume 训练。
+
+> 🔴 **用户令 · 2026-11-17 — Stable 段 S1/S2 等分可行性报告（最高优先）**
+>
 > **用户原话**：「我有点想把 Stable 的 700k 等分成 S1 和 S2，S1 配置不变，S2 中 web:code:math 按 4:4:2 配比，以提升数学、代码、agentic 能力。请 pretrain 和 data 分别写个报告，分析可行性和利弊。」
 
 > **pretrain 报告要求**（data 线另写一份，各写各的）：
@@ -118,6 +122,27 @@
 
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+
+### 🔴 用户令 · 2026-11-18 10:5x（**排查 resume 后训练吞吐腰斩：~600K→~300K tok/s，step 7s→14s**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「你或者安排 pretrain 去排查为什么 pretrain resume 后吞吐大幅下降」
+
+**背景（运维已实测，别再重复测，直接深挖根因）**：训练在 2026-11-18 08:55 意外中断（原因另查，本令聚焦吞吐），10:33 从 iter 244000 resume。恢复后：
+- **每步时间 ~14.0s（历史 ~7.0s，翻倍）**；吞吐 **~300K tok/s（历史峰值 613,992 / 稳态 ~590K，腰斩）**
+- 实测 master 日志 `/tmp/baize_s1_baize2b_master.log`：`Step Time : 14.19s / 14.37s / 13.75s ... GPU utilization: 511 TFLOP/s/GPU`（首步 28.6s 含 NCCL 建树）
+- 日志大量 `NCCL INFO ... via P2P/CUMEM`，且 `.29` 上 node_rank=1 之前有反复重连迹象
+- 8 卡显存 ~75GB（模型已加载正常），GPU util 剧烈波动（5%~100% 交替，非稳态满载）
+
+**立即执行**（按优先级逐一排查，每步留 trace 证据）：
+
+1. **确认 NCCL 跨节点拓扑是否降级**（最可疑）：查 master/worker 日志里跨节点 rank（.29 的 8 个 rank）的通信走的是 `via NET/IB`（高速）还是 `via P2P/SHARP` 之外的慢路径。重点看：`.29` 的 node_rank=1 是否**全部 8 个 rank 都正常加入 DP=16**，还是只恢复了部分（DP 掉档会直接翻倍 step time）。命令：`grep -aE "Connected all trees|via NET|via P2P|rank .*->.*via" /tmp/baize_s1_baize2b_*.log`，统计 `.29` 侧（hostname whag0pgpuap29）rank 数。
+2. **确认 CUDA Graph / 融合优化是否失效**：重启命令里是否丢了 `--enable-cuda-graph` 或 FP8/融合开关（历史 MEMORY 明确「CUDA Graph: OFF」是当前配置，但需确认与断前一致）。对比断前最后一次正常 step time（可从 11-17 的 MEMORY 或历史 master 日志找 ~7.0s 记录）的启动参数。
+3. **确认数据加载是否变慢**：dataloader 是否因 NFS 缓存未预热 / `BAIZE_NUM_WORKERS` / mmap 开关变化导致 GPU 空等数据（util 剧烈波动的典型成因）。查当前 dataloader worker 数与历史是否一致。
+4. **确认是否有评测/其他进程抢资源**：`.29` 上是否有 llama-server / eval 进程在抢占 CPU 或带宽（历史「评测拖吞吐」教训，step>7.4s 即越界）。
+5. **给出结论 + 修复**：定位到具体根因（NCCL 降级 / DP 掉档 / 融合失效 / 数据加载），能修就修（如补回缺失开关、重启对齐参数、清掉抢资源进程），**修完必须实测 step time 回到 ~7s 才能算完成**。若需要重启训练才能恢复，先报运维（附要改的参数 diff），不要擅自重启。
+6. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行给「吞吐降级根因 + 修复动作 + 修复后实测 step time/tok/s」；EXPERIMENTS 记录。保持 `WAITING=0`。
+
+---
 
 ### [运维令] 2026-11-09 10:0x（**每满万整数 ckpt 做 8 集常识评测（limit=100）持续刷新同一报告 · 不得影响训练吞吐**）· 用户直令 · 最高优先
 

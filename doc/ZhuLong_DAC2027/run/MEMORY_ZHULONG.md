@@ -1,12 +1,16 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1251·**🟢 standby·plan v1.5 已交付（v1.5 内容已提交于 commit `e810dc502`——⚠️ 该 commit 是 designflow 自动提交循环 sweep 而成的**混合提交**，含本线 v1.5 §6 同步 + designflow shard C #r750 两线内容；v1.5 改动 = report `report_edafb_icml2027_plan_zh.html` §6 + 本 MEMORY + daily-memories/2026-11-18.md，已 push 至 origin/main）·本 wake 7 判据全通过**。v1.5 = v1.4 + §6.1 标题候选 3→6（+3 情绪机制主线：Affective Gating / Surprise-State-Weapon-Focus / From Arousal to Retrieval·原 3 降级备选·推荐转情绪方向）+ §6.2 贡献 4→5 条（H1-H4→H1-H7 / 8 臂→13 臂 / 删 mock-EDA+Lite 500 改协议白皮书 / RSI+情绪双重边界 / 第 5 条 Formalize 三机制计算映射）+ §6.3 章节大纲 11→12 行全同步（7 假设/13 臂/Full 子集替 Lite 500/协议白皮书替 mock-EDA/§9 标题更新/新增独立 §4.5 Affective-Memory Mechanisms 章节行/§8 Related Work 行合入 affective neuroscience）+ §6.4 图表 Fig2/Table2/Table3 同步 13 臂/H1-H7 + 新增 Fig5-9 情绪机制图表 + Table6 H5-H7 核验。报告 **119150B**>25KB ✅·0 外链（grep=0）✅·0 script ✅·11 h2 ✅·diff 仅在 §6（§0-§5/§7-§9 本体未改）✅·v1.4 判据全过（13 臂/H1-H7/delta表/时间线/附录F BibTeX+G 调研/Plan B/UNKNOWN）✅。**发现并修复**：repo ZHULONG_TASK.md 顶部 v1.5 第三批意见令（commit `5a113ef69` 仅更新任务书·未改报告）·报告 §6 仍停留 v1.2/v1.3 口径·本 wake 执行该 pending 任务。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。infra: loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅·ops relay 活 ✅·**预注册日 2026-11-22 临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1254·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（含 v1.5 §6 同步·已 push origin/main）。本 wake 第四次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链（grep `href="https?://"`=0）+ 0 `<script>` / M0-M8+S1/M3+S1/N1/N2 13 臂 / H1-H7 7 假设 / §4.5 Affective-Memory / Fig5-9 情绪机制图表 / diff vs v1.4 仅在 §6（§0-§5/§7-§9 本体未改）。v1.5 详细流水见 daily-memories/2026-11-18.md（wake#1251）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
-- [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·发现并执行 pending 的 v1.5 §6 同步任务·7 判据全通过·报告 119150B）。
+- [2026-11-18 wake#1254 心跳] standby 第四次复核 v1.5（commit e810dc502）·7 判据全通过·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
+
+- [2026-11-18 wake#1253 心跳] standby 第三次复核 v1.5（commit e810dc502）·7 判据全通过·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 临近）。
+
+- [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·7 判据全通过·报告 119150B）。
 
 - [wake#1250/#1249/#1248 详条已滚出·被 wake#1251 代表] plan v1.4 第十~十二次复核·9 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1250]。
 
