@@ -210,7 +210,7 @@
 1792547194816_zsj47.messages.archive.json					parked		2026-11-05 05:06	mid-conv: stimulus 纠错 (reedchen)
 1793602325758_bp9uf.messages.json					parked		2026-11-05 05:06	root-cause: TOOL_DIR wrong / detect error (e0024852)
 1793684384632_6dmno.messages.json					parked		2026-11-05 05:06	run skill: 执行 SKILLS.md (t0003117)
-1793681040407_u0mwh.messages.json					parked		2026-11-05 05:06	analyze netlist structure doc (t0002614)
+1793681040407_u0mwh.messages.json					parked	EDA-Eval-DesignFlow-HspiceTbStructAnalyze-001	2026-11-19 02:05	cross-shard dup: shard A already delivered EDA-Eval-DesignFlow-HspiceTbStructAnalyze-001 (domain=eda_other) on 2026-11-08; D revert append (r907 false-start)
 1793065763835_y6liq.messages.json					parked		2026-11-05 05:06	dup of u0mwh (t0002614)
 1793184099494_v6u6m.messages.json					parked		2026-11-05 05:06	root-cause: DSPF output/branch + sp command not found (e0024852)
 1793596868413_1comp.messages.json					parked		2026-11-05 05:06	doc: 解析 ZQ Cal 结构 生成 HTML (e0045369)
