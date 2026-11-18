@@ -1,0 +1,24 @@
+[incr-eval 23:03:13] Starting incr_eval_all R2703
+[incr-eval 23:03:13] --- codex ---
+[incr-eval 23:03:13] codex: unevaluated real_patch=1 empty_patch=2
+[incr-eval 23:03:13] codex: merged 1 new patches -> predictions_codex_new_R2703.json
+[incr-eval 23:03:13] codex: EVAL 1 instances -> run_id=verified_full_glm53_codex_incr_R2703
+[incr-eval 23:03:17] codex: eval rc=0
+[incr-eval 23:03:17]   django__django-13109: NO report.json -> infra
+[incr-eval 23:03:17]   django__django-13012: EMPTY PATCH -> failed
+[incr-eval 23:03:17]   django__django-13033: EMPTY PATCH -> failed
+[incr-eval 23:03:17] codex: cumulative n=199 resolved=97 failed=101 infra=1 empty_patch=45 -> eval_glm53_codex.json
+[incr-eval 23:03:17] --- cline-patched ---
+[incr-eval 23:03:17] cline-patched: unevaluated real_patch=0 empty_patch=1
+[incr-eval 23:03:17]   django__django-15930: EMPTY PATCH -> failed
+[incr-eval 23:03:17] cline-patched: cumulative n=384 resolved=275 failed=109 infra=0 empty_patch=15 -> eval_glm53_cline-patched.json
+[incr-eval 23:03:17] --- pi ---
+[incr-eval 23:03:17] pi: unevaluated real_patch=0 empty_patch=2
+[incr-eval 23:03:17]   django__django-12754: EMPTY PATCH -> failed
+[incr-eval 23:03:17]   django__django-12774: EMPTY PATCH -> failed
+[incr-eval 23:03:17] pi: cumulative n=329 resolved=226 failed=102 infra=1 empty_patch=14 -> eval_glm53_pi.json
+[incr-eval 23:03:17] === SUMMARY ===
+[incr-eval 23:03:17] codex: resolved=97 failed=101 infra=1 n=199 (new_real=1 new_empty=2)
+[incr-eval 23:03:17] cline-patched: resolved=275 failed=109 infra=0 n=384 (new_real=0 new_empty=1)
+[incr-eval 23:03:17] pi: resolved=226 failed=102 infra=1 n=329 (new_real=0 new_empty=2)
+[incr-eval 23:03:17] DONE
