@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1242·**🟠 standby·plan v1.2 已交付（commit `9565933b1`='zhulong plan: 附录 D case 计数订正为权威 main.tex:77 口径 (v1.2)'）·第七十五次复核+心跳（本轮=交互式 OpenCode 会话·prompt=ZHULONG_TASK.md 原文·无新指令）**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付 v1、wake#1217 刷新 v1.1、wake#1241 订正 v1.2（附录 D case 计数由 MEMORY 快照 A352/B394/C359/D462 订正为权威 main.tex:77 A363+B395+C460+D466=1684，audit/case 语义分离），经 wake#1168~#1241 七十四次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·ops relay PID118432 活 ✅·repo HEAD=`9565933b1`（本线 v1.2 订正提交）·本线 dirty=0 ✅（benchmark/ 的 MEMORY_B 改动与 designflow 未跟踪文件为造题线在途产物·非本线·未 add）·0 behind origin ✅·无真实 subagent eval（pgrep 假阳性=本 opencode 会话）✅。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令·任务已完成→不重做（硬约束禁覆盖已有报告；v1.2 仅订正过期源数字·未改任何结论/假设/臂表/判据）·不起 eval·仅记本心跳·**预注册日 2026-11-22 临近·待用户显式放行消融实验起跑**）
+WAITING: 0（2026-11-18 wake#1243·**🟠 standby·plan v1.2 已交付（commit `9565933b1`='zhulong plan: 附录 D case 计数订正为权威 main.tex:77 口径 (v1.2)'）·第七十六次复核+心跳（本轮=交互式 OpenCode 会话·prompt=ZHULONG_TASK.md 原文·无新指令）**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付 v1、wake#1217 刷新 v1.1、wake#1241 订正 v1.2（附录 D case 计数由 MEMORY 快照 A352/B394/C359/D462 订正为权威 main.tex:77 A363+B395+C460+D466=1684，audit/case 语义分离），经 wake#1168~#1241 七十四次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·ops relay PID118432 活 ✅·repo HEAD=`9565933b1`（本线 v1.2 订正提交）·本线 dirty=0 ✅（benchmark/ 的 MEMORY_B 改动与 designflow 未跟踪文件为造题线在途产物·非本线·未 add）·0 behind origin ✅·无真实 subagent eval（pgrep 假阳性=本 opencode 会话）✅。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令·任务已完成→不重做（硬约束禁覆盖已有报告；v1.2 仅订正过期源数字·未改任何结论/假设/臂表/判据）·不起 eval·仅记本心跳·**预注册日 2026-11-22 临近·待用户显式放行消融实验起跑**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -27,9 +27,8 @@ WAITING: 0（2026-11-18 wake#1242·**🟠 standby·plan v1.2 已交付（commit 
 - [wake#1241 详条] 见 `daily-memories/2026-11-18.md` §[wake#1241]（plan v1.2 微订正·附录 D case 计数订正为权威 main.tex:77 口径·commit `9565933b1`·交互式 OpenCode 会话）。
 
 - [wake#1239 详条已滚出·2026-11-18 wake#1240 归档] 见 `daily-memories/2026-11-18.md` §[wake#1239 roll-out]（plan v1.1 第七十二次复核·交互式 OpenCode 会话·被 wake#1240 代表）。
-
-- [2026-11-18 wake#1242] 🟠 standby 心跳·plan v1.2 第七十五次复核通过·无待办·**交互式 OpenCode 会话**（prompt=ZHULONG_TASK.md 原文·无新指令）→ 不重做已完成任务（硬约束禁覆盖已有报告）·不起 eval。复核 `reports/report_edafb_icml2027_plan_zh.html`：74356B>25KB ✅·0 script ✅·0 外链 ✅·11 h2 ✅·7 臂 ✅·4 假设 ✅·delta 表+时间线+开源边界表+Plan B 齐全 ✅。infra：loop PID243810 活·https_proxy ✅·ops relay PID118432 活 ✅·无真实 subagent eval（pgrep 假阳性=本 opencode 会话 PID2025485/2025486·parent=loop 243810·已逐 PID 核验）✅。HEAD=`864d92cd6`（他线提交·本线无新提交）·run/reports 无 dirty ✅·0 behind origin ✅。未改 tex·未动 designflow cases·未起进程·未覆盖报告（硬约束全部遵守）。**subagent 消融线仍 done_all·不起任何新臂**。§7 Step C PHASE=done_all→什么都不做退出。**预注册日 2026-11-22 临近**·待用户显式放行消融实验起跑。WAITING=0 standby·仅记本心跳（wake#1240 详条滚出至 daily-memories/2026-11-18.md 保持 ≤40KB）。
-- [wake#1240 详条已滚出·2026-11-18 wake#1242 归档] 见 `daily-memories/2026-11-18.md` §[wake#1240 roll-out]（plan v1.1 第七十三次复核·被 wake#1242 代表）。
+- [wake#1242 详条已滚出·2026-11-18 wake#1243 归档] 见 `daily-memories/2026-11-18.md` §[wake#1242 roll-out]（plan v1.2 第七十五次复核·交互式 OpenCode 会话·被 wake#1243 代表）。
+- [wake#1240 + wake#1239 详条已滚出·2026-11-18 wake#1242 归档] 见 `daily-memories/2026-11-18.md` §[wake#1240/#1239 roll-out]（plan v1.1 第七十二/七十三次复核·被 wake#1242 代表）。
 
 - [wake#1231/#1229/#1228 详条已滚出·2026-11-18 wake#1230~#1232 归档] 见 `daily-memories/2026-11-18.md` §[wake#1231 roll-out]（plan v1.1 第六十一~六十四次复核·结构性+实质核验·被 wake#1230/#1232 代表）。
 
