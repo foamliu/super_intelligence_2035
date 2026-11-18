@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1304·**🟢 plan v1.6 + paper v1.7 均已交付并提交**：v1.6 报告假设内聚化重组（commit `50ed2d283`·122386B·8 判据）+ v1.7 论文正文重写（commit `d12a6dbf9`+`e1bc9c0f3`·正文 6 页·10 判据全通过·0 error 0 undefined·0 作者泄漏·3 情绪机制公式显式·3 核心+7 子假设·预注册声明 2026-11-22·诚实路线·Appendix D 新增·7 新引用）。subagent 消融线仍 done_all·不起臂。infra 健康·/home 25G free·/nasdata 2.5T free·cline ✅·loop PID243810 + ops_relay PID118463 活·预注册日 2026-11-22 距 4 天）
+WAITING: 0（2026-11-18 wake#1305·**🟢 plan v1.6 + paper v1.7 均已交付并提交**：v1.6 报告假设内聚化重组（commit `50ed2d283`·122386B·8 判据）+ v1.7 论文正文重写（commit `d12a6dbf9`+`e1bc9c0f3`·正文 6 页·10 判据全通过·0 error 0 undefined·0 作者泄漏·3 情绪机制公式显式·3 核心+7 子假设·预注册声明 2026-11-22·诚实路线·Appendix D 新增·7 新引用）。subagent 消融线仍 done_all·不起臂。infra 健康·/home 25G free·/nasdata 2.5T free·cline ✅·loop PID243810 + ops_relay PID118463 活·预注册日 2026-11-22 距 4 天）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -9,6 +9,8 @@ WAITING: 0（2026-11-18 wake#1304·**🟢 plan v1.6 + paper v1.7 均已交付并
 - [wake#1298 详条已滚出·被 wake#1299 代表] 见 `daily-memories/2026-11-18.md` §[wake#1298 rolled-out]（plan v1.5 第四十八次复核·HEAD=`18a4d76e1`·/home 23G 稳定记录）。
 
 - [2026-11-18 wake#1304 心跳·opencode 交互式会话] 第五十三次核验·standby·done_all·无新指令·v1.7 已确认提交（`d12a6dbf9`+`e1bc9c0f3`·main.pdf 230611B）·订正本行上方 v1.7「commit 待提交」为已提交·infra 健康（loop PID243810/ops_relay PID118463/cline ✅·/home 35G free·/nasdata 2.5T free）·ops 队列已排空（last_run_id=146）·§7 StepC：done_all→退出。
+
+- [2026-11-18 wake#1305 心跳·loop 自动唤醒 opencode·非交互] 第五十四次核验·standby·done_all·无新指令·任务书无新令（顶部最新仍 v1.7 已归档）·infra 健康（loop PID243810/ops_relay PID118432/cline ✅ @~/.local/bin/cline·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146）·HEAD=`e5f7b9a48`（designflow shard 提交位于 zhulong wake#1304 `b0de32698` 之上·共享工作副本正常）·落后 origin/main 2 commit（designflow 在途·不 stash 他线改动）·working tree 仅有 designflow benchmark 未提交改动（trace_ledger_C/D.tsv + _metadata_backfill 脚本·非本线·不动）·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。
 
 - [2026-11-18 wake#1303 详条·opencode 交互式会话] **plan v1.6 + paper v1.7 双交付**。v1.6（假设内聚化重组）：§4 七条并列假设 → 3 核心+7 子·总-机制-边界三层 + §5.1 对应假设列 + §6 编号同步·报告 122386B·8 判据全通过·commit `50ed2d283`。**v1.7**（放行直接改论文正文）：重写 `EDA-Flow-Bench_ICML2027/`（main.tex + 12 section files + 4 appendix files + references.bbl）·新标题「Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study」·正文 6 页（§1-§9 pages 1-5 + Ethics/Repro page 6·refs+appendix from page 7）·10 判据全通过：①正文 6 页✅ ②0 error 0 undefined✅ ③匿名 0 泄漏✅ ④§4 三情绪机制公式显式（w_write=α·surprise+β·penalty / r_cp=|central|/|total| / score=sim+γ·state_match）✅ ⑤§5 3 核心+7 子假设+三层结构图✅ ⑥§6 预注册声明（PreregDate 2026-11-22 + M0 10.0% + M1-M8/N1-N2 TBD）✅ ⑦§9 诚实路线（H1/H2 证伪写成边界条件）✅ ⑧引用含 ZhuLong-DAC + DATE27 PLACEHOLDER + McGaugh/Loftus/Bower/Itti&Baldi/Park✅ ⑨防伪底线（冻结数字带来源 + 新臂全标 TBD）✅ ⑩Appendix D 新增（情绪机制设计细节 + 调研文献 + 图表占位）✅。删旧 6 section files（2_benchmark/3_harness/4_experiments/5_analysis/6_related/7_conclusion）·新增 8 section files + Appendix D。v1.6 + v1.7 令均已归档至 ZHULONG_TASK_ARCHIVE.md。
 
