@@ -1281,3 +1281,5 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 8luru	jiashengz	hfeg0plg92	386	physical_verify	parked		2026-11-19 02:13	r788 deepread: layout_aether. core=mux/muxi +1-Ellipse rule(实证10vs11). clean但需ship symbol geometry. re-parked REJECT(可未来提取)
 1794897459912_voyt3.messages.json	e0039122	hfeg0plg52	351	physical_verify	case	EDA-Eval-DesignFlow-CalibreLvsRulePtnFix-001	2026-11-19 02:35	
 1790578434343_y6ito					case	EDA-Eval-DesignFlow-SkillTreeDiffAudit-001	2026-11-19 04:42	
+1789298272731_mwqz9	mwxi	hfhds228	58	physical_verify	parked		2026-11-19 04:51	wrong-domain: real task=project-sync rsync/db scripting sysadmin, keywords drc/lvs/aether from cwd not task; not physical_verify/layout
+1793871192062_cd2b8	xinqiaoz	hfhds201	55	physical_verify	case	EDA-Eval-DesignFlow-PdkDummyScaffold-001	2026-11-19 05:07	
