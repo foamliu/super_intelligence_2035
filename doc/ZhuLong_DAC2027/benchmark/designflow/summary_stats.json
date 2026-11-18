@@ -15,13 +15,13 @@
   "generated": "2026-11-19T02:30:00+08:00",
   "hits_total": 37112,
   "hosts": 614,
-  "mc10": 4012,
-  "mc100": 460,
+  "mc10": 2517,
+  "mc100": 281,
   "mc1000": 5,
   "mc15": 0,
-  "mc20": 0,
+  "mc20": 2220,
   "mc25": 2376,
-  "mc30": 3046,
+  "mc30": 1980,
   "mc300": 364,
   "mc5": 4432,
   "mc500": 460,
@@ -93,6 +93,23 @@
     },
     "a_pure_verdict_r760": "EXHAUSTED_DEFINITIVE [SUPERSEDED r765: liveness check缺陷查文件非目录, r764/r765 directory-aware复查推翻]",
     "a_pure_verdict_r761": "CONFIRMED_STRENGTHENED [SUPERSEDED r765: 同r760 liveness缺陷, 14条parked经目录感知复查10/10 ALIVE]",
+    "a_pure_verdict_r765": {
+      "alive_candidates_remarked": [
+        "uyvi5(mc164,已造题StaRunEval-001)",
+        "aqetb(mc85)",
+        "i7d8w(mc143)",
+        "8akpt(mc66)",
+        "najzl(mc44)",
+        "ejpf0(mc48)",
+        "c8v5k(mc54)",
+        "twfqn(mc39,digital)",
+        "u5wma(mc46,digital)"
+      ],
+      "implication": "A-pure pool NOT exhausted; stop-loss under mc>=5 NOT triggered; continue A-pure casemaking from remaining 8 ALIVE candidates",
+      "remarked_round": "r765/r766",
+      "summary": "r764/r765 directory-aware liveness recheck推翻r760/r761 EXHAUSTED_DEFINITIVE/CONFIRMED_STRENGTHENED结论. r760/r761 liveness检查查文件(messages.json file)非目录(sessions/ dir), cline rotation后文件蒸发但目录仍在=会话目录ALIVE. r765复查r761 parked 14条: 10/10真A-pure ALIVE(e0046913 cluster@pkn004 8/8 STA ALIVE: uyvi5 mc164/aqetb mc85/i7d8w mc143/8akpt mc66/najzl mc44/ejpf0 mc48/0arn6 mc20/c8v5k mc54 + e0045144@pkn002 2/2 digital ALIVE: twfqn mc39/u5wma mc46; g7hp7真NOFILE; zpla8实C-domain DRC误标). A-pure池远未枯竭可续造题.",
+      "verdict": "OVERTURNED"
+    },
     "all_shard_mc10": 4012,
     "all_shard_mc30": 3046,
     "all_shard_mc5": 4432,
@@ -107,24 +124,7 @@
     "shard_A_pool_mc10": 3337,
     "shard_A_pool_mc5": 3602,
     "src": "ssh_eda_search_20261118_230537/summary.tsv",
-    "top_next_round_candidates": "NONE - A-pure exhaustion DEFINITIVE on fresh 11-18 data: both A-pure candidates (3p6ld mc79, gnwy5 mc11) fully checked across all hosts, all NOFILE or unreachable. Cline rotation is systematic, not snapshot-staleness.",
-    "a_pure_verdict_r765": {
-      "verdict": "OVERTURNED",
-      "summary": "r764/r765 directory-aware liveness recheck推翻r760/r761 EXHAUSTED_DEFINITIVE/CONFIRMED_STRENGTHENED结论. r760/r761 liveness检查查文件(messages.json file)非目录(sessions/ dir), cline rotation后文件蒸发但目录仍在=会话目录ALIVE. r765复查r761 parked 14条: 10/10真A-pure ALIVE(e0046913 cluster@pkn004 8/8 STA ALIVE: uyvi5 mc164/aqetb mc85/i7d8w mc143/8akpt mc66/najzl mc44/ejpf0 mc48/0arn6 mc20/c8v5k mc54 + e0045144@pkn002 2/2 digital ALIVE: twfqn mc39/u5wma mc46; g7hp7真NOFILE; zpla8实C-domain DRC误标). A-pure池远未枯竭可续造题.",
-      "alive_candidates_remarked": [
-        "uyvi5(mc164,已造题StaRunEval-001)",
-        "aqetb(mc85)",
-        "i7d8w(mc143)",
-        "8akpt(mc66)",
-        "najzl(mc44)",
-        "ejpf0(mc48)",
-        "c8v5k(mc54)",
-        "twfqn(mc39,digital)",
-        "u5wma(mc46,digital)"
-      ],
-      "remarked_round": "r765/r766",
-      "implication": "A-pure pool NOT exhausted; stop-loss under mc>=5 NOT triggered; continue A-pure casemaking from remaining 8 ALIVE candidates"
-    }
+    "top_next_round_candidates": "NONE - A-pure exhaustion DEFINITIVE on fresh 11-18 data: both A-pure candidates (3p6ld mc79, gnwy5 mc11) fully checked across all hosts, all NOFILE or unreachable. Cline rotation is systematic, not snapshot-staleness."
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -214,7 +214,7 @@
     "to": "designflow/summary_1113.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261116_072610/summary.tsv",
-  "prev_sessions": 3791,
+  "prev_sessions": 8051,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
   "scan_rows": 44991,
   "scan_sha256": "(pending)",
@@ -236,7 +236,7 @@
     "shard_A_pool_mc10": 3337,
     "total_rows": 44991
   },
-  "sessions": 8051,
+  "sessions": 3325,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -328,7 +328,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-18T23:52:11+08:00",
+  "updated_at": "2026-11-19 04:22",
   "users_mc10": 614,
   "users_mc100": 182,
   "users_mc30": 401,
