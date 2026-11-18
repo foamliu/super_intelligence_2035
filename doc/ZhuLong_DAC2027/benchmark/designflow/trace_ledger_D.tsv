@@ -85,7 +85,7 @@
 1792215355014_rcx51	boblv	hfeg0pgn145	345	schematic_netlist	case	EDA-Eval-DesignFlow-VwlpDetectMDrive-001	2026-11-03 12:23	
 1792056947936_36yj3.messages.json	thomas1w	hfeg0pkn005	347	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistStructDF-001	2026-11-03 12:56	
 1792389346933_uiykd	t0002470	hfeg0pkn004	379	analog_context	case	EDA-Eval-DesignFlow-DDR5CmdSeqFind-001	2026-11-03 14:36	
-1791963948520_hk622.messages.json	rongtaoy	hfeg0plg99	257	schematic_netlist	case	EDA-Eval-DesignFlow-SPFNetlistCompare-001	2026-11-03 15:03	
+1791963948520_hk622.messages.json	rongtaoy	hfeg0plg99	257	schematic_netlist	parked	EDA-Eval-DesignFlow-SPFNetlistCompare-001	2026-11-18 17:58	r888 audit: case_id FineSimNoRefCktFix-001 actually owned by shard B (cases/B/, commit 2919864a9 r53). D ledger contamination - cleaned. SPF compare deepread (msg[0]) is different task in same trace, viable for future D case but blocked by A r708 cmd_mark REFUSE on session-already-touched
 1792139236507_7jzqb.messages.json	reedchen	hfeg0plg93	200	waveform	case	EDA-Eval-DesignFlow-FineSimTskew-001	2026-11-03 15:46	
 1793078373656_wqhsu.messages.json	xiwang	hfeg0pkn003	289	schematic_netlist	case	EDA-Eval-DesignFlow-ScmosStructFind-001	2026-11-03 16:27	
 1789983785169_qqvzo.messages.json	e0031668	hfeg0pkn003	206	schematic_netlist	parked		2026-11-03 17:14	duplicate task of ErcSetupGen-001 (same user e0031668, same ERC ercSetup.tcl task; delivered from 1dh6s mc389)
@@ -1724,7 +1724,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793947531660_s4fee					parked		2026-11-14 06:06	Aether env startup env-dep
 1794461721254_24dje	dsgao	10.129.2.10	183	waveform	case	EDA-Eval-DesignFlow-GrDecPwrMeasure-001	2026-11-14 06:38	
 1794361270744_y1yqm	e0039120	hfeg0plg99	12	schematic_netlist	case	EDA-Eval-DesignFlow-GuiScriptExplainQA-001	2026-11-17 03:03	r789 re-claim revival candidate (GUI_5csl.py code-explain Q&A, 11-15 mandate revival)
-1794445820477_f4smw	mhyu	hfeahpc502	91	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistCompare3WayQA-001	2026-11-18 17:36	r887 revival-from-parked per 2026-11-15 令§二 Q&A 造-able; netlist-compare Q&A
+1794445820477_f4smw	mhyu	hfeahpc502	91	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistCompare3WayQA-001	2026-11-18 17:48	r887 revival-from-parked per 2026-11-15 令§二 Q&A 造-able; netlist-compare Q&A
 1794447908266_uxnxd	e07435	hfeg0plg55	70	schematic_netlist	parked		2026-11-14 07:28	r638 netlist-analysis Q&A
 1793176301340_bme92	my7li	hfeg0pkn004	10	schematic_netlist	parked		2026-11-14 07:28	r638 dqtool-capability Q&A
 1794460854642_r3xw8	e02141	hfeg0pkn005	88	analog_context	parked		2026-11-14 07:28	r638 TCAD wrong-subdomain Q&A
