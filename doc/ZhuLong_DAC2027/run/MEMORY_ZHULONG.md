@@ -1,12 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1252·**🟢 standby·plan v1.5 已交付并独立复核**：commit `e810dc502`（混合提交·含本线 v1.5 §6 同步 + designflow shard C·已 push origin/main）。本 wake 重新独立核验 7 判据全通过：① §6.1 6 标题（3 情绪机制主线 + 3 备选·推荐转情绪）✅ ② §6.2 5 贡献（H1-H7/13 臂/删 mock-EDA+Lite 500/RSI+情绪双边界/第5条 Formalize 三机制）✅ ③ §6.3 章节大纲 12 行全同步（7 假设/13 臂/Full 子集/协议白皮书/独立 §4.5/§9 标题更新/§8 Related Work 合入 affective neuroscience）✅ ④ §6.4 Fig2/Table2/Table3 同步 13 臂/H1-H7 + 新增 Fig5-9 情绪机制图表 + Table6 ✅ ⑤ 0 外链（grep `href="https?://"`=0）+ 0 `<script>` ✅ ⑥ diff vs v1.4（commit 2c4ed787d）仅在 §6（@@ -605/+605, @@ -647/+658），§0-§5/§7-§9 本体未改 ✅ ⑦ v1.4 判据继续过（119150B>25KB / 11 h2 / 13 臂 / H1-H7 / delta 表 / 时间线 / 附录 F BibTeX + G 调研 / Plan B / UNKNOWN）✅。v1.5 详细流水见 daily-memories/2026-11-18.md（wake#1251）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。infra: loop PID243810 活 ✅·ops relay 活 ✅·**预注册日 2026-11-22 临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1253·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（含 v1.5 §6 同步·已 push origin/main）。本 wake 第三次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链（grep `href="https?://"`=0）+ 0 `<script>` / 13 臂标记 11 处 / H1-H7 标记 9 处 / §4.5 Affective-Memory 4 处 / Fig5-9 情绪机制图表 5 个 / diff vs v1.4 仅在 §6（§0-§5/§7-§9 本体未改）。v1.5 详细流水见 daily-memories/2026-11-18.md（wake#1251）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。**预注册日 2026-11-22 临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
-- [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·发现并执行 pending 的 v1.5 §6 同步任务·7 判据全通过·报告 119150B）。
+- [2026-11-18 wake#1253 心跳] standby 第三次复核 v1.5（commit e810dc502）·7 判据全通过·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 临近）。
+
+- [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·7 判据全通过·报告 119150B）。
 
 - [wake#1250/#1249/#1248 详条已滚出·被 wake#1251 代表] plan v1.4 第十~十二次复核·9 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1250]。
 
