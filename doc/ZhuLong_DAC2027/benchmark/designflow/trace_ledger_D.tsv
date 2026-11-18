@@ -878,7 +878,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1792564023249_i4laj.messages.json					parked		2026-11-06 02:01	inspection query: 检测TESTPIN存在, thin one-shot check not produce-deliverable
 1789714793666_iqotq.messages.json					parked		2026-11-06 02:01	Q&A: 工作路径 + only IO points root-cause, not produce
 1788501825087_b20n2.messages.json					parked		2026-11-06 02:01	software-eng: C++ mainwindow.cpp GUI + aether_launch_dsim skill integration, not shard-D core
-1792042184377_b1xgb.messages.json					parked		2026-11-06 02:01	analysis: compare IDD csv data find optimization, not produce
+1792042184377_b1xgb.messages.json					case	EDA-Eval-DesignFlow-IddTreeAnalyze-001	2026-11-19 03:16	phantom-revival r911: assets+reference built #308 (commit pre-jsonl), jsonl row appended r911 (D.jsonl 489->490), self-verify 15/15 PASS + 4 neg FAIL + degenerate FAIL, k=15 a-o, domain=analog_context, B-grade synthesized A=21rows/3tgt B=27rows/4tgt C anti-hardcode
 1785910754851_j98ua.messages.json					parked		2026-11-06 02:01	skill-scenario: 启动场景 模拟电路优化, not produce
 1791811755077_txxmi.messages.json					parked		2026-11-06 02:01	skill-loading: anasim slash-command, not produce
 1792041709940_x5fd4.messages.json					parked		2026-11-06 02:01	root-cause/debug: fix aether subcircuit pins/ports mismatch sim error, not produce
