@@ -1,8 +1,10 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
+> 🆕 **R2663 · 2026-11-18 10:2x — 巡检+纠偏轮·自检clean(load9.2/224·MemAvail1861GB·0 runaway>8000%CPU·opencode PID4072970 6.7%/1.2GB idle REPL under ssh pts/1 49.8h 未达kill阈值不碰·pretrain cline PID1970440 非本线不碰)·**🔴 纠正R2662误判**：SWE-bench Verified eval **✅COMPLETE**(PENDING_EVAL=0 across 7路·all patch-bearing instances evaluated·0 backlog)——R2662"eval stalled@Nov13-14·~1014题待eval"=**误计**：500−n gap = no-patch/no-output predict attempts(429 quota/timeout)·NOT unevaluated instances·**真瓶颈=predict 2274/3500=65% stalled@gateway 429(quota exhausted)**(remaining: codex361/deepseek325/pi204/cline168/cc146/hermes20/opencode2·无predict进程在跑·受gateway quota制约=infra)·**caveat**: codex(314 quota)&deepseek(106 timeout) SWE-bench predict 早于适配器修复(codex fix Nov17·deepseek fix R988)→数字疑被压低→predict rerun(用修复后适配器)为候选(受quota制约)·留待运维拍板·7way报告(report_harness_glm53_7way_swebench_tb_zh.html)已正确(eval 0 backlog·predict 65% stalled 429·今晨09:55 REGEN)·kimi full500报告routine refresh(11±11行)·全部运维令✅已交付·无新指令·WAITING=0·📦 TASK=26.4KB MEMORY=24.2KB(✅≤32KB)
 
-> 🆕 **R2662 · 2026-11-18 10:0x — 巡检轮·自检clean(load9.3/224·MemAvail1861GB·0 runaway>8000%CPU·0 eval容器进程·opencode PID4072970 6.6%/1.2GB under ssh pts/1 etimes~49h 未达kill阈值不碰)·全部运维令✅已交付(14:5x+10:2x R2661)·**TB-2.1 7路最终(分母89)**:cline47.2/codex28.1/opencode50.6/cc33.7/pi39.3/hermes46.1/deepseek12.4·**SWE-bench Verified predict=500/500全7路完成✅ 但eval stalled@Nov13-14(5天)**:opencode eval498/500·hermes480/500·cc341/500·cline330/500·pi295/500·deepseek175/500·codex142/500→余~1014题待eval(余量:codex358+deepseek325+pi205+cline170+cc159+hermes20+opencode2)·research日报11-18 harness建议4条(①产物存在性判分替代exit-code·②工具provider绑定检查·③结果文件外壳指纹四元组·④代码评测按语言分桶)纳入未来计划·WAITING=0: 无未完成指令·等待运维新指令(或指示是否续推SWE-bench eval)·📦 TASK=26.4KB MEMORY=24.0KB(✅≤32KB)
+
+> 📦 **R2662 · 2026-11-18 10:0x — 巡检轮·自检clean(load9.3/224·MemAvail1861GB·0 runaway>8000%CPU·0 eval容器进程·opencode PID4072970 6.6%/1.2GB under ssh pts/1 etimes~49h 未达kill阈值不碰)·全部运维令✅已交付(14:5x+10:2x R2661)·**TB-2.1 7路最终(分母89)**:cline47.2/codex28.1/opencode50.6/cc33.7/pi39.3/hermes46.1/deepseek12.4·**SWE-bench Verified predict=500/500全7路完成✅ 但eval stalled@Nov13-14(5天)**:opencode eval498/500·hermes480/500·cc341/500·cline330/500·pi295/500·deepseek175/500·codex142/500→余~1014题待eval(余量:codex358+deepseek325+pi205+cline170+cc159+hermes20+opencode2)·research日报11-18 harness建议4条(①产物存在性判分替代exit-code·②工具provider绑定检查·③结果文件外壳指纹四元组·④代码评测按语言分桶)纳入未来计划·WAITING=0: 无未完成指令·等待运维新指令(或指示是否续推SWE-bench eval)·📦 TASK=26.4KB MEMORY=24.0KB(✅≤32KB)
 
 > 📦 R2661 流水已归档 → daily-memories-harness/2026-11-18.md。结论：14:5x(codex适配器fix①②③+89题重跑COMPLETE+merge→codex25/89=28.1%)+10:2x(撤回修正后Pass%·全路infra/synthetic/quota/conn重跑COMPLETE·real_pct=passed/89)均✅已交付·三报告REGEN·fresh audit全7路DONE待重跑=0。需要时再读。
 
@@ -45,11 +47,11 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2661 ✅ 14:5x+10:2x 全部交付·7/7路 DONE(待重跑=0)·codex 25/89=28.1%(从1/89回升✅)·三报告REGEN✅·WAITING=0
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·eval 7/7·双7way报告·codex.py fix①②③✅·audit rate_limit桶+point④✅·"修正后Pass%"撤回✅·7/7路rerun COMPLETE(cline47.2·codex28.1·opencode50.6·cc33.7·pi39.3·hermes46.1·deepseek12.4)·三报告REGEN narrative更新✅·14:5x✅已交付·10:2x✅已交付
-当前动作:     R2661: codex-55 rerun COMPLETE(55/55 done)·fresh audit 7/7路 DONE 待重跑=0·三报告REGEN(tb21_7way+glm53_7way+cline_special)·codex行=25/89=28.1%·narrative全部更新·glm53 status false-positive fix·14:5x+10:2x标记已交付
-下一步:       无未完成指令·等待运维新指令
-阻塞:         无
+PHASE:        R2663 巡检+纠偏·SWE-bench eval✅COMPLETE(0 backlog·R2662"stalled"=误计no-patch)·predict 2274/3500=65% stalled@429·WAITING=0
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE(cline47.2/codex28.1/opencode50.6/cc33.7/pi39.3/hermes46.1/deepseek12.4)·codex.py fix①②③✅·14:5x+10:2x✅已交付·SWE-bench eval✅COMPLETE(7/7路 PENDING_EVAL=0)·7way报告正确(09:55 REGEN)
+当前动作:     R2663: 自检clean·查"SWE-bench eval stalled"→实为COMPLETE(PENDING_EVAL=0·R2662把no-patch predict误计为unevaluated)·真瓶颈=predict 65% stalled@429·纠正MEMORY+快照叙事·kimi full500报告routine refresh
+下一步:       无未完成指令·等待运维新指令(或指示续推SWE-bench predict——受gateway 429 quota制约·codex/deepseek predict早于适配器修复可考虑rerun)
+阻塞:         无(predict stalled系gateway 429 infra·非agent可解)
 ERROR_COUNT:  0
  体积: TASK≈29.7KB / MEMORY≈18.1KB（✅≤32KB）
  真实 Pass% (fresh audit, 分母=89, 全部DONE待重跑=0): cline 42/89=47.2% · codex 25/89=28.1%(从修复前1/89=1.1%回升✅fix①生效·89题重跑COMPLETE+merge) · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · 全部7路待重跑=0
