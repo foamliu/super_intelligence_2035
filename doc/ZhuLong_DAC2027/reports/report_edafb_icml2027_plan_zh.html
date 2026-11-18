@@ -67,8 +67,9 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <header>
   <h1>EDA-Flow-Bench ICML 2027 · 重定位与消融设计计划书</h1>
   <div class="meta">
-    zhulong agent · 2026-11-17 · 唯一交付：<code>reports/report_edafb_icml2027_plan_zh.html</code><br>
+    zhulong agent · 2026-11-17（v1）· 2026-11-18（v1.3 增量补预印本引用）· 唯一交付：<code>reports/report_edafb_icml2027_plan_zh.html</code><br>
     用户令 2026-11-17 22:5x：论文重定位 + 消融实验设计 + 计划书（最高优先）<br>
+    用户令 2026-11-18（交互式会话）：v1.3 增量补丁 — 附录 F 补两篇 zhulong 预印本 BibTeX 引用（ZhuLong-DAC 已上线 + DATE27 PLACEHOLDER）<br>
     单文件自包含 · 0 外链 · 0 CDN · 0 &lt;script&gt; · 全文数字可追溯
   </div>
 </header>
@@ -86,7 +87,11 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
   <li><a href="#s7">§7 实验矩阵与时间线</a></li>
   <li><a href="#s8">§8 风险与 Plan B</a></li>
   <li><a href="#s9">§9 现有资产映射</a></li>
-  <li><a href="#sx">附录：引用清单（路径 + 行号）</a></li>
+  <li><a href="#sx">附录：引用清单（路径 + 行号）</a>
+    <ul>
+      <li><a href="#sf">F. 参考文献（Bibliography · 预印本引用）</a></li>
+    </ul>
+  </li>
 </ul>
 </div>
 
@@ -508,6 +513,11 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <tr><td>Appendix A/B/C</td><td>—</td><td>—</td><td>A: benchmark details；B: full per-arm results + per-domain；C: memory audit logs + harness impl</td></tr>
 </table>
 
+<div class="callout info">
+<b>正文呼应（v1.3 增量 · 脚注式标注）</b>：本计划书 §3 delta 表与 §6.3 章节大纲中多处提及「两篇 zhulong / DATE27 / DAC 前作」，其预印本引用已统一收录至<b>附录 F（Bibliography · 预印本引用）</b>——ZhuLong-DAC 预印本已上线（<code>\cite{liu2026runreadbackrefine}</code>，arXiv:2611.19056），DATE27 预印本预计 2026-12 上线，当前以 <code>\cite{PLACEHOLDER_DATE27_ZHULONG}</code> 占位。本标注为<b>引用指针增量</b>，不改 §0–§9 任何结论 / 假设 / 臂表 / 判据 / 数字。
+<span class="src">来源：用户令 2026-11-18（交互式会话）· 附录 F</span>
+</div>
+
 <h3>§6.4 图表清单（Figure 3-5 + Table 3-5）</h3>
 <table class="figtable">
 <tr><th>编号</th><th>标题</th><th>数据来源</th><th>是否已有</th></tr>
@@ -752,21 +762,62 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <tr><td>用户 2026-11-15 07:2x H_ctx 思路（独立上下文 + 固定小 token 预算）</td><td>ZHULONG_TASK.md 用户裁令节（2026-11-15 07:2x）</td></tr>
 <tr><td>subagent 消融线结果（A0=69.2% / A1=66.7% / A2=53.3%）</td><td>ZHULONG_TASK.md 结案令节</td></tr>
 </table>
+
+<h3 id="sf">F. 参考文献（Bibliography · 预印本引用）</h3>
+
+<p>本节为 <b>v1.3 增量</b>（用户令 2026-11-18 交互式会话下发），在 v1.2 计划书基础上补充两篇 zhulong 预印本的 BibTeX 引用，供论文写作时直接 <code>\cite{}</code>。本节为<b>纯文档增量</b>，不改 §0–§9 任何结论 / 假设 / 臂表 / 判据 / 数字；subagent 消融线仍 <code>done_all</code>，不起任何新臂。
+<span class="src">来源：用户令 2026-11-18（交互式会话）· ZHULONG_TASK.md 顶部「🔴 用户令 · 2026-11-18」节</span></p>
+
+<div class="callout info">
+<b>引用纪律说明</b>：下述两条 BibTeX 条目是<b>用户给定的事实</b>（来源：用户令 2026-11-18 交互式会话），agent 不编造、不改写。其中 ZhuLong-DAC 预印本已上线 arXiv，可直接引用；DATE27 预印本预计 2026-12 初上线，当前以 <code>PLACEHOLDER</code> 占位，论文写作时引用键用 <code>\cite{PLACEHOLDER_DATE27_ZHULONG}</code>，arXiv 编号待定（上线后回填 eprint/archivePrefix/primaryClass/url 字段）。<b>本计划书 0 外链纪律继续生效</b>：下列 BibTeX 中的 <code>url={https://arxiv.org/abs/...}</code> 字段以<b>纯文本</b>呈现（置于 <code>&lt;pre&gt;</code> 块内），<b>不</b>渲染成可点击的超链接（即不含 <code>&lt;a&nbsp;href=…&gt;</code> 形式的外链）；arXiv 编号以文本形式给出。
+</div>
+
+<h4>F.1 ZhuLong-DAC 预印本（已上线，可直接引用）</h4>
+<p>对应本计划书 §3 delta 表与 §6.3 章节大纲中的「DAC / ZhuLong_DAC2027 / 前作 / grounding-gap 框架」引用。引用键：<code>liu2026runreadbackrefine</code>。</p>
+<pre>
+@misc{liu2026runreadbackrefine,
+      title={Run, Read Back, Refine: Observation Fidelity in Execution-Grounded EDA Agents},
+      author={Yang Liu and Shiwei Hou and Xiyuan Chen and Sen Yuan and Shao You and Feifan Chen and Wencheng Li and Shuyang Hu and Emma Xia and Xiaojing Lu and Wenchuan Zhang and Hao Wang and Fan Xu and Yanfeng Li and Hongwen Li and Yiming Zhu},
+      year={2026},
+      eprint={2611.19056},
+      archivePrefix={arXiv},
+      primaryClass={cs.AR},
+      url={https://arxiv.org/abs/2611.19056},
+}
+</pre>
+<p class="small">状态：已上线 arXiv（2611.19056，cs.AR）· 引用键 <code>liu2026runreadbackrefine</code> 可直接用于论文 <code>\cite{}</code>。来源：用户令 2026-11-18（交互式会话）给定。</p>
+
+<h4>F.2 DATE27_Zhulong 预印本（2026-12 初上线，当前 PLACEHOLDER）</h4>
+<p>对应本计划书 §3 delta 表与 §6.3 章节大纲中的「DATE27 / 前作 / 自进化方法骨架 / 三层记忆 + 可靠性门控」引用。引用键：<code>PLACEHOLDER_DATE27_ZHULONG</code>（占位，待上线后回填元数据）。</p>
+<pre>
+@misc{PLACEHOLDER_DATE27_ZHULONG,
+      title={[PLACEHOLDER] ZhuLong-SE: Execution-Grounded Self-Evolving LLM Agent for EDA Scripting (DATE27 preprint, to appear early December 2026)},
+      author={[PLACEHOLDER — DATE27_Zhulong 作者列表]},
+      year={2026},
+      note={预印版 2026-12 上线后回填 eprint/archivePrefix/primaryClass/url；当前 PLACEHOLDER，论文写作时引用键用 \cite{PLACEHOLDER_DATE27_ZHULONG} 占位，arXiv 编号待定},
+}
+</pre>
+<p class="small">状态：PLACEHOLDER · 预印版预计 2026-12 初上线，上线后回填 eprint / archivePrefix / primaryClass / url 四字段并替换 author 占位列表。当前论文写作用 <code>\cite{PLACEHOLDER_DATE27_ZHULONG}</code> 占位。来源：用户令 2026-11-18（交互式会话）给定。</p>
+
+<div class="callout gold">
+<b>与现有附录 A–E 的关系</b>：附录 A–E 是<b>本计划书内部引用清单</b>（路径 + 行号，指向仓库内源文件），用于「全文数字可追溯」自检；本附录 F 是<b>论文写作时的外部 Bibliography</b>（BibTeX 条目，指向 arXiv 预印本），用于论文 References 节。两者互补：A–E 证「本计划书不编造数字」，F 供「论文正式引用两篇前作」。F 节的 BibTeX 是用户给定事实，不需 path:行号 追溯（已在 callout 标注来源为用户令 2026-11-18）。
+</div>
 </section>
 
 <hr>
 <div class="small">
-<b>本计划书自检（判据 6 条）</b>：
+<b>本计划书自检（v1.3 · 判据 7 条）</b>：
 ① 六问全部有答案（§2-§9）✅；
 ② ≥6 臂且含等 token 预算负对照 N1（§5.1，8 臂含 N1/N2 两负对照）✅；
 ③ 每条假设有证伪条件（§4，H1-H4 各有「证伪条件」行）✅；
 ④ 有 delta 表（§3）与时间线（§7.2）✅；
 ⑤ 0 外链 0 script（单文件自包含，仅 inline CSS）✅；
-⑥ 全文数字可追溯（每个数字带 文件路径:行号，附录汇总）✅。
+⑥ 全文数字可追溯（每个数字带 文件路径:行号，附录汇总）✅；
+⑦ <b>v1.3 增量</b>：附录 F 含两条 BibTeX（ZhuLong-DAC 完整 + DATE27 PLACEHOLDER）· 0 真实外链（即不含 <code>&lt;a&nbsp;href=…&gt;</code> 形式；BibTeX url 字段以纯文本呈现于 <code>&lt;pre&gt;</code> 块）· §0–§9 结论/假设/臂表/判据/数字未改（diff 只在附录 F + §6.3 脚注式标注）✅。
 <br><br>
-<b>体量</b>：本文件 &gt; 25KB ✅ · <b>交付</b>：reports/report_edafb_icml2027_plan_zh.html · <b>commit 前缀</b>：zhulong plan: EDA-Flow-Bench ICML2027 重定位与消融设计 v1 · <b>只 add 本线文件</b>（勿 -A）。
+<b>体量</b>：本文件 &gt; 25KB ✅（v1.2 = 74356B，v1.3 增量只会更大）· <b>交付</b>：reports/report_edafb_icml2027_plan_zh.html · <b>commit 前缀</b>：zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.3 — 补两篇 zhulong 预印本 BibTeX 引用 · <b>只 add 本线文件</b>（勿 -A）。
 <br><br>
-MEMORY_ZHULONG.md 只加一行心跳（保持 ≤40 KB）。
+MEMORY_ZHULONG.md 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
 </div>
 
 </div>
