@@ -4132,3 +4132,81 @@ commit `pretrain 项目:`。✅ 已完成：commit e1c6be4 pushed, 28 files（�
 > - 本轮先做这一件；做完回到训练监控（`WAITING: 1`）。若你在过程中发现**明显更值得做的问题**（如数据 bug、指标异常），可以直接追，但要在 MEMORY 记清「为什么优先于原任务」。
 >
 > **归档原因**：§4.7 task 被 21:2x 更正撤销（评测数字不进论文）；11-11 用户令将关注点转向四层评测拿结果。仅保留「§4.6 进度句需更新为实测值」为仍有效任务。
+
+---
+
+## 归档 2026-11-19 — 11-18 吞吐诊断四令（均已完成）
+
+> **归档原因**：2026-11-18 吞吐腰斩事件已闭环。根因 = `.12` data 线 MegaMath 分词进程（`pc2_fast.py` PID 2350098，8925% CPU 占 89 核）抢占训练 rank/dataloader/NCCL 通信线程 CPU。运维已直接干预重启训练自 iter_244000，data 线释放 CPU 后 step time 从 ~13.3s 回落至 ~7.0s，确认 CPU 争抢是根因。截至 2026-11-19 06:36 训练健康 iter=252000 step~7.0s/1030TFLOP。S1/S2 报告已交付 `run/reports/report_s1s2_split_pretrain.md`(36.7KB)。
+
+### 🔴 用户令 · 2026-11-18 14:2x（**告知：运维已直接干预重启训练；你接管后续监控与吞吐诊断**）· 用户直令 · 最高优先 · ✅ 已完成
+
+> **用户原话**：「给 pretrain 下指令，告知运维直接干预重起训练的事儿」
+
+**告知内容（运维已做的动作，你需知晓并接管，不要重复做）**：
+
+1. **运维已直接干预重启**：因你此前 cline 反复卡死在「verify」循环、迟迟不落地重启动作，运维（我）已亲手执行了：
+   - 撤销了你加在 `baize-llm/scripts/train.sh` 里未经证实的 `TORCH_COMPILE_DISABLE=1`（该行是伪根因，断前根本没开 compile，纯靠 TE FP8 kernel 跑 613K；你加的这行反而有害）；
+   - 杀掉旧训练进程，用**断前原配置**（`train.sh s1`，无任何改动）从 iter_244000 重启了训练。
+2. **当前训练状态**：已 resume 自 iter 244000，NCCL 建树成功，step time 稳定在 **~13.3s（~546 TFLOP）**，**仍未回到断前的 7s/1050**。
+3. **运维已定位的新嫌疑（你要接手核实）**：`.12` 上 data 线的 MegaMath 分词进程（`pc2_fast.py` PID 2350098，8925% CPU 占 89 核）把整机 CPU 打满，抢占了训练 rank/dataloader/NCCL 通信线程的 CPU，高度疑似是 step 13s 的根因。**运维已另向 data 线下达「清理僵尸 + 分机降载」指令**，data 处理后会释放 CPU。
+
+**你接下来要做（接管，不重复重启）**：
+1. 不要再擅自重启训练、不要再改 train.sh（配置已回到断前原样，别再动）。
+2. 持续监控 step time：**等 data 线释放 CPU 后，观察 step time 是否从 13.3s 回落到 ~7s**。若回落，坐实「CPU 争抢是根因」，本事件闭环。
+3. 若 data 清理 CPU 后 step time 仍 13s，则继续排查（但先等 CPU 结论，别并行瞎猜）。
+4. 心跳记录当前 step time / tok/s 实测值；保持 `WAITING=0`。
+
+---
+
+### 🔴 用户令 · 2026-11-18 13:1x（**立即执行：根因已定 NVLS，现在就杀训练并从 iter 244000 重启 resume，无需再报批**）· 用户直令 · 最高优先 · ✅ 已完成
+
+> **用户原话（对前令的澄清+批复）**：「是谁给 pretrain 下"不擅自重启"的要求的？我明明说了"找到根因后可重启"的？」→ 运维更正：**没有任何前置条件，根因已定位（.12 NVLS 绑定失败 CUDA error 802，瞬态竞态），立即执行重启，不要再「报运维待批」**。
+
+**立即执行（本轮第一优先，马上做）：**
+
+1. **杀训练进程**：kill 当前 2 节点训练（.12 node_rank=0 + .29 node_rank=1 的 `torchrun`/`pretrain_launcher` 及其全部 rank 子进程）。只杀 pretrain 相关，🚫 不碰 data/vision/harness/posttrain 及其他线。
+2. **从 iter_0244000 resume**（`latest_checkpointed_iteration.txt`=244000；撞见 iter_0246000 目录也不要误用，它未完整）。
+3. **LR warmup 与原来完全一致**（`--lr-warmup-iters 2000` 等，不改任何 warmup 参数）。启动参数、精度配置（FP8 tensorwise）都与断前一致，不做任何额外改动。
+4. **重启后验收（必做）**：实测 step time 回落到 ~7s、TFLOP 回 ~1050、吞吐 ~590-613K tok/s。若 NVLS 仍报 `CUDA error 802`，按 #2429 的备选方案 `NCCL_NVLS_ENABLE=0` 在两节点统一禁用（此时整体降速，但仍比 NVLS 单边失败强，先恢复再议）。
+5. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行写「已重启 resume 自 iter 244000 + 重启后 NVLS 状态（available/failed）+ 实测 step time/tok·s⁻¹」；重启前先 commit 记录现场。保持 `WAITING=0`。
+
+---
+
+### 🔴 用户令 · 2026-11-18 11:1x（**授权：找到根因后可杀训练进程，从最新 ckpt 重新 resume；LR warmup 机制不变**）· 用户直令 · 最高优先 · ✅ 已完成
+
+> **用户原话**：「授权 pretrain 在找到根因后，可以杀死当前训练进程，重新从最新检查点 resume。resume 时 LR warmup 机制跟原来一样即可。」
+
+**授权范围（叠加在 10:5x 排查令之上）**：
+
+1. **先定位再动手**：继续完成 10:5x 令的根因定位（当前头号嫌疑 = torchinductor 编译缓存失效 → fallback kernel 致 2x 减速；需先确证是「重编译中」还是「缓存缺失需重建」）。**只有确证根因、且判断「重启+resume 能恢复吞吐」时，才执行下面的杀训练动作**。
+2. **杀训练进程 + resume 的权限**（本次已获用户授权，可执行）：
+   - 确认根因后，**允许 kill 当前 2 节点训练进程**（.12 node_rank=0 + .29 node_rank=1 的 torchrun 及其 rank 子进程；只杀 `pretrain_launcher`/`torchrun` 相关，🚫 不碰 data/vision/harness/posttrain 及其他线进程）。
+   - **从最新 checkpoint resume**：最新完整 ckpt = **iter_0244000**（`latest_checkpointed_iteration.txt`=244000；注意 iter_0246000 目录存在但 latest 未认它，resume 以 latest_train_state.pt 为准，即 244000，别误用未完整的 246000）。
+   - **LR warmup 机制与原来保持完全一致**：沿用 `--lr-warmup-iters 2000` 等既有启动参数，不做任何 warmup 相关的改动（这点用户明确要求「跟原来一样即可」）。
+3. **重启前先清编译缓存**（如果根因是 inductor 缓存）：启动前处理 `/tmp/torchinductor_*` 缓存，避免 resume 后再次命中坏缓存或重复编译。若根因不是编译缓存，按实际根因处置，不必强行清。
+4. **重启后验收**：实测 step time 回到 ~7s、吞吐 ~590-613K tok/s 才算完成；若 resume 后仍 14s，说明未命中真根因，继续排查，别再反复重启。
+5. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行写「根因 + 已重启 resume 自 iter 244000 + 重启后实测 step time/tok·s⁻¹」；重启动作前先 `git add`/commit 记录现场。保持 `WAITING=0`。
+
+---
+
+### 🔴 用户令 · 2026-11-18 10:5x（**排查 resume 后训练吞吐腰斩：~600K→~300K tok/s，step 7s→14s**）· 用户直令 · 最高优先 · ✅ 已完成
+
+> **用户原话**：「你或者安排 pretrain 去排查为什么 pretrain resume 后吞吐大幅下降」
+
+**背景（运维已实测，别再重复测，直接深挖根因）**：训练在 2026-11-18 08:55 意外中断（原因另查，本令聚焦吞吐），10:33 从 iter 244000 resume。恢复后：
+- **每步时间 ~14.0s（历史 ~7.0s，翻倍）**；吞吐 **~300K tok/s（历史峰值 613,992 / 稳态 ~590K，腰斩）**
+- 实测 master 日志 `/tmp/baize_s1_baize2b_master.log`：`Step Time : 14.19s / 14.37s / 13.75s ... GPU utilization: 511 TFLOP/s/GPU`（首步 28.6s 含 NCCL 建树）
+- 日志大量 `NCCL INFO ... via P2P/CUMEM`，且 `.29` 上 node_rank=1 之前有反复重连迹象
+- 8 卡显存 ~75GB（模型已加载正常），GPU util 剧烈波动（5%~100% 交替，非稳态满载）
+
+**立即执行**（按优先级逐一排查，每步留 trace 证据）：
+
+1. **确认 NCCL 跨节点拓扑是否降级**（最可疑）：查 master/worker 日志里跨节点 rank（.29 的 8 个 rank）的通信走的是 `via NET/IB`（高速）还是 `via P2P/SHARP` 之外的慢路径。重点看：`.29` 的 node_rank=1 是否**全部 8 个 rank 都正常加入 DP=16**，还是只恢复了部分（DP 掉档会直接翻倍 step time）。命令：`grep -aE "Connected all trees|via NET|via P2P|rank .*->.*via" /tmp/baize_s1_baize2b_*.log`，统计 `.29` 侧（hostname whag0pgpuap29）rank 数。
+2. **确认 CUDA Graph / 融合优化是否失效**：重启命令里是否丢了 `--enable-cuda-graph` 或 FP8/融合开关（历史 MEMORY 明确「CUDA Graph: OFF」是当前配置，但需确认与断前一致）。对比断前最后一次正常 step time（可从 11-17 的 MEMORY 或历史 master 日志找 ~7.0s 记录）的启动参数。
+3. **确认数据加载是否变慢**：dataloader 是否因 NFS 缓存未预热 / `BAIZE_NUM_WORKERS` / mmap 开关变化导致 GPU 空等数据（util 剧烈波动的典型成因）。查当前 dataloader worker 数与历史是否一致。
+4. **确认是否有评测/其他进程抢资源**：`.29` 上是否有 llama-server / eval 进程在抢占 CPU 或带宽（历史「评测拖吞吐」教训，step>7.4s 即越界）。
+5. **给出结论 + 修复**：定位到具体根因（NCCL 降级 / DP 掉档 / 融合失效 / 数据加载），能修就修（如补回缺失开关、重启对齐参数、清掉抢资源进程），**修完必须实测 step time 回到 ~7s 才能算完成**。若需要重启训练才能恢复，先报运维（附要改的参数 diff），不要擅自重启。
+6. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行给「吞吐降级根因 + 修复动作 + 修复后实测 step time/tok/s」；EXPERIMENTS 记录。保持 `WAITING=0`。
+
+> **归档原因**：吞吐腰斩事件已闭环。根因 = `.12` CPU 争抢（data 线 MegaMath 分词 8925% CPU）。运维直接干预重启训练自 iter_244000，data 线释放 CPU 后 step time 回落至 ~7.0s。2026-11-19 06:36 确认训练健康 iter=252000/700000 step~7.0s/1030TFLOP/0NaN/0skip。
