@@ -3303,6 +3303,58 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TrtfMeasDeckGen-001",
+   "arm": "V0",
+   "k_conditions": 19,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TrtfMeasDeckGen-001",
+   "arm": "V1",
+   "k_conditions": 19,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TrtfMeasDeckGen-001",
+   "arm": "V2",
+   "k_conditions": 19,
+   "pi_seconds": 275.7,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-TrtfMeasDeckGen-001/V2/outputs/submit.zip",
+   "n_zip_members": 4
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-VamRecoCellReplace-001",
+   "arm": "V0",
+   "k_conditions": 24,
+   "pi_seconds": 136.6,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "PASS",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-VamRecoCellReplace-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
   }
  ]
 }
