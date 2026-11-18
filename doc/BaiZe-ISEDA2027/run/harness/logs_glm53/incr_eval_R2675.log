@@ -1,0 +1,52 @@
+[incr-eval 13:59:17] Starting incr_eval_all R2675
+[incr-eval 13:59:17] --- cline-patched ---
+[incr-eval 13:59:17] cline-patched: unevaluated real_patch=2 empty_patch=0
+[incr-eval 13:59:17] cline-patched: merged 2 new patches -> predictions_cline-patched_new_R2675.json
+[incr-eval 13:59:17] cline-patched: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2675
+[incr-eval 14:00:13] cline-patched: eval rc=0
+[incr-eval 14:00:13]   django__django-12858: RESOLVED
+[incr-eval 14:00:13]   django__django-12965: FAILED
+[incr-eval 14:00:13] cline-patched: cumulative n=344 resolved=254 failed=88 infra=2 empty_patch=4 -> eval_glm53_cline-patched.json
+[incr-eval 14:00:13] --- hermes ---
+[incr-eval 14:00:13] hermes: unevaluated real_patch=1 empty_patch=2
+[incr-eval 14:00:13] hermes: merged 1 new patches -> predictions_hermes_new_R2675.json
+[incr-eval 14:00:13] hermes: EVAL 1 instances -> run_id=verified_full_glm53_hermes_incr_R2675
+[incr-eval 14:00:42] hermes: eval rc=0
+[incr-eval 14:00:42]   sympy__sympy-16792: RESOLVED
+[incr-eval 14:00:42]   sphinx-doc__sphinx-9229: EMPTY PATCH -> failed
+[incr-eval 14:00:42]   sympy__sympy-13031: EMPTY PATCH -> failed
+[incr-eval 14:00:42] hermes: cumulative n=491 resolved=440 failed=49 infra=2 empty_patch=6 -> eval_glm53_hermes.json
+[incr-eval 14:00:42] --- claude-code ---
+[incr-eval 14:00:42] claude-code: unevaluated real_patch=1 empty_patch=0
+[incr-eval 14:00:42] claude-code: merged 1 new patches -> predictions_claude-code_new_R2675.json
+[incr-eval 14:00:42] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2675
+[incr-eval 14:01:11] claude-code: eval rc=0
+[incr-eval 14:01:11]   django__django-11400: FAILED
+[incr-eval 14:01:11] claude-code: cumulative n=369 resolved=289 failed=76 infra=4 empty_patch=17 -> eval_glm53_claude-code.json
+[incr-eval 14:01:11] --- codex ---
+[incr-eval 14:01:11] codex: unevaluated real_patch=0 empty_patch=3
+[incr-eval 14:01:11]   astropy__astropy-14182: EMPTY PATCH -> failed
+[incr-eval 14:01:11]   astropy__astropy-14508: EMPTY PATCH -> failed
+[incr-eval 14:01:11]   astropy__astropy-14995: EMPTY PATCH -> failed
+[incr-eval 14:01:11] codex: cumulative n=153 resolved=91 failed=62 infra=0 empty_patch=9 -> eval_glm53_codex.json
+[incr-eval 14:01:11] --- pi ---
+[incr-eval 14:01:11] pi: unevaluated real_patch=0 empty_patch=1
+[incr-eval 14:01:11]   django__django-11141: EMPTY PATCH -> failed
+[incr-eval 14:01:11] pi: cumulative n=300 resolved=216 failed=81 infra=3 empty_patch=4 -> eval_glm53_pi.json
+[incr-eval 14:01:11] --- opencode ---
+[incr-eval 14:01:11] opencode: unevaluated real_patch=0 empty_patch=0
+[incr-eval 14:01:11] opencode: nothing to do
+[incr-eval 14:01:11] --- deepseek-harness ---
+[incr-eval 14:01:11] deepseek-harness: unevaluated real_patch=0 empty_patch=3
+[incr-eval 14:01:11]   django__django-10914: EMPTY PATCH -> failed
+[incr-eval 14:01:11]   django__django-11138: EMPTY PATCH -> failed
+[incr-eval 14:01:11]   django__django-11141: EMPTY PATCH -> failed
+[incr-eval 14:01:11] deepseek-harness: cumulative n=180 resolved=143 failed=37 infra=0 empty_patch=3 -> eval_glm53_deepseek-harness.json
+[incr-eval 14:01:11] === SUMMARY ===
+[incr-eval 14:01:11] cline-patched: resolved=254 failed=88 infra=2 n=344 (new_real=2 new_empty=0)
+[incr-eval 14:01:11] hermes: resolved=440 failed=49 infra=2 n=491 (new_real=1 new_empty=2)
+[incr-eval 14:01:11] claude-code: resolved=289 failed=76 infra=4 n=369 (new_real=1 new_empty=0)
+[incr-eval 14:01:11] codex: resolved=91 failed=62 infra=0 n=153 (new_real=0 new_empty=3)
+[incr-eval 14:01:11] pi: resolved=216 failed=81 infra=3 n=300 (new_real=0 new_empty=1)
+[incr-eval 14:01:11] deepseek-harness: resolved=143 failed=37 infra=0 n=180 (new_real=0 new_empty=3)
+[incr-eval 14:01:11] DONE
