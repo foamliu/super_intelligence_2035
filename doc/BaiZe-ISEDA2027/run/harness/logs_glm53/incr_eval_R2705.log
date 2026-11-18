@@ -1,0 +1,12 @@
+[incr-eval 23:31:08] Starting incr_eval_all R2705
+[incr-eval 23:31:08] --- deepseek-harness ---
+[incr-eval 23:31:08] deepseek-harness: unevaluated real_patch=1 empty_patch=0
+[incr-eval 23:31:08] deepseek-harness: merged 1 new patches -> predictions_deepseek-harness_new_R2705.json
+[incr-eval 23:31:08] deepseek-harness: EVAL 1 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2705
+[incr-eval 23:31:13] deepseek-harness: eval rc=0
+[incr-eval 23:31:13]   django__django-12774: NO report.json -> infra
+[incr-eval 23:31:13] deepseek-harness: cumulative n=205 resolved=152 failed=52 infra=1 empty_patch=14 -> eval_glm53_deepseek-harness.json
+[incr-eval 23:31:13] --- pi ---
+[incr-eval 23:31:13] pi: unevaluated real_patch=1 empty_patch=1
+[incr-eval 23:31:13] pi: merged 1 new patches -> predictions_pi_new_R2705.json
+[incr-eval 23:31:13] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2705
