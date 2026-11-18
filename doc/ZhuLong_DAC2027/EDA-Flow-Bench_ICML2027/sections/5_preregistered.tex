@@ -1,0 +1,80 @@
+\section{Pre-Registered Hypotheses and Ablation Design}
+\label{sec:preregistered}
+
+We pre-register \textbf{3 core hypotheses} (H1 functional / H2 mechanistic / H3 boundary) decomposed into \textbf{7 sub-hypotheses}, organized in a \emph{total--mechanism--boundary} three-layer structure. All hypotheses, arms, and criteria are frozen before data collection on \PreregDate.
+
+\subsection{Three-Layer Structure}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Layer} & \textbf{Core Hyp.} & \textbf{Sub-Hypotheses} \\
+\midrule
+L1 Total (functional) & H1: memory+RSI $\to$ transferable gain & H1a, H1b, H1c \\
+L2 Mechanism (affective) & H2: gain from 3 affective mechanisms & H2a, H2b, H2c \\
+L3 Boundary (appendix) & H3: single-agent $\geq$ multi-agent & H3 (independent) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{H1 (total).} Governed long-term memory + RSI yields transferable Pass@1 gains on long-chain EDA flow. \emph{Falsification (disjunctive):} any of H1a/H1b/H1c falsified $\Rightarrow$ H1 falsified. If H1 fails $\to$ write as ``boundary conditions of RSI in long-chain flow.''
+
+\textbf{H2 (mechanism).} H1's gain arises from the three affective-memory mechanisms (\S\ref{sec:affective}), not from prompt lengthening (N1 excludes). \emph{Falsification (conjunctive):} all of H2a/H2b/H2c falsified $\Rightarrow$ H2 falsified; 1--2 mechanisms surviving $\to$ directional ``partial mechanisms effective'' result. If H2 fails $\to$ write as ``boundary conditions of affective heuristics in symbolic orchestration.''
+
+\textbf{H3 (boundary, appendix).} The prior finding (single-agent $\geq$ multi-agent; autonomous-spawn $\geq$ user-custom) replicates in the flow setting. \emph{Independent} of H1/H2. Both outcomes publishable: replication $\to$ consolidates; non-replication $\to$ bounds the single-agent advantage to short chains.
+
+\subsection{Sub-Hypotheses (compact)}
+
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lXX@{}}
+\toprule
+\textbf{Sub} & \textbf{Claim (one line)} & \textbf{Falsification (one line)} \\
+\midrule
+H1a & Memory lifts long-chain Pass@1 (M3 vs M0, $\geq$3pp) & M3$-$M0$<$1pp or McNemar $p>0.05$ or reversal \\
+H1b & RSI gain grows monotonically with chain length ($\Delta_{\text{long}}\geq\Delta_{\text{mid}}\geq\Delta_{\text{short}}$, $\geq$3pp) & monotonicity broken or $\Delta_{\text{long}}-\Delta_{\text{short}}$ CI contains 0 \\
+H1c & Memory is necessary for RSI (no-memory RSI gain $\leq$0; interaction $\geq$2pp) & S1$>$M0+2pp or interaction CI contains 0 \\
+\midrule
+H2a & Surprise-gated writing $>$ uniform (M5 vs M2, $\geq$3pp, equal token) & M5$-$M2$<$1pp or reversal \\
+H2b & Weapon-focus compression $>$ full write (M7 vs M2, $\geq$2pp, memory $\leq$0.6$\times$) & M7$<$M2$-$2pp or memory $\geq$0.8$\times$M2 \\
+H2c & State-aware retrieval $>$ state-agnostic (M6 vs M3, $\geq$3pp on fail-streak subset) & fail-streak M6$-$M3$<$1pp or harm in smooth subset \\
+\midrule
+H3 & Single-agent $\geq$ autonomous-spawn in flow (nested in M3+S1) & autonomous-spawn $>$ single-agent +3pp (McNemar $p<0.05$) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Statistics.} McNemar (paired, direction-consistent) + paired bootstrap 95\% CI (1000 resamples); $\alpha=0.05$ (Bonferroni $\alpha=0.05/3=0.0167$ for the 3-hypothesis family). Minimum matrix: 120 tasks/arm (top-120 by chain length from the Full set); ideal: 500 tasks $\times$ 3 repeats.
+
+\subsection{13-Arm Ablation}
+\label{sec:arms}
+
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabularx}{\columnwidth}{@{}lllX@{}}
+\toprule
+\textbf{Arm} & \textbf{Hyp} & \textbf{Variable} & \textbf{Criteria} \\
+\midrule
+M0 & H1a & no memory (baseline) & anchor \MzeroPass{} \\
+M1 & H1a & static SOP memory & M1$\geq$M0+2pp \\
+M2 & H1a & auto memory, no gating & M2$\geq$M0+2pp \\
+M3 & H1a & auto memory + reliability gating & \textbf{M3$\geq$M0+3pp} \\
+S1 & H1c & RSI, no memory & S1$\leq$M0 (no-memory RSI null) \\
+M3+S1 & H1b,c & memory + RSI & interaction $\geq$2pp; $\Delta_{\text{long}}\geq\Delta_{\text{mid}}\geq\Delta_{\text{short}}$ \\
+\midrule
+N1 & H1a & killer: equal-token random padding & M3$\geq$N1+3pp (excludes ``prompt longer'') \\
+N2 & H2$^-$ & error/irrelevant memory & N2$\leq$M0; M3$\geq$N2+5pp \\
+M4 & H1+H2 & transfer: train-domain write, target-domain read & $\geq$M0+2pp; leak rate $=0$ \\
+\midrule
+M5 & H2a & surprise-gated writing ($w=\alpha\cdot$surprise$+\beta\cdot$penalty) & M5$\geq$M2+3pp; token $\Delta\leq$10\% \\
+M6 & H2c & state-aware retrieval (score=sim$+\gamma\cdot$state\_match) & fail-streak M6$\geq$M3+3pp \\
+M7 & H2b & weapon-focus compression ($r_{\text{cp}}$) & M7$\geq$M2+2pp; memory $\leq$0.6$\times$ \\
+M8 & H2$^-$ & negative-valence bias (always retrieve pitfalls) & M8$\leq$M6 (over-defense harmful) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+All arms use the same \texttt{check.py}, same $\geq$8 assertions, same 2400s timeout, same backbone (DeepSeek-V4-Pro). Results for M1--M8, N1--N2 are \TBD (to be evaluated post pre-registration); M0 is anchored at \MzeroPass{} from the frozen snapshot.

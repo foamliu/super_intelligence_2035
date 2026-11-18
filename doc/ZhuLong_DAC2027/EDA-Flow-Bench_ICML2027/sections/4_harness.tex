@@ -1,0 +1,35 @@
+\section{Harness with Memory and Self-Improvement}
+\label{sec:harness}
+
+\subsection{Three-Layer Memory (L0/L1/L2)}
+\label{sec:memory-arch}
+
+We extend the three-layer memory architecture from our prior script-layer work \cite{liu2026runreadbackrefine} to the flow setting. \textbf{L0} (working memory): the current trace's context window. \textbf{L1} (session memory): distilled lessons from the current run (error $\rightarrow$ fix mappings, tool-sequence templates), with reliability gating---ground-truth anchoring (a binary validator must cover self-reported success), disconfirmation filtering (2 refutations $\rightarrow$ evict), 5-round unconfirmed demotion, and held-out gated evolution (regress $>5$pp $\rightarrow$ rollback). \textbf{L2} (cross-session skill library): durable, versioned skills indexed by abstraction/reusability/actionability/faithfulness, with anti-leakage retrieval (names-only injection, docstring generalization, problem-side embedding) to prevent cross-task answer copying.
+
+\subsection{Affective-Memory Mechanisms: From Biology to Computation}
+\label{sec:affective}
+
+The L1/L2 architecture above is \emph{functional}: it asks ``does memory help?'' but not ``\emph{which} computational mechanism brings the gain?'' We introduce three mechanisms inspired by cognitive-neuroscience principles of emotional memory, each giving a \emph{computable} mapping that can be ablated with a mechanism-level negative control (equal-token budget, mechanism off).
+
+\textbf{Mechanism 1: Surprise/Penalty-Gated Writing.} Humans do not log every event uniformly; emotionally arousing events---unexpected failures or breakthroughs---are preferentially consolidated via amygdala--hippocampus interaction \cite{mcgaugh2004}. We map this to a \emph{write-gating weight}:
+\begin{equation}
+\label{eq:write-gate}
+w_{\text{write}}(e) = \alpha \cdot \text{surprise}(e) + \beta \cdot \text{penalty}(e),
+\end{equation}
+where $\text{surprise}(e) = \text{KL}(p_{\text{posterior}} \| p_{\text{prior}})$ is the Bayesian surprise of event $e$ relative to the memory bank's prior \cite{ittibaldi2009}, and $\text{penalty}(e)$ is the sunk cost (tool calls / tokens consumed before a mid-chain crash). The agent writes preferentially to high-$w_{\text{write}}$ events; $\alpha,\beta$ are calibrated by ablation (M5 vs.\ M2 uniform sampling), with total memory budget held equal to control for ``just remembering more.''
+
+\textbf{Mechanism 2: Weapon-Focus Compression.} Under high arousal, the brain consolidates \emph{central} details (the threatening stimulus) at the expense of \emph{peripheral} details \cite{loftus1987}. We map this to a compression ratio:
+\begin{equation}
+\label{eq:weapon-focus}
+r_{\text{cp}} = \frac{|\text{central tokens}|}{|\text{total tokens}|},
+\end{equation}
+where \emph{central} = error stack trace + root-cause causal chain, and \emph{peripheral} = intermediate tool-call logs. When surprise exceeds a threshold (same trigger as M5), the agent writes only central content into L1/L2, stripping peripheral noise. This predicts: smaller memory $\wedge$ equal-or-better Pass@1.
+
+\textbf{Mechanism 3: State-Aware Retrieval.} Mood-congruent and state-dependent recall \cite{bower1981} predict that an agent in a ``failing streak'' state should preferentially retrieve defensive pitfall-avoidance lessons, while a ``smooth progress'' state should retrieve success templates. We map this to a retrieval score:
+\begin{equation}
+\label{eq:state-retrieval}
+\text{score}(q, m) = \text{sim}(q, m) + \gamma \cdot \text{state\_match}(\text{state}(q), \text{state}(m)),
+\end{equation}
+where $\text{state} = (\text{recent-}N\text{-step failure rate}, \text{current tool domain}, \text{chain-stage})$ and $\gamma$ is calibrated by ablation (M6 vs.\ M3 state-agnostic retrieval, same memory content).
+
+Each mechanism has a \emph{mechanism-level negative control}: turn the mechanism off while holding the token budget equal, isolating ``the mechanism helps'' from ``more context helps.'' This is stricter than the functional-level control (M3 vs.\ M0) and directly addresses the reviewer objection that memory gains are just prompt-lengthening. Full mechanism derivations, biological-evidence citations, and the AI-affective-memory literature positioning (Generative Agents \cite{park2023}, EM-LLM, PsychoAgent) are in Appendix~\ref{sec:affective-appendix}.

@@ -1,0 +1,10 @@
+\section{Task Modality and Benchmark (Carrier)}
+\label{sec:benchmark}
+
+\bench{} is a benchmark of \textbf{\Ntasks{} tasks} across \textbf{13 EDA domains}---from schematic/netlist to SPICE simulation, physical verification, and digital synthesis---each derived from \emph{real coding-agent traces} of IC design engineers in a production environment. We use \bench{} as a \emph{carrier} for falsifiable cognition claims, not as the contribution itself.
+
+\textbf{Design-flow contract.} Each task requires the agent to produce \texttt{submit.zip} by orchestrating remote EDA tools through an MCP bridge, scored against $\geq 8$ executable assertions with a \texttt{PreToolUse} hook that prevents answer leakage (reference/ and check.py never enter the workdir). The contract deliberately does not specify language or host---the agent must discover the right tool chain. Detailed benchmark construction is in Appendix~\ref{sec:benchmark-details}.
+
+\textbf{Evaluation subset.} Experiments use a Full-set subset (top-120 by grounding depth / chain length, internally evaluated, not released). A frozen 696-run snapshot (2026-11-09; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s timeout, 8 workers) provides the M0 baseline anchor: \MzeroPass{} Pass@1 (62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT).
+
+\textbf{Open-source boundary (v1.4 narrowing).} We release a \emph{protocol white-paper} (harness protocol + criteria + desensitized task specifications) and an \emph{NDA-controlled review package} for reviewers, but do \textbf{not} release executable Lite-set assets or a mock-EDA mode. The falsifiability of our claims does not depend on releasing proprietary EDA tool licenses: the protocol and criteria are sufficient for an independent party to re-derive an equivalent benchmark on open-source EDA tools (Yosys/OpenROAD/Magic) and test the same hypotheses (\S\ref{sec:reproducibility}).

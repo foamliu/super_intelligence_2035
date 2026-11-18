@@ -1,0 +1,43 @@
+\section{Affective-Memory Mechanism Design Details}
+\label{sec:affective-appendix}
+
+This appendix gives full derivations of the three affective-memory mechanisms introduced in \S\ref{sec:affective}, the cognitive-neuroscience evidence, and the AI-affective-memory literature positioning. All citations were verified via the research.cimi\_search service (8 calls); BibTeX entries are in \texttt{main.bbl}.
+
+\subsection{Mechanism 1: Surprise/Penalty-Gated Writing}
+
+\textbf{Biological evidence.} Emotional arousal---regardless of valence---enhances memory consolidation via the amygdala--hippocampus interaction: adrenal epinephrine/cortisol $\rightarrow$ amygdala norepinephrine $\rightarrow$ hippocampal LTP \cite{mcgaugh2004}. Richter-Levin \& Akirav (2003) describe ``emotional tagging'' of salient events.
+
+\textbf{Computational mapping.} The write-gating weight (Eq.~\ref{eq:write-gate}) uses Bayesian surprise $\text{surprise}(e) = \text{KL}(p_{\text{posterior}} \| p_{\text{prior}})$ as the prediction-error signal \cite{ittibaldi2009}, and penalty as the sunk cost of a mid-chain failure (tool calls / tokens consumed before the crash). The agent writes an event $e$ to L1/L2 with priority $\propto w_{\text{write}}(e)$, subject to a total token budget held equal to the M2 uniform-sampling baseline. Calibrating $\alpha,\beta$: M5 sweeps $(\alpha,\beta) \in [0,1]^2$ on the transfer target domain; the Pass@1 iso-contour identifies the operating point. \textbf{Falsification (H2a):} M5 $-$ M2 $<$ 1pp or direction reversal $\Rightarrow$ surprise-gating has no advantage over uniform sampling at equal token budget.
+
+\subsection{Mechanism 2: Weapon-Focus Compression}
+
+\textbf{Biological evidence.} Under high arousal, the brain consolidates \emph{central} details (the threat) at the expense of \emph{peripheral} details---the ``weapon-focus effect'' \cite{loftus1987}; Easterbrook (1959) attentional narrowing; Mather \& Sutherland (2011) arousal-biased competition.
+
+\textbf{Computational mapping.} The compression ratio $r_{\text{cp}} = |\text{central tokens}|/|\text{total tokens}|$ (Eq.~\ref{eq:weapon-focus}) is triggered when surprise exceeds the same threshold as M5. \emph{Central} = error stack trace + root-cause causal chain (extracted by a root-cause abstraction step); \emph{peripheral} = intermediate tool-call logs. M7 writes only central content; M2 writes everything. \textbf{Falsification (H2b):} M7 $<$ M2 $-$ 2pp (compression lost critical info) or M7 memory $\geq$ 0.8$\times$M2 (compression ineffective) $\Rightarrow$ weapon-focus compression is harmful or inert in EDA flow.
+
+\subsection{Mechanism 3: State-Aware Retrieval}
+
+\textbf{Biological evidence.} Bower (1981) Network Theory of Affect: mood-congruent recall (matching valence) and state-dependent recall (matching encoding/retrieval state) \cite{bower1981}; Eich et al.\ (1994) show stronger effects under self-generated events.
+
+\textbf{Computational mapping.} The retrieval score (Eq.~\ref{eq:state-retrieval}) adds a state-match term to semantic similarity: $\text{state} = (\text{recent-}N\text{-step failure rate}, \text{current tool domain}, \text{chain stage})$. An agent in a fail-streak retrieves pitfall-avoidance memories; in smooth progress, it retrieves success templates. M6 uses state-aware retrieval on M5-sourced memory (controlling the write side); M3 uses state-agnostic (sim-only) retrieval. \textbf{Falsification (H2c):} fail-streak subset M6 $-$ M3 $<$ 1pp or reversal, or smooth-progress subset M6 $<$ M3 $-$ 2pp (state-awareness harms in good conditions) $\Rightarrow$ H2c falsified.
+
+\subsection{AI-Affective-Memory Literature Positioning}
+
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Generative Agents} \cite{park2023}: importance-score-filtered writes---a functional precursor to H2a, but without a predictive-error formulation or pre-registered falsification.
+    \item \textbf{EM-LLM} (arXiv:2407.09450): segments events using Bayesian surprise---shares the surprise signal but targets episodic segmentation, not write-gating for tool orchestration.
+    \item \textbf{PsychoAgent} (arXiv:2608.07438): retrieves by affect + conflict---a functional precursor to H2c, but without state-dependent encoding or mechanism-level negative controls.
+    \item \textbf{Somatic-marker re-injection} (arXiv:2605.08611): re-injects emotion vectors---orthogonal to our write-gate/compression/retrieval decomposition.
+\end{itemize}
+
+Our contribution: \emph{first pre-registered, falsifiable test} of these three bio-inspired mechanisms on real long-chain EDA flow, with mechanism-level negative controls (equal-token, mechanism-off) rather than post-hoc gain reports.
+
+\subsection{Placeholder Figures (post pre-registration)}
+
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item Figure A1: $\alpha/\beta$ calibration iso-contour (M5 sweep, verifies H2a).
+    \item Figure A2: $r_{\text{cp}}$ vs.\ Pass@1 scatter (M7 vs.\ M2, verifies H2b).
+    \item Figure A3: state\_match hit distribution, fail-streak vs.\ smooth (M6, verifies H2c).
+    \item Figure A4: M4 transfer leak-rate audit (abstract cognition vs.\ answer-fragment).
+\end{itemize}
+All figures are \TBD{} pending post-pre-registration evaluation.

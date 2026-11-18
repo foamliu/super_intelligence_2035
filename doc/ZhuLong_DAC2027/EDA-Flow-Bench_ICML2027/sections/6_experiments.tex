@@ -1,0 +1,55 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\textbf{Pre-registration statement.} This paper pre-registers 3 core hypotheses (H1--H3) and 7 sub-hypotheses (H1a--c, H2a--c, H3) before data collection. The pre-registration date is \PreregDate. Results for the M0 baseline are available from a frozen 696-run snapshot (\MzeroPass{} Pass@1, 62/620 decided runs; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s timeout, 8 workers, 2026-11-09). All other arms (M1--M8, N1--N2) are to be evaluated post pre-registration. Negative results will be reported as publishable boundary conditions on RSI and affective-memory mechanisms in long-chain EDA orchestration.
+
+\textbf{M0 baseline anchor.} Table~\ref{tab:m0-baseline} reports the frozen snapshot that anchors M0. The 7.1$\times$ domain gap (pnr\_signoff 20.8\% vs.\ physical\_verify/layout\_aether 2.9\%) and the failure-class split (no-output 21.0\%, semantic 62.8\%, contract 0.3\%, UNKNOWN 7.0\%) are descriptive of the baseline; they motivate the memory/RSI hypotheses but are \emph{not} used to pre-claim any arm's result.
+
+\begin{table}[ht]
+\centering
+\caption{M0 baseline (frozen 696-run snapshot, 2026-11-09). Pass\% = PASS/(PASS+FAIL). Full per-domain table in Appendix~\ref{sec:additional-results}.}
+\label{tab:m0-baseline}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Metric} & \textbf{Count} & \textbf{Rate} \\
+\midrule
+PASS & 62 & --- \\
+FAIL & 558 & --- \\
+ERROR & 70 & --- \\
+ABSENT & 6 & --- \\
+\midrule
+Pass@1 (decided) & 62/620 & \textbf{10.0\%} \\
+no-output / aborted & 146/696 & 21.0\% \\
+semantic / partial & 437/696 & 62.8\% \\
+contract / format & 2/696 & 0.3\% \\
+UNKNOWN & 49/696 & 7.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{H1/H2/H3 criteria-check framework.} Each sub-hypothesis's pass/fail is determined by the pre-registered threshold (\S\ref{sec:preregistered}). Table~\ref{tab:criteria-check} gives the evaluation framework with results \TBD.
+
+\begin{table}[ht]
+\centering
+\caption{Pre-registered criteria check (results \TBD{} post pre-registration).}
+\label{tab:criteria-check}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}llXcc@{}}
+\toprule
+\textbf{Hyp} & \textbf{Arm} & \textbf{Test} & \textbf{Est.} & \textbf{Verdict} \\
+\midrule
+H1a & M3 vs M0 & $\Delta$Pass@1 $\geq$3pp & \TBD & \TBD \\
+H1a & M3 vs N1 & exclude prompt-lengthening & \TBD & \TBD \\
+H1b & M3+S1 stratified & monotonic $\Delta$ & \TBD & \TBD \\
+H1c & 2$\times$2 factorial & interaction $\geq$2pp & \TBD & \TBD \\
+H2a & M5 vs M2 & surprise-gate $>$ uniform & \TBD & \TBD \\
+H2b & M7 vs M2 & compress $>$ full & \TBD & \TBD \\
+H2c & M6 vs M3 & state-aware $>$ agnostic & \TBD & \TBD \\
+H3 & single vs spawn & single $\geq$ spawn & \TBD & \TBD \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Reused 696-run assets.} The frozen snapshot provides M0 directly. For arms requiring stratification (H1b), we re-use the trace-length distribution from 47 instrumented pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. No new evaluation is run before \PreregDate.
