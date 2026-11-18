@@ -2913,6 +2913,97 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PwrNoiseDeckExplain-001",
+   "arm": "V0",
+   "k_conditions": 61,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PwrNoiseDeckExplain-001",
+   "arm": "V1",
+   "k_conditions": 61,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PwrNoiseDeckExplain-001",
+   "arm": "V2",
+   "k_conditions": 61,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SaNPsimDiag-001",
+   "arm": "V0",
+   "k_conditions": 18,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SaNPsimDiag-001",
+   "arm": "V1",
+   "k_conditions": 18,
+   "pi_seconds": 276.6,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "[c] missing keys: {'verdict', 'warnings', 'simulator', 'fixes', 'dc_status', 'root_cause', 'mode', 'transient_status', 'fatal_errors'}",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-SaNPsimDiag-001/V1/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SaNPsimDiag-001",
+   "arm": "V2",
+   "k_conditions": 18,
+   "pi_seconds": 138.6,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "[c] missing keys: {'mode', 'transient_status', 'warnings', 'dc_status', 'fatal_errors', 'verdict', 'fixes', 'simulator', 'root_cause'}",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-SaNPsimDiag-001/V2/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SimResultDirExplain-001",
+   "arm": "V0",
+   "k_conditions": 76,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
