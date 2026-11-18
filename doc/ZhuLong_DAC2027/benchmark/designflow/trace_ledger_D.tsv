@@ -1453,7 +1453,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793602049673_w4596	hswang	hfeg0plg94	64	analog_context	parked		2026-11-11 16:03	misclaimed wrong session (w4596=gokuguo not hswang); re-claim skipped, will not use
 1791529572460_sao7s	yanxvwei	hfeg0plg99	72	waveform	parked		2026-11-11 16:03	task-family dup of ShiftIntervalReport-001 (same yanxvwei + same compare_wave_new.pl/find_best_shift); #515 peek-reject
 1793760248797_9sga3	hswang	hfeg0plg94	58	analog_context	case	EDA-Eval-DesignFlow-SpfRccShieldDiff-001	2026-11-11 16:34	
-1792579582434_9g6vn	mengfeiz	hfeg0plg74	10	waveform	case	EDA-Eval-DesignFlow-IddMeasPostProcess-001	2026-11-11 17:33	
+1792579582434_9g6vn	mengfeiz	hfeg0plg74	10	waveform	case	EDA-Eval-DesignFlow-IddMeasPostProcess-001	2026-11-19 03:07	phantom revival r910: built #518 (2026-11-11) self-verify 12/12 PASS + 4 neg FAIL but jsonl append missed; r910 revival补齐 append D.jsonl 488->489; domain=waveform l1_subgrade=L1-realrun-python; B-grade synthesized CSV reframe; cross-shard dup check 0/4 clean
 1794226612818_s08eb	rhyanw	hfeg0plg76	33	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceUndefParamScan-001	2026-11-11 18:20	
 1793261282500_4fq1p	t0002224	hfeg0pkn004	347	schematic_netlist	case	EDA-Eval-DesignFlow-ClosureDeckBuilder-001	2026-11-11 18:52	
 1793171759141_p33gv	scarle	hfeg0pkn002	15	analog_context	case	EDA-Eval-DesignFlow-LeakageCellPvtAudit-001	2026-11-11 19:32	
