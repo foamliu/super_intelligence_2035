@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **R2661 · 2026-11-18 09:4x — ✅ 14:5x+10:2x 全部交付轮·自检clean(load28/224·MemAvail1025GB·0 runaway>8000%·0 codex rerun进程(all gone since ~07:51))·codex-55第三轮重跑COMPLETE(55/55 done·5 chunks:12+12+12+12+7·last activity 07:51)·**fresh audit 全部7路 DONE 待重跑=0**:cline42/89=47.2%·**codex25/89=28.1%**(从修复前1/89=1.1%回升✅fix①生效)·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%·三报告REGEN(tb21_7way 24KB+glm53_7way 17.7KB+cline_special 14.2KB)·narrative全部更新(无stale 19/89/重跑进行中/第三轮重跑中)·codex行=25/89=28.1% 重跑COMPLETE✅·glm53 codex status false-positive fix(exclude cline agent process from running check·agent args contain task book text with path+markers)·codex.py fix①②③✅·audit④✅·「修正后Pass%」撤回✅·real_pct=passed/89✅·**14:5x(修复codex适配器假低分+重跑)✅已交付**·**10:2x(纠正归因口径·未真跑题全部重跑)✅已交付**·WAITING=0**: 无未完成指令·14:5x+10:2x均标记已交付·等待运维新指令
+> 🆕 **R2662 · 2026-11-18 10:0x — 巡检轮·自检clean(load9.3/224·MemAvail1861GB·0 runaway>8000%CPU·0 eval容器进程·opencode PID4072970 6.6%/1.2GB under ssh pts/1 etimes~49h 未达kill阈值不碰)·全部运维令✅已交付(14:5x+10:2x R2661)·**TB-2.1 7路最终(分母89)**:cline47.2/codex28.1/opencode50.6/cc33.7/pi39.3/hermes46.1/deepseek12.4·**SWE-bench Verified predict=500/500全7路完成✅ 但eval stalled@Nov13-14(5天)**:opencode eval498/500·hermes480/500·cc341/500·cline330/500·pi295/500·deepseek175/500·codex142/500→余~1014题待eval(余量:codex358+deepseek325+pi205+cline170+cc159+hermes20+opencode2)·research日报11-18 harness建议4条(①产物存在性判分替代exit-code·②工具provider绑定检查·③结果文件外壳指纹四元组·④代码评测按语言分桶)纳入未来计划·WAITING=0: 无未完成指令·等待运维新指令(或指示是否续推SWE-bench eval)·📦 TASK=26.4KB MEMORY=24.0KB(✅≤32KB)
+
+> 📦 R2661 流水已归档 → daily-memories-harness/2026-11-18.md。结论：14:5x(codex适配器fix①②③+89题重跑COMPLETE+merge→codex25/89=28.1%)+10:2x(撤回修正后Pass%·全路infra/synthetic/quota/conn重跑COMPLETE·real_pct=passed/89)均✅已交付·三报告REGEN·fresh audit全7路DONE待重跑=0。需要时再读。
 
 > 📦 R2658-R2660 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮×3：codex-55 rerun监控·fresh audit·stale叙事修复·companion alive等待codex-55完成）。需要时再读。
 
