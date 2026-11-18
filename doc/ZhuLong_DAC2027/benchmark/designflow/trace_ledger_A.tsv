@@ -519,7 +519,7 @@
 1793611777735_q9ulk	ruisongs	hfeg0pfn087	31	verification	case	EDA-Eval-DesignFlow-XrunTypeerrDiagnose-001	2026-11-17 22:44	r699 revival: xrun TYPEERR bit-select string-index diagnose, A档 trace-faithful
 1793250981130_kq81c	thqu	hfeg0pkn099	31	digital	parked		2026-11-14 11:11	r506 REJECT host 10.129.2.99 ssh connection timed out unreachable infra-block
 1792459025453_8o316	max7c	hfeg0pkn004	13	digital	parked		2026-11-14 11:11	r506 REJECT usage Q&A '如何执行这个脚本'
-1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	18	digital	parked		2026-11-14 11:55	r509 doc-gen Q&A: summarize perl script acc_auto_connect.pl functionality+validation+common-issues. rtl:43;verilog:30 keyword假阳, user明示'总结'非produce-task
+1794398653895_gl3jy.messages.json	e0045144	hfeg0pkn005	18	digital	case	EDA-Eval-DesignFlow-AccAutoConnectSumm-001	2026-11-18 09:21	r720 case landed: analysis-Q&A doc-summary produce-task, digital, k=18; parked 11-14 revived per 11-15 intent
 1792717840232_bx87p.messages.json	adaml	hfeg0pkn002	18	eda_other	parked		2026-11-14 11:55	r509 usage Q&A: check python packages for data-analysis/plotting. rtl:34 keyword假阳, env-inspection非produce-task
 1794394549939_ia08o	xy1zhang	hfeg0pgn145	927	verification	case	EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	2026-11-16 21:03	r645 C-A debug-Q&A compare_tasks.sv dup-assign + xrun TRZDGOC root-cause, k=15 | r663-merged-dup-notes: r509 debug Q&A: analyze xrun.log sim premature-exit cause. verilog:927 dominant但user明示'分析退出原因'非produce-task
 1791266472578_d7u53.messages.json	adminai	hfeg0pkn004	29	eda_other	parked		2026-11-14 12:39	r512 peek: ObsidianVault 运维项目 scaffolding + mwxi 账号可见 file-perm, infra/doc-gen non-EDA, rtl kw from workspace
