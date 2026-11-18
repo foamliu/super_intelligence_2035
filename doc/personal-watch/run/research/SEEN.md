@@ -5693,3 +5693,6 @@
 | 2026-11-18 | 2611.21407 | Harness Leverage Across Model Size: A Ladder of Five Local Agent Harnesses from 0.75B to 4.7B | cs.AI | 收录 |
 | 2026-11-18 | 2611.21457 | Out of Sight, Into Memory: Compact Visual Latents Retain Local Evidence in Ultra-High-Resolution Remote Sensing | cs.CV | 收录 |
 | 2026-11-18 | 2611.21538 | Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle | cs.LG | 收录 |
+| 2026-11-19 | 2611.23035 | Storing the Gemma 4 K=V Cache Once: Exact Global-KV Memory Savings in a Paged Serving Engine with Unchanged Attention Kernels | cs.LG | 收录 |
+| 2026-11-19 | 2611.23197 | Structure--Residual Inductive Biases for Language Model Pretraining | cs.CL | 收录 |
+| 2026-11-19 | 2611.22777 | CrossEnv: Synthesizing Verifiable Cross-Environment Tasks for Long-Horizon Agent Training | cs.AI | 收录 |

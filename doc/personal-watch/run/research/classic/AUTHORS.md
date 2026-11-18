@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-18 21:0x）**：作者 **212** 人（编号最大 **212**）· X 已核验 **106** · 已发信 **91** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-19 00:1x）**：作者 **215** 人（编号最大 **215**）· X 已核验 **106** · 已发信 **93** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十一轮增量（2026-11-19 00:1x）**：作者网 212 → **215**（#213 Kushagra Bainsla / #214 Hai Huang / #215 Kewei Tu 屠可伟，依次来自本轮 A 轨 `2611.23035` / `2611.23197` / `2611.23026`）；已发信 91 → **93**（#92 / #93，均 `SENT OK 00:10:13`）；X 已核验 **106 不变**（`x.com` 直连与代理均 `000` ⇒ 不猜 handle，voice_ready 0）。三人邮箱均为**论文 PDF 首页明文（地址级别 C）**；#213 / #215 的论文为 2026-11-17 新提交，地址即现行，但**仍按下限口径记录**，不写成 A/B。
 >
 > **第六十轮增量（2026-11-18 21:0x）**：作者网 209 → **212**（#210 Michael Tschannen / #211 Stella Biderman / #212 Hailey Schoelkopf，依次来自本轮 B 轨 #230 SigLIP 2 / #231 Pythia）；已发信 **91 不变**（今日 12/12 已满 ⇒ 只建档不发信）；X 已核验 104 → **106**（`@mtschannen`：profile `200` + bio `Research Scientist @GoogleDeepMind` + 单推页 `og:title` = `Michael Tschannen (@mtschannen) on X`；`@BlancheMinerva`：profile `200` + bio 含 `@AiEleuther` + 单推页 `og:title` = `Stella Biderman (@BlancheMinerva) on X`；`x.com/haileyschoelkopf` **404** ⇒ 未找到 X，不猜）；三人均 **待跟踪** —— 邮箱仅见于论文 PDF 首页（2023 / 2025 年地址），按令**发信前须先核现行主页**。
 >
@@ -3050,6 +3052,46 @@
 | X 账号 | **未找到**（`x.com/haileyschoelkopf` 本轮 **`404`**；🚫 不猜近似 handle） |
 | 状态 | **待跟踪**（只建档；无已核实现行邮箱 + 无 X ⇒ 不发信） |
 | 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：**训练套件的可复现性**（checkpoint 序列 / 数据顺序 / 去重版本）是 harness 与 data 两条线的共同底座，她同时是「评测套件怎么设计才可复现」的实践者。 |
+### 213. Kushagra Bainsla
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kushagra Bainsla（英语/印度姓名 ⇒ 英文信 ≤200 词） |
+| 机构 | **San José State University**（单作者论文一作，A 轨 `2611.23035`） |
+| 代表论文 | **Storing the Gemma 4 K=V Cache Once**（`2611.23035`，2026-11-17） |
+| 邮箱 | **`kushagra.bainsla@sjsu.edu`**（来源：**论文 PDF 第 1 页明文**，`pdftotext` 实测；**地址级别 C**；`sjsu.edu/people/kushagra.bainsla/` 本轮 `404` ⇒ 无机构人员页可核） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（本轮 `x.com` 直连与代理均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（第 92 封，2026-11-19 00:10:13，英文 175 词） |
+| 备注 | `语言=英文(判据=非中/日/韩姓名族属 + 美国高校)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**用模型结构换服务内存**的精确工程（Eq. (4) 640 值行、two-view read、bit-identical 对账），可回填我们的长上下文部署预算。 |
+
+### 214. Hai Huang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hai Huang（华人姓名 ⇒ 若发信应用中文；本轮**不发**） |
+| 机构 | **Palona AI**（一作，A 轨 `2611.23197`） |
+| 代表论文 | **Structure–Residual Inductive Biases for Language Model Pretraining**（`2611.23197`，2026-11-17） |
+| 邮箱 | **未找到**（PDF 首页未给个人邮箱；主页 `haihuang-ml.github.io` 本轮 `404`） |
+| 主页 | GitHub <https://github.com/haihuang-ml>（仓库 `structure-residual` 可访问） |
+| X 账号 | **未找到**（X 不可达） |
+| 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 不发信） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 需机构确认；本轮未发)`。价值点：BBC / CC 的**深度偏好相反**与 1B 数据脚本公开，可当我们的小规模探针。 |
+
+### 215. Kewei Tu 屠可伟
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kewei Tu 屠可伟（中文信 ≤300 字） |
+| 机构 | **上海科技大学** 信息科学与技术学院（通讯作者 †，A 轨 `2611.23026`） |
+| 代表论文 | **TPHC: Improving Hyper-Connections with Tensor-Parallel Grouped Updates**（`2611.23026`，2026-11-17） |
+| 邮箱 | **`tukw@shanghaitech.edu.cn`**（来源：**论文 PDF 第 1 页作者块明文**，`pdftotext` 实测；**地址级别 C**；本人页 `faculty.sist.shanghaitech.edu.cn/faculty/tukw/` `000`、`keweitu.github.io` `404`） |
+| 主页 | **未找到可访问页** |
+| X 账号 | **未找到**（X 不可达） |
+| 状态 | **已发信**（第 93 封，2026-11-19 00:10:13，中文 200 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**残差流扩展的写回多样性**（TP 分片部分输出）+ 训练时间口径（4 流 +9%、4→16 流 +19%），可直接指导 2B 级预训练的结构试验。 |
+
+
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

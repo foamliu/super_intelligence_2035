@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-19（3/5 · 00:00 早报） · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.75; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:12px; font-size:13px; opacity:.9; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:18px; }
+  .card h2 { margin:0 0 10px; font-size:18px; color:var(--primary); line-height:1.5; }
+  .card .no { display:inline-block; background:var(--primary); color:#fff; border-radius:6px; padding:1px 9px;
+              font-size:13px; margin-right:8px; vertical-align:2px; }
+  .kv { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  .kv th, .kv td { border-top:1px solid var(--border); padding:7px 8px; text-align:left; vertical-align:top; }
+  .kv th { width:110px; color:var(--muted); font-weight:600; background:#fafbfc; }
+  tag { display:inline-block; font-size:12px; border-radius:5px; padding:1px 8px; margin-right:6px; }
+  .t-borrow { background:#e7f0ff; color:#0b3d6e; border:1px solid #b9d0f5; }
+  .t-pop { background:#eaf7ee; color:#1a7f37; border:1px solid #b7e0c3; }
+  .rm { background:#f6f8fa; border-left:3px solid var(--accent); padding:8px 14px; font-size:14px; color:#2b3b4a; margin-top:10px; border-radius:0 6px 6px 0; }
+  details { border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-top:12px; background:#fcfdff; }
+  details summary { cursor:pointer; font-weight:600; color:var(--primary); font-size:14.5px; }
+  details ul { margin:10px 0 2px; padding-left:22px; font-size:14px; }
+  details li { margin:5px 0; }
+  h3.sec { font-size:17px; color:var(--primary); margin:28px 0 10px; }
+  table.plain { width:100%; border-collapse:collapse; font-size:14px; background:var(--card); }
+  table.plain th, table.plain td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.plain th { background:#eef3f8; color:var(--primary); }
+  a { color:var(--accent); word-break:break-all; }
+  code { background:#f2f4f7; border-radius:4px; padding:1px 5px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul.tight li { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-19</h1>
+  <div class="sub"><b>早报（00:00 时窗）</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-19 00:1x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
+</header>
+
+<div class="note">
+  <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> 列表 <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>97,294 B / 40 entry</b>），最新 <code>published</code> = <b><code>2026-11-17T18:59:37Z</code></b>（公告批<b>未前进</b>，与 11-18 21:00 轮相同）。<b>如实记</b>：本轮 cs.CV / cs.AI / cs.SE / cs.LG 四路列表在 30 秒命令时限内未返回（curl 超时）⇒ <b>未</b>声称「五路覆盖」，三篇均取自 cs.CL 列表内条目并按 <code>id_list</code> 逐条复核。<br>
+  三篇均实测 <code>id_list</code> / atom 有真实 <code>published</code>，且 PDF <b><code>HTTP 200</code> + <code>%PDF-</code></b>：<code>2611.23035</code>（542,112 B）· <code>2611.23197</code>（732,950 B）· <code>2611.22777</code>（1,081,938 B）；<code>pdftotext</code> 逐篇核数字。
+</div>
+
+<div class="card">
+  <h2><span class="no">1</span>Storing the Gemma 4 K=V Cache Once: Exact Global-KV Memory Savings in a Paged Serving Engine with Unchanged Attention Kernels</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Kushagra Bainsla（San José State University，单作者）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-17（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.LG ｜ <tag class="t-borrow">借鉴</tag> 推理服务 / KV cache / 长上下文</td></tr>
+    <tr><th>中文一句话</th><td>Gemma 4 的 global attention 层里 <b>value 是归一化后的 key 投影、key 是 value 乘一个固定权重</b>，作者据此把每个 KV head / token 的缓存从 <b>1,024 个值压到 640 个值</b>（−37.5%），并用两个重叠的 strided view 让<b>原版 paged attention kernel 不改</b>；vLLM 原型（16-bit 31B）解码期每请求 KV 内存在 32K–64K 上下文下降到 <b>1/1.34–1/1.40</b>。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.23035">abs: 2611.23035</a> ｜ <a href="https://arxiv.org/pdf/2611.23035">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：这是一篇「<b>用模型结构换服务内存</b>」的精确工程：不改 kernel、不改输出算术，只改缓存布局。对我们在研的两件事直接相关：① 长上下文部署的显存预算（同卡同 batch 能多放多少 token）；② 预训练侧若采用「K/V 共享投影」类结构，服务栈能不能零改动吃到红利。它的证据链也干净：<code>bit-identical</code> 对账 + 2/432 答案差异落在 run-to-run 噪声内 + 一个 block-pool 模型把两个吞吐比预测到 1% 内。<br><b>我们的观察（非原文结论）</b>：这类收益的上限由「结构里到底冗余多少」决定，而不是由 kernel 优化决定 ⇒ 选型时应先算「每 head/token 的理论最小存储」，再看 serving engine 是否已经实现。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">2</span>Structure–Residual Inductive Biases for Language Model Pretraining</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Hai Huang（Palona AI）· Bartosz Żuk（波兰科学院计算机所）· Rassul Magauin · Jiaxin Huang · Xue Liu（MBZUAI）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-17（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CL ｜ <tag class="t-borrow">借鉴</tag> 预训练 / 表征结构 / 架构偏置</td></tr>
+    <tr><th>中文一句话</th><td>把「结构 vs 细节」做成两种显式偏置：<b>BBC</b>（Boundary Bottleneck Concept）让信息经「边界载体」传递、保留段内局部自回归；<b>CC</b>（Continuous Concept）用谱分解把表征拆成低频结构 + 高频残差；300M token 上组合两者让 GPT-2 Medium 的 <b>NLL 改善 1.44%</b>，并称增益延续到 <b>20B token</b>；两者深度偏好相反（BBC 偏浅层、CC 偏深层）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.23197">abs: 2611.23197</a> ｜ <a href="https://arxiv.org/pdf/2611.23197">pdf</a> ｜ <a href="https://github.com/haihuang-ml/structure-residual">代码</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：它给的是一条<b>可在 2B 规模前做完的预注册实验</b>：把「加结构偏置」与「加参数 / 加数据」分开比，并预先声明判据（NLL 与下游）。对我们的价值在于<b>实验设计</b>而非结论：① 深度偏好相反 ⇒ 若我们只在一个深度插，可能把两个效应抵消；② 1.44% 是 300M token、GPT-2 Medium 的单点，需按「同 token / 同算力」复算；③ 代码与 1B 数据脚本公开，可直接当我们的小规模探针。<br><b>风险</b>：作者自报、未见第三方复现；<b>NLL 改善不等于下游任务改善</b>，引用时必须同时给下游表。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">3</span>CrossEnv: Synthesizing Verifiable Cross-Environment Tasks for Long-Horizon Agent Training</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Zhengfeng Yu（北理工 + 阿里）· Tian Lan（阿里）· Zhijing Wu（北理工）et al.（共 11 位，含 Longyue Wang / Weihua Luo / Xian-Ling Mao；北京理工大学 · 阿里巴巴 · 北京邮电大学）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-17（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.AI ｜ <tag class="t-borrow">借鉴</tag> agent 训练数据 / 可验证环境 / 长程任务</td></tr>
+    <tr><th>中文一句话</th><td>用 <b>entity–tool graph</b> 找出多个可执行环境之间的实体/工具连接，再对齐跨环境数据，合成<b>可执行、可验证</b>的跨环境任务；配套 <b>CrossEnv-Curriculum</b>（单环境工具使用 → 多环境多业务协同 → 引入用户交互），在四个外部 benchmark 上以<b>更少训练样本</b>达到有竞争力的表现，并报告向新环境组合、低相似外部任务与更长 workflow 的迁移。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.22777">abs: 2611.22777</a> ｜ <a href="https://arxiv.org/pdf/2611.22777">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：harness 线最缺的不是「更多题」，而是<b>跨工具、可判分、能加长</b>的题。这篇把「环境之间的依赖」显式建成图，再用图去约束合成，思路可以直接搬到我们的 designflow / EDA 多工具链（综合 → 布局 → 时序）造题：<b>先建工具-实体图，再生成必须跨两个工具才能完成的任务</b>，最后用执行日志判分。<br><b>风险</b>：①「competitive performance with fewer examples」未给统一算力口径，跨 benchmark 不可直接比；② 环境为 LLM 模拟，迁移到真实 EDA 工具链需重新验证可执行性与判分稳定性。</div>
+</div>
+
+
+<h3 class="sec">🅱 B 轨 · 经典论文（第六十一轮 +3 → 234）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>被引</th><th>一句话贡献</th><th>与我们工作的关系</th></tr>
+  <tr>
+    <td>232</td>
+    <td><b>Multimodal Autoregressive Pre-training of Large Vision Encoders（AIMv2）</b><br>
+      Enrico Fini · Mustafa Shukor · Xiujun Li（et al.，共 16 位）· Apple · 2024 · CVPR 2025（会议名取自 OpenAlex；PDF 未核到页眉）<br>
+      <a href="https://arxiv.org/abs/2411.14402">arXiv 2411.14402</a></td>
+    <td><b>147</b><br>（OpenAlex，2026-11-19；<b>&lt;500 按「方法论常青 / 开源基线」收</b>）</td>
+    <td>把自回归预训练从纯视觉扩到<b>图文多模态</b>：编码器 + 多模态解码器自回归生成<b>原始 image patch 与文本 token</b>；<b>AIMv2-3B</b> 在<b>冻结主干</b>下达 <b>89.5%</b> ImageNet-1k，并开源代码与权重。</td>
+    <td><b>vision（主）</b>：判别式（CLIP/SigLIP）vs 生成式（AIMv2）两条路线对照 ⇒ 动作：视觉塔选型各放一个基线，固定下游集比较。<br><b>pretrain（辅）</b>：主干与多模态解码器的容量分配是可借的消融设计。</td>
+  </tr>
+  <tr>
+    <td>233</td>
+    <td><b>Extending Context Window of Large Language Models via Positional Interpolation</b><br>
+      Shouyuan Chen · Sherman Wong · Liangjian Chen · Yuandong Tian（Meta）· 2023 · arXiv 预印本<br>
+      <a href="https://arxiv.org/abs/2306.15595">arXiv 2306.15595</a></td>
+    <td><b>983</b><br>（OpenAlex，查询日 2026-11-19）</td>
+    <td>不改模型结构、不引入新参数，直接把 RoPE 的<b>位置索引线性插值</b>到目标长度，把 LLaMA 7B–65B 的 2048 上下文扩到 <b>32768</b>，只需 <b>≤1000 步</b>微调；理论给出「插值上界比外推上界小约 <b>600×</b>」。</td>
+    <td><b>pretrain（主）</b>：长上下文续训的<b>最低成本基线</b>，任何「扩窗方案」都应与它同 token 预算对比 ⇒ 动作：把 <code>PI 1000 步</code> 写进对照表第一行。<br><b>zhulong（辅）</b>：thinking 轴评测必须声明窗口扩展方式，否则长度收益不可归因。</td>
+  </tr>
+  <tr>
+    <td>234</td>
+    <td><b>Data Filtering Networks</b><br>
+      Alex Fang · Albin Madappally Jose · Amit Jain · Ludwig Schmidt（et al.）· 2023 · arXiv 预印本<br>
+      <a href="https://arxiv.org/abs/2309.17425">arXiv 2309.17425</a></td>
+    <td><b>273</b><br>（OpenAlex，查询日 2026-11-19；<b>&lt;500 按「方法论常青」收</b>：图文过滤的对照基线）</td>
+    <td>把「过滤」本身学成一个<b>数据过滤网络（DFN）</b>，并指出<b>ImageNet 准确率是坏代理</b>：高 ImageNet 精度的过滤器可能产出更差的训练集；<b>DFN-5B</b> 上训出的 ViT-H 达 <b>84.4%</b> ImageNet 零样本。</td>
+    <td><b>data（主）</b>：筛数据不能只看「筛子自身的分类指标」，要看「下游模型的缩放曲线」⇒ 动作：任何新过滤器先跑 <code>小模型 × 固定 token → 下游</code> 再决定是否放大。<br><b>vision（辅）</b>：图文对配比与过滤阈值需与下游任务绑定。</td>
+  </tr>
+</table>
+
+<p style="font-size:13.5px;color:var(--muted)">核验：两篇均 arXiv <code>id_list</code> <code>200</code> + OpenAlex <code>200</code>；PDF <code>200</code> 且 <code>Content-Length</code> 对账一致（751,217 / 1,431,519 B，均 &lt;5 MB，不入 git）；<code>pdftotext</code> 核到 <code>32768</code> / <code>within 1000 steps</code> / <code>∼600×</code> 与 <code>DFN-5B</code> / <code>84.4%</code> / <code>ViT-H</code> / <code>DFN-2B</code>。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 215）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱 / 主页</th><th>X</th><th>状态</th></tr>
+  <tr><td>213</td><td>Kushagra Bainsla · San José State University</td><td>Storing the Gemma 4 K=V Cache Once（2611.23035）</td><td><code>kushagra.bainsla@sjsu.edu</code>（PDF p1 明文，C 级；机构人员页 404）</td><td>未找到（<code>x.com</code> 本轮不可达）</td><td>已发信（#92）</td></tr>
+  <tr><td>214</td><td>Hai Huang · Palona AI</td><td>Structure–Residual Inductive Biases（2611.23197）</td><td><code>github.com/haihuang-ml</code>（仓库可访问；主页 <code>haihuang-ml.github.io</code> 404，邮箱未找到）</td><td>未找到</td><td>待跟踪（不发信）</td></tr>
+  <tr><td>215</td><td>Kewei Tu 屠可伟 · 上海科技大学</td><td>TPHC（2611.23026）</td><td><code>tukw@shanghaitech.edu.cn</code>（PDF p1 作者块，C 级；本人页 000/404）</td><td>未找到</td><td>已发信（#93）</td></tr>
+</table>
+<p style="font-size:13.5px;color:var(--muted)">⚠️ X 账号本轮<b>未核验</b>：<code>x.com</code> 直连 <code>000</code>、经 <code>127.0.0.1:7897</code> 亦 <code>000</code> ⇒ 按纪律写「未找到」，🚫 不猜 handle。三位邮箱均标注地址级别 C（论文 PDF 首页）；#213 / #215 为 2026-11-17 新论文，地址即现行，但<b>仍按下限口径记录</b>。</p>
+
+<h3 class="sec">✉ 作者请教信（本时窗 2 封 · 累计 93）</h3>
+<table class="plain">
+  <tr><th>#</th><th>收件人 / 机构</th><th>论文</th><th>语言（判据）</th><th>问题数</th><th>状态</th><th>回信状态</th></tr>
+  <tr><td>92</td><td>Kushagra Bainsla · SJSU</td><td><code>2611.23035</code></td><td>英文（姓名族属非中日韩 + 美国机构）</td><td>2（1 问二选一）</td><td>✅ SENT OK 00:10:13</td><td>未到期（2026-12-03）</td></tr>
+  <tr><td>93</td><td>Kewei Tu 屠可伟 · 上海科技大学</td><td><code>2611.23026</code></td><td>中文（华人姓名族属 + 中国机构）</td><td>2（1 问二选一）</td><td>✅ SENT OK 00:10:13</td><td>未到期（2026-12-03）</td></tr>
+</table>
+<p style="font-size:13.5px;color:var(--muted)">抗模板化：两封开头句分别落在 <code>Eq. (4)</code> 的 640 值行 / mHC「每子层只写一份输出」的诊断；同轮零共用开头句与问题句式。篇幅实测：英文 <b>175 词</b>（≤200）、中文 <b>200 字</b>（≤300）；落款严格两行、其后无行。<b>累计回信率 0 / 93</b>，0 封到期（最早 2026-11-25，#1–#7）。</p>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready</h3>
+<p>本期 <b>voice_ready 0 条</b>：<code>x.com</code> 直连与代理均 <code>000</code> ⇒ 无法取得「原文 + 链接」双源，按纪律不标。<b>news_ready 0 条</b>：三篇新论文与两篇经典均无发布 / 开源 / 首次事件点，不硬凑。</p>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线）</h3>
+<table class="plain">
+  <tr><th>线</th><th>建议（可落地）</th></tr>
+  <tr><td><b>pretrain</b></td><td>本周把<b>长上下文扩窗对照表</b>建起来，第一行固定为 <code>Position Interpolation + ≤1000 步</code>（#232），其余方案（YaRN / NTK-aware / 继续预训练）同 token 预算比较；判据预注册：同 32K 评测集上的 <code>ppl</code> 与 <code>4K→32K</code> 的保持率。<br>另：残差流扩展实验按 #2（BBC/CC 深度偏好相反）设计<b>分层插点</b>，每层单独消融，禁止只插一处。</td></tr>
+  <tr><td><b>vision</b></td><td>把图文过滤器的评估口径从「筛子自身指标」改成「<b>固定小模型 × 固定 token 的下游曲线</b>」（#233 DFN 的核心教训）；先在 10% 子集上跑三点（0.5B/1B 参数 × 1B/2B token），通过再放大。</td></tr>
+  <tr><td><b>harness</b></td><td>designflow 造题引入 #3 的 <b>entity–tool graph</b>：先枚举 EDA 工具（综合/布局/时序）的输入输出实体，再生成「必须跨 ≥2 个工具」才可完成的任务；判分用执行日志三态（<code>compile_pass / sim_match / 功能等价</code>）。</td></tr>
+  <tr><td><b>data</b></td><td>把 #233 的结论写成过滤器准入规则：新过滤器上线前必须给出「<b>下游缩放曲线</b>」而非「分类准确率」；同时保留一条<b>低分类精度但高下游</b>的对照组，防止把好数据筛掉。</td></tr>
+  <tr><td><b>zhulong</b></td><td>thinking 长度实验须记录<b>窗口扩展方式与续训步数</b>（#232），否则「长思考更好」无法与「窗口更大」区分；成本口径同时报 <code>tokens × 单价</code> 与 <code>wall-clock</code>。</td></tr>
+  <tr><td><b>designflow</b></td><td>跨工具链任务先做<b>可执行性预检</b>：每个合成任务必须在容器内跑通「工具 A 输出 → 工具 B 输入」两次，任一失败即丢弃；这比事后判分便宜。</td></tr>
+</table>
+
+<div class="note" style="margin-top:18px">
+  <b>附录 · 本轮检索式与命中</b>：<code>https://export.arxiv.org/api/query?search_query=cat:cs.CL&amp;sortBy=submittedDate&amp;sortOrder=descending&amp;max_results=40</code> ⇒ <code>200</code> / <code>97,294</code> B / 40 entry；<code>published</code> 上界 <code>2026-11-17T18:59:37Z</code>。去重：三篇 ID 在 <code>SEEN.md</code> 均 0 命中。四路其它分类列表本轮<b>超时未返回</b>，如实记录，不补写「已覆盖」。
+</div>
+
+<footer>
+  research 线 · 论文观察日报 · 2026-11-19 00:00 时窗 ｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-19 00:1x CST
+</footer>
+
+</div>
+</body>
+</html>
+
