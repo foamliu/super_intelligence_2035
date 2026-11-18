@@ -4486,6 +4486,45 @@
    "detail": "hidden asset missing: /tmp/wv_cg_full/_grade/g_d933165b/hidden/config_B.json",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001/V0/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001",
+   "arm": "V1",
+   "k_conditions": 42,
+   "pi_seconds": 120.0,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "hidden asset missing: /tmp/wv_cg_full/_grade/g_k_p61sgy/hidden/config_B.json",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001",
+   "arm": "V2",
+   "k_conditions": 42,
+   "pi_seconds": 230.0,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "hidden asset missing: /tmp/wv_cg_full/_grade/g_lw_oc3kk/hidden/config_B.json",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbPwlExtract-001",
+   "arm": "V0",
+   "k_conditions": 31,
+   "pi_seconds": 360.0,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
