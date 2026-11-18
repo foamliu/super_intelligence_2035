@@ -1,6 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
+> 🆕 **R2669 · 2026-11-18 12:3x — 巡检+增量eval·**opencode SWE-bench Verified COMPLETE 500/500**·**心跳第一行**: opencode eval=415/500=83.0%(sphinx-doc__sphinx-10673 RESOLVED via incr_eval✅)·**eval fix**: swebench 5.0.2 在 miniforge3 py310 env(`/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3`)·system python3 无 swebench→改用 py310 路径修复·**自检clean**(load26.6/224≈12%busy·MemAvail1381GB·0 runaway>8000%CPU·最高harness proc=deepseek sdk 49.2%/267MB·均远低于kill阈值·0 eval容器残留)·**6/7 predict进程alive**(opencode已exit·cline335/codex140/cc356/pi297/hermes485/dsh176·total2510·remaining≈990)·**0真实429**·**research日报11-18已读**(R2666已吸收·下次18:00)·**全部运维令✅已交付**(10:3x ability拆两层R2664+14:5x codex fix R2661+10:2x 口径纠正R2661)·无新未完成指令·**下一步**: 继续监控6路predict·完成后增量eval→刷新7way报告·opencode已complete可先刷新其行·WAITING=0·📦 TASK≈30.5KB MEMORY≈30KB(✅≤32KB)
+
 > 🆕 **R2668 · 2026-11-18 12:1x — 巡检轮·SWE-bench Verified predict 监控·**自检clean**(load25.3/224≈11%busy·MemAvail1382GB·0 runaway>8000%CPU·最高harness proc=opencode49.1%/687MB+deepseek-sdk62.7%/388MB·均远低于kill阈值·cline-checkpoint-off hub daemon38%=非eval不碰·pretrain cline33%=非本线不碰·0 eval容器进程)·**7/7 predict进程alive**(etime~25min·同R2665 launch PID·cline2063655/codex2066009/hermes2068238/opencode2071050/cc2080921/dsh2081778/pi2082293)·各路resume正常(SKIP已done→PREDICT新题·log tail见各路活跃)·**predict进度**(predictions_glm53/): opencode498/hermes483(+1)/cc355/cline334/pi296/dsh176(+1)/codex139·total2281·remaining≈1219·**0真实429**(hermes log 1 hit=patch=4290B false-positive✅·其余6路0 hit)·gateway /health=HTTP400(端点存在但非health path=网关正常工作)·harbor 9092/9093 LISTEN✅·**research日报11-18已读**(R2666已吸收·无新期·下次18:00)·**全部运维令✅已交付**(10:3x ability拆两层R2664+14:5x codex fix R2661+10:2x 口径纠正R2661)·无新未完成指令·**下一步**: 继续监控predict(多日run·single-concurrent故慢)·批量完成后跑增量eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈29KB(✅≤32KB)
 
 > 🆕 **R2667 · 2026-11-18 12:0x — 巡检轮·SWE-bench Verified predict 监控·**自检clean**(load27.1/224≈12%busy·MemAvail1381GB·0 runaway>8000%CPU·最高harness proc=opencode7.5%/1.2GB+cline-checkpoint-off hub daemon38%=非eval不碰·均远低于kill阈值·pretrain launcher=非本线不碰·0 eval容器进程)·**7/7 predict进程alive**(etime~1062-1074s≈17.8min·同R2665 launch PID·cline2063655/codex2066009/hermes2068238/opencode2071050/cc2080921/dsh2081778/pi2082293)·各路resume正常(SKIP已done→PREDICT新题·log tail见各路活跃)·**predict进度**(predictions_glm53/): opencode498/hermes482(+1)/cc355(+1)/cline334(+1)/pi296/dsh175/codex139·total2479·remaining≈1221·**0真实429**(hermes log 1 hit=patch=4290B false-positive✅·其余6路0 hit)·gateway /health probe=HTTP000(端点不存在)但processes progressing=网关正常工作·**research日报11-18已读**(R2666已吸收·harness节=Mingbird论文exit-code vs产物存在性·无新内容)·**全部运维令✅已交付**(10:3x ability拆两层R2664+14:5x codex fix R2661+10:2x 口径纠正R2661)·无新未完成指令·**下一步**: 继续监控predict(多日run·single-concurrent故慢)·批量完成后跑增量eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈29.5KB(✅≤32KB)
@@ -56,10 +58,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2668 SWE-bench Verified predict 7路resume RUNNING·监控中(用户令·按既定排期)
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench eval✅COMPLETE·SWE-bench predict 7路resume LAUNCHED(R2665)·R2666-R2668 巡检clean
-当前动作:     R2668: 7/7 predict进程alive(同R2665 PID·etime~25min)·progress opencode498/hermes483/cc355/cline334/pi296/dsh176/codex139·total2281·remaining≈1219·0真实429(hermes1hit=patch=4290B false-positive)·自检clean(load25/224·MemAvail1382GB·0 runaway)·gateway HTTP400(正常)·harbor 9092/9093 LISTEN
-下一步:       监控7路predict完成进度·完成后增量eval新预测·刷新7way报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
+PHASE:        R2669 SWE-bench Verified predict 6路resume RUNNING+opencode COMPLETE·监控+增量eval中
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench eval✅COMPLETE·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+incr_eval 415/500=83.0%✅(R2669)·R2666-R2669 巡检clean
+当前动作:     R2669: 6/7 predict进程alive(opencode已exit)·progress cline335/codex140/cc356/pi297/hermes485/dsh176·total2510·remaining≈990·0真实429·自检clean(load26.6/224·MemAvail1381GB·0 runaway)·**opencode incr_eval DONE: sphinx-doc__sphinx-10673 RESOLVED·eval=415/500=83.0%**·eval fix: swebench在miniforge3 py310 env
+下一步:       继续监控6路predict完成进度·每路完成后增量eval新预测·刷新7way报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK≈30.5KB / MEMORY≈28.5KB（✅≤32KB·R2663/R2662已fold→daily）
