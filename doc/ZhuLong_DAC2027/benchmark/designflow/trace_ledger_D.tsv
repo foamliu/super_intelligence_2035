@@ -179,7 +179,7 @@
 1792560382811_jjrak.messages.json	e0032163	hfeg0pkn003	2130	analog_context	parked		2026-11-05 03:04	doc task: '详解电路原理画框架图列出模块作用', no runnable deliverable
 1793338010547_r06g9.messages.json	clarawu	hfeg0pkn002	2089	waveform	parked		2026-11-05 03:04	analysis+conditional-fix: '检查单调性,如果不单调就优化电路'; marginal/vague deliverable
 1793607437978_fzngm.messages.json	yazhuok	hfeg0pkn002	972	schematic_netlist	case	EDA-Eval-DesignFlow-NetRcPathDiff-001	2026-11-05 03:49	
-1792829965577_rser7.messages.json					parked		2026-11-05 03:49	root-cause: 'parasitics反标率低是什么原因' + SDF分析 = Q&A
+1792829965577_rser7.messages.json					case	EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001	2026-11-18 15:31	r883 revival-from-parked per 2026-11-15 令; A档 trace-faithful 诊断Q&A; 9断言a-i; B=LPDDR5TOP合成; self-test PASS+3neg FAIL; D.jsonl 474->475
 1793587429686_gxlr2.messages.json					parked		2026-11-05 03:49	skill install how-to: '帮忙装一下这个skill' + '能实现哪些功能/SOP' = Q&A
 1793706326923_qiqs7.messages.archive.json					parked		2026-11-05 03:49	wrong shard: innovus power-analysis/Redhawk (PP/PTPX), not D domain
 1793069992209_s9rzg.messages.archive.json					parked		2026-11-05 03:49	root-cause+doc: ERC丢失vdll power '分析原因' + '总结marker流程/整理markdown' = analysis/doc
