@@ -6,6 +6,8 @@ WAITING: 0（2026-11-18 wake#1255·**🟢 standby·plan v1.5 已交付**：commi
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-18 wake#1256 心跳] standby 第六次复核 v1.5（commit e810dc502·§6 同步已交付）·7 判据全通过·diff vs v1.4 仅 §6（line 605-683）/ 0 外链 0 script / 119150B / 13 臂 H1-H7 / Fig5-9 情绪机制图表·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
+
 - [2026-11-18 wake#1255 心跳] standby 第五次复核 v1.5（commit e810dc502）·7 判据全通过·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
 
 - [2026-11-18 wake#1254 心跳] standby 第四次复核 v1.5（commit e810dc502）·7 判据全通过·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
