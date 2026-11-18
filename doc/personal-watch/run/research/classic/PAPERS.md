@@ -3789,9 +3789,64 @@
 
 ---
 
+## 220. Qwen3 Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Qwen3 Technical Report |
+| 作者（前 3） | An Yang · Anfeng Li · Baosong Yang（et al.，共 **60** 位；阿里巴巴通义千问团队） |
+| 年份 | **2025**（arXiv 首次提交 **2025-05-14**，`cs.CL`，v1 实测；`updated` 同 v1） |
+| 会议 / 期刊 | **arXiv 技术报告**（PDF 未见会议名；本轮不写会议） |
+| 被引数 | **19,693**（OpenAlex `10.48550/arxiv.2505.09388`，查询日 **2026-11-18**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2505.09388> ｜ arXiv DOI `10.48550/arxiv.2505.09388` |
+| 一句话贡献 | 一个系列同时给**稠密 6 档（0.6B / 1.7B / 4B / 8B / 14B / 32B）与 MoE 两档（30B-A3B / 235B-A22B）**，预训练 **36T token、覆盖 119 种语言**；核心是把 **thinking / non-thinking 两种模式放进同一个模型**（后训练四段：Long-CoT cold start → Reasoning RL → **Thinking Mode Fusion** → General RL），小模型则用 **strong-to-weak distillation**（off-policy + on-policy）继承大模型推理能力。作者自报 Qwen3-235B-A22B 在 **AIME'24 85.7 / AIME'25 81.5 / LiveCodeBench v5 70.7 / CodeForces 2,056**。 |
+| 与我们工作的关系 | **zhulong（主目标：thinking 轴与「两模式合一」）**：它把「思考长度」做成**可分配的 budget** 而不是换模型，正是 zhulong 想测的「thinking 开关 × 语言」二维表的现成对照 ⇒ <b>动作</b>：zhulong 消融表固定模型与解码，只把 thinking budget 分档（例如 0 / 1K / 4K / 16K），同表记录准确率与 token 成本，并**预注册**「budget 翻倍后准确率增益 < X% 即判无收益」。<br>**pretrain（辅助：语言覆盖口径）**：119 语言说明「多语言能力」可以靠 36T token 覆盖而非后训练补 ⇒ <b>动作</b>：自有语料的语言清单按 ISO 码逐项登记，报「覆盖语言数 + 每语言 token 占比」，🚫 只报总 token。<br>**data（辅助：蒸馏数据）**：strong-to-weak distillation 的 off-policy / on-policy 混合，是我们做小模型冷启动的直接参照。<br>**风险**：① 19,693 次被引里含大量「引用报告做基线」的引用，不代表方法被复现；② 85.7 / 81.5 / 2,056 均为**作者自报**，本线未复现；③ 报告未给 thinking budget 与准确率的完整曲线。 |
+| 首次收录 | **2026-11-18**（第五十七轮） |
+| 核验状态 | arXiv API `id_list` `200` + `application/atom+xml`（6,413 B）；OpenAlex `200`（19,693）；PDF `200` / 779,424 B（`%PDF-`，<5 MB），`pdftotext` 核到 `36 trillion tokens` / `119 languages` / `0.6 to 235 billion` / `85.7 on AIME'24` / `81.5 on AIME'25` / `70.7 on LiveCodeBench v5` / `2,056 on CodeForces` / `Thinking Mode Fusion` / `Strong-to-Weak Distillation`；全文 `pdftotext` 后 **`@` 0 命中** ⇒ 无个人邮箱 |
+
+---
+
+## 221. 2 OLMo 2 Furious（OLMo 2）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | 2 OLMo 2 Furious |
+| 作者（前 3） | Team OLMo · Pete Walsh · Luca Soldaini（et al.，共 **43** 位；Allen Institute for AI（Ai2），含 Noah A. Smith / Luke Zettlemoyer / Ali Farhadi / Hannaneh Hajishirzi） |
+| 年份 | **2024**（arXiv 首次提交 **2024-12-31**，`cs.CL`；最新 `updated` **2025-10-08**，v3 已补 32B 结果） |
+| 会议 / 期刊 | **COLM 2025**（arXiv `comment` 原文 `Shorter version accepted to COLM 2025. Updated to include 32B results.`） |
+| 被引数 | **870**（OpenAlex `10.48550/arxiv.2501.00656`，查询日 **2026-11-18**；S2 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2501.00656> ｜ arXiv DOI `10.48550/arxiv.2501.00656` |
+| 一句话贡献 | 把「全开放」做成**可复算的训练配方**：7B / 13B / 32B 稠密模型分别训 **4.05T / 5.6T / 6.6T token**（其中预训练段 3.90T / 5T / 6.06T），预训练语料 OLMo 2 Mix 1124 约 **3.9T token、95% 以上来自网页**；训练切成 **两段**（第二段 mid-training 占 **5–10% 的 FLOPs**），mid-training 阶段换用 **Dolmino Mix 1124** 做退火；稳定性上换成 **RMSNorm + QK-Norm + Z-Loss**，并用**多随机序重跑 50B/100B token 的 checkpoint soup（模型平均）**降低方差；后训练沿用 Tülu 3 的做法并加 **RLVR**。作者自报 OLMES 子集上 OLMo 2 32B 平均 **73.3**。 |
+| 与我们工作的关系 | **pretrain（主目标：两段式训练与退火预算）**：把「预训练 / mid-training」显式切开并给出 FLOPs 占比，是我们做 2B 级模型「何时切退火」的直接对照 ⇒ <b>动作</b>：预训练日志固定记录 `stage1 tokens / stage2 tokens / stage2 FLOPs 占比`，并把退火数据清单按来源（DCLM / Dolma / ProofPile II / StarCoder）分列。<br>**data（主目标：mix 的可复算性）**：Mix 1124 + Dolmino 1124 两套配比都给了来源与比例 ⇒ <b>动作</b>：自有配比表按同一粒度（来源 × 子集 × 占比 × 去重前后 token）落盘，版本号写成 `mix-<YYMM>` 便于与论文对齐。<br>**harness（辅助：方差口径）**：checkpoint soup 说明「单次跑分」噪声大 ⇒ <b>动作</b>：评测报分至少 3 次不同数据序，或明确写「单次，未做 seed 平均」。<br>**风险**：① 73.3 为 OLMES 子集平均、作者自报；② mid-training 的 **Dolmino** 具体 token 预算正文给的是 FLOPs 区间（5–10%）而非固定 token 数 ⇒ 🚫 不换算成 token 反推。 |
+| 首次收录 | **2026-11-18**（第五十七轮） |
+| 核验状态 | arXiv API `id_list` `200` + atom（7,762 B，含 `comment`）；OpenAlex `200`（870）；PDF `200` / 4,213,966 B（`%PDF-`，<5 MB），`pdftotext` 核到 `4.05 trillion tokens` / `3.90 trillion for pretraining stage` / `5.6 trillion` / `6.6 trillion` / `approximately 3.9 trillion tokens, with over 95% derived from web data` / `mid-training (5–10% of training FLOPs)` / `QK-Norm` / `Z-Loss` / `OLMo 2 32B 73.3` / `for 50B tokens each` |
+
+---
+
+
+## 222. AutoChip: Automating HDL Generation Using LLM Feedback
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | AutoChip: Automating HDL Generation Using LLM Feedback |
+| 作者（前 3） | Shailja Thakur · Jason Blocklove · Hammond Pearce（et al.，共 **6** 位，含 Benjamin Tan / Ramesh Karri / Siddharth Garg；IBM Research · NYU · UNSW · University of Calgary） |
+| 年份 | **2023**（arXiv 首次提交 **2023-11-08**，`cs.PL`；最新 `updated` **2024-06-04**） |
+| 会议 / 期刊 | **arXiv 预印本**（PDF 用 `acmart` 模板 + ACM 版权块，但本轮**未核到**具体会议/DOI ⇒ 🚫 不写会议名） |
+| 被引数 | **247**（OpenAlex `10.48550/arxiv.2311.04887`，查询日 **2026-11-18**；S2 未查）。**&lt;500，按「本领域权威」收**（LLM-for-EDA 的「生成-编译-仿真」闭环里最早被反复引用的开源实现之一） |
+| arXiv / DOI | <https://arxiv.org/abs/2311.04887> ｜ arXiv DOI `10.48550/arxiv.2311.04887` |
+| 一句话贡献 | 把「生成 Verilog」做成**闭环**而非一次性补全：先用设计 prompt 生成初版 module，再把 **Icarus Verilog 的编译错误与仿真输出差异**回灌给对话模型迭代修正；在 **HDLBits** 的设计 prompt + testbench 上评测 **GPT-4 / GPT-3.5-turbo / Claude 2 / Code Llama**，作者自报通过 **89.19% 的全部测试用例、比 zero-shot 多 24.2%**，脚本与数据集开源（`github.com/shailja-thakur/AutoChip`）。 |
+| 与我们工作的关系 | **designflow（主目标：反馈信号的定义）**：它说明「编译通过」与「仿真一致」是两个不同信号，且**回灌哪个信号决定模型学什么** ⇒ <b>动作</b>：designflow 判分器把 `compile_pass / sim_match / 功能等价` 拆三级分别记录，🚫 不用单一 pass 率代替；造题时每个 testbench 额外留一份**不参与反馈**的隐藏用例，用于检测「只对齐 testbench」。<br>**harness（辅助：迭代预算口径）**：报分必须同时写 `轮数上限 / 每轮 token 成本 / 模型版本`，否则 24.2% 无法与其他外壳比较。<br>**风险**：① 原文表述是「24.2% more than zero-shot settings」，基数与口径需按表核（本线未复现）；② 模型为 2023 年的 GPT-4 / Claude 2 / Code Llama，🚫 不可外推到现在；③ 隐藏用例若与反馈用例同源，分数会虚高。 |
+| 首次收录 | **2026-11-18**（第五十七轮） |
+| 核验状态 | arXiv API `id_list` `200` + atom（7,762 B）；OpenAlex `200`（247）；PDF `200` / 1,637,705 B（`%PDF-`，&lt;5 MB），`pdftotext` 核到 `89.19% of all test cases` / `24.2% more than zero-shot settings` / `Icarus Verilog` / `HDLBits` / `GPT-4, GPT-3.5-turbo, Claude 2, and Code` / `the first feedback-driven` |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
-> ✅ **第五十六轮（2026-11-18 09:0x）转正 3 条**：StarCoder 2 `2402.19173`（#217，**1,095**，预印本 TMLR under review）· Magpie `2406.08464`（#218，**353**，**&lt;500 按「方法论常青」收**，理由：只用前置模板自举指令，已被后续数据合成工作当基线）· Jamba `2403.19887`（#219，**789**，预印本）⇒ B 轨累计 **219**（覆盖轴：代码语料可审计构建 + 小模型过训 / 零人工指令自举与过滤 / Transformer-Mamba-MoE 混合比例与激活参数口径）。⚠️ **本轮如实记三处未核**：① Magpie / Jamba 的 arXiv `id_list` 本轮 `429`、随后 `SSL_ERROR_SYSCALL 000` ⇒ **首次提交日留白**，只记 PDF 版本日期；② 两篇的会议信息未核；③ StarCoder 2 全文**无个人邮箱**（仅 `contact@bigcode-project.org`）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Qwen3 `2505.09388`（本轮 OpenAlex 实测 **19,693**；PDF 因 SSL `000` 未取到 ⇒ 留待下轮三源补齐）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）；⑤ DBRX `2404.12358` / OLMoE `2409.02060`（ID 已查重未收，被引未实测）。
+> ✅ **第五十七轮（2026-11-18 12:0x）转正 3 条**：Qwen3 `2505.09388`（#220，**19,693**，技术报告）· OLMo 2 `2501.00656`（#221，**870**，COLM 2025）· AutoChip `2311.04887`（#222，**247**，**&lt;500 按「本领域权威」收**）⇒ B 轨累计 **222**（覆盖轴：thinking/non-thinking 合一的 budget 机制 + 两段式训练与退火配比 + HDL 生成-仿真反馈闭环）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① OLMoE `2409.02060`（OpenAlex 实测 **374**，全开放 MoE，PDF 未取）；② DBRX `2404.12358`（早前 OpenAlex 已实测，未收）；③ Tulu 3 已收 #213 ⇒ 不重复；④ HBM / JEDEC 一手（连续多轮未命中）；⑤ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）。
+> ✅ **第五十六轮（2026-11-18 09:0x）转正 3 条**：StarCoder 2 `2402.19173`（#217，**1,095**，预印本 TMLR under review）· Magpie `2406.08464`（#218，**353**，**&lt;500 按「方法论常青」收**，理由：只用前置模板自举指令，已被后续数据合成工作当基线）· Jamba `2403.19887`（#219，**789**，预印本）⇒ B 轨累计 **219**。⚠️ 该轮如实记三处未核：① Magpie / Jamba 的 arXiv `id_list` 当时 `429`/`000` ⇒ 首次提交日留白；② 两篇会议信息未核；③ StarCoder 2 全文无个人邮箱。
+
+
 > ✅ **第五十五轮（2026-11-18 06:0x）转正 4 条**：Tülu 3 `2411.15124`（#213，**1,670**，预印本技术报告）· DSPy `2310.03714`（#214，**1,261**，预印本，仅 v1）· OpenHands `2407.16741`（#215，**1,050**，ICLR 2025）· SAM 2 `2408.00714`（#216，**5,632**，预印本技术报告）⇒ B 轨累计 **216**（覆盖轴：后训练 SFT→DPO→RLVR 三段配方 / 指标驱动的 prompt 编译 / 外壳即平台（runtime + 事件流）/ 视觉 streaming memory）。四篇均 arXiv `id_list` + OpenAlex + PDF 三源实测；`pdftotext` 逐篇核到关键数字（`>25% and 65%` / `resolve rate of 26%` / `35.5M masks across 50.9K videos` / `Reinforcement Learning with Verifiable Rewards`）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Magpie `2406.08464`（实测 353，<500 ⇒ 需先写明「方法论常青」理由）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）；⑤ StarCoder 2 `2402.19173`（本轮实测 **1,095**，可作 The Stack v2 数据侧补充，下轮优先）。
 > ✅ **第五十四轮（2026-11-18 03:0x）转正 3 条**：VeriGen `2308.00708`（#210，**533**，ACM TODAES / 前身 DATE 2023）· WebShop `2207.01206`（#211，**1,765**，NeurIPS 2023）· ChipNeMo `2311.00176`（#212，**472**，预印本技术报告，**&lt;500 按「本领域权威」收**）⇒ B 轨累计 **212**。⚠️ **本轮先纠了两处历史误记**：① VeriGen 的 PDF 本轮三端点可取（2,636,063 B，`%PDF-`）⇒ 00:00 轮「PDF 不可达 ⇒ 不进表」的暂缓正式解除；② 候选池早前写 WebShop「358」被引，本轮 OpenAlex 实测 **1,765**（`2207.01206`）⇒ 以本轮实测为准，旧数字作废。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① Magpie `2406.08464`（本轮实测 **353**，&lt;500 ⇒ 需先写明「方法论常青」理由才收）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ 长上下文调度（Zero Bubble `2401.10241` 实测 90 ⇒ 暂留）。
 > ✅ **第五十三轮（2026-11-18 00:0x）转正 3 条**：DCLM `2406.11794`（#207，**627**，NeurIPS 2024 D&B）· AdamW `1711.05101`（#208，**34,224**，ICLR 2019）· Prismatic VLMs `2402.07865`（#209，**325**，ICML 2024，**&lt;500 按「方法论常青」收**）⇒ B 轨累计 **209**。⚠️ 本轮**更正一个错误 ID**：VeriGen 不是 `2308.00113`（实测为水印论文 *Three Bricks*），真 ID = `2308.00708`（OpenAlex **531**）；但该文 PDF 三端点均 `000`/`404`（多次重试 + 后台下载未拿到完整文件）⇒ 按三源纪律**不进表**，留 06:00 首选项。

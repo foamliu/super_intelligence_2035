@@ -2885,7 +2885,46 @@
 | 状态 | **待跟踪**（只建档） |
 | 备注 | `语言=英文(判据=斯拉夫语族姓名 + Hugging Face，无中日韩信号)`。价值点：The Stack v2 的许可证过滤与 619 语言去重口径；若能拿到个人邮箱，问题应聚焦「opt-out 比例对代码能力的影响」与「3B 过训到 3.3T token 的收益曲线」。 |
 
-1. **邮箱取当前机构主页 / 本人 CV 的最新地址**，🚫 不用 5 年前 PDF 首页的旧邮箱（可能已失效或转他人）。
+### 201. Luca Soldaini
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luca Soldaini（意大利语族姓名 ⇒ 英文正文 + 意大利语称谓问候一句；按 2026-11-14 令） |
+| 机构 | **Allen Institute for AI（Ai2）**（OLMo 2 核心作者，B 轨 #221；亦为 Dolma / OLMoE 数据侧作者） |
+| 代表论文 | **2 OLMo 2 Furious**（arXiv `2501.00656`，三作）· **Dolma: an Open Corpus of Three Trillion Tokens**（`2402.00159`，B 轨已收） |
+| 邮箱 | **`luca@soldaini.net`**（本人现行主页 <https://soldaini.net/> `200` / 12,855 B，页内 `mailto:` 明文；🚫 未用 PDF 地址） |
+| 主页 | <https://soldaini.net/>（`200`） |
+| X 账号 | `@soldni`（主页自链 `twitter.com/soldni`；⚠️ 本轮 X 不可达 ⇒ **未做 `og:title` 双源**，不计入「已核验」） |
+| 状态 | **已发信**（#89，2026-11-18 12:10:19，英文正文 176 词 + 意大利语称谓一句） |
+| 备注 | `语言=英文正文+意语问候(判据=意大利语族姓名 + 美国机构)`。问题方向：Dolmino Mix 1124 在退火阶段的 token 占比、砍到 1/3 时 keep vs re-tune（二选一）、7B/13B/32B 上稳定性干预是否冗余。 |
+
+### 202. Noah A. Smith
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noah A. Smith（英语姓名族属 ⇒ 英文信） |
+| 机构 | **University of Washington（Paul G. Allen School）+ Allen Institute for AI**（OLMo 2 作者之一，B 轨 #221） |
+| 代表论文 | **2 OLMo 2 Furious**（`2501.00656`，作者列表末段）· OLMo 系列 / 大模型评测方法 |
+| 邮箱 | **`nasmith@cs.washington.edu`**（本人主页 `Contact` 页 <https://nasmith.github.io/contact/> `200` / 13,752 B，页内 `mailto:` 明文） |
+| 主页 | <https://nasmith.github.io/>（`200` / 24,943 B） |
+| X 账号 | `@nlpnoah`（主页自链 `twitter.com/nlpnoah`；⚠️ X 本轮不可达，未双源，不计入已核验） |
+| 状态 | **待跟踪**（只建档；同论文已有 Luca Soldaini 代表本线发信，守「同一论文 ≤1」） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：OLMo 2 的评测口径与 checkpoint soup 方差处理；若日后另开新论文（非 #221）再考虑发信。 |
+
+### 203. Benjamin Tan（Peng Seng Benjamin Tan）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Benjamin Tan（华人姓名族属 `Peng Seng … Tan` ⇒ **中文信**；按令「名字族属优先于机构所在地」） |
+| 机构 | **University of Calgary**（Electrical and Software Engineering 副教授，CalgaryISH 负责人；AutoChip 五作，B 轨 #222） |
+| 代表论文 | **AutoChip: Automating HDL Generation Using LLM Feedback**（`2311.04887`）· VeriGen（`2308.00708`）· 硬件安全 / LLM-for-EDA |
+| 邮箱 | **`benjamin.tan1@ucalgary.ca`**（UCalgary 官方人员页 <https://profiles.ucalgary.ca/peng-seng-benjamin-tan> `200` / 77,425 B，页内明文） |
+| 主页 | <https://profiles.ucalgary.ca/peng-seng-benjamin-tan>（`200`）；课题组 <https://calgaryish.com/PI/>（未逐页核） |
+| X 账号 | **未找到**（人员页只链校方 `twitter.com/ucalgary`，非本人 ⇒ 🚫 不登记为本人 handle） |
+| 状态 | **已发信**（#90，2026-11-18 12:10:20，中文 CJK 250 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 加拿大机构)`。问题方向：24.20% 是相对提升还是绝对百分点、HDLBits 难度分桶哪一档无增益（二选一）、是否存在只对齐 testbench 的倾向与留出 testbench 对照。 |
+
+
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
 4. 抓 X 一律走 `research/classic/x_fetch.py`（只读、串行、≥3s、单轮 ≤6 个 handle），原始结果落 `research/classic/x/`，**不做任何写操作**。

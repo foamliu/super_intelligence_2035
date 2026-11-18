@@ -1,0 +1,16 @@
+Gentile Prof. Soldaini, la scrivo in inglese per precisione tecnica.
+
+I am Yang Liu, a researcher working on LLM agents and small-model training; my page is https://foamliu.github.io/.
+
+What I keep coming back to in "2 OLMo 2 Furious" is that Dolmino Mix 1124 enters only through the annealing phase, while the base models sit on the Pareto frontier of performance versus compute. In our small-model ablations the annealing budget is the scarcest resource, so that phase length is the knob we cannot afford to guess.
+
+Two questions:
+
+1. Roughly what share of the pretraining tokens went into the annealing phase with Dolmino Mix 1124, and if that phase were cut to one third, would you keep the mix ratios unchanged or re-tune them? "Keep" or "re-tune" plus one sentence would already help.
+
+2. With training logs and thousands of checkpoints released: across 7B, 13B and 32B, did the same stability interventions stay equally necessary, or did one become redundant at the largest scale?
+
+Thank you for making the checkpoints and recipes public.
+
+Best regards,
+Yang Liu
