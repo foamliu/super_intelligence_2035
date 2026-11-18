@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1322·**🟢 standby·done_all·无新令**：plan v1.6 + paper v1.7 均已交付（见下）·subagent 消融线结案不起臂·用户再次粘贴任务书全文无新指令·顶部最新仍 v1.7 已归档·infra 健康·cline ✅ @/home/app.e0031982/.local/bin/cline·loop PID243810 带代理 ✅ + ops_relay PID118463 活·ops 队列排空 last_run_id=146·fetch 后 HEAD=`6cce57107`（他线推进·非本线·0 ahead 0 behind origin/main·push 通畅·本线路径 working tree clean）·research 日报 2026-11-18 zhulong 建议均 Verilog 评测法+模型架构方向与本线情绪门控论文范围不对应·§10 不起臂·预注册日 2026-11-22 距 4 天·§7 StepC done_all→退出·与 wake#1311-1321 同款场景）
+WAITING: 0（2026-11-18 wake#1323·**🟢 standby·done_all·无新令**：plan v1.6 + paper v1.7 均已交付（见下）·subagent 消融线结案不起臂·用户再次粘贴任务书全文无新指令·顶部最新仍 v1.7 已归档·infra 健康·cline ✅ @/home/app.e0031982/.local/bin/cline·loop PID243810 带代理 ✅ + ops_relay PID118463 活·ops 队列排空 last_run_id=146·fetch 后 HEAD=`d2f242f52`（他线推进·非本线·0 ahead 0 behind origin/main·push 通畅·本线路径 working tree clean）·research 日报 2026-11-18 zhulong 建议均 Verilog 评测法+模型架构方向与本线情绪门控论文范围不对应·§10 不起臂·预注册日 2026-11-22 距 4 天·§7 StepC done_all→退出·与 wake#1311-1322 同款场景）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -9,6 +9,8 @@ WAITING: 0（2026-11-18 wake#1322·**🟢 standby·done_all·无新令**：plan 
 - [wake#1298 详条已滚出·被 wake#1299 代表] 见 `daily-memories/2026-11-18.md` §[wake#1298 rolled-out]（plan v1.5 第四十八次复核·HEAD=`18a4d76e1`·/home 23G 稳定记录）。
 
 - [wake#1304~#1311 详条已滚出·被 wake#1312 代表] 8 条同模式 standby 心跳（第五十三~六十次核验·均 standby·done_all·无新指令·用户粘贴任务书全文无新令·顶部最新仍 v1.7 已归档·ops 队列排空 last_run_id=146·/home 35G free·/nasdata 2.5T free·距预注册日 2026-11-22 仍 4 天·§7 StepC 退出）·HEAD 序列 `e5f7b9a48`→`00e6a026d`→`1733ce0f5`→`96a853eb8`→`9b411f55a`→`848b81095`→`1b17823ea`→`8fe334571`·原文见 `daily-memories/2026-11-18.md` §[wake#1304~#1308 rolled-out]/§[wake#1309 rolled-out]/§[wake#1310 rolled-out]/§[wake#1311 rolled-out]（多次合并归档省 MEMORY 空间）。
+
+- [2026-11-18 wake#1323 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第七十二次核验·standby·done_all·与 wake#1311-1322 同款场景·infra 健康（loop PID243810 带代理 ✅ / ops_relay PID118463 / cline ✅·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146·无 pending·RUN_ID 146 只读 freshness check 已执行）·fetch 后 HEAD=`d2f242f52`（他线提交推进·非本线·0 ahead 0 behind origin/main·push 通畅·本线路径 working tree clean）·research 日报 2026-11-18 zhulong 建议均与本线论文范围不对应→不起臂·subagent 消融线 done_all·§7 StepC：done_all→退出。详条见 `daily-memories/2026-11-18.md` §[wake#1323]，本条仅记心跳不另展开。
 
 - [2026-11-18 wake#1322 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第七十一次核验·standby·done_all·与 wake#1311-1321 同款场景·infra 健康（loop PID243810 带代理 ✅ / ops_relay PID118463 / cline ✅·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146·无 pending）·fetch 后 HEAD=`6cce57107`（他线提交推进·非本线·0 ahead 0 behind origin/main·push 通畅·本线路径 working tree clean）·research 日报 2026-11-18 zhulong 建议均与本线论文范围不对应→不起臂·subagent 消融线 done_all·§7 StepC：done_all→退出。详条见 `daily-memories/2026-11-18.md` §[wake#1322]，本条仅记心跳不另展开。
 
