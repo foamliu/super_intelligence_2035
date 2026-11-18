@@ -1858,3 +1858,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1782880092083_8ynmb	e03179	10.129.2.11	24	schematic_netlist	claimed		2026-11-18 08:23	
 1792655063557_odjfu	hongl	10.129.8.124	18	schematic_netlist	claimed		2026-11-18 08:27	
 1792214069125_7b4kj					case	EDA-Eval-DesignFlow-TopCellNameResolver-001	2026-11-18 08:41	
+1792031877409_9vjrk	e0014566	hfeg0pkn001(10.129.2.10)	17	schematic_netlist	case	EDA-Eval-DesignFlow-TopCellNameQuery-001	2026-11-18 09:44	
+1791868718387_z7niq					parked		2026-11-18 09:34	dup of 9vjrk (same user e0014566 same prompt top cell name)
+1791983684940_vmnh4					parked		2026-11-18 09:34	dup of 9vjrk (same user e0014566 same prompt top cell name)
+1782784094855_g8un6					parked		2026-11-18 09:34	pin-list extraction trace INCOMPLETE (ended non-ASCII error, no user-accepted gold standard) - violates 红线#1
