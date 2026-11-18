@@ -6,6 +6,38 @@
 
 ---
 
+### 📦 已归档块 · 2026-11-18 20:5x zh-cn（论文全文加中文对照·注释态）· ✅ 已交付
+
+> 交付：round1 commit `abf24281f`（main.tex+12 sections，+249/−0 纯新增）+ round2 commit `28e77662f`（appendix A/B 标记头 + C 乱码修正 51+/33- + D 新增 51+/0-）；编译 11p/0err/0undef/230611B 同字节；报告 `reports/report_edafb_zh_translation_zh.html`；MEMORY 一行 `[zh-cn] 覆盖 17 文件·编译 11p 0err·commit abf24281f+28e77662f`。原文（待执行→已交付）如下：
+
+> 🔴 **2026-11-18 20:5x 用户令 — 论文《EDA-Flow-Bench_ICML2027》全文加中文对照（注释态）· 待执行**
+>
+> **用户原话**：「安排 zhulong agent 修改论文 EDA-Flow-Bench_ICML2027：1. 每段英文接中文翻译（注释状态）」。
+> **目标**：把中英对照做成**源文件内的 LaTeX 注释**——不新建旁路文件、**不改变任何编译输出**。
+>
+> **范围**：`EDA-Flow-Bench_ICML2027/` 下全部英文正文源文件 —— `sections/0_abstract … 11_reproducibility`（12 个）、`appendix/A_benchmark_details … D_affective_mechanism`（4 个）、`main.tex`（仅正文段落；标题/作者/宏定义旁注不必译）。
+>
+> **格式（硬性）**：
+> 1. 每段英文**紧接其后**插入中文：首行标记统一为 `% 【中文】`，多行时**每行都以 `%` 开头**；英文段落与中文块之间空一行。
+> 2. 覆盖粒度：正文段落（含 abstract）· `\section`/`\subsection` 标题 · 每个 `\item` · 图/表 `\caption` · 附录 `\paragraph`。**表格不逐格译**：在 `\begin{table}` 之前（或 `\caption` 之后）加一条 `% 【中文】表 X：…（列名依次：…）` 说明即可。
+> 3. **禁止**在这些位置插注释：`verbatim`/`lstlisting`/`\verb`/`\url` 环境体、数学环境体（`equation`/`align`）、`tabular` 行内、`\cite{}`/`\ref{}` 内部 —— 这些位置 `%` 会改变语义或破坏排版。
+> 4. LaTeX 宏**原样照抄**（`\bench{}` / `\MzeroPass{}` / `\PreregDate` / `\Ntasks` / `\Neval` …），不翻译宏名；数学符号、变量、文件名、命令、代码标识保留英文。
+> 5. ⚠️ **漏写 `%` = 把中文注入 PDF**（PDF 无 CJK 字体 ⇒ 编译报错或乱码），一律判不合格。
+>
+> **翻译质量**：忠实原句，**不改数字/断言/引用**、不新增主张、不删减；术语统一（benchmark=基准 · harness=执行框架 · pre-registration=预注册 · affective memory=情绪记忆 · grounding=接地 · ablation=消融 · assertion=断言 · trace=轨迹 · desensitized=脱敏 · commercial EDA tools=商用 EDA 工具 · design_flow=设计流）。
+>
+> **验收判据（先定后做，全部通过才交付）**：
+> ① **编译**：`pdflatex → bibtex → pdflatex ×2`，用 `-outdir` 输出到临时目录（勿污染仓库）⇒ **仍为 11 页**、0 error、0 undefined；因全是注释，**PDF 内容应与改动前一致**（记录页数 + `pdftotext` 字数；本机若无 `pdftotext` 则比对页数与各节起始页号）。
+> ② **覆盖**：16 个源文件**每个都有**中文；逐文件统计「英文段数 / 中文块数」，差值必须逐条给出原因（表格说明合并、公式行不计等）并写入报告。
+> ③ **diff 纯净**：`git diff --numstat` 中改动文件**只有 `.tex`**，且**删除列全为 0**（纯新增注释）；若有个别行内断行调整，须在报告列出并说明未改语义。
+> ④ **不改口径**：不新建 `.md`/`.zh.tex`/`_zh` 旁路文件；不改 `\Ntasks`/`\Neval`/`\MzeroPass`/`\ScriptPass`/`\PreregDate` 等宏值；不改章节文件名（`10_ethics`/`11_reproducibility` 保持）；不改任何数字与断言。
+> ⑤ **提交**：信息前缀 `zhulong paper zh:`，只 `git add -- EDA-Flow-Bench_ICML2027/**`；`main.pdf` 内容未变则**不必重新提交**（若提交须说明字节差异原因）。
+>
+> **交付物**：① 改好的 `.tex`；② 中文 HTML 报告 `reports/report_edafb_zh_translation_zh.html`（**单文件自包含、无外链**，按常驻报告规程：覆盖统计表 + 术语表 + 编译证据 + diff 统计）；③ MEMORY/daily 一行：`[zh-cn] 覆盖 16 文件 N 段 · 编译 11p 0err · commit <sha>`。
+>
+> **节奏**：本轮唤醒**优先做本令**（高于 standby 心跳与 reframe_note 等非阻塞维护）；体量大允许分 2 轮（先 sections、后 appendix），但每轮都要在 MEMORY 记录已完成文件清单，**不允许停在半途无标记状态**。
+> **防伪底线不变**：不改题/图/check、不编造数字、不动他线文件。
+
 ### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】
 
 > **来源**：用户 2026-10-08 下达。国庆假期（约 10/01–10/08）期间本线持续推进，现需汇总成一份**可读的 HTML 报告**向用户汇报。**本动作优先于新一轮评测推进**（但**不打断正在跑的 `C1.wo_retrieval r5`**——若 r5 仍在跑，先正常巡检/收割，再写报告；报告里把 r5 标为「运行中/收割值待补」即可）。
