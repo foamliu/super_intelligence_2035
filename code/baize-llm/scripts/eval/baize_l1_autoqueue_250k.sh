@@ -30,13 +30,13 @@ PREV_RESULTS="$RES_DIR/gguf_iter_240000_fixed_8set/results.json"
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
 find_train_pid() { pgrep -f "pretrain_launcher.*baize2b" 2>/dev/null | head -1; }
 
+MASTER_LOG=/tmp/baize_s1_baize2b_master.log
 check_train_health() {
   local pid=$(find_train_pid)
   if [ -z "$pid" ]; then echo "$(ts) [WARN] no train PID" | tee -a "$LOG"; return 0; fi
-  local step_ms=$(tail -1 /proc/$pid/fd/1 2>/dev/null | grep -oP 'elapsed time per iteration \(ms\): \K[0-9.]+' || echo "9999")
-  local step_int=${step_ms%.*}
-  echo "$(ts) train PID=$pid step=${step_ms}ms (thresh 7400)" | tee -a "$LOG"
-  [ "$step_int" -le 7400 ] 2>/dev/null
+  local step_sec=$(tail -5 "$MASTER_LOG" 2>/dev/null | grep -oP 'Step Time : \K[0-9.]+' | tail -1 || echo "99.99")
+  echo "$(ts) train PID=$pid step=${step_sec}s (thresh 7.4s)" | tee -a "$LOG"
+  awk "BEGIN {exit !(${step_sec:-99.99} <= 7.4)}"
 }
 
 # Phase 0a: Wait for previous eval (240k) to finish (serial guard)
@@ -54,7 +54,7 @@ while [ ! -d "$CKPT_DIR" ]; do
   sleep 300; WAITED=$((WAITED+300))
   [ $WAITED -ge 86400 ] && { echo "$(ts) [TIMEOUT] giving up (24h limit)" | tee -a "$LOG"; exit 1; }
   local_pid=$(find_train_pid)
-  local_iter=$(tail -1 /proc/$local_pid/fd/1 2>/dev/null | grep -oP 'iteration +\K[0-9]+' || echo "?")
+  local_iter=$(tail -20 "$MASTER_LOG" 2>/dev/null | grep -oP 'iteration +\K[0-9]+' | tail -1 || echo "?")
   echo "$(ts) waiting for ckpt (train iter=$local_iter, ${WAITED}s)..." | tee -a "$LOG"
 done
 echo "$(ts) checkpoint found!" | tee -a "$LOG"
