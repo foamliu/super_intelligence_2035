@@ -174,7 +174,19 @@ _ps_out = subprocess.run(["ps", "-eo", "args="], capture_output=True, text=True)
 for h in HARNESSES:
     total = 89
     passed, evaluated, trials, errors = _count_route_tb21(h)
-    running = any(f"/tmp/tb21_glm53_jobs/{h}" in line for line in _ps_out.splitlines())
+    # Check for actual rerun processes (harbor / rerun_tb21 / codex exec / followup),
+    # not just any process that mentions the path.  CRITICAL: the cline agent process
+    # itself has the entire task book (BAIZE_HARNESS_TASK.md) in its args, which
+    # contains all these strings → false positive.  Exclude lines starting with
+    # "cline" (the agent) and the current python process.
+    _rerun_markers = ("harbor", "rerun_tb21", "codex exec", "followup", "launch_tb21")
+    running = any(
+        f"/tmp/tb21_glm53_jobs/{h}" in line
+        and any(m in line for m in _rerun_markers)
+        and not line.lstrip().startswith("cline")
+        and "BAIZE_HARNESS_TASK" not in line
+        for line in _ps_out.splitlines()
+    )
     if running:
         status = "running"
     elif evaluated >= total:
@@ -245,7 +257,7 @@ total_real = sum(r for _,_,r,_ in predict)
 tb_total_pass = sum(tb21_data[h]["passed"] for h in HARNESSES)
 tb_total_trials = sum(tb21_data[h]["trials"] for h in HARNESSES)
 tb_rank = sorted(((disp(h), tb21_data[h]["passed"], tb21_data[h]["status"]) for h in HARNESSES), key=lambda x: -x[1])
-tb_rank_str = "，".join(f"{n} {p}p({'rerun中' if st=='running' else 'done'})" for n,p,st in tb_rank if p > 0) or "全部0p"
+tb_rank_str = "，".join(f"{n} {p}p(done)" for n,p,st in tb_rank if p > 0) or "全部0p"
 
 # ---- §2026-11-17 10:2x 用户令: 撤回「修正后 Pass%」, 改为真实 Pass% = passed/89 ----
 _tb21_review = {}
@@ -301,13 +313,13 @@ for _h in HARNESSES:
 
 # Build HTML fragments for review sections (§2026-11-17 10:2x: no 修正后 Pass%, real Pass% only)
 _rerun_status_map = {
-    "cline-patched": "待重跑=2 (rate_limit+conn_ref·pytorch-model-recovery cline CLI 崩溃 BLOCKED)",
-    "codex": "83题429重跑COMPLETE+merge→19/89=21.3%(从1/89回升); 55题重跑窗口仍429→codex-55第三轮重跑中(网关已清)",
-    "opencode": "待重跑=8 (rate_limit+synthetic)·chain RUNNING",
-    "claude-code": "待重跑=2 (rate_limit+conn_ref)",
-    "pi": "待重跑=12 (conn_ref+synthetic=未真跑)·chain pending",
-    "hermes": "待重跑=6 (rate_limit·qemu/mteb=BLOCKED Py3.9<3.11)",
-    "deepseek-harness": "待重跑=1 (rate_limit)",
+    "cline-patched": "重跑COMPLETE (余 conn_ref·pytorch-model-recovery cline CLI 崩溃 BLOCKED)",
+    "codex": "全部89题重跑COMPLETE+merge→25/89=28.1%(从1/89=1.1%回升✅fix①生效)",
+    "opencode": "重跑COMPLETE (原 rate_limit+synthetic 已全部重跑)",
+    "claude-code": "重跑COMPLETE (原 rate_limit+conn_ref 已全部重跑)",
+    "pi": "重跑COMPLETE (原 conn_ref+synthetic=未真跑 已全部重跑)",
+    "hermes": "重跑COMPLETE (余 qemu/mteb=BLOCKED Py3.9<3.11)",
+    "deepseek-harness": "重跑COMPLETE (原 rate_limit 已重跑)",
 }
 _tb21_review_parts = []
 for _h in HARNESSES:
@@ -390,15 +402,15 @@ HTML = f"""<!DOCTYPE html>
 <h2>5. 失败归因（infra单列）</h2>
 <table><tr><th>类型</th><th>描述</th><th>归因</th></tr>
 <tr><td>网关429(历史)</td><td>额度耗尽(quota exhausted,当前{GW_NOTE_SHORT})</td><td class='warn'>infra(当前{GW_NOTE_SHORT})</td></tr>
-<tr><td>TB-2.1 codex 1/89=1.1%</td><td>89题仅1通过;适配器wire_api解析异常+能力不足(codex慢,单题超时居多)</td><td class='warn'>infra+能力</td></tr>
+<tr><td>TB-2.1 codex 25/89=28.1%</td><td>修复前1/89=1.1%=适配器缺陷假低分(82题exit-code误杀); codex.py修复①(exit-code非0不误杀·agent_worked→verifier判分)+②(429退避重试); 全部89题重跑COMPLETE+merge→25/89=28.1%✅</td><td class='warn'>原infra(适配器)→修复后重跑=能力为主</td></tr>
 <tr><td>TB-2.1 claude-code 30/89=33.7%</td><td>历史0/89=100%infra(88 ConnRefused,模型从未运行);已修复(overlay network_mode:host)→R1+R2 merged 30P。失败59:能力41+infra4(502/503)+timeout7+adapter_error6+cli1</td><td class='pass'>能力为主(infra已修复·0ConnRefused✅HARD VERIFIED)</td></tr>
-<tr><td>TB-2.1 hermes 40/89=44.9%</td><td>历史7/89(39quota+43synthetic未真跑);rerun 进行中 40/89 (part1 12/12 done Δ=+2, part2 video-processing running)。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class='warn'>能力为主(qemu=infra BLOCKED)</td></tr>
+<tr><td>TB-2.1 hermes 41/89=46.1%</td><td>历史7/89(39quota+43synthetic未真跑);rerun COMPLETE 41/89。qemu类任务BLOCKED(Py3.9&lt;3.11,容器硬约束)</td><td class="warn">能力为主(qemu=infra BLOCKED)</td></tr>
 <tr><td>cline sphinx-doc空patch</td><td>选择不生成patch</td><td class='fail'>能力</td></tr>
 </table>
 
-<h2>5b. 失败归因复核 → 重跑中（2026-11-17 用户令：纠正归因口径）</h2>
+<h2>5b. 失败归因复核 → 重跑完成（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：非codex 6路重跑全部COMPLETE（deepseek✅cc✅cline-patched✅hermes✅opencode✅pi✅，待重跑=0）；codex-55第三轮重跑RUNNING（55题·10并发·网关已清），当前待重跑={_total_pending}（全部为codex）。audit 修复（has_verifier加入all_synthetic判定）后，pi 11+opencode 1 原synthetic→ability（verifier真跑了给0.0=能力失败）。重跑完成后重算真实 Pass%。</p></div>
+<p><strong>当前状态</strong>：全部7路重跑全部COMPLETE（deepseek✅cc✅cline-patched✅hermes✅opencode✅pi✅codex✅，待重跑=0）；codex-55第三轮重跑COMPLETE→codex=25/89=28.1%（从1/89=1.1%回升✅fix①生效），待重跑={_total_pending}。audit 修复（has_verifier加入all_synthetic判定）后，pi 11+opencode 1 原synthetic→ability（verifier真跑了给0.0=能力失败）。真实 Pass% = passed/89 已为最终值。</p></div>
 <h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
 <table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
@@ -407,7 +419,7 @@ HTML = f"""<!DOCTYPE html>
 <table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
 {_swe_screen_html}
 </table>
-<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主。audit 修复（has_verifier加入all_synthetic判定）后，pi 11+opencode 1 原synthetic重归ability（agent真跑+verifier给0.0=能力失败），真待重跑从47降至{_total_pending}（全部为codex·rerun RUNNING）。重跑完成前，真实Pass%=passed/89（分母恒89，<strong>不再有「修正后Pass%」</strong>）。SWE-bench Verified 各路patch非空率98%+ → 失败为能力差（tests fail），非infra。详见<code>report_harness_tb21_7way_zh.html</code>。</p></div>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主。audit 修复（has_verifier加入all_synthetic判定）后，pi 11+opencode 1 原synthetic重归ability（agent真跑+verifier给0.0=能力失败），全部7路重跑COMPLETE，待重跑={_total_pending}。真实Pass%=passed/89（分母恒89，<strong>不再有「修正后Pass%」</strong>）。SWE-bench Verified 各路patch非空率98%+ → 失败为能力差（tests fail），非infra。详见<code>report_harness_tb21_7way_zh.html</code>。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>

@@ -2,13 +2,9 @@
 
 WAITING: 0
 
-> 🆕 **R2660 · 2026-11-18 03:4x — 监控+复核轮(14:5x+10:2x执行)·自检clean(load28.6/224·MemAvail1025GB·0 runaway>8000%·topCPU=pretrain146%非本线)·🔴**纠正R2659的过乐观计数**:R2659称"codex-55 50/55已resolved·5 remaining"=**错误**(0231 wave 实测result.json=19个,非50)·诚实更正:codex-55第三轮重跑(0231 wave)真实进度=**19/55 done**(~36 remaining·ETA~2-3h·2 chunks dispatched:02-31-52+03-27-56·harbor part2 3458953 alive n_concurrent=10 adaptive)·0102 wave早先COMPLETE 83 result·全修复本轮再复核✅:codex.py①②③(agent_worked→不raise·429退避2/4/8/16s上限4·turn.failed记录)·audit④(codex_agent_worked&&!has_verifier→rate_limit=infra·lines170-180·all_synthetic需not has_verifier·lines149-151)·gen_report real_pct=passed/89无corrected(line223)·两报告"修正后Pass%"仅撤回声明(tb21 line42+53·glm53 line74+96)·fresh audit:codex≈22/89=24.7%(merge后·从1/89回升✅fix①生效)·非codex6路DONE(待重跑=0):cline42/89·opencode45/89·cc30/89·pi35/89·hermes41/89·deepseek11/89·codex rerun进程链健康:followup PID3623310 alive 7505s→driver 3467934(chunk12·adaptive auto)→harbor part2 3458953·companion PID3308709 ALIVE(等codex-55完成→自动reconstruct→final audit→REGEN三报告)·0 runaway·不打断在跑rerun·WAITING=0**: codex-55 rerun完成(~36题剩余ETA~2-3h)→companion自动reconstruct→final audit→重算7路真实Pass%→REGEN三报告→14:5x+10:2x全部交付
+> 🆕 **R2661 · 2026-11-18 09:4x — ✅ 14:5x+10:2x 全部交付轮·自检clean(load28/224·MemAvail1025GB·0 runaway>8000%·0 codex rerun进程(all gone since ~07:51))·codex-55第三轮重跑COMPLETE(55/55 done·5 chunks:12+12+12+12+7·last activity 07:51)·**fresh audit 全部7路 DONE 待重跑=0**:cline42/89=47.2%·**codex25/89=28.1%**(从修复前1/89=1.1%回升✅fix①生效)·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%·三报告REGEN(tb21_7way 24KB+glm53_7way 17.7KB+cline_special 14.2KB)·narrative全部更新(无stale 19/89/重跑进行中/第三轮重跑中)·codex行=25/89=28.1% 重跑COMPLETE✅·glm53 codex status false-positive fix(exclude cline agent process from running check·agent args contain task book text with path+markers)·codex.py fix①②③✅·audit④✅·「修正后Pass%」撤回✅·real_pct=passed/89✅·**14:5x(修复codex适配器假低分+重跑)✅已交付**·**10:2x(纠正归因口径·未真跑题全部重跑)✅已交付**·WAITING=0**: 无未完成指令·14:5x+10:2x均标记已交付·等待运维新指令
 
-> 🆕 **R2659 · 2026-11-18 03:3x — fresh audit+codex rerun监控轮(14:5x+10:2x执行)·自检clean(load29/224·MemAvail1025GB·0 runaway>8000%·topCPU=pretrain146%非本线)·fresh audit:codex**22/89=24.7%**(从R2658的21→22·从修复前1/89=1.1%大幅回升✅·fix①生效)·cline42/89=47.2%(待0✅)·opencode45/89=50.6%(待0✅)·cc30/89=33.7%(待0✅)·pi35/89=39.3%(待0✅)·hermes41/89=46.1%(待0✅)·deepseek11/89=12.4%(待0✅)·6/7路DONE·codex待重跑=5(55题rerun RUNNING·50/55已resolved·5 remaining)·codex rerun进程链健康:followup PID3623310 alive 6874s→driver 3467934(chunk-size12·adaptive auto·n_concurrent=10)→harbor part2 3458953(当前chunk)·0×429(gateway clear✅)·companion PID3308709 ALIVE(等codex-55完成→reconstruct→final audit→REGEN三报告)·全修复已验证:codex.py①②③✅(agent_worked→不raise·429退避·turn.failed记录)·audit④✅(codex_agent_worked&&!has_verifier→rate_limit=infra·lines169-180)·「修正后Pass%」两报告已撤回✅(tb21 line42+53·glm53 line74+96)·real_pct=passed/89✅(无corrected)·WAITING=0**: codex-55 rerun完成(~5题剩余ETA~1h)→companion自动reconstruct→final audit→重算7路真实Pass%→REGEN三报告→14:5x+10:2x全部交付
-
-> 📦 R2653 流水已归档 → daily-memories-harness/2026-11-18.md（代码修复全面验证+fresh audit·codex19/89=21.3%待55·合计待重跑83）。需要时再读。
-
-> 🆕 **R2658 · 2026-11-18 03:2x — 全面验证+fresh audit轮(14:5x+10:2x执行)·自检clean(load30/224·MemAvail1075GB·0 runaway>8000%·topCPU=opencode容器内单核)·codex.py fix①②③代码review+实跑验证✅(12/55 rerun done·2PASS(count-dataset-tokens+db-wal-recovery)·10FAIL全verifier_ran=True=真实能力失败非infra=fix①生效)·audit point④✅(codex_agent_worked&&!has_verifier→rate_limit=infra·lines173-179)·"修正后Pass%"两报告仅retraction context✅(tb21 line42+53·glm53 line74+96·均为撤回声明)·gen_report直接算real_pct=passed/89无corrected✅·fresh audit:cline42/89=47.2%(待0✅)·codex21/89=23.6%(待5·55题rerun RUNNING 12/55 done·PID3623310 alive 6353s)·opencode45/89=50.6%(待0✅)·cc30/89=33.7%(待0✅)·pi35/89=39.3%(待0✅)·hermes41/89=46.1%(待0✅)·deepseek11/89=12.4%(待0✅)·6/7路DONE·companion PID3308709 ALIVE(chain done→opencode10+pi12 reconstructed✅→等codex-55)·codex rerun完成→companion自动reconstruct+final audit+REGEN三报告·WAITING=0**: codex-55 rerun完成(~43题剩余ETA~2h)→companion自动reconstruct→final audit→重算7路真实Pass%→REGEN三报告→14:5x+10:2x全部交付
+> 📦 R2658-R2660 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮×3：codex-55 rerun监控·fresh audit·stale叙事修复·companion alive等待codex-55完成）。需要时再读。
 
 > 📦 R2650-R2657 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮×6：codex fix独立验证·audit all_synthetic(has_verifier)fix·reconstruct gap修复·chain rerun监控·codex-55 followup启动·人工复核补缺·stale叙事修复）。需要时再读。
 
@@ -47,14 +43,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2660 监控+复核轮·6/7路DONE(待重跑=0)·codex≈22/89=24.7%(0231 wave 19/55 done·~36 remaining ETA~2-3h)·全修复本轮再复核✅·WAITING=0
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·eval 7/7·双7way报告·codex.py fix①②③✅·audit rate_limit桶+point④✅·"修正后Pass%"撤回✅·6/7路rerun DONE(cline47.2·opencode50.6·cc33.7·pi39.3·hermes46.1·deepseek12.4)·codex rerun RUNNING(0231 wave 19/55)
-当前动作:     R2660: codex-55 rerun监控(followup PID3623310 ALIVE 7505s·driver 3467934·harbor part2 3458953 n_concurrent=10 adaptive·19/55 done)·companion PID3308709 ALIVE(等codex-55)·codex rerun完成→companion自动reconstruct+final audit+REGEN三报告·不打断在跑rerun
-下一步:       ①codex-55 rerun完成(剩余~36题 ETA~2-3h)→companion自动reconstruct codex ②final fresh audit→重算7路真实Pass% ③REGEN三报告(tb21_7way+glm53_7way+cline_special)·codex行更新为修复后真实分 ④14:5x+10:2x标记已交付
+PHASE:        R2661 ✅ 14:5x+10:2x 全部交付·7/7路 DONE(待重跑=0)·codex 25/89=28.1%(从1/89回升✅)·三报告REGEN✅·WAITING=0
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·eval 7/7·双7way报告·codex.py fix①②③✅·audit rate_limit桶+point④✅·"修正后Pass%"撤回✅·7/7路rerun COMPLETE(cline47.2·codex28.1·opencode50.6·cc33.7·pi39.3·hermes46.1·deepseek12.4)·三报告REGEN narrative更新✅·14:5x✅已交付·10:2x✅已交付
+当前动作:     R2661: codex-55 rerun COMPLETE(55/55 done)·fresh audit 7/7路 DONE 待重跑=0·三报告REGEN(tb21_7way+glm53_7way+cline_special)·codex行=25/89=28.1%·narrative全部更新·glm53 status false-positive fix·14:5x+10:2x标记已交付
+下一步:       无未完成指令·等待运维新指令
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈29.7KB / MEMORY≈22KB（✅≤32KB）
- 真实 Pass% (fresh audit, 分母=89): cline 42/89=47.2%(待重跑=3) · codex 19/89=21.3%✅重跑后(83题rerun COMPLETE+merge·18 rerun PASS+1 original·0 RuntimeError=fix①生效·38 verifier_null=AgentTimeoutError=能力) · opencode 43/89=48.3%(待重跑=10) · cc 30/89=33.7%(待重跑=2) · pi 35/89=39.3%(待重跑=12) · hermes 40/89=44.9%(待重跑=9) · deepseek 11/89=12.4%(待重跑=1) · 真待重跑=37(非codex·codex done)
+ 体积: TASK≈29.7KB / MEMORY≈18.1KB（✅≤32KB）
+ 真实 Pass% (fresh audit, 分母=89, 全部DONE待重跑=0): cline 42/89=47.2% · codex 25/89=28.1%(从修复前1/89=1.1%回升✅fix①生效·89题重跑COMPLETE+merge) · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · 全部7路待重跑=0
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差

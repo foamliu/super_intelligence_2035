@@ -33,38 +33,15 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-17 14:5x（**修复 codex 适配器假低分 + 重跑**）· 用户直令 · 最高优先 · 未完成
+### ✅ 用户令 · 2026-11-17 14:5x（**修复 codex 适配器假低分 + 重跑**）· 用户直令 · ✅ 已交付（R2661）
 
-> **用户原话**：「codex 1.1% 有点难以置信那」→ 运维已抽样完整 trace 确认根因。
-
-**根因（运维已实测，别再重复诊断）**：codex 89 题里 **82 题是 `RuntimeError: Codex exited with code 1`（stderr 空），verifier_result=null（验证器根本没跑）**，另有 3 题超时、1 题 exit code 2；真正「干净跑完 + verifier 判 0 分」的只有 2 题。抽样 `build-pmars` 的 stdout 证明：codex **实际开始工作了**（`turn.started` + agent 思考 + 执行 `/bin/bash -lc`），但 `codex exec` 整体 exit code 1，被 `codex.py:188-192` 的 `return_code != 0 → raise RuntimeError` 直接掐断。即 **82 题是适配器把「单命令非 0 退出」误当成「整个 agent 失败」→ 假低分，不是能力**。归因证据已在本轮 commit 前的诊断中（可复现：`ssh 10.239.2.29` 查 `/tmp/tb21_glm53_jobs/codex/2026-11-09__19-51-27/*/result.json`）。
-
-**立即执行**：
-
-1. **修 `run/harness/terminalbench/agents/codex.py`**：
-   - ① `return_code != 0` 不应直接判定 agent 失败——codex 用 `--json` 输出完整事件流，应**从 stdout 的 JSON 事件里判断是否 `turn.failed` / 是否有 `error` 项**，而不是看 shell exit code；若 stdout 里已有正常的 command_execution/agent_message 事件（agent 确实在跑），exit code 非 0 不作为失败依据。
-   - ② 加 **429/rate-limit 检测 + 指数退避重试**：检测 stdout/stderr 含 `429`/`rate limit`/`exceeded retry limit` → sleep 2/4/8/16s 重试，上限 4 次（`tb_qa_rectification_20261028.md` 早提的方案）。
-   - ③ 保留对真超时（AgentTimeoutError）的记录，但与「适配器掐断」分开归类。
-2. **重跑 codex 全部 89 题**（修完后，adaptive 并发上限内），merge 后重算真实 Pass%。预期从 1/89 大幅回升（对照：codex SWE-bench 63.2%）。
-3. **报告**：`report_harness_tb21_7way_zh.html` 里 codex 行从「1/89=1.1%」改为「修复前 1/89 系适配器假低分（82 题被 exit-code 误杀），修复重跑后 = ?/89」，给出新真实分。
-4. **审计脚本同步修正**：`audit_tb21_review_7way.py` 的 ability 判定对 codex 这类「adapter 掐断」也要正确归类（stdout 有 agent 事件但 verifier 没跑 = infra，不是 ability）。
-5. 红线不变，诚实优先。保持 `WAITING=0`，心跳第一行给：codex 修复重跑后的新 Pass%。
+> **交付结论**：codex.py 修复①（exit-code非0不误杀·解析stdout NDJSON·agent_worked→verifier照常判分）+ ②（429退避重试2/4/8/16s上限4次）+ ③（turn.failed记录与适配器掐断分开归类）均已实现并验证。全部89题重跑COMPLETE（83题第一轮+55题第三轮·网关已清）+merge→**codex 25/89=28.1%**（从修复前1/89=1.1%回升✅fix①生效）。audit_tb21_review_7way.py 已同步修正（codex_agent_worked&&!has_verifier→rate_limit=infra·lines169-180）。三报告codex行已更新为「修复前1/89=1.1%系适配器假低分（82题被exit-code误杀），修复重跑后25/89=28.1%」。心跳第一行已给：codex 修复重跑后新 Pass%=28.1%。
 
 ---
 
-### 🔴 用户令 · 2026-11-17 10:2x（**纠正归因口径：未真跑题必须重跑，不得「剔除分母假设计入」**）· 用户直令 · 最高优先 · 未完成
+### ✅ 用户令 · 2026-11-17 10:2x（**纠正归因口径：未真跑题必须重跑，不得「剔除分母假设计入」**）· 用户直令 · ✅ 已交付（R2661）
 
-> **用户原话**：「有 x 未真跑，那举措不应该是重跑吗？你把分直接加上去算什么？直接假设真跑就能对？凭什么？」
-
-**定性**：R2600 的「修正后 Pass% = passed / (89 − 纯infra题数)」是**错误口径**——它把未真跑/额度/连接拒绝的题直接从分母剔除，等价于**默认这些题「真跑就能通过」**，这是凭空抬分，不是复核准绳。**未真跑题的处置只有一个正解：重跑拿真实结果**，pass 就 +1、fail 就计失败，再重算 Pass%。
-
-**立即执行**（R2602 的 v2 rerun 方向是对的，本令是要你**把口径和数字改对**）：
-
-1. **撤回「修正后 Pass%」**：从两份报告里删掉「修正后 Pass%」「纯 infra 剔除」这套表述（或降级为明确标注「假设性、仅参考、不作为成绩」），**不得再把它当作任何结论**。真正可对外引用的只有：`当前 Pass%（未重跑完成前，标注含 infra 待重跑）` 和 `重跑完成后重算的真实 Pass%`。
-2. **重跑到底**：把 R2600 四桶归因里标 `synthetic/未真跑`、`quota`、`conn_refused` 的所有题**全部列入 rerun 清单并串行重跑**（R2602 已在跑的 47 trial 继续；确认清单无遗漏，尤其 deepseek 5、codex 2、cc 1 这些低分路也必须补齐，不能因为「分低就不管」）。环境硬约束题（如 hermes qemu Py3.9<3.11）如实标 `BLOCKED(infra)` 并从分母剔除时**必须显式注明剔除原因**，且该路 Pass% 分母要写清 89−BLOCKED，而非「假设通过」。
-3. **重跑后重算真实 Pass%**：每路 `passed / 89`（分母恒 89，BLOCKED 单列不误算为「通过」），给出重跑前后对比表。**能力题一旦重跑仍 fail，就必须计为 fail**，不许因「想好看」归到 infra。
-4. **报告更新**：TB-2.1 两份报告里的「失败归因复核」节改成「重跑中/重跑完成」真实口径，去掉「修正后 Pass%」表；SWE-bench Verified 同理（patch 非空率 98% 只是「模型有产出」的证据，不等于「失败都是能力」，仍按真实 verdict 归因，别把 empty/infra 简单归为能力）。
-5. **红线复述**：能力 vs infra 的区分只能靠 trace 证据，不能靠「调整分母」；诚实优先于好看。保持 `WAITING=0`，心跳第一行给：撤回修正后 Pass% 的声明 + 各路人肉重算的真实 Pass%（重跑完成前标「待重跑」）。
+> **交付结论**：「修正后 Pass%」已从两份报告撤回（仅保留口径纠正声明）。全部7路 infra/synthetic/quota/conn_refused 题已全部重跑COMPLETE（待重跑=0）。真实 Pass% = passed/89（分母恒89）已为最终值：cline 42/89=47.2% · **codex 25/89=28.1%**（从1/89=1.1%回升✅fix①生效） · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4%。BLOCKED(infra) 硬约束题（hermes qemu/mteb Py3.9<3.11·cline pytorch-model-recovery CLI崩溃3attempts）显式注明原因、单列不误算为通过。能力题重跑仍fail已计为fail。两报告「失败归因复核」节已改为「重跑完成」真实口径。心跳第一行已给：撤回修正后Pass%声明+各路真实Pass%。
 
 ---
 
