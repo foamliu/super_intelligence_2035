@@ -1,5 +1,62 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **用户令 · 2026-11-18（交互式会话下发）— 补充：在计划书 `reports/report_edafb_icml2027_plan_zh.html` 适当位置补充两条预印本引用信息（最高优先 · 纯文档增量 · 不改其他内容）**
+>
+> 本条**覆盖 standby 状态**，是 v1.2 计划书交付后的**增量补丁任务**，不是重做计划书。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
+>
+> **用户原话（逐条对齐，不得自行改题）**：
+> 1. 「安排 zhulong agent 在适当位置补充信息：1.ZhuLong-DAC 已经发预印版，可以引用。2.DATE27_Zhulong 在 12 月初会发预印版，可以暂时通过 PLACEHOLDER 引用。」
+>
+> **ZhuLong-DAC 预印本 BibTeX（已上线，可直接引用）**：
+>
+> ```bibtex
+> @misc{liu2026runreadbackrefine,
+>       title={Run, Read Back, Refine: Observation Fidelity in Execution-Grounded EDA Agents}, 
+>       author={Yang Liu and Shiwei Hou and Xiyuan Chen and Sen Yuan and Shao You and Feifan Chen and Wencheng Li and Shuyang Hu and Emma Xia and Xiaojing Lu and Wenchuan Zhang and Hao Wang and Fan Xu and Yanfeng Li and Hongwen Li and Yiming Zhu},
+>       year={2026},
+>       eprint={2611.19056},
+>       archivePrefix={arXiv},
+>       primaryClass={cs.AR},
+>       url={https://arxiv.org/abs/2611.19056}, 
+> }
+> ```
+>
+> **DATE27_Zhulong 预印本 BibTeX（12 月初上线，当前用 PLACEHOLDER）**：
+>
+> ```bibtex
+> @misc{PLACEHOLDER_DATE27_ZHULONG,
+>       title={[PLACEHOLDER] ZhuLong-SE: Execution-Grounded Self-Evolving LLM Agent for EDA Scripting (DATE27 preprint, to appear early December 2026)},
+>       author={[PLACEHOLDER — DATE27_Zhulong 作者列表]},
+>       year={2026},
+>       note={预印版 2026-12 上线后回填 eprint/archivePrefix/primaryClass/url；当前 PLACEHOLDER，论文写作时引用键用 \cite{PLACEHOLDER_DATE27_ZHULONG} 占位，arXiv 编号待定},
+> }
+> ```
+>
+> ### ① 适当位置（建议，agent 可自主判断更优位置）
+>
+> - **首选**：在附录新增 `<h3>F. 参考文献（Bibliography · 预印本引用）</h3>` 小节（位于现有 E. ZHULONG_TASK.md / MEMORY_ZHULONG.md 之后、`<hr>` 自检块之前），放两条 BibTeX。
+> - **次选**：在现有附录 B（DATE27_Zhulong）开头加一行「预印本引用：见下方 BibTeX F」+ 在附录 C（ZhuLong_DAC2027）开头加同样指针；统一在 F 节给全文 BibTeX。
+> - **正文呼应**（可选，非必需）：§6.3 章节大纲的 §8 Related Work 行（"DATE27 + DAC + ExpeL + Reflexion + SkillOpt + MUSE"）和 §1/§3 多处提到「两篇 zhulong / 前作 / DAC」的地方，可在合适处加一句脚注式标注「（预印本 [F] / [F-DATE27 PLACEHOLDER]）」——但**不得改动现有结论、假设、臂表、判据、数字**。
+>
+> ### ② 硬约束（继承 v1.2，全部继续生效）
+>
+> - **唯一改动文件**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.2 基础上做增量补充）。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**（本轮只补计划书，不改稿）。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效——BibTeX 中的 `url={https://arxiv.org/abs/...}` 字段**必须以纯文本呈现**（`&lt;` 转义或放在 `<code>` / `<pre>` 块内），**不得**渲染成可点击的 `<a href="https://...">` 超链接；arXiv 编号以文本形式给出即可。
+> - ✅ **可追溯**：BibTeX 条目本身是用户给定的事实，标注「来源：用户令 2026-11-18（交互式会话）」即可，不需要 path:行号。
+> - ✅ **防伪底线**：不编造数字 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB（增量只会更大）；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+>
+> ### ③ 交付与提交
+>
+> - 交付物：v1.3 增量版 `reports/report_edafb_icml2027_plan_zh.html`（在 v1.2 的 74356B 基础上追加附录 F + 可选正文呼应）。
+> - 自检后 commit，前缀：`zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.3 — 补两篇 zhulong 预印本 BibTeX 引用`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：① 附录 F（或等价位）含两条 BibTeX，ZhuLong-DAC 完整 + DATE27 PLACEHOLDER；② 0 真实 `<a href="https://...">` 外链（grep `href="https?://`=0）；③ 0 `<script>`；④ 现有 §0–§9 结论/假设/臂表/判据/数字**未改**（diff 只在附录 + 可选正文脚注式标注）；⑤ v1.2 的所有判据（size>25KB / 11+ h2 / 8 臂 / H1-H4 证伪 / delta 表 / 时间线 / 开源边界表 / Plan B / UNKNOWN）继续过。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+
 > 🔴 **用户令 · 2026-11-17 22:5x — 新任务：EDA-Flow-Bench 论文重定位 + 消融实验设计 + 计划书（最高优先）**
 >
 > 本条**覆盖 standby 状态**（subagent 消融线仍保持 `done_all` 结案，**不再起 A3/A4/A5/A6/A0′′′ 等旧臂**；这是**一个新任务**，不是恢复旧实验）。
