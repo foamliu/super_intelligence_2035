@@ -5,12 +5,13 @@ WAITING: 0
 > 🔴 **用户令 2026-11-18 — S2 overlap 研究 + PC-4 blend TSV + Nemotron/finemath 分词 · 已交付**：
 > **S2 overlap 报告**：`reports/report_s2_data_overlap_study.md`（455行/6方案/Megatron源码逐行分析）。结论：当前blend不排除S1已训数据；同种子重叠~83-100%；推荐方案D+E（补新源stack-v3/MegaMath天然零重叠 + S2换SEED=5678）；完全排除不可行。
 > **PC-4 blend TSV**：`code/baize-llm/configs/blend_s2_preblend.tsv`（fallback版, 10源/prop=1.0/web40/code40/math20, 已加入finemath-4plus prop=0.005/epoch=0.78）。待Nemotron分词完成更新为main版。
-> **Nemotron-CC-Math 分词**：🔄后台运行中 PID 1791934（21/193 shards, ~1.35B tok/shard, ~28.5B tok已产出, ETA~37.8h, RAYON=8, nice19, ionice3, log→/tmp/tok_nemotron_math.log）。
+> **Nemotron-CC-Math 分词**：🔄后台运行中 PID 1791931（27/193 shards, ~1.35B tok/shard, ~36.6B tok已产出, ETA~36.6h, RAYON=8, nice19, ionice3, log→/tmp/tok_nemotron_math.log）。
 > **finemath-4plus 分词**：✅DONE（64/64 shards, 9.4B tokens, 0 errors, 5528s）→已加入blend TSV(prop=0.005)。
-> **MegaMath-web 下载**：🔄运行中 PID 489801（3060/4950=62%, 断点续传, nice19/ionice3/max-workers2, log→/tmp/dl_megamath_web_restart.log）。
-> **Code-Reasoning 下载**：🔄运行中 PID 489797（1519/1637=93%, 2 .incomplete, ETA~14min, 断点续传, nice19/ionice3/max-workers2, log→/tmp/dl_code_reasoning_restart3.log）。
-> **Math-Reasoning 下载**：🔄运行中 PID 3697171（1058/2228=47%, 断点续传稳定无崩溃, nice19/ionice3/max-workers2, log→/tmp/dl_math_reasoning_restart4.log）。
-> **.12 负载**：29.1 ✅ (<120 红线, 不挤 pretrain)；.29 负载：38.9 ✅。
+> **MegaMath PC-2 分词**：✅ALL DONE（5 subsets: text-code-block 200 shards + web-pro 100 + qa 32 + translated-code 16 + code 16 = 364 .json / 243GB; pc2_fast_split .12+.29 均已完成退出）。
+> **MegaMath-web 下载**：🔄运行中 PID 489801（3252/4950=66%, 断点续传, nice19/ionice3/max-workers2, log→/tmp/dl_megamath_web_restart.log）。
+> **Code-Reasoning 下载**：🔄运行中 PID 489797（1532/1637=94%, 2.8TB已落盘, 2 .incomplete, ETA~17min, 断点续传, nice19/ionice3/max-workers2, log→/tmp/dl_code_reasoning_restart3.log）。
+> **Math-Reasoning 下载**：🔄运行中 PID 3697171（1076/2228=48%, 2.0TB已落盘, 断点续传稳定无崩溃, nice19/ionice3/max-workers2, log→/tmp/dl_math_reasoning_restart4.log）。
+> **.12 负载**：33.82 ✅ (<120 红线, 不挤 pretrain)；.29 负载：38.75 ✅。
 
 > 🔴 **用户令 2026-11-18 14:2x — .12 CPU 僵尸清理 + 分词分机 · 已执行**：
 > **清理清单**：KILL PID 2350098 (`pc2_fast.py --subset megamath-text-code-block`, 9449%CPU=94核, ppid=1孤儿, 跑9h, batch encode用94线程抢CPU) + KILL PID 4060821 (`pc2_v3.py`, 99%CPU=1核, 跑8.5h, 与pc2_fast重叠做text-code-block但web-pro/qa/translated-code已完成→wasteful overlap)。
@@ -60,13 +61,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅ PC-3✅ PC-4✅(含finemath) PC-5🔄 → WAITING=0
-已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词(64.97B tok:web-pro 12.8B+tcb 40.5B+qa 5.9B+tc 5.8B;megamath-code 0tok因无text列);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv更新(10源prop=1.0,web40/code40/math20,含finemath prop=0.005/epoch=0.78);✅S2重叠研究报告(report_s2_data_overlap_study.md,6方案/455行);✅MegaMath text-code-block分词全完成(200/200 shards via .12/.29分机);✅finemath-4plus分词DONE(64/64/9.4B tok/0err)→已加入blend TSV;✅MegaMath flat symlink(pre-blend/megamath/348×3files)
-当前动作:     后台4任务并行巡检(wake#1551): Nemotron分词(17/193 shards,~23B tok已产出,ETA~38.7h,PID1791934,nice19/ionice3)+MegaMath-web下载(60%/2952files,ETA~1.5h,PID489801,nice19)+Code-Reasoning下载(92%/1512files,ETA~11min,PID489797,nice19)+Math-Reasoning下载(47%/1050files,稳定无崩溃,PID3697171,nice19); .12 load=29.9✅<120; .29 load=40.6✅; /nas_user 46T可用✅; pretrain训练正常(iter~248370,step~7s)
-下一步:       ①Code-Reasoning即将完成(~11min)→验收+登记DATA_MAPPING ②等Nemotron分词完成(~38.7h)→更新为main版blend TSV(加入Nemotron源) ③MegaMath-web下载完成后PC-5分词 ④全部完成后逐源13-gram污染扫描 ⑤报告pretrain线转告SEED=5678建议
-阻塞:         无(所有后台任务nice19/ionice3;.12 load 29.9<120✅不挤pretrain;/nas_user 46T可用✅>5T红线;git up-to-date with origin)
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄 → WAITING=0
+已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB:web-pro 100+tcb 200+qa 32+tc 16+code 16;pc2_fast_split .12+.29均完成退出);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv更新(10源prop=1.0,web40/code40/math20,含finemath prop=0.005/epoch=0.78);✅S2重叠研究报告(report_s2_data_overlap_study.md,6方案/455行);✅finemath-4plus分词DONE(64/64/9.4B tok/0err)→已加入blend TSV;✅MegaMath flat symlink(pre-blend/megamath/348×3files)
+当前动作:     后台4任务并行巡检(wake#1553): Nemotron分词(27/193 shards,~36.6B tok已产出,ETA~36.6h,PID1791931,nice19/ionice3)+MegaMath-web下载(66%/3252files,ETA~2.2h,PID489801,nice19)+Code-Reasoning下载(94%/1532files/2.8TB,ETA~17min,PID489797,nice19)+Math-Reasoning下载(48%/1076files/2.0TB,稳定无崩溃,PID3697171,nice19); .12 load=33.82✅<120; .29 load=38.75✅; /nas_user 46T可用✅; pretrain训练正常(torchrun PID2501551/step~7s)
+下一步:       ①Code-Reasoning即将完成(~17min)→验收+登记DATA_MAPPING ②等Nemotron分词完成(~36.6h)→更新为main版blend TSV(加入Nemotron源) ③MegaMath-web下载完成后PC-5分词 ④全部完成后逐源13-gram污染扫描 ⑤报告pretrain线转告SEED=5678建议
+阻塞:         无(所有后台任务nice19/ionice3;.12 load 33.82<120✅不挤pretrain;/nas_user 46T可用✅>5T红线;git up-to-date with origin)
 ERROR_COUNT:  0
-未完成指令:   无(4后台任务运行中,所有PC-1~PC-4已交付,finemath已加入blend TSV)→WAITING=0
+未完成指令:   无(4后台任务运行中,PC-1~PC-4已交付,MegaMath PC-2全完成,finemath已加入blend TSV)→WAITING=0
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）
@@ -74,7 +75,9 @@ ERROR_COUNT:  0
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [11-19 00:22] 唤醒1552（例行巡检·4后台任务全健康·进度推进·Code-Reasoning即将完成·MEMORY刷新）：①🔄Nemotron-CC-Math分词 RUNNING(PID1791934/21/193 shards/~28.5B tok已产出/ETA~37.8h/nice19/ionice3/481%CPU=5核/RAYON=8/log→/tmp/tok_nemotron_math.log);②🔄MegaMath-web下载 RUNNING(PID489801/3060/4950=62%/ETA~1.2h/nice19/ionice3/max-workers2/log→/tmp/dl_megamath_web_restart.log/2 .incomplete);③🔄Code-Reasoning下载 RUNNING(PID489797/1519/1637=93%/ETA~14min/nice19/ionice3/max-workers2/log→/tmp/dl_code_reasoning_restart3.log/2 .incomplete);④🔄Math-Reasoning下载 RUNNING(PID3697171/1058/2228=47%/稳定无崩溃/nice19/ionice3/max-workers2/log→/tmp/dl_math_reasoning_restart4.log/2 .incomplete);⑤✅.12 load=29.1✅<120红线(不挤pretrain);⑥✅.29 load=38.9✅;⑦✅磁盘/nas_user 113T/67T已用/46T可用(60%)→✅红线≥5T;⑧✅pretrain训练正常(torchrun PID2501551/step~7s/iter~248700);⑨✅git up-to-date with origin(无新指令);⑩下一步：Code-Reasoning即将完成→验收+登记DATA_MAPPING→等Nemotron分词完成→更新main版blend TSV
+> [11-19 01:45] 唤醒1553（例行巡检·MegaMath PC-2全完成确认·4后台任务健康·进度推进·MEMORY刷新）：①✅MegaMath PC-2分词ALL DONE确认(5 subsets: text-code-block 200+web-pro 100+qa 32+translated-code 16+code 16=364 .json/243GB; pc2_fast_split .12 PID2430086+.29 PID3935896均已完成退出,无残留进程);②🔄Nemotron-CC-Math分词 RUNNING(PID1791931/27/193 shards/~36.6B tok已产出/ETA~36.6h/nice19/ionice3/RAYON=8/log→/tmp/tok_nemotron_math.log);③🔄MegaMath-web下载 RUNNING(PID489801/3252/4950=66%/ETA~2.2h/nice19/ionice3/max-workers2/log→/tmp/dl_megamath_web_restart.log);④🔄Code-Reasoning下载 RUNNING(PID489797/1532/1637=94%/2.8TB已落盘/ETA~17min/nice19/ionice3/max-workers2/log→/tmp/dl_code_reasoning_restart3.log);⑤🔄Math-Reasoning下载 RUNNING(PID3697171/1076/2228=48%/2.0TB已落盘/稳定无崩溃/nice19/ionice3/max-workers2/log→/tmp/dl_math_reasoning_restart4.log);⑥✅.12 load=33.82✅<120红线;⑦✅.29 load=38.75✅;⑧✅磁盘/nas_user 113T/67T已用/46T可用(60%)→✅红线≥5T;⑨✅pretrain训练正常(torchrun PID2501551/step~7s);⑩✅git up-to-date with origin;⑪下一步：Code-Reasoning即将完成→验收+登记DATA_MAPPING→等Nemotron分词完成→更新main版blend TSV
+
+> 📦 唤醒1552 原文已归档 → daily-memories-data/2026-11-19.md（例行巡检·4后台任务健康·Code-Reasoning 93%·Nemotron 21/193,详见日文件）
 
 > 📦 唤醒1549-1551 原文已归档 → daily-memories-data/2026-11-18.md（例行巡检×3轮·4后台任务健康·Code-Reasoning渐进93%·Nemotron分词21/193,详见日文件）
 
