@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-18（5/5 · 09:00 增量） · research 线</title>
+<title>论文观察日报 · 2026-11-18（5/5 · 21:00 增量） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -48,7 +48,7 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-18</h1>
   <div class="sub"><b>早报（00:00 时窗）+ 03:00 补齐</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b>／<b>06:0x CST（B 轨第五十五轮 + 2 封信）</b>／<b>09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）</b>／<b>12:1x CST（B 轨第五十七轮 +3 + 2 封信）</b>／<b>15:0x CST（B 轨第五十八轮 +2 + 1 封信）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b>／<b>06:0x CST（B 轨第五十五轮 + 2 封信）</b>／<b>09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）</b>／<b>12:1x CST（B 轨第五十七轮 +3 + 2 封信）</b>／<b>15:0x CST（B 轨第五十八轮 +2 + 1 封信）</b>／<b>18:0x CST（B 轨第五十九轮 +3 + 作者网 +3 + 回信诊断 §10）</b>／<b>21:0x CST（B 轨第六十轮 +4 + 作者网 +3 + voice_ready V34 + 6 线建议）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -496,8 +496,97 @@
   <li><b>news_ready 0</b>：本轮 3 篇均为方法与技术报告（2017 / 2023 / 2024），无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
 </ul>
 
+<h3 class="sec">🅱 B 轨 · 21:00 增量（+4 → <b>231</b> · 第六十轮）</h3>
+<table class="plain">
+  <tr><th style="width:12%;">arXiv</th><th style="width:30%;">标题（原题照抄）</th><th style="width:9%;">被引</th><th>一句话贡献 + 为什么算经典</th><th style="width:14%;">服务线</th></tr>
+  <tr>
+    <td><code>2401.10241</code></td>
+    <td>Zero Bubble Pipeline Parallelism</td>
+    <td><b>100</b><br><span style="font-size:12px;color:#59636e;">OpenAlex<br>2026-11-18</span></td>
+    <td>把 1F1B 拆成 F / B / W 三类 pass 用 W 填空泡：ZB-H1 空泡降到 1/3（峰值激活不变 <code>pMB</code>）、ZB-H2 零空泡（<code>(2p−1)MB</code>）；再绕开 optimizer step 的跨 stage 同步（post-validation + 回滚）。相对 1F1B 吞吐 <b>+23%</b>（同内存上限）/ <b>+31%</b>（放宽内存）。<br><b>&lt;500 按「奠基 / 开创范式」收</b>：自述同步语义下<b>首个零空泡</b>，此前「bubble 不可避免」是共识前提。</td>
+    <td>pretrain · zhulong</td>
+  </tr>
+  <tr>
+    <td><code>2209.05433</code></td>
+    <td>FP8 Formats for Deep Learning</td>
+    <td><b>593</b></td>
+    <td>定义 E4M3（偏置 7、最大 448、无无穷、单一 NaN 位型）与 E5M2（偏置 15、最大 57,344）两套编码并分工：<b>E4M3 给权重/激活、E5M2 给梯度</b>；缩放因子放<b>软件</b>而不是改指数偏置；FP16 AMP 的「按溢出调 loss scale」对 FP8 <b>不是好选择</b>。NVIDIA 技术报告（2 页，无实验曲线）。</td>
+    <td>pretrain · zhulong</td>
+  </tr>
+  <tr>
+    <td><code>2502.14786</code></td>
+    <td>SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features</td>
+    <td><b>1,822</b></td>
+    <td>把 captioning 预训练 + 自蒸馏/掩码预测 + 在线数据筛选 + 多语去偏合成一条配方：四档 <b>ViT-B 86M / L 303M / So400m 400M / g 1B</b>、<b>109 语言</b>、256k 词表 Gemma 分词器、<b>NaFlex</b> 原生多分辨率/长宽比；额外 4B 样本只用 sigmoid 图文损失。</td>
+    <td>vision</td>
+  </tr>
+  <tr>
+    <td><code>2304.01373</code></td>
+    <td>Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling</td>
+    <td><b>761</b></td>
+    <td>可复现训练套件：<b>8 尺寸（70M–12B）× 2 套数据 = 16 模型</b>，每模型 <b>154 个 checkpoint</b>、训练顺序已知；Pile <b>300B</b> vs MinHashLSH(0.87) 去重后 <b>207B</b>；batch 1024；65,000 步（45%）出现相变（≥2.8B 才有「准确率 ~ 词频」相关）。ICML 2023。</td>
+    <td>harness · data · pretrain</td>
+  </tr>
+</table>
+<ul class="tight">
+  <li><b>核验（三源实测）</b>：arXiv <code>id_list</code> <code>200</code> + atom（4 entry）· OpenAlex <b>4/4</b> <code>200</code>（100 / 593 / 1,822 / 761）· PDF <b>4/4</b> <code>200</code> + <code>%PDF-</code>（649,126 / 281,195 / 623,539 / 1,091,147 B，<b>全部 ≤5 MB</b>）· <code>pdftotext</code> 逐篇核到原文数字（见 <code>research/classic/PAPERS.md</code> #228–#231 的「核验状态」行）。</li>
+  <li><b>候选池结清</b>：旧记「Zero Bubble 实测 90 ⇒ 暂留」→ 本轮实测 <b>100</b>，按「奠基」收（不再拿被引阈值卡开创性工作）；旧记「SigLIP 2 待核一手」→ 已核 <code>2502.14786</code> 并收。</li>
+</ul>
+
+<h3 class="sec">👥 作者关系网 · 21:00 增量（+3 → 212 · X 已核验 106）</h3>
+<ul class="tight">
+  <li><b>#210 Michael Tschannen</b>（Google DeepMind 苏黎世；SigLIP / SigLIP 2 项目 lead）· 邮箱 <code>tschannen@google.com</code>（<b>SigLIP 2 PDF 首页明文</b>，2025 年）· X <b>@mtschannen</b>（profile <code>200</code> + bio 含 <code>Research Scientist @GoogleDeepMind</code> + 单推页 <code>og:title</code> 双源）· 主页 <code>tschannen.github.io</code> <b>404</b> ⇒ <b>待跟踪、不发信</b>（邮箱现行性未核）。</li>
+  <li><b>#211 Stella Biderman</b>（EleutherAI 执行总监；Pythia 一作）· 邮箱 <code>stella@eleuther.ai</code>（Pythia PDF 首页，<b>2023 年</b>）· X <b>@BlancheMinerva</b>（单推页 <code>og:title</code> = 本人 + bio 含 <code>@AiEleuther</code>）· 站点个人页 <code>/people</code> <code>/team</code> 均 <code>404</code>，只有 <code>contact@eleuther.ai</code> ⇒ <b>待跟踪、不发信</b>。</li>
+  <li><b>#212 Hailey Schoelkopf</b>（EleutherAI；Pythia 二作）· 邮箱 <code>hailey@eleuther.ai</code>（Pythia PDF 首页，2023 年）· 主页 <code>haileyschoelkopf.github.io</code> <code>200</code> 但<b>无 mailto、无 X 链接</b> · <code>x.com/haileyschoelkopf</code> <b>404</b> ⇒ 写「未找到 X」，<b>不猜 handle</b>。</li>
+  <li>三人<b>均未发信</b>：今日额度 <b>12/12</b> 已满 + 邮箱仅见于论文 PDF（旧地址）⇒ 按「先核现行主页再发」办。</li>
+</ul>
+
+<h3 class="sec">✉️ 作者请教信 · 21:00（<b>0 封</b> · 今日 12/12 已满 · 累计 91 · 回信率 <b>0/91</b>）</h3>
+<ul class="tight">
+  <li><b>本轮不发信</b>：今日 <b>12/12</b>（<code>RESEARCH_MAIL_SPEC §3</code> 每日硬上限）⇒ 按 §3「剩余时窗只做选题与草稿，<b>不发</b>」。今日 00 / 03 / 06 / 09 / 12 / 15 六个时窗合计 12 封的额度已在 <b>15:00</b> 用尽。</li>
+  <li><b>回信跟踪（制度化口径）</b>：<code>research/mail/replies/</code> 仍<b>只有 README 与诊断文档，无任何回信摘录</b> ⇒ <b>回复数 0 / 发出数 91 = 0%</b>；<b>0 封到期</b>（最早 2026-11-25，#1–#7）⇒ 三值状态栏仍全为「未到期」，<b>不把 0 回信当成功</b>，按待诊断信号处理。</li>
+  <li><b>本轮替代动作（不发信就做诊断）</b>：为下一批信补「地址级别」字段（A = 本人现行主页 <code>mailto:</code> / B = 机构官方人员页 / C = 论文 PDF 首页）—— 本轮 #210–#212 三人<b>全部只能到 C 级</b>，这本身就是「有邮箱率虚高」的证据：<b>纸上 212 人里，本轮新增的 A 级地址为 0/3</b>。</li>
+  <li>发件通道仍<b>只发不收</b>（无 IMAP/POP3）⇒ 回信可能已到但读不到，仍是最需运维介入的一项。</li>
+</ul>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready · 21:00</h3>
+<details class="voice-ready" open>
+<summary>🗣 voice_ready · 研究者言论（可发头条） · 本期 1 条（V34）</summary>
+<ul>
+  <li><b>人物</b>：Lucas Beyer <b>@giffmana</b>（Meta；ex OpenAI / DeepMind / Brain；SigLIP 一作之一）</li>
+  <li><b>言论</b>：原文 —— "ayyoo they did our distillation thing for language models! Literally, with the equivalent of mixup :) / One thing it seems they had to do, is to only do this for part of the distillation, and then finish on \"pure\" examples. We probably should have also done that back then!"<br>中文 —— 「哎哟，他们把我们在蒸馏上的那套搬到语言模型上了！ literally 就是 mixup 的等价物 :) 有一点他们似乎必须做：只在蒸馏的<b>一部分</b>阶段这么做，最后再用『纯』样本收尾。我们当年大概也该这么干！」</li>
+  <li><b>时间</b>：2026-11-16 20:35 UTC（<b>2 天内</b>，未超 30 天）</li>
+  <li><b>出处</b>：<a href="https://x.com/giffmana/status/2122428389684588624">x.com/giffmana/status/2122428389684588624</a>（推文页 <code>200</code> / 157,407 B，<code>og:title</code> = <code>Lucas Beyer (bl16) (@giffmana) on X</code>，<code>og:description</code> 全文已取，与 profile 时间线一致 ⇒ 双源）</li>
+  <li><b>话题点</b>：预训练蒸馏里「混合成样本」被比作 mixup —— 但真正可搬的工程细节是<b>混到一半就停、末段回纯数据收尾</b>。</li>
+  <li><b>风险</b>：① 他评论的是<b>他人新论文</b>（<i>Perturbing Inputs Improves Pretraining Distillation</i>，@jackcai1206 等），"our distillation thing" 指其早前工作，<b>本推没有任何数字/消融</b>；② 「当年也该这么做」是<b>事后经验判断</b>，🚫 不得写成「已证明必须先混后纯」；③ 回复型推文，引用须保留「在评论哪篇论文」的上下文。</li>
+</ul>
+</details>
+<ul class="tight">
+  <li><b>voice_ready 1 → 2</b>（今日累计：V18 Jason Wei 03:00 首发 + V34 Lucas Beyer 本轮首发）。</li>
+  <li><b>news_ready 0</b>：本轮 4 篇全为经典论文（2022–2025），无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
+</ul>
+
+<h3 class="sec">🧭 6 线可执行建议 · 21:00</h3>
+<table class="plain">
+  <tr><th style="width:13%;">线</th><th>建议（可直接执行）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>① PP 调度做三组对照（有判据）</b>：固定模型切分与 micro-batch 数，跑「1F1B vs ZB-H1 vs ZB-H2」，记 <code>tokens/s</code> / <code>峰值激活</code> / <code>optimizer 同步耗时</code>；<b>预注册判据</b>：ZB-H1 的 tokens/s 提升 <b>&lt;10%</b> ⇒ 不上调度改造，预算转数据管线（<code>2401.10241</code> 的 23% / 31% 是 2023 年自家规模数字，2B 上未必成立）。<b>② FP8 尝试前先补三列</b>：<code>格式（E4M3/E5M2）/ 缩放粒度（per-tensor 或 per-channel）/ 缩放因子来源（静态标定或动态）</code>；判据 = 任何「FP8 不掉点」主张缺任一项判<b>不可比</b>（<code>2209.05433</code>）。</td></tr>
+  <tr><td><b>vision</b></td><td><b>视觉塔尺寸 A/B（预注册）</b>：按 SigLIP 2 同配方各训 <b>ViT-B/86M</b> 与 <b>So400m/400M</b>，在<b>我们的 agent 任务</b>上比（不用 ImageNet 线性探测）；判据 = 400M 相对 86M 提升 <b>&lt;3%</b> 而训练成本 <b>&gt;2×</b> ⇒ 2B 主模型锁 86M。另：评测集固定加「竖屏截图 / 宽幅波形图」两类，验证 <b>NaFlex</b> 与固定分辨率版的定位差异（<code>2502.14786</code>）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>把「checkpoint 扫描」写成常规实验类型</b>：评测报告固定三列 <code>checkpoint 步数 / 已见 token 数 / 数据顺序版本</code>；判据 = 任何「能力涌现」结论须给 <b>≥5 个 checkpoint</b> 的曲线，单点结论判无效（<code>2304.01373</code>：154 checkpoint + 训练顺序可复现）。</td></tr>
+  <tr><td><b>data</b></td><td><b>去重实验至少两档（有参照值）</b>：跑「不去重 vs MinHashLSH 阈值 <b>0.87</b>」两档，比 <b>记忆化</b> 与 <b>下游</b> 两项；参照量级用 Pythia 的 300B → 约 207B（<code>2304.01373</code>）；判据 = 若下游提升 &lt;1% 而去重成本 &gt;10% 总训练时长，则只做样本级精确去重、不做近似去重。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本表加一列「调度器 / 精度格式版本」</b>：PP 相关行必须标调度器（1F1B / ZB-H1 / ZB-H2），否则两次跑分不可比；若推理侧试 FP8，必须把「权重/激活 FP8」与「KV cache 精度」<b>分开记</b>，🚫 不拿训练侧 FP8 结论外推推理（#228 / #229）。</td></tr>
+  <tr><td><b>designflow</b></td><td>无（本轮 4 篇为 PP 调度 / 数值格式 / 视觉编码器 / 训练套件，均不涉及 EDA 造题或 L1–L5 保真度；不凑数）。</td></tr>
+</table>
+
+<h3 class="sec">📎 附录 · 21:00 增量检索记录（可核验）</h3>
+<table class="plain">
+  <tr><td style="width:20%;">接口 / 端点</td><td><code>export.arxiv.org/api/query</code>（<code>cat:cs.CL</code> 列表 + <code>id_list</code>）· <code>api.openalex.org/works/doi:10.48550/arXiv.*</code> · <code>arxiv.org/pdf/*</code>（含 HEAD 取 <code>Content-Length</code> 对账）· <code>x.com/*</code>（profile + 单推页）· <code>api.github.com</code> · 作者主页</td></tr>
+  <tr><td>成功项</td><td><code>cat:cs.CL</code> <code>200</code> / <b>72,765</b> B / 30 entry，最新 <code>published</code> = <b>2026-11-17T18:59:37Z</b>（与 18:00 相同 ⇒ 公告批<b>未前进</b>）· <code>id_list</code>（4 篇）<code>200</code> / 8,484 B · OpenAlex <b>4/4</b> <code>200</code> · PDF <b>4/4</b> <code>200</code> 且落盘字节与 <code>Content-Length</code> 一致 · <code>x.com</code> 直连 <b>200</b> + 代理 <b>200</b>（本日首次直连可用）· <code>@mtschannen</code> / <code>@BlancheMinerva</code> / <code>@giffmana</code> / <code>@_jasonwei</code> / <code>@karpathy</code> 均 <code>200</code></td></tr>
+  <tr><td>失败项（如实记）</td><td><code>x.com/haileyschoelkopf</code> <b>404</b>（不猜 handle）· <code>tschannen.github.io</code> <b>404</b> · <code>stellabiderman.com</code> <b>000</b> · <code>www.eleuther.ai/people</code> / <code>/team</code> <b>404</b> · <code>lins-ml.github.io</code> <b>404</b> / GitHub <code>lins-ml</code> <b>404</b> ⇒ Zero Bubble 作者 <b>Min Lin</b> 本轮未能核到现行主页（未单列条目）</td></tr>
+  <tr><td>A 轨说明</td><td><b>0 新收</b>：今日 <b>5/5</b> 已满（配额满，<b>不是</b>阻断）；公告批仍停在 <code>2026-11-17T18:59:37Z</code> ⇒ 11-19 新批留 00:00 时窗，不重开今日 5 篇。</td></tr>
+</table>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）／12:1x CST（B 轨第五十七轮 +3 + 2 封信 + 6 线建议）／15:0x CST（B 轨第五十八轮 +2 + 1 封信 + 6 线建议）／<b>18:0x CST（B 轨第五十九轮 +3 + 作者网 +3 + 回信诊断 §10 + 6 线建议；今日额度满 ⇒ 发信 0）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>227</b> 篇（第五十九轮 +3）｜ 作者网 <b>209</b> 人（X 已核验 104）｜ 作者信累计 <b>91</b> 封（回信率 <b>0/91</b>，0 封到期，最早 2026-11-25）｜ voice_ready 1 ｜ news_ready 0<br>
+  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）／12:1x CST（B 轨第五十七轮 +3 + 2 封信 + 6 线建议）／15:0x CST（B 轨第五十八轮 +2 + 1 封信 + 6 线建议）／<b>18:0x CST（B 轨第五十九轮 +3 + 作者网 +3 + 回信诊断 §10 + 6 线建议；今日额度满 ⇒ 发信 0）</b>／<b>21:0x CST（B 轨第六十轮 +4 + 作者网 +3 + voice_ready V34 + 6 线建议；发信 0 因额度满）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>231</b> 篇（第六十轮 +4）｜ 作者网 <b>212</b> 人（X 已核验 <b>106</b>）｜ 作者信累计 <b>91</b> 封（回信率 <b>0/91</b>，0 封到期，最早 2026-11-25）｜ voice_ready <b>2</b>（V18 + V34）｜ news_ready 0<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 

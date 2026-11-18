@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-18 18:0x）**：作者 **209** 人（编号最大 **209**）· X 已核验 **104** · 已发信 **91** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-18 21:0x）**：作者 **212** 人（编号最大 **212**）· X 已核验 **106** · 已发信 **91** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十轮增量（2026-11-18 21:0x）**：作者网 209 → **212**（#210 Michael Tschannen / #211 Stella Biderman / #212 Hailey Schoelkopf，依次来自本轮 B 轨 #230 SigLIP 2 / #231 Pythia）；已发信 **91 不变**（今日 12/12 已满 ⇒ 只建档不发信）；X 已核验 104 → **106**（`@mtschannen`：profile `200` + bio `Research Scientist @GoogleDeepMind` + 单推页 `og:title` = `Michael Tschannen (@mtschannen) on X`；`@BlancheMinerva`：profile `200` + bio 含 `@AiEleuther` + 单推页 `og:title` = `Stella Biderman (@BlancheMinerva) on X`；`x.com/haileyschoelkopf` **404** ⇒ 未找到 X，不猜）；三人均 **待跟踪** —— 邮箱仅见于论文 PDF 首页（2023 / 2025 年地址），按令**发信前须先核现行主页**。
 >
 > **第五十九轮增量（2026-11-18 18:0x）**：作者网 206 → **209**（#207 Zhifang Sui 穗志方 / #208 Mitchell Wortsman / #209 Paulius Micikevicius，依次来自本轮 B 轨 #225 DeepSeekMoE / #226 Small-scale proxies / #227 Mixed Precision）；已发信 **91 不变**（今日额度 12/12 已满，按 `RESEARCH_MAIL_SPEC §3` 只做选题与草稿，**不发**）；X 已核验 **104 不变**（`x.com` 直连与代理均 `000`）；已 follow 仍 **0**（需登录态，未假装）。⚠️ 本轮三人**均未取得可核现行邮箱**：#207 PKU 页 `000`、#208 三个主页全 `404`、#209 只有 PDF 首页 2017 年地址（已标「发信前须先核现行页」）⇒ 三人一律 `待跟踪`，🚫 不猜地址。
 >
@@ -1784,6 +1786,8 @@
 
 | V25（**第二十七轮新增 · 本期采用**） | Demis Hassabis `@demishassabis` | 2026-11-11 17:12 UTC | "Super proud to announce AlphaGenome 2 - our new DNA sequence model! 🧬 It predicts the impact of DNA variants in different specific cell types - unlocking crucial information for understanding complex diseases. Available for academic research via our API: https://t.co/dEyrvpTxIl"（推文页 `og:description` 全文） | <https://x.com/demishassabis/status/2120565316619284734> | 本期 `voice_ready` 第 1 条：推文页 `200` / 177,123 B，`og:title` = `Demis Hassabis (@demishassabis) on X`（bio = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief Scientist of Alphabet...`）；话题点 =「同一份 DNA、不同细胞类型：单字母变异为何只在部分细胞致病 —— 序列模型开始能按细胞类型预测」；风险 = ① 属**模型发布 + 学术 API 开放**的公告口径，🚫 不得写成「已解决疾病机理」；② 预测能力与准确率**未在本推中给数字**，引用时只能给方向；③ 2026-11-11，3 天内，符合 ≤30 天口径 |
 | V26（**第二十八轮新增 · 本期采用**） | Yoshua Bengio `@Yoshua_Bengio` | 2026-11-13 21:55 UTC | "It was great to be in Berlin and Zurich last week to connect with the European scientific community and policymakers on the urgent need for safe-by-design AI."（推文页 `og:description` **全文**，与 profile `full_text` 逐字一致） | <https://x.com/Yoshua_Bengio/status/2121361248889577858> | 本期 `voice_ready` 第 1 条：推文页 `200` / 113,553 B，`og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`（bio = `Turing Award recipient ... @UMontreal, @LawZero_ &amp; @Mila_Quebec`）；话题点 =「图灵奖得主在欧盟各国政府间推『safe-by-design』，说明 AI 安全从论文话题变成政策议程」；风险 = ① 属**行程回顾 + 主张**，🚫 不得写成「欧盟已采纳该原则」或任何政策结论；② 未提任何具体法规/数字 ⇒ 不补；③ 2026-11-13，1 天内，符合 ≤30 天口径 |
+| V34（**第六十轮新增 · 本期首发**） | Lucas Beyer `@giffmana` | 2026-11-16 20:35 UTC | "ayyoo they did our distillation thing for language models! Literally, with the equivalent of mixup :)<br><br>One thing it seems they had to do, is to only do this for part of the distillation, and then finish on \"pure\" examples. We probably should have also done that back then!"（推文页 `og:description` 全文；原文两段以空行分隔，此处用 `<br>` 标出） | <https://x.com/giffmana/status/2122428389684588624> | 本期 `voice_ready` 第 1 条：推文页 `200` / 157,407 B，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X`（与 profile bio `Researcher (now: Meta. ex: OpenAI, DeepMind, Brain, RWTH Aachen)` 一致 ⇒ 作者可核）。**话题点**：预训练蒸馏里「混入合成/教师样本」可以类比 mixup，但实践上似乎要**只在训练前段混、末段回到纯真实样本**收尾 —— 这是一个可直接搬进配方的工程细节。**风险**：① 他评论的是**他人新论文**（`Perturbing Inputs Improves Pretraining Distillation`，@jackcai1206 等），"our distillation thing" 指其早前工作，**本推不含任何数字/消融**；② 「should have also done that」是**事后经验判断**，🚫 不得写成「已证明必须先混后纯」；③ 属回复型推文，引用时须保留「在评论哪篇论文」的上下文。 |
+
 | V28（**第三十轮新增 · 本期采用**） | Tri Dao `@tri_dao` | 2026-10-28 19:49 UTC | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | 推文页 `HTTP 200` / 168,416 B，`og:title` = `Tri Dao (@tri_dao) on X` 且 `og:description` 与 profile `full_text` **逐字一致** ⇒ 本人原推。**话题点**：代码语料的 tokenizer 设计可能比模型规模更省算力（对 data / pretrain 的词汇表决策直接可用）。**风险**：他说的是**他人论文**（H-Net）的结论，非本人实验 ⇒ 只能当「研究者观点」，不能当已复现证据。 |
 > ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 / **V12** 正文截断不采用；V10 / V11 / **V13 / V14** 作者不符不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
 
@@ -3007,6 +3011,45 @@
 | 状态 | **待跟踪**（只建档；**未发信** —— 地址时效未确认） |
 | 备注 | `语言=英文(判据=姓名族属+美国机构)`。价值点：BF16/FP16/FP8 的**数值口径**源头，pretrain 线「训练配置表四列（master weight dtype / 累加 dtype / loss scale / 溢出策略）」的直接出处。同页还有 `eriche@google.com`（Erich Elsen）等 2017 年地址，同样先核现行页再发。 |
 
+
+### 210. Michael Tschannen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Michael Tschannen（德语姓名族属 + 瑞士机构 ⇒ **德文称谓问候 + 英文正文**；正文的英文 ≤200 词） |
+| 机构 | **Google DeepMind（苏黎世）**（SigLIP / SigLIP 2 项目 lead；B 轨 #230 通讯作者） |
+| 代表论文 | **Sigmoid Loss for Language Image Pre-Training（SigLIP）**（`2303.15343`，ICCV 2023，B 轨 #118）· **SigLIP 2**（`2502.14786`，B 轨 #230） |
+| 邮箱 | **`tschannen@google.com`**（来源：**SigLIP 2 PDF 首页明文**，2025 年论文；⚠️ 按令**发信前仍须先核现行主页**，🚫 不用更早论文的旧地址） |
+| 主页 | **未找到**（`tschannen.github.io` 本轮 `404`；DeepMind 个人页未取到） |
+| X 账号 | **@mtschannen**（双源：`x.com/mtschannen` `200`，bio = `Research Scientist @GoogleDeepMind. Representation learning for multimodal understanding and generation.`；单推页 `og:title` = `Michael Tschannen (@mtschannen) on X`） |
+| 状态 | **待跟踪**（有 PDF 邮箱，无已核现行主页 ⇒ 本轮不发信） |
+| 备注 | `语言=德文问候+英文正文(判据=德语姓名族属 + 瑞士/Google DeepMind 苏黎世)`。价值点：**视觉塔四档尺寸（86M / 303M / 400M / 1B）+ 稠密任务配方**的一手作者，是 vision 线「2B 模型该配多大视觉塔」的直接对话对象；问题方向建议锁在「captioning/自蒸馏各自的消融贡献」与「中文域内图文对下 sigmoid loss 的 batch 需求」。 |
+
+### 211. Stella Biderman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Stella Biderman（英语姓名 ⇒ 英文信 ≤200 词） |
+| 机构 | **EleutherAI**（执行总监；Pythia 一作，B 轨 #231） |
+| 代表论文 | **Pythia: A Suite for Analyzing LLMs Across Training and Scaling**（`2304.01373`，ICML 2023，B 轨 #231）· **The Pile**（`2101.00027`，B 轨 #76 区段） |
+| 邮箱 | **`stella@eleuther.ai`**（来源：**Pythia PDF 首页明文**，2023 年论文；⚠️ EleutherAI 站点本轮仅首页 `200`、只有公共信箱 `contact@eleuther.ai`，个人页 `/people` `/team` 均 `404` ⇒ 无现行个人页可核，发信前须再核） |
+| 主页 | **未找到**（`stellabiderman.com` 本轮 `000`；GitHub `StellaAthena` `200` 但页内无 `mailto:`） |
+| X 账号 | **@BlancheMinerva**（双源：`x.com/BlancheMinerva` `200`，bio = `Ensuring that tech companies don't have a monopoly on being able to do research on cutting edge AI @AiEleuther.`；单推页 `og:title` = `Stella Biderman (@BlancheMinerva) on X`） |
+| 状态 | **待跟踪**（邮箱为 2023 年 PDF 地址 ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：**可复现训练轨迹**（16 模型 × 154 checkpoint、训练顺序已知）的设计者，是 harness 线「中间 checkpoint 扫描」与 data 线「去重阈值对照」的直接对话对象。⚠️ 本轮抓到的时间线**近 30 天全为言论自由 / 政策类**，无技术原推 ⇒ **不作 voice_ready**（宁缺勿滥）。 |
+
+### 212. Hailey Schoelkopf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hailey Schoelkopf（英语姓名 ⇒ 英文信 ≤200 词） |
+| 机构 | **EleutherAI**（Pythia 二作，B 轨 #231；亦参与 The Pile / GPT-NeoX 线） |
+| 代表论文 | **Pythia**（`2304.01373`，ICML 2023，B 轨 #231）· GPT-NeoX-20B（`2204.06745`，本表未单列） |
+| 邮箱 | **`hailey@eleuther.ai`**（来源：**Pythia PDF 首页明文**，2023 年论文；⚠️ 现行性未核 ⇒ 发信前须先核主页/机构页） |
+| 主页 | <https://haileyschoelkopf.github.io/>（本轮 `200` / 23,354 B；⚠️ 页内**无 `mailto:`、无 X 链接**） |
+| X 账号 | **未找到**（`x.com/haileyschoelkopf` 本轮 **`404`**；🚫 不猜近似 handle） |
+| 状态 | **待跟踪**（只建档；无已核实现行邮箱 + 无 X ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：**训练套件的可复现性**（checkpoint 序列 / 数据顺序 / 去重版本）是 harness 与 data 两条线的共同底座，她同时是「评测套件怎么设计才可复现」的实践者。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
