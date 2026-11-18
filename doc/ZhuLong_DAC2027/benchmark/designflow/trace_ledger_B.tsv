@@ -1522,3 +1522,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1792204849864_ly0mw	e0039516	hfeg0plg76	19	spice_sim	parked		2026-11-17 05:02	r776 wrong-domain parked (dup of .messages.json entry): trace is EDA layout job-submission (Aether M0U/ddjob/LSF/OGE/Donau), NOT spice_char; was claimed 11-17 05:02, host-verified r776
 1795004858414_iqrnp	scarle	hfhds201	567	schematic_netlist	case	EDA-Eval-DesignFlow-AetherHspiceNetlistExport-001	2026-11-19 00:31	
 1795005201890_1n4ta	alan17z	hfeg0plg10	243	spice_sim	case	EDA-Eval-DesignFlow-IbisZqCalibMerge-001	2026-11-19 01:00	
+1794883500039_7pswx	wnyu	hfeg0plg002	353	spice_sim	case	EDA-Eval-DesignFlow-VcoBiasTbGen-001	2026-11-19 01:30	
