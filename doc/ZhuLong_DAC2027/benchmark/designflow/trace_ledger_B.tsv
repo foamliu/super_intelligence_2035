@@ -1529,3 +1529,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795001507401_e243s	alan17z	hfeg0plg10	217	spice_sim	parked		2026-11-19 03:02	stale: file not found on hfeg0plg10(172.16.8.176), session deleted between scan and read
 1795003458729_fsoag	scarle	hfhds201	189	spice_sim	parked		2026-11-19 03:03	stale: file existed at ls (736312B 11-18 20:23) but deleted before cp; scarle active, session rotation
 1794797385862_khobz	tongfanl	hfhds201	119	spice_sim	case	EDA-Eval-DesignFlow-MatrixJobStatusParse-001	2026-11-19 03:24	
+1794971114617_a8p3f	dsgao	hfhds201	43	spice_sim	case	EDA-Eval-DesignFlow-TwoStepSenseTTCmp-001	2026-11-19 04:12	
