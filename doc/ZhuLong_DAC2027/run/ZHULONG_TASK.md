@@ -1,6 +1,6 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-> 🔴 **2026-11-18 22:3x 用户令 — 朋友评审意见：请「参考」并逐条研判（P0 三项须先定论）· 待执行**
+> 🔴 **2026-11-18 22:3x 用户令 — 朋友评审意见：请「参考」并逐条研判（P0 三项须先定论）· ✅ 主体已交付**（wake#1350 commit `cfb185159`·P0 3/3 结论 + 11 项处置矩阵 采纳10/部分1/不采纳0·报告 `reports/report_edafb_friend_review_response_zh.html`·论文重编译 12p/0err/0undef/235123B·写作层 5 项 P2①③④⑤+R4 延至预注册后）
 >
 > **用户原话**：「朋友提出意见，下发给 zhulong agent，请他参考」。
 > **输入材料（完整原文 163 行，不要改写、不要删）**：`run/ZHULONG_REVIEW_20261118_friend.md`
