@@ -3849,6 +3849,32 @@
    "detail": "d: JSON missing top-level keys: ['improvement_subckt', 'n_subckts', 'device_counts', 'n_signals', 'signals']",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-CircWfReport-001/V2/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-ClampLeakPwrAnalyze-001",
+   "arm": "V0",
+   "k_conditions": 34,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-ClampLeakPwrAnalyze-001",
+   "arm": "V1",
+   "k_conditions": 34,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
