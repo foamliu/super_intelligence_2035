@@ -10,7 +10,7 @@ WAITING: 0（2026-11-18 wake#1348·**🟢 standby·done_all·中文对照令已�
 - [wake#1347 详条已滚出·被 wake#1348 代表] 见 `daily-memories/2026-11-18.md` §[wake#1347 rolled-out]（第九十三次核验·standby·done_all·HEAD=`0cf923b6f3`·本轮 wake#1348 维护滚出·原文不改）。
 - [wake#1346 详条已滚出·被 wake#1347 代表] 见 `daily-memories/2026-11-18.md` §[wake#1346 rolled-out]（第九十二次核验·standby·done_all·HEAD=`512577c07`·本轮 wake#1347 维护滚出·原文不改）。
 - [wake#1345 详条已滚出·被 wake#1346 代表] 见 `daily-memories/2026-11-18.md` §[wake#1345 rolled-out]（第九十一次核验·standby·done_all·HEAD=`29535f0c8`→自提交 `512577c07`·本轮 wake#1346 维护滚出·原文不改）。
-- [2026-11-18 wake#1343 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第八十九次核验·standby·done_all·与 wake#1311-1342 同款场景·infra 健康（loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h / cline ✅ @/home/app.e0031982/.local/bin/cline·/home 29G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146 = inbox 顶块 RUN_ID 146·无 RUN_ID 147 pending）·fetch 后 HEAD=`054a0d711`=origin/main（他线提交推进·非本线·0 ahead 0 behind·push 通畅·zhulong run/ZhuLong_DAC2027 子树干净·AGENTS.md 禁 stash/clean/reset → 不碰）·research 日报 2026-11-18.html mtime 21:09（wake#1342 已见·此后无更新版本）zhulong 建议仍 Verilog 评测法(VeriGen/ChipNeMo/DSPy)+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应→不起臂·subagent 消融线 done_all·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本轮另做 §10 维护：滚 wake#1342 详条出至 daily + 合并 wake#1339-1341 三指针为一行省空间（原文不改）·MEMORY 维持 40KB 硬上限内。
+- [wake#1343 详条已滚出·被 wake#1348 代表] 见 `daily-memories/2026-11-18.md` §[wake#1343 rolled-out]（第八十九次核验·standby·done_all·HEAD=`054a0d711`·本轮 wake#1348 维护滚出省 40KB 空间·原文不改）。
 
 - [wake#1342 详条已滚出·被 wake#1343 代表] 见 `daily-memories/2026-11-18.md` §[wake#1342 rolled-out]（第八十八次核验·standby·done_all·HEAD=`a76fce061`·本轮 wake#1343 维护滚出·原文不改）。
 
