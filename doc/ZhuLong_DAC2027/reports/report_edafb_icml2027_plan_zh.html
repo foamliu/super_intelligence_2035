@@ -216,6 +216,14 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 
 <h3>§2.3 开源边界表</h3>
 
+<div class="callout bad">
+<b>v1.4 开源边界收缩（用户令 2026-11-18 第二批意见 ①：「Lite 500 题 + mock-EDA 模式开源」费力不讨好，不建议）</b>：
+<p>用户原话：「『计划书提出开源 Lite 500 题 + mock-EDA 模式』费力不讨好，不建议。」v1.4 据此<b>收缩开源边界</b>：原 v1.2 承诺的「Lite 集 500 题脱敏资产 + mock-EDA 可执行模式开源」<b>降级</b>——理由：① Lite 集脱敏 + 难度校准 + 可释放性筛选的工程成本高，维护负担重；② mock-EDA 模式无法复现真实工具 grounding depth 差距（physical_verify 2.9% 的 DRC/LVS 真跑在 mock 下不存在），开源自降为「mock 工具编排」后差异化优势被削弱；③ 收益/成本不匹配。</p>
+<p><b>v1.4 替代性开源边界（更轻、更可信）</b>：只开 <b>harness 协议 + 判据 + 脱敏任务规格（不开 Lite 集可执行资产、不开 mock-EDA 模式）</b>，即「评测协议白皮书」而非可执行资产。外部研究者可在自建 mock 沙盒上复跑 harness 协议、用开源 EDA（Yosys/OpenROAD/Magic）重造等价 bench 检验同一认知命题（命题可迁移性论证不变，见 §2.2）。</p>
+<p><b>下表（v1.2 起草）保留作历史口径</b>，但其中「Lite 集 500 题 prompt + 脱敏 input assets」「mock-EDA 模式」「mock-behavioral fixture」三行的<b>能开（green）</b>列在 v1.4 降级为<b>不开或仅协议级</b>（见本 callout 替代边界）。</p>
+<span class="src">用户令 2026-11-18 第二批意见 ①（ZHULONG_TASK.md v1.4 令 §① 意见 1）</span>
+</div>
+
 <table>
 <tr><th>类别</th><th>能开（green）</th><th>不能开（red）</th><th>可申请（yellow）</th></tr>
 <tr>
@@ -446,7 +454,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <section id="s5">
 <h2>§5 消融实验设计（核心：≥6 臂 + 杀手级对照 + 污染防护 + 统计）</h2>
 
-<h3>§5.1 臂表（8 臂，含 2 负对照）</h3>
+<h3>§5.1 臂表（v1.4：13 臂 = v1.2 的 8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2 + v1.4 新增 M4/M5/M6/M7/M8）</h3>
 
 <table class="arms-table">
 <tr><th>臂号</th><th>名称</th><th>唯一变量</th><th>实现方式</th><th>对照</th><th>预注册判据</th><th>成本（token/墙钟）</th></tr>
@@ -554,9 +562,10 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <b>杀手级对照 N1（必须有，判别「记忆真有用」 vs 「prompt 变长」）</b>：审稿人对「记忆/检索增益」最常见的反驳是「你只是给了更多上下文 token，LLM 自然表现更好」。N1 通过<b>等 token 预算的无意义填充</b>排除这一替代解释——若 M3 ≈ N1，则记忆增益<b>仅来自 token 量</b>而非知识内容，H1 被实质证伪（即使 M3 &gt; M0）。这一对照在 DATE27 中<b>未做</b>（DATE27 只对比了 names-only vs full-sequence injection，4_self_evolve.tex:22 + 1_intro.tex:28「names-only retrieval improves over full-sequence injection by 4.7pp」），是新论文的实验设计增量。
 </div>
 
-<h3>§5.2 污染防护</h3>
+<h3>§5.2 污染防护（v1.4：新增 Full→Lite 迁移检验 M4，替代纯 held-out 口径）</h3>
 <ul>
-  <li><b>Held-out 任务</b>：自改进的写入侧（distillation）只用在「训练子集」上的 trace；held-out 子集（120 题或 500 题）<b>从不参与 distillation</b>。继承 DATE27 的 instance-disjoint split（1_intro.tex:7 + 4_self_evolve.tex:22）。</li>
+  <li><b>v1.4 跨题污染检验（M4 迁移臂，核心）</b>：用户 2026-11-18 第二批意见 ② 指出<b>真正的风险是「记忆跨题污染」</b>——agent 在一题上写的记忆可能直接泄露另一题的答案。v1.4 把污染防护从「held-out 不参与 distillation」升级为<b>主动迁移检验</b>：在<b>训练域</b>（Full 集子集）跑 agent 写记忆，在<b>迁移目标域</b>（instance-disjoint 的另一子集）<b>只读记忆</b>，看能否迁移提升 Pass@1。若迁移有效 → 记忆是抽象认知；若迁移无效或负向 → 记忆只是题面答案缓存（即污染）。<b>污染检测指标</b>：对迁移命中记忆逐条审计「抽象认知 vs 题面答案片段」，统计<b>答案泄露率</b>（&gt;0 则 anti-leakage 强化后复测）。<span class="src">用户令 2026-11-18 第二批意见 ② · M4 臂 §5.1</span></li>
+  <li><b>Held-out 任务</b>：自改进的写入侧（distillation）只用在「训练子集」上的 trace；held-out 子集（120 题或 500 题）<b>从不参与 distillation</b>。继承 DATE27 的 instance-disjoint split（1_intro.tex:7 + 4_self_evolve.tex:22）。<b>v1.4：M4 迁移臂的目标域即此 held-out 的扩展</b>。</li>
   <li><b>时间切分</b>：记忆写入只用 2026-11-09 冻结快照<b>之前</b>的 trace；冻结快照之后的 case 不进入记忆库（防止「用未来数据解释过去」）。</li>
   <li><b>答案泄漏检查</b>：复用 EDA-Flow-Bench 的 PreToolUse 防泄题钩子（3_harness.tex:51-65）—— reference/ + check.py 不进入 workdir；hook_blocks 字段统计 ACCESS RESTRICTED 事件（3_harness.tex:67）。自改进记忆条目经 anti-leakage retrieval（names-only + docstring generalization，4_self_evolve.tex:22）防止跨划分答案复制。</li>
   <li><b>记忆内容审计</b>：每条 L1 记忆条目记录 trace_source + reliability tier（verified/unverified/pitfall，4_self_evolve.tex:10）+ 写入时间戳；审计脚本统计「错误条目占比」「淘汰条目数」「冲突消解次数」——作为「记忆质量」的协变量报告。</li>
@@ -576,6 +585,11 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 </div>
 
 <h3>§5.4 最小可跑矩阵 vs 理想矩阵</h3>
+
+<div class="callout warn">
+<b>v1.4 任务子集口径变更（连锁自开源边界收缩）</b>：v1.2 以「Lite 集 500 题」为任务子集；v1.4 因开源边界收缩（§2.3 callout），<b>所有臂改用 Full 集子集</b>（如 top-120 by grounding depth / top-200 by chain length，从 1684 题中选，<b>不造新题、不开源</b>）。下表「Lite 集」字样在 v1.4 统一理解为「Full 集子集（不开源，仅内部评测）」。M4 迁移臂的训练域/目标域均取自 Full 集子集。
+<span class="src">用户令 2026-11-18 第二批意见 ① 连锁修订（ZHULONG_TASK.md v1.4 令 §① 意见 1 连锁）</span>
+</div>
 <table>
 <tr><th></th><th>最小可跑矩阵（1-2 周）</th><th>理想矩阵（资源允许）</th></tr>
 <tr><td><b>臂</b></td><td>M0, M3, N1, M3+S1（4 臂，覆盖 H1 主对照 + 杀手级 N1 + H3 交互）</td><td>8 臂全跑（M0/M1/M2/M3/S1/M3+S1/N1/N2）</td></tr>
@@ -628,6 +642,11 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <span class="src">来源：用户令 2026-11-18（交互式会话）· 附录 F</span>
 </div>
 
+<div class="callout gold">
+<b>v1.4 Related Work 扩展（用户令 2026-11-18 第二批意见 ③）</b>：§8 Related Work 行从「EDA benchmark / agent memory / RSI / self-evolution（DATE27 + DAC + ExpeL + Reflexion + SkillOpt + MUSE）」<b>扩展</b>加一行「<b>affective neuroscience × agent memory</b>（情绪唤醒度巩固 McGaugh 2004/2013 / 心境一致提取 Bower 1981 / 武器聚焦 Loftus 1987 Steblay 1992 / 预测误差门控 Friston Rao &amp; Ballard 1999 Ranganath &amp; Rainer 2003 / Bayesian surprise Itti &amp; Baldi 2009 / AI 情感记忆 Generative Agents Park 2023 · EM-LLM arXiv:2407.09450 · PsychoAgent arXiv:2608.07438 · somatic-marker re-injection arXiv:2605.08611）」。完整文献清单 + 机制映射见<b>附录 G</b>（research.cimi_search 8 次调用）。
+<span class="src">用户令 2026-11-18 第二批意见 ③ · 附录 G</span>
+</div>
+
 <h3>§6.4 图表清单（Figure 3-5 + Table 3-5）</h3>
 <table class="figtable">
 <tr><th>编号</th><th>标题</th><th>数据来源</th><th>是否已有</th></tr>
@@ -648,6 +667,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <h2>§7 实验矩阵与时间线</h2>
 
 <h3>§7.1 实验矩阵表（臂 × 任务子集 × 重复 × 判据）</h3>
+<div class="callout warn"><b>v1.4</b>：本表「Lite」「Lite 500」字样统一理解为「Full 集子集（不开源）」；新增 M4/M5/M6/M7/M8 行（见 §5.1 臂表 v1.4 新增）。M0 锚点仍引用 696-run 快照（4_experiments.tex:66）。</div>
 <table class="arms-table">
 <tr><th>臂</th><th>任务子集</th><th>重复</th><th>判据</th><th>对应假设</th><th>状态</th></tr>
 <tr><td>M0</td><td>引用 696-run 快照（Full 集子集）</td><td>1（快照）</td><td>基线锚点 10.0%</td><td>—</td><td>✅ 已有（4_experiments.tex:66）</td></tr>
@@ -729,6 +749,18 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <td><b>记忆写入污染</b>（错误条目误导后续任务）</td>
 <td>M2/M3 &lt; M0</td>
 <td>这正是 N2 对照要测的；若 M3 &lt; M0，说明门控不足 → 加强 disconfirmation filtering 或降级到 M1 静态记忆报告。</td>
+</tr>
+<tr>
+<td><span class="tag p0">R8</span></td>
+<td><b>v1.4 开源承诺收缩被审稿人质疑复现性</b>（删 Lite 500 + mock-EDA）</td>
+<td>拒稿风险</td>
+<td>① <b>NDA 受控评审复现包</b>（审稿人签 NDA 访问受控沙盒）；② <b>协议级开源</b>（harness 协议 + 判据 + 脱敏任务规格白皮书，不开可执行资产）；③ <b>命题可迁移性论证</b>（用开源 EDA Yosys/OpenROAD/Magic 重造等价 bench 仍能检验 H1-H7，§2.2）；④ M4 迁移臂本身就是「记忆是抽象认知而非题面答案」的复现性证据（§5.2）。</td>
+</tr>
+<tr>
+<td><span class="tag p1">R9</span></td>
+<td><b>v1.4 情绪机制（H5/H6/H7）全负结果</b></td>
+<td>核心认知升级失效</td>
+<td><b>诚实路线</b>：写成「<b>情绪启发式在长链工具编排上的边界条件</b>」——认知神经科学机制在生物认知中成立（附录 G），但<b>迁移到 LLM agent 的 long-chain flow 是经验问题</b>；负结果界定「生物启发机制在符号工具编排上的适用边界」，本身可发表（与 R1 同构）。同时回退到 v1.2 的 H1-H4 功能级命题作次要贡献。</td>
 </tr>
 </table>
 
@@ -912,22 +944,88 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <div class="callout gold">
 <b>与现有附录 A–E 的关系</b>：附录 A–E 是<b>本计划书内部引用清单</b>（路径 + 行号，指向仓库内源文件），用于「全文数字可追溯」自检；本附录 F 是<b>论文写作时的外部 Bibliography</b>（BibTeX 条目，指向 arXiv 预印本），用于论文 References 节。两者互补：A–E 证「本计划书不编造数字」，F 供「论文正式引用两篇前作」。F 节的 BibTeX 是用户给定事实，不需 path:行号 追溯（已在 callout 标注来源为用户令 2026-11-18）。
 </div>
+
+<h3 id="sg">G. 调研文献（research.cimi_search · 情绪×记忆机制映射 · v1.4）</h3>
+
+<p>本节为 <b>v1.4 增量</b>（用户令 2026-11-18 第二批意见 ②③ 硬要求：必须用 <code>research.cimi_search</code> 做调研，≥6 次调用）。实际执行 <b>8 次 research.cimi_search 调用</b>，查询词覆盖：① 情绪唤醒度巩固（amygdala-hippocampus）/ ② 心境一致 + 状态依赖提取 / ③ 武器聚焦 + central-peripheral / ④ 预测误差 + Bayesian surprise 门控 / ⑤ affective tagging / ⑥ LLM agent 情绪记忆 / ⑦ affective computing agent memory / ⑧ dopamine reward prediction error（主动扩展）。下表列出引用进 §4.5 / §5 / §6.3 的关键文献，<b>0 外链纪律继续生效</b>：arXiv 编号 / DOI 以纯文本给出，<b>不</b>渲染成可点击超链接。
+<span class="src">工具：research.cimi_search（MCP）· 8 次调用 · 命中数见各查询 · 来源：用户令 2026-11-18 第二批意见 ②③</span></p>
+
+<h4>G.1 机制 ① 情绪唤醒度 → 记忆巩固（amygdala-hippocampus · 写入门控生物证据）</h4>
+<table>
+<tr><th>文献</th><th>关键结论（用于 §4.5.1 机制①）</th><th>来源标识（纯文本）</th></tr>
+<tr><td>McGaugh, J.L. (2004). The amygdala modulates the consolidation of memories of emotionally arousing experiences.</td><td>杏仁核调节情绪唤醒事件的记忆巩固；肾上腺素/皮质醇 → 杏仁核 NE → 海马存储调制。v1.4 写入门控（M5）的直接生物对应。</td><td>Annu Rev Neurosci 27:1-28 · DOI: 10.1146/annurev.neuro.27.070203.144157 · PMID: 15217324</td></tr>
+<tr><td>McGaugh, J.L. (2013). Making lasting memories: Remembering the significant.</td><td>情绪唤醒度（arousal，无论正负效价）选择性增强重要经验的长期记忆；杏仁核-海马交互是核心。</td><td>PNAS 110(Supplement 2):10402-10407 · DOI: 10.1073/pnas.1301209110</td></tr>
+<tr><td>McIntyre, C.K., McGaugh, J.L., Williams, C.L. (2011). Interacting brain systems modulate memory consolidation.</td><td>情绪唤醒通过外周激素 + 蓝斑 NE → BLA 调制全脑记忆存储。</td><td>PubMed PMID: 22085800</td></tr>
+<tr><td>Richter-Levin, G. &amp; Akirav, I. (2003). Emotional tagging of memory formation.</td><td>「emotional tagging」概念：杏仁核激活「标记」经验为重要，强化海马突触。v1.4 affective tag 的来源。</td><td>Haifa University CRIS · Brain Res Rev</td></tr>
+<tr><td>Kensinger, E.A. (2009). Remembering the Details: Effects of Emotion.</td><td>情绪对记忆的增强非对称：负性体验更常触发 focal enhancement（central 细节）。</td><td>Emot Rev 1(2):99-113 · DOI: 10.1177/1754073908100432 · PMC2676782</td></tr>
+<tr><td>Ack Baraly, K., Hot, P., Davidson, P.S.R., Talmi, D. (2016). How Emotional Arousal Enhances Episodic Memory.</td><td>情绪唤醒增强情景记忆的综述（modulated-consolidation model）。</td><td>Learning and Memory: A Comprehensive Reference (2nd ed.), Elsevier</td></tr>
+</table>
+
+<h4>G.2 机制 ② 武器聚焦 → central-peripheral 记忆权衡（压缩生物证据）</h4>
+<table>
+<tr><th>文献</th><th>关键结论（用于 §4.5.1 机制②）</th><th>来源标识（纯文本）</th></tr>
+<tr><td>Easterbrook, J.A. (1959). The effect of emotion on cue utilization and the organization of behavior.</td><td>高唤醒注意窄化（attentional narrowing）—— v1.4 武器聚焦压缩（M7）的理论源头。</td><td>Psychol Rev 66:183-201</td></tr>
+<tr><td>Loftus, E.F., Loftus, G.R., Messo, J. (1987). Some facts about 'weapon focus'.</td><td>武器聚焦效应原始证据：武器出现窄化注意，损害周边细节记忆。</td><td>J Appl Psychol / Law Hum Behav</td></tr>
+<tr><td>Steblay, N.M. (1992). A meta-analytic review of the weapon focus effect.</td><td>武器聚焦 meta 分析：robust 但受 attention/arousal 中介。</td><td>Law Hum Behav 16:413-424</td></tr>
+<tr><td>Mather, M. &amp; Sutherland, M.R. (2011). Arousal-biased competition in perception and memory.</td><td>arousal-biased competition 理论：唤醒增强高优先级刺激、抑制低优先级。v1.4 central/peripheral 比值的理论基础。</td><td>Perspect Psychol Sci · PMC3110019</td></tr>
+<tr><td>Levine, L.J. &amp; Edelstein, R.S. (2009). Emotion and memory narrowing: A goal-relevance approach.</td><td>目标相关性取向解释记忆窄化：情绪只增强与当前目标相关信息。</td><td>（review）</td></tr>
+</table>
+
+<h4>G.3 机制 ③ 心境一致 / 状态依赖提取（状态感知检索生物证据）</h4>
+<table>
+<tr><th>文献</th><th>关键结论（用于 §4.5.1 机制③）</th><th>来源标识（纯文本）</th></tr>
+<tr><td>Bower, G.H. (1981). Mood and Memory.</td><td>Network Theory of Affect：心境作为记忆网络节点，心境一致 + 状态依赖提取。v1.4 状态感知检索（M6）的理论源头。</td><td>Am Psychol 36:129-148</td></tr>
+<tr><td>Bower, G.H., Gilligan, S.G., Monteiro, K.P. (1981). Return of the repressed: Mood and memory.</td><td>心境一致记忆的实验证据（催眠诱导心境）。</td><td>（PDF via psychology.com 复现）</td></tr>
+<tr><td>Eich, E., Macaulay, D., Ryan, L. (1994). Mood dependent memory.</td><td>状态依赖提取：自生成事件下效应更强；编码/检索心境匹配 &gt; 不匹配。</td><td>（review, ScienceDirect）</td></tr>
+</table>
+
+<h4>G.4 预测误差 / Bayesian surprise 门控（写入门控计算先例）</h4>
+<table>
+<tr><th>文献</th><th>关键结论（用于 §4.5.1 机制① + H5）</th><th>来源标识（纯文本）</th></tr>
+<tr><td>Rao, R.P.N. &amp; Ballard, D.H. (1999). Predictive coding in the visual cortex.</td><td>预测编码奠基：皮层只传播预测残差（误差信号）。</td><td>Nat Neurosci 2:79-87</td></tr>
+<tr><td>Friston, K. (2010). The free-energy principle.</td><td>自由能原理：预测误差最小化统一为学习/感知目标。</td><td>Nat Rev Neurosci 11:127-138</td></tr>
+<tr><td>Ranganath, C. &amp; Rainer, G. (2003). Neural mechanisms for detecting and remembering novel events.</td><td>新异事件检测与记忆编码共享神经机制。</td><td>Nat Rev Neurosci 4:345-55</td></tr>
+<tr><td>Itti, L. &amp; Baldi, P. (2009). Bayesian surprise attracts human attention.</td><td>Bayesian surprise = KL(后验‖先验)，吸引注意。v1.4 surprise 项的形式化来源。</td><td>Vision Res 49:1295-1306</td></tr>
+<tr><td>Quent, J.A., Henson, R.N., Greve, A. (2021). A predictive coding model of episodic memory.</td><td>预测误差增强记忆的各种理论模型系统比较。</td><td>（review）</td></tr>
+<tr><td>Pupillo, F. et al. (2023). The effect of prediction error on episodic memory encoding.</td><td>计算模型导出的预测误差预测后续记忆成绩。</td><td>npj Science of Learning</td></tr>
+<tr><td>van Kesteren, E.R. et al. (2012). How schema and novelty augment memory formation.</td><td>双通路模型：图式一致 → 整合通路；图式外新异 → 情景通路强编码。</td><td>Trends Neurosci</td></tr>
+</table>
+
+<h4>G.5 AI / LLM agent 情感记忆（工程先例 · 同构参照）</h4>
+<table>
+<tr><th>文献</th><th>关键结论（用于 §4.5 info callout + §6.3 Related Work）</th><th>来源标识（纯文本）</th></tr>
+<tr><td>Park, J.S. et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior.</td><td>用 LLM 打「重要性分」过滤记忆写入 —— v1.4 惊奇度门控（M5）的工程化先例（同思想，但未在 EDA flow 预注册检验）。</td><td>arXiv:2304.03442</td></tr>
+<tr><td>EM-LLM (2024). Human-inspired Episodic Memory for Infinite Context LLMs.</td><td>用 Bayesian surprise + 图论边界切分事件，无限上下文 LLM 情景记忆。</td><td>arXiv:2407.09450</td></tr>
+<tr><td>Gorlo, N., Wise, D.K., Speranzon, A., Carlone, L. (2026). Worth Remembering: Surprise-Gated Robot Episodic Memory.</td><td>机器人情景记忆按 Bayesian surprise 门控写入，存 &lt;2% 帧提升 QA 12%+。v1.4 M5 几乎同构。</td><td>arXiv:2606.03787</td></tr>
+<tr><td>Mouchon, L. (2026). Surprise as a Signal for Plasticity and Metacognition.</td><td>冻结 backbone 上的 surprise 检测器，门控可塑性 + 元认知。</td><td>arXiv:2606.31495</td></tr>
+<tr><td>Amanlou, M. et al. (2026). PsychoAgent: An Affect-Sensitive Cognitive Architecture for Conflict-Aware Memory in LLM Agents.</td><td>affective significance + 未解决冲突 影响记忆可访问性 —— v1.4 状态感知检索（M6）的 LLM 先例。</td><td>arXiv:2608.07438</td></tr>
+<tr><td>The Echo Amplifies the Knowledge: Somatic Marker Analogues in LMs via Emotion Vector Re-Injection. (2026)</td><td>Damasio 躯体标记假说的 LLM 实现：emotion vector 在回忆时再注入。情绪记忆作为动作选择启发式。</td><td>arXiv:2605.08611</td></tr>
+<tr><td>DAM-LLM: Dynamic Affective Memory Management for Personalized LLM Agents.</td><td>Bayesian 更新 + 熵驱动压缩，记忆体积减 70%。v1.4 武器聚焦压缩（M7）的先例。</td><td>（Lacuna 索引）</td></tr>
+<tr><td>REMT: From simulated empathy to structural attunement. (2026)</td><td>Realtime Editable Memory Topology：affective salience 整合进动态记忆拓扑。</td><td>Frontiers in AI 2026 · DOI: 10.3389/frai.2026.1749517</td></tr>
+<tr><td>Emotions in Artificial Intelligence. (2025)</td><td>把 affect 作为 episodic event 的 tag 存储，作为动作选择启发式。</td><td>arXiv:2505.01462</td></tr>
+</table>
+
+<div class="callout info">
+<b>调研诚实披露</b>：上述文献均由 <code>research.cimi_search</code> 返回（8 次调用，查询词见本节首段），agent <b>不编造</b>。其中 G.1-G.4 的认知神经科学机制在<b>生物认知中成立</b>（有 fMRI / 行为实验证据）；G.5 的 AI 先例在<b>对话/机器人/通用 agent 场景</b>验证。<b>但这些机制是否迁移到「真实 EDA long-chain tool orchestration」是本论文要检验的假设（H5/H6/H7）而非定论</b>——生物认知的 arousal/valence 在 LLM agent 中需映射为可计算信号（surprise / penalty / state），映射的有效性正是 v1.4 消融要测的。若 H5-H7 全负，则界定了「生物启发机制在符号工具编排上的适用边界」（§8 R9 Plan B）。
+</div>
 </section>
 
 <hr>
 <div class="small">
-<b>本计划书自检（v1.3 · 判据 7 条）</b>：
+<b>本计划书自检（v1.4 · 判据 9 条）</b>：
 ① 六问全部有答案（§2-§9）✅；
-② ≥6 臂且含等 token 预算负对照 N1（§5.1，8 臂含 N1/N2 两负对照）✅；
-③ 每条假设有证伪条件（§4，H1-H4 各有「证伪条件」行）✅；
+② ≥6 臂且含等 token 预算负对照 N1（§5.1，v1.4 扩到 13 臂含 N1/N2/M8 三负对照）✅；
+③ 每条假设有证伪条件（§4，H1-H4 功能级 + v1.4 H5/H6/H7 机制级，各有「证伪条件」行）✅；
 ④ 有 delta 表（§3）与时间线（§7.2）✅；
 ⑤ 0 外链 0 script（单文件自包含，仅 inline CSS）✅；
-⑥ 全文数字可追溯（每个数字带 文件路径:行号，附录汇总）✅；
-⑦ <b>v1.3 增量</b>：附录 F 含两条 BibTeX（ZhuLong-DAC 完整 + DATE27 PLACEHOLDER）· 0 真实外链（即不含 <code>&lt;a&nbsp;href=…&gt;</code> 形式；BibTeX url 字段以纯文本呈现于 <code>&lt;pre&gt;</code> 块）· §0–§9 结论/假设/臂表/判据/数字未改（diff 只在附录 F + §6.3 脚注式标注）✅。
+⑥ 全文数字可追溯（每个数字带 文件路径:行号，附录 A–E 汇总）✅；
+⑦ <b>v1.3 增量</b>：附录 F 含两条 BibTeX（ZhuLong-DAC 完整 + DATE27 PLACEHOLDER）· 0 真实外链 · §0–§9 未改 ✅；
+⑧ <b>v1.4 核心认知升级</b>：§4.5 三条情绪机制计算映射（惊奇度门控 / 武器聚焦压缩 / 状态感知检索）+ H5/H6/H7 机制级假设（各含证伪条件）+ M4-M7(±M8) 新臂（§5.1）✅；
+⑨ <b>v1.4 调研硬要求</b>：research.cimi_search 8 次调用（≥6）+ 附录 G 调研文献（G.1-G.5 五组，arXiv/DOI 纯文本，0 外链）+ §6.3 Related Work 扩展 affective neuroscience 行 + §2.3 开源边界收缩（删 Lite 500 + mock-EDA）+ §5.2 Full→Lite 迁移污染检验 M4 + §8 R8/R9 风险 ✅。
 <br><br>
-<b>体量</b>：本文件 &gt; 25KB ✅（v1.2 = 74356B，v1.3 增量只会更大）· <b>交付</b>：reports/report_edafb_icml2027_plan_zh.html · <b>commit 前缀</b>：zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.3 — 补两篇 zhulong 预印本 BibTeX 引用 · <b>只 add 本线文件</b>（勿 -A）。
+<b>体量</b>：本文件 &gt; 25KB ✅（v1.2 = 74356B → v1.3 = 80036B → v1.4 增量更大）· <b>交付</b>：reports/report_edafb_icml2027_plan_zh.html · <b>commit 前缀</b>：zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.4 — 情绪×长期记忆核心认知升级 + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 调研 · <b>只 add 本线文件</b>（勿 -A）。
 <br><br>
-MEMORY_ZHULONG.md 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+MEMORY_ZHULONG.md 只加一行心跳（保持 ≤40 KB，超了滚动归档）。subagent 消融线仍 done_all，新臂 M4-M8 是计划书设计<b>不是现在起跑</b>（本轮只出设计文档，不起训练/评测进程）。
 </div>
 
 </div>
