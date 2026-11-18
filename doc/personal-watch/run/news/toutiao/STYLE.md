@@ -115,6 +115,17 @@
 | 6 | 🔑 **自赞首读 `NF` 不代表失败**：点击后按钮被重绘移除，`document.querySelector('.detail-like')` 读到 `NF`；以**重载后的 `detail-like like \| 1`** 为判据 | `like2.out`：`AFTER_CLICK NF` → `RELOAD detail-like like \| 1` |
 | 7 | ⚠️ **IT之家配图「干净率」低**：本轮首选图（乐天证券公告）是**官方公告截图**，图内左下角嵌 `IT之家` + `www.ithome.com`，`img_check.py` 全过（200 / image/jpeg / 105,631 B）但仍须弃用 ⇒ **每张都要目视** | `view618.png` 目视；改取 `1/028/600` Waymo 车型图（`view600.png` 干净、780×438）才通过 |
 
+### §A.16 采集与发布链路实测（2026-11-18 第 301 轮 · **官方示意图最好用 / 量子位图床要 Referer**）
+
+| # | 结论 | 依据 |
+|:--|:--|:--|
+| 1 | ✅ **科技史类选题是配图的最优解**：旅行者 1 号（`1/028/745`）首图 = NASA 官方探测器示意图（深空星空 + 探测器本体），**无二维码 / 无水印 / 无社交 UI / 无站标角标**，1 张即过。⇒ 配图优先级再明确一档：**官方航天/厂商示意图 > 厂商产品图 > 新闻现场照 > 名人截图（多数弃）** | `viewimg.py` → `view_voyager.png` 目视；`2026-11-18-1505-voyager.jpg`（57,367 B / 1200×675） |
+| 2 | ⚠️ **量子位图床 `i.qbitai.com` 不带 Referer 会失败**：`img_check.py` 默认 Referer 是 `ithome.com`，对量子位图返回空 body ⇒ 误判 `BAD`。**校验量子位图必须 `check(u, referer='https://www.qbitai.com/')`** | `BAD None 0 …i.qbitai.com/…png` → 带 Referer 后 `200 image/png 77,939 ok:True` |
+| 3 | ⚠️ **IT之家 RSS 路径段手敲会整批 404**：本轮 RSS 仍在 `1/028/`，误用 `1/029/` 时 6 篇全部 `status None / HTTPError 404`。**键值只从 `dedup.json` 的 `key` 字段取** | `ith_extract.py` 输出 6×`HTTP Error 404` → 改 `1/028/` 后 6/6 `status 200` |
+| 4 | ⚠️ **`cmt.py` 前台必超 30s**（导航 10s + 逐键 + 提交 6s + 重载 11s + 滚动 3s）⇒ 一律 `nohup setsid … &` 后台跑再 `cat`；**后台跑时先看 `AFTER` 计数**再等 `RECHECK`，避免重复提交 | 首次前台调用 `Command timed out after 30000ms`；改后台后 A/B/C 三条均一次成功 |
+| 5 | 🔑 **作者页取文章 URL 用链接列表判，不用 `innerText.indexOf`**：长标题含「」等符号时 `innerText` 匹配会落空（`found:false`），但 `[...document.querySelectorAll('a')].filter(h=>/article\/\d{10,}/)` 里**第二个链接的文本就是标题** | `authorpage.py`：`found:false` 但 `first[]` 已含 `article/7709403617102529043` + 完整标题 |
+| 6 | ✅ **「共 N 条内容」本轮即时更新**：`s4_confirm.py` 点「确认发布」后 6s 读到的就是 `共 53 条内容`（52→53），无需轮询 | `AFTER_CONFIRM {"cnt":"共 53 条内容"}` |
+
 ### §A.15 采集与发布链路实测（2026-11-18 第 300 轮 · **配图四选一 / 评论复核口径**）
 
 | # | 结论 | 依据 |
