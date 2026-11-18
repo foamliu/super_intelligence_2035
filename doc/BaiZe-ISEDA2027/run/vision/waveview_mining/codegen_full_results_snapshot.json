@@ -2146,6 +2146,45 @@
    "detail": "",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001/V0/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001",
+   "arm": "V1",
+   "k_conditions": 37,
+   "pi_seconds": 241.8,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001",
+   "arm": "V2",
+   "k_conditions": 37,
+   "pi_seconds": 168.4,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-CmlDivOscDiag-001",
+   "arm": "V0",
+   "k_conditions": 36,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
