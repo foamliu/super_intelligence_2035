@@ -1533,3 +1533,5 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794883923672_7rj65					case	EDA-Eval-DesignFlow-SkillDocGen-001	2026-11-19 04:31	
 1795001214198_w8iq4	joeyl	hfeg0pkn002	246	spice_sim	case	EDA-Eval-DesignFlow-DelvtoNetlistMod-001	2026-11-19 04:55	
 1795004623740_8n2mv	laijiang	hfeg0pkn003	196	spice_sim	case	EDA-Eval-DesignFlow-SpfRcExtract-001	2026-11-19 05:18	
+1795004153065_gwgz1	alan17z	hfeg0plg10	214	spice_sim	parked		2026-11-19 05:30	dup of 1n4ta/IbisZqCalibMerge-001 same alan17z IBIS-merge task (U2 verbatim 'merge 3 skills into 1, ai on sim server')
+1795001261903_fejb2	clarawu	hfeg0pkn005	110	spice_sim	case	EDA-Eval-DesignFlow-FineSimStimSweepFix-001	2026-11-19 05:44	
