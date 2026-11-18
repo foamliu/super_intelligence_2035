@@ -123,6 +123,23 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-18 11:1x（**授权：找到根因后可杀训练进程，从最新 ckpt 重新 resume；LR warmup 机制不变**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「授权 pretrain 在找到根因后，可以杀死当前训练进程，重新从最新检查点 resume。resume 时 LR warmup 机制跟原来一样即可。」
+
+**授权范围（叠加在 10:5x 排查令之上）**：
+
+1. **先定位再动手**：继续完成 10:5x 令的根因定位（当前头号嫌疑 = torchinductor 编译缓存失效 → fallback kernel 致 2x 减速；需先确证是「重编译中」还是「缓存缺失需重建」）。**只有确证根因、且判断「重启+resume 能恢复吞吐」时，才执行下面的杀训练动作**。
+2. **杀训练进程 + resume 的权限**（本次已获用户授权，可执行）：
+   - 确认根因后，**允许 kill 当前 2 节点训练进程**（.12 node_rank=0 + .29 node_rank=1 的 torchrun 及其 rank 子进程；只杀 `pretrain_launcher`/`torchrun` 相关，🚫 不碰 data/vision/harness/posttrain 及其他线进程）。
+   - **从最新 checkpoint resume**：最新完整 ckpt = **iter_0244000**（`latest_checkpointed_iteration.txt`=244000；注意 iter_0246000 目录存在但 latest 未认它，resume 以 latest_train_state.pt 为准，即 244000，别误用未完整的 246000）。
+   - **LR warmup 机制与原来保持完全一致**：沿用 `--lr-warmup-iters 2000` 等既有启动参数，不做任何 warmup 相关的改动（这点用户明确要求「跟原来一样即可」）。
+3. **重启前先清编译缓存**（如果根因是 inductor 缓存）：启动前处理 `/tmp/torchinductor_*` 缓存，避免 resume 后再次命中坏缓存或重复编译。若根因不是编译缓存，按实际根因处置，不必强行清。
+4. **重启后验收**：实测 step time 回到 ~7s、吞吐 ~590-613K tok/s 才算完成；若 resume 后仍 14s，说明未命中真根因，继续排查，别再反复重启。
+5. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行写「根因 + 已重启 resume 自 iter 244000 + 重启后实测 step time/tok·s⁻¹」；重启动作前先 `git add`/commit 记录现场。保持 `WAITING=0`。
+
+---
+
 ### 🔴 用户令 · 2026-11-18 10:5x（**排查 resume 后训练吞吐腰斩：~600K→~300K tok/s，step 7s→14s**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「你或者安排 pretrain 去排查为什么 pretrain resume 后吞吐大幅下降」
