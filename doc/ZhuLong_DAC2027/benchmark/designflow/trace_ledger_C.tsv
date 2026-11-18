@@ -1273,9 +1273,9 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1794982200520_f80vd	e0039786	hfeg0plg76	481	layout_virtuoso	parked		2026-11-19 01:10	r786 REJECT sprawling env-dependent + ends unresolved
 1794830235110_8x09n	ziyuny	hfeg0pnd001	426	physical_verify	case	EDA-Eval-DesignFlow-WlAdjacentCheckRundrc-001	2026-11-19 01:40	r786 parked-pending-deepread wl-adjacent-check skill-builder; SVRF regex translation core promising
 1794999346452_d1jo3	scarle	hfeg0plg91	660	physical_verify	parked		2026-11-19 01:10	r786 REJECT wrong-shard D (netlist-extraction) + ends unresolved
-ibmuc	jiashengz	hfeg0plg92	538	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
-3p4sb	yinyus	hfeg0plg67	460	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
-of070	jzeng	hfeg0plg85	446	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
-k499q	e0039786	hfeg0plg76	444	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
-fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
-8luru	jiashengz	hfeg0plg92	386	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
+ibmuc	jiashengz	hfeg0plg92	538	physical_verify	parked		2026-11-19 02:13	r788 deepread: layout_aether(非physical_verify). core=stdcell symbol drawing+handoff md. offline core软(techlib-dependent pin-offset表). reframe需ship techlib进SUT(重). re-parked REJECT
+3p4sb	yinyus	hfeg0plg67	460	physical_verify	case	EDA-Eval-DesignFlow-NicapBlockPlanner-001	2026-11-19 02:13	r788 deepread: layout_aether (ledger r786 标 physical_verify 误). gold=nicap_block_create.py v2.0.0(8634B)+SKILL.md(18325B) on disk. reframe=纯stdlib规划段(planner),6离线可验核心. k_check=17
+of070	jzeng	hfeg0plg85	446	physical_verify	parked		2026-11-19 02:13	r788 deepread: pg_layout. core=V4 via+2um DRC pad. 末UI无法生成V4=incomplete. Aether geometry,非offline. re-parked REJECT
+k499q	e0039786	hfeg0plg76	444	physical_verify	parked		2026-11-19 02:13	r788 deepread: physical_verify. core=fix DRC in .il. 515msgs drift到GUI. SKILL/Virtuoso DRC,软. re-parked REJECT
+fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deepread: DUPLICATE of k499q(同user/task/opening). drift到PEX/dspf. re-parked REJECT(dup)
+8luru	jiashengz	hfeg0plg92	386	physical_verify	parked		2026-11-19 02:13	r788 deepread: layout_aether. core=mux/muxi +1-Ellipse rule(实证10vs11). clean但需ship symbol geometry. re-parked REJECT(可未来提取)
