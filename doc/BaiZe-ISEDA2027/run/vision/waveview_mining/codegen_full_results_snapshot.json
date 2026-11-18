@@ -3641,6 +3641,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PpFlowSetupGen-001",
+   "arm": "V2",
+   "k_conditions": 23,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "RUNTIME:[Errno 2] No such file or directory: '/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-PpFlowSetupGen-001/../../assets/EDA-Eval-DesignFlow",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-PpFlowSetupGen-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-PwrGlobalsGen-001",
+   "arm": "V0",
+   "k_conditions": 54,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
