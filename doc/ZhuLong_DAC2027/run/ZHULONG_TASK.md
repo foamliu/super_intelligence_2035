@@ -1,6 +1,73 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-> 🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第二批意见）— 升级 v1.4 计划书：删费力不讨好的 Lite/mock-EDA 开源、改跨题污染检验为 Full→Lite 迁移、核心认知升级为「情绪在长期记忆巩固与提取中的作用」+ 必须用 `research.cimi_search` 做调研（最高优先 · 覆盖 standby · 合并预印本引用令为子任务）**
+> 🔴🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第三批意见）— v1.5 增量：同步 §6 论文大纲与图表至 v1.4 口径（标题/贡献/章节大纲/图表清单 4 处全改 · 纯文档增量 · 不改 §0–§5/§7–§9 本体 · 最高优先 · 覆盖 standby）**
+>
+> 本条是 v1.4 交付（commit `2c4ed787d`）后的**§6 同步补丁**。用户检查发现：v1.4 在 §4/§5/§2.3/§8 都做了升级，但 **§6 论文大纲与图表基本停留在 v1.2/v1.3 口径**，多处不同步。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
+>
+> **用户原话**：「§6 论文大纲与图表 是否需要相应调整？」→ 经核对，**需要**。具体 4 处：
+>
+> ### ① §6.1 标题候选（3 个）— 加"情绪 × 记忆"方向
+> - 现 3 个标题全是 "Long-Term Memory + RSI" / "From Script to Flow" / "EDA-Flow-Bench carrier" 叙事，**没有体现 v1.4 的情绪机制核心认知升级**。
+> - **要求**：至少加 1-2 个候选标题体现"情绪机制 × 长期记忆 × EDA agent"主线，例如（agent 可自主拟）："Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study" / "Surprise, State, and Weapon-Focus: Biologically-Inspired Memory for EDA Flow Agents" / "From Arousal to Retrieval: Testing Affective-Memory Mechanisms in EDA Design-Flow Agents"。保留原 3 个作备选，重新给推荐（推荐应转向情绪机制方向，因 v1.4 核心认知已升级）。
+>
+> ### ② §6.2 贡献列表（4 条）— 全部同步 v1.4 + 加第 5 条
+> - **第 1 条** "Formulate 4 条假设 H1-H4" → **Formulate 7 条预注册、可证伪假设（H1-H4 功能级 + v1.4 H5/H6/H7 机制级：惊奇度门控 / 状态感知检索 / 武器聚焦压缩），each with falsification conditions**。
+> - **第 2 条** "Design an 8-arm ablation" → **Design a 13-arm ablation（v1.2 的 8 臂 + v1.4 新增 M4 跨域迁移 / M5 惊奇度门控 / M6 状态感知检索 / M7 武器聚焦压缩 / M8 负效价偏倚负对照），含等 token 预算杀手级对照 N1 + 错误记忆对照 N2 + 答案泄露率审计**。
+> - **第 3 条** "Introduce ... mock-EDA mode + 500-task sanitized Lite set" → **删 mock-EDA + Lite 500**（§2.3 已收缩），改 **Introduce long-chain flow orchestration as a new task modality（design_flow 契约：submit.zip + ≥8 断言 + 不指定 lang/host）with a released evaluation protocol white paper（harness 协议 + 判据 + 脱敏任务规格开源；不开 Lite 集可执行资产、不开 mock-EDA 模式，见 §2.3 v1.4 收缩）**。
+> - **第 4 条** "Report ... boundary conditions on RSI" → **Report falsifiable results on 13 EDA domains（1684 flow tasks, Full 集子集评测）, including negative results as publishable boundary conditions on RSI AND affective-memory mechanisms in long-chain orchestration（§4 §8）**。
+> - **新增第 5 条**：**Formalize** three cognitive-neuroscience mechanisms（emotional arousal → surprise/penalty gating / weapon-focus → central-peripheral compression / mood-congruence → state-aware retrieval）as computable mappings（`w = α·surprise + β·penalty` · `central_vs_peripheral_ratio` · `score = sim + γ·state_match`）, grounded in research.cimi_search literature（附录 G）—— v1.4 核心方法贡献。
+>
+> ### ③ §6.3 章节大纲 — 多处同步
+> - **§1 Introduction** 内容描述："4 条预注册假设预告" → **7 条假设预告（H1-H4 功能级 + H5-H7 情绪机制级）**；动机段加"从生物认知的情绪-记忆机制到 LLM agent 的可计算映射"。
+> - **§3 Task Modality & Benchmark** 内容描述："Lite 集 500 题" → **Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测）**；开源边界改"协议白皮书级（§2.3 v1.4 收缩）"。
+> - **§4 Harness with Memory & Self-Improvement** 内容描述："8 臂实现细节" → **13 臂实现细节 + v1.4 三条情绪机制计算映射（写入门控 / 压缩 / 状态感知检索）**。
+> - **§5 Pre-Registered Hypotheses & Ablation Design** 内容描述："4 假设 + 8 臂表" → **7 假设（H1-H7）+ 13 臂表 + M4 迁移污染检验 + 答案泄露率审计**。
+> - **§6 Experiments** 内容描述："H1-H4 判据核验" → **H1-H7 判据核验 + 情绪机制三机制的消融对比（M5/M6/M7 vs M2/M3）**。
+> - **§7 Analysis: Why Memory Helps/Hurts** 内容描述：加 **surprise 分布 / state_match 命中分布 / central-peripheral 压缩比 vs Pass@1 / M4 迁移答案泄露率审计 / 情绪机制在不同链长子集的异质性**。
+> - **§9 Conclusion: Boundary Conditions of RSI in Flow** 标题与内容：改 **"Boundary Conditions of RSI and Affective-Memory Mechanisms in Long-Chain EDA Flow"**；内容含"哪些假设被支持/证伪（H1-H7 分别）；情绪机制在符号工具编排上的适用边界；future work（多模态 grounding / 更长链 / 效价维度细化）"。
+> - **Ethics + Reproducibility** 内容描述："mock-EDA 复现" → 删 mock-EDA，改 **"协议白皮书级开源 + NDA 受控评审包（§2.3 v1.4 收缩）"**。
+> - **Related Work 行**：v1.4 已有 callout 扩展 affective neuroscience ✅；本次把 callout 内容**合入章节大纲本行**（行内描述加"affective neuroscience × agent memory（McGaugh / Bower / Loftus / Friston / Itti & Baldi / Park / EM-LLM / PsychoAgent，见附录 G）"）。
+> - **章节大纲新增候选**（agent 自主判断是否加独立章节）：是否在 §4 与 §5 之间加独立 **§4.5 Affective-Memory Mechanisms: From Biology to Computation** 章节承载 v1.4 §4.5 内容？或维持 §4.5 作为 §4 子节？agent 自主决定，但**章节大纲必须显式反映该内容存在**（不能只藏在 §4 子节里让人看不见主线）。
+>
+> ### ④ §6.4 图表清单 — 臂数/假设数同步 + 新增情绪机制图表
+> - **Figure 2** "8 臂消融 Pass@1" → **13 臂消融 Pass@1 + 95% CI（M0/M1/M2/M3/S1/M3+S1/N1/N2/M4/M5/M6/M7/M8）**。
+> - **Table 2** "8 臂消融表" → **13 臂消融表（臂号 / 唯一变量 / 判据 / 结果）**。
+> - **Table 3** "H1-H4 判据核验" → **H1-H7 判据核验（point estimate + CI + McNemar p + 证伪/支持）**。
+> - **Table 4** "13 域逐域 Pass@1（M0 vs M3）" → 保留，并可考虑加 **M0 vs M5/M6/M7** 列（情绪机制臂的逐域表现）——agent 自主决定。
+> - **新增 Figure**（v1.4 必须有，agent 自主编号 Fig 5/6/7）：
+>   - **情绪机制三机制消融对比图**：M5 vs M2（惊奇度门控）/ M6 vs M3（状态感知检索）/ M7 vs M2（武器聚焦压缩）的 Pass@1 对比；
+>   - **写入权重 α/β 标定曲线**：surprise 与 penalty 不同权重下的 Pass@1 等高线 / 折线（M5 标定）；
+>   - **central/peripheral 压缩比 vs Pass@1 散点**（M7 vs M2，验证"压缩更小且 Pass@1 不降"的 H7 判据）；
+>   - **M4 迁移污染检验的答案泄露率审计图/表**：迁移命中记忆逐条审计（抽象认知 vs 题面答案片段）的分布 + 答案泄露率指标；
+>   - **state_match 命中分布**：M6 在"连续失败子集"vs"正常推进子集"的 state_match 命中分布对比（验证 H6 状态感知在挫败时调高避坑权重）。
+> - **新增 Table**（可选）：**H5-H7 机制级判据核验表**（与 Table 3 H1-H4 并列，单独给情绪机制的证伪/支持结论）。
+>
+> ### ⑤ 硬约束（继承 v1.4，全部继续生效）
+>
+> - **唯一改动文件**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.4 的 111269B 基础上做 §6 增量修订）。
+> - 🚫 **不改 §0/§1/§2/§3/§4/§5/§7/§8/§9 本体**（本轮只改 §6 + 必要的图表交叉引用）；§6.3 Related Work 行可合入 v1.4 callout 内容（callout 可保留或合并，agent 自决）。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`，新臂 M4-M8 是设计文档不是起跑。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效。
+> - ✅ **可追溯**：新增图表标注数据来源（"§5 实验新跑" / "M4 迁移审计日志" 等），不确定写 `UNKNOWN`。
+> - ✅ **防伪底线**：不编造数字 / 不编造文献 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB（v1.5 增量只会更大）；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+> - **提交**：commit 前缀 `zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.5 — §6 论文大纲与图表同步至 v1.4 口径（标题/贡献/章节/图表 4 处）`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① §6.1 至少 4 个候选标题（含 ≥1 个情绪机制方向），推荐转向情绪机制 ✅；
+>   ② §6.2 贡献列表 5 条（H1-H7 / 13 臂 / 删 mock-EDA+Lite 500 / 含情绪边界 / 第5条 Formalize 三机制）✅；
+>   ③ §6.3 章节大纲 9+ 行全部同步 v1.4（7 假设 / 13 臂 / Full 子集 / 情绪机制 / RSI+情绪边界 / 协议白皮书）✅；
+>   ④ §6.4 Figure 2/Table 2/Table 3 臂数与假设数同步（13 臂 / H1-H7）+ 新增 ≥4 个情绪机制图表（三机制消融 / α·β 标定 / 压缩比散点 / M4 泄露率审计 / state_match 分布）✅；
+>   ⑤ 0 真实外链（grep `href="https?://"`=0）+ 0 `<script>` ✅；
+>   ⑥ §0–§5/§7–§9 本体未改（diff 只在 §6 + 必要交叉引用）✅；
+>   ⑦ v1.4 的所有判据继续过（size>25KB / 11+ h2 / 13 臂 / H1-H7 证伪 / delta 表 / 时间线 / 附录 F/G / Plan B / UNKNOWN）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+>
+> **agent 自主空间**：具体标题措辞 / 第 5 条贡献的精炼句式 / §4.5 是否升格为独立章节 / 新增图表的编号与具体形式 / Table 4 是否加 M5/M6/M7 列 由 agent 自主决定——用户给的是同步要求，不是逐字模板。
+
+> 🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第二批意见）— 升级 v1.4 计划书：删费力不讨好的 Lite/mock-EDA 开源、改跨题污染检验为 Full→Lite 迁移、核心认知升级为「情绪在长期记忆巩固与提取中的作用」+ 必须用 `research.cimi_search` 做调研（最高优先 · 覆盖 standby · 合并预印本引用令为子任务）** ⚠️ **已交付（commit `2c4ed787d`·v1.4·111269B）**
 >
 > 本条**覆盖 standby 状态**，是 v1.2 计划书交付后的**第二批意见 + 核心认知升级**，要求产出 **v1.4 计划书**。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。**前一条 2026-11-18 预印本引用令合并为本令的子任务 ④**（同次交付，不单独出 v1.3）。
 >
@@ -428,138 +495,7 @@
 
 ### 📦 归档指针 · 2026-10-25「按外部评审意见改论文（含 57.4pp 归因硬伤）」· 已执行完毕（10-26 令并行）。要点：改稿须如实标注「待补」及补法，不得编造数字/文献。原文见 `ZHULONG_TASK_ARCHIVE.md`「归档块 · 2026-11-11」。
 
-### 📦 已归档 batch 13 · 2026-10-27（原文见 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 13）
-
-> 以下均已闭合/已被取代，仅留 1 行指针，需要时读 archive：10-26 ops 中继修复（relay PID118463 活，.last_run_id=128）· 10-26 cimi_search/cimi_fetch 挂载（research MCP 可用）· 10-24 23:0x DAC 审稿+改稿方案（41.6KB 报告已交付）· 10-24 19:0x 论文排版（commit 3651b322）· 10-24 22:23 配置对齐（maxTokens 16384→8192，已被 10-26 令覆盖）· 10-24 22:15 已核实事实（RUN_ID 115/117）· 10-24 22:1x 停 cline-full+重跑 5-run（已被 10-26 令覆盖）· 10-24 20:2x cline vs zhulong-CLI 差异归因（25.9KB）· 10-24 15:4x 引用修正（Lemma→Claim）· 10-24 16:1x refs 单独起页 · 10-24 13:0x 执行令（commit d2d9bb7a）· 10-23 22:1x cline×deepseek-v4-pro×full 5-run（**部分活跃·r1 已硬切留证，r2-r5 待裁决**）· 10-23 09:4x 作废 r1-r3+重跑（已被 10-26 覆盖）· batch 10/11/12 更早指针见 archive。
-### 0. 🎯 当前状态速览（每次唤醒先看这里）
-
-| 项 | 值（**2026-10-04 运维更新**）|
-|:--|:--|
-| **环境** | ⚠️ **两服务器独立挂载**：当前 2.12 开发机路径前缀为 <code>/nas_train/</code>；最终运行目标 36.15 路径前缀为 <code>/nasdata/</code>。评测代码 <code>eda_fastmcp</code> 在 36.15 上位于 <code>/nasdata/app.e0031982/code/eda_fastmcp</code>（未迁移）。旧 task book 中 <code>/nasdata/</code> 开头的路径仍然有效。 |
-| **当前阶段** | ✅ **冻结令已解除；编排模型已切换为 glm-5.2（deepseek-v4-pro-fp4 额度已耗尽）；agent 可正常推进。** |
-| **编排模型** | `glm-5.2`（`02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23` · `http://agi-gateway.cxmt.com/cloud/v1`） |
-| **已完成（探路 1-shot）** | ✅ 组件 `pure_llm` 11.4% / `rag` 70.3% / `wo_retrieval` 81.6% / `full` 84.8%；✅ S2 Φ `k10` 75.3% / `k3` 69.0% / `k1` 60.8% / `lagged` 84.2%（r2 修复后 98.1% 满分） |
-| **旧 5-run 进行到哪** | ⏸ 旧 S1（`omega_low`）r1=81.6 / r2=82.3 ✅；r3 因 **infra 作废**（license 耗尽 + shard0/1 端口 8664/8665 宕 + `/home` 磁盘 <8G）自 9/30 停摆至今 |
-| **🚫 不做** | `(H+E)` 档 · `phi_unbounded`（≡ full 锚点）· 主基座 `deepseek-v4-pro-fp4` 的模型消融臂（≡ full×5 锚点，不重跑）。**注**：`wo_sandbox`(=rag 已测) / `wo_selfexpl`(已测·运维令二十六排队干净重测) 不再「暂缓」。 |
-| **🔄 试验次序** | **已调换：Phase B（大模型消融）→ C1（组件）→ C2（S2Φ）→ S1（保真度）**。因 `deepseek-v4-pro-fp4` 额度 403 阻塞 C1，先跑 Phase B（4 模型均使用独立 key/endpoint，不受 pro-fp4 限制）|
-| **叙事** | 一顿合并：**B → C1 → C2 → S1**，「单任务书 + 单循环」串行 75 轮全量 mean±std，回填 6 表 56 个 `[TBD]` |
-
-### 📦 已归档（2026-10-20，batch 6）：运维令 十四 ~ 二十四（10-13 ~ 10-15 批次）
-
-> 均已闭合（echo 数据/消融建议书/paper 编译/SKILL-Tcl 并入/沙盒暂停-恢复撤销等）。**常驻纪律保留**：每次刷新论文前 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；口径=EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）；SKILL/Tcl 数字只认 zhulong_results.md 现存值，未齐标 pending，🚫 凭印象编造。原文（1-line 指针）移至 `run/ARCHIVE_ZHULONG_TASK.md`。
-
-### 📦 已归档（06:4x，batch 7）：十三（75% 下限规则）+ 预留追加块
-
-> 均已闭合/长期未使用，原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。
-
-### 📦 已归档（2026-10-20，batch 4）：运维令 十二 / 十一 / 十 / 九 / (一)~(八)10-10 / (二)~(五)10-09
-
-> 均已闭合（full_v3 5/5=82.1±3.0% 已交付、r2–r5 已完成、RAG/沙盒排查已收口）。原文（1-line 指针）移至 `run/ARCHIVE_ZHULONG_TASK.md`。需要时再读。
-
-
-> **来源**：用户 2026-10-08 观察。根因 = **loop 进程环境里没有 `https_proxy`**（脚本不 export 代理、完全继承启动 shell；只在调 cline 时 `env -u` 剥代理，而 **git 访问 GitHub 必须走代理**）。
-
-**现状（已核对 `zhulong_loop.sh` 源码）**：
-- 脚本**无**任何 `export https_proxy=...` —— 代理靠启动 shell 注入。
-- 第 117 行 cline 调用 `env -u http_proxy -u https_proxy ...`（剥代理给 cline）—— **这只作用于 cline 那一行**，不影响 loop 自身的 git。
-- `git_sync_and_push()`（第 54–103 行）里的 `git fetch origin` / `git push origin main` **直接用 loop 进程的环境** → 若该环境无 `https_proxy` → GitHub 不通 → `timeout 120 git fetch` 触发 → `[push] fetch FAILED (network?) - skip this cycle.` → 永远推不出去 / 拉不回来。
-
-**正确代理值**（与 eval 启动、BaiZe 线一致）：
-```
-https_proxy=http://172.19.92.23:13128
-http_proxy=http://172.19.92.23:13128
-```
-
-**你要做的（每次唤醒自检 + 必要时修复）**：
-
-1. **查 loop 进程环境有没有代理**：
-   ```bash
-   _LPID="$(pgrep -f 'zhulong_loop.sh' | head -1)"
-   [ -n "$_LPID" ] && tr '\0' '\n' < /proc/$_LPID/environ | grep -iE 'https_proxy|http_proxy' || echo "NO_PROXY_IN_LOOP"
-   ```
-   - 有 `https_proxy=http://172.19.92.23:13128` → ✅ 正常，无需操作。
-   - 无 / 值不对 → ❌ 进入第 2 步修复。
-
-2. **若 loop 缺代理 → 重启 loop 并显式注入代理**（详细 bash 脚本已归档至 `ZHULONG_TASK_ARCHIVE.md`·2026-10-18·该修复已于 10-08 执行完毕，loop 持续带代理运行）：核心 = `pkill -f zhulong_loop.sh` → `export https_proxy=http://172.19.92.23:13128 http_proxy=...` → `setsid bash zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &` → 复核 `/proc/$PID/environ` 含 `https_proxy`。
-
-3. **回报**：把自检结果（有无代理 / 是否重启 / 新 PID + environ 证据）写进 `MEMORY_ZHULONG.md` 操作流水 1 行。
-
-**纪律**：
-- 🚫 **不要改 `zhulong_loop.sh` 源码**（加 `export` 是可选项，但当前先靠启动环境注入；若你判断有必要在脚本里加 `export https_proxy=...`，**先在流水里写明理由再改**，且只加在 `git_sync_and_push` 之前、不要影响 cline 那行的 `env -u`）。
-- 🚫 重启 loop **必须带 `setsid` + 重定向**（否则随 ssh 会话断开而死，血的教训）。
-- ✅ 若 loop 当前正带代理且健康，**什么都不用做**，流水记一句「自检通过」即可。
-- ✅ 这条指令**常驻**：以后每次唤醒顺手 `tr '\0' '\n' < /proc/$(pgrep -f zhulong_loop.sh|head -1)/environ | grep -i proxy` 扫一眼。
-
-### 📦 已归档（2026-10-20，batch 5）：运维令 10-08(一) / 10-05(四~八) / 10-04(全)
-
-> 均已闭合（HTML 报告已交、ops 中继稳定、config dir 隔离已落地、试验次序 B→C1→C2→S1 已生效、环境迁移已落地）。原文（1-line 指针）移至 `run/ARCHIVE_ZHULONG_TASK.md`。
-
-### 切臂（5 轮跑完、算好 mean±std 后，启动下一臂前执行）
-
-```bash
-cd $BASE_DIR
-# 按 STAGE 选一条切换脚本（S1/C1/C2；B 不切 set_ablation，改用 cline auth，见下）
-$BASE_DIR/venv/bin/python scripts/set_s1_fidelity.py <ARM>      # S1: <ARM>∈{omega_low, readback_binary, readback_none}
-$BASE_DIR/venv/bin/python scripts/set_ablation.py <CONFIG>      # C1: <CONFIG>∈{pure_llm, rag, wo_retrieval, full}
-$BASE_DIR/venv/bin/python scripts/set_s2_phi.py <ARM>           # C2: <ARM>∈{phi_k10, phi_k3, phi_k1, phi_lagged}
-bash scripts/stop.sh && bash scripts/start.sh && sleep 3 && tail -20 logs/app.log
-```
-
-> ⚠️ **改写 `.env` 的脚本必须串行 `&&` 链执行，严禁并发**（曾并发截断 `.env`）。核对：核心 4 工具 visibility 正确，对应 ENV flag 已写入。
-
-### 启动一轮（脱离进程组）
-
-```bash
-cd $BASE_DIR
-setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &
-```
-
-> 工具可能超时/无输出，但进程已脱离 → **不算失败**；不要重复启动同一轮。启动后 `PHASE=running`、`WAITING=1`。
-
-### 检查本轮是否结束
-
-```bash
-cd $BASE_DIR
-pgrep -f '^bash scripts/run_cline_script'
-```
-
-- 有输出 → 还在跑，**什么都不做**退出（`WAITING` 保持 1）。
-- 无输出 → 已结束，进入打分。
-
-### 打分（Pass@1；用 grep，别用 run_eval.py）
-
-```bash
-cd $BASE_DIR
-grep -E 'pass \(|评估结果汇总|PASS_RATE' /tmp/ABL_<TAG>_r<N>.log | tail -5
-```
-
-> 以 log 里 `pass (xx.x%)` 为 Pass@1 口径。`run_eval.py --latest 1` 是完整重评会超时，**不用它做口径**。
-
-### 模型切换（仅 STAGE=B；full 配置不切 set_ablation）
-
-| 模型 | `-m` 参数 | `cline auth` 命令（⚠️ key 可能过期，启动 Phase B 前先核；完整 key 以 `ablation_run_task_model_full.md` 为唯一源）|
-|:--|:--|:--|
-| `glm-5.2` | `glm-5.2` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` |
-| `deepseek-v4-flash` | `deepseek-v4-flash` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3 -b http://agi-gateway.cxmt.com/v1 -m deepseek-v4-flash` |
-| `kimi-k2.6-cloud` | `kimi-k2.6-cloud` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f -b http://agi-gateway.cxmt.com/cloud/v1 -m kimi-k2.6-cloud` |
-| `doubao-seed-2.0-pro-cloud` | `doubao-seed-2.0-pro-cloud` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f -b http://agi-gateway.cxmt.com/cloud/v1 -m doubao-seed-2.0-pro-cloud` |
-
-## 7. 🧭 推进逻辑（每次唤醒严格只走一步）
-
-### 前置校验
-读 `MEMORY_ZHULONG.md`「操作流水」最后 3 条，检查有无 `❌ EVAL_FAILED` 或 `⚠️`；有未处理异常 → 先重试（重打分 / 重启本轮）再按正常流程推进。
-
-### 步骤 0（PHASE=init）
-1. infra 三项校验（见运维指令区）：`/home` 磁盘 ≥~8G + 8664/8665/8653/8669 全 OPEN + `run_code` 可执行。
-
-
-   - 不满足 → `WAITING=1` 原地等，退出（下轮复检）。
-2. canary：故意触发一次应被拒的调用，确认反作弊 PreToolUse hook 生效；**未被拒 → 立即停，本批作废**。
-3. 切 `S1.omega_low` → 启动 r1 → `PHASE=running`、`WAITING=1`。
-
-### 步骤 A（PHASE=running）
-执行「检查本轮是否结束」：
-- **pgrep 有输出** → 什么都不做，退出。
+### 📦 已归档 batch 13 · 2026-10-27（*pgrep 有输出** → 什么都不做，退出。
 - **pgrep 无输出** → 「打分」：
   - 成功 → 记成绩，`ROUND+=1`：
     - `ROUND<=5` → 启动本臂下一轮（`PHASE=running`、`WAITING=1`）
