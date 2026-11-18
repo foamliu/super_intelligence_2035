@@ -1,0 +1,29 @@
+# deepread: u5wma — debug_mon_central.v code review (msg[34])
+
+- **session**: `1794986928161_u5wma` · user `e0045144` @ `hfeg0pkn002` (10.129.2.11) · mc46
+- **agent**: `lead` (cline desktop, provider cxmt-deepseek-flash, model deepseek-v4-flash, plugin agent-policy-engine)
+- **trace-format finding (重要)**: `agent='lead'` 但 `read_files` tool_results **含完整文件内容**（msg[36] 50KB debug_mon_central.v 全文，msg[1] 46KB，avg 17393 chars）。**推翻 r771「lead→stripped→unbuildable」的过宽推论**（该推论仅基于 c8v5k 单点）。lead 标签本身 NOT a buildability disqualifier。
+- **liveness**: 目录式 session（1794986928161_u5wma/），messages.json 405KB/40 msgs ALIVE @ pkn002。
+- **用户意图序列**（全 8 个 user msg）:
+  - msg[0] read debug_mon_central.v 分析字节不匹配/潜在 bug
+  - msg[4/6/8] follow-up Q&A：central_out 互斥性、shuffle 32bit、IN/OUT 字节 match
+  - msg[10] 补齐注释 + 更新 summary（produce-task）
+  - msg[22] 分析两份 code 判断功能是否相同（v2 vs v1）
+  - msg[26] 修复后再判功能相同
+  - msg[30] 给 debug_mon_subsys.v 加注释（produce-task）
+  - **msg[34] 检查 debug_mon_central.v 是否有问题** ← 本 case 选此单轮
+- **本 case 选定意图 (msg[34])**: 单轮 code-review analysis-Q&A。用户原话「检查这份code是否有问题：<path>/debug_mon_central.v」。
+- **ground-truth (assistant msg[39] + check.py 静态解析 A 推导)**:
+  - A = debug_mon_central.v（740 行纯组合）
+  - module `debug_mon_central`；10 个 `always @(*)`，0 个 `always @(posedge)` → 纯组合
+  - 19 个 `case`，19 个 `default:` → 无 latch
+  - 129 个 `hcbuf` 实例缓冲 `debug_mon_a_i`/`debug_mon_b_i` 输入
+  - IN 方向三选一 mux：`debug_sel[27:26]=0`→A direct / `=1`→B direct / `=2`→shuffle（经 `debug_mon_shuffle_i_buf`）
+  - `ro_debug_mon_o[31:0] = top_debug_mon[31:0]`（line 184，只读 alias）
+  - OE/OUT 最终 mux 镜像 `debug_sel[27:26]`（line 460/468），IN 经 `debug_mon_in_buf`（line 544）
+  - **结论：未发现功能性 Bug，代码质量良好**（assistant msg[39] 10 项检查全 ✅）
+- **A 资产重建**: msg[36]+msg[38] read_files tool_results（带 " N | " 行前缀）→ strip 前缀 → 740 行 debug_mon_central.v（46KB）
+- **隐藏 B (specificity oracle)**: 同结构改名 `debug_mon_central_b` + 信号 `dmc_top_out`/`dmc_shuffle_buf`/`dmc_in_buf`/`dmc_ro_alias`/`dmc_sel` + 注入一处 latch（移除一个 default）→ B-only 标识符在 A 中全 0 命中（oracle clean）
+- **判分范式**: B = specificity oracle（静态报告范式，B 不在 SUT 跑）。check.py subprocess 静态解析 A 推导 ground-truth + 解析 B 推导 B-only 标识符。
+- **产出 case**: `EDA-Eval-DesignFlow-DebugMonCentralReview-001`（digital, k=15, ref PASS 15/15 + 5 negatives 全 FAIL）
+- **与既有 digital/eda_other 案区分**: 本 case = 单轮 RTL code-review analysis-Q&A（无 Bug 清单 + 结构特征确认），非 produce-task（r764 VsensorTbSkeleton 写 tb）/非 debug-Q&A（r769 GenLibCorner 报错诊断）/非 knowledge-Q&A（r755 ToolRcFormatMap）。

@@ -119,12 +119,20 @@
     "new_A_pure_mc10": 2,
     "new_A_pure_nofile_checked": 2,
     "note": "r759 POOL_SWITCH: 11-16->11-18 full 698-host rescan (orchestrator.sh, 7min). all-shard mc10 3513->4012 (+499). shard_A_pool_mc10 2938->3337 (+399). new_A_domain_mc10_vs_1116=428 (but A-PURE=2: 3p6ld mc79 rose3wang, gnwy5 mc11 e0048255; both NOFILE on checked hosts - cline rotation persists). A-pure exhaustion stands on fresh 11-18 data. r760 CLOSED: checked remaining 4 unchecked hosts (plg93/plg56/plg13/pjn200) + plg17 for 3p6ld + all 3 hosts for gnwy5. All NOFILE or unreachable. A-pure exhaustion DEFINITIVE. Next-round options: (a) tighten shard A keyword filter to drop C/D false-captures (pool 3337 is broad, real A-pure=0 live); (b) discuss quota r762 due; (c) governance/paper. | r761 AUDIT: precise C/D-tool filter on 11-18 scan (5222-slug dedup): broad_A_mc10=3179, a_pure=349, a_strong_pure=106 (91 touched, 14 FRESH). All 14 FRESH ssh-checked NOFILE (e0046913 STA cluster x8 + others, hosts pkn004/pkn002/plg76). r760 exhaustion verdict CONFIRMED+STRENGTHENED (16/16 A-pure NOFILE). 14 parked. Honest pool=349 (vs 3337 broad, 89% false captures). Filter-tightening deferred to discuss/board (denominator-shift risk).",
-    "round": "r761",
+    "round": "r772",
     "scope": "shard A broad-keyword filter (A-domain pool, not all-shard total)",
     "shard_A_pool_mc10": 3337,
     "shard_A_pool_mc5": 3602,
     "src": "ssh_eda_search_20261118_230537/summary.tsv",
-    "top_next_round_candidates": "NONE - A-pure exhaustion DEFINITIVE on fresh 11-18 data: both A-pure candidates (3p6ld mc79, gnwy5 mc11) fully checked across all hosts, all NOFILE or unreachable. Cline rotation is systematic, not snapshot-staleness."
+    "top_next_round_candidates": "NONE - A-pure exhaustion DEFINITIVE on fresh 11-18 data: both A-pure candidates (3p6ld mc79, gnwy5 mc11) fully checked across all hosts, all NOFILE or unreachable. Cline rotation is systematic, not snapshot-staleness.",
+    "a_pure_verdict_r772": {
+      "verdict": "OVERTURNED r771 lead->stripped generalization; A-pure buildable >=3",
+      "basis": "twfqn + u5wma (e0045144@pkn002) both ALIVE dir-style sessions with agent='lead' BUT read_files tool_results carry FULL file content (twfqn acc_auto_connect.pl 48KB/ahb_master.v 23KB, u5wma debug_mon_central.v 50KB). r771 'lead->stripped->unbuildable' was over-broad (based on single c8v5k point). lead label alone is NOT a buildability disqualifier.",
+      "a_pure_buildable_r772": "u5wma CASED(EDA-Eval-DesignFlow-DebugMonCentralReview-001) + twfqn BUILDABLE(AHB master produce-task candidate, next round) + c8v5k unbuildable on own merits(source scripts permission-denied, NOT lead label) + najzl/ejpf0 pending re-check(not r771 speculation)",
+      "supersedes": "a_pure_verdict_r765 (OVERTURNED) partial; r771 'trace-format-incompatibility fourth dimension' refined: ALIVE!=buildable still holds in principle BUT lead agent is NOT the disqualifying criterion",
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
+      "round": "r772"
+    }
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
