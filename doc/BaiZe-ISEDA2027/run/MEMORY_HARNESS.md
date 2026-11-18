@@ -1,7 +1,9 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2671 · 2026-11-18 12:5x — 巡检+incr_eval R2670 DONE·**心跳第一行**: incr_eval R2670 **COMPLETE**(12:58·4 routes: cline251+2/cc287+1/hermes438+3/dsh143+2)·**SWE-bench Verified Pass%(cumulative resolved/500)**: hermes438=87.6%·opencode415=83.0%·cc287=57.4%·cline251=50.2%·pi216=43.2%·dsh143=28.6%·codex91=18.2%·6/7 predict alive(opencode COMPLETE 500/500·cline337/codex143/cc357/pi298/hermes487/dsh177·total2299/3500·remaining≈1201)·**pi有3 uneval real patches→下次incr_eval目标**·**自检clean**(load26/224≈12%busy·MemAvail1371GB·0 runaway>8000%CPU·最高harness proc=501%=pip-setuptools testbed容器·远低于kill阈值)·**0真实429**·**research日报11-18已读**(3条harness建议:①产物存在性判分(2611.21407)②provider绑定检查(2611.21577)③外壳指纹四元组(2407.16741)·均为参考非新指令)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒新real-patch后跑incr_eval(pi3+新增)→合并cumulative→刷新7way SWE-bench报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28KB(✅≤32KB)
+> 🆕 **R2672 · 2026-11-18 13:2x — incr_eval R2672 DONE(5 real patches ALL RESOLVED)·**心跳第一行**: incr_eval R2672 **COMPLETE**(13:19·3 routes eval: cline+2/hermes+1/cc+2·5 real patches全部RESOLVED + empty merge: codex+6/hermes+1/cc+1/pi+3/opencode+1)·**SWE-bench Verified Pass%(cumulative resolved/500)**: hermes439=87.8%(+1)·opencode415=83.0%·cc289=57.8%(+2)·cline253=50.6%(+2)·pi216=43.2%·dsh143=28.6%·codex91=18.2%·6/7 predict alive(opencode COMPLETE 500/500·cline339/codex143/cc359/pi299/hermes488/dsh177·total2305/3500·remaining≈1195)·**自检clean**(load25/224≈11%busy·MemAvail1371GB·0 runaway>8000%CPU·最高harness proc~50%=dsh-sdk·远低于kill阈值)·**0真实429**(hermes log 1 false-positive)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒新real-patch后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈27.8KB(✅≤32KB)
+
+> 📦 R2671 流水已归档 → daily-memories-harness/2026-11-18.md（巡检+incr_eval R2670 DONE·4 routes eval·opencode COMPLETE·0 429·research日报11-18已读·全部运维令✅已交付）。需要时再读。
 
 > 📦 R2669-R2670 流水已归档 → daily-memories-harness/2026-11-18.md（2轮巡检·incr_eval R2670 launched→DONE·opencode COMPLETE 500/500·4 routes eval updated·0 429·自检clean）。需要时再读。
 
