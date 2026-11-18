@@ -1,12 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1298·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（v1.5 §6 同步·已在 origin/main）。本 wake 第四十八次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8 / H1-H7 / §6.1-§6.3 / §5.1 标题自证 13 臂。git：fetch 后 HEAD=`18a4d76e1`=origin/main（他线推进·run/ 无 dirty）·本线最后 commit `f28a64061` wake#1297（loop 已自行提交）·TASK 11.0KB✅·MEMORY 滚后<40KB 硬阈✅（滚 wake#1296 至 daily 控体量）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval·ps 核验无 ZhuLong subagent/run_h2/eval 进程·zhulong_loop PID243810 在跑（4d+）·ops_relay PID118463 在跑（23d）。✅ **infra 健康**：**/home 23G free（95% used·与 wake#1297 持平·起本线 eval 无 /home 障碍）**·**/nasdata 2.5T free（18% used·稳定）**。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1299·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（v1.5 §6 同步·已在 origin/main）。本 wake 第四十九次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8 / H1-H7 / §6.1-§6.3 / §5.1 标题自证 13 臂。git：fetch 后 HEAD=`e376dc047`=origin/main（他线推进·run/ 无 dirty）·本线最后 commit `f28a64061` wake#1297（loop 已自行提交）·TASK 11.0KB✅·MEMORY 滚后<40KB 硬阈✅（本 wake 合并 wake#1281~#1291 11 条指针控体量）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval·ps 核验无 ZhuLong subagent/run_h2/eval 进程·zhulong_loop PID243810 在跑（4d+）·ops_relay PID118463 在跑（23d）。✅ **infra 健康**：**/home 23G free（95% used·与 wake#1298 持平·起本线 eval 无 /home 障碍）**·**/nasdata 2.5T free（19% used·稳定）**。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
 - [2026-11-18 wake#1298 心跳·交互式 OpenCode 会话·非交互执行] 第四十八次复核 v1.5（commit e810dc502）·7 判据全通过（报告 119150B / 11 h2 / 0 外链+0 script / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8 / §5.1 标题自证 13 臂 / H1-H7 / §6.1-§6.3）·git fetch 后 HEAD=`18a4d76e1`=origin/main（他线推进·run/ 无 dirty）·本线最后 commit `f28a64061` wake#1297（loop 已自行提交心跳·本 wake 不重复内容核验仅续编）·ps：zhulong_loop PID243810 活（4d+）+ ops_relay PID118463 活（23d）·无 ZhuLong eval/subagent/run_h2 进程·不起 eval 不起臂·subagent 消融线仍 done_all·M4-M8 设计文档不起跑·待用户下一步放行（预注册日 2026-11-22 距 4 天）。✅ **infra 健康**：**/home 23G free（95% used·与 wake#1297 持平·起本线 eval 无 /home 障碍）**·**/nasdata 2.5T free（18% used·稳定）**。状态与 wake#1297 一致，仅续编心跳 + 滚 wake#1296 至 daily 控体量·TASK 11.0KB✅·MEMORY 滚后<40KB 硬阈✅。
+
+- [2026-11-18 wake#1299 心跳·交互式 OpenCode 会话] 第四十九次复核 v1.5（commit e810dc502）·7 判据全通过（报告 119150B / 11 h2 / 0 外链+0 script / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8 / §5.1 标题自证 13 臂 / H1-H7 / §6.1-§6.3）·git fetch 后 HEAD=`e376dc047`=origin/main（他线推进·run/ 无 dirty·0 behind 0 ahead）·本线最后 commit `f28a64061` wake#1297（loop 已自行提交·本 wake 仅续编心跳不重复内容核验）·ps：zhulong_loop PID243810 活（4d02h）+ ops_relay PID118463 活（23d07h）·无 ZhuLong eval/subagent/run_h2 进程·不起 eval 不起臂·subagent 消融线仍 done_all·M4-M8 设计文档不起跑·待用户下一步放行（预注册日 2026-11-22 距 4 天）。✅ **infra 健康**：**/home 23G free（95% used·与 wake#1298 持平）**·**/nasdata 2.5T free（19% used·稳定）**。状态与 wake#1298 一致，仅续编心跳 + 合并 wake#1281~#1291 11 条独立指针为 1 条省 MEMORY 空间·TASK 11.0KB✅·MEMORY 滚后<40KB 硬阈✅。
 - [wake#1297 详条已滚出·被 wake#1298 代表] 见 `daily-memories/2026-11-18.md` §[wake#1297 rolled-out]（plan v1.5 第四十七次复核·HEAD=`efdd5d2f5`·/home 23G 稳定记录）。
 
 - [wake#1296 详条已滚出·被 wake#1297 代表] 见 `daily-memories/2026-11-18.md` §[wake#1296 rolled-out]（plan v1.5 第四十六次复核·HEAD=`f7efd8826`·/home 23G 稳定记录）。
@@ -19,27 +21,7 @@ WAITING: 0（2026-11-18 wake#1298·**🟢 standby·plan v1.5 已交付**：commi
 
 - [wake#1292 详条已滚出·被 wake#1293 代表] 见 `daily-memories/2026-11-18.md` §[wake#1292 rolled-out]（plan v1.5 第四十二次复核·HEAD=`8aee47a83`·/home 1.3M CRITICAL 暴降记录）。
 
-- [wake#1291 详条已滚出·被 wake#1292 代表] 见 `daily-memories/2026-11-18.md` §[wake#1291 rolled-out]（plan v1.5 第四十一次复核·HEAD=`0b33875c5`）。
-
-- [wake#1290 详条已滚出·被 wake#1291 代表] 见 `daily-memories/2026-11-18.md` §[wake#1290 rolled-out]（plan v1.5 第四十次复核·HEAD=`47e0099d6`）。
-
-- [wake#1289 详条已滚出·被 wake#1290 代表] 见 `daily-memories/2026-11-18.md` §[wake#1289 rolled-out]（plan v1.5 第三十九次复核·HEAD=`67c9c352c`）。
-
-- [wake#1288 详条已滚出·被 wake#1289 代表] 见 `daily-memories/2026-11-18.md` §[wake#1288 rolled-out]（plan v1.5 第三十八次复核·HEAD=`658763cf8`）。
-
-- [wake#1287 详条已滚出·被 wake#1288 代表] 见 `daily-memories/2026-11-18.md` §[wake#1287 rolled-out]（plan v1.5 第三十七次复核·HEAD=`973bde986`）。
-
-- [wake#1286 详条已滚出·被 wake#1288 代表] 见 `daily-memories/2026-11-18.md` §[wake#1286 rolled-out]（plan v1.5 第三十六次复核·HEAD=`c32861bc2`）。
-
-- [wake#1285 详条已滚出·被 wake#1286 代表] 见 `daily-memories/2026-11-18.md` §[wake#1285 rolled-out]（plan v1.5 第三十五次复核·HEAD=`f158f3b92`）。
-
-- [wake#1284 详条已滚出·被 wake#1286 代表] 见 `daily-memories/2026-11-18.md` §[wake#1284 rolled-out]（plan v1.5 第三十四次复核 + TASK.md 69KB→11KB 归档维护债清零）。
-
-- [wake#1283 详条已滚出·被 wake#1285 代表] 见 `daily-memories/2026-11-18.md` §[wake#1283 rolled-out]（plan v1.5 第三十三次复核）。
-
-- [wake#1282 详条已滚出·被 wake#1283 代表] plan v1.5 第三十二次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1282 rolled-out]。
-
-- [wake#1281 详条已滚出·被 wake#1282 代表] plan v1.5 第三十一次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1281 rolled-out]。
+- [wake#1281~#1291 详条已滚出·被 wake#1291 代表] plan v1.5 第三十一~四十一次复核·7 判据全通过·仅记心跳·HEAD 序列 `0b33875c5`→`47e0099d6`→`67c9c352c`→`658763cf8`→`973bde986`→`c32861bc2`→`f158f3b92`（#1284 含 TASK.md 69KB→11KB 归档维护债清零）·原文见 `daily-memories/2026-11-18.md` §[wake#1281/#1282/#1283/#1284/#1285/#1286/#1287/#1288/#1289/#1290/#1291 rolled-out]（11 条独立指针合并省 MEMORY 空间）。
 
 - [wake#1277~#1280 详条已滚出·被 wake#1286 代表] plan v1.5 第二十四~二十七次复核·7 判据全通过·仅记心跳·原文见 `daily-memories/2026-11-18.md` §[wake#1277/#1278/#1279/#1280 rolled-out]（4 条独立指针合并省 MEMORY 空间）。
 
