@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-18 03:0x）**：作者 **194** 人（编号最大 **194**）· X 已核验 **104** · 已发信 **84** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-18 15:0x）**：作者 **206** 人（编号最大 **206**）· X 已核验 **104** · 已发信 **91** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第五十八轮增量（2026-11-18 15:0x）**：作者网 203 → **206**（#204 Hao Liu / #205 Ali Farhadi / #206 Hannaneh Hajishirzi，均来自本轮 B 轨 #223 OLMoE 与 #224 Ring Attention）；已发信 90 → **91**（#91 Hao Liu · Ring Attention，中文 CJK **206** 字，`SENT OK 15:05:21`）；X 已核验 **104 不变**（本轮 `x.com` 直连与代理均超时 `000` ⇒ 三人均写「未找到 X」，**不猜 handle**）；已 follow 仍 **0**（需登录态，未假装）。
 
 **第五十四轮增量（2026-11-18 03:0x）**：作者网 190 → **194**（#191 Hammond Pearce / #192 Shailja Thakur / #193 Zeynab Anbiaee / #194 Arunkumar V）；已发信 82 → **84**（#83 Pearce 英文 195 词 · #84 Arunkumar 英文 197 词，`SENT OK 03:04:49 / 03:04:53`）；X 已核验 103 → **104**（`@kiwihammond`：`x.com/kiwihammond` 的 `og:title` = `Hammond Pearce (@kiwihammond) on X` + bio 一致 ⇒ 双源；**本轮 X 直连 `200`、无需代理**）。两人无公开邮箱（Thakur / Anbiaee）⇒ 只建档不发信，不猜地址。
 
@@ -2923,6 +2925,45 @@
 | X 账号 | **未找到**（人员页只链校方 `twitter.com/ucalgary`，非本人 ⇒ 🚫 不登记为本人 handle） |
 | 状态 | **已发信**（#90，2026-11-18 12:10:20，中文 CJK 250 字） |
 | 备注 | `语言=中文(判据=华人姓名族属 + 加拿大机构)`。问题方向：24.20% 是相对提升还是绝对百分点、HDLBits 难度分桶哪一档无增益（二选一）、是否存在只对齐 testbench 的倾向与留出 testbench 对照。 |
+
+### 204. Hao Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hao Liu（拼音姓名族属 ⇒ **中文信**；按令「名字族属优先于机构所在地」） |
+| 机构 | **Google DeepMind**（research scientist；即将入职 CMU ML 系；Ring Attention 一作，B 轨 #224，原 UC Berkeley 博士） |
+| 代表论文 | **Ring Attention with Blockwise Transformers for Near-Infinite Context**（arXiv `2310.01889`，NeurIPS 2023）· World Model on Million-Length Video（`2402.08268`） |
+| 邮箱 | **`haoxyliu@gmail.com`**（本人现行主页 <https://www.haoliu.ai/> `200` / 2,256 B，页内 `email=` 字段用 HTML 实体混淆，`html.unescape` 还原；🚫 未用 PDF 上的 Berkeley 旧地址） |
+| 主页 | <https://www.haoliu.ai/>（`200`） |
+| X 账号 | **未找到**（主页无 X 链接；本轮未猜 handle） |
+| 状态 | **已发信**（#91，2026-11-18 15:05:21，中文 CJK 206 字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构)`。问题方向：Table 2 的 `c = FLOPS / Bandwidth` 在 IB 集群上是否构成硬下界（短于 150K 是否该放弃 ring，二选一）、Table 4 的 MFU 下降归因（attention FLOPs 占比 vs 通信未完全重叠）。 |
+
+### 205. Ali Farhadi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ali Farhadi（波斯语族姓名 ⇒ 英文信） |
+| 机构 | **University of Washington（Paul G. Allen School）+ Allen Institute for AI（Ai2）**（OLMoE 资深作者，B 轨 #223） |
+| 代表论文 | **OLMoE: Open Mixture-of-Experts Language Models**（`2409.02060`）· YOLOv3（`1804.02767`，末位作者）· Molmo |
+| 邮箱 | **`ali@cs.washington.edu`**（UW 官方人员页 <https://www.cs.washington.edu/people/faculty/ali> `200` / 113,422 B，页内明文） |
+| 主页 | <https://www.cs.washington.edu/people/faculty/ali>（`200`） |
+| X 账号 | **未找到**（本轮未取得可核验 handle；🚫 不猜） |
+| 状态 | **待跟踪**（只建档；同论文已向一作 #204 发信，守「同一论文 ≤1」） |
+| 备注 | `语言=英文(判据=波斯语族姓名 + 美国机构；无中日韩信号)`。价值点：OLMoE 的「共享专家无效」「dropless token-based routing 优于 expert-based」这两条反直觉结论的复现边界。 |
+
+### 206. Hannaneh Hajishirzi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hannaneh Hajishirzi（波斯语族姓名 ⇒ 英文信） |
+| 机构 | **University of Washington + Allen Institute for AI（Ai2）**（OLMoE 末位作者，B 轨 #223） |
+| 代表论文 | **OLMoE**（`2409.02060`）· OLMo（`2402.00838`）· Pythia 系列（作者之一） |
+| 邮箱 | **`hannaneh@cs.washington.edu`**（UW 官方人员页 <https://www.cs.washington.edu/people/faculty/hannaneh> `200` / 117,846 B，页内明文） |
+| 主页 | <https://www.cs.washington.edu/people/faculty/hannaneh>（`200`；`hajishirzi.github.io` 本轮 `404`） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **待跟踪**（只建档；守「同一论文 ≤1」） |
+| 备注 | `语言=英文(判据=波斯语族姓名 + 美国机构)`。价值点：全开放训练栈（权重/数据/代码/日志）的成本口径，是 data / pretrain 线做「可复现预算表」的参照。 |
 
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。

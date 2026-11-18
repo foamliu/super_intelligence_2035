@@ -48,7 +48,7 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-18</h1>
   <div class="sub"><b>早报（00:00 时窗）+ 03:00 补齐</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b>／<b>06:0x CST（B 轨第五十五轮 + 2 封信）</b>／<b>09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：2026-11-18 00:1x CST（第 1–3 篇）／<b>03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）</b>／<b>06:0x CST（B 轨第五十五轮 + 2 封信）</b>／<b>09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）</b>／<b>12:1x CST（B 轨第五十七轮 +3 + 2 封信）</b>／<b>15:0x CST（B 轨第五十八轮 +2 + 1 封信）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -387,8 +387,60 @@
   <li><b>news_ready 0</b>：三篇经典均为方法/数据报告，无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
 </ul>
 
+<h3 class="sec">🅱 B 轨 · 15:00 增量（第五十八轮 +2 → 224）</h3>
+<table class="plain">
+  <tr><th style="width:30%;">论文</th><th>被引</th><th>一句话贡献（数字均来自 PDF，作者自报）</th><th>与我们工作的关系</th></tr>
+  <tr><td><b>OLMoE: Open Mixture-of-Experts Language Models</b><br><code>2409.02060</code> · 2024-09-03</td><td><b>374</b><br><span style="color:#59636e;">&lt;500，按「方法论常青」收</span></td><td><b>6.9B 总参数 / 每 token 激活 1.3B</b>，预训练 <b>5.1T token</b>；每层 <b>64 个专家、激活 8 个</b>（FFN 1,024，dense 对照 8,192 ⇒ 激活参数对齐，各 128×H100、130B token）；正文消融：<b>dropless token-based routing 优于 expert-based</b>、<b>shared experts 无收益</b>、路由在 <b>1%（5,000 步 / 20B token）</b>时已基本饱和。</td><td><b>pretrain</b>：MoE 分支对照必须报 <code>total / active / tokens / 卡数</code>，dense 基线压到同 active。<br><b>data</b>：每 5k 步记 top-8 命中集合重合率，早饱和即停路由调参。<br><b>harness</b>：报分标 active 参数。</td></tr>
+  <tr><td><b>Ring Attention with Blockwise Transformers for Near-Infinite Context</b><br><code>2310.01889</code> · NeurIPS 2023</td><td><b>508</b></td><td>激活显存只与 block size <code>c</code> 线性、<b>与序列长度无关</b>；KV 通信与块计算完全重叠；要求 <b><code>c ≥ FLOPS/Bandwidth</code>、<code>s = 6c</code></b>（Table 2：A100 NVLink <b>1.0/6.2</b>，A100 InfiniBand <b>24.5/149.5</b>，×1e3）；<b>8×A100 训 256K</b>，外推 <b>512 卡 → 16M</b>（原文 <code>it suggests</code>）；Table 4 报 7B–65B 的 MFU。</td><td><b>pretrain</b>：实验预注册表加 <code>FLOPS / 带宽 / c</code>，目标序列 &lt; 6c 就<b>不上 ring</b>。<br><b>harness</b>：长上下文报分带「训练序列长度 / 注意力实现 / 卡数」。<br><b>zhulong</b>：EDA 长文档可试「块内局部 + 跨块环状」划分。</td></tr>
+</table>
+<div class="rm"><b>三源实测</b>：arXiv <code>id_list=2409.02060,2310.01889</code> <code>200</code> / 5,523 B（23 / 3 位作者逐字核对，首交 2024-09-03 / 2023-10-03）；OpenAlex <b>2/2 <code>200</code></b>（374 / 508）；PDF <b>2/2 <code>200</code> + <code>%PDF-</code></b>（<b>6,501,620</b> / <b>1,766,025</b> B，均 &lt;5 MB），<code>pdftotext</code> 全部可解析。<br><b>未核 / 更正（如实记）</b>：① OLMoE 正式会场未核（<code>comment</code> 只有页数）⇒ 不写会议；② Ring Attention 的 NeurIPS 2023 取自 ACM DL，<b>不是</b> arXiv 元数据；③ 候选池 <code>2404.12358</code> 实测是 <b>From r to Q*（280）</b>、<b>不是 DBRX</b> ⇒ 已移除（DBRX 只有官方博客、无 arXiv 一手论文）；④ 本轮上游限速（OLMoE 6.5 MB 下了约 9 分钟）⇒ 只收 2 条，不凭记忆补第 3 条。</div>
+
+<h3 class="sec">👥 作者关系网 · 15:00 增量（+3 → 206）</h3>
+<ul class="tight">
+  <li><b>#204 Hao Liu</b>（Google DeepMind，即将入职 CMU；Ring Attention 一作）· <code>haoxyliu@gmail.com</code> 取自本人主页 <code>haoliu.ai</code>（<code>200</code> / 2,256 B，HTML 实体混淆，<code>html.unescape</code> 还原）· 主页无 X 链接 ⇒ <b>未找到 X</b> · <b>已发信</b>（中文）。</li>
+  <li><b>#205 Ali Farhadi</b>（UW + Ai2，OLMoE 资深作者）· <code>ali@cs.washington.edu</code> 取自 UW 人员页（<code>200</code> / 113,422 B 明文）· <b>未找到 X</b> · <b>待跟踪</b>（同论文 ≤1）。</li>
+  <li><b>#206 Hannaneh Hajishirzi</b>（UW + Ai2，OLMoE 末位作者）· <code>hannaneh@cs.washington.edu</code> 取自 UW 人员页（<code>200</code> / 117,846 B 明文；<code>hajishirzi.github.io</code> <code>404</code>）· <b>未找到 X</b> · <b>待跟踪</b>。</li>
+  <li>X 已核验计数保持 <b>104</b>（<code>x.com</code> 直连与代理均超时 <code>000</code>）⇒ 三人均写「未找到」，🚫 不猜 handle。</li>
+</ul>
+
+<h3 class="sec">✉️ 作者请教信 · 15:00（1 封 · 今日 12/12 · 累计 91 · 回信率 0/91）</h3>
+<ul class="tight">
+  <li><b>#91 → Hao Liu</b>（<code>haoxyliu@gmail.com</code>）· Ring Attention <code>2310.01889</code> · <b>中文 CJK 206 字</b> · <code>SENT OK 15:05:21</code>。两问（H4）：① IB 集群上 <code>c = FLOPS/Bandwidth</code> 是否构成硬下界 —— 短于 150K 该不该放弃 ring（<b>二选一</b> + 一句理由）；② Table 4 的 MFU 下降归因 + 要一组可复现的「模型 / 卡数 / 序列长度」。</li>
+  <li>落款两行（<code>祝好，</code> / <code>Yang Liu</code>）其后无行；正文不含项目名；与同日 #87–#90 零共用开头句 / 问题句式。</li>
+  <li><b>回信率 0/91</b>：<code>mail/replies/</code> 仍无任何回信摘录；<b>0 封到期</b>（最早 2026-11-25）。发件通道仍<b>只发不收</b> ⇒ 回信可能已到但读不到（最需运维介入项）。</li>
+</ul>
+
+<h3 class="sec">🧭 6 线可执行建议 · 15:00</h3>
+<table class="plain">
+  <tr><th style="width:12%;">线</th><th>建议（可落地）</th><th style="width:30%;">依据</th></tr>
+  <tr><td>pretrain</td><td>长上下文实验预注册表新增 <code>FLOPS / 互联带宽 / c=FLOPS÷带宽</code> 三列，由 <code>s = 6c</code> 判定「目标序列是否值得上 ring」；MoE 分支对照报 <code>total / active / tokens / 卡数</code>，dense 基线压到同 active。</td><td>#224 Table 2；#223 激活参数对齐对照</td></tr>
+  <tr><td>vision</td><td>无（本轮 2 篇均非视觉侧）。</td><td>—</td></tr>
+  <tr><td>harness</td><td>长上下文结果文件必带「训练序列长度 / 注意力实现 / 卡数」；MoE 报分标 <code>active</code> 参数。</td><td>#224 Table 4；#223 摘要口径</td></tr>
+  <tr><td>data</td><td>训练监控加「路由饱和探针」：每 5k 步记 top-8 命中集合与上一步的重合率；~1% 预训练内饱和即停路由调参，预算转数据配比。</td><td>OLMoE <code>after 1% of pretraining (5000 steps or 20B tokens)</code></td></tr>
+  <tr><td>zhulong</td><td>EDA 长文档（规格书 + 波形报告）试「块内局部注意力 + 跨块环状传递」，先只测显存与 MFU，不测准确率。</td><td>Ring Attention 的 blockwise + ring 划分</td></tr>
+  <tr><td>designflow</td><td>无（本轮非 EDA / 造题内容）。</td><td>—</td></tr>
+</table>
+
+<h3 class="sec">📎 附录 · 15:00 增量检索记录（可核验）</h3>
+<table class="plain">
+  <tr><th style="width:62%;">请求</th><th>结果</th></tr>
+  <tr><td><code>cat:cs.CL</code> 列表（按提交日倒序，30 条）</td><td><code>200</code> / 72,765 B / <code>application/atom+xml</code>；最新 <code>published</code> = <b>2026-11-17T18:59:37Z</b>（较 12:00 的 <code>2026-11-17T05:01:24Z</code> <b>前进</b>）⇒ A 轨今日 5/5 已满，<b>0 新收</b>，登记 6 条给 11-19</td></tr>
+  <tr><td><code>id_list=2409.02060,2310.01889</code></td><td><code>200</code> / 5,523 B / atom（首交 2024-09-03T17:08:20Z / 2023-10-03T08:44:50Z）</td></tr>
+  <tr><td>OpenAlex ×2</td><td>2/2 <code>200</code>：<b>374</b> / <b>508</b></td></tr>
+  <tr><td>PDF ×2</td><td>2/2 <code>200</code> + <code>%PDF-</code>：<b>6,501,620</b> / <b>1,766,025</b> B（均 &lt;5 MB）；<code>pdftotext</code> 可解析</td></tr>
+  <tr><td>作者主页 / 人员页 ×3</td><td><code>haoliu.ai</code> <code>200</code> / 2,256 B；<code>cs.washington.edu/people/faculty/ali</code> <code>200</code> / 113,422 B；<code>…/hannaneh</code> <code>200</code> / 117,846 B</td></tr>
+  <tr><td>失败项（如实记）</td><td><code>x.com</code> 直连与代理均超时 <code>000</code> ⇒ voice_ready 0 新增；<code>people.eecs.berkeley.edu/~hao.liu/</code> <code>404</code>（旧主页）；<code>sewonmin.github.io</code> / <code>sewon-m.github.io</code> / <code>hajishirzi.github.io</code> 均 <code>404</code></td></tr>
+  <tr><td>环境坑（本轮）</td><td>arXiv PDF 上游限速（约 18 KB/s）⇒ 6.5 MB 文件需 ~9 分钟；用后台 <code>curl --max-time 600</code> 跑完再 <code>pdftotext</code>，🚫 不中途判「不可达」</td></tr>
+</table>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready · 15:00</h3>
+<ul class="tight">
+  <li><b>voice_ready 0 新增</b>（沿用 03:00 的 Jason Wei 原推）：<code>x.com</code> 本轮直连与代理均 <code>000</code> ⇒ 不取原推、不转二手当原文。</li>
+  <li><b>news_ready 0</b>：OLMoE 与 Ring Attention 均为方法 / 技术报告，无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
+</ul>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）／<b>12:1x CST（B 轨第五十七轮 +3 + 2 封信 + 6 线建议）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>222</b> 篇（第五十七轮 +3）｜ 作者网 <b>203</b> 人（X 已核验 104）｜ 作者信累计 <b>90</b> 封（回信率 <b>0/90</b>，0 封到期，最早 2026-11-25）｜ voice_ready 1 ｜ news_ready 0<br>
+  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）／12:1x CST（B 轨第五十七轮 +3 + 2 封信 + 6 线建议）／<b>15:0x CST（B 轨第五十八轮 +2 + 1 封信 + 6 线建议）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>224</b> 篇（第五十八轮 +2）｜ 作者网 <b>206</b> 人（X 已核验 104）｜ 作者信累计 <b>91</b> 封（回信率 <b>0/91</b>，0 封到期，最早 2026-11-25）｜ voice_ready 1 ｜ news_ready 0<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
