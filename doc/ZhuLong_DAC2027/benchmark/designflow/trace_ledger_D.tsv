@@ -264,7 +264,7 @@
 1793784075345_99pcm.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793233072993_vmvz6.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1793167439759_tkpln.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
-1792750940096_i9qdi.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
+1792750940096_i9qdi.messages.json					case	EDA-Eval-DesignFlow-BlClampRailDiagQA-001	2026-11-18 23:07	r899 revival: old D262-peek-unfit (pre-2026-11-15 reaudit); kw schematic:405/netlist:272/pyaether:255 strong D-pure, re-deepread under new rules
 1792202007838_ms1ia.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1792206946923_goqly.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
 1792573053073_cg9ru.messages.json					parked		2026-11-05 06:49	D262-peek-unfit
