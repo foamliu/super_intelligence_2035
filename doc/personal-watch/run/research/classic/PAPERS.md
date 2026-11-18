@@ -3760,7 +3760,7 @@
 | 字段 | 内容 |
 |:--|:--|
 | 标题 | Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing |
-| 作者（前 3） | Zhangchen Xu · Fengqing Jiang · Radha Poovendran（et al.，共 6 位；University of Washington · Allen Institute for AI） |
+| 作者（前 3） | Zhangchen Xu · Fengqing Jiang · Radha Poovendran（et al.，共 7 位；University of Washington · Allen Institute for AI） |
 | 年份 | **2024**（PDF 实测 v2 = `2024-10-07`，`cs.CL`；**首次提交日未核到**：arXiv API 本轮 `429` / `SSL_ERROR_SYSCALL 000`，不臆写） |
 | 会议 / 期刊 | **arXiv 预印本**（PDF 页眉 `Preprint`；会议信息本轮未核验） |
 | 被引数 | **353**（OpenAlex `10.48550/arxiv.2406.08464`，查询日 **2026-11-18**；**&lt;500 ⇒ 按「方法论常青」收录**：只用对齐模型的前置模板自举指令，已被后续大量数据合成工作当作基线） |
