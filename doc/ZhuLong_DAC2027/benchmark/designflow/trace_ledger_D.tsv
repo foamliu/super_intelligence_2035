@@ -1573,7 +1573,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794214637465_iqj11	shaoyou	hfeg0plg49	27	waveform	case	EDA-Eval-DesignFlow-WvSignalDisplayGuideQA-001	2026-11-18 13:59	r608 peek: interactive WaveView signal-display not produce-task
 1791448973775_f8g40	rongjiez	hfeg0plg98	27	schematic_netlist	parked		2026-11-13 03:56	runModelQA.pl code-comparison Q&A + PPT summary, non-falsifiable
 1790731913166_ki1x0	chengk	hfeg0plg96	27	schematic_netlist	parked		2026-11-13 03:56	code-reading + flowchart (IddFlowCode), non-falsifiable comprehension
-1793692877234_xlzwr	ronghu	hfeg0plg93	27	analog_context	parked		2026-11-13 03:56	char hspice removal_hbm error debug '请分析原因', non-falsifiable explain
+1793692877234_xlzwr	ronghu	hfeg0plg93	27	analog_context	parked	EDA-Eval-DesignFlow-RemovalUnsolvableDiag-001	2026-11-18 16:27	cross-shard dup of B CharRemovalAbort-001 (same trace xlzwr/ronghu/ffrqN_Rfreshtokenx2 removal_hbm abort, same diagnostic-script abstraction); D r885 revert, do NOT build
 1793778171219_tq83u	e0046686	hfeg0plg80	28	schematic_netlist	parked		2026-11-13 03:56	rev_cali GUI param-box feature dev, not D produce-task
 1794390463016_3sogb	alexli	hfeg0pkn004	1611	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: skill-dependent (presim-automation/eda_agent), non-falsifiable skill query
 1794401065591_eo84n	xdwang	hfeg0pkn005	1453	schematic_netlist	parked		2026-11-13 04:15	r587 newuser-probe reject: Q&A inventory (count inverters in netlist), non-falsifiable comprehension
