@@ -26,29 +26,7 @@ WAITING: 0（2026-11-18 wake#1257·**🟢 standby·plan v1.5 已交付**：commi
 
 - [wake#1245/#1244 详条已滚出·被 wake#1249 代表] plan v1.2 第七十七~八次复核·6 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md`。
 
-- [2026-11-18 wake#1226] 见 `daily-memories/2026-11-18.md` §[wake#1228 roll-out]（plan v1.1 第五十九次复核·被 wake#1227/#1228 代表）。
-
-- [wake#1230 详条已滚出·2026-11-18 wake#1231 归档] 见 `daily-memories/2026-11-18.md` §[wake#1231 roll-out]（plan v1.1 第六十三次复核·实质源核验·被 wake#1231 代表）。
-
-- [wake#1232 详条已滚出·2026-11-18 wake#1233 归档] 见 `daily-memories/2026-11-18.md` §[wake#1232 roll-out]（plan v1.1 第六十五次复核·4 并行 subagent 源核验·全通过·被 wake#1233 代表）。
-
-- [wake#1233 详条已滚出·2026-11-18 wake#1234 归档] 见 `daily-memories/2026-11-18.md` §[wake#1233 roll-out]（plan v1.1 第六十六次复核·独立结构复核 + pgrep 假阳性诊断·全通过·被 wake#1234 代表）。
-
-- [2026-11-18 wake#1234 详条已滚出·2026-11-18 wake#1235 归档] 见 `daily-memories/2026-11-18.md` §[wake#1234 roll-out]（plan v1.1 第六十七次复核·被 wake#1235 代表）。
-
-- [2026-11-18 wake#1235 详条已滚出·2026-11-18 wake#1236 归档] 见 `daily-memories/2026-11-18.md` §[wake#1235 roll-out]（plan v1.1 第六十八次复核·被 wake#1236 代表）。
-
-- [2026-11-18 wake#1236 详条已滚出·2026-11-18 wake#1237 归档] 见 `daily-memories/2026-11-18.md` §[wake#1236 roll-out]（plan v1.1 第六十九次复核·被 wake#1237 代表）。
-
-- [2026-11-18 wake#1237 详条已滚出·2026-11-18 wake#1238 归档] 见 `daily-memories/2026-11-18.md` §[wake#1237 roll-out]（plan v1.1 第七十次复核·被 wake#1238 代表）。
-
-- [wake#1238 详条已滚出·2026-11-18 wake#1239 归档] 见 `daily-memories/2026-11-18.md` §[wake#1238 roll-out]（plan v1.1 第七十一次复核·交互式 OpenCode 会话·被 wake#1239 代表）。
-
-- [wake#1241 详条] 见 `daily-memories/2026-11-18.md` §[wake#1241]（plan v1.2 微订正·附录 D case 计数订正为权威 main.tex:77 口径·commit `9565933b1`·交互式 OpenCode 会话）。
-
-- [wake#1239 详条已滚出·2026-11-18 wake#1240 归档] 见 `daily-memories/2026-11-18.md` §[wake#1239 roll-out]（plan v1.1 第七十二次复核·交互式 OpenCode 会话·被 wake#1240 代表）。
-- [wake#1242 详条已滚出·2026-11-18 wake#1243 归档] 见 `daily-memories/2026-11-18.md` §[wake#1242 roll-out]（plan v1.2 第七十五次复核·交互式 OpenCode 会话·被 wake#1243 代表）。
-- [wake#1240 + wake#1239 详条已滚出·2026-11-18 wake#1242 归档] 见 `daily-memories/2026-11-18.md` §[wake#1240/#1239 roll-out]（plan v1.1 第七十二/七十三次复核·被 wake#1242 代表）。
+- [wake#1226~#1243 详条已滚出·2026-11-18 多次归档] 见 `daily-memories/2026-11-18.md` §[wake#1228/#1231/#1232/#1233/#1241/#1242 roll-out]（plan v1.1 第五十九~七十三次复核 + v1.2 微订正 commit `9565933b1` + v1.2 第七十五次复核·交互式 OpenCode 会话·被 wake#1228/#1231/#1232/#1233/#1241/#1242/#1243 代表）。
 
 - [wake#1231/#1229/#1228 详条已滚出·2026-11-18 wake#1230~#1232 归档] 见 `daily-memories/2026-11-18.md` §[wake#1231 roll-out]（plan v1.1 第六十一~六十四次复核·结构性+实质核验·被 wake#1230/#1232 代表）。
 
