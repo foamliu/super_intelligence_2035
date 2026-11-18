@@ -1,9 +1,9 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2679 · 2026-11-18 15:0x — 监控轮(6路predict alive·+5新prediction·仅1新real-patch不足起incr_eval)·**心跳第一行**: 监控轮R2679·predict 2343/3500(Δ vs R2678=+5·cline346/hermes493/pi304·dsh187)·6/7 predict alive(opencode COMPLETE 500/500)·0 429✅(hermes log 1 hit=patch=4290B false-positive)·**自检clean**(load28.7/224·MemAvail1405GB·最高harness proc=cline-checkpoint-off 36.7%/752MB·远低于8000%CPU/50GB阈值·0 runaway·0 Docker残留)·**新unevaluated real-patch=1**(dsh django__django-11603 4514B·pi+2/hermes+1均empty-patch)→不足≥3-5阈值·不启动incr_eval·**research日报11-18已读**(12:17版·无新harness建议·18:00版未发布)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈25.5KB(✅≤32KB)
+> 🆕 **R2680 · 2026-11-18 15:2x — incr_eval轮(5新real-patch·4路eval·2 RESOLVED·7way报告REGEN)·**心跳第一行**: incr_eval R2680 DONE(151.3s)·5新real-patch跨4路eval: cline-patched 2题(django-13933 RESOLVED✅+django-13837 FAILED)·cc 1题(django-11551 RESOLVED✅)·hermes 1题(sympy-21930 FAILED)·dsh 1题(django-11603 infra no-report)→**SWE-bench Verified Pass%**: cline255/500=51.0%(+1)·cc290/500=58.0%(+1)·hermes441/500=88.2%·dsh143/500=28.6%·opencode415/500=83.0%·codex91/500=18.2%·pi218/500=43.6%·predict 2348/3500(Δ vs R2679=+5)·6/7 predict alive(opencode COMPLETE)·0 429✅·**自检clean**(load32.47/224≈14.5%busy·MemAvail1371GB·最高harness proc=cline-checkpoint-off 36.7%/752MB·远低于8000%CPU/50GB阈值)·7way报告REGEN(18636B)·**research日报11-18已读**(12:17版·无新harness建议)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval·WAITING=0·📦 TASK≈30.5KB MEMORY≈25.5KB(✅≤32KB)
+> 📦 R2679 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2343/3500·+5新prediction·仅1新real-patch不足起incr_eval·6/7 predict alive·0 429·自检clean·research日报已读）。需要时再读。
 > 📦 R2678 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2338/3500·+3新prediction不足起incr_eval·6/7 predict alive·0 429·自检clean·research日报已读）。需要时再读。
-> 📦 R2677 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·5新real-patch·+3 RESOLVED·pi218/hermes441·predict 2335/3500·自检clean）。需要时再读。
 > 📦 R2676 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·1新real-patch不足起incr_eval·predict 2326/3500·自检clean·research日报已读）。需要时再读。
 
 > 📦 R2674 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2309/3500·hermes+2·自检clean·无新运维令·research日报已读）。需要时再读。
