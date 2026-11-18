@@ -3875,6 +3875,58 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-ClampLeakPwrAnalyze-001",
+   "arm": "V2",
+   "k_conditions": 34,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-ClkOscStim-001",
+   "arm": "V0",
+   "k_conditions": 49,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-ClkOscStim-001",
+   "arm": "V1",
+   "k_conditions": 49,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-ClkOscStim-001",
+   "arm": "V2",
+   "k_conditions": 49,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
