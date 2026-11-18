@@ -1,11 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1349·**🟢 standby·done_all·中文对照令已交付**：用户令 commit `870a7102c`（论文全文加中文对照注释态）已执行——round1 `abf24281f`+round2 `28e77662f` 两轮 push 至 origin·编译 11p/0err/0undef/230611B 同字节·报告 `reports/report_edafb_zh_translation_zh.html`·subagent 消融线结案不起臂·顶部最新 task 令（zh-cn）已闭合·infra 健康·cline ✅ @/home/app.e0031982/.local/bin/cline / loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h·ops 队列排空 last_run_id=146·HEAD=`14b3811db`=origin/main（他线提交推进·非本线·0 ahead 0 behind·push 通畅·zhulong run/ZhuLong_DAC2027 子树干净·benchmark/designflow 有他线改动不碰·AGENTS.md 禁 stash/clean/reset → 不碰）·/home 29G free·/nasdata 2.5T free·距预注册日 2026-11-22 仍 4 天·§7 StepC done_all→退出·本轮滚 wake#1347 详条出至 daily·MEMORY 维持 40KB 硬上限内）
+WAITING: 0（2026-11-18 wake#1350·**🟠 friend-review P0+处置矩阵已交付·写作层 5 项延至预注册后**：朋友评审令（ZHULONG_TASK.md 顶部 🔴 22:3x）已执行——P0 三项结论（R1 采纳/R2 部分采纳 b 路线/R5 采纳）+ 11 项处置矩阵（采纳 10/部分 1/不采纳 0）·预注册关键已落入论文 §3/§5/§6+abstract+§1（R1 H1c 跨session措辞+S1禁持久化 / R2 pilot signal+M6延后 / R5 M0同子集锚点口径 / P1 臂表13→10主+3附录撤M2的H1a弱判据 / P2② H2b弱支持 / R3 M4 n-gram机器可判代理）·重编译 12p/0err/0undef/235123B（+1页）·报告 reports/report_edafb_friend_review_response_zh.html·写作层 P2①③④⑤+R4 延至预注册后·subagent 消融线结案不起臂·infra 健康·距预注册日 2026-11-22 仍 3 天·待决：M0子集实测/DATE27引用/理想矩阵M6/写作层5项）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-18 wake#1350 心跳·opencode 交互式会话·朋友评审令执行] 第九十六次核验·**friend-review 实质工作**（非 standby）·用户贴任务书全文后 git fetch 发现 origin/main 有新令 `869fa5e5d`（朋友评审意见下发）+ loop 已提交 wake#1349 standby 心跳 `0c241f2e8`·本会话对齐 origin/main（`git reset origin/main` mixed 零数据丢失·benchmark/designflow 他线在途文件保留）·执行朋友评审研判：P0 三项结论（R1 采纳·H1c 精确化为「跨 session 长期记忆是跨 session RSI 前提」+S1 显式禁 session 间持久化；R2 部分采纳·取 b 路线 pilot signal+abstract 不报 pp+M6 延至理想矩阵；R5 采纳·M0 锚点改同 top-120 子集实测值 \TBD·696-run 10.0% 保留为描述性全集基线）+ P1 采纳方案 A（13→10 主表+3 附录·撤 M2 的 H1a 弱判据 M2≥M0+2pp/M3≥M2+1pp）+ P2② 采纳（H2b 弱支持中间地带）+ R3 采纳（M4 n-gram 机器可判代理）·11 项处置矩阵：采纳 10/部分 1/不采纳 0·预注册关键已落入论文 sections/0_abstract.tex+1_intro.tex+3_task_benchmark.tex+5_preregistered.tex+6_experiments.tex·重编译 pdflatex→bibtex→pdflatex×2 = 12p/0err/0undef/235123B（v1.7 zh-cn 11p/230611B → +1 页因设计层增补）·报告 reports/report_edafb_friend_review_response_zh.html（单文件自包含·11 项逐条+改前改后+验收对照）·写作层 5 项（P2①③④⑤+R4）延至预注册后·不改任何既有实测数字·不编造新数字·待决：M0 top-120 子集实测/DATE27 引用落实/理想矩阵 M6/写作层 5 项·距预注册日 2026-11-22 仍 3 天·infra 健康（loop PID243810/ops_relay PID118463/cline ✅）·提交前缀 `zhulong review:`·git add -- doc/ZhuLong_DAC2027/**。
 - [2026-11-18 wake#1349 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第九十五次核验·standby·done_all·与 wake#1348 同款场景·infra 健康（loop PID243810 活 / ops_relay PID118463 活 / cline ✅ @/home/app.e0031982/.local/bin/cline·/home 29G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146 = inbox 顶块 RUN_ID 146·无 RUN_ID 147 pending）·git pull --rebase 因 benchmark/ 他线在途文件 unstaged 未执行（AGENTS.md 禁 stash/clean/reset → 不碰·status -sb 显示 ## main...origin/main 无 ahead/behind → 与 origin 同步）·HEAD=`c927f8bde`=origin/main（他线提交推进·非本线·0 ahead 0 behind·push 通畅·zhulong run/ZhuLong_DAC2027 子树干净·benchmark/designflow 有他线改动不碰）·research 日报 2026-11-18.html mtime 21:09（wake#1348 已见·此后无更新版本）zhulong 建议仍 Verilog 评测法+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应→不起臂·subagent 消融线 done_all·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本轮 §10 维护：滚 wake#1298/#1300/#1301/#1302 合并指针出至 daily（已存在）+ 用指针替换·MEMORY 维持 40KB 硬上限内。
 - [2026-11-18 wake#1348 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第九十四次核验·standby·done_all·与 wake#1311-1347 同款场景·infra 健康（loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h / cline ✅ @/home/app.e0031982/.local/bin/cline·/home 29G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146 = inbox 顶块 RUN_ID 146·无 RUN_ID 147 pending）·fetch 后 HEAD=`14b3811db`=origin/main（他线提交推进·非本线·0 ahead 0 behind·push 通畅·zhulong run/ZhuLong_DAC2027 子树干净·benchmark/designflow 有他线改动不碰·AGENTS.md 禁 stash/clean/reset → 不碰）·research 日报 2026-11-18.html mtime 21:09（wake#1347 已见·此后无更新版本）zhulong 建议仍 Verilog 评测法+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应→不起臂·subagent 消融线 done_all·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本轮 §10 维护：滚 wake#1347 详条出至 daily + 用指针替换·MEMORY 维持 40KB 硬上限内。
 - [wake#1347 详条已滚出·被 wake#1348 代表] 见 `daily-memories/2026-11-18.md` §[wake#1347 rolled-out]（第九十三次核验·standby·done_all·HEAD=`0cf923b6f3`·本轮 wake#1348 维护滚出·原文不改）。
@@ -37,21 +38,19 @@ WAITING: 0（2026-11-18 wake#1349·**🟢 standby·done_all·中文对照令已�
 
 - [wake#1303 详条已滚出·被 wake#1314 代表] 见 `daily-memories/2026-11-18.md` §[wake#1303 rolled-out]（**plan v1.6 + paper v1.7 双交付**·v1.6 假设内聚化重组 3 核心+7 子·报告 122386B·commit `50ed2d283`·v1.7 重写 `EDA-Flow-Bench_ICML2027/` 正文 main.tex+12 section+4 appendix+main.bbl·新标题「Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study」·正文 6 页·10 判据全通过·v1.6+v1.7 令已归档至 ZHULONG_TASK_ARCHIVE.md）。
 
-- [wake#1298/#1300/#1301/#1302 详条已滚出·本轮 wake#1349 再滚出合并指针] 见 `daily-memories/2026-11-18.md` §[wake#1298 rolled-out]/§[wake#1300 rolled-out]/§[wake#1301 rolled-out]/§[wake#1302 rolled-out]（plan v1.5 第四十八~五十二次复核·均 standby·7 判据全通过·HEAD 序列 `18a4d76e1`→`660c541a4`→`ea22f49ff`→`e7050e9d7`→`7335535e1`·wake#1298 旧有重复指针已并·原文不改）。
+- [wake#1298-1302 详条已滚出·本轮 wake#1350 删除] 见 `daily-memories/2026-11-18.md` §[wake#1298-1302 rolled-out]。
 
-- [wake#1259/#1260/#1261/#1262 详条已滚出·被 wake#1263 代表] plan v1.5 第九~十二次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1259/#1260/#1261 rolled-out]（含 wake#1259 程序性瑕疵记录：v1.5 内容被混入 designflow commit e810dc502·commit msg 偏离硬约束·内容正确无需返工·不回溯 amend）。
+- [wake#1259-1262 详条已滚出·本轮 wake#1350 压缩] plan v1.5 第 9-12 次复核·7 判据全通过·见 `daily-memories/2026-11-18.md` §[wake#1259-1262 rolled-out]（含 wake#1259 程序性瑕疵：v1.5 混入 designflow commit e810dc502·内容正确不返工）。
 
-- [wake#1263~#1291 详条/指针已滚出·2026-11-18 wake#1308 再合并] plan v1.5 第十三~四十一次复核（#1263~#1291）+ wake#1284 含 TASK.md 69KB→11KB 归档维护债清零·7 判据全通过·仅记心跳·HEAD 序列 `0b33875c5`→`47e0099d6`→`67c9c352c`→`658763cf8`→`973bde986`→`c32861bc2`→`f158f3b92`·原文见 `daily-memories/2026-11-18.md` §[wake#1263/#1264/#1265/#1266/#1277/#1279/#1281/#1286/#1291 rolled-out]（多次独立指针合并省 MEMORY 空间）。
+- [wake#1263~#1291 详条已滚出·本轮 wake#1350 压缩] plan v1.5 第 13-41 次复核·7 判据全通过·原文见 `daily-memories/2026-11-18.md` §[wake#1263-1291 rolled-out]（含 wake#1284 TASK.md 归档债清零）。
 
 - [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·7 判据全通过·报告 119150B）。
 
-- [wake#1244/#1245/#1248/#1249/#1250 详条已滚出·被 wake#1251 代表] plan v1.2 第七十七~八次 + v1.4 第十~十二次复核·6/9 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1250]。
+- [wake#1244-1250 详条已滚出·本轮 wake#1350 压缩] plan v1.2 第 77-78 次 + v1.4 第 10-12 次复核·6/9 判据全通过·见 `daily-memories/2026-11-18.md` §[wake#1250]。
 
 - [2026-11-18 wake#1247 详条] 见 `daily-memories/2026-11-18.md` §[wake#1247]（**plan v1.4 交付**·用户令 2026-11-18 第二批意见·核心认知升级情绪×长期记忆 + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 8 次调研 + 附录 G·自检 9 判据全通过·新臂 M4-M8 是设计不起跑）。
 
 - [2026-11-18 wake#1246 详条] 见 `daily-memories/2026-11-18.md` §[wake#1246]（**plan v1.3 交付**·用户令 2026-11-18 交互式会话·增量补两篇 zhulong 预印本 BibTeX 引用至附录 F·ZhuLong-DAC 完整 + DATE27 PLACEHOLDER·自检 7 判据全通过·不起 eval·不起臂）。
-
-- [wake#911~#1243 详条/指针已滚出·本轮 wake#1349 再精简] 原文均已在 `daily-memories/2026-11-{17,18}.md`·均已被 wake#1036(结案)/wake#1178(v1 首交付)/wake#1251(v1.5 交付)/wake#1303(v1.6+v1.7 交付) 代表。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。

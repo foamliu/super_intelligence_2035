@@ -15,11 +15,14 @@
 % 永不进入工作目录）。该契约故意不规定语言或主机——智能体必须自行发现正确的工具链。详细基准构建见
 % 附录~\ref{sec:benchmark-details}。
 
-\textbf{Evaluation subset.} Experiments use a Full-set subset (top-120 by grounding depth / chain length, internally evaluated, not released). A frozen 696-run snapshot (2026-11-09; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s timeout, 8 workers) provides the M0 baseline anchor: \MzeroPass{} Pass@1 (62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT).
+\textbf{Evaluation subset.} Experiments use a Full-set subset (top-120 by grounding depth / chain length, internally evaluated, not released). A frozen 696-run snapshot (2026-11-09; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s timeout, 8 workers) provides the descriptive full-set baseline: \MzeroPass{} Pass@1 (62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT). \emph{M0 comparison anchor caliber:} the 696-run \MzeroPass{} is the full-set descriptive value; the minimal-matrix comparison anchor for arms (M3, N1, \dots) is the M0 Pass@1 measured on the \emph{same top-120 subset} (\TBD, measured post pre-registration alongside the arms), which is expected to differ from 10.0\% because the top-120 by chain length is harder than the full set.
 % 【中文】
 % \textbf{评测子集。} 实验使用 Full 集子集（按接地深度/链长取 top-120，内部评测，不发布）。一份冻结
 % 的 696-run 快照（2026-11-09；DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、2400s 超时、
-% 8 workers）提供 M0 基线锚点：\MzeroPass{} Pass@1（62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT）。
+% 8 workers）提供描述性全集基线：\MzeroPass{} Pass@1（62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT）。
+% \emph{M0 比较锚点口径：} 696-run \MzeroPass{} 为全集描述值；各臂（M3、N1、…）在最小矩阵中的比较锚点
+% 为\emph{同 top-120 子集}上实测的 M0 Pass@1（\TBD，预注册后与各臂一同测量），该值预期偏离 10.0\%，
+% 因按链长取 top-120 比全集更难。
 
 \textbf{Open-source boundary (v1.4 narrowing).} We release a \emph{protocol white-paper} (harness protocol + criteria + desensitized task specifications) and an \emph{NDA-controlled review package} for reviewers, but do \textbf{not} release executable Lite-set assets or a mock-EDA mode. The falsifiability of our claims does not depend on releasing proprietary EDA tool licenses: the protocol and criteria are sufficient for an independent party to re-derive an equivalent benchmark on open-source EDA tools (Yosys/OpenROAD/Magic) and test the same hypotheses (\S\ref{sec:reproducibility}).
 % 【中文】

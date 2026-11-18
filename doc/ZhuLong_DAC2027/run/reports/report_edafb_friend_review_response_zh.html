@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>朋友评审意见处置矩阵 · EDA-Flow-Bench (ICML 2027) · 2026-11-18</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#bc8cff;--adopt:#3fb950;--partial:#d29922;--reject:#f85149;--code:#1f2937}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;margin:0;padding:24px;max-width:1180px;margin:0 auto}
+h1{color:#fff;font-size:1.55rem;border-bottom:1px solid var(--border);padding-bottom:12px;margin-top:8px}
+h2{color:var(--accent);font-size:1.2rem;margin-top:36px;border-left:4px solid var(--accent);padding-left:12px}
+h3{color:#fff;font-size:1.02rem;margin-top:24px}
+.meta{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:16px 0;font-size:.9rem;color:var(--muted)}
+.meta b{color:var(--text)}
+.kbadge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.78rem;font-weight:600;margin-right:6px}
+.adopt{background:rgba(63,185,80,.15);color:var(--adopt);border:1px solid var(--adopt)}
+.partial{background:rgba(210,153,34,.15);color:var(--partial);border:1px solid var(--partial)}
+.reject{background:rgba(248,81,73,.15);color:var(--reject);border:1px solid var(--reject)}
+.p0{background:rgba(248,81,73,.12);color:var(--red);border:1px solid var(--red)}
+.layer{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.72rem;font-weight:600}
+.Ldes{background:rgba(88,166,255,.15);color:var(--accent)}
+.Lcrit{background:rgba(248,81,73,.15);color:var(--red)}
+.Lwrt{background:rgba(188,140,255,.15);color:var(--purple)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.86rem;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#21262d;color:#fff;font-weight:600;position:sticky;top:0}
+tr:last-child td{border-bottom:none}
+tr:hover{background:#1c2128}
+code,pre{background:var(--code);color:#e06c75;padding:1px 5px;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:.84rem}
+pre{padding:10px 12px;overflow-x:auto;color:var(--text);border:1px solid var(--border)}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.diff .col{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:.82rem}
+.diff .before{border-left:3px solid var(--red)}
+.diff .after{border-left:3px solid var(--green)}
+.diff .label{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:600}
+@media(max-width:760px){.diff{grid-template-columns:1fr}}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.stat .num{font-size:1.9rem;font-weight:700}
+.stat .lbl{font-size:.78rem;color:var(--muted);margin-top:4px}
+.todo{background:rgba(210,153,34,.06);border:1px solid var(--yellow);border-radius:8px;padding:12px 16px;margin:12px 0}
+.done{background:rgba(63,185,80,.06);border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin:12px 0}
+.item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:14px 0}
+.item-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.item-id{font-weight:700;color:#fff;font-size:1rem}
+.foot{color:var(--muted);font-size:.8rem;text-align:center;margin-top:40px;border-top:1px solid var(--border);padding-top:14px}
+.verdict{font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>📋 朋友评审意见处置矩阵 · EDA-Flow-Bench (ICML 2027)</h1>
+
+<div class="meta">
+<b>评审来源：</b>用户转发的朋友评审（用户注明「AI 生成，内容仅供参考」），原文 163 行见 <code>run/ZHULONG_REVIEW_20261118_friend.md</code>（文档 A 结构性风险 R1–R5 + 细节 5 条；文档 B 子假设/消融数量评估 + 方案 A/B）。<br>
+<b>任务令：</b><code>ZHULONG_TASK.md</code> 顶部 🔴 2026-11-18 22:3x 用户令。<br>
+<b>处置范围：</b>R1–R5 + P2 五项 + 臂表收敛（方案 A）+ R3/R4，共 <b>11 项</b>。<br>
+<b>处置原则：</b>逐条研判（采纳/部分/不采纳 + 理由 + 影响面），<b>不照单全收</b>；不改任何既有实测数字（696-run / 10.0% / 62·558·70·6 / 2.9%），不编造新数字。<br>
+<b>本会话落点：</b>预注册关键（判据层/设计层）已落入论文 §3/§5/§6 + abstract + §1；写作层延至预注册后；论文重编译 <b>12 页 / 0 err / 0 undef / 235123 B</b>。
+</div>
+
+<h2>📊 处置总览</h2>
+<div class="summary">
+<div class="stat"><div class="num" style="color:var(--adopt)">10</div><div class="lbl">采纳</div></div>
+<div class="stat"><div class="num" style="color:var(--partial)">1</div><div class="lbl">部分采纳</div></div>
+<div class="stat"><div class="num" style="color:var(--reject)">0</div><div class="lbl">不采纳</div></div>
+</div>
+
+<table>
+<thead><tr><th>编号</th><th>议题</th><th>处置</th><th>层级</th><th>本会话</th><th>影响面</th></tr></thead>
+<tbody>
+<tr><td><b>R1</b> <span class="kbadge p0">P0</span></td><td>H1c 定义漏洞（session 内 in-context = 短期记忆 ⇒ S1≤M0 伪证伪）</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lcrit">判据层</span></td><td>✅ 已落</td><td>§5.2 H1c 措辞、§5.3 S1 臂、abstract</td></tr>
+<tr><td><b>R2</b> <span class="kbadge p0">P0</span></td><td>120 题功效不足（McNemar ≈0.62；M6 失败子集 ~40 题 功效 &lt;0.3）</td><td><span class="kbadge partial">部分采纳</span></td><td><span class="layer Lcrit">判据层</span></td><td>✅ 已落</td><td>§5.3 统计/功效定位、M6 判据、abstract</td></tr>
+<tr><td><b>R5</b> <span class="kbadge p0">P0</span></td><td>M0 锚点子集口径（10.0% 是 696-run 全集；top-120 子集 M0 可能 4–6%）</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lcrit">判据层</span></td><td>✅ 已落</td><td>§3、§5.3 M0 行、§5 收尾、§6</td></tr>
+<tr><td><b>P1</b></td><td>臂表收敛 13→10 主表+3 附录（方案 A）</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Ldes">设计层</span></td><td>✅ 已落</td><td>§5.3 臂表、§6、abstract、§1 贡献</td></tr>
+<tr><td><b>P2①</b></td><td>abstract 7.6× vs 7.1× 并置需区分</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lwrt">写作层</span></td><td>⏳ 延后</td><td>abstract</td></tr>
+<tr><td><b>P2②</b></td><td>H2b 中间地带（记忆 0.6–0.8×、Pass@1 持平）需「弱支持」</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lcrit">判据层</span></td><td>✅ 已落</td><td>§5.2 H2b 证伪条件</td></tr>
+<tr><td><b>P2③</b></td><td>表 5 UNK 119 vs 正文 49 口径不一致</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lwrt">写作层</span></td><td>⏳ 延后</td><td>附录表 5 脚注</td></tr>
+<tr><td><b>P2④</b></td><td>DATE27 PLACEHOLDER 引用须截稿前落实</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lwrt">写作层</span></td><td>⏳ 延后</td><td>references.bib、§8</td></tr>
+<tr><td><b>P2⑤</b></td><td>B.2 five machine-days vs §5.4 28 天量级差 → 拆两里程碑</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lwrt">写作层</span></td><td>⏳ 延后</td><td>附录 B.2、§5.4 时间线</td></tr>
+<tr><td><b>R3</b></td><td>M4 泄露审计需机器可判代理指标（n-gram 重叠）</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lcrit">判据层</span></td><td>✅ 已落</td><td>§5.3 M4 判据</td></tr>
+<tr><td><b>R4</b></td><td>情绪三机制与最近邻方法计算差异（§4.5.1）</td><td><span class="kbadge adopt">采纳</span></td><td><span class="layer Lwrt">写作层</span></td><td>⏳ 延后</td><td>§4.5.1 / 附录 D</td></tr>
+</tbody>
+</table>
+
+<h2>🔴 P0 三项（实验设计地基，已先定论）</h2>
+
+<div class="item">
+<div class="item-head"><span class="item-id">R1 · H1c 定义漏洞</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lcrit">判据层</span> 已落</span></div>
+<p><b>评审要点：</b>S1 臂「每 session 内 in-context 自改进、session 结束丢弃」——但单次 run 内的 in-context learning 本身即短期记忆，S1≈M0 很可能不成立，不是因为「记忆不是前提」，而是 session 内记忆已足够 ⇒ H1c「S1≤M0」可能被<b>伪证伪</b>，浪费 480 run。</p>
+<p><b>研判理由：</b>评审逻辑成立。session 内 in-context learning 确实构成短期记忆，原判据无法干净分离「跨 session 长期记忆」与「session 内自改进」两个变量。精确化为「跨 session」口径既消除伪证伪风险，又保留可证伪性，且为零成本（设计层措辞，不重跑）。</p>
+<div class="diff">
+<div class="col before"><div class="label">改前</div>H1c: Memory is necessary for RSI (no-memory RSI gain ≤0; interaction ≥2pp)．S1 臂：RSI, no memory．判据：S1≤M0 (no-memory RSI null)</div>
+<div class="col after"><div class="label">改后</div>H1c: <b>Cross-session</b> long-term memory is necessary for <b>cross-session</b> RSI．S1 臂：RSI, no memory; <b>inter-session persistence explicitly forbidden (incl. harness-level file residue)</b>．判据：S1≤M0 (cross-session RSI null under no inter-session persistence)</div>
+</div>
+<p><b>影响面：</b>§5.2 子假设表 H1c 行（中英）、§5.3 S1 臂变量与判据、§5.3 附录臂注。已重编译。</p>
+<p><b>不改的代价：</b>跑完 480 run 才发现 S1 因 session 内记忆而 ≈M0，H1c 被伪证伪，所有臂数字需重跑——评审「如果只改一件事」点名的两处之一。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">R2 · 120 题功效不足</span><span><span class="kbadge partial">部分采纳</span> <span class="layer Lcrit">判据层</span> 已落</span></div>
+<p><b>评审要点：</b>§5.3 自承 120 题 McNemar 功效 ≈0.62（40% 真效应漏检）；M6 失败子集仅 ~40 题，3pp 判据功效 &lt;0.3，是<b>假阴性高危臂</b>。要求二选一：(a) 抬到 ≥200 题/臂（M6 失败子集 ≥80），(b) 明确 pilot signal + abstract 不报具体 pp。</p>
+<p><b>研判理由：</b>评审对功效的核算正确。预注册日 2026-11-22 仅剩 3 天，(a) 抬题量需扩评测规模、且最小矩阵本就是「最小」设计（理想矩阵 500×3 才是主要判据来源），故取 <b>(b) pilot signal 路线</b>：明确最小矩阵结果为试点信号、H1/H2 主要判据延至理想矩阵、abstract 不报各臂 pp。对 M6 额外加「失败子集 ~40 题探索性、H2c 判据延至理想矩阵 fail-streak ≥80」——比评审建议更保守，杜绝「120 题跑出 2.1pp 就写 H1a 部分支持」。</p>
+<div class="diff">
+<div class="col before"><div class="label">改前</div>§5.3 统计仅写「最小矩阵 120 任务/臂；理想 500×3」，无功效定位．M6 判据：fail-streak M6≥M3+3pp（无功效警示）</div>
+<div class="col after"><div class="label">改后</div>§5.3 增「<b>功效定位</b>：n=120 下 3pp 功效 ≈0.62 ⇒ 最小矩阵为 <b>pilot signal</b>，H1/H2 主要判据延至理想矩阵（power ≥0.8）；abstract 不报各臂 pp」．M6 判据加「<b>minimal-matrix exploratory: ~40 题 power &lt;0.3; H2c verdict deferred to ideal matrix, fail-streak ≥80</b>」</div>
+</div>
+<p><b>影响面：</b>§5.3 统计段、§5.3 M6 判据、§6 判据检验表注。abstract 本就未报各臂 pp（保持）。</p>
+<p><b>不改的代价：</b>120 题跑出 2.1pp 写成「H1a 部分支持」会毁掉预注册纪律可信度；M6 在 40 题子集得 p&gt;0.05 写成「H2c 证伪」会把真机制误判为无效（假阴性比假阳性更伤）。</p>
+<p><b>为何「部分」：</b>采纳评审框架与 (b) 路线，但未取 (a) ≥200 题扩量（3 天窗口 + 理想矩阵已是主要判据来源）；并对 M6 加了比评审更保守的「延至理想矩阵」处置。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">R5 · M0 锚点子集口径</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lcrit">判据层</span> 已落</span></div>
+<p><b>评审要点：</b>10.0% 是 696-run 全集（62/620）的值，而最小矩阵取 top-120 by chain length ⇒ 子集 M0 很可能只有 4–6%。直接用 10.0% 作 M0 锚点对比 120 题结果 = <b>基线口径错误</b>。</p>
+<p><b>研判理由：</b>评审正确。top-120 by chain length 比全集更难，子集 M0 必然偏离 10.0%。预注册须冻结「口径」而非「数字」：声明 M0 比较锚点 = 同 top-120 子集实测值（预注册后与各臂一同测量，\TBD），696-run 10.0% 保留为<b>描述性全集基线</b>。这冻结了口径又不编造子集数字（子集值须实测）。</p>
+<div class="diff">
+<div class="col before"><div class="label">改前</div>§5.3 M0 行：anchor \MzeroPass{} (10.0%)．§3：696-run 快照「provides the M0 baseline anchor: 10.0%」</div>
+<div class="col after"><div class="label">改后</div>§5.3 M0 行：anchor = M0 Pass@1 on <b>same top-120 subset</b> (\TBD post pre-reg); 696-run 10.0% is <b>full-set descriptive only</b>．§3 增「<b>M0 comparison anchor caliber</b>」段：696-run 10.0% 为全集描述值；最小矩阵比较锚点为同 top-120 子集实测 M0（\TBD），预期偏离 10.0%（top-120 更难）</div>
+</div>
+<p><b>影响面：</b>§3 评测子集段、§5.3 M0 行、§5 收尾、§6 注。\MzeroPass 宏仍为 10.0%（描述性用途保留），仅比较锚点口径改。</p>
+<p><b>不改的代价：</b>用 10.0% 全集锚点对比 120 题子集 M3 ⇒ 基线偏高，Δpp 被系统性低估，所有臂结论失真——评审「如果只改一件事」点名的两处之二。</p>
+<p><b>待决：</b>预注册后须实测 M0 在 top-120 子集的 Pass@1（M0 仅基线、1 trace×120 题、数小时可完成）。</p>
+</div>
+
+<h2>🧩 P1 · 臂表收敛（方案 A，已落）</h2>
+<div class="item">
+<div class="item-head"><span class="item-id">13 → 10 主表 + 3 附录</span><span><span class="kbadge adopt">采纳</span> <span class="layer Ldes">设计层</span> 已落</span></div>
+<p><b>评审方案 A：</b>主表 10 臂 <code>M0·M3·S1·M3+S1·N1·N2·M4·M5·M6·M7</code>；M1 移附录；M2 仅作 M5/M7 对照、<b>撤掉 M2≥M0+2pp 与 M3≥M2+1pp 两条判据</b>；M8 移附录。</p>
+<p><b>研判理由：</b>评审逐臂分析成立——M1 对 H1 边际贡献低且无子假设归属；M2 的 1pp 判据在 n=120 下是噪声（§5.3 自承 3pp 功效才 0.62，1pp 基本不可检），保留会出现「M2 跑出 +1.8pp 算不算支持 H1a」的歧义；M8 是可选单向臂。方案 A <b>不删任何假设覆盖</b>（H1a 主对照仍是 M0 vs M3 + N1 排除；H2a/b/c 各保留 M5/M6/M7 + M2 对照），仅去冗余。</p>
+<div class="diff">
+<div class="col before"><div class="label">改前（13 臂主表）</div>M0·M1·M2·M3·S1·M3+S1 | N1·N2·M4 | M5·M6·M7·M8<br>M2 判据：M2≥M0+2pp（H1a 弱对照）<br>M1 判据：M1≥M0+2pp；M8：M8≤M6</div>
+<div class="col after"><div class="label">改后（10 臂主表）</div>M0·M3·S1·M3+S1 | N1·N2·M4 | M5·M6·M7<br><b>M2</b> 作 H2a/H2b 对照臂（出现于 M5 vs M2、M7 vs M2 判据行，<b>不进主表</b>；H1a 弱对照判据 <b>撤回</b>）<br><b>M1（静态 SOP）、M8（负效价）</b> 移附录稳健性检验</div>
+</div>
+<p><b>影响面（验收③四处编号同步）：</b></p>
+<ul>
+<li>§5.1 三层结构表——未变（H1c 措辞已由 R1 改）</li>
+<li>§5.2 子假设映射——H1a 仍 M0 vs M3 + N1；H2a/b 仍引 M2 作对照（兼容）</li>
+<li>§5.3 臂表——13→10 主表 + 附录臂注（标题改「10-Arm Main Ablation (3 Appendix)」）</li>
+<li>§6 判据检验表——本无 M1/M8 行、M5/M7 vs M2 行保留 ⇒ 天然兼容，仅加收敛注</li>
+<li>abstract「13-arm ablation」→「10-arm main ablation (3 appendix arms)」；§1 贡献 (2) 同步</li>
+</ul>
+<p><b>不改的代价：</b>13 臂对一个 ICML 单篇过重；M2 的 1pp 判据产生不可解释的灰色地带；M8 单向可选臂占主表篇幅。</p>
+</div>
+
+<h2>✏️ P2 五项（写作与口径）</h2>
+
+<div class="item">
+<div class="item-head"><span class="item-id">P2① · abstract 7.6× vs 7.1× 并置</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lwrt">写作层</span> ⏳ 延后</span></div>
+<p><b>评审：</b>「7.6× drop」（script→flow 跨任务难度）与「7.1× domain gap」（flow 内域间差异）并置易误读，需半句区分。<br><b>研判：</b>采纳。两个倍数语义不同，并置确实误导。<b>影响面：</b>abstract 加半句限定（跨任务难度 vs flow 内域间差异）。<b>层级：</b>写作层，延至预注册后与 P2③④⑤ 一并改。<b>不改代价：</b>审稿人可能混淆两个 gap 的口径，质疑数字一致性。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">P2② · H2b 中间地带「弱支持」</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lcrit">判据层</span> 已落</span></div>
+<p><b>评审：</b>H2b 联合判据「M7≥M2+2pp 且记忆≤0.6×」，证伪「M7&lt;M2−2pp <b>或</b> 记忆≥0.8×」——<b>中间地带（记忆 0.6–0.8×、Pass@1 持平）无归属</b>。<br><b>研判：</b>采纳。这是<b>判据层</b>（增加第三态）须预注册冻结，故本会话已落。<b>影响面：</b>§5.2 H2b 证伪条件加「<b>weak support</b>: memory 0.6–0.8×M2 & |M7−M2|&lt;2pp」。已重编译。<b>不改代价：</b>跑出中间地带结果时无预注册归属，被迫事后裁定 ⇒ 破坏预注册纪律。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">P2③ · 表 5 UNK 119 vs 正文 49</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lwrt">写作层</span> ⏳ 延后</span></div>
+<p><b>评审：</b>正文 UNKNOWN 49（§6 表 1：49/696=7.0%），表 5 UNK 119（含 ERROR-status aborted），口径不一致须加脚注。<br><b>研判：</b>采纳。两口径都正确但需说明。<b>影响面：</b>附录表 5 加脚注区分「FAIL-with-submit UNKNOWN 49」vs「UNK 含 ERROR-aborted 119」。<b>层级：</b>写作层延后。<b>不改代价：</b>审稿人对数字一致性起疑。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">P2④ · DATE27 PLACEHOLDER 引用</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lwrt">写作层</span> ⏳ 延后</span></div>
+<p><b>评审：</b>DATE27 是 PLACEHOLDER，ICML 截稿前必须落实，否则 Related Work「继承 DATE27 骨架」缺支撑。<br><b>研判：</b>采纳。这是<b>截稿前硬依赖</b>（非预注册依赖，预注册判据不涉及 DATE27 引用）。<b>影响面：</b>references.bib 落实 DATE27 BibTeX + §8 Related Work 引用。<b>层级：</b>写作层，预注册后至截稿前完成。<b>不改代价：</b>核心叙事缺引用支撑，审稿人可直接质疑。<b>待决：</b>须确认 DATE27 的正式出版/预印本元数据。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">P2⑤ · B.2 five machine-days vs §5.4 28 天</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lwrt">写作层</span> ⏳ 延后</span></div>
+<p><b>评审：</b>B.2「five machine-days」（仅 M0/M3 两臂）与 §5.4「28 天」（8 臂×500×3）量级差，须拆两里程碑。<br><b>研判：</b>采纳。两时间线对应不同矩阵规模，并置显得不可信。<b>影响面：</b>附录 B.2 + §5.4 时间线拆为「多骨干扫描（M0/M3）」与「全臂理想矩阵（8 臂×500×3）」两里程碑。<b>层级：</b>写作层延后。<b>不改代价：</b>审稿人觉得时间线不可信。</p>
+</div>
+
+<h2>🔧 R3 / R4</h2>
+
+<div class="item">
+<div class="item-head"><span class="item-id">R3 · M4 泄露审计机器可判代理</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lcrit">判据层</span> 已落</span></div>
+<p><b>评审：</b>M4「泄露率=0」靠人工逐条判「抽象 vs 答案片段」，120 题×数百条不可扩展，inter-annotator agreement 未设计 ⇒ 在审稿人眼里是未经验证声称。建议机器可判代理：记忆条目 vs 目标域 prompt/文件名/断言字面量的 n-gram 重叠率，人工只审 borderline。<br><b>研判：</b>采纳。这是<b>判据层</b>（M4 审计方法）须预注册冻结，故本会话已落。<b>影响面：</b>§5.3 M4 判据改为「leak rate =0 (machine-judgeable proxy: n-gram overlap of memory entries vs target-domain prompt/filename/assertion literals; manual only borderline)」。<b>不改代价：</b>「泄露率=0」被视为未验证声称，M4 整个臂的可信度受损。</p>
+</div>
+
+<div class="item">
+<div class="item-head"><span class="item-id">R4 · 情绪三机制与最近邻方法计算差异</span><span><span class="kbadge adopt">采纳</span> <span class="layer Lwrt">写作层</span> ⏳ 延后</span></div>
+<p><b>评审：</b>三机制（惊异门控≈priority sampling、武器聚焦≈error-stack logging、状态感知检索≈query rewriting）与已有方法计算差异未说明，靠「首次在真实 EDA flow 预注册」差异化是 setting 差异不是方法差异。建议 §4.5.1 公式旁补「与最近邻方法计算差异」：surprise=KL(posterior‖prior) 而非 embedding 距离；penalty=sunk-cost 而非固定权重；并说明 M5 的 α/β 扫描考的是「机制贡献」还是「超参」。<br><b>研判：</b>采纳。方法差异须写清以支撑 contribution 第 5 条。<b>影响面：</b>§4.5.1 / 附录 D 加段「与最近邻方法的计算差异」+ M5 α/β 扫描语义说明。<b>层级：</b>写作层延后（不改判据/臂/数字）。<b>不改代价：</b>审稿人（ML 背景 AC）质疑三机制是已知方法的重新包装。</p>
+</div>
+
+<h2>🗂️ 层级划分与本会话落点</h2>
+<div class="done">
+<b>✅ 本会话已落（预注册关键 · 须 2026-11-22 前冻结）</b>
+<ul>
+<li><span class="layer Lcrit">判据层</span> R1（H1c 跨 session 措辞 + S1 禁持久化）、R2（pilot signal 定位 + M6 延后）、R5（M0 同子集锚点口径）、P2②（H2b 弱支持中间地带）、R3（M4 n-gram 机器可判代理）</li>
+<li><span class="layer Ldes">设计层</span> P1（臂表 13→10 主+3 附录、撤 M2 的 H1a 弱判据）</li>
+<li>同步：abstract「13-arm」→「10-arm main (3 appendix)」、§1 贡献 (2)、§3 M0 锚点口径段、§6 收敛注</li>
+<li>论文重编译：<b>12 页 / 0 err / 0 undef / 235123 B</b>（v1.7 zh-cn 11 页 / 230611 B → +1 页，因臂表收敛注 + 功效定位段 + M0 口径段 + M4 审计 + H2b 弱支持等设计层增补）</li>
+</ul>
+</div>
+<div class="todo">
+<b>⏳ 延至预注册后（写作层 · 不影响判据冻结）</b>
+<ul>
+<li>P2① abstract 7.6×/7.1× 半句区分</li>
+<li>P2③ 附录表 5 UNK 119 vs 49 脚注</li>
+<li>P2④ DATE27 PLACEHOLDER 引用落实（<b>截稿前硬依赖</b>，须确认 DATE27 出版/预印本元数据）</li>
+<li>P2⑤ B.2 / §5.4 时间线拆两里程碑</li>
+<li>R4 §4.5.1 与最近邻方法计算差异段 + M5 α/β 扫描语义</li>
+</ul>
+</div>
+
+<h2>🔎 验收对照</h2>
+<table>
+<thead><tr><th>验收项</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>① P0 三项均有明确结论</td><td>✅ R1 采纳 / R2 部分采纳（b 路线）/ R5 采纳，各带理由+影响面+不改代价</td></tr>
+<tr><td>② 处置矩阵覆盖 R1–R5 + P2 五项 + 臂表收敛</td><td>✅ 11 项全覆盖（R1/R2/R3/R4/R5 + P2①-⑤ + P1）</td></tr>
+<tr><td>③ 动臂表/假设 ⇒ 四处编号 + 论文章节同步</td><td>✅ §5.1/§5.2/§5.3/§6 + abstract + §1 贡献 均同步，自查一致</td></tr>
+<tr><td>④ 论文改 ⇒ 重编译记页数/0 err/0 undef</td><td>✅ pdflatex→bibtex→pdflatex×2：12p / 0 err / 0 undef / 235123B（+1 页，原因见上）</td></tr>
+<tr><td>⑤ 中文 HTML 报告单文件自包含</td><td>✅ 本文件 <code>run/reports/report_edafb_friend_review_response_zh.html</code></td></tr>
+<tr><td>⑥ MEMORY/daily 一行</td><td>✅ 见 MEMORY_ZHULONG.md 心跳行</td></tr>
+</tbody>
+</table>
+
+<h2>📌 待决项（预注册后）</h2>
+<ul>
+<li><b>M0 top-120 子集实测</b>：预注册后与各臂一同跑 M0 在 top-120 子集的 Pass@1（数小时），回填 §5.3/§3 的 \TBD。</li>
+<li><b>DATE27 引用元数据</b>：确认 DATE27 正式出版/预印本信息，截稿前落实 references.bib + §8。</li>
+<li><b>理想矩阵 M6</b>：fail-streak ≥80 题时再下 H2c 判据（最小矩阵 M6 仅探索性）。</li>
+<li><b>写作层 5 项</b>：P2①③④⑤ + R4，预注册后至截稿前完成。</li>
+</ul>
+
+<div class="foot">
+本报告由 zhulong agent 生成 · 2026-11-18 · 评审原文不改写 · 不改既有实测数字 · 不编造新数字 · 提交前缀 <code>zhulong review:</code>
+</div>
+
+</body>
+</html>
