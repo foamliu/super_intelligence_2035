@@ -9,6 +9,7 @@ export PYTHONPATH="/nas_train/app.e0031982/code/BaiZe-ISEDA2027/p6_tf5:${PYTHONP
 export HF_DATASETS_CACHE="/nas_train/app.e0031982/hf_cache"
 export HF_HOME="/nas_train/app.e0031982/.cache"
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+export no_proxy='127.0.0.1,localhost' NO_PROXY='127.0.0.1,localhost'
 
 ITER=250000
 CKPT_DIR=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/iter_0250000
