@@ -602,3 +602,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1792043847420_76s5j	t0002441	10.129.32.75	18	eda_other	case	EDA-Eval-DesignFlow-FinesimDcConvCatalogAnalyze-001	2026-11-18 04:16	r708 prev-worker landed case 125db0222; completing mark
 1788415796573_uolj8	jason17w	10.129.32.190	55	eda_other	case	SkillLogdirReportPatch-001	2026-11-18 04:57	
 1794215816873_l3qi7					case	EDA-Eval-DesignFlow-VlogShellWrapGen-001	2026-11-18 07:25	
+1794279044223_131gn.messages.json					case	EDA-Eval-DesignFlow-FsDbcFrontendCmp-001	2026-11-18 08:44	r719 digital A-faithful produce-task: FS/DBC frontend tree comparison tool (checkpoint-resumable, case-variant scan, risky-string flag, diff classify). hatch from B wrong-shard-A park, --force
