@@ -40,3 +40,30 @@ doc/ZhuLong_DAC2027/benchmark/designflow/cases_staging/
 
 # 2026-11-12 shard B 换池: 原始扫描快照是可从 .75 重生的中间产物, 不入库(sha256+行数记入 summary_1109_build.log)
 doc/ZhuLong_DAC2027/benchmark/designflow/_scan_*_raw.tsv
+
+# ── 2026-11-18 用户令：清理仓库根散落的 operator 会话临时日志 + 游离草稿 ────────────────
+# 背景：仓库根曾堆积 129 个 `_*.log / _*.err / _*.out / push_*.txt / mg.*`（合计 ~50KB），
+#       全部是历史 operator 会话的 stdout/stderr 重定向产物，无内容价值，且会被自动提交搅脏。
+#       已全部删除；规则用前置 `/` 限定在**仓库根**，避免误伤各线 run/ 下的同名证据文件。
+/_*.log
+/_*.out
+/_*.err
+/_ops_wt_*/
+/mg.err
+/mg.out
+/mg.txt
+/pull.log
+/rb2.log
+/reset_hard.log
+/push_*.txt
+# 各线目录下的同类临时件（点名，不泛化）
+/doc/BaiZe-ISEDA2027/_fetch1.err
+/doc/BaiZe-ISEDA2027/_fetch1.out
+/doc/BaiZe-ISEDA2027/_ssh_test.log
+/doc/ZhuLong_DAC2027/_pull.log
+# 游离旧草稿 / 本地快照：与 tracked 版本不同源（2026-11-10 的旧稿 vs 11-14 的定稿），
+# 留盘供人工比对、不入库；确认废弃后可手工删除。
+/doc/BaiZe-ISEDA2027/0_abstract.tex
+/doc/BaiZe-ISEDA2027/4_llm_pretrain.tex
+/doc/BaiZe-ISEDA2027/BaiZe-NeurIPS2027.zip
+
