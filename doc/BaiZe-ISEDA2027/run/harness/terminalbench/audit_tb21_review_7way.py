@@ -119,9 +119,16 @@ def scan_route_all_dirs(h):
                 "econn": "ECONNRESET" in stdout,
                 "iterations": int(m.group(1)) if m else -1,
                 "exc_type": ei.get("exception_type", ""),
+                "exc_msg": str(ei.get("exception_message", ""))[:300],
+                "exc_tb": str(ei.get("exception_traceback", ""))[:600],
                 "has_run_result": '"run_result"' in stdout,
                 "has_verifier": bool(vr.get("rewards")),
                 "stdout_len": len(stdout),
+                # §2026-11-18: clean_ability = has_verifier=True 且无 exc_type 且
+                # exit_code OK (None=未记录视为OK, 或 0)。这是 layer-A「真能力」证据。
+                "clean_ability": (bool(vr.get("rewards"))
+                                  and not ei.get("exception_type", "")
+                                  and (exit_code is None or exit_code == 0)),
                 # §2026-11-17 14:5x point④: codex 适配器掐断信号
                 "codex_agent_worked": codex_agent_worked,
                 "codex_turn_failed": codex_turn_failed,
@@ -129,11 +136,38 @@ def scan_route_all_dirs(h):
     return task_data
 
 
+# §2026-11-18 10:3x 用户令: ability 桶拆两层。
+#   layer-A「真能力」: has_verifier=True + 无 exception (verifier 干净跑出 0.0)。
+#   layer-B「infra 嫌疑」: 带 infra 类 exception (timeout/setup/exit≠0/RuntimeError)
+#     且无任何干净 verifier trial —— 需逐题 trace 判定是真 infra 还是能力。
+#   exc_type 不再无条件算「真跑证据」(旧 has_proper 的 bug)。
+INFRA_EXC_TYPES = {
+    "AgentTimeoutError", "AgentSetupTimeoutError", "VerifierTimeoutError",
+    "NonZeroAgentExitCodeError", "RuntimeError", "CancelledError",
+    "RewardFileNotFoundError",
+}
+INFRA_EXC_SUBTYPE = {
+    "AgentTimeoutError": "timeout",
+    "AgentSetupTimeoutError": "setup_fail",
+    "VerifierTimeoutError": "verifier_timeout",
+    "NonZeroAgentExitCodeError": "nonzero_exit",
+    "RuntimeError": "runtime_error",
+    "CancelledError": "other_infra",
+    "RewardFileNotFoundError": "other_infra",
+}
+# layer-B 子桶优先级: exit≠0 / RuntimeError 可能含能力成分, timeout/setup/verifier_timeout
+# 更偏 infra。分类时取「最可能含能力」的子桶 (保守: 不轻易把题标成纯 infra)。
+_INFRA_PRIO = ["nonzero_exit", "runtime_error", "timeout",
+               "setup_fail", "verifier_timeout", "other_infra"]
+
+
 def classify_merged(task_data, all_tasks):
-    """合并所有 trial 后做四桶归因。PASS 优先。"""
-    buckets = {"passed": [], "ability": [], "quota": [],
-               "rate_limit": [], "conn_refused": [], "synthetic": [],
-               "not_evaluated": []}
+    """合并所有 trial 后做归因。PASS 优先。ability 拆 layer-A/B 两层。"""
+    buckets = {"passed": [], "ability": [],
+               "timeout": [], "setup_fail": [], "nonzero_exit": [],
+               "runtime_error": [], "verifier_timeout": [], "other_infra": [],
+               "quota": [], "rate_limit": [], "conn_refused": [],
+               "synthetic": [], "not_evaluated": []}
     detail = {}
     for task, trials in sorted(task_data.items()):
         best = max(t["reward"] for t in trials)
@@ -142,63 +176,78 @@ def classify_merged(task_data, all_tasks):
             continue
         all_quota = all(t["quota"] for t in trials)
         all_conn = all(t["conn_refused"] or t["cli_bug"] for t in trials)
-        # §2026-11-18: has_verifier 也加入判定 —— verifier 跑了给了真实分 (哪怕 0.0)
-        # = agent 确实在非 infra 状态下跑过且被公平判分 = ability 失败, 不是 synthetic。
-        # pi/opencode 等适配器不写 stdout 到 result.json → stdout_len=0, 但 verifier
-        # 仍跑了 (has_verifier=True) → 旧逻辑误归 synthetic → 现在正确归为 ability。
         all_synthetic = all(
             (not t["has_run_result"]) and t["stdout_len"] < 50
             and not t["has_verifier"]
             for t in trials)
+        # §2026-11-18 10:3x: has_proper 不再含 exc_type —— exception 是 infra 信号,
+        # 不是「模型真跑」证据。econn (ECONNRESET) 同理移除。
         has_proper = any(
-            t["iterations"] > 1 or t["has_run_result"] or
-            t["exc_type"] or t["econn"] for t in trials)
-        # §2026-11-17 14:4x: codex 适配器盲区修复。
-        # codex 因 429/rate_limit/exceeded retry 产生的「假 0 分」会被 has_proper
-        # (exc_type=RuntimeError) 误判成 ability。修复：若有 rate_limit 信号且
-        # 无任何「干净跑完」trial (exit_code==0 且无 rate_limit 信号)，归 infra。
+            t["iterations"] > 1 or t["has_run_result"]
+            for t in trials)
         any_rate_limit = any(t.get("rate_limit") for t in trials)
-        # §2026-11-18: any_clean 也认 reconstructed rerun trial —— 它们没有
-        # exit_code (聚合 result.json 重建)，但有 exc_type (AgentTimeoutError 等)
-        # 或 has_verifier (verifier 跑了给了分) = agent 确实在非 429 状态下跑过。
-        # 这类 trial 证明该题已获公平重跑，不再归 rate_limit (pending rerun)。
+        # §2026-11-18 10:3x: any_clean 也不认 exc_type —— 有 infra exception 的
+        # trial 不是「干净跑完」。只认 exit_code==0 或 has_verifier (且 exc_type
+        # 不在 infra 集) 的 trial。
         any_clean = any(
-            (t.get("exit_code") == 0 or t.get("exc_type")
-             or t.get("has_verifier"))
+            (t.get("exit_code") == 0
+             or (t.get("has_verifier") and t["exc_type"] not in INFRA_EXC_TYPES))
             and not t.get("rate_limit") for t in trials)
-        # §2026-11-17 14:5x point④: codex 适配器「掐断」检测。
-        # stdout 有 agent 事件 (agent 确实在跑) 但 verifier 没跑 (has_verifier=False)
-        # = 适配器把「单命令非 0 退出」误当「整个 agent 失败」→ raise RuntimeError
-        # → verifier 根本没跑 → 假低分。这是 infra (adapter缺陷)，不是 ability。
         any_adapter_cutoff = any(
             t.get("codex_agent_worked") and not t.get("has_verifier")
             for t in trials)
+        # §2026-11-18 10:3x 用户令 核心: layer-A「真能力」。
+        #   any trial: has_verifier=True (verifier 跑了给 0.0) + 无 exception
+        #   = 模型在非 infra 状态下跑完且被公平判分 = 真能力失败。
+        has_clean_ability = any(
+            t["has_verifier"] and not t["exc_type"]
+            for t in trials)
+        # §2026-11-18 10:3x 用户令: layer-B「infra 嫌疑」。
+        #   无干净 trial + 有 infra 类 exception → 收集子类型。
+        infra_subtypes = set()
+        infra_evidence = []  # (exc_type, exc_msg, exc_tb, source, dir)
+        for t in trials:
+            if t["exc_type"] in INFRA_EXC_TYPES:
+                infra_subtypes.add(INFRA_EXC_SUBTYPE[t["exc_type"]])
+                infra_evidence.append(
+                    (t["exc_type"], t.get("exc_msg", ""),
+                     t.get("exc_tb", ""), t["source"], t["dir"]))
+            if t.get("econn"):
+                infra_subtypes.add("other_infra")
+        # ---- 分类 ----
         if any_rate_limit and not any_clean:
             cat = "rate_limit"
         elif any_adapter_cutoff and not any_clean:
-            # agent 跑了但 verifier 没跑 = 适配器掐断 (infra)，不是能力不足
             cat = "rate_limit"
-        elif has_proper and not all_conn:
+        elif has_clean_ability:
             cat = "ability"
         elif all_conn:
             cat = "conn_refused"
-        elif all_synthetic:
-            cat = "synthetic"
         elif all_quota:
             cat = "quota"
+        elif infra_subtypes:
+            # layer-B: 取「最可能含能力」的子桶 (保守归因)
+            for prio in _INFRA_PRIO:
+                if prio in infra_subtypes:
+                    cat = prio
+                    break
+        elif all_synthetic:
+            cat = "synthetic"
         elif has_proper:
             cat = "ability"
         elif any(t.get("has_verifier") for t in trials) and not all_synthetic:
-            # verifier ran (gave a real score) AND agent produced output
-            # (not all_synthetic => some trial has stdout_len>=50) => real
-            # ability failure, not 未真跑/synthetic
             cat = "ability"
         else:
             cat = "synthetic"
         buckets[cat].append(task)
-        detail[task] = {"category": cat, "best_reward": best,
-                        "n_trials": len(trials),
-                        "sources": sorted(set(t["source"] for t in trials))}
+        d = {"category": cat, "best_reward": best,
+             "n_trials": len(trials),
+             "sources": sorted(set(t["source"] for t in trials))}
+        # layer-B: 记录 infra 证据 (exc_type + trace top3) 供逐题深挖
+        if cat in _INFRA_PRIO:
+            d["infra_subtypes"] = sorted(infra_subtypes)
+            d["infra_evidence"] = infra_evidence[:3]
+        detail[task] = d
     for t in sorted(all_tasks):
         if t not in task_data:
             buckets["not_evaluated"].append(t)
@@ -216,28 +265,50 @@ def main():
         task_data = scan_route_all_dirs(h)
         buckets, detail = classify_merged(task_data, all_tasks)
         passed = len(buckets["passed"])
+        # §2026-11-18 10:3x: layer-B infra 子桶 (timeout/setup/nonzero/runtime/...)
+        layer_b = sum(len(buckets[k]) for k in
+                      ("timeout", "setup_fail", "nonzero_exit",
+                       "runtime_error", "verifier_timeout", "other_infra"))
         pure_infra = (len(buckets["quota"]) + len(buckets["conn_refused"])
-                      + len(buckets["synthetic"]) + len(buckets["rate_limit"]))
+                      + len(buckets["synthetic"]) + len(buckets["rate_limit"])
+                      + layer_b)
         # §2026-11-17 10:2x: 真实 Pass% = passed / 89 (分母恒 89).
-        # 不再计算 corrected_pass_pct = passed/(89-pure_infra) — 那是凭空抬分.
-        # infra 桶 (quota/conn_refused/synthetic/rate_limit) = 待重跑, 重跑后 pass 就 +1, fail 计失败.
         real_pct = passed / total * 100
-        bc = {"ability": len(buckets["ability"]), "quota": len(buckets["quota"]),
+        # §2026-11-18 10:3x: 干净 Pass% 区间。
+        #   下界 = passed/89 (当前确定值)。
+        #   上界 = (passed + layer_b)/89 (假设所有 infra 嫌疑题补跑后全过——
+        #   极端上界, 实际不可能全过, 但给运维一个范围感)。
+        upper_pct = (passed + layer_b) / total * 100
+        bc = {"ability": len(buckets["ability"]),
+              "timeout": len(buckets["timeout"]),
+              "setup_fail": len(buckets["setup_fail"]),
+              "nonzero_exit": len(buckets["nonzero_exit"]),
+              "runtime_error": len(buckets["runtime_error"]),
+              "verifier_timeout": len(buckets["verifier_timeout"]),
+              "other_infra": len(buckets["other_infra"]),
+              "quota": len(buckets["quota"]),
               "rate_limit": len(buckets["rate_limit"]),
               "conn_refused": len(buckets["conn_refused"]),
               "synthetic": len(buckets["synthetic"]),
               "not_evaluated": len(buckets["not_evaluated"])}
         result["harnesses"][h] = {
             "display": DISP[h], "evaluated": len(task_data), "passed": passed,
-            "real_pass_pct": round(real_pct, 1), "buckets": buckets,
-            "bucket_counts": bc, "pending_rerun": pure_infra,
+            "real_pass_pct": round(real_pct, 1),
+            "upper_pass_pct": round(upper_pct, 1),
+            "layer_b_pending": layer_b,
+            "buckets": buckets, "bucket_counts": bc,
+            "pending_rerun": pure_infra,
             "detail": detail}
         print(f"[review] {DISP[h]:16s}: pass={passed:2d}/{total} "
               f"({real_pct:.1f}%) | ability={bc['ability']:2d} "
-              f"quota={bc['quota']:2d} rate_limit={bc['rate_limit']:2d} "
+              f"timeout={bc['timeout']:2d} setup={bc['setup_fail']:2d} "
+              f"nonzero={bc['nonzero_exit']:2d} runtime={bc['runtime_error']:2d} "
+              f"vtimeout={bc['verifier_timeout']:2d} other={bc['other_infra']:2d} "
+              f"| quota={bc['quota']:2d} rate_limit={bc['rate_limit']:2d} "
               f"conn_ref={bc['conn_refused']:2d} "
               f"synthetic={bc['synthetic']:2d} not_eval={bc['not_evaluated']:2d} "
-              f"| 待重跑(infra)={pure_infra} (重跑完成后重算真实 Pass%)")
+              f"| layer-B(infra嫌疑)={layer_b} "
+              f"Pass%区间={real_pct:.1f}%~{upper_pct:.1f}%")
     MANIFESTS.mkdir(parents=True, exist_ok=True)
     out = MANIFESTS / f"tb21_review_7way_{time.strftime('%Y%m%d_%H%M')}.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2))
@@ -246,7 +317,9 @@ def main():
     for h in HARNESSES:
         r = result["harnesses"][h]
         parts.append(f"{DISP[h]}:{r['passed']}/{total}={r['real_pass_pct']}%"
-                     f"(待重跑={r['pending_rerun']})")
+                     f"(ability={r['bucket_counts']['ability']}"
+                     f"/infra嫌疑={r['layer_b_pending']}"
+                     f"/Pass%区间={r['real_pass_pct']}%~{r['upper_pass_pct']}%)")
     print("[review] MEMORY line: " + " | ".join(parts))
     return 0
 

@@ -276,18 +276,29 @@ try:
         _passed = len(_bk["passed"])
         _pending = (len(_bk["quota"]) + len(_bk["conn_refused"]) +
                     len(_bk["synthetic"]) + len(_bk["rate_limit"]))
+        # §2026-11-18 10:3x 用户令: layer-B infra 子桶 (timeout/setup/nonzero/runtime/...)
+        _layer_b = sum(len(_bk[k]) for k in
+                       ("timeout", "setup_fail", "nonzero_exit",
+                        "runtime_error", "verifier_timeout", "other_infra"))
         _tb21_review[_h] = {
             "passed": _passed, "real_pct": round(_passed/_total*100, 1),
+            "upper_pct": round((_passed + _layer_b) / _total * 100, 1),
             "pending_rerun": _pending,
+            "layer_b_pending": _layer_b,
             "ability": len(_bk["ability"]), "quota": len(_bk["quota"]),
             "conn_ref": len(_bk["conn_refused"]),
             "synthetic": len(_bk["synthetic"]),
+            "timeout": len(_bk.get("timeout", [])),
+            "setup_fail": len(_bk.get("setup_fail", [])),
+            "nonzero_exit": len(_bk.get("nonzero_exit", [])),
+            "runtime_error": len(_bk.get("runtime_error", [])),
             "syn_list": _bk["synthetic"], "cr_list": _bk["conn_refused"],
             "q_list": _bk["quota"],
         }
 except Exception:
     pass
 _total_pending = sum(r.get("pending_rerun", 0) for r in _tb21_review.values())
+_total_layer_b = sum(r.get("layer_b_pending", 0) for r in _tb21_review.values())
 
 # SWE-bench 初筛: empty patch = infra(未生成patch), real patch = 能力
 _swe_screen_rows = []
@@ -327,15 +338,23 @@ for _h in HARNESSES:
     if not _r:
         continue
     _st = _rerun_status_map.get(_h, "—")
-    if _r["pending_rerun"] == 0:
+    _lb = _r.get("layer_b_pending", 0)
+    if _r["pending_rerun"] == 0 and _lb == 0:
         _verdict = "失败全部为能力不足"
+    elif _lb > 0:
+        _verdict = f"重跑队列空, 但仍有 {_lb} 题 infra 异常待判定 (超时/exit≠0/RuntimeError)"
     else:
         _verdict = f"待重跑 {_r['pending_rerun']} 题 ({_st})"
+    _timeout = _r.get("timeout", 0) + _r.get("verifier_timeout", 0)
+    _env = (_r.get("nonzero_exit", 0) + _r.get("runtime_error", 0)
+            + _r.get("setup_fail", 0) + _r.get("other_infra", 0))
     _tb21_review_parts.append(
         f"<tr><td><strong>{disp(_h)}</strong></td><td>{_r['passed']}</td>"
-        f"<td>{_r['real_pct']}%</td><td>{_r['ability']}</td>"
-        f"<td>{_r['quota']}</td><td>{_r['conn_ref']}</td>"
-        f"<td>{_r['synthetic']}</td><td>{_r['pending_rerun']}</td>"
+        f"<td>{_r['real_pct']}%~{_r.get('upper_pct', _r['real_pct'])}%</td>"
+        f"<td>{_r['ability']}</td>"
+        f"<td class='warn'>{_timeout}</td>"
+        f"<td class='warn'>{_env}</td>"
+        f"<td>{_r['quota'] + _r.get('rate_limit',0) + _r['conn_ref'] + _r['synthetic']}</td>"
         f"<td>{_st}</td><td>{_verdict}</td></tr>")
 _tb21_review_html = "\n".join(_tb21_review_parts) or "<tr><td colspan='10'>复核数据不可用</td></tr>"
 
@@ -410,16 +429,16 @@ HTML = f"""<!DOCTYPE html>
 
 <h2>5b. 失败归因复核 → 重跑完成（2026-11-17 用户令：纠正归因口径）</h2>
 <div class="caveat"><p><strong>🔴 口径纠正声明 (2026-11-17 10:2x)</strong>：此前「修正后 Pass% = passed / (89 − 纯infra)」已<strong>撤回</strong>。该口径把未真跑题从分母剔除，等价于假设这些题真跑就能通过 = 凭空抬分。未真跑题的处置只有重跑。真正可对外引用的成绩只有 <strong>真实 Pass% = passed / 89</strong>（分母恒89）。</p>
-<p><strong>当前状态</strong>：全部7路重跑全部COMPLETE（deepseek✅cc✅cline-patched✅hermes✅opencode✅pi✅codex✅，待重跑=0）；codex-55第三轮重跑COMPLETE→codex=25/89=28.1%（从1/89=1.1%回升✅fix①生效），待重跑={_total_pending}。audit 修复（has_verifier加入all_synthetic判定）后，pi 11+opencode 1 原synthetic→ability（verifier真跑了给0.0=能力失败）。真实 Pass% = passed/89 已为最终值。</p></div>
-<h3>① TB-2.1 四桶归因 + 重跑状态（合并后）</h3>
-<table><tr><th>Harness</th><th>Passed</th><th>真实Pass%</th><th>能力</th><th>Quota</th><th>ConnRef</th><th>Synthetic</th><th>待重跑</th><th>重跑状态</th><th>结论</th></tr>
+<p><strong>当前状态</strong>：全部7路重跑全部COMPLETE（deepseek✅cc✅cline-patched✅hermes✅opencode✅pi✅codex✅，待重跑=0）。但 <strong>§2026-11-18 10:3x 用户令再复核发现</strong>：ability 桶里仍混着 infra 异常（超时/exit≠0/RuntimeError/setup）——exc_type 被旧 audit 当成「真跑证据」误并入 ability。已修正：ability 拆两层，layer-A=真能力（has_verifier+无exception），layer-B=infra嫌疑（{len(HARNESSES) and 'timeout/setup/nonzero_exit/runtime_error'}），共 {_total_layer_b} 题。各路 Pass% 区间 = passed/89 ~ (passed+layer-B)/89（上界=假设所有 infra 嫌疑题补跑后全过，极端上界）。codex=25/89=28.1%（从1/89=1.1%回升✅fix①生效）。真实 Pass% = passed/89 仍为确定下界。</p></div>
+<h3>① TB-2.1 能力/超时/环境异常 三层分解 + 重跑状态（合并后 · §2026-11-18 10:3x 用户令）</h3>
+<table><tr><th>Harness</th><th>Passed</th><th>Pass%区间</th><th>真能力<br>(layer-A)</th><th>超时</th><th>环境异常<br>(layer-B)</th><th>Infra<br>(已知)</th><th>重跑状态</th><th>结论</th></tr>
 {_tb21_review_html}
 </table>
 <h3>② SWE-bench Verified patch 非空初筛</h3>
 <table><tr><th>Harness</th><th>Predict数</th><th>真实patch</th><th>空patch</th><th>非空率</th><th>初筛归因</th></tr>
 {_swe_screen_html}
 </table>
-<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败以<strong>能力不足</strong>为主。audit 修复（has_verifier加入all_synthetic判定）后，pi 11+opencode 1 原synthetic重归ability（agent真跑+verifier给0.0=能力失败），全部7路重跑COMPLETE，待重跑={_total_pending}。真实Pass%=passed/89（分母恒89，<strong>不再有「修正后Pass%」</strong>）。SWE-bench Verified 各路patch非空率98%+ → 失败为能力差（tests fail），非infra。详见<code>report_harness_tb21_7way_zh.html</code>。</p></div>
+<div class="info"><p><strong>核心结论</strong>：TB-2.1 各路失败经 §2026-11-18 10:3x 再复核后拆为三层——<strong>真能力</strong>（layer-A: verifier干净跑出0.0+无exception）+ <strong>超时</strong>（AgentTimeoutError/VerifierTimeoutError, 预算不足or死循环待逐题判定）+ <strong>环境异常</strong>（NonZeroAgentExitCode/RuntimeError/AgentSetupTimeout, exit≠0=缺pip/Py版本or语法错待逐题判定）。各路仍有 {_total_layer_b} 题 infra 异常待逐题 trace 判定（重跑队列空但非「失败全部为能力不足」）。真实Pass%=passed/89（分母恒89，确定下界）；上界=(passed+layer-B)/89（假设infra嫌疑全过）。SWE-bench Verified 各路patch非空率98%+ → 失败为能力差（tests fail），非infra。详见<code>report_harness_tb21_7way_zh.html</code>。</p></div>
 
 <h2>6. 硬盘体检</h2>
 <table><tr><th>路径</th><th>容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>

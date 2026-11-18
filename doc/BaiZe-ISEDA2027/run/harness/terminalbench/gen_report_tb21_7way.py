@@ -218,12 +218,25 @@ def _review_7way_merged():
         passed = len(buckets["passed"])
         pending_rerun = (len(buckets["quota"]) + len(buckets["conn_refused"])
                          + len(buckets["synthetic"]) + len(buckets["rate_limit"]))
+        # §2026-11-18 10:3x: layer-B infra 子桶 (timeout/setup/nonzero/runtime/...)
+        layer_b = sum(len(buckets[k]) for k in
+                      ("timeout", "setup_fail", "nonzero_exit",
+                       "runtime_error", "verifier_timeout", "other_infra"))
+        total = len(all_tasks) or 89
         result[h] = {
             "display": mod.DISP[h], "passed": passed, "total": total,
             "real_pct": round(passed / total * 100, 1),
+            "upper_pct": round((passed + layer_b) / total * 100, 1),
             "pending_rerun": pending_rerun,
+            "layer_b_pending": layer_b,
             "bucket_counts": {
                 "ability": len(buckets["ability"]),
+                "timeout": len(buckets["timeout"]),
+                "setup_fail": len(buckets["setup_fail"]),
+                "nonzero_exit": len(buckets["nonzero_exit"]),
+                "runtime_error": len(buckets["runtime_error"]),
+                "verifier_timeout": len(buckets["verifier_timeout"]),
+                "other_infra": len(buckets["other_infra"]),
                 "quota": len(buckets["quota"]),
                 "rate_limit": len(buckets["rate_limit"]),
                 "conn_refused": len(buckets["conn_refused"]),
@@ -334,54 +347,78 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "<code>agent_result.n_input_tokens / n_output_tokens</code>; ② 墙钟由 harbor task 开始/结束时间戳"
              "计算并落 <code>result.json</code>。重跑时启用。🚫 未采集不编造数字（宁缺勿编）。</p></div>")
 
-    # ---- 表二: 各 Harness 失败分析 ----
-    H.append("<h2>表二 · 各 Harness 失败分析</h2>")
-    H.append("<p><strong>桶定义</strong>: "
-             "<strong>Infra</strong> = 额度耗尽 + 连接拒绝 + 超时(harbor wrapper) + ECONNRESET + setup/env 失败 "
-             "+ CLI/适配器 bug + 网关 502 + 未真跑/假结果（全 trial 均为 infra）; "
-             "<strong>能力不足</strong> = 模型真运行（有 run_result / iterations&gt;0）但 verifier 判 fail "
-             "（含 Reached max turns; mixed_fail 至少一 trial 非额度且有运行证据 → 归能力）; "
-             "<strong>其他</strong> = 未出现在任何 result.json（未评测/未跑）。</p>")
+    # ---- 表二: 各 Harness 失败分析 (§2026-11-18 能力/超时/环境异常三层分解) ----
+    H.append("<h2>表二 · 各 Harness 失败分析（能力 vs 超时 vs 环境异常）</h2>")
+    H.append("<p><strong>桶定义 (§2026-11-18 10:3x 用户令 · ability 拆两层)</strong>: "
+             "<strong>真能力 (layer-A)</strong> = verifier 干净跑出 0.0 且无 exception、无超时、无 exit≠0 "
+             "—— 模型真跑、真答错; "
+             "<strong>超时</strong> = AgentTimeoutError / VerifierTimeoutError (预算不够 or 模型死循环, 待逐题判定); "
+             "<strong>环境异常 (layer-B)</strong> = NonZeroAgentExitCodeError / RuntimeError / AgentSetupTimeoutError "
+             "(exit≠0=缺 pip/Py 版本 or 脚本语法错; RuntimeError=适配器/网关 stderr 非空, 待逐题判定); "
+             "<strong>Infra (已知)</strong> = quota + 429/rate_limit + conn_refused + synthetic (已重跑完成的纯 infra); "
+             "<strong>其他</strong> = 未评测/未跑。"
+             "<br><strong>守恒</strong>: Failed = 真能力 + 超时 + 环境异常 + Infra(已知) + 其他。</p>")
     H.append("<table><thead><tr><th>#</th><th>Harness</th><th>Failed</th>"
-             "<th>Infra</th><th>能力不足</th><th>其他(未评测/未跑)</th>"
+             "<th class='pass'>真能力<br>(layer-A)</th>"
+             "<th class='warn'>超时</th>"
+             "<th class='warn'>环境异常<br>(layer-B)</th>"
+             "<th>Infra<br>(已知)</th>"
+             "<th>其他</th>"
              "<th>守恒校验</th></tr></thead><tbody>")
-    tot_failed = tot_infra = tot_ability = tot_other = 0
+    tot_failed = tot_ability = tot_timeout = tot_env = tot_infra = tot_other = 0
     all_ok = True
     for i, (name, up, ev, tr, er) in enumerate(rows, 1):
-        # find the audit key for this display name
         hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
-        ae = (audit_7way or {}).get(hkey, {})
-        if ae:
-            infra, ability, other = _reclassify(ae)
-        else:
-            infra, ability, other = 0, 0, 0
+        rd = (review_data or {}).get(hkey, {})
+        bc = rd.get("bucket_counts", {}) if rd else {}
         failed = total_tasks - up
-        ok = (infra + ability + other == failed)
+        ability = bc.get("ability", 0)
+        timeout = bc.get("timeout", 0) + bc.get("verifier_timeout", 0)
+        env = (bc.get("nonzero_exit", 0) + bc.get("runtime_error", 0)
+               + bc.get("setup_fail", 0) + bc.get("other_infra", 0))
+        infra = (bc.get("quota", 0) + bc.get("rate_limit", 0)
+                 + bc.get("conn_refused", 0) + bc.get("synthetic", 0))
+        other = bc.get("not_evaluated", 0)
+        ok = (ability + timeout + env + infra + other == failed)
         all_ok = all_ok and ok
-        tot_failed += failed; tot_infra += infra
-        tot_ability += ability; tot_other += other
+        tot_failed += failed; tot_ability += ability
+        tot_timeout += timeout; tot_env += env
+        tot_infra += infra; tot_other += other
+        ok_txt = "✅" if ok else f"❌ ({ability+timeout+env+infra+other}≠{failed})"
+        a_cls = "pass" if ability > 0 else ""
+        t_cls = "warn" if timeout > 0 else ""
+        e_cls = "warn" if env > 0 else ""
         i_cls = "fail" if infra > 0 else "pass"
         o_cls = "warn" if other > 0 else ""
-        ok_txt = "✅" if ok else f"❌ ({infra+ability+other}≠{failed})"
         H.append(f"<tr><td class='num'>{i}</td><td><strong>{esc(name)}</strong></td>"
                  f"<td class='num'>{failed}</td>"
+                 f"<td class='num {a_cls}'>{ability}</td>"
+                 f"<td class='num {t_cls}'>{timeout}</td>"
+                 f"<td class='num {e_cls}'>{env}</td>"
                  f"<td class='num {i_cls}'>{infra}</td>"
-                 f"<td class='num'>{ability}</td>"
                  f"<td class='num {o_cls}'>{other}</td>"
                  f"<td>{ok_txt}</td></tr>")
     H.append("</tbody><tfoot><tr><td colspan=2>合计</td>"
              f"<td class='num'>{tot_failed}</td>"
-             f"<td class='num {('fail' if tot_infra>0 else 'pass')}'>{tot_infra}</td>"
              f"<td class='num'>{tot_ability}</td>"
+             f"<td class='num'>{tot_timeout}</td>"
+             f"<td class='num'>{tot_env}</td>"
+             f"<td class='num {('fail' if tot_infra>0 else 'pass')}'>{tot_infra}</td>"
              f"<td class='num'>{tot_other}</td>"
-             f"<td>{'✅' if (tot_infra+tot_ability+tot_other==tot_failed) else '❌'}</td></tr></tfoot></table>")
-    H.append(f"<p><strong>守恒断言</strong>: 逐行 Failed = Infra + 能力不足 + 其他 "
+             f"<td>{'✅' if (tot_ability+tot_timeout+tot_env+tot_infra+tot_other==tot_failed) else '❌'}</td></tr></tfoot></table>")
+    H.append(f"<p><strong>守恒断言</strong>: 逐行 Failed = 真能力 + 超时 + 环境异常 + Infra(已知) + 其他 "
              f"{'全部成立 ✅' if all_ok else '存在不守恒 ❌'}; "
              f"合计 Failed {tot_failed} = 7×{total_tasks} − Passed {total_passed} = {total_tasks*7 - total_passed} "
              f"{'✅' if (tot_failed == total_tasks*7 - total_passed) else '❌'}。</p>")
-    H.append("<div class='caveat'><p><strong>Infra 归零目标</strong>: 本表 Infra 列存在意义即「infra 已清零」验收证据。"
-             "当前各路 Infra 尚未归零（见下方修复台账）。目标: 每路修复 + 重跑后 Infra → 0。"
-             "🚫 不改 verifier/reward 判据, 不删旧 result.json（重跑落新目录）。</p></div>")
+    H.append("<div class='caveat'><p><strong>🔴 §2026-11-18 10:3x 关键纠偏</strong>: "
+             "此前 R2661 把带 <code>exc_type</code> 的失败题（AgentTimeoutError / RuntimeError / "
+             "NonZeroAgentExitCodeError 等）一律归入「能力不足」—— 这是 <strong>误判</strong>。"
+             "exc_type 是 <strong>infra 信号</strong>（超时/环境崩溃/适配器异常），不是「模型真跑证据」。"
+             "本次拆分后，<strong>真能力 (layer-A)</strong> 仅保留 verifier 干净跑出 0.0 且无 exception 的题；"
+             "超时 + 环境异常 (layer-B) 题显式单列，标注「若补跑/修环境后 Pass% 可能变动」。</p>"
+             "<p><strong>Pass% 区间</strong>: 下界 = passed/89 (当前确定值); "
+             "上界 = (passed + layer-B 题数)/89 (假设所有 infra 嫌疑题补跑后全过 — 极端上界, 实际不可能全过)。"
+             "各路区间见 §表四。</p></div>")
 
     # ---- 表三: Infra 欠账修复台账 ----
     H.append("<h2>表三 · Infra 欠账修复台账</h2>")
