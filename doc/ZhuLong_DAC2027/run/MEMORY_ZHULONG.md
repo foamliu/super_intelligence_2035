@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1325·**🟢 standby·done_all·无新令**：plan v1.6 + paper v1.7 均已交付（见下）·subagent 消融线结案不起臂·用户再次粘贴任务书全文无新指令·顶部最新仍 v1.7 已归档·infra 健康·cline ✅ / loop PID243810 带代理 ✅ / ops_relay PID118463 活·ops 队列排空 last_run_id=146·fetch 后 HEAD=`e1661a2cb`（他线推进·非本线·0 ahead 0 behind·push 通畅·working tree 仅 designflow 在途产物不碰）·research 日报 2026-11-18 zhulong 建议均 Verilog 评测法+模型架构方向与本线情绪门控论文范围不对应·不起臂·预注册日 2026-11-22 距 4 天·§7 StepC done_all→退出·与 wake#1311-1324 同款场景·本轮 §10 维护滚 wake#1324 详条 + 合并 wake#1298/#1300/#1301/#1302 指针）
+WAITING: 0（2026-11-18 wake#1326·**🟢 standby·done_all·无新令**：plan v1.6 + paper v1.7 均已交付（见下）·subagent 消融线结案不起臂·用户再次粘贴任务书全文无新指令·顶部最新仍 v1.7 已归档·infra 健康·cline ✅ @/home/app.e0031982/.local/bin/cline / loop PID243810 带代理 ✅ / ops_relay PID118463+2698885 活·ops 队列排空 last_run_id=146（顶块 RUN_ID 146 只读 freshness check 已执行·无 RUN_ID 147 pending）·fetch 后 HEAD=`1fbff2d05`（harness 他线推进·非本线·0 ahead 0 behind·push 通畅·working tree 仅 designflow 在途产物不碰）·research 日报 2026-11-18 zhulong 建议均 Verilog 评测法+模型架构方向与本线情绪门控论文范围不对应·不起臂·预注册日 2026-11-22 距 4 天·§7 StepC done_all→退出·与 wake#1311-1325 同款场景·本轮 §10 维护滚 A3-A6 起跑预注册块（已结案取消）出至 daily·MEMORY 40192B→~36KB）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -104,35 +104,9 @@ WAITING: 0（2026-11-18 wake#1325·**🟢 standby·done_all·无新令**：plan 
 
 **Δ**：A1 vs A0 = −2.5pp（~0.3σ·证据不足）·**A2 vs A0 = −15.9pp**·**A2 vs A1 = −13.4pp**。**关键发现**：三臂 gen-rate（pass/generated）持平 ~87%→能力质量不变；A2 cline_ok(60%) << A1(72-90%) → 验证 spawn 流程更长→更多 timeout→生成率低→ITT 被吞吐拖垮。**McNemar 配对检验 ✅已做**（`mcnemar_subagent_results.json`）：majority vote A0=72.5%/A1=65%/A2=50%→A0vsA1 b=4,c=1,p=0.37 不显著·**A0vsA2 b=9,c=0,p=0.008 显著**·A1vsA2 b=8,c=2,p=0.11 趋势。per-round(120obs)：**A0vsA2 b=24,c=5,p=0.0008 高度显著**·**A1vsA2 b=23,c=7,p=0.006 显著·满足预注册≥6:6**。**H1 裁决**：A0vsA1 证据不足（spawn 调研型不显著伤/助）·A0vsA2 & A1vsA2 **验证型 spawn 显著有害**（主因吞吐降非质量降）。H2 源码 commit 39ccd44cc+wrapper v3.0.74 已 build 未装→待装+smoke→B2-B5。
 
-### A3-A6 起跑预注册（2026-11-15 wake#978 · 用户令 20:5x 放行）
+### A3-A6 起跑预注册（已结案取消·2026-11-17 09:3x 用户令覆盖）
 
-> 起跑顺序：A0′ → A3 → A6 → A4 → A5。每臂起跑前在此写一行「臂号+唯一变量+判据+数据子集+资源/并发+对照臂」（未写不得起跑）。
-
-**A0′（预算基线 · ✅ 收口 = 16.7 ± 0.8%）**
-- 唯一变量：out-budget `maxTokens 16384→4096`（in≤32K 经 `models.json contextWindow=32000` **不变**·compaction=basic **不变**·无 spawn **不变**）→ A0′ = A0 + out-budget 收紧
-- 预注册判据：A0′ 为 **A3 的预注册锚点**（`A3 ITT ≥ A0′ ITT + 3pp`·McNemar b≥6 c≥6 方向一致）；A0′ 本身无 pass/fail，记 ITT mean±std + gen-rate + compaction 次数
-- ✅ 结果：**16.7 ± 0.8%**（3 valid: r2=15.8%(25/158)·r3=17.1%(27/158)·r4=17.1%(27/158)·r1 废 SIGTERM·158-scale·gen 32/40 ok）·**Δ vs A0(69.2%) = −52.5pp**（out-budget 收紧效应：单 agent 吞吐崩塌，质量不变但生成率 32/40→pass 27/158）
-- 数据子集：`compaction_subset_40.txt`（40 题·与 A0/A1/A2 同子集）
-- 资源/并发：`-p 4` · **8650 池错峰** · 3 轮 · trace 落 `/tmp/zhulong_a0prime_trace`
-- 对照臂：**A0**（compaction-basic 69.2±1.4%·in≤32K/out≤16384/无 spawn）。**A0′ vs A0 = out-budget 效应（单变量）**；**A3 vs A0′ = spawn 效应（单变量）**
-- 关键修正：A1/A2 用 `contextWindow=1000000`（无强制压缩 regime·历史 confound）；A0′/A3 用 `contextWindow=32000`（=A0·强制 compaction@28.8K = H_ctx regime）
-- arm dir：`/nasdata/app.e0031982/subagent_ablation/A0prime/` · run：`run_a0prime_ablation.sh` · smoke：`smoke8_a0prime.txt` ROUNDS=1
-
-**A0′′（in=8K input budget 基线 via truncation proxy · 🔵 r1(proxy) 起跑中）**
-- [A0′′ 起跑预注册 · 2026-11-16 wake#1011] 唯一变量=**input 预算 32K→8K**（经 **truncation proxy** `a0pp_input_budget_proxy.py` port 19099 截断 API 请求至 8K token·**非** models.json contextWindow（cline 3.0.51 忽略）·out 恒 16K 不变·compaction=basic 不变·无 spawn 不变）→ A0′′ = A0 + in-budget 收紧（proxy 截断）
-- 预注册判据：A0′′ 为 **A3(in=8K,spawn) 的预注册锚点**（`A3 ITT ≥ A0′′ ITT + 3pp`·McNemar b≥6 c≥6 方向一致）；A0′′ 本身记 ITT mean±std + gen-rate + proxy 截断次数
-- 预期机制：单 agent 在 in=8K 下 API 只见 system+最近 ~7K token → 早期 API 文档/探索历史丢失 → 质量下降（vs A0=69.2%）；多 agent(A3) 分工后每个 agent 上下文天然小 → 8K 预算影响小 → 质量保持 → A3>A0′′
-- 数据子集：`compaction_subset_40.txt`（40 题·与 A0/A1/A2 同子集）
-- 资源/并发：`-p 4` · 8650 池错峰 · 3 轮 · proxy port 19099 · trace 落 `/tmp/zhulong_a0pp_eval` + `/tmp/zhulong_a0pp_trace`
-- 对照臂：**A0**（in=32K/out=16K/无 spawn/69.2±1.4%）。**A0′′ vs A0 = in-budget 效应（单变量）**；**A3 vs A0′′ = spawn 效应（单变量）**
-- ⚠️ **关键限制（wake#1011 smoke 证明）**：cline 3.0.51 对 openai-compatible custom model **忽略** models.json `contextWindow`/`maxInputTokens` → compaction 在 0.9×128K=116K 触发非 7.2K → **8K input budget 必须经外部 proxy 强制**，不能靠 cline config。proxy 截断 vs cline compaction 的差异：proxy 给 LLM 最近 8K 原始上下文（recency bias），compaction 给压缩摘要（可能保留旧信息）——两者都限制 LLM 有效输入至 ~8K，对 H_ctx 假设检验等效。
-- arm dir：`/nasdata/app.e0031982/subagent_ablation/A0pp/` · run：`run_a0pp_ablation.sh`（已集成 proxy）· proxy：`a0pp_input_budget_proxy.py`
-- ✅ A0′′ r1(no-proxy) VOIDED：60%(24/40)·8K 未施压·cline 忽略 contextWindow·trace 留 /tmp/zhulong_a0pp_trace/r1/ 标 VOID
-
-**A3（in=8K via proxy + research spawn · 待 A0′′(proxy) 跑完后起）**
-- [A3 起跑预注册 · 2026-11-16 09:0x 令修正] 唯一变量=spawn（in=8K via proxy·out=16K·research spawn hint 注入·子 agent 继承父模型无 MCP 用 read_files/search_codebase·主 agent 用 pyAether MCP）·判据=A3 ITT ≥ A0′′ ITT + 3pp + McNemar b≥6 c≥6 方向一致·数据子集=`compaction_subset_40.txt`·资源=`-p 4`·8650 池·3 轮·对照臂=A0′′(proxy)
-
-**A6 / A4 / A5**：待 A3 跑完后逐臂补写预注册（A4/A5/A6 需装 H2 wrapper v3.0.74+INHERIT_MCP=1；A6 依赖 A3 的 per-task 上下文测量定阈值 X）。
+- [A3-A6 起跑预注册详条已滚出·2026-11-18 wake#1326 维护] 见 `daily-memories/2026-11-18.md` §[A3-A6 起跑预注册 rolled-out]（A0′ 收口 16.7±0.8%·A0′′ r1(no-proxy) VOIDED 60%·A3/A4/A5/A6 全部因 subagent 消融线结案取消·原文不改）。
 
 
 
@@ -174,4 +148,5 @@ WAITING: 0（2026-11-18 wake#1325·**🟢 standby·done_all·无新令**：plan 
 **结论**：full_v3 (82.1±3.0%) **未复现** r1=88.0%（异常高值）。full_v3 比 V2(r2-r5=79.8±2.1%) 高 ~2.3pp，1σ 范围内重叠，自探索增益不显著。
 - [2026-10-19 06:30–17:31 指针块·已滚出] 运维令三十二② (N′) r1/r2/r3 巡检 #1–#11、r1/r2 收口详情 → 原文已搬入 daily-memories/2026-10-19.md「归档·18:5x」段。r1=78.5%/r2=70.9%/r3 task130 stuck 6582s（RUN_ID 83 查的根因）。
 ## 操作流水
+- [2026-11-18 wake#1326 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第七十五次核验·standby·done_all·与 wake#1311-1325 同款场景·infra 健康（loop PID243810 带代理 ✅ / ops_relay PID118463+2698885 活 / cline ✅ @/home/app.e0031982/.local/bin/cline·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146·顶块 RUN_ID 146 只读 freshness check 已执行·无 RUN_ID 147 pending）·fetch 后 HEAD=`1fbff2d05`（harness 他线提交推进·非本线·0 ahead 0 behind origin/main·push 通畅·working tree 未提交=designflow 线在途自动产物·AGENTS.md 禁 stash/clean/reset → 不碰）·research 日报 2026-11-18 zhulong 建议均 Verilog 评测法+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应→不起臂·subagent 消融线 done_all·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本轮另做 §10 维护：MEMORY 40192B 超 32KB 软上限→滚 A3-A6 起跑预注册块（subagent 线结案已取消·A0′/A0′′/A3/A4/A5/A6 详条）出至 `daily-memories/2026-11-18.md` §[A3-A6 起跑预注册 rolled-out]·MEMORY→~36KB·原文不改。
 - [wake#388~#838 旧指针已滚出·2026-11-10/11 多次合并] 原文见 `daily-memories/2026-11-{10,11}.md`（wake#388~#798 共 10 条旧指针 + wake#836b/c/d B 轴抽查三遍旧心跳·均已被上方合并指针代表·冗余合并省 MEMORY 空间）。
