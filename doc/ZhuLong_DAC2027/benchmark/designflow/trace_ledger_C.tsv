@@ -1268,3 +1268,14 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1783336974544_edi4u	e0014566	hfeg0plg58	29	physical_verify	case	EDA-Eval-DesignFlow-AutoViaStrcatTypeFix-001	2026-11-18 20:46	
 1794919650822_4kf4h	jzeng	hfeg0plg85	775	pg_layout	case	EDA-Eval-DesignFlow-M4M5PowerOverlapPatch-001	2026-11-19 00:27	
 1794899386539_20fct.messages.json	miccao	hfhds201	974	physical_verify	parked		2026-11-19 00:51	REJECT r785: session failed (exit_code=1, failed_external_process_exit); Task 1 (skipper KB parser) delivered but NO explicit user acceptance (user just moved to Task 2 @msg92); Tasks 2+ (HBs/highlight/trace VSS! net) all failed unresolved; §A rule 4 trace-end-gold NOT satisfied
+1794820859448_vsbz6	jzeng	hfeg0plg85	625	pg_layout	parked		2026-11-19 01:10	r786 REJECT near-dup r785 4kf4h + ends unresolved
+1795001166483_8ur5y	legendd	hfeg0plg105	542	layout_aether	parked		2026-11-19 01:10	r786 REJECT ends-in-failure + GUI-interactive no-script-gold
+1794982200520_f80vd	e0039786	hfeg0plg76	481	layout_virtuoso	parked		2026-11-19 01:10	r786 REJECT sprawling env-dependent + ends unresolved
+1794830235110_8x09n	ziyuny	hfeg0pnd001	426	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread wl-adjacent-check skill-builder; SVRF regex translation core promising
+1794999346452_d1jo3	scarle	hfeg0plg91	660	physical_verify	parked		2026-11-19 01:10	r786 REJECT wrong-shard D (netlist-extraction) + ends unresolved
+ibmuc	jiashengz	hfeg0plg92	538	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
+3p4sb	yinyus	hfeg0plg67	460	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
+of070	jzeng	hfeg0plg85	446	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
+k499q	e0039786	hfeg0plg76	444	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
+fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
+8luru	jiashengz	hfeg0plg92	386	physical_verify	parked		2026-11-19 01:10	r786 parked-pending-deepread fresh mid-mc C candidate
