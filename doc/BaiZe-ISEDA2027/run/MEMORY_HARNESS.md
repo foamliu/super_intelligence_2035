@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2715 · 2026-11-19 01:1x — 监控轮·MM容器316/580(54.5%·+1)·real_new=1(pi django-13033)未达≥2阈值→不跑eval·resolved不变·7way报告无需REGEN·predict 5路alive**·心跳第一行: SWE-bench Verified 7路 cumulative(不变): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code292/500=58.4%**·**cline280/500=56.0%**·**pi228/500=45.6%**·**deepseek154/500=30.8%**·**codex98/500=19.6%**·📦 real_new=1(pi django-13033)<2阈值→不跑eval·resolved不变·Pass%不变·7way报告无需REGEN·📦 **SWE-bench Multimodal容器下载**(用户令11-18): **316/580 pulled=54.5%**(0 FAILED✅)·pull_all_images.sh alive(PID 3749136·NI=19·etime~8h20m)·predict 5/7 alive(cline395/codex230/cc421/dsh213/pi339·opencode+hermes COMPLETE 500/500)·0 429✅·**自检**: load38.97/224≈17%busy·无本线proc>8000%✅(最高cline daemon 34%=0.3核)·pretrain launcher healthy·disk /nas_train 27T avail✅·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈12.3KB(✅≤32KB)
+> 🆕 **R2716 · 2026-11-19 01:2x — 监控轮+merge-empties·MM容器317/580(54.7%·+1)·real_new(pending)=0<2阈值→不跑eval·41 empties merged入failed(cline4+codex15+cc15+pi5+dsh2)·resolved不变·7way报告无需REGEN·predict 5路alive**·心跳第一行: SWE-bench Verified 7路 cumulative(不变): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code292/500=58.4%**·**cline280/500=56.0%**·**pi228/500=45.6%**·**deepseek154/500=30.8%**·**codex98/500=19.6%**·📦 real_new(pending)=0<2阈值→不跑eval·41 empty-patch merged入failed/empty_patch·n/evaluated更新(cline399/codex240/cc424/pi340/dsh213·opencode+hermes 500)·resolved不变·Pass%不变·7way报告无需REGEN·📦 **SWE-bench Multimodal容器下载**(用户令11-18): **317/580 pulled=54.7%**(0 FAILED✅)·pull_all_images.sh alive(PID 3749136·NI=19·etime~8h26m·当前拉carbon-design-system_1776_carbon-13527)·predict 5/7 alive(cline396/codex233/cc424/dsh213/pi340·opencode+hermes COMPLETE 500/500)·0 429✅·**自检**: load38.71/224≈17%busy·无本线proc>8000%✅(最高本线cline daemon 34%=0.3核·pretrain launcher 140%=1.4核非本线)·pretrain launcher healthy·disk /nas_train 27T avail✅·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈12.4KB(✅≤32KB)
+> 📦 R2715 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器316/580·real_new=1(pi django-13033)<2阈值→不跑eval·resolved不变·predict 5路alive·自检clean）。需要时再读。
 > 📦 R2714 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器315/580·0新real-patch(21新预测全empty)·resolved不变·predict 5路alive·自检clean）。需要时再读。
 > 📦 R2713 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器314/580·0新real-patch(14新预测全empty)·1 pending未达阈值·resolved不变·predict 5路alive·自检clean）。需要时再读。
 > 📦 R2712 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器313/580·0新real-patch达阈值·empties合并入failed·predict 5路alive·自检clean）。需要时再读。
@@ -36,16 +37,16 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2715 监控轮·SWE-bench Multimodal容器下载316/580(54.5%)+Verified real_new=1(pi django-13033)<2阈值→不跑eval·predict 5路alive
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·hermes 500/500 COMPLETE+eval 444/500=88.8%✅·incr_eval R2680~R2712 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice=idle·315/580 pulled=54.3%·0 FAILED)·CPU_SPIRAL_SKIP added(sklearn-14710)·incr_eval路径bug已修(R2708)·R2709~R2712自动正确读取✅
-当前动作:     R2715: 监控轮·real_new=1(pi django-13033)<2阈值→不跑eval·resolved计数不变(7way报告无需REGEN)·MM容器下载316/580(PID 3749136 alive·NI=19·0 FAILED)·predict 5路alive(cline395/codex230/cc421/dsh213/pi339)·自检clean(load38.97/224≈17%busy·无本线proc>8000%CPU·最高cline daemon 34%=0.3核·pretrain launcher healthy·disk 27T avail)
-下一步:       继续监控MM容器下载(316/580)+5路predict·新real-patch累计达2阈值后跑incr_eval(路径bug已修·自动正确)→刷新7way报告·Multimodal下载完成后准备MM评测
+PHASE:        R2716 监控轮+merge-empties·SWE-bench Multimodal容器下载317/580(54.7%)+Verified real_new(pending)=0<2阈值→不跑eval·41 empties merged·predict 5路alive
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·hermes 500/500 COMPLETE+eval 444/500=88.8%✅·incr_eval R2680~R2716 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice=idle·317/580 pulled=54.7%·0 FAILED)·CPU_SPIRAL_SKIP added(sklearn-14710)·incr_eval路径bug已修(R2708)·R2709~R2716自动正确读取✅
+当前动作:     R2716: 监控轮+merge-empties·real_new(pending)=0<2阈值→不跑eval·41 empty-patch merged入failed(cline4+codex15+cc15+pi5+dsh2)·resolved不变(7way报告无需REGEN)·MM容器下载317/580(PID 3749136 alive·NI=19·etime~8h26m·0 FAILED·当前拉carbon-design-system_1776_carbon-13527)·predict 5路alive(cline396/codex233/cc424/dsh213/pi340)·自检clean(load38.71/224≈17%busy·无本线proc>8000%CPU·最高本线cline daemon 34%=0.3核·pretrain launcher 140%=1.4核非本线·healthy·disk 27T avail)
+下一步:       继续监控MM容器下载(317/580)+5路predict·新real-patch累计达2阈值后跑incr_eval(路径bug已修·自动正确)→刷新7way报告·Multimodal下载完成后准备MM评测
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈30.2KB / MEMORY≈12.3KB（✅≤32KB）
- SWE-bench Verified Pass%(cumulative resolved/500, after R2710): hermes444=88.8%·opencode415=83.0%·cc292=58.4%·cline280=56.0%·pi228=45.6%·dsh154=30.8%·codex98=19.6%·(partial·predict still running for 5 routes)
+ 体积: TASK≈30.2KB / MEMORY≈12.4KB（✅≤32KB）
+ SWE-bench Verified Pass%(cumulative resolved/500, after R2716 merge-empties): hermes444=88.8%·opencode415=83.0%·cc292=58.4%·cline280=56.0%·pi228=45.6%·dsh154=30.8%·codex98=19.6%·(partial·predict still running for 5 routes)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
-  SWE-bench Multimodal容器下载(用户令11-18): pull_all_images.sh·swebench_mm/pull_progress.log·swebench_mm/pull_state.txt·580 images total·316 pulled(0 FAILED)·nice19/ionice=idle·不抢.29 CPU✅
+  SWE-bench Multimodal容器下载(用户令11-18): pull_all_images.sh·swebench_mm/pull_progress.log·swebench_mm/pull_state.txt·580 images total·317 pulled(0 FAILED)·nice19/ionice=idle·不抢.29 CPU✅
   research日报11-18 harness建议: ①artifact-based judging(exit code只做旁证·产物存在性+空跑记0·arxiv 2611.21407) ②provider binding检查(同名工具不同来源·arxiv 2611.21577) → 纳入未来计划
 ## 启动说明（首次唤醒）
 
