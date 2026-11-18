@@ -4395,6 +4395,97 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbGrpCornerNav-001",
+   "arm": "V0",
+   "k_conditions": 24,
+   "pi_seconds": 110.4,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 12,
+   "k_total": 12,
+   "detail": "PASS 12/12 (a-l) B=8 corners, A=6 corners, anti-hardcode OK",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbGrpCornerNav-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbGrpCornerNav-001",
+   "arm": "V1",
+   "k_conditions": 24,
+   "pi_seconds": 102.6,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 12,
+   "k_total": 12,
+   "detail": "PASS 12/12 (a-l) B=8 corners, A=6 corners, anti-hardcode OK",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbGrpCornerNav-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbGrpCornerNav-001",
+   "arm": "V2",
+   "k_conditions": 24,
+   "pi_seconds": 98.6,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 12,
+   "k_total": 12,
+   "detail": "PASS 12/12 (a-l) B=8 corners, A=6 corners, anti-hardcode OK",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbGrpCornerNav-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+   "arm": "V0",
+   "k_conditions": 6,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "PASS 16/16",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbMeasRunGen-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+   "arm": "V1",
+   "k_conditions": 6,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "PASS 16/16",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbMeasRunGen-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+   "arm": "V2",
+   "k_conditions": 6,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 16,
+   "k_total": 16,
+   "detail": "PASS 16/16",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbMeasRunGen-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001",
+   "arm": "V0",
+   "k_conditions": 42,
+   "pi_seconds": 200.0,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "hidden asset missing: /tmp/wv_cg_full/_grade/g_d933165b/hidden/config_B.json",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001/V0/outputs/submit.zip",
+   "n_zip_members": 1
   }
  ]
 }
