@@ -1267,3 +1267,4 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1792978925184_zyk8x	xinqiaoz	hfeg0pkn002	58	physical_verify	case	EDA-Eval-DesignFlow-DrcSyncVerifyReport-001	2026-11-18 20:19	
 1783336974544_edi4u	e0014566	hfeg0plg58	29	physical_verify	case	EDA-Eval-DesignFlow-AutoViaStrcatTypeFix-001	2026-11-18 20:46	
 1794919650822_4kf4h	jzeng	hfeg0plg85	775	pg_layout	case	EDA-Eval-DesignFlow-M4M5PowerOverlapPatch-001	2026-11-19 00:27	
+1794899386539_20fct.messages.json	miccao	hfhds201	974	physical_verify	parked		2026-11-19 00:51	REJECT r785: session failed (exit_code=1, failed_external_process_exit); Task 1 (skipper KB parser) delivered but NO explicit user acceptance (user just moved to Task 2 @msg92); Tasks 2+ (HBs/highlight/trace VSS! net) all failed unresolved; §A rule 4 trace-end-gold NOT satisfied
