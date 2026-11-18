@@ -1,12 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1341·**🟢 standby·done_all·中文对照令已交付**：用户令 commit `870a7102c`（论文全文加中文对照注释态）已执行——round1 `abf24281f`+round2 `28e77662f` 两轮 push 至 origin·编译 11p/0err/0undef/230611B 同字节·报告 `reports/report_edafb_zh_translation_zh.html`·subagent 消融线结案不起臂·顶部最新 task 令（zh-cn）已闭合·infra 健康·cline ✅ @/home/app.e0031982/.local/bin/cline / loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h·ops 队列排空 last_run_id=146·HEAD=`be0f5493a`=origin/main（他线 harness 提交推进·非本线·0 ahead 0 behind·push 通畅·AGENTS.md 禁 stash/clean/reset → 不碰）·/home 29G free·/nasdata 2.5T free·距预注册日 2026-11-22 仍 4 天·§7 StepC done_all→退出·本轮滚 wake#1340 详条出至 daily·MEMORY 维持 40KB 硬上限内）
+WAITING: 0（2026-11-18 wake#1342·**🟢 standby·done_all·中文对照令已交付**：用户令 commit `870a7102c`（论文全文加中文对照注释态）已执行——round1 `abf24281f`+round2 `28e77662f` 两轮 push 至 origin·编译 11p/0err/0undef/230611B 同字节·报告 `reports/report_edafb_zh_translation_zh.html`·subagent 消融线结案不起臂·顶部最新 task 令（zh-cn）已闭合·infra 健康·cline ✅ @/home/app.e0031982/.local/bin/cline / loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h·ops 队列排空 last_run_id=146·HEAD=`a76fce061`=origin/main（他线 pretrain#2488+designflow r839 提交推进·非本线·0 ahead 0 behind·push 通畅·AGENTS.md 禁 stash/clean/reset → 不碰）·/home 29G free·/nasdata 2.5T free·距预注册日 2026-11-22 仍 4 天·§7 StepC done_all→退出·本轮滚 wake#1341 详条出至 daily·MEMORY 维持 40KB 硬上限内）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
-- [2026-11-18 wake#1341 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第八十七次核验·standby·done_all·与 wake#1311-1340 同款场景·infra 健康（loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h / cline ✅ @/home/app.e0031982/.local/bin/cline·/home 29G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146 = inbox 顶块 RUN_ID 146·无 RUN_ID 147 pending）·fetch 后 HEAD=`be0f5493a`=origin/main（harness 他线提交推进·非本线·0 ahead 0 behind·push 通畅·zhulong run/ZhuLong_DAC2027 子树干净·AGENTS.md 禁 stash/clean/reset → 不碰）·research 日报 2026-11-18.html mtime 21:09（wake#1340 @21:25 已见·此后无更新版本）zhulong 建议仍 Verilog 评测法(VeriGen/ChipNeMo/DSPy)+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应→不起臂·subagent 消融线 done_all·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本轮另做 §10 维护：滚 wake#1340 详条出至 daily（原文不改）·MEMORY 维持 40KB 硬上限内。
+- [2026-11-18 wake#1342 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第八十八次核验·standby·done_all·与 wake#1311-1341 同款场景·infra 健康（loop PID243810 活 4d9h / ops_relay PID118463 活 23d13h / cline ✅ @/home/app.e0031982/.local/bin/cline·/home 29G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146 = inbox 顶块 RUN_ID 146·无 RUN_ID 147 pending）·fetch 后 HEAD=`a76fce061`=origin/main（pretrain#2488 监控巡检+designflow shard B r839 他线提交推进·非本线·0 ahead 0 behind·push 通畅·zhulong run/ZhuLong_DAC2027 子树干净·AGENTS.md 禁 stash/clean/reset → 不碰）·research 日报 2026-11-18.html mtime 21:09（wake#1341 已见·此后无更新版本）zhulong 建议仍 Verilog 评测法(VeriGen/ChipNeMo/DSPy)+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应→不起臂·subagent 消融线 done_all·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本轮另做 §10 维护：滚 wake#1341 详条出至 daily（原文不改）·MEMORY 维持 40KB 硬上限内。
+
+- [wake#1341 详条已滚出·被 wake#1342 代表] 见 `daily-memories/2026-11-18.md` §[wake#1341 rolled-out]（第八十七次核验·standby·done_all·HEAD=`be0f5493a`·本轮 wake#1342 维护滚出·原文不改）。
 
 - [wake#1340 详条已滚出·被 wake#1341 代表] 见 `daily-memories/2026-11-18.md` §[wake#1340 rolled-out]（第八十六次核验·standby·done_all·HEAD=`8ee61eee7`·本轮 wake#1341 维护滚出·原文不改）。
 
@@ -22,7 +24,7 @@ WAITING: 0（2026-11-18 wake#1341·**🟢 standby·done_all·中文对照令已�
 
 - [wake#1298 详条已滚出·被 wake#1299 代表] 见 `daily-memories/2026-11-18.md` §[wake#1298 rolled-out]（plan v1.5 第四十八次复核·HEAD=`18a4d76e1`·/home 23G 稳定记录）。
 
-- [wake#1304~#1311 详条已滚出·被 wake#1312 代表] 8 条同模式 standby 心跳（第五十三~六十次核验·均 standby·done_all·无新指令·用户粘贴任务书全文无新令·顶部最新仍 v1.7 已归档·ops 队列排空 last_run_id=146·/home 35G free·/nasdata 2.5T free·距预注册日 2026-11-22 仍 4 天·§7 StepC 退出）·HEAD 序列 `e5f7b9a48`→`00e6a026d`→`1733ce0f5`→`96a853eb8`→`9b411f55a`→`848b81095`→`1b17823ea`→`8fe334571`·原文见 `daily-memories/2026-11-18.md` §[wake#1304~#1308 rolled-out]/§[wake#1309 rolled-out]/§[wake#1310 rolled-out]/§[wake#1311 rolled-out]（多次合并归档省 MEMORY 空间）。
+- [wake#1304~#1311 详条已滚出·被 wake#1312 代表] 8 条同模式 standby 心跳（第五十三~六十次核验·均 standby·done_all·无新指令·顶部最新仍 v1.7 已归档·ops 排空 last_run_id=146·距预注册日 2026-11-22 仍 4 天·§7 StepC 退出）·HEAD 序列 `e5f7b9a48`→…→`8fe334571`·原文见 `daily-memories/2026-11-18.md` §[wake#1304~#1308]/§[wake#1309]/§[wake#1310]/§[wake#1311 rolled-out]（合并归档省空间）。
 
 - [wake#1325 详条已滚出·被 wake#1330 代表] 见 `daily-memories/2026-11-18.md` §[wake#1325 rolled-out]（第七十四次核验·standby·done_all·HEAD=`e1661a2cb`·本轮 wake#1330 维护滚出·原文不改）。
 
