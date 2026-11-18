@@ -1,0 +1,26 @@
+# deepread: ypwty — auto-group-generator skill + group generate (ziyunu)
+
+- **trace**: `ziyuny@10.129.32.190` session `1789803471527_ypwty` (mc=55, agent='lead', idle)
+  - messages.json 476KB / 91 msgs (59 user / 32 assistant); 2026-09-19~20
+  - keywords: aether:247;pyaether:49;drc:33;lvs:32;verilog:24;calibre:24;pdk:22;schematic:16
+- **真实用户任务（多轮，按时间）**：
+  - **U#0**: 用户贴入《Skill 写作指南(Meta-Skill)》+ 要求「创建一个名为 `auto-group-generator` 的 skill，用于对电路中特定 group 结构（电流镜/cascode/差分对等）自动产生 group layout」。助手 read_files 读 `ggSkill/group_generator_cfg.md`+`scripts/data/test.py`+`run_test_gui.sh` → list_allowed_files 探 skill 目录结构 → RAG search pyAether API（aeOpenDesign/aeLoadGroupGeneratorConfigFile/aeCstAnalysisFromDesign/aeCstRealizeAllFromDesign/geGetCurrentWindow）→ 在可写区 `scripts/data/gg_skill_staging/` 用 editor 创建 skill 6 文件 → `_install_refs.py` 复制安装到 `~/.cline/skills/auto-group-generator/` + 登记 INDEX.md → 跑 merge_cfg.py 端到端功能测试（合并 patch：CurrentMirror.Matching.Rows "2"→"4"，Style 保持 Common Centroid，深配置 RoutingCfg 等完好）→ 全通过。
+  - **U#37**: 「帮我把 `dynamicFileRoots` 扩展到 skills 目录」→ 改 `agent-policy.json`（mode 0400 属主只读 → 原子替换：写临时→chmod 0400→os.replace）。
+  - **U#46**: 「有没有办法让我在调用 skill 时把工作目录切到 `/home/ziyuny/.cline/scripts/data`」→ 改 `run_group_generate.sh` 加 `GG_WORK_DIR` env（默认该目录），mkdir logs/run_cfg，cd 进去再跑。
+  - **U#55**: 「那我的 skill 在哪里」→ 确认 `/home/ziyuny/.cline/skills/auto-group-generator/` 结构。
+  - **U#57 (主 EDA 任务)**: 「在 train/ddgoa_test 项目中的，zyTest/VwlpRefAmpIP 上做 group generate」→ 调 `run_group_generate.sh`（配置来源 3=项目默认 `reference/projects/zyTest/group_generator_cfg.json`）→ **A#90 trace-end-gold**: ✅ `GROUP GENERATE DONE: zyTest/VwlpRefAmpIP/layout`，aeSaveDesign True，无 [FAIL]。
+- **真实 gold 文件（.75:10.129.32.190 抓取，staging 区仍在）**：
+  - `gg_skill_staging/auto-group-generator/scripts/merge_cfg.py` (2534B) — 深度合并工具：`deep_merge(base,patch)` dict 递归合并、list/标量整体替换、patch 优先；CLI `--base/--patch/--out`；`load_json` 错误处理（FileNotFoundError→exit 2，JSONDecodeError→exit 2 + [FAIL]）；非 dict 入参 raise ValueError。
+  - `scripts/group_generate.py` (5114B) — pyAether flow: emyInitAether('-adv') → aeOpenDesign → aeLoadGroupGeneratorConfigFile → aeCstAnalysisFromDesign → aeCstRealizeAllFromDesign → aeSaveDesign。
+  - `scripts/run_group_generate.sh` (3234B) — wrapper：GG_WORK_DIR 切 cwd → 调 group_generate.py → 报告。
+  - `SKILL.md` (7253B) — skill 定义（验收标准：日志 GROUP GENERATE DONE / aeSaveDesign 非 False / 无 [FAIL]）。
+  - `scripts/data/group_generator_cfg.json` (20622B, **base**) — 19 顶层键 (AbutCfg/CdfCfg/ColorMetals/DRCCfg/DeviceCfg/DummyThresholdCfg/ExistsColor/GuardRingCfg/IsFinfet/LayerCfg/PDK/PatternCfg/PolyContactCfg/RotateCfg/RoutingCfg/RoutingConfig/SpecificLayerCfg/TermCdfCfg/ViaCfg)。PatternCfg 含 CurrentMirror/Cascode/DifferentPair/Logic/MOS/RES，各自 Matching 子对象 (Style/Mode/ShareOD/Rotate/Rows/Dummy/GuardRing/DeviceRule/...)。
+  - `run_cfg_test/patch.json` (179B, **gold patch**) = `{"PatternCfg":{"CurrentMirror":{"Matching":{"Style":"Common Centroid","Rows":"4"}}}}`。
+  - `run_cfg_test/merged_group_generator_cfg.json` (20900B, **gold merged**) — Rows 2→4，Style 不变，19 键不变，Dummy/GuardRing 等深子对象保留。
+- **造题决策**：
+  - 主 EDA 任务 U#57 (group generate) 需真跑 Aether + ziyunu 项目 fs，SUT 不可达 → 不可作 A 档。
+  - U#0 (建 skill) 多文件巨型交付，pyAether flow 部分需 import pyAether → 难自包含验。
+  - **选 skill 的 config-merge 子任务（merge_cfg.py）作 B 档 reframe**：这是 trace 内真实写过、真实测过、用户接受 skill 时隐含接受的子交付物；纯 stdlib、确定性、可在 hidden B 上 subprocess 真跑、断言有牙（深递归 vs 浅替换 / list 整体替换 vs 拼接 / leaf override / 19 键保留 / 新键添加 / 错误处理 / 幂等 / anti-hardcode）。
+  - 用户底层意图 = skill 需「用户部分自定义设置（如电流镜 4 行）合并进项目默认 cfg，不破坏 reference」的机制 → merge_cfg.py 正是此意图的可验核心。
+  - 域 = layout_aether（skill 用于 Aether group layout 自动生成）；L1（离线 stdlib）；档 B。
+- **hidden B 设计**：与 A 结构同（19 顶层键、PatternCfg.CurrentMirror/Cascode/DifferentPair.Matching）但值全换 + ColorMetals 为非空 list；patch_B 命中多条语义：深 leaf override (Cascode.Matching.Rows="6") + list 整体替换 (ColorMetals=["M2","M4","M6"]) + 新顶层键 (UserOverride)。check.py 以 raw 三引号 JSON inline B（避免 base64腐蚀，承 r798 模式）。
