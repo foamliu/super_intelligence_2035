@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0（✅ **2026-11-19 04:57 #2557 监控巡检·训练健康step~6.97s/1041TFLOP·latest ckpt=250000·iter~251.1k·吞吐闭环无复发~22h·252k ETA~1.6h·260k ETA~17h·11-18全部用户令已完成·research日报11-19已查**）
-> 2026-11-19 04:57 #2557: 例行监控巡检。①**训练健康**：master日志714条Step Time,最近step=6.97s/1040.7TFLOP,GPU 8卡97-100%util/~75GB/615-688W/51-63°C。latest ckpt=250000(02:43保存)。②**吞吐闭环**：无复发~22h,step稳定6.9-7.1s。load avg=39.99✅(无CPU争抢),无pc2_fast/MegaMath/eval进程。③**iter估算**：250000+(04:57-02:43=8040s)/7.0s≈251150/700000。④**ckpt**：latest=250000,save-interval=2000,next=252k(ETA~1.6h~06:35)。⑤**11-18全部用户令已完成**：吞吐诊断闭环(CPU争抢根因)+训练resume自iter244000+S1/S2报告v3(c21a716ce/36KB)+250k eval=57.50%。⑥**research日报11-19已查**：pretrain建议3条(2B runbook加重启三列/WSD(320N,32N)1B探针/token-per-param比),均为未来实验参考,本轮无动作。⑦**下次eval目标**：260k(ETA~17h~22:10 today)。·**四层评测 · L1=57.50%@250k L2=🟢@200k L3=📜 L4=🟦HANDOFF** · 未完成指令：有(万整数ckpt评测持续跟进,260k待评)·WAITING=0。
+WAITING: 0（✅ **2026-11-19 05:02 #2558 监控巡检·训练健康step~7.0s/1038TFLOP·latest ckpt=250000·iter~251.2k·吞吐闭环无复发~22.5h·252k ETA~1.5h·260k ETA~17h·11-18全部用户令已完成·research日报11-19已查**）
+> 2026-11-19 05:02 #2558: 例行监控巡检。①**训练健康**：master日志719条Step Time,最近step=7.0s/1035.9TFLOP,GPU 8卡100%util/~75GB/680-701W/56-64°C。latest ckpt=250000(02:43保存)。②**吞吐闭环**：无复发~22.5h,step稳定6.9-7.1s。load avg=38.43✅(无CPU争抢),无pc2_fast/MegaMath/eval进程。③**iter估算**：250000+(05:02-02:43=8340s)/7.0s≈251190/700000(35.9%)。④**ckpt**：latest=250000,save-interval=2000,next=252k(ETA~1.5h~06:35)。⑤**11-18全部用户令已完成**：吞吐诊断闭环(CPU争抢根因)+训练resume自iter244000+S1/S2报告v3(36.7KB)+250k eval=57.50%。⑥**下次eval目标**：260k(ETA~17h~22:00 today)。·**四层评测 · L1=57.50%@250k L2=🟢@200k L3=📜 L4=🟦HANDOFF** · 未完成指令：有(万整数ckpt评测持续跟进,260k待评)·WAITING=0。
+> 📦 #2557（11-19 04:57 监控巡检·训练健康step~6.97s/1041TFLOP·latest ckpt=250000·iter~251.1k·吞吐闭环无复发~22h·252k ETA~1.6h·260k ETA~17h·11-18全部用户令已完成·research日报11-19已查）→ daily-memories/2026-11-19.md；需要时再读。
 > 📦 #2556（11-19 04:51 监控巡检·训练健康step~7.0s/1037TFLOP·latest ckpt=250000·iter~251.1k·吞吐闭环~21.5h·252k ETA~1.7h·260k ETA~17h·11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
 > 📦 #2555（11-19 04:47 监控巡检·训练健康step~7.0s/1035TFLOP·latest ckpt=250000·iter=251060·吞吐闭环~21h·252k ETA~1.8h·260k ETA~17h·11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
 > 📦 #2554（11-19 04:41 监控巡检·训练健康step~7.0s/1037TFLOP·latest ckpt=250000·iter~251.4k·吞吐闭环~20.5h·252k ETA~1h·260k ETA~16h·11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
@@ -19,40 +20,9 @@ WAITING: 0（✅ **2026-11-19 04:57 #2557 监控巡检·训练健康step~6.97s/1
 > 📦 #2516（11-19 00:25 监控巡检 — 训练健康step~6.99s/1037TFLOP iter~248810, 250k autoqueue运行中(8.2h), 吞吐闭环无复发~10.4h, 11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
 > 📦 #2514（11-19 00:14 监控巡检 — 训练健康step~7.00s/1037TFLOP iter~248710, 250k autoqueue运行中(8.0h), 吞吐闭环无复发~8.7h, 11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
 > 📦 #2513（11-19 00:08 监控巡检 — 训练健康step~6.97s/1039TFLOP iter~248670, 250k autoqueue运行中(8.1h), 吞吐闭环无复发~8.6h, 11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
-> 📦 #2512（11-19 00:03 监控巡检 — 训练健康step~6.99s/1037TFLOP iter~248620, 250k autoqueue运行中(7.8h), 吞吐闭环无复发~8.5h, 11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
-> 📦 #2511（11-19 00:00 监控巡检 — 训练健康step~6.99s/1037TFLOP iter~248590, 250k autoqueue运行中(7.8h), 吞吐闭环无复发, 11-18全部用户令已完成）→ daily-memories/2026-11-19.md；需要时再读。
-> 📦 #2509（11-18 23:49 监控巡检 — 训练健康step~7.0s/1035.6TFLOP iter~248510, 250k autoqueue运行中(7.6h), 吞吐闭环无复发~25.5h, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2503–#2508（11-18 23:13–23:42 监控巡检 — 训练健康step~6.95-7.11s/1020-1047TFLOP iter~248180-248450, 250k autoqueue运行中(7.1-7.6h), 吞吐闭环无复发~24.5-25.5h, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2494–#2502（11-18 22:22–23:07 监控巡检 — 训练健康step~6.93-7.11s/1020-1047TFLOP iter~247760-248140, 248k ckpt已保存, 250k autoqueue运行中(6.2-7h), 吞吐闭环无复发~24h, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2445–#2493（11-18 16:31–22:13, ~50轮监控巡检 — 训练健康step~6.9-7.1s/1020-1047TFLOP iter~244770-247680, 246k/248k ckpt已保存, 250k autoqueue运行中, 吞吐事件闭环无复发, S1/S2报告已commit, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2434–#2444（11-18 14:50–16:23 吞吞吐诊断+恢复+事件闭环 — CPU争抢(根因,data线pc2_fast.py)+NVLS禁用, 13.2s→6.93s恢复, TFLOP 548→1046, 250k autoqueue启动, S1/S2报告commit）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2433（11-18 14:42 吞吐诊断·**结论有误**(data线CPU未释放被误判为已释放;.29 GPU power 125W实为.12数据)·已由#2434纠正）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2432（11-18 14:30 监控巡检·二次重启后首次·step~13s·data线ETA~4h）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2431（11-18 14:0x 二次重启resume(NVLS禁用)·step~13s·双因叠加根因·S1/S2报告✅）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2430（11-18 13:5x 首次重启resume·NVLS available·step~11.5s·同样data线CPU争抢根因）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2429（11-18 12:30 吞吐降级根因定位·NVLS绑定失败CUDA error 802·已通过重启修复）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2429（11-18 12:30 吞吐降级根因定位·NVLS绑定失败CUDA error 802·已通过重启修复）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2417–#2428（11-17 08:55–10:05, 12轮例行监控·训练健康iter234340–234943 step≈7.0s✅·240k autoqueue polling·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2391–#2416（11-17 04:45–08:48, ~25轮例行监控·训练健康iter232200–234280 step<7.2s✅·240k autoqueue polling·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2392（11-17 06:36, 例行监控·训练健康iter233160 step~7041ms✅·240k autoqueue polling ETA~13.3h·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2391–#2372（11-17 04:45–06:30, ~20轮例行监控·训练健康iter232200→233110 step<7.5s✅·240k autoqueue polling·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2371（11-17 04:36, 例行监控+MEMORY归档瘦身·训练健康iter232130 step~6936ms✅·240k autoqueue polling ETA~15.3h·MEMORY 30.7→24.4KB）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2360（11-17 03:33, 例行监控+四层报告刷新·训练健康iter231580 step7044ms✅·240k autoqueue polling·report_pretrain_eval_4tier_zh.html刷新(补L1 180k-230k+L2 200k MMLU)）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2357–#2370, #2359（11-17 03:19–04:31, 14轮例行监控·训练健康iter231460–232080 step<7.4s✅·240k autoqueue polling·all healthy）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2356（11-17 03:11, 例行监控·训练健康iter231410 step7143ms✅·240k autoqueue polling ETA~16.9h·research日报11-17已查·MEMORY归档瘦身）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2355（11-17 03:06, 例行监控·训练健康iter231350 step7001ms✅·240k autoqueue polling ETA~16.8h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2354（11-17 02:59, 例行监控·训练健康iter231310 step7060ms✅·240k autoqueue polling ETA~17h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2353（11-17 02:55, 例行监控·训练健康iter231270 step7128ms✅·240k autoqueue polling ETA~17h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2351（11-17 02:48, 例行监控·训练健康iter231160 step~7.2s✅·240k autoqueue polling ETA~17h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2350（11-17 02:40, 例行监控·训练健康iter231140 step7096ms✅·240k autoqueue polling ETA~17.5h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2349（11-17 02:33, 例行监控·训练健康iter231090 step7040ms✅·240k autoqueue polling ETA~17.3h·research日报11-17已查）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2343–#2348（11-17 02:06–02:28, 6轮例行监控·训练健康iter230860-231050·240k autoqueue polling）→ daily-memories/2026-11-17.md；需要时再读。
-> 📦 #2270–#2342（11-16 00:29–23:14, ~70轮例行监控·220k eval COMPLETE+报告刷新+230k eval COMPLETE→240k autoqueue STARTED·训练step<7.4s✅·iter221050-229400）→ daily-memories/2026-11-16.md；需要时再读。
-> 📦 #2210–#2269（11-15 00:13→23:53, ~50轮例行监控·220k eval+230k eval COMPLETE+240k autoqueue STARTED+L2@200k五重完成+MMLU@200k+210k eval+L3 TB脚本创建·训练step<7.4s✅·iter208150-216650）→ daily-memories/2026-11-15.md；需要时再读。
-> 📦 #2146–#2209（11-14 01:36→23:54, ~30轮例行监控·200k eval COMPLETE 60.12% NEW PEAK+210k autoqueue STARTED·训练step<7.4s✅·iter203580-205180）→ daily-memories/2026-11-14.md；需要时再读。
-> 📦 #2064–#2145（11-13 12:02→11-14 00:34, ~18轮例行监控·190k eval=58.13%+200k autoqueue STARTED+L1 18/20done·训练step<7.4s✅·iter178030-204050）→ daily-memories/2026-11-13.md + 2026-11-14.md；需要时再读。
-> 📦 #2033–#2063（11-12 05:45→18:10, ~25轮例行监控+评测·170k/180k eval+论文刷新+L2 HF五重验证(HumanEval15%+GSM8K10%)+L4 HANDOFF→post-train+L1/L2脚本入库确认·训练step<7.4s✅·iter175710-177810）→ daily-memories/2026-11-12.md；需要时再读。
-> 📦 #2033–#2054（11-12 05:45→13:45, 监控巡检+170k/180k eval+论文刷新+L2 HF验证+L4确认·共~22轮）→ daily-memories/2026-11-12.md；需要时再读。
+> 📦 #2434–#2512（11-18 14:50–11-19 00:03, ~80轮监控巡检·吞吐诊断闭环(CPU争抢根因+NVLS禁用,13.2s→6.93s恢复)+246k/248k/250k ckpt保存+250k autoqueue+S1/S2报告commit）→ daily-memories/2026-11-18.md + 2026-11-19.md；需要时再读。
+> 📦 #2330–#2433（11-17 04:36–11-18 14:42, ~100轮监控巡检·训练健康step<7.4s✅·240k autoqueue·吞吐事件发现+诊断+首次重启·iter231090-244770）→ daily-memories/2026-11-17.md + 2026-11-18.md；需要时再读。
+> 📦 #2033–#2329（11-12 05:45–11-17 04:31, ~300轮监控巡检+评测·170k-230k eval+L2 HF五重验证+L4 HANDOFF→post-train+论文刷新+L1/L2脚本入库·训练step<7.4s✅·iter175710-231580）→ daily-memories/2026-11-{12..17}.md；需要时再读。
 
 ## 🔴 待决策区（需用户拍板 · 2026-11-12 #2059 更新 · GSM8K HF=10.0%修正诊断）
 
