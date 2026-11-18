@@ -1,6 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0（✅ **2026-11-18 17:53 #2458 监控巡检**：训练健康step~7.1s/1023TFLOP iter~245460/700000·latest_ckpt=244000(next 246000 ETA~18:56)·250k autoqueue运行中(PID 651752)·吞吐闭环无复现已~7.5h·.29 GPU 8卡98-100%util/~75GB·.12 loadavg=25健康pc2_fast.py不在·S1/S2报告已commit·11-18全部用户令已完成**）
-> 2026-11-18 17:53 #2458: 监控巡检。①**训练健康**：step=7.00-7.24s(mean~7.1s),TFLOP=1001-1036,GPU 8卡98-100%util/~75GB,loss=1.964-1.970稳定,grad_norm=0.088-0.093,0 nan/0 skipped。②**迭代进度**：iter=245460/700000(worker log 17:52),LR=7.3E-04(WSD stable段),latest_ckpt=244000,next_ckpt=246000(ETA~18:56,540步×7.1s≈64min),iter_0246000目录已存在但latest仍=244000(断前旧未完成,到达246000时覆盖)。③**250k autoqueue**：PID 651752运行中(~99min),polling for iter_0250000。④**吞吐事件闭环**：无复现,step稳定~7.1s已~7.5h,根因确证=data线pc2_fast.py CPU争抢(#2442闭环),.12 loadavg=25.05健康,88%idle,pc2_fast.py已确认不在。⑤**11-18用户令全部完成**：10:5x排查✅/11:1x授权✅/13:1x重启✅/14:2x接管监控✅/S1/S2报告✅。⑥**MEMORY体积**：~29KB(✅<32KB)。·**四层评测 · L1=57.88%@240k L2=🟢@200k L3=📜 L4=🟦HANDOFF** · 未完成指令：有(万整数ckpt评测持续跟进,250k autoqueue运行中)·WAITING: 0。
+WAITING: 0（✅ **2026-11-18 17:59 #2459 监控巡检**：训练健康step~7.1s/1023TFLOP iter~245510/700000·latest_ckpt=244000(next 246000 ETA~19:00)·250k autoqueue运行中(PID 651752,~104min)·吞吐闭环无复现已~8h·.29 GPU 8卡89-100%util/~75GB·.12 loadavg=25.96健康pc2_fast.py不在·S1/S2报告已commit·11-18全部用户令已完成**）
+> 2026-11-18 17:59 #2459: 监控巡检。①**训练健康**：step=7.00-7.30s(mean~7.1s),TFLOP=993-1036,GPU 8卡89-100%util/~75GB。②**迭代进度**：iter≈245510/700000(由#2458的245460+~50步估算),latest_ckpt=244000,next_ckpt=246000(ETA~19:00,~490步×7.1s≈58min)。③**250k autoqueue**：PID 651752运行中(~104min),polling for iter_0250000。④**吞吐事件闭环**：无复现,step稳定~7.1s已~8h,根因确证=data线pc2_fast.py CPU争抢(#2442闭环),.12 loadavg=25.96健康,pc2_fast.py已确认不在。⑤**11-18用户令全部完成**：10:5x排查✅/11:1x授权✅/13:1x重启✅/14:2x接管监控✅/S1/S2报告✅。⑥**MEMORY体积**：~29KB(✅<32KB)。·**四层评测 · L1=57.88%@240k L2=🟢@200k L3=📜 L4=🟦HANDOFF** · 未完成指令：有(万整数ckpt评测持续跟进,250k autoqueue运行中)·WAITING: 0。
+> 📦 #2458（11-18 17:53 监控巡检 — 训练健康step~7.1s/1023TFLOP iter~245460, 吞吐闭环7.5h无复发, 250k autoqueue运行中, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2457（11-18 17:44 监控巡检 — 训练健康step~7.1s/1020TFLOP iter~245390, 吞吐闭环7h无复发, 250k autoqueue运行中, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2456（11-18 17:39 监控巡检 — 训练健康step~7.1s/1020TFLOP iter~245350, 吞吐闭环6.5h无复发, 250k autoqueue运行中, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2455（11-18 17:35 监控巡检 — 训练健康step~7.1s/1020TFLOP iter~245310, .12 loadavg=24.64健康, 吞吐闭环6h无复发, 250k autoqueue运行中, 11-18全部用户令已完成）→ daily-memories/2026-11-18.md；需要时再读。
@@ -18,11 +19,7 @@ WAITING: 0（✅ **2026-11-18 17:53 #2458 监控巡检**：训练健康step~7.1s
 > 📦 #2442（11-18 15:58 吞吐恢复·根因确证CPU争抢·事件闭环 — step 13.2s→6.93s, TFLOP 548→1046, data线杀旧pc2_fast.py后立即恢复, NVLS=0无影响）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2441（11-18 15:49 监控巡检·data线CPU争抢持续·step仍~13.2s·pc2_fast.py 154/200 shards ETA~18:28·等data结束后复测）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2440（11-18 15:42 监控巡检·data线CPU争抢持续·loadavg缓降·step仍~13.2s·pc2_fast.py 240/348→修正为154/200 shards）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2439（11-18 15:33 监控巡检·data线CPU争抢持续·step仍~13.2s·NVLS=0定位修正(环境变量非train.sh)·双因仍同时活跃）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2438（11-18 15:21 监控巡检·data线CPU争抢持续·step仍~13.2s·双因仍同时活跃·NVLS=0误标为train.sh硬编码）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2437（11-18 15:14 监控巡检·data线CPU争抢持续·step仍~13.2s·双因仍同时活跃）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2436（11-18 15:05 #2435结论更正·CPU争抢未解除·双因仍同时活跃）→ daily-memories/2026-11-18.md；需要时再读。
-> 📦 #2435（11-18 14:58 吞吐诊断·**结论有误**：称data线已结束/loadavg=28.94→实测15:03仍运行/loadavg=146·"NVLS为唯一主因"结论已由#2436撤回）→ daily-memories/2026-11-18.md；需要时再读。
+> 📦 #2435–#2439（11-18 14:58→15:33, 5轮吞吐诊断中间态·CPU争抢+NVLS双因排查·结论逐步修正→最终#2442定案CPU争抢为根因）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2434（11-18 14:50 吞吐诊断修正·双因叠加(NVLS禁用+CPU争抢)·CPU争抢因素已于14:55消除·NVLS为主因已由#2435确证）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2433（11-18 14:42 吞吐诊断·**结论有误**(data线CPU未释放被误判为已释放;.29 GPU power 125W实为.12数据)·已由#2434纠正）→ daily-memories/2026-11-18.md；需要时再读。
 > 📦 #2432（11-18 14:30 监控巡检·二次重启后首次·step~13s·data线ETA~4h）→ daily-memories/2026-11-18.md；需要时再读。
