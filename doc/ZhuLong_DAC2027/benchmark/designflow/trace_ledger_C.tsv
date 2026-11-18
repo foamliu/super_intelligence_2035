@@ -148,7 +148,7 @@
 1790490487765_6dx8f.messages.json	cwei	hfeahpc504	328	layout_aether	case	EDA-Eval-DesignFlow-CTLESchGenAudit-001	2026-11-03 22:54	
 1792546322783_po4s1.messages.json	colinxu	hfeg0plg81	248	layout_virtuoso	case	EDA-Eval-DesignFlow-SchPinPlanAudit-001	2026-11-03 23:15	
 1789017399621_cmsbu	chenyue	hfeg0plg85	129	layout_aether	parked		2026-11-03 23:28	near-dup of M2PathLayout-001 (i1gjh): same chenyue/hfeg0plg85/cimi_test_cy/test_cimi/layout, same dbCreatePath theme (M2LANE/100paths/pitch0.69 vs M2/40paths/2um); parked to avoid topic dup
-1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	deepread		2026-11-15 20:15	r616 deepread done; case synthesis DEBT:1 ETA r617; layout_aether remain-top-pin-virtual script fix (dbDelCV+aeAddTrace-once+try-except ASSTRM-80158)
+1792723085633_1ggoq	ellawu	hfeg0pkn005	109	layout_aether	case	EDA-Eval-DesignFlow-LayoutRemainTopPinVirtualFix-001	2026-11-18 22:06	r616 deepread done; case synthesis DEBT:1 ETA r617; layout_aether remain-top-pin-virtual script fix (dbDelCV+aeAddTrace-once+try-except ASSTRM-80158)
 1789993978842_q63ux	yiz	hfeg0plg101	247	layout_aether	parked		2026-11-03 23:29	sim domain: UI#0 读 ncsim.trn 信号 toggle 数值=waveform/sim 非 physical_layout; netlist124+hspice dominant
 1791526217197_87257	t0002962	hfeg0pkn003	460	layout_aether	parked		2026-11-03 23:32	meta: UI#0 policy engine caching/permission debug, UI#234 grant permission to change file; not a design-flow seed
 1789090020843_b9bop	zhigangw	hfeg0pkn002	183	layout_aether	parked		2026-11-03 23:32	generic launch: UI#0 启动业务场景:时序分析, UI#264 report product yield; innovus110 mixed timing/yield non pure layout
