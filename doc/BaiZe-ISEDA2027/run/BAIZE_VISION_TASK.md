@@ -33,11 +33,18 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· ⚠️ 未完成 · 用户两轮修正后需重做
+### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· ✅ 重做已交付 (wake#1663) · 待用户验收
 
-> **wake#1525 初版交付被用户否决**：初版只跑了 10 道带 PNG 的题（V0=0/V1=0/V2=1/10），把 214 道 noPng case 标为 `image_required=False` + `text_only` 排除在外。用户两轮修正要求「不要把 MLLM 价值矮化为 OCR」「所有与波形相关的 case 都纳入，让 V0 vs V1/V2 的实验说话」。**当前 jsonl 224 行的分类和基线对照不满足修正后的判据，需要重做。**
+> **wake#1663 重做交付（2026-11-19 00:25:35 全队列 runner done）**：用户两轮修正后已重做，原「还差什么」三项全部落地——
+> 1. ✅ **jsonl 分类改判**：废除旧「214 道 text_only 标 `image_required=False` + 排除在 V0/V1/V2 外」口径。新口径 `eval_included = 波形相关 ∧ 有 check.py = 192` 全部纳入评测队列（`cohort=full_eval`）；182 道 text_only 不再排除，由 agent 尝试、真实 check.py 判分（不预设「需不需要看图」，让实验说话）。新增 `audit_category`（image_reading/code_gen）字段。33 道（32 no_check + 1 非波形 IRReportPdf）诚实排除并写明理由。子集 `vision/EDA-Eval-DesignFlow-WaveView.jsonl` 225 行，36.15 与本地 sha256 一致。
+> 2. ✅ **V0/V1/V2 全队列对照跑完**：36.15 `run_codegen_full.py` 跑完全队列 **546 行/546 = 182 case × 3 臂三臂齐全**。V0 20/182(11.0%) · V1 28/182(15.4%) · V2 32/182(17.6%)。**McNemar：V0 vs V1 b=11 c=3 p=0.057(边缘) · V0 vs V2 b=15 c=3 p=0.008(显著 p<0.05) · V1 vs V2 b=8 c=4 p=0.388**。17 例 VQA 翻转（15 例 V0→V2 PASS / 3 例反向）。**结论：MLLM-as-VQA 价值 = V2 适配器 vs 无 VQA 整题通过率 +6.6pp(11.0%→17.6%)，p=0.008 显著**。本地快照 `vision/waveview_mining/codegen_full_results_snapshot.json`(546 行)。
+> 3. ✅ **报告已更新**：`reports/report_vision_waveview_selftest_agent_zh.html` §0.6 已改写为最终全队列结果（废除 interim 措辞），数字可复算。
+>
+> **状态**：重做已交付并 commit（`vision wake#1663`），**WAITING: 0**。原 wake#1525 否决记录与三项「还差什么」原文保留于下，供用户验收对照；用户验收通过后归档至 `ARCHIVE_OPERATOR_VISION.md`。
 
-> **还差什么（明确）**：
+> **wake#1525 初版交付被用户否决（历史，保留对照）**：初版只跑了 10 道带 PNG 的题（V0=0/V1=0/V2=1/10），把 214 道 noPng case 标为 `image_required=False` + `text_only` 排除在外。用户两轮修正要求「不要把 MLLM 价值矮化为 OCR」「所有与波形相关的 case 都纳入，让 V0 vs V1/V2 的实验说话」。**该初版口径已被 wake#1663 重做取代。**
+
+> **原「还差什么（已全部解决）**：
 > 1. **jsonl 分类要改**：224 道里 214 道标 `image_required=False`+`text_only` 是基于旧口径（"check.py 判图像读数才算需要看图"）。按修正后口径，这些 case 应纳入评测——它们与波形相关，VQA 工具可能通过任何机制（读数/pattern/细节问答/辅助决策）帮助提升通过率。
 > 2. **V0/V1/V2 对照要跑全量**（或至少跑有 check.py 的 ~192 道），不只跑 10 道。V0 = 无 VQA 跑通过率，V1/V2 = 有 VQA 跑通过率，差异 = MLLM 价值。
 > 3. **报告要更新**：用扩大题集的对照结果覆盖 `reports/report_vision_waveview_selftest_agent_zh.html`。
