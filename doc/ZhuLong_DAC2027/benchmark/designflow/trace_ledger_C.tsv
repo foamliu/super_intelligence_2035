@@ -1008,7 +1008,7 @@ djvnv	e0014566	hfeg0plg58	79	layout_virtuoso	parked		2026-11-15 07:19	run-existi
 0pfvw	hybeaml	hfeg0plg88	76	layout_aether	parked		2026-11-15 07:19	thin-produce hotkey layer-switch below bar
 3m5t4	yohannw	hfeg0pnd001	76	layout_aether	parked		2026-11-15 07:19	config/ops agent_policy config mod
 5laiw	yongk1li	hfeg0plg99	79	physical_verify	parked		2026-11-15 07:19	Q&A/modify-existing what is this modify script
-ics15	ziyuny	hfeg0plg98	79	physical_verify	parked		2026-11-15 07:19	debug/analyze DRC log analysis
+ics15	ziyuny	hfeg0plg98	79	physical_verify	case	EDA-Eval-DesignFlow-DrcRunStatusAnalyze-001	2026-11-18 21:26	r776 revive per 2026-11-15 user command (old analysis-Q&A disqualifier -> viable B档); real trace ziyuny@hfeg0plg98 mc=79, mock-behavioral DRC run-status log analyzer, k_check=20
 61zln	rongtaoy	hfeg0pnd002	76	physical_verify	parked		2026-11-15 07:19	verify/audit-existing coupling extraction audit
 yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config modify policy writableRoots add dir
 1lote	hongyuy	hfeg0plg73	78	physical_verify	parked		2026-11-15 07:19	how-to Q&A CMP add how to operate
