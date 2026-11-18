@@ -3343,3 +3343,11 @@
 | 2026-11-19 | [W] 华为 WATCH Air 真机曝光（方形 / 钛金属 / 5 天续航） | IT之家 `1/029/127` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/127.htm |
 | 2026-11-19 | [W] 华为 WATCH 5 重启 HarmonyOS 7 花粉 Beta（新增地震预警） | IT之家 `1/029/128` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/128.htm |
 | 2026-11-19 | [W] 腾讯 WorkBuddy 七天收入年化超 5 亿美元 | IT之家 `1/029/110` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/110.htm |
+| 2026-11-19 | 谷歌 Labs 推出实验性智能体 Stitch Loop：连接代码库与线上数据，发布后持续优化并提交 PR | IT之家 `1/029/137` | news | https://www.ithome.com/1/029/137.htm |
+| 2026-11-19 | 安全团队公开 NGINX2Root 漏洞链：5 个 Nginx RCE + 内核提权，合并后可容器逃逸拿宿主机 root | IT之家 `1/029/139` | news | https://www.ithome.com/1/029/139.htm |
+| 2026-11-19 | SpaceXAI 密西西比 AI 数据中心泄漏 5,000–6,000 加仑丙二醇冷却液，部分流入厂外排水沟 | IT之家 `1/029/115` | news | https://www.ithome.com/1/029/115.htm |
+| 2026-11-19 | 北爱尔兰一中学用抽奖鼓励 GTA 6 发售日按时上课（70 英镑游戏礼品卡 ×2） | IT之家 `1/029/091` | news | https://www.ithome.com/1/029/091.htm |
+| 2026-11-19 | 英伟达黄仁勋辞职后首次全员大会：临时 CEO 称告别黄仁勋时代，12 月加薪，董事会称不会复职 | IT之家 `1/029/134` | news | https://www.ithome.com/1/029/134.htm |
+| 2026-11-19 | Omdia：2026 Q3 中东智能手机出货量同比降 29% 至 1,070 万部，ASP 升至 511 美元 | IT之家 `1/029/136` | news | https://www.ithome.com/1/029/136.htm |
+| 2026-11-19 | QQ 音乐简洁版脱离波点音乐独立上架安卓，绿钻权益互通 | IT之家 `1/029/113` | news | https://www.ithome.com/1/029/113.htm |
+| 2026-11-19 | [W] 我国成功发射实践二十四号卫星，长征系列第 678 次飞行 | IT之家 `1/029/138` | W 区（第 306 轮 · W1 · 与 AI 主题无关，不入账） | https://www.ithome.com/1/029/138.htm |
