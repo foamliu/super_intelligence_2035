@@ -44,21 +44,7 @@ WAITING: 0（2026-11-18 wake#1284·**🟢 standby·plan v1.5 已交付**：commi
 
 - [wake#1227 详条已滚出·2026-11-18 wake#1229 归档] 见 `daily-memories/2026-11-18.md` §[wake#1229 roll-out]（plan v1.1 第六十次复核·被 wake#1228/#1229 代表）。
 
-- [wake#1198~#1224 详条已滚出·2026-11-18 wake#1223 再归档] 见 `daily-memories/2026-11-18.md`（plan v1.1 第三十一~五十七次复核·结构性/实质源核验/infra 自检·被 wake#1201/#1216/#1221/#1225/#1226 代表）。
-
-- [wake#1095~#1196 详条/指针已滚出·2026-11-18 wake#1223 再归档] 见 `daily-memories/2026-11-{17,18}.md`（plan v1 第二~二十九次复核·被 wake#1197/#1198 代表）。
-
-- [wake#1167 详条已滚出·2026-11-18 wake#1223 再归档] 见 `daily-memories/2026-11-17.md`（plan v1 首次交付·commit `87cdb56f8`·被 wake#1178 代表）。
-
-- [wake#1165/#1166 详条已滚出·2026-11-18 wake#1223 再归档] 见 `daily-memories/2026-11-18.md`（被 wake#1172 代表）。
-
-- [wake#1162~#1164 详条已滚出·2026-11-17 wake#1223 再归档] 见 `daily-memories/2026-11-17.md`（被 wake#1166 代表）。
-
-- [wake#1148~#1161 详条已滚出·2026-11-17 wake#1162] → `daily-memories/2026-11-17.md` §[wake#1148~#1161 rolled-out]（standby 心跳序列·done_all·结案5项重核通过·infra 自检通过·含 wake#1161 HEAD=a6813fb2a·pgrep/comm 假阳性排查·ops_clean_run5 非 subagent 臂·不干扰）。
-
-- [wake#1036 详条已滚出·2026-11-17] → `daily-memories/2026-11-17.md` §[wake#1036 rolled-out]（subagent 消融线结案·done_all·用户令 09:3x·⚠️ 任务#2 report §结案节当时虚假✅→wake#1103 补做·❌ wake#1103 补做本身误判→wake#1104 纠正）。
-
-- [wake#911~#1092 旧指针已滚出·2026-11-17 wake#1093 合并] 原文均已在 `daily-memories/2026-11-17.md`（含 wake#1092 §[rolled-out] / wake#1090/#1091 §[rolled-out] / wake#1087/#1088 §[rolled-out] / wake#1037~#1040 + wake#911~#1035 §[rolled-out wake#1042 归档] 等）·均已被 wake#1036(结案)+wake#1093(最新 standby) 代表。A0′′ proxy 修复关键节点 #1011（cline 3.0.51 忽略 contextWindow=8K→truncation proxy port 19099）详见 daily-memories/2026-11-1{6,7}.md。
+- [wake#911~#1224 详条/指针已滚出·2026-11-18 wake#1284 再合并] 原文均已在 `daily-memories/2026-11-{17,18}.md`（plan v1 首次交付 commit `87cdb56f8` + v1.1 第二~五十七次复核 + standby 心跳序列 + subagent 消融线结案 wake#1036 + wake#1148~#1161 done_all 重核 + A0′′ proxy 修复关键节点 #1011 cline 3.0.51 忽略 contextWindow=8K→truncation proxy port 19099 详见 daily-memories/2026-11-1{6,7}.md）·均已被 wake#1036(结案)/wake#1178(v1 首交付)/wake#1251(v1.5 交付) 代表。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
