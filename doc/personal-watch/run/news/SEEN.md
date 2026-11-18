@@ -3310,3 +3310,36 @@
 | 2026-11-18 | [W] GTA 6 M 站均分 99 | IT之家 `1/029/038` | W 区（第 304 轮） | https://www.ithome.com/1/029/038.htm |
 | 2026-11-18 | [W] 外媒编辑 GTA 6 通关时长 | IT之家 `1/029/023` | W 区（第 304 轮） | https://www.ithome.com/1/029/023.htm |
 | 2026-11-18 | [W] 新西兰旅游局喊话切区玩家 | IT之家 `1/029/010` | W 区（第 304 轮） | https://www.ithome.com/1/029/010.htm |
+| 2026-11-19 | 谷歌开放 Project Genie 新体验并首次开放 Genie 4（边玩边改天气 / 调用角色 / 原生音频 / Genie 3 探索时长 60s→3 分钟） | IT之家 `1/029/129` | news（第 305 轮 · §1） | https://www.ithome.com/1/029/129.htm |
+| 2026-11-19 | 微软与英特尔深化合作：Azure 首个 EMIB 客户 + 锁定 Diamond Rapids 供应 | IT之家 `1/029/122` | news（第 305 轮 · §1） | https://www.ithome.com/1/029/122.htm |
+| 2026-11-19 | 华为 × Vodacom 发布 U6GHz（6425–7125MHz）成果：VitaAAU 覆盖 +30% / 能耗 -30%（厂商自报） | IT之家 `1/029/123` | news（第 305 轮 · §1 + §3 治理侧面） | https://www.ithome.com/1/029/123.htm |
+| 2026-11-19 | 「安卓版」iOS 系统实现 Touch ID（@BugOS技术组 视频 / 社区移植） | IT之家 `1/029/126` | news（第 305 轮 · §1 + §6 生态侧面） | https://www.ithome.com/1/029/126.htm |
+| 2026-11-19 | 中国旗舰模型集体收紧网络攻击能力（Qwen4-Max 过滤语料未开权重 / Kimi K3.1 Pro 81.0% vs 90.5% / VAPOR PANDA 200+ 机构） | IT之家 `1/028/133` | news（第 305 轮 · §2） | https://www.ithome.com/1/028/133.htm |
+| 2026-11-19 | 一款路由器故障致全美航班停飞：FAA 停用 60 余台、叫停后续安装 | IT之家 `1/029/119` | news（第 305 轮 · §2） | https://www.ithome.com/1/029/119.htm |
+| 2026-11-19 | 第七届中国人工智能大赛在厦门收官：安全攻防赛近 1200 支团队、8 支 A 类 | IT之家 `1/028/132` | news（第 305 轮 · §3，企业供稿只采赛事事实） | https://www.ithome.com/1/028/132.htm |
+| 2026-11-19 | Anthropic 考虑扩大 IPO 规模：机构认购意向 4,000 亿美元、散户近 1,000 亿美元（CNBC） | IT之家 `1/029/121` | news（第 305 轮 · §4） | https://www.ithome.com/1/029/121.htm |
+| 2026-11-19 | Anthropic IPO 定价每股 83 美元：估值约 1.5 万亿美元、合计融资超 944 亿美元 | IT之家 `1/029/132` | news（第 305 轮 · §5 + §6 市场侧面） | https://www.ithome.com/1/029/132.htm |
+| 2026-11-19 | 腾讯：更多企业转向国产芯片，将助推国内供应链建设提速（Q3 营收 2073.36 亿 +8%） | IT之家 `1/029/124` | news（第 305 轮 · §5） | https://www.ithome.com/1/029/124.htm |
+| 2026-11-19 | 字节跳动被曝与微软洽谈 5 亿美元 Azure 合同，惹 OpenAI 不满（The Information） | IT之家 `1/029/133` | news（第 305 轮 · §5） | https://www.ithome.com/1/029/133.htm |
+| 2026-11-19 | 马斯克：SpaceX 未把 OpenAI 任何采购收入计入预期 | IT之家 `1/029/116` | news（第 305 轮 · §5） | https://www.ithome.com/1/029/116.htm |
+| 2026-11-19 | 哈啰 Robotaxi 组织调整：成立「模型开发与数据闭环部」由 CEO 杨磊负责 | IT之家 `1/029/117` | news（第 305 轮 · §5） | https://www.ithome.com/1/029/117.htm |
+| 2026-11-19 | 华为 Mate 90 系列推送 HarmonyOS 7.0.0.115：完全体 3D 空间壁纸 | IT之家 `1/029/125` | news（第 305 轮 · §5） | https://www.ithome.com/1/029/125.htm |
+| 2026-11-19 | [A] 字节借 Azure 间接调用 OpenAI：授权边界可被第三方云绕开的公开案例 | IT之家 `1/029/133` | analysis（第 305 轮 · 附录 X1） | https://www.ithome.com/1/029/133.htm |
+| 2026-11-19 | [D] 2026 年 FPS 玩家的快触发 8K 键盘真实体验 | IT之家 `1/029/131` | discussion（第 305 轮 · 附录 X2） | https://www.ithome.com/1/029/131.htm |
+| 2026-11-19 | [T] 电动牙刷导购系列（欧乐-B 推广） | IT之家 `1/028/119` `1/028/120` `1/028/129` `1/028/130` | tool（第 305 轮 · 附录 X3） | https://www.ithome.com/1/028/119.htm |
+| 2026-11-19 | [T] GEO 优化服务商选型 / 外贸 GEO 案例 | IT之家 `1/028/125` `1/028/122` | tool（第 305 轮 · 附录 X4） | https://www.ithome.com/1/028/125.htm |
+| 2026-11-19 | [W] 正文 404：`1/029/135` / `1/029/136` | IT之家 | W 区（第 305 轮 · 附录 X5，不入账） | https://www.ithome.com/1/029/135.htm |
+| 2026-11-19 | [W] AMD Radeon Linux 26.17 驱动（高带宽 HDMI） | IT之家 `1/029/130` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/130.htm |
+| 2026-11-19 | [W] AMD 26.11.2 肾上腺素驱动（ROCm 10.2 / 《影之刃零》） | IT之家 `1/029/131` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/131.htm |
+| 2026-11-19 | [W] 铭凡 T5 Max-388 5L 台式机 48GB+1TB 9699 元 | IT之家 `1/029/093` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/093.htm |
+| 2026-11-19 | [W] 微星 RTX Spark 迷你主机 EdgeMesa N AI+ 33999 元 | IT之家 `1/029/111` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/111.htm |
+| 2026-11-19 | [W] 赛睿 T1 联名 QcK Cloth XXL 鼠标垫 399 元 | IT之家 `1/028/117` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/028/117.htm |
+| 2026-11-19 | [W] 小米 18 标准版预计 12 月发布、起售 5699 元（爆料） | IT之家 `1/029/120` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/120.htm |
+| 2026-11-19 | [W] 2026 苹果 App Store Awards 入围名单 | IT之家 `1/029/094` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/094.htm |
+| 2026-11-19 | [W] GTA 6 半小时创 Twitch 单机游戏收视纪录（250 万人同观） | IT之家 `1/029/104` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/104.htm |
+| 2026-11-19 | [W] GTA 6 无法重玩已完成任务、仅 15 个手动存档位 | IT之家 `1/029/112` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/112.htm |
+| 2026-11-19 | [W] R 星总裁山姆·豪瑟发售后致谢 | IT之家 `1/029/114` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/114.htm |
+| 2026-11-19 | [W] 数毛社实测 GTA 6 Xbox 版（Series X 稳定 30 帧） | IT之家 `1/029/118` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/118.htm |
+| 2026-11-19 | [W] 华为 WATCH Air 真机曝光（方形 / 钛金属 / 5 天续航） | IT之家 `1/029/127` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/127.htm |
+| 2026-11-19 | [W] 华为 WATCH 5 重启 HarmonyOS 7 花粉 Beta（新增地震预警） | IT之家 `1/029/128` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/128.htm |
+| 2026-11-19 | [W] 腾讯 WorkBuddy 七天收入年化超 5 亿美元 | IT之家 `1/029/110` | W 区（第 305 轮 · X6） | https://www.ithome.com/1/029/110.htm |
