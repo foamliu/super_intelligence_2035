@@ -2,6 +2,13 @@
 
 WAITING: 0
 
+> 🔴 **用户令 2026-11-18 — S2 overlap 研究 + PC-4 blend TSV + Nemotron/finemath 分词 · 已交付**：
+> **S2 overlap 报告**：`reports/report_s2_data_overlap_study.md`（455行/6方案/Megatron源码逐行分析）。结论：当前blend不排除S1已训数据；同种子重叠~83-100%（相同shuffle前缀）；推荐方案D+E（补新源stack-v3/MegaMath天然零重叠 + S2换SEED=5678将旧源重叠从~35%降到~17%）；完全排除不可行（code_l2/l3剩余量不足）。
+> **PC-4 blend TSV**：`code/baize-llm/configs/blend_s2_preblend.tsv`（fallback版，9源/prop=1.0/web40/code40/math20）。MegaMath flat symlink `pre-blend/megamath/`（348×3 files, subset-prefixed: mm_wp/mm_tcb/mm_qa/mm_tc）。待Nemotron分词完成更新为main版。
+> **Nemotron-CC-Math 分词**：后台运行中 PID 1791934（193 parquet, RAYON=8, nice19, ionice3, log→/tmp/tok_nemotron_math.log）。
+> **finemath-4plus 分词**：后台运行中 PID 1791935（64 parquet, RAYON=8, nice19, ionice3, log→/tmp/tok_finemath4.log）。
+> **.12 负载**：82 ✅ (<120 红线, 不挤 pretrain)。
+
 > 🔴 **用户令 2026-11-18 14:2x — .12 CPU 僵尸清理 + 分词分机 · 已执行**：
 > **清理清单**：KILL PID 2350098 (`pc2_fast.py --subset megamath-text-code-block`, 9449%CPU=94核, ppid=1孤儿, 跑9h, batch encode用94线程抢CPU) + KILL PID 4060821 (`pc2_v3.py`, 99%CPU=1核, 跑8.5h, 与pc2_fast重叠做text-code-block但web-pro/qa/translated-code已完成→wasteful overlap)。
 > **分机方案**：.12 `pc2_fast_split.py --subset megamath-text-code-block --start-idx 155 --end-idx 178` (shards 155-177/23个, RAYON_NUM_THREADS=8, nice=19, ionice=3, PID 2430086) + .29 `pc2_fast_split.py --subset megamath-text-code-block --start-idx 178 --end-idx 200` (shards 178-199/22个, RAYON_NUM_THREADS=16, nice=19, ionice=3, PID 3935896)。megamath-code 16 parquets schema不含text列(file_info/repo_info struct)→pc2_fast.py不兼容, 待后续单独处理。
@@ -50,13 +57,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置工作执行中 — PC-1✅ PC-2🔄 PC-3✅ PC-4待 PC-5🔄 → WAITING=1(30min长睡监控)
-已完成:       ✅分词全DONE(8192shard/476B tok/1.8TB/0ERR);✅PC-1 L4过滤✅(430.7B/90.5%保留/脚本+报告+白名单TSV);✅PC-3污染闸门✅(5 benchmark下载9277tasks);✅Nemotron-CC-Math下载✅(243GB/196files);✅finemath下载✅(140GB/288parquet);✅S1/S2报告v2.7(更新PC-1/PC-3实测结果);✅小数据集#6-10全DONE;✅MegaMath batch1(216GB/5子集)
-当前动作:     PC-2 MegaMath分词4路并行运行中(web-pro 2/100/112s per shard/ETA~3h; text-code-block 0/200; qa 0/32; translated-code 0/16); MegaMath-web下载12%(599/4950); finemath+Nemotron已完成
-下一步:       ①等PC-2分词完成(ETA~3-6h)→更新报告G2 ②PC-4 blend TSV生成(依赖PC-1+PC-2) ③MegaMath-web下载完成后PC-5分词 ④全部完成后逐题污染扫描
-阻塞:         无(PC-2分词4路并行nice19/ionice3后台运行;MegaMath-web下载后台运行)
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅ PC-3✅ PC-4✅ PC-5🔄 → WAITING=0
+已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词(64.97B tok:web-pro 12.8B+tcb 40.5B+qa 5.9B+tc 5.8B;megamath-code 0tok因无text列);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv生成(fallback版,9源prop=1.0,web40/code40/math20);✅S2重叠研究报告(report_s2_data_overlap_study.md,6方案/455行/含Megatron源码分析);✅Nemotron-CC-Math分词后台运行中(193parquet,PID1791934,nice19);✅finemath-4plus分词后台运行中(64parquet,PID1791935,nice19);✅MegaMath flat symlink(pre-blend/megamath/348×3files)
+当前动作:     Nemotron-CC-Math+finemath-4plus后台分词运行中(RAYON_NUM_THREADS=8,nice19,ionice3,.12 load=82✅<120);S2 blend TSV fallback版已交付(待Nemotron分词完成更新为main版)
+下一步:       ①等Nemotron+finemath分词完成→更新blend_s2_preblend.tsv为main版(加入nemotron_math/finemath4,下调megamath prop) ②MegaMath-web下载完成后PC-5分词 ③全部完成后逐源13-gram污染扫描 ④报告pretrain线转告SEED=5678建议
+阻塞:         无(Nemotron+finemath分词后台nice19/ionice3;.12 load 82<120✅不挤pretrain)
 ERROR_COUNT:  0
-未完成指令:   有(PC-2分词进行中/MegaMath-web下载12%/PC-4待PC-2完成)→WAITING=1(后台任务,30min长睡监控)
+未完成指令:   无(Nemotron+finemath分词后台运行中,MegaMath-web下载后台运行中,所有PC-1~PC-4已交付)→WAITING=0
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）
