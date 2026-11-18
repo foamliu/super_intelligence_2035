@@ -1901,3 +1901,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1792653728196_49kxc	yutongy	10.129.2.11	10	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 stdcell circuit recommendation open-ended thin-gold
 1793692750441_cydnq	e0039602	10.129.2.11	422	schematic_netlist	parked		2026-11-19 05:12	r920 peek: cross-shard dup — A ledger已 case=EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001 (r638, U#0 tb_family role Q&A, domain=eda_other). D-pure keyword filter 假阳性. D 不造. U#241 cell_part bug 诊断子任务若独立造需先 @A 厘清 task-level vs session-level dedup (DEBT hk622).
 1794813876119_mbjtd	frankc	hfeg0plg92	30	waveform	case	EDA-Eval-DesignFlow-ArgparseWaveviewFixQA-001	2026-11-19 05:42	r921 peek: debug-Q&A argparse-waveview_file-required, buildable, defer synth to r922 (peek-only round per r920 plan)
+1793277903344_9dj4b	shuoran	10.129.35.68	50	schematic_netlist	claimed		2026-11-19 05:58	
