@@ -33,7 +33,7 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-18 10:3x（**再复核：ability 桶里仍混着 infra 异常，拆两层**）· 用户直令 · 最高优先 · 未完成
+### ✅ 用户令 · 2026-11-18 10:3x（**再复核：ability 桶里仍混着 infra 异常，拆两层**）· 用户直令 · ✅ 已交付（R2664）
 
 > **用户原话**：「现在 7 个 harness failed case 再没有 infra 原因导致的，对吗？核对了吗」→ 运维已抽样核实：**不成立**。
 
@@ -49,6 +49,8 @@
 3. **修正 audit 脚本**：`exc_type` 不再无条件算「真跑证据」；改为「`has_verifier` + 干净 0.0 + 无 exception」才算 ability；新增 `timeout`、`setup_fail`、`nonzero_exit` 三个 infra 子桶。
 4. **报告**：`report_harness_tb21_7way_zh.html` 的 7-way 表和失败归因节 RE 生成——新增「能力 vs 超时 vs 环境/exit异常」三列分解；把上次「待重跑=0」的措辞改为「重跑队列空，但仍有 N 题 infra 异常待判定/待修环境」。
 5. 红线：能力 vs infra 只能靠 trace 证据；诚实优先。保持 `WAITING=0`，心跳第一行给：7 路各自「真能力失败 / 超时 / 环境异常」三数 + 重新核算的干净 Pass% 区间。
+
+> **交付结论（R2664 · 2026-11-18 11:2x）**：ability 桶已拆两层——layer-A「真能力」(has_verifier=True+无exc_type+exit_code OK) / layer-B「infra嫌疑」(6个子桶: timeout/setup_fail/nonzero_exit/runtime_error/verifier_timeout/other_infra)。audit脚本 `audit_tb21_review_7way.py` 已修正(INFRA_EXC_TYPES集合+clean_ability字段+exc_type不再算真跑证据)。逐题trace判定93题layer-B: **66题确认infra**(deepseek36=29×适配器空响应+7×pip-install-fail·hermes20=19×pip/python3缺失+1×VerifierTimeout·opencode5=3×VerifierTimeout+1×OOM+1×cmd-timeout·cc4=2×VerifierTimeout+2×cmd-timeout·codex1=adapter exit2) + 9题ability_lean(cc3+pi3+opencode2+cline1=exit1但其他harness通过同题) + 18题ambiguous(cline8×AgentTimeout900s+codex3×timeout+pi2+opencode2+cc1+hermes1=无其他harness通过同题)。**关键发现**: deepseek 12.4%被36题infra压低(上界52.8%)·hermes 46.1%被20题infra压低(上界69.7%)。报告 `report_harness_tb21_7way_zh.html` 已RE生成(30575字节)——新增表2.5(layer-B逐题判定+Pass%区间+关键模式)、表二改为能力/超时/环境异常三列分解、「待重跑=0」改为「重跑队列空但仍有93题layer-B infra异常待判定/待修环境」。心跳第一行已给7路三数+Pass%区间。manifests/tb21_layerB_determinations_20261118_1120.json 存有per-task verdict+evidence(已gitignore)。
 
 ---
 

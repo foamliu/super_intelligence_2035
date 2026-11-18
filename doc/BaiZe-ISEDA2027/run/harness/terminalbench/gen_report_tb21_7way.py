@@ -418,7 +418,77 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "超时 + 环境异常 (layer-B) 题显式单列，标注「若补跑/修环境后 Pass% 可能变动」。</p>"
              "<p><strong>Pass% 区间</strong>: 下界 = passed/89 (当前确定值); "
              "上界 = (passed + layer-B 题数)/89 (假设所有 infra 嫌疑题补跑后全过 — 极端上界, 实际不可能全过)。"
-             "各路区间见 §表四。</p></div>")
+             "各路区间见 §表 2.5。</p></div>")
+
+    # ---- 表 2.5 · Layer-B 逐题判定 (§2026-11-18 10:3x 用户令 item 1) ----
+    H.append("<h2>表 2.5 · Layer-B 逐题判定（infra 嫌疑 → 确认 infra / ability-lean / ambiguous）</h2>")
+    H.append("<p><strong>判定方法 (§2026-11-18 10:3x)</strong>: 对 layer-B 每题查 trace 证据 "
+             "(exc_type + exc_msg + exc_tb top3) 并交叉验证「该题是否被其他 harness 通过」。"
+             "<strong>确认 infra</strong> = pip/python3 缺失 (exit 127/get-pip/pip install fail)、"
+             "OOM (exit 137)、适配器空响应 (deepseek empty final_response)、"
+             "VerifierTimeoutError、RuntimeError 包装的 Command timed out、适配器 exit code 2。"
+             "<strong>ability-lean</strong> = agent CLI exit 1 但其他 harness 通过了同题 → 本 harness 能力不足。"
+             "<strong>ambiguous</strong> = 超时/exit1 且无其他 harness 通过 → 可能任务对所有模型都太难。</p>")
+    _DETERMINED = {
+        "cline": (0, 0, 1, 8),
+        "codex": (1, 0, 0, 3),
+        "opencode": (5, 0, 2, 2),
+        "claude-code": (4, 0, 3, 1),
+        "pi": (0, 0, 3, 3),
+        "hermes": (20, 0, 0, 1),
+        "deepseek": (36, 0, 0, 0),
+    }
+    _PATTERNS = {
+        "cline": "8×AgentTimeout(900s) + 1×exit1(pytorch-model-recovery)",
+        "codex": "3×AgentTimeout + 1×adapter exit2",
+        "opencode": "3×VerifierTimeout + 1×OOM(137) + 1×cmd-timeout + 2×exit1(ability) + 2×amb",
+        "claude-code": "2×VerifierTimeout + 2×cmd-timeout + 3×exit1(ability) + 1×amb",
+        "pi": "1×timeout + 3×exit1(ability) + 2×amb",
+        "hermes": "19×pip/python3缺失(exit127) + 1×VerifierTimeout + 1×amb",
+        "deepseek": "29×适配器空响应(empty final_response) + 7×pip-install-fail",
+    }
+    H.append("<table><thead><tr><th>#</th><th>Harness</th><th>Layer-B<br>总数</th>"
+             "<th class='fail'>确认<br>infra</th>"
+             "<th class='warn'>ability-<br>lean</th>"
+             "<th>ambig-<br>uous</th>"
+             "<th>Pass%<br>区间</th>"
+             "<th>关键模式</th></tr></thead><tbody>")
+    _tot_lb = _tot_infra = _tot_alean = _tot_amb = 0
+    for i, (name, up, ev, tr, er) in enumerate(rows, 1):
+        hkey = next((hk for hk, dv in DISP.items() if dv == name), name)
+        rd = (review_data or {}).get(hkey, {})
+        _det = _DETERMINED.get(name, (0, 0, 0, 0))
+        _infra, _ilean, _alean, _amb = _det
+        _lb = _infra + _ilean + _alean + _amb
+        _tot_lb += _lb; _tot_infra += _infra
+        _tot_alean += _alean; _tot_amb += _amb
+        _range = f"{rd.get('real_pct', 0)}%~{rd.get('upper_pct', 0)}%"
+        H.append(f"<tr><td class='num'>{i}</td><td><strong>{esc(name)}</strong></td>"
+                 f"<td class='num'>{_lb}</td>"
+                 f"<td class='num fail'>{_infra}</td>"
+                 f"<td class='num warn'>{_alean}</td>"
+                 f"<td class='num'>{_amb}</td>"
+                 f"<td class='num'><strong>{_range}</strong></td>"
+                 f"<td style='font-size:0.85em'>{esc(_PATTERNS.get(name, '—'))}</td></tr>")
+    H.append("</tbody><tfoot><tr><td colspan=2>合计</td>"
+             f"<td class='num'>{_tot_lb}</td>"
+             f"<td class='num fail'>{_tot_infra}</td>"
+             f"<td class='num warn'>{_tot_alean}</td>"
+             f"<td class='num'>{_tot_amb}</td>"
+             f"<td colspan=2>—</td></tr></tfoot></table>")
+    H.append("<div class='caveat'><p><strong>🔴 关键发现</strong>: "
+             "<strong>deepseek 36 题 layer-B 全部 = 确认 infra</strong> "
+             "(29×适配器空响应 + 7×pip-install-fail) — "
+             "deepseek 12.4% 被大量 infra 异常压低, 若适配器+环境修复, Pass% 可能升至最高 52.8%。"
+             "<strong>hermes 20/21 = 确认 infra</strong> "
+             "(19×pip/python3 缺失 + 1×VerifierTimeout) — hermes 46.1% 也被 infra 压低, 上界 69.7%。"
+             "<strong>cline 8×AgentTimeout(900s)</strong> = ambiguous (无其他 harness 通过同题)。"
+             "<strong>cc/pi exit1</strong> 多为 ability-lean (其他 harness 通过了同题)。</p>"
+             "<p><strong>诚实声明</strong>: 确认 infra 的 66 题 "
+             "(deepseek 36 + hermes 20 + opencode 5 + cc 4 + codex 1) "
+             "不应计入「能力失败」, 但也<strong>不从分母剔除</strong> (分母恒 89)。"
+             "标注为「infra 待修环境/适配器」, 若修复后重跑 Pass% 可能变动。"
+             f"ability-lean + ambiguous 共 {_tot_alean + _tot_amb} 题更接近能力失败。</p></div>")
 
     # ---- 表三: Infra 欠账修复台账 ----
     H.append("<h2>表三 · Infra 欠账修复台账</h2>")
@@ -464,7 +534,9 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
                   "<p><strong>当前状态</strong>: 全部7路重跑COMPLETE (deepseek✅cc✅cline-patched✅hermes✅opencode✅pi✅codex✅, 待重跑=0). "
                   f"codex-55第三轮重跑COMPLETE→codex=25/89=28.1% (从1/89=1.1%回升✅fix①生效), 待重跑={_total_pending}. "
                   "真实 Pass% = passed/89 已为最终值, "
-                  "pass 就 +1, fail 计失败。<strong>所有 infra 桶已重跑完成, 不从分母剔除</strong>。"
+                  "pass 就 +1, fail 计失败。<strong>重跑队列空 (待重跑=0), 但仍有 93 题 layer-B infra 异常待判定/待修环境</strong> "
+                  "(见 §表 2.5: 66 题确认 infra + 27 题 ability-lean/ambiguous)。"
+                  "<strong>所有已知 infra 桶 (quota/rate_limit/conn_refused/synthetic) 已重跑完成, 不从分母剔除</strong>。"
                   "环境硬约束 (BLOCKED) 题显式注明原因, 不误算为通过: hermes qemu/mteb (Py3.9&lt;3.11), "
                   "cline pytorch-model-recovery (cline CLI 静默崩溃, 3 attempts)。</p>"
                   "<p><strong>四桶定义</strong>: <code>ability</code> = 模型真跑且答错 "

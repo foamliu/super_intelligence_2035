@@ -1,7 +1,9 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2663 · 2026-11-18 10:2x — 巡检+纠偏轮·自检clean(load9.2/224·MemAvail1861GB·0 runaway>8000%CPU·opencode PID4072970 6.7%/1.2GB idle REPL under ssh pts/1 49.8h 未达kill阈值不碰·pretrain cline PID1970440 非本线不碰)·**🔴 纠正R2662误判**：SWE-bench Verified eval **✅COMPLETE**(PENDING_EVAL=0 across 7路·all patch-bearing instances evaluated·0 backlog)——R2662"eval stalled@Nov13-14·~1014题待eval"=**误计**：500−n gap = no-patch/no-output predict attempts(429 quota/timeout)·NOT unevaluated instances·**真瓶颈=predict 2274/3500=65% stalled@gateway 429(quota exhausted)**(remaining: codex361/deepseek325/pi204/cline168/cc146/hermes20/opencode2·无predict进程在跑·受gateway quota制约=infra)·**caveat**: codex(314 quota)&deepseek(106 timeout) SWE-bench predict 早于适配器修复(codex fix Nov17·deepseek fix R988)→数字疑被压低→predict rerun(用修复后适配器)为候选(受quota制约)·留待运维拍板·7way报告(report_harness_glm53_7way_swebench_tb_zh.html)已正确(eval 0 backlog·predict 65% stalled 429·今晨09:55 REGEN)·kimi full500报告routine refresh(11±11行)·全部运维令✅已交付·无新指令·WAITING=0·📦 TASK=26.4KB MEMORY=24.2KB(✅≤32KB)
+> 🆕 **R2664 · 2026-11-18 11:2x — 🔴10:3x用户令交付(ability桶拆两层)·**心跳第一行(7路三数+Pass%区间)**: cline:真=38/超=8/环=1|47.2%~57.3% · codex:真=59/超=3/环=1|28.1%~32.6% · opencode:真=31/超=1/环=8|50.6%~60.7% · cc:真=51/超=0/环=8|33.7%~42.7% · pi:真=48/超=1/环=5|39.3%~46.1% · hermes:真=27/超=2/环=19|46.1%~69.7% · deepseek:真=41/超=0/环=36|12.4%~52.8% · **layer-B逐题判定**: 93题=66确认infra(deepseek36+hermes20+opencode5+cc4+codex1)+9 ability_lean+18 ambiguous · **关键发现**: deepseek 36题layer-B全部=确认infra(29×适配器空响应+7×pip-install-fail)→12.4%被infra压低·hermes 20/21=确认infra(19×pip缺失)→46.1%也被压低·cline 8×AgentTimeout(900s)=ambiguous · audit脚本已修(INFRA_EXC_TYPES+clean_ability+6个infra子桶)·报告新增表2.5(layer-B逐题判定+Pass%区间+关键模式)·表二改为能力/超时/环境异常三列分解·manifests/tb21_layerB_determinations_20261118_1120.json已存(per-task verdict+evidence)·WAITING=0·📦 TASK≈29.7KB MEMORY≈26KB(✅≤32KB)
+
+> 📦 **R2663 · 2026-11-18 10:2x — 巡检+纠偏轮·自检clean(load9.2/224·MemAvail1861GB·0 runaway>8000%CPU·opencode PID4072970 6.7%/1.2GB idle REPL under ssh pts/1 49.8h 未达kill阈值不碰·pretrain cline PID1970440 非本线不碰)·**🔴 纠正R2662误判**：SWE-bench Verified eval **✅COMPLETE**(PENDING_EVAL=0 across 7路·all patch-bearing instances evaluated·0 backlog)——R2662"eval stalled@Nov13-14·~1014题待eval"=**误计**：500−n gap = no-patch/no-output predict attempts(429 quota/timeout)·NOT unevaluated instances·**真瓶颈=predict 2274/3500=65% stalled@gateway 429(quota exhausted)**(remaining: codex361/deepseek325/pi204/cline168/cc146/hermes20/opencode2·无predict进程在跑·受gateway quota制约=infra)·**caveat**: codex(314 quota)&deepseek(106 timeout) SWE-bench predict 早于适配器修复(codex fix Nov17·deepseek fix R988)→数字疑被压低→predict rerun(用修复后适配器)为候选(受quota制约)·留待运维拍板·7way报告(report_harness_glm53_7way_swebench_tb_zh.html)已正确(eval 0 backlog·predict 65% stalled 429·今晨09:55 REGEN)·kimi full500报告routine refresh(11±11行)·全部运维令✅已交付·无新指令·WAITING=0·📦 TASK=26.4KB MEMORY=24.2KB(✅≤32KB)
 
 
 > 📦 **R2662 · 2026-11-18 10:0x — 巡检轮·自检clean(load9.3/224·MemAvail1861GB·0 runaway>8000%CPU·0 eval容器进程·opencode PID4072970 6.6%/1.2GB under ssh pts/1 etimes~49h 未达kill阈值不碰)·全部运维令✅已交付(14:5x+10:2x R2661)·**TB-2.1 7路最终(分母89)**:cline47.2/codex28.1/opencode50.6/cc33.7/pi39.3/hermes46.1/deepseek12.4·**SWE-bench Verified predict=500/500全7路完成✅ 但eval stalled@Nov13-14(5天)**:opencode eval498/500·hermes480/500·cc341/500·cline330/500·pi295/500·deepseek175/500·codex142/500→余~1014题待eval(余量:codex358+deepseek325+pi205+cline170+cc159+hermes20+opencode2)·research日报11-18 harness建议4条(①产物存在性判分替代exit-code·②工具provider绑定检查·③结果文件外壳指纹四元组·④代码评测按语言分桶)纳入未来计划·WAITING=0: 无未完成指令·等待运维新指令(或指示是否续推SWE-bench eval)·📦 TASK=26.4KB MEMORY=24.0KB(✅≤32KB)
@@ -47,14 +49,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2663 巡检+纠偏·SWE-bench eval✅COMPLETE(0 backlog·R2662"stalled"=误计no-patch)·predict 2274/3500=65% stalled@429·WAITING=0
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE(cline47.2/codex28.1/opencode50.6/cc33.7/pi39.3/hermes46.1/deepseek12.4)·codex.py fix①②③✅·14:5x+10:2x✅已交付·SWE-bench eval✅COMPLETE(7/7路 PENDING_EVAL=0)·7way报告正确(09:55 REGEN)
-当前动作:     R2663: 自检clean·查"SWE-bench eval stalled"→实为COMPLETE(PENDING_EVAL=0·R2662把no-patch predict误计为unevaluated)·真瓶颈=predict 65% stalled@429·纠正MEMORY+快照叙事·kimi full500报告routine refresh
-下一步:       无未完成指令·等待运维新指令(或指示续推SWE-bench predict——受gateway 429 quota制约·codex/deepseek predict早于适配器修复可考虑rerun)
-阻塞:         无(predict stalled系gateway 429 infra·非agent可解)
+PHASE:        R2664 10:3x用户令交付(ability桶拆两层)·audit脚本修+报告新增表2.5+layer-B逐题判定·WAITING=0
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·14:5x+10:2x✅·SWE-bench eval✅COMPLETE·10:3x ability桶拆两层✅(audit脚本修+6个infra子桶+clean_ability+表2.5逐题判定+Pass%区间)
+当前动作:     R2664: 10:3x用户令——ability桶拆两层(layer-A真能力/layer-B infra嫌疑)·逐题trace判定93题layer-B(66确认infra+9 ability_lean+18 ambiguous)·audit脚本修正(exc_type不再算真跑证据)·报告新增表2.5·MEMORY心跳更新
+下一步:       无未完成指令·等待运维新指令·(deepseek 36题infra=适配器空响应·hermes 20题infra=pip缺失·若运维指示修复环境/适配器后重跑,Pass%可能显著变动)
+阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈29.7KB / MEMORY≈18.1KB（✅≤32KB）
- 真实 Pass% (fresh audit, 分母=89, 全部DONE待重跑=0): cline 42/89=47.2% · codex 25/89=28.1%(从修复前1/89=1.1%回升✅fix①生效·89题重跑COMPLETE+merge) · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · 全部7路待重跑=0
+ 体积: TASK≈29.7KB / MEMORY≈26KB（✅≤32KB）
+ 真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
   cline专项小结: predict_glm53=332files/332real/249resolved/0empty·C1:332real·C2:failed=81(能力)·C3:empty=0·C4:249res/334eval=74.7%·C5:报告R2453·失败top1=能力差·cc354/500=70.8%·opencode498/500=99.6%·gap=能力差
