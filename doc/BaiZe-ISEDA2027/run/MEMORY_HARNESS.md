@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2707 · 2026-11-18 23:5x — 监控轮·MM容器303/580(52.2%)·1新real-patch(cline)不足阈值·cumulative不变**·心跳第一行: SWE-bench Verified 7路 cumulative(不变): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code292/500=58.4%**·**cline275/500=55.0%**·**pi227/500=45.4%**·**deepseek153/500=30.6%**·**codex98/500=19.6%**·📦 监控轮: 1 unevaluated real-patch(cline django-15987·predict advance 382→384)不足incr_eval阈值(R2697先例:1<阈值)→无incr_eval·cumulative Pass%不变·📦 **SWE-bench Multimodal容器下载**(用户令11-18): **303/580 pulled=52.2%**(0 FAILED✅)·pull_all_images.sh alive(PID 3749136·NI=19·ionice=idle)·正在pull #304(carbon-design-system__carbon-12402)·每image≈6min·剩余277≈28h·predict 5/7 alive(cline384/codex194/cc392/pi331/dsh206·opencode+hermes COMPLETE 500/500)·0 429✅·**自检**: load39.03/224≈17.4%busy·无proc>8000%✅·maxRSS=opencode1.2GB✅·pretrain 8GPU 100%/74GB healthy✅·disk /nas_train 27T avail✅·**全部运维令✅已交付**·research日报11-18已读·WAITING=0·📦 TASK≈30.2KB MEMORY≈10.2KB(✅≤32KB)
+> 🆕 **R2708 · 2026-11-19 00:0x — incr_eval轮·4 real-patch跨3路(cline4全RESOLVED+pi1 FAILED+dsh1 RESOLVED)·MM容器306/580(52.8%)·路径bug发现并修复**·心跳第一行: SWE-bench Verified 7路 cumulative(更新): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**cline279/390=71.5%(+4)**·**claude-code292/392=74.5%**·**deepseek154/207=74.4%(+1)**·**pi227/332=68.4%**·**codex98/201=48.8%**·📦 incr_eval R2708: 4 real-patch跨3路→cline django-15987/16032/16082/16100全RESOLVED✅+pi django-13012 FAILED(ability)+dsh django-12965 RESOLVED✅·**路径bug发现**: incr_eval_all脚本EVAL_LOG_ROOT=`logs/run_evaluation`(错)应为`logs/evaluation`→6题误标infra→手动修正读取正确report.json·脚本已修(line17)·7way报告REGEN(18814B)·📦 **SWE-bench Multimodal容器下载**(用户令11-18): **306/580 pulled=52.8%**(0 FAILED✅)·pull_all_images.sh alive(PID 3749136·NI=19·ionice=idle)·predict 5/7 alive(cline387/codex195/cc392/pi333/dsh207·opencode+hermes COMPLETE 500/500)·0 429✅·**自检**: load38.59/224≈17.2%busy·无proc>8000%✅·pretrain 8GPU 100%/74GB healthy✅·disk /nas_train 27T avail✅·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈10.5KB(✅≤32KB)
+> 📦 R2707 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器303/580·1新real-patch(cline)不足阈值·cumulative不变·predict 5路alive·自检clean）。需要时再读。
 > 📦 R2706 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器301/580·0新incr_eval·cumulative不变·predict 5路alive·自检clean）。需要时再读。
 > 📦 R2705 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器300/580·2 real-patch跨2路(deepseek django-12774+pi django-12858)全RESOLVED✅·FALSE INFRA路径bug复发已手动修正·7way报告REGEN(15506B)·predict 5路alive·自检clean）。需要时再读。
 > 📦 R2704 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器298/580·1 real-patch(cline django-15957)FAILED(ability·patch applied but tests fail)·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
@@ -28,16 +29,16 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2707 监控轮·SWE-bench Multimodal容器下载303/580(52.2%)+Verified predict 5路alive·1新real-patch(cline)不足阈值
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·hermes 500/500 COMPLETE+eval 444/500=88.8%✅·incr_eval R2680~R2705 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice=idle·303/580 pulled=52.2%·0 FAILED)·CPU_SPIRAL_SKIP added(sklearn-14710)·FALSE INFRA路径bug已修(R2701·fix_r2701_eval_path.py·R2705手动修正deepseek)
-当前动作:     R2707: 监控轮·1 unevaluated real-patch(cline django-15987·predict advance 382→384)不足incr_eval阈值→无incr_eval·cumulative Pass%不变·MM容器下载303/580(PID 3749136 alive·NI=19·ionice=idle·0 FAILED·正在pull #304)·predict 5路alive(cline384/codex194/cc392/pi331/dsh206)·自检clean(load39.03/224≈17.4%busy·无本线proc>8000%CPU·maxRSS=opencode1.2GB·pretrain 8GPU 100%/74GB healthy·disk 27T avail)
-下一步:       继续监控MM容器下载(303/580)+5路predict·新real-patch累计达阈值后跑incr_eval→刷新7way报告·Multimodal下载完成后准备MM评测
+PHASE:        R2708 incr_eval轮·SWE-bench Multimodal容器下载306/580(52.8%)+Verified incr_eval 4 real-patch跨3路(cline+4/pi+0/dsh+1)·路径bug发现并修复
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·hermes 500/500 COMPLETE+eval 444/500=88.8%✅·incr_eval R2680~R2708 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice=idle·306/580 pulled=52.8%·0 FAILED)·CPU_SPIRAL_SKIP added(sklearn-14710)·incr_eval路径bug已修(R2708·EVAL_LOG_ROOT logs/run_evaluation→logs/evaluation)
+当前动作:     R2708: incr_eval轮·4 real-patch跨3路eval: cline django-15987/16032/16082/16100全RESOLVED✅+pi django-13012 FAILED(ability)+dsh django-12965 RESOLVED✅·incr_eval路径bug(logs/run_evaluation→logs/evaluation)发现并修复·6题误标infra已手动修正·7way报告REGEN(18814B)·MM容器下载306/580(PID 3749136 alive·NI=19·0 FAILED)·predict 5路alive(cline387/codex195/cc392/pi333/dsh207)·自检clean(load38.59/224≈17.2%busy·无本线proc>8000%CPU·pretrain 8GPU 100%/74GB healthy·disk 27T avail)
+下一步:       继续监控MM容器下载(306/580)+5路predict·新real-patch累计达阈值后跑incr_eval(路径bug已修·下次自动正确)→刷新7way报告·Multimodal下载完成后准备MM评测
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK≈30.2KB / MEMORY≈10.2KB（✅≤32KB）
- SWE-bench Verified Pass%(cumulative resolved/500, after R2707): hermes444=88.8%·opencode415=83.0%·cc292=58.4%·cline275=55.0%·pi227=45.4%·dsh153=30.6%·codex98=19.6%·(partial·predict still running for 5 routes)
+ SWE-bench Verified Pass%(cumulative resolved/500, after R2708): hermes444=88.8%·opencode415=83.0%·cc292=58.4%·cline279=55.8%·pi227=45.4%·dsh154=30.8%·codex98=19.6%·(partial·predict still running for 5 routes)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
-  SWE-bench Multimodal容器下载(用户令11-18): pull_all_images.sh·swebench_mm/pull_progress.log·swebench_mm/pull_state.txt·580 images total·303 pulled(0 FAILED)·nice19/ionice=idle·不抢.29 CPU✅
+  SWE-bench Multimodal容器下载(用户令11-18): pull_all_images.sh·swebench_mm/pull_progress.log·swebench_mm/pull_state.txt·580 images total·306 pulled(0 FAILED)·nice19/ionice=idle·不抢.29 CPU✅
   research日报11-18 harness建议: ①artifact-based judging(exit code只做旁证·产物存在性+空跑记0·arxiv 2611.21407) ②provider binding检查(同名工具不同来源·arxiv 2611.21577) → 纳入未来计划
 ## 启动说明（首次唤醒）
 
