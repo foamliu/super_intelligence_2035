@@ -4018,6 +4018,32 @@
    "detail": "",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DlySigmaSweep-001/V0/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
+   "arm": "V1",
+   "k_conditions": 46,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DlySigmaSweep-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DlySigmaSweep-001",
+   "arm": "V2",
+   "k_conditions": 46,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DlySigmaSweep-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
   }
  ]
 }
