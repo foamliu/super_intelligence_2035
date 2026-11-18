@@ -613,7 +613,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1794790395375_uyvi5					case	EDA-Eval-DesignFlow-StaRunEval-001	2026-11-19 01:28	r766: parked→case (r765 liveness recheck overturned r761 NOFILE verdict, dir-aware check confirmed ALIVE). Single-turn analysis-Q&A: evaluate STA run result. A-pure pnr_signoff, mc=164.
 1794815708056_i7d8w					parked		2026-11-19 02:09	r765 dir-aware recheck: ALIVE (r761 NOFILE verdict SUPERSEDED, liveness查文件非目录之误). 优先 claim+造题.
 1794990429780_bdhyb					parked		2026-11-18 23:50	r761: FRESH a_strong_pure (precise C/D-tool filter, mc=90, pnr_signoff) NOFILE on hfeg0pkn002 (cline rotation). r760 exhaustion verdict CONFIRMED+STRENGTHENED (14 more checked, all NOFILE).
-1794807450388_aqetb					parked		2026-11-19 02:09	r765 dir-aware recheck: ALIVE (r761 NOFILE verdict SUPERSEDED, liveness查文件非目录之误). 优先 claim+造题.
+1794807450388_aqetb					case	EDA-Eval-DesignFlow-StaSweepCfgFix-001	2026-11-19 02:36	r765 dir-aware recheck: ALIVE (r761 NOFILE verdict SUPERSEDED, liveness查文件非目录之误). 优先 claim+造题.
 1794909339583_zpla8					parked		2026-11-18 23:50	r761: FRESH a_strong_pure (precise C/D-tool filter, mc=79, pnr_signoff) NOFILE on hfeg0pkn002 (cline rotation). r760 exhaustion verdict CONFIRMED+STRENGTHENED (14 more checked, all NOFILE).
 1794885564034_8akpt					parked		2026-11-19 02:09	r765 dir-aware recheck: ALIVE (r761 NOFILE verdict SUPERSEDED, liveness查文件非目录之误). 优先 claim+造题.
 1794980853769_c8v5k					parked		2026-11-19 02:09	r765 dir-aware recheck: ALIVE (r761 NOFILE verdict SUPERSEDED, liveness查文件非目录之误). 优先 claim+造题.
