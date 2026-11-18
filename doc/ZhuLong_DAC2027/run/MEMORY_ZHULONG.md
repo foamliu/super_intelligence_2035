@@ -1,10 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1245·**🟠 standby·plan v1.2 已交付（commit `9565933b1`='zhulong plan: 附录 D case 计数订正为权威 main.tex:77 口径 (v1.2)'）·第七十八次复核+心跳（本轮=交互式 OpenCode 会话·prompt=ZHULONG_TASK.md 原文·无新指令·重读 6 篇必读源文后复核报告完整性）**。用户令 2026-11-17 22:5x 新任务=EDA-Flow-Bench ICML2027 重定位+消融设计计划书·已在 wake#1167 交付 v1、wake#1217 刷新 v1.1、wake#1241 订正 v1.2（附录 D case 计数由 MEMORY 快照 A352/B394/C359/D462 订正为权威 main.tex:77 A363+B395+C460+D466=1684，audit/case 语义分离），经 wake#1168~#1243 七十五次复核通过。subagent 消融线仍 done_all·**不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）。infra: **loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅**·ops relay PID118432 活 ✅·repo HEAD=`9289017ed`（research r202·本线 v1.2=`9565933b1` 已含·FF 同步 origin ✅）·本线 dirty=0 ✅（benchmark/ 的 MEMORY_B 改动为造题线在途产物·非本线·未 add）·0 behind origin ✅·无真实 subagent eval（pgrep 假阳性=本 opencode 会话）✅。本轮自检：报告 74356B>25KB ✅·0 外链 0 script ✅·§0-§9+附录齐全 ✅·8 臂含 2 负对照≥6 ✅·等 token 杀手级对照 ✅·H1-H4 证伪条件齐 ✅·delta 表+时间线 ✅·附录引用路径+行号可追溯 ✅。§7 Step C: PHASE=done_all→什么都不做退出。prompt=ZHULONG_TASK.md 原文·无新指令·任务已完成→不重做（硬约束禁覆盖已有报告）·不起 eval·仅记本心跳·**预注册日 2026-11-22 临近·待用户显式放行消融实验起跑**）
+WAITING: 0（2026-11-18 wake#1246·**🟢 standby·plan v1.3 已交付（用户令 2026-11-18 交互式会话·增量补丁·在 v1.2 基础上补两篇 zhulong 预印本 BibTeX 引用至附录 F）**。v1.3 = v1.2 + 附录 F（ZhuLong-DAC 完整 BibTeX `liu2026runreadbackrefine` arXiv:2611.19056 + DATE27 PLACEHOLDER `PLACEHOLDER_DATE27_ZHULONG`）+ §6.3 脚注式标注 + TOC/头/self-check 更新。报告 74356B→80036B>25KB ✅·0 外链（grep `href="https?://"`=0）✅·0 script ✅·11 h2 ✅·附录 F 含两条 BibTeX（ZhuLong-DAC 完整 + DATE27 PLACEHOLDER）✅·§0–§9 结论/假设/臂表/判据/数字未改（diff 只在附录 F + §6.3 脚注）✅。subagent 消融线仍 done_all·**不再起任何新臂**。infra: loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅·ops relay PID118432 活 ✅·本线 v1.3 待 commit·**预注册日 2026-11-22 临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
+
+- [2026-11-18 wake#1246 详条] 见 `daily-memories/2026-11-18.md` §[wake#1246]（**plan v1.3 交付**·用户令 2026-11-18 交互式会话·增量补两篇 zhulong 预印本 BibTeX 引用至附录 F·ZhuLong-DAC 完整 + DATE27 PLACEHOLDER·自检 7 判据全通过·不起 eval·不起臂）。
 
 - [2026-11-18 wake#1245 详条] 见 `daily-memories/2026-11-18.md` §[wake#1245]（plan v1.2 第七十八次复核·交互式 OpenCode 会话·重读 main.tex/sections/appendix + DATE27 + DAC conclusion + designflow 资产头·报告 6 判据复核全通过·不起 eval·仅记心跳）。
 
