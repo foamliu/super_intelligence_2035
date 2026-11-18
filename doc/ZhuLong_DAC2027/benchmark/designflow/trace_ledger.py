@@ -747,6 +747,18 @@ def cmd_mcmartix(args):
             and (excl_pat is None or not excl_pat.search(v["kw"] or ""))]
 
     thresholds = [int(x) for x in args.thresholds.split(",") if x.strip()]
+    # 2026-11-19 r780 兑现 A r771 §建议动作2 承诺（D r922 待 verify）：
+    # mc-matrix 输出 header 须含 snapshot_src + generated_at + 「next snapshot 落地时
+    # 旧结论 expire」提示，承 D r910 pool-snapshot-freshness 方法学（D r908→r909 + A
+    # r760→r765 双实证：跨 snapshot 引用过时枯竭结论会误导 §9）。
+    import time
+    try:
+        mtime = time.strftime("%Y-%m-%d", time.localtime(os.path.getmtime(src)))
+    except OSError:
+        mtime = "?"
+    print("# snapshot_src=%s" % src)
+    print("# generated_at=%s (snapshot mtime)" % mtime)
+    print("# next_snapshot_expires_this_conclusion=true")
     print("# 扫描快照: %s" % src)
     print("# 数据行 = %d（跳过表头 %d 行）→ 去重 session = %d%s"
           % (n_rows, n_hdr, len(rows),
@@ -893,6 +905,116 @@ def cmd_mcguard(args):
     return 1 if fails else 0
 
 
+def cmd_phantom_check(args):
+    """2026-11-19 r780 兑现 A r771 §建议动作1 承诺（D r910 surface + D r922 待 verify）：
+    ledger-jsonl 一致性机械检测 invariant。
+
+    对每个 shard：扫 trace_ledger_<X>.tsv 中 status=case/seeded 的行（case_id 非空），
+    与 EDA-Eval-DesignFlow_<X>.jsonl 中的 case id 集合对比。分类：
+      - 已建 assets 可 revival：ledger 标 case 且 reference/<id>/ 存在，但 jsonl 缺行
+        （各 shard 优先零成本 revival 补齐）
+      - 无 reference dir：ledger 标 case 但 jsonl 缺行且 reference/ 也无对应目录
+        （历史 mark 早于造题 → 须补造或下线，不可静默残留）
+      - jsonl 多余：jsonl 有 case id 但 ledger 未 mark case（极少见，反向漏标）
+
+    id 归一化：ledger 与 jsonl 的 case_id 可能含/省略「EDA-Eval-DesignFlow-」前缀
+    （A.jsonl 实测两格式并存），比较前统一剥前缀。
+
+    退出码：0=PASS（无 phantom）/ 1=FAIL（有 phantom）。承 r708 single-source-of-truth
+    invariant：cases/X/<case>.json=source(入 git)，X.jsonl=build 产物，phantom=裂痕。
+    """
+    PREFIX = "EDA-Eval-DesignFlow-"
+
+    def _norm_cid(cid):
+        cid = (cid or "").strip()
+        if cid.startswith(PREFIX):
+            cid = cid[len(PREFIX):]
+        return cid
+    jsonl_dir = args.jsonl_dir
+    ref_dir = args.ref_dir
+    shards = (args.shard,) if args.shard else ("A", "B", "C", "D")
+    total_phantom = 0
+    summary_lines = []
+    for s in shards:
+        ledger_p = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+        if not os.path.exists(ledger_p):
+            summary_lines.append("shard %s: 台账文件不存在 %s" % (s, ledger_p))
+            continue
+        # 收集 ledger status=case/seeded 的 (session_file, case_id)
+        ledger_cases = {}  # norm_cid -> session_file (取第一条)
+        case_id_to_sid = {}
+        for r in _load_file(ledger_p):
+            if r["status"] in COVERED and r["case_id"]:
+                cid = _norm_cid(r["case_id"])
+                if not cid:
+                    continue
+                ledger_cases.setdefault(cid, r["session_file"])
+                case_id_to_sid[cid] = r["session_file"]
+        # 收集 jsonl case id 集合（归一化后）
+        jsonl_p = os.path.join(jsonl_dir, "EDA-Eval-DesignFlow_%s.jsonl" % s)
+        jsonl_ids = set()
+        if os.path.exists(jsonl_p):
+            with open(jsonl_p, encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    cid = _norm_cid(rec.get("id") or rec.get("case_id") or rec.get("task_id") or "")
+                    if cid:
+                        jsonl_ids.add(cid)
+        else:
+            summary_lines.append("shard %s: jsonl 不存在 %s（跳过 jsonl 对比，仅报 ledger case 数）"
+                                  % (s, jsonl_p))
+        # 分类
+        ledger_ids = set(ledger_cases.keys())
+        # phantom = ledger 有 case 但 jsonl 没有
+        phantoms = ledger_ids - jsonl_ids
+        # 已建 assets：reference/<id>/ 或 reference/<PREFIX><id>/ 目录存在
+        built_assets = []
+        no_ref = []
+        for cid in sorted(phantoms):
+            ref_path_short = os.path.join(ref_dir, cid)
+            ref_path_full = os.path.join(ref_dir, PREFIX + cid)
+            has_ref = os.path.isdir(ref_path_short) or os.path.isdir(ref_path_full)
+            if has_ref:
+                built_assets.append((cid, case_id_to_sid.get(cid, "")))
+            else:
+                no_ref.append((cid, case_id_to_sid.get(cid, "")))
+        # jsonl 多余（jsonl 有但 ledger 未标 case）
+        jsonl_only = jsonl_ids - ledger_ids
+        n_phantom = len(phantoms)
+        total_phantom += n_phantom
+        line = ("shard %s: ledger case=%d / jsonl ids=%d / phantom=%d "
+                "(已建 assets=%d, 无 reference dir=%d) / jsonl 多余=%d"
+                % (s, len(ledger_ids), len(jsonl_ids), n_phantom,
+                   len(built_assets), len(no_ref), len(jsonl_only)))
+        summary_lines.append(line)
+        if args.verbose:
+            for cid, sid in built_assets:
+                summary_lines.append("  [可 revival] %s (session=%s) ref dir 存在" % (cid, sid))
+            for cid, sid in no_ref:
+                summary_lines.append("  [无 ref]    %s (session=%s) 须补造或下线" % (cid, sid))
+            for cid in sorted(jsonl_only):
+                summary_lines.append("  [jsonl 多余] %s jsonl 有但 ledger 未 mark case" % cid)
+    print("=== phantom-check (ledger-jsonl 一致性 invariant) ===")
+    print("jsonl_dir=%s" % jsonl_dir)
+    print("ref_dir=%s" % ref_dir)
+    print("")
+    for ln in summary_lines:
+        print(ln)
+    print("")
+    verdict = "PASS" if total_phantom == 0 else "FAIL"
+    print("结果：%s (total phantom=%d)" % (verdict, total_phantom))
+    print("注：phantom=ledger 标 case 但 jsonl 无对应行 (data-hygiene threat, "
+          "承 r708 single-source-of-truth invariant)。")
+    print("    「已建 assets」phantom = 零成本 revival 候选 (各 shard 优先补齐)。")
+    print("    「无 reference dir」phantom = 历史 mark 早于造题 → 须补造或下线。")
+    return 1 if total_phantom else 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="trace ledger + coverage progress")
     ap.add_argument("--shard", default=None, choices=sorted(SHARD_DOMAINS.keys()),
@@ -944,13 +1066,22 @@ def main():
                    default=DEFAULT_MC)
     p = sub.add_parser("mcguard",
                        help="2026-11-11 守门员: 校验 mc>=10 规则未被破坏 (退出码 0=PASS/1=FAIL)")
+    p = sub.add_parser("phantom-check",
+                       help="2026-11-19 r780 兑现 A r771 §建议动作1 承诺: "
+                            "ledger-jsonl 一致性机械检测 invariant (退出码 0=PASS/1=FAIL)")
+    p.add_argument("--jsonl-dir", dest="jsonl_dir", required=True,
+                   help="EDA-Eval-DesignFlow jsonl 目录 (含 EDA-Eval-DesignFlow_<X>.jsonl)")
+    p.add_argument("--ref-dir", dest="ref_dir", required=True,
+                   help="reference 目录 (含 <case_id>/ 子目录, 用于判「已建 assets」phantom)")
+    p.add_argument("--verbose", action="store_true", help="输出每个 phantom 的 case_id + session")
     a = ap.parse_args()
     if a.shard:
         _set_shard(a.shard)
     return {"stats": cmd_stats, "next": cmd_next, "claim": cmd_claim,
             "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed,
             "scansync": cmd_scansync, "prefilter": cmd_prefilter,
-            "mc-matrix": cmd_mcmartix, "mcguard": cmd_mcguard}[a.cmd](a) or 0
+            "mc-matrix": cmd_mcmartix, "mcguard": cmd_mcguard,
+            "phantom-check": cmd_phantom_check}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":
