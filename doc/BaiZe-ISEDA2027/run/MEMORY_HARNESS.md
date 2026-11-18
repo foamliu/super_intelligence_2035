@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2678 · 2026-11-18 14:5x — 监控轮(6路predict alive·+3新prediction不足起incr_eval)·**心跳第一行**: 监控轮R2678·predict 2338/3500(Δ vs R2677=+3·cline345/hermes493/pi303·各+1)·6/7 predict alive(opencode COMPLETE 500/500)·0 429✅·**自检clean**(load27/224·MemAvail1374GB·最高harness proc=cline-checkpoint-off 36.6%/660MB·远低于8000%CPU/50GB阈值·0 runaway·0 Docker残留)·**research日报11-18已读**(harness建议4条·借鉴非指令:①产物存在性判分+空跑记0[2611.21407·127/357无产物85正常退出]②工具provider绑定检查[2611.21577]③外壳指纹四元组(runtime镜像哈希/动作空间版本/最大轮数/超时)[2407.16741+2310.03714]④单次跑分噪声⇒3次数据序或标注未做seed平均[OLMo2])·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.5KB(✅≤32KB)
+> 🆕 **R2679 · 2026-11-18 15:0x — 监控轮(6路predict alive·+5新prediction·仅1新real-patch不足起incr_eval)·**心跳第一行**: 监控轮R2679·predict 2343/3500(Δ vs R2678=+5·cline346/hermes493/pi304·dsh187)·6/7 predict alive(opencode COMPLETE 500/500)·0 429✅(hermes log 1 hit=patch=4290B false-positive)·**自检clean**(load28.7/224·MemAvail1405GB·最高harness proc=cline-checkpoint-off 36.7%/752MB·远低于8000%CPU/50GB阈值·0 runaway·0 Docker残留)·**新unevaluated real-patch=1**(dsh django__django-11603 4514B·pi+2/hermes+1均empty-patch)→不足≥3-5阈值·不启动incr_eval·**research日报11-18已读**(12:17版·无新harness建议·18:00版未发布)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈25.5KB(✅≤32KB)
+> 📦 R2678 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2338/3500·+3新prediction不足起incr_eval·6/7 predict alive·0 429·自检clean·research日报已读）。需要时再读。
 > 📦 R2677 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·5新real-patch·+3 RESOLVED·pi218/hermes441·predict 2335/3500·自检clean）。需要时再读。
 > 📦 R2676 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·1新real-patch不足起incr_eval·predict 2326/3500·自检clean·research日报已读）。需要时再读。
 
@@ -18,9 +19,9 @@ WAITING: 0
 
 > 📦 R2666-R2668 流水已归档 → daily-memories-harness/2026-11-18.md（3轮巡检·7/7 predict alive·0 429·gateway/harbor up）。需要时再读。
 
-> 🆕 **R2665 · 2026-11-18 11:4x — 续推 SWE-bench Verified predict(用户令·按既定排期)·7路resume LAUNCHED·**心跳第一行**: gateway probe HTTP=200✅(quota恢复)·harbor 9092/9093 up·launch_glm53_full500.sh predict setsid detached·7 predict进程alive(cline2063655/codex2066009/hermes2068238/opencode2071050/cc2080921/dsh2081778/pi2082293)·resume跳过已done(2274/3500)·处理remaining 1226(opencode2/hermes20/cc146/cline168/pi204/dsh325/codex361)·无429(仅false-positive patch=4290B)·自检clean(load20/224·MemAvail1384GB·最高harness proc=opencode27.9%/597MB·远低于8000%CPU/50GB阈值)·logs_glm53/predict_*_glm53.log + master_resume_20261118_1148.log·caveat: codex/dsh已done题系修复前适配器所产(empty-patch 429/timeout=infra·resume不再重试)·多日run·待完成后续增量eval+刷新7way报告·WAITING=0·📦 TASK≈29.7KB MEMORY≈28KB(✅≤32KB)
+> 📦 R2665 流水已归档 → daily-memories-harness/2026-11-18.md（7路resume LAUNCHED·gateway HTTP=200·harbor up·resume跳过已done 2274/3500·处理remaining 1226·0 429·自检clean·caveat: codex/dsh已done题=修复前适配器·empty-patch=infra）。需要时再读。
 
-> 🆕 **R2664 · 2026-11-18 11:2x — 🔴10:3x用户令交付(ability桶拆两层)·**心跳第一行(7路三数+Pass%区间)**: cline:真=38/超=8/环=1|47.2%~57.3% · codex:真=59/超=3/环=1|28.1%~32.6% · opencode:真=31/超=1/环=8|50.6%~60.7% · cc:真=51/超=0/环=8|33.7%~42.7% · pi:真=48/超=1/环=5|39.3%~46.1% · hermes:真=27/超=2/环=19|46.1%~69.7% · deepseek:真=41/超=0/环=36|12.4%~52.8% · **layer-B逐题判定**: 93题=66确认infra(deepseek36+hermes20+opencode5+cc4+codex1)+9 ability_lean+18 ambiguous · **关键发现**: deepseek 36题layer-B全部=确认infra(29×适配器空响应+7×pip-install-fail)→12.4%被infra压低·hermes 20/21=确认infra(19×pip缺失)→46.1%也被压低·cline 8×AgentTimeout(900s)=ambiguous · audit脚本已修(INFRA_EXC_TYPES+clean_ability+6个infra子桶)·报告新增表2.5(layer-B逐题判定+Pass%区间+关键模式)·表二改为能力/超时/环境异常三列分解·manifests/tb21_layerB_determinations_20261118_1120.json已存(per-task verdict+evidence)·WAITING=0·📦 TASK≈29.7KB MEMORY≈26KB(✅≤32KB)
+> 📦 R2664 流水已归档 → daily-memories-harness/2026-11-18.md（10:3x用户令·ability桶拆两层交付·layer-A真能力/layer-B infra嫌疑·93题逐题判定=66确认infra+9 ability_lean+18 ambiguous·audit脚本已修·报告新增表2.5·manifests/tb21_layerB_determinations已存）。需要时再读。
 
 > 📦 R2663 流水已归档 → daily-memories-harness/2026-11-18.md。结论：巡检+纠偏轮·纠正R2662误判(eval✅COMPLETE·0 backlog·真瓶颈=predict 65% stalled@gateway 429)·自检clean·全部运维令✅已交付·WAITING=0。需要时再读。
 
@@ -67,13 +68,13 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2678 监控轮·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
+PHASE:        R2679 监控轮·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2677 DONE(pi218/hermes441·+3 RESOLVED)
-当前动作:     R2678: 监控轮·predict 2338/3500(Δ vs R2677=+3)·6/7 predict alive·0 429·自检clean·research日报11-18已读(4条harness建议·借鉴非指令)
+当前动作:     R2679: 监控轮·predict 2343/3500(Δ vs R2678=+5)·6/7 predict alive·0 429·自检clean·新real-patch=1不足incr_eval·research日报11-18已读
 下一步:       继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→合并cumulative→刷新7way SWE-bench报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈30.5KB / MEMORY≈28.7KB（✅≤32KB）
+ 体积: TASK≈30.5KB / MEMORY≈25.5KB（✅≤32KB）
  SWE-bench Verified Pass%(cumulative resolved/500): hermes441=88.2%·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi218=43.6%·dsh143=28.6%·codex91=18.2%·(partial·predict still running for 6 routes·incr_eval R2677 DONE)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
