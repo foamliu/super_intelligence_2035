@@ -19,11 +19,7 @@ WAITING: 0（2026-11-19 wake#1416·**🟠 friend-review 已交付·写作层 5 �
 - [wake#1395-1402 详条已滚出·本轮 wake#1403 维护合并] 8 条同模式 standby 心跳（第一百四十一~一百四十八次核验·均 standby·done_all·无新指令·用户粘贴任务书全文无新令·friend-review 主体已 wake#1350 交付）·HEAD 序列 `6c3606a66`(w#1395)→…→`2a1ed693d`(w#1400)→`6d34d97e9`(w#1401)→`abe0092fe`(w#1402)·原文见 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1403 维护合并省 MEMORY 空间·原文不改）。
 - [2026-11-19 wake#1391-1394 详条已滚出·本轮 wake#1396 维护滚出] 4 条同模式 standby 心跳（第一百三十七~一百四十次核验·均 standby·done_all·无新指令·用户粘贴任务书全文无新令·friend-review 主体已 wake#1350 交付）·HEAD 序列 `187a774e0`(w#1391)→`4d9046fe6`?→`a15b8bbc6`(w#1393)→`40386d381`(w#1394)·原文见 `daily-memories/2026-11-19.md` §[wake#1391-1394 rolled-out]（本轮 wake#1396 维护合并省 MEMORY 空间·原文不改）。
 - [wake#1381~#1390 详条已滚出·本轮 wake#1398 维护合并] 10 条同模式 standby 心跳（第一百二十七~一百四十一次核验之间·均 standby·done_all·无新指令·用户粘贴任务书全文无新令·friend-review 主体已 wake#1350 交付）·HEAD 序列 `b7551a7fe`(w#1381)→…→`9288f92bcb`(w#1390)·原文见 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1398 维护合并省 MEMORY 空间·原文不改）。
-- [wake#1370~#1380 合并指针已滚出·本轮 wake#1404 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1370~#1380 合并指针 rolled-out]（原文不改）。
-- [wake#1352~#1369 合并指针已滚出·本轮 wake#1404 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1352~#1369 合并指针 rolled-out]（原文不改）。
-- [wake#1343~#1351 详条已滚出·本轮 wake#1380 合并] 9 条 standby 心跳（第八十九~九十七次核验·含 **wake#1350 friend-review 实质工作** P0 3/3+11 项矩阵 采纳10/部分1/不采纳0·commit `cfb185159`·报告 25734B·论文 12p/0err/0undef/235123B）·HEAD 序列 `054a0d711`(w#1343)→`cfb185159`(w#1350/w#1351)·原文见 `daily-memories/2026-11-18.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1380 维护合并省 MEMORY 空间·原文不改）。
-
-- [wake#1244~#1342 合并指针已滚出·本轮 wake#1408 维护滚出] 见 `daily-memories/2026-11-18.md` §[wake#1244~#1342 合并指针 rolled-out]（原文不改）。
+- [wake#1244~#1380 + wake#1343~#1351 合并指针已滚出·本轮 wake#1419 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1370~#1380 + wake#1352~#1369 + wake#1343~#1351 + wake#1244~#1342 合并指针 · rolled-out by wake#1419]（含 wake#1350 friend-review 实质工作指针·commit `cfb185159`·原文不改）。
 
 
 > 本文件由推进 agent 维护（外层 loop 兜底 commit）。任务书（只读）：`ZHULONG_TASK.md`。
