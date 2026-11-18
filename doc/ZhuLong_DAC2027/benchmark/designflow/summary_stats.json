@@ -1,304 +1,298 @@
 {
- "daily_trend": {
-  "20261029": 14370,
-  "20261030": 2641,
-  "20261031": 13994,
-  "20261101": 14047,
-  "20261102": 13890,
-  "20261103": 14448
- },
- "daily_users": {
-  "20261029": 327,
-  "20261103": 365
- },
- "dedup_sessions": 6968,
- "generated": "2026-11-06T08:40:00+08:00",
- "hits_total": 37112,
- "hosts": 694,
- "mc10": 2907,
- "mc100": 460,
- "mc1000": 5,
- "mc15": 3273,
- "mc20": 2174,
- "mc25": 2376,
- "mc30": 1342,
- "mc300": 364,
- "mc5": 3888,
- "mc500": 460,
- "mc5_recompute": {
-  "computed_at": "2026-11-18T08:30:00+08:00",
-  "computed_by": "r718 (mc>=5 adoption flip)",
-  "scan": "ssh_eda_search_20261115_081559/summary.tsv (local mirror summary_1115_081559.tsv)",
-  "scope": "shard A broad-keyword filter, 4-shard ledger exclusion",
-  "shard_mc_A": 5,
-  "matrix": {
-   "mc5": {
-    "pool": 2996,
-    "touched": 2686,
-    "fresh": 310
-   },
-   "mc10": {
-    "pool": 2776,
-    "touched": 2640,
-    "fresh": 136
-   },
-   "mc15": {
-    "pool": 2614,
-    "touched": 2518,
-    "fresh": 96
-   },
-   "mc20": {
-    "pool": 2478,
-    "touched": 2414,
-    "fresh": 64
-   },
-   "mc30": {
-    "pool": 2265,
-    "touched": 2242,
-    "fresh": 23
-   }
+  "daily_trend": {
+    "20261029": 14370,
+    "20261030": 2641,
+    "20261031": 13994,
+    "20261101": 14047,
+    "20261102": 13890,
+    "20261103": 14448
   },
-  "mc5_mc9_band": {
-   "pool": 220,
-   "touched": 46,
-   "fresh": 174,
-   "note": "NEW range opened by 10->5 (r718 recompute; r615 had 179 fresh, touched grew so fresh 179->174)"
+  "daily_users": {
+    "20261029": 327,
+    "20261103": 365
   },
-  "auto_stop": {
-   "threshold_rounds": 3,
-   "consecutive_zero_case_rounds": 0,
-   "note": "r718 ADOPTION: shard_mc.A flipped 10->5 per 11-15 highest-priority order. r615 analysis supported flip (mc5-9 adds 174 fresh). Stop-loss criterion per 11-15 = whether mc>=5 pool has candidates that faithfully restore user intent + writable check(); analysis-Q&A now LEGAL (11-15 task intent), so analysis-dominant peek is NOT a problem. Counter resets; this is round 1 of true mc>=5 selection."
+  "dedup_sessions": 8051,
+  "generated": "2026-11-18T23:15:00+08:00",
+  "hits_total": 37112,
+  "hosts": 614,
+  "mc10": 4012,
+  "mc100": 460,
+  "mc1000": 5,
+  "mc15": 0,
+  "mc20": 0,
+  "mc25": 2376,
+  "mc30": 3046,
+  "mc300": 364,
+  "mc5": 4432,
+  "mc500": 460,
+  "mc5_recompute": {
+    "computed_at": "2026-11-18T08:30:00+08:00",
+    "computed_by": "r718 (mc>=5 adoption flip)",
+    "scan": "ssh_eda_search_20261115_081559/summary.tsv (local mirror summary_1115_081559.tsv)",
+    "scope": "shard A broad-keyword filter, 4-shard ledger exclusion",
+    "shard_mc_A": 5,
+    "matrix": {
+      "mc5": {
+        "pool": 2996,
+        "touched": 2686,
+        "fresh": 310
+      },
+      "mc10": {
+        "pool": 2776,
+        "touched": 2640,
+        "fresh": 136
+      },
+      "mc15": {
+        "pool": 2614,
+        "touched": 2518,
+        "fresh": 96
+      },
+      "mc20": {
+        "pool": 2478,
+        "touched": 2414,
+        "fresh": 64
+      },
+      "mc30": {
+        "pool": 2265,
+        "touched": 2242,
+        "fresh": 23
+      }
+    },
+    "mc5_mc9_band": {
+      "pool": 220,
+      "touched": 46,
+      "fresh": 174,
+      "note": "NEW range opened by 10->5 (r718 recompute; r615 had 179 fresh, touched grew so fresh 179->174)"
+    },
+    "auto_stop": {
+      "threshold_rounds": 3,
+      "consecutive_zero_case_rounds": 0,
+      "note": "r718 ADOPTION: shard_mc.A flipped 10->5 per 11-15 highest-priority order. r615 analysis supported flip (mc5-9 adds 174 fresh). Stop-loss criterion per 11-15 = whether mc>=5 pool has candidates that faithfully restore user intent + writable check(); analysis-Q&A now LEGAL (11-15 task intent), so analysis-dominant peek is NOT a problem. Counter resets; this is round 1 of true mc>=5 selection."
+    },
+    "verdict": "r718: mc>=5 ADOPTED. mc>=5 fresh=310 (vs mc>=10 fresh=136, +174). r382 mc>=5 useless EXPIRED under 6959-dedup scan. Next: select from candidates_mc5.tsv, report A-domain vs cross-domain ratio + case count each round."
   },
-  "verdict": "r718: mc>=5 ADOPTED. mc>=5 fresh=310 (vs mc>=10 fresh=136, +174). r382 mc>=5 useless EXPIRED under 6959-dedup scan. Next: select from candidates_mc5.tsv, report A-domain vs cross-domain ratio + case count each round."
- },
- "mc_matrix": {
-  "src": "ssh_eda_search_20261115_081559/summary.tsv",
-  "scope": "shard A broad-keyword filter (A-domain pool, not all-shard total)",
-  "note": "r718 mc>=5 adoption: A-filtered pool. mc5=2996/fresh310, mc10=2776/fresh136, mc30=2265/fresh23. All-shard totals unchanged (mc10=2907 etc for coverage denominator).",
-  "mc5": {
-   "pool": 2996,
-   "touched": 2686,
-   "fresh": 310
+  "mc_matrix": {
+    "src": "ssh_eda_search_20261118_230537/summary.tsv",
+    "scope": "shard A broad-keyword filter (A-domain pool, not all-shard total)",
+    "note": "r759 POOL_SWITCH: 11-16->11-18 full 698-host rescan (orchestrator.sh, 7min). all-shard mc10 3513->4012 (+499). shard_A_pool_mc10 2938->3337 (+399). new_A_domain_mc10_vs_1116=428 (but A-PURE=2: 3p6ld mc79 rose3wang, gnwy5 mc11 e0048255; both NOFILE on checked hosts - cline rotation persists). A-pure exhaustion stands on fresh 11-18 data.",
+    "all_shard_mc10": 4012,
+    "all_shard_mc30": 3046,
+    "all_shard_mc5": 4432,
+    "shard_A_pool_mc10": 3337,
+    "shard_A_pool_mc5": 3602,
+    "new_A_domain_mc10_vs_1116": 428,
+    "new_A_domain_mc5_vs_1116": 467,
+    "new_A_pure_mc10": 2,
+    "new_A_pure_nofile_checked": 2,
+    "top_next_round_candidates": "3p6ld(rose3wang mc79 verilog/rtl/primetime/synthesis, 4 hosts unchecked plg93/plg56/plg13/pjn200), gnwy5(e0048255 mc11)",
+    "round": "r759"
   },
-  "mc10": {
-   "pool": 2776,
-   "touched": 2640,
-   "fresh": 136
+  "mc_matrix_1105_hist": {
+    "computed_at": "2026-11-11",
+    "historical": "11/05 snapshot, pre-switch (kept for reference, do not use for fresh/pool)",
+    "mc10": {
+      "fresh": 381,
+      "pool": 1929,
+      "touched": 1548
+    },
+    "mc15": {
+      "fresh": 291,
+      "pool": 1795,
+      "touched": 1504
+    },
+    "mc20": {
+      "fresh": 216,
+      "pool": 1681,
+      "touched": 1465
+    },
+    "mc30": {
+      "fresh": 119,
+      "pool": 1511,
+      "touched": 1392
+    },
+    "mc5": {
+      "fresh": 532,
+      "pool": 2114,
+      "touched": 1582
+    },
+    "note": "2026-11-11 用户令: mc 全线降到 10(原 A=15 / B,C,D=30)。矩阵基于 11/05 全量扫描 summary_1105.tsv (5822 数据行 -> 2560 去重 session, slug 级去重取最大 mc) 本地复算; 复算命令: python3 designflow/trace_ledger.py [--shard X] mc-matrix --src designflow/summary_1105.tsv --json。pool=池总量 touched=已动过(4 shard ledger) fresh=未动过(真正可做)",
+    "src": "designflow/summary_1105.tsv"
   },
-  "mc15": {
-   "pool": 2614,
-   "touched": 2518,
-   "fresh": 96
+  "mc_matrix_1109_hist": {
+    "computed_at": "2026-11-13",
+    "dedup_sessions": 3964,
+    "historical": "11/09 snapshot, superseded by 11/13 (kept for reference, do not use for fresh/pool). 1109 B mc>=10 fresh=0.",
+    "mc10": {
+      "fresh": 416,
+      "pool": 2882,
+      "touched": 2466
+    },
+    "mc15": {
+      "fresh": 319,
+      "pool": 2684,
+      "touched": 2365
+    },
+    "mc20": {
+      "fresh": 247,
+      "pool": 2519,
+      "touched": 2272
+    },
+    "mc30": {
+      "fresh": 145,
+      "pool": 2247,
+      "touched": 2102
+    },
+    "mc5": {
+      "fresh": 696,
+      "pool": 3210,
+      "touched": 2514
+    },
+    "scan": "ssh_eda_search_20261109_224902",
+    "scan_rows": 38082,
+    "scan_sha256": "a3a374ad5bcaa79f1b82ceeb3ab560e8a703450640b8ad4c11fc6fbb0bec3c07",
+    "src": "designflow/summary_1109.tsv"
   },
-  "mc20": {
-   "pool": 2478,
-   "touched": 2414,
-   "fresh": 64
+  "note": "r384: scansync (11/09 still latest, no new scan) + stale-candidates-file finding (candidates_mc10.tsv=11/05, gyja8 gone) + 4 fresh A-dominant peeked from 11/09 direct (xinm9/y7550/5szsv/ux82s all weak/not-viable, 0 case). A.jsonl 210 unchanged. PIVOT (a/b/c/d) still awaits user decision.",
+  "note_mc30": "顶层 mcN 现统一取自 11/09 全量扫描 raw summary.tsv (38082 行 / 5999 dedup session by session_file). mc_matrix.* 仍基于 11/05 curated summary_1105.tsv (1928 shard-A-keyword dedup, slug 级取最大 mc) 用于 ledger fresh 复算; 两源口径不同, 勿混用. target_mc=10 时覆盖率分母取 mc_matrix.mc10.pool=1929 (与 ledger 同源).",
+  "pool_switch": {
+    "B_mc10_fresh_1109": 0,
+    "B_mc10_fresh_1113": 76,
+    "by": "ops_directive + shardB completion (2026-11-12 用户令)",
+    "done_at": "2026-11-13T21:20+08:00",
+    "from": "designflow/summary_1109.tsv",
+    "mc10_fresh_1109": 416,
+    "mc10_fresh_1113": 663,
+    "note": "ops 2026-11-13 13:30 触发 1113 全量扫描; shard B 2026-11-13 完成换池落盘 (mc_matrix.src->summary_1113.tsv). 1109 B mc10 fresh=0 (台账消化), 1113 B mc10 fresh=76 (+76). ALL mc10 fresh 416(1109)->663(1113) +247.",
+    "scan_path": "/home/t0002965/log/ssh_eda_search_20261113_131349/summary.tsv",
+    "scan_rows": 41409,
+    "to": "designflow/summary_1113.tsv"
   },
-  "mc30": {
-   "pool": 2265,
-   "touched": 2242,
-   "fresh": 23
-  }
- },
- "mc_matrix_1105_hist": {
-  "computed_at": "2026-11-11",
-  "historical": "11/05 snapshot, pre-switch (kept for reference, do not use for fresh/pool)",
-  "mc10": {
-   "fresh": 381,
-   "pool": 1929,
-   "touched": 1548
+  "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261116_072610/summary.tsv",
+  "prev_sessions": 3791,
+  "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
+  "scan_rows": 44991,
+  "scan_sha256": "(pending)",
+  "scansync": {
+    "method": "orchestrator.sh full 698-host rescan (daily quota per 11-14 user order; r759 POOL_SWITCH)",
+    "scan_dir": "ssh_eda_search_20261118_230537",
+    "prev_scan": "ssh_eda_search_20261116_072610",
+    "duration_sec": 420,
+    "dedup_sessions": 8051,
+    "total_rows": 44991,
+    "mc10": 4012,
+    "mc30": 3046,
+    "mc5": 4432,
+    "shard_A_pool_mc10": 3337,
+    "new_A_domain_mc10_vs_prev": 428,
+    "new_A_pure_mc10": 2,
+    "new_A_pure_live": 0,
+    "new_A_pure_nofile": 2,
+    "fresh_A_domain_verdict": "A-pure exhaustion CONFIRMED on fresh 11-18 data: 428 new A-domain mc10 but only 2 A-pure (rest are C/D-dominated sessions caught by broad A keyword filter), both A-pure NOFILE on checked hosts (cline rotation). auto-stop stands. Top next-round candidate 3p6ld (mc79) has 4 unchecked hosts.",
+    "round": "r759"
   },
-  "mc15": {
-   "fresh": 291,
-   "pool": 1795,
-   "touched": 1504
+  "sessions": 8051,
+  "shard_mc": {
+    "A": 10,
+    "B": 10,
+    "C": 10,
+    "D": 10
   },
-  "mc20": {
-   "fresh": 216,
-   "pool": 1681,
-   "touched": 1465
+  "stop_loss_shardA_mc5": {
+    "triggered_at": "2026-11-18T14:1x+08:00",
+    "triggered_by": "r731 (11-15 directive auto-stop §二.4: 3 consecutive 0-case rounds at mc>=5)",
+    "evidence": "r719/r720/r722/r724/r725/r726 produced 6 cases after mc>=5 adoption (r718); then r727/r728/r730 = 3 consecutive 0-case rounds. r730 systematic exhaustion proof: strict A-pure filter (verdi|vcs|dc_shell|design_compiler|innovus|primetime|pt_shell|formality|yosys|vivado|openroad|verilint) on 20261116 snapshot = 165 mc>=5 A-pure candidates; top 25 (mc 100-773) + 12 low-mc peek ALL fresh candidates already claimed by other shards (cross-shard mutex, r728 lesson) or C/D domain. A-pure mc>=5 fresh after cross-shard mutex ~= 0.",
+    "action": "shard_mc.A reverted 5 -> 10 (matches trace_ledger.py SHARD_MC which was never changed). Pivot to intent_audit continuation + other output per 11-15 directive.",
+    "verdict": "mc>=5 pool expansion (11-15 order) measured INEFFECTIVE for shard A: produced 6 cases (r719-r726) then exhausted under cross-shard mutex. Not a threshold problem - A-pure fresh material truly consumed."
   },
-  "mc30": {
-   "fresh": 119,
-   "pool": 1511,
-   "touched": 1392
+  "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
+  "summary_1113_dedup_sessions": 4418,
+  "target_mc": 10,
+  "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6. 2026-11-15 用户令: shard A 单独 10 -> 5 (A 选料枯竭, 扩池); B/C/D 维持 10.",
+  "threshold_eval_shardA": {
+    "eval_basis": [
+      "r374-r380 peek 32/32 fresh strict-clean A-domain candidates (mc>=10, strict-clean filter adom>=50 & adom>1.2*ndom & mc>=15 & noise<0.3*adom) ALL weak: env-config / analysis-Q&A / doc-search / debug-Q&A / flow-driving; 1 produce-task = y4c5b Qt Jobmonitor (non-EDA GUI, delivered r377 as L1 offline-patch reframe)",
+      "r381 mc>=5 slice peek (new slice, never peeked): 12 unique sessions, ~10/12 wrong-shard C/D (drc/aether/schematic/hspice/waveview dominant), only 2 A-domain-ish (fwtt5 sv:14/netlist:12, nurc0 sv:598 low-diversity paste) but mc<10 unauthorized under 2026-11-11 mc>=10 令",
+      "A archetype saturation: ~37/210 A cases are diagnosis/generator/parser/audit/analyze/report; spec-driven-gen / log-parser / diagnosis-gen three modes (r367-r373) already exhausted fresh clean-produce pool"
+    ],
+    "finding": "Binding constraint is archetype + strong gate (k>=8, 3 neg FAIL, hidden B), NOT threshold. Lowering mc 10->5 does NOT help (wrong-shard dominated 10/12). fresh=289 at mc>=10 is quality-exhausted (32/32 strict-clean weak), not quantity-exhausted.",
+    "min_viable_threshold_recommendation": "NO threshold below mc>=10 unblocks A casemaking under current gate. mc>=5 yields wrong-shard/C-D material. The最低可用阈值 = mc>=10 (current), but it is quality-saturated.",
+    "predicted_new_cases_by_option": {
+      "a_full_rescan": "unknown until new scan runs; 11/09 scan 2 days stale, 11/11 daily log 2541 sessions suggests new material accumulating; recommend触发 new full rescan to quantify",
+      "b_lower_to_mc5": "~0-2 A clean-produce (10/12 wrong-shard, 2 low-diversity); NOT recommended, low yield + violates 2026-11-11 mc>=10 令",
+      "c_new_archetype": "~10-20 if §5 L1 ban relaxed for A-static-analysis (audit/retrieval/explain tasks reclassified as L1 produce); requires explicit user authorization to override §5",
+      "d_accept_saturation": "0 new A cases; redirect capacity to B/C/D; A holds at ~210"
+    },
+    "round": "r382",
+    "updated_at": "2026-11-11T16:11:48+08:00",
+    "user_decision_needed": "PIVOT (r381) awaits user pick among (a/b/c/d). This eval provides the data basis. A-line recommendation: (a) full rescan first to quantify new material; if yield low, then (c) new archetype OR (d) accept saturation."
   },
-  "mc5": {
-   "fresh": 532,
-   "pool": 2114,
-   "touched": 1582
+  "threshold_table_shardA": {
+    "dig_marker": "verilog|systemverilog|rtl|sdc|vivado|yosys|openroad|synthesis|dc_shell|design_compiler",
+    "kw_filter": "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad",
+    "note": "sessions/users/dig_marker = A-keyword filtered dedup; fresh = un-ledgered (4-shard ledger 排除, from mc-matrix). pool=touched+fresh.",
+    "rows": {
+      "mc10": {
+        "dig_marker": 869,
+        "fresh": 289,
+        "pool": 1648,
+        "sessions": 1649,
+        "touched": 1359,
+        "users": 230
+      },
+      "mc15": {
+        "dig_marker": 815,
+        "fresh": 219,
+        "pool": 1545,
+        "sessions": 1545,
+        "touched": 1326,
+        "users": 225
+      },
+      "mc20": {
+        "dig_marker": 765,
+        "fresh": 162,
+        "pool": 1452,
+        "sessions": 1452,
+        "touched": 1290,
+        "users": 220
+      },
+      "mc25": {
+        "dig_marker": 738,
+        "fresh": 123,
+        "pool": 1384,
+        "sessions": 1384,
+        "touched": 1261,
+        "users": 217
+      },
+      "mc30": {
+        "dig_marker": 701,
+        "fresh": 94,
+        "pool": 1322,
+        "sessions": 1322,
+        "touched": 1228,
+        "users": 213
+      },
+      "mc5": {
+        "dig_marker": 939,
+        "fresh": 379,
+        "pool": 1765,
+        "sessions": 1769,
+        "touched": 1386,
+        "users": 237
+      }
+    },
+    "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "note": "2026-11-11 用户令: mc 全线降到 10(原 A=15 / B,C,D=30)。矩阵基于 11/05 全量扫描 summary_1105.tsv (5822 数据行 -> 2560 去重 session, slug 级去重取最大 mc) 本地复算; 复算命令: python3 designflow/trace_ledger.py [--shard X] mc-matrix --src designflow/summary_1105.tsv --json。pool=池总量 touched=已动过(4 shard ledger) fresh=未动过(真正可做)",
-  "src": "designflow/summary_1105.tsv"
- },
- "mc_matrix_1109_hist": {
-  "computed_at": "2026-11-13",
-  "dedup_sessions": 3964,
-  "historical": "11/09 snapshot, superseded by 11/13 (kept for reference, do not use for fresh/pool). 1109 B mc>=10 fresh=0.",
-  "mc10": {
-   "fresh": 416,
-   "pool": 2882,
-   "touched": 2466
-  },
-  "mc15": {
-   "fresh": 319,
-   "pool": 2684,
-   "touched": 2365
-  },
-  "mc20": {
-   "fresh": 247,
-   "pool": 2519,
-   "touched": 2272
-  },
-  "mc30": {
-   "fresh": 145,
-   "pool": 2247,
-   "touched": 2102
-  },
-  "mc5": {
-   "fresh": 696,
-   "pool": 3210,
-   "touched": 2514
-  },
-  "scan": "ssh_eda_search_20261109_224902",
-  "scan_rows": 38082,
-  "scan_sha256": "a3a374ad5bcaa79f1b82ceeb3ab560e8a703450640b8ad4c11fc6fbb0bec3c07",
-  "src": "designflow/summary_1109.tsv"
- },
- "note": "r384: scansync (11/09 still latest, no new scan) + stale-candidates-file finding (candidates_mc10.tsv=11/05, gyja8 gone) + 4 fresh A-dominant peeked from 11/09 direct (xinm9/y7550/5szsv/ux82s all weak/not-viable, 0 case). A.jsonl 210 unchanged. PIVOT (a/b/c/d) still awaits user decision.",
- "note_mc30": "顶层 mcN 现统一取自 11/09 全量扫描 raw summary.tsv (38082 行 / 5999 dedup session by session_file). mc_matrix.* 仍基于 11/05 curated summary_1105.tsv (1928 shard-A-keyword dedup, slug 级取最大 mc) 用于 ledger fresh 复算; 两源口径不同, 勿混用. target_mc=10 时覆盖率分母取 mc_matrix.mc10.pool=1929 (与 ledger 同源).",
- "pool_switch": {
-  "B_mc10_fresh_1109": 0,
-  "B_mc10_fresh_1113": 76,
-  "by": "ops_directive + shardB completion (2026-11-12 用户令)",
-  "done_at": "2026-11-13T21:20+08:00",
-  "from": "designflow/summary_1109.tsv",
-  "mc10_fresh_1109": 416,
-  "mc10_fresh_1113": 663,
-  "note": "ops 2026-11-13 13:30 触发 1113 全量扫描; shard B 2026-11-13 完成换池落盘 (mc_matrix.src->summary_1113.tsv). 1109 B mc10 fresh=0 (台账消化), 1113 B mc10 fresh=76 (+76). ALL mc10 fresh 416(1109)->663(1113) +247.",
-  "scan_path": "/home/t0002965/log/ssh_eda_search_20261113_131349/summary.tsv",
-  "scan_rows": 41409,
-  "to": "designflow/summary_1113.tsv"
- },
- "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261115_081559/summary.tsv",
- "prev_sessions": 3791,
- "scan_path": "/home/t0002965/log/ssh_eda_search_20261116_072610/summary.tsv",
- "scan_rows": 37113,
- "scan_sha256": "(pending)",
- "scansync": {
-  "dedup_sessions": 6968,
-  "duration_sec": 240,
-  "fresh_A_domain_verdict": "all 8 new A-domain mc>=10 sessions NOFILE (cline rotation); auto-stop stands with fresh 11-16 data",
-  "mc10": 3513,
-  "mc30": 2666,
-  "method": "orchestrator.sh full 698-host rescan (daily quota per 11-14 user order; A auto-stop data refresh + pool_switch)",
-  "new_A_domain_live": 0,
-  "new_A_domain_mc10": 8,
-  "new_A_domain_nofile": 8,
-  "new_sessions_mc10_vs_1115": 11,
-  "prev_scan": "ssh_eda_search_20261115_081559",
-  "round": "r620",
-  "scan": "ssh_eda_search_20261116_072610",
-  "staleness_correction": "summary_stats.json mc10 was 2664 (stale, from older scan); 11-15 recompute=3504; 11-16 fresh=3513; real 23h delta mc10 +9",
-  "unreachable": 6
- },
- "sessions": 3791,
- "shard_mc": {
-  "A": 10,
-  "B": 10,
-  "C": 10,
-  "D": 10
- },
- "stop_loss_shardA_mc5": {
-  "triggered_at": "2026-11-18T14:1x+08:00",
-  "triggered_by": "r731 (11-15 directive auto-stop §二.4: 3 consecutive 0-case rounds at mc>=5)",
-  "evidence": "r719/r720/r722/r724/r725/r726 produced 6 cases after mc>=5 adoption (r718); then r727/r728/r730 = 3 consecutive 0-case rounds. r730 systematic exhaustion proof: strict A-pure filter (verdi|vcs|dc_shell|design_compiler|innovus|primetime|pt_shell|formality|yosys|vivado|openroad|verilint) on 20261116 snapshot = 165 mc>=5 A-pure candidates; top 25 (mc 100-773) + 12 low-mc peek ALL fresh candidates already claimed by other shards (cross-shard mutex, r728 lesson) or C/D domain. A-pure mc>=5 fresh after cross-shard mutex ~= 0.",
-  "action": "shard_mc.A reverted 5 -> 10 (matches trace_ledger.py SHARD_MC which was never changed). Pivot to intent_audit continuation + other output per 11-15 directive.",
-  "verdict": "mc>=5 pool expansion (11-15 order) measured INEFFECTIVE for shard A: produced 6 cases (r719-r726) then exhausted under cross-shard mutex. Not a threshold problem - A-pure fresh material truly consumed."
- },
- "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
- "summary_1113_dedup_sessions": 4418,
- "target_mc": 10,
- "target_mc_changed": "2026-11-11 用户令: 30 -> 10 (A 原 15); 候选池 11/05 -> 11/09 待 A 执行 A1-A6. 2026-11-15 用户令: shard A 单独 10 -> 5 (A 选料枯竭, 扩池); B/C/D 维持 10.",
- "threshold_eval_shardA": {
-  "eval_basis": [
-   "r374-r380 peek 32/32 fresh strict-clean A-domain candidates (mc>=10, strict-clean filter adom>=50 & adom>1.2*ndom & mc>=15 & noise<0.3*adom) ALL weak: env-config / analysis-Q&A / doc-search / debug-Q&A / flow-driving; 1 produce-task = y4c5b Qt Jobmonitor (non-EDA GUI, delivered r377 as L1 offline-patch reframe)",
-   "r381 mc>=5 slice peek (new slice, never peeked): 12 unique sessions, ~10/12 wrong-shard C/D (drc/aether/schematic/hspice/waveview dominant), only 2 A-domain-ish (fwtt5 sv:14/netlist:12, nurc0 sv:598 low-diversity paste) but mc<10 unauthorized under 2026-11-11 mc>=10 令",
-   "A archetype saturation: ~37/210 A cases are diagnosis/generator/parser/audit/analyze/report; spec-driven-gen / log-parser / diagnosis-gen three modes (r367-r373) already exhausted fresh clean-produce pool"
-  ],
-  "finding": "Binding constraint is archetype + strong gate (k>=8, 3 neg FAIL, hidden B), NOT threshold. Lowering mc 10->5 does NOT help (wrong-shard dominated 10/12). fresh=289 at mc>=10 is quality-exhausted (32/32 strict-clean weak), not quantity-exhausted.",
-  "min_viable_threshold_recommendation": "NO threshold below mc>=10 unblocks A casemaking under current gate. mc>=5 yields wrong-shard/C-D material. The最低可用阈值 = mc>=10 (current), but it is quality-saturated.",
-  "predicted_new_cases_by_option": {
-   "a_full_rescan": "unknown until new scan runs; 11/09 scan 2 days stale, 11/11 daily log 2541 sessions suggests new material accumulating; recommend触发 new full rescan to quantify",
-   "b_lower_to_mc5": "~0-2 A clean-produce (10/12 wrong-shard, 2 low-diversity); NOT recommended, low yield + violates 2026-11-11 mc>=10 令",
-   "c_new_archetype": "~10-20 if §5 L1 ban relaxed for A-static-analysis (audit/retrieval/explain tasks reclassified as L1 produce); requires explicit user authorization to override §5",
-   "d_accept_saturation": "0 new A cases; redirect capacity to B/C/D; A holds at ~210"
-  },
-  "round": "r382",
-  "updated_at": "2026-11-11T16:11:48+08:00",
-  "user_decision_needed": "PIVOT (r381) awaits user pick among (a/b/c/d). This eval provides the data basis. A-line recommendation: (a) full rescan first to quantify new material; if yield low, then (c) new archetype OR (d) accept saturation."
- },
- "threshold_table_shardA": {
-  "dig_marker": "verilog|systemverilog|rtl|sdc|vivado|yosys|openroad|synthesis|dc_shell|design_compiler",
-  "kw_filter": "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad",
-  "note": "sessions/users/dig_marker = A-keyword filtered dedup; fresh = un-ledgered (4-shard ledger 排除, from mc-matrix). pool=touched+fresh.",
-  "rows": {
-   "mc10": {
-    "dig_marker": 869,
-    "fresh": 289,
-    "pool": 1648,
-    "sessions": 1649,
-    "touched": 1359,
-    "users": 230
-   },
-   "mc15": {
-    "dig_marker": 815,
-    "fresh": 219,
-    "pool": 1545,
-    "sessions": 1545,
-    "touched": 1326,
-    "users": 225
-   },
-   "mc20": {
-    "dig_marker": 765,
-    "fresh": 162,
-    "pool": 1452,
-    "sessions": 1452,
-    "touched": 1290,
-    "users": 220
-   },
-   "mc25": {
-    "dig_marker": 738,
-    "fresh": 123,
-    "pool": 1384,
-    "sessions": 1384,
-    "touched": 1261,
-    "users": 217
-   },
-   "mc30": {
-    "dig_marker": 701,
-    "fresh": 94,
-    "pool": 1322,
-    "sessions": 1322,
-    "touched": 1228,
-    "users": 213
-   },
-   "mc5": {
-    "dig_marker": 939,
-    "fresh": 379,
-    "pool": 1765,
-    "sessions": 1769,
-    "touched": 1386,
-    "users": 237
-   }
-  },
-  "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
- },
- "updated_at": "2026-11-18T08:30:00+08:00",
- "users_mc10": 508,
- "users_mc100": 182,
- "users_mc30": 401,
- "users_mc300": 60,
- "users_total": 580
+  "updated_at": "2026-11-18T23:15:00+08:00",
+  "users_mc10": 614,
+  "users_mc100": 182,
+  "users_mc30": 401,
+  "users_mc300": 60,
+  "users_total": 580,
+  "mc_matrix_hist": [
+    {
+      "src": "ssh_eda_search_20261115_081559/summary.tsv",
+      "archived_at": "2026-11-18T23:15",
+      "round": "r759"
+    }
+  ]
 }
