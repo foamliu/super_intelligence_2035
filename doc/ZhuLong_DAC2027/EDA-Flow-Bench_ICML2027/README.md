@@ -10,25 +10,32 @@
 
 结构遵循 ML 会议惯例（参考 SWE-bench, ICLR 2024）：**Related Work 放在结果之后，Appendix 是命名 section 而非单个 "Appendix" 章节，包含 ICML 强制的 Ethics + Reproducibility Statement**。
 
+结构以 `main.tex` 的 `\input` 顺序为唯一权威（**不要**按文件名 glob 组装章节）。
+v1.7 重写后正文为 12 个文件（Ethics/Repro 接在 Conclusion 之后，编号 10/11），
+旧版 `8_ethics` / `9_reproducibility` 与 `8_related` / `9_conclusion` 重号，已于本版修正。
+
 ```
 EDA-Flow-Bench_ICML2027/
-├── main.tex                  # 主文件（ICML 2027 模板）
+├── main.tex                  # 主文件（ICML 2026 style，待换 2027 Author Kit）
 ├── references.bib            # 参考文献
-├── sections/                 # 主体章节（计入 8 页限制）
+├── sections/                 # 主体章节（计入正文页数）
 │   ├── 0_abstract.tex        # 摘要
-│   ├── 1_intro.tex           # §1 引言
-│   ├── 2_benchmark.tex       # §2 Benchmark Construction（数据源 + task schema + domain + 评测指标）
-│   ├── 3_harness.tex         # §3 Agent System and Evaluation Harness（Cline + MCP + 防泄题 + EDA 桥）
-│   ├── 4_experiments.tex     # §4 Experiments（RQ1/RQ2/RQ3 + 主结果）
-│   ├── 5_analysis.tex        # §5 Analysis（failure taxonomy + grounding depth + 分布 + threats）
-│   ├── 6_related.tex         # §6 Related Work（★ 放结果后，ML 惯例）
-│   ├── 7_conclusion.tex      # §7 Discussion and Conclusion
-│   ├── 8_ethics.tex          # Ethics Statement（★ ICML 强制）
-│   └── 9_reproducibility.tex # Reproducibility Statement（★ ICML 期望）
+│   ├── 1_intro.tex           # §1 Introduction
+│   ├── 2_background.tex      # §2 Background: From Script to Flow
+│   ├── 3_task_benchmark.tex  # §3 Task Modality and Benchmark (Carrier)
+│   ├── 4_harness.tex         # §4 Harness with Memory and Self-Improvement
+│   ├── 5_preregistered.tex   # §5 Pre-Registered Hypotheses and Ablation Design
+│   ├── 6_experiments.tex     # §6 Experiments
+│   ├── 7_analysis.tex        # §7 Analysis: Why Memory Helps or Hurts
+│   ├── 8_related.tex         # §8 Related Work（★ 放结果后，ML 惯例）
+│   ├── 9_conclusion.tex      # §9 Conclusion: Boundary Conditions of RSI and Affective-Memory
+│   ├── 10_ethics.tex         # §10 Ethics Statement（★ ICML 强制）
+│   └── 11_reproducibility.tex # §11 Reproducibility Statement（★ ICML 期望）
 ├── appendix/                 # 附录（不计入页数，放 references 之后）
-│   ├── A_benchmark_details.tex   # App. A Benchmark Details（task example + scan pipeline + keywords + full distribution）
-│   ├── B_additional_results.tex  # App. B Additional Results（full per-domain + per-model + failure-by-domain + token cost）
-│   └── C_experimental_details.tex # App. C Experimental Details（cline config + API + hook impl + judge impl + open-source roadmap）
+│   ├── A_benchmark_details.tex    # App. A Benchmark Details（task example + scan pipeline + keywords + full distribution）
+│   ├── B_additional_results.tex   # App. B Additional Results（full per-domain + per-model + failure-by-domain + token cost）
+│   ├── C_experimental_details.tex # App. C Experimental Details（cline config + API + hook impl + judge impl + open-source roadmap）
+│   └── D_affective_mechanism.tex  # App. D Affective Mechanism（情绪机制生物学依据全集）
 ├── figures/                  # 图表
 └── README.md                 # 本文件
 ```
