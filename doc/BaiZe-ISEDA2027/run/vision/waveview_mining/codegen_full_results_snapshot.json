@@ -4044,6 +4044,84 @@
    "detail": "",
    "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DlySigmaSweep-001/V2/outputs/submit.zip",
    "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqDqsAlign-001",
+   "arm": "V0",
+   "k_conditions": 33,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqDqsAlign-001",
+   "arm": "V1",
+   "k_conditions": 33,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqDqsAlign-001",
+   "arm": "V2",
+   "k_conditions": 33,
+   "pi_seconds": 236.6,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "j: mean_offset_ns -1.0 != oracle 1.025",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DqDqsAlign-001/V2/outputs/submit.zip",
+   "n_zip_members": 3
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+   "arm": "V0",
+   "k_conditions": 3,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 18,
+   "k_total": 18,
+   "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V0/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+   "arm": "V1",
+   "k_conditions": 3,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 18,
+   "k_total": 18,
+   "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V1/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqTrtfMeasure-001",
+   "arm": "V2",
+   "k_conditions": 3,
+   "pi_seconds": 0.0,
+   "pi_rc": "resume",
+   "verdict": true,
+   "k_pass": 18,
+   "k_total": 18,
+   "detail": "PASS: 18/18 conditions (DqTrtfMeasure-001)",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DqTrtfMeasure-001/V2/outputs/submit.zip",
+   "n_zip_members": 2
   }
  ]
 }
