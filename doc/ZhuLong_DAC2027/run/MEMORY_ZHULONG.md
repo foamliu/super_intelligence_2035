@@ -1,14 +1,16 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1250·**🟢 standby·plan v1.4 已交付（wake#1247 commit `2c4ed787d`·用户令 2026-11-18 第二批意见·核心认知升级：情绪×长期记忆 + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 调研）·本 wake 第十二次复核 9 判据全通过**。v1.4 = v1.3 + §4.5 三条情绪机制计算映射（惊奇度门控 w=α·surprise+β·penalty / 武器聚焦压缩 central_vs_peripheral_ratio / 状态感知检索 score=sim+γ·state_match）+ H5/H6/H7 机制级假设（各含证伪条件）+ M4/M5/M6/M7(±M8) 新臂（§5.1 扩到 13 臂）+ §5.2 Full→Lite 迁移污染检验 M4 + §2.3 开源边界收缩（删 Lite 500 + mock-EDA，改协议级开源）+ §5.4/§7.1 任务子集 Lite→Full 子集 + §6.3 Related Work 扩 affective neuroscience 行 + §8 R8/R9 风险 + 附录 G 调研文献（research.cimi_search 8 次调用·G.1-G.5 五组）。报告 **111269B**>25KB ✅·0 外链（grep=0）✅·0 script ✅·11 h2 ✅·H1-H7 证伪条件齐 ✅·13 臂含 3 负对照 ✅·附录 F 两条 BibTeX 保留 ✅·§0-§9 数字未改（10.0%/1684 保留）✅。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。infra: loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅·ops relay PID118432 活 ✅·HEAD=origin/main `1e209a237`（FF 同步·非本线提交）0 behind ✅·**预注册日 2026-11-22 临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1251·**🟢 standby·plan v1.5 已交付（本 wake commit `__V15_HASH__`·用户令 2026-11-18 第三批意见·§6 论文大纲与图表同步至 v1.4 口径）·本 wake 7 判据全通过**。v1.5 = v1.4 + §6.1 标题候选 3→6（+3 情绪机制主线：Affective Gating / Surprise-State-Weapon-Focus / From Arousal to Retrieval·原 3 降级备选·推荐转情绪方向）+ §6.2 贡献 4→5 条（H1-H4→H1-H7 / 8 臂→13 臂 / 删 mock-EDA+Lite 500 改协议白皮书 / RSI+情绪双重边界 / 第 5 条 Formalize 三机制计算映射）+ §6.3 章节大纲 11→12 行全同步（7 假设/13 臂/Full 子集替 Lite 500/协议白皮书替 mock-EDA/§9 标题更新/新增独立 §4.5 Affective-Memory Mechanisms 章节行/§8 Related Work 行合入 affective neuroscience）+ §6.4 图表 Fig2/Table2/Table3 同步 13 臂/H1-H7 + 新增 Fig5-9 情绪机制图表 + Table6 H5-H7 核验。报告 **119150B**>25KB ✅·0 外链（grep=0）✅·0 script ✅·11 h2 ✅·diff 仅在 §6（§0-§5/§7-§9 本体未改）✅·v1.4 判据全过（13 臂/H1-H7/delta表/时间线/附录F BibTeX+G 调研/Plan B/UNKNOWN）✅。**发现并修复**：repo ZHULONG_TASK.md 顶部 v1.5 第三批意见令（commit `5a113ef69` 仅更新任务书·未改报告）·报告 §6 仍停留 v1.2/v1.3 口径·本 wake 执行该 pending 任务。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval。infra: loop PID243810 活 ✅·https_proxy=http://172.19.92.23:13128 ✅·ops relay 活 ✅·**预注册日 2026-11-22 临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
-- [2026-11-18 wake#1250 详条] 见 `daily-memories/2026-11-18.md` §[wake#1250]（plan v1.4 第十二次复核·交互式 OpenCode 会话·9 判据全通过·infra 自检通过·不起 eval·仅记心跳·HEAD=1e209a237 FF 同步）。
+- [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·发现并执行 pending 的 v1.5 §6 同步任务·7 判据全通过·报告 119150B）。
 
-- [wake#1249/#1248 详条已滚出·2026-11-18 wake#1250 归档] 见 `daily-memories/2026-11-18.md` §[wake#1249]/§[wake#1248]（plan v1.4 第十/十一次复核·交互式 OpenCode 会话·9 判据全通过·仅记心跳·被 wake#1250 代表）。
+- [2026-11-18 wake#1250 详条已滚出·被 wake#1251 代表] plan v1.4 第十二次复核·9 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1250]。
+
+- [wake#1249/#1248 详条已滚出·被 wake#1250 代表] 见 `daily-memories/2026-11-18.md`（plan v1.4 第十/十一次复核·仅记心跳）。
 
 - [2026-11-18 wake#1247 详条] 见 `daily-memories/2026-11-18.md` §[wake#1247]（**plan v1.4 交付**·用户令 2026-11-18 第二批意见·核心认知升级情绪×长期记忆 + Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 8 次调研 + 附录 G·自检 9 判据全通过·新臂 M4-M8 是设计不起跑）。
 
