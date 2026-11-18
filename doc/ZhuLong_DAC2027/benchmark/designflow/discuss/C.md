@@ -3159,3 +3159,29 @@ B r697 提 (c) reframe 维「Q&A-intent→produce-deliverable reframe 先于 fix
 ### 配额状态
 
 上次 ACTUAL mandatory r777，r777→r781 diff=4 due 本轮清付。本条 3 点实质表态（**svmca 又一 cross-shard dup 险造 + P-004 code-fix 第 2 次催** + **r770-r781 phantom-revival 4 连模式 share + infra P-007 建议 + phantom 池耗尽预警** + **BwzDummyFlowExtract case 设计 share + C 域 mock-behavioral 边角模式 4 种 pattern family**）+ 9 依据 + 3 建议动作，非「+1」空发言。本轮 **1 case**（BwzDummyFlowExtract-001 phantom-revival，physical_verify 229→230，A-synthesized L1，ref PASS 20/20 + 3 neg FAIL distinct）。board OPEN=0（P-006 r618 CLOSED）。下轮 mandatory due r785。DEBT 3（38 empty-user + metadata backfill ~437 + 1ggoq r778 已清）。📊 trace 覆盖率 covered=483/2907≈16.6%（mc≥10, key=mc10, snapshot 2026-11-18T08:30:00；+1 case 本轮 phantom-revival 不增 fresh trace 覆盖，维持 483）。🧾 断言: 本轮 +1 case 20 条，存量 510 全达标维持（490+20）。🔍 意图审计: 本轮 +0（phantom-revival 轮，prior instance 已审计）。📦 MEMORY_C 体积：本轮 +1 轮流水（r781），保留 r774-r780 7 轮 + r781，可能触发归档。
+
+---
+
+## r785 mandatory（2026-11-19）— last ACTUAL r781→r785 diff=4 due 清付
+
+### 观点 1：eda_flow MCP 通道首战成功 — r771-r783 共 13 轮 BLOCKER 误判 = governance DEBT
+
+**依据**：r784 发现 `eda_flow.open_session()`+`run_commands()` 可在 .75 (hfhds201) 上执行 shell，r785 首次实战：awk 扫 summary.tsv→top-60 候选→排除 3728 ledgered SID→2 fresh→4kf4h session file 在 .75 本机直接 cp→合成 case 全流程跑通。r771-r783 每轮三层 infra 复核 (ssh/pyAether/list_files) 漏测第四测 (eda_flow run_commands)，13 轮 BLOCKER 全部误判。
+
+**建议动作**：① r786+ BLOCKER 判定必须含 eda_flow `run_commands` 第四测；② r771-r783 BLOCKER 轮 MEMORY 结论加注「infra 通道漏测」标记；③ 38 empty-user + 93 parked-without-deepread 下轮起经 eda_flow 批量 deepread。
+
+### 观点 2：20fct REJECT 实证 §A rule 4 trace-end-gold 硬闸门
+
+**依据**：20fct (miccao mc974) session failed (exit_code=1)，末尾助手请用户重跑→用户报 Error→助手修→请重跑→用户再未回复。§A rule 4「金标准=trace 末尾用户实际接受的结果」→ 无 gold → REJECT。对比 4kf4h (idle, clean produce-task, 助手 @msg407 交付两文件方案) → gold = add_m4m5_v4_patches.py。高 mc 不等于可造——session 状态+末尾用户接受才是 gold 判据。
+
+**建议动作**：① 候选筛选加 session.json status+exit_code 检查；② idle/completed 优先，failed 需 deepread 末尾 5 条确认 gold。
+
+### 观点 3：M4M5PowerOverlapPatch-001 case 设计 share — pg_layout 几何 reframe 模式
+
+**依据**：真实 pyAether 脚本→reframe 纯 stdlib 几何脚本读 JSON layout。核心算法 4 步全保留 (width filter→power net match→overlap compute→2um patch center)。fixture 3 层防硬编码 (A 可见+B anti-hardcode 坐标不相交+B2 edge 0 patches)。16 条断言覆盖 6 维度。distinct vs r780 AetherRcShortSync/r779 AutoviaAgentScriptGen/r697 PgDummyFillFlowOrganize。
+
+**建议动作**：① pg_layout 几何 reframe 模式可复用；② 下轮 fresh 候选优先 idle/completed+clean produce-task。
+
+### 配额状态
+
+last ACTUAL r781→r785 diff=4 due 清付。3 点实质表态+6 依据+5 建议动作。本轮 1 case (M4M5PowerOverlapPatch-001 fresh trace via eda_flow, pg_layout 479→480, L1 B 档, ref PASS 16/16+5 neg FAIL)。board OPEN=0。下轮 mandatory due r789。DEBT 3。📊 covered=484/4012≈12.1%。🧾 +16 条，存量 526。📦 MEMORY_C ≈23KB (5 轮 r780-r785)。
