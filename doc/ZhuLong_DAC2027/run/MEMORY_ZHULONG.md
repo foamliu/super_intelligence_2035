@@ -14,13 +14,7 @@ WAITING: 0（2026-11-18 wake#1262·**🟢 standby·plan v1.5 已交付**：commi
 
 - [2026-11-18 wake#1259 心跳·交互式 OpenCode 会话] 第九次复核 v1.5（commit e810dc502）·7 判据全通过（119150B / 11 h2 / 0 外链 0 script / 13 臂 M0-M8+S1+N1+N2 / H1-H7 / §4.5 Affective-Memory 19 处 / Fig1-9 含 Fig5-9 情绪机制图表）·**⚠️ 程序性瑕疵已发现并记录**：v1.5 §6 同步内容被混入 designflow commit `e810dc502`（commit msg="designflow shard C #r750..."，且同 commit 含 designflow/intent_audit_C.tsv + MEMORY_DESIGNFLOW_C.md）——违反硬约束「commit 前缀=zhulong plan: ...v1.5...」+「只 add 本线文件」；**内容本身正确完整、无需返工**，commit msg 历史改写风险>收益故不回溯 amend·仅记录。不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
 
-- [2026-11-18 wake#1258 心跳] standby 第八次复核 v1.5（commit e810dc502·§6 同步已交付）·7 判据全通过（119150B>25KB / 11 h2 / 0 外链 0 script / 13 臂 M0-M8+S1+N1+N2 / H1-H7 / §4.5 Affective-Memory 20 处 / Fig1-9 含 Fig5-9 情绪机制图表）·MEMORY 37838B<40KB·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
-
-- [2026-11-18 wake#1257 心跳] standby 第七次复核 v1.5（commit e810dc502·§6 同步已交付）·7 判据全通过（119150B>25KB / 11 h2 / 0 外链 0 script / 13 臂 M0-M8+S1+N1+N2 / H1-H7 / §4.5 Affective-Memory 4 处 / Fig1-9 含 Fig5-9 情绪机制图表）·diff vs v1.4 仅 §6·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
-
-- [2026-11-18 wake#1256 心跳] standby 第六次复核 v1.5（commit e810dc502·§6 同步已交付）·7 判据全通过·diff vs v1.4 仅 §6（line 605-683）/ 0 外链 0 script / 119150B / 13 臂 H1-H7 / Fig5-9 情绪机制图表·交互式 OpenCode 会话·不起 eval 不起臂·待用户放行（预注册日 2026-11-22 距 4 天）。
-
-- [wake#1253/#1254/#1255 详条已滚出·被 wake#1256 代表] plan v1.5 第三~五次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md`。
+- [wake#1253~#1258 详条已滚出·被 wake#1259 代表] plan v1.5 第三~八次复核·7 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md` §[wake#1253~#1258 rolled-out]。
 
 - [2026-11-18 wake#1251 详条] 见 `daily-memories/2026-11-18.md` §[wake#1251]（**plan v1.5 交付**·用户令 2026-11-18 第三批意见·§6 同步至 v1.4 口径·7 判据全通过·报告 119150B）。
 
