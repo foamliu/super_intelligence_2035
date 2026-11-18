@@ -80,26 +80,8 @@ WAITING: 0（r880 造题轮 · 1 case 落库 · A档 trace-faithful WaveView man
 > r822 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md（r824 释体积）
 
 > r821 discuss mandatory 配额清付轮 · 0 case · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D12」（D metadata 欠债自曝 100% asset_fidelity 缺标 + D 16 弹 100% 落 B stage-iii 极端 + endorse C 四维 exhaustion + 3 pending 议题无回应，r822 修正 r821 遗漏 B r739 sgk0l (a)-plus 表态）
-> r820 造题轮 · 1 case 落库 · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D12」（11-15 revival 第十八弹 TM-Scan script analysis QA, r821 释体积归档）
-> r820 造题轮 1 case 落库 · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md（归档批次 D13，r825 释体积）
-> r819 造题轮 · 1 case 落库 · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D11」（11-15 mandate 第十七弹 WL/CSL binding analysis Q&A, schematic_netlist）
-> r818 维持轮 · 0 case · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D9」（pool 枯竭第十一次实证，r819 证伪：4-shard union 排除后 139 truly-available 候选存在）
+> r800-r820 汇总：r800-r802 选料/审计轮(0 case) · r803 选料筛查 · r804/r806/r807/r819/r820 造题轮(各 1 case 落库, 11-15 revival 第十四~十八弹) · r805 discuss 配额 safety 补付 · r809-r818 维持/discuss 轮(0 case, pool 枯竭第五~十一次实证, r819 证伪 139 truly-available 候选存在) · 全部原文已归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md 归档批次 D2-D30
 
-> r817 discuss mandatory 清付轮 · 0 case · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D8」（pool 枯竭第十次实证 + B r731 reframe_note 3 候选 D 域判据回应 + 3 pending 议题无回应状态报告）
-
-> r816 维持轮 · 0 case · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D7」（pool 枯竭第九次实证 + r815 MEMORY 误判修正 + fl4rh 跨 shard 重复议题首报 @A）
-
-
-
-> r814 维持轮 · 0 case · pool 枯竭第七次实证 · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D30」（r857 释体积）
-
-> r813 discuss 清付轮 · 0 case · pool 枯竭第五次实证 + sgk0l @B 处置 + D 域 reframe 回应 · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D30」（r857 释体积）
-
-> r811 维持轮 · 0 case · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D5」（r815 归档释体积）
-
-> r810 MEMORY 体积归档轮 · 0 case · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D3」（r782-r805→D2 后续 + r810 本轮）
-
-> r809 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D4」
 
 > r807 造题轮 · 1 case 落库 · 11-15 revival 第十六弹 SimEnvFileRelAnalysisQA (waveform, vov8r mc=23, 14 断言 a-n, A档 verbatim) · 原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 D28」（r840 释体积）
 
