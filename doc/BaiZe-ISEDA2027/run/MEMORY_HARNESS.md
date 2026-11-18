@@ -1,8 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2687 · 2026-11-18 17:4x — 监控轮·SWE-bench Multimodal容器下载持续推进+Verified predict续推·**心跳第一行**: SWE-bench Verified 7路 cumulative(unchanged since R2685·无incr_eval): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code293/500=58.6%**·**cline257/500=51.4%**·**pi222/500=44.4%**·**deepseek145/500=29.0%**·**codex94/500=18.8%**·📦 **SWE-bench Multimodal容器下载进行中**(用户令11-18): **31/580 pulled**(state=31·0 FAILED✅·pulling #32)·580 images=100 dev+480 test·17 JS/TS repos·sequential pull nice19/ionice3·~1.7min/each·ETA~15h(remaining 549)·pull_all_images.sh alive(PID 3749136·etimes=3065s·nice19)·docker pull CPU≈0.1%·0 429✅·disk /nas_train 27T free✅·predict 5/7 alive(cline353/codex164/cc376/pi312/dsh190·opencode+hermes COMPLETE 500/500)·last60min: codex+2real/cc+2real/cline+0real/pi+0real/dsh+0real(不足incr_eval·需≥3-5 real-patch/route)·**自检**: load 41/224≈18.3%busy·MemAvail1358GB·最高harness proc=pretrain 130%(非本线)·docker pull 0.1%·无本线proc>8000%阈值✅·pretrain不受影响✅·research日报11-18已读(5条harness建议:产物存在性判分/harness指纹四元组/provider绑定/语言分桶/seed平均·均纳入未来)·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈28.8KB(✅≤32KB)
-> 📦 R2686 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器下载22/580·predict 5路alive·19新预测40min不足incr_eval·自检clean·research日报已读）。需要时再读。
+> 🆕 **R2688 · 2026-11-18 18:1x — incr_eval轮·SWE-bench Multimodal容器下载持续推进+Verified incr_eval R2688 DONE·**心跳第一行**: SWE-bench Verified 7路 cumulative(after R2688): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code294/500=58.8%(+1)**·**cline257/500=51.4%**·**pi223/500=44.6%(+1)**·**deepseek147/500=29.4%(+2)**·**codex96/500=19.2%(+2)**·📦 **SWE-bench Multimodal容器下载进行中**(用户令11-18): **42/580 pulled**(state=42·0 FAILED✅·pulling chart.js)·580 images=100 dev+480 test·17 JS/TS repos·sequential pull nice19/ionice3·~1.7min/each·ETA~15h(remaining 538)·pull_all_images.sh alive(PID 3749136·etimes=4439s·nice19)·docker pull CPU≈0.1%·0 429✅·disk /nas_train 27T free✅·incr_eval R2688 COMPLETE: 11 instances 6 routes·+6 RESOLVED·+3 FAILED·+2 infra·CPU_SPIRAL_SKIP added(sklearn-14710 skipped→infra→protects pretrain✅)·pi infra dedup(3→1)·7way报告REGEN(18721B)·predict 5/7 alive(cline353/codex167/cc377/pi312/dsh191·opencode+hermes COMPLETE 500/500)·**自检**: load30/224≈13.3%busy·最高harness proc=cline-hub-daemon34.4%·docker pull 0.1%·无本线proc>8000%阈值✅·pretrain不受影响✅·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈29KB(✅≤32KB)
+> 📦 R2687 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器下载31/580·predict 5路alive·无incr_eval·自检clean·research日报已读）。需要时再读。
 > 📦 R2685 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·5 instances 4 routes·+2 RESOLVED+0 FAILED+3 infra·7way报告REGEN·SWE-bench Multimodal容器下载17/580·scikit-learn CPU kill）。需要时再读。
 > 📦 R2684 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·8 instances 5 routes·+5 RESOLVED+0 FAILED+3 infra·7way报告REGEN·SWE-bench Multimodal容器下载启动6/580·scikit-learn CPU kill）。需要时再读。
 > 📦 R2683 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·20 instances 6 routes·+13 RESOLVED+5 FAILED+4 infra·re-parse路径bug修复·7way报告REGEN·swebench deps安装·scikit-learn CPU kill）。需要时再读。
@@ -75,14 +75,14 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2687 监控轮·SWE-bench Multimodal容器下载持续推进(31/580)+Verified predict 5路RUNNING·SWE-bench Verified 7路 cumulative stable(无incr_eval)
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2680~R2685 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice3·31/580 pulled·0 FAILED·ETA~15h)
-当前动作:     R2687: 监控MM容器下载(31/580·PID 3749136 alive·nice19·0.1%CPU)+Verified predict 5路alive(cline353/codex164/cc376/pi312/dsh190)·last60min codex+2real/cc+2real其余0·不足incr_eval·自检clean(load41/224·MemAvail1358GB·无本线proc>8000%)
+PHASE:        R2688 incr_eval轮·SWE-bench Multimodal容器下载持续推进(42/580)+Verified incr_eval R2688 DONE(+6resolved)·7way报告REGEN
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2680~R2688 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice3·42/580 pulled·0 FAILED·ETA~15h)·CPU_SPIRAL_SKIP added(sklearn-14710)
+当前动作:     R2688: incr_eval COMPLETE(11 instances·+6resolved+3failed+2infra)·7way报告REGEN(18721B)·MM容器下载42/580(PID 3749136 alive·nice19·0.1%CPU)·predict 5路alive·自检clean(load30/224·无本线proc>8000%)
 下一步:       继续监控MM容器下载+5路predict·攒够新real-patch(≥3-5题/route)后跑incr_eval→刷新7way报告·3 infra题待后续re-eval·Multimodal下载完成后准备MM评测
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈30.2KB / MEMORY≈28.8KB（✅≤32KB）
- SWE-bench Verified Pass%(cumulative resolved/500): hermes441=88.2%·opencode415=83.0%·cc290=58.0%·cline255=51.0%·pi218=43.6%·dsh143=28.6%·codex91=18.2%·(partial·predict still running for 6 routes·incr_eval R2680 DONE)
+ 体积: TASK≈30.2KB / MEMORY≈29KB（✅≤32KB）
+ SWE-bench Verified Pass%(cumulative resolved/500, after R2688): hermes444=88.8%·opencode415=83.0%·cc294=58.8%·cline257=51.4%·pi223=44.6%·dsh147=29.4%·codex96=19.2%·(partial·predict still running for 5 routes)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
   7路额度审计(修正后): cline:Q=0/S=8/CR=1/E=89 | codex:Q=0/S=5/CR=0/E=89 | opencode:Q=15/S=23/CR=0/E=89 | claude-code:Q=0/S=0/CR=0/E=89(修复后0ConnRefused·R1+R2 merged 30P) | pi:Q=0/S=45/CR=1/E=89 | hermes:Q=39/S=43/CR=0/E=89 | deepseek:Q=0/S=48/CR=0/E=89 | rerun_targets=227
   cc归因结论: claude-code 30/89=33.7%(R1+R2 merged·0ConnRefused✅HARD VERIFIED·passed=30/ability=41/infra=4(502+503)/timeout=7/adapter_error=6/cli_parse_bug=1)·根因=容器内127.0.0.1指向容器自身·修复=overlay network_mode:host·vs旧0/89=100%infra(88ConnRefused)·详见reports/report_harness_cc_tb21_attribution_zh.html(89行逐题R1+R2 merged)
