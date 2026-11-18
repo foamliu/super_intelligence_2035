@@ -1,16 +1,18 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1288·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（v1.5 §6 同步·已在 origin/main）。本 wake 第三十八次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 M4 M5 M6 M7 M8 N1 N2 / H1-H7 / §6.1-§6.3。git：workspace HEAD=`658763cf8`=origin/main 0 behind 0 ahead（ff-only·较 wake#1287 记录的 973bde986 前进·为本线 wake#1287 commit·现干净）·本线 run/ 无 dirty·TASK.md 11.1KB<32KB✅·MEMORY 39.4KB<40KB✅（贴近硬上限·下次唤醒需滚动）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval·ps 核验 75 个 cline 进程均为 designflow eval 线（他线·未碰）·无 ZhuLong subagent/run_h2/ablation_run eval 进程·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1289·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（v1.5 §6 同步·已在 origin/main）。本 wake 第三十九次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 M4 M5 M6 M7 M8 N1 N2 / H1-H7 / §6.1-§6.3。git：workspace HEAD=`67c9c352c`=origin/main 0 behind 0 ahead（ff-only·较 wake#1288 记录的 658763cf8 前进·他线 commit·现干净）·本线 run/ 无 dirty·TASK.md 11.1KB<32KB✅·MEMORY 39.4KB<40KB✅（贴近硬上限·下次唤醒需滚动）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval·ps 核验 75 个 cline 进程均为 designflow eval 线（他线·未碰）·无 ZhuLong subagent/run_h2/ablation_run eval 进程·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-18 wake#1289 心跳·交互式 OpenCode 会话] 第三十九次复核 v1.5（commit e810dc502）·7 判据全通过（报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0-M8+N1+N2 / H1-H7 / §6.1-§6.3）·git HEAD=`67c9c352c`=origin/main 0 behind 0 ahead（ff-only·他线 commit 推进·本线 run/ 无 dirty）·ps 核验 75 cline 均为 designflow eval（他线·未碰）·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）·无 ZhuLong subagent/run_h2/ablation_run eval 进程·不起 eval 不起臂·subagent 消融线仍 done_all·新臂 M4-M8 是设计文档不起跑·待用户下一步放行（预注册日 2026-11-22 距 4 天）。状态与 wake#1288 一致，仅续编心跳 + HEAD 推进（658763cf8→67c9c352c·他线 ff-only）+ 本轮滚动 wake#1287/#1286 至 daily 控体量。⚠️ MEMORY 仍贴近 40KB 硬上限，下次唤醒需继续滚动。
+
 - [2026-11-18 wake#1288 心跳·交互式 OpenCode 会话] 第三十八次复核 v1.5（commit e810dc502）·7 判据全通过（119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0-M8+N1+N2 / H1-H7 / §6.1-§6.3）·git HEAD=`658763cf8`=origin/main 0 behind 0 ahead（ff-only·本线 wake#1287 commit·workspace 干净·本线 run/ 无 dirty·TASK.md 11.1KB<32KB✅）·ps 核验 75 cline 均为 designflow eval（他线评测高峰·未碰）·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）·无 ZhuLong subagent/run_h2/ablation_run eval 进程·不起 eval 不起臂·subagent 消融线仍 done_all·新臂 M4-M8 设计文档不起跑·待用户下一步放行（预注册日 2026-11-22 距 4 天）。状态与 wake#1287 一致，仅续编心跳 + HEAD 推进（973bde986→658763cf8·本线 ff-only）。⚠️ MEMORY 39.4KB 已贴近 40KB 硬上限，下次唤醒需先滚动早期 wake 指针至 daily-memories。
 
-- [2026-11-18 wake#1287 心跳·交互式 OpenCode 会话] 第三十七次复核 v1.5（commit e810dc502）·7 判据全通过·git HEAD=`973bde986`=origin/main 0 behind 0 ahead（ff-only·他线 commit 推进）·ps 78 cline 均为 designflow eval·zhulong_loop.sh harness PID243810+317595 在跑·不起 eval 不起臂·待用户下一步放行。详条见上 wake#1288 同口径（本行已由 wake#1288 代表，仅留指针控体量）。
+- [wake#1287 详条已滚出·被 wake#1288 代表] 见 `daily-memories/2026-11-18.md` §[wake#1287 rolled-out]（plan v1.5 第三十七次复核·HEAD=`973bde986`）。
 
-- [2026-11-18 wake#1286 心跳·交互式 OpenCode 会话] 第三十六次复核 v1.5（commit e810dc502）·7 判据全通过（119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 / H1-H7 / §6.1-§6.3 / Fig5-9）·git HEAD=`c32861bc2`=origin/main 0 behind 0 ahead·workspace 干净·ps 78 cline 均为 designflow eval·zhulong_loop.sh harness PID243810 在跑·无 ZhuLong eval·不起 eval 不起臂·subagent 消融线仍 done_all·新臂 M4-M8 设计文档不起跑·待用户下一步放行。详条见上 wake#1287 同口径（本行已由 wake#1287 代表，仅留指针）。
+- [wake#1286 详条已滚出·被 wake#1288 代表] 见 `daily-memories/2026-11-18.md` §[wake#1286 rolled-out]（plan v1.5 第三十六次复核·HEAD=`c32861bc2`）。
 
 - [2026-11-18 wake#1285 心跳·交互式 OpenCode 会话] 第三十五次复核 v1.5（commit e810dc502）·7 判据全通过·git HEAD=`f158f3b92` ahead 1（他线 BaiZe·非本线）·本线无 dirty·ps 4 cline 均 designflow·无 ZhuLong eval·待用户下一步放行。详条见上 wake#1286 同口径。
 
