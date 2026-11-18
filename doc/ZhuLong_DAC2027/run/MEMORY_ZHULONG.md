@@ -1,6 +1,6 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-19 wake#1363·**🟠 friend-review P0+处置矩阵已交付·写作层 5 项延至预注册后·standby**：朋友评审令（ZHULONG_TASK.md 顶部 🔴 22:3x）已于 wake#1350 执行——P0 三项结论（R1 采纳/R2 部分采纳 b 路线/R5 采纳）+ 11 项处置矩阵（采纳 10/部分 1/不采纳 0）·预注册关键已落入论文 §3/§5/§6+abstract+§1·重编译 12p/0err/0undef/235123B·报告 reports/report_edafb_friend_review_response_zh.html·写作层 P2①③④⑤+R4 延至预注册后·subagent 消融线结案不起臂·infra 健康（loop/relay 活·cline ✅·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146）·research 日报 2026-11-18 有 5 条 zhulong 建议（VeriGen 三级闸门/DSPy 指标驱动编译/Jamba 混合比轴/Qwen3 thinking budget 分档）属预注册后输入，本轮 standby 不纳排期·距预注册日 2026-11-22 仍 3 天·待决：M0子集实测/DATE27引用/理想矩阵M6/写作层5项）
+WAITING: 0（2026-11-19 wake#1363·**🟠 friend-review 已交付·写作层 5 项延至预注册后·standby**：朋友评审令（TASK 顶部 🔴 22:3x）已于 wake#1350 执行——P0 3/3 结论 + 11 项处置矩阵（采纳 10/部分 1/不采纳 0）·预注册关键已落入论文 §3/§5/§6+abstract+§1·重编译 12p/0err/0undef/235123B·报告 reports/report_edafb_friend_review_response_zh.html·写作层 P2①③④⑤+R4 延至预注册后·subagent 消融线结案不起臂·infra 健康（loop/relay 活·cline ✅·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146）·research 日报 2026-11-18 zhulong 建议 5 条属预注册后输入·不纳排期·距预注册日 2026-11-22 仍 3 天·待决：M0子集实测/DATE27引用/理想矩阵M6/写作层5项）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
