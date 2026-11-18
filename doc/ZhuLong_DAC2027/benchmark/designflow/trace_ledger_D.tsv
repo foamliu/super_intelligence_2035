@@ -1868,3 +1868,4 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793792294539_8qf3i	m1wang	hfeg0plg79	22	analog_context	parked		2026-11-18 11:52	failed RAG-Q&A: empty workspace, no DEJOA circuit, AskEDA knowledge_base_used=false, no gold deliverable, no evidence anchor -> P-006 (C) unmakeable (r875 deepread)
 1794555791754_tjfdb	e0010438	10.129.32.46	22	analog_context	case	EDA-Eval-DesignFlow-VerilogNetlistAnalyze-001	2026-11-18 12:29	
 1789979343381_qwx61	thomasz	hfeg0plg184	16	schematic_netlist	case	EDA-Eval-DesignFlow-SkillScriptComprehensionQA-001	2026-11-18 21:25	
+1789955535816_el8uc.messages.json					parked		2026-11-18 21:47	r896 deepread: meta/explore chat (what-can-you-do/make-eda-profile/make-SVG/write-md), 128msgs; high kw from assistant RAG search_apis not real EDA work; per 2026-11-15 setup类 revivable as agent-profile case but weak design_flow fit, defer
