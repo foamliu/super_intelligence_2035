@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2677 · 2026-11-18 14:3x — incr_eval轮(5新real-patch·+3 RESOLVED)·**心跳第一行**: incr_eval R2677 DONE(169.9s)·5新real-patch跨3路eval: cline-patched 2题→both failed(能力)·pi 2题→both RESOLVED✅·hermes 1题→RESOLVED✅·全部7路0 unevaluated·**SWE-bench Verified Pass%(cumulative·updated)**: hermes441=88.2%(+1)·opencode415=83.0%·cc289=57.8%·cline254=50.8%·pi218=43.6%(+2)·dsh143=28.6%·codex91=18.2%·predict 2335/3500(Δ vs R2676=+9·codex+2/cc+1/pi+3/hermes+1/dsh+1)·6/7 predict alive(opencode COMPLETE)·**自检clean**(0 runaway·0 Docker残留·load正常)·**research日报11-18已读**(无新可执行指令)·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.7KB(✅≤32KB)
+> 🆕 **R2678 · 2026-11-18 14:5x — 监控轮(6路predict alive·+3新prediction不足起incr_eval)·**心跳第一行**: 监控轮R2678·predict 2338/3500(Δ vs R2677=+3·cline345/hermes493/pi303·各+1)·6/7 predict alive(opencode COMPLETE 500/500)·0 429✅·**自检clean**(load27/224·MemAvail1374GB·最高harness proc=cline-checkpoint-off 36.6%/660MB·远低于8000%CPU/50GB阈值·0 runaway·0 Docker残留)·**research日报11-18已读**(harness建议4条·借鉴非指令:①产物存在性判分+空跑记0[2611.21407·127/357无产物85正常退出]②工具provider绑定检查[2611.21577]③外壳指纹四元组(runtime镜像哈希/动作空间版本/最大轮数/超时)[2407.16741+2310.03714]④单次跑分噪声⇒3次数据序或标注未做seed平均[OLMo2])·**全部运维令✅已交付**·无新未完成指令·**下一步**: 继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·WAITING=0·📦 TASK≈30.5KB MEMORY≈28.5KB(✅≤32KB)
+> 📦 R2677 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·5新real-patch·+3 RESOLVED·pi218/hermes441·predict 2335/3500·自检clean）。需要时再读。
 > 📦 R2676 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·1新real-patch不足起incr_eval·predict 2326/3500·自检clean·research日报已读）。需要时再读。
 
 > 📦 R2674 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2309/3500·hermes+2·自检clean·无新运维令·research日报已读）。需要时再读。
@@ -66,9 +67,9 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2677 incr_eval轮(5新real-patch·+3 RESOLVED)·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
+PHASE:        R2678 监控轮·SWE-bench Verified predict 6路RUNNING+opencode COMPLETE
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2677 DONE(pi218/hermes441·+3 RESOLVED)
-当前动作:     R2677: incr_eval DONE·5新real-patch跨3路eval(cline 2 failed/pi 2 RESOLVED/hermes 1 RESOLVED)·全部7路0 unevaluated·predict 2335/3500(Δ vs R2676=+9)·6/7 predict alive·0真实429·自检clean
+当前动作:     R2678: 监控轮·predict 2338/3500(Δ vs R2677=+3)·6/7 predict alive·0 429·自检clean·research日报11-18已读(4条harness建议·借鉴非指令)
 下一步:       继续监控6路predict·攒够新real-patch(≥3-5题)后跑incr_eval→合并cumulative→刷新7way SWE-bench报告·(caveat: codex/dsh已done题=修复前适配器·empty-patch=infra·resume不再重试)
 阻塞:         无
 ERROR_COUNT:  0
