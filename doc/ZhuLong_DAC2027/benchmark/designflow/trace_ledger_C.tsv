@@ -1263,4 +1263,5 @@ j2was	miccao	hfeg0plg37	10	physical_verify	parked		2026-11-16 01:26	doc-view Q&A
 1785735278930_ome1l	e0014566	hfeg0plg58	43	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaBatchLogMon-001	2026-11-18 13:32	
 1791967999802_urahg	ellawu	hfeg0pkn001	26	physical_verify	case	DrcTvfDeckExplainDraw-001	2026-11-18 17:48	
 1788923302434_a66ln	xinqiaoz	hfeg0pkn002	71	physical_verify	case	EDA-Eval-DesignFlow-DrcWaiveReviewTest-001	2026-11-18 18:38	
-1790080851129_29j7y	lizwen	hfeg0pkn002	60	physical_verify	claimed		2026-11-18 19:27	
+1790080851129_29j7y	lizwen	hfeg0pkn002	60	physical_verify	case	EDA-Eval-DesignFlow-NwDerivedLayerRuleExtract-001	2026-11-18 19:46	dup of ledger 29j7y (legacy sid fmt); merging record
+1792978925184_zyk8x	xinqiaoz	hfeg0pkn002	58	physical_verify	case	EDA-Eval-DesignFlow-DrcSyncVerifyReport-001	2026-11-18 20:19	
