@@ -1855,3 +1855,6 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1793947510471_uq3df	e0044587	hfeg0plg105	82	schematic_netlist	parked		2026-11-18 06:46	r860 stale: session file not on host 10.129.8.231 (only 1 newer session 1794739258529_65a53 remains), candidate rotated out
 1793858542305_5arbb	alleng	hfeg0plg77	39	analog_context	parked		2026-11-18 06:48	r860 false-positive keywords: 110-msg session, user actual intent = generic IT Q&A (msg60 'output text doc' / msg96 'how to open .md on Linux' / msg98 'pandoc install'), lvs:90/verilog:60/analog:60 keyword hits from cimi-kb-search retrieved KB content not user EDA work, not a design-flow produce-task
 1793846320456_gx19a	steveny	10.129.32.189	22	schematic_netlist	case	EDA-Eval-DesignFlow-SkillIfaceExplainer-001	2026-11-18 08:15	
+1782880092083_8ynmb	e03179	10.129.2.11	24	schematic_netlist	claimed		2026-11-18 08:23	
+1792655063557_odjfu	hongl	10.129.8.124	18	schematic_netlist	claimed		2026-11-18 08:27	
+1792214069125_7b4kj					case	EDA-Eval-DesignFlow-TopCellNameResolver-001	2026-11-18 08:41	
