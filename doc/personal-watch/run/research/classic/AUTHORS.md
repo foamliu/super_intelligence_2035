@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-19 03:0x）**：作者 **219** 人（编号最大 **219**）· X 已核验 **106** · 已发信 **96** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-19 06:0x）**：作者 **223** 人（编号最大 **223**）· X 已核验 **106** · 已发信 **98** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十三轮增量（2026-11-19 06:0x）**：作者网 219 → **223**（#220 Mirac Suzgun / #221 Cheng-Ping Hsieh / #222 Ramachandran Ramjee / #223 Amey Agrawal，来自本轮 B 轨 #238 BBH / #240 RULER / #241 Sarathi-Serve）；已发信 96 → **98**（#98 中文 / #99 英文，见 `发送记录.md` §06:0x）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle；#221 的 `@ChengPingHsieh` 只有主页 href 单一来源，**不计入已核验**）。地址级别：#221 为 **A（本人现行主页 `mailto:`，`hsiehjackson.github.io` `200`）**；#222 为 **B（MSR 官方人员页，`200`）**；#220 为 **C（2022 论文 PDF）**；#223 无已核邮箱、只建档不发。⚠️ 本轮**先查重后才收**：`2101.00027`（The Pile）/ `2402.00159`（Dolma）/ `2306.11644`（phi-1）/ `2309.07544`（VerilogEval）均在表内 ⇒ 作废，改收 #238–#241。
 >
 > **第六十二轮增量（2026-11-19 03:0x）**：作者网 215 → **219**（#216 Nikit Srivastava / #217 Shengding Hu 胡声鼎 / #218 Mingxuan Wang 王明轩 / #219 Xueping Gao，依次来自 A 轨 `2611.23158`、B 轨 #236 MiniCPM、B 轨 #237 DAPO、A 轨 `2611.22835`）；已发信 93 → **96**（#94 英文 192 词 / #95 中文 196 字 / #96 中文 231 字，均 `SENT OK 03:03`）；X 已核验 **106 不变**（`x.com` 直连与代理均 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#217 为 **A（本人主页 mailto，`shengdinghu.github.io` `200`）**；#216 / #218 为 **C（论文 PDF 首页）**；#219 未找到公开邮箱、只建档不发。
 >
@@ -3146,6 +3148,58 @@
 | X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
 | 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 不发信） |
 | 备注 | `语言=中文(判据=华人姓名族属 + 中国机构；本轮未发)`。价值点：**「事实正确 ≠ 给出所要求的有限结论」**（122 条标签全对但仅 95/128 满足事实+范围契约），可直接改 harness 的完成判据。 |
+
+### 220. Mirac Suzgun
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mirac Suzgun（土耳其姓名族属 ⇒ 若发信应用英文） |
+| 机构 | **Stanford University**（B 轨 #238 BBH 一作；论文作者块单位） |
+| 代表论文 | **Challenging BIG-Bench Tasks and Whether Chain-of-Thought Can Solve Them**（`2210.09261`，2022） |
+| 邮箱 | `msuzgun@cs.stanford.edu`（**来源：论文 PDF 首页明文，地址级别 C**；2022 年地址，未核现行主页 ⇒ 发信前须先核） |
+| 主页 | **未找到**（`miracsuzgun.github.io` `404`、`suzgun.github.io` `404`、`msuzgun.github.io` `404`；`web.stanford.edu/~msuzgun/` 仅返回**目录索引页**（672 B），非个人主页） |
+| X 账号 | **未找到**（`x.com` 直连与代理均 `000`，本轮无法二次核验；🚫 不猜 handle） |
+| 状态 | **待跟踪**（C 级地址 + 无现行主页 ⇒ 本轮不发信） |
+| 备注 | `语言=英文(判据=土耳其姓名族属 + 美国机构；本轮未发)`。价值点：**同一批任务换 prompting 形态，模型排名会变**（PaLM 540B answer-only 52.3 → CoT 65.2；Codex 56.6 → 73.9），可直接约束 harness 的评测口径。 |
+
+### 221. Cheng-Ping Hsieh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Cheng-Ping Hsieh（华人姓名族属：Hsieh 为威妥玛式拼写 ⇒ 若发信应用中文；🚫 本轮不猜汉字写法） |
+| 机构 | **University of California San Diego**（个人主页自述）· 兼 NVIDIA（B 轨 #240 RULER 一作） |
+| 代表论文 | **RULER: What's the Real Context Size of Your Long-Context Language Models?**（`2404.06654`，COLM 2024） |
+| 邮箱 | **c2hsieh@ucsd.edu**（**来源：本人现行主页 `https://hsiehjackson.github.io/` 的 `mailto:`，页面实测 `HTTP 200` / 15,391 B，地址级别 A**） |
+| 主页 | <https://hsiehjackson.github.io/>（实测 `HTTP 200`） |
+| X 账号 | **候选 `@ChengPingHsieh`**（来源：本人主页 `href="https://twitter.com/ChengPingHsieh"`；⚠️ `x.com` 本轮直连与代理均 `000` ⇒ **未做 `og:title` 二次核验，不计入「X 已核验」**） |
+| 状态 | **已发信**（2026-11-19 06:0x，中文请教信 #98）· X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=华人姓名族属 Hsieh + 主页自述 UCSD；不因机构在美国判英文)`。价值点：**有效长度的阈值是固定值 85.6（Llama2-7B@4K）而不是按模型归一** ⇒ 直接决定我们怎么报长上下文验收。 |
+
+### 222. Ramachandran Ramjee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ramachandran Ramjee（印度姓名族属 ⇒ 英文） |
+| 机构 | **Microsoft Research India**（B 轨 #241 Sarathi-Serve 末位作者 / 通讯作者口径） |
+| 代表论文 | **Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve**（`2403.02310`，2024） |
+| 邮箱 | **ramjee@microsoft.com**（**来源：MSR 官方人员页 `https://www.microsoft.com/en-us/research/people/ramjee/` 实测 `HTTP 200` / 179,728 B，页内 HTML 实体编码的 `mailto:`；地址级别 B**） |
+| 主页 | <https://www.microsoft.com/en-us/research/people/ramjee/>（实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 06:0x，英文请教信 #99） |
+| 备注 | `语言=英文(判据=印度姓名族属 + 印度机构；无中日韩信号)`。价值点：**chunk 256 → 257 就有 32% 的 prefill 时间差**（tile quantization）⇒ 评测机的调度参数必须进实验记录。 |
+
+### 223. Amey Agrawal
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Amey Agrawal（印度姓名族属 ⇒ 英文） |
+| 机构 | **Microsoft Research India**（B 轨 #241 Sarathi-Serve 一作；论文作者块） |
+| 代表论文 | **Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve**（`2403.02310`，2024） |
+| 邮箱 | **未找到**（`amey-agrawal.github.io` `404`、`ameyagrawal.github.io` `404`、MSR 人员页 `.../people/ameyagrawal/` `404`；论文 PDF 未印邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 只建档、不发信；同论文已按「同一论文 ≤1」发给 #222） |
+| 备注 | `语言=英文(判据=印度姓名族属 + 印度机构；本轮未发)`。不猜地址：三个候选页均实测 `404`。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
