@@ -50,6 +50,17 @@ SHARD_DOMAINS = {
 SHARD_MC = {"A": 10, "B": 10, "C": 10, "D": 10}
 # 全局默认阈值（无 --shard 时用；也是 refresh 时写 mc<N> 的键）
 DEFAULT_MC = 10
+# per-shard 排除关键词（r709 兑现 A r708 §观点5 承诺，回应 D r809/r813/r888 十催）。
+# D 域 = schematic_netlist/waveform/analog_context；hspice/finesim/spectre 等 spice-sim
+# 工具命中属 B 域 spice_sim，旧 inclusion-only 过滤会经 D 的 netlist/analog 关键词漏入 D 池。
+# 排除具体 spice-sim 工具名（保留通用 spice/simulator/analog，避免误杀 D 域 analog context）。
+# A/B/C 排除词为空 ⇒ 零影响（纯 additive）。
+SHARD_EXCLUDE = {
+    "A": "",
+    "B": "",
+    "C": "",
+    "D": "hspice|finesim|siliconsmart|spectre|ngspice|custom_sim",
+}
 
 # 运行时由 --shard 设定
 _shard = None
@@ -338,6 +349,9 @@ def cmd_next(args):
     if _shard and _shard in SHARD_DOMAINS:
         tools_re = SHARD_DOMAINS[_shard][1]
         tool_filter = " && $6 ~ /%s/" % tools_re
+        excl = SHARD_EXCLUDE.get(_shard, "")
+        if excl:
+            tool_filter += " && $6 !~ /%s/" % excl
     print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s keywords($6) 过滤" % _shard if _shard else ""))
     print("# (sub(/\\.messages\\.json$/,\"\",$4); sub(/\\.json$/,\"\",$4) 规范化后做 anchor 匹配; r394 修 .json 后缀漏排除)")
     print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降阈值; **2026-11-11 用户令: 全线降到 mc>=10**)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != DEFAULT_MC else ""))
@@ -604,18 +618,22 @@ def cmd_scansync(args):
     print("# 3) 各 shard 候选池规模 (用当前过滤词 + mc 阈值):")
     for sid in sorted(SHARD_DOMAINS):
         tools_re = SHARD_DOMAINS[sid][1]
+        excl = SHARD_EXCLUDE.get(sid, "")
+        excl_filter = " && $6 !~ /%s/" % excl if excl else ""
         mc = SHARD_MC.get(sid, 30)
-        print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/ {print $4}' | sort -u | wc -l)\""
-              % (sid, mc, mc, tools_re))
+        print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/%s {print $4}' | sort -u | wc -l)\""
+              % (sid, mc, mc, tools_re, excl_filter))
     print("# 4) 新增 session (旧扫描没有的, 按 target_mc=%d 口径):" % DEFAULT_MC)
     print("echo \"new_sessions: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d{print $4}' | sort -u) | wc -l)\""
           % (old_scan, DEFAULT_MC, DEFAULT_MC))
     print("# 5) 各 shard 的新增候选 (旧扫描没有的):")
     for sid in sorted(SHARD_DOMAINS):
         tools_re = SHARD_DOMAINS[sid][1]
+        excl = SHARD_EXCLUDE.get(sid, "")
+        excl_filter = " && $6 !~ /%s/" % excl if excl else ""
         mc = SHARD_MC.get(sid, 30)
-        print("echo \"shard_%s_new: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/{print $4}' | sort -u) | wc -l)\""
-              % (sid, old_scan, mc, tools_re, mc, tools_re))
+        print("echo \"shard_%s_new: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/%s{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/%s{print $4}' | sort -u) | wc -l)\""
+              % (sid, old_scan, mc, tools_re, excl_filter, mc, tools_re, excl_filter))
     print("# 6) 更新 summary_stats.json (把上面的数字填进去):")
     print("#    python3 designflow/trace_ledger.py refresh --json '{\"scan_path\":\"$SCAN_DIR/summary.tsv\",\"mc30\":NNN,...}'")
     print("# 7) daily scan log 增量 (今日新增 trace):")
@@ -714,14 +732,19 @@ def cmd_mcmartix(args):
 
     # 可选：按 shard 的 keywords 过滤词切分
     kw_pat = None
+    excl_pat = None
     if args.shard:
         if args.shard not in SHARD_DOMAINS:
             print("ERROR: 未知 shard %s" % args.shard)
             return 2
         kw_pat = re.compile(SHARD_DOMAINS[args.shard][1])
+        excl = SHARD_EXCLUDE.get(args.shard, "")
+        if excl:
+            excl_pat = re.compile(excl)
 
     rows = [dict(sid=k, **v) for k, v in best.items()
-            if (kw_pat is None or kw_pat.search(v["kw"] or ""))]
+            if (kw_pat is None or kw_pat.search(v["kw"] or ""))
+            and (excl_pat is None or not excl_pat.search(v["kw"] or ""))]
 
     thresholds = [int(x) for x in args.thresholds.split(",") if x.strip()]
     print("# 扫描快照: %s" % src)
