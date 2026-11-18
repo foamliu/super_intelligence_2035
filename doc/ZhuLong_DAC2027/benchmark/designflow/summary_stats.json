@@ -16,12 +16,12 @@
   "hits_total": 37112,
   "hosts": 614,
   "mc10": 2517,
-  "mc100": 2247,
+  "mc100": 566,
   "mc1000": 5,
   "mc15": 0,
   "mc20": 2220,
   "mc25": 2376,
-  "mc30": 1342,
+  "mc30": 1980,
   "mc300": 364,
   "mc5": 4432,
   "mc500": 460,
@@ -141,6 +141,22 @@
       "supersedes": "a_pure_verdict_r765 (OVERTURNED, 10 ALIVE) -> r773 EXHAUSTED-AFTER-6-CASES; a_pure_verdict_r772 (BUILDABLE>=3) -> r773 CORRECTED (twfqn=fork non-buildable, u5wma was the only genuine r772 build, c8v5k/najzl/ejpf0 all duplicates)",
       "verdict": "EXHAUSTED-AFTER-6-CASES: r765 10 ALIVE A-pure pool now 6 case'd + 4 NON-BUILDABLE(fork/duplicate). A-pure fresh pool effectively exhausted on 11-18 snapshot."
     },
+    "a_pure_verdict_r775": {
+      "fresh_unclaimed_mc5_9_count": 13,
+      "liveness_check": "19/19 ALIVE via directory-aware ssh (check <dir>/<dir>.messages.json NOT <dir>/messages.json)",
+      "mc5_9_a_pure_unique_sessions": 19,
+      "r775_case": "EDA-Eval-DesignFlow-RandAddrOverflowDiagnose-001 (nurc0 phantom revival, verification, k=15, A.jsonl 388->389)",
+      "round": "r775",
+      "sample_sizes": {
+        "1791883133340_l0x4z": 39773,
+        "1791946267022_oqri7": 60072,
+        "1792562152582_saz5l": 50746,
+        "1793241105381_nurc0": 574538
+      },
+      "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
+      "supersedes": "r760 EXHAUSTED_DEFINITIVE + r773 EXHAUSTED-AFTER-6-CASES -> limited to mc>=10 band; mc5-9 band is fresh+ALIVE",
+      "verdict": "mc5-9 A-pure band NOT exhausted: 19/19 ALIVE with substantial content. OVERTURNS r760/r773 NOFILE conclusion for mc5-9 band (r760 checked wrong path $path/messages.json instead of $path/<dir>.messages.json). mc>=5 lowering IS effective (11-15 order validated). Stop-loss does NOT trigger (buildable candidates exist)."
+    },
     "all_shard_mc10": 4012,
     "all_shard_mc30": 3046,
     "all_shard_mc5": 4432,
@@ -155,23 +171,7 @@
     "shard_A_pool_mc10": 3337,
     "shard_A_pool_mc5": 3602,
     "src": "ssh_eda_search_20261118_230537/summary.tsv",
-    "top_next_round_candidates": "NONE - A-pure exhaustion DEFINITIVE on fresh 11-18 data: both A-pure candidates (3p6ld mc79, gnwy5 mc11) fully checked across all hosts, all NOFILE or unreachable. Cline rotation is systematic, not snapshot-staleness.",
-    "a_pure_verdict_r775": {
-      "round": "r775",
-      "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
-      "mc5_9_a_pure_unique_sessions": 19,
-      "liveness_check": "19/19 ALIVE via directory-aware ssh (check <dir>/<dir>.messages.json NOT <dir>/messages.json)",
-      "sample_sizes": {
-        "1792562152582_saz5l": 50746,
-        "1793241105381_nurc0": 574538,
-        "1791946267022_oqri7": 60072,
-        "1791883133340_l0x4z": 39773
-      },
-      "verdict": "mc5-9 A-pure band NOT exhausted: 19/19 ALIVE with substantial content. OVERTURNS r760/r773 NOFILE conclusion for mc5-9 band (r760 checked wrong path $path/messages.json instead of $path/<dir>.messages.json). mc>=5 lowering IS effective (11-15 order validated). Stop-loss does NOT trigger (buildable candidates exist).",
-      "supersedes": "r760 EXHAUSTED_DEFINITIVE + r773 EXHAUSTED-AFTER-6-CASES -> limited to mc>=10 band; mc5-9 band is fresh+ALIVE",
-      "r775_case": "EDA-Eval-DesignFlow-RandAddrOverflowDiagnose-001 (nurc0 phantom revival, verification, k=15, A.jsonl 388->389)",
-      "fresh_unclaimed_mc5_9_count": 13
-    }
+    "top_next_round_candidates": "NONE - A-pure exhaustion DEFINITIVE on fresh 11-18 data: both A-pure candidates (3p6ld mc79, gnwy5 mc11) fully checked across all hosts, all NOFILE or unreachable. Cline rotation is systematic, not snapshot-staleness."
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -283,7 +283,7 @@
     "shard_A_pool_mc10": 3337,
     "total_rows": 44991
   },
-  "sessions": 3325,
+  "sessions": 3964,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -375,7 +375,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-19 05:12",
+  "updated_at": "2026-11-19 07:48",
   "users_mc10": 614,
   "users_mc100": 182,
   "users_mc30": 401,
