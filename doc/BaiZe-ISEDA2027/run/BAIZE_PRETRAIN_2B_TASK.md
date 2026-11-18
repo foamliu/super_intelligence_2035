@@ -123,6 +123,20 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-18 13:1x（**立即执行：根因已定 NVLS，现在就杀训练并从 iter 244000 重启 resume，无需再报批**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话（对前令的澄清+批复）**：「是谁给 pretrain 下"不擅自重启"的要求的？我明明说了"找到根因后可重启"的？」→ 运维更正：**没有任何前置条件，根因已定位（.12 NVLS 绑定失败 CUDA error 802，瞬态竞态），立即执行重启，不要再「报运维待批」**。
+
+**立即执行（本轮第一优先，马上做）：**
+
+1. **杀训练进程**：kill 当前 2 节点训练（.12 node_rank=0 + .29 node_rank=1 的 `torchrun`/`pretrain_launcher` 及其全部 rank 子进程）。只杀 pretrain 相关，🚫 不碰 data/vision/harness/posttrain 及其他线。
+2. **从 iter_0244000 resume**（`latest_checkpointed_iteration.txt`=244000；撞见 iter_0246000 目录也不要误用，它未完整）。
+3. **LR warmup 与原来完全一致**（`--lr-warmup-iters 2000` 等，不改任何 warmup 参数）。启动参数、精度配置（FP8 tensorwise）都与断前一致，不做任何额外改动。
+4. **重启后验收（必做）**：实测 step time 回落到 ~7s、TFLOP 回 ~1050、吞吐 ~590-613K tok/s。若 NVLS 仍报 `CUDA error 802`，按 #2429 的备选方案 `NCCL_NVLS_ENABLE=0` 在两节点统一禁用（此时整体降速，但仍比 NVLS 单边失败强，先恢复再议）。
+5. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行写「已重启 resume 自 iter 244000 + 重启后 NVLS 状态（available/failed）+ 实测 step time/tok·s⁻¹」；重启前先 commit 记录现场。保持 `WAITING=0`。
+
+---
+
 ### 🔴 用户令 · 2026-11-18 11:1x（**授权：找到根因后可杀训练进程，从最新 ckpt 重新 resume；LR warmup 机制不变**）· 用户直令 · 最高优先 · 未完成
 
 > **用户原话**：「授权 pretrain 在找到根因后，可以杀死当前训练进程，重新从最新检查点 resume。resume 时 LR warmup 机制跟原来一样即可。」
