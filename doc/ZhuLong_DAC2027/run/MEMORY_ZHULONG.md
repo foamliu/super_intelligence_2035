@@ -1,29 +1,16 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-19 wake#1372·**🟠 friend-review 已交付·写作层 5 项延至预注册后·standby**：朋友评审令（TASK 顶部 🔴 22:3x）已于 wake#1350 执行——P0 3/3 结论 + 11 项处置矩阵（采纳 10/部分 1/不采纳 0）·预注册关键已落入论文 §3/§5/§6+abstract+§1·重编译 12p/0err/0undef/235123B·报告 reports/report_edafb_friend_review_response_zh.html·写作层 P2①③④⑤+R4 延至预注册后·subagent 消融线结案不起臂·infra 健康（loop/relay 活·cline ✅·/home 29G·/nasdata 2.5T）·ops 排空·research 日报 2026-11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·待决：M0子集实测/DATE27引用/理想矩阵M6/写作层5项）
+WAITING: 0（2026-11-19 wake#1373·**🟠 friend-review 已交付·写作层 5 项延至预注册后·standby**：朋友评审令（TASK 顶部 🔴 22:3x）已于 wake#1350 执行——P0 3/3 结论 + 11 项处置矩阵（采纳 10/部分 1/不采纳 0）·预注册关键已落入论文 §3/§5/§6+abstract+§1·重编译 12p/0err/0undef/235123B·报告 reports/report_edafb_friend_review_response_zh.html·写作层 P2①③④⑤+R4 延至预注册后·subagent 消融线结案不起臂·infra 健康（loop/relay 活·cline ✅·/home 29G·/nasdata 2.5T）·ops 排空·research 日报 2026-11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·待决：M0子集实测/DATE27引用/理想矩阵M6/写作层5项）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-19 wake#1373 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百一十九次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop PID243810/relay PID118432 活·cline ✅ /home/app.e0031982/.local/bin/cline·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146·outbox DONE 146·无 147 pending）·HEAD=`b6dbd190f`·behind=0/ahead=0（zhulong run 子树干净·benchmark/designflow 2 modified 属他线不碰）·research 日报 11-19(00:16) zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。本轮 §10 合并 wake#1352~#1369 旧指针省空间。
 - [2026-11-19 wake#1372 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百一十八次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop PID243810/relay PID118463 活·cline ✅ /home/app.e0031982/.local/bin/cline·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146·无 147 pending）·HEAD=`7a47f64aa`·behind=0/ahead=0（vision 他线推进已 rebase 入 main·zhulong run 子树干净）·research 日报 11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。
 - [2026-11-19 wake#1371 详条已滚出·被 wake#1372 代表] 见 `daily-memories/2026-11-19.md` §[wake#1371 rolled-out]（第一百一十七次核验·standby·done_all·HEAD=`5dfae0a63`·本轮 wake#1372 维护滚出·原文不改）。
 - [2026-11-19 wake#1370 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第一百一十六次核验·standby·done_all·friend-review 主体已 wake#1350 交付（commit `cfb185159`）·本轮无新指令·写作层 5 项 + 待决 4 项延至预注册后·infra 健康（loop/ops_relay 活·cline ✅·/home 29G·/nasdata 2.5T）·ops 排空（last_run_id=146=inbox 最新·无 147 pending）·HEAD=`b43efe20e`·behind=0·zhulong run 子树干净·benchmark/designflow 2 untracked 属他线不碰·research 日报 11-19 zhulong 建议#232 属预注册后输入·距预注册 2026-11-22 仍 3 天·§7 StepC 退出。本轮 §10 合并 wake#1298~#1332 旧指针省空间。
-- [wake#1369 详条已滚出·被 wake#1370 代表] 见 `daily-memories/2026-11-19.md` §[wake#1369 rolled-out]（第一百一十五次核验·standby·done_all·HEAD=`bc7236773`·本轮 wake#1370 维护滚出·原文不改）。
-- [wake#1368 详条已滚出·被 wake#1369 代表] 见 `daily-memories/2026-11-19.md` §[wake#1368 rolled-out]（第一百一十四次核验·standby·done_all·HEAD=`c38e1b158`·本轮 wake#1369 维护滚出·原文不改）。
-- [wake#1367/#1366 详条已滚出·被 wake#1368 代表] 2 条同模式 standby 心跳（第一百一十二~十三次核验·均 standby·done_all·HEAD 序列 `5eca45662`(w#1366)→`35f327ae4`(w#1367)）·原文见 `daily-memories/2026-11-19.md` §[wake#1367/#1366 rolled-out]（本轮 wake#1369 维护合并省 MEMORY 空间·原文不改）。
-- [wake#1365/#1364 详条已滚出·被 wake#1366 代表] 2 条同模式 standby 心跳（第一百一十~十一次核验·均 standby·done_all·HEAD 均为 `577eea1e2`）·原文见 `daily-memories/2026-11-19.md` §[wake#1365 rolled-out]/§[wake#1364 rolled-out]（本轮 wake#1369 维护合并省 MEMORY 空间·原文不改）。
-- [wake#1362 详条已滚出·被 wake#1363 代表] 见 `daily-memories/2026-11-19.md` §[wake#1362 程序性瑕疵]（第一百零八次核验·standby·done_all·HEAD=`9404fb14b`·含 ⚠️ 误用 `git reset --hard` 损毁他线 2 文件未提交改动之自述+教训·原文不改）。
-- [wake#1361 详条已滚出·被 wake#1362 代表] 见 `daily-memories/2026-11-18.md` §[wake#1361 rolled-out]（第一百零七次核验·standby·done_all·HEAD=`70a9fce5d`·本轮 wake#1362 维护滚出·原文不改）。
-- [wake#1360 详条已滚出·被 wake#1361 代表] 见 `daily-memories/2026-11-18.md` §[wake#1360 rolled-out]（第一百零六次核验·standby·done_all·HEAD=`70a9fce5d`·本轮 wake#1361 维护滚出·原文不改）。
-- [wake#1359 详条已滚出·被 wake#1360 代表] 见 `daily-memories/2026-11-18.md` §[wake#1359 rolled-out]（第一百零五次核验·standby·done_all·HEAD=`9a2c63677`·本轮 wake#1360 维护滚出·原文不改）。
-- [wake#1358 详条已滚出·被 wake#1359 代表] 见 `daily-memories/2026-11-18.md` §[wake#1358 rolled-out]（第一百零四次核验·standby·done_all·HEAD=`03194d08a`·本轮 wake#1359 维护滚出·原文不改）。
-- [wake#1357 详条已滚出·被 wake#1358 代表] 见 `daily-memories/2026-11-18.md` §[wake#1357 rolled-out]（第一百零三次核验·standby·done_all·HEAD=`14331a309`·本轮 wake#1358 维护滚出·原文不改）。
-- [wake#1356 详条已滚出·被 wake#1358 代表] 见 `daily-memories/2026-11-18.md` §[wake#1356 rolled-out]（第一百零二次核验·standby·done_all·HEAD=`9211e27ea`·本轮 wake#1358 维护滚出·原文不改）。
-- [wake#1355 详条已滚出·被 wake#1356 代表] 见 `daily-memories/2026-11-18.md` §[wake#1355 rolled-out]（第一百零一次核验·standby·done_all·HEAD=`6d1550648`·本轮 wake#1356 维护滚出·原文不改）。
-- [wake#1354 详条已滚出·被 wake#1357 代表] 见 `daily-memories/2026-11-18.md` §[wake#1354 rolled-out]（第一百次核验·standby·done_all·HEAD=`3335f0295`·本轮 wake#1357 维护滚出·原文不改）。
-- [wake#1353 详条已滚出·被 wake#1354 代表] 见 `daily-memories/2026-11-18.md` §[wake#1353 rolled-out]（第九十九次核验·standby·done_all·HEAD=`a8d19d30e`·本轮 wake#1354 维护滚出·原文不改）。
-- [wake#1352 详条已滚出·被 wake#1356 代表] 见 `daily-memories/2026-11-18.md` §[wake#1352 rolled-out]（第九十八次核验·standby·done_all·HEAD=`018aa6538`·本轮 wake#1356 维护滚出·原文不改）。
+- [wake#1352~#1369 详条已滚出·本轮 wake#1373 合并] 15 条同模式 standby 心跳（第九十八~一百一十五次核验·均 standby·done_all·无新指令）·HEAD 序列 `018aa6538`(w#1352)→…→`bc7236773`(w#1369)·含 ⚠️ wake#1362 程序性瑕疵（误用 `git reset --hard` 损毁他线 2 文件未提交改动·教训已记）·原文见 `daily-memories/2026-11-18.md` 与 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1373 维护合并省 MEMORY 空间·原文不改）。
 - [wake#1350 详条已滚出·被 wake#1353 代表] 见 `daily-memories/2026-11-18.md` §[wake#1350 rolled-out]（第九十六次核验·**friend-review 实质工作**·P0 3/3+11 项矩阵 采纳10/部分1/不采纳0·commit `cfb185159`·报告 25734B·论文 12p/0err/0undef/235123B·本轮 wake#1353 维护滚出·原文不改）。
 - [wake#1351 详条已滚出·被 wake#1352 代表] 见 `daily-memories/2026-11-18.md` §[wake#1351 rolled-out]（第九十七次核验·standby·done_all·HEAD=`cfb185159`·本轮 wake#1352 维护滚出·原文不改）。
 - [wake#1349 详条已滚出·被 wake#1351 代表] 见 `daily-memories/2026-11-18.md` §[wake#1349 rolled-out]（第九十五次核验·standby·done_all·HEAD=`c927f8bde`·本轮 wake#1351 维护滚出·原文不改）。
