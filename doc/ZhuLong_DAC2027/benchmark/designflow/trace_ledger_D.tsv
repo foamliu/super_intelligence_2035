@@ -1873,3 +1873,29 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794215806676_ut1oo.messages.json					case	EDA-Eval-DesignFlow-R2XdomainReportQA-001	2026-11-18 22:35	D revival (B-parked wrong-shard, hspice kw from sim-sp-gen skill name not sim work); A档 trace-faithful msg#88 R2 xdomain report refactor; 15 断言 a-o
 1793955920680_cp2b9.messages.json					case	EDA-Eval-DesignFlow-PincheckReuseAppendQA-001	2026-11-19 00:48	revival-from-B-parked: B r578 identified D-domain waveform compare_wave -reuse edit, parked for D per 2026-11-15 reaudit. D r903 synthesized A档 trace-faithful, 14 断言 a-n.
 1791945700586_w4ghz	xinpengc	hfeg0plg91	26	analog_context	parked		2026-11-19 01:00	r904 triage REJECT: U0='@LP5TOP2.log why running ATPG would fail?' = ATPG/DFT debug, A-domain digital/verification not D; mc26 kw cmos:18932/analog:6598 from LP5TOP2.log content not user intent; D-include filter false positive
+1793761868550_2d741	e0041123	10.129.32.46	42	analog_context	parked		2026-11-19 02:31	r908 triage: r908 license/traceback debug QA pasted-error
+1791871990799_p5k61	lizwen	10.129.2.11	38	analog_context	parked		2026-11-19 02:31	r908 triage: r908 aether keybind QA (continuous-copy)
+1791874141148_5ersu	lizwen	10.129.2.11	38	analog_context	parked		2026-11-19 02:31	r908 triage: r908 aether keybind QA (smash-shortcut)
+1790230670440_jdjbi	sagequan	10.129.32.190	33	waveform	parked		2026-11-19 02:31	r908 triage: r908 simdiag-cli skill-trigger browser-demo
+1793761722170_ptr9i	e0047722	10.129.8.125	33	analog_context	parked		2026-11-19 02:31	r908 triage: r908 NON-EDA creative-writing (XinSheng)
+1794379167105_u2kcz	minjiex	10.129.8.222	29	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 NOFILE session-rotated
+1794396521621_iv9vy	yanxvwei	10.129.2.11	28	analog_context	parked		2026-11-19 02:31	r908 triage: r908 NON-EDA Qt+MySQL CAD-Workstation app-dev
+1792630862375_qvdrc	e0039122	10.129.2.13	25	waveform	parked		2026-11-19 02:31	r908 triage: r908 process-exploration (G5 craft) weak
+1793706151201_hp4wb	jcgu	10.129.32.236	24	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 skill-trigger group-gen-sdl GUI-layout not-checkable
+1794483638699_uegln	katief	10.129.2.13	24	waveform	parked		2026-11-19 02:31	r908 triage: r908 PAT-line explanation QA thin-1-line
+1788868117450_sgvz4	ziyuny	10.129.8.236	24	analog_context	parked		2026-11-19 02:31	r908 triage: r908 RAG/DRC explanation QA
+1789696755885_2rwrr	miccao	10.129.32.47	23	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 flashlvl layout-compare C-domain-physical-verify not-D
+1793149369055_nwthf	kevin1d	10.129.8.104	23	analog_context	parked		2026-11-19 02:31	r908 triage: r908 layout keybind QA
+1790663352557_4oru1	yzwang	10.129.2.10	19	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 TECHLIB listing QA
+1789980799310_n7mei	johnl	10.129.2.10	18	analog_context	parked		2026-11-19 02:31	r908 triage: r908 zl linking-state debug QA
+1793090190070_znwrq	e0029495	10.129.2.10	17	waveform	parked		2026-11-19 02:31	r908 triage: r908 anasimpro-gui-start skill-trigger
+1787645967125_jlx61	e0025730	10.129.8.86	17	analog_context	parked		2026-11-19 02:31	r908 triage: r908 sense-margin-test skill-trigger
+1791877460752_8c3y9	e0041392	10.129.2.12	13	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 askeda doc-search QA
+1794190139575_cd5dj	steveny	10.129.32.189	12	analog_context	parked		2026-11-19 02:31	r908 triage: r908 SKILL.md format debug QA
+1792132943677_u0ng5	e0041392	10.129.2.12	12	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 Ignore-Instance how-to QA
+1794537623013_alyc0	hao15z	10.129.2.14	12	analog_context	parked		2026-11-19 02:31	r908 triage: r908 hello-world nihao
+1792562450900_285vt	colinxu	10.129.35.74	12	analog_context	parked		2026-11-19 02:31	r908 triage: r908 hello-world (r904 also triaged)
+1791983444226_u9tql	e0014566	10.129.35.82	12	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 SKILL API top-cell-name thin-single-call
+1794395782046_n4bp8	e0023936	10.129.32.75	11	waveform	parked		2026-11-19 02:31	r908 triage: r908 NOFILE session-rotated
+1792066073564_8uwb4	e0041392	10.129.2.12	10	analog_context	parked		2026-11-19 02:31	r908 triage: r908 anasimpro-gui-start skill-trigger
+1792653728196_49kxc	yutongy	10.129.2.11	10	schematic_netlist	parked		2026-11-19 02:31	r908 triage: r908 stdcell circuit recommendation open-ended thin-gold
