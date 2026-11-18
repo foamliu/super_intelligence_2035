@@ -439,8 +439,65 @@
   <li><b>news_ready 0</b>：OLMoE 与 Ring Attention 均为方法 / 技术报告，无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
 </ul>
 
+<h3 class="sec">🅰 A 轨 · 18:00 时窗（今日 5/5 已满 ⇒ 0 新收；公告批<b>未前进</b>）</h3>
+<ul class="tight">
+  <li><b>公告批</b>：<code>cat:cs.CL</code> 列表 <code>200</code> / <b>72,765</b> B / 30 entry，最新 <code>published</code> = <b>2026-11-17T18:59:37Z</b>（与 15:00 轮<b>完全相同</b> ⇒ 近 3 小时无新公告）。</li>
+  <li><b>0 新收</b>：今日 A 轨 5/5 已满，按「宁少勿凑」不加收；11-19 窗口的登记名单沿用 15:00 的 6 条（<code>2611.23229</code> / <code>2611.23197</code> / <code>2611.23158</code> / <code>2611.23127</code> / <code>2611.22835</code> / <code>2611.22777</code>），本轮<b>未读全文</b>，🚫 不写摘要。</li>
+  <li>⚠️ 未收不等于无新增：公告批上界停在 <code>2026-11-17T18:59:37Z</code>，<b>这是端点返回的上界</b>，不是「arXiv 今天没论文」。</li>
+</ul>
+
+<h3 class="sec">🅱 B 轨 · 18:00 增量（第五十九轮 +3 → 227）</h3>
+<table class="plain">
+  <tr><th style="width:29%;">论文</th><th>被引</th><th>一句话贡献（数字均来自 PDF，作者自报）</th><th>与我们工作的关系</th></tr>
+  <tr><td><b>DeepSeekMoE: Towards Ultimate Expert Specialization in MoE Language Models</b><br><code>2401.06066</code> · 2024-01-11</td><td><b>1,590</b></td><td><b>fine-grained expert segmentation</b>（FFN 切成 <code>mN</code> 个专家、激活 <code>mK</code> 个）＋ <b>shared expert isolation</b>（<code>Ks</code> 个专家常开）。三档实测：<b>2B</b> = 2.0B 总参、<code>1 shared + 7/63 routed</code>、专家为 <b>0.25×</b> 标准 FFN；<b>16B</b> 在 <b>2T token</b> 上训练，用<b>约 40% 计算量</b>达到 <b>DeepSeek 7B</b> 可比；<b>145B</b>（初步）= <code>4 shared + 12/128 routed</code>、专家 <b>0.125×</b>FFN、<b>144.6B 总参 / 约 22.2B 激活</b>、仅 <b>245B token</b>（13,000 步）。</td><td><b>pretrain</b>：MoE 消融表把<b>两级均衡系数分开记</b>——expert-level <b>0.01</b>（2B/16B）/<b>0.001</b>（145B）、device-level 取更大值；shared:routed 按 <b>1:3</b>（1/2/4 个 shared 的 Pile loss = <b>1.808/1.806/1.811</b>，差异极小）。<br><b>zhulong</b>：报分必带 <code>total / activated / tokens</code>。</td></tr>
+  <tr><td><b>Small-scale proxies for large-scale Transformer training instabilities</b><br><code>2309.14322</code> · 2023-09-25</td><td><b>139</b><br><span style="color:#59636e;">&lt;500，按「方法论常青」收</span></td><td>把 LR 扫大（AdamW，<b>3e-4 → 3e-1</b> 七档，warmup 5e3、总 1e5 步、batch <b>256×512</b> token、词表 <b>32,101</b>）就能在<b>小模型上复现</b>大模型的两类不稳定（attention logit 增长 / output logit 与 log-prob 偏离）；<b>qk-layernorm + z-loss（1e-4）</b>把稳定区间拉开<b>约三个数量级</b>的 LR；在 <b>4.8B</b> 上<b>先预测后验证</b>——预测「无 qk-layernorm 时 LR 1e-2 会发散」，实测<b>确实发散</b>；另报「attention logit &gt; <code>1e4</code> 的点全部发散」。（<code>1.2B</code> 可配 LR <code>0.3</code>、AdamW <code>β=0.9/0.95</code>、grad clip 1.0）</td><td><b>pretrain</b>：把稳定性做成<b>可预算的小实验</b>——先在 ≤1B 扫 LR 到发散边界，记 <b>max attention logit</b>，再外推目标规模；判据写死 <code>logit &gt; 1e4 ⇒ 发散区</code>。<br><b>zhulong</b>：训练日志固定留 <code>attention logit max</code> 与 <code>output logit vs log-prob</code> 两个指标。</td></tr>
+  <tr><td><b>Mixed Precision Training</b><br><code>1710.03740</code> · 2017-10-10 · <b>ICLR 2018</b></td><td><b>2,697</b></td><td>FP16 训练三件套：<b>FP32 master weights</b> + <b>loss scaling</b> + <b>FP16 乘法 / FP32 累加</b>。可复核数字：约 <b>5%</b> 的权重梯度指数 &lt; <code>−24</code>（FP16 下变 0）；Multibox SSD 中 <b>67%</b> 激活梯度为 0、而 <code>[2^-27, 2^-24)</code> 区间<b>仍然重要</b>；scaling 因子实测取 <b>8 – 32K</b>，判据「最大绝对梯度 × 因子 &lt; <b>65,504</b>」；检测到溢出就<b>跳过该步更新</b>。</td><td><b>pretrain</b>：训练配置表固定四列——<code>master weight dtype / 累加 dtype / loss-scale 取值与方式 / 溢出处理</code>；BF16 动态范围不同 ⇒ <b>不能照搬</b> 8–32K。<br><b>zhulong</b>：FP16 算术吞吐为 FP32 的 <b>2×–8×</b>，报成本必带精度格式。</td></tr>
+</table>
+<div class="rm"><b>三源实测</b>：arXiv <code>id_list</code> <code>200</code> / <b>9,776</b> B（3 entry，作者逐字核对）+ 标题检索 2 次 <code>200</code>（3,907 / 2,954 B）；OpenAlex <b>3/3 <code>200</code></b>（1,590 / 139 / 2,697）；PDF <b>3/3 <code>200</code> + <code>%PDF-</code></b>（<b>733,666</b> / <b>10,685,777</b> / <b>1,404,641</b> B；10.7 MB 那篇 &gt;5 MB ⇒ 只留 <code>/tmp</code>，不入 git），<code>pdftotext</code> 全部可解析；<code>2309.14322</code> 另用 ar5iv 全文页交叉核对（<code>200</code> / 213,785 B）。<br><b>未核（如实记）</b>：① #226 的会议 —— arXiv <code>comment</code> 未标、OpenAlex 记 <code>preprint</code> ⇒ <b>会议留白</b>；② #225 的会议同样未核（arXiv 未标）；③ 三篇均<b>无个人邮箱</b>（#227 的 PDF 首页有 2017 年地址，按令不直接采用）。<br><b>本轮纠正一处旧记</b>：候选池早前把「spike 侧」记作 <code>2209.14389</code>，实测那是 <i>Downstream Datasets Make Surprisingly Good Pretraining Corpora</i>（36 被引）⇒ 真 ID = <code>2309.14322</code>，旧记作废。</div>
+
+<h3 class="sec">👥 作者关系网 · 18:00 增量（+3 → 209）</h3>
+<ul class="tight">
+  <li><b>#207 Zhifang Sui（穗志方）</b>（北京大学，DeepSeekMoE 作者）· 邮箱 <b>未找到</b>（<code>scholar.pku.edu.cn/zhifang</code> 本轮 <code>000</code>；🚫 不猜 <code>@pku.edu.cn</code> 拼装地址）· 状态 <b>待跟踪</b>。</li>
+  <li><b>#208 Mitchell Wortsman</b>（UW / Google Research，Small-scale proxies 一作）· 三个主页全 <b><code>404</code></b>（<code>mwortsman.github.io</code> / <code>homes.cs.washington.edu/~wortsman/</code> / UW 人员页 <code>…/faculty/wortsman</code>）⇒ 无邮箱、可能已换机构 · <b>待跟踪</b>。</li>
+  <li><b>#209 Paulius Micikevicius</b>（NVIDIA，Mixed Precision 一作）· 邮箱 <code>pauliusm@nvidia.com</code> 取自 <b>PDF 首页明文</b>（<b>2017 年地址</b>，已标「发信前须先核现行主页」）· <b>待跟踪、未发信</b>。</li>
+  <li>X 已核验计数保持 <b>104</b>（本轮 <code>x.com</code> 直连与代理均 <code>000</code>）；已 follow 仍 <b>0</b>（需登录态，未假装）。</li>
+</ul>
+
+<h3 class="sec">✉️ 作者请教信 · 18:00（<b>0 封</b> · 今日 12/12 已满 · 累计 91 · 回信率 0/91）</h3>
+<ul class="tight">
+  <li><b>本轮不发信</b>：今日额度已用满 <b>12/12</b>（<code>RESEARCH_MAIL_SPEC §3</code> 每日硬上限），按 §3「剩余时窗只做选题与草稿，<b>不发</b>」执行 —— 是遵守上限，不是缩手。</li>
+  <li><b>改做回信诊断（首次「台账字段覆盖率」审计）</b>：<b>主题行</b>可审计 <b>13 / 91（14%）</b>、<b>语言标签</b> <b>≤50 处 / 91 封（≤55%）</b> ⇒ 11-25 批量到期后「按主题 / 按母语」分层的<b>分母不足</b>。下轮起每封固定写 4 字段：<code>主题 / 语言=…(判据=…) / 地址级别 A-B-C / 问题数</code>；老 78 封<b>不追补</b>（追补 = 凭记忆编造）。</li>
+  <li><b>模板化信号（可测）</b>：英文主题 <b>7/7</b> 全部以 <code>Question on</code> 开头、中文 <b>6/6</b> 以 <code>关于…</code> 开头 ⇒ 下轮起改为「论文专有名词 + 数字/符号」直呼，并在台账留痕。</li>
+  <li><b>累计回信率 0 / 91</b>，<b>0 封到期</b>（最早 2026-11-25）⇒ 仍按<b>待诊断信号</b>处理，不记为成功；发件通道仍<b>只发不收</b>（无 IMAP/POP3），仍是最需运维介入的一项。</li>
+</ul>
+
+<h3 class="sec">🧭 6 线可执行建议 · 18:00</h3>
+<table class="plain">
+  <tr><th style="width:13%;">线</th><th>建议（可直接执行）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>① 训练配置表固定四列</b>：<code>master weight dtype / 累加 dtype / loss-scale（取值 + 常数或动态）/ 溢出处理（跳过或回滚）</code>；判据 = 缺任一项的 run <b>不进对比表</b>（依据 <code>1710.03740</code>）。<b>② WSD 稳定性预检</b>：每改结构或 LR，先在 ≤1B 档把 LR 上扫到发散边界，记 <code>max attention logit</code>，判据 <code>logit &gt; 1e4</code> 即判「发散区」，并在烧大卡前按 logit–规模曲线外推目标档（依据 <code>2309.14322</code>）。<b>③ MoE 均衡系数分开记</b>：<code>expert-level 0.01 / device-level</code> 两列，145B 档前先跑「0.01 vs 0.001」小规模对照（依据 <code>2401.06066</code>）。</td></tr>
+  <tr><td><b>vision</b></td><td>无（本轮 3 篇均为预训练结构 / 数值 / 稳定性，非视觉侧；不凑数）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>报分表的「规模」列拆成 total / activated 两列</b>：MoE 与稠密混排时，只给 total 参数的横比一律禁止；判据 = 同一张表内 activated 不可比的条目，单独分表（依据 #225 的 <code>144.6B / 22.2B</code> 与「40% 计算量」口径）。</td></tr>
+  <tr><td><b>data</b></td><td>无（本轮 3 篇均非数据配比 / 清洗内容；不凑数）。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>训练日志加两个稳定性指标 + 成本表加一列</b>：① 每 step 记 <code>attention logit max</code> 与 <code>output logit vs log-prob</code>；判据 = 出现 <code>logit &gt; 1e4</code> 的 run 一律标「不稳定，不进消融结论」。② 成本表加「精度格式（FP16/BF16）与是否开 loss scaling」，否则「换精度省 2×–8×」这句无法核（依据 #227）。</td></tr>
+  <tr><td><b>designflow</b></td><td>无（本轮 3 篇均非 EDA / 造题内容；不凑数）。</td></tr>
+</table>
+
+<h3 class="sec">📎 附录 · 18:00 增量检索记录（可核验）</h3>
+<table class="plain">
+  <tr><td style="width:20%;">接口 / 端点</td><td><code>export.arxiv.org/api/query</code>（<code>cat:cs.CL</code> 列表 / <code>id_list</code> / 标题检索）· <code>api.openalex.org/works/doi:10.48550/arXiv.*</code> · <code>arxiv.org/pdf/*</code> · <code>ar5iv.labs.arxiv.org</code></td></tr>
+  <tr><td>成功项</td><td>列表 <code>200</code> / 72,765 B / 30 entry；<code>id_list</code> <code>200</code> / 9,776 B；标题检索 2/2 <code>200</code>；OpenAlex 3/3 <code>200</code>；PDF 3/3 <code>200</code> + <code>%PDF-</code>；ar5iv <code>200</code></td></tr>
+  <tr><td>失败项（如实记）</td><td><code>x.com</code> 直连与代理均 <code>000</code> ⇒ voice_ready 0 新增；<code>scholar.pku.edu.cn/zhifang</code> <code>000</code>；<code>mwortsman.github.io</code> / <code>homes.cs.washington.edu/~wortsman/</code> / UW <code>…/faculty/wortsman</code> 全 <code>404</code></td></tr>
+  <tr><td>环境坑（本轮）</td><td>arXiv PDF 上游限速 + <b>连接中途停滞</b>（10.7 MB 那篇在 8.90 MB 卡住不动）⇒ 先按 PID <code>kill</code>（🚫 不用 <code>pkill -f</code> 匹配自身），再 <code>curl -C -</code> 续传，最终 <b>10,685,777 B</b> 与 <code>Content-Length</code> 一致才算成功</td></tr>
+</table>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready · 18:00</h3>
+<ul class="tight">
+  <li><b>voice_ready 0 新增</b>（沿用 03:00 的 Jason Wei 原推）：<code>x.com</code> 本轮直连与代理均 <code>000</code> ⇒ 不取原推、不转二手当原文。</li>
+  <li><b>news_ready 0</b>：本轮 3 篇均为方法与技术报告（2017 / 2023 / 2024），无「发布 / 首次 / 开源」事件点 ⇒ 不硬凑。</li>
+</ul>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）／12:1x CST（B 轨第五十七轮 +3 + 2 封信 + 6 线建议）／<b>15:0x CST（B 轨第五十八轮 +2 + 1 封信 + 6 线建议）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>224</b> 篇（第五十八轮 +2）｜ 作者网 <b>206</b> 人（X 已核验 104）｜ 作者信累计 <b>91</b> 封（回信率 <b>0/91</b>，0 封到期，最早 2026-11-25）｜ voice_ready 1 ｜ news_ready 0<br>
+  research 线 · <code>research/daily/2026-11-18.html</code> ｜ 生成 2026-11-18 00:1x CST（第 1–3 篇）／03:0x CST（第 4–5 篇 + B 轨 + 作者网 + voice_ready）／06:0x CST（B 轨第五十五轮 + 2 封信 + 回信跟踪修补）／09:0x CST（B 轨第五十六轮 +3 + 2 封信 + 7 天观察点）／12:1x CST（B 轨第五十七轮 +3 + 2 封信 + 6 线建议）／15:0x CST（B 轨第五十八轮 +2 + 1 封信 + 6 线建议）／<b>18:0x CST（B 轨第五十九轮 +3 + 作者网 +3 + 回信诊断 §10 + 6 线建议；今日额度满 ⇒ 发信 0）</b>｜ <b>今日 5/5</b> ｜ A 轨 5 篇 ＋ B 轨 <b>227</b> 篇（第五十九轮 +3）｜ 作者网 <b>209</b> 人（X 已核验 104）｜ 作者信累计 <b>91</b> 封（回信率 <b>0/91</b>，0 封到期，最早 2026-11-25）｜ voice_ready 1 ｜ news_ready 0<br>
   免责：推荐 = 待读线索，非结论；所有数字为论文作者自报，本线未复现。引用请标原文出处（作者 / 标题 / arXiv ID）。
 </footer>
 
