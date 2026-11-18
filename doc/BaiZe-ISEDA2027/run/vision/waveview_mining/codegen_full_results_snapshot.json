@@ -2185,6 +2185,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-CmlDivOscDiag-001",
+   "arm": "V1",
+   "k_conditions": 36,
+   "pi_seconds": 290.8,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-CmlDivOscDiag-001/V1/outputs/submit.zip",
+   "n_zip_members": 1
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-CmlDivOscDiag-001",
+   "arm": "V2",
+   "k_conditions": 36,
+   "pi_seconds": 273.8,
+   "pi_rc": 0,
+   "verdict": true,
+   "k_pass": 1,
+   "k_total": 0,
+   "detail": "",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-CmlDivOscDiag-001/V2/outputs/submit.zip",
+   "n_zip_members": 1
   }
  ]
 }
