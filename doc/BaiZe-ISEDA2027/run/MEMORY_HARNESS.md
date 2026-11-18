@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2685 · 2026-11-18 17:2x — incr_eval轮+SWE-bench Multimodal容器下载持续·**心跳第一行**: SWE-bench Verified 7路 cumulative(after R2685 incr_eval): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code293/500=58.6%**·**cline257/500=51.4%**·**pi222/500=44.4%**·**deepseek145/500=29.0%**·**codex94/500=18.8%**·incr_eval R2685 ran 5 instances(4 routes): **+2 RESOLVED**(cc django-14089·dsh django-11603)·+0 FAILED·+3 infra(pi sklearn-14710[CPU=18494%→docker kill·运维令11-02]·hermes django-14631/14725[NO report.json])·7way报告REGEN(18632B)·📦 **SWE-bench Multimodal容器下载进行中**(用户令11-18): 580 images(100 dev+480 test·17 JS/TS repos)·sequential pull nice19/ionice3·**17/580 pulled**(~2min/each·ETA~18h)·pull_all_images.sh alive(PID 3749136)·0 429✅·predict 5/7 alive(cline352/codex159/cc375/pi311/dsh190·opencode+hermes COMPLETE 500/500)·**自检**: scikit-learn容器CPU=18494%超8000%阈值→已docker kill(运维令11-02)·research日报11-18已读(论文#3 harness判分口径:只读exit code会记"什么都没写"为通过·借鉴)·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈28.3KB(✅≤32KB)
+> 🆕 **R2686 · 2026-11-18 17:3x — 监控轮·SWE-bench Multimodal容器下载持续+Verified predict续推·**心跳第一行**: SWE-bench Verified 7路 cumulative(unchanged since R2685): **hermes444/500=88.8%**·**opencode415/500=83.0%**·**claude-code293/500=58.6%**·**cline257/500=51.4%**·**pi222/500=44.4%**·**deepseek145/500=29.0%**·**codex94/500=18.8%**·📦 **SWE-bench Multimodal容器下载进行中**(用户令11-18): **22/580 pulled**(state=22·pulling #23 Automattic__wp-calypso-26335)·580 images=100 dev+480 test·17 JS/TS repos·sequential pull nice19/ionice3·~1.8min/each·ETA~17h(remaining 558)·pull_all_images.sh alive(PID 3749136·etimes=2409s)·docker pull CPU=0.1%·0 429✅·disk /data 5.8T free(need ~1.3TB more)✅·predict 5/7 alive(cline352/codex163/cc376/pi311/dsh190·opencode+hermes COMPLETE 500/500)·19 new predictions in 40min(不足incr_eval·需≥3-5 real-patch/route)·**自检**: load 39/224≈17.5%busy·MemAvail1356GB·最高harness proc=cline-hub-daemon 34.5%·docker pull 0.1%·无proc>8000%阈值✅·pretrain不受影响✅·**全部运维令✅已交付**·WAITING=0·📦 TASK≈30.2KB MEMORY≈28.4KB(✅≤32KB)
+> 📦 R2685 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·5 instances 4 routes·+2 RESOLVED+0 FAILED+3 infra·7way报告REGEN·SWE-bench Multimodal容器下载17/580·scikit-learn CPU kill）。需要时再读。
 > 📦 R2684 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·8 instances 5 routes·+5 RESOLVED+0 FAILED+3 infra·7way报告REGEN·SWE-bench Multimodal容器下载启动6/580·scikit-learn CPU kill）。需要时再读。
 > 📦 R2683 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·20 instances 6 routes·+13 RESOLVED+5 FAILED+4 infra·re-parse路径bug修复·7way报告REGEN·swebench deps安装·scikit-learn CPU kill）。需要时再读。
 > 📦 R2682 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·predict 2360/3500·+3全EMPTY·6/7 predict alive·0 429·自检clean·research日报已读）。需要时再读。
@@ -73,10 +74,10 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2684 incr_eval轮+SWE-bench Multimodal容器下载·SWE-bench Verified predict 5路RUNNING+opencode/hermes COMPLETE·incr_eval R2684 DONE(+5 RESOLVED)
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2680 DONE·incr_eval R2683 DONE·incr_eval R2684 DONE(8 instances·+5 RESOLVED+0 FAILED+3 infra·7way报告REGEN)·**SWE-bench Multimodal容器下载已启动**(580 images·sequential nice19/ionice3·6/580 pulled)
-当前动作:     R2684: incr_eval 8 instances(5 routes)eval'd·+5 RESOLVED(cline1+cc1+pi1+hermes1+dsh1)·+3 infra(pi sklearn-14710 CPU kill·hermes django-14631/14725 NO report)·7way报告REGEN·SWE-bench Multimodal容器下载启动(用户令11-18)·scikit-learn容器CPU=18165%→docker kill(运维令11-02)
-下一步:       继续监控5路predict+Multimodal容器下载·攒够新real-patch(≥3-5题)后跑incr_eval→刷新7way报告·3 infra题待后续re-eval·Multimodal下载完成后准备MM评测
+PHASE:        R2686 监控轮·SWE-bench Multimodal容器下载持续(22/580)+Verified predict 5路RUNNING·SWE-bench Verified 7路 cumulative stable
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·10:3x ability桶拆两层✅·SWE-bench predict 7路resume LAUNCHED(R2665)·opencode 500/500 COMPLETE+eval 415/500=83.0%✅·incr_eval R2680~R2685 DONE·**SWE-bench Multimodal容器下载进行中**(580 images·sequential nice19/ionice3·22/580 pulled·ETA~17h)
+当前动作:     R2686: 监控MM容器下载(22/580·PID 3749136 alive·nice19·0.1%CPU)+Verified predict 5路alive(cline352/codex163/cc376/pi311/dsh190)·19新预测40min内不足incr_eval·自检clean(load39/224·MemAvail1356GB·无proc>8000%)
+下一步:       继续监控MM容器下载+5路predict·攒够新real-patch(≥3-5题/route)后跑incr_eval→刷新7way报告·3 infra题待后续re-eval·Multimodal下载完成后准备MM评测
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK≈30.5KB / MEMORY≈27.8KB（✅≤32KB）
