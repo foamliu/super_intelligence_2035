@@ -2276,6 +2276,32 @@
    "detail": "no submit.zip produced",
    "submit_path": null,
    "n_zip_members": 0
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DatatPrintOrderDiag-001",
+   "arm": "V2",
+   "k_conditions": 29,
+   "pi_seconds": 173.0,
+   "pi_rc": 0,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "[a] submit.zip valid + contains a .py script and out.json :: missing asset: /tmp/wv_cg_full/_grade/g_m73y9g0t/assets/EDA-Eval-DesignFlow-DatatPrintOrderDiag-001/A_wtm/WTM001_normal_check.v",
+   "submit_path": "/tmp/wv_cg_full/EDA-Eval-DesignFlow-DatatPrintOrderDiag-001/V2/outputs/submit.zip",
+   "n_zip_members": 2
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-Ddr6RptCmdExtract-001",
+   "arm": "V0",
+   "k_conditions": 33,
+   "pi_seconds": 360.1,
+   "pi_rc": -99,
+   "verdict": false,
+   "k_pass": 0,
+   "k_total": 0,
+   "detail": "no submit.zip produced",
+   "submit_path": null,
+   "n_zip_members": 0
   }
  ]
 }
