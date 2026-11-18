@@ -1,10 +1,35 @@
 \section{Analysis: Why Memory Helps or Hurts}
 \label{sec:analysis}
+% 【中文】\section{分析：记忆为何有用或有害}
 
 \textbf{Failure taxonomy (baseline).} Over the \Neval{}-run M0 snapshot, a systematic per-run triage (machine-checkable evidence, explicit UNKNOWN share, never folding unclassified runs) yields: (i) no-output/aborted 21.0\% (146/696), (ii) semantic/partial failure 62.8\% (437/696; 132 runtime crashes + 305 assertion failures), (iii) contract/format 0.3\% (2/696), residual UNKNOWN 7.0\% (49/696). The dominance of semantic failures (62.8\%)---deliverables that are syntactically plausible but semantically wrong---is direct evidence that the binding constraint is \emph{knowledge of what to do}, not output formatting. This supports the memory hypothesis: an agent that consolidated ``which assertions fail and why'' across sessions could convert semantic failures into passes.
+% 【中文】
+% \textbf{失败分类法（基线）。} 在 \Neval{}-run M0 快照上，系统性的逐 run 分诊（机检证据、显式 UNKNOWN
+% 比例、从不把未分类 run 折入他类）得到：(i) 无输出/中止 21.0\%（146/696），(ii) 语义/部分失败 62.8\%
+%（437/696；132 运行时崩溃 + 305 断言失败），(iii) 契约/格式 0.3\%（2/696），残余 UNKNOWN 7.0\%
+%（49/696）。语义失败（62.8\%）占主导——交付物语法上合理但语义上错误——这是直接证据：绑定约束是
+% \emph{知道该做什么的知识}，而非输出格式。这支持记忆假设：一个跨会话巩固"哪些断言失败及为何"的
+% 智能体可将语义失败转化为通过。
 
 \textbf{Trace anatomy (baseline).} 47 instrumented pilot runs (2026-11-03--06) show: median 26.5 tool calls (IQR 13.8--38.0, max 97) across 20.5 iterations, median 1{,}047\,s (IQR 552--1{,}495). Of 1{,}371 tool calls, 41.2\% go through the MCP bridge to live EDA tools and 58.8\% are built-in file/search/shell. The effort is substantial but not unbounded---and the 41.2\% MCP fraction means nearly half of all actions require grounding in live tool outputs the model has never seen during training. (Caveat: these 47 traces are archived pilots, not the \Neval{}-run batch; they describe mechanics, not pass rates.)
+% 【中文】
+% \textbf{轨迹解剖（基线）。} 47 条插桩试点 run（2026-11-03--06）显示：中位 26.5 次工具调用
+%（IQR 13.8--38.0，最大 97），跨 20.5 轮迭代，中位 1{,}047\,s（IQR 552--1{,}495）。1{,}371 次工具
+% 调用中，41.2\% 经 MCP 网桥走向真实 EDA 工具，58.8\% 为内置文件/搜索/shell。投入可观但有界——
+% 41.2\% 的 MCP 占比意味着近半数动作需要在模型训练中从未见过的实时工具输出上接地。（告诫：这 47 条
+% 轨迹是归档试点，非 \Neval{}-run 批次；它们描述机制而非通过率。）
 
 \textbf{Affective-mechanism analysis (placeholder, post pre-registration).} The three mechanisms (\S\ref{sec:affective}) predict testable signatures: (1) surprise distribution---M5 should concentrate writes on high-surprise events; (2) $r_{\text{cp}}$ vs.\ Pass@1 scatter---M7 should occupy the ``smaller memory, equal-or-better Pass@1'' region; (3) state\_match hit distribution---M6 should up-weight pitfall memories in the fail-streak subset; (4) M4 leak-rate audit---transfer-hit memories should be abstract cognition, not problem-specific answer fragments (leak rate $=0$). These analyses are \TBD{} pending post-pre-registration evaluation.
+% 【中文】
+% \textbf{情绪机制分析（占位，预注册后）。} 三个机制（\S\ref{sec:affective}）预测可检验的签名：
+% (1) 惊异分布——M5 应将写入集中于高惊异事件；(2) $r_{\text{cp}}$ vs.\ Pass@1 散点——M7 应占据
+% "更小记忆、相等或更优 Pass@1"区域；(3) state\_match 命中分布——M6 应在失败连击子集中上调避坑记忆
+% 权重；(4) M4 泄漏率审计——迁移命中记忆应为抽象认知而非问题特定答案片段（泄漏率 $=0$）。这些分析
+% 为 \TBD{}，待预注册后评测。
 
 \textbf{Why memory might hurt.} If memory is uncurated (M2, no reliability gating), stale or contradictory entries can mislead: a lesson from an old tool version may be wrong for the current one. This is why H1a tests M3 (gated) against M2 (ungated), and why the disconfirmation filter and held-out rollback are part of the reliability gating. If H1a falsifies \emph{but} M3 $\approx$ M2, the negative result itself is publishable: it bounds the value of reliability gating in long-chain flow.
+% 【中文】
+% \textbf{记忆为何可能有害。} 若记忆未经整理（M2，无可靠性门控），陈旧或矛盾的条目可能误导：来自旧
+% 工具版本的教训对当前版本可能错误。这正是 H1a 用 M3（门控）对照 M2（无门控）的原因，也是证伪过滤
+% 与留出回滚成为可靠性门控一部分的原因。若 H1a 被证伪\emph{但} M3 $\approx$ M2，该阴性结果本身可发表：
+% 它界定了长链流程中可靠性门控的价值。
