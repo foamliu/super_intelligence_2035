@@ -1525,3 +1525,6 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794883500039_7pswx	wnyu	hfeg0plg002	353	spice_sim	case	EDA-Eval-DesignFlow-VcoBiasTbGen-001	2026-11-19 01:30	
 1794791834453_cn31i	tongni	hfeg0pkn005	328	spice_sim	case	EDA-Eval-DesignFlow-ActLdoR5ReportGen-001	2026-11-19 01:57	
 1794819814309_orsuk	thqu	hfhds208	117	spice_sim	case	EDA-Eval-DesignFlow-SimCornerSearch-001	2026-11-19 02:42	
+1795000943167_vsiuu	joeyl	hfeg0pkn002	246	spice_sim	parked		2026-11-19 02:58	permission denied: file -rw-rw-r-- joeyl:hfdes, e0031982 not in hfdes group, cat/scp fail
+1795001507401_e243s	alan17z	hfeg0plg10	217	spice_sim	parked		2026-11-19 03:02	stale: file not found on hfeg0plg10(172.16.8.176), session deleted between scan and read
+1795003458729_fsoag	scarle	hfhds201	189	spice_sim	parked		2026-11-19 03:03	stale: file existed at ls (736312B 11-18 20:23) but deleted before cp; scarle active, session rotation
