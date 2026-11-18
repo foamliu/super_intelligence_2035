@@ -18,7 +18,7 @@ WAITING: 0（2026-11-18 wake#1316·**🟢 standby·done_all·无新令**：plan 
 
 - [wake#1314 详条已滚出·被 wake#1315 代表] 见 `daily-memories/2026-11-18.md` §[wake#1314 rolled-out]（第六十三次核验·standby·done_all·HEAD=`ecb9f5e80`·与 wake#1311-1313 同款用户粘贴任务书无新令）。
 
-- [2026-11-18 wake#1315 心跳·opencode 交互式会话·用户再次粘贴任务书全文无新指令] 第六十四次核验·standby·done_all·用户消息=ZHULONG_TASK.md 全文（顶部最新仍 v1.7 已归档·与 MEMORY 行 3 一致·无新令·与 wake#1311/#1312/#1313/#1314 同款场景）·infra 健康（loop PID243810/ops_relay PID118463/cline ✅ @/home/app.e0031982/.local/bin/cline·/home 35G free·/nasdata 2.5T free）·ops 队列排空（last_run_id=146·inbox 顶部即 146·无 pending）·fetch 后 HEAD=`776cf1d60`（他线提交推进·非本线·0 ahead 0 behind origin/main·push 通畅·working tree 未提交=`doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW_D.md` + `designflow/trace_ledger_C.tsv` + `designflow/trace_ledger_D.tsv` 均 harness 线在途自动产物·AGENTS.md 禁 stash/clean/reset → 不碰）·research 日报 2026-11-18 zhulong 建议 5+ 条均 Verilog 评测法+模型架构方向·与本线「情绪门控×长期记忆预注册可证伪」论文范围不对应·subagent 消融线 done_all·§10「与本任务书冲突以本任务书为准」→ 不起臂·距预注册日 2026-11-22 仍 4 天·§7 StepC：done_all→退出。本条入后滚 wake#1314 详条至 `daily-memories/2026-11-18.md`，MEMORY 控体量（<40KB 硬阈）。
+- [wake#1315 详条已滚出·被 wake#1316 代表] 见 `daily-memories/2026-11-18.md` §[wake#1315 rolled-out]（第六十四次核验·standby·done_all·HEAD=`776cf1d60`·与 wake#1311-1314 同款用户粘贴任务书无新令）。
 
 - [wake#1303 详条已滚出·被 wake#1314 代表] 见 `daily-memories/2026-11-18.md` §[wake#1303 rolled-out]（**plan v1.6 + paper v1.7 双交付**·v1.6 假设内聚化重组 3 核心+7 子·报告 122386B·commit `50ed2d283`·v1.7 重写 `EDA-Flow-Bench_ICML2027/` 正文 main.tex+12 section+4 appendix+main.bbl·新标题「Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study」·正文 6 页·10 判据全通过·v1.6+v1.7 令已归档至 ZHULONG_TASK_ARCHIVE.md）。
 
