@@ -1,10 +1,12 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-18 wake#1290·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（v1.5 §6 同步·已在 origin/main）。本 wake 第四十次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8 / H1-H7 / §6.1-§6.3。git：workspace HEAD=`47e0099d6`=origin/main 0 behind 0 ahead（ff-only·即 wake#1289 commit·现干净）·本线 run/ 无 dirty·TASK.md 11.1KB<32KB✅·MEMORY 滚动 wake#1288/#1285 至 daily 后体量回落。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval·ps 核验 75 个 cline 进程均为 designflow eval 线（他线·未碰）·无 ZhuLong subagent/run_h2/ablation_run eval 进程·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）。⚠️ infra：/home 仅 2.2G free（<8G 软阈·他线 75 cline eval 占用·非本线 eval·standby 不受影响）。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
+WAITING: 0（2026-11-18 wake#1291·**🟢 standby·plan v1.5 已交付**：commit `e810dc502`（v1.5 §6 同步·已在 origin/main）。本 wake 第四十一次独立核验 7 判据全通过：报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8 / H1-H7 / §6.1-§6.3 / §5.1 标题自证 13 臂。git：pull `Already up to date`·workspace HEAD=`0b33875c5`=origin/main（其他线 designflow/vision/harness 推进所致·本线 zhulong 最后提交 `29e501409` wake#1290·本线 run/ 无 dirty）·TASK.md 11.0KB<32KB✅·MEMORY 39.0KB<40KB 硬阈✅（略超 32KB 软阈·wake#1290 刚滚过·不再滚）。subagent 消融线仍 done_all·**新臂 M4-M8 是设计文档不是起跑**·不起 eval·ps 核验无 ZhuLong subagent/run_h2/ablation_run eval 进程·无 cline 跑本线任务书·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）·ops_relay PID118463 在跑（23d uptime）⚠️ infra：/home 仅 1.3G free（较 wake#1290 的 2.2G 再降 0.9G·<8G 软阈·他线 designflow eval 占用·非本线 eval·standby 不受影响·若后续要起本线 eval 须先确认磁盘恢复）·/nasdata 20G free（>8G·较 wake#1290 的 33G 降 13G）。**预注册日 2026-11-22（4 天）临近·待用户下一步放行**）
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
+
+- [2026-11-18 wake#1291 心跳·交互式 OpenCode 会话·非交互执行] 第四十一次复核 v1.5（commit e810dc502）·7 判据全通过（报告 119150B / 11 h2 / 0 外链+0 script / 13 臂·§5.1=18 / H1-H7 / §6.1-§6.3）·git pull `Already up to date`·HEAD=`0b33875c5`=origin/main（其他线推进·本线最后 commit `29e501409` wake#1290·run/ 无 dirty）·ps：zhulong_loop PID243810 活（4d+）+ ops_relay PID118463 活（23d）·无 ZhuLong eval/subagent/cline 跑本线·不起 eval 不起臂·subagent 消融线仍 done_all·M4-M8 设计文档不起跑·待用户下一步放行（预注册日 2026-11-22 距 4 天）。⚠️ infra：/home 1.3G free（较 wake#1290 的 2.2G 再降 0.9G·<8G 软阈·他线 designflow eval 占用·standby 不受影响）·/nasdata 20G free（>8G·降 13G）。状态与 wake#1290 一致，仅续编心跳·TASK 11.0KB✅·MEMORY 39.1KB<40KB 硬阈✅（合并 wake#1227/#1228/#1229/#1231 冗余指针控体量·不再滚）。
 
 - [2026-11-18 wake#1290 心跳·交互式 OpenCode 会话] 第四十次复核 v1.5（commit e810dc502）·7 判据全通过（报告 119150B>25KB / 11 h2 / 0 外链 + 0 `<script>` / 13 臂 M0 M1 M2 M3 S1 M3+S1 N1 N2 M4 M5 M6 M7 M8·§5.1 标题自证 13 臂 / H1-H7 / §6.1-§6.3）·git HEAD=`47e0099d6`=origin/main 0 behind 0 ahead（ff-only·即 wake#1289 commit·本线 run/ 无 dirty）·ps 核验 75 cline 均为 designflow eval（他线·未碰）·zhulong_loop.sh harness PID243810 在跑（4d+ uptime）·无 ZhuLong subagent/run_h2/ablation_run eval 进程·不起 eval 不起臂·subagent 消融线仍 done_all·新臂 M4-M8 是设计文档不起跑·待用户下一步放行（预注册日 2026-11-22 距 4 天）。⚠️ infra：/home 仅 2.2G free（<8G 软阈·他线 75 cline eval 占用·非本线 eval·standby 不受影响·若后续要起本线 eval 须先确认磁盘恢复）。状态与 wake#1289 一致，仅续编心跳 + 本轮滚动 wake#1288/#1285 至 daily 控体量（MEMORY 39.6KB→回落）。
 
@@ -44,11 +46,7 @@ WAITING: 0（2026-11-18 wake#1290·**🟢 standby·plan v1.5 已交付**：commi
 
 - [wake#1245/#1244 详条已滚出·被 wake#1249 代表] plan v1.2 第七十七~八次复核·6 判据全通过·仅记心跳·见 `daily-memories/2026-11-18.md`。
 
-- [wake#1226~#1243 详条已滚出·2026-11-18 多次归档] 见 `daily-memories/2026-11-18.md` §[wake#1228/#1231/#1232/#1233/#1241/#1242 roll-out]（plan v1.1 第五十九~七十三次复核 + v1.2 微订正 commit `9565933b1` + v1.2 第七十五次复核·交互式 OpenCode 会话·被 wake#1228/#1231/#1232/#1233/#1241/#1242/#1243 代表）。
-
-- [wake#1231/#1229/#1228 详条已滚出·2026-11-18 wake#1230~#1232 归档] 见 `daily-memories/2026-11-18.md` §[wake#1231 roll-out]（plan v1.1 第六十一~六十四次复核·结构性+实质核验·被 wake#1230/#1232 代表）。
-
-- [wake#1227 详条已滚出·2026-11-18 wake#1229 归档] 见 `daily-memories/2026-11-18.md` §[wake#1229 roll-out]（plan v1.1 第六十次复核·被 wake#1228/#1229 代表）。
+- [wake#1226~#1243 详条已滚出·2026-11-18 多次归档] 见 `daily-memories/2026-11-18.md` §[wake#1228/#1231/#1232/#1233/#1241/#1242 roll-out]（plan v1.1 第五十九~七十三次复核 + v1.2 微订正 commit `9565933b1` + v1.2 第七十五次复核·交互式 OpenCode 会话·含 #1227/#1228/#1229/#1231 子集·被 wake#1228/#1231/#1232/#1233/#1241/#1242/#1243 代表）。
 
 - [wake#911~#1224 详条/指针已滚出·2026-11-18 wake#1284 再合并] 原文均已在 `daily-memories/2026-11-{17,18}.md`（plan v1 首次交付 commit `87cdb56f8` + v1.1 第二~五十七次复核 + standby 心跳序列 + subagent 消融线结案 wake#1036 + wake#1148~#1161 done_all 重核 + A0′′ proxy 修复关键节点 #1011 cline 3.0.51 忽略 contextWindow=8K→truncation proxy port 19099 详见 daily-memories/2026-11-1{6,7}.md）·均已被 wake#1036(结案)/wake#1178(v1 首交付)/wake#1251(v1.5 交付) 代表。
 
