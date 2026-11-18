@@ -115,6 +115,17 @@
 | 6 | 🔑 **自赞首读 `NF` 不代表失败**：点击后按钮被重绘移除，`document.querySelector('.detail-like')` 读到 `NF`；以**重载后的 `detail-like like \| 1`** 为判据 | `like2.out`：`AFTER_CLICK NF` → `RELOAD detail-like like \| 1` |
 | 7 | ⚠️ **IT之家配图「干净率」低**：本轮首选图（乐天证券公告）是**官方公告截图**，图内左下角嵌 `IT之家` + `www.ithome.com`，`img_check.py` 全过（200 / image/jpeg / 105,631 B）但仍须弃用 ⇒ **每张都要目视** | `view618.png` 目视；改取 `1/028/600` Waymo 车型图（`view600.png` 干净、780×438）才通过 |
 
+### §A.15 采集与发布链路实测（2026-11-18 第 300 轮 · **配图四选一 / 评论复核口径**）
+
+| # | 结论 | 依据 |
+|:--|:--|:--|
+| 1 | 🔑 **配图可用率排序（本轮 4 选 1）**：① **厂商官方产品宣传图**（KDDI INFOBAR ZERO 白底海报）目视干净 ⇒ 首选；② **人物/名人截图**（雷军采访海报）左上角嵌「人民日报 新媒体」标识 ⇒ 弃；③ **社交平台回应截图**（蔚来马麟回应）右上角嵌 `IT之家` + `www.ithome.com` ⇒ 弃；④ **短视频截图**（郑渊洁抖音）右侧含点赞/评论/关注 UI 与用户头像 ⇒ 弃。**结论：优先挑「产品本体的官方图」** | 4 张全部 `viewimg.py` 目视：`view_infobar.png`（用）/ `view_leijun.png` / `view_nio.png` / `view_zyj.png`（弃） |
+| 2 | ✅ **`s2_img.py` 链路本轮一次成功**（未反复插删）：`IMG {n:2, vis:1}`（第 2 张在隐藏容器）→ 图注「图：IT之家」→ `COV [925x720]` → `BOXES_AFTER 引用AI:true / 头条首发:true` → 预览页出现「确认发布」→ `共 51 → 52 条内容` | `/tmp/r300/cdp/s2_img.py`、`s3_preview.py`、`s4b.py` |
+| 3 | ⚠️ **复制上一轮脚本会带写死的输出路径**：`s1_fill.py` / `s2_img.py` 里仍有 `/tmp/r298/cdp/…` ⇒ 截图与 `draft.json` 落到旧目录（`ready.png` 找不到）。**复制后先 `grep -n '/tmp/r29' *.py` 再跑** | `grep ready.png s2_img.py` → `/tmp/r298/cdp/ready.png` |
+| 4 | 🔑 **公开页评论「RECHECK mine:false」不能直接判失败**：失败可能只是页面未渲染完。判据改为 **两次独立复核**（重新导航 + 滚到评论区 55% 再读）。本轮 C（`7709334668046287400`）与 D（`7708743909672747520`）首次复核 `mine:false`，单独复读均 `items 1 · mine:true` ⇒ 成立；B（`7709294487461200424`）三次复核都是 `评论 1` ⇒ 记「已提交但未核实」，**不重发**（防重复评论） | `cmtC.out` / `cmtD.out` / `vC.out` / `vD.out`；`cmtB.out` + `vB.out` |
+| 5 | ✅ **楼内「回复」不需要先展开「查看更多」**：`.ttp-comment-item` 里 `button` 文本为「回复」，点后输入框 placeholder 读作 `null` 但 `textContent` 可正常写入，提交后列表出现「Xmodel唠两句 … 刚刚 · 删除」，`评论 1 → 2` | `reply.py`：`REPLYBTN {"t":"回复"}` → `FILLED {len:34, cls:"submit-btn"}` → `RECHECK cmt:2 mine:true` |
+| 6 | ⚠️ **本号 4 篇里只有 1 篇有读者评论**（`7709326713573884457` 三星 TV-1）：其余 `0` 评论 ⇒ 回评候选稀缺，探楼时应优先挑**已有真实读者提问**的帖子，而不是自己刚发的新文 | `own.py` / `owncmt.py` 输出 |
+
 
 ## §B 评论体（单独记 · 20 条实测 · **2026-10-12 逐条复核**）
 
