@@ -924,7 +924,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1790150039431_ojny6					parked		2026-11-06 03:23	skill-scenario: simdiag-cli remote HTTP diagnosis skill prompt; not a clean produce-task
 1790145346740_n1crk					parked		2026-11-06 03:23	skill-scenario: AutoCell TCL flow generator slash-command; wrong domain
 1789465514819_9f0ra					parked		2026-11-06 03:23	vague trigger (启动业务场景:仿真与验证) -> env overview Q&A; not a produce-task
-1789555682011_6j4hl					deepread		2026-11-19 06:42	r925 revival: overturn 2026-11-06 park(mid-conv inaccurate, U#0=msg0=first user turn). A-faithful 提出需求(paste failing RunTrace, fix tracer). Precedent r922. peek done r925, synth defer r926. domain=schematic_netlist, mc109, pjli@hfeg0plg06
+1789555682011_6j4hl					case	EDA-Eval-DesignFlow-SigEdgeHierClimbFix-001	2026-11-19 07:05	r925 revival: overturn 2026-11-06 park(mid-conv inaccurate, U#0=msg0=first user turn). A-faithful 提出需求(paste failing RunTrace, fix tracer). Precedent r922. peek done r925, synth defer r926. domain=schematic_netlist, mc109, pjli@hfeg0plg06
 1791954901303_1epl2	e0039602	10.129.8.136	95	schematic_netlist	case	EDA-Eval-DesignFlow-CellExpandGen-001	2026-11-06 04:11	
 1790751104057_raf93					parked		2026-11-06 04:12	skill-loading run-regression(U#0=skill_instructions)
 1791974592283_86fuo					parked		2026-11-06 04:12	how-to Q&A(怎么实现自动抽网表,无具体asset)
