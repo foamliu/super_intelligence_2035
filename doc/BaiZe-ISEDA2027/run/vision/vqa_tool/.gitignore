@@ -9,3 +9,7 @@ restored_probe_images/
 
 # LoRA adapter binaries (regenerable by sft_rl_strengthen.py --stage sft/rft)
 strengthen_runs/*_adapter_seed*/
+
+# Regenerable synthetic GRPO training images (deterministic via synth_waveform_qa.py, fixed seed)
+grpo_mllm_runs/grpo_train_images/
+grpo_mllm_runs/smoke/grpo_train_images/

@@ -1,0 +1,42 @@
+{
+  "config": {
+    "model_path": "/nas_data/app.e0031982/models/Qwen3.5-2B",
+    "output_dir": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/grpo_mllm_runs/smoke",
+    "init_adapter": null,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "lr": 1e-05,
+    "total_steps": 2,
+    "batch_prompts": 2,
+    "group_size": 4,
+    "ppo_epochs": 1,
+    "clip_eps": 0.2,
+    "max_new_tokens": 40,
+    "temperature": 0.8,
+    "top_p": 0.95,
+    "seed": 20261119,
+    "log_steps": 1,
+    "save_steps": 2,
+    "train_seed": 20261114,
+    "smoke_test": true,
+    "device": "cuda"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "loss": 0.0,
+      "reward_mean": 1.0,
+      "n_rollouts": 8,
+      "n_tokens": 32
+    },
+    {
+      "step": 2,
+      "loss": 0.0,
+      "reward_mean": 0.5542,
+      "n_rollouts": 8,
+      "n_tokens": 32
+    }
+  ],
+  "total_wall_s": 10.64096713066101
+}

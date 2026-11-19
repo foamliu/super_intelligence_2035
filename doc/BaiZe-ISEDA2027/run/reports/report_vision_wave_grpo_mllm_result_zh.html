@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Vision · 波形图理解 Stage-2W GRPO(完整 MLLM)成果报告</title>
+<style>
+ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#1f2937;line-height:1.6;background:#f9fafb}
+ h1{font-size:1.5rem;border-bottom:3px solid #1f2937;padding-bottom:8px}
+ h2{font-size:1.15rem;margin-top:28px;color:#1f2937;border-left:5px solid #3b82f6;padding-left:10px}
+ .cards{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+ .card{flex:1;min-width:150px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+ .card .lab{font-size:.8rem;color:#6b7280}.card .val{font-size:1.5rem;font-weight:700;margin:4px 0}
+ .card .sub{font-size:.78rem;color:#6b7280}
+ .ok{color:#059669}.bad{color:#dc2626}.warn{color:#d97706}
+ table{border-collapse:collapse;width:100%;background:#fff;margin:12px 0;font-size:.9rem}
+ th,td{border:1px solid #e5e7eb;padding:7px 10px;text-align:center}
+ th{background:#f3f4f6}td:first-child{text-align:left}
+ .note{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.9rem}
+ .neg{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:14px 0}
+ .muted{color:#6b7280;font-size:.85rem}
+ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:.85em}
+ .foot{margin-top:30px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:.8rem;color:#6b7280}
+</style></head><body>
+<h1>BaiZe Vision · 波形图理解 Stage-2W GRPO（完整 Qwen3.5-2B MLLM）成果报告</h1>
+<p class="muted">用户令 2026-11-19 · GPU 迁回训练 · step (c) GRPO + step (d) 评测 ｜ wake#1685 ｜ 2026-11-19</p>
+<div class="note">
+<b>口径修正（诚实性）</b>：前序 wake#1684 以「post-GRPO 0.8667 = <b>+26.67pp</b>」作为 GRPO 成果头条。经核对，该 +26.67pp 是相对 <b>base 模型(0.60)</b> 的「整条 SFT+RFT+GRPO 链路」增益，<b>并非 GRPO 自身增益</b>。GRPO 的冷启动 adapter 是 RFT2(<span class="ok">0.90</span>)，post-GRPO 为 <span class="bad">0.867</span>，<b>GRPO 真实增益 = −3.3pp（McNemar b=2 c=1 p=1.0，不显著）</b>。误判成因：smoke 用 <code>init_adapter=null</code>（fresh LoRA from base）跑出 0.60，被误记为「post-SFT/rft2-init 基线」——它其实是 base 模型分数。本报告以真正的冷启动基线(RFT2=0.90)为 GRPO 对照。
+</div>
+<h2>1. 关键数字（held-out n=30，合成波形图问答，6 技能×5 题）</h2>
+<div class="cards">
+ <div class="card"><div class="lab">pre-SFT (base)</div><div class="val">60.0%</div><div class="sub">18/30 · Qwen3.5-2B 原生 VL，无 adapter</div></div>
+ <div class="card"><div class="lab">post-SFT (3-seed mean)</div><div class="val">74.4%</div><div class="sub">σ=4.2pp · Stage-1W SFT2 LoRA</div></div>
+ <div class="card"><div class="lab">post-RFT2 (GRPO 冷启动)</div><div class="val">90.0%</div><div class="sub">27/30 · rft2_adapter_seed11</div></div>
+ <div class="card"><div class="lab">post-GRPO (step500)</div><div class="val" style="color:#dc2626">86.7%</div><div class="sub">26/30 · 冷启动 RFT2 + 500 步 GRPO</div></div>
+</div>
+<h2>2. 阶段进程</h2>
+<svg width="560" height="240" viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="stage progression">
+<rect width="560" height="240" fill="#ffffff"/>
+<line x1="60" y1="115.0" x2="520" y2="115.0" stroke="#e5e7eb"/>
+<text x="52" y="119.0" font-size="10" fill="#6b7280" text-anchor="end">50</text>
+<line x1="60" y1="100.0" x2="520" y2="100.0" stroke="#e5e7eb"/>
+<text x="52" y="104.0" font-size="10" fill="#6b7280" text-anchor="end">60</text>
+<line x1="60" y1="85.0" x2="520" y2="85.0" stroke="#e5e7eb"/>
+<text x="52" y="89.0" font-size="10" fill="#6b7280" text-anchor="end">70</text>
+<line x1="60" y1="70.0" x2="520" y2="70.0" stroke="#e5e7eb"/>
+<text x="52" y="74.0" font-size="10" fill="#6b7280" text-anchor="end">80</text>
+<line x1="60" y1="55.0" x2="520" y2="55.0" stroke="#e5e7eb"/>
+<text x="52" y="59.0" font-size="10" fill="#6b7280" text-anchor="end">90</text>
+<line x1="60" y1="40.0" x2="520" y2="40.0" stroke="#e5e7eb"/>
+<text x="52" y="44.0" font-size="10" fill="#6b7280" text-anchor="end">100</text>
+<line x1="60.0" y1="100.0" x2="213.3" y2="78.3" stroke="#10b981" stroke-width="2.5"/>
+<line x1="213.3" y1="78.3" x2="366.7" y2="55.0" stroke="#10b981" stroke-width="2.5"/>
+<line x1="366.7" y1="55.0" x2="520.0" y2="60.0" stroke="#ef4444" stroke-width="2.5"/>
+<circle cx="60.0" cy="100.0" r="5" fill="#1f2937"/>
+<text x="60.0" y="88.0" font-size="12" font-weight="700" fill="#1f2937" text-anchor="middle">60.0%</text>
+<text x="60.0" y="122.0" font-size="10" fill="#374151" text-anchor="middle">pre-SFT (base)</text>
+<circle cx="213.3" cy="78.3" r="5" fill="#1f2937"/>
+<text x="213.3" y="66.3" font-size="12" font-weight="700" fill="#1f2937" text-anchor="middle">74.4%</text>
+<text x="213.3" y="100.3" font-size="10" fill="#374151" text-anchor="middle">post-SFT (3-seed mean)</text>
+<circle cx="366.7" cy="55.0" r="5" fill="#1f2937"/>
+<text x="366.7" y="43.0" font-size="12" font-weight="700" fill="#1f2937" text-anchor="middle">90.0%</text>
+<text x="366.7" y="77.0" font-size="10" fill="#374151" text-anchor="middle">post-RFT2 (GRPO cold-start)</text>
+<circle cx="520.0" cy="60.0" r="5" fill="#1f2937"/>
+<text x="520.0" y="48.0" font-size="12" font-weight="700" fill="#1f2937" text-anchor="middle">86.7%</text>
+<text x="520.0" y="82.0" font-size="10" fill="#374151" text-anchor="middle">post-GRPO (step500)</text>
+</svg>
+<p class="muted">绿线=上升，红线=下降。SFT→RFT2 是主要增益来源（+30pp）；RFT2→post-GRPO 为 <b>−3.3pp</b>（GRPO 未带来提升）。</p>
+<h2>3. 预注册判据与诚实结论</h2>
+<div class="neg">
+<b>判据</b>（用户令 step d）：对比 pre-SFT / post-SFT / post-GRPO 的波形图理解通过率；GRPO 是否相对其<b>冷启动</b>提升通过率。<br><b>结论</b>：<ul>
+ <li><b>Stage-1W（SFT→RFT）是增益来源</b>：base 60% → RFT2 90%（+30pp；既有 v2-RFT McNemar b=7 c=0 <b>p=0.0156</b>，预注册显著）。</li>
+ <li><b>Stage-2W（GRPO）未提升</b>：post-GRPO 86.7% vs 冷启动 RFT2 90% = <b>−3.3pp</b>，McNemar b=2 c=1 <b>p=1.0（不显著）</b>。属<b>负结果，如实记录</b>。</li>
+ <li><b>技能层面</b>：duty_cycle 0.8→1.0（改善），但 amplitude_read 0.6→0.2（<b>回归</b>），其余持平，净 27→26。</li>
+ <li>「+26.67pp」是<b>整条链路 vs base</b>（base→post-GRPO McNemar b=2 c=10 <b>p=0.039</b>，显著），但<b>不能归因于 GRPO</b>。</li>
+</ul></div>
+<h2>4. McNemar 精确检验（同 30 题、同判分）</h2>
+<table><tr><th>对比</th><th>b（前者对后者错）</th><th>c（前者错后者对）</th><th>Δ</th><th>精确 p（双侧）</th><th>判定</th></tr>
+<tr><td>base vs post-GRPO（整链路）</td><td>2</td><td>10</td><td>+26.7pp</td><td>0.0386</td><td class="ok">显著</td></tr>
+<tr><td><b>RFT2 冷启动 vs post-GRPO（GRPO 自身）</b></td><td>2</td><td>1</td><td>-3.3pp</td><td>1.0000</td><td class="bad">不显著</td></tr>
+</table>
+<p class="muted">n=30 较小，p 仅供参考；GRPO 自身对比 b=2 c=1 信号方向为<b>轻微变差</b>。</p>
+<h2>5. 每技能准确率</h2>
+<svg width="796" height="250" viewBox="0 0 796 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="per-skill accuracy">
+<rect width="796" height="250" fill="#ffffff"/>
+<line x1="70" y1="200.0" x2="776" y2="200.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="62" y="204.0" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+<line x1="70" y1="166.0" x2="776" y2="166.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="62" y="170.0" font-size="11" fill="#6b7280" text-anchor="end">20</text>
+<line x1="70" y1="132.0" x2="776" y2="132.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="62" y="136.0" font-size="11" fill="#6b7280" text-anchor="end">40</text>
+<line x1="70" y1="98.0" x2="776" y2="98.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="62" y="102.0" font-size="11" fill="#6b7280" text-anchor="end">60</text>
+<line x1="70" y1="64.0" x2="776" y2="64.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="62" y="68.0" font-size="11" fill="#6b7280" text-anchor="end">80</text>
+<line x1="70" y1="30.0" x2="776" y2="30.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="62" y="34.0" font-size="11" fill="#6b7280" text-anchor="end">100</text>
+<rect x="70" y="98.0" width="26" height="102.0" fill="#94a3b8"><title>type_classification: 60%</title></rect>
+<text x="83.0" y="95.0" font-size="10" fill="#374151" text-anchor="middle">60</text>
+<rect x="104" y="30.0" width="26" height="170.0" fill="#3b82f6"><title>type_classification: 100%</title></rect>
+<text x="117.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<rect x="138" y="30.0" width="26" height="170.0" fill="#ef4444"><title>type_classification: 100%</title></rect>
+<text x="151.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<text x="151.0" y="216" font-size="10.5" fill="#374151" text-anchor="middle">type classification</text>
+<rect x="194" y="64.0" width="26" height="136.0" fill="#94a3b8"><title>cycle_count: 80%</title></rect>
+<text x="207.0" y="61.0" font-size="10" fill="#374151" text-anchor="middle">80</text>
+<rect x="228" y="30.0" width="26" height="170.0" fill="#3b82f6"><title>cycle_count: 100%</title></rect>
+<text x="241.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<rect x="262" y="30.0" width="26" height="170.0" fill="#ef4444"><title>cycle_count: 100%</title></rect>
+<text x="275.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<text x="275.0" y="216" font-size="10.5" fill="#374151" text-anchor="middle">cycle count</text>
+<rect x="318" y="132.0" width="26" height="68.0" fill="#94a3b8"><title>amplitude_read: 40%</title></rect>
+<text x="331.0" y="129.0" font-size="10" fill="#374151" text-anchor="middle">40</text>
+<rect x="352" y="98.0" width="26" height="102.0" fill="#3b82f6"><title>amplitude_read: 60%</title></rect>
+<text x="365.0" y="95.0" font-size="10" fill="#374151" text-anchor="middle">60</text>
+<rect x="386" y="166.0" width="26" height="34.0" fill="#ef4444"><title>amplitude_read: 20%</title></rect>
+<text x="399.0" y="163.0" font-size="10" fill="#374151" text-anchor="middle">20</text>
+<text x="399.0" y="216" font-size="10.5" fill="#374151" text-anchor="middle">amplitude read</text>
+<rect x="442" y="64.0" width="26" height="136.0" fill="#94a3b8"><title>freq_comparison: 80%</title></rect>
+<text x="455.0" y="61.0" font-size="10" fill="#374151" text-anchor="middle">80</text>
+<rect x="476" y="30.0" width="26" height="170.0" fill="#3b82f6"><title>freq_comparison: 100%</title></rect>
+<text x="489.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<rect x="510" y="30.0" width="26" height="170.0" fill="#ef4444"><title>freq_comparison: 100%</title></rect>
+<text x="523.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<text x="523.0" y="216" font-size="10.5" fill="#374151" text-anchor="middle">freq comparison</text>
+<rect x="566" y="200.0" width="26" height="0.0" fill="#94a3b8"><title>duty_cycle: 0%</title></rect>
+<text x="579.0" y="197.0" font-size="10" fill="#374151" text-anchor="middle">0</text>
+<rect x="600" y="64.0" width="26" height="136.0" fill="#3b82f6"><title>duty_cycle: 80%</title></rect>
+<text x="613.0" y="61.0" font-size="10" fill="#374151" text-anchor="middle">80</text>
+<rect x="634" y="30.0" width="26" height="170.0" fill="#ef4444"><title>duty_cycle: 100%</title></rect>
+<text x="647.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<text x="647.0" y="216" font-size="10.5" fill="#374151" text-anchor="middle">duty cycle</text>
+<rect x="690" y="30.0" width="26" height="170.0" fill="#94a3b8"><title>rise_edge: 100%</title></rect>
+<text x="703.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<rect x="724" y="30.0" width="26" height="170.0" fill="#3b82f6"><title>rise_edge: 100%</title></rect>
+<text x="737.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<rect x="758" y="30.0" width="26" height="170.0" fill="#ef4444"><title>rise_edge: 100%</title></rect>
+<text x="771.0" y="27.0" font-size="10" fill="#374151" text-anchor="middle">100</text>
+<text x="771.0" y="216" font-size="10.5" fill="#374151" text-anchor="middle">rise edge</text>
+<g transform="translate(10,238)" font-size="11" fill="#374151"><rect x="0" y="-9" width="12" height="12" fill="#94a3b8"/><text x="16" y="1">base</text><rect x="60" y="-9" width="12" height="12" fill="#3b82f6"/><text x="76" y="1">RFT2 cold-start</text><rect x="200" y="-9" width="12" height="12" fill="#ef4444"/><text x="216" y="1">post-GRPO</text></g>
+</svg>
+<table><tr><th>技能</th><th>base</th><th>RFT2 冷启动</th><th>post-GRPO</th><th>GRPO Δ</th></tr>
+<tr><td>type classification</td><td>60%</td><td>100%</td><td>100%</td><td>+0pp</td></tr>
+<tr><td>cycle count</td><td>80%</td><td>100%</td><td>100%</td><td>+0pp</td></tr>
+<tr><td>amplitude read</td><td>40%</td><td>60%</td><td>20%</td><td>-40pp</td></tr>
+<tr><td>freq comparison</td><td>80%</td><td>100%</td><td>100%</td><td>+0pp</td></tr>
+<tr><td>duty cycle</td><td>0%</td><td>80%</td><td>100%</td><td>+20pp</td></tr>
+<tr><td>rise edge</td><td>100%</td><td>100%</td><td>100%</td><td>+0pp</td></tr>
+<tr><td><b>整体</b></td><td>60%</td><td>90%</td><td>86.7%</td><td>-3.3pp</td></tr>
+</table>
+<p class="muted">amplitude_read 回归（0.6→0.2）是 post-GRPO 整体下降主因；duty_cycle 进一步修复（0.8→1.0）。</p>
+<h2>6. Stage-1W SFT 多 seed（held-out，同 30 题）</h2>
+<table><tr><th>seed</th><th>correct/n</th><th>accuracy</th><th>mean_reward</th></tr>
+<tr><td>sft2_seed11</td><td>21/30</td><td>70.0%</td><td>0.719</td></tr>
+<tr><td>sft2_seed22</td><td>24/30</td><td>80.0%</td><td>0.840</td></tr>
+<tr><td>sft2_seed33</td><td>22/30</td><td>73.3%</td><td>0.761</td></tr>
+<tr><td><b>mean ± σ</b></td><td>—</td><td><b>74.4% ± 4.2pp</b></td><td>—</td></tr>
+</table>
+<h2>7. GRPO 训练诊断（为何没有提升）</h2>
+<table><tr><th>指标</th><th>值</th><th>解读</th></tr>
+<tr><td>训练步数 / wall</td><td>224 logged / 2765s（≈46min，GPU7）</td><td>500 步目标完成</td></tr>
+<tr><td>reward==1.0 的步数</td><td>189/224（84%）</td><td class="warn">奖励饱和：冷启动已在 0.90，多数 group 全对</td></tr>
+<tr><td>loss&gt;0 的步数</td><td>2/224</td><td class="bad">仅 2 步有梯度；其余 advantage=0→loss=0</td></tr>
+<tr><td>reward 均值（首10 / 末10）</td><td>0.952 / 0.801</td><td>末段略降（个别难题）</td></tr>
+<tr><td>末步 loss 异常</td><td>-6.927</td><td>单 group reward=0.125 离群，非趋势</td></tr>
+</table>
+<div class="note"><b>根因</b>：GRPO advantage=(R−mean)/(std+ε)；group 内 4 条 rollout 奖励全同（冷启动已会做→全对→全 1.0）时 std=0→adv=0→loss=0→无梯度。500 步仅 2 步有效更新，且把 amplitude_read 拉差了。即 GRPO 在「冷启动已近天花板」的合成题上<b>几乎无操作</b>。</div>
+<h2>8. 方法与配置</h2>
+<ul>
+ <li><b>模型</b>：完整 Qwen3.5-2B MLLM（含视觉塔，<b>不剥离</b>）+ LoRA r=8 α=16 ≈ 5.46M trainable（0.246%）。</li>
+ <li><b>Stage-1W</b>：SFT2（3 seed）→ RFT2（v2 加强管线 RFT，rft2_adapter_seed11，即 GRPO 冷启动）。</li>
+ <li><b>Stage-2W GRPO</b>：lr=1e-05 · B=2 G=4 · ppo_epochs=1 · clip=0.2 · max_new_tokens=64 · temp=0.8 top_p=0.95 · seed=20261119 · train_seed=20261114（150 train case，6 技能×25）· GPU7 bf16。</li>
+ <li><b>可验证奖励</b>：<code>synth_waveform_qa.reward_for</code>（回归 exp(−rel_err/τ) / 分类二值）。</li>
+ <li><b>评测集</b>：合成波形图 held-out n=30（<code>vision/vqa_tool/eval_images/q0..q29.png</code>，eval_seed=20261115）。</li>
+</ul>
+<h2>9. 改进建议（下一步）</h2>
+<ul>
+ <li><b>留出头空间</b>：GRPO 从 base 或 SFT（而非已 0.90 的 RFT2）冷启动，让 RL 有可学余量。</li>
+ <li><b>奖励分解</b>：连续值奖励拆「区间内 vs 越界」，β&gt;α（research 日报 2026-11-19 建议），减少全对饱和。</li>
+ <li><b>更难/长尾训练题</b>：加入噪声、多通道、非整数周期等，提高 group 内奖励方差。</li>
+ <li><b>增大多样性</b>：提高 temperature / 增大 group_size，避免 4 条 rollout 全同。</li>
+ <li><b>真实 benchmark 复测</b>：把 post-GRPO adapter 装入 :30003 → 重跑 EDA-Eval-DesignFlow-WaveView 子集 V2 臂（真实 EDA 题，非合成）。</li>
+</ul>
+<h2>10. 可复现清单</h2>
+<table><tr><th>产物</th><th>路径</th></tr>
+<tr><td>pre-SFT (base) 评测</td><td><code>vision/vqa_tool/strengthen_runs/prebaseline_heldout.json</code></td></tr>
+<tr><td>post-SFT (3 seed)</td><td><code>vision/vqa_tool/strengthen_runs/sft2_summary.json</code></td></tr>
+<tr><td>RFT2 冷启动评测</td><td><code>vision/vqa_tool/strengthen_runs/rft2_seed11_eval.json</code></td></tr>
+<tr><td>RFT2 adapter（冷启动）</td><td><code>vision/vqa_tool/strengthen_runs/rft2_adapter_seed11/</code></td></tr>
+<tr><td>post-GRPO 评测</td><td><code>/nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/grpo_mllm_eval.json</code></td></tr>
+<tr><td>post-GRPO adapter</td><td><code>/nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/step500/adapter_model.safetensors</code></td></tr>
+<tr><td>GRPO 训练日志</td><td><code>/nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/training_log.json</code></td></tr>
+<tr><td>GRPO 训练脚本（含冷启动基线修正）</td><td><code>vision/vqa_tool/grpo_mllm_wave.py</code></td></tr>
+<tr><td>评测图</td><td><code>vision/vqa_tool/eval_images/q0..q29.png</code></td></tr>
+</table>
+<p class="muted">复跑：<code>CUDA_VISIBLE_DEVICES=7 python grpo_mllm_wave.py --total_steps 500 --group_size 4 --batch_prompts 2 --init_adapter .../rft2_adapter_seed11</code>（修正版会在训练前自动评测冷启动基线并落 <code>grpo_mllm_pretrain_baseline_eval.json</code>）</p>
+<div class="foot"><p><b>诚实性声明</b>：本报告所有数字均可追溯到落盘 JSON（路径见 §10），由 <code>gen_grpo_mllm_report.py</code> 直接读取生成，未手工修饰。GRPO 为负结果（相对冷启动 −3.3pp，不显著），如实记录；前序「+26.67pp」头条系对 base 而非冷启动的口径错误，已修正。</p><p>BaiZe Vision · wake#1685 · 2026-11-19 · 单文件 HTML · 0 外链 · 0 script · 内联 SVG</p></div>
+</body></html>

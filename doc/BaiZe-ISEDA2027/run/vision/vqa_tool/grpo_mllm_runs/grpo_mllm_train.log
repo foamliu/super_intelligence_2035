@@ -1,0 +1,68 @@
+/nas_data/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Loading weights:   0%|          | 0/617 [00:00<?, ?it/s]Loading weights:   4%|▍         | 27/617 [00:00<00:02, 265.79it/s]Loading weights:  13%|█▎        | 80/617 [00:00<00:01, 407.75it/s]Loading weights:  22%|██▏       | 138/617 [00:00<00:00, 484.44it/s]Loading weights:  30%|███       | 187/617 [00:00<00:00, 481.42it/s]Loading weights:  39%|███▉      | 240/617 [00:00<00:00, 491.44it/s]Loading weights:  47%|████▋     | 293/617 [00:00<00:00, 497.76it/s]Loading weights:  67%|██████▋   | 412/617 [00:00<00:00, 717.15it/s]Loading weights:  97%|█████████▋| 597/617 [00:00<00:00, 1070.80it/s]Loading weights: 100%|██████████| 617/617 [00:00<00:00, 735.83it/s] 
+[grpo-mllm] cold-start from adapter: /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/strengthen_runs/rft2_adapter_seed11
+trainable params: 5,455,872 || all params: 2,218,697,536 || trainable%: 0.2459
+[grpo-mllm] 150 train cases | B=2 G=4 steps=500 lr=1e-05 device=cuda
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `chunk_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+[transformers] `causal_conv1d_update` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `fused_recurrent_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+  step 1/500 | loss 0.0000 | reward 1.000 | rollouts 8 | 0.09 step/s | ETA 83.2 min
+  step 10/500 | loss 0.0000 | reward 0.946 | rollouts 8 | 0.10 step/s | ETA 81.7 min
+  step 20/500 | loss -0.0704 | reward 0.963 | rollouts 8 | 0.09 step/s | ETA 80.0 min
+  step 30/500 | loss 0.0000 | reward 0.926 | rollouts 8 | 0.09 step/s | ETA 78.3 min
+  step 40/500 | loss 0.0000 | reward 0.952 | rollouts 8 | 0.08 step/s | ETA 76.7 min
+  step 50/500 | loss 0.0000 | reward 0.963 | rollouts 8 | 0.08 step/s | ETA 75.0 min
+  step 60/500 | loss 0.0000 | reward 0.927 | rollouts 8 | 0.08 step/s | ETA 73.3 min
+  step 70/500 | loss 0.0000 | reward 0.963 | rollouts 8 | 0.08 step/s | ETA 71.7 min
+  step 80/500 | loss 0.0000 | reward 0.941 | rollouts 8 | 0.08 step/s | ETA 70.0 min
+  step 90/500 | loss 0.0000 | reward 0.963 | rollouts 8 | 0.08 step/s | ETA 68.3 min
+  step 100/500 | loss 0.0000 | reward 1.000 | rollouts 8 | 0.08 step/s | ETA 66.7 min
+  saved adapter -> /nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/step100
+  step 110/500 | loss 0.0000 | reward 0.963 | rollouts 8 | 0.08 step/s | ETA 65.0 min
+  step 120/500 | loss 0.0000 | reward 1.000 | rollouts 8 | 0.08 step/s | ETA 63.3 min
+  step 130/500 | loss 0.0000 | reward 0.963 | rollouts 8 | 0.08 step/s | ETA 61.7 min
+  step 140/500 | loss 0.0000 | reward 1.000 | rollouts 8 | 0.09 step/s | ETA 60.0 min
+  step 150/500 | loss 0.0000 | reward 0.951 | rollouts 8 | 0.09 step/s | ETA 58.3 min
+  step 160/500 | loss 0.0000 | reward 0.911 | rollouts 8 | 0.08 step/s | ETA 56.7 min
+  step 170/500 | loss 0.0000 | reward 0.955 | rollouts 8 | 0.08 step/s | ETA 55.0 min
+  step 180/500 | loss 0.0000 | reward 0.919 | rollouts 8 | 0.08 step/s | ETA 53.3 min
+  step 190/500 | loss 0.0000 | reward 0.890 | rollouts 8 | 0.08 step/s | ETA 51.7 min
+  step 200/500 | loss 0.0000 | reward 0.926 | rollouts 8 | 0.08 step/s | ETA 50.0 min
+  saved adapter -> /nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/step200
+  step 210/500 | loss 0.0000 | reward 0.955 | rollouts 8 | 0.08 step/s | ETA 48.3 min
+  step 220/500 | loss 0.0000 | reward 0.874 | rollouts 8 | 0.08 step/s | ETA 46.7 min
+[grpo-mllm] saved final adapter -> /nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/step500
+[eval grpo_mllm_final] q0 type_classification gt=square pred=square correct=True reward=1.0
+[eval grpo_mllm_final] q1 type_classification gt=sine pred=sine correct=True reward=1.0
+[eval grpo_mllm_final] q2 type_classification gt=sawtooth pred=sawtooth correct=True reward=1.0
+[eval grpo_mllm_final] q3 type_classification gt=sawtooth pred=sawtooth correct=True reward=1.0
+[eval grpo_mllm_final] q4 type_classification gt=square pred=square correct=True reward=1.0
+[eval grpo_mllm_final] q5 cycle_count gt=3 pred=3 correct=True reward=1.0
+[eval grpo_mllm_final] q6 cycle_count gt=3 pred=3 correct=True reward=1.0
+[eval grpo_mllm_final] q7 cycle_count gt=4 pred=4 correct=True reward=1.0
+[eval grpo_mllm_final] q8 cycle_count gt=5 pred=5 correct=True reward=1.0
+[eval grpo_mllm_final] q9 cycle_count gt=3 pred=3 correct=True reward=1.0
+[eval grpo_mllm_final] q10 amplitude_read gt=6 pred=4 correct=False reward=0.1084
+[eval grpo_mllm_final] q11 amplitude_read gt=6 pred=4 correct=False reward=0.1084
+[eval grpo_mllm_final] q12 amplitude_read gt=7 pred=7 correct=True reward=1.0
+[eval grpo_mllm_final] q13 amplitude_read gt=6 pred=4 correct=False reward=0.1084
+[eval grpo_mllm_final] q14 amplitude_read gt=6 pred=4 correct=False reward=0.1084
+[eval grpo_mllm_final] q15 freq_comparison gt=B pred=B correct=True reward=1.0
+[eval grpo_mllm_final] q16 freq_comparison gt=A pred=A correct=True reward=1.0
+[eval grpo_mllm_final] q17 freq_comparison gt=A pred=A correct=True reward=1.0
+[eval grpo_mllm_final] q18 freq_comparison gt=A pred=A correct=True reward=1.0
+[eval grpo_mllm_final] q19 freq_comparison gt=A pred=A correct=True reward=1.0
+[eval grpo_mllm_final] q20 duty_cycle gt=75 pred=75 correct=True reward=1.0
+[eval grpo_mllm_final] q21 duty_cycle gt=25 pred=25 correct=True reward=1.0
+[eval grpo_mllm_final] q22 duty_cycle gt=25 pred=25 correct=True reward=1.0
+[eval grpo_mllm_final] q23 duty_cycle gt=25 pred=25 correct=True reward=1.0
+[eval grpo_mllm_final] q24 duty_cycle gt=75 pred=75 correct=True reward=1.0
+[eval grpo_mllm_final] q25 rise_edge gt=sharp pred=sharp correct=True reward=1.0
+[eval grpo_mllm_final] q26 rise_edge gt=sharp pred=sharp correct=True reward=1.0
+[eval grpo_mllm_final] q27 rise_edge gt=gradual pred=gradual correct=True reward=1.0
+[eval grpo_mllm_final] q28 rise_edge gt=gradual pred=gradual correct=True reward=1.0
+[eval grpo_mllm_final] q29 rise_edge gt=sharp pred=sharp correct=True reward=1.0
+=== EVAL grpo_mllm_final acc=0.8667 mean_reward=0.8811 -> /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/strengthen_runs/grpo_mllm_final_eval.json
+[grpo-mllm] held-out acc=0.8667 -> /nas_data/app.e0031982/datasets/baize-vision/out/wave_grpo_stage2w_mllm/grpo_mllm_eval.json
