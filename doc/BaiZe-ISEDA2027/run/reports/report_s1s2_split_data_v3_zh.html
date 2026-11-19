@@ -54,7 +54,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已就绪。</b>关键路径 PC-1~PC-4 <b style="color:green;">全部完成</b>：PC-1（stack-v3 L4 过滤 <span style="color:green;">✅ 430.7B / 90.5%</span>）→ PC-2（MegaMath 5 子集分词 <span style="color:green;">✅ 364 shard / 64.97B tok</span>）→ PC-3（污染闸门 <span style="color:green;">✅ 5 benchmarks / 9277 tasks</span>）→ PC-4（blend TSV <span style="color:green;">✅ 10 源 / prop=1.0</span>）。仅剩 PC-5（MegaMath-web 下载 ✅ 完成 + Nemotron-CC-Math 分词 🔄 117/193=60.6%）作为 <b>优化项</b> 在 S2 启动后中途刷新。S2 零重叠方案已明确：补新源（stack-v3 + MegaMath，天然零重叠，占 S2 的 28%）+ 换 SEED=5678（旧源重叠从 ~35% 降到 ~17%），S2 总体重叠率 ~12%，预训练阶段可接受。<b>350k 切换点 ≈ 11-26，700k 终点 ≈ 12-25，时间线不变。</b></p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已就绪。</b>关键路径 PC-1~PC-4 <b style="color:green;">全部完成</b>：PC-1（stack-v3 L4 过滤 <span style="color:green;">✅ 430.7B / 90.5%</span>）→ PC-2（MegaMath 5 子集分词 <span style="color:green;">✅ 364 shard / 64.97B tok</span>）→ PC-3（污染闸门 <span style="color:green;">✅ 5 benchmarks / 9277 tasks</span>）→ PC-4（blend TSV <span style="color:green;">✅ 10 源 / prop=1.0</span>）。仅剩 PC-5（MegaMath-web 下载 ✅ 完成 + Nemotron-CC-Math 分词 🔄 126/193=65.3%）作为 <b>优化项</b> 在 S2 启动后中途刷新。S2 零重叠方案已明确：补新源（stack-v3 + MegaMath，天然零重叠，占 S2 的 28%）+ 换 SEED=5678（旧源重叠从 ~35% 降到 ~17%），S2 总体重叠率 ~12%，预训练阶段可接受。<b>350k 切换点 ≈ 11-26，700k 终点 ≈ 12-25，时间线不变。</b></p>
 </div>
 <div class="toc">
 <b>目录</b>
@@ -85,7 +85,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h3>1.2 已落盘 S2 Blend TSV — fallback 版（当前版本，含 finemath）</h3>
 <p style="font-size:12px;color:#666;">
 文件路径：<code>code/baize-llm/configs/blend_s2_preblend.tsv</code>（2026-11-18 定稿）<br>
-这是 <b>fallback 版</b>：MegaMath-web（Batch2）✅ 下载完成（4950/4950）、Nemotron-CC-Math 🔄 分词中（117/193=60.6%）。两完成后将更新为 main 版（加入 Nemotron 源，下调 megamath prop）。
+这是 <b>fallback 版</b>：MegaMath-web（Batch2）✅ 下载完成（4950/4950）、Nemotron-CC-Math 🔄 分词中（126/193=65.3%）。两完成后将更新为 main 版（加入 Nemotron 源，下调 megamath prop）。
 所有 epoch 均为 S1+S2 累计值。10 源 / prop 加和 = 1.000 / 类别校验：web=0.40 ✅ code=0.40 ✅ math=0.20 ✅
 </p>
 <table>
@@ -182,14 +182,14 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h4>PC-5: MegaMath-web (Batch2) 下载 + 分词 🔄 进行中（优化项，不阻塞 S2）</h4>
 <table style="margin:8px 0;">
 <tr><th style="width:100px;">工作内容</th><td>下载 MegaMath-web 子集（~4950 files / ~887GB / ~279B tokens），下载完成后立即分词。同时 Nemotron-CC-Math 分词进行中。</td></tr>
-<tr><th>预估耗时</th><td>下载 ~2h（66% 已完成）+ 分词 1–2 天 = 合计 2–3 天</td></tr>
+<tr><th>预估耗时</th><td>下载 ✅ 完成（16.5h）+ 分词 1–2 天 = 合计 2–3 天</td></tr>
 <tr><th>截止日期</th><td><b>2026-11-25</b>（Soft deadline — S2 ~11-26 启动；如延迟则用 fallback 启动 + S2 中途刷新 blend TSV）</td></tr>
 <tr><th>当前状态</th><td class="amber">🔄 进行中 — <br>
 　• MegaMath-web 下载：<b>✅ 完成</b>（4950/4950，16.5h）<br>
-　• Nemotron-CC-Math 分词：117/193 = <b>60.6%</b>，~78B tok 已产出，ETA ~14h，PID 1791931，RAYON=8，nice19/ionice3<br>
-　• Code-Reasoning 下载：1532/1637 = 94%，ETA ~17min<br>
-　• Math-Reasoning 下载：1076/2228 = 48%，稳定无崩溃<br>
-　• .12 load = 33.82 ✅ &lt; 120 | .29 load = 38.75 ✅ | /nas_user 46T 可用 ✅</td></tr>
+　• Nemotron-CC-Math 分词：126/193 = <b>65.3%</b>，~98B tok 已产出，ETA ~12h，PID 1791931，RAYON=8，nice19/ionice3<br>
+　• Code-Reasoning 下载：<b>✅ 完成</b>（1637/1637，13.9h）<br>
+　• Math-Reasoning 下载：1423/2228 = 64%，稳定无崩溃<br>
+　• .12 load = 32.13 ✅ &lt; 120 | .29 load = 38.75 ✅ | /nas_user 45T 可用 ✅</td></tr>
 <tr><th>负责人</th><td>Data Agent</td></tr>
 <tr><th>验收标准</th><td>① 下载 0 incomplete ② 分词 0 ERR ③ 实测 tokens ≥ 200B（MegaMath-web）④ 更新 blend TSV 为 main 版</td></tr>
 </table>
@@ -199,10 +199,10 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <table>
 <tr><th style="width:30px;">#</th><th>repo_id</th><th>类型</th><th class="num">体积</th><th>用途</th><th>当前状态</th><th>理由</th></tr>
 <tr><td><b>1</b></td><td><code>IFM/MegaMath</code> batch2 (megamath-web)</td><td><b>预训练</b></td><td class="num">887GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (4950/4950, 16.5h)</td><td>S2 数学预训练核心来源，batch1 已完成，batch2 是消除 math 缺口的关键</td></tr>
-<tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code> <span class="cite">[arXiv 2508.15096, ICLR 2026]</span></td><td><b>预训练</b></td><td class="num">260GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (243GB/196 files)；🔄 分词中 (60.6%)</td><td>133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85</td></tr>
+<tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code> <span class="cite">[arXiv 2508.15096, ICLR 2026]</span></td><td><b>预训练</b></td><td class="num">260GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (243GB/196 files)；🔄 分词中 (65.3%)</td><td>133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85</td></tr>
 <tr><td><b>3</b></td><td><code>HuggingFaceTB/finemath</code> <span class="cite">[FineMath-3+/4+]</span></td><td><b>预训练</b></td><td class="num">149GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (140GB/288 parquet)；✅ 分词完成 (9.4B tok)</td><td>34B+9.6B tok，数学预训练补充；已加入 blend TSV (prop=0.005)</td></tr>
-<tr><td>4</td><td><code>IFM/Code-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">3.28TB</td><td>decay/post-train</td><td class="amber">🔄 94% (1532/1637)</td><td>不是 S2 预训练瓶颈（stack-v3 已解决 code 缺口）</td></tr>
-<tr><td>5</td><td><code>IFM/Math-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 48% (1076/2228)</td><td>不是 S2 预训练瓶颈</td></tr>
+<tr><td>4</td><td><code>IFM/Code-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">3.28TB</td><td>decay/post-train</td><td class="green">✅ 完成 (1637/1637, 13.9h)</td><td>不是 S2 预训练瓶颈（stack-v3 已解决 code 缺口）</td></tr>
+<tr><td>5</td><td><code>IFM/Math-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 64% (1423/2228)</td><td>不是 S2 预训练瓶颈</td></tr>
 <tr><td>6</td><td><code>nvidia/OpenMathInstruct-2</code></td><td>SFT</td><td class="num">12.6GB</td><td>post-train</td><td class="green">✅ 完成</td><td>体积小，快速下完</td></tr>
 <tr><td>7</td><td><code>nvidia/OpenCodeReasoning</code></td><td>SFT</td><td class="num">9.7GB</td><td>post-train</td><td class="green">✅ 完成</td><td>体积小，快速下完</td></tr>
 <tr><td>8</td><td><code>nvidia/OpenCodeInstruct</code></td><td>SFT</td><td class="num">6.9GB</td><td>post-train</td><td class="green">✅ 完成</td><td>体积小</td></tr>
@@ -211,7 +211,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </table>
 <div class="info" style="font-size:12px;">
 <b>原则</b>：S2 预训练需要的（#1~#3）排最前，立即启动；IFM 已在下的（#4~#5）继续但不抢带宽；SFT/RL 小数据集（#6~#10）✅ 全部完成。<br>
-<b>磁盘红线</b>：<code>/nas_user</code> 可用 ≥5TB（当前 46T 可用 ✅）。<br>
+<b>磁盘红线</b>：<code>/nas_user</code> 可用 ≥5TB（当前 45T 可用 ✅）。<br>
 <b>注意</b>：<code>aimo-validation-aime</code> 不下。
 </div>
 <!-- §3 -->
@@ -232,7 +232,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <td style="background:#bbdefb">🔵启动</td><td style="background:#ffe0b2">🟠66%</td><td style="background:#c8e6c9">✅~887GB</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">Nemotron 分词 (#2)</td>
-<td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#ffe0b2">🟠60%</td><td style="background:#ffe0b2">🟠</td><td style="background:#c8e6c9">✅~133B</td><td></td><td></td><td></td><td></td><td></td>
+<td></td><td style="background:#bbdefb">🔵启动</td><td style="background:#ffe0b2">🟠65%</td><td style="background:#ffe0b2">🟠</td><td style="background:#c8e6c9">✅~133B</td><td></td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-1: stack-v3 L4 过滤</td>
 <td style="background:#bbdefb">🔵2-4h</td><td style="background:#c8e6c9">✅DONE</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
@@ -255,7 +255,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </table>
 <div class="info" style="font-size:12px;">
 <b>关键路径（v3 更新）</b>：PC-1 ✅ → PC-2 ✅ → PC-3 ✅(黑名单) → PC-4 ✅ → <b>S2 可启动</b>（~11-26）→ PC-5(优化项) + Nemotron 分词 → 中途刷新 blend TSV 为 main 版<br>
-<b>时间余量</b>：PC-1~PC-4 已于 11-18/11-19 完成，S2 启动 ~11-26 = <b>~7 天余量</b>（v2 为 ~3 天，v3 因 PC-1~4 提前完成而宽裕）。唯一长尾 = Nemotron 分词 ETA ~36.6h（~11-21 完成），不阻塞 S2 启动（fallback 版已就绪）。
+<b>时间余量</b>：PC-1~PC-4 已于 11-18/11-19 完成，S2 启动 ~11-26 = <b>~7 天余量</b>（v2 为 ~3 天，v3 因 PC-1~4 提前完成而宽裕）。唯一长尾 = Nemotron 分词 ETA ~12h（~11-20 完成），不阻塞 S2 启动（fallback 版已就绪）。
 </div>
 <!-- §4 -->
 <h2 id="s4">§4 — Epoch 核算表（S1+S2 累计消耗 vs 可用量）</h2>
@@ -321,15 +321,15 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h2 id="s6">§6 — 风险与缓解</h2>
 <table>
 <tr><th style="width:25px;">#</th><th>风险</th><th>等级</th><th>缓解措施</th><th>当前状态</th></tr>
-<tr><td>1</td><td><b>Math epoch 1.25 偏高</b>（fallback 版 megamath 单源 1.69）</td><td class="amber">🟡 中</td><td>Nemotron-CC-Math (133B) 分词完成后更新为 main 版 → epoch 降到 ~0.85；MegaMath-web (~279B) 到货后进一步降至 ~0.65</td><td>🔄 Nemotron 分词 60.6%，ETA ~11-20</td></tr>
+<tr><td>1</td><td><b>Math epoch 1.25 偏高</b>（fallback 版 megamath 单源 1.69）</td><td class="amber">🟡 中</td><td>Nemotron-CC-Math (133B) 分词完成后更新为 main 版 → epoch 降到 ~0.85；MegaMath-web (~279B) 到货后进一步降至 ~0.65</td><td>🔄 Nemotron 分词 65.3%，ETA ~11-20</td></tr>
 <tr><td>2</td><td><b>code_l2/l3 累计 epoch &gt;1.0</b>（1.15/1.03）</td><td class="amber">🟡 低-中</td><td>stack-v3 (430.7B, 零重叠) 已补入 Code 类别 → 类别整体 epoch 0.88 ✅；如需进一步降，可调低 code_l2 prop（0.18→0.15）提高 stack-v3（0.17→0.20）</td><td class="green">✅ 类别整体安全</td></tr>
 <tr><td>3</td><td><b>S1→S2 配比骤变</b>（Web 74%→40%）导致 Loss spike</td><td class="amber">🟡 低-中</td><td>pretrain S4 实验显示配比切换 loss 反降 → 推荐直接切换；保留 ramp 备选（5K~10K 步线性渐变）</td><td class="green">✅ pretrain 线确认</td></tr>
 <tr><td>4</td><td><b>评测集污染</b>（HumanEval/MBPP/GSM8K/MATH/SWE-bench）</td><td class="red">🔴 高</td><td>5 benchmarks / 9277 tasks 黑名单 ✅ 就绪；13-gram/8-gram 扫描待执行（~11-21 后）</td><td class="amber">⏳ 黑名单 ✅ / 扫描待执行</td></tr>
 <tr><td>5</td><td><b>S2 与 S1 数据重叠</b>（同种子 ~83-100%）</td><td class="amber">🟡 中</td><td>方案 D+E：补新源（stack-v3+MegaMath，天然零重叠，28% of S2）+ 换 SEED=5678（旧源重叠 ~35%→~17%）→ 总体重叠 ~12%</td><td class="green">✅ 方案已定（见 §8）</td></tr>
 <tr><td>6</td><td><b>MegaMath-web 下载延迟</b></td><td class="green">🟢 已解决</td><td>fallback 版 blend TSV 已就绪；下载已完成 → PC-5 分词待执行 → S2 中途刷新 blend TSV</td><td class="green">✅ 下载完成 (4950/4950)</td></tr>
-<tr><td>7</td><td><b>Nemotron 分词延迟</b>（60.6%，ETA ~14h）</td><td class="amber">🟡 低</td><td>不阻塞 S2 启动（fallback 版已就绪）；分词完成后更新为 main 版</td><td class="amber">🔄 60.6%，ETA ~11-20</td></tr>
-<tr><td>8</td><td><b>.12 CPU 争抢 pretrain</b></td><td class="red">🔴 已解决</td><td>僵尸进程已杀（KILL 89核+1核）；分词 nice19/ionice3/分机 .12+.29；.12 load 33.82 ✅ &lt; 120</td><td class="green">✅ 已解决</td></tr>
-<tr><td>9</td><td><b>磁盘空间不足</b></td><td class="green">🟢 低</td><td>/nas_user 46T 可用 ✅ ≥5T 红线</td><td class="green">✅</td></tr>
+<tr><td>7</td><td><b>Nemotron 分词延迟</b>（65.3%，ETA ~12h）</td><td class="amber">🟡 低</td><td>不阻塞 S2 启动（fallback 版已就绪）；分词完成后更新为 main 版</td><td class="amber">🔄 65.3%，ETA ~11-20</td></tr>
+<tr><td>8</td><td><b>.12 CPU 争抢 pretrain</b></td><td class="red">🔴 已解决</td><td>僵尸进程已杀（KILL 89核+1核）；分词 nice19/ionice3/分机 .12+.29；.12 load 32.13 ✅ &lt; 120</td><td class="green">✅ 已解决</td></tr>
+<tr><td>9</td><td><b>磁盘空间不足</b></td><td class="green">🟢 低</td><td>/nas_user 45T 可用 ✅ ≥5T 红线</td><td class="green">✅</td></tr>
 <tr><td>10</td><td><b>灾难性遗忘 / 语言风格突变</b>（Web 74%→40%）</td><td class="amber">🟡 中</td><td>S1 web 已训 953.6B（0.43 epoch），S2 继续 web 513.3B → 累计 1466.9B（0.66 epoch），web 仍有充足训练量；S4 实验确认 loss 平稳</td><td class="green">✅ 已分析</td></tr>
 </table>
 <!-- §7 -->
@@ -370,7 +370,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验 web/code/math prop</td><td class="green">✅ 10 源 / prop=1.0 / web40/code40/math20 PASS</td><td>手动调整 prop 至满足</td></tr>
 <tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-26）</b></td><td>pretrain 训练日志 + eval</td><td class="green">🟢 进行中（iter ~235k，ETA ~11-26）</td><td>如异常推迟 S2 切换</td></tr>
 <tr><td>G6</td><td><b>S2 换 SEED=5678</b>（零重叠方案）</td><td>s2.env 或 common.env SEED 值</td><td class="amber">⏳ 待 pretrain 线设置（5 分钟工作量）</td><td>不换种子则 S2 重叠 ~25%（可接受但不理想）</td></tr>
-<tr><td>G7</td><td><b>（可选）Nemotron-CC-Math 分词完成</b></td><td>MANIFEST total_tokens ≥ 100B</td><td class="amber">⏳ 60.6% (117/193)，ETA ~11-20（Soft）</td><td>使用 fallback 版启动；分词完成后中途刷新为 main 版</td></tr>
+<tr><td>G7</td><td><b>（可选）Nemotron-CC-Math 分词完成</b></td><td>MANIFEST total_tokens ≥ 100B</td><td class="amber">⏳ 65.3% (126/193)，ETA ~11-20（Soft）</td><td>使用 fallback 版启动；分词完成后中途刷新为 main 版</td></tr>
 <tr><td>G8</td><td><b>（可选）MegaMath-web 到货且分词完成</b></td><td>MANIFEST total_tokens ≥ 200B</td><td class="amber">✅ 下载完成 (4950/4950) + ⏳ 分词待执行（Soft）</td><td>使用 fallback 版启动；PC-5 完成后可中途刷新</td></tr>
 </table>
 <div class="summary" style="font-size:12px;">
@@ -512,8 +512,8 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>OpenCodeInstruct</td><td><span class="cite">NVIDIA</span></td><td class="num">6.9GB</td><td>post-train SFT</td><td class="green">✅ 已下载</td></tr>
 <tr><td>code_contests</td><td><span class="cite">DeepMind, arXiv:2203.07814</span></td><td class="num">7.6GB</td><td>post-train RL</td><td class="green">✅ 已下载（自带验证器）</td></tr>
 <tr><td>NuminaMath-1.5</td><td><span class="cite">Project Numina, arXiv:2408.02856</span></td><td class="num">0.5GB</td><td>post-train SFT</td><td class="green">✅ 已下载</td></tr>
-<tr><td>Code-Reasoning</td><td><span class="cite">IFM, K2 Horizon series</span></td><td class="num">3.28TB</td><td>decay/post-train</td><td class="amber">🔄 94% 下载中</td></tr>
-<tr><td>Math-Reasoning</td><td><span class="cite">IFM, K2 Horizon series</span></td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 48% 下载中</td></tr>
+<tr><td>Code-Reasoning</td><td><span class="cite">IFM, K2 Horizon series</span></td><td class="num">3.28TB</td><td>decay/post-train</td><td class="green">✅ 已下载</td></tr>
+<tr><td>Math-Reasoning</td><td><span class="cite">IFM, K2 Horizon series</span></td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 64% 下载中</td></tr>
 </table>
 <div class="footer">
 <p>
@@ -522,7 +522,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ blend_s2_preblend.tsv（已落盘 fallback 版）/ report_s2_data_overlap_study.md（455 行 overlap 研究）/ CONTAMINATION_CHECK_AGENT_IFM.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v2 报告关系</b>: v2 = 可执行落地方案（PC-1~4 进行中）；<b>v3 = 数据已就绪的落地方案</b>（PC-1~4 ✅ 完成 + 零重叠方案 + 数据源引用）。v2 保留不删。<br>
-<b>生成时间</b>: 2026-11-19
+<b>生成时间</b>: 2026-11-19（最新刷新 18:55 — Nemotron 126/193=65.3%，Code-Reasoning ✅ 完成，Math-Reasoning 64%）
 </p>
 </div>
 </body>
