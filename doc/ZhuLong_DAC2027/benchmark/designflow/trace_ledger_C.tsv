@@ -559,7 +559,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794190927249_42mhi	xflin	hfeg0plg52	128	layout_virtuoso	parked		2026-11-10 02:20	r299: how-to Q&A (pcell instance array), idle, prose gold, §4.2/4.3 fail
 1791965068024_x89mp	lizwen	hfeg0pkn002	169	physical_verify	parked		2026-11-10 02:20	r299: failed, wrong-shard web-dev (HTML UI export for PV platform), calibre kw from HTML content
 1792055918399_guf1d	minjiex	hfeg0plg90	97	physical_verify	parked		2026-11-10 02:20	r299: cancelled, trivial prompt=你好, A-rule2 fail
-1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	parked		2026-11-10 02:20	r299: idle, capability Q&A prompt=你可以使用Aether吗, no produce-task
+1794213257272_e0taz	e0039122	hfeg0plg53	170	layout_aether	case	EDA-Eval-DesignFlow-DrcRuleModSem-001	2026-11-20 07:54	r848: revival parked r299 (capability Q&A) -> B档 reframe rule-modifier-semantics extractor; B-ledger entry is wrong-domain park (match=0/spice_sim/hfeg0plg52) vs C match=170/layout_aether/hfeg0plg53
 1793937823141_zdo8r	t0002038	hfeg0plg90	585	layout_aether	case	EDA-Eval-DesignFlow-TrMatchHelperGen-001	2026-11-10 04:11	
 1791611768210_xnqkp					parked		2026-11-10 04:54	r312 data-analysis on aether crash CSV (wrong-shard, not layout)
 1793094734633_bn62m					parked		2026-11-10 04:54	r312 pex-fail diagnose-fix (no clean produce deliverable)
