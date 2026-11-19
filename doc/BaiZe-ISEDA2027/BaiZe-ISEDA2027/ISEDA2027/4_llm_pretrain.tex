@@ -15,22 +15,30 @@ The model trains under a WSD schedule (LR $1\times10^{-3}$, $2{,}000$ warmup $=0
 % 中文：本模型在 WSD 调度下训练（LR $1\times10^{-3}$，预热 $2{,}000$ 步 $=700$k 的 $0.29\%$），序列 $16{,}384$（$613{,}992$ tok/s；到 $1$M 外推 $64\times$）。衰减分两段：A 段在 16K 上用指令数据退火（$60$–$70\%$），B 段沿 32K→64K→128K 阶梯扩展（$30$–$40\%$），$lr_{\min}{=}1\times10^{-4}$。
 
 \subsection{Data}\label{sec:llm-data}
-The stable phase uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split.
-% 中文：数据。稳定阶段使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布。
-Figure~\ref{fig:data-mix} shows the stable and decay (annealing) mixtures side by side; the decay segment drops most general web/code/math in favor of instruction-SFT and agentic-SFT data.
-% 中文：图 \ref{fig:data-mix} 并排展示了稳定段与衰减（退火）段的配比；衰减段大幅压低通用网页/代码/数学，转向指令式 SFT 与智能体 SFT 数据。
-Sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
+The stable phase ($700$k steps) follows a two-stage curriculum (Figure~\ref{fig:data-mix}).
+% 中文：数据。稳定段（$700$k 步）采用两阶段课程学习（图 \ref{fig:data-mix}）。
+\textbf{S1} ($0$--$350$k) uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split, establishing a general-purpose language foundation.
+% 中文：\textbf{S1}（$0$–$350$k）使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布，建立通用语言基础。
+\textbf{S2} ($350$k--$700$k) shifts to a $40{:}40{:}20$ web/code/math split to strengthen code and math capability.
+% 中文：\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 的网页/代码/数学配比，以增强代码与数学能力。
+New sources are introduced in S2: stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$371B tokens), supplemented by Nemotron-CC-Math ($133$B) and finemath, for math.
+% 中文：S2 引入新数据源：代码侧补入 stack-v3-train（L4 过滤后 $430.7$B token），数学侧补入 MegaMath（$\sim$371B token）、Nemotron-CC-Math（$133$B）与 finemath。
+These new sources are absent from S1's blend, so they have zero document-level overlap with S1; for the shared sources (Ultra-FineWeb, UltraData-Code, UltraData-Math), a different random seed is used in S2 to reduce document-level repetition.
+% 中文：这些新源不在 S1 的 blend 中，因此与 S1 零文档重叠；对共享源（Ultra-FineWeb、UltraData-Code、UltraData-Math），S2 更换随机种子以降低文档级重复。
+\textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$), retaining a small general fraction (web $22\%$, math $4\%$, code $2\%$); segment~B extends context on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$).
+% 中文：\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），保留少量通用成分（网页 $22\%$、数学 $4\%$、代码 $2\%$）；B 段在 32K→64K→128K 阶梯上扩展上下文（$30$–$40\%$）。
+All sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
 % 中文：各源预混合为大 shard（每 rank $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$），限制数据加载内存占用。
 Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ benchmarks; shards are scanned for ${\geq}0.80$ n-gram overlap.
 % 中文：污染控制由 $193{,}295$ 条 13-gram 黑名单实现（覆盖 $536$ 个基准）；shard 发布前扫描 ${\geq}0.80$ 的 n-gram 重叠。
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \footnotesize
-\begin{minipage}[t]{0.47\linewidth}
+\begin{minipage}[t]{0.31\linewidth}
 \centering
-\textbf{Stable (WSD $\theta{=}10^{6}$)}\\[-2pt]
-\begin{tikzpicture}[scale=0.9]
+\textbf{S1: Stable (0--350k)}\\[-2pt]
+\begin{tikzpicture}[scale=0.85]
 % pie: web 74% (0--266.4), code 19% (266.4--334.8), math 7% (334.8--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:266.4:1)     -- cycle;
 \fill[red!60]    (0,0) -- (266.4:1) arc (266.4:334.8:1) -- cycle;
@@ -39,14 +47,26 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (300:0.55)  {\textbf{19\%}};
 \node at (348:0.62)  {\textbf{7\%}};
 \end{tikzpicture}\\[2pt]
-\begin{tabular}{@{}ll@{}}
-\textcolor{blue!60}{$\bullet$} web & \textcolor{red!60}{$\bullet$} code\ \,\ \textcolor{green!55}{$\bullet$} math \\
-\end{tabular}
+web\,74\%\;\textbar\;code\,19\%\;\textbar\;math\,7\%
 \end{minipage}\hfill
-\begin{minipage}[t]{0.47\linewidth}
+\begin{minipage}[t]{0.31\linewidth}
 \centering
-\textbf{Decay (annealing)}\\[-2pt]
-\begin{tikzpicture}[scale=0.9]
+\textbf{S2: Stable (350k--700k)}\\[-2pt]
+\begin{tikzpicture}[scale=0.85]
+% pie: web 40% (0--144), code 40% (144--288), math 20% (288--360)
+\fill[blue!60]   (0,0) -- (0:1)     arc (0:144:1)     -- cycle;
+\fill[red!60]    (0,0) -- (144:1)   arc (144:288:1)   -- cycle;
+\fill[green!55]  (0,0) -- (288:1)   arc (288:360:1)   -- cycle;
+\node at (72:0.62)  {\textbf{40\%}};
+\node at (216:0.62) {\textbf{40\%}};
+\node at (324:0.62) {\textbf{20\%}};
+\end{tikzpicture}\\[2pt]
+web\,40\%\;\textbar\;code\,40\%\;\textbar\;math\,20\%
+\end{minipage}\hfill
+\begin{minipage}[t]{0.31\linewidth}
+\centering
+\textbf{Decay (annealing, 700k--720k)}\\[-2pt]
+\begin{tikzpicture}[scale=0.85]
 % pie: instr-SFT 60% (0--216), agentic-SFT 12% (216--259.2), web 22% (259.2--338.4), math 4% (338.4--352.8), code 2% (352.8--360)
 \fill[orange!70]  (0,0) -- (0:1)     arc (0:216:1)       -- cycle;
 \fill[purple!60]  (0,0) -- (216:1)   arc (216:259.2:1)   -- cycle;
@@ -67,10 +87,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \textcolor{blue!60}{$\bullet$} web & \textcolor{green!55}{$\bullet$} math\ \,\ \textcolor{red!60}{$\bullet$} code \\
 \end{tabular}
 \end{minipage}
-\caption{Data mixture of the stable (WSD $\theta{=}10^{6}$) and decay (annealing) phases. The decay segment replaces the bulk of general web/code/math with instruction-SFT (60\%) and agentic-SFT (12\%) data.}
-% 中文：图 \ref{fig:data-mix} 稳定段（WSD $\theta{=}10^{6}$）与衰减（退火）段的数据配比。衰减段以指令式 SFT（60\%）与智能体 SFT（12\%）取代大部分通用网页/代码/数学。
+\caption{Three-stage curriculum learning data mixture. \textbf{S1} (0--$350$k steps) establishes a general-purpose foundation with a $74{:}19{:}7$ web/code/math split. \textbf{S2} ($350$k--$700$k) shifts to $40{:}40{:}20$ to strengthen code and math, incorporating new sources---stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$$371$B tokens) for math---that have zero overlap with S1, while shared sources use a different random seed to reduce document repetition. \textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$) with a long-context ladder (segment~B). Color legend: \textcolor{blue!60}{$\bullet$}~web, \textcolor{red!60}{$\bullet$}~code, \textcolor{green!55}{$\bullet$}~math, \textcolor{orange!70}{$\bullet$}~instr-SFT, \textcolor{purple!60}{$\bullet$}~agentic-SFT.}
+% 中文：图 \ref{fig:data-mix} 三阶段课程学习数据配比。\textbf{S1}（$0$–$350$k 步）以 $74{:}19{:}7$ 的网页/代码/数学分布建立通用基础。\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 以增强代码与数学，引入新源——代码侧 stack-v3-train（L4 过滤后 $430.7$B token）、数学侧 MegaMath（$\sim$$371$B token）——与 S1 零重叠，共享源更换随机种子降低文档重复。\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），B 段为长上下文阶梯。颜色图例：蓝=网页、红=代码、绿=数学、橙=指令 SFT、紫=智能体 SFT。
 \label{fig:data-mix}
-\end{figure}
+\end{figure*}
 
 \subsection{Long-Context Data Gate}\label{sec:longctx-data}
 Only $\mathbf{2.52\%}$ of tokens sit in documents ${\geq}32$K and $0.03\%$ at ${\geq}128$K (mean $889$ tokens; Table~\ref{tab:longctx-data}), so we measured the distribution before budgeting segment~B.
@@ -96,8 +116,8 @@ ${\geq}1$M & --- & n/a & n/a & 3 & 128K & 8/2 & ${\approx}90$K \\
 \end{table}
 
 \subsection{Results and Production Run}\label{sec:llm-results}
-The model uses WSD at LR $1\times10^{-3}$ with an $86{:}10{:}4$ annealing mix.
-% 中文：结果与生产训练。本模型采用 WSD、LR $1\times10^{-3}$、退火混合 $86{:}10{:}4$。
+The model uses WSD at LR $1\times10^{-3}$ with a two-stage stable curriculum ($74{:}19{:}7$ $\to$ $40{:}40{:}20$) followed by a $60{:}12{:}28$ annealing mix (instruction-SFT / agentic-SFT / general).
+% 中文：结果与生产训练。本模型采用 WSD、LR $1\times10^{-3}$，稳定段两阶段课程（$74{:}19{:}7$ $\to$ $40{:}40{:}20$），退火混合 $60{:}12{:}28$（指令 SFT / 智能体 SFT / 通用）。
 
 
 The recipe is scaled to $2.94$T tokens at $\texttt{DP}{=}16$ over two $8{\times}$H100 nodes, $\texttt{GBS}{=}256$ at sequence $16{,}384$ ($4{,}194{,}304$ tokens/step), FP8 tensorwise, AdamW.
@@ -115,7 +135,8 @@ At the time of writing (2026-11-13), the run has passed iteration $190{,}000$ of
 \toprule
 \textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
 \midrule
-Warmup + stable & 2.94T & 700k & ${\approx}57$ d & 190k done \\
+S1 stable ($74{:}19{:}7$) & 1.47T & 350k & ${\approx}28.5$ d & in progress \\
+S2 stable ($40{:}40{:}20$) & 1.47T & 350k & ${\approx}28.5$ d & queued \\
 Decay A (16K, $60$--$70\%$) & 58.7B & 14k & ${\approx}1.2$ d & queued \\
 Decay B (LC, $30$--$40\%$) & 25.2B & 6k & ${\approx}2.3$ d & gated \\
 \midrule
