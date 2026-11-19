@@ -6,18 +6,18 @@
 <h1>SWE-bench Verified · 7 路横评报告</h1>
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash　|　<strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-19 11:45（R2759）</p>
+<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-19 15:35（R2766）</p>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
 <table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 <tr><td>1</td><td><strong>hermes</strong></td><td class='pass' style='font-weight:bold'>444/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>88.8%</td></tr>
 <tr><td>2</td><td><strong>opencode</strong></td><td class='pass' style='font-weight:bold'>415/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>83.0%</td></tr>
-<tr><td>3</td><td><strong>cline</strong></td><td class='pass' style='font-weight:bold'>296/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>59.2%</td></tr>
+<tr><td>3</td><td><strong>cline</strong></td><td class='pass' style='font-weight:bold'>300/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>60.0%</td></tr>
 <tr><td>4</td><td><strong>claude-code</strong></td><td class='pass' style='font-weight:bold'>295/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>59.0%</td></tr>
 <tr><td>5</td><td><strong>pi</strong></td><td class='pass' style='font-weight:bold'>235/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>47.0%</td></tr>
-<tr><td>6</td><td><strong>deepseek</strong></td><td class='pass' style='font-weight:bold'>168/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>33.6%</td></tr>
-<tr><td>7</td><td><strong>codex</strong></td><td class='pass' style='font-weight:bold'>108/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>21.6%</td></tr>
+<tr><td>6</td><td><strong>deepseek</strong></td><td class='pass' style='font-weight:bold'>175/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>35.0%</td></tr>
+<tr><td>7</td><td><strong>codex</strong></td><td class='pass' style='font-weight:bold'>109/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>21.8%</td></tr>
 </tbody></table>
 <div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算，不含未跑题的假设。每个格子只写一个数字。</p></div>
 
@@ -25,21 +25,21 @@
 <table><thead><tr><th>Harness</th><th>Predict/500</th><th>剩余</th><th>Empty patch</th><th>状态</th></tr></thead><tbody>
 <tr><td><strong>hermes</strong></td><td>500/500</td><td>0</td><td class='fail'>10</td><td>✅ 满量</td></tr>
 <tr><td><strong>opencode</strong></td><td>500/500</td><td>0</td><td class='fail'>1</td><td>✅ 满量</td></tr>
-<tr><td><strong>cline</strong></td><td>460/500</td><td>40</td><td class='fail'>68</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>cline</strong></td><td>476/500</td><td>24</td><td class='fail'>78</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>claude-code</strong></td><td>500/500</td><td>0</td><td class='fail'>141</td><td>✅ 满量</td></tr>
-<tr><td><strong>pi</strong></td><td>405/500</td><td>95</td><td class='fail'>77</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>deepseek</strong></td><td>259/500</td><td>241</td><td class='fail'>55</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>codex</strong></td><td>391/500</td><td>109</td><td class='fail'>230</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>pi</strong></td><td>420/500</td><td>80</td><td class='fail'>84</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>deepseek</strong></td><td>270/500</td><td>230</td><td class='fail'>59</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>codex</strong></td><td>398/500</td><td>102</td><td class='fail'>236</td><td>⏳ 进行中</td></tr>
 </tbody></table>
 <div class="note"><p>Empty = 模型已 attempt 但未生成 patch（能力不足，非 infra）。剩余 = 尚未 attempt 的题数。opencode / claude-code / hermes 已满 500。</p></div>
 
 <h2>2. 待跑 / 待重跑清单</h2>
 <h3>待跑（backlog · predict &lt; 500）</h3>
 <table><tr><th>Harness</th><th>剩余题数</th></tr>
-<tr><td><strong>deepseek</strong></td><td>241</td></tr>
-<tr><td><strong>codex</strong></td><td>109</td></tr>
-<tr><td><strong>pi</strong></td><td>95</td></tr>
-<tr><td><strong>cline</strong></td><td>40</td></tr>
+<tr><td><strong>deepseek</strong></td><td>230</td></tr>
+<tr><td><strong>codex</strong></td><td>102</td></tr>
+<tr><td><strong>pi</strong></td><td>80</td></tr>
+<tr><td><strong>cline</strong></td><td>24</td></tr>
 </table>
 
 <h3>待重跑（infra 失败）</h3>
@@ -51,5 +51,5 @@
 <div class="note"><p>429/quota：当前无 429 阻塞题。其余失败题 = 能力不足（tests fail / 空 patch），非 infra，不需重跑。</p></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R2759 · 2026-11-19 11:45<br>SWE-bench Verified 500 · 7-way
+BaiZe Harness · R2766 · 2026-11-19 15:35<br>SWE-bench Verified 500 · 7-way
 </p></body></html>
