@@ -2,7 +2,7 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-19 (R5) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：Nemotron分词126/193=65.3%(ETA~12h) / Code-Reasoning下载✅完成(1637/1637,13.9h) / Math-Reasoning下载64%(1423/2228) / .12 load=32.13✅ / /nas_user 45T可用✅ / commit+push完成(ec2e9bcf0)**。
+> 🟢 **心跳 · 2026-11-19 (R6) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 259k/700k(37.0%) step~7.0s / 350k切换点修正~11-26 / Nemotron分词143/193=74.1%(ETA~9h,~111B tok) / Code-Reasoning下载✅完成 / Math-Reasoning下载67%(1492/2228) / .12 load=30.6✅ / /nas_user 44T可用✅ / v3报告全量刷新iter+step+切换点+Nemotron进度+Math-Reasoning进度+余量 / commit+push完成**。
 
 > 🟢 **心跳 · 2026-11-19 (R4) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 主要刷新点：PC-1~PC-4 全部✅完成 / PC-2 MegaMath 5子集364shard分词全完成(64.97B tok) / PC-3 污染闸门9277tasks黑名单就绪 / PC-4 blend_s2_preblend.tsv 10源已落盘(含finemath) / 新增§8 S2零重叠方案(方案D+E,换SEED=5678,总体重叠~12%) / 新增§9 数据源引用(Nemotron-CC-Math arXiv:2508.15096/MegaMath arXiv:2504.02807/stack-v3/finemath) / 甘特图扩展到12-25 / Go/No-Go G1~G5全部PASS / v2保留不删 / commit+push完成**。
 
