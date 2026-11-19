@@ -1,5 +1,102 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-19 用户令 — 论文双盲 + 排版 + 开源承诺 + 附录政策 5 条修订意见（最高优先 · 覆盖 standby）**
+>
+> 本条是 v1.7 论文重写 + 朋友评审处置（commit `cfb185159`·12p/0err/0undef）之后的**5 条修订意见**，全部针对 `EDA-Flow-Bench_ICML2027/` 正文与排版。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
+>
+> **用户原话（逐条对齐）**：
+> 1. 「由于要双盲投稿，"Our prior work" 这样的措辞需要处理」
+> 2. 「这张表【5.1. Three-Layer Structure】对于双栏过宽，已经侵入 margin 了」
+> 3. 「摘要是否太长，ICML 一般摘要多少字（word）？」
+> 4. 「任何数据、代码都不承诺开源」
+> 5. 「提交论文给 ICML 时需要附录吗，reviewer 会看吗？」
+>
+> ### ① 意见 1：双盲匿名 — "Our prior work" 措辞处理
+>
+> - **问题定位**：`sections/2_background.tex:14` 有 "Our prior work on script-layer EDA (DATE27, \cite{...}; ZhuLong-DAC, \cite{...}) showed memory + RSI gains on short-chain tasks" —— 这是**自指暴露**，"Our prior work" 直接告诉审稿人 DATE27 / ZhuLong-DAC 是作者自己的工作，违反双盲。
+> - **排查范围**：全论文树 grep `Our prior work|Our earlier|Our previous|Our own|We previously|in our prior|in our earlier|in our previous`，所有命中都要改。
+> - **改写策略**（agent 自主选择，但必须双盲合规）：
+>   - 改为第三方引用：`Prior work on script-layer EDA (DATE27, \cite{...}; ZhuLong-DAC, \cite{...}) showed ...` —— 去掉 "Our"，把 DATE27/DAC 当作"已有工作"引用。
+>   - 或匿名引用：`Building on script-layer EDA memory + RSI work (DATE27, \cite{...}; ZhuLong-DAC, \cite{...}), this paper tests whether ...` —— 不声明归属。
+>   - **DATE27 占位引用 `\cite{PLACEHOLDER_DATE27_ZHULONG}` 保留**（预印版 12 月上线后回填，现在双盲下占位 OK）。
+> - **自检**：`grep -nE 'Our prior|Our earlier|Our previous|Our own|We previously' sections/*.tex main.tex` = 0 命中（除注释行）。
+> - **匿名性复检**：`pdftotext main.pdf - | grep -iE 'Yang Liu|Hongwen|cxmt|ChangXin|Our prior|Our earlier|Our previous'` = 0。
+>
+> ### ② 意见 2：§5.1 Three-Layer Structure 表过宽侵入 margin
+>
+> - **问题定位**：`sections/5_preregistered.tex:16` 的 `\begin{tabular}{@{}lll@{}}` 三列表（Layer / Core Hyp. / Sub-Hypotheses）在 ICML 双栏 `\columnwidth` 下过宽，侵入 margin（用户实测）。
+> - **修复策略**（agent 自主选择，但必须不侵入 margin）：
+>   - 改用 `tabularx` + `\columnwidth` + `X` 列（自动换行）：`\begin{tabularx}{\columnwidth}{@{}lXX@{}}` 或 `@{}llX@{}`；
+>   - 或缩写列头（Layer / Core / Sub）+ 内容紧凑化（如 "L1 Total (functional)" → "L1 Total"）；
+>   - 或改为列表/段落形式（不用表格）：`L1 Total: H1 ... (H1a, H1b, H1c)` 三行列表；
+>   - 或用 `\small` / `\footnotesize` 缩字号（但 ICML 不鼓励正文表格用 footnotesize）。
+> - **自检**：编译后 `pdftotext -layout main.pdf -` 检查 §5.1 表格不越 margin；或看 main.log 的 `Overfull \hbox` 警告中该表所在行不出现。
+> - **顺带排查**：其他表格（§5 子假设表、§6 实验矩阵、§3 delta 表等）也 grep `Overfull \hbox` 看是否有同类问题，一并修。
+>
+> ### ③ 意见 3：摘要长度 — ICML 惯例与压缩
+>
+> - **现状**：abstract 现 **215 词**（英文，不含中文注释）。
+> - **ICML 惯例**：ICML 官方 author kit 通常**不设硬限**但惯例 **150-250 词**，多数录用论文在 **180-230 词**。215 词在惯例范围内**不算过长**，但偏长；考虑到用户主动询问，倾向压缩。
+> - **处理要求**（agent 自主判断，但必须给数据支撑）：
+>   - 在 `sections/0_abstract.tex` 顶部加一行注释 `% abstract word count: N (ICML convention 150-250)`，标注当前词数；
+>   - 若 agent 判断 215 词合理（在惯例范围内），可保留但**给理由**（如"含三公式 + 预注册声明 + 开源边界，信息密度高"）；
+>   - 若 agent 判断可压缩，目标压缩到 **~180-200 词**：可压缩处——开源边界细节（"protocol white-paper + NDA review package, without releasing executable Lite-set assets" 可缩短）、三公式可只提"three computable mechanisms"不列公式（公式在 §4 有）、negative-results 声明可缩短；
+>   - **保留**：7.6× 跳变 / 3 核心假设 / 10 臂 + N1 + M4 / 预注册日 / 诚实路线（这些是核心叙事）。
+> - **自检**：编译后 `sed -n '/\\begin{abstract}/,/\\end{abstract}/p' sections/0_abstract.tex | grep -v '^%' | wc -w` 报告最终词数，在 commit message 标注。
+>
+> ### ④ 意见 4：任何数据、代码都不承诺开源
+>
+> - **问题定位**：v1.4 把开源边界从"Lite 500 + mock-EDA"收缩到"协议白皮书级开源（harness 协议 + 判据 + 脱敏任务规格开源）"，但**用户现在要求更进一步：任何数据、代码都不承诺开源**。
+> - **排查范围**：全论文树 grep `release|released|open.?source|open.?sourced|publicly available|will be made available|code is available|data is available|repository|github|huggingface|we open|we release|we share|we publish`（不区分大小写），所有"承诺开源"的措辞都要改。
+> - **改写策略**（agent 自主选择，但必须完全不承诺开源）：
+>   - 删除所有"we release / we open-source / will be made available"承诺；
+>   - 改为"due to the production-origin of the traces (real IC design engineer sessions on commercial EDA tools), **no data, code, or executable assets can be released**; reproducibility is supported via a **detailed protocol description** (this paper) + **NDA-gated controlled review package** for qualified reviewers"；
+>   - §11 Reproducibility 改为"reproducibility via protocol description + NDA review package only; no public release of data/code/assets"；
+>   - Abstract 的 "We release a protocol white-paper ..." 句**删除**或改为 "No data or code is released; reproducibility is supported via a detailed protocol description and an NDA-gated review package."
+>   - §3 Task Modality 的"协议白皮书级开源"措辞改为"协议描述（本论文）+ NDA 受控评审包"；
+>   - Appendix D / A / B / C 中若有"will release"措辞一并改。
+> - **自检**：`grep -niE 'we release|we open|will be made available|publicly available|github|huggingface|we share|we publish.*code|we publish.*data|open-source' sections/*.tex appendix/*.tex main.tex` = 0 命中（除纯描述性"open-source EDA tools"如 Yosys/OpenROAD 上下文，那些是引用别人的开源工具不是承诺自己开源，保留）。
+> - **诚实性**：不承诺开源是真实情况（trace 源自公司生产资产，确实不能开），不是虚假声称。
+>
+> ### ⑤ 意见 5：ICML 附录政策 — 需要附录吗？reviewer 会看吗？
+>
+> - **ICML 政策（agent 必须在回复中给数据支撑，不能凭印象）**：
+>   - **需要附录吗**：ICML **不强制**附录，但**强烈建议**有附录放补充材料（proofs / detailed experimental setup / additional results / dataset details）。ICML 2024/2025 author kit 明确："Appendices are allowed and do not count toward the page limit; however, reviewers are not obligated to read appendices, and the main paper should be self-contained."
+>   - **reviewer 会看吗**：reviewer **不强制**读附录，主审通常读正文 + 抽查附录关键部分（如 proof of main theorem / detailed setup for reproducibility）。附录是"必要时可查的补充"，不是"必须读完的内容"。**关键结论必须在正文**，附录只能放支撑细节。
+>   - **页数**：附录**不计入正文页数**（正文 ≤ 9 页 ICML 2027，用户自我加压 ≤ 6 页；附录无上限但建议 ≤ 20 页，超长附录可能被审稿人吐槽）。
+> - **对本论文的具体建议**（agent 写进论文 §11 Reproducibility 或 README，并回应用户）：
+>   - **保留附录**：Appendix A (benchmark details) / B (additional results) / C (experimental details) / D (affective mechanism design details) 都有补充价值，保留；
+>   - **正文必须 self-contained**：§5 假设 + §6 实验框架 + §7 分析的**核心结论与判据**必须在正文能读懂，不依赖附录；
+>   - **附录定位**：在 §11 Reproducibility 或正文首次引用附录处加一句"see Appendix X for details"明确指针，但不把关键判据只放附录；
+>   - **附录长度**：agent 自检附录页数（编译后 main.pdf 的 appendix 部分），若 > 15 页考虑压缩（朋友评审 P1 已把 M1/M8 移 appendix，注意不要 appendix 臃肿）；
+>   - **回应用户**：在 commit message 或 MEMORY 心跳明确写"ICML 附录政策：不强制但建议；reviewer 不强制读；附录不计入正文页数；本论文保留 Appendix A-D 作支撑细节，关键结论在正文"。
+>
+> ### ⑥ 硬约束（继承 v1.7，全部继续生效）
+>
+> - **可改**：`EDA-Flow-Bench_ICML2027/main.tex` + `sections/*.tex` + `appendix/*.tex` + `main.bbl`。
+> - 🚫 **不动**：designflow 造题线 cases/jsonl/ledger、其他论文树（DATE27/DAC/ASPDAC）。
+> - 🚫 **不起**：训练/评测进程。
+> - ✅ **正文 ≤ 6 页**（v1.7 硬限继续；当前 7 页，本次修订若加内容需同步压缩，目标压到 ≤ 6 页）。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律（论文树无 HTML，此条对 HTML 报告继续生效）。
+> - ✅ **双盲匿名**：`\documentclass[submitted]` 或 icml2026 [submitted] 选项保留；pdftotext 无作者/机构/自指泄漏。
+> - ✅ **防伪底线**：不编造数字 / 不编造文献 / 不改判据/题/样本 / 不删他人数据。
+> - ✅ **预注册纪律**：§6 预注册日 2026-11-22 声明保留。
+> - **编译验证**（必须自检后提交）：4 轮 pdflatex+bibtex；`grep -c '^!' main.log` = 0；`grep -c 'Undefined' main.log` = 0；正文页数 ≤ 6；匿名性复检；`Overfull \hbox` 警告中 §5.1 表格不出现。
+> - **提交**：commit 前缀 `zhulong paper: EDA-Flow-Bench ICML2027 双盲+排版+开源+附录 5 条修订（"Our prior work"匿名化 / §5.1 表过宽 / 摘要长度 / 不承诺开源 / 附录政策说明）`；**只 add 论文树 + 本线 run 文件**，勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① 全论文树 0 处 "Our prior/earlier/previous/own" 自指（grep=0，除注释）✅；
+>   ② §5.1 Three-Layer Structure 表不侵入 margin（Overfull \hbox 警告中无该表行）✅；
+>   ③ Abstract 词数在 commit message 标注 + （若压缩）目标 180-200 词 ✅；
+>   ④ 全论文树 0 处 "we release / we open-source / will be made available / publicly available" 开源承诺（除引用别人开源工具如 Yosys/OpenROAD）✅；
+>   ⑤ §11 Reproducibility 或 README 含 ICML 附录政策说明（不强制 / reviewer 不强制读 / 不计入正文页数 / 本论文保留 A-D 支撑细节 / 关键结论在正文）✅；
+>   ⑥ 正文 ≤ 6 页 ✅；
+>   ⑦ 编译 0 error 0 undefined ✅；
+>   ⑧ 匿名性（pdftotext 无作者/机构/自指泄漏）✅；
+>   ⑨ 防伪底线 + 预注册纪律继续过 ✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），距预注册 2026-11-22 还 3 天。
+>
+> **agent 自主空间**：双盲措辞的具体改写 / 表格修复的具体方式（tabularx vs 列表 vs 缩写）/ 摘要压缩的具体句子取舍 / 开源承诺删除的具体措辞 / 附录政策说明的放置位置（§11 vs README vs 正文脚注）由 agent 自主决定——用户给的是 5 条意见 + 数据要求，不是逐字模板。**意见 5 必须给数据支撑**（ICML 政策来源，不能凭印象）。
+
 > 🔴 **2026-11-18 22:3x 用户令 — 朋友评审意见：请「参考」并逐条研判（P0 三项须先定论）· ✅ 主体已交付**（wake#1350 commit `cfb185159`·P0 3/3 结论 + 11 项处置矩阵 采纳10/部分1/不采纳0·报告 `reports/report_edafb_friend_review_response_zh.html`·论文重编译 12p/0err/0undef/235123B·写作层 5 项 P2①③④⑤+R4 延至预注册后）
 >
 > **用户原话**：「朋友提出意见，下发给 zhulong agent，请他参考」。
