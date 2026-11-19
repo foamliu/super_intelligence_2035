@@ -39,7 +39,9 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### 🔴 用户令 · 2026-11-19 08:2x（**重新输出 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告，突出重点主表**）· 用户直令 · 最高优先 · 未完成
+### ✅ 用户令 · 2026-11-19 08:2x（**重新输出 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告，突出重点主表**）· 用户直令 · ✅ 已交付（R2751）
+
+> **交付结论（R2751 · 2026-11-19 09:0x）**：两份中文 HTML 已 REGEN 主表置顶✅。① `report_harness_tb21_7way_zh.html`(31655B)——★主表 TB-2.1 7路 Pass% 置顶第一屏(放大加粗·按Pass%降序):opencode50.6/cline47.2/hermes46.1/pi39.3/cc33.7/codex28.1/deepseek12.4(分母89)·其余(失败归因/Layer-B判定/infra台账)降级次要小节。② `report_harness_glm53_7way_swebench_tb_zh.html`(23834B)——★主表①TB-2.1(同上·含Pass%区间+Layer-B)+★主表②SWE-bench Verified(按Pass%降序·标partial/满量):hermes88.8/opencode83.0/cc59.0/cline58.4/pi46.6/deepseek33.2/codex21.6。两报告均0script/0外链✅。生成器已改(`gen_report_glm53_7way.py`+`gen_report_tb21_7way.py`·主表块置顶)→loop后续REGEN自动保持主表置顶。数据取R2750最新audit。口径红线照旧(分母89/N·真实Pass%=passed/分母·无修正后Pass%)。
 
 > **用户原话**：「harness 重新输出 TB-2.1 和 SWE-bench Verified 两个 7-way 评测报告（中文HTML）。要突出重点（主表）。」
 

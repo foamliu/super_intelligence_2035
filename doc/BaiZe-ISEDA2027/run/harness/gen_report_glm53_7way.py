@@ -376,6 +376,41 @@ _oc_n, _oc_r = sw_by_name.get("opencode", (0,0))
 _cl_rate = f"{_cl_r/_cl_n*100:.1f}%" if _cl_n else "—"
 _oc_rate = f"{_oc_r/_oc_n*100:.1f}%" if _oc_n else "—"
 
+# ---- §2026-11-19 用户令: 主表置顶 (7-way Pass% 速览, 放大加粗, 第一屏) ----
+# TB-2.1 主表行 (按 Pass% 降序); SWE-bench 主表行 (按 Pass% 降序, 标 partial)
+_tb_main_sorted = sorted(
+    [(disp(h), tb21_data[h]["passed"], tb21_data[h]["total"],
+      _tb21_review.get(h, {}).get("real_pct"),
+      _tb21_review.get(h, {}).get("upper_pct"),
+      _tb21_review.get(h, {}).get("layer_b_pending", 0))
+     for h in HARNESSES],
+    key=lambda x: -(x[1] / max(x[2], 1)))
+_tb_main_html = ""
+for _i, (_nm, _p, _tot, _rpct, _upct, _lb) in enumerate(_tb_main_sorted, 1):
+    _rp = _rpct if _rpct is not None else (round(_p/_tot*100, 1) if _tot else 0)
+    _range = f"{_rp}%"
+    if _lb > 0 and _upct is not None:
+        _range = f"{_rp}% ~ {_upct}%"
+    _lb_txt = f"⚠️ {_lb}题infra待判" if _lb > 0 else "✅ 干净"
+    _tb_main_html += (f"<tr><td>{_i}</td><td><strong>{esc(_nm)}</strong></td>"
+                      f"<td class='pass' style='font-size:1.15em;font-weight:bold'>{_p}/{_tot}</td>"
+                      f"<td style='font-size:1.35em;font-weight:bold;color:#27ae60'>{_range}</td>"
+                      f"<td>{_lb_txt}</td></tr>\n")
+
+_sw_main_sorted = sorted(
+    [(name, n, resolved, total) for (name, n, resolved, _u, _e, _s) in swebench
+     for (pname, total, _real, _emp) in [next((p for p in predict if p[0] == name), (name, 0, 0, 0))]],
+    key=lambda x: -(x[2] / max(x[1], 1)))
+_sw_main_html = ""
+for _i, (_nm, _n, _r, _tot) in enumerate(_sw_main_sorted, 1):
+    _rate = f"{_r/_n*100:.1f}%" if _n else "—"
+    _partial = "⏳ 进行中" if _n < 500 else "✅ 满量"
+    _sw_main_html += (f"<tr><td>{_i}</td><td><strong>{esc(_nm)}</strong></td>"
+                      f"<td>{_tot}/500</td><td>{_n}</td>"
+                      f"<td class='pass' style='font-weight:bold'>{_r}</td>"
+                      f"<td style='font-size:1.35em;font-weight:bold;color:#27ae60'>{_rate}</td>"
+                      f"<td>{_partial}</td></tr>\n")
+
 HTML = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -389,6 +424,23 @@ HTML = f"""<!DOCTYPE html>
 <p><strong>状态</strong>：predict {total_pred}/3500={total_pred/3500*100:.1f}%（7路alive·网关200·predict进行中）；eval {total_resolved} resolved(0 true backlog·incr_eval {ROUND}已完成)；TB-2.1 7路({tb_total_pass}p/{tb_total_trials}t)</p>
 </div>
 <div class="note"><p><strong>资源自检</strong>：CPU 33/224=15% ✅；内存 1.1Ti avail ✅；磁盘 /data 5.8T + / 352G ✅；网关 {GW_EMOJI} {GW_NOTE_SHORT}</p></div>
+
+<h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · 7-way Pass% 速览（第一屏 · 重点）</h2>
+<div class="critical"><p><strong>用户令 2026-11-19：突出主表。</strong>以下两张主表为本报告重点，放大加粗置于第一屏。其余明细（kimi 对照、失败归因、infra 台账、ETA 等）降级为下方次要小节。</p></div>
+
+<h3 style="font-size:1.25em">主表 ① · Terminal-Bench 2.1（89 题 × 7 路 · 真实 Pass% = passed/89 · 按 Pass% 降序）</h3>
+<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Passed/89</th><th>Pass%</th><th>Layer-B infra</th></tr></thead><tbody>
+{_tb_main_html}</tbody></table>
+<div class="note"><p>分母恒 89。Pass% 区间下界 = passed/89（确定值）；上界 = (passed+layer-B)/89（假设 infra 嫌疑题补跑后全过，极端上界，实际不可能全过）。codex=25/89=28.1%（修复前 1/89=1.1% 系适配器假低分，已修复重跑）。详见 §3 + §5b。</p></div>
+
+<h3 style="font-size:1.25em">主表 ② · SWE-bench Verified（500 题 × 7 路 · 进行中 / partial · 按 Pass% 降序）</h3>
+<div class="critical"><p><strong>⚠️ 进行中 / partial（非最终）</strong>：各路 predict 尚未满 500（codex 最慢）。Pass% 分母 = 该路已评测题数 N（非 500），<strong>N&lt;500 时各路 Pass% 不可跨行直接比大小</strong>。</p></div>
+<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Predict/500</th><th>Eval N</th><th>Resolved</th><th>Pass%(resolved/N)</th><th>状态</th></tr></thead><tbody>
+{_sw_main_html}</tbody></table>
+<div class="note"><p>领先: {sw_lead_str}。predict {total_pred}/3500={total_pred/3500*100:.1f}%。已评测题内 Resolved+Failed+Infra=N（守恒）。详见 §1。</p></div>
+
+<hr style="border:2px solid #2980b9;margin:25px 0">
+<p style="text-align:center;color:#7f8c8d">↓ 以下为详细分析（次要小节）↓</p>
 
 <h2>1. SWE-bench Verified · 7 路结果（进行中 / partial）</h2>
 <div class="critical"><p><strong>⚠️ 进行中 / partial（非最终）</strong>：题集=500 题，但各路 predict 尚未满 500（codex 最慢，ETA 见 §7）。下表 Pass% 分母=该路已评测题数 N（非 500），<strong>N&lt;500 时各路 Pass% 不可跨行直接比大小</strong>。已评测题内 Resolved+Failed+Infra=N（守恒）。</p></div>

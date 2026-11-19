@@ -320,17 +320,19 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
     speed = " · ".join(f"{name} {up}/{total_tasks}" for name, up, ev, tr, er in rows)
     H.append(f"<div class='info'><p><strong>7路速览</strong>: {speed}</p></div>")
 
-    # ---- 表一: TB-2.1 7路矩阵 ----
-    H.append("<h2>表一 · TB-2.1 7路矩阵</h2>")
-    H.append("<table><thead><tr><th>#</th><th>Harness</th><th>Passed</th>"
+    # ---- §2026-11-19 用户令: 表一升级为「主表」置顶 (放大加粗, 按 Pass% 降序, 第一屏) ----
+    H.append("<h2 style='font-size:1.5em;border-left:8px solid #e74c3c'>★ 主表 · TB-2.1 7-way Pass%（第一屏 · 重点）</h2>")
+    H.append("<div class='caveat'><p><strong>用户令 2026-11-19：突出主表。</strong>下表为本报告重点，放大加粗置于第一屏，按 Pass% 降序。其余明细（失败归因、Layer-B 逐题判定、infra 台账等）降级为下方次要小节。</p></div>")
+    H.append("<table style='font-size:1.05em'><thead><tr><th>#</th><th>Harness</th><th>Passed</th>"
              f"<th>题集总数</th><th>Pass%</th><th>墙钟成本</th>"
              "<th>Token 成本 (in / out)</th><th>Trials</th></tr></thead><tbody>")
-    for i, (name, up, ev, tr, er) in enumerate(rows, 1):
+    _main_rows = sorted(rows, key=lambda x: -x[1])
+    for i, (name, up, ev, tr, er) in enumerate(_main_rows, 1):
         pct = f"{up/total_tasks*100:.1f}%"
         H.append(f"<tr><td class='num'>{i}</td><td><strong>{esc(name)}</strong></td>"
-                 f"<td class='num pass'>{up}</td>"
+                 f"<td class='num pass' style='font-size:1.15em;font-weight:bold'>{up}</td>"
                  f"<td class='num'>{total_tasks}</td>"
-                 f"<td class='num'><strong>{pct}</strong></td>"
+                 f"<td class='num' style='font-size:1.4em;font-weight:bold;color:#27ae60'>{pct}</td>"
                  f"<td class='warn'>未采集</td>"
                  f"<td class='warn'>未采集</td>"
                  f"<td class='num'>{tr}</td></tr>")
@@ -346,6 +348,8 @@ def _build_html(rows, total_tasks, total_passed, total_trials, now, audit_7way=N
              "<p><strong>补采方案</strong>: ① 各适配器在 resolve 阶段从网关响应累计 input/output token 并写回 "
              "<code>agent_result.n_input_tokens / n_output_tokens</code>; ② 墙钟由 harbor task 开始/结束时间戳"
              "计算并落 <code>result.json</code>。重跑时启用。🚫 未采集不编造数字（宁缺勿编）。</p></div>")
+
+    H.append("<hr style='border:2px solid #2980b9;margin:25px 0'><p style='text-align:center;color:#7f8c8d'>↓ 以下为详细分析（次要小节）↓</p>")
 
     # ---- 表二: 各 Harness 失败分析 (§2026-11-18 能力/超时/环境异常三层分解) ----
     H.append("<h2>表二 · 各 Harness 失败分析（能力 vs 超时 vs 环境异常）</h2>")
