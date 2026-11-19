@@ -1,12 +1,13 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-19 wake#1534·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = **0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0**（与 wake#1524-1533 一致）·main.pdf 234468B restore 至 canonical `1b2b4222e`（fresh recompile 仅 metadata 时戳差异·非内容改动）·MANIFEST.md 11319B 在论文树根·paper tree HEAD=`1b2b4222e`（本线 canonical·工作树干净）·四条 11-19 红令全交付·不起臂·standby）
+WAITING: 0（2026-11-19 wake#1535·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = **0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0**（与 wake#1524-1534 一致）·main.pdf 234468B restore 至 canonical `1b2b4222e`（fresh recompile 仅 metadata 时戳差异·非内容改动）·MANIFEST.md 11319B 在论文树根·paper tree HEAD=`1b2b4222e`（本线 canonical·工作树干净）·四条 11-19 红令全交付·不起臂·standby）
 
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-19 wake#1535 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0（与 wake#1524-1534 一致）·main.pdf 234468B restore 至 canonical `1b2b4222e`（fresh recompile 仅 metadata 时戳差异·非内容改动）·MANIFEST.md 11319B 在论文树根·paper tree HEAD=`1b2b4222e` 工作树干净·四条 11-19 红令全交付·不起臂·standby。
 - [2026-11-19 wake#1534 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0（与 wake#1524-1533 一致）·main.pdf 234468B restore 至 canonical `1b2b4222e`（fresh recompile 仅 metadata 时戳差异·非内容改动）·MANIFEST.md 11319B 在论文树根·paper tree HEAD=`1b2b4222e` 工作树干净·四条 11-19 红令全交付·不起臂·standby。
 - [2026-11-19 wake#1533 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0（与 wake#1524-1532 一致）·main.pdf 234468B restore 至 canonical `1b2b4222e`（fresh recompile 仅 metadata 时戳差异·非内容改动）·MANIFEST.md 11319B 在论文树根·paper tree HEAD=`1b2b4222e` 工作树干净·四条 11-19 红令全交付·不起臂·standby。
 - [wake#1526-#1532 详条已滚出·2026-11-19 wake#1533 维护] 见 `daily-memories/2026-11-19.md` §[wake#1526-#1532 rolled-out]（均 opencode 交互式 standby 心跳·fresh clean compile 0/0/12p/0 Overfull/28 Underfull·四条 11-19 红令全交付·done_all·不起臂）。
