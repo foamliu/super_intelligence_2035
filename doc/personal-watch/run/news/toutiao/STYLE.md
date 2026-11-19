@@ -1,4 +1,14 @@
 
+## §A.18 第 308 轮实测（2026-11-19 12:3x · 5 条 · **跨轮复制脚本 = 硬编码残留**）
+
+| # | 要点 | 实测 |
+|:--|:--|:--|
+| 1 | 🔑 **跨轮复制发布脚本，必须逐项清掉上一轮的硬编码：标题 / 图注 / 图片路径** | 本轮 `s2_img.py` 从 `/tmp/r307` 复制而来，只改了图片路径，**图注仍硬编码「图：OpenAI 官方政策说明配图」** ⇒ 首次插图后 `CAP` 读到错值；若不复核就直接发布，就是**配图署名造假**（图是艾伯塔省发布会，署名却写 OpenAI）。**发布前 `insp4.py` 必查 `cap` / `COV` / `BOXES` 三项**，与 `TITLE`、`IMG` 一起当「四件套」核 | 
+| 2 | ⚠️ **`Input.insertText` 是「追加」不是「替换」，纠错时不能整段重跑 `s2_img.py`** | 二次执行 `s2` 导致图注变成两条同样文本（且会**再插一张图**，`FILEINPUTS 0` 才没插成）。正解：单写小步骤 `cap2.py` —— `textarea.focus()` → `setSelectionRange(0,len)` → `Backspace`（**dispatched keyEvent，React 才收得到**）→ `insertText`，实测 `CLEARED "" → AFTER 图：艾伯塔省政府发布会现场（IT之家）` | 
+| 3 | ⚠️ **图注框是原生 `textarea`，不是 ProseMirror** | `document.querySelector('.ProseMirror textarea.pgc-img-caption-ipt')` 可直接命中，`selectionStart/End`、`setSelectionRange` 全部可用 ⇒ **改图注不必走逐键输入**，比评论框好操作（评论框是 `div[contenteditable]`） | 
+| 4 | ⚠️ **`RECHECK mine:false` 仍可能是渲染延迟，先 `verify.py` 再判断** | B 帖（传统武术）提交后 `AFTER 评论 159`、`RECHECK 评论 158 / mine:false`；单独 `verify.py` 再读 **`评论 159 · mine:true`** ⇒ 成立。**计数 +1 与「mine:true」任一命中即算落地**，两次都不过才判失败，且失败也不重发（承 §A.5 第 6 条） | 
+| 5 | ✅ **`1/029/222` 这类「政府发布会现场图」是最干净的配图** | 1280×720、讲台牌自带官方 slogan、**无他站角标 / 无二维码 / 无水印**，封面自动取正文图得 `925×720`（高于 672×462 建议线）。同轮弃掉 678×452 的 CEO 人物图（低于「≥1000px 宽」建议线）⇒ **选图顺序仍应「先尺寸、再目视」** | 
+
 ## §A.17 第 307 轮实测（2026-11-19 09:4x · 5 条）
 
 | # | 要点 | 实测 |
