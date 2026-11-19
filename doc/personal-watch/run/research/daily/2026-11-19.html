@@ -404,16 +404,47 @@
   · <b>designflow</b>：L1 题可加「检索臂」——先判「命中段落是否含答案 span」再判答案对错（#251），否则会把检索失败与推理失败混为一谈。
 </div>
 
+<h3 class="sec">🅱 B 轨增量 · 15:3x 时窗（第六十七轮 · 经典 #253–#256）</h3>
+<p class="rm" style="margin-top:0">A 轨今日 <b>5/5 已满</b>（新批最新 <code>published</code> 仍 <code>2026-11-18T18:56:12Z</code>，与 15:00 时窗一致）；本轮只做 B 轨：新增 4 条经典 + 作者网 4 人。<b>今日发信 12/12 已达每日硬上限 ⇒ 本轮不发信</b>，只建档与草稿准备。</p>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>被引（OpenAlex）</th><th>服务线</th><th>一句话价值</th></tr>
+  <tr><td>253</td><td>s1: Simple test-time scaling<br><code>2501.19393</code> · EMNLP 2025</td><td>1,939</td><td>zhulong · harness · designflow</td><td>1,000 题 + <b>budget forcing</b>（思考 token 上/下界，<code>"Wait"</code> 续想）把「想多久」变成显式旋钮</td></tr>
+  <tr><td>254</td><td>Gemma 2: Improving Open Language Models at a Practical Size<br><code>2408.00118</code> · 预印本</td><td>3,891</td><td>pretrain</td><td>2B/9B <b>用蒸馏替代 next-token</b>；局部滑窗 4096 与全局 8192 <b>逐层交替</b>；logit soft-cap 50.0 / 30.0</td></tr>
+  <tr><td>255</td><td>Byte Latent Transformer: Patches Scale Better Than Tokens<br><code>2412.09871</code> · 预印本</td><td>144（&lt;500，按「开创范式」收）</td><td>pretrain · data · harness</td><td>按 <b>next-byte 熵</b>切 patch 取代固定词表；首个 FLOP 受控字节级 scaling 至 <b>8B / 4T bytes</b></td></tr>
+  <tr><td>256</td><td>TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks<br><code>2412.14161</code> · NeurIPS 2025</td><td>465（&lt;500，按「本领域权威」收）</td><td>harness · designflow</td><td>模拟小公司的长程任务（浏览/写码/跑程序/沟通），最强 agent 仅自主完成 <b>30%</b></td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted)">核验：arXiv <code>id_list</code> 两批均 <code>200</code> + <code>application/atom+xml</code>；OpenAlex 4/4 <code>200</code>；PDF 仅 <b>1/4 可解析</b>（Gemma 2 610,320 B、以 <code>%%EOF</code> 收尾），另 3 篇下载中途截断（1,368,920 / 839,117 / 1,183,809 B，无 <code>%%EOF</code>、<code>pdftotext</code> 失败）⇒ 这三篇数字改用 arXiv 官方摘要（s1 另用 ar5iv HTML <code>200</code>/731,343 B 交叉核对），均已在 <code>PAPERS.md</code> 逐条标注「未做 PDF 逐页复核」。</p>
+
+<h3 class="sec">👥 作者网增量（#236–#239）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱（级别）</th><th>X</th><th>状态</th></tr>
+  <tr><td>236</td><td>Niklas Muennighoff · Cursor / Stanford</td><td><code>2501.19393</code></td><td><code>n.muennighoff@gmail.com</code>（<b>A</b>，本人主页 <code>mailto:</code>）</td><td>候选 <code>@Muennighoff</code>（主页 href；X 不可达未二次核）</td><td>待跟踪（今日额度满）</td></tr>
+  <tr><td>237</td><td>Morgane Riviere · Google DeepMind</td><td><code>2408.00118</code></td><td>未找到（不猜 <code>@google.com</code>）</td><td>未找到</td><td>待跟踪（只建档）</td></tr>
+  <tr><td>238</td><td>Artidoro Pagnoni · Meta FAIR / UW</td><td><code>2412.09871</code></td><td>未找到（候选页 <code>000</code>）</td><td>未找到</td><td>待跟踪（只建档）</td></tr>
+  <tr><td>239</td><td>Frank F. Xu 徐方政 · Microsoft AI</td><td><code>2412.14161</code></td><td><code>fangzhengxu@microsoft.com</code>（<b>B</b>，主页 <code>[at]</code> 写法）</td><td>未找到</td><td>待跟踪（今日额度满）</td></tr>
+</table>
+
+<div class="note" style="margin-top:14px">
+  <b>🎯 15:3x 增量建议（B 轨 #253–#256）</b>：<br>
+  · <b>pretrain</b>：① 2B 主线加一组「NTP vs 自 27B/更大教师蒸馏」的小规模对照，判据 = 同算力验证集 NLL + 下游分 + 是否发散（#254）；② 长上下文实验把「局部:全局层比」做成 1:1 与 3:1 两档，判据 = 同显存有效上下文长度（#254）；③ 分词器敏感性先测「原生 BPE vs 自训 BPE」的同题方差，再决定是否考虑字节级（#255）。<br>
+  · <b>data</b>：清洗报表新增「被 tokenizer 切碎比例」一列（EDA 网表名 / Verilog 宏名优先统计），字节级路线的价值以该列为前置证据（#255）。<br>
+  · <b>harness</b>：① agent 报表固定写「思考预算档位 + 是否触发截断」，不同预算分数不得同列比较（#253）；② 长程任务判分改为「环境内产物 + 每步可核验证据」，并同时报「全自动完成率」与「人机协作完成率」（#256）；③ 判分器不得假设输出可被同一 tokenizer 无损还原（#255）。<br>
+  · <b>zhulong</b>：thinking 轴把思考 token 上界做成 1k / 4k / 16k 三档曲线，并记录强制截断导致的空答案率（#253 的 <code>a_max</code>/<code>a_min</code>）。<br>
+  · <b>designflow</b>：L3–L5 难题试「低预算先答、再按需续想」两段式；L4/L5 直接照 #256 拆「环境 + 可核验产物 + 沟通件」。<br>
+  · <b>vision</b>：本轮无新增视觉侧结论（四篇均非视觉塔/图文对线）。
+</div>
+
 <div class="note" style="margin-top:18px">
   <b>附录 · 本轮检索式与命中</b>：<code>https://export.arxiv.org/api/query?search_query=cat:cs.CL&amp;sortBy=submittedDate&amp;sortOrder=descending&amp;max_results=40</code> ⇒ <code>200</code> / <code>97,294</code> B / 40 entry；<code>published</code> 上界 <code>2026-11-17T18:59:37Z</code>（03:00 与 06:00 两次复核均未前进）。去重：A 轨五个 ID 在 <code>SEEN.md</code> 均 0 命中。00:00 轮四路其它分类列表超时未返回，03:00 / 06:00 轮未重试，如实记录，不补写「已覆盖」。<br>
   <b>B 轨 06:00 检索式</b>：<code>https://export.arxiv.org/api/query?id_list=2210.09261,2302.01318,2404.06654,2403.02310</code> ⇒ <code>200</code> / 10,848 B / 4 entry；OpenAlex 4/4 <code>200</code>；PDF 4/4 <code>200</code>。⚠️ 本轮<b>先查重</b>再收：<code>2101.00027</code> / <code>2402.00159</code> / <code>2306.11644</code> / <code>2309.07544</code> 均已在 <code>PAPERS.md</code> 内 ⇒ 作废。<br>
   <b>B 轨 09:00 检索式</b>：<code>https://export.arxiv.org/api/query?id_list=2108.12409,2211.05102,2401.09670,2407.00079</code> ⇒ <b><code>429</code></b>（<code>14 B</code>，转用 abs 页）· 单 ID 重试 <code>000</code>；改取 <code>https://arxiv.org/abs/&lt;ID&gt;</code> 4/4 <code>200</code>；OpenAlex 4/4 <code>200</code>；PDF 4/4 <code>200</code> 且字节与 <code>Content-Length</code> 对齐。<b>先查重</b>：四个 ID 在 <code>PAPERS.md</code> 全量正则 <b>0 命中</b>。<br>
   <b>B 轨 12:00 检索式</b>：<code>https://arxiv.org/abs/1910.13461</code> / <code>2405.09818</code> / <code>2308.12966</code> / <code>2305.13048</code> ⇒ 4/4 <code>200</code>；OpenAlex <code>https://api.openalex.org/works/https://doi.org/10.48550/arxiv.&lt;ID&gt;</code> 4/4 <code>200</code>；PDF <code>https://arxiv.org/pdf/&lt;ID&gt;</code> 2/4 完整（296,072 / 1,590,242 B）· 另 2 篇 <code>Content-Length</code> 25,245,551 / 6,329,953 B <b>&gt;5 MB 未落盘</b>，改用 <code>https://ar5iv.labs.arxiv.org/html/&lt;ID&gt;</code> 2/2 <code>200</code> 核数字。<b>先查重</b>：四个 ID 在 <code>PAPERS.md</code> 正则 0 命中；⚠️ 候选池旧记 <code>2410.21276</code> 实测为 GPT-4o System Card ⇒ 不收。<br>
+  <b>B 轨 15:30 检索式</b>：<code>https://export.arxiv.org/api/query?id_list=2209.14389,2402.00159</code> ⇒ <code>200</code> / 7,313 B / 2 entry（⚠️ 先查重后发现两条均已在表内或 ID 不符：`2209.14389` 实为 <i>Downstream Datasets Make Surprisingly Good Pretraining Corpora</i>、Dolma 早已收录 ⇒ 均不收）；<code>id_list=2501.19393,2309.15698</code> ⇒ <code>200</code> / 6,208 B（⚠️ `2309.15698` 实为 <i>Deep Model Fusion: A Survey</i>，<b>不是 VerilogEval</b> ⇒ 不收；VerilogEval 真 ID 经标题检索为 `2309.07544`，已在表内）；<code>id_list=2501.19393,2305.09673,2408.00118,2412.09871</code> ⇒ <code>200</code> / 21,496 B（⚠️ `2305.09673` 实为 <i>Vulnerability Detection Using Two-Stage Deep Learning Models</i>，<b>不是 LoRA 遗忘那篇</b> ⇒ 不收）；<code>id_list=2205.10593,2412.14161</code> ⇒ <code>200</code> / 5,840 B（⚠️ `2205.10593` 实为 <i>Few-Shot NLI Generation with PDD</i>，与 CircuitNet 无关 ⇒ 不收）；OpenAlex <code>works/https://doi.org/10.48550/arxiv.&lt;ID&gt;</code> 共 8 次（含作废候选）⇒ 有效 4/4 <code>200</code>（1,939 / 3,891 / 144 / 465）。<br>
   <b>B 轨 15:00 检索式</b>：<code>https://export.arxiv.org/api/query?id_list=1801.06146,2004.04906,1904.08779,2110.07205</code> ⇒ <code>200</code> / 9,793 B / 4 entry；OpenAlex <code>https://api.openalex.org/works?filter=doi:10.48550/arxiv.&lt;ID&gt;&amp;select=title,type,cited_by_count,publication_year,primary_location,biblio</code> ⇒ 3/3 <code>200</code>（6,245 / 8,667 / 4,968）；PDF <code>https://arxiv.org/pdf/&lt;ID&gt;</code> 2/3 完整（979,417 / 383,508 B，字节 = <code>Content-Length</code>），<code>1904.08779</code> 远程 3,733,556 B 中途截断 ⇒ 改 <code>https://ar5iv.labs.arxiv.org/html/1904.08779</code> <code>200</code> / 172,404 B。<b>先查重</b>：三个 ID 在 <code>PAPERS.md</code> 全量正则 <b>0 命中</b>；<code>2110.07205</code> 仅用于结清候选池陈旧行（早已收录 #172）。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-19 00:00 + 03:00 + 06:00 + 09:00 + 12:00 + 15:00 时窗 ｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-19 15:0x CST
+  research 线 · 论文观察日报 · 2026-11-19 00:00 + 03:00 + 06:00 + 09:00 + 12:00 + 15:00 + 15:30 时窗 ｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-19 15:45（A 轨 5/5 · B 轨累计 256） CST
 </footer>
 
 </div>

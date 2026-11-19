@@ -6,6 +6,11 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-19 15:4x）**：作者 **239** 人（编号最大 **239**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十七轮增量（2026-11-19 15:3x）**：作者网 235 → **239**（#236 Niklas Muennighoff **A 级** `n.muennighoff@gmail.com`（主页 `mailto:`）/ #237 Morgane Riviere 无地址 / #238 Artidoro Pagnoni 无地址（候选页 `000`）/ #239 Frank F. Xu 徐方政 **B 级** `fangzhengxu@microsoft.com`（主页 `[at]` 形式明文）），来自本轮 B 轨 #253 s1 / #254 Gemma 2 / #255 BLT / #256 TheAgentCompany；X 保持 **106**（`@Muennighoff` 仅主页 href 候选，未二次核验 ⇒ 不计数）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档不发）。
+>
+
 > **当前计数（2026-11-19 15:0x）**：作者 **235** 人（编号最大 **235**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 >
 > **第六十六轮增量（2026-11-19 15:0x）**：作者网 231 → **235**（#232 Wen-tau Yih 易文韬 / #233 Jeremy Howard / #234 Sebastian Ruder / #235 Daniel S. Park，来自本轮 B 轨 #251 DPR / #250 ULMFiT ×2 / #252 SpecAugment）；已发信 102 → **104**（#103 中文 250 字 · `SENT OK 15:04:39`；#104 英文 182 词 · `SENT OK 15:04:42`）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 🚫 不猜 handle，`voice_ready` 0）。地址级别：#232 **A**（本人主页 `mailto:`）· #233 **C**（2018 PDF 首页，现行页无 `mailto:`）· #234 / #235 未找到 ⇒ 只建档。今日发信 **12/12**（已达每日硬上限，剩余时窗只做选题与草稿）。
@@ -3365,6 +3370,59 @@
 | X 账号 | **未找到**（`x.com` 不可达） |
 | 状态 | **待跟踪**（无地址不发） |
 | 备注 | `语言=한국어(判据=韩文姓名族属 Park；仅判据，本轮未发)`。价值点：策略表式增广 `(W, F, m_F, T, p, m_T)` 可直接迁移成 data 的增广配置模板。 |
+
+### 236. Niklas Muennighoff
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Niklas Muennighoff（德文姓名族属 ⇒ 若发信应为「德文问候 + 英文正文」；本人主页自述**本科学于北京大学、可中文工作** ⇒ 中文亦成立，发信前二选一并写清判据） |
+| 机构 | **Cursor（Composer）**；**Stanford** 博士生（导师 Yejin Choi & Andrew Ng）—— 均取自本人主页自述（`200` / 47,863 B） |
+| 代表论文 | **s1**（`2501.19393`，EMNLP 2025；B 轨 #253 一作）· MTEB · Scaling Data-Constrained LMs |
+| 邮箱 | **n.muennighoff@gmail.com** / **A**（本人主页 `https://muennighoff.com/` 页内 `mailto:` 明文） |
+| 主页 | <https://muennighoff.com/>（`200` / 47,863 B） |
+| X 账号 | **候选 `@Muennighoff`**（主页 `icons` 区 href 直指 `https://x.com/Muennighoff`；`x.com` 本机不可达 ⇒ **未二次核验、不计数**） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 备注 | `语言=德文问候+英文正文 或 中文(判据=德文姓名族属 + 主页自述北大本科/可中文工作；本轮未发)`。价值点：**budget forcing** 的 `a_max`/`a_min` 正是 zhulong thinking 轴的直接参数化。 |
+
+### 237. Morgane Riviere
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Morgane Riviere（法文姓名族属 ⇒ 若发信应为「法文问候 + 英文正文」；本轮未发） |
+| 机构 | **Google DeepMind**（B 轨 #254 Gemma 2 报告署名的首位个人作者） |
+| 代表论文 | **Gemma 2**（`2408.00118`，2024 预印本） |
+| 邮箱 | **未找到**（本轮未检索到可核的个人主页；🚫 不猜 `@google.com` / `@deepmind.com`） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜） |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=法文问候+英文正文(判据=法文姓名族属 + Google DeepMind；仅判据，本轮未发)`。价值点：2B/9B **蒸馏替代 NTP** 的配方细节（教师规模、蒸馏损失形式）。 |
+
+### 238. Artidoro Pagnoni
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Artidoro Pagnoni（意大利文姓名族属 ⇒ 若发信应为「意大利文问候 + 英文正文」；本轮未发） |
+| 机构 | **Meta（FAIR）/ University of Washington**（B 轨 #255 BLT 一作；机构按作者群与论文页推断，本轮未逐项核个人主页） |
+| 代表论文 | **Byte Latent Transformer**（`2412.09871`，2024 预印本） |
+| 邮箱 | **未找到**（候选页 `https://apagnoni.github.io/` 返回 `000`（超时）；🚫 不猜 `@meta.com` / `@cs.washington.edu`） |
+| 主页 | **未找到**（同上 `000`） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=意大利文问候+英文正文(判据=意大利文姓名族属；仅判据，本轮未发)`。价值点：**按 next-byte 熵切 patch** 的具体阈值与「patch 大小 × 模型大小」的 FLOP 分配。 |
+
+### 239. Frank F. Xu（徐方政）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Frank F. Xu / Fangzheng Xu（徐方政；中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **Microsoft AI**（本人主页 2026-11-19 实测抬头写 `Microsoft` / Mountain View；论文期在 CMU） |
+| 代表论文 | **TheAgentCompany**（`2412.14161`，NeurIPS 2025；B 轨 #256 一作）· AutoAgents / RepoBench 等 |
+| 邮箱 | **fangzhengxu@microsoft.com** / **B**（本人主页 `https://frankxfz.me/` 以 `fangzhengxu[at]microsoft.com` 形式明文给出，非 `mailto:`） |
+| 主页 | <https://frankxfz.me/>（`200` / 1,256 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + 主页英文名 Fangzheng Xu；本轮未发)`。价值点：长程任务的「环境内产物」判分口径可直接迁到 designflow L4/L5。 |
+
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
