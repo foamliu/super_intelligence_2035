@@ -31,14 +31,7 @@ WAITING: 0（2026-11-19 wake#1474·**🟠 friend-review 已交付·写作层 5 �
 - [wake#1452 详条已滚出·本轮 wake#1457 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1452 详条 rolled-out by wake#1457]（第一百九十八次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·本轮 §10 维护合并 wake#1407~#1431 共 19 条单条指针·原文不改）。
 - [wake#1451 详条已滚出·本轮 wake#1457 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1451 详条 rolled-out by wake#1457]（第一百九十七次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·本轮 §10 维护滚 wake#1448 详条至 daily·原文不改）。
 - [wake#1450 详条已滚出·本轮 wake#1451 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1450 详条 rolled-out by wake#1451]（第一百九十六次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·本轮 §10 维护二次合并 wake#1244~#1406 旧指针省 MEMORY 空间·原文不改）。
-- [wake#1449 详条已滚出·本轮 wake#1450 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1449 详条 rolled-out by wake#1450]（第一百九十五次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
-- [wake#1448 详条已滚出·本轮 wake#1451 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1448 详条 rolled-out by wake#1451]（第一百九十四次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
-- [wake#1447 详条已滚出·本轮 wake#1448 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1447 详条 rolled-out by wake#1448]（第一百九十三次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
-- [wake#1446 详条已滚出·本轮 wake#1447 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1446 详条 rolled-out by wake#1447]（第一百九十二次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
-- [wake#1444 详条已滚出·本轮 wake#1445 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1444 详条 rolled-out by wake#1445]（第一百九十次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
-- [wake#1443 详条已滚出·本轮 wake#1444 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1443 详条 + 操作流水旧指针 rolled-out · 2026-11-19 wake#1444 维护滚出]（第一百八十九次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
-- [wake#1441 详条已滚出·本轮 wake#1442 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1441 详条 rolled-out by wake#1442]（第一百八十七次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·本轮 §10 维护滚 wake#1440 详条至 daily·原文不改）。
-- [wake#1440 详条已滚出·本轮 wake#1441 维护滚出] 见 `daily-memories/2026-11-19.md` §[wake#1440 详条 rolled-out by wake#1441]（第一百八十六次核验·standby·done_all·无新指令·friend-review 主体已 wake#1350 交付·原文不改）。
+- [wake#1440~#1449 合并指针已滚出·本轮 wake#1474 维护合并] wake#1440+#1441+#1443+#1444+#1446+#1447+#1448+#1449 共 8 条同模式 standby 心跳（第一百八十六~一百九十五次核验·均 standby·done_all·无新指令·friend-review 主体已 wake#1350 交付）·原文见 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1474 合并省 MEMORY 空间·原文不改）。
 - [wake#1407~#1437 合并指针已滚出·本轮 wake#1471 维护再合并] wake#1407~#1425 + wake#1426~#1431 + wake#1432~#1437 共 ~25 条同模式 standby 心跳（第一百五十三~一百八十三次核验·均 standby·done_all·无新指令·friend-review 主体已 wake#1350 交付）·原文见 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1471 三次合并省 MEMORY 空间·原文不改）。
 - [wake#1244~#1406 合并指针已滚出·本轮 wake#1450 维护再合并] wake#1244~#1380 + wake#1381~#1390 + wake#1391-1394 + wake#1395-1402 + wake#1403~#1406 共 ~50 条同模式 standby 心跳（第一百二十七~一百五十二次核验·均 standby·done_all·无新指令·friend-review 主体已 wake#1350 交付）·原文见 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（本轮 wake#1450 二次合并省 MEMORY 空间·原文不改）。
 
