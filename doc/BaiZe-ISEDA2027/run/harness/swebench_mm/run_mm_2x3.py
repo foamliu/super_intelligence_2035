@@ -21,6 +21,7 @@ Usage:
 from __future__ import annotations
 import argparse, json, os, shutil, subprocess, sys, time, signal
 from pathlib import Path
+from urllib.parse import urlparse
 
 HERE = Path(__file__).resolve().parent
 HARNESS_DIR = HERE.parent
@@ -167,12 +168,19 @@ def setup_opencode_providers(routes: list[dict]):
     OPENCODE_CONFIG.write_text(json.dumps(config, indent=2, ensure_ascii=False))
 
 
-def build_prompt_with_images(problem_statement: str, image_infos: list[dict]) -> str:
-    """Build prompt text with embedded base64 images as markdown (for cline via mm_proxy)."""
+def build_prompt_with_images(problem_statement: str, image_infos: list[dict],
+                             proxy_port: int = 9095) -> str:
+    """Build prompt text with short proxy image URLs (for cline via mm_proxy).
+
+    Uses http://127.0.0.1:<port>/mm_image/<filename> references instead of inline
+    base64 data: URLs, because the base64 payload exceeds the 128 KB single-argument
+    limit (MAX_ARG_STRLEN) when passed as a cline positional prompt argument.
+    mm_proxy resolves these URLs by reading the file from --image-dir.
+    """
     if not image_infos:
         return problem_statement
     img_md = "\n\n".join(
-        f"![screenshot_{i+1}]({info['data_url']})"
+        f"![screenshot_{i+1}](http://127.0.0.1:{proxy_port}/mm_image/{Path(info['path']).name})"
         for i, info in enumerate(image_infos)
     )
     return (f"The following screenshots are related to this issue:\n\n"
@@ -196,27 +204,91 @@ def download_instance_images(instance: dict, img_handler: ImageHandler) -> list[
 
 
 def start_mm_proxy(route: dict, port: int) -> subprocess.Popen:
-    """Start mm_proxy for a cline route."""
+    """Start mm_proxy for a cline route (with --image-dir for /mm_image/ proxy URLs)."""
+    # Verify port is free first (stale proxy from a previous run would cause
+    # the new one to silently fail to bind, and cline would hit the old proxy).
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.bind(("127.0.0.1", port))
+        s.close()
+    except OSError:
+        log(f"  ⚠️ port {port} still in use — killing stale mm_proxy")
+        subprocess.run(["pkill", "-f", f"mm_proxy.py --port {port}"],
+                       capture_output=True)
+        time.sleep(2)
     cmd = [sys.executable, str(HERE / "mm_proxy.py"),
            "--port", str(port),
            "--upstream", route["base_url"],
-           "--api-key", route["api_key"]]
-    proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+           "--api-key", route["api_key"],
+           "--image-dir", str(IMAGE_CACHE)]
+    proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL,
+                            stderr=open(f"/tmp/mm_proxy_{port}.log", "a"))
     time.sleep(1)  # let it bind
-    log(f"  mm_proxy started on port {port} (pid={proc.pid}) → {route['base_url']}")
+    if proc.poll() is not None:
+        log(f"  ❌ mm_proxy exited immediately (rc={proc.returncode})!")
+    else:
+        log(f"  mm_proxy started on port {port} (pid={proc.pid}) → {route['base_url']} "
+            f"(image_dir={IMAGE_CACHE})")
     return proc
 
 
-def run_cline_mm(route, instance, workdir, image_infos, proxy_port, timeout):
+def setup_cline_mm_data_dir(route: dict, proxy_port: int, route_id: str) -> str:
+    """Create a per-route cline data-dir with providers.json pre-configured.
+
+    cline persists provider settings (including baseUrl) in its data-dir and
+    IGNORES the OPENAI_BASE_URL env var.  If we reuse the shared data-dir, a
+    stale baseUrl from a previous run (e.g. port 9092) causes cline to connect
+    to a dead proxy → 'Forbidden'.  Using a per-route data-dir with a freshly
+    written providers.json guarantees the correct mm_proxy baseUrl.
+    """
+    import datetime
+    data_dir = Path(f"/dev/shm/harness_mm_2x3/cline_data/{route_id}")
+    settings_dir = data_dir / "settings"
+    settings_dir.mkdir(parents=True, exist_ok=True)
+
+    upstream_path = urlparse(route["base_url"]).path or "/v1"
+    base_url = f"http://127.0.0.1:{proxy_port}{upstream_path}"
+
+    providers = {
+        "version": 1,
+        "lastUsedProvider": "openai-compatible",
+        "modes": {},
+        "providers": {
+            "openai-compatible": {
+                "settings": {
+                    "provider": "openai-compatible",
+                    "apiKey": route["api_key"],
+                    "model": route["model"],
+                    "baseUrl": base_url,
+                },
+                "updatedAt": datetime.datetime.utcnow().isoformat() + "Z",
+                "tokenSource": "migration",
+            }
+        },
+    }
+    (settings_dir / "providers.json").write_text(json.dumps(providers, indent=2))
+    # secrets.json: cline expects this for the openai provider key
+    secrets = {"openAiApiKey": route["api_key"]}
+    (data_dir / "secrets.json").write_text(json.dumps(secrets, indent=2))
+    return str(data_dir)
+
+
+def run_cline_mm(route, instance, workdir, image_infos, proxy_port, timeout,
+                 route_id: str):
     """Run cline with multimodal prompt via mm_proxy. Returns (patch, stdout, stderr, rc)."""
-    prompt = build_prompt_with_images(instance["problem_statement"], image_infos)
+    prompt = build_prompt_with_images(instance["problem_statement"], image_infos,
+                                      proxy_port)
+    # cline persists provider config in its data-dir and ignores OPENAI_BASE_URL.
+    # Use a per-route data-dir with providers.json pre-written to point at mm_proxy.
+    data_dir = setup_cline_mm_data_dir(route, proxy_port, route_id)
     cmd = [CLINE_BIN, "-c", str(workdir),
-           "--data-dir", "/nas_train/app.e0031982/harness_work/cline_harness_data",
-           "-P", "openai", "-m", route["model"], "-k", route["api_key"],
+           "--data-dir", data_dir,
+           "-P", "openai-compatible", "-m", route["model"], "-k", route["api_key"],
            "--auto-approve", "true", "--json", prompt]
     env = {
         "OPENAI_API_KEY": route["api_key"],
-        "OPENAI_BASE_URL": f"http://127.0.0.1:{proxy_port}/v1",
+        "OPENAI_BASE_URL": f"http://127.0.0.1:{proxy_port}",
         "PATH": os.environ.get("PATH", ""),
     }
     try:
@@ -272,7 +344,7 @@ def predict_one(route, instance, img_handler, proxy_port) -> dict:
     t0 = time.time()
     if harness == "cline":
         patch, out, err, rc = run_cline_mm(route, instance, workdir, image_infos,
-                                            proxy_port, TIMEOUT_RUN)
+                                            proxy_port, TIMEOUT_RUN, route_id)
     else:
         patch, out, err, rc = run_opencode_mm(route, instance, workdir, image_infos,
                                                TIMEOUT_RUN)
