@@ -4230,3 +4230,29 @@ commit `pretrain 项目:`。✅ 已完成：commit e1c6be4 pushed, 28 files（�
 5. **编译验收**：`latexmk -pdf main.tex` 0 error 后，`git add` 本线文件 → commit `pretrain paper:` → push。心跳第一行写「摘精简/贡献点 N 项/backbone 图 ref + 编译 0err」。（⚠️ 改论文正文属例行，但删数字/拆贡献点/加图是用户本次点名要求，优先级最高）
 
 > **归档原因**：论文改进令已闭环（commit 23068482d，2026-11-19 10:01）。① 0_abstract.tex 删除 volatile 快照句（"currently about one-quarter…169,130…591K…loss≈2.04"），摘要不再含任何 currently/169130/591K/loss≈ 快照值。② 1_intro.tex 贡献点拆解为 3 项：(1) 成本-隐私双重约束下的 on-premise 2B hybrid EDA 子智能体；(2) Mamba2-hybrid 结构带来结构性会话级成本下降（仅 4/56 层持 session-growing state）；(3) 受预算约束的预训练配方 + 449 题评测协议。③ 3_architecture.tex 新增 TikZ Mamba2-hybrid 层结构图（fig:backbone），展示 56 层中 SSM/MLP/GQA 交错排列，图注讲清"只有 4/56 层持会话增长状态"。main.tex 加 `\usetikzlibrary{decorations.pathreplacing}`。④ latexmk 编译 0 error、5 页、0 undefined ref/citation。已 push 到 origin/main。
+
+---
+
+## 归档 2026-11-19 论文改进第二轮 — 贡献点重写 / §5 改 Domain Adaptation（已完成）
+
+### 🔴 用户令 · 2026-11-19 13:2x（**改论文第二轮：贡献点重写 / 第五节标题改「领域适配」**）· 用户直令 · 最高优先 · ✅ 已完成
+
+> **用户原话**（pretrain 部分）：
+> ① 贡献点里「We present a 2B hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator」这段跟下面 bullet 重复，删掉。
+> ② 贡献点改成三个：1) 构建 2B 模型、mamba2-hybrid 架构、支持 1M 上下文窗口（对应第三节架构）；2) 通过课程学习强化 code+math+agentic 能力（对应第四节预训练）；3) 通过后训练验证其可作为 subagent 底模、服务 EDA Agent、协助电路设计师编排 designflow（EDA 脚本是胶水），验证「大小模型结合的 agent 架构在 agentic IC 落地的可行性」（对应第五节后训练）。
+> ③ 第五节标题从「LLM Post-Training」改成「领域适配（Domain Adaptation）」，并注明：基于 post-train 近期成果，2B 小模型还能通过「修复脚本适配工具」大幅提升通过率——这种工程类 ACI（Agent-Computer-Interface）改进是后训练之外另一条高 ROI 路线。
+
+**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/`。
+
+**任务（逐条执行）**：
+
+1. **删重复句（`1_intro.tex` §Contributions）**：删掉 `\paragraph{Contributions.}` 后、`\begin{itemize}` 前那句 `We present a 2B hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator.`（及其中文注释行）——它与第一个 bullet 重复。
+2. **重写贡献点为三项**（替换现有 3 个 bullet 的内容，按用户给定的语义 + 章节对应重写）：
+   - **贡献①**：构建 2B 模型 + mamba2-hybrid 架构 + 支持 1M 上下文窗口（对应 §3 架构，ref `sec:arch`/`sec:overview`）；
+   - **贡献②**：通过课程学习强化 code+math+agentic 能力（对应 §4 预训练，ref `sec:llm-pretrain`/`sec:llm-data`）；
+   - **贡献③**：通过后训练验证其可作为 subagent 底模、服务 EDA Agent、协助电路设计师编排 designflow（EDA 脚本为胶水），验证「大小模型结合的 agent 架构在 agentic IC 落地可行性」（对应 §5，ref `sec:llm-posttrain`）。每项写英文主句 + 中文注释，逻辑对齐用户原文。
+3. **改第五节标题（`5_llm_posttrain.tex`）**：`\section{LLM Post-Training}\label{sec:llm-posttrain}` → `\section{Domain Adaptation}\label{sec:llm-posttrain}`（⚠️ `\label` 保持不变，别改，否则全文 `\ref{sec:llm-posttrain}` 会悬空）。对应中文注释同步改「领域适配」。并在该节开头补 1-2 句说明第二条高 ROI 路线：2B 小模型可通过「修复脚本适配工具（ACI，Agent-Computer-Interface）」大幅提升通过率，这是 domain annealing/SFT/RL 之外的另一条工程改进路线（呼应 post-train 近期成果）。
+4. **刷新相关文字**：`3_architecture.tex`、`0_abstract.tex`、`9_conclusion.tex` 若引用了第五节标题/旧措辞，同步更新（如正文出现过 "LLM Post-Training"/"post-training (SFT, RLVR)" 字样，视情况是否改口径）。
+5. **编译验收**：`latexmk -pdf main.tex` 0 error、0 undefined ref；`git add` 论文文件 → commit `pretrain paper:` → push。心跳第一行写「删重复句/贡献点3项/§5改Domain Adaptation + 编译0err」。
+
+> **归档原因**：论文改进第二轮已闭环（commit 53985409e，2026-11-19 14:12）。① 1_intro.tex 删除 `\paragraph{Contributions.}` 后的重复引述句及其中文注释。② 贡献点 3 项重写为：(1) A 2B Mamba2-hybrid backbone with a 1M-token context window（对应 §3 sec:arch/sec:longctx）；(2) Curriculum learning that strengthens code, math, and agentic capability（对应 §4 sec:llm-pretrain）；(3) Domain adaptation validating the subagent as a deployable EDA agent core（对应 §5 sec:llm-posttrain，含 EDA 脚本胶水 + 大小模型协作可行性验证）。③ 5_llm_posttrain.tex 标题 `\section{LLM Post-Training}` → `\section{Domain Adaptation}`（`\label{sec:llm-posttrain}` 不变），中文注释同步改「领域适配」，新增 ACI 段落说明第二条高 ROI 工程路线。④ 3_architecture.tex pipeline 表 `(ii) Post-training (SFT, RLVR)` → `(ii) Domain adaptation (anneal, SFT, RLVR)`。⑤ latexmk 编译 0 error、5 页、0 undefined ref。已 push 到 origin/main。
