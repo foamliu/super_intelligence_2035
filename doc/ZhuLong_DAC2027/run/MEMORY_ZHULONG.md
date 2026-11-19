@@ -1,14 +1,15 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-19 wake#1548·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile 0/0/12p/0 Overfull/28 Underfull/badness10000=0·body §0-§9 收于 p6 ≤6·abstract 199 source 词·paper tree 工作树干净·四条 11-19 红令结构判据 fresh 复核全过（① 无 \Ntasks{1827} ② \FullScale/`\LiteSet{500}` line54-55 ③ 无 \PreregDate ④ 无 pre-regist 措辞 ⑤ Contributions=3 条 We \emph{introduce/formulate/design} ⑥ 无 Our prior/earlier/previous ⑦ abstract 199 词≤200 ⑧ MANIFEST.md 11319B 在论文树根）·不起臂·standby）
+WAITING: 0（2026-11-19 wake#1549·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·main.log 复核 0 Overfull/28 Underfull/12p（与 wake#1548 fresh clean compile 一致·state 未变）·四条 11-19 红令结构判据复核全过（① 无 \Ntasks{1827} ② \FullScale/`\LiteSet{500}` line54-55 ③ 无 \PreregDate ④ 无 pre-regist 措辞 ⑤ Contributions=3 条 ⑥ 无 Our prior/earlier/previous ⑦ abstract 199 词≤200 ⑧ MANIFEST.md 在论文树根）·不起臂·standby）
 
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
-- [2026-11-19 wake#1548 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0·body §0-§9 收于 p6 ≤6 页 ✓·abstract 199 source 词 ≤200 ✓·四条 11-19 红令结构判据 fresh 复核全过（① 无 \Ntasks{1827} 宏 ② \FullScale/`\LiteSet{500}` line54-55 ③ 无 \PreregDate 宏 ④ 无 pre-regist 措辞 ⑤ Contributions=3 条 We \emph{introduce/formulate/design} ⑥ 无 Our prior/earlier/previous ⑦ abstract 199 词≤200 ⑧ MANIFEST.md 11319B 在论文树根）·paper tree 工作树干净（仅 main.pdf 元数据时戳差异）·不起臂·standby。
-- [wake#1547 详条已滚出·2026-11-19 wake#1548 维护] 见 `daily-memories/2026-11-19.md` §[wake#1547 rolled-out]（opencode 交互式 standby 心跳·fresh clean compile 0/0/12p/0 Overfull/28 Underfull·四条 11-19 红令全交付·done_all·不起臂）。
+- [2026-11-19 wake#1549 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·main.log 复核 0 Overfull / 28 Underfull / 12 pages（与 wake#1548 fresh clean compile 一致·state 未变·未重新 clean compile）·四条 11-19 红令结构判据复核全过（① 无 \Ntasks{1827} 宏 ② \FullScale/`\LiteSet{500}` line54-55 ③ 无 \PreregDate 宏 ④ 无 pre-regist 措辞 ⑤ Contributions=3 条 We \emph{introduce/formulate/design} ⑥ 无 Our prior/earlier/previous ⑦ abstract 199 词≤200 ⑧ MANIFEST.md 在论文树根）·paper tree HEAD=`1b2b4222e` 工作树干净·不起臂·standby。
+- [2026-11-19 wake#1548 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh clean compile（删 aux → 3 轮 pdflatex+bibtex）round 3 = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull / badness 10000=0·body §0-§9 收于 p6 ≤6 页 ✓·abstract 199 source 词 ≤200 ✓·四条 11-19 红令结构判据 fresh 复核全过·paper tree 工作树干净·不起臂·standby。
+- [wake#1547 详条已滚出·2026-11-19 wake#1549 维护] 见 `daily-memories/2026-11-19.md` §[wake#1547 rolled-out]（opencode 交互式 standby 心跳·fresh clean compile 0/0/12p/0 Overfull/28 Underfull·四条 11-19 红令全交付·done_all·不起臂）。
 - [wake#1543-#1546 详条已滚出·2026-11-19 wake#1548 维护] 见 `daily-memories/2026-11-19.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 standby 心跳·fresh clean compile 0/0/12p/0 Overfull/28 Underfull·四条 11-19 红令全交付·done_all·不起臂）。
 - [wake#1542 详条已滚出·2026-11-19 wake#1543 维护] 见 `daily-memories/2026-11-19.md` §[wake#1542 rolled-out]（opencode 交互式 standby 心跳·fresh clean compile 0/0/12p/0 Overfull/28 Underfull·四条 11-19 红令全交付·done_all·不起臂）。
 - [wake#1540, #1541 详条已滚出·2026-11-19 wake#1542 维护] 见 `daily-memories/2026-11-19.md` §[wake#1540, #1541 rolled-out]（均 opencode 交互式 standby 心跳·fresh clean compile 0/0/12p/0 Overfull/28 Underfull·四条 11-19 红令全交付·done_all·不起臂）。
