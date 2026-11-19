@@ -135,7 +135,7 @@
 1786535933950_lj2gw.messages.json	e0014566	hfeg0plg58	393	analog_context	case	EDA-Eval-DesignFlow-RsCalcLabelAdd-001	2026-11-04 12:48	rscalc RTEXT/RNODE label add, U#0 clean 提需求
 1792323159551_toezr	xxchen	hfeg0plg53	318	schematic_netlist	parked		2026-11-12 23:22	cross-shard near-dup D下线 C保留 (A r438裁定, domain mislabel), was case GdsBump2-001
 1791956738036_ruk0m	jinyuli	hfeg0plg91	29	waveform	case	EDA-Eval-DesignFlow-ClkOscStim-001	2026-11-04 14:05	
-1793082430174_aihrj.messages.json	amberh	hfeg0plg98	28	schematic_netlist	parked		2026-11-04 14:34	Q&A how-to-highlight-nets, no generation deliverable, no accepted gold
+1793082430174_aihrj.messages.json	amberh	hfeg0plg98	28	schematic_netlist	parked		2026-11-19 16:17	r947 re-peek confirms r944 unfit: 22msgs, U#0 'aether工具中如何点亮电路中的线？' howto-Q&A, assistant RAG-search saga never delivers GOLD (msg21 empty), aether:134 dominant = C-domain layout; unbuildable no-GOLD
 1792552823708_o8ivt.messages.json	yutongy	hfeg0plg53	28	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellListXtract-001	2026-11-04 15:00	
 1793167500635_mn59z.messages.json	e03179	hfeg0pkn002	28	schematic_netlist	case	EDA-Eval-DesignFlow-ProfCellReco-001	2026-11-04 16:26	
 1784254184878_zd84z.messages.json	e0014566	hfeg0plg58	28	schematic_netlist	case	EDA-Eval-DesignFlow-NetHighlightProbe-001	2026-11-04 16:44	
@@ -1910,3 +1910,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794827107689_db48s	kaixuanx	hfeg0pkn003	181	schematic_netlist	parked		2026-11-19 14:45	unreadable: file group drvsa, e0031982 in guest/eda_agent only; NFS flaky stat
 1794889513594_yd89p	joeyl	hfeg0pkn002	193	analog_context	deepread		2026-11-19 15:16	r944 fresh peek: CML 5-corner tuning L2 produce-task, GOLD msg199 complete (root cause + 3 params + 5-corner AC table + recommended netlist), buildable but L2 real-sim needs 60-90min, synth deferred to r945+
 1794795187792_3dlpk.messages.json	qiangw	hfhds209	194	schematic_netlist	case	EDA-Eval-DesignFlow-StaPathLastModStatQA-001	2026-11-19 15:44	
+1786954043971_7g1bd	e0025730	hfeg0plg49	13	schematic_netlist	parked		2026-11-19 16:16	r947 peek: '/sense-margin' slash-command skill-invocation + env-access-failure (Permission denied /proj/drcoa + SSH timeout), no GOLD deliverable; netlist:20/drc:19 kw from skill desc + project path 'drcoa' not real netlist work; U#2 slash-command not organic A-faithful intent
