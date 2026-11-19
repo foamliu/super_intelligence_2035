@@ -1,5 +1,21 @@
 ﻿# BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-19 16:0x — 刷新 S1/S2 报告出 v3（最高优先）**
+
+> **用户原话**：「请 data 刷新 report_s1s2_split_data_v2_zh.html，得到 report_s1s2_split_data_v3_zh.html」
+
+**任务**：基于 `run/reports/report_s1s2_split_data_v2_zh.html` 刷新一版 **v3**，落盘为 `run/reports/report_s1s2_split_data_v3_zh.html`（原地新增文件，不覆盖 v2）。
+
+**刷新重点**（把最近一周数据侧的实际进展与决策同步进去，别再引用旧数字）：
+1. **前置工作实测状态**：PC-1（L4 过滤 430.7B/90.5%）✅、PC-2（MegaMath 5 子集 364 shard 分词）✅、PC-3（污染闸门 9277 tasks）✅、PC-4（`blend_s2_preblend.tsv` 10 源 web40/code40/math20 含 finemath）✅、PC-5（MegaMath-web 下载→分词，进度以实盘为准）+ Nemotron-CC-Math 分词进度。
+2. **S2 零重叠方案**：把 `report_s2_data_overlap_study.md` 的结论同步进来（当前 blend 不排除 S1 已训数据、同种子重叠 83-100%、推荐方案 D+E：补新源天然零重叠 + S2 换 SEED=5678）。
+3. **切换点/时间线**：350k 切换点 ~11-26、700k 终点 ~12-25、前置关键路径已就绪（PC-1~PC-4 完成，仅剩 Nemotron 分词长尾）。
+4. **数据源引用**：与论文 alignment——Nemotron-CC-Math（arXiv 2508.15096 / ICLR 2026）、MegaMath（arXiv 2504.02807）、stack-v3、finemath 等带引用的口径写清。
+5. **报告规范照旧**：中文 HTML、单文件自包含、内联 CSS、0 外链 0 script、离线可开。
+6. 完成后 `git add` → commit `data report:` → push；心跳第一行写「v3 报告路径 + 主要刷新点」。（v2 保留不删）
+
+---
+
 > 🔴 **用户令 · 2026-11-19 13:2x — 改论文第二轮：Fig-2 饼图调优 / TABLE IV 精简 / 数据源与数据引用（最高优先）**
 
 > **用户原话**（data 部分）：
