@@ -1538,3 +1538,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795009038642_5qu6l	willz	hfeahpc501	193	spice_sim	case	EDA-Eval-DesignFlow-PvtDeckGen-001	2026-11-19 06:09	
 1794821389358_f8e95	e0044480	hfeg0plg54	67	spice_sim	case	EDA-Eval-DesignFlow-SpDeckBatchMod-001	2026-11-19 06:36	
 1794965175154_oa6ct	yangyangs	hfeg0plg101	62	spice_sim	case	EDA-Eval-DesignFlow-PsijCalc-001	2026-11-19 07:08	
+1794983837401_q5stq	t0002607	hfeg0pkn004	159	spice_sim	case	EDA-Eval-DesignFlow-SpiceFloatPortDetect-001	2026-11-19 08:15	
