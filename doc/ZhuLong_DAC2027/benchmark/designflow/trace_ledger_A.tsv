@@ -656,7 +656,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1794193348712_x0mjt	e0041392	10.129.2.12	7		parked		2026-11-19 16:42	r801: non-buildable. wscli env-config session, only 1 real user input (skill_instructions), agent全程配环境auth无deliverable. r798 verdict reaffirmed
 1794366349085_n907k	meng1l	10.129.2.13	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=17828
 1794384170431_k7bl1	e0039516	10.129.2.10	6		case	EDA-Eval-DesignFlow-NoConnPurposeExplainQA-001	2026-11-20 00:14	r818 case: NoConnPurposeExplainQA-001 (analysis-Q&A + specificity oracle, k=14/14, ref PASS 14/14 + 5neg+3fake FAIL; A wrODT1 DEF/netlist/dbget report, B rdqs_pad freePin oracle; e0039516/10.129.2.10/mc7/digital)
-1794449765531_s59t7	rongjiez	10.129.2.14	7		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
+1794449765531_s59t7	rongjiez	10.129.2.14	7		case	EDA-Eval-DesignFlow-ZtypeWaveCompareProduce-001	2026-11-20 04:19	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1794453900244_5of6x	e0048255	10.129.32.190	8		case	EDA-Eval-DesignFlow-GpioCsvFormatConvert-001	2026-11-19 13:13	r795 case (eda_other produce-task, k=16, GPIO CSV format-convert)
 1782141557406_uhla7	e0025730	10.129.8.86	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1789718897680_hdhfh	t0002470	10.129.2.11	5		case	EDA-Eval-DesignFlow-CgTimingMeetExactlyFilter-001	2026-11-19 22:42	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
@@ -673,9 +673,9 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1794478957304_r44l7	vendor.cno.chjh07	10.129.2.11	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1794637486415_rbr06	e0039516	10.129.2.10	5		case	EDA-Eval-DesignFlow-DdjocCircuitPlanReconQA-001	2026-11-19 23:35	r794-liveness-ALIVE mc5-9-A-pure sz=61629
 1793926861786_5fn4e	e0047722	10.129.8.125	6		parked		2026-11-19 12:47	r794-liveness-NOFILE mc5-9-A-pure rotation-evaporated
-1794276772104_yicdk					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
-1794301691470_zg7xg					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
-1794278751082_g8en5					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
+1794276772104_yicdk					parked		2026-11-20 04:19	r828 subdir-ALIVE 482KB/65msgs/agent=lead deep-read: TRUE domain=B spice_sim (finesim/primesim fullchip sim flow, scan kw verilog/dbget misclassified). B parked 11-11 'trivial 1msg' was flat-path NOFILE misread. defer to B
+1794301691470_zg7xg					parked		2026-11-20 04:19	r828 subdir-ALIVE 817KB/242msgs/agent=lead deep-read: TRUE domain=C physical_verify (ERC marker schMark/voltMark propagation on power rails VHV/SUV/SVP). B parked 'wrong-shard ERC' correct. defer to C
+1794278751082_g8en5					parked		2026-11-20 04:19	r828 subdir-ALIVE 1.1MB/276msgs/agent=lead deep-read: TRUE domain=D schematic_netlist (cck circuit traversal Tcl fn cckSearchInst/cckExplore tdv/IND/RES/CAP/mos). B parked 11-11 'raw SKILL log' was NOFILE misread. defer to D
 1795070537204_wh1mf	e0048255	hfeg0plg80	175	digital	case	EDA-Eval-DesignFlow-RtlPathSwapProduce-001	2026-11-19 17:58	
 1794812335509_8x5ym	gracew	hfeg0plg92	159	verification	case	EDA-Eval-DesignFlow-CpForcePerBank-001	2026-11-19 18:36	
 1795003416811_wlxsu.messages.json					case	EDA-Eval-DesignFlow-XrunLibsFixProduce-001	2026-11-19 19:32	
