@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-20（5/5 · 03:00 补齐） · research 线</title>
+<title>论文观察日报 · 2026-11-20（5/5 · 06:00 补 B 轨 +4） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-20</h1>
-  <div class="sub"><b>03:00 时窗（补齐 5/5）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 03:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>06:00 时窗（A 轨 5/5 已满 · B 轨 +4）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -239,6 +239,91 @@
   · <b>designflow</b>：L1–L5 判分至少保留一档可累加部分分，避免「全对 / 全错」门槛掩盖阶段能力（#272）；阶段产物若可执行检查，优先用程序判据而非 LLM 打分（沿用 00:00 时窗 #24849）。
 </div>
 
+<div class="note" style="margin-top:16px">
+  <b>🌅 06:00 时窗增量（A 轨 5/5 已满 ⇒ 0 新收；B 轨第七十二轮 +4 → 276；作者网 +4 → 255；发信 +3 → 112）</b><br>
+  <b>A 轨状态</b>：<code>cat:cs.CL</code> 最新 <code>published</code> 仍为 <code>2026-11-18T18:56:12Z</code>（<b>连续第 7 窗未前进</b>，本窗实测 <code>200</code> / <b>94,399 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>）⇒ 今日 5 篇已是该公告批上限，<b>不再补收</b>，<code>SEEN.md</code> / <code>papers.jsonl</code> 本窗无新增。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 第七十二轮 +4 → 276（评测聚合 / 视觉接口 / 语料配比 / KV 压缩）</h3>
+
+<div class="card">
+  <h2><span class="no">B1</span>Measuring Massive Multitask Language Understanding（MMLU）</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Dan Hendrycks · Collin Burns · Steven Basart（et al.，共 7 位；UC Berkeley / Columbia / UChicago / MIT；末位 Jacob Steinhardt）</td></tr>
+    <tr><th>年份 / 出处</th><td>2020 首次提交 · <b>ICLR 2021</b>（arXiv <code>comment</code> 原文）· arXiv <code>2009.03300</code></td></tr>
+    <tr><th>被引</th><td><b>6,448</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td><b>57 个学科</b>、<b>14,079</b> 道测试题、<b>1,540</b> 道开发题、每科至少 <b>100</b> 题；估计专家准确率 <b>89.8%</b>，GPT-3 <b>43.9%</b>，随机猜 <b>25%</b>（作者自报）。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>harness（主）</b>——MMLU 作为新 harness 的第一道 sanity check，报表同时给总分、逐科分数、每科题量与区间；单科突增先查污染再归因数据配比。<b>data（辅）</b>——测试题（含选项顺序变体）进固定 blocklist。<br><b>风险</b>：测试集公开且早于多数现行语料；89.8% 是估计值；未做 PDF 逐页复核。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">B2</span>Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Peng Wang · Shuai Bai · Sinan Tan（et al.，共 19 位；Alibaba Group / Qwen Team；末位 Junyang Lin）</td></tr>
+    <tr><th>年份 / 出处</th><td>2024（2024-09-18）· arXiv 预印本 · arXiv <code>2409.12191</code></td></tr>
+    <tr><th>被引</th><td><b>6,170</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>两条接口改动：<b>naive dynamic resolution</b>（任意分辨率 → 可变数量视觉 token）＋ <b>M-RoPE</b>（旋转位置编码拆成 temporal / height / width 三分量）；ViT 后用 MLP 把相邻 <b>2×2</b> token 压成一个；2B / 8B / 72B，声称可理解 <b>20 分钟以上</b>视频；DocVQA <b>96.5 / 94.5 / 90.1</b>、MMMU <b>64.5 / 54.1 / 41.1</b>（72B / 7B / 2B，作者自报）。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>vision（主）</b>——视觉塔方案表新增「固定分辨率 + 插值」vs「原生动态分辨率 + 2×2 压缩」，判据 = 同视觉 token 预算下的 OCR / 文档分数，并单列 token 增长。<b>pretrain（辅）</b>——M-RoPE 三分量作为长上下文位置编码对照，先验证文本退化一致性。<b>data（辅）</b>——图文对保留原始宽高比与像素数。<br><b>风险</b>：数字全为作者自报；动态分辨率抬高 token 成本；arXiv 注明与 <code>2408.15262</code> 有文本重叠；未做 PDF 逐页复核。</div>
+</div>
+
+
+<div class="card">
+  <h2><span class="no">B3</span>The Pile: An 800GB Dataset of Diverse Text for Language Modeling</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Leo Gao · Stella Biderman · Sid Black（et al.，共 12 位；EleutherAI）</td></tr>
+    <tr><th>年份 / 出处</th><td>2020（2020-12-31）· arXiv 预印本 · arXiv <code>2101.00027</code></td></tr>
+    <tr><th>被引</th><td><b>3,645</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td><b>825.18 GiB</b>、<b>22 个子集</b>，并公开「原始大小 / 采样权重 / 重复 epoch / 有效大小」四列：Pile-CC <b>227.12 GiB（18.11%，1.0）</b>、PubMed Central <b>90.27 GiB（14.40%，2.0）</b>、Books3 <b>100.96 GiB（12.07%，1.5）</b>、OpenWebText2 <b>62.77 GiB（10.01%，2.0）</b>、ArXiv <b>56.21 GiB（8.96%，2.0）</b>；评测用 <b>bpb</b> 而非仅 perplexity，并承认跨 split 仍可能有重复（作者自报）。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>data（主）</b>——配比表把「采样比例」与「重复 epoch」拆成两列，按有效 token 核算；小规模消融固定有效 token 预算再比比例。<b>pretrain（辅）</b>——跨语料统一用 bpb，🚫 用不同 tokenizer 的 perplexity 横比。<b>harness（辅）</b>——跨 split 去重口径写入数据卡。<br><b>风险</b>：含已下架 / 版权争议子集；2020 年清洗口径与现行差距大；权重为经验选择；未做 PDF 逐页复核。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">B4</span>DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>DeepSeek-AI（团队署名；Aixin Liu · Bei Feng · Bin Wang …）</td></tr>
+    <tr><th>年份 / 出处</th><td>2024（2024-05-07）· arXiv 预印本技术报告 · arXiv <code>2405.04434</code></td></tr>
+    <tr><th>被引</th><td><b>1,986</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td><b>236B 总参 / 21B 激活</b>、<b>128K</b> 上下文；<b>MLA</b> 把 K/V 联合压到低秩潜向量以缩 KV cache，配 <b>DeepSeekMoE</b>；<b>8.1T token</b> 预训练；相对 DeepSeek 67B 声称省 <b>42.5%</b> 训练成本、KV cache 减 <b>93.3%</b>、最大生成吞吐 <b>5.76×</b>（作者自报）。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>pretrain（主）</b>——长上下文配置表新增「MLA vs GQA vs MHA」三行，判据 = 同显存下最大 batch / 序列长度与吞吐，低秩维度单列超参。<b>zhulong（辅）</b>——成本口径把「KV cache 字节」与「每 token 激活参数」分开记。<b>harness（辅）</b>——长上下文评测报「有效上下文」而非标称 128K。<br><b>风险</b>：团队署名难拆贡献；42.5% / 93.3% / 5.76× 均为对自家 67B 的相对值；MLA 对检索型任务可能掉点；未做 PDF 逐页复核。</div>
+</div>
+
+<h3 class="sec">👥 作者网增量（#252–#255 → 255 人）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>姓名 / 机构</th><th>邮箱（级别）</th><th>来源论文</th><th>状态</th></tr>
+    <tr><td>252</td><td>Jacob Steinhardt · UC Berkeley</td><td><code>jsteinhardt@berkeley.edu</code>（<b>A</b>：本人主页明文，200 / 13,887 B）</td><td><code>2009.03300</code> MMLU</td><td>已发信（#110）</td></tr>
+    <tr><td>253</td><td>Eugene Agichtein · Emory University</td><td><code>eugene.agichtein@emory.edu</code>（<b>B</b>：arXiv 原生 HTML，200 / 970,388 B；主页 403）</td><td><code>2611.24849</code> ExecJudges</td><td>已发信（#111）</td></tr>
+    <tr><td>254</td><td>Yi Lu · 南京审计大学</td><td><code>luyi06@gmail.com</code>（<b>B</b>：arXiv 原生 HTML，200 / 348,321 B）</td><td><code>2611.24071</code> Retained Context</td><td>已发信（#112，中文）</td></tr>
+    <tr><td>255</td><td>Charles L. A. Clarke · University of Waterloo</td><td><code>claclark@gmail.com</code>（<b>B</b>：同源 HTML；主页 200 / 1,342 B）</td><td><code>2611.24849</code> ExecJudges</td><td>待跟踪（同论文已发 #253）</td></tr>
+  </table>
+  <div class="rm">X 已核验仍 <b>106</b>：四人主页 / 论文页均无可读 handle，按「不猜」纪律一律写「未找到 X」，本轮不新增 follow 候选。</div>
+</div>
+
+<h3 class="sec">✉️ 本轮发信（06:00 时窗 3 封 · 今日累计 8/12）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>收件人</th><th>arXiv</th><th>语言 / 篇幅</th><th>状态</th></tr>
+    <tr><td>110</td><td>Jacob Steinhardt（UC Berkeley）</td><td><code>2009.03300</code></td><td>英文 <b>173</b> 词</td><td><code>SENT OK 06:03:52</code></td></tr>
+    <tr><td>111</td><td>Eugene Agichtein（Emory）</td><td><code>2611.24849</code></td><td>英文 <b>189</b> 词</td><td><code>SENT OK 06:03:55</code></td></tr>
+    <tr><td>112</td><td>Yi Lu（南京审计大学）</td><td><code>2611.24071</code></td><td>中文 <b>297</b> 字</td><td><code>SENT OK 06:03:59</code>（主题行编码事故，06:04:04 补更正）</td></tr>
+  </table>
+  <div class="rm">三封开头句与问题句式零共用；落款均两行（英文 <code>Best regards,</code> / 中文 <code>祝好，</code>，下一行 <code>Yang Liu</code>）其后无行；正文无项目名 / 雇主。累计回信率 <b>0 / 112</b>，0 封到期（最早 2026-11-25）。</div>
+</div>
+
+<div class="note" style="margin-top:16px">
+  <b>🎯 06:00 增量建议（对各线的可执行建议 · 覆盖 6 线）</b><br>
+  · <b>pretrain</b>：长上下文试验新增「MLA / GQA / MHA」三行对照，固定显存与有效 token 预算，记录低秩维度、KV cache 字节、最大 batch（#276）；位置编码试验若上多模态，先用纯文本验证 M-RoPE 三分量退化后与 1D-RoPE 数值一致（#274）。<br>
+  · <b>vision</b>：视觉塔方案表补一档「原生动态分辨率 + 2×2 token 压缩」，判据 = 同视觉 token 预算下 DocVQA / OCRBench 类分数 + 显存与时延（#274：DocVQA 96.5 / 94.5 / 90.1，作者自报）；🚫 只看分辨率上限不看 token 成本。<br>
+  · <b>data</b>：配比表把「采样比例」与「重复 epoch」拆列，按有效 token 核算；跨语料比较统一用 bpb（#275）；MMLU 测试题（含选项顺序变体）加入固定去污染 blocklist（#273）。<br>
+  · <b>harness</b>：MMLU 报表必须「总分 + 逐科 + 题量 + 区间」，并把「单科突增」设为污染触发器（#273）；审阅程序判据时按 #253 的 16 标签预算做小样本校准，先看 Krippendorff α 再扩大（#24849）。<br>
+  · <b>zhulong</b>：成本表把 KV cache 压缩收益与「每 token 激活参数」分列，🚫 把 MLA 的 93.3% 缓存节省折算成等比例训练算力节省（#276）；长上下文一律报有效长度（#240 RULER 口径）。<br>
+  · <b>designflow</b>：可执行判据迁移到 EDA 文档前，先用 20–30 条人工标签测「词法匹配 / NLP 库 / 候选池统计量」三项的边际贡献，再决定重写顺序（#24849 / #253 问答方向）。
+</div>
+
 <details>
 <summary>🗣 voice_ready · 研究者言论（本期 0 条）</summary>
 <ul>
@@ -261,12 +346,15 @@
   <b>A 轨 03:00 补 2 篇</b>：<code>id_list=2611.24809,2611.24540</code> ⇒ <code>200</code> / <code>application/atom+xml</code> / <b>4,464 B / 2 entry</b>（<code>published</code> <code>2026-11-18T17:45:51Z</code> / <code>2026-11-18T14:48:52Z</code>）；abs 页 2/2 <code>200</code>（40,690 / 39,545 B）；数字用 arXiv 原生 HTML 2/2 <code>200</code>（966,440 / 122,470 B），<b>未做 PDF 逐页复核</b>。<b>先查重</b>：两个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> 均 <b>0 命中</b>。<br>
   <b>B 轨第七十一轮</b>：arXiv abs 页 4/4 <code>200</code>（43,569 / 44,344 / 43,160 / 42,800 B）；OpenAlex 4/4 <code>200</code>（990 / 13,910 / 967 / 1,116）；ar5iv HTML 4/4 <code>200</code>（207,799 / 476,499 / 106,203 / 151,070 B）核数字，<b>未做 PDF 逐页复核</b>。<b>先查重</b>：四个 ID 在 <code>PAPERS.md</code> 全量正则 <b>0 命中</b>。<br>
   <b>发信 03:00 时窗</b>：<code>#107</code> <code>03:03:13</code> / <code>#108</code> <code>03:03:18</code> / <code>#109</code> <code>03:03:18</code>；日志 <code>/tmp/r214/mail/zhuang.log</code> / <code>koyejo.log</code> / <code>sengupta.log</code>；回信率 <b>0 / 109</b>。<br>
+  <b>B 轨第七十二轮（06:00）</b>：<code>id_list=2009.03300,2409.12191,2101.00027,2405.04434</code> ⇒ <code>200</code> / <code>application/atom+xml</code> / <b>19,377 B / 4 entry</b>（<code>published</code> <code>2020-09-07T17:59:25Z</code> / <code>2024-09-18T17:59:32Z</code> / <code>2020-12-31T19:00:10Z</code> / <code>2024-05-07T15:56:43Z</code>）；OpenAlex <b>4/4 <code>200</code></b>（<b>6,448 / 6,170 / 3,645 / 1,986</b>，查询日 2026-11-20）；ar5iv HTML <b>4/4 <code>200</code></b>（208,166 / 655,463 / 677,121 / 694,593 B）核数字，<b>未做 PDF 逐页复核</b>。<b>先查重</b>：四个 ID 在 <code>PAPERS.md</code> 全量正则 <b>0 命中</b>（另核 <code>2211.09110</code> HELM / <code>2107.03374</code> Codex / <code>2306.00978</code> AWQ / <code>2308.03688</code> AgentBench / <code>2306.05685</code> MT-Bench 均未收录）。<br>
+  <b>A 轨列表（06:00 复测）</b>：<code>cat:cs.CL</code> ⇒ <code>200</code> / <b>94,399 B</b> / <b>40 entry</b>，<code>published</code> 上界仍 <code>2026-11-18T18:56:12Z</code> ⇒ 连续第 7 窗未前进，A 轨本窗 0 新收（今日 5/5 已满）。<br>
+  <b>发信（06:00）</b>：<code>#110</code> <code>06:03:52</code>（173 词）/ <code>#111</code> <code>06:03:55</code>（189 词）/ <code>#112</code> <code>06:03:59</code>（297 汉字）+ <code>06:04:04</code> 主题行更正；日志 <code>/tmp/r218/mail/steinhardt.log</code> / <code>agichtein.log</code> / <code>yilu.log</code> / <code>yilu_correction.log</code>；回信率 <b>0 / 112</b>。<br>
   <b>网络自检</b>：<code>export.arxiv.org</code>（<code>https</code> + <code>--noproxy '*'</code>）<code>200</code>；<code>arxiv.org/pdf</code> 与 <code>ar5iv</code> 均 <code>200</code> 但 PDF 传输在 25–27 s 内被截断（连续 7 份）⇒ 本轮统一走 ar5iv 核数字，并如实标注。<br>
   <b>台账</b>：发信 <code>#105</code> / <code>#106</code>，起止时间 <code>2026-11-20 00:05:38</code> / <code>00:05:45</code>；日志 <code>/tmp/r213/mail/lm.log</code> / <code>guo.log</code>。回信率 <b>0 / 106</b>；<code>replies/</code> 仍无摘录；通道仍只发不收。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-20（03:00 时窗补齐 5/5）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 03:0x（A 轨 5/5 · B 轨累计 272 · 作者网 251 · 发信 109 / 回信 0） CST
+  research 线 · 论文观察日报 · 2026-11-20（06:00 时窗 · A 轨 5/5 · B 轨 +4）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 06:0x（A 轨 5/5 · B 轨累计 276 · 作者网 255 · 发信 112 / 回信 0） CST
 </footer>
 
 </div>

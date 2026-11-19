@@ -6,6 +6,10 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-20 06:0x）**：作者 **255** 人（编号最大 **255**）· X 已核验 **106**（本轮未新增核验：四名新作者主页均无可读 handle）· 已发信 **112**（台账 #1–#112；另有 1 封主题行更正，不计入）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第七十二轮增量（2026-11-20 06:0x）**：作者网 251 → **255**（#252 Jacob Steinhardt **A 级** `jsteinhardt@berkeley.edu`（本人主页明文，`200` / 13,887 B）/ #253 Eugene Agichtein **B 级** `eugene.agichtein@emory.edu`（arXiv 原生 HTML，`200` / 970,388 B；主页 `403`）/ #254 Yi Lu **B 级** `luyi06@gmail.com`（arXiv 原生 HTML，`200` / 348,321 B；南京审计大学）/ #255 Charles L. A. Clarke **B 级** `claclark@gmail.com`（同源 HTML；主页 `200` / 1,342 B）），来自 B 轨 #273 MMLU 与 A 轨 `2611.24849` / `2611.24071`；已发信 109 → **112**（#110 英文 173 词 `SENT OK 06:03:52` / #111 英文 189 词 `06:03:55` / #112 中文 297 字 `06:03:59`）；⚠️ **事故如实记**：#112 的主题行被 shell 二次转义成 `\u5173...` 字面量，已于 `06:04:04` 补发一封**主题行更正**（不计为第 113 封）并写入台账。X 保持 **106**，四人均写「未找到 X」。
+
 > **当前计数（2026-11-20 03:0x）**：作者 **251** 人（编号最大 **251**）· X 已核验 **106**（#248 的 `@liuzhuang1234` 只取自本人主页外链、**未做 `og:title` + `full_text` 双源核验 ⇒ 不计入「已核验」**）· 已发信 **109**（台账 #1–#109）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **第七十一轮增量（2026-11-20 03:0x）**：作者网 247 → **251**（#248 Zhuang Liu 刘壮 **A 级** `zhuangl@princeton.edu`（`liuzhuang13.github.io` 页内明文，200 / 42,671 B）/ #249 Sanmi Koyejo **A 级** `sanmi@cs.stanford.edu`（`cs.stanford.edu/~sanmi/` 明文，200 / 7,785 B）/ #250 Biswa Sengupta **B 级** `biswa.sengupta@jpmorgan.com`（arXiv 原生 HTML 正文，200 / 122,470 B）/ #251 Alethea Power **C 级** `alethea@openai.com`（2022 年论文 `comment`，未复核 ⇒ 不发）），来自本轮 B 轨 #270 ConvNeXt / #272 Mirage / #271 Grokking 与 A 轨 #5 `2611.24540`；已发信 106 → **109**（#107 中文 194 字 `SENT OK 03:03:13` / #108 英文 171 词 `03:03:18` / #109 英文 161 词 `03:03:18`）。
@@ -3593,6 +3597,58 @@
 | X 账号 | **未找到**（🚫 不猜） |
 | 状态 | **待跟踪**（C 级地址，不发） |
 | 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：小数据上「过拟合之后仍会泛化」的原始观察，影响我们小规模消融的早停口径；但地址为 2022 年旧地址，暂不投递。 |
+
+### 252. Jacob Steinhardt
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jacob Steinhardt（英语姓名族属 ⇒ 英文信） |
+| 机构 | **UC Berkeley**（Statistics / EECS；MMLU 末位作者） |
+| 代表论文 | **Measuring Massive Multitask Language Understanding**（`2009.03300`，ICLR 2021，B 轨 #273，末位作者） |
+| 邮箱 | **jsteinhardt@berkeley.edu** / **A**（本人主页 `https://jsteinhardt.stat.berkeley.edu/` 页内明文，2026-11-20 实测 `200` / 13,887 B） |
+| 主页 | <https://jsteinhardt.stat.berkeley.edu/>（`200` / 13,887 B） |
+| X 账号 | **未找到**（主页内无 twitter / x.com 外链 ⇒ 🚫 不猜） |
+| 状态 | **已发信**（第 110 封，2026-11-20 06:03:52 `SENT OK`） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构；无中/日/韩信号)`。价值点：MMLU 的**测试集公开与污染**问题，直接关系 harness 的「单科突增先查污染」流程；问答聚焦「逐科区间 vs 总分」与「最便宜的污染诊断」。回填 harness（主）· data（辅）。 |
+
+### 253. Eugene Agichtein
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Eugene Agichtein（英语 / 俄裔姓名族属 ⇒ 英文信） |
+| 机构 | **Emory University**（Computer Science；Atlanta, GA） |
+| 代表论文 | **Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling**（`2611.24849`，2026-11-18，A 轨 2026-11-20 第 1 篇，一作） |
+| 邮箱 | **eugene.agichtein@emory.edu** / **B**（**arXiv 原生 HTML 作者信息段**明文，2026-11-20 实测 `200` / 970,388 B；机构主页 `mathcs.emory.edu/~eugene/` 实测 `403` ⇒ 未在主页复核） |
+| 主页 | **未取得可访问个人页**（`403`；`eugeneagichtein.github.io` `404` ⇒ 🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 111 封，2026-11-20 06:03:55 `SENT OK`） |
+| 备注 | `语言=英文(判据=英语/俄裔姓名族属 + 美国机构；无中/日/韩信号)`。价值点：**可执行程序判据**（每题目生成一段程序替代逐文档 LLM 判分），与 designflow 的 L1–L5 可验证判分同构；问答聚焦「词法匹配 / NLP 库 / 候选池统计量哪一项能迁到硬件与 EDA 文档」与「程序 vs LLM 判分器的审计抽样规则」。回填 harness（主）· designflow（辅）。 |
+
+### 254. Yi Lu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yi Lu（拼音姓名可还原中文名；中国机构 ⇒ **中文信**） |
+| 机构 | **南京审计大学 统计与数据科学学院**（Nanjing Audit University；Nanjing 211815, Jiangsu, China） |
+| 代表论文 | **Measuring and Charging for Retained Context in Long-Context LLM Services**（`2611.24071`，2026-11-18，A 轨 2026-11-20 第 3 篇，一作） |
+| 邮箱 | **luyi06@gmail.com** / **B**（**arXiv 原生 HTML 正文明文**，2026-11-20 实测 `200` / 348,321 B；未在机构页复核） |
+| 主页 | **未找到**（🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 112 封，2026-11-20 06:03:59 `SENT OK`；06:04:04 另发一封**主题行编码更正**，不计为第 113 封） |
+| 备注 | `语言=中文(判据=拼音姓名 Yi Lu + 中国机构南京审计大学；不因 gmail / 英文论文判英文)`。价值点：**「只压尾部、不降均值」**的计费结论（P99 −31%–42%、中位上升）与 65,536 token 热缓存的实测口径，直接可用于 zhulong 的成本叙事；问答聚焦「agent 负载下位置权重能否用缓存命中块 + 相关性分数近似」与「按 KV 块还是按命中 token 计费」。回填 zhulong（主）· harness（辅）。 |
+
+### 255. Charles L. A. Clarke
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Charles L. A. Clarke（英语姓名族属 ⇒ 英文信） |
+| 机构 | **University of Waterloo**（David R. Cheriton School of Computer Science；Ontario, Canada） |
+| 代表论文 | **Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling**（`2611.24849`，A 轨 2026-11-20 第 1 篇，二作） |
+| 邮箱 | **claclark@gmail.com** / **B**（arXiv 原生 HTML 作者信息段明文，2026-11-20 实测 `200` / 970,388 B） |
+| 主页 | <https://plg.uwaterloo.ca/~claclark/>（`200` / 1,342 B；页内未读到明文邮箱） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1 封」发给 #253 ⇒ 不再发） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 加拿大机构)`。价值点：TREC 评测与相关性判定的长期经验；建账以备后续「程序判据在检索型任务上的稳定性」追问。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

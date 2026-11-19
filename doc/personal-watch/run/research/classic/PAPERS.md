@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **276** 条（**第七十二轮 2026-11-20 06:0x 补 4 条 → 276**：MMLU `2009.03300`（**6,448**，ICLR 2021）/ Qwen2-VL `2409.12191`（**6,170**）/ The Pile `2101.00027`（**3,645**）/ DeepSeek-V2 `2405.04434`（**1,986**）；元数据 arXiv `id_list` **`200` + atom**（19,377 B / 4 entry）+ OpenAlex **4/4 `200`** + ar5iv HTML **4/4 `200`**（208,166 / 655,463 / 677,121 / 694,593 B）核数字，**未做 PDF 逐页复核**；覆盖轴 = 57 学科知识基准的聚合与污染 / 原生动态分辨率与三维位置编码 / 语料配比的「比例 × epoch」两旋钮 / MLA 的 KV cache 压缩）
+
 **本轮快照**：累计 **272** 条（**第七十一轮 2026-11-20 03:0x 补 4 条 → 272**：C4 文档化 `2104.08758`（**990**，EMNLP 2021 pp. 1286–1305）/ ConvNeXt `2201.03545`（**13,910**，CVPR 2022 pp. 11966–11976）/ Grokking `2201.02177`（**967**）/ Mirage `2304.15004`（**1,116**，NeurIPS 2023 pp. 55565–55581）；元数据 arXiv abs 页 **4/4 `200`** + OpenAlex **4/4 `200`**；数字用 ar5iv HTML **4/4 `200`**（207,799 / 476,499 / 106,203 / 151,070 B）核对，**未做 PDF 逐页复核**；覆盖轴 = 网页语料来源审计 / 纯 ConvNet 现代化配方 / 过拟合之后的泛化 / 指标选择制造的假涌现）
 
 **本轮快照**：累计 **268** 条（**第七十轮 2026-11-20 00:0x 补 4 条 → 268**：Transformer-XL `1901.02860`（**1,881**）/ Emu3 `2409.18869`（**1,022**）/ Medusa `2401.10774`（**1,028**）/ Janus `2410.13848`（**633**，CVPR 2025 pp. 12966–12977）；元数据经 **arXiv abs 页 `citation_*` 4/4 `200`**（arXiv `id_list` 本轮 `429`，如实记）+ OpenAlex 4/4 `200`；PDF 4/4 `200` 但**全部截断**（`pdftotext` 失败）⇒ 数字一律改用 **ar5iv HTML 4/4 `200`**（312,920 / 267,946 / 319,495 / 317,703 B）核对并逐条标注；覆盖轴 = 段级递归与相对位置编码 / 全离散 token 的统一理解生成 / 多解码头投机解码的无损档 / 理解与生成双编码器解耦）。回溯：**第六十九轮 2026-11-19 21:0x 补 4 条 → 264**：Transfusion `2408.11039`（**588**）/ Agentless `2407.01489`（**1,053**，PACM SE Vol. 2 Issue FSE pp. 801–824, 2025）/ Massive Activations `2402.17762`（**444**，**&lt;500 按「方法论常青」收**）/ EDA Corpus `2405.06676`（**38**，**&lt;500 按「本领域权威」收**，IEEE LAD 2024 pp. 1–5）；arXiv `id_list` 4/4 `200` + OpenAlex 4/4 `200`；PDF 2/4 完整（1,384,716 / 453,822 B）、2/4 `content-length` 14,087,563 / 7,636,655 B **>5 MB 未落盘** ⇒ 数字用 **ar5iv HTML 2/2 `200`**（300,229 / 271,351 B）核对。
@@ -4698,9 +4700,79 @@
 | 核验状态 | arXiv abs 页 `200` / 42,800 B（`citation_title` / `citation_author` / `citation_date=2023/04/28`）；OpenAlex `200`（**1,116**，NeurIPS 2023 pp. 55565–55581）；ar5iv HTML `200` / **151,070 B** 核 `92%` / `Multiple Choice Grade` / `exact match` / `power law` / `per-token cross entropy`；**未做 PDF 逐页复核**。 |
 
 ---
+## 273. Measuring Massive Multitask Language Understanding（MMLU）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Measuring Massive Multitask Language Understanding |
+| 作者（前 3） | Dan Hendrycks · Collin Burns · Steven Basart（et al.，共 7 位；UC Berkeley / Columbia / UChicago / MIT；末位 Jacob Steinhardt） |
+| 年份 | **2021**（ICLR 2021；arXiv 首次提交 **2020-09-07**，`cs.CY`） |
+| 会议 / 期刊 | **ICLR 2021**（arXiv `comment` 原文 `ICLR 2021`；OpenAlex 对该 arXiv DOI 记录为 `preprint`，两条口径不同） |
+| 被引数 | **6,448**（OpenAlex `10.48550/arxiv.2009.03300`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2009.03300> ｜ arXiv DOI `10.48550/arxiv.2009.03300` |
+| 一句话贡献 | 用 **57 个学科**的多选题测预训练知识：**14,079** 道测试题、**1,540** 道开发题、每科至少 **100** 道测试题，覆盖 STEM / 人文 / 社科 / 其他，难度从小学到专业；估计专家准确率约 **89.8%**，而 GPT-3 为 **43.9%**、随机猜为 **25%**，且没有任何单科达到专家水平（作者自报）。 |
+| 与我们工作的关系 | **harness（主目标：基准聚合与污染口径）**：<b>动作</b>：新 harness 的第一道 sanity check 固定跑 MMLU，但报表必须同时给「总分 + 逐科分数 + 每科题量」，并按题量给区间；🚫 只报一个总分（#272 已证明总分会被指标形状掩盖）。<br>**pretrain（辅）**：<b>动作</b>：预训练数据决策里把 MMLU 当「知识覆盖探针」，🚫 当能力上限；对单科突增先做污染排查再归因到数据配比。<br>**data（辅）**：<b>动作</b>：去污染流水线把 MMLU 测试题（含选项顺序变体）列入固定 blocklist，并在数据配比实验前后各跑一次。<br>**风险**：① 测试集公开且早于多数现行语料，分数易受污染；② 89.8% 是估计值而非实测专家分数；③ 题目以英语 / 美国语境为主；④ 未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十二轮） |
+| 核验状态 | arXiv API `id_list=2009.03300,2409.12191,2101.00027,2405.04434` **`200` + `application/atom+xml`**（19,377 B / 4 entry；`published=2020-09-07T17:59:25Z`）；OpenAlex **`200`（6,448）**；ar5iv HTML **`200` / 208,166 B** 核 `57 subjects` / `14,079` / `1,540` / `100 test examples` / `89.8` / `43.9` / `25%`；**未做 PDF 逐页复核**。 |
+
+---
+
+## 274. Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution |
+| 作者（前 3） | Peng Wang · Shuai Bai · Sinan Tan（et al.，共 19 位；Alibaba Group / Qwen Team；末位 Junyang Lin） |
+| 年份 | **2024**（arXiv 首次提交 **2024-09-18**，`cs.CV`） |
+| 会议 / 期刊 | arXiv 预印本（OpenAlex `type=preprint`；无会场记录） |
+| 被引数 | **6,170**（OpenAlex `10.48550/arxiv.2409.12191`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2409.12191> ｜ arXiv DOI `10.48550/arxiv.2409.12191` |
+| 一句话贡献 | 两条接口改动而非换主干：① **naive dynamic resolution** 把任意分辨率图像映射成可变数量视觉 token；② **M-RoPE** 把旋转位置编码拆成 **temporal / height / width** 三分量（文本时三分量取相同 ID，退化为 1D-RoPE）；ViT 后用 MLP 把相邻 **2×2** token 压成一个，统一处理图像与视频；2B / 8B / 72B 三档，声称可理解 **20 分钟以上**视频；DocVQA **96.5 / 94.5 / 90.1**、MMMU **64.5 / 54.1 / 41.1**（72B / 7B / 2B，作者自报）。 |
+| 与我们工作的关系 | **vision（主目标：视觉塔分辨率与位置编码）**：<b>动作</b>：视觉塔方案表新增「固定分辨率 + 插值」vs「原生动态分辨率 + 2×2 压缩」两行，判据 = 同视觉 token 预算下的 OCR / 文档任务分数，并单独记录 token 数随分辨率的增长。<br>**pretrain（辅）**：<b>动作</b>：长上下文位置编码试验把 M-RoPE 的三分量拆解作为对照（文本退化一致性必须先验证），🚫 直接把 1D-RoPE 结论套到多模态。<br>**data（辅）**：<b>动作</b>：图文对采集不强制统一分辨率，保留原始宽高比与像素数，供动态分辨率训练直接使用。<br>**风险**：① 全部数字为作者自报且未复现；② 动态分辨率会抬高视觉 token 成本，收益需与显存 / 时延一起算；③ 论文注明与 `2408.15262` 有文本重叠（arXiv admin note）；④ 未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十二轮） |
+| 核验状态 | arXiv API `id_list` **`200` + atom**（`published=2024-09-18T17:59:32Z`；`comment` = 代码链接 + 文本重叠提示）；OpenAlex **`200`（6,170）**；ar5iv HTML **`200` / 655,463 B** 核 `naive dynamic resolution` / `M-RoPE` / `temporal, height, and width` / `2 × 2` / `DocVQA` 96.5·94.5·90.1 / `MMMU val` 64.5·54.1·41.1 / `20 minutes`；**未做 PDF 逐页复核**。 |
+
+---
+
+
+
+## 275. The Pile: An 800GB Dataset of Diverse Text for Language Modeling
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Pile: An 800GB Dataset of Diverse Text for Language Modeling |
+| 作者（前 3） | Leo Gao · Stella Biderman · Sid Black（et al.，共 12 位；EleutherAI） |
+| 年份 | **2020**（arXiv 首次提交 **2020-12-31**，`cs.CL`；数据集论文常引作 2021） |
+| 会议 / 期刊 | arXiv 预印本（OpenAlex `type=preprint`；无会场记录） |
+| 被引数 | **3,645**（OpenAlex `10.48550/arxiv.2101.00027`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2101.00027> ｜ arXiv DOI `10.48550/arxiv.2101.00027` |
+| 一句话贡献 | 公开 **825.18 GiB**、**22 个子集**的英文预训练语料，并把「原始大小 / 采样权重 / 重复 epoch 数 / 有效大小」四列同时公开：Pile-CC **227.12 GiB（18.11%，1.0 epoch）**、PubMed Central **90.27 GiB（14.40%，2.0）**、Books3 **100.96 GiB（12.07%，1.5）**、OpenWebText2 **62.77 GiB（10.01%，2.0）**、ArXiv **56.21 GiB（8.96%，2.0）**；评测用 **bits per UTF-8 encoded byte（bpb）** 而非仅 perplexity，并承认训练 / 验证 / 测试划分之间仍可能有重复文档（作者自报）。 |
+| 与我们工作的关系 | **data（主目标：配比的两个旋钮）**：<b>动作</b>：数据配比表把「采样比例」与「重复 epoch 数」拆成两列分别记录，按有效 token 而非原始字节核算；小规模消融固定有效 token 预算再比比例。<br>**pretrain（辅）**：<b>动作</b>：跨语料比较统一用 **bpb**（与 tokenizer 无关），🚫 用不同 tokenizer 下的 perplexity 直接横比。<br>**harness（辅）**：<b>动作</b>：验证 / 测试集去重口径写进数据卡，承认跨 split 重复并按文档级指纹复检。<br>**风险**：① 语料含已下架 / 版权争议子集（如 Books3），不可直接照搬；② 2020 年的网页语料与现行清洗口径差距大；③ 22 子集的权重是经验选择，非最优化结果；④ 未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十二轮） |
+| 核验状态 | arXiv API `id_list` **`200` + atom**（`published=2020-12-31T19:00:10Z`）；OpenAlex **`200`（3,645）**；ar5iv HTML **`200` / 677,121 B** 核 `825.18 GiB` / `22 diverse` / `Pile-CC 227.12 GiB 18.11%` / `PubMed Central 90.27 GiB 14.40%` / `Books3 100.96 GiB 12.07%` / `ArXiv 56.21 GiB 8.96%` / `bits per UTF-8` / 跨 split 重复说明；**未做 PDF 逐页复核**。 |
+
+---
+
+## 276. DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model |
+| 作者（前 3） | DeepSeek-AI（团队署名；Aixin Liu · Bei Feng · Bin Wang …） |
+| 年份 | **2024**（arXiv 首次提交 **2024-05-07**，`cs.CL`） |
+| 会议 / 期刊 | arXiv 预印本技术报告（OpenAlex `type=preprint`；无会场记录） |
+| 被引数 | **1,986**（OpenAlex `10.48550/arxiv.2405.04434`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.04434> ｜ arXiv DOI `10.48550/arxiv.2405.04434` |
+| 一句话贡献 | **236B 总参 / 21B 激活**、**128K** 上下文的 MoE 模型，核心是 **MLA（Multi-head Latent Attention）**：把 K/V 联合压到低秩潜向量以缩 KV cache，并与 **DeepSeekMoE**（细粒度专家 + 共享专家）组合；在 **8.1T token** 上预训练，相对 DeepSeek 67B 声称节省 **42.5%** 训练成本、KV cache 减少 **93.3%**、最大生成吞吐提升 **5.76×**（作者自报）。 |
+| 与我们工作的关系 | **pretrain（主目标：注意力与 MoE 的联合设计）**：<b>动作</b>：长上下文配置表新增「MLA vs GQA vs MHA」三行，判据 = 同显存下的最大 batch / 序列长度与训练吞吐，并单列低秩维度作为超参；🚫 只比参数量。<br>**zhulong（辅）**：<b>动作</b>：成本口径把「KV cache 字节数」与「每 token 激活参数」分开记，MLA 的收益主要落在前者，不能折算成同等训练算力节省。<br>**harness（辅）**：<b>动作</b>：长上下文评测固定报告「有效上下文」而非标称 128K（与 #240 的 RULER 口径一致）。<br>**风险**：① 团队署名、个人贡献难拆分；② 42.5% / 93.3% / 5.76× 均为对自家 67B 基线的相对值，不可跨模型横比；③ MLA 的低秩压缩对某些检索型任务可能掉点；④ 未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十二轮） |
+| 核验状态 | arXiv API `id_list` **`200` + atom**（`published=2024-05-07T15:56:43Z`）；OpenAlex **`200`（1,986）**；ar5iv HTML **`200` / 694,593 B** 核 `236B` / `21B` / `128K` / `8.1T` / `42.5%` / `93.3%` / `5.76` / `Multi-head Latent Attention`；**未做 PDF 逐页复核**。 |
+
+---
 
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
+> ✅ **第七十二轮（2026-11-20 06:0x）转正 4 条**：MMLU `2009.03300`（#273，**6,448**，ICLR 2021）· Qwen2-VL `2409.12191`（#274，**6,170**）· The Pile `2101.00027`（#275，**3,645**）· DeepSeek-V2 `2405.04434`（#276，**1,986**）⇒ B 轨累计 **276**（覆盖轴：57 学科知识基准的聚合与污染 / 原生动态分辨率与三维位置编码 / 语料配比的「比例 × epoch」两旋钮 / MLA 的 KV cache 压缩）。核验：arXiv `id_list` **`200` + atom**（19,377 B / 4 entry）+ OpenAlex **4/4 `200`** + ar5iv HTML **4/4 `200`**（208,166 / 655,463 / 677,121 / 694,593 B），**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中（另核 `2211.09110` HELM / `2107.03374` Codex / `2306.00978` AWQ / `2308.03688` AgentBench / `2306.05685` MT-Bench 均未收录，留作候选）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ HELM `2211.09110`（多场景评测框架）或 Codex `2107.03374`（HumanEval 的原始出处）；④ AWQ `2306.00978`（激活感知权重量化，SLM 部署）；⑤ 合成数据自举后续一手。
 > ✅ **第七十一轮（2026-11-20 03:0x）转正 4 条**：C4 文档化 `2104.08758`（#269，**990**，EMNLP 2021 pp. 1286–1305）· ConvNeXt `2201.03545`（#270，**13,910**，CVPR 2022 pp. 11966–11976）· Grokking `2201.02177`（#271，**967**）· Are Emergent Abilities a Mirage? `2304.15004`（#272，**1,116**，NeurIPS 2023 pp. 55565–55581）⇒ B 轨累计 **272**（覆盖轴：网页语料的来源审计 / 纯 ConvNet 的现代化配方 / 过拟合之后的泛化 / 指标选择制造的假涌现）。核验：abs 页 4/4 `200`；OpenAlex 4/4 `200`（990 / 13,910 / 967 / 1,116）；ar5iv HTML 4/4 `200`（207,799 / 476,499 / 106,203 / 151,070 B）核数字，**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 合成数据自举后续一手；④ EDA 第二篇可执行判分（换 OpenROAD 指令集方向）；⑤ 视觉侧补 AIMv2 / DFN 与 #270 对照。
 > ✅ **第七十轮（2026-11-20 00:0x）转正 4 条**：Transformer-XL `1901.02860`（#265，**1,881**）· Emu3 `2409.18869`（#266，**1,022**）· Medusa `2401.10774`（#267，**1,028**）· Janus `2410.13848`（#268，**633**，CVPR 2025 pp. 12966–12977）⇒ B 轨累计 **268**（覆盖轴：段级递归 + 相对位置编码 / 全离散 token 统一理解与生成 / 多解码头投机解码的无损档 / 理解与生成双编码器解耦）。核验：arXiv `id_list` 本轮 **`429`** ⇒ 改用 **abs 页 `citation_*` 4/4 `200`**（标题 / 作者 / 首次提交日齐全，如实记）；OpenAlex 4/4 `200`；PDF 4/4 `200` 但**全部截断**（无 `%%EOF`、`pdftotext` 失败）⇒ 数字改用 **ar5iv HTML 4/4 `200`**（312,920 / 267,946 / 319,495 / 317,703 B）核对。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中（另核 `2307.08691` FlashAttention-2 / `1811.06965` GPipe / `1910.02054` ZeRO / `1909.08053` Megatron-LM 均已在表内 ⇒ 不收）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 合成数据自举后续一手；④ EDA 第二篇可执行判分（VerilogEval 已在表内 ⇒ 换 OpenROAD 指令集方向）；⑤ 长上下文位置编码续（NTK-aware 一手）。
 > ✅ **第六十九轮（2026-11-19 21:0x）转正 4 条**：Transfusion `2408.11039`（#261，**588**）· Agentless `2407.01489`（#262，**1,053**，PACM SE Vol. 2 Issue FSE pp. 801–824, 2025）· Massive Activations `2402.17762`（#263，**444**，**&lt;500 按「方法论常青」收**）· EDA Corpus `2405.06676`（#264，**38**，**&lt;500 按「本领域权威」收**，IEEE LAD 2024 pp. 1–5）⇒ B 轨累计 **264**（覆盖轴：文本因果 / 图像双向的混合注意力与双损失 / 固定三段流水线作为 agent 基线 / 巨值激活＝隐式 bias 项 / 脚本必须在 OpenROAD 里真跑才算对）。核验：arXiv `id_list` 4/4 `200` + OpenAlex 4/4 `200`；PDF 2/4 完整（1,384,716 / 453,822 B，`%PDF-` + `pdftotext` 均通过），2/4 `content-length` 14,087,563 / 7,636,655 B **>5 MB 未落盘** ⇒ 数字用 ar5iv 2/2 `200`（300,229 / 271,351 B）核对。⚠️ **本轮拦下一处 ID 误记**：候选池/检索时记的「EDA Corpus `2405.07288`」实测是 *Erasing Concepts from Text-to-Image Diffusion Models with Few-shot Unlearning*（OpenAlex 被引 34，与 EDA 无关）⇒ 按标题检索得真 ID **`2405.06676`**（被引 **38**，IEEE LAD 2024）后才收录；**旧记作废**。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中，改试 `ti:` + 会议论文集）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手，本轮 #263 已补「异常激活」侧）；③ 数据质量线「合成数据自举」后续一手；④ EDA 侧第二篇可执行判分语料（VerilogEval `2309.07544` 已在表内 ⇒ 换 ChipNeMo 后续或 OpenROAD 指令集工作）；⑤ 长上下文位置编码续（NTK-aware 一手）。
