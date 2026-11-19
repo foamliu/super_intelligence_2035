@@ -16,3 +16,17 @@ new instances: 2 ['sphinx-doc__sphinx-9673', 'sympy__sympy-15349']
 new instances: 2 ['matplotlib__matplotlib-14623', 'matplotlib__matplotlib-24026']
 [incr-eval 16:55:21] pi: merged 2 new patches -> predictions_pi_new_R2771.json
 [incr-eval 16:55:21] pi: EVAL 2 instances -> run_id=verified_full_glm53_pi_incr_R2771
+[incr-eval 17:56:05] pi: eval rc=0
+[incr-eval 17:56:05]   matplotlib__matplotlib-14623: NO report.json -> infra
+[incr-eval 17:56:05]   matplotlib__matplotlib-24026: NO report.json -> infra
+[incr-eval 17:56:05] pi: cumulative n=420 resolved=242 failed=175 infra=3 -> eval_glm53_pi.json
+[incr-eval 17:56:05] hermes: 0 new instances, skip
+
+=== deepseek R2771 ===
+new instances: 1 ['django__django-15563']
+[incr-eval 17:56:05] deepseek: merged 1 new patches -> predictions_deepseek-harness_new_R2771.json
+[incr-eval 17:56:05] deepseek: EVAL 1 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2771
+[incr-eval 17:56:37] deepseek: eval rc=0
+[incr-eval 17:56:37]   django__django-15563: RESOLVED
+[incr-eval 17:56:37] deepseek: cumulative n=271 resolved=176 failed=95 infra=0 -> eval_glm53_deepseek-harness.json
+[incr-eval 17:56:37] === incr_eval R2771 done: 5 instances, +2resolved +1failed +2infra, spiral_marked=0 ===
