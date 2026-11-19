@@ -68,19 +68,19 @@
 1791526217197_87257.messages.json	t0002962	hfeg0plg90	460	schematic_netlist	parked		2026-11-03 09:37	file cleaned from disk since 2026-10-28 scan (absent on hfeg0pkn003 + hfeg0plg90); stale snapshot
 1792380576403_uumms	e0029308	hfeg0pkn001	343	schematic_netlist	case	EDA-Eval-DesignFlow-CellVerilogExtract-001	2026-11-03 10:10	
 1788577896116_33zw1.messages.json					case	EDA-Eval-DesignFlow-NetPathHL-001	2026-11-03 10:44	
-1792831256137_6qt0a	harrywu	hfeg0pkn002	319	schematic_netlist	parked	cross-shard dup = shard B EDA-Eval-DesignFlow-DelayChainEdgeMeas-001 (spice_sim)	2026-11-03 10:54	
+1792831256137_6qt0a	harrywu	hfeg0pkn002	319	schematic_netlist	parked	cross-shard dup = shard B EDA-Eval-DesignFlow-DelayChainEdgeMeas-001 (spice_sim)	2026-11-19 23:49	r968 dup-of-shardB: B cased DelayChainEdgeMeas-001; cross-shard dup
 1790490487765_6dx8f	cwei	hfeahpc504	328	schematic_netlist	parked		2026-11-03 11:26	overlaps CTLEAether-001 (same user cwei/lib spice_agent_test/topology CTLE; golden conn table = CTLEAether-001 gen_ctle_A.py public asset -> cross-case answer leakage per §4.8)
 1791958525711_f1fik	chengleiy	hfeg0pkn001	504	schematic_netlist	case	EDA-Eval-DesignFlow-ScriptDirComprehendQA-001	2026-11-19 11:45	
-1792487689184_4ybw1	yan1zh	hfeg0plg65	495	schematic_netlist	parked	layout-from-schematic + LVS (shard C territory), OA binary, pyAether sandbox refused	2026-11-03 11:08	
-1792570431387_vdqlw	ypzheng	hfeg0pkn003	335	analog_context	parked	Aether tool-QA skill creation (infra), not design-flow	2026-11-03 11:08	
+1792487689184_4ybw1	yan1zh	hfeg0plg65	495	schematic_netlist	parked	layout-from-schematic + LVS (shard C territory), OA binary, pyAether sandbox refused	2026-11-19 23:48	r968 peek dup-of-shardB: U#8 layout-from-schematic+LVS = shard C layout_aether; B also parked; cross-shard dup
+1792570431387_vdqlw	ypzheng	hfeg0pkn003	335	analog_context	parked	Aether tool-QA skill creation (infra), not design-flow	2026-11-19 23:48	r968 peek dup-of-shardB: B cased TrimMarginSpec-001 (mutex 1-trace-1-case); U#9 addr-gating explain is D-domain analog_context but trace taken; cross-shard dup
 1789092579396_tgs17	miccao	hfeg0plg37	378	schematic_netlist	case	EDA-Eval-DesignFlow-CellConstraintsTplProduceQA-001	2026-11-19 14:08	r940 revival-from-parked peek (override B wrong-domain park 2026-11-09 'wrong-shard(layout/calibre/schematic)'): tgs17 = autocell-tcl-flow CDL->GDS pcell skill, netlist:1038/.cdl:37 dominant = schematic_netlist D-domain (B=spice_sim correctly disowned). U#231 produce cell_constraints_template.txt 590 lines 10 sections GOLD A#282. deepread done. synth deferred r941. 0 hits cross-shard jsonl.
-1787569992152_uml8e	e0024597	hfeg0pkn005	342	schematic_netlist	parked	ERC batch-run (physical_verify, shard C territory)	2026-11-03 11:08	
-1788932125428_zqelb	ziyuny	hfeg0pnd002	378	schematic_netlist	parked	DRC/LVS startup + layout delete/cleanup ops (shard C)	2026-11-03 11:08	
-1791425782404_rn6pm	yohannw	hfeg0pkn003	322	analog_context	parked	SKILL source-code analysis/documentation (tooling infra, not design-flow)	2026-11-03 11:08	
-1787897609476_ooyxi	sophiaw	hfeg0plg09	394	analog_context	parked	cross-shard dup = B PVTalterChar-001 (spice_sim)	2026-11-03 11:08	
+1787569992152_uml8e	e0024597	hfeg0pkn005	342	schematic_netlist	parked	ERC batch-run (physical_verify, shard C territory)	2026-11-19 23:48	r968 peek dup-of-shardC: C cased ERCBootPlan-001; U#1 ERC_AI_CHECK flow-driving; cross-shard dup
+1788932125428_zqelb	ziyuny	hfeg0pnd002	378	schematic_netlist	parked	DRC/LVS startup + layout delete/cleanup ops (shard C)	2026-11-19 23:49	r968 dup-of-shardC: C parked (GUI/cleanup ops); keywords drc:944/lvs:453 = physical_verify; cross-shard dup
+1791425782404_rn6pm	yohannw	hfeg0pkn003	322	analog_context	parked	SKILL source-code analysis/documentation (tooling infra, not design-flow)	2026-11-19 23:49	r968 dup-of-shardA: A cased VirtuosoToolLocator-001; B parked (SKILL code-comprehension); cross-shard dup
+1787897609476_ooyxi	sophiaw	hfeg0plg09	394	analog_context	parked	cross-shard dup = B PVTalterChar-001 (spice_sim)	2026-11-19 23:48	r968 peek dup-of-shardB: B cased PVTalterChar-001; U#1 skill-generation not D produce; cross-shard dup
 1792400027384_ahjnv	zhukaic	hfeahpc503	397	analog_context	parked	cross-shard dup = B OpampACSpec-001 (spice_sim)	2026-11-03 11:08	
-1793093197648_x2w2z	yueliu	hfeahpc501	303	waveform	parked	cross-shard dup = B AlterDeckSplit-001 (spice_sim)	2026-11-03 11:08	
-1787903140887_314mt	sophiaw	hfeg0plg09	378	analog_context	parked	cross-shard dup = B InvPVTchar-001 (spice_sim)	2026-11-03 11:08	
+1793093197648_x2w2z	yueliu	hfeahpc501	303	waveform	parked	cross-shard dup = B AlterDeckSplit-001 (spice_sim)	2026-11-19 23:49	r968 dup-of-shardB: B cased AlterDeckSplit-001 (spice_sim L2); cross-shard dup
+1787903140887_314mt	sophiaw	hfeg0plg09	378	analog_context	parked	cross-shard dup = B InvPVTchar-001 (spice_sim)	2026-11-19 23:49	r968 dup-of-shardB: B cased InvPVTchar-001; sophiaw same as ooyxi skill/sim; cross-shard dup
 1792660810859_l0qrf	xiwang	hfeg0pkn003	299	schematic_netlist	case	EDA-Eval-DesignFlow-DevUsageExtract-001	2026-11-03 11:50	
 1792215355014_rcx51	boblv	hfeg0pgn145	345	schematic_netlist	case	EDA-Eval-DesignFlow-VwlpDetectMDrive-001	2026-11-03 12:23	
 1792056947936_36yj3.messages.json	thomas1w	hfeg0pkn005	347	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistStructDF-001	2026-11-03 12:56	
