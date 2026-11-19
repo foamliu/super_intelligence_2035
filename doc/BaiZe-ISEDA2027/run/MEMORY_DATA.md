@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-19 (R9) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 主要刷新点：Nemotron 170/193=88.1% ETA~3.8h ~132.4B tok / MegaMath-web 分词 128/4950 ETA~40h / Math-Reasoning 72.2% (1608/2228) / 全量 live numbers 同步 / commit+push完成 (6a1f03e94)**。
+
 > 🟢 **心跳 · 2026-11-19 (R8) — PC-5 MegaMath-web分词启动 + 下载盘点更新**：MegaMath-web下载✅完成(4950parquet/826GB/0inc)→PC-5分词已启动(PID3028124/RAYON=8/nice19/ionice3/~37.5M tok/shard/ETA~37h/log→/tmp/tok_megamath_web.log); Code-Reasoning下载✅完成(1635parquet/3.0TB/0inc/7子集全完成); Nemotron分词160/193=82.9%(~124.7B tok/ETA~5.6h/PID1791934); Math-Reasoning下载70%(1566/2228/PID3697171/ETA~10h); DATA_MAPPING.md D1节已更新(3repo状态); .12 load=30.57✅<120; /nas_user 44T可用✅>5T红线; pretrain训练正常(step~7s)。
 
 > 🟢 **心跳 · 2026-11-19 (R7) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 260k/700k(37.1%) step~7.05s / 350k切换点修正~11-27 / Nemotron分词158/193=81.9%(ETA~6h,~123B tok) / Math-Reasoning下载70%(1556/2228) / .12 load=31.72✅ / /nas_user 44T可用✅ / v3报告全量刷新iter+step+切换点+Nemotron进度+Math-Reasoning进度+load+disk / commit+push完成**。
