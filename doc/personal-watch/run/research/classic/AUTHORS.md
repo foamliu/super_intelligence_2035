@@ -6,7 +6,10 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-20 00:1x）**：作者 **247** 人（编号最大 **247**）· X 已核验 **106** · 已发信 **106**（台账 #1–#106）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-20 03:0x）**：作者 **251** 人（编号最大 **251**）· X 已核验 **106**（#248 的 `@liuzhuang1234` 只取自本人主页外链、**未做 `og:title` + `full_text` 双源核验 ⇒ 不计入「已核验」**）· 已发信 **109**（台账 #1–#109）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第七十一轮增量（2026-11-20 03:0x）**：作者网 247 → **251**（#248 Zhuang Liu 刘壮 **A 级** `zhuangl@princeton.edu`（`liuzhuang13.github.io` 页内明文，200 / 42,671 B）/ #249 Sanmi Koyejo **A 级** `sanmi@cs.stanford.edu`（`cs.stanford.edu/~sanmi/` 明文，200 / 7,785 B）/ #250 Biswa Sengupta **B 级** `biswa.sengupta@jpmorgan.com`（arXiv 原生 HTML 正文，200 / 122,470 B）/ #251 Alethea Power **C 级** `alethea@openai.com`（2022 年论文 `comment`，未复核 ⇒ 不发）），来自本轮 B 轨 #270 ConvNeXt / #272 Mirage / #271 Grokking 与 A 轨 #5 `2611.24540`；已发信 106 → **109**（#107 中文 194 字 `SENT OK 03:03:13` / #108 英文 171 词 `03:03:18` / #109 英文 161 词 `03:03:18`）。
+
 
 > **第七十轮增量（2026-11-20 00:0x）**：作者网 245 → **247**（#246 Tianle Cai 蔡天乐 **B 级** `tianle.cai@princeton.edu`（ar5iv 作者块 + 主页 `200` / 6,114 B 核身份，页内无 `mailto:`）/ #247 Quoc V. Le **C 级** `qvl@google.com`（2019 年论文作者块，未在现行页复核）），来自本轮 B 轨 #267 Medusa / #265 Transformer-XL；Emu3 一作 Xinlong Wang（`wangxinlong.github.io` 与 `xinlongwang.github.io` 均 **404**）· Janus 一作 Chengyue Wu / Xiaokang Chen（`xiaokang2022.github.io` 实测是**同名中文博客「小康笔记本」**，非本人 ⇒ 拒用）⇒ 只计数不建档、不猜地址；X 保持 **106**（两人页面均无可读 handle）；已发信 104 → **106**（#105 中文 227 字 `SENT OK 00:05:38` / #106 中文 241 字 `SENT OK 00:05:45`）。
 
@@ -3538,6 +3541,58 @@
 | X 账号 | **未找到**（🚫 不猜） |
 | 状态 | **待跟踪**（C 级地址，不发） |
 | 备注 | `语言=英文(判据=姓名族属越南裔 + 美国机构；无中/日/韩信号)`。价值点：长上下文「记忆 + 相对位置编码」的原始配方；但其当前工作重心在 Gemini，本线只作长期跟踪对象，不优先发信。 |
+
+### 248. Zhuang Liu（刘壮）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhuang Liu（刘壮） |
+| 机构 | **Princeton University**（Department of Computer Science，Assistant Professor；发表 ConvNeXt 时在 Meta AI / UC Berkeley） |
+| 代表论文 | **ConvNeXt / A ConvNet for the 2020s**（`2201.03545`，B 轨 #270，一作）· ConvNeXt V2 |
+| 邮箱 | **zhuangl@princeton.edu** / **A**（**本人主页** `https://liuzhuang13.github.io/` 页内明文 `zhuangl [at] princeton [dot] edu`，2026-11-20 实测 `200` / 42,671 B） |
+| 主页 | <https://liuzhuang13.github.io/>（`200` / 42,671 B） |
+| X 账号 | **@liuzhuang1234**（取自本人主页外链；⚠️ 本轮**未**做 `og:title` + profile `full_text` 双源核验 ⇒ 只登记、不据此引用言论） |
+| 状态 | **已发信**（第 107 封，2026-11-20 03:03:13 `SENT OK`） |
+| 备注 | `语言=中文(判据=中文姓名族属 刘壮 + 拼音可还原；不因机构在美国 / 论文英文 / 邮箱 .edu 判英文)`。价值点：纯 ConvNet 在视觉塔选型里的最强对照；问答聚焦「有限算力下 300 epoch 配方的可裁剪项」与「监督 vs 掩码自监督的先后」。回填 vision（主）· pretrain（辅）。 |
+
+### 249. Sanmi Koyejo
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sanmi Koyejo（尼日利亚裔，机构美国 ⇒ 英文） |
+| 机构 | **Stanford University**（CS，Associate Professor） |
+| 代表论文 | **Are Emergent Abilities of Large Language Models a Mirage?**（`2304.15004`，B 轨 #272，末位 / 通讯）· 可信机器学习与评测方向 |
+| 邮箱 | **sanmi@cs.stanford.edu** / **A**（**本人主页** `https://cs.stanford.edu/~sanmi/` 页内明文 `sanmi[at]cs.stanford.edu`，2026-11-20 实测 `200` / 7,785 B） |
+| 主页 | <https://cs.stanford.edu/~sanmi/> |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 108 封，2026-11-20 03:03:18 `SENT OK`） |
+| 备注 | `语言=英文(判据=尼日利亚裔姓名族属 + 美国机构；无中/日/韩信号)`。价值点：评测指标选择对「能力是否涌现」的影响，直接决定 harness 报表模板；问答聚焦「连续指标是否要预注册」与「题量下限是否依赖指标曲率」。回填 harness（主）· designflow（辅）。 |
+
+### 250. Biswa Sengupta
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Biswa Sengupta（印度裔，机构美国 ⇒ 英文） |
+| 机构 | **JPMorgan Chase & Co.**（LLM Suite） |
+| 代表论文 | **Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models**（`2611.24540`，2026-11-18，唯一作者；A 轨 2026-11-20 第 5 篇） |
+| 邮箱 | **biswa.sengupta@jpmorgan.com** / **B**（**arXiv 原生 HTML 正文作者信息段**明文，2026-11-20 实测 `200` / 122,470 B；⚠️ 未在机构页复核） |
+| 主页 | **未找到**（🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 109 封，2026-11-20 03:03:18 `SENT OK`） |
+| 备注 | `语言=英文(判据=印度裔姓名族属 + 美国机构；无中/日/韩信号)`。价值点：小模型组件组合的**重复因子实验**（32 次核心训练、两种子、±0.0043 nats 参考边界），正好补我们「组件叠加是否真的叠加」的空白；问答聚焦「MoE 容量混淆是否需要参数匹配对照」与「放大到 2B / 32K 时哪个开关先失效」。回填 pretrain（主）· data（辅）。 |
+
+### 251. Alethea Power
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alethea Power（英语姓名，机构美国 ⇒ 英文） |
+| 机构 | **OpenAI**（发表 Grokking 时；当前在职状态未复核） |
+| 代表论文 | **Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets**（`2201.02177`，B 轨 #271，一作） |
+| 邮箱 | **alethea@openai.com** / **C**（**2022 年论文 `comment` 字段**明文；⚠️ 未在现行个人 / 机构页复核，按 C 级记，发信前必须先找 A/B 级地址） |
+| 主页 | **未找到可核现行个人主页**（🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（C 级地址，不发） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：小数据上「过拟合之后仍会泛化」的原始观察，影响我们小规模消融的早停口径；但地址为 2022 年旧地址，暂不投递。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

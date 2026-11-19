@@ -5701,3 +5701,5 @@
 | 2026-11-20 | 2611.24849 | Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling | cs.IR | 收录 |
 | 2026-11-20 | 2611.24844 | General progress substitutes for specific training data in language models | cs.CL | 收录 |
 | 2026-11-20 | 2611.24071 | Measuring and Charging for Retained Context in Long-Context LLM Services | cs.PF | 收录 |
+| 2026-11-20 | 2611.24809 | On-Policy Morphing into Hybrid Attention Models | cs.CL | 收录 |
+| 2026-11-20 | 2611.24540 | Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models | cs.CL | 收录 |

@@ -1,0 +1,14 @@
+Dear Professor Koyejo,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.
+
+Your paper's central claim, that roughly 92% of claimed emergent abilities on BIG-Bench appear only under discontinuous metrics such as multiple-choice grade and exact match, changed how we read our own evaluation curves. We are building an agent harness where pass@k and all-or-nothing task success are the defaults, and we do see sharp jumps that may be metric artifacts.
+
+Two questions:
+1. For a harness that must ship a single number, would you recommend pre-registering a continuous per-token or per-step metric alongside pass@k, or is bootstrapping confidence intervals over a small task set enough? Your answer decides our reporting template.
+2. The paper also notes that too few test examples can create apparent emergence. In practice, is there a minimum number of examples per task at which the discontinuity disappears, or does it depend entirely on the curvature of the chosen metric?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **272** 条（**第七十一轮 2026-11-20 03:0x 补 4 条 → 272**：C4 文档化 `2104.08758`（**990**，EMNLP 2021 pp. 1286–1305）/ ConvNeXt `2201.03545`（**13,910**，CVPR 2022 pp. 11966–11976）/ Grokking `2201.02177`（**967**）/ Mirage `2304.15004`（**1,116**，NeurIPS 2023 pp. 55565–55581）；元数据 arXiv abs 页 **4/4 `200`** + OpenAlex **4/4 `200`**；数字用 ar5iv HTML **4/4 `200`**（207,799 / 476,499 / 106,203 / 151,070 B）核对，**未做 PDF 逐页复核**；覆盖轴 = 网页语料来源审计 / 纯 ConvNet 现代化配方 / 过拟合之后的泛化 / 指标选择制造的假涌现）
+
 **本轮快照**：累计 **268** 条（**第七十轮 2026-11-20 00:0x 补 4 条 → 268**：Transformer-XL `1901.02860`（**1,881**）/ Emu3 `2409.18869`（**1,022**）/ Medusa `2401.10774`（**1,028**）/ Janus `2410.13848`（**633**，CVPR 2025 pp. 12966–12977）；元数据经 **arXiv abs 页 `citation_*` 4/4 `200`**（arXiv `id_list` 本轮 `429`，如实记）+ OpenAlex 4/4 `200`；PDF 4/4 `200` 但**全部截断**（`pdftotext` 失败）⇒ 数字一律改用 **ar5iv HTML 4/4 `200`**（312,920 / 267,946 / 319,495 / 317,703 B）核对并逐条标注；覆盖轴 = 段级递归与相对位置编码 / 全离散 token 的统一理解生成 / 多解码头投机解码的无损档 / 理解与生成双编码器解耦）。回溯：**第六十九轮 2026-11-19 21:0x 补 4 条 → 264**：Transfusion `2408.11039`（**588**）/ Agentless `2407.01489`（**1,053**，PACM SE Vol. 2 Issue FSE pp. 801–824, 2025）/ Massive Activations `2402.17762`（**444**，**&lt;500 按「方法论常青」收**）/ EDA Corpus `2405.06676`（**38**，**&lt;500 按「本领域权威」收**，IEEE LAD 2024 pp. 1–5）；arXiv `id_list` 4/4 `200` + OpenAlex 4/4 `200`；PDF 2/4 完整（1,384,716 / 453,822 B）、2/4 `content-length` 14,087,563 / 7,636,655 B **>5 MB 未落盘** ⇒ 数字用 **ar5iv HTML 2/2 `200`**（300,229 / 271,351 B）核对。
 
 
@@ -4628,8 +4630,78 @@
 
 ---
 
+## 269. Documenting Large Webtext Corpora: A Case Study on the Colossal Clean Crawled Corpus
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Documenting Large Webtext Corpora: A Case Study on the Colossal Clean Crawled Corpus |
+| 作者（前 3） | Jesse Dodge · Maarten Sap · Ana Marasović（et al.，共 8 位；Allen Institute for AI / UW / CMU / Stanford） |
+| 年份 | **2021**（arXiv 首次提交 **2021-04-18**，`cs.CL`） |
+| 会议 / 期刊 | **EMNLP 2021**，pp. **1286–1305**（OpenAlex `type=conference-paper`） |
+| 被引数 | **990**（OpenAlex `10.48550/arxiv.2104.08758`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.08758> ｜ arXiv DOI `10.48550/arxiv.2104.08758` |
+| 一句话贡献 | 首次系统**文档化 C4** 的来源、内容与过滤后果：`C4.en` 为 **365M 文档 / 156B token / 305 GB**（无 blocklist 版 395M / 198B / 380 GB，无清洗版 1.1B / 1.4T / 2.3 TB）；来源含专利与美国军方网站，正文含机器翻译文本与其他基准的评测样例；blocklist 过滤**不成比例地删除少数群体相关文本**。 |
+| 与我们工作的关系 | **data（主目标：网页语料的来源审计与去污染基线）**：<b>动作</b>：语料清洗报表固定三列——来源域抽样、机器生成文本抽检、与评测集的重合检查；把「无 blocklist / 无清洗」两档规模写进同一张表，避免只报最终规模。<br>**harness（辅）**：<b>动作</b>：评测集污染检查不只查精确串，还要查「同分布机器翻译文本」与「基准样例原文」两类（本文实测两类都在 C4 中）。<br>**pretrain（辅）**：<b>动作</b>：报预训练语料规模时同时给「文档数 / token 数 / 字节数」三个口径，🚫 只报 token。<br>**风险**：① 2021 年的 Common Crawl 快照，不能代表当前网页分布；② 过滤影响是描述性统计，不是因果实验；③ 只覆盖英文 C4。 |
+| 首次收录 | **2026-11-20**（第七十一轮） |
+| 核验状态 | arXiv abs 页 `200` / 43,569 B（`citation_title` / `citation_author` / `citation_date=2021/04/18`）；OpenAlex `200`（**990**，EMNLP 2021 pp. 1286–1305）；ar5iv HTML `200` / **207,799 B** 核 `365 million` / `156 billion` / `305 GB` / `395 million` / `198 billion` / `380 GB` / `1.1 billion` / `1.4 trillion` / `2.3 TB` 与 blocklist 段落；**未做 PDF 逐页复核**。 |
+| 首次收录补注 | 本条目同时补上必读清单外的「数据文档化」源头：C4 是 T5 `1910.10683`（#81）的训练语料，但语料本身的审计结论只在这篇里。 |
+
+---
+
+## 270. A ConvNet for the 2020s（ConvNeXt）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | A ConvNet for the 2020s |
+| 作者（前 3） | Zhuang Liu · Hanzi Mao · Chao-Yuan Wu（et al.，共 6 位；Meta AI / UC Berkeley；末位 Saining Xie） |
+| 年份 | **2022**（arXiv 首次提交 **2022-01-10**，`cs.CV`） |
+| 会议 / 期刊 | **IEEE/CVF CVPR 2022**，pp. **11966–11976**（OpenAlex `type=conference-paper`） |
+| 被引数 | **13,910**（OpenAlex `10.48550/arxiv.2201.03545`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2201.03545> ｜ arXiv DOI `10.48550/arxiv.2201.03545` |
+| 一句话贡献 | 把标准 ResNet **逐步「现代化」**（macro design / ResNeXt / inverted bottleneck / 大卷积核 / 逐层微设计）为纯 ConvNet：**300 epoch**、AdamW **4e-3**、batch **4096**、weight decay **0.05**、20 epoch warmup、LayerScale 初值 **1e-6**、EMA；ConvNeXt-T 在 **4.5 GFLOPs** 下 **82.1%**（Swin-T **81.3%**），ConvNeXt-XL 384² 达 **87.8%**（350M 参数 / 179.0 GFLOPs），并在 COCO / ADE20K 上优于 Swin（作者自报）。 |
+| 与我们工作的关系 | **vision（主目标：视觉编码器选型与配方）**：<b>动作</b>：视觉塔方案表把「纯 ConvNet / 层级 Transformer / 混合」并排，判据 = 同 GFLOPs 下的精度 + 下游 VLM 任务掉点，🚫 只看 ImageNet 单点。<br>**pretrain（辅）**：<b>动作</b>：把 300 epoch / 4e-3 / wd 0.05 / LayerScale 1e-6 / EMA 作为「强基线配方」写进预训练配置表，先固定配方再比架构，避免架构与配方混在一起。<br>**风险**：① 主结果是 ImageNet-1K 监督预训练，不等于图文对齐最优；② 13,910 次被引里大量是后续工作引用，非独立复现；③ ar5iv 数字未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十一轮） |
+| 核验状态 | arXiv abs 页 `200` / 44,344 B（`citation_title` / `citation_author` / `citation_date=2022/01/10`）；OpenAlex `200`（**13,910**，CVPR 2022 pp. 11966–11976）；ar5iv HTML `200` / **476,499 B** 核 `87.8%` / `82.1` / `81.3` / `4.5G` / `300 epochs` / `4e-3` / `batch size of 4096` / `weight decay of 0.05` / `1e-6` / `EMA`；**未做 PDF 逐页复核**。 |
+
+---
+
+## 271. Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets |
+| 作者（前 3） | Alethea Power · Yuri Burda · Harri Edwards（et al.，共 5 位；OpenAI） |
+| 年份 | **2022**（arXiv 首次提交 **2022-01-06**，`cs.LG`） |
+| 会议 / 期刊 | arXiv 预印本（OpenAlex `type=preprint`，无会场记录） |
+| 被引数 | **967**（OpenAlex `10.48550/arxiv.2201.02177`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2201.02177> ｜ arXiv DOI `10.48550/arxiv.2201.02177` |
+| 一句话贡献 | 在小算法数据集上发现 **grokking**：泛化可以发生在**严重过拟合之后**——除法 mod 97、训练集占 **50%** 时，训练精度约 **10^3** 步接近完美，而验证精度要到约 **10^6** 步才达到同水平；数据比例在 **25–30%** 附近时，少 **1%** 数据会让泛化**中位时间增加 40–50%**；**weight decay** 对改善泛化最有效（作者自报）。 |
+| 与我们工作的关系 | **pretrain（主目标：训练时长 / 早停 / 正则化口径）**：<b>动作</b>：小规模预训练消融必须固定「训练步数上限」，并把「验证集还在上升」与「已经平台」分开记录；🚫 用早期验证曲线判定某组件无效。<br>**harness（辅）**：<b>动作</b>：小验证集上的「明显掉点」先排除指标噪声与样本量不足，再判定能力缺失（与 #272 同一教训）。<br>**data（辅）**：<b>动作</b>：数据量缩小实验必须记录「达到目标精度所需步数」，不只记最终精度。<br>**风险**：① 任务全是合成算法数据集（模运算 / 群运算），不能直接外推到自然语言；② 结果对小数据集与强正则化敏感；③ 未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十一轮） |
+| 核验状态 | arXiv abs 页 `200` / 43,160 B（`citation_title` / `citation_author` / `citation_date=2022/01/06`）；OpenAlex `200`（**967**，preprint）；ar5iv HTML `200` / **106,203 B** 核 `division mod 97` / `50%` / `10^3` / `10^6` / `25-30%` / `1%` / `40-50%` / `weight decay is particularly effective`；**未做 PDF 逐页复核**。 |
+
+---
+
+## 272. Are Emergent Abilities of Large Language Models a Mirage?
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Are Emergent Abilities of Large Language Models a Mirage? |
+| 作者（前 3） | Rylan Schaeffer · Brando Miranda · Sanmi Koyejo（共 3 位；Stanford University） |
+| 年份 | **2023**（arXiv 首次提交 **2023-04-28**，`cs.CL`） |
+| 会议 / 期刊 | **NeurIPS 2023**，pp. **55565–55581**（OpenAlex `type=conference-paper`） |
+| 被引数 | **1,116**（OpenAlex `10.48550/arxiv.2304.15004`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2304.15004> ｜ arXiv DOI `10.48550/arxiv.2304.15004` |
+| 一句话贡献 | 提出「涌现是**指标造成的幻象**」：BIG-Bench 上约 **92%** 的「涌现能力」只在 **multiple-choice grade / exact match** 这类非线性或不连续指标下出现；换成线性 / 连续指标或增加统计量后消失，而 per-token 交叉熵随模型规模按**幂律平滑下降**；样本太少也会让弱小模型看起来「突然不行」，从而制造假涌现。 |
+| 与我们工作的关系 | **harness（主目标：判分口径与报表模板）**：<b>动作</b>：报表同时给「连续指标（per-token loss / per-step 部分分）」与「离散指标（pass@k / 全对率）」，并写明题量与置信区间；🚫 只报一个离散总分。<br>**designflow（辅）**：<b>动作</b>：L1–L5 判分不要全用「全对 / 全错」，至少保留一档可累加的部分分，否则阶段能力会被「门槛效应」掩盖。<br>**pretrain（辅）**：<b>动作</b>：scaling 曲线读数先用连续 loss，再看离散基准，避免把指标拐点当成能力拐点。<br>**风险**：① 论文针对的是「同一模型家族的固定输出」分析，不否认某些能力确实在规模上出现；② 92% 是 BIG-Bench 子集统计，不是所有基准；③ 未做 PDF 逐页复核。 |
+| 首次收录 | **2026-11-20**（第七十一轮） |
+| 核验状态 | arXiv abs 页 `200` / 42,800 B（`citation_title` / `citation_author` / `citation_date=2023/04/28`）；OpenAlex `200`（**1,116**，NeurIPS 2023 pp. 55565–55581）；ar5iv HTML `200` / **151,070 B** 核 `92%` / `Multiple Choice Grade` / `exact match` / `power law` / `per-token cross entropy`；**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
+> ✅ **第七十一轮（2026-11-20 03:0x）转正 4 条**：C4 文档化 `2104.08758`（#269，**990**，EMNLP 2021 pp. 1286–1305）· ConvNeXt `2201.03545`（#270，**13,910**，CVPR 2022 pp. 11966–11976）· Grokking `2201.02177`（#271，**967**）· Are Emergent Abilities a Mirage? `2304.15004`（#272，**1,116**，NeurIPS 2023 pp. 55565–55581）⇒ B 轨累计 **272**（覆盖轴：网页语料的来源审计 / 纯 ConvNet 的现代化配方 / 过拟合之后的泛化 / 指标选择制造的假涌现）。核验：abs 页 4/4 `200`；OpenAlex 4/4 `200`（990 / 13,910 / 967 / 1,116）；ar5iv HTML 4/4 `200`（207,799 / 476,499 / 106,203 / 151,070 B）核数字，**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 合成数据自举后续一手；④ EDA 第二篇可执行判分（换 OpenROAD 指令集方向）；⑤ 视觉侧补 AIMv2 / DFN 与 #270 对照。
 > ✅ **第七十轮（2026-11-20 00:0x）转正 4 条**：Transformer-XL `1901.02860`（#265，**1,881**）· Emu3 `2409.18869`（#266，**1,022**）· Medusa `2401.10774`（#267，**1,028**）· Janus `2410.13848`（#268，**633**，CVPR 2025 pp. 12966–12977）⇒ B 轨累计 **268**（覆盖轴：段级递归 + 相对位置编码 / 全离散 token 统一理解与生成 / 多解码头投机解码的无损档 / 理解与生成双编码器解耦）。核验：arXiv `id_list` 本轮 **`429`** ⇒ 改用 **abs 页 `citation_*` 4/4 `200`**（标题 / 作者 / 首次提交日齐全，如实记）；OpenAlex 4/4 `200`；PDF 4/4 `200` 但**全部截断**（无 `%%EOF`、`pdftotext` 失败）⇒ 数字改用 **ar5iv HTML 4/4 `200`**（312,920 / 267,946 / 319,495 / 317,703 B）核对。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中（另核 `2307.08691` FlashAttention-2 / `1811.06965` GPipe / `1910.02054` ZeRO / `1909.08053` Megatron-LM 均已在表内 ⇒ 不收）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 合成数据自举后续一手；④ EDA 第二篇可执行判分（VerilogEval 已在表内 ⇒ 换 OpenROAD 指令集方向）；⑤ 长上下文位置编码续（NTK-aware 一手）。
 > ✅ **第六十九轮（2026-11-19 21:0x）转正 4 条**：Transfusion `2408.11039`（#261，**588**）· Agentless `2407.01489`（#262，**1,053**，PACM SE Vol. 2 Issue FSE pp. 801–824, 2025）· Massive Activations `2402.17762`（#263，**444**，**&lt;500 按「方法论常青」收**）· EDA Corpus `2405.06676`（#264，**38**，**&lt;500 按「本领域权威」收**，IEEE LAD 2024 pp. 1–5）⇒ B 轨累计 **264**（覆盖轴：文本因果 / 图像双向的混合注意力与双损失 / 固定三段流水线作为 agent 基线 / 巨值激活＝隐式 bias 项 / 脚本必须在 OpenROAD 里真跑才算对）。核验：arXiv `id_list` 4/4 `200` + OpenAlex 4/4 `200`；PDF 2/4 完整（1,384,716 / 453,822 B，`%PDF-` + `pdftotext` 均通过），2/4 `content-length` 14,087,563 / 7,636,655 B **>5 MB 未落盘** ⇒ 数字用 ar5iv 2/2 `200`（300,229 / 271,351 B）核对。⚠️ **本轮拦下一处 ID 误记**：候选池/检索时记的「EDA Corpus `2405.07288`」实测是 *Erasing Concepts from Text-to-Image Diffusion Models with Few-shot Unlearning*（OpenAlex 被引 34，与 EDA 无关）⇒ 按标题检索得真 ID **`2405.06676`**（被引 **38**，IEEE LAD 2024）后才收录；**旧记作废**。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中，改试 `ti:` + 会议论文集）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手，本轮 #263 已补「异常激活」侧）；③ 数据质量线「合成数据自举」后续一手；④ EDA 侧第二篇可执行判分语料（VerilogEval `2309.07544` 已在表内 ⇒ 换 ChipNeMo 后续或 OpenROAD 指令集工作）；⑤ 长上下文位置编码续（NTK-aware 一手）。
 
