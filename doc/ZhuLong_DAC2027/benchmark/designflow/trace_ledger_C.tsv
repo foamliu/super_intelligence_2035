@@ -1030,7 +1030,7 @@ yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked		2026-11-15 07:19	config mod
 1792218778037_jck4q					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1791795200862_zm1g8					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1788936800658_pkver					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
-1794445063551_4cxea					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
+1794445063551_4cxea					case	EDA-Eval-DesignFlow-Mt2FillDecision-001	2026-11-19 09:47	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1789697908076_bvqsb					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1790215562772_dj66w					parked		2026-11-15 12:11	r597 peek REJECT: not-produce (Q&A/brainstorming/ops/run-existing/SVRF-Q&A)
 1794561894844_927j6	feng1z	10.129.8.221	73	physical_verify	case	EDA-Eval-DesignFlow-SpfWlBlbCoupling-001	2026-11-15 12:49	
@@ -1296,4 +1296,4 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 1794275240977_d2enp	gokuguo	hfeg0plg53	15	layout_virtuoso	case	EDA-Eval-DesignFlow-LayermapPairAudit-001	2026-11-19 08:10	
 1790214684453_ocopa	e0041123	10.129.40.58	42	physical_verify	case	EDA-Eval-DesignFlow-DRCRuleQuery-001	2026-11-19 08:37	
 1793600834008_rqtjy.messages.json	claire1l	10.129.8.124	33	physical_verify	case	EDA-Eval-DesignFlow-ItfDirTreeDiffReport-001	2026-11-19 09:06	
-1795001459152_a85ce	connorw	hfeg0pkn003	235	physical_verify	claimed		2026-11-19 09:27	
+1795001459152_a85ce	connorw	hfeg0pkn003	235	physical_verify	case	EDA-Eval-DesignFlow-LvsConfigReport-001	2026-11-19 09:41	
