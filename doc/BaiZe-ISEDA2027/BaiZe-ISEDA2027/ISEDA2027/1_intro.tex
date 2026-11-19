@@ -15,19 +15,16 @@ Privacy compounds the cost argument: netlists, GDSII layouts, and design rules a
 Building such a model \emph{from scratch} as a production subagent, however, remains an under-documented engineering problem.
 
 \paragraph{Contributions.}
-We present a 2B hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator.
-% 中文：我们提出一个约 22 亿参数的混合（状态空间+注意力）智能体模型，从零构建，作为已部署 orchestrator 之下的高性价比 EDA 子智能体。
-
 \begin{itemize}
-\item \textbf{An on-premise 2B hybrid EDA subagent under cost--privacy dual constraints.}
-We build a $\approx$2B hybrid (state-space + attention) model from scratch to serve as a local subagent beneath a deployed orchestrator, translating intent into native EDA scripts (PyAether, SKILL, Tcl) so that on-site subtasks never leave the premises.
-% 中文：成本-隐私双重约束下的本地 2B 混合 EDA 子智能体。我们从零构建一个约 22 亿参数的混合（状态空间+注意力）模型，作为已部署编排者之下的本地子智能体，把意图翻译成原生 EDA 脚本（PyAether、SKILL、Tcl），使本地子任务不离开本地。
+\item \textbf{A 2B Mamba2-hybrid backbone with a 1M-token context window.}
+We build a $\approx$2B hybrid (state-space + attention) model from scratch whose 56-layer backbone interleaves Mamba-2 SSM and MLP layers with only four GQA attention layers (Section~\ref{sec:arch}), and whose RoPE configuration extrapolates to a $1$M-token context window with stable perplexity and ${\geq}95\%$ needle-retrieval accuracy (Section~\ref{sec:longctx}).
+% 中文：2B Mamba2 混合骨干与 1M token 上下文窗口。我们从零构建一个约 22 亿参数的混合（状态空间+注意力）模型，其 56 层骨干将 Mamba-2 SSM 与 MLP 层同仅 4 个 GQA 注意力层交错排列（第 \ref{sec:arch} 节），并通过 RoPE 配置外推到 1M token 上下文窗口，困惑度稳定、针检索精度 $\geq95\%$（第 \ref{sec:longctx} 节）。
 
-\item \textbf{Mamba2-hybrid architecture for structural session-level cost reduction.}
-The 56-layer backbone interleaves Mamba-2 SSM and MLP layers with only four GQA attention layers, so just $4/56{=}7.1\%$ of layers carry a session-growing state; decoding is linear-time, making per-subtask serving cost reduction structural rather than a matter of quantization alone.
-% 中文：Mamba2 混合架构带来结构性的会话级成本下降。56 层骨干将 Mamba-2 SSM 与 MLP 层同仅 4 个 GQA 注意力层交错排列，故仅 $4/56{=}7.1\%$ 的层携带随会话增长的状态；解码为线性时间，使每子任务 serving 成本下降具有结构性，而非仅靠量化。
+\item \textbf{Curriculum learning that strengthens code, math, and agentic capability.}
+A three-stage curriculum---two stable phases (S1/S2; $700$k steps) and a decay annealing phase---shifts the data mixture from a general $74{:}19{:}7$ web/code/math blend to a code-and-math-enriched $40{:}40{:}20$ blend, then anneals on instruction and agentic SFT data with a long-context ladder (Section~\ref{sec:llm-pretrain}).
+% 中文：通过课程学习强化代码、数学与智能体能力。三阶段课程学习——两个稳定阶段（S1/S2；700k 步）加一个退火阶段——将数据配比从通用 74:19:7（网页/代码/数学）逐步切换到强化代码与数学的 40:40:20 配比，再在指令与智能体 SFT 数据上退火并叠加长上下文阶梯（第 \ref{sec:llm-pretrain} 节）。
 
-\item \textbf{Budget-constrained pre-training recipe and 449-task evaluation protocol.}
-A staged search under a fixed GPU-hour budget fixes the pre-training recipe; a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes tests whether the subagent matches deployed orchestrators at comparable accuracy with materially lower serving cost.
-% 中文：受预算约束的预训练配方与 449 题评测协议。在固定 GPU·h 预算下的分阶段搜索确定预训练配方；在覆盖三种语言、四种商业 runtime 的 449 任务 EDA 脚本基准上，检验子智能体能否以可比精度、显著更低成本从编排者卸载子任务。
+\item \textbf{Domain adaptation validating the subagent as a deployable EDA agent core.}
+Through domain annealing, supervised fine-tuning, and reinforcement learning (Section~\ref{sec:llm-posttrain}), we adapt the pre-trained backbone into a subagent that serves EDA agents and assists circuit designers in orchestrating design flows---where EDA scripts serve as the glue between intent and tool execution---validating the feasibility of a large--small model collaborative agent architecture for agentic IC design.
+% 中文：领域适配验证子智能体可作为可部署的 EDA Agent 内核。通过领域退火、监督微调与强化学习（第 \ref{sec:llm-posttrain} 节），我们把预训练骨干适配为子智能体，服务 EDA Agent、协助电路设计师编排 designflow（EDA 脚本充当意图与工具执行之间的胶水），验证「大小模型结合的 agent 架构在 agentic IC 设计落地的可行性」。
 \end{itemize}
