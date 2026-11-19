@@ -14,6 +14,7 @@ status：claimed / deepread / case / parked
 """
 import argparse
 import datetime
+import glob
 import json
 import os
 import re
@@ -1015,6 +1016,156 @@ def cmd_phantom_check(args):
     return 1 if total_phantom else 0
 
 
+_NOFILE_RE = re.compile(r"NOFILE|file-deleted-postscan|file-deleted", re.IGNORECASE)
+
+
+def _latest_local_summary():
+    """找 designflow/ 下最新的 summary_*.tsv 本地镜像 (JOIN 恢复 ip/host/user 用)。"""
+    cands = sorted(glob.glob(os.path.join(HERE, "summary_*.tsv")), reverse=True)
+    # glob 不保证按 mtime；按 mtime 再排一次取最新
+    cands = sorted(cands, key=lambda p: os.path.getmtime(p), reverse=True)
+    return cands[0] if cands else None
+
+
+def _load_summary_coords(summary_path):
+    """读 scan summary.tsv → {slug: (ip, host, user, mc)}。
+
+    summary.tsv 列 (见 AGENTS.md §2): ip host user session_file match_count keywords tools。
+    session_file 形如 1782890212076_npkmm.messages.json，归一化为 slug 做 join 键。
+    """
+    coords = {}
+    if not summary_path or not os.path.exists(summary_path):
+        return coords
+    with open(summary_path, encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 5 or parts[0] == "ip":
+                continue
+            ip, host, user, sess, mc = parts[0], parts[1], parts[2], parts[3], parts[4]
+            slug = _norm_sid(sess)
+            # 同 slug 可能跨多机/多 user 出现 (实测 ~2/2700)，保留首个 (= 最高 mc 行，
+            # 因 summary 一般按 match_count desc 排)；仍记全量供 verbose 复核。
+            coords.setdefault(slug, (ip, host, user, mc))
+    return coords
+
+
+def cmd_revive_nofile(args):
+    """2026-11-20 r827 兑现 discuss/A.md r826 承诺 + D r969 §建议动作1：
+    NOFILE-parked 子目录路径重试 revival 工具 (A 作 trace_ledger.py code owner)。
+
+    背景 (D r969 + C r836 + A r820 三域实证)：cline session 文件实际在子目录
+    `~/.cline/data/sessions/<id>/<id>.messages.json`，旧 peek/revival 用 flat 路径
+    `~/.cline/data/sessions/<id>.messages.json` 必 NOFILE ⇒ 大量活候选被误判 parked
+    (D 台账 106 unique NOFILE-parked, A 23 parked)。本工具把这条路径 bug 修成机械可扫：
+
+    1. 扫 shard 台账 NOFILE-parked 行 (status=parked + note 命中 NOFILE/file-deleted)；
+    2. JOIN scan summary.tsv 恢复 (ip, host, user) —— 台账里 host 常为空 (D263-peek
+       丢映射)，但 summary.tsv 保留全量 ip/host/user/mc，可恢复探测坐标；
+    3. 输出 subdir-aware SSH 探测命令块 (经 eda_flow run_commands 在 .75 上跑)，按
+       (ip, user) 分批连接，每条同时探 flat 与 subdir 路径，输出 TSV：
+       slug \t flat_size|NOFILE \t subdir_size|NOFILE
+       subdir_size != NOFILE ⇒ 活候选，可 un-park + deep-read + 造题。
+
+    纯本机 dry-run (不连 .75)：emit ready-to-run bash 块 + 恢复率统计。
+    退出码：0=有可恢复候选且命令已 emit / 2=无可恢复候选 / 3=summary 不可用。
+    """
+    summary_path = args.src or _latest_local_summary()
+    if not summary_path or not os.path.exists(summary_path):
+        print("[revive-nofile] 找不到 scan summary.tsv 本地镜像 (--src 指定)。")
+        print("  designflow/ 下需有 summary_*.tsv (各 shard scansync 时已 mirror)。")
+        return 3
+    coords = _load_summary_coords(summary_path)
+    if not coords:
+        print("[revive-nofile] summary.tsv 解析为空: %s" % summary_path)
+        return 3
+    shards = (args.shard,) if args.shard else ("A", "B", "C", "D")
+    print("# === revive-nofile: NOFILE-parked 子目录路径重试 revival (r827) ===")
+    print("# 兑现: discuss/A.md r826 承诺 + D r969 §建议动作1 (A 作 code owner)")
+    print("# 背景: flat 路径 NOFILE 是假阴性, 真路径在 sessions/<id>/<id>.messages.json")
+    print("# summary: %s (%d slugs)" % (summary_path, len(coords)))
+    print("# 在 .75 上跑 (经 eda_flow run_commands); ssh 加 </dev/null 防 hang (TASK §2 坑3)")
+    print("# 输出列: slug \\t flat_size|NOFILE \\t subdir_size|NOFILE")
+    print("# subdir_size != NOFILE ⇒ 活候选 ⇒ un-park + deep-read + 造题")
+    print("")
+    total_parked = total_recoverable = total_lost = 0
+    all_groups = []  # (shard, ip, user, host, [slugs])
+    for s in shards:
+        ledger_p = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+        if not os.path.exists(ledger_p):
+            print("# shard %s: 台账不存在, 跳过" % s)
+            continue
+        parked_slugs = []
+        seen = set()
+        for r in _load_file(ledger_p):
+            if r["status"] != "parked":
+                continue
+            if not _NOFILE_RE.search(r.get("note", "")):
+                continue
+            slug = _norm_sid(r["session_file"])
+            if slug in seen:
+                continue
+            seen.add(slug)
+            parked_slugs.append(slug)
+        # JOIN summary 恢复坐标
+        recoverable = []  # (slug, ip, host, user, mc)
+        lost = []
+        for slug in parked_slugs:
+            c = coords.get(slug)
+            if c:
+                recoverable.append((slug, c[0], c[1], c[2], c[3]))
+            else:
+                lost.append(slug)
+        # 按 (ip, user) 分批
+        groups = {}
+        for slug, ip, host, user, mc in recoverable:
+            groups.setdefault((ip, user, host), []).append(slug)
+        total_parked += len(parked_slugs)
+        total_recoverable += len(recoverable)
+        total_lost += len(lost)
+        print("# --- shard %s: NOFILE-parked=%d / recoverable=%d / lost=%d / ssh-groups=%d ---"
+              % (s, len(parked_slugs), len(recoverable), len(lost), len(groups)))
+        if args.verbose:
+            for slug, ip, host, user, mc in recoverable:
+                print("#   [recoverable] %s → ip=%s host=%s user=%s mc=%s"
+                      % (slug, ip, host, user, mc))
+            for slug in lost:
+                print("#   [lost]        %s (summary 无此 slug, 坐标不可恢复)" % slug)
+        for (ip, user, host), slugs in groups.items():
+            all_groups.append((s, ip, user, host, sorted(slugs)))
+    print("")
+    if not all_groups:
+        print("# 无可恢复候选 — 各 shard NOFILE-parked 全部未在 summary 中找到坐标。")
+        print("# 汇总: parked=%d recoverable=0 lost=%d" % (total_parked, total_lost))
+        return 2
+    # emit bash 探测块
+    print("# ===== 复制以下块到 eda_flow run_commands (cwd=workdir) =====")
+    for s, ip, user, host, slugs in all_groups:
+        slugs_str = " ".join(slugs)
+        print("# shard %s @ %s (%s) user=%s — %d sessions"
+              % (s, ip, host, user, len(slugs)))
+        # 单连接内循环探每条 slug 的 flat+subdir; 路径用 /home/<user> (非 ~, 因 ssh 以
+        # 自身身份登录读他人 home)。subdir_size != NOFILE ⇒ 活候选。
+        print("ssh -o BatchMode=yes -o ConnectTimeout=8 %s </dev/null 'for s in %s; do "
+              "printf \"%%s\\t\" \"$s\"; "
+              "for p in /home/%s/.cline/data/sessions/$s.messages.json "
+              "/home/%s/.cline/data/sessions/$s/$s.messages.json; do "
+              "if [ -f \"$p\" ]; then printf \"%%s\\t\" \"$(stat -c%%s \"$p\" 2>/dev/null)\"; "
+              "else printf \"NOFILE\\t\"; fi; done; printf \"\\n\"; done' "
+              "2>/dev/null"
+              % (ip, slugs_str, user, user))
+    print("# ===== 探测块结束 =====")
+    print("")
+    print("# 汇总: NOFILE-parked=%d / recoverable=%d / lost=%d / ssh-groups=%d"
+          % (total_parked, total_recoverable, total_lost, len(all_groups)))
+    print("# 后续 (看探测输出): 对 subdir_size != NOFILE 的 slug, un-park + deep-read:")
+    print("#   python3 designflow/trace_ledger.py --shard <X> mark --session <slug>.messages.json \\")
+    print("#       --status parked --note 'subdir-ALIVE <size> revival r827, 待 deep-read'")
+    print("# (mark 用 --force 若跨 shard 互斥; deep-read 后再 claim/造题/转 case)")
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="trace ledger + coverage progress")
     ap.add_argument("--shard", default=None, choices=sorted(SHARD_DOMAINS.keys()),
@@ -1074,6 +1225,12 @@ def main():
     p.add_argument("--ref-dir", dest="ref_dir", required=True,
                    help="reference 目录 (含 <case_id>/ 子目录, 用于判「已建 assets」phantom)")
     p.add_argument("--verbose", action="store_true", help="输出每个 phantom 的 case_id + session")
+    p = sub.add_parser("revive-nofile",
+                       help="2026-11-20 r827 兑现 discuss/A.md r826 承诺 + D r969 §建议动作1: "
+                            "NOFILE-parked 子目录路径重试 revival (JOIN summary 恢复坐标 + emit "
+                            "subdir-aware SSH 探测块; 纯本机 dry-run)")
+    p.add_argument("--src", help="scan summary.tsv 本地镜像 (默认 designflow/ 下最新 summary_*.tsv)")
+    p.add_argument("--verbose", action="store_true", help="输出每个 NOFILE-parked slug 的恢复坐标")
     a = ap.parse_args()
     if a.shard:
         _set_shard(a.shard)
@@ -1081,7 +1238,8 @@ def main():
             "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed,
             "scansync": cmd_scansync, "prefilter": cmd_prefilter,
             "mc-matrix": cmd_mcmartix, "mcguard": cmd_mcguard,
-            "phantom-check": cmd_phantom_check}[a.cmd](a) or 0
+            "phantom-check": cmd_phantom_check,
+            "revive-nofile": cmd_revive_nofile}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":
