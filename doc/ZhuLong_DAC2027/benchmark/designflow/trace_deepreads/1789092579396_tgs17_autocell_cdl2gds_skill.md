@@ -60,3 +60,34 @@
 - tgs17 是 374-msg 长会话；只锚 U#231（单轮 produce 模板），不要把整条 skill 开发史塞进判分
 - U#327（用模板跑全流程生成 gds）是另一独立 produce 候选，可作 r942 第二案（2nd-case-same-session，承 r939 范式）
 - cross-shard check：tgs17 0 hits in main merged jsonl + 0 in all4 ledger except D-parked → 无跨 shard 碰撞，可 claim
+
+## r942 U#327 GOLD 扩展（autocell-tcl-flow-generator produce-task）
+
+**fetch**: r942 eda_flow open_session(shardD-r942-probe) + ssh .75→10.129.35.73 cat `1789092579396_tgs17/1789092579396_tgs17.messages.json` (1,290,843B, 374 msgs)
+
+**U#327 verbatim** (msg[327], id=msg_mu0jmh2y_nio):
+> `/autocell-tcl-flow-generator /home/miccao/autocell/ddcpc/netlist/train_proplus_decqa_20260903/netlist_dir_20260807这是网表路径，依据/home/miccao/autocell.1.2026.7/g5_ddcpc/config/cell_constraints_template.txt里面的设置，生成所有的gds，放到/home/miccao/autocell/ddcpc/gds下面`
+
+**意图分型**: **true L2 produce-task**（用户 invoke autocell-tcl-flow-generator skill 跑全流程：netlist_dir_20260807 含 544 .cdl 文件 + cell_constraints_template.txt → 生成所有 GDS 到 ddcpc/gds/）。**非 howto Q&A**——用户要"跑"不是"解释"，reframe 成 manual-grounded howto 会违反 11-15 任务初衷第 1 条（任务形态=用户意图）。
+
+**assistant 执行链** (msg 328-374, 47 msgs):
+- A#328: tool_use `skills` autocell-tcl-flow-generator (skill invocation)
+- A#330: run_commands `ls netlist_dir_20260807/` → 544 .cdl 文件 (and2GF47x1-4, and2PF47x1-4, and2x1-4, and3GF47x1-3, ...)
+- A#332: `head -5 and2GF47x1.cdl` → `*and2GF47x1 / Type: cdl / Tool: AETHER-SE` + 检查 rule.json kit 映射
+- A#334: `ls | sed 's/\.cdl//' | sort` 列全 543 cell
+- A#340 (A-text 117字): "网表中存在子电路（层级结构）。AutoCell 期望顶层 .SUBCKT 与单元名称匹配。我来编写一个批处理脚本..."
+- A#348 (A-text 95字): "问题——这个网表是层级化的（包含子电路 nand2PF 和 invGF），但原始的 g5_ddcpc 网表是扁平的。AutoCell 需要扁平化的网表..."
+- A#350 (A-text 154字): "新网表是分层的，包含子电路调用（XInand2PF_0、XIinvGF_0）...需要编写一个预处理器将分层网表扁平化..."
+- A#364 (A-text 139字): "实例名称前缀使用 Inand2PF_0 而不是 XInand2PF_0...原始网表会加上子电路调用名称作为内部网表的前缀..."
+- A#368 (A-text 88字): "第 65 行缺少 params = {} 的初始化...添加 params = {} 并将调用名称前缀设为 X..."
+- msg 374 = trace 末尾（assistant 仍在调试 netlist flattening 脚本，**未产出最终 GDS**）
+
+**GOLD 状态**: **incomplete** — assistant 在 trace 末尾仍调试 netlist 扁平化预处理器（层级 .cdl → 扁平 .cdl 供 AutoCell 消费），未跑到 AutoCell 生成 GDS 阶段。无 clean final deliverable 可作 gold-standard。
+
+**r942 判定**: U#327 是 **true L2 produce-task deferred to r943+**：
+- **非 manual-grounded howto reframe 候选**（用户意图=run 非 explain，reframe 违反任务初衷）
+- **需 full L2 pipeline 重建**：A=netlist_dir 子集（~10-20 .cdl）+ cell_constraints_template.txt + 扁平化预处理器脚本；candidate=扁平化 + AutoCell schematic 命令 + GDS streamout；check=GDS 文件结构 + cell 数 + 扁平化等价性 + 端口匹配（≥8 断言真跑 subprocess）
+- **预算估计**: 60-90 min（fetch GOLD + 重建扁平化逻辑 + 合成 B 平行 netlist + 真跑 AutoCell check + 3 neg + §4.9）
+- **r942 40-min budget 不足**（mandatory discuss 15min + infra probe 5min + U#327 fetch/scan 10min ≈ 30min 已用，余 ~10min 不够 L2 pipeline）
+
+**r943 建议**: ① 若 budget 充裕（>60min）可 attempt U#327 L2 produce-task（需 eda_flow run_code pyAether 跑 AutoCell schematic + GDS streamout，hidden B 平行 netlist 库）；② 否则选 fresh mc≥10 D-pure 候选做 manual-grounded howto reframe（11 例范式快速复用）；③ yv34j mc=11 .cdl:992 D-pure r788 claim-by-exception 可直接 claim。
