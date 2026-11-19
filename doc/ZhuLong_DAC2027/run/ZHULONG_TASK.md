@@ -1,5 +1,59 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-19 用户令 — 贡献列表精简至 2-3 项，且必须有一项是基于真实 Trace 构建的评测集 EDA-Flow-Bench（最高优先 · 覆盖 standby）**
+>
+> 本条是删除预注册令（commit `8348b8a7a`）之后的**贡献列表精简令**。用户原话：「贡献太多，2-3 项即可，而且应该有一项是基于真实 Trace 构建的评测集 EDA-Flow-Bench」。
+>
+> **现状**：`sections/1_intro.tex:22` 的 Contributions 段有 **5 条**：(1) formulate 3 核心假设 + 7 子假设；(2) design 10-arm ablation + N1 + M4；(3) formalize 三情绪机制计算映射；(4) introduce long-chain flow orchestration 新任务模态 + 评测协议；(5) 承诺报告 negative results。**问题**：5 条太多且分散，EDA-Flow-Bench 评测集（论文最核心的实体资产）反而没有作为独立贡献出现，被埋在 (4) 的"任务模态"里。
+>
+> ### ① 精简要求
+>
+> - **目标**：2-3 条贡献（用户原话"2-3 项即可"）。
+> - **硬约束**：**必须有一项是"基于真实 Trace 构建的评测集 EDA-Flow-Bench"**（用户明确要求）。这是论文最核心的实体资产——1684 任务 / 13 EDA 域 / 真实 IC 设计工程师 coding-agent traces / design_flow 契约（submit.zip + ≥8 断言）/ 696-run 冻结快照（10.0% Pass@1 vs 76.5% 单脚本）—— 必须升格为独立贡献项，不能埋在"任务模态"里。
+> - **其余 1-2 项**由 agent 自主选择组合，建议方向（agent 可自主调整）：
+>   - **认知命题 + 情绪机制形式化**（合并原 (1)(3)）：formulate 3 核心可证伪假设（H1 总/H2 机制/H3 边界）+ 7 子假设 + 三情绪机制计算映射（surprise-gated writing / weapon-focus compression / state-aware retrieval），作为可证伪的认知贡献。
+>   - **消融设计**（原 (2)）：10 臂主消融 + 等 token 杀手级对照 N1 + 跨域迁移污染探针 M4 + 答案泄露率审计，作为方法贡献。可与认知命题合并或独立。
+>   - **诚实路线**（原 (5)）：可并入认知命题（"含负结果作为可发表边界条件"），不单列。
+>   - **任务模态**（原 (4)）：并入 EDA-Flow-Bench 评测集贡献（长链 flow orchestration 是评测集的任务形态）。
+>
+> ### ② 推荐的 3 条结构（agent 自主判断，可调整为 2 条）
+>
+> 1. **EDA-Flow-Bench**: a benchmark of 1684 long-chain EDA design-flow tasks across 13 domains, each derived from real IC-design engineer coding-agent traces in a production environment, with a design_flow contract (submit.zip + ≥8 executable assertions + PreToolUse anti-leakage hook) and a frozen 696-run evaluation snapshot (10.0% Pass@1 vs 76.5% on single-script EDA benchmarks, a 7.6× gap).（基于真实 Trace 构建的评测集，含任务模态 + 评测协议 + 冻结快照；不发布数据/代码，仅本论文描述协议 + NDA 受控评审包）
+> 2. **Falsifiable cognition on affective memory**: 3 core falsifiable hypotheses (H1 functional / H2 mechanistic / H3 boundary) decomposed into 7 sub-hypotheses, each with falsification conditions; three cognitive-neuroscience mechanisms (arousal → surprise/penalty gating, weapon-focus → central-peripheral compression, mood-congruence → state-aware retrieval) formalized as computable mappings.（认知命题 + 情绪机制形式化，合并原 (1)(3)）
+> 3. **Mechanism-level ablation with killer controls**: a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1, excluding "prompt just got longer") and a cross-domain transfer contamination probe (M4, with machine-judgeable leak-rate audit). Negative results reported as publishable boundary conditions.（消融设计 + 诚实路线，合并原 (2)(5)）
+>
+> **若 agent 判断 2 条更合适**：可把 (2)(3) 合并为一条"可证伪认知命题 + 机制级消融"（含假设 + 情绪机制公式 + 消融设计 + 诚实路线），保留 EDA-Flow-Bench 独立。agent 自决，但**总数 ≤ 3**。
+>
+> ### ③ 同步修改
+>
+> - **Abstract**（`sections/0_abstract.tex`）：现 abstract 强调"3 核心假设 + 10 臂 + 三公式"，需调整叙事权重——**EDA-Flow-Bench 评测集应占更显著位置**（它是第一贡献项），认知命题 + 情绪机制作为第二贡献。agent 自主调整 abstract 句序与权重，但保留核心数字（7.6× / 1684 / 10.0% / 76.5% / 696）+ 三公式 + 诚实路线 + no-release。词数仍 ≤ 200（v1.8 摘要判据继续）。
+> - **§1 Intro Contributions 段**（`sections/1_intro.tex:22`）：5 条 → 2-3 条（按 ② 推荐）。
+> - **计划书**（`reports/report_edafb_icml2027_plan_zh.html`）§6.2 贡献列表：同步精简至 2-3 条（与论文一致）；注意 v1.6 计划书原是 5 条贡献，v1.7 论文沿用，现在统一改。
+> - **不强制改其他章节**：§5 假设表 / §6 实验 / §9 结论等不动（它们是内容展开，不是贡献列表）；但若 §9 Conclusion 的"we formulate 3 core hypotheses ..."句与新的 2-3 条贡献叙事冲突，agent 可微调（自决）。
+>
+> ### ④ 硬约束（继承，全部继续生效）
+>
+> - **可改**：`EDA-Flow-Bench_ICML2027/sections/1_intro.tex` + `0_abstract.tex` + `9_conclusion.tex`（可选微调）+ `reports/report_edafb_icml2027_plan_zh.html`。
+> - 🚫 **不动**：其他 sections / appendix / main.tex 宏定义 / designflow 造题线 / 其他论文树。
+> - 🚫 **不起**：训练/评测进程。
+> - ✅ **正文 ≤ 6 页**（精简贡献应让正文更短或持平）。
+> - ✅ **双盲匿名 + 防伪底线 + 0 外链**（计划书）。
+> - ✅ **EDA-Flow-Bench 必须作为独立贡献项**（用户硬要求）。
+> - **编译验证**：4 轮 pdflatex+bibtex；0 error 0 undefined；正文 ≤ 6 页；匿名性复检；abstract 词数 ≤ 200。
+> - **提交**：commit 前缀 `zhulong paper: 贡献列表精简至 2-3 项（EDA-Flow-Bench 评测集升格为独立贡献 + 认知命题/消融合并）`；**只 add 论文树 + 计划书 + 本线 run 文件**，勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① Contributions 段 2-3 条（grep `We \\emph{` 命中数 = 2 或 3）✅；
+>   ② 其中一条显式是 EDA-Flow-Bench 评测集（含 "real ... traces" / "1684" / "13 domains" / "design_flow contract" 关键词）✅；
+>   ③ Abstract 叙事权重调整（EDA-Flow-Bench 占更显著位置）✅；
+>   ④ Abstract 词数 ≤ 200 ✅；
+>   ⑤ 计划书 §6.2 同步精简 ✅；
+>   ⑥ 编译 0 error 0 undefined ✅；
+>   ⑦ 正文 ≤ 6 页 ✅；
+>   ⑧ 匿名 + 防伪 + 双盲继续过 ✅。
+> - 完成后 `WAITING=0` standby，记一行心跳。
+>
+> **agent 自主空间**：2 条还是 3 条 / 具体措辞 / abstract 句序调整 / §9 是否微调 由 agent 自主决定——用户给的是"2-3 项 + EDA-Flow-Bench 必须独立"，不是逐字模板。
+
 > 🔴 **2026-11-19 用户令 — 删除全部"预注册"相关内容（预注册日 / 预注册声明 / `\PreregDate` 宏 / "pre-register"措辞 / 预注册纪律段），保留假设/判据/诚实路线本身（最高优先 · 覆盖 standby）**
 >
 > 本条是 v1.8（5 条修订，commit `e31a8048d`）之后的**删除令**。用户原话：「不需要预注册 计划也没法排的这么严格 都删掉」。
