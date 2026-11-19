@@ -49,25 +49,20 @@ git_push_if_needed() {
     if [ $((now - last)) -lt "$PUSH_INTERVAL" ]; then
         return
     fi
-    echo "[push] $(date '+%F %T') push interval reached, committing + pushing ..."
-    cd "$GIT_ROOT" || return
-    # 🧭 2026-10-06 运维：共享工作副本上 `git add -A` 会卷走别线的在途文件
-    #   （10-05 已出事故：commit `06effe2 restore other agents files from dropped auto-commit`）
-    #   ⇒ 改为「本线白名单 + -A」+ 提交信息加线名前缀（否则运维无法靠 git 溯源谁在干活）。
-    for p in doc/BaiZe-ISEDA2027/run/MEMORY_VISION.md doc/BaiZe-ISEDA2027/run/EXPERIMENTS_VISION.md \
-             doc/BaiZe-ISEDA2027/run/BAIZE_VISION_TASK.md doc/BaiZe-ISEDA2027/run/daily-memories-vision \
-             doc/BaiZe-ISEDA2027/run/vision doc/BaiZe-ISEDA2027/run/GPU29_ALLOC.md; do
-        [ -e "$p" ] && git add -A -- "$p"
-    done
-    if git commit -m "vision auto-commit $(date '+%F %T')" >/dev/null 2>&1; then
-        echo "[push] committed."
+    echo "[push] $(date '+%F %T') push interval reached, committing + pushing (worktree-isolated) ..."
+    # 🧭 2026-11-19 wake#1688（用户令 22:1x）：vision 与 posttrain 共享 .17 同一工作副本。
+    #   旧做法「共享树 `git add -A` + `git push origin main`」会让 vision auto-commit 永远推不上去
+    #   （origin 被各线持续前进 → non-ff reject）→ 堆成「N ahead」→ posttrain `pull --rebase --autostash`
+    #   必冲突 + index.lock 争用。改用 worktree 隔离 helper：detached worktree at origin/main → 只 add
+    #   vision 白名单 → push HEAD:main → merge-base 复验 → reset --mixed 对齐共享 HEAD。
+    #   RCA + 协议：run/vision/SHARED_REPO_GIT_PROTOCOL_RCA.md ；helper：run/vision/vision_line_commit.sh
+    local helper="$SCRIPT_DIR/vision/vision_line_commit.sh"
+    if [ -x "$helper" ]; then
+        bash "$helper" "vision auto-commit $(date '+%F %T')"
+    elif [ -f "$helper" ]; then
+        bash "$helper" "vision auto-commit $(date '+%F %T')"
     else
-        echo "[push] nothing to commit."
-    fi
-    if git push origin main 2>&1; then
-        echo "[push] push OK."
-    else
-        echo "[push] push FAILED (will retry next cycle)."
+        echo "[push] WARNING: $helper missing — skip push (do NOT fall back to shared-tree git add -A)."
     fi
     date +%s > "$LAST_PUSH"
 }
