@@ -1,4 +1,8 @@
 
+WAITING: 0（r957 造题轮 · **1 case 落库** · [case] EDA-Eval-DesignFlow-CustomDlyIoLogicExplainQA-001 (chuanqiz@hfeg0pnd001 mc95 jojdp, analog_context, 12 断言 a-l, A=CustomDlyPulse200nsVbnVbpCtrlBIP 8-section manual I/O logic explain QA, B=hidden CustomDlyNcCtrlIP token-disjoint synthesized-reframe, U#72 verbatim "忽略内部信号...能否给出输入和输出的逻辑关系", ref iologic_explain_parser.py generic md-structure parser (无硬编码 cell/port) 12/12 PASS + 3 neg(empty_stub/print_hardcode_B/partial_parser) ALL FAIL, EDA-Flow-Bench commit 6c658178c assets+ref pushed; D.jsonl 515→516 gitignored merge-script 管) · 🧮 k_check=12 · 🧾 断言: 12 a-l · cov 506→507 (analog_context +1) · 下轮 mandatory due r959 · ⚠体积DEBT: MEMORY_D 50720B > 40KB 红线，下轮或 r958 应评估归档
+
+> r956 指针：上轮 1 case 落库 WaveformEdgeDiffStat-001 (botaoj@hfeg0plg100 mc70 49fjf, waveform) · 详见 daily_D_2026-11-19 r956 段
+
 WAITING: 0（r956 造题轮 · **1 case 落库** · [case] EDA-Eval-DesignFlow-WaveformEdgeDiffStat-001 (botaoj@hfeg0plg100 mc70 49fjf, waveform, 12 断言 a-l, A=v(oute) s1/s100 CSV + B=hidden v(dll) reference threshold=vdll/2 derived, U#4 verbatim Monte Carlo .fsdb edge-diff stat mean/var/max/min, ref edge_diff_stat_ref.py 12/12 PASS + 3 neg(wrong_threshold/wrong_edge_method/wrong_pairing) ALL FAIL, EDA-Flow-Bench commit pending) · reconcile r955: ag2qz→case ledger mark restored (case factually in benchmark D.jsonl:514, later session had reframed r955 as 0-case discuss) · r955 workdir closed keep=true · fresh mc10-70 D-pure scan: 49fjf FRESH (waveview:286+schematic:93+analog:41) best waveform candidate · 🧮 k_check=12 · 🧾 断言: 12 a-l · cov 505→506 (waveform 88) · 下轮 mandatory due r959）
 
 > r955 指针：并发双 agent 碰撞轮 · 1 case 落库 GioTielDaisyChainExplain-001 (ag2qz xavierw mc57 schematic_netlist) + discuss overdue 清付 · 详见 daily_D_2026-11-19 r955 段
