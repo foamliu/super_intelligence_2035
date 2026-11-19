@@ -1,0 +1,58 @@
+[incr-eval 21:00:13] Starting incr_eval_all R2786 (CPU-limited: taskset 0-15 + OMP=1)
+[incr-eval 21:00:13] --- pi ---
+[incr-eval 21:00:13] pi: unevaluated real_patch=2 (spiral=0) empty_patch=14
+[incr-eval 21:00:13] pi: merged 2 new patches -> predictions_pi_new_R2786.json
+[incr-eval 21:00:13] pi: EVAL 2 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_pi_incr_R2786
+[incr-eval 21:03:41] pi: eval rc=0
+[incr-eval 21:03:41]   mwaskom__seaborn-3187: RESOLVED
+[incr-eval 21:03:41]   psf__requests-5414: FAILED
+[incr-eval 21:03:41]   matplotlib__matplotlib-21568: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-22719: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-22871: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-24570: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-24627: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-24870: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-25311: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-25479: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-25775: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-25960: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-26208: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   matplotlib__matplotlib-26291: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   mwaskom__seaborn-3069: EMPTY PATCH -> failed
+[incr-eval 21:03:41]   psf__requests-6028: EMPTY PATCH -> failed
+[incr-eval 21:03:41] pi: cumulative n=436 resolved=244 failed=190 infra=2 empty_patch=94 total_pred=436
+[incr-eval 21:03:41] --- codex ---
+[incr-eval 21:03:41] codex: CPU_SPIRAL_SKIP -> ['scikit-learn__scikit-learn-14710'] (mark infra, no eval)
+[incr-eval 21:03:41] codex: unevaluated real_patch=1 (spiral=1) empty_patch=12
+[incr-eval 21:03:41] codex: merged 1 new patches -> predictions_codex_new_R2786.json
+[incr-eval 21:03:41] codex: EVAL 1 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_codex_incr_R2786
+[incr-eval 21:04:08] codex: eval rc=0
+[incr-eval 21:04:08]   sphinx-doc__sphinx-7889: RESOLVED
+[incr-eval 21:04:08]   sphinx-doc__sphinx-10435: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-10449: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-10466: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-10614: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-10673: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-11445: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-11510: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-7440: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-7454: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-7590: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-7748: EMPTY PATCH -> failed
+[incr-eval 21:04:08]   sphinx-doc__sphinx-7757: EMPTY PATCH -> failed
+[incr-eval 21:04:08] codex: cumulative n=412 resolved=111 failed=300 infra=1 empty_patch=241 total_pred=412
+[incr-eval 21:04:08] --- deepseek ---
+[incr-eval 21:04:08] deepseek: unevaluated real_patch=1 (spiral=0) empty_patch=3
+[incr-eval 21:04:08] deepseek: merged 1 new patches -> predictions_deepseek-harness_new_R2786.json
+[incr-eval 21:04:08] deepseek: EVAL 1 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_deepseek-harness_incr_R2786
+[incr-eval 21:04:38] deepseek: eval rc=0
+[incr-eval 21:04:38]   django__django-15987: RESOLVED
+[incr-eval 21:04:38]   django__django-15741: EMPTY PATCH -> failed
+[incr-eval 21:04:38]   django__django-16032: EMPTY PATCH -> failed
+[incr-eval 21:04:38]   django__django-16082: EMPTY PATCH -> failed
+[incr-eval 21:04:38] deepseek: cumulative n=276 resolved=178 failed=98 infra=0 empty_patch=59 total_pred=276
+[incr-eval 21:04:38] === SUMMARY ===
+[incr-eval 21:04:38] pi: resolved=244 failed=190 infra=2 n=436 (new_real=2 new_empty=14 spiral=0)
+[incr-eval 21:04:38] codex: resolved=111 failed=300 infra=1 n=412 (new_real=1 new_empty=12 spiral=1)
+[incr-eval 21:04:38] deepseek: resolved=178 failed=98 infra=0 n=276 (new_real=1 new_empty=3 spiral=0)
+[incr-eval 21:04:38] DONE
