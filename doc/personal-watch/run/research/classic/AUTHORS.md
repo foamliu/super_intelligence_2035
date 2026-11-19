@@ -6,6 +6,10 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-20 00:1x）**：作者 **247** 人（编号最大 **247**）· X 已核验 **106** · 已发信 **106**（台账 #1–#106）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第七十轮增量（2026-11-20 00:0x）**：作者网 245 → **247**（#246 Tianle Cai 蔡天乐 **B 级** `tianle.cai@princeton.edu`（ar5iv 作者块 + 主页 `200` / 6,114 B 核身份，页内无 `mailto:`）/ #247 Quoc V. Le **C 级** `qvl@google.com`（2019 年论文作者块，未在现行页复核）），来自本轮 B 轨 #267 Medusa / #265 Transformer-XL；Emu3 一作 Xinlong Wang（`wangxinlong.github.io` 与 `xinlongwang.github.io` 均 **404**）· Janus 一作 Chengyue Wu / Xiaokang Chen（`xiaokang2022.github.io` 实测是**同名中文博客「小康笔记本」**，非本人 ⇒ 拒用）⇒ 只计数不建档、不猜地址；X 保持 **106**（两人页面均无可读 handle）；已发信 104 → **106**（#105 中文 227 字 `SENT OK 00:05:38` / #106 中文 241 字 `SENT OK 00:05:45`）。
+
 > **当前计数（2026-11-19 21:0x）**：作者 **245** 人（编号最大 **245**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **第六十九轮增量（2026-11-19 21:0x）**：作者网 242 → **245**（#243 Lingming Zhang 张令明 **A 级** `lingming@illinois.edu`（`lingming.cs.illinois.edu` `mailto:`，200 / 22,815 B；⚠️ `llingming.github.io` 已 404）/ #244 Chunqiu Steven Xia **B 级** `chunqiu2@illinois.edu`（论文 PDF 首页分组明文，按确定性还原）/ #245 Vidya A. Chhabria **A 级** `vidyachhabria@asu.edu`（ASU 官方 profile 页明文，200 / 124,745 B）），来自本轮 B 轨 #262 Agentless / #264 EDA Corpus；Transfusion #261（Meta FAIR，无个人主页可核）/ Massive Activations #263（Mingjie Sun `mingjiesun.com` 与 `cs.cmu.edu/~mingjies/` 均 `000`/`404`）⇒ 只计数不建档、不猜地址；X 保持 **106**（三人页内均无可读 handle）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档并备 11-20 草稿）。
@@ -3440,7 +3444,7 @@
 | 邮箱 | **guody5@mail2.sysu.edu.cn** / **A**（本人主页 `https://guoday.github.io/` 页内 `mailto:` 明文，2026-11-19 实测 `200` / 74,157 B） |
 | 主页 | <https://guoday.github.io/>（`200` / 74,157 B） |
 | X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接） |
-| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发；草稿已备 11-20） |
+| 状态 | **已发信**（2026-11-20 00:05:45 · 台账 **#106** · 中文 241 字 · A 级地址当场复核；主页写「至 2026-04」在 DeepSeek ⇒ 若回信再核现行单位） |
 | 备注 | `语言=中文(判据=中文姓名族属 郭达雅 + 中山大学/DeepSeek；本轮未发)`。价值点：**87/10/3 代码语料配比 + repository-level 预训练 + 16K FIM 窗口**，可直接回填 data / pretrain 两条线的对照设计。⚠️ 主页写「至 2026-04」在 DeepSeek ⇒ 发信前需再核其现行单位（本线未据二手报道改写）。 |
 
 ### 241. Peiyi Wang（王培懿）
@@ -3480,7 +3484,7 @@
 | 邮箱 | **lingming@illinois.edu** / **A**（本人主页 `https://lingming.cs.illinois.edu/` 页内 `mailto:` 明文，2026-11-19 实测 `200` / 22,815 B；⚠️ `llingming.github.io` 已 `404`，勿再用旧地址） |
 | 主页 | <https://lingming.cs.illinois.edu/>（`200` / 22,815 B） |
 | X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接；🚫 不猜） |
-| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 状态 | **已发信**（2026-11-20 00:05:38 · 台账 **#105** · 中文 227 字 · A 级地址当场复核） |
 | 备注 | `语言=中文(判据=中文姓名族属 张令明 + 论文英文/美国机构不改变判据)`。价值点：**「无 agent 的三段固定流水线」**（定位 → 修 → 补丁验证 + 自生成复现测试）是我们 harness 侧「先证基线、再谈 agent 增益」的直接依据；可问「定位粒度从文件降到行时，召回与误改如何权衡」。 |
 
 ### 244. Chunqiu Steven Xia
@@ -3508,6 +3512,32 @@
 | X 账号 | **未找到**（🚫 不猜） |
 | 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
 | 备注 | `语言=英文(判据=姓名族属印度裔 + 美国机构；无中/日/韩信号)`。价值点：**「脚本类样本必须在 OpenROAD 里真跑才判对」** 是 designflow L1–L5 判分器最缺的一条硬约束；可问「增强样本（改写 prompt / 改参数）在训练与评分的分布如何隔离，避免验证集被增强污染」。 |
+
+### 246. Tianle Cai（蔡天乐）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianle Cai / 蔡天乐（中文姓名族属 ⇒ 若发信应用**中文全文**；人在 Princeton 不改判据） |
+| 机构 | **Princeton University**（PhD candidate，导师 Kai Li / Jason D. Lee；主页自述本科毕业于北京大学，师从 Liwei Wang / Di He；曾 part-time 在 Together.ai 与 Tri Dao 合作） |
+| 代表论文 | **Medusa**（`2401.10774`，B 轨 #267 一作）· 推理加速 / 解码方向 |
+| 邮箱 | **tianle.cai@princeton.edu** / **B**（ar5iv 论文 HTML 作者块明文，2026-11-20 实测 `200`；本人主页 `https://tianle.website/` `200` / **6,114 B** 已核身份含「Tianle Cai (蔡天乐) … PhD candidate at Princeton University」，但页内**无 `mailto:`** ⇒ 不标 A） |
+| 主页 | <https://tianle.website/>（`200` / 6,114 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接；🚫 不猜） |
+| 状态 | **待跟踪**（本轮已发满 2 封并优先两篇中文草稿；未发信） |
+| 备注 | `语言=中文(判据=中文姓名族属 蔡天乐 + 主页自述北大本科；不以「人在美国 / 论文英文 / `.edu` 邮箱」判英文)`。价值点：**多解码头 + tree attention 的无损加速档位**，可直接回填 zhulong 成本口径（无损 vs 需联合训练分开报）。 |
+
+### 247. Quoc V. Le
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Quoc V. Le（越南裔，机构美国 ⇒ 英文） |
+| 机构 | **Google DeepMind**（Gemini 团队；Transformer-XL 末位作者，署名时属 Google Brain） |
+| 代表论文 | **Transformer-XL**（`1901.02860`，B 轨 #265 末位作者）· seq2seq / Neural Architecture Search / T5 系列 |
+| 邮箱 | **qvl@google.com** / **C**（**2019 年论文 ar5iv 作者块**明文；⚠️ 未在现行个人 / 机构页复核，按 C 级记，发信前必须先找 A/B 级地址） |
+| 主页 | **未找到可核现行个人主页**（本轮未取到；🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（C 级地址，不发） |
+| 备注 | `语言=英文(判据=姓名族属越南裔 + 美国机构；无中/日/韩信号)`。价值点：长上下文「记忆 + 相对位置编码」的原始配方；但其当前工作重心在 Gemini，本线只作长期跟踪对象，不优先发信。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
