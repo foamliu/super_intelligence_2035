@@ -6,7 +6,10 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-19 06:0x）**：作者 **223** 人（编号最大 **223**）· X 已核验 **106** · 已发信 **98** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-19 09:0x）**：作者 **227** 人（编号最大 **227**）· X 已核验 **106** · 已发信 **100** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十四轮增量（2026-11-19 09:0x）**：作者网 223 → **227**（#224 Ofir Press / #225 Xin Jin 金鑫 / #226 Mingxing Zhang 张明星 / #227 Ruoyu Qin，来自本轮 B 轨 #242 ALiBi / #244 DistServe / #245 Mooncake）；已发信 98 → **100**（#100 / #101 均中文，见 `发送记录.md` §09:0x）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#225 为 **A（本人现行主页 `xinjin.github.io` `200` / 14,919 B，页内反爬写法按确定性还原）**；#226 为 **C（论文 PDF 首页明文；`mzhang2021.github.io` / `zhangmingxing.github.io` / 清华软院候选页均 `404`）**；#224 / #227 无可核现行邮箱 ⇒ 只建档不发。⚠️ 纠错记录：`mzhang.io` 实测为 **Northeastern 博士生 Michael Zhang**，与 Mooncake 作者 Mingxing Zhang **无关** ⇒ 已拒用，不以其身份/邮箱入表。
+
 >
 > **第六十三轮增量（2026-11-19 06:0x）**：作者网 219 → **223**（#220 Mirac Suzgun / #221 Cheng-Ping Hsieh / #222 Ramachandran Ramjee / #223 Amey Agrawal，来自本轮 B 轨 #238 BBH / #240 RULER / #241 Sarathi-Serve）；已发信 96 → **98**（#98 中文 / #99 英文，见 `发送记录.md` §06:0x）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle；#221 的 `@ChengPingHsieh` 只有主页 href 单一来源，**不计入已核验**）。地址级别：#221 为 **A（本人现行主页 `mailto:`，`hsiehjackson.github.io` `200`）**；#222 为 **B（MSR 官方人员页，`200`）**；#220 为 **C（2022 论文 PDF）**；#223 无已核邮箱、只建档不发。⚠️ 本轮**先查重后才收**：`2101.00027`（The Pile）/ `2402.00159`（Dolma）/ `2306.11644`（phi-1）/ `2309.07544`（VerilogEval）均在表内 ⇒ 作废，改收 #238–#241。
 >
@@ -3200,6 +3203,58 @@
 | X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
 | 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 只建档、不发信；同论文已按「同一论文 ≤1」发给 #222） |
 | 备注 | `语言=英文(判据=印度姓名族属 + 印度机构；本轮未发)`。不猜地址：三个候选页均实测 `404`。 |
+
+### 224. Ofir Press
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ofir Press（希伯来姓名族属 ⇒ 英文） |
+| 机构 | **Meta FAIR**（本人主页自述 `I lead the code benchmarks team at FAIR`；ALiBi 发表时为 University of Washington · Meta AI） |
+| 代表论文 | **Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation**（`2108.12409`，ICLR 2022）· SWE-bench（`2310.06770`，共同作者） |
+| 邮箱 | **未找到现行地址**（主页 `https://ofirpress.github.io/` `HTTP 200` / 13,838 B，但 `about/` 页无 `mailto:`；2021 年 PDF 首页 `ofirp@cs.washington.edu` 属旧机构 ⇒ 按「不因旧 PDF 发信」只登记，🚫 不发） |
+| 主页 | <https://ofirpress.github.io/>（`200`） |
+| X 账号 | **未找到**（`x.com` 本轮不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核现行邮箱 ⇒ 只建档、不发信） |
+| 备注 | `语言=英文(判据=希伯来姓名族属 + 美国机构；未发)`。价值点：ALiBi 的「训练短、测试长」说法必须与「训练长度内变差」一起引用，否则会误导扩窗决策。 |
+
+### 225. Xin Jin 金鑫
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xin Jin 金鑫（华人姓名族属 ⇒ 中文） |
+| 机构 | **北京大学计算机学院**（Associate Professor；B 轨 #244 DistServe 作者之一） |
+| 代表论文 | **DistServe: Disaggregating Prefill and Decoding for Goodput-optimized LLM Serving**（`2401.09670`，2024） |
+| 邮箱 | **`xinjinpku@pku.edu.cn`**（**来源：本人现行主页 `https://xinjin.github.io/` 实测 `HTTP 200` / 14,919 B，页内反爬写法 `xinjinpku (at) pku (dot) edu (dot) cn`，按确定性还原；地址级别 A**） |
+| 主页 | <https://xinjin.github.io/>（`200`；自述 USENIX NSDI 2018 / FAST 2019 Best Paper） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 09:05，中文请教信 #100） |
+| 备注 | `语言=中文(判据=华人姓名族属 Jin / 金鑫 + 中国机构北京大学；不因论文英文判英文)`。价值点：把「P90 TTFT / P90 TPOT 分开报 + 达成率」固定进跑批报告，避免只报平均吞吐。 |
+
+### 226. Mingxing Zhang 张明星
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingxing Zhang 张明星（华人姓名族属 ⇒ 中文） |
+| 机构 | **清华大学**（B 轨 #245 Mooncake 作者之一；论文作者块 `Moonshot AI ♡ Tsinghua University`） |
+| 代表论文 | **Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving**（`2407.00079`，ACM Transactions on Storage） |
+| 邮箱 | **`zhang_mingxing@mail.tsinghua.edu.cn`**（**来源：论文 PDF 第 1 页作者块，`pdftotext` 实测明文；地址级别 C**。`mzhang2021.github.io` / `zhangmingxing.github.io` / 清华软院人员页候选 URL 均 `404` ⇒ 无 A/B 级可核页面，按下限记录） |
+| 主页 | **未找到**（上述四个候选 URL 全 `404`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 09:05，中文请教信 #101） |
+| 备注 | `语言=中文(判据=华人姓名族属 Zhang Mingxing / 张明星 + 中国机构清华大学)`。⚠️ `mzhang.io` 是 **Northeastern 的 Michael Zhang**，**非本人** ⇒ 已拒用。价值点：525% 与 75% 都依赖长上下文/前缀复用，短序列高并发场景不能直接外推。 |
+
+### 227. Ruoyu Qin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ruoyu Qin（华人姓名族属 ⇒ 若发信应用中文） |
+| 机构 | **Moonshot AI**（B 轨 #245 Mooncake 一作；论文作者块） |
+| 代表论文 | **Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving**（`2407.00079`，2024） |
+| 邮箱 | **未找到**（PDF 只印通讯作者 `xuxinran@moonshot.ai`，无个人地址；主页 `ruoyuqin.github.io` 未验证 ⇒ 不发） |
+| 主页 | **未找到**（`https://ryqin.github.io/` 实测 `404`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱；同论文已按「同一论文 ≤1」发给 #226） |
+| 备注 | `语言=中文(判据=华人姓名族属；本轮未发)`。🚫 不用通讯作者邮箱替个人发信，避免把「同一论文 ≤1」变成「换个收件人再发一次」。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。

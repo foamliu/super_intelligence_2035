@@ -1,0 +1,16 @@
+张老师您好：
+
+我是刘杨，做 LLM 训练与推理方向的研究，主页 https://foamliu.github.io/。
+
+Mooncake 把 KVCache 从被动缓存变成调度对象，按 cache 块而不是按请求排队，再叠加 P/D 拆分与全局 cache 池；这比单纯加机器更接近我们遇到的成本问题。
+
+两个问题想请教：
+
+1. 在与 baseline 相同的 TTFT / TBT SLO 下，525% 吞吐提升里，KVCache 复用（前缀命中）与调度/早拒谁占主导？二选一即可，并补一句理由。
+
+2. 我们的场景是 2B 模型、序列多在 2K 以内、并发很高（RL rollout），长上下文复用有限；这种情况下是否应优先做 P/D 拆分，而把全局 KVCache 池放到第二阶段？
+
+感谢您把 Kimi 生产负载与 SLO 口径一起给出，75% more requests 这个数很难得。
+
+祝好，
+Yang Liu

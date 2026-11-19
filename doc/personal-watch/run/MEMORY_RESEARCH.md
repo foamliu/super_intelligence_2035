@@ -13,20 +13,20 @@ WAITING: 1
 ```
 
 PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网 + 研究者言论投料）；loop 按 0,3,6,9,12,15,18,21 八时窗唤醒
-已完成:       [r209 · 本地 2026-11-19 06:0x · 06:00 时窗：A 轨 0 新收（今日 5/5 已满）+ B 轨 +4 → 241 + 作者网 +4 → 223 + 作者信 2 封（累计 98）+ 回信率 0/98]。
-  ① 网络：**直连可用、代理 000**（`export.arxiv.org` https 直连 `200`、`--noproxy '*'` 全程；`x.com` 直连与代理均 `000`）。`cat:cs.CL` 最新 `published` **`2026-11-17T18:59:37Z`**（00:00 / 03:00 / 06:00 三窗逐字相同 ⇒ 公告批未前进 >39h）。
-  ② A 轨 **0 新收**：今日目标 5/5 已在 00:00 + 03:00 完成；不拿旧批内低相关条目凑数。**先查重后发现 4 个拟收 ID 全在表内**（`2101.00027` The Pile / `2402.00159` Dolma / `2306.11644` phi-1 / `2309.07544` VerilogEval）⇒ 全部作废。
-  ③ B 轨 **+4 → 241**：BBH `2210.09261`（**1,433**；23 任务、PaLM 52.3→65.2、Codex 56.6→73.9、人类 67.7）/ Speculative Sampling `2302.01318`（**1,424**；Chinchilla 70B、2–2.5×、HumanEval 14.1→5.73 ms/token 2.46×、K=4）/ RULER `2404.06654`（**1,799**；13 任务 × 17 模型、阈值 = Llama2-7B@4K 的 **85.6**、半数百 32K 达标）/ Sarathi-Serve `2403.02310`（**539**；chunked-prefills + stall-free、2.6×/3.7×/5.6×、chunk 257 比 256 慢 32%）；arXiv 4/4 `200` + OpenAlex 4/4 `200` + PDF 4/4 `200`（349,916 / 5,375,941 / 682,955 / 1,945,812 B；BBH >5 MB 仅 `/tmp`）。
-  ④ 作者网 **+4 → 223**（#220 Mirac Suzgun C 级 / #221 Cheng-Ping Hsieh **A 级**（`hsiehjackson.github.io` `200` + `mailto:`）/ #222 Ramachandran Ramjee **B 级**（MSR 人员页）/ #223 Amey Agrawal 无邮箱只建档）；X 不可达 ⇒ 已核验保持 **106**、不猜 handle。
-  ⑤ 发信 **2 封**：`SENT OK 06:06:16`（#98 中文 **207** 字 · `RULER 的 4K 阈值 85.6…` · 地址 A 级）/ `06:06:19`（#99 英文 **167** 词 · `The 256-token chunk and the TBT budget…` · 地址 B 级）；落款两行、其后无行；同轮零共用；均 2 问且 1 问二选一（H4）。今日 7/12。
-  ⑥ 回信率 **0 / 98**，**0 封到期**（最早 2026-11-25）；`mail/replies/` 无任何摘录；通道仍只发不收。
+已完成:       [r210 · 本地 2026-11-19 09:0x · 09:00 时窗：A 轨 0 新收（今日 5/5 已满）+ B 轨 +4 → 245 + 作者网 +4 → 227 + 作者信 2 封（累计 100）+ 回信率 0/100]。
+  ① 网络：**直连可用、代理 000**（`export.arxiv.org` https 直连 `200`、`--noproxy '*'` 全程；`x.com` 直连与代理均 `000`）。`cat:cs.CL` 最新 `published` **`2026-11-17T18:59:37Z`**（00:00 / 03:00 / 06:00 / 09:00 四窗逐字相同 ⇒ 公告批未前进 >42h）。
+  ② A 轨 **0 新收**：今日目标 5/5 已在 00:00 + 03:00 完成；不拿旧批内低相关条目凑数。09:00 只复核公告批 + `id_list`（两次 `429` / `000` ⇒ 改 abs 页）。
+  ③ B 轨 **+4 → 245**：ALiBi `2108.12409`（**969**；1024→2048、11% faster / 11% less memory、ICLR 2022）/ Efficiently Scaling `2211.05102`（**506**；PaLM 540B、29 ms/token、76% MFU、32× context）/ DistServe `2401.09670`（**711**；7.4× / 12.6× tighter SLO、>90% 达成率、13B A100）/ Mooncake `2407.00079`（**345**，<500 按「方法论常青 / 生产系统权威」收；525%、75% more requests、KVCache-centric scheduler）；abs 4/4 `200` + OpenAlex 4/4 `200` + PDF 4/4 `200` 且字节 = `Content-Length`（759,030 / 1,036,959 / 647,352 / 581,962 B，全部 <5 MB）。
+  ④ 作者网 **+4 → 227**（#224 Ofir Press 无现行邮箱 / #225 Xin Jin 金鑫 **A 级**（`xinjin.github.io` `200`）/ #226 Mingxing Zhang 张明星 **C 级**（PDF；4 候选页 404）/ #227 Ruoyu Qin 无邮箱）；X 不可达 ⇒ 已核验保持 **106**、不猜 handle。⚠️ `mzhang.io` = Northeastern Michael Zhang，非本人 ⇒ 拒用。
+  ⑤ 发信 **2 封**：`SENT OK 09:05:27`（#100 中文 **211** 字 · DistServe 90%→99% 归因 · 地址 A 级）/ `09:05:30`（#101 中文 **189** 字 · Mooncake 525% 里复用 vs 调度 · 地址 C 级）；落款两行、其后无行；同轮零共用；均 2 问且 1 问二选一（H4）。今日 9/12。
+  ⑥ 回信率 **0 / 100**，**0 封到期**（最早 2026-11-25）；`mail/replies/` 无任何摘录；通道仍只发不收。
   ⑦ voice_ready **0**（X 不可达）；news_ready **0**（无事件点）。
-  ⑧ 交付：`daily/2026-11-19.html`（5 卡 + B 轨 7 条 + 作者网 11 条 + 信件 7 条 + 6 线建议；div 16/16、table 9/9、tr 63/63、td 209/209、th 46/46、0 script、0 残留 `**`，38,892 B）+ `index.html` 当日行 + `research/2026-11-19.md` §16–§19 + `PAPERS.md` #238–#241（快照 241）+ `AUTHORS.md` #220–#223（计数 223）+ `发送记录.md` §06:0x + drafts/bodies 各 2。]
-当前动作:     ✅ 本轮闭环：B 轨补「评测形态 / 解码成本 / 长上下文验收 / 服务调度」四块地基，2 封信（中 1 英 1，地址 A/B 级）、作者网 +4。
-下一步:       ① 09:00：复核公告批，前进则做新一批 A 轨 3 篇；② RULER 三列口径（4K 基线 / 目标长度均分 / 有效长度）与 Sarathi 的 chunk 参数进各线实验记录模板；③ 11-25 首批到期 → #1–#7 批量转 `无应答(>14d)`；④ 运维：SMTP 显示名与「只发不收」。
-本轮新增:     A 轨 +0（今日 5/5）· B 轨 +4（241）· 作者网 +4（223）· 作者信 2（98）· voice_ready 0 · news_ready 0 · 回信率 0/98 · X 已核验 106
-阻塞:         ① 发件通道只发不收（无 IMAP/POP3）⇒ 回信可能已到但读不到，最需运维介入；② `x.com` 直连与代理均 `000` ⇒ voice_ready 无法新增；③ arXiv 公告批自 11-17 18:59Z 未前进（>39h），A 轨只能在旧批内取未收录条目；④ `WATCH_RESEARCH_TASK.md` 体积超红线且 agent 只读 ⇒ 需授权。
-ERROR_COUNT:  104（本轮 +1：`x.com` 直连与代理均 `000`，voice_ready 记为 0；已按「分清代proxy」处置）
+  ⑧ 交付：`daily/2026-11-19.html`（5 卡 + B 轨 11 条 + 作者网 15 条 + 信件 9 条 + 6 线建议）+ `index.html` 当日行 + `research/2026-11-19.md` §20–§23 + `PAPERS.md` #242–#245（快照 245）+ `AUTHORS.md` #224–#227（计数 227）+ `发送记录.md` §09:0x + `LETTER_AUDIT.md §10` + `REPLY_DIAGNOSIS.md §12` + drafts/bodies 各 2。]
+当前动作:     ✅ 本轮闭环：B 轨补「位置外推 / 推理成本分解 / 两阶段 SLO / KVCache 调度」四块，2 封中文信（地址 A/C）、作者网 +4，并留下同名拒用判据。
+下一步:       ① 12:00：复核公告批，前进则做新一批 A 轨 3 篇；② 把 #243 的「权重 / KV / 计算」三列预算表 + #244 的 `P90 TTFT/TPOT/达成率` 写进各线实验记录模板；③ 11-25 首批到期 → #1–#7 批量转 `无应答(>14d)`；④ 运维：SMTP 显示名与「只发不收」。
+本轮新增:     A 轨 +0（今日 5/5）· B 轨 +4（245）· 作者网 +4（227）· 作者信 2（100）· voice_ready 0 · news_ready 0 · 回信率 0/100 · X 已核验 106
+阻塞:         ① 发件通道只发不收（无 IMAP/POP3）⇒ 回信可能已到但读不到，最需运维介入；② `x.com` 直连与代理均 `000` ⇒ voice_ready 无法新增；③ arXiv 公告批自 11-17 18:59Z 未前进（>42h），A 轨只能在旧批内取未收录条目；④ `WATCH_RESEARCH_TASK.md` 体积超红线且 agent 只读 ⇒ 需授权。
+ERROR_COUNT:  105（本轮 +1：arXiv `id_list` 两次 `429` / `000` ⇒ 已改 abs 页 `citation_*` 并如实标注；未把 abs 页写成 `id_list 200`）
 
 ```
 
@@ -59,10 +59,10 @@ ERROR_COUNT:  104（本轮 +1：`x.com` 直连与代理均 `000`，voice_ready �
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：⏰ **每天 8 个时窗 · 0/3/6/9/12/15/18/21（本地时区）**（`RESEARCH_MAIL_SPEC §3` 与 loop 现行口径；`WAITING` 字段保留仅供人读、**已不影响唤醒节律**）；回退：`WATCH_SCHEDULE_HOURS=` 置空 ⇒ `WAITING=1` 睡 **30min** / `WAITING=0` 短睡 **60s**
-- **上次采集窗口**：`2026-11-19 06:0x`（**第二百零九轮 · 06:00 时窗**：`cat:cs.CL` 最新 `published` 仍 `2026-11-17T18:59:37Z`（**与 00:00 / 03:00 相同 ⇒ 未前进 >39h**）；A 轨 **0 新收**（今日 5/5 已满）；B 轨 +4 → **241**（BBH 1,433 / Speculative Sampling 1,424 / RULER 1,799 / Sarathi-Serve 539）；作者网 +4 → **223**；X 已核验 **106**；信件 **2**（累计 98，今日 7/12）；回信率 **0/98**；voice_ready 0；news_ready 0）
+- **上次采集窗口**：`2026-11-19 09:0x`（**第二百一十轮 · 09:00 时窗**：`cat:cs.CL` 最新 `published` 仍 `2026-11-17T18:59:37Z`（**与 00:00 / 03:00 / 06:00 相同 ⇒ 未前进 >42h**）；A 轨 **0 新收**（今日 5/5 已满）；B 轨 +4 → **245**（ALiBi 969 / Efficiently Scaling 506 / DistServe 711 / Mooncake 345）；作者网 +4 → **227**；X 已核验 **106**；信件 **2**（累计 100，今日 9/12）；回信率 **0/100**；voice_ready 0；news_ready 0）
 - **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
 - **累计收录**：`358` 篇（11-19 A 轨 +5：`2611.23035` / `2611.23197` / `2611.22777` / `2611.22835` / `2611.23158`；`SEEN.md` 为唯一防重台账）
-- **B 轨（经典论文 · 2026-11-11 新增）**：`research/classic/PAPERS.md`（滚动清单，**241 篇**，8 字段 + OpenAlex 单源被引 + arXiv `comment` 会议口径 + 首次收录日；**六十三轮累计，必读清单 37/37 全覆盖**）· `research/classic/AUTHORS.md`（**223 人**关系网 + X 只读证据 + 待 follow 清单 + 发信记录 + 言论台账 V1–V34）；**B 轨不占 5 篇额度、不进 `SEEN.md`**。作者信草稿 `research/mail/drafts/<arXiv_ID>.md`；正文一律落 `research/mail/bodies/`
+- **B 轨（经典论文 · 2026-11-11 新增）**：`research/classic/PAPERS.md`（滚动清单，**245 篇**，8 字段 + OpenAlex 单源被引 + arXiv `comment` 会议口径 + 首次收录日；**六十四轮累计，必读清单 37/37 全覆盖**）· `research/classic/AUTHORS.md`（**227 人**关系网 + X 只读证据 + 待 follow 清单 + 发信记录 + 言论台账 V1–V34）；**B 轨不占 5 篇额度、不进 `SEEN.md`**。作者信草稿 `research/mail/drafts/<arXiv_ID>.md`；正文一律落 `research/mail/bodies/`
 
 
 
@@ -72,6 +72,8 @@ ERROR_COUNT:  104（本轮 +1：`x.com` 直连与代理均 `000`，voice_ready �
 
 
 ## 2. 流水（倒序，保留最近 ~20 条）
+
+- **2026-11-19（本地 09:0x · 09:00 时窗 · 🅰 A 轨 0 新收（今日 5/5 已满）＋ 🅱 B 轨第六十四轮 +4 → 245 ＋ 作者网 +4 → 227 ＋ 2 封信（累计 100）＋ 回信率 0/100）** —— **第二百一十轮**：① 网络：`cat:cs.CL` 列表 `200` / 97,294 B / 40 entry，最新 `published` 仍 `2026-11-17T18:59:37Z`（四窗未前进 >42h）；`x.com` 直连与代理均 `000`。② A 轨 0 新收。③ B 轨 +4 → 245：ALiBi `2108.12409`（969）/ Efficiently Scaling `2211.05102`（506）/ DistServe `2401.09670`（711）/ Mooncake `2407.00079`（345，<500 按「方法论常青 / 生产系统权威」收）；`id_list` 两次 429/000 ⇒ 改 arXiv abs 页 `citation_*`（4/4 200）+ OpenAlex 4/4 + PDF 4/4 且字节 = `Content-Length`（759,030 / 1,036,959 / 647,352 / 581,962 B）+ `pdftotext` 核数字。④ 作者网 +4 → 227（#225 A 级 / #226 C 级；⚠️ `mzhang.io` 为 Northeastern Michael Zhang，同名拒用）。⑤ 发信 2 封：`SENT OK 09:05:27`（#100 中文 211 字 · A 级）/ `09:05:30`（#101 中文 189 字 · C 级）；落款两行其后无行、同轮零共用、均 2 问且 1 问二选一。⑥ 回信率 **0/100**，0 封到期（最早 11-25）。⑦ voice_ready 0 / news_ready 0。⑧ 交付：daily + index + §20–§23 + PAPERS #242–#245 + AUTHORS #224–#227 + 台账 §09:0x + LETTER_AUDIT §10 + REPLY_DIAGNOSIS §12 + drafts/bodies 各 2。
 
 - **2026-11-19（本地 06:0x · 06:00 时窗 · 🅰 A 轨 0 新收（今日 5/5 已满）＋ 🅱 B 轨第六十三轮 +4 → 241 ＋ 作者网 +4 → 223 ＋ 2 封信（累计 98））** —— **第二百零九轮**：① 网络：`export.arxiv.org`（https）直连 `200` / `--noproxy '*'`，`cat:cs.CL` 最新 `published` **`2026-11-17T18:59:37Z`**（00:00 / 03:00 / 06:00 **三窗逐字相同** ⇒ 公告批未前进 >39h）；`x.com` 直连 `000`、`127.0.0.1:7897` 亦 `000`。② A 轨 **0 新收**：今日 5/5 已满，不拿旧批低相关条目凑数。**查重纠错**：拟收 `2101.00027`（The Pile）/ `2402.00159`（Dolma）/ `2306.11644`（phi-1）/ `2309.07544`（VerilogEval）**全在表内** ⇒ 四条作废（教训：抓 arXiv 前先对 `PAPERS.md` 做 ID 全量正则扫描，不靠记忆）。③ B 轨 **+4 → 241**：BBH `2210.09261`（**1,433**；23 任务、PaLM 540B 52.3→65.2、Codex 56.6→73.9、人类平均 67.7、算法族收益 +17.7~+28.5 远大于 NLP +7.1~+10.4）/ Speculative Sampling `2302.01318`（**1,424**；Chinchilla 70B、2–2.5×、XSum 14.1→7.00 ms/token 2.01×、HumanEval 14.1→5.73 ms/token **2.46×**、`K=4`）/ RULER `2404.06654`（**1,799**；四类 13 任务 × 17 模型、阈值 = **Llama2-7B@4K 的 85.6**、只有一半模型 32K 仍达标、Llama3.1-70B 128K 处 66.6）/ Sarathi-Serve `2403.02310`（**539**；chunked-prefills + stall-free、2.6× / 3.7× / 5.6×、**chunk 257 比 256 慢 32%**）；arXiv 4/4 `200` + OpenAlex 4/4 `200` + PDF 4/4 `200`（349,916 / **5,375,941** / 682,955 / 1,945,812 B；BBH >5 MB 仅 `/tmp`）+ `pdftotext` 逐篇核数。④ 作者网 **+4 → 223**（#220 Mirac Suzgun `msuzgun@cs.stanford.edu` C（三个主页 404）/ #221 Cheng-Ping Hsieh `c2hsieh@ucsd.edu` **A**（`hsiehjackson.github.io` `200` + `mailto:`，候选 X `@ChengPingHsieh` 仅单源不计核验）/ #222 Ramachandran Ramjee `ramjee@microsoft.com` **B**（MSR 人员页 179,728 B）/ #223 Amey Agrawal 三个候选页全 404 ⇒ 只建档）；X 已核验 **106 不变**。⑤ 发信 **2 封**：`SENT OK 06:06:16`（#98 中文 **207** 汉字 · `RULER 的 4K 阈值 85.6 与 CWE/FWE 的掉点顺序` · 地址 **A 级**）/ `06:06:19`（#99 英文 **167** 词 · `The 256-token chunk and the TBT budget in Sarathi-Serve` · 地址 **B 级**）；落款两行其后无行、正文无项目名、同轮零共用开头与句式；均 2 问且 1 问二选一（H4）；今日 7/12。⑥ 回信率 **0/98**、0 封到期（最早 11-25）；`replies/` 无摘录；通道仍只发不收。⑦ voice_ready 0（X 不可达）；news_ready 0（四篇经典均无事件点）。⑧ 交付：`daily/2026-11-19.html` **38,892 B**（div 16/16、table 9/9、tr 63/63、td 209/209、th 46/46、p 4/4、code 127/127、b 188/188、0 script、0 残留 `**`）+ `index.html` 当日行 + `research/2026-11-19.md` §16–§19 + `PAPERS.md` #238–#241（快照 241，覆盖计数 pretrain 93 / harness 107 / data 103 / zhulong 114）+ `AUTHORS.md` #220–#223 + 台账 §06:0x + drafts/bodies 各 2。⚠️ 踩坑：draft 正文初版把汉字名猜成「谢承平」⇒ 按「不伪造」改成「Hsieh 为威妥玛式拼写、本轮不猜汉字」；HTML 附录里误写 markdown `**先查重**` ⇒ 已改 `<b>` 并复验 `**` 计数 = 0。
 
