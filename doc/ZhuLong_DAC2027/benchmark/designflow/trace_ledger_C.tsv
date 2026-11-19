@@ -1303,3 +1303,4 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 1792477592591_hlzhf	ellawu	10.129.2.14	24	physical_verify	case	EDA-Eval-DesignFlow-TvfDeckOutputVarTrace-001	2026-11-19 13:05	
 1789979508962_oyqu3	kenwang	172.16.8.192	32	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoErrorDiag-001	2026-11-19 13:27	
 1793602560932_3wt7w					case	EDA-Eval-DesignFlow-DrcDeckQaScan-001	2026-11-19 14:01	revival-under-reaudit r814: D r270 parked Q&A unfit pre-11-15; physical_verify calibre:104;drc:100 C-domain; reaudit restored Q&A valid; reframe drc-deck-qa-scanner
+7y204	yzwang	10.129.2.10	23	physical_verify	case	EDA-Eval-DesignFlow-PptReportGen-001	2026-11-19 14:38	
