@@ -3407,3 +3407,21 @@
 | 2026-11-19 | [W] 硅星人风格？SiliconForest 开源 OS 可跑 Mac 应用（AppleInsider）：开源项目发布，按 §0.1「工具上线」不入账 | IT之家 `1/029/287` | W 区（第 309 轮） | https://www.ithome.com/1/029/287.htm |
 | 2026-11-19 | [W] 酷态科 10 Ultra 充电器安全隐患 + OTA 修复固件：消费电子硬件，非 AI 题材 | IT之家 `1/029/209` | W 区（第 309 轮） | https://www.ithome.com/1/029/209.htm |
 | 2026-11-19 | [W] 印度安得拉邦为硅晶圆厂开出最高 80% 补贴：产业补贴类，单一地方政策且与 AI 无直接事件点 | IT之家 `1/029/407` | W 区（第 309 轮） | https://www.ithome.com/1/029/407.htm |
+| 2026-11-19 | 微软高管：Claude 和 ChatGPT 能做的，Copilot 能做的更好且更便宜 | IT之家 | news | https://www.ithome.com/1/029/520.htm |
+| 2026-11-19 | 英国金融业网络威胁加剧，监管机构 10 月接报事件数创 5 年来单月次高 | IT之家 | news | https://www.ithome.com/1/029/571.htm |
+| 2026-11-19 | 补齐多年体验缺失，谷歌将为原生 Android 系统新增「应用锁」功能 | IT之家 | news | https://www.ithome.com/1/029/511.htm |
+| 2026-11-19 | 遏制 AI 作弊：韩国安防企业竞相开发智能眼镜探测仪 | IT之家 | news | https://www.ithome.com/1/029/539.htm |
+| 2026-11-19 | 12 月 10 日上市，三星 AI 眼镜 Intelligent Eyewear 预售数小时便售罄 | IT之家 | news | https://www.ithome.com/1/029/515.htm |
+| 2026-11-19 | 李开复：企业 AI 转型只看「智能体数量」是荒谬笑话 | IT之家 | news | https://www.ithome.com/1/029/582.htm |
+| 2026-11-19 | 英伟达确认：黄仁勋时代「T5T 邮件」企业文化将继续保留 | IT之家 | news | https://www.ithome.com/1/029/519.htm |
+| 2026-11-19 | 史上最大 IPO 带来新一轮造富神话：Anthropic 上市或催生数千名百万富翁 | IT之家 | news | https://www.ithome.com/1/029/509.htm |
+| 2026-11-19 | 微软纳德拉：AI 代劳网购将重塑互联网生意，拒绝接入的平台恐失去机会 | IT之家 | news | https://www.ithome.com/1/029/497.htm |
+| 2026-11-19 | Gartner 预测：2027 年全球人工智能支出将突破 4 万亿美元 | IT之家 | news | https://www.ithome.com/1/029/546.htm |
+| 2026-11-19 | 杨元庆：联想今年营收千亿美元「板上钉钉」/ 80% 算力将产生于端边 | IT之家 | news | https://www.ithome.com/1/029/528.htm |
+| 2026-11-19 | 杨元庆：终端市场有巨大增长机会，80% 算力将产生于「端边」 | IT之家 | W:dup-528 | https://www.ithome.com/1/029/518.htm |
+| 2026-11-19 | 黄仁勋女儿现身全员会、英伟达要提前发钱（含 T5T 保留与董事会表态） | IT之家 | news | https://www.ithome.com/1/029/526.htm |
+| 2026-11-19 | Alphabet 董事长轩尼诗：英伟达找到黄仁勋接班人很有挑战性，但并非不可能 | IT之家 | news | https://www.ithome.com/1/029/494.htm |
+| 2026-11-19 | 韩国成为全球第四个出口额破万亿美元国家，AI 芯片旺盛需求助力 | IT之家 | news | https://www.ithome.com/1/029/495.htm |
+| 2026-11-19 | 华为发布下一代核心网演进白皮书，提出 AgenticCore / NGC AI-Native 架构 | IT之家 | news | https://www.ithome.com/1/029/540.htm |
+| 2026-11-19 | 松下开发全新电动变焦镜头 / 联想季报稿等消费电子与厂商稿 | IT之家 | W:not-news | https://www.ithome.com/1/029/532.htm |
+| 2026-11-19 | 月之暗面 API 服务可用性低，官方调查中（Kimi Code K3 部分中断） | IT之家 | news | https://www.ithome.com/1/029/632.htm |

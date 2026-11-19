@@ -1,4 +1,16 @@
 
+
+## §A.20 第 310 轮实测（2026-11-19 18:0x · 5 条 · **后台列表已不直接暴露 pgc_id**）
+
+| # | 要点 | 实测 |
+|:--|:--|:--|
+| 1 | 🔑 **`/profile_v4/graphic/articles` 列表页的本号文章标题就是 `<a href>`，可直接读到 `/item/<id>/`** | 页面已改为「点「查看评论」跳评论区」的交互（本轮点 3 次均不跳、不开新标签）；取 id 的正解 = `[...document.querySelectorAll('a')]` 里筛 `innerText` 以标题开头的元素，读 `getAttribute('href')` ⇒ `https://www.toutiao.com/item/7709821694692672041/?enter_from=mp_group_management`；再用该 id 拼 `https://www.toutiao.com/article/7709821694692672041/` 即命中（承 §A.7 第 5 条 / §A.17 第 2 条） |
+| 2 | ⚠️ **「更多」下拉里的「查看评论」点击后不导航**（3 次验证） | 连点「查看评论」后 `location.href` 仍是列表页、`/json` 里也无新标签；菜单 DOM 在点击后即收起。**不要据此判「发布失败」**，改用第 1 条取 id |
+| 3 | ✅ **「四硬标准」第②条（图正常显示）要「先滚再读」，首读必是懒加载占位** | `chk4.py` 首次读 `IMGS {n:1, vis:1, broken:1, src:data:image/gif;base64…}` 是**占位图**（第四次复现）；`chk5b.py` 做 `i.scrollIntoView({block:'center'})` + 等 5 s 后 → `nw859 nh540 w676 h425 done:true`，截图目视图片与图注均正常 ⇒ **判据是渲染后的 `naturalWidth>1`** |
+| 4 | ⚠️ **`SEEN.md` 计数口径要写清是 `wc -l` 还是「主键去重」** | 本轮 `wc -l` 3,408 → 3,427（+19），但其中 `518` 与 `528` 同题、`532` 为厂商稿 ⇒ 主键去重口径实为 +17。两个数差 2，记账时必须并列写，否则后续轮次会把「+19」当新闻条数 |
+| 5 | 🔑 **配图「只存 URL」的落盘后校验可以只发 HEAD（已实现 `img_check.py --head`）** | 发布前需再验一次图仍可用，但重下会在本地多出一份 body；新增 `head()` 走 `Request(method='HEAD')` ⇒ `200 + image/* + Content-Length>5120`，本轮 4 张全部 `OK`、不落盘。⚠️ 无 `Content-Length` 的站点返回 `bytes:None`，此时调用方须用 `os.path.getsize` 补一次 |
+
+
 ## §A.19 第 309 轮实测（2026-11-19 15:1x · 5 条 · **前台超时 ≠ 作业被杀**）
 
 | # | 要点 | 实测 |

@@ -32,15 +32,50 @@ def check(url, referer=REF):
             "bytes": n, "ok": ok, "warn_watermark": warn, "err": r["err"]}
 
 
+def head(url, referer=REF):
+    """只发 HEAD、不读 body —— 用于校验**落盘后**的图片（不重复下载）。
+
+    判据同 check()：200 + `image/*` + `Content-Length` > 5120。
+    服务器不给 Content-Length 时 `bytes` 为 None，此时 `ok` 只按前两条判，
+    调用方应用本地 `os.path.getsize` 补一次大小校验。
+    """
+    import urllib.request
+
+    from fetch import UA
+    req = urllib.request.Request(url, method="HEAD", headers={
+        "User-Agent": UA, "Referer": referer, "Accept": "image/*,*/*;q=0.8",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=25) as r:
+            n = r.headers.get("Content-Length")
+            n = int(n) if n and n.isdigit() else None
+            ctype = r.headers.get("Content-Type", "")
+            ok = bool(r.status == 200 and ctype.startswith("image/")
+                      and (n is None or n > 5120))
+            return {"url": url, "status": r.status, "ctype": ctype.split(";")[0],
+                    "bytes": n, "ok": ok, "warn_watermark": "watermark" in url.lower(),
+                    "err": None}
+    except Exception as e:  # noqa: BLE001
+        return {"url": url, "status": None, "ctype": "", "bytes": None,
+                "ok": False, "warn_watermark": "watermark" in url.lower(),
+                "err": "%s: %s" % (type(e).__name__, e)}
+
+
 def main():
     bad = 0
     urls = sys.argv[1:]
+    if "--head" in urls:
+        urls.remove("--head")
+        fn = head
+    else:
+        fn = check
     for u in urls:
-        d = check(u)
+        d = fn(u)
         flag = "OK  " if (d["ok"] and not d["warn_watermark"]) else ("WARN" if d["ok"] else "BAD ")
         if not d["ok"]:
             bad += 1
-        print("%s %s %-12s %8d %s" % (flag, d["status"], d["ctype"], d["bytes"], u))
+        print("%s %s %-12s %s %s" % (flag, d["status"], d["ctype"],
+                                     "-" if d["bytes"] is None else "%8d" % d["bytes"], u))
     print("BAD %d / %d" % (bad, len(urls)))
 
 
