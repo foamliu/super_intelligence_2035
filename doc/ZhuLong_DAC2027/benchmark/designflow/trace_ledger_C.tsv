@@ -1294,3 +1294,4 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 1783403844641_6lp9l	e0014566	10.129.2.10	39	physical_verify	case	EDA-Eval-DesignFlow-AutoViaConfigReport-001	2026-11-19 07:48	
 1791770100985_wi6fj.messages.json	e0041392	10.129.8.125	22	layout_aether	case	EDA-Eval-DesignFlow-GuardRingApiSchema-001	2026-11-19 07:37	
 1794275240977_d2enp	gokuguo	hfeg0plg53	15	layout_virtuoso	case	EDA-Eval-DesignFlow-LayermapPairAudit-001	2026-11-19 08:10	
+1790214684453_ocopa	e0041123	10.129.40.58	42	physical_verify	case	EDA-Eval-DesignFlow-DRCRuleQuery-001	2026-11-19 08:37	
