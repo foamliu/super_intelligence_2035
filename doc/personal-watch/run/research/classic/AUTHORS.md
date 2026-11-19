@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-19 09:0x）**：作者 **227** 人（编号最大 **227**）· X 已核验 **106** · 已发信 **100** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-19 12:2x）**：作者 **231** 人（编号最大 **231**）· X 已核验 **106** · 已发信 **102**（台账 #1–#102；⚠️ 修正：上一行快照写「100」而台账已有 #101，实际发信数按台账编号计）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十五轮增量（2026-11-19 12:2x）**：作者网 227 → **231**（#228 Luke Zettlemoyer / #229 Jinze Bai / #230 Bo Peng / #231 Mike Lewis，来自本轮 B 轨 #246 BART / #248 Qwen-VL / #249 RWKV / #246 BART 一作）；已发信 101 → **102**（#102 英文 180 词，`SENT OK 12:22:05`）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#228 为 **B（UW 官方教职页明文）**；#229 / #230 / #231 均**未找到**可核现行邮箱 ⇒ 只建档不发（`api.github.com/users/BlinkDL` 的 `email` = `null`）。⚠️ 本轮纠错：候选池旧记「Muon `2410.21276`」实测是 **GPT-4o System Card**，不收。
 >
 > **第六十四轮增量（2026-11-19 09:0x）**：作者网 223 → **227**（#224 Ofir Press / #225 Xin Jin 金鑫 / #226 Mingxing Zhang 张明星 / #227 Ruoyu Qin，来自本轮 B 轨 #242 ALiBi / #244 DistServe / #245 Mooncake）；已发信 98 → **100**（#100 / #101 均中文，见 `发送记录.md` §09:0x）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#225 为 **A（本人现行主页 `xinjin.github.io` `200` / 14,919 B，页内反爬写法按确定性还原）**；#226 为 **C（论文 PDF 首页明文；`mzhang2021.github.io` / `zhangmingxing.github.io` / 清华软院候选页均 `404`）**；#224 / #227 无可核现行邮箱 ⇒ 只建档不发。⚠️ 纠错记录：`mzhang.io` 实测为 **Northeastern 博士生 Michael Zhang**，与 Mooncake 作者 Mingxing Zhang **无关** ⇒ 已拒用，不以其身份/邮箱入表。
 
@@ -3255,6 +3257,58 @@
 | X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
 | 状态 | **待跟踪**（无已核实现行邮箱；同论文已按「同一论文 ≤1」发给 #226） |
 | 备注 | `语言=中文(判据=华人姓名族属；本轮未发)`。🚫 不用通讯作者邮箱替个人发信，避免把「同一论文 ≤1」变成「换个收件人再发一次」。 |
+
+### 228. Luke Zettlemoyer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luke Zettlemoyer（非中/日/韩姓名族属 ⇒ 英文信） |
+| 机构 | **University of Washington**（Paul G. Allen School of Computer Science & Engineering；BART 末位作者，B 轨 #246；论文时期 Facebook AI 兼职） |
+| 代表论文 | **BART: Denoising Sequence-to-Sequence Pre-training**（`1910.13461`，ACL 2020）· 另参与常识推理 / 语义解析多条线 |
+| 邮箱 | **`lsz@cs.washington.edu`**（**B 级**：UW 官方教职页 `https://www.cs.washington.edu/people/faculty/lsz` 实测 `HTTP 200` / 115,720 B，页内明文 `Email: lsz@cs.washington.edu`；🚫 不用 2019 年 PDF 旧地址） |
+| 主页 | <https://www.cs.washington.edu/people/faculty/lsz>（`200`） |
+| X 账号 | **未找到**（`x.com` 直连与代理均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 12:22:05，第 102 封） |
+| 备注 | `语言=英文(判据=姓名族属非中/日/韩 + 美国机构)`。信只问 2 问、第 1 问二选一（infilling vs 15% token masking），专属细节 = 五种 noising function / `Poisson(λ = 3)` / `15%` / `+6 ROUGE` / `+1.1 BLEU`。回填 pretrain（去噪目标是否值得开一路）+ data（噪声即增广）。 |
+
+### 229. Jinze Bai
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jinze Bai（华人姓名族属 ⇒ 若发信应用中文；⚠️ 本轮不猜汉字写法） |
+| 机构 | **Alibaba Group**（B 轨 #248 Qwen-VL 一作） |
+| 代表论文 | **Qwen-VL: A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and Beyond**（`2308.12966`，2023） |
+| 邮箱 | **未找到**（arXiv PDF 首页作者块无个人邮箱；PDF 6,329,953 B >5 MB 本轮未完整下载；阿里官方页未给个人邮箱 ⇒ 不发） |
+| 主页 | **未找到**（`qwenlm.github.io` 为团队博客，非个人主页） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构；本轮未发)`。价值点：`448×448` 分辨率、位置感知适配器、框归一化 `[0,1000)` 的**接口设计**可直接追问；先补 A/B 级邮箱再发。 |
+
+### 230. Bo Peng
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bo Peng（华人姓名族属 ⇒ 若发信应用中文；GitHub 显示名 `PENG Bo`；⚠️ 不猜汉字） |
+| 机构 | **EleutherAI / RWKV 项目**（B 轨 #249 一作；GitHub `BlinkDL`） |
+| 代表论文 | **RWKV: Reinventing RNNs for the Transformer Era**（`2305.13048`，2023） |
+| 邮箱 | **未找到**（GitHub API `api.github.com/users/BlinkDL` 实测 `200`，`email` 字段为 `null`；`rwkv.com` `200` / 15,619 B 页内无 `mailto:`；`blinkdl.github.io` `404` ⇒ 不发） |
+| 主页 | <https://rwkv.com/>（`200`，项目站）· <https://github.com/BlinkDL>（`200`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱） |
+| 备注 | `语言=中文(判据=华人姓名族属；本轮未发)`。价值点：`O(Td)` 线性注意力、time/channel mixing、1024→8192 逐级续训的 token 预算；先补邮箱。 |
+
+### 231. Mike Lewis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mike Lewis（非中/日/韩姓名族属 ⇒ 英文信） |
+| 机构 | **Meta AI（论文时期 Facebook AI Research）**（B 轨 #246 BART 一作） |
+| 代表论文 | **BART**（`1910.13461`，ACL 2020） |
+| 邮箱 | **未找到**（本轮未核到可确认的现行个人页 / 机构人员页；🚫 不猜 `@fb.com` 地址，🚫 不用 2019 年 PDF 旧地址） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1」发给 #228） |
+| 备注 | `语言=英文(判据=姓名族属；本轮未发)`。🚫 不因「Meta 邮箱格式可猜」而拼装地址。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
