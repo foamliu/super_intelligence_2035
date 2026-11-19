@@ -4210,3 +4210,23 @@ commit `pretrain 项目:`。✅ 已完成：commit e1c6be4 pushed, 28 files（�
 6. 落盘：`MEMORY_PRETRAIN_2B.md` 心跳第一行给「吞吐降级根因 + 修复动作 + 修复后实测 step time/tok/s」；EXPERIMENTS 记录。保持 `WAITING=0`。
 
 > **归档原因**：吞吐腰斩事件已闭环。根因 = `.12` CPU 争抢（data 线 MegaMath 分词 8925% CPU）。运维直接干预重启训练自 iter_244000，data 线释放 CPU 后 step time 回落至 ~7.0s。2026-11-19 06:36 确认训练健康 iter=252000/700000 step~7.0s/1030TFLOP/0NaN/0skip。
+
+---
+
+### 🔴 用户令 · 2026-11-19 08:3x（**改进 ISEDA2027 论文：精简摘要 / 贡献点拆解 / Backbone 插图 / 刷新文字**）· 用户直令 · 最高优先 · ✅ 已完成
+
+> **用户原话**（pretrain 部分）：「请 pretrain 改进 BaiZe-ISEDA2027 论文：1.精简摘要，删掉易变的中间态描述；2.贡献点拆解为 2-3 项；3.在 Language Backbone 一节给 Mamba2-Hybrid 核心模块做插图；4.刷新相关文字。」
+
+**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/`（只改 `ISEDA2027/*.tex` + `main.tex`，🚫 不碰 Baize-NeurIPS）。
+
+**任务（逐条执行）**：
+
+1. **精简摘要（`0_abstract.tex`）**：删掉这类**易变的中间态描述**：
+   > `The backbone is currently about one-quarter of the way through this run ($169{,}130$ of $700{,}000$ iterations at ≈591K tok/s, training loss≈2.04).`
+   以及同类的「当前进行到 X 步 / 当前 loss / 当前 tok/s」等随时会过时的勤态数字。摘要应只保留**稳定的贡献与架构事实**（2B hybrid / 56 层 / Mamba-2+4 attention / 成本-隐私动机 / 449 题评测意图），不留会被时间戳打脸的数字。改完摘要里不再出现任何「currently / 当前 / 169130 / 591K / loss≈」这类快照值。
+2. **贡献点拆解为 2-3 项（`1_intro.tex` 的 `\paragraph{Contributions.}` + itemize）**：现有个 `\item` 共存，把它整理成 **2-3 个高内聚的贡献点**，每个贡献点一句话统领 + 简短支撑。建议方向（可自调）：① 成本-隐私双重约束下的 on-premise 2B hybrid EDA 子智能体；② Mamba2-hybrid 结构带来的会话级成本节省（线性解码 + 仅注意层持 RoPE）；③ 从零预算约束配方 + 449 题评测协议。删掉冗长展开，保持 <=3 项。
+3. **Language Backbone 小节加核心模块插图（`3_architecture.tex`）**：在 `\subsection{Language Backbone}\label{sec:arch}` 里，用 TikZ 画一张 **Mamba2-Hybrid 核心模块图**（加 `\begin{figure}` + `\caption` + `\label`，正文 `\ref` 引用），展示 56 层中「Mamba-2 SSM 层 / MLP 层 / 4 个 GQA 注意力层交错」+「仅注意层带 RoPE、SSM/MLP 位置无关」这一核心结构。图要简洁清晰、单栏可读，配图下有图注讲清「只有 4/56 层持会话增长状态」这一卖点。可参考 Nemotron-H 的 sequential hybrid 示意风格。
+4. **刷新相关文字**：为配合以上改动，刷新 `1_intro.tex` / `3_architecture.tex` / `0_abstract.tex` 里被影响/被删的句子，保证前后一致、无悬空 `\ref`、无空洞表述；编译检查 0 error。
+5. **编译验收**：`latexmk -pdf main.tex` 0 error 后，`git add` 本线文件 → commit `pretrain paper:` → push。心跳第一行写「摘精简/贡献点 N 项/backbone 图 ref + 编译 0err」。（⚠️ 改论文正文属例行，但删数字/拆贡献点/加图是用户本次点名要求，优先级最高）
+
+> **归档原因**：论文改进令已闭环（commit 23068482d，2026-11-19 10:01）。① 0_abstract.tex 删除 volatile 快照句（"currently about one-quarter…169,130…591K…loss≈2.04"），摘要不再含任何 currently/169130/591K/loss≈ 快照值。② 1_intro.tex 贡献点拆解为 3 项：(1) 成本-隐私双重约束下的 on-premise 2B hybrid EDA 子智能体；(2) Mamba2-hybrid 结构带来结构性会话级成本下降（仅 4/56 层持 session-growing state）；(3) 受预算约束的预训练配方 + 449 题评测协议。③ 3_architecture.tex 新增 TikZ Mamba2-hybrid 层结构图（fig:backbone），展示 56 层中 SSM/MLP/GQA 交错排列，图注讲清"只有 4/56 层持会话增长状态"。main.tex 加 `\usetikzlibrary{decorations.pathreplacing}`。④ latexmk 编译 0 error、5 页、0 undefined ref/citation。已 push 到 origin/main。
