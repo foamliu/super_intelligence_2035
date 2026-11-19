@@ -671,7 +671,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793873712084_pzo1r	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=53923
 1794194018234_c41bm	e0041392	10.129.2.12	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=305709
 1794478957304_r44l7	vendor.cno.chjh07	10.129.2.11	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
-1794637486415_rbr06	e0039516	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=61629
+1794637486415_rbr06	e0039516	10.129.2.10	5		case	EDA-Eval-DesignFlow-DdjocCircuitPlanReconQA-001	2026-11-19 23:35	r794-liveness-ALIVE mc5-9-A-pure sz=61629
 1793926861786_5fn4e	e0047722	10.129.8.125	6		parked		2026-11-19 12:47	r794-liveness-NOFILE mc5-9-A-pure rotation-evaporated
 1794276772104_yicdk					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
 1794301691470_zg7xg					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
