@@ -1,4 +1,6 @@
-WAITING: 0（11-20 **r909 case 产出轮**：sivh1(e0044979 mc31 characterization)深读→CmpLogReportMod-001 落库。trace=维护 cmp_log 仿真器 log 对比工具链 3 项改动：①概览列名 measure来源→log file location+log.path 单元格 ②从真实 log 提 mode(NanoSpice +simmode=命令行/FineSim -mode 命令行/FX Global Preset: 独立行;用户提示格式不准实测核对) ③概览后加 working directory 面板。A 档 trace-faithful(用用户原话), produce 型交付=改好 cmp_log/ 目录, hidden B=不同 mode(promd/prox3/mtm/BASEMX vs spicemd/prox1/MX)+不同路径(/rundata/B vs /rundata/lacaa)+多一条 NanoSpice log。k=15 a-o, ref 15/15 PASS, 5 neg 全 FAIL(NEG_RC=5/5), §4.9 三假(empty/print/core-deleted)全 FAIL, 随机化(n)3 子集一致, cross-input guard(m)禁 A 禁词。cases/B 445→446, B.jsonl 445→446, ledger_B sivh1→case。同 user e0044979 已 7 case(3 个同 cmp_log 工具链:SimLogCompareReport/SimModeExtractGen/CmpLogReportMod, 动作动词层正交, discuss r909 记 per-toolchain intent-diff 闸门建议)。discuss r909 mandatory 清付(r900→r909 diff=9)。下轮首选：继续排重池内剩余 fresh 或新 fresh 变现）
+WAITING: 0（11-20 **r910 0-case 取证轮**：扫 1119 B-pool 209 mc≥10 → 8 条 fresh peek 全 near-dup/weak-teeth → 仅 0rh2t(shanliny mc24)真 distinct → claim+深读(GenXtopCliUpgrade)，剩余硬预算不足走完闭环故按 r908 先例留 DEBT 下轮首合成。取证证据见下。）
+[r909 archived] 11-20 r909 case 产出轮 · sivh1(e0044979 mc31)→CmpLogReportMod-001, cases/B 445→446 (k=15, NEG_RC=5/5); 原文见 git log r909
+[r909 verbose archived] sivh1 cmp_log 工具链 3 改(列名+log.path/mode 提取/working dir 面板); k=15 a-o, ref 15/15, NEG 5/5, §4.9 三假全 FAIL; hidden B 异 mode+异路径+多 NanoSpice log; 同 user e0044979 7 case 动作动词正交; 原文见 git log r909
 [r908 archived] 11-20 r908 0-case 候选排重 + MEMORY_B 瘦身轮；原文 verbose 见 git log r908
 [r906 archived] 11-20 r906 case 产出轮 · szlie(vincentz mc193)→VtargetBisecAggregate-001, cases/B 443→444 (k=15 a-o, NEG_RC=6/6, ref 15/15 PASS); 原文 verbose 见 git log r906
 [r905 archived] 11-20 r905 case 产出轮 · h033j(e0047547 mc62)→HighSigmaDocSummaryGen-001, cases/B 442→443 (k=15, NEG 5/5, ref 15/15 PASS); 重大数据保全: rescue 6 个 recent case 只 append B.jsonl 未写 cases/B→补写 cases/B 436→443; 原文 verbose 见 git log r905
@@ -37,7 +39,7 @@ POOL_SWITCH: 1105→1109 @ r462 → 1113 (r490+) → r501 对账落盘 切 summa
 `446 条 proper(spice_sim:376 · characterization:69 · legacy 110 · cases/B 446)· ledger_B case 608·parked 972·total 1580 · r618 意图审计 319 keep + r713-r756 方法学复检 394/394=100% · backfill 全量收口: layer 396/396 · asset_fidelity 399/399 · reframe_note 397/397 · k_rationale==k_check 1333/1333 ✓ · 🎯 cline_eval 137/15/12.2% · r847 1118 扫描 B mc>=10 fresh=215 打破 217 轮 fresh=0; r848-r909 四十六轮变现; 1119 扫描 normalized fresh=28(NEW-user=0,全老用户新 session)· 🧾 断言: 本轮 r909 +15, 总断言 1333 · 存量 446/446 达标(0 empty) · k_rationale==k_check 一致率 1333/1333 ✓`
 `📊 trace 覆盖率（mc>=10, src=ssh_eda_search_20261119_172105[A r804 已切; B 本地 mirror b_pool_1119_summary_schema.tsv r908 验用]）: covered 608 / 新池 209(B keywords 过滤后) = 291%（1118口径 1141 池待 B mirror 复算）· ledger_B case 608·parked 972·total 1580 · r908 验 1119 b_pool fresh mc>=10=22(ledger 归一后 28, NEW-user=0) · 🎨 asset_fidelity 399/399=100% · 📝 reframe_note 397/397=100% · 🏷️ layer 396/396=100%`
 `💬 discuss: r909 mandatory 清付(r900→r909 diff=9, r904-r908 欠配额累积本轮清). 下次 mandatory due r913. board OPEN=0. r909 议题: B 域单用户工具链维护模式富矿+近重风险, per-toolchain intent-diff 闸门建议.`
-`⏳ DEBT: 0（r909 CmpLogReportMod-001 落库; β7 WrDqMeas-001 基线 run 已清付 r552; post_vqa actual run 待 task2 infra 解阻）。
+`⏳ DEBT: 1（r910 0rh2t shanliny mc24 → GenXtopCliUpgrade 已 claim+深读未合成，下轮首合成；详见 designflow/trace_deepreads/0rh2t_GenXtopCliUpgrade.md。β7 WrDqMeas-001 基线 run 已清付 r552; post_vqa actual run 待 task2 infra 解阻）。
 🧾 断言: 本轮 r909 +15(CmpLogReportMod-001 k=15), 总断言 1333 · 存量 446/446 达标(0 empty) · k_rationale==k_check 一致率 1333/1333 ✓
 `⚠️ 事故/坑告警块（r740/r890/r894/r905/r881 共享工作区 broad-add 事故 + r636 env-gitignore + 11-05 dedup bug + r434 cross-shard dedup 缺口）原文 r908 滚入 ARCHIVE_OPERATOR_DESIGNFLOW_B.md r908-mem-trim。修法已生效: EDA-Flow-Bench 仓本线 commit 用 `git commit <pathspec>` 显式指定, 禁用裸 `git commit`; add 后立即 commit; 造 case fixture 目录别用 `env/`; 每轮造题必须写 cases/B/<id>.json 不能只 append B.jsonl。`
 
@@ -45,6 +47,12 @@ POOL_SWITCH: 1105→1109 @ r462 → 1113 (r490+) → r501 对账落盘 切 summa
 🔍 候选重审: 旧可造=0(全 parked) → 新可造=191 → r656 cross-shard dedup 剔除 9 → 182 真可造（详见 pool_reaudit_B.tsv + cross_shard_dedup_B_r656.md）· 复活池变现: 182→已造 87(r619-r711), 真未造 ~95 · form-convergence 27/191(25 L1-report + 2 produce-deck, 全 characterization)
 
 ## 流水（最新在上）→ verbose 原文 r908 滚入 ARCHIVE_OPERATOR_DESIGNFLOW_B.md r908-mem-trim
+- r910 0-case 取证轮（1119 B-pool 209 mc≥10 扫 → 8 fresh peek 全 near-dup/weak-teeth → 仅 0rh2t distinct）：
+  · 取证证据：sgk0l(vincentz)≈**shard D 已 case SpSweepDeckGen-001**（跨 shard 互斥确认 exact dup）；s27qe(vincentz)≈SpTempParamAlter；sq0lh(clarawu)≈Ron/.md0 cluster(RonDvqSlopeExtract/Md0MeasureExtract)；cnyt5(e0044979)≈DspfPerfMultiProcDiag；u5vqi(weiyue)=Q&A cleanup-advice 无 produce(check() 无牙)；md9m3(alan17z)=skill-merge meta-task 非 B 域；xbksc(shanliny)=3.3MB/377msg SRAM meas debug 单轮吃不下。
+  · 已 park: s27qe/cnyt5/sq0lh（near-dup）；sgk0l 跨 shard D 已 case 拒 park。
+  · 已 claim+深读: **0rh2t(shanliny mc24) → GenXtopCliUpgrade**：SRAM char 工具链 generate_xtop.py 加 CLI(-o/-s/-f/-q/-n/-h)+修 SPICE `+` 续行 pin 名 bug；参考解已存 .75 uploads/generate_xtop.py(274行)；distinct vs shanliny 既有 5 mt0/meas case；DEBT=1 下轮首合成（SOP 见 deepread note designflow/trace_deepreads/0rh2t_GenXtopCliUpgrade.md）。
+  · 📊 覆盖率: covered 609 / 1119 B-pool mc≥10 不变(本轮 0 case)；ledger_B case 609·parked 972(+3)·total 1580(+1 claim)；mc10.fresh=22-28(全老用户新 session, NEW-user=0)，本轮取证确认 fresh 多为老用户重复任务 near-dup。
+  · 🧾 断言: 本轮 r910 +0(0-case)，总断言 1333 不变；存量 446/446 达标。
 - r909 case 产出轮 · sivh1(e0044979 mc31 characterization)→CmpLogReportMod-001（cmp_log 工具链 3 改:列名+log.path/mode 提取/working dir 面板; k=15 a-o, ref 15/15 PASS, 5 neg FAIL NEG_RC=5/5, §4.9 三假全 FAIL, 随机化+cross-input guard; cases/B 445→446, B.jsonl 445→446, ledger sivh1→case; 同 user e0044979 7 case 3 个同 cmp_log 工具链动作动词正交; discuss r909 mandatory 清付 r900→r909 diff=9）
 - r908 0-case 候选排重 + MEMORY_B 瘦身轮（见顶部 WAITING 行；ARCHIVE r908-mem-trim 含原 L46-L58 事故块 + L64-L127 流水 verbose）
 - r902-r907 流水 verbose 见 git log r902-r907 / ARCHIVE 各 rXXX-mem-trim 批次
