@@ -19,13 +19,15 @@ We present a 2B hybrid (state-space + attention) agentic model built from scratc
 % 中文：我们提出一个约 22 亿参数的混合（状态空间+注意力）智能体模型，从零构建，作为已部署 orchestrator 之下的高性价比 EDA 子智能体。
 
 \begin{itemize}
-\item \textbf{A cost-efficient EDA subagent.}
-Our subagent receives EDA subtasks in natural language from the orchestrator and drives EDA tools in their native scripting languages (PyAether, SKILL, Tcl).
-% 中文：高性价比的 EDA 子智能体。本模型以自然语言从 编排者 接收 EDA 子任务，并以 EDA 工具的原生脚本语言（PyAether、SKILL、Tcl）驱动这些工具。
-Its 56 layers interleave Mamba-2 state-space and MLP layers with four grouped-query-attention layers, so only the latter carry a session-growing state---which is what makes per-subtask cost reduction structural rather than a matter of quantization alone.
-% 中文：其 56 层将 Mamba-2 状态空间层与 MLP 层同 4 个分组查询注意力层交错排列，因此只有后者携带随会话增长的状态——这使每子任务成本下降具有结构性，而非仅靠量化。
-A staged budget-constrained search (S1--S5) with a reduced-horizon proxy protocol fixes the pre-training recipe.
-% 中文：分阶段、受预算约束的搜索（S1--S5）配合缩短视野的代理协议确定预训练配方。
-On a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes, we ask whether it matches deployed orchestrators at comparable accuracy while materially reducing per-subtask cost, and what an on-premise subagent must co-locate with the model.
+\item \textbf{An on-premise 2B hybrid EDA subagent under cost--privacy dual constraints.}
+We build a $\approx$2B hybrid (state-space + attention) model from scratch to serve as a local subagent beneath a deployed orchestrator, translating intent into native EDA scripts (PyAether, SKILL, Tcl) so that on-site subtasks never leave the premises.
+% 中文：成本-隐私双重约束下的本地 2B 混合 EDA 子智能体。我们从零构建一个约 22 亿参数的混合（状态空间+注意力）模型，作为已部署编排者之下的本地子智能体，把意图翻译成原生 EDA 脚本（PyAether、SKILL、Tcl），使本地子任务不离开本地。
 
+\item \textbf{Mamba2-hybrid architecture for structural session-level cost reduction.}
+The 56-layer backbone interleaves Mamba-2 SSM and MLP layers with only four GQA attention layers, so just $4/56{=}7.1\%$ of layers carry a session-growing state; decoding is linear-time, making per-subtask serving cost reduction structural rather than a matter of quantization alone.
+% 中文：Mamba2 混合架构带来结构性的会话级成本下降。56 层骨干将 Mamba-2 SSM 与 MLP 层同仅 4 个 GQA 注意力层交错排列，故仅 $4/56{=}7.1\%$ 的层携带随会话增长的状态；解码为线性时间，使每子任务 serving 成本下降具有结构性，而非仅靠量化。
+
+\item \textbf{Budget-constrained pre-training recipe and 449-task evaluation protocol.}
+A staged search under a fixed GPU-hour budget fixes the pre-training recipe; a 449-task EDA-scripting benchmark spanning three languages and four commercial runtimes tests whether the subagent matches deployed orchestrators at comparable accuracy with materially lower serving cost.
+% 中文：受预算约束的预训练配方与 449 题评测协议。在固定 GPU·h 预算下的分阶段搜索确定预训练配方；在覆盖三种语言、四种商业 runtime 的 449 任务 EDA 脚本基准上，检验子智能体能否以可比精度、显著更低成本从编排者卸载子任务。
 \end{itemize}
