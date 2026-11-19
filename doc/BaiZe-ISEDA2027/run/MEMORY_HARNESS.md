@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2766 · 2026-11-19 15:3x — 监控轮·incr_eval R2765 结果收集+7way报告REGEN**·**心跳第一行**: ✅ 自检clean(load38/224=17.1%✅·无CPU失控✅·无内存失控✅·pretrain未受影响✅)·incr_eval R2765: **cline+4 RESOLVED**(sphinx 7440/7454/8120/9230→cumulative 300/500=60.0%)·**codex+1 RESOLVED**(sklearn-25232→cumulative 109/500=21.8%)·**deepseek+7 RESOLVED**(django 15161/15268/15277/15278/15315/15368/15380→cumulative 175/500=35.0%)·pi eval 10 instances still running(matplotlib慢·pid1882277 alive~14min)→下轮收pi结果·7way报告REGEN(R2766·4840B): hermes444=88.8%/opencode415=83.0%/cline300=60.0%/cc295=59.0%/pi235=47.0%(待eval)/deepseek175=35.0%/codex109=21.8%·MM 2×3 predict 6路RUN(总51/2880: opencode×doubao22/cline×doubao15/opencode×deepseek6/cline×deepseek3/opencode×kimi3/cline×kimi2·nice19/ionice3)·Verified predict 4路alive(cline478/pi420/codex398/dsh270)·research日报11-19已读(harness建议=跨工具图约束合成任务·未来EDA多工具链造题参考·本轮无即时action)·WAITING=0·📦 TASK=29.4KB(✅≤32KB) MEMORY=24.4KB(✅≤32KB)
+> 🆕 **R2767 · 2026-11-19 15:45 — 监控轮·自检clean+MM 2×3 predict核查+pi incr_eval R2765仍running**·**心跳第一行**: ✅ 自检clean(load39/224=17.5%✅·无CPU失控✅·无内存失控✅·pretrain未受影响✅)·MM 2×3 predict 65/2880(58/65非空patch=89%·opencode×doubao29最快~60s/inst·cline×doubao18·opencode×deepseek9·opencode×kimi3·cline×deepseek3·cline×kimi2·deepseek text-only=设计·kimi慢~11min/inst ETA~3.7d·6路全RUN·nice19/ionice3·0 429·0 error)·Verified predict 4路alive(cline480/pi421/codex399/dsh270·deltas自R2766 tiny cline+2/pi+1/codex+1→不跑incr_eval)·pi incr_eval R2765 still running(~15min·matplotlib慢·pid2412422 alive)→下轮收pi结果·cumulative不变(hermes444=88.8%/opencode415=83.0%/cline300=60.0%/cc295=59.0%/pi235=47.0%/dsh175=35.0%/codex109=21.8%)·无REGEN(无新eval结果)·research日报11-19已读(无即时action)·WAITING=0·📦 TASK=30.1KB(✅≤32KB) MEMORY=24.6KB(✅≤32KB)
+> 📦 R2766 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+incr_eval R2765结果收集: cline+4/codex+1/deepseek+7 RESOLVED·pi 10inst still running·7way报告REGEN R2766·MM 2×3 51/2880·Verified 4路alive·自检clean）。需要时再读。
 > 📦 R2765 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+incr_eval R2765 launched·cline6 sphinx+codex2 sklearn+pi10 django/mpl+dsh7 django·MM 2×3 predict 6路RUN中·kimi慢已解·Verified 4路alive·自检clean）。需要时再读。
 > 📦 R2764 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM 2×3 predict 6路RUN中·doubao最快5-6/480·deepseek2/480 text-only·kimi0/480慢(instance1跑12min)·Verified predict 4路alive(cline474/pi419/codex398/dsh270)·自检clean(load37/224=16.6%)·kimi慢标下轮复查）。需要时再读。
 > 📦 R2763 流水已归档 → daily-memories-harness/2026-11-19.md（MM容器下载COMPLETE 580/580·gate 4/4 met·2×3 predict全6路启动·nice19/ionice3·实测opencode×doubao has_patch patch=598B✅·6路全RUN可恢复·SWE-bench Verified predict 4路alive·自检clean）。需要时再读。
@@ -82,16 +83,16 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2765 监控轮+incr_eval R2765 launched·MM 2×3 predict 6路RUN中(kimi慢已解)·Verified predict 4路alive
+PHASE:        R2767 监控轮·MM 2×3 predict 6路RUN中(65/2880·kimi慢~11min/inst)·Verified predict 4路alive·pi incr_eval R2765 still running
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·ability桶拆两层✅·SWE-bench predict 7路resume·opencode500/500+eval415/500=83.0%✅·hermes500/500+eval444/500=88.8%✅·cc500/500+eval295/500=59.0%✅·incr_eval R2680~R2757 DONE·§用户令11-19 08:2x 两份7way报告REGEN主表置顶✅·§用户令11-19 报告重写✅已交付(R2758)·**MM容器下载COMPLETE(580/580·0FAILED·12:14:49)**✅·**2×3 predict全6路启动✅**(R2763 14:56·480题/路·nice19/ionice3)
-当前动作:     R2765: 监控轮→自检clean(load39/224=17.5%·CPU<70%单核·无失控·pretrain未受影响)→MM 2×3 predict进度核查(doubao最快8-9/480·deepseek2/480 text-only·kimi慢已解=instance1 938s非hang·2/480已产出patch)→Verified predict 4路alive(cline476/codex398/pi419/dsh270)→**incr_eval R2765 launched**(25 real+29 empty·CPU-limited taskset0-15+OMP=1·pid1882277)→写心跳+commit+push
+当前动作:     R2767: 监控轮→自检clean(load39/224=17.5%·无CPU/内存失控·pretrain未受影响)→MM 2×3 predict核查(65/2880·58/65非空patch=89%·opencode×doubao29最快~60s·kimi慢~11min/inst·0 429·0 error)→Verified predict 4路alive(cline480/pi421/codex399/dsh270·deltas tiny→不跑incr_eval)→pi incr_eval R2765 still running(matplotlib慢·pid2412422)→下轮收→写心跳+commit+push
 下一步:       ① 继续监控2×3 predict(6路×480·可恢复·`bash launch_mm_2x3_full.sh status`) ② 收incr_eval R2765结果→merge→REGEN 7way报告(若resolved有变) ③ predict完成后merge+eval(Docker·CPU限制taskset 0-15+OMP=1) ④ eval后出2×3中文HTML报告(落reports/·MM判分格式合法率vs正确率分列) ⑤ SWE-bench Verified predict继续+incr_eval ⑥ 每轮自检CPU/内存(运维令11-02/10-30)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK=30.1KB（✅≤32KB） / MEMORY=24.1KB（✅≤32KB）
- SWE-bench Verified Pass%(分母恒500·resolved/500·单数字无区间): hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·dsh168/500=33.6%·codex108/500=21.6%·(4路predict仍alive: cline476/codex398/pi419/dsh270)
+ 体积: TASK=30.1KB（✅≤32KB） / MEMORY=24.6KB（✅≤32KB）
+ SWE-bench Verified Pass%(分母恒500·resolved/500·单数字无区间): hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·dsh168/500=33.6%·codex108/500=21.6%·(4路predict仍alive: cline480/pi421/codex399/dsh270)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2% · codex 25/89=28.1% · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
-  SWE-bench Multimodal 2×3 predict(R2763 14:56启动·6路RUN·480题/路·nice19/ionice3): cline×doubao8/480·opencode×doubao9/480(均has_patch✅·最快)·cline×deepseek2/480·opencode×deepseek2/480(TEXT-ONLY=config设计·gateway返回400非多模态)·cline×kimi2/480·opencode×kimi2/480(✅慢已解·instance1=938s极慢单题非hang·已unblocked产patch)·可恢复progress_2x3逐题落盘·不抢.29 CPU✅
+  SWE-bench Multimodal 2×3 predict(R2763 14:56启动·6路RUN·480题/路·nice19/ionice3·65/2880·58/65非空patch=89%): opencode×doubao29/480(最快~60s)·cline×doubao18/480·opencode×deepseek9/480(TEXT-ONLY=config设计)·cline×deepseek3/480·opencode×kimi3/480·cline×kimi2/480(kimi慢~11min/inst·ETA~3.7d·已unblocked产patch)·可恢复progress_2x3逐题落盘·不抢.29 CPU✅
   research日报11-19 harness建议: ①完成判据改三分法(fact/verdict/scope·PASS回执绑定最终源码摘要+两项具名检查+终止后可见检查仍PASS·只报标签正确率不算通过) ②MM判分格式合法率vs任务正确率分两列·MM评测分四组(VQA/captioning/纯文本/混合)缺组不参与排名 ③20,480生成上限写进评测配置 ④两档prompting(answer-only/CoT)分任务族报分 → 纳入未来计划(来自 research 日报 2026-11-19)
 ## 启动说明（首次唤醒）
 
