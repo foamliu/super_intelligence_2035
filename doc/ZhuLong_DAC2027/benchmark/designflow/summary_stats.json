@@ -16,12 +16,12 @@
   "hits_total": 37112,
   "hosts": 614,
   "mc10": 2517,
-  "mc100": 566,
+  "mc100": 364,
   "mc1000": 5,
   "mc15": 0,
   "mc20": 2220,
   "mc25": 2376,
-  "mc30": 1980,
+  "mc30": 1342,
   "mc300": 364,
   "mc5": 4432,
   "mc500": 460,
@@ -261,7 +261,7 @@
     "to": "designflow/summary_1113.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261116_072610/summary.tsv",
-  "prev_sessions": 3325,
+  "prev_sessions": 3964,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261118_230537/summary.tsv",
   "scan_rows": 44991,
   "scan_sha256": "(pending)",
@@ -285,7 +285,7 @@
   },
   "sessions": 3964,
   "shard_mc": {
-    "A": 5,
+    "A": 10,
     "B": 10,
     "C": 10,
     "D": 10
@@ -294,9 +294,9 @@
   "stop_loss_shardA_mc5": {
     "action": "r794 OVERTURN: shard_mc.A restored 10 -> 5 per 11-15 highest-priority order. Stop-loss criterion (11-15 §二.4) = 'mc>=5 候选里有无能忠实还原意图+可判分 check() 任务'. r731 stop_loss was PREMATURE: it used strict A-pure filter (verdi|vcs|dc_shell|design_compiler|innovus|primetime|pt_shell|formality|yosys|vivado|openroad|verilint) that EXCLUDED analysis-Q&A/doc-search/debug-Q&A which 11-15 task intent made LEGAL. r727/r728/r730 0-case were budget constraints, NOT pool exhaustion.",
     "evidence": "r794 liveness check of 34 fresh A-pure mc5-9 candidates (4-shard mutex excluded, A_total>C_total AND A_total>D_total): 33/34 ALIVE (97%), 1 NOFILE (1793926861786_5fn4e @ 10.129.8.125 rotation-evaporated). Correct path used: /home/<user>/.cline/data/sessions/<sf>/<sf>.messages.json (per r721/r723 path-bug fix). All 33 ALIVE parked in trace_ledger_A for future case rounds. Pool NOT exhausted -> stop_loss NOT triggered.",
-    "triggered_at": "2026-11-18T14:1x+08:00 (r731, OVERTURNED)",
     "overtuned_at": "2026-11-19T12:4x+08:00 (r794)",
     "overtuned_by": "r794 (mc5-9 A-pure liveness: 33/34 ALIVE)",
+    "triggered_at": "2026-11-18T14:1x+08:00 (r731, OVERTURNED)",
     "verdict": "mc>=5 pool expansion (11-15 order) CONFIRMED EFFECTIVE for shard A: 33 fresh ALIVE A-pure candidates in mc5-9 band alone (top 34 by A-pure filter, 4-shard mutex applied). r731 stop_loss was a misjudgment based on (a) strict A-pure filter excluding legal analysis-Q&A tasks + (b) 0-case rounds that were budget constraints not pool exhaustion. shard_mc.A=5 active."
   },
   "summary_1113_dedup_sessions": 4418,
@@ -376,7 +376,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-19T12:47:51.124627",
+  "updated_at": "2026-11-19 13:07",
   "users_mc10": 614,
   "users_mc100": 182,
   "users_mc30": 401,
