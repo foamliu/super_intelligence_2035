@@ -39,6 +39,25 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
+### 🔴 用户令 · 2026-11-19 08:2x（**重新输出 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告，突出重点主表**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「harness 重新输出 TB-2.1 和 SWE-bench Verified 两个 7-way 评测报告（中文HTML）。要突出重点（主表）。」
+
+**立即执行**（基于当前已落盘最新数据 REGEN，勿新起评测）：
+
+1. **两份中文 HTML**（单文件自包含、0 script、0 外链）：
+   - ① `reports/report_harness_tb21_7way_zh.html` —— TB-2.1（89 题）× 7 路；
+   - ② `reports/report_harness_glm53_7way_swebench_tb_zh.html` —— SWE-bench Verified（500 题）+ TB-2.1 × 7 路。
+2. **突出主表**（用户点名）：把「7-way Pass% 主表」放在报告最显眼的**开头**（第一屏/顶部），放大加粗、一眼可读。主表内容：
+   - **TB-2.1**：7 路 Pass（passed×/89 + Pass%），按 Pass % 降序或原 harness 顺序，一表 7 行；
+   - **SWE-bench Verified**：7 路 Predict/Eval N/Resolved/Pass%，标「进行中/partial」。
+   其余（失败归因、infra 台账、synthetic 明细、cc 归因等）**降级为次要小节放主表之后**，不得喧宾夺主。
+3. **口径红线照旧**：分母恒 89（TB-2.1）/ 分母=已评测 N（SWE-bench，标 partial）；真实 Pass% = passed/分母；「修正后 Pass%」已撤回，不得出现；能力 vs infra 靠 trace 证据，synthetic/未真跑题显式标注。
+4. **数据务必取最新**（本轮 REGEN 前 git pull + 重跑 audit，勿用旧快照）：TB-2.1 当前应为 codex 修复后 ~28%、cc 修复后 ~33.7%、opencode ~48-50% 等（以 audit 实算为准，别照抄历史数字）。
+5. 自检 0 script/0 外链、porcelain=0；`git add` 本线文件 → commit → push；心跳第一行放两份主表的极简数字摘要。保持 `WAITING=0`。
+
+---
+
 ### ✅ 用户令 · 2026-11-18 10:3x（**再复核：ability 桶里仍混着 infra 异常，拆两层**）· 用户直令 · ✅ 已交付（R2664）
 
 > **用户原话**：「现在 7 个 harness failed case 再没有 infra 原因导致的，对吗？核对了吗」→ 运维已抽样核实：**不成立**。
