@@ -1,5 +1,17 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+### 🔴 用户令 · 2026-11-19（**GPU 分配调整：收缩到 GPU 4-5**）
+
+> **.17 GPU 分配**：**GPU 4-5 → posttrain**，GPU 6-7 → vision。
+>
+> **背景**：vision 以前用 CPU 跑 RL，现在迁回 GPU 6-7。posttrain 从原来的 GPU 4/6/7 收缩到 GPU 4-5。
+>
+> **你要做的**：
+> 1. **vLLM 服务迁移**：当前 3 个 vLLM 服务分别在 GPU 4（base :8098）、GPU 6（SFT :8096）、GPU 7（GRPO :8095）。把 GPU 6 和 GPU 7 上的服务迁移到 GPU 4 和 GPU 5（或按需合并/裁减）。如果某些服务当前无流量，也可以直接关掉释放显存。
+> 2. **迁移顺序**：先在 GPU 5 上起服务 → 确认端口可用 → 再 kill GPU 6/7 上的旧进程。避免服务中断。
+> 3. **vision 的 VQA 服务**（GPU 5 上的 Qwen3.5-2B `:30001`/`:30003`）会由 vision 线自己迁移到 GPU 6。你启动 GPU 5 上的服务前，先检查 GPU 5 是否已被释放（`nvidia-smi`）。
+> 4. **不要碰 GPU 0-3**（sglang TP4，非本线）和 **GPU 6-7**（vision 线）。
+
 ### 🔴 用户令 · 2026-11-16 22:0x（自建沙盒池/MCP，别再跟 zhulong 互相等）· ✅ 已闭合（wake628 全流程闭环）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：STEP1 verdict=共用 8090 池+-p2（`SandboxEndpointPool` 独占租借+asyncio.Queue 池满排队，`cap`=池总并发=4，不起新 MCP，同 workdir `t0002997_1..4`⇒与 run1-4 同口径可并入 5run mean）；run5 Pass@1=4.43%(7/158,exec44 行 VALID)+冒烟 PASS+`env_fingerprint.json` 在位(pool_mode=shared_8090_exclusive_queue/shared_with_zhulong=true/new_mcp=false)；5-run 收口 n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]% rca_status=CLEAN，McNemar chi2=13.5 p<0.001 vs 旧.17 3.04%±0.74%；报告§10/§8 5-run 同表+口径 caveat。需要时再读。
 
 

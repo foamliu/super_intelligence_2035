@@ -17,8 +17,13 @@
 | **data** | `10.239.2.12` | `baize_data_loop.sh` | `BAIZE_DATA_TASK.md` | `MEMORY_DATA.md` | `daily-memories-data/` | 数据准备 phase0~phase6 + R2/R3 调研 | ✅ 运行中 |
 | **posttrain** 🆕 | `10.252.32.17` | `baize_posttrain_loop.sh` | `BAIZE_POSTTRAIN_TASK.md` | `MEMORY_POSTTRAIN.md` | `daily-memories-posttrain/` | Stage(ii) 领域退火/SFT/RLVR-GRPO + EDA-Eval 评测；**当前零 GPU 预研**（P0 诊断 D1–D6 / P1 数据盘点 / P2 方案书 / P3 脚本骨架），正式训练等 pretrain ckpt（ETA≈2026-12-25） | ⬜ 待 ops 启动 |
 
+> **GPU 分配（2026-11-19 用户令）**：`.17` 的 8×A40 分配如下：
+> - GPU 0-3：sglang TP4（现有服务，非 BaiZe 线）
+> - **GPU 4-5：posttrain**（vLLM 推理服务 + 后续训练）
+> - **GPU 6-7：vision**（VQA 服务 + 波形 RL 训练迁回 GPU）
+>
 > 🆕 **posttrain 线（2026-11-06 新建）**：与其它线**互不干扰** ——
-> 当前阶段**不占 GPU**（诊断/盘点/方案/脚本骨架全是 CPU/IO），正式训练待 pretrain 收敛 ckpt。
+> 正式训练待 pretrain 收敛 ckpt（ETA≈2026-12-25）。当前 GPU 4-5 用于 vLLM 推理服务。
 > 重 I/O 仍要避让 `10.239.2.29` 上的 pretrain 训练。
 
 ## 2. 已收敛（**2 个，不应再跑**）
