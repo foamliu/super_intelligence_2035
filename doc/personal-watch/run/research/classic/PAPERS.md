@@ -4298,7 +4298,60 @@
 
 ---
 
+## 250. Universal Language Model Fine-tuning for Text Classification
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Universal Language Model Fine-tuning for Text Classification |
+| 作者（前 3） | Jeremy Howard · Sebastian Ruder（共 2 位；fast.ai / University of Washington） |
+| 年份 | **2018**（arXiv 首次提交 **2018-01-18**，`cs.CL`） |
+| 会议 / 期刊 | **ACL 2018**，pp. **328–339**（OpenAlex `type=conference-paper`，source = Proceedings of the ACL Meeting，DOI `10.18653/v1/P18-1031`） |
+| 被引数 | **6,245**（OpenAlex `10.48550/arxiv.1801.06146`，查询日 **2026-11-19**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1801.06146> ｜ ACL DOI `10.18653/v1/P18-1031` ｜ arXiv DOI `10.48550/arxiv.1801.06146` |
+| 一句话贡献 | 提出**三阶段迁移学习**（通用域 LM 预训练 → 目标任务 LM 微调 → 分类器微调），并把「怎么微调」拆成三个可复用的手段：**discriminative fine-tuning**（每层不同学习率，下层取 `η_{l-1} = η_l / 2.6`）、**slanted triangular learning rates**（`cut_frac = 0.1`、`ratio = 32`）、**gradual unfreezing**（从最后一层起逐层解冻，每解冻一层训 1 epoch）；预训练语料 Wikitext-103（**28,595** 篇 / **103M** 词），分类器微调 **50 epochs**，摘要自报在 6 个文本分类数据集上相对错误率下降 **18–24%**。 |
+| 与我们工作的关系 | **pretrain（主目标：小数据域内微调的配方）**：<b>动作</b>：2B 主线做域内 SFT 时，把「分层学习率倍数」与「是否逐层解冻」做成两个独立开关，各跑一个短程点；判据 = 同 token 预算下域内任务分与通用能力回退，🚫 只报域内涨点。<br>**data（小样本 epoch 预算）**：本文在 30k 级样本上分类器训 50 epochs 不过拟合、更大数据集可以更久 ⇒ <b>动作</b>：data 线报表新增「样本量 × epoch 上限」对照，避免把大语料 epoch 数直接搬到小语料。<br>**harness（复现口径）**：三阶段配方的效果依赖预训练 LM 的域与规模 ⇒ <b>动作</b>：任何「分层学习率有效」的结论必须同时给预训练语料规模，否则不可比。<br>**风险**：① 预训练规模仅 103M 词，与当今万亿 token 预训练不可直接比；② 模型是 LSTM（AWD-LSTM），**decoder-only Transformer 的迁移性未验证** ⇒ 我们的观察：不能直接外推 `η/2.6` 与 `cut_frac=0.1`；③ 18–24% 为作者自报，未第三方复现；④ 2018 年基线。 |
+| 首次收录 | **2026-11-19**（第六十六轮） |
+| 核验状态 | arXiv `id_list` `200`（2 位作者 / 2018-01-18）；OpenAlex `200`（**6,245**，ACL 2018 pp. 328–339）；PDF `200` / **979,417** B（`%PDF-`，本地字节 = 远程 `Content-Length`），`pdftotext` 核到 `28,595 preprocessed Wikipedia articles and 103 million words` / `cut f rac = 0.1, ratio = 32` / `η l /2.6` / `one epoch` / `50 epochs` / `error reduction of 18-24%` |
+
+---
+
+## 251. Dense Passage Retrieval for Open-Domain Question Answering
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Dense Passage Retrieval for Open-Domain Question Answering |
+| 作者（前 3） | Vladimir Karpukhin · Barlas Oğuz · Sewon Min（et al.，共 8 位，含 Danqi Chen、Wen-tau Yih；Facebook AI / University of Washington / Princeton） |
+| 年份 | **2020**（arXiv 首次提交 **2020-04-10**，`cs.CL`） |
+| 会议 / 期刊 | **EMNLP 2020**，pp. **6769–6781**（OpenAlex `type=conference-paper`；DOI `10.18653/v1/2020.emnlp-main.550`；⚠️ 本线 15:0x 草稿备注曾误写「ACL 2020」⇒ 以 OpenAlex 的 EMNLP 记录为准） |
+| 被引数 | **8,667**（OpenAlex `10.48550/arxiv.2004.04906`，查询日 **2026-11-19**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2004.04906> ｜ EMNLP DOI `10.18653/v1/2020.emnlp-main.550` ｜ arXiv DOI `10.48550/arxiv.2004.04906` |
+| 一句话贡献 | 用**双塔（dual-encoder）**做段落检索：问题与段落各过一个 BERT 编码器，训练目标是对比学习，**负例构造**是核心贡献——**in-batch negatives**（batch 内其它问题的正段落当负例）+ 每条问题**额外 1 个 BM25 检索到的难负例**，batch size **128**；摘要自报在 top-20 段落检索准确率上比 Lucene-BM25 **绝对提升 9%–19%**，Top-5 准确率 **65.2% vs 42.9%**，下游 QA 端到端也优于 ORQA；重排时对 BM25 与 DPR 的分数用 **λ = 1.1** 融合。 |
+| 与我们工作的关系 | **data（主目标：检索语料的负例构造）**：<b>动作</b>：domain 检索语料（工具手册 / 时序报告）建索引时，负例策略写成显式配置 `in_batch` / `bm25_per_query` / `batch_size`，先做「只 in-batch」与「in-batch + 1 BM25」两档对照，判据 = top-k 命中率与下游任务分。<br>**harness（检索指标口径）**：top-20 / top-100 与 Top-5 是不同量纲 ⇒ <b>动作</b>：报表固定写「k 值 + 数据集 + 是否含 BM25 重排」，🚫 只写「检索更好」。<br>**designflow（读手册找参数）**：芯片设计问题常是「某参数在哪个文档哪一节」⇒ <b>动作</b>：designflow 的 L1 题可先用本方法做检索臂，记录「命中段落是否含答案 span」而不是只看答案对错。<br>**风险**：① 8,667 为 OpenAlex 口径；② 预训练编码器是 BERT-base，与当今 2B 级 LLM 的 embedding 不能直接比；③ 双塔对**领域漂移**（索引由旧编码器建、查询用新编码器）的鲁棒性本文未系统评估；④ 9%–19% 为作者自报。 |
+| 首次收录 | **2026-11-19**（第六十六轮） |
+| 核验状态 | arXiv `id_list` `200`（8 位作者 / 2020-04-10）；OpenAlex `200`（**8,667**，EMNLP 2020 pp. 6769–6781）；PDF `200` / **383,508** B（`%PDF-`，本地字节 = 远程 `Content-Length`），`pdftotext` 核到 `9%-19% absolute in terms of top-20 passage retrieval accuracy` / `65.2% vs. 42.9% in Top-5 accuracy` / `one additional BM25 negative passage per question` / `batch size of 128` / `In-batch negatives` / `λ = 1.1` |
+
+---
+
+## 252. SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition |
+| 作者（前 3） | Daniel S. Park · William Chan · Yu Zhang（et al.，共 7 位，含 Quoc V. Le；Google Brain） |
+| 年份 | **2019**（arXiv 首次提交 **2019-04-18**，`eess.AS`） |
+| 会议 / 期刊 | **Interspeech 2019**，pp. **2613–2617**（OpenAlex `type=conference-paper`；arXiv DOI `10.48550/arxiv.1904.08779`） |
+| 被引数 | **4,968**（OpenAlex `10.48550/arxiv.1904.08779`，查询日 **2026-11-19**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1904.08779> ｜ arXiv DOI `10.48550/arxiv.1904.08779` |
+| 一句话贡献 | 把语音识别的数据增广做成**直接在 log-mel 频谱上施加的三种形变**：time warping（时间轴弯折）、frequency masking（掩掉连续 mel 通道）、time masking（掩掉连续时间步），可在线施加；给出四条手工策略的参数表（**LB** = `W 80 / F 27 / m_F 1 / T 100 / p 1.0 / m_T 1`，**LD** 同参但双掩码，**SM/SS** = `W 40` 配 `F 15/27`、`T 70`、`p 0.2`），在 LAS 网络上使 LibriSpeech test-other **6.8% WER**（无 LM）/ **5.8%**（shallow fusion），对照此前混合系统 **7.5%**；Switchboard 达 **7.2% / 14.6%**。 |
+| 与我们工作的关系 | **data（主目标：域内数据的「破坏—重建」增广）**：<b>动作</b>：把增广写成可开关步骤并带参数四元组 `(W, F, m, T)`，先在窄域小样本上做「无增广 / 单掩码 / 双掩码」三档，判据 = 域内任务分 + 过拟合间隔（train-val gap），🚫 不看训练 loss。<br>**pretrain（正则化视角）**：本文的增益来自「输入空间遮挡」而非新数据 ⇒ <b>动作</b>：若 2B 训练后期出现记忆化，可试结构化遮挡（如屏蔽固定宽度的时间/频率带），并记录与 dropout 的叠加效应。<br>**vision（类比迁移）**：掩块 = Cutout 的谱域版本 ⇒ <b>动作</b>：视觉线做 patch 遮挡增广时，直接借用其「策略表 + 参数」形式，先固定一档再调。<br>**harness（指标口径）**：语音任务报 WER 且区分「有无 LM」⇒ <b>动作</b>：任何「增广有效」的结论必须标注是否用了外部 LM / 重排，否则不可比。<br>**风险**：① 结果是语音识别任务，**与文本 / 多模态 LLM 的迁移性未验证** ⇒ 我们的观察：只能借「策略表化」的做法，不能借具体参数；② 4,968 为 OpenAlex 口径；③ 2019 年基线，LAS 架构已被取代；④ 6.8% / 5.8% 为作者自报。 |
+| 首次收录 | **2026-11-19**（第六十六轮） |
+| 核验状态 | arXiv `id_list` `200`（7 位作者 / 2019-04-18）；OpenAlex `200`（**4,968**，Interspeech 2019 pp. 2613–2617）；⚠️ PDF `Content-Length` **3,733,556** B，本轮下载中途被截断（本地 1,683,456 B，`pdftotext` 报 `Couldn't read xref table`）⇒ **未做 PDF 逐页复核**，Table 1 参数与 WER 数字改由 **ar5iv HTML `200` / 172,404 B** 核对（`LB 80 27 1 100 1.0 1` / `LD 80 27 2 100 1.0 2` / `SM 40 15 2 70 0.2 2` / `SS 40 27 2 70 0.2 2` / `6.8% WER on test-other` / `5.8% WER with shallow fusion` / `7.5% WER`） |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
+
+> ✅ **第六十六轮（2026-11-19 15:0x）转正 3 条**：ULMFiT `1801.06146`（#250，**6,245**，ACL 2018 pp. 328–339）· DPR `2004.04906`（#251，**8,667**，EMNLP 2020 pp. 6769–6781）· SpecAugment `1904.08779`（#252，**4,968**，Interspeech 2019 pp. 2613–2617）⇒ B 轨累计 **252**（覆盖轴：小数据域内微调的三个旋钮 `η_{l-1}=η_l/2.6` / `cut_frac=0.1` / `ratio=32` / 逐层解冻 1 epoch / 50 epochs · 检索负例构造 in-batch + 每条 1 个 BM25 难负例 / batch 128 / `λ=1.1` · 谱域结构化遮挡的策略表 `(W, F, m_F, T, p, m_T)`）。两篇 PDF 与 `Content-Length` 对齐（979,417 / 383,508 B），SpecAugment PDF 3,733,556 B **下载中途被截断**（本地 1,683,456 B、`pdftotext` 报 xref 错误）⇒ 该篇数字改由 **ar5iv HTML `200`** 核对并如实标注「未做 PDF 逐页复核」。<br>⚠️ **本轮纠一处会议误记**：15:0x 草稿备注把 DPR 写成「ACL 2020」⇒ OpenAlex 实测为 **EMNLP 2020**（pp. 6769–6781，DOI `10.18653/v1/2020.emnlp-main.550`），已在 #251 内留痕。<br>⚠️ **候选池陈旧项结清**：旧候选「SpeechT5 `2010.00718`（元数据已核未收）」**早已作废**——该 ID 实为 *When to Impute?*，SpeechT5 真 ID `2110.07205` 已于第四十四轮转正为 **#172**；后续轮次反复抄写此行属笔误，本轮一并删除。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 数据质量线「合成数据自举」一手；④ 视觉侧「统一 token 词表」对照（Transfusion `2408.11039` 待核）；⑤ 长上下文位置编码续（NTK-aware 一手）。
 
 > ✅ **第六十五轮（2026-11-19 12:0x）转正 4 条**：BART `1910.13461`（#246，**15,049**，ACL 2020 pp. 7871–7880）· Chameleon `2405.09818`（#247，**1,262**）· Qwen-VL `2308.12966`（#248，**5,222**）· RWKV `2305.13048`（#249，**830**）⇒ B 轨累计 **249**（覆盖轴：去噪目标的五种加噪与 `Poisson(λ = 3)` / 早期融合的统一 token 词表 / 视觉分辨率与框接口 / 线性注意力的 `O(Td)` 成本）。两篇 PDF >5 MB（25,245,551 / 6,329,953 B）**未落盘**，改用 ar5iv HTML 2/2 `200` 核数字并如实标注；另两篇 PDF 与 `Content-Length` 对齐（296,072 / 1,590,242 B）。<br>⚠️ **本轮纠一处 ID 误记**：候选池/记忆里「Muon 原论文 `2410.21276`」**实测是 *GPT-4o System Card***（OpenAlex `200`，11,351）⇒ 该 ID **不收**；Muon 的可引论文是 **`2502.16982`（Muon is Scalable for LLM Training，已收 #181）**，Muon 本身的原始描述是博客而非 arXiv 论文。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手，本轮 Chameleon 已补 QK-Norm 消融）；③ 视觉侧「统一 token 词表」对照（Transfusion `2408.11039` 待核）；④ 存储侧近存 / HBM 一手；⑤ EDA 侧 LLM-for-EDA 新一手（ASAP7 / OpenROAD 流程耦合）。
 
