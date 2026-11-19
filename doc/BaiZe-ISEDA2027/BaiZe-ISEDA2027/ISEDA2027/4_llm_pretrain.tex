@@ -25,8 +25,8 @@ New sources are introduced in S2: stack-v3-train (L4-filtered, $430.7$B tokens; 
 % 中文：S2 引入新数据源：代码侧补入 stack-v3-train（L4 过滤后 $430.7$B token，基于 The Stack~v2~\cite{lozhkov2024stackv2}），数学侧补入 MegaMath（$\sim$371B token~\cite{liu2025megamath}）、Nemotron-CC-Math（$133$B~\cite{mahabadi2026nemotronccmath}）与 FineMath~\cite{benallal2025smolm2}。
 These new sources are absent from S1's blend, so they have zero document-level overlap with S1; for the shared sources (Ultra-FineWeb, UltraData-Code, UltraData-Math), a different random seed is used in S2 to reduce document-level repetition.
 % 中文：这些新源不在 S1 的 blend 中，因此与 S1 零文档重叠；对共享源（Ultra-FineWeb、UltraData-Code、UltraData-Math），S2 更换随机种子以降低文档级重复。
-\textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$; e.g., OpenMathInstruct-2~\cite{toshniwal2024openmathinstruct2}, NuminaMath~\cite{li2024numinamath}, OpenCodeReasoning~\cite{ahmad2025opencodereasoning}) and agentic-SFT ($12\%$), retaining a small general fraction (web $22\%$, math $4\%$, code $2\%$); segment~B extends context on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$).
-% 中文：\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$；如 OpenMathInstruct-2~\cite{toshniwal2024openmathinstruct2}、NuminaMath~\cite{li2024numinamath}、OpenCodeReasoning~\cite{ahmad2025opencodereasoning}）与智能体 SFT（$12\%$），保留少量通用成分（网页 $22\%$、数学 $4\%$、代码 $2\%$）；B 段在 32K→64K→128K 阶梯上扩展上下文（$30$–$40\%$）。
+\textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$; e.g., UltraData-SFT~\cite{openbmb2026ultradata}, OpenMathInstruct-2~\cite{toshniwal2024openmathinstruct2}, NuminaMath~\cite{li2024numinamath}, OpenCodeReasoning~\cite{ahmad2025opencodereasoning}) and agentic-SFT ($12\%$; e.g., UltraData-SFT-Agent~\cite{openbmb2026ultradata}, AgentTrove~\cite{openthoughts2026agenttrove}), retaining a small general fraction (web $22\%$, math $4\%$, code $2\%$); segment~B extends context on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$).
+% 中文：\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$；如 UltraData-SFT~\cite{openbmb2026ultradata}、OpenMathInstruct-2~\cite{toshniwal2024openmathinstruct2}、NuminaMath~\cite{li2024numinamath}、OpenCodeReasoning~\cite{ahmad2025opencodereasoning}）与智能体 SFT（$12\%$；如 UltraData-SFT-Agent~\cite{openbmb2026ultradata}、AgentTrove~\cite{openthoughts2026agenttrove}），保留少量通用成分（网页 $22\%$、数学 $4\%$、代码 $2\%$）；B 段在 32K→64K→128K 阶梯上扩展上下文（$30$–$40\%$）。
 All sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
 % 中文：各源预混合为大 shard（每 rank $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$），限制数据加载内存占用。
 Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ benchmarks; shards are scanned for ${\geq}0.80$ n-gram overlap.
@@ -35,10 +35,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \begin{figure*}[t]
 \centering
 \footnotesize
-\begin{minipage}[t]{0.31\linewidth}
+\begin{minipage}[t]{0.32\linewidth}
 \centering
-\textbf{S1: Stable (0--350k)}\\[6pt]
-\begin{tikzpicture}[scale=1.8]
+\textbf{S1: Stable (0--350k)}\\[12pt]
+\begin{tikzpicture}[scale=2.0]
 % pie: web 74% (0--266.4), code 19% (266.4--334.8), math 7% (334.8--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:266.4:1)     -- cycle;
 \fill[red!60]    (0,0) -- (266.4:1) arc (266.4:334.8:1) -- cycle;
@@ -52,10 +52,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (348:0.62)  {\textbf{7\%}};
 \end{tikzpicture}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.31\linewidth}
+\begin{minipage}[t]{0.32\linewidth}
 \centering
-\textbf{S2: Stable (350k--700k)}\\[6pt]
-\begin{tikzpicture}[scale=1.8]
+\textbf{S2: Stable (350k--700k)}\\[12pt]
+\begin{tikzpicture}[scale=2.0]
 % pie: web 40% (0--144), code 40% (144--288), math 20% (288--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:144:1)     -- cycle;
 \fill[red!60]    (0,0) -- (144:1)   arc (144:288:1)   -- cycle;
@@ -69,10 +69,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (324:0.62) {\textbf{20\%}};
 \end{tikzpicture}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.31\linewidth}
+\begin{minipage}[t]{0.32\linewidth}
 \centering
-\textbf{Decay (annealing, 700k--720k)}\\[6pt]
-\begin{tikzpicture}[scale=1.8]
+\textbf{Decay (annealing, 700k--720k)}\\[12pt]
+\begin{tikzpicture}[scale=2.0]
 % pie: instr-SFT 60% (0--216), agentic-SFT 12% (216--259.2), web 22% (259.2--338.4), math 4% (338.4--352.8), code 2% (352.8--360)
 \fill[orange!70]  (0,0) -- (0:1)     arc (0:216:1)       -- cycle;
 \fill[purple!60]  (0,0) -- (216:1)   arc (216:259.2:1)   -- cycle;
@@ -89,10 +89,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (238:0.60) {\textbf{12\%}};
 \node at (299:0.62) {\textbf{22\%}};
 % small wedges: leader lines + external labels (avoid cramped overlap)
-\draw (345.6:0.70) -- (345.6:1.38);
-\node[anchor=south east] at (345.6:1.42) {\textbf{4\%}};
-\draw (356.4:0.70) -- (356.4:1.38);
-\node[anchor=north east] at (356.4:1.42) {\textbf{2\%}};
+\draw (345.6:0.70) -- (345.6:1.20);
+\node[anchor=south east] at (345.6:1.25) {\textbf{4\%}};
+\draw (356.4:0.70) -- (356.4:1.20);
+\node[anchor=north east] at (356.4:1.25) {\textbf{2\%}};
 \end{tikzpicture}
 \end{minipage}
 
@@ -110,8 +110,8 @@ Only $\mathbf{2.52\%}$ of tokens sit in documents ${\geq}32$K and $0.03\%$ at ${
 % 中文：长上下文数据闸门。仅 $2.52\%$ 的 token 位于 ${\geq}32$K 的文档中，$0.03\%$ 达到 ${\geq}128$K（平均 $889$ token；表 \ref{tab:longctx-data}），因此在编列 B 段预算前测量了该分布。
 We gate the ladder: ${\geq}32$K share must reach $20\%$ and ${\geq}128$K $5\%$ (else it stops at 64K), with EOD resets and de-duplication.
 % 中文：我们设闸门：${\geq}32$K 占比须达 $20\%$、${\geq}128$K 达 $5\%$（否则止于 64K），并对 EOD 重置状态与去重。
-Long-context training data is drawn from documents ${\geq}32$K within the general web corpus, supplemented by publicly available long-context collections such as ProLong~\cite{gao2024prolong} and LongAlign~\cite{bai2024longalign}; retrieval quality is evaluated with RULER~\cite{hsieh2024ruler}.
-% 中文：长上下文训练数据取自通用语料中 ${\geq}32$K 的文档，并辅以公开长上下文数据集如 ProLong~\cite{gao2024prolong} 和 LongAlign~\cite{bai2024longalign}；检索质量用 RULER~\cite{hsieh2024ruler} 评估。
+Long-context training data is drawn from documents ${\geq}32$K within the general web corpus, supplemented by publicly available long-context collections such as ProLong~\cite{gao2024prolong}, LongAlign~\cite{bai2024longalign}, and Whole-Books~\cite{ysngkil2026wholebooks}; retrieval quality is evaluated with RULER~\cite{hsieh2024ruler}.
+% 中文：长上下文训练数据取自通用语料中 ${\geq}32$K 的文档，并辅以公开长上下文数据集如 ProLong~\cite{gao2024prolong}、LongAlign~\cite{bai2024longalign} 与 Whole-Books~\cite{ysngkil2026wholebooks}；检索质量用 RULER~\cite{hsieh2024ruler} 评估。
 \begin{table}[t]
 \centering
 \caption{Long-context data gate (left) and training ladder (right). Per-GPU tokens held at $16{,}384$; 32K throughput measured, 64K/128K extrapolated.}
@@ -119,13 +119,13 @@ Long-context training data is drawn from documents ${\geq}32$K within the genera
 \label{tab:longctx-train}
 \footnotesize
 \setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}lccl|cccr@{}}
+\begin{tabular}{@{}lcc|cccr@{}}
 \toprule
-\textbf{Thresh.} & \textbf{Docs} & \textbf{Share} & \textbf{Status} & \textbf{Rung} & \textbf{Seq.} & \textbf{CP/DP} & \textbf{Tput} \\
+\textbf{Thresh.} & \textbf{Docs} & \textbf{Share} & \textbf{Rung} & \textbf{Seq.} & \textbf{CP/DP} & \textbf{Tput} \\
 \midrule
-${\geq}32$K & 4{,}257 & \textbf{2.52\%} & not met & 1 & 32K & 2/8 & $351{,}526$ \\
-${\geq}128$K & --- & \textbf{0.03\%} & not met & 2 & 64K & 4/4 & ${\approx}180$K \\
-${\geq}1$M & --- & n/a & n/a & 3 & 128K & 8/2 & ${\approx}90$K \\
+${\geq}32$K & 4{,}257 & \textbf{2.52\%} & 1 & 32K & 2/8 & $351{,}526$ \\
+${\geq}128$K & --- & \textbf{0.03\%} & 2 & 64K & 4/4 & ${\approx}180$K \\
+${\geq}1$M & --- & n/a & 3 & 128K & 8/2 & ${\approx}90$K \\
 \bottomrule
 \end{tabular}
 \end{table}
