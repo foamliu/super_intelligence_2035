@@ -287,20 +287,27 @@ def setup_cline_mm_data_dir(route: dict, proxy_port: int, route_id: str) -> str:
 def sanitize_cline_prompt(text: str) -> str:
     """Escape @mentions in prompt text so cline doesn't interpret them as file mentions.
 
-    cline (bun/Node CLI) treats ``@word`` as a file-mention: it tries to read a
-    file named *word*, fails, and **silently exits with rc=0 and zero output**.
-    GitHub issue text routinely contains ``@username`` mentions which trigger
-    this.  We escape by inserting a zero-width space (U+200B) after the ``@``
-    so the mention is no longer parsed, while remaining visually identical.
-    Already-escaped ``@`` (inside backticks or followed by space/``@``) is left
-    as-is.
+    cline (cline-checkpoint-off v3.0.51) treats ``@word`` as a file-mention: it
+    tries to read a file named *word*, fails, and **silently exits with rc=0
+    and zero output** (confirmed 2026-11-19 via /tmp/test_variants.py: raw
+    ``@user`` → 1.9s empty exit; GitHub URLs / image tags / local proxy URLs
+    are all fine).
+
+    The previous escape inserted a zero-width space (U+200B) after ``@`` — but
+    cline treats U+200B as a word char and STILL parses ``@\\u200bword`` as a
+    mention → silent exit (confirmed: ``@\\u200buser`` → 1.9s empty exit).
+    cline also exits on ``@.word`` and ``@/word``.
+
+    The WORKING escape (confirmed 2026-11-19 via /tmp/test_escape.py) is to
+    insert a **real ASCII space** after ``@``: ``@word`` → ``@ word``.  This
+    breaks the mention parse while keeping the ``@`` symbol readable.  ``@``
+    inside backticks (already safe) is left as-is.
     """
     import re
-    # Match @ followed by a word char, but NOT inside backticks or already
-    # followed by space/another @.  We do a simple pass: replace @word → @\u200bword
-    # when @ is at start-of-token (preceded by whitespace, start-of-line, or
-    # non-word char that isn't a backtick).
-    return re.sub(r'(?<!`)@(?=[A-Za-z0-9_])', '@\u200b', text)
+    # Match @ followed by a word char, but NOT inside backticks.  Replace with
+    # "@ " (at + real space) — a real space is the only separator cline v3.0.51
+    # does NOT treat as part of a file-mention token.
+    return re.sub(r'(?<!`)@(?=[A-Za-z0-9_])', '@ ', text)
 
 
 def run_cline_mm(route, instance, workdir, image_infos, proxy_port, timeout,
@@ -370,9 +377,9 @@ def run_cline_mm(route, instance, workdir, image_infos, proxy_port, timeout,
         e["no_proxy"] = "*"; e["NO_PROXY"] = "*"
         # Debug: verify cline can produce output in this context
         try:
-            _v_out, _v_err, _v_rc = subprocess.run(
+            _vr = subprocess.run(
                 [CLINE_BIN, "--version"], capture_output=True, text=True, timeout=10, env=e)
-            log(f"    cline --version: rc={_v_rc} out={_v_out.strip()!r} err={_v_err[:100]!r}")
+            log(f"    cline --version: rc={_vr.returncode} out={_vr.stdout.strip()!r} err={_vr.stderr[:100]!r}")
         except Exception as _ve:
             log(f"    cline --version FAILED: {_ve}")
         log(f"    cline cmd: {[str(c)[:80] for c in cmd[:3]]}... prompt_len={len(str(prompt))}")
