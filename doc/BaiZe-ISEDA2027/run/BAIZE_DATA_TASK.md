@@ -1,5 +1,30 @@
 ﻿# BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-19 13:2x — 改论文第二轮：Fig-2 饼图调优 / TABLE IV 精简 / 数据源与数据引用（最高优先）**
+
+> **用户原话**（data 部分）：
+> ① Fig-2 三阶段饼图再调：圆饼和顶部标签有重叠；圆饼太小，直径扩到原来的 2-3 倍；图标题写太细（`blend_s2_preblend.tsv` 这种文件名不要写进图题）。
+> ② TABLE IV 的 Wall-clock 和 Status 两列删掉（尤其 Status 这种中间态不要写）。
+> ③ 数据源（如 Nemotron-CC-Math）加论文引用，可用 `research.cimi_search` web search 查。
+> ④ Decay 阶段用的 instruction-SFT / agentic-SFT 适当列一下并给引用。
+> ⑤ Long-Context Data 训练用的开源数据也列一下、给引用。
+
+**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex`（Fig 是 `fig:data-mix`，`figure*` 三饼图；TABLE IV 是 `tab:prod-budget`）+ `reference.bib`。
+
+**任务（逐条执行）**：
+
+1. **Fig-2 饼图调优**：
+   - ① 修 **圆饼与顶部标签重叠**：饼图标题（`\textbf{S1/S2/Decay}`）目前放在 `minipage` 顶部与饼图贴太近，需拉开间距（如调 `\\[-2pt]` 为 `\\[6pt]` 或加 `\vspace`），确保标题与圆饼不重叠。
+   - ② **圆饼尺寸扩大 2-3 倍**：TikZ 的 `scale=0.85`（或各饼的 scale）改大到 2-3 倍直径（如三饼统一 `scale=1.8` 左右，注意 `figure*` 跨双栏宽度够放三张放大饼；若放不下，可每饼 0.31linewidth 微调、或 scale 2.0 并接受换行，但**优先保证直径翻 2-3 倍**）。
+   - ③ **图题去文件名**：`\caption{...}` 里删掉 `(\texttt{blend\_s2\_preblend.tsv})` 这类实现细节/文件名（S2 category proportions follow the finalized 4:4:2 blend configuration，不再贴 tsv 文件名）；中文注释行同步。
+2. **TABLE IV 精简（`tab:prod-budget`）**：删掉 **Wall-clock** 列和 **Status** 列（表头 + 各行的值），只留 `Phase / Tokens / Steps` 三列（合计行相应精简）。删 Status 后「in progress/queued/gated」这些中间态从表中消失（正文若靠表表达进行态，改为文字说明或不提）。同步更新中文注释。
+3. **数据源加引用（Nemotron-CC-Math 等）**：用 `research.cimi_search` web search 查证下列数据源的官方出处/论文/arXiv，往 `reference.bib` 补齐 bibtex 并在正文 `\cite`，至少覆盖：**Nemotron-CC-Math**（ICLR 2026 / arXiv）、**finemath**（且确认其更正式名如 FineMath-3+/Llama-3.1、HF 与 arXiv）、**MegaMath**（arXiv 2504.02807）、**stack-v3**（HuggingFace The Stack v3）。找不到官方引用的标「未查到」并在报告里说明，不编造。
+4. **Decay 数据列引用（instruction-SFT / agentic-SFT）**：在 §Data/Decay 相关段落，把 Decay 用到的 instruction-SFT（如 UltraData-SFT-2605、OpenMathInstruct-2、NuminaMath-1.5、OpenCodeReasoning 等）与 agentic-SFT（UltraData-SFT-Agent-2609、AgentTrove 等）适当列名 + `\cite`（同样先 search 查证官方出处）。
+5. **Long-Context Data 列引用**：在 `\ref{sec:longctx-data}` 相关段落，把长上下文训练用的开源数据（如 ProLong、LongAlign、RULER、whole-books 等，以 data 线实际下载/使用的为准）列名 + `\cite`。
+6. **编译验收**：`latexmk -pdf main.tex` 0 error、0 undefined ref、无未定义 citation；`git add` 论文文件 + reference.bib → commit `data paper:` → push。心跳第一行写「fig:data-mix 饼图调优/TABLE IV 删2列/数据源+Decay+LongCtx 引用补齐 + 编译0err」。
+
+---
+
 > 🔴 **用户令 · 2026-11-19 08:3x — 改进 ISEDA2027 论文：重画 Fig-1（S1/S2/Decay 三饼图跨双栏）+ 刷新 S1→S2→Decay 课程学习文字（最高优先）**
 
 > **用户原话**（data 部分）：「data：1.重画 Fig-1，宽度跨越双栏，并排放置 S1、S2 和 Decay 三个饼图；2.基于最新 S1->S2->Decay 课程学习策略和相应的数据处理刷新文字。」
