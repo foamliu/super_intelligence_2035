@@ -134,7 +134,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <ol class="risk">
   <li><span class="tag p0">R1</span> <b>H2 负结果</b>（自改进收益不随链长单调，甚至转负）—— Plan B：写成「在真实 design flow 上自改进的边界条件」诚实路线，这本身是可发表认知（§8）。</li>
   <li><span class="tag p0">R2</span> <b>不可开源被审稿人质疑复现性</b> —— Plan B：受限评审复现包 + mock-EDA 模式 + Lite 集 500 题脱敏构造方法开源 + 第三方可在 mock 沙盒复跑 harness（§2.3 / §8）。</li>
-  <li><span class="tag p1">R3</span> <b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1684 仍在增长，696-run 冻结快照可能过期）—— Plan B：所有论文数字绑定冻结快照 + Lite 集 500 题固定 + 多骨干扫描在 camera-ready 补（§8）。</li>
+  <li><span class="tag p1">R3</span> <b>cases 增长与评测口径漂移</b>（Full 集（数千·持续增长·论文不报告具体数字）仍在增长，696-run 冻结快照可能过期）—— Plan B：所有论文数字绑定冻结快照 + Lite 集 500 题固定 + 多骨干扫描在 camera-ready 补（§8）。</li>
 </ol>
 </div>
 
@@ -317,7 +317,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <tr>
 <td><b>可迁移性主张</b></td>
 <td>单一 EDA 域（PyAether 158 题），自进化在 instance-disjoint held-out 上 +2.5pp（80.0% vs 77.5%）<br><span class="src">DATE27 0_abstract.tex:4 · 6_conclusion.tex:3</span></td>
-<td>13 EDA 域（1684 题 flow 任务），主张「<b>认知可从脚本层迁移到 flow 层</b>」——若 H1-H4 在 flow 层复现则认知可迁移，若不复现则界定边界条件</td>
+<td>13 EDA 域（Full 数千题 flow 任务·持续增长·不报告具体数字；Lite 500 题一般评测用），主张「<b>认知可从脚本层迁移到 flow 层</b>」——若 H1-H4 在 flow 层复现则认知可迁移，若不复现则界定边界条件</td>
 <td><b>继承</b>可证伪假设 + 受控消融 + 负结果照写的纪律；<b>差异</b>从「单域 +2.5pp」到「跨 13 域可迁移性检验」</td>
 </tr>
 </table>
@@ -653,7 +653,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h3>§6.2 贡献列表（v1.9：3 条，EDA-Flow-Bench 升格为独立贡献）</h3>
 <div class="callout gold"><b>v1.9 同步（用户令 2026-11-19）</b>：贡献从 5 条精简为 3 条——EDA-Flow-Bench 评测集升格为独立第一贡献（原埋在「任务模态」里）；认知命题 + 情绪机制形式化合并为第二贡献；消融设计 + 诚实路线合并为第三贡献。原 v1.5 的 5 条（formulate / design / introduce / report / formalize）中，「任务模态」并入 EDA-Flow-Bench，「诚实路线」并入消融设计。<span class="src">用户令 2026-11-19 贡献列表精简令</span></div>
 <ol>
-  <li><b>Introduce</b> EDA-Flow-Bench：a benchmark of <code>\Ntasks</code> long-chain EDA design-flow tasks across 13 domains，each derived from <b>real IC-design engineer coding-agent traces</b> in a production environment，with a <b>design_flow contract</b>（submit.zip + ≥8 executable assertions + PreToolUse anti-leakage hook）and a frozen <code>\Neval</code>-run evaluation snapshot（<code>\MzeroPass</code> Pass@1 vs <code>\ScriptPass</code> on single-script EDA benchmarks，a 7.6× gap）——含任务模态（长链 flow orchestration）+ 评测协议 + 冻结快照；<b>不发布数据/代码</b>，仅本论文描述协议 + NDA 受控评审包（§3、§11）。</li>
+  <li><b>Introduce</b> EDA-Flow-Bench：a <b>two-tier benchmark</b>（<b>Full</b>: several thousand long-chain EDA design-flow tasks across 13 domains，continuously growing，count not reported；<b>Lite</b>: 500 curated tasks filtered from Full by domain-coverage balance + chain-length distribution，used for general evaluation under bounded token/time budgets），each derived from <b>real IC-design engineer coding-agent traces</b> in a production environment，with a <b>design_flow contract</b>（submit.zip + ≥8 executable assertions + PreToolUse anti-leakage hook）and a frozen <code>\Neval</code>-run Full-set evaluation snapshot（<code>\MzeroPass</code> Pass@1 vs <code>\ScriptPass</code> on single-script EDA benchmarks，a 7.6× gap）——含任务模态（长链 flow orchestration）+ 评测协议 + 冻结快照；<b>不发布任何数据/代码</b>，仅本论文描述协议 + NDA 受控评审包（§3、§11）。</li>
   <li><b>Formulate</b> 3 条核心可证伪假设（H1 功能性 / H2 机制性 / H3 边界性）下设 7 条子假设（H1a/b/c · H2a/b/c · H3），each with falsification conditions，on long-term memory + recursive self-improvement + affective-memory mechanisms in long-chain EDA flow orchestration；并 <b>Formalize</b> 三个认知神经科学机制（emotional arousal → surprise/penalty gating / weapon-focus → central-peripheral compression / mood-congruence → state-aware retrieval）为可计算映射（<code>w = α·surprise + β·penalty</code> · <code>central_vs_peripheral_ratio</code> · <code>score = sim + γ·state_match</code>），grounded in research.cimi_search literature（附录 G）——合并 v1.5 原 (1)(5) 认知命题 + 情绪机制形式化（§4、§5）。</li>
   <li><b>Design</b> a 10-arm main ablation（3 appendix arms）含等 token 预算杀手级对照 N1（排除「prompt just got longer」替代解释）+ 跨域迁移污染探针 M4（含机器可判的答案泄露率审计）+ 错误记忆对照 N2——separates「memory works」from「prompt just got longer」AND「emotion mechanism helps」from「uniform sampling」——controls absent from prior EDA self-evolution work（DATE27）；negative results 报告为 publishable boundary conditions（合并 v1.5 原 (2)(4) 消融设计 + 诚实路线）（§5、§6、§8）。</li>
 </ol>
@@ -664,7 +664,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <tr><th>新论文章节</th><th>对应 DATE27 章节</th><th>对应 DAC 章节</th><th>内容</th></tr>
 <tr><td>§1 Introduction</td><td>1_intro.tex</td><td>1_intro.tex</td><td>动机：从脚本到 flow 的迁移 + <b>从生物认知的情绪-记忆机制到 LLM agent 的可计算映射</b>；<b>3 条核心假设预告（H1 总 + H2 机制 + H3 边界）</b>；grounding-gap 框架回顾</td></tr>
 <tr><td>§2 Background: From Script to Flow</td><td>—（DATE27 无）</td><td>2_background.tex + 4_grounding.tex</td><td>grounding-gap 框架回顾；单脚本 vs flow 的 delta（§3 表）；为什么 memory + RSI 在 flow 层可能不同</td></tr>
-<tr><td>§3 Task Modality &amp; Benchmark (carrier)</td><td>—</td><td>5_bench.tex</td><td>design_flow 契约；13 域；<b>Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测，替 Lite 500）</b>；<b>协议白皮书级开源边界（§2.3 v1.4 收缩，替 mock-EDA）</b>；作为认知检验载体而非卖点</td></tr>
+<tr><td>§3 Task Modality &amp; Benchmark (carrier)</td><td>—</td><td>5_bench.tex</td><td>design_flow 契约；13 域；<b>two-tier：Full（数千·持续增长·不报告具体数字）+ Lite（500·一般评测用·从 Full 按领域覆盖+链长分布筛选）</b>；最小矩阵 = top-120 of Lite 500；<b>不发布任何数据/代码（v1.8 收紧：协议描述 + NDA 受控评审包，替 mock-EDA）</b>；作为认知检验载体而非卖点</td></tr>
 <tr><td>§4 Harness with Memory &amp; Self-Improvement</td><td>3_method.tex + 4_self_evolve.tex</td><td>3_design.tex</td><td>三层记忆 L0/L1/L2 + 可靠性门控（继承 DATE27）扩展到 flow 层；<b>13 臂实现细节 + v1.4 三条情绪机制计算映射（写入门控 w=α·surprise+β·penalty / 武器聚焦压缩 central_vs_peripheral / 状态感知检索 score=sim+γ·state_match）</b></td></tr>
 <tr><td><b>§4.5 Affective-Memory Mechanisms: From Biology to Computation</b>（v1.5 新增独立章节行）</td><td>—（DATE27 无）</td><td>—</td><td><b>承载 v1.4 §4.5 主线</b>：情绪唤醒度→惊奇度门控 / 武器聚焦→根因抽象与噪声剥离 / 心境一致→状态感知检索；三机制的可计算映射 + 与生物认知的对应（附录 G 文献）+ 与 LLM agent 符号编排的差距论证；H2a/H2b/H2c 机制级假设在此正式陈述</td></tr>
 <tr><td>§5 Falsifiable Hypotheses &amp; Ablation Design</td><td>—（DATE27 无可证伪命题）</td><td>—</td><td><b>3 核心假设 + 7 子假设（H1a/b/c · H2a/b/c · H3）+ 13 臂表（§5.1）</b> + 杀手级对照 N1 + 污染防护 + <b>M4 Full→Lite 跨域迁移污染检验 + 答案泄露率审计</b> + 统计功效</td></tr>
@@ -755,7 +755,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 </tr>
 <tr>
 <td><span class="tag p1">R3</span></td>
-<td><b>cases 增长与评测口径漂移</b>（Full 集 \Ntasks=1684 仍在增长，696 快照可能过期）</td>
+<td><b>cases 增长与评测口径漂移</b>（Full 集（数千·持续增长·不报告具体数字）仍在增长，696 快照可能过期）</td>
 <td>数字时效性</td>
 <td>① 所有论文数字绑定冻结快照（2026-11-09，main.tex:100）+ Lite 集 500 题固定；② 新跑的臂都在 Lite 集上（固定）；③ 多骨干扫描在 camera-ready 补；④ <b>认知命题不依赖绝对数字</b>（H1 判据是 M3 − M0 的相对 Δ，不依赖 10.0% 的绝对值）。</td>
 </tr>
@@ -825,7 +825,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 
 <h3>§9.2 需新造题（缺口）</h3>
 <ul>
-  <li><b>长链 flow 任务缺口</b>：现有 13 域的 grounding depth 分布中，深度 7+（physical_verify/layout_aether）仅占 696 快照的 ~16%（73+38=111/696）。H2 的 long 层（&gt;38 calls）需确认 top-120 子集中 long 层 ≥ 40 题——若不足，需从 Full 集 1684 题中补选长链 case（不造新题，只从现有 case 中选）。</li>
+  <li><b>长链 flow 任务缺口</b>：现有 13 域的 grounding depth 分布中，深度 7+（physical_verify/layout_aether）仅占 696 快照的 ~16%（73+38=111/696）。H2 的 long 层（&gt;38 calls）需确认 top-120 子集中 long 层 ≥ 40 题——若不足，需从 Full 集（数千）中补选长链 case（不造新题，只从现有 case 中选）。</li>
   <li><b>开源 EDA 等价 bench（理想矩阵 / Plan B for R2）</b>：若用 Yosys/OpenROAD/Magic 重造一个等价 bench 来证明命题可迁移，需新造题——这是 R2 的 Plan B，资源允许时做，非最小矩阵必需。</li>
   <li><b>不需要新造的</b>：M1 的 EDA 工具 SOP（从 DATE27 4 skills + 1 rule 扩展，用现有 13 域知识整理，不需新 case）；N1 的无关填充文本（预生成随机 EDA 文档片段）；N2 的错误记忆条目（人工构造错误 API 用法，不需新 case）。</li>
 </ul>
