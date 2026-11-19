@@ -1309,3 +1309,4 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 d52pq					parked		2026-11-19 15:28	NFS stale: ls visible, os.path.exists=False, head/cat fail; host 172.16.8.175 jiaqis sessions likely stale
 qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleCellMatch-002	2026-11-19 16:07	
 1792458709086_461oe	ellawu	10.129.2.14	24	layout_aether	case	EDA-Eval-DesignFlow-PyaetherWorkflowAnalyzer-001	2026-11-19 16:47	
+1794831480408_of070	jzeng	hfeg0plg85	446	layout_aether	case	EDA-Eval-DesignFlow-V4PadGenBetweenPowerM4M5-001	2026-11-19 17:24	
