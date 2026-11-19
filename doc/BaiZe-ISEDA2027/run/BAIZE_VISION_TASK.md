@@ -40,10 +40,15 @@
 > **背景**：vision 以前在 .12 用 CPU 跑 RL，是因为 .12 的 GPU 腾给了 pretrain。现在 vision 已迁到 .17，后四卡中的 GPU 6-7 可以用起来。
 >
 > **你要做的**：
-> 1. **VQA 服务迁移**：当前 VQA 服务（Qwen3.5-2B `:30001` + rft2 适配器 `:30003`）跑在 GPU 5。把 `--gpu` 参数从 5 改到 **6**，重启服务。这会释放 GPU 5 给 posttrain。
-> 2. **训练迁回 GPU**：之前因 GPU 不足改用 CPU 的波形 RL 训练（Stage-2W GRPO），现在用 **GPU 6-7** 迁回 GPU 训练。Qwen3.5-2B 是 2B 模型，2 张 A40（各 46GB）足够。
+> 1. **VQA 服务迁移**：当前 VQA 服务（Qwen3.5-2B `:30001` + rft2 适配器 `:30003`）跑在 GPU 5。把 `--gpu` 参数从 5 改到 **6**，重启服务。这会释放 GPU 5 给 posttrain。✅ 已完成（wake#1680）
+> 2. **训练迁回 GPU — 走 Option B（在 .17 上重新生成）**：之前因 GPU 不足改用 CPU 的波形 RL 训练（Stage-1W SFT + Stage-2W GRPO），现在用 **GPU 6-7** 迁回 GPU 训练。**.17 与 .12/.29 网络不通**，旧的 SFT checkpoint / backbone / 训练数据都在 .12 上拿不到。**因此走 Option B：在 .17 上从零重新生成全部前置产物**：
+>    - **a) 提取 2B 文本骨干**：.17 上已有 Qwen3.5-2B 模型文件（VQA 服务在用）。用 `extract_qwen3vl_2b_text.py` 或等效脚本提取纯文本骨干（Qwen3.5-2B 本身就是纯文本模型，可能无需剥离视觉塔，直接用即可）。
+>    - **b) 重新合成 SFT 训练数据**：参照 .12 上的合成方法（`sft_holdout_500.jsonl` 的生成逻辑，见 `vision/wave_rl/` 下的脚本），在 .17 上重新生成波形问答训练数据。数据源：波形图 PNG（已有的 10 道）、或用公开参数重建合成波形图。
+>    - **c) GPU SFT 训练**：用 GPU 6-7 跑 Stage-1W SFT（3000 步，2B+LoRA，GPU 上应远快于 CPU 2.4h）。
+>    - **d) GPU GRPO 训练**：SFT 验收通过后，跑 Stage-2W GRPO（500 步，GPU 6-7，bf16 并行 rollout）。
+>    - **e) 评测**：跑 WaveQA-RL 评测，对比 pre-SFT / post-SFT / post-GRPO 通过率。
 > 3. **WaveView 评测不受影响**：36.15 上的 V0/V1/V2 全量对照继续跑，这是推理任务不占本地 GPU。
-> 4. **迁移顺序**：先迁 VQA 服务到 GPU 6（确保 :30001/:30003 恢复），再启动 GPU 训练。迁移时记录旧 PID → kill → 重启 → curl 验证。
+> 4. **已完成项**：① VQA→GPU 6 ✅（wake#1680）。② GRPO 训练当前 BLOCKED——走 Option B 解除阻塞。
 
 ### 🔴 用户令 · 2026-11-17 16:3x（**自主构建 EDA-Eval-DesignFlow-WaveView 子集**）· ✅ 重做已交付 (wake#1663) · 待用户验收
 
