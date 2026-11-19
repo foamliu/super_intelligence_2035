@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-19 (R5) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：Nemotron分词126/193=65.3%(ETA~12h) / Code-Reasoning下载✅完成(1637/1637,13.9h) / Math-Reasoning下载64%(1423/2228) / .12 load=32.13✅ / /nas_user 45T可用✅ / commit+push完成(ec2e9bcf0)**。
+
 > 🟢 **心跳 · 2026-11-19 (R4) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 主要刷新点：PC-1~PC-4 全部✅完成 / PC-2 MegaMath 5子集364shard分词全完成(64.97B tok) / PC-3 污染闸门9277tasks黑名单就绪 / PC-4 blend_s2_preblend.tsv 10源已落盘(含finemath) / 新增§8 S2零重叠方案(方案D+E,换SEED=5678,总体重叠~12%) / 新增§9 数据源引用(Nemotron-CC-Math arXiv:2508.15096/MegaMath arXiv:2504.02807/stack-v3/finemath) / 甘特图扩展到12-25 / Go/No-Go G1~G5全部PASS / v2保留不删 / commit+push完成**。
 
 > 🟢 **心跳 · 2026-11-19 (R3) — fig:data-mix 饼图调优/TABLE IV 删2列/数据源+Decay+LongCtx 引用补齐 + 编译0err**：① Fig-2 三饼图 scale 2.5→3.0（直径 6cm = 3.5×原 0.85，超"2-3×"目标）、minipage 0.32→0.33linewidth（更宽容纳放大饼）、标题间距 12pt→16pt（VQA 确认无重叠、clear white space）、Decay 4%/2% 外部 leader-line 标签改为饼内错位标签（消除 bounding box 不一致、所有饼同尺寸）、图题删除冗余末句"S2 category proportions follow the finalized 4:4:2 blend configuration"（中英文同步删）；② TABLE IV（tab:prod-budget）已为 3 列（Phase/Tokens/Steps，Wall-clock/Status 前轮已删）；③ 数据源引用 R2 已齐（Nemotron-CC-Math/FineMath/MegaMath/Stack-v3 全部 \cite + bib entry）；④ Decay 段引用已齐；⑤ Long-Context 段引用已齐；`latexmk -pdf main.tex` 0 error / 0 undefined ref / 0 undefined citation / 0 LaTeX Warning（6 页），VQA 确认饼图填充宽度良好、无标题重叠、所有百分比标签可见。
@@ -67,9 +69,9 @@ WAITING: 0
 ```
 PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄 → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB:web-pro 100+tcb 200+qa 32+tc 16+code 16;pc2_fast_split .12+.29均完成退出);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv更新(10源prop=1.0,web40/code40/math20,含finemath prop=0.005/epoch=0.78);✅S2重叠研究报告(report_s2_data_overlap_study.md,6方案/455行);✅finemath-4plus分词DONE(64/64/9.4B tok/0err)→已加入blend TSV;✅MegaMath flat symlink(pre-blend/megamath/348×3files)
-当前动作:     后台4任务并行巡检(wake#1553): Nemotron分词(27/193 shards,~36.6B tok已产出,ETA~36.6h,PID1791931,nice19/ionice3)+MegaMath-web下载(66%/3252files,ETA~2.2h,PID489801,nice19)+Code-Reasoning下载(94%/1532files/2.8TB,ETA~17min,PID489797,nice19)+Math-Reasoning下载(48%/1076files/2.0TB,稳定无崩溃,PID3697171,nice19); .12 load=33.82✅<120; .29 load=38.75✅; /nas_user 46T可用✅; pretrain训练正常(torchrun PID2501551/step~7s)
-下一步:       ①Code-Reasoning即将完成(~17min)→验收+登记DATA_MAPPING ②等Nemotron分词完成(~36.6h)→更新为main版blend TSV(加入Nemotron源) ③MegaMath-web下载完成后PC-5分词 ④全部完成后逐源13-gram污染扫描 ⑤报告pretrain线转告SEED=5678建议
-阻塞:         无(所有后台任务nice19/ionice3;.12 load 33.82<120✅不挤pretrain;/nas_user 46T可用✅>5T红线;git up-to-date with origin)
+当前动作:     v3报告刷新完成(wake#1554): Nemotron分词(126/193=65.3%,~98B tok已产出,ETA~12h,PID1791931,nice19/ionice3)+MegaMath-web下载✅完成(4950/4950,16.5h)+Code-Reasoning下载✅完成(1637/1637,13.9h)+Math-Reasoning下载(64%/1423files,稳定无崩溃,PID3697171,nice19); .12 load=32.13✅<120; /nas_user 45T可用✅; pretrain训练正常(torchrun PID2501551/step~7s); v3报告commit+push完成(ec2e9bcf0)
+下一步:       ①等Nemotron分词完成(~12h)→更新为main版blend TSV(加入Nemotron源) ②MegaMath-web分词(PC-5) ③全部完成后逐源13-gram污染扫描 ④报告pretrain线转告SEED=5678建议 ⑤Math-Reasoning下载完成后验收+登记DATA_MAPPING
+阻塞:         无(所有后台任务nice19/ionice3;.12 load 32.13<120✅不挤pretrain;/nas_user 45T可用✅>5T红线;git pushed to origin)
 ERROR_COUNT:  0
 未完成指令:   无(4后台任务运行中,PC-1~PC-4已交付,MegaMath PC-2全完成,finemath已加入blend TSV)→WAITING=0
 ```
