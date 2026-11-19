@@ -1,12 +1,13 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-19 wake#1527·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh 复核 main.log = **0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull**（与 wake#1524/1525/1526 一致）·main.pdf 234468B 与 canonical `1b2b4222e` 一致·HEAD=`b0a26b5c1`（pretrain 线·0 behind origin/main）·本线工作树干净·designflow dirty 文件非本线未碰·不起臂·standby）
+WAITING: 0（2026-11-19 wake#1528·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh 复核 main.log = **0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull**（与 wake#1524-1527 一致）·main.pdf 234468B 与 canonical `1b2b4222e` 一致·MANIFEST.md 11319B 在论文树根·HEAD=`d188595dc`（本线 wake#1527 standby 已 push·0 behind origin/main）·本线工作树干净·designflow dirty 文件非本线未碰·不起臂·standby）
 
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
 > 全线结果汇总：**A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停**。subagent 消融线 done_all·不再追加新臂·agent 回 standby。
 
+- [2026-11-19 wake#1528 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh 复核 main.log = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull（与 wake#1524-1527 一致）·main.pdf 234468B 与 canonical `1b2b4222e` 一致·MANIFEST.md 11319B 在论文树根·HEAD=`d188595dc`（本线 wake#1527 standby 已 push·0 behind origin/main）·本线工作树干净·designflow dirty 文件非本线未碰·不起臂·standby。
 - [2026-11-19 wake#1527 心跳·opencode 交互式·用户再次粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh 复核 main.log = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull（与 wake#1524/1525/1526 一致）·main.pdf 234468B 与 canonical `1b2b4222e` 一致·HEAD=`b0a26b5c1`（pretrain 线·0 behind origin/main）·本线工作树干净·designflow dirty 文件非本线未碰·不起臂·standby。
 - [2026-11-19 wake#1526 心跳·opencode 交互式·用户粘贴全任务书无新指令·§7 Step C done_all→什么都不做退出·fresh 复核 clean compile 产物 main.log = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull（与 wake#1524/1525 一致）·MANIFEST.md 在论文树根（11.3KB）·本线工作树干净（main.pdf 已 restore 至 commit `1b2b4222e` canonical 234468B·wake#1525 fresh recompile 同字节同页数仅 metadata 时戳差异·非内容改动）·`benchmark/designflow/` 4 个 dirty/untracked 文件为 designflow 线产物·非本线·未碰·不起臂·standby。
 - [2026-11-19 wake#1525 心跳·opencode 交互式·fresh standby 复核·§7 Step C done_all·五条 11-19 红令全交付并已 commit（HEAD 含 wake#1524 commit `1b2b4222e`）·本轮独立 fresh 复核 clean compile 产物 main.log = 0 err / 0 undefined / 12 pages / 0 Overfull / 28 Underfull（与 wake#1524 记录一致）·MANIFEST.md 在论文树根（11.3KB）·`doc/ZhuLong_DAC2027/benchmark/designflow/` 2 个 dirty 文件为 designflow 线产物·非本线·未碰·不起臂·standby。
