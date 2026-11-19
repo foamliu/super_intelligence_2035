@@ -1,5 +1,88 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-19 用户令 — Overleaf 编译问题修复 + Overfull/Underfull hbox 排版修复 + clean compile 纪律 + MANIFEST 同步指引（最高优先 · 覆盖 standby）**
+>
+> 本条是分层令（commit `c72b82fd0` + wake#1522 `7932e0201`）之后的**编译可靠性令**。用户在 Overleaf 编译时报告大量 `Undefined control sequence`（`\FullScale` in 0_abstract/1_intro/3_task_benchmark）+ `Reference sec:hypotheses undefined` + 5 Overfull hbox + 91 Underfull hbox。
+>
+> **ops 独立诊断结论**：本地 clean compile（删 aux/bbl/log → 3 轮 pdflatex+bibtex）**0 error 0 undefined citation 0 undefined ref**，12 页通过。Overleaf 的 undefined 是**版本不同步**——用户上传到 Overleaf 的 main.tex 是旧版（缺 `\FullScale` 宏定义 line 44 + `\input{sections/5_hypotheses}` 改名 line 86），导致 sections 引用 `\FullScale` undefined + `\ref{sec:hypotheses}` undefined。**本地编译验证是真实的，但 agent 没做 clean compile 掩盖了潜在风险，也没给用户 Overleaf 同步指引**。
+>
+> ### ① 修复 Overfull \hbox（5 处，用户报告的硬排版问题）
+>
+> 干净编译后 main.log 有 5 个 Overfull \hbox（必须修，过宽侵入 margin）：
+>
+> 1. **`sections/4_harness.tex:64` 公式 66.5pt 过宽**（最严重）—— `q; m) = (N; ...` 公式行。修复策略（agent 自主选择）：① 公式改用 `\small` 或 `\footnotesize` 数学；② 公式拆行（`align` / `multline`）；③ 公式参数缩写（如 `N_central` → `N_c`，`N_peripheral` → `N_p`，在 caption 解释）；④ 改用 `\shoveleft` / `\shoveright` 调整。
+> 2. **`sections/4_harness.tex:64` 同公式 9.1pt 过宽**（同上公式，修 ①.1 时一并解决）。
+> 3. **`appendix/B_additional_results.tex:176` 表 20.1pt 过宽** —— per-domain 表某列过宽。修复：① 表改 `tabularx` + `\columnwidth` + `X` 列；② 缩写列头；③ `\small` 表字号；④ 数字精度压缩。
+> 4. **`appendix/D_affective_mechanism.tex:53` 公式 10.2pt 过宽** —— 情绪机制公式。修复同 ①.1。
+> 5. **`appendix/B_additional_results.tex:25` 6.0pt 过宽** —— 表。修复同 ①.3。
+>
+> **自检**：clean compile 后 `grep -c 'Overfull' main.log` ≤ 1（允许 1 个 ≤3pt 的残余，但 66pt / 20pt 那两个必须消除）；`grep -A1 'Overfull' main.log` 中无 `4_harness:64` / `B_additional_results:176` / `D_affective_mechanism:53` 行。
+>
+> ### ② Underfull \hbox 排版优化（91 处，用户报告，优先级低于 Overfull）
+>
+> Underfull 是 badness warning，不影响编译但影响美观。91 处中多数是双栏排版自然产生的不易消除的，agent 应：
+>
+> - **优先修 badness = 10000 的**（最严重，约 10+ 处，如 `1_intro.tex:22` vbox badness 10000、`5_preregistered.tex:65/102` 多个 10000、`6_experiments.tex:5`、`appendix/B:12`、`appendix/C:25/48/62/104`、`appendix/D:13`）。修复策略：① 段落微调措辞让断行更自然；② 加 `\sloppy` 或 `\emergencystretch=3em` 在问题段落（全局加 `\emergencystretch` 在 preamble 是最简单方案，agent 自决）；③ 表格 `\small` + 重新断行。
+> - **badness < 5000 的可接受**，不强制修（修了会过度改动）。
+> - **自检**：clean compile 后 `grep -c 'Underfull' main.log` 显著下降（目标 ≤ 30，从 91 降下来）；badness 10000 的 Underfull 清零或 ≤ 2。
+>
+> ### ③ clean compile 纪律（强制，从此所有编译验证必须这样）
+>
+> **agent 之前的编译验证有漏洞**：依赖已有 main.aux 旧缓存报"0 undefined"，掩盖了潜在风险。ops 独立删 aux 重编时 round 1 也报 undefined ref/citation，round 3 才干净。从此**每次编译验证必须 clean compile**：
+>
+> ```bash
+> cd EDA-Flow-Bench_ICML2027
+> rm -f main.aux main.bbl main.blg main.log main.out main.toc main.pdf
+> pdflatex -interaction=nonstopmode main.tex   # round 1（会报 undefined ref/citation，正常）
+> bibtex main                                    # 解析 citation
+> pdflatex -interaction=nonstopmode main.tex   # round 2
+> pdflatex -interaction=nonstopmode main.tex   # round 3（应 0 undefined）
+> # 验证：
+> grep -c '^!' main.log          # = 0（0 error）
+> grep -ci 'undefined' main.log  # = 0（0 undefined ref/citation/control sequence）
+> grep -c 'Overfull' main.log    # ≤ 1
+> grep -i 'Output written' main.log  # 报页数 + 字节
+> ```
+>
+> - **判据**：round 3 的 `grep -ci 'undefined' main.log` = 0 才算编译通过；round 1 的 undefined 是正常的（aux 还没建立），**不得用 round 1 的 log 报"有 undefined"也不得用旧 aux 报"0 undefined"**。
+> - commit message 必须写"clean compile（删 aux → 3 轮 pdflatex+bibtex）0 error 0 undefined N pages"。
+> - **不得**只跑 1 轮 pdflatex 就报编译通过。
+>
+> ### ④ MANIFEST.md + Overleaf 同步指引（让用户能在 Overleaf 复现编译）
+>
+> 用户用 Overleaf 编译但版本不同步导致 undefined。agent 必须在论文树根目录 `EDA-Flow-Bench_ICML2027/MANIFEST.md` 写一个同步指引，包含：
+>
+> 1. **必须上传的文件清单**（完整文件树）：`main.tex` + `sections/*.tex`（12 个）+ `appendix/*.tex`（4 个）+ `references.bib` + `icml2026.sty` + `icml2026.bst` + 所有 `.sty` / `.bst` 依赖 + 所有图片/图源文件（若有 `\includegraphics`）。用 `find . -name '*.tex' -o -name '*.bib' -o -name '*.sty' -o -name '*.bst' -o -name '*.png' -o -name '*.pdf'` 列全。
+> 2. **关键宏定义清单**（让用户核对 Overleaf 上的 main.tex 是否最新）：列出 `main.tex` 所有 `\newcommand` 宏（`\FullScale` / `\LiteSet` / `\Neval` / `\MzeroPass` / `\ScriptPass` / `\bench` / `\mode` / `\TBD` 等）+ 行号，让用户核对 Overleaf main.tex 有这些宏。
+> 3. **文件改名记录**：`5_preregistered.tex` → `5_hypotheses.tex`（main.tex:86 的 `\input` 也改了）；如果 Overleaf 上还有旧 `5_preregistered.tex`，**必须删除**，否则可能被旧 `\input` 误读。
+> 4. **Overleaf 编译步骤**：① 上传所有文件（用 zip 整体上传最稳）；② Overleaf 项目设置 compiler = pdfLaTeX；③ 点 Recompile（Overleaf 自动跑多轮，等 2-3 分钟）；④ 如果还报 undefined，检查 main.tex 是否是最新版（含 `\FullScale` 宏 line 44 + `\input{sections/5_hypotheses}` line 86）。
+> 5. **clean compile 命令**（本地或 Overleaf 都适用）：复制 ③ 的 4 轮命令。
+> 6. **当前编译状态**：12 pages / 0 error / 0 undefined / N Overfull / N Underfull（修完 ①② 后更新数字）。
+>
+> ### ⑤ 硬约束（继承，全部继续生效）
+>
+> - **可改**：`EDA-Flow-Bench_ICML2027/sections/4_harness.tex` + `appendix/B_additional_results.tex` + `appendix/D_affective_mechanism.tex` + 其他有 Overfull/Underfull 的文件 + 新增 `MANIFEST.md` + `main.tex`（若需加 `\emergencystretch`）。
+> - 🚫 **不动**：designflow 造题线、其他论文树、宏定义的数字值（`\LiteSet=500` / `\Neval=696` / `\MzeroPass=10.0%` 等不改）、假设/判据/诚实路线/分层结构/贡献列表/双盲/防伪。
+> - 🚫 **不起**：训练/评测进程。
+> - ✅ **正文 ≤ 6 页**（排版修复不应改变页数；若 Overfull 修复导致换页，调整措辞保持 6 页）。
+> - ✅ **clean compile 0 error 0 undefined**（③ 纪律）。
+> - ✅ **双盲匿名 + 防伪底线 + 0 外链 + 不承诺开源 + 无预注册 + Full/Lite 分层 + 3 项贡献**（前几轮令全部继续）。
+> - **编译验证**：必须 ③ 的 clean compile（删 aux → 3 轮 pdflatex+bibtex）；round 3 的 `grep -ci 'undefined' main.log` = 0。
+> - **提交**：commit 前缀 `zhulong paper: Overleaf 编译修复（Overfull hbox 5 处 + Underfull 优化 + clean compile 纪律 + MANIFEST 同步指引）`；**只 add 论文树 + 本线 run 文件**，勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① clean compile（删 aux → 3 轮）round 3 `grep -ci 'undefined' main.log` = 0 ✅；
+>   ② `grep -c 'Overfull' main.log` ≤ 1，且无 `4_harness:64` / `B_additional_results:176` / `D_affective_mechanism:53` 行 ✅；
+>   ③ `grep -c 'Underfull' main.log` ≤ 30，badness 10000 的 Underfull ≤ 2 ✅；
+>   ④ `MANIFEST.md` 在论文树根目录，含文件清单 + 宏定义清单 + 改名记录 + Overleaf 编译步骤 + clean compile 命令 + 当前编译状态 ✅；
+>   ⑤ 正文 ≤ 6 页（排版修复后页数不变）✅；
+>   ⑥ abstract ≤ 200 词（渲染词数，pdftotext 实测）✅；
+>   ⑦ 0 error（`grep -c '^!' main.log` = 0）✅；
+>   ⑧ 双盲 + 防伪 + 分层 + 3 项贡献 + 无预注册 + 不承诺开源 继续过 ✅；
+>   ⑨ commit message 含 "clean compile 0 error 0 undefined N pages" ✅。
+> - 完成后 `WAITING=0` standby，记一行心跳。
+>
+> **agent 自主空间**：Overfull 公式的具体修复方式（缩字号 / 拆行 / 缩写参数）由 agent 自决；Underfull 修复范围（全局 `\emergencystretch` vs 逐段 `\sloppy` vs 措辞微调）由 agent 自决；MANIFEST.md 的具体格式由 agent 自决——用户给的是"修 Overleaf 编译问题 + clean compile 纪律 + 让用户能复现"，不是逐字模板。
+
 > 🔴 **2026-11-19 用户令 — EDA-Flow-Bench 分层为 Full（数千·增长·不在论文中给具体数字）+ Lite（500·一般评测用·token/时间预算有限），全树同步改写（最高优先 · 覆盖 standby）**
 >
 > 本条是贡献精简令（commit `335267235`）之后的**评测集分层令**。用户原话：「EDA-Flow-Bench 分成 Full（数千）和 Lite（500）。前者数量在增加，不用在论文中给出具体数字，从中筛选 500 形成 Lite，一般评测用 Lite（token/时间预算有限）」。
