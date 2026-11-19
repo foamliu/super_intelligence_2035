@@ -198,7 +198,7 @@
 1785747744541_ks4xp	e0014566	hfeg0pkn001	253	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcAgentGen-001	2026-11-04 19:42	
 1787285566134_xwncx	e0014566	hfeg0pkn001	269	layout_virtuoso	parked		2026-11-04 20:01	dup of RTextChkPlan-001/RsCalcChkPtGen-001 (same rtext-checkpoint-designer skill)
 1790238584900_vajed	xinqiaoz	hfeg0pkn004	307	physical_verify	case	EDA-Eval-DesignFlow-DrcPatQaDiag-001	2026-11-04 20:18	
-1792114378643_rw7u9	gokuguo	hfeg0plg53	51	physical_verify	case	EDA-Eval-DesignFlow-ErcReconLicDiag-001	2026-11-04 20:57	
+1792114378643_rw7u9	gokuguo	hfeg0plg53	51	physical_verify	case	EDA-Eval-DesignFlow-ErcReconLicenseDiag-001	2026-11-20 04:37	r841 revival: ERC -recon license root-cause diagnosis (physical_verify, L1-boundary, B-档 synthesized). deepread rw7u9_erc_recon_license_diag.md. k_check=16 (a-p). reframe: free-text root-cause diagnosis -> stdlib diagnose_erc_recon.py (parse erc.log license ERROR + batch_lvs.py -recon line + lvs.log + lvs.rep -> JSON). hidden B1(INVX1/line66)/B2(NAND2X1/line72) anti-hardcode A(MB2SDFQD1/line56).
 1791861649073_wj4ab	kenwang	hfeg0pkn005	253	physical_verify	case	EDA-Eval-DesignFlow-DrcPyEnvDiag-001	2026-11-04 21:49	
 1790664471639_s4xs4	xinqiaoz	hfeg0pkn004	283	physical_verify	case	EDA-Eval-DesignFlow-PdkRunsetExplorer-001	2026-11-04 22:09	
 1793078373656_wqhsu	xiwang	hfeg0pkn003	289	layout_aether	case	EDA-Eval-DesignFlow-ScmosStructId-001	2026-11-04 22:56	
