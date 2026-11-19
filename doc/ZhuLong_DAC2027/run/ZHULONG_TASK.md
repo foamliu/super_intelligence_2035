@@ -2,7 +2,7 @@
 
 > 🔴 **2026-11-19 用户令（最高优先）**
 >
-> 「放行 zhulong 使用 EDA-Flow-Bench 仓库跑实验（16 worker，大约 3h 跑 1-run）默认使用 doubao 模型，Lite 集（500）」
+> 「放行 zhulong 使用 EDA-Flow-Bench 仓库跑 EDA-Flow-Bench_ICML2027 论文中的实验（16 worker，大约 3h 跑 1-run）默认使用 doubao 模型，Lite 集（500）」
 
 
 > 🔴 **2026-11-19 用户令 — Overleaf 编译问题修复 + Overfull/Underfull hbox 排版修复 + clean compile 纪律 + MANIFEST 同步指引（最高优先 · 覆盖 standby）**
