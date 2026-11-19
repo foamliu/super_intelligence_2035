@@ -37,8 +37,12 @@
 \newcommand{\etal}{\textit{et al.}\xspace}
 \newcommand{\TBD}{\textbf{TBD}\xspace}
 
-% 任务总数（唯一事实源）：每轮只改这一行
-\newcommand{\Ntasks}{1827}
+% 评测集分层（2026-11-19 用户令）：
+%   Full = 数千（several thousand）、持续增长、论文中不给具体数字。
+%   Lite = 500，从 Full 按领域覆盖平衡 + 链长分布筛选的代表性子集，用于一般评测（token/时间预算有限）。
+%   arm-level experiments run on Lite；696-run 冻结快照是 Full-set 描述性 baseline（采样自 Full）。
+\newcommand{\FullScale}{several thousand}
+\newcommand{\LiteSet}{500}
 % 冻结评测快照：2026-11-09 run_batch_20261109_171201 = 696 runs
 %   （62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT）
 \newcommand{\Neval}{696}

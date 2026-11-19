@@ -20,7 +20,7 @@
 
 \begin{table}[ht]
 \centering
-\caption{M0 baseline (frozen 696-run snapshot, 2026-11-09). Pass\% = PASS/(PASS+FAIL). Full per-domain table in Appendix~\ref{sec:additional-results}.}
+\caption{M0 baseline (frozen 696-run Full-set snapshot, 2026-11-09). Pass\% = PASS/(PASS+FAIL). Full per-domain table in Appendix~\ref{sec:additional-results}.}
 \label{tab:m0-baseline}
 \scriptsize
 \setlength{\tabcolsep}{4pt}
@@ -69,12 +69,12 @@ H3 & single vs spawn & single $\geq$ spawn & \TBD & \TBD \\
 \end{tabularx}
 \end{table}
 
-\textbf{Arm-table convergence \& power notes.} The main 10-arm table drops M1/M8 to appendix; M2 is the H2a/H2b control (H1a weak-control criteria withdrawn, \S\ref{sec:arms}). M6's fail-streak test is exploratory at the minimal matrix (H2c deferred to ideal matrix). The minimal-matrix M0 anchor is the same-subset M0 (\TBD), not the 696-run \MzeroPass{}.
+\textbf{Arm-table convergence \& power notes.} The main 10-arm table drops M1/M8 to appendix; M2 is the H2a/H2b control (H1a weak-control criteria withdrawn, \S\ref{sec:arms}). M6's fail-streak test is exploratory at the minimal matrix (H2c deferred to ideal matrix). The minimal-matrix M0 anchor is the same-subset M0 on the top-120-of-Lite (\TBD), not the 696-run Full-set \MzeroPass{}.
 % 【中文】
 % \textbf{臂表收敛与功效注。} 主 10 臂表将 M1（静态 SOP）与 M8（负效价）移至附录，M2 作为 H2a/H2b 对照
 % 运行（非主臂；其 H1a 弱对照判据已撤回，§\ref{sec:arms}）。M6 的失败连续检验在最小矩阵下为探索性
-%（$\sim$40 题、功效 $<$0.3）；H2c 判据延至理想矩阵。最小矩阵的 M0 比较锚点为同子集 M0（\TBD），
-% 而非 696-run \MzeroPass{}（§\ref{sec:benchmark}）。
+%（$\sim$40 题、功效 $<$0.3）；H2c 判据延至理想矩阵。最小矩阵的 M0 比较锚点为同 top-120-of-Lite
+% 子集上实测的 M0（\TBD），而非 696-run Full-set \MzeroPass{}（§\ref{sec:benchmark}）。
 
 \textbf{Reused 696-run assets.} The frozen snapshot provides M0 directly. For H1b stratification, we re-use the trace-length distribution from 47 pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. No new evaluation runs are reported in this paper.
 % 【中文】
