@@ -1311,3 +1311,5 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1792458709086_461oe	ellawu	10.129.2.14	24	layout_aether	case	EDA-Eval-DesignFlow-PyaetherWorkflowAnalyzer-001	2026-11-19 16:47	
 1794831480408_of070	jzeng	hfeg0plg85	446	layout_aether	case	EDA-Eval-DesignFlow-V4PadGenBetweenPowerM4M5-001	2026-11-19 17:24	
 1790149772146_7bout	yzwang	10.129.2.10	29	physical_verify	case	EDA-Eval-DesignFlow-CalibreLayerMapResolver-001	2026-11-19 17:46	
+1788426707990_o1egm	jason17w	10.129.32.190	38	physical_verify	parked		2026-11-19 17:58	off-domain: trace real intent = cline skill-loading harness Q&A (how to add project-local skills via .clinerules, U#0/U#31/U#61); keywords drc:744;verilog:275 are FALSE-POSITIVE from cwd path /rundata/drcoa/V0/simdir/verilog/yesong/verilog.ddr5.drcoa.coa_1220_hj; belongs to shard A eda_other/harness, NOT physical_verify/layout/pg. 71 msgs, 300KB. r821 parked.
+1790219742335_t9g3z	lizwen	10.129.2.12	22	layout_aether	case	EDA-Eval-DesignFlow-DnwPatternGen-001	2026-11-19 18:10	
