@@ -29,6 +29,16 @@
 \usepackage{tabularx}
 \usepackage{enumitem}
 
+% 排版微调（2026-11-19 用户令 · Overfull/Underfull 修复）：
+%   \emergencystretch 让段落断行在难断处最多额外拉伸 3em 而不报 badness，
+%   显著减少 Underfull \hbox（段落级）；\raggedbottom 允许双栏底部不强制对齐，
+%   消除 "Underfull \vbox (badness 10000) while \output is active"（栏底填充警告）。
+\setlength{\emergencystretch}{4em}
+\raggedbottom
+% ragged X 列：用于 tabularx 中含不可断数学串（如 M7$<$M2$-$2pp）的单元格，
+% 避免单 token 行被强制拉伸而报 Underfull \hbox (badness 10000)。
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
 % 宏定义
 \newcommand{\bench}{EDA-Flow-Bench\xspace}
 \newcommand{\mode}{design\_flow\xspace}

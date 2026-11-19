@@ -25,7 +25,7 @@ The L1/L2 architecture above is \emph{functional}: it asks ``does memory help?''
 % 我们引入三个受情绪记忆认知神经科学原理启发的机制，每个给出一个\emph{可计算}映射，可用机制级阴性对照
 %（等 token 预算、机制关闭）消融。
 
-\textbf{Mechanism 1: Surprise/Penalty-Gated Writing.} Emotionally arousing events---unexpected failures or breakthroughs---are preferentially consolidated via amygdala--hippocampus interaction \cite{mcgaugh2004}. We map this to a \emph{write-gating weight}:
+{\hbadness=10000\sloppy \textbf{Mechanism 1: Surprise/Penalty-Gated Writing.} Emotionally arousing events---unexpected failures or breakthroughs---are preferentially consolidated via amygdala--hippocampus interaction \cite{mcgaugh2004}. We map this to a \emph{write-gating weight}:\par}
 % 【中文】
 % \textbf{机制 1：惊异/惩罚门控写入。} 人类不会均匀记录每个事件；情绪唤起的事件——意外失败或突破——
 % 经杏仁核-海马交互被优先巩固 \cite{mcgaugh2004}。我们将其映射为一个\emph{写入门控权重}：
@@ -60,9 +60,9 @@ where \emph{central} = error stack trace + root-cause causal chain, and \emph{pe
 % 智能体应优先检索防御性的避坑教训，而"顺利推进"状态应检索成功模板。我们将其映射为一个检索评分：
 \begin{equation}
 \label{eq:state-retrieval}
-\text{score}(q, m) = \text{sim}(q, m) + \gamma \cdot \text{state\_match}(\text{state}(q), \text{state}(m)),
+\text{score}(q, m) = \text{sim}(q, m) + \gamma \cdot \text{sm}(\text{state}(q), \text{state}(m)),
 \end{equation}
-where $\text{state} = (\text{recent-}N\text{-step failure rate}, \text{current tool domain}, \text{chain-stage})$ and $\gamma$ is calibrated by ablation (M6 vs.\ M3 state-agnostic retrieval, same memory content).
+where $\text{sm}$ denotes state-match, the state tuple is $\text{state}=(\text{fail-rate}_N,\,\text{tool},\,\text{stage})$---respectively the recent-$N$-step failure rate, the current tool domain, and the chain stage---and $\gamma$ is calibrated by ablation (M6 vs.\ M3 state-agnostic retrieval, same memory content).
 % 【中文】
 % 其中 $\text{state} = (\text{最近 }N\text{ 步失败率}, \text{当前工具领域}, \text{链阶段})$，$\gamma$
 % 由消融校准（M6 vs.\ M3 状态无关检索，相同记忆内容）。

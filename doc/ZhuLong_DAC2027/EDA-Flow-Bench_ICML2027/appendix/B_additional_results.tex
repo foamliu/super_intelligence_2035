@@ -9,7 +9,7 @@
 \label{sec:full-per-domain}
 % \subsection{完整的各领域结果}
 
-Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 frozen evaluation (\Neval{} runs across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers). The overall Pass@1 is 10.0\% (62 PASS / 620 decided runs); 70 ERROR and 6 ABSENT runs are excluded from the denominator but reported per domain. Column sums are 62/558/70/6/696, and for every row PASS$+$FAIL$+$ERROR$+$ABSENT$=$Total.
+{\hbadness=10000\sloppy Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 frozen evaluation (\Neval{} runs across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers). The overall Pass@1 is 10.0\% (62 PASS / 620 decided runs); 70 ERROR and 6 ABSENT runs are excluded from the denominator but reported per domain. Column sums are 62/558/70/6/696, and for every row PASS$+$FAIL$+$ERROR$+$ABSENT$=$Total.\par}
 % 表~\ref{tab:full-domain-results} 报告 2026-11-09 冻结评测（\Neval{} 个 run，覆盖全部 13 个领域，
 % DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers）的完整各领域分解。
 % 总体 Pass@1 为 10.0\%（62 PASS / 620 已判定 run）；70 个 ERROR 与 6 个 ABSENT 不计入分母但逐域列出。
@@ -22,6 +22,7 @@ Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from t
 % \caption{2026-11-09 完整 Full-set 评测快照（696 例，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers、超时 2400s）各领域 Pass@1 (\%)。此为描述性 Full-set 基线；臂级实验在 Lite \LiteSet{}-任务集上运行。Pass\% = PASS/(PASS+FAIL)；ERROR 与 ABSENT 不计入分母。}
 \label{tab:full-domain-results}
 \scriptsize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lcccccc@{}}
 \toprule
 \textbf{Domain} & \textbf{PASS} & \textbf{FAIL} & \textbf{ERROR} & \textbf{ABSENT} & \textbf{Total} & \textbf{Pass\%} \\
@@ -68,6 +69,7 @@ camera-ready version and repeat it as the multi-backbone test of RQ3
 \label{sec:failure-by-domain}
 % \subsection{各领域失败分类法}
 
+{\hbadness=10000\sloppy
 The batch runner records one terminal status per run, so the per-domain failure
 \emph{categories} cannot be derived from that terminal status alone. We therefore
 report (i) the run-level outcome anchors per domain (Table~\ref{tab:full-domain-results})
@@ -87,6 +89,7 @@ FAIL-with-submit UNKNOWN (49 runs, 7.0\% of the batch) is detailed in
 \S\ref{sec:failure-by-domain}. A stacked-bar view and a Cohen's $\kappa$ agreement
 statistic between the tool and a human labeler on a 100-run sample are deferred
 to the camera-ready version.
+\par}
 % 批次 runner 每个 run 只记录一个终态，因此仅凭该终态无法推导各领域的失败\emph{类别}。
 % 故我们给出：(i) 各领域 run 级结果锚点（表~\ref{tab:full-domain-results}）；
 % (ii) 一个逐 run 归因流程，它从每个 run 的判分日志与智能体会话中恢复类别
@@ -173,6 +176,8 @@ PASS/40. Basic compaction consistently outperforms agentic by ${\sim}10$pp while
 keeping wall-clock time lower, suggesting that preserving tool-call I/O verbatim
 is more valuable than a lossy semantic summary for EDA flow orchestration.}
 \label{tab:compaction-ablation}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}llcccc@{}}
 \toprule
 \textbf{Round} & \textbf{Variant} & \textbf{Pass\%} & \textbf{PASS/40} & \textbf{Wall (h)} & \textbf{Tok/task (M)} \\
