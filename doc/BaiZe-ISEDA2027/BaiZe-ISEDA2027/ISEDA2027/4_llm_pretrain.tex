@@ -15,8 +15,8 @@ The model trains under a WSD schedule (LR $1\times10^{-3}$, $2{,}000$ warmup $=0
 % 中文：本模型在 WSD 调度下训练（LR $1\times10^{-3}$，预热 $2{,}000$ 步 $=700$k 的 $0.29\%$），序列 $16{,}384$（$613{,}992$ tok/s；到 $1$M 外推 $64\times$）。衰减分两段：A 段在 16K 上用指令数据退火（$60$–$70\%$），B 段沿 32K→64K→128K 阶梯扩展（$30$–$40\%$），$lr_{\min}{=}1\times10^{-4}$。
 
 \subsection{Data}\label{sec:llm-data}
-The stable phase ($700$k steps) follows a two-stage curriculum (Figure~\ref{fig:data-mix}).
-% 中文：数据。稳定段（$700$k 步）采用两阶段课程学习（图 \ref{fig:data-mix}）。
+The pretraining data follows a three-stage curriculum: two stable stages (S1, S2; $700$k steps) and a decay annealing stage (Figure~\ref{fig:data-mix}).
+% 中文：数据。预训练数据采用三阶段课程学习：两个稳定阶段（S1、S2；$700$k 步）加一个退火阶段（图 \ref{fig:data-mix}）。
 \textbf{S1} ($0$--$350$k) uses a seven-source mixture yielding a $74{:}19{:}7$ web/code/math split, establishing a general-purpose language foundation.
 % 中文：\textbf{S1}（$0$–$350$k）使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布，建立通用语言基础。
 \textbf{S2} ($350$k--$700$k) shifts to a $40{:}40{:}20$ web/code/math split to strengthen code and math capability.
