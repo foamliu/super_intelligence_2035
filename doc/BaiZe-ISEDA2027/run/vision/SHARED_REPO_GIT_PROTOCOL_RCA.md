@@ -123,3 +123,19 @@ git merge-base --is-ancestor "$(git -C "$WT" rev-parse HEAD)" origin/main && ech
 - ✅ 共享树只读跑、提交进 worktree、只 add 本线白名单、push 后 `merge-base --is-ancestor` 复验、再 `reset --mixed` 对齐
 - 指针：本协议常驻摘要写于 `MEMORY_VISION.md`「🧭 共享副本 git 协议」段；helper = `run/vision/vision_line_commit.sh`
 
+## 8. 复发模式与根治（2026-11-20 wake#1690 增补）
+
+> wake#1688 落地后，wake#1689 与 wake#1690 均观测到**共享 HEAD 再次 1 ahead**（vision auto-commit 仅删 `vision/wave_rl/probe_backbone.py` 390 行，未入 origin）。本节定位复发根因并根治。
+
+**复发根因**：wake#1688 的 helper（`vision_line_commit.sh`）已改为 worktree 隔离 + 只 add vision 白名单（不再 `git add -A`）——这层 ✅ 生效（auto-commit `--stat` 仅 1 个 vision 文件、无别线路径）。但 helper 的「自动检测变更」用 `git diff --name-only HEAD; git ls-files --others`，当**某个 vision 白名单文件在共享工作树磁盘上缺失、而 origin/HEAD 仍有它**时（本案 = `probe_backbone.py`，早前某轮 worktree/reset 把它从 WT 抹掉），helper 把它当变更，但 `cp` 的 `[ -e "$p" ]` 守卫跳过不存在的文件 → worktree 内 `git add <path>` 命中「HEAD 树有 / WT 无」→ **stage 成 deletion** → 推一个仅含删除的 commit → `reset --mixed` 后 WT 仍缺 → 下一轮再删 → **每轮复发 ahead-1**。叠加 NFS 共享 `.git` 上别线（.29/.12）频繁 git 操作产生短暂 `index.lock`，偶尔残留成 stale 锁（本轮 0B、00:41、15min、本机无活跃 git 进程）。
+
+**根治（本轮已落地）**：
+1. 用**免索引**方式还盘缺失文件：`git show origin/main:<path> > <path>`（只读 object、不碰 index.lock，避让 NFS 并发锁争用）。
+2. 判定 stale `.git/index.lock`（0B、mtime 比最近一次成功 git 老 ≥ 数分钟、本机无活跃 git 进程）后 `rm -f` **绝对路径**锁；⚠️ CWD≠repo root（CWD=…/run，root=…/super_intelligence_2035）时相对 `.git/index.lock` 会指向错误路径，**必须用 `/nas_data/app.e0031982/code/super_intelligence_2035/.git/index.lock`**。
+3. `git reset --mixed --quiet origin/main` 对齐 HEAD→origin；NFS ref 缓存可能让紧随的 `git rev-parse` 显示旧 sha，**以 `git rev-list --count origin/main...HEAD` = `0	0` 为准**。
+4. 复核三方一致：`git cat-file -e HEAD:<path>` + `wc -c <path>` + `git diff --stat HEAD -- <path>`（空）= 文件在 HEAD 树 + 磁盘 + 无 diff。
+
+**helper 改进建议（未本轮改，待停 loop 时一并改，避免改运行中脚本）**：自动检测后、对白名单内「HEAD 有 / WT 无」的文件先 `git show origin/main:<path> > <path>` 还盘，避免把「缺失」当「删除」推上去。
+
+**证据（可复算）**：reflog `HEAD@{0}: reset: moving to origin/main`（a07fcb787）；`rev-list --count origin/main...HEAD` = `0	0`；`probe_backbone.py` 在 HEAD 树、磁盘 17177B、`git diff --stat HEAD` 空；vision 领域 `status --porcelain` 干净。
+
