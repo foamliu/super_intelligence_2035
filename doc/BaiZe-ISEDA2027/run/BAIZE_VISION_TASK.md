@@ -1,6 +1,7 @@
 # BAIZE_VISION_TASK.md
 
-### 📦 §用户令·2026-11-16 21:2x（vision 自行到 36.15 挖 waveview case · 不再等 designflow task2）✅ 已交付（wake#1461：1606 题池(A352/B390/C418/D446)→双判 273→可判分 225→带可见图 10→可跑集(带图∧V-A) 10；V-A 124/V-B 101，10 带图全 V-A；三方对账 case_id+sha256 全重合·新增 0·缺失 0·sha256 10/10 匹配。交付 vision/waveview_cases_mined.jsonl(273·A124/B101/NA48)+reports/report_vision_waveview_mining_zh.html(14547B 0外链0script)+vision/waveview_mining/(mine_3615.py 只读+raw)。§8 新增可跑=0<阈值≥3→不启动 V0/V1。全程只读未改 designflow·modified=false。commit `vision mining:`）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`（2026-11-16 wake#1462 归档）。需要时再读。
+### 📦 §用户令·2026-11-16 21:2x（vision 自行到 36.15 挖 waveview case）✅ 已交付（wake#1461：273 双判→225 可判分→10 带图可跑；交付 waveview_cases_mined.jsonl + report_vision_waveview_mining_zh.html + mine_3615.py）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`「归档 · 2026-11-19 §A」。需要时再读。
+
 
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不编造数字/文献、负结果照写）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定技术路线、实验设计与工具选择；用证据说话，用结果说服。**
@@ -24,16 +25,66 @@
 > 用法：每次唤醒 `git pull` 后先看索引最新一期；若「本线建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
 > 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
 
-### 📦 §用户令·2026-11-07 10:10（阶段2 放行·CPU 放开试各种 idea）✅ 已交付（wake#893：6 项授权变更 v2–v5 全试，v5 获统计显著正结果 A16%→B37%→C53% p=0.0009）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`（2026-11-14 wake#1212 归档）。需要时再读。
+### 📦 §用户令·2026-11-07 两条（10:10 阶段2 放行·CPU 试各种 idea；09:2x 走出「干等 GPU」用 .12/.29 CPU 做 RL）✅ 均已交付（wake#893：v2–v5 全试，v5 统计显著正结果 A16%→B37%→C53% p=0.0009；含数据集调研/技术栈冒烟/RL 方案/CPU 实验/中文 HTML 报告）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`（wake#1212 归档）。需要时再读。
 
-### 📦 §用户令·2026-11-07 09:2x（走出「干等 GPU」·用 .12/.29 CPU 设计有效 RL 证明 Qwen3.5-2B 波形理解显著提升）✅ 已交付（wake#893：数据集调研+技术栈冒烟+RL 方案+CPU 实验(含对照与显著性)+中文 HTML 报告 全部交付）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`（2026-11-14 wake#1212 归档）。需要时再读。
 
 
 > 📦 已归档（2026-10-30~31，ViT-L 68.236% / MLLM 26.10% 写进论文 ch6/ch7、6_vision_encoder.tex 重写、第6章审校修订、波形图强化 RL 计划书、2B MLLM 看懂波形图能力报告）→ run/ARCHIVE_OPERATOR_VISION.md（wake#424/#435/#436/#437/#439）。需要时再读。
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-19（**GPU 分配 + 训练迁回 GPU**）
+### 🔴 用户令 · 2026-11-19 20:0x（**定版：.12→.17 无网，SFT 产物在 .17 就地重生成**）· 细化并取代本文件「2026-11-19 11:12 GPU 分配令」第 2 条
+
+> **用户原话（2026-11-19）**：「.12 到 .17 无网，在 .17 重生成 SFT 产物。」
+> 这是对 wake#1681 / wake#1682 里「② GRPO 仍 BLOCKED，等运维 staging 或 Option B 拍板」的**正式答复**。
+
+**一、先钉死前提（不要再当待确认项复述）**
+1. `.12 ↔ .17` **无网络**：`rsync` / `scp` / 自取 checkpoint 一律不可行。**Option A（运维拷贝/迁移）作废**，不得再出现在心跳、报告或"下一步"里。
+2. `.17` 上 `/nas_train` 不可用（挂成 `/H100_train` 且无 app 数据），`/nas_data/.../out/` 只有空 `wave_grpo_stage2w/`。⇒ **不存在"等产物到位"这条路**。
+3. `.12` / `.29` SSH 超时是既定事实。**不必每轮再探测、不要再因它判 BLOCKED**（省 token，也免误判）。
+
+**二、本轮唯一目标：在 .17 从零把 Stage-1W SFT 产物做出来，再用 GPU6-7 把 SFT → GRPO 跑通**
+按 11-19 11:12 令第 2 条 a)–d) 执行，**baseline = 完整 Qwen3.5-2B MLLM + LoRA（不剥视觉塔）**：
+- **a) 数据**：波形图 + 问答对（`image, question → answer`）。来源三选一或混用：10 道带 PNG 的旧题 / 按 case 公开参数重建波形图 / EDA-Eval-DesignFlow 波形 case 提取。**必须落盘并报路径 + 条数 + 1 条样例**（禁止只报"已准备"）。
+- **b) SFT**：GPU6-7，LoRA，~3000 步，产出 `step{N}/adapter_*`，并同时产出**可判定指标**（VQA 通过率 或 format/submit 口径，二选一，**写明分母**）。
+- **c) GRPO**：SFT 验收通过后 500 步，可验证奖励（check.py 或等效判分）。奖励设计纳入 research 日报 2026-11-19 建议：拆「区间内 vs 越界」β>α、判分档位边界 ±2% 重判一致性。
+- **d) 评测**：pre-SFT / post-SFT / post-GRPO 三段对比，题集写明（WaveQA-RL 或 EDA-Eval-DesignFlow-WaveView 子集），**每个数字要能追到落盘文件**。
+
+**三、硬性要求**
+1. **本轮不得以 BLOCKED 收尾**。缺什么自己造（数据自己合成、backbone 自己确认、依赖自己解决）。某一步真做不成，必须写清「试了什么 / 报什么错 / 替代方案 / 下一步可执行动作」，**不许写"等运维"**。
+2. **架构兼容性自行解决**：`qwen3_5` 若当前 transformers 不支持直接 LoRA，自选路径（升级 transformers / `trust_remote_code` / 调 peft `target_modules` / 必要时先回退纯文本骨干跑通闭环再补视觉），并在报告里写清取舍理由。
+3. **本地权重优先**：先在 `.17` 找现成可用的 Qwen3.5 / Qwen3-VL 权重，不要再尝试跨机取。
+4. **兜底工具（本轮已交付并自测）**：`run/vision/wave_rl/probe_backbone.py`。若最终需要纯文本骨干：
+   `python probe_backbone.py --scan --roots <...>`（只读探测，输出 DIRECT / STRIP_LLM / STRIP_LM / SKIP 判定）
+   `python probe_backbone.py --autoprepare --out <dir> --roots <...>`（就地抽取，支持分片 safetensors、`model.language_model.` 前缀剥离、视觉塔丢弃）
+   已过离线功能自检（4 场景：纯文本 DIRECT / 分片+前缀剥离 / autoprepare / SKIP 分支）。**它只是兜底，不改变"主目标是完整 MLLM"这一条**。
+5. **旧守卫必须改造**：`run_grpo_wave_gpu67.sh` 里「缺 SFT 产物 → `[EXIT 0] BLOCKED`」不再是正常出口——改为在缺失时**自动进入自生成链路**（或直接调用自生成脚本）；BLOCKED 只允许用于「GPU6-7 被他线真占用」这类外部事实。
+6. **边界不变**：只动 GPU6-7；不杀别线进程（posttrain serve / VQA serve / pretrain）；不碰 `attribution_3615_run*`；`git add` 只加本线文件（不用 `-A`）。
+
+**四、交付物清单（缺一项即本轮不算完成）**
+
+| # | 交付物 | 落点 / 要求 |
+|:--|:--|:--|
+| 1 | 波形 QA 训练集 | `.jsonl` 落盘 + 条数 + 样例 1 条 + 生成脚本 |
+| 2 | SFT 产物 | `step{N}/adapter_config.json` + `adapter_model.safetensors` |
+| 3 | SFT 验收结果 | `eval_results.json`（含分母、阈值、pass 字段） |
+| 4 | GRPO 产物 | `step{N}` ckpt + 训练日志（reward 曲线） |
+| 5 | 三段对比表 | pre/post-SFT/post-GRPO 通过率 + 配对检验（n 与 p 值） |
+| 6 | 报告 | 原地更新本线固定报告（不新开文件） |
+| 7 | 心跳 | `MEMORY_VISION.md` 一行 + 当日 daily 一行 |
+| 8 | 提交 | `git add <本线文件>` + `commit + push`，`git status -sb` 干净 |
+
+**五、验收判据（预注册，先写后跑，跑完按此判）**
+- SFT 至少产出 1 个 `step*` 且验收指标落盘（**分母必须写明**）；
+- **post-SFT > pre-SFT** 才判 SFT 有效；
+- **post-GRPO vs post-SFT** 做同题配对检验（McNemar），报到 **n10/n01/n 与 p 值**；不显著就照写「不显著」，不许粉饰；
+- 所有数字给可复算命令（脚本 + 参数）。
+
+> ⚠️ 若 GPU6-7 实际被他线占用（如 VQA serve 仍在 GPU6），先报占用实况（`nvidia-smi` 输出摘要 + 进程），再决定是等释放还是先把数据/训练链路准备好——**但"先准备链路"不等于可以停摆**。
+
+### 📦 用户令 · 2026-11-19 11:12（**GPU 分配 + 训练迁回 GPU**）· 第 2 条已被上方 20:0x 令细化，原文保留对照
+
+
 
 > **.17 GPU 分配**：GPU 4-5 → posttrain，**GPU 6-7 → vision**。
 >
@@ -62,14 +113,7 @@
 >
 > **状态**：重做已交付并 commit（`vision wake#1663`），**WAITING: 0**。原 wake#1525 否决记录与三项「还差什么」原文保留于下，供用户验收对照；用户验收通过后归档至 `ARCHIVE_OPERATOR_VISION.md`。
 
-> **wake#1525 初版交付被用户否决（历史，保留对照）**：初版只跑了 10 道带 PNG 的题（V0=0/V1=0/V2=1/10），把 214 道 noPng case 标为 `image_required=False` + `text_only` 排除在外。用户两轮修正要求「不要把 MLLM 价值矮化为 OCR」「所有与波形相关的 case 都纳入，让 V0 vs V1/V2 的实验说话」。**该初版口径已被 wake#1663 重做取代。**
-
-> **原「还差什么（已全部解决）**：
-> 1. **jsonl 分类要改**：224 道里 214 道标 `image_required=False`+`text_only` 是基于旧口径（"check.py 判图像读数才算需要看图"）。按修正后口径，这些 case 应纳入评测——它们与波形相关，VQA 工具可能通过任何机制（读数/pattern/细节问答/辅助决策）帮助提升通过率。
-> 2. **V0/V1/V2 对照要跑全量**（或至少跑有 check.py 的 ~192 道），不只跑 10 道。V0 = 无 VQA 跑通过率，V1/V2 = 有 VQA 跑通过率，差异 = MLLM 价值。
-> 3. **报告要更新**：用扩大题集的对照结果覆盖 `reports/report_vision_waveview_selftest_agent_zh.html`。
-
-> **用户原话**：「vision：1. designflow_waveview 评测集建立了吗？2. 基线（EDA_Flow_Bench) 在#1分数多少？3. 加上 Qwen3.5-2B作为VQA工具后，#1分数多少？……既然有 .17→36.15 SSH 隧道，vision 为什么不能自己去 36.15 的 EDA-Eval-DesignFlow.jsonl 去筛选 WaveView Case。为什么都要指望别人？在同一目录生成并维护 EDA-Eval-DesignFlow-WaveView.jsonl」
+> 📦 **wake#1525 否决记录 / 原「还差什么」三项 / 用户原话** 已归档 → `run/ARCHIVE_OPERATOR_VISION.md`「归档 · 2026-11-19 §B」。**现行结论**：wake#1663 重做已交付（546 行全队列 · V0 20/182(11.0%) / V1 28/182(15.4%) / V2 32/182(17.6%) · McNemar V0vsV2 p=0.008 显著 · MLLM-as-VQA 价值 +6.6pp），待用户验收。需要对照旧口径时再读归档。
 
 **一、核心任务：自主构建 WaveView 评测子集**
 
@@ -225,13 +269,7 @@
 
 ### 0. 🎯 当前状态速览
 
-> 📦 §0 当前状态速览（2026-10-05 晚版本，已过时）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`；当前状态以 `MEMORY_VISION.md` 顶部状态头为准。需要时再读。
-
-> 📦 §运维指令（2026-10-05 深夜2 · 两份 HTML 报告）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：report_vision_lp_eval.html + report_vision_aimv2_impl.html 已产出并提交。需要时再读。
-
-> 📦 §运维指令（2026-10-05 深夜 · R12→3epoch + 方向建议）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：3-epoch 续跑 lp=20.27%（35 点 R²=0.94）；VISION_NEXT_DIRECTIONS.md 已交（方向2/3已批，方向4作废）。需要时再读。
-
-> 📦 §运维指令 · 2026-10-05（晚 · 全量 AIMv2 训练 + 论文 §6 改写 + proxy/环境隔离口径）已归档 → run/ARCHIVE_OPERATOR_VISION.md；结论：R12b 训练完成(lp_max=18.81%) + 论文 §6 改写完成 + proxy/env 口径已同步。需要时再读。
+> 📦 §0 当前状态速览 + §运维指令 2026-10-05（深夜2 两份 HTML 报告 / 深夜 R12→3epoch+方向建议 / 晚 全量 AIMv2 训练+论文 §6 改写+proxy 口径）**均已归档** → `run/ARCHIVE_OPERATOR_VISION.md`；当前状态以 `MEMORY_VISION.md` 顶部状态头为准。需要时再读。
 
 ### 1. 📌 全局口径与铁律（一次性质，对所有 R 生效）
 
