@@ -1548,3 +1548,5 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794975235290_3ygqr	e0030760	hfeg0pkn001	155	spice_sim	case	EDA-Eval-DesignFlow-SnmHsvFailDiag-001	2026-11-19 12:17	
 1795000940649_06m8h.messages.json	binwenh	hfeg0pkn005	27	spice_sim	case	EDA-Eval-DesignFlow-SpDeckDiffAnalyze-001	2026-11-19 12:48	
 1794912291025_2md1p	guangmingz	hfeg0plg58	232	spice_sim	case	EDA-Eval-DesignFlow-CellPortExtract-001	2026-11-19 13:30	
+1794817593461_34knj	e0048916	hfeg0pkn005	21	spice_sim	parked		2026-11-19 13:45	vague brainstorming 'design DDR chip', no concrete deliverable; switched to mnm6f
+1794817079726_mnm6f	xflin	hfeg0pkn004	20	spice_sim	case	EDA-Eval-DesignFlow-PhaseDerivGroupDelay-001	2026-11-19 13:56	
