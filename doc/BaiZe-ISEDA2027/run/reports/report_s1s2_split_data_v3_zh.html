@@ -85,7 +85,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h3>1.2 已落盘 S2 Blend TSV — fallback 版（当前版本，含 finemath）</h3>
 <p style="font-size:12px;color:#666;">
 文件路径：<code>code/baize-llm/configs/blend_s2_preblend.tsv</code>（2026-11-18 定稿）<br>
-这是 <b>fallback 版</b>：MegaMath-web（Batch2）✅ 下载完成（4950/4950）+ 🔄 分词进行中（166/4950，~6.8B tok 已产出，ETA ~40h）、Nemotron-CC-Math 🔄 分词中（172/193=89.1%，~134.2B tok 已产出，ETA ~3.5h）。两完成后将更新为 main 版（加入 Nemotron 源，下调 megamath prop）。
+这是 <b>fallback 版</b>：MegaMath-web（Batch2）✅ 下载完成（4950/4950）+ 🔄 分词进行中（188/4950=3.8%，~7.4B tok 已产出，ETA ~40h）、Nemotron-CC-Math 🔄 分词中（174/193=90.2%，~135.6B tok 已产出，ETA ~3.1h）。两完成后将更新为 main 版（加入 Nemotron 源，下调 megamath prop）。
 所有 epoch 均为 S1+S2 累计值。10 源 / prop 加和 = 1.000 / 类别校验：web=0.40 ✅ code=0.40 ✅ math=0.20 ✅
 </p>
 <table>
@@ -109,8 +109,8 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>MegaMath Batch1 实测分词结果</b>（PC-2 ✅ 全完成）：5 子集 / 364 shard / 243GB / 64.97B tokens<br>
 　web-pro 100 shard / 12.8B tok | text-code-block 200 shard / 40.5B tok | qa 32 shard / 5.9B tok | translated-code 16 shard / 5.8B tok | code 16 shard / <b>无法分词</b>（schema 无 text 列）<br>
 <b>finemath-4plus</b>（PC-2 附加 ✅）：64 shard / 9.4B tok / 0 errors / 5528s<br>
-<b>Nemotron-CC-Math</b>：243GB / 193 parquet，🔄 分词中（172/193 = 89.1%，~134.2B tok 已产出，ETA ~3.5h）→ 完成后更新为 main 版 blend TSV<br>
-<b>MegaMath-web (Batch2)</b>：~826GB / 4950 files，<b>✅ 下载完成</b>（4950/4950，16.5h）→ <b>🔄 分词中</b>（166/4950，PID 3028124，ETA ~40h）
+<b>Nemotron-CC-Math</b>：243GB / 193 parquet，🔄 分词中（174/193 = 90.2%，~135.6B tok 已产出，ETA ~3.1h）→ 完成后更新为 main 版 blend TSV<br>
+<b>MegaMath-web (Batch2)</b>：~826GB / 4950 files，<b>✅ 下载完成</b>（4950/4950，16.5h）→ <b>🔄 分词中</b>（188/4950=3.8%，~7.4B tok 已产出，PID 3028124，ETA ~40h）
 </div>
 <h3>1.3 main 版 S2 Blend TSV — 规划中（Nemotron 完成后定稿）</h3>
 <p style="font-size:12px;color:#666;">Nemotron-CC-Math（133B tok，<span class="cite">arXiv 2508.15096, ICLR 2026</span>）分词完成后，将其作为第 11 个源加入 Math 类别，下调 megamath prop（从 0.075 降到 ~0.04），使 megamath 单源 epoch 从 1.69 降到 &lt;1.0。预计 main 版 Math 小计仍 = 0.20，但 4 源变 5 源，epoch 更均衡。</p>
@@ -523,7 +523,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>数据来源</b>: DATA_MAPPING.md §A（token 实测）/ §H.14（stack-v3 476B）/ §D1（IFM HfApi 实测）/ blend_s2_preblend.tsv（已落盘 fallback 版）/ report_s2_data_overlap_study.md（455 行 overlap 研究）/ CONTAMINATION_CHECK_AGENT_IFM.md<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；新数据集来自 HfApi().dataset_info(files_metadata=True)；MegaMath 论文 token 数标注了 ±15% tokenizer 偏差。无估算、无编造。<br>
 <b>与 v2 报告关系</b>: v2 = 可执行落地方案（PC-1~4 进行中）；<b>v3 = 数据已就绪的落地方案</b>（PC-1~4 ✅ 完成 + 零重叠方案 + 数据源引用）。v2 保留不删。<br>
-<b>生成时间</b>: 2026-11-20（最新刷新 — iter ~261k/700k=37.3% (step 7.0s)，350k 切换点 ~11-27，Nemotron 172/193=89.1% ETA~3.5h ~134.2B tok，PC-5 MegaMath-web 分词 166/4950 ETA~40h，Code-Reasoning ✅ 完成 1635/1635 3.0TB，Math-Reasoning 72.7% (1620/2228)，.12 load=35.86 /nas_user 44T 可用）
+<b>生成时间</b>: 2026-11-20（最新刷新 — iter ~261k/700k=37.3% (step 7.0s)，350k 切换点 ~11-27，Nemotron 174/193=90.2% ETA~3.1h ~135.6B tok，PC-5 MegaMath-web 分词 188/4950=3.8% ETA~40h ~7.4B tok，Code-Reasoning ✅ 完成 1635/1635 3.0TB，Math-Reasoning 72.7% (1620/2228)，.12 load=35.86 /nas_user 44T 可用）
 </p>
 </div>
 </body>
