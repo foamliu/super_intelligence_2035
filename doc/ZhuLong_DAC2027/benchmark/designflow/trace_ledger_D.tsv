@@ -595,7 +595,7 @@
 1793002153721_g34gw.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1793698265018_v1cgf.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1792630583637_kjibr.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
-1792993730194_cyua2.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1792993730194_cyua2.messages.json					parked	EDA-Eval-DesignFlow-WtmDanglingElseDiag-001	2026-11-20 03:48	cross-shard B already cased as EDA-Eval-DesignFlow-WtmDanglingElseMre0Diag-001 (spice_sim, 2026-11-08); D duplicate (WtmDanglingElseDiag-001) reverted r978, NOT a D-pure candidate — spice_sim domain belongs to shard B
 1793251326263_gesut.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1793602560932_3wt7w.messages.archive.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1792371083070_3ncyu.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
