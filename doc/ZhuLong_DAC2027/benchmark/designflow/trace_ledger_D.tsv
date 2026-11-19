@@ -330,7 +330,7 @@
 1793255895022_wag72.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793603150610_nr884.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793603150610_nr884.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
-1792397054964_fz05e.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792397054964_fz05e.messages.json					claimed		2026-11-20 00:05	path-bug revival r969: NOFILE-parked r263 used flat path (wrong); C r836 hypothesis confirmed — actual path is subdir ~/.cline/data/sessions/<id>/<id>.messages.json. Verified 388KB fetchable @10.129.8.132 colinxu. U0 schematic pin insert/save + U8/U9 policy ndjson destructive-runcode analysis (cleanest falsifiable intent). mc=114 D-domain analog_context. deepread next round.
 1792397054964_fz05e.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792746486510_lrvvt.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792746486510_lrvvt.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
