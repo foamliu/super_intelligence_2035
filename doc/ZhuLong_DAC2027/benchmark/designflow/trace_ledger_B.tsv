@@ -1562,3 +1562,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794881885856_2gneu.messages.json	e0044979	hfeg0pkn002	121	spice_sim	case	EDA-Eval-DesignFlow-SimLogCompareReport-001	2026-11-19 21:09	
 1794818788622_2sopo	e0029308	hfeg0pkn002	62	spice_sim	case	EDA-Eval-DesignFlow-DffResetPrioClassify-001	2026-11-19 21:30	
 1794917878991_5zp1p	hairuizh	hfeg0pkn001	19	spice_sim	case	EDA-Eval-DesignFlow-SimScanSkillGen-001	2026-11-19 22:02	
+1795055679706_6cg9n	e0047547	hfeg0pkn003	107	spice_sim	case	EDA-Eval-DesignFlow-YieldSimAgentPlanGen-001	2026-11-19 22:42	
