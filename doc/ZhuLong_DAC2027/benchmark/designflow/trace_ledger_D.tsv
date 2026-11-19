@@ -612,7 +612,7 @@
 1792393082920_qggt4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1792498093542_s4vp5.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1793012120155_plwnn.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
-1793782993086_d1yda.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
+1793782993086_d1yda.messages.json					case	EDA-Eval-DesignFlow-AetherDmBatchCopyExplainQA-001	2026-11-20 03:28	r977 NOFILE-revival path-bug 第 8 例 case; analog_context Aether DM batch-copy-cell manual-grounded howto Q&A→produce-parser reframe (承 r972/r974 范式); A-faithful U#0 verbatim; 12 断言 a-l; hidden B=重写手册(Edit→Batch Copy, 字段名全置换 token 不相交); anti-hardcode A-only token<=1 + B 字段>=4 命中 + A 泛化双向; 自验 ref 12/12 PASS + 3 negatives(empty_shell/print_expected/delcore)全 FAIL
 1793263826690_n4bf4.messages.json					parked		2026-11-05 13:01	peek_D270 unfit (Q&A/doc/root-cause/mid-conv/skill-scaffold/NOFILE/boilerplate)
 1793252591105_fy1dp.messages.json	yifansun	hfeg0pkn001	40	waveform	case	EDA-Eval-DesignFlow-PlsInStimGen-001	2026-11-05 13:52	
 1793234226913_xtse5.messages.json					parked		2026-11-05 13:52	peek_D271 unfit
