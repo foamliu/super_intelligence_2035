@@ -1551,7 +1551,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794472156729_uwq51	t0002470	hfeg0pkn002	13	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: '阅读这个skill' + lpddr5-coverage-closure.zip = skill-reading/meta Q&A; mc13
 1794459946831_4q7vd	hairuizh	hfeg0pkn002	22	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: PRODUCE-TASK '提取仿真结果' @/rundata/.../plat_invs_thick.mt0.csv BUT (a)/rundata Permission denied from .75 sandbox NEW asset-unreachable mode (b)sim-extract skill-scaffolded (skill provides ref impl scripts/sim_extract.py) not free-form; mc22
 1794367188865_8v6w7	e0046913	hfeg0pkn003	53	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: e0046913 user = A-domain STA/history (hvfis r568 also A-domain), low-mc netlist kw but user-domain mismatch; parked; mc53
-1794464932663_5li8u	ghyang	hfeg0pkn003	59	schematic_netlist	parked		2026-11-13 00:50	dailylog-1113 post1109 peek r570: unclassified-low-priority (not deep-read, budget), parked to close ledger gap; mc59
+1794464932663_5li8u	ghyang	hfeg0pkn003	59	schematic_netlist	case	EDA-Eval-DesignFlow-LsfExitDiagQA-001	2026-11-19 23:29	r967 revival-from-parked (r570 budget-parked); U#20 LSF EXIT diagnosis LD_PRELOAD/libstdc++/GLIBCXX, B-grade synthesized-reframe, k=14/14
 1794202410355_ps4q9	yifansun	10.129.32.83	137	analog_context	case	EDA-Eval-DesignFlow-DpMuxSimRank-001	2026-11-13 03:31	
 1793967403860_ojko8	huifangg	hfeg0plg96	363	waveform	parked		2026-11-13 03:56	cap:Q&A '识别波形图吗' capability-check, no deliverable
 1793177580229_11fst	e0030760	hfeg0plg74	260	schematic_netlist	parked		2026-11-13 03:56	Solido MC stimulus debug+修正版; complex, Solido tool not in sandbox, /proj DUT asset risk
