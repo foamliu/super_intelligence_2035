@@ -742,7 +742,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1792639733537_qwreb					parked		2026-11-16 23:13	r676 concept-Q&A Calibre PG dummy SETLAYER how-to, 0 writes/9 reads, teeth-fail P-006(C) concept-Q&A no evidence anchor
 1793790199273_ge424					case	EDA-Eval-DesignFlow-DrcDeckStatsAnalyzer-001	2026-11-16 17:43	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793264574506_nx2ac					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1793686357167_wlw3b					parked		2026-11-16 19:20	r668 revival-REJECT: debug-Q&A (explain DrcQa.py + fix PermissionError pdkQa.log), 1 editor on private asset hbpeng/LoggerUtil.py, drc:1658=PATH-SUBSTRING inflation; e0047722 2-host mc85
+1793686357167_wlw3b					case	EDA-Eval-DesignFlow-DrcQaRunDiag-001	2026-11-20 06:43	r668 revival-REJECT: debug-Q&A (explain DrcQa.py + fix PermissionError pdkQa.log), 1 editor on private asset hbpeng/LoggerUtil.py, drc:1658=PATH-SUBSTRING inflation; e0047722 2-host mc85
 1794297992607_e4kv0					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794357795851_55qgy					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794276534959_30cgz					parked		2026-11-16 19:20	r668 revival-REJECT: pure concept-Q&A/learning (linux howto U#0-10 + DRC QA steps U#12/47 + virtuoso howto U#87-93), 0 write/create/edit, no fixture/evidence -> P-006 (C) retired; hongl 2-host mc148
