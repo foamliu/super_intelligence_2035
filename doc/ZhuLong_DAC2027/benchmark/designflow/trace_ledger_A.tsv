@@ -648,7 +648,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1792827914007_fl8g4	jkxu	10.129.32.80	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=31578
 1792998450890_1y66j	e0041392	10.129.2.12	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=232337
 1793004297782_9kvaw	harrys	10.129.2.11	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=159591
-1793179786389_n57f9	zhiguo1w	10.129.40.209	8		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=258265
+1793179786389_n57f9	zhiguo1w	10.129.40.209	8		case	EDA-Eval-DesignFlow-StdlibPptxGen-001	2026-11-19 13:57	r794-liveness-ALIVE mc5-9-A-pure sz=258265
 1793753704056_irod5	e0042624	10.129.2.11	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=93011
 1793755021637_2f3uv	daiweilu	10.129.35.244	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=203976
 1793755246546_qxcop	shanliny	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=78803
