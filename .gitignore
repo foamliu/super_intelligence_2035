@@ -32,6 +32,11 @@ doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0
 doc/BaiZe-ISEDA2027/reports/*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9].txt
 doc/BaiZe-ISEDA2027/run/harness/terminalbench/manifests/
 doc/BaiZe-ISEDA2027/run/harness/terminalbench/traces/
+# SWE-bench Multimodal 2x3 eval machine products (config w/ keys, predictions, logs)
+doc/BaiZe-ISEDA2027/run/harness/swebench_mm/mm_2x3_config.json
+doc/BaiZe-ISEDA2027/run/harness/swebench_mm/predictions_2x3/
+doc/BaiZe-ISEDA2027/run/harness/swebench_mm/logs_2x3/
+doc/BaiZe-ISEDA2027/run/harness/swebench_mm/reports_2x3/
 # 2026-11-17 补：R988 deepseek/hermes zero-debug 产物（.log/.py/.sh/.patch/.md）非人读 HTML，依 11-14 令清出 reports/
 doc/BaiZe-ISEDA2027/reports/harness_zero_debug/
 # 例外：被人读报告引用/作为固定产物的清单（如 2nd/3rd-batch ids）如需入库，请显式 `git add -f` 并说明
