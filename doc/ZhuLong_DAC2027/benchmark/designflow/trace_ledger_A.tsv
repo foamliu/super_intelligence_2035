@@ -668,7 +668,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793064917593_tpnqx					parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=112676
 1793087727242_vqefw	e0029495	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=14177
 1793597178818_otgh9	e0045488	10.129.2.13	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
-1793873712084_pzo1r	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=53923
+1793873712084_pzo1r	johnl	10.129.2.10	5		case	EDA-Eval-DesignFlow-RowredB64RestoreProduce-001	2026-11-20 00:47	r794-liveness-ALIVE mc5-9-A-pure sz=53923
 1794194018234_c41bm	e0041392	10.129.2.12	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=305709
 1794478957304_r44l7	vendor.cno.chjh07	10.129.2.11	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1794637486415_rbr06	e0039516	10.129.2.10	5		case	EDA-Eval-DesignFlow-DdjocCircuitPlanReconQA-001	2026-11-19 23:35	r794-liveness-ALIVE mc5-9-A-pure sz=61629
