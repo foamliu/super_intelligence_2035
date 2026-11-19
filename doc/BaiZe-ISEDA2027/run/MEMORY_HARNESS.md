@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2763 · 2026-11-19 14:5x — MM容器下载COMPLETE(580/580)+2×3 predict全6路启动✅**·**心跳第一行**: ✅ **MM容器下载COMPLETE**(`pull_state.txt`=580·`pull_progress.log`末行`=== DOWNLOAD COMPLETE === Total:580 Pulled:580 Failed:0`·12:14:49)·✅ **DeepSeek-V4-flash额度恢复**(curl实测返回valid completion)·✅ gate 4/4 met(下载100%+额度恢复+6路smoke全PASS+不抢CPU)·**2×3 predict全6路启动**(cline×deepseek/kimi/doubao+opencode×deepseek/kimi/doubao·480题/路·`launch_mm_2x3_full.sh`·nice19/ionice3·cline3路各配mm_proxy 9095/9096/9097)·实测opencode×doubao instance2 `has_patch patch=598B wall=45.5s`✅·6路全RUN·可恢复(progress_2x3逐题落盘)·SWE-bench Verified predict 4路alive·📌 **自检**: load38/224✅·本线MM proc CPU<1%(nice19生效)✅·无CPU失控✅·pretrain未受影响✅·**全部运维令✅已交付(11-18下载✅+11-19 2×3 predict已启动)**·WAITING=0·📦 TASK=29.8KB(✅≤32KB) MEMORY=23.5KB(✅≤32KB)
+> 🆕 **R2764 · 2026-11-19 15:0x — 监控轮·MM 2×3 predict 6路RUN中+SWE-bench Verified 4路alive**·**心跳第一行**: ✅ 自检clean(load37/224=16.6%✅·本线MM proc CPU<66%(单核·nice19生效)✅·无CPU失控✅·pretrain未受影响✅)·MM 2×3 predict启动后~12min进度: **doubao最快**(cline5/480·opencode6/480·均has_patch✅)·**deepseek**(cline2/480·opencode2/480·TEXT-ONLY mode=config设计·gateway返回400非多模态·image_url已drop)·**kimi慢**(cline0/480·opencode0/480·proc alive pcpu6%·instance1跑~12min·无输出·值得监控)·SWE-bench Verified predict 4路alive(cline474/pi419/codex398/dsh270 of 500)·📌 **kimi慢值得下轮复查**·WAITING=0·📦 TASK=30.1KB(✅≤32KB) MEMORY=24.1KB(✅≤32KB)
+> 📦 R2763 流水已归档 → daily-memories-harness/2026-11-19.md（MM容器下载COMPLETE 580/580·gate 4/4 met·2×3 predict全6路启动·nice19/ionice3·实测opencode×doubao has_patch patch=598B✅·6路全RUN可恢复·SWE-bench Verified predict 4路alive·自检clean）。需要时再读。
 > 📦 R2762 流水已归档 → daily-memories-harness/2026-11-19.md（MM 2×3 cline×doubao/deepseek silent-exit根因修复=sanitize_cline_prompt U+200B→ASCII空格·smoke全6路PASS: cline×kimi2284B/doubao1770B/deepseek4300B·opencode×kimi2441B/doubao1627B/deepseek6832B）。需要时再读。
 > 📦 R2761 流水已归档 → daily-memories-harness/2026-11-19.md（MM 2×3 cline管线3bug修复+cline×kimi smoke PASS patch=2284B 51calls 491s+opencode×kimi PASS patch=2441B·两harness MM管线全通）。需要时再读。
 > 📦 R2757 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval(cline+1 pi+2 RESOLVED)+MM 2×3可行性核查+6路配置落盘+7way报告REGEN·MM容器521/580=89.8%）。需要时再读。
@@ -79,16 +80,16 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2763 MM容器下载COMPLETE(580/580)·2×3 predict全6路已启动✅(480题/路·nice19/ionice3)
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·ability桶拆两层✅·SWE-bench predict 7路resume·opencode500/500+eval415/500=83.0%✅·hermes500/500+eval444/500=88.8%✅·cc500/500+eval295/500=59.0%✅·incr_eval R2680~R2757 DONE·§用户令11-19 08:2x 两份7way报告REGEN主表置顶✅·**SWE-bench Multimodal 2×3评测**(用户令11-19): 可行性核查✅(Kimi/Doubao多模态✅·DeepSeek待额度重置)·6路配置`mm_2x3_config.json`+评测计划`MM_2X3_EVAL_PLAN.md`落盘✅·**MM容器下载进行中**(580 images·521/580 pulled=89.8%·0 FAILED)·CPU螺旋kill+incr_eval CPU-limited(taskset 0-15+OMP=1)✅
-当前动作:     R2763: 自检clean(load38/224·本线MM proc CPU<1%·nice19生效✅)→gate核查(MM下载580/580✅+DeepSeek额度恢复✅+6路smoke全PASS✅)→`launch_mm_2x3_full.sh`全6路启动(480题/路·nice19/ionice3·cline mm_proxy 9095-9097)→实测opencode×doubao has_patch patch=598B✅·6路全RUN·SWE-bench Verified predict 4路alive·pretrain未受影响
-下一步:       ① 监控2×3 predict进度(6路×480·可恢复·查`bash launch_mm_2x3_full.sh status`) ② predict完成后merge+eval(Docker·CPU限制taskset 0-15+OMP=1) ③ eval后出2×3中文HTML报告(落reports/) ④ SWE-bench Verified predict继续(cline/codex/pi/deepseek 4路alive)+incr_eval ⑤ 每轮自检CPU/内存(运维令11-02/10-30)
+PHASE:        R2764 监控轮·MM 2×3 predict 6路RUN中(启动~12min)+SWE-bench Verified predict 4路alive
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·ability桶拆两层✅·SWE-bench predict 7路resume·opencode500/500+eval415/500=83.0%✅·hermes500/500+eval444/500=88.8%✅·cc500/500+eval295/500=59.0%✅·incr_eval R2680~R2757 DONE·§用户令11-19 08:2x 两份7way报告REGEN主表置顶✅·§用户令11-19 报告重写✅已交付(R2758)·**MM容器下载COMPLETE(580/580·0FAILED·12:14:49)**✅·**2×3 predict全6路启动✅**(R2763 14:56·480题/路·nice19/ionice3)
+当前动作:     R2764: 监控轮→自检clean(load37/224=16.6%·CPU<66%单核·无失控·pretrain未受影响)→MM 2×3 predict进度核查(doubao最快5-6/480·deepseek 2/480 text-only·kimi 0/480慢·proc alive)→SWE-bench Verified predict 4路alive(cline474/pi419/codex398/dsh270)→写心跳+commit+push
+下一步:       ① 继续监控2×3 predict(6路×480·可恢复·`bash launch_mm_2x3_full.sh status`) ② **复查kimi慢**(0/480 after 12min·下轮看是否有产出或需排查) ③ predict完成后merge+eval(Docker·CPU限制taskset 0-15+OMP=1) ④ eval后出2×3中文HTML报告(落reports/) ⑤ SWE-bench Verified predict继续+incr_eval ⑥ 每轮自检CPU/内存(运维令11-02/10-30)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK=29.8KB（✅≤32KB） / MEMORY=23.9KB（✅≤32KB）
- SWE-bench Verified Pass%(分母恒500·resolved/500·单数字无区间): hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·dsh168/500=33.6%·codex108/500=21.6%·(4路predict仍alive: cline460/codex391/pi405/dsh259)
+ 体积: TASK=30.1KB（✅≤32KB） / MEMORY=24.1KB（✅≤32KB）
+ SWE-bench Verified Pass%(分母恒500·resolved/500·单数字无区间): hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·dsh168/500=33.6%·codex108/500=21.6%·(4路predict仍alive: cline474/codex398/pi419/dsh270)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2% · codex 25/89=28.1% · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
-  SWE-bench Multimodal容器下载(用户令11-18)✅COMPLETE+2×3评测(用户令11-19)predict已启动: run/harness/swebench_mm/·580 images total·**580/580 pulled=100%(0 FAILED·12:14:49)**·✅已交付(R2763)·**2×3 predict全6路RUN**(cline/opencode×deepseek-v4-flash/kimi-k2.6/doubao·480题/路·nice19/ionice3·cline mm_proxy 9095-9097·可恢复progress_2x3)·实测has_patch✅·不抢.29 CPU✅
+  SWE-bench Multimodal 2×3 predict(R2763 14:56启动·6路RUN·480题/路·nice19/ionice3): cline×doubao5/480·opencode×doubao6/480(均has_patch✅)·cline×deepseek2/480·opencode×deepseek2/480(TEXT-ONLY=config设计·gateway返回400非多模态)·cline×kimi0/480·opencode×kimi0/480(proc alive·慢·instance1跑~12min·📌下轮复查)·可恢复progress_2x3逐题落盘·不抢.29 CPU✅
   research日报11-19 harness建议: ①完成判据改三分法(fact/verdict/scope·PASS回执绑定最终源码摘要+两项具名检查+终止后可见检查仍PASS·只报标签正确率不算通过) ②20,480生成上限写进评测配置 ③entity-tool graph造题(必须跨≥2工具·执行日志三态判分) → 纳入未来计划(来自 research 日报 2026-11-19)
 ## 启动说明（首次唤醒）
 
