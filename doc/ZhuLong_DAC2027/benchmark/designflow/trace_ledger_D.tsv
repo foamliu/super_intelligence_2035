@@ -311,7 +311,7 @@
 1792986549258_5vo44.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793242571158_hfv5q.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793242571158_hfv5q.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
-1792579190180_tgumy.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1792579190180_tgumy.messages.json					parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
 1792579190180_tgumy.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793347000576_ygv3b.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793347000576_ygv3b.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
@@ -328,7 +328,7 @@
 1792995418878_a5drw.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792995418878_a5drw.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793255895022_wag72.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
-1793603150610_nr884.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793603150610_nr884.messages.json					case	EDA-Eval-DesignFlow-RedBistFlowRecon-001	2026-11-20 01:05	cross-shard A case (RedBistFlowRecon-001); path-bug revival confirmed r971 subdir path fetchable but already A-cased, do NOT revive in D
 1793603150610_nr884.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792397054964_fz05e.messages.json					case	EDA-Eval-DesignFlow-PolicyNdjsonDestrScan-001	2026-11-20 00:43	path-bug revival r969: NOFILE-parked r263 used flat path (wrong); C r836 hypothesis confirmed — actual path is subdir ~/.cline/data/sessions/<id>/<id>.messages.json. Verified 388KB fetchable @10.129.8.132 colinxu. U0 schematic pin insert/save + U8/U9 policy ndjson destructive-runcode analysis (cleanest falsifiable intent). mc=114 D-domain analog_context. deepread next round.
 1792397054964_fz05e.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
@@ -347,7 +347,7 @@
 1793324917372_6iuo6.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792477456219_fy4mv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792477456219_fy4mv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
-1793328605482_xpue4.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
+1793328605482_xpue4.messages.json					parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
 1793328605482_xpue4.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793274153419_2q4mg.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793274153419_2q4mg.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
@@ -491,7 +491,7 @@
 1792733394521_26h7a.messages.archive.json					parked		2026-11-05 11:04	empty-read (zhililu stale archive)
 1792636346682_ipre5.messages.json					parked		2026-11-05 11:04	empty-read (stale archive)
 1793017826309_9umav.messages.archive.json					parked		2026-11-05 11:04	empty-read (stale archive)
-1792563529955_5fjwc.messages.json					parked		2026-11-05 11:04	NOFILE (colinxu hfeg0plg16 wrong host)
+1792563529955_5fjwc.messages.json					case	EDA-Eval-DesignFlow-SchPinAddProduce-001	2026-11-20 01:04	path-bug revival r971; subdir path fetch OK 162KB; D-pure schematic pin-add; B档 synthesized produce-reframe; 14 断言 a-n; mock pyAether harness
 1792496413587_zrc4b.messages.json					parked		2026-11-05 11:04	ssh-err timeout
 1793068512022_39kt1.messages.json					parked		2026-11-05 11:04	ssh-err timeout
 1793261255178_1wvdl.messages.json					parked		2026-11-05 11:04	ssh-err timeout
@@ -891,7 +891,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791867861982_jesvi					parked		2026-11-06 02:44	dup duty/skew (see 7ycbz), not selected
 1787549214610_0muo8					parked		2026-11-06 02:44	skill-scenario (启动业务场景 仿真与验证), not a produce-task
 1792478336435_qe1n4					parked		2026-11-06 02:44	qualib TCL template gen for STD check - borderline domain (qualib not shard-D core), not selected
-1792573684287_demod					parked		2026-11-06 02:44	ssh host key verification failed (NOFILE), unreachable
+1792573684287_demod					parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
 1790229492123_m7hxu					parked		2026-11-06 02:44	clean A-faithful produce (design double-tail slicer 2.9GHz) L2 schematic-gen, kept-note for future; not selected this round
 1788144579422_5cz37					parked		2026-11-06 02:44	layout autovia/powerfill cell removal - wrong domain (layout not shard-D core)
 1792045605929_rp1xk					parked		2026-11-06 02:44	Q&A (hspice .option for sensitive param sweep), no deliverable
@@ -1514,7 +1514,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1788757855111_k34i5	xinqiaoz	hfeg0pkn005	48	schematic_netlist	parked		2026-11-12 22:17	r560 peek: greeting + scenario-launch DRC/LVS (C-domain)
 1793077423218_8nqgg	e03179	hfeg0pkn002	48	schematic_netlist	parked		2026-11-12 22:17	r560 peek: skill-only vam-agent (same #554b sub-class)
 1793686764440_0vmow	e0017052	hfeg0pkn001	96	schematic_netlist	case	EDA-Eval-DesignFlow-DqsOscCircuitExplainQA-001	2026-11-16 01:08	r560 peek: explain Q&A 'DQSOSC circuit detail' on verilog netlist
-1792493018233_3rdqj	jinhaoli	hfeg0pkn004	67	analog_context	parked		2026-11-12 22:17	r560 peek: NOFILE/timeout (unreachable)
+1792493018233_3rdqj	jinhaoli	hfeg0pkn004	67	analog_context	parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
 1790489156584_1bc9r	mike	hfhds206	61	analog_context	parked		2026-11-12 22:17	r560 peek: garbled/incomprehensible first turn
 1788831007337_cmr7h	sagequan	hfeg0pbn04	49	analog_context	parked		2026-11-12 22:17	r560 peek: continuation debug llm_cline.py code fix (A-domain tooling)
 1794226224742_t8ka2					parked		2026-11-12 22:32	r561 mc10-15 1109 peek-reject: Q&A/debug/how-to/explain/scenario-launch/skill-query (non produce-task)
