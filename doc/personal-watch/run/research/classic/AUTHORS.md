@@ -6,6 +6,10 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-19 18:1x）**：作者 **242** 人（编号最大 **242**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十八轮增量（2026-11-19 18:1x）**：作者网 239 → **242**（#240 Daya Guo 郭达雅 **A 级** `guody5@mail2.sysu.edu.cn`（主页 `mailto:`）/ #241 Peiyi Wang 王培懿 无地址 / #242 Sirui Hong 洪思睿 无地址），来自本轮 B 轨 #258 DeepSeek-Coder / #259 Math-Shepherd / #260 MetaGPT；**DiT #257 两位作者 Bill Peebles / Saining Xie 早已建档 ⇒ 本轮不重复计数**；X 保持 **106**（三人主页/GitHub 均无可读 handle ⇒ 🚫 不猜）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档并备 11-20 草稿）。⚠️ `x.com` 本轮直连与代理均 `200`（较前几轮 `000` 有变化），但**尚未做单条推文 `og:title` 双源核验** ⇒ `voice_ready` 仍记 0，不抢发。
+>
 > **当前计数（2026-11-19 15:4x）**：作者 **239** 人（编号最大 **239**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 >
 > **第六十七轮增量（2026-11-19 15:3x）**：作者网 235 → **239**（#236 Niklas Muennighoff **A 级** `n.muennighoff@gmail.com`（主页 `mailto:`）/ #237 Morgane Riviere 无地址 / #238 Artidoro Pagnoni 无地址（候选页 `000`）/ #239 Frank F. Xu 徐方政 **B 级** `fangzhengxu@microsoft.com`（主页 `[at]` 形式明文）），来自本轮 B 轨 #253 s1 / #254 Gemma 2 / #255 BLT / #256 TheAgentCompany；X 保持 **106**（`@Muennighoff` 仅主页 href 候选，未二次核验 ⇒ 不计数）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档不发）。
@@ -3422,6 +3426,46 @@
 | X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接） |
 | 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
 | 备注 | `语言=中文(判据=中文姓名族属 + 主页英文名 Fangzheng Xu；本轮未发)`。价值点：长程任务的「环境内产物」判分口径可直接迁到 designflow L4/L5。 |
+
+
+### 240. Daya Guo（郭达雅）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Daya Guo / 郭达雅（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **DeepSeek**（DeepSeek-Coder 一作；本人主页自述 `AI Researcher in DeepSeek` 2023-07 至 2026-04，此前中山大学博士 + MSRA 联合培养） |
+| 代表论文 | **DeepSeek-Coder**（`2401.14196`，B 轨 #258 一作）· DeepSeek-R1（`2501.12948`，已收 B 轨）· GraphCodeBERT（ICLR 2021） |
+| 邮箱 | **guody5@mail2.sysu.edu.cn** / **A**（本人主页 `https://guoday.github.io/` 页内 `mailto:` 明文，2026-11-19 实测 `200` / 74,157 B） |
+| 主页 | <https://guoday.github.io/>（`200` / 74,157 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发；草稿已备 11-20） |
+| 备注 | `语言=中文(判据=中文姓名族属 郭达雅 + 中山大学/DeepSeek；本轮未发)`。价值点：**87/10/3 代码语料配比 + repository-level 预训练 + 16K FIM 窗口**，可直接回填 data / pretrain 两条线的对照设计。⚠️ 主页写「至 2026-04」在 DeepSeek ⇒ 发信前需再核其现行单位（本线未据二手报道改写）。 |
+
+### 241. Peiyi Wang（王培懿）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Peiyi Wang / 王培懿（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **北京大学**计算机学院（博士 2020–2025，OpenReview 档案）；论文署名单位含「多媒体信息处理国家重点实验室」与 DeepSeek-AI |
+| 代表论文 | **Math-Shepherd**（`2312.08935`，B 轨 #259 一作）· Math-Minos 等 |
+| 邮箱 | **未找到可核现行地址**（`api.github.com/users/Wangpeiyi9979` 的 `email` = `null`；Google Scholar 仅显示 `stu.pku.edu.cn` 域名，**非完整地址**）⇒ 🚫 不猜 |
+| 主页 | **未找到**（`wangpeiyi9979.github.io` / `peiyiwang.github.io` 均 `404`） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + 北京大学；本轮未发)`。价值点：**自动过程标签（completion/estimation）+ 逐步 PPO + min-over-steps 聚合**，是 zhulong thinking 轴奖励粒度的直接对照。 |
+
+### 242. Sirui Hong（洪思睿）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sirui Hong / 洪思睿（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **DeepWisdom**（联合创始人；OpenReview 档案写 `Researcher DeepWisdom 2019–Present`，另列香港科技大学） |
+| 代表论文 | **MetaGPT**（`2308.00352`，B 轨 #260 一作）· OpenManus / MGX 相关工作 |
+| 邮箱 | **未找到可核个人地址**（论文首页给的 `alexanderwu@fuzhi.ai` 属另一位作者，🚫 不挪用；Google Scholar 仅显示 `fuzhi.ai` 域名） |
+| 主页 | **未找到**（`sirui-hong.github.io` `404`；GitHub `stellaHSR` 无 blog 字段） |
+| X 账号 | **未找到**（GitHub API `twitter_username` = `null`） |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + DeepWisdom；本轮未发)`。价值点：**SOP 编码进 prompt + 角色流水线 + 阶段产物**，可直接映射 designflow L4/L5 的「阶段可判分产物」。 |
 
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
