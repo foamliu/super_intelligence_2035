@@ -19,15 +19,19 @@ We argue this is not merely a model-capacity problem but a \emph{memory and self
 % 注定每次运行都要重新发现同样的知识。递归自我改进（RSI）——扩展技能库并从经验中改进执行框架本身的
 % 能力——只有在记忆跨会话持久存在以累积经验时才有意义。
 
-\textbf{Contributions.} (1) We \emph{formulate} 3 core falsifiable hypotheses (H1 functional / H2 mechanistic / H3 boundary) decomposed into 7 sub-hypotheses, each with falsification conditions (\S\ref{sec:hypotheses}). (2) We \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1) and a cross-domain transfer probe (M4). (3) We \emph{formalize} three cognitive-neuroscience mechanisms---arousal $\rightarrow$ surprise/penalty gating, weapon-focus $\rightarrow$ central-peripheral compression, mood-congruence $\rightarrow$ state-aware retrieval---as computable mappings (\S\ref{sec:harness}). (4) We \emph{introduce} long-chain flow orchestration as a new task modality with a falsifiable evaluation protocol (described in this paper; no data/code release). (5) We commit to reporting \emph{negative results} as publishable boundary conditions.
+\textbf{Contributions.} (1) We \emph{introduce} \bench{}, a benchmark of \Ntasks{} long-chain EDA design-flow tasks across 13 domains, each derived from real IC-design engineer coding-agent traces in a production environment, with a \mode{} contract (submit.zip + $\geq$8 executable assertions + a PreToolUse anti-leakage hook) and a frozen \Neval{}-run evaluation snapshot (\MzeroPass{} Pass@1 vs.\ \ScriptPass{} on single-script EDA benchmarks, a 7.6$\times$ gap); no data or code is released, with reproducibility supported via the protocol in this paper and an NDA-gated review package (\S\ref{sec:benchmark}). (2) We \emph{formulate} 3 core falsifiable hypotheses (H1 functional / H2 mechanistic / H3 boundary) decomposed into 7 sub-hypotheses, each with falsification conditions, and formalize three cognitive-neuroscience mechanisms---arousal $\rightarrow$ surprise/penalty gating, weapon-focus $\rightarrow$ central-peripheral compression, mood-congruence $\rightarrow$ state-aware retrieval---as computable mappings (\S\ref{sec:hypotheses}, \S\ref{sec:harness}). (3) We \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1, excluding ``prompt just got longer'') and a cross-domain transfer contamination probe (M4, with a machine-judgeable leak-rate audit); negative results are reported as publishable boundary conditions.
 % 【中文】
-% \textbf{贡献。}(1) 我们\emph{提出} 3 条核心可证伪假设（H1 功能性：记忆+RSI 增益；H2 机制性：
-% 增益源于情绪记忆机制；H3 边界性：单 vs 多智能体），分解为 7 条子假设，每条含证伪条件
-%（\S\ref{sec:hypotheses}）。(2) 我们\emph{设计} 10 臂主消融（3 臂附录），含等 token 杀手对照（N1）与跨域迁移
-% 污染探针（M4）（\S\ref{sec:hypotheses}）。(3) 我们\emph{形式化}三个认知神经科学机制——情绪觉醒
-% $\rightarrow$ 惊异/惩罚门控、武器焦点 $\rightarrow$ 中心-外围压缩、情绪一致性 $\rightarrow$ 状态感知
-% 检索——为可计算映射（\S\ref{sec:harness}）。(4) 我们\emph{引入}长链流程编排作为新任务模态，
-% 并提供可证伪的评测协议（本论文描述；不发布数据/代码）。(5) 我们承诺将\emph{阴性结果}作为可发表的边界条件报告，涵盖 RSI 与情绪记忆机制。
+% \textbf{贡献。}(1) 我们\emph{引入}\bench{}——一个含 \Ntasks{} 个长链 EDA 设计流任务、跨 13 个领域
+% 的基准，每个任务源自真实 IC 设计工程师在生产环境中的 coding-agent trace，含 \mode{} 契约
+%（submit.zip + $\geq$8 个可执行断言 + PreToolUse 反泄漏钩子）与冻结的 \Neval{}-run 评测快照
+%（\MzeroPass{} Pass@1 vs.\ 单脚本 EDA 基准 \ScriptPass{}，7.6$\times$ 跳变）；不发布数据/代码，
+% 复现性由本论文协议描述 + NDA 受控评审包支持（\S\ref{sec:benchmark}）。(2) 我们\emph{提出}
+% 3 条核心可证伪假设（H1 功能性 / H2 机制性 / H3 边界性）下设 7 条子假设、各含证伪条件，
+% 并形式化三个认知神经科学机制——情绪觉醒 $\rightarrow$ 惊异/惩罚门控、武器焦点 $\rightarrow$
+% 中心-外围压缩、情绪一致性 $\rightarrow$ 状态感知检索——为可计算映射
+%（\S\ref{sec:hypotheses}、\S\ref{sec:harness}）。(3) 我们\emph{设计} 10 臂主消融（3 臂附录），
+% 含等 token 杀手对照（N1，排除"提示变长"替代解释）与跨域迁移污染探针（M4，含机器可判的
+% 答案泄露率审计）；阴性结果作为可发表的边界条件报告。
 
 \textbf{Experimental status.} The M0 baseline (\MzeroPass{}) is available from a frozen 696-run snapshot; the other arms (M1--M8, N1--N2) are to be evaluated.
 % 【中文】
