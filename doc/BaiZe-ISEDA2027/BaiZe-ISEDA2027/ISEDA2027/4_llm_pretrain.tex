@@ -35,10 +35,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \begin{figure*}[t]
 \centering
 \footnotesize
-\begin{minipage}[t]{0.32\linewidth}
+\begin{minipage}[t]{0.33\linewidth}
 \centering
-\textbf{S1: Stable (0--350k)}\\[12pt]
-\begin{tikzpicture}[scale=2.5, baseline=(current bounding box.north)]
+\textbf{S1: Stable (0--350k)}\\[16pt]
+\begin{tikzpicture}[scale=3.0, baseline=(current bounding box.north)]
 % pie: web 74% (0--266.4), code 19% (266.4--334.8), math 7% (334.8--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:266.4:1)     -- cycle;
 \fill[red!60]    (0,0) -- (266.4:1) arc (266.4:334.8:1) -- cycle;
@@ -52,10 +52,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (348:0.62)  {\textbf{7\%}};
 \end{tikzpicture}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.32\linewidth}
+\begin{minipage}[t]{0.33\linewidth}
 \centering
-\textbf{S2: Stable (350k--700k)}\\[12pt]
-\begin{tikzpicture}[scale=2.5, baseline=(current bounding box.north)]
+\textbf{S2: Stable (350k--700k)}\\[16pt]
+\begin{tikzpicture}[scale=3.0, baseline=(current bounding box.north)]
 % pie: web 40% (0--144), code 40% (144--288), math 20% (288--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:144:1)     -- cycle;
 \fill[red!60]    (0,0) -- (144:1)   arc (144:288:1)   -- cycle;
@@ -69,10 +69,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (324:0.62) {\textbf{20\%}};
 \end{tikzpicture}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.32\linewidth}
+\begin{minipage}[t]{0.33\linewidth}
 \centering
-\textbf{Decay (annealing, 700k--720k)}\\[12pt]
-\begin{tikzpicture}[scale=2.5, baseline=(current bounding box.north)]
+\textbf{Decay (annealing, 700k--720k)}\\[16pt]
+\begin{tikzpicture}[scale=3.0, baseline=(current bounding box.north)]
 % pie: instr-SFT 60% (0--216), agentic-SFT 12% (216--259.2), web 22% (259.2--338.4), math 4% (338.4--352.8), code 2% (352.8--360)
 \fill[orange!70]  (0,0) -- (0:1)     arc (0:216:1)       -- cycle;
 \fill[purple!60]  (0,0) -- (216:1)   arc (216:259.2:1)   -- cycle;
@@ -88,11 +88,9 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (108:0.55) {\textbf{60\%}};
 \node at (238:0.60) {\textbf{12\%}};
 \node at (299:0.62) {\textbf{22\%}};
-% small wedges: leader lines + external labels (avoid cramped overlap)
-\draw (345.6:1.0) -- (345.6:1.10);
-\node[anchor=south east] at (345.6:1.13) {\textbf{4\%}};
-\draw (356.4:1.0) -- (356.4:1.10);
-\node[anchor=north east] at (356.4:1.13) {\textbf{2\%}};
+% small wedges: internal labels at staggered radii to fit narrow slices
+\node at (345.6:0.55) {\textbf{4\%}};
+\node at (356.4:0.80) {\textbf{2\%}};
 \end{tikzpicture}
 \end{minipage}
 
@@ -100,8 +98,8 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 % Unified color legend (applies to all three pies)
 \textcolor{blue!60}{$\bullet$}~web \quad \textcolor{red!60}{$\bullet$}~code \quad \textcolor{green!55}{$\bullet$}~math \quad \textcolor{orange!70}{$\bullet$}~instr-SFT \quad \textcolor{purple!60}{$\bullet$}~agentic-SFT
 
-\caption{Three-stage curriculum learning data mixture. \textbf{S1} (0--$350$k steps) establishes a general-purpose foundation with a $74{:}19{:}7$ web/code/math split. \textbf{S2} ($350$k--$700$k) shifts to $40{:}40{:}20$ to strengthen code and math, incorporating new sources---stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$$371$B tokens), supplemented by Nemotron-CC-Math ($133$B) and FineMath, for math---that have zero document-level overlap with S1, while shared sources use a different random seed to reduce document repetition. \textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$) with a long-context ladder (segment~B). S2 category proportions follow the finalized $4{:}4{:}2$ blend configuration.}
-% 中文：图 \ref{fig:data-mix} 三阶段课程学习数据配比。\textbf{S1}（$0$–$350$k 步）以 $74{:}19{:}7$ 的网页/代码/数学分布建立通用基础。\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 以增强代码与数学，引入新源——代码侧 stack-v3-train（L4 过滤后 $430.7$B token）、数学侧 MegaMath（$\sim$$371$B token）、Nemotron-CC-Math（$133$B）与 FineMath——与 S1 零文档重叠，共享源更换随机种子降低文档重复。\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），B 段为长上下文阶梯。S2 类别配比依据定稿的 $4{:}4{:}2$ blend 配置。
+\caption{Three-stage curriculum learning data mixture. \textbf{S1} (0--$350$k steps) establishes a general-purpose foundation with a $74{:}19{:}7$ web/code/math split. \textbf{S2} ($350$k--$700$k) shifts to $40{:}40{:}20$ to strengthen code and math, incorporating new sources---stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$$371$B tokens), supplemented by Nemotron-CC-Math ($133$B) and FineMath, for math---that have zero document-level overlap with S1, while shared sources use a different random seed to reduce document repetition. \textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$) with a long-context ladder (segment~B).}
+% 中文：图 \ref{fig:data-mix} 三阶段课程学习数据配比。\textbf{S1}（$0$–$350$k 步）以 $74{:}19{:}7$ 的网页/代码/数学分布建立通用基础。\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 以增强代码与数学，引入新源——代码侧 stack-v3-train（L4 过滤后 $430.7$B token）、数学侧 MegaMath（$\sim$$371$B token）、Nemotron-CC-Math（$133$B）与 FineMath——与 S1 零文档重叠，共享源更换随机种子降低文档重复。\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），B 段为长上下文阶梯。
 \label{fig:data-mix}
 \end{figure*}
 
