@@ -641,12 +641,12 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1793945694181_3djeh	e0039102	10.129.8.112	16	digital	parked		2026-11-19 10:46	r789: capability Q&A (can you use pyAether bridge), unbuildable for design_flow
 1788483291546_fbikp	e02141	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=16436
 1789453137672_720it	e0017484	10.129.35.73	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=10070
-1790581124817_gucnl	e02141	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=63273
+1790581124817_gucnl	e02141	10.129.2.14	6		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1790649594359_skdtd	zmzhang	10.129.8.230	8		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=29961
 1791615542263_satf4	johnl	10.129.2.10	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=14135
 1792044781149_gwa9k	sijialv	10.129.32.46	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=23247
 1792827914007_fl8g4	jkxu	10.129.32.80	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=31578
-1792998450890_1y66j	e0041392	10.129.2.12	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=232337
+1792998450890_1y66j	e0041392	10.129.2.12	6		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1793004297782_9kvaw	harrys	10.129.2.11	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=159591
 1793179786389_n57f9	zhiguo1w	10.129.40.209	8		case	EDA-Eval-DesignFlow-StdlibPptxGen-001	2026-11-19 13:57	r794-liveness-ALIVE mc5-9-A-pure sz=258265
 1793753704056_irod5	e0042624	10.129.2.11	6		case	EDA-Eval-DesignFlow-SkillReviewAskEda-001	2026-11-19 16:42	r801 re-claim from parked: skill-review analysis-QA (eda_other), review ask-eda against skill-creator standard
@@ -656,20 +656,23 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1794193348712_x0mjt	e0041392	10.129.2.12	7		parked		2026-11-19 16:42	r801: non-buildable. wscli env-config session, only 1 real user input (skill_instructions), agent全程配环境auth无deliverable. r798 verdict reaffirmed
 1794366349085_n907k	meng1l	10.129.2.13	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=17828
 1794384170431_k7bl1	e0039516	10.129.2.10	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=28561
-1794449765531_s59t7	rongjiez	10.129.2.14	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=563204
+1794449765531_s59t7	rongjiez	10.129.2.14	7		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1794453900244_5of6x	e0048255	10.129.32.190	8		case	EDA-Eval-DesignFlow-GpioCsvFormatConvert-001	2026-11-19 13:13	r795 case (eda_other produce-task, k=16, GPIO CSV format-convert)
-1782141557406_uhla7	e0025730	10.129.8.86	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=64698
-1789718897680_hdhfh	t0002470	10.129.2.11	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=1053770
+1782141557406_uhla7	e0025730	10.129.8.86	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
+1789718897680_hdhfh	t0002470	10.129.2.11	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1791615588369_akfxu	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=13846
 1791897142698_tt73q	jason17w	10.129.32.190	5		case	EDA-Eval-DesignFlow-VpsInterfaceSummaryQA-001	2026-11-19 15:05	r798 case: VPS interface summary analysis-QA + specificity oracle (15 conds, B=TRO_v2024.03/TestFlowCorp 8-dim rename). A=SKILL.md+trimmed guide+run_regr.py+custom_utils.py. ref PASS 15/15, 5 neg FAIL, §4.9 a/b/c FAIL
 1791947876609_xq1yo	e0027435	10.129.8.237	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=5638
 1792224394327_gheik	e0014566	10.129.35.82	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=120863
-1792466393671_dqi7d	liyingw	172.16.8.14	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=62615
+1792466393671_dqi7d	liyingw	172.16.8.14	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1793064917593_tpnqx					parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=112676
 1793087727242_vqefw	e0029495	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=14177
-1793597178818_otgh9	e0045488	10.129.2.13	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=135836
+1793597178818_otgh9	e0045488	10.129.2.13	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1793873712084_pzo1r	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=53923
 1794194018234_c41bm	e0041392	10.129.2.12	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=305709
-1794478957304_r44l7	vendor.cno.chjh07	10.129.2.11	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=355678
+1794478957304_r44l7	vendor.cno.chjh07	10.129.2.11	5		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
 1794637486415_rbr06	e0039516	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=61629
 1793926861786_5fn4e	e0047722	10.129.8.125	6		parked		2026-11-19 12:47	r794-liveness-NOFILE mc5-9-A-pure rotation-evaporated
+1794276772104_yicdk					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
+1794301691470_zg7xg					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
+1794278751082_g8en5					parked		2026-11-19 17:14	r803: broad mc>=10 A-pure candidate (verilog/dbget dominant), liveness=NOFILE rotation (probed 11-19 17:0x, all hosts NOFILE). non-buildable: trace evaporated
