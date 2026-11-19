@@ -6,7 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-19 18:1x）**：作者 **242** 人（编号最大 **242**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+> **当前计数（2026-11-19 21:0x）**：作者 **245** 人（编号最大 **245**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第六十九轮增量（2026-11-19 21:0x）**：作者网 242 → **245**（#243 Lingming Zhang 张令明 **A 级** `lingming@illinois.edu`（`lingming.cs.illinois.edu` `mailto:`，200 / 22,815 B；⚠️ `llingming.github.io` 已 404）/ #244 Chunqiu Steven Xia **B 级** `chunqiu2@illinois.edu`（论文 PDF 首页分组明文，按确定性还原）/ #245 Vidya A. Chhabria **A 级** `vidyachhabria@asu.edu`（ASU 官方 profile 页明文，200 / 124,745 B）），来自本轮 B 轨 #262 Agentless / #264 EDA Corpus；Transfusion #261（Meta FAIR，无个人主页可核）/ Massive Activations #263（Mingjie Sun `mingjiesun.com` 与 `cs.cmu.edu/~mingjies/` 均 `000`/`404`）⇒ 只计数不建档、不猜地址；X 保持 **106**（三人页内均无可读 handle）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档并备 11-20 草稿）。
 >
 > **第六十八轮增量（2026-11-19 18:1x）**：作者网 239 → **242**（#240 Daya Guo 郭达雅 **A 级** `guody5@mail2.sysu.edu.cn`（主页 `mailto:`）/ #241 Peiyi Wang 王培懿 无地址 / #242 Sirui Hong 洪思睿 无地址），来自本轮 B 轨 #258 DeepSeek-Coder / #259 Math-Shepherd / #260 MetaGPT；**DiT #257 两位作者 Bill Peebles / Saining Xie 早已建档 ⇒ 本轮不重复计数**；X 保持 **106**（三人主页/GitHub 均无可读 handle ⇒ 🚫 不猜）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档并备 11-20 草稿）。⚠️ `x.com` 本轮直连与代理均 `200`（较前几轮 `000` 有变化），但**尚未做单条推文 `og:title` 双源核验** ⇒ `voice_ready` 仍记 0，不抢发。
 >
@@ -3467,6 +3469,45 @@
 | 状态 | **待跟踪**（只建档，无地址不发） |
 | 备注 | `语言=中文(判据=中文姓名族属 + DeepWisdom；本轮未发)`。价值点：**SOP 编码进 prompt + 角色流水线 + 阶段产物**，可直接映射 designflow L4/L5 的「阶段可判分产物」。 |
 
+
+### 243. Lingming Zhang（张令明）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lingming Zhang / 张令明（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **University of Illinois Urbana-Champaign**（Siebel School of Computing and Data Science 副教授；软件工程 / 程序修复方向） |
+| 代表论文 | **Agentless**（`2407.01489`，B 轨 #262 末位作者 / 通讯）· LLM 程序修复与测试生成系列 |
+| 邮箱 | **lingming@illinois.edu** / **A**（本人主页 `https://lingming.cs.illinois.edu/` 页内 `mailto:` 明文，2026-11-19 实测 `200` / 22,815 B；⚠️ `llingming.github.io` 已 `404`，勿再用旧地址） |
+| 主页 | <https://lingming.cs.illinois.edu/>（`200` / 22,815 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接；🚫 不猜） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 张令明 + 论文英文/美国机构不改变判据)`。价值点：**「无 agent 的三段固定流水线」**（定位 → 修 → 补丁验证 + 自生成复现测试）是我们 harness 侧「先证基线、再谈 agent 增益」的直接依据；可问「定位粒度从文件降到行时，召回与误改如何权衡」。 |
+
+### 244. Chunqiu Steven Xia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chunqiu Steven Xia（中文姓名族属 夏春秋 ⇒ 若发信应用**中文全文**） |
+| 机构 | **University of Illinois Urbana-Champaign**（博士生；与 #243 同组） |
+| 代表论文 | **Agentless**（`2407.01489`，B 轨 #262 一作）· 程序修复 / LLM4SE 相关 |
+| 邮箱 | **chunqiu2@illinois.edu** / **B**（论文 PDF 首页明文分组写法 `{chunqiu2, yinlind2, sorend2, lingming}@illinois.edu`，按确定性还原；PDF `200` / 1,384,716 B；⚠️ 未见个人主页 `mailto:`，故不标 A） |
+| 主页 | **未找到**（`stevenxia9903.github.io` 实测 `404`；🚫 不凭推测填） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪**（同论文作者 #243 优先；按「同一论文 ≤1 封」不同时发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + UIUC)`。价值点：一作对**采样条数、复现测试筛选、重排序信号**的实操细节最清楚，适合问「复现测试生成失败时补丁还怎么排序」。 |
+
+### 245. Vidya A. Chhabria
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Vidya A. Chhabria（姓名族属印度裔，机构美国 ⇒ 英文） |
+| 机构 | **Arizona State University**（School of Electrical, Computer and Energy Engineering 助理教授；VDA Lab，EDA / 物理设计方向） |
+| 代表论文 | **EDA Corpus**（`2405.06676`，B 轨 #264 末位作者 / 通讯）· EDA 与 ML 交叉方向工作 |
+| 邮箱 | **vidyachhabria@asu.edu** / **A**（ASU 官方 profile 页 `https://search.asu.edu/profile/4370240` 页内明文，2026-11-19 实测 `200` / 124,745 B；另有院系页 `faculty.engineering.asu.edu/vidyachhabria/` `200` / 17,609 B 但无邮箱） |
+| 主页 | <https://faculty.engineering.asu.edu/vidyachhabria/>（`200` / 17,609 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 备注 | `语言=英文(判据=姓名族属印度裔 + 美国机构；无中/日/韩信号)`。价值点：**「脚本类样本必须在 OpenROAD 里真跑才判对」** 是 designflow L1–L5 判分器最缺的一条硬约束；可问「增强样本（改写 prompt / 改参数）在训练与评分的分布如何隔离，避免验证集被增强污染」。 |
 
 2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
 3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
