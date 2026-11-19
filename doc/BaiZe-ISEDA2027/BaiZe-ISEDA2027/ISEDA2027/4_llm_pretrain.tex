@@ -21,12 +21,12 @@ The pretraining data follows a three-stage curriculum: two stable stages (S1, S2
 % 中文：\textbf{S1}（$0$–$350$k）使用七源混合，产出 $74{:}19{:}7$ 的网页/代码/数学分布，建立通用语言基础。
 \textbf{S2} ($350$k--$700$k) shifts to a $40{:}40{:}20$ web/code/math split to strengthen code and math capability.
 % 中文：\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 的网页/代码/数学配比，以增强代码与数学能力。
-New sources are introduced in S2: stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$371B tokens), supplemented by Nemotron-CC-Math ($133$B) and finemath, for math.
-% 中文：S2 引入新数据源：代码侧补入 stack-v3-train（L4 过滤后 $430.7$B token），数学侧补入 MegaMath（$\sim$371B token）、Nemotron-CC-Math（$133$B）与 finemath。
+New sources are introduced in S2: stack-v3-train (L4-filtered, $430.7$B tokens; built on The Stack~v2~\cite{lozhkov2024stackv2}) for code and MegaMath ($\sim$371B tokens~\cite{liu2025megamath}), supplemented by Nemotron-CC-Math ($133$B~\cite{mahabadi2026nemotronccmath}) and FineMath~\cite{benallal2025smolm2}, for math.
+% 中文：S2 引入新数据源：代码侧补入 stack-v3-train（L4 过滤后 $430.7$B token，基于 The Stack~v2~\cite{lozhkov2024stackv2}），数学侧补入 MegaMath（$\sim$371B token~\cite{liu2025megamath}）、Nemotron-CC-Math（$133$B~\cite{mahabadi2026nemotronccmath}）与 FineMath~\cite{benallal2025smolm2}。
 These new sources are absent from S1's blend, so they have zero document-level overlap with S1; for the shared sources (Ultra-FineWeb, UltraData-Code, UltraData-Math), a different random seed is used in S2 to reduce document-level repetition.
 % 中文：这些新源不在 S1 的 blend 中，因此与 S1 零文档重叠；对共享源（Ultra-FineWeb、UltraData-Code、UltraData-Math），S2 更换随机种子以降低文档级重复。
-\textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$), retaining a small general fraction (web $22\%$, math $4\%$, code $2\%$); segment~B extends context on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$).
-% 中文：\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），保留少量通用成分（网页 $22\%$、数学 $4\%$、代码 $2\%$）；B 段在 32K→64K→128K 阶梯上扩展上下文（$30$–$40\%$）。
+\textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$; e.g., OpenMathInstruct-2~\cite{toshniwal2024openmathinstruct2}, NuminaMath~\cite{li2024numinamath}, OpenCodeReasoning~\cite{ahmad2025opencodereasoning}) and agentic-SFT ($12\%$), retaining a small general fraction (web $22\%$, math $4\%$, code $2\%$); segment~B extends context on a \mbox{32K$\to$64K$\to$128K} ladder ($30$--$40\%$).
+% 中文：\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$；如 OpenMathInstruct-2~\cite{toshniwal2024openmathinstruct2}、NuminaMath~\cite{li2024numinamath}、OpenCodeReasoning~\cite{ahmad2025opencodereasoning}）与智能体 SFT（$12\%$），保留少量通用成分（网页 $22\%$、数学 $4\%$、代码 $2\%$）；B 段在 32K→64K→128K 阶梯上扩展上下文（$30$–$40\%$）。
 All sources are pre-blended into large shards ($\mathcal{O}(10)$ vs.\ $\mathcal{O}(600)$ index files per rank), bounding the data-loader footprint.
 % 中文：各源预混合为大 shard（每 rank $\mathcal{O}(10)$ 个索引文件而非 $\mathcal{O}(600)$），限制数据加载内存占用。
 Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ benchmarks; shards are scanned for ${\geq}0.80$ n-gram overlap.
@@ -37,8 +37,8 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \footnotesize
 \begin{minipage}[t]{0.31\linewidth}
 \centering
-\textbf{S1: Stable (0--350k)}\\[-2pt]
-\begin{tikzpicture}[scale=0.85]
+\textbf{S1: Stable (0--350k)}\\[6pt]
+\begin{tikzpicture}[scale=1.8]
 % pie: web 74% (0--266.4), code 19% (266.4--334.8), math 7% (334.8--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:266.4:1)     -- cycle;
 \fill[red!60]    (0,0) -- (266.4:1) arc (266.4:334.8:1) -- cycle;
@@ -54,8 +54,8 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \end{minipage}\hfill
 \begin{minipage}[t]{0.31\linewidth}
 \centering
-\textbf{S2: Stable (350k--700k)}\\[-2pt]
-\begin{tikzpicture}[scale=0.85]
+\textbf{S2: Stable (350k--700k)}\\[6pt]
+\begin{tikzpicture}[scale=1.8]
 % pie: web 40% (0--144), code 40% (144--288), math 20% (288--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:144:1)     -- cycle;
 \fill[red!60]    (0,0) -- (144:1)   arc (144:288:1)   -- cycle;
@@ -71,8 +71,8 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \end{minipage}\hfill
 \begin{minipage}[t]{0.31\linewidth}
 \centering
-\textbf{Decay (annealing, 700k--720k)}\\[-2pt]
-\begin{tikzpicture}[scale=0.85]
+\textbf{Decay (annealing, 700k--720k)}\\[6pt]
+\begin{tikzpicture}[scale=1.8]
 % pie: instr-SFT 60% (0--216), agentic-SFT 12% (216--259.2), web 22% (259.2--338.4), math 4% (338.4--352.8), code 2% (352.8--360)
 \fill[orange!70]  (0,0) -- (0:1)     arc (0:216:1)       -- cycle;
 \fill[purple!60]  (0,0) -- (216:1)   arc (216:259.2:1)   -- cycle;
@@ -100,8 +100,8 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 % Unified color legend (applies to all three pies)
 \textcolor{blue!60}{$\bullet$}~web \quad \textcolor{red!60}{$\bullet$}~code \quad \textcolor{green!55}{$\bullet$}~math \quad \textcolor{orange!70}{$\bullet$}~instr-SFT \quad \textcolor{purple!60}{$\bullet$}~agentic-SFT
 
-\caption{Three-stage curriculum learning data mixture. \textbf{S1} (0--$350$k steps) establishes a general-purpose foundation with a $74{:}19{:}7$ web/code/math split. \textbf{S2} ($350$k--$700$k) shifts to $40{:}40{:}20$ to strengthen code and math, incorporating new sources---stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$$371$B tokens), supplemented by Nemotron-CC-Math ($133$B) and finemath, for math---that have zero document-level overlap with S1, while shared sources use a different random seed to reduce document repetition. \textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$) with a long-context ladder (segment~B). S2 category proportions follow the finalized $4{:}4{:}2$ blend configuration (\texttt{blend\_s2\_preblend.tsv}).}
-% 中文：图 \ref{fig:data-mix} 三阶段课程学习数据配比。\textbf{S1}（$0$–$350$k 步）以 $74{:}19{:}7$ 的网页/代码/数学分布建立通用基础。\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 以增强代码与数学，引入新源——代码侧 stack-v3-train（L4 过滤后 $430.7$B token）、数学侧 MegaMath（$\sim$$371$B token）、Nemotron-CC-Math（$133$B）与 finemath——与 S1 零文档重叠，共享源更换随机种子降低文档重复。\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），B 段为长上下文阶梯。S2 类别配比依据定稿的 $4{:}4{:}2$ blend 配置（\texttt{blend\_s2\_preblend.tsv}）。
+\caption{Three-stage curriculum learning data mixture. \textbf{S1} (0--$350$k steps) establishes a general-purpose foundation with a $74{:}19{:}7$ web/code/math split. \textbf{S2} ($350$k--$700$k) shifts to $40{:}40{:}20$ to strengthen code and math, incorporating new sources---stack-v3-train (L4-filtered, $430.7$B tokens) for code and MegaMath ($\sim$$371$B tokens), supplemented by Nemotron-CC-Math ($133$B) and FineMath, for math---that have zero document-level overlap with S1, while shared sources use a different random seed to reduce document repetition. \textbf{Decay} ($700$k--$720$k) anneals toward instruction-SFT ($60\%$) and agentic-SFT ($12\%$) with a long-context ladder (segment~B). S2 category proportions follow the finalized $4{:}4{:}2$ blend configuration.}
+% 中文：图 \ref{fig:data-mix} 三阶段课程学习数据配比。\textbf{S1}（$0$–$350$k 步）以 $74{:}19{:}7$ 的网页/代码/数学分布建立通用基础。\textbf{S2}（$350$k–$700$k）切换为 $40{:}40{:}20$ 以增强代码与数学，引入新源——代码侧 stack-v3-train（L4 过滤后 $430.7$B token）、数学侧 MegaMath（$\sim$$371$B token）、Nemotron-CC-Math（$133$B）与 FineMath——与 S1 零文档重叠，共享源更换随机种子降低文档重复。\textbf{Decay}（$700$k–$720$k）退火转向指令式 SFT（$60\%$）与智能体 SFT（$12\%$），B 段为长上下文阶梯。S2 类别配比依据定稿的 $4{:}4{:}2$ blend 配置。
 \label{fig:data-mix}
 \end{figure*}
 
@@ -110,6 +110,8 @@ Only $\mathbf{2.52\%}$ of tokens sit in documents ${\geq}32$K and $0.03\%$ at ${
 % 中文：长上下文数据闸门。仅 $2.52\%$ 的 token 位于 ${\geq}32$K 的文档中，$0.03\%$ 达到 ${\geq}128$K（平均 $889$ token；表 \ref{tab:longctx-data}），因此在编列 B 段预算前测量了该分布。
 We gate the ladder: ${\geq}32$K share must reach $20\%$ and ${\geq}128$K $5\%$ (else it stops at 64K), with EOD resets and de-duplication.
 % 中文：我们设闸门：${\geq}32$K 占比须达 $20\%$、${\geq}128$K 达 $5\%$（否则止于 64K），并对 EOD 重置状态与去重。
+Long-context training data is drawn from documents ${\geq}32$K within the general web corpus, supplemented by publicly available long-context collections such as ProLong~\cite{gao2024prolong} and LongAlign~\cite{bai2024longalign}; retrieval quality is evaluated with RULER~\cite{hsieh2024ruler}.
+% 中文：长上下文训练数据取自通用语料中 ${\geq}32$K 的文档，并辅以公开长上下文数据集如 ProLong~\cite{gao2024prolong} 和 LongAlign~\cite{bai2024longalign}；检索质量用 RULER~\cite{hsieh2024ruler} 评估。
 \begin{table}[t]
 \centering
 \caption{Long-context data gate (left) and training ladder (right). Per-GPU tokens held at $16{,}384$; 32K throughput measured, 64K/128K extrapolated.}
@@ -140,20 +142,20 @@ At the time of writing (2026-11-13), the run has passed iteration $190{,}000$ of
 
 \begin{table}[t]
 \centering
-\caption{Production budget. Wall-clock is estimated at measured throughput.}
+\caption{Production budget.}
 \label{tab:prod-budget}
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lrcrl@{}}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}lrl@{}}
 \toprule
-\textbf{Phase} & \textbf{Tokens} & \textbf{Steps} & \textbf{Wall-clock} & \textbf{Status} \\
+\textbf{Phase} & \textbf{Tokens} & \textbf{Steps} \\
 \midrule
-S1 stable ($74{:}19{:}7$) & 1.47T & 350k & ${\approx}28.5$ d & in progress \\
-S2 stable ($40{:}40{:}20$) & 1.47T & 350k & ${\approx}28.5$ d & queued \\
-Decay A (16K, $60$--$70\%$) & 58.7B & 14k & ${\approx}1.2$ d & queued \\
-Decay B (LC, $30$--$40\%$) & 25.2B & 6k & ${\approx}2.3$ d & gated \\
+S1 stable ($74{:}19{:}7$) & 1.47T & 350k \\
+S2 stable ($40{:}40{:}20$) & 1.47T & 350k \\
+Decay A (16K, $60$--$70\%$) & 58.7B & 14k \\
+Decay B (LC, $30$--$40\%$) & 25.2B & 6k \\
 \midrule
-\textbf{Total} & \textbf{3.02T} & \textbf{720k} & ${\approx}60.5$ d & --- \\
+\textbf{Total} & \textbf{3.02T} & \textbf{720k} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -163,7 +165,7 @@ Long-context training is segment~B of the decay: the LR is already low, and neit
 % 中文：衰减尾部中的长上下文训练。长上下文训练是衰减的 B 段：LR 已低，SFT 与 RL 都不建立该量级的检索能力。
 The decay budget is ${\sim}2.9\%$ of main volume ($83.9$B / $20{,}000$ steps); long-context data is $30$--$40\%$ ($25$--$34$B). The ladder runs \mbox{32K$\to$64K$\to$128K} at $\texttt{CP}\in\{2,4,8\}$, $16{,}384$ tokens/GPU, continuing decay without re-warming; $\theta{=}10^{6}$ fixed, so 128K is trained and 1M is $8\times$ extrapolation (Table~\ref{tab:longctx-train}). Reference cost ${\sim}880$ GPU-hours (Table~\ref{tab:prod-budget}).
 % 中文：衰减预算为主训练量的 ${\sim}2.9\%$（$83.9$B / $20{,}000$ 步）；长上下文数据占 $30$–$40\%$（$25$–$34$B）。阶梯按 32K→64K→128K 运行，$\texttt{CP}\in\{2,4,8\}$，每 GPU $16{,}384$ token，延续衰减不重预热；$\theta{=}10^{6}$ 固定，故 128K 由训练达成、1M 为 $8\times$ 外推（表 \ref{tab:longctx-train}）。参考成本约 $880$ GPU·h（表 \ref{tab:prod-budget}）。
-At WSD end: one snapshot---needle retrieval (passkey + RULER, target ${\geq}95\%$ at 1M) and perplexity extrapolation ($\leq 1.10\times$).
+At WSD end: one snapshot---needle retrieval (passkey + RULER~\cite{hsieh2024ruler}, target ${\geq}95\%$ at 1M) and perplexity extrapolation ($\leq 1.10\times$).
 % 中文：WSD 结束时：一个快照——针检索（passkey + RULER，1M 目标 ${\geq}95\%$）与困惑度外推（$\leq 1.10\times$）。
 
 \subsection{Long-Context Capability and Inference Cost}\label{sec:longctx}
