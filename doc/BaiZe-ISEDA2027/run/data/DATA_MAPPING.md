@@ -694,9 +694,9 @@
 
 | repo_id | 类型 | 用途 | 文件数 | 总字节(GB) | license | 含真实工具执行 | 带reward | 与已有数据重叠 | SHA | 状态 |
 |:--|:--|:--|--:|--:|:--|:--|:--|:--|:--|:--|
-| `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 第一批完成(5子集/364parquet/216GB/0inc; megamath-web~1TB第二批待两路下载完成后启动) |
-| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(630/2226parquet/28%/1.2TB/2inc/PID2351909/elapsed~7.7h/nice19/ionice3/max-workers2; math-dialogue子集630/1184(1/5子集进行中); rate~43s/it; log→/tmp/dl_math_reasoning_restart.log健康; 最近parquet@09:47活跃; 剩余1596parquet/~3.26TB; ETA~19h→预计11-18~05CST; 11-17 09:4x巡检活跃) |
-| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | 🔄 下载中(1072/1635parquet/66%/2.0TB/2inc/PID2688848/elapsed~0.9h(重启后)/nice19/ionice3/max-workers2; code-no-thinking✅309+code-no-thinking-hard✅235+code-task-synthesis✅198+code-thinking-hard✅200+code-thinking-v0🔄130/352(下载中); 剩余code-thinking-v1(329)+codeio(12)=563parquet/~1.28TB; rate~2.85s/it(重启后较快); log→/tmp/dl_code_reasoning_restart.log健康; 最近parquet@09:44活跃; ETA~10h→预计11-17~20CST; 11-17 09:4x巡检活跃) |
+| `IFM/MegaMath` (≡`LLM360/MegaMath`) | 预训练 | 数学预训练语料 | 5317 | 1041.37 | odc-by | 否 | 否 | 独立(与OpenWebMath部分来源重叠) | `3cbc646` | ✅ 全量完成(6子集/5317parquet/1041GB/0inc; 第一批5子集364parquet分词完成64.97B tok; megamath-web 4950parquet/826GB下载✅完成+分词🔄进行中PID3028124/37.5M tok/shard/ETA~37h) |
+| `IFM/Math-Reasoning` | SFT | 数学推理链 | 2228 | 4462.53 | apache-2.0 | 否 | 否 | 独立 | `e249295` | 🔄 下载中(1566/2228parquet/70%/~3.0TB/2inc/PID3697171/elapsed~1d/nice19/ionice3/max-workers2; math-dialogue✅大部分+math-rewrite🔄进行中; rate~57s/it; log→/tmp/dl_math_reasoning_restart4.log; ETA~10h; 2026-11-19 22:4x巡检活跃) |
+| `IFM/Code-Reasoning` | SFT | 代码推理链 | 1637 | 3277.04 | apache-2.0 | 否 | 否 | 独立 | `e971bd7` | ✅ 下载完成(1635/1635parquet/3.0TB/0inc/elapsed~13.9h/nice19/ionice3/max-workers2; 7子集全完成; log→/tmp/dl_code_reasoning_restart3.log; 2026-11-19完成) |
 
 **MegaMath 子集详情**（HfApi 实测，2026-11-17 08:0x）：
 - `megamath-web-pro` (15B tokens, 高质量) — ✅ 100 parquet
@@ -704,20 +704,20 @@
 - `megamath-qa` — ✅ 32 parquet
 - `megamath-text-code-block` — ✅ 200 parquet
 - `megamath-translated-code` — ✅ 16 parquet
-- `megamath-web` (279B tokens, ~1TB) — ⏳ 第二批，待 Code-Reasoning + Math-Reasoning 完成后启动
+- `megamath-web` (279B tokens, ~1TB) — ✅ 下载完成(4950parquet/826GB/0inc); 🔄 分词进行中(PID3028124/RAYON=8/nice19/ionice3/~37.5M tok/shard/ETA~37h/log→/tmp/tok_megamath_web.log)
 
-**Code-Reasoning 子集详情**（HfApi 实测，2026-11-17 08:0x）：
+**Code-Reasoning 子集详情**（HfApi 实测，2026-11-17 08:0x · 下载状态更新 2026-11-19）：
 - `code-no-thinking` — ✅ 309/309 parquet (619.0GB)
 - `code-no-thinking-hard` — ✅ 235/235 parquet (470.6GB)
 - `code-task-synthesis` — ✅ 198/198 parquet (396.1GB)
 - `code-thinking-hard` — ✅ 200/200 parquet (399.8GB)
-- `code-thinking-v0` — 🔄 130/352 parquet (707.6GB; 下载中)
-- `code-thinking-v1` — ❌ 0/329 parquet (660.5GB; 未开始)
-- `codeio` — ❌ 0/12 parquet (23.4GB; 未开始)
+- `code-thinking-v0` — ✅ 352/352 parquet (707.6GB)
+- `code-thinking-v1` — ✅ 329/329 parquet (660.5GB)
+- `codeio` — ✅ 12/12 parquet (23.4GB)
 
-**Math-Reasoning 子集详情**（HfApi 实测，2026-11-17 08:0x）：
-- `math-dialogue` — 🔄 630/1184 parquet (2373.4GB; 下载中)
-- `math-rewrite` — ❌ 0/404 parquet (810.0GB; 未开始)
+**Math-Reasoning 子集详情**（HfApi 实测，2026-11-17 08:0x · 下载状态更新 2026-11-19）：
+- `math-dialogue` — ✅ 1184/1184 parquet (2373.4GB; 下载完成)
+- `math-rewrite` — 🔄 进行中 (404 parquet; 下载中)
 - `math-thinking-oss` — ❌ 0/232 parquet (466.3GB; 未开始)
 - `math-thinking-qwen` — ❌ 0/354 parquet (709.3GB; 未开始)
 - `socratic-math-dialogue` — ❌ 0/52 parquet (103.5GB; 未开始)
