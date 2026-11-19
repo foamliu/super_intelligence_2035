@@ -1299,3 +1299,4 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 1795001459152_a85ce	connorw	hfeg0pkn003	235	physical_verify	case	EDA-Eval-DesignFlow-LvsConfigReport-001	2026-11-19 09:41	
 1783476214859_q3z4m	e0014566	10.129.2.10	38	physical_verify	case	EDA-Eval-DesignFlow-AutoViaAgentGen-001	2026-11-19 10:26	
 1791889999605_9m82z	ellawu	10.129.2.14	26	physical_verify	case	EDA-Eval-DesignFlow-TvfDeckAnalyzeReport-001	2026-11-19 12:06	r809 infra-block: pyAether guest t0002997 (uid=204385), ssh to 10.129.2.14 Permission denied; re-claim when pyAether restarts as e0031982 (D r768 pattern); top fresh_true_C_r808.tsv candidate (phys_score=1750, mc=26, drc:1617)
+1792742868238_3v5rl	ellawu	10.129.2.14	14	physical_verify	case	EDA-Eval-DesignFlow-PgDummyFlowAnalyze-001	2026-11-19 12:34	
