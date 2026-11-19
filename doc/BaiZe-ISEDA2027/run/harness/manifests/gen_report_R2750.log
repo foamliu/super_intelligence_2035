@@ -1,0 +1,16 @@
+Report written: /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_glm53_7way_swebench_tb_zh.html (15502 bytes)
+  cline: n=453 resolved=292 status=eval_done
+  codex: n=384 resolved=108 status=eval_done
+  opencode: n=500 resolved=415 status=eval_done
+  claude-code: n=500 resolved=295 status=eval_done
+  pi: n=393 resolved=233 status=eval_done
+  hermes: n=500 resolved=444 status=eval_done
+  deepseek: n=257 resolved=166 status=eval_done
+TB-2.1:
+  cline: pass=42 done=89 err=42 st=done
+  codex: pass=25 done=89 err=175 st=done
+  opencode: pass=45 done=89 err=89 st=done
+  claude-code: pass=30 done=89 err=135 st=done
+  pi: pass=35 done=89 err=84 st=done
+  hermes: pass=41 done=89 err=108 st=done
+  deepseek: pass=11 done=89 err=95 st=done
