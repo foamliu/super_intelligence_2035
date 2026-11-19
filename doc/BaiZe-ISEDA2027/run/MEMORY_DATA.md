@@ -2,7 +2,7 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-19 — Fig-1 三饼图跨双栏 + 文字刷新 + 编译 0err**：重画 `4_llm_pretrain.tex` Fig-1（`fig:data-mix`）为 `figure*` 跨双栏三饼图（S1 web74/code19/math7 · S2 web40/code40/math20 · Decay instr-SFT60/agentic12/web22/math4/code2），三饼统一颜色图例 + 圆形描边 + 白色分隔线，图注注明 S2 配比依据 `blend_s2_preblend.tsv`（4:4:2）；刷新 §Data 节文字为 S1→S2→Decay 三阶段课程学习（含 stack-v3/MegaMath/Nemotron/finemath 新源零重叠 + 换种子），更新 §Results 的 annealing mix（86:10:4→60:12:28）与 production budget 表（拆 S1/S2），`latexmk -pdf main.tex` 0 error（5 页），已 commit `data paper:` + push。
+> 🟢 **心跳 · 2026-11-19 — Fig-1 三饼图跨双栏 + 文字刷新 + 编译 0err**：重画 `4_llm_pretrain.tex` Fig-1（`fig:data-mix`）为 `figure*` 跨双栏三饼图（S1 web74/code19/math7 · S2 web40/code40/math20 · Decay instr-SFT60/agentic12/web22/math4/code2），三饼统一颜色图例 + 圆形描边 + 白色分隔线，图注注明 S2 配比依据 `blend_s2_preblend.tsv`（4:4:2）；刷新 §Data 节文字为 S1→S2→Decay 三阶段课程学习（含 stack-v3/MegaMath/Nemotron/finemath 新源零重叠 + 换种子），正文「two-stage」→「three-stage」与图注一致（commit fa2bdea9c），更新 §Results 的 annealing mix（86:10:4→60:12:28）与 production budget 表（拆 S1/S2），`latexmk -pdf main.tex` 0 error（5 页），已 commit `data paper:` + push。
 
 > 🔴 **用户令 2026-11-18 — S2 overlap 研究 + PC-4 blend TSV + Nemotron/finemath 分词 · 已交付**：
 > **S2 overlap 报告**：`reports/report_s2_data_overlap_study.md`（455行/6方案/Megatron源码逐行分析）。结论：当前blend不排除S1已训数据；同种子重叠~83-100%；推荐方案D+E（补新源stack-v3/MegaMath天然零重叠 + S2换SEED=5678）；完全排除不可行。
