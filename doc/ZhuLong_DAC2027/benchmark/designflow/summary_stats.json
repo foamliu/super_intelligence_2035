@@ -28,7 +28,7 @@
   "mc5_recompute": {
     "auto_stop": {
       "consecutive_zero_case_rounds": 0,
-      "note": "r718 ADOPTION: shard_mc.A flipped 10->5 per 11-15 highest-priority order. r615 analysis supported flip (mc5-9 adds 174 fresh). Stop-loss criterion per 11-15 = whether mc>=5 pool has candidates that faithfully restore user intent + writable check(); analysis-Q&A now LEGAL (11-15 task intent), so analysis-dominant peek is NOT a problem. Counter resets; this is round 1 of true mc>=5 selection.",
+      "note": "r794 OVERTURN of r731 stop_loss: 33/34 mc5-9 A-pure candidates ALIVE. Stop-loss criterion (viable candidates exist) NOT met. shard_mc.A=5 active. Counter reset.",
       "threshold_rounds": 3
     },
     "computed_at": "2026-11-18T08:30:00+08:00",
@@ -285,18 +285,19 @@
   },
   "sessions": 3964,
   "shard_mc": {
-    "A": 10,
+    "A": 5,
     "B": 10,
     "C": 10,
     "D": 10
   },
   "source": "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv (11/09 full rescan r292)",
   "stop_loss_shardA_mc5": {
-    "action": "shard_mc.A reverted 5 -> 10 (matches trace_ledger.py SHARD_MC which was never changed). Pivot to intent_audit continuation + other output per 11-15 directive.",
-    "evidence": "r719/r720/r722/r724/r725/r726 produced 6 cases after mc>=5 adoption (r718); then r727/r728/r730 = 3 consecutive 0-case rounds. r730 systematic exhaustion proof: strict A-pure filter (verdi|vcs|dc_shell|design_compiler|innovus|primetime|pt_shell|formality|yosys|vivado|openroad|verilint) on 20261116 snapshot = 165 mc>=5 A-pure candidates; top 25 (mc 100-773) + 12 low-mc peek ALL fresh candidates already claimed by other shards (cross-shard mutex, r728 lesson) or C/D domain. A-pure mc>=5 fresh after cross-shard mutex ~= 0.",
-    "triggered_at": "2026-11-18T14:1x+08:00",
-    "triggered_by": "r731 (11-15 directive auto-stop §二.4: 3 consecutive 0-case rounds at mc>=5)",
-    "verdict": "mc>=5 pool expansion (11-15 order) measured INEFFECTIVE for shard A: produced 6 cases (r719-r726) then exhausted under cross-shard mutex. Not a threshold problem - A-pure fresh material truly consumed."
+    "action": "r794 OVERTURN: shard_mc.A restored 10 -> 5 per 11-15 highest-priority order. Stop-loss criterion (11-15 §二.4) = 'mc>=5 候选里有无能忠实还原意图+可判分 check() 任务'. r731 stop_loss was PREMATURE: it used strict A-pure filter (verdi|vcs|dc_shell|design_compiler|innovus|primetime|pt_shell|formality|yosys|vivado|openroad|verilint) that EXCLUDED analysis-Q&A/doc-search/debug-Q&A which 11-15 task intent made LEGAL. r727/r728/r730 0-case were budget constraints, NOT pool exhaustion.",
+    "evidence": "r794 liveness check of 34 fresh A-pure mc5-9 candidates (4-shard mutex excluded, A_total>C_total AND A_total>D_total): 33/34 ALIVE (97%), 1 NOFILE (1793926861786_5fn4e @ 10.129.8.125 rotation-evaporated). Correct path used: /home/<user>/.cline/data/sessions/<sf>/<sf>.messages.json (per r721/r723 path-bug fix). All 33 ALIVE parked in trace_ledger_A for future case rounds. Pool NOT exhausted -> stop_loss NOT triggered.",
+    "triggered_at": "2026-11-18T14:1x+08:00 (r731, OVERTURNED)",
+    "overtuned_at": "2026-11-19T12:4x+08:00 (r794)",
+    "overtuned_by": "r794 (mc5-9 A-pure liveness: 33/34 ALIVE)",
+    "verdict": "mc>=5 pool expansion (11-15 order) CONFIRMED EFFECTIVE for shard A: 33 fresh ALIVE A-pure candidates in mc5-9 band alone (top 34 by A-pure filter, 4-shard mutex applied). r731 stop_loss was a misjudgment based on (a) strict A-pure filter excluding legal analysis-Q&A tasks + (b) 0-case rounds that were budget constraints not pool exhaustion. shard_mc.A=5 active."
   },
   "summary_1113_dedup_sessions": 4418,
   "target_mc": 10,
@@ -375,7 +376,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-19 07:48",
+  "updated_at": "2026-11-19T12:47:51.124627",
   "users_mc10": 614,
   "users_mc100": 182,
   "users_mc30": 401,

@@ -639,3 +639,37 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1789881943229_0xncd	johnl	10.129.2.10	6	digital	parked		2026-11-19 10:11	r787 audit: too thin. Single user msg '帮我看下仿真' (42 chars, 8 msgs/62KB). Vague intent, no specific deliverable, ground-truth too thin for check() with teeth (per 11-15令 exclusion #2). johnl has prior mixed-session history (r711 m1cve NOT-AUTHENTIC).
 1793078584783_hldwx	e0039102	10.129.8.112	13	digital	parked		2026-11-19 10:46	r789: non-EDA platform Q&A (deploy Agent to Zhulong), unbuildable for design_flow
 1793945694181_3djeh	e0039102	10.129.8.112	16	digital	parked		2026-11-19 10:46	r789: capability Q&A (can you use pyAether bridge), unbuildable for design_flow
+1788483291546_fbikp	e02141	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=16436
+1789453137672_720it	e0017484	10.129.35.73	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=10070
+1790581124817_gucnl	e02141	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=63273
+1790649594359_skdtd	zmzhang	10.129.8.230	8		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=29961
+1791615542263_satf4	johnl	10.129.2.10	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=14135
+1792044781149_gwa9k	sijialv	10.129.32.46	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=23247
+1792827914007_fl8g4	jkxu	10.129.32.80	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=31578
+1792998450890_1y66j	e0041392	10.129.2.12	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=232337
+1793004297782_9kvaw	harrys	10.129.2.11	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=159591
+1793179786389_n57f9	zhiguo1w	10.129.40.209	8		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=258265
+1793753704056_irod5	e0042624	10.129.2.11	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=93011
+1793755021637_2f3uv	daiweilu	10.129.35.244	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=203976
+1793755246546_qxcop	shanliny	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=78803
+1793846544665_8pb5i	willl	10.129.35.77	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=224747
+1794193348712_x0mjt	e0041392	10.129.2.12	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=307390
+1794366349085_n907k	meng1l	10.129.2.13	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=17828
+1794384170431_k7bl1	e0039516	10.129.2.10	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=28561
+1794449765531_s59t7	rongjiez	10.129.2.14	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=563204
+1794453900244_5of6x	e0048255	10.129.32.190	8		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=423172
+1782141557406_uhla7	e0025730	10.129.8.86	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=64698
+1789718897680_hdhfh	t0002470	10.129.2.11	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=1053770
+1791615588369_akfxu	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=13846
+1791897142698_tt73q	jason17w	10.129.32.190	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=233148
+1791947876609_xq1yo	e0027435	10.129.8.237	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=5638
+1792224394327_gheik	e0014566	10.129.35.82	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=120863
+1792466393671_dqi7d	liyingw	172.16.8.14	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=62615
+1793064917593_tpnqx					parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=112676
+1793087727242_vqefw	e0029495	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=14177
+1793597178818_otgh9	e0045488	10.129.2.13	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=135836
+1793873712084_pzo1r	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=53923
+1794194018234_c41bm	e0041392	10.129.2.12	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=305709
+1794478957304_r44l7	vendor.cno.chjh07	10.129.2.11	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=355678
+1794637486415_rbr06	e0039516	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=61629
+1793926861786_5fn4e	e0047722	10.129.8.125	6		parked		2026-11-19 12:47	r794-liveness-NOFILE mc5-9-A-pure rotation-evaporated
