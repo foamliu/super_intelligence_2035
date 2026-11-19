@@ -347,7 +347,7 @@
 1793324917372_6iuo6.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792477456219_fy4mv.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1792477456219_fy4mv.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
-1793328605482_xpue4.messages.json					parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
+1793328605482_xpue4.messages.json					case	EDA-Eval-DesignFlow-OpenDmViewsProduce-001	2026-11-20 02:40	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
 1793328605482_xpue4.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793274153419_2q4mg.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793274153419_2q4mg.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
