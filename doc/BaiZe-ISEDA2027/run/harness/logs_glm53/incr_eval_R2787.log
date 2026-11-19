@@ -8,3 +8,12 @@
 new instances: 1 ['matplotlib__matplotlib-14623']
 [incr-eval 21:20:34] pi: merged 1 new patches -> predictions_pi_new_R2787.json
 [incr-eval 21:20:34] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2787
+[incr-eval 21:40:42] pi: eval rc=0
+[incr-eval 21:40:42]   matplotlib__matplotlib-14623: FAILED
+[incr-eval 21:40:42] pi: cumulative n=436 resolved=244 failed=191 infra=1 -> eval_glm53_pi.json
+[incr-eval 21:40:42] hermes: 0 new instances, skip
+
+=== deepseek R2787 ===
+new instances: 3 ['django__django-16100', 'django__django-16116', 'django__django-16136']
+[incr-eval 21:40:42] deepseek: merged 3 new patches -> predictions_deepseek-harness_new_R2787.json
+[incr-eval 21:40:42] deepseek: EVAL 3 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2787
