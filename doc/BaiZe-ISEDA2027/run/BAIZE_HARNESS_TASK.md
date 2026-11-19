@@ -19,13 +19,15 @@
 > | opencode | Kimi-K2.6 | 同上 | 同上 | 同上 |
 > | opencode | Doubao | 同上 | 同上 | 同上 |
 
-> **排队条件**：SWE-bench Multimodal 容器下载完成（当前 433/580=74.7%）后启动。不抢 pretrain CPU。
+> **排队条件**：SWE-bench Multimodal 容器下载完成（✅ 580/580=100% · 2026-11-19 12:14 · 0 FAILED）后启动。不抢 pretrain CPU。**→ 2×3 predict 已于 R2763 14:56 启动（6 路全 RUN，nice19/ionice3）。**
 
-> 🔴 **用户令 · 2026-11-18 — 下载 SWE-bench Multimodal 评测容器（最高优先）**
+> ✅ **用户令 · 2026-11-18 — 下载 SWE-bench Multimodal 评测容器（最高优先）· ✅ 已交付（R2763）**
 
 > **用户原话**：「一边补 SWE-bench Verified 评测，一边下载 SWE-bench Multimodal 的评测容器」
 
 > **指令**：在继续补 SWE-bench Verified 评测的同时，并行下载 SWE-bench Multimodal 的评测容器。不要影响 pretrain 训练吞吐（nice19/ionice3，不抢 .29 CPU）。
+
+> **交付结论（R2763 · 2026-11-19 14:5x）**：MM 容器下载 **COMPLETE**——`pull_state.txt`=580、`pull_progress.log` 末行 `=== DOWNLOAD COMPLETE === Total: 580 | Pulled: 580 | Skipped: 0 | Failed: 0`（2026-11-19 12:14:49）。全程 nice19/ionice=idle、不抢 .29 CPU✅。SWE-bench Verified 评测并行补跑未中断（4 路 predict alive）。下载产物落 `run/harness/swebench_mm/`（images/instances/test.parquet/dev.parquet，均 gitignored 机器产物）。
 
 > 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不编造数字、infra≠能力、判据不放宽）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定排查路径、复现手段与修复方案。**
 

@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2762 · 2026-11-19 14:4x — MM 2×3 cline×doubao/deepseek silent-exit根因修复+smoke全6路PASS✅**·**心跳第一行**: ✅ **cline×doubao smoke PASS**(patch=1770B·12 API calls·wall=101s)+✅ **cline×deepseek smoke PASS**(patch=4300B·47 API calls·wall=314s)·**根因**: `sanitize_cline_prompt`用U+200B(零宽空格)转义`@mention`→cline-checkpoint-off v3.0.51把U+200B当word char→仍解析`@\u200bword`为file-mention→**静默退出rc=0 stdout=0 0 API calls**·**修复**: U+200B→真实ASCII空格(`@word`→`@ word`)·**实证**(7 variant测试): `@user`→1.9s空退✗·`@.word`/`@/word`→1.9s空退✗·`@ word`→17s 91KB patch✅·`＠word`(全角)→30s 109KB✅·**附加修复**: `--version`调试块`subprocess.run`返回CompletedProcess误当3-tuple解包→改用`.returncode/.stdout/.stderr`·**6路smoke全has_patch**: cline×kimi2284B·cline×doubao1770B·cline×deepseek4300B·opencode×kimi2441B·opencode×doubao1627B·opencode×deepseek6832B·SWE-bench Verified predict 4路alive·📌 **自检**: load35/224✅·无CPU失控✅·pretrain未受影响✅·**全部运维令✅已交付**·WAITING=0·📦 TASK=29.5KB(✅≤32KB) MEMORY=23.0KB(✅≤32KB)
+> 🆕 **R2763 · 2026-11-19 14:5x — MM容器下载COMPLETE(580/580)+2×3 predict全6路启动✅**·**心跳第一行**: ✅ **MM容器下载COMPLETE**(`pull_state.txt`=580·`pull_progress.log`末行`=== DOWNLOAD COMPLETE === Total:580 Pulled:580 Failed:0`·12:14:49)·✅ **DeepSeek-V4-flash额度恢复**(curl实测返回valid completion)·✅ gate 4/4 met(下载100%+额度恢复+6路smoke全PASS+不抢CPU)·**2×3 predict全6路启动**(cline×deepseek/kimi/doubao+opencode×deepseek/kimi/doubao·480题/路·`launch_mm_2x3_full.sh`·nice19/ionice3·cline3路各配mm_proxy 9095/9096/9097)·实测opencode×doubao instance2 `has_patch patch=598B wall=45.5s`✅·6路全RUN·可恢复(progress_2x3逐题落盘)·SWE-bench Verified predict 4路alive·📌 **自检**: load38/224✅·本线MM proc CPU<1%(nice19生效)✅·无CPU失控✅·pretrain未受影响✅·**全部运维令✅已交付(11-18下载✅+11-19 2×3 predict已启动)**·WAITING=0·📦 TASK=29.8KB(✅≤32KB) MEMORY=23.5KB(✅≤32KB)
+> 📦 R2762 流水已归档 → daily-memories-harness/2026-11-19.md（MM 2×3 cline×doubao/deepseek silent-exit根因修复=sanitize_cline_prompt U+200B→ASCII空格·smoke全6路PASS: cline×kimi2284B/doubao1770B/deepseek4300B·opencode×kimi2441B/doubao1627B/deepseek6832B）。需要时再读。
 > 📦 R2761 流水已归档 → daily-memories-harness/2026-11-19.md（MM 2×3 cline管线3bug修复+cline×kimi smoke PASS patch=2284B 51calls 491s+opencode×kimi PASS patch=2441B·两harness MM管线全通）。需要时再读。
 > 📦 R2757 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval(cline+1 pi+2 RESOLVED)+MM 2×3可行性核查+6路配置落盘+7way报告REGEN·MM容器521/580=89.8%）。需要时再读。
 > 📦 R2756 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器465/580=80.2%·pretrain未受影响·predict+2新各路<2阈值→不跑incr_eval·自检clean）。需要时再读。
@@ -78,16 +79,16 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2759 SWE-bench Verified报告重写✅交付+footer修复+任务书归档瘦身·MM容器553/580=95.3%
+PHASE:        R2763 MM容器下载COMPLETE(580/580)·2×3 predict全6路已启动✅(480题/路·nice19/ionice3)
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·ability桶拆两层✅·SWE-bench predict 7路resume·opencode500/500+eval415/500=83.0%✅·hermes500/500+eval444/500=88.8%✅·cc500/500+eval295/500=59.0%✅·incr_eval R2680~R2757 DONE·§用户令11-19 08:2x 两份7way报告REGEN主表置顶✅·**SWE-bench Multimodal 2×3评测**(用户令11-19): 可行性核查✅(Kimi/Doubao多模态✅·DeepSeek待额度重置)·6路配置`mm_2x3_config.json`+评测计划`MM_2X3_EVAL_PLAN.md`落盘✅·**MM容器下载进行中**(580 images·521/580 pulled=89.8%·0 FAILED)·CPU螺旋kill+incr_eval CPU-limited(taskset 0-15+OMP=1)✅
-当前动作:     R2759: SWE-bench Verified报告重写✅(主表置顶 resolved/500 单数字·生成器footer stray text修复)·任务书归档(11-19 08:2x+11-18 10:3x→ARCHIVE·36→29.5KB)·MM容器下载巡检(553/580=95.3%)·predict 4路alive·自检clean(load40/224·无本线proc>8000%CPU·pretrain未受影响)
-下一步:       ① MM下载完成(580/580)后冒烟1题×6路 ② 复测DeepSeek-V4-flash多模态(额度~13:00重置后) ③ cline/opencode多模态适配(下载image_assets图片→base64→多模态content) ④ parquet→swebench JSON转换器 ⑤ SWE-bench Verified predict继续(cline/codex/pi/deepseek 4路alive)
+当前动作:     R2763: 自检clean(load38/224·本线MM proc CPU<1%·nice19生效✅)→gate核查(MM下载580/580✅+DeepSeek额度恢复✅+6路smoke全PASS✅)→`launch_mm_2x3_full.sh`全6路启动(480题/路·nice19/ionice3·cline mm_proxy 9095-9097)→实测opencode×doubao has_patch patch=598B✅·6路全RUN·SWE-bench Verified predict 4路alive·pretrain未受影响
+下一步:       ① 监控2×3 predict进度(6路×480·可恢复·查`bash launch_mm_2x3_full.sh status`) ② predict完成后merge+eval(Docker·CPU限制taskset 0-15+OMP=1) ③ eval后出2×3中文HTML报告(落reports/) ④ SWE-bench Verified predict继续(cline/codex/pi/deepseek 4路alive)+incr_eval ⑤ 每轮自检CPU/内存(运维令11-02/10-30)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK=29.5KB（✅≤32KB） / MEMORY=23.0KB（✅≤32KB）
+ 体积: TASK=29.8KB（✅≤32KB） / MEMORY=23.9KB（✅≤32KB）
  SWE-bench Verified Pass%(分母恒500·resolved/500·单数字无区间): hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·dsh168/500=33.6%·codex108/500=21.6%·(4路predict仍alive: cline460/codex391/pi405/dsh259)
  真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2% · codex 25/89=28.1% · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
-  SWE-bench Multimodal容器下载(用户令11-18)+2×3评测(用户令11-19): run/harness/swebench_mm/·580 images total·553 pulled=95.3%(0 FAILED)·PID 3749136 NI=19·nice19/ionice=idle·不抢.29 CPU✅·ETA~1h·**2×3评测排队中**(6路配置+评测计划已落盘·待下载完成+多模态适配)
+  SWE-bench Multimodal容器下载(用户令11-18)✅COMPLETE+2×3评测(用户令11-19)predict已启动: run/harness/swebench_mm/·580 images total·**580/580 pulled=100%(0 FAILED·12:14:49)**·✅已交付(R2763)·**2×3 predict全6路RUN**(cline/opencode×deepseek-v4-flash/kimi-k2.6/doubao·480题/路·nice19/ionice3·cline mm_proxy 9095-9097·可恢复progress_2x3)·实测has_patch✅·不抢.29 CPU✅
   research日报11-19 harness建议: ①完成判据改三分法(fact/verdict/scope·PASS回执绑定最终源码摘要+两项具名检查+终止后可见检查仍PASS·只报标签正确率不算通过) ②20,480生成上限写进评测配置 ③entity-tool graph造题(必须跨≥2工具·执行日志三态判分) → 纳入未来计划(来自 research 日报 2026-11-19)
 ## 启动说明（首次唤醒）
 

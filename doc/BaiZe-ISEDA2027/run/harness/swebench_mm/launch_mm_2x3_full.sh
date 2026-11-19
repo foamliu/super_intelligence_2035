@@ -52,7 +52,7 @@ for r in "${ROUTES[@]}"; do
     continue
   fi
   echo "  launching $r -> $log"
-  setsid bash -c "cd '$HERE' && python3 run_mm_2x3.py predict --route '$r' > '$log' 2>&1" \
+  setsid bash -c "cd '$HERE' && nice -n 19 ionice -c 3 python3 run_mm_2x3.py predict --route '$r' > '$log' 2>&1" \
     < /dev/null > /dev/null 2>&1 &
   sleep 2   # stagger launches to avoid a thundering herd on the gateway
 done
