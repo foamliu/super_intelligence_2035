@@ -1,0 +1,64 @@
+[incr-eval 15:22:39] Starting incr_eval_all R2765 (CPU-limited: taskset 0-15 + OMP=1)
+[incr-eval 15:22:39] --- cline ---
+[incr-eval 15:22:39] cline: unevaluated real_patch=6 (spiral=0) empty_patch=11
+[incr-eval 15:22:39] cline: merged 6 new patches -> predictions_cline-patched_new_R2765.json
+[incr-eval 15:22:39] cline: EVAL 6 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_cline-patched_incr_R2765
+[incr-eval 15:25:13] cline: eval rc=0
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7440: RESOLVED
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7454: RESOLVED
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7462: FAILED
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7590: FAILED
+[incr-eval 15:25:13]   sphinx-doc__sphinx-8120: RESOLVED
+[incr-eval 15:25:13]   sphinx-doc__sphinx-9230: RESOLVED
+[incr-eval 15:25:13]   sphinx-doc__sphinx-10614: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-10673: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-11510: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7748: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7757: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7910: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-7985: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-8035: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-8056: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-8551: EMPTY PATCH -> failed
+[incr-eval 15:25:13]   sphinx-doc__sphinx-9658: EMPTY PATCH -> failed
+[incr-eval 15:25:13] cline: cumulative n=479 resolved=300 failed=179 infra=0 empty_patch=76 total_pred=476
+[incr-eval 15:25:13] --- codex ---
+[incr-eval 15:25:13] codex: CPU_SPIRAL_SKIP -> ['scikit-learn__scikit-learn-14710'] (mark infra, no eval)
+[incr-eval 15:25:13] codex: unevaluated real_patch=2 (spiral=1) empty_patch=7
+[incr-eval 15:25:13] codex: merged 2 new patches -> predictions_codex_new_R2765.json
+[incr-eval 15:25:13] codex: EVAL 2 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_codex_incr_R2765
+[incr-eval 15:26:15] codex: eval rc=0
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-25232: RESOLVED
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-25747: FAILED
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-25102: EMPTY PATCH -> failed
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-25931: EMPTY PATCH -> failed
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-25973: EMPTY PATCH -> failed
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-26194: EMPTY PATCH -> failed
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-26323: EMPTY PATCH -> failed
+[incr-eval 15:26:15]   scikit-learn__scikit-learn-9288: EMPTY PATCH -> failed
+[incr-eval 15:26:15]   sphinx-doc__sphinx-10323: EMPTY PATCH -> failed
+[incr-eval 15:26:15] codex: cumulative n=398 resolved=109 failed=288 infra=1 empty_patch=229 total_pred=398
+[incr-eval 15:26:15] --- cc ---
+[incr-eval 15:26:15] cc: unevaluated real_patch=0 (spiral=0) empty_patch=0
+[incr-eval 15:26:15] cc: nothing to do
+[incr-eval 15:26:15] --- deepseek ---
+[incr-eval 15:26:15] deepseek: unevaluated real_patch=7 (spiral=0) empty_patch=4
+[incr-eval 15:26:15] deepseek: merged 7 new patches -> predictions_deepseek-harness_new_R2765.json
+[incr-eval 15:26:15] deepseek: EVAL 7 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_deepseek-harness_incr_R2765
+[incr-eval 15:29:27] deepseek: eval rc=0
+[incr-eval 15:29:27]   django__django-15161: RESOLVED
+[incr-eval 15:29:27]   django__django-15268: RESOLVED
+[incr-eval 15:29:27]   django__django-15277: RESOLVED
+[incr-eval 15:29:27]   django__django-15278: RESOLVED
+[incr-eval 15:29:27]   django__django-15315: RESOLVED
+[incr-eval 15:29:27]   django__django-15368: RESOLVED
+[incr-eval 15:29:27]   django__django-15380: RESOLVED
+[incr-eval 15:29:27]   django__django-15252: EMPTY PATCH -> failed
+[incr-eval 15:29:27]   django__django-15280: EMPTY PATCH -> failed
+[incr-eval 15:29:27]   django__django-15375: EMPTY PATCH -> failed
+[incr-eval 15:29:27]   django__django-15503: EMPTY PATCH -> failed
+[incr-eval 15:29:27] deepseek: cumulative n=270 resolved=175 failed=95 infra=0 empty_patch=56 total_pred=270
+[incr-eval 15:29:27] --- pi ---
+[incr-eval 15:29:27] pi: unevaluated real_patch=10 (spiral=0) empty_patch=7
+[incr-eval 15:29:27] pi: merged 10 new patches -> predictions_pi_new_R2765.json
+[incr-eval 15:29:27] pi: EVAL 10 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_pi_incr_R2765
