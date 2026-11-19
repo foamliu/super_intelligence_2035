@@ -1514,7 +1514,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1788757855111_k34i5	xinqiaoz	hfeg0pkn005	48	schematic_netlist	parked		2026-11-12 22:17	r560 peek: greeting + scenario-launch DRC/LVS (C-domain)
 1793077423218_8nqgg	e03179	hfeg0pkn002	48	schematic_netlist	parked		2026-11-12 22:17	r560 peek: skill-only vam-agent (same #554b sub-class)
 1793686764440_0vmow	e0017052	hfeg0pkn001	96	schematic_netlist	case	EDA-Eval-DesignFlow-DqsOscCircuitExplainQA-001	2026-11-16 01:08	r560 peek: explain Q&A 'DQSOSC circuit detail' on verilog netlist
-1792493018233_3rdqj	jinhaoli	hfeg0pkn004	67	analog_context	parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
+1792493018233_3rdqj	jinhaoli	hfeg0pkn004	67	analog_context	case	EDA-Eval-DesignFlow-Ddr5WriteTaskParamExplainQA-001	2026-11-20 02:18	r974 落库: A-faithful U#0 verbatim 'ddr5_test.v task write 参数解读', synthesized-reframe produce verilog task-signature parser, 12 断言 a-l, path-bug revival 第 5 例 case
 1790489156584_1bc9r	mike	hfhds206	61	analog_context	parked		2026-11-12 22:17	r560 peek: garbled/incomprehensible first turn
 1788831007337_cmr7h	sagequan	hfeg0pbn04	49	analog_context	parked		2026-11-12 22:17	r560 peek: continuation debug llm_cline.py code fix (A-domain tooling)
 1794226224742_t8ka2					parked		2026-11-12 22:32	r561 mc10-15 1109 peek-reject: Q&A/debug/how-to/explain/scenario-launch/skill-query (non produce-task)
