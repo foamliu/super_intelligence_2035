@@ -65,6 +65,15 @@ A档合规判定：✓ 提出需求（详解电路原理 + 画框架图 + 列模
 - **check.py**: 12 断言 a-l，反硬编码用 word-boundary 匹配 49 个 A-only token
 - **self-verify**: 12/12 PASS + 3 neg (empty/print_only/core_deleted) 全 FAIL
 
+## Case Synthesis (r939 — U#65 follow-up, same session, 2nd case)
+
+- **A 资产**: `wckdcm_top_duty_cycle_explain_A.md` — 基于 trace GOLD A#80 (10467 字) 合成的结构化 markdown 手册，保留 WckDCMTop 真实 cell 名/端口字符串/闭环校准框架图/6 组子模块作用表 A-F 共 37 个真实 cell/闭环五步工作流程/设计要点/局限
+- **B 资产 (hidden)**: `zq_calibration_module_explain_B.md` — 合成平行场景（DDR5 RDIMM ZQTrain ZQCalTop 阻抗校准模块详解），结构同构但 token 不相交（ZQ/ZQCali/ZQIb/ZQDiv/RZQ/ODT vs WCK/DCM/DCC/WckDCMTop）
+- **deliverable reframe**: 复用 r937 `circuit_module_explain_parser.py`（parser 完全通用无硬编码，对两份手册均正确解析 8 键 JSON）
+- **check.py**: 12 断言 a-l，反硬编码用 word-boundary 匹配 119 个 A-only token（WCK/DCM/DCC/ddjoc-specific，通用词占空比/duty 因 DCM 与 ZQ 振荡器均调占空比属合法重叠故排除）
+- **self-verify**: 12/12 PASS + 3 neg (empty/print_only/core_deleted) 全 FAIL ALL_NEG_FAIL=True + §4.9 (a)(b)(c) ✓ + 3-seed idempotent ✓
+- **合法双 case**: 同 session 同 user 不同问（U#0 锚 r937 / U#65 锚 r939），r938 discuss 已确立 sibling-dup vs follow-up-question 区分
+
 ## Why This Case is D-Domain
 
 - 用户真实意图：详解 LPDDR5X DRAM 模拟电路模块原理 — 纯 analog_context Q&A
