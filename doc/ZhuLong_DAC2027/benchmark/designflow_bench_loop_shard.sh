@@ -91,10 +91,9 @@ git_push_if_needed() {
     (
         flock -x 200
         git_sync_one "$BENCH_REPO_ROOT" master "$LAST_PUSH_BENCH" "bench-shard${SHARD}" \
-            "benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow_${SHARD}.jsonl" \
+            "benchmarks/EDA-Eval-DesignFlow/cases/${SHARD}" \
             "benchmarks/EDA-Eval-DesignFlow/assets" \
             "benchmarks/EDA-Eval-DesignFlow/reference" \
-            "benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl"
     ) 200>/tmp/designflow_bench_git.lock
 }
 
@@ -130,9 +129,10 @@ while true; do
 
 ## 本轮任务卡（loop shard ${SHARD} 自动生成 · __TS__）
 - **你是 shard ${SHARD}**，只做 domain 属于本 shard 的 case。
-- **本轮只做 1 条 case**：trace_ledger.py --shard ${SHARD} next → claim → 深读 → 合成 → 自验 → 追加 EDA-Eval-DesignFlow_${SHARD}.jsonl → 日报一行。
+- **本轮只做 1 条 case**：trace_ledger.py --shard ${SHARD} next → claim → 深读 → 合成 → 自验 → 写 cases/${SHARD}/<task_id>.json + assets/<task_id>/ + reference/<task_id>/ → 日报一行。
+- 🚫 不要追加任何 *.jsonl（jsonl 是 build 产物，已 gitignored，由 scripts/build_jsonl.py 从 cases/ 生成）。
 - 🚫 不要碰主 jsonl（EDA-Eval-DesignFlow.jsonl），它由 merge 脚本自动合并。
-- 🚫 不要碰别的 shard 的文件（MEMORY_DESIGNFLOW_{其他}.md、trace_ledger_{其他}.tsv、EDA-Eval-DesignFlow_{其他}.jsonl）。
+- 🚫 不要碰别的 shard 的文件（MEMORY_DESIGNFLOW_{其他}.md、trace_ledger_{其他}.tsv、cases/{其他}/）。
 - 硬预算：__BUDGET__ 分钟（进程 __TIMEOUT__s 后被 timeout 终止）。
 - 交付后必须把 MEMORY_DESIGNFLOW_${SHARD}.md 首行写成 WAITING: 0。
 CARD
