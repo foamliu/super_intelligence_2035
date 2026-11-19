@@ -1,0 +1,18 @@
+[incr-eval 16:54:51] === incr_eval R2771 start ===
+
+=== cline R2771 ===
+new instances: 2 ['sphinx-doc__sphinx-9673', 'sympy__sympy-15349']
+[incr-eval 16:54:51] cline: merged 2 new patches -> predictions_cline-patched_new_R2771.json
+[incr-eval 16:54:51] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2771
+[incr-eval 16:55:20] cline: eval rc=0
+[incr-eval 16:55:20]   sphinx-doc__sphinx-9673: FAILED
+[incr-eval 16:55:20]   sympy__sympy-15349: RESOLVED
+[incr-eval 16:55:20] cline: cumulative n=481 resolved=301 failed=180 infra=0 -> eval_glm53_cline-patched.json
+[incr-eval 16:55:21] codex: 0 new instances, skip
+[incr-eval 16:55:21] opencode: 0 new instances, skip
+[incr-eval 16:55:21] claude-code: 0 new instances, skip
+
+=== pi R2771 ===
+new instances: 2 ['matplotlib__matplotlib-14623', 'matplotlib__matplotlib-24026']
+[incr-eval 16:55:21] pi: merged 2 new patches -> predictions_pi_new_R2771.json
+[incr-eval 16:55:21] pi: EVAL 2 instances -> run_id=verified_full_glm53_pi_incr_R2771
