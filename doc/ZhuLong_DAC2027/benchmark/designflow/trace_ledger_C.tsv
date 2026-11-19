@@ -1315,3 +1315,5 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1790219742335_t9g3z	lizwen	10.129.2.12	22	layout_aether	case	EDA-Eval-DesignFlow-DnwPatternGen-001	2026-11-19 18:10	
 1794971695642_y20x8	xinqiaoz	hfeg0plg56	788	physical_verify	parked		2026-11-19 18:35	REJECT r822: not EDA — disk cleanup session (/home/xinqiaoz disk space, PyCharm cache, issues dir cleanup); pdk/drc/calibre keyword matches incidental in cleanup listings
 1795012706443_fc55b	legendd	hfeg0pkn001	588	layout_aether	case	EDA-Eval-DesignFlow-TechViaChainResolver-001	2026-11-19 18:55	
+1783301808776_x4ltd	e0014566	10.129.2.10	36	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillScriptRunAnalyzer-001	2026-11-19 19:58	
+1792736789930_mfvq9	mwxi	10.129.32.112	31	layout_virtuoso	parked		2026-11-19 19:19	off-domain: ops/sysadmin (disk cleanup + python liblzma fix + conda env + quantization tool Ubuntu runtime libs on 172.16.8.101/10.239.67.65); keywords aether/drc/calibre false positives; not layout_virtuoso
