@@ -1554,3 +1554,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794793538641_8bcd2	t0003117	hfeg0pkn004	348	spice_sim	case	EDA-Eval-DesignFlow-BridgeServerFix-001	2026-11-19 15:09	
 1794795007762_dvr37	thomasz	hfeg0pfn058	145	spice_sim	case	EDA-Eval-DesignFlow-FinesimConvCompare-001	2026-11-19 15:45	
 1794969925980_gcxee	clarawu	hfeg0pkn005	72	spice_sim	case	EDA-Eval-DesignFlow-ZqRonLibGen-001	2026-11-19 16:35	
+1794970521313_yulwm	xiaoyu1d	hfhds208	19	spice_sim	case	EDA-Eval-DesignFlow-FinesimNestedSweepGen-001	2026-11-19 17:40	
