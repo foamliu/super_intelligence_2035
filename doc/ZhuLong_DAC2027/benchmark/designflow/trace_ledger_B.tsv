@@ -1567,4 +1567,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795055873026_3bis4	alan17z	hfeg0pkn004	167	spice_sim	case	EDA-Eval-DesignFlow-IbisModelSpGen-001	2026-11-20 00:01	
 1795069774803_nghfa	siyuji	hfeg0plg72	54	spice_sim	case	EDA-Eval-DesignFlow-TclDebugInstrumentGen-001	2026-11-20 00:26	
 1795074095632_qqces.messages.json	e0039786	hfeg0pkn005	112	spice_sim	case	EDA-Eval-DesignFlow-BatchPexHspiceGuiGen-001	2026-11-20 00:54	
-1795052008686_g9bki	e0029308	hfeg0pkn001	353	spice_sim	claimed		2026-11-20 01:24	
+1795052008686_g9bki	e0029308	hfeg0pkn001	353	spice_sim	case	EDA-Eval-DesignFlow-DffSetupHoldStimGen-001	2026-11-20 02:05	
