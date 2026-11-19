@@ -981,7 +981,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1791944596389_h9kyu	e13zhang			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: meta/analysis Q&A patent ideas (U#4 分析验证环境有没有值得写专利的点), not produce-task
 1793098650308_1tdh8	michael1l			layout_aether	parked		2026-11-15 04:04	r582 peek REJECT: meta+Q&A (U#0-2 hi + U#3 aether里有漏孔检查吗), not produce-task
 1794357827042_myiqd	peterch			layout_virtuoso	parked		2026-11-15 04:04	r582 peek REJECT: setup+Q&A (U#0 访问DEJOA项目 + U#2 virtuoso下怎么看hierachy), not produce-task
-1793849646244_6kk7g	adaml			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: run-existing-skill calibre-lvs (U#0 calibre-lvs skill invocation), not produce-task
+1793849646244_6kk7g	adaml			physical_verify	case	EDA-Eval-DesignFlow-CalibreLvsRepParse-001	2026-11-20 01:33	revived r835: 2026-11-15 reaudit legitimizes run-existing-skill/flow-driving; reframe to lvs_rep_parser.py per skill spec 验收标准
 1793588497814_536nj	yuqingc			physical_verify	parked		2026-11-15 04:04	r582 peek REJECT: file-operation (U#0 export CSV to local machine), not EDA produce-task
 1793945277123_q737d	xxchen	hfeg0pkn001	102	layout_aether	parked		2026-11-15 05:23	not-produce r583
 1787623581243_t3vh1	e0014566	hfeg0plg58	rscalc RTEXT checkPoints layout_virtuoso	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcRtextCheckpoints-001	2026-11-15 05:23	r583 A档 layout_virtuoso k=12 delivered
@@ -1320,3 +1320,5 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1794879096266_pwk03.messages.json	lynn1y	hfeg0plg44	371	physical_verify	case	EDA-Eval-DesignFlow-GdsHierarchyTransformResolver-001	2026-11-19 20:43	
 1794969582427_9sd8r.messages.json	steveny	hfeg0pnd001	294	physical_verify	case	EDA-Eval-DesignFlow-CalibreVcoResolve-001	2026-11-19 23:17	r830: calibre_vco env resolver reframe, 15 conds a-o, gold+neg verified
 1794993777655_2zkx6	e0025768	hfeg0pnd001	11	layout_aether	case	EDA-Eval-DesignFlow-TraceSessionAnalyzer-001	2026-11-20 00:21	
+1795052196933_qagyb.messages.json	jkxu	hfeg0pkn002	15	physical_verify	parked		2026-11-20 01:19	LSF ops Q&A: bjobs smallslot queue stuck + bsub -I vs no-I + btop usage, drc:600 keywords are job-name bleed not real DRC intent; not C-domain (ops-infrastructure)
+1795000516166_olj08.messages.json	e0025768	hfeg0pkn001	13	layout_aether	parked		2026-11-20 01:21	near-dup of r833 2zkx6 TraceSessionAnalyzer-001: same user e0025768 + same U#0 'analyze history sessions, summarize engineers work/business Q/business tools, save .md'; only 1 user_input turn; reaudit-dup
