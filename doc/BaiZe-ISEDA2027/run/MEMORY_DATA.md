@@ -2,7 +2,7 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-20 (R10) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 261k/700k(37.3%) step~7.0s / Nemotron 171/193=88.6% ETA~3.6h ~133.3B tok / MegaMath-web 分词 142/4950 ETA~40h / Math-Reasoning 72.3% (1612/2228) ETA~9.9h / .12 load=35.02✅ / /nas_user 44T✅ / 全量 live numbers 同步 / commit+push完成**。
+> 🟢 **心跳 · 2026-11-20 (R11) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 261k/700k(37.3%) step~7.0s / Nemotron 172/193=89.1% ETA~3.5h ~134.2B tok / MegaMath-web 分词 166/4950 ETA~40h / Math-Reasoning 72.7% (1620/2228) ETA~9.8h / .12 load=35.86✅ / /nas_user 44T✅ / 全量 live numbers 同步 / commit+push完成**。
 
 > 🟢 **心跳 · 2026-11-19 (R9) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 主要刷新点：Nemotron 170/193=88.1% ETA~3.8h ~132.4B tok / MegaMath-web 分词 128/4950 ETA~40h / Math-Reasoning 72.2% (1608/2228) / 全量 live numbers 同步 / commit+push完成 (6a1f03e94)**。
 
@@ -73,11 +73,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词142/4950) → WAITING=0
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词166/4950) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv(10源/含finemath);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(多次刷新/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅Code-Reasoning下载DONE(1635parquet/3.0TB/0inc);✅DATA_MAPPING.md D1节更新
-当前动作:     PC-5 MegaMath-web分词(142/4950/ETA~40h/PID3028124/nice19/ionice3/RAYON=8)+Nemotron分词(171/193=88.6%/ETA~3.6h/PID1791934/~133.3B tok)+Math-Reasoning下载(72.3%/1612of2228/PID3697171/ETA~9.9h); .12 load=35.02✅<120; /nas_user 44T可用✅; pretrain训练正常(iter~261k/step~7.0s)
-下一步:       ①等Nemotron分词完成(~3.6h)→更新main版blend TSV(加入Nemotron源) ②等MegaMath-web分词完成(~40h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议 ⑤Math-Reasoning下载完成后验收+登记DATA_MAPPING
-阻塞:         无(所有后台任务nice19/ionice3;.12 load 35.02<120✅不挤pretrain;/nas_user 44T可用✅>5T红线)
+当前动作:     PC-5 MegaMath-web分词(166/4950/ETA~40h/PID3028124/nice19/ionice3/RAYON=8)+Nemotron分词(172/193=89.1%/ETA~3.5h/PID1791934/~134.2B tok)+Math-Reasoning下载(72.7%/1620of2228/PID3697171/ETA~9.8h); .12 load=35.86✅<120; /nas_user 44T可用✅; pretrain训练正常(iter~261k/step~7.0s)
+下一步:       ①等Nemotron分词完成(~3.5h)→更新main版blend TSV(加入Nemotron源) ②等MegaMath-web分词完成(~40h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议 ⑤Math-Reasoning下载完成后验收+登记DATA_MAPPING
+阻塞:         无(所有后台任务nice19/ionice3;.12 load 35.86<120✅不挤pretrain;/nas_user 44T可用✅>5T红线)
 ERROR_COUNT:  0
 未完成指令:   无(PC-1~PC-4已交付;PC-5分词已启动;3个后台任务运行中)→WAITING=0
 ```
