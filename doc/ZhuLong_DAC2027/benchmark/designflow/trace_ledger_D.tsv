@@ -1914,3 +1914,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794808132400_f98rc.messages.json	tongfanl	hfhds201	304	analog_context	case	EDA-Eval-DesignFlow-WTM007LfsrCombineSeqProduce-001	2026-11-19 17:41	
 1794806636605_ws1ft	dechaoc	hfeg0pkn004	392	schematic_netlist	case	EDA-Eval-DesignFlow-CmNamePortNetCheckStatusProduce-001	2026-11-19 18:08	
 1794877493843_1rs5h	zjqiao	10.129.32.75	345	schematic_netlist	case	EDA-Eval-DesignFlow-FinesimMtxCmdAgentProduce-001	2026-11-19 18:37	
+1794894590754_qbqi9.messages.json	jiashengz	hfeg0plg92	298	schematic_netlist	claimed		2026-11-19 18:57	LATCH05C symbol vs latqGSx1 reference pin reconciliation; R1b stdcell; D-pure schematic_netlist
