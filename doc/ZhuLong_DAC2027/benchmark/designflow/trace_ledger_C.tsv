@@ -1319,3 +1319,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1792736789930_mfvq9	mwxi	10.129.32.112	31	layout_virtuoso	parked		2026-11-19 19:19	off-domain: ops/sysadmin (disk cleanup + python liblzma fix + conda env + quantization tool Ubuntu runtime libs on 172.16.8.101/10.239.67.65); keywords aether/drc/calibre false positives; not layout_virtuoso
 1794879096266_pwk03.messages.json	lynn1y	hfeg0plg44	371	physical_verify	case	EDA-Eval-DesignFlow-GdsHierarchyTransformResolver-001	2026-11-19 20:43	
 1794969582427_9sd8r.messages.json	steveny	hfeg0pnd001	294	physical_verify	case	EDA-Eval-DesignFlow-CalibreVcoResolve-001	2026-11-19 23:17	r830: calibre_vco env resolver reframe, 15 conds a-o, gold+neg verified
+1794993777655_2zkx6	e0025768	hfeg0pnd001	11	layout_aether	case	EDA-Eval-DesignFlow-TraceSessionAnalyzer-001	2026-11-20 00:21	
