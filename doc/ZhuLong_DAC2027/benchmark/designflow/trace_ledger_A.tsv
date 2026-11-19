@@ -681,3 +681,4 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1795003416811_wlxsu.messages.json					case	EDA-Eval-DesignFlow-XrunLibsFixProduce-001	2026-11-19 19:32	
 6f9zc	mike	hfhds201	174	verification	case	EDA-Eval-DesignFlow-Lp6CfgFormatConvert-001	2026-11-19 21:00	r810: ALIVE via SUBDIR path /home/mike/.cline/data/sessions/1794885045965_6f9zc/*.messages.json (1MB); flat-path NOFILE was a path bug not rotation. deferred - mixed verilog/analog, lower priority than yk8qc
 yk8qc	lein	hfeg0plg10	321	verification	case	EDA-Eval-DesignFlow-IrunLogPrintRank-001	2026-11-19 20:24	
+1795068626907_ec2jo	chengk	hfeg0pkn002	58	digital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26	
