@@ -529,7 +529,7 @@
 1794472156729_uwq51	t0002470	hfeg0plg76	441	verification	case	EDA-Eval-DesignFlow-Lpddr5CovTermitFix-001	2026-11-14 14:45	
 1789976011359_06htj	mike	hfhds211	275	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793778069961_gf2ud	tongfanl	hfhds206	213	verification	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
-1791784530809_sr0ca	tongfanl	hfhds206	173	verification	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
+1791784530809_sr0ca	tongfanl	hfhds206	173	verification	case	EDA-Eval-DesignFlow-DqselDefineMismatchQA-001	2026-11-20 02:44	r823: A档 trace-faithful analysis-Q&A, DQSELH/DQSEL_LH define mismatch, k=13/13, subdir-path revival 第三例, --force override D 旧规则 park
 1791686047150_w4uy2	jason17w	hfeg0pnd002	169	pnr_signoff	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1793348917218_h8pcp	jinhaoli	hfeg0plg107	156	digital	parked		2026-11-14 17:30	file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1794550682017_axn69	zhengc	hfeg0pgn145	273	verification	parked		2026-11-14 19:03	load-balancer unreachable: 10.129.35.244 routes to different backend, file missing on 2nd+ ssh conn (r498 same issue)
