@@ -41,12 +41,15 @@
 >
 > **你要做的**：
 > 1. **VQA 服务迁移**：当前 VQA 服务（Qwen3.5-2B `:30001` + rft2 适配器 `:30003`）跑在 GPU 5。把 `--gpu` 参数从 5 改到 **6**，重启服务。这会释放 GPU 5 给 posttrain。✅ 已完成（wake#1680）
-> 2. **训练迁回 GPU — 走 Option B（在 .17 上重新生成）**：之前因 GPU 不足改用 CPU 的波形 RL 训练（Stage-1W SFT + Stage-2W GRPO），现在用 **GPU 6-7** 迁回 GPU 训练。**.17 与 .12/.29 网络不通**，旧的 SFT checkpoint / backbone / 训练数据都在 .12 上拿不到。**因此走 Option B：在 .17 上从零重新生成全部前置产物**：
->    - **a) 提取 2B 文本骨干**：.17 上已有 Qwen3.5-2B 模型文件（VQA 服务在用）。用 `extract_qwen3vl_2b_text.py` 或等效脚本提取纯文本骨干（Qwen3.5-2B 本身就是纯文本模型，可能无需剥离视觉塔，直接用即可）。
->    - **b) 重新合成 SFT 训练数据**：参照 .12 上的合成方法（`sft_holdout_500.jsonl` 的生成逻辑，见 `vision/wave_rl/` 下的脚本），在 .17 上重新生成波形问答训练数据。数据源：波形图 PNG（已有的 10 道）、或用公开参数重建合成波形图。
->    - **c) GPU SFT 训练**：用 GPU 6-7 跑 Stage-1W SFT（3000 步，2B+LoRA，GPU 上应远快于 CPU 2.4h）。
->    - **d) GPU GRPO 训练**：SFT 验收通过后，跑 Stage-2W GRPO（500 步，GPU 6-7，bf16 并行 rollout）。
->    - **e) 评测**：跑 WaveQA-RL 评测，对比 pre-SFT / post-SFT / post-GRPO 通过率。
+> 2. **训练迁回 GPU — 走 Option B（在 .17 上重新生成）**：之前因 GPU 不足改用 CPU 的波形 RL 训练（Stage-1W SFT + Stage-2W GRPO），现在用 **GPU 6-7** 迁回 GPU 训练。**.17 与 .12/.29 网络不通**，旧的 SFT checkpoint / 训练数据都在 .12 上拿不到。**因此走 Option B：在 .17 上从零重新生成全部前置产物**。
+>
+>    **核心目标**：以 **Qwen3.5-2B（MLLM）为 baseline**，通过 SFT + GRPO 强化它**读懂波形图**的能力。Qwen3.5-2B 本身就是个蛮强的多模态模型（VQA 服务已在用它看图答题），不需要剥离视觉塔——直接对完整 MLLM 做 LoRA 微调。
+>
+>    - **a) 准备训练数据**：合成或收集**波形图 + 问答对**（image + question → answer）。数据源：已有 10 道带 PNG 的波形题、用公开参数重建合成波形图、或从 EDA-Eval-DesignFlow 的波形 case 中提取。参照 .12 上的合成方法（`vision/wave_rl/` 下的脚本逻辑），在 .17 上重新生成。
+>    - **b) GPU SFT 训练**：用 GPU 6-7 跑 Stage-1W SFT——直接对 **Qwen3.5-2B 完整 MLLM** 做 LoRA 微调（不是文本骨干，是完整多模态模型），训练它看波形图回答问题。3000 步左右，GPU 上应远快于 CPU。
+>    - **c) GPU GRPO 训练**：SFT 验收通过后，跑 Stage-2W GRPO——用可验证奖励（check.py 或等效判分）强化 MLLM 的波形图理解。500 步，GPU 6-7，bf16 并行 rollout。
+>    - **d) 评测**：对比 pre-SFT / post-SFT / post-GRPO 的波形图理解通过率。可用 WaveQA-RL 评测集或 EDA-Eval-DesignFlow-WaveView 子集。
+>    - **注意**：之前 .12 上的做法是剥离视觉塔用纯文本骨干（因为 transformers 不支持 qwen3_vl 架构）。现在 Qwen3.5-2B 是不同的模型，需确认其架构在当前 transformers 版本下可被 LoRA 微调（含视觉塔）。如遇兼容性问题，自行解决（升级 transformers / 用 peft / 调整加载方式）。
 > 3. **WaveView 评测不受影响**：36.15 上的 V0/V1/V2 全量对照继续跑，这是推理任务不占本地 GPU。
 > 4. **已完成项**：① VQA→GPU 6 ✅（wake#1680）。② GRPO 训练当前 BLOCKED——走 Option B 解除阻塞。
 
