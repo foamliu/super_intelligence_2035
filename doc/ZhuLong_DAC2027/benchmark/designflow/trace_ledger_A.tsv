@@ -642,7 +642,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1788483291546_fbikp	e02141	10.129.2.14	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=16436
 1789453137672_720it	e0017484	10.129.35.73	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=10070
 1790581124817_gucnl	e02141	10.129.2.14	6		parked		2026-11-19 17:14	r803: rotation-NOFILE reconfirm (11-19 17:0x, was r794-ALIVE 12:47). rotation window ~4h evaporated .messages.json
-1790649594359_skdtd	zmzhang	10.129.8.230	8		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=29961
+1790649594359_skdtd	zmzhang	10.129.8.230	8		case	EDA-Eval-DesignFlow-StdCellBtiAnalyze-001	2026-11-19 21:32	r812 reopened from r794 parked: analysis-Q&A Verilog BTI stdcell, A-pure digital, ALIVE via subdir
 1791615542263_satf4	johnl	10.129.2.10	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=14135
 1792044781149_gwa9k	sijialv	10.129.32.46	6		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=23247
 1792827914007_fl8g4	jkxu	10.129.32.80	7		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=31578
