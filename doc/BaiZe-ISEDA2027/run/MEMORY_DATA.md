@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-20 (R22) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R22 刷新点：iter ~262.9k/700k(37.6%) step~8.0s / 350k 切换点修正 ~11-28 / MegaMath-web 分词 792/4950=16.0% ETA~30h ~29.5B tok / Math-Reasoning 80.1% (1785/2228) ETA~7h / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=10.70✅ / /nas_user 44T✅ / 全量 live numbers 同步 R22 / commit+push**。
+
 > 🟢 **心跳 · 2026-11-20 (R21) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R21 刷新点：MegaMath-web 分词 735/4950=14.8% ETA~31h ~27.4B tok / Math-Reasoning 79.4% (1770/2228) ETA~8h / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=9.23✅ / /nas_user 44T✅ / 全量 live numbers 同步 R21 / commit+push**。
 
 > 🟢 **心跳 · 2026-11-20 (R20) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R20 刷新点：MegaMath-web 分词 702/4950=14.2% ETA~31h ~26.4B tok / Math-Reasoning 79.1% (1764/2228) ETA~8h / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=11.97✅ / /nas_user 44T✅ / 全量 live numbers 同步 R20 / commit+push**。
