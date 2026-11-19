@@ -48,3 +48,18 @@ trace 原意图是 skill-build/characterization（写 one-off gen_model_sp.py �
 - B2 反 stub：空 modes + 空 encoding → 生成器 exit 0 写 0 文件（写死 A 的 11 文件的 stub 必 FAIL）
 - self-verify: ref 16/16 PASS, 5 neg 全 FAIL (NEG_RC=5/5), 确定性 3-run sha256 一致
 - B.jsonl 440 → 441
+
+## ⚠️ r900 duplicate-detection 处置（重要）
+
+**结论**：yy8pd 是 r892 已落 case 的 cross-session near-duplicate，本轮不建新 case。
+
+- r892 已落 **EDA-Eval-DesignFlow-IbisModelSpGen-001**（commit 3a1b79026, 2026-11-20 00:06:49），trace = `1795055873026_3bis4`（alan17z, mc167）——**同一用户 alan17z**。
+- 两个 session 是同一意图的 continuation：3bis4 是「flagged model .sp files as format-wrong + unified two-section layout」，yy8pd 是「合并 3 IBIS skill + build gen_model_sp.py」。real_task_summary 关键词重叠（ibis-extract / gen_model_sp / model .sp / Drive Strength Setup / ODT Setup）>80%。
+- r892 schema：inline SPEC_A/B/B2 + label-based（{label,mode,podt}）。我的 r900 schema：external hidden/ + odt_encoding+modes{subdir,filename,tags,drive,vodten}。不同 schema 但同一生成器意图。
+
+**处置**：
+1. EDA-Flow-Bench：`git restore --staged --worktree` 还原 r892 的 check.py/gen_model_sp.py/spec_A/hidden/negative_selftest + rm 8 个我的 stray 文件（example_odt40.sp/example_pu40_pd40.sp/task_spec.json/negative/empty_stub.py 等）→ working tree 回到 HEAD，r892 case 完整保留。r892 negative_selftest 复跑 NEG_RC=5/5 完好。
+2. B.jsonl：回滚 441→440（移除我的 IbisModelSpGen-001 append，gitignored 本地文件）。
+3. ledger：yy8pd `case` → `parked`（note: duplicate of r892 3bis4, same user alan17z, same IBIS DQ-driver model .sp generator intent）。
+
+**教训**：claim 前缺「case_id 已存在」+「同 user 同意图」双闸门。修法：claim 前 (a) grep reference/ 查同名 case；(b) grep ledger_B 查同 user 已 case/parked session，比对 real_task_summary 关键词重叠度。纳入 §3 选料 SOP。
