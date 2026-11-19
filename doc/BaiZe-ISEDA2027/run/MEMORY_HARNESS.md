@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
-> 🆕 **R2757 · 2026-11-19 11:1x — incr_eval(cline+1 RESOLVED pi+2 RESOLVED)+MM 2×3可行性核查+6路配置落盘+报告REGEN**·**心跳第一行**: 📦 **SWE-bench Multimodal 2×3评测**(用户令11-19): **可行性核查✅**(Kimi-K2.6多模态✅image_tokens=3·Doubao多模态✅·DeepSeek-V4-flash额度耗尽~13:00重置·网关/v1/models 200✅)·**6路配置落盘** `swebench_mm/mm_2x3_config.json`(gitignored)·**评测计划** `swebench_mm/MM_2X3_EVAL_PLAN.md`(committed)·关键缺口=harness多模态适配(cline/opencode现传纯文本problem_statement·需下载image_assets图片→base64→多模态content)·**MM容器下载** 521/580=89.8%(0 FAILED✅·ETA~2-3h)·不抢pretrain CPU✅·SWE-bench Verified incr_eval: **cline +1 RESOLVED**(sklearn-25232)→**296/462=64.1%**·**pi +2 RESOLVED**(django-15973+16100)→**235/402=58.5%**·codex +2 empties+1 spiral-infra→108/389·7way报告REGEN✅(23748B 11:17)·📌 **自检**: load40/224✅·无本线proc>8000%CPU✅·pretrain未受影响✅·**全部运维令✅已交付**·WAITING=0·📦 TASK≈36KB(>32软限<40硬限·下轮归档) MEMORY≈22.7KB(✅≤32KB)
+> 🆕 **R2759 · 2026-11-19 11:4x — SWE-bench Verified报告重写✅交付+footer stray text修复+任务书归档瘦身**·**心跳第一行**: ✅ **§用户令11-19 报告重写已交付**(R2758)·报告`report_harness_glm53_7way_swebench_tb_zh.html`重写(23748→4840B)·★主表7路置顶 Pass%=resolved/500 单数字无区间: hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·deepseek168/500=33.6%·codex108/500=21.6%·删TB表/ETA/kimi·保留predict进度+backlog+infra待重跑·生成器`gen_report_glm53_7way.py`重写(537→162行)+footer stray text「报告正文一律写cline」已清✅·**任务书归档瘦身**(36109→29498B·≤32KB✅·11-19 08:2x+11-18 10:3x两完整块→ARCHIVE)·**MM容器下载** 553/580=95.3%(0 FAILED✅·ETA~1h)·**MM 2×3评测**排队(等MM下载完)·SWE-bench Verified predict 4路alive(cline460/codex391/pi405/deepseek259)·📌 **自检**: load40/224✅·无本线proc>8000%CPU✅·pretrain未受影响✅·**全部运维令✅已交付**·WAITING=0·📦 TASK=29.5KB(✅≤32KB) MEMORY=23.0KB(✅≤32KB)
+> 📦 R2757 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval(cline+1 pi+2 RESOLVED)+MM 2×3可行性核查+6路配置落盘+7way报告REGEN·MM容器521/580=89.8%）。需要时再读。
 > 📦 R2756 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器465/580=80.2%·pretrain未受影响·predict+2新各路<2阈值→不跑incr_eval·自检clean）。需要时再读。
 > 📦 R2755 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器448/580=77.2%·predict自R2754仅+2新各路<2阈值→不跑incr_eval·predict 4路alive·cumulative不变·自检clean·pretrain未受影响）。需要时再读。
 > 📦 R2754 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval R2752 merge确认(cline+3→295 dsh+2→168) 监控轮 codex 1empty merged 7way报告REGEN MM容器440/580 predict 4路alive 自检clean）。需要时再读。
@@ -76,16 +77,16 @@ WAITING: 0
 
 ## 📊 进度快照
 
-PHASE:        R2757 incr_eval(cline+1 pi+2 RESOLVED)+MM 2×3可行性核查+6路配置落盘·MM容器521/580=89.8%
+PHASE:        R2759 SWE-bench Verified报告重写✅交付+footer修复+任务书归档瘦身·MM容器553/580=95.3%
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·ability桶拆两层✅·SWE-bench predict 7路resume·opencode500/500+eval415/500=83.0%✅·hermes500/500+eval444/500=88.8%✅·cc500/500+eval295/500=59.0%✅·incr_eval R2680~R2757 DONE·§用户令11-19 08:2x 两份7way报告REGEN主表置顶✅·**SWE-bench Multimodal 2×3评测**(用户令11-19): 可行性核查✅(Kimi/Doubao多模态✅·DeepSeek待额度重置)·6路配置`mm_2x3_config.json`+评测计划`MM_2X3_EVAL_PLAN.md`落盘✅·**MM容器下载进行中**(580 images·521/580 pulled=89.8%·0 FAILED)·CPU螺旋kill+incr_eval CPU-limited(taskset 0-15+OMP=1)✅
-当前动作:     R2757: incr_eval(cline+1 RESOLVED sklearn-25232→296/462·pi+2 RESOLVED django-15973+16100→235/402·codex+2 empties+1 spiral-infra→108/389)·7way报告REGEN✅(23748B 11:17)·MM 2×3可行性核查(3 LLM多模态实测✅)·6路配置+评测计划落盘·自检clean(load40/224·无本线proc>8000%CPU·pretrain未受影响)
-下一步:       ① 复测DeepSeek-V4-flash多模态(额度~13:00重置后) ② 开始cline/opencode多模态适配(下载image_assets图片→base64→多模态content) ③ parquet→swebench JSON转换器 ④ MM下载完成(580/580)后冒烟1题×6路 ⑤ TASK归档到≤32KB
+当前动作:     R2759: SWE-bench Verified报告重写✅(主表置顶 resolved/500 单数字·生成器footer stray text修复)·任务书归档(11-19 08:2x+11-18 10:3x→ARCHIVE·36→29.5KB)·MM容器下载巡检(553/580=95.3%)·predict 4路alive·自检clean(load40/224·无本线proc>8000%CPU·pretrain未受影响)
+下一步:       ① MM下载完成(580/580)后冒烟1题×6路 ② 复测DeepSeek-V4-flash多模态(额度~13:00重置后) ③ cline/opencode多模态适配(下载image_assets图片→base64→多模态content) ④ parquet→swebench JSON转换器 ⑤ SWE-bench Verified predict继续(cline/codex/pi/deepseek 4路alive)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈36KB(>32软限<40硬限·下轮归档) / MEMORY≈22.7KB（✅≤32KB）
- SWE-bench Verified Pass%(cumulative resolved/N, after R2757 incr_eval): hermes444/500=88.8%·opencode415/500=83.0%·cline296/462=64.1%·cc295/500=59.0%·pi235/402=58.5%·dsh168/259=64.9%·codex108/389=27.8%·(partial·predict still running for 4 routes: cline/codex/pi/dsh)
- 真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2%[真38/超8/环1|47.2~57.3%] · codex 25/89=28.1%[真59/超3/环1|28.1~32.6%] · opencode 45/89=50.6%[真31/超1/环8|50.6~60.7%] · cc 30/89=33.7%[真51/超0/环8|33.7~42.7%] · pi 35/89=39.3%[真48/超1/环5|39.3~46.1%] · hermes 41/89=46.1%[真27/超2/环19|46.1~69.7%] · deepseek 11/89=12.4%[真41/超0/环36|12.4~52.8%] · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
-  SWE-bench Multimodal容器下载(用户令11-18 最高优先)+2×3评测(用户令11-19): run/harness/swebench_mm/·580 images total·521 pulled=89.8%(0 FAILED)·PID 3749136 NI=19·nice19/ionice=idle·不抢.29 CPU✅·ETA~2-3h·**2×3评测排队中**(6路配置+评测计划已落盘·待下载完成+多模态适配)
+ 体积: TASK=29.5KB（✅≤32KB） / MEMORY=23.0KB（✅≤32KB）
+ SWE-bench Verified Pass%(分母恒500·resolved/500·单数字无区间): hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·dsh168/500=33.6%·codex108/500=21.6%·(4路predict仍alive: cline460/codex391/pi405/dsh259)
+ 真实 Pass% (layer-A/B 拆分后, 分母=89): cline 42/89=47.2% · codex 25/89=28.1% · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4% · layer-B=93题(66确认infra+9 ability_lean+18 ambiguous)
+  SWE-bench Multimodal容器下载(用户令11-18)+2×3评测(用户令11-19): run/harness/swebench_mm/·580 images total·553 pulled=95.3%(0 FAILED)·PID 3749136 NI=19·nice19/ionice=idle·不抢.29 CPU✅·ETA~1h·**2×3评测排队中**(6路配置+评测计划已落盘·待下载完成+多模态适配)
   research日报11-19 harness建议: ①完成判据改三分法(fact/verdict/scope·PASS回执绑定最终源码摘要+两项具名检查+终止后可见检查仍PASS·只报标签正确率不算通过) ②20,480生成上限写进评测配置 ③entity-tool graph造题(必须跨≥2工具·执行日志三态判分) → 纳入未来计划(来自 research 日报 2026-11-19)
 ## 启动说明（首次唤醒）
 

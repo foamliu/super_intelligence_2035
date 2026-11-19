@@ -1,14 +1,8 @@
 # BAIZE_HARNESS_TASK.md
 
-> 🔴 **用户令 · 2026-11-19 — SWE-bench Verified 报告重写（最高优先）**
+### ✅ 用户令 · 2026-11-19（**SWE-bench Verified 报告重写**）· 用户直令 · ✅ 已交付（R2758）
 
-> **用户原话**：「报告质量很差。主表 cline 列 Pass% 写成 47.2%~57.3%，没跑就假设不过？写 47.2% 不就行了。报告这么长其它内容有信息量吗？文档名字写的是 swebench，下边加个 Terminal-Bench 表有关系吗？ETA 那都多早以前的事儿了放这里干什么？有用的主表没做好，哪些 case 需要重跑这些有用的信息没写好，净写一些垃圾。」
-
-> **重写要求**：
-> 1. **主表**（SWE-bench Verified 7 路结果）置顶，这是报告的核心。Pass% 分母用 500（已 resolved/500），没跑完的就是 resolved/500，不写区间、不写 ~、不假设。每个格子只写一个数字。
-> 2. **删掉所有无关内容**：Terminal-Bench 表删掉（那是另一个报告）、过期的 ETA 删掉、冗余的口径说明删掉、kimi 对比表如果分母不同也删掉。
-> 3. **保留有信息量的内容**：哪些 case 还没跑（empty/backlog 清单）、哪些需要重跑（infra 失败/429 等）、各路 predict 进度。
-> 4. **报告要短**，只写有用的东西。
+> **交付结论（R2758 · 2026-11-19 11:4x）**：报告 `report_harness_glm53_7way_swebench_tb_zh.html` 已重写（23748→4840B）。①★主表 SWE-bench Verified 7路置顶·Pass%=resolved/500·单数字无区间无~·按降序：hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·deepseek168/500=33.6%·codex108/500=21.6%。②删 Terminal-Bench表/ETA/磁盘/kimi对比。③保留 predict进度+待跑backlog(deepseek241/codex109/pi95/cline40)+待重跑infra(pi1+codex1)。④生成器 `gen_report_glm53_7way.py` 重写(537→162行)·footer stray text已清。0script/0外链✅。
 
 > 🔴 **用户令 · 2026-11-19 — SWE-bench Multimodal 2×3 评测（排队，MM 容器下载完后启动）**
 
@@ -66,47 +60,9 @@
 ### 🧷 📛 命名与归档纪律（常驻）
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区，自上而下找第一条「未完成」的指令执行
 
-### ✅ 用户令 · 2026-11-19 08:2x（**重新输出 TB-2.1 + SWE-bench Verified 两份 7-way 中文 HTML 报告，突出重点主表**）· 用户直令 · ✅ 已交付（R2751）
+> 📦 §用户令·2026-11-19 08:2x（重新输出两份7way报告主表置顶）**✅ 已交付（R2751）** → run/ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-19」节；**结论**：两份中文HTML主表置顶✅·TB-2.1 7路opencode50.6/cline47.2/hermes46.1/pi39.3/cc33.7/codex28.1/deepseek12.4·SWE-bench Verified hermes88.8/opencode83.0/cc59.0/cline58.4/pi46.6/deepseek33.2/codex21.6。需要时再读。
 
-> **交付结论（R2751 · 2026-11-19 09:0x）**：两份中文 HTML 已 REGEN 主表置顶✅。① `report_harness_tb21_7way_zh.html`(31655B)——★主表 TB-2.1 7路 Pass% 置顶第一屏(放大加粗·按Pass%降序):opencode50.6/cline47.2/hermes46.1/pi39.3/cc33.7/codex28.1/deepseek12.4(分母89)·其余(失败归因/Layer-B判定/infra台账)降级次要小节。② `report_harness_glm53_7way_swebench_tb_zh.html`(23834B)——★主表①TB-2.1(同上·含Pass%区间+Layer-B)+★主表②SWE-bench Verified(按Pass%降序·标partial/满量):hermes88.8/opencode83.0/cc59.0/cline58.4/pi46.6/deepseek33.2/codex21.6。两报告均0script/0外链✅。生成器已改(`gen_report_glm53_7way.py`+`gen_report_tb21_7way.py`·主表块置顶)→loop后续REGEN自动保持主表置顶。数据取R2750最新audit。口径红线照旧(分母89/N·真实Pass%=passed/分母·无修正后Pass%)。
-
-> **用户原话**：「harness 重新输出 TB-2.1 和 SWE-bench Verified 两个 7-way 评测报告（中文HTML）。要突出重点（主表）。」
-
-**立即执行**（基于当前已落盘最新数据 REGEN，勿新起评测）：
-
-1. **两份中文 HTML**（单文件自包含、0 script、0 外链）：
-   - ① `reports/report_harness_tb21_7way_zh.html` —— TB-2.1（89 题）× 7 路；
-   - ② `reports/report_harness_glm53_7way_swebench_tb_zh.html` —— SWE-bench Verified（500 题）+ TB-2.1 × 7 路。
-2. **突出主表**（用户点名）：把「7-way Pass% 主表」放在报告最显眼的**开头**（第一屏/顶部），放大加粗、一眼可读。主表内容：
-   - **TB-2.1**：7 路 Pass（passed×/89 + Pass%），按 Pass % 降序或原 harness 顺序，一表 7 行；
-   - **SWE-bench Verified**：7 路 Predict/Eval N/Resolved/Pass%，标「进行中/partial」。
-   其余（失败归因、infra 台账、synthetic 明细、cc 归因等）**降级为次要小节放主表之后**，不得喧宾夺主。
-3. **口径红线照旧**：分母恒 89（TB-2.1）/ 分母=已评测 N（SWE-bench，标 partial）；真实 Pass% = passed/分母；「修正后 Pass%」已撤回，不得出现；能力 vs infra 靠 trace 证据，synthetic/未真跑题显式标注。
-4. **数据务必取最新**（本轮 REGEN 前 git pull + 重跑 audit，勿用旧快照）：TB-2.1 当前应为 codex 修复后 ~28%、cc 修复后 ~33.7%、opencode ~48-50% 等（以 audit 实算为准，别照抄历史数字）。
-5. 自检 0 script/0 外链、porcelain=0；`git add` 本线文件 → commit → push；心跳第一行放两份主表的极简数字摘要。保持 `WAITING=0`。
-
----
-
-### ✅ 用户令 · 2026-11-18 10:3x（**再复核：ability 桶里仍混着 infra 异常，拆两层**）· 用户直令 · ✅ 已交付（R2664）
-
-> **用户原话**：「现在 7 个 harness failed case 再没有 infra 原因导致的，对吗？核对了吗」→ 运维已抽样核实：**不成立**。
-
-**运维已实测（.29 全量 result.json 统计，本轮别再重复统计，直接按此深挖）**：各路仍带 `exception_info` 的失败题不少——codex(90超时+83 RuntimeError)、deepseek(42 exit≠0+32 RE+12超时+7 setup超时)、hermes(52 exit≠0+39超时+11 RE)、pi(52超时+18 RE+9 setup超时)、cc(117 RE+12超时)、opencode(56 RE+23超时)、cline(31超时+7 RE)。**当前 `audit_tb21_review_7way.py:153-155` 的 `exc_type` 被当成「模型真跑=ability」证据，把「超时/exit≠0/setup失败」这些 infra 类异常误并入 ability 桶**——这是 R2661 那张「7-way 最终表」下结论过早的根因。
-
-**立即执行**：
-
-1. **把 ability 桶拆两层**，逐题重排：
-   - **layer-A「真能力」**：`verifier_result` 干净跑出 0.0（`has_verifier=True`）且无 exception、无超时、无 exit≠0 —— 模型真跑、真答错。
-   - **layer-B「infra 嫌疑（待判定）」**：带 `AgentTimeoutError` / `AgentSetupTimeoutError` / `VerifierTimeoutError` / `NonZeroAgentExitCodeError` / `RuntimeError`（stderr 非空、非 agent 能力）的失败题。
-   - 判 layer-B 里每题的**真实性质**：超时 = 预算不够（infra，应重跑或标 timeout-infra）还是模型陷入死循环（能力）？exit≠0 = 环境缺 pip/Py 版本（已见 hermes qemu `No module named pip`，infra）还是脚本语法错（能力）？逐题给 trace 证据 + top3 原文。
-2. **重新出「干净真实 Pass%」**：每路 `passed / 89`（真能力层）不变，但把「infra 待判题」显式单列，标注「若这些题补跑/修环境后，X 路 Pass% 可能从 Y% 变动到 Z%」。**不得再把 infra 异常题当能力失败计入**。
-3. **修正 audit 脚本**：`exc_type` 不再无条件算「真跑证据」；改为「`has_verifier` + 干净 0.0 + 无 exception」才算 ability；新增 `timeout`、`setup_fail`、`nonzero_exit` 三个 infra 子桶。
-4. **报告**：`report_harness_tb21_7way_zh.html` 的 7-way 表和失败归因节 RE 生成——新增「能力 vs 超时 vs 环境/exit异常」三列分解；把上次「待重跑=0」的措辞改为「重跑队列空，但仍有 N 题 infra 异常待判定/待修环境」。
-5. 红线：能力 vs infra 只能靠 trace 证据；诚实优先。保持 `WAITING=0`，心跳第一行给：7 路各自「真能力失败 / 超时 / 环境异常」三数 + 重新核算的干净 Pass% 区间。
-
-> **交付结论（R2664 · 2026-11-18 11:2x）**：ability 桶已拆两层——layer-A「真能力」(has_verifier=True+无exc_type+exit_code OK) / layer-B「infra嫌疑」(6个子桶: timeout/setup_fail/nonzero_exit/runtime_error/verifier_timeout/other_infra)。audit脚本 `audit_tb21_review_7way.py` 已修正(INFRA_EXC_TYPES集合+clean_ability字段+exc_type不再算真跑证据)。逐题trace判定93题layer-B: **66题确认infra**(deepseek36=29×适配器空响应+7×pip-install-fail·hermes20=19×pip/python3缺失+1×VerifierTimeout·opencode5=3×VerifierTimeout+1×OOM+1×cmd-timeout·cc4=2×VerifierTimeout+2×cmd-timeout·codex1=adapter exit2) + 9题ability_lean(cc3+pi3+opencode2+cline1=exit1但其他harness通过同题) + 18题ambiguous(cline8×AgentTimeout900s+codex3×timeout+pi2+opencode2+cc1+hermes1=无其他harness通过同题)。**关键发现**: deepseek 12.4%被36题infra压低(上界52.8%)·hermes 46.1%被20题infra压低(上界69.7%)。报告 `report_harness_tb21_7way_zh.html` 已RE生成(30575字节)——新增表2.5(layer-B逐题判定+Pass%区间+关键模式)、表二改为能力/超时/环境异常三列分解、「待重跑=0」改为「重跑队列空但仍有93题layer-B infra异常待判定/待修环境」。心跳第一行已给7路三数+Pass%区间。manifests/tb21_layerB_determinations_20261118_1120.json 存有per-task verdict+evidence(已gitignore)。
-
----
+> 📦 §用户令·2026-11-18 10:3x（ability桶拆两层）**✅ 已交付（R2664）** → run/ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-19」节；**结论**：layer-A真能力/layer-B infra嫌疑(6子桶)·93题layer-B: 66题infra+9题ability_lean+18题ambiguous·deepseek12.4%上界52.8%·hermes46.1%上界69.7%。需要时再读。
 
 ### ✅ 用户令 · 2026-11-17 14:5x（**修复 codex 适配器假低分 + 重跑**）· 用户直令 · ✅ 已交付（R2661）
 

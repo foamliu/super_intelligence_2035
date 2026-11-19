@@ -150,7 +150,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="note"><p>429/quota：当前无 429 阻塞题。其余失败题 = 能力不足（tests fail / 空 patch），非 infra，不需重跑。</p></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · {ROUND} · {NOW}<br>SWE-bench Verified 500 · 7-way · 报告正文一律写 cline
+BaiZe Harness · {ROUND} · {NOW}<br>SWE-bench Verified 500 · 7-way
 </p></body></html>"""
 
 os.makedirs(REPORT_DIR, exist_ok=True)
