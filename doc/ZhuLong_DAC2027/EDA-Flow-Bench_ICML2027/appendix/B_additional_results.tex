@@ -69,12 +69,12 @@ camera-ready version and repeat it as the multi-backbone test of RQ3
 % \subsection{各领域失败分类法}
 
 The batch runner records one terminal status per run, so the per-domain failure
-\emph{categories} cannot be derived from the released logs alone. We therefore
+\emph{categories} cannot be derived from that terminal status alone. We therefore
 report (i) the run-level outcome anchors per domain (Table~\ref{tab:full-domain-results})
-and (ii) a triage tool that recovers the categories from each run's judge log and
-agent session, which accompanies this benchmark
-(\texttt{eval\_triage/05\_batch\_triage.py}, with an explicit UNKNOWN share so that
-unclassified runs are never silently folded into another bucket). Applying it to
+and (ii) a triage procedure that recovers the categories from each run's judge log and
+agent session (\texttt{eval\_triage/05\_batch\_triage.py}, available to qualified reviewers
+via the NDA-gated review package rather than publicly released, with an explicit UNKNOWN
+share so that unclassified runs are never silently folded into another bucket). Applying it to
 the \Neval{}-run batch yields the per-domain category matrix in
 Table~\ref{tab:failure-by-domain} (PASS runs are out of scope here; rows sum to
 the FAIL+ERROR count per domain). Class abbreviations: TO=ERROR\_TIMEOUT,
@@ -87,10 +87,11 @@ FAIL-with-submit UNKNOWN (49 runs, 7.0\% of the batch) is detailed in
 \S\ref{sec:failure-by-domain}. A stacked-bar view and a Cohen's $\kappa$ agreement
 statistic between the tool and a human labeler on a 100-run sample are deferred
 to the camera-ready version.
-% 批次 runner 每个 run 只记录一个终态，因此仅凭已发布的日志无法推导各领域的失败\emph{类别}。
+% 批次 runner 每个 run 只记录一个终态，因此仅凭该终态无法推导各领域的失败\emph{类别}。
 % 故我们给出：(i) 各领域 run 级结果锚点（表~\ref{tab:full-domain-results}）；
-% (ii) 一个逐 run 归因工具，它从每个 run 的判分日志与智能体会话中恢复类别
-% （eval_triage/05_batch_triage.py，并显式报告 UNKNOWN 比例，避免未分类 run 被悄悄并入别的桶）。
+% (ii) 一个逐 run 归因流程，它从每个 run 的判分日志与智能体会话中恢复类别
+% （eval_triage/05_batch_triage.py，经 NDA 受控评审包向合格评审者提供，不公开发布；
+% 并显式报告 UNKNOWN 比例，避免未分类 run 被悄悄并入别的桶）。
 % 将其应用于 \Neval{}-run 批次得到表~\ref{tab:failure-by-domain} 的逐域类别矩阵（PASS run 不在此表
 % 范围；各行加和为该域 FAIL+ERROR 数）。列缩写：TO=ERROR_TIMEOUT, INFRA=ERROR_INFRA,
 % NOSUB=NO_SUBMIT, FMT=FORMAT_CONTRACT, RT=ASSERT_RUNTIME, SEM=ASSERT_SEMANTIC,
