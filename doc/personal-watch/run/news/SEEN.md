@@ -3425,3 +3425,24 @@
 | 2026-11-19 | 华为发布下一代核心网演进白皮书，提出 AgenticCore / NGC AI-Native 架构 | IT之家 | news | https://www.ithome.com/1/029/540.htm |
 | 2026-11-19 | 松下开发全新电动变焦镜头 / 联想季报稿等消费电子与厂商稿 | IT之家 | W:not-news | https://www.ithome.com/1/029/532.htm |
 | 2026-11-19 | 月之暗面 API 服务可用性低，官方调查中（Kimi Code K3 部分中断） | IT之家 | news | https://www.ithome.com/1/029/632.htm |
+| 2026-11-19 | 面壁智能：截至 2026 年 11 月 MiniCPM 家族模型全球下载量超 7000 万次 | IT之家 | news | https://www.ithome.com/1/029/674.htm |
+| 2026-11-19 | SenseNova U1 Pro 获 Design Arena 双榜中国第一、全球第六（商汤授权稿） | 量子位 | news | https://www.qbitai.com/2026/11/511179.html |
+| 2026-11-19 | 可灵 Kling Image 4.0 原生 8K 输出实测（单图 2000 字 / 70+ 字体 / 10 张组图） | 量子位 | news | https://www.qbitai.com/2026/11/511092.html |
+| 2026-11-19 | 多家银行警告：AI 智能体擅自动账的损失可能由用户自负（Ally / 摩根大通 / 花旗 / 富国） | IT之家 | news | https://www.ithome.com/1/029/646.htm |
+| 2026-11-19 | Meta 员工爆料 Muse 智能体可能擅自读取 Signal 消息与银行账户余额 | IT之家 | news | https://www.ithome.com/1/029/671.htm |
+| 2026-11-19 | 德国 BSI 将网络威胁上调为「严峻至危急」：AI 智能体降低攻击门槛，指数 124→238 | IT之家 | news | https://www.ithome.com/1/029/609.htm |
+| 2026-11-19 | 重庆大渡口：力争到 2030 年具身智能产业规模突破 100 亿元（仅标题，正文未抓） | 中新网 | news | https://www.chinanews.com.cn/rss/scroll-news.xml |
+| 2026-11-19 | Canva 推出「AI 开关」，可关闭绝大部分 AI 工具 | IT之家 | news | https://www.ithome.com/1/029/677.htm |
+| 2026-11-19 | 阿里 CEO 吴泳铭：2027、2028 年将是中国算力最紧缺的两年，2027 后以平头哥为主 | IT之家 | news | https://www.ithome.com/1/029/682.htm |
+| 2026-11-19 | IMF 总裁：AI 投资热情过高，金融市场或现进一步调整；循环融资约 1 万亿美元 | IT之家 | news | https://www.ithome.com/1/029/648.htm |
+| 2026-11-19 | 马斯克：预计未来 12-18 个月 Optimus 能做家务，下次演示须「足够真实」 | IT之家 | news | https://www.ithome.com/1/029/616.htm |
+| 2026-11-19 | SK 海力士回应「HBM4 良率突破 70%」：商业机密，不便披露 | IT之家 | news | https://www.ithome.com/1/029/673.htm |
+| 2026-11-19 | Counterpoint：AI 数据中心拉涨存储，印度高端旗舰 2026 年底较 2025 年涨价超 30% | IT之家 | news | https://www.ithome.com/1/029/653.htm |
+| 2026-11-19 | NASA 旅行者 1 号抵达距地球 1 光日位置 | IT之家 | news | https://www.ithome.com/1/029/656.htm |
+| 2026-11-19 | 马斯克：SpaceX 每月约新增 0.5GW 算力，明年底提速至 1GW（表态，无独立新事实） | IT之家 | W:not-news | https://www.ithome.com/1/029/649.htm |
+| 2026-11-19 | 格力电器因 150 元成被执行人（朱磊称系诉讼费缴款，司法个案） | IT之家 | W:not-news | https://www.ithome.com/1/029/667.htm |
+| 2026-11-19 | 联想集团季报稿：季度营收首破 2000 亿元（厂商稿） | 量子位 | W:not-news | https://www.qbitai.com/2026/11/511088.html |
+| 2026-11-19 | 安谋科技 Cortex-M42 + 星辰100e AIoT 原型平台（新品说明会稿） | 量子位 | W:not-news | https://www.qbitai.com/2026/11/511079.html |
+| 2026-11-19 | GTA6「零 AI 纯手搓」评论稿（观点/评论体） | 量子位 | W:not-news | https://www.qbitai.com/2026/11/511180.html |
+| 2026-11-19 | 极客公园创新大会 2027 嘉宾阵容更新（活动预告） | 量子位 | W:not-news | https://www.qbitai.com/2026/11/511258.html |
+| 2026-11-19 | 阿里 H1 归母净利 750.72 亿元 / 网易 260.57 亿元 / 快手 50.88 亿元（财报数字） | IT之家 | W:not-news | https://www.ithome.com/1/029/639.htm |
