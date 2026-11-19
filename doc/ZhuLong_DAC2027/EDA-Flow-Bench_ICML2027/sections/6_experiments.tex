@@ -2,12 +2,12 @@
 \label{sec:experiments}
 % 【中文】\section{实验}
 
-\textbf{Pre-registration statement.} We pre-register 3 core hypotheses (H1--H3) and 7 sub-hypotheses before data collection (\PreregDate; details in \S\ref{sec:preregistered}). M0 is available from a frozen 696-run snapshot (\MzeroPass{} Pass@1; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s, 2026-11-09); M1--M8 and N1--N2 are evaluated post pre-registration. Negative results are reported as publishable boundary conditions.
+\textbf{Experimental status.} We formulate 3 core hypotheses (H1--H3) and 7 sub-hypotheses (details in \S\ref{sec:hypotheses}). M0 is available from a frozen 696-run snapshot (\MzeroPass{} Pass@1; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s, 2026-11-09); M1--M8 and N1--N2 are to be evaluated. Negative results are reported as publishable boundary conditions.
 % 【中文】
-% \textbf{预注册声明。} 本文在数据收集前预注册 3 条核心假设（H1--H3）与 7 条子假设（H1a--c、H2a--c、
-% H3）。预注册日为 \PreregDate。M0 基线结果可从冻结的 696-run 快照获得（\MzeroPass{} Pass@1、
+% \textbf{实验状态。} 本文提出 3 条核心假设（H1--H3）与 7 条子假设（H1a--c、H2a--c、
+% H3）。M0 基线结果可从冻结的 696-run 快照获得（\MzeroPass{} Pass@1、
 % 62/620 已判定 run；DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、2400s 超时、8 workers、
-% 2026-11-09）。所有其他臂（M1--M8、N1--N2）将在预注册后评测。阴性结果将作为可发表的边界条件报告，
+% 2026-11-09）。所有其他臂（M1--M8、N1--N2）待评测。阴性结果将作为可发表的边界条件报告，
 % 涵盖长链 EDA 编排中的 RSI 与情绪记忆机制。
 
 \textbf{M0 baseline anchor.} Table~\ref{tab:m0-baseline} reports the frozen snapshot anchoring M0. The 7.1$\times$ domain gap and failure-class split are descriptive of the baseline; they motivate the memory/RSI hypotheses but are \emph{not} used to pre-claim any arm's result (full breakdown in \S\ref{sec:analysis}).
@@ -42,15 +42,15 @@ UNKNOWN & 49/696 & 7.0\% \\
 \end{tabular}
 \end{table}
 
-\textbf{H1/H2/H3 criteria-check framework.} Each sub-hypothesis's pass/fail is determined by the pre-registered threshold (\S\ref{sec:preregistered}). Table~\ref{tab:criteria-check} gives the evaluation framework with results \TBD.
+\textbf{H1/H2/H3 criteria-check framework.} Each sub-hypothesis's pass/fail is determined by the pre-specified falsification threshold (\S\ref{sec:hypotheses}). Table~\ref{tab:criteria-check} gives the evaluation framework with results \TBD.
 % 【中文】
-% \textbf{H1/H2/H3 判据检验框架。} 每条子假设的通过/失败由预注册阈值（\S\ref{sec:preregistered}）
+% \textbf{H1/H2/H3 判据检验框架。} 每条子假设的通过/失败由事前规定的证伪阈值（\S\ref{sec:hypotheses}）
 % 决定。表~\ref{tab:criteria-check} 给出评测框架，结果为 \TBD。
-% 【中文】表 2：预注册判据检验（结果 \TBD{}，预注册后）。
+% 【中文】表 2：判据检验（结果 \TBD{}，待评测）。
 
 \begin{table}[ht]
 \centering
-\caption{Pre-registered criteria check (results \TBD{} post pre-registration).}
+\caption{Criteria check (results \TBD{}).}
 \label{tab:criteria-check}
 \scriptsize
 \begin{tabularx}{\columnwidth}{@{}llXcc@{}}
@@ -76,8 +76,8 @@ H3 & single vs spawn & single $\geq$ spawn & \TBD & \TBD \\
 %（$\sim$40 题、功效 $<$0.3）；H2c 判据延至理想矩阵。最小矩阵的 M0 比较锚点为同子集 M0（\TBD），
 % 而非 696-run \MzeroPass{}（§\ref{sec:benchmark}）。
 
-\textbf{Reused 696-run assets.} The frozen snapshot provides M0 directly. For H1b stratification, we re-use the trace-length distribution from 47 pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. No new evaluation runs before \PreregDate.
+\textbf{Reused 696-run assets.} The frozen snapshot provides M0 directly. For H1b stratification, we re-use the trace-length distribution from 47 pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. No new evaluation runs are reported in this paper.
 % 【中文】
 % \textbf{复用 696-run 资产。} 冻结快照直接提供 M0。对需要分层的臂（H1b），我们复用 47 条插桩试点
 % run 的轨迹长度分布（中位 26.5 调用，IQR 13.8--38.0）来定义短（$<$14）/中（14--38）/长（$>$38）
-% 分层。\PreregDate 前不跑新评测。
+% 分层。本文不报告新的评测 run。

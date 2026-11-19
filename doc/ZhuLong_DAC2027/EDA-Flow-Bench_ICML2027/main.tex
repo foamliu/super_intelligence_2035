@@ -4,7 +4,7 @@
 %
 % 编译：pdflatex main && bibtex main && pdflatex main && pdflatex main
 %
-% v1.7 重写：从"卖 bench"重定位为"认知命题 + 情绪机制 + 预注册可证伪"
+% v1.7 重写：从"卖 bench"重定位为"认知命题 + 情绪机制 + 可证伪假设"
 % 正文 ≤ 6 页（不含 references + appendix）
 %
 % 【中文】main.tex 覆盖说明（2026-11-18 中文对照令）：
@@ -42,8 +42,6 @@
 % 冻结评测快照：2026-11-09 run_batch_20261109_171201 = 696 runs
 %   （62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT）
 \newcommand{\Neval}{696}
-% 预注册日
-\newcommand{\PreregDate}{2026-11-22}
 % M0 基线锚点 Pass@1（冻结 696-run 快照）
 \newcommand{\MzeroPass}{10.0\%}
 % 脚本层基线对比
@@ -56,7 +54,7 @@
 \begin{document}
 
 \twocolumn[
-  \icmltitle{Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study}
+  \icmltitle{Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Falsifiable Study}
 
   \icmltitlerunning{Affective Memory for EDA Flow Agents}
 
@@ -69,7 +67,7 @@
 
   \icmlcorrespondingauthor{Anonymous Submission}{anonymous@example.org}
 
-  \icmlkeywords{EDA, LLM agents, long-chain orchestration, affective memory, pre-registered hypotheses}
+  \icmlkeywords{EDA, LLM agents, long-chain orchestration, affective memory, falsifiable hypotheses}
 
   \vskip 0.3in
 ]
@@ -81,7 +79,7 @@
 \input{sections/2_background}
 \input{sections/3_task_benchmark}
 \input{sections/4_harness}
-\input{sections/5_preregistered}
+\input{sections/5_hypotheses}
 \input{sections/6_experiments}
 \input{sections/7_analysis}
 \input{sections/8_related}
