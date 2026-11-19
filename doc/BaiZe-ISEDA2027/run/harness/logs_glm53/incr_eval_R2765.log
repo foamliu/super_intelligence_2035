@@ -62,3 +62,34 @@
 [incr-eval 15:29:27] pi: unevaluated real_patch=10 (spiral=0) empty_patch=7
 [incr-eval 15:29:27] pi: merged 10 new patches -> predictions_pi_new_R2765.json
 [incr-eval 15:29:27] pi: EVAL 10 instances [CPU-limited 16 cores] -> run_id=verified_full_glm53_pi_incr_R2765
+[incr-eval 16:04:10] pi: eval rc=0
+[incr-eval 16:04:10]   django__django-16333: RESOLVED
+[incr-eval 16:04:10]   django__django-16429: RESOLVED
+[incr-eval 16:04:10]   django__django-16454: FAILED
+[incr-eval 16:04:10]   django__django-16493: RESOLVED
+[incr-eval 16:04:10]   django__django-16527: RESOLVED
+[incr-eval 16:04:10]   django__django-16631: FAILED
+[incr-eval 16:04:10]   django__django-16662: RESOLVED
+[incr-eval 16:04:10]   django__django-9296: RESOLVED
+[incr-eval 16:04:10]   matplotlib__matplotlib-14623: NO report.json -> infra
+[incr-eval 16:04:10]   matplotlib__matplotlib-20859: RESOLVED
+[incr-eval 16:04:10]   django__django-16315: EMPTY PATCH -> failed
+[incr-eval 16:04:10]   django__django-16485: EMPTY PATCH -> failed
+[incr-eval 16:04:10]   django__django-16502: EMPTY PATCH -> failed
+[incr-eval 16:04:10]   django__django-16819: EMPTY PATCH -> failed
+[incr-eval 16:04:10]   django__django-16950: EMPTY PATCH -> failed
+[incr-eval 16:04:10]   matplotlib__matplotlib-20676: EMPTY PATCH -> failed
+[incr-eval 16:04:10]   matplotlib__matplotlib-20826: EMPTY PATCH -> failed
+[incr-eval 16:04:10] pi: cumulative n=419 resolved=242 failed=175 infra=2 empty_patch=80 total_pred=422
+[incr-eval 16:04:10] --- opencode ---
+[incr-eval 16:04:10] opencode: unevaluated real_patch=0 (spiral=0) empty_patch=0
+[incr-eval 16:04:10] opencode: nothing to do
+[incr-eval 16:04:10] --- hermes ---
+[incr-eval 16:04:10] hermes: unevaluated real_patch=0 (spiral=0) empty_patch=0
+[incr-eval 16:04:10] hermes: nothing to do
+[incr-eval 16:04:10] === SUMMARY ===
+[incr-eval 16:04:10] cline: resolved=300 failed=179 infra=0 n=479 (new_real=6 new_empty=11 spiral=0)
+[incr-eval 16:04:10] codex: resolved=109 failed=288 infra=1 n=398 (new_real=2 new_empty=7 spiral=1)
+[incr-eval 16:04:10] deepseek: resolved=175 failed=95 infra=0 n=270 (new_real=7 new_empty=4 spiral=0)
+[incr-eval 16:04:10] pi: resolved=242 failed=175 infra=2 n=419 (new_real=10 new_empty=7 spiral=0)
+[incr-eval 16:04:10] DONE
