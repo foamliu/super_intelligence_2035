@@ -6,14 +6,14 @@
 <h1>SWE-bench Verified · 7 路横评报告</h1>
 <div class="info">
 <p><strong>模型</strong>：glm-5.3-flash　|　<strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-19 16:14（R2769）</p>
+<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-19 17:02（R2771）</p>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
 <table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 <tr><td>1</td><td><strong>hermes</strong></td><td class='pass' style='font-weight:bold'>444/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>88.8%</td></tr>
 <tr><td>2</td><td><strong>opencode</strong></td><td class='pass' style='font-weight:bold'>415/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>83.0%</td></tr>
-<tr><td>3</td><td><strong>cline</strong></td><td class='pass' style='font-weight:bold'>300/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>60.0%</td></tr>
+<tr><td>3</td><td><strong>cline</strong></td><td class='pass' style='font-weight:bold'>301/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>60.2%</td></tr>
 <tr><td>4</td><td><strong>claude-code</strong></td><td class='pass' style='font-weight:bold'>295/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>59.0%</td></tr>
 <tr><td>5</td><td><strong>pi</strong></td><td class='pass' style='font-weight:bold'>242/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>48.4%</td></tr>
 <tr><td>6</td><td><strong>deepseek</strong></td><td class='pass' style='font-weight:bold'>175/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>35.0%</td></tr>
@@ -25,11 +25,11 @@
 <table><thead><tr><th>Harness</th><th>Predict/500</th><th>剩余</th><th>Empty patch</th><th>状态</th></tr></thead><tbody>
 <tr><td><strong>hermes</strong></td><td>500/500</td><td>0</td><td class='fail'>10</td><td>✅ 满量</td></tr>
 <tr><td><strong>opencode</strong></td><td>500/500</td><td>0</td><td class='fail'>1</td><td>✅ 满量</td></tr>
-<tr><td><strong>cline</strong></td><td>481/500</td><td>19</td><td class='fail'>82</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>cline</strong></td><td>487/500</td><td>13</td><td class='fail'>87</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>claude-code</strong></td><td>500/500</td><td>0</td><td class='fail'>141</td><td>✅ 满量</td></tr>
-<tr><td><strong>pi</strong></td><td>422/500</td><td>78</td><td class='fail'>86</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>pi</strong></td><td>424/500</td><td>76</td><td class='fail'>87</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>deepseek</strong></td><td>271/500</td><td>229</td><td class='fail'>59</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>codex</strong></td><td>400/500</td><td>100</td><td class='fail'>238</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>codex</strong></td><td>401/500</td><td>99</td><td class='fail'>239</td><td>⏳ 进行中</td></tr>
 </tbody></table>
 <div class="note"><p>Empty = 模型已 attempt 但未生成 patch（能力不足，非 infra）。剩余 = 尚未 attempt 的题数。opencode / claude-code / hermes 已满 500。</p></div>
 
@@ -37,9 +37,9 @@
 <h3>待跑（backlog · predict &lt; 500）</h3>
 <table><tr><th>Harness</th><th>剩余题数</th></tr>
 <tr><td><strong>deepseek</strong></td><td>229</td></tr>
-<tr><td><strong>codex</strong></td><td>100</td></tr>
-<tr><td><strong>pi</strong></td><td>78</td></tr>
-<tr><td><strong>cline</strong></td><td>19</td></tr>
+<tr><td><strong>codex</strong></td><td>99</td></tr>
+<tr><td><strong>pi</strong></td><td>76</td></tr>
+<tr><td><strong>cline</strong></td><td>13</td></tr>
 </table>
 
 <h3>待重跑（infra 失败）</h3>
@@ -52,5 +52,5 @@
 <div class="note"><p>429/quota：当前无 429 阻塞题。其余失败题 = 能力不足（tests fail / 空 patch），非 infra，不需重跑。</p></div>
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R2769 · 2026-11-19 16:14<br>SWE-bench Verified 500 · 7-way
+BaiZe Harness · R2771 · 2026-11-19 17:02<br>SWE-bench Verified 500 · 7-way
 </p></body></html>
