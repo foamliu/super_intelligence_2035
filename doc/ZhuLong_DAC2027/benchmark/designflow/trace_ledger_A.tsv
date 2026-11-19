@@ -661,7 +661,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1782141557406_uhla7	e0025730	10.129.8.86	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=64698
 1789718897680_hdhfh	t0002470	10.129.2.11	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=1053770
 1791615588369_akfxu	johnl	10.129.2.10	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=13846
-1791897142698_tt73q	jason17w	10.129.32.190	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=233148
+1791897142698_tt73q	jason17w	10.129.32.190	5		claimed		2026-11-19 14:11	r798 re-claim: buildable VPS interface summary Q&A (specificity oracle). x0mjt/gheik audited non-buildable (env-config no deliverable / private-KB doc-search no accessible source)
 1791947876609_xq1yo	e0027435	10.129.8.237	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=5638
 1792224394327_gheik	e0014566	10.129.35.82	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=120863
 1792466393671_dqi7d	liyingw	172.16.8.14	5		parked		2026-11-19 12:47	r794-liveness-ALIVE mc5-9-A-pure sz=62615
