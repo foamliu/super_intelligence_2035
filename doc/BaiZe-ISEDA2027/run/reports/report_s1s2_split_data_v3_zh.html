@@ -199,7 +199,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <table>
 <tr><th style="width:30px;">#</th><th>repo_id</th><th>类型</th><th class="num">体积</th><th>用途</th><th>当前状态</th><th>理由</th></tr>
 <tr><td><b>1</b></td><td><code>IFM/MegaMath</code> batch2 (megamath-web)</td><td><b>预训练</b></td><td class="num">887GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (4950/4950, 16.5h)</td><td>S2 数学预训练核心来源，batch1 已完成，batch2 是消除 math 缺口的关键</td></tr>
-<tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code> <span class="cite">[arXiv 2508.15096, ICLR 2026]</span></td><td><b>预训练</b></td><td class="num">260GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (243GB/196 files)；🔄 分词中 (65.3%)</td><td>133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85</td></tr>
+<tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code> <span class="cite">[arXiv 2508.15096, ICLR 2026]</span></td><td><b>预训练</b></td><td class="num">260GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (243GB/196 files)；🔄 分词中 (67.4%)</td><td>133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85</td></tr>
 <tr><td><b>3</b></td><td><code>HuggingFaceTB/finemath</code> <span class="cite">[FineMath-3+/4+]</span></td><td><b>预训练</b></td><td class="num">149GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (140GB/288 parquet)；✅ 分词完成 (9.4B tok)</td><td>34B+9.6B tok，数学预训练补充；已加入 blend TSV (prop=0.005)</td></tr>
 <tr><td>4</td><td><code>IFM/Code-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">3.28TB</td><td>decay/post-train</td><td class="green">✅ 完成 (1637/1637, 13.9h)</td><td>不是 S2 预训练瓶颈（stack-v3 已解决 code 缺口）</td></tr>
 <tr><td>5</td><td><code>IFM/Math-Reasoning</code> (恢复断点续传)</td><td>SFT</td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 64% (1423/2228)</td><td>不是 S2 预训练瓶颈</td></tr>
@@ -321,13 +321,13 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h2 id="s6">§6 — 风险与缓解</h2>
 <table>
 <tr><th style="width:25px;">#</th><th>风险</th><th>等级</th><th>缓解措施</th><th>当前状态</th></tr>
-<tr><td>1</td><td><b>Math epoch 1.25 偏高</b>（fallback 版 megamath 单源 1.69）</td><td class="amber">🟡 中</td><td>Nemotron-CC-Math (133B) 分词完成后更新为 main 版 → epoch 降到 ~0.85；MegaMath-web (~279B) 到货后进一步降至 ~0.65</td><td>🔄 Nemotron 分词 65.3%，ETA ~11-20</td></tr>
+<tr><td>1</td><td><b>Math epoch 1.25 偏高</b>（fallback 版 megamath 单源 1.69）</td><td class="amber">🟡 中</td><td>Nemotron-CC-Math (133B) 分词完成后更新为 main 版 → epoch 降到 ~0.85；MegaMath-web (~279B) 到货后进一步降至 ~0.65</td><td>🔄 Nemotron 分词 67.4%，ETA ~11-20</td></tr>
 <tr><td>2</td><td><b>code_l2/l3 累计 epoch &gt;1.0</b>（1.15/1.03）</td><td class="amber">🟡 低-中</td><td>stack-v3 (430.7B, 零重叠) 已补入 Code 类别 → 类别整体 epoch 0.88 ✅；如需进一步降，可调低 code_l2 prop（0.18→0.15）提高 stack-v3（0.17→0.20）</td><td class="green">✅ 类别整体安全</td></tr>
 <tr><td>3</td><td><b>S1→S2 配比骤变</b>（Web 74%→40%）导致 Loss spike</td><td class="amber">🟡 低-中</td><td>pretrain S4 实验显示配比切换 loss 反降 → 推荐直接切换；保留 ramp 备选（5K~10K 步线性渐变）</td><td class="green">✅ pretrain 线确认</td></tr>
 <tr><td>4</td><td><b>评测集污染</b>（HumanEval/MBPP/GSM8K/MATH/SWE-bench）</td><td class="red">🔴 高</td><td>5 benchmarks / 9277 tasks 黑名单 ✅ 就绪；13-gram/8-gram 扫描待执行（~11-21 后）</td><td class="amber">⏳ 黑名单 ✅ / 扫描待执行</td></tr>
 <tr><td>5</td><td><b>S2 与 S1 数据重叠</b>（同种子 ~83-100%）</td><td class="amber">🟡 中</td><td>方案 D+E：补新源（stack-v3+MegaMath，天然零重叠，28% of S2）+ 换 SEED=5678（旧源重叠 ~35%→~17%）→ 总体重叠 ~12%</td><td class="green">✅ 方案已定（见 §8）</td></tr>
 <tr><td>6</td><td><b>MegaMath-web 下载延迟</b></td><td class="green">🟢 已解决</td><td>fallback 版 blend TSV 已就绪；下载已完成 → PC-5 分词待执行 → S2 中途刷新 blend TSV</td><td class="green">✅ 下载完成 (4950/4950)</td></tr>
-<tr><td>7</td><td><b>Nemotron 分词延迟</b>（65.3%，ETA ~12h）</td><td class="amber">🟡 低</td><td>不阻塞 S2 启动（fallback 版已就绪）；分词完成后更新为 main 版</td><td class="amber">🔄 65.3%，ETA ~11-20</td></tr>
+<tr><td>7</td><td><b>Nemotron 分词延迟</b>（67.4%，ETA ~11h）</td><td class="amber">🟡 低</td><td>不阻塞 S2 启动（fallback 版已就绪）；分词完成后更新为 main 版</td><td class="amber">🔄 67.4%，ETA ~11-20</td></tr>
 <tr><td>8</td><td><b>.12 CPU 争抢 pretrain</b></td><td class="red">🔴 已解决</td><td>僵尸进程已杀（KILL 89核+1核）；分词 nice19/ionice3/分机 .12+.29；.12 load 32.13 ✅ &lt; 120</td><td class="green">✅ 已解决</td></tr>
 <tr><td>9</td><td><b>磁盘空间不足</b></td><td class="green">🟢 低</td><td>/nas_user 45T 可用 ✅ ≥5T 红线</td><td class="green">✅</td></tr>
 <tr><td>10</td><td><b>灾难性遗忘 / 语言风格突变</b>（Web 74%→40%）</td><td class="amber">🟡 中</td><td>S1 web 已训 953.6B（0.43 epoch），S2 继续 web 513.3B → 累计 1466.9B（0.66 epoch），web 仍有充足训练量；S4 实验确认 loss 平稳</td><td class="green">✅ 已分析</td></tr>
