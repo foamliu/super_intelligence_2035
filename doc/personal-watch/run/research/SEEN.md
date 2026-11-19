@@ -5698,3 +5698,6 @@
 | 2026-11-19 | 2611.22777 | CrossEnv: Synthesizing Verifiable Cross-Environment Tasks for Long-Horizon Agent Training | cs.AI | 收录 |
 | 2026-11-19 | 2611.22835 | When Passing Checks Do Not Establish Completion: Evidence Interpretation in Coding Agents | cs.CL | 收录 |
 | 2026-11-19 | 2611.23158 | MoE--LoRA Methods for Multilingual Adaptation: A Systematic Empirical Study | cs.CL | 收录 |
+| 2026-11-20 | 2611.24849 | Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling | cs.IR | 收录 |
+| 2026-11-20 | 2611.24844 | General progress substitutes for specific training data in language models | cs.CL | 收录 |
+| 2026-11-20 | 2611.24071 | Measuring and Charging for Retained Context in Long-Context LLM Services | cs.PF | 收录 |
