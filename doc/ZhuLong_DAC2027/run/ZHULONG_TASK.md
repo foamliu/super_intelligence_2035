@@ -1,5 +1,101 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-19 用户令 — EDA-Flow-Bench 分层为 Full（数千·增长·不在论文中给具体数字）+ Lite（500·一般评测用·token/时间预算有限），全树同步改写（最高优先 · 覆盖 standby）**
+>
+> 本条是贡献精简令（commit `335267235`）之后的**评测集分层令**。用户原话：「EDA-Flow-Bench 分成 Full（数千）和 Lite（500）。前者数量在增加，不用在论文中给出具体数字，从中筛选 500 形成 Lite，一般评测用 Lite（token/时间预算有限）」。
+>
+> **现状**：`main.tex:41` 宏 `\newcommand{\Ntasks}{1827}`（Full 集当前任务数，designflow 造题线在持续增长——A:399 / B:418 / C:502 / D:508，本线多次随 designflow commit 同步上调 1684→1722→1810→1827）。**问题**：① Full 集具体数字会随时间过期且需要本线反复手工同步，用户要求**不在论文中给具体数字**；② 论文缺少\"Full / Lite\"分层结构——评测集应当有一个稳定的 500-task Lite 子集用于一般评测（token/时间预算有限），Full 集本身是数千且增长。
+>
+> ### ① 分层结构（用户硬要求）
+>
+> - **Full 集**：数千（"several thousand" / "thousands"），**持续增长**（designflow 造题线在加任务），**论文中不给出具体数字**。`main.tex:41` 的 `\newcommand{\Ntasks}{1827}` 宏**删除**或改为定性描述（如 `\newcommand{\FullSet}{thousands of}` 或 `\newcommand{\FullScale}{thousands}`，agent 自决宏名但**不得给具体数字**）。所有引用 `\Ntasks` 的地方同步改写。
+> - **Lite 集**：**500 任务**，从 Full 集中筛选形成，**用于一般评测**（token/时间预算有限）。新增宏 `\newcommand{\LiteSet}{500}`（agent 自决宏名），用于 Lite 集引用。
+> - **筛选说明**：Lite 500 是从 Full 集（数千）按某筛选标准（agent 自主选择：如按链长/接地深度/领域覆盖平衡/难度分布）筛选的代表性子集；筛选标准应在 §3 Task/Benchmark 或 Appendix A 简述（1-2 句），保证 Lite 是 Full 的代表性子集（13 域覆盖 + 链长分布近似 Full）。
+> - **评测用途**：**一般评测用 Lite**（token/时间预算有限），Full 集用于描述性 baseline 快照采样池与持续增长储备。论文实验（M0 + M1-M8/N1-N2 各臂）应在 Lite 上跑（除非另有说明）。
+>
+> ### ② 与现有概念的协调（agent 自主判断，但必须自洽）
+>
+> 现有论文有几个评测集相关的概念，引入 Full/Lite 后需协调一致：
+>
+> 1. **696-run 冻结快照**（2026-11-09，`\MzeroPass=10.0%`，62/620 decided）：这是从 Full 集（数千）采样的描述性 baseline 快照。**保留**为\"Full-set descriptive baseline\"。新增 Full/Lite 分层后，696-run 的定位是\"Full 集描述性快照\"（不是 Lite，因为 696 > 500；它采样自 Full 集）。`main.tex:44` 的 `\newcommand{\Neval}{696}` 宏**保留**（这是快照样本数，不是 Full 集总数）。
+> 2. **top-120 最小矩阵**（§3 / §5）：现作\"minimal matrix\"（按链长 top-120，arm 对比锚点）。agent 自主判断以下两种协调方式之一（或第三种 agent 自决）：
+>    - **方案 a**：top-120 是 **Lite 500 的进一步子集**（minimal matrix = top-120 of Lite 500），arm 对比锚点在 top-120 上；Lite 500 是一般评测集，top-120 是 power-constrained minimal-matrix arm-comparison subset。
+>    - **方案 b**：top-120 概念**废弃**，arm 对比直接在 Lite 500 上跑（agent 改 §3 / §5 / §6 的 minimal-matrix 表述，去掉 top-120）；M0 锚点改为\"same Lite 500 subset M0 (\TBD)\"。
+>    - agent 自决，但**必须全树一致**（§3 / §5 / §6 / §7 / appendix A-B 不能互相矛盾）。
+> 3. **ideal matrix 500×3**（§5 Statistics）：现作\"500 tasks × 3 repeats，power≥0.8\"。**若 Lite = 500**，则 ideal matrix 与 Lite 自然对齐（ideal matrix = Lite 500 × 3 repeats）。agent 应显式说明\"ideal matrix = Lite × 3 repeats\"，让两者自洽。**保留** ideal matrix 的统计功效叙事（朋友评审 R2 的关键诚实化要求）。
+> 4. **per-domain 分布**（appendix B 表 \ref{tab:full-domain-results}）：696-run 跨 13 域的 per-domain breakdown，**保留**为 Full-set 描述性 baseline。若 agent 判断需要 Lite 500 的 per-domain 分布表，可在 appendix B 加一张 Lite 分布表（自决，不强制）。
+>
+> ### ③ 改写范围（全树同步）
+>
+> 必须改写的地方（所有引用 `\Ntasks` 或\"1827\"/\"1684\"等具体 Full 数字的，全部改）：
+>
+> 1. **`main.tex`**：`\newcommand{\Ntasks}{1827}` → 改为定性 Full 宏（如 `\newcommand{\FullScale}{thousands of}`）或直接删宏用文字；新增 `\newcommand{\LiteSet}{500}`；宏注释说明\"Full = thousands, growing, no specific number; Lite = 500 curated subset for general evaluation\"。
+> 2. **`sections/0_abstract.tex`**：现\"a benchmark of \Ntasks{} long-chain EDA design-flow tasks across 13 domains\" → 改为\"a two-tier benchmark: a \emph{Full} set of several thousand long-chain EDA design-flow tasks across 13 domains (continuously growing, count not reported) and a \emph{Lite} set of \LiteSet{} curated tasks used for general evaluation under bounded token/time budgets\"。保留 7.6× / 10.0% / 76.5% / 696-run / 62/620 / 三公式 / 10 臂 / no-release / 诚实路线。词数仍 ≤ 200（agent 自主压缩其他句子以容纳分层描述）。
+> 3. **`sections/1_intro.tex`**：
+>    - 第 5 行\"a frozen 696-run evaluation snapshot shows ... only \MzeroPass{} Pass@1\"——保留 696-run baseline 描述（Full-set descriptive baseline）。
+>    - 第 22 行 Contributions 段第 (1) 条\"We \emph{introduce} \bench{}, a benchmark of \Ntasks{} long-chain EDA design-flow tasks across 13 domains ...\" → 改为\"We \emph{introduce} \bench{}, a two-tier benchmark (\emph{Full}: several thousand long-chain EDA design-flow tasks across 13 domains, continuously growing, count not reported; \emph{Lite}: \LiteSet{} curated tasks used for general evaluation under bounded token/time budgets), each derived from real IC-design engineer coding-agent traces ... with a frozen \Neval{}-run evaluation snapshot (\MzeroPass{} Pass@1 vs.\ \ScriptPass{} ..., a 7.6$\times$ gap)\"。
+> 4. **`sections/3_task_benchmark.tex`**：
+>    - 第 5 行\"\bench{} is a benchmark of \textbf{\Ntasks{} tasks} across \textbf{13 EDA domains} ...\" → 改为分层描述（Full thousands + Lite 500）。
+>    - 新增一段\"**Two-tier structure.** Full: thousands of tasks (continuously growing, count not reported), curated from real IC-design engineer traces; Lite: \LiteSet{} tasks filtered from Full by [筛选标准 agent 自决], used for general evaluation under bounded token/time budgets; arm-level experiments run on Lite.\"（位置：§3 开头或 Evaluation subset 段附近，agent 自决）。
+>    - 第 18 行\"Evaluation subset\"段：现\"Experiments use a Full-set subset (top-120 by chain length)\"——按 ② 方案 a/b 改写协调（top-120 of Lite 或废弃 top-120 直接用 Lite）；696-run 快照描述保留为\"Full-set descriptive baseline snapshot\"。
+> 5. **`sections/5_hypotheses.tex`**：
+>    - 第 68 行\"Minimum matrix: 120 tasks/arm (top-120 by chain length); ideal: 500 tasks × 3 repeats\" → 协调改写（按 ② 方案 a/b）；若 Lite=500 与 ideal matrix 对齐，显式说\"ideal matrix = Lite × 3 repeats\"。
+>    - 第 89 行 arm 表\"anchor = M0 Pass@1 on same top-120 subset (\TBD)\" → 协调改写（top-120 of Lite 或 Lite 500）。
+>    - 第 111 行\"M0's minimal-matrix anchor is the same-subset M0 (\TBD), not the 696-run full-set \MzeroPass{}\" → 协调改写。
+> 6. **`sections/6_experiments.tex`**：现 M0 baseline 表用 696-run 快照（保留）；arm 表若引用 top-120 / Lite，同步协调。
+> 7. **`sections/7_analysis.tex`**：failure taxonomy (21%/62.8%/0.3%) 与 trace anatomy (47 pilot) 数据保留（这是 696-run + 47 pilot 的描述性数据，不受 Full/Lite 分层影响）。
+> 8. **`sections/9_conclusion.tex`**：现\"We introduce \bench{}, a benchmark of \Ntasks{} long-chain EDA design-flow tasks from real IC-design traces\" → 改为分层描述（Full thousands + Lite 500）。
+> 9. **`sections/11_reproducibility.tex`**：若引用 `\Ntasks` 或具体 Full 数字，同步改。
+> 10. **`appendix/A_benchmark_details.tex`**：
+>    - 第 19 行\"mc $\geq$ 30 threshold yields the high-quality candidate pool from which all \Ntasks{} Full-set tasks are curated\" → 改为\"from which the Full set (thousands of tasks, count not reported) is curated; a Lite subset of \LiteSet{} tasks is filtered from Full by [筛选标准] for general evaluation\"。
+>    - 第 55 行\"build holds \Ntasks{} cases (A: 399, B: 418, C: 502, D: 508)\"——这是分 shard 的具体数字（A/B/C/D 4 个 shard）。agent 自主判断：**保留** shard 分布（这是附录细节，不与\"Full 不给具体数字\"冲突——附录可以说\"at the time of writing\"或\"current snapshot\"）**或**删除具体 shard 数字改为\"thousands across 4 shards\"。倾向保留 shard 分布（附录细节，对读者理解 curation pipeline 有价值），但加一句\"counts grow as new traces are curated; numbers here reflect the snapshot at submission time\"。
+> 11. **`appendix/B_additional_results.tex`**：696-run per-domain 表保留；若 agent 加 Lite 分布表（②.4）放此。
+> 12. **`appendix/C_experimental_details.tex`** / **`appendix/D_affective_mechanism.tex`**：若引用 `\Ntasks` 或 Full 具体数字，同步改。
+>
+> ### ④ 计划书同步（`reports/report_edafb_icml2027_plan_zh.html`）
+>
+> - §6.4 Figure/Table 描述、§5.1 臂表、§3 benchmark 描述中所有\"1684\"/\"1722\"/\"1810\"/\"1827\"/\Ntasks 具体数字 → 同步改为\"数千（Full，持续增长，不给具体数字）+ 500（Lite，一般评测用）\"分层结构。
+> - §5 Statistics 中 ideal matrix 500×3 与 Lite 500 的对齐关系显式说明。
+> - top-120 minimal matrix 概念按 ② 方案 a/b 协调。
+>
+> ### ⑤ 防伪底线（必须保留的数据点）
+>
+> - ✅ **696-run 冻结快照** / `\MzeroPass=10.0%` / 62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT / `\Neval=696` —— 全保留，这是已实测数据。
+> - ✅ **76.5% 单脚本** / **7.6× 跳变** / **7.1× 域差距** —— 全保留。
+> - ✅ **failure taxonomy** 21.0% / 62.8% / 0.3% / 7.0% UNKNOWN —— 保留（696-run 数据）。
+> - ✅ **47 pilot** 26.5 calls / 41.2% MCP —— 保留（pilot 数据）。
+> - ✅ **shard 分布** A:399 / B:418 / C:502 / D:508 —— 附录可保留（加\"snapshot at submission time\"说明）或删除，agent 自决。
+> - 🚫 **不编造** Lite 500 的筛选结果数字（Lite 500 的 M0 / arm 结果若未实测，标 \TBD；696-run 是 Full-set 描述性 baseline，不是 Lite 500 的结果）。
+> - 🚫 **不删**他人数据 / 不改判据 / 不改题/样本 / 双盲匿名继续。
+>
+> ### ⑥ 硬约束（继承，全部继续生效）
+>
+> - **可改**：`EDA-Flow-Bench_ICML2027/main.tex` + `sections/*.tex` + `appendix/*.tex` + `reports/report_edafb_icml2027_plan_zh.html`。
+> - 🚫 **不动**：designflow 造题线 cases/jsonl/ledger、其他论文树。
+> - 🚫 **不起**：训练/评测进程（Lite 500 的实测结果若未跑，标 \TBD）。
+> - ✅ **正文 ≤ 6 页**（分层描述应紧凑，不应让正文变长）。
+> - ✅ **0 外链 0 script**（计划书）。
+> - ✅ **双盲匿名 + 防伪底线**（已列 ⑤）。
+> - ✅ **不承诺开源**（v1.8 意见 4 继续）。
+> - ✅ **无预注册**（v1.9 删除令继续，不得回退\"预注册\"措辞）。
+> - **编译验证**：4 轮 pdflatex+bibtex；`grep -c '^!' main.log` = 0；`grep -c 'Undefined' main.log` = 0（注意删 `\Ntasks` 宏后所有引用同步改，否则 undefined）；正文 ≤ 6 页；匿名性复检；abstract ≤ 200 词。
+> - **提交**：commit 前缀 `zhulong paper: EDA-Flow-Bench 分层为 Full（数千·不给具体数字）+ Lite（500·一般评测用）`；**只 add 论文树 + 计划书 + 本线 run 文件**，勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① `main.tex` 无 `\newcommand{\Ntasks}{1827}` 宏（或改为定性描述）✅；
+>   ② 全论文树 grep `1827|1684|1722|1810` = 0（除附录 shard 分布 + 注释行）✅；
+>   ③ 新增 `\LiteSet{500}` 宏 + 论文中 Lite 500 显式出现 ✅；
+>   ④ Full 集在论文中只出现定性描述（\"thousands\" / \"several thousand\" / \"growing\"），**不出现具体数字**（除附录 shard 分布 + 696-run 快照样本数 \Neval）✅；
+>   ⑤ abstract / §1 contributions / §3 / §9 含 Full+Lite 分层描述 ✅；
+>   ⑥ 696-run / 10.0% / 62/620 / 76.5% / 7.6× / 7.1× / 21%/62.8%/0.3% 全保留 ✅；
+>   ⑦ top-120 / ideal matrix 500×3 与 Lite 500 协调一致（无互相矛盾）✅；
+>   ⑧ 编译 0 error 0 undefined（删 `\Ntasks` 宏后无 undefined）✅；
+>   ⑨ 正文 ≤ 6 页 + abstract ≤ 200 词 ✅；
+>   ⑩ 匿名 + 防伪 + 双盲 + 无预注册 + 不承诺开源 继续过 ✅；
+>   ⑪ 计划书 §6.4 / §5 / §3 同步分层结构 ✅。
+> - 完成后 `WAITING=0` standby，记一行心跳。
+>
+> **agent 自主空间**：Full 宏的具体命名（`\FullScale` / `\FullSet` / 直接用文字）/ Lite 宏的具体命名（`\LiteSet` / `\Lite`）/ Lite 500 的筛选标准（按链长 / 接地深度 / 领域覆盖平衡 / 难度分布）/ top-120 与 Lite 500 的协调方式（方案 a top-120 of Lite vs 方案 b 废弃 top-120）/ 附录 shard 分布是否保留 + \"snapshot at submission time\" 说明 —— 由 agent 自主决定。用户给的是\"Full 数千不给具体数字 + Lite 500 一般评测用 + 全树同步\"，不是逐字模板。
+
 > 🔴 **2026-11-19 用户令 — 贡献列表精简至 2-3 项，且必须有一项是基于真实 Trace 构建的评测集 EDA-Flow-Bench（最高优先 · 覆盖 standby）**
 >
 > 本条是删除预注册令（commit `8348b8a7a`）之后的**贡献列表精简令**。用户原话：「贡献太多，2-3 项即可，而且应该有一项是基于真实 Trace 构建的评测集 EDA-Flow-Bench」。
