@@ -311,7 +311,7 @@
 1792986549258_5vo44.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793242571158_hfv5q.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793242571158_hfv5q.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
-1792579190180_tgumy.messages.json					parked		2026-11-20 01:04	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
+1792579190180_tgumy.messages.json					case	EDA-Eval-DesignFlow-DbcoaZqCalCircuitExplainQA-001	2026-11-20 01:30	path-bug revival confirmed r971: subdir path fetchable (see nofile_revival_candidates_r971.tsv)
 1792579190180_tgumy.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793347000576_ygv3b.messages.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
 1793347000576_ygv3b.messages.archive.json					parked		2026-11-05 08:09	D263-peek: NOFILE (session not at .cline/data/sessions on host/ip)
