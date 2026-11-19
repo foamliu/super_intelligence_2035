@@ -224,9 +224,19 @@ def start_mm_proxy(route: dict, port: int) -> subprocess.Popen:
            "--image-dir", str(IMAGE_CACHE)]
     proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL,
                             stderr=open(f"/tmp/mm_proxy_{port}.log", "a"))
-    time.sleep(1)  # let it bind
-    if proc.poll() is not None:
-        log(f"  ❌ mm_proxy exited immediately (rc={proc.returncode})!")
+    # Wait until the proxy actually accepts connections (readiness probe).
+    ready = False
+    for _ in range(30):  # up to ~6s
+        if proc.poll() is not None:
+            break
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.2):
+                ready = True
+                break
+        except OSError:
+            time.sleep(0.2)
+    if not ready or proc.poll() is not None:
+        log(f"  ❌ mm_proxy failed to start on port {port} (rc={proc.returncode})!")
     else:
         log(f"  mm_proxy started on port {port} (pid={proc.pid}) → {route['base_url']} "
             f"(image_dir={IMAGE_CACHE})")
@@ -274,27 +284,116 @@ def setup_cline_mm_data_dir(route: dict, proxy_port: int, route_id: str) -> str:
     return str(data_dir)
 
 
+def sanitize_cline_prompt(text: str) -> str:
+    """Escape @mentions in prompt text so cline doesn't interpret them as file mentions.
+
+    cline (bun/Node CLI) treats ``@word`` as a file-mention: it tries to read a
+    file named *word*, fails, and **silently exits with rc=0 and zero output**.
+    GitHub issue text routinely contains ``@username`` mentions which trigger
+    this.  We escape by inserting a zero-width space (U+200B) after the ``@``
+    so the mention is no longer parsed, while remaining visually identical.
+    Already-escaped ``@`` (inside backticks or followed by space/``@``) is left
+    as-is.
+    """
+    import re
+    # Match @ followed by a word char, but NOT inside backticks or already
+    # followed by space/another @.  We do a simple pass: replace @word → @\u200bword
+    # when @ is at start-of-token (preceded by whitespace, start-of-line, or
+    # non-word char that isn't a backtick).
+    return re.sub(r'(?<!`)@(?=[A-Za-z0-9_])', '@\u200b', text)
+
+
 def run_cline_mm(route, instance, workdir, image_infos, proxy_port, timeout,
                  route_id: str):
     """Run cline with multimodal prompt via mm_proxy. Returns (patch, stdout, stderr, rc)."""
-    prompt = build_prompt_with_images(instance["problem_statement"], image_infos,
-                                      proxy_port)
+    if route.get("text_only"):
+        # Non-multimodal model: pass plain text problem_statement (no image
+        # injection). mm_proxy still forwards but finds no markdown image tags
+        # → no image_url conversion → gateway gets a text-only request.
+        prompt = instance["problem_statement"]
+    else:
+        prompt = build_prompt_with_images(instance["problem_statement"], image_infos,
+                                          proxy_port)
+    # Escape @mentions — cline treats @word as file mention and silently exits
+    # with 0 output when the "file" doesn't exist (confirmed 2026-11-19).
+    prompt = sanitize_cline_prompt(prompt)
     # cline persists provider config in its data-dir and ignores OPENAI_BASE_URL.
     # Use a per-route data-dir with providers.json pre-written to point at mm_proxy.
     data_dir = setup_cline_mm_data_dir(route, proxy_port, route_id)
+    # Health-check the proxy right before invoking cline — it may have died
+    # during the (potentially lengthy) image-download phase.
+    import socket as _sock
+    proxy_ok = False
+    try:
+        with _sock.create_connection(("127.0.0.1", proxy_port), timeout=1):
+            proxy_ok = True
+    except OSError:
+        proxy_ok = False
+    if not proxy_ok:
+        log(f"  ⚠️ mm_proxy on port {proxy_port} died before cline — restarting")
+        # Re-start proxy (the Popen object from start_mm_proxy is not accessible
+        # here, so we spawn a fresh one that will be cleaned up by predict_route).
+        subprocess.Popen([sys.executable, str(HERE / "mm_proxy.py"),
+                          "--port", str(proxy_port),
+                          "--upstream", route["base_url"],
+                          "--api-key", route["api_key"],
+                          "--image-dir", str(IMAGE_CACHE)],
+                         stdout=subprocess.DEVNULL,
+                         stderr=open(f"/tmp/mm_proxy_{proxy_port}.log", "a"))
+        for _ in range(30):
+            try:
+                with _sock.create_connection(("127.0.0.1", proxy_port), timeout=0.2):
+                    break
+            except OSError:
+                time.sleep(0.2)
     cmd = [CLINE_BIN, "-c", str(workdir),
            "--data-dir", data_dir,
            "-P", "openai-compatible", "-m", route["model"], "-k", route["api_key"],
            "--auto-approve", "true", "--json", prompt]
     env = {
         "OPENAI_API_KEY": route["api_key"],
-        "OPENAI_BASE_URL": f"http://127.0.0.1:{proxy_port}",
+        "OPENAI_BASE_URL": f"http://127.0.0.1:{proxy_port}{urlparse(route['base_url']).path or '/v1'}",
         "PATH": os.environ.get("PATH", ""),
     }
+    # cline (bun/Node.js) produces zero output when stdout is a pipe
+    # (capture_output=True).  Redirect to temp files instead and read back.
+    import tempfile
+    out_fd, out_path = tempfile.mkstemp(suffix=".out", prefix="cline_")
+    err_fd, err_path = tempfile.mkstemp(suffix=".err", prefix="cline_")
+    os.close(out_fd); os.close(err_fd)
     try:
-        out, err, rc = run(cmd, workdir, timeout=timeout + 120, with_proxy=False, env=env)
+        e = os.environ.copy()
+        if env:
+            e.update(env)
+        for k in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY"):
+            e.pop(k, None)
+        e["no_proxy"] = "*"; e["NO_PROXY"] = "*"
+        # Debug: verify cline can produce output in this context
+        try:
+            _v_out, _v_err, _v_rc = subprocess.run(
+                [CLINE_BIN, "--version"], capture_output=True, text=True, timeout=10, env=e)
+            log(f"    cline --version: rc={_v_rc} out={_v_out.strip()!r} err={_v_err[:100]!r}")
+        except Exception as _ve:
+            log(f"    cline --version FAILED: {_ve}")
+        log(f"    cline cmd: {[str(c)[:80] for c in cmd[:3]]}... prompt_len={len(str(prompt))}")
+        with open(out_path, "w") as outf, open(err_path, "w") as errf:
+            p = subprocess.run(cmd, cwd=str(workdir), stdout=outf, stderr=errf,
+                               timeout=timeout + 120, env=e)
+        out = Path(out_path).read_text() if Path(out_path).exists() else ""
+        err = Path(err_path).read_text() if Path(err_path).exists() else ""
+        rc = p.returncode
     except subprocess.TimeoutExpired:
         out, err, rc = f"[agent TIMEOUT after {timeout + 120}s]", "", -1
+    finally:
+        try: os.unlink(out_path); os.unlink(err_path)
+        except OSError: pass
+    # Debug: log cline output length and first/last 300 chars (helps diagnose
+    # silent-exit issues where cline produces no output).
+    log(f"    cline rc={rc} stdout_len={len(out)} stderr_len={len(err)}")
+    if len(out) < 500:
+        log(f"    cline STDOUT: {out!r}")
+    if len(err) < 500:
+        log(f"    cline STDERR: {err!r}")
     patch = git_patch(workdir)
     return patch, out, err, rc
 
@@ -306,9 +405,11 @@ def run_opencode_mm(route, instance, workdir, image_infos, timeout):
     # NOTE: prompt must come BEFORE -f flags (yargs array flag consumes subsequent args)
     cmd = [OPENCODE_BIN, "run", "--dir", str(workdir),
            "--model", provider_model, "--auto", prompt]
-    # Attach image files via -f (absolute paths, after prompt)
-    for info in image_infos:
-        cmd.extend(["-f", info["path"]])
+    # Attach image files via -f (absolute paths, after prompt).
+    # Skip for text-only (non-multimodal) routes — model cannot process images.
+    if not route.get("text_only"):
+        for info in image_infos:
+            cmd.extend(["-f", info["path"]])
     env = {
         "PATH": os.environ.get("PATH", ""),
     }
@@ -327,7 +428,7 @@ def predict_one(route, instance, img_handler, proxy_port) -> dict:
     repo = instance["repo"]
     harness = route["harness"]
     route_id = route["id"]
-    workdir = WORKDIR_BASE / harness / repo.replace("/", "_")
+    workdir = WORKDIR_BASE / route_id / repo.replace("/", "_")
 
     try:
         ok, msg = git_clone_or_fetch(repo, bc, workdir)
@@ -338,8 +439,13 @@ def predict_one(route, instance, img_handler, proxy_port) -> dict:
         return {"instance_id": iid, "route": route_id, "blocked": msg,
                 "classification": "blocked", "model_patch_len": 0}
 
-    image_infos = download_instance_images(instance, img_handler)
-    log(f"  {iid}: {len(image_infos)} images downloaded")
+    if route.get("text_only"):
+        image_infos = []
+        n_img_urls = len(instance.get("image_assets", {}).get("problem_statement", []))
+        log(f"  {iid}: TEXT-ONLY mode — {n_img_urls} image URL(s) NOT injected (model non-multimodal)")
+    else:
+        image_infos = download_instance_images(instance, img_handler)
+        log(f"  {iid}: {len(image_infos)} images downloaded")
 
     t0 = time.time()
     if harness == "cline":
@@ -363,7 +469,8 @@ def predict_one(route, instance, img_handler, proxy_port) -> dict:
     result = {"instance_id": iid, "route": route_id, "harness": harness,
               "model": route["model"], "wall_s": round(wall, 1),
               "rc": rc, "model_patch_len": len(patch),
-              "n_images": len(image_infos)}
+              "n_images": len(image_infos),
+              "text_only": bool(route.get("text_only"))}
     if rc != 0 and not patch:
         result["classification"] = "infra" if "TIMEOUT" in str(out) else "failed"
     elif not patch:
@@ -386,6 +493,10 @@ def predict_route(route, instances, max_n=None, smoke=False) -> list[dict]:
     proxy_proc = None
     proxy_port = MM_PROXY_BASE_PORT
     if harness == "cline":
+        # Per-route port so concurrent cline routes don't collide on 9095.
+        cline_routes = [r for r in load_config()["routes"] if r["harness"] == "cline"]
+        cline_idx = next((i for i, r in enumerate(cline_routes) if r["id"] == route_id), 0)
+        proxy_port = MM_PROXY_BASE_PORT + cline_idx
         proxy_proc = start_mm_proxy(route, proxy_port)
     if harness == "opencode":
         setup_opencode_providers(load_config()["routes"])
