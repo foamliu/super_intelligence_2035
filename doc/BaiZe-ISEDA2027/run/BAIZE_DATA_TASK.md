@@ -1,5 +1,26 @@
 ﻿# BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-19 08:3x — 改进 ISEDA2027 论文：重画 Fig-1（S1/S2/Decay 三饼图跨双栏）+ 刷新 S1→S2→Decay 课程学习文字（最高优先）**
+
+> **用户原话**（data 部分）：「data：1.重画 Fig-1，宽度跨越双栏，并排放置 S1、S2 和 Decay 三个饼图；2.基于最新 S1->S2->Decay 课程学习策略和相应的数据处理刷新文字。」
+
+**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex`（当前 Fig 是 `\ref{fig:data-mix}`，含 stable + decay 两饼，单栏 minipage），以及相关文字段（`4_llm_pretrain.tex` §Data 节 + 可能 `3_architecture.tex`/`1_intro.tex`）。
+
+**任务（逐条执行）**：
+
+1. **重画 Fig-1（`fig:data-mix` 替换为三饼图，跨双栏）**：
+   - 用 `\begin{figure*}`（跨双栏，`figure*` 而不是 `figure`）并排三个饼图：**S1（稳定段 web74/code19/math7）· S2（web40/code40/math20）· Decay（退火 instr-SFT 60/agentic-SFT 12/web 22/math 4/code 2）**。
+   - 三饼图同一行、同尺寸、各自带标题（S1 stable / S2 / Decay annealing），颜色图例统一。
+   - S2 的配比数字以**最新 4:4:2 决策**为准（web:code:math = 40:40:20），且**优先用已落盘的 `blend_s2_preblend.tsv` 实际 prop**；若 Nemotron/finemath 已并入 main 版，用 main 版实际值并在图注注明数据源。
+   - 图注讲清三阶段课程学习：S1 通用为主 → S2 提升 code/math → Decay 转向指令/agentic。
+2. **刷新文字（基于最新 S1→S2→Decay 课程学习策略 + 对应数据处理）**：刷新 `4_llm_pretrain.tex` §Data 节及相关段落，反映：
+   - S1（0–~350k）保持 web74/code19/math7；S2（~350k–700k）切换 web:code:math=40:40:20，补入 stack-v3（code）+ MegaMath/Nemotron/finemath（math）；Decay（700k–720k）退火转向 instr-SFT/agentic-SFT + 长上下文 ladder。
+   - 呼应数据侧最新事实：S2 通过「补新源（stack-v3/MegaMath）天然零重叠 + 换 SEED」规避与 S1 重复采样（见 `report_s2_data_overlap_study.md`）；删除任何「当前下载中/未完成」这类易变状态表述，只写**最终策略与配比**。
+   - 保持与 S1/S2 报告一致的口径（4:4:2、切换点 ~350k 而非「12-25」）。
+3. **编译验收**：`latexmk -pdf main.tex` 0 error（跨双栏 `figure*` 注意占位/顺序）；`git add` 本线文件 → commit `data paper:` → push。心跳第一行写「Fig-1 三饼图跨双栏 + 文字刷新 + 编译 0err」。
+
+---
+
 > 🔴 **用户令 · 2026-11-18 14:2x — 排查 .12 狂占 CPU 的分词任务 + 分词任务 .12/.29 分机（最高优先）**
 
 > **用户原话**：「给 data 下指令，让它：1.看看 .12 上占 CPU 的分词任务，是否都有用（狂占 CPU 的僵尸无用进程可以杀掉），2.把分词任务在 .12 和 .29 分一分，以减少对 pretrain 的干扰。」
