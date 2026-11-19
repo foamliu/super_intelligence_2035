@@ -3446,3 +3446,20 @@
 | 2026-11-19 | GTA6「零 AI 纯手搓」评论稿（观点/评论体） | 量子位 | W:not-news | https://www.qbitai.com/2026/11/511180.html |
 | 2026-11-19 | 极客公园创新大会 2027 嘉宾阵容更新（活动预告） | 量子位 | W:not-news | https://www.qbitai.com/2026/11/511258.html |
 | 2026-11-19 | 阿里 H1 归母净利 750.72 亿元 / 网易 260.57 亿元 / 快手 50.88 亿元（财报数字） | IT之家 | W:not-news | https://www.ithome.com/1/029/639.htm |
+| 2026-11-20 | 苹果正自研 AI 智能体：可操控设备、浏览网页、编写代码 | IT之家 | https://www.ithome.com/1/029/750.htm |
+| 2026-11-20 | 谷歌 Gemini 现可直接操作苹果 Mac 电脑（Computer Use） | IT之家 | https://www.ithome.com/1/029/749.htm |
+| 2026-11-20 | 微软官方 PyPI 包 Agent Framework 遭劫持植入窃密恶意软件 | IT之家 | https://www.ithome.com/1/029/700.htm |
+| 2026-11-20 | 欧盟委员会证实遭到 AI 驱动的网络攻击 | IT之家 | https://www.ithome.com/1/029/687.htm |
+| 2026-11-20 | 英国法院裁定政府必须承认曾要求苹果「开后门」 | IT之家 | https://www.ithome.com/1/029/699.htm |
+| 2026-11-20 | 我国新增 34 家领航级智能工厂 | 央视网 | https://news.cctv.com/2026/11/20/ARTI65whXxxx9evkCO2pnUIU261120.shtml |
+| 2026-11-20 | 国家数据局：开展新一批可信数据空间创新发展试点 | 央视网 | https://news.cctv.com/2026/11/20/ARTI96NAS4KPFgSzdq99lLZ2261120.shtml |
+| 2026-11-20 | AI 模型大幅降低古籍数字化成本：识别 1000 页不到 0.1 美元 | IT之家 | https://www.ithome.com/1/029/688.htm |
+| 2026-11-20 | 北京多所高校提供免费「算力福利」加速 AI 创新应用 | 央视网 | https://news.cctv.com/2026/11/20/ARTISuy07HTWxGI234Z2LnVp261120.shtml |
+| 2026-11-20 | Anthropic 上市首日收盘涨 17%，市值 1.27 万亿美元 | IT之家 | https://www.ithome.com/1/029/748.htm |
+| 2026-11-20 | 谷歌与蓝色起源合作，2029 年发射 AI 服务器卫星 | IT之家 | https://www.ithome.com/1/029/695.htm |
+| 2026-11-20 | 快手 CEO 程一笑：Kling 4.0 已进入游戏和具身智能等场景 | IT之家 | https://www.ithome.com/1/029/686.htm |
+| 2026-11-20 | Canva 推出「AI 开关」，可关闭绝大部分 AI 工具 | IT之家 | https://www.ithome.com/1/029/677.htm |
+| 2026-11-20 | 博帝 AI Matrix 系列 DDR5 / M.2 SSD（新品稿） | IT之家 | W:not-news | https://www.ithome.com/1/029/645.htm |
+| 2026-11-20 | Uber 前 CEO 卡兰尼克声援黄仁勋复职（峰会发言） | IT之家 | W:opinion | https://www.ithome.com/1/029/691.htm |
+| 2026-11-20 | 格力电器因 150 元成被执行人？朱磊回应（司法个案） | IT之家 | W:not-news | https://www.ithome.com/1/029/667.htm |
+| 2026-11-20 | App Store 上架安卓虚拟机 Andarium（工具上线） | IT之家 | W:not-news | https://www.ithome.com/1/029/644.htm |
