@@ -75,6 +75,17 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
   </div>
 </header>
 
+<div class="callout gold" style="margin:14px 0;">
+<b>2026-11-19 评测集分层令（覆盖本计划书具体 Full-set 数字）</b>：用户令 EDA-Flow-Bench 分层为 <b>Full（数千·持续增长·论文中不给具体数字）+ Lite（500·一般评测用·token/时间预算有限）</b>。据此对本计划书作如下口径覆盖（历史诊断段「现稿主张」保留原貌作历史记录，不再逐字改写）：
+<ul style="margin:4px 0;">
+<li>本计划书中所有「\Ntasks=1684 / 1722 / 1810 / 1827」「Full 集 N 题」等<b>具体 Full-set 数字</b>，统一理解为「<b>Full = 数千（several thousand）、持续增长、论文不报告具体数字</b>」；附录 shard 分布（A399/B418/C502/D508）仅作投稿时快照保留。</li>
+<li><b>Lite = 500</b>（从 Full 按领域覆盖平衡 + 链长分布筛选）为一般评测集；<b>所有臂级实验在 Lite 上运行</b>。</li>
+<li><b>最小矩阵 = top-120 of Lite 500</b>（按链长）；<b>理想矩阵 = Lite 500 × 3 重复</b>（两者显式对齐，power ≥ 0.8）。</li>
+<li>696-run 冻结快照（\Neval=696, \MzeroPass=10.0%）是 <b>Full-set 描述性 baseline 快照</b>（采样自 Full，非 Lite）；各臂比较锚点为同 top-120-of-Lite 子集上实测的 M0（\TBD）。</li>
+</ul>
+<span class="src">用户令 2026-11-19（ZHULONG_TASK.md 评测集分层令）· 论文树 main.tex \FullScale/\LiteSet 宏 + §3 Two-tier structure + §5 ideal matrix=Lite×3</span>
+</div>
+
 <div class="toc">
 <strong>目录</strong>
 <ul>
@@ -345,7 +356,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 </div>
 
 <div class="callout">
-<b>统计与样本量约定（v1.6 · 紧凑化后共享，适用于全部子假设）</b>：统计检验统一为 McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；事前规定 α=0.05（Bonferroni 校正后 α=0.05/3=0.0167 用于 3 核心假设族）。最小矩阵：Lite 集 500 题中取 trace 最长 top-120（按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层，5_analysis.tex:85），每臂 1 trace × 120 题 = 120 run；理想矩阵：500 题 × 3 重复 = 1500 run/臂。n 不足时明确写「仅信号不作结论」。分层/析因特殊样本量见 H1b/H1c 各条。
+<b>统计与样本量约定（v1.6 · 紧凑化后共享，适用于全部子假设；2026-11-19 分层令复核）</b>：统计检验统一为 McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；事前规定 α=0.05（Bonferroni 校正后 α=0.05/3=0.0167 用于 3 核心假设族）。<b>最小矩阵：Lite 集 500 题中取 trace 最长 top-120（top-120 of Lite 500，按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层）</b>，每臂 1 trace × 120 题 = 120 run；<b>理想矩阵 = Lite 500 × 3 重复 = 1500 run/臂（与 Lite 500 显式对齐，power ≥ 0.8）</b>。n 不足时明确写「仅信号不作结论」。分层/析因特殊样本量见 H1b/H1c 各条。
 </div>
 
 <h3>L1 总命题 H1 · 受治理的长期记忆 + 递归自改进在长链 EDA flow 上有可迁移增益</h3>
@@ -606,8 +617,8 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h3>§5.4 最小可跑矩阵 vs 理想矩阵</h3>
 
 <div class="callout warn">
-<b>v1.4 任务子集口径变更（连锁自开源边界收缩）</b>：v1.2 以「Lite 集 500 题」为任务子集；v1.4 因开源边界收缩（§2.3 callout），<b>所有臂改用 Full 集子集</b>（如 top-120 by grounding depth / top-200 by chain length，从 1684 题中选，<b>不造新题、不开源</b>）。下表「Lite 集」字样在 v1.4 统一理解为「Full 集子集（不开源，仅内部评测）」。M4 迁移臂的训练域/目标域均取自 Full 集子集。
-<span class="src">用户令 2026-11-18 第二批意见 ① 连锁修订（ZHULONG_TASK.md v1.4 令 §① 意见 1 连锁）</span>
+<b>2026-11-19 评测集分层令（覆盖 v1.4 任务子集口径）</b>：用户令 EDA-Flow-Bench 分层为 <b>Full（数千·持续增长·不给具体数字）+ Lite（500·一般评测用）</b>。据此覆盖 v1.4「所有臂改用 Full 集子集」口径：<b>Lite 500 是从 Full 按领域覆盖平衡 + 链长分布筛选的固定代表性子集</b>（不再是 v1.4 的「Full 集子集（不开源，仅内部评测）」模糊口径）；<b>所有臂级实验在 Lite 500 上运行</b>；最小矩阵 = top-120 of Lite 500；理想矩阵 = Lite 500 × 3 重复。M4 迁移臂的训练域/目标域均取自 Lite 500 的 instance-disjoint 划分。696-run 快照是 Full-set 描述性 baseline（采样自 Full，非 Lite），各臂锚点为同 top-120-of-Lite 子集上实测的 M0（\TBD）。
+<span class="src">用户令 2026-11-19 评测集分层令（覆盖 v1.4 §5.4 口径）· 论文 §3 Two-tier structure + §5 ideal matrix=Lite×3</span>
 </div>
 <table>
 <tr><th></th><th>最小可跑矩阵（1-2 周）</th><th>理想矩阵（资源允许）</th></tr>
@@ -691,7 +702,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <tr><td>Table 1</td><td>与 DATE27 的 delta 表（§3）</td><td>§3（本计划书）</td><td>✅ 本计划书已起草</td></tr>
 <tr><td>Table 2</td><td><b>13 臂</b>消融表（臂号 / 唯一变量 / 判据 / 结果 / 对应子假设）</td><td>§5 + §6 实验结果</td><td>✅ 设计已起草，结果待跑</td></tr>
 <tr><td>Table 3</td><td>主结果：<b>3 核心假设 + 7 子假设</b>判据核验（H1/H2/H3 总结论 + H1a/b/c · H2a/b/c · H3 各子假设 point estimate + CI + McNemar p + 证伪/支持）</td><td>§6 实验新跑</td><td>❌ 新跑</td></tr>
-<tr><td>Table 4</td><td>13 域逐域 Pass@1（M0 vs M3，复用 696 快照 + 新跑；<b>v1.5 可选加 M0 vs M5/M6/M7 列</b>看情绪机制臂逐域表现）</td><td>4_experiments.tex:40-60（M0 已有）+ M3/M5/M6/M7 新跑</td><td>一半已有（M0）</td></tr>
+<tr><td>Table 4</td><td>13 域逐域 Pass@1（M0 vs M3，复用 696-run Full-set 快照 + 在 Lite 500 上新跑；<b>v1.5 可选加 M0 vs M5/M6/M7 列</b>看情绪机制臂逐域表现）</td><td>4_experiments.tex:40-60（M0 已有）+ M3/M5/M6/M7 在 Lite 500 新跑</td><td>一半已有（M0 Full-set 快照）</td></tr>
 <tr><td>Table 5</td><td>开源边界表（§2.3 v1.4 收缩）</td><td>§2.3（本计划书）</td><td>✅ 本计划书已起草</td></tr>
 <tr><td><b>Table 6</b>（v1.5 可选新增）</td><td>H2a/H2b/H2c 机制级判据核验表（与 Table 3 H1/H2/H3 并列，单独给情绪机制的证伪/支持结论 + α/β/γ 标定值）</td><td>§6 实验新跑（M5/M6/M7 标定）</td><td>❌ 新跑</td></tr>
 </table>
@@ -846,9 +857,9 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h3>A. EDA-Flow-Bench_ICML2027（现稿）</h3>
 <table>
 <tr><th>引用项</th><th>来源</th></tr>
-<tr><td>\Ntasks=1684</td><td>EDA-Flow-Bench_ICML2027/main.tex:76</td></tr>
-<tr><td>cases 构成 A363+B395+C460+D466=1684</td><td>EDA-Flow-Bench_ICML2027/main.tex:77</td></tr>
-<tr><td>\LiteSet=500</td><td>EDA-Flow-Bench_ICML2027/main.tex:99</td></tr>
+<tr><td>\FullScale=several thousand（Full 集·持续增长·论文不给具体数字）</td><td>EDA-Flow-Bench_ICML2027/main.tex（\FullScale 宏，2026-11-19 分层令）</td></tr>
+<tr><td>附录 shard 分布 A399+B418+C502+D508=1827（投稿时快照，正文不报告）</td><td>EDA-Flow-Bench_ICML2027/appendix/A_benchmark_details.tex:55</td></tr>
+<tr><td>\LiteSet=500（Lite 集·一般评测用·从 Full 按领域覆盖+链长筛选）</td><td>EDA-Flow-Bench_ICML2027/main.tex（\LiteSet 宏，2026-11-19 分层令）</td></tr>
 <tr><td>\Neval=696（冻结快照 2026-11-09）</td><td>EDA-Flow-Bench_ICML2027/main.tex:100-104</td></tr>
 <tr><td>10.0% Pass@1 (62/620 decided)</td><td>EDA-Flow-Bench_ICML2027/sections/0_abstract.tex:8 · 4_experiments.tex:66</td></tr>
 <tr><td>76.5% 单脚本 EDA benchmark</td><td>0_abstract.tex:8 · 4_experiments.tex:66</td></tr>
@@ -910,7 +921,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h3>D. benchmark / MEMORY（现有 designflow 资产）</h3>
 <table>
 <tr><th>引用项</th><th>来源</th></tr>
-<tr><td>四库 case 计数（权威，仍在增长）A363+B395+C460+D466=1684</td><td>EDA-Flow-Bench_ICML2027/main.tex:76-77（\Ntasks=1684，注释标「唯一事实源」）</td></tr>
+<tr><td>四库 case 计数（投稿时快照，仍在增长；正文不报告具体数字）A399+B418+C502+D508=1827</td><td>EDA-Flow-Bench_ICML2027/appendix/A_benchmark_details.tex:55（2026-11-19 分层令：正文 \FullScale=several thousand，附录保留 shard 快照）</td></tr>
 <tr><td>B 线方法学复检 audit 394/394=100%（batch1-35 全量收口）</td><td>benchmark/MEMORY_DESIGNFLOW_B.md:1（audit 行；394 为 audit 时刻的 B 计数，现 B=395，case 计数以 main.tex:77 为准）</td></tr>
 <tr><td>C 线 intent_audit 359/359 keep（intent 审计计数，非 case 计数）</td><td>benchmark/MEMORY_DESIGNFLOW_C.md:1（intent_audit_C.tsv 359/359 keep；C case 计数=460 见 main.tex:77）</td></tr>
 <tr><td>D 线 / A 线 case 计数</td><td>以 main.tex:77 为准（A363 / D466）；MEMORY_DESIGNFLOW_{A,D}.md 头部为造题流水状态行，case 计数会随后续造题轮持续增长，不作论文数字引用</td></tr>
