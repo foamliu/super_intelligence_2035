@@ -17,3 +17,8 @@ new instances: 1 ['sphinx-doc__sphinx-9367']
 new instances: 2 ['django__django-16950', 'matplotlib__matplotlib-23314']
 [incr-eval 23:59:24] deepseek: merged 2 new patches -> predictions_deepseek-harness_new_R2796.json
 [incr-eval 23:59:24] deepseek: EVAL 2 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2796
+[incr-eval 00:30:16] deepseek: eval rc=0
+[incr-eval 00:30:16]   django__django-16950: FAILED
+[incr-eval 00:30:16]   matplotlib__matplotlib-23314: NO report.json -> infra
+[incr-eval 00:30:16] deepseek: cumulative n=305 resolved=191 failed=113 infra=1 -> eval_glm53_deepseek-harness.json
+[incr-eval 00:30:16] === incr_eval R2796 done: 3 instances, +1resolved +1failed +1infra, spiral_marked=0 ===
