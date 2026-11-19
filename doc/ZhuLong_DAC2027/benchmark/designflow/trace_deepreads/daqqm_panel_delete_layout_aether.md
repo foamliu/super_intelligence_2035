@@ -24,3 +24,15 @@
 ## 处置
 
 `mark --status parked --force` + note 记录 C-domain REJECT 确认。**不造**（非 D 域，违「🚫 不碰别的 shard」+ D shard 只做 analog_context/schematic_netlist/waveform）。
+
+## r845 revival (2026-11-20) — 2026-11-15 reaudit 后 doc-search Q&A 合法化
+
+按 2026-11-15 用户令「旧判为 weak / analysis-only / doc-search / Q&A 的候选全部恢复为可造」，daqqm 的 layout_aether doc-search Q&A 意图现合法。本轮 revival via 档 B reframe 落库 `EDA-Eval-DesignFlow-AetherPanelDeleteDiag-001`（layout_aether, L1, 档 B, k_check=14, 子型 aether-layout-panel-delete-docsearch-diagnosis）。**C 域 layout_aether GUI doc-search 检索+诊断 reframe 子型首例**（与既有 layout_aether case 正交：AetherAutorouteTraceRuleDiag=autoroute rule / AetherPinErrorQa=pin error / AetherSePermAudit=SE perm / AetherLauncherSkill=launcher / AetherEnvBootstrap=env / AetherApiSummary=api summary — 本案=panel/window GUI 排障 doc-search）。
+
+- **档 B reframe**：A 档 gold=助手对真实 aether_tool_qa.md(5188行)+part_V_Layout_Editor.md(8577行) free-text doc-search 诊断（prose，无 ≥8 独立硬断言牙）→ reframe 为离线纯 stdlib 检索器 `aether_panel_diag.py`，CLI `<corpus_dir> <query> [-o out.json]`，解析 `## 提问`/`**回复：**` 问答块 + `### N.N`/`Menu:`/`BindKey:` 手册章节 → 检索 panel/window 管理条目 + 抽取方法/快捷键/菜单路径 → 输出结构化 JSON 报告。
+- **visible A** = aether_tool_qa_A.md + part_V_Layout_Editor_A.md（内容 faithful 摘自真实文档的 panel/window/workspace Q&A 与 LSW/Window 章节）+ prompt.txt（用户原话逐字「查看左右panel无法删除到原因」+ reframe 接口）+ task_brief.md。
+- **hidden B** = aether_tool_qa_B.md + part_V_Layout_Editor_B.md（合成，同结构，不同问答条目/不同 panel 方法/不同行号/不同手册章节；B distinctive methods: Ctrl+Shift+H / Window -> Close Side Panel / Pin）。
+- **判分 14 条独立条件 a-n**：zip合法+stdlib-only+B运行JSON+6顶层键+retrieved_qa四字段+line_range行界+panel关键词相关性+Ctrl+Shift+H方法+CloseSidePanel/Pin方法+corpus_files无幻觉+手册章节四字段+反硬编码A(A含add To panel/ENTER，B含Ctrl+Shift+H)+missing-path非零退出+3-seed确定性。
+- **自验**：golden 14/14 PASS；4 negatives (empty/print_expected/core_deleted/hardcode_a) all FAIL DISTINCT (a,b,c,d,e,f / l,m / e,f,g,h,i,k / f,h,i,j,l)；§4.9 三假全 FAIL；roundtrip test==disk check.py sha16 cbeed5cc0640d722 ✓。
+- **infra**：eda_flow open_session(task_id=shardC-r845) OK；ssh e0031982@10.129.35.73 + key OK；scp 594KB messages.json + 真实参考文档(127KB+888KB) OK。pyAether .75:8651/8652/8654 Connection refused（非 L1 必需）。
+- **台账**：C ledger mark case (force, 跨 shard D 台账 parked 已 r897 订正 C-domain)；build_jsonl.py --shard C 重建 C.jsonl 525→528（含 2 既有 gap + 本案）。
