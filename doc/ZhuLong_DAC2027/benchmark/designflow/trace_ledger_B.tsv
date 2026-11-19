@@ -1542,3 +1542,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794911095789_zpzkm	xavierw	hfeg0pkn002	104	spice_sim	case	EDA-Eval-DesignFlow-SramNetlistLint-001	2026-11-19 08:48	
 1794832275714_qoz23	zhenglu	hfeg0pkn003	30	spice_sim	parked		2026-11-19 09:08	wrong-domain: prompt=DES key extraction from asm (crypto/reverse-eng), 'spice' kw matched path detch_spice, not spice_sim
 1794792863902_qetcj	kaixuanx	hfeg0pkn003	58	spice_sim	case	EDA-Eval-DesignFlow-WakeDelayMeasGen-001	2026-11-19 09:24	
+1794884513364_46pb5	zhenglu	hfeg0pkn003	42	spice_sim	case	EDA-Eval-DesignFlow-HspiceLibScanDeckGen-001	2026-11-19 10:26	
