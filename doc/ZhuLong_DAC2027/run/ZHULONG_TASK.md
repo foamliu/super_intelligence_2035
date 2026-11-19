@@ -1,4 +1,40 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
+> 🔴 **2026-11-19 22:4x 用户令 — 【解禁】授权 ZhiLong 使用 EDA-Flow-Bench 仓库**跑实验**（16 worker · ~3h/run · 默认 doubao · Lite 集 500）· 最高优先 · 覆盖 standby/「不起臂」**
+>
+> **用户原话**：「放行 zhulong 使用 EDA-Flow-Bench 仓库跑实验（16 worker，大约 3h 跑 1-run）默认使用 doubao 模型，Lite 集（500）」
+>
+> 这是对长期 `done_all / standby / 不起臂` 状态的**正式解禁**，范围仅限本令。
+>
+> ### ① 授权范围（仅此范围）
+> - ✅ 允许在 **EDA-Flow-Bench 仓库**（36.15 上的 benchmark 实跑树，非论文树 `EDA-Flow-Bench_ICML2027`）**拉起真评测 run**；允许起 **16 个 worker** 并发。
+> - ✅ 允许消费 **Lite 集 = 500 题**（与论文宏 `\LiteSet{500}` 同口径；若 Lite 500 的筛选清单尚未落盘，**必须先落盘清单文件**再跑，禁止"边跑边定题"）。
+> - ✅ 默认模型 = **doubao**（provider 端点/模型 id 由本线在 36.15 上确认并**落盘**到结果目录；若 doubao 不可用，**先停、报错、说明**，不许静默换 deepseek 或别的模型）。
+> - 🚫 仍不动：benchmark 内容、`check.py`、题面、Lite 筛选以外的题；不动论文树的四条红令结构判据。
+>
+> ### ② 运行参数（写死本轮，不自行放大）
+> - **数据集**：Lite 500（分母恒 500，不得剔题/挑题）
+> - **并发**：16 worker（`-p 16` 或等价参数；若实测 16 会打爆内存/端口，**降到实测安全值并写明原因**，不得硬顶）
+> - **预算**：约 **3h / 1-run**；超 4h 未收尾必须报「超预算 + 当前进度 + 新 ETA」，不得默默长跑
+> - **资源隔离**：`nice`/`ionice` 起步；不碰 pretrain / vision / posttrain 的 GPU 与端口；不 kill 别线进程；GPU 仅用于推理服务，不在本机跑训练
+>
+> ### ③ 最小交付（缺一项即本轮不算完成）
+> | # | 交付物 | 要求 |
+> |:--|:--|:--|
+> | 1 | Lite 500 清单 | 落盘（题号列表 + 生成规则 + 与 Full 的覆盖对比一句），供他人复现 |
+> | 2 | 1 个完整 run | 500/500 有结果；`final_report.json` + `completed_code_generation.jsonl` 落盘 |
+> | 3 | 主指标 | **Pass@1 = resolved/500**；再给失败分桶（能力/超时/环境异常/infra）与守恒校验 |
+> | 4 | run 元数据 | 模型 id + 端点 + `-p 16` + 起止时间 + wall clock + 每题均耗时；token 采集不到就写「未采集」，**不许估** |
+> | 5 | 可复算命令 | 一行命令 + 参数，别人能原样重跑 |
+> | 6 | 心跳 | MEMORY 一行 + 当日 daily 一行（含本次 run 的 Pass@1 与 wall clock） |
+>
+> ### ④ 判据与纪律
+> - **判据先写后用**：本 run 是 **Lite-500 上的首个基线（M0 或点名 arm，由你在 MEMORY 里先写清是哪一臂）**；跑完按写好的判据判，不改门槛。
+> - 论文里 Lite-500 数字此前为 `\TBD`；本次若产出实测值，**以实测为准**更新论文对应表格，并在 MEMORY 记录「\TBD → 实测值 + 命令 + 日期」；**未跑到的臂继续标 `\TBD`**。
+> - 🚫 不编造：跑失败/中断就照写失败原因与已完成比例；不许把部分 run 当 500 分母。
+> - **git 纪律（今日教训）**：推送后必须 `git fetch && git merge-base --is-ancestor <commit> origin/main` 复验；只 push 成功退出码不算数（vision 21:41 曾"假推送"，21:48 才自纠）。
+> - 本轮结束仍回到 standby；**下次唤醒先看 MEMORY 里本 run 的进度**，未完成就续（不要重头再来）。
+
+
 
 > 🔴 **2026-11-19 用户令 — Overleaf 编译问题修复 + Overfull/Underfull hbox 排版修复 + clean compile 纪律 + MANIFEST 同步指引（最高优先 · 覆盖 standby）**
 >
