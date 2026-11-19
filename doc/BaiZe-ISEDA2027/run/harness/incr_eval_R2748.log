@@ -1,0 +1,60 @@
+[incr-eval 08:07:02] Starting incr_eval_all R2748
+[incr-eval 08:07:02] --- cline ---
+[incr-eval 08:07:02] cline: unevaluated real_patch=2 empty_patch=0
+[incr-eval 08:07:02] cline: merged 2 new patches -> predictions_cline-patched_new_R2748.json
+[incr-eval 08:07:02] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2748
+[incr-eval 08:07:40] cline: eval rc=0
+[incr-eval 08:07:40]   pytest-dev__pytest-7521: RESOLVED
+[incr-eval 08:07:40]   pytest-dev__pytest-7571: FAILED
+[incr-eval 08:07:40] cline: cumulative n=447 resolved=287 failed=160 infra=0 empty_patch=59 total_pred=444 -> eval_glm53_cline-patched.json
+[incr-eval 08:07:40] --- codex ---
+[incr-eval 08:07:40] codex: unevaluated real_patch=2 empty_patch=1
+[incr-eval 08:07:40] codex: merged 2 new patches -> predictions_codex_new_R2748.json
+[incr-eval 08:07:40] codex: EVAL 2 instances -> run_id=verified_full_glm53_codex_incr_R2748
+[incr-eval 08:08:40] codex: eval rc=0
+[incr-eval 08:08:40]   scikit-learn__scikit-learn-11310: RESOLVED
+[incr-eval 08:08:40]   scikit-learn__scikit-learn-12973: FAILED
+[incr-eval 08:08:40]   scikit-learn__scikit-learn-13124: EMPTY PATCH -> failed
+[incr-eval 08:08:40] codex: cumulative n=383 resolved=108 failed=275 infra=0 empty_patch=217 total_pred=383 -> eval_glm53_codex.json
+[incr-eval 08:08:40] --- cc ---
+[incr-eval 08:08:40] cc: unevaluated real_patch=0 empty_patch=0
+[incr-eval 08:08:40] cc: nothing to do
+[incr-eval 08:08:40] --- deepseek ---
+[incr-eval 08:08:40] deepseek: unevaluated real_patch=1 empty_patch=3
+[incr-eval 08:08:40] deepseek: merged 1 new patches -> predictions_deepseek-harness_new_R2748.json
+[incr-eval 08:08:40] deepseek: EVAL 1 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2748
+[incr-eval 08:09:12] deepseek: eval rc=0
+[incr-eval 08:09:12]   django__django-14349: RESOLVED
+[incr-eval 08:09:12]   django__django-14351: EMPTY PATCH -> failed
+[incr-eval 08:09:12]   django__django-14404: EMPTY PATCH -> failed
+[incr-eval 08:09:12]   django__django-14534: EMPTY PATCH -> failed
+[incr-eval 08:09:12] deepseek: cumulative n=251 resolved=162 failed=89 infra=0 empty_patch=50 total_pred=251 -> eval_glm53_deepseek-harness.json
+[incr-eval 08:09:12] --- pi ---
+[incr-eval 08:09:12] pi: unevaluated real_patch=2 empty_patch=9
+[incr-eval 08:09:12] pi: merged 2 new patches -> predictions_pi_new_R2748.json
+[incr-eval 08:09:12] pi: EVAL 2 instances -> run_id=verified_full_glm53_pi_incr_R2748
+[incr-eval 08:10:14] pi: eval rc=0
+[incr-eval 08:10:14]   django__django-15277: RESOLVED
+[incr-eval 08:10:14]   django__django-15278: RESOLVED
+[incr-eval 08:10:14]   django__django-15252: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15268: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15280: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15315: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15368: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15375: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15382: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15499: EMPTY PATCH -> failed
+[incr-eval 08:10:14]   django__django-15525: EMPTY PATCH -> failed
+[incr-eval 08:10:14] pi: cumulative n=391 resolved=233 failed=157 infra=1 empty_patch=67 total_pred=391 -> eval_glm53_pi.json
+[incr-eval 08:10:14] --- opencode ---
+[incr-eval 08:10:14] opencode: unevaluated real_patch=0 empty_patch=0
+[incr-eval 08:10:14] opencode: nothing to do
+[incr-eval 08:10:14] --- hermes ---
+[incr-eval 08:10:14] hermes: unevaluated real_patch=0 empty_patch=0
+[incr-eval 08:10:14] hermes: nothing to do
+[incr-eval 08:10:14] === SUMMARY ===
+[incr-eval 08:10:14] cline: resolved=287 failed=160 infra=0 n=447 (new_real=2 new_empty=0)
+[incr-eval 08:10:14] codex: resolved=108 failed=275 infra=0 n=383 (new_real=2 new_empty=1)
+[incr-eval 08:10:14] deepseek: resolved=162 failed=89 infra=0 n=251 (new_real=1 new_empty=3)
+[incr-eval 08:10:14] pi: resolved=233 failed=157 infra=1 n=391 (new_real=2 new_empty=9)
+[incr-eval 08:10:14] DONE
