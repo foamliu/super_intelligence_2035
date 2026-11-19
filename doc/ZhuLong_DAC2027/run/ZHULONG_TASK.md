@@ -1,5 +1,68 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-19 用户令 — 删除全部"预注册"相关内容（预注册日 / 预注册声明 / `\PreregDate` 宏 / "pre-register"措辞 / 预注册纪律段），保留假设/判据/诚实路线本身（最高优先 · 覆盖 standby）**
+>
+> 本条是 v1.8（5 条修订，commit `e31a8048d`）之后的**删除令**。用户原话：「不需要预注册 计划也没法排的这么严格 都删掉」。
+>
+> **背景**：v1.4 计划书里 agent 自己设了"预注册日 2026-11-22"并写进论文 `\PreregDate` 宏 + §6 预注册声明 + 多处"pre-registered"措辞。用户从未确认这个日期，也不需要预注册纪律——计划无法排得这么严格。**全部删除**，但**保留**假设/判据/诚实路线本身（这些是论文内容，不是预注册纪律）。
+>
+> ### ① 删除范围（全论文树 + 计划书）
+>
+> **必须删除/改写的内容**：
+> 1. **`main.tex` 第 45-46 行 `\newcommand{\PreregDate}{2026-11-22}` 宏定义** —— 删除宏定义；所有引用 `\PreregDate` 的地方同步改写（见下）。
+> 2. **`sections/1_intro.tex:32` "Pre-registration" 段** —— 整段删除（"All hypotheses, arms, and criteria are pre-registered before data collection on \PreregDate. The M0 baseline ... are to be evaluated post pre-registration."）；可保留一句中性的实验状态说明如"M0 baseline is available from a frozen 696-run snapshot; other arms are to be evaluated."
+> 3. **`sections/6_experiments.tex:5` "Pre-registration statement" 段** —— 整段删除或改写为中性"Experimental status"段（去掉"pre-register"/"pre-registration"措辞 + `\PreregDate`，保留 M0 锚点 + 其他臂 TBD 的事实）。
+> 4. **`sections/0_abstract.tex`** —— "We pre-register 3 core falsifiable hypotheses" → 改为 "We formulate 3 core falsifiable hypotheses"；"all other arms are evaluated after the pre-registration date (\PreregDate)" → 改为 "all other arms are to be evaluated"（去预注册日）。
+> 5. **`sections/5_preregistered.tex`** —— 文件名/节名 `\section{Pre-Registered Hypotheses and Ablation Design}` → 改为 `\section{Falsifiable Hypotheses and Ablation Design}`（去 "Pre-Registered"）；`\label{sec:preregistered}` 可保留（避免大规模 \ref 改动）或改为 `sec:hypotheses`（agent 自决，但必须全树 \ref 同步）；正文 "We pre-register 3 core hypotheses ... frozen before data collection on \PreregDate" → 改为 "We formulate 3 core falsifiable hypotheses ... each with falsification conditions"（去预注册 + 去冻结日）。
+> 6. **`sections/9_conclusion.tex:5,10`** —— "We pre-registered 3 core hypotheses ... evaluated after \PreregDate" → 改为 "We formulate 3 core falsifiable hypotheses ... other arms are to be evaluated"；"first pre-registered evidence" → 改为 "first falsifiable evidence" 或 "first mechanistic evidence"。
+> 7. **`sections/10_ethics.tex:5`** —— "Pre-registration discipline (\PreregDate) ensures hypotheses and criteria cannot be retroactively adjusted" 整句删除（预注册纪律段）；保留前面的脱敏说明 + 后面的 negative-results 报告声明。
+> 8. **`sections/3_task_benchmark.tex:18,24`** —— "measured post pre-registration" → 改为 "to be measured"；"预注册后与各臂一同测量" → 改为 "与各臂一同测量"。
+> 9. **`sections/6_experiments.tex:45,47,49,53,79,83`** —— "pre-registered threshold" → 改为 "falsification threshold" 或 "pre-specified threshold"（"pre-specified" 不是预注册，是假设判据的事前说明，OK）；"post pre-registration" / "pre-registration" 全部改为 "to be evaluated" 或 "pending evaluation"；Table caption "Pre-registered criteria check (results \TBD{} post pre-registration)" → 改为 "Criteria check (results \TBD{})"；"No new evaluation runs before \PreregDate" → 改为 "No new evaluation runs are reported in this paper" 或直接删除该句。
+> 10. **`sections/7_analysis.tex:22,24,28`** —— "placeholder, post pre-registration" → 改为 "placeholder, pending evaluation"；"待预注册后评测" → 改为 "待评测"。
+> 11. **`sections/8_related.tex:13,17,18,21,26`** —— "pre-registered falsification" → 改为 "falsifiable test" 或 "mechanism-level falsification"；"this paper pre-registers" → 改为 "this paper tests"；"本文预注册的经验问题" → 改为 "本文检验的经验问题"。
+> 12. **`appendix/D_affective_mechanism.tex:65,66,75,77,80,81,93,94`** —— "pre-registered falsification" → "falsifiable test"；"first pre-registered, falsifiable test" → "first falsifiable test"；"post pre-registration" → "pending evaluation"；"占位图（预注册后）" → "占位图（待评测）"。
+> 13. **`sections/11_reproducibility.tex`** —— 若有"pre-registration"措辞一并删除（grep 确认）；保留附录政策说明段。
+> 14. **`main.tex:7` 注释** "v1.7 重写：从'卖 bench'重定位为'认知命题 + 情绪机制 + 预注册可证伪'" → 改为 "v1.7 重写：从'卖 bench'重定位为'认知命题 + 情绪机制 + 可证伪假设'"（去"预注册"）。
+>
+> **计划书同步**（`reports/report_edafb_icml2027_plan_zh.html`）：
+> - 若计划书中有"预注册日 2026-11-22" / "pre-registration" / "预注册" 措辞，同步删除或改为"可证伪假设" / "falsifiable hypotheses"（agent 自主判断改动范围，但必须与论文一致）。
+> - §7.2 时间线节点"预注册日 2026-11-22"删除，其他时间线节点（数据冻结日/最小矩阵跑完/ICML 截稿）可保留或一并删（用户说"计划也没法排的这么严格"，倾向删除整个严格时间线，保留 ICML 截稿日作为外部硬约束）。
+>
+> ### ② 保留的内容（不要误删）
+>
+> - ✅ **3 核心假设 + 7 子假设**（H1/H2/H3 + H1a/b/c · H2a/b/c · H3）—— 假设本身保留，只去"预注册"措辞。
+> - ✅ **每条假设的证伪条件**（falsification conditions）—— 保留，这是可证伪性，不是预注册。
+> - ✅ **诚实路线**（"若 H1/H2 被证伪，写成边界条件，本身可发表"）—— 保留。
+> - ✅ **M0 锚点 10.0% + 696-run 快照** —— 保留（这是已有数据，不是预注册纪律）。
+> - ✅ **M1-M8/N1-N2 结果 TBD** —— 保留"待评测"事实，只去"预注册后评测"的措辞。
+> - ✅ **判据阈值 / 统计方法**（McNemar / paired bootstrap / α=0.05）—— 保留（这是事前说明的判据，不是预注册纪律；"pre-specified threshold" OK，"pre-registered threshold" 改）。
+> - ✅ **附录政策说明**（§11 ICML appendix policy 段）—— 保留。
+> - ✅ **双盲匿名 / 防伪底线** —— 保留。
+>
+> ### ③ 硬约束（继承 v1.8，全部继续生效）
+>
+> - **可改**：`EDA-Flow-Bench_ICML2027/main.tex` + `sections/*.tex` + `appendix/*.tex` + `reports/report_edafb_icml2027_plan_zh.html`。
+> - 🚫 **不动**：designflow 造题线 cases/jsonl/ledger、其他论文树。
+> - 🚫 **不起**：训练/评测进程。
+> - ✅ **正文 ≤ 6 页**（删除内容应让正文更短或持平，不应变长）。
+> - ✅ **0 外链 0 script**（论文树无 HTML，此条对计划书 HTML 继续生效）。
+> - ✅ **双盲匿名** + **防伪底线**（不编造数字/文献，不改判据/题/样本，不删他人数据）。
+> - **编译验证**：4 轮 pdflatex+bibtex；`grep -c '^!' main.log` = 0；`grep -c 'Undefined' main.log` = 0（注意删除 `\PreregDate` 宏后，所有引用该宏的地方必须同步改，否则会 undefined）；正文页数 ≤ 6；匿名性复检。
+> - **提交**：commit 前缀 `zhulong paper: 删除全部预注册相关内容（预注册日/声明/宏/措辞），保留假设/判据/诚实路线`；**只 add 论文树 + 计划书 + 本线 run 文件**，勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① 全论文树 grep `\\PreregDate` = 0（宏定义 + 所有引用全删）✅；
+>   ② 全论文树 grep -niE 'pre-regist|preregist|预注册' = 0（除注释行 + 计划书同步）✅；
+>   ③ `main.tex` 无 `\newcommand{\PreregDate}` 宏定义 ✅；
+>   ④ §1 / §6 的"Pre-registration"段删除或改写为中性"Experimental status" ✅；
+>   ⑤ 假设/证伪条件/诚实路线/M0 锚点/TBD 保留（grep `falsif|H1|H2|H3|MzeroPass|TBD` 命中数不降）✅；
+>   ⑥ 编译 0 error 0 undefined（删宏后无 `\PreregDate` undefined 报错）✅；
+>   ⑦ 正文 ≤ 6 页 ✅；
+>   ⑧ 匿名性 + 防伪底线 + 双盲继续过 ✅；
+>   ⑨ 计划书同步（§7.2 预注册日删除 + "预注册"措辞改"可证伪假设"）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编）。
+>
+> **agent 自主空间**：`\label{sec:preregistered}` 是否改名为 `sec:hypotheses`（需同步全树 \ref）由 agent 自决；§6 "Pre-registration statement" 段是整段删还是改写为中性"Experimental status"由 agent 自决；计划书时间线节点保留哪些由 agent 自决——用户给的是"删预注册 + 保留假设/判据/诚实路线"，不是逐字模板。
+
 > 🔴 **2026-11-19 用户令 — 论文双盲 + 排版 + 开源承诺 + 附录政策 5 条修订意见（最高优先 · 覆盖 standby）**
 >
 > 本条是 v1.7 论文重写 + 朋友评审处置（commit `cfb185159`·12p/0err/0undef）之后的**5 条修订意见**，全部针对 `EDA-Flow-Bench_ICML2027/` 正文与排版。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
