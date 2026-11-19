@@ -744,7 +744,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793264574506_nx2ac					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1793686357167_wlw3b					case	EDA-Eval-DesignFlow-DrcQaRunDiag-001	2026-11-20 06:43	r668 revival-REJECT: debug-Q&A (explain DrcQa.py + fix PermissionError pdkQa.log), 1 editor on private asset hbpeng/LoggerUtil.py, drc:1658=PATH-SUBSTRING inflation; e0047722 2-host mc85
 1794297992607_e4kv0					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1794357795851_55qgy					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1794357795851_55qgy					case	EDA-Eval-DesignFlow-BridgeConnDiag-001	2026-11-20 07:19	r847: pyAether bridge connection root-cause diag (env-config/debug-Q&A legal per 2026-11-15 reaudit), k_check=18, ref PASS + 4 neg FAIL distinct a/c/n/p
 1794276534959_30cgz					parked		2026-11-16 19:20	r668 revival-REJECT: pure concept-Q&A/learning (linux howto U#0-10 + DRC QA steps U#12/47 + virtuoso howto U#87-93), 0 write/create/edit, no fixture/evidence -> P-006 (C) retired; hongl 2-host mc148
 1794295625900_jia3m	stewieg	hfeg0plg89	300	layout_aether	case	EDA-Eval-DesignFlow-RoutingTrackFinder-001	2026-11-16 19:30	r667 revival per 2026-11-15 user令; second-look peek 实证 U#8-11 produce-task「开发 aether 脚本找中层金属可用布线轨道(channel)」+assistant 写 cxmt_find_routing_tracks.py (real gold), B档 reframe → RoutingTrackFinder-001 交付
 1794529920818_slj4a					case	EDA-Eval-DesignFlow-DrcViaScriptScan-001	2026-11-20 03:56	revival r839: r537 parked Q&A/run-existing -> 2026-11-15 reaudit 可造 (analysis-Q&A legal); reframe 档B DRC/via 脚本库扫描器
