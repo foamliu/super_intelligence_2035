@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-20 (R17) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 261.4k/700k(37.3%) step~8.2s / Nemotron 189/193=97.9% ETA~38min ~150B tok（即将完成！） / MegaMath-web 分词 426/4950=8.6% ETA~35h ~15.7B tok / Math-Reasoning 76.0% (1690/2228) ETA~9h / .12 load=13.34✅ / /nas_user 44T✅ / 全量 live numbers 同步 / commit+push完成**。
+
 > 🟢 **心跳 · 2026-11-20 (R16) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 261.4k/700k(37.3%) step~8.2s / Nemotron 187/193=96.9% ETA~58min ~146B tok / MegaMath-web 分词 406/4950=8.2% ETA~35h ~15.1B tok / Math-Reasoning 75.7% (1686/2228) ETA~9h / .12 load=14.73✅ / /nas_user 44T✅ / 全量 live numbers 同步 / commit+push完成**。
 
 > 🟢 **心跳 · 2026-11-20 (R15) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 最新刷新点：iter 261.4k/700k(37.3%) step~8.2s(harness CPU争抢) / Nemotron 183/193=94.8% ETA~1.6h ~142.8B tok / MegaMath-web 分词 339/4950=6.85% ETA~36.5h ~13.4B tok / Math-Reasoning 74.9% (1668/2228) ETA~9.1h / .12 load=21.70✅ / /nas_user 44T✅ / 全量 live numbers 同步 / commit+push完成**。
@@ -79,11 +81,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词206/4950) → WAITING=0
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词426/4950) Nemotron🔄(189/193=97.9%即将完成) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv(10源/含finemath);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(多次刷新/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅Code-Reasoning下载DONE(1635parquet/3.0TB/0inc);✅DATA_MAPPING.md D1节更新
-当前动作:     PC-5 MegaMath-web分词(406/4950=8.2%/ETA~35h/PID3028124/nice19/ionice3/RAYON=8)+Nemotron分词(187/193=96.9%/ETA~58min/PID1791934/~146B tok)+Math-Reasoning下载(75.7%/1686of2228/PID3697171/ETA~9h); .12 load=14.73✅<120; /nas_user 44T可用✅; pretrain训练正常(iter~261.4k/step~8.2s)
-下一步:       ①等Nemotron分词完成(~3.0h)→更新main版blend TSV(加入Nemotron源) ②等MegaMath-web分词完成(~40h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议 ⑤Math-Reasoning下载完成后验收+登记DATA_MAPPING
-阻塞:         无(所有后台任务nice19/ionice3;.12 load 34.04<120✅不挤pretrain;/nas_user 44T可用✅>5T红线)
+当前动作:     PC-5 MegaMath-web分词(426/4950=8.6%/ETA~35h/PID3028124/nice19/ionice3/RAYON=8)+Nemotron分词(189/193=97.9%/ETA~38min即将完成/PID1791934/~150B tok)+Math-Reasoning下载(76.0%/1690of2228/PID3697171/ETA~9h); .12 load=13.34✅<120; /nas_user 44T可用✅; pretrain训练正常(iter~261.4k/step~8.2s)
+下一步:       ①等Nemotron分词完成(~38min)→更新main版blend TSV(加入Nemotron源,下调megamath prop) ②等MegaMath-web分词完成(~35h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议 ⑤Math-Reasoning下载完成后验收+登记DATA_MAPPING
+阻塞:         无(所有后台任务nice19/ionice3;.12 load 13.34<120✅不挤pretrain;/nas_user 44T可用✅>5T红线)
 ERROR_COUNT:  0
 未完成指令:   无(PC-1~PC-4已交付;PC-5分词已启动;3个后台任务运行中)→WAITING=0
 ```
@@ -93,7 +95,7 @@ ERROR_COUNT:  0
 > 📦 §🔬 开工前 5 项必验结果（2026-10-06 09:48）已归档 → daily-memories-data/2026-10-06.md；**结论**：5 项全 PASS（N=18.36M/s_step=1.50s/LR=3e-3/Δloss÷2σ=7.9×），d=128 proxy 可开工。需要时再读。
 
 ## 📋 本唤醒流水
-> [11-19 01:45] 唤醒1553（例行巡检·MegaMath PC-2全完成确认·4后台任务健康·进度推进·MEMORY刷新）：①✅MegaMath PC-2分词ALL DONE确认(5 subsets: text-code-block 200+web-pro 100+qa 32+translated-code 16+code 16=364 .json/243GB; pc2_fast_split .12 PID2430086+.29 PID3935896均已完成退出,无残留进程);②🔄Nemotron-CC-Math分词 RUNNING(PID1791931/27/193 shards/~36.6B tok已产出/ETA~36.6h/nice19/ionice3/RAYON=8/log→/tmp/tok_nemotron_math.log);③🔄MegaMath-web下载 RUNNING(PID489801/3252/4950=66%/ETA~2.2h/nice19/ionice3/max-workers2/log→/tmp/dl_megamath_web_restart.log);④🔄Code-Reasoning下载 RUNNING(PID489797/1532/1637=94%/2.8TB已落盘/ETA~17min/nice19/ionice3/max-workers2/log→/tmp/dl_code_reasoning_restart3.log);⑤🔄Math-Reasoning下载 RUNNING(PID3697171/1076/2228=48%/2.0TB已落盘/稳定无崩溃/nice19/ionice3/max-workers2/log→/tmp/dl_math_reasoning_restart4.log);⑥✅.12 load=33.82✅<120红线;⑦✅.29 load=38.75✅;⑧✅磁盘/nas_user 113T/67T已用/46T可用(60%)→✅红线≥5T;⑨✅pretrain训练正常(torchrun PID2501551/step~7s);⑩✅git up-to-date with origin;⑪下一步：Code-Reasoning即将完成→验收+登记DATA_MAPPING→等Nemotron分词完成→更新main版blend TSV
+> [11-20 02:10] 唤醒1554（例行巡检·v3报告刷新·3后台任务健康·Nemotron即将完成）：①🔄Nemotron-CC-Math分词 RUNNING(189/193=97.9%/~150B tok已产出/ETA~38min即将完成/PID1791934/nice19/ionice3/RAYON=8)；②🔄MegaMath-web分词 RUNNING(426/4950=8.6%/~15.7B tok/ETA~35h/PID3028124/nice19/ionice3/RAYON=8)；③🔄Math-Reasoning下载 RUNNING(1690/2228=76%/ETA~9h/PID3697171/nice19/ionice3/max-workers2)；④✅.12 load=13.34✅<120红线；⑤✅磁盘/nas_user 113T/70T已用/44T可用(62%)→✅红线≥5T；⑥✅v3报告已刷新最新live numbers(Nemotron 97.9%/MegaMath-web 8.6%/Math-Reasoning 76%/load 13.34)；⑦✅git up-to-date with origin；⑧下一步：Nemotron分词即将完成(~38min)→完成后立即更新main版blend TSV(加入Nemotron源/下调megamath prop/epoch从1.69降到~0.62)→更新v3报告→commit+push
 
 > 📦 唤醒1552 原文已归档 → daily-memories-data/2026-11-19.md（例行巡检·4后台任务健康·Code-Reasoning 93%·Nemotron 21/193,详见日文件）
 
