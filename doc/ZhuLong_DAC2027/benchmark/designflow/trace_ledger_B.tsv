@@ -1575,4 +1575,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794901251428_sykbg	e0030760	hfeg0pkn001	138	spice_sim	parked		2026-11-20 04:15	r901 deepread done (159msgs/1.2MB, 4 tasks: MC-sigma-chain Q&A / NanoSpice install+doc-loc / NanoSpice HighSigma doc-summary MD / Solido HSV fail diag). BLOCKER: NanoSpice doc txt cleaned + /proj/lacaa perm-denied to sandbox user; reframe=nanospice_highsigma_summarizer.py (Task D, new intent vs e0030760 13 cases). Needs focused trace-rebuild round. 0-case this round.
 1794965001388_f4v84	e0044979	hfeg0pkn002	83	spice_sim	case	EDA-Eval-DesignFlow-SimModeExtractGen-001	2026-11-20 04:36	
 1795065039863_8pwia	e0029308	hfeg0pkn001	112	spice_sim	case	EDA-Eval-DesignFlow-TtCdlVVerdictGen-001	2026-11-20 04:59	
-1794998877326_h033j	e0047547	hfeg0pkn003	62	spice_sim	claimed		2026-11-20 05:14	
+1794998877326_h033j	e0047547	hfeg0pkn003	62	spice_sim	case	EDA-Eval-DesignFlow-HighSigmaDocSummaryGen-001	2026-11-20 05:32	
