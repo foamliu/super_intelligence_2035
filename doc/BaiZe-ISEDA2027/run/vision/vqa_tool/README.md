@@ -20,11 +20,11 @@ designflow 调用，用于度量「基线 fail → 上 VQA 后 pass」的多模�
 
 ## 启动服务
 ```bash
-CUDA_VISIBLE_DEVICES=5 /nas_data/app.e0031982/miniforge3/envs/py310/bin/python \
+CUDA_VISIBLE_DEVICES=6 /nas_data/app.e0031982/miniforge3/envs/py310/bin/python \
   qwen35_vqa_server.py --port 30001 --gpu 0
 # 首次冷加载 ~127s（NFS）；page cache 热 后 ~2.6s
 ```
-当前已在本机 **GPU 5（空闲 A40）、端口 30001** 常驻运行（pid 见 `pgrep -f qwen35_vqa_server`）。
+当前已在本机 **GPU 6（vision 线 A40，2026-11-19 用户令由 GPU 5 迁入；释放 GPU 5 给 posttrain）、端口 30001** 常驻运行（pid 见 `pgrep -f qwen35_vqa_server`）。`:30003` 为 `+rft2_adapter_seed11` 适配器实例，同样常驻 GPU 6。
 停止：`curl -s -X POST http://127.0.0.1:30001/shutdown` 或 `pkill -f qwen35_vqa_server.py`。
 
 ## 调用

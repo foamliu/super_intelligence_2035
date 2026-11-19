@@ -19,7 +19,9 @@ API:
   POST /shutdown  -> graceful stop (localhost only)
 
 Usage:
-  CUDA_VISIBLE_DEVICES=5 python qwen35_vqa_server.py --port 30001 --gpu 0
+  CUDA_VISIBLE_DEVICES=6 python qwen35_vqa_server.py --port 30001 --gpu 0
+  # 2026-11-19 用户令: VQA 服务从 GPU 5 迁到 GPU 6（释放 GPU 5 给 posttrain；
+  # vision 线分配 GPU 6-7）。:30001 基模 + :30003 rft2 适配器均常驻 GPU 6。
 
 Notes:
   - transformers 5.20.2 in conda py310 recognizes `qwen3_5` (verified).
