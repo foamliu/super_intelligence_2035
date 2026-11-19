@@ -1,5 +1,32 @@
 # BAIZE_HARNESS_TASK.md
 
+> 🔴 **用户令 · 2026-11-19 — SWE-bench Verified 报告重写（最高优先）**
+
+> **用户原话**：「报告质量很差。主表 cline 列 Pass% 写成 47.2%~57.3%，没跑就假设不过？写 47.2% 不就行了。报告这么长其它内容有信息量吗？文档名字写的是 swebench，下边加个 Terminal-Bench 表有关系吗？ETA 那都多早以前的事儿了放这里干什么？有用的主表没做好，哪些 case 需要重跑这些有用的信息没写好，净写一些垃圾。」
+
+> **重写要求**：
+> 1. **主表**（SWE-bench Verified 7 路结果）置顶，这是报告的核心。Pass% 分母用 500（已 resolved/500），没跑完的就是 resolved/500，不写区间、不写 ~、不假设。每个格子只写一个数字。
+> 2. **删掉所有无关内容**：Terminal-Bench 表删掉（那是另一个报告）、过期的 ETA 删掉、冗余的口径说明删掉、kimi 对比表如果分母不同也删掉。
+> 3. **保留有信息量的内容**：哪些 case 还没跑（empty/backlog 清单）、哪些需要重跑（infra 失败/429 等）、各路 predict 进度。
+> 4. **报告要短**，只写有用的东西。
+
+> 🔴 **用户令 · 2026-11-19 — SWE-bench Multimodal 2×3 评测（排队，MM 容器下载完后启动）**
+
+> **用户原话**：「SWE-bench Multimodal 下载完后，起如下的 2x3 评测。2 个 harness：cline+opencode。3 个 LLM：DeepSeek-V4-flash、Kimi-K2.6 和 Doubao」
+
+> **评测矩阵（2 harness × 3 LLM = 6 路）**：
+
+> | Harness | LLM | API key | Base URL | Model |
+> |:--|:--|:--|:--|:--|
+> | cline | DeepSeek-V4-flash | `02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3` | `http://agi-gateway.cxmt.com/v1` | `deepseek-v4-flash` |
+> | cline | Kimi-K2.6 | `02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f` | `http://agi-gateway.cxmt.com/cloud/v1` | `kimi-k2.6-cloud` |
+> | cline | Doubao | `02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f` | `http://agi-gateway.cxmt.com/cloud/v1` | `doubao-seed-2.0-pro-cloud` |
+> | opencode | DeepSeek-V4-flash | 同上 | 同上 | 同上 |
+> | opencode | Kimi-K2.6 | 同上 | 同上 | 同上 |
+> | opencode | Doubao | 同上 | 同上 | 同上 |
+
+> **排队条件**：SWE-bench Multimodal 容器下载完成（当前 433/580=74.7%）后启动。不抢 pretrain CPU。
+
 > 🔴 **用户令 · 2026-11-18 — 下载 SWE-bench Multimodal 评测容器（最高优先）**
 
 > **用户原话**：「一边补 SWE-bench Verified 评测，一边下载 SWE-bench Multimodal 的评测容器」
