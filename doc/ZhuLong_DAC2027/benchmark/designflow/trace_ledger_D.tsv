@@ -1751,7 +1751,7 @@ yaddy	xinqiaoz	hfeg0pkn002	0	schematic_netlist	parked		2026-11-08 12:35	r401 pee
 1794531688278_q3i8d	curryxu	hfeg0pkn002	11	schematic_netlist	parked		2026-11-14 08:45	skill-path paste '/home/adaml/.cline/skills/virtuoso-sch-editor'; skill-load non-produce
 1793601917510_4rd17	e0027673	hfeg0pkn001	10	waveform	parked		2026-11-14 08:45	skill-creator driven ('/model' + skill_instructions skill-creator); skill-infra non-user-produce
 1794450066854_jk0on	jackjia	hfhds234	10	waveform	parked		2026-11-14 09:15	circuit-CA analysis Q&A
-1792055082930_ul4z7	tongfanl	hfhds206	12	waveform	parked		2026-11-14 09:15	how-to ODT modify Q&A
+1792055082930_ul4z7	tongfanl	hfhds206	12	waveform	case	EDA-Eval-DesignFlow-Ddr6OdtModifyMethodQA-001	2026-11-19 08:41	r930 revival-from-parked: tongfanl@hfhds206 mc12 waveform ODT-modify-howto Q&A; A-faithful U#0 verbatim; manual-grounded howto produce reframe (承 r928/r929 范式); 12 断言 a-l
 1794293977226_4kbqy	nevinrao	hfeg0plg102	55	waveform	parked		2026-11-19 01:39	r905 deepread confirm: U1 testmode merge verification spec (cm1_ag_Ldosel0merge1 analog LDO select); real assets HUGE (allCMAdr_MAandOP.csv 8000+ rows, TM_parameters.v 7000+ lines, TM_*.v tasks); agent explored cmds_testmode dir but WRITE blocked by policy (U58), no clean deliverable produced; borderline domain (analog LDO-select merge via Verilog test patterns); too big + no gold -> not造 quality k>=8 case in budget
 1792395802853_jtiny	johnl	hfeg0plg98	23	waveform	parked		2026-11-14 09:15	DDR5 power system explanation Q&A
 1787646969865_5z1pb	e0025730	hfeg0plg49	24	waveform	parked		2026-11-14 09:15	skill-command /sense-margin-test
