@@ -82,7 +82,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
   <li><a href="#s1">§1 现稿诊断（逐节）</a></li>
   <li><a href="#s2">§2 贡献重定位与开源边界</a></li>
   <li><a href="#s3">§3 与 DATE27 的 delta 表</a></li>
-  <li><a href="#s4">§4 可证伪命题（pre-registered）</a></li>
+  <li><a href="#s4">§4 可证伪命题（falsifiable）</a></li>
   <li><a href="#s5">§5 消融设计（臂表 + 污染防护 + 统计）</a></li>
   <li><a href="#s6">§6 论文大纲与图表</a></li>
   <li><a href="#s7">§7 实验矩阵与时间线</a></li>
@@ -111,7 +111,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <ol class="judge">
   <li><b>贡献重定位</b>：三条硬伤（不可开源 / benchmark 社区价值被削弱 / 单点数字会过期）已诊断；替代结构 = 主线认知 + 副线任务形态 + bench 作载体；开源边界表见 §2.3。<span class="tag p2">✅</span></li>
   <li><b>与 DATE27 delta 表</b>：五维 delta（任务粒度 / 自进化载体 / 失败信号 / 评测单位 / 可迁移性主张）见 §3。<span class="tag p2">✅</span></li>
-  <li><b>可证伪命题</b>：4 条预注册假设（H1 记忆增益 / H2 自改进随链长单调 / H3 记忆是自改进前提 / H4 单 agent 与自主 spawn 结论复现），每条含自变量、因变量、判据阈值、样本量、统计检验、<b>证伪条件</b>，见 §4。<span class="tag p2">✅</span></li>
+  <li><b>可证伪命题</b>：4 条可证伪假设（H1 记忆增益 / H2 自改进随链长单调 / H3 记忆是自改进前提 / H4 单 agent 与自主 spawn 结论复现），每条含自变量、因变量、判据阈值、样本量、统计检验、<b>证伪条件</b>，见 §4。<span class="tag p2">✅</span></li>
   <li><b>消融设计</b>：≥6 臂（M0/M1/M2/M3/S1/M3+S1 + 两类负对照）+ <b>等 token 预算无记忆长 prompt 杀手级对照</b> + 最小可跑矩阵 + 理想矩阵，见 §5。<span class="tag p2">✅</span></li>
   <li><b>论文规划</b>：3 标题候选 + 4 贡献 + 与两篇 zhulong 同构章节大纲 + 图表清单 + 实验矩阵表 + ICML2027 倒推时间线 + 风险清单，见 §6–§8。<span class="tag p2">✅</span></li>
   <li><b>现有资产衔接</b>：今天就能跑 / 需新造题 / 需新基座沙盒三档清单 + 防伪底线，见 §9。<span class="tag p2">✅</span></li>
@@ -144,12 +144,12 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <h3>§1.1 Abstract（0_abstract.tex）</h3>
 <p><b>现稿主张</b>：首句定位「现有 EDA benchmark 只评单函数代码生成或开源 flow 修复，无人评多步编排」；贡献 = EDA-Flow-Bench（\Ntasks=1684 任务、13 域、真实 trace 构建）；结果 = DeepSeek-V4-Pro 10.0% Pass@1 vs 单脚本 76.5%；分析 = tool-chain grounding depth（pnr_signoff 20.8% vs physical_verify/layout_aether 2.9%，7.1×）。
 <span class="src">0_abstract.tex:2-10 · \Ntasks main.tex:76 · \Neval main.tex:104 · 10.0% 62/620 4_experiments.tex:66</span></p>
-<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 全文是「我们造了一个 bench + 跑了一个数字 + 解释一个 gap」——<b>没有可证伪的认知命题</b>，grounding depth 是「事后解释的描述性标注」而非「事前预注册的预测」；② <span class="tag mut">可升格</span> 10.0% vs 76.5% 的 7.6× 跨任务难度跳变 + grounding-depth 排序的稳定性，可升格为「<b>任务链长放大了 harness（观测/记忆/自改进）轴相对于基座轴的决定性</b>」这一认知命题（继承 DAC 的 grounding-gap 框架）；③ 10.0% 是<b>单点数字</b>，会随基座更新迅速过期——这正是用户指出的第三条硬伤。</p>
+<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 全文是「我们造了一个 bench + 跑了一个数字 + 解释一个 gap」——<b>没有可证伪的认知命题</b>，grounding depth 是「事后解释的描述性标注」而非「事前规定的预测」；② <span class="tag mut">可升格</span> 10.0% vs 76.5% 的 7.6× 跨任务难度跳变 + grounding-depth 排序的稳定性，可升格为「<b>任务链长放大了 harness（观测/记忆/自改进）轴相对于基座轴的决定性</b>」这一认知命题（继承 DAC 的 grounding-gap 框架）；③ 10.0% 是<b>单点数字</b>，会随基座更新迅速过期——这正是用户指出的第三条硬伤。</p>
 
 <h3>§1.2 Intro（1_intro.tex）</h3>
 <p><b>现稿主张</b>：把 EDA 工作流自动化重构为 agentic flow orchestration；贡献三条 = Benchmark / Evaluation（10.0% 天花板 + 7.1× 域差距）/ Analysis（失败分类法 + 47 trace 解剖）。
 <span class="src">1_intro.tex:5-35 · 贡献三条 1_intro.tex:29-35</span></p>
-<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 三条贡献全是「评测集本体」及其产物，<b>没有方法贡献</b>（DAC README.md:43 自己也说「我们没有自研模型，harness 即方法」但 ICML 比 DAC 更看重方法/认知）；② <span class="tag mut">可升格</span> 第 5 段「grounding depth dominates model scale」是<b>未检验假设</b>（现稿已诚实标注 4_experiments.tex:97-102）——把它从「假设」升格为「预注册可证伪命题」就是认知叙事的入口；③ 缺一个「<b>为什么 memory + RSI</b>」的 motivation 段——DAC Conclusion 的 Future work 四方向之一就是 long-term memory + RSI，应前移到 Intro 作为本论文要检验的命题。
+<p><b>诊断</b>：① <span class="tag p1">benchmark 叙事</span> 三条贡献全是「评测集本体」及其产物，<b>没有方法贡献</b>（DAC README.md:43 自己也说「我们没有自研模型，harness 即方法」但 ICML 比 DAC 更看重方法/认知）；② <span class="tag mut">可升格</span> 第 5 段「grounding depth dominates model scale」是<b>未检验假设</b>（现稿已诚实标注 4_experiments.tex:97-102）——把它从「假设」升格为「可证伪命题」就是认知叙事的入口；③ 缺一个「<b>为什么 memory + RSI</b>」的 motivation 段——DAC Conclusion 的 Future work 四方向之一就是 long-term memory + RSI，应前移到 Intro 作为本论文要检验的命题。
 <span class="src">DAC 8_conclusion.tex:4（Future work 原句：domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking）</span></p>
 
 <h3>§1.3 Benchmark Construction（2_benchmark.tex）</h3>
@@ -207,7 +207,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 
 <table>
 <tr><th>层级</th><th>角色</th><th>内容</th><th>是否开源</th></tr>
-<tr><td><b>主线（认知）</b></td><td>论文的灵魂</td><td>long-term memory + recursive self-improvement 在 EDA agent（脚本 + designflow）长链工具编排中的<b>可证伪收益与边界条件</b>。4 条预注册假设（H1-H4，§4），≥6 臂消融（§5）。</td><td>命题 + 判据 + 实验协议全开源（数字在 mock 沙盒可复跑）</td></tr>
+<tr><td><b>主线（认知）</b></td><td>论文的灵魂</td><td>long-term memory + recursive self-improvement 在 EDA agent（脚本 + designflow）长链工具编排中的<b>可证伪收益与边界条件</b>。4 条可证伪假设（H1-H4，§4），≥6 臂消融（§5）。</td><td>命题 + 判据 + 实验协议全开源（数字在 mock 沙盒可复跑）</td></tr>
 <tr><td><b>副线（任务形态）</b></td><td>认知的载体</td><td>long-chain flow orchestration 作为<b>新任务形态</b>（design_flow 契约：submit.zip 交付件 + ≥8 断言 + 不指定 lang/host）；评测协议（Pass@1 + PreToolUse 防泄题 + 2400s 超时）。</td><td>协议 + 判据 + harness 全开源</td></tr>
 <tr><td><b>载体（bench）</b></td><td>外部接口</td><td>EDA-Flow-Bench 作为「认知检验的实验台」：Lite 集 500 题（脱敏可释放）+ mock-EDA 模式 + 协议与判据 + Lite 集构造方法。<b>原始 trace、真实 PDK/网表/公司脚本不发布。</b></td><td>部分开源（见 §2.3 边界表）</td></tr>
 </table>
@@ -258,7 +258,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 </tr>
 <tr>
 <td><b>认知命题</b></td>
-<td>4 条预注册假设 + 证伪条件 + 统计检验协议 + ≥6 臂消融的判据阈值（§4 §5）</td>
+<td>4 条可证伪假设 + 证伪条件 + 统计检验协议 + ≥6 臂消融的判据阈值（§4 §5）</td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -307,7 +307,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 <td><b>可迁移性主张</b></td>
 <td>单一 EDA 域（PyAether 158 题），自进化在 instance-disjoint held-out 上 +2.5pp（80.0% vs 77.5%）<br><span class="src">DATE27 0_abstract.tex:4 · 6_conclusion.tex:3</span></td>
 <td>13 EDA 域（1684 题 flow 任务），主张「<b>认知可从脚本层迁移到 flow 层</b>」——若 H1-H4 在 flow 层复现则认知可迁移，若不复现则界定边界条件</td>
-<td><b>继承</b>预注册假设 + 受控消融 + 负结果照写的纪律；<b>差异</b>从「单域 +2.5pp」到「跨 13 域可迁移性检验」</td>
+<td><b>继承</b>可证伪假设 + 受控消融 + 负结果照写的纪律；<b>差异</b>从「单域 +2.5pp」到「跨 13 域可迁移性检验」</td>
 </tr>
 </table>
 
@@ -318,9 +318,9 @@ hr{border:none;border-top:1px dashed var(--line);margin:28px 0;}
 
 <!-- ============================ §4 ============================ -->
 <section id="s4">
-<h2>§4 可证伪命题（pre-registered hypotheses · v1.6 三层结构：总-机制-边界）</h2>
+<h2>§4 可证伪命题（falsifiable hypotheses · v1.6 三层结构：总-机制-边界）</h2>
 
-<p>v1.6 将 v1.4/v1.5 的 7 条并列假设（H1-H7）重组为<b>3 条核心假设 + 7 条子假设</b>，构成「<b>总-机制-边界</b>」三层内聚结构。每条子假设含 5 字段：陈述 / 自变量 / 因变量 / 判据阈值 / 证伪条件。所有假设在数据冻结前预注册（§7 时间线标「预注册日」）。
+<p>v1.6 将 v1.4/v1.5 的 7 条并列假设（H1-H7）重组为<b>3 条核心假设 + 7 条子假设</b>，构成「<b>总-机制-边界</b>」三层内聚结构。每条子假设含 5 字段：陈述 / 自变量 / 因变量 / 判据阈值 / 证伪条件。所有假设在事前规定判据与证伪条件。
 <span class="src">用户令 2026-11-18 第四批意见（v1.6 · 假设内聚化重组：7→3 核心+7 子·总-机制-边界三层）</span></p>
 
 <div class="callout info">
@@ -345,7 +345,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 </div>
 
 <div class="callout">
-<b>统计与样本量约定（v1.6 · 紧凑化后共享，适用于全部子假设）</b>：统计检验统一为 McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；预注册 α=0.05（Bonferroni 校正后 α=0.05/3=0.0167 用于 3 核心假设族）。最小矩阵：Lite 集 500 题中取 trace 最长 top-120（按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层，5_analysis.tex:85），每臂 1 trace × 120 题 = 120 run；理想矩阵：500 题 × 3 重复 = 1500 run/臂。n 不足时明确写「仅信号不作结论」。分层/析因特殊样本量见 H1b/H1c 各条。
+<b>统计与样本量约定（v1.6 · 紧凑化后共享，适用于全部子假设）</b>：统计检验统一为 McNemar（配对，方向一致）+ paired bootstrap 95% CI（1000 resample）；事前规定 α=0.05（Bonferroni 校正后 α=0.05/3=0.0167 用于 3 核心假设族）。最小矩阵：Lite 集 500 题中取 trace 最长 top-120（按 47 pilot 的 median 26.5 calls / IQR 13.8-38.0 分层，5_analysis.tex:85），每臂 1 trace × 120 题 = 120 run；理想矩阵：500 题 × 3 重复 = 1500 run/臂。n 不足时明确写「仅信号不作结论」。分层/析因特殊样本量见 H1b/H1c 各条。
 </div>
 
 <h3>L1 总命题 H1 · 受治理的长期记忆 + 递归自改进在长链 EDA flow 上有可迁移增益</h3>
@@ -415,7 +415,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 </table>
 
 <div class="callout info">
-<b>机制 → 假设的可证伪性升级</b>：H1a 只问「记忆有无增益」——即使 M3 &gt; M0，也不知道增益来自「正确相关记忆」还是「prompt 变长」（这正是 N1 杀手级对照要排除的）。v1.6 的 H2a/H2b/H2c 把问题深化为「<b>增益是否来自该具体机制</b>」：H2a 检验惊奇度门控 vs 均匀采样；H2b 检验武器聚焦压缩 vs 全量写入；H2c 检验状态感知检索 vs 状态无关检索。每条都有<b>机制级负对照</b>（关掉该机制、保留等量 token），比 H1a 的功能级对照更精细。这与 AI 情感记忆前沿（Generative Agents 用 importance score 过滤写入 Park et al. 2023、EM-LLM 用 Bayesian surprise 切分事件 arXiv:2407.09450、PsychoAgent 用 affect + conflict 检索 arXiv:2608.07438、somatic-marker emotion vector re-injection arXiv:2605.08611）同构，但<b>首次在真实 EDA long-chain flow 上预注册可证伪检验</b>。
+<b>机制 → 假设的可证伪性升级</b>：H1a 只问「记忆有无增益」——即使 M3 &gt; M0，也不知道增益来自「正确相关记忆」还是「prompt 变长」（这正是 N1 杀手级对照要排除的）。v1.6 的 H2a/H2b/H2c 把问题深化为「<b>增益是否来自该具体机制</b>」：H2a 检验惊奇度门控 vs 均匀采样；H2b 检验武器聚焦压缩 vs 全量写入；H2c 检验状态感知检索 vs 状态无关检索。每条都有<b>机制级负对照</b>（关掉该机制、保留等量 token），比 H1a 的功能级对照更精细。这与 AI 情感记忆前沿（Generative Agents 用 importance score 过滤写入 Park et al. 2023、EM-LLM 用 Bayesian surprise 切分事件 arXiv:2407.09450、PsychoAgent 用 affect + conflict 检索 arXiv:2608.07438、somatic-marker emotion vector re-injection arXiv:2605.08611）同构，但<b>首次在真实 EDA long-chain flow 上做可证伪检验</b>。
 <span class="src">附录 G 调研文献（research.cimi_search 8 次调用）</span>
 </div>
 
@@ -464,7 +464,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 </table>
 
 <div class="callout warn">
-<b>H3 的特殊说明</b>：H3 直接对应用户 2026-11-17 09:3x 结案令的两条认知（「单 agent &gt; 多 agent；自主 spawn &gt; 用户定制」，源自 2026 暑假清华博士研究积累）。该认知在 subagent 消融线（40 题子集）上成立，但<b>是否在长链 flow 任务上仍成立</b>是经验问题——长链任务可能恰好满足「所需上下文 &gt; 窗口」的条件（用户 2026-11-15 07:2x 提出的 H_ctx 思路），使多 agent 分工优势显现。H3 用预注册方式正面检验这一边界。<b>无论结果如何都可发表</b>：复现 → 巩固认知；不复现 → 界定长链是单 agent 优势的边界。
+<b>H3 的特殊说明</b>：H3 直接对应用户 2026-11-17 09:3x 结案令的两条认知（「单 agent &gt; 多 agent；自主 spawn &gt; 用户定制」，源自 2026 暑假清华博士研究积累）。该认知在 subagent 消融线（40 题子集）上成立，但<b>是否在长链 flow 任务上仍成立</b>是经验问题——长链任务可能恰好满足「所需上下文 &gt; 窗口」的条件（用户 2026-11-15 07:2x 提出的 H_ctx 思路），使多 agent 分工优势显现。H3 用可证伪方式正面检验这一边界。<b>无论结果如何都可发表</b>：复现 → 巩固认知；不复现 → 界定长链是单 agent 优势的边界。
 <span class="src">MEMORY_ZHULONG.md:1-5（结案结论）· 用户 2026-11-15 07:2x H_ctx 思路（ZHULONG_TASK.md 用户裁令节）</span>
 </div>
 </section>
@@ -476,7 +476,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h3>§5.1 臂表（v1.4：13 臂 = v1.2 的 8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2 + v1.4 新增 M4/M5/M6/M7/M8）</h3>
 
 <table class="arms-table">
-<tr><th>臂号</th><th>名称</th><th>唯一变量</th><th>实现方式</th><th>对照</th><th>预注册判据</th><th>成本（token/墙钟）</th><th>对应假设（v1.6）</th></tr>
+<tr><th>臂号</th><th>名称</th><th>唯一变量</th><th>实现方式</th><th>对照</th><th>事前规定判据</th><th>成本（token/墙钟）</th><th>对应假设（v1.6）</th></tr>
 <tr class="arm">
 <td><b>M0</b></td><td>无记忆基线</td><td>无任何跨 session 记忆</td>
 <td>Cline v3.0.51 原配置（EDA-Flow-Bench 3_harness.tex:8-19），不注入任何记忆条目；每任务独立 trace；等同 696-run 冻结快照的 DeepSeek-V4-Pro 配置<br><span class="src">4_experiments.tex:22-26</span></td>
@@ -627,22 +627,22 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h3>§6.1 标题候选（v1.5：6 个 = 3 个情绪机制主线 + 3 个原 v1.2 备选）</h3>
 <div class="callout gold"><b>v1.5 同步（用户令 2026-11-18 第三批意见 ①）</b>：v1.4 核心认知已升级为「情绪机制 × 长期记忆」，故标题候选转向情绪机制方向；原 v1.2 的 3 个标题保留作备选，推荐转向情绪机制方向。<span class="src">用户令 2026-11-18 第三批意见 ①</span></div>
 <ol>
-  <li><b>Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study</b>（情绪门控主线，点明预注册 + 可证伪；最直接承载 v1.4 H5/H6/H7）</li>
+  <li><b>Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Falsifiable Study</b>（情绪门控主线，点明可证伪；最直接承载 v1.4 H5/H6/H7）</li>
   <li><b>Surprise, State, and Weapon-Focus: Biologically-Inspired Memory for EDA Flow Agents</b>（三机制命名式，呼应 v1.4 §4.5 三条计算映射）</li>
   <li><b>From Arousal to Retrieval: Testing Affective-Memory Mechanisms in EDA Design-Flow Agents</b>（巩固→提取闭环叙事，覆盖写入门控 + 状态感知检索）</li>
 </ol>
 <p><b>备选（v1.2 原 3 个，未体现情绪机制，降级为备选）</b>：</p>
 <ol start="4">
-  <li><b>Long-Term Memory and Recursive Self-Improvement for EDA Design-Flow Agents: A Pre-Registered, Falsifiable Study</b>（认知命题优先，副标点明预注册 + 可证伪；未点情绪机制）</li>
+  <li><b>Long-Term Memory and Recursive Self-Improvement for EDA Design-Flow Agents: A Falsifiable Study</b>（认知命题优先，副标点明可证伪；未点情绪机制）</li>
   <li><b>From Script to Flow: Testing Whether Self-Evolution Transfers to Long-Chain EDA Orchestration</b>（迁移性叙事，呼应 §3 delta 表；未点情绪机制）</li>
   <li><b>EDA-Flow-Bench: A Carrier for Falsifiable Cognition on Long-Chain Tool Orchestration</b>（bench 作载体，认知作灵魂；未点情绪机制）</li>
 </ol>
-<p><b>推荐（v1.5 更新）</b>：第 1 个 <i>Affective Gating of Long-Term Memory in Long-Chain EDA Agents</i>——最直接表达 v1.4 核心认知升级（情绪门控 × 长期记忆）+ 预注册纪律，符合 ICML 对可证伪性与机制级创新的偏好；第 2/3 个作并列候选（三机制命名 / 巩固→提取闭环）。</p>
+<p><b>推荐（v1.5 更新）</b>：第 1 个 <i>Affective Gating of Long-Term Memory in Long-Chain EDA Agents</i>——最直接表达 v1.4 核心认知升级（情绪门控 × 长期记忆）+ 可证伪纪律，符合 ICML 对可证伪性与机制级创新的偏好；第 2/3 个作并列候选（三机制命名 / 巩固→提取闭环）。</p>
 
 <h3>§6.2 贡献列表（v1.5：5 条，动词开头）</h3>
 <div class="callout gold"><b>v1.5 同步（用户令 2026-11-18 第三批意见 ②）</b>：贡献从 4 条扩为 5 条——H1-H4→H1-H7、8 臂→13 臂、删 mock-EDA+Lite 500（§2.3 v1.4 收缩）、负结果含 RSI 与情绪机制双重边界、新增第 5 条 Formalize 三机制计算映射。<span class="src">用户令 2026-11-18 第三批意见 ②</span></div>
 <ol>
-  <li><b>Formulate</b> 3 条核心预注册可证伪假设（H1 总命题 + H2 机制级 + H3 边界）下设 7 条子假设（H1a/b/c · H2a/b/c · H3 独立），each with falsification conditions（§4）on long-term memory + recursive self-improvement + affective-memory mechanisms in long-chain EDA flow orchestration.</li>
+  <li><b>Formulate</b> 3 条核心可证伪假设（H1 总命题 + H2 机制级 + H3 边界）下设 7 条子假设（H1a/b/c · H2a/b/c · H3 独立），each with falsification conditions（§4）on long-term memory + recursive self-improvement + affective-memory mechanisms in long-chain EDA flow orchestration.</li>
   <li><b>Design</b> a 13-arm ablation（v1.2 的 8 臂 M0/M1/M2/M3/S1/M3+S1/N1/N2 + v1.4 新增 M4 跨域迁移 / M5 惊奇度门控 / M6 状态感知检索 / M7 武器聚焦压缩 / M8 负效价偏倚负对照）含等 token 预算杀手级对照 N1 + 错误记忆对照 N2 + M4 答案泄露率审计——separates「memory works」from「prompt just got longer」AND「emotion mechanism helps」from「uniform sampling」——controls absent from prior EDA self-evolution work（DATE27）（§5）。</li>
   <li><b>Introduce</b> long-chain flow orchestration as a new task modality（design_flow 契约：submit.zip + ≥8 断言 + 不指定 lang/host）with a released <b>evaluation protocol white paper</b>（harness 协议 + 判据 + 脱敏任务规格开源；<b>不开 Lite 集可执行资产、不开 mock-EDA 模式</b>，见 §2.3 v1.4 收缩）；任务子集用 Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测）。</li>
   <li><b>Report</b> falsifiable results on 13 EDA domains（1684 flow tasks, Full 集子集评测）, including negative results as publishable boundary conditions on RSI <b>AND</b> affective-memory mechanisms in long-chain orchestration（§4 §8）。</li>
@@ -658,7 +658,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <tr><td>§3 Task Modality &amp; Benchmark (carrier)</td><td>—</td><td>5_bench.tex</td><td>design_flow 契约；13 域；<b>Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测，替 Lite 500）</b>；<b>协议白皮书级开源边界（§2.3 v1.4 收缩，替 mock-EDA）</b>；作为认知检验载体而非卖点</td></tr>
 <tr><td>§4 Harness with Memory &amp; Self-Improvement</td><td>3_method.tex + 4_self_evolve.tex</td><td>3_design.tex</td><td>三层记忆 L0/L1/L2 + 可靠性门控（继承 DATE27）扩展到 flow 层；<b>13 臂实现细节 + v1.4 三条情绪机制计算映射（写入门控 w=α·surprise+β·penalty / 武器聚焦压缩 central_vs_peripheral / 状态感知检索 score=sim+γ·state_match）</b></td></tr>
 <tr><td><b>§4.5 Affective-Memory Mechanisms: From Biology to Computation</b>（v1.5 新增独立章节行）</td><td>—（DATE27 无）</td><td>—</td><td><b>承载 v1.4 §4.5 主线</b>：情绪唤醒度→惊奇度门控 / 武器聚焦→根因抽象与噪声剥离 / 心境一致→状态感知检索；三机制的可计算映射 + 与生物认知的对应（附录 G 文献）+ 与 LLM agent 符号编排的差距论证；H2a/H2b/H2c 机制级假设在此正式陈述</td></tr>
-<tr><td>§5 Pre-Registered Hypotheses &amp; Ablation Design</td><td>—（DATE27 无预注册）</td><td>—</td><td><b>3 核心假设 + 7 子假设（H1a/b/c · H2a/b/c · H3）+ 13 臂表（§5.1）</b> + 杀手级对照 N1 + 污染防护 + <b>M4 Full→Lite 跨域迁移污染检验 + 答案泄露率审计</b> + 统计功效</td></tr>
+<tr><td>§5 Falsifiable Hypotheses &amp; Ablation Design</td><td>—（DATE27 无可证伪命题）</td><td>—</td><td><b>3 核心假设 + 7 子假设（H1a/b/c · H2a/b/c · H3）+ 13 臂表（§5.1）</b> + 杀手级对照 N1 + 污染防护 + <b>M4 Full→Lite 跨域迁移污染检验 + 答案泄露率审计</b> + 统计功效</td></tr>
 <tr><td>§6 Experiments</td><td>5_exp.tex</td><td>6_exp.tex</td><td>主结果：<b>H1/H2/H3 的判据核验</b>；<b>情绪机制三机制消融对比（M5 vs M2 惊奇度门控 / M6 vs M3 状态感知检索 / M7 vs M2 武器聚焦压缩）</b>；分层分析；负结果照写</td></tr>
 <tr><td>§7 Analysis: Why Memory Helps/Hurts</td><td>—</td><td>7_discussion.tex</td><td>记忆内容审计；失败模式与记忆类型的交互；trace 解剖（继承 5_analysis.tex:76-121）；<b>v1.5 新增：surprise 分布 / state_match 命中分布 / central-peripheral 压缩比 vs Pass@1 / M4 迁移答案泄露率审计 / 情绪机制在不同链长子集的异质性</b></td></tr>
 <tr><td>§8 Related Work</td><td>2_related_work.tex</td><td>—（DAC 无独立 related）</td><td>EDA benchmark / agent memory / RSI / self-evolution（DATE27 + DAC + ExpeL + Reflexion + SkillOpt + MUSE）<b>+ affective neuroscience × agent memory（情绪唤醒度巩固 McGaugh 2004/2013 / 心境一致提取 Bower 1981 / 武器聚焦 Loftus 1987 Steblay 1992 / 预测误差门控 Friston Rao &amp; Ballard 1999 Ranganath &amp; Rainer 2003 / Bayesian surprise Itti &amp; Baldi 2009 / AI 情感记忆 Generative Agents Park 2023 · EM-LLM arXiv:2407.09450 · PsychoAgent arXiv:2608.07438 · somatic-marker re-injection arXiv:2605.08611，见附录 G）</b></td></tr>
@@ -719,23 +719,10 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <tr><td>H4 架构</td><td>M3+S1 臂内 3 架构 × 120</td><td>1</td><td>单 agent ≥ spawn + 0pp</td><td><b>H4</b></td><td>❌ 新跑（最小矩阵必跑）</td></tr>
 </table>
 
-<h3>§7.2 时间线（ICML 2027 倒推）</h3>
-<p>ICML 2027 截稿：<b>Abstract 2027-01-16 / Paper 2027-01-22</b>（EDA-Flow-Bench_ICML2027/README.md:6-7）。</p>
-<table>
-<tr><th>里程碑</th><th>日期</th><th>交付</th></tr>
-<tr><td><b>预注册日</b></td><td>2026-11-22（本周）</td><td>4 假设 + 8 臂判据冻结（本计划书 §4 §5 作为预注册文档归档）；此后不得改判据</td></tr>
-<tr><td>数据冻结日</td><td>2026-11-26</td><td>Lite 集 500 题固定 + top-120 子集固定 + 记忆写入只用此日前 trace</td></tr>
-<tr><td>最小矩阵跑完</td><td>2026-12-03</td><td>M0(Lite)/M3/S1/M3+S1/N1/H4 共 ≈ 360+ run；出方向性信号</td></tr>
-<tr><td>最小矩阵分析</td><td>2026-12-06</td><td>§6 主结果 Table 3 初稿；H1-H4 信号判定（支持/证伪/不足）</td></tr>
-<tr><td>理想矩阵启动</td><td>2026-12-08</td><td>若信号值得确认 → 启动 500 题 × 3 重复 + M1/M2/N2 补臂</td></tr>
-<tr><td>理想矩阵跑完</td><td>2027-01-05</td><td>8 臂 × 500 × 3 ≈ 12000 run；多骨干 M0/M3 扫描</td></tr>
-<tr><td>写作冻结日</td><td>2027-01-12</td><td>全文初稿冻结（§1-§9 + Appendix）；数字回填完毕</td></tr>
-<tr><td>内部评审日</td><td>2027-01-15</td><td>内部 + 外部（如 BaiZe 团队）评审；查可追溯性 + 0 外链 + 防伪底线</td></tr>
-<tr><td>Abstract 投稿</td><td>2027-01-16</td><td>ICML 2027 abstract</td></tr>
-<tr><td>Paper 投稿</td><td>2027-01-22</td><td>ICML 2027 full paper</td></tr>
-</table>
+<h3>§7.2 时间线（ICML 2027 外部硬约束）</h3>
+<p>ICML 2027 截稿：<b>Abstract 2027-01-16 / Paper 2027-01-22</b>（EDA-Flow-Bench_ICML2027/README.md:6-7），为本计划唯一外部硬约束。中间里程碑（数据冻结、最小矩阵、理想矩阵、写作冻结等）不排严格日期——按实验进展滚动推进，保留 ICML 截稿日作倒推锚点。</p>
 <div class="callout info">
-<b>时间线缓冲</b>：最小矩阵（11-22 → 12-03）留 11 天，含 1 周 smoke + 跑 + 分析；理想矩阵（12-08 → 01-05）留 28 天，对应 28 天 8 workers 估算。若最小矩阵信号为「H1 被证伪」，则不启动理想矩阵，提前进入写作（走 §8 R1 Plan B 边界条件论文），时间更充裕。
+<b>路线说明</b>：先跑最小矩阵出方向性信号；若 H1 被证伪则提前进入写作（走 §8 R1 Plan B 边界条件论文），否则启动理想矩阵。具体节奏视 infra 与信号灵活调整，不做严格日程承诺。
 </div>
 </section>
 
@@ -802,7 +789,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 </table>
 
 <div class="callout ok">
-<b>「负结果也发」的诚实路线（必写进 Intro + Conclusion）</b>：本论文预注册 4 条假设 + 8 臂对照，<b>任何一条被证伪都照写</b>。这不是失败——可证伪性本身就是科学贡献。继承自两篇 zhulong 的纪律：DAC 7_discussion.tex:7 公开报告 SKILL 自探索 +2.0pp 在噪声内 [-2.9,6.9] 仍作次要贡献；DATE27 6_conclusion.tex:3 公开报告「scope-boundary reflection 和 multi-batch disconfirmation 在当前设计下未验证」。本论文把这一纪律推到极致：预注册 → 跑 → 照写。
+<b>「负结果也发」的诚实路线（必写进 Intro + Conclusion）</b>：本论文提出 4 条可证伪假设 + 8 臂对照，<b>任何一条被证伪都照写</b>。这不是失败——可证伪性本身就是科学贡献。继承自两篇 zhulong 的纪律：DAC 7_discussion.tex:7 公开报告 SKILL 自探索 +2.0pp 在噪声内 [-2.9,6.9] 仍作次要贡献；DATE27 6_conclusion.tex:3 公开报告「scope-boundary reflection 和 multi-batch disconfirmation 在当前设计下未验证」。本论文把这一纪律推到极致：假设 → 跑 → 照写。
 </div>
 </section>
 
@@ -849,7 +836,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
   <li>🚫 <b>不删他人数据</b>——designflow 造题线的 cases/jsonl/ledger 不动（用户令 2026-11-17 22:5x 硬约束）。</li>
   <li>🚫 <b>不改 main.tex / sections/*.tex / appendix/*.tex</b>（本轮只规划，不改稿）。</li>
   <li>🚫 <b>不起训练或评测进程</b>（本轮只出计划书）。</li>
-  <li>✅ 预注册后判据冻结，不得回溯调整（§7.2 预注册日 2026-11-22）。</li>
+  <li>✅ 判据事前规定，不得回溯调整。</li>
 </ul>
 </div>
 </section>
@@ -1031,7 +1018,7 @@ H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案�
 <h4>G.5 AI / LLM agent 情感记忆（工程先例 · 同构参照）</h4>
 <table>
 <tr><th>文献</th><th>关键结论（用于 §4.5 info callout + §6.3 Related Work）</th><th>来源标识（纯文本）</th></tr>
-<tr><td>Park, J.S. et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior.</td><td>用 LLM 打「重要性分」过滤记忆写入 —— v1.4 惊奇度门控（M5）的工程化先例（同思想，但未在 EDA flow 预注册检验）。</td><td>arXiv:2304.03442</td></tr>
+<tr><td>Park, J.S. et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior.</td><td>用 LLM 打「重要性分」过滤记忆写入 —— v1.4 惊奇度门控（M5）的工程化先例（同思想，但未在 EDA flow 做可证伪检验）。</td><td>arXiv:2304.03442</td></tr>
 <tr><td>EM-LLM (2024). Human-inspired Episodic Memory for Infinite Context LLMs.</td><td>用 Bayesian surprise + 图论边界切分事件，无限上下文 LLM 情景记忆。</td><td>arXiv:2407.09450</td></tr>
 <tr><td>Gorlo, N., Wise, D.K., Speranzon, A., Carlone, L. (2026). Worth Remembering: Surprise-Gated Robot Episodic Memory.</td><td>机器人情景记忆按 Bayesian surprise 门控写入，存 &lt;2% 帧提升 QA 12%+。v1.4 M5 几乎同构。</td><td>arXiv:2606.03787</td></tr>
 <tr><td>Mouchon, L. (2026). Surprise as a Signal for Plasticity and Metacognition.</td><td>冻结 backbone 上的 surprise 检测器，门控可塑性 + 元认知。</td><td>arXiv:2606.31495</td></tr>
