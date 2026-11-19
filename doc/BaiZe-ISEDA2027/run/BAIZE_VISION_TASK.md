@@ -33,6 +33,35 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-19 22:1x（**排障：你与 post-train 共用 .17 同一份仓库目录 → 冲突 / 它的记忆推不上来**）
+
+> **用户原话**：「vision 和 post-train 在一台服务器，共享仓库目录。之前 post-train 总是抱怨跟 vision 有冲突，最新的记忆推不上来。**请 vision 看一下这个情况**。」
+> ⇒ 这条令的**执行人是 vision 线**，不是运维。运维只给线索与参考实现，取证/整改/验收由你完成。
+
+**一、要你查清的事（带证据，不许只写结论）**
+1. 共享工作副本当前状态：`git -C <共享根> status --porcelain`、`stash list`（历史上有 **stash `d5427b789`** 卡在 `MEMORY_VISION.md` / `daily-memories-vision` 上，posttrain 2026-11-16 记录「autostash 冲突系 vision 文件，非本线，留 stash 不动」——**这个 stash 该由你判读后处理**）、`rebase-merge/` 残留、`.git/index.lock` 争用事件。
+2. 共享 HEAD 与 `origin/main` 的分叉：你在 wake#1686 自记「共享 HEAD=`2749fa3ca` 8 ahead（内容已在 origin）」，现在还是不是？分叉是什么造成的？
+3. 你历史上的 `git add -A` 提交里混入了哪些别线文件（列 commit + 路径）——这是 posttrain rebase 必冲突的根因之一。
+4. posttrain 侧症状对照：它在 daily 记的 `Unable to create index.lock`、`autostash 冲突`、`rejected (fetch first)` 各出现在哪几轮。
+
+**二、要你落地的整改（这是重点）**
+1. **推送改为 worktree 隔离**（你 wake#1686 已自证可行）：共享工作树只读只跑，提交一律在 `/tmp/gitpush_vision` 之类的 **detached worktree** 里做，只 `git add` 本线路径。**固化为默认做法**，写进你的 MEMORY 常驻段。
+2. 共享树**清理到可用态**：处理掉卡住的 stash（判读后：属你线的就 pop/落盘，不属你线的**保留并写明**，禁止删别线 stash）；若共享 HEAD 与 origin 分叉且工作树干净，用 `merge --ff-only` 对齐；**任何情况下不得 `reset --hard` / `clean -xfd`**（会毁别线在途）。
+3. 产出一页 **RCA**（症状→根因→证据→修法→回滚），并把「共享副本 git 协议」写成 **posttrain 能照抄的命令块**（它下一轮唤醒要直接用）。落点：本线报告或 `run/vision/` 下 md，同时在 MEMORY 记一行指针。
+4. 参考（可选，**必须自己核验后才可用**）：运维已放 `run/ops/SHARED_REPO_GIT_PROTOCOL.md`（根因/协议/红线）+ `run/ops/git_line_commit.sh`（worktree 封装，白名单/锁检测/--dry-run）。它**没有在 .17 上跑过**，你要么验证它可用并采用，要么指出问题并给替代——不许照抄不验。
+
+**三、验收判据（你自己跑出来给我看）**
+- posttrain 下一次唤醒能 **pull → 改 MEMORY → commit → push 一次过，0 冲突、不等锁**（把它那轮的 git 日志摘要贴出来）；
+- 连续 3 轮多线并发提交无 `index.lock` 事故；
+- 本线 commit 的 `--stat` 里**不含别线路径**；
+- 共享树每轮结束时 `status --porcelain` 为空（或只剩本线 `.gitignore` 覆盖物）。
+
+**四、边界**
+- 只动本线文件 + 共享树**只读检查**；需要改 posttrain 文件时先在 MEMORY 记一行并说明原因（不许悄悄改它的 MEMORY/TASK）。
+- 不杀别线进程；不碰 `attribution_3615_run*`。
+- 本轮**不得以「已上报」收尾**：要么整改完成并给出验收证据，要么写清卡在哪一步、需要谁配合。
+
+
 ### 🔴 用户令 · 2026-11-19 20:0x（**定版：.12→.17 无网，SFT 产物在 .17 就地重生成**）· 细化并取代本文件「2026-11-19 11:12 GPU 分配令」第 2 条
 
 > **用户原话（2026-11-19）**：「.12 到 .17 无网，在 .17 重生成 SFT 产物。」
@@ -259,14 +288,7 @@
 
 > 📦 2026-10-06~08 运维指令（8 条：①论文LaTeX ②全线报告 ③mask-ratio消融 ④GPU12对账 ⑤昨夜汇报 ⑥下一步建议 ⑦AIMv2 AR范式 ⑧队列裁定 ⑨lp协议研究）已归档 → `run/ARCHIVE_OPERATOR_VISION.md`。需要时再读。
 
-### 🧭 运维规程 · 2026-10-06（【agent 归档 MEMORY + 任务书】 —— 由你自己滚，不再由运维代劳）· 常驻
-
-> 用户裁定：「运维归档任务书不是长久之计」。`MEMORY_*.md` 一直是 agent 自滚（不经运维）⇒ 任务书同理。本轮起：MEMORY + 任务书，两样都由你自己滚。
-> 判据：两者 均 ≤32KB；>40KB = 红线 ⇒ 必须先归档再提交（「收尾铁律」第 0 步已同步此判据）。
-> 做法 = 只「搬迁」、不改内容：① 已闭合内容（已执行完/已作废的运维块、已完成轮次正文、较早巡检流水）原文搬入 `run/ARCHIVE_OPERATOR_VISION.md` / `run/ARCHIVE_VISION_SPEC_HISTORY.md`（无则新建）/ `daily-memories-vision/<日期>.md`；② 留 1 行指针。
-> 护栏：搬前 `git pull --rebase --autostash`；冲突保留双方；提交用 `vision 归档: …` 前缀。
-> 本轮动作：本任务书现 ≈24KB（在上限内）⇒ 暂时无需归档；一旦 >32KB 即自行滚动（`MEMORY_VISION.md` 已贴 32KB 上限，优先滚它）。
-
+### 🧭 运维规程 · 2026-10-06（agent 自滚 MEMORY + 任务书）· 常驻 → **现行条款已并入上文「工作约定」第 2 条（各 ≤32KB、超限原文搬 ARCHIVE 留 1 行指针）**；原文见 `run/ARCHIVE_OPERATOR_VISION.md`。
 ### 0. 🎯 当前状态速览
 
 > 📦 §0 当前状态速览 + §运维指令 2026-10-05（深夜2 两份 HTML 报告 / 深夜 R12→3epoch+方向建议 / 晚 全量 AIMv2 训练+论文 §6 改写+proxy 口径）**均已归档** → `run/ARCHIVE_OPERATOR_VISION.md`；当前状态以 `MEMORY_VISION.md` 顶部状态头为准。需要时再读。
