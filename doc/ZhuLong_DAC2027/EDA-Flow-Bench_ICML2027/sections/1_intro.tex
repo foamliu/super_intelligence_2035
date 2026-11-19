@@ -12,14 +12,14 @@ LLM agents have mastered single-function EDA code generation---VerilogEval, RTLL
 % 最低领域（\texttt{physical\_verify} 与 \texttt{layout\_aether}，均为 2.9\%）的 7.1$\times$
 %（描述性点估计；置信区间重叠），而最难的领域恰恰是那些要求最深实时工具交互的领域。
 
-We argue this is not merely a model-capacity problem but a \emph{memory and self-improvement} deficit. Long-chain flow tasks exceed any context window: an agent that cannot consolidate lessons across sessions---which errors recur, which tool sequences work, which project conventions matter---is condemned to re-discover the same knowledge on every run. Recursive self-improvement (RSI), the ability to expand a skill library and refine the harness itself from experience, is only meaningful if memory persists across sessions to accumulate that experience.
+We argue this is not merely a model-capacity problem but a \emph{memory and self-improvement} deficit. Long-chain flow tasks exceed any context window: an agent that cannot consolidate lessons across sessions---which errors recur, which tool sequences work---is condemned to re-discover the same knowledge every run. Recursive self-improvement (RSI)---expanding a skill library and refining the harness from experience---is only meaningful if memory persists to accumulate that experience.
 % 【中文】
 % 我们论证这并非单纯的模型能力问题，而是一个\emph{记忆与自我改进}缺失。长链流程任务超出任何上下文
 % 窗口：一个无法跨会话巩固经验教训（哪些错误反复出现、哪些工具序列奏效、哪些项目约定要紧）的智能体，
 % 注定每次运行都要重新发现同样的知识。递归自我改进（RSI）——扩展技能库并从经验中改进执行框架本身的
 % 能力——只有在记忆跨会话持久存在以累积经验时才有意义。
 
-\textbf{Contributions.} (1) We \emph{formulate} 3 core pre-registered falsifiable hypotheses (H1 functional: memory+RSI gains; H2 mechanistic: gains from affective-memory mechanisms; H3 boundary: single-vs-multi-agent) decomposed into 7 sub-hypotheses, each with falsification conditions (\S\ref{sec:preregistered}). (2) We \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1) and a cross-domain transfer contamination probe (M4) (\S\ref{sec:preregistered}). (3) We \emph{formalize} three cognitive-neuroscience mechanisms---emotional arousal $\rightarrow$ surprise/penalty gating, weapon-focus $\rightarrow$ central-peripheral compression, mood-congruence $\rightarrow$ state-aware retrieval---as computable mappings (\S\ref{sec:harness}). (4) We \emph{introduce} long-chain flow orchestration as a new task modality with a released evaluation protocol white-paper. (5) We commit to reporting \emph{negative results} as publishable boundary conditions on RSI and affective-memory mechanisms.
+\textbf{Contributions.} (1) We \emph{formulate} 3 core pre-registered falsifiable hypotheses (H1 functional / H2 mechanistic / H3 boundary) decomposed into 7 sub-hypotheses, each with falsification conditions (\S\ref{sec:preregistered}). (2) We \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1) and a cross-domain transfer probe (M4). (3) We \emph{formalize} three cognitive-neuroscience mechanisms---arousal $\rightarrow$ surprise/penalty gating, weapon-focus $\rightarrow$ central-peripheral compression, mood-congruence $\rightarrow$ state-aware retrieval---as computable mappings (\S\ref{sec:harness}). (4) We \emph{introduce} long-chain flow orchestration as a new task modality with a falsifiable evaluation protocol (described in this paper; no data/code release). (5) We commit to reporting \emph{negative results} as publishable boundary conditions.
 % 【中文】
 % \textbf{贡献。}(1) 我们\emph{提出} 3 条核心预注册可证伪假设（H1 功能性：记忆+RSI 增益；H2 机制性：
 % 增益源于情绪记忆机制；H3 边界性：单 vs 多智能体），分解为 7 条子假设，每条含证伪条件
@@ -27,7 +27,7 @@ We argue this is not merely a model-capacity problem but a \emph{memory and self
 % 污染探针（M4）（\S\ref{sec:preregistered}）。(3) 我们\emph{形式化}三个认知神经科学机制——情绪觉醒
 % $\rightarrow$ 惊异/惩罚门控、武器焦点 $\rightarrow$ 中心-外围压缩、情绪一致性 $\rightarrow$ 状态感知
 % 检索——为可计算映射（\S\ref{sec:harness}）。(4) 我们\emph{引入}长链流程编排作为新任务模态，
-% 并发布评测协议白皮书。(5) 我们承诺将\emph{阴性结果}作为可发表的边界条件报告，涵盖 RSI 与情绪记忆机制。
+% 并提供可证伪的评测协议（本论文描述；不发布数据/代码）。(5) 我们承诺将\emph{阴性结果}作为可发表的边界条件报告，涵盖 RSI 与情绪记忆机制。
 
 \textbf{Pre-registration.} All hypotheses, arms, and criteria are pre-registered before data collection on \PreregDate. The M0 baseline (\MzeroPass{}) is available from a frozen snapshot; M1--M8 and N1--N2 are to be evaluated post pre-registration.
 % 【中文】

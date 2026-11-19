@@ -11,13 +11,13 @@
 % 调用经 MCP 网桥走向真实 EDA 工具（47 条插桩试点轨迹；\S\ref{sec:analysis}）。这在质性上更难：智能体
 % 必须将其行动建立在训练中从未见过的工具输出上，链接依赖步骤，并在流程中途从失败中恢复。
 
-\textbf{Why memory and RSI may matter more in flow.} On single-script tasks, in-context learning within one trace often suffices---the entire problem fits in the window. On long-chain flow, the relevant knowledge (tool quirks, project conventions, failure patterns) accumulates \emph{across} sessions and exceeds any window. This makes persistent memory a potential binding constraint: an agent that can consolidate ``which tool sequences work'' and ``which errors recur'' into a cross-session memory may close the grounding gap, while one that re-derives everything from scratch each run is bounded. Recursive self-improvement (RSI)---expanding a skill library and refining the harness from experience---is only meaningful if memory persists to accumulate that experience. Our prior work on script-layer EDA (DATE27, \cite{PLACEHOLDER_DATE27_ZHULONG}; ZhuLong-DAC, \cite{liu2026runreadbackrefine}) showed memory + RSI gains on short-chain tasks; whether these \emph{transfer} to long-chain flow is the central question of this paper.
+\textbf{Why memory and RSI may matter more in flow.} On single-script tasks, in-context learning within one trace often suffices---the entire problem fits in the window. On long-chain flow, the relevant knowledge (tool quirks, project conventions, failure patterns) accumulates \emph{across} sessions and exceeds any window. This makes persistent memory a potential binding constraint: an agent that can consolidate ``which tool sequences work'' and ``which errors recur'' into a cross-session memory may close the grounding gap, while one that re-derives everything from scratch each run is bounded. Recursive self-improvement (RSI)---expanding a skill library and refining the harness from experience---is only meaningful if memory persists to accumulate that experience. Prior work on script-layer EDA (DATE27, \cite{PLACEHOLDER_DATE27_ZHULONG}; ZhuLong-DAC, \cite{liu2026runreadbackrefine}) showed memory + RSI gains on short-chain tasks; whether these \emph{transfer} to long-chain flow is the central question of this paper.
 % 【中文】
 % \textbf{为何记忆与 RSI 在流程中可能更重要。} 在单脚本任务上，单条轨迹内的上下文学习通常足够——整个
 % 问题装得进窗口。在长链流程上，相关知识（工具癖性、项目约定、失败模式）\emph{跨}会话累积并超出任何
 % 窗口。这使持久记忆成为潜在的绑定约束：一个能将"哪些工具序列奏效"与"哪些错误反复出现"巩固进跨会话
 % 记忆的智能体可能弥合接地差距，而每次运行都从头重新推导的智能体则有上限。递归自我改进（RSI）——扩展
-% 技能库并从经验中改进执行框架——只有在记忆持久以累积经验时才有意义。我们先前的脚本层 EDA 工作
+% 技能库并从经验中改进执行框架——只有在记忆持久以累积经验时才有意义。先前的脚本层 EDA 工作
 %（DATE27，\cite{PLACEHOLDER_DATE27_ZHULONG}；ZhuLong-DAC，\cite{liu2026runreadbackrefine}）在短链
 % 任务上展示了记忆 + RSI 增益；这些增益能否\emph{迁移}到长链流程是本文的中心问题。
 

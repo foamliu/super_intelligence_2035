@@ -2,7 +2,7 @@
 \label{sec:experiments}
 % 【中文】\section{实验}
 
-\textbf{Pre-registration statement.} This paper pre-registers 3 core hypotheses (H1--H3) and 7 sub-hypotheses (H1a--c, H2a--c, H3) before data collection. The pre-registration date is \PreregDate. Results for the M0 baseline are available from a frozen 696-run snapshot (\MzeroPass{} Pass@1, 62/620 decided runs; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s timeout, 8 workers, 2026-11-09). All other arms (M1--M8, N1--N2) are to be evaluated post pre-registration. Negative results will be reported as publishable boundary conditions on RSI and affective-memory mechanisms in long-chain EDA orchestration.
+\textbf{Pre-registration statement.} We pre-register 3 core hypotheses (H1--H3) and 7 sub-hypotheses before data collection (\PreregDate; details in \S\ref{sec:preregistered}). M0 is available from a frozen 696-run snapshot (\MzeroPass{} Pass@1; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s, 2026-11-09); M1--M8 and N1--N2 are evaluated post pre-registration. Negative results are reported as publishable boundary conditions.
 % 【中文】
 % \textbf{预注册声明。} 本文在数据收集前预注册 3 条核心假设（H1--H3）与 7 条子假设（H1a--c、H2a--c、
 % H3）。预注册日为 \PreregDate。M0 基线结果可从冻结的 696-run 快照获得（\MzeroPass{} Pass@1、
@@ -10,7 +10,7 @@
 % 2026-11-09）。所有其他臂（M1--M8、N1--N2）将在预注册后评测。阴性结果将作为可发表的边界条件报告，
 % 涵盖长链 EDA 编排中的 RSI 与情绪记忆机制。
 
-\textbf{M0 baseline anchor.} Table~\ref{tab:m0-baseline} reports the frozen snapshot that anchors M0. The 7.1$\times$ domain gap (pnr\_signoff 20.8\% vs.\ physical\_verify/layout\_aether 2.9\%) and the failure-class split (no-output 21.0\%, semantic 62.8\%, contract 0.3\%, UNKNOWN 7.0\%) are descriptive of the baseline; they motivate the memory/RSI hypotheses but are \emph{not} used to pre-claim any arm's result.
+\textbf{M0 baseline anchor.} Table~\ref{tab:m0-baseline} reports the frozen snapshot anchoring M0. The 7.1$\times$ domain gap and failure-class split are descriptive of the baseline; they motivate the memory/RSI hypotheses but are \emph{not} used to pre-claim any arm's result (full breakdown in \S\ref{sec:analysis}).
 % 【中文】
 % \textbf{M0 基线锚点。} 表~\ref{tab:m0-baseline} 报告锚定 M0 的冻结快照。7.1$\times$ 的领域差距
 %（pnr\_signoff 20.8\% vs.\ physical\_verify/layout\_aether 2.9\%）与失败类别划分（无输出 21.0\%、
@@ -69,14 +69,14 @@ H3 & single vs spawn & single $\geq$ spawn & \TBD & \TBD \\
 \end{tabularx}
 \end{table}
 
-\textbf{Arm-table convergence \& power notes.} The main 10-arm table drops M1 (static SOP) and M8 (negative-valence) to appendix, and M2 runs as the H2a/H2b control (not a main arm; its H1a weak-control criteria are withdrawn, \S\ref{sec:arms}). M6's fail-streak test is exploratory at the minimal matrix ($\sim$40 tasks, power $<$0.3); the H2c verdict is deferred to the ideal matrix. The M0 comparison anchor for the minimal matrix is the same-subset M0 (\TBD), not the 696-run \MzeroPass{} (\S\ref{sec:benchmark}).
+\textbf{Arm-table convergence \& power notes.} The main 10-arm table drops M1/M8 to appendix; M2 is the H2a/H2b control (H1a weak-control criteria withdrawn, \S\ref{sec:arms}). M6's fail-streak test is exploratory at the minimal matrix (H2c deferred to ideal matrix). The minimal-matrix M0 anchor is the same-subset M0 (\TBD), not the 696-run \MzeroPass{}.
 % 【中文】
 % \textbf{臂表收敛与功效注。} 主 10 臂表将 M1（静态 SOP）与 M8（负效价）移至附录，M2 作为 H2a/H2b 对照
 % 运行（非主臂；其 H1a 弱对照判据已撤回，§\ref{sec:arms}）。M6 的失败连续检验在最小矩阵下为探索性
 %（$\sim$40 题、功效 $<$0.3）；H2c 判据延至理想矩阵。最小矩阵的 M0 比较锚点为同子集 M0（\TBD），
 % 而非 696-run \MzeroPass{}（§\ref{sec:benchmark}）。
 
-\textbf{Reused 696-run assets.} The frozen snapshot provides M0 directly. For arms requiring stratification (H1b), we re-use the trace-length distribution from 47 instrumented pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. No new evaluation is run before \PreregDate.
+\textbf{Reused 696-run assets.} The frozen snapshot provides M0 directly. For H1b stratification, we re-use the trace-length distribution from 47 pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. No new evaluation runs before \PreregDate.
 % 【中文】
 % \textbf{复用 696-run 资产。} 冻结快照直接提供 M0。对需要分层的臂（H1b），我们复用 47 条插桩试点
 % run 的轨迹长度分布（中位 26.5 调用，IQR 13.8--38.0）来定义短（$<$14）/中（14--38）/长（$>$38）

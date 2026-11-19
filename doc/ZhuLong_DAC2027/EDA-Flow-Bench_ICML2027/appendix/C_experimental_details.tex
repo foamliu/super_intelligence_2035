@@ -91,13 +91,13 @@ The \texttt{test\_rationale} field documents each assertion in human-readable fo
 % 【中文】
 % \texttt{test\_rationale} 字段以可读形式（"k 条断言：(1)、(2)、……"）记录每条断言，便于可解释性与审计。
 
-\subsection{Open-Source EDA Extension Roadmap}
+\subsection{Open-Source EDA Equivalence Mapping}
 \label{sec:repro-details}
-% 【中文】\subsection{开源 EDA 扩展路线图}
+% 【中文】\subsection{开源 EDA 等价映射}
 
-To address the reproducibility limitation of commercial EDA tools, we plan an open-source-EDA extension mapping each domain to an open-source equivalent:
+To address the reproducibility limitation of commercial EDA tools, an independent party can construct an open-source-EDA equivalent by mapping each domain to an open-source tool:
 % 【中文】
-% 为应对商用 EDA 工具的可复现性限制，我们计划一个开源 EDA 扩展，将每个领域映射到对应开源方案：
+% 为应对商用 EDA 工具的可复现性限制，独立方可通过将每个领域映射到对应开源工具来构建开源 EDA 等价基准：
 \begin{itemize}
     \item \textbf{Digital synthesis}: Synopsys DC $\to$ Yosys + OpenROAD.
     % 【中文】\textbf{数字综合}：Synopsys DC $\to$ Yosys + OpenROAD。
@@ -108,6 +108,7 @@ To address the reproducibility limitation of commercial EDA tools, we plan an op
     \item \textbf{Layout}: Virtuoso/Aether $\to$ KLayout + OpenROAD.
     % 【中文】\textbf{版图}：Virtuoso/Aether $\to$ KLayout + OpenROAD。
 \end{itemize}
-The open-source extension will share the task schema, harness, and anti-leakage protocol of the commercial benchmark, enabling cross-ecosystem comparison.
+Such an open-source re-implementation would reuse the task schema, harness, and anti-leakage protocol described in this paper, enabling cross-ecosystem comparison. We do not release such an extension; the mapping is provided so that independent parties can re-derive an equivalent benchmark.
 % 【中文】
-% 开源扩展将与商用基准共享任务模式、框架和防泄漏协议，从而支持跨生态比对。
+% 此类开源再实现将复用本论文描述的任务模式、框架与防泄漏协议，从而支持跨生态比对。我们不发布该扩展；
+% 提供此映射以便独立方可重新推导出等价基准。

@@ -9,32 +9,31 @@ We pre-register \textbf{3 core hypotheses} (H1 functional / H2 mechanistic / H3 
 
 \subsection{Three-Layer Structure}
 % 【中文】\subsection{三层结构}
-% 【中文】表 1：三层假设结构（列名依次：层级、核心假设、子假设）
+% 【中文】表 1：三层假设结构（列名依次：层级、核心假设、子假设）。tabularx+X 列防双栏越 margin。
 
 \begin{center}
 \small
-\begin{tabular}{@{}lll@{}}
+\begin{tabularx}{\columnwidth}{@{}lXX@{}}
 \toprule
 \textbf{Layer} & \textbf{Core Hyp.} & \textbf{Sub-Hypotheses} \\
 \midrule
-L1 Total (functional) & H1: memory+RSI $\to$ transferable gain & H1a, H1b, H1c \\
-L2 Mechanism (affective) & H2: gain from 3 affective mechanisms & H2a, H2b, H2c \\
-L3 Boundary (appendix) & H3: single-agent $\geq$ multi-agent & H3 (independent) \\
+L1 Total & H1: memory+RSI $\to$ transferable gain & H1a, H1b, H1c \\
+L2 Mechanism & H2: gain from 3 affective mechanisms & H2a, H2b, H2c \\
+L3 Boundary & H3: single-agent $\geq$ multi-agent & H3 (independent) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 
-\textbf{H1 (total).} Governed long-term memory + RSI yields transferable Pass@1 gains on long-chain EDA flow. \emph{Falsification (disjunctive):} any of H1a/H1b/H1c falsified $\Rightarrow$ H1 falsified. If H1 fails $\to$ write as ``boundary conditions of RSI in long-chain flow.''
+\textbf{H1 (total).} Governed long-term memory + RSI yields transferable Pass@1 gains on long-chain EDA flow. \emph{Falsification (disjunctive):} any of H1a/H1b/H1c falsified $\Rightarrow$ H1 falsified.
 % 【中文】
 % \textbf{H1（总）。} 受治理的长期记忆 + RSI 在长链 EDA 流程上带来可迁移的 Pass@1 增益。
-% \emph{证伪（析取式）：} H1a/H1b/H1c 任一被证伪 $\Rightarrow$ H1 被证伪。若 H1 失败 $\to$ 写作
-% "长链流程中 RSI 的边界条件"。
+% \emph{证伪（析取式）：} H1a/H1b/H1c 任一被证伪 $\Rightarrow$ H1 被证伪。
 
-\textbf{H2 (mechanism).} H1's gain arises from the three affective-memory mechanisms (\S\ref{sec:affective}), not from prompt lengthening (N1 excludes). \emph{Falsification (conjunctive):} all of H2a/H2b/H2c falsified $\Rightarrow$ H2 falsified; 1--2 mechanisms surviving $\to$ directional ``partial mechanisms effective'' result. If H2 fails $\to$ write as ``boundary conditions of affective heuristics in symbolic orchestration.''
+\textbf{H2 (mechanism).} H1's gain arises from the three affective-memory mechanisms (\S\ref{sec:affective}), not prompt lengthening (N1 excludes). \emph{Falsification (conjunctive):} all of H2a/H2b/H2c falsified $\Rightarrow$ H2 falsified; 1--2 surviving $\to$ ``partial mechanisms effective.''
 % 【中文】
 % \textbf{H2（机制）。} H1 的增益源于三个情绪记忆机制（\S\ref{sec:affective}），而非提示延长（N1 排除）。
-% \emph{证伪（合取式）：} H2a/H2b/H2c 全部被证伪 $\Rightarrow$ H2 被证伪；1--2 个机制存活 $\to$ 有方向
-% 的"部分机制有效"结果。若 H2 失败 $\to$ 写作"符号编排中情绪启发式的边界条件"。
+% \emph{证伪（合取式）：} H2a/H2b/H2c 全部被证伪 $\Rightarrow$ H2 被证伪；1--2 个机制存活 $\to$
+% "部分机制有效"。
 
 \textbf{H3 (boundary, appendix).} The prior finding (single-agent $\geq$ multi-agent; autonomous-spawn $\geq$ user-custom) replicates in the flow setting. \emph{Independent} of H1/H2. Both outcomes publishable: replication $\to$ consolidates; non-replication $\to$ bounds the single-agent advantage to short chains.
 % 【中文】
@@ -66,7 +65,7 @@ H3 & Single-agent $\geq$ autonomous-spawn in flow (nested in M3+S1) & autonomous
 \end{tabularx}
 \end{center}
 
-\textbf{Statistics.} McNemar (paired, direction-consistent) + paired bootstrap 95\% CI (1000 resamples); $\alpha=0.05$ (Bonferroni $\alpha=0.05/3=0.0167$ for the 3-hypothesis family). Minimum matrix: 120 tasks/arm (top-120 by chain length from the Full set); ideal: 500 tasks $\times$ 3 repeats. \emph{Power positioning:} at $n{=}120$, McNemar power for a 3pp effect is $\approx$0.62, so minimal-matrix results are reported as \textbf{pilot signal}, not primary verdicts; H1/H2 primary verdicts are deferred to the ideal matrix (500$\times$3, power $\geq$0.8). M6's fail-streak subset ($\sim$40 tasks at $n{=}120$, power $<$0.3 for 3pp) is exploratory only; the H2c verdict is deferred to the ideal matrix (fail-streak $\geq$80 tasks). The abstract reports no specific pp numbers for arms.
+\textbf{Statistics.} McNemar (paired, direction-consistent) + paired bootstrap 95\% CI (1000 resamples); $\alpha=0.05$ (Bonferroni $\alpha=0.05/3=0.0167$ for the 3-hypothesis family). Minimum matrix: 120 tasks/arm (top-120 by chain length); ideal: 500 tasks $\times$ 3 repeats. \emph{Power positioning:} at $n{=}120$, McNemar power for a 3pp effect is $\approx$0.62, so minimal-matrix results are reported as \textbf{pilot signal}, not primary verdicts; H1/H2 verdicts are deferred to the ideal matrix (500$\times$3, power $\geq$0.8). M6's fail-streak subset ($\sim$40 tasks at $n{=}120$, power $<$0.3) is exploratory; H2c is deferred to the ideal matrix (fail-streak $\geq$80). The abstract reports no specific pp numbers for arms.
 % 【中文】
 % \textbf{统计。} McNemar（配对、方向一致）+ 配对 bootstrap 95\% CI（1000 次重采样）；$\alpha=0.05$
 %（3 假设族 Bonferroni $\alpha=0.05/3=0.0167$）。最小矩阵：120 任务/臂（按链长取 Full 集 top-120）；
@@ -103,13 +102,13 @@ M7 & H2b & weapon-focus compression ($r_{\text{cp}}$) & M7$\geq$M2+2pp; memory $
 \end{tabularx}
 \end{center}
 
-\textbf{Appendix arms.} M2 (auto memory, no gating) is evaluated as the H2a/H2b control arm---it appears in the H2 criteria rows (M5 vs M2, M7 vs M2) but is \emph{not} a main-table arm; its prior H1a weak-control criteria (M2$\geq$M0+2pp and M3$\geq$M2+1pp) are \textbf{withdrawn} (1pp is below detectable effect at $n{=}120$, \S\ref{sec:preregistered}). M1 (static SOP memory) and M8 (negative-valence bias) are appendix robustness checks, not in the main 10-arm table.
+\textbf{Appendix arms.} M2 (auto memory, no gating) is the H2a/H2b control arm---it appears in H2 criteria rows (M5 vs M2, M7 vs M2) but is \emph{not} a main-table arm; its prior H1a weak-control criteria (M2$\geq$M0+2pp and M3$\geq$M2+1pp) are \textbf{withdrawn} (1pp is below detectable effect at $n{=}120$). M1 (static SOP memory) and M8 (negative-valence bias) are appendix robustness checks.
 % 【中文】
 % \textbf{附录臂。} M2（自动记忆、无门控）作为 H2a/H2b 对照臂评测——出现在 H2 判据行（M5 vs M2、M7 vs M2），
 % 但\emph{不}是主表臂；其先前的 H1a 弱对照判据（M2$\geq$M0+2pp 与 M3$\geq$M2+1pp）\textbf{撤回}
 %（1pp 在 $n{=}120$ 下低于可检效应，§5.3）。M1（静态 SOP 记忆）与 M8（负效价偏倚）为附录稳健性检验，不进主 10 臂表。
 
-All arms use the same \texttt{check.py}, same $\geq$8 assertions, same 2400s timeout, same backbone (DeepSeek-V4-Pro). Results for M1--M8, N1--N2 are \TBD (to be evaluated post pre-registration); M0's comparison anchor for the minimal matrix is the M0 Pass@1 measured on the same top-120 subset (\TBD), not the 696-run full-set \MzeroPass{} (which remains the descriptive baseline snapshot).
+All arms use the same \texttt{check.py}, same $\geq$8 assertions, same 2400s timeout, same backbone (DeepSeek-V4-Pro). M1--M8 and N1--N2 results are \TBD (post pre-registration); M0's minimal-matrix anchor is the same-subset M0 (\TBD), not the 696-run full-set \MzeroPass{} (descriptive baseline snapshot).
 % 【中文】
 % 所有臂使用相同的 \texttt{check.py}、相同的 $\geq$8 断言、相同的 2400s 超时、相同的骨干
 %（DeepSeek-V4-Pro）。M1--M8、N1--N2 的结果为 \TBD（预注册后评测）；M0 在最小矩阵中的比较锚点为
