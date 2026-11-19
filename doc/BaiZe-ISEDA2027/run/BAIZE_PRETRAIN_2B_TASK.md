@@ -109,6 +109,28 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-19 13:2x（**改论文第二轮：贡献点重写 / 第五节标题改「领域适配」**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**（pretrain 部分）：
+> ① 贡献点里「We present a 2B hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator」这段跟下面 bullet 重复，删掉。
+> ② 贡献点改成三个：1) 构建 2B 模型、mamba2-hybrid 架构、支持 1M 上下文窗口（对应第三节架构）；2) 通过课程学习强化 code+math+agentic 能力（对应第四节预训练）；3) 通过后训练验证其可作为 subagent 底模、服务 EDA Agent、协助电路设计师编排 designflow（EDA 脚本是胶水），验证「大小模型结合的 agent 架构在 agentic IC 落地的可行性」（对应第五节后训练）。
+> ③ 第五节标题从「LLM Post-Training」改成「领域适配（Domain Adaptation）」，并注明：基于 post-train 近期成果，2B 小模型还能通过「修复脚本适配工具」大幅提升通过率——这种工程类 ACI（Agent-Computer-Interface）改进是后训练之外另一条高 ROI 路线。
+
+**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/`。
+
+**任务（逐条执行）**：
+
+1. **删重复句（`1_intro.tex` §Contributions）**：删掉 `\paragraph{Contributions.}` 后、`\begin{itemize}` 前那句 `We present a 2B hybrid (state-space + attention) agentic model built from scratch to serve as a cost-efficient EDA subagent beneath a deployed orchestrator.`（及其中文注释行）——它与第一个 bullet 重复。
+2. **重写贡献点为三项**（替换现有 3 个 bullet 的内容，按用户给定的语义 + 章节对应重写）：
+   - **贡献①**：构建 2B 模型 + mamba2-hybrid 架构 + 支持 1M 上下文窗口（对应 §3 架构，ref `sec:arch`/`sec:overview`）；
+   - **贡献②**：通过课程学习强化 code+math+agentic 能力（对应 §4 预训练，ref `sec:llm-pretrain`/`sec:llm-data`）；
+   - **贡献③**：通过后训练验证其可作为 subagent 底模、服务 EDA Agent、协助电路设计师编排 designflow（EDA 脚本为胶水），验证「大小模型结合的 agent 架构在 agentic IC 落地可行性」（对应 §5，ref `sec:llm-posttrain`）。每项写英文主句 + 中文注释，逻辑对齐用户原文。
+3. **改第五节标题（`5_llm_posttrain.tex`）**：`\section{LLM Post-Training}\label{sec:llm-posttrain}` → `\section{Domain Adaptation}\label{sec:llm-posttrain}`（⚠️ `\label` 保持不变，别改，否则全文 `\ref{sec:llm-posttrain}` 会悬空）。对应中文注释同步改「领域适配」。并在该节开头补 1-2 句说明第二条高 ROI 路线：2B 小模型可通过「修复脚本适配工具（ACI，Agent-Computer-Interface）」大幅提升通过率，这是 domain annealing/SFT/RL 之外的另一条工程改进路线（呼应 post-train 近期成果）。
+4. **刷新相关文字**：`3_architecture.tex`、`0_abstract.tex`、`9_conclusion.tex` 若引用了第五节标题/旧措辞，同步更新（如正文出现过 "LLM Post-Training"/"post-training (SFT, RLVR)" 字样，视情况是否改口径）。
+5. **编译验收**：`latexmk -pdf main.tex` 0 error、0 undefined ref；`git add` 论文文件 → commit `pretrain paper:` → push。心跳第一行写「删重复句/贡献点3项/§5改Domain Adaptation + 编译0err」。
+
+---
+
 > 📦 **2026-11-19 论文改进令**（精简摘要/贡献点拆解3项/backbone TikZ图fig:backbone）**✅ 已完成**（commit 23068482d · 2026-11-19 10:01）→ 原文归档 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-19 论文改进」节。**结论**：0_abstract删volatile快照句(169130/591K/loss≈2.04)、1_intro贡献点拆解3项(cost-privacy子agent/Mamba2-hybrid结构成本/budget recipe+449eval)、3_architecture加TikZ Mamba2-hybrid层结构图(fig:backbone,4/56层session-growing state)、latexmk编译0err5页0undefined。已push到origin/main。需要时再读。
 
 > 📦 **2026-11-18 吞吐诊断四令**（14:2x 告知重启 / 13:1x 立即重启 / 11:1x 授权重启 / 10:5x 排查吞吐腰斩）**✅ 均已完成** → 原文归档 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-19」节。**结论**：根因=`.12` CPU 争抢（data 线 MegaMath 分词 `pc2_fast.py` 8925% CPU 占 89 核）；运维直接干预重启训练自 iter_244000；data 线释放 CPU 后 step time 从 ~13.3s 回落至 ~7.0s，吞吐闭环。截至 2026-11-19 06:36 训练健康 iter=252000/700000 step~7.0s/1030TFLOP/0NaN/0skip。需要时再读。
