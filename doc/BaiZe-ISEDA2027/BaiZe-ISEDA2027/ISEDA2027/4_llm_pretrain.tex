@@ -38,7 +38,7 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \begin{minipage}[t]{0.32\linewidth}
 \centering
 \textbf{S1: Stable (0--350k)}\\[12pt]
-\begin{tikzpicture}[scale=2.0]
+\begin{tikzpicture}[scale=2.5]
 % pie: web 74% (0--266.4), code 19% (266.4--334.8), math 7% (334.8--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:266.4:1)     -- cycle;
 \fill[red!60]    (0,0) -- (266.4:1) arc (266.4:334.8:1) -- cycle;
@@ -55,7 +55,7 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \begin{minipage}[t]{0.32\linewidth}
 \centering
 \textbf{S2: Stable (350k--700k)}\\[12pt]
-\begin{tikzpicture}[scale=2.0]
+\begin{tikzpicture}[scale=2.5]
 % pie: web 40% (0--144), code 40% (144--288), math 20% (288--360)
 \fill[blue!60]   (0,0) -- (0:1)     arc (0:144:1)     -- cycle;
 \fill[red!60]    (0,0) -- (144:1)   arc (144:288:1)   -- cycle;
@@ -72,7 +72,7 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \begin{minipage}[t]{0.32\linewidth}
 \centering
 \textbf{Decay (annealing, 700k--720k)}\\[12pt]
-\begin{tikzpicture}[scale=2.0]
+\begin{tikzpicture}[scale=2.5]
 % pie: instr-SFT 60% (0--216), agentic-SFT 12% (216--259.2), web 22% (259.2--338.4), math 4% (338.4--352.8), code 2% (352.8--360)
 \fill[orange!70]  (0,0) -- (0:1)     arc (0:216:1)       -- cycle;
 \fill[purple!60]  (0,0) -- (216:1)   arc (216:259.2:1)   -- cycle;
@@ -89,10 +89,10 @@ Contamination is controlled by a $193{,}295$-entry 13-gram blacklist from $536$ 
 \node at (238:0.60) {\textbf{12\%}};
 \node at (299:0.62) {\textbf{22\%}};
 % small wedges: leader lines + external labels (avoid cramped overlap)
-\draw (345.6:0.70) -- (345.6:1.20);
-\node[anchor=south east] at (345.6:1.25) {\textbf{4\%}};
-\draw (356.4:0.70) -- (356.4:1.20);
-\node[anchor=north east] at (356.4:1.25) {\textbf{2\%}};
+\draw (345.6:1.0) -- (345.6:1.10);
+\node[anchor=south east] at (345.6:1.13) {\textbf{4\%}};
+\draw (356.4:1.0) -- (356.4:1.10);
+\node[anchor=north east] at (356.4:1.13) {\textbf{2\%}};
 \end{tikzpicture}
 \end{minipage}
 
