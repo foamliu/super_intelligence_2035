@@ -963,9 +963,16 @@
   "PrismJS__prism-2622": {
     "instance_id": "PrismJS__prism-2622",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 820.8,
+    "rc": 0,
+    "model_patch_len": 44710,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Language* plugin will display **\"Apex\"** rather than \"Java\") while reusing Java's grammar underneath. If needed in the future, Apex-specific keywords or constructs can be layered on top of this base.\n",
+    "stderr_tail": "shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/PrismJS_prism && npx mocha tests/run.js --language=apex\nTesting language 'apex'\n\n    ✓ – should pass test case 'full_example'\n\n\n  1 passing (13ms)\n\u001b[0m\n"
   },
   "PrismJS__prism-2649": {
     "instance_id": "PrismJS__prism-2649",

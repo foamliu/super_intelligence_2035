@@ -3913,9 +3913,16 @@
   "carbon-design-system__carbon-6976": {
     "instance_id": "carbon-design-system__carbon-6976",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 132.5,
+    "rc": 0,
+    "model_patch_len": 1535,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "bIndex behavior when explicitly passed as prop\n\nBoth reported issues are resolved: no more invalid `focusable` attribute on span elements, and no redundant `tabindex` attribute on the button element.\n",
+    "stderr_tail": "c/components/OverflowMenu/OverflowMenu-test.js -u\n> carbon@0.0.0 test\n> cross-env BABEL_ENV=test jest packages/react/src/components/OverflowMenu/OverflowMenu-test.js\n\nsh: 1: cross-env: not found\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7012": {
     "instance_id": "carbon-design-system__carbon-7012",
