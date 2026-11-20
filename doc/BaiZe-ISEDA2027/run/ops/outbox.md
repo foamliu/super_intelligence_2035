@@ -31147,3 +31147,92 @@ host=whag0pgpuap12  date=2026-11-20 14:46:20
 
 === DONE 289 | 2026-11-20 14:46:33 ===
 ```
+
+---
+
+## RUN_ID 289 · 2026-11-20 14:46:21 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+echo "host=$(hostname)  date=$(date "+%F %T")"
+echo
+echo "[1] SessionType=none 隧道测试（10s 内不退出 = 认证+通道建立正常，只是 session 起不来）"
+timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o SessionType=none -N -L 127.0.0.1:18922:127.0.0.1:22 app.e0031982@10.239.2.29 2>&1 | tail -3 | sed "s/^/  tun| /"
+echo "  tun_rc=$?  (124 = 12s 内隧道一直活着 = 好迹象)"
+echo
+echo "[2] 420s 长超时 + 极简命令（若只是慢，这里能拿到数据）"
+OUT=$(timeout 420 ssh -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=no app.e0031982@10.239.2.29 "cat /proc/loadavg; uptime; echo DSTATE=$(ps -eo stat= | cut -c1 | grep -c D); nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader | head -8" 2>&1); RC=$?
+echo "  rc=$RC"
+echo "$OUT" | head -16 | cut -c1-180 | sed "s/^/  .29| /"
+echo
+echo "[3] 若 [2] 成功，再采三条线状态（60s）"
+if echo "$OUT" | grep -q "load average"; then
+  R3="ps -eo pid,ppid,etime,stat,pcpu,rss,args | grep -e baize_ -e torchrun -e pretrain_gpt -e harness | grep -v grep | cut -c1-150 | head -20; echo ---relay; ps -eo pid,etime,args | grep ops_relay | grep -v grep | cut -c1-110; tail -n 8 /tmp/baize_ops_relay.29.log 2>/dev/null; echo ---loops; ls -l /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null; tail -n 4 /tmp/baize_pretrain_loop.log 2>/dev/null; tail -n 4 /tmp/baize_harness_loop.log 2>/dev/null; echo ---mount; mount | grep -e nas -e nfs | head -5; echo ---dmesg; dmesg 2>/dev/null | tail -6"
+  timeout 90 ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=no app.e0031982@10.239.2.29 "$R3" 2>&1 | cut -c1-190 | sed "s/^/  .29| /"
+else
+  echo "  [2] 未成功 → 跳过"
+fi
+echo
+echo "（只读：未 kill / 未重启 / 未改文件）"
+'
+echo
+echo "[0] TARGET: 12；执行机 = $(hostname)"
+eval "$BODY"
+echo
+echo "=== DONE 289 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] TARGET: 12；执行机 = whag0pgpuap29
+host=whag0pgpuap29  date=2026-11-20 14:46:21
+
+[1] SessionType=none 隧道测试（10s 内不退出 = 认证+通道建立正常，只是 session 起不来）
+  tun_rc=0  (124 = 12s 内隧道一直活着 = 好迹象)
+
+[2] 420s 长超时 + 极简命令（若只是慢，这里能拿到数据）
+  rc=0
+  .29| 22.71 14.88 9.82 12/4755 2932652
+  .29|  14:46:34 up 42 min,  4 users,  load average: 22.71, 14.88, 9.82
+  .29| DSTATE=2
+  .29| 0, 0 %, 16593 MiB
+  .29| 1, 0 %, 16559 MiB
+  .29| 2, 0 %, 16533 MiB
+  .29| 3, 0 %, 16543 MiB
+  .29| 4, 79 %, 16573 MiB
+  .29| 5, 0 %, 16559 MiB
+  .29| 6, 0 %, 16471 MiB
+  .29| 7, 41 %, 16535 MiB
+
+[3] 若 [2] 成功，再采三条线状态（60s）
+  .29|  444177       1       34:19 Ssl   0.8 247464 /nas_train/app.e0031982/harness/cline/dist/cline-checkpoint-off --cline-hub-daemon --cwd /nas_train/app.e
+  .29| 1475330       1       19:58 Ss    0.0  3788 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  .29| 1475349 1475330       19:58 Sl   31.8 461076 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligen
+  .29| 2547366       1       05:17 S     0.0   244 bash -c cd /nas_train/app.e0031982/code/baize-llm && setsid bash scripts/train.sh s1 > /tmp/baize_s1_launc
+  .29| 2579711 2547367       04:49 S     0.0  8748 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 65536 
+  .29| 2588244 2547367       04:38 Sl    3.7 504260 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bi
+  .29| ---relay
+  .29| 1479210       19:57 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops_rela
+  .29| 2918084       00:13 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops_rela
+  .29| ---loops
+  .29| -rw-r----- 1 app.e0031982 app.adm 227113 Nov 20 14:46 /tmp/baize_pretrain_loop.log
+  .29|       at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+  .29|       at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+  .29| 
+  .29|    [90m⎿ [0m[2m=== INFO:megatron.core.timers:(min, max) time across ranks (ms):     model-an...[0m
+  .29| ---mount
+  .29| 10.239.23.31:/vol_CTE0_data01 on /nas_train type nfs (rw,relatime,vers=3,rsize=262144,wsize=262144,namlen=255,hard,proto=rdma,port=20049,timeo=50,retrans=2,sec=sys,mountaddr=10.239.23.31,mou
+  .29| 10.239.23.32:/vol_CTE0_data02 on /nas_user type nfs (rw,relatime,vers=3,rsize=262144,wsize=262144,namlen=255,hard,proto=rdma,port=20049,timeo=50,retrans=2,sec=sys,mountaddr=10.239.23.32,moun
+  .29| 10.239.23.32:/vol_CTE0_data03 on /nas_inference type nfs (rw,relatime,vers=3,rsize=262144,wsize=262144,namlen=255,hard,proto=rdma,port=20049,timeo=50,retrans=2,sec=sys,mountaddr=10.239.23.32
+  .29| 10.239.23.32:/vol_CTE0_data04 on /nas_env type nfs (rw,relatime,vers=3,rsize=262144,wsize=262144,namlen=255,hard,proto=rdma,port=20049,timeo=50,retrans=2,sec=sys,mountaddr=10.239.23.32,mount
+  .29| 10.239.23.32:/vol_CTE0_data04/.snapshot/weekly_cdp_2025-10-19_0010_01 on /nas_env/.snapshot/weekly_cdp_2025-10-19_0010_01 type nfs (rw,relatime,vers=3,rsize=262144,wsize=262144,namlen=255,ha
+  .29| ---dmesg
+
+（只读：未 kill / 未重启 / 未改文件）
+
+=== DONE 289 | 2026-11-20 14:46:35 ===
+```
