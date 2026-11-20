@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-20（5/5 · 15:00 补 B 轨 +4 → 288） · research 线</title>
+<title>论文观察日报 · 2026-11-20（5/5 · 18:00 补 B 轨 +4 → 292） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-20</h1>
-  <div class="sub"><b>15:00 时窗（A 轨 5/5 已满 · B 轨第七十五轮 +4 → 288）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 15:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>18:00 时窗（A 轨 5/5 已满 · B 轨第七十六轮 +4 → 292）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 18:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -636,8 +636,99 @@
   </table>
 </div>
 
+<div class="note" style="margin-top:16px">
+  <b>🌆 18:00 时窗增量（A 轨 5/5 已满 ⇒ 0 新收；B 轨第七十六轮 +4 → 292；作者网 +2 → 271；发信 0（今日 12/12 满，备 11-21 草稿 2）；回信率 0/116）</b><br>
+  <b>A 轨状态</b>：<code>cat:cs.CL</code> 复测 <code>200</code> / <b>109,971 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界仍 <b><code>2026-11-19T18:57:25Z</code></b>（与 15:00 逐字相同）⇒ 同一公告批内未再前进，今日额度 <b>5/5</b> 已满 ⇒ 不替换、不增收；新批前 12 条已查重（<code>SEEN.md</code> 全 <b>0 命中</b>），候选清单扩到 12 条，其中 7 条为低相关（孟加拉语幻觉基准 / 马拉地语政务检索 / 胸片报告纠错等），优先候选仍为 agent / 长上下文方向 5 条。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 第七十六轮 +4 → 292（判别式预训练 / 候选框成本结构 / 解耦掩码分支 / 最大熵 RL 的稳定性）</h3>
+
+<div class="card">
+  <h2><span class="no">B13</span>ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Kevin Clark · Minh-Thang Luong · Quoc V. Le（共 4 位；末位 Christopher D. Manning）</td></tr>
+    <tr><th>年份 / 出处</th><td>2020 首次提交（<code>2020-03-23</code>，仅 v1）· arXiv <code>comment</code> = <code>ICLR 2020</code> · arXiv <code>2003.10555</code></td></tr>
+    <tr><th>被引</th><td><b>5,109</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>把 MLM 的「填空」换成<b>替换 token 检测（RTD）</b>：小生成器把若干 token 换成合理替代词，判别器逐 token 判「是否被换」；摘要口径称比 MLM <b>更省算力</b>，且判别器不必与生成器等大。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>pretrain（主 · 预训练目标对照）</b>：把 RTD 与 MLM 当<b>并列目标基线</b>，预注册判据 = 同 FLOPs 下的下游微调分数 + 收敛步数。<b>zhulong</b>：判别式目标只喂编码器、不直接产出生成能力 ⇒ thinking 轴收益必须单测。<b>data</b>：生成器与判别器语料须同分布，否则判别器退化成「体裁/领域判别器」（复现时最常见的假成功）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2003.10555">https://arxiv.org/abs/2003.10555</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B14</span>Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Shaoqing Ren · Kaiming He · Ross Girshick（共 4 位；末位 Jian Sun）</td></tr>
+    <tr><th>年份 / 出处</th><td>2015 首次提交（<code>2015-06-04</code>，v3 <code>2016-01-06</code>）· <b>IEEE TPAMI 39(6):1137–1149, 2017</b>（OpenAlex，DOI <code>10.1109/tpami.2016.2577031</code>）· arXiv <code>1506.01497</code></td></tr>
+    <tr><th>被引</th><td><b>80,700</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td><b>RPN</b> 逐位置同时出 objectness 与框回归，并<b>与检测网络共享全图卷积特征</b> ⇒ 候选框近乎零成本；VGG-16 全流程 <b>5 fps</b>、每图仅 <b>300</b> 个候选即达 VOC 2007/2012 与 COCO 当时最优（摘要口径）。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>vision（主 · 区域级检测头）</b>：版图图形 / 封装元件 / 缺陷块若要做区域级输出，先把「共享特征 + 轻头」当成本基线，量清共享省下多少算力。<b>designflow</b>：定位与分类拆两段记分。<b>harness</b>：检测数字必须同时报候选数 / NMS 阈值 / 输入分辨率，否则跨论文不可比。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/1506.01497">https://arxiv.org/abs/1506.01497</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B15</span>Mask R-CNN</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Kaiming He · Georgia Gkioxari · Piotr Dollár（共 4 位；末位 Ross Girshick）</td></tr>
+    <tr><th>年份 / 出处</th><td>2017 首次提交（<code>2017-03-20</code>，v3 <code>2018-01-24</code>）· <b>IEEE TPAMI 42(2):386–397, 2020</b>（OpenAlex，DOI <code>10.1109/tpami.2018.2844175</code>）· arXiv <code>1703.06870</code></td></tr>
+    <tr><th>被引</th><td><b>7,047</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>在 Faster R-CNN 上<b>并行加一路掩码分支</b>（分类 / 框 / 掩码解耦），代价小、<b>5 fps</b>；COCO 的实例分割 / 检测 / 关键点三赛道均取得当时单模型最优（摘要口径），代码开放为 Detectron。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>vision（主 · 像素级区域标注）</b>：需要「轮廓」而非框时掩码分支更贴近下游；标注贵 ⇒ 用<b>框标注 + 少量掩码金标</b>的课程式数据。<b>designflow</b>：掩码题按 IoU 判分，比框 IoU 更难被「猜大框」蒙过。<b>harness</b>：分割与检测指标分开报。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/1703.06870">https://arxiv.org/abs/1703.06870</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B16</span>Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Tuomas Haarnoja · Aurick Zhou · Pieter Abbeel（共 4 位；末位 Sergey Levine）</td></tr>
+    <tr><th>年份 / 出处</th><td>2018 首次提交（<code>2018-01-04</code>，v2 <code>2018-08-08</code>）· arXiv <code>comment</code> 含 <b>ICML 2018</b>；OpenAlex 该 DOI 记预印本但 biblio 给 pp. <b>1861–1870</b> · arXiv <code>1801.01290</code></td></tr>
+    <tr><th>被引</th><td><b>13,567</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>最大熵框架下把离策略更新与<b>随机 actor</b> 结合（同时最大化期望回报与熵），在连续控制基准上优于同期 on/off-policy 方法，且<b>不同随机种子下性能接近</b>（摘要口径，作者以此论证稳定性）。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>zhulong（主 · 稳定性判据）</b>：把<b>同配置多种子方差</b>写进预注册（均值 + 标准差 + 最差种子）。<b>harness</b>：稳定性结论必须附种子数与随机源。<b>designflow</b>：只借其评测口径，<b>本线不做在线 RL 训练</b>。<b>pretrain</b>：关系弱。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/1801.01290">https://arxiv.org/abs/1801.01290</a></td></tr>
+  </table>
+</div>
+
+<h3 class="sec">👥 作者关系网 +2 → 271（18:00 时窗）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 · 机构</th><th>邮箱（等级）</th><th>arXiv</th><th>状态</th></tr>
+  <tr><td>270</td><td>Georgia Gkioxari · Caltech（主页明文「assistant professor, Computing &amp; Mathematical Sciences」；此前 Meta FAIR）</td><td><code>georgia.gkioxari@gmail.com</code>（<b>A</b>：主页页内明文，<code>200</code> / 44,977 B）</td><td><code>1703.06870</code></td><td>待发信（同论文 ≤1 封 ⇒ 不与 Girshick 并发）</td></tr>
+  <tr><td>271</td><td>Ross Girshick · <b>机构未从主页核到</b>（页面极简，无 affiliation 文本 ⇒ 不写现雇主）</td><td><code>ross.girshick@gmail.com</code>（<b>A</b>：主页页内明文，<code>200</code> / 7,882 B）</td><td><code>1506.01497</code></td><td>草稿已备（<code>drafts/1506.01497.md</code>，11-21 发）</td></tr>
+</table>
+<div class="rm"><b>未找到（不猜）</b>：Piotr Dollár（<code>pdollar.github.io</code> <code>404</code>）· Minh-Thang Luong（<code>thangluong.com</code> <code>200</code> 但是 Squarespace 停放页「Coming Soon」，无邮箱）· Kevin Clark（<code>kevinclark.ca</code> <code>200</code> / 11,203 B，页内无明文邮箱）· Christopher D. Manning（<code>nlp.stanford.edu/~manning/</code> <code>000</code>，<code>profiles.stanford.edu/christopher-manning</code> <code>404</code>）· Tuomas Haarnoja（<code>tuomashaarnoja.github.io</code> <code>404</code>）· Aurick Zhou（<code>people.eecs.berkeley.edu/~aurickzhou/</code> <code>404</code>）· Shaoqing Ren（<code>www.shaoqingren.com</code> <code>200</code> / 21,379 B，页内无明文邮箱）。<br><b>X 账号</b>：本轮两人均<b>未见可核验 handle</b> ⇒ 已核验数仍 <b>106</b>；未做推文双源核验 ⇒ <code>voice_ready</code> <b>0</b>。<b>语言判据</b>：Gkioxari（希腊姓名族属）/ Girshick（英语姓名族属）⇒ 均英文正文；🚫 未以「论文英文 / 邮箱 gmail」判英文。</div>
+
+<h3 class="sec">🧭 给 6 线的 18:00 增量建议</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：预训练目标加一组对照 —— MLM 与 RTD（替换 token 检测）在<b>同 FLOPs 预算</b>下各跑一次，判据写「下游微调分数 + 收敛步数 + 峰值显存」，并记录生成器/判别器语料是否同源（否则 RTD 会退化成领域判别）。</li>
+  <li><b>vision</b>：区域级输出先立成本基线 —— 「共享全图特征 + RPN 轻头」vs「独立候选网络」，报告<b>候选数 / NMS 阈值 / 输入分辨率</b>三件套；若需要轮廓，再加掩码分支并<b>分档标注</b>（全量框 + 小比例掩码金标）。</li>
+  <li><b>harness</b>：检测与分割指标<b>分开报</b>（框 IoU / 掩码 IoU / 类别分开）；任何「稳定性」结论必须附<b>种子数 + 随机源</b>，只报单次最好成绩的一律标为不可复核。</li>
+  <li><b>data</b>：为 RTD 类目标准备<b>同分布生成器语料</b>的核对脚本（同一 shard 抽样、同一 tokenizer 版本）；掩码数据先做「框 → 掩码」课程，别一次性要求像素级标注。</li>
+  <li><b>zhulong</b>：消融表加「多种子」列（均值 / 标准差 / 最差种子），并把「稀疏/混合注意力」与「训练目标」两条轴<b>分表</b>报，避免交互项混在一起解释。</li>
+  <li><b>designflow</b>：造题把「定位」与「分类」拆两段记分，掩码类题按 IoU 判；对「近重复图形」（同一 cell 多处复制）必须单独设一档，防止 NMS 把不同实例压成一个。</li>
+</ul>
+
+<div class="note" style="margin-top:16px">
+  <b>🔎 18:00 核验（可复核）</b><br>
+  <b>A 轨列表</b>：<code>cat:cs.CL</code> ⇒ <code>200</code> / <b>109,971 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界 <b><code>2026-11-19T18:57:25Z</code></b>（与 15:00 相同 ⇒ 本窗未前进）。前 12 条 ID 在 <code>SEEN.md</code> 全 <b>0 命中</b>；本轮另用 <code>id_list</code> 取到其中 7 条标题（<code>2611.26514</code> 马拉地语政务检索 / <code>2611.26509</code> GLiDE 蒸馏决策模型 / <code>2611.26492</code> 胸片报告多模态纠错 / <code>2611.26398</code> 水务治理跨项目知识 / <code>2611.26358</code> Beam 模型技术报告 / <code>2611.26336</code> 孟加拉语幻觉分层基准 / <code>2611.26317</code> 目标语言抽取语义建模）⇒ 大多与 6 线弱相关，11-21 仍优先 agent / 长上下文方向。<br>
+  <b>B 轨四篇</b>：<code>id_list=2003.10555,1703.06870,1506.01497,1801.01290</code> ⇒ <code>200</code> / <code>application/atom+xml</code> / <b>9,733 B / 4 entry</b>（逐条按 <code>published</code> 与标题核）；OpenAlex <b>4/4 <code>200</code></b>（<b>5,109 / 7,047 / 80,700 / 13,567</b>，查询日 2026-11-20，含 TPAMI 39(6):1137–1149 与 TPAMI 42(2):386–397 的卷期页）。<b>查重</b>：四 ID 在 <code>PAPERS.md</code> 此前<b>只出现在候选池注释</b>（未收录）⇒ 本轮转正，不产生重复条目。数字取自 arXiv 官方摘要，<b>未做 PDF 逐页复核</b>。<br>
+  <b>主页实测</b>：<code>gkioxari.github.io</code> <code>200</code> / 44,977 B（页内明文邮箱 + Caltech 职衔）· <code>www.rossgirshick.info</code> <code>200</code> / 7,882 B（页内明文邮箱，无 affiliation）· 失败项：<code>rossgirshick.info</code>（无 www）<code>000</code>、<code>pdollar.github.io</code> <code>404</code>、<code>thangluong.com</code> 停放页、<code>nlp.stanford.edu/~manning/</code> <code>000</code>、<code>tuomashaarnoja.github.io</code> <code>404</code>、<code>people.eecs.berkeley.edu/~aurickzhou/</code> <code>404</code>。<br>
+  <b>发信</b>：今日 <b>12/12</b> 达上限 ⇒ <b>0 封</b>；备 11-21 两封草稿（NeRF <b>181</b> 词 / Faster R-CNN <b>178</b> 词，均落款两行其后无行、正文无项目名、开头句与问句句式互不相同）。回信率 <b>0 / 116</b>，<b>0 封到期</b>（最早 2026-11-25）；<code>replies/</code> 仍无摘录，通道只发不收。
+</div>
+
+<div class="card">
+  <h2 style="font-size:16px;">🔁 18:00 变更说明（相对 15:00）</h2>
+  <table class="kv">
+    <tr><th>A 轨 5 篇</th><td><b>不变</b>（00:00 三篇 + 03:00 两篇）。公告批上界仍为 <code>2026-11-19T18:57:25Z</code>，本窗未前进；今日 5/5 已满 ⇒ 不替换、不增收，候选清单由 5 条扩到 12 条（新增 7 条已核标题）。</td></tr>
+    <tr><th>B 轨</th><td>288 → <b>292</b>（+4：ELECTRA / Faster R-CNN / Mask R-CNN / SAC），服务线分布 pretrain +1 · vision +2 · zhulong +1（designflow / harness 为附带）。</td></tr>
+    <tr><th>作者网 / 发信</th><td>作者网 269 → <b>271</b>（+2，均 A 级页内明文地址）；发信 <b>116 不变</b>（今日 12/12 满），<b>备 11-21 草稿 2 封</b>；回信率 <b>0/116</b>，到期 0 封（最早 11-25）。</td></tr>
+    <tr><th>口径</th><td>两篇 TPAMI 卷期页取自 OpenAlex（与 arXiv 预印本记录并列）；ELECTRA 的 ICLR 2020 只按 arXiv <code>comment</code> 记，未写记忆中的页码；SAC 的 ICML 2018 按 <code>comment</code> + OpenAlex biblio 双记。</td></tr>
+  </table>
+</div>
+
 <footer>
-  research 线 · 论文观察日报 · 2026-11-20（15:00 时窗 · A 轨 5/5 · B 轨 288）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 15:0x（A 轨 5/5 · B 轨累计 288 · 作者网 269 · 发信 116 / 回信 0） CST
+  research 线 · 论文观察日报 · 2026-11-20（18:00 时窗 · A 轨 5/5 · B 轨 292 · 作者网 271）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 18:0x（A 轨 5/5 · B 轨累计 292 · 作者网 271 · 发信 116 / 回信 0 · voice_ready 0 / news_ready 0） CST
 </footer>
 
 </div>

@@ -3844,5 +3844,30 @@
 | 主页 | <https://tingchen.me/>（`200` / 2,565 B，JS 渲染） |
 | X 账号 | **未找到**（🚫 不猜） |
 | 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
-| 备注 | `语言=中文(判据=拼音姓名族属；机构在美国不构成英文判据)`。价值点：SimCLR 的「增强组合 > 编码器结构」结论直接决定 vision 线消融的因子拆分；待其公开可联系地址后再发信，问题应聚焦「增强策略在小规模（<2B）视觉塔上是否仍主导」。 |
+### 270. Georgia Gkioxari
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Georgia Gkioxari（希腊姓名族属 ⇒ 英文正文；欧洲语言不全文母语） |
+| 机构 | **Caltech**（主页明文「assistant professor in the Computing & Mathematical Sciences department at Caltech」，此前为 Meta FAIR research scientist；2026-11-20 实测） |
+| 代表论文 | **Mask R-CNN**（`1703.06870`，B 轨 #291，二作）· 实例分割 / 人体关键点 |
+| 邮箱 | `georgia.gkioxari@gmail.com`（**A 级**：主页页内明文，`https://gkioxari.github.io/` `200` / 44,977 B） |
+| 主页 | <https://gkioxari.github.io/> |
+| X 账号 | **未找到**（主页未见 X 外链；🚫 不猜 handle） |
+| 状态 | **待发信**（A 级地址；同论文 ≤1 封 ⇒ 若先发 Girshick，本轮不并发） |
+| 备注 | `语言=英文(判据=希腊姓名族属 + 美国机构)`。价值点：掩码分支与 RoIAlign 的**对齐精度**直接决定「区域级」标注的可用性；可问「在密集、低对比度目标上，RoIAlign 的采样点密度与上采样倍率哪个先成为瓶颈」——答复可回填 vision 线的下游头设计。 |
+
+### 271. Ross Girshick
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ross Girshick（`rbg`；英语姓名族属 ⇒ 英文） |
+| 机构 | **未从主页核到**（`https://www.rossgirshick.info/` `200` / 7,882 B，页面极简无 affiliation 文本；论文时期为 Facebook AI Research，**本轮未核现状** ⇒ 不写现雇主） |
+| 代表论文 | **Faster R-CNN**（`1506.01497`，B 轨 #290，三作）· **Mask R-CNN**（#291，末位）· R-CNN 系列 |
+| 邮箱 | `ross.girshick@gmail.com`（**A 级**：主页页内明文） |
+| 主页 | <https://www.rossgirshick.info/> |
+| X 账号 | **未找到**（主页无 X 外链；🚫 不猜） |
+| 状态 | **草稿已备**（`drafts/1506.01497.md`，11-21 时窗发） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：RPN「共享全图卷积特征」是**成本结构**问题的源头答案；可问「锚框尺度/长宽比集合与特征层数哪个是跨尺度召回的主瓶颈」，以及「四步交替训练 vs 近似联合训练的实际差异」——两条都能回填 vision 线检测头的预算分配与 data 线的标注粒度选择。 |
+
 

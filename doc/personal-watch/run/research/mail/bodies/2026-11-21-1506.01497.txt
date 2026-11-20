@@ -1,0 +1,14 @@
+Dear Dr. Girshick,
+
+I am Yang Liu (https://foamliu.github.io/), a researcher working on LLM agents.
+
+We are building a vision front-end for chip-design data: layout images where the objects of interest (cells, vias, defect clusters) differ in scale by two orders of magnitude and frequently sit next to near-identical neighbours. Your Faster R-CNN is the baseline we keep returning to, because the RPN makes proposals almost free once features are shared.
+
+1. With 3 scales × 3 aspect ratios (9 anchors) tied to one feature map, does recall on very small objects mainly come from adding anchor scales or from adding feature levels? Which lever was cheaper at fixed compute?
+2. How large was the gap between the 4-step alternating training and approximate joint training in practice? If it is small, we would rather spend that budget on data.
+3. With 300 proposals and NMS, do near-duplicate but distinct patterns get suppressed? Which diagnostic would you run first to separate NMS suppression from genuine feature confusion?
+
+Thank you for the paper and the released code.
+
+Best regards,
+Yang Liu

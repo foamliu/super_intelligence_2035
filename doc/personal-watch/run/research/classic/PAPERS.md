@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **292** 条（**第七十六轮 2026-11-20 18:0x 补 4 条 → 292**：ELECTRA `2003.10555`（**5,109**，arXiv `comment` = ICLR 2020）/ Faster R-CNN `1506.01497`（**80,700**，IEEE TPAMI 39(6):1137–1149, 2017）/ Mask R-CNN `1703.06870`（**7,047**，IEEE TPAMI 42(2):386–397, 2020）/ Soft Actor-Critic `1801.01290`（**13,567**，arXiv `comment` = ICML 2018，OpenAlex biblio pp. 1861–1870）；元数据 `id_list=2003.10555,1703.06870,1506.01497,1801.01290` **`200` + `application/atom+xml`**（9,733 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 判别式预训练的样本效率 / 共享卷积特征做近零成本候选框 / 解耦掩码分支与 RoIAlign / 最大熵离策略 RL 的种子稳定性）
+
 **本轮快照**：累计 **288** 条（**第七十五轮 2026-11-20 15:0x 补 4 条 → 288**：SimCLR `2002.05709`（**18,118**，ICML 2020）/ NeRF `2003.08934`（**1,186**，ECCV 2020 oral）/ ChatEDA `2308.10204`（**319**，IEEE TCAD 43(10):3184–3197, 2024；**&lt;500 按「本领域权威」收**）/ Routing Transformers `2003.05997`（**925**，TACL 9:53–68, 2021）；arXiv `id_list` 两批均 **`200` + atom**（10,472 B / 4 entry、9,755 B / 4 entry），OpenAlex **4/4 `200`**；ChatEDA 另用 arXiv 原生 HTML（196,479 B）读作者与 affiliation；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；⚠️ 原计划 ELECTRA 的旧记 ID `2003.05997` 实测为 Routing Transformers ⇒ 改收后者，ELECTRA 真 ID `2003.10555` 留作下轮）
 
 **本轮快照**：累计 **284** 条（**第七十四轮 2026-11-20 12:0x 补 4 条 → 284**：PaLM-E `2303.03378`（**4,143**，预印本）/ 3D Gaussian Splatting `2308.04079`（**12,239**，ACM TOG 2023）/ Magicoder `2312.02120`（**416**，**&lt;500 按「方法论常青」收**）/ SGDR `1608.03983`（**11,502**，arXiv `comment` = ICLR 2017）；元数据分两批实测 arXiv `id_list`：`2303.03378,2308.04079,2010.00718,2301.12597` ⇒ **`200` + atom**（9,914 B / 4 entry，其中 `2010.00718` 实测为 *When to Impute?* ⇒ **SpeechT5 的 ID 记错，本轮未收**）与 `2303.03378,2312.02120` ⇒ **`200` + atom**（6,252 B / 2 entry），`1608.03983` ⇒ **`200` + atom**（2,359 B / 1 entry），逐条按 `published` 核 + OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 多模态句子与连续状态编码进语言塔 / 各向异性高斯 + 密度控制做实时新视角合成 / 开源片段当种子自造指令数据 / 余弦退火与热重启日程）
@@ -4981,6 +4983,74 @@
 | 与我们工作的关系 | **pretrain（主 · 长上下文稀疏注意力基线）**：<b>动作</b>：长上下文实验里把「固定窗口 / 学出来的稀疏模式」当两类基线分别跑，报告同一 token 预算下的困惑度与显存。**zhulong（成本口径）**：稀疏注意力的实际加速取决于 kernel 与聚类开销 ⇒ 成本必须实测，🚫 不许按复杂度公式外推。**harness**：长上下文评测须同时给「序列长度 + 是否外推」两个标签。 |
 | 首次收录 | **2026-11-20**（第七十五轮） |
 | 核验状态 | 同 #287 的 arXiv 批量（9,755 B / 4 entry）；OpenAlex **`200`（925，TACL 9:53–68）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 289. ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators |
+| 作者（前 3） | Kevin Clark · Minh-Thang Luong · Quoc V. Le（共 **4** 位；末位 Christopher D. Manning；arXiv 作者字段逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-03-23`；仅 v1） |
+| 会议 / 期刊 | **ICLR 2020**（arXiv `comment` 逐字为 `ICLR 2020`）；OpenAlex 该 DOI 记为预印本（`arXiv (Cornell University)`，无卷期页）⇒ **不写记忆中的页码** |
+| 被引数 | **5,109**（OpenAlex `10.48550/arxiv.2003.10555`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2003.10555> ｜ arXiv DOI `10.48550/arxiv.2003.10555` |
+| 一句话贡献 | 把 MLM 的「填空」换成 **replaced token detection**：先用小生成器把若干 token 换成合理替代词，再训练判别器逐 token 判「是否被换」；摘要口径称该目标比 MLM **更省算力（sample-efficient）**，且判别器不必与生成器等大。 |
+| 与我们工作的关系 | **pretrain（主 · 预训练目标对照）**：小模型阶段若要「同算力下更高样本效率」，把 RTD 与 MLM 作为**并列目标基线**跑，预注册判据 = **同 FLOPs 下的下游微调分数 + 收敛步数**，🚫 不许只报最后分数。<br>**zhulong（因果边界）**：判别式目标只喂编码器，**不直接产出生成能力** ⇒ 「thinking 轴」的收益必须单独测，不能与预训练效率混谈。<br>**data（配比陷阱）**：生成器与判别器所见语料必须**同分布**，否则判别器学成「体裁/领域判别器」而非「替换检测器」——这是复现时最常见的一种假成功。 |
+| 首次收录 | **2026-11-20**（第七十六轮） |
+| 核验状态 | arXiv `id_list=2003.10555,1703.06870,1506.01497,1801.01290` ⇒ **`200` + `application/atom+xml`**（9,733 B / 4 entry）；OpenAlex **`200`（5,109）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 290. Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks |
+| 作者（前 3） | Shaoqing Ren · Kaiming He · Ross Girshick（共 **4** 位；末位 Jian Sun；arXiv 作者字段逐字核） |
+| 年份 | **2015**（arXiv v1 `2015-06-04`；v3 `2016-01-06`） |
+| 会议 / 期刊 | **IEEE TPAMI**（OpenAlex：vol **39**、issue **6**、pp. **1137–1149**、2017；DOI `10.1109/tpami.2016.2577031`）；arXiv `comment` 仅写 `Extended tech report`，**会议版本轮未从一手源核对 ⇒ 不写** |
+| 被引数 | **80,700**（OpenAlex `10.48550/arxiv.1506.01497`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/1506.01497> ｜ 期刊 DOI `10.1109/tpami.2016.2577031` ｜ arXiv DOI `10.48550/arxiv.1506.01497` |
+| 一句话贡献 | 用 **RPN**（全卷积，逐位置同时出 objectness 与框回归）替代外部候选框算法，并**与检测网络共享全图卷积特征** ⇒ 候选框「近乎零成本」；VGG-16 上**全流程 5 fps**，每图仅 **300** 个候选即达 VOC 2007/2012 与 COCO 的当时最优（摘要口径）。 |
+| 与我们工作的关系 | **vision（主 · 区域级检测头）**：视觉塔若要输出「区域级」结果（版图图形 / 封装元件 / 缺陷块），RPN 的「共享特征 + 轻量头」是成本基线；先量「共享」省下多少算力，再谈换更重的头。<br>**designflow（造题分层）**：「定位」与「分类」拆两段记分（框 IoU 与类别分开判），避免一个总分掩盖定位退化。<br>**harness（可比性）**：检测类数字必须同时报 **候选数（300）+ NMS 阈值 + 输入分辨率**，否则跨论文不可比。 |
+| 首次收录 | **2026-11-20**（第七十六轮） |
+| 核验状态 | 同 #289 的 arXiv 批量（9,733 B / 4 entry）；OpenAlex **`200`（80,700，TPAMI 39(6):1137–1149）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 291. Mask R-CNN
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mask R-CNN |
+| 作者（前 3） | Kaiming He · Georgia Gkioxari · Piotr Dollár（共 **4** 位；末位 Ross Girshick；arXiv 作者字段逐字核） |
+| 年份 | **2017**（arXiv v1 `2017-03-20`；v3 `2018-01-24`） |
+| 会议 / 期刊 | **IEEE TPAMI**（OpenAlex：vol **42**、issue **2**、pp. **386–397**、2020；DOI `10.1109/tpami.2018.2844175`）；arXiv `comment` = `open source; appendix on more results`（**不写会议页码**） |
+| 被引数 | **7,047**（OpenAlex `10.48550/arxiv.1703.06870`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/1703.06870> ｜ 期刊 DOI `10.1109/tpami.2018.2844175` ｜ arXiv DOI `10.48550/arxiv.1703.06870` |
+| 一句话贡献 | 在 Faster R-CNN 上**并行加一路掩码分支**（分类 / 框 / 掩码解耦），代价小、**5 fps**；在 COCO 的实例分割、检测、人体关键点三条赛道均取得当时单模型最优（摘要口径），代码开放为 Detectron。 |
+| 与我们工作的关系 | **vision（主 · 像素级区域标注）**：版图 / 封装图像若需要「轮廓」而非框，掩码分支是更贴近下游的接口；但标注成本高 ⇒ 建议 **框标注 + 少量掩码金标** 的课程式数据方案。<br>**designflow（判分）**：造题可要求输出掩码并按 IoU 判分，比框 IoU 更难被「瞎猜大框」蒙过。<br>**harness**：分割指标须与检测指标**分开报**，🚫 不用一个总分代替两者。 |
+| 首次收录 | **2026-11-20**（第七十六轮） |
+| 核验状态 | 同 #289 的 arXiv 批量（9,733 B / 4 entry）；OpenAlex **`200`（7,047，TPAMI 42(2):386–397）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 292. Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor |
+| 作者（前 3） | Tuomas Haarnoja · Aurick Zhou · Pieter Abbeel（共 **4** 位；末位 Sergey Levine；arXiv 作者字段逐字核） |
+| 年份 | **2018**（arXiv v1 `2018-01-04`；v2 `2018-08-08`） |
+| 会议 / 期刊 | **ICML 2018**（arXiv `comment` 逐字含 `ICML 2018`）；OpenAlex 该 DOI 记 `arXiv (Cornell University)` 但 biblio 给 pp. **1861–1870** ⇒ 两处均如实记录 |
+| 被引数 | **13,567**（OpenAlex `10.48550/arxiv.1801.01290`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/1801.01290> ｜ arXiv DOI `10.48550/arxiv.1801.01290` ｜ 代码 <https://github.com/haarnoja/sac> |
+| 一句话贡献 | 在**最大熵**框架下把离策略更新与**随机 actor**结合：目标同时最大化期望回报与熵（「尽量成功，同时尽量随机」），在连续控制基准上优于同期 on-policy / off-policy 方法，且**不同随机种子下性能接近**（摘要口径，作者以此论证稳定性）。 |
+| 与我们工作的关系 | **zhulong（主 · 稳定性判据）**：把「**同配置多种子方差**」写进预注册判据（报均值 + 标准差 + 最差种子），比只报单次最好成绩更能暴露训练不稳。<br>**harness**：任何「稳定性」结论必须附种子数与随机源（初始化 / 数据序），否则不可复核。<br>**designflow**：若把工具调用序列当连续控制，熵正则可作为探索基线；但**本线不做在线 RL 训练**，只借其评测口径。<br>**pretrain**：关系弱，只借「种子稳定性」这一报告规范。 |
+| 首次收录 | **2026-11-20**（第七十六轮） |
+| 核验状态 | 同 #289 的 arXiv 批量（9,733 B / 4 entry）；OpenAlex **`200`（13,567）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 
