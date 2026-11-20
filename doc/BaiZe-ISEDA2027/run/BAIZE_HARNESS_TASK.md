@@ -1,6 +1,36 @@
 # BAIZE_HARNESS_TASK.md
 
-### 🔴 用户令 · 2026-11-20 14:5x（**OOM 事故后带护栏分批灰度重启 · 最高优先 · 覆盖 08:2x 令**）
+### 🔴 用户令 · 2026-11-20 16:3x（**harness 解冻 · 恢复评测 · 覆盖 14:5x 冻结令**）
+
+> Phase 0 冻结态已验收通过（loop CPU 节流 LIVE / 护栏守护 PID931671 存活 / 自检 clean / pretrain step~7.28s≤7.4s / 无 eval 容器）。现**解冻**，恢复被打断的评测。🚫 解冻 ≠ 回到无护栏态：**Step 1 硬护栏必须先落地，Step 2 再分批恢复**。
+
+#### Step 1 — 先落地硬护栏（本令最高优先，做完才动评测）
+
+1. **docker eval 加内存/CPU 上限**：eval 入口统一注入 `--memory 128g --memory-swap 128g --cpus 16`（包 wrapper，或核实 swebench harness 是否支持透传 docker 参数；做不成就如实报「未做」并让该路 eval 串行+降并发，不得裸跑）。
+2. **宿主 predict 加 `ulimit -v 209715200`**（=200GiB，单位 KB）+ 既有 `nice -n 19` `ionice -c3` + `OMP_NUM_THREADS≤8`。
+3. **护栏守护保持运行**：`harness_resource_guard.sh`（现 PID931671）不得停；若不在先重启它。
+
+#### Step 2 — 分批恢复（由轻到重，逐步）
+
+1. **先**：Verified predict 3 路（codex/pi/dsh）续跑，限并发 ≤2 路。
+2. **再**：incr_eval backlog（含 deepseek R2800 的 5 个 matplotlib），必须走受限容器，串行。
+3. **最后**：MM 2×3 predict 6 路（最重），待前两项护栏验证稳定后再开，限并发。
+
+#### 判据（每轮自检，越界即降载/暂停）
+
+- pretrain step ≤7.4s；超了立即暂停 predict/eval 让 pretrain。
+- 宿主 mem avail ≥ 512G（护栏守护 400G 是最后防线；到 512G 先自己降载）。
+- `docker ps` 里每个 harness eval 容器都带 `--memory` 限制。
+
+#### 纪律
+
+- `WAITING` 交回你自己按业务管理（有长任务 RUNNING=1，否则=0），不再强制 1。
+- 只动本线；不碰 pretrain/data/vision/zhulong。
+- `.12` 均摊（incr_eval docker/报告生成迁 `.12`）作可选优化；若做，`.12` 上 nice19 + load 闸阈值 80，且不得影响 data 线分词。
+- TASK 37.9KB 超软限：本轮顺带把已闭环旧运维块（含下方 14:5x 冻结令、08:2x 令）迁到 `ARCHIVE_OPERATOR_HARNESS.md` 留指针。
+- 诚实底线：护栏会拖慢评测 ETA，报告里明写，不藏。
+
+### 🔴 用户令 · 2026-11-20 14:5x（**OOM 事故后带护栏分批灰度重启 · 最高优先**）· ✅ 已闭环（Phase 0 完成·16:3x 解冻令覆盖·护栏定义见本块）
 
 > **背景（已核实，不必重查）**：11-19 夜 deepseek incr_eval R2800 的 matplotlib 评测容器吃穿宿主 ~2TB 内存，`.29` OOM 卡死，14:0x 重启。根因 = **评测容器无内存上限**（`daemon.json` 无默认限制），且自检是「报告」不是「拦截」（R2801 写 clean 后两次唤醒间无人杀失控容器）。同源历史：10-29 sympy 宿主 predict 吃 1.2TB、11-02 sklearn 抢 185 核。
 
