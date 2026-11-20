@@ -30972,3 +30972,89 @@ host=whag0pgpuap12  date=2026-11-20 11:15:27
 
 === DONE 287 | 2026-11-20 11:17:57 ===
 ```
+
+---
+
+## RUN_ID 288 · 2026-11-20 11:20:05 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+echo "host=$(hostname)  date=$(date "+%F %T")"
+echo
+echo "[1] ssh-keyscan（不需要认证；能出 key = sshd 在正常响应）"
+timeout 25 ssh-keyscan -T 15 -p 22 10.239.2.29 2>&1 | head -6 | cut -c1-160 | sed "s/^/  scan| /"
+echo "  keyscan_rc=$?"
+echo
+echo "[2] 已有的 ControlMaster socket（用户手工 ssh 过会留下）"
+ls -l ~/.ssh/control-* 2>/dev/null | head -6 | sed "s/^/  /"
+echo
+echo "[3] 单次详细握手 180s（只看判定性 debug 行 + 末尾）"
+OUT=$(timeout 180 ssh -vv -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 app.e0031982@10.239.2.29 "echo SSH_LOGIN_OK; hostname; uptime" 2>&1); RC=$?
+echo "  rc=$RC"
+echo "$OUT" | grep -E "Connecting to|Connection established|Remote protocol version|Local version|kex: algorithm|Authentications that can continue|Next authentication method|Offering public key|Server accepts key|Authenticated to|Permission denied|No more authentication|Timed out" | head -12 | cut -c1-160 | sed "s/^/  vv| /"
+echo "  --- 末尾 6 行 ---"
+echo "$OUT" | tail -6 | cut -c1-160 | sed "s/^/  vv| /"
+echo
+if echo "$OUT" | grep -q SSH_LOGIN_OK; then
+  echo "[4] 登录成功 → 采集 .29 全景"
+  R2="uptime; cat /proc/loadavg; free -g | head -3; nvidia-smi --query-gpu=index,utilization.gpu,memory.used,memory.total --format=csv,noheader; echo ---procs; ps -eo pid,ppid,etime,stat,pcpu,rss,args | grep -e baize_ -e torchrun -e pretrain_gpt -e harness | grep -v grep | cut -c1-150 | head -20; echo ---relay; ps -eo pid,etime,args | grep ops_relay | grep -v grep | cut -c1-110; tail -n 8 /tmp/baize_ops_relay.29.log 2>/dev/null; echo ---loops; ls -l /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log 2>/dev/null; tail -n 4 /tmp/baize_pretrain_loop.log 2>/dev/null; tail -n 4 /tmp/baize_harness_loop.log 2>/dev/null; echo ---Dstate; ps -eo stat= | cut -c1 | grep -c D; echo ---mount; mount | grep -e nas -e nfs | head -5; echo ---dmesg; dmesg 2>/dev/null | tail -6"
+  timeout 120 ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=no app.e0031982@10.239.2.29 "$R2" 2>&1 | cut -c1-200 | sed "s/^/  .29| /"
+else
+  echo "[4] 未登录 → 跳过采集"
+fi
+echo
+echo "（只读：未 kill / 未重启 / 未改文件）"
+'
+echo
+echo "[0] TARGET: 12；执行机 = $(hostname)"
+eval "$BODY"
+echo
+echo "=== DONE 288 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] TARGET: 12；执行机 = whag0pgpuap12
+host=whag0pgpuap12  date=2026-11-20 11:20:05
+
+[1] ssh-keyscan（不需要认证；能出 key = sshd 在正常响应）
+  scan| # 10.239.2.29:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  scan| # 10.239.2.29:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  scan| # 10.239.2.29:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  scan| # 10.239.2.29:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  scan| # 10.239.2.29:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  scan| 10.239.2.29 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGqzrkqXxnao/fbR9Lt5At6/mPD3MD3WmKrJKfpw1PwKWEWF8c3xBp1ZP72I4HIK+KDmPjZXCfta
+  keyscan_rc=0
+
+[2] 已有的 ControlMaster socket（用户手工 ssh 过会留下）
+
+[3] 单次详细握手 180s（只看判定性 debug 行 + 末尾）
+  rc=124
+  vv| debug1: Connecting to 10.239.2.29 [10.239.2.29] port 22.
+  vv| debug1: Connection established.
+  vv| debug1: Local version string SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  vv| debug1: Remote protocol version 2.0, remote software version OpenSSH_8.9p1 Ubuntu-3ubuntu0.11
+  vv| debug1: kex: algorithm: curve25519-sha256
+  vv| debug1: Authentications that can continue: publickey,password
+  vv| debug1: Next authentication method: publickey
+  vv| debug1: Offering public key: /home/app.e0031982/.ssh/id_rsa RSA SHA256:LzSjN6Wj+/7fvxLb48YlS7wCGQcENGkBG130EzhTvGU
+  vv| debug1: Server accepts key: /home/app.e0031982/.ssh/id_rsa RSA SHA256:LzSjN6Wj+/7fvxLb48YlS7wCGQcENGkBG130EzhTvGU
+  vv| Authenticated to 10.239.2.29 ([10.239.2.29]:22) using "publickey".
+  --- 末尾 6 行 ---
+  vv| debug2: channel 0: send open
+  vv| debug1: Requesting no-more-sessions@openssh.com
+  vv| debug1: Entering interactive session.
+  vv| debug1: pledge: filesystem
+  vv| debug1: channel 0: free: client-session, nchannels 1
+  vv| Killed by signal 15.
+
+[4] 未登录 → 跳过采集
+
+（只读：未 kill / 未重启 / 未改文件）
+
+=== DONE 288 | 2026-11-20 11:23:05 ===
+```
