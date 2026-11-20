@@ -2104,23 +2104,44 @@
   "bpmn-io__bpmn-js-1337": {
     "instance_id": "bpmn-io__bpmn-js-1337",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 853.9,
+    "rc": 0,
+    "model_patch_len": 6127,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "g:\n- Typed start event is stripped of its event definition when moved to a regular sub-process\n- Typed start event keeps its event definition when moved from a regular sub-process to the root process\n",
+    "stderr_tail": "        // then\n+        expect(hasEventDefinition(startEventAfter, 'bpmn:MessageEventDefinition')).to.be.true;\n+        expect(startEventAfter.parent).to.equal(root);\n+      })\n+    );\n+\n   });\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1348": {
     "instance_id": "bpmn-io__bpmn-js-1348",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 415.6,
+    "rc": 0,
+    "model_patch_len": 3245,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "slint`\n- The BPMN fixture XML is well-formed\n- Logic verified through manual trace: non-message boundary events are still rejected, only those with `MessageEventDefinition` are now allowed as targets\n",
+    "stderr_tail": "vents with MessageEventDefinition\n[✓] Add message catch boundary event to test fixture BPMN\n[✓] Add tests for message flow targeting message catch boundary events\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1365": {
     "instance_id": "bpmn-io__bpmn-js-1365",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 755.3,
+    "rc": 0,
+    "model_patch_len": 2616,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "etLoopEntries`, `_getAdHocEntry`). The popup menu is accessed via the screw-wrench icon in the context pad, and the collection toggle appears as a header entry when a data object element is selected.\n",
+    "stderr_tail": "ead test/spec/features/popup-menu/ReplaceMenuProviderSpec.js\u001b[90m [limit=100, offset=1680]\u001b[0m\n\u001b[0m→ \u001b[0mRead test/spec/features/popup-menu/ReplaceMenuProviderSpec.js\u001b[90m [limit=30, offset=1940]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1382": {
     "instance_id": "bpmn-io__bpmn-js-1382",
