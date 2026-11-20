@@ -1345,3 +1345,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1794993350192_2dwhe	ellawu	hfeg0plg79	30	physical_verify	case	EDA-Eval-DesignFlow-SvrfInsertDummyExtract-001	2026-11-20 22:14	
 1795052358945_dbl7u	raylei	hfeg0plg103	11	physical_verify	case	EDA-Eval-DesignFlow-StarRcCcoDupDirFix-001	2026-11-20 22:45	
 1795076455054_baqpa	e0049141	hfeg0plg54	83	physical_verify	case	EDA-Eval-DesignFlow-SramMarkLayerDiag-001	2026-11-20 23:59	
+1794982956287_uzvua	lucaslu	hfeg0plg88	88	layout_aether	case	EDA-Eval-DesignFlow-LayoutHierScrapeDiag-001	2026-11-21 00:46	
