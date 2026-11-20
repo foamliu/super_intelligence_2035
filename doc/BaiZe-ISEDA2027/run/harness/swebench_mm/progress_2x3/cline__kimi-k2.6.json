@@ -858,9 +858,16 @@
   "PrismJS__prism-1895": {
     "instance_id": "PrismJS__prism-1895",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 393.2,
+    "rc": 0,
+    "model_patch_len": 8347,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "JSX, TSX, Flow, CoffeeScript, N4JS, ActionScript) automatically inherit this fix through `Prism.languages.extend('javascript', ...)`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-1897": {
     "instance_id": "PrismJS__prism-1897",
