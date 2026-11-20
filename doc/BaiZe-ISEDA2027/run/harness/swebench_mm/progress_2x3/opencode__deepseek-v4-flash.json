@@ -1965,23 +1965,43 @@
   "bpmn-io__bpmn-js-1196": {
     "instance_id": "bpmn-io__bpmn-js-1196",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1198": {
     "instance_id": "bpmn-io__bpmn-js-1198",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 309.7,
+    "rc": 0,
+    "model_patch_len": 613,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " logic in the `reconnectStart` handler (line 226: `oldSource.default === businessObject`), ensuring the `default` attribute is only removed when the flow being reconnected is itself the default flow.\n",
+    "stderr_tail": "modules/camunda-bpmn-moddle 2>/dev/null; ls node_modules/diagram-js/lib/features/mouse 2>/dev/null\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/modeling/BpmnUpdater.js\u001b[90m [limit=40, offset=220]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1200": {
     "instance_id": "bpmn-io__bpmn-js-1200",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 141.7,
+    "rc": 0,
+    "model_patch_len": 1375,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "low.\n\nThe symmetry with `IntermediateThrowEvent` (which was already in the list) makes this change natural — both intermediate event types on a sequence flow should preserve the condition expression.\n",
+    "stderr_tail": "the relevant code that handles dropping intermediate events on sequence flows\n[✓] Implement the fix - add IntermediateCatchEvent to allowlist in BpmnUpdater.js\n[✓] Verify the fix by running lint\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1206": {
     "instance_id": "bpmn-io__bpmn-js-1206",
