@@ -1643,3 +1643,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795152734593_40uq0	shanliny	hfeg0plg107	547	spice_sim	case	EDA-Eval-DesignFlow-MosMeasDeckFix-001	2026-11-20 22:32	
 1795068208982_tmtun	chuanqiz	hfeg0pnd001	292	spice_sim	case	EDA-Eval-DesignFlow-RailPinTypeScanGen-001	2026-11-20 23:04	
 1795155396772_ovoby	hauserz	hfeg0plg17	232	spice_sim	case	EDA-Eval-DesignFlow-LdoDeckGen-001	2026-11-20 23:46	
+1795154631427_u6dpn	jeoteanl	hfeg0plg57	86	spice_sim	case	EDA-Eval-DesignFlow-LibMismatchFix-001	2026-11-21 00:38	r941: A档 trace-faithful LibMismatchFix-001 (k=12 a-l, ref 12/12, NEG 4/4 FAIL, 3-seed). FineSim IDDQ lib/netlist device-name mismatch diagnosis+fix, pure Python lib_mismatch_fix.py
