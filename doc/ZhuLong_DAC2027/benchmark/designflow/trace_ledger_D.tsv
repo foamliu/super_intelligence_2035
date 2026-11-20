@@ -1947,3 +1947,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794906865811_bp1x8	zjqiao	hfhds201	105	schematic_netlist	case	EDA-Eval-DesignFlow-CrcAlertMeasFix-001	2026-11-20 20:05	
 1794899301159_8luru	jiashengz	hfeg0plg92	386	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellDevtypeAuditProduce-001	2026-11-20 21:22	
 1795056204141_prsvc	chuanqiz	hfeg0pnd001	80	schematic_netlist	case	EDA-Eval-DesignFlow-IOStaticLogicDeriveProduce-001	2026-11-20 22:10	
+1795053503763_lbkmz.messages.json	joeyl	hfeg0plg74	246	schematic_netlist	parked	EDA-Eval-DesignFlow-UlvtDelvtoInjectProduce-001	2026-11-20 22:39	near-dup of NetlistUlvtDelvtoInject-001 (3ydq7, same user joeyl/mc246/same U#0 ULVT delvto inject task); r1021 abort per 1-task-1-case anti-redundancy (r1014 precedent)

@@ -47,3 +47,11 @@
 - gold: inject_delvto_ref.py 逐字改编自真实 reduce_vth.py
 - check.py 14 断言 a-n: a zip含inject_delvto.py b py_compile c 反空壳≥400B d B运行exit0 e B输出文件存在非空 f 4 ULVT各含_delvto=-0.15(独立_gt_scan) g 2非ULVT不含_delvto h .SUBCKT/.ENDS定义不含_delvto i XNA _delvto在续行不在首行 j XPB/XNC _delvto在注释之前且注释保留 k delvto值恰-0.15 l 反硬编码零A-only token m 反硬编码含B-only token n 3-seed md5一致
 - 自验: ref 14/14 PASS on B + ref on A 产 A gold(4 ULVT改/3非ULVT未改/定义未改)一致 + 3 neg(empty/print_only/core_deleted)全 FAIL NEG_RC=0 + §4.9 a/b/c 三假全 FAIL, k_check=k_rat=14>=8 GATE PASS ✓
+
+## ⚠️ r1021 ABORT (near-dup, 1-task-1-case anti-redundancy)
+- 本 deepread 合成的 case (EDA-Eval-DesignFlow-UlvtDelvtoInjectProduce-001) **已 abort 不落库**。
+- 原因: lbkmz 与已有 NetlistUlvtDelvtoInject-001 (session 3ydq7, joeyl@hfeg0plg74 mc246) 是 **同一用户/同一任务/同一 U#0 逐字** 的 near-dup (joeyl 集群 lbkmz/3ydq7/fxlzf 三 session 关键词完全一致 netlist:1103/schematic:100/hspice:93/opamp:24, 均重复 ULVT delvto 注入任务)。
+- D 已有 2 个 joeyl ULVT delvto case: UlvtDelvtoReducer-001 (qsn6y mc23 早期) + NetlistUlvtDelvtoInject-001 (3ydq7 mc246)。本例第 3 个 = 题库冗余。
+- 处置 (守 r1014 precedent): 删 cases/D json + assets/ + reference/ 全部文件, D.jsonl rebuild 回 543, ledger mark --force case→parked (note 记 near-dup 原因)。
+- 教训: 选料时 joeyl 集群 (mc246, netlist:1103) 的多 session 是同一重复任务, 需先查同用户已有 case (grep joeyl ledger) 再决定, 勿仅看 session 唯一就认为 fresh。
+- deepread + 合成的 inject_delvto_ref.py (逐字改编自真实 reduce_vth.py) + check.py 14 断言设计已验证可用 (ref 14/14 PASS + 3 neg FAIL), 可复用到下一个真正 fresh 的 SPICE delvto/param-inject trace (需重抽 gold + 不相交命名)。
