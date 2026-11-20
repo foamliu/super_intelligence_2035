@@ -1068,37 +1068,72 @@
   "PrismJS__prism-2754": {
     "instance_id": "PrismJS__prism-2754",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1134.0,
+    "rc": 0,
+    "model_patch_len": 6395,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "l 16 JSX tests pass\n- All TSX tests pass  \n- The provided snippet `<Button {...{onClick, disabled}}>` now highlights correctly as a proper `tag` token with the `spread` attribute recognized inside it\n",
+    "stderr_tail": "ucture and find JSX-related language files\n[✓] Identify the bug in JSX spread props handling\n[✓] Implement the fix for spread props syntax highlighting\n[✓] Test the fix with the provided snippet\n\u001b[0m\n"
   },
   "PrismJS__prism-2782": {
     "instance_id": "PrismJS__prism-2782",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 126.0,
+    "rc": 0,
+    "model_patch_len": 531951,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "bol. Adding `@` allows strings like `\"Select * from test Where Code=@Code\"` to be highlighted correctly.\n\n### Verification\n\nAll language tests pass (23 passing), including the new VB.NET string test.\n",
+    "stderr_tail": "ture'\n\n\n  23 passing (60ms)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Investigate VB.NET string pattern issue with @ symbol\n[✓] Find and fix the relevant Prism.js language definition\n[✓] Test the fix if possible\n\u001b[0m\n"
   },
   "PrismJS__prism-2792": {
     "instance_id": "PrismJS__prism-2792",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 540.4,
+    "rc": 0,
+    "model_patch_len": 958,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " empty, simple, newline-escaped, single-quote-escaped, backslash-escaped, and complex multi-line ANSI-C strings.\n\n### Verification\nAll 1904 language tests pass, including the new ANSI-C quoting test.\n",
+    "stderr_tail": "\n\n\n  1904 passing (2s)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Add ANSI-C quoting pattern to prism-bash.js\n[✓] Update entity regex to include \\'\n[✓] Add test for ANSI-C quoting\n[✓] Run language tests to verify\n\u001b[0m\n"
   },
   "PrismJS__prism-2841": {
     "instance_id": "PrismJS__prism-2841",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 252.1,
+    "rc": 0,
+    "model_patch_len": 548020,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "— Added a test case for `/foo#{39+3}/` to verify interpolation is now highlighted correctly.\n3. **`components/prism-ruby.min.js`** — Regenerated via `npm run build`.\n\nAll 11 Ruby language tests pass.\n",
+    "stderr_tail": "m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore the codebase to understand the Ruby language definition\n[✓] Identify why interpolation works for %r{...} but not /.../ regex\n[✓] Fix the issue and verify with tests\n\u001b[0m\n"
   },
   "PrismJS__prism-2861": {
     "instance_id": "PrismJS__prism-2861",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 265.4,
+    "rc": 0,
+    "model_patch_len": 1366,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "✓\n\n**2. `tests/languages/typescript/type-property.test`**\nAdded a new test case based on the exact example from the issue to prevent regression.\n\nAll 1995 existing tests pass, including the new test.\n",
+    "stderr_tail": "est case 'label_feature'\n    ✓ – should pass test case 'number_feature'\n    ✓ – should pass test case 'operator_feature'\n    ✓ – should pass test case 'punctuation_feature'\n\n\n  1995 passing (2s)\n\u001b[0m\n"
   },
   "PrismJS__prism-2946": {
     "instance_id": "PrismJS__prism-2946",
