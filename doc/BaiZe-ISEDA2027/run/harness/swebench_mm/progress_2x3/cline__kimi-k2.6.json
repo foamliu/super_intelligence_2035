@@ -1033,9 +1033,16 @@
   "PrismJS__prism-2705": {
     "instance_id": "PrismJS__prism-2705",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1301.3,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "45,\"outputTokens\":32180,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":1297885,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-20T19:03:48.689Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "PrismJS__prism-2713": {
     "instance_id": "PrismJS__prism-2713",

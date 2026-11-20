@@ -1166,23 +1166,44 @@
   "PrismJS__prism-3050": {
     "instance_id": "PrismJS__prism-3050",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "existing workdir updated",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1172.0,
+    "rc": 0,
+    "model_patch_len": 54742,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " `E[End]` → `node-id(\\\"E\\\")` + `node-rectangle[punctuation\\\"[\\\" + \\\"End\\\" + punctuation\\\"]\\\"]` (no longer split as keyword \\\"End\\\")\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3141": {
     "instance_id": "PrismJS__prism-3141",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "existing workdir updated",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 65.8,
+    "rc": 0,
+    "model_patch_len": 7795,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ork\\n- Variable syntax with backticks (`@\\\\`test\\\\``) continues to match as `variable` (due to its earlier position in the grammar)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3174": {
     "instance_id": "PrismJS__prism-3174",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 68.0,
+    "rc": 0,
+    "model_patch_len": 8206,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ameter is isolated to a specific actor, e.g.:\\n\\n```swift\\nfunc doSomething(with manager: isolated SomeActor) {\\n    // ...\\n}\\n```\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3351": {
     "instance_id": "PrismJS__prism-3351",

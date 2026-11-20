@@ -1152,30 +1152,58 @@
   "PrismJS__prism-3001": {
     "instance_id": "PrismJS__prism-3001",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 752.3,
+    "rc": 0,
+    "model_patch_len": 3409,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "pe` / `infer` are **no longer** incorrectly highlighted  \n\n**Files changed:**\n- `components/prism-typescript.js`\n- `components/prism-typescript.min.js`\n\nAll TypeScript and TSX tests continue to pass.\n",
+    "stderr_tail": "^#?(?!\\s)[_$a-zA-Z\\xA0-\\uFFFF](?:(?!\\s)[$\\w\\xA0-\\uFFFF])*/,generic:{pattern:/<[\\s\\S]+/,alias:\"class-name\",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);\n\\ No newline at end of file\n\u001b[0m\n"
   },
   "PrismJS__prism-3050": {
     "instance_id": "PrismJS__prism-3050",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 986.3,
+    "rc": 0,
+    "model_patch_len": 568851,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " semicolons\n\n**Verification:**\n- `npm run build` completed successfully\n- `npm test` passes fully (all aliases, core, dependencies, examples, identifiers, language, pattern, plugin, and runner tests)\n",
+    "stderr_tail": "S project structure and language patterns\n[✓] Create Mermaid language definition\n[✓] Register Mermaid in components.json/components.js\n[✓] Add example/test if appropriate\n[✓] Build and run tests\n\u001b[0m\n"
   },
   "PrismJS__prism-3141": {
     "instance_id": "PrismJS__prism-3141",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 103.6,
+    "rc": 0,
+    "model_patch_len": 1129,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "- **`tests/languages/sql/string_feature.test`**: Added test cases for backtick strings.\n\n**Verification:**\n- All SQL language tests pass.\n- Pattern tests pass (no regressions or backtracking issues).\n",
+    "stderr_tail": " should have nice names and aliases\n    ✓ - should not use octal escapes\n    ✓ - should not cause exponential backtracking\n    ✓ - should not cause polynomial backtracking\n\n\n  36 passing (618ms)\n\u001b[0m\n"
   },
   "PrismJS__prism-3174": {
     "instance_id": "PrismJS__prism-3174",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 138.6,
+    "rc": 0,
+    "model_patch_len": 465242,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ded the `isolated` keyword to the Swift language definition in `components/prism-swift.js` and updated the corresponding test in `tests/languages/swift/keyword_feature.test`. All 15 Swift tests pass.\n",
+    "stderr_tail": "'operator_feature'\n    ✓ – should pass test case 'punctuation_feature'\n    ✓ – should pass test case 'short-argument_feature'\n    ✓ – should pass test case 'string_feature'\n\n\n  15 passing (28ms)\n\u001b[0m\n"
   },
   "PrismJS__prism-3351": {
     "instance_id": "PrismJS__prism-3351",

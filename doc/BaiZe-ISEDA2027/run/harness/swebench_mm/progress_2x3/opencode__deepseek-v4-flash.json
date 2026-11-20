@@ -1840,9 +1840,16 @@
   "bpmn-io__bpmn-js-1092": {
     "instance_id": "bpmn-io__bpmn-js-1092",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1324.3,
+    "rc": 0,
+    "model_patch_len": 683702,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "th tasks at `(250, 260, 100, 80)` and `(350, 560, 100, 80)`, moving the cursor within 20px of the second task's center `(400, 600)` will now snap it there, enabling easy center-to-center connections.\n",
+    "stderr_tail": "or connection previews and grid snapping\n[✓] Identify the root cause of center-to-center connection issue\n[✓] Implement fix for center-to-center connection snapping\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1119": {
     "instance_id": "bpmn-io__bpmn-js-1119",
