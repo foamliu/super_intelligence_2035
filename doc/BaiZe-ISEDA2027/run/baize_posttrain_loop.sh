@@ -49,6 +49,7 @@ _pt_in_whitelist() {
         "$REL/MEMORY_POSTTRAIN.md"|"$REL/EXPERIMENTS_POSTTRAIN.md"|"$REL/BAIZE_POSTTRAIN_TASK.md"|"$REL/ARCHIVE_OPERATOR_POSTTRAIN.md") return 0;;
         "$REL/daily-memories-posttrain"/*) return 0;;
         "$REL/baize_posttrain_"*) return 0;;
+        "$REL/baseline_"*) return 0;;   # §E.2 deliverable baseline_<arm>_run<N>_pertask.json + interim (added wake651)
         "$REL/bpt_"*) return 0;;
         "$REL/POSTTRAIN_"*) return 0;;
         "$REL/posttrain_"*) return 0;;
