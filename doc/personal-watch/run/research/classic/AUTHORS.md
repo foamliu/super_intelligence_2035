@@ -3998,3 +3998,28 @@
 | 状态 | **只建档**（无可发地址） |
 | 备注 | `语言=俄语(判据=姓名族属；欧洲语言只做称谓问候 + 英文正文)`。价值点：ring-allreduce 的带宽-延迟分解可直接用于 pretrain 线的「通信占比 / 扩卡效率」预注册口径。 |
 
+### 281. Deepak Narayanan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Deepak Narayanan（英文姓名族属 + 美国机构 ⇒ 信按英文写） |
+| 机构 | NVIDIA（Megatron-LM / Megatron-Core 方向；本轮未逐页核职位） |
+| 代表论文 | Efficient Large-Scale LM Training on GPU Clusters Using Megatron-LM（arXiv `2104.04473`，一作）· Megatron-LM 系（`1909.08053` 合作者） |
+| 邮箱 | **dnarayanan@nvidia.com**（来源：个人主页 `https://deepakn94.github.io/` 实测 `HTTP 200` / 10,161 B，页内明文；页面 `mailto:` 被 JS 混淆为空 ⇒ 按 **B 级**记，发信前需当场复核） |
+| 主页 | <https://deepakn94.github.io/>（实测 `200` / 10,161 B；页面内含 `megatron-sc21.pdf` 链接，与论文对应） |
+| X 账号 | **未找到**（主页无 X / Twitter 链接，🚫 不猜） |
+| 状态 | **只建档**（本轮时窗信额已满，未发） |
+| 备注 | `语言=英文(判据=英文姓名族属+美国机构)`。价值点：并行组切分与交错 1F1B 的**实测取舍**（TP×PP×DP 与气泡占比），可直接回填 pretrain 的并行配置预注册表；也可追问 2B 规模下「交错层数」是否有拐点。 |
+
+### 282. Samir Khaki
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Samir Khaki（姓名族属未能判定 ⇒ 按英文兜底；🚫 不因机构推定母语） |
+| 机构 | 未核实（论文元数据未给 affiliation，本轮未逐页核） |
+| 代表论文 | VR-SparseQuant: Accurate FP4 Quantization with 2:4 Sparsity on Vera Rubin（arXiv `2611.25717`，一作） |
+| 邮箱 | **未找到**（候选主页 `samirkhaki.github.io` / `samir-khaki.github.io` 均 `404`；`www.mit.edu/~samirk/` 与 `people.csail.mit.edu/samirk/` 均 `403` ⇒ 按纪律不写猜测邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=姓名族属不可判+无中文/日韩机构信号；兜底英文)`。价值点：激活量化的**误差分摊**与离线 scale-ratio 校准 —— 即使没有 Vera Rubin，也可在模拟环境验证「两条稀疏流共享同一 FP4 预算」的思路。 |

@@ -5706,3 +5706,5 @@
 | 2026-11-21 | 2611.26510 | AutoMaster: Autonomous Post-Training by Making the Same Model a Better Teacher | cs.CL | 收录 |
 | 2026-11-21 | 2611.26427 | MemFolder: Structure-Guided Memory Folding for Efficient Agent Memory Management | cs.CL | 收录 |
 | 2026-11-21 | 2611.26363 | HiSA: Sparsifying the Hidden Dimension of RoPE Attention in LLMs | cs.LG | 收录 |
+| 2026-11-21 | 2611.25717 | VR-SparseQuant: Accurate FP4 Quantization with 2:4 Sparsity on Vera Rubin | cs.CL | 收录 |
+| 2026-11-21 | 2611.25813 | Efficient and Robust Drafting with Multi-Token Prediction | cs.CL | 收录 |

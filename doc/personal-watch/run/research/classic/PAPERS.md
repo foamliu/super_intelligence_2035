@@ -5175,6 +5175,40 @@
 
 ---
 
+## 300. Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM |
+| 作者（前 3） | Deepak Narayanan · Mohammad Shoeybi · Jared Casper（共 **12** 位；arXiv 作者字段逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-04-09`；v5 `2021-08-23`） |
+| 会议 / 期刊 | **SC 2021**（arXiv `comment` 逐字：`Accepted to SC 2021`；OpenAlex `conference-paper`，DOI `10.1145/3458817.3476209`） |
+| 被引数 | **1,754**（OpenAlex `works/https://doi.org/10.48550/arxiv.2104.04473`，查询日 **2026-11-21**；同日二次查询 `filter=doi:` 返回 1,752，差分属索引抖动，按首次查询记） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.04473> ｜ arXiv DOI `10.48550/arxiv.2104.04473` ｜ 会议 DOI `10.1145/3458817.3476209` ｜ 代码 <https://github.com/nvidia/megatron-lm> |
+| 一句话贡献 | 把**张量并行 / 流水并行 / 数据并行**组合到上千卡：提出**交错式 1F1B 流水调度**（吞吐 +10% 以上、显存与既有方案同量级），并定量给出三类并行的取舍；3072 卡上 1T 参数模型达 **502 petaFLOP/s**、单卡 **52%** 理论峰值。 |
+| 与我们工作的关系 | **pretrain（主 · 并行配置口径）**：预注册项 =「并行度 (TP×PP×DP) × 交错层数 → 吞吐 / 显存 / 气泡占比」小表，2B 规模即可做，不必等大卡。<br>**zhulong（成本基线）**：step 时间按「通信 / 流水气泡 / 计算」三分，可作为我们多机成本口径的分母。 |
+| 首次收录 | **2026-11-21**（第七十八轮 · 00:3x 补轮） |
+| 核验状态 | arXiv `id_list=2104.04473` **`200` + `application/atom+xml`**（`published` `2021-04-09T16:43:11Z`，`comment`/`journal_ref` 已读）；OpenAlex **`200`（1,754 / 2021 / conference-paper / SC）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 301. EVA: Exploring the Limits of Masked Visual Representation Learning at Scale
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | EVA: Exploring the Limits of Masked Visual Representation Learning at Scale |
+| 作者（前 3） | Yuxin Fang · Wen Wang · Binhui Xie（共 **9** 位；arXiv 作者字段逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-11-14`；v2 `2022-12-05`） |
+| 会议 / 期刊 | **CVPR 2023**（arXiv `comment` 只提 `release code and models`，未写会议 ⇒ 会议信息取自 OpenAlex：`conference-paper`，DOI `10.1109/cvpr52729.2023.01855`；两源不一致处以 OpenAlex 为准并注明） |
+| 被引数 | **1,182**（OpenAlex `works/https://doi.org/10.48550/arxiv.2211.07636`，查询日 **2026-11-21**） |
+| arXiv / DOI | <https://arxiv.org/abs/2211.07636> ｜ arXiv DOI `10.48550/arxiv.2211.07636` ｜ 会议 DOI `10.1109/cvpr52729.2023.01855` ｜ 代码/权重 <https://github.com/baaivision/EVA> |
+| 一句话贡献 | 预训练目标是**重建「图文对齐后的视觉特征」而不是像素**：掩码给定可见 patch，重建 CLIP 式对齐特征，从而把原生 ViT 扩到 **10 亿参数**；下游（识别 / 视频动作 / 检测 / 实例与语义分割）全面刷新；并给出关键工程结论 —— 用 EVA 初始化巨型 CLIP 的视觉塔可**显著稳定训练**、以更少样本与算力超过从零训练。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔目标与初始化）**：预注册两臂对照「重建像素（MAE）vs 重建对齐特征（EVA）」，固定 token 预算，判据 = 下游 3 任务的线性探测分数；换塔时先把新塔按 EVA 式对齐特征初始化。<br>**pretrain（稳定性）**：初始化策略是可直接写进配方的稳定性干预项。<br>**data（数据预算）**：公开数据即可支撑 10 亿参数视觉塔 ⇒ 数据预算表要区分「公开可得 / 需自采」。 |
+| 首次收录 | **2026-11-21**（第七十八轮 · 00:3x 补轮） |
+| 核验状态 | arXiv `id_list=2211.07636` **`200` + atom**（`published` `2022-11-14T18:59:52Z`）；OpenAlex **`200`（1,182 / 2023 / conference-paper / CVPR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5186,6 +5220,8 @@
 | `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
 
 > 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第七十八轮 · 00:3x 补轮（2026-11-21）转正 2 条**：Megatron-LM SC'21 `2104.04473`（#300，**1,754**，SC 2021）· EVA `2211.07636`（#301，**1,182**，CVPR 2023）⇒ B 轨累计 **301**。⚠️ **先查重后写入**：原候选 DINO `2104.14294` / 小规模代理训练不稳定性 `2209.14389` / Megatron-LM 1909 `1909.08053` 经 `id_list` 批量核对**均已在表内** ⇒ 全部剔除，改收上述两篇（两 ID 全量正则 0 命中）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 通信重叠侧（Ring-AllReduce / overlap：ZeRO、Ring Attention、Horovod 已收 ⇒ 只补 overlap 实现侧）；③ 训练稳定性 spike 侧（μP 与 QK-clip 方向，注意 `2209.14389` 已收）；④ 视觉塔后续对照（`2611.26199` 自适应数据选择，属新论文 ⇒ 归 A 轨）；⑤ MoE 路由可解释性（`2611.26075`，摘要只给两个误差降幅，缺可复用超参 ⇒ 暂留观察）。
 
 > ✅ **第七十七轮（2026-11-20 21:0x）转正 4 条**：DETR `2005.12872`（#293，**25,731**，ECCV 2020，LNCS pp. 213–229）· YOLO `1506.02640`（#294，**66,671**，CVPR 2016 pp. 779–788）· Quiet-STaR `2403.09629`（#295，**436**，**&lt;500 按「方法论常青」收**，arXiv 预印本 · `comment` 空）· MetaMath `2309.12284`（#296，**1,029**，ICLR 2024 Spotlight）⇒ B 轨累计 **296**（覆盖轴：集合预测 + 二分匹配去掉 NMS/anchor / 单网络回归的实时检测成本 / 每个 token 都想一下的自监督 thinking / 多视角改写题目自举）。核验：arXiv `id_list` **`200` + `application/atom+xml`**（10,477 B / 4 entry）+ OpenAlex **4/4 `200`**（25,731 / 66,671 / 436 / 1,029，查询日 2026-11-20，含 DETR 与 YOLO 的会议 DOI/页码）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（DETR PDF 30 s 内未下完 ⇒ 放弃，如实记）。**先查重**：DETR / YOLO 两 ID 在 `PAPERS.md` 全量正则 **0 命中**；ZeRO `1910.02054` / Ring Attention `2310.01889` 已在表内 ⇒ 不收。⚠️ **ID 误记在写入前拦截**：原计划用 `2309.12284` 收 RTLLM，实测该 ID 为 **MetaMath** ⇒ 改收 MetaMath；RTLLM 真 ID `2308.05345` 早已收录（并已发信 #66），未产生错误条目。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 通信重叠侧（Ring-AllReduce / overlap，ZeRO 已收 ⇒ 只补通信侧）；④ 视觉塔对照补 SigLIP 2（待核一手版本）；⑤ 检测后续（Deformable DETR `2010.04159` / DINO 系列，待核被引）。
 
