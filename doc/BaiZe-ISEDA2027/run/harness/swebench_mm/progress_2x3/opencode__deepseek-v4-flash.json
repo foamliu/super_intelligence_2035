@@ -1700,16 +1700,30 @@
   "alibaba-fusion__next-665": {
     "instance_id": "alibaba-fusion__next-665",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 92.4,
+    "rc": 0,
+    "model_patch_len": 14160,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "property documentation to the `rowSelection` JSDoc comment\n\n**`docs/table/index.md`** and **`docs/table/index.en-us.md`:**\n- Updated the `rowSelection` API documentation with the new `title` property\n",
+    "stderr_tail": "pec.js\nissue-spec.js\n\u001b[0m\n\u001b[0m→ \u001b[0mRead scripts/test/index.js\n\u001b[0m→ \u001b[0mRead src/table/selection.jsx\u001b[90m [offset=30, limit=170]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/table/base.jsx\u001b[90m [offset=223, limit=12]\u001b[0m\n"
   },
   "alibaba-fusion__next-717": {
     "instance_id": "alibaba-fusion__next-717",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 146.0,
+    "rc": 0,
+    "model_patch_len": 1011,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": ".jsx:730` and `src/select/select.jsx:758`: when `value[fillProps]` is `undefined`, fall back to `valueRender(value)` (which returns `item.label || item.value`), ensuring the value is still displayed.\n",
+    "stderr_tail": "er-react-16/build/index.js\n @ ./test/affix/index-spec.js\n @ ./test ^.*(?<!a11y)-spec.js$\n @ ./scripts/test/allinone.js\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/select/auto-complete.jsx\u001b[90m [limit=30, offset=160]\u001b[0m\n"
   },
   "alibaba-fusion__next-877": {
     "instance_id": "alibaba-fusion__next-877",

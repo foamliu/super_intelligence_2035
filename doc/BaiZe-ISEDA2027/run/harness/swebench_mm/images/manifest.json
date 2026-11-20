@@ -958,5 +958,11 @@
     "mime": "image/png",
     "size": 578279,
     "ts": 1795196640.2036636
+  },
+  "https://user-images.githubusercontent.com/8028956/133679005-0528600f-e8f1-4667-b061-dc23bae8a57f.png": {
+    "path": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_mm/images/9af5529a971c444e.png",
+    "mime": "image/png",
+    "size": 13688,
+    "ts": 1795196862.8373356
   }
 }
