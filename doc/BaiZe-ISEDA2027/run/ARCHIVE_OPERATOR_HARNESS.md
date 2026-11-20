@@ -2244,3 +2244,125 @@ git rm --cached 'doc/BaiZe-ISEDA2027/run/harness/**/*verified_full_*.json'
 ---
 
 **✅ 交付结论（R2600, 2026-11-17 09:1x）**：合并 original+rerun 后四桶归因完成。新增 `audit_tb21_review_7way.py`（扫描 original+所有 rerun 目录，按 task_name 合并，PASS 优先，四桶归因 ability/quota/conn_refused/synthetic）。TB-2.1 修正后 Pass%: cline 47.2%→47.7%(inf=1·conn_ref) · codex 1.1%→1.1%(inf=2·86 ability=真能力低分) · opencode 48.3%→54.4%(inf=10·synthetic) · cc 33.7%→34.1%(inf=1·conn_ref) · pi 39.3%→47.3%(inf=15·14synthetic+1conn_ref) · hermes 42.7%→50.0%(inf=13·synthetic) · deepseek 12.4%→13.1%(inf=5·synthetic)。SWE-bench Verified patch 非空初筛: cline 329/332=99.1% · codex 137/139=98.6% · deepseek 175/175=100% → 失败为能力(tests fail)非 infra。两份报告(report_harness_tb21_7way_zh.html 17.6KB + report_harness_glm53_7way_swebench_tb_zh.html 16.5KB)新增§失败归因复核。自检 0 script/0外链✅·reports/ porcelain=0✅。核心结论：各路失败以能力不足为主，纯 infra 题数少。
+
+## 归档 2026-11-20（harness 解冻·16:3x令闭环后，14:5x冻结令+08:2x CPU令+11-19报告令由 BAIZE_HARNESS_TASK.md 搬入，原文未改）
+### 🔴 用户令 · 2026-11-20 14:5x（**OOM 事故后带护栏分批灰度重启 · 最高优先**）· ✅ 已闭环（Phase 0 完成·16:3x 解冻令覆盖·护栏定义见本块）
+
+> **背景（已核实，不必重查）**：11-19 夜 deepseek incr_eval R2800 的 matplotlib 评测容器吃穿宿主 ~2TB 内存，`.29` OOM 卡死，14:0x 重启。根因 = **评测容器无内存上限**（`daemon.json` 无默认限制），且自检是「报告」不是「拦截」（R2801 写 clean 后两次唤醒间无人杀失控容器）。同源历史：10-29 sympy 宿主 predict 吃 1.2TB、11-02 sklearn 抢 185 核。
+
+> **本次重启一律不自动续跑任何在途任务**：R2800 deepseek matplotlib incr_eval、MM 2×3 predict(6 路)、Verified predict(codex/pi/dsh 3 路) 全部**暂停**，判定为「事故中断、待护栏落地后由运维令放行」。🚫 本轮及后续若干轮**不跑 eval、不起 docker 评测、不起新 predict**。
+
+#### Phase 0 — 本令即执行，并持续到运维另发「解冻」令（期间 `WAITING` 保持 1）
+
+1. **启动护栏守护**（若未运行）：`setsid bash run/harness_resource_guard.sh > /tmp/harness_resource_guard.log 2>&1 < /dev/null &`；`ps` 确认 PID 活、`tail /tmp/harness_resource_guard.log` 见「启动:」行。此脚本**常驻**、每 15s 采样，`MemAvailable<400GB` 或 `load1>160` 时就地 `docker kill` 全部 harness 评测容器（只识别 `sweb.eval.*`/`swebench/*`/`alexgshaw/*`，绝不碰别线或宿主进程）。
+2. **完成 08:2x 令尚未做的部分（CPU 节流）**：改 `baize_harness_loop.sh` 加 `HARNESS_CPUS/NICE/IONICE/OMP/LOAD_MAX` + 受控 cline 启动 + load 闸，`bash -n` 过。判据 = pretrain step ≤7.4s 且不再出现「harness CPU 争抢」。
+3. **本轮其余只做**：git pull → 自检 CPU/内存 → 核验无运行中 harness 评测容器（`docker ps | grep -E 'sweb.eval|swebench|alexgshaw'` 应为空，有残留先 `docker kill`）→ 写 MEMORY 心跳（注明「Phase 0 monitor-only·未自动续跑任何在途任务」）→ `WAITING: 1` → commit+push。
+
+#### 解冻前必须落地的硬护栏（预先准备好，解冻令到达前不执行）
+
+- **docker 评测加内存/CPU 上限**：在 eval 入口统一注入 `--memory 128g --memory-swap 128g --cpus 16`（包一层 `docker run` wrapper，或核实 swebench harness 是否支持透传 docker 参数；做不成如实报「未做」，不假装做成）。
+- **宿主 predict 加 `ulimit -v`**（10-29 sympy 1.2TB 就是宿主 predict 无上限）：每路 predict 启动前 `ulimit -v 209715200`（=200GiB，单位 KB）+ 既有 `nice -n 19` `ionice -c3` + `OMP_NUM_THREADS≤8`。
+- **`.12` 均摊**：把 incr_eval docker 与纯 Python 报告生成迁 `.12`（`.12` 上 `nice -n 19` + load 闸，阈值按 data 线分词设更低，如 80）。
+
+#### 交付与验收（Phase 0 完成后）
+
+- `MEMORY_HARNESS.md` 心跳 1 行；**收到解冻令前不得自行解冻**。
+- 判据：`docker ps` 无 harness 评测容器；护栏守护 PID 存活；`baize_harness_loop.sh` 已受控且 `bash -n` 过；pretrain step ≤7.4s。
+- 诚实底线：护栏必然拖慢评测 ETA，解冻后明写，不藏。
+
+### 🔴 用户令 · 2026-11-20 08:2x（**限制 CPU 占用，不得影响 pretrain 进度；并让 `.29`+`.12` 均摊**）
+
+> 用户原话：①「让 harness 限制 CPU 使用，不许影响预训练进度」②「harness 目前在 .29，可以均匀使用 .12 和 .29 的 CPU」。
+> 背景事实（已核实，不必重查）：`.29` 与 `.12` **均为 8×H100 / 224 核**；`.29` = pretrain（占 GPU，**训练受 CPU 拖慢**）+ harness（不占 GPU、吃 CPU）；`.12` = data（多为 CPU/IO）。
+> **现状病灶**：`baize_harness_loop.sh:121` 的 `cline -c ...` 是**裸调用，零 CPU 限制**。pretrain 日志已多轮记录「末步 9.3s > 7.4s = harness 线 CPU 争抢」（#2703/#2706/#2707/#2708）——**step 从 7.0s 被拖到 9.3s，约 −30% 训练吞吐**。这是必须消除的回归。
+
+#### 一、直接改 loop 脚本（本令最重要，改完立即生效）
+
+改 `baize_harness_loop.sh`：
+
+1. **配置区**（L30-35 附近）新增可调变量，默认值取保守侧：
+   ```bash
+   # 2026-11-20 用户令：harness 不得影响 pretrain 进度
+   HARNESS_CPUS="${HARNESS_CPUS:-}"          # 空=不限制核数；设了则 taskset 绑核
+   HARNESS_NICE="${HARNESS_NICE:-19}"        # 最低优先级（沿用 baize_cpu_eval_*.sh 既有范式）
+   HARNESS_IONICE="${HARNESS_IONICE:-3}"     # idle IO
+   HARNESS_OMP="${HARNESS_OMP:-8}"           # 线程上限，禁跑满 224 核
+   HARNESS_LOAD_MAX="${HARNESS_LOAD_MAX:-120}"  # .29 1min load 阈值（224 核的 ~54%）
+   ```
+2. **L119-121 的 cline 调用**改为受控启动：
+   ```bash
+   env -u http_proxy ... -u API_TYPE \
+       OMP_NUM_THREADS="$HARNESS_OMP" MKL_NUM_THREADS="$HARNESS_OMP" \
+       OPENBLAS_NUM_THREADS="$HARNESS_OMP" NUMEXPR_NUM_THREADS="$HARNESS_OMP" \
+     taskline=(nice -n "$HARNESS_NICE" ionice -c3)
+   [ -n "$HARNESS_CPUS" ] && taskline=(taskset -c "$HARNESS_CPUS" "${taskline[@]}")
+   "${taskline[@]}" cline -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" \
+       -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+   ```
+   （`HARNESS_CPUS` 为空时行为 = 原来的 nice/ionice 版；设 `0-111` 等即绑核。）
+3. **新增 pretrain 保护闸**（每轮 wake 后、调 cline 前）：
+   ```bash
+   # .29 的 1min load 超阈值 → 本轮跳过 cline，只做 git 同步（让 pretrain 先跑）
+   if [ "$(hostname -I | grep -c '10.239.2.29')" -gt 0 ]; then
+     L1=$(awk '{print int($1)}' /proc/loadavg)
+     if [ "${L1:-0}" -gt "$HARNESS_LOAD_MAX" ]; then
+       echo "[loop] $(date '+%F %T') SKIP cline: load=${L1} > ${HARNESS_LOAD_MAX}（让 pretrain）"
+       git_sync_and_push; sleep "$SLEEP_WAIT"; continue
+     fi
+   fi
+   ```
+   **判据**：pretrain 的 step 时间回到 **≤7.4s**（当前基线），且不再出现「harness CPU 争抢」字样。
+4. `bash -n` 必过；把改动 + `--dry-run` 等价验证贴进 MEMORY。
+
+#### 二、cgroup 兜底（更硬，但需 sudo，做不成要如实报）
+
+若有 root：给 harness 建 cgroup v2 并限核，**优先级高于 nice**：
+```bash
+# 仅当能 sudo 时执行；无 root → 跳过并在报告里写明「未做」
+sudo mkdir -p /sys/fs/cgroup/harness
+echo "0-63" | sudo tee /sys/fs/cgroup/harness/cpuset.cpus >/dev/null   # .29 上给 harness 64 核
+echo "max 100000 50000" | sudo tee /sys/fs/cgroup/harness/cpu.max >/dev/null  # 50% 配额上限
+sudo sh -c "echo $$ > /sys/fs/cgroup/harness/cgroup.procs"   # 或在启动 loop 时挂入
+```
+**红线**：`cpuset.cpus` **绝不可包含 pretrain 正在用的核**；不确定就先不设，用 §一 的 nice+load 闸兜住。
+
+#### 三、把负载均摊到 `.12`（用户令②）
+
+目标：harness 的 **agent 推理/评分/报告生成**这类纯 CPU 任务，尽量跑在 `.12`；`.29` 只留**必须本地**的部分。
+
+1. **先摸清可迁移面**：列出 harness 当前所有**长时 CPU 任务**（incr_eval docker 评测、MM predict、7way 报告生成、sklearn 评分），逐个标注「可在 .12 跑 / 必须 .29」。
+2. **优先迁 `.12` 的**：docker 评测（`incr_eval`）、报告生成脚本（`gen_7way_report.py` 等纯 Python）。做法：`.12` 上 clone/共享同一仓库，SSH 过去 `nice -n 19` 跑，结果 JSON 回写共享盘。
+3. **必须在 `.29` 的**：依赖 `.29` 本地路径/容器的部分。
+4. **`.12` 自身也要护栏**：data 线在 `.12` 上做分词，**同样会被抢**——迁过去时必须同样 `nice 19 + OMP≤8 + load 闸`，阈值用 `.12` 的（若 data 分词也在跑，`.12` 的 load 阈值设更低，如 80）。
+5. **判据**：`.29` 的 load 1min 在 harness 活跃期 **≤120**；`.12` **≤100**；pretrain step **≤7.4s** 持续 30 分钟。
+
+#### 四、交付与验收
+
+1. `run/reports/report_harness_cpu_throttle_zh.html`（中文自包含 HTML）：
+   改前/改后 `baize_harness_loop.sh` 对照 + **pretrain step 时间曲线**（改前 9.3s vs 改后目标 ≤7.4s）+ `.29`/`.12` 负载对照 + 迁移清单（哪些去了 `.12`）+ **未做项与原因**。
+2. `MEMORY_HARNESS.md` 记一行；本令完成前 `WAITING` 保持 0（这是长任务）。
+3. **不许做的事**：🚫 kill 进程来解决 CPU（本轮不是清场）· 🚫 动 pretrain 任何文件/进程 · 🚫 为让数字好看而不实测就写「已达标」· 🚫 无 root 却声称做了 cgroup。
+4. **诚实底线**：限制必然让 harness 变慢（评测 ETA 拉长）——这在报告里**明写**，不要藏。用户已接受这个代价。
+
+
+### ✅ 用户令 · 2026-11-19（**SWE-bench Verified 报告重写**）· 用户直令 · ✅ 已交付（R2758）
+
+> **交付结论（R2758 · 2026-11-19 11:4x）**：报告 `report_harness_glm53_7way_swebench_tb_zh.html` 已重写（23748→4840B）。①★主表 SWE-bench Verified 7路置顶·Pass%=resolved/500·单数字无区间无~·按降序：hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·deepseek168/500=33.6%·codex108/500=21.6%。②删 Terminal-Bench表/ETA/磁盘/kimi对比。③保留 predict进度+待跑backlog(deepseek241/codex109/pi95/cline40)+待重跑infra(pi1+codex1)。④生成器 `gen_report_glm53_7way.py` 重写(537→162行)·footer stray text已清。0script/0外链✅。
+
+> 🔴 **用户令 · 2026-11-19 — SWE-bench Multimodal 2×3 评测（排队，MM 容器下载完后启动）**
+
+> **用户原话**：「SWE-bench Multimodal 下载完后，起如下的 2x3 评测。2 个 harness：cline+opencode。3 个 LLM：DeepSeek-V4-flash、Kimi-K2.6 和 Doubao」
+
+> **评测矩阵（2 harness × 3 LLM = 6 路）**：
+
+> | Harness | LLM | API key | Base URL | Model |
+> |:--|:--|:--|:--|:--|
+> | cline | DeepSeek-V4-flash | `02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3` | `http://agi-gateway.cxmt.com/v1` | `deepseek-v4-flash` |
+> | cline | Kimi-K2.6 | `02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f` | `http://agi-gateway.cxmt.com/cloud/v1` | `kimi-k2.6-cloud` |
+> | cline | Doubao | `02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f` | `http://agi-gateway.cxmt.com/cloud/v1` | `doubao-seed-2.0-pro-cloud` |
+> | opencode | DeepSeek-V4-flash | 同上 | 同上 | 同上 |
+> | opencode | Kimi-K2.6 | 同上 | 同上 | 同上 |
+> | opencode | Doubao | 同上 | 同上 | 同上 |
+
+> **排队条件**：SWE-bench Multimodal 容器下载完成（✅ 580/580=100% · 2026-11-19 12:14 · 0 FAILED）后启动。不抢 pretrain CPU。**→ 2×3 predict 已于 R2763 14:56 启动（6 路全 RUN，nice19/ionice3）。**
+
