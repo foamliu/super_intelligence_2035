@@ -5607,16 +5607,30 @@
   "openlayers__openlayers-12393": {
     "instance_id": "openlayers__openlayers-12393",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 191.2,
+    "rc": 0,
+    "model_patch_len": 1234,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " of detail\n4. Handle both width and height resizing correctly\n\nThe changes are in `/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/openlayers_openlayers/src/ol/source/ImageStatic.js` lines 138-156.\n",
+    "stderr_tail": "y.js:338:25)\n    at ConfigArrayFactory.loadInDirectory (/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/openlayers_openlayers/node_modules/eslint/lib/cli-engine/config-array-factory.js:431:16)\n\u001b[0m\n"
   },
   "openlayers__openlayers-12467": {
     "instance_id": "openlayers__openlayers-12467",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 125.0,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "r-style/layer snapToPixel option to disable snapping entirely for animated elements.\n\nYou can also open a feature request in the OpenLayers repository to add a configuration option for this behavior.\n",
+    "stderr_tail": "/style/Circle.js\n\u001b[0m✱ \u001b[0mGrep \"ViewHint.ANIMATING\"\u001b[90m 25 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"snapToPixel\"\u001b[90m in src/ol/layer · 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"snapToPixel\"\u001b[90m in src/ol · 14 matches\u001b[0m\n"
   },
   "openlayers__openlayers-12683": {
     "instance_id": "openlayers__openlayers-12683",
