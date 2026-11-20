@@ -1602,3 +1602,8 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795083114382_h9k50	yh1yang	hfeg0pkn003	518	spice_sim	case	EDA-Eval-DesignFlow-DevFourTermMeasGen-001	2026-11-20 10:31	
 1795086710598_iyoge	yinyus	hfeahpc505	4988	spice_sim	case	EDA-Eval-DesignFlow-WvCurPwlStimGen-001	2026-11-20 10:59	
 1795085525243_qlvgs	xiuqiy	hfeahpc505	4986	spice_sim	case	EDA-Eval-DesignFlow-BankLogicCellMapAnalyze-001	2026-11-20 11:41	r918 delivered: 13 conds a-m, ref PASS, 5 negs FAIL (§4.9 3 fakes empty/print/core), anti-hardcode-A 518!=1000
+1795080484488_t6td6	xkyuan	hfeg0plg100	105	spice_sim	parked		2026-11-20 11:50	junk: 1msg pure-Q&A fanin/fanout explanation, no delivery, no teeth possible
+1795085887059_b35r7	xkyuan	hfeg0plg100	105	spice_sim	parked		2026-11-20 11:50	junk: arithmetic test session (1+1, 85*13213, big-mult), not real EDA task; high kw from system_prompt not content
+1795081362887_6jie5	joeyl	hfeg0pkn004	95	spice_sim	parked		2026-11-20 11:52	near-dup DelvtoNetlistMod-001(w8iq4 same joeyl): same modules Bias/CML_C2C/Solo_Divider/WCKTop/Divider_and_C2C, same delvto Vth injection, same PMOS+0.2/NMOS-0.2 msg89 correction, same vth -0.2->-0.1->0.05 iterations
+1795080330727_y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertPulseCheck-001	2026-11-20 12:07	
+1795081084990_t0xdo	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 12:08	near-dup DelvtoNetlistMod-001: byte-identical user msgs to 6jie5/w8iq4 (same joeyl delvto Vth injection, same modules, same PMOS+0.2 msg89)
