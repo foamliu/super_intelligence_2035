@@ -1937,16 +1937,30 @@
   "bpmn-io__bpmn-js-1179": {
     "instance_id": "bpmn-io__bpmn-js-1179",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 711.6,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch",
+    "stdout_tail": "osely at potential code issues:\nLet me look at the CreateConnectionHandler more carefully and how it handles layout:\nLet me check how `endDocking` is actually tested - finding the matcher definition:\n",
+    "stderr_tail": "-js/lib/features/modeling/Modeling.js\u001b[90m [limit=80, offset=1]\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"endDocking|startDocking\"\u001b[90m in . · 30 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead node_modules/diagram-js/lib/layout/LayoutUtil.js\n"
   },
   "bpmn-io__bpmn-js-1192": {
     "instance_id": "bpmn-io__bpmn-js-1192",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 10.6,
+    "rc": 0,
+    "model_patch_len": 395,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "Removed the `canCopy` rule that blocked copying boundary events when their host wasn't also being copied (line 911-913 in `lib/features/rules/BpmnRules.js`).\n",
+    "stderr_tail": "7,8 @@\n   if (is(element, 'bpmn:Lane') && !includes(elements, element.parent)) {\n     return false;\n   }\n \n-\n-\n   return true;\n }\n \n function isOutgoingEventBasedGatewayConnection(connection) {\n\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1196": {
     "instance_id": "bpmn-io__bpmn-js-1196",
