@@ -75,13 +75,20 @@ guard_block() {
 
 # ── git 同步（共享工作副本：只 add 本通道自己的文件）─────────────────────
 git_sync() {
-    local counts behind
+    local counts behind rc=0
     cd "$GIT_ROOT" || return 0
+    # 2026-11-20 ops: if another process holds the index, skip this cycle (do not fight for the lock)
+    [ -f .git/index.lock ] && return 0
     timeout 60 git fetch origin >/dev/null 2>&1 || return 0
     counts="$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo '0 0')"
     behind="$(echo "$counts" | awk '{print $1}')"
     if [ "${behind:-0}" -gt 0 ]; then
-        git pull --rebase --autostash origin main >/dev/null 2>&1 || { git rebase --abort >/dev/null 2>&1; return 0; }
+        timeout 120 git pull --rebase --autostash origin main >/dev/null 2>&1; rc=$?
+        if [ "$rc" -ne 0 ]; then
+            timeout 30 git rebase --abort >/dev/null 2>&1
+            echo "[relay-$HOSTTAG] git pull --rebase failed/timeout (rc=$rc), skip this cycle"
+            return 0
+        fi
     fi
 }
 git_publish() {
@@ -92,10 +99,10 @@ git_publish() {
     fi
     git commit -m "ops-relay[$HOSTTAG]: result @ $(date '+%F %T')" >/dev/null 2>&1 || return 0
     for i in 1 2 3; do
-        git push origin main >/dev/null 2>&1 && return 0
+        timeout 120 git push origin main >/dev/null 2>&1 && return 0
         sleep 3
-        git fetch origin >/dev/null 2>&1
-        git pull --rebase --autostash origin main >/dev/null 2>&1 || git rebase --abort >/dev/null 2>&1
+        timeout 60 git fetch origin >/dev/null 2>&1
+        timeout 120 git pull --rebase --autostash origin main >/dev/null 2>&1 || timeout 30 git rebase --abort >/dev/null 2>&1
     done
     echo "[relay-$HOSTTAG] push FAILED (will retry next cycle)"
 }
