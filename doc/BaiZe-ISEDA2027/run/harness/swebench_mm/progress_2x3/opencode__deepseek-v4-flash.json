@@ -2146,9 +2146,16 @@
   "bpmn-io__bpmn-js-1382": {
     "instance_id": "bpmn-io__bpmn-js-1382",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 385.2,
+    "rc": 0,
+    "model_patch_len": 6049,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "bjectReference → DataStoreReference\n- Replacement from DataStoreReference → DataObjectReference\n- Entry count verification (2 for DataObjectReference with collection toggle, 1 for DataStoreReference)\n",
+    "stderr_tail": "ence/DataStoreReference in ReplaceMenuProvider.js\n[✓] Create test BPMN fixture with DataStoreReference\n[✓] Add replace menu tests for DataObjectReference/DataStoreReference\n[✓] Verify tests pass\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1434": {
     "instance_id": "bpmn-io__bpmn-js-1434",

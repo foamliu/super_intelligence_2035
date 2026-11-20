@@ -5005,37 +5005,72 @@
   "highlightjs__highlight.js-2932": {
     "instance_id": "highlightjs__highlight.js-2932",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 175.3,
+    "rc": 0,
+    "model_patch_len": 412,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ns were introduced.\\n\\nThe fix is minimal, focused, and maintains backward compatibility while addressing the reported bug.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2958": {
     "instance_id": "highlightjs__highlight.js-2958",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 216.9,
+    "rc": 0,
+    "model_patch_len": 631,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "with XML namespace specifications (which allow 1-character NCName prefixes), and does not break any existing functionality.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2960": {
     "instance_id": "highlightjs__highlight.js-2960",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 250.2,
+    "rc": 0,
+    "model_patch_len": 5839,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ly: regex detection after keyword `m` (and all other regex operators) now works correctly with any delimiter, not just `/`.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2969": {
     "instance_id": "highlightjs__highlight.js-2969",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 210.8,
+    "rc": 0,
+    "model_patch_len": 1785,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ighlighted as strings, so the `/` in `?/` no longer incorrectly starts a regex that would break the rest of the line/block.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2972": {
     "instance_id": "highlightjs__highlight.js-2972",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 283.5,
+    "rc": 0,
+    "model_patch_len": 3151,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "cted because the tests were written before type hint support was added, and don't expect the new type highlighting classes.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3000": {
     "instance_id": "highlightjs__highlight.js-3000",

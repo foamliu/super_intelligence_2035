@@ -1436,30 +1436,57 @@
   "alibaba-fusion__next-1807": {
     "instance_id": "alibaba-fusion__next-1807",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 5925,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "alibaba-fusion__next-2131": {
     "instance_id": "alibaba-fusion__next-2131",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 731.3,
+    "rc": 0,
+    "model_patch_len": 1647,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "reHandleChildren` (for the `children` prop) already handles data correctly by creating new objects instead of mutating the originals.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-2164": {
     "instance_id": "alibaba-fusion__next-2164",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 72.4,
+    "rc": 0,
+    "model_patch_len": 290,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "he same file (e.g., `#{$table-prefix}-filter`, `#{$table-prefix}-expanded-ctrl`, and the tree arrows already have `cursor: pointer`).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-2355": {
     "instance_id": "alibaba-fusion__next-2355",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 395.2,
+    "rc": 0,
+    "model_patch_len": 1687,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "The problematic `'[start, end]'` case now safely returns `undefined` instead of throwing\\n- Null/undefined parents are handled safely\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-2860": {
     "instance_id": "alibaba-fusion__next-2860",
