@@ -3463,3 +3463,27 @@
 | 2026-11-20 | Uber 前 CEO 卡兰尼克声援黄仁勋复职（峰会发言） | IT之家 | W:opinion | https://www.ithome.com/1/029/691.htm |
 | 2026-11-20 | 格力电器因 150 元成被执行人？朱磊回应（司法个案） | IT之家 | W:not-news | https://www.ithome.com/1/029/667.htm |
 | 2026-11-20 | App Store 上架安卓虚拟机 Andarium（工具上线） | IT之家 | W:not-news | https://www.ithome.com/1/029/644.htm |
+| 2026-11-20 | OpenAI 邀部分 Plus 用户体验 dots AI 智能体，移动版将设独立标签页 | IT之家 | https://www.ithome.com/1/029/784.htm |
+| 2026-11-20 | OpenAI 开放 GPT-Live-1.1 API：实时双向对话 | IT之家 | https://www.ithome.com/1/029/776.htm |
+| 2026-11-20 | 只改一处代码，谷歌 AI 智能体优化 Harness 后成功率提升 8 倍 | IT之家 | https://www.ithome.com/1/029/766.htm |
+| 2026-11-20 | 小鹏科技日首发「图灵 AI 共驾」 | IT之家 | https://www.ithome.com/1/029/785.htm |
+| 2026-11-20 | Visa、万事达卡接连通报网络攻击事件 | IT之家 | https://www.ithome.com/1/029/758.htm |
+| 2026-11-20 | 摩根大通数据泄露：黑客宣称掌握 1.6 万个客户邮箱 | IT之家 | https://www.ithome.com/1/029/757.htm |
+| 2026-11-20 | 国内首个智能座舱 AI 分级评价体系 C1–C5 | IT之家 | https://www.ithome.com/1/029/781.htm |
+| 2026-11-20 | 谷歌 2027 年 1 月全球推广 Android 开发者验证 | IT之家 | https://www.ithome.com/1/029/765.htm |
+| 2026-11-20 | 商务部：1-10 月智能眼镜销售额增长 1 倍、具身智能机器人 +25.2% | IT之家 | https://www.ithome.com/1/029/762.htm |
+| 2026-11-20 | 美光：2027 存储芯片 75% 库存售罄 | IT之家 | https://www.ithome.com/1/029/786.htm |
+| 2026-11-20 | 苹果 Apple 支持社区今日永久关闭（28 年） | IT之家 | https://www.ithome.com/1/029/779.htm |
+| 2026-11-20 | 三星电子任命存储与移动业务新负责人 | IT之家 | https://www.ithome.com/1/029/769.htm |
+| 2026-11-20 | 微软确认 Win11 26H2 推送（系统更新通告） | IT之家 | W:not-news | https://www.ithome.com/1/029/782.htm |
+| 2026-11-20 | 国家邮政局 1-10 月快递业务量 1688.2 亿件（行业数据） | IT之家 | W:not-news | https://www.ithome.com/1/029/783.htm |
+| 2026-11-20 | 苹果 iOS 27.3 Beta 2 修订版（测试版推送） | IT之家 | W:not-news | https://www.ithome.com/1/029/751.htm |
+| 2026-11-20 | 苹果 macOS 27.3 Beta 2 公测版（测试版推送） | IT之家 | W:not-news | https://www.ithome.com/1/029/754.htm |
+| 2026-11-20 | Nothing 首款 AI 设备外观流出（爆料） | IT之家 | W:not-news | https://www.ithome.com/1/029/705.htm |
+| 2026-11-20 | 曝 Meta Muse Charm 售 300 美元（爆料） | IT之家 | W:not-news | https://www.ithome.com/1/029/771.htm |
+| 2026-11-20 | 蓝箭朱雀三号发动机复检试车（科技进展） | IT之家 | W:not-news | https://www.ithome.com/1/029/774.htm |
+| 2026-11-20 | 台山岛兆瓦级海岛微电网投运（能源基建） | IT之家 | W:not-news | https://www.ithome.com/1/029/777.htm |
+| 2026-11-20 | Counterpoint Q3 欧洲手机出货 -18%（监测报告） | IT之家 | W:not-news | https://www.ithome.com/1/029/744.htm |
+| 2026-11-20 | 微软英伟达云 PC Direct Stream（功能预告） | IT之家 | W:not-news | https://www.ithome.com/1/029/747.htm |
+| 2026-11-20 | Steam Machine 512GB 开放直购（硬件销售） | IT之家 | W:not-news | https://www.ithome.com/1/029/745.htm |
+| 2026-11-20 | ChatGPT 实时听写（功能上线） | IT之家 | W:not-news | https://www.ithome.com/1/029/707.htm |
