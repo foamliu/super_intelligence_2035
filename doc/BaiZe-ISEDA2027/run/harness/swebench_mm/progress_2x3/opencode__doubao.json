@@ -4459,9 +4459,16 @@
   "eslint__eslint-15243": {
     "instance_id": "eslint__eslint-15243",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 207.8,
+    "rc": 0,
+    "model_patch_len": 1001,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "k correctly, enabling use cases like the shiki syntax highlighter mentioned in your request\n- Only 2 lines of code modified, no breaking API changes\n\nThe implementation is complete and ready for use!\n",
+    "stderr_tail": "ness_mm_2x3/workdirs/opencode__doubao/eslint_eslint/lib/eslint/index.js',\n    '/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/eslint_eslint/async-formatter-example.js'\n  ]\n}\n\nNode.js v20.18.1\n\u001b[0m\n"
   },
   "eslint__eslint-17618": {
     "instance_id": "eslint__eslint-17618",
