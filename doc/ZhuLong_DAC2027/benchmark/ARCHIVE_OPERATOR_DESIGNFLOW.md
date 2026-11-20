@@ -7939,3 +7939,90 @@ WAITING_archived_r792: 0-case governance 轮. mandatory discuss r792 配额清�
 ```
 → r820-orig: 0-case 治理轮 · eda_flow session r820 open · 探测 7 候选: r794 subdir-ALIVE 4 候选(fl8g4/720it/xq1yo/gheik) 全 6msgs 薄/trivial/canned/KB-dependent=weak; r528 parked 3 候选 subdir-aware find 证 ALIVE: gf2ud(1.08MB mc213 verif, tZQLAT=30ns 提取意图)/h8pcp(1.05MB mc156 digital, 波形 debug)/06htj(4.8MB mc275 pnr) · 据 gf2ud 合成 TzqlatTimingExtractProduce-001(B档 k=12/12, ref PASS+4neg全FAIL+§4.9全FAIL+e2e PASS, 全验证通过) → mark 时被 ledger 跨 shard 互斥拒绝(gf2ud 已是他 shard B 的 case TzqlatLocate-001 2026-11-08) → **已回滚**: A.jsonl 410→410 不变, assets/reference TzqlatTimingExtractProduce-001 已删, 保留 r820_r528_subdir_revival_investigation.md 调查笔记 · 核心发现: r528「file-deleted」是假阴性—文件在 sessions/<sid>/<sid>.messages.json 子目录(旧判定查直接路径必 NOFILE), subdir-aware find 可复活; 13 条 r528 parked A 域候选抽查 3 条全 ALIVE, 预计可复苏 5-10 条造题料 · A.jsonl 410 不变. cases/A 430 不变. 🎯 通过率: 观察值(未跑 pi). 📊 trace 覆盖率: 398/4149=9.6%(不变). DEBT: 下轮 (a)subdir-aware 全量重扫 r528 parked 13 候选→(b)对未碰撞候选(优先 06htj/h8pcp, mark 前先核跨 shard 占用; h8pcp debug 需 reframe, 06htj 4.8MB 分轮) 深读+造题 + paper \Ntasks sync(A 未变无需) + discuss r820 due r818+4=r822(欠). flag: r528 subdir-path 复苏是当前最强造题来源, 优先全量重扫).
 ```
+
+---
+
+## 归档块 · 2026-11-20 r866 瘦身（从 BAIZE_DESIGNFLOW_BENCH_TASK_A.md 搬入）
+
+> 以下两块已从 TASK_A 归档（TASK_A 超 40KB 红线），保留原文备查。TASK_A 各留 1 行指针。
+
+### A1. 🔴 2026-11-11 用户令（最高优先 · 覆盖上面所有旧令）：mc 阈值全线 30 → 10（已作废 · 被 2026-11-15 mc≥5 令覆盖）
+
+> 🔴 **2026-11-11 用户令（最高优先 · 覆盖上面所有旧令）：mc 阈值全线 30 → 10**
+>
+> **用户原话**：「那就继续全面调低 mc 值，比如调到 mc>=10」。
+>
+> **配置已由运维落地**（本机可直接验证，不是待办）：
+> - `designflow/trace_ledger.py`：`SHARD_MC = {"A":10,"B":10,"C":10,"D":10}`，新增 `DEFAULT_MC=10`；
+> - `designflow/summary_stats.json`：`target_mc=10`、`shard_mc` 全 10、新增 `mc10/mc15/mc20` 与 `mc_matrix`；
+> - `designflow/candidates_mc10.tsv`：**已生成 1929 行（mc≥10）**，比旧 `candidates_mc30.tsv`（1369 行）多 560 行；
+> - `designflow/trace_ledger.py mc-matrix`：本机复算池/已动过/未动过，`gen_daily_report.py` 已改为一页一个分母。
+>
+> **各 shard 每轮必须执行**：
+> 1. **选料改用 mc≥10**：`python3 designflow/trace_ledger.py --shard <X> mc-matrix --src designflow/summary_1105.tsv --thresholds 10,15,30` 核对池；取候选时 `awk '$5+0>=10'`，**禁止再出现 `>=30` / `>=15` 字面量**（含注释与 MEMORY 里的口径描述）。
+> 2. **候选池用 mc≥10 口径**：建议用 `candidates_mc10.tsv`（或用 `mc-matrix --emit-candidates-mc 10` 按 shard 过滤重出）；`candidates_mc30.tsv` 是旧口径，用它会让「池多少」失真。
+> 3. **说「池已枯竭」要有依据**：同轮贴出 `mc-matrix` 输出证明 `fresh=0`。此前 `C` 线「池确证枯竭」是在 mc≥30 口径下说的，mc≥10 下尚未验证。（不是禁止你说，是要你说得能被复核。）
+> 4. **覆盖率报数必须与 `summary_stats.json.target_mc` 同口径**（现在是 `mc10`，分母 1929），并注明是哪份扫描快照（`mc_matrix.src`），不得混用 `mc30=2247`。
+>
+> **实测依据（11/05 全量扫描，5822 数据行 → 2560 去重 session）**：
+>
+> | 阈值 | 池总量 | 已动过 | 未动过（可做） |
+> |:--|--:|--:|--:|
+> | mc≥30（旧） | 1,511 | 1,392 | **119** |
+> | mc≥20 | 1,681 | 1,465 | 216 |
+> | mc≥15（A 旧） | 1,795 | 1,504 | 291 |
+> | **mc≥10（新）** | **1,929** | **1,548** | **381** |
+> | mc≥5 | 2,114 | 1,582 | 532 |
+>
+> 分 shard 未动过（mc≥30 → mc≥10）：**A 109→318 · B 5→39 · C 102→332 · D 70→252**。
+>
+> ⚠️ **shard A 补充**：工具健康令（2026-11-10 22:2x）的硬约束"`trace_ledger next/claim` 跳过 + A.jsonl 保持 203"**与令同日失效**——本条用户令要求恢复造题。工具健康深挖已 DONE（r325 交付 + r334 修正），请把令归档进 `ARCHIVE_OPERATOR_DESIGNFLOW.md`，勿再以 holding 空转（已连 35 轮 r327-r361）。
+
+### A2. 🚨 2026-11-10 工具健康深挖令（仅 shard A · 已 DONE r325 + r334 修正）
+
+> 🚨 **本轮这一条 case 不是造题，是「工具健康深挖」（2026-11-10 22:2x 用户令 · 仅 shard A）**
+>
+> 循环任务卡会说「本轮只做 1 条 case：trace_ledger next → 深读 → 合成 → 追加 jsonl」。
+> **本轮把这 1 条 case 直接替换成本任务**：`trace_ledger next / claim` 跳过，
+> `EDA-Eval-DesignFlow_A.jsonl` 保持 203 不变。
+> （沿用上一轮成功的经验：把令写成卡片语言，比在顶部挂"最高优先"更有效。）
+>
+> **问题（用户原话）**：「再深入看看 trace，有没有异常。比如 finesim、asc 这些 EDA 工具是否正常执行？
+> 有哪些重复出现的失败模式？**写个中文 HTML 报告**。」
+>
+> **一、数据在手，别重新跑评测**
+> `designflow/eval_triage/results/run_batch_20261109_171201/triage_summary.json` 里每个 case 都带
+> status/class/evidence 路径；据此定位每条的 agent session 与 judge log。
+> 690/696 有判分证据，6 个 ABSENT。
+>
+> **二、写 `07_tool_health.py`（stdlib only，放进 `eval_triage/`）**
+> 逐 run 抽取并聚合：
+> 1. **执行过的命令**：从 session 的 tool 调用里取 `run_commands` / `eda_flow__run_commands` 的输入；
+> 2. **工具识别**：正则命中清单（大小写不敏感、按"词边界+可执行名"匹配）：
+>    `finesim` `hspice` `spectre` `eldo` `smartspice` `asc` `aether` `schematic` `calibre` `pvx`
+>    `innovus` `icc2` `pt_shell` `primetime` `dc_shell` `design_compiler` `verdi` `vcs` `xrun`
+>    `spyglass` `star-rc` `redhawk` `totem` `siliconsmart` `pyAether`
+>    —— 每个工具报：**调用次数 / 有正常输出 / 报错退出 / 调了但无产物 / 从未调用**（四态分开，
+>    **"从未调用"绝不算工具失败**）；
+> 3. **失败签名归一化**：从工具输出/退出码里抽 stderr 首行，去掉路径/时间/编号后聚类
+>    （例：`command not found`、`licence`/`license`、`No such file`、`Permission denied`、
+>    `MCP ... refused`、`timeout`、`syntax error`、`undefined net`、`SPICE convergence`）。
+>    每类报：出现 run 数 / 出现次数 / **3 个 example task_id** / **1 行原文证据（≤200 字符）**；
+> 4. **交叉分析**：签名 × domain、签名 × 失败类别（NO_SUBMIT/RT/SEM/UNKNOWN）、finesim/asc 专项小节。
+>
+> **三、产出（本轮交付物）**
+> 1. `eval_triage/results/run_batch_20261109_171201/tool_health.json`（机器可读，带 evidence 路径）；
+> 2. **中文 HTML 报告**：`doc/ZhuLong_DAC2027/reports/report_designflow_tool_health_20261110_zh.html`
+>    —— 自包含（内联 CSS + 内联 SVG 条形图，**不引 CDN、不依赖 JS**），结构：
+>    ① 一句话结论 ② 工具健康矩阵表 ③ **finesim / asc 专项**（是否正常执行、典型失败）
+>    ④ Top-15 重复失败模式（含 example + 原文）⑤ 按 domain / 失败类别的交叉表 ⑥ 方法与被排除项
+>    （例如"从未调用"、"无判分证据"的计数）+ 复现命令。
+> 3. MEMORY 一行：`tool-health: <工具数> tools seen, finesim=ok/fail/not-invoked, top pattern=<签名> <n>runs, html=<path>`；
+> 4. commit 脚本 + json + html + MEMORY + daily；**原始 session/trace 不入库**。
+>
+> **四、判据**
+> - 工具四态必须能自证（贴 2 个 case 的解析前后对照到 MEMORY）；
+> - "asc" 若在本数据里其实是别的含义（如 Aether 的 asc 子命令或某个 shell 别名），
+>   **在报告里如实写清你核到的含义**，不要硬凑成工具；
+> - 若某工具的全部调用都失败，单独点名（这正是用户要的"异常"）。
+> - 数字不许估：取不到写 `n/a` 并说明原因。
