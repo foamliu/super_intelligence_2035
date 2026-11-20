@@ -1,0 +1,2 @@
+# 2026-11-20 wake#1702: 训练日志不入库（防 vision_line_commit.sh auto-detect 卷入 untracked 垃圾）
+*_train.log
