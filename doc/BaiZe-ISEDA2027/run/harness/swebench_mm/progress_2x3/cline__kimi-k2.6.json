@@ -984,23 +984,37 @@
   "PrismJS__prism-2678": {
     "instance_id": "PrismJS__prism-2678",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1021.8,
+    "rc": 0,
+    "model_patch_len": 14099,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "er's exact example `![emoji](https://content.markdowner.net/emoji/g/64/1f44d.png)` now tokenizes as an `image` token instead of `url`\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-2680": {
     "instance_id": "PrismJS__prism-2680",
     "route": "cline__kimi-k2.6",
     "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
+    "error": "[Errno 7] Argument list too long: '/home/app.e0031982/.local/bin/cline'",
     "model_patch_len": 0
   },
   "PrismJS__prism-2686": {
     "instance_id": "PrismJS__prism-2686",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1012.0,
+    "rc": 0,
+    "model_patch_len": 2558,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "` (`echo \\\"Hello World\\\"`)\\n- `output` (`Hello World\\\\n`)\\n- `command` → `info` (`/home/user`), `shell-symbol` (`$`), `bash` (`exit`)\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-2703": {
     "instance_id": "PrismJS__prism-2703",

@@ -4473,30 +4473,58 @@
   "eslint__eslint-17618": {
     "instance_id": "eslint__eslint-17618",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 442.2,
+    "rc": 0,
+    "model_patch_len": 1046,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "entContext.qqForkContext.addAll(context.falseForkContext);\n+                    } else {\n+                        parentContext.qqForkContext.addAll(context.qqForkContext);\n+                    }\n```\n",
+    "stderr_tail": "0OFwFn'\nnpm error A complete log of this run can be found in: /home/app.e0031982/.npm/_logs/2026-11-20T18_24_21_834Z-debug-0.log\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix code path analysis for (a && b) ?? c\n\u001b[0m\n"
   },
   "eslint__eslint-8120": {
     "instance_id": "eslint__eslint-8120",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 113.7,
+    "rc": 0,
+    "model_patch_len": 3002,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " when `ignoreRestSiblings: true`\n2. They are still reported when the flag is off\n\nThis resolves the issue you described where the `ignoreRestSiblings` option wasn't working inside function arguments.\n",
+    "stderr_tail": " (node:internal/modules/run_main:173:12) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/eslint_eslint/Makefile.js'\n  ]\n}\n\nNode.js v20.18.1\n\u001b[0m\n"
   },
   "eslint__eslint-8850": {
     "instance_id": "eslint__eslint-8850",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 368.6,
+    "rc": 0,
+    "model_patch_len": 2999,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "g extra indent when the parenthesized expression is the right operand of a BinaryExpression or LogicalExpression.\n\nThe test case from the issue has been added to the test suite to prevent regression.\n",
+    "stderr_tail": "\n                 bridge.callHandler(\n                   'getAppVersion', 'test23', function(responseData) {\n                     window.ah.mobileAppVersion = responseData;\n                   }\n\n\u001b[0m\n"
   },
   "eslint__eslint-9348": {
     "instance_id": "eslint__eslint-9348",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 286.6,
+    "rc": 0,
+    "model_patch_len": 1350,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "test list to prevent regression.\n\nThe fix ensures that no runtime error is thrown when processing code with for-of loops inside try/catch blocks in class constructors after `super()` has been called.\n",
+    "stderr_tail": " (node:internal/modules/run_main:173:12) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/eslint_eslint/Makefile.js'\n  ]\n}\n\nNode.js v20.18.1\n\u001b[0m\n"
   },
   "eslint__eslint-9436": {
     "instance_id": "eslint__eslint-9436",

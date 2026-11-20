@@ -1812,16 +1812,30 @@
   "bpmn-io__bpmn-js-1083": {
     "instance_id": "bpmn-io__bpmn-js-1083",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 484.8,
+    "rc": 0,
+    "model_patch_len": 1486,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " first and last waypoints (with `point.original || point` fallback) as `'mid'` snap points. This restores the v3.x behavior where connected elements snap to their docking points when moved near them.\n",
+    "stderr_tail": "se to understand docking snapping mechanism\n[✓] Identify the root cause of missing docking snapping\n[✓] Implement fix for docking snapping in BpmnCreateMoveSnapping\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1085": {
     "instance_id": "bpmn-io__bpmn-js-1085",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1214.9,
+    "rc": 0,
+    "model_patch_len": 672,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "roperly updates the diagram connection's waypoints and triggers the correct DI update path via `BpmnUpdater`, which sets `bo.di.waypoint` (the `bpmndi:BPMNEdge` waypoint, not the semantic attribute).\n",
+    "stderr_tail": "mTodos\n[✓] Explore the codebase to understand how waypoints are handled on sequenceFlows\n[✓] Identify the root cause of waypoints being serialized to XML\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1092": {
     "instance_id": "bpmn-io__bpmn-js-1092",
