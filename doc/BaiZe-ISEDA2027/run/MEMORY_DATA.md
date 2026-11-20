@@ -2,6 +2,9 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-20 (R58) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R58 刷新点：iter ~263.1k(263140)/700k(37.6%) step~7.04s(末8步均值~7041ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2526/4950=51.0% ETA~21.4h ~108.3B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=28.3✅ .29 load=25.8✅ / /nas_user 43T✅ / 全量 live numbers 同步 R58 (v3.21: MM-web 49.8%→51.0%, step 7021ms→7041ms, iter 262.9k(262920)→263.1k(263140), .12 load 27.6→28.3, .29 load 25.6→25.8, ETA 22.0h→21.4h, 105.7B→108.3B) / commit+push**。
+
+
 > 🟢 **心跳 · 2026-11-20 (R57) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R57 刷新点：iter ~262.9k(262920)/700k(37.6%) step~7.02s(末8步均值~7021ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2465/4950=49.8% ETA~22.0h ~105.7B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=27.6✅ .29 load=25.6✅ / /nas_user 43T✅ / 全量 live numbers 同步 R57 (v3.20: MM-web 49.3%→49.8%, step 7047ms→7021ms, iter 262.7k(262680)→262.9k(262920), .12 load 27.2→27.6, .29 load 24.0→25.6) / commit+push**。
 
 
