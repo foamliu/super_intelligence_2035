@@ -20,7 +20,7 @@
 - 时间线: 配置 10:09:21 改 (`*CAPTAB`→`CAPTAB`)，10:12:50 重跑仍读 /apps 默认路径 → 证实顶层 CAPTAB 在 multi-corner 下不生效
 - runset 现状: lpe_gxrc/ 下 `Rev07_3Corner` MISSING，`Rev07_9Corner` present
 
-## reframe (档 B → PexFailDiag-001)
+## reframe (档 B → PexGxrcDiag-001)
 A 档 gold = free-text 根因诊断 prose (依赖 live /apps、/proj 不可达，无 ≥8 独立硬断言牙) → reframe 为离线纯 stdlib `pex_fail_diag.py`，4 输入(gxrc_config/corner_file/pex_log/runset_listing)，输出结构化 JSON。
 - visible A: 忠实 trace (multi-corner 激活 + 顶层 *CAPTAB 注释 + 6 corner Rev07_3Corner MISSING + Rev07_9Corner present → root_causes=[config_precedence, runset_stale])
 - hidden B: 全反相 (single-corner + 顶层 CAPTAB 激活 + 1 corner Rev04_1Corner MISSING + Rev08_4Corner present → root_causes=[runset_stale]，无 config_precedence)
