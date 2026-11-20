@@ -57,7 +57,7 @@
 1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	schematic_netlist	parked		2026-11-03 08:43	cross-shard dup: shard B already parked fkprl 2026-10-31 as layout_virtuoso (RTEXT/RNODE dup w/ LayoutVirtuoso-001)
 1792463960005_7frw8.messages.json					parked		2026-11-03 08:33	aether check&save infra debug (non-design)
 1789350621467_fymcr.messages.json					parked		2026-11-03 08:33	autocell pcell.tcl gen + skill-creation (physical+skill, non-D)
-1789954294975_4chsl.messages.json					parked		2026-11-03 08:33	verilog/SystemVerilog netlist analysis (digital, non-D analog)
+1789954294975_4chsl.messages.json					case	EDA-Eval-DesignFlow-RowCtrlModInvProduce-001	2026-11-20 16:26	r1008 revival: 11-15 reaudit, schematic_netlist comprehension Q&A (U#0 分析row_ctrl功能), old D-park verilog=non-D 是旧 D-purity 偏好非硬筛; C-shard also parked wrong-shard=D; netlist.sv real Aether text export portable -> A=real netlist, produce-script inventory (12 断言, ref PASS+3neg FAIL)
 1793155371052_v59v8.messages.json					parked		2026-11-03 08:33	python UI script for cdslck lock files (non-EDA design)
 1793005343621_45gjq.messages.json					parked		2026-11-03 08:33	pdk/techfile infra (non-D)
 1785498914896_8du7m.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/calibre (non-D)
@@ -1937,3 +1937,8 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1793870551130_jr0o3	ronghu	hfeg0pkn005	44	schematic_netlist	case	EDA-Eval-DesignFlow-InstSupplyRailFixProduce-001	2026-11-20 12:52	REVIVAL per 2026-11-15 user order: B/C parked as debug under old rules; D revives as schematic_netlist produce (netlist supply-rail analysis + .inst correction)
 1795079879562_3ydq7.messages.json	joeyl	hfeg0plg74	246	analog_context	case	EDA-Eval-DesignFlow-NetlistUlvtDelvtoInject-001	2026-11-20 15:23	
 1794921978969_4uyo1	max7c	hfeg0plg06	118	schematic_netlist	parked		2026-11-20 15:47	r1006 wrong-domain: verilog regression command-compare debug (shard A digital/verification); verilog:1979 dominant; U#1 'commands.txt哪些命令有问题'. D abort.
+1794296966966_l4tfv					case	EDA-Eval-DesignFlow-WaveformInvSearchProduce-001	2026-11-20 16:48	revival from B-parked(11-11 file-search consultation); 11-15 reaudit retrieval/QA legit; waveform domain=D; A-faithful U#76 verbatim; 15 assertions a-o; synthesized-reframe real fs->manifest JSON
+1795078545832_fxlzf.messages.json	joeyl	hfeg0plg74	246	schematic_netlist	parked		2026-11-20 17:08	
+1794877076915_2mwdb.messages.json	jingjiew	hfeg0plg97	357	schematic_netlist	parked		2026-11-20 17:10	
+1795053942204_k9tbi.messages.json	tianqizh	hfeg0plg89	442	waveform	parked		2026-11-20 17:11	
+1795080497883_q5elb.messages.json	guangmingz	hfeg0pfn048	271	schematic_netlist	case	EDA-Eval-DesignFlow-VamCosimEnvBuild-001	2026-11-20 17:41	

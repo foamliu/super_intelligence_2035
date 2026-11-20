@@ -1,7 +1,11 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **R2802 · 2026-11-20 15:2x — Phase 0 监控冻结态（OOM 事故后带护栏分批灰度重启·14:5x 令）·未自动续跑任何在途任务**·**心跳第一行**: ✅Phase 0 monitor-only·①护栏守护已运行(PID931671·ppid1·15:16启动·MemAvail<400G|load>160→docker kill harness 评测容器·只识别 sweb.eval.*/swebench/*/alexgshaw/*·绝不碰别线/宿主进程)②loop CPU 节流已写入 baize_harness_loop.sh(HARNESS_NICE19/IONICE3/OMP8/LOAD_MAX120 + taskline=nice/ionice + OMP env + pretrain load 闸·bash -n 过✅·待 loop 重启生效·本轮不自行重启以免 §3.5(4) PATH/proxy 静默空转陷阱 + 双 agent 竞态)③自检clean(load27.6/224=12%✅·mem avail1498G✅·无失控进程)④docker ps 无 harness 评测容器✅⑤**按「全部暂停」冻结令杀停在途 opencode×deepseek MM predict(PID962346·启动14:19=14:5x令前·非失控 CPU53%/RSS1.2G·属无 ulimit 宿主 predict=OOM 风险向量·SIGTERM 已终止✅·未碰父 bash/pretrain cline/hub daemon)**⑥pretrain step~7.1s<7.4s✅(judge 满足·因 harness 冻结非因节流 live)·**在途任务全暂停待解冻令放行**: R2800 deepseek incr_eval(5 matplotlib)·MM 2×3 predict 6路·Verified predict codex438/pi447/dsh329 3路·**下轮计划**: 持续 Phase 0 监控(每~15min·WAITING=1)直到运维「解冻」令；解冻前落地硬护栏(docker eval --memory128g/--cpus16·宿主 predict ulimit -v 200GiB·.12 均摊)·🚫不跑 eval/不起 docker 评测/不起新 predict·WAITING=1·📦 TASK≈29.4KB(✅≤32KB) MEMORY≈31KB(✅≤32KB)
+> 🆕 **R2807 · 2026-11-20 17:35 — 16:3x 解冻令·Step 2.1 调度优化(codex→deepseek)+Step 2.2 R2800 5-matplotlib COMPLETE**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活(ppid1·2.2h)✅ ②mem avail1476G✅ ③load24.5/224✅ ④pretrain step7.21s≤7.4s✅(iter261260/700000) ⑤无失控进程✅. **Step2.1调度**: codex predict STOPPED(PID78546 killed·quota-stalled 256 quota_blocked·442/500·~1h无net progress·43文件全125B quota结果)→deepseek-harness predict STARTED via predict_guarded.sh(PID2570557·ppid1·ulimit-v 200GiB HARD VERIFIED Max address space=214748364800B✅·nice19✅·OMP/MKL/OPENBLAS/NUMEXPR=8✅·resume 332/500·now PREDICT astropy-13033)→pi+deepseek=2路≤2并发✅. **Step2.2**: deepseek R2800 5-matplotlib COMPLETE(23314/23476/24570 RESOLVED·25287 infra·25479 FAILED)+incr_eval 26113 RESOLVED+26291 FAILED→deepseek 195/500=39.0%(+4). **7way报告REGEN**: deepseek 191→195/500=39.0%✅. **Step2.3** MM 2×3待2.1/2.2稳定后开. opencode PID3328632=交互SSH会话(非本线·未碰). 📦 TASK≈37.9KB MEMORY≈32.4KB
+> 📦 R2806 流水已归档 → daily-memories-harness/2026-11-20.md（16:3x解冻令·Step1硬护栏全落地验证✅·docker eval mem128g/cpu16 monkey-patch HARD VERIFIED·predict_guarded.sh ulimit200GiB·guard PID931671·Step2.1 codex+pi RUNNING·Step2.2 deepseek incr_eval matplotlib-26113 RUNNING·load28·mem1483G·pretrain7.28s·WAITING=1）。需要时再读。
+> 📦 R2804 流水已归档 → daily-memories-harness/2026-11-20.md（Phase 0 监控轮#3·git pull up to date·guard PID931671存活·loop PID45764节流LIVE·自检clean·无eval容器·无predict/eval进程·pretrain 7.28s·WAITING=1）。需要时再读。
+> 📦 R2803 流水已归档 → daily-memories-harness/2026-11-20.md（Phase 0 监控轮#2·loop 已重启 PID45764→CPU 节流 LIVE·自检clean·无 eval 容器·无 predict/eval 进程·pretrain 7.1s·WAITING=1）。需要时再读。
+> 📦 R2802 流水已归档 → daily-memories-harness/2026-11-20.md（Phase 0 首轮·护栏守护启动PID931671·loop CPU 节流写入+bash -n·自检clean·无 eval 容器·杀停在途 opencode×deepseek MM predict PID962346·pretrain step7.1s·WAITING=1·待 loop 重启生效）。需要时再读。
 > 📦 R2800 流水已归档 → daily-memories-harness/2026-11-20.md（incr_eval轮·R2799 setsid根因修复重跑·codex R2800 COMPLETE 9658 FAILED+9673/9698 RESOLVED→115/23.0%+2·deepseek R2800 RUNNING 5 matplotlib·7way REGEN R2800·MM 633/2880·自检clean）。需要时再读。
 > 📦 R2799 流水已归档 → daily-memories-harness/2026-11-20.md（incr_eval轮·R2799未用setsid→sg docker被SIGHUP杀→9673孤儿·codex 9658 FAILED·R2800 setsid修复重跑codex 9673+9698 RESOLVED→115·deepseek R2800 RUNNING·7way REGEN·MM 633/2880·自检clean）。需要时再读。
 > 📦 R2798 流水已归档 → daily-memories-harness/2026-11-20.md（监控轮·incr_eval R2796 deepseek matplotlib-23314仍RUNNING·codex113已REGEN入7way报告·MM 2×3 620/2880·6路全RUN·自检clean）。需要时再读。
@@ -111,14 +115,14 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        Phase 0 监控冻结态（OOM 事故后带护栏分批灰度重启·2026-11-20 14:5x 令）·未自动续跑任何在途任务·WAITING=1
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·ability桶拆两层✅·SWE-bench Verified predict 7路·opencode415/500=83.0%✅·hermes444/500=88.8%✅·cc295/500=59.0%✅·cline-patched 500/500✅·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·2×3 predict 6路启动✅(R2763)·**Phase 0**: 护栏守护启动✅(PID931671)·loop CPU 节流写入+bash -n✅(待重启生效)·自检clean✅·无 eval 容器✅·在途 opencode×deepseek MM predict 按冻结令杀停✅
-当前动作:     Phase 0 monitor-only：git pull→自检CPU/内存(load27.6/mem1498G)→核验无 eval 容器→杀停在途 predict(PID962346)→loop 节流改写+bash -n→写心跳→commit+push
-下一步:       持续 Phase 0 监控(每~15min·WAITING=1)直到运维「解冻」令；解冻前落地硬护栏(docker eval --memory128g/--cpus16 wrapper·宿主 predict ulimit -v 209715200=200GiB+nice19+OMP≤8·.12 均摊 load 闸阈值80)；loop 重启使 CPU 节流生效（推荐: 登录 shell 或显式注入 PATH=$HOME/.local/bin + https_proxy=http://172.19.92.25:13128，见 AGENTS.md §3.5(4)）
-阻塞:         无（冻结态·待运维解冻令）
+PHASE:        16:3x 解冻令执行中·Step 1 硬护栏已落地+验证✅·Step 2.1 pi+deepseek RUNNING·Step 2.2 R2800 5-matplotlib COMPLETE·Step 2.3 待稳定后开
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·**Phase 0 冻结验收通过✅**·**Step 1 硬护栏全落地✅**: ①`swebench_guarded_eval.py` docker SDK monkey-patch(mem_limit=128g/memswap=128g/nano_cpus=16e9)·docker inspect HARD VERIFIED✅ ②`predict_guarded.sh` ulimit -v 209715200+OMP8+nice19/ionice3·实测PASS✅ ③guard PID931671存活✅·**Step 2.2 R2800 5-matplotlib COMPLETE✅**·**TASK 归档**: 14:5x+08:2x 已搬到 ARCHIVE(TASK 41KB→32.9KB✅)
+当前动作:     R2807 解冻执行：Step 2.1 codex predict STOPPED(quota-stalled 442/500·256 quota_blocked)→deepseek-harness predict STARTED(PID2570557·predict_guarded.sh·resume 332/500)·pi predict continuing(PID85526·449/500)·=2路≤2并发✅·load24.5✅·mem1476G✅·pretrain7.21s✅·7way报告REGEN deepseek195/500=39.0%
+下一步:       ①监控 Step 2.1 pi+deepseek 稳定(pretrain step≤7.4s·mem≥512G·load≤120)→②deepseek predict推进 332→500 + pi 449→500→③incr_eval backlog(deepseek~21未评测+codex14+pi待评估·走guarded容器串行)→④Step 2.3 MM 2×3 predict 6路(launcher已更新用predict_guarded.sh·待前两项稳定后开·限并发)→⑤codex quota恢复后rerun 256 quota_blocked
+阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK≈29.4KB（✅≤32KB） / MEMORY≈31KB（✅≤32KB）
- SWE-bench Verified Pass%(分母恒500·冻结前最后值·解冻后续跑可能变): hermes444/500=88.8%·opencode415/500=83.0%·cline303/500=60.6%·cc295/500=59.0%·pi247/500=49.4%·dsh191/500=38.2%·codex115/500=23.0%·(predict 3路 codex438/pi447/dsh329 已冻结暂停)
+ 体积: TASK≈37.9KB（⚠️>32KB软限·<40KB硬限） / MEMORY≈32.4KB（✅≤32KB）
+ SWE-bench Verified Pass%(分母恒500·解冻后续跑中): hermes444/500=88.8%·opencode415/500=83.0%·cline303/500=60.6%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%·(predict 2路 RUNNING: pi449/500·deepseek332/500)
  真实 Pass% (layer-A/B, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
    SWE-bench Multimodal 2×3 predict(冻结暂停·R2763 14:56启动·480题/路): opencode×doubao212·cline×doubao194·opencode×deepseek74·opencode×kimi49·cline×kimi42·cline×deepseek49·6路已按14:5x冻结令暂停(opencode×deepseek PID962346已杀停)
   research日报11-19 harness建议: ①完成判据三分法 ②MM判分格式合法率vs正确率分两列+四组分组 ③20480生成上限写进评测配置 ④两档prompting分任务族报分 → 解冻后纳入(来自 research 日报 2026-11-19)

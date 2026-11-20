@@ -1,34 +1,63 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-> 🔴 **2026-11-20 用户令 — 放行 EDA-Flow-Bench Lite 500 评测起跑（16 workers · 仓库在本机 · 直接跑 run_batch.sh）· 最多优先（覆盖 standby）**
+> 🔴 **2026-11-20 用户令（v2 · 覆盖上一条放行令）— 严格遵循 README + 用户启动方式重跑 doubao-seed-2.0-pro 对齐 10.5% 基准，之后跑 mini + lite 两个豆包小模型 · 最多优先（覆盖 standby）**
 >
-> 本条是收益材料 slide 24 调整（commit `d6cfd68b8`）之后的**评测起跑放行令**。用户原话：「安排 zhulong agent 跑一下 EDA-Flow-Bench 评测（仓库跟 zhulong agent 在一台服务器）：`app.e0031982@hfeg0tedaap02:/nasdata/app.e0031982/code/EDA-Flow-Bench$ bash eval/run_batch.sh --workers 16`」。
+> 本条覆盖上一条放行令。上一条要求"对齐 DeepSeek-V4-Pro M0"**作废**——README 明确 `deepseek-v4-pro-cloud 已下线`，论文 M0 基座应是 `doubao-seed-2.0-pro-cloud`。用户基准也是 doubao。
 >
-> **背景**：此前所有红令都 🚫 不起评测进程，agent 一直在 standby 写论文。本条**正式放行**评测起跑——EDA-Flow-Bench 评测仓库与 zhulong agent 在同一台服务器（`hfeg0tedaap02`），路径 `/nasdata/app.e0031982/code/EDA-Flow-Bench/`，agent 可直接 cd 进去执行。这是论文 §6 M0 + 各臂实测结果的数据来源——论文当前 M1-M8/N1-N2 全标 \TBD，跑完才有真实数字填进论文。
+> ### ⚠️ 上一轮 2.37% 不算数 · 必须重跑（根因已诊断）
 >
-> ### ① 执行命令（用户指定，逐字照跑）
+> agent 昨晚 batch `run_batch_20261119_225802`（doubao·16 worker·runtime 2:01:26·422 任务·**2.37% Pass@1**）**不算数**。根因：`~/.cline/data/settings/providers.json` 的 `updatedAt=2026-11-19T16:45:45Z`（UTC = 北京时间 11-20 00:45），而 batch 起跑是 11-19 22:58——**agent 起跑时 providers.json 还是旧配置**，跑的过程中才被改对，导致前半段走错 endpoint。当前 providers.json 已对齐用户正确凭据（apiKey `...3dd97aea-...`·model `doubao-seed-2.0-pro-cloud`·baseUrl `http://agi-gateway.cxmt.com/cloud/v1`），**重跑必须用当前已修正的 providers.json**。
+>
+> **用户基准（必须对齐）**：用户前几天用同一命令同一基座自己跑过，结果 **`51/484 = 10.5% Pass@1`**（500 cases·16 workers·runtime 2:57:14·FAIL 431·PASS 51·ERROR 16·ABSENT 2）。重跑 doubao-seed-2.0-pro 应落在 ~10% 量级（±2pp 正常波动）；若重跑仍 ≤5%，说明启动方式仍有问题，停并诊断，不要硬填。
+>
+> ### ① 执行命令（用户指定，逐字照跑·严格遵循 README）
+>
+> 用户原话：「我就是这样启动的：`app.e0031982@hfeg0tedaap02:/nasdata/app.e0031982/code/EDA-Flow-Bench$ bash eval/run_batch.sh --workers 16`」——**逐字照跑，不要加 `--model` 等参数**（run_batch.sh 默认 `--model doubao-seed-2.0-pro-cloud --thinking low --timeout 2400`，与用户基准对齐）。
 >
 > ```bash
 > cd /nasdata/app.e0031982/code/EDA-Flow-Bench
 > bash eval/run_batch.sh --workers 16
 > ```
 >
-> - **工作目录**：`/nasdata/app.e0031982/code/EDA-Flow-Bench/`（不是 super_intelligence_2035 repo 内的论文树，是独立的 EDA-Flow-Bench 评测仓库）
-> - **命令**：`bash eval/run_batch.sh --workers 16`（用户原话，逐字执行，不要改参数）
-> - **默认行为**（run_batch.sh 默认）：跑 `eval/cases_lite.txt`（500 条 Lite 子集），16 个 worker 并发，主指标 Pass@1，结果写 `eval/status.jsonl`，跑完打印汇总
-> - **预期耗时**：500 case × 单 case 中位 ~1047s / 16 worker ≈ **8-12 小时**（参考 47 pilot 数据；实际取决于 case 难度分布与 worker 抖动）
+> - **工作目录**：`/nasdata/app.e0031982/code/EDA-Flow-Bench/`（独立评测仓库，不是 super_intelligence_2035 repo 内论文树）
+> - **命令**：`bash eval/run_batch.sh --workers 16`（用户原话，**不要改参数**；默认基座 = doubao-seed-2.0-pro-cloud，与用户基准一致）
+> - **默认行为**：跑 `eval/cases_lite.txt`（500 条 Lite 子集），16 worker 并发，主指标 Pass@1，结果写 `eval/status.jsonl`
+> - **预期耗时**：用户基准 2:57:14，agent 应落在 2-4h 量级
 >
-> ### ② 跑前自检（agent 必须先做，避免空跑）
+> ### ② 严格遵循 README + AGENTS.md（用户明确要求）
 >
-> 跑前确认环境就绪，**任何一项不满足先修再跑**：
+> 用户原话：「zhulong agent 启动方式可能没有遵循项目的 README。所以要求 zhulong agent **严格遵循我和 README 的方式**，重跑一轮 doubao 模型。总之，**先跑出一个对齐的结果来**。」
 >
-> 1. **仓库就位**：`ls /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch.sh` 存在且可执行（`-rwxr-x---`）
-> 2. **Lite 集就位**：`ls /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/cases_lite.txt` 存在且 ≥ 500 行（若缺失或不足，先 `--regen-lite` 重建：`bash eval/run_batch.sh --regen-lite --workers 1 --limit 0 --dry-run` 看是否需重建，或直接 `--regen-lite` 重建后再跑主命令）
-> 3. **cline 就位**：`which cline` 或 `/home/app.e0031982/.local/node-20/bin/cline` 可执行；cline 版本与论文 §6 声明一致（Cline v3.0.51，若版本已变在 MEMORY 心跳标注）
-> 4. **基座配置**：默认 `--model doubao-seed-2.0-pro-cloud --thinking low --timeout 2400`（run_batch.sh 默认值，与论文 §6 M0 snapshot 配置对齐：DeepSeek-V4-Pro / Cline v3.0.51 / thinking=low / 2400s）。**若默认基座不是 DeepSeek-V4-Pro**，显式加 `--model deepseek-v4-pro-cloud`（agent 自决，但必须与论文 §6 M0 配置一致，否则结果不能直接作 M0）
-> 5. **磁盘空间**：`df -h /nasdata/app.e0031982/` 剩余 ≥ 50GB（500 case × 16 worker × 每 workdir ~100MB 估算；不足先清理 agent_workspace/ 旧 workdir）
-> 6. **GPU/网络**：cline 走云基座，确认 `https_proxy=http://172.19.92.23:13128` 在环境里（或 ~/.bashrc:119 注入），否则 cline 连不上基座 API
-> 7. **无并发冲突**：确认本机没有其他 EDA-Flow-Bench 评测在跑（`pgrep -fa run_batch.sh` 无其它 PID，或本线已知的 designflow 评测不冲突）
+> 跑前**必读** `/nasdata/app.e0031982/code/EDA-Flow-Bench/README.md` 和 `AGENTS.md`，按其"快速开始"步骤执行，不得跳步。特别核对：
+>
+> 1. **providers.json 已对齐**（agent 跑前 grep 核验，不是跑完才看）：
+>    - `cat ~/.cline/data/settings/providers.json` 的 `apiKey` = `02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f`
+>    - `model` = `doubao-seed-2.0-pro-cloud`
+>    - `baseUrl` = `http://agi-gateway.cxmt.com/cloud/v1`
+>    - 三项全中才起跑；若任一不符，先改对再跑（改 providers.json 不是改 run_batch.sh 参数）
+> 2. **cline 就位**：`command -v cline` 有输出（`/home/app.e0031982/.local/node-20/bin/cline`），或显式 `export PATH="/home/app.e0031982/.local/node-20/bin:$HOME/.bun/bin:$PATH"`
+> 3. **https_proxy 注入**：`export https_proxy=http://172.19.92.23:13128`（~/.bashrc:119），否则 cline 连不上 agi-gateway
+> 4. **登录 shell 启动**（AGENTS.md 血泪纪律）：用 `bash -lc` 或显式注入 PATH+proxy，否则 `env: 'cline': No such file` 静默空转
+> 5. **Lite 集就位**：`wc -l eval/cases_lite.txt` ≥ 500
+> 6. **无并发**：`pgrep -fa run_batch.sh` 无其它 PID
+>
+> ### ③ 三轮跑批顺序（doubao-pro → doubao-mini → doubao-lite）
+>
+> **轮 1（必跑·对齐基准）**：`doubao-seed-2.0-pro-cloud`（默认基座，命令同 ①）。跑完核对 Pass@1 落在 ~10% 量级才算对齐成功。
+>
+> **轮 2（pro 对齐后跑·豆包小模型 1）**：`doubao-seed-2.0-mini-cloud`
+> - API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_caa8bffa-b976-47f5-acc3-4141f6c5b90f`
+> - Base Url (OpenAI)：`http://agi-gateway.cxmt.com/cloud/v1`
+> - Base Url (Anthropic)：`http://agi-gateway.cxmt.com/cloud/anthropic/v1`
+> - 执行方式：先改 `~/.cline/data/settings/providers.json` 的 `apiKey` 为上面 mini 的 key、`model` 为 `doubao-seed-2.0-mini-cloud`、`baseUrl` 保持 `http://agi-gateway.cxmt.com/cloud/v1`，再 `bash eval/run_batch.sh --workers 16`（命令不变，靠 providers.json 切模型）
+>
+> **轮 3（mini 跑完后跑·豆包小模型 2）**：`doubao-seed-2.0-lite-cloud`
+> - API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_78b81092-7e90-436e-aa8a-5ab8510567fe`
+> - Base Url (OpenAI)：`http://agi-gateway.cxmt.com/cloud/v1`
+> - Base Url (Anthropic)：`http://agi-gateway.cxmt.com/cloud/anthropic/v1`
+> - 执行方式：同轮 2，改 providers.json 的 apiKey + model 为 lite 的，再 `bash eval/run_batch.sh --workers 16`
+>
+> **顺序硬约束**：轮 1 必须先跑且对齐 ~10% 才进轮 2；轮 2 跑完才进轮 3。不得并发三轮（共享同一 providers.json + 同一 cases_lite.txt，会互相污染）。每轮跑完把 providers.json 改回 doubao-seed-2.0-pro-cloud 默认态（用 pro 的 key），避免下轮串台。
 >
 > ### ③ 跑中监控（agent 自主节奏）
 >
@@ -41,50 +70,59 @@
 >   - worker 全 hang（>30min 无新 status 写入）→ 死锁，停
 > - **正常波动**：单 case FAIL / 个别 worker 慢 / 个别 timeout 是正常，不停
 >
-> ### ④ 跑后汇总（结果回填论文 + 报告）
+> ### ④ 跑后汇总（三轮各自一份报告 · 论文回填用 pro 轮）
 >
-> 跑完后（500 case 全判完或 abort）：
+> 每轮跑完后（500 case 全判完或 abort）：
 >
 > 1. **汇总数字**（从 `eval/status.jsonl` + run_batch.sh summary 输出取）：
->    - 总 case 数 / 已判 case 数 / PASS / FAIL / ERROR / ABSENT / UNKNOWN
+>    - 总 case 数 / 已判 case 数 / PASS / FAIL / ERROR / ABSENT
 >    - Pass@1 (decided) = PASS / (PASS + FAIL)
 >    - per-domain 分布（若 status.jsonl 含 domain 字段）
 >    - 平均 tool calls / 平均时长 / MCP 比例（若 run_batch.sh 输出）
->    - 与论文 §6 M0 snapshot（696-run 10.0%）对比：Lite 500 的 M0 Pass@1 是多少？差异多大？
-> 2. **报告**：在 `doc/ZhuLong_DAC2027/reports/` 新增 `report_edafb_lite500_m0_eval_zh.html`，含：跑批配置（基座/cline/thinking/timeout/workers/起止时间）+ 汇总数字 + per-domain 表 + 与 696-run snapshot 对比 + 异常 case 抽样 + 是否作论文 M0 anchor 的判断（按朋友评审 R5：M0 anchor = 同 Lite 子集实测值，696-run 仅作 Full-set descriptive baseline）
-> 3. **论文回填**（可选，agent 自决是否本令一并做还是下条令做）：
->    - 论文 §6 M0 表的 `\TBD` 改为实测值（Lite 500 的 M0 Pass@1）
+>    - **轮 1 对齐核对**：pro 轮 Pass@1 与用户基准 10.5% 对比，差异多少；落在 ~8-12% 算对齐成功
+> 2. **报告**：每轮在 `doc/ZhuLong_DAC2027/reports/` 新增一份 HTML：
+>    - 轮 1：`report_edafb_lite500_doubao_pro_eval_zh.html`
+>    - 轮 2：`report_edafb_lite500_doubao_mini_eval_zh.html`
+>    - 轮 3：`report_edafb_lite500_doubao_lite_eval_zh.html`
+>    - 含：跑批配置（基座模型 / cline 版本 / thinking / timeout / workers / 起止时间 / runtime）+ 汇总数字 + per-domain 表 + 与用户基准 10.5% 对比 + 异常 case 抽样
+> 3. **论文回填**（**仅轮 1 pro 轮**作 M0 anchor，agent 自决是否本令一并做还是下条令做）：
+>    - 论文 §6 M0 表的 `\TBD` 改为 pro 轮实测值（Lite 500 的 M0 Pass@1）
 >    - §3 Evaluation subset 段的 `(\TBD, to be measured)` 改实测值
 >    - §5 arm 表 M0 行的 `anchor = M0 Pass@1 on same top-120-of-Lite subset (\TBD)` 改实测值（若跑的是全 Lite 500，top-120 子集从结果里取）
 >    - abstract / §1 / §9 若有 "to be evaluated" 可微调为 "M0 evaluated; other arms pending"（agent 自决）
+>    - **mini / lite 两轮是基座消融数据**（小模型 vs pro 对比），论文 §6 backbone 比较段可引用，但不作 M0 anchor
 >    - **防伪底线**：只填实测数字，不编造；若跑批 abort 未跑完 500，只填已判子集数字 + 标注 "partial run, N/500 judged"
-> 4. **MEMORY 心跳**：每 wake 记录跑批进度（已判 N/500 · 当前 Pass@1 · 预计完成时间），跑完记最终汇总
+> 4. **MEMORY 心跳**：每 wake 记录当前轮进度（轮 X · 已判 N/500 · 当前 Pass@1 · 预计完成时间），每轮跑完记最终汇总 + 切下一轮动作
 >
 > ### ⑤ 硬约束（本令专项 + 继承）
 >
-> - ✅ **可起评测进程**（本令正式放行，撤销此前"🚫 不起评测进程"约束，**仅限 EDA-Flow-Bench Lite 500 M0 评测**，不是 designflow 造题线也不是其它评测）
+> - ✅ **可起评测进程**（本令正式放行，撤销此前"🚫 不起评测进程"约束，**仅限 EDA-Flow-Bench Lite 500 三轮 doubao 评测**，不是 designflow 造题线也不是其它评测）
 > - 🚫 **不改判据/题/样本**：cases_lite.txt 的 500 case 不动，run_batch.sh 的判分逻辑不动，check.py / assertions 不动
 > - 🚫 **不动 designflow 造题线**（cases/jsonl/ledger）、其他论文树、super_intelligence_2035 repo 论文树（除非 ④.3 论文回填）
-> - ✅ **命令逐字照跑**：`bash eval/run_batch.sh --workers 16`（用户原话，不要改参数；若 ② 自检发现需加 `--model` 或 `--regen-lite`，在 commit/MEMORY 说明理由）
-> - ✅ **M0 配置对齐**：基座 = DeepSeek-V4-Pro / Cline v3.0.51 / thinking=low / timeout=2400s（与论文 §6 M0 snapshot 一致；若 run_batch.sh 默认基座不是这个，显式加 `--model`）
+> - ✅ **命令逐字照跑**：`bash eval/run_batch.sh --workers 16`（用户原话，**不加 --model 等参数**；三轮靠改 providers.json 切模型，不改 run_batch.sh 参数）
+> - ✅ **严格遵循 README + AGENTS.md**：跑前必读 `/nasdata/app.e0031982/code/EDA-Flow-Bench/README.md` + `AGENTS.md`，按"快速开始"执行
+> - ✅ **providers.json 跑前核验**：每轮起跑前 grep 核验 apiKey/model/baseUrl 三项与该轮目标模型一致，不一致先改对再跑
+> - ✅ **登录 shell + PATH + proxy 注入**：用 `bash -lc` 或显式 `export PATH=...; export https_proxy=...`，否则 cline 静默空转
+> - ✅ **三轮串行不并发**：共享同一 providers.json + cases_lite.txt，轮 1 对齐 ~10% 才进轮 2，轮 2 跑完才进轮 3
+> - ✅ **M0 基座 = doubao-seed-2.0-pro-cloud**（不是 deepseek-v4-pro，README 明确已下线；论文 §6 若仍写 deepseek 需一并改为 doubao-seed-2.0-pro-cloud，agent 自决是否本令一并改）
 > - ✅ **防伪底线**：不编造数字，只填实测；不删他人数据；不改判据/题/样本
 > - ✅ **双盲匿名 + 0 外链 + 不承诺开源 + 无预注册 + Full/Lite 分层 + 3 项贡献**（前几轮令全部继续，论文回填时不得违反）
 > - **提交**：
 >   - 评测仓库 `/nasdata/app.e0031982/code/EDA-Flow-Bench/` 的产物（status.jsonl / log / report）若在 git 跟踪，commit 到该仓库；若不在 git，只在本 repo `doc/ZhuLong_DAC2027/reports/` 写报告
->   - 论文回填（若做）commit 到本 repo `doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/`，前缀 `zhulong eval: EDA-Flow-Bench Lite 500 M0 评测结果回填论文`
->   - 本 repo run 文件（MEMORY / TASK / daily-memories）照常 commit，前缀 `zhulong eval: EDA-Flow-Bench Lite 500 M0 评测起跑·进度 wake#XXXX`
+>   - 论文回填（若做）commit 到本 repo `doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/`，前缀 `zhulong eval: EDA-Flow-Bench Lite 500 doubao-pro M0 评测结果回填论文`
+>   - 本 repo run 文件（MEMORY / TASK / daily-memories）照常 commit，前缀 `zhulong eval: EDA-Flow-Bench Lite 500 doubao-{pro|mini|lite} 评测·进度 wake#XXXX`
 >   - **只 add 本线文件**，勿 `-A`
 > - **判据（自检后再汇报）**：
->   ① ② 自检 7 项全过 ✅；
->   ② run_batch.sh 成功启动，日志写到 eval/run_*.log ✅；
->   ③ 跑中每 wake 进度记录（已判 N/500 · Pass@1）✅；
->   ④ 跑完汇总数字 + 报告 `report_edafb_lite500_m0_eval_zh.html` ✅；
->   ⑤ 论文 §6 M0 \TBD 改实测值（若本令一并做）✅；
+>   ① ② 跑前自检全过（providers.json 三项核验 + cline + proxy + 登录 shell + Lite 集 + 无并发）✅；
+>   ② 轮 1 run_batch.sh 成功启动，日志写到 eval/run_*.log ✅；
+>   ③ 轮 1 跑完 Pass@1 落在 ~10% 量级（对齐用户基准 10.5% ±2pp）✅；若 ≤5% 停并诊断；
+>   ④ 三轮各自报告 HTML ✅；
+>   ⑤ 论文 §6 M0 \TBD 改 pro 轮实测值（若本令一并做）✅；
 >   ⑥ 防伪底线（不编造、不删、不改判据/题/样本）✅；
 >   ⑦ 双盲+分层+3 贡献+无预注册+不承诺开源 继续过 ✅。
 > - 完成后 `WAITING=0` standby，记一行心跳。
 >
-> **agent 自主空间**：是否 nohup 后台跑 vs 前台跑 / 是否本令一并回填论文 vs 下条令回填 / 报告 html 的具体格式 / per-domain 表是否做 / 异常 case 抽样多少条 —— 由 agent 自主决定。用户给的是"跑 `bash eval/run_batch.sh --workers 16`"+ 仓库路径，不是逐字模板。**关键是命令逐字照跑、跑完有汇总数字回填论文**。
+> **agent 自主空间**：是否 nohup 后台跑 vs 前台跑 / 是否本令一并回填论文 vs 下条令回填 / 报告 html 的具体格式 / per-domain 表是否做 / 异常 case 抽样多少条 / 是否本令一并把论文 §6 的 deepseek 改为 doubao —— 由 agent 自主决定。用户给的是"严格遵循我和 README 的方式，重跑一轮 doubao 模型，先跑出一个对齐的结果来"+ 三个模型的凭据，不是逐字模板。**关键是命令逐字照跑 `bash eval/run_batch.sh --workers 16`、providers.json 跑前核验对齐、pro 轮对齐 ~10% 才算成功、三轮串行跑完各有报告**。
 
 ### 🟡 询问 · 2026-11-20 08:4x（**只回答，不要动手**）
 

@@ -5,6 +5,8 @@
 >
 > 最后更新：2026-11-13
 
+> 🔑 **应急 API Key**：`doc/token_plan.txt` 是运维个人 API Key 的应急备份，额度耗尽或鉴权故障时可从中取用。⚠️ 仓库须保持 private；不得把 Key 复制进任务书/MEMORY/代码。
+
 ---
 
 ## 1. 活跃 agent（**5 个**）
@@ -131,6 +133,11 @@ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 | `10.239.2.12` | data | 8×H100；data 多为 CPU/IO |
 | `10.252.32.17` | posttrain · vision | 8×A40；**2026-11-09（周一）起分配 4 张给 post-train**；**2026-11-13 vision 迁入（空卡）** |
 | `10.251.36.15` | zhulong · designflow | ZhuLong 项目（独立于 BaiZe） |
+
+> 🔗 **SSH 隧道**：`10.251.36.15` ↔ `10.252.32.17` 之间经一台 Windows 11 中继打通（两机端口 22 被防火墙挡，但 ICMP 互通）。细节见 `doc/dual-nix-tunnel.md`。
+> - `.15 → .17`：在 `.15` 上 `ssh -p 2222 app.e0031982@localhost`
+> - `.17 → .15`：在 `.17` 上 `ssh -p 3333 app.e0031982@localhost`
+> - scp 同理，加 `-P 2222 / -P 3333`（注意大写 `-P`）。
 
 ## 6. 📉 记忆体量维护（**2026-10-03 运维新增**）
 

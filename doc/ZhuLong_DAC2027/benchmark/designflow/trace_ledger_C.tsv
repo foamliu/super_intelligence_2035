@@ -436,7 +436,7 @@
 1789090752430_4xt0p	zhigangw	hfeg0pkn002	0		parked		2026-11-08 21:36	mode=act 启动业务场景 模拟电路优化 no organic intent
 1793236307554_giaze	pdsong	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension 分析脚本功能
 1793667682319_64ztm	e0047488	hfeg0pkn002	0		parked		2026-11-08 21:36	dup of YamlToGds-001 same user/task
-1793012120155_plwnn	pdsong	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension 分析lvsSvdb文件
+1793012120155_plwnn	pdsong	hfeg0pkn004	0		case	EDA-Eval-DesignFlow-LvsSvdbRepDirStat-001	2026-11-20 17:01	revival: 11-15 reaudit code-comprehension/analysis legit; real host hfeg0pgn024 mc=81 physical_verify; built LvsSvdbRepDirStat-001
 1792488450622_kc85b	kevinc	hfeg0pkn002	0		parked		2026-11-08 21:36	root-cause debug LPE失败 non-seed
 1790126403703_fj73q	e02141	hfeg0pkn001	0		parked		2026-11-08 21:36	env-recon 配置swb-python-api环境
 1793870539133_n91uu	e0047722	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension PDK_QA项目目录结构
@@ -1333,3 +1333,5 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1793241530970_pbokx					case	EDA-Eval-DesignFlow-RedundantPinRemoval-001	2026-11-20 13:12	revival: D-ledger wrong-host NOFILE parked (path-bug era) -> C layout_aether case; 11-15 reaudit env-config/flow-driving legit
 1792494760058_95hv8.messages.json					case	EDA-Eval-DesignFlow-MeaCrossSection-001	2026-11-20 13:41	revival: D parked 11-05 as peek_D270 unfit(skill-scaffold); 2026-11-15 reaudit skill-scaffold/flow-driving/script-completion legitimate; session is C-domain layout_aether (pyaether:54;aether:47), D misjudged shard; jxwang analyze mea-cross-section skill + run once + persist, 档 B reframe fixture-driven offline cross-section measurement
 1795069253162_62why.messages.json	hktklin	hfeg0plg87	111	layout_virtuoso	case	EDA-Eval-DesignFlow-TapPcellBot-001	2026-11-20 15:21	
+1795049723270_htijd	e0047600	hfeg0pjn200	285	physical_verify	case	EDA-Eval-DesignFlow-GdsRailLabelRestore-001	2026-11-20 16:31	r862 physical_verify GDS tiling vdd/vss rail label restore-original matrix reframe; k=15 static source-analysis judge; gold=solve.py PASS + 6 neg FAIL distinct
+1795001912028_iludo	cuij	hfeg0plg86	79	physical_verify	case	EDA-Eval-DesignFlow-DrcRunsetAutoConfigAnalyze-001	2026-11-20 17:41	
