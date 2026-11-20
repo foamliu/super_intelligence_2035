@@ -1,4 +1,15 @@
 
+## §A.27 第 321 轮实测（2026-11-21 07:0x · 6 条 · **标题框残留 / 题注误插后重建正文 / 评论复核只认 canonical+列表**）
+
+| # | 结论 | 依据 |
+|:--|:--|:--|
+| 1 | 🔑 **填完正文必须回读标题**：`s1_fill.py` 会先把 `paras.txt` 灌进正文，但标题框可能仍留着**上一轮**的值（编辑器残留 state，承 §A.25 第 1 条的另一面） | `s1.out` `CHK {"title":"内存涨价 263%，为什么手机只敢涨 13%","titleLen":22,...,"head":"一个数学家说…"}` ⇒ 正文是新稿、标题是旧稿；`fixtitle.py` 重写后 `AFTER {"titleLen":19}` |
+| 2 | 🔑 **插图「定位段」别用上一轮的关键词**：`s2_img.py` 里 `ps.find(x=>/关键词/.test(...))` 若关键词在新稿里出现在**别的段**，图会插错位置、题注跟着跑；`find` 失败再退到 `ps[len-3]` 更危险 | 本轮图插到了第 3 段后（目标为第 2 段后）；改为**按下标取段**（`ps[1]`）后正确 |
+| 3 | 🔑 **题注插错后不要「点坐标 + 退格」去修**：段落不在视口时 `getBoundingClientRect()` 读到 `y:0`，点击落在页面顶部 ⇒ 焦点乱跳、**正文被复制**（本轮多出一段） | `fixcap.py` `POS {"x":30,"y":0}` → `AFTERDEL {"n":27,"hasCap":3}`；最终靠 `rebuild.py`（`selectNodeContents` 清空 + 一次 `insertText`）重建（`WIPE {ps:1,len:0}` → `FILL {ps:23}`） |
+| 4 | ⚠️ **`textarea.pgc-img-caption-ipt` 有两个**：一个在 ProseMirror 内（可见），一个在隐藏 `templ` 里（`offsetWidth=0`）⇒ 点之前先 `filter(x=>x.offsetWidth>0)` | `CAPBOX {'n':1,...}` 用过滤后取到正确那个；不加过滤时点到隐藏框，`CAP` 写进去也不显示 |
+| 5 | ⚠️ **发布页读「封面」要先把页滚到底**：`封面` 文本节点在视口外时 `querySelector` 找不到（本轮曾误判 `NF_COV`）⇒ `scrollTo(0, document.body.scrollHeight)` 后再读，或直接看图 | `cov2.png` 目视：封面已自动取正文图（`编辑 替换 / 预览`） |
+| 6 | 🔑 **评论落库的唯一稳判据 = `link[rel=canonical]` 与目标 id 一致 + 评论列表出现「Xmodel唠两句 … 刚刚 · 删除」**；`RECHECK` 里的 `cmt` 是异步残留（读到 `评论 26 / 评论 0` 都出现过），`mine:false` 不可作失败 | A/B/C 三条均以此判据确认落地；B 帖首读 `RECHECK cmt:评论 0` → 重跑 `CANON … mine:true` |
+
 ## §A.25 第 316b 轮实测（2026-11-20 15:3x · 5 条 · **标题框会吞正文 / 评论发送键范围**）
 
 | # | 结论 | 依据 |
