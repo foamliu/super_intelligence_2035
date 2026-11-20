@@ -30654,3 +30654,99 @@ cut: '"': No such file or directory
 
 === DONE 284 | 2026-11-20 10:49:42 ===
 ```
+
+---
+
+## RUN_ID 285 · 2026-11-20 10:52:15 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+echo "host=$(hostname)  date=$(date "+%F %T")"
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+echo
+echo "[1] 精确目录的最近写入（mtime 排序，各取前 4）"
+for d in "$R/doc/BaiZe-ISEDA2027/run/logs" "$R/doc/BaiZe-ISEDA2027/run/daily-memories" "$R/doc/BaiZe-ISEDA2027/run/daily-memories-harness" "$R/doc/BaiZe-ISEDA2027/run/reports"; do
+  echo "  [$d]"
+  ls -lt --time-style=+%m-%d_%H:%M "$d" 2>/dev/null | sed -n "2,5p" | sed "s/^/    /"
+done
+echo
+echo "[2] git 侧写入时间（.29 若还在提交，这些会变新）"
+ls -lt --time-style=+%m-%d_%H:%M "$R/.git" 2>/dev/null | sed -n "1,6p" | sed "s/^/  /"
+ls -lt --time-style=+%m-%d_%H:%M "$R/.git/refs/heads" 2>/dev/null | sed -n "1,3p" | sed "s/^/  refs| /"
+echo
+echo "[3] 训练产物：latest_checkpointed_iteration / iter_02x 目录（深度放到 9）"
+timeout 90 find /nas_train/app.e0031982 -maxdepth 9 \( -name "latest_checkpointed_iteration.txt" -o -type d -name "iter_02*" \) -printf "%TY-%Tm-%Td %TH:%TM  %p\n" 2>/dev/null | sort | tail -6 | sed "s/^/  /"
+echo
+echo "[4] /nas_train 近 4 小时被写过的文件（深度 8，按时间取最后 5 条）"
+timeout 90 find /nas_train/app.e0031982 -maxdepth 8 -type f -mmin -240 -printf "%TY-%Tm-%Td %TH:%TM  %p\n" 2>/dev/null | sort | tail -5 | sed "s/^/  /"
+echo
+echo "[5] SSH 认证阶段（只要结果，60s）"
+timeout 60 ssh -o BatchMode=yes -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o NumberOfPasswordPrompts=0 10.239.2.29 "uptime" 2>&1 | tail -4 | sed "s/^/  auth| /"
+echo
+echo "[6] 中继实例（是否被反复重启）"
+ps -eo pid,etime,args | grep "[o]ps_relay" | cut -c1-120 | sed "s/^/  /"
+tail -n 3 /tmp/baize_ops_relay.12.log 2>/dev/null | cut -c1-150 | sed "s/^/  relay12| /"
+echo
+echo "（只读：未 kill / 未重启 / 未改文件）"
+'
+echo
+echo "[0] TARGET: 12；执行机 = $(hostname)"
+eval "$BODY"
+echo
+echo "=== DONE 285 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] TARGET: 12；执行机 = whag0pgpuap12
+host=whag0pgpuap12  date=2026-11-20 10:52:15
+
+[1] 精确目录的最近写入（mtime 排序，各取前 4）
+  [/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs]
+  [/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/daily-memories]
+    -rw-r--r-- 1 app.e0031982 app.adm   9277 11-20_01:22 2026-11-20.md
+    -rw-r----- 1 app.e0031982 app.adm 150259 11-20_00:22 2026-11-19.md
+    -rw-r--r-- 1 app.e0031982 app.adm  38896 11-18_23:46 2026-11-18.md
+    -rw-r----- 1 app.e0031982 app.adm  59941 11-17_10:00 2026-11-17.md
+  [/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/daily-memories-harness]
+    -rw-r----- 1 app.e0031982 app.adm   9574 11-20_01:12 2026-11-20.md
+    -rw-r----- 1 app.e0031982 app.adm  89028 11-19_23:38 2026-11-19.md
+    -rw-r----- 1 app.e0031982 app.adm  60966 11-18_23:46 2026-11-18.md
+    -rw-r----- 1 app.e0031982 app.adm  72644 11-17_19:10 2026-11-17.md
+  [/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/reports]
+    -rw-r--r-- 1 app.e0031982 app.adm 51051 11-20_10:52 report_s1s2_split_data_v3_zh.html
+    -rw-r--r-- 1 app.e0031982 app.adm 19002 11-20_09:31 report_posttrain_loop_git_diag_zh.html
+    -rw-r--r-- 1 app.e0031982 app.adm 28986 11-20_00:06 report_pretrain_llamacpp_scaling_zh.html
+    -rw-r----- 1 app.e0031982 app.adm 18835 11-19_21:41 report_vision_wave_grpo_mllm_result_zh.html
+
+[2] git 侧写入时间（.29 若还在提交，这些会变新）
+  total 2100
+  -rw-r--r--   1 app.e0031982 app.adm      21 11-20_10:52 HEAD
+  -rw-r--r--   1 app.e0031982 app.adm 1618723 11-20_10:52 index
+  -rw-r--r--   1 app.e0031982 app.adm      41 11-20_10:52 AUTO_MERGE
+  drwxr-x--- 260 app.e0031982 app.adm   36864 11-20_10:52 objects
+  -rw-r-----   1 app.e0031982 app.adm     110 11-20_10:52 FETCH_HEAD
+  refs| total 16
+  refs| -rw-r--r-- 1 app.e0031982 app.adm 41 11-20_10:52 main
+
+[3] 训练产物：latest_checkpointed_iteration / iter_02x 目录（深度放到 9）
+
+[4] /nas_train 近 4 小时被写过的文件（深度 8，按时间取最后 5 条）
+
+[5] SSH 认证阶段（只要结果，60s）
+
+[6] 中继实例（是否被反复重启）
+  1032513 26-15:21:51 bash ./ops_relay_v2.sh
+  1397746       04:00 bash ./ops_relay_v2.sh
+  relay12| [relay-12] RUN_ID=282 executed, exit=0, appended to outbox.
+  relay12| [relay-12] RUN_ID=283 executed, exit=0, appended to outbox.
+  relay12| [relay-12] RUN_ID=284 executed, exit=0, appended to outbox.
+
+（只读：未 kill / 未重启 / 未改文件）
+
+=== DONE 285 | 2026-11-20 10:56:16 ===
+```
