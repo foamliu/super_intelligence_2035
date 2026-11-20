@@ -2006,16 +2006,30 @@
   "bpmn-io__bpmn-js-1206": {
     "instance_id": "bpmn-io__bpmn-js-1206",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1212.2,
+    "rc": 0,
+    "model_patch_len": 10799,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " batch detach test (multiple boundary events → intermediate events), batch move-with-host test (boundary events stay attached), and batch attach test (multiple intermediate events → boundary events).\n",
+    "stderr_tail": "ove\n[✓] Implement the fix for boundary event detachment in batch move\n[✓] Add tests for batch detach and batch attach scenarios\n[✓] Run lint to verify correctness\n[✓] Final review of all changes\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1221": {
     "instance_id": "bpmn-io__bpmn-js-1221",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 416.6,
+    "rc": 0,
+    "model_patch_len": 799,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "te their label position. This ensures labels are adjusted to avoid overlapping with newly pasted connections and hosts, matching the same logic already applied during interactive connection creation.\n",
+    "stderr_tail": "PositioningBehavior.js\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Add elements.paste postExecuted listener to AdaptiveLabelPositioningBehavior to re-check labels after paste\n[✓] Verify the fix with existing tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1236": {
     "instance_id": "bpmn-io__bpmn-js-1236",

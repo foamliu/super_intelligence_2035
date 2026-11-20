@@ -1318,16 +1318,30 @@
   "alibaba-fusion__next-1067": {
     "instance_id": "alibaba-fusion__next-1067",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 447.6,
+    "rc": 0,
+    "model_patch_len": 1657,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "件\n1. **`src/slider/slick/arrow.jsx`** — 移除 `slideCount <= slidesToShow` 时的统一禁用逻辑\n2. **`test/slider/index-spec.js`** — 补充了对应的测试用例，验证 `slidesToShow=3`、`slideCount=2`、`defaultActiveIndex=1` 时左箭头可用、右箭头禁用\n",
+    "stderr_tail": "browser Chrome\n\u001b[91m21 11 2026 05:31:37.490:ERROR [launcher]: \u001b[39mNo binary for Chrome browser on your platform.\n  Please, set \"CHROME_BIN\" env variable.\n\u001b[0m\n\u001b[0m→ \u001b[0mRead test/slider/a11y-spec.js\n"
   },
   "alibaba-fusion__next-114": {
     "instance_id": "alibaba-fusion__next-114",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 308.9,
+    "rc": 0,
+    "model_patch_len": 1570,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ion > 0) {\n       result = Number(Number(result).toFixed(precision));\n   }\n   ```\n2. **`test/number-picker/index-spec.js`** — Added a test case covering the reported float precision bug on increment.\n",
+    "stderr_tail": "    assert(wrapper2.find('input').prop('value') === 4.03);\n+\n+            done();\n+        });\n+\n \n         it('should support onCorrect', (done) => {\n             const onCorrect = sinon.spy();\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1500": {
     "instance_id": "alibaba-fusion__next-1500",
