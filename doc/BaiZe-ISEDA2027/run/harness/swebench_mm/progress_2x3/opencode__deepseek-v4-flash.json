@@ -1589,9 +1589,16 @@
   "alibaba-fusion__next-3218": {
     "instance_id": "alibaba-fusion__next-3218",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 143.2,
+    "rc": 0,
+    "model_patch_len": 775,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "next-select` → `.demo-container .next-select`\n- **`docs/select/demo/combobox-basic.md:130`** — `.next-select` → `.demo-container .next-select`\n\n现在 Select 的 margin 样式只会在各自 demo 容器内生效，不会全局泄露到其他 demo 中。\n",
+    "stderr_tail": "ry structure to understand how demos are organized\n[✓] Find Select demo CSS files with overly absolute styles that affect other demos\n[✓] Fix the CSS to scope styles properly to individual demos\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3345": {
     "instance_id": "alibaba-fusion__next-3345",
