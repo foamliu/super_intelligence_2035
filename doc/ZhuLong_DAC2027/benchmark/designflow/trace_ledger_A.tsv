@@ -502,7 +502,7 @@
 1791854347080_pits0	johnl	hfeg0pkn001	52	digital	parked		2026-11-14 10:10	r503: 看下仿真激励在哪里 analysis Q&A
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	case	EDA-Eval-DesignFlow-XrunCuvmurDiagnose-001	2026-11-17 22:20	r503: 分析log error怎么导致 debug Q&A
 1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	case	EDA-Eval-DesignFlow-ProjVersionDiffAnalyze-001	2026-11-17 10:06	r503: 三个版本项目有什么不同 version-diff analysis Q&A
-1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	parked		2026-11-14 10:10	r503: sim-path+pattern-path debug (truncated) debug pattern
+1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	case	EDA-Eval-DesignFlow-RedBistLoopCountDiagnose-001	2026-11-20 10:51	r503: sim-path+pattern-path debug (truncated) debug pattern
 1789975587201_fniqj	alanji	hfeg0pjn100	36	digital	case	EDA-Eval-DesignFlow-AddKeywordFile-001	2026-11-15 15:06	r503: write python script add keyword vague + netlist-diff analysis
 1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	parked		2026-11-14 10:10	r503: workspace have what infra Q&A
 1791280343229_bp54q	mwxi	hfeg0pkn003	76	digital	parked		2026-11-14 10:51	r505: crontab task-recovery infra REJECT (verilog kw from workspace, task=infra)
