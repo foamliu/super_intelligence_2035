@@ -1613,3 +1613,11 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795082207498_lxzq1	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 12:48	near-dup of DelvtoNetlistMod-001 (same user joeyl, same ULVT delvto task)
 1795139264863_vckxz	joeyli	hfeg0plg49	93	spice_sim	parked		2026-11-20 12:48	out-of-domain: Aether layout script (C-domain layout_aether), not spice_sim/char
 1795137757784_ewbyk	tongfanl	hfeg0pgn072	20	spice_sim	case	EDA-Eval-DesignFlow-VdbiasSyncFixGen-001	2026-11-20 13:00	
+1795139659877_b8fi1	declanzh	hfeahpc505	10	spice_sim	case	EDA-Eval-DesignFlow-Mt0AggregateGen-001	2026-11-20 13:42	
+1795081804693_amgmv	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
+1795081852438_sn7gv	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
+1795081892210_chwbc	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
+1795081959886_dd6sb	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
+1795082002866_zynq7	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
+1795082080072_1ajdv	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
+1795085216076_c68lg	keviny	hfeahpc504	57	spice_sim	parked		2026-11-20 13:42	C-domain GDS analysis (R_RowRed768.gds, 1msg thin), near-dup cluster of amgmv
