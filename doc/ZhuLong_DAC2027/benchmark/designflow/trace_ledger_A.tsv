@@ -693,4 +693,16 @@ gital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26
 1794963500274_exucf	eva1li	hfeg0plg74	123	digital	case	EDA-Eval-DesignFlow-ErrforcebitMeaningQA-001	2026-11-20 20:56	
 1794902635452_aoe57	e0014036	hfeg0plg15	158	digital	case	EDA-Eval-DesignFlow-RunSimPprNewShAnalyzeQA-001	2026-11-20 21:29	
 1794972439111_qooqq.messages.json	e0045144	hfeg0plg11	164	digital	case	EDA-Eval-DesignFlow-LintRptAnalyzeQA-001	2026-11-20 22:15	LintRptAnalyzeQA-001 k=12 digital lint report analysis A档 trace-faithful (lint.rpt 947L from trace) hidden B lint_B.rpt 12 assertions selftest PASS 7 negs FAIL
-1794808558058_g18s9	sfeng	hfeg0pkn005	225	digital	case	EDA-Eval-DesignFlow-CompressBasicRunbookQA-001	2026-11-20 22:57	r875 delivered: CompressBasicRunbookQA-001 k=12/12 digital/verification (LPDDR6 compress_basic .inc/.run structure + vsim run cmd). A档 trace-faithful (5 self-contained fixtures verbatim from trace). hidden B compress_basic_B.{run,inc}. selftest PASS 8/8 negs FAIL. A-pure mc225 verilog:1133
+1794808558058_g18s9	sfeng	hfeg0pkn005	225	digital	parked	EDA-Eval-DesignFlow-CompressBasicRunbookQA-001	2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1795142758542_ggoyv					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1795056127241_edc1w					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794986612091_pm8zt					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794905326109_smsiw					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794832618722_nqtif					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794905310620_zo3k4					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794905317697_2n2tp					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1795077186517_plk7n					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794971015849_bxlhe					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794989160663_uhnxn					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794983590823_7ykhf					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1794967327345_t5h98					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
