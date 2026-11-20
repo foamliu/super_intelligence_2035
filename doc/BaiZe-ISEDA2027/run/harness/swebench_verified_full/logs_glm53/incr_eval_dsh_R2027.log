@@ -1,6 +1,0 @@
-
-============================================================
-=== deepseek-harness: incr_eval R2027 ===
-  deepseek-harness: 41 new instances to eval (total real preds: 131, already evaluated: 91)
-  [06:03:44] deepseek-harness: merged 131 -> predictions_glm53/predictions_deepseek-harness_glm53.json
-  [06:03:44] deepseek-harness: launching eval (workers=1, timeout=1800, 41 instances)...
