@@ -147,7 +147,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1794386548710_l4tre	xinqiaoz	hfeg0pkn002	575	pnr_signoff	旧判:weak(Q&A非produce)	不可造(待深读)	§5 L1-gate作废,L1合法;待深读:genReleaseNote.py Python script maintenance(HTML/backup/empty-field),no real EDA tool exec但L1 produce可toothy(script行为),需核自包含资产
 1794206548447_artkz					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	post-LVS/DRC signoff flow Q&A via AskEDA(model disabled),no real tool exec,prose
 1794466237270_iyyzq	jerrychu	hfeg0pkn003	15	eda_other	旧判:weak(Q&A非produce)	可造(已造r846)	§5 L1-gate作废,L1合法. 可造(已造 EDA-Eval-DesignFlow-CornerNameConvertProduce-001 r846):PDK corner-name transformer produce-task,sed/python文本变换(voltage p->.去v,temp去c m->-,prefix保留,append _mos_varactor_dbc,insert TYPICAL,output original=converted),toothy check(15断言+hidden-B 12 corner+3seed子集+合成泛化). 资产自包含(corners纯文本,trace中assistant editor/text完整可见无sandbox剥离). 旧判'sed非design_flow'作废(11-15 L1合法,parallel l4tre/jeij7)
-1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'analysis Q&A REJECT'作废;待深读:where setup/hold defined+give datapath,若有具体file/signal gold可specificity-oracle,需核
+1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	旧判:weak(Q&A非produce)	不可造(NOFILE rotation蒸发)	旧判'analysis Q&A REJECT'作废(11-15 analysis-Q&A合法);r849核验:10.129.8.104 sessions dir 仅剩 11-19 swt49,uqvno(11-12)已被rotation删除,subdir-path亦无;不可造(无真实trace可达)
 1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	'read project+tell me what the review prompt is'analysis,prose
 1794449150836_cdrm1	daiweilu	hfeg0pgn145	107	verification	旧判:weak(Q&A非produce)	不可造(无真实trace)	r847深读:flat+subdir双NOFILE(rotation蒸发,不在11-19scan),文件已蒸发不可复活
 1794571860576_p0fqe	johnl	hfeg0pkn001	224	pnr_signoff	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	innovus DRC-rule summarization Q&A,prose
@@ -171,7 +171,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1791960240913_4drpt	hengbow	hfeg0plg94	21	eda_other	旧判:wrong-shard/跨域	不可造(跨域defer)	dup of tj1kl finesim=B域
 1793156257609_xqkry	daiweilu	hfeg0pgn145	62	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	lpddr5 TB regression snippet Q&A(只跑了一个pattern吗),prose
 1794453586384_srob6	jason17w	hfeg0pnd002	77	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	empty user_input(image/file-only)cannot synthesize
-1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'sim log debug Q&A+cache-clear infra'作废(debug-Q&A合法);待深读:sim log problem debug Q&A,若有具体error/fix gold可debug-Q&A specificity-oracle,需核
+1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	旧判:weak(Q&A非produce)	可造(已造r849)	旧判'sim log debug Q&A+cache-clear infra'作废(debug-Q&A合法);r849深读subdir-path ALIVE 267KB/48msgs,U#0怎么解决log的问题→xrun.log *E,DLCSMD Dependent checksum ddr5_package vs real_wl_gen→stale xcelium worklib cache,package未改+user-local cache+无需改源码重run;B档synthesized XrunDlcsmdCacheDiagnose-001 k=15/15 落库
 1794397613511_dwr4p	guomings	hfeg0pkn003	70	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	nihao/nij greetings no task
 1792569513787_jq6lq	mwxi	hfhds228	85	eda_other	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	crontab/file-sync infra debug not EDA
 1789453406100_p28m8	e0017484	hfeg0plg54	75	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	canned trigger(启动业务场景:仿真与验证)+analysis Q&A

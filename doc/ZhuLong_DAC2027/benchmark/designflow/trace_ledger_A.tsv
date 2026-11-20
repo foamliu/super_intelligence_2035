@@ -463,7 +463,7 @@
 1794386548710_l4tre	xinqiaoz	hfeg0pkn002	575	pnr_signoff	case	EDA-Eval-DesignFlow-ReleaseNoteEmptyFix-001	2026-11-20 08:47	false-positive: genReleaseNote.py Python script maintenance (HTML/backup/empty-field), no real calibre/LVS/DRC execution; L1 not L2/L3
 1794206548447_artkz					parked		2026-11-14 06:21	false-positive: pure Q&A about post-LVS/DRC signoff flow via AskEDA skill (model disabled), no real EDA tool execution; voltus/aether keywords from skill references
 1794466237270_iyyzq	jerrychu	hfeg0pkn003	15	eda_other	case	EDA-Eval-DesignFlow-CornerNameConvertProduce-001	2026-11-20 09:07	r846 REVIVE: 11-15 pool re-audit 24待深读第3条落地. 旧判(L1-only/sed文本处理非design_flow)作废(L1 produce-task合法,parallel l4tre/jeij7). 真实意图=U#43 corner-name transformer ssgnp_0p675v_0c->original=ssgnp_mos_varactor_dbc/TYPICAL/0.675/0. B档 synthesized, k=15/15, ref PASS+3neg+§4.9全FAIL, sha match. trace 49msgs jerrychu@hfeg0pkn003 mc15 eda_other
-1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	parked		2026-11-14 07:07	r496 peek: USER#0 tell me where setup/hold tis defined+give datapath, analysis Q&A, REJECT produce-task
+1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	parked		2026-11-20 10:32	r849 NOFILE rotation蒸发(11-19 sessions dir only swt49 left, uqvno 11-12 deleted), subdir-path also gone; 不可造(无真实trace可达)
 1793343472817_6tswp	e0039602	hfeg0plg95	119	digital	case	TruthTblCheckVerDiff-001	2026-11-17 13:33	r679 deepread: verilog_lib_trans v1.4.1 vs v1.4 truth-table-check version-diff + workflow explain, 2-turn analysis-Q&A, digital. SSH-restored fetch. Synth plan DEBT next round.
 1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	parked		2026-11-14 07:07	r496 peek: USER#0 read project+tell me what the review prompt is, analysis Q&A, REJECT
 1794382021638_eadk1	alanji	hfeg0plg99	107	digital	case	EDA-Eval-DesignFlow-DmiPinCompareDiagnose-001	2026-11-17 09:13	r496 peek: USER#0 analyze why pattern reports DMI pin compare error, debug/analysis, REJECT
@@ -490,7 +490,7 @@
 1793156257609_xqkry	daiweilu	hfeg0pgn145	62	digital	parked		2026-11-14 10:10	r503: lpddr5 TB regression snippet Q&A (只跑了一个pattern吗) analysis not produce
 1794453586384_srob6	jason17w	hfeg0pnd002	77	digital	parked		2026-11-14 10:10	r503: empty user_input (image/file-only) cannot synthesize
 1794539090854_vqpd5	wenfeiz	hfeg0pkn004	64	digital	case	EDA-Eval-DesignFlow-Lpddr5TbStudyDoc-001	2026-11-16 12:16	r630: revived from r503 parked (old weak 'doc-gen not produce-task' retired per 11-15 order); deepread done (lpddr5 TB study doc, analysis-Q&A, C-A); DEBT 1 case next round
-1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	parked		2026-11-14 10:10	r503: sim log problem debug Q&A + cache-clear infra question
+1792571741703_ui4hv	ruisongs	hfeg0pfn087	52	digital	case	EDA-Eval-DesignFlow-XrunDlcsmdCacheDiagnose-001	2026-11-20 10:32	r503: sim log problem debug Q&A + cache-clear infra question
 1794446207194_gaopz	ericw	hfhds201	90	digital	case	EDA-Eval-DesignFlow-VecgenExpCompareLocate-001	2026-11-17 15:49	r683 reaudit revive: 11-15 mandate analysis-Q&A valid; deepread done DEBT1 synth next
 1794445729302_9kc99	e0039602	hfeg0pkn005	77	digital	case	EDA-Eval-DesignFlow-VerilibEquiAnalyze-001	2026-11-18 06:33	r503: 阅读目录告诉我项目在做什么/TB怎么构建 pure analysis Q&A
 1794397613511_dwr4p	guomings	hfeg0pkn003	70	digital	parked		2026-11-14 10:10	r503: nihao/nij greetings no task
