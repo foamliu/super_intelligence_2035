@@ -1567,7 +1567,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795055873026_3bis4	alan17z	hfeg0pkn004	167	spice_sim	case	EDA-Eval-DesignFlow-IbisModelSpGen-001	2026-11-20 00:01	
 1795069774803_nghfa	siyuji	hfeg0plg72	54	spice_sim	case	EDA-Eval-DesignFlow-TclDebugInstrumentGen-001	2026-11-20 00:26	
 1795074095632_qqces.messages.json	e0039786	hfeg0pkn005	112	spice_sim	case	EDA-Eval-DesignFlow-BatchPexHspiceGuiGen-001	2026-11-20 00:54	
-1795052008686_g9bki	e0029308	hfeg0pkn001	353	spice_sim	case	EDA-Eval-DesignFlow-DffSetupHoldStimGen-001	2026-11-20 02:05	
+1795052008686_g9bki	e0029308	hfeg0pkn001	353	spice_sim	case	EDA-Eval-DesignFlow-DffSetupHoldStimGen-001	2026-11-21 06:35	RESTORED r951: real case DffSetupHoldStimGen-001 (DFF setup/hold stim, e0029308@hfeg0pkn001 mc353, B.jsonl+cases/B). r951 误mark-parked 已回滚. NOTE: g9bki slug collides across hosts - hfeg0pkn002@mc3480 is a DIFFERENT physical session (GUI Auto_Check.py layout, not B-core) sharing the slug; dedup by slug means hfeg0pkn002 variant already covered/excluded.
 1795053953259_xwken	kaixuanx	hfeg0pkn003	137	spice_sim	case	EDA-Eval-DesignFlow-DffPvtCompareGen-001	2026-11-20 02:33	
 1795055245563_97z71	shanliny	hfeg0pkn003	137	spice_sim	case	EDA-Eval-DesignFlow-WmMt0Diag-001	2026-11-20 02:58	
 1795073373751_cixxj	e0029308	hfeg0plg49	234	spice_sim	case	EDA-Eval-DesignFlow-CellFamilyExtractGen-001	2026-11-20 03:28	
@@ -1652,3 +1652,5 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794831644151_koqs1	witterfu	hfeg0pkn005	865	spice_sim	case	EDA-Eval-DesignFlow-SpDeckPvtMigrate-001	2026-11-21 05:07	
 1795164832117_xieo6	pirinliu	hfeg0pkn001	136	spice_sim	case	EDA-Eval-DesignFlow-MosDcMultiCornerGen-001	2026-11-21 05:37	
 1794894357170_1x8qv	vincentz	hfeg0pkn005	10652	spice_sim	case	EDA-Eval-DesignFlow-StdcellL36Audit-001	2026-11-21 06:08	
+1789041210705_xxz7c	junxu	hfeg0pkn005	5367	spice_sim	parked		2026-11-21 06:30	deepread r951: 507-msg exploratory skill-building trace (build finesim block-sim skill via virtuoso ADE/DSIM Block). NO concrete deliverable produced - assistant spent whole session hunting SKILL fns (asiCreateSession/asiNetlist/hnlSetOutputVars) with virtuoso crashing/restarting; user ended '好了吗/继续'. No write_file, no skill artifact. check()无牙(exclusion 2). park, not caseable as-is.
+1794909179037_qg6bv	wzj	hfeg0pkn003	3881	spice_sim	parked		2026-11-21 06:32	peek r951: U[0] '在dscqa_work lib建立一个schematic' = virtuoso schematic creation (C/D domain layout_virtuoso/schematic_netlist), NOT B spice_sim/char. hspice:717 secondary. park wrong-domain.
