@@ -1,11 +1,9 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 283 | TARGET: 12 -->
-## RUN_ID 283 — **`.29` 到底是死是活：可达性 + NFS 写入痕迹取证（只读 · 2026-11-20 10:4x）**
+<!-- RUN_ID: 284 | TARGET: 12 -->
+## RUN_ID 284 — **`.29` 到底卡在哪：SSH banner 探针 + 长超时登录 + NFS 最后写入时间（只读 · 2026-11-20 10:5x）**
 
-> **背景（RUN_ID 282 实测结果，不必重查）**：RUN_ID 282 由 `whag0pgpuap12` 在 10:04:22 执行、exit=0，但它内部 `ssh 10.239.2.29` **跑满 180s 超时、零输出**；`.29` 的中继游标至今仍停在 281（未执行 282）。⇒ `.12 → .29` 的 SSH 通路当前不可用，或 `.29` 主机/sshd 卡死。
-> 本令**不去修 `.29`**，只用 `.12` 能看到的证据回答三件事：① `.29` 网络层是否活着；② 共享 NFS 上 `.29` 侧最近有没有写入（= 训练/loop 是否还在跑）；③ 共享副本 git 是否干净（这决定 loop 复活后能否 push）。
-> **只读**：不 kill、不重启、不改 `.29` 任何东西、不动共享副本。
-> 投递到 `.12`（唯一在线中继）。
+> **已知（RUN_ID 282/283 实测，不必重查）**：`.29` ping 通（0% 丢包，但 rtt 最大 293ms）；`.29:22` TCP OPEN；`.12→.29` 的 ssh 在 180s 内**连 banner 都没拿到**；共享副本 `origin...HEAD = 0 0`（`.12` 拉取正常、inbox 已到 283）；`/nas_train` **近 3 小时零写入**；pretrain/harness 最后提交仍是 01:22 / 01:13。
+> 本轮把「`.29` 是负载饿死、sshd 僵死，还是文件系统挂死」区分开：**只读、不 kill、不重启**。
 
 ```bash
 set -u
@@ -13,41 +11,32 @@ BODY='
 set -u
 echo "host=$(hostname)  date=$(date "+%F %T")"
 echo
-echo "[1] .29 可达性"
-ping -c 2 -W 2 10.239.2.29 2>&1 | tail -3
-( timeout 3 bash -c "</dev/tcp/10.239.2.29/22" ) >/dev/null 2>&1 && echo "  tcp22=OPEN" || echo "  tcp22=CLOSED_OR_TIMEOUT"
-timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no 10.239.2.29 "echo SSH_OK; hostname; uptime" 2>&1 | tail -3 | sed "s/^/  ssh| /"
+echo "[1] SSH banner 探针（能拿到 banner = sshd 进程还在接受连接）"
+B=$(timeout 12 bash -c "exec 3<>/dev/tcp/10.239.2.29/22; head -c 64 <&3" 2>/dev/null)
+if [ -n "${B:-}" ]; then echo "  banner=$B"; else echo "  banner=NONE（12s 内未返回 SSH banner → sshd 未响应）"; fi
 echo
-echo "[2] 共享副本 git（两机同一块 NFS）"
-R=/nas_train/app.e0031982/code/super_intelligence_2035
-git -C "$R" log -1 --date=iso --format="  HEAD %ad %h" 2>&1 | cut -c1-110
-echo "  left-right(origin...HEAD)=$(git -C "$R" rev-list --left-right --count origin/main...HEAD 2>/dev/null | tr "\t" " ")"
-echo "  staged=$(git -C "$R" diff --cached --name-only 2>/dev/null | wc -l) unstaged=$(git -C "$R" diff --name-only 2>/dev/null | wc -l) untracked=$(git -C "$R" ls-files -o --exclude-standard 2>/dev/null | wc -l)"
-[ -f "$R/.git/index.lock" ] && stat -c "  LOCK %y %s %n" "$R/.git/index.lock"
-git -C "$R" log -1 --date=iso --format="  last_pretrain_commit=%ad %h" -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null
-git -C "$R" log -1 --date=iso --format="  last_harness_commit=%ad %h" -- doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md 2>/dev/null
+echo "[2] 长超时 ssh（240s）：一次性拿 uptime/load/GPU/进程"
+timeout 240 ssh -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=4 10.239.2.29 "uptime; echo LOAD=$(cut -d\" \" -f1-3 /proc/loadavg); free -g | head -2; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader; echo ---procs---; ps -eo pid,etime,pcpu,args | grep -e baize_ -e torchrun -e pretrain | grep -v grep | cut -c1-120 | head -12" 2>&1 | tail -25 | sed "s/^/  ssh| /"
+echo "  ssh_rc=$?"
 echo
-echo "[3] 共享副本上近 60 分钟被改动的 run/ 文件（= 是否有 agent 还在写）"
-L=$(find "$R/doc/BaiZe-ISEDA2027/run" -type f -mmin -60 2>/dev/null | head -8)
-if [ -n "$L" ]; then echo "$L" | sed "s/^/  /"; else echo "  无（60 分钟内 run/ 零写入）"; fi
+echo "[3] 若 [2] 失败：ssh -vv 看握手停在哪一步（最后 12 行）"
+timeout 40 ssh -vv -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no 10.239.2.29 "true" 2>&1 | tail -12 | cut -c1-150 | sed "s/^/  vv| /"
 echo
-echo "[4] /nas_train 近 3 小时被写过的文件（checkpoint / 训练日志痕迹，最多 8 条）"
-L=$(timeout 60 find /nas_train/app.e0031982 -maxdepth 6 -type f -mmin -180 2>/dev/null | head -8)
-if [ -n "$L" ]; then echo "$L" | sed "s/^/  /"; else echo "  无（3 小时内 /nas_train 零写入 → 训练已停）"; fi
+echo "[4] NFS 上最后的 checkpoint / 目录时间（判断训练是否停在某步）"
+timeout 60 find /nas_train/app.e0031982 -maxdepth 7 -type d -name "iter_*" -printf "%TY-%Tm-%Td %TH:%TM  %p\n" 2>/dev/null | sort | tail -4 | sed "s/^/  /"
 echo
-echo "[5] /nas_train 近 1 小时内 >50MB 的新写入（最多 5 条，看是否还在存 ckpt）"
-L=$(timeout 60 find /nas_train/app.e0031982 -maxdepth 7 -type f -size +50M -mmin -60 2>/dev/null | head -5)
-if [ -n "$L" ]; then echo "$L" | sed "s/^/  /"; else echo "  无"; fi
+echo "[5] /nas_train 近 24h / 6h / 1h 写入文件数（同一块盘，两机都能看到）"
+for m in 1440 360 60; do printf "  last_%smin=%s\n" "$m" "$(timeout 60 find /nas_train/app.e0031982 -maxdepth 6 -type f -mmin -$m 2>/dev/null | wc -l)"; done
 echo
-echo "[6] .12 中继自身"
-ps -eo pid,etime,args | grep "[o]ps_relay" | cut -c1-110 | head -3 | sed "s/^/  /"
-tail -n 4 /tmp/baize_ops_relay.12.log 2>/dev/null | cut -c1-140 | sed "s/^/  relay12| /"
+echo "[6] .12 中继实例与日志尾"
+ps -eo pid,etime,args | grep "[o]ps_relay" | cut -c1-110 | sed "s/^/  /"
+tail -n 6 /tmp/baize_ops_relay.12.log 2>/dev/null | cut -c1-150 | sed "s/^/  relay12| /"
 echo
-echo "（全部只读：未 kill / 未重启 / 未改 .29 / 未改共享副本）"
+echo "（只读：未 kill / 未重启 / 未改 .29 / 未改共享副本）"
 '
 echo
-echo "[0] 本令只投 .12（TARGET: 12）；实际执行机 = $(hostname)"
+echo "[0] TARGET: 12；执行机 = $(hostname)"
 eval "$BODY"
 echo
-echo "=== DONE 283 | $(date "+%F %T") ==="
+echo "=== DONE 284 | $(date "+%F %T") ==="
 ```
