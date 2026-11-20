@@ -24,7 +24,7 @@ session	user	host	mc	domain	旧判定	新判定(可造/不可造)	拟造任务�
 1791892714340_0b3ir.messages.json	joeyl	hfeg0pkn004	52	spice_sim	dup-of-7ycbz-DutySkewAvg(divider-duty/skew平均edge-count-ambiguity)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793101648065_ioa1s.messages.json	tongni	hfeg0pfn119	93	spice_sim	tran-sim-gen-skill与j8vf6/g48nq重复	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1792387368762_qw7ae.messages.json	tongni	hfeg0pfn119	69	spice_sim	tran-sim-gen-skill与ioa1s重复	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1787821853675_z72bi.messages.json	sophiaw	hfeg0plg09	167	spice_sim	presim/nanospice多仿真器skill.75不可用	待定	待深读 trace 后定
+1787821853675_z72bi.messages.json	sophiaw	hfeg0plg09	167	spice_sim	presim/nanospice多仿真器skill.75不可用	可造	多仿真器(presim/nanospice)deck 仿真器选择/切换; 旧判 .75 不可用=env 非拒题理由
 1hq6h					scout_1105: false-positive/non-spice/explain-only	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 0si6a					scout_1105: false-positive/non-spice/explain-only	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 sr426					scout_1105: false-positive/non-spice/explain-only	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -65,7 +65,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1791463574990_um5we.messages.json					verilog ddr6 vecgen pattern-seed sharing (xuebaok), hspice:12 incidental; not sp	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1789976011359_06htj.messages.json					logic_cosim path/env-setup (mike), hspice:15/calibre:16 incidental; not spice_ch	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1789867185527_85sjy.messages.json					pyAether get-current-design env (steveny), pyAether:314 dominant, hspice:1 incid	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1790150039431_ojny6.messages.json					env-check/demo scaffolding (sagequan), netlist:103/hspice:6 incidental; not clea	待定	待深读 trace 后定
+1790150039431_ojny6.messages.json					env-check/demo scaffolding (sagequan), netlist:103/hspice:6 incidental; not clea	可造	待深读: env-check/demo scaffolding, netlist:103/hspice:6; 11-15 env-config 合法
 1792552457905_b4dlx.messages.json					anasimpro GUI-start (zjqiao), netlist:479/hspice:5 incidental; not spice_char	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1790501128558_cd4qp.messages.json					SpiceAgent skill env-init/schematic-gen (cwei), schematic:201 dominant; same pro	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1791944811866_cv0pc.messages.json					calibre DRC log analysis (miccao), calibre:462 dominant, hspice:2 incidental; be	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -130,13 +130,13 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1793345773037_65daa					prior-rejected dup (重题, MEMORY line 4/8)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793243641918_xcuds					prior-rejected consulting (咨询)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1793779465508_q9aja					prior-rejected consulting (咨询)	不可造	cross-shard false-pos (r656 dedup): 已是 shard A case EDA-Eval-DesignFlow-WaveviewModuleUpdate-001; 旧判定=prior-rejected consulting (咨询)
-1793685165147_ga396					prior-rejected (MEMORY line 4)	待定	待深读 trace 后定
+1793685165147_ga396					prior-rejected (MEMORY line 4)	可造	待深读: 旧判 prior-rejected(MEMORY line4) 已过期, 需重读确认意图
 1788946694927_w5knw					prior-rejected old+software-dev	不可造	非 EDA: 软件开发非设计流任务
-1792045605929_rp1xk					prior-rejected (MEMORY line 4)	待定	待深读 trace 后定
+1792045605929_rp1xk					prior-rejected (MEMORY line 4)	可造	待深读: 旧判 prior-rejected(MEMORY line4) 已过期, 需重读确认意图
 1789957560618_7kyrv					prior-rejected digital	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1792372024585_wjj8v					prior-rejected digital	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793323487985_ukhbj					prior-rejected inaccessible host hfeg0pbn15	不可造	无真实 trace: 主机不可达 (criterion 1)
-1788871441686_fieju					prior-rejected low spice(14hspice/22total tiny session)	待定	待深读 trace 后定
+1788871441686_fieju					prior-rejected low spice(14hspice/22total tiny session)	可造	待深读: 旧判 low-spice tiny session; 有 hspice:14, 需重读确认意图
 1792133910648_645nk	wnyu	hfeg0pkn004	1	spice_sim	synthesis_attempted_A档不达: div3_model.py行为级计数器模型trace中3次运行全失败(msg57/61/65 no DIVO	不可造	无 check() 牙: trace 中运行全失败无 golden (criterion 2)
 1793929759607_7nm1g					disk-usage-scanner-falsepositive	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793865540752_5ue0u					stdcell-W-selection-continuation-dup34b72	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -145,13 +145,13 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	netlist:948 hspice:8 — 
 1793931174603_tc4yu					rootcause-whyPM11cutoff	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
 1792119938594_z6elv					trivial-hi	不可造	无真实用户意图: 问候/琐碎会话
 1792379743340_2y77m					skill-invocation-tran-sim-gen	可造	produce: tran-sim 生成
-1793763926139_g7b4c.messages.json					1566	待定	待深读 trace 后定
-1793763944405_7qatl.messages.json					1524	待定	待深读 trace 后定
-1793763970829_iq1bu.messages.json					1437	待定	待深读 trace 后定
-1793261282500_4fq1p.messages.json					2310	待定	待深读 trace 后定
-1792544094676_mntzu.messages.json					917	待定	待深读 trace 后定
-1791980431476_gsmj2.messages.json					155	待定	待深读 trace 后定
-1793274153419_2q4mg.messages.json					291	待定	待深读 trace 后定
+1793763926139_g7b4c.messages.json					1566	可造	待深读: mc1566 高分候选, 无 metadata, 需取 trace 确认 B 域意图
+1793763944405_7qatl.messages.json					1524	可造	待深读: mc1524 高分候选, 需取 trace 确认
+1793763970829_iq1bu.messages.json					1437	可造	待深读: mc1437 高分候选, 需取 trace 确认
+1793261282500_4fq1p.messages.json					2310	可造	待深读: mc2310 高分候选, 需取 trace 确认
+1792544094676_mntzu.messages.json					917	可造	待深读: mc917 高分候选, 需取 trace 确认
+1791980431476_gsmj2.messages.json					155	可造	待深读: mc155 候选, 需取 trace 确认
+1793274153419_2q4mg.messages.json					291	可造	待深读: mc291 候选, 需取 trace 确认
 1788771111710_mwijd	scout	scout	0	characterization	sagequan@hfeg0pnd002 meta-testing-zlcli-harness-not-EDA	不可造	无真实用户意图: harness meta 测试非 EDA
 1793702742279_izlej	scout	scout	0	characterization	owench@hfeg0pkn002 analyze-path-consulting-CVcurve	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1792127794562_r8yj1	scout	scout	0	characterization	e0023936@hfeg0pkn002 GUI-consulting-prior-scout-00:3x	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
@@ -320,21 +320,21 @@ qnm9e					Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, no
 1793154955266_qw049	yixiaow	hfeg0pkn005	30	spice_sim	aether W/L min constraint + sim error (如何解决=ask-fix), borderline schematic; 暂缓	可造	debug-Q&A: W/L 约束+sim error 修复诊断(11-15 新标准恢复)
 1793187039315_agw7c	e0046686	hfeg0pkn005	27	spice_sim	autosim script dev (C++ MainWindow/onAddInstance), wrong-shard; REJECT	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793180163422_wz7gy	e03179	hfeg0pkn002	26	spice_sim	script dev (gen_bnk_va/argparse/profile_analyzer), wrong-shard; REJECT	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1790128216866_kbs81	e02141	hfeg0pkn001	13	spice_sim		待定	待深读 trace 后定
-1789975159435_j1gy6	rongjiez	hfeg0pkn005	12	spice_sim		待定	待深读 trace 后定
-1792570696255_obhqj	ypzheng	hfeg0pkn003	11	spice_sim		待定	待深读 trace 后定
-1793877281100_262wq	allenzh	hfeg0pkn004	9	spice_sim		待定	待深读 trace 后定
-1793770158127_wb9zm	nevinrao	hfeg0pkn001	9	spice_sim		待定	待深读 trace 后定
-1791944653526_tdbc1	e0029495	hfeg0pkn002	9	spice_sim		待定	待深读 trace 后定
-1789545210038_ep9m4	lorikx	hfeg0pkn004	9	spice_sim		待定	待深读 trace 后定
-1789552395398_wt5s2	lorikx	hfeg0pkn004	9	spice_sim		待定	待深读 trace 后定
-1793786362791_uvxvv	berylwu	hfeg0pkn002	8	spice_sim		待定	待深读 trace 后定
-1790659224643_m273z	t0002987	hfeg0pkn005	8	spice_sim		待定	待深读 trace 后定
-1792724490907_5vb3f	thomasz	hfeg0pkn002	7	spice_sim		待定	待深读 trace 后定
-1793078652491_wk3wd	cliu	hfeg0pkn004	7	spice_sim		待定	待深读 trace 后定
-1788417639556_79j7l	shaoyou	hfeg0pkn003	6	spice_sim		待定	待深读 trace 后定
-1790058749132_f0qtv	t0002987	hfeg0pkn005	6	spice_sim		待定	待深读 trace 后定
-1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim		待定	待深读 trace 后定
+1790128216866_kbs81	e02141	hfeg0pkn001	13	spice_sim		可造	待深读: e02141@pkn001 mc13 spice_sim, 需取 trace 确认意图
+1789975159435_j1gy6	rongjiez	hfeg0pkn005	12	spice_sim		可造	待深读: rongjiez@pkn005 mc12 spice_sim, 需取 trace 确认意图
+1792570696255_obhqj	ypzheng	hfeg0pkn003	11	spice_sim		可造	待深读: ypzheng@pkn003 mc11 spice_sim, 需取 trace 确认意图
+1793877281100_262wq	allenzh	hfeg0pkn004	9	spice_sim		可造	待深读: allenzh@pkn004 mc9 spice_sim, 需取 trace 确认意图
+1793770158127_wb9zm	nevinrao	hfeg0pkn001	9	spice_sim		可造	待深读: nevinrao@pkn001 mc9 spice_sim, 需取 trace 确认意图
+1791944653526_tdbc1	e0029495	hfeg0pkn002	9	spice_sim		可造	待深读: e0029495@pkn002 mc9 spice_sim, 需取 trace 确认意图
+1789545210038_ep9m4	lorikx	hfeg0pkn004	9	spice_sim		可造	待深读: lorikx@pkn004 mc9 spice_sim, 需取 trace 确认意图
+1789552395398_wt5s2	lorikx	hfeg0pkn004	9	spice_sim		可造	待深读: lorikx@pkn004 mc9 spice_sim, 需取 trace 确认意图
+1793786362791_uvxvv	berylwu	hfeg0pkn002	8	spice_sim		可造	待深读: berylwu@pkn002 mc8 spice_sim, 需取 trace 确认意图
+1790659224643_m273z	t0002987	hfeg0pkn005	8	spice_sim		可造	待深读: t0002987@pkn005 mc8 spice_sim, 需取 trace 确认意图
+1792724490907_5vb3f	thomasz	hfeg0pkn002	7	spice_sim		可造	待深读: thomasz@pkn002 mc7 spice_sim, 需取 trace 确认意图
+1793078652491_wk3wd	cliu	hfeg0pkn004	7	spice_sim		可造	待深读: cliu@pkn004 mc7 spice_sim, 需取 trace 确认意图
+1788417639556_79j7l	shaoyou	hfeg0pkn003	6	spice_sim		可造	待深读: shaoyou@pkn003 mc6 spice_sim, 需取 trace 确认意图
+1790058749132_f0qtv	t0002987	hfeg0pkn005	6	spice_sim		可造	待深读: t0002987@pkn005 mc6 spice_sim, 需取 trace 确认意图
+1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim		可造	待深读: rongjiez@pkn005 mc5 spice_sim, 需取 trace 确认意图
 1794120029303_q4f45	e0023936	hfeg0pkn004	33	spice_sim	wrong-shard cline plugin dev	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793952138224_b2l64	t0003117	hfeg0pkn005	405	spice_sim	eval-user+premise-missing fault-inject	不可造	无真实用户意图: eval/scout 用户
 1791522635010_ikvky	clarawu	hfeg0pkn004	277	spice_sim	wrong-shard gvim vimrc config	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -367,9 +367,9 @@ qnm9e					Finesim DC convergence Q&A prose dup of uky6c/FineSimDcConvFix-001, no
 1788353164910_sxtgo	rongjiez	hfeg0plg52	977	spice_sim	qt cpp jobmonitor editing, code-editing paradigm, reject	不可造	非 EDA: cpp 软件开发
 1794144259461_ifj1a	dandans	hfeg0plg05	595	spice_sim	lsf live job monitoring, not self-contained, reject	不可造	无真实用户意图: 作业监控非任务
 1791612109523_qv65m	mike	hfeg0plg05	486	spice_sim	env build/run reconstruction, no computational golden, reject	不可造	无 check() 牙: 无计算 golden (criterion 2)
-1793327181609_04txc	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	待定	待深读 trace 后定
-1793322259360_bisir	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	待定	待深读 trace 后定
-1789908324813_f0jns	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	待定	待深读 trace 后定
+1793327181609_04txc	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	可造	待深读: 旧判 peeked-reject; 11-15 重审, 需重读确认
+1793322259360_bisir	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	可造	待深读: 旧判 peeked-reject; 11-15 重审, 需重读确认
+1789908324813_f0jns	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	可造	待深读: 旧判 peeked-reject; 11-15 重审, 需重读确认
 1788941364124_2lp7f.messages.json	ruifan	hfeg0plg36	81	spice_sim	wrong-shard(layout/calibre/schematic)or-vague	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793071146917_b5nzb.messages.json	ruifan	hfeg0plg36	49	spice_sim	wrong-shard(layout/calibre/schematic)or-vague	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1789958710444_rhti4.messages.json	miccao	hfeg0plg37	266	spice_sim	wrong-shard(layout/calibre/schematic)or-vague	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -814,14 +814,14 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	reject consultation 解释sp文件	可造	explain/介绍 Q&A → 造「结构化讲解报告」check 验关键概念/端口/拓扑点覆盖
 1793791874358_a7erh	t0002062	hfeg0pkn002	52	spice_sim	reject how-to 怎么仿真电路+rscalc.log	可造	how-to Q&A → 造「产出生成式 how-to 指南」check 验关键步骤/命令/参数覆盖
 1792056845394_o8w1u	e0024852	hfeg0pkn002	18	spice_sim	reject consultation (schematic 看文件)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
-1792207956030_8anm0	lanxinz	hfeg0pkn002	57	spice_sim	park 1109 fresh unassessed-low	待定	待深读 trace 后定
-1792391609614_eznro	mwxi	hfeg0pkn002	43	spice_sim	park 1109 fresh unassessed-low	待定	待深读 trace 后定
+1792207956030_8anm0	lanxinz	hfeg0pkn002	57	spice_sim	park 1109 fresh unassessed-low	可造	待深读: lanxinz@pkn002 mc57, 旧判 park unassessed-low, 需取 trace
+1792391609614_eznro	mwxi	hfeg0pkn002	43	spice_sim	park 1109 fresh unassessed-low	可造	待深读: mwxi@pkn002 mc43, 旧判 park unassessed-low, 需取 trace
 1791773204994_wotp5	e0024597	hfeg0pkn004	136	spice_sim	reject wrong-domain ERC tcl + /home/e0031668 perm	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1793176175395_5i5wz	e03179	hfeg0pkn002	147	spice_sim	reject skill-use vam-agent	待定	待深读 trace 后定
+1793176175395_5i5wz	e03179	hfeg0pkn002	147	spice_sim	reject skill-use vam-agent	可造	vam-agent 建模/skill 调用任务; 旧判 skill-use 已废(skill-use 合法)
 1792220242064_duzjh	jinsongl	hfeg0pkn002	123	spice_sim	reject skill-authoring zigzag skill	不可造	无真实用户意图: skill 编写(meta)
 1793864695856_gxlr2	shunlinp	hfeg0pkn002	71	spice_sim	reject skill-install/demo Q&A	不可造	r712 host-verify: pool entry 1793864695856 不存在于 shunlinp@hfeg0pkn002 (host 仅有 1793587429686 已入 jsonl) -> stale-dup
-1792462491236_ccaea	weidong	hfeg0pkn002	133	spice_sim	reject L1 filename->CSV too simple for new case	待定	待深读 trace 后定
-1790658262664_zjzz8	e03179	hfeg0pkn002	168	spice_sim	reject skill-use vam-agent 建模	待定	待深读 trace 后定
+1792462491236_ccaea	weidong	hfeg0pkn002	133	spice_sim	reject L1 filename->CSV too simple for new case	可造	filename→CSV 提取/转换; 旧判 L1 too-simple 已废(简单真实任务合法)
+1790658262664_zjzz8	e03179	hfeg0pkn002	168	spice_sim	reject skill-use vam-agent 建模	可造	vam-agent 建模 skill 调用; 旧判 skill-use 已废
 1793755992968_1ip4z	reedchen	hfeg0pkn004	68	spice_sim	reject near-dup McPvtVmEval-001/PostSimDeckBatch-001	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1791437695704_3pn6a	thomasz	hfeg0pkn002	24	spice_sim	reject diagnostic 波形打不开	可造	debug-Q&A → 造「根因诊断报告」check 验根因定位/证据引用/修复建议覆盖
 1793104325523_ad0nq	jackjia	hfeg0pkn002	34	spice_sim	reject empty nmsg=0	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
@@ -875,14 +875,14 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1794401271107_fnxke					11-12 02:3x rescan peek reject: near-dup of op8wj (already parked r411) - same u	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794366982750_ngnm2					11-12 02:3x rescan peek reject: wrong-domain (waveform=D shard) + consultation -	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794394189493_0fuy7					11-12 02:3x rescan peek reject: near-dup of r73sm (already delivered StrongarmFo	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1794398684733_jjrpj	e0030760	10.129.2.10	509	spice_sim	r414 rescan reject: jjrpj not-viable B-domain L2/L3	待定	待深读 trace 后定
-1794394259449_bwtk9	e0030760	10.129.2.10	509	spice_sim	r414 rescan reject: bwtk9 not-viable B-domain L2/L3	待定	待深读 trace 后定
-1794382087740_nm5op	rongjiez	10.129.35.69	306	spice_sim	r414 rescan reject: nm5op not-viable B-domain L2/L3	待定	待深读 trace 后定
-1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3	待定	待深读 trace 后定
-1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	r414 rescan reject: jlgfx not-viable B-domain L2/L3	待定	待深读 trace 后定
+1794398684733_jjrpj	e0030760	10.129.2.10	509	spice_sim	r414 rescan reject: jjrpj not-viable B-domain L2/L3	可造	B-domain spice 任务(mc509); 旧判 not-viable L2/L3 已废(层级非准入)
+1794394259449_bwtk9	e0030760	10.129.2.10	509	spice_sim	r414 rescan reject: bwtk9 not-viable B-domain L2/L3	可造	B-domain spice 任务(mc509); 旧判 not-viable L2/L3 已废
+1794382087740_nm5op	rongjiez	10.129.35.69	306	spice_sim	r414 rescan reject: nm5op not-viable B-domain L2/L3	可造	B-domain spice 任务(mc306); 旧判 not-viable L2/L3 已废
+1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3	可造	B-domain spice 任务(mc122); 旧判 not-viable L2/L3 已废
+1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	r414 rescan reject: jlgfx not-viable B-domain L2/L3	可造	B-domain spice 任务(mc195); 旧判 not-viable L2/L3 已废
 1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.	不可造	无真实 trace: 记录主机上定位不到 (criterion 1)
 1793942940446_q3y71.messages.json	declanzh	hfeg0pkn005	96	spice_sim	dup ie8du (declanzh core1103 .mt0 aggregation) already covered by Mt0FolderAggSt	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
-1791424827517_ca3hh.messages.json					ambiguous (guangmingz '解析dsim_block' - parse DSIM block, single brief turn, uncl	待定	待深读 trace 后定
+1791424827517_ca3hh.messages.json					ambiguous (guangmingz '解析dsim_block' - parse DSIM block, single brief turn, uncl	可造	待深读: guangmingz '解析dsim_block' 单轮; 11-15 重审, 需确认 check 可造牙
 1791523486486_ws2bi.messages.json					DUP SpiceSim-001 (irene1li, same ws2bi session, tr/tf/duty/skew measurement task	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793668301608_71ttn.messages.json					continuation (tongni '继续/继续中断的工作' - resume, not first-turn produce)	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1793184645122_t1epq.messages.json					consultation (e0030760 '先查看lacaa最小电路设计图' - exploration, not produce)	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
@@ -922,14 +922,14 @@ peek:					peek: consultation verdi-fsdb-warning-paste	可造	Q&A/咨询 → 造�
 1790578411744_brrc3.messages.json	e0039602	hfeg0pkn002	49	spice_sim	AutoDebug code-reading+comparison report (V3 vs 0916), no SPICE/waveform sim, L1	可造	analysis-Q&A: AutoDebug 代码阅读+对比报告(11-15 新标准恢复)
 1789106338537_v9zug					kanban app session (.cline/apps/kanban/), not cline coding session, REJECT peek 	不可造	无真实用户意图: kanban app 非 cline coding 会话
 1791445250037_2gxuy					consultation: how-to open vscode, hspice:20 kw but 0 sim, REJECT peek r421	可造	how-to Q&A → 造「产出生成式 how-to 指南」check 验关键步骤/命令/参数覆盖
-1787636335993_qe1va					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1789031072098_3tnys					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1792467113057_ny0wi					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1792490112659_zhp1c					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1791537680196_nmt8f					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1792397227578_q4d8h					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1792548283238_of6ff					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
-1792630583637_kjibr					peeked-r434:not-clean-B-produce	待定	待深读 trace 后定
+1787636335993_qe1va					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 Q&A/analysis 合法, 需重读
+1789031072098_3tnys					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
+1792467113057_ny0wi					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
+1792490112659_zhp1c					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
+1791537680196_nmt8f					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
+1792397227578_q4d8h					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
+1792548283238_of6ff					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
+1792630583637_kjibr					peeked-r434:not-clean-B-produce	可造	待深读: 旧判 not-clean-B-produce; 11-15 重审, 需重读
 1789993978842_q63ux	yiz	hfeg0pgn145	248	spice_sim	peeked-r435:waveform-toggle-read-ncsim-trn-not-B-produce	不可造	wrong-shard-for-B: ncsim 波形属 D 域
 1793268873755_cwq7f	e02141	hfeg0pkn001	698	characterization	peeked-r435:sentaurus-tcad-deck-study-QA-not-B-produce	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1792564968145_q16oz	t0002801	hfeg0plg99	102	spice_sim	peeked-r435:waveform-image-merge-iwave-not-B-produce	不可造	wrong-shard-for-B: waveform 属 D 域
@@ -1009,7 +1009,7 @@ sessions.index					peek: non-B-dominant (netlist/drc/aether, spice density <6%)	
 1794536630040_5u9zc	pdsong	hfeg0plg74	80	spice_sim	r526 peek: USER#0 帮我分析下这个脚本 grepPCPNLoc_v2.py = analysis Q&A (verb 分析, C r527 ty	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
 1794376048465_g9gw3	zhenglu	hfeg0plg55	104	characterization	r526 peek: USER#0 PRODUCE extract optical/ddm/resist model from PDK .tbc.decrypt	可造	Q&A/咨询 → 造「结构化回答」check 验关键知识点覆盖 (stub/空壳必 FAIL)
 1792394008610_lyj3f					r528 peek msg0=读取网表帮我分析电路 verb=分析=analysis Q&A not produce-task REJECT	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
-1794375714680_dx87n					r528 deepread 22msgs: sch->netlist extract P2STopM5 but msg21 pyAether sandbox c	待定	待深读 trace 后定
+1794375714680_dx87n					r528 deepread 22msgs: sch->netlist extract P2STopM5 but msg21 pyAether sandbox c	可造	sch→netlist 提取(P2STopM5); 已有 r528 deepread, pyAether sandbox 上下文
 1794377551087_9mc97					r527 peek msg0=建22nm CMOS sentaurus sprocess deck=TCAD process sim Sentaurus未装非B	不可造	wrong-domain/false-positive/non-EDA/dup: 仍属有效排除 (非 B 域 spice_char 或无 EDA 意图)
 1794314899739_8dr7s					r529 peek verb=分析 Q&A not produce-task REJECT (r529 park未落盘, r530补park)	可造	analysis Q&A → 造「电路/脚本分析报告」check 验关键模块/行为/指标覆盖
 1794379025377_s6w4t					r529 peek how-to Q&A not produce-task REJECT (r529 park未落盘, r530补park)	可造	how-to Q&A → 造「产出生成式 how-to 指南」check 验关键步骤/命令/参数覆盖
