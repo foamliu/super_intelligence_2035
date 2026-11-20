@@ -1,4 +1,15 @@
 
+## §A.25 第 316b 轮实测（2026-11-20 15:3x · 5 条 · **标题框会吞正文 / 评论发送键范围**）
+
+| # | 结论 | 依据 |
+|:--|:--|:--|
+| 1 | 🔑 **`insertText` 前先确认焦点落点**：标题是 `textarea[placeholder*="标题"]`，正文是 `.ProseMirror`；若焦点还在标题框，整篇正文会灌进标题（且标题上限 2～30 字会把正文掐掉一半，**编辑器不报错**） | 首次 `FILL {"titleLen":1237,"edLen":1291}`、`CHK title:"用一个新密码…"` ⇒ 标题被写成了正文首段；修正法：标题用原生 `HTMLTextAreaElement.value` setter 只写标题（`titleLen:21`），正文 `selectNodeContents` 全选后 `insertText` 覆盖（`ps:26 / 共 1063 字`） |
+| 2 | 🔑 **正文定位要用「排除法」找标题框**：`document.querySelector('textarea')` 在发布页可能是**第三个** textarea（AI 创作框也不带 `标题` placeholder）⇒ 一律 `[...querySelectorAll('textarea')].find(x=>/标题/.test(x.placeholder||''))` | 上一轮脚本按索引取，直接取错框；本轮改用 placeholder 过滤后稳定 |
+| 3 | ⚠️ **公开页评论框 `.comment-textarea` 的提交键是 `.ttp-comment-input button.submit-btn`**，绝不能在全页找「发布/发送」——页面顶部导航也有个「发布」 | 第 1 投点到 `{"x":1918,"y":32,"t":"发布"}`（顶栏），`AFTER 评论 37`（未变）；改用 `cmt.py` 路径后 `37 → 38` |
+| 4 | ✅ **评论判据仍以「计数 +1」为主，`RECHECK mine:false` 有两因**：页面重导航后评论列表异步重渲染（读到 `items:0 / 评论 0`），或楼层折叠 | C 帖 `AFTER 4 → 5` 但 `RECHECK 评论 0 mine:false`；改用 `readcmt.py` 读公开页列表见「Xmodel唠两句 … 刚刚 · 删除」⇒ 已落库 |
+| 5 | ⚠️ **`Ctx.ev()` 没有 `flush` 参数**（第 4 次踩）：把 `flush=True` 传给它就抛 `TypeError: Ctx.ev() got an unexpected keyword argument 'flush'` | 本轮 `s1_fill.py` / `move.py` 各崩一次；删掉 `flush=` 即正常 |
+
+
 ## §A.24 第 315 轮实测（2026-11-20 12:0x · 5 条 · **图片 URL 不许手抄 / 品牌拼图可作「讲这家公司」的配图**）
 
 | # | 结论 | 依据 |
