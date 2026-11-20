@@ -1938,3 +1938,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1795079879562_3ydq7.messages.json	joeyl	hfeg0plg74	246	analog_context	case	EDA-Eval-DesignFlow-NetlistUlvtDelvtoInject-001	2026-11-20 15:23	
 1794921978969_4uyo1	max7c	hfeg0plg06	118	schematic_netlist	parked		2026-11-20 15:47	r1006 wrong-domain: verilog regression command-compare debug (shard A digital/verification); verilog:1979 dominant; U#1 'commands.txt哪些命令有问题'. D abort.
 1794296966966_l4tfv					case	EDA-Eval-DesignFlow-WaveformInvSearchProduce-001	2026-11-20 16:48	revival from B-parked(11-11 file-search consultation); 11-15 reaudit retrieval/QA legit; waveform domain=D; A-faithful U#76 verbatim; 15 assertions a-o; synthesized-reframe real fs->manifest JSON
+1795078545832_fxlzf.messages.json	joeyl	hfeg0plg74	246	schematic_netlist	parked		2026-11-20 17:08	
+1794877076915_2mwdb.messages.json	jingjiew	hfeg0plg97	357	schematic_netlist	parked		2026-11-20 17:10	
+1795053942204_k9tbi.messages.json	tianqizh	hfeg0plg89	442	waveform	parked		2026-11-20 17:11	
+1795080497883_q5elb.messages.json	guangmingz	hfeg0pfn048	271	schematic_netlist	claimed		2026-11-20 17:12	
