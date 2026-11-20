@@ -676,7 +676,7 @@
 1793260065712_n78nn	t0003117	hfeg0pkn005	4669	schematic_netlist	parked		2026-11-05 15:01	skill-loading task (invoke netlist_extract skill in skills_v0.2); not a produce-task
 1793338010547_r06g9	clarawu	hfeg0pkn004	4143	analog_context	parked		2026-11-05 15:01	RON curve monotonicity check + circuit optimization (open-ended modify-circuit task, iterative L2/L3); not single-turn produce
 1792135941514_8n60f	adaml	hfeg0pnd001	3566	analog_context	parked	EDA-Eval-DesignFlow-TspcTimingBisecTbGen-001	2026-11-18 07:36	cross-shard domain misclass: deepread+B place as spice_sim(B-domain)@hfeg0pkn002; D ledger analog_context@hfeg0pnd001 was wrong; case lives in cases/B+B.jsonl; ref solution added to shared reference/ (r863)
-1793669959152_3123n	lvyy	hfeg0pkn002	3554	analog_context	parked		2026-11-05 15:01	CML circuit sizing Q&A (why sweeping mp5 size changes current; what W/L range for 100uA); analysis+tuning not produce-task
+1793669959152_3123n	lvyy	hfeg0pkn002	3554	analog_context	parked		2026-11-20 15:45	r1006 cross-shard dup: B already CASE'd as EDA-Eval-DesignFlow-CmlBwExtensionHandbook-001 (2026-11-17). D abort per 1-trace-1-case mutex. Revert deepread->parked.
 1793763989902_37j9u	lvyy	hfeg0pkn002	3373	analog_context	parked		2026-11-05 15:01	duplicate of 3123n (same lvyy CML circuit sizing Q&A); analysis not produce-task
 1793792759786_ujw1y	qiang3xu	hfeg0pkn005	2921	analog_context	case	EDA-Eval-DesignFlow-PrbsTmCircuitSummaryQA-001	2026-11-17 04:53	r792 revive: 11-15 mandate, circuit-summary Q&A (PRBS_TM), gold=trace msg41
 1789545001824_x0t2m	ethanw	hfhds201	2068	schematic_netlist	case	EDA-Eval-DesignFlow-LatchListMatch-001	2026-11-05 15:46	
@@ -1936,3 +1936,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794827268223_o6j6c	jingjiew	hfeg0plg97	373	schematic_netlist	case	EDA-Eval-DesignFlow-FsmChkEnableProduce-001	2026-11-20 12:09	
 1793870551130_jr0o3	ronghu	hfeg0pkn005	44	schematic_netlist	case	EDA-Eval-DesignFlow-InstSupplyRailFixProduce-001	2026-11-20 12:52	REVIVAL per 2026-11-15 user order: B/C parked as debug under old rules; D revives as schematic_netlist produce (netlist supply-rail analysis + .inst correction)
 1795079879562_3ydq7.messages.json	joeyl	hfeg0plg74	246	analog_context	case	EDA-Eval-DesignFlow-NetlistUlvtDelvtoInject-001	2026-11-20 15:23	
+1794921978969_4uyo1	max7c	hfeg0plg06	118	schematic_netlist	parked		2026-11-20 15:47	r1006 wrong-domain: verilog regression command-compare debug (shard A digital/verification); verilog:1979 dominant; U#1 'commands.txt哪些命令有问题'. D abort.
