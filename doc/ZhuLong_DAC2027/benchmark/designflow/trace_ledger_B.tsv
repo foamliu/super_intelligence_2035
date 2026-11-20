@@ -1608,3 +1608,8 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795080330727_y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertPulseCheck-001	2026-11-20 12:07	
 1795081084990_t0xdo	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 12:08	near-dup DelvtoNetlistMod-001: byte-identical user msgs to 6jie5/w8iq4 (same joeyl delvto Vth injection, same modules, same PMOS+0.2 msg89)
 1795086090156_ok6tg	zanezang	hfeahpc501	30	spice_sim	case	EDA-Eval-DesignFlow-BinCountBusStimGen-001	2026-11-20 12:34	
+1795081881558_pbkq1	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 12:47	near-dup of DelvtoNetlistMod-001 (same user joeyl, same ULVT delvto netlist mod task; w8iq4 r857)
+1795085525243_5v4tq	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 12:48	near-dup of DelvtoNetlistMod-001 (same user joeyl, same ULVT delvto task)
+1795082207498_lxzq1	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 12:48	near-dup of DelvtoNetlistMod-001 (same user joeyl, same ULVT delvto task)
+1795139264863_vckxz	joeyli	hfeg0plg49	93	spice_sim	parked		2026-11-20 12:48	out-of-domain: Aether layout script (C-domain layout_aether), not spice_sim/char
+1795137757784_ewbyk	tongfanl	hfeg0pgn072	20	spice_sim	case	EDA-Eval-DesignFlow-VdbiasSyncFixGen-001	2026-11-20 13:00	
