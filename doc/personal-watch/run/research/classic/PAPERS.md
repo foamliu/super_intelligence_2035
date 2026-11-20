@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **299** 条（**第七十八轮 2026-11-21 00:0x 补 3 条 → 299**：Horovod `1802.05799`（**1,619**，预印本）/ Deformable DETR `2010.04159`（**8,952**，arXiv `comment` = ICLR 2021 Oral）/ SigLIP 2 `2502.14786`（**1,832**，预印本）；元数据 arXiv `id_list` 单篇 **3/3 `200` + `application/atom+xml`**（`published` 齐备）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（本轮 PDF 下载 30 s 内未完成）；覆盖轴 = 数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）
+
 **本轮快照**：累计 **292** 条（**第七十六轮 2026-11-20 18:0x 补 4 条 → 292**：ELECTRA `2003.10555`（**5,109**，arXiv `comment` = ICLR 2020）/ Faster R-CNN `1506.01497`（**80,700**，IEEE TPAMI 39(6):1137–1149, 2017）/ Mask R-CNN `1703.06870`（**7,047**，IEEE TPAMI 42(2):386–397, 2020）/ Soft Actor-Critic `1801.01290`（**13,567**，arXiv `comment` = ICML 2018，OpenAlex biblio pp. 1861–1870）；元数据 `id_list=2003.10555,1703.06870,1506.01497,1801.01290` **`200` + `application/atom+xml`**（9,733 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 判别式预训练的样本效率 / 共享卷积特征做近零成本候选框 / 解耦掩码分支与 RoIAlign / 最大熵离策略 RL 的种子稳定性）
 
 **本轮快照**：累计 **288** 条（**第七十五轮 2026-11-20 15:0x 补 4 条 → 288**：SimCLR `2002.05709`（**18,118**，ICML 2020）/ NeRF `2003.08934`（**1,186**，ECCV 2020 oral）/ ChatEDA `2308.10204`（**319**，IEEE TCAD 43(10):3184–3197, 2024；**&lt;500 按「本领域权威」收**）/ Routing Transformers `2003.05997`（**925**，TACL 9:53–68, 2021）；arXiv `id_list` 两批均 **`200` + atom**（10,472 B / 4 entry、9,755 B / 4 entry），OpenAlex **4/4 `200`**；ChatEDA 另用 arXiv 原生 HTML（196,479 B）读作者与 affiliation；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；⚠️ 原计划 ELECTRA 的旧记 ID `2003.05997` 实测为 Routing Transformers ⇒ 改收后者，ELECTRA 真 ID `2003.10555` 留作下轮）
@@ -5122,6 +5124,57 @@
 
 ---
 
+## 297. Horovod: fast and easy distributed deep learning in TensorFlow
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Horovod: fast and easy distributed deep learning in TensorFlow |
+| 作者（前 3） | Alexander Sergeev · Mike Del Balso（共 **2** 位；arXiv 作者字段逐字核） |
+| 年份 | **2018**（arXiv v1 `2018-02-15`；v3 为当前版本） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 为空；OpenAlex `type=preprint`，无会场记录） |
+| 被引数 | **1,619**（OpenAlex `10.48550/arxiv.1802.05799`，查询日 **2026-11-21**） |
+| arXiv / DOI | <https://arxiv.org/abs/1802.05799> ｜ arXiv DOI `10.48550/arxiv.1802.05799` |
+| 一句话贡献 | 把 **ring-allreduce** 做成 TensorFlow 的通用 allreduce 路径（`hvd.allreduce` 等），并用尽量少的代码改动让模型从单卡扩到多卡；论文的核心论点是通信库的**开销**与**改写成本**这两道门槛会让人放弃多卡。 |
+| 与我们工作的关系 | **pretrain（主 · 通信成本）**：训练日志应固定记录 allreduce 时间 / step 时间，把「扩卡效率」写成预注册判据；ring 模型的带宽-延迟分解可用于判断瓶颈在链路还是同步频率。<br>**data（数据并行口径）**：全局 batch = 单卡 batch × 卡数 × 梯度累积步数，分片方式会影响有效样本顺序 ⇒ 数据配比实验必须固定这些量。<br>**harness（复现）**：任何「多卡加速」声明都应同时给单卡基线与本机的通信占比。 |
+| 首次收录 | **2026-11-21**（第七十八轮） |
+| 核验状态 | arXiv `id_list=1802.05799` **`200` + `application/atom+xml`**（`published` `2018-02-15T23:36:51Z`，`primary_category=cs.LG`）；OpenAlex **`200`（1,619，2018，type=preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（PDF 下载 30 s 内未完成）。 |
+
+---
+
+## 298. Deformable DETR: Deformable Transformers for End-to-End Object Detection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deformable DETR: Deformable Transformers for End-to-End Object Detection |
+| 作者（前 3） | Xizhou Zhu · Weijie Su · Lewei Lu（共 **6** 位；末位 Jifeng Dai；arXiv 作者字段逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-10-08`；v4 为当前版本） |
+| 会议 / 期刊 | **ICLR 2021 Oral**（arXiv `comment` 逐字：`ICLR 2021 Oral`；OpenAlex 仍记 `type=preprint` ⇒ 以 arXiv comment 为准） |
+| 被引数 | **8,952**（OpenAlex `10.48550/arxiv.2010.04159`，查询日 **2026-11-21**） |
+| arXiv / DOI | <https://arxiv.org/abs/2010.04159> ｜ arXiv DOI `10.48550/arxiv.2010.04159` ｜ 代码 <https://github.com/fundamentalvision/Deformable-DETR> |
+| 一句话贡献 | 针对 DETR「收敛慢 + 特征分辨率受限」，把注意力改成**只在参考点周围少量采样点上做**（deformable attention），在 COCO 上以**少 10× 的训练 epoch** 超过 DETR，尤其改善**小目标**。 |
+| 与我们工作的关系 | **vision（主 · 检测头）**：给「采样预算 vs 小目标召回」一条可测轴；我们的版图/封装图目标尺度跨两个数量级，可先固定采样点数再扫特征层。<br>**designflow（评分轴）**：稀疏采样 + 集合预测（无 NMS/anchor）适合把「漏检 / 误检」拆成两条独立评分，不与 mAP 混算。<br>**harness（收敛成本）**：把「达到同等精度所需 epoch」作为单独指标记录，避免只看最终分数。 |
+| 首次收录 | **2026-11-21**（第七十八轮） |
+| 核验状态 | arXiv `id_list=2010.04159` **`200` + atom**（`published` `2020-10-08T17:59:21Z`，`comment=ICLR 2021 Oral`）；OpenAlex **`200`（8,952，2020）**；作者邮箱另用 **ar5iv HTML `200` / 267,916 B** 核对（脚注 `{zhuwalter,luotto,daijifeng}@sensetime.com` / `jackroos@mail.ustc.edu.cn` / `binli@ustc.edu.cn` / `xgwang@ee.cuhk.edu.hk`）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 299. SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features |
+| 作者（前 3） | Michael Tschannen · Alexey Gritsenko · Xiao Wang（共 **14** 位；末位 Xiaohua Zhai；arXiv 作者字段逐字核） |
+| 年份 | **2025**（arXiv v1 `2025-02-20`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 只给 checkpoint 链接，未提会议；OpenAlex `type=preprint`） |
+| 被引数 | **1,832**（OpenAlex `10.48550/arxiv.2502.14786`，查询日 **2026-11-21**） |
+| arXiv / DOI | <https://arxiv.org/abs/2502.14786> ｜ arXiv DOI `10.48550/arxiv.2502.14786` ｜ 权重 <https://github.com/google-research/big_vision> |
+| 一句话贡献 | 在 SigLIP 的图文目标上并入 **caption 预训练 + 自监督损失（自蒸馏 / 掩码预测）+ 在线数据治理**，形成统一配方；各规模在零样本分类、图文检索、VLM 迁移上均优于 SigLIP，并显著改善**定位与稠密预测**；另有支持**多分辨率 / 原生宽高比**的变体与去偏后的数据混合。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔选型）**：原生宽高比 + 多分辨率对**长宽比极端的版图截图**是直接相关变量；应作为视觉塔候选与我们现用塔同数据对照。<br>**data（图文对配方）**：caption 预训练与在线治理说明「图文对质量」不只靠离线过滤；去偏前后的配比要留档。<br>**pretrain（分辨率策略）**：多分辨率训练对 token 数与位置编码的影响，可作为 2B 预训练的数据形状预注册项。<br>**designflow**：规格书截图 / 版图注释属稠密特征任务，正好对应本文声称改进的 dense features。 |
+| 首次收录 | **2026-11-21**（第七十八轮） |
+| 核验状态 | arXiv `id_list=2502.14786` **`200` + atom**（`published` `2025-02-20T18:08:29Z`，`comment` 为 checkpoint 链接）；OpenAlex **`200`（1,832，2025，type=preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5200,6 +5253,8 @@
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
 |:--|:--|:--|:--|:--|
 | — | （本轮无新增候选，待下轮实测后填） | — | — | — |
+
+> ✅ **第七十八轮（2026-11-21 00:0x）转正 3 条**：Horovod `1802.05799`（#297，**1,619**，预印本）· Deformable DETR `2010.04159`（#298，**8,952**，ICLR 2021 Oral）· SigLIP 2 `2502.14786`（#299，**1,832**，预印本）⇒ B 轨累计 **299**（覆盖轴：数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）。核验：arXiv `id_list` 单篇 **3/3 `200` + atom** + OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则均 **0 命中**（`1802.05799` 与此前「Ring-AllReduce 通信侧」候选一致，未与 ZeRO `1910.02054` 重复）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 检测后续（DINO 系列 / Mask DINO）；④ 视觉塔对照补 SigLIP 原文 `2103.00020` 已在表内 ⇒ 改补 EVA / InternViT 一手；⑤ 存储墙侧（PIM 综述已收 ⇒ 补近三年 HBM 实测论文）。
 
 > ✅ 已晋级（第三轮转正，勿再留在候选池）：`2104.09864` RoFormer（#9）· `2310.06770` SWE-bench（#10）· `2303.11366` Reflexion（#11）· `2201.11903` CoT（#12）。
 

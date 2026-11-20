@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-21（3/5 · 00:00 早报 · B 轨 +3 → 299） · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.75; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:12px; font-size:13px; opacity:.9; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:18px; }
+  .card h2 { margin:0 0 10px; font-size:18px; color:var(--primary); line-height:1.5; }
+  .card .no { display:inline-block; background:var(--primary); color:#fff; border-radius:6px; padding:1px 9px;
+              font-size:13px; margin-right:8px; vertical-align:2px; }
+  .kv { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  .kv th, .kv td { border-top:1px solid var(--border); padding:7px 8px; text-align:left; vertical-align:top; }
+  .kv th { width:110px; color:var(--muted); font-weight:600; background:#fafbfc; }
+  tag { display:inline-block; font-size:12px; border-radius:5px; padding:1px 8px; margin-right:6px; }
+  .t-borrow { background:#e7f0ff; color:#0b3d6e; border:1px solid #b9d0f5; }
+  .t-pop { background:#eaf7ee; color:#1a7f37; border:1px solid #b7e0c3; }
+  .rm { background:#f6f8fa; border-left:3px solid var(--accent); padding:8px 14px; font-size:14px; color:#2b3b4a; margin-top:10px; border-radius:0 6px 6px 0; }
+  details { border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-top:12px; background:#fcfdff; }
+  details summary { cursor:pointer; font-weight:600; color:var(--primary); font-size:14.5px; }
+  details ul { margin:10px 0 2px; padding-left:22px; font-size:14px; }
+  details li { margin:5px 0; }
+  h3.sec { font-size:17px; color:var(--primary); margin:28px 0 10px; }
+  table.plain { width:100%; border-collapse:collapse; font-size:14px; background:var(--card); }
+  table.plain th, table.plain td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.plain th { background:#eef3f8; color:var(--primary); }
+  a { color:var(--accent); word-break:break-all; }
+  code { background:#f2f4f7; border-radius:4px; padding:1px 5px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul.tight li { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-21</h1>
+  <div class="sub"><b>00:00 时窗（早报 · A 轨 3/5 · B 轨第七十八轮 +3 → 299）</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-21 00:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
+</header>
+
+<div class="note">
+  <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> 列表 <b><code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code></b>（<b>109,971 B / 40 entry</b>，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>（与 11-20 的 15:00 / 18:00 / 21:00 三个时窗逐字相同 ⇒ 公告批本窗<b>未前进</b>）。
+  3 篇入选 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> <b>均 0 命中</b>；<code>id_list</code> 单篇查询 3/3 <code>200</code> + <code>published</code> 齐备。
+  ⚠️ 本窗只从<b>已公告的积压候选</b>里取，未把「公告批上界不动」当成「没有新论文」。
+</div>
+
+<h3 class="sec">A 轨 · 今日推荐（3 / 5）</h3>
+<div class="card">
+  <h2><span class="no">1</span>AutoMaster: Autonomous Post-Training by Making the Same Model a Better Teacher</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Guoxin Chen · Shuang Sun · Fanzhe Meng（et al.，共 6 位；末位 Wayne Xin Zhao；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CL ｜ <tag class="t-borrow">借鉴</tag> 后训练 / 行为塑造 / 教师轨迹 / agent 任务</td></tr>
+    <tr><th>中文一句话</th><td>任务「成功」并不等于知道该强化哪种行为：Skill-FT 用<b>自然语言技能</b>抑制教师轨迹里的无依据假设、无效重复与表面验证，并补出被低估的有效行为；AutoMaster 让 LLM agent 闭环做<b>轨迹分析 → 技能设计 → 数据选择 → 回滚反馈</b>。Terminal / Search / 软件工程三类任务、4B 与 9B 目标模型上，比「直接用成功教师轨迹做 SFT」平均高 <b>1.42–8.99 个百分点</b>（教师、题池、训练集大小与 SFT 配方全部固定）；另有反直觉发现：<b>SFT 时保留技能说明</b>比去掉更好（六个设置全部成立），尽管评估时看不到技能、监督输出完全相同（作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26510">abs: 2611.26510</a> ｜ <a href="https://arxiv.org/pdf/2611.26510">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：我们把「教师轨迹 → SFT」当作默认低成本路线，但一直没把<b>轨迹里的坏习惯</b>单独建模。可借三点：① <b>「成功」不是唯一的筛选轴</b>——同一批成功轨迹里，技能描述能把「碰巧成功」与「可复用行为」分开；② <b>技能说明应作为训练上下文保留</b>，这直接影响我们数据打包格式（每条样本是否带 skill 前缀）；③ <b>增益区间 1.42–8.99 pp</b> 可作为 harness 侧预注册的最小可检测效应。<br><b>风险 / 边界</b>：① 只在 4B / 9B 上做，未给 2B 或 30B+ 的曲线；② 三类任务均为 agent/终端，未覆盖纯知识评测；③ 全部数字作者自报，无第三方复现。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">2</span>MemFolder: Structure-Guided Memory Folding for Efficient Agent Memory Management</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Xuyang Liu · Chenwen Lu · Junxi Wang（et al.，共 9 位；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CL ｜ <tag class="t-borrow">借鉴</tag> 长期记忆 / 检索成本 / 上下文压缩</td></tr>
+    <tr><th>中文一句话</th><td>长期 agent 的外部记忆有两个<b>耦合</b>成本：记录越多检索越慢，检索到的上下文越长则 prefill 与解码注意力越贵；剪枝会丢证据、合并又会得到更少但更长的检索单元。MemFolder 分两段处理：<b>RecordFolder</b> 先做实体归一，按「代表性 + 互补性」选锚点，再结合语义 / 实体亲和度与时间链把兼容记录折叠成更少的检索单元；<b>ContextFolder</b> 把组内原始记录编码成紧凑文本，并用验证反馈在关键事实无法恢复时回改。三个文本记忆基准（LoCoMo / PersonaMem / LongMemEval）与两个多模态基准（M3-Bench-web / M3-Bench-robot）上，Mem0 上以 <b>50% 更少记录</b>保留 <b>99.0%</b> 原平均性能，比最强基线高 <b>1.9 个百分点</b>；叠加 ContextFolder 后，现有记录压缩方法还能进一步缩短输出（作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26427">abs: 2611.26427</a> ｜ <a href="https://arxiv.org/pdf/2611.26427">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：harness 线的记忆模块目前只按「条数」设预算，这篇把<b>条数成本</b>与<b>上下文长度成本</b>拆开，并给出可复用的两段式结构。可借三点：① <b>「代表性 + 互补性」选锚</b>比相似度 top-k 更抗冗余，适合芯片规格书这种大量近似条款的语料；② <b>用验证反馈决定是否回改编码</b>，等价于给压缩加一个「关键事实可恢复」判据；③ <b>50% 记录保留 99% 性能</b> 可作为我们记忆预算的分档起点。<br><b>风险 / 边界</b>：① 保留率是「平均性能」而非逐任务最差值，长尾任务可能掉更多；② 基准以对话/个人记忆为主，专业文档（规格书、版图注释）未覆盖；③ 数字作者自报。</div>
+</div>
+<div class="card">
+  <h2><span class="no">3</span>HiSA: Sparsifying the Hidden Dimension of RoPE Attention in LLMs</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Ambroise Borbely · Mathieu Salzmann · Olivier Verscheure（机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.LG ｜ <tag class="t-borrow">借鉴</tag> 稀疏注意力 / RoPE / 预训练 / 解码成本</td></tr>
+    <tr><th>中文一句话</th><td>不沿 token 轴做稀疏，而是沿<b>隐藏维</b>做：query / key 投影保持不变，只按 token 位置的<b>静态、无参数</b>规则把 RoPE 的 q/k 拆块，省略一部分点积。从零训练 LLM 时只计算约 <b>1/3 的 query-key 乘积</b>，效果不低于完整点积（作者称有提升）；推理时解码更快、显存更小，并给出 FlashAttention-3 的 kernel 实现；作者还展示了稠密注意力确实会学着<b>压低被 HiSA 丢掉的那部分注意力分数</b>（代码已开源）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26363">abs: 2611.26363</a> ｜ <a href="https://arxiv.org/pdf/2611.26363">pdf</a> ｜ 💻 <a href="https://github.com/ambroise-b/hisa">github.com/ambroise-b/hisa</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：pretrain 线在长上下文上最贵的两项就是注意力的 q·k 与 KV 显存，本文给的是<b>与 token 稀疏正交</b>的另一根轴。可借三点：① <b>规则无参数、按位置静态</b> ⇒ 不引入额外路由网络，训练/推理同一套 mask，工程风险低于学习式稀疏；② <b>只算 1/3 q·k</b> 是可预注册的成本目标；③ <b>FlashAttention-3 kernel + 开源</b> 让它比纯方法论文更容易试。<br><b>风险 / 边界</b>：① 「效果不降」依赖从零训练，<b>不能直接假定可对已训练 checkpoint 做后处理</b>；② 省的是 q·k 计算，KV cache 的存储节省需看具体实现；③ 作者自报，未见第三方复现；④ 与 GQA / MLA 的叠加效果未知。</div>
+</div>
+
+<h3 class="sec">B 轨 · 经典论文（第七十八轮 +3 → 299）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年 / 被引</th><th>一句话贡献</th><th>与我们工作的关系</th></tr>
+  <tr>
+    <td>297</td>
+    <td><b>Horovod: fast and easy distributed deep learning in TensorFlow</b><br><code>1802.05799</code></td>
+    <td>2018 · <b>1,619</b></td>
+    <td>把 ring-allreduce 做成 TensorFlow 的通用 allreduce 路径，并只用少量代码改动即可多卡训练。</td>
+    <td><b>pretrain（主）</b>：多机通信的成本基线；预注册项 = 通信占比与扩卡效率。<b>data</b>：数据并行分片与全局 batch 的口径。</td>
+  </tr>
+  <tr>
+    <td>298</td>
+    <td><b>Deformable DETR: Deformable Transformers for End-to-End Object Detection</b><br><code>2010.04159</code></td>
+    <td>2020 · <b>8,952</b></td>
+    <td>注意力只采样参考点周围少量 key，收敛快 10×，小目标更好。</td>
+    <td><b>vision（主）</b>：检测头的采样预算与小目标召回。<b>designflow</b>：版图缺陷检测的「稀疏采样 + 集合预测」评分轴。</td>
+  </tr>
+  <tr>
+    <td>299</td>
+    <td><b>SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features</b><br><code>2502.14786</code></td>
+    <td>2025 · <b>1,832</b></td>
+    <td>把 caption 预训练、自监督损失与在线数据治理并入统一配方，多语言并保留原生宽高比。</td>
+    <td><b>vision（主）</b>：视觉塔选型与图文对配方。<b>data</b>：去偏与在线治理。<b>pretrain</b>：多分辨率 / 原生宽高比对训练的影响。</td>
+  </tr>
+</table>
+<p style="font-size:13.5px;color:var(--muted);">核验：arXiv <code>id_list</code> 单篇 3/3 <code>200</code> + atom（<code>published</code> 齐备）；OpenAlex 3/3 <code>200</code>（1,619 / 8,952 / 1,832，查询日 2026-11-21）。会议：Deformable DETR 的 arXiv <code>comment</code> 明写 <b>ICLR 2021 Oral</b>；Horovod / SigLIP 2 的 <code>comment</code> 未提会议 ⇒ 按预印本记。数字取自 arXiv 官方摘要，<b>未做 PDF 逐页复核</b>（本轮 PDF 下载 30 s 内未完成 ⇒ 如实记）。</p>
+<h3 class="sec">作者关系网（+4 → 280）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱（级别）</th><th>状态 / 备注</th></tr>
+  <tr><td>277</td><td>Xizhou Zhu · 商汤 / 清华（论文期）</td><td>Deformable DETR</td><td><code>zhuwalter@sensetime.com</code>（B：论文脚注明文）</td><td><b>只建档</b>；2020 年地址，疑失效，暂不发信。</td></tr>
+  <tr><td>278</td><td>Michael Tschannen · Google DeepMind</td><td>SigLIP 2</td><td><b>未找到</b>（候选主页 404，不猜）</td><td>只建档。</td></tr>
+  <tr><td>279</td><td>Xiaohua Zhai · Google DeepMind</td><td>SigLIP 2</td><td><b>未找到</b>（候选主页不可达，不猜）</td><td>只建档。</td></tr>
+  <tr><td>280</td><td>Alexander Sergeev · Petuum（论文期）</td><td>Horovod</td><td><b>未找到</b>（论文未给邮箱）</td><td>只建档；价值点：ring-allreduce 的通信占比口径。</td></tr>
+</table>
+
+<h3 class="sec">作者请教信（本轮 3 封 · 累计 119 · 回信率 0/119）</h3>
+<table class="plain">
+  <tr><th>#</th><th>收件人</th><th>论文</th><th>语言 / 字数</th><th>状态</th></tr>
+  <tr><td>117</td><td>Ben Mildenhall · <code>me@bmild.com</code></td><td>NeRF <code>2003.08934</code></td><td>英文 / 181 词</td><td>✅ SENT OK 2026-11-21 00:04:19</td></tr>
+  <tr><td>118</td><td>Ross Girshick · <code>ross.girshick@gmail.com</code></td><td>Faster R-CNN <code>1506.01497</code></td><td>英文 / 178 词</td><td>✅ SENT OK 2026-11-21 00:04:21</td></tr>
+  <tr><td>119</td><td>Eric Zelikman · <code>eric@humansand.ai</code></td><td>Quiet-STaR <code>2403.09629</code></td><td>英文 / 182 词</td><td>✅ SENT OK 2026-11-21 00:04:24</td></tr>
+</table>
+<p style="font-size:13.5px;color:var(--muted);">地址均为发信前当场复核（<code>mailto:</code> 页内明文，3/3 <code>200</code>）。三封开头句与问句句式互不相同，落款严格两行且其后无任何行。回信状态：<b>已回复 0 / 无应答(&gt;14d) 0 / 未到期 119</b>；0 封到期（最早 2026-11-25）。<b>0 回信仍按待诊断信号处理，不记为成功。</b></p>
+
+<h3 class="sec">对各线的可执行建议（6 线）</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：① 把 HiSA 作为「q·k 计算降为 1/3」的候选，先在 0.5B / 4K 上做<b>同 token 预算</b>对照（判据：验证 loss 不回退 + 解码吞吐提升 ≥1.3×，预注册）；② 训练日志固定记录<b>通信占比</b>（allreduce 时间 / step 时间），以 Horovod 的 ring 模型为分母口径。</li>
+  <li><b>vision</b>：① SigLIP 2 的原生宽高比 + 多分辨率作为视觉塔候选，与我们现用塔在<b>同一图文对</b>上比零样本分类与定位；② 检测头加一组 Deformable DETR 式稀疏采样对照，只测小目标召回与收敛 epoch。</li>
+  <li><b>harness</b>：① 记忆模块按「记录条数」与「检索上下文 token」<b>两个预算</b>分别报告，参照 MemFolder 的 50% 记录 / 99% 保留作为分档；② SFT 数据打包实验：样本是否携带 skill 前缀，作为单独消融（判据：六设置平均分，参照 AutoMaster 的 +1.42–8.99 pp 区间）。</li>
+  <li><b>data</b>：① 对教师轨迹做「成功但含坏习惯」标注，先量比例再决定是否清洗（不要默认成功轨迹都可直接 SFT）；② 参考 SigLIP 2 的在线数据治理，记录去偏前后的配比变化。</li>
+  <li><b>zhulong</b>：thinking 预算实验加一条 <b>skill 前缀</b> 变量（保留 / 移除），检验「行为内部化」是否在中文任务上复现；成本口径同时报 P50 与 P99。</li>
+  <li><b>designflow</b>：把「漏检 / 误检」拆成两条评分轴（沿用 YOLO #294 的结论），并对稀疏采样检测头单独记录小目标召回，避免与整体 mAP 混在一起。</li>
+</ul>
+<h3 class="sec">附录 · 检索式与命中</h3>
+<table class="plain">
+  <tr><th>检索</th><th>结果</th></tr>
+  <tr><td><code>cat:cs.CL&amp;sortBy=submittedDate&amp;sortOrder=descending&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b>；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（未前进）</td></tr>
+  <tr><td><code>id_list=2611.26510 / 2611.26427 / 2611.26363</code></td><td>3/3 <code>200</code> + atom，<code>published</code> 齐备</td></tr>
+  <tr><td><code>id_list=1802.05799 / 2010.04159 / 2502.14786</code></td><td>3/3 <code>200</code> + atom；OpenAlex 3/3 <code>200</code></td></tr>
+  <tr><td>去重</td><td>6 个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> 均 0 命中 ⇒ 剔除 0 条</td></tr>
+  <tr><td>未收候选</td><td><code>2611.26613</code>（cs.RO 动作级批评）· <code>2611.26584</code>（后训练读出）⇒ 登记给后续时窗，本轮不写摘要</td></tr>
+</table>
+
+<h3 class="sec">晚报变更说明（AM → PM）</h3>
+<p style="font-size:14px;">（00:00 早报尚无 PM 轮；18:00 前每次补齐时在此追加，写明「改了什么 / 为什么」。）</p>
+
+<footer>
+  research 线 · 论文观察日报 · 2026-11-21 00:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+</footer>
+</div>
+</body>
+</html>

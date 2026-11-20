@@ -5703,3 +5703,6 @@
 | 2026-11-20 | 2611.24071 | Measuring and Charging for Retained Context in Long-Context LLM Services | cs.PF | 收录 |
 | 2026-11-20 | 2611.24809 | On-Policy Morphing into Hybrid Attention Models | cs.CL | 收录 |
 | 2026-11-20 | 2611.24540 | Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models | cs.CL | 收录 |
+| 2026-11-21 | 2611.26510 | AutoMaster: Autonomous Post-Training by Making the Same Model a Better Teacher | cs.CL | 收录 |
+| 2026-11-21 | 2611.26427 | MemFolder: Structure-Guided Memory Folding for Efficient Agent Memory Management | cs.CL | 收录 |
+| 2026-11-21 | 2611.26363 | HiSA: Sparsifying the Hidden Dimension of RoPE Attention in LLMs | cs.LG | 收录 |
