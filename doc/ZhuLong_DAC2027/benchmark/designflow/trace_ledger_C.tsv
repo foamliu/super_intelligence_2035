@@ -70,7 +70,7 @@
 1790046433855_egji4.messages.json	xinqiaoz	hfeg0plg76	610	physical_verify	case	EDA-Eval-DesignFlow-PdkQaSyncWorkflowAnalyze-001	2026-11-17 20:55	r725 case: PdkQaSyncWorkflowAnalyze-001 (physical_verify, mock pdk-qa-sync-workflow-analyze, k=16 a-p, B=LVS QA C1-C4 + B2=ERC QA E1, anti-hardcode A)
 1791787171667_hx63x.messages.json	xinqiaoz	hfeg0pkn004	561	physical_verify	case	EDA-Eval-DesignFlow-SshTestProfileBuilder-001	2026-11-15 18:08	handoff resume PDK QA test fixes 强状态依赖(r47)
 1784623431472_gvm3g.messages.json	e0014566	hfeg0pkn001	554	layout_virtuoso	parked		2026-11-15 20:07	r616 re-park: deepread reveals domain=spice_sim/analog_context (FineSim/Totem-SC PowerIREM), NOT C (layout/pv); belongs to shard B/D. 2 prior deepreads exist. C-domain misclassify in pool_reaudit.
-1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked		2026-11-03 11:01	handoff 弃(r46)
+1789893440245_qzgr0.messages.json	xinqiaoz	hfeg0plg76	547	physical_verify	parked	EDA-Eval-DesignFlow-DrcRuleCellMatchEngine-001	2026-11-21 07:54	r890 rollback: DrcRuleCellMatchEngine-001 was DUPLICATE of existing DrcRuleCellMatch-002 (same trace qzgr0). rolled back. keep parked.
 1786592143567_5jmnc.messages.json	e0014566	hfeg0plg58	539	layout_virtuoso	parked		2026-11-03 11:01	RsCalc/AutoVia/PowerFill 重叠既有(r45)
 1790067900307_qy90r.messages.json	xinqiaoz	hfeg0plg76	534	physical_verify	parked		2026-11-03 11:01	handoff resume PDK QA sync phase4(r47)
 1792998643161_19e3k.messages.json	jcgu	hfeg0plg95	533	physical_verify	case	EDA-Eval-DesignFlow-AetherLauncherSkill-001	2026-11-18 03:59	ssh 超时弃(r45)
