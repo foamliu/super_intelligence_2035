@@ -1926,7 +1926,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1795002165385_19znu.messages.json	reedchen	hfeg0pkn004	159	schematic_netlist	case	EDA-Eval-DesignFlow-I319BufferDelete-001	2026-11-19 23:04	
 1794897784136_jjg2c	jiashengz	hfeg0pkn002	99	schematic_netlist	case	EDA-Eval-DesignFlow-StdCellFromNetlistProduce-001	2026-11-20 04:25	
 1794795731500_05ev4.messages.json	my7li	hfeg0plg56	409	analog_context	case	EDA-Eval-DesignFlow-DqAbusLioYioMappingExtractProduce-001	2026-11-20 05:11	
-1794806896875_ibmuc	jiashengz	hfeg0plg92	538	schematic_netlist	claimed		2026-11-20 05:32	
+1794806896875_ibmuc	jiashengz	hfeg0plg92	538	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistStructureGraphProduce-001	2026-11-20 11:15	
 1794991410253_ze989	clarawu	hfeg0plg14	33	analog_context	case	EDA-Eval-DesignFlow-DronDv2ExtractProduce-001	2026-11-20 06:39	
 1794980358021_wwqts	wenfeiz	hfeg0pgn145	162	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistInstHierTrace-001	2026-11-20 07:17	
 1794797478286_gp8t1.messages.json	e0027609	hfeg0pkn005	70	schematic_netlist	case	EDA-Eval-DesignFlow-SchHierParentLocateProduce-001	2026-11-20 08:31	
