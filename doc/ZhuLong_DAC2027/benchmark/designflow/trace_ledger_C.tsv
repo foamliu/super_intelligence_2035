@@ -1349,3 +1349,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1794878796288_fmdbz	yzwang	hfeg0plg06	87	layout_virtuoso	case	EDA-Eval-DesignFlow-SpaceShieldDrcwMarkAdd-001	2026-11-21 01:29	
 1789975398513_qnayr	joelchen	hfeg0pgn019	4141	physical_verify	case	EDA-Eval-DesignFlow-ArgusDrcLogAnalyze-001	2026-11-21 03:49	
 1790230411878_yhaoi	e0041123	hfeg0plg104	2572	layout_aether	case	EDA-Eval-DesignFlow-DrcTestpatternGen-001	2026-11-21 04:39	
+1795143959958_c9l2c	alan3zh	hfeg0pkn002	3309	pg_layout	case	EDA-Eval-DesignFlow-DontTouchCellAudit-001	2026-11-21 05:30	
