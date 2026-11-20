@@ -1235,16 +1235,30 @@
   "PrismJS__prism-3372": {
     "instance_id": "PrismJS__prism-3372",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 901.5,
+    "rc": 0,
+    "model_patch_len": 333,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " test (`npm run test:dependencies`) — 24 passing\n- ✅ Examples test (`npm run test:examples`) — 284 passing\n- ✅ Identifiers & aliases tests — all passing\n- ✅ Full test suite (`npm test`) — all passing\n",
+    "stderr_tail": "prism-plantuml.js grammar\n[✓] Add plantuml entry to components.json\n[✓] Create example file examples/prism-plantuml.html\n[✓] Create test files for plantuml\n[✓] Run tests to verify implementation\n\u001b[0m\n"
   },
   "PrismJS__prism-3438": {
     "instance_id": "PrismJS__prism-3438",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 838.8,
+    "rc": 0,
+    "model_patch_len": 1914,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "00;500;600;700&display=swap');\n```\n\n**Verification**\n\n- `npm run test:languages -- --language=css` ✅\n- `npm run test:languages` (all 2,524 tests) ✅\n- `npm run test:core` ✅\n- `npm run test:patterns` ✅\n",
+    "stderr_tail": "feature'\n    ✓ – should pass test case 'punctuation_feature'\n    ✓ – should pass test case 'string_char_feature'\n\n\n  2524 passing (2s)\n\u001b[0m\n\u001b[0m$ \u001b[0mrm -f test_url.js prism-debug.js\n(no output)\n\u001b[0m\n"
   },
   "PrismJS__prism-3442": {
     "instance_id": "PrismJS__prism-3442",

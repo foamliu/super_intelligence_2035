@@ -1187,30 +1187,56 @@
   "PrismJS__prism-3174": {
     "instance_id": "PrismJS__prism-3174",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 200.6,
+    "rc": 0,
+    "model_patch_len": 8206,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "m install`. However, the minified file was updated manually to match the source change, and the regex behavior was verified directly.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3351": {
     "instance_id": "PrismJS__prism-3351",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 904.8,
+    "rc": 0,
+    "model_patch_len": 476628,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\\\", {\\\"type\\\":\\\"punctuation\\\",\\\"content\\\":\\\".\\\"},\\n        {\\\"type\\\":\\\"class-name\\\",\\\"content\\\":\\\"UUID\\\",\\\"length\\\":4}\\n    ]\\n}\\n```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3355": {
     "instance_id": "PrismJS__prism-3355",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 3.3,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "empty_patch"
   },
   "PrismJS__prism-3372": {
     "instance_id": "PrismJS__prism-3372",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 388.8,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "9715,\"outputTokens\":3759,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":385445,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-20T20:39:46.480Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "PrismJS__prism-3438": {
     "instance_id": "PrismJS__prism-3438",
