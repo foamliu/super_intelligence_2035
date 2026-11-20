@@ -1346,23 +1346,44 @@
   "alibaba-fusion__next-1500": {
     "instance_id": "alibaba-fusion__next-1500",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1046.6,
+    "rc": 0,
+    "model_patch_len": 2888,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ble/base.jsx`：将 `fixedHeader` 传递给 `Header` 组件\n- `src/table/base/header.jsx`：接收 `fixedHeader` 并透传给 `Filter`\n- `src/table/base/filter.jsx`：`fixedHeader` 为 true 时使用 `document.body` 作为 dropdown container\n",
+    "stderr_tail": "ilter}\n+                                fixedHeader={this.props.fixedHeader || this.context.fixedHeader}\n                             />\n                         ) : null;\n                     }\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1509": {
     "instance_id": "alibaba-fusion__next-1509",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 680.2,
+    "rc": 0,
+    "model_patch_len": 2782,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ainer`\n   - 新增测试：验证 `Dialog.show()` 也能正确继承 `ConfigProvider` 的 `popupContainer`\n\n### 验证结果\n\n通过本地脚本验证了以下两点：\n- `popupContainer` 确实被传递给了 `Overlay`\n- 当显式设置 `overlayProps.container` 时，该值优先于 `popupContainer`\n",
+    "stderr_tail": "oveChild(popupContainer);\n+    });\n+\n     it('should support height', () => {\n         wrapper = render(<Dialog visible/>);\n         assert(!document.querySelector('.next-dialog').style.height);\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1586": {
     "instance_id": "alibaba-fusion__next-1586",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 356.4,
+    "rc": 0,
+    "model_patch_len": 2249,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t=true` 时选中节点，当 `select=false` 时取消选中，实现 true/false 来回切换，CSS 样式 `next-selected` 也会同步变化。\n\n**2. `test/tree/index-spec.js`**\n更新了对应的测试用例，验证第二次点击同一节点时会正确取消选中（`selectedKeys=[]`，`extra.selected=false`，样式移除）。\n",
+    "stderr_tail": " component source files in the codebase\n[✓] Identify the bug in node selection toggle logic\n[✓] Implement fix for selected state toggling and CSS styles\n[✓] Verify the fix with tests or examples\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1708": {
     "instance_id": "alibaba-fusion__next-1708",

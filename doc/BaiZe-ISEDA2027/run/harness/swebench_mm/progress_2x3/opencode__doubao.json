@@ -5341,30 +5341,58 @@
   "highlightjs__highlight.js-3559": {
     "instance_id": "highlightjs__highlight.js-3559",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 98.1,
+    "rc": 0,
+    "model_patch_len": 878,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ted normally, matching the color of other brackets.\n\nThe test failure is only because new test cases were added to the test file without updating the expected output - the actual fix works correctly.\n",
+    "stderr_tail": "ould.js:275:17)\n      at Assertion.value (node_modules/should/cjs/should.js:356:19)\n      at /dev/shm/harness_mm_2x3/workdirs/opencode__doubao/highlightjs_highlight.js/test/markup/index.js:36:32\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3644": {
     "instance_id": "highlightjs__highlight.js-3644",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 118.7,
+    "rc": 0,
+    "model_patch_len": 407,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Fixed. Added support for CMake multi-line comments (`#[[` to `]]`) in `/src/languages/cmake.js`.\n",
+    "stderr_tail": "  hljs.COMMENT(\n+    /#\\[\\[/,\n+    /\\]\\]/\n+  ),\n   hljs.HASH_COMMENT_MODE,\n   hljs.QUOTE_STRING_MODE,\n   hljs.NUMBER_MODE\n ]\n\n\u001b[0m\n\u001b[0m$ \u001b[0mrm test_cmake_comment.html test_cmake.mjs\n(no output)\n\u001b[0m\n"
   },
   "openlayers__openlayers-10340": {
     "instance_id": "openlayers__openlayers-10340",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 931.4,
+    "rc": 0,
+    "model_patch_len": 964016,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "r since Circle geometry uses Cartesian units which don't map uniformly to spherical coordinate systems. For perfect circles in the view when using `useGeographic`, use `createRegularPolygon` instead.\n",
+    "stderr_tail": "2m\n[\u001b[1m./test/test-extensions.js\u001b[39m\u001b[22m] 14.3 KiB {\u001b[1m\u001b[33mtest-extensions\u001b[39m\u001b[22m}\u001b[1m\u001b[32m [built]\u001b[39m\u001b[22m\n    + 598 hidden modules\n\u001b[34mℹ\u001b[39m \u001b[90m｢wdm｣\u001b[39m: Compiled successfully.\n\u001b[0m\n"
   },
   "openlayers__openlayers-10478": {
     "instance_id": "openlayers__openlayers-10478",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 139.8,
+    "rc": 0,
+    "model_patch_len": 1363,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "iles are fetched again when needed.\n\nThese changes prevent the white areas by ensuring all required source tiles are loaded before reprojection, even if they were previously disposed when zoomed out.\n",
+    "stderr_tail": ".forEach(function(tile, i, arr) {\n   const state = tile.getState();\n-  if (state == TileState.IDLE) {\n+  if (state == TileState.IDLE || state == TileState.ABORT) {\n     tile.load();\n   }\n });\n \n\n\u001b[0m\n"
   },
   "openlayers__openlayers-10545": {
     "instance_id": "openlayers__openlayers-10545",

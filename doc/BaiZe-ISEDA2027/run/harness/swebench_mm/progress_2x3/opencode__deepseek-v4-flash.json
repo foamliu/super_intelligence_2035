@@ -2034,16 +2034,30 @@
   "bpmn-io__bpmn-js-1236": {
     "instance_id": "bpmn-io__bpmn-js-1236",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 853.4,
+    "rc": 0,
+    "model_patch_len": 1000,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " }`. For subprocess morphs, dimensions are preserved whenever the expansion state stays the same. The original expanded→expanded logic is preserved for non-subprocess activities in the `else` branch.\n",
+    "stderr_tail": "and how subprocess/ad-hoc dimensions are handled\n[✓] Identify the bug - dimensions changing when collapsed subprocess is made ad-hoc\n[✓] Implement the fix in BpmnReplace.js\n[✓] Verify with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1238": {
     "instance_id": "bpmn-io__bpmn-js-1238",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 619.7,
+    "rc": 0,
+    "model_patch_len": 1066,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "that correctly walks up to the nearest `Process`/`SubProcess`/`Collaboration` and places the association in the `artifacts` containment array — it just was never being called for associations before.\n",
+    "stderr_tail": " their parents work\n[✓] Find the code that handles moving source/target of associations\n[✓] Implement the fix to update association parent when moving source/target\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1256": {
     "instance_id": "bpmn-io__bpmn-js-1256",
