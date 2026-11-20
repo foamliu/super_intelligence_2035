@@ -1,6 +1,8 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
 WAITING: 0
+> 🟢 **心跳 · 2026-11-20 (R51) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R51 刷新点：iter ~262.0k(262030)/700k(37.4%) step~7.19s(末8步均值7185ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2315/4950=46.8% ETA~23.2h ~99.0B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=28.62✅ .29 load=24.29✅ / /nas_user 43T✅ / 全量 live numbers 同步 R51 (v3.14: MM-web 46.2%→46.8%, step 7.2s→7.19s, iter 262.0k(262000)→262.0k(262030), .12 load 30.67→28.62, .29 load 26.51→24.29) / commit+push**。
+
 > 🟢 **心跳 · 2026-11-20 (R50) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R50 刷新点：iter ~262.0k(262000)/700k(37.4%) step~7.2s(末8步均值7215ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2289/4950=46.2% ETA~23.4h ~97.8B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=30.67✅ .29 load=26.51✅ / /nas_user 43T✅ / 全量 live numbers 同步 R50 (v3.13: MM-web 43.3%→46.2%, step 7.21s→7.2s, iter 261.3k→262.0k, .29 load 25.87→26.51) / commit+push**。
 
 > 🟢 **心跳 · 2026-11-20 (R49) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R49 刷新点：iter ~261.3k(261260)/700k(37.3%) step~7.21s(末8步均值7215ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2146/4950=43.3% ETA~24.4h ~91.0B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=29.75✅ .29 load=25.87✅ / /nas_user 43T✅ / 全量 live numbers 同步 R49 (v3.12: MM-web 42.6%→43.3%, step 7.32s→7.21s持续向好, iter 261.1k→261.3k, .29 load 30.38→25.87) / commit+push**。
