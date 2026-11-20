@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-21 (R67) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R67 刷新点：iter ~264.8k(264800)/700k(37.8%) step~7.01s(末8步均值~7010ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2925/4950=59.1% ETA~17.8h ~124B tok(log 逐 shard sum 实测,ETA持续下降) / Nemotron-CC-Math ✅完成(193/193,195.4B tok,0errors) / Math-Reasoning ✅完成(2228/2228,0inc) / Code-Reasoning ✅完成(1637/1637,0inc) / MegaMath-web下载✅完成(4950/4950,0inc) / latest ckpt=264k / .12 load=26.3✅ .29 load≈29.6✅ / /nas_user 43T✅ / 全量 live numbers 同步 R67 (v3.30: MM-web 58.4%→59.1%, step 7016ms→7010ms, iter 264630→264800, .12 load 27.3→26.3, .29 load 28.2→29.6, ETA 18.1h→17.8h, 123B→124B) / commit+push**。
+
 > 🟢 **心跳 · 2026-11-21 (R66) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R66 刷新点：iter ~264.6k(264630)/700k(37.8%) step~7.02s(末8步均值~7016ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2890/4950=58.4% ETA~18.1h ~123B tok(log 逐 shard sum 实测,ETA持续下降) / Nemotron-CC-Math ✅完成(193/193,195.4B tok,0errors) / Math-Reasoning ✅完成(2228/2228,0inc) / Code-Reasoning ✅完成(1637/1637,0inc) / MegaMath-web下载✅完成(4950/4950,0inc) / latest ckpt=264k / .12 load=27.3✅ .29 load≈28.2✅ / /nas_user 43T✅ / 全量 live numbers 同步 R66 (v3.29: MM-web 57.7%→58.4%, step 7011ms→7016ms, iter 264560→264630, .12 load 26.8→27.3, .29 load 27.0→28.2, ETA 18.4h→18.1h, 121.5B→123B) / commit+push**。
 
 
@@ -61,7 +63,6 @@ WAITING: 0
 
 > 🟢 **心跳 · 2026-11-19 (R4) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + 主要刷新点：PC-1~PC-4 全部✅完成 / PC-2 MegaMath 5子集364shard分词全完成(64.97B tok) / PC-3 污染闸门9277tasks黑名单就绪 / PC-4 blend_s2_preblend.tsv 10源已落盘(含finemath) / 新增§8 S2零重叠方案(方案D+E,换SEED=5678,总体重叠~12%) / 新增§9 数据源引用(Nemotron-CC-Math arXiv:2508.15096/MegaMath arXiv:2504.02807/stack-v3/finemath) / 甘特图扩展到12-25 / Go/No-Go G1~G5全部PASS / v2保留不删 / commit+push完成**。
 
-> 🟢 **心跳 · 2026-11-19 (R3) — fig:data-mix 饼图调优/TABLE IV 删2列/数据源+Decay+LongCtx 引用补齐 + 编译0err**：① Fig-2 三饼图 scale 2.5→3.0（直径 6cm = 3.5×原 0.85，超"2-3×"目标）、minipage 0.32→0.33linewidth（更宽容纳放大饼）、标题间距 12pt→16pt（VQA 确认无重叠、clear white space）、Decay 4%/2% 外部 leader-line 标签改为饼内错位标签（消除 bounding box 不一致、所有饼同尺寸）、图题删除冗余末句"S2 category proportions follow the finalized 4:4:2 blend configuration"（中英文同步删）；② TABLE IV（tab:prod-budget）已为 3 列（Phase/Tokens/Steps，Wall-clock/Status 前轮已删）；③ 数据源引用 R2 已齐（Nemotron-CC-Math/FineMath/MegaMath/Stack-v3 全部 \cite + bib entry）；④ Decay 段引用已齐；⑤ Long-Context 段引用已齐；`latexmk -pdf main.tex` 0 error / 0 undefined ref / 0 undefined citation / 0 LaTeX Warning（6 页），VQA 确认饼图填充宽度良好、无标题重叠、所有百分比标签可见。
 
 > 🔴 **用户令 2026-11-18 — S2 overlap 研究 + PC-4 blend TSV + Nemotron/finemath 分词 · 已交付**：
 > **S2 overlap 报告**：`reports/report_s2_data_overlap_study.md`（455行/6方案/Megatron源码逐行分析）。结论：当前blend不排除S1已训数据；同种子重叠~83-100%；推荐方案D+E（补新源stack-v3/MegaMath天然零重叠 + S2换SEED=5678）；完全排除不可行。
