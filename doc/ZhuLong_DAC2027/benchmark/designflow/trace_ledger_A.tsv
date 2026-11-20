@@ -499,7 +499,7 @@
 1793867092418_uemp5	e0039602	hfeg0pkn005	66	digital	parked		2026-11-14 10:10	r503: verilog-lib-trans tool retrieval-logic Q&A (LLM tooling meta)
 1793873301625_fg7hf	e0039602	hfeg0pkn005	56	digital	parked		2026-11-14 10:10	r503: LLM-conversion-model评审prompt/stdcell相似匹配 Q&A (tooling meta)
 1794482509558_n7ot5	szcao	hfeg0pgn145	55	digital	case	CmPatternRunGen-001	2026-11-18 01:53	r704 reaudit revived: produce-task cmlist->test.run+run_script (digital, U#8/U#26/U#34); all dep files in trace read_files tool_result=self-contained; deepread DONE trace_deepreads/n7ot5_cmlist_run_gen.md; synth DEBT 1 next round (CmPatternRunGen-001)
-1791854347080_pits0	johnl	hfeg0pkn001	52	digital	parked		2026-11-14 10:10	r503: 看下仿真激励在哪里 analysis Q&A
+1791854347080_pits0	johnl	hfeg0pkn001	52	digital	case	EDA-Eval-DesignFlow-SimStimulusLocateQA-001	2026-11-20 11:23	r851: 仿真激励定位 analysis-Q&A, B档 synthesized, k=13/13, 11-15 reaudit 候选池重审待深读 pits0 落地 (旧 r503 weak Q&A-gate 误杀→复活)
 1793172663300_7hv1e	ruisongs	hfeg0pfn087	41	digital	case	EDA-Eval-DesignFlow-XrunCuvmurDiagnose-001	2026-11-17 22:20	r503: 分析log error怎么导致 debug Q&A
 1794206891160_wvtya	e0039602	hfeg0pkn005	39	digital	case	EDA-Eval-DesignFlow-ProjVersionDiffAnalyze-001	2026-11-17 10:06	r503: 三个版本项目有什么不同 version-diff analysis Q&A
 1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	case	EDA-Eval-DesignFlow-RedBistLoopCountDiagnose-001	2026-11-20 10:51	r503: sim-path+pattern-path debug (truncated) debug pattern

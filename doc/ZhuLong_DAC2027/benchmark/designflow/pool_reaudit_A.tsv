@@ -177,7 +177,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1789453406100_p28m8	e0017484	hfeg0plg54	75	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	canned trigger(启动业务场景:仿真与验证)+analysis Q&A
 1793867092418_uemp5	e0039602	hfeg0pkn005	66	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	verilog-lib-trans tool retrieval-logic Q&A(LLM tooling meta),prose
 1793873301625_fg7hf	e0039602	hfeg0pkn005	56	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	LLM-conversion-model评审prompt Q&A(tooling meta),prose
-1791854347080_pits0	johnl	hfeg0pkn001	52	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'analysis Q&A'作废;待深读:看下仿真激励在哪里,若有具体stimulus file/signal gold可specificity-oracle,需核
+1791854347080_pits0	johnl	hfeg0pkn001	52	verification	旧判:weak(Q&A非produce)	可造(已造r851)	旧判'analysis Q&A'作废(11-15 analysis-Q&A合法);r851已造 EDA-Eval-DesignFlow-SimStimulusLocateQA-001(B档 synthesized,S5 analysis-Q&A+specificity oracle,k=13/13,仿真激励定位+只看端口相关,真实域=verification DDR5 xrun testbench)
 1794450614593_7oy74	thomas1w	hfeg0pjn099	39	digital	旧判:weak(Q&A非produce)	可造(已造r850)	r850已造RedBistLoopCountDiagnose-001(B档synthesized debug-Q&A k=16/16):repeat(8)实跑8次,A_Summary按pattern_name变化记行,第7/8轮连续撞同分支合并故只7条,第8轮new=0缓冲上限32满.资产/rundata,/proj对评测账号Permission denied→B档reframe
 1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	'workspace have what'infra Q&A,thin
 1791280343229_bp54q	mwxi	hfeg0pkn003	76	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	crontab task-recovery infra
