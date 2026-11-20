@@ -6,6 +6,11 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-20 21:0x）**：作者 **276** 人（编号最大 **276**）· X 已核验 **107**（本轮 +1：`@scut_longhui` 经 `og:title` + `og:description` 双源核验）· 已发信 **116**（台账 #1–#116）· 回信 **0**。
+
+> **第七十七轮增量（2026-11-20 21:0x）**：作者网 271 → **276**（#272 Eric Zelikman **A 级** `eric@humansand.ai`（`ezelikman.github.io` 页内明文，`200` / 19,986 B；页内明文 Stanford University）/ #273 Longhui Yu **B 级** `yulonghui@stu.pku.edu.cn`（arXiv 原生 HTML `200` / 304,026 B 的 `mailto:`，渲染把 `7.5pt` 前缀粘入 ⇒ 按上下文还原；X 双源核到现职 **Moonshot AI · Post-train KIMI**，学生邮箱可能已失效 ⇒ 暂不发）/ #274 Weisen Jiang **B 级** `wjiangar@cse.ust.hk`（同源 HTML 作者块）/ #275 Nicolas Carion **未找到**（`nicolascarion.github.io` `404`、GitHub `email=null`、ar5iv 页无邮箱明文）/ #276 Joseph Redmon **未找到**（`pjreddie.com` `200` / 14,063 B 无 `mailto:`、GitHub `email=null`）），来自本轮 B 轨 #293 DETR / #294 YOLO / #295 Quiet-STaR / #296 MetaMath；已发信仍 **116**（今日 12/12 满，只备 11-21 第 3 封草稿）；回信 **0**。
+
+
 > **当前计数（2026-11-20 09:0x）**：作者 **260** 人（编号最大 **260**）· X 已核验 **106**（本轮 5 个主页 `href` 均实读，但未做 `og:title` 二次核验 ⇒ 按纪律不计入）· 已发信 **114**（台账 #1–#114；另有 1 封主题行更正，不计入）· 回信 **0**。
 
 > **第七十三轮增量（2026-11-20 09:0x）**：作者网 255 → **260**（#256 Ji Lin **A 级** `jilin.eecs@gmail.com`（`linji.me` 页内 `jilin.eecs AT gmail`，`200` / 58,984 B）/ #257 Tony Z. Zhao **A 级** `tonyzihaozhao@gmail.com`（`tonyzhaozh.github.io` 页内 `mailto:`，`200` / 24,093 B）/ #258 Guangxuan Xiao **A 级** `xiaoguangxuan@gmail.com`（`guangxuanx.com` 页内 `mailto:`，`200` / 15,305 B，经代理）/ #259 Luca Soldaini **A 级** `luca@soldaini.net`（`soldaini.net` 页内 `mailto:`，`200` / 12,855 B）/ #260 Wei-Lin Chiang **无邮箱**（主页 `200` / 20,604 B 无明文 ⇒ 待跟踪））；⚠️ **同作者去重**：Guangxuan Xiao 已于 11-17 收 #69、Soldaini 已于 11-18 收 #89 ⇒ 本轮两篇经典改投 Ji Lin（SmoothQuant 二作）与不投（Dolma），未重复发信。
@@ -3869,5 +3874,71 @@
 | X 账号 | **未找到**（主页无 X 外链；🚫 不猜） |
 | 状态 | **草稿已备**（`drafts/1506.01497.md`，11-21 时窗发） |
 | 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：RPN「共享全图卷积特征」是**成本结构**问题的源头答案；可问「锚框尺度/长宽比集合与特征层数哪个是跨尺度召回的主瓶颈」，以及「四步交替训练 vs 近似联合训练的实际差异」——两条都能回填 vision 线检测头的预算分配与 data 线的标注粒度选择。 |
+
+
+### 272. Eric Zelikman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Eric Zelikman（英语姓名族属 ⇒ 英文） |
+| 机构 | **Stanford University**（`https://ezelikman.github.io/` 页内明文 Stanford University；2026-11-20 实测 `200` / 19,986 B） |
+| 代表论文 | **Quiet-STaR**（`2403.09629`，B 轨 #295，一作）· STaR（Self-Taught Reasoner） |
+| 邮箱 | `eric@humansand.ai`（**A 级**：主页页内明文） |
+| 主页 | <https://ezelikman.github.io/> |
+| X 账号 | **未找到**（主页未见 X 外链；🚫 不猜） |
+| 状态 | **草稿已备**（`drafts/2403.09629.md` + `bodies/2026-11-21-2403.09629.txt`，11-21 时窗发，英文 182 词） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：把「思考」放在**继续预训练**而非任务微调里，是 thinking 预算实验的前置证据；三问集中在 tokenwise 并行采样的算力占比、只有 REINFORCE 信号时如何防止「想法抄下一个 token」、以及收益是否依赖极大的继续预训练 token 数 —— 均直接回填 zhulong 的 thinking 轴与 pretrain 的辅助损失设计。 |
+
+### 273. Longhui Yu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Longhui Yu（拼音姓名族属 ⇒ 中文；汉字写法本轮未核，不猜） |
+| 机构 | **Moonshot AI**（X 页 `og:description` 明文 `Post-train KIMI @Kimi_Moonshot`）· **Peking University 硕士**（同源 `MS Peking University @PKU1898`） |
+| 代表论文 | **MetaMath**（`2309.12284`，B 轨 #296，一作）· 数学推理数据自举 |
+| 邮箱 | `yulonghui@stu.pku.edu.cn`（**B 级**：arXiv 原生 HTML `200` / 304,026 B 的 `mailto:`；渲染把 `7.5pt` 前缀粘进地址，按上下文还原；主页无明文邮箱 ⇒ 未双源复核） |
+| 主页 | <https://yulonghui.github.io/>（`200` / 18,583 B） |
+| X 账号 | **@scut_longhui**（已核验：`x.com/scut_longhui` 经代理 `200`，`og:title` = `Longhui Yu (@scut_longhui) on X`，`og:description` = `Post-train KIMI @Kimi_Moonshot | MS Peking University @PKU1898`） |
+| 状态 | **待跟踪**（学生邮箱 + 已入职公司 ⇒ 地址新鲜度存疑，**暂不发**；如需联系优先找 Moonshot 现职公开地址） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + PKU 硕士；🚫 不因现职 Moonshot / 论文英文 / gmail 类邮箱判英文)`。价值点：MetaMath 的「多视角改写题目、不改答案」是 data 线扩题的低成本做法；可问改写后的**答案一致性过滤阈值**与**近重复去重**口径，以及 GSM8K/MATH 去污染的实际 n-gram 阈值。 |
+
+### 274. Weisen Jiang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Weisen Jiang（拼音姓名族属 ⇒ 中文；汉字写法本轮未核，不猜） |
+| 机构 | **香港科技大学（HKUST）**（arXiv 原生 HTML 作者块，邮箱域 `cse.ust.hk`） |
+| 代表论文 | **MetaMath**（`2309.12284`，B 轨 #296，二作） |
+| 邮箱 | `wjiangar@cse.ust.hk`（**B 级**：arXiv 原生 HTML `200` / 304,026 B 作者块明文） |
+| 主页 | **未找到**（本轮未核到本人主页；🚫 不用同名页替代） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文 ≤1 封 ⇒ 优先一作；不并发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 香港机构)`。价值点同 #273：题目自举与去重口径；若一作地址失效，可作为同论文的第二联系人（**仅在确认一作不可达后**再考虑，不催）。 |
+
+### 275. Nicolas Carion
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nicolas Carion（法语姓名族属；若将来发信 ⇒ **法语称谓问候 + 英文正文**） |
+| 机构 | **Facebook AI Research**（论文时期，ar5iv 页明文 `Facebook AI Research`；现状未核 ⇒ 不写现雇主） |
+| 代表论文 | **DETR**（`2005.12872`，B 轨 #293，一作） |
+| 邮箱 | **未找到**（`nicolascarion.github.io` `404`；GitHub API `nicolascarion` 的 `email=null`；ar5iv 页 `200` / 272,409 B 无邮箱明文） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=法语(判据=法语姓名族属 + 法国/FAIR Paris 机构；欧洲语言只做称谓问候 + 英文正文)`。价值点：DETR 的「固定 query 槽 + 二分匹配」把 NMS 与 anchor 从调参空间移除，是 vision 线检测头的成本对照；若拿到地址，可问 query 数与小目标召回的关系。 |
+
+### 276. Joseph Redmon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Joseph Redmon（英语姓名族属 ⇒ 英文） |
+| 机构 | **University of Washington**（论文时期；现状未核 ⇒ 不写现雇主） |
+| 代表论文 | **YOLO**（`1506.02640`，B 轨 #294，一作）· YOLOv2 / YOLOv3 |
+| 邮箱 | **未找到**（`https://pjreddie.com/` `200` / 14,063 B 无 `mailto:`；GitHub API `pjreddie` 的 `email=null`；论文旧地址未复核 ⇒ 🚫 不发旧地址） |
+| 主页 | <https://pjreddie.com/> |
+| X 账号 | **未找到**（主页无 X 外链；🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：单阶段检测的**成本-精度取舍**是 vision 线实时筛查的基线；其「误检更少、定位更差」的结论可直接用于 designflow 造题时把漏检/误检拆成两条评分轴。 |
 
 

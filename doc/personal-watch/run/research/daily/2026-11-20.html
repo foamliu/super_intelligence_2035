@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-20（5/5 · 18:00 补 B 轨 +4 → 292） · research 线</title>
+<title>论文观察日报 · 2026-11-20（5/5 · 21:00 补 B 轨 +4 → 296） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,15 +47,16 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-20</h1>
-  <div class="sub"><b>18:00 时窗（A 轨 5/5 已满 · B 轨第七十六轮 +4 → 292）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 18:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>21:00 时窗（A 轨 5/5 已满 · B 轨第七十七轮 +4 → 296）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 21:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
 <div class="note">
   <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL</code> 列表 <b><code>HTTP 200</code> + <code>application/atom+xml; charset=utf-8</code></b>（<b>94,399 B / 40 entry</b>），最新 <code>published</code> = <b><code>2026-11-18T18:56:12Z</code></b> —— 与 11-19 的 15:00 / 15:30 / 18:00 / 21:00 <b>逐字一致</b>，公告批<b>连续多窗未前进</b>。<b>今日是新的一天、A 轨额度重置为 5</b> ⇒ 不再「0 新收」，而是从该批<b>未收录且仍在 72h 窗口</b>的条目里挑 3 篇（<code>published</code> 距今约 <b>30–39h</b>），逐条 <code>id_list</code> 复核。<br>
   三篇均实测 arXiv <code>id_list</code> <code>200</code> + atom 有真实 <code>published</code>；PDF <b><code>HTTP 200</code> + <code>%PDF-</code></b>（559,325 / 564,759 / 248,531 B）<b>但三份均截断</b>（无 <code>%%EOF</code>、<code>pdftotext</code> 报 xref 错误）⇒ 数字<b>只取自 arXiv 摘要与 abs 页 <code>citation_*</code> 元数据</b>，逐条标注「未做 PDF 逐页复核」。另：arXiv <code>id_list</code> 批量接口在 00:00 时窗对 B 轨返回 <b><code>429</code></b>，已改用 abs 页元数据核验（详见文末附录）。<br>
-  <b>03:00 时窗追加</b>：<code>id_list=2611.24809,2611.24540</code> ⇒ <code>200</code> / <code>application/atom+xml</code> / <b>4,464 B / 2 entry</b>，<code>published</code> 分别 <b><code>2026-11-18T17:45:51Z</code></b> / <b><code>2026-11-18T14:48:52Z</code></b>（距本轮 33–36h，仍在 72h 窗口）；两篇数字取自 <b>arXiv 原生 HTML 2/2 <code>200</code></b>（966,440 / 122,470 B），<b>未做 PDF 逐页复核</b>。
+  <b>03:00 时窗追加</b>：<code>id_list=2611.24809,2611.24540</code> ⇒ <code>200</code> / <code>application/atom+xml</code> / <b>4,464 B / 2 entry</b>，<code>published</code> 分别 <b><code>2026-11-18T17:45:51Z</code></b> / <b><code>2026-11-18T14:48:52Z</code></b>（距本轮 33–36h，仍在 72h 窗口）；两篇数字取自 <b>arXiv 原生 HTML 2/2 <code>200</code></b>（966,440 / 122,470 B），<b>未做 PDF 逐页复核</b>。<br>
+  <b>21:00 时窗追加</b>：<code>cat:cs.CL</code> ⇒ <code>200</code> / <b>109,971 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>，<code>published</code> 上界仍 <b><code>2026-11-19T18:57:25Z</code></b>（与 15:00 / 18:00 逐字相同）⇒ A 轨 <b>0 新收</b>（今日 5/5 已满，不替换、不增收）。B 轨四篇 = <code>id_list=2005.12872,1506.02640,2403.09629,2309.12284</code> ⇒ <b><code>200</code> / atom / 10,477 B / 4 entry</b>；OpenAlex <b>4/4 <code>200</code></b>（<b>25,731 / 66,671 / 436 / 1,029</b>）；数字取自 arXiv 官方摘要，<b>未做 PDF 逐页复核</b>。
 </div>
 
 <div class="card">
@@ -727,8 +728,100 @@
   </table>
 </div>
 
+<h3 class="sec">🅱 B 轨 · 第七十七轮 +4 → 296（无 NMS 的集合检测 / 单阶段实时基线 / 预训练期 thinking / 题目自举）</h3>
+<h3 class="sec" style="font-size:15px;margin-top:6px;">21:00 时窗增量</h3>
+
+<div class="card">
+  <h2><span class="no">B17</span>End-to-End Object Detection with Transformers</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Nicolas Carion · Francisco Massa · Gabriel Synnaeve（共 6 位；末位 Sergey Zagoruyko）· Facebook AI Research</td></tr>
+    <tr><th>年份 / 出处</th><td>2020 首次提交（<code>2020-05-26</code>）· <b>ECCV 2020</b>（OpenAlex：LNCS pp. <b>213–229</b>，DOI <code>10.1007/978-3-030-58452-8_13</code>）· arXiv <code>2005.12872</code></td></tr>
+    <tr><th>被引</th><td><b>25,731</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>把检测当<b>集合预测</b>：<b>二分匹配</b>的集合损失强制「一个目标一个预测」，配 transformer 编码器-解码器与一小组<b>可学习 object queries</b>，<b>去掉 NMS 与 anchor 生成</b>；COCO 上精度 / 耗时与高度优化的 Faster R-CNN 基线相当，并可统一扩展到全景分割（摘要口径）。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>vision（主 · 无 NMS 的检测头）</b>：版图图形 / 封装元件若要端到端区域输出，先试「固定 query 槽 + 集合损失」，把 NMS 阈值与 anchor 超参从调参空间移除。<b>designflow</b>：集合式输出天然支持「一对象一答案」判分，可把漏检 / 重复检分开计分。<b>harness</b>：必须同报 query 数 + 训练 epoch（原文 500）+ AP / AP50。<b>data</b>：集合损失对「同一实物多次标注」敏感 ⇒ 先定去重规则。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2005.12872">https://arxiv.org/abs/2005.12872</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B18</span>You Only Look Once: Unified, Real-Time Object Detection</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Joseph Redmon · Santosh Divvala · Ross Girshick（共 4 位；末位 Ali Farhadi）· University of Washington / Allen Institute for AI（论文时期）</td></tr>
+    <tr><th>年份 / 出处</th><td>2015 首次提交（<code>2015-06-08</code>，v5 当前）· <b>CVPR 2016</b>（pp. <b>779–788</b>，DOI <code>10.1109/cvpr.2016.91</code>）· arXiv <code>1506.02640</code></td></tr>
+    <tr><th>被引</th><td><b>66,671</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>把检测写成<b>单网络回归</b>：一次前向直接出框 + 类别概率，整条流水线端到端优化；基础模型 <b>45 fps</b>、Fast YOLO <b>155 fps</b> 且 mAP 仍是其它实时检测器的两倍（摘要口径）；定位误差更多、但「无物体处乱报」显著更少，迁移到艺术画时优于 DPM / R-CNN。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>vision（主 · 单阶段成本基线）</b>：实时筛查（缺陷初筛 / 版面快筛）先量 YOLO 式成本，再决定是否上两阶段或 transformer。<b>data</b>：整图一次回归 ⇒ 标注要覆盖「背景即负样本」，并给出每图目标数分布。<b>designflow</b>：造题把漏检与误检设成两条独立评分轴。<b>harness</b>：检测数字成组报 mAP + fps + 输入分辨率 + GPU 型号。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/1506.02640">https://arxiv.org/abs/1506.02640</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B19</span>Quiet-STaR: Language Models Can Teach Themselves to Think Before Speaking</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Eric Zelikman · Georges Harik · Yijia Shao（共 6 位；末位 Noah D. Goodman）· Stanford University 等</td></tr>
+    <tr><th>年份 / 出处</th><td>2024 首次提交（<code>2024-03-14</code>，v2 当前）· <b>arXiv 预印本</b>（<code>comment</code> 空；OpenAlex <code>type=preprint</code> ⇒ 不写未核会议）· arXiv <code>2403.09629</code></td></tr>
+    <tr><th>被引</th><td><b>436</b>（OpenAlex，查询日 2026-11-20；<b>&lt;500，按「方法论常青」收</b>：把「先想再说」做成任意文本上的自监督目标）</td></tr>
+    <tr><th>一句话贡献</th><td>在每个 token 处先生成一段<b>内部想法</b>再预测后文，用<b>逐 token 并行采样</b> + 可学习<b>想法起止 token</b> + <b>扩展 teacher forcing</b> 控成本；继续预训练后<b>零样本</b>（无任务微调）把 GSM8K <b>5.9% → 10.9%</b>、CommonsenseQA <b>36.3% → 47.2%</b>，并降低难 token 困惑度（摘要口径）。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>zhulong（主 · thinking 轴前置证据）</b>：thinking 可在继续预训练里用「解释后文」的自监督学出来 ⇒ 预算实验应加「预训练期 vs 后训练期」两组。<b>pretrain</b>：把「想法 token + 原 NTP」当辅助损失，需预注册权重与想法长度上限。<b>harness</b>：卖点是 zero-shot ⇒ 必须同报基线是否做过同量继续预训练。<b>data</b>：想法从任意文本学，token 数比标注质量更关键。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2403.09629">https://arxiv.org/abs/2403.09629</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B20</span>MetaMath: Bootstrap Your Own Mathematical Questions for Large Language Models</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Longhui Yu · Weisen Jiang · Han Shi（共 10 位；末位 Weiyang Liu）· Peking University / HKUST / Huawei / Cambridge 等</td></tr>
+    <tr><th>年份 / 出处</th><td>2023 首次提交（<code>2023-09-21</code>，v4 当前）· <b>ICLR 2024（Spotlight）</b>（arXiv <code>comment</code> 逐字）· arXiv <code>2309.12284</code></td></tr>
+    <tr><th>被引</th><td><b>1,029</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td><b>不加外部知识</b>，把同一道数学题从多个视角<b>改写</b>造出 <b>MetaMathQA</b>，再微调 LLaMA-2；<b>MetaMath-7B</b> 达 GSM8K <b>66.4%</b> / MATH <b>19.4%</b>（比同尺寸当时最好高 <b>11.5% / 8.7%</b>），<b>MetaMath-70B</b> GSM8K <b>82.3%</b>，略高于 GPT-3.5-Turbo（摘要口径），数据 / 模型 / 代码全开放。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>data（主 · 题目自举）</b>：只改题面不改答案的低成本扩题路线，先做答案一致性过滤 + 近重复去重再进 SFT。<b>zhulong</b>：MetaMath-7B 作 SFT 档数学基线，与 thinking 档对比须同 token 预算、同评测脚本。<b>harness</b>：GSM8K/MATH 可能被改写模型见过 ⇒ 必须报去污染方式（n-gram 阈值）。<b>designflow</b>：可借「一题多视角改写」造 EDA 规格题，但答案须可执行验证。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2309.12284">https://arxiv.org/abs/2309.12284</a></td></tr>
+  </table>
+</div>
+
+<h3 class="sec">👥 作者关系网 +5 → 276（21:00 时窗）· X 已核验 +1 → 107</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 · 机构</th><th>邮箱（等级）</th><th>arXiv</th><th>状态</th></tr>
+  <tr><td>272</td><td>Eric Zelikman · <b>Stanford University</b>（主页明文）</td><td><code>eric@humansand.ai</code>（<b>A</b>：主页页内明文，<code>200</code> / 19,986 B）</td><td><code>2403.09629</code></td><td>草稿已备（11-21 第三封）</td></tr>
+  <tr><td>273</td><td>Longhui Yu · <b>Moonshot AI</b>（KIMI post-train）/ PKU 硕士</td><td><code>yulonghui@stu.pku.edu.cn</code>（<b>B</b>：arXiv 原生 HTML 的 <code>mailto:</code>，渲染把 <code>7.5pt</code> 粘入 ⇒ 按上下文还原）</td><td><code>2309.12284</code></td><td>待跟踪（学生邮箱 + 现职已换 ⇒ 暂不发）</td></tr>
+  <tr><td>274</td><td>Weisen Jiang · <b>HKUST</b></td><td><code>wjiangar@cse.ust.hk</code>（<b>B</b>：同源 HTML 作者块）</td><td><code>2309.12284</code></td><td>待跟踪（同论文 ≤1 封 ⇒ 不并发）</td></tr>
+  <tr><td>275</td><td>Nicolas Carion · Facebook AI Research（论文时期）</td><td><b>未找到</b>（<code>nicolascarion.github.io</code> <code>404</code>；GitHub <code>email=null</code>；ar5iv 无明文）</td><td><code>2005.12872</code></td><td>只建档（不可发信）</td></tr>
+  <tr><td>276</td><td>Joseph Redmon · University of Washington（论文时期）</td><td><b>未找到</b>（<code>pjreddie.com</code> 无 <code>mailto:</code>；GitHub <code>email=null</code>）</td><td><code>1506.02640</code></td><td>只建档（不可发信）</td></tr>
+</table>
+<div class="rm"><b>X 双源核验（本轮唯一新增）</b>：<code>x.com/scut_longhui</code> 经代理 <code>127.0.0.1:7897</code> ⇒ <code>200</code> / 183,536 B；<code>og:title</code> = <code>Longhui Yu (@scut_longhui) on X</code>，<code>og:description</code> = <code>Post-train KIMI @Kimi_Moonshot | MS Peking University @PKU1898</code> ⇒ 计入已核验 <b>107</b>。其余四人未见可核验 handle ⇒ 写「未找到 X」，🚫 不猜。<br><b>语言判据</b>：Zelikman / Redmon / Carion ⇒ 英语 / 法语族属（Carion 若发信用法语称谓 + 英文正文）；Longhui Yu / Weisen Jiang ⇒ 中文全文（拼音姓名 + PKU / HKUST）。🚫 未以「论文英文 / 现职公司 / 邮箱域名」判英文。<br><b>发信</b>：今日 <b>12/12</b> 满 ⇒ <b>0 封</b>；备 11-21 三封草稿（NeRF <b>181</b> 词 / Faster R-CNN <b>178</b> 词 / Quiet-STaR <b>182</b> 词），三封开头句互不相同，落款均两行其后无行。回信率 <b>0 / 116</b>，<b>0 封到期</b>（最早 2026-11-25）。</div>
+
+<h3 class="sec">🧭 给 6 线的 21:00 增量建议</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：把 Quiet-STaR 的「想法 token + 原 NTP」当<b>辅助损失</b>做小规模预注册实验：想法长度上限 ∈ {8, 16, 32}、主/辅权重 ∈ {0.5, 1.0}，判据 = 同 token 预算下验证困惑度 + 难 token 子集困惑度，并记录<b>想法 token 占总算力比例</b>。</li>
+  <li><b>vision</b>：检测头预算三档对照 —— YOLO 式单阶段 / Faster R-CNN 两阶段 / DETR 固定 query 集合；统一报 <b>mAP + fps + 输入分辨率 + GPU 型号 + query/候选数</b>，并固定训练 epoch 预算，别把训练时长差当结构优势。</li>
+  <li><b>harness</b>：任何「零样本提升」必须附<b>基线是否做过同量继续预训练</b>；数学/代码基准报去污染方式（n-gram 重叠阈值、是否剔除改写题）；检测把漏检与误检分开报。</li>
+  <li><b>data</b>：扩题照 MetaMath「只改题面、不改答案」，先落两条过滤 —— <b>答案一致性</b>（多路径一致率）与<b>近重复去重</b>（题面 n-gram + 数值替换检测）；YOLO 侧补「背景即负样本」规范与每图目标数分布。</li>
+  <li><b>zhulong</b>：thinking 预算实验加「预训练期 vs 后训练期」两组（Quiet-STaR vs STaR/RL 类），固定总 token 与评测脚本；报告 thinking token 占比、平均想法长度、以及去掉想法后的同参数量基线。</li>
+  <li><b>designflow</b>：DETR 的集合预测适合「一对象一答案」判分 —— 造题把<b>漏检 / 重复检 / 误检</b>设三条独立评分轴；要轮廓则按掩码 IoU，「同一 cell 多处复制」单独设档。</li>
+</ul>
+
+<div class="note" style="margin-top:16px">
+  <b>🔎 21:00 核验（可复核）</b><br>
+  <b>A 轨列表</b>：<code>cat:cs.CL</code>（https 直连）⇒ <code>200</code> / <b>109,971 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界 <b><code>2026-11-19T18:57:25Z</code></b>（与 15:00 / 18:00 逐字相同 ⇒ 本窗未前进）；今日 5/5 已满 ⇒ 0 新收、不替换。<br>
+  <b>B 轨四篇</b>：<code>id_list=2005.12872,1506.02640,2403.09629,2309.12284</code> ⇒ <code>200</code> / <code>application/atom+xml</code> / <b>10,477 B / 4 entry</b>（逐条按 <code>published</code> 与标题核）；OpenAlex <b>4/4 <code>200</code></b>（<b>25,731 / 66,671 / 436 / 1,029</b>，查询日 2026-11-20，含 ECCV 2020 LNCS pp. 213–229 与 CVPR 2016 pp. 779–788 的 DOI / 页码）。<b>查重</b>：DETR / YOLO 在 <code>PAPERS.md</code> 全量正则 0 命中；ZeRO <code>1910.02054</code> / Ring Attention <code>2310.01889</code> 已在表内 ⇒ 不收。数字取自 arXiv 官方摘要，<b>未做 PDF 逐页复核</b>（DETR PDF 30 s 内未下完，如实记）。⚠️ <b>ID 误记在写入前拦截</b>：原计划用 <code>2309.12284</code> 收 RTLLM，实测该 ID 为 <b>MetaMath</b> ⇒ 改收 MetaMath；RTLLM 真 ID <code>2308.05345</code> 早已收录并已发信 #66。<br>
+  <b>主页实测</b>：<code>ezelikman.github.io</code> <code>200</code> / 19,986 B（明文邮箱 + Stanford）· <code>yulonghui.github.io</code> <code>200</code> / 18,583 B（无明文邮箱，外链 <code>twitter.com/scut_longhui</code>）· arXiv 原生 HTML <code>2309.12284v4</code> <code>200</code> / 304,026 B（作者块两个邮箱）· <code>pjreddie.com</code> <code>200</code> / 14,063 B（无 <code>mailto:</code>）· <code>nicolascarion.github.io</code> <code>404</code>。<br>
+  <b>X</b>：<code>x.com/scut_longhui</code> 经代理 <code>200</code> / 183,536 B，<code>og:title</code> 与 <code>og:description</code> 双源一致 ⇒ 已核验 <b>107</b>。<br>
+  <b>发信</b>：今日 <b>12/12</b> 达上限 ⇒ <b>0 封</b>；备 11-21 第三封 Quiet-STaR 草稿（<b>182</b> 词，落款两行其后无行，正文无项目名）。回信率 <b>0 / 116</b>，<b>0 封到期</b>（最早 2026-11-25）；<code>replies/</code> 仍无摘录，通道只发不收。
+</div>
+
+<div class="card">
+  <h2 style="font-size:16px;">🔁 21:00 变更说明（相对 18:00）</h2>
+  <table class="kv">
+    <tr><th>A 轨 5 篇</th><td><b>不变</b>（00:00 三篇 + 03:00 两篇）。公告批上界仍为 <code>2026-11-19T18:57:25Z</code>，本窗未前进；今日 5/5 已满 ⇒ 不替换、不增收。</td></tr>
+    <tr><th>B 轨</th><td>292 → <b>296</b>（+4：DETR / YOLO / Quiet-STaR / MetaMath），服务线分布 vision +2 · zhulong +2 · data +1 · pretrain +1（harness / designflow 为附带）。</td></tr>
+    <tr><th>作者网 / X</th><td>作者网 271 → <b>276</b>（+5：2 个 A/B 级可用地址、2 个未找到、1 个待跟踪）；X 已核验 106 → <b>107</b>（<code>@scut_longhui</code>，双源核验）。</td></tr>
+    <tr><th>发信 / 回信</th><td>发信 <b>116 不变</b>（今日 12/12 满），<b>备 11-21 三封草稿</b>（+Quiet-STaR）；回信率 <b>0/116</b>，到期 0 封（最早 11-25）。</td></tr>
+    <tr><th>口径</th><td>DETR / YOLO 按 OpenAlex 的会议 DOI 与页码记；Quiet-STaR <code>comment</code> 为空 ⇒ 只写 arXiv 预印本；MetaMath 的 ICLR 2024 Spotlight 按 arXiv <code>comment</code> 逐字记。被引均取 OpenAlex 2026-11-20 快照。</td></tr>
+  </table>
+</div>
+
 <footer>
-  research 线 · 论文观察日报 · 2026-11-20（18:00 时窗 · A 轨 5/5 · B 轨 292 · 作者网 271）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 18:0x（A 轨 5/5 · B 轨累计 292 · 作者网 271 · 发信 116 / 回信 0 · voice_ready 0 / news_ready 0） CST
+  research 线 · 论文观察日报 · 2026-11-20（21:00 时窗 · A 轨 5/5 · B 轨 296 · 作者网 276）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 21:0x（A 轨 5/5 · B 轨累计 296 · 作者网 276 · X 已核验 107 · 发信 116 / 回信 0 · voice_ready 0 / news_ready 0） CST
 </footer>
 
 </div>

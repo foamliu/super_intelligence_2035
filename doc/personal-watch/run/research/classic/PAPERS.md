@@ -5054,6 +5054,74 @@
 
 ---
 
+## 293. End-to-End Object Detection with Transformers（DETR）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | End-to-End Object Detection with Transformers |
+| 作者（前 3） | Nicolas Carion · Francisco Massa · Gabriel Synnaeve（共 **6** 位；末位 Sergey Zagoruyko；arXiv 作者字段逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-05-26`；v3 为当前版本） |
+| 会议 / 期刊 | **ECCV 2020**（OpenAlex：`Lecture Notes in Computer Science`，pp. **213–229**，DOI `10.1007/978-3-030-58452-8_13`；arXiv `comment` 为空 ⇒ 会议名按 DOI/页码记，未从会议官网逐字核） |
+| 被引数 | **25,731**（OpenAlex `10.48550/arxiv.2005.12872`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2005.12872> ｜ arXiv DOI `10.48550/arxiv.2005.12872` ｜ 会议 DOI `10.1007/978-3-030-58452-8_13` ｜ 代码 <https://github.com/facebookresearch/detr> |
+| 一句话贡献 | 把检测当**集合预测**：用**二分匹配**的集合损失强制「一个目标一个预测」，配 transformer 编码器-解码器与一小组**可学习 object queries**，**去掉 NMS 与 anchor 生成**；COCO 上精度/耗时与高度优化的 Faster R-CNN 基线相当，并可统一扩展到全景分割（摘要口径）。 |
+| 与我们工作的关系 | **vision（主 · 无 NMS 的检测头）**：版图图形 / 封装元件若要做端到端区域输出，先试「固定 query 槽 + 集合损失」这条路线，把 NMS 阈值与 anchor 超参从调参空间里去掉。<br>**designflow（判分）**：集合式输出天然支持「一对象一答案」的对齐判分，适合造「漏检 / 重复检」两类错误分开计分的题。<br>**harness**：必须同时报 **query 数 + 训练 epoch（原文为 500）+ AP/AP50**，否则与单阶段检测器不可比。<br>**data（标注粒度）**：集合损失对「同一实物多次标注」敏感 ⇒ 数据侧要先定去重规则。 |
+| 首次收录 | **2026-11-20**（第七十七轮） |
+| 核验状态 | arXiv `id_list=2005.12872,1506.02640,2403.09629,2309.12284` ⇒ **`200` + `application/atom+xml`**（10,477 B / 4 entry）；OpenAlex **`200`（25,731，LNCS pp. 213–229）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（PDF 下载 30 s 内未完成，已放弃）。 |
+
+---
+
+## 294. You Only Look Once: Unified, Real-Time Object Detection（YOLO）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | You Only Look Once: Unified, Real-Time Object Detection |
+| 作者（前 3） | Joseph Redmon · Santosh Divvala · Ross Girshick（共 **4** 位；末位 Ali Farhadi；arXiv 作者字段逐字核） |
+| 年份 | **2015**（arXiv v1 `2015-06-08`；v5 为当前版本） |
+| 会议 / 期刊 | **CVPR 2016**（OpenAlex：IEEE CVPR，pp. **779–788**，DOI `10.1109/cvpr.2016.91`；arXiv `comment` 为空 ⇒ 按 OpenAlex 记） |
+| 被引数 | **66,671**（OpenAlex `10.48550/arxiv.1506.02640`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/1506.02640> ｜ arXiv DOI `10.48550/arxiv.1506.02640` ｜ 会议 DOI `10.1109/cvpr.2016.91` |
+| 一句话贡献 | 把检测写成**单网络的回归问题**（一次前向直接出框 + 类别概率），整条流水线端到端优化；基础模型 **45 fps**、Fast YOLO **155 fps** 且 mAP 仍是其它实时检测器的两倍（摘要口径）；定位误差更多、但「无物体处乱报」显著更少，且从自然图像迁移到艺术画时优于 DPM / R-CNN。 |
+| 与我们工作的关系 | **vision（主 · 单阶段成本基线）**：任何「实时筛查」需求（缺陷初筛 / 版面快筛）都应先量 YOLO 式单阶段成本，再决定是否上两阶段或 transformer。<br>**data（全局上下文）**：整图一次回归 ⇒ 标注要覆盖「背景即负样本」，否则误检率不可控；数据侧须给出**每图目标数分布**。<br>**designflow**：造题可把「漏检 vs 误检」设成两条独立评分轴（YOLO 的取舍正是这两轴不同权重）。<br>**harness**：检测数字必须成组报 **mAP + fps + 输入分辨率 + GPU 型号**。 |
+| 首次收录 | **2026-11-20**（第七十七轮） |
+| 核验状态 | 同 #293 的 arXiv 批量（10,477 B / 4 entry）；OpenAlex **`200`（66,671，CVPR 2016 pp. 779–788）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 295. Quiet-STaR: Language Models Can Teach Themselves to Think Before Speaking
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Quiet-STaR: Language Models Can Teach Themselves to Think Before Speaking |
+| 作者（前 3） | Eric Zelikman · Georges Harik · Yijia Shao（共 **6** 位；末位 Noah D. Goodman；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-03-14`；v2 为当前版本） |
+| 会议 / 期刊 | **arXiv 预印本**（arXiv `comment` 为空；OpenAlex 该 DOI 记 `arXiv (Cornell University)`、`type=preprint` ⇒ **不写未核实的会议**） |
+| 被引数 | **436**（OpenAlex `10.48550/arxiv.2403.09629`，查询日 **2026-11-20**；**&lt;500，按「方法论常青」收**：把「先想再说」做成可在任意文本上自监督的预训练目标） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.09629> ｜ arXiv DOI `10.48550/arxiv.2403.09629` |
+| 一句话贡献 | STaR 的泛化：让 LM 在**每个 token 处**先生成一段「内部想法」再预测后文，用**逐 token 并行采样**、可学习的**想法起止 token** 与**扩展 teacher forcing** 控制成本；在互联网文本上继续预训练后，**零样本**（不做任务微调）把 GSM8K 从 **5.9% → 10.9%**、CommonsenseQA 从 **36.3% → 47.2%**，并降低难预测 token 的困惑度（摘要口径）。 |
+| 与我们工作的关系 | **zhulong（主 · thinking 轴的前置证据）**：证明「思考」不必只在 SFT/RL 阶段引入，可在**继续预训练**里用「解释后文」的自监督信号学出来 ⇒ 小模型 thinking 预算实验应加「预训练期 vs 后训练期」两组。<br>**pretrain（目标设计）**：可把「想法 token + 原目标」看成一项**辅助损失**，需预注册主/辅损失权重与想法长度上限。<br>**harness（口径）**：其卖点是 **zero-shot、无任务微调** ⇒ 复现时必须同报「基线是否做过同量继续预训练」，否则收益会被误记到方法上。<br>**data**：想法从「任意文本」学，不依赖人工 rationale ⇒ 语料规模比标注质量更关键，需记录继续预训练 token 数。 |
+| 首次收录 | **2026-11-20**（第七十七轮） |
+| 核验状态 | 同 #293 的 arXiv 批量（10,477 B / 4 entry）；OpenAlex **`200`（436，preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 296. MetaMath: Bootstrap Your Own Mathematical Questions for Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MetaMath: Bootstrap Your Own Mathematical Questions for Large Language Models |
+| 作者（前 3） | Longhui Yu · Weisen Jiang · Han Shi（共 **10** 位；末位 Weiyang Liu；arXiv 作者字段逐字核） |
+| 年份 | **2023**（arXiv v1 `2023-09-21`；v4 为当前版本） |
+| 会议 / 期刊 | **ICLR 2024（Spotlight）**（arXiv `comment` 逐字：`To appear at ICLR 2024 (Spotlight). Project Page: https://meta-math.github.io/`；OpenAlex 记 `International Conference on Learning Representations`，无页码） |
+| 被引数 | **1,029**（OpenAlex `10.48550/arxiv.2309.12284`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2309.12284> ｜ arXiv DOI `10.48550/arxiv.2309.12284` ｜ 项目页 <https://meta-math.github.io/> |
+| 一句话贡献 | **不加外部知识**，把同一道数学题从多个视角**改写**（自我引导）造出 **MetaMathQA**，再微调 LLaMA-2；**MetaMath-7B** 达 GSM8K **66.4%** / MATH **19.4%**（比同尺寸当时最好高 **11.5% / 8.7%**），**MetaMath-70B** GSM8K **82.3%**，略高于 GPT-3.5-Turbo（摘要口径），数据 / 模型 / 代码全开放。 |
+| 与我们工作的关系 | **data（主 · 题目自举与改写）**：给「小语料扩题」一条低成本路线 —— 只改题面不改答案，先做**答案一致性过滤 + 近重复去重**，再进 SFT；预注册判据 = 原始题集不掉点、改写题集涨点。<br>**zhulong（数学推理基线）**：把 MetaMath-7B 的 GSM8K/MATH 当 SFT 档基线，与 thinking 档对比时必须同 token 预算、同评测脚本。<br>**harness（污染）**：GSM8K/MATH 的测试题可能被改写模型见过 ⇒ 必须报去污染方式（n-gram 重叠阈值），否则涨幅不可信。<br>**designflow**：可借「一题多视角改写」造 EDA 规格题，但答案须可执行验证。 |
+| 首次收录 | **2026-11-20**（第七十七轮） |
+| 核验状态 | 同 #293 的 arXiv 批量（10,477 B / 4 entry）；OpenAlex **`200`（1,029，ICLR）**；authors/affiliation 另用 arXiv 原生 HTML **`200` / 304,026 B** 核；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。⚠️ **ID 记录更正**：本轮原计划用 `2309.12284` 收 RTLLM，实测该 ID 标题为 **MetaMath**（RTLLM 真 ID = `2308.05345`，早已收录且已发信 #66）⇒ 当场改收 MetaMath，未产生错误条目。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5065,6 +5133,8 @@
 | `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
 
 > 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第七十七轮（2026-11-20 21:0x）转正 4 条**：DETR `2005.12872`（#293，**25,731**，ECCV 2020，LNCS pp. 213–229）· YOLO `1506.02640`（#294，**66,671**，CVPR 2016 pp. 779–788）· Quiet-STaR `2403.09629`（#295，**436**，**&lt;500 按「方法论常青」收**，arXiv 预印本 · `comment` 空）· MetaMath `2309.12284`（#296，**1,029**，ICLR 2024 Spotlight）⇒ B 轨累计 **296**（覆盖轴：集合预测 + 二分匹配去掉 NMS/anchor / 单网络回归的实时检测成本 / 每个 token 都想一下的自监督 thinking / 多视角改写题目自举）。核验：arXiv `id_list` **`200` + `application/atom+xml`**（10,477 B / 4 entry）+ OpenAlex **4/4 `200`**（25,731 / 66,671 / 436 / 1,029，查询日 2026-11-20，含 DETR 与 YOLO 的会议 DOI/页码）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（DETR PDF 30 s 内未下完 ⇒ 放弃，如实记）。**先查重**：DETR / YOLO 两 ID 在 `PAPERS.md` 全量正则 **0 命中**；ZeRO `1910.02054` / Ring Attention `2310.01889` 已在表内 ⇒ 不收。⚠️ **ID 误记在写入前拦截**：原计划用 `2309.12284` 收 RTLLM，实测该 ID 为 **MetaMath** ⇒ 改收 MetaMath；RTLLM 真 ID `2308.05345` 早已收录（并已发信 #66），未产生错误条目。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 通信重叠侧（Ring-AllReduce / overlap，ZeRO 已收 ⇒ 只补通信侧）；④ 视觉塔对照补 SigLIP 2（待核一手版本）；⑤ 检测后续（Deformable DETR `2010.04159` / DINO 系列，待核被引）。
 
 > ✅ **第七十五轮（2026-11-20 15:0x）转正 4 条**：SimCLR `2002.05709`（#285，**18,118**，ICML 2020）· NeRF `2003.08934`（#286，**1,186**，ECCV 2020 oral）· ChatEDA `2308.10204`（#287，**319**，IEEE TCAD 43(10):3184–3197, 2024，**&lt;500 按「本领域权威」收**）· Routing Transformers `2003.05997`（#288，**925**，TACL 9:53–68, 2021）⇒ B 轨累计 **288**（覆盖轴：增强组合 + 投影头 + 大 batch 的对比学习配方 / 5D 坐标 + 可微体渲染 / RTL→GDSII 的分解-脚本-执行三段 agent / 在线 k-means 内容稀疏注意力）。核验：arXiv `id_list` 两批均 **`200` + atom**（10,472 B / 4 entry、9,755 B / 4 entry）+ OpenAlex **4/4 `200`**（18,118 / 1,186 / 319 / 925，查询日 2026-11-20）；ChatEDA 另用 arXiv 原生 HTML **`200` / 196,479 B** 读作者与 affiliation；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：四 ID 在 `PAPERS.md` 全量正则 **0 命中**（`1907.11692` RoBERTa / `2012.03112` PIM 综述 / `2308.00113` VeriGen / `2104.14294` DINO / `2304.07193` DINOv2 / `2311.04887` AutoChip / `1406.2661` GAN 均已在表内或仅作候选 ⇒ 本轮不收）。⚠️ **避免一处 ID 误记**：原计划收 **ELECTRA**，按记忆写成 `2003.05997`，实测该 ID 为 **Routing Transformers** ⇒ 当场改收后者（#288）；**ELECTRA 真 ID = `2003.10555`**（arXiv `200` + title 逐字核），留作下轮候选。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① ELECTRA `2003.10555`（真 ID 已核，待核被引）；② Mask R-CNN `1703.06870` / Faster R-CNN `1506.01497`（检测侧空缺）；③ SAC `1801.01290` / DDPG `1509.02971`（连续控制）；④ HBM / JEDEC 一手（连续多轮未命中）；⑤ 通信重叠侧（ZeRO 已收 ⇒ 只补 Ring-AllReduce / overlap）。
 
