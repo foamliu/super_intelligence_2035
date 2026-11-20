@@ -688,3 +688,5 @@ gital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26
 1795074037878_b6qm0	valleyxu	hfeg0pfn081	117	digital	case	EDA-Eval-DesignFlow-XrunLogMarkerQA-001	2026-11-20 17:42	
 1794893066701_eu329	lein	hfeg0pgn145	197	verification	case	EDA-Eval-DesignFlow-RandcaseWeightZeroTrfcQA-001	2026-11-20 19:25	r869 case: A-pure verification, LPDDR6 refresh.run randcase weight-0 trfc semantics analysis-Q&A, A档 trace-faithful, k=12/12
 1794987681428_6mdpc	xuluo	hfeg0plg74	183	digital	case	EDA-Eval-DesignFlow-RhrRefreshTimingQA-001	2026-11-20 20:05	
+1795095642999_y7gyo.messages.json	wenfeiz	hfeg0plg09	201	digital	parked		2026-11-20 20:28	NOFILE rotated/evaporated, scp 11-20 20:2x fail
+1794915763924_fkrdf.messages.json	max7c	hfeg0plg06	123	digital	parked		2026-11-20 20:35	path infra issue: sessions are subdirs not flat files, deferred; exucf chosen instead
