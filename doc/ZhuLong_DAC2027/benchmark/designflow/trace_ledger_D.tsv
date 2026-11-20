@@ -1945,3 +1945,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794882024123_3prfp.messages.json	mre	hfeg0pkn005	111	waveform	case	EDA-Eval-DesignFlow-SimPvtExtractProduce-001	2026-11-20 18:03	
 1794809382329_bw5c1.messages.json	zjqiao	hfhds201	165	schematic_netlist	case	EDA-Eval-DesignFlow-HcellNetlistXrefProduce-001	2026-11-20 18:50	
 1794906865811_bp1x8	zjqiao	hfhds201	105	schematic_netlist	case	EDA-Eval-DesignFlow-CrcAlertMeasFix-001	2026-11-20 20:05	
+1794899301159_8luru	jiashengz	hfeg0plg92	386	schematic_netlist	case	EDA-Eval-DesignFlow-StdcellDevtypeAuditProduce-001	2026-11-20 21:22	
