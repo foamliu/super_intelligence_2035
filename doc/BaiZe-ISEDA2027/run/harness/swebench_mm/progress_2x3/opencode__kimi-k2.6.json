@@ -921,23 +921,44 @@
   "PrismJS__prism-2195": {
     "instance_id": "PrismJS__prism-2195",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 641.5,
+    "rc": 0,
+    "model_patch_len": 4739,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rator_feature'\n    ✓ – should pass test case 'string_feature'\n```\n\nThe fix treats the whole continued comment as a single token, so the underline at the end of the line no longer breaks highlighting.\n",
+    "stderr_tail": "rator:[/[+\\-*/\\\\^<=>&#@$%!]/,{pattern:/([^\\S\\r\\n])_(?=[^\\S\\r\\n]*[\\r\\n])/,lookbehind:!0}],punctuation:/[{}().,:?]/},Prism.languages.vb=Prism.languages[\"visual-basic\"];\n\\ No newline at end of file\n\u001b[0m\n"
   },
   "PrismJS__prism-2295": {
     "instance_id": "PrismJS__prism-2295",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 265.7,
+    "rc": 0,
+    "model_patch_len": 4232,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e_feature.test` to cover single-package cases (`package baz;` and `import foo.Bar;`).\n4. **Updated the minified file** `components/prism-java.min.js` accordingly.\n\nAll 62 Java-related tests now pass.\n",
+    "stderr_tail": "dos\n[✓] Explore PrismJS repo and find Java language definition\n[✓] Identify why single-package names aren't highlighted\n[✓] Fix the Java package highlighting regex\n[✓] Verify the fix with a test\n\u001b[0m\n"
   },
   "PrismJS__prism-2348": {
     "instance_id": "PrismJS__prism-2348",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 699.8,
+    "rc": 0,
+    "model_patch_len": 4659,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "- `components/prism-cpp.js`\n- `components/prism-cpp.min.js`\n- `tests/languages/cpp/class-name_feature.test`\n\n### Verification\nAll C++ tests pass, and the full language test suite passes (1628 tests).\n",
+    "stderr_tail": "ode_modules/mocha/bin/_mocha'\n  ]\n}\n\nNode.js v20.18.1\n\u001b[0m\n\u001b[0m→ \u001b[0mRead components/prism-cpp.js\n\u001b[0m→ \u001b[0mRead tests/languages/cpp/class-name_feature.test\n\u001b[0m→ \u001b[0mRead components/prism-cpp.min.js\n"
   },
   "PrismJS__prism-2622": {
     "instance_id": "PrismJS__prism-2622",
