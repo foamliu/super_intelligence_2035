@@ -3487,3 +3487,18 @@
 | 2026-11-20 | 微软英伟达云 PC Direct Stream（功能预告） | IT之家 | W:not-news | https://www.ithome.com/1/029/747.htm |
 | 2026-11-20 | Steam Machine 512GB 开放直购（硬件销售） | IT之家 | W:not-news | https://www.ithome.com/1/029/745.htm |
 | 2026-11-20 | ChatGPT 实时听写（功能上线） | IT之家 | W:not-news | https://www.ithome.com/1/029/707.htm |
+| 2026-11-20 | 谷歌 Harness 自改进让智能体任务成功率提升 8 倍（首图：https://img.ithome.com/newsuploadfiles/2026/11/46a5d420-0716-471a-ad26-75933469f0a0.png?x-bce-process=image/format,f_auto ｜ HEAD 200 image/png 390934 B） | IT之家 `1/029/766` | news（第 314 轮 · §1 · 论文口径 B） | https://www.ithome.com/1/029/766.htm |
+| 2026-11-20 | 6 位 PIN 码破解从 19 年缩至 20 天：Win11 设备 TPM 防暴力破解机制被绕过（首图：https://img.ithome.com/newsuploadfiles/2026/11/a4b0797a-c59e-4d8e-a7a9-4b6d7d21e87d.jpg?x-bce-process=image/format,f_auto ｜ HEAD 200 image/jpeg 120511 B） | IT之家 `1/029/789` | news（第 314 轮 · §2 · 柏林工业大学 Hello Again） | https://www.ithome.com/1/029/789.htm |
+| 2026-11-20 | 微软推送 Win11 26x00.10075 可选更新：搜索内存占用降低 15%~20%（首图：https://img.ithome.com/newsuploadfiles/2026/11/ec24a4e6-dc16-4f48-a38d-3df52a1062d7.jpg ｜ HEAD 200 image/jpeg） | IT之家 `1/029/793` | news（第 314 轮 · §2） | https://www.ithome.com/1/029/793.htm |
+| 2026-11-20 | 商务部：1-10 月重点平台智能眼镜销售额 +1 倍、具身智能机器人 +25.2%（图片：无，候选带 watermark 参数不登记） | IT之家 `1/029/762` | news（第 314 轮 · §3） | https://www.ithome.com/1/029/762.htm |
+| 2026-11-20 | 国内推出首个智能座舱 AI 分级评价体系 C1–C5（图片：无，中新网只有站点通用图） | 中新网 `10735052` | news（第 314 轮 · §3） | https://www.chinanews.com.cn/cj/2026/11-20/10735052.shtml |
+| 2026-11-20 | 吴泳铭：阿里「2032 年全球数据中心规模超 20GW」目标或下调（图片：无，正文 0 图） | IT之家 `1/029/702` | news（第 314 轮 · §3） | https://www.ithome.com/1/029/702.htm |
+| 2026-11-20 | 消息称 vivo S70 系列、iQOO 16R 春节前发布（首图：https://img.ithome.com/newsuploadfiles/2026/11/14c2b3f0-e89d-4d05-af14-2c440d90e613.png ｜ HEAD 200 image/png） | IT之家 `1/029/787` | news（第 314 轮 · §4 · 爆料稿，已标注未证实） | https://www.ithome.com/1/029/787.htm |
+| 2026-11-20 | 爆料者 Cyberleek 公布疑似《GTA 6》Xbox 版文件（首图：https://img.ithome.com/newsuploadfiles/2026/11/854db1a7-80a2-413d-93b1-a3781d40271c.jpg ｜ HEAD 200 image/jpeg 128933 B） | IT之家 `1/029/791` | news（第 314 轮 · §5） | https://www.ithome.com/1/029/791.htm |
+| 2026-11-20 | 苹果启动 Apple Card 拉新：首年最高 6% 返现、上限 1000 美元（首图：https://img.ithome.com/newsuploadfiles/2026/11/b3389fc2-2009-4712-b355-66bedf08ab59.jpg?x-bce-process=image/format,f_auto ｜ HEAD 200 image/jpeg 21582 B） | IT之家 `1/029/772` | news（第 314 轮 · §5） | https://www.ithome.com/1/029/772.htm |
+| 2026-11-20 | 苹果 watchOS 27.3 Beta 扩充 Siri Modular 表盘至 5 款（首图：https://img.ithome.com/newsuploadfiles/2026/11/cfae3650-9cf2-4029-8558-ede3f52cdffe.png ｜ HEAD 200 image/png 233188 B） | IT之家 `1/029/768` | news（第 314 轮 · §5） | https://www.ithome.com/1/029/768.htm |
+| 2026-11-20 | 铁路 12306 App 信息通知服务优化：新增候补兑现与列车运行调整（首图：https://img.ithome.com/newsuploadfiles/2026/11/1250c91e-a108-4f8a-a5e2-178a021331d2.png ｜ HEAD 200 image/png 138719 B） | IT之家 `1/029/763` | news（第 314 轮 · §6） | https://www.ithome.com/1/029/763.htm |
+| 2026-11-20 | 摩根大通 2026 消费调查：97% 中国受访者年底前购新 iPhone（原文未披露样本量） | IT之家 `1/029/764` | W:not-news（第 314 轮） | https://www.ithome.com/1/029/764.htm |
+| 2026-11-20 | 吉利星越 L PLUS 12 月上市 / 大众 ID. Buzz Beach 露营车 / OPPO Pad Air6 开售 / 绿联 60W 充电器 | IT之家 | W:not-news（第 314 轮 · 硬件销售通告） | https://www.ithome.com/1/029/756.htm |
+| 2026-11-20 | Newzoo：《GTA 6》首周收入预测 / 《GTA 6》两个「简单模式」开关 | IT之家 | W:not-news（第 314 轮 · 预测与设置解析） | https://www.ithome.com/1/029/696.htm |
+| 2026-11-20 | IT早报 1120 / Epic 喜加一 / 名创优品营销稿 | IT之家 | W:not-news（第 314 轮 · 聚合与促销） | https://www.ithome.com/1/029/755.htm |
