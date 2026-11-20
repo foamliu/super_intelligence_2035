@@ -755,7 +755,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794480485564_nphvz					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794292352673_gjzyg					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794357676593_s5o5k					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
-1793192893935_poa8g					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1793192893935_poa8g					case	EDA-Eval-DesignFlow-AlpsOutMissingDiag-001	2026-11-20 08:21	r849 revival: poa8g yixiaow aether MDE alps.out missing debug-Q&A, 2026-11-15 reaudit legal
 1791425862447_ytr6l					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794468352049_l35g8	t0002038	hfeg0pkn003	90	layout_aether	case	EDA-Eval-DesignFlow-FreeTrackFinder-001	2026-11-14 01:27	
 1792998643161_19e3k	jcgu	10.129.32.236	542		parked		2026-11-14 02:30	r538 peek REJECT (skill-orch: skill-creator)
