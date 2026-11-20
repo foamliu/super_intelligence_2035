@@ -34,6 +34,13 @@ SLEEP_WAIT=900                  # 有异步阻塞时的唤醒间隔（2026-10-28
 MEMORY="$SCRIPT_DIR/MEMORY_HARNESS.md"
 LAST_PUSH="/tmp/baize_harness_last_push"
 
+# 2026-11-20 用户令（Phase 0 step 2 / 08:2x）：harness 不得影响 pretrain 进度
+HARNESS_CPUS="${HARNESS_CPUS:-}"             # 空=不绑核；设了则 taskset -c 绑核（如 "0-111"）
+HARNESS_NICE="${HARNESS_NICE:-19}"           # 最低 CPU 优先级
+HARNESS_IONICE="${HARNESS_IONICE:-3}"        # idle IO（ionice -c 3）
+HARNESS_OMP="${HARNESS_OMP:-8}"              # 线程上限，禁跑满 224 核
+HARNESS_LOAD_MAX="${HARNESS_LOAD_MAX:-120}"  # .29 1min load 阈值（224 核 ~54%），超则本轮跳过 cline
+
 # 🔑 额度/鉴权体检 + 自动轮换（2026-10-04 用户指令）：额度耗尽时 agent 自己在任务书里也动不了 → 必须在 loop 里。
 #   候选来自 doc/keys.txt（10 项 → 取 8 个 chat/coding LLM，排除 ASR/文生图）；
 #   探针 = curl /chat/completions（200 可用 / 429 额度耗尽 / 403 base 不匹配）——现场实测见 run/ops/outbox.md RUN_ID 43/44。
@@ -115,10 +122,23 @@ while true; do
         #   ⚠️ 只作用于本行：loop 自身/`git push` 仍保留 proxy（外网仍需代理）。
           # 🔑 额度/鉴权体检 + 自动轮换（候选 = doc/keys.txt 的 8 个 chat LLM；200 可用 / 429 额度耗尽 / 403 base 不匹配）
           #    全挂 → 跳过本轮（不静默空转）；选中项的 base 会自动写进 cline 的 openAiBaseUrl
+          # 2026-11-20 用户令：pretrain 保护闸——.29 的 1min load 超阈值 → 本轮跳过 cline（让 pretrain 先跑）
+          if [ "$(hostname -I | grep -c '10.239.2.29')" -gt 0 ]; then
+            L1=$(awk '{print int($1)}' /proc/loadavg)
+            if [ "${L1:-0}" -gt "$HARNESS_LOAD_MAX" ]; then
+              echo "[loop] $(date '+%F %T') SKIP cline: load=${L1} > ${HARNESS_LOAD_MAX}（让 pretrain）"
+              git_sync_and_push; sleep "$SLEEP_WAIT"; continue
+            fi
+          fi
           if llm_pick "$LLM_STATE" "$KEYS_TXT"; then
+        # 2026-11-20 用户令：受控启动（nice/ionice/OMP 节流；可选 taskset 绑核）
+        taskline=(nice -n "$HARNESS_NICE" ionice -c "$HARNESS_IONICE")
+        [ -n "$HARNESS_CPUS" ] && taskline=(taskset -c "$HARNESS_CPUS" "${taskline[@]}")
         env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY -u ftp_proxy -u FTP_PROXY \
             -u OPENAI_API_KEY -u OPENAI_API_URL -u API_TYPE \
-          cline -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+            OMP_NUM_THREADS="$HARNESS_OMP" MKL_NUM_THREADS="$HARNESS_OMP" \
+            OPENBLAS_NUM_THREADS="$HARNESS_OMP" NUMEXPR_NUM_THREADS="$HARNESS_OMP" \
+          "${taskline[@]}" cline -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
           else
             echo "[loop] $(date '+%F %T') !!! 无可用 LLM 候选 → 跳过本轮 cline"
           fi
