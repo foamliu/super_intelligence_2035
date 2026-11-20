@@ -30750,3 +30750,131 @@ host=whag0pgpuap12  date=2026-11-20 10:52:15
 
 === DONE 285 | 2026-11-20 10:56:16 ===
 ```
+
+---
+
+## RUN_ID 286 · 2026-11-20 11:10:29 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+echo "host=$(hostname)  date=$(date "+%F %T")"
+BASE=/nas_train/app.e0031982
+CK=$BASE/code/BaiZe-ISEDA2027/nemo_experiments
+R=$BASE/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo
+echo "=========== A. pretrain（.29 独有）==========="
+echo "[A1] 训练产出目录（ckpt 目录最后写入时间 = 训练最后一刻）"
+ls -lt --time-style=+%m-%d_%H:%M "$CK/baize2b/checkpoints" 2>/dev/null | sed -n "1,6p" | sed "s/^/  /"
+echo "[A2] 训练目录里的最新日志"
+ls -lt --time-style=+%m-%d_%H:%M "$CK/baize2b" 2>/dev/null | sed -n "1,6p" | sed "s/^/  /"
+echo "[A3] 最新日志尾部 3 行（含 iter/step）"
+L=$(ls -t "$CK"/baize2b/*.log "$CK"/baize2b/logs/*.log 2>/dev/null | head -1)
+if [ -n "${L:-}" ]; then echo "  file=$L  mtime=$(stat -c %y "$L")"; tail -n 3 "$L" | cut -c1-160 | sed "s/^/    | /"; else echo "  未找到 log"; fi
+echo "[A4] pretrain agent 会话目录（最后活动时间）"
+ls -lt --time-style=+%m-%d_%H:%M "$BASE/.cline_pretrain/sessions" 2>/dev/null | sed -n "1,4p" | sed "s/^/  /"
+echo
+echo "=========== B. harness（.29 独有）==========="
+echo "[B1] harness 工作目录"
+ls -lt --time-style=+%m-%d_%H:%M "$BASE/harness" 2>/dev/null | sed -n "1,6p" | sed "s/^/  /"
+echo "[B2] harness agent 会话/日志目录（$HOME 下 .cline* 逐个列 mtime）"
+for d in "$BASE"/.cline_harness "$BASE"/.cline_harness_eval "$HOME"/.cline_harness*; do
+  [ -d "$d" ] && ls -ld --time-style=+%m-%d_%H:%M "$d" | sed "s/^/  dir /"
+done
+ls -lt --time-style=+%m-%d_%H:%M "$BASE/.cline_harness/sessions" 2>/dev/null | sed -n "1,4p" | sed "s/^/  /"
+echo
+echo "=========== C. ops 中继（.29 那只）==========="
+echo "[C1] .29 中继游标文件的 mtime（= 最后一次执行命令的时刻）"
+stat -c "  %y  %s  %n" "$R/ops/.last_run_id.29" 2>/dev/null
+echo "[C2] outbox 里 .29 主机执行过的最后 3 条"
+grep -nF "host=whag0pgpuap29" "$R/ops/outbox.md" 2>/dev/null | tail -3 | cut -c1-120 | sed "s/^/  /"
+echo "[C3] 共享树里 .29 侧最后写过的 5 个文件（按 mtime，排除 .12 自己的明显产物）"
+find "$R" -maxdepth 2 -type f -mmin -900 2>/dev/null | head -5 | sed "s/^/  /"
+echo
+echo "=========== D. 再试一次连 .29（换姿势，全部 2>&1）==========="
+echo "[D1] 裸读 SSH banner（dd 逐字节，最多 5s）"
+timeout 5 bash -c "exec 3<>/dev/tcp/10.239.2.29/22; dd bs=1 count=40 <&3 2>/dev/null" 2>&1 | head -2 | sed "s/^/  banner| /"
+echo "[D2] ssh 公钥认证 45s（只看结果）"
+timeout 45 ssh -o BatchMode=yes -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o NumberOfPasswordPrompts=0 10.239.2.29 "echo SSH_LOGIN_OK; hostname; uptime" 2>&1 | tail -3 | sed "s/^/  ssh| /"
+echo "[D3] .29 的 22 端口当前连接数（从 .12 看）"
+timeout 5 bash -c "exec 3<>/dev/tcp/10.239.2.29/22" 2>&1 && echo "  connect=OK" || echo "  connect=FAIL"
+echo
+echo "（只读：未 kill / 未重启 / 未改文件）"
+'
+echo
+echo "[0] TARGET: 12；执行机 = $(hostname)"
+eval "$BODY"
+echo
+echo "=== DONE 286 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] TARGET: 12；执行机 = whag0pgpuap12
+host=whag0pgpuap12  date=2026-11-20 11:10:29
+
+=========== A. pretrain（.29 独有）===========
+[A1] 训练产出目录（ckpt 目录最后写入时间 = 训练最后一刻）
+  total 1072
+  -rw-r--r-- 1 app.e0031982 app.adm 3461 11-19_22:22 latest_train_state.pt
+  drwxr-xr-x 2 app.e0031982 app.adm 8192 11-19_22:22 iter_0260000
+  -rw-r--r-- 1 app.e0031982 app.adm    6 11-19_22:22 latest_checkpointed_iteration.txt
+  drwxr-xr-x 2 app.e0031982 app.adm 8192 11-19_18:24 iter_0258000
+  drwxr-xr-x 2 app.e0031982 app.adm 8192 11-19_14:25 iter_0256000
+[A2] 训练目录里的最新日志
+  total 152
+  drwxr-x---  82 app.e0031982 app.adm 12288 11-19_22:32 lm_eval_results
+  drwxr-x---   2 app.e0031982 app.adm  4096 11-19_22:31 hf_iter_260000
+  drwxr-xr-x 132 app.e0031982 app.adm 20480 11-19_22:22 checkpoints
+  drwxr-x---   2 app.e0031982 app.adm  4096 11-19_02:53 hf_iter_250000
+  drwxr-x---   2 app.e0031982 app.adm  4096 11-18_14:11 tb_logs
+[A3] 最新日志尾部 3 行（含 iter/step）
+  未找到 log
+[A4] pretrain agent 会话目录（最后活动时间）
+  total 16220
+  drwxr-x--- 2 app.e0031982 app.adm 4096 11-20_01:27 1795109222603_04qt5
+  drwxr-x--- 2 app.e0031982 app.adm 4096 11-20_01:13 1795108436938_cg0oy
+  drwxr-x--- 2 app.e0031982 app.adm 4096 11-20_01:06 1795108014086_ukghi
+
+=========== B. harness（.29 独有）===========
+[B1] harness 工作目录
+  total 160
+  drwxr-x--- 21 app.e0031982 app.adm  8192 11-13_16:16 cline
+  drwxr-x--- 10 app.e0031982 app.adm  4096 10-15_09:16 pi
+  drwxr-x--- 33 app.e0031982 app.adm 20480 10-14_13:52 hermes-agent
+  drwxr-x--- 18 app.e0031982 app.adm 12288 10-06_00:52 deepseek-harness
+  -rw-r-----  1 app.e0031982 app.adm  3172 09-15_16:36 MEMORY.md
+[B2] harness agent 会话/日志目录（/home/app.e0031982 下 .cline* 逐个列 mtime）
+  dir drwxr-x--- 7 app.e0031982 app.adm 4096 10-04_17:54 /nas_train/app.e0031982/.cline_harness
+  total 16
+  drwxr-x--- 2 app.e0031982 app.adm 4096 10-05_07:58 1791158338538_9tbti
+  drwxr-x--- 2 app.e0031982 app.adm 4096 10-04_17:54 1791107690023_0l23b
+  drwxr-x--- 2 app.e0031982 app.adm 4096 10-04_17:49 1791107381611_lp6e6
+
+=========== C. ops 中继（.29 那只）===========
+[C1] .29 中继游标文件的 mtime（= 最后一次执行命令的时刻）
+  2026-11-17 22:39:31.079185480 +0800  4  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.29
+[C2] outbox 里 .29 主机执行过的最后 3 条
+  29781:=== RUN_ID 279 | pretrain hung-cline kill (AUTHORIZED) | 2026-11-17 22:29:54 | host=whag0pgpuap29 ===
+  29892:=== RUN_ID 280 | salvaged loop log analysis (READ-ONLY) | 2026-11-17 22:33:57 | host=whag0pgpuap29 ===
+  30245:=== RUN_ID 281 | salvaged loop log analysis (READ-ONLY) | 2026-11-17 22:39:27 | host=whag0pgpuap29 ===
+[C3] 共享树里 .29 侧最后写过的 5 个文件（按 mtime，排除 .12 自己的明显产物）
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vision_line_commit.sh
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/SHARED_REPO_GIT_PROTOCOL_RCA.md
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/posttrain_loop_git_diag_dryrun.sh
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/.gitignore
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/incr_eval_codex_R2784.py
+
+=========== D. 再试一次连 .29（换姿势，全部 2>&1）===========
+[D1] 裸读 SSH banner（dd 逐字节，最多 5s）
+[D2] ssh 公钥认证 45s（只看结果）
+[D3] .29 的 22 端口当前连接数（从 .12 看）
+  connect=OK
+
+（只读：未 kill / 未重启 / 未改文件）
+
+=== DONE 286 | 2026-11-20 11:11:19 ===
+```
