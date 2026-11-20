@@ -1,0 +1,14 @@
+Yuxiang Wei 老师您好，
+
+我是刘杨，做代码与 EDA 语料的合成数据方向，主页 https://foamliu.github.io/。
+
+Magicoder 最打动我的是把开源片段当种子、而不是让模型凭空出题：75K 合成指令训出的 7B 模型，MagicoderS-CL-7B 在 HumanEval+ 上以 66.5 对 65.9 超过 ChatGPT。我们想把这套 OSS-Instruct 迁到 Verilog 和脚本类语料上，有两个细节拿不准：
+
+1. 每个种子片段平均生成几条指令？种子筛选靠的是 star 数、仓库里有没有配套测试，还是语法树完整度？我们这边的开源片段比 Python 少一个量级，筛太严就没量、筛太松就学不到真实写法。
+
+2. HumanEval+ 的这 0.6 分，有多少可能来自与种子片段的近似重复？你们的去重是用 n-gram 还是 embedding 相似度，阈值大概定在多少？
+
+这两个答案决定我们把 OSS-Instruct 当主粮，还是只作 Python 语料的补充。
+
+祝好，
+Yang Liu

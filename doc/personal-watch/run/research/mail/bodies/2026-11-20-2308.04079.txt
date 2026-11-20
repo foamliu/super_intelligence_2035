@@ -1,0 +1,14 @@
+Sehr geehrter Herr Dr. Kerbl,
+
+I am Yang Liu, a researcher working on LLM agents and multimodal systems; you can find my work at https://foamliu.github.io/.
+
+We are checking whether 3D Gaussian Splatting can serve as a controlled generator of multi-view training data, so the part we depend on is your combination of anisotropic covariance, interleaved densification, and the visibility-aware rasterizer that reaches 30 fps at 1080p. Two points I could not settle from the paper:
+
+1. Densification: do the 0.0002 gradient threshold and the 3,000-iteration opacity reset stay fixed across scene types, or does an indoor scene need its own values? If we can retune only one of the two, which one dominates visual quality?
+
+2. When SfM returns few and clustered points, is the more reliable fallback a denser random initialization or an MVS-derived point cloud? We want to know which failure mode to rule out before we commit a data budget.
+
+Either answer changes whether we treat 3DGS as a generator for small object-centric scenes only, or also for well-captured room-scale ones.
+
+Best regards,
+Yang Liu

@@ -3727,3 +3727,69 @@
 5. **发送前必查词数（2026-11-12 新增，血的教训）**：英文信发送**之前**先 `wc -w <body.txt>` 确认 ≤200（中文 ≤300 字），**不达标先删改再发**。第十二轮因「先发后核」实测 **212 词**、超 12 词 ⇒ 已如实记入 `research/mail/发送记录.md`；此后本项为**发送前置检查**，不是事后记录。
 6. **X 抓取需显式代理**：本机 shell 默认**不继承** `HTTP(S)_PROXY`，直连 `x.com` 会返回 `000`；`x_fetch.py` 内部默认走 `http://127.0.0.1:7897`，手工 `curl` 时**必须加 `--proxy`**。`000` **不等于**代理挂了（本轮实测：直连 000 / 带代理 200）⇒ 先分清「无代理」与「代理挂」，再决定是否报运维。
 7. **编号纪律（2026-11-15 r178 起）**：条目标题编号取**连续号**，不再沿用「人数计数器」。历史上曾出现编号最后一位（129）小于人数（131）的情况（两者口径不同：有的 section 覆盖两位同论文作者）⇒ 新条目从 129 之后依次编号 130 / 131 / 132，**人数仍以日报与 MEMORY 的计数器为准（134）**。
+
+### 261. Danny Driess
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danny Driess（德语姓名族属 ⇒ 若发信当用德语称谓问候 + 英文正文） |
+| 机构 | **Physical Intelligence（π）**（本人主页自述现任；论文发表时为 Google DeepMind，再前为 TU Berlin 博士，导师 Marc Toussaint） |
+| 代表论文 | **PaLM-E**（`2303.03378`，B 轨 #281，一作）· 具身多模态与机器人策略 |
+| 邮箱 | **driess@gmail.com** / **A**（本人主页 `https://dannydriess.github.io/` 页内混淆明文 `driess at gmail dot com`，2026-11-20 实测 `200` / 29,043 B；页内另有 `danny.driess@ipvs.uni-stuttgart.de`，属读博期间旧址，作备份不首选） |
+| 主页 | <https://dannydriess.github.io/>（`200` / 29,043 B） |
+| X 账号 | **未找到**（🚫 不猜；搜索结果的 `x.com/DannyDriess` 未经 profile 双源核验，不登记） |
+| 状态 | **待跟踪**（本论文同批已发 #115 / #116 两封，按「每轮 ≤3 封 + 今日 12/12 满」本封不发） |
+| 备注 | `语言=德语称谓 + 英文正文(判据=德语姓名族属 Danny Driess + TU Berlin 博士；不因现机构在美国判英文)`。价值点：多模态句子把视觉与连续状态编码成 token 的做法，直接对应 vision 线的「视觉塔怎么接语言塔」；下轮发信应聚焦「观测 token 的时序位置如何编码」与「正迁移在配比上的最小可复现设置」。 |
+
+### 262. Bernhard Kerbl
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bernhard Kerbl（奥地利德语姓名族属 ⇒ 德语称谓问候 + 英文正文） |
+| 机构 | **University of Copenhagen**（ tenure-track Assistant Professor，本人主页自述）；兼 **TU Wien** Principal Project Investigator；2018 年 Graz 工大博士 |
+| 代表论文 | **3D Gaussian Splatting**（`2308.04079`，B 轨 #282，一作）· 层次化 3D Gaussian 大场景渲染 |
+| 邮箱 | **beke@di.ku.dk** / **A**（本人主页 `https://snosixtyboo.github.io/` 页首明文，2026-11-20 实测 `200` / 7,493 B） |
+| 主页 | <https://snosixtyboo.github.io/>（`200` / 7,493 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 115 封，2026-11-20 12:04:38 `SENT OK`；主题「Densification thresholds and sparse-SfM fallback in 3DGS」；正文 178 词） |
+| 备注 | `语言=德语称谓 + 英文正文(判据=奥地利德语姓名族属 + Graz 工大博士；**不因现机构在丹麦 / 论文英文判英文**；姓名族属优先于机构所在地)`。价值点：密度控制的两个旋钮（`0.0002` 梯度阈值 / `3,000` 次不透明度重置）与稀疏 SfM 退化路径，直接决定 3DGS 能否当「有预算上限的合成多视角数据生成器」；回填 vision（主）· data（数据预算单位）· designflow（场景级生成可行性）。 |
+
+### 263. George Drettakis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | George Drettakis（希腊姓名族属；机构法国 Inria ⇒ 按 §2 用**法语称谓 + 英文正文**） |
+| 机构 | **Inria**（Université Côte d'Azur，GRAPHDECO / REVES 团队负责人） |
+| 代表论文 | **3D Gaussian Splatting**（`2308.04079`，B 轨 #282，末位 / 通讯方向）· 神经辐射场与实时渲染系列 |
+| 邮箱 | **George.Drettakis@inria.fr** / **A**（团队主页 `https://www-sop.inria.fr/reves/George.Drettakis/` 页内明文，2026-11-20 实测 `200` / 38,451 B） |
+| 主页 | <https://www-sop.inria.fr/reves/George.Drettakis/>（`200` / 38,451 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1 封」发给一作 #262 ⇒ 不再发） |
+| 备注 | `语言=法语称谓 + 英文正文(判据=希腊姓名族属 + 法国 Inria；不因论文英文判英文)`。建账用途：若 #262 无回应且需换人追问同一论文的工程细节，此条是唯一备选，**同一论文不得并发两封**。 |
+
+### 264. Yuxiang Wei
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yuxiang Wei（拼音姓名可还原中文名 ⇒ 中文信；🚫 汉字名未从可访问页面确认，不臆写） |
+| 机构 | **Meta**（AI Research Scientist，本人主页自述）；2022–2026 UIUC 计算机博士，导师 Lingming Zhang |
+| 代表论文 | **Magicoder**（`2312.02120`，B 轨 #283，一作）· 代码生成与合成数据构造 |
+| 邮箱 | **yuxiang630.wei@gmail.com** / **A**（本人主页 `https://yuxiang.cs.illinois.edu/` 页内明文，2026-11-20 实测 `200` / 36,494 B）；论文 ar5iv HTML 另见 `ywei40@illinois.edu`（`200` / 652,918 B） |
+| 主页 | <https://yuxiang.cs.illinois.edu/>（`200` / 36,494 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 116 封，2026-11-20 12:04:44 `SENT OK`；主题「OSS-Instruct 的种子筛选与去重阈值」；正文 221 个 CJK 汉字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + UIUC 华人学者；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。价值点：种子筛选与去重阈值直接决定我们把 OSS-Instruct 用在 Verilog/脚本语料时「筛太严没量、筛太松学不到真实写法」的取舍；回填 data（主）· pretrain（代码配比）· harness（HumanEval+ 小样本口径）。 |
+
+### 265. Frank Hutter
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Frank Hutter（德语姓名族属 ⇒ 德语称谓 + 英文正文） |
+| 机构 | **University of Freiburg**（计算机系教授，机器学习实验室）；AutoML / 超参优化方向 |
+| 代表论文 | **SGDR**（`1608.03983`，B 轨 #284，末位）· AdamW · 贝叶斯优化与 AutoML 系列 |
+| 邮箱 | **未找到**（本人页 `https://ml.informatik.uni-freiburg.de/profile/hutter/` 实测 `200` / 834,415 B，**页内无明文邮箱、无 `mailto:`** ⇒ 🚫 不猜、不写「fh@…」这类记忆址） |
+| 主页 | <https://ml.informatik.uni-freiburg.de/profile/hutter/>（`200` / 834,415 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
+| 备注 | `语言=德语称谓 + 英文正文(判据=德语姓名族属 + 德国机构)`。建账用途：LR 日程（余弦 / 热重启 vs WSD）是 pretrain 线的常备对照；待其机构页或论文出新地址后再发信，问题应聚焦「同 token 预算下热重启对末段 loss 抖动的影响」。 |
+
