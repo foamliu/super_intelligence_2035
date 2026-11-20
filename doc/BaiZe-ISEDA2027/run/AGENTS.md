@@ -132,6 +132,11 @@ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 | `10.252.32.17` | posttrain · vision | 8×A40；**2026-11-09（周一）起分配 4 张给 post-train**；**2026-11-13 vision 迁入（空卡）** |
 | `10.251.36.15` | zhulong · designflow | ZhuLong 项目（独立于 BaiZe） |
 
+> 🔗 **SSH 隧道**：`10.251.36.15` ↔ `10.252.32.17` 之间经一台 Windows 11 中继打通（两机端口 22 被防火墙挡，但 ICMP 互通）。细节见 `doc/dual-nix-tunnel.md`。
+> - `.15 → .17`：在 `.15` 上 `ssh -p 2222 app.e0031982@localhost`
+> - `.17 → .15`：在 `.17` 上 `ssh -p 3333 app.e0031982@localhost`
+> - scp 同理，加 `-P 2222 / -P 3333`（注意大写 `-P`）。
+
 ## 6. 📉 记忆体量维护（**2026-10-03 运维新增**）
 
 > **为什么**：loop 脚本对 `MEMORY_*.md` 只做 `grep '^WAITING:'`（近零成本），
