@@ -103,8 +103,8 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1792055475403_wuuc7	e0039102	hfeg0plg74	97	verification	旧判:duplicate/已覆盖	不可造(已覆盖dup)	dup of D RegrCaseFilter-001
 1793268918911_brnqb	e02141	hfeg0plg56	717	digital	旧判:wrong-shard/跨域	不可造(跨域defer)	Sentaurus TCAD device sim=B/C,not digital
 1793237499232_nph58	jkxu	hfeg0pkn002	297	verification	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	multi-topic consultation pivots(perf-diag->partition-config->coverage),no clean resolution,prose
-1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'how-to Q&A'作废;待深读:how-to-change tran 10ps->500ps in matrixrun script,具体script-edit意图,可能有specificity-oracle(具体行/参数名),需核trace gold
-1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'vague analysis'作废;待深读:look at netlist structure and content,若有具体net/instance名可specificity-oracle,需核
+1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	旧判:weak(Q&A非produce)	不可造(无牙check)	r847深读:session无解终止(assistant 130+tool_use搜matrixrun未果,以ask_question结束用户未答),找到trantime.sim=.tran 10ps 16242001ps+d6vecgen_compress L201 $tranFile但未定位10ps写入处,无ground-truth gold,reframe需凭空编造违反真实性
+1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	旧判:weak(Q&A非produce)	不可造(跨shard已占)	r847深读:397msgs/36realU,analysis-Q&A合法,CCR_RedCheck(realU#31)单模块explain有gold,但D已造case MbistMpprModuleFindQA-001(同session realU#0/#1,schematic_netlist域2026-11-17),守shard纪律不双取,gold备查trace_deepreads/r847
 1792137927597_f4kc0	jackliu	hfeg0pkn003	279	verification	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'capability Q&A';待深读:can you read waveform trn file,偏capability meta,需核是否有具体file/信号gold(likely NOTEETH)
 1793953438523_pzo6g	e0039602	hfeg0pkn002	269	verification	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'context-coupled skill packaging';待深读:verilog-lib-trans skill packaging,context-coupled需核自包含性
 1794201552569_r2yjr	e0039602	hfeg0pkn002	287	digital	旧判:duplicate/已覆盖	不可造(已覆盖dup)	cross-shard dup:D TbFamilyMergeConverted-001
@@ -149,7 +149,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1794466237270_iyyzq	jerrychu	hfeg0pkn003	15	eda_other	旧判:weak(Q&A非produce)	可造(已造r846)	§5 L1-gate作废,L1合法. 可造(已造 EDA-Eval-DesignFlow-CornerNameConvertProduce-001 r846):PDK corner-name transformer produce-task,sed/python文本变换(voltage p->.去v,temp去c m->-,prefix保留,append _mos_varactor_dbc,insert TYPICAL,output original=converted),toothy check(15断言+hidden-B 12 corner+3seed子集+合成泛化). 资产自包含(corners纯文本,trace中assistant editor/text完整可见无sandbox剥离). 旧判'sed非design_flow'作废(11-15 L1合法,parallel l4tre/jeij7)
 1794466250329_uqvno	zhengc	hfeg0pkn003	120	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'analysis Q&A REJECT'作废;待深读:where setup/hold defined+give datapath,若有具体file/signal gold可specificity-oracle,需核
 1793950397255_x9i0b	e0039602	hfeg0plg95	118	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	'read project+tell me what the review prompt is'analysis,prose
-1794449150836_cdrm1	daiweilu	hfeg0pgn145	107	verification	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'analysis Q&A'作废;待深读:8-turn testmode verification guidance(RingOscCP90Sel/CrackMonEn等具体信号名),specificity-oracle可能,需核gold
+1794449150836_cdrm1	daiweilu	hfeg0pgn145	107	verification	旧判:weak(Q&A非produce)	不可造(无真实trace)	r847深读:flat+subdir双NOFILE(rotation蒸发,不在11-19scan),文件已蒸发不可复活
 1794571860576_p0fqe	johnl	hfeg0pkn001	224	pnr_signoff	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	innovus DRC-rule summarization Q&A,prose
 1794465633184_9scu4	e0045128	hfeg0pkn005	27	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	mc27 synthesis:3 pyAether only too low+NOFILE unreachable
 1794468675464_p5pi7	dsgao	hfeg0pkn001	236	verification	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	scan false-positive:gvim syntax highlighting Q&A,mc236 from systemverilog kw in context,actual=gvim config troubleshooting

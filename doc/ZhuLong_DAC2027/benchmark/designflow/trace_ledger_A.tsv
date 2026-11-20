@@ -328,8 +328,8 @@
 1792033394584_xd7ut	tongfanl	hfhds201	277	digital	case	EDA-Eval-DesignFlow-WtmWriteArrayScope-001	2026-11-15 11:28	r316 analysis-only: '帮我分析下这个环境并回答WTM模式write是否发到array' = analysis question, not produce/diagnosis
 1793972832447_zxb65	thomas1w	hfeg0pjn100	133	verification	case	EDA-Eval-DesignFlow-MbistRepairReArmDiag-001	2026-11-10 15:39	
 1793237499232_nph58	jkxu	hfeg0pkn002	297	verification	parked		2026-11-10 15:59	multi-topic-consultation-starts-perf-diag-then-pivots-to-partition-config-coverage-MSIE-build-U0-diagnosis-has-no-clean-resolution
-1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	parked		2026-11-10 15:59	how-to-change-tran-10ps-to-500ps-in-matrixrun-script
-1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	parked		2026-11-10 15:59	vague-analysis-look-at-netlist-structure-and-content
+1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	parked		2026-11-20 09:33	r847深读:不可造(无牙check),session无解终止assistant搜matrixrun未果以ask_question结束,无ground-truth gold
+1792378797897_0gv3z	thomas1w	hfeg0pkn002	291	verification	parked		2026-11-20 09:34	r847深读:跨shard碰撞defer D — D已造case MbistMpprModuleFindQA-001(schematic_netlist域,realU#0/#1 produce-task分类器,2026-11-17).本线realU#31 CCR_RedCheck explain虽不同turn/不同taskform但同session+域偏schematic_netlist,守shard纪律不双取,gold已提取备查见trace_deepreads/r847
 1792137927597_f4kc0	jackliu	hfeg0pkn003	279	verification	parked		2026-11-10 15:59	capability-question-can-you-read-waveform-trn-file
 1793953438523_pzo6g	e0039602	hfeg0pkn002	269	verification	parked		2026-11-10 16:00	context-coupled-verilog-lib-trans-skill-packaging
 1794201552569_r2yjr	e0039602	hfeg0pkn002	287	digital	parked		2026-11-10 17:12	r319 DUPLICATE-ABORT: r2yjr trace already built by shard D as EDA-Eval-DesignFlow-TbFamilyMergeConverted-001 (schematic_netlist domain, same session 1794201552569_r2yjr.messages.json, same tb_family-check->merged-converted-sv task, 16 conds static-verify reframe). r318 deepread compared only vs bghqo/TbFamilyResultVerify-001 (different session), missed cross-shard r2yjr dup. NOT appended to A.jsonl (maintains 200). Lesson reinforced: cross-shard grep session_file BEFORE claim.
