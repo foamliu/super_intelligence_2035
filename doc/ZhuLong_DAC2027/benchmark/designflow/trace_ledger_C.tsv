@@ -519,7 +519,7 @@ gaz6r	jaceyx	hfeg0pkn002	96	physical_verify	parked		2026-11-09 20:39	ITF-inline-
 1xqgw	steveny	hfeg0pnd001	754	physical_verify	parked		2026-11-09 20:39	rscalc-reproduction-review-overlaps-tatnx continuation-note
 hxh3n	colinxu	hfeg0pkn002	733	physical_verify	parked		2026-11-09 20:39	view-cell+add-pin+schematic colinxu-recon-pattern
 ccxtr	colinxu	hfeg0pkn002	206	physical_verify	parked		2026-11-09 20:39	view-current-circuit 1-turn recon
-yzifo	colinxu	hfeg0pkn002	85	physical_verify	parked		2026-11-09 20:39	view-current-cell 1-turn recon
+yzifo	colinxu	hfeg0pkn002	85	physical_verify	case	EDA-Eval-DesignFlow-VirtuosoOpenCellQueryGen-001	2026-11-20 11:26	r854: revival, layout_virtuoso produce-task (colinxu '查看virtuoso当前打开的cell' -> SKILL get_current_cell.il generator reframe), was parked 11-09 as 'view-current-cell 1-turn recon' (old non-produce sieve) + D-NOFILE wrong-host 11-05; 11-15 reaudit: env-config/flow-driving legal + actual deliverable is a .il script (produce)
 gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-lookup-skill-design-interface how-to
 5331g	colinxu	hfeg0pkn002	230	physical_verify	parked		2026-11-09 20:39	schematic-add-delete-TESTPIN net-zero shard-D+harness-recon
 1794225749981_8lqkt	e0023936	hfhds201		layout_aether	parked		2026-11-09 20:56	r288 L_shape cluster FAILED: pyAether sandbox down (Connection refused 172.16.8.106:55053), DRC QA tools (qa_modify_scene/qa_design_trackb) unavailable, no layout/test-pattern work done, user gave up
