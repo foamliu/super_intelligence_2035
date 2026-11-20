@@ -1582,3 +1582,8 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794995662112_s27qe					parked		2026-11-20 07:55	r910 near-dup: 1794995662112_s27qe
 1794901726360_cnyt5					parked		2026-11-20 07:55	r910 near-dup: 1794901726360_cnyt5
 1794989806200_sq0lh					parked		2026-11-20 07:55	r910 near-dup: 1794989806200_sq0lh
+1794818774473_rs6bc	e0029308	hfeg0plg49	62	spice_sim	parked		2026-11-20 08:33	near-dup DffResetPrioClassify-001(same user e0029308 DFF reset priority)
+1794992232222_k9a0w	weiyue	hfeg0plg76	26	spice_sim	parked		2026-11-20 08:33	near-dup AcDcCapMerge-001(same user weiyue AC-DC cap merge)
+1794970581451_0jt5b	clarawu	hfeg0plg76	89	spice_sim	parked		2026-11-20 08:33	near-dup ZqRonLibGen-001(same user clarawu zqcode_75pvt Ron extract)
+1795077996572_icdx9	clarawu	hfeg0plg76	56	spice_sim	parked		2026-11-20 08:33	near-dup RonDvqSlopeExtract+FineSimStimSweepFix(same user clarawu dRon/dV slope FineSim stim fix)
+1794979201741_ksikx	clarawu	hfeg0plg76	66	spice_sim	parked		2026-11-20 08:33	near-dup ZqRonLibGen-001(same user clarawu extract_Ron_75pvt PVT-info same script as 0jt5b)
