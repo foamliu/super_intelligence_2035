@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-mini-cloud 评测报告（轮 2）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.6;color:#222;background:#fafafa}
+h1{color:#1a1a2e;border-bottom:3px solid #c0392b;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:32px;border-left:4px solid #c0392b;padding-left:10px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:left}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.warn{background:#fff3cd;border:1px solid #ffe08a;padding:12px 16px;border-radius:6px;margin:12px 0}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
+.infra{color:#c0392b;font-weight:700}
+.ability{color:#2c3e50}
+.summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag-infra{background:#f8d7da;color:#721c24}
+.tag-ability{background:#d1ecf1;color:#0c5460}
+ul{margin:6px 0}
+</style>
+</head>
+<body>
+
+<h1>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-mini-cloud 评测报告</h1>
+<p><strong>轮次：</strong>轮 2（doubao-mini）｜<strong>日期：</strong>2026-11-21｜<strong>状态：</strong><span class="tag tag-infra">⚠️ infra-contaminated</span></p>
+
+<div class="danger">
+<strong>⚠️ 重要警示：本轮结果受基础设施故障污染（FUSE Token 额度耗尽）</strong>
+<p>本轮 batch 在运行过程中触发 <code>[run_batch][FUSE] Token 额度耗尽, 触发熔断! 停止剩余 worker</code>（出现 2 次）。
+mini 模型 API 的 Token 额度无法支撑 16 worker 并发跑 500 case，熔断后大量 worker 被停止，
+导致 <strong>471/500（94.2%）的 case 为 "no submit.zip produced（cline 未产出任何文件）"</strong>——
+这些是<strong>基础设施噪声</strong>（worker 被熔断终止 / cline 被 rate-limit 拦截），<strong>不是模型能力失败</strong>。</p>
+<p>仅 <strong>~28/500（5.6%）的 case 为真实能力评测</strong>（cline 确实运行并产出了 submit.zip，但内容错误，check.py 判 FAIL）。
+这 28 个真实能力 case 中 <strong>0 PASS</strong>，提示 mini 远弱于 pro，但样本量太小且 batch 整体被 infra 污染，
+<strong>0.0% 不可作为 mini 的干净能力结论</strong>（AGENTS.md §1.2「infra ≠ 能力」）。</p>
+</div>
+
+<h2>1. 跑批配置</h2>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>评测集</td><td>EDA-Flow-Bench Lite 500（<code>eval/cases_lite.txt</code>，500 条高质量子集）</td></tr>
+<tr><td>基座模型</td><td><code>doubao-seed-2.0-mini-cloud</code></td></tr>
+<tr><td>API Key</td><td><code>02_..._caa8bffa-b976-47f5-acc3-4141f6c5b90f</code>（mini 专用）</td></tr>
+<tr><td>Base URL</td><td><code>http://agi-gateway.cxmt.com/cloud/v1</code></td></tr>
+<tr><td>thinking</td><td>low（run_batch.sh 默认）</td></tr>
+<tr><td>timeout</td><td>2400s（run_batch.sh 默认）</td></tr>
+<tr><td>workers</td><td>16</td></tr>
+<tr><td>harness</td><td>cline 3.0.51 + PreToolUse 防泄题 hook</td></tr>
+<tr><td>启动命令</td><td><code>setsid bash eval/run_batch.sh --workers 16 --model doubao-seed-2.0-mini-cloud</code></td></tr>
+<tr><td>batch ID</td><td><code>run_batch_20261121_002920</code></td></tr>
+<tr><td>日志</td><td><code>eval/run_20261121_0031_doubao_mini.log</code></td></tr>
+<tr><td>起止时间</td><td>2026-11-21 00:29:20 → ~00:45 CST（约 16 min，熔断后快速结束）</td></tr>
+<tr><td>runtime</td><td>~16 min（远短于 pro 轮 2:35，因 FUSE 提前终止大量 worker）</td></tr>
+</table>
+
+<div class="warn">
+<strong>关于 <code>--model</code> 参数：</strong>任务书原文要求「命令不加 <code>--model</code>，靠 providers.json 切模型」。
+但经 wake#1705 机制诊断，本仓 <code>run_one.sh:324</code> 把 <code>-m "$MODEL"</code> 显式传给 cline，
+而 MODEL 来自 <code>run_batch.sh --model</code> 参数（providers.json 只供 apiKey，不供 model）。
+因此<strong>必须显式传 <code>--model doubao-seed-2.0-mini-cloud</code></strong>，否则 cline 会用 pro 模型名 + mini key → 网关 403 Forbidden。
+第一次尝试（不加 --model）已 kill 作废（214 status 全 FAIL Forbidden），本次为修正后的 clean 起跑。
+</div>
+
+<h2>2. 汇总数字（从日志 <code>run_20261121_0031_doubao_mini.log</code> 提取）</h2>
+
+<div class="summary-box">
+<table>
+<tr><th>指标</th><th>值</th><th>备注</th></tr>
+<tr><td>总 case 数</td><td>500</td><td>Lite 集</td></tr>
+<tr><td>已判 case 数</td><td>500</td><td>日志显示 500 行结果（含熔断终止的 case）</td></tr>
+<tr><td>PASS</td><td><strong>0</strong></td><td class="infra">⚠️ 含 infra 污染</td></tr>
+<tr><td>FAIL</td><td>499</td><td>含 471 infra-killed + ~28 real ability</td></tr>
+<tr><td>ERROR</td><td>0</td><td>—</td></tr>
+<tr><td>ABSENT</td><td>1</td><td>BistOscRccReorder-001 early exit</td></tr>
+<tr><td><strong>Pass@1 (decided, 全量)</strong></td><td><strong>0/499 = 0.0%</strong></td><td class="infra">⚠️ infra-contaminated，不可作能力结论</td></tr>
+<tr><td>Pass@1 (real ability 子集)</td><td>0/~28 = 0.0%</td><td>样本太小，仅作信号参考</td></tr>
+</table>
+</div>
+
+<h2>3. 失败构成分类（infra vs 能力）</h2>
+
+<table>
+<tr><th>类别</th><th>数量</th><th>占比</th><th>性质</th><th>说明</th></tr>
+<tr><td>no submit.zip produced</td><td>471</td><td>94.2%</td><td class="infra">infra 噪声</td><td>cline 未产出任何文件。主因：FUSE 熔断终止 worker / cline 被 rate-limit 拦截（"当前请求额度已用完，请等待7秒后重试"）。<strong>不是模型能力失败</strong>。</td></tr>
+<tr><td>exception: AssertionError</td><td>21</td><td>4.2%</td><td class="ability">真实能力 FAIL</td><td>cline 运行并产出了 submit.zip，但 check.py 断言不通过（内容错误）。<strong>真实能力评测</strong>。</td></tr>
+<tr><td>exception: FileNotFoundError</td><td>1</td><td>0.2%</td><td class="ability">真实能力 FAIL</td><td>AOI21ArcChar-001，候选脚本产物缺失。</td></tr>
+<tr><td>check FAILED (tuple)</td><td>~3</td><td>0.6%</td><td class="ability">真实能力 FAIL</td><td>check.py 返回 (False, {条件映射})，多条件不通过。</td></tr>
+<tr><td>ABSENT (early exit)</td><td>1</td><td>0.2%</td><td>—</td><td>BistOscRccReorder-001，early exit。</td></tr>
+<tr><td>其他 FAIL</td><td>~3</td><td>0.6%</td><td class="ability">真实能力 FAIL</td><td>未归入上述类别的 FAIL。</td></tr>
+</table>
+
+<div class="warn">
+<strong>分类结论：</strong>
+<ul>
+<li><span class="tag tag-infra">infra</span> <strong>471/500（94.2%）</strong>：FUSE 熔断 + rate-limit 导致 cline 未产出。这部分<strong>不计入能力结论</strong>。</li>
+<li><span class="tag tag-ability">ability</span> <strong>~28/500（5.6%）</strong>：cline 确实运行并产出，但内容错误。这 28 个真实能力 case <strong>0 PASS</strong>。</li>
+<li>FUSE 机制：run_batch.sh 检测到 cline stderr 含 "Token额度已用完/额度/quota exhaust" 时，写 <code>FUSE_TOKEN_EXHAUSTED</code> 标志文件，后续 worker 检测到标志后跳过新 case，已派发的 case 继续跑完。</li>
+</ul>
+</div>
+
+<h2>4. 与轮 1（doubao-pro）对比</h2>
+
+<table>
+<tr><th>指标</th><th>轮 1 pro</th><th>轮 2 mini</th><th>差异</th></tr>
+<tr><td>基座</td><td>doubao-seed-2.0-pro-cloud</td><td>doubao-seed-2.0-mini-cloud</td><td>—</td></tr>
+<tr><td>PASS</td><td>45</td><td>0</td><td>−45</td></tr>
+<tr><td>FAIL</td><td>438</td><td>499</td><td>+61</td></tr>
+<tr><td>ERROR</td><td>15</td><td>0</td><td>−15</td></tr>
+<tr><td>ABSENT</td><td>2</td><td>1</td><td>−1</td></tr>
+<tr><td><strong>Pass@1 (decided)</strong></td><td><strong>9.32%</strong> (45/483)</td><td><strong>0.0%</strong> (0/499) ⚠️</td><td><strong>−9.32pp</strong></td></tr>
+<tr><td>用户基准对齐</td><td>✅ 9.32% 落 10.5%±2pp</td><td>❌ infra-contaminated</td><td>—</td></tr>
+<tr><td>runtime</td><td>2:34:59</td><td>~16 min</td><td>远短（FUSE 提前终止）</td></tr>
+<tr><td>FUSE 触发</td><td>无</td><td>2 次</td><td>mini API 额度不足</td></tr>
+<tr><td>no-submit.zip 占比</td><td>低（pro 能跑完）</td><td>94.2%</td><td>infra 信号</td></tr>
+</table>
+
+<div class="warn">
+<strong>对比结论（谨慎）：</strong>
+<ul>
+<li>pro 轮 (9.32%) 是<strong>干净对齐</strong>结果，可作 M0 anchor。</li>
+<li>mini 轮 (0.0%) 是<strong>infra-contaminated</strong>结果，<strong>不可直接与 pro 对比</strong>作 backbone 消融结论。</li>
+<li>唯一可比的信号：mini 在 ~28 个真实能力 case 上 0 PASS（pro 在同批 case 上有 45 PASS）。但因 mini 的 28 个 case 是 FUSE 前的早期 case（可能偏易/偏难不均匀），<strong>不可作配对比较</strong>。</li>
+<li><strong>论文 §6 backbone 比较段不应引用 mini 的 0.0%</strong>作为干净能力数字。若需 mini 的干净数据，需在 API 额度恢复后用更低并发（如 --workers 4）重跑。</li>
+</ul>
+</div>
+
+<h2>5. 真实能力 FAIL case 抽样（22 条 exception）</h2>
+<p>以下 case 为 cline 确实运行并产出 submit.zip、但 check.py 判 FAIL 的真实能力失败（非 infra）：</p>
+<table>
+<tr><th>case_id</th><th>耗时</th><th>失败原因（摘要）</th></tr>
+<tr><td>NetlistPadDriverTrace-001-v2</td><td>59s</td><td>report missing required keys</td></tr>
+<tr><td>NetlistHierarchyExtractQA-001</td><td>76s</td><td>cond i: B1 total_csl=0, expected 160</td></tr>
+<tr><td>NetlistStructDF-001</td><td>98s</td><td>judge setup missing</td></tr>
+<tr><td>PgLayoutMergeAudit-001</td><td>44s</td><td>B missing keys: size_analysis,conclusion,merge_re...</td></tr>
+<tr><td>AsyncFifoSim-001</td><td>63s</td><td>no Gray-coded pointer logic</td></tr>
+<tr><td>DesignListGen-001</td><td>66s</td><td>B1 path set mismatch</td></tr>
+<tr><td>AprLogAudit-001</td><td>70s</td><td>submit.zip must contain audit_apr.py</td></tr>
+<tr><td>AutoCellFlow-001</td><td>73s</td><td>submit.zip missing gen_autocell_flow.py</td></tr>
+<tr><td>AOI21ArcChar-001</td><td>89s</td><td>FileNotFoundError</td></tr>
+<tr><td>ArgusDeckEquivAudit-001</td><td>94s</td><td>B: body_diffs length == 1</td></tr>
+<tr><td>AlterDeckSplit-001</td><td>101s</td><td>6 condition(s) violated</td></tr>
+<tr><td>AutoCellKitMap-001</td><td>57s</td><td>CLI exit 0 + valid JSON check fail</td></tr>
+<tr><td>AutoCellRmAvPf-001</td><td>62s</td><td>candidate exited 1</td></tr>
+<tr><td>AutoCellTclFlow-001</td><td>83s</td><td>submit.zip must contain exactly [generate_autocell...]</td></tr>
+<tr><td>AutoViaPFAudit-001</td><td>74s</td><td>autovia residual I20 missing/wrong</td></tr>
+<tr><td>AvgValueCalc-001</td><td>80s</td><td>avg_calc.tcl not in zip</td></tr>
+<tr><td>DrcDensityParseJudge-001</td><td>189s</td><td>drc_density_check.py not found in submit.zip</td></tr>
+<tr><td>BridgeCfgDiag-001</td><td>72s</td><td>check FAILED [a-m]: multiple conditions</td></tr>
+<tr><td>BitcellMcSpGen-001</td><td>100s</td><td>.sp .include references B netlist</td></tr>
+<tr><td>CTLEAcMetric-001</td><td>60s</td><td>zip missing ac_metric_extractor.py</td></tr>
+<tr><td>AutoViaSelAnalyze-001</td><td>187s</td><td>B idx2 valid=None (expected False)</td></tr>
+<tr><td>ABMatchPlacementCheck-001</td><td>993s</td><td>candidate non-zero exit 1</td></tr>
+</table>
+<p>这些真实 FAIL 的模式多为「submit.zip 缺少必需文件 / 脚本运行出错 / 条件不满足」，与 pro 轮的 FAIL 模式类似，但 mini <strong>完全没有 PASS</strong>（pro 在同批有 45 PASS），提示 mini 的代码生成与 EDA 工具链能力显著弱于 pro。</p>
+
+<h2>6. FUSE 熔断机制说明</h2>
+<p><code>run_batch.sh</code> 内置 Token 额度熔断（FUSE）机制：</p>
+<ul>
+<li><strong>检测</strong>（run_batch.sh:319-320）：每个 worker 完成后，检查 cline stderr / 日志是否含 <code>Token额度已用完|Token quota|rate.?limit|额度|quota.*exhaust</code>。</li>
+<li><strong>触发</strong>（run_batch.sh:323-328）：命中则打印 <code>[FUSE] Token 额度耗尽, 触发熔断!</code>，写 <code>FUSE_TOKEN_EXHAUSTED</code> 标志文件到 PROGRESS_DIR。</li>
+<li><strong>传播</strong>（run_batch.sh:297-298）：后续 worker 进入 run_task 前检查标志文件，存在则跳过新 case 直接退出。</li>
+<li><strong>效果</strong>：已派发的 case 继续跑完，未派发的 case 被跳过（记录为 no-submit.zip FAIL）。</li>
+</ul>
+<p>本轮 FUSE 触发 2 次，说明 mini API 的 Token 额度在 16 worker 并发下很快耗尽。mini 是轻量模型，API 配额可能远低于 pro。</p>
+
+<h2>7. 结论与建议</h2>
+
+<div class="danger">
+<strong>本轮结论：</strong>
+<ul>
+<li><strong>轮 2（doubao-mini）结果 = infra-contaminated</strong>（FUSE Token 额度耗尽）。</li>
+<li><strong>0.0% Pass@1 (0/499) 不可作为 mini 的干净能力结论</strong>——471/500 是 infra 噪声（熔断终止），仅 ~28/500 是真实能力评测（0 PASS）。</li>
+<li>真实能力信号：28 个真实 FAIL（0 PASS）提示 mini 远弱于 pro，但样本太小、且是 FUSE 前的早期 case（可能有选择偏差），<strong>不可作配对比较</strong>。</li>
+</ul>
+</div>
+
+<div class="warn">
+<strong>建议：</strong>
+<ul>
+<li><strong>论文 §6 backbone 比较段</strong>：不应引用 mini 的 0.0% 作为干净能力数字。若需 mini 干净数据，需在 API 额度恢复后<strong>降低并发</strong>（如 <code>--workers 4</code>）重跑——但这会偏离任务书「逐字照跑 --workers 16」的约束，需用户裁定。</li>
+<li><strong>轮 3（doubao-lite）</strong>：lite 有独立 API key（<code>...78b81092</code>）和独立额度，可能不会触发同样的 FUSE。本轮已起跑，监控中。</li>
+<li><strong>mini 重跑选项</strong>：(a) 等 API 额度恢复后用 --workers 4 重跑；(b) 接受 partial signal（28 real FAIL, 0 PASS）作定性参考、不作定量结论；(c) 放弃 mini 干净数据，仅报告 infra-failed 事实。由用户裁定。</li>
+</ul>
+</div>
+
+<h2>8. 防伪底线自检</h2>
+<ul>
+<li>✅ 所有数字来自实测日志 <code>run_20261121_0031_doubao_mini.log</code>，未编造。</li>
+<li>✅ infra vs 能力 已显式分类（471 infra / ~28 ability），未将 infra 噪声冒充能力结论。</li>
+<li>✅ FUSE 熔断事实已如实记录（2 次触发）。</li>
+<li>✅ 未改判据 / 未改题 / 未改样本 / 未删他人数据。</li>
+<li>✅ 报告标注 <span class="tag tag-infra">infra-contaminated</span>，不掩盖 infra 故障。</li>
+</ul>
+
+<hr>
+<p style="color:#888;font-size:12px">报告生成：2026-11-21 01:2x CST｜zhulong agent wake#1707｜EDA-Flow-Bench Lite 500 doubao-mini 评测轮 2</p>
+
+</body>
+</html>
