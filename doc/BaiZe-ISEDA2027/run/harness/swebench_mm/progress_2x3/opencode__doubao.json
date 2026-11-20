@@ -4921,9 +4921,16 @@
   "highlightjs__highlight.js-2765": {
     "instance_id": "highlightjs__highlight.js-2765",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 272.4,
+    "rc": 0,
+    "model_patch_len": 275853,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Data.isError` are highlighted consistently with other similar expressions\n\nAll existing tests pass, including the `else-variants` test that verifies the basic `{{else}}` case still works as expected.\n",
+    "stderr_tail": "k\n    ✓ should markup inline\n    ✓ should markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  277 passing (668ms)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2785": {
     "instance_id": "highlightjs__highlight.js-2785",
