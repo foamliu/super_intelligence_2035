@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **288** 条（**第七十五轮 2026-11-20 15:0x 补 4 条 → 288**：SimCLR `2002.05709`（**18,118**，ICML 2020）/ NeRF `2003.08934`（**1,186**，ECCV 2020 oral）/ ChatEDA `2308.10204`（**319**，IEEE TCAD 43(10):3184–3197, 2024；**&lt;500 按「本领域权威」收**）/ Routing Transformers `2003.05997`（**925**，TACL 9:53–68, 2021）；arXiv `id_list` 两批均 **`200` + atom**（10,472 B / 4 entry、9,755 B / 4 entry），OpenAlex **4/4 `200`**；ChatEDA 另用 arXiv 原生 HTML（196,479 B）读作者与 affiliation；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；⚠️ 原计划 ELECTRA 的旧记 ID `2003.05997` 实测为 Routing Transformers ⇒ 改收后者，ELECTRA 真 ID `2003.10555` 留作下轮）
+
 **本轮快照**：累计 **284** 条（**第七十四轮 2026-11-20 12:0x 补 4 条 → 284**：PaLM-E `2303.03378`（**4,143**，预印本）/ 3D Gaussian Splatting `2308.04079`（**12,239**，ACM TOG 2023）/ Magicoder `2312.02120`（**416**，**&lt;500 按「方法论常青」收**）/ SGDR `1608.03983`（**11,502**，arXiv `comment` = ICLR 2017）；元数据分两批实测 arXiv `id_list`：`2303.03378,2308.04079,2010.00718,2301.12597` ⇒ **`200` + atom**（9,914 B / 4 entry，其中 `2010.00718` 实测为 *When to Impute?* ⇒ **SpeechT5 的 ID 记错，本轮未收**）与 `2303.03378,2312.02120` ⇒ **`200` + atom**（6,252 B / 2 entry），`1608.03983` ⇒ **`200` + atom**（2,359 B / 1 entry），逐条按 `published` 核 + OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 多模态句子与连续状态编码进语言塔 / 各向异性高斯 + 密度控制做实时新视角合成 / 开源片段当种子自造指令数据 / 余弦退火与热重启日程）
 
 **本轮快照**：累计 **280** 条（**第七十三轮 2026-11-20 09:0x 补 4 条 → 280**：SmoothQuant `2211.10438`（**839**）/ Chatbot Arena `2403.04132`（**2,131**）/ ALOHA+ACT `2304.13705`（**3,065**，RSS 2023）/ Dolma `2402.00159`（**674**，ACL 2024）；元数据 arXiv `id_list` **`200` + atom**（11,794 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；两条 OpenAlex 记 `preprint` 的如实标注、不写记忆中的会场）
@@ -4914,6 +4916,74 @@
 
 ---
 
+## 285. A Simple Framework for Contrastive Learning of Visual Representations
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | A Simple Framework for Contrastive Learning of Visual Representations |
+| 作者（前 3） | Ting Chen · Simon Kornblith · Mohammad Norouzi（共 **4** 位；末位 Geoffrey Hinton；arXiv 作者字段逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-02-13`；v3 `2020-07-01`） |
+| 会议 / 期刊 | **ICML 2020**（arXiv `comment` 原文 `ICML'2020`；OpenAlex `type=preprint` 记 arXiv 版 ⇒ 会议信息按 arXiv 字段写） |
+| 被引数 | **18,118**（OpenAlex `10.48550/arxiv.2002.05709`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2002.05709> ｜ DOI `10.48550/arxiv.2002.05709` |
+| 一句话贡献 | 去掉 memory bank 与专用结构，只用「**数据增强组合 + 可学习非线性投影头 + 大 batch 长训练**」三项就做出强对比学习：ImageNet 线性探针 **76.5%** top-1（较前 SOTA 相对 +**7%**，与有监督 ResNet-50 持平）；仅用 **1%** 标签微调即得 **85.8%** top-5（标签少 **100×** 仍超 AlexNet）。 |
+| 与我们工作的关系 | **vision（主 · 自监督预训练的第一杠杆）**：<b>动作</b>：视觉塔消融把「增强策略组合」与「编码器容量」拆成两个独立因子预注册，别把收益全记到编码器上。**harness**：加一条「冻结 backbone + 线性探针」的廉价评测口径（不微调），与全量微调分数并列报。**pretrain**：投影头在预训练后丢弃 ⇒ 下游用的是 backbone 表示，报表不得把投影维度当成模型规格。 |
+| 首次收录 | **2026-11-20**（第七十五轮） |
+| 核验状态 | arXiv `id_list=2002.05709,2003.08934,1907.11692,2012.03112` **`200` + `application/atom+xml; charset=utf-8`**（10,472 B / 4 entry，其中 RoBERTa / PIM 综述**已在表内** ⇒ 本轮不收）；OpenAlex **`200`（18,118）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 286. NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis |
+| 作者（前 3） | Ben Mildenhall · Pratul P. Srinivasan · Matthew Tancik（共 **6** 位；末位 Ren Ng；arXiv 作者字段逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-03-19`；v2 `2020-08-03`） |
+| 会议 / 期刊 | **ECCV 2020（oral）**（arXiv `comment` 原文 `ECCV 2020 (oral)`；OpenAlex `type=preprint` 记 arXiv 版） |
+| 被引数 | **1,186**（OpenAlex `10.48550/arxiv.2003.08934`，查询日 **2026-11-20**；该记录指向 arXiv 预印本，**其他版本不在同一记录内** ⇒ 口径只作本表内部比较） |
+| arXiv / DOI | <https://arxiv.org/abs/2003.08934> ｜ DOI `10.48550/arxiv.2003.08934` |
+| 一句话贡献 | 用一个全连接网络把**单条 5D 坐标**（空间 `(x,y,z)` + 视角 `(θ,φ)`）映射成**体密度 + 视角相关辐射亮度**，沿相机光线查询并用可微体渲染投回图像；只需「已知位姿的稀疏视角图像」即可优化出连续场景表示并做新视角合成。 |
+| 与我们工作的关系 | **vision（主 · 合成多视角数据）**：<b>动作</b>：若把 NeRF 类方法当数据生成器，预算单位写「**场景数 × 每场景视角数**」，并先测位姿噪声对重建的影响，再谈扩量。**designflow**：体渲染表示的是**外观/辐射**而非几何真值 ⇒ 可做「版图三维示意」，🚫 不能当尺寸/层高可验证的 CAD 真值。**data**：生成的每张图必须带来源三元组（场景 / 位姿 / 渲染器版本）。 |
+| 首次收录 | **2026-11-20**（第七十五轮） |
+| 核验状态 | 同 #285 的 arXiv 批量（10,472 B / 4 entry）；OpenAlex **`200`（1,186）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 287. ChatEDA: A Large Language Model Powered Autonomous Agent for EDA
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ChatEDA: A Large Language Model Powered Autonomous Agent for EDA |
+| 作者（前 3） | Zhuolun He · Haoyuan Wu · Xinyun Zhang（共 **7** 位；末位 Bei Yu；arXiv 作者字段逐字核，affiliation 取自 arXiv 原生 HTML：一作 **Chinese University of Hong Kong**，Haisheng Zheng 为 Shanghai Artificial Intelligent Laboratory） |
+| 年份 | **2023**（arXiv v1 `2023-08-20`；v4 `2024-09-21`） |
+| 会议 / 期刊 | **IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems**（OpenAlex：vol **43**、issue **10**、pp. **3184–3197**、2024；DOI `10.1109/tcad.2024.3383347`） |
+| 被引数 | **319**（OpenAlex `10.48550/arxiv.2308.10204`，查询日 **2026-11-20**；**&lt;500，按「本领域权威」收**：EDA 流程自动化 agent 的代表性一手工作） |
+| arXiv / DOI | <https://arxiv.org/abs/2308.10204> ｜ 期刊 DOI `10.1109/tcad.2024.3383347` ｜ arXiv DOI `10.48550/arxiv.2308.10204` |
+| 一句话贡献 | **ChatEDA** = LLM（自训 **AutoMage**）+ EDA 工具当执行器，把 **RTL → GDSII** 的流程拆成「**任务分解 / 脚本生成 / 任务执行**」三段；作者自报在多类需求上优于 GPT-4 等通用 LLM。 |
+| 与我们工作的关系 | **designflow（主 · 造题与可验证性）**：<b>动作</b>：造题按「分解 / 脚本 / 执行」三段分别记分，执行段必须在**真 OpenROAD** 跑通才算过（呼应 EDA Corpus #264 的「脚本判对错要真跑」）。**harness**：判分对象是**脚本产物 + 运行日志**，不是自然语言解释。**data**：微调样本必须带「流程阶段」标签，否则无法判断模型是学会了流程还是背了模板。 |
+| 首次收录 | **2026-11-20**（第七十五轮） |
+| 核验状态 | arXiv `id_list=2003.05997,1812.04948,2305.13243,2308.10204` **`200` + `application/atom+xml`**（9,755 B / 4 entry）；OpenAlex **`200`（319，TCAD 43(10):3184–3197）**；arXiv 原生 HTML `https://arxiv.org/html/2308.10204v2` **`200` / 196,479 B**（读作者块与 affiliation）；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 288. Efficient Content-Based Sparse Attention with Routing Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Efficient Content-Based Sparse Attention with Routing Transformers |
+| 作者（前 3） | Aurko Roy · Mohammad Saffar · Ashish Vaswani（共 **4** 位；末位 David Grangier；arXiv 作者字段逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-03-12`；v5 `2020-10-24`） |
+| 会议 / 期刊 | **Transactions of the Association for Computational Linguistics**（OpenAlex：vol **9**、pp. **53–68**、2021；DOI `10.1162/tacl_a_00353`） |
+| 被引数 | **925**（OpenAlex `10.48550/arxiv.2003.05997`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2003.05997> ｜ 期刊 DOI `10.1162/tacl_a_00353` ｜ arXiv DOI `10.48550/arxiv.2003.05997` |
+| 一句话贡献 | 用**在线 k-means 路由模块**学出内容相关的稀疏注意力模式，把复杂度从 `O(n²d)` 降到 **`O(n^1.5 d)`**；Wikitext-103 困惑度 **15.8 vs 18.3**、ImageNet-64 **3.43 vs 3.44** bits/dim，并在 PG-19 上以 22 层 / **8192** 序列长度取得测试困惑度 **33.2**。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文稀疏注意力基线）**：<b>动作</b>：长上下文实验里把「固定窗口 / 学出来的稀疏模式」当两类基线分别跑，报告同一 token 预算下的困惑度与显存。**zhulong（成本口径）**：稀疏注意力的实际加速取决于 kernel 与聚类开销 ⇒ 成本必须实测，🚫 不许按复杂度公式外推。**harness**：长上下文评测须同时给「序列长度 + 是否外推」两个标签。 |
+| 首次收录 | **2026-11-20**（第七十五轮） |
+| 核验状态 | 同 #287 的 arXiv 批量（9,755 B / 4 entry）；OpenAlex **`200`（925，TACL 9:53–68）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -4925,6 +4995,8 @@
 | `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
 
 > 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第七十五轮（2026-11-20 15:0x）转正 4 条**：SimCLR `2002.05709`（#285，**18,118**，ICML 2020）· NeRF `2003.08934`（#286，**1,186**，ECCV 2020 oral）· ChatEDA `2308.10204`（#287，**319**，IEEE TCAD 43(10):3184–3197, 2024，**&lt;500 按「本领域权威」收**）· Routing Transformers `2003.05997`（#288，**925**，TACL 9:53–68, 2021）⇒ B 轨累计 **288**（覆盖轴：增强组合 + 投影头 + 大 batch 的对比学习配方 / 5D 坐标 + 可微体渲染 / RTL→GDSII 的分解-脚本-执行三段 agent / 在线 k-means 内容稀疏注意力）。核验：arXiv `id_list` 两批均 **`200` + atom**（10,472 B / 4 entry、9,755 B / 4 entry）+ OpenAlex **4/4 `200`**（18,118 / 1,186 / 319 / 925，查询日 2026-11-20）；ChatEDA 另用 arXiv 原生 HTML **`200` / 196,479 B** 读作者与 affiliation；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：四 ID 在 `PAPERS.md` 全量正则 **0 命中**（`1907.11692` RoBERTa / `2012.03112` PIM 综述 / `2308.00113` VeriGen / `2104.14294` DINO / `2304.07193` DINOv2 / `2311.04887` AutoChip / `1406.2661` GAN 均已在表内或仅作候选 ⇒ 本轮不收）。⚠️ **避免一处 ID 误记**：原计划收 **ELECTRA**，按记忆写成 `2003.05997`，实测该 ID 为 **Routing Transformers** ⇒ 当场改收后者（#288）；**ELECTRA 真 ID = `2003.10555`**（arXiv `200` + title 逐字核），留作下轮候选。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① ELECTRA `2003.10555`（真 ID 已核，待核被引）；② Mask R-CNN `1703.06870` / Faster R-CNN `1506.01497`（检测侧空缺）；③ SAC `1801.01290` / DDPG `1509.02971`（连续控制）；④ HBM / JEDEC 一手（连续多轮未命中）；⑤ 通信重叠侧（ZeRO 已收 ⇒ 只补 Ring-AllReduce / overlap）。
 
 > ✅ **第七十四轮（2026-11-20 12:0x）转正 4 条**：PaLM-E `2303.03378`（#281，**4,143**，预印本）· 3D Gaussian Splatting `2308.04079`（#282，**12,239**，ACM TOG）· Magicoder `2312.02120`（#283，**416**，**&lt;500 按「方法论常青」收**）· SGDR `1608.03983`（#284，**11,502**，arXiv `comment` = ICLR 2017）⇒ B 轨累计 **284**（覆盖轴：多模态句子 + 连续状态编码进语言塔 / 各向异性高斯 + 密度控制做实时新视角合成 / 开源片段当种子自造指令数据 / 余弦退火与热重启日程）。核验：arXiv `id_list` 三批全 **`200` + atom**（9,914 B / 4 entry、6,252 B / 2 entry、2,359 B / 1 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：四 ID 在 `PAPERS.md` 全量正则 0 命中（`2301.12597` BLIP-2 / `2310.01889` Ring Attention / `2308.03688` AgentBench / `2312.14238` InternVL / `2306.06070` Mind2Web / `1711.05101` AdamW / `1710.03740` Mixed Precision 均已在表内 ⇒ 全部作废）。⚠️ **两处更正**：① 旧候选池把 PaLM-E 记成 `2403.03378`，OpenAlex 实测该 DOI 是 *European Physical Journal C* 的物理论文 ⇒ 真 ID = `2303.03378`；② 旧记录把 SpeechT5 记成 `2010.00718`，实测该 ID 为 *When to Impute? Imputation before and during cross-validation*（stat.ME）⇒ **SpeechT5 的 arXiv ID 仍未核实**（OpenAlex 标题检索到 `2110.07205` 预印本 159 + ACL 2022 版 318），下一轮须先核 ID 再收。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① SpeechT5（先核真 ID，再核 ACL 2022 版被引）；② HBM / JEDEC 一手（连续多轮未命中）；③ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；④ Ring-AllReduce / 通信重叠一侧（ZeRO 已收 ⇒ 只补通信侧）；⑤ 数据质量线「合成数据自举」后续一手（Magicoder 已收 ⇒ 补 Self-Instruct 之后的演进）。
 > ✅ **第七十三轮（2026-11-20 09:0x）转正 4 条**：SmoothQuant `2211.10438`（#277，**839**）· Chatbot Arena `2403.04132`（#278，**2,131**）· ALOHA+ACT `2304.13705`（#279，**3,065**，RSS）· Dolma `2402.00159`（#280，**674**，ACL）⇒ B 轨累计 **280**（覆盖轴：W8A8 的逐通道缩放与成本口径 / 人评排行榜的一致性与置信区间 / 动作分块降低复合误差 / 语料构造的中间态验收）。核验：arXiv `id_list` **`200` + atom**（11,794 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① PaLM-E `2403.03378`（具身多模态）；② 3D Gaussian Splatting `2308.04079`；③ HBM / JEDEC 一手（连续多轮未命中）；④ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；⑤ 数据质量线「合成数据自举」后续一手。

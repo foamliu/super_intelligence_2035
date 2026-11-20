@@ -3793,3 +3793,56 @@
 | 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
 | 备注 | `语言=德语称谓 + 英文正文(判据=德语姓名族属 + 德国机构)`。建账用途：LR 日程（余弦 / 热重启 vs WSD）是 pretrain 线的常备对照；待其机构页或论文出新地址后再发信，问题应聚焦「同 token 预算下热重启对末段 loss 抖动的影响」。 |
 
+
+### 266. Ben Mildenhall
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ben Mildenhall（英语姓名族属 ⇒ 英文信） |
+| 机构 | **Google Research**（NeRF 一作；UC Berkeley 博士，导师 Ren Ng） |
+| 代表论文 | **NeRF**（`2003.08934`，B 轨 #286，一作）· Mip-NeRF 系列 |
+| 邮箱 | **me@bmild.com** / **A**（本人主页 `https://bmild.github.io/` 页内明文，2026-11-20 实测 `200` / 86,655 B） |
+| 主页 | <https://bmild.github.io/>（`200` / 86,655 B） |
+| X 账号 | **未找到**（主页无 X 外链；🚫 不猜 handle） |
+| 状态 | **待发信**（11-20 15:00 已备草稿 `drafts/2003.08934.md`，今日 12/12 额度满 ⇒ 11-21 00:00 时窗首封） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构 Google Research)`。价值点：**5D 输入里显式带视角方向** ⇒ 把「视角相关效应」与「几何」解耦；若我们用 NeRF 类方法造多视角数据，最贵的是位姿与稀疏视角，而不是网络。回填 vision（主）· data（数据预算单位：场景数 × 视角数）· designflow（只做示意、不做几何真值）。 |
+
+### 267. Pratul P. Srinivasan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pratul P. Srinivasan（印度裔姓名族属 ⇒ 英文信） |
+| 机构 | **Google Research**（NeRF 二作；UC Berkeley 博士） |
+| 代表论文 | **NeRF**（`2003.08934`，B 轨 #286，二作）· Mip-NeRF 360 等 |
+| 邮箱 | **pratul.srinivasan@gmail.com** / **A**（本人主页 `https://pratulsrinivasan.github.io/` 页内明文，2026-11-20 实测 `200` / 109,065 B） |
+| 主页 | <https://pratulsrinivasan.github.io/>（`200` / 109,065 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文已备一作草稿 ⇒ 按「同论文 ≤1 封」不并发） |
+| 备注 | `语言=英文(判据=印度裔姓名族属 + 美国机构)`。建账用途：抗锯齿 / 多尺度采样（Mip-NeRF 线）是「把渲染当训练数据」时分辨率与采样预算的直接依据；待一作不回信且过期后再考虑。 |
+
+### 268. Zhuolun He（何卓伦，汉字名未从可访问页面确认 ⇒ 不臆写）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhuolun He（拼音姓名族属 ⇒ 若发信应中文） |
+| 机构 | **The Chinese University of Hong Kong（CUHK）**（arXiv 原生 HTML 的 affiliation 字段，2026-11-20 实测；导师 Bei Yu） |
+| 代表论文 | **ChatEDA**（`2308.10204`，B 轨 #287，一作）· EDA 流程自动化 agent |
+| 邮箱 | **未找到**（`zhuolunhe.github.io` / `hezhuolun.github.io` / `zlhe.github.io` 均 `404`；CUHK 个人页 `www.cse.cuhk.edu.hk/~zlhe/` `404`；GitHub 搜索到 `zleonhe` 但 **API 无 email、无法双源确认是其本人** ⇒ 🚫 不写猜测地址） |
+| 主页 | **未找到**（同上，逐个实测失败） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 香港机构)`。价值点：ChatEDA 的「分解 → 脚本 → 执行」三段正好对应 designflow 造题的可验证性分层；关注其后续 TCAD 版本是否公开执行日志与失败样例。 |
+
+### 269. Ting Chen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ting Chen（拼音姓名族属 ⇒ 若发信应中文；汉字名未确认 ⇒ 不臆写） |
+| 机构 | **Google**（SimCLR 一作，论文时 Google Research；后转 Google DeepMind） |
+| 代表论文 | **SimCLR**（`2002.05709`，B 轨 #285，一作）· 视觉自监督对比学习 |
+| 邮箱 | **未找到**（个人页 `https://tingchen.me/` 实测 `200` / 2,565 B 但是 JS 单页应用、**页面无明文邮箱**；`research.google/people/tingchen/` `404`；Semantic Scholar 作者记录 `homepage=null` ⇒ 🚫 不猜 `tingchen@google.com` 这类记忆址） |
+| 主页 | <https://tingchen.me/>（`200` / 2,565 B，JS 渲染） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
+| 备注 | `语言=中文(判据=拼音姓名族属；机构在美国不构成英文判据)`。价值点：SimCLR 的「增强组合 > 编码器结构」结论直接决定 vision 线消融的因子拆分；待其公开可联系地址后再发信，问题应聚焦「增强策略在小规模（<2B）视觉塔上是否仍主导」。 |
+

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-20（5/5 · 12:00 补 B 轨 +4 → 284） · research 线</title>
+<title>论文观察日报 · 2026-11-20（5/5 · 15:00 补 B 轨 +4 → 288） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-20</h1>
-  <div class="sub"><b>12:00 时窗（A 轨 5/5 已满 · B 轨第七十四轮 +4 → 284）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 12:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>15:00 时窗（A 轨 5/5 已满 · B 轨第七十五轮 +4 → 288）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 15:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -541,8 +541,103 @@
   <b>作者主页复核</b>：<code>linji.me</code> <code>200</code> / 58,984 B · <code>tonyzhaozh.github.io</code> <code>200</code> / 24,093 B · <code>guangxuanx.com</code> <code>200</code> / 15,305 B（经代理）· <code>soldaini.net</code> <code>200</code> / 12,855 B · <code>infwinston.github.io</code> <code>200</code> / 20,604 B（无邮箱 ⇒ 不猜）。
 </div>
 
+<div class="note" style="margin-top:16px">
+  <b>🌇 15:00 时窗增量（A 轨 5/5 已满 ⇒ 0 新收；B 轨第七十五轮 +4 → 288；作者网 +4 → 269；发信 0（今日 12/12 满，只备草稿）；回信率 0/116）</b><br>
+  <b>A 轨状态</b>：<code>cat:cs.CL</code> 复测 <code>200</code> / <b>109,971 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界由 <code>2026-11-19T04:26:13Z</code> 前进到 <b><code>2026-11-19T18:57:25Z</code></b>（同一公告批内继续前进）⇒ 但今日额度 <b>5/5</b> 已满，<b>不替换、不增收</b>；新批前 10 条已查重（<code>SEEN.md</code> 全 <b>0 命中</b>），登记 5 个 11-21 优先候选。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 第七十五轮 +4 → 288（自监督视觉配方 / 5D 辐射场 / EDA agent / 内容稀疏注意力）</h3>
+
+<div class="card">
+  <h2><span class="no">B9</span>A Simple Framework for Contrastive Learning of Visual Representations</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Ting Chen · Simon Kornblith · Mohammad Norouzi（共 4 位；末位 Geoffrey Hinton）</td></tr>
+    <tr><th>年份 / 出处</th><td>2020 首次提交（<code>2020-02-13</code>，v3 <code>2020-07-01</code>）· arXiv <code>comment</code> = <code>ICML'2020</code> · arXiv <code>2002.05709</code></td></tr>
+    <tr><th>被引</th><td><b>18,118</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>去掉 memory bank 与专用结构，只靠「<b>数据增强组合 + 可学习非线性投影头 + 大 batch 长训练</b>」：ImageNet 线性探针 <b>76.5%</b> top-1（相对 +7%，与有监督 ResNet-50 持平）；仅 1% 标签微调得 <b>85.8%</b> top-5（标签少 100×）。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>vision（主）</b>：视觉塔消融把「增强策略」与「编码器容量」拆成两个独立因子预注册。<b>harness</b>：加「冻结 backbone + 线性探针」的廉价口径，与全量微调分数并列报。<b>pretrain</b>：投影头预训练后丢弃 ⇒ 不得把投影维度当模型规格。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2002.05709">https://arxiv.org/abs/2002.05709</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B10</span>NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Ben Mildenhall · Pratul P. Srinivasan · Matthew Tancik（共 6 位；末位 Ren Ng）</td></tr>
+    <tr><th>年份 / 出处</th><td>2020 首次提交（<code>2020-03-19</code>，v2 <code>2020-08-03</code>）· arXiv <code>comment</code> = <code>ECCV 2020 (oral)</code> · arXiv <code>2003.08934</code></td></tr>
+    <tr><th>被引</th><td><b>1,186</b>（OpenAlex 的 arXiv 记录，查询日 2026-11-20；其他版本不在同一记录 ⇒ 只作表内比较）</td></tr>
+    <tr><th>一句话贡献</th><td>全连接网络把单条 <b>5D 坐标</b>（空间 <code>(x,y,z)</code> + 视角 <code>(θ,φ)</code>）映射成<b>体密度 + 视角相关辐射亮度</b>，沿光线做可微体渲染；只需「已知位姿的稀疏视角图像」即可优化出连续场景表示。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>vision（主 · 合成多视角）</b>：数据预算单位写「场景数 × 每场景视角数」，先测位姿噪声再谈扩量。<b>designflow</b>：表示的是辐射/外观而非几何真值 ⇒ 只能做三维示意，🚫 不能当尺寸可验证的 CAD 真值。<b>data</b>：每张生成图带「场景 / 位姿 / 渲染器版本」三元组。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2003.08934">https://arxiv.org/abs/2003.08934</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B11</span>ChatEDA: A Large Language Model Powered Autonomous Agent for EDA</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Zhuolun He · Haoyuan Wu · Xinyun Zhang（共 7 位；末位 Bei Yu）· 一作 affiliation = <b>CUHK</b>（arXiv 原生 HTML 实测）</td></tr>
+    <tr><th>年份 / 出处</th><td>2023 首次提交（<code>2023-08-20</code>，v4 <code>2024-09-21</code>）· <b>IEEE TCAD</b> 43(10):3184–3197, 2024 · arXiv <code>2308.10204</code></td></tr>
+    <tr><th>被引</th><td><b>319</b>（OpenAlex，查询日 2026-11-20；&lt;500，按「本领域权威」收）</td></tr>
+    <tr><th>一句话贡献</th><td><b>ChatEDA</b> = LLM（自训 <b>AutoMage</b>）+ EDA 工具当执行器，把 <b>RTL → GDSII</b> 拆成「<b>任务分解 / 脚本生成 / 任务执行</b>」三段；作者自报在多样需求上优于 GPT-4 等通用 LLM。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>designflow（主）</b>：造题按三段分别记分，执行段必须在<b>真 OpenROAD</b> 跑通才算过（与 EDA Corpus #264 判据一致）。<b>harness</b>：判分对象 = 脚本产物 + 运行日志，不是自然语言解释。<b>data</b>：微调样本带「流程阶段」标签。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2308.10204">https://arxiv.org/abs/2308.10204</a></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="no">B12</span>Efficient Content-Based Sparse Attention with Routing Transformers</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Aurko Roy · Mohammad Saffar · Ashish Vaswani（共 4 位；末位 David Grangier）</td></tr>
+    <tr><th>年份 / 出处</th><td>2020 首次提交（<code>2020-03-12</code>，v5 <code>2020-10-24</code>）· <b>TACL</b> 9:53–68, 2021 · arXiv <code>2003.05997</code></td></tr>
+    <tr><th>被引</th><td><b>925</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>用<b>在线 k-means 路由</b>学内容相关稀疏注意力，复杂度 <code>O(n²d)</code> → <b><code>O(n^1.5 d)</code></b>；Wikitext-103 <b>15.8 vs 18.3</b> 困惑度、ImageNet-64 <b>3.43 vs 3.44</b> bits/dim；PG-19 上 22 层 / 序列长 <b>8192</b> 得测试困惑度 <b>33.2</b>。</td></tr>
+    <tr><th>与我们工作的关系</th><td><b>pretrain（主 · 长上下文基线）</b>：把「固定窗口」与「学出来的稀疏模式」当两类基线分别跑，同 token 预算下报困惑度 + 显存。<b>zhulong</b>：实际加速取决于 kernel 与聚类开销 ⇒ 成本必须实测，🚫 不许按复杂度公式外推。<b>harness</b>：长上下文评测须带「序列长度 + 是否外推」两个标签。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2003.05997">https://arxiv.org/abs/2003.05997</a></td></tr>
+  </table>
+</div>
+
+<h3 class="sec">👥 作者关系网 +4 → 269（15:00 时窗）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 · 机构</th><th>邮箱（等级）</th><th>arXiv</th><th>状态</th></tr>
+  <tr><td>266</td><td>Ben Mildenhall · Google Research</td><td><code>me@bmild.com</code>（<b>A</b>：主页页内明文）</td><td><code>2003.08934</code></td><td>待发信（草稿已备，11-21 00:00 首封）</td></tr>
+  <tr><td>267</td><td>Pratul P. Srinivasan · Google Research</td><td><code>pratul.srinivasan@gmail.com</code>（<b>A</b>：主页页内明文）</td><td><code>2003.08934</code></td><td>待跟踪（同论文 ≤1 封，不并发）</td></tr>
+  <tr><td>268</td><td>Zhuolun He · CUHK</td><td><b>未找到</b>（主页 3 个候选全 <code>404</code>；GitHub 候选无法双源确认 ⇒ 不猜）</td><td><code>2308.10204</code></td><td>待跟踪（无 A/B 级地址，不发）</td></tr>
+  <tr><td>269</td><td>Ting Chen · Google</td><td><b>未找到</b>（个人页 <code>200</code> 但是 JS 单页、无明文邮箱；<code>research.google</code> 页 <code>404</code>）</td><td><code>2002.05709</code></td><td>待跟踪（无 A/B 级地址，不发）</td></tr>
+</table>
+<div class="rm"><b>X 账号</b>：本轮四人<b>均未找到可核验 handle</b>（主页无 X 外链；🚫 不猜 handle）⇒ 已核验数仍 <b>106</b>。<b>语言判据</b>：Mildenhall / Srinivasan = 英文（英语 / 印度裔姓名族属 + 美国机构）；Zhuolun He / Ting Chen = 中文（拼音姓名族属优先于机构所在地；🚫 不因人在美国或论文英文判英文），但两人均无可用地址 ⇒ 本轮不写中文信。</div>
+
+<h3 class="sec">🧭 给 6 线的 15:00 增量建议</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：长上下文实验新增两行基线（固定窗口注意力 / 内容稀疏注意力），预注册判据写「同 token 预算下 final perplexity + 峰值显存 + 实际吞吐」，吞吐必须实测，不用复杂度公式换算。</li>
+  <li><b>vision</b>：视觉塔消融的因子表加一列「数据增强组合」（如 crop / color jitter / blur 的开关），与编码器容量分开；另加「冻结 backbone + 线性探针」这一廉价口径作为早期筛选。</li>
+  <li><b>harness</b>：把「冻结特征线性探针」与「全量微调」并列成两档分数；任何跨论文比较必须同时给样本量、序列长度与是否外推。</li>
+  <li><b>data</b>：合成多视角数据的每条记录补「场景 / 位姿 / 渲染器版本」三元组；合成脚本类数据补「流程阶段」标签（分解 / 脚本 / 执行）。</li>
+  <li><b>zhulong</b>：成本表加「注意力形态（稠密 / 窗口 / 稀疏）」列；稀疏注意力只在实测吞吐优于稠密时才进方案，避免拿渐近复杂度当收益。</li>
+  <li><b>designflow</b>：ChatEDA 的三段式直接照搬为造题结构 —— 执行段以「真 OpenROAD 跑通 + 日志可比对」为唯一通过标准，自然语言解释不计分。</li>
+</ul>
+
+<div class="note" style="margin-top:16px">
+  <b>🔎 15:00 核验（可复核）与一处 ID 误记拦截</b><br>
+  <b>A 轨列表</b>：<code>cat:cs.CL</code> ⇒ <code>200</code> / <b>109,971 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界 <b><code>2026-11-19T18:57:25Z</code></b>（12:00 时为 <code>2026-11-19T04:26:13Z</code>）⇒ 今日 5/5 已满，0 新收。<br>
+  <b>11-21 早报优先候选（已查重，<code>SEEN.md</code> 全 0 命中，本轮未写进今日 5 篇）</b>：<code>2611.26613</code> AgentRoboCritic（前沿 agent 在直接机器人控制上的能力）· <code>2611.26584</code> Represented but misread（后训练改变「读出」方式）· <code>2611.26510</code> AutoMaster（同一模型当更好的老师做自主后训练）· <code>2611.26427</code> MemFolder（结构化 agent 记忆折叠）· <code>2611.26363</code> HiSA（RoPE 注意力隐维稀疏化）。<br>
+  <b>B 轨四篇</b>：arXiv <code>id_list=2002.05709,2003.08934,1907.11692,2012.03112</code> ⇒ <code>200</code> / <code>application/atom+xml; charset=utf-8</code> / <b>10,472 B / 4 entry</b>（RoBERTa / PIM 综述已在表内 ⇒ 不收）；<code>id_list=2003.05997,1812.04948,2305.13243,2308.10204</code> ⇒ <code>200</code> / atom / <b>9,755 B / 4 entry</b>；OpenAlex <b>4/4 <code>200</code></b>（<b>18,118 / 1,186 / 319 / 925</b>，查询日 2026-11-20，含 TCAD 43(10):3184–3197 与 TACL 9:53–68 的卷期页）；ChatEDA 另用 arXiv 原生 HTML <code>200</code> / <b>196,479 B</b> 读作者块与 affiliation。<br>
+  ⚠️ <b>ID 误记拦截（本轮唯一更正）</b>：原计划收 <b>ELECTRA</b>，按记忆写成 <code>2003.05997</code>；实测该 ID 是 <i>Routing Transformers</i> ⇒ 当场改收后者（B12），并单独核出 <b>ELECTRA 真 ID = <code>2003.10555</code></b>（arXiv <code>200</code> + 标题逐字核），留作下轮候选，未产生错误条目。<br>
+  <b>查重</b>：四 ID 在 <code>PAPERS.md</code> 全量正则 <b>0 命中</b>（<code>1907.11692</code> RoBERTa / <code>2012.03112</code> PIM 综述 / <code>2308.00113</code> VeriGen / <code>2104.14294</code> DINO / <code>2304.07193</code> DINOv2 / <code>2311.04887</code> AutoChip / <code>1406.2661</code> GAN 均已在表内或仅作候选 ⇒ 本轮不收）。<br>
+  <b>发信</b>：今日 <b>12/12</b> 已达每日硬上限 ⇒ <b>0 封</b>；已备 11-21 首封草稿 <code>drafts/2003.08934.md</code> + 正文 <code>bodies/2026-11-21-2003.08934.txt</code>（<b>181 词</b>，落款两行其后无行，正文无项目名）。回信率 <b>0 / 116</b>，<b>0 封到期</b>（最早 2026-11-25）。
+</div>
+
+<div class="card">
+  <h2 style="font-size:16px;">🔁 15:00 变更说明（相对 12:00）</h2>
+  <table class="kv">
+    <tr><th>A 轨 5 篇</th><td><b>不变</b>（00:00 三篇 + 03:00 两篇）。公告批上界继续前进到 <code>2026-11-19T18:57:25Z</code>，但今日 5/5 已满 ⇒ 不替换、不增收；新批登记 5 个 11-21 候选。</td></tr>
+    <tr><th>B 轨</th><td>284 → <b>288</b>（+4：SimCLR / NeRF / ChatEDA / Routing Transformers），服务线分布 vision +2 · designflow +1 · pretrain +1。</td></tr>
+    <tr><th>作者网 / 发信</th><td>作者网 265 → <b>269</b>（+4；其中 2 人有 A 级邮箱、2 人无地址只建档）；发信 <b>116 不变</b>（今日 12/12 满），回信率 <b>0/116</b>，到期 0 封。</td></tr>
+    <tr><th>口径修正</th><td>拦截一处 ID 误记：ELECTRA 旧记 <code>2003.05997</code> 实为 Routing Transformers ⇒ 改收真论文，ELECTRA 真 ID <code>2003.10555</code> 留作下轮。</td></tr>
+  </table>
+</div>
+
 <footer>
-  research 线 · 论文观察日报 · 2026-11-20（12:00 时窗 · A 轨 5/5 · B 轨 284）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 12:0x（A 轨 5/5 · B 轨累计 284 · 作者网 265 · 发信 116 / 回信 0） CST
+  research 线 · 论文观察日报 · 2026-11-20（15:00 时窗 · A 轨 5/5 · B 轨 288）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 15:0x（A 轨 5/5 · B 轨累计 288 · 作者网 269 · 发信 116 / 回信 0） CST
 </footer>
 
 </div>
