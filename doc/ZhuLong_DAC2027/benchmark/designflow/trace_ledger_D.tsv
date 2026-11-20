@@ -1949,7 +1949,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1795056204141_prsvc	chuanqiz	hfeg0pnd001	80	schematic_netlist	case	EDA-Eval-DesignFlow-IOStaticLogicDeriveProduce-001	2026-11-20 22:10	
 1795053503763_lbkmz.messages.json	joeyl	hfeg0plg74	246	schematic_netlist	parked	EDA-Eval-DesignFlow-UlvtDelvtoInjectProduce-001	2026-11-20 22:39	near-dup of NetlistUlvtDelvtoInject-001 (3ydq7, same user joeyl/mc246/same U#0 ULVT delvto inject task); r1021 abort per 1-task-1-case anti-redundancy (r1014 precedent)
 1798172501150_w4x70	haoyut	hfeg0plg15	1576	schematic_netlist	claimed		2026-11-20 22:46	
-1794903718405_vf998	daiweilu	hfeg0pgn145	210	analog_context	case	EDA-Eval-DesignFlow-RingOscTmDecodeVerify-001	2026-11-20 23:43	
+1794903718405_vf998	daiweilu	hfeg0pgn145	210	analog_context	case	EDA-Eval-DesignFlow-RingOscTmDecodeVerify-001	2026-11-21 06:15	sister-turn +EDA-Eval-DesignFlow-WckOscFooterRatioVerify-001 (U#149 WckOsc footer 50/50 ratio verify, 2026-11-21 r1035)
 1795004396448_zsvtm					case	EDA-Eval-DesignFlow-WaveViewFsdbLaunchProduce-001	2026-11-21 00:39	
 1794471268159_nh28n					parked		2026-11-21 00:42	cross-shard dup: B landed as DcaStimSweepGen-001 (spice_sim). D claim was misclassification; case in B.jsonl. Abandon D-side per 1-trace-1-case.
 1794894403458_lk95a	ryanren	hfeg0pfn048	48	schematic_netlist	case	EDA-Eval-DesignFlow-IprobeStimAuditProduce-001	2026-11-21 00:58	
