@@ -1208,23 +1208,42 @@
   "PrismJS__prism-3351": {
     "instance_id": "PrismJS__prism-3351",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 355.2,
+    "rc": 0,
+    "model_patch_len": 480893,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "cally correct behavior consistent with how uppercase identifiers appear in Java (e.g., `import static com.example.Foo.MAX_VALUE;`).\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3355": {
     "instance_id": "PrismJS__prism-3355",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 3.3,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch"
   },
   "PrismJS__prism-3372": {
     "instance_id": "PrismJS__prism-3372",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 400.4,
+    "rc": 0,
+    "model_patch_len": 61000,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "onents.json sorted correctly)\\n- **285 example tests** passing (including prism-plantuml.html)\\n- **2754 total tests passing** (3s)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3438": {
     "instance_id": "PrismJS__prism-3438",

@@ -1854,16 +1854,30 @@
   "bpmn-io__bpmn-js-1119": {
     "instance_id": "bpmn-io__bpmn-js-1119",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 752.7,
+    "rc": 0,
+    "model_patch_len": 937,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "connection, so `modeling.connect` correctly assigns `newSource.parent` as the diagram parent. For reconnectStart, `context.newSource` is available; for reconnectEnd, `context.newTarget` is available.\n",
+    "stderr_tail": " message flow\n[✓] Identify root cause in ReplaceConnectionBehavior and Modeling.connect\n[✓] Implement fix for parent computation when replacing connections\n[✓] Verify the fix with lint/typecheck\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1143": {
     "instance_id": "bpmn-io__bpmn-js-1143",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 254.5,
+    "rc": 0,
+    "model_patch_len": 1425,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ldren — the participant will use its default size.\n\n**Fix 2** (`GroupBehavior.js:45-53`): Defensive null-check reorder — `categoryValue.$parent` was accessed before the null check on `categoryValue`.\n",
+    "stderr_tail": "er elements\n[✓] Find the root cause in the codebase\n[✓] Implement the fix in CreateParticipantBehavior.js\n[✓] Implement defensive null-check fix in GroupBehavior.js\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1151": {
     "instance_id": "bpmn-io__bpmn-js-1151",
