@@ -692,3 +692,4 @@ gital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26
 1794915763924_fkrdf.messages.json	max7c	hfeg0plg06	123	digital	parked		2026-11-20 20:35	path infra issue: sessions are subdirs not flat files, deferred; exucf chosen instead
 1794963500274_exucf	eva1li	hfeg0plg74	123	digital	case	EDA-Eval-DesignFlow-ErrforcebitMeaningQA-001	2026-11-20 20:56	
 1794902635452_aoe57	e0014036	hfeg0plg15	158	digital	case	EDA-Eval-DesignFlow-RunSimPprNewShAnalyzeQA-001	2026-11-20 21:29	
+1794972439111_qooqq.messages.json	e0045144	hfeg0plg11	164	digital	case	EDA-Eval-DesignFlow-LintRptAnalyzeQA-001	2026-11-20 22:15	LintRptAnalyzeQA-001 k=12 digital lint report analysis A档 trace-faithful (lint.rpt 947L from trace) hidden B lint_B.rpt 12 assertions selftest PASS 7 negs FAIL
