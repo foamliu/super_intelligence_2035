@@ -76,7 +76,7 @@
     "all_shard_mc10": 4149,
     "round": "r804",
     "shard_A_pool_mc10_broad": 2517,
-    "src": "ssh_eda_search_20261119_172105/summary.tsv"
+    "src": "ssh_eda_search_20261120_145529/summary.tsv"
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -167,21 +167,22 @@
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261116_072610/summary.tsv",
   "prev_sessions": 1141,
-  "scan_path": "/home/t0002965/log/ssh_eda_search_20261119_172105/summary.tsv",
+  "scan_path": "/home/t0002965/log/ssh_eda_search_20261120_145529/summary.tsv",
   "scan_rows": 44991,
   "scan_sha256": "(pending)",
   "scansync": {
-    "a_pure_mc10": 130,
-    "a_pure_mc5": 145,
-    "dedup_sessions": 8335,
-    "hosts_total": 698,
-    "prev_scan": "ssh_eda_search_20261118_230537",
-    "round": "r804",
-    "rows_total": 44936,
-    "scan_completed": "2026-11-19T17:28:00",
-    "scan_dir": "ssh_eda_search_20261119_172105",
-    "scan_duration_min": 7,
-    "scan_started": "2026-11-19T17:21:00"
+    "scan_dir": "ssh_eda_search_20261120_145529",
+    "raw_rows": 38323,
+    "dedup_sessions": 5457,
+    "unreachable": 26,
+    "unreachable_pct": 3.72,
+    "scan_duration_sec": 210,
+    "runner": "/home/e0031982/eda_scan_runner_r860.py (recreated r860)",
+    "raw_mc10": 4065,
+    "raw_mc20": 3580,
+    "raw_mc30": 3216,
+    "note": "raw awk overcounts vs ledger dedup (11-19 raw mc10=3986 vs calibrated=2517); mc10/mc20/mc30 denominators NOT updated pending trace_ledger mc-matrix on local summary_1120.tsv transfer next round",
+    "updated_at": "2026-11-20T15:05:09+08:00"
   },
   "sessions": 1141,
   "shard_mc": {
