@@ -1952,3 +1952,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794903718405_vf998	daiweilu	hfeg0pgn145	210	analog_context	case	EDA-Eval-DesignFlow-RingOscTmDecodeVerify-001	2026-11-20 23:43	
 1795004396448_zsvtm					case	EDA-Eval-DesignFlow-WaveViewFsdbLaunchProduce-001	2026-11-21 00:39	
 1794471268159_nh28n					parked		2026-11-21 00:42	cross-shard dup: B landed as DcaStimSweepGen-001 (spice_sim). D claim was misclassification; case in B.jsonl. Abandon D-side per 1-trace-1-case.
+1794894403458_lk95a	ryanren	hfeg0pfn048	48	schematic_netlist	case	EDA-Eval-DesignFlow-IprobeStimAuditProduce-001	2026-11-21 00:58	
