@@ -1601,3 +1601,4 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794993372245_aurzv.messages.json	clarawu	hfeg0pkn005	52	spice_sim	parked		2026-11-20 09:30	r914 clarawu near-dup cluster (Ron/netlist-extract territory, clarawu 11 existing cases)
 1795083114382_h9k50	yh1yang	hfeg0pkn003	518	spice_sim	case	EDA-Eval-DesignFlow-DevFourTermMeasGen-001	2026-11-20 10:31	
 1795086710598_iyoge	yinyus	hfeahpc505	4988	spice_sim	case	EDA-Eval-DesignFlow-WvCurPwlStimGen-001	2026-11-20 10:59	
+1795085525243_qlvgs	xiuqiy	hfeahpc505	4986	spice_sim	case	EDA-Eval-DesignFlow-BankLogicCellMapAnalyze-001	2026-11-20 11:41	r918 delivered: 13 conds a-m, ref PASS, 5 negs FAIL (§4.9 3 fakes empty/print/core), anti-hardcode-A 518!=1000
