@@ -1337,3 +1337,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795001912028_iludo	cuij	hfeg0plg86	79	physical_verify	case	EDA-Eval-DesignFlow-DrcRunsetAutoConfigAnalyze-001	2026-11-20 17:41	
 1792761048382_vtpfh					case	EDA-Eval-DesignFlow-SpfLayerCoupleCapAnalyze-001	2026-11-20 18:31	revival: D parked 11-05 peek_D270 unfit(analysis-only=weak); 2026-11-15 reaudit parasitic-analysis legit; C-domain physical_verify SPF parsing, D misjudged shard; r866 档B reframe k=15
 1794981622005_1pkud.messages.json	e0047695	hfeg0plg58	76	physical_verify	case	EDA-Eval-DesignFlow-SvrfLayerMapAnalyze-001	2026-11-20 19:04	
+1794813614281_frynn	laryu	hfeg0plg77	82	physical_verify	case	EDA-Eval-DesignFlow-SvrfBraceAnalyzer-001	2026-11-20 19:50	
