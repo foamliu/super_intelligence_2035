@@ -1629,3 +1629,9 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795075473970_r4cdh.messages.json	shanliny	hfeg0pkn003	395	spice_sim	case	EDA-Eval-DesignFlow-PvtConfigDeckGen-001	2026-11-20 17:39	r929 case: PVT-config HSPICE deck gen (config_pvt.txt 8col <<>> sub + symlink netlist + scale filter + log routing). k=13 a-m, ref 13/13 PASS, NEG 4/4 (empty/print/deleted_core=§4.9三假 + hardcode_b)全 FAIL. A-faithful real config_pvt.txt+racing_m4b2.sp. harness-for-teeth, pure FS assert no hspice.
 1795081207513_z9qr1	dorisz	hfeahpc505	9	spice_sim	case	EDA-Eval-DesignFlow-AiiloadReorgGen-001	2026-11-20 18:08	
 1795087698313_mxv3d	jinsongl	hfeg0pfn101	4	spice_sim	case	EDA-Eval-DesignFlow-MeasFileSpfStyleGen-001	2026-11-20 19:04	
+1795080828591_5v4tq	joeyl	hfeg0pkn004	93	spice_sim	parked		2026-11-20 19:31	near-dup DelvtoNetlistMod-001(w8iq4 r857): joeyl cluster 6jie5/t0xdo/pbkq1/lxzq1 all parked same delvto Vth injection; 5v4tq byte-identical keywords netlist:1102/opamp:24
+1794916730161_sik16	jerry16z	hfeg0pnd001	8	spice_sim	parked		2026-11-20 19:31	C-domain layout (archive aether:576 pyaether:15 dbget:78), not spice; hspice only 6
+1795070992316_ovji6	jerry16z	hfeg0pnd001	8	spice_sim	parked		2026-11-20 19:31	C-domain Aether/Virtuoso layout (pyaether:273 aether:124 dbopencv:77 cellview:161), hspice:1, not spice_sim
+1795090189327_71kny	dandans	hfeg0pbn13	76	spice_sim	parked		2026-11-20 19:31	netlist/lib mgmt (netlist:1113 hspice:1), weak spice signal, not produce-task
+1795089984884_tom4v	yuchens	hfeahpc503	4	spice_sim	parked		2026-11-20 19:31	schematic/rtl (schematic:32 rtl:15 pex:4 hspice:4), weak spice
+1795139104007_7w8z6	yuankong	hfeg0pfn021	3	spice_sim	parked		2026-11-20 19:31	DRC-heavy (drc:69 netlist:111), C-domain physical_verify not spice
