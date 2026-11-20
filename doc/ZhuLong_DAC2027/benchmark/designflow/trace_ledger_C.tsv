@@ -1328,3 +1328,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1794881298870_ned46.messages.json	zlhou	hfeg0plg52	119	physical_verify	case	EDA-Eval-DesignFlow-PexGxrcDiag-001	2026-11-20 08:49	
 1794969260918_q1dv2	ziyuny	hfeg0pnd001	147	physical_verify	case	EDA-Eval-DesignFlow-DrcJobExitCwdDiag-001	2026-11-20 09:39	
 1793685645025_x0ib4.messages.json					case	EDA-Eval-DesignFlow-PexRunlpePathFormatDiag-001	2026-11-20 10:49	
+1793084699921_dyvlr					case	EDA-Eval-DesignFlow-VirtBridgeStatusDiag-001	2026-11-20 11:54	r855 revival: 11-15 reaudit env-config/flow-driving 合法; D-ledger wrong-host parked(NOFILE) 订正; layout_virtuoso bridge-liveness-diagnosis reframe
