@@ -880,23 +880,43 @@
   "PrismJS__prism-1897": {
     "instance_id": "PrismJS__prism-1897",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "PrismJS__prism-2029": {
     "instance_id": "PrismJS__prism-2029",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 619.6,
+    "rc": 0,
+    "model_patch_len": 739,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " regression.\n\n**Verification:**\n- The reproduction script now correctly tokenizes both `\"It's\"` and `` `It's` `` as complete strings.\n- All 1394 language tests pass, including all 8 D-specific tests.\n",
+    "stderr_tail": " Fix character literal regex to not span newlines\n[✓] Separate backtick (WYSIWYG) strings from double-quoted strings\n[✓] Update string_feature.test with bug cases\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "PrismJS__prism-2182": {
     "instance_id": "PrismJS__prism-2182",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 106.0,
+    "rc": 0,
+    "model_patch_len": 746,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " trailing `?` before the colon.\n\n2. **`tests/languages/elixir/attr-name_feature.test`** — Added a test case for `foo?: true` to ensure the fix is covered by tests.\n\nAll 13 Elixir language tests pass.\n",
+    "stderr_tail": " test case 'number_feature'\n\n    ✓ – should pass test case 'operator_feature'\n\n    ✓ – should pass test case 'regex_feature'\n\n    ✓ – should pass test case 'string_feature'\n\n\n  13 passing (55ms)\n\u001b[0m\n"
   },
   "PrismJS__prism-2195": {
     "instance_id": "PrismJS__prism-2195",

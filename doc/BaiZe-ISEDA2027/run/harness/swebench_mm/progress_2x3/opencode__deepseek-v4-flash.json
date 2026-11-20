@@ -1407,23 +1407,44 @@
   "alibaba-fusion__next-1720": {
     "instance_id": "alibaba-fusion__next-1720",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 629.6,
+    "rc": 0,
+    "model_patch_len": 1661,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "async `setState`). `onSearch` now reads `this.cachedValue` instead of `this.state.value`, ensuring it gets the value that was already updated by suggestion selection before the search callback fires.\n",
+    "stderr_tail": "/input.jsx\u001b[90m [limit=12, offset=249]\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"onPressEnter|handleKeyDown|enter\"\"\u001b[90m in test/input · 7 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead test/input/index-spec.js\u001b[90m [limit=40, offset=60]\u001b[0m\n"
   },
   "alibaba-fusion__next-1742": {
     "instance_id": "alibaba-fusion__next-1742",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 631.7,
+    "rc": 0,
+    "model_patch_len": 6123,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "node (via dataSource)\nconst data = [{ key: '1', label: 'Node 1', title: '' }];\n<Tree dataSource={data} />\n\n// Remove title on Tree node (via children)\n<TreeNode key=\"1\" label=\"Node 1\" title=\"\" />\n```\n",
+    "stderr_tail": "cader/item.jsx\u001b[90m [limit=50, offset=98]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/tree-select/tree-select.jsx\u001b[90m [limit=60, offset=700]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/tree/view/tree-node.jsx\u001b[90m [limit=35, offset=392]\u001b[0m\n"
   },
   "alibaba-fusion__next-1788": {
     "instance_id": "alibaba-fusion__next-1788",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 34.5,
+    "rc": 0,
+    "model_patch_len": 921,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ase.jsx:206`) calls `this.props.onBlur(e)` with the React synthetic event, but the types declared zero parameters — so TypeScript users would get type errors when trying to access the event argument.\n",
+    "stderr_tail": "MLInputElement>) => void;\n \n /**\n  * 自定义字符串计算长度方式\n  */\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead types/input/index.d.ts\u001b[90m [offset=69, limit=15]\u001b[0m\n\u001b[0m→ \u001b[0mRead types/input/index.d.ts\u001b[90m [offset=217, limit=15]\u001b[0m\n"
   },
   "alibaba-fusion__next-1807": {
     "instance_id": "alibaba-fusion__next-1807",

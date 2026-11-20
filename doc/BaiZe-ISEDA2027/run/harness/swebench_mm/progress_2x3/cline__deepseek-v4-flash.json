@@ -922,9 +922,16 @@
   "PrismJS__prism-2195": {
     "instance_id": "PrismJS__prism-2195",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1470.7,
+    "rc": 0,
+    "model_patch_len": 3726,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "h just `'`, while the `!`/`REM` branch uses `+` (one-or-more) since `!` or `REM` alone with nothing after is still a valid comment.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-2295": {
     "instance_id": "PrismJS__prism-2295",
