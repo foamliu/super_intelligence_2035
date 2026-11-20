@@ -4207,9 +4207,16 @@
   "carbon-design-system__carbon-8452": {
     "instance_id": "carbon-design-system__carbon-8452",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 213.8,
+    "rc": 0,
+    "model_patch_len": 8635,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t including all variants (expand, sticky header, overflow menu, checkboxes)\n- Added `md` option to Storybook controls\n\nThe new `md` size can be used by passing `size=\"md\"` to the DataTable component.\n",
+    "stderr_tail": "all: 'tall', none: null },\n+    { compact: 'compact', short: 'short', md: 'md', tall: 'tall', none: null },\n     null\n   ),\n   stickyHeader: boolean('Sticky header (experimental)', false),\n });\n\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8469": {
     "instance_id": "carbon-design-system__carbon-8469",

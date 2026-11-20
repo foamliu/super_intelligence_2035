@@ -1012,9 +1012,16 @@
   "PrismJS__prism-2686": {
     "instance_id": "PrismJS__prism-2686",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1049.7,
+    "rc": 0,
+    "model_patch_len": 511731,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "l-symbol important\">$</span>\n  <span class=\"token bash language-bash\">\n    <span class=\"token builtin class-name\">echo</span>\n    <span class=\"token string\">\"Hello World\"</span>\n  </span>\n</span>\n```\n",
+    "stderr_tail": "ymbol\":{pattern:/^[$#]/,alias:\"important\"}}},output:/.(?:.*(?:[\\r\\n]|.$))*/},s.languages[\"sh-session\"]=s.languages.shellsession=s.languages[\"shell-session\"]})(Prism);\n\\ No newline at end of file\n\u001b[0m\n"
   },
   "PrismJS__prism-2703": {
     "instance_id": "PrismJS__prism-2703",
