@@ -283,11 +283,91 @@
   <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；回信通道仍只发不收</td></tr>
 </table>
 
+<h3 class="sec">06:00 时窗 · A 轨 0 新收（今日 5/5 已满）· B 轨 +3（→ 307）· 作者网 +2（→ 287）· 信 3 封（累计 125）· voice_ready 1</h3>
+
+<div class="note" style="margin-bottom:14px;">
+  <b>A 轨 0 新收（不是漏采）</b>：今日 A 轨 <b>5/5 已满</b>（00:00 三篇 + 00:3x 两篇）⇒ 按「每天 5 篇」口径<b>不凑第 6 篇</b>；候选继续登记（<code>2611.26084</code> / <code>2611.26059</code> / <code>2611.26069</code> / <code>2611.25588</code> / <code>2611.26275</code>）。列表 <code>cat:cs.CL&amp;max_results=40</code> ⇒ <code>200</code> / 109,971 B / 40 entry；<code>published</code> 上界仍是 <code>2026-11-19T18:57:25Z</code>，<b>连续第 7 窗未前进</b>（公告批次未更新，仍在 72h 窗口内，截止 11-22 18:57Z）。
+</div>
+
+<table class="plain">
+  <tr><th>#</th><th>经典论文（本轮转正）</th><th>年份 · 被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr>
+    <td>305</td>
+    <td><b>Mask DINO: Towards A Unified Transformer-based Framework for Object Detection and Segmentation</b><br><a href="https://arxiv.org/abs/2206.02777">arXiv:2206.02777</a></td>
+    <td>2022 · <b>911</b><br><span style="color:#59636e;font-size:12.5px;">CVPR 2023，OpenAlex 会议论文</span></td>
+    <td>在 DINO 上加<b>掩码分支</b>：query embedding 与高分辨率像素图点积出二值掩码，检测与三类分割<b>共用 query 与训练流程</b>（COCO 实例 54.5 AP / 全景 59.4 PQ / ADE20K 60.8 mIoU）。</td>
+    <td>vision（主）· designflow · harness</td>
+  </tr>
+  <tr>
+    <td>306</td>
+    <td><b>Scaling Vision Transformers to 22 Billion Parameters</b><br><a href="https://arxiv.org/abs/2302.05442">arXiv:2302.05442</a></td>
+    <td>2023 · <b>965</b><br><span style="color:#59636e;font-size:12.5px;">预印本</span></td>
+    <td>把 ViT 扩到 22B 并给出「不炸」配方：<b>QK-norm</b> 压注意力 logit 过大、并行层 + 冻结部分层控显存。</td>
+    <td>pretrain（主）· vision · zhulong</td>
+  </tr>
+  <tr>
+    <td>307</td>
+    <td><b>PaLM 2 Technical Report</b><br><a href="https://arxiv.org/abs/2305.10403">arXiv:2305.10403</a></td>
+    <td>2023 · <b>2,439</b><br><span style="color:#59636e;font-size:12.5px;">预印本（技术报告）</span></td>
+    <td>同一 token 预算下<b>配比比规模更影响</b>多语与推理表现；架构偏「深窄」，并给出小模型蒸馏路线。</td>
+    <td>data（主）· pretrain · harness</td>
+  </tr>
+</table>
+
+<details class="voice-ready">
+<summary>🗣 voice_ready · 研究者言论（可发头条）</summary>
+<ul>
+  <li><b>人物</b>：Richard S. Sutton @RichardSSutton（University of Alberta / Amii；强化学习奠基人，2024 图灵奖得主）</li>
+  <li><b>言论</b>：原文 “Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO”<br>中文：光靠暴力算力不足以换来智能，还需要更聪明的新方法；人工智能这门科学远未走到终点。（个人看法）</li>
+  <li><b>时间</b>：2026-11-07（推文页 <code>created_at</code> = <code>2026-11-07T18:57Z</code>；14 天，≤30 天不降级）</li>
+  <li><b>出处</b>：<a href="https://x.com/RichardSSutton/status/2119142310894334262">x.com/RichardSSutton/status/2119142310894334262</a>（经 <code>127.0.0.1:7897</code> 抓取 <code>HTTP 200</code> / 125,980 B；主页内嵌 JSON 的推文文本与 <code>og:description</code> <b>双源逐字一致</b>）</li>
+  <li><b>话题点</b>：「算力堆到头了吗」是大众最能接住的 AI 争论，而说这话的人是强化学习奠基者，不是反 AI 评论员 —— 冲突感天然。</li>
+  <li><b>风险</b>：① 「IMHO」是作者自述的主观判断，不可写成结论；② 未给出「clever new methods」的具体所指，🚫 不得替他补充（例如不能说他在批评 scaling law）；③ 其 11-08 RISEx 2026 keynote（<i>The Tashan/Openmind Robot Kindergarten</i>）是同一立场的展开，引用时建议一并给出上下文。</li>
+</ul>
+</details>
+
+
+<p style="font-size:14px;"><b>作者关系网 · +2（→ 287）</b>：#286 <b>Ryan Hanrui Wang</b>（Nebius Applied AI + MIT）<b>B 级</b> <code>wang@nebius.com</code>（arXiv 原生 HTML 脚注明文，<code>200</code> / 420,247 B）· #287 <b>Feng Li</b>（HKUST）<b>A 级</b> <code>fliay@connect.ust.hk</code>（本人主页 <code>mailto:</code> 明文，<code>200</code> / 24,341 B）；#274 <b>Weisen Jiang</b> 由「待跟踪」转 <b>已发信</b>。X 已核验保持 <b>107</b>（本轮仅补抓主页与推文；follow 需登录态 ⇒ 只输出待 follow 清单，🚫 不假装已 follow）。</p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 3 封 · 累计 125 · 回信率 0/125</b>：#123 VR-SparseQuant（Ryan Hanrui Wang，<b>中文 153 字</b>）· #124 Mask DINO（Feng Li，<b>中文 225 字</b>）· #125 MetaMath（Weisen Jiang，<b>中文 163 字</b>），三封均 <code>SENT OK</code>（06:04:11 / 06:04:15 / 06:04:18），今日 <b>9/12</b>。三封语言判据均为「拼音姓名族属（主）+ 机构（辅）」⇒ 中文全文；三封开头句与问句句式零共用，各含只对该论文成立的技术细节（两条 2:4 稀疏流共享同一 FP4 预算 / query embedding × 高分辨率像素图点积 / 多视角改写不改答案）。<b>回信 0，0 封到期</b>（最早 11-25，#1–#7）⇒ 继续按待诊断信号处理，不记为成功。</p>
+
+<details>
+<summary>📰 news_ready · 本期 0 条（理由）</summary>
+<ul>
+  <li>本轮三条均为<b>经典方法论文</b>（统一检测分割头 / ViT-22B 训练配方 / 多语配比报告），没有发布、开源、首次突破类<b>事件点</b> ⇒ 四问中的第②问（有事件点吗）不过。</li>
+  <li>A 轨本窗 0 新收（今日额度已满），也没有新的事件型素材。</li>
+  <li>唯一有大众传播潜力的是上面的 <b>voice_ready</b>（Sutton 的「算力不够」），按规矩只进 voice_ready，不重复计 news_ready。</li>
+</ul>
+</details>
+
+<h3 class="sec">06:00 时窗 · 对各线的可执行建议（6 线）</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：在 2B 训练前 200 step 记录<b>每层 attention logit 的 P99.9</b>（ViT-22B 的做法），并预注册一条 QK-norm 对照臂（同 token 预算、同数据切片）；判据：若 P99.9 在 200 step 内增长 &gt;2× 或出现 1 次 spike，则启用 QK-norm 并对比「spike 次数 / loss 方差」，只在方差下降 ≥30% 时保留。</li>
+  <li><b>vision</b>：把「检测-only 头」与「检测+掩码共用 query 头」做成两臂，在同一批版图截图上按 <b>IoU 0.5 / 0.75 双档</b>报框指标与掩码指标；判据：若共用 query 使小目标（面积 &lt;32²）AP 下降 &gt;1.0，则维持双头，只在造题侧使用掩码。</li>
+  <li><b>harness</b>：判分脚本增加「先钉任务定义、再比数字」的显式字段（Mask DINO 一个模型同时出实例/全景/语义三种结果，跨定义比数不可比）；判据：同一模型在两种任务定义下的分数差 &gt;10pp 时，报告必须同时列两种定义。</li>
+  <li><b>data</b>：固定 token 预算做一次<b>配比消融</b>（多语比例 ×2 一档），其余不变；判据：同 token 下中文能力增益 &lt;1pp 且英文不降 ⇒ 维持现配比，不引入新语料。</li>
+  <li><b>zhulong</b>：成本表新增「<b>精度补偿成本</b>」一列 —— 把 FP4 + 2:4 稀疏的 3.1× / 2.7× 加速与 perplexity 劣化放在同一行，换算成「等效 token 成本」；判据：若在自家模型上困惑度劣化 &gt;3%，该加速不进入成本口径。</li>
+  <li><b>designflow</b>：L2/L3 保真度按「<b>元件级 IoU</b>」与「<b>区域级 IoU</b>」双档造题；判据：两档在同一模型上的难度差 ≥15pp 才算真区分，否则合并成一档，避免用粒度差异冒充难度。</li>
+</ul>
+
+<h3 class="sec">附录 · 06:00 时窗检索与核验</h3>
+<table class="plain">
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（7 窗未前进）</td></tr>
+  <tr><td><code>id_list=2206.02777,2302.05442,2309.12284</code></td><td><code>200</code> + atom（9,772 B / 3 entry），<code>published</code> 齐备</td></tr>
+  <tr><td>abs 页复查</td><td>3/3 <code>200</code>（42,570 / 47,645 / 64,215 B）</td></tr>
+  <tr><td>OpenAlex</td><td>3/3 <code>200</code>：<b>911</b>（CVPR 2023 会议论文）/ <b>965</b>（preprint）/ <b>2,439</b>（preprint）；查询日 2026-11-21</td></tr>
+  <tr><td>先查重后剔除</td><td>同批候选 Position Interpolation <code>2306.15595</code> 与 InternVL <code>2312.14238</code> 已在 <code>PAPERS.md</code> ⇒ 未重复收；本轮三条 ID 全量正则 0 命中</td></tr>
+  <tr><td>地址复核（发信前）</td><td>3/3 <code>200</code>：<code>fengli-ust.github.io</code>（24,341 B）· <code>arxiv.org/html/2611.25717v1</code>（420,247 B）· <code>arxiv.org/html/2309.12284v4</code>（304,026 B）</td></tr>
+  <tr><td>X 可达性</td><td><code>x.com</code> 直连 <code>000</code>、代理 <code>127.0.0.1:7897</code> <b><code>200</code></b>；主页与单条推文 <code>200</code>（推文页 125,980 B）</td></tr>
+  <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；回信通道仍只发不收</td></tr>
+</table>
+
 <h3 class="sec">晚报变更说明（AM → PM）</h3>
 <p style="font-size:14px;"><b>2026-11-21 00:3x 补轮（相对 00:00 早报）</b>：① A 轨由 <b>3/5 → 5/5</b>，新增 <b>#4 VR-SparseQuant</b>（FP4 + 2:4 稀疏的激活量化，6.85→5.57 困惑度）与 <b>#5 G-MTP</b>（单头多 token 预测草稿器，服务端 3.1× / 手机 GPU 2.2×）；<b>为什么补这两篇</b>：早报三篇集中在后训练与注意力，缺「部署侧单位成本」这一块，而这两篇正好覆盖量化与解码延迟两条成本轴，且都有可复核的数字。② B 轨 <b>+3 → +5（299 → 301）</b>：补 Megatron-LM 2104.04473（1,754，SC 2021）与 EVA 2211.07636（1,182，CVPR 2023），补的是「并行配置口径」与「视觉塔预训练目标」两块空白；原计划的 DINO / μP 系不稳定性和 Megatron-LM 1909 经 <code>id_list</code> 核对<b>均已在表内</b>，故改收上述两篇（先查重后写入）。③ 作者网 <b>+4 → +6（282）</b>，新增 #281 Deepak Narayanan（B 级页内明文邮箱）与 #282 Samir Khaki（四个候选主页 404/403 ⇒ 未找到，不猜）。④ 6 线建议新增 5 条（pretrain 并行配置表 / vision MAE-vs-EVA 两臂 / harness 延迟分解 / data 公开数据分层 / zhulong 草稿器开关）。⑤ 信 0 封：本时窗额度 3/3 已于 00:04 用满，不跨窗借额度。</p>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-21 00:00 / 00:3x / 03:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-21 00:00 / 00:3x / 03:00 / 06:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>

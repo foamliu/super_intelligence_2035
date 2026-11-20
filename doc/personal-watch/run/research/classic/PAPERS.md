@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **307** 条（**第八十轮 2026-11-21 06:0x 补 3 条 → 307**：Mask DINO `2206.02777`（**911**，CVPR 2023，DOI `10.1109/cvpr52729.2023.00297`）/ Scaling ViT to 22B `2302.05442`（**965**，预印本）/ PaLM 2 Technical Report `2305.10403`（**2,439**，预印本）；arXiv `id_list` 单批 **`200` + atom**（9,772 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,570 / 47,645 / 64,215 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 一个头同时出框与掩码 / QK-norm 压注意力 logit 爆炸 / 配比比规模更影响多语与推理）
+
 **本轮快照**：累计 **304** 条（**第七十九轮 2026-11-21 03:0x 补 3 条 → 304**：An Empirical Model of Large-Batch Training `1812.06162`（**543**，预印本）/ On the difficulty of training RNNs `1211.5063`（**5,097**，预印本；ICML 2013 版本轮未逐页核）/ Decision Transformer `2106.01345`（**2,596**，预印本，OpenAlex biblio.volume 34）；arXiv `id_list` **3/3 `200` + atom** + abs 页 **3/3 `200`**（43,826 / 41,068 / 43,191 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；覆盖轴 = 临界批量与梯度噪声尺度 / 梯度范数裁剪作为 spike 第一闸 / return-to-go 序列建模替代 critic；**回溯 第七十八轮 2026-11-21 00:0x 补 3 条 → 299**：Horovod `1802.05799`（**1,619**，预印本）/ Deformable DETR `2010.04159`（**8,952**，arXiv `comment` = ICLR 2021 Oral）/ SigLIP 2 `2502.14786`（**1,832**，预印本）；元数据 arXiv `id_list` 单篇 **3/3 `200` + `application/atom+xml`**（`published` 齐备）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（本轮 PDF 下载 30 s 内未完成）；覆盖轴 = 数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）
 
 **本轮快照**：累计 **292** 条（**第七十六轮 2026-11-20 18:0x 补 4 条 → 292**：ELECTRA `2003.10555`（**5,109**，arXiv `comment` = ICLR 2020）/ Faster R-CNN `1506.01497`（**80,700**，IEEE TPAMI 39(6):1137–1149, 2017）/ Mask R-CNN `1703.06870`（**7,047**，IEEE TPAMI 42(2):386–397, 2020）/ Soft Actor-Critic `1801.01290`（**13,567**，arXiv `comment` = ICML 2018，OpenAlex biblio pp. 1861–1870）；元数据 `id_list=2003.10555,1703.06870,1506.01497,1801.01290` **`200` + `application/atom+xml`**（9,733 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 判别式预训练的样本效率 / 共享卷积特征做近零成本候选框 / 解耦掩码分支与 RoIAlign / 最大熵离策略 RL 的种子稳定性）
@@ -5260,6 +5262,57 @@
 
 ---
 
+## 305. Mask DINO: Towards A Unified Transformer-based Framework for Object Detection and Segmentation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mask DINO: Towards A Unified Transformer-based Framework for Object Detection and Segmentation |
+| 作者（前 3） | Feng Li · Hao Zhang · Huaizhe Xu（共 **7** 位；另有 Shilong Liu / Lei Zhang / Lionel M. Ni / Heung-Yeung Shum；arXiv 作者字段逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-06-06`，v3 `2023-04-05`） |
+| 会议 / 期刊 | **CVPR 2023**（OpenAlex `type=conference-paper`，DOI `10.1109/cvpr52729.2023.00297`） |
+| 被引数 | **911**（OpenAlex `10.1109/cvpr52729.2023.00297`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2206.02777> ｜ arXiv DOI `10.48550/arxiv.2206.02777` ｜ CVPR DOI `10.1109/cvpr52729.2023.00297` |
+| 一句话贡献 | 在 DINO 上加一条**掩码预测分支**：用 query embedding 与高分辨率像素图做点积出二值掩码，让检测与实例/全景/语义分割共用同一套 query 与训练流程（COCO 实例 **54.5 AP**、全景 **59.4 PQ**、ADE20K 语义 **60.8 mIoU**，均在 1B 参数以下模型里取最优）。 |
+| 与我们工作的关系 | **vision（主 · 检测头选型）**：一个头同时给框与掩码，省掉「检测 + 分割」两套标注与调度，是版图/截图视觉输入的候选结构。<br>**designflow（造题）**：掩码粒度决定「元件级」还是「区域级」判分，L2/L3 保真度轴可直接借其任务划分。<br>**harness（判分）**：同一模型出三种分割结果 ⇒ 评测口径需先固定任务定义，再比数字。 |
+| 首次收录 | **2026-11-21**（第八十轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2206.02777` **`200` + atom**（`published` `2022-06-06T17:59:51Z`）+ abs 页 **`200` / 42,570 B**；OpenAlex **`200`（911 / 2023 / conference-paper / CVPR 2023）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 306. Scaling Vision Transformers to 22 Billion Parameters
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Vision Transformers to 22 Billion Parameters |
+| 作者（前 3） | Mostafa Dehghani · Josip Djolonga · Basil Mustafa（共 **30+** 位；arXiv 作者字段逐字核，截断至前 3） |
+| 年份 | **2023**（arXiv v1 `2023-02-10`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`；会议版本轮未逐页核） |
+| 被引数 | **965**（OpenAlex `10.48550/arxiv.2302.05442`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2302.05442> ｜ arXiv DOI `10.48550/arxiv.2302.05442` |
+| 一句话贡献 | 把 ViT 扩到 **22B** 参数，并给出「不炸」的工程配方：**QK-norm（对 query/key 做归一化）** 替代部分 warmup/裁剪来抑制注意力 logit 过大、并行层（并行 MLP+Attention）+ 冻结部分层控制显存；同时报告大规模下的 few-shot 与多模态蒸馏收益。 |
+| 与我们工作的关系 | **pretrain（主 · 训练稳定性）**：QK-norm 是「注意力 logit 爆炸」这一 loss-spike 家族的便宜解法，可直接对照 2B 预训练的 attn logit 分布。<br>**vision（视觉塔规模律）**：给出视觉塔继续扩规模时的边际收益形状，决定我们是否需要 >1B 视觉塔。<br>**zhulong（成本口径）**：并行层 + 冻结策略是显存/吞吐换算的现实选项。 |
+| 首次收录 | **2026-11-21**（第八十轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2302.05442` **`200` + atom**（`published` `2023-02-10T18:56:34Z`）+ abs 页 **`200` / 47,645 B**；OpenAlex **`200`（965 / 2023 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 307. PaLM 2 Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | PaLM 2 Technical Report |
+| 作者（前 3） | Rohan Anil · Andrew M. Dai · Orhan Firat（作者数百位，机构署名为 Google；arXiv 作者字段逐字核，截断至前 3） |
+| 年份 | **2023**（arXiv v1 `2023-05-17`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`；技术报告） |
+| 被引数 | **2,439**（OpenAlex `10.48550/arxiv.2305.10403`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.10403> ｜ arXiv DOI `10.48550/arxiv.2305.10403` |
+| 一句话贡献 | 公开「计算最优先扩规模」在**多语数据配比**下的落地经验：训练配比比模型规模更影响多语与推理表现；架构上强调**深窄**（相对更深的层数、更窄的宽度）与无监督/监督数据混配，并给出小模型（Gecko）蒸馏路线。 |
+| 与我们工作的关系 | **data（主 · 配比）**：明确「同一 token 预算下，换配比比换规模更划算」，是我们数据线做消融的对照口径。<br>**pretrain（架构）**：深窄 vs 宽浅的取舍直接影响 2B 模型的单卡吞吐与显存，可作为形状消融的一极。<br>**harness（多语评测）**：多语能力必须与配比一起报，否则跨报告的数字不可比。 |
+| 首次收录 | **2026-11-21**（第八十轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2305.10403` **`200` + atom**（`published` `2023-05-17T17:46:53Z`）+ abs 页 **`200` / 64,215 B**；OpenAlex **`200`（2,439 / 2023 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5340,6 +5393,9 @@
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
 |:--|:--|:--|:--|:--|
 | — | （本轮无新增候选，待下轮实测后填） | — | — | — |
+
+> ✅ **第八十轮（2026-11-21 06:0x）转正 3 条**：Mask DINO `2206.02777`（#305，**911**，CVPR 2023）· Scaling ViT to 22B `2302.05442`（#306，**965**，预印本）· PaLM 2 `2305.10403`（#307，**2,439**，预印本）⇒ B 轨累计 **307**。核验：arXiv `id_list` **单批 `200` + atom**（9,772 B / 3 entry）+ abs 页 **3/3 `200`**（42,570 / 47,645 / 64,215 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 Position Interpolation `2306.15595` 与 InternVL `2312.14238` 经查**已在表内** ⇒ 剔除，未重复收）。
+> **下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 实现报告；QK-norm 已由 #306 覆盖，改找 QK-clip 一手）；③ 检测后续（DINO-X / Grounding DINO 1.5 核 ID）；④ 视觉塔对照（EVA-02 / InternViT-6B 一手）；⑤ 长上下文位置编码（NTK 对照，YaRN / 位置插值已收）。
 
 > ✅ **第七十九轮（2026-11-21 03:0x）转正 3 条**：An Empirical Model of Large-Batch Training `1812.06162`（#302，**543**，预印本）· On the difficulty of training RNNs `1211.5063`（#303，**5,097**，预印本）· Decision Transformer `2106.01345`（#304，**2,596**，预印本）⇒ B 轨累计 **304**。核验：arXiv `id_list` **3/3 `200` + atom** + abs 页 **3/3 `200`** + OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（GShard `2006.16668` 与 LoRA `2106.09685` 经查**已在表内** ⇒ 剔除，未重复收）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧的实现报告（QK-clip / loss-spike）；③ 检测后续（Mask DINO / DINO-X 一手核 ID）；④ 视觉塔对照（InternViT 一手）；⑤ 长上下文位置编码（位置插值 / NTK 对照，YaRN 已收）。
 
