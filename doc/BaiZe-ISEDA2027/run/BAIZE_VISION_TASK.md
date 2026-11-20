@@ -1,5 +1,44 @@
 # BAIZE_VISION_TASK.md
 
+### 🔴 用户令 · 2026-11-20 08:4x（**诊断 posttrain loop 存活性 + 修它的 git 推送**）
+
+> 用户原话：「我不确定 post-train 的 agent loop 是否活着，可以让 vision 看一下。下一步怎么做才能让 post-train 正常工作？」
+> 范围（用户已选）：**诊断 + 修 git 推送**，不含重启 loop。前提已确认：两线**同在 `10.252.32.17`**、共享同一工作副本。
+
+**一、诊断（只读，四项都给"命令 + 原始输出"，不许只写结论）**
+
+1. `pgrep -af 'baize_.*_loop.sh'` → `baize_posttrain_loop.sh` 在不在；在则 `ps -o etimes=,lstart= -p <PID>`。
+2. `ls -l /tmp/baize_posttrain_loop.log` + `tail -200`，逐条查已知静默失效模式（命中给行号）：
+   `env: 'cline': No such file`（PATH 无 cline→空转）/ `!!! 无可用 LLM 候选` / `[push] push FAILED` /
+   `[push] pull --rebase FAILED` / `TASK_MD missing`；并报最后一条 `[loop] wake up` 距今多久。
+3. 共享树：`rev-list --left-right --count origin/main...HEAD`、`status --porcelain|head`、`stash list`、
+   `ls .git/index.lock`、`ls -d .git/rebase-merge .git/rebase-apply`。
+4. **白名单缺口**：loop L77-80 只 add 8 条路径，而 `run/` 下实有 100+ `baize_posttrain_*`、
+   `run/reports/` 4 个 + 根 `reports/` 23 个 `report_posttrain_*`。列出"产出但不在白名单"的路径清单 + 计数。
+
+**二、整改：把 `baize_posttrain_loop.sh` 的 `git_sync_and_push()`（L45-100）换成 worktree 隔离**
+
+现状三处硬伤：L66 `pull --rebase --autostash`（运维协议 §4 禁项）、L94 共享树直推（non-ff 必拒）、L77-80 白名单过窄。
+参照你已写的 `run/vision/SHARED_REPO_GIT_PROTOCOL_RCA.md` §4.1/§8 + `vision_line_commit.sh`；
+运维另有通用版 `run/ops/git_line_commit.sh`（`--line posttrain` 已内置白名单）——**二选一并说明理由**。
+
+必须同时满足：①共享树只读 ②提交在 detached worktree ③只 add 白名单 ④push 后 `merge-base --is-ancestor`
+复验（不信退出码）⑤结束 `reset --mixed` 对齐 ⑥`index.lock` 守卫（有锁跳过 reset，不删别线锁）。
+白名单按 glob 段补全：`MEMORY_POSTTRAIN.md`·`EXPERIMENTS_POSTTRAIN.md`·`BAIZE_POSTTRAIN_TASK.md`·
+`daily-memories-posttrain/`·`run/baize_posttrain_*`·`run/bpt_*`·`run/POSTTRAIN_*`·`run/posttrain_*`·
+`run/attribution_3615_run*`·`run/rca_*`·`run/reports/report_posttrain_*`·`reports/report_posttrain_*`
+（⚠️ `run/rca_*`/`run/bpt_*` 若与别线重叠则收窄并说明）。保留 `PUSH_INTERVAL=900` 节流、`timeout 120 git fetch`、
+失败只跳过本轮不抛错。`bash -n` 必过 + dry-run 等价验证（列路径不真推）。
+
+**红线**：🚫 不改 `BAIZE_POSTTRAIN_TASK.md` 正文（只在 MEMORY 记一行）·🚫 `reset --hard`/`clean -xfd`/删别线 stash/
+kill posttrain 进程 ·🚫 重启 posttrain loop（由运维/用户决定）·🚫 **不得声称"posttrain 已能一次过 push"**
+（它 standby 不提交，此点物理上无法验证，须如实写）。
+
+**三、交付**：`run/reports/report_posttrain_loop_git_diag_zh.html`（中文自包含 HTML，不用 md 顶替）＝
+诊断四项 + **存活判定（死/活，用户最想知道的第一个答案）** + 白名单缺口表 + 改前/改后对照 + 未验证项声明；
+`MEMORY_VISION.md` 记一行摘要。程序改动只写本线（`vision/`）+ 目标文件 `baize_posttrain_loop.sh`。
+
+
 ### 📦 §用户令·2026-11-16 21:2x（vision 自行到 36.15 挖 waveview case）✅ 已交付（wake#1461：273 双判→225 可判分→10 带图可跑；交付 waveview_cases_mined.jsonl + report_vision_waveview_mining_zh.html + mine_3615.py）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`「归档 · 2026-11-19 §A」。需要时再读。
 
 
