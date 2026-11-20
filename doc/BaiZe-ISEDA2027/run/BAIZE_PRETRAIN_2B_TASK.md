@@ -109,6 +109,24 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-20 14:4x（**进入维护状态：训练已由运维拉起，只许监控，禁止重启/杀进程**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「让它进入维护状态，不要把你刚刚重启的训练弄死了」
+
+**背景（必读）**：昨夜 `.29` 卡死导致训练退出（最新 ckpt = iter_260000）。**运维（我）已直接修复环境并重启训练**：
+- 根因：`.29` 上 `~/.local/lib/python3.10/site-packages/` 里 11-18 16:20 被 `uv` 装的 `huggingface_hub-2.4.0` + `datasets-5.2.0` 污染了 Python 环境，导致 `pretrain_launcher.py --help` 探测 crash、train.sh 的 RoPE 门禁误判「不支持 --rotary-base」而拒启。
+- 修复：已把这两个包 `mv` 成 `.bak`（`huggingface_hub.240.bak` / `datasets.520.bak`），import 恢复正常（transformers 4.56.1 + hf_hub 0.36.2）。
+- 重启：已用断前原配置 `train.sh s1` 从 iter_260000 resume（PID 2547367，`.12` node_rank=0 + `.29` node_rank=1，16 rank，`--rotary-base 1000000` 已正确传入）。
+
+**你必须遵守（铁律，最高优先）**：
+1. **🚫 禁止重启训练**：无论看到什么异常（step time 波动、SSH 超时、GPU util 跳动等），**一律先监控记录 + 上报运维，绝不自行 kill 或 restart 训练进程**。训练是否重启由运维/用户拍板。
+2. **🚫 禁止杀任何 `pretrain_launcher` / `torchrun` / `train.sh` 进程**（PID 2547367 那套）。
+3. **🚫 禁止再动 `train.sh` / `configs/*.env` / `~/.local` 里那两个 `.bak` 包**（环境已修好，别恢复污染、别改配置）。
+4. **✅ 只做监控维护**：每轮心跳照常记录「训练健康 / iter / step time / loss / GPU / 260k autoqueue」；发现 step time 明显偏离 ~7s 或进程掉线，**只记录 + 在 MEMORY 顶部标 `⚠️ 待运维处理`**，然后 `WAITING=1` 等运维，不要自己动手。
+5. 之前归档的「重启授权」类指令均已闭环作废；本令覆盖之。保持 `WAITING=0` 仅做监控心跳，遇异常才转 `WAITING=1` + 上报。
+
+---
+
 > 📦 **2026-11-19 13:2x 改论文第二轮**（贡献点重写/§5改Domain Adaptation）**✅ 已完成**（commit 53985409e · 2026-11-19 14:12）→ 原文归档 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-19 论文改进第二轮」节。**结论**：① 删重复引述句+中文注释；② 贡献点3项重写(2B Mamba2-hybrid+1M ctx / curriculum learning / domain adaptation)；③ §5标题改Domain Adaptation(label不变)+ACI段落；④ pipeline表改"Domain adaptation (anneal, SFT, RLVR)"；⑤ latexmk 0err 5pp 0undefined。已push。
 
 > 📦 **2026-11-19 08:3x 论文改进令**（精简摘要/贡献点拆解3项/backbone TikZ图fig:backbone）**✅ 已完成**（commit 23068482d · 2026-11-19 10:01）→ 原文归档 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-19 论文改进」节。**结论**：0_abstract删volatile快照句(169130/591K/loss≈2.04)、1_intro贡献点拆解3项(cost-privacy子agent/Mamba2-hybrid结构成本/budget recipe+449eval)、3_architecture加TikZ Mamba2-hybrid层结构图(fig:backbone,4/56层session-growing state)、latexmk编译0err5页0undefined。已push到origin/main。需要时再读。
