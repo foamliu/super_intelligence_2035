@@ -436,7 +436,7 @@
 1789090752430_4xt0p	zhigangw	hfeg0pkn002	0		parked		2026-11-08 21:36	mode=act 启动业务场景 模拟电路优化 no organic intent
 1793236307554_giaze	pdsong	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension 分析脚本功能
 1793667682319_64ztm	e0047488	hfeg0pkn002	0		parked		2026-11-08 21:36	dup of YamlToGds-001 same user/task
-1793012120155_plwnn	pdsong	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension 分析lvsSvdb文件
+1793012120155_plwnn	pdsong	hfeg0pkn004	0		case	EDA-Eval-DesignFlow-LvsSvdbRepDirStat-001	2026-11-20 17:01	revival: 11-15 reaudit code-comprehension/analysis legit; real host hfeg0pgn024 mc=81 physical_verify; built LvsSvdbRepDirStat-001
 1792488450622_kc85b	kevinc	hfeg0pkn002	0		parked		2026-11-08 21:36	root-cause debug LPE失败 non-seed
 1790126403703_fj73q	e02141	hfeg0pkn001	0		parked		2026-11-08 21:36	env-recon 配置swb-python-api环境
 1793870539133_n91uu	e0047722	hfeg0pkn004	0		parked		2026-11-08 21:36	code-comprehension PDK_QA项目目录结构
