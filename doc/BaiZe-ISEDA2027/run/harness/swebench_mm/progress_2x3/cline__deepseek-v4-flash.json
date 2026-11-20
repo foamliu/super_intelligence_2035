@@ -1013,16 +1013,30 @@
   "PrismJS__prism-2686": {
     "instance_id": "PrismJS__prism-2686",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 671.5,
+    "rc": 0,
+    "model_patch_len": 784,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "would be multiple tokens anyway)\\n- Windows-style roots like `C:\\\\` are not matched (these are not standard shell-session prefixes)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-2703": {
     "instance_id": "PrismJS__prism-2703",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 445.1,
+    "rc": 0,
+    "model_patch_len": 4731,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ents/prism-fsharp.js` - Updated the block comment regex pattern\\n2. `components/prism-fsharp.min.js` - Same fix in minified version\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-2705": {
     "instance_id": "PrismJS__prism-2705",

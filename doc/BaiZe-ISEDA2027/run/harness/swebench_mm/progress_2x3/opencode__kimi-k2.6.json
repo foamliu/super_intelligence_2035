@@ -991,15 +991,22 @@
   "PrismJS__prism-2678": {
     "instance_id": "PrismJS__prism-2678",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 715.4,
+    "rc": 0,
+    "model_patch_len": 14064,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " `tests/languages/markdown/url-reference_feature.test` — updated `![foo]: ...` case from `url-reference` to `image-reference`\n\nAll 22 Markdown tests and the full pattern test suite (2112 tests) pass.\n",
+    "stderr_tail": "es('image-reference'));\"\ntrue\ntrue\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Understand the PrismJS markdown plugin structure\n[✓] Add image token support to markdown grammar\n[✓] Verify the change works correctly\n\u001b[0m\n"
   },
   "PrismJS__prism-2680": {
     "instance_id": "PrismJS__prism-2680",
     "route": "opencode__kimi-k2.6",
     "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
+    "error": "[Errno 7] Argument list too long: '/home/app.e0031982/.local/bin/opencode'",
     "model_patch_len": 0
   },
   "PrismJS__prism-2686": {

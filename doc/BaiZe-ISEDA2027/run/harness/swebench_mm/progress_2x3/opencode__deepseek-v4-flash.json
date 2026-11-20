@@ -1603,37 +1603,72 @@
   "alibaba-fusion__next-3345": {
     "instance_id": "alibaba-fusion__next-3345",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 100.6,
+    "rc": 0,
+    "model_patch_len": 759,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "se` rule setting `top` to `$dialog-content-padding-top` (20px), matching the body's padding-top so the close button aligns with the content rather than floating at the very top where it overlaps text\n",
+    "stderr_tail": "0 matches\n  testRegex:  - 0 matches\nPattern: test/dialog/index-spec.js - 0 matches\n\u001b[0m\n\u001b[0m✱ \u001b[0mGlob \"**/karma*\"\u001b[90m in . · 1 match\u001b[0m\n\u001b[0m→ \u001b[0mRead test/dialog/index-spec.js\u001b[90m [limit=20]\u001b[0m\n"
   },
   "alibaba-fusion__next-3445": {
     "instance_id": "alibaba-fusion__next-3445",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 142.5,
+    "rc": 0,
+    "model_patch_len": 602,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " adding `onClick={e => e.stopPropagation()}` to the radio input prevents its click from bubbling up, leaving only the label's click to trigger `handleClick` — a single `onChange` call per user click.\n",
+    "stderr_tail": "lash/alibaba-fusion_next/node_modules/enzyme/build/Utils.js:84:14)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14) {\n  code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'\n}\n\nNode.js v20.18.1\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3454": {
     "instance_id": "alibaba-fusion__next-3454",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 87.6,
+    "rc": 0,
+    "model_patch_len": 727,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "x` props have changed independently and updates state accordingly. The same sentinel-value guard logic (`MAX_SAFE_INTEGER`/`MIN_SAFE_INTEGER`) is preserved for consistency with the existing handling.\n",
+    "stderr_tail": "m/harness_mm_2x3/workdirs/opencode__deepseek-v4-flash/alibaba-fusion_next/scripts/test/karma.js does not exist!\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/number-picker/number-picker.jsx\u001b[90m [limit=40, offset=197]\u001b[0m\n"
   },
   "alibaba-fusion__next-3724": {
     "instance_id": "alibaba-fusion__next-3724",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 518.0,
+    "rc": 0,
+    "model_patch_len": 3834,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "mpatible** — existing usage with a single object continues to work identically (applied to both panels). Passing an array `[leftProps, rightProps]` enables independent per-panel search configuration.\n",
+    "stderr_tail": "Props when passed as array\n[✓] Update transfer-panel.jsx propTypes for searchProps\n[✓] Update TypeScript definitions\n[✓] Update search demo to show array usage\n[✓] Verify changes work with tests\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3947": {
     "instance_id": "alibaba-fusion__next-3947",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 109.8,
+    "rc": 0,
+    "model_patch_len": 2273,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "essage\n  required\n>\n  <Input name=\"name\" />\n</Form.Item>\n```\n\nWhen validation fails, the error message shows `\"姓名 是必填字段\"` instead of `\"name 是必填字段\"`, even though `label` is a ReactNode (not a string).\n",
+    "stderr_tail": " prop to Form.Item in item.jsx (propTypes and getLabelForErrorMessage logic)\n[✓] Add errorMessageLabel prop to TypeScript definitions in types/form/index.d.ts\n[✓] Verify changes by running tests\n\u001b[0m\n"
   },
   "alibaba-fusion__next-4021": {
     "instance_id": "alibaba-fusion__next-4021",
