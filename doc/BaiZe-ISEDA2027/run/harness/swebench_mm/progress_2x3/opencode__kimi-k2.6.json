@@ -1388,23 +1388,44 @@
   "alibaba-fusion__next-1708": {
     "instance_id": "alibaba-fusion__next-1708",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 398.9,
+    "rc": 0,
+    "model_patch_len": 1286,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "= mount(\n        <TreeSelect\n            treeCheckable\n            dataSource={dataSource}\n            defaultValue={['2']}\n        />\n    );\n    assert.deepEqual(getLabels(wrapper), ['男装']);\n});\n```\n",
+    "stderr_tail": "}\n+            />\n+        );\n+        assert.deepEqual(getLabels(wrapper), ['男装']);\n+    });\n+\n     it('should support preview mode render', () => {\n         const dataSource = [\n             {\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1720": {
     "instance_id": "alibaba-fusion__next-1720",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 834.1,
+    "rc": 0,
+    "model_patch_len": 3624,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "--|\n| 输入 `r`，弹层可见，高亮 \"Recent\"，按回车 | 选中 \"Recent\"，并触发 `onSearch('Recent')`，两者一致 |\n| 输入 `r`，弹层不可见，按回车 | 触发 `onSearch('r')` |\n| 输入 `r`，弹层可见但无匹配项，按回车 | 触发 `onSearch('r')` |\n| 鼠标点击联想词 | 只选中，不触发搜索（保持原有行为） |\n",
+    "stderr_tail": "component source code and understand Enter key handling\n[✓] Identify the bug causing search term/suggestion inconsistency on Enter\n[✓] Implement fix for the Enter key behavior\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1742": {
     "instance_id": "alibaba-fusion__next-1742",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 529.9,
+    "rc": 0,
+    "model_patch_len": 6550,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "例 |\n\n### 使用方式\n\n```jsx\n// 去掉 title 提示\n<Cascader showItemTitle={false} dataSource={dataSource} />\n```\n\n默认 `showItemTitle={true}`，完全兼容现有行为。由于 `Menu` 也同步支持了该属性，`Select` 等使用 `Menu` 的组件同样可以通过此属性控制 `title`。\n",
+    "stderr_tail": "0m# \u001b[0mTodos\n[✓] Add showItemTitle prop to Menu component\n[✓] Add showItemTitle prop to Cascader component\n[✓] Update TypeScript definitions\n[✓] Add tests for showItemTitle in Menu and Cascader\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1788": {
     "instance_id": "alibaba-fusion__next-1788",

@@ -2062,9 +2062,16 @@
   "bpmn-io__bpmn-js-1256": {
     "instance_id": "bpmn-io__bpmn-js-1256",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1517.7,
+    "rc": 0,
+    "model_patch_len": 737,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " parent/children relationship during deletion:\nLet me look at the issue from a different angle - maybe the bug is related to how the `eachElement` traverses the tree and affects the `makeSpace` call:\n",
+    "stderr_tail": "s:80:  spaceTool.makeSpace(adjustments.movingShapes, adjustments.resizingShapes, { x: 0, y: offset }, direction);\nlib/features/modeling/behavior/UpdateFlowNodeRefsBehavior.js:71:    'spaceTool',\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1299": {
     "instance_id": "bpmn-io__bpmn-js-1299",

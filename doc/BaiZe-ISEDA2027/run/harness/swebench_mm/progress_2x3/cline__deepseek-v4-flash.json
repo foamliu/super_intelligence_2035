@@ -1668,9 +1668,15 @@
   "alibaba-fusion__next-4021": {
     "instance_id": "alibaba-fusion__next-4021",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 3147,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "alibaba-fusion__next-4182": {
     "instance_id": "alibaba-fusion__next-4182",
