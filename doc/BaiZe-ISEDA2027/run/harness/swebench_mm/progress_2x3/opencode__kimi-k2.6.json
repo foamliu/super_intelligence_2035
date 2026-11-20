@@ -1222,9 +1222,15 @@
   "PrismJS__prism-3355": {
     "instance_id": "PrismJS__prism-3355",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.3,
+    "rc": -1,
+    "model_patch_len": 6528,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "PrismJS__prism-3372": {
     "instance_id": "PrismJS__prism-3372",

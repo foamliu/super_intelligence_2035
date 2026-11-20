@@ -4865,30 +4865,58 @@
   "highlightjs__highlight.js-2726": {
     "instance_id": "highlightjs__highlight.js-2726",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 371.3,
+    "rc": 0,
+    "model_patch_len": 1901,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nts, and optional bracket arguments inside braces also work as expected\n\nThe fix is implemented in `/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/highlightjs_highlight.js/src/languages/latex.js`.\n",
+    "stderr_tail": "an class=\"hljs-name\">cap</span></span> U&#x27;<span class=\"hljs-tag\">\\<span class=\"hljs-name\">!</span></span>:s|_W=s&#x27;|_W}\n$</span>\n\u001b[0m\n\u001b[0m$ \u001b[0mrm test-latex.js test-latex2.js\n(no output)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2727": {
     "instance_id": "highlightjs__highlight.js-2727",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 406.4,
+    "rc": 0,
+    "model_patch_len": 2512,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ar and async) and applies the standard function highlighting to them, matching how regular top-level functions are highlighted.\n\nYou can rebuild highlight.js with this change to get the new behavior.\n",
+    "stderr_tail": "ould.js:356:19)\n      at /dev/shm/harness_mm_2x3/workdirs/opencode__doubao/highlightjs_highlight.js/test/markup/index.js:36:32\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix ES6 class member function highlighting\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2740": {
     "instance_id": "highlightjs__highlight.js-2740",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 453.9,
+    "rc": 0,
+    "model_patch_len": 245619,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ck for backward compatibility\n\nAll existing SQL tests pass, and the problematic escaped quote sequences are now correctly highlighted in all contexts, including IF conditions and dynamic SQL strings.\n",
+    "stderr_tail": "ock\n    ✓ should markup inline\n    ✓ should markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1623 passing (7s)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2750": {
     "instance_id": "highlightjs__highlight.js-2750",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 261.2,
+    "rc": 0,
+    "model_patch_len": 275515,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`${({ args }) => args.name}`\n- Nested template literals inside Styled Components patterns\n\nThe fix works for both JavaScript and TypeScript, as TypeScript inherits the JavaScript language definition.\n",
+    "stderr_tail": "js/should.js:356:19)\n      at /dev/shm/harness_mm_2x3/workdirs/opencode__doubao/highlightjs_highlight.js/test/markup/index.js:36:32\n\u001b[0m\n\u001b[0m$ \u001b[0mrm test.js test-template-literal.js\n(no output)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2765": {
     "instance_id": "highlightjs__highlight.js-2765",
