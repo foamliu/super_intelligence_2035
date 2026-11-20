@@ -3514,3 +3514,28 @@
 | 2026-11-20 | 字节否认张楠/谢欣离职 / 三星 Gauss 4 代码 / One UI 9.5 天气 AI / 三星安卓笔记本 | IT之家 | W:not-news（第 315 轮 · 否认式回应与爆料） | https://www.ithome.com/1/029/839.htm |
 | 2026-11-20 | 华为云 CloudRobo 组队 | 量子位 | W:not-news（第 315 轮 · 厂商稿） | https://www.qbitai.com/2026/11/511426.html |
 | 2026-11-20 | 汽车/硬件通告与爆料 25 条（850/836/835/834/831/828/824/820/817/825/827/822/815/807/806/804/800/799/794/792/790/778/823/829/808/803） | IT之家 | W:not-news（第 315 轮 · 销量通告与爆料） | https://www.ithome.com/1/029/850.htm |
+| 2026-11-20 | 英伟达据悉洽谈收购 AI 初创 Inception（估值至少超 5 亿美元） | IT之家 / The Information | news（第 316 轮 · §1） | https://www.ithome.com/1/029/886.htm |
+| 2026-11-20 | 高通携手 Cirrascale 开放 AI200 推理加速器客户评估 | IT之家 | news（第 316 轮 · §1） | https://www.ithome.com/1/029/874.htm |
+| 2026-11-20 | 迈特芯 3D-TPU 芯片 Mega188 点亮（600GB/s / 80 TPS on Qwen3-8B） | IT之家 | news（第 316 轮 · §1） | https://www.ithome.com/1/029/876.htm |
+| 2026-11-20 | PHP 8.6 正式发布 | IT之家 | news（第 316 轮 · §1） | https://www.ithome.com/1/029/898.htm |
+| 2026-11-20 | 三星 Gauss 4 E2B 现身 One UI 9.5 代码 | IT之家 / SammyGuru | news（第 316 轮 · §1） | https://www.ithome.com/1/029/833.htm |
+| 2026-11-20 | 群晖 DSM CVSS 9.8 漏洞 CVE-2026-120382 | IT之家 / 群晖安全公告 | news（第 316 轮 · §2） | https://www.ithome.com/1/029/861.htm |
+| 2026-11-20 | 微信短剧审核新规：单集≥1 分钟 / AI 制作证明视频 12 月必填 | IT之家 / 微信短剧内容中心 | news（第 316 轮 · §3） | https://www.ithome.com/1/029/883.htm |
+| 2026-11-20 | 苹果下架安卓虚拟机 Andarium（指南 2.5.2 / 1.1） | IT之家 | news（第 316 轮 · §3） | https://www.ithome.com/1/029/867.htm |
+| 2026-11-20 | 亚马逊反对纽约「最后一公里」配送新规 | IT之家 / The Verge | news（第 316 轮 · §3） | https://www.ithome.com/1/029/872.htm |
+| 2026-11-20 | 微软 Edge 158 可疑通知自动取消订阅 | IT之家 / NeoWin | news（第 316 轮 · §3） | https://www.ithome.com/1/029/888.htm |
+| 2026-11-20 | 李书福：一般性传统大学已不适应 AI 时代人才培养 | IT之家 / 新浪财经 | news（第 316 轮 · §4） | https://www.ithome.com/1/029/864.htm |
+| 2026-11-20 | SpaceX 430 亿美元 AI 芯片抵押贷款：债主要求不许发射上天 | IT之家 / 金融时报 | news（第 316 轮 · §4） | https://www.ithome.com/1/029/896.htm |
+| 2026-11-20 | 苏姿丰首谈黄仁勋离任英伟达 CEO | IT之家 / Business Insider | news（第 316 轮 · §5） | https://www.ithome.com/1/029/878.htm |
+| 2026-11-20 | CounterPoint 2026Q3 全球电视出货：海信反超 TCL | IT之家 / CounterPoint | news（第 316 轮 · §5） | https://www.ithome.com/1/029/865.htm |
+| 2026-11-20 | 余承东：鸿蒙智行主动安全累计避免碰撞超 542 万次 | IT之家现场 | news（第 316 轮 · §5） | https://www.ithome.com/1/029/910.htm |
+| 2026-11-20 | 李书福：吉利旗下芯位科技筹备建设芯位大学 | IT之家 / 上海证券报 | news（第 316 轮 · §6） | https://www.ithome.com/1/029/913.htm |
+| 2026-11-20 | 华为与北汽战略共同体升级 / 余承东晒「五界」矩阵 / 六大独有核心技术 | IT之家 | W:not-news（第 316 轮 · 品牌表态，数字已由 910 入账） | https://www.ithome.com/1/029/949.htm |
+| 2026-11-20 | 《GTA 6》Sensor Tower 首日估算 2458 万份 / 23.6 亿美元 | IT之家 / Sensor Tower | W:not-news（第 316 轮 · 第三方估算，清单弱相关） | https://www.ithome.com/1/029/866.htm |
+| 2026-11-20 | 苹果 20 周年款 iPhone 渲染图曝光 / 荣耀 7 英寸新机爆料 | IT之家 | W:not-news（第 316 轮 · 爆料渲染图） | https://www.ithome.com/1/029/868.htm |
+| 2026-11-20 | PHP 近 20 年漏洞：httpS 大写 S 致 TLS 失效（已修复） | IT之家 | W:not-news（第 316 轮 · 已修复无在野利用；并并入 898） | https://www.ithome.com/1/029/884.htm |
+| 2026-11-20 | 硬件通告与促销 20+ 条（949/927/941/902/889/887/882/875/871/900/862/836/835/834/831/828/825/822/820/817/815/807/806/823/842/829/826/808/873/911/899） | IT之家 | W:not-news（第 316 轮 · 促销/发售通告/功能预览） | https://www.ithome.com/1/029/949.htm |
+| 2026-11-20 | 新浪新闻 2026 探索大会 / Agnes 双系统决策 / 极客公园大会嘉宾阵容 | 量子位 | W:not-news（第 316 轮 · 通稿/厂商稿/活动预告） | https://www.qbitai.com/2026/11/511603.html |
+| 2026-11-20 | 子午播报 2026-11-20（联合国新闻播报汇编） | 联合国新闻 | W:not-news（第 316 轮 · 播报汇编） | https://news.un.org/feed/view/zh/story/2026/11/1143232 |
+| 2026-11-20 | 美国为伊朗战事花费超 480 亿美元 / 法国 10 月骚乱损失超 2 亿欧元 / 土耳其卡塔尔防御协议 / 中方反对恐怖主义 | 央视网 | W:not-news（第 316 轮 · 禁令 9 涉军涉外冲突） | https://news.cctv.com/ |
+| 2026-11-20 | AI 类岗位扩容、技能人才需求旺（就业市场新趋势） | 中新网 | W:not-news（第 316 轮 · 综述访谈，无具体事件点） | https://www.chinanews.com.cn/ |
