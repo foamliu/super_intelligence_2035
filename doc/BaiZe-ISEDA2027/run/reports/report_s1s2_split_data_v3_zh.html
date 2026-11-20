@@ -48,7 +48,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>用户令</b>: 2026-11-19 — 基于 v2 刷新 v3，同步最近一周数据侧实际进展与决策<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；Nemotron-CC-Math / MegaMath / finemath 均为实际分词后 MANIFEST 实测值。<br>
 <b>当前进度</b>: iter ≈ 265k / 700k（37.8%），step ≈ 8.2s（含 harness CPU 争抢，baseline ~7.0s）；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−265k)×8.2s ≈ 8.0 天），<b>~2026-12-25 到 700k 终点</b>（(700k−265k)×7.0s ≈ 35.3 天，baseline step）<br>
-<b>R34 刷新</b>（2026-11-20 09:0x）：MegaMath-web 分词 1318/4950=26.6% ETA ~28.1h · Math-Reasoning 87.9% (1959/2228) · .12 load=11.32 · /nas_user 43T<br>
+<b>R35 刷新</b>（2026-11-20 09:14）：MegaMath-web 分词 1332/4950=26.9% ETA ~28.2h ~49.8B tok · Math-Reasoning 88.2% (1965/2228) 2inc · .12 load=10.75 · /nas_user 43T<br>
 <b>v3 主要刷新点</b>: ① PC-1~PC-4 全部 ✅ 完成（v2 时仅 PC-1 完成）② Nemotron-CC-Math ✅ 分词完成 195.4B tok（v2 时仅下载完成）③ finemath ✅ 分词完成 9.4B tok ④ 新增 §0 — S2 零重叠方案（同步 overlap 研究结论）⑤ 数据源引用与论文 alignment ⑥ 时间线更新（350k ~11-28，余量改善）
 </p>
 <div class="summary">
@@ -207,10 +207,10 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="pc-card" style="border-left-color:#ff9800;">
 <h4>🔄 PC-5: MegaMath-web 下载 + 分词（进行中）</h4>
 <p style="font-size:12px;margin:4px 0;">
-<b>状态</b>: <span class="green">✅ 下载完成 (4950/4950, 0 inc)</span> / <span class="amber">🔄 分词 26.6% (1318/4950 = ~49.3B tok) / ETA ~28.1h</span><br>
+<b>状态</b>: <span class="green">✅ 下载完成 (4950/4950, 0 inc)</span> / <span class="amber">🔄 分词 26.9% (1332/4950 = ~49.8B tok) / ETA ~28.2h</span><br>
 <b>Nemotron-CC-Math 分词</b>: <span class="green">✅ 完成 (193/193 shards, 195.4B tok, 0 errors)</span> <span class="cite">[v3 新增里程碑]</span><br>
 <b>finemath-4plus 分词</b>: <span class="green">✅ 完成 (64/64 shards, 9.4B tok, 0 errors, 5528s)</span> <span class="cite">[v3 新增里程碑]</span><br>
-<b>Math-Reasoning 下载</b>: 🔄 87.9% (1959/2228) · 2 inc · 接近完成<br>
+<b>Math-Reasoning 下载</b>: 🔄 88.2% (1965/2228) · 2 inc · 接近完成<br>
 <b>Code-Reasoning 下载</b>: <span class="green">✅ 完成 (0 inc)</span>
 </p>
 </div>
@@ -222,7 +222,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code></td><td>预训练</td><td class="num">260GB</td><td>S2 Math</td><td class="green">✅ 下载完成 + 分词完成 (195.4B tok)</td></tr>
 <tr><td><b>3</b></td><td><code>HuggingFaceTB/finemath</code></td><td>预训练</td><td class="num">149GB</td><td>S2 Math</td><td class="green">✅ 下载完成 + 分词完成 (9.4B tok)</td></tr>
 <tr><td><b>4</b></td><td><code>IFM/Code-Reasoning</code></td><td>SFT</td><td class="num">3.28TB</td><td>decay/post-train</td><td class="green">✅ 完成 (0 inc)</td></tr>
-<tr><td><b>5</b></td><td><code>IFM/Math-Reasoning</code></td><td>SFT</td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 87.9% (1959/2228) · 2 inc</td></tr>
+<tr><td><b>5</b></td><td><code>IFM/Math-Reasoning</code></td><td>SFT</td><td class="num">4.46TB</td><td>decay/post-train</td><td class="amber">🔄 88.2% (1965/2228) · 2 inc</td></tr>
 <tr><td><b>6</b></td><td><code>nvidia/OpenMathInstruct-2</code></td><td>SFT</td><td class="num">12.6GB</td><td>post-train</td><td class="green">✅ 完成</td></tr>
 <tr><td><b>7</b></td><td><code>nvidia/OpenCodeReasoning</code></td><td>SFT</td><td class="num">9.7GB</td><td>post-train</td><td class="green">✅ 完成</td></tr>
 <tr><td><b>8</b></td><td><code>nvidia/OpenCodeInstruct</code></td><td>SFT</td><td class="num">6.9GB</td><td>post-train</td><td class="green">✅ 完成</td></tr>
@@ -444,7 +444,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <b>数据来源</b>: DATA_MAPPING.md §A / §H.14 / §D1 / CONTAMINATION_CHECK.md / report_s2_data_overlap_study.md / report_s1s2_split_data_v2_zh.html v2.9<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；Nemotron-CC-Math 195.4B / MegaMath 364 shard 243GB / finemath 9.4B 均为实际分词后实测值。无估算、无编造。<br>
 <b>与 v2 关系</b>: v3 = 在 v2.9 基础上刷新最近一周进展（PC-1~PC-4 全部完成、Nemotron+finemath 分词完成、新增 §0 零重叠方案、新增 §8 数据源引用、时间线更新 350k ~11-28、epoch 全部改善）。<br>
-<b>生成时间</b>: 2026-11-20（v3.1 — R34 refresh：iter ~265k / MegaMath-web 26.6% (1318/4950 ~49.3B tok) / Math-Reasoning 87.9% (1959/2228) / .12 load 11.32 / /nas_user 43T）
+<b>生成时间</b>: 2026-11-20（v3.1 — R35 refresh：iter ~265k / MegaMath-web 26.9% (1332/4950 ~49.8B tok) / Math-Reasoning 88.2% (1965/2228) / .12 load 10.75 / /nas_user 43T）
 </p>
 </div>
 </body>
