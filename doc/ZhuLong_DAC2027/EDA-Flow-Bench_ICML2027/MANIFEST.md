@@ -1,7 +1,7 @@
 # MANIFEST.md — EDA-Flow-Bench ICML 2027 论文 · Overleaf 同步与编译指引
 
 > 用途：让用户（及任何复现者）能在 Overleaf 上从零复现本地 clean compile。
-> 本地 clean compile 现状（2026-11-19）：**12 pages / 0 error / 0 undefined / 0 Overfull / 28 Underfull（badness 10000 = 0）**。
+> 本地 clean compile 现状（2026-11-21）：**12 pages / 0 error / 0 undefined / 0 Overfull / 29 Underfull（badness 10000 = 0）**。
 > 正文（§0–§9，含 Abstract）= p1–p6（≤ 6 页）；References / Ethics / Reproducibility / Appendix A–D 从 p7 起。
 
 ---
@@ -75,8 +75,9 @@ Overleaf 上若仍报 `Undefined control sequence \FullScale` / `\LiteSet`，说
 | **54** | **`\newcommand{\FullScale}{several thousand}`** | **宏** | **Full 集定性描述（不给具体数字）** |
 | **55** | **`\newcommand{\LiteSet}{500}`** | **宏** | **Lite 集任务数** |
 | 58 | `\newcommand{\Neval}{696}` | 宏 | 冻结快照 run 数（Full-set 描述性样本数） |
-| 60 | `\newcommand{\MzeroPass}{10.0\%}` | 宏 | M0 基线 Pass@1 |
-| 62 | `\newcommand{\ScriptPass}{76.5\%}` | 宏 | 单脚本 EDA 基线 |
+| 60 | `\newcommand{\MzeroPass}{10.0\%}` | 宏 | M0 描述性基线 Pass@1（696-run Full-set 快照·DeepSeek-V4-Pro） |
+| **63** | **`\newcommand{\MzeroAnchor}{10.1\%}`** | **宏** | **M0 臂级比较锚点 Pass@1（top-120-of-Lite·doubao-seed-2.0-pro-cloud·12/119 decided）** |
+| 65 | `\newcommand{\ScriptPass}{76.5\%}` | 宏 | 单脚本 EDA 基线 |
 
 **关键核对点**：
 - `main.tex:54` 必须有 `\newcommand{\FullScale}{several thousand}`（旧版是 `\newcommand{\Ntasks}{1827}`，已删除）。
@@ -139,7 +140,7 @@ grep -i 'Output written' main.log # 报页数 + 字节
 
 ---
 
-## 6. 当前编译状态（2026-11-19，本次 Overfull/Underfull 修复后）
+## 6. 当前编译状态（2026-11-21，M0 anchor 回填 doubao-seed-2.0-pro-cloud 后）
 
 | 指标 | 值 | 判据 | 状态 |
 |:--|:--|:--|:--|
@@ -148,9 +149,9 @@ grep -i 'Output written' main.log # 报页数 + 字节
 | `grep -c '^!' main.log`（error） | 0 | = 0 | ✅ |
 | `grep -ci 'undefined' main.log` | 0 | = 0 | ✅ |
 | `grep -c 'Overfull' main.log` | 0 | ≤ 1 | ✅ |
-| `grep -c 'Underfull' main.log` | 28 | ≤ 30 | ✅ |
+| `grep -c 'Underfull' main.log` | 29 | ≤ 30 | ✅ |
 | `grep -c 'badness 10000' main.log` | 0 | ≤ 2 | ✅ |
-| abstract 词数（渲染，pdftotext 实测） | 189 | ≤ 200 | ✅ |
+| abstract 词数（渲染，pdftotext 实测） | 186 | ≤ 200 | ✅ |
 | 匿名性（pdftotext 无作者/机构/自指泄漏） | 0 自指泄漏 | = 0 | ✅ |
 
 ### 6.1 本次修复的 5 处 Overfull \hbox（用户报告）
@@ -171,7 +172,7 @@ grep -i 'Output written' main.log # 报页数 + 字节
 
 ## 7. 硬约束与防伪底线（继承，编译复现时不得违反）
 
-- 🚫 不动宏定义的数字值：`\LiteSet=500` / `\Neval=696` / `\MzeroPass=10.0%` / `\ScriptPass=76.5%` 不改。
+- 🚫 不动宏定义的数字值：`\LiteSet=500` / `\Neval=696` / `\MzeroPass=10.0%` / `\MzeroAnchor=10.1%` / `\ScriptPass=76.5%` 不改。
 - 🚫 Full 集在论文中只出现定性描述（"several thousand"/"thousands"/"growing"），**不出现具体数字**（除附录 shard 分布 + 696-run 快照样本数 `\Neval`）。
 - ✅ 双盲匿名 + 防伪底线 + 0 外链 + 不承诺开源 + 无预注册 + Full/Lite 分层 + 3 项贡献。
 - ✅ 编译验证必须 §5 的 clean compile；round 3 的 `grep -ci 'undefined' main.log` = 0。

@@ -23,15 +23,16 @@
 % 永不进入工作目录）。该契约故意不规定语言或主机——智能体必须自行发现正确的工具链。详细基准构建见
 % 附录~\ref{sec:benchmark-details}。
 
-\textbf{Evaluation subset.} Arm-level experiments run on the Lite \LiteSet{}-task set; the \emph{minimal matrix} for arm comparison is the top-120 of Lite by chain length (power-constrained arm-comparison anchor), and the \emph{ideal matrix} is Lite $\times$ 3 repeats (\S\ref{sec:hypotheses}). A frozen 696-run Full-set snapshot (2026-11-09; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s, 8 workers) provides the descriptive Full-set baseline: \MzeroPass{} Pass@1 (62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT). Because 696 runs are sampled from Full (not Lite) and the top-120 is harder than the Full set, the minimal-matrix comparison anchor for arms is the M0 Pass@1 on the \emph{same top-120-of-Lite subset} (\TBD, to be measured with the arms), expected to differ from 10.0\% (\S\ref{sec:hypotheses}).
+\textbf{Evaluation subset.} Arm-level experiments run on the Lite \LiteSet{}-task set; the \emph{minimal matrix} for arm comparison is the top-120 of Lite by chain length (power-constrained arm-comparison anchor), and the \emph{ideal matrix} is Lite $\times$ 3 repeats (\S\ref{sec:hypotheses}). A frozen 696-run Full-set snapshot (2026-11-09; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s, 8 workers) provides the descriptive Full-set baseline: \MzeroPass{} Pass@1 (62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT). Because 696 runs are sampled from Full (not Lite) and use a different backbone, the minimal-matrix comparison anchor for arms is the M0 Pass@1 on the \emph{same top-120-of-Lite subset}, measured on the arm backbone \textbf{doubao-seed-2.0-pro-cloud} (2026-11-20): \MzeroAnchor{} (12/119 decided), close to but distinct from the 696-run \MzeroPass{} (\S\ref{sec:hypotheses}).
 % 【中文】
 % \textbf{评测子集。} 臂级实验在 Lite \LiteSet{}-任务集上运行；臂对比的\emph{最小矩阵}为按链长取
 % Lite 的 top-120（受功效约束的臂对比锚点），\emph{理想矩阵}为 Lite $\times$ 3 重复
 %（\S\ref{sec:hypotheses}）。一份冻结的 696-run Full-set 快照（2026-11-09；DeepSeek-V4-Pro、
 % Cline v3.0.51、\texttt{thinking=low}、2400s 超时、8 workers）提供描述性 Full-set 基线：
 % \MzeroPass{} Pass@1（62 PASS / 558 FAIL / 70 ERROR / 6 ABSENT）。由于 696 run 采样自 Full
-% （非 Lite）且 top-120 比全集更难，各臂最小矩阵的比较锚点为\emph{同 top-120-of-Lite 子集}上实测的
-% M0 Pass@1（\TBD，与各臂一同测量），该值预期偏离 10.0\%（\S\ref{sec:hypotheses}）。
+% （非 Lite）且使用不同骨干，各臂最小矩阵的比较锚点为\emph{同 top-120-of-Lite 子集}上、以臂骨干
+% \textbf{doubao-seed-2.0-pro-cloud}（2026-11-20）实测的 M0 Pass@1：\MzeroAnchor{}
+%（12/119 已判定），接近但区别于 696-run \MzeroPass{}（\S\ref{sec:hypotheses}）。
 
 \textbf{Reproducibility boundary.} Due to the production-origin of the traces (real IC design engineer sessions on commercial EDA tools), no data, code, or executable assets are released; reproducibility is supported via the detailed protocol description in this paper and an \emph{NDA-gated review package} for qualified reviewers. The falsifiability of our claims does not depend on proprietary licenses: the protocol and criteria suffice for an independent party to re-derive an equivalent benchmark on open-source EDA tools (Yosys/OpenROAD/Magic) and test the same hypotheses (\S\ref{sec:reproducibility}).
 % 【中文】

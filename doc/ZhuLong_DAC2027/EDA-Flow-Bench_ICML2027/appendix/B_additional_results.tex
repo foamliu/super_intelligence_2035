@@ -50,20 +50,25 @@ pnr\_signoff       & 5  & 19  & 0  & 1 & 25  & 20.8 \\
 \label{sec:per-model}
 % \subsection{各模型结果}
 
-This submission reports a \emph{single-backbone} evaluation: only DeepSeek-V4-Pro
+This submission reports a \emph{single-backbone} Full-set snapshot: only DeepSeek-V4-Pro
 has been run to completion over the full \Neval{}-run snapshot (10.0\% Pass@1,
 62/620 decided). GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash and Doubao-Seed-2.0-Pro
-are configured in the same harness but their sweeps are still running, so we
-report no numbers for them rather than a table of dashes. At the observed batch
-cost (696 runs in $\approx$24\,h at 8 workers), the remaining four backbones
-amount to roughly five machine-days; we will report the sweep in the
+are configured in the same harness but their Full-set sweeps are still running, so we
+report no Full-set numbers for them rather than a table of dashes. Separately, the
+\emph{arm-level} M0 anchor is measured on doubao-seed-2.0-pro-cloud over the Lite
+top-120-of-Lite subset (\MzeroAnchor{}, 12/119 decided; 9.3\% over full Lite \LiteSet{},
+45/483); DeepSeek-V4-Pro has since been deprecated as the arm backbone.
+At the observed batch cost (696 runs in $\approx$24\,h at 8 workers), the remaining four backbones
+amount to roughly five machine-days; we will report the Full-set sweep in the
 camera-ready version and repeat it as the multi-backbone test of RQ3
 (Section~\ref{sec:per-model}).
-% 本投稿给出的是\emph{单骨干}评测：只有 DeepSeek-V4-Pro 在完整的 \Neval{}-run 快照上跑到完成
+% 本投稿给出的是\emph{单骨干} Full-set 快照：只有 DeepSeek-V4-Pro 在完整的 \Neval{}-run 快照上跑到完成
 % （10.0\% Pass@1，62/620 已判定）。GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro
-% 已接入同一框架但扫描仍在跑，因此这里不报数字，也不放一张全是 "---" 的表。
-% 按本批实测成本（696 run / 8 workers ≈ 24 小时），余下四个骨干约需五个机器日；camera-ready
-% 版本将给出该扫描，并用它作为 RQ3 的多骨干检验。
+% 已接入同一框架但 Full-set 扫描仍在跑，因此这里不报 Full-set 数字，也不放一张全是 "---" 的表。
+% 另外，臂级 M0 锚点已在 doubao-seed-2.0-pro-cloud 上、于 Lite top-120-of-Lite 子集实测
+% （\MzeroAnchor{}，12/119 已判定；全 Lite \LiteSet{} 为 9.3\%，45/483）；DeepSeek-V4-Pro 已作为
+% 臂骨干弃用。按本批实测成本（696 run / 8 workers ≈ 24 小时），余下四个骨干约需五个机器日；camera-ready
+% 版本将给出该 Full-set 扫描，并用它作为 RQ3 的多骨干检验。
 
 \subsection{Failure Taxonomy by Domain}
 \label{sec:failure-by-domain}

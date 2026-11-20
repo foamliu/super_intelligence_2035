@@ -56,8 +56,11 @@
 % 冻结评测快照：2026-11-09 run_batch_20261109_171201 = 696 runs
 %   （62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT）
 \newcommand{\Neval}{696}
-% M0 基线锚点 Pass@1（冻结 696-run 快照）
+% M0 描述性基线 Pass@1（冻结 696-run Full-set 快照·DeepSeek-V4-Pro·2026-11-09）
 \newcommand{\MzeroPass}{10.0\%}
+% M0 臂级比较锚点 Pass@1（top-120-of-Lite 子集·doubao-seed-2.0-pro-cloud·2026-11-20 实测 12/119 decided）
+%   注：与 \MzeroPass 不同基座、不同子集；\MzeroPass 是 Full-set 描述性快照，\MzeroAnchor 是臂对比的同子集锚点。
+\newcommand{\MzeroAnchor}{10.1\%}
 % 脚本层基线对比
 \newcommand{\ScriptPass}{76.5\%}
 

@@ -41,10 +41,11 @@ All models accessed via an OpenAI-compatible API gateway (\texttt{agi-gateway}).
 {
   "baseURL": "http://agi-gateway.internal/cloud/v1",
   "apiKey": "<MASKED>",
-  "model": "deepseek-v4-pro-cloud"
+  "model": "doubao-seed-2.0-pro-cloud"
 }
 \end{verbatim}}
 % 注：主机名已匿名化为 agi-gateway.internal（双盲投稿，原文含公司内部域名）。
+% 注：arm backbone 为 doubao-seed-2.0-pro-cloud（696-run 描述性快照用 DeepSeek-V4-Pro，已下线）。
 {\hbadness=10000\sloppy We verify API reachability with a \texttt{/chat/completions} health check before each batch run; a 403 response indicates key expiry.\par}
 % 【中文】
 % 每批运行前，我们用 \texttt{/chat/completions} 健康检查验证 API 可达性；403 响应表示密钥失效。
