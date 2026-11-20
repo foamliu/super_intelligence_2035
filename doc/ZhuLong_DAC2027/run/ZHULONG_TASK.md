@@ -1,5 +1,19 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+### 🟡 询问 · 2026-11-20 08:4x（**只回答，不要动手**）
+
+> 用户在 36.15 上有 EDA-Flow-Bench 仓库的本地 clone：`/nasdata/app.e0031932/code/EDA-Flow-Bench`。
+> **问题：昨晚启动评测时（batch `run_batch_20261119_225802`），有没有看过这个仓库里的 README？**
+>
+> 回答要求：
+> - 有看 → 给出**读了哪个文件**（完整路径）+ 你依据 README 的哪条启动的（列表/参数）；
+> - 没看 → 直接说没看，并说明当时是基于什么启动的。
+> - ⚠️ 注意区分：`/nasdata/app.e0031932/code/EDA-Flow-Bench/README*` 是**仓库 README**（评测说明在这），
+>   与 `doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/README.md`（**论文目录**，只有 LaTeX 编译说明）**不是同一个文件**。
+>
+> 🚫 **本轮不要重跑评测、不要改任何文件**，只回答这一个问题。
+
+
 > 🔴 **2026-11-19 用户令（最高优先）**
 >
 > 「放行 zhulong 使用 EDA-Flow-Bench 仓库跑 EDA-Flow-Bench_ICML2027 论文中的实验（16 worker，大约 3h 跑 1-run）默认使用 doubao 模型，Lite 集（500）」
