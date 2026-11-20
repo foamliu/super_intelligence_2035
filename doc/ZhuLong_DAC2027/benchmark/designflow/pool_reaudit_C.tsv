@@ -663,3 +663,9 @@ ics15	ziyuny	hfeg0plg98	79	physical_verify	parked: debug/analyze DRC log analysi
 61zln	rongtaoy	hfeg0pnd002	76	physical_verify	parked: verify/audit-existing coupling extraction audit	可造	脚本/审计:check验修改或审计结果+hidden B
 yl9sr	xinqiaoz	hfeg0plg56	76	physical_verify	parked: config modify policy writableRoots add dir	可造	env-config/skill:check验配置或产物正确性+hidden B
 1lote	hongyuy	hfeg0plg73	78	physical_verify	parked: how-to Q&A CMP add how to operate	可造	Q&A/analysis:check验答案结构+关键事实+hidden B
+1794881678884_85er4	e0045291	hfeg0pnd001	22	wrong-domain	r878:web-app-proto wrong-domain	不可造	r880 复核确认:web-app 原型开发(agent-console-proto JS/CSS/HTML),drc/lvs/aether keyword 为路径子串噪声,非 C 域
+1794982850030_oapv7	e0023936	hfhds201	10	schematic/aether-doc	r878:Q&A doc-search no-deliverable §4排除	不可造(非C域)	r880 复核:doc-search 新标准下合法,但 domain=schematic/aether(D/A域)非C(aether:25/schematic:20,无 drc/lvs/pex/gds);且 eMCP 端点不可沙盒复现
+1794895770835_wkkfu	e0023936	hfeg0pkn001	8	below-mc10	r878:同 oapv7 doc-search	不可造(mc<10)	r880 复核:mc=8 < mc≥10 阈值,不入选;r878 误纳入
+1789975398513_qnayr	joelchen	hfeg0pgn019	4141	physical_verify	r880 新发现 fresh(r878 漏报)	可造(下轮 r881)	calibre-drc-log-analysis Argus PERC DRC log 分析生成报告,fixture-driven reframe,trace 16msg/45KB 已 deepread claimed
+1794538451505_qouu6	ethanw	hfhds201	9536	physical_verify	r880 新发现 fresh(r878 漏报)	待深读	LVS netlist port-size mismatch 诊断,trace 仅 1 user msg 无 assistant gold,gold 需合成
+1790230411878_yhaoi	e0041123	hfeg0pgn143	2572	layout_aether/physical_verify	r880 新发现 fresh(r878 漏报)	待深读	drc:1339/aether:524/pyaether:406,需 ssh 10.129.35.242 peek 确认 user 意图
