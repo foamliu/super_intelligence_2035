@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-15814",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex 33cc636b22..1a6ca0cc16 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -748,6 +748,10 @@ class Query(BaseExpression):\n                     cur_model = source.related_model\n                 else:\n                     cur_model = source.remote_field.model\n+                # Proxy models are transparent for the deferred loading\n+                # bookkeeping because fields are always defined on (and\n+                # selected for) their concrete model.\n+                cur_model = cur_model._meta.concrete_model\n                 opts = cur_model._meta\n                 # Even if we're \"just passing through\" this model, we must add\n                 # both the current model's pk and the related reference field\n"
+  }
+]

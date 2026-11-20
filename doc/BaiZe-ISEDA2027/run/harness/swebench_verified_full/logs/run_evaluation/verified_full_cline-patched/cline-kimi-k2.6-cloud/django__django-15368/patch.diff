@@ -1,0 +1,37 @@
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index f8d848e92..f2f9797d8 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -670,7 +670,7 @@ class QuerySet:
+                 when_statements = []
+                 for obj in batch_objs:
+                     attr = getattr(obj, field.attname)
+-                    if not isinstance(attr, Expression):
++                    if not hasattr(attr, 'resolve_expression'):
+                         attr = Value(attr, output_field=field)
+                     when_statements.append(When(pk=obj.pk, then=attr))
+                 case_statement = Case(*when_statements, output_field=field)
+diff --git a/tests/queries/test_bulk_update.py b/tests/queries/test_bulk_update.py
+index 1d669e0bb..4711724b2 100644
+--- a/tests/queries/test_bulk_update.py
++++ b/tests/queries/test_bulk_update.py
+@@ -211,6 +211,19 @@ class BulkUpdateTests(TestCase):
+         Number.objects.bulk_update(numbers, ['num'])
+         self.assertCountEqual(Number.objects.filter(num=1), numbers)
+ 
++    def test_plain_f_expression(self):
++        notes = [
++            Note.objects.create(note='test-note-%s' % i, misc='test-misc-%s' % i)
++            for i in range(10)
++        ]
++        for note in notes:
++            note.note = F('misc')
++        Note.objects.bulk_update(notes, ['note'])
++        self.assertCountEqual(
++            Note.objects.values_list('note', flat=True),
++            [note.misc for note in notes],
++        )
++
+     def test_booleanfield(self):
+         individuals = [Individual.objects.create(alive=False) for _ in range(10)]
+         for individual in individuals:

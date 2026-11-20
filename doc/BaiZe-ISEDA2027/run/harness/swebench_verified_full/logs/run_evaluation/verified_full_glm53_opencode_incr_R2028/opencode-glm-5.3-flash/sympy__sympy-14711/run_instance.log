@@ -1,0 +1,156 @@
+2026-11-10 18:52:36,072 - INFO - Creating container for sympy__sympy-14711...
+2026-11-10 18:52:36,098 - INFO - Container for sympy__sympy-14711 created: 49980b79acf1bfc1c7630bcfe388f3bf3bc4f59afa29950a045447035bd80e73
+2026-11-10 18:52:37,043 - INFO - Container for sympy__sympy-14711 started: 49980b79acf1bfc1c7630bcfe388f3bf3bc4f59afa29950a045447035bd80e73
+2026-11-10 18:52:37,045 - INFO - Intermediate patch for sympy__sympy-14711 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sympy__sympy-14711/patch.diff, now applying to container...
+2026-11-10 18:52:37,195 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/vector/dyadic.py...
+Checking patch sympy/physics/vector/tests/test_dyadic.py...
+Checking patch sympy/physics/vector/tests/test_vector.py...
+Checking patch sympy/physics/vector/vector.py...
+Applied patch sympy/physics/vector/dyadic.py cleanly.
+Applied patch sympy/physics/vector/tests/test_dyadic.py cleanly.
+Applied patch sympy/physics/vector/tests/test_vector.py cleanly.
+Applied patch sympy/physics/vector/vector.py cleanly.
+
+2026-11-10 18:52:37,627 - INFO - Git diff before:
+diff --git a/sympy/physics/vector/dyadic.py b/sympy/physics/vector/dyadic.py
+index dc6852793..677648bb1 100644
+--- a/sympy/physics/vector/dyadic.py
++++ b/sympy/physics/vector/dyadic.py
+@@ -59,8 +59,10 @@ def __init__(self, inlist):
+ 
+     def __add__(self, other):
+         """The add operator for Dyadic. """
+-        other = _check_dyadic(other)
+-        return Dyadic(self.args + other.args)
++        if other == 0:
++            return self
++        else:
++            return Dyadic(self.args + _check_dyadic(other).args)
+ 
+     def __and__(self, other):
+         """The inner product operator for a Dyadic and a Dyadic or Vector.
+diff --git a/sympy/physics/vector/tests/test_dyadic.py b/sympy/physics/vector/tests/test_dyadic.py
+index 0ec5ba8a8..af0981b28 100644
+--- a/sympy/physics/vector/tests/test_dyadic.py
++++ b/sympy/physics/vector/tests/test_dyadic.py
+@@ -60,6 +60,14 @@ def test_dyadic():
+         assert (expected - actual).simplify() == 0
+ 
+ 
++def test_dyadic_add_0():
++    # Adding Dyadic to 0 (e.g. via sum()) should work
++    assert sum([A.x | A.y, 0 * (A.x | A.y)]) == A.x | A.y
++    assert sum([0 * (A.x | A.y), A.x | A.y]) == A.x | A.y
++    assert (A.x | A.y) + 0 == A.x | A.y
++    assert 0 + (A.x | A.y) == A.x | A.y
++
++
+ def test_dyadic_simplify():
+     x, y, z, k, n, m, w, f, s, A = symbols('x, y, z, k, n, m, w, f, s, A')
+     N = ReferenceFrame('N')
+diff --git a/sympy/physics/vector/tests/test_vector.py b/sympy/physics/vector/tests/test_vector.py
+index 828a25f3c..1dbca6ff0 100644
+--- a/sympy/physics/vector/tests/test_vector.py
++++ b/sympy/physics/vector/tests/test_vector.py
+@@ -145,6 +145,18 @@ def test_vector_var_in_dcm():
+     raises(ValueError, lambda: v.diff(u1, N))
+ 
+ 
++def test_vector_add_0():
++    # Issue 13186 - adding Vector to 0 (e.g. via sum()) should work
++    N = ReferenceFrame('N')
++    assert sum([N.x, 0 * N.x]) == N.x
++    assert sum([0 * N.x, N.x]) == N.x
++    assert N.x + 0 == N.x
++    assert 0 + N.x == N.x
++    assert N.x - 0 == N.x
++    assert 0 - N.x == -N.x
++    assert Vector(0) + N.x == N.x
++
++
+ def test_vector_simplify():
+     x, y, z, k, n, m, w, f, s, A = symbols('x, y, z, k, n, m, w, f, s, A')
+     N = ReferenceFrame('N')
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..1c0ca0f19 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,8 +57,10 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
+-        other = _check_vector(other)
+-        return Vector(self.args + other.args)
++        if other == 0:
++            return self
++        else:
++            return Vector(self.args + _check_vector(other).args)
+ 
+     def __and__(self, other):
+         """Dot product of two vectors.
+2026-11-10 18:52:37,629 - INFO - Eval script for sympy__sympy-14711 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sympy__sympy-14711/eval.sh; copying to container...
+2026-11-10 18:52:44,653 - INFO - Test runtime: 6.95 seconds
+2026-11-10 18:52:44,654 - INFO - Test output for sympy__sympy-14711 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sympy__sympy-14711/test_output.txt
+2026-11-10 18:52:44,707 - INFO - Git diff after:
+diff --git a/sympy/physics/vector/dyadic.py b/sympy/physics/vector/dyadic.py
+index dc6852793..677648bb1 100644
+--- a/sympy/physics/vector/dyadic.py
++++ b/sympy/physics/vector/dyadic.py
+@@ -59,8 +59,10 @@ def __init__(self, inlist):
+ 
+     def __add__(self, other):
+         """The add operator for Dyadic. """
+-        other = _check_dyadic(other)
+-        return Dyadic(self.args + other.args)
++        if other == 0:
++            return self
++        else:
++            return Dyadic(self.args + _check_dyadic(other).args)
+ 
+     def __and__(self, other):
+         """The inner product operator for a Dyadic and a Dyadic or Vector.
+diff --git a/sympy/physics/vector/tests/test_dyadic.py b/sympy/physics/vector/tests/test_dyadic.py
+index 0ec5ba8a8..af0981b28 100644
+--- a/sympy/physics/vector/tests/test_dyadic.py
++++ b/sympy/physics/vector/tests/test_dyadic.py
+@@ -60,6 +60,14 @@ def test_dyadic():
+         assert (expected - actual).simplify() == 0
+ 
+ 
++def test_dyadic_add_0():
++    # Adding Dyadic to 0 (e.g. via sum()) should work
++    assert sum([A.x | A.y, 0 * (A.x | A.y)]) == A.x | A.y
++    assert sum([0 * (A.x | A.y), A.x | A.y]) == A.x | A.y
++    assert (A.x | A.y) + 0 == A.x | A.y
++    assert 0 + (A.x | A.y) == A.x | A.y
++
++
+ def test_dyadic_simplify():
+     x, y, z, k, n, m, w, f, s, A = symbols('x, y, z, k, n, m, w, f, s, A')
+     N = ReferenceFrame('N')
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..1c0ca0f19 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,8 +57,10 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
+-        other = _check_vector(other)
+-        return Vector(self.args + other.args)
++        if other == 0:
++            return self
++        else:
++            return Vector(self.args + _check_vector(other).args)
+ 
+     def __and__(self, other):
+         """Dot product of two vectors.
+2026-11-10 18:52:44,707 - INFO - Git diff changed after running eval script
+2026-11-10 18:52:44,707 - INFO - Grading answer for sympy__sympy-14711...
+2026-11-10 18:52:44,708 - INFO - report: {'sympy__sympy-14711': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Vector'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Vector_diffs', 'test_vector_var_in_dcm'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-14711: resolved: True
+2026-11-10 18:52:44,709 - INFO - Attempting to stop container sweb.eval.sympy__sympy-14711.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 18:53:00,695 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 18:53:00,696 - INFO - Attempting to remove container sweb.eval.sympy__sympy-14711.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 18:53:00,746 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_glm53_opencode_incr_R2028 removed successfully.

@@ -1,0 +1,17 @@
+[R2286-eval 19:00:37] cline: 288 evald, 287 real, 2 new
+[R2286-eval 19:00:37] cline: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2286-eval 19:03:14]   eval finished rc=0
+[R2286-eval 19:03:14]   cline: +1 resolved +1 failed +0 infra => total resolved=221
+[R2286-eval 19:03:14] codex: 124 evald, 118 real, 1 new
+[R2286-eval 19:03:14] codex: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2286-eval 19:03:50]   eval finished rc=0
+[R2286-eval 19:03:50]   codex: +1 resolved +0 failed +0 infra => total resolved=81
+[R2286-eval 19:03:50] opencode: 498 evald, 498 real, 0 new
+[R2286-eval 19:03:50] claude-code: 266 evald, 267 real, 1 new
+[R2286-eval 19:03:50] claude-code: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2286-eval 19:04:20]   eval finished rc=0
+[R2286-eval 19:04:20]   claude-code: +1 resolved +0 failed +0 infra => total resolved=218
+[R2286-eval 19:04:20] pi: 244 evald, 244 real, 0 new
+[R2286-eval 19:04:20] hermes: 453 evald, 453 real, 0 new
+[R2286-eval 19:04:20] deepseek: 175 evald, 175 real, 0 new
+[R2286-eval 19:04:20] DONE R2286: 4 instances eval'd, total new resolved = 3

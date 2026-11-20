@@ -1,0 +1,303 @@
+diff --git a/django/core/handlers/base.py b/django/core/handlers/base.py
+index 169df6b3cf..34355ac0b8 100644
+--- a/django/core/handlers/base.py
++++ b/django/core/handlers/base.py
+@@ -85,6 +85,18 @@ class BaseHandler:
+                     self.adapt_method_mode(False, mw_instance.process_exception),
+                 )
+ 
++            if middleware_is_async and not asyncio.iscoroutinefunction(mw_instance):
++                # Middleware such as MiddlewareMixin in async mode has a sync
++                # __call__() that returns a coroutine, which is not recognized
++                # as a coroutine function by asyncio.iscoroutinefunction().
++                # Wrap it so that the handler chain is a genuine coroutine
++                # function; otherwise middleware further up the stack would
++                # receive a coroutine instead of a response.
++                async def async_mw_instance(request, mw_instance=mw_instance):
++                    return await mw_instance(request)
++
++                mw_instance = async_mw_instance
++
+             handler = convert_exception_to_response(mw_instance)
+             handler_is_async = middleware_is_async
+ 
+diff --git a/repro_32532.py b/repro_32532.py
+new file mode 100644
+index 0000000000..8de16595b1
+--- /dev/null
++++ b/repro_32532.py
+@@ -0,0 +1,208 @@
++"""
++Reproduction for: Coroutine passed to the first middleware's process_response()
++instead of HttpResponse (Django ticket #32532).
++
++Simulates an ASGI request flowing through various middleware stacks and
++records what each middleware's process_response() hook receives.
++"""
++import asyncio
++import sys
++import types
++
++import django
++from django.conf import settings
++from django.http import HttpResponse
++from django.urls import path
++from django.utils.deprecation import MiddlewareMixin
++from django.utils.decorators import (
++    async_only_middleware, sync_and_async_middleware, sync_only_middleware,
++)
++
++# --- URLconf ---------------------------------------------------------------
++urlconf = types.ModuleType('repro_urls')
++
++
++def view(request):
++    return HttpResponse('OK')
++
++
++urlconf.urlpatterns = [path('', view)]
++sys.modules['repro_urls'] = urlconf
++
++# --- Middleware ------------------------------------------------------------
++repro_mw = types.ModuleType('repro_mw')
++
++observed = []
++
++
++class DummyMiddleware(MiddlewareMixin):
++    """MiddlewareMixin-based middleware with a process_response hook."""
++
++    def process_response(self, request, response):
++        observed.append(('DummyMiddleware', type(response).__name__))
++        return response
++
++
++class Dummy2Middleware(MiddlewareMixin):
++    def process_response(self, request, response):
++        observed.append(('Dummy2Middleware', type(response).__name__))
++        return response
++
++
++@async_only_middleware
++class AsyncOnlyMiddleware:
++    """Async-only middleware (sync_capable=False)."""
++    sync_capable = False
++    async_capable = True
++
++    def __init__(self, get_response):
++        self.get_response = get_response
++
++    async def __call__(self, request):
++        return await self.get_response(request)
++
++
++class PlainSyncMiddleware:
++    """Plain sync middleware (no capability declarations -> sync-only)."""
++    sync_capable = True
++    async_capable = False
++
++    def __init__(self, get_response):
++        self.get_response = get_response
++
++    def __call__(self, request):
++        return self.get_response(request)
++
++
++@sync_and_async_middleware
++class SyncCallAsyncCapableMiddleware:
++    """Both-capable middleware whose __call__ is a plain sync function."""
++    sync_capable = True
++    async_capable = True
++
++    def __init__(self, get_response):
++        self.get_response = get_response
++
++    def __call__(self, request):
++        return self.get_response(request)
++
++
++def async_function_middleware(get_response):
++    async def middleware(request):
++        return await get_response(request)
++    return middleware
++
++
++async_function_middleware.sync_capable = False
++async_function_middleware.async_capable = True
++
++
++repro_mw.DummyMiddleware = DummyMiddleware
++repro_mw.Dummy2Middleware = Dummy2Middleware
++repro_mw.AsyncOnlyMiddleware = AsyncOnlyMiddleware
++repro_mw.PlainSyncMiddleware = PlainSyncMiddleware
++repro_mw.SyncCallAsyncCapableMiddleware = SyncCallAsyncCapableMiddleware
++repro_mw.async_function_middleware = async_function_middleware
++sys.modules['repro_mw'] = repro_mw
++
++# --- Django setup ----------------------------------------------------------
++settings.configure(
++    DEBUG=False,
++    DATABASES={},
++    INSTALLED_APPS=[],
++    MIDDLEWARE=[],
++    ROOT_URLCONF='repro_urls',
++    USE_TZ=False,
++    ALLOWED_HOSTS=['*'],
++)
++django.setup()
++
++from django.core.handlers.base import BaseHandler  # noqa: E402
++from django.test.client import AsyncRequestFactory, RequestFactory  # noqa: E402
++
++async_request_factory = AsyncRequestFactory()
++sync_request_factory = RequestFactory()
++
++
++def run(middleware_list, label, is_async=True):
++    observed.clear()
++    settings.MIDDLEWARE = middleware_list
++
++    class Handler(BaseHandler):
++        pass
++
++    handler = Handler()
++    handler.load_middleware(is_async=is_async)
++    try:
++        if is_async:
++            request = async_request_factory.get('/')
++            response = asyncio.run(handler.get_response_async(request))
++        else:
++            request = sync_request_factory.get('/')
++            response = handler.get_response(request)
++        status = response.status_code
++        is_response = isinstance(response, HttpResponse)
++    except Exception as exc:
++        status = 'EXC: %r' % (exc,)
++        is_response = False
++    mode = 'async' if is_async else 'sync'
++    print('%-58s [%s] status=%s response_is_HttpResponse=%s' % (label, mode, status, is_response))
++    for name, response_type in observed:
++        print('    %-20s process_response got: %s' % (name, response_type))
++    print()
++
++
++# Scenario 1: reporter's case - MiddlewareMixin middlewares only.
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.Dummy2Middleware',
++], 'S1: [Dummy(Mixin), Dummy2(Mixin)]')
++
++# Scenario 2: async-only middleware below a MiddlewareMixin middleware.
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.AsyncOnlyMiddleware',
++], 'S2: [Dummy(Mixin), AsyncOnly]')
++
++# Scenario 3: plain sync middleware below a MiddlewareMixin middleware.
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.PlainSyncMiddleware',
++], 'S3: [Dummy(Mixin), PlainSync]')
++
++# Scenario 4: async-only middleware first, Mixin second.
++run([
++    'repro_mw.AsyncOnlyMiddleware',
++    'repro_mw.DummyMiddleware',
++], 'S4: [AsyncOnly, Dummy(Mixin)]')
++
++# Scenario 5: both-capable middleware with a sync __call__ below a Mixin.
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.SyncCallAsyncCapableMiddleware',
++], 'S5: [Dummy(Mixin), SyncCallAsyncCapable]')
++
++# Scenario 6: deep mixed stack.
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.Dummy2Middleware',
++    'repro_mw.AsyncOnlyMiddleware',
++    'repro_mw.PlainSyncMiddleware',
++], 'S6: [Dummy, Dummy2, AsyncOnly, PlainSync]')
++
++# Scenario 7: async function middleware below a Mixin middleware.
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.async_function_middleware',
++], 'S7: [Dummy(Mixin), async_function_middleware]')
++
++# Scenario 8: sync-mode requests through the same stacks (no regression).
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.Dummy2Middleware',
++], 'S8: [Dummy(Mixin), Dummy2(Mixin)]', is_async=False)
++run([
++    'repro_mw.DummyMiddleware',
++    'repro_mw.PlainSyncMiddleware',
++], 'S9: [Dummy(Mixin), PlainSync]', is_async=False)
++
+diff --git a/tests/middleware_exceptions/middleware.py b/tests/middleware_exceptions/middleware.py
+index 9fb9726b50..7cfa10fa39 100644
+--- a/tests/middleware_exceptions/middleware.py
++++ b/tests/middleware_exceptions/middleware.py
+@@ -4,6 +4,7 @@ from django.template.response import TemplateResponse
+ from django.utils.decorators import (
+     async_only_middleware, sync_and_async_middleware, sync_only_middleware,
+ )
++from django.utils.deprecation import MiddlewareMixin
+ 
+ log = []
+ 
+@@ -16,6 +17,12 @@ class BaseMiddleware:
+         return self.get_response(request)
+ 
+ 
++class ProcessResponseMiddleware(MiddlewareMixin):
++    def process_response(self, request, response):
++        log.append('process-response %s' % type(response).__name__)
++        return response
++
++
+ class ProcessExceptionMiddleware(BaseMiddleware):
+     def process_exception(self, request, exception):
+         return HttpResponse('Exception caught')
+diff --git a/tests/middleware_exceptions/tests.py b/tests/middleware_exceptions/tests.py
+index 8b019ba524..ce5dba0737 100644
+--- a/tests/middleware_exceptions/tests.py
++++ b/tests/middleware_exceptions/tests.py
+@@ -282,6 +282,36 @@ class MiddlewareSyncAsyncTests(SimpleTestCase):
+         self.assertEqual(response.content, b'OK')
+         self.assertEqual(response.status_code, 200)
+ 
++    @override_settings(MIDDLEWARE=[
++        'middleware_exceptions.middleware.ProcessResponseMiddleware',
++        'middleware_exceptions.middleware.AsyncProcessExceptionMiddleware',
++    ])
++    async def test_process_response_receives_response_async(self):
++        """
++        process_response() of the first middleware must receive an
++        HttpResponse, not a coroutine, when an async middleware is lower in
++        the stack (#32532).
++        """
++        mw.log.clear()
++        response = await self.async_client.get('/middleware_exceptions/view/')
++        self.assertEqual(mw.log, ['process-response HttpResponse'])
++        self.assertEqual(response.status_code, 200)
++
++    @override_settings(MIDDLEWARE=[
++        'middleware_exceptions.middleware.ProcessResponseMiddleware',
++        'middleware_exceptions.middleware.SyncAndAsyncMiddleware',
++    ])
++    async def test_process_response_receives_response_async_sync_call_middleware(self):
++        """
++        process_response() of the first middleware must receive an
++        HttpResponse, not a coroutine, when a middleware with a synchronous
++        __call__() is lower in the stack (#32532).
++        """
++        mw.log.clear()
++        response = await self.async_client.get('/middleware_exceptions/view/')
++        self.assertEqual(mw.log, ['process-response HttpResponse'])
++        self.assertEqual(response.status_code, 200)
++
+ 
+ @override_settings(ROOT_URLCONF='middleware_exceptions.urls')
+ class AsyncMiddlewareTests(SimpleTestCase):

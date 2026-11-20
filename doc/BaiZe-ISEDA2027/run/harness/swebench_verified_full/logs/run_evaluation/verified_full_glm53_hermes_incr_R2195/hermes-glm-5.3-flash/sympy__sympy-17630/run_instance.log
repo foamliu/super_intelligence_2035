@@ -1,0 +1,77 @@
+2026-11-11 21:07:37,420 - INFO - Creating container for sympy__sympy-17630...
+2026-11-11 21:07:37,446 - INFO - Container for sympy__sympy-17630 created: 5e3070b51011adda6c3388a141a327f971ed7f1022802602caf5bd76384155ed
+2026-11-11 21:07:38,084 - INFO - Container for sympy__sympy-17630 started: 5e3070b51011adda6c3388a141a327f971ed7f1022802602caf5bd76384155ed
+2026-11-11 21:07:38,086 - INFO - Intermediate patch for sympy__sympy-17630 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2195/hermes-glm-5.3-flash/sympy__sympy-17630/patch.diff, now applying to container...
+2026-11-11 21:07:38,209 - INFO - >>>>> Applied Patch:
+Checking patch sympy/matrices/expressions/matexpr.py...
+warning: sympy/matrices/expressions/matexpr.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/tests/test_blockmatrix.py...
+warning: sympy/matrices/expressions/tests/test_blockmatrix.py has type 100755, expected 100644
+Applied patch sympy/matrices/expressions/matexpr.py cleanly.
+Applied patch sympy/matrices/expressions/tests/test_blockmatrix.py cleanly.
+
+2026-11-11 21:07:38,881 - INFO - Git diff before:
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index fd1e6d970a..48e15cd491 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -627,6 +627,8 @@ def _postprocessor(expr):
+                 # manipulate them like non-commutative scalars.
+                 return cls._from_args(nonmatrices + [mat_class(*matrices).doit(deep=False)])
+ 
++        if mat_class == MatAdd:
++            return mat_class(*matrices).doit(deep=False)
+         return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
+     return _postprocessor
+ 
+diff --git a/sympy/matrices/expressions/tests/test_blockmatrix.py b/sympy/matrices/expressions/tests/test_blockmatrix.py
+index 1e1033affc..908acfc702 100755
+--- a/sympy/matrices/expressions/tests/test_blockmatrix.py
++++ b/sympy/matrices/expressions/tests/test_blockmatrix.py
+@@ -3,7 +3,7 @@
+     BlockMatrix, bc_dist, bc_matadd, bc_transpose, bc_inverse,
+     blockcut, reblock_2x2, deblock)
+ from sympy.matrices.expressions import (MatrixSymbol, Identity,
+-        Inverse, trace, Transpose, det)
++        Inverse, trace, Transpose, det, ZeroMatrix)
+ from sympy.matrices import (
+     Matrix, ImmutableMatrix, ImmutableSparseMatrix)
+ from sympy.core import Tuple, symbols, Expr
+@@ -104,6 +104,13 @@ def test_block_collapse_explicit_matrices():
+     A = ImmutableSparseMatrix([[1, 2], [3, 4]])
+     assert block_collapse(BlockMatrix([[A]])) == A
+ 
++def test_issue_17624():
++    a = MatrixSymbol("a", 2, 2)
++    z = ZeroMatrix(2, 2)
++    b = BlockMatrix([[a, z], [z, z]])
++    assert block_collapse(b * b) == BlockMatrix([[a**2, z], [z, z]])
++    assert block_collapse(b * b * b) == BlockMatrix([[a**3, z], [z, z]])
++
+ def test_BlockMatrix_trace():
+     A, B, C, D = [MatrixSymbol(s, 3, 3) for s in 'ABCD']
+     X = BlockMatrix([[A, B], [C, D]])
+2026-11-11 21:07:38,883 - INFO - Eval script for sympy__sympy-17630 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2195/hermes-glm-5.3-flash/sympy__sympy-17630/eval.sh; copying to container...
+2026-11-11 21:07:44,313 - INFO - Test runtime: 5.36 seconds
+2026-11-11 21:07:44,315 - INFO - Test output for sympy__sympy-17630 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2195/hermes-glm-5.3-flash/sympy__sympy-17630/test_output.txt
+2026-11-11 21:07:44,397 - INFO - Git diff after:
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index fd1e6d970a..48e15cd491 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -627,6 +627,8 @@ def _postprocessor(expr):
+                 # manipulate them like non-commutative scalars.
+                 return cls._from_args(nonmatrices + [mat_class(*matrices).doit(deep=False)])
+ 
++        if mat_class == MatAdd:
++            return mat_class(*matrices).doit(deep=False)
+         return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
+     return _postprocessor
+2026-11-11 21:07:44,398 - INFO - Git diff changed after running eval script
+2026-11-11 21:07:44,398 - INFO - Grading answer for sympy__sympy-17630...
+2026-11-11 21:07:44,402 - INFO - report: {'sympy__sympy-17630': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_17624', 'test_zero_matrix_add'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_bc_matmul', 'test_bc_matadd', 'test_bc_transpose', 'test_bc_dist_diag', 'test_block_plus_ident', 'test_BlockMatrix', 'test_block_collapse_explicit_matrices', 'test_BlockMatrix_trace', 'test_BlockMatrix_Determinant', 'test_squareBlockMatrix', 'test_BlockDiagMatrix', 'test_blockcut', 'test_reblock_2x2', 'test_deblock', 'test_sort_key', 'test_matadd_sympify', 'test_matadd_of_matrices', 'test_doit_args', 'test_generic_identity'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17630: resolved: True
+2026-11-11 21:07:44,403 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17630.verified_full_glm53_hermes_incr_R2195...
+2026-11-11 21:08:00,404 - INFO - Container sweb.eval.sympy__sympy-17630.verified_full_glm53_hermes_incr_R2195 stopped successfully.
+2026-11-11 21:08:00,404 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17630.verified_full_glm53_hermes_incr_R2195...
+2026-11-11 21:08:00,453 - INFO - Container sweb.eval.sympy__sympy-17630.verified_full_glm53_hermes_incr_R2195 removed successfully.

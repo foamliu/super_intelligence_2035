@@ -1,0 +1,29 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 1,
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1792412239.4058688,
+            "stop": 1792412241.5785418
+        },
+        "tests": [
+            {
+                "name": "test_outputs.py::test_out_html_bypasses_filter",
+                "status": "passed",
+                "duration": 1.683716006577015,
+                "start": 1792412239.8939996,
+                "stop": 1792412241.5781772,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            }
+        ]
+    }
+}

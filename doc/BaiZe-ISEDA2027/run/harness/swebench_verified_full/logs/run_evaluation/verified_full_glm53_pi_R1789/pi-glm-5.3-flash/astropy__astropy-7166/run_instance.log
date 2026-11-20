@@ -1,0 +1,75 @@
+2026-11-07 21:59:21,567 - INFO - Creating container for astropy__astropy-7166...
+2026-11-07 21:59:21,615 - INFO - Container for astropy__astropy-7166 created: 365db81ac4e60b059978ac0f58e105fe7b4cb8fda466497cdca80e03c88afda6
+2026-11-07 21:59:22,561 - INFO - Container for astropy__astropy-7166 started: 365db81ac4e60b059978ac0f58e105fe7b4cb8fda466497cdca80e03c88afda6
+2026-11-07 21:59:22,563 - INFO - Intermediate patch for astropy__astropy-7166 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-7166/patch.diff, now applying to container...
+2026-11-07 21:59:22,674 - INFO - >>>>> Applied Patch:
+Checking patch astropy/utils/misc.py...
+Checking patch astropy/utils/tests/test_misc.py...
+Applied patch astropy/utils/misc.py cleanly.
+Applied patch astropy/utils/tests/test_misc.py cleanly.
+
+2026-11-07 21:59:23,232 - INFO - Git diff before:
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d1..cceaeb957 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,7 +528,7 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
++            if ((inspect.isfunction(val) or isinstance(val, property)) and
+                 is_public_member(key) and
+                 val.__doc__ is None):
+                 for base in cls.__mro__[1:]:
+diff --git a/astropy/utils/tests/test_misc.py b/astropy/utils/tests/test_misc.py
+index 4f632e8d1..1467a761f 100644
+--- a/astropy/utils/tests/test_misc.py
++++ b/astropy/utils/tests/test_misc.py
+@@ -89,6 +89,21 @@ def test_inherit_docstrings():
+         assert Subclass.__call__.__doc__ == "FOO"
+ 
+ 
++def test_inherit_docstrings_with_property():
++    class Base(metaclass=misc.InheritDocstrings):
++        @property
++        def text(self):
++            "FOO"
++            return 'foo'
++
++    class Subclass(Base):
++        @property
++        def text(self):
++            return 'bar'
++
++    assert Subclass.text.__doc__ == "FOO"
++
++
+ def test_set_locale():
+     # First, test if the required locales are available
+     current = locale.setlocale(locale.LC_ALL)
+2026-11-07 21:59:23,234 - INFO - Eval script for astropy__astropy-7166 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-7166/eval.sh; copying to container...
+2026-11-07 21:59:28,628 - INFO - Test runtime: 5.33 seconds
+2026-11-07 21:59:28,629 - INFO - Test output for astropy__astropy-7166 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-7166/test_output.txt
+2026-11-07 21:59:28,708 - INFO - Git diff after:
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d1..cceaeb957 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,7 +528,7 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
++            if ((inspect.isfunction(val) or isinstance(val, property)) and
+                 is_public_member(key) and
+                 val.__doc__ is None):
+                 for base in cls.__mro__[1:]:
+2026-11-07 21:59:28,708 - INFO - Git diff changed after running eval script
+2026-11-07 21:59:28,708 - INFO - Grading answer for astropy__astropy-7166...
+2026-11-07 21:59:28,711 - INFO - report: {'astropy__astropy-7166': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/utils/tests/test_misc.py::test_inherit_docstrings'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/utils/tests/test_misc.py::test_isiterable', 'astropy/utils/tests/test_misc.py::test_signal_number_to_name_no_failure', 'astropy/utils/tests/test_misc.py::test_skip_hidden', 'astropy/utils/tests/test_misc.py::test_JsonCustomEncoder', 'astropy/utils/tests/test_misc.py::test_check_broadcast', 'astropy/utils/tests/test_misc.py::test_dtype_bytes_or_chars'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-7166: resolved: True
+2026-11-07 21:59:28,713 - INFO - Attempting to stop container sweb.eval.astropy__astropy-7166.verified_full_glm53_pi_R1789...
+2026-11-07 21:59:44,883 - INFO - Container sweb.eval.astropy__astropy-7166.verified_full_glm53_pi_R1789 stopped successfully.
+2026-11-07 21:59:44,883 - INFO - Attempting to remove container sweb.eval.astropy__astropy-7166.verified_full_glm53_pi_R1789...
+2026-11-07 21:59:44,918 - INFO - Container sweb.eval.astropy__astropy-7166.verified_full_glm53_pi_R1789 removed successfully.

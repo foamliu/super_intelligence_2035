@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "astropy__astropy-7606",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/astropy/units/core.py b/astropy/units/core.py\nindex e9bd986d..0ee8cf86 100644\n--- a/astropy/units/core.py\n+++ b/astropy/units/core.py\n@@ -1710,7 +1710,10 @@ class UnrecognizedUnit(IrreducibleUnit):\n         _unrecognized_operator\n \n     def __eq__(self, other):\n-        other = Unit(other, parse_strict='silent')\n+        try:\n+            other = Unit(other, parse_strict='silent')\n+        except (ValueError, UnitsError, TypeError):\n+            return False\n         return isinstance(other, UnrecognizedUnit) and self.name == other.name\n \n     def __ne__(self, other):\ndiff --git a/astropy/units/tests/test_units.py b/astropy/units/tests/test_units.py\nindex 000c12d2..e5549ab1 100644\n--- a/astropy/units/tests/test_units.py\n+++ b/astropy/units/tests/test_units.py\n@@ -729,6 +729,8 @@ def test_compare_with_none():\n     # because that doesn't trigger the bug.  See #3108.\n     assert not (u.m == None)  # nopep8\n     assert u.m != None  # nopep8\n+    assert not (u.Unit('asdf', parse_strict='silent') == None)  # nopep8\n+    assert u.Unit('asdf', parse_strict='silent') != None  # nopep8\n \n \n def test_validate_power_detect_fraction():\n"
+  }
+]

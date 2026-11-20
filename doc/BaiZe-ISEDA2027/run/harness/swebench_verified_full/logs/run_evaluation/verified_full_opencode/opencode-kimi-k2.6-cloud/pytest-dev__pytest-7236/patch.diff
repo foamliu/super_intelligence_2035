@@ -1,0 +1,49 @@
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 773f545..7c06638 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -221,8 +221,12 @@ class TestCaseFunction(Function):
+             # TestCase instance interacts with the results object, so better to only do it
+             # when absolutely needed
+             if self.config.getoption("usepdb"):
+-                self._explicit_tearDown = self._testcase.tearDown
+-                setattr(self._testcase, "tearDown", lambda *args: None)
++                skipped = getattr(
++                    self._obj, "__unittest_skip__", False
++                ) or getattr(self._testcase, "__unittest_skip__", False)
++                if not skipped:
++                    self._explicit_tearDown = self._testcase.tearDown
++                    setattr(self._testcase, "tearDown", lambda *args: None)
+ 
+             # we need to update the actual bound method with self.obj, because
+             # wrap_pytest_function_for_tracing replaces self.obj by a wrapper
+diff --git a/testing/test_unittest.py b/testing/test_unittest.py
+index 83f1b6b..784e095 100644
+--- a/testing/test_unittest.py
++++ b/testing/test_unittest.py
+@@ -1193,6 +1193,25 @@ def test_pdb_teardown_called(testdir, monkeypatch):
+     ]
+ 
+ 
++def test_pdb_teardown_not_called_on_skipped_test(testdir):
++    """Ensure tearDown() is not called for skipped tests when --pdb is given (#7281)."""
++    testdir.makepyfile(
++        """
++        import unittest
++
++        class MyTestCase(unittest.TestCase):
++            def tearDown(self):
++                raise Exception("tearDown should not be called for skipped tests")
++
++            @unittest.skip("hello")
++            def test_one(self):
++                pass
++    """
++    )
++    result = testdir.runpytest_inprocess("--pdb")
++    result.stdout.fnmatch_lines("* 1 skipped in *")
++
++
+ def test_async_support(testdir):
+     pytest.importorskip("unittest.async_case")
+ 

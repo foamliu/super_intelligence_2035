@@ -1,0 +1,114 @@
+2026-10-30 17:42:02,492 - INFO - Creating container for django__django-13794...
+2026-10-30 17:42:02,509 - INFO - Container for django__django-13794 created: b0cb6637555d58db073b71d2833531a18741f59d5cb9851fe02720dd2b61cf41
+2026-10-30 17:42:07,832 - INFO - Container for django__django-13794 started: b0cb6637555d58db073b71d2833531a18741f59d5cb9851fe02720dd2b61cf41
+2026-10-30 17:42:07,835 - INFO - Intermediate patch for django__django-13794 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13794/patch.diff, now applying to container...
+2026-10-30 17:42:08,501 - INFO - >>>>> Applied Patch:
+Checking patch django/template/defaultfilters.py...
+Checking patch tests/template_tests/filter_tests/test_add.py...
+Applied patch django/template/defaultfilters.py cleanly.
+Applied patch tests/template_tests/filter_tests/test_add.py cleanly.
+
+2026-10-30 17:42:09,513 - INFO - Git diff before:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 1c844580c6..a201b1214a 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -21,6 +21,7 @@ from django.utils.text import (
+ )
+ from django.utils.timesince import timesince, timeuntil
+ from django.utils.translation import gettext, ngettext
++from django.utils.functional import Promise
+ 
+ from .base import Variable, VariableDoesNotExist
+ from .library import Library
+@@ -678,6 +679,12 @@ def add(value, arg):
+         return int(value) + int(arg)
+     except (ValueError, TypeError):
+         try:
++            if isinstance(value, Promise) and isinstance(arg, Promise):
++                return value._proxy____cast() + arg._proxy____cast()
++            elif isinstance(value, Promise):
++                return value._proxy____cast() + arg
++            elif isinstance(arg, Promise):
++                return value + arg._proxy____cast()
+             return value + arg
+         except Exception:
+             return ''
+diff --git a/tests/template_tests/filter_tests/test_add.py b/tests/template_tests/filter_tests/test_add.py
+index 0fcc661f4a..d5545b0dde 100644
+--- a/tests/template_tests/filter_tests/test_add.py
++++ b/tests/template_tests/filter_tests/test_add.py
+@@ -1,6 +1,7 @@
+ from datetime import date, timedelta
+ 
+ from django.template.defaultfilters import add
++from django.utils.functional import lazystr
+ from django.test import SimpleTestCase
+ 
+ from ..utils import setup
+@@ -51,3 +52,28 @@ class FunctionTests(SimpleTestCase):
+ 
+     def test_add(self):
+         self.assertEqual(add('1', '2'), 3)
++
++class LazyStringTests(SimpleTestCase):
++    """
++    Tests for concatenating strings with lazy strings.
++    """
++
++    @setup({'add08': '{{ val|add:arg }}'})
++    def test_add08(self):
++        output = self.engine.render_to_string('add08', {'val': lazystr('hello'), 'arg': ' world'})
++        self.assertEqual(output, 'hello world')
++
++    @setup({'add09': '{{ val|add:arg }}'})
++    def test_add09(self):
++        output = self.engine.render_to_string('add09', {'val': 'hello', 'arg': lazystr(' world')})
++        self.assertEqual(output, 'hello world')
++
++    @setup({'add10': '{{ val|add:arg }}'})
++    def test_add10(self):
++        output = self.engine.render_to_string('add10', {'val': lazystr('hello'), 'arg': lazystr(' world')})
++        self.assertEqual(output, 'hello world')
++
++    def test_add_lazy(self):
++        self.assertEqual(add(lazystr('hello'), ' world'), 'hello world')
++        self.assertEqual(add('hello', lazystr(' world')), 'hello world')
++        self.assertEqual(add(lazystr('hello'), lazystr(' world')), 'hello world')
+2026-10-30 17:42:09,516 - INFO - Eval script for django__django-13794 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13794/eval.sh; copying to container...
+2026-10-30 17:42:15,154 - INFO - Test runtime: 5.57 seconds
+2026-10-30 17:42:15,163 - INFO - Test output for django__django-13794 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13794/test_output.txt
+2026-10-30 17:42:15,277 - INFO - Git diff after:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 1c844580c6..a201b1214a 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -21,6 +21,7 @@ from django.utils.text import (
+ )
+ from django.utils.timesince import timesince, timeuntil
+ from django.utils.translation import gettext, ngettext
++from django.utils.functional import Promise
+ 
+ from .base import Variable, VariableDoesNotExist
+ from .library import Library
+@@ -678,6 +679,12 @@ def add(value, arg):
+         return int(value) + int(arg)
+     except (ValueError, TypeError):
+         try:
++            if isinstance(value, Promise) and isinstance(arg, Promise):
++                return value._proxy____cast() + arg._proxy____cast()
++            elif isinstance(value, Promise):
++                return value._proxy____cast() + arg
++            elif isinstance(arg, Promise):
++                return value + arg._proxy____cast()
+             return value + arg
+         except Exception:
+             return ''
+2026-10-30 17:42:15,277 - INFO - Git diff changed after running eval script
+2026-10-30 17:42:15,277 - INFO - Grading answer for django__django-13794...
+2026-10-30 17:42:15,288 - INFO - report: {'django__django-13794': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_add08 (template_tests.filter_tests.test_add.AddTests)', 'test_add09 (template_tests.filter_tests.test_add.AddTests)'], 'failure': ['test_lazy_add (utils_tests.test_functional.FunctionalTests)']}, 'PASS_TO_PASS': {'success': ['test_add (template_tests.filter_tests.test_add.FunctionTests)', 'cached_property caches its value and behaves like a property.', 'test_cached_property_auto_name (utils_tests.test_functional.FunctionalTests)', "Disallow this case because the decorated function wouldn't be cached.", 'test_cached_property_reuse_same_name (utils_tests.test_functional.FunctionalTests)', 'test_cached_property_set_name_not_called (utils_tests.test_functional.FunctionalTests)', 'test_classproperty_getter (utils_tests.test_functional.FunctionalTests)', 'test_classproperty_override_getter (utils_tests.test_functional.FunctionalTests)', 'test_lazy (utils_tests.test_functional.FunctionalTests)', 'lazy also finds base class methods in the proxy object', 'lazy finds the correct (overridden) method implementation', 'test_lazy_class_preparation_caching (utils_tests.test_functional.FunctionalTests)', 'test_lazy_equality (utils_tests.test_functional.FunctionalTests)', 'test_lazy_object_to_string (utils_tests.test_functional.FunctionalTests)', 'test_lazy_repr_bytes (utils_tests.test_functional.FunctionalTests)', 'test_lazy_repr_int (utils_tests.test_functional.FunctionalTests)', 'test_lazy_repr_text (utils_tests.test_functional.FunctionalTests)', 'test_add01 (template_tests.filter_tests.test_add.AddTests)', 'test_add02 (template_tests.filter_tests.test_add.AddTests)', 'test_add03 (template_tests.filter_tests.test_add.AddTests)', 'test_add04 (template_tests.filter_tests.test_add.AddTests)', 'test_add05 (template_tests.filter_tests.test_add.AddTests)', 'test_add06 (template_tests.filter_tests.test_add.AddTests)', 'test_add07 (template_tests.filter_tests.test_add.AddTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13794: resolved: False
+2026-10-30 17:42:15,301 - INFO - Attempting to stop container sweb.eval.django__django-13794.verified_full_codex...
+2026-10-30 17:42:31,579 - INFO - Container sweb.eval.django__django-13794.verified_full_codex stopped successfully.
+2026-10-30 17:42:31,579 - INFO - Attempting to remove container sweb.eval.django__django-13794.verified_full_codex...
+2026-10-30 17:42:31,638 - INFO - Container sweb.eval.django__django-13794.verified_full_codex removed successfully.

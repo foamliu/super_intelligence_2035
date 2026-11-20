@@ -1,0 +1,37 @@
+{
+  "base_commit": "72c9786c16c20f0aaef66170ba4b1d25a08cfc67",
+  "created_at": "2022-11-11T07:10:47Z",
+  "eval_type": "pass_and_fail",
+  "image": "swebench/sweb.eval.x86_64.alibaba-fusion_1776_next-4182:latest",
+  "image_assets": {
+    "patch": [],
+    "problem_statement": [
+      "https://user-images.githubusercontent.com/109202769/178670197-39e8aa2c-5905-465c-b29b-6810768bac7c.png"
+    ],
+    "test_patch": []
+  },
+  "instance_id": "alibaba-fusion__next-4182",
+  "log_parser": "parse_log_next",
+  "repo": "alibaba-fusion/next",
+  "version": "1.26",
+  "patch": "diff --git a/src/cascader-select/cascader-select.jsx b/src/cascader-select/cascader-select.jsx\nindex 25bbe41687..d6e87c65c9 100644\n--- a/src/cascader-select/cascader-select.jsx\n+++ b/src/cascader-select/cascader-select.jsx\n@@ -595,13 +595,16 @@ class CascaderSelect extends Component {\n         }\n \n         const { prefix, popupProps } = this.props;\n-        const dropDownNode = this.popup\n-            .getInstance()\n-            .overlay.getInstance()\n-            .getContentNode();\n-        const cascaderNode = dropDownNode.querySelector(`.${prefix}cascader`);\n-        if (cascaderNode) {\n-            this.cascaderHeight = getStyle(cascaderNode, 'height');\n+        const { v2 = false } = popupProps;\n+        if (!v2) {\n+            const dropDownNode = this.popup\n+                .getInstance()\n+                .overlay.getInstance()\n+                .getContentNode();\n+            const cascaderNode = dropDownNode.querySelector(`.${prefix}cascader`);\n+            if (cascaderNode) {\n+                this.cascaderHeight = getStyle(cascaderNode, 'height');\n+            }\n         }\n \n         if (typeof popupProps.afterOpen === 'function') {\n",
+  "test_patch": "diff --git a/test/cascader-select/index-spec.js b/test/cascader-select/index-spec.js\nindex f29521fa8f..c92d292111 100644\n--- a/test/cascader-select/index-spec.js\n+++ b/test/cascader-select/index-spec.js\n@@ -21,6 +21,8 @@ function freeze(dataSource) {\n     });\n }\n \n+const delay = time => new Promise(resolve => setTimeout(resolve, time));\n+\n const ChinaArea = [\n     {\n         value: '2973',\n@@ -587,6 +589,13 @@ describe('CascaderSelect', () => {\n         });\n         assert(wrapper.find('.next-input-text-field em').text() === '陕西 / 西安 / 西安市');\n     });\n+\n+    it('should support popup v2', async () => {\n+        wrapper = mount(<CascaderSelect dataSource={ChinaArea} popupProps={{ v2: true }} showSearch />);\n+        wrapper.find('.next-select').simulate('click');\n+        await delay(300);\n+        assert(document.querySelector('.next-cascader-select-dropdown'));\n+    });\n });\n \n function findItem(menuIndex, itemIndex) {\n",
+  "eval_script": "#!/bin/bash\nset -uxo pipefail\ncd /testbed\ngit config --global --add safe.directory /testbed\nsource $NVM_DIR/nvm.sh\ngit status\ngit show\ngit -c core.fileMode=false diff 72c9786c16c20f0aaef66170ba4b1d25a08cfc67\ngit checkout 72c9786c16c20f0aaef66170ba4b1d25a08cfc67 test/cascader-select/index-spec.js\ngit apply -v - <<'EOF_114329324912'\ndiff --git a/test/cascader-select/index-spec.js b/test/cascader-select/index-spec.js\nindex f29521fa8f..c92d292111 100644\n--- a/test/cascader-select/index-spec.js\n+++ b/test/cascader-select/index-spec.js\n@@ -21,6 +21,8 @@ function freeze(dataSource) {\n     });\n }\n \n+const delay = time => new Promise(resolve => setTimeout(resolve, time));\n+\n const ChinaArea = [\n     {\n         value: '2973',\n@@ -587,6 +589,13 @@ describe('CascaderSelect', () => {\n         });\n         assert(wrapper.find('.next-input-text-field em').text() === '陕西 / 西安 / 西安市');\n     });\n+\n+    it('should support popup v2', async () => {\n+        wrapper = mount(<CascaderSelect dataSource={ChinaArea} popupProps={{ v2: true }} showSearch />);\n+        wrapper.find('.next-select').simulate('click');\n+        await delay(300);\n+        assert(document.querySelector('.next-cascader-select-dropdown'));\n+    });\n });\n \n function findItem(menuIndex, itemIndex) {\n\nEOF_114329324912\nif ! git diff --quiet HEAD -- package.json 2>/dev/null; then echo \"package.json changed by patch; re-syncing dependencies\"; export PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true; if [ -f yarn.lock ]; then timeout 900 yarn install --silent > /dev/null 2>&1 || true; else timeout 900 npm install --silent > /dev/null 2>&1 || true; fi; chmod -R a+rX node_modules > /dev/null 2>&1 || true; fi\nsed -i \"s/browsers: \\['Chrome'\\]/browsers: ['ChromeTravis']/\" scripts/test/karma.js || true\nsed -i \"s/singleRun: singleRun,/singleRun: true,/\" scripts/test/karma.js || true\n: '>>>>> Start Test Output'\ntimeout 10m bash -c 'PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable xvfb-run --server-args=\"-screen 0 1280x1024x24 -ac :99\" su chromeuser -c \"npm run test cascader-select\"'\n: '>>>>> End Test Output'\ngit checkout 72c9786c16c20f0aaef66170ba4b1d25a08cfc67 test/cascader-select/index-spec.js\n",
+  "problem_statement": "[CascaderSelect]开启popup v2会报错\n### Component \r\nCascaderSelect\r\n\r\n\r\n\r\n### Steps to reproduce\r\n<CascaderSelect\r\n  popupProps={{\r\n        v2: true,\r\n      }} \r\n  showSearch\r\n  placeholder=\"搜索名字\"\r\n/>\r\n<img width=\"1346\" alt=\"image\" src=\"https://user-images.githubusercontent.com/109202769/178670197-39e8aa2c-5905-465c-b29b-6810768bac7c.png\">\r\n\r\n\r\n\r\n\n",
+  "hints_text": "",
+  "FAIL_TO_PASS": [
+    "CascaderSelect - should support popup v2"
+  ],
+  "PASS_TO_PASS": [
+    "CascaderSelect - should support searching when it is a single cascader select",
+    "CascaderSelect - should render multiple cascader",
+    "CascaderSelect - should render multiple cascader when set checkStrictly to true",
+    "CascaderSelect - should show dropdown when click select box",
+    "CascaderSelect - should change select box display when expand item if set changeOnSelect to true",
+    "CascaderSelect - should show dropdown when set defaultVisible to true",
+    "CascaderSelect - should render single cascader under control",
+    "CascaderSelect - should ignore case when searching",
+    "CascaderSelect - should support searching when it is a multiple cascader select",
+    "CascaderSelect - should render single cascader select"
+  ]
+}

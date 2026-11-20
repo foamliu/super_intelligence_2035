@@ -1,0 +1,140 @@
+2026-10-30 17:31:14,509 - INFO - Creating container for sympy__sympy-24443...
+2026-10-30 17:31:14,552 - INFO - Container for sympy__sympy-24443 created: 8979d01d680332d7f3487ef9f2abe9afc1a99186f179ba5b217b51cf94fc747c
+2026-10-30 17:31:22,143 - INFO - Container for sympy__sympy-24443 started: 8979d01d680332d7f3487ef9f2abe9afc1a99186f179ba5b217b51cf94fc747c
+2026-10-30 17:31:22,146 - INFO - Intermediate patch for sympy__sympy-24443 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-24443/patch.diff, now applying to container...
+2026-10-30 17:31:22,419 - INFO - >>>>> Applied Patch:
+Checking patch sympy/combinatorics/homomorphisms.py...
+Applied patch sympy/combinatorics/homomorphisms.py cleanly.
+
+2026-10-30 17:31:22,878 - INFO - Git diff before:
+diff --git a/sympy/combinatorics/homomorphisms.py b/sympy/combinatorics/homomorphisms.py
+index bb7bdf32ba..fbf318b165 100644
+--- a/sympy/combinatorics/homomorphisms.py
++++ b/sympy/combinatorics/homomorphisms.py
+@@ -310,40 +310,27 @@ def homomorphism(domain, codomain, gens, images=(), check=True):
+ def _check_homomorphism(domain, codomain, images):
+     if hasattr(domain, 'relators'):
+         rels = domain.relators
++        pres_gens = domain.generators
+     else:
+-        gens = domain.presentation().generators
+-        rels = domain.presentation().relators
++        p = domain.presentation()
++        rels = p.relators
++        pres_gens = p.generators
+     identity = codomain.identity
+ 
+     def _image(r):
+         if r.is_identity:
+             return identity
+-        else:
+-            w = identity
+-            r_arr = r.array_form
+-            i = 0
+-            j = 0
+-            # i is the index for r and j is for
+-            # r_arr. r_arr[j] is the tuple (sym, p)
+-            # where sym is the generator symbol
+-            # and p is the power to which it is
+-            # raised while r[i] is a generator
+-            # (not just its symbol) or the inverse of
+-            # a generator - hence the need for
+-            # both indices
+-            while i < len(r):
+-                power = r_arr[j][1]
+-                if isinstance(domain, PermutationGroup) and r[i] in gens:
+-                    s = domain.generators[gens.index(r[i])]
+-                else:
+-                    s = r[i]
+-                if s in images:
+-                    w = w*images[s]**power
+-                elif s**-1 in images:
+-                    w = w*images[s**-1]**power
+-                i += abs(power)
+-                j += 1
+-            return w
++        w = identity
++        for sym, power in r.array_form:
++            for idx, g in enumerate(pres_gens):
++                if g.letter_form[0] == sym:
++                    s = domain.generators[idx]
++                    if s in images:
++                        w = w*images[s]**power
++                    elif s**-1 in images:
++                        w = w*images[s**-1]**power
++                    break
++        return w
+ 
+     for r in rels:
+         if isinstance(codomain, FpGroup):
+2026-10-30 17:31:22,879 - INFO - Eval script for sympy__sympy-24443 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-24443/eval.sh; copying to container...
+2026-10-30 17:31:27,570 - INFO - Test runtime: 4.42 seconds
+2026-10-30 17:31:27,579 - INFO - Test output for sympy__sympy-24443 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-24443/test_output.txt
+2026-10-30 17:31:27,633 - INFO - Git diff after:
+diff --git a/sympy/combinatorics/homomorphisms.py b/sympy/combinatorics/homomorphisms.py
+index bb7bdf32ba..fbf318b165 100644
+--- a/sympy/combinatorics/homomorphisms.py
++++ b/sympy/combinatorics/homomorphisms.py
+@@ -310,40 +310,27 @@ def homomorphism(domain, codomain, gens, images=(), check=True):
+ def _check_homomorphism(domain, codomain, images):
+     if hasattr(domain, 'relators'):
+         rels = domain.relators
++        pres_gens = domain.generators
+     else:
+-        gens = domain.presentation().generators
+-        rels = domain.presentation().relators
++        p = domain.presentation()
++        rels = p.relators
++        pres_gens = p.generators
+     identity = codomain.identity
+ 
+     def _image(r):
+         if r.is_identity:
+             return identity
+-        else:
+-            w = identity
+-            r_arr = r.array_form
+-            i = 0
+-            j = 0
+-            # i is the index for r and j is for
+-            # r_arr. r_arr[j] is the tuple (sym, p)
+-            # where sym is the generator symbol
+-            # and p is the power to which it is
+-            # raised while r[i] is a generator
+-            # (not just its symbol) or the inverse of
+-            # a generator - hence the need for
+-            # both indices
+-            while i < len(r):
+-                power = r_arr[j][1]
+-                if isinstance(domain, PermutationGroup) and r[i] in gens:
+-                    s = domain.generators[gens.index(r[i])]
+-                else:
+-                    s = r[i]
+-                if s in images:
+-                    w = w*images[s]**power
+-                elif s**-1 in images:
+-                    w = w*images[s**-1]**power
+-                i += abs(power)
+-                j += 1
+-            return w
++        w = identity
++        for sym, power in r.array_form:
++            for idx, g in enumerate(pres_gens):
++                if g.letter_form[0] == sym:
++                    s = domain.generators[idx]
++                    if s in images:
++                        w = w*images[s]**power
++                    elif s**-1 in images:
++                        w = w*images[s**-1]**power
++                    break
++        return w
+ 
+     for r in rels:
+         if isinstance(codomain, FpGroup):
+2026-10-30 17:31:27,634 - INFO - Grading answer for sympy__sympy-24443...
+2026-10-30 17:31:27,634 - INFO - report: {'sympy__sympy-24443': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_homomorphism'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_isomorphisms'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-24443: resolved: True
+2026-10-30 17:31:27,636 - INFO - Attempting to stop container sweb.eval.sympy__sympy-24443.verified_full_claude-code...
+2026-10-30 17:31:43,186 - INFO - Container sweb.eval.sympy__sympy-24443.verified_full_claude-code stopped successfully.
+2026-10-30 17:31:43,186 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24443.verified_full_claude-code...
+2026-10-30 17:31:43,255 - INFO - Container sweb.eval.sympy__sympy-24443.verified_full_claude-code removed successfully.

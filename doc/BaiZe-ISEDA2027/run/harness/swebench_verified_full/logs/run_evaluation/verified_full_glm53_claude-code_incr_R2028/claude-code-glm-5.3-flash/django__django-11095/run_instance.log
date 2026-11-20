@@ -1,0 +1,234 @@
+2026-11-10 13:17:42,513 - INFO - Creating container for django__django-11095...
+2026-11-10 13:17:42,533 - INFO - Container for django__django-11095 created: 3bd000030fbd5a98bc4e326f28d28255567aeb4d248a65231ec8af54e90b257d
+2026-11-10 13:17:43,277 - INFO - Container for django__django-11095 started: 3bd000030fbd5a98bc4e326f28d28255567aeb4d248a65231ec8af54e90b257d
+2026-11-10 13:17:43,279 - INFO - Intermediate patch for django__django-11095 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/django__django-11095/patch.diff, now applying to container...
+2026-11-10 13:17:43,415 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/options.py...
+Checking patch docs/ref/contrib/admin/index.txt...
+Checking patch docs/releases/3.0.txt...
+Checking patch tests/modeladmin/tests.py...
+Applied patch django/contrib/admin/options.py cleanly.
+Applied patch docs/ref/contrib/admin/index.txt cleanly.
+Applied patch docs/releases/3.0.txt cleanly.
+Applied patch tests/modeladmin/tests.py cleanly.
+
+2026-11-10 13:17:44,544 - INFO - Git diff before:
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5e7b23f9a0..86b507e730 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -580,9 +580,15 @@ class ModelAdmin(BaseModelAdmin):
+     def __str__(self):
+         return "%s.%s" % (self.model._meta.app_label, self.__class__.__name__)
+ 
++    def get_inlines(self, request, obj=None):
++        """
++        Hook for specifying custom inline classes.
++        """
++        return self.inlines
++
+     def get_inline_instances(self, request, obj=None):
+         inline_instances = []
+-        for inline_class in self.inlines:
++        for inline_class in self.get_inlines(request, obj):
+             inline = inline_class(self.model, self.admin_site)
+             if request:
+                 if not (inline.has_view_or_change_permission(request, obj) or
+diff --git a/docs/ref/contrib/admin/index.txt b/docs/ref/contrib/admin/index.txt
+index 93679c46fd..3523208e56 100644
+--- a/docs/ref/contrib/admin/index.txt
++++ b/docs/ref/contrib/admin/index.txt
+@@ -1608,6 +1608,21 @@ templates used by the :class:`ModelAdmin` views:
+             def get_sortable_by(self, request):
+                 return {*self.get_list_display(request)} - {'rank'}
+ 
++.. method:: ModelAdmin.get_inlines(request, obj=None)
++
++    The ``get_inlines`` method is given the ``HttpRequest`` and the ``obj``
++    being edited (or ``None`` on an add form) and is expected to return a
++    ``list`` or ``tuple`` of inline classes. The default implementation returns
++    the object's :attr:`~ModelAdmin.inlines` attribute, for example::
++
++        class MyModelAdmin(admin.ModelAdmin):
++            inlines = (MyInline, SomeOtherInline)
++
++            def get_inlines(self, request, obj=None):
++                if obj:
++                    return (MyInline, SomeOtherInline)
++                return ()
++
+ .. method:: ModelAdmin.get_inline_instances(request, obj=None)
+ 
+     The ``get_inline_instances`` method is given the ``HttpRequest`` and the
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index d7ad7a8cf7..5279256385 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -47,6 +47,9 @@ Minor features
+ * Added support for the ``admin_order_field`` attribute on properties in
+   :attr:`.ModelAdmin.list_display`.
+ 
++* :meth:`.ModelAdmin.get_inlines` allows specifying the inlines based on the
++  request or model instance.
++
+ :mod:`django.contrib.admindocs`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index 6934bf2b3c..9ab149ea42 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -3,7 +3,7 @@ from datetime import date
+ from django import forms
+ from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
+ from django.contrib.admin.options import (
+-    HORIZONTAL, VERTICAL, ModelAdmin, TabularInline,
++    HORIZONTAL, VERTICAL, ModelAdmin, StackedInline, TabularInline,
+     get_content_type_for_model,
+ )
+ from django.contrib.admin.sites import AdminSite
+@@ -719,6 +719,30 @@ class ModelAdminTests(TestCase):
+         self.assertEqual(perms_needed, {'band'})
+         self.assertEqual(protected, [])
+ 
++    def test_get_inlines(self):
++        class ConcertInline(TabularInline):
++            model = Concert
++
++        class SongInline(StackedInline):
++            model = Song
++
++        class BandAdmin(ModelAdmin):
++            inlines = [ConcertInline]
++
++            def get_inlines(self, request, obj=None):
++                if obj is None:
++                    return []
++                return [ConcertInline, SongInline]
++
++        ma = BandAdmin(Band, self.site)
++        self.assertEqual(ma.get_inlines(request), [])
++        self.assertEqual(ma.get_inlines(request, self.band), [ConcertInline, SongInline])
++        self.assertEqual(ma.get_inline_instances(request), [])
++        inline_instances = ma.get_inline_instances(request, self.band)
++        self.assertEqual(len(inline_instances), 2)
++        self.assertIsInstance(inline_instances[0], ConcertInline)
++        self.assertIsInstance(inline_instances[1], SongInline)
++
+ 
+ class ModelAdminPermissionTests(SimpleTestCase):
+2026-11-10 13:17:44,547 - INFO - Eval script for django__django-11095 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/django__django-11095/eval.sh; copying to container...
+2026-11-10 13:17:51,222 - INFO - Test runtime: 6.59 seconds
+2026-11-10 13:17:51,224 - INFO - Test output for django__django-11095 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/django__django-11095/test_output.txt
+2026-11-10 13:17:51,297 - INFO - Git diff after:
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5e7b23f9a0..86b507e730 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -580,9 +580,15 @@ class ModelAdmin(BaseModelAdmin):
+     def __str__(self):
+         return "%s.%s" % (self.model._meta.app_label, self.__class__.__name__)
+ 
++    def get_inlines(self, request, obj=None):
++        """
++        Hook for specifying custom inline classes.
++        """
++        return self.inlines
++
+     def get_inline_instances(self, request, obj=None):
+         inline_instances = []
+-        for inline_class in self.inlines:
++        for inline_class in self.get_inlines(request, obj):
+             inline = inline_class(self.model, self.admin_site)
+             if request:
+                 if not (inline.has_view_or_change_permission(request, obj) or
+diff --git a/docs/ref/contrib/admin/index.txt b/docs/ref/contrib/admin/index.txt
+index 93679c46fd..3523208e56 100644
+--- a/docs/ref/contrib/admin/index.txt
++++ b/docs/ref/contrib/admin/index.txt
+@@ -1608,6 +1608,21 @@ templates used by the :class:`ModelAdmin` views:
+             def get_sortable_by(self, request):
+                 return {*self.get_list_display(request)} - {'rank'}
+ 
++.. method:: ModelAdmin.get_inlines(request, obj=None)
++
++    The ``get_inlines`` method is given the ``HttpRequest`` and the ``obj``
++    being edited (or ``None`` on an add form) and is expected to return a
++    ``list`` or ``tuple`` of inline classes. The default implementation returns
++    the object's :attr:`~ModelAdmin.inlines` attribute, for example::
++
++        class MyModelAdmin(admin.ModelAdmin):
++            inlines = (MyInline, SomeOtherInline)
++
++            def get_inlines(self, request, obj=None):
++                if obj:
++                    return (MyInline, SomeOtherInline)
++                return ()
++
+ .. method:: ModelAdmin.get_inline_instances(request, obj=None)
+ 
+     The ``get_inline_instances`` method is given the ``HttpRequest`` and the
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index d7ad7a8cf7..5279256385 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -47,6 +47,9 @@ Minor features
+ * Added support for the ``admin_order_field`` attribute on properties in
+   :attr:`.ModelAdmin.list_display`.
+ 
++* :meth:`.ModelAdmin.get_inlines` allows specifying the inlines based on the
++  request or model instance.
++
+ :mod:`django.contrib.admindocs`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index 6934bf2b3c..9ab149ea42 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -3,7 +3,7 @@ from datetime import date
+ from django import forms
+ from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
+ from django.contrib.admin.options import (
+-    HORIZONTAL, VERTICAL, ModelAdmin, TabularInline,
++    HORIZONTAL, VERTICAL, ModelAdmin, StackedInline, TabularInline,
+     get_content_type_for_model,
+ )
+ from django.contrib.admin.sites import AdminSite
+@@ -719,6 +719,30 @@ class ModelAdminTests(TestCase):
+         self.assertEqual(perms_needed, {'band'})
+         self.assertEqual(protected, [])
+ 
++    def test_get_inlines(self):
++        class ConcertInline(TabularInline):
++            model = Concert
++
++        class SongInline(StackedInline):
++            model = Song
++
++        class BandAdmin(ModelAdmin):
++            inlines = [ConcertInline]
++
++            def get_inlines(self, request, obj=None):
++                if obj is None:
++                    return []
++                return [ConcertInline, SongInline]
++
++        ma = BandAdmin(Band, self.site)
++        self.assertEqual(ma.get_inlines(request), [])
++        self.assertEqual(ma.get_inlines(request, self.band), [ConcertInline, SongInline])
++        self.assertEqual(ma.get_inline_instances(request), [])
++        inline_instances = ma.get_inline_instances(request, self.band)
++        self.assertEqual(len(inline_instances), 2)
++        self.assertIsInstance(inline_instances[0], ConcertInline)
++        self.assertIsInstance(inline_instances[1], SongInline)
++
+ 
+ class ModelAdminPermissionTests(SimpleTestCase):
+2026-11-10 13:17:51,297 - INFO - Grading answer for django__django-11095...
+2026-11-10 13:17:51,298 - INFO - report: {'django__django-11095': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_get_inline_instances_override_get_inlines (generic_inline_admin.tests.GenericInlineModelAdminTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_no_deletion (generic_inline_admin.tests.NoInlineDeletionTest)', 'test_custom_form_meta_exclude (generic_inline_admin.tests.GenericInlineModelAdminTest)', 'test_custom_form_meta_exclude_with_readonly (generic_inline_admin.tests.GenericInlineModelAdminTest)', 'test_get_fieldsets (generic_inline_admin.tests.GenericInlineModelAdminTest)', 'test_get_formset_kwargs (generic_inline_admin.tests.GenericInlineModelAdminTest)', 'test_get_formsets_with_inlines_returns_tuples (generic_inline_admin.tests.GenericInlineModelAdminTest)', 'test_extra_param (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_get_extra (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_get_max_num (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_get_min_num (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_max_num_param (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_min_num_param (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_no_param (generic_inline_admin.tests.GenericInlineAdminParametersTest)', 'test_add (generic_inline_admin.tests.GenericInlineAdminWithUniqueTogetherTest)', 'test_delete (generic_inline_admin.tests.GenericInlineAdminWithUniqueTogetherTest)', 'test_basic_add_GET (generic_inline_admin.tests.GenericAdminViewTest)', 'test_basic_add_POST (generic_inline_admin.tests.GenericAdminViewTest)', 'test_basic_edit_GET (generic_inline_admin.tests.GenericAdminViewTest)', 'test_basic_edit_POST (generic_inline_admin.tests.GenericAdminViewTest)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11095: resolved: True
+2026-11-10 13:17:51,300 - INFO - Attempting to stop container sweb.eval.django__django-11095.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 13:18:07,575 - INFO - Container sweb.eval.django__django-11095.verified_full_glm53_claude-code_incr_R2028 stopped successfully.
+2026-11-10 13:18:07,575 - INFO - Attempting to remove container sweb.eval.django__django-11095.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 13:18:07,633 - INFO - Container sweb.eval.django__django-11095.verified_full_glm53_claude-code_incr_R2028 removed successfully.

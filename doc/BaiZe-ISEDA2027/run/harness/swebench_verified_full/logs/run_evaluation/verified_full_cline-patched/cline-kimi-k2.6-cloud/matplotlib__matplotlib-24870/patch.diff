@@ -1,0 +1,121 @@
+diff --git a/lib/matplotlib/contour.py b/lib/matplotlib/contour.py
+index 144eadeae..19b36fdad 100644
+--- a/lib/matplotlib/contour.py
++++ b/lib/matplotlib/contour.py
+@@ -1448,9 +1448,11 @@ class QuadContourSet(ContourSet):
+         nargs = len(args)
+         if nargs <= 2:
+             z = ma.asarray(args[0], dtype=np.float64)
++            z_dtype = np.asarray(args[0]).dtype
+             x, y = self._initialize_x_y(z)
+             args = args[1:]
+         elif nargs <= 4:
++            z_dtype = np.asarray(args[2]).dtype
+             x, y, z = self._check_xyz(args[:3], kwargs)
+             args = args[3:]
+         else:
+@@ -1462,6 +1464,8 @@ class QuadContourSet(ContourSet):
+             z = ma.masked_where(z <= 0, z)
+             _api.warn_external('Log scale: values of z <= 0 have been masked')
+             self.zmin = float(z.min())
++        if self.levels is None and len(args) == 0 and z_dtype == bool:
++            self.levels = [0.5] if not self.filled else [0, 0.5, 1]
+         self._process_contour_level_args(args)
+         return (x, y, z)
+ 
+@@ -1585,6 +1589,9 @@ levels : int or array-like, optional
+     If array-like, draw contour lines at the specified levels.
+     The values must be in increasing order.
+ 
++    If *Z* is a boolean array, a single level at 0.5 is used for
++    `.contour`, and levels [0, 0.5, 1] are used for `.contourf`.
++
+ Returns
+ -------
+ `~.contour.QuadContourSet`
+diff --git a/lib/matplotlib/tests/test_contour.py b/lib/matplotlib/tests/test_contour.py
+index e42206b8c..01437db0e 100644
+--- a/lib/matplotlib/tests/test_contour.py
++++ b/lib/matplotlib/tests/test_contour.py
+@@ -693,3 +693,25 @@ def test_contour_remove():
+     assert ax.get_children() != orig_children
+     cs.remove()
+     assert ax.get_children() == orig_children
++
++
++def test_contour_bool_array():
++    # Auto-detect boolean arrays and default levels to [0.5] for contour
++    # and [0, 0.5, 1] for contourf.
++    fig, ax = plt.subplots()
++    z = np.array([[True, False], [False, True]])
++
++    cs = ax.contour(z)
++    assert list(cs.levels) == [0.5]
++
++    cs2 = ax.contourf(z)
++    assert list(cs2.levels) == [0.0, 0.5, 1.0]
++
++    # Explicit levels should still work
++    cs3 = ax.contour(z, levels=[0.3])
++    assert list(cs3.levels) == [0.3]
++
++    # Non-boolean arrays should use default behavior
++    cs4 = ax.contour(np.array([[0.0, 1.0], [1.0, 0.0]]))
++    assert len(cs4.levels) > 1
++
+diff --git a/lib/matplotlib/tests/test_triangulation.py b/lib/matplotlib/tests/test_triangulation.py
+index c292d8281..d739ffa06 100644
+--- a/lib/matplotlib/tests/test_triangulation.py
++++ b/lib/matplotlib/tests/test_triangulation.py
+@@ -1341,3 +1341,27 @@ def test_triplot_label():
+     assert labels == ['label']
+     assert len(handles) == 1
+     assert handles[0] is lines
++
++
++def test_tricontour_bool_array():
++    # Auto-detect boolean arrays and default levels to [0.5] for tricontour
++    # and [0, 0.5, 1] for tricontourf.
++    x = [0.0, 1.0, 0.5]
++    y = [0.0, 0.0, 1.0]
++    tri = [[0, 1, 2]]
++    z = np.array([True, False, True])
++
++    fig, ax = plt.subplots()
++    cs = ax.tricontour(x, y, tri, z)
++    assert list(cs.levels) == [0.5]
++
++    cs2 = ax.tricontourf(x, y, tri, z)
++    assert list(cs2.levels) == [0.0, 0.5, 1.0]
++
++    # Explicit levels should still work
++    cs3 = ax.tricontour(x, y, tri, z, levels=[0.3])
++    assert list(cs3.levels) == [0.3]
++
++    # Non-boolean arrays should use default behavior
++    cs4 = ax.tricontour(x, y, tri, np.array([0.0, 1.0, 0.0]))
++    assert len(cs4.levels) > 1
+diff --git a/lib/matplotlib/tri/_tricontour.py b/lib/matplotlib/tri/_tricontour.py
+index c403ebae7..3d011c0e3 100644
+--- a/lib/matplotlib/tri/_tricontour.py
++++ b/lib/matplotlib/tri/_tricontour.py
+@@ -74,6 +74,8 @@ class TriContourSet(ContourSet):
+         if self.logscale and self.zmin <= 0:
+             func = 'contourf' if self.filled else 'contour'
+             raise ValueError(f'Cannot {func} log of negative values.')
++        if self.levels is None and len(args) == 1 and np.asarray(args[0]).dtype == bool:
++            self.levels = [0.5] if not self.filled else [0, 0.5, 1]
+         self._process_contour_level_args(args[1:])
+         return (tri, z)
+ 
+@@ -123,6 +125,10 @@ levels : int or array-like, optional
+     If array-like, draw contour lines at the specified levels.  The values must
+     be in increasing order.
+ 
++    If *Z* is a boolean array, a single level at 0.5 is used for
++    `~.Axes.tricontour`, and levels [0, 0.5, 1] are used for
++    `~.Axes.tricontourf`.
++
+ Returns
+ -------
+ `~matplotlib.tri.TriContourSet`

@@ -1,0 +1,43 @@
+diff --git a/lib/matplotlib/category.py b/lib/matplotlib/category.py
+index c823b68f..86fe19ae 100644
+--- a/lib/matplotlib/category.py
++++ b/lib/matplotlib/category.py
+@@ -58,7 +58,7 @@ class StrCategoryConverter(units.ConversionInterface):
+             is_numlike = all(units.ConversionInterface.is_numlike(v)
+                              and not isinstance(v, (str, bytes))
+                              for v in values)
+-        if is_numlike:
++        if is_numlike and len(values) > 0:
+             _api.warn_deprecated(
+                 "3.5", message="Support for passing numbers through unit "
+                 "converters is deprecated since %(since)s and support will be "
+diff --git a/lib/matplotlib/tests/test_category.py b/lib/matplotlib/tests/test_category.py
+index f0e424bd..6c206741 100644
+--- a/lib/matplotlib/tests/test_category.py
++++ b/lib/matplotlib/tests/test_category.py
+@@ -112,6 +112,12 @@ class TestStrCategoryConverter:
+             actual = self.cc.convert(data, self.unit, self.ax)
+         np.testing.assert_allclose(actual, np.array([1., 2., 3.]))
+ 
++    def test_convert_empty(self):
++        actual = self.cc.convert([], self.unit, self.ax)
++        np.testing.assert_array_equal(actual, np.array([], dtype=float))
++        actual = self.cc.convert(np.array([]), self.unit, self.ax)
++        np.testing.assert_array_equal(actual, np.array([], dtype=float))
++
+     @pytest.mark.parametrize("fvals", fvalues, ids=fids)
+     def test_convert_fail(self, fvals):
+         with pytest.raises(TypeError):
+@@ -312,3 +318,12 @@ def test_hist():
+     n, bins, patches = ax.hist(['a', 'b', 'a', 'c', 'ff'])
+     assert n.shape == (10,)
+     np.testing.assert_allclose(n, [2., 0., 0., 1., 0., 0., 1., 0., 0., 1.])
++
++
++def test_plot_empty_with_category_units():
++    # GH#22649 - empty data should not trigger a spurious deprecation warning
++    fig, ax = plt.subplots()
++    ax.xaxis.update_units(['a', 'b'])
++    ax.plot([], [])
++    ax.scatter([], [])
++    ax.bar([], [])

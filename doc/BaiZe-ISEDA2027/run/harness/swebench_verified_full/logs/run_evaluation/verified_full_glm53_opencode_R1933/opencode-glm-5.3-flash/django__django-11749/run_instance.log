@@ -1,0 +1,106 @@
+2026-11-09 13:20:35,301 - INFO - Creating container for django__django-11749...
+2026-11-09 13:20:35,352 - INFO - Container for django__django-11749 created: 1321b02ecda9ecf72dc65b84549a3f183ca72ce7e93731b8933ec404967326ba
+2026-11-09 13:20:35,981 - INFO - Container for django__django-11749 started: 1321b02ecda9ecf72dc65b84549a3f183ca72ce7e93731b8933ec404967326ba
+2026-11-09 13:20:35,984 - INFO - Intermediate patch for django__django-11749 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-11749/patch.diff, now applying to container...
+2026-11-09 13:20:36,100 - INFO - >>>>> Applied Patch:
+Checking patch django/core/management/__init__.py...
+Checking patch tests/user_commands/management/commands/mutually_exclusive_required.py...
+Checking patch tests/user_commands/tests.py...
+Applied patch django/core/management/__init__.py cleanly.
+Applied patch tests/user_commands/management/commands/mutually_exclusive_required.py cleanly.
+Applied patch tests/user_commands/tests.py cleanly.
+
+2026-11-09 13:20:37,520 - INFO - Git diff before:
+diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py
+index 5f2e64761e..ebe2c294ec 100644
+--- a/django/core/management/__init__.py
++++ b/django/core/management/__init__.py
+@@ -130,11 +130,17 @@ def call_command(command_name, *args, **options):
+                 yield opt
+ 
+     parser_actions = list(get_actions(parser))
++    mutually_exclusive_required_opts = [
++        opt for group in parser._mutually_exclusive_groups
++        if group.required for opt in group._group_actions
++    ]
+     # Any required arguments which are passed in via **options must be passed
+     # to parse_args().
+     parse_args += [
+         '{}={}'.format(min(opt.option_strings), arg_options[opt.dest])
+-        for opt in parser_actions if opt.required and opt.dest in options
++        for opt in parser_actions if (
++            opt.required or opt in mutually_exclusive_required_opts
++        ) and opt.dest in options
+     ]
+     defaults = parser.parse_args(args=parse_args)
+     defaults = dict(defaults._get_kwargs(), **arg_options)
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index a53c781ac6..da23b82ba3 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -209,6 +209,13 @@ class CommandTests(SimpleTestCase):
+         self.assertIn('need_me', out.getvalue())
+         self.assertIn('needme2', out.getvalue())
+ 
++    def test_call_command_with_required_mutually_exclusive_arguments(self):
++        out = StringIO()
++        management.call_command('mutually_exclusive_required', shop_id=1, stdout=out)
++        self.assertIn('shop_id', out.getvalue())
++        management.call_command('mutually_exclusive_required', shop_name='foo', stdout=out)
++        self.assertIn('shop_name', out.getvalue())
++
+     def test_command_add_arguments_after_common_arguments(self):
+         out = StringIO()
+         management.call_command('common_args', stdout=out)
+2026-11-09 13:20:37,521 - INFO - Eval script for django__django-11749 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-11749/eval.sh; copying to container...
+2026-11-09 13:20:44,611 - INFO - Test runtime: 7.03 seconds
+2026-11-09 13:20:44,612 - INFO - Test output for django__django-11749 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-11749/test_output.txt
+2026-11-09 13:20:44,693 - INFO - Git diff after:
+diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py
+index 5f2e64761e..ebe2c294ec 100644
+--- a/django/core/management/__init__.py
++++ b/django/core/management/__init__.py
+@@ -130,11 +130,17 @@ def call_command(command_name, *args, **options):
+                 yield opt
+ 
+     parser_actions = list(get_actions(parser))
++    mutually_exclusive_required_opts = [
++        opt for group in parser._mutually_exclusive_groups
++        if group.required for opt in group._group_actions
++    ]
+     # Any required arguments which are passed in via **options must be passed
+     # to parse_args().
+     parse_args += [
+         '{}={}'.format(min(opt.option_strings), arg_options[opt.dest])
+-        for opt in parser_actions if opt.required and opt.dest in options
++        for opt in parser_actions if (
++            opt.required or opt in mutually_exclusive_required_opts
++        ) and opt.dest in options
+     ]
+     defaults = parser.parse_args(args=parse_args)
+     defaults = dict(defaults._get_kwargs(), **arg_options)
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index a53c781ac6..da23b82ba3 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -209,6 +209,13 @@ class CommandTests(SimpleTestCase):
+         self.assertIn('need_me', out.getvalue())
+         self.assertIn('needme2', out.getvalue())
+ 
++    def test_call_command_with_required_mutually_exclusive_arguments(self):
++        out = StringIO()
++        management.call_command('mutually_exclusive_required', shop_id=1, stdout=out)
++        self.assertIn('shop_id', out.getvalue())
++        management.call_command('mutually_exclusive_required', shop_name='foo', stdout=out)
++        self.assertIn('shop_name', out.getvalue())
++
+     def test_command_add_arguments_after_common_arguments(self):
+         out = StringIO()
+         management.call_command('common_args', stdout=out)
+2026-11-09 13:20:44,693 - INFO - Grading answer for django__django-11749...
+2026-11-09 13:20:44,695 - INFO - report: {'django__django-11749': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_mutually_exclusive_group_required_options (user_commands.tests.CommandTests)']}, 'PASS_TO_PASS': {'success': ['test_get_random_secret_key (user_commands.tests.UtilsTests)', 'test_is_ignored_path_false (user_commands.tests.UtilsTests)', 'test_is_ignored_path_true (user_commands.tests.UtilsTests)', 'test_no_existent_external_program (user_commands.tests.UtilsTests)', 'test_normalize_path_patterns_truncates_wildcard_base (user_commands.tests.UtilsTests)', 'test_call_command_no_checks (user_commands.tests.CommandTests)', 'test_call_command_option_parsing (user_commands.tests.CommandTests)', 'test_call_command_option_parsing_non_string_arg (user_commands.tests.CommandTests)', 'test_call_command_unrecognized_option (user_commands.tests.CommandTests)', 'test_call_command_with_required_parameters_in_mixed_options (user_commands.tests.CommandTests)', 'test_call_command_with_required_parameters_in_options (user_commands.tests.CommandTests)', 'test_calling_a_command_with_no_app_labels_and_parameters_should_raise_a_command_error (user_commands.tests.CommandTests)', 'test_calling_a_command_with_only_empty_parameter_should_ends_gracefully (user_commands.tests.CommandTests)', 'test_calling_command_with_app_labels_and_parameters_should_be_ok (user_commands.tests.CommandTests)', 'test_calling_command_with_parameters_and_app_labels_at_the_end_should_be_ok (user_commands.tests.CommandTests)', 'test_check_migrations (user_commands.tests.CommandTests)', 'test_command (user_commands.tests.CommandTests)', 'test_command_add_arguments_after_common_arguments (user_commands.tests.CommandTests)', 'test_command_style (user_commands.tests.CommandTests)', 'BaseCommand.create_parser() passes kwargs to CommandParser.', 'test_discover_commands_in_eggs (user_commands.tests.CommandTests)', 'An unknown command raises CommandError', 'test_find_command_without_PATH (user_commands.tests.CommandTests)', 'test_language_preserved (user_commands.tests.CommandTests)', 'test_no_translations_deactivate_translations (user_commands.tests.CommandTests)', 'test_output_transaction (user_commands.tests.CommandTests)', 'test_subparser (user_commands.tests.CommandTests)', 'test_subparser_dest_args (user_commands.tests.CommandTests)', 'test_subparser_dest_required_args (user_commands.tests.CommandTests)', 'test_subparser_invalid_option (user_commands.tests.CommandTests)', 'Exception raised in a command should raise CommandError with', 'test_disallowed_abbreviated_options (user_commands.tests.CommandRunTests)', 'test_script_prefix_set_in_commands (user_commands.tests.CommandRunTests)', 'test_skip_checks (user_commands.tests.CommandRunTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11749: resolved: False
+2026-11-09 13:20:44,697 - INFO - Attempting to stop container sweb.eval.django__django-11749.verified_full_glm53_opencode_R1933...
+2026-11-09 13:21:01,104 - INFO - Container sweb.eval.django__django-11749.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 13:21:01,104 - INFO - Attempting to remove container sweb.eval.django__django-11749.verified_full_glm53_opencode_R1933...
+2026-11-09 13:21:01,154 - INFO - Container sweb.eval.django__django-11749.verified_full_glm53_opencode_R1933 removed successfully.

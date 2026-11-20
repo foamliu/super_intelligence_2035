@@ -1,0 +1,42 @@
+diff --git a/lib/matplotlib/pyplot.py b/lib/matplotlib/pyplot.py
+index 58ce4c03f..822583378 100644
+--- a/lib/matplotlib/pyplot.py
++++ b/lib/matplotlib/pyplot.py
+@@ -2278,9 +2278,13 @@ def set_cmap(cmap: Colormap | str) -> None:
+     matplotlib.cm.register_cmap
+     matplotlib.cm.get_cmap
+     """
++    if isinstance(cmap, str):
++        name = cmap
++    else:
++        name = cmap.name
+     cmap = get_cmap(cmap)
+ 
+-    rc('image', cmap=cmap.name)
++    rc('image', cmap=name)
+     im = gci()
+ 
+     if im is not None:
+diff --git a/lib/matplotlib/tests/test_colors.py b/lib/matplotlib/tests/test_colors.py
+index 2e841699c..7bd7ac042 100644
+--- a/lib/matplotlib/tests/test_colors.py
++++ b/lib/matplotlib/tests/test_colors.py
+@@ -1649,3 +1649,18 @@ def test_cm_set_cmap_error():
+     bad_cmap = 'AardvarksAreAwkward'
+     with pytest.raises(ValueError, match=bad_cmap):
+         sm.set_cmap(bad_cmap)
++def test_set_cmap_registered_name():
++    # Check that registering a colormap under a different name
++    # and then setting it as the default cmap works.
++    cmap = mcolors.LinearSegmentedColormap.from_list(
++        'internal', ['r', 'g', 'b'])
++    mpl.colormaps.register(cmap, name='external')
++    try:
++        plt.set_cmap('external')
++        assert mpl.rcParams['image.cmap'] == 'external'
++        fig, ax = plt.subplots()
++        im = ax.imshow([[1, 2], [3, 4]])
++        # The returned colormap instance retains its original internal name
++        assert im.get_cmap().name == 'internal'
++    finally:
++        mpl.colormaps.unregister('external')

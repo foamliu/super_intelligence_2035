@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-8399",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/changelog/8334.bugfix.rst b/changelog/8334.bugfix.rst\nnew file mode 100644\nindex 0000000..6b4bf7b\n--- /dev/null\n+++ b/changelog/8334.bugfix.rst\n@@ -0,0 +1 @@\n+Reverted the fix for :issue:`517`, which prevented the ``unittest`` setUpClass fixtures from being \"private\" (prefixed with ``_``), restoring the previous behavior where they are hidden from ``pytest --fixtures`` unless ``-v`` is used.\ndiff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py\nindex 719eb4e..f7eecad 100644\n--- a/src/_pytest/unittest.py\n+++ b/src/_pytest/unittest.py\n@@ -143,8 +143,9 @@ def _make_xunit_fixture(\n     @pytest.fixture(\n         scope=scope,\n         autouse=True,\n-        # Use a unique name to speed up lookup.\n-        name=f\"unittest_{setup_name}_fixture_{obj.__qualname__}\",\n+        # Use a unique name, prefixed with \"_\" so it's not collected/published\n+        # as a \"public\" fixture (e.g. in `pytest --fixtures`), see #8334.\n+        name=f\"_unittest_{setup_name}_fixture_{obj.__qualname__}\",\n     )\n     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:\n         if _is_skipped(self):\n"
+  }
+]

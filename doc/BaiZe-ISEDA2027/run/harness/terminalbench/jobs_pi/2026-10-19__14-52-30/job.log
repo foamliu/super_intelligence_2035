@@ -1,0 +1,40 @@
+Agent 'pi' does not declare an options_model; leftover kwargs are ignored
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
+Command outputs captured
+Trial bn-fit-modify__Viea3Wm failed: Pi exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'pi' does not declare an options_model; leftover kwargs are ignored
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
+Command outputs captured
+Trial break-filter-js-from-html__5LETdBY failed: Pi exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'pi' does not declare an options_model; leftover kwargs are ignored
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
+Command outputs captured
+Trial chess-best-move__eAaSeMv failed: Pi exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'pi' does not declare an options_model; leftover kwargs are ignored
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
+Command outputs captured
+Trial fix-git__e2cNhYX failed: Pi exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'pi' does not declare an options_model; leftover kwargs are ignored
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
+Command outputs captured
+Trial log-summary-date-ranges__vWCs6qT failed: Pi exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached

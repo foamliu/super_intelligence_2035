@@ -1,0 +1,57 @@
+diff --git a/doc/modules/model_evaluation.rst b/doc/modules/model_evaluation.rst
+index 537f23e4..f8ec08ec 100644
+--- a/doc/modules/model_evaluation.rst
++++ b/doc/modules/model_evaluation.rst
+@@ -1366,7 +1366,7 @@ function::
+     >>> tpr
+     array([0. , 0.5, 0.5, 1. , 1. ])
+     >>> thresholds
+-    array([1.8 , 0.8 , 0.4 , 0.35, 0.1 ])
++    array([1. , 0.8 , 0.4 , 0.35, 0.1 ])
+ 
+ Compared to metrics such as the subset accuracy, the Hamming loss, or the
+ F1 score, ROC doesn't require optimizing a threshold for each label.
+diff --git a/sklearn/metrics/_ranking.py b/sklearn/metrics/_ranking.py
+index 0cdead92..caa2353d 100644
+--- a/sklearn/metrics/_ranking.py
++++ b/sklearn/metrics/_ranking.py
+@@ -1056,7 +1056,7 @@ def roc_curve(
+     >>> tpr
+     array([0. , 0.5, 0.5, 1. , 1. ])
+     >>> thresholds
+-    array([1.8 , 0.8 , 0.4 , 0.35, 0.1 ])
++    array([1. , 0.8 , 0.4 , 0.35, 0.1 ])
+     """
+     fps, tps, thresholds = _binary_clf_curve(
+         y_true, y_score, pos_label=pos_label, sample_weight=sample_weight
+@@ -1083,7 +1083,8 @@ def roc_curve(
+     # to make sure that the curve starts at (0, 0)
+     tps = np.r_[0, tps]
+     fps = np.r_[0, fps]
+-    thresholds = np.r_[thresholds[0] + 1, thresholds]
++    first_threshold = thresholds[0] + 1 if thresholds[0] >= 1 else 1.0
++    thresholds = np.r_[first_threshold, thresholds]
+ 
+     if fps[-1] <= 0:
+         warnings.warn(
+diff --git a/sklearn/metrics/tests/test_ranking.py b/sklearn/metrics/tests/test_ranking.py
+index f38f118c..4350fcfe 100644
+--- a/sklearn/metrics/tests/test_ranking.py
++++ b/sklearn/metrics/tests/test_ranking.py
+@@ -235,6 +235,16 @@ def test_roc_returns_consistency():
+     assert fpr.shape == thresholds.shape
+ 
+ 
++def test_roc_curve_with_probability_estimates():
++    # Non-regression test for probability estimates where the first threshold
++    # should not exceed 1.
++    rng = np.random.RandomState(42)
++    y_true = rng.randint(0, 2, size=10)
++    y_score = rng.rand(10)
++    _, _, thresholds = roc_curve(y_true, y_score)
++    assert (thresholds <= 1).all()
++
++
+ def test_roc_curve_multi():
+     # roc_curve not applicable for multi-class problems
+     y_true, _, y_score = make_prediction(binary=False)

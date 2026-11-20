@@ -1,0 +1,52 @@
+2026-11-03 00:12:49,663 - INFO - Creating container for django__django-14349...
+2026-11-03 00:12:49,683 - INFO - Container for django__django-14349 created: 3a6714948d46190b1e888e5b0d5cdefb210cc987f4b91881d18af8960edd8507
+2026-11-03 00:12:50,358 - INFO - Container for django__django-14349 started: 3a6714948d46190b1e888e5b0d5cdefb210cc987f4b91881d18af8960edd8507
+2026-11-03 00:12:50,360 - INFO - Intermediate patch for django__django-14349 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-14349/patch.diff, now applying to container...
+2026-11-03 00:12:50,477 - INFO - >>>>> Applied Patch:
+Checking patch django/core/validators.py...
+Applied patch django/core/validators.py cleanly.
+
+2026-11-03 00:12:51,334 - INFO - Git diff before:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a385819510..e56d27e58e 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -105,6 +105,11 @@ class URLValidator(RegexValidator):
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
++        # bpo-43882: urlsplit strips leading and trailing \n, \r, and \t.
++        # Reject URLs with these characters to prevent them from being
++        # silently stripped and considered valid.
++        if re.search("[\t\n\r]", value):
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         # Then check full URL
+         try:
+2026-11-03 00:12:51,336 - INFO - Eval script for django__django-14349 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-14349/eval.sh; copying to container...
+2026-11-03 00:12:58,626 - INFO - Test runtime: 7.22 seconds
+2026-11-03 00:12:58,627 - INFO - Test output for django__django-14349 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-14349/test_output.txt
+2026-11-03 00:12:58,703 - INFO - Git diff after:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a385819510..e56d27e58e 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -105,6 +105,11 @@ class URLValidator(RegexValidator):
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
++        # bpo-43882: urlsplit strips leading and trailing \n, \r, and \t.
++        # Reject URLs with these characters to prevent them from being
++        # silently stripped and considered valid.
++        if re.search("[\t\n\r]", value):
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         # Then check full URL
+         try:
+2026-11-03 00:12:58,704 - INFO - Grading answer for django__django-14349...
+2026-11-03 00:12:58,706 - INFO - report: {'django__django-14349': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_validators (validators.tests.TestValidators)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_domain_whitelist (validators.tests.DeprecationTests)', 'test_domain_whitelist_access_warning (validators.tests.DeprecationTests)', 'test_domain_whitelist_set_warning (validators.tests.DeprecationTests)', 'test_whitelist (validators.tests.DeprecationTests)', 'test_whitelist_warning (validators.tests.DeprecationTests)', 'test_basic_equality (validators.tests.TestValidatorEquality)', 'test_decimal_equality (validators.tests.TestValidatorEquality)', 'test_email_equality (validators.tests.TestValidatorEquality)', 'test_file_extension_equality (validators.tests.TestValidatorEquality)', 'test_prohibit_null_characters_validator_equality (validators.tests.TestValidatorEquality)', 'test_regex_equality (validators.tests.TestValidatorEquality)', 'test_regex_equality_blank (validators.tests.TestValidatorEquality)', 'test_regex_equality_nocache (validators.tests.TestValidatorEquality)', 'test_max_length_validator_message (validators.tests.TestValidators)', 'test_message_dict (validators.tests.TestValidators)', 'test_message_list (validators.tests.TestValidators)', 'test_regex_validator_flags (validators.tests.TestValidators)', 'test_single_message (validators.tests.TestValidators)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14349: resolved: True
+2026-11-03 00:12:58,707 - INFO - Attempting to stop container sweb.eval.django__django-14349.verified_full_deepseek-harness...
+2026-11-03 00:13:14,816 - INFO - Container sweb.eval.django__django-14349.verified_full_deepseek-harness stopped successfully.
+2026-11-03 00:13:14,816 - INFO - Attempting to remove container sweb.eval.django__django-14349.verified_full_deepseek-harness...
+2026-11-03 00:13:14,857 - INFO - Container sweb.eval.django__django-14349.verified_full_deepseek-harness removed successfully.

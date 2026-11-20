@@ -1,0 +1,19 @@
+287 instances already run, skipping...
+Running 6 instances...
+  0%|          | 0/6 [00:00<?, ?it/s] 17%|█▋        | 1/6 [00:25<02:08, 25.74s/it]1 ran successfully, 0 failed:  17%|█▋        | 1/6 [00:25<02:08, 25.74s/it]2 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:25<00:51, 12.91s/it]2 ran successfully, 0 failed:  50%|█████     | 3/6 [00:26<00:26,  8.84s/it]3 ran successfully, 0 failed:  50%|█████     | 3/6 [00:26<00:26,  8.84s/it]4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:26<00:13,  6.73s/it]4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:27<00:05,  5.43s/it]5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:27<00:05,  5.43s/it]5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:40<00:08,  8.00s/it]5 ran successfully, 0 failed: 100%|██████████| 6/6 [30:18<00:00, 303.05s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [30:18<00:00, 303.05s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [30:18<00:00, 303.05s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 293
+Instances submitted: 293
+Instances completed: 292
+Instances incomplete: 0
+Instances resolved: 222
+Instances unresolved: 70
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 12
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 293
+Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json

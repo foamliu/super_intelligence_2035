@@ -1,0 +1,215 @@
+2026-11-09 15:21:27,055 - INFO - Creating container for astropy__astropy-8707...
+2026-11-09 15:21:27,097 - INFO - Container for astropy__astropy-8707 created: 79094b613477e4aa89b6e9f1c6805f6afc931283417201a6ec7175b301a449a5
+2026-11-09 15:21:28,710 - INFO - Container for astropy__astropy-8707 started: 79094b613477e4aa89b6e9f1c6805f6afc931283417201a6ec7175b301a449a5
+2026-11-09 15:21:28,712 - INFO - Intermediate patch for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/astropy__astropy-8707/patch.diff, now applying to container...
+2026-11-09 15:21:28,853 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES.rst...
+Checking patch astropy/io/fits/card.py...
+Checking patch astropy/io/fits/header.py...
+Checking patch astropy/io/fits/tests/test_header.py...
+Checking patch astropy_helpers...
+warning: unable to rmdir 'astropy_helpers': Directory not empty
+Applied patch CHANGES.rst cleanly.
+Applied patch astropy/io/fits/card.py cleanly.
+Applied patch astropy/io/fits/header.py cleanly.
+Applied patch astropy/io/fits/tests/test_header.py cleanly.
+Applied patch astropy_helpers cleanly.
+
+2026-11-09 15:21:29,402 - INFO - Git diff before:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 3dc79416e..e8c366161 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -181,6 +181,9 @@ astropy.io.misc
+ astropy.io.fits
+ ^^^^^^^^^^^^^^^
+ 
++- Fixed an issue where ``Header.fromstring`` and ``Card.fromstring`` did not
++  accept Python 3 ``bytes`` strings. [#8698]
++
+ astropy.io.registry
+ ^^^^^^^^^^^^^^^^^^^
+ 
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..68352c067 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, decode_ascii, translate, _words_group
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -554,7 +554,7 @@ class Card(_Verify):
+         """
+ 
+         card = cls()
+-        card._image = _pad(image)
++        card._image = _pad(decode_ascii(image))
+         card._verified = False
+         return card
+ 
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..02e84f64c 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,8 +334,11 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str, bytes
++           String or bytes containing the entire header.  In the case of
++           bytes it must be encoded in ASCII (the FITS standard), though it
++           may contain non-ASCII characters which will be replaced (on
++           decoding) with '?' characters.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -348,6 +351,12 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        if isinstance(data, bytes):
++            # Fit the bytes into the existing code that handles str (unicode
++            # on Python 3) by decoding them to str first; this is simple and
++            # works fine for the ASCII data expected in FITS headers
++            data = decode_ascii(data)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index 7c1725aed..8b8e4d4b9 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -477,6 +477,46 @@ class TestHeaderFunctions(FitsTestCase):
+                     "CONTINUE  'ampersand at the endcontinue must have string value (with quotes)&'  "
+                     "CONTINUE  '' / comments in line 1 comments with ''.                             ")
+ 
++    def test_header_fromstring_bytes(self):
++        """
++        Regression test for https://github.com/astropy/astropy/issues/8698
++
++        Header.fromstring should accept Python 3 ``bytes`` as well as ``str``.
++        """
++
++        hstr = "SIMPLE  =                    T" + " " * 55
++        header = fits.Header.fromstring(hstr.encode('ascii'))
++        assert header['SIMPLE'] is True
++
++        # Test with a card separator as well
++        hstr = "SIMPLE  =                    T\nBITPIX  =                    8"
++        header = fits.Header.fromstring(hstr.encode('ascii'), sep='\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++
++        # And str input should still work identically
++        header = fits.Header.fromstring(hstr, sep='\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++
++    def test_card_fromstring_bytes(self):
++        """
++        Regression test for https://github.com/astropy/astropy/issues/8698
++
++        Card.fromstring should accept Python 3 ``bytes`` as well as ``str``.
++        """
++
++        c = fits.Card.fromstring(b'ABC     = F')
++        assert c.keyword == 'ABC'
++        assert c.value is False
++        assert str(c) == _pad('ABC     = F')
++
++        # And str input should still work identically
++        c = fits.Card.fromstring('ABC     = F')
++        assert c.keyword == 'ABC'
++        assert c.value is False
++        assert str(c) == _pad('ABC     = F')
++
+     def test_continue_card_with_equals_in_value(self):
+         """
+         Regression test for https://aeon.stsci.edu/ssb/trac/pyfits/ticket/117
+2026-11-09 15:21:29,404 - INFO - Eval script for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/astropy__astropy-8707/eval.sh; copying to container...
+2026-11-09 15:21:39,157 - INFO - Test runtime: 9.67 seconds
+2026-11-09 15:21:39,159 - INFO - Test output for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/astropy__astropy-8707/test_output.txt
+2026-11-09 15:21:39,251 - INFO - Git diff after:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 3dc79416e..e8c366161 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -181,6 +181,9 @@ astropy.io.misc
+ astropy.io.fits
+ ^^^^^^^^^^^^^^^
+ 
++- Fixed an issue where ``Header.fromstring`` and ``Card.fromstring`` did not
++  accept Python 3 ``bytes`` strings. [#8698]
++
+ astropy.io.registry
+ ^^^^^^^^^^^^^^^^^^^
+ 
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..68352c067 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, decode_ascii, translate, _words_group
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -554,7 +554,7 @@ class Card(_Verify):
+         """
+ 
+         card = cls()
+-        card._image = _pad(image)
++        card._image = _pad(decode_ascii(image))
+         card._verified = False
+         return card
+ 
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..02e84f64c 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,8 +334,11 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str, bytes
++           String or bytes containing the entire header.  In the case of
++           bytes it must be encoded in ASCII (the FITS standard), though it
++           may contain non-ASCII characters which will be replaced (on
++           decoding) with '?' characters.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -348,6 +351,12 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        if isinstance(data, bytes):
++            # Fit the bytes into the existing code that handles str (unicode
++            # on Python 3) by decoding them to str first; this is simple and
++            # works fine for the ASCII data expected in FITS headers
++            data = decode_ascii(data)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+2026-11-09 15:21:39,251 - INFO - Git diff changed after running eval script
+2026-11-09 15:21:39,251 - INFO - Grading answer for astropy__astropy-8707...
+2026-11-09 15:21:39,258 - INFO - report: {'astropy__astropy-8707': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_from_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::test_shallow_copy', 'astropy/io/fits/tests/test_header.py::test_init_with_header', 'astropy/io/fits/tests/test_header.py::test_init_with_dict', 'astropy/io/fits/tests/test_header.py::test_init_with_ordereddict', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_rename_keyword', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_constructor_default_args', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_string_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_boolean_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_long_integer_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_floating_point_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_complex_value_card'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8707: resolved: True
+2026-11-09 15:21:39,260 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8707.verified_full_glm53_claude-code_R1933...
+2026-11-09 15:21:54,880 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_glm53_claude-code_R1933 stopped successfully.
+2026-11-09 15:21:54,880 - INFO - Attempting to remove container sweb.eval.astropy__astropy-8707.verified_full_glm53_claude-code_R1933...
+2026-11-09 15:21:54,939 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_glm53_claude-code_R1933 removed successfully.

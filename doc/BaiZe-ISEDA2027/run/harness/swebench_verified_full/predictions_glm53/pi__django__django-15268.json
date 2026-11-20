@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-15268",
+    "model_name_or_path": "pi-glm-5.3-flash",
+    "model_patch": ""
+  }
+]

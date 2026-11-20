@@ -1,0 +1,22 @@
+
+=== cline-patched: sympy__sympy-16886 ===
+  merged 262 real preds -> predictions_glm53/predictions_cline-patched_glm53.json
+  [10:12:18] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_cline-patched_R2254.log)
+  sympy__sympy-16886: RESOLVED
+  [10:12:28] cline-patched: eval updated (resolved=201, failed=65, infra=1)
+
+=== pi: django__django-16612 ===
+  merged 232 real preds -> predictions_glm53/predictions_pi_glm53.json
+  [10:12:28] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_pi_R2254.log)
+  django__django-16612: RESOLVED
+  [10:13:27] pi: eval updated (resolved=175, failed=62, infra=0)
+
+=== incr_eval R2254 complete in 68.5s ===

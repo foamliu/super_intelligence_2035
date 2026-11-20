@@ -1,0 +1,200 @@
+2026-10-30 15:32:44,059 - INFO - Creating container for django__django-11728...
+2026-10-30 15:32:44,103 - INFO - Container for django__django-11728 created: e3ce6adecac21cb1501a88a858b20eedf8369699b1504d9d975fb654f854600c
+2026-10-30 15:32:45,067 - INFO - Container for django__django-11728 started: e3ce6adecac21cb1501a88a858b20eedf8369699b1504d9d975fb654f854600c
+2026-10-30 15:32:45,069 - INFO - Intermediate patch for django__django-11728 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11728/patch.diff, now applying to container...
+2026-10-30 15:32:45,235 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admindocs/utils.py...
+Checking patch tests/admin_docs/test_utils.py...
+Applied patch django/contrib/admindocs/utils.py cleanly.
+Applied patch tests/admin_docs/test_utils.py cleanly.
+
+2026-10-30 15:32:46,603 - INFO - Git diff before:
+diff --git a/django/contrib/admindocs/utils.py b/django/contrib/admindocs/utils.py
+index 1ce4594501..167398b236 100644
+--- a/django/contrib/admindocs/utils.py
++++ b/django/contrib/admindocs/utils.py
+@@ -180,6 +180,10 @@ def replace_named_groups(pattern):
+             elif val == ')' and prev_char != '\\':
+                 unmatched_open_brackets -= 1
+             prev_char = val
++        else:
++            # If the group ends at the end of the pattern, append it.
++            if unmatched_open_brackets == 0:
++                group_pattern_and_name.append((pattern[start:], group_name))
+ 
+     # Replace the string for named capture groups with their group names.
+     for group_pattern, group_name in group_pattern_and_name:
+@@ -212,6 +216,10 @@ def replace_unnamed_groups(pattern):
+             elif val == ')' and prev_char != '\\':
+                 unmatched_open_brackets -= 1
+             prev_char = val
++        else:
++            # If the group ends at the end of the pattern, append it.
++            if unmatched_open_brackets == 0:
++                group_indices.append((start, len(pattern)))
+ 
+     # Remove unnamed group matches inside other unnamed capture groups.
+     group_start_end_indices = []
+diff --git a/tests/admin_docs/test_utils.py b/tests/admin_docs/test_utils.py
+index 17ea912015..130ccbff74 100644
+--- a/tests/admin_docs/test_utils.py
++++ b/tests/admin_docs/test_utils.py
+@@ -1,12 +1,57 @@
+ import unittest
+ 
+ from django.contrib.admindocs.utils import (
+-    docutils_is_available, parse_docstring, parse_rst, trim_docstring,
++    docutils_is_available, parse_docstring, parse_rst, replace_named_groups,
++    replace_unnamed_groups, trim_docstring,
+ )
++from django.test import SimpleTestCase
+ 
+ from .tests import AdminDocsSimpleTestCase
+ 
+ 
++class ReplaceGroupsTests(SimpleTestCase):
++    def test_replace_named_groups(self):
++        self.assertEqual(
++            replace_named_groups(r'^(?P<a>\w+)/b/(\w+)$'),
++            r'^<a>/b/(\w+)$',
++        )
++        self.assertEqual(
++            replace_named_groups(r'^(?P<a>\w+)/b/(?P<c>\w+)/$'),
++            r'^<a>/b/<c>/$',
++        )
++
++    def test_replace_named_groups_trailing(self):
++        """
++        replace_named_groups() replaces a named group at the end of the
++        pattern (without a trailing slash).
++        """
++        self.assertEqual(
++            replace_named_groups(r'entries/(?P<pk>[^/.]+)/relationships/(?P<related_field>\w+)'),
++            r'entries/<pk>/relationships/<related_field>',
++        )
++
++    def test_replace_unnamed_groups(self):
++        # replace_unnamed_groups is typically called after replace_named_groups.
++        self.assertEqual(
++            replace_unnamed_groups(r'^<a>/b/(\w+)$'),
++            r'^<a>/b/<var>$',
++        )
++        self.assertEqual(
++            replace_unnamed_groups(r'^<a>/b/((x|y)\w+)$'),
++            r'^<a>/b/<var>$',
++        )
++
++    def test_replace_unnamed_groups_trailing(self):
++        """
++        replace_unnamed_groups() replaces an unnamed group at the end of the
++        pattern.
++        """
++        self.assertEqual(
++            replace_unnamed_groups(r'entries/<var>/(\w+)'),
++            r'entries/<var>/<var>',
++        )
++
++
+ @unittest.skipUnless(docutils_is_available, "no docutils installed.")
+ class TestUtils(AdminDocsSimpleTestCase):
+     """
+2026-10-30 15:32:46,606 - INFO - Eval script for django__django-11728 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11728/eval.sh; copying to container...
+2026-10-30 15:32:56,270 - INFO - Test runtime: 9.58 seconds
+2026-10-30 15:32:56,273 - INFO - Test output for django__django-11728 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11728/test_output.txt
+2026-10-30 15:32:56,373 - INFO - Git diff after:
+diff --git a/django/contrib/admindocs/utils.py b/django/contrib/admindocs/utils.py
+index 1ce4594501..167398b236 100644
+--- a/django/contrib/admindocs/utils.py
++++ b/django/contrib/admindocs/utils.py
+@@ -180,6 +180,10 @@ def replace_named_groups(pattern):
+             elif val == ')' and prev_char != '\\':
+                 unmatched_open_brackets -= 1
+             prev_char = val
++        else:
++            # If the group ends at the end of the pattern, append it.
++            if unmatched_open_brackets == 0:
++                group_pattern_and_name.append((pattern[start:], group_name))
+ 
+     # Replace the string for named capture groups with their group names.
+     for group_pattern, group_name in group_pattern_and_name:
+@@ -212,6 +216,10 @@ def replace_unnamed_groups(pattern):
+             elif val == ')' and prev_char != '\\':
+                 unmatched_open_brackets -= 1
+             prev_char = val
++        else:
++            # If the group ends at the end of the pattern, append it.
++            if unmatched_open_brackets == 0:
++                group_indices.append((start, len(pattern)))
+ 
+     # Remove unnamed group matches inside other unnamed capture groups.
+     group_start_end_indices = []
+diff --git a/tests/admin_docs/test_utils.py b/tests/admin_docs/test_utils.py
+index 17ea912015..130ccbff74 100644
+--- a/tests/admin_docs/test_utils.py
++++ b/tests/admin_docs/test_utils.py
+@@ -1,12 +1,57 @@
+ import unittest
+ 
+ from django.contrib.admindocs.utils import (
+-    docutils_is_available, parse_docstring, parse_rst, trim_docstring,
++    docutils_is_available, parse_docstring, parse_rst, replace_named_groups,
++    replace_unnamed_groups, trim_docstring,
+ )
++from django.test import SimpleTestCase
+ 
+ from .tests import AdminDocsSimpleTestCase
+ 
+ 
++class ReplaceGroupsTests(SimpleTestCase):
++    def test_replace_named_groups(self):
++        self.assertEqual(
++            replace_named_groups(r'^(?P<a>\w+)/b/(\w+)$'),
++            r'^<a>/b/(\w+)$',
++        )
++        self.assertEqual(
++            replace_named_groups(r'^(?P<a>\w+)/b/(?P<c>\w+)/$'),
++            r'^<a>/b/<c>/$',
++        )
++
++    def test_replace_named_groups_trailing(self):
++        """
++        replace_named_groups() replaces a named group at the end of the
++        pattern (without a trailing slash).
++        """
++        self.assertEqual(
++            replace_named_groups(r'entries/(?P<pk>[^/.]+)/relationships/(?P<related_field>\w+)'),
++            r'entries/<pk>/relationships/<related_field>',
++        )
++
++    def test_replace_unnamed_groups(self):
++        # replace_unnamed_groups is typically called after replace_named_groups.
++        self.assertEqual(
++            replace_unnamed_groups(r'^<a>/b/(\w+)$'),
++            r'^<a>/b/<var>$',
++        )
++        self.assertEqual(
++            replace_unnamed_groups(r'^<a>/b/((x|y)\w+)$'),
++            r'^<a>/b/<var>$',
++        )
++
++    def test_replace_unnamed_groups_trailing(self):
++        """
++        replace_unnamed_groups() replaces an unnamed group at the end of the
++        pattern.
++        """
++        self.assertEqual(
++            replace_unnamed_groups(r'entries/<var>/(\w+)'),
++            r'entries/<var>/<var>',
++        )
++
++
+ @unittest.skipUnless(docutils_is_available, "no docutils installed.")
+ class TestUtils(AdminDocsSimpleTestCase):
+     """
+2026-10-30 15:32:56,373 - INFO - Grading answer for django__django-11728...
+2026-10-30 15:32:56,376 - INFO - report: {'django__django-11728': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_simplify_regex (admin_docs.test_views.AdminDocViewFunctionsTests)', 'test_app_not_found (admin_docs.test_views.TestModelDetailView)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_builtin_fields (admin_docs.test_views.TestFieldType)', 'test_custom_fields (admin_docs.test_views.TestFieldType)', 'test_field_name (admin_docs.test_views.TestFieldType)', 'test_descriptions_render_correctly (admin_docs.test_views.TestModelDetailView)', 'Model properties are displayed as fields.', 'test_method_data_types (admin_docs.test_views.TestModelDetailView)', 'test_method_excludes (admin_docs.test_views.TestModelDetailView)', 'test_methods_with_arguments (admin_docs.test_views.TestModelDetailView)', 'test_methods_with_arguments_display_arguments (admin_docs.test_views.TestModelDetailView)', 'test_methods_with_arguments_display_arguments_default_value (admin_docs.test_views.TestModelDetailView)', 'test_methods_with_multiple_arguments_display_arguments (admin_docs.test_views.TestModelDetailView)', 'test_model_detail_title (admin_docs.test_views.TestModelDetailView)', 'test_model_docstring_renders_correctly (admin_docs.test_views.TestModelDetailView)', 'test_model_not_found (admin_docs.test_views.TestModelDetailView)', 'test_model_with_many_to_one (admin_docs.test_views.TestModelDetailView)', 'test_model_with_no_backward_relations_render_only_relevant_fields (admin_docs.test_views.TestModelDetailView)', 'test_bookmarklets (admin_docs.test_views.AdminDocViewTests)', 'test_index (admin_docs.test_views.AdminDocViewTests)', 'test_missing_docutils (admin_docs.test_views.AdminDocViewTests)', 'test_model_index (admin_docs.test_views.AdminDocViewTests)', 'test_namespaced_view_detail (admin_docs.test_views.AdminDocViewTests)', 'test_no_sites_framework (admin_docs.test_views.AdminDocViewTests)', 'test_template_detail (admin_docs.test_views.AdminDocViewTests)', 'test_templatefilter_index (admin_docs.test_views.AdminDocViewTests)', 'test_templatetag_index (admin_docs.test_views.AdminDocViewTests)', 'test_view_detail (admin_docs.test_views.AdminDocViewTests)', 'test_view_detail_as_method (admin_docs.test_views.AdminDocViewTests)', 'test_view_detail_illegal_import (admin_docs.test_views.AdminDocViewTests)', 'test_view_index (admin_docs.test_views.AdminDocViewTests)', 'test_view_index_with_method (admin_docs.test_views.AdminDocViewTests)', 'test_bookmarklets (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_index (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_missing_docutils (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_model_index (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_namespaced_view_detail (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_no_sites_framework (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_template_detail (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_templatefilter_index (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_templatetag_index (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_view_detail (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_view_detail_as_method (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_view_detail_illegal_import (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_view_index (admin_docs.test_views.AdminDocViewWithMultipleEngines)', 'test_view_index_with_method (admin_docs.test_views.AdminDocViewWithMultipleEngines)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11728: resolved: True
+2026-10-30 15:32:56,378 - INFO - Attempting to stop container sweb.eval.django__django-11728.verified_full_opencode...
+2026-10-30 15:33:12,346 - INFO - Container sweb.eval.django__django-11728.verified_full_opencode stopped successfully.
+2026-10-30 15:33:12,346 - INFO - Attempting to remove container sweb.eval.django__django-11728.verified_full_opencode...
+2026-10-30 15:33:12,405 - INFO - Container sweb.eval.django__django-11728.verified_full_opencode removed successfully.

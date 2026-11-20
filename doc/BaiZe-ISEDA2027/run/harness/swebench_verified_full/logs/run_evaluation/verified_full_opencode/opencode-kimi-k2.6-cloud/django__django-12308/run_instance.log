@@ -1,0 +1,81 @@
+2026-10-30 15:33:59,887 - INFO - Creating container for django__django-12308...
+2026-10-30 15:33:59,945 - INFO - Container for django__django-12308 created: b39cbcd6df212b644e8c259b92dd7f4fcd7d14ba56d991dc85b1eacfa807d685
+2026-10-30 15:34:01,010 - INFO - Container for django__django-12308 started: b39cbcd6df212b644e8c259b92dd7f4fcd7d14ba56d991dc85b1eacfa807d685
+2026-10-30 15:34:01,011 - INFO - Intermediate patch for django__django-12308 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12308/patch.diff, now applying to container...
+2026-10-30 15:34:01,151 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/utils.py...
+warning: django/contrib/admin/utils.py has type 100755, expected 100644
+Checking patch tests/admin_utils/tests.py...
+warning: tests/admin_utils/tests.py has type 100755, expected 100644
+Applied patch django/contrib/admin/utils.py cleanly.
+Applied patch tests/admin_utils/tests.py cleanly.
+
+2026-10-30 15:34:02,542 - INFO - Git diff before:
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f017..184d30a86d 100755
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -1,5 +1,6 @@
+ import datetime
+ import decimal
++import json
+ from collections import defaultdict
+ 
+ from django.core.exceptions import FieldDoesNotExist
+@@ -398,6 +399,8 @@ def display_for_field(value, field, empty_value_display):
+         return formats.number_format(value)
+     elif isinstance(field, models.FileField) and value:
+         return format_html('<a href="{}">{}</a>', value.url, value)
++    elif isinstance(field, models.JSONField):
++        return json.dumps(value, cls=field.encoder)
+     else:
+         return display_for_value(value, empty_value_display)
+ 
+diff --git a/tests/admin_utils/tests.py b/tests/admin_utils/tests.py
+index 463ba9556d..f49f91593d 100755
+--- a/tests/admin_utils/tests.py
++++ b/tests/admin_utils/tests.py
+@@ -197,6 +197,12 @@ class UtilsTests(SimpleTestCase):
+         display_value = display_for_field(12345, models.IntegerField(), self.empty_value)
+         self.assertEqual(display_value, '12,345')
+ 
++    def test_jsonfield_display_for_field(self):
++        display_value = display_for_field({'foo': 'bar'}, models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, '{"foo": "bar"}')
++        display_value = display_for_field(['foo', 'bar'], models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, '["foo", "bar"]')
++
+     def test_list_display_for_value(self):
+         display_value = display_for_value([1, 2, 3], self.empty_value)
+         self.assertEqual(display_value, '1, 2, 3')
+2026-10-30 15:34:02,545 - INFO - Eval script for django__django-12308 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12308/eval.sh; copying to container...
+2026-10-30 15:34:10,860 - INFO - Test runtime: 8.22 seconds
+2026-10-30 15:34:10,865 - INFO - Test output for django__django-12308 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12308/test_output.txt
+2026-10-30 15:34:10,947 - INFO - Git diff after:
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f017..184d30a86d 100755
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -1,5 +1,6 @@
+ import datetime
+ import decimal
++import json
+ from collections import defaultdict
+ 
+ from django.core.exceptions import FieldDoesNotExist
+@@ -398,6 +399,8 @@ def display_for_field(value, field, empty_value_display):
+         return formats.number_format(value)
+     elif isinstance(field, models.FileField) and value:
+         return format_html('<a href="{}">{}</a>', value.url, value)
++    elif isinstance(field, models.JSONField):
++        return json.dumps(value, cls=field.encoder)
+     else:
+         return display_for_value(value, empty_value_display)
+2026-10-30 15:34:10,947 - INFO - Git diff changed after running eval script
+2026-10-30 15:34:10,947 - INFO - Grading answer for django__django-12308...
+2026-10-30 15:34:10,970 - INFO - report: {'django__django-12308': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_json_display_for_field (admin_utils.tests.UtilsTests)', 'test_label_for_field (admin_utils.tests.UtilsTests)']}, 'PASS_TO_PASS': {'success': ['test_cyclic (admin_utils.tests.NestedObjectsTests)', 'test_non_added_parent (admin_utils.tests.NestedObjectsTests)', 'test_on_delete_do_nothing (admin_utils.tests.NestedObjectsTests)', 'test_queries (admin_utils.tests.NestedObjectsTests)', 'test_relation_on_abstract (admin_utils.tests.NestedObjectsTests)', 'test_siblings (admin_utils.tests.NestedObjectsTests)', 'test_unrelated_roots (admin_utils.tests.NestedObjectsTests)', 'test_flatten (admin_utils.tests.UtilsTests)', 'test_flatten_fieldsets (admin_utils.tests.UtilsTests)', 'test_label_for_field_form_argument (admin_utils.tests.UtilsTests)', 'test_label_for_property (admin_utils.tests.UtilsTests)', 'test_list_display_for_value (admin_utils.tests.UtilsTests)', 'test_list_display_for_value_boolean (admin_utils.tests.UtilsTests)', 'test_null_display_for_field (admin_utils.tests.UtilsTests)', 'test_number_formats_display_for_field (admin_utils.tests.UtilsTests)', 'test_number_formats_with_thousand_separator_display_for_field (admin_utils.tests.UtilsTests)', 'test_quote (admin_utils.tests.UtilsTests)', 'test_related_name (admin_utils.tests.UtilsTests)', 'test_safestring_in_field_label (admin_utils.tests.UtilsTests)', 'test_values_from_lookup_field (admin_utils.tests.UtilsTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12308: resolved: False
+2026-10-30 15:34:10,972 - INFO - Attempting to stop container sweb.eval.django__django-12308.verified_full_opencode...
+2026-10-30 15:34:26,676 - INFO - Container sweb.eval.django__django-12308.verified_full_opencode stopped successfully.
+2026-10-30 15:34:26,676 - INFO - Attempting to remove container sweb.eval.django__django-12308.verified_full_opencode...
+2026-10-30 15:34:26,731 - INFO - Container sweb.eval.django__django-12308.verified_full_opencode removed successfully.

@@ -1,0 +1,34 @@
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c1..2aca8bab 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c20..91589cc2 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,4 +1,5 @@
+ from sympy.core.numbers import (I, Rational, pi)
++from sympy.core.function import FunctionClass
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+ from sympy.core.sympify import sympify  # can't import as S yet
+@@ -326,6 +327,10 @@ def sym(s):
+     raises(ValueError, lambda: symbols(':a:'))
+     raises(ValueError, lambda: symbols('::a'))
+ 
++    # issue 23867
++    a, s = symbols(('a0:2', 's0:2'), cls=Function)
++    assert isinstance(a[0], FunctionClass) and isinstance(s[1], FunctionClass)
++
+ 
+ def test_symbols_become_functions_issue_3539():
+     from sympy.abc import alpha, phi, beta, t

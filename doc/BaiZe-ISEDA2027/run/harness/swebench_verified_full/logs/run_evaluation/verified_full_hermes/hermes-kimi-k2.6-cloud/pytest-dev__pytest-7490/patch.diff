@@ -1,0 +1,71 @@
+diff --git a/src/_pytest/skipping.py b/src/_pytest/skipping.py
+index 335e109..4e6dcc3 100644
+--- a/src/_pytest/skipping.py
++++ b/src/_pytest/skipping.py
+@@ -262,6 +262,8 @@ def pytest_runtest_makereport(item: Item, call: CallInfo[None]):
+     outcome = yield
+     rep = outcome.get_result()
+     xfailed = item._store.get(xfailed_key, None)
++    if xfailed is None and rep.when == "call":
++        xfailed = evaluate_xfail_marks(item)
+     # unittest special case, see setting of unexpectedsuccess_key
+     if unexpectedsuccess_key in item._store and rep.when == "call":
+         reason = item._store[unexpectedsuccess_key]
+diff --git a/test_repro.py b/test_repro.py
+new file mode 100644
+index 0000000..2b477f1
+--- /dev/null
++++ b/test_repro.py
+@@ -0,0 +1,7 @@
++import pytest
++
++
++def test_xfail_test(request):
++    mark = pytest.mark.xfail(reason="xfail")
++    request.node.add_marker(mark)
++    assert 0
+diff --git a/test_xfail_dynamic.py b/test_xfail_dynamic.py
+new file mode 100644
+index 0000000..1d0596c
+--- /dev/null
++++ b/test_xfail_dynamic.py
+@@ -0,0 +1,8 @@
++import pytest
++
++
++def test_xfail_added_during_call(request):
++    """Dynamically adding xfail marker during the test should work (#7511)."""
++    mark = pytest.mark.xfail(reason="dynamically added")
++    request.node.add_marker(mark)
++    assert 0
+diff --git a/test_xfail_edge_cases.py b/test_xfail_edge_cases.py
+new file mode 100644
+index 0000000..c2a17f4
+--- /dev/null
++++ b/test_xfail_edge_cases.py
+@@ -0,0 +1,25 @@
++import pytest
++
++
++def test_xfail_dynamic_raises_match(request):
++    """Dynamically added xfail with raises matching the exception."""
++    request.node.add_marker(pytest.mark.xfail(reason="dyn", raises=ValueError))
++    raise ValueError("boom")
++
++
++def test_xfail_dynamic_raises_no_match(request):
++    """Dynamically added xfail with raises not matching -> should fail."""
++    request.node.add_marker(pytest.mark.xfail(reason="dyn", raises=ValueError))
++    raise TypeError("boom")
++
++
++def test_xfail_dynamic_strict_pass(request):
++    """Dynamically added strict xfail that passes -> should fail (XPASS strict)."""
++    request.node.add_marker(pytest.mark.xfail(reason="dyn", strict=True))
++    assert 1
++
++
++def test_xfail_dynamic_not_strict_pass(request):
++    """Dynamically added non-strict xfail that passes -> xpassed."""
++    request.node.add_marker(pytest.mark.xfail(reason="dyn", strict=False))
++    assert 1

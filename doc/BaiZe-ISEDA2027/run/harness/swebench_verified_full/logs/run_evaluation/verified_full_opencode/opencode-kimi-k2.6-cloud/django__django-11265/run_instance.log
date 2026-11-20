@@ -1,0 +1,124 @@
+2026-10-30 15:31:58,286 - INFO - Creating container for django__django-11265...
+2026-10-30 15:31:58,360 - INFO - Container for django__django-11265 created: a67cac7fae79735ca6205441a1f769d164a0c96e0ca122a84cf9c2ec22b55c3e
+2026-10-30 15:31:59,972 - INFO - Container for django__django-11265 started: a67cac7fae79735ca6205441a1f769d164a0c96e0ca122a84cf9c2ec22b55c3e
+2026-10-30 15:31:59,974 - INFO - Intermediate patch for django__django-11265 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11265/patch.diff, now applying to container...
+2026-10-30 15:32:00,139 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/query.py...
+Checking patch tests/filtered_relation/tests.py...
+Applied patch django/db/models/sql/query.py cleanly.
+Applied patch tests/filtered_relation/tests.py cleanly.
+
+2026-10-30 15:32:01,562 - INFO - Git diff before:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index d69c24419b..f44334c38c 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1666,6 +1666,7 @@ class Query(BaseExpression):
+             filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
+         # Generate the inner query.
+         query = Query(self.model)
++        query._filtered_relations = self._filtered_relations.copy()
+         query.add_filter(filter_expr)
+         query.clear_ordering(True)
+         # Try to have as simple as possible subquery -> trim leading joins from
+@@ -2143,13 +2144,17 @@ class Query(BaseExpression):
+         # (that is, self). We can't do this for LEFT JOINs because we would
+         # miss those rows that have nothing on the outer side.
+         if self.alias_map[lookup_tables[trimmed_paths + 1]].join_type != LOUTER:
+-            select_fields = [r[0] for r in join_field.related_fields]
+-            select_alias = lookup_tables[trimmed_paths + 1]
+-            self.unref_alias(lookup_tables[trimmed_paths])
+-            extra_restriction = join_field.get_extra_restriction(
+-                self.where_class, None, lookup_tables[trimmed_paths + 1])
+-            if extra_restriction:
+-                self.where.add(extra_restriction, AND)
++            if not self.alias_map[lookup_tables[trimmed_paths + 1]].filtered_relation:
++                select_fields = [r[0] for r in join_field.related_fields]
++                select_alias = lookup_tables[trimmed_paths + 1]
++                self.unref_alias(lookup_tables[trimmed_paths])
++                extra_restriction = join_field.get_extra_restriction(
++                    self.where_class, None, lookup_tables[trimmed_paths + 1])
++                if extra_restriction:
++                    self.where.add(extra_restriction, AND)
++            else:
++                select_fields = [r[1] for r in join_field.related_fields]
++                select_alias = lookup_tables[trimmed_paths]
+         else:
+             # TODO: It might be possible to trim more joins from the start of the
+             # inner query if it happens to have a longer join chain containing the
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 5e85dff16c..fc609c7956 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -98,6 +98,22 @@ class FilteredRelationTests(TestCase):
+             [self.author1]
+         )
+ 
++    def test_with_join_exclude(self):
++        self.assertSequenceEqual(
++            Author.objects.annotate(
++                book_alice=FilteredRelation('book', condition=Q(book__title__iexact='poem by alice')),
++            ).exclude(book_alice__isnull=False),
++            [self.author2]
++        )
++
++    def test_with_join_exclude_field_lookup(self):
++        self.assertSequenceEqual(
++            Author.objects.annotate(
++                book_alice=FilteredRelation('book', condition=Q(book__title__iexact='poem by alice')),
++            ).exclude(book_alice__title='Poem by Alice'),
++            [self.author2]
++        )
++
+     def test_with_join_and_complex_condition(self):
+         self.assertSequenceEqual(
+             Author.objects.annotate(
+2026-10-30 15:32:01,564 - INFO - Eval script for django__django-11265 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11265/eval.sh; copying to container...
+2026-10-30 15:32:08,129 - INFO - Test runtime: 6.48 seconds
+2026-10-30 15:32:08,130 - INFO - Test output for django__django-11265 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11265/test_output.txt
+2026-10-30 15:32:08,210 - INFO - Git diff after:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index d69c24419b..f44334c38c 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1666,6 +1666,7 @@ class Query(BaseExpression):
+             filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
+         # Generate the inner query.
+         query = Query(self.model)
++        query._filtered_relations = self._filtered_relations.copy()
+         query.add_filter(filter_expr)
+         query.clear_ordering(True)
+         # Try to have as simple as possible subquery -> trim leading joins from
+@@ -2143,13 +2144,17 @@ class Query(BaseExpression):
+         # (that is, self). We can't do this for LEFT JOINs because we would
+         # miss those rows that have nothing on the outer side.
+         if self.alias_map[lookup_tables[trimmed_paths + 1]].join_type != LOUTER:
+-            select_fields = [r[0] for r in join_field.related_fields]
+-            select_alias = lookup_tables[trimmed_paths + 1]
+-            self.unref_alias(lookup_tables[trimmed_paths])
+-            extra_restriction = join_field.get_extra_restriction(
+-                self.where_class, None, lookup_tables[trimmed_paths + 1])
+-            if extra_restriction:
+-                self.where.add(extra_restriction, AND)
++            if not self.alias_map[lookup_tables[trimmed_paths + 1]].filtered_relation:
++                select_fields = [r[0] for r in join_field.related_fields]
++                select_alias = lookup_tables[trimmed_paths + 1]
++                self.unref_alias(lookup_tables[trimmed_paths])
++                extra_restriction = join_field.get_extra_restriction(
++                    self.where_class, None, lookup_tables[trimmed_paths + 1])
++                if extra_restriction:
++                    self.where.add(extra_restriction, AND)
++            else:
++                select_fields = [r[1] for r in join_field.related_fields]
++                select_alias = lookup_tables[trimmed_paths]
+         else:
+             # TODO: It might be possible to trim more joins from the start of the
+             # inner query if it happens to have a longer join chain containing the
+2026-10-30 15:32:08,210 - INFO - Git diff changed after running eval script
+2026-10-30 15:32:08,210 - INFO - Grading answer for django__django-11265...
+2026-10-30 15:32:08,212 - INFO - report: {'django__django-11265': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_with_exclude (filtered_relation.tests.FilteredRelationTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_aggregate (filtered_relation.tests.FilteredRelationAggregationTests)', 'test_as_subquery (filtered_relation.tests.FilteredRelationTests)', 'test_defer (filtered_relation.tests.FilteredRelationTests)', 'test_difference (filtered_relation.tests.FilteredRelationTests)', 'test_exclude_relation_with_join (filtered_relation.tests.FilteredRelationTests)', 'test_extra (filtered_relation.tests.FilteredRelationTests)', 'test_internal_queryset_alias_mapping (filtered_relation.tests.FilteredRelationTests)', 'test_intersection (filtered_relation.tests.FilteredRelationTests)', 'test_multiple_times (filtered_relation.tests.FilteredRelationTests)', 'test_only_not_supported (filtered_relation.tests.FilteredRelationTests)', 'test_select_for_update (filtered_relation.tests.FilteredRelationTests)', 'test_select_related (filtered_relation.tests.FilteredRelationTests)', 'test_select_related_foreign_key (filtered_relation.tests.FilteredRelationTests)', 'test_select_related_with_empty_relation (filtered_relation.tests.FilteredRelationTests)', 'test_union (filtered_relation.tests.FilteredRelationTests)', 'test_values (filtered_relation.tests.FilteredRelationTests)', 'test_values_list (filtered_relation.tests.FilteredRelationTests)', 'test_with_condition_as_expression_error (filtered_relation.tests.FilteredRelationTests)', 'test_with_empty_relation_name_error (filtered_relation.tests.FilteredRelationTests)', 'test_with_foreign_key_error (filtered_relation.tests.FilteredRelationTests)', 'test_with_foreign_key_on_condition_error (filtered_relation.tests.FilteredRelationTests)', 'test_with_generic_foreign_key (filtered_relation.tests.FilteredRelationTests)', 'test_with_join (filtered_relation.tests.FilteredRelationTests)', 'test_with_join_and_complex_condition (filtered_relation.tests.FilteredRelationTests)', 'test_with_m2m (filtered_relation.tests.FilteredRelationTests)', 'test_with_m2m_deep (filtered_relation.tests.FilteredRelationTests)', 'test_with_m2m_multijoin (filtered_relation.tests.FilteredRelationTests)', 'test_with_multiple_filter (filtered_relation.tests.FilteredRelationTests)', 'test_with_prefetch_related (filtered_relation.tests.FilteredRelationTests)', 'test_without_join (filtered_relation.tests.FilteredRelationTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11265: resolved: True
+2026-10-30 15:32:08,214 - INFO - Attempting to stop container sweb.eval.django__django-11265.verified_full_opencode...
+2026-10-30 15:32:23,800 - INFO - Container sweb.eval.django__django-11265.verified_full_opencode stopped successfully.
+2026-10-30 15:32:23,801 - INFO - Attempting to remove container sweb.eval.django__django-11265.verified_full_opencode...
+2026-10-30 15:32:23,862 - INFO - Container sweb.eval.django__django-11265.verified_full_opencode removed successfully.

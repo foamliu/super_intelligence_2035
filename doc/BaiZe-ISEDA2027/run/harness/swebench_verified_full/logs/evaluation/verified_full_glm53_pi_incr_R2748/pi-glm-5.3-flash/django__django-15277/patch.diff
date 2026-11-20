@@ -1,0 +1,32 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index f30b523346..88c9ca9f28 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -1010,7 +1010,8 @@ class CharField(Field):
+     def __init__(self, *args, db_collation=None, **kwargs):
+         super().__init__(*args, **kwargs)
+         self.db_collation = db_collation
+-        self.validators.append(validators.MaxLengthValidator(self.max_length))
++        if self.max_length is not None:
++            self.validators.append(validators.MaxLengthValidator(self.max_length))
+ 
+     def check(self, **kwargs):
+         databases = kwargs.get('databases') or []
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 13c7e2b212..eea6820625 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1847,6 +1847,13 @@ class ValueTests(TestCase):
+                 expr = Value(value)
+                 self.assertIsInstance(expr.output_field, output_field_type)
+ 
++    def test_resolve_output_field_no_max_length_validator(self):
++        # CharFields without a max_length (as created by
++        # Value._resolve_output_field()) don't need a MaxLengthValidator.
++        expr = Value('test')
++        self.assertIsInstance(expr.output_field, CharField)
++        self.assertEqual(expr.output_field.validators, [])
++
+     def test_resolve_output_field_failure(self):
+         msg = 'Cannot resolve expression type, unknown output_field'
+         with self.assertRaisesMessage(FieldError, msg):

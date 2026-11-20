@@ -1,0 +1,43 @@
+diff --git a/django/core/cache/backends/db.py b/django/core/cache/backends/db.py
+index 33c79c5a1..6394ba878 100644
+--- a/django/core/cache/backends/db.py
++++ b/django/core/cache/backends/db.py
+@@ -267,9 +267,11 @@ class DatabaseCache(BaseDatabaseCache):
+                 cursor.execute(
+                     connection.ops.cache_key_culling_sql() % table,
+                     [cull_num])
+-                cursor.execute("DELETE FROM %s "
+-                               "WHERE cache_key < %%s" % table,
+-                               [cursor.fetchone()[0]])
++                result = cursor.fetchone()
++                if result:
++                    cursor.execute("DELETE FROM %s "
++                                   "WHERE cache_key < %%s" % table,
++                                   [result[0]])
+ 
+     def clear(self):
+         db = router.db_for_write(self.cache_model_class)
+diff --git a/tests/cache/tests.py b/tests/cache/tests.py
+index d404475e1..7129d1214 100644
+--- a/tests/cache/tests.py
++++ b/tests/cache/tests.py
+@@ -1040,6 +1040,19 @@ class DBCacheTests(BaseCacheTests, TransactionTestCase):
+     def test_zero_cull(self):
+         self._perform_cull_test('zero_cull', 50, 18)
+ 
++    @override_settings(CACHES=caches_setting_for_tests(
++        BACKEND='django.core.cache.backends.db.DatabaseCache',
++        LOCATION='test cache table',
++        OPTIONS={'CULL_FREQUENCY': 1, 'MAX_ENTRIES': 1},
++    ))
++    def test_cull_none_result(self):
++        # With CULL_FREQUENCY=1, cull_num=num which means the offset query
++        # can return None. This should not raise an error.
++        cache = caches['default']
++        cache.set('key1', 'value1')
++        cache.set('key2', 'value2')
++        # The above should not raise 'NoneType' object is not subscriptable.
++
+     def test_second_call_doesnt_crash(self):
+         out = io.StringIO()
+         management.call_command('createcachetable', stdout=out)

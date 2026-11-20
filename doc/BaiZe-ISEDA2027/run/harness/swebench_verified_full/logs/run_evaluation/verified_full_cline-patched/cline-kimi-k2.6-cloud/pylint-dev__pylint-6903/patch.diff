@@ -1,0 +1,102 @@
+diff --git a/pylint/lint/run.py b/pylint/lint/run.py
+index a7e5d55..0f10a6e 100644
+--- a/pylint/lint/run.py
++++ b/pylint/lint/run.py
+@@ -58,6 +58,8 @@ def _query_cpu() -> int | None:
+             cpu_shares = int(file.read().rstrip())
+         # For AWS, gives correct value * 1024.
+         avail_cpu = int(cpu_shares / 1024)
++    if avail_cpu is not None:
++        return max(avail_cpu, 1)
+     return avail_cpu
+ 
+ 
+diff --git a/tests/lint/test_run.py b/tests/lint/test_run.py
+new file mode 100644
+index 0000000..d50683c
+--- /dev/null
++++ b/tests/lint/test_run.py
+@@ -0,0 +1,83 @@
++# Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
++# For details: https://github.com/PyCQA/pylint/blob/main/LICENSE
++# Copyright (c) https://github.com/PyCQA/pylint/blob/main/CONTRIBUTORS.txt
++
++from __future__ import annotations
++
++from pathlib import Path
++from unittest.mock import mock_open, patch
++
++from pylint.lint.run import _query_cpu
++
++
++class TestQueryCpu:
++    """Tests for _query_cpu()."""
++
++    def test_no_cgroup_files(self) -> None:
++        def mock_is_file(self: Path) -> bool:
++            return False
++
++        with patch.object(Path, "is_file", mock_is_file):
++            assert _query_cpu() is None
++
++    def test_quota_negative_one_no_shares(self) -> None:
++        def mock_is_file(self: Path) -> bool:
++            return str(self) == "/sys/fs/cgroup/cpu/cpu.cfs_quota_us"
++
++        with patch.object(Path, "is_file", mock_is_file):
++            with patch("builtins.open", mock_open(read_data="-1")):
++                assert _query_cpu() is None
++
++    def test_cpu_shares_returns_at_least_one(self) -> None:
++        def mock_is_file(self: Path) -> bool:
++            return str(self) == "/sys/fs/cgroup/cpu/cpu.shares"
++
++        with patch.object(Path, "is_file", mock_is_file):
++            with patch("builtins.open", mock_open(read_data="2")):
++                # 2 / 1024 would be 0, but we should get at least 1
++                assert _query_cpu() == 1
++
++    def test_cpu_shares_normal(self) -> None:
++        def mock_is_file(self: Path) -> bool:
++            return str(self) == "/sys/fs/cgroup/cpu/cpu.shares"
++
++        with patch.object(Path, "is_file", mock_is_file):
++            with patch("builtins.open", mock_open(read_data="2048")):
++                assert _query_cpu() == 2
++
++    def test_small_quota_returns_at_least_one(self) -> None:
++        def mock_is_file(self: Path) -> bool:
++            return str(self) in {
++                "/sys/fs/cgroup/cpu/cpu.cfs_quota_us",
++                "/sys/fs/cgroup/cpu/cpu.cfs_period_us",
++            }
++
++        def mock_open_func(path: str, **kwargs: str) -> mock_open:
++            if path == "/sys/fs/cgroup/cpu/cpu.cfs_quota_us":
++                return mock_open(read_data="50000").return_value
++            if path == "/sys/fs/cgroup/cpu/cpu.cfs_period_us":
++                return mock_open(read_data="100000").return_value
++            raise FileNotFoundError(path)
++
++        with patch.object(Path, "is_file", mock_is_file):
++            with patch("builtins.open", mock_open_func):
++                # 50000 / 100000 would be 0, but we should get at least 1
++                assert _query_cpu() == 1
++
++    def test_quota_larger_than_period(self) -> None:
++        def mock_is_file(self: Path) -> bool:
++            return str(self) in {
++                "/sys/fs/cgroup/cpu/cpu.cfs_quota_us",
++                "/sys/fs/cgroup/cpu/cpu.cfs_period_us",
++            }
++
++        def mock_open_func(path: str, **kwargs: str) -> mock_open:
++            if path == "/sys/fs/cgroup/cpu/cpu.cfs_quota_us":
++                return mock_open(read_data="200000").return_value
++            if path == "/sys/fs/cgroup/cpu/cpu.cfs_period_us":
++                return mock_open(read_data="100000").return_value
++            raise FileNotFoundError(path)
++
++        with patch.object(Path, "is_file", mock_is_file):
++            with patch("builtins.open", mock_open_func):
++                assert _query_cpu() == 2

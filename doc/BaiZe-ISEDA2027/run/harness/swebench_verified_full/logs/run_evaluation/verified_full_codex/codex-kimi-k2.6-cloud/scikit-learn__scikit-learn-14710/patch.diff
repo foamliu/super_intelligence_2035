@@ -1,0 +1,51 @@
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8c..3170e400 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd..149b3ce1 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -415,3 +415,26 @@ def test_infinite_values_missing_values():
+ 
+     assert stump_clf.fit(X, y_isinf).score(X, y_isinf) == 1
+     assert stump_clf.fit(X, y_isnan).score(X, y_isnan) == 1
++
++
++def test_early_stopping_with_string_targets():
++    # Make sure HistGradientBoostingClassifier works with string targets
++    # when early stopping is on. Non-regression test for issue #14769.
++    X = np.random.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++    gb = HistGradientBoostingClassifier(n_iter_no_change=10)
++    gb.fit(X, y)
++    assert gb.classes_[0] == 'x'
++    assert gb.classes_[1] == 'y'
++
++
++def test_early_stopping_with_string_targets_and_scorer():
++    # Make sure HistGradientBoostingClassifier works with string targets
++    # when early stopping is on and scoring is not 'loss'. Non-regression
++    # test for issue #14769.
++    X = np.random.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++    gb = HistGradientBoostingClassifier(n_iter_no_change=10, scoring='accuracy')
++    gb.fit(X, y)
++    assert gb.classes_[0] == 'x'
++    assert gb.classes_[1] == 'y'

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13794",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/django/utils/functional.py b/django/utils/functional.py\nindex 6d38f932..1345e455 100644\n--- a/django/utils/functional.py\n+++ b/django/utils/functional.py\n@@ -176,6 +176,9 @@ def lazy(func, *resultclasses):\n                 return str(self) % rhs\n             return self.__cast() % rhs\n \n+        def __radd__(self, other):\n+            return other + self.__cast()\n+\n         def __deepcopy__(self, memo):\n             # Instances of this class are effectively immutable. It's just a\n             # collection of functions. So we don't need to do anything\ndiff --git a/tests/template_tests/filter_tests/test_add.py b/tests/template_tests/filter_tests/test_add.py\nindex 0fcc661f..a6fe1c43 100644\n--- a/tests/template_tests/filter_tests/test_add.py\n+++ b/tests/template_tests/filter_tests/test_add.py\n@@ -1,6 +1,7 @@\n from datetime import date, timedelta\n \n from django.template.defaultfilters import add\n+from django.utils.functional import lazystr\n from django.test import SimpleTestCase\n \n from ..utils import setup\n@@ -51,3 +52,10 @@ class FunctionTests(SimpleTestCase):\n \n     def test_add(self):\n         self.assertEqual(add('1', '2'), 3)\n+\n+    def test_concatenate_lazy_string(self):\n+        self.assertEqual(add('a', lazystr('b')), 'ab')\n+\n+    def test_concatenate_lazy_string_on_the_left(self):\n+        self.assertEqual(add(lazystr('a'), 'b'), 'ab')\n+\n"
+  }
+]

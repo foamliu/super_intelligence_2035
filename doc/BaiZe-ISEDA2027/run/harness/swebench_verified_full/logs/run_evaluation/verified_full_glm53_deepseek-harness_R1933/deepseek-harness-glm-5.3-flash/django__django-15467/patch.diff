@@ -1,0 +1,42 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 64be087bf..aa91cb500 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -269,7 +269,9 @@ class BaseModelAdmin(metaclass=forms.MediaDefiningClass):
+                         "class": get_ul_class(self.radio_fields[db_field.name]),
+                     }
+                 )
+-                kwargs["empty_label"] = _("None") if db_field.blank else None
++                kwargs["empty_label"] = (
++                    kwargs.get("empty_label") or _("None") if db_field.blank else None
++                )
+ 
+         if "queryset" not in kwargs:
+             queryset = self.get_field_queryset(db, db_field, request)
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index ede1a0921..41e93f248 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -658,6 +658,22 @@ class ModelAdminTests(TestCase):
+             [("", "None"), (1, "Plane"), (2, "Train"), (3, "Bus")],
+         )
+ 
++    def test_foreign_key_as_radio_field_with_custom_empty_label(self):
++        class ConcertAdmin(ModelAdmin):
++            radio_fields = {"opening_band": VERTICAL}
++
++            def formfield_for_foreignkey(self, db_field, request, **kwargs):
++                if db_field.name == "opening_band":
++                    kwargs["empty_label"] = "I WANT TO SET MY OWN EMPTY LABEL"
++                return super().formfield_for_foreignkey(db_field, request, **kwargs)
++
++        cma = ConcertAdmin(Concert, self.site)
++        cmafa = cma.get_form(request)
++        self.assertEqual(
++            cmafa.base_fields["opening_band"].empty_label,
++            "I WANT TO SET MY OWN EMPTY LABEL",
++        )
++
+         class AdminConcertForm(forms.ModelForm):
+             class Meta:
+                 model = Concert

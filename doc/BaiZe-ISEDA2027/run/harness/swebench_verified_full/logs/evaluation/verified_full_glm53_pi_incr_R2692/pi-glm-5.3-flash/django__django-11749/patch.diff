@@ -1,0 +1,36 @@
+diff --git a/repro_28360.py b/repro_28360.py
+new file mode 100644
+index 0000000000..efd677847e
+--- /dev/null
++++ b/repro_28360.py
+@@ -0,0 +1,30 @@
++import django
++from django.conf import settings
++
++settings.configure(DEBUG=True, INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'])
++django.setup()
++
++from django.core.management import call_command
++from django.core.management.base import BaseCommand, CommandError
++
++
++class Command(BaseCommand):
++    def add_arguments(self, parser):
++        shop = parser.add_mutually_exclusive_group(required=True)
++        shop.add_argument('--shop-id', nargs='?', type=int, default=None, dest='shop_id')
++        shop.add_argument('--shop', nargs='?', type=str, default=None, dest='shop_name')
++
++    def handle(self, *args, **options):
++        print('OK: shop_id=%r shop_name=%r' % (options['shop_id'], options['shop_name']))
++
++
++# Works: option passed as a CLI-style arg.
++call_command(Command(), '--shop-id=1')
++
++# Fails: option passed as a kwarg.
++try:
++    call_command(Command(), shop_id=1)
++except CommandError as e:
++    print('FAIL (kwarg): %s' % e)
++else:
++    print('PASS (kwarg)')

@@ -1,0 +1,37 @@
+=== incr_eval_1route R1130 START Sun Nov  1 05:39:49 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sun Nov  1 05:39:49 AM CST 2026] === merge hermes predictions ===
+hermes: 54 real patches merged
+[Sun Nov  1 05:39:49 AM CST 2026] === hermes eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:26<00:00, 26.59s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.59s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.59s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sun Nov  1 05:40:21 AM CST 2026] === hermes eval DONE ===
+[Sun Nov  1 05:40:21 AM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: unchanged (n=339 resolved=261 failed=78 infra=0)
+  codex: unchanged (n=223 resolved=175 failed=48 infra=0)
+  hermes: WROTE eval_hermes.json  n=54 resolved=42 failed=12 infra=0
+  deepseek-harness: unchanged (n=64 resolved=51 failed=13 infra=0)
+[Sun Nov  1 05:40:21 AM CST 2026] === gen report HTML ===
+  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
+  claude-code  done=500/500 patch=339 no_patch=84 infra=70 eval=Y resolved=261
+  codex        done=500/500 patch=223 no_patch=75 infra=197 eval=Y resolved=175
+  hermes       done=83/500 patch=53 no_patch=29 infra=0 eval=Y resolved=42
+  deepseek-harness done=205/500 patch=62 no_patch=4 infra=118 eval=Y resolved=51
+=== incr_eval_1route R1130 DONE Sun Nov  1 05:40:22 AM CST 2026 ===

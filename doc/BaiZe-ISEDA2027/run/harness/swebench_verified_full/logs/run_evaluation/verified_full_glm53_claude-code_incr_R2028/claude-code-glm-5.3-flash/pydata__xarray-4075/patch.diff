@@ -1,0 +1,77 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 447aaf5..a057271 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -87,6 +87,11 @@ Bug fixes
+ ~~~~~~~~~
+ - Support dark mode in VS code (:issue:`4024`)
+   By `Keisuke Fujii <https://github.com/fujiisoup>`_.
++- Fixed a bug where ``weighted.mean`` and ``weighted.sum_of_weights`` produced wrong
++  results when passing boolean weights, because the sum of weights was computed as a
++  boolean (logical) dot product instead of a numeric sum. Boolean weights are now
++  converted to integers before the reduction. (:issue:`4074`)
++  By `Yang Liu <https://github.com/>`_.
+ - ``ValueError`` is raised when ``fill_value`` is not a scalar in :py:meth:`full_like`. (:issue:`3977`)
+   By `Huite Bootsma <https://github.com/huite>`_.
+ - Fix wrong order in converting a ``pd.Series`` with a MultiIndex to ``DataArray``. (:issue:`3951`)
+diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py
+index 996d2e4..c8ea54a 100644
+--- a/xarray/core/weighted.py
++++ b/xarray/core/weighted.py
+@@ -142,7 +142,13 @@ class Weighted:
+         # we need to mask data values that are nan; else the weights are wrong
+         mask = da.notnull()
+ 
+-        sum_of_weights = self._reduce(mask, self.weights, dim=dim, skipna=False)
++        # bool -> int, because `xr.dot` of bools casts to bool (GH #4074)
++        if self.weights.dtype == bool:
++            sum_of_weights = self._reduce(
++                mask, self.weights.astype(int), dim=dim, skipna=False
++            )
++        else:
++            sum_of_weights = self._reduce(mask, self.weights, dim=dim, skipna=False)
+ 
+         # 0-weights are not valid
+         valid_weights = sum_of_weights != 0.0
+diff --git a/xarray/tests/test_weighted.py b/xarray/tests/test_weighted.py
+index 2453121..f254d86 100644
+--- a/xarray/tests/test_weighted.py
++++ b/xarray/tests/test_weighted.py
+@@ -158,6 +158,37 @@ def test_weighted_mean_nan(weights, expected, skipna):
+     assert_equal(expected, result)
+ 
+ 
++@pytest.mark.parametrize("da", ([1.0, 2], [1, np.nan], [np.nan, np.nan]))
++@pytest.mark.parametrize("skipna", (True, False))
++def test_weighted_sum_bool_weights(da, skipna):
++
++    da = DataArray(da)
++
++    # all weights as 1
++    weights = xr.full_like(da, True, dtype=bool)
++
++    expected = da.where(weights).sum(skipna=skipna)
++    result = da.weighted(weights).sum(skipna=skipna)
++
++    assert_equal(expected, result)
++
++
++@pytest.mark.filterwarnings("ignore:Mean of empty slice")
++@pytest.mark.parametrize("da", ([1.0, 2], [1, np.nan], [np.nan, np.nan]))
++@pytest.mark.parametrize("skipna", (True, False))
++def test_weighted_mean_bool_weights(da, skipna):
++
++    da = DataArray(da)
++
++    # all weights as 1
++    weights = xr.full_like(da, True, dtype=bool)
++
++    expected = da.where(weights).mean(skipna=skipna)
++    result = da.weighted(weights).mean(skipna=skipna)
++
++    assert_equal(expected, result)
++
++
+ def expected_weighted(da, weights, dim, skipna, operation):
+     """
+     Generate expected result using ``*`` and ``sum``. This is checked against

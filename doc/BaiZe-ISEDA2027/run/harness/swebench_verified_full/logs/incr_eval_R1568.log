@@ -1,0 +1,42 @@
+=== incr_eval R1568 START Wed Nov  4 01:48:32 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov  4 01:48:32 PM CST 2026] === merge codex predictions ===
+codex: 358 real patches merged
+[Wed Nov  4 01:48:33 PM CST 2026] === codex eval START 2 new instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:27<00:27, 27.47s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:27<00:27, 27.47s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:55<00:00, 27.58s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:55<00:00, 27.58s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:55<00:00, 27.58s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 2
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[Wed Nov  4 01:49:33 PM CST 2026] === codex eval DONE ===
+[Wed Nov  4 01:49:33 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 207 real patches merged
+[Wed Nov  4 01:49:33 PM CST 2026] === deepseek-harness eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:35<00:00, 35.03s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:35<00:00, 35.03s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:35<00:00, 35.03s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 6
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[Wed Nov  4 01:50:12 PM CST 2026] === deepseek-harness eval DONE ===
+=== incr_eval R1568 ALL DONE Wed Nov  4 01:50:12 PM CST 2026 ===

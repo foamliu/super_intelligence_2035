@@ -1,0 +1,46 @@
+2026-11-07 20:41:07,406 - INFO - Creating container for django__django-10999...
+2026-11-07 20:41:07,438 - INFO - Container for django__django-10999 created: 0c314c57ac736bc96913689a4e1e1a157c983fe907ce053b8242179f8c420940
+2026-11-07 20:41:08,238 - INFO - Container for django__django-10999 started: 0c314c57ac736bc96913689a4e1e1a157c983fe907ce053b8242179f8c420940
+2026-11-07 20:41:08,240 - INFO - Intermediate patch for django__django-10999 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-10999/patch.diff, now applying to container...
+2026-11-07 20:41:08,354 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/dateparse.py...
+Applied patch django/utils/dateparse.py cleanly.
+
+2026-11-07 20:41:09,163 - INFO - Git diff before:
+diff --git a/django/utils/dateparse.py b/django/utils/dateparse.py
+index 8d08b7d1d3..a037758784 100644
+--- a/django/utils/dateparse.py
++++ b/django/utils/dateparse.py
+@@ -29,7 +29,7 @@ datetime_re = re.compile(
+ standard_duration_re = re.compile(
+     r'^'
+     r'(?:(?P<days>-?\d+) (days?, )?)?'
+-    r'((?:(?P<hours>-?\d+):)(?=\d+:\d+))?'
++    r'((?:(?P<hours>-?\d+):)(?=-?\d+:-?\d+))?'
+     r'(?:(?P<minutes>-?\d+):)?'
+     r'(?P<seconds>-?\d+)'
+     r'(?:\.(?P<microseconds>\d{1,6})\d{0,6})?'
+2026-11-07 20:41:09,166 - INFO - Eval script for django__django-10999 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-10999/eval.sh; copying to container...
+2026-11-07 20:41:15,438 - INFO - Test runtime: 6.19 seconds
+2026-11-07 20:41:15,440 - INFO - Test output for django__django-10999 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-10999/test_output.txt
+2026-11-07 20:41:15,504 - INFO - Git diff after:
+diff --git a/django/utils/dateparse.py b/django/utils/dateparse.py
+index 8d08b7d1d3..a037758784 100644
+--- a/django/utils/dateparse.py
++++ b/django/utils/dateparse.py
+@@ -29,7 +29,7 @@ datetime_re = re.compile(
+ standard_duration_re = re.compile(
+     r'^'
+     r'(?:(?P<days>-?\d+) (days?, )?)?'
+-    r'((?:(?P<hours>-?\d+):)(?=\d+:\d+))?'
++    r'((?:(?P<hours>-?\d+):)(?=-?\d+:-?\d+))?'
+     r'(?:(?P<minutes>-?\d+):)?'
+     r'(?P<seconds>-?\d+)'
+     r'(?:\.(?P<microseconds>\d{1,6})\d{0,6})?'
+2026-11-07 20:41:15,504 - INFO - Grading answer for django__django-10999...
+2026-11-07 20:41:15,506 - INFO - report: {'django__django-10999': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_negative (utils_tests.test_dateparse.DurationParseTests)', 'test_parse_postgresql_format (utils_tests.test_dateparse.DurationParseTests)']}, 'PASS_TO_PASS': {'success': ['test_parse_date (utils_tests.test_dateparse.DateParseTests)', 'test_parse_datetime (utils_tests.test_dateparse.DateParseTests)', 'test_parse_time (utils_tests.test_dateparse.DateParseTests)', 'test_days (utils_tests.test_dateparse.DurationParseTests)', 'test_fractions_of_seconds (utils_tests.test_dateparse.DurationParseTests)', 'test_hours_minutes_seconds (utils_tests.test_dateparse.DurationParseTests)', 'test_iso_8601 (utils_tests.test_dateparse.DurationParseTests)', 'test_minutes_seconds (utils_tests.test_dateparse.DurationParseTests)', 'test_parse_python_format (utils_tests.test_dateparse.DurationParseTests)', 'test_seconds (utils_tests.test_dateparse.DurationParseTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-10999: resolved: False
+2026-11-07 20:41:15,508 - INFO - Attempting to stop container sweb.eval.django__django-10999.verified_full_glm53_opencode_R1789...
+2026-11-07 20:41:31,786 - INFO - Container sweb.eval.django__django-10999.verified_full_glm53_opencode_R1789 stopped successfully.
+2026-11-07 20:41:31,786 - INFO - Attempting to remove container sweb.eval.django__django-10999.verified_full_glm53_opencode_R1789...
+2026-11-07 20:41:31,823 - INFO - Container sweb.eval.django__django-10999.verified_full_glm53_opencode_R1789 removed successfully.

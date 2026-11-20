@@ -1,0 +1,166 @@
+2026-10-30 16:52:45,765 - INFO - Creating container for django__django-14122...
+2026-10-30 16:52:45,792 - INFO - Container for django__django-14122 created: 135128b02d4ec73404f2b8575b9cf040b818d96f08684ed1576939e6c73decb3
+2026-10-30 16:52:46,394 - INFO - Container for django__django-14122 started: 135128b02d4ec73404f2b8575b9cf040b818d96f08684ed1576939e6c73decb3
+2026-10-30 16:52:46,397 - INFO - Intermediate patch for django__django-14122 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14122/patch.diff, now applying to container...
+2026-10-30 16:52:46,551 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/aggregation/models.py...
+Checking patch tests/aggregation/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/aggregation/models.py cleanly.
+Applied patch tests/aggregation/tests.py cleanly.
+
+2026-10-30 16:52:48,236 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709d..f6cd8d3052 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -125,11 +125,12 @@ class SQLCompiler:
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+-        for expr, (sql, params, is_ref) in order_by:
+-            # Skip References to the select clause, as all expressions in the
+-            # select clause are already part of the group by.
+-            if not is_ref:
+-                expressions.extend(expr.get_group_by_cols())
++        if not self._meta_ordering:
++            for expr, (sql, params, is_ref) in order_by:
++                # Skip References to the select clause, as all expressions in the
++                # select clause are already part of the group by.
++                if not is_ref:
++                    expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+             expressions.append(expr)
+diff --git a/tests/aggregation/models.py b/tests/aggregation/models.py
+index cfc261abcc..a9377f06e0 100644
+--- a/tests/aggregation/models.py
++++ b/tests/aggregation/models.py
+@@ -43,3 +43,14 @@ class Store(models.Model):
+ 
+     def __str__(self):
+         return self.name
++
++
++class Category(models.Model):
++    name = models.CharField(max_length=100)
++    age = models.IntegerField()
++
++    class Meta:
++        ordering = ['name']
++
++    def __str__(self):
++        return self.name
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 49123396dd..dc712698c5 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -14,7 +14,7 @@ from django.test.testcases import skipUnlessDBFeature
+ from django.test.utils import Approximate, CaptureQueriesContext
+ from django.utils import timezone
+ 
+-from .models import Author, Book, Publisher, Store
++from .models import Author, Book, Category, Publisher, Store
+ 
+ 
+ class AggregateTestCase(TestCase):
+@@ -1340,3 +1340,16 @@ class AggregateTestCase(TestCase):
+             ('Stuart Russell', 1),
+             ('Peter Norvig', 2),
+         ], lambda a: (a.name, a.contact_count), ordered=False)
++
++    def test_aggregation_default_ordering_not_in_group_by(self):
++        """Meta.ordering is not included in GROUP BY when aggregating."""
++        Category.objects.bulk_create([
++            Category(name='Alice', age=30),
++            Category(name='Bob', age=30),
++            Category(name='Charlie', age=25),
++        ])
++        result = Category.objects.values('age').annotate(count=Count('id'))
++        self.assertCountEqual(result, [
++            {'age': 25, 'count': 1},
++            {'age': 30, 'count': 2},
++        ])
+2026-10-30 16:52:48,239 - INFO - Eval script for django__django-14122 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14122/eval.sh; copying to container...
+2026-10-30 16:52:55,860 - INFO - Test runtime: 7.54 seconds
+2026-10-30 16:52:55,862 - INFO - Test output for django__django-14122 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14122/test_output.txt
+2026-10-30 16:52:55,958 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709d..f6cd8d3052 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -125,11 +125,12 @@ class SQLCompiler:
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+-        for expr, (sql, params, is_ref) in order_by:
+-            # Skip References to the select clause, as all expressions in the
+-            # select clause are already part of the group by.
+-            if not is_ref:
+-                expressions.extend(expr.get_group_by_cols())
++        if not self._meta_ordering:
++            for expr, (sql, params, is_ref) in order_by:
++                # Skip References to the select clause, as all expressions in the
++                # select clause are already part of the group by.
++                if not is_ref:
++                    expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+             expressions.append(expr)
+diff --git a/tests/aggregation/models.py b/tests/aggregation/models.py
+index cfc261abcc..a9377f06e0 100644
+--- a/tests/aggregation/models.py
++++ b/tests/aggregation/models.py
+@@ -43,3 +43,14 @@ class Store(models.Model):
+ 
+     def __str__(self):
+         return self.name
++
++
++class Category(models.Model):
++    name = models.CharField(max_length=100)
++    age = models.IntegerField()
++
++    class Meta:
++        ordering = ['name']
++
++    def __str__(self):
++        return self.name
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 49123396dd..dc712698c5 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -14,7 +14,7 @@ from django.test.testcases import skipUnlessDBFeature
+ from django.test.utils import Approximate, CaptureQueriesContext
+ from django.utils import timezone
+ 
+-from .models import Author, Book, Publisher, Store
++from .models import Author, Book, Category, Publisher, Store
+ 
+ 
+ class AggregateTestCase(TestCase):
+@@ -1340,3 +1340,16 @@ class AggregateTestCase(TestCase):
+             ('Stuart Russell', 1),
+             ('Peter Norvig', 2),
+         ], lambda a: (a.name, a.contact_count), ordered=False)
++
++    def test_aggregation_default_ordering_not_in_group_by(self):
++        """Meta.ordering is not included in GROUP BY when aggregating."""
++        Category.objects.bulk_create([
++            Category(name='Alice', age=30),
++            Category(name='Bob', age=30),
++            Category(name='Charlie', age=25),
++        ])
++        result = Category.objects.values('age').annotate(count=Count('id'))
++        self.assertCountEqual(result, [
++            {'age': 25, 'count': 1},
++            {'age': 30, 'count': 2},
++        ])
+2026-10-30 16:52:55,958 - INFO - Grading answer for django__django-14122...
+2026-10-30 16:52:55,960 - INFO - report: {'django__django-14122': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_default_ordering_does_not_affect_group_by (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['By default, Article.objects.all() orders by pub_date descending, then', 'F expressions can be used in Meta.ordering.', 'Override ordering with order_by, which is in the same format as the', "Ordering can be based on fields included from an 'extra' clause", 'If the extra clause uses an SQL keyword for a name, it will be', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'A column may only be included once (the first occurrence) so we check', 'ordering by a foreign key by its attribute name prevents the query', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'Only the last order_by has any effect (since they each override any', "'pk' works as an ordering option in Meta.", 'test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)', 'test_order_by_self_referential_fk (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', "Use '?' to order randomly.", 'An ordering referencing a model with an ordering referencing a model', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'Ordering can be reversed using the reverse() method on a queryset.', "Use the 'stop' part of slicing notation to limit the results.", "Use the 'stop' and 'start' parts of slicing notation to offset the"], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14122: resolved: True
+2026-10-30 16:52:55,962 - INFO - Attempting to stop container sweb.eval.django__django-14122.verified_full_pi...
+2026-10-30 16:53:11,993 - INFO - Container sweb.eval.django__django-14122.verified_full_pi stopped successfully.
+2026-10-30 16:53:11,994 - INFO - Attempting to remove container sweb.eval.django__django-14122.verified_full_pi...
+2026-10-30 16:53:12,044 - INFO - Container sweb.eval.django__django-14122.verified_full_pi removed successfully.

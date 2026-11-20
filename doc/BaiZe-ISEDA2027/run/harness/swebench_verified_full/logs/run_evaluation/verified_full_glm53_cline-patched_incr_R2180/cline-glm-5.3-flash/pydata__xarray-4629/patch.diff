@@ -1,0 +1,43 @@
+diff --git a/xarray/core/merge.py b/xarray/core/merge.py
+index ca4e29b..dff0080 100644
+--- a/xarray/core/merge.py
++++ b/xarray/core/merge.py
+@@ -501,7 +501,7 @@ def merge_attrs(variable_attrs, combine_attrs):
+     if combine_attrs == "drop":
+         return {}
+     elif combine_attrs == "override":
+-        return variable_attrs[0]
++        return dict(variable_attrs[0])
+     elif combine_attrs == "no_conflicts":
+         result = dict(variable_attrs[0])
+         for attrs in variable_attrs[1:]:
+diff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py
+index 0994ed9..c4e0bc2 100644
+--- a/xarray/tests/test_merge.py
++++ b/xarray/tests/test_merge.py
+@@ -109,6 +109,25 @@ class TestMergeFunction:
+             expected.attrs = expected_attrs
+             assert actual.identical(expected)
+ 
++    def test_merge_attrs_override_copy(self):
++        var1_attrs = {"a": 1, "b": 2}
++        var2_attrs = {"a": 3, "b": 4}
++        expected_attrs = {"a": 1, "b": 2}
++
++        data = create_test_data()
++        data.var1.attrs = var1_attrs
++        data.var2.attrs = var2_attrs
++        actual = xr.merge([data.var1, data.var2], combine_attrs="override")
++        expected = data[["var1", "var2"]]
++        expected.attrs = expected_attrs
++        assert actual.identical(expected)
++
++        # check that attrs from one source are not changed when
++        # attrs of merged result are changed
++        actual.attrs["a"] = 5
++        assert var1_attrs["a"] == 1
++        assert var2_attrs["a"] == 3
++
+     def test_merge_dicts_simple(self):
+         actual = xr.merge([{"foo": 0}, {"bar": "one"}, {"baz": 3.5}])
+         expected = xr.Dataset({"foo": 0, "bar": "one", "baz": 3.5})

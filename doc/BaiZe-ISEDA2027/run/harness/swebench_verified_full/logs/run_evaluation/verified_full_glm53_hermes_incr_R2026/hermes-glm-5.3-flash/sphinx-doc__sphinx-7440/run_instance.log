@@ -1,0 +1,200 @@
+2026-11-10 08:34:51,295 - INFO - Creating container for sphinx-doc__sphinx-7440...
+2026-11-10 08:34:51,315 - INFO - Container for sphinx-doc__sphinx-7440 created: 7c62488992dc223be796e01fb60520d868eede9a34b8d8cfa43bac0a5f2a12f2
+2026-11-10 08:34:52,468 - INFO - Container for sphinx-doc__sphinx-7440 started: 7c62488992dc223be796e01fb60520d868eede9a34b8d8cfa43bac0a5f2a12f2
+2026-11-10 08:34:52,470 - INFO - Intermediate patch for sphinx-doc__sphinx-7440 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2026/hermes-glm-5.3-flash/sphinx-doc__sphinx-7440/patch.diff, now applying to container...
+2026-11-10 08:34:52,625 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/std.py...
+Checking patch tests/test_domain_std.py...
+Applied patch sphinx/domains/std.py cleanly.
+Applied patch tests/test_domain_std.py cleanly.
+
+2026-11-10 08:34:53,025 - INFO - Git diff before:
+diff --git a/sphinx/domains/std.py b/sphinx/domains/std.py
+index d820cfe5c..74e901779 100644
+--- a/sphinx/domains/std.py
++++ b/sphinx/domains/std.py
+@@ -305,7 +305,7 @@ def make_glossary_term(env: "BuildEnvironment", textnodes: Iterable[Node], index
+         term['ids'].append(node_id)
+ 
+     std = cast(StandardDomain, env.get_domain('std'))
+-    std.note_object('term', termtext.lower(), node_id, location=term)
++    std.note_object('term', termtext, node_id, location=term)
+ 
+     # add an index entry too
+     indexnode = addnodes.index()
+@@ -565,7 +565,7 @@ class StandardDomain(Domain):
+         # links to tokens in grammar productions
+         'token':   TokenXRefRole(),
+         # links to terms in glossary
+-        'term':    XRefRole(lowercase=True, innernodeclass=nodes.inline,
++        'term':    XRefRole(innernodeclass=nodes.inline,
+                             warn_dangling=True),
+         # links to headings or arbitrary labels
+         'ref':     XRefRole(lowercase=True, innernodeclass=nodes.inline,
+@@ -789,6 +789,8 @@ class StandardDomain(Domain):
+                           RemovedInSphinx40Warning)
+             domain = env.get_domain('citation')
+             return domain.resolve_xref(env, fromdocname, builder, typ, target, node, contnode)
++        elif typ == 'term':
++            resolver = self._resolve_term_xref
+         else:
+             resolver = self._resolve_obj_xref
+ 
+@@ -923,6 +925,28 @@ class StandardDomain(Domain):
+         return make_refnode(builder, fromdocname, docname,
+                             labelid, contnode)
+ 
++    def _resolve_term_xref(self, env: "BuildEnvironment", fromdocname: str,
++                           builder: "Builder", typ: str, target: str,
++                           node: pending_xref, contnode: Element) -> Element:
++        result = self._resolve_obj_xref(env, fromdocname, builder, typ,
++                                        target, node, contnode)
++        if result:
++            return result
++        else:
++            for objtype, term in self.objects:
++                if objtype == 'term' and term.lower() == target.lower():
++                    docname, labelid = self.objects[objtype, term]
++                    logger.warning(__('term %s not found in case sensitive match.'
++                                      'made a reference to %s instead.'),
++                                   target, term, location=node, type='ref', subtype='term')
++                    break
++            else:
++                docname, labelid = '', ''
++            if not docname:
++                return None
++            return make_refnode(builder, fromdocname, docname,
++                                labelid, contnode)
++
+     def _resolve_obj_xref(self, env: "BuildEnvironment", fromdocname: str,
+                           builder: "Builder", typ: str, target: str,
+                           node: pending_xref, contnode: Element) -> Element:
+diff --git a/tests/test_domain_std.py b/tests/test_domain_std.py
+index aa1d29eb1..33a000a3f 100644
+--- a/tests/test_domain_std.py
++++ b/tests/test_domain_std.py
+@@ -99,7 +99,7 @@ def test_glossary(app):
+     text = (".. glossary::\n"
+             "\n"
+             "   term1\n"
+-            "   term2\n"
++            "   TERM2\n"
+             "       description\n"
+             "\n"
+             "   term3 : classifier\n"
+@@ -114,7 +114,7 @@ def test_glossary(app):
+     assert_node(doctree, (
+         [glossary, definition_list, ([definition_list_item, ([term, ("term1",
+                                                                      index)],
+-                                                             [term, ("term2",
++                                                             [term, ("TERM2",
+                                                                      index)],
+                                                              definition)],
+                                      [definition_list_item, ([term, ("term3",
+@@ -127,7 +127,7 @@ def test_glossary(app):
+     assert_node(doctree[0][0][0][0][1],
+                 entries=[("single", "term1", "term-term1", "main", None)])
+     assert_node(doctree[0][0][0][1][1],
+-                entries=[("single", "term2", "term-term2", "main", None)])
++                entries=[("single", "TERM2", "term-TERM2", "main", None)])
+     assert_node(doctree[0][0][0][2],
+                 [definition, nodes.paragraph, "description"])
+     assert_node(doctree[0][0][1][0][1],
+@@ -141,12 +141,23 @@ def test_glossary(app):
+                 [nodes.definition, nodes.paragraph, "description"])
+ 
+     # index
+-    objects = list(app.env.get_domain("std").get_objects())
++    domain = app.env.get_domain("std")
++    objects = list(domain.get_objects())
+     assert ("term1", "term1", "term", "index", "term-term1", -1) in objects
+-    assert ("term2", "term2", "term", "index", "term-term2", -1) in objects
++    assert ("TERM2", "TERM2", "term", "index", "term-TERM2", -1) in objects
+     assert ("term3", "term3", "term", "index", "term-term3", -1) in objects
+     assert ("term4", "term4", "term", "index", "term-term4", -1) in objects
+ 
++    # term reference (case sensitive)
++    refnode = domain.resolve_xref(app.env, 'index', app.builder, 'term', 'term1',
++                                  pending_xref(), nodes.paragraph())
++    assert_node(refnode, nodes.reference, refid="term-term1")
++
++    # term reference (case insensitive)
++    refnode = domain.resolve_xref(app.env, 'index', app.builder, 'term', 'term2',
++                                  pending_xref(), nodes.paragraph())
++    assert_node(refnode, nodes.reference, refid="term-TERM2")
++
+ 
+ def test_glossary_warning(app, status, warning):
+     # empty line between terms
+2026-11-10 08:34:53,028 - INFO - Eval script for sphinx-doc__sphinx-7440 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2026/hermes-glm-5.3-flash/sphinx-doc__sphinx-7440/eval.sh; copying to container...
+2026-11-10 08:34:58,051 - INFO - Test runtime: 4.98 seconds
+2026-11-10 08:34:58,052 - INFO - Test output for sphinx-doc__sphinx-7440 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2026/hermes-glm-5.3-flash/sphinx-doc__sphinx-7440/test_output.txt
+2026-11-10 08:34:58,124 - INFO - Git diff after:
+diff --git a/sphinx/domains/std.py b/sphinx/domains/std.py
+index d820cfe5c..74e901779 100644
+--- a/sphinx/domains/std.py
++++ b/sphinx/domains/std.py
+@@ -305,7 +305,7 @@ def make_glossary_term(env: "BuildEnvironment", textnodes: Iterable[Node], index
+         term['ids'].append(node_id)
+ 
+     std = cast(StandardDomain, env.get_domain('std'))
+-    std.note_object('term', termtext.lower(), node_id, location=term)
++    std.note_object('term', termtext, node_id, location=term)
+ 
+     # add an index entry too
+     indexnode = addnodes.index()
+@@ -565,7 +565,7 @@ class StandardDomain(Domain):
+         # links to tokens in grammar productions
+         'token':   TokenXRefRole(),
+         # links to terms in glossary
+-        'term':    XRefRole(lowercase=True, innernodeclass=nodes.inline,
++        'term':    XRefRole(innernodeclass=nodes.inline,
+                             warn_dangling=True),
+         # links to headings or arbitrary labels
+         'ref':     XRefRole(lowercase=True, innernodeclass=nodes.inline,
+@@ -789,6 +789,8 @@ class StandardDomain(Domain):
+                           RemovedInSphinx40Warning)
+             domain = env.get_domain('citation')
+             return domain.resolve_xref(env, fromdocname, builder, typ, target, node, contnode)
++        elif typ == 'term':
++            resolver = self._resolve_term_xref
+         else:
+             resolver = self._resolve_obj_xref
+ 
+@@ -923,6 +925,28 @@ class StandardDomain(Domain):
+         return make_refnode(builder, fromdocname, docname,
+                             labelid, contnode)
+ 
++    def _resolve_term_xref(self, env: "BuildEnvironment", fromdocname: str,
++                           builder: "Builder", typ: str, target: str,
++                           node: pending_xref, contnode: Element) -> Element:
++        result = self._resolve_obj_xref(env, fromdocname, builder, typ,
++                                        target, node, contnode)
++        if result:
++            return result
++        else:
++            for objtype, term in self.objects:
++                if objtype == 'term' and term.lower() == target.lower():
++                    docname, labelid = self.objects[objtype, term]
++                    logger.warning(__('term %s not found in case sensitive match.'
++                                      'made a reference to %s instead.'),
++                                   target, term, location=node, type='ref', subtype='term')
++                    break
++            else:
++                docname, labelid = '', ''
++            if not docname:
++                return None
++            return make_refnode(builder, fromdocname, docname,
++                                labelid, contnode)
++
+     def _resolve_obj_xref(self, env: "BuildEnvironment", fromdocname: str,
+                           builder: "Builder", typ: str, target: str,
+                           node: pending_xref, contnode: Element) -> Element:
+2026-11-10 08:34:58,124 - INFO - Git diff changed after running eval script
+2026-11-10 08:34:58,124 - INFO - Grading answer for sphinx-doc__sphinx-7440...
+2026-11-10 08:34:58,142 - INFO - report: {'sphinx-doc__sphinx-7440': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_std.py::test_glossary'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_std.py::test_process_doc_handle_figure_caption', 'tests/test_domain_std.py::test_process_doc_handle_table_title', 'tests/test_domain_std.py::test_get_full_qualified_name', 'tests/test_domain_std.py::test_glossary_warning', 'tests/test_domain_std.py::test_glossary_comment', 'tests/test_domain_std.py::test_glossary_comment2', 'tests/test_domain_std.py::test_glossary_sorted', 'tests/test_domain_std.py::test_glossary_alphanumeric', 'tests/test_domain_std.py::test_glossary_conflicted_labels', 'tests/test_domain_std.py::test_cmdoption', 'tests/test_domain_std.py::test_multiple_cmdoptions', 'tests/test_domain_std.py::test_disabled_docref'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7440: resolved: True
+2026-11-10 08:34:58,144 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_hermes_incr_R2026...
+2026-11-10 08:35:14,524 - INFO - Container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_hermes_incr_R2026 stopped successfully.
+2026-11-10 08:35:14,524 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_hermes_incr_R2026...
+2026-11-10 08:35:14,555 - INFO - Container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_hermes_incr_R2026 removed successfully.

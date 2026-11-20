@@ -1,0 +1,106 @@
+2026-11-13 17:16:19,776 - INFO - Creating container for sympy__sympy-19346...
+2026-11-13 17:16:19,798 - INFO - Container for sympy__sympy-19346 created: d3f98e68c7e9873204a6a680a10b37efe52065d6410b974b6ef80805119a2075
+2026-11-13 17:16:20,510 - INFO - Container for sympy__sympy-19346 started: d3f98e68c7e9873204a6a680a10b37efe52065d6410b974b6ef80805119a2075
+2026-11-13 17:16:20,512 - INFO - Intermediate patch for sympy__sympy-19346 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2384/pi-glm-5.3-flash/sympy__sympy-19346/patch.diff, now applying to container...
+2026-11-13 17:16:20,633 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/repr.py...
+Checking patch sympy/printing/tests/test_repr.py...
+Applied patch sympy/printing/repr.py cleanly.
+Applied patch sympy/printing/tests/test_repr.py cleanly.
+
+2026-11-13 17:16:21,326 - INFO - Git diff before:
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..f06d75e1fc 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -250,6 +250,21 @@ def _print_tuple(self, expr):
+         else:
+             return "(%s)" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        items = ["%s: %s" % (self._print(key), self._print(value))
++                 for key, value in expr.items()]
++        return "{%s}" % ", ".join(items)
++
++    def _print_set(self, expr):
++        if not expr:
++            return "set()"
++        return "{%s}" % self.reprify(expr, ", ")
++
++    def _print_frozenset(self, expr):
++        if not expr:
++            return "frozenset()"
++        return "frozenset((%s))" % self.reprify(expr, ", ")
++
+     def _print_WildFunction(self, expr):
+         return "%s('%s')" % (expr.__class__.__name__, expr.name)
+ 
+diff --git a/sympy/printing/tests/test_repr.py b/sympy/printing/tests/test_repr.py
+index f749683ff7..39bca58cc4 100644
+--- a/sympy/printing/tests/test_repr.py
++++ b/sympy/printing/tests/test_repr.py
+@@ -193,6 +193,28 @@ def test_tuple():
+     sT((x, y), "(Symbol('x'), Symbol('y'))")
+ 
+ 
++def test_dict():
++    sT({x: y}, "{Symbol('x'): Symbol('y')}")
++
++
++def test_set():
++    # iteration order of sets is not deterministic, so compare sorted reprs
++    assert sorted(srepr({x, y}).strip('{}').split(', ')) == (
++        sorted(["Symbol('x')", "Symbol('y')"]))
++    assert srepr(set()) == "set()"
++
++
++def test_frozenset():
++    # iteration order of frozensets is not deterministic, so compare sorted reprs
++    printed = srepr(frozenset([x, y]))
++    assert printed.startswith("frozenset((") and printed.endswith("))")
++    assert sorted(printed[len("frozenset(("):-len("))")].split(', ')) == (
++        sorted(["Symbol('x')", "Symbol('y')"]))
++    assert srepr(frozenset()) == "frozenset()"
++
++
++
++
+ def test_WildFunction():
+     sT(WildFunction('w'), "WildFunction('w')")
+2026-11-13 17:16:21,328 - INFO - Eval script for sympy__sympy-19346 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2384/pi-glm-5.3-flash/sympy__sympy-19346/eval.sh; copying to container...
+2026-11-13 17:16:26,091 - INFO - Test runtime: 4.66 seconds
+2026-11-13 17:16:26,092 - INFO - Test output for sympy__sympy-19346 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2384/pi-glm-5.3-flash/sympy__sympy-19346/test_output.txt
+2026-11-13 17:16:26,179 - INFO - Git diff after:
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..f06d75e1fc 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -250,6 +250,21 @@ def _print_tuple(self, expr):
+         else:
+             return "(%s)" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        items = ["%s: %s" % (self._print(key), self._print(value))
++                 for key, value in expr.items()]
++        return "{%s}" % ", ".join(items)
++
++    def _print_set(self, expr):
++        if not expr:
++            return "set()"
++        return "{%s}" % self.reprify(expr, ", ")
++
++    def _print_frozenset(self, expr):
++        if not expr:
++            return "frozenset()"
++        return "frozenset((%s))" % self.reprify(expr, ", ")
++
+     def _print_WildFunction(self, expr):
+         return "%s('%s')" % (expr.__class__.__name__, expr.name)
+2026-11-13 17:16:26,179 - INFO - Git diff changed after running eval script
+2026-11-13 17:16:26,179 - INFO - Grading answer for sympy__sympy-19346...
+2026-11-13 17:16:26,181 - INFO - report: {'sympy__sympy-19346': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_dict'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_printmethod', 'test_more_than_255_args_issue_10259', 'test_Function', 'test_Geometry', 'test_Singletons', 'test_Integer', 'test_list', 'test_Matrix', 'test_empty_Matrix', 'test_Rational', 'test_Float', 'test_Symbol', 'test_Symbol_two_assumptions', 'test_Symbol_no_special_commutative_treatment', 'test_Wild', 'test_Dummy', 'test_Dummy_assumption', 'test_Dummy_from_Symbol', 'test_tuple', 'test_WildFunction', 'test_settins', 'test_AlgebraicNumber', 'test_PolyRing', 'test_FracField', 'test_PolyElement', 'test_FracElement', 'test_FractionField', 'test_PolynomialRingBase', 'test_DMP', 'test_FiniteExtension', 'test_ExtensionElement', 'test_BooleanAtom', 'test_Integers', 'test_Naturals', 'test_Naturals0', 'test_Reals', 'test_matrix_expressions', 'test_Cycle', 'test_Permutation', 'test_diffgeom'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-19346: resolved: True
+2026-11-13 17:16:26,182 - INFO - Attempting to stop container sweb.eval.sympy__sympy-19346.verified_full_glm53_pi_incr_R2384...
+2026-11-13 17:16:42,201 - INFO - Container sweb.eval.sympy__sympy-19346.verified_full_glm53_pi_incr_R2384 stopped successfully.
+2026-11-13 17:16:42,202 - INFO - Attempting to remove container sweb.eval.sympy__sympy-19346.verified_full_glm53_pi_incr_R2384...
+2026-11-13 17:16:42,258 - INFO - Container sweb.eval.sympy__sympy-19346.verified_full_glm53_pi_incr_R2384 removed successfully.

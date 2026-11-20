@@ -1,0 +1,84 @@
+diff --git a/django/db/backends/base/schema.py b/django/db/backends/base/schema.py
+index 61f88401a..2e2d7bbb6 100644
+--- a/django/db/backends/base/schema.py
++++ b/django/db/backends/base/schema.py
+@@ -393,7 +393,12 @@ class BaseDatabaseSchemaEditor:
+         news = {tuple(fields) for fields in new_index_together}
+         # Deleted indexes
+         for fields in olds.difference(news):
+-            self._delete_composed_index(model, fields, {'index': True}, self.sql_delete_index)
++            self._delete_composed_index(
++                model,
++                fields,
++                {'index': True, 'unique': False},
++                self.sql_delete_index,
++            )
+         # Created indexes
+         for field_names in news.difference(olds):
+             fields = [model._meta.get_field(field) for field in field_names]
+diff --git a/tests/migrations/test_operations.py b/tests/migrations/test_operations.py
+index 55c20213b..b12f85989 100644
+--- a/tests/migrations/test_operations.py
++++ b/tests/migrations/test_operations.py
+@@ -1759,6 +1759,61 @@ class OperationTests(OperationTestBase):
+         operation = migrations.AlterIndexTogether("Pony", None)
+         self.assertEqual(operation.describe(), "Alter index_together for Pony (0 constraint(s))")
+ 
++    def test_alter_index_together_remove_with_unique_together(self):
++        """
++        Removing index_together when there's a unique_together on the same
++        fields shouldn't crash (#29224).
++        """
++        app_label = "test_alintouni"
++        project_state = self.apply_operations(app_label, ProjectState(), [
++            migrations.CreateModel(
++                "Pony",
++                [
++                    ("id", models.AutoField(primary_key=True)),
++                    ("pink", models.IntegerField(default=3)),
++                    ("weight", models.FloatField()),
++                ],
++                options={
++                    "unique_together": {("pink", "weight")},
++                    "index_together": {("pink", "weight")},
++                },
++            ),
++        ])
++        table_name = "%s_pony" % app_label
++        # There should be at least one index before removal.
++        with connection.cursor() as cursor:
++            constraints = connection.introspection.get_constraints(cursor, table_name)
++            self.assertTrue(any(
++                c["index"] and not c["unique"]
++                for c in constraints.values()
++                if c['columns'] == ["pink", "weight"]
++            ))
++        operation = migrations.AlterIndexTogether("Pony", [])
++        new_state = project_state.clone()
++        operation.state_forwards(app_label, new_state)
++        with connection.schema_editor() as editor:
++            operation.database_forwards(app_label, editor, project_state, new_state)
++        # The non-unique index should be removed, but the unique constraint
++        # should still exist.
++        with connection.cursor() as cursor:
++            constraints = connection.introspection.get_constraints(cursor, table_name)
++            self.assertFalse(any(
++                c["index"] and not c["unique"]
++                for c in constraints.values()
++                if c['columns'] == ["pink", "weight"]
++            ))
++            self.assertTrue(any(
++                c["unique"]
++                for c in constraints.values()
++                if c['columns'] == ["pink", "weight"]
++            ))
++        # Ensure the unique constraint still works
++        with connection.cursor() as cursor:
++            cursor.execute("INSERT INTO %s (pink, weight) VALUES (1, 1)" % table_name)
++            with self.assertRaises(IntegrityError), transaction.atomic():
++                cursor.execute("INSERT INTO %s (pink, weight) VALUES (1, 1)" % table_name)
++            cursor.execute("DELETE FROM %s" % table_name)
++
+     @skipUnlessDBFeature('supports_table_check_constraints')
+     def test_add_constraint(self):
+         project_state = self.set_up_test_model("test_addconstraint")

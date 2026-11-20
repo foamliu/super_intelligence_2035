@@ -1,0 +1,70 @@
+2026-10-30 16:48:50,243 - INFO - Creating container for django__django-12308...
+2026-10-30 16:48:50,290 - INFO - Container for django__django-12308 created: a79e8db437538ee4dd6351343b21e6cd0239dd909a4d939a3ffa96be55ec8dd6
+2026-10-30 16:48:50,802 - INFO - Container for django__django-12308 started: a79e8db437538ee4dd6351343b21e6cd0239dd909a4d939a3ffa96be55ec8dd6
+2026-10-30 16:48:50,804 - INFO - Intermediate patch for django__django-12308 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12308/patch.diff, now applying to container...
+2026-10-30 16:48:50,974 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/utils.py...
+warning: django/contrib/admin/utils.py has type 100755, expected 100644
+Checking patch tests/admin_utils/tests.py...
+warning: tests/admin_utils/tests.py has type 100755, expected 100644
+Applied patch django/contrib/admin/utils.py cleanly.
+Applied patch tests/admin_utils/tests.py cleanly.
+
+2026-10-30 16:48:52,838 - INFO - Git diff before:
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f017..c27628a134 100755
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -398,6 +398,8 @@ def display_for_field(value, field, empty_value_display):
+         return formats.number_format(value)
+     elif isinstance(field, models.FileField) and value:
+         return format_html('<a href="{}">{}</a>', value.url, value)
++    elif isinstance(field, models.JSONField):
++        return field.formfield().prepare_value(value)
+     else:
+         return display_for_value(value, empty_value_display)
+ 
+diff --git a/tests/admin_utils/tests.py b/tests/admin_utils/tests.py
+index 463ba9556d..5a7aff91da 100755
+--- a/tests/admin_utils/tests.py
++++ b/tests/admin_utils/tests.py
+@@ -216,6 +216,15 @@ class UtilsTests(SimpleTestCase):
+         )
+         self.assertEqual(display_for_value(True, ''), 'True')
+         self.assertEqual(display_for_value(False, ''), 'False')
++    def test_json_field_display_for_field(self):
++        display_value = display_for_field({'foo': 'bar'}, models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, '{"foo": "bar"}')
++
++        display_value = display_for_field([1, 2, 3], models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, '[1, 2, 3]')
++
++        display_value = display_for_field(forms.fields.InvalidJSONInput('invalid'), models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, 'invalid')
+ 
+     def test_label_for_field(self):
+         """
+2026-10-30 16:48:52,842 - INFO - Eval script for django__django-12308 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12308/eval.sh; copying to container...
+2026-10-30 16:49:01,084 - INFO - Test runtime: 8.15 seconds
+2026-10-30 16:49:01,088 - INFO - Test output for django__django-12308 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12308/test_output.txt
+2026-10-30 16:49:01,153 - INFO - Git diff after:
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f017..c27628a134 100755
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -398,6 +398,8 @@ def display_for_field(value, field, empty_value_display):
+         return formats.number_format(value)
+     elif isinstance(field, models.FileField) and value:
+         return format_html('<a href="{}">{}</a>', value.url, value)
++    elif isinstance(field, models.JSONField):
++        return field.formfield().prepare_value(value)
+     else:
+         return display_for_value(value, empty_value_display)
+2026-10-30 16:49:01,153 - INFO - Git diff changed after running eval script
+2026-10-30 16:49:01,153 - INFO - Grading answer for django__django-12308...
+2026-10-30 16:49:01,163 - INFO - report: {'django__django-12308': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_json_display_for_field (admin_utils.tests.UtilsTests)', 'test_label_for_field (admin_utils.tests.UtilsTests)']}, 'PASS_TO_PASS': {'success': ['test_cyclic (admin_utils.tests.NestedObjectsTests)', 'test_non_added_parent (admin_utils.tests.NestedObjectsTests)', 'test_on_delete_do_nothing (admin_utils.tests.NestedObjectsTests)', 'test_queries (admin_utils.tests.NestedObjectsTests)', 'test_relation_on_abstract (admin_utils.tests.NestedObjectsTests)', 'test_siblings (admin_utils.tests.NestedObjectsTests)', 'test_unrelated_roots (admin_utils.tests.NestedObjectsTests)', 'test_flatten (admin_utils.tests.UtilsTests)', 'test_flatten_fieldsets (admin_utils.tests.UtilsTests)', 'test_label_for_field_form_argument (admin_utils.tests.UtilsTests)', 'test_label_for_property (admin_utils.tests.UtilsTests)', 'test_list_display_for_value (admin_utils.tests.UtilsTests)', 'test_list_display_for_value_boolean (admin_utils.tests.UtilsTests)', 'test_null_display_for_field (admin_utils.tests.UtilsTests)', 'test_number_formats_display_for_field (admin_utils.tests.UtilsTests)', 'test_number_formats_with_thousand_separator_display_for_field (admin_utils.tests.UtilsTests)', 'test_quote (admin_utils.tests.UtilsTests)', 'test_related_name (admin_utils.tests.UtilsTests)', 'test_safestring_in_field_label (admin_utils.tests.UtilsTests)', 'test_values_from_lookup_field (admin_utils.tests.UtilsTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12308: resolved: False
+2026-10-30 16:49:01,165 - INFO - Attempting to stop container sweb.eval.django__django-12308.verified_full_pi...
+2026-10-30 16:49:17,296 - INFO - Container sweb.eval.django__django-12308.verified_full_pi stopped successfully.
+2026-10-30 16:49:17,296 - INFO - Attempting to remove container sweb.eval.django__django-12308.verified_full_pi...
+2026-10-30 16:49:17,354 - INFO - Container sweb.eval.django__django-12308.verified_full_pi removed successfully.

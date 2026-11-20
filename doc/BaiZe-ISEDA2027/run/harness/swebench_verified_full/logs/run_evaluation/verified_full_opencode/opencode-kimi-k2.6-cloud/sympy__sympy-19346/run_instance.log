@@ -1,0 +1,124 @@
+2026-10-30 15:58:46,892 - INFO - Creating container for sympy__sympy-19346...
+2026-10-30 15:58:46,908 - INFO - Container for sympy__sympy-19346 created: 4c0ff91a3dfde1b654c179e039d3e8cdc327c8551527675e90bd4e5c2ada96b5
+2026-10-30 15:58:48,080 - INFO - Container for sympy__sympy-19346 started: 4c0ff91a3dfde1b654c179e039d3e8cdc327c8551527675e90bd4e5c2ada96b5
+2026-10-30 15:58:48,083 - INFO - Intermediate patch for sympy__sympy-19346 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-19346/patch.diff, now applying to container...
+2026-10-30 15:58:48,194 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/repr.py...
+Checking patch sympy/printing/tests/test_repr.py...
+Applied patch sympy/printing/repr.py cleanly.
+Applied patch sympy/printing/tests/test_repr.py cleanly.
+
+2026-10-30 15:58:48,815 - INFO - Git diff before:
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..7093376f72 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -9,6 +9,7 @@
+ 
+ from typing import Any, Dict
+ 
++from sympy.core.compatibility import default_sort_key
+ from sympy.core.function import AppliedUndef
+ from sympy.core.mul import Mul
+ from mpmath.libmp import repr_dps, to_str as mlib_to_str
+@@ -144,6 +145,25 @@ def _print_EmptySequence(self, expr):
+     def _print_list(self, expr):
+         return "[%s]" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        keys = sorted(expr.keys(), key=default_sort_key)
++        items = []
++        for key in keys:
++            item = "%s: %s" % (self._print(key), self._print(expr[key]))
++            items.append(item)
++        return "{%s}" % ", ".join(items)
++
++    def _print_set(self, expr):
++        if not expr:
++            return "set()"
++        items = sorted(expr, key=default_sort_key)
++        return "{%s}" % ", ".join(self._print(item) for item in items)
++
++    def _print_frozenset(self, expr):
++        if not expr:
++            return "frozenset()"
++        return "frozenset({%s})" % ", ".join(self._print(item) for item in sorted(expr, key=default_sort_key))
++
+     def _print_MatrixBase(self, expr):
+         # special case for some empty matrices
+         if (expr.rows == 0) ^ (expr.cols == 0):
+diff --git a/sympy/printing/tests/test_repr.py b/sympy/printing/tests/test_repr.py
+index f749683ff7..cfc0e628e7 100644
+--- a/sympy/printing/tests/test_repr.py
++++ b/sympy/printing/tests/test_repr.py
+@@ -193,6 +193,21 @@ def test_tuple():
+     sT((x, y), "(Symbol('x'), Symbol('y'))")
+ 
+ 
++def test_dict():
++    sT({x: y}, "{Symbol('x'): Symbol('y')}")
++    sT({x: Integer(4)}, "{Symbol('x'): Integer(4)}")
++
++
++def test_set():
++    sT(set(), "set()")
++    sT({x}, "{Symbol('x')}")
++
++
++def test_frozenset():
++    sT(frozenset(), "frozenset()")
++    sT(frozenset([x]), "frozenset({Symbol('x')})")
++
++
+ def test_WildFunction():
+     sT(WildFunction('w'), "WildFunction('w')")
+2026-10-30 15:58:48,818 - INFO - Eval script for sympy__sympy-19346 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-19346/eval.sh; copying to container...
+2026-10-30 15:58:52,994 - INFO - Test runtime: 4.12 seconds
+2026-10-30 15:58:53,003 - INFO - Test output for sympy__sympy-19346 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-19346/test_output.txt
+2026-10-30 15:58:53,066 - INFO - Git diff after:
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..7093376f72 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -9,6 +9,7 @@
+ 
+ from typing import Any, Dict
+ 
++from sympy.core.compatibility import default_sort_key
+ from sympy.core.function import AppliedUndef
+ from sympy.core.mul import Mul
+ from mpmath.libmp import repr_dps, to_str as mlib_to_str
+@@ -144,6 +145,25 @@ def _print_EmptySequence(self, expr):
+     def _print_list(self, expr):
+         return "[%s]" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        keys = sorted(expr.keys(), key=default_sort_key)
++        items = []
++        for key in keys:
++            item = "%s: %s" % (self._print(key), self._print(expr[key]))
++            items.append(item)
++        return "{%s}" % ", ".join(items)
++
++    def _print_set(self, expr):
++        if not expr:
++            return "set()"
++        items = sorted(expr, key=default_sort_key)
++        return "{%s}" % ", ".join(self._print(item) for item in items)
++
++    def _print_frozenset(self, expr):
++        if not expr:
++            return "frozenset()"
++        return "frozenset({%s})" % ", ".join(self._print(item) for item in sorted(expr, key=default_sort_key))
++
+     def _print_MatrixBase(self, expr):
+         # special case for some empty matrices
+         if (expr.rows == 0) ^ (expr.cols == 0):
+2026-10-30 15:58:53,066 - INFO - Git diff changed after running eval script
+2026-10-30 15:58:53,066 - INFO - Grading answer for sympy__sympy-19346...
+2026-10-30 15:58:53,067 - INFO - report: {'sympy__sympy-19346': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_dict'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_printmethod', 'test_more_than_255_args_issue_10259', 'test_Function', 'test_Geometry', 'test_Singletons', 'test_Integer', 'test_list', 'test_Matrix', 'test_empty_Matrix', 'test_Rational', 'test_Float', 'test_Symbol', 'test_Symbol_two_assumptions', 'test_Symbol_no_special_commutative_treatment', 'test_Wild', 'test_Dummy', 'test_Dummy_assumption', 'test_Dummy_from_Symbol', 'test_tuple', 'test_WildFunction', 'test_settins', 'test_AlgebraicNumber', 'test_PolyRing', 'test_FracField', 'test_PolyElement', 'test_FracElement', 'test_FractionField', 'test_PolynomialRingBase', 'test_DMP', 'test_FiniteExtension', 'test_ExtensionElement', 'test_BooleanAtom', 'test_Integers', 'test_Naturals', 'test_Naturals0', 'test_Reals', 'test_matrix_expressions', 'test_Cycle', 'test_Permutation', 'test_diffgeom'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-19346: resolved: True
+2026-10-30 15:58:53,069 - INFO - Attempting to stop container sweb.eval.sympy__sympy-19346.verified_full_opencode...
+2026-10-30 15:59:09,219 - INFO - Container sweb.eval.sympy__sympy-19346.verified_full_opencode stopped successfully.
+2026-10-30 15:59:09,220 - INFO - Attempting to remove container sweb.eval.sympy__sympy-19346.verified_full_opencode...
+2026-10-30 15:59:09,259 - INFO - Container sweb.eval.sympy__sympy-19346.verified_full_opencode removed successfully.

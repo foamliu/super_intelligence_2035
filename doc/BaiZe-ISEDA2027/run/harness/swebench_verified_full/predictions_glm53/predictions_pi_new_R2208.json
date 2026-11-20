@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-14238",
+    "model_name_or_path": "pi-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py\nindex 0f53d9c30b..e505aa65b2 100644\n--- a/django/db/models/fields/__init__.py\n+++ b/django/db/models/fields/__init__.py\n@@ -2524,8 +2524,10 @@ class AutoFieldMeta(type):\n         return isinstance(instance, self._subclasses) or super().__instancecheck__(instance)\n \n     def __subclasscheck__(self, subclass):\n-        return subclass in self._subclasses or super().__subclasscheck__(subclass)\n-\n+        return (\n+            super().__subclasscheck__(subclass)\n+            or issubclass(subclass, self._subclasses)\n+        )\n \n class AutoField(AutoFieldMixin, IntegerField, metaclass=AutoFieldMeta):\n \n"
+  }
+]

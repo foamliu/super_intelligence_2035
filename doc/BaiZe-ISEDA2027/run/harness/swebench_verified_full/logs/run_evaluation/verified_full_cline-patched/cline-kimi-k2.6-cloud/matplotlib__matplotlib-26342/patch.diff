@@ -1,0 +1,55 @@
+diff --git a/doc/users/next_whats_new/ContourSet_set_paths.rst b/doc/users/next_whats_new/ContourSet_set_paths.rst
+new file mode 100644
+index 000000000..e6e05ad2d
+--- /dev/null
++++ b/doc/users/next_whats_new/ContourSet_set_paths.rst
+@@ -0,0 +1,6 @@
++ContourSet.set_paths
++--------------------
++
++`.ContourSet` now has a `.ContourSet.set_paths` method, which can be used to
++replace the paths of a contour plot.  This is the counterpart to the existing
++`.ContourSet.get_paths` method.
+diff --git a/lib/matplotlib/contour.py b/lib/matplotlib/contour.py
+index 3f84250b6..7405b75b5 100644
+--- a/lib/matplotlib/contour.py
++++ b/lib/matplotlib/contour.py
+@@ -1128,6 +1128,18 @@ class ContourSet(ContourLabeler, mcoll.Collection):
+         uppers = self._levels[1:]
+         return (lowers, uppers)
+ 
++    def set_paths(self, paths):
++        """
++        Set the paths of the contour.
++
++        Parameters
++        ----------
++        paths : list of `.Path`
++            The new paths for the contour.
++        """
++        self._paths = paths
++        self.stale = True
++
+     def changed(self):
+         if not hasattr(self, "cvalues"):
+             self._process_colors()  # Sets cvalues.
+diff --git a/lib/matplotlib/tests/test_contour.py b/lib/matplotlib/tests/test_contour.py
+index b6ddb2830..f2fa0700d 100644
+--- a/lib/matplotlib/tests/test_contour.py
++++ b/lib/matplotlib/tests/test_contour.py
+@@ -811,6 +811,15 @@ def test_all_nan():
+                                 2.4e-14, 5e-14, 7.5e-14, 1e-13])
+ 
+ 
++def test_contourset_set_paths():
++    fig, ax = plt.subplots()
++    cs = ax.contour(np.arange(16).reshape((4, 4)))
++    paths = cs.get_paths()
++    new_paths = [p.deepcopy() for p in paths]
++    cs.set_paths(new_paths)
++    assert cs.get_paths() == new_paths
++
++
+ def test_deprecated_apis():
+     cs = plt.contour(np.arange(16).reshape((4, 4)))
+     with pytest.warns(mpl.MatplotlibDeprecationWarning, match="collections"):

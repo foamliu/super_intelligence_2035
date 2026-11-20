@@ -1,0 +1,92 @@
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367eb..46a5a2fc 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -9,7 +9,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
+-from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Type, Union, cast
++from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union, cast
+ 
+ from docutils import nodes
+ from docutils.nodes import Node
+@@ -35,6 +35,30 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_name(fieldarg: str) -> Tuple[Optional[str], str]:
++    """Split a field argument into a type and a name.
++
++    The type may contain nested brackets (e.g. ``dict(str, str)``), so the
++    argument is split at the last whitespace that is not nested inside
++    brackets.  If no such whitespace is found, the whole argument is
++    considered a name.
++    """
++    depth = 0
++    pos = -1
++    for i, char in enumerate(fieldarg):
++        if char in '([{':
++            depth += 1
++        elif char in ')]}':
++            depth -= 1
++        elif char.isspace() and depth == 0:
++            pos = i
++
++    if pos == -1:
++        return None, fieldarg
++    else:
++        return fieldarg[:pos].rstrip(), fieldarg[pos:].strip()
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -297,11 +321,8 @@ class DocFieldTransformer:
+ 
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+-                try:
+-                    argtype, argname = fieldarg.split(None, 1)
+-                except ValueError:
+-                    pass
+-                else:
++                argtype, argname = _split_type_and_name(fieldarg)
++                if argtype is not None:
+                     types.setdefault(typename, {})[argname] = \
+                         [nodes.Text(argtype)]
+                     fieldarg = argname
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 569390c4..afc512d9 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -1008,6 +1008,29 @@ def test_info_field_list_var(app):
+                 refdomain="py", reftype="class", reftarget="int", **{"py:class": "Class"})
+ 
+ 
++def test_info_field_list_with_type_containing_brackets(app):
++    # refs: #9283
++    text = (".. py:function:: foo(opc_meta)\n"
++            "\n"
++            "   :param dict(str, str) opc_meta: (optional)\n")
++    doctree = restructuredtext.parse(app, text)
++
++    assert_node(doctree[2][1][0][0], ([nodes.field_name, "Parameters"],
++                                      [nodes.field_body, nodes.paragraph]))
++    assert_node(doctree[2][1][0][0][1][0],
++                ([addnodes.literal_strong, "opc_meta"],
++                 " (",
++                 [pending_xref, addnodes.literal_emphasis, "dict"],
++                 [addnodes.literal_emphasis, "("],
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 [addnodes.literal_emphasis, ", "],
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 [addnodes.literal_emphasis, ")"],
++                 ")",
++                 " -- ",
++                 "(optional)"))
++
++
+ @pytest.mark.sphinx(freshenv=True)
+ def test_module_index(app):
+     text = (".. py:module:: docutils\n"

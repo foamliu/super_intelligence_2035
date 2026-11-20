@@ -1,0 +1,130 @@
+2026-10-30 16:53:24,604 - INFO - Creating container for django__django-14376...
+2026-10-30 16:53:24,639 - INFO - Container for django__django-14376 created: 62198249ccb8aafb979eb46ca6d4a9bc917e0ed720e4d29a3839d11c1b417346
+2026-10-30 16:53:25,692 - INFO - Container for django__django-14376 started: 62198249ccb8aafb979eb46ca6d4a9bc917e0ed720e4d29a3839d11c1b417346
+2026-10-30 16:53:25,694 - INFO - Intermediate patch for django__django-14376 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14376/patch.diff, now applying to container...
+2026-10-30 16:53:25,849 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/mysql/base.py...
+Checking patch django/db/backends/mysql/client.py...
+Checking patch tests/dbshell/test_mysql.py...
+Applied patch django/db/backends/mysql/base.py cleanly.
+Applied patch django/db/backends/mysql/client.py cleanly.
+Applied patch tests/dbshell/test_mysql.py cleanly.
+
+2026-10-30 16:53:27,346 - INFO - Git diff before:
+diff --git a/django/db/backends/mysql/base.py b/django/db/backends/mysql/base.py
+index 2c62182d31..8b28a60485 100644
+--- a/django/db/backends/mysql/base.py
++++ b/django/db/backends/mysql/base.py
+@@ -200,9 +200,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+         if settings_dict['USER']:
+             kwargs['user'] = settings_dict['USER']
+         if settings_dict['NAME']:
+-            kwargs['db'] = settings_dict['NAME']
++            kwargs['database'] = settings_dict['NAME']
+         if settings_dict['PASSWORD']:
+-            kwargs['passwd'] = settings_dict['PASSWORD']
++            kwargs['password'] = settings_dict['PASSWORD']
+         if settings_dict['HOST'].startswith('/'):
+             kwargs['unix_socket'] = settings_dict['HOST']
+         elif settings_dict['HOST']:
+diff --git a/django/db/backends/mysql/client.py b/django/db/backends/mysql/client.py
+index 95442a32b0..3632eb94ee 100644
+--- a/django/db/backends/mysql/client.py
++++ b/django/db/backends/mysql/client.py
+@@ -8,7 +8,10 @@ class DatabaseClient(BaseDatabaseClient):
+     def settings_to_cmd_args_env(cls, settings_dict, parameters):
+         args = [cls.executable_name]
+         env = None
+-        db = settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
++        db = settings_dict['OPTIONS'].get(
++            'database',
++            settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
++        )
+         user = settings_dict['OPTIONS'].get('user', settings_dict['USER'])
+         password = settings_dict['OPTIONS'].get(
+             'password',
+diff --git a/tests/dbshell/test_mysql.py b/tests/dbshell/test_mysql.py
+index c3ecc6503b..a4fd46af79 100644
+--- a/tests/dbshell/test_mysql.py
++++ b/tests/dbshell/test_mysql.py
+@@ -39,6 +39,36 @@ class MySqlDbshellCommandTestCase(SimpleTestCase):
+         )
+ 
+     def test_options_override_settings_proper_values(self):
++        settings_port = 444
++        options_port = 555
++        self.assertNotEqual(settings_port, options_port, 'test pre-req')
++        expected_args = [
++            'mysql',
++            '--user=optionuser',
++            '--host=optionhost',
++            '--port=%s' % options_port,
++            'optiondbname',
++        ]
++        expected_env = {'MYSQL_PWD': 'optionpassword'}
++        self.assertEqual(
++            self.settings_to_cmd_args_env({
++                'NAME': 'settingdbname',
++                'USER': 'settinguser',
++                'PASSWORD': 'settingpassword',
++                'HOST': 'settinghost',
++                'PORT': settings_port,
++                'OPTIONS': {
++                    'database': 'optiondbname',
++                    'user': 'optionuser',
++                    'password': 'optionpassword',
++                    'host': 'optionhost',
++                    'port': options_port,
++                },
++            }),
++            (expected_args, expected_env),
++        )
++
++    def test_options_override_settings_deprecated_values(self):
+         settings_port = 444
+         options_port = 555
+         self.assertNotEqual(settings_port, options_port, 'test pre-req')
+2026-10-30 16:53:27,350 - INFO - Eval script for django__django-14376 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14376/eval.sh; copying to container...
+2026-10-30 16:53:34,712 - INFO - Test runtime: 7.27 seconds
+2026-10-30 16:53:34,714 - INFO - Test output for django__django-14376 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14376/test_output.txt
+2026-10-30 16:53:35,113 - INFO - Git diff after:
+diff --git a/django/db/backends/mysql/base.py b/django/db/backends/mysql/base.py
+index 2c62182d31..8b28a60485 100644
+--- a/django/db/backends/mysql/base.py
++++ b/django/db/backends/mysql/base.py
+@@ -200,9 +200,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+         if settings_dict['USER']:
+             kwargs['user'] = settings_dict['USER']
+         if settings_dict['NAME']:
+-            kwargs['db'] = settings_dict['NAME']
++            kwargs['database'] = settings_dict['NAME']
+         if settings_dict['PASSWORD']:
+-            kwargs['passwd'] = settings_dict['PASSWORD']
++            kwargs['password'] = settings_dict['PASSWORD']
+         if settings_dict['HOST'].startswith('/'):
+             kwargs['unix_socket'] = settings_dict['HOST']
+         elif settings_dict['HOST']:
+diff --git a/django/db/backends/mysql/client.py b/django/db/backends/mysql/client.py
+index 95442a32b0..3632eb94ee 100644
+--- a/django/db/backends/mysql/client.py
++++ b/django/db/backends/mysql/client.py
+@@ -8,7 +8,10 @@ class DatabaseClient(BaseDatabaseClient):
+     def settings_to_cmd_args_env(cls, settings_dict, parameters):
+         args = [cls.executable_name]
+         env = None
+-        db = settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
++        db = settings_dict['OPTIONS'].get(
++            'database',
++            settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
++        )
+         user = settings_dict['OPTIONS'].get('user', settings_dict['USER'])
+         password = settings_dict['OPTIONS'].get(
+             'password',
+2026-10-30 16:53:35,113 - INFO - Git diff changed after running eval script
+2026-10-30 16:53:35,113 - INFO - Grading answer for django__django-14376...
+2026-10-30 16:53:35,114 - INFO - report: {'django__django-14376': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_options_non_deprecated_keys_preferred (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_options_override_settings_proper_values (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_parameters (dbshell.test_mysql.MySqlDbshellCommandTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_basic_params_specified_in_settings (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_can_connect_using_sockets (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_crash_password_does_not_leak (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_fails_with_keyerror_on_incomplete_config (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_options_charset (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_ssl_certificate_is_added (dbshell.test_mysql.MySqlDbshellCommandTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14376: resolved: True
+2026-10-30 16:53:35,116 - INFO - Attempting to stop container sweb.eval.django__django-14376.verified_full_pi...
+2026-10-30 16:53:51,379 - INFO - Container sweb.eval.django__django-14376.verified_full_pi stopped successfully.
+2026-10-30 16:53:51,379 - INFO - Attempting to remove container sweb.eval.django__django-14376.verified_full_pi...
+2026-10-30 16:53:51,426 - INFO - Container sweb.eval.django__django-14376.verified_full_pi removed successfully.

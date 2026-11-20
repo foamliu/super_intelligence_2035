@@ -1,0 +1,123 @@
+2026-11-09 23:13:58,366 - INFO - Creating container for sphinx-doc__sphinx-8595...
+2026-11-09 23:13:58,387 - INFO - Container for sphinx-doc__sphinx-8595 created: a9a9ab00276aa5797401c7a98c2a7c44d52162e46b2bf5668433a31d9d22392b
+2026-11-09 23:13:58,922 - INFO - Container for sphinx-doc__sphinx-8595 started: a9a9ab00276aa5797401c7a98c2a7c44d52162e46b2bf5668433a31d9d22392b
+2026-11-09 23:13:58,927 - INFO - Intermediate patch for sphinx-doc__sphinx-8595 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8595/patch.diff, now applying to container...
+2026-11-09 23:13:59,089 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+warning: CHANGES has type 100755, expected 100644
+Checking patch sphinx/ext/autodoc/__init__.py...
+warning: sphinx/ext/autodoc/__init__.py has type 100755, expected 100644
+Checking patch tests/roots/test-ext-autodoc/target/empty_all.py...
+Checking patch tests/test_ext_autodoc.py...
+warning: tests/test_ext_autodoc.py has type 100755, expected 100644
+Applied patch CHANGES cleanly.
+Applied patch sphinx/ext/autodoc/__init__.py cleanly.
+Applied patch tests/roots/test-ext-autodoc/target/empty_all.py cleanly.
+Applied patch tests/test_ext_autodoc.py cleanly.
+
+2026-11-09 23:13:59,419 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index bdf3be3b8..47512fc3f 100755
+--- a/CHANGES
++++ b/CHANGES
+@@ -25,6 +25,7 @@ Bugs fixed
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
+ * #8592: autodoc: ``:meta public:`` does not effect to variables
++* #8643: autodoc: Empty ``__all__`` attribute is ignored
+ 
+ Testing
+ --------
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index d85d79617..c9f90acca 100755
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1074,7 +1074,7 @@ class ModuleDocumenter(Documenter):
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
+         members = self.get_module_members()
+         if want_all:
+-            if not self.__all__:
++            if self.__all__ is None:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+                 return True, list(members.values())
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 39897eb7d..6b7284912 100755
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -738,6 +738,17 @@ def test_autodoc_ignore_module_all(app):
+     ]
+ 
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_module_empty_all(app):
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.empty_all', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.empty_all',
++        ''
++    ]
++
++
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_autodoc_noindex(app):
+     options = {"noindex": True}
+2026-11-09 23:13:59,422 - INFO - Eval script for sphinx-doc__sphinx-8595 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8595/eval.sh; copying to container...
+2026-11-09 23:14:03,721 - INFO - Test runtime: 4.21 seconds
+2026-11-09 23:14:03,724 - INFO - Test output for sphinx-doc__sphinx-8595 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8595/test_output.txt
+2026-11-09 23:14:03,792 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index bdf3be3b8..47512fc3f 100755
+--- a/CHANGES
++++ b/CHANGES
+@@ -25,6 +25,7 @@ Bugs fixed
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
+ * #8592: autodoc: ``:meta public:`` does not effect to variables
++* #8643: autodoc: Empty ``__all__`` attribute is ignored
+ 
+ Testing
+ --------
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index d85d79617..c9f90acca 100755
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1074,7 +1074,7 @@ class ModuleDocumenter(Documenter):
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
+         members = self.get_module_members()
+         if want_all:
+-            if not self.__all__:
++            if self.__all__ is None:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+                 return True, list(members.values())
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 39897eb7d..6b7284912 100755
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -738,6 +738,17 @@ def test_autodoc_ignore_module_all(app):
+     ]
+ 
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_module_empty_all(app):
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.empty_all', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.empty_all',
++        ''
++    ]
++
++
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_autodoc_noindex(app):
+     options = {"noindex": True}
+2026-11-09 23:14:03,793 - INFO - Grading answer for sphinx-doc__sphinx-8595...
+2026-11-09 23:14:03,829 - INFO - report: {'sphinx-doc__sphinx-8595': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False, 'infra_failure_reason': 'no_tests_collected'}}
+Result for sphinx-doc__sphinx-8595: resolved: False
+2026-11-09 23:14:03,831 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8595.verified_full_glm53_claude-code_incr_R1992...
+2026-11-09 23:14:19,668 - INFO - Container sweb.eval.sphinx-doc__sphinx-8595.verified_full_glm53_claude-code_incr_R1992 stopped successfully.
+2026-11-09 23:14:19,668 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8595.verified_full_glm53_claude-code_incr_R1992...
+2026-11-09 23:14:19,708 - INFO - Container sweb.eval.sphinx-doc__sphinx-8595.verified_full_glm53_claude-code_incr_R1992 removed successfully.

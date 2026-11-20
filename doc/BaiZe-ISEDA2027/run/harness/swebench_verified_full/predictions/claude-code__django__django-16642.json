@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-16642",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/http/response.py b/django/http/response.py\nindex f62dec8ce9..259463d013 100644\n--- a/django/http/response.py\n+++ b/django/http/response.py\n@@ -609,7 +609,9 @@ class FileResponse(StreamingHttpResponse):\n                 # Encoding isn't set to prevent browsers from automatically\n                 # uncompressing files.\n                 content_type = {\n+                    \"br\": \"application/brotli\",\n                     \"bzip2\": \"application/x-bzip\",\n+                    \"compress\": \"application/x-compress\",\n                     \"gzip\": \"application/gzip\",\n                     \"xz\": \"application/x-xz\",\n                 }.get(encoding, content_type)\ndiff --git a/tests/responses/test_fileresponse.py b/tests/responses/test_fileresponse.py\nindex 952fe4dd7c..3654a996ea 100644\n--- a/tests/responses/test_fileresponse.py\n+++ b/tests/responses/test_fileresponse.py\n@@ -252,6 +252,8 @@ class FileResponseTests(SimpleTestCase):\n         uncompress the file, which is most probably not wanted.\n         \"\"\"\n         test_tuples = (\n+            (\".tar.Z\", \"application/x-compress\"),\n+            (\".tar.br\", \"application/brotli\"),\n             (\".tar.gz\", \"application/gzip\"),\n             (\".tar.bz2\", \"application/x-bzip\"),\n             (\".tar.xz\", \"application/x-xz\"),\n"
+  }
+]

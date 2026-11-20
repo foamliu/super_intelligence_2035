@@ -1,0 +1,84 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 5a9f249..b3165f4 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -47,9 +47,14 @@ New Features
+ 
+ Bug fixes
+ ~~~~~~~~~
++- Fix :py:meth:`Dataset.merge` to allow merging a named
++  :py:class:`~xarray.DataArray` into a Dataset, matching the behavior of the
++  top-level :py:func:`merge` function (:issue:`3898`).
+ - Fix :py:meth:`xarray.combine_by_coords` to allow for combining incomplete
+   hypercubes of Datasets (:issue:`3648`).  By `Ian Bolliger
+   <https://github.com/bolliger32>`_.
++  hypercubes of Datasets (:issue:`3648`).  By `Ian Bolliger
++  <https://github.com/bolliger32>`_.
+ - Fix :py:meth:`xarray.combine_by_coords` when combining cftime coordinates
+   which span long time intervals (:issue:`3535`).  By `Spencer Clark
+   <https://github.com/spencerkclark>`_.
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index ac0a923..eb03645 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -3547,7 +3547,7 @@ class Dataset(Mapping, ImplementsDatasetReduce, DataWithCoords):
+ 
+     def merge(
+         self,
+-        other: "CoercibleMapping",
++        other: Union["CoercibleMapping", "DataArray"],
+         inplace: bool = None,
+         overwrite_vars: Union[Hashable, Iterable[Hashable]] = frozenset(),
+         compat: str = "no_conflicts",
+diff --git a/xarray/core/merge.py b/xarray/core/merge.py
+index 10c7804..d49b7f0 100644
+--- a/xarray/core/merge.py
++++ b/xarray/core/merge.py
+@@ -797,7 +797,7 @@ def merge(
+ 
+ def dataset_merge_method(
+     dataset: "Dataset",
+-    other: "CoercibleMapping",
++    other: Union["CoercibleMapping", "DataArray"],
+     overwrite_vars: Union[Hashable, Iterable[Hashable]],
+     compat: str,
+     join: str,
+@@ -809,6 +809,11 @@ def dataset_merge_method(
+     # method due for backwards compatibility
+     # TODO: consider deprecating it?
+ 
++    from .dataarray import DataArray
++
++    if isinstance(other, DataArray):
++        other = other.to_dataset()
++
+     if isinstance(overwrite_vars, Iterable) and not isinstance(overwrite_vars, str):
+         overwrite_vars = set(overwrite_vars)
+     else:
+diff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py
+index c1e6c7a..25f3222 100644
+--- a/xarray/tests/test_merge.py
++++ b/xarray/tests/test_merge.py
+@@ -159,7 +159,21 @@ class TestMergeMethod:
+         with raises_regex(ValueError, "should be coordinates or not"):
+             data.merge(data.reset_coords())
+ 
+-    def test_merge_broadcast_equals(self):
++    def test_merge_dataarray(self):
++        # regression test for GH3898
++        ds = xr.Dataset({"a": 0})
++        da = xr.DataArray(1, name="b")
++
++        expected = xr.merge([ds, da])
++        actual = ds.merge(da)
++        assert expected.identical(actual)
++
++        actual = ds.merge(da, overwrite_vars="b")
++        assert expected.identical(actual)
++
++        with pytest.raises(ValueError):
++            ds.merge(xr.DataArray(1))
++
+         ds1 = xr.Dataset({"x": 0})
+         ds2 = xr.Dataset({"x": ("y", [0, 0])})
+         actual = ds1.merge(ds2)

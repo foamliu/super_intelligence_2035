@@ -1,0 +1,104 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 0f53d9c30..0ce7de02c 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -2524,7 +2524,7 @@ class AutoFieldMeta(type):
+         return isinstance(instance, self._subclasses) or super().__instancecheck__(instance)
+ 
+     def __subclasscheck__(self, subclass):
+-        return subclass in self._subclasses or super().__subclasscheck__(subclass)
++        return issubclass(subclass, self._subclasses) or super().__subclasscheck__(subclass)
+ 
+ 
+ class AutoField(AutoFieldMixin, IntegerField, metaclass=AutoFieldMeta):
+diff --git a/tests/model_fields/test_autofield.py b/tests/model_fields/test_autofield.py
+index 646cd2ab0..e0c46990c 100644
+--- a/tests/model_fields/test_autofield.py
++++ b/tests/model_fields/test_autofield.py
+@@ -33,3 +33,18 @@ class AutoFieldInheritanceTests(SimpleTestCase):
+         for field in (models.BigAutoField, models.SmallAutoField):
+             with self.subTest(field.__name__):
+                 self.assertTrue(issubclass(field, models.AutoField))
++
++    def test_issubclass_of_big_and_small_autofield_subclasses(self):
++        class MyBigAutoField(models.BigAutoField):
++            pass
++
++        class MySmallAutoField(models.SmallAutoField):
++            pass
++
++        class MyBigAutoFieldSubclass(MyBigAutoField):
++            pass
++
++        for field in (MyBigAutoField, MySmallAutoField, MyBigAutoFieldSubclass):
++            with self.subTest(field.__name__):
++                self.assertTrue(issubclass(field, models.AutoField))
++                self.assertIsInstance(field(), models.AutoField)
+diff --git a/tests/model_options/apps.py b/tests/model_options/apps.py
+index be2250fe7..f3de5c171 100644
+--- a/tests/model_options/apps.py
++++ b/tests/model_options/apps.py
+@@ -23,3 +23,8 @@ class ModelPKNoneConfig(AppConfig):
+ class ModelPKNonexistentConfig(AppConfig):
+     name = 'model_options'
+     default_auto_field = 'django.db.models.NonexistentAutoField'
++
++
++class ModelPKBigAutoFieldSubclassConfig(AppConfig):
++    name = 'model_options'
++    default_auto_field = 'model_options.models.MyBigAutoField'
+diff --git a/tests/model_options/models/__init__.py b/tests/model_options/models/__init__.py
+index e69de29bb..8bd024540 100644
+--- a/tests/model_options/models/__init__.py
++++ b/tests/model_options/models/__init__.py
+@@ -0,0 +1,9 @@
++from django.db.models import BigAutoField, SmallAutoField
++
++
++class MyBigAutoField(BigAutoField):
++    pass
++
++
++class MySmallAutoField(SmallAutoField):
++    pass
+diff --git a/tests/model_options/test_default_pk.py b/tests/model_options/test_default_pk.py
+index b67884891..a5fb5be34 100644
+--- a/tests/model_options/test_default_pk.py
++++ b/tests/model_options/test_default_pk.py
+@@ -3,6 +3,8 @@ from django.db import models
+ from django.test import SimpleTestCase, override_settings
+ from django.test.utils import isolate_apps
+ 
++from .models import MyBigAutoField, MySmallAutoField
++
+ 
+ @isolate_apps('model_options')
+ class TestDefaultPK(SimpleTestCase):
+@@ -82,6 +84,27 @@ class TestDefaultPK(SimpleTestCase):
+ 
+         self.assertIsInstance(Model._meta.pk, models.SmallAutoField)
+ 
++    @override_settings(DEFAULT_AUTO_FIELD='model_options.models.MyBigAutoField')
++    def test_default_auto_field_setting_big_auto_field_subclass(self):
++        class Model(models.Model):
++            pass
++
++        self.assertIsInstance(Model._meta.pk, MyBigAutoField)
++
++    @override_settings(DEFAULT_AUTO_FIELD='model_options.models.MySmallAutoField')
++    def test_default_auto_field_setting_small_auto_field_subclass(self):
++        class Model(models.Model):
++            pass
++
++        self.assertIsInstance(Model._meta.pk, MySmallAutoField)
++
++    @isolate_apps('model_options.apps.ModelPKBigAutoFieldSubclassConfig')
++    def test_app_default_auto_field_big_auto_field_subclass(self):
++        class Model(models.Model):
++            pass
++
++        self.assertIsInstance(Model._meta.pk, MyBigAutoField)
++
+     @isolate_apps('model_options.apps.ModelDefaultPKConfig')
+     @override_settings(DEFAULT_AUTO_FIELD='django.db.models.SmallAutoField')
+     def test_m2m_default_auto_field_setting(self):

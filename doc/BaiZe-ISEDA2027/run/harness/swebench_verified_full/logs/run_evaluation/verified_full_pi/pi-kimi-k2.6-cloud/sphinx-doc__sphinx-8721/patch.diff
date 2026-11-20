@@ -1,0 +1,36 @@
+diff --git a/sphinx/ext/viewcode.py b/sphinx/ext/viewcode.py
+index a7d52a91..060604e2 100644
+--- a/sphinx/ext/viewcode.py
++++ b/sphinx/ext/viewcode.py
+@@ -182,6 +182,8 @@ def collect_pages(app: Sphinx) -> Generator[Tuple[str, Dict[str, Any], str], Non
+     env = app.builder.env
+     if not hasattr(env, '_viewcode_modules'):
+         return
++    if app.builder.name.startswith("epub") and not env.config.viewcode_enable_epub:
++        return
+     highlighter = app.builder.highlighter  # type: ignore
+     urito = app.builder.get_relative_uri
+ 
+diff --git a/tests/test_ext_viewcode.py b/tests/test_ext_viewcode.py
+index 79864095..55612cd4 100644
+--- a/tests/test_ext_viewcode.py
++++ b/tests/test_ext_viewcode.py
+@@ -102,3 +102,18 @@ def test_local_source_files(app, status, warning):
+ 
+     assert result.count('href="_modules/not_a_package/submodule.html#not_a_package.submodule.Class3.class_attr"') == 1
+     assert result.count('This is the class attribute class_attr') == 1
++
++
++@pytest.mark.sphinx('html', testroot='ext-viewcode')
++def test_viewcode_not_create_epub_module_pages_by_default(make_app, app_params):
++    # test for viewcode creates pages for epub even if
++    # viewcode_enable_epub=False on make html epub
++    args, kwargs = app_params
++    app1 = make_app(*args, **kwargs)
++    app1.build()
++    assert (app1.outdir / '_modules/spam/mod1.html').exists()
++
++    # then build with EPUB using the same doctreedir
++    app2 = make_app('epub', *args[1:], **kwargs)
++    app2.build()
++    assert not (app2.outdir / '_modules').exists()

@@ -1,0 +1,172 @@
+2026-10-28 12:25:22,312 - INFO - Creating container for psf__requests-1142...
+2026-10-28 12:25:22,345 - INFO - Container for psf__requests-1142 created: 71ade31e3117cf4d5799817af9ea7981de7f97bb1ec7b0cfadb20d3813254d3a
+2026-10-28 12:25:23,951 - INFO - Container for psf__requests-1142 started: 71ade31e3117cf4d5799817af9ea7981de7f97bb1ec7b0cfadb20d3813254d3a
+2026-10-28 12:25:23,954 - INFO - Intermediate patch for psf__requests-1142 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/psf__requests-1142/patch.diff, now applying to container...
+2026-10-28 12:25:24,135 - INFO - >>>>> Applied Patch:
+Checking patch requests/cookies.py...
+Checking patch requests/models.py...
+Checking patch requests/packages/urllib3/_collections.py...
+Checking patch test_requests.py...
+Applied patch requests/cookies.py cleanly.
+Applied patch requests/models.py cleanly.
+Applied patch requests/packages/urllib3/_collections.py cleanly.
+Applied patch test_requests.py cleanly.
+
+2026-10-28 12:25:24,214 - INFO - Git diff before:
+diff --git a/requests/cookies.py b/requests/cookies.py
+index bd7289e..19e4ec1 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -7,6 +7,10 @@ requests.utils imports from here, so be careful with imports.
+ """
+ 
+ import collections
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from .compat import cookielib, urlparse, Morsel
+ 
+ try:
+@@ -133,7 +137,7 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..0c99e5d 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -386,7 +386,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index a052b1d..2103bfa 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,10 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from threading import Lock
+ 
+ try: # Python 2.7+
+diff --git a/test_requests.py b/test_requests.py
+index c974e98..9e6447a 100644
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -274,6 +274,36 @@ class RequestsTestCase(unittest.TestCase):
+ 
+         self.assertTrue(hasattr(resp, 'hook_working'))
+ 
++    def test_get_no_content_length(self):
++        req = requests.Request('GET', 'http://example.com')
++        prep = req.prepare()
++        self.assertTrue('Content-Length' not in prep.headers)
++
++    def test_post_has_content_length(self):
++        req = requests.Request('POST', 'http://example.com', data={'key': 'value'})
++        prep = req.prepare()
++        self.assertTrue('Content-Length' in prep.headers)
++
++    def test_empty_post_no_content_length(self):
++        req = requests.Request('POST', 'http://example.com')
++        prep = req.prepare()
++        self.assertTrue('Content-Length' not in prep.headers)
++
++    def test_head_no_content_length(self):
++        req = requests.Request('HEAD', 'http://example.com')
++        prep = req.prepare()
++        self.assertTrue('Content-Length' not in prep.headers)
++
++    def test_put_has_content_length(self):
++        req = requests.Request('PUT', 'http://example.com', data='some data')
++        prep = req.prepare()
++        self.assertTrue('Content-Length' in prep.headers)
++
++    def test_get_with_empty_dict_no_content_length(self):
++        req = requests.Request('GET', 'http://example.com', data={})
++        prep = req.prepare()
++        self.assertTrue('Content-Length' not in prep.headers)
++
+     def test_links(self):
+         url = 'https://api.github.com/users/kennethreitz/repos?page=1&per_page=10'
+         r = requests.head(url=url)
+2026-10-28 12:25:24,217 - INFO - Eval script for psf__requests-1142 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/psf__requests-1142/eval.sh; copying to container...
+2026-10-28 12:25:27,479 - INFO - Test runtime: 3.19 seconds
+2026-10-28 12:25:27,482 - INFO - Test output for psf__requests-1142 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/psf__requests-1142/test_output.txt
+2026-10-28 12:25:27,560 - INFO - Git diff after:
+diff --git a/requests/cookies.py b/requests/cookies.py
+index bd7289e..19e4ec1 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -7,6 +7,10 @@ requests.utils imports from here, so be careful with imports.
+ """
+ 
+ import collections
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from .compat import cookielib, urlparse, Morsel
+ 
+ try:
+@@ -133,7 +137,7 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..0c99e5d 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -386,7 +386,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index a052b1d..2103bfa 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,10 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from threading import Lock
+ 
+ try: # Python 2.7+
+2026-10-28 12:25:27,560 - INFO - Git diff changed after running eval script
+2026-10-28 12:25:27,560 - INFO - Grading answer for psf__requests-1142...
+2026-10-28 12:25:27,565 - INFO - report: {'psf__requests-1142': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_no_content_length'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_basic_building', 'test_requests.py::RequestsTestCase::test_entry_points', 'test_requests.py::RequestsTestCase::test_invalid_url', 'test_requests.py::RequestsTestCase::test_params_are_added_before_fragment', 'test_requests.py::RequestsTestCase::test_path_is_not_double_encoded'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for psf__requests-1142: resolved: True
+2026-10-28 12:25:27,568 - INFO - Attempting to stop container sweb.eval.psf__requests-1142.verified_full_claude-code...
+2026-10-28 12:25:43,658 - INFO - Container sweb.eval.psf__requests-1142.verified_full_claude-code stopped successfully.
+2026-10-28 12:25:43,658 - INFO - Attempting to remove container sweb.eval.psf__requests-1142.verified_full_claude-code...
+2026-10-28 12:25:43,696 - INFO - Container sweb.eval.psf__requests-1142.verified_full_claude-code removed successfully.

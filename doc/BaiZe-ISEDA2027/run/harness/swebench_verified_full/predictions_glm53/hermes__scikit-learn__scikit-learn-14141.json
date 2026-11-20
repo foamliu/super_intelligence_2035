@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-14141",
+    "model_name_or_path": "hermes-glm-5.3-flash",
+    "model_patch": "diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py\nindex e5d3141b..d13f28b0 100644\n--- a/sklearn/utils/_show_versions.py\n+++ b/sklearn/utils/_show_versions.py\n@@ -46,6 +46,7 @@ def _get_deps_info():\n         \"numpy\",\n         \"scipy\",\n         \"Cython\",\n+        \"joblib\",\n         \"pandas\",\n         \"matplotlib\",\n     ]\n"
+  }
+]

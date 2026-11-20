@@ -1,0 +1,82 @@
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d7..b335916a 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -553,6 +553,9 @@ class Card(_Verify):
+         card(s).
+         """
+ 
++        if isinstance(image, bytes):
++            image = decode_ascii(image)
++
+         card = cls()
+         card._image = _pad(image)
+         card._verified = False
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d5..a15515a6 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,7 +334,7 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
++        data : str or bytes
+            String containing the entire header.
+ 
+         sep : str, optional
+@@ -348,6 +348,12 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++
++        if isinstance(sep, bytes):
++            sep = decode_ascii(sep)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index 7c1725ae..8ce2d9bd 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -841,6 +841,28 @@ class TestHeaderFunctions(FitsTestCase):
+         for c in header.cards:
+             assert c.value == fits.card.UNDEFINED
+ 
++    def test_header_fromstring_bytes(self):
++        """Test that Header.fromstring accepts bytes."""
++        hstr = (b'SIMPLE  =                    T / Standard FITS\n'
++                b'BITPIX  =                    8 / 8-bit data\n'
++                b'NAXIS   =                    0 / No data axes\n'
++                b'END')
++        header = fits.Header.fromstring(hstr, sep=b'\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++        assert header['NAXIS'] == 0
++
++    def test_card_fromstring_bytes(self):
++        """Test that Card.fromstring accepts bytes."""
++        c = fits.Card.fromstring(b'ABC     = F')
++        assert c.value is False
++
++        c = fits.Card.fromstring(b'ABC     =                    T')
++        assert c.value is True
++
++        c = fits.Card.fromstring(b"HISTORY  (1, 2)")
++        assert c.keyword == 'HISTORY'
++
+     def test_set_comment_only(self):
+         header = fits.Header([('A', 'B', 'C')])
+         header.set('A', comment='D')

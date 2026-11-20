@@ -1,0 +1,54 @@
+diff --git a/requests/sessions.py b/requests/sessions.py
+index d701ff2..8869d3c 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -13,12 +13,12 @@ from collections import Mapping
+ from datetime import datetime
+ 
+ from .auth import _basic_auth_str
+-from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
++from .compat import cookielib, OrderedDict, urljoin, urlparse
+ from .cookies import (
+     cookiejar_from_dict, extract_cookies_to_jar, RequestsCookieJar, merge_cookies)
+ from .models import Request, PreparedRequest, DEFAULT_REDIRECT_LIMIT
+ from .hooks import default_hooks, dispatch_hook
+-from .utils import to_key_val_list, default_headers, to_native_string
++from .utils import to_key_val_list, default_headers
+ from .exceptions import (
+     TooManyRedirects, InvalidSchema, ChunkedEncodingError, ContentDecodingError)
+ from .structures import CaseInsensitiveDict
+@@ -27,7 +27,7 @@ from .adapters import HTTPAdapter
+ 
+ from .utils import (
+     requote_uri, get_environ_proxies, get_netrc_auth, should_bypass_proxies,
+-    get_auth_from_url
++    get_auth_from_url, to_native_string
+ )
+ 
+ from .status_codes import codes
+@@ -425,7 +425,7 @@ class Session(SessionRedirectMixin):
+             If Tuple, ('cert', 'key') pair.
+         """
+ 
+-        method = builtin_str(method)
++        method = to_native_string(method)
+ 
+         # Create the Request.
+         req = Request(
+diff --git a/test_requests.py b/test_requests.py
+index 467c5bc..bebb3bf 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -523,6 +523,12 @@ class RequestsTestCase(unittest.TestCase):
+             method=u('POST'), url=httpbin('post'), files=files)
+         assert r.status_code == 200
+ 
++    def test_bytes_method_name(self):
++        files = {'file': open('test_requests.py', 'rb')}
++        r = requests.request(
++            method=b'POST', url=httpbin('post'), files=files)
++        assert r.status_code == 200
++
+     def test_custom_content_type(self):
+         r = requests.post(
+             httpbin('post'),

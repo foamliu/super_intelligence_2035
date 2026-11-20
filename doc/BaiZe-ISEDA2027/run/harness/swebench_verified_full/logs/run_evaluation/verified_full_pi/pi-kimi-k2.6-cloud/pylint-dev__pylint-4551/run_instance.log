@@ -1,0 +1,418 @@
+2026-11-01 20:51:04,318 - INFO - Creating container for pylint-dev__pylint-4551...
+2026-11-01 20:51:04,338 - INFO - Container for pylint-dev__pylint-4551 created: 3951fdabb7649cc6c6e7625fec953ef4708788d35cd9f17691c4e65beee26e22
+2026-11-01 20:51:04,928 - INFO - Container for pylint-dev__pylint-4551 started: 3951fdabb7649cc6c6e7625fec953ef4708788d35cd9f17691c4e65beee26e22
+2026-11-01 20:51:04,931 - INFO - Intermediate patch for pylint-dev__pylint-4551 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pylint-dev__pylint-4551/patch.diff, now applying to container...
+2026-11-01 20:51:05,094 - INFO - >>>>> Applied Patch:
+Checking patch pylint/pyreverse/inspector.py...
+Checking patch tests/unittest_pyreverse_inspector.py...
+Applied patch pylint/pyreverse/inspector.py cleanly.
+Applied patch tests/unittest_pyreverse_inspector.py cleanly.
+
+2026-11-01 20:51:05,331 - INFO - Git diff before:
+diff --git a/pylint/pyreverse/inspector.py b/pylint/pyreverse/inspector.py
+index 8fa12202..be91e0da 100644
+--- a/pylint/pyreverse/inspector.py
++++ b/pylint/pyreverse/inspector.py
+@@ -28,6 +28,24 @@ def _iface_hdlr(_):
+     return True
+ 
+ 
++def _get_annotation(node, name):
++    """Return the annotation node for the given name if it is a function parameter."""
++    if not isinstance(node, astroid.FunctionDef):
++        return None
++    for args, annotations in (
++        (node.args.posonlyargs or (), node.args.posonlyargs_annotations or ()),
++        (node.args.args or (), node.args.annotations or ()),
++        (node.args.kwonlyargs or (), node.args.kwonlyargs_annotations or ()),
++    ):
++        for i, arg in enumerate(args):
++            if arg.name == name and i < len(annotations) and annotations[i] is not None:
++                return annotations[i]
++    if node.args.vararg == name and node.args.varargannotation is not None:
++        return node.args.varargannotation
++    if node.args.kwarg == name and node.args.kwargannotation is not None:
++        return node.args.kwargannotation
++    return None
++
+ def _astroid_wrapper(func, modname):
+     print("parsing %s..." % modname)
+     try:
+@@ -183,6 +201,35 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         node.locals_type = collections.defaultdict(list)
+         if self.tag:
+             node.uid = self.generate_id()
++        # handle parameter annotations
++        for args, annotations in (
++            (node.args.posonlyargs or (), node.args.posonlyargs_annotations or ()),
++            (node.args.args or (), node.args.annotations or ()),
++            (node.args.kwonlyargs or (), node.args.kwonlyargs_annotations or ()),
++        ):
++            for i, arg in enumerate(args):
++                ann = annotations[i] if i < len(annotations) else None
++                if ann is not None:
++                    try:
++                        values = set(ann.infer())
++                        current = set(node.locals_type[arg.name])
++                        node.locals_type[arg.name] = list(current | values)
++                    except astroid.InferenceError:
++                        pass
++        if node.args.vararg and node.args.varargannotation is not None:
++            try:
++                values = set(node.args.varargannotation.infer())
++                current = set(node.locals_type[node.args.vararg])
++                node.locals_type[node.args.vararg] = list(current | values)
++            except astroid.InferenceError:
++                pass
++        if node.args.kwarg and node.args.kwargannotation is not None:
++            try:
++                values = set(node.args.kwargannotation.infer())
++                current = set(node.locals_type[node.args.kwarg])
++                node.locals_type[node.args.kwarg] = list(current | values)
++            except astroid.InferenceError:
++                pass
+ 
+     link_project = visit_project
+     link_module = visit_module
+@@ -219,9 +266,17 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+ 
+             current = frame.locals_type[node.name]
+             values = set(node.infer())
++            # handle annotated assignment
++            if isinstance(node.parent, astroid.AnnAssign) and node.parent.annotation:
++                try:
++                    values |= set(node.parent.annotation.infer())
++                except astroid.InferenceError:
++                    pass
+             frame.locals_type[node.name] = list(set(current) | values)
+         except astroid.InferenceError:
+             pass
++        except astroid.InferenceError:
++            pass
+ 
+     @staticmethod
+     def handle_assignattr_type(node, parent):
+@@ -231,6 +286,38 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         """
+         try:
+             values = set(node.infer())
++            # handle annotated assignment
++            if isinstance(node.parent, astroid.AnnAssign) and node.parent.annotation:
++                try:
++                    values |= set(node.parent.annotation.infer())
++                except astroid.InferenceError:
++                    pass
++            # handle assignment from annotated parameter or local variable
++            elif isinstance(node.parent, astroid.Assign):
++                assign_value = node.parent.value
++                if isinstance(assign_value, astroid.Name):
++                    try:
++                        _, definitions = assign_value.lookup(assign_value.name)
++                        for defn in definitions:
++                            if (
++                                isinstance(defn.parent, astroid.AnnAssign)
++                                and defn.parent.annotation
++                            ):
++                                try:
++                                    values |= set(defn.parent.annotation.infer())
++                                except astroid.InferenceError:
++                                    pass
++                            elif isinstance(defn.parent, astroid.Arguments):
++                                func = defn.scope()
++                                if isinstance(func, astroid.FunctionDef):
++                                    ann = _get_annotation(func, assign_value.name)
++                                    if ann is not None:
++                                        try:
++                                            values |= set(ann.infer())
++                                        except astroid.InferenceError:
++                                            pass
++                    except astroid.InferenceError:
++                        pass
+             current = set(parent.instance_attrs_type[node.attrname])
+             parent.instance_attrs_type[node.attrname] = list(current | values)
+         except astroid.InferenceError:
+diff --git a/tests/unittest_pyreverse_inspector.py b/tests/unittest_pyreverse_inspector.py
+index e1ff6378..fc95496a 100644
+--- a/tests/unittest_pyreverse_inspector.py
++++ b/tests/unittest_pyreverse_inspector.py
+@@ -128,3 +128,71 @@ def test_from_directory(project):
+ def test_project_node(project):
+     expected = ["data", "data.clientmodule_test", "data.suppliermodule_test"]
+     assert sorted(project.keys()) == expected
++
++
++def test_locals_type_with_type_hints():
++    project = inspector.project_from_files(
++        [os.path.join(os.path.dirname(__file__), "data")],
++        project_name="data",
++    )
++    linker = inspector.Linker(project)
++    linker.visit(project)
++    module = project.get_module("data.clientmodule_test")
++    klass = module["Ancestor"]
++    assert hasattr(klass, "locals_type")
++    # Check that the 'value' parameter of __init__ is in the function's locals_type
++    # but since it's an instance attr we care about instance_attrs_type
++    func = klass["__init__"]
++    assert hasattr(func, "locals_type")
++
++
++def test_instance_attrs_with_type_hints():
++    code = '''
++class C(object):
++    def __init__(self, a: str = None):
++        self.a = a
++'''
++    module = astroid.parse(code)
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit(module)
++    klass = module["C"]
++    assert "a" in klass.instance_attrs_type
++    assert any(
++        isinstance(node, astroid.ClassDef) and node.name == "str"
++        for node in klass.instance_attrs_type["a"]
++    )
++
++
++def test_instance_attrs_with_annassign_type_hints():
++    code = '''
++class C(object):
++    def __init__(self):
++        self.a: str = None
++'''
++    module = astroid.parse(code)
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit(module)
++    klass = module["C"]
++    assert "a" in klass.instance_attrs_type
++    assert any(
++        isinstance(node, astroid.ClassDef) and node.name == "str"
++        for node in klass.instance_attrs_type["a"]
++    )
++
++
++def test_instance_attrs_with_local_annassign_type_hints():
++    code = '''
++class C(object):
++    def __init__(self):
++        a: str = None
++        self.a = a
++'''
++    module = astroid.parse(code)
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit(module)
++    klass = module["C"]
++    assert "a" in klass.instance_attrs_type
++    assert any(
++        isinstance(node, astroid.ClassDef) and node.name == "str"
++        for node in klass.instance_attrs_type["a"]
++    )
+2026-11-01 20:51:05,334 - INFO - Eval script for pylint-dev__pylint-4551 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pylint-dev__pylint-4551/eval.sh; copying to container...
+2026-11-01 20:51:09,396 - INFO - Test runtime: 3.98 seconds
+2026-11-01 20:51:09,398 - INFO - Test output for pylint-dev__pylint-4551 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pylint-dev__pylint-4551/test_output.txt
+2026-11-01 20:51:09,451 - INFO - Git diff after:
+diff --git a/pylint/pyreverse/inspector.py b/pylint/pyreverse/inspector.py
+index 8fa12202..be91e0da 100644
+--- a/pylint/pyreverse/inspector.py
++++ b/pylint/pyreverse/inspector.py
+@@ -28,6 +28,24 @@ def _iface_hdlr(_):
+     return True
+ 
+ 
++def _get_annotation(node, name):
++    """Return the annotation node for the given name if it is a function parameter."""
++    if not isinstance(node, astroid.FunctionDef):
++        return None
++    for args, annotations in (
++        (node.args.posonlyargs or (), node.args.posonlyargs_annotations or ()),
++        (node.args.args or (), node.args.annotations or ()),
++        (node.args.kwonlyargs or (), node.args.kwonlyargs_annotations or ()),
++    ):
++        for i, arg in enumerate(args):
++            if arg.name == name and i < len(annotations) and annotations[i] is not None:
++                return annotations[i]
++    if node.args.vararg == name and node.args.varargannotation is not None:
++        return node.args.varargannotation
++    if node.args.kwarg == name and node.args.kwargannotation is not None:
++        return node.args.kwargannotation
++    return None
++
+ def _astroid_wrapper(func, modname):
+     print("parsing %s..." % modname)
+     try:
+@@ -183,6 +201,35 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         node.locals_type = collections.defaultdict(list)
+         if self.tag:
+             node.uid = self.generate_id()
++        # handle parameter annotations
++        for args, annotations in (
++            (node.args.posonlyargs or (), node.args.posonlyargs_annotations or ()),
++            (node.args.args or (), node.args.annotations or ()),
++            (node.args.kwonlyargs or (), node.args.kwonlyargs_annotations or ()),
++        ):
++            for i, arg in enumerate(args):
++                ann = annotations[i] if i < len(annotations) else None
++                if ann is not None:
++                    try:
++                        values = set(ann.infer())
++                        current = set(node.locals_type[arg.name])
++                        node.locals_type[arg.name] = list(current | values)
++                    except astroid.InferenceError:
++                        pass
++        if node.args.vararg and node.args.varargannotation is not None:
++            try:
++                values = set(node.args.varargannotation.infer())
++                current = set(node.locals_type[node.args.vararg])
++                node.locals_type[node.args.vararg] = list(current | values)
++            except astroid.InferenceError:
++                pass
++        if node.args.kwarg and node.args.kwargannotation is not None:
++            try:
++                values = set(node.args.kwargannotation.infer())
++                current = set(node.locals_type[node.args.kwarg])
++                node.locals_type[node.args.kwarg] = list(current | values)
++            except astroid.InferenceError:
++                pass
+ 
+     link_project = visit_project
+     link_module = visit_module
+@@ -219,9 +266,17 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+ 
+             current = frame.locals_type[node.name]
+             values = set(node.infer())
++            # handle annotated assignment
++            if isinstance(node.parent, astroid.AnnAssign) and node.parent.annotation:
++                try:
++                    values |= set(node.parent.annotation.infer())
++                except astroid.InferenceError:
++                    pass
+             frame.locals_type[node.name] = list(set(current) | values)
+         except astroid.InferenceError:
+             pass
++        except astroid.InferenceError:
++            pass
+ 
+     @staticmethod
+     def handle_assignattr_type(node, parent):
+@@ -231,6 +286,38 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         """
+         try:
+             values = set(node.infer())
++            # handle annotated assignment
++            if isinstance(node.parent, astroid.AnnAssign) and node.parent.annotation:
++                try:
++                    values |= set(node.parent.annotation.infer())
++                except astroid.InferenceError:
++                    pass
++            # handle assignment from annotated parameter or local variable
++            elif isinstance(node.parent, astroid.Assign):
++                assign_value = node.parent.value
++                if isinstance(assign_value, astroid.Name):
++                    try:
++                        _, definitions = assign_value.lookup(assign_value.name)
++                        for defn in definitions:
++                            if (
++                                isinstance(defn.parent, astroid.AnnAssign)
++                                and defn.parent.annotation
++                            ):
++                                try:
++                                    values |= set(defn.parent.annotation.infer())
++                                except astroid.InferenceError:
++                                    pass
++                            elif isinstance(defn.parent, astroid.Arguments):
++                                func = defn.scope()
++                                if isinstance(func, astroid.FunctionDef):
++                                    ann = _get_annotation(func, assign_value.name)
++                                    if ann is not None:
++                                        try:
++                                            values |= set(ann.infer())
++                                        except astroid.InferenceError:
++                                            pass
++                    except astroid.InferenceError:
++                        pass
+             current = set(parent.instance_attrs_type[node.attrname])
+             parent.instance_attrs_type[node.attrname] = list(current | values)
+         except astroid.InferenceError:
+diff --git a/tests/unittest_pyreverse_inspector.py b/tests/unittest_pyreverse_inspector.py
+index e1ff6378..fc95496a 100644
+--- a/tests/unittest_pyreverse_inspector.py
++++ b/tests/unittest_pyreverse_inspector.py
+@@ -128,3 +128,71 @@ def test_from_directory(project):
+ def test_project_node(project):
+     expected = ["data", "data.clientmodule_test", "data.suppliermodule_test"]
+     assert sorted(project.keys()) == expected
++
++
++def test_locals_type_with_type_hints():
++    project = inspector.project_from_files(
++        [os.path.join(os.path.dirname(__file__), "data")],
++        project_name="data",
++    )
++    linker = inspector.Linker(project)
++    linker.visit(project)
++    module = project.get_module("data.clientmodule_test")
++    klass = module["Ancestor"]
++    assert hasattr(klass, "locals_type")
++    # Check that the 'value' parameter of __init__ is in the function's locals_type
++    # but since it's an instance attr we care about instance_attrs_type
++    func = klass["__init__"]
++    assert hasattr(func, "locals_type")
++
++
++def test_instance_attrs_with_type_hints():
++    code = '''
++class C(object):
++    def __init__(self, a: str = None):
++        self.a = a
++'''
++    module = astroid.parse(code)
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit(module)
++    klass = module["C"]
++    assert "a" in klass.instance_attrs_type
++    assert any(
++        isinstance(node, astroid.ClassDef) and node.name == "str"
++        for node in klass.instance_attrs_type["a"]
++    )
++
++
++def test_instance_attrs_with_annassign_type_hints():
++    code = '''
++class C(object):
++    def __init__(self):
++        self.a: str = None
++'''
++    module = astroid.parse(code)
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit(module)
++    klass = module["C"]
++    assert "a" in klass.instance_attrs_type
++    assert any(
++        isinstance(node, astroid.ClassDef) and node.name == "str"
++        for node in klass.instance_attrs_type["a"]
++    )
++
++
++def test_instance_attrs_with_local_annassign_type_hints():
++    code = '''
++class C(object):
++    def __init__(self):
++        a: str = None
++        self.a = a
++'''
++    module = astroid.parse(code)
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit(module)
++    klass = module["C"]
++    assert "a" in klass.instance_attrs_type
++    assert any(
++        isinstance(node, astroid.ClassDef) and node.name == "str"
++        for node in klass.instance_attrs_type["a"]
++    )
+2026-11-01 20:51:09,451 - INFO - Grading answer for pylint-dev__pylint-4551...
+2026-11-01 20:51:09,452 - INFO - report: {'pylint-dev__pylint-4551': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/unittest_pyreverse_writer.py::test_dot_files[packages_No_Name.dot]', 'tests/unittest_pyreverse_writer.py::test_dot_files[classes_No_Name.dot]', 'tests/unittest_pyreverse_writer.py::test_get_visibility[names0-special]', 'tests/unittest_pyreverse_writer.py::test_get_visibility[names1-private]', 'tests/unittest_pyreverse_writer.py::test_get_visibility[names2-public]', 'tests/unittest_pyreverse_writer.py::test_get_visibility[names3-protected]', 'tests/unittest_pyreverse_writer.py::test_get_annotation_annassign[a:', 'tests/unittest_pyreverse_writer.py::test_get_annotation_assignattr[def', 'tests/unittest_pyreverse_writer.py::test_infer_node_1', 'tests/unittest_pyreverse_writer.py::test_infer_node_2']}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pylint-dev__pylint-4551: resolved: False
+2026-11-01 20:51:09,454 - INFO - Attempting to stop container sweb.eval.pylint-dev__pylint-4551.verified_full_pi...
+2026-11-01 20:51:25,607 - INFO - Container sweb.eval.pylint-dev__pylint-4551.verified_full_pi stopped successfully.
+2026-11-01 20:51:25,607 - INFO - Attempting to remove container sweb.eval.pylint-dev__pylint-4551.verified_full_pi...
+2026-11-01 20:51:25,637 - INFO - Container sweb.eval.pylint-dev__pylint-4551.verified_full_pi removed successfully.

@@ -1,0 +1,104 @@
+2026-11-11 18:59:27,587 - INFO - Creating container for sphinx-doc__sphinx-8721...
+2026-11-11 18:59:27,606 - INFO - Container for sphinx-doc__sphinx-8721 created: 3539731c3265726df791aa57280e799569a661932c368400770abc10efc00b38
+2026-11-11 18:59:28,548 - INFO - Container for sphinx-doc__sphinx-8721 started: 3539731c3265726df791aa57280e799569a661932c368400770abc10efc00b38
+2026-11-11 18:59:28,550 - INFO - Intermediate patch for sphinx-doc__sphinx-8721 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2188/hermes-glm-5.3-flash/sphinx-doc__sphinx-8721/patch.diff, now applying to container...
+2026-11-11 18:59:28,743 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+warning: CHANGES has type 100755, expected 100644
+Checking patch sphinx/ext/viewcode.py...
+warning: sphinx/ext/viewcode.py has type 100755, expected 100644
+Checking patch tests/test_ext_viewcode.py...
+warning: tests/test_ext_viewcode.py has type 100755, expected 100644
+Applied patch CHANGES cleanly.
+Applied patch sphinx/ext/viewcode.py cleanly.
+Applied patch tests/test_ext_viewcode.py cleanly.
+
+2026-11-11 18:59:29,220 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index bc9dfa335..27784d67e 100755
+--- a/CHANGES
++++ b/CHANGES
+@@ -57,6 +57,7 @@ Bugs fixed
+ * #8693: autodoc: Default values for overloaded functions are rendered as string
+ * #8306: autosummary: mocked modules are documented as empty page when using
+   :recursive: option
++* #8720: viewcode: module pages are generated for epub on incremental build
+ * #8618: html: kbd role produces incorrect HTML when compound-key separators (-,
+   + or ^) are used as keystrokes
+ * #8629: html: A type warning for html_use_opensearch is shown twice
+diff --git a/sphinx/ext/viewcode.py b/sphinx/ext/viewcode.py
+index a7d52a91c..c2bcee4f5 100755
+--- a/sphinx/ext/viewcode.py
++++ b/sphinx/ext/viewcode.py
+@@ -182,6 +182,10 @@ def collect_pages(app: Sphinx) -> Generator[Tuple[str, Dict[str, Any], str], Non
+     env = app.builder.env
+     if not hasattr(env, '_viewcode_modules'):
+         return
++    if app.builder.name == "singlehtml":
++        return
++    if app.builder.name.startswith("epub") and not env.config.viewcode_enable_epub:
++        return
+     highlighter = app.builder.highlighter  # type: ignore
+     urito = app.builder.get_relative_uri
+ 
+diff --git a/tests/test_ext_viewcode.py b/tests/test_ext_viewcode.py
+index 79864095b..21002966b 100755
+--- a/tests/test_ext_viewcode.py
++++ b/tests/test_ext_viewcode.py
+@@ -49,6 +49,21 @@ def test_viewcode(app, status, warning):
+             '<span>    &quot;&quot;&quot;</span></div>\n') in result
+ 
+ 
++@pytest.mark.sphinx('epub', testroot='ext-viewcode')
++def test_viewcode_epub_default(app, status, warning):
++    app.builder.build_all()
++
++    assert not (app.outdir / '_modules/spam/mod1.xhtml').exists()
++
++
++@pytest.mark.sphinx('epub', testroot='ext-viewcode',
++                    confoverrides={'viewcode_enable_epub': True})
++def test_viewcode_epub_enabled(app, status, warning):
++    app.builder.build_all()
++
++    assert (app.outdir / '_modules/spam/mod1.xhtml').exists()
++
++
+ @pytest.mark.sphinx(testroot='ext-viewcode', tags=['test_linkcode'])
+ def test_linkcode(app, status, warning):
+     app.builder.build(['objects'])
+2026-11-11 18:59:29,223 - INFO - Eval script for sphinx-doc__sphinx-8721 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2188/hermes-glm-5.3-flash/sphinx-doc__sphinx-8721/eval.sh; copying to container...
+2026-11-11 18:59:36,291 - INFO - Test runtime: 6.98 seconds
+2026-11-11 18:59:36,294 - INFO - Test output for sphinx-doc__sphinx-8721 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2188/hermes-glm-5.3-flash/sphinx-doc__sphinx-8721/test_output.txt
+2026-11-11 18:59:36,351 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index bc9dfa335..27784d67e 100755
+--- a/CHANGES
++++ b/CHANGES
+@@ -57,6 +57,7 @@ Bugs fixed
+ * #8693: autodoc: Default values for overloaded functions are rendered as string
+ * #8306: autosummary: mocked modules are documented as empty page when using
+   :recursive: option
++* #8720: viewcode: module pages are generated for epub on incremental build
+ * #8618: html: kbd role produces incorrect HTML when compound-key separators (-,
+   + or ^) are used as keystrokes
+ * #8629: html: A type warning for html_use_opensearch is shown twice
+diff --git a/sphinx/ext/viewcode.py b/sphinx/ext/viewcode.py
+index a7d52a91c..c2bcee4f5 100755
+--- a/sphinx/ext/viewcode.py
++++ b/sphinx/ext/viewcode.py
+@@ -182,6 +182,10 @@ def collect_pages(app: Sphinx) -> Generator[Tuple[str, Dict[str, Any], str], Non
+     env = app.builder.env
+     if not hasattr(env, '_viewcode_modules'):
+         return
++    if app.builder.name == "singlehtml":
++        return
++    if app.builder.name.startswith("epub") and not env.config.viewcode_enable_epub:
++        return
+     highlighter = app.builder.highlighter  # type: ignore
+     urito = app.builder.get_relative_uri
+2026-11-11 18:59:36,351 - INFO - Git diff changed after running eval script
+2026-11-11 18:59:36,351 - INFO - Grading answer for sphinx-doc__sphinx-8721...
+2026-11-11 18:59:36,363 - INFO - report: {'sphinx-doc__sphinx-8721': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_viewcode.py::test_viewcode_epub_default'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_viewcode.py::test_viewcode_epub_enabled', 'tests/test_ext_viewcode.py::test_linkcode', 'tests/test_ext_viewcode.py::test_local_source_files'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8721: resolved: True
+2026-11-11 18:59:36,365 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8721.verified_full_glm53_hermes_incr_R2188...

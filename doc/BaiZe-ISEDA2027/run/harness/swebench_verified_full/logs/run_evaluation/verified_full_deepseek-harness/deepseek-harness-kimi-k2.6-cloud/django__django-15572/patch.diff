@@ -1,0 +1,57 @@
+diff --git a/EOF b/EOF
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/django/template/autoreload.py b/django/template/autoreload.py
+index 84c855416..5a0a97ff5 100644
+--- a/django/template/autoreload.py
++++ b/django/template/autoreload.py
+@@ -17,7 +17,7 @@ def get_template_directories():
+         if not isinstance(backend, DjangoTemplates):
+             continue
+ 
+-        items.update(cwd / to_path(dir) for dir in backend.engine.dirs)
++        items.update(cwd / to_path(dir) for dir in backend.engine.dirs if dir)
+ 
+         for loader in backend.engine.template_loaders:
+             if not hasattr(loader, "get_dirs"):
+@@ -25,7 +25,7 @@ def get_template_directories():
+             items.update(
+                 cwd / to_path(directory)
+                 for directory in loader.get_dirs()
+-                if not is_django_path(directory)
++                if not is_django_path(directory) and directory
+             )
+     return items
+ 
+diff --git a/tests/template_tests/test_autoreloader.py b/tests/template_tests/test_autoreloader.py
+index cc2c3f58a..c0bc46630 100644
+--- a/tests/template_tests/test_autoreloader.py
++++ b/tests/template_tests/test_autoreloader.py
+@@ -104,6 +104,27 @@ class TemplateReloadTests(SimpleTestCase):
+         )
+ 
+ 
++    @override_settings(
++        TEMPLATES=[
++            {
++                "DIRS": ["", ROOT],
++                "BACKEND": "django.template.backends.django.DjangoTemplates",
++            }
++        ]
++    )
++    def test_empty_string_in_dirs_ignored(self):
++        """
++        Empty strings in DIRS are filtered out.
++
++        Regression test for autoreload breaking when empty strings in DIRS
++        become the current working directory after pathlib normalization.
++        """
++        self.assertSetEqual(
++            autoreload.get_template_directories(),
++            {ROOT},
++        )
++
++
+ @require_jinja2
+ @override_settings(INSTALLED_APPS=["template_tests"])
+ class Jinja2TemplateReloadTests(SimpleTestCase):

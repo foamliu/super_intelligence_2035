@@ -1,0 +1,75 @@
+diff --git a/django/core/management/commands/makemigrations.py b/django/core/management/commands/makemigrations.py
+index 2e97d9064b..f257e947ba 100644
+--- a/django/core/management/commands/makemigrations.py
++++ b/django/core/management/commands/makemigrations.py
+@@ -248,12 +248,12 @@ class Command(BaseCommand):
+                 else:
+                     self.log("No changes detected")
+         else:
++            if check_changes:
++                sys.exit(1)
+             if self.update:
+                 self.write_to_last_migration_files(changes)
+             else:
+                 self.write_migration_files(changes)
+-            if check_changes:
+-                sys.exit(1)
+ 
+     def write_to_last_migration_files(self, changes):
+         loader = MigrationLoader(connections[DEFAULT_DB_ALIAS])
+diff --git a/docs/ref/django-admin.txt b/docs/ref/django-admin.txt
+index af27e0afb5..957c53b766 100644
+--- a/docs/ref/django-admin.txt
++++ b/docs/ref/django-admin.txt
+@@ -823,7 +823,7 @@ Generate migration files without Django version and timestamp header.
+ .. django-admin-option:: --check
+ 
+ Makes ``makemigrations`` exit with a non-zero status when model changes without
+-migrations are detected.
++migrations are detected. Does not create the migrations.
+ 
+ .. django-admin-option:: --scriptable
+ 
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index 2520d14361..ba37e63a95 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -322,6 +322,9 @@ Miscellaneous
+ * The ``autofocus`` HTML attribute in the admin search box is removed as it can
+   be confusing for screen readers.
+ 
++* :option:`makemigrations --check` no longer writes migration files when model
++  changes are detected.
++
+ .. _deprecated-features-4.2:
+ 
+ Features deprecated in 4.2
+diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
+index 9900c7a35d..3fc7f2a25c 100644
+--- a/tests/migrations/test_commands.py
++++ b/tests/migrations/test_commands.py
+@@ -2388,12 +2388,21 @@ class MakeMigrationsTests(MigrationTestBase):
+ 
+     def test_makemigrations_check(self):
+         """
+-        makemigrations --check should exit with a non-zero status when
+-        there are changes to an app requiring migrations.
++        makemigrations --check should exit with a non-zero status when there
++        are changes to an app requiring migrations, and should not generate
++        migrations.
+         """
+-        with self.temporary_migration_module():
++        with self.temporary_migration_module() as migration_dir:
+             with self.assertRaises(SystemExit):
+                 call_command("makemigrations", "--check", "migrations", verbosity=0)
++            self.assertEqual(
++                [
++                    name
++                    for name in os.listdir(os.path.dirname(migration_dir))
++                    if name != "__pycache__"
++                ],
++                ["__init__.py"],
++            )
+ 
+         with self.temporary_migration_module(
+             module="migrations.test_migrations_no_changes"

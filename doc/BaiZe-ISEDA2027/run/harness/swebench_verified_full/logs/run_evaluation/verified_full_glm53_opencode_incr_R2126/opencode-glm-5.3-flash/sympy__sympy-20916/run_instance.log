@@ -1,0 +1,62 @@
+2026-11-10 23:38:30,024 - INFO - Creating container for sympy__sympy-20916...
+2026-11-10 23:38:30,060 - INFO - Container for sympy__sympy-20916 created: 83fc86b88d40ec795518715eeaae21e8a46248a3b27443d6fd68c373a295b042
+2026-11-10 23:38:31,971 - INFO - Container for sympy__sympy-20916 started: 83fc86b88d40ec795518715eeaae21e8a46248a3b27443d6fd68c373a295b042
+2026-11-10 23:38:31,973 - INFO - Intermediate patch for sympy__sympy-20916 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2126/opencode-glm-5.3-flash/sympy__sympy-20916/patch.diff, now applying to container...
+2026-11-10 23:38:32,142 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/conventions.py...
+Checking patch sympy/printing/tests/test_conventions.py...
+Applied patch sympy/printing/conventions.py cleanly.
+Applied patch sympy/printing/tests/test_conventions.py cleanly.
+
+2026-11-10 23:38:32,919 - INFO - Git diff before:
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bbe9..5e3aa1ab54 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -7,7 +7,7 @@
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
++_name_with_digits_p = re.compile(r'^([^\W\d_]+)([0-9]+)$')
+ 
+ 
+ def split_super_sub(text):
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8fc..1eaebdcbe4 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -30,6 +30,8 @@ def test_super_sub():
+     assert split_super_sub("alpha_11") == ("alpha", [], ["11"])
+     assert split_super_sub("alpha_11_11") == ("alpha", [], ["11", "11"])
+     assert split_super_sub("") == ("", [], [])
++    assert split_super_sub("ω0") == ("ω", [], ["0"])
++    assert split_super_sub("ω") == ("ω", [], [])
+ 
+ 
+ def test_requires_partial():
+2026-11-10 23:38:32,921 - INFO - Eval script for sympy__sympy-20916 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2126/opencode-glm-5.3-flash/sympy__sympy-20916/eval.sh; copying to container...
+2026-11-10 23:38:37,479 - INFO - Test runtime: 4.47 seconds
+2026-11-10 23:38:37,482 - INFO - Test output for sympy__sympy-20916 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2126/opencode-glm-5.3-flash/sympy__sympy-20916/test_output.txt
+2026-11-10 23:38:37,537 - INFO - Git diff after:
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bbe9..5e3aa1ab54 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -7,7 +7,7 @@
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
++_name_with_digits_p = re.compile(r'^([^\W\d_]+)([0-9]+)$')
+ 
+ 
+ def split_super_sub(text):
+2026-11-10 23:38:37,537 - INFO - Git diff changed after running eval script
+2026-11-10 23:38:37,537 - INFO - Grading answer for sympy__sympy-20916...
+2026-11-10 23:38:37,538 - INFO - report: {'sympy__sympy-20916': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_super_sub']}, 'PASS_TO_PASS': {'success': ['test_requires_partial'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-20916: resolved: False
+2026-11-10 23:38:37,540 - INFO - Attempting to stop container sweb.eval.sympy__sympy-20916.verified_full_glm53_opencode_incr_R2126...
+2026-11-10 23:38:53,889 - INFO - Container sweb.eval.sympy__sympy-20916.verified_full_glm53_opencode_incr_R2126 stopped successfully.
+2026-11-10 23:38:53,890 - INFO - Attempting to remove container sweb.eval.sympy__sympy-20916.verified_full_glm53_opencode_incr_R2126...
+2026-11-10 23:38:53,935 - INFO - Container sweb.eval.sympy__sympy-20916.verified_full_glm53_opencode_incr_R2126 removed successfully.

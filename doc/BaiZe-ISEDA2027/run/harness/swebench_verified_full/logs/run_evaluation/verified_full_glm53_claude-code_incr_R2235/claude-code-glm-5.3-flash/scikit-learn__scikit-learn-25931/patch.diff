@@ -1,0 +1,61 @@
+diff --git a/sklearn/ensemble/_iforest.py b/sklearn/ensemble/_iforest.py
+index 4d6c1c3f..8dc38409 100644
+--- a/sklearn/ensemble/_iforest.py
++++ b/sklearn/ensemble/_iforest.py
+@@ -345,7 +345,13 @@ class IsolationForest(OutlierMixin, BaseBagging):
+             return self
+ 
+         # else, define offset_ wrt contamination parameter
+-        self.offset_ = np.percentile(self.score_samples(X), 100.0 * self.contamination)
++        if issparse(X):
++            # csr_matrix is required by the trees to compute the scores while
++            # X was validated as csc_matrix to fit them.
++            X = X.tocsr()
++        self.offset_ = np.percentile(
++            -self._compute_chunked_score_samples(X), 100.0 * self.contamination
++        )
+ 
+         return self
+ 
+diff --git a/sklearn/ensemble/tests/test_iforest.py b/sklearn/ensemble/tests/test_iforest.py
+index 5f046540..81d81e6d 100644
+--- a/sklearn/ensemble/tests/test_iforest.py
++++ b/sklearn/ensemble/tests/test_iforest.py
+@@ -234,6 +234,37 @@ def test_score_samples():
+     )
+ 
+ 
++def test_iforest_with_feature_names():
++    """Check that fitting with feature names does not raise a warning.
++
++    Non-regression test for #25655: fitting an IsolationForest with a
++    pandas DataFrame and a contamination parameter different from "auto"
++    used to warn about feature names because the training data was
++    re-validated when computing the scores used to define `offset_`.
++    """
++    pd = pytest.importorskip("pandas")
++
++    feature_names = ["a", "b"]
++    X = pd.DataFrame([[1, 2], [3, 4], [5, 6], [-10, -20]], columns=feature_names)
++
++    # Fitting must not warn about feature names.
++    with warnings.catch_warnings():
++        warnings.simplefilter("error")
++        clf = IsolationForest(contamination=0.1, random_state=0).fit(X)
++
++    assert_array_equal(clf.feature_names_in_, feature_names)
++
++    # Predicting with an ndarray without feature names must still warn.
++    warn_msg = "X does not have valid feature names, but IsolationForest"
++    with pytest.warns(UserWarning, match=warn_msg):
++        clf.predict(X.to_numpy())
++
++    # Predicting with a DataFrame with the same feature names must not warn.
++    with warnings.catch_warnings():
++        warnings.simplefilter("error")
++        clf.predict(X)
++
++
+ def test_iforest_warm_start():
+     """Test iterative addition of iTrees to an iForest"""
+ 

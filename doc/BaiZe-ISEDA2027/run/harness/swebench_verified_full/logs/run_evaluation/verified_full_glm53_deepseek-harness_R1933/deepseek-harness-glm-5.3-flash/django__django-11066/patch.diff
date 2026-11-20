@@ -1,0 +1,98 @@
+diff --git a/django/contrib/contenttypes/management/__init__.py b/django/contrib/contenttypes/management/__init__.py
+index 2b5f688136..563cba2fdf 100644
+--- a/django/contrib/contenttypes/management/__init__.py
++++ b/django/contrib/contenttypes/management/__init__.py
+@@ -24,7 +24,7 @@ class RenameContentType(migrations.RunPython):
+             content_type.model = new_model
+             try:
+                 with transaction.atomic(using=db):
+-                    content_type.save(update_fields={'model'})
++                    content_type.save(using=db, update_fields={'model'})
+             except IntegrityError:
+                 # Gracefully fallback if a stale content type causes a
+                 # conflict as remove_stale_contenttypes will take care of
+diff --git a/tests/contenttypes_tests/test_operations.py b/tests/contenttypes_tests/test_operations.py
+index bdf492fe2a..11fed234b2 100644
+--- a/tests/contenttypes_tests/test_operations.py
++++ b/tests/contenttypes_tests/test_operations.py
+@@ -3,7 +3,7 @@ from django.conf import settings
+ from django.contrib.contenttypes import management as contenttypes_management
+ from django.contrib.contenttypes.models import ContentType
+ from django.core.management import call_command
+-from django.db import migrations, models
++from django.db import migrations, models, router
+ from django.test import TransactionTestCase, override_settings
+ 
+ 
+@@ -64,3 +64,71 @@ class ContentTypeOperationsTests(TransactionTestCase):
+         call_command('migrate', 'contenttypes_tests', 'zero', database='default', interactive=False, verbosity=0)
+         self.assertTrue(ContentType.objects.filter(app_label='contenttypes_tests', model='foo').exists())
+         self.assertTrue(ContentType.objects.filter(app_label='contenttypes_tests', model='renamedfoo').exists())
++
++
++class WriteToOtherRouter:
++    def db_for_read(self, model, **hints):
++        return 'other'
++
++    def db_for_write(self, model, **hints):
++        return 'other'
++
++
++@override_settings(
++    MIGRATION_MODULES=dict(
++        settings.MIGRATION_MODULES,
++        contenttypes_tests='contenttypes_tests.operations_migrations',
++    ),
++)
++class MultiDbRenameContentTypeTests(TransactionTestCase):
++    """
++    RenameContentType operations must be applied on the database being
++    migrated (schema_editor.connection.alias), not necessarily on the
++    database returned by the router for unpinned saves
++    (ticket #31135).
++    """
++    available_apps = [
++        'contenttypes_tests',
++        'django.contrib.contenttypes',
++    ]
++    databases = {'default', 'other'}
++
++    @classmethod
++    def setUpClass(cls):
++        super().setUpClass()
++        # Route unpinned reads and writes to 'other'. Model.save() without an
++        # explicit `using` falls back to the router, so with this router in
++        # place a content type save lacking using=db (the bug) attempts to
++        # write to 'other' instead of the migrated database ('default' here).
++        cls._saved_routers = router.routers
++        router.routers = [WriteToOtherRouter()]
++
++    @classmethod
++    def tearDownClass(cls):
++        router.routers = cls._saved_routers
++        super().tearDownClass()
++
++    def test_rename_content_type_saves_on_migrated_database(self):
++        ContentType.objects.using('default').create(app_label='contenttypes_tests', model='foo')
++        call_command('migrate', 'contenttypes_tests', database='default', interactive=False, verbosity=0)
++        self.assertTrue(
++            ContentType.objects.using('default').filter(
++                app_label='contenttypes_tests', model='renamedfoo'
++            ).exists()
++        )
++        self.assertFalse(
++            ContentType.objects.using('default').filter(
++                app_label='contenttypes_tests', model='foo'
++            ).exists()
++        )
++        call_command('migrate', 'contenttypes_tests', 'zero', database='default', interactive=False, verbosity=0)
++        self.assertTrue(
++            ContentType.objects.using('default').filter(
++                app_label='contenttypes_tests', model='foo'
++            ).exists()
++        )
++        self.assertFalse(
++            ContentType.objects.using('default').filter(
++                app_label='contenttypes_tests', model='renamedfoo'
++            ).exists()
++        )

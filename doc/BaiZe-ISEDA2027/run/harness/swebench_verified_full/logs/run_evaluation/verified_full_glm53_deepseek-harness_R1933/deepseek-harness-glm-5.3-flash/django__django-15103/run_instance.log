@@ -1,0 +1,279 @@
+2026-11-09 07:57:54,538 - INFO - Creating container for django__django-15103...
+2026-11-09 07:57:56,794 - INFO - Removed existing container sweb.eval.django__django-15103.verified_full_glm53_deepseek-harness_R1933
+2026-11-09 07:57:56,831 - INFO - Container for django__django-15103 created: b494a40a367611b9661669d94f92f54044e6b244152f3e1a1eb7233396ef8833
+2026-11-09 07:57:58,015 - INFO - Container for django__django-15103 started: b494a40a367611b9661669d94f92f54044e6b244152f3e1a1eb7233396ef8833
+2026-11-09 07:57:58,016 - INFO - Intermediate patch for django__django-15103 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/django__django-15103/patch.diff, now applying to container...
+2026-11-09 07:57:58,152 - INFO - >>>>> Applied Patch:
+Checking patch django/template/defaultfilters.py...
+Checking patch django/utils/html.py...
+Checking patch docs/ref/templates/builtins.txt...
+Checking patch docs/releases/4.1.txt...
+Checking patch tests/template_tests/filter_tests/test_json_script.py...
+Checking patch tests/utils_tests/test_html.py...
+Applied patch django/template/defaultfilters.py cleanly.
+Applied patch django/utils/html.py cleanly.
+Applied patch docs/ref/templates/builtins.txt cleanly.
+Applied patch docs/releases/4.1.txt cleanly.
+Applied patch tests/template_tests/filter_tests/test_json_script.py cleanly.
+Applied patch tests/utils_tests/test_html.py cleanly.
+
+2026-11-09 07:57:59,054 - INFO - Git diff before:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 5ccef38048..04bfd52e32 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -83,10 +83,10 @@ def escapejs_filter(value):
+ 
+ 
+ @register.filter(is_safe=True)
+-def json_script(value, element_id):
++def json_script(value, element_id=None):
+     """
+-    Output value JSON-encoded, wrapped in a <script type="application/json">
+-    tag.
++    Output value JSON-encoded, wrapped in a
++    <script type="application/json"> tag.
+     """
+     return _json_script(value, element_id)
+ 
+diff --git a/django/utils/html.py b/django/utils/html.py
+index da1b5675ec..be9f22312e 100644
+--- a/django/utils/html.py
++++ b/django/utils/html.py
+@@ -61,7 +61,7 @@ _json_script_escapes = {
+ }
+ 
+ 
+-def json_script(value, element_id):
++def json_script(value, element_id=None):
+     """
+     Escape all the HTML/XML special characters with their unicode escapes, so
+     value is safe to be output anywhere except for inside a tag attribute. Wrap
+@@ -69,10 +69,13 @@ def json_script(value, element_id):
+     """
+     from django.core.serializers.json import DjangoJSONEncoder
+     json_str = json.dumps(value, cls=DjangoJSONEncoder).translate(_json_script_escapes)
+-    return format_html(
+-        '<script id="{}" type="application/json">{}</script>',
+-        element_id, mark_safe(json_str)
+-    )
++    if element_id:
++        template = '<script id="{}" type="application/json">{}</script>'
++        args = (element_id, mark_safe(json_str))
++    else:
++        template = '<script type="application/json">{}</script>'
++        args = (mark_safe(json_str),)
++    return format_html(template, *args)
+ 
+ 
+ def conditional_escape(text):
+diff --git a/docs/ref/templates/builtins.txt b/docs/ref/templates/builtins.txt
+index 2edfd65c7b..dbddf9c8ea 100644
+--- a/docs/ref/templates/builtins.txt
++++ b/docs/ref/templates/builtins.txt
+@@ -1832,7 +1832,7 @@ If ``value`` is the list ``['a', 'b', 'c']``, the output will be the string
+ Safely outputs a Python object as JSON, wrapped in a ``<script>`` tag, ready
+ for use with JavaScript.
+ 
+-**Argument:** HTML "id" of the ``<script>`` tag.
++**Argument:** Optional HTML "id" of the ``<script>`` tag.
+ 
+ For example::
+ 
+@@ -1861,6 +1861,17 @@ This is compatible with a strict Content Security Policy that prohibits in-page
+ script execution. It also maintains a clean separation between passive data and
+ executable code.
+ 
++The argument is optional. If not provided, the ``<script>`` tag will have no
++``id`` attribute::
++
++    {{ value|json_script }}
++
++If ``value`` is the dictionary ``{'hello': 'world'}``, the output will be:
++
++.. code-block:: html
++
++    <script type="application/json">{"hello": "world"}</script>
++
+ .. templatefilter:: last
+ 
+ ``last``
+diff --git a/docs/releases/4.1.txt b/docs/releases/4.1.txt
+index 7bfb527104..043f52319b 100644
+--- a/docs/releases/4.1.txt
++++ b/docs/releases/4.1.txt
+@@ -226,7 +226,9 @@ URLs
+ Utilities
+ ~~~~~~~~~
+ 
+-* ...
++* The ``element_id`` argument of :tfilter:`json_script` and
++  :func:`~django.utils.html.json_script` is now optional, so the ``<script>``
++  tag can be rendered without an ``id``.
+ 
+ Validators
+ ~~~~~~~~~~
+diff --git a/tests/template_tests/filter_tests/test_json_script.py b/tests/template_tests/filter_tests/test_json_script.py
+index 061fe32c12..84cfaa7aa3 100644
+--- a/tests/template_tests/filter_tests/test_json_script.py
++++ b/tests/template_tests/filter_tests/test_json_script.py
+@@ -17,3 +17,29 @@ class JsonScriptTests(SimpleTestCase):
+             '{"a": "testing\\r\\njson \'string\\" \\u003Cb\\u003Eescaping\\u003C/b\\u003E"}'
+             '</script>'
+         )
++
++    @setup({'json-tag02': '{{ value|json_script }}'})
++    def test_without_id(self):
++        output = self.engine.render_to_string(
++            'json-tag02',
++            {'value': {'a': 'testing\r\njson \'string" <b>escaping</b>'}}
++        )
++        self.assertEqual(
++            output,
++            '<script type="application/json">'
++            '{"a": "testing\\r\\njson \'string\\" \\u003Cb\\u003Eescaping\\u003C/b\\u003E"}'
++            '</script>'
++        )
++
++    @setup({'json-tag03': "{{ value|json_script:'test_id' }}"})
++    def test_with_id(self):
++        output = self.engine.render_to_string(
++            'json-tag03',
++            {'value': {'a': 'testing\r\njson \'string" <b>escaping</b>'}}
++        )
++        self.assertEqual(
++            output,
++            '<script id="test_id" type="application/json">'
++            '{"a": "testing\\r\\njson \'string\\" \\u003Cb\\u003Eescaping\\u003C/b\\u003E"}'
++            '</script>'
++        )
+diff --git a/tests/utils_tests/test_html.py b/tests/utils_tests/test_html.py
+index 909620ea3f..e0a8b8ac21 100644
+--- a/tests/utils_tests/test_html.py
++++ b/tests/utils_tests/test_html.py
+@@ -173,6 +173,17 @@ class TestUtilsHtml(SimpleTestCase):
+             with self.subTest(arg=arg):
+                 self.assertEqual(json_script(arg, 'test_id'), expected)
+ 
++    def test_json_script_without_id(self):
++        tests = (
++            ('&<>', '<script type="application/json">"\\u0026\\u003C\\u003E"</script>'),
++            ({'a': '<script>test&ing</script>'}, '<script type="application/json">'
++             '{"a": "\\u003Cscript\\u003Etest\\u0026ing\\u003C/script\\u003E"}</script>'),
++            (lazystr('&<>'), '<script type="application/json">"\\u0026\\u003C\\u003E"</script>'),
++        )
++        for arg, expected in tests:
++            with self.subTest(arg=arg):
++                self.assertEqual(json_script(arg), expected)
++
+     def test_smart_urlquote(self):
+         items = (
+             ('http://öäü.com/', 'http://xn--4ca9at.com/'),
+2026-11-09 07:57:59,055 - INFO - Eval script for django__django-15103 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/django__django-15103/eval.sh; copying to container...
+2026-11-09 07:58:05,604 - INFO - Test runtime: 6.49 seconds
+2026-11-09 07:58:05,605 - INFO - Test output for django__django-15103 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/django__django-15103/test_output.txt
+2026-11-09 07:58:05,656 - INFO - Git diff after:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 5ccef38048..04bfd52e32 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -83,10 +83,10 @@ def escapejs_filter(value):
+ 
+ 
+ @register.filter(is_safe=True)
+-def json_script(value, element_id):
++def json_script(value, element_id=None):
+     """
+-    Output value JSON-encoded, wrapped in a <script type="application/json">
+-    tag.
++    Output value JSON-encoded, wrapped in a
++    <script type="application/json"> tag.
+     """
+     return _json_script(value, element_id)
+ 
+diff --git a/django/utils/html.py b/django/utils/html.py
+index da1b5675ec..be9f22312e 100644
+--- a/django/utils/html.py
++++ b/django/utils/html.py
+@@ -61,7 +61,7 @@ _json_script_escapes = {
+ }
+ 
+ 
+-def json_script(value, element_id):
++def json_script(value, element_id=None):
+     """
+     Escape all the HTML/XML special characters with their unicode escapes, so
+     value is safe to be output anywhere except for inside a tag attribute. Wrap
+@@ -69,10 +69,13 @@ def json_script(value, element_id):
+     """
+     from django.core.serializers.json import DjangoJSONEncoder
+     json_str = json.dumps(value, cls=DjangoJSONEncoder).translate(_json_script_escapes)
+-    return format_html(
+-        '<script id="{}" type="application/json">{}</script>',
+-        element_id, mark_safe(json_str)
+-    )
++    if element_id:
++        template = '<script id="{}" type="application/json">{}</script>'
++        args = (element_id, mark_safe(json_str))
++    else:
++        template = '<script type="application/json">{}</script>'
++        args = (mark_safe(json_str),)
++    return format_html(template, *args)
+ 
+ 
+ def conditional_escape(text):
+diff --git a/docs/ref/templates/builtins.txt b/docs/ref/templates/builtins.txt
+index 2edfd65c7b..dbddf9c8ea 100644
+--- a/docs/ref/templates/builtins.txt
++++ b/docs/ref/templates/builtins.txt
+@@ -1832,7 +1832,7 @@ If ``value`` is the list ``['a', 'b', 'c']``, the output will be the string
+ Safely outputs a Python object as JSON, wrapped in a ``<script>`` tag, ready
+ for use with JavaScript.
+ 
+-**Argument:** HTML "id" of the ``<script>`` tag.
++**Argument:** Optional HTML "id" of the ``<script>`` tag.
+ 
+ For example::
+ 
+@@ -1861,6 +1861,17 @@ This is compatible with a strict Content Security Policy that prohibits in-page
+ script execution. It also maintains a clean separation between passive data and
+ executable code.
+ 
++The argument is optional. If not provided, the ``<script>`` tag will have no
++``id`` attribute::
++
++    {{ value|json_script }}
++
++If ``value`` is the dictionary ``{'hello': 'world'}``, the output will be:
++
++.. code-block:: html
++
++    <script type="application/json">{"hello": "world"}</script>
++
+ .. templatefilter:: last
+ 
+ ``last``
+diff --git a/docs/releases/4.1.txt b/docs/releases/4.1.txt
+index 7bfb527104..043f52319b 100644
+--- a/docs/releases/4.1.txt
++++ b/docs/releases/4.1.txt
+@@ -226,7 +226,9 @@ URLs
+ Utilities
+ ~~~~~~~~~
+ 
+-* ...
++* The ``element_id`` argument of :tfilter:`json_script` and
++  :func:`~django.utils.html.json_script` is now optional, so the ``<script>``
++  tag can be rendered without an ``id``.
+ 
+ Validators
+ ~~~~~~~~~~
+2026-11-09 07:58:05,657 - INFO - Git diff changed after running eval script
+2026-11-09 07:58:05,657 - INFO - Grading answer for django__django-15103...
+2026-11-09 07:58:05,658 - INFO - report: {'django__django-15103': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_without_id (template_tests.filter_tests.test_json_script.JsonScriptTests)', 'test_json_script_without_id (utils_tests.test_html.TestUtilsHtml)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_basic (template_tests.filter_tests.test_json_script.JsonScriptTests)', 'test_conditional_escape (utils_tests.test_html.TestUtilsHtml)', 'test_escape (utils_tests.test_html.TestUtilsHtml)', 'test_escapejs (utils_tests.test_html.TestUtilsHtml)', 'test_format_html (utils_tests.test_html.TestUtilsHtml)', 'test_html_safe (utils_tests.test_html.TestUtilsHtml)', 'test_html_safe_defines_html_error (utils_tests.test_html.TestUtilsHtml)', 'test_html_safe_doesnt_define_str (utils_tests.test_html.TestUtilsHtml)', 'test_html_safe_subclass (utils_tests.test_html.TestUtilsHtml)', 'test_json_script (utils_tests.test_html.TestUtilsHtml)', 'test_linebreaks (utils_tests.test_html.TestUtilsHtml)', 'test_smart_urlquote (utils_tests.test_html.TestUtilsHtml)', 'test_strip_spaces_between_tags (utils_tests.test_html.TestUtilsHtml)', 'test_strip_tags (utils_tests.test_html.TestUtilsHtml)', 'test_strip_tags_files (utils_tests.test_html.TestUtilsHtml)', 'test_urlize (utils_tests.test_html.TestUtilsHtml)', 'test_urlize_unchanged_inputs (utils_tests.test_html.TestUtilsHtml)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15103: resolved: True
+2026-11-09 07:58:05,659 - INFO - Attempting to stop container sweb.eval.django__django-15103.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 07:58:22,494 - INFO - Container sweb.eval.django__django-15103.verified_full_glm53_deepseek-harness_R1933 stopped successfully.
+2026-11-09 07:58:22,495 - INFO - Attempting to remove container sweb.eval.django__django-15103.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 07:58:22,539 - INFO - Container sweb.eval.django__django-15103.verified_full_glm53_deepseek-harness_R1933 removed successfully.
+eepseek-harness_R1933.1794182275 removed successfully.

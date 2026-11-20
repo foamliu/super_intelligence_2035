@@ -1,0 +1,32 @@
+diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
+index 79f6a7d1..a2557d52 100644
+--- a/sympy/core/numbers.py
++++ b/sympy/core/numbers.py
+@@ -1386,10 +1386,10 @@ def __eq__(self, other):
+             other = _sympify(other)
+         except SympifyError:
+             return NotImplemented
+-        if not self:
+-            return not other
+         if isinstance(other, Boolean):
+             return False
++        if not self:
++            return not other
+         if other.is_NumberSymbol:
+             if other.is_irrational:
+                 return False
+diff --git a/sympy/core/tests/test_numbers.py b/sympy/core/tests/test_numbers.py
+index 8b3e9912..c8be0329 100644
+--- a/sympy/core/tests/test_numbers.py
++++ b/sympy/core/tests/test_numbers.py
+@@ -1673,6 +1673,10 @@ def test_bool_eq():
+     assert 1 == True
+     assert S.One == True
+     assert S.One != S.true
++    assert S(0.0) != S.false
++    assert S.false != S(0.0)
++    assert S(0.0) != S.true
++    assert S.true != S(0.0)
+ 
+ 
+ def test_Float_eq():

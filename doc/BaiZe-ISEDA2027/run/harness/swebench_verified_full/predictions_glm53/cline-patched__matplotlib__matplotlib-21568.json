@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "matplotlib__matplotlib-21568",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py\nindex 0766156d6..d3975fd19 100644\n--- a/lib/matplotlib/dates.py\n+++ b/lib/matplotlib/dates.py\n@@ -598,7 +598,9 @@ def _wrap_in_tex(text):\n     # Braces ensure dashes are not spaced like binary operators.\n     ret_text = '$\\\\mathdefault{'+ret_text.replace('-', '{-}')+'}$'\n     ret_text = ret_text.replace('$\\\\mathdefault{}$', '')\n-    return ret_text\n+    # TeX ignores whitespace in math mode, so replace spaces with control\n+    # spaces (\\ ) to keep e.g. \"01 00:00\" from rendering as \"0100:00\".\n+    return ret_text.replace(' ', '\\\\ ')\n \n \n ## date tickers and formatters ###\ndiff --git a/lib/matplotlib/tests/test_dates.py b/lib/matplotlib/tests/test_dates.py\nindex 96a3db173..e3ff50bfd 100644\n--- a/lib/matplotlib/tests/test_dates.py\n+++ b/lib/matplotlib/tests/test_dates.py\n@@ -325,7 +325,7 @@ def test_date_formatter_callable():\n     (datetime.timedelta(weeks=52 * 200),\n      [r'$\\mathdefault{%d}$' % (year,) for year in range(1990, 2171, 20)]),\n     (datetime.timedelta(days=30),\n-     [r'Jan$\\mathdefault{ %02d 1990}$' % (day,) for day in range(1, 32, 3)]),\n+     [r'Jan$\\mathdefault{\\ %02d\\ 1990}$' % (day,) for day in range(1, 32, 3)]),\n     (datetime.timedelta(hours=20),\n      [r'$\\mathdefault{%02d:00:00}$' % (hour,) for hour in range(0, 21, 2)]),\n ])\n"
+  }
+]

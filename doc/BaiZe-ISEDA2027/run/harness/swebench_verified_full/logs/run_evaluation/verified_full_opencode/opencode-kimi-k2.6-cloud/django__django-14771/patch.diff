@@ -1,0 +1,84 @@
+diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
+index cc65c043ab..b33416f30b 100644
+--- a/django/utils/autoreload.py
++++ b/django/utils/autoreload.py
+@@ -220,6 +220,12 @@ def get_child_arguments():
+     py_script = Path(sys.argv[0])
+ 
+     args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions]
++    # Pass -X options through to the child process.
++    for key, value in sys._xoptions.items():
++        if value is True:
++            args.append('-X%s' % key)
++        else:
++            args.append('-X%s=%s' % (key, value))
+     # __spec__ is set when the server was started with the `-m` option,
+     # see https://docs.python.org/3/reference/import.html#main-spec
+     # __spec__ may not exist, e.g. when running in a Conda env.
+diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
+index 7c28a9d4d0..4135866148 100644
+--- a/tests/utils_tests/test_autoreload.py
++++ b/tests/utils_tests/test_autoreload.py
+@@ -203,6 +203,26 @@ class TestChildArguments(SimpleTestCase):
+             [sys.executable, '-Werror', __file__, 'runserver']
+         )
+ 
++    @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    @mock.patch('sys._xoptions', {'utf8': True})
++    def test_xoptions(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, '-Xutf8', __file__, 'runserver']
++        )
++
++    @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    @mock.patch('sys._xoptions', {'utf8': '1'})
++    def test_xoptions_with_value(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, '-Xutf8=1', __file__, 'runserver']
++        )
++
+     @mock.patch('__main__.__spec__', None)
+     @mock.patch('sys.warnoptions', [])
+     def test_exe_fallback(self):
+@@ -462,12 +482,13 @@ class TestRaiseLastException(SimpleTestCase):
+ class RestartWithReloaderTests(SimpleTestCase):
+     executable = '/usr/bin/python'
+ 
+-    def patch_autoreload(self, argv):
++    def patch_autoreload(self, argv, xoptions=None):
+         patch_call = mock.patch('django.utils.autoreload.subprocess.run', return_value=CompletedProcess(argv, 0))
+         patches = [
+             mock.patch('django.utils.autoreload.sys.argv', argv),
+             mock.patch('django.utils.autoreload.sys.executable', self.executable),
+             mock.patch('django.utils.autoreload.sys.warnoptions', ['all']),
++            mock.patch('django.utils.autoreload.sys._xoptions', xoptions or {}),
+         ]
+         for p in patches:
+             p.start()
+@@ -500,6 +521,20 @@ class RestartWithReloaderTests(SimpleTestCase):
+             self.assertEqual(mock_call.call_count, 1)
+             self.assertEqual(mock_call.call_args[0][0], [self.executable, '-Wall', '-m', 'django'] + argv[1:])
+ 
++    def test_xoptions(self):
++        with tempfile.TemporaryDirectory() as temp_dir:
++            script = Path(temp_dir) / 'manage.py'
++            script.touch()
++            argv = [str(script), 'runserver']
++            mock_call = self.patch_autoreload(argv, xoptions={'utf8': True})
++            with mock.patch('__main__.__spec__', None):
++                autoreload.restart_with_reloader()
++            self.assertEqual(mock_call.call_count, 1)
++            self.assertEqual(
++                mock_call.call_args[0][0],
++                [self.executable, '-Wall', '-Xutf8'] + argv,
++            )
++
+ 
+ class ReloaderTests(SimpleTestCase):
+     RELOADER_CLS = None

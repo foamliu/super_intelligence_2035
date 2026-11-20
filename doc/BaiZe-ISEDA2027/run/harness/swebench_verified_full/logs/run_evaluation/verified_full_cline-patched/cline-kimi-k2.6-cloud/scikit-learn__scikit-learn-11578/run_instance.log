@@ -1,0 +1,312 @@
+2026-11-05 00:25:50,823 - INFO - Creating container for scikit-learn__scikit-learn-11578...
+2026-11-05 00:25:50,840 - INFO - Container for scikit-learn__scikit-learn-11578 created: 41885f9f3c76a31ef58e926af2eaea8a667453b425ed86ca797d3a0f62df13da
+2026-11-05 00:25:51,708 - INFO - Container for scikit-learn__scikit-learn-11578 started: 41885f9f3c76a31ef58e926af2eaea8a667453b425ed86ca797d3a0f62df13da
+2026-11-05 00:25:51,710 - INFO - Intermediate patch for scikit-learn__scikit-learn-11578 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-11578/patch.diff, now applying to container...
+2026-11-05 00:25:51,839 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/linear_model/least_angle.py...
+Checking patch sklearn/linear_model/logistic.py...
+Checking patch sklearn/linear_model/tests/test_logistic.py...
+Checking patch sklearn/utils/optimize.py...
+Applied patch sklearn/linear_model/least_angle.py cleanly.
+Applied patch sklearn/linear_model/logistic.py cleanly.
+Applied patch sklearn/linear_model/tests/test_logistic.py cleanly.
+Applied patch sklearn/utils/optimize.py cleanly.
+
+2026-11-05 00:25:52,229 - INFO - Git diff before:
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index cd10edcc4..01967f789 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -32,7 +32,7 @@ solve_triangular_args = {'check_finite': False}
+ 
+ def lars_path(X, y, Xy=None, Gram=None, max_iter=500,
+               alpha_min=0, method='lar', copy_X=True,
+-              eps=np.finfo(np.float).eps,
++              eps=np.finfo(np.float64).eps,
+               copy_Gram=True, verbose=0, return_path=True,
+               return_n_iter=False, positive=False):
+     """Compute Least Angle Regression or Lasso path using LARS algorithm [1]
+@@ -78,7 +78,7 @@ def lars_path(X, y, Xy=None, Gram=None, max_iter=500,
+     copy_X : bool, optional (default=True)
+         If ``False``, ``X`` is overwritten.
+ 
+-    eps : float, optional (default=``np.finfo(np.float).eps``)
++    eps : float, optional (default=``np.finfo(np.float64).eps``)
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+         systems.
+@@ -594,7 +594,7 @@ class Lars(LinearModel, RegressorMixin):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, normalize=True,
+                  precompute='auto', n_nonzero_coefs=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
++                 eps=np.finfo(np.float64).eps, copy_X=True, fit_path=True,
+                  positive=False):
+         self.fit_intercept = fit_intercept
+         self.verbose = verbose
+@@ -832,7 +832,7 @@ class LassoLars(Lars):
+ 
+     def __init__(self, alpha=1.0, fit_intercept=True, verbose=False,
+                  normalize=True, precompute='auto', max_iter=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
++                 eps=np.finfo(np.float64).eps, copy_X=True, fit_path=True,
+                  positive=False):
+         self.alpha = alpha
+         self.fit_intercept = fit_intercept
+@@ -858,7 +858,7 @@ def _check_copy_and_writeable(array, copy=False):
+ def _lars_path_residues(X_train, y_train, X_test, y_test, Gram=None,
+                         copy=True, method='lars', verbose=False,
+                         fit_intercept=True, normalize=True, max_iter=500,
+-                        eps=np.finfo(np.float).eps, positive=False):
++                        eps=np.finfo(np.float64).eps, positive=False):
+     """Compute the residues on left-out data for a full LARS path
+ 
+     Parameters
+@@ -1072,7 +1072,7 @@ class LarsCV(Lars):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, max_iter=500,
+                  normalize=True, precompute='auto', cv=None,
+-                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
++                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float64).eps,
+                  copy_X=True, positive=False):
+         self.max_iter = max_iter
+         self.cv = cv
+@@ -1298,7 +1298,7 @@ class LassoLarsCV(LarsCV):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, max_iter=500,
+                  normalize=True, precompute='auto', cv=None,
+-                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
++                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float64).eps,
+                  copy_X=True, positive=False):
+         self.fit_intercept = fit_intercept
+         self.verbose = verbose
+@@ -1434,7 +1434,7 @@ class LassoLarsIC(LassoLars):
+     """
+     def __init__(self, criterion='aic', fit_intercept=True, verbose=False,
+                  normalize=True, precompute='auto', max_iter=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, positive=False):
++                 eps=np.finfo(np.float64).eps, copy_X=True, positive=False):
+         self.criterion = criterion
+         self.fit_intercept = fit_intercept
+         self.positive = positive
+diff --git a/sklearn/linear_model/logistic.py b/sklearn/linear_model/logistic.py
+index e4ea696ce..87acf9b39 100644
+--- a/sklearn/linear_model/logistic.py
++++ b/sklearn/linear_model/logistic.py
+@@ -922,7 +922,14 @@ def _log_reg_scoring_path(X, y, train, test, pos_class=None, Cs=10,
+         check_input=False, max_squared_sum=max_squared_sum,
+         sample_weight=sample_weight)
+ 
+-    log_reg = LogisticRegression(fit_intercept=fit_intercept)
++    log_reg = LogisticRegression(fit_intercept=fit_intercept,
++                                 multi_class=multi_class, penalty=penalty,
++                                 dual=dual, tol=tol,
++                                 class_weight=class_weight,
++                                 random_state=random_state, solver=solver,
++                                 max_iter=max_iter,
++                                 intercept_scaling=intercept_scaling,
++                                 verbose=verbose)
+ 
+     # The score method of Logistic Regression has a classes_ attribute.
+     if multi_class == 'ovr':
+@@ -1164,7 +1171,7 @@ class LogisticRegression(BaseEstimator, LinearClassifierMixin,
+     """
+ 
+     def __init__(self, penalty='l2', dual=False, tol=1e-4, C=1.0,
+-                 fit_intercept=True, intercept_scaling=1, class_weight=None,
++                 fit_intercept=True, intercept_scaling=1., class_weight=None,
+                  random_state=None, solver='liblinear', max_iter=100,
+                  multi_class='ovr', verbose=0, warm_start=False, n_jobs=1):
+ 
+diff --git a/sklearn/linear_model/tests/test_logistic.py b/sklearn/linear_model/tests/test_logistic.py
+index 56be87f71..e3e3ccb24 100644
+--- a/sklearn/linear_model/tests/test_logistic.py
++++ b/sklearn/linear_model/tests/test_logistic.py
+@@ -5,7 +5,7 @@ from scipy import linalg, optimize, sparse
+ import pytest
+ 
+ from sklearn.datasets import load_iris, make_classification
+-from sklearn.metrics import log_loss
++from sklearn.metrics import log_loss, get_scorer
+ from sklearn.model_selection import StratifiedKFold
+ from sklearn.preprocessing import LabelEncoder
+ from sklearn.utils import compute_class_weight
+@@ -29,6 +29,7 @@ from sklearn.linear_model.logistic import (
+     logistic_regression_path, LogisticRegressionCV,
+     _logistic_loss_and_grad, _logistic_grad_hess,
+     _multinomial_grad_hess, _logistic_loss,
++    _log_reg_scoring_path,
+ )
+ 
+ X = [[-1, 0], [0, 1], [1, 1]]
+@@ -1072,6 +1073,29 @@ def test_logreg_predict_proba_multinomial():
+     assert_greater(clf_wrong_loss, clf_multi_loss)
+ 
+ 
++def test_logistic_cv_multinomial_score():
++    # Test that _log_reg_scoring_path uses multinomial predict_proba
++    # when multi_class='multinomial' and scoring needs probability estimates.
++    X, y = iris.data, iris.target
++    # Ensure all classes are present in training set
++    train = list(range(0, 40)) + list(range(50, 90)) + list(range(100, 140))
++    test = list(range(40, 50)) + list(range(90, 100)) + list(range(140, 150))
++
++    coefs, Cs, scores, n_iter = _log_reg_scoring_path(
++        X, y, train, test, scoring='neg_log_loss',
++        multi_class='multinomial', solver='lbfgs',
++        fit_intercept=True)
++
++    # Compute expected score using multinomial predict_proba
++    log_reg = LogisticRegression(multi_class='multinomial', solver='lbfgs')
++    log_reg.coef_ = coefs[0][:, :-1]
++    log_reg.intercept_ = coefs[0][:, -1]
++    log_reg.classes_ = np.unique(y[train])
++
++    expected_score = get_scorer('neg_log_loss')(log_reg, X[test], y[test])
++    assert_almost_equal(scores[0], expected_score)
++
++
+ def test_max_iter():
+     # Test that the maximum number of iteration is reached
+     X, y_bin = iris.data, iris.target.copy()
+diff --git a/sklearn/utils/optimize.py b/sklearn/utils/optimize.py
+index 27550454d..6217a3966 100644
+--- a/sklearn/utils/optimize.py
++++ b/sklearn/utils/optimize.py
+@@ -15,7 +15,7 @@ significant speedups.
+ 
+ import numpy as np
+ import warnings
+-from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
++from scipy.optimize._linesearch import line_search_wolfe2, line_search_wolfe1
+ 
+ from ..exceptions import ConvergenceWarning
+2026-11-05 00:25:52,232 - INFO - Eval script for scikit-learn__scikit-learn-11578 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-11578/eval.sh; copying to container...
+2026-11-05 00:25:56,472 - INFO - Test runtime: 4.17 seconds
+2026-11-05 00:25:56,474 - INFO - Test output for scikit-learn__scikit-learn-11578 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-11578/test_output.txt
+2026-11-05 00:25:56,553 - INFO - Git diff after:
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index cd10edcc4..01967f789 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -32,7 +32,7 @@ solve_triangular_args = {'check_finite': False}
+ 
+ def lars_path(X, y, Xy=None, Gram=None, max_iter=500,
+               alpha_min=0, method='lar', copy_X=True,
+-              eps=np.finfo(np.float).eps,
++              eps=np.finfo(np.float64).eps,
+               copy_Gram=True, verbose=0, return_path=True,
+               return_n_iter=False, positive=False):
+     """Compute Least Angle Regression or Lasso path using LARS algorithm [1]
+@@ -78,7 +78,7 @@ def lars_path(X, y, Xy=None, Gram=None, max_iter=500,
+     copy_X : bool, optional (default=True)
+         If ``False``, ``X`` is overwritten.
+ 
+-    eps : float, optional (default=``np.finfo(np.float).eps``)
++    eps : float, optional (default=``np.finfo(np.float64).eps``)
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+         systems.
+@@ -594,7 +594,7 @@ class Lars(LinearModel, RegressorMixin):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, normalize=True,
+                  precompute='auto', n_nonzero_coefs=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
++                 eps=np.finfo(np.float64).eps, copy_X=True, fit_path=True,
+                  positive=False):
+         self.fit_intercept = fit_intercept
+         self.verbose = verbose
+@@ -832,7 +832,7 @@ class LassoLars(Lars):
+ 
+     def __init__(self, alpha=1.0, fit_intercept=True, verbose=False,
+                  normalize=True, precompute='auto', max_iter=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
++                 eps=np.finfo(np.float64).eps, copy_X=True, fit_path=True,
+                  positive=False):
+         self.alpha = alpha
+         self.fit_intercept = fit_intercept
+@@ -858,7 +858,7 @@ def _check_copy_and_writeable(array, copy=False):
+ def _lars_path_residues(X_train, y_train, X_test, y_test, Gram=None,
+                         copy=True, method='lars', verbose=False,
+                         fit_intercept=True, normalize=True, max_iter=500,
+-                        eps=np.finfo(np.float).eps, positive=False):
++                        eps=np.finfo(np.float64).eps, positive=False):
+     """Compute the residues on left-out data for a full LARS path
+ 
+     Parameters
+@@ -1072,7 +1072,7 @@ class LarsCV(Lars):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, max_iter=500,
+                  normalize=True, precompute='auto', cv=None,
+-                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
++                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float64).eps,
+                  copy_X=True, positive=False):
+         self.max_iter = max_iter
+         self.cv = cv
+@@ -1298,7 +1298,7 @@ class LassoLarsCV(LarsCV):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, max_iter=500,
+                  normalize=True, precompute='auto', cv=None,
+-                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float).eps,
++                 max_n_alphas=1000, n_jobs=1, eps=np.finfo(np.float64).eps,
+                  copy_X=True, positive=False):
+         self.fit_intercept = fit_intercept
+         self.verbose = verbose
+@@ -1434,7 +1434,7 @@ class LassoLarsIC(LassoLars):
+     """
+     def __init__(self, criterion='aic', fit_intercept=True, verbose=False,
+                  normalize=True, precompute='auto', max_iter=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, positive=False):
++                 eps=np.finfo(np.float64).eps, copy_X=True, positive=False):
+         self.criterion = criterion
+         self.fit_intercept = fit_intercept
+         self.positive = positive
+diff --git a/sklearn/linear_model/logistic.py b/sklearn/linear_model/logistic.py
+index e4ea696ce..87acf9b39 100644
+--- a/sklearn/linear_model/logistic.py
++++ b/sklearn/linear_model/logistic.py
+@@ -922,7 +922,14 @@ def _log_reg_scoring_path(X, y, train, test, pos_class=None, Cs=10,
+         check_input=False, max_squared_sum=max_squared_sum,
+         sample_weight=sample_weight)
+ 
+-    log_reg = LogisticRegression(fit_intercept=fit_intercept)
++    log_reg = LogisticRegression(fit_intercept=fit_intercept,
++                                 multi_class=multi_class, penalty=penalty,
++                                 dual=dual, tol=tol,
++                                 class_weight=class_weight,
++                                 random_state=random_state, solver=solver,
++                                 max_iter=max_iter,
++                                 intercept_scaling=intercept_scaling,
++                                 verbose=verbose)
+ 
+     # The score method of Logistic Regression has a classes_ attribute.
+     if multi_class == 'ovr':
+@@ -1164,7 +1171,7 @@ class LogisticRegression(BaseEstimator, LinearClassifierMixin,
+     """
+ 
+     def __init__(self, penalty='l2', dual=False, tol=1e-4, C=1.0,
+-                 fit_intercept=True, intercept_scaling=1, class_weight=None,
++                 fit_intercept=True, intercept_scaling=1., class_weight=None,
+                  random_state=None, solver='liblinear', max_iter=100,
+                  multi_class='ovr', verbose=0, warm_start=False, n_jobs=1):
+ 
+diff --git a/sklearn/utils/optimize.py b/sklearn/utils/optimize.py
+index 27550454d..6217a3966 100644
+--- a/sklearn/utils/optimize.py
++++ b/sklearn/utils/optimize.py
+@@ -15,7 +15,7 @@ significant speedups.
+ 
+ import numpy as np
+ import warnings
+-from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
++from scipy.optimize._linesearch import line_search_wolfe2, line_search_wolfe1
+ 
+ from ..exceptions import ConvergenceWarning
+2026-11-05 00:25:56,553 - INFO - Git diff changed after running eval script
+2026-11-05 00:25:56,553 - INFO - Grading answer for scikit-learn__scikit-learn-11578...
+2026-11-05 00:25:56,555 - INFO - report: {'scikit-learn__scikit-learn-11578': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_multinomial_score[neg_log_loss-multiclass_agg_list3]']}, 'PASS_TO_PASS': {'success': [], 'failure': ['sklearn/linear_model/tests/test_logistic.py::test_predict_2_classes', 'sklearn/linear_model/tests/test_logistic.py::test_error', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_mock_scorer', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_score_does_not_warn_by_default', 'sklearn/linear_model/tests/test_logistic.py::test_lr_liblinear_warning', 'sklearn/linear_model/tests/test_logistic.py::test_predict_3_classes', 'sklearn/linear_model/tests/test_logistic.py::test_predict_iris', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_validation[lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_validation[newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_validation[sag]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_validation[saga]', 'sklearn/linear_model/tests/test_logistic.py::test_check_solver_option[LogisticRegression]', 'sklearn/linear_model/tests/test_logistic.py::test_check_solver_option[LogisticRegressionCV]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_binary[lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_binary[newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_binary[sag]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_binary[saga]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_binary_probabilities', 'sklearn/linear_model/tests/test_logistic.py::test_sparsify', 'sklearn/linear_model/tests/test_logistic.py::test_inconsistent_input', 'sklearn/linear_model/tests/test_logistic.py::test_write_parameters', 'sklearn/linear_model/tests/test_logistic.py::test_nan', 'sklearn/linear_model/tests/test_logistic.py::test_consistency_path', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regression_path_convergence_fail', 'sklearn/linear_model/tests/test_logistic.py::test_liblinear_dual_random_state', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_loss_and_grad', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_grad_hess', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_multinomial_score[accuracy-multiclass_agg_list0]', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_multinomial_score[precision-multiclass_agg_list1]', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_multinomial_score[f1-multiclass_agg_list2]', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_multinomial_score[recall-multiclass_agg_list4]', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_logistic_regression_string_inputs', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_cv_sparse', 'sklearn/linear_model/tests/test_logistic.py::test_intercept_logistic_helper', 'sklearn/linear_model/tests/test_logistic.py::test_ovr_multinomial_iris', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regression_solvers', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regression_solvers_multiclass', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regressioncv_class_weights', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regression_sample_weights', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regression_class_weights', 'sklearn/linear_model/tests/test_logistic.py::test_logistic_regression_multinomial', 'sklearn/linear_model/tests/test_logistic.py::test_multinomial_grad_hess', 'sklearn/linear_model/tests/test_logistic.py::test_liblinear_decision_function_zero', 'sklearn/linear_model/tests/test_logistic.py::test_liblinear_logregcv_sparse', 'sklearn/linear_model/tests/test_logistic.py::test_saga_sparse', 'sklearn/linear_model/tests/test_logistic.py::test_logreg_intercept_scaling', 'sklearn/linear_model/tests/test_logistic.py::test_logreg_intercept_scaling_zero', 'sklearn/linear_model/tests/test_logistic.py::test_logreg_l1', 'sklearn/linear_model/tests/test_logistic.py::test_logreg_l1_sparse_data', 'sklearn/linear_model/tests/test_logistic.py::test_logreg_cv_penalty', 'sklearn/linear_model/tests/test_logistic.py::test_logreg_predict_proba_multinomial', 'sklearn/linear_model/tests/test_logistic.py::test_max_iter', 'sklearn/linear_model/tests/test_logistic.py::test_n_iter[newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_n_iter[liblinear]', 'sklearn/linear_model/tests/test_logistic.py::test_n_iter[sag]', 'sklearn/linear_model/tests/test_logistic.py::test_n_iter[saga]', 'sklearn/linear_model/tests/test_logistic.py::test_n_iter[lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-True-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-True-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-True-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-True-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-False-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-False-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-False-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-True-False-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-True-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-True-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-True-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-True-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-False-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-False-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-False-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[ovr-False-False-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-True-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-True-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-True-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-True-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-False-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-False-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-False-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-True-False-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-True-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-True-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-True-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-True-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-False-newton-cg]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-False-sag]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-False-saga]', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start[multinomial-False-False-lbfgs]', 'sklearn/linear_model/tests/test_logistic.py::test_saga_vs_liblinear', 'sklearn/linear_model/tests/test_logistic.py::test_dtype_match', 'sklearn/linear_model/tests/test_logistic.py::test_warm_start_converge_LR']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-11578: resolved: False
+2026-11-05 00:25:56,557 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-11578.verified_full_cline-patched...
+2026-11-05 00:26:12,717 - INFO - Container sweb.eval.scikit-learn__scikit-learn-11578.verified_full_cline-patched stopped successfully.
+2026-11-05 00:26:12,718 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-11578.verified_full_cline-patched...
+2026-11-05 00:26:12,753 - INFO - Container sweb.eval.scikit-learn__scikit-learn-11578.verified_full_cline-patched removed successfully.

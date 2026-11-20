@@ -1,0 +1,70 @@
+2026-11-12 23:23:22,019 - INFO - Creating container for scikit-learn__scikit-learn-10844...
+2026-11-12 23:23:22,041 - INFO - Container for scikit-learn__scikit-learn-10844 created: c15f4071bfc4e0e00cd2530c5c055dd7d2d756fde5a52ae05e2e716a183df8ec
+2026-11-12 23:23:22,539 - INFO - Container for scikit-learn__scikit-learn-10844 started: c15f4071bfc4e0e00cd2530c5c055dd7d2d756fde5a52ae05e2e716a183df8ec
+2026-11-12 23:23:22,541 - INFO - Intermediate patch for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2301/codex-glm-5.3-flash/scikit-learn__scikit-learn-10844/patch.diff, now applying to container...
+2026-11-12 23:23:22,677 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/metrics/cluster/supervised.py...
+Checking patch sklearn/metrics/cluster/tests/test_supervised.py...
+Applied patch sklearn/metrics/cluster/supervised.py cleanly.
+Applied patch sklearn/metrics/cluster/tests/test_supervised.py cleanly.
+
+2026-11-12 23:23:23,081 - INFO - Git diff before:
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778ae..9bcca75a2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index 8da03d1e1..4d0110ea1 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -253,6 +253,16 @@ def test_fowlkes_mallows_score():
+     assert_almost_equal(worst_score, 0.)
+ 
+ 
++def test_fowlkes_mallows_score_overflow():
++    # Check that the score does not overflow when the products of the
++    # pairwise counts exceed the range of a 32-bit integer.
++    n_samples = 2 ** 16
++    labels = np.arange(n_samples)
++    with np.errstate(over="raise"):
++        score = fowlkes_mallows_score(labels, labels)
++    assert_almost_equal(score, 1.)
++
++
+ def test_fowlkes_mallows_score_properties():
+     # handcrafted example
+     labels_a = np.array([0, 0, 0, 1, 1, 2])
+2026-11-12 23:23:23,084 - INFO - Eval script for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2301/codex-glm-5.3-flash/scikit-learn__scikit-learn-10844/eval.sh; copying to container...
+2026-11-12 23:23:27,448 - INFO - Test runtime: 4.30 seconds
+2026-11-12 23:23:27,451 - INFO - Test output for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2301/codex-glm-5.3-flash/scikit-learn__scikit-learn-10844/test_output.txt
+2026-11-12 23:23:27,506 - INFO - Git diff after:
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778ae..9bcca75a2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+2026-11-12 23:23:27,507 - INFO - Git diff changed after running eval script
+2026-11-12 23:23:27,507 - INFO - Grading answer for scikit-learn__scikit-learn-10844...
+2026-11-12 23:23:27,508 - INFO - report: {'scikit-learn__scikit-learn-10844': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/metrics/cluster/tests/test_supervised.py::test_int_overflow_mutual_info_fowlkes_mallows_score'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/metrics/cluster/tests/test_supervised.py::test_error_messages_on_wrong_input', 'sklearn/metrics/cluster/tests/test_supervised.py::test_perfect_matches', 'sklearn/metrics/cluster/tests/test_supervised.py::test_homogeneous_but_not_complete_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_complete_but_not_homogeneous_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_not_complete_and_not_homogeneous_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_non_consicutive_labels', 'sklearn/metrics/cluster/tests/test_supervised.py::test_adjustment_for_chance', 'sklearn/metrics/cluster/tests/test_supervised.py::test_adjusted_mutual_info_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_expected_mutual_info_overflow', 'sklearn/metrics/cluster/tests/test_supervised.py::test_entropy', 'sklearn/metrics/cluster/tests/test_supervised.py::test_contingency_matrix', 'sklearn/metrics/cluster/tests/test_supervised.py::test_contingency_matrix_sparse', 'sklearn/metrics/cluster/tests/test_supervised.py::test_exactly_zero_info_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_v_measure_and_mutual_information', 'sklearn/metrics/cluster/tests/test_supervised.py::test_fowlkes_mallows_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_fowlkes_mallows_score_properties'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-10844: resolved: True
+2026-11-12 23:23:27,510 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_glm53_codex_incr_R2301...
+2026-11-12 23:23:43,588 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_glm53_codex_incr_R2301 stopped successfully.
+2026-11-12 23:23:43,588 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_glm53_codex_incr_R2301...
+2026-11-12 23:23:43,625 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_glm53_codex_incr_R2301 removed successfully.

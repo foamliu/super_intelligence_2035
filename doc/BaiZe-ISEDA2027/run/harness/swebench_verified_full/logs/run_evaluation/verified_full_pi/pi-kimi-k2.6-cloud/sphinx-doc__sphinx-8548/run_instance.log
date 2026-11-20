@@ -1,0 +1,283 @@
+2026-10-30 17:01:50,232 - INFO - Creating container for sphinx-doc__sphinx-8548...
+2026-10-30 17:01:50,263 - INFO - Container for sphinx-doc__sphinx-8548 created: 66417e4a67c244d03e47143738e796c5bd31ef36acd64987bbfe693646d78357
+2026-10-30 17:01:51,139 - INFO - Container for sphinx-doc__sphinx-8548 started: 66417e4a67c244d03e47143738e796c5bd31ef36acd64987bbfe693646d78357
+2026-10-30 17:01:51,142 - INFO - Intermediate patch for sphinx-doc__sphinx-8548 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8548/patch.diff, now applying to container...
+2026-10-30 17:01:51,305 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/__init__.py...
+Checking patch tests/roots/test-ext-autodoc/target/inherited_attr.py...
+Checking patch tests/test_ext_autodoc.py...
+Applied patch sphinx/ext/autodoc/__init__.py cleanly.
+Applied patch tests/roots/test-ext-autodoc/target/inherited_attr.py cleanly.
+Applied patch tests/test_ext_autodoc.py cleanly.
+
+2026-10-30 17:01:51,767 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index ddfd2b365..02be36da3 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -606,7 +606,20 @@ class Documenter:
+ 
+                     for i, line in enumerate(self.process_doc(docstrings)):
+                         self.add_line(line, sourcename, i)
+-
++                elif inspect.isclass(self.parent):
++                    for basecls in inspect.getmro(self.parent):
++                        if basecls is self.parent:
++                            continue
++                        key = (basecls.__qualname__, self.objpath[-1])
++                        if key in attr_docs:
++                            no_docstring = True
++                            # make a copy of docstring for attributes to avoid cache
++                            # the change of autodoc-process-docstring event.
++                            docstrings = [list(attr_docs[key])]
++
++                            for i, line in enumerate(self.process_doc(docstrings)):
++                                self.add_line(line, sourcename, i)
++                            break
+         # add content from docstrings
+         if not no_docstring:
+             docstrings = self.get_doc()
+@@ -756,6 +769,38 @@ class Documenter:
+                     # keep documented attributes
+                     keep = True
+                 isattr = True
++            elif inspect.isclass(self.object):
++                for basecls in inspect.getmro(self.object):
++                    if basecls is self.object:
++                        continue
++                    if (basecls.__qualname__, membername) in attr_docs:
++                        if want_all and isprivate:
++                            if self.options.private_members is None:
++                                keep = False
++                            else:
++                                keep = membername in self.options.private_members
++                        else:
++                            # keep documented attributes
++                            keep = True
++                        isattr = True
++                        break
++                else:
++                    if want_all and isprivate:
++                        if has_doc or self.options.undoc_members:
++                            if self.options.private_members is None:
++                                keep = False
++                            elif is_filtered_inherited_member(membername):
++                                keep = False
++                            else:
++                                keep = membername in self.options.private_members
++                        else:
++                            keep = False
++                    else:
++                        if self.options.members is ALL and is_filtered_inherited_member(membername):
++                            keep = False
++                        else:
++                            # ignore undocumented members if :undoc-members: is not given
++                            keep = has_doc or self.options.undoc_members
+             elif want_all and isprivate:
+                 if has_doc or self.options.undoc_members:
+                     if self.options.private_members is None:
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 392ad1a68..29c687d0d 100644
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -2234,3 +2234,26 @@ def test_name_mangling(app):
+         '      name of Foo',
+         '',
+     ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_inherited_members_attribute(app):
++    options = {"members": None,
++               "inherited-members": None}
++    actual = do_autodoc(app, 'class', 'target.inherited_attr.Derived', options)
++    assert '   .. py:attribute:: Derived.attr' in actual
++    assert '      docstring for inherited attribute' in actual
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_inherited_attribute_directive(app):
++    actual = do_autodoc(app, 'attribute', 'target.inherited_attr.Derived.attr')
++    assert list(actual) == [
++        '',
++        '.. py:attribute:: Derived.attr',
++        '   :module: target.inherited_attr',
++        "   :value: 'foo'",
++        '',
++        '   docstring for inherited attribute',
++        '',
++    ]
+2026-10-30 17:01:51,770 - INFO - Eval script for sphinx-doc__sphinx-8548 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8548/eval.sh; copying to container...
+2026-10-30 17:01:57,000 - INFO - Test runtime: 5.15 seconds
+2026-10-30 17:01:57,001 - INFO - Test output for sphinx-doc__sphinx-8548 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8548/test_output.txt
+2026-10-30 17:01:57,074 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index ddfd2b365..02be36da3 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -606,7 +606,20 @@ class Documenter:
+ 
+                     for i, line in enumerate(self.process_doc(docstrings)):
+                         self.add_line(line, sourcename, i)
+-
++                elif inspect.isclass(self.parent):
++                    for basecls in inspect.getmro(self.parent):
++                        if basecls is self.parent:
++                            continue
++                        key = (basecls.__qualname__, self.objpath[-1])
++                        if key in attr_docs:
++                            no_docstring = True
++                            # make a copy of docstring for attributes to avoid cache
++                            # the change of autodoc-process-docstring event.
++                            docstrings = [list(attr_docs[key])]
++
++                            for i, line in enumerate(self.process_doc(docstrings)):
++                                self.add_line(line, sourcename, i)
++                            break
+         # add content from docstrings
+         if not no_docstring:
+             docstrings = self.get_doc()
+@@ -756,6 +769,38 @@ class Documenter:
+                     # keep documented attributes
+                     keep = True
+                 isattr = True
++            elif inspect.isclass(self.object):
++                for basecls in inspect.getmro(self.object):
++                    if basecls is self.object:
++                        continue
++                    if (basecls.__qualname__, membername) in attr_docs:
++                        if want_all and isprivate:
++                            if self.options.private_members is None:
++                                keep = False
++                            else:
++                                keep = membername in self.options.private_members
++                        else:
++                            # keep documented attributes
++                            keep = True
++                        isattr = True
++                        break
++                else:
++                    if want_all and isprivate:
++                        if has_doc or self.options.undoc_members:
++                            if self.options.private_members is None:
++                                keep = False
++                            elif is_filtered_inherited_member(membername):
++                                keep = False
++                            else:
++                                keep = membername in self.options.private_members
++                        else:
++                            keep = False
++                    else:
++                        if self.options.members is ALL and is_filtered_inherited_member(membername):
++                            keep = False
++                        else:
++                            # ignore undocumented members if :undoc-members: is not given
++                            keep = has_doc or self.options.undoc_members
+             elif want_all and isprivate:
+                 if has_doc or self.options.undoc_members:
+                     if self.options.private_members is None:
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 392ad1a68..29c687d0d 100644
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -2234,3 +2234,26 @@ def test_name_mangling(app):
+         '      name of Foo',
+         '',
+     ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_inherited_members_attribute(app):
++    options = {"members": None,
++               "inherited-members": None}
++    actual = do_autodoc(app, 'class', 'target.inherited_attr.Derived', options)
++    assert '   .. py:attribute:: Derived.attr' in actual
++    assert '      docstring for inherited attribute' in actual
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_inherited_attribute_directive(app):
++    actual = do_autodoc(app, 'attribute', 'target.inherited_attr.Derived.attr')
++    assert list(actual) == [
++        '',
++        '.. py:attribute:: Derived.attr',
++        '   :module: target.inherited_attr',
++        "   :value: 'foo'",
++        '',
++        '   docstring for inherited attribute',
++        '',
++    ]
+diff --git a/tests/test_ext_autodoc_autoclass.py b/tests/test_ext_autodoc_autoclass.py
+index c36305de3..6130f233a 100644
+--- a/tests/test_ext_autodoc_autoclass.py
++++ b/tests/test_ext_autodoc_autoclass.py
+@@ -51,6 +51,61 @@ def test_classes(app):
+     ]
+ 
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_instance_variable(app):
++    options = {'members': True}
++    actual = do_autodoc(app, 'class', 'target.instance_variable.Bar', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: Bar()',
++        '   :module: target.instance_variable',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr2',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr3',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++    ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_inherited_instance_variable(app):
++    options = {'members': True,
++               'inherited-members': True}
++    actual = do_autodoc(app, 'class', 'target.instance_variable.Bar', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: Bar()',
++        '   :module: target.instance_variable',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr1',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring foo',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr2',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr3',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++    ]
++
++
+ def test_decorators(app):
+     actual = do_autodoc(app, 'class', 'target.decorator.Baz')
+     assert list(actual) == [
+2026-10-30 17:01:57,074 - INFO - Git diff changed after running eval script
+2026-10-30 17:01:57,074 - INFO - Grading answer for sphinx-doc__sphinx-8548...
+2026-10-30 17:01:57,077 - INFO - report: {'sphinx-doc__sphinx-8548': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/test_ext_autodoc_autoclass.py::test_inherited_instance_variable']}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_autoclass.py::test_classes', 'tests/test_ext_autodoc_autoclass.py::test_instance_variable', 'tests/test_ext_autodoc_autoclass.py::test_decorators', 'tests/test_ext_autodoc_autoclass.py::test_slots_attribute', 'tests/test_ext_autodoc_autoclass.py::test_show_inheritance_for_subclass_of_generic_type'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8548: resolved: False
+2026-10-30 17:01:57,078 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8548.verified_full_pi...
+2026-10-30 17:02:13,614 - INFO - Container sweb.eval.sphinx-doc__sphinx-8548.verified_full_pi stopped successfully.
+2026-10-30 17:02:13,614 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8548.verified_full_pi...
+2026-10-30 17:02:13,667 - INFO - Container sweb.eval.sphinx-doc__sphinx-8548.verified_full_pi removed successfully.

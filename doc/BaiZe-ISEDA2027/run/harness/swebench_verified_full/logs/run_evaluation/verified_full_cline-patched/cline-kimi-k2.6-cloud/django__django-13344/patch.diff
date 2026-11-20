@@ -1,0 +1,227 @@
+diff --git a/django/core/handlers/base.py b/django/core/handlers/base.py
+index 169df6b3c..90ba6f337 100644
+--- a/django/core/handlers/base.py
++++ b/django/core/handlers/base.py
+@@ -1,4 +1,6 @@
+ import asyncio
++
++from django.utils.asyncio import iscoroutinefunction
+ import logging
+ import types
+ 
+@@ -107,7 +109,7 @@ class BaseHandler:
+           - Asynchronous methods are left alone
+         """
+         if method_is_async is None:
+-            method_is_async = asyncio.iscoroutinefunction(method)
++            method_is_async = iscoroutinefunction(method)
+         if debug and not name:
+             name = name or 'method %s()' % method.__qualname__
+         if is_async:
+@@ -173,7 +175,7 @@ class BaseHandler:
+         if response is None:
+             wrapped_callback = self.make_view_atomic(callback)
+             # If it is an asynchronous view, run it in a subthread.
+-            if asyncio.iscoroutinefunction(wrapped_callback):
++            if iscoroutinefunction(wrapped_callback):
+                 wrapped_callback = async_to_sync(wrapped_callback)
+             try:
+                 response = wrapped_callback(request, *callback_args, **callback_kwargs)
+@@ -225,7 +227,7 @@ class BaseHandler:
+         if response is None:
+             wrapped_callback = self.make_view_atomic(callback)
+             # If it is a synchronous view, run it in a subthread
+-            if not asyncio.iscoroutinefunction(wrapped_callback):
++            if not iscoroutinefunction(wrapped_callback):
+                 wrapped_callback = sync_to_async(wrapped_callback, thread_sensitive=True)
+             try:
+                 response = await wrapped_callback(request, *callback_args, **callback_kwargs)
+@@ -255,7 +257,7 @@ class BaseHandler:
+                     )
+                 )
+             try:
+-                if asyncio.iscoroutinefunction(response.render):
++                if iscoroutinefunction(response.render):
+                     response = await response.render()
+                 else:
+                     response = await sync_to_async(response.render, thread_sensitive=True)()
+@@ -321,7 +323,7 @@ class BaseHandler:
+         non_atomic_requests = getattr(view, '_non_atomic_requests', set())
+         for db in connections.all():
+             if db.settings_dict['ATOMIC_REQUESTS'] and db.alias not in non_atomic_requests:
+-                if asyncio.iscoroutinefunction(view):
++                if iscoroutinefunction(view):
+                     raise RuntimeError(
+                         'You cannot use ATOMIC_REQUESTS with async views.'
+                     )
+diff --git a/django/core/handlers/exception.py b/django/core/handlers/exception.py
+index 98fb46083..f306022d4 100644
+--- a/django/core/handlers/exception.py
++++ b/django/core/handlers/exception.py
+@@ -14,6 +14,7 @@ from django.core.exceptions import (
+ from django.http import Http404
+ from django.http.multipartparser import MultiPartParserError
+ from django.urls import get_resolver, get_urlconf
++from django.utils.asyncio import iscoroutinefunction
+ from django.utils.log import log_response
+ from django.views import debug
+ 
+@@ -31,7 +32,7 @@ def convert_exception_to_response(get_response):
+     no middleware leaks an exception and that the next middleware in the stack
+     can rely on getting a response instead of an exception.
+     """
+-    if asyncio.iscoroutinefunction(get_response):
++    if iscoroutinefunction(get_response):
+         @wraps(get_response)
+         async def inner(request):
+             try:
+diff --git a/django/utils/asyncio.py b/django/utils/asyncio.py
+index 2405e3413..b7338cb63 100644
+--- a/django/utils/asyncio.py
++++ b/django/utils/asyncio.py
+@@ -32,3 +32,10 @@ def async_unsafe(message):
+         return decorator(func)
+     else:
+         return decorator
++
++
++def iscoroutinefunction(func):
++    """Return True if func is a coroutine function or a callable with an async __call__."""
++    return asyncio.iscoroutinefunction(func) or (
++        hasattr(func, '__call__') and asyncio.iscoroutinefunction(func.__call__)
++    )
+diff --git a/django/utils/deprecation.py b/django/utils/deprecation.py
+index b2c681b33..f0d6aa15a 100644
+--- a/django/utils/deprecation.py
++++ b/django/utils/deprecation.py
+@@ -4,6 +4,8 @@ import warnings
+ 
+ from asgiref.sync import sync_to_async
+ 
++from django.utils.asyncio import iscoroutinefunction
++
+ 
+ class RemovedInDjango40Warning(DeprecationWarning):
+     pass
+@@ -102,14 +104,14 @@ class MiddlewareMixin:
+         If get_response is a coroutine function, turns us into async mode so
+         a thread is not consumed during a whole request.
+         """
+-        if asyncio.iscoroutinefunction(self.get_response):
++        if iscoroutinefunction(self.get_response):
+             # Mark the class as async-capable, but do the actual switch
+             # inside __call__ to avoid swapping out dunder methods
+             self._is_coroutine = asyncio.coroutines._is_coroutine
+ 
+     def __call__(self, request):
+         # Exit out to async mode, if needed
+-        if asyncio.iscoroutinefunction(self.get_response):
++        if iscoroutinefunction(self.get_response):
+             return self.__acall__(request)
+         response = None
+         if hasattr(self, 'process_request'):
+diff --git a/tests/async/tests.py b/tests/async/tests.py
+index 783fbdd08..c85c40166 100644
+--- a/tests/async/tests.py
++++ b/tests/async/tests.py
+@@ -1,3 +1,4 @@
++import asyncio
+ import os
+ import sys
+ from unittest import mock, skipIf
+@@ -7,11 +8,35 @@ from asgiref.sync import async_to_sync
+ from django.core.cache import DEFAULT_CACHE_ALIAS, caches
+ from django.core.exceptions import SynchronousOnlyOperation
+ from django.test import SimpleTestCase
+-from django.utils.asyncio import async_unsafe
++from django.utils.asyncio import async_unsafe, iscoroutinefunction
+ 
+ from .models import SimpleModel
+ 
+ 
++class IsCoroutineFunctionTest(SimpleTestCase):
++    def test_coroutine_function(self):
++        async def async_func():
++            pass
++        self.assertIs(iscoroutinefunction(async_func), True)
++
++    def test_sync_function(self):
++        def sync_func():
++            pass
++        self.assertIs(iscoroutinefunction(sync_func), False)
++
++    def test_async_callable_instance(self):
++        class AsyncCallable:
++            async def __call__(self):
++                pass
++        self.assertIs(iscoroutinefunction(AsyncCallable()), True)
++
++    def test_sync_callable_instance(self):
++        class SyncCallable:
++            def __call__(self):
++                pass
++        self.assertIs(iscoroutinefunction(SyncCallable()), False)
++
++
+ @skipIf(sys.platform == 'win32' and (3, 8, 0) < sys.version_info < (3, 8, 1), 'https://bugs.python.org/issue38563')
+ class CacheTest(SimpleTestCase):
+     def test_caches_local(self):
+diff --git a/tests/middleware_exceptions/middleware.py b/tests/middleware_exceptions/middleware.py
+index 9fb9726b5..93dadba91 100644
+--- a/tests/middleware_exceptions/middleware.py
++++ b/tests/middleware_exceptions/middleware.py
+@@ -4,6 +4,7 @@ from django.template.response import TemplateResponse
+ from django.utils.decorators import (
+     async_only_middleware, sync_and_async_middleware, sync_only_middleware,
+ )
++from django.utils.deprecation import MiddlewareMixin
+ 
+ log = []
+ 
+@@ -130,3 +131,23 @@ class NotSyncOrAsyncMiddleware(BaseMiddleware):
+ 
+     def __call__(self, request):
+         return self.get_response(request)
++
++
++class AsyncClassMiddleware:
++    """Async class-based middleware without MiddlewareMixin."""
++    async_capable = True
++    sync_capable = False
++
++    def __init__(self, get_response):
++        self.get_response = get_response
++
++    async def __call__(self, request):
++        response = await self.get_response(request)
++        return response
++
++
++class ProcessResponseMiddleware(MiddlewareMixin):
++    def process_response(self, request, response):
++        if not isinstance(response, HttpResponse):
++            raise TypeError('process_response received %r instead of HttpResponse' % response)
++        return response
+diff --git a/tests/middleware_exceptions/tests.py b/tests/middleware_exceptions/tests.py
+index 8b019ba52..b7c9dff1a 100644
+--- a/tests/middleware_exceptions/tests.py
++++ b/tests/middleware_exceptions/tests.py
+@@ -339,3 +339,18 @@ class AsyncMiddlewareTests(SimpleTestCase):
+     async def test_process_view_return_response(self):
+         response = await self.async_client.get('/middleware_exceptions/view/')
+         self.assertEqual(response.content, b'Processed view normal_view')
++
++    @override_settings(MIDDLEWARE=[
++        'middleware_exceptions.middleware.ProcessResponseMiddleware',
++        'middleware_exceptions.middleware.AsyncClassMiddleware',
++    ])
++    async def test_async_class_middleware_with_process_response(self):
++        """
++        Async class-based middleware (without MiddlewareMixin) followed by a
++        MiddlewareMixin with process_response should pass an HttpResponse to
++        process_response, not a coroutine object.
++        """
++        response = await self.async_client.get('/middleware_exceptions/view/')
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(response.content, b'OK')
++

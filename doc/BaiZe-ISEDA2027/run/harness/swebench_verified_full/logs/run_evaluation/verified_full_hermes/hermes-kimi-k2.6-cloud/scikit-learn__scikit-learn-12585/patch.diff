@@ -1,0 +1,70 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 0000000..cf5d133
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,21 @@
++import builtins
++import numpy as np
++import scipy.optimize.linesearch as _ls
++
++# Restore removed numpy scalar aliases for sklearn 0.22 on numpy 2.x
++for _name in ('int', 'float', 'bool', 'object', 'complex'):
++    if not hasattr(np, _name):
++        setattr(np, _name, getattr(builtins, _name, object))
++
++# scipy linesearch compatibility
++if not hasattr(_ls, 'line_search_wolfe2'):
++    import scipy.optimize
++    _ls.line_search_wolfe2 = scipy.optimize.line_search
++    _ls.line_search_wolfe1 = scipy.optimize.line_search
++
++# wminkowski stub (removed in scipy 1.6+)
++import scipy.spatial.distance as _sd
++if not hasattr(_sd, 'wminkowski'):
++    def _wminkowski(u, v, p, w):
++        return _sd.minkowski(u * w, v * w, p)
++    _sd.wminkowski = _wminkowski
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18..3499827 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569..32b0d62 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -147,6 +147,7 @@ def _make_cell_set_template_code():
+     else:
+         return types.CodeType(
+             co.co_argcount,
++            getattr(co, 'co_posonlyargcount', 0),
+             co.co_kwonlyargcount,
+             co.co_nlocals,
+             co.co_stacksize,
+diff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py
+index ebcb389..95dd52d 100644
+--- a/sklearn/tests/test_base.py
++++ b/sklearn/tests/test_base.py
+@@ -167,6 +167,13 @@ def test_clone_sparse_matrices():
+         assert_array_equal(clf.empty.toarray(), clf_cloned.empty.toarray())
+ 
+ 
++def test_clone_estimator_class_as_parameter():
++    # Regression test for cloning when a parameter is an estimator class.
++    clf = MyEstimator(empty=MyEstimator)
++    clf_cloned = clone(clf)
++    assert clf_cloned.empty is MyEstimator
++
++
+ def test_repr():
+     # Smoke test the repr of the base estimator.
+     my_estimator = MyEstimator()

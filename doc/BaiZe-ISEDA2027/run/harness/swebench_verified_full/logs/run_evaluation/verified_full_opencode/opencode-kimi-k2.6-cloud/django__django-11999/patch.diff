@@ -1,0 +1,75 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..ce790675c1 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,10 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            method_name = 'get_%s_display' % self.name
++            if not getattr(cls, method_name, None):
++                setattr(cls, method_name,
++                        partialmethod(cls._get_FIELD_display, field=self))
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..bb641e784c 100644
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -76,6 +76,17 @@ class Choiceful(models.Model):
+     empty_choices_text = models.TextField(choices=())
+ 
+ 
++class OverrideGetDisplay(models.Model):
++    choice = models.IntegerField(choices=[(1, 'One'), (2, 'Two')])
++
++    def get_choice_display(self):
++        return 'custom choice'
++
++
++class OverrideGetDisplayChild(OverrideGetDisplay):
++    pass
++
++
+ class BigD(models.Model):
+     d = models.DecimalField(max_digits=32, decimal_places=30)
+ 
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 0d6e930b06..2fa423cc25 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -7,8 +7,8 @@ from django.test import SimpleTestCase, TestCase
+ from django.utils.functional import lazy
+ 
+ from .models import (
+-    Bar, Choiceful, Foo, RenamedField, VerboseNameField, Whiz, WhizDelayed,
+-    WhizIter, WhizIterEmpty,
++    Bar, Choiceful, Foo, OverrideGetDisplay, RenamedField, VerboseNameField,
++    Whiz, WhizDelayed, WhizIter, WhizIterEmpty,
+ )
+ 
+ 
+@@ -186,6 +186,20 @@ class GetFieldDisplayTests(SimpleTestCase):
+         self.assertIsNone(WhizIterEmpty(c=None).c)         # Blank value
+         self.assertEqual(WhizIterEmpty(c='').c, '')        # Empty value
+ 
++    def test_get_FIELD_display_override(self):
++        """
++        get_FIELD_display() can be overridden on the model.
++        """
++        self.assertEqual(OverrideGetDisplay(choice=1).get_choice_display(), 'custom choice')
++        self.assertEqual(OverrideGetDisplay(choice=2).get_choice_display(), 'custom choice')
++
++    def test_get_FIELD_display_override_inherited(self):
++        """
++        get_FIELD_display() override is inherited by subclasses.
++        """
++        from .models import OverrideGetDisplayChild
++        self.assertEqual(OverrideGetDisplayChild(choice=1).get_choice_display(), 'custom choice')
++
+ 
+ class GetChoicesTests(SimpleTestCase):
+ 

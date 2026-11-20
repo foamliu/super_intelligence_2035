@@ -1,0 +1,63 @@
+2026-10-30 17:21:17,744 - INFO - Creating container for pytest-dev__pytest-5809...
+2026-10-30 17:21:17,770 - INFO - Container for pytest-dev__pytest-5809 created: 47915bbb16a8561d36599ebcd0c1d81a94be9fed8e99b78eb5a892ee1955be17
+2026-10-30 17:21:18,497 - INFO - Container for pytest-dev__pytest-5809 started: 47915bbb16a8561d36599ebcd0c1d81a94be9fed8e99b78eb5a892ee1955be17
+2026-10-30 17:21:18,499 - INFO - Intermediate patch for pytest-dev__pytest-5809 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/pytest-dev__pytest-5809/patch.diff, now applying to container...
+2026-10-30 17:21:18,643 - INFO - >>>>> Applied Patch:
+Checking patch src/_pytest/pastebin.py...
+Checking patch testing/test_pastebin.py...
+Applied patch src/_pytest/pastebin.py cleanly.
+Applied patch testing/test_pastebin.py cleanly.
+
+2026-10-30 17:21:18,810 - INFO - Git diff before:
+diff --git a/src/_pytest/pastebin.py b/src/_pytest/pastebin.py
+index 41576a615..79b0d9d40 100644
+--- a/src/_pytest/pastebin.py
++++ b/src/_pytest/pastebin.py
+@@ -79,7 +79,7 @@ def create_new_paste(contents):
+ 
+     params = {
+         "code": contents,
+-        "lexer": "python3" if sys.version_info[0] >= 3 else "python",
++        "lexer": "text",
+         "expiry": "1week",
+     }
+     url = "https://bpaste.net"
+diff --git a/testing/test_pastebin.py b/testing/test_pastebin.py
+index bac8f9802..aac0b651e 100644
+--- a/testing/test_pastebin.py
++++ b/testing/test_pastebin.py
+@@ -126,8 +126,7 @@ class TestPaste(object):
+         assert len(mocked_urlopen) == 1
+         url, data = mocked_urlopen[0]
+         assert type(data) is bytes
+-        lexer = "python3" if sys.version_info[0] >= 3 else "python"
+         assert url == "https://bpaste.net"
+-        assert "lexer=%s" % lexer in data.decode()
++        assert "lexer=text" in data.decode()
+         assert "code=full-paste-contents" in data.decode()
+         assert "expiry=1week" in data.decode()
+2026-10-30 17:21:18,813 - INFO - Eval script for pytest-dev__pytest-5809 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/pytest-dev__pytest-5809/eval.sh; copying to container...
+2026-10-30 17:21:29,913 - INFO - Test runtime: 11.01 seconds
+2026-10-30 17:21:29,915 - INFO - Test output for pytest-dev__pytest-5809 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/pytest-dev__pytest-5809/test_output.txt
+2026-10-30 17:21:29,983 - INFO - Git diff after:
+diff --git a/src/_pytest/pastebin.py b/src/_pytest/pastebin.py
+index 41576a615..79b0d9d40 100644
+--- a/src/_pytest/pastebin.py
++++ b/src/_pytest/pastebin.py
+@@ -79,7 +79,7 @@ def create_new_paste(contents):
+ 
+     params = {
+         "code": contents,
+-        "lexer": "python3" if sys.version_info[0] >= 3 else "python",
++        "lexer": "text",
+         "expiry": "1week",
+     }
+     url = "https://bpaste.net"
+2026-10-30 17:21:29,983 - INFO - Git diff changed after running eval script
+2026-10-30 17:21:29,983 - INFO - Grading answer for pytest-dev__pytest-5809...
+2026-10-30 17:21:29,985 - INFO - report: {'pytest-dev__pytest-5809': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/test_pastebin.py::TestPaste::test_create_new_paste'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/test_pastebin.py::TestPasteCapture::test_failed', 'testing/test_pastebin.py::TestPasteCapture::test_all', 'testing/test_pastebin.py::TestPasteCapture::test_non_ascii_paste_text'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-5809: resolved: True
+2026-10-30 17:21:29,987 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-5809.verified_full_claude-code...
+2026-10-30 17:21:45,530 - INFO - Container sweb.eval.pytest-dev__pytest-5809.verified_full_claude-code stopped successfully.
+2026-10-30 17:21:45,530 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-5809.verified_full_claude-code...
+2026-10-30 17:21:45,568 - INFO - Container sweb.eval.pytest-dev__pytest-5809.verified_full_claude-code removed successfully.

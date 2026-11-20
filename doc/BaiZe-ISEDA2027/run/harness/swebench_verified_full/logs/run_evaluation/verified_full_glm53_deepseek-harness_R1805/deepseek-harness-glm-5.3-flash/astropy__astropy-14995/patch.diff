@@ -1,0 +1,66 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index c0049469b2..e7e51b2468 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -292,6 +292,13 @@ astropy.modeling
+ - Fixed an issue with Parameter where a getter could be input without a
+   setter (or vice versa). [#14708]
+ 
++astropy.nddata
++^^^^^^^^^^^^^^
++
++- Fixed a bug where ``NDDataRef`` mask propagation failed during arithmetic
++  (e.g. with ``handle_mask=np.bitwise_or``) if one of the operands did not
++  have a mask. [#14900]
++
+ astropy.time
+ ^^^^^^^^^^^^
+ 
+diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py
+index 4153dfccb2..28c34ca326 100644
+--- a/astropy/nddata/mixins/ndarithmetic.py
++++ b/astropy/nddata/mixins/ndarithmetic.py
+@@ -522,6 +522,9 @@ class NDArithmeticMixin:
+             return deepcopy(operand.mask)
+         elif operand is None:
+             return deepcopy(self.mask)
++        elif operand.mask is None:
++            # Make a copy so there is no reference in the result.
++            return deepcopy(self.mask)
+         else:
+             # Now lets calculate the resulting mask (operation enforces copy)
+             return handle_mask(self.mask, operand.mask, **kwds)
+diff --git a/astropy/nddata/mixins/tests/test_ndarithmetic.py b/astropy/nddata/mixins/tests/test_ndarithmetic.py
+index 8c461155ab..b501adf9d5 100644
+--- a/astropy/nddata/mixins/tests/test_ndarithmetic.py
++++ b/astropy/nddata/mixins/tests/test_ndarithmetic.py
+@@ -1310,3 +1310,29 @@ def test_raise_method_not_supported():
+     # raise error for unsupported propagation operations:
+     with pytest.raises(ValueError):
+         ndd1.uncertainty.propagate(np.mod, ndd2, result, correlation)
++
++
++def test_arithmetics_mask_one_operand_without_mask():
++    # Regression test for #14900: when one operand has a mask but the
++    # other does not, the existing mask must be propagated (copied) to
++    # the result instead of calling ``handle_mask`` with ``None``.
++    # Using ``np.bitwise_or`` ensures this fails with a TypeError if
++    # ``None`` is passed to the handler.
++    data1 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
++    mask1 = np.array([[0, 1, 64], [8, 0, 1], [2, 1, 0]])
++    data2 = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
++
++    nd1 = NDDataArithmetic(data1, mask=mask1)
++    nd2 = NDDataArithmetic(data2)
++
++    for meth in ("add", "subtract", "multiply", "divide"):
++        # only self has a mask -> copied to the result
++        nd_ = getattr(nd1, meth)(nd2, handle_mask=np.bitwise_or)
++        np.testing.assert_array_equal(nd_.mask, mask1)
++        # only operand2 has a mask -> copied to the result
++        nd_ = getattr(nd2, meth)(nd1, handle_mask=np.bitwise_or)
++        np.testing.assert_array_equal(nd_.mask, mask1)
++
++    # a scalar operand (converted, mask is None) behaves the same way
++    nd_ = nd1.multiply(2.0, handle_mask=np.bitwise_or)
++    np.testing.assert_array_equal(nd_.mask, mask1)

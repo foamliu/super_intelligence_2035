@@ -1,0 +1,90 @@
+diff --git a/sphinx/ext/inheritance_diagram.py b/sphinx/ext/inheritance_diagram.py
+index 6e39855..9fc1c06 100644
+--- a/sphinx/ext/inheritance_diagram.py
++++ b/sphinx/ext/inheritance_diagram.py
+@@ -33,10 +33,12 @@ from __future__ import annotations
+ import builtins
+ import hashlib
+ import inspect
++import posixpath
+ import re
+ from collections.abc import Iterable
+ from importlib import import_module
+ from typing import Any, cast
++from urllib.parse import urlsplit, urlunsplit
+ 
+ from docutils import nodes
+ from docutils.nodes import Node
+@@ -54,6 +56,7 @@ from sphinx.ext.graphviz import (
+     render_dot_texinfo,
+ )
+ from sphinx.util.docutils import SphinxDirective
++from sphinx.util.osutil import relative_uri
+ from sphinx.util.typing import OptionSpec
+ from sphinx.writers.html import HTML5Translator
+ from sphinx.writers.latex import LaTeXTranslator
+@@ -395,6 +398,36 @@ def get_graph_hash(node: inheritance_diagram) -> str:
+     return hashlib.md5(encoded, usedforsecurity=False).hexdigest()[-10:]
+ 
+ 
++def _svg_relative_uri(imagedir: str, current_filename: str, uri: str) -> str:
++    """Return *uri* rewritten to be usable inside the generated SVG file.
++
++    In SVG output the diagram is embedded in the page using an ``<object>``
++    tag, and the browser loads it as a separate document: relative links
++    inside the SVG are resolved against the SVG file's own location (in
++    *imagedir*), not against the location of the embedding page.
++
++    :param imagedir: directory of the SVG file, relative to the
++        documentation root (e.g. ``'_images'``)
++    :param current_filename: path of the embedding page, relative to the
++        documentation root (e.g. ``'api/module.html'``)
++    :param uri: link target as appropriate for the embedding page, i.e.
++        relative to the page's directory (or an absolute URI)
++    """
++    scheme, netloc, path, query, fragment = urlsplit(uri)
++    if scheme or netloc:
++        # Not a relative link (e.g. an intersphinx target).
++        return uri
++    if not path:
++        # Fragment-only link: valid from within any document.
++        return uri
++    # Resolve the page-relative path against the embedding page's directory
++    # to get a documentation-root-relative path, then express it relative to
++    # the directory containing the SVG file.
++    path = posixpath.normpath(posixpath.join(posixpath.dirname(current_filename), path))
++    path = relative_uri(imagedir + '/', path)
++    return urlunsplit(('', '', path, query, fragment))
++
++
+ def html_visit_inheritance_diagram(self: HTML5Translator, node: inheritance_diagram) -> None:
+     """
+     Output the graph for HTML.  This will insert a PNG with clickable
+@@ -408,17 +441,23 @@ def html_visit_inheritance_diagram(self: HTML5Translator, node: inheritance_diag
+     # Create a mapping from fully-qualified class names to URLs.
+     graphviz_output_format = self.builder.env.config.graphviz_output_format.upper()
+     current_filename = self.builder.current_docname + self.builder.out_suffix
++    svg_relative_paths = graphviz_output_format == 'SVG'
+     urls = {}
+     pending_xrefs = cast(Iterable[addnodes.pending_xref], node)
+     for child in pending_xrefs:
+         if child.get('refuri') is not None:
+-            if graphviz_output_format == 'SVG':
+-                urls[child['reftitle']] = "../" + child.get('refuri')
++            if svg_relative_paths:
++                urls[child['reftitle']] = _svg_relative_uri(
++                    self.builder.imagedir, current_filename, child['refuri'])
+             else:
+                 urls[child['reftitle']] = child.get('refuri')
+         elif child.get('refid') is not None:
+-            if graphviz_output_format == 'SVG':
+-                urls[child['reftitle']] = '../' + current_filename + '#' + child.get('refid')
++            if svg_relative_paths:
++                # The target is in the embedding page itself, whose path
++                # relative to its own directory is its basename.
++                urls[child['reftitle']] = _svg_relative_uri(
++                    self.builder.imagedir, current_filename,
++                    posixpath.basename(current_filename) + '#' + child.get('refid'))
+             else:
+                 urls[child['reftitle']] = '#' + child.get('refid')
+ 

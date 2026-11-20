@@ -1,0 +1,9 @@
+[incr-eval-guarded 17:02:25] survey: real_new=2 empty_new=0 already_done=330
+[incr-eval-guarded 17:02:25] real-patch backlog: ['matplotlib__matplotlib-26113', 'matplotlib__matplotlib-26291']
+[incr-eval-guarded 17:02:25] merged 2 new patches -> predictions_deepseek-harness_new_R2806.json
+[incr-eval-guarded 17:02:25] EVAL 2 instances (GUARDED container) -> run_id=verified_full_glm53_deepseek-harness_incr_R2806
+[incr-eval-guarded 17:07:44] eval rc=0
+[incr-eval-guarded 17:07:44]   matplotlib__matplotlib-26113: RESOLVED
+[incr-eval-guarded 17:07:44]   matplotlib__matplotlib-26291: FAILED
+[incr-eval-guarded 17:07:44] merged -> resolved=195 failed=115 infra=1
+[incr-eval-guarded 17:07:44] DONE. deepseek resolved=195/500

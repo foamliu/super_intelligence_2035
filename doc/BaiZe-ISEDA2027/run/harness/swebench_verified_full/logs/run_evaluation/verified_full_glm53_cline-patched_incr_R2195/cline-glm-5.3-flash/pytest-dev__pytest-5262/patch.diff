@@ -1,0 +1,83 @@
+diff --git a/changelog/5194.bugfix.rst b/changelog/5194.bugfix.rst
+new file mode 100644
+index 0000000..b59003e
+--- /dev/null
++++ b/changelog/5194.bugfix.rst
+@@ -0,0 +1 @@
++``EncodedFile`` (used when capturing ``stdout``/``stderr``) no longer advertises ``b`` (binary) in its ``mode`` attribute, which made libraries like ``youtube-dl`` fail when writing to captured output.
+\ No newline at end of file
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7f..edd8e25 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -447,6 +447,13 @@ class EncodedFile(object):
+         """Ensure that file.name is a string."""
+         return repr(self.buffer)
+ 
++    @property
++    def mode(self):
++        """Ensure that mode does not include 'b' (binary), as this is a
++        text-level wrapper: the underlying buffer is binary, but ``write``
++        accepts ``str`` (#5194)."""
++        return self.buffer.mode.replace("b", "")
++
+     def __getattr__(self, name):
+         return getattr(object.__getattribute__(self, "buffer"), name)
+ 
+diff --git a/testing/test_capture.py b/testing/test_capture.py
+index 5d80eb6..41f4a6f 100644
+--- a/testing/test_capture.py
++++ b/testing/test_capture.py
+@@ -1461,6 +1461,52 @@ def test_pickling_and_unpickling_encoded_file():
+     pickle.loads(ef_as_str)
+ 
+ 
++def test_encodedfile_mode(tmpfile):
++    """EncodedFile.mode should not include 'b' (binary) (#5194).
++
++    The underlying buffer is binary, but EncodedFile is a text-level
++    wrapper: libraries like youtube-dl check ``mode`` to decide whether
++    to write ``bytes`` or ``str``.
++    """
++    assert tmpfile.mode == "wb+"
++    ef = capture.EncodedFile(tmpfile, "utf8")
++    assert "b" not in ef.mode
++    assert ef.mode == "w+"
++
++
++@needsosdup
++def test_safe_text_dupfile_mode_not_binary(tmpfile):
++    """The result of safe_text_dupfile should not advertise binary mode (#5194)."""
++    ef = capture.safe_text_dupfile(tmpfile, "wb")
++    assert "b" not in ef.mode
++    # writing str still works as before
++    ef.write("hello")
++    ef.close()
++    tmpfile.seek(0)
++    assert b"hello" in tmpfile.read()
++
++
++def test_encodedfile_write_like_youtube_dl(tmpfile):
++    """Simulate youtube-dl's write_string(): it checks ``'b' in out.mode``
++    to decide whether to write ``bytes`` or ``str`` (#5194)."""
++
++    def write_string(s, out, encoding="utf8"):
++        if "b" in getattr(out, "mode", ""):
++            out.write(s.encode(encoding))
++        elif hasattr(out, "buffer"):
++            out.buffer.write(s.encode(encoding))
++        else:
++            out.write(s)
++
++    ef = capture.safe_text_dupfile(tmpfile, "wb")
++    assert "b" not in ef.mode
++    # with the fixed mode, the str branch is taken and must not raise
++    write_string("hello", ef)
++    ef.close()
++    tmpfile.seek(0)
++    assert b"hello" in tmpfile.read()
++
++
+ def test_global_capture_with_live_logging(testdir):
+     # Issue 3819
+     # capture should work with live cli logging

@@ -1,0 +1,147 @@
+2026-11-18 20:31:35,945 - INFO - Creating container for django__django-12304...
+2026-11-18 20:31:36,062 - INFO - Container for django__django-12304 created: 8fd2d6696b175763615e934e34c23982a849991fff86c0bcd7de6ebe3767c0e7
+2026-11-18 20:31:36,799 - INFO - Container for django__django-12304 started: 8fd2d6696b175763615e934e34c23982a849991fff86c0bcd7de6ebe3767c0e7
+2026-11-18 20:31:36,800 - INFO - Intermediate patch for django__django-12304 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2694/deepseek-harness-glm-5.3-flash/django__django-12304/patch.diff, now applying to container...
+2026-11-18 20:31:36,920 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/enums.py...
+Checking patch docs/ref/models/fields.txt...
+Checking patch docs/releases/3.1.txt...
+Checking patch tests/model_enums/tests.py...
+Applied patch django/db/models/enums.py cleanly.
+Applied patch docs/ref/models/fields.txt cleanly.
+Applied patch docs/releases/3.1.txt cleanly.
+Applied patch tests/model_enums/tests.py cleanly.
+
+2026-11-18 20:31:38,350 - INFO - Git diff before:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..51821a2b45 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -31,6 +31,7 @@ class ChoicesMeta(enum.EnumMeta):
+         # that is passed in as "self" as the value to use when looking up the
+         # label in the choices.
+         cls.label = property(lambda self: cls._value2label_map_.get(self.value))
++        cls.do_not_call_in_templates = True
+         return enum.unique(cls)
+ 
+     def __contains__(cls, member):
+diff --git a/docs/ref/models/fields.txt b/docs/ref/models/fields.txt
+index d321506d99..473dfee0d8 100644
+--- a/docs/ref/models/fields.txt
++++ b/docs/ref/models/fields.txt
+@@ -226,6 +226,9 @@ modifications:
+ * The use of :func:`enum.unique()` is enforced to ensure that values cannot be
+   defined multiple times. This is unlikely to be expected in choices for a
+   field.
++* Because enumeration classes are callable classes, add
++  ``do_not_call_in_templates = True`` to prevent the template engine from
++  calling them, allowing the use of enumeration members in templates.
+ 
+ Note that using ``YearInSchool.SENIOR``, ``YearInSchool['SENIOR']``, or
+ ``YearInSchool('SR')`` to access or lookup enum members work as expected, as do
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 3def8920cc..fb4136aa7e 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -218,6 +218,10 @@ Migrations
+ Models
+ ~~~~~~
+ 
++* Enumeration classes, e.g. ``TextChoices``, now define
++  ``do_not_call_in_templates = True`` to prevent the template engine from
++  calling them, allowing the use of enumeration members in templates.
++
+ * The new :class:`~django.db.models.functions.ExtractIsoWeekDay` function
+   extracts ISO-8601 week days from :class:`~django.db.models.DateField` and
+   :class:`~django.db.models.DateTimeField`, and the new :lookup:`iso_week_day`
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479de..bd3041e9c1 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -4,6 +4,7 @@ import ipaddress
+ import uuid
+ 
+ from django.db import models
++from django.template import Context, Engine
+ from django.test import SimpleTestCase
+ from django.utils.functional import Promise
+ from django.utils.translation import gettext_lazy as _
+@@ -149,6 +150,25 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_do_not_call_in_templates(self):
++        engine = Engine()
++        context = Context({'YearInSchool': YearInSchool, 'Suit': Suit})
++        # Enumeration classes shouldn't be called by the template engine, so
++        # they can be used in template comparisons and rendered as values.
++        for template, expected in [
++            ('{{ YearInSchool.FRESHMAN }}', 'FR'),
++            ('{{ Suit.DIAMOND }}', '1'),
++            (
++                '{% if YearInSchool.FRESHMAN == YearInSchool.FRESHMAN %}'
++                'FR{% endif %}',
++                'FR',
++            ),
++        ]:
++            with self.subTest(template=template):
++                self.assertEqual(
++                    engine.from_string(template).render(context), expected
++                )
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'
+2026-11-18 20:31:38,354 - INFO - Eval script for django__django-12304 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2694/deepseek-harness-glm-5.3-flash/django__django-12304/eval.sh; copying to container...
+2026-11-18 20:31:44,845 - INFO - Test runtime: 6.41 seconds
+2026-11-18 20:31:44,847 - INFO - Test output for django__django-12304 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2694/deepseek-harness-glm-5.3-flash/django__django-12304/test_output.txt
+2026-11-18 20:31:44,933 - INFO - Git diff after:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..51821a2b45 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -31,6 +31,7 @@ class ChoicesMeta(enum.EnumMeta):
+         # that is passed in as "self" as the value to use when looking up the
+         # label in the choices.
+         cls.label = property(lambda self: cls._value2label_map_.get(self.value))
++        cls.do_not_call_in_templates = True
+         return enum.unique(cls)
+ 
+     def __contains__(cls, member):
+diff --git a/docs/ref/models/fields.txt b/docs/ref/models/fields.txt
+index d321506d99..473dfee0d8 100644
+--- a/docs/ref/models/fields.txt
++++ b/docs/ref/models/fields.txt
+@@ -226,6 +226,9 @@ modifications:
+ * The use of :func:`enum.unique()` is enforced to ensure that values cannot be
+   defined multiple times. This is unlikely to be expected in choices for a
+   field.
++* Because enumeration classes are callable classes, add
++  ``do_not_call_in_templates = True`` to prevent the template engine from
++  calling them, allowing the use of enumeration members in templates.
+ 
+ Note that using ``YearInSchool.SENIOR``, ``YearInSchool['SENIOR']``, or
+ ``YearInSchool('SR')`` to access or lookup enum members work as expected, as do
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 3def8920cc..fb4136aa7e 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -218,6 +218,10 @@ Migrations
+ Models
+ ~~~~~~
+ 
++* Enumeration classes, e.g. ``TextChoices``, now define
++  ``do_not_call_in_templates = True`` to prevent the template engine from
++  calling them, allowing the use of enumeration members in templates.
++
+ * The new :class:`~django.db.models.functions.ExtractIsoWeekDay` function
+   extracts ISO-8601 week days from :class:`~django.db.models.DateField` and
+   :class:`~django.db.models.DateTimeField`, and the new :lookup:`iso_week_day`
+2026-11-18 20:31:44,933 - INFO - Git diff changed after running eval script
+2026-11-18 20:31:44,934 - INFO - Grading answer for django__django-12304...
+2026-11-18 20:31:44,935 - INFO - report: {'django__django-12304': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_templates (model_enums.tests.ChoicesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_integerchoices (model_enums.tests.ChoicesTests)', 'test_integerchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_containment (model_enums.tests.ChoicesTests)', 'test_integerchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_invalid_definition (model_enums.tests.ChoicesTests)', 'test_str (model_enums.tests.ChoicesTests)', 'test_textchoices (model_enums.tests.ChoicesTests)', 'test_textchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_textchoices_blank_value (model_enums.tests.ChoicesTests)', 'test_textchoices_containment (model_enums.tests.ChoicesTests)', 'test_textchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_textchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_bool_unsupported (model_enums.tests.CustomChoicesTests)', 'test_labels_valid (model_enums.tests.CustomChoicesTests)', 'test_timezone_unsupported (model_enums.tests.CustomChoicesTests)', 'test_uuid_unsupported (model_enums.tests.CustomChoicesTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12304: resolved: True
+2026-11-18 20:31:44,937 - INFO - Attempting to stop container sweb.eval.django__django-12304.verified_full_glm53_deepseek-harness_incr_R2694...
+2026-11-18 20:32:01,218 - INFO - Container sweb.eval.django__django-12304.verified_full_glm53_deepseek-harness_incr_R2694 stopped successfully.
+2026-11-18 20:32:01,218 - INFO - Attempting to remove container sweb.eval.django__django-12304.verified_full_glm53_deepseek-harness_incr_R2694...
+2026-11-18 20:32:01,277 - INFO - Container sweb.eval.django__django-12304.verified_full_glm53_deepseek-harness_incr_R2694 removed successfully.

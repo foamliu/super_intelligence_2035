@@ -1,0 +1,60 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 0f53d9c30b..0ce7de02c6 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -2524,7 +2524,7 @@ class AutoFieldMeta(type):
+         return isinstance(instance, self._subclasses) or super().__instancecheck__(instance)
+ 
+     def __subclasscheck__(self, subclass):
+-        return subclass in self._subclasses or super().__subclasscheck__(subclass)
++        return issubclass(subclass, self._subclasses) or super().__subclasscheck__(subclass)
+ 
+ 
+ class AutoField(AutoFieldMixin, IntegerField, metaclass=AutoFieldMeta):
+diff --git a/tests/model_options/models/__init__.py b/tests/model_options/models/__init__.py
+index e69de29bb2..4cc6183ed0 100644
+--- a/tests/model_options/models/__init__.py
++++ b/tests/model_options/models/__init__.py
+@@ -0,0 +1,9 @@
++from django.db import models
++
++
++class MyBigAutoField(models.BigAutoField):
++    pass
++
++
++class MySmallAutoField(models.SmallAutoField):
++    pass
+diff --git a/tests/model_options/test_default_pk.py b/tests/model_options/test_default_pk.py
+index b678848916..058a66bd58 100644
+--- a/tests/model_options/test_default_pk.py
++++ b/tests/model_options/test_default_pk.py
+@@ -3,6 +3,8 @@ from django.db import models
+ from django.test import SimpleTestCase, override_settings
+ from django.test.utils import isolate_apps
+ 
++from model_options.models import MyBigAutoField, MySmallAutoField
++
+ 
+ @isolate_apps('model_options')
+ class TestDefaultPK(SimpleTestCase):
+@@ -99,3 +101,19 @@ class TestDefaultPK(SimpleTestCase):
+ 
+         m2m_pk = M2MModel._meta.get_field('m2m').remote_field.through._meta.pk
+         self.assertIsInstance(m2m_pk, models.SmallAutoField)
++
++    @isolate_apps('model_options.apps.ModelDefaultPKConfig')
++    @override_settings(DEFAULT_AUTO_FIELD='model_options.models.MyBigAutoField')
++    def test_default_auto_field_subclass_of_big_auto_field(self):
++        class Model(models.Model):
++            pass
++
++        self.assertIsInstance(Model._meta.pk, MyBigAutoField)
++
++    @isolate_apps('model_options.apps.ModelDefaultPKConfig')
++    @override_settings(DEFAULT_AUTO_FIELD='model_options.models.MySmallAutoField')
++    def test_default_auto_field_subclass_of_small_auto_field(self):
++        class Model(models.Model):
++            pass
++
++        self.assertIsInstance(Model._meta.pk, MySmallAutoField)

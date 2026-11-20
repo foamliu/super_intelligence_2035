@@ -1,0 +1,57 @@
+diff --git a/doc/users/next_whats_new/contour_set_paths.rst b/doc/users/next_whats_new/contour_set_paths.rst
+new file mode 100644
+index 000000000..aa9b5ce50
+--- /dev/null
++++ b/doc/users/next_whats_new/contour_set_paths.rst
+@@ -0,0 +1,6 @@
++ContourSet.set_paths
++--------------------
++
++`.ContourSet.set_paths` has been added to replace the paths of a
++`.ContourSet` after creation.  This is useful, for example, when the paths
++need to be modified in place, such as by cartopy for its special transforms.
+diff --git a/lib/matplotlib/contour.py b/lib/matplotlib/contour.py
+index 3f84250b6..6e467c4a5 100644
+--- a/lib/matplotlib/contour.py
++++ b/lib/matplotlib/contour.py
+@@ -1113,6 +1113,17 @@ class ContourSet(ContourLabeler, mcoll.Collection):
+                              if len(vertices) else empty_path)
+         return paths
+ 
++    def set_paths(self, paths):
++        """
++        Set the paths of the contour lines/edges.
++
++        Parameters
++        ----------
++        paths : list of `.Path`
++            The new paths for the contour set.
++        """
++        self._paths = paths
++
+     def _get_lowers_and_uppers(self):
+         """
+         Return ``(lowers, uppers)`` for filled contours.
+diff --git a/lib/matplotlib/tests/test_contour.py b/lib/matplotlib/tests/test_contour.py
+index b6ddb2830..b2eb8f5e1 100644
+--- a/lib/matplotlib/tests/test_contour.py
++++ b/lib/matplotlib/tests/test_contour.py
+@@ -11,6 +11,7 @@ import matplotlib as mpl
+ from matplotlib import pyplot as plt, rc_context, ticker
+ from matplotlib.colors import LogNorm, same_color
+ import matplotlib.patches as mpatches
++from matplotlib.path import Path
+ from matplotlib.testing.decorators import image_comparison
+ import pytest
+ 
+@@ -823,3 +824,10 @@ def test_deprecated_apis():
+         assert_array_equal(cs.tcolors, [c.get_edgecolor() for c in colls])
+     with pytest.warns(mpl.MatplotlibDeprecationWarning, match="tlinewidths"):
+         assert cs.tlinewidths == [c.get_linewidth() for c in colls]
++
++
++def test_set_paths():
++    cs = plt.contour(np.arange(16).reshape((4, 4)))
++    new_paths = [Path([[0, 0], [1, 1]])]
++    cs.set_paths(new_paths)
++    assert cs.get_paths() == new_paths

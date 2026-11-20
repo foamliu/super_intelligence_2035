@@ -1,0 +1,61 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..7754ffc646 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,9 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            if not hasattr(cls, 'get_%s_display' % self.name):
++                setattr(cls, 'get_%s_display' % self.name,
++                        partialmethod(cls._get_FIELD_display, field=self))
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..dd6dd38823 100644
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -405,3 +405,13 @@ class UUIDChild(PrimaryKeyUUIDModel):
+ 
+ class UUIDGrandchild(UUIDChild):
+     pass
++
++
++class OverrideGetFooBarDisplay(models.Model):
++    foo_bar = models.IntegerField(choices=[(1, 'foo'), (2, 'bar')])
++
++    def get_foo_bar_display(self):
++        return "something"
++
++    class Meta:
++        app_label = 'model_fields'
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 0d6e930b06..983aff39be 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -7,8 +7,8 @@ from django.test import SimpleTestCase, TestCase
+ from django.utils.functional import lazy
+ 
+ from .models import (
+-    Bar, Choiceful, Foo, RenamedField, VerboseNameField, Whiz, WhizDelayed,
+-    WhizIter, WhizIterEmpty,
++    Bar, Choiceful, Foo, OverrideGetFooBarDisplay, RenamedField,
++    VerboseNameField, Whiz, WhizDelayed, WhizIter, WhizIterEmpty,
+ )
+ 
+ 
+@@ -168,6 +168,11 @@ class GetFieldDisplayTests(SimpleTestCase):
+         self.assertIsInstance(val, str)
+         self.assertEqual(val, 'translated')
+ 
++    def test_override_get_FIELD_display(self):
++        """User-defined get_FIELD_display() should not be overridden."""
++        instance = OverrideGetFooBarDisplay(foo_bar=1)
++        self.assertEqual(instance.get_foo_bar_display(), 'something')
++
+     def test_iterator_choices(self):
+         """
+         get_choices() works with Iterators.

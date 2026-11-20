@@ -1,0 +1,70 @@
+diff --git a/sympy/polys/monomials.py b/sympy/polys/monomials.py
+index 0e844033..d2cd3451 100644
+--- a/sympy/polys/monomials.py
++++ b/sympy/polys/monomials.py
+@@ -127,7 +127,7 @@ def itermonomials(variables, max_degrees, min_degrees=None):
+                 for variable in item:
+                     if variable != 1:
+                         powers[variable] += 1
+-                if max(powers.values()) >= min_degree:
++                if sum(powers.values()) >= min_degree:
+                     monomials_list_comm.append(Mul(*item))
+             yield from set(monomials_list_comm)
+         else:
+@@ -139,7 +139,7 @@ def itermonomials(variables, max_degrees, min_degrees=None):
+                 for variable in item:
+                     if variable != 1:
+                         powers[variable] += 1
+-                if max(powers.values()) >= min_degree:
++                if sum(powers.values()) >= min_degree:
+                     monomials_list_non_comm.append(Mul(*item))
+             yield from set(monomials_list_non_comm)
+     else:
+diff --git a/sympy/polys/tests/test_monomials.py b/sympy/polys/tests/test_monomials.py
+index 482cbee3..96cc43a7 100644
+--- a/sympy/polys/tests/test_monomials.py
++++ b/sympy/polys/tests/test_monomials.py
+@@ -10,6 +10,7 @@
+ )
+ 
+ from sympy.polys.polyerrors import ExactQuotientFailed
++from sympy.polys.orderings import monomial_key
+ 
+ from sympy.abc import a, b, c, x, y, z
+ from sympy.core import S, symbols
+@@ -162,6 +163,35 @@ def test_monomials():
+                     x*j**2, x*k**2, x*j*k, x**2*j**2*k**2, x*j*k**2, x**2, x**2*j*k**2
+             }
+ 
++def test_itermonomials_min_degrees():
++    # total_degree tests, see issue #21803
++    x1, x2, x3 = symbols('x1, x2, x3')
++    states = [x1, x2, x3]
++
++    assert set(itermonomials(states, 3, min_degrees=3)) == \
++        {x1**3, x1**2*x2, x1**2*x3, x1*x2**2, x1*x2*x3,
++         x1*x3**2, x2**3, x2**2*x3, x2*x3**2, x3**3}
++
++    assert set(itermonomials(states, 3, min_degrees=2)) == \
++        {x1**2, x1*x2, x1*x3, x2**2, x2*x3, x3**2,
++         x1**3, x1**2*x2, x1**2*x3, x1*x2**2, x1*x2*x3,
++         x1*x3**2, x2**3, x2**2*x3, x2*x3**2, x3**3}
++
++    assert set(itermonomials(states, 2, min_degrees=0)) == \
++        {S.One, x1, x2, x3, x1**2, x1*x2, x1*x3, x2**2, x2*x3, x3**2}
++
++    assert sorted(itermonomials(states, 3, min_degrees=3),
++                  key=monomial_key('grlex', states)) == \
++        [x3**3, x2*x3**2, x2**2*x3, x2**3, x1*x3**2, x1*x2*x3,
++         x1*x2**2, x1**2*x3, x1**2*x2, x1**3]
++
++    # non-commutative variables
++    i, j = symbols('i j', commutative=False)
++    assert set(itermonomials([i, j], 2, 2)) == {i**2, i*j, j*i, j**2}
++    assert set(itermonomials([i, j], 3, 2)) == \
++        {i**2, i*j, j*i, j**2,
++         i**3, i**2*j, i*j*i, i*j**2, j*i**2, j*i*j, j**2*i, j**3}
++
+ def test_monomial_count():
+     assert monomial_count(2, 2) == 6
+     assert monomial_count(2, 3) == 10

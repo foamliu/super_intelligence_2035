@@ -1,0 +1,11 @@
+{
+  "harness": "pi",
+  "run_id": "verified_full_glm53_pi_incr_R2308",
+  "round": "R2308",
+  "n": 1,
+  "resolved": [
+    "pylint-dev__pylint-6903"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

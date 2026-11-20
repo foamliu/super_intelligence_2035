@@ -1,0 +1,47 @@
+diff --git a/django/db/models/query_utils.py b/django/db/models/query_utils.py
+index ae0f886107..c91e97debc 100644
+--- a/django/db/models/query_utils.py
++++ b/django/db/models/query_utils.py
+@@ -87,7 +87,12 @@ class Q(tree.Node):
+         args, kwargs = (), {}
+         if len(self.children) == 1 and not isinstance(self.children[0], Q):
+             child = self.children[0]
+-            kwargs = {child[0]: child[1]}
++            if isinstance(child, tuple) and len(child) == 2:
++                kwargs = {child[0]: child[1]}
++            else:
++                args = (child,)
++                if self.connector != self.default:
++                    kwargs = {'_connector': self.connector}
+         else:
+             args = tuple(self.children)
+             if self.connector != self.default:
+diff --git a/tests/queries/test_q.py b/tests/queries/test_q.py
+index 6dcf36ce02..76f7fd88d8 100644
+--- a/tests/queries/test_q.py
++++ b/tests/queries/test_q.py
+@@ -1,4 +1,4 @@
+-from django.db.models import F, Q
++from django.db.models import Exists, F, OuterRef, Q
+ from django.test import SimpleTestCase
+ 
+ 
+@@ -111,3 +111,18 @@ class QTests(SimpleTestCase):
+         q = q1 & q2
+         path, args, kwargs = q.deconstruct()
+         self.assertEqual(Q(*args, **kwargs), q)
++
++    def test_deconstruct_boolean_expression(self):
++        from .models import Item
++        q = Q(Exists(Item.objects.all()))
++        path, args, kwargs = q.deconstruct()
++        self.assertEqual(path, 'django.db.models.Q')
++        self.assertEqual(len(args), 1)
++        self.assertIsInstance(args[0], Exists)
++        self.assertEqual(kwargs, {})
++
++    def test_reconstruct_boolean_expression(self):
++        from .models import Item
++        q = Q(Exists(Item.objects.all()))
++        path, args, kwargs = q.deconstruct()
++        self.assertEqual(Q(*args, **kwargs), q)

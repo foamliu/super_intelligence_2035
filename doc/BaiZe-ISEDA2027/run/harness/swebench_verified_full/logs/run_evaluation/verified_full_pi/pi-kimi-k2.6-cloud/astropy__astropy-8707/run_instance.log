@@ -1,0 +1,181 @@
+2026-10-30 16:45:52,449 - INFO - Creating container for astropy__astropy-8707...
+2026-10-30 16:45:52,463 - INFO - Container for astropy__astropy-8707 created: bfe33d15862e2af0eb958dc1af9daff4c2e3d5b23739e44426eb46f774177074
+2026-10-30 16:45:53,825 - INFO - Container for astropy__astropy-8707 started: bfe33d15862e2af0eb958dc1af9daff4c2e3d5b23739e44426eb46f774177074
+2026-10-30 16:45:53,828 - INFO - Intermediate patch for astropy__astropy-8707 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/astropy__astropy-8707/patch.diff, now applying to container...
+2026-10-30 16:45:53,982 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/card.py...
+Checking patch astropy/io/fits/header.py...
+Checking patch astropy/io/fits/tests/test_header.py...
+Applied patch astropy/io/fits/card.py cleanly.
+Applied patch astropy/io/fits/header.py cleanly.
+Applied patch astropy/io/fits/tests/test_header.py cleanly.
+
+2026-10-30 16:45:54,933 - INFO - Git diff before:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..df48812de 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,16 +5,16 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+ from astropy.utils.exceptions import AstropyUserWarning
+ 
+-
+ __all__ = ['Card', 'Undefined']
+ 
+ 
++
+ FIX_FP_TABLE = str.maketrans('de', 'DE')
+ FIX_FP_TABLE2 = str.maketrans('dD', 'eE')
+ 
+@@ -552,6 +552,8 @@ class Card(_Verify):
+         image is longer than 80 columns, assume it contains ``CONTINUE``
+         card(s).
+         """
++        if isinstance(image, bytes):
++            image = decode_ascii(image)
+ 
+         card = cls()
+         card._image = _pad(image)
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..555f557f3 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,7 +334,7 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
++        data : str or bytes
+            String containing the entire header.
+ 
+         sep : str, optional
+@@ -347,9 +347,13 @@ class Header:
+         header
+             A new `Header` instance.
+         """
+-
+         cards = []
+ 
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++        if isinstance(sep, bytes):
++            sep = decode_ascii(sep)
++
+         # If the card separator contains characters that may validly appear in
+         # a card, the only way to unambiguously distinguish between cards is to
+         # require that they be Card.length long.  However, if the separator
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index 7c1725aed..12b7796b7 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -2328,6 +2328,31 @@ class TestHeaderFunctions(FitsTestCase):
+                 pytest.raises(fits.VerifyError, c.verify, 'exception')
+             else:
+                 c.verify('exception')
++    def test_card_fromstring_bytes(self):
++        c = fits.Card.fromstring(b"ABC     =                    1")
++        assert c.keyword == 'ABC'
++        assert c.value == 1
++
++    def test_header_fromstring_bytes(self):
++        hstr = b"SIMPLE  =                    T / comment\nBITPIX  =                    8"
++        header = fits.Header.fromstring(hstr, sep=b'\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++
++    def test_header_fromstring_mixed_bytes_str(self):
++        hstr = b"SIMPLE  =                    T / comment\nBITPIX  =                    8"
++        header = fits.Header.fromstring(hstr, sep='\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++
++    def test_header_fromstring_bytes_with_end(self):
++        hstr = (
++            b"SIMPLE  =                    T / comment\n"
++            b"BITPIX  =                    8\n"
++            b"END     ")
++        header = fits.Header.fromstring(hstr, sep=b'\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
+ 
+ 
+ class TestRecordValuedKeywordCards(FitsTestCase):
+2026-10-30 16:45:54,935 - INFO - Eval script for astropy__astropy-8707 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/astropy__astropy-8707/eval.sh; copying to container...
+2026-10-30 16:46:05,367 - INFO - Test runtime: 10.35 seconds
+2026-10-30 16:46:05,369 - INFO - Test output for astropy__astropy-8707 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/astropy__astropy-8707/test_output.txt
+2026-10-30 16:46:05,438 - INFO - Git diff after:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..df48812de 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,16 +5,16 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+ from astropy.utils.exceptions import AstropyUserWarning
+ 
+-
+ __all__ = ['Card', 'Undefined']
+ 
+ 
++
+ FIX_FP_TABLE = str.maketrans('de', 'DE')
+ FIX_FP_TABLE2 = str.maketrans('dD', 'eE')
+ 
+@@ -552,6 +552,8 @@ class Card(_Verify):
+         image is longer than 80 columns, assume it contains ``CONTINUE``
+         card(s).
+         """
++        if isinstance(image, bytes):
++            image = decode_ascii(image)
+ 
+         card = cls()
+         card._image = _pad(image)
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..555f557f3 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,7 +334,7 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
++        data : str or bytes
+            String containing the entire header.
+ 
+         sep : str, optional
+@@ -347,9 +347,13 @@ class Header:
+         header
+             A new `Header` instance.
+         """
+-
+         cards = []
+ 
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++        if isinstance(sep, bytes):
++            sep = decode_ascii(sep)
++
+         # If the card separator contains characters that may validly appear in
+         # a card, the only way to unambiguously distinguish between cards is to
+         # require that they be Card.length long.  However, if the separator
+2026-10-30 16:46:05,438 - INFO - Git diff changed after running eval script
+2026-10-30 16:46:05,438 - INFO - Grading answer for astropy__astropy-8707...
+2026-10-30 16:46:05,444 - INFO - report: {'astropy__astropy-8707': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_from_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::test_shallow_copy', 'astropy/io/fits/tests/test_header.py::test_init_with_header', 'astropy/io/fits/tests/test_header.py::test_init_with_dict', 'astropy/io/fits/tests/test_header.py::test_init_with_ordereddict', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_rename_keyword', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_constructor_default_args', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_string_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_boolean_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_long_integer_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_floating_point_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_complex_value_card'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8707: resolved: True
+2026-10-30 16:46:05,447 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8707.verified_full_pi...
+2026-10-30 16:46:21,609 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_pi stopped successfully.
+2026-10-30 16:46:21,609 - INFO - Attempting to remove container sweb.eval.astropy__astropy-8707.verified_full_pi...
+2026-10-30 16:46:21,652 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_pi removed successfully.

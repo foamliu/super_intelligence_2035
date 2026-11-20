@@ -1,0 +1,42 @@
+diff --git a/django/contrib/auth/backends.py b/django/contrib/auth/backends.py
+index f4b172275..a3765ae0f 100644
+--- a/django/contrib/auth/backends.py
++++ b/django/contrib/auth/backends.py
+@@ -39,6 +39,8 @@ class ModelBackend(BaseBackend):
+     def authenticate(self, request, username=None, password=None, **kwargs):
+         if username is None:
+             username = kwargs.get(UserModel.USERNAME_FIELD)
++        if username is None or password is None:
++            return
+         try:
+             user = UserModel._default_manager.get_by_natural_key(username)
+         except UserModel.DoesNotExist:
+diff --git a/tests/auth_tests/test_auth_backends.py b/tests/auth_tests/test_auth_backends.py
+index 6447edefc..42f201942 100644
+--- a/tests/auth_tests/test_auth_backends.py
++++ b/tests/auth_tests/test_auth_backends.py
+@@ -225,7 +225,24 @@ class BaseModelBackendTest:
+         CountingMD5PasswordHasher.calls = 0
+         authenticate(username='no_such_user', password='test')
+         self.assertEqual(CountingMD5PasswordHasher.calls, 1)
++        CountingMD5PasswordHasher.calls = 0
++        authenticate(username='no_such_user', password='test')
++        self.assertEqual(CountingMD5PasswordHasher.calls, 1)
+ 
++    @override_settings(PASSWORD_HASHERS=['auth_tests.test_auth_backends.CountingMD5PasswordHasher'])
++    def test_authentication_timing_with_none_username(self):
++        """The password hasher isn't run when username is None."""
++        CountingMD5PasswordHasher.calls = 0
++        authenticate(username=None, password='test')
++        self.assertEqual(CountingMD5PasswordHasher.calls, 0)
++
++    @override_settings(PASSWORD_HASHERS=['auth_tests.test_auth_backends.CountingMD5PasswordHasher'])
++    def test_authentication_timing_with_none_password(self):
++        """The password hasher isn't run when password is None."""
++        username = getattr(self.user, self.UserModel.USERNAME_FIELD)
++        CountingMD5PasswordHasher.calls = 0
++        authenticate(username=username, password=None)
++        self.assertEqual(CountingMD5PasswordHasher.calls, 0)
+ 
+ class ModelBackendTest(BaseModelBackendTest, TestCase):
+     """

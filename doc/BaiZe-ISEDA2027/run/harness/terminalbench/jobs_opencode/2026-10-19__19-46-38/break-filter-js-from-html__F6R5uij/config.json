@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_pilot_dataset_KDp3w7/break-filter-js-from-html",
+        "source": "tb_pilot_dataset_KDp3w7"
+    },
+    "trial_name": "break-filter-js-from-html__F6R5uij",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_opencode/2026-10-19__19-46-38",
+    "agent": {
+        "name": "terminalbench.agents.opencode:OpenCodeTB"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "a14e985f-eb2f-4301-a526-2cd385982e79"
+}

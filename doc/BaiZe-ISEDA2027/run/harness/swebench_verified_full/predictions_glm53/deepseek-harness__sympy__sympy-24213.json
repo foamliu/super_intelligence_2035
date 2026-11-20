@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-24213",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/physics/units/unitsystem.py b/sympy/physics/units/unitsystem.py\nindex a436880c..e2c597be 100644\n--- a/sympy/physics/units/unitsystem.py\n+++ b/sympy/physics/units/unitsystem.py\n@@ -175,7 +175,8 @@ def _collect_factor_and_dimension(self, expr):\n             for addend in expr.args[1:]:\n                 addend_factor, addend_dim = \\\n                     self._collect_factor_and_dimension(addend)\n-                if dim != addend_dim:\n+                if dim != addend_dim and not self.get_dimension_system(\n+                        ).equivalent_dims(dim, addend_dim):\n                     raise ValueError(\n                         'Dimension of \"{}\" is {}, '\n                         'but it should be {}'.format(\n"
+  }
+]

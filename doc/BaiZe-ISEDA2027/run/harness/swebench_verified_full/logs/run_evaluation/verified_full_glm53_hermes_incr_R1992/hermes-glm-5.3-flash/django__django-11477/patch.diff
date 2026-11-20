@@ -1,0 +1,64 @@
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..14fd01c354 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -172,7 +172,9 @@ def translate_url(url, lang_code):
+         to_be_reversed = "%s:%s" % (match.namespace, match.url_name) if match.namespace else match.url_name
+         with override(lang_code):
+             try:
+-                url = reverse(to_be_reversed, args=match.args, kwargs=match.kwargs)
++                # Remove None values from kwargs to handle optional named groups
++                kwargs = {k: v for k, v in match.kwargs.items() if v is not None}
++                url = reverse(to_be_reversed, args=match.args, kwargs=kwargs)
+             except NoReverseMatch:
+                 pass
+             else:
+diff --git a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo
+index 5eac50466c..70c79890d7 100644
+Binary files a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo and b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo differ
+diff --git a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
+index a938e3371d..6f43cfbcd1 100644
+--- a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
++++ b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
+@@ -40,3 +40,7 @@ msgstr "^registreren/$"
+ #: urls/namespace.py:12
+ msgid "register-as-path/"
+ msgstr "registreren-als-pad/"
++
++#: urls/default.py:21
++msgid "^news/(?:(?P<year>[0-9]+)/)?$"
++msgstr "^nieuws/(?:(?P<year>[0-9]+)/)?$"
+diff --git a/tests/i18n/patterns/tests.py b/tests/i18n/patterns/tests.py
+index 6ed2c4ffeb..19415f050a 100644
+--- a/tests/i18n/patterns/tests.py
++++ b/tests/i18n/patterns/tests.py
+@@ -163,6 +163,18 @@ class URLTranslationTests(URLTestCaseBase):
+             self.assertEqual(translate_url('/nl/gebruikers/', 'en'), '/en/users/')
+             self.assertEqual(translation.get_language(), 'nl')
+ 
++    def test_translate_url_utility_with_optional_named_groups(self):
++        # Test URLs with optional named groups
++        with translation.override('en'):
++            # URL without the optional parameter should translate correctly
++            self.assertEqual(translate_url('/en/news/', 'nl'), '/nl/nieuws/')
++            # URL with the optional parameter should also translate correctly
++            self.assertEqual(translate_url('/en/news/2023/', 'nl'), '/nl/nieuws/2023/')
++
++        with translation.override('nl'):
++            self.assertEqual(translate_url('/nl/nieuws/', 'en'), '/en/news/')
++            self.assertEqual(translate_url('/nl/nieuws/2023/', 'en'), '/en/news/2023/')
++
+ 
+ class URLNamespaceTests(URLTestCaseBase):
+     """
+diff --git a/tests/i18n/patterns/urls/default.py b/tests/i18n/patterns/urls/default.py
+index b0c2f2585e..d1f9e0aa3d 100644
+--- a/tests/i18n/patterns/urls/default.py
++++ b/tests/i18n/patterns/urls/default.py
+@@ -17,4 +17,6 @@ urlpatterns += i18n_patterns(
+     path('prefixed.xml', view, name='prefixed_xml'),
+     re_path(_(r'^users/$'), view, name='users'),
+     re_path(_(r'^account/'), include('i18n.patterns.urls.namespace', namespace='account')),
++    # URL pattern with optional named group
++    re_path(_(r'^news/(?:(?P<year>[0-9]+)/)?$'), view, name='news'),
+ )

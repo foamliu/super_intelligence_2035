@@ -1,0 +1,66 @@
+diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
+index b6af5f549..57b4b2bf5 100644
+--- a/django/utils/autoreload.py
++++ b/django/utils/autoreload.py
+@@ -223,8 +223,8 @@ def get_child_arguments():
+     # __spec__ is set when the server was started with the `-m` option,
+     # see https://docs.python.org/3/reference/import.html#main-spec
+     # __spec__ may not exist, e.g. when running in a Conda env.
+-    if getattr(__main__, '__spec__', None) is not None and __main__.__spec__.parent:
+-        args += ['-m', __main__.__spec__.parent]
++    if getattr(__main__, '__spec__', None) is not None and __main__.__spec__.name:
++        args += ['-m', __main__.__spec__.name]
+         args += sys.argv[1:]
+     elif not py_script.exists():
+         # sys.argv[0] may not exist for several reasons on Windows.
+diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
+index 7b91686bf..f8e14e5d8 100644
+--- a/tests/utils_tests/test_autoreload.py
++++ b/tests/utils_tests/test_autoreload.py
+@@ -24,6 +24,7 @@ from django.utils import autoreload
+ from django.utils.autoreload import WatchmanUnavailable
+ 
+ from .test_module import __main__ as test_main
++from .test_module import main as test_module_main
+ from .utils import on_macos_with_hfs
+ 
+ 
+@@ -170,7 +171,7 @@ class TestChildArguments(SimpleTestCase):
+     def test_run_as_module(self):
+         self.assertEqual(
+             autoreload.get_child_arguments(),
+-            [sys.executable, '-m', 'django', 'runserver']
++            [sys.executable, '-m', 'django.__main__', 'runserver']
+         )
+ 
+     @mock.patch.dict(sys.modules, {'__main__': test_main})
+@@ -179,7 +180,16 @@ class TestChildArguments(SimpleTestCase):
+     def test_run_as_non_django_module(self):
+         self.assertEqual(
+             autoreload.get_child_arguments(),
+-            [sys.executable, '-m', 'utils_tests.test_module', 'runserver'],
++            [sys.executable, '-m', 'utils_tests.test_module.__main__', 'runserver'],
++        )
++
++    @mock.patch.dict(sys.modules, {'__main__': test_module_main})
++    @mock.patch('sys.argv', [test_module_main.__file__, 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    def test_run_as_non_django_dotted_module(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, '-m', 'utils_tests.test_module.main', 'runserver'],
+         )
+ 
+     @mock.patch('sys.argv', [__file__, 'runserver'])
+@@ -481,7 +491,7 @@ class RestartWithReloaderTests(SimpleTestCase):
+             with mock.patch.dict(sys.modules, {'__main__': django.__main__}):
+                 autoreload.restart_with_reloader()
+             self.assertEqual(mock_call.call_count, 1)
+-            self.assertEqual(mock_call.call_args[0][0], [self.executable, '-Wall', '-m', 'django'] + argv[1:])
++            self.assertEqual(mock_call.call_args[0][0], [self.executable, '-Wall', '-m', 'django.__main__'] + argv[1:])
+ 
+ 
+ class ReloaderTests(SimpleTestCase):
+diff --git a/tests/utils_tests/test_module/main.py b/tests/utils_tests/test_module/main.py
+new file mode 100644
+index 000000000..e69de29bb

@@ -1,0 +1,37 @@
+[R1789-eval 19:49:39] cline: merged 46 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_cline-patched.json
+[R1789-eval 19:49:39] cline: launching eval on 46 instances (workers=1, timeout=1800, run_id=verified_full_glm53_cline-patched_R1789)...
+[R1789-eval 19:50:19] cline: merged 46 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_cline-patched.json
+[R1789-eval 19:50:19] cline: launching eval on 46 instances (workers=1, timeout=1800, run_id=verified_full_glm53_cline-patched_R1789)...
+[R1789-eval 19:51:06] cline: merged 46 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_cline-patched.json
+[R1789-eval 19:51:06] cline: launching eval on 46 instances (workers=1, timeout=1800, run_id=verified_full_glm53_cline-patched_R1789)...
+[R1789-eval 20:03:06] cline: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_cline-patched_R1789.log
+[R1789-eval 20:03:06] cline: resolved=35 failed=10 infra=1 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_cline-patched.json
+[R1789-eval 20:03:06] codex: merged 8 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_codex.json
+[R1789-eval 20:03:06] codex: launching eval on 8 instances (workers=1, timeout=1800, run_id=verified_full_glm53_codex_R1789)...
+[R1789-eval 20:07:56] codex: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_codex_R1789.log
+[R1789-eval 20:07:56] codex: resolved=6 failed=2 infra=0 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_codex.json
+[R1789-eval 20:07:56] opencode: merged 102 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_opencode.json
+[R1789-eval 20:07:56] opencode: launching eval on 102 instances (workers=1, timeout=1800, run_id=verified_full_glm53_opencode_R1789)...
+[R1789-eval 21:16:47] opencode: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_opencode_R1789.log
+[R1789-eval 21:16:47] opencode: resolved=80 failed=22 infra=0 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_opencode.json
+[R1789-eval 21:16:47] claude-code: merged 36 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_claude-code.json
+[R1789-eval 21:16:47] claude-code: launching eval on 36 instances (workers=1, timeout=1800, run_id=verified_full_glm53_claude-code_R1789)...
+[R1789-eval 21:44:19] claude-code: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_claude-code_R1789.log
+[R1789-eval 21:44:19] claude-code: resolved=27 failed=9 infra=0 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_claude-code.json
+[R1789-eval 21:44:19] pi: merged 34 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_pi.json
+[R1789-eval 21:44:19] pi: launching eval on 34 instances (workers=1, timeout=1800, run_id=verified_full_glm53_pi_R1789)...
+[R1789-eval 22:09:37] pi: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_pi_R1789.log
+[R1789-eval 22:09:37] pi: resolved=26 failed=8 infra=0 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_pi.json
+[R1789-eval 22:09:37] hermes: merged 131 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_hermes.json
+[R1789-eval 22:09:37] hermes: launching eval on 131 instances (workers=1, timeout=1800, run_id=verified_full_glm53_hermes_R1789)...
+[R1789-eval 23:30:36] hermes: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_hermes_R1789.log
+[R1789-eval 23:30:36] hermes: resolved=124 failed=7 infra=0 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_hermes.json
+[R1789-eval 23:30:36] deepseek-harness: merged 40 real patches -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/predictions_deepseek-harness.json
+[R1789-eval 23:30:36] deepseek-harness: launching eval on 40 instances (workers=1, timeout=1800, run_id=verified_full_glm53_deepseek-harness_R1789)...
+[R1789-eval 00:04:23] deepseek-harness: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_deepseek-harness_R1789.log
+[R1789-eval 00:04:23] deepseek-harness: resolved=33 failed=7 infra=0 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_deepseek-harness.json
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/incr_eval_glm53_R1789.py", line 112, in <module>
+    log(f"\nR1789 eval done in {time.time()-t0:.1f}s", flush=True)
+TypeError: log() got an unexpected keyword argument 'flush'
+DONE

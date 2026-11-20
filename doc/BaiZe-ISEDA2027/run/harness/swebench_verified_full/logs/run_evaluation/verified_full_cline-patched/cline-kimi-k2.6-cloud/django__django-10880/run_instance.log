@@ -1,0 +1,106 @@
+2026-10-30 16:10:35,387 - INFO - Creating container for django__django-10880...
+2026-10-30 16:10:35,441 - INFO - Container for django__django-10880 created: 2c73e038ec4faacf1e81dcd205e21bfbaae2ee5ef2fcb68700b794be58ee2cf1
+2026-10-30 16:11:08,566 - INFO - Container for django__django-10880 started: 2c73e038ec4faacf1e81dcd205e21bfbaae2ee5ef2fcb68700b794be58ee2cf1
+2026-10-30 16:11:08,568 - INFO - Intermediate patch for django__django-10880 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-10880/patch.diff, now applying to container...
+2026-10-30 16:11:08,768 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/aggregates.py...
+Checking patch tests/aggregation/test_filter_argument.py...
+Checking patch tests/aggregation/tests.py...
+Applied patch django/db/models/aggregates.py cleanly.
+Applied patch tests/aggregation/test_filter_argument.py cleanly.
+Applied patch tests/aggregation/tests.py cleanly.
+
+2026-10-30 16:11:09,934 - INFO - Git diff before:
+diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py
+index ac0b62d0bf..ea88c54b0d 100644
+--- a/django/db/models/aggregates.py
++++ b/django/db/models/aggregates.py
+@@ -68,7 +68,7 @@ class Aggregate(Func):
+         return []
+ 
+     def as_sql(self, compiler, connection, **extra_context):
+-        extra_context['distinct'] = 'DISTINCT' if self.distinct else ''
++        extra_context['distinct'] = 'DISTINCT ' if self.distinct else ''
+         if self.filter:
+             if connection.features.supports_aggregate_filter_clause:
+                 filter_sql, filter_params = self.filter.as_sql(compiler, connection)
+diff --git a/tests/aggregation/test_filter_argument.py b/tests/aggregation/test_filter_argument.py
+index 63dee59464..bf6499eed8 100644
+--- a/tests/aggregation/test_filter_argument.py
++++ b/tests/aggregation/test_filter_argument.py
+@@ -87,3 +87,7 @@ class FilteredAggregateTests(TestCase):
+             older_friends_count__gte=2,
+         )
+         self.assertEqual(qs.get(pk__in=qs.values('pk')), self.a1)
++
++    def test_filtered_count_distinct(self):
++        agg = Count('book__pages', filter=Q(book__rating__gt=3), distinct=True)
++        self.assertEqual(Author.objects.aggregate(c=agg)['c'], 2)
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 8cac90f020..63f691cc5e 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -5,8 +5,8 @@ from decimal import Decimal
+ from django.core.exceptions import FieldError
+ from django.db import connection
+ from django.db.models import (
+-    Avg, Count, DecimalField, DurationField, F, FloatField, Func, IntegerField,
+-    Max, Min, Sum, Value,
++    Avg, Case, Count, DecimalField, DurationField, F, FloatField, Func, IntegerField,
++    Max, Min, Sum, Value, When,
+ )
+ from django.test import TestCase
+ from django.test.utils import Approximate, CaptureQueriesContext
+@@ -389,6 +389,15 @@ class AggregateTestCase(TestCase):
+         vals = Book.objects.aggregate(Count("rating", distinct=True))
+         self.assertEqual(vals, {"rating__count": 4})
+ 
++    def test_count_distinct_case(self):
++        vals = Book.objects.aggregate(
++            c=Count(
++                Case(When(pages__gt=100, then=Value(1)), output_field=IntegerField()),
++                distinct=True,
++            )
++        )
++        self.assertEqual(vals, {"c": 1})
++
+     def test_count_star(self):
+         with self.assertNumQueries(1) as ctx:
+             Book.objects.aggregate(n=Count("*"))
+2026-10-30 16:11:09,943 - INFO - Eval script for django__django-10880 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-10880/eval.sh; copying to container...
+2026-10-30 16:11:16,163 - INFO - Test runtime: 5.90 seconds
+2026-10-30 16:11:16,167 - INFO - Test output for django__django-10880 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-10880/test_output.txt
+2026-10-30 16:11:16,253 - INFO - Git diff after:
+diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py
+index ac0b62d0bf..ea88c54b0d 100644
+--- a/django/db/models/aggregates.py
++++ b/django/db/models/aggregates.py
+@@ -68,7 +68,7 @@ class Aggregate(Func):
+         return []
+ 
+     def as_sql(self, compiler, connection, **extra_context):
+-        extra_context['distinct'] = 'DISTINCT' if self.distinct else ''
++        extra_context['distinct'] = 'DISTINCT ' if self.distinct else ''
+         if self.filter:
+             if connection.features.supports_aggregate_filter_clause:
+                 filter_sql, filter_params = self.filter.as_sql(compiler, connection)
+diff --git a/tests/aggregation/test_filter_argument.py b/tests/aggregation/test_filter_argument.py
+index 63dee59464..bf6499eed8 100644
+--- a/tests/aggregation/test_filter_argument.py
++++ b/tests/aggregation/test_filter_argument.py
+@@ -87,3 +87,7 @@ class FilteredAggregateTests(TestCase):
+             older_friends_count__gte=2,
+         )
+         self.assertEqual(qs.get(pk__in=qs.values('pk')), self.a1)
++
++    def test_filtered_count_distinct(self):
++        agg = Count('book__pages', filter=Q(book__rating__gt=3), distinct=True)
++        self.assertEqual(Author.objects.aggregate(c=agg)['c'], 2)
+2026-10-30 16:11:16,253 - INFO - Git diff changed after running eval script
+2026-10-30 16:11:16,253 - INFO - Grading answer for django__django-10880...
+2026-10-30 16:11:16,261 - INFO - report: {'django__django-10880': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_count_distinct_expression (aggregation.tests.AggregateTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_add_implementation (aggregation.tests.AggregateTestCase)', 'test_aggregate_alias (aggregation.tests.AggregateTestCase)', 'test_aggregate_annotation (aggregation.tests.AggregateTestCase)', 'test_aggregate_in_order_by (aggregation.tests.AggregateTestCase)', 'test_aggregate_multi_join (aggregation.tests.AggregateTestCase)', 'test_aggregate_over_complex_annotation (aggregation.tests.AggregateTestCase)', 'test_aggregation_expressions (aggregation.tests.AggregateTestCase)', 'test_annotate_basic (aggregation.tests.AggregateTestCase)', 'test_annotate_defer (aggregation.tests.AggregateTestCase)', 'test_annotate_defer_select_related (aggregation.tests.AggregateTestCase)', 'test_annotate_m2m (aggregation.tests.AggregateTestCase)', 'test_annotate_ordering (aggregation.tests.AggregateTestCase)', 'test_annotate_over_annotate (aggregation.tests.AggregateTestCase)', 'test_annotate_values (aggregation.tests.AggregateTestCase)', 'test_annotate_values_aggregate (aggregation.tests.AggregateTestCase)', 'test_annotate_values_list (aggregation.tests.AggregateTestCase)', 'test_annotated_aggregate_over_annotated_aggregate (aggregation.tests.AggregateTestCase)', 'test_annotation (aggregation.tests.AggregateTestCase)', 'test_annotation_expressions (aggregation.tests.AggregateTestCase)', 'test_arguments_must_be_expressions (aggregation.tests.AggregateTestCase)', 'test_avg_decimal_field (aggregation.tests.AggregateTestCase)', 'test_avg_duration_field (aggregation.tests.AggregateTestCase)', 'test_backwards_m2m_annotate (aggregation.tests.AggregateTestCase)', 'test_combine_different_types (aggregation.tests.AggregateTestCase)', 'test_complex_aggregations_require_kwarg (aggregation.tests.AggregateTestCase)', 'test_complex_values_aggregation (aggregation.tests.AggregateTestCase)', 'test_count (aggregation.tests.AggregateTestCase)', 'test_count_star (aggregation.tests.AggregateTestCase)', 'test_dates_with_aggregation (aggregation.tests.AggregateTestCase)', 'test_decimal_max_digits_has_no_effect (aggregation.tests.AggregateTestCase)', 'test_empty_aggregate (aggregation.tests.AggregateTestCase)', 'test_even_more_aggregate (aggregation.tests.AggregateTestCase)', 'test_expression_on_aggregation (aggregation.tests.AggregateTestCase)', 'test_filter_aggregate (aggregation.tests.AggregateTestCase)', 'test_filtering (aggregation.tests.AggregateTestCase)', 'test_fkey_aggregate (aggregation.tests.AggregateTestCase)', 'test_grouped_annotation_in_group_by (aggregation.tests.AggregateTestCase)', 'test_missing_output_field_raises_error (aggregation.tests.AggregateTestCase)', 'test_more_aggregation (aggregation.tests.AggregateTestCase)', 'test_multi_arg_aggregate (aggregation.tests.AggregateTestCase)', 'test_multiple_aggregates (aggregation.tests.AggregateTestCase)', 'test_non_grouped_annotation_not_in_group_by (aggregation.tests.AggregateTestCase)', 'test_nonaggregate_aggregation_throws (aggregation.tests.AggregateTestCase)', 'test_nonfield_annotation (aggregation.tests.AggregateTestCase)', 'test_order_of_precedence (aggregation.tests.AggregateTestCase)', 'test_related_aggregate (aggregation.tests.AggregateTestCase)', 'test_reverse_fkey_annotate (aggregation.tests.AggregateTestCase)', 'test_single_aggregate (aggregation.tests.AggregateTestCase)', 'test_sum_distinct_aggregate (aggregation.tests.AggregateTestCase)', 'test_sum_duration_field (aggregation.tests.AggregateTestCase)', 'test_ticket11881 (aggregation.tests.AggregateTestCase)', 'test_ticket12886 (aggregation.tests.AggregateTestCase)', 'test_ticket17424 (aggregation.tests.AggregateTestCase)', 'test_values_aggregation (aggregation.tests.AggregateTestCase)', 'test_values_annotation_with_expression (aggregation.tests.AggregateTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-10880: resolved: True
+2026-10-30 16:11:16,268 - INFO - Attempting to stop container sweb.eval.django__django-10880.verified_full_cline-patched...
+2026-10-30 16:11:32,102 - INFO - Container sweb.eval.django__django-10880.verified_full_cline-patched stopped successfully.
+2026-10-30 16:11:32,102 - INFO - Attempting to remove container sweb.eval.django__django-10880.verified_full_cline-patched...
+2026-10-30 16:11:32,153 - INFO - Container sweb.eval.django__django-10880.verified_full_cline-patched removed successfully.

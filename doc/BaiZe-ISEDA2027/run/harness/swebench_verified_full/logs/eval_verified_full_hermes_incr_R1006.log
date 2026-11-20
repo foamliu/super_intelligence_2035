@@ -1,0 +1,16 @@
+Running 14 instances...
+  0%|          | 0/14 [00:00<?, ?it/s]  7%|▋         | 1/14 [00:22<04:48, 22.18s/it]1 ran successfully, 0 failed:   7%|▋         | 1/14 [00:22<04:48, 22.18s/it]1 ran successfully, 0 failed:  14%|█▍        | 2/14 [00:22<02:14, 11.20s/it]2 ran successfully, 0 failed:  14%|█▍        | 2/14 [00:22<02:14, 11.20s/it]2 ran successfully, 0 failed:  21%|██▏       | 3/14 [00:23<01:26,  7.83s/it]3 ran successfully, 0 failed:  21%|██▏       | 3/14 [00:23<01:26,  7.83s/it]3 ran successfully, 0 failed:  29%|██▊       | 4/14 [00:25<01:04,  6.42s/it]4 ran successfully, 0 failed:  29%|██▊       | 4/14 [00:25<01:04,  6.42s/it]4 ran successfully, 0 failed:  36%|███▌      | 5/14 [00:32<00:58,  6.52s/it]5 ran successfully, 0 failed:  36%|███▌      | 5/14 [00:32<00:58,  6.52s/it]5 ran successfully, 0 failed:  43%|████▎     | 6/14 [00:44<00:59,  7.40s/it]6 ran successfully, 0 failed:  43%|████▎     | 6/14 [00:44<00:59,  7.40s/it]6 ran successfully, 0 failed:  50%|█████     | 7/14 [00:46<00:46,  6.57s/it]7 ran successfully, 0 failed:  50%|█████     | 7/14 [00:46<00:46,  6.57s/it]7 ran successfully, 0 failed:  57%|█████▋    | 8/14 [00:46<00:34,  5.77s/it]8 ran successfully, 0 failed:  57%|█████▋    | 8/14 [00:46<00:34,  5.77s/it]8 ran successfully, 0 failed:  64%|██████▍   | 9/14 [00:48<00:26,  5.37s/it]9 ran successfully, 0 failed:  64%|██████▍   | 9/14 [00:48<00:26,  5.37s/it]9 ran successfully, 0 failed:  71%|███████▏  | 10/14 [01:09<00:27,  6.98s/it]10 ran successfully, 0 failed:  71%|███████▏  | 10/14 [01:09<00:27,  6.98s/it]10 ran successfully, 0 failed:  79%|███████▊  | 11/14 [01:18<00:21,  7.12s/it]11 ran successfully, 0 failed:  79%|███████▊  | 11/14 [01:18<00:21,  7.12s/it]11 ran successfully, 0 failed:  86%|████████▌ | 12/14 [02:08<00:21, 10.74s/it]12 ran successfully, 0 failed:  86%|████████▌ | 12/14 [02:08<00:21, 10.74s/it]12 ran successfully, 0 failed:  93%|█████████▎| 13/14 [05:36<00:25, 25.86s/it]13 ran successfully, 0 failed:  93%|█████████▎| 13/14 [05:36<00:25, 25.86s/it]13 ran successfully, 0 failed: 100%|██████████| 14/14 [09:25<00:00, 40.37s/it]14 ran successfully, 0 failed: 100%|██████████| 14/14 [09:25<00:00, 40.37s/it]14 ran successfully, 0 failed: 100%|██████████| 14/14 [09:25<00:00, 40.37s/it]
+All instances run.
+Total instances: 14
+Instances submitted: 14
+Instances completed: 14
+Instances incomplete: 0
+Instances resolved: 10
+Instances unresolved: 4
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 14
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json

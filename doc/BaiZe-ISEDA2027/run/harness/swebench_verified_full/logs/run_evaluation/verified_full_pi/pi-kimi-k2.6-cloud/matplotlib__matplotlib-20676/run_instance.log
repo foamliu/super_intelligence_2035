@@ -1,0 +1,82 @@
+2026-10-30 16:59:28,423 - INFO - Creating container for matplotlib__matplotlib-20676...
+2026-10-30 16:59:28,463 - INFO - Container for matplotlib__matplotlib-20676 created: d1df16bc671c544218d616d9e3cd41f273c7a530cb5d035ff146e78539c1bf38
+2026-10-30 16:59:31,453 - INFO - Container for matplotlib__matplotlib-20676 started: d1df16bc671c544218d616d9e3cd41f273c7a530cb5d035ff146e78539c1bf38
+2026-10-30 16:59:31,454 - INFO - Intermediate patch for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-20676/patch.diff, now applying to container...
+2026-10-30 16:59:31,635 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/tests/test_widgets.py...
+Checking patch lib/matplotlib/widgets.py...
+Applied patch lib/matplotlib/tests/test_widgets.py cleanly.
+Applied patch lib/matplotlib/widgets.py cleanly.
+
+2026-10-30 16:59:33,795 - INFO - Git diff before:
+diff --git a/lib/matplotlib/tests/test_widgets.py b/lib/matplotlib/tests/test_widgets.py
+index 71ebd176f..759c9631d 100644
+--- a/lib/matplotlib/tests/test_widgets.py
++++ b/lib/matplotlib/tests/test_widgets.py
+@@ -280,6 +280,18 @@ def test_span_selector_direction():
+         tool.direction = 'invalid_string'
+ 
+ 
++def test_span_selector_interactive_initial_limits():
++    for direction, get_lim in [('horizontal', 'get_xlim'),
++                               ('vertical', 'get_ylim')]:
++        fig, ax = plt.subplots()
++        ax.plot([10, 20], [10, 20])
++        lim_before = getattr(ax, get_lim)()
++        tool = widgets.SpanSelector(ax, lambda *args: None, direction,
++                                    interactive=True)
++        lim_after = getattr(ax, get_lim)()
++        assert lim_after == lim_before
++
++
+ def test_tool_line_handle():
+     ax = get_ax()
+ 
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d4..ccf3908e0 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2141,10 +2141,12 @@ class SpanSelector(_SelectorWidget):
+         if self.direction == 'horizontal':
+             trans = ax.get_xaxis_transform()
+             w, h = 0, 1
++            x, y = ax.get_xbound()[0], 0
+         else:
+             trans = ax.get_yaxis_transform()
+             w, h = 1, 0
+-        self._rect = Rectangle((0, 0), w, h,
++            x, y = 0, ax.get_ybound()[0]
++        self._rect = Rectangle((x, y), w, h,
+                                transform=trans,
+                                visible=False,
+                                **self._rectprops)
+2026-10-30 16:59:33,797 - INFO - Eval script for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-20676/eval.sh; copying to container...
+2026-10-30 16:59:48,377 - INFO - Test runtime: 14.51 seconds
+2026-10-30 16:59:48,378 - INFO - Test output for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-20676/test_output.txt
+2026-10-30 16:59:48,440 - INFO - Git diff after:
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d4..ccf3908e0 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2141,10 +2141,12 @@ class SpanSelector(_SelectorWidget):
+         if self.direction == 'horizontal':
+             trans = ax.get_xaxis_transform()
+             w, h = 0, 1
++            x, y = ax.get_xbound()[0], 0
+         else:
+             trans = ax.get_yaxis_transform()
+             w, h = 1, 0
+-        self._rect = Rectangle((0, 0), w, h,
++            x, y = 0, ax.get_ybound()[0]
++        self._rect = Rectangle((x, y), w, h,
+                                transform=trans,
+                                visible=False,
+                                **self._rectprops)
+2026-10-30 16:59:48,441 - INFO - Git diff changed after running eval script
+2026-10-30 16:59:48,441 - INFO - Grading answer for matplotlib__matplotlib-20676...
+2026-10-30 16:59:48,442 - INFO - report: {'matplotlib__matplotlib-20676': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['lib/matplotlib/tests/test_widgets.py::test_span_selector_bound[horizontal]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_bound[vertical]']}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_widgets.py::test_rectangle_drag[True-new_center0]', 'lib/matplotlib/tests/test_widgets.py::test_rectangle_drag[False-new_center1]', 'lib/matplotlib/tests/test_widgets.py::test_ellipse', 'lib/matplotlib/tests/test_widgets.py::test_rectangle_handles', 'lib/matplotlib/tests/test_widgets.py::test_span_selector', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_drag[True]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_drag[False]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_direction', 'lib/matplotlib/tests/test_widgets.py::test_tool_line_handle', 'lib/matplotlib/tests/test_widgets.py::test_lasso_selector', 'lib/matplotlib/tests/test_widgets.py::test_CheckButtons', 'lib/matplotlib/tests/test_widgets.py::test_TextBox', 'lib/matplotlib/tests/test_widgets.py::test_check_radio_buttons_image[png]', 'lib/matplotlib/tests/test_widgets.py::test_check_bunch_of_radio_buttons[png]', 'lib/matplotlib/tests/test_widgets.py::test_slider_slidermin_slidermax_invalid', 'lib/matplotlib/tests/test_widgets.py::test_slider_slidermin_slidermax', 'lib/matplotlib/tests/test_widgets.py::test_slider_valmin_valmax', 'lib/matplotlib/tests/test_widgets.py::test_slider_valstep_snapping', 'lib/matplotlib/tests/test_widgets.py::test_slider_horizontal_vertical', 'lib/matplotlib/tests/test_widgets.py::test_range_slider[horizontal]', 'lib/matplotlib/tests/test_widgets.py::test_range_slider[vertical]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[True-True]', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[True-False]', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[False-True]', 'lib/matplotlib/tests/test_widgets.py::test_rect_visibility[png]', 'lib/matplotlib/tests/test_widgets.py::test_rect_visibility[pdf]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[1]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[2]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[3]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove_first_point', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_redraw'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-20676: resolved: False
+2026-10-30 16:59:48,443 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-20676.verified_full_pi...
+2026-10-30 17:00:04,550 - INFO - Container sweb.eval.matplotlib__matplotlib-20676.verified_full_pi stopped successfully.
+2026-10-30 17:00:04,550 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-20676.verified_full_pi...
+2026-10-30 17:00:04,589 - INFO - Container sweb.eval.matplotlib__matplotlib-20676.verified_full_pi removed successfully.

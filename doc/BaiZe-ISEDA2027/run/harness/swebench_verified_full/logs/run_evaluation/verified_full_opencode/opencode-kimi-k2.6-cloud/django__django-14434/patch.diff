@@ -1,0 +1,32 @@
+diff --git a/django/db/backends/base/schema.py b/django/db/backends/base/schema.py
+index ad2f5a7da1..4c018624fb 100644
+--- a/django/db/backends/base/schema.py
++++ b/django/db/backends/base/schema.py
+@@ -1251,7 +1251,7 @@ class BaseDatabaseSchemaEditor:
+         else:
+             sql = self.sql_create_unique
+         if columns:
+-            columns = self._index_columns(table, columns, col_suffixes=(), opclasses=opclasses)
++            columns = self._index_columns(model._meta.db_table, columns, col_suffixes=(), opclasses=opclasses)
+         else:
+             columns = Expressions(model._meta.db_table, expressions, compiler, self.quote_value)
+         return Statement(
+diff --git a/tests/schema/tests.py b/tests/schema/tests.py
+index c5f5bd2e85..a18398265a 100644
+--- a/tests/schema/tests.py
++++ b/tests/schema/tests.py
+@@ -2407,6 +2407,14 @@ class SchemaTests(TransactionTestCase):
+             editor.remove_constraint(BookWithSlug, constraint)
+         self.assertNotIn(constraint.name, self.get_constraints(table))
+ 
++    def test_create_unique_sql_references_column(self):
++        with connection.schema_editor() as editor:
++            editor.create_model(Author)
++            sql = editor._create_unique_sql(Author, ['name'])
++        table = Author._meta.db_table
++        self.assertIs(sql.references_column(table, 'name'), True)
++        self.assertIs(sql.references_column(table, 'other'), False)
++
+     @skipIfDBFeature('supports_expression_indexes')
+     def test_func_unique_constraint_unsupported(self):
+         # UniqueConstraint is ignored on databases that don't support indexes on

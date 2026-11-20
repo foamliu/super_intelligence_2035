@@ -1,0 +1,18 @@
+diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
+index 52f7ea45..aa1146c6 100644
+--- a/sympy/core/numbers.py
++++ b/sympy/core/numbers.py
+@@ -1587,6 +1587,13 @@ class Rational(Number):
+ 
+     @cacheit
+     def __new__(cls, p, q=None, gcd=None):
++        if q is not None and isinstance(q, str):
++            # Convert q to a Rational before p is converted, otherwise
++            # "q *= p.q" below can multiply a raw string q by an integer,
++            # e.g. Rational('0.5', '100') would give q = '100' * 2 -> '100100'
++            q = Rational(q)
++            gcd = gcd or 1
++
+         if q is None:
+             if isinstance(p, Rational):
+                 return p

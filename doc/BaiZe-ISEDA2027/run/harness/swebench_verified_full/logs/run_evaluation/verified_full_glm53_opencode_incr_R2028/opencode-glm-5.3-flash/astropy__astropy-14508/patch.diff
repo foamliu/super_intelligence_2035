@@ -1,0 +1,92 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index be16b1fa..2b33bb06 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,16 @@
++Version 5.3.0 (unreleased)
++==========================
++
++Bug Fixes
++---------
++
++astropy.io.fits
++^^^^^^^^^^^^^^^
++
++- Fix a bug where ``astropy.io.fits.Card`` could use a string representation of
++  floating point values that was larger than necessary, which could result in
++  comments being unnecessarily truncated. [#14520]
++
+ Version 5.2.1 (2023-01-06)
+ ==========================
+ 
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 118bfced..a6a34a04 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -1299,6 +1299,29 @@ def _format_value(value):
+ 
+ def _format_float(value):
+     """Format a floating number to make sure it gets the decimal point."""
++    # Try to use the shortest string representation of the value, which is
++    # guaranteed to round-trip to the same float; this avoids unnecessarily
++    # long strings such as '0.009124999999999999' for 0.009125.  Only if that
++    # representation does not fit in the 20 characters allowed for a floating
++    # point value in a FITS card, fall back to formatting the value with a
++    # fixed number of significant digits.
++    value_str = str(value)
++    if len(value_str) <= 20:
++        if "e" in value_str:
++            # On some Windows builds of Python (and possibly other platforms?)
++            # the exponent is zero-padded out to, it seems, three digits.
++            # Normalize the format to pad only to two digits.
++            significand, exponent = value_str.split("e")
++            if exponent[0] in ("+", "-"):
++                sign = exponent[0]
++                exponent = exponent[1:]
++            else:
++                sign = ""
++            value_str = f"{significand}E{sign}{int(exponent):02d}"
++        elif "." not in value_str and "E" not in value_str:
++            value_str += ".0"
++        return value_str
++
+     value_str = f"{value:.16G}"
+     if "." not in value_str and "E" not in value_str:
+         value_str += ".0"
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index a8f4e116..d965bcb1 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -137,6 +137,32 @@ class TestHeaderFunctions(FitsTestCase):
+         ):
+             assert str(c) == _pad("FLOATNUM= -4.6737463674763E+32")
+ 
++    def test_card_float_repr(self):
++        """Test that floats use the shortest representation that round-trips.
++
++        Regression test for https://github.com/astropy/astropy/issues/14519
++        """
++        c = fits.Card("floatnum", 0.009125)
++        assert str(c) == _pad("FLOATNUM=             0.009125")
++        assert c.value == 0.009125
++
++        # the shorter representation leaves room for the comment
++        # https://github.com/astropy/astropy/issues/14519
++        with pytest.warns(AstropyUserWarning, match="HIERARCH card will be created"):
++            c = fits.Card(
++                "ESO IFM CL RADIUS", 0.009125, "[m] radius arround actuator to avoid"
++            )
++        assert str(c) == _pad(
++            "HIERARCH ESO IFM CL RADIUS = 0.009125 "
++            "/ [m] radius arround actuator to avoid"
++        )
++        assert c.value == 0.009125
++        assert c.comment == "[m] radius arround actuator to avoid"
++
++        # floats that do not fit in 20 characters are still truncated
++        c = fits.Card("lngfloat", 1.7976931348623157e308)
++        assert str(c) == _pad("LNGFLOAT= 1.7976931348623E+308")
++
+     def test_complex_value_card(self):
+         """Test Card constructor with complex value"""
+ 

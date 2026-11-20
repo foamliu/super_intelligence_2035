@@ -1,0 +1,19 @@
+
+============================================================
+=== opencode: incr_eval R2183 (1 instances) ===
+  [17:39:26] opencode: merged 484 real preds -> predictions_glm53/predictions_opencode_glm53.json
+  [17:39:26] opencode: launching eval (workers=1, timeout=1800, 1 instances)...
+  [17:39:30] opencode: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_opencode_R2183.log)
+  sphinx-doc__sphinx-10614: failed (capability)
+  [17:39:30] opencode: eval report updated (n=484, resolved=394, failed=88, infra=2)
+
+============================================================
+=== claude-code: incr_eval R2183 (1 instances) ===
+  [17:39:30] claude-code: merged 210 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [17:39:30] claude-code: launching eval (workers=1, timeout=1800, 1 instances)...
+  [17:39:35] claude-code: eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2183.log)
+  django__django-11477: failed (capability)
+  [17:39:35] claude-code: eval report updated (n=210, resolved=164, failed=44, infra=2)
+
+============================================================
+R2183 incr_eval complete in 8.9s

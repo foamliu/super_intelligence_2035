@@ -1,0 +1,15 @@
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a3858195..d476f6c6 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -106,6 +106,10 @@ class URLValidator(RegexValidator):
+         if scheme not in self.schemes:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
++        # Reject URLs with control characters, as urlsplit on newer Pythons
++        # strips them silently (bpo-43882), preventing the regex from rejecting.
++        if "\n" in value or "\r" in value or "\t" in value:
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+         # Then check full URL
+         try:
+             super().__call__(value)

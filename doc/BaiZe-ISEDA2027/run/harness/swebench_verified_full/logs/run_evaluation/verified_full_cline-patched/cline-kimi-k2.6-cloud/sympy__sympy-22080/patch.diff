@@ -1,0 +1,88 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index b669a2c7..3fb89435 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -6,7 +6,7 @@
+ from collections import defaultdict
+ from itertools import chain
+ from sympy.core import S
+-from .precedence import precedence
++from .precedence import precedence, PRECEDENCE
+ from .codeprinter import CodePrinter
+ 
+ _kw_py2and3 = {
+@@ -137,6 +137,21 @@ def _get_statement(self, codestring):
+     def _get_comment(self, text):
+         return "  # {}".format(text)
+ 
++    def parenthesize(self, item, level, strict=False):
++        from sympy.core.mod import Mod
++        if isinstance(item, Mod):
++            # In Python code, Mod is printed using the % operator, which has
++            # the same precedence as *, /, // but lower precedence than unary
++            # minus.  Treating it with the precedence of Add ensures correct
++            # parenthesization in Mul and Pow contexts.
++            item_prec = PRECEDENCE['Add']
++        else:
++            item_prec = precedence(item)
++        if (item_prec < level) or ((not strict) and item_prec <= level):
++            return "(%s)" % self._print(item)
++        else:
++            return self._print(item)
++
+     def _expand_fold_binary_op(self, op, args):
+         """
+         This method expands a fold on binary operations.
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index cf18825e..f7287db4 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -30,6 +30,9 @@ def test_PythonCodePrinter():
+ 
+     assert prntr.doprint(x**y) == 'x**y'
+     assert prntr.doprint(Mod(x, 2)) == 'x % 2'
++    assert prntr.doprint(-Mod(x, y)) == '-(x % y)'
++    assert prntr.doprint(x*Mod(y, 2)) == 'x*(y % 2)'
++    assert prntr.doprint(Mod(x, y)**2) == '(x % y)**2'
+     assert prntr.doprint(And(x, y)) == 'x and y'
+     assert prntr.doprint(Or(x, y)) == 'x or y'
+     assert not prntr.module_imports
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index e25986b4..ab8d2637 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -10,7 +10,7 @@
+     true, false, And, Or, Not, ITE, Min, Max, floor, diff, IndexedBase, Sum,
+     DotProduct, Eq, Dummy, sinc, erf, erfc, factorial, gamma, loggamma,
+     digamma, RisingFactorial, besselj, bessely, besseli, besselk, S, beta,
+-    betainc, betainc_regularized, fresnelc, fresnels)
++    betainc, betainc_regularized, fresnelc, fresnels, Mod)
+ from sympy.codegen.cfunctions import expm1, log1p, exp2, log2, log10, hypot
+ from sympy.codegen.numpy_nodes import logaddexp, logaddexp2
+ from sympy.codegen.scipy_nodes import cosm1
+@@ -1496,3 +1496,25 @@ def assertAllClose(self, result, *, abstol=1e-15, reltol=1e-15):
+             f = case.lambdify(cse=cse)
+             result = f(*case.num_args)
+             case.assertAllClose(result)
++
++
++def test_lambdify_mod():
++    # Issue: lambdify with modules=[] incorrectly parenthesizes Mod
++    x, y = symbols('x y')
++    expr = -Mod(x, y)
++    f = lambdify([x, y], expr, modules=[])
++    assert f(3, 7) == -3
++    src = inspect.getsource(f)
++    assert 'return -(x % y)' in src
++
++    expr2 = x * Mod(y, 2)
++    f2 = lambdify([x, y], expr2, modules=[])
++    assert f2(3, 5) == 3 * (5 % 2)
++    src2 = inspect.getsource(f2)
++    assert 'return x*(y % 2)' in src2
++
++    expr3 = Mod(x, y) ** 2
++    f3 = lambdify([x, y], expr3, modules=[])
++    assert f3(5, 3) == (5 % 3) ** 2
++    src3 = inspect.getsource(f3)
++    assert 'return (x % y)**2' in src3

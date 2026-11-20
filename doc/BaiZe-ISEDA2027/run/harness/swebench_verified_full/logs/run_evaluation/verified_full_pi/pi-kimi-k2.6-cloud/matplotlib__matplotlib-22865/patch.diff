@@ -1,0 +1,50 @@
+diff --git a/lib/matplotlib/colorbar.py b/lib/matplotlib/colorbar.py
+index c59b0ac8..4f059664 100644
+--- a/lib/matplotlib/colorbar.py
++++ b/lib/matplotlib/colorbar.py
+@@ -651,8 +651,15 @@ class Colorbar:
+             if not self.drawedges:
+                 if len(self._y) >= self.n_rasterize:
+                     self.solids.set_rasterized(True)
+-        self.dividers.set_segments(
+-            np.dstack([X, Y])[1:-1] if self.drawedges else [])
++        if self.drawedges:
++            segments = np.dstack([X, Y])
++            if self.extend not in ('both', 'min'):
++                segments = segments[1:]
++            if self.extend not in ('both', 'max'):
++                segments = segments[:-1]
++            self.dividers.set_segments(segments)
++        else:
++            self.dividers.set_segments([])
+ 
+     def _add_solids_patches(self, X, Y, C, mappable):
+         hatches = mappable.hatches * len(C)  # Have enough hatches.
+diff --git a/lib/matplotlib/tests/test_colorbar.py b/lib/matplotlib/tests/test_colorbar.py
+index ae3ab92c..0413867d 100644
+--- a/lib/matplotlib/tests/test_colorbar.py
++++ b/lib/matplotlib/tests/test_colorbar.py
+@@ -147,6 +147,23 @@ def test_colorbar_extension_inverted_axis(orientation, extend, expected):
+     else:
+         assert len(cbar._extend_patches) == 1
+ 
++@pytest.mark.parametrize("extend, nsegments",
++                         [("neither", 8),
++                          ("min", 9),
++                          ("max", 9),
++                          ("both", 10)])
++def test_colorbar_drawedges_with_extension(extend, nsegments):
++    """Test that dividers are drawn at the boundaries with extensions."""
++    fig, ax = plt.subplots()
++    cmap = plt.get_cmap("viridis").with_extremes(under=(0, 0, 0, 1),
++                                                 over=(1, 1, 1, 1))
++    bounds = np.arange(10)
++    norm = BoundaryNorm(bounds, cmap.N, extend=extend)
++    cbar = fig.colorbar(cm.ScalarMappable(cmap=cmap, norm=norm), cax=ax,
++                        orientation='horizontal', drawedges=True)
++    cbar._draw_all()
++    assert len(cbar.dividers.get_segments()) == nsegments
++
+ 
+ @pytest.mark.parametrize('use_gridspec', [True, False])
+ @image_comparison(['cbar_with_orientation',

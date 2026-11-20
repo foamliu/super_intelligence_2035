@@ -1,0 +1,52 @@
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 73c20334..0f92f497 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -23,7 +23,7 @@
+ from sympy.core.add import Add
+ from sympy.core.containers import Tuple
+ from sympy.core.numbers import Float
+-from sympy.core.parameters import global_parameters
++from sympy.core.parameters import global_parameters, evaluate as _evaluate
+ from sympy.simplify import nsimplify, simplify
+ from sympy.geometry.exceptions import GeometryError
+ from sympy.functions.elementary.miscellaneous import sqrt
+@@ -152,8 +152,9 @@ def __new__(cls, *args, **kwargs):
+                         'warn' or 'ignore'.'''))
+         if any(coords[dim:]):
+             raise ValueError('Nonzero coordinates cannot be removed.')
+-        if any(a.is_number and im(a) for a in coords):
+-            raise ValueError('Imaginary coordinates are not permitted.')
++        with _evaluate(True):
++            if any(a.is_number and im(a) for a in coords):
++                raise ValueError('Imaginary coordinates are not permitted.')
+         if not all(isinstance(a, Expr) for a in coords):
+             raise TypeError('Coordinates must be valid SymPy expressions.')
+ 
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index 930d7077..16a334f1 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -3,6 +3,7 @@
+ from sympy.core.singleton import S
+ from sympy.core.symbol import Symbol
+ from sympy.core.sympify import sympify
++from sympy.core.parameters import evaluate
+ from sympy.functions.elementary.miscellaneous import sqrt
+ from sympy.geometry import Line, Point, Point2D, Point3D, Line3D, Plane
+ from sympy.geometry.entity import rotate, scale, translate, GeometryEntity
+@@ -471,3 +472,14 @@ def test_direction_cosine():
+     assert p2.direction_cosine(Point3D(0, 0, 0)) == [-sqrt(3) / 3, -sqrt(3) / 3, -sqrt(3) / 3]
+     assert p2.direction_cosine(Point3D(1, 1, 12)) == [0, 0, 1]
+     assert p2.direction_cosine(Point3D(12, 1, 12)) == [sqrt(2) / 2, 0, sqrt(2) / 2]
++
++def test_point_evaluate_false():
++    # issue: Point creation inside evaluate(False) should not raise
++    # Imaginary coordinates error for real coordinates
++    with evaluate(False):
++        assert Point2D(1, 2) == Point2D(1, 2)
++        assert Point(1, 2) == Point(1, 2)
++        assert Point3D(1, 2, 3) == Point3D(1, 2, 3)
++        assert sympify('Point2D(Integer(1),Integer(2))') == Point2D(1, 2)
++        # imaginary coordinates should still raise
++        raises(ValueError, lambda: Point(1, I))

@@ -1,0 +1,1070 @@
+2026-11-09 16:01:31,994 - INFO - Creating container for astropy__astropy-7336...
+2026-11-09 16:01:32,017 - INFO - Container for astropy__astropy-7336 created: c38e6c180e79257e706fb9ba12993f0cd0364fb79c0d168d6bb7c8a83922da14
+2026-11-09 16:01:32,857 - INFO - Container for astropy__astropy-7336 started: c38e6c180e79257e706fb9ba12993f0cd0364fb79c0d168d6bb7c8a83922da14
+2026-11-09 16:01:32,859 - INFO - Intermediate patch for astropy__astropy-7336 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/astropy__astropy-7336/patch.diff, now applying to container...
+2026-11-09 16:01:32,973 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES.rst...
+Checking patch astropy/coordinates/sky_coordinate.py...
+Checking patch astropy/extern/configobj/configobj.py...
+Checking patch astropy/io/ascii/misc.py...
+Checking patch astropy/io/fits/header.py...
+Checking patch astropy/table/np_utils.py...
+Checking patch astropy/table/operations.py...
+Checking patch astropy/table/row.py...
+Checking patch astropy/units/decorators.py...
+Checking patch astropy/units/tests/py3_test_quantity_annotations.py => astropy/units/tests/test_quantity_annotations.py...
+Checking patch astropy/units/tests/test_quantity_decorator.py...
+Checking patch astropy/utils/metadata.py...
+Checking patch poc.py...
+Applied patch CHANGES.rst cleanly.
+Applied patch astropy/coordinates/sky_coordinate.py cleanly.
+Applied patch astropy/extern/configobj/configobj.py cleanly.
+Applied patch astropy/io/ascii/misc.py cleanly.
+Applied patch astropy/io/fits/header.py cleanly.
+Applied patch astropy/table/np_utils.py cleanly.
+Applied patch astropy/table/operations.py cleanly.
+Applied patch astropy/table/row.py cleanly.
+Applied patch astropy/units/decorators.py cleanly.
+Applied patch astropy/units/tests/py3_test_quantity_annotations.py => astropy/units/tests/test_quantity_annotations.py cleanly.
+Applied patch astropy/units/tests/test_quantity_decorator.py cleanly.
+Applied patch astropy/utils/metadata.py cleanly.
+Applied patch poc.py cleanly.
+
+2026-11-09 16:01:33,438 - INFO - Git diff before:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index aea009f09..1dce1f7ac 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -334,6 +334,8 @@ astropy.time
+ astropy.units
+ ^^^^^^^^^^^^^
+ 
++- ``u.quantity_input`` no longer errors if the return annotation for a function is ``None``. [#7336]
++
+ astropy.utils
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py
+index 988776fd1..9c734124a 100644
+--- a/astropy/coordinates/sky_coordinate.py
++++ b/astropy/coordinates/sky_coordinate.py
+@@ -1796,7 +1796,7 @@ def _get_frame(args, kwargs):
+         # to allow the first argument to set the class.  That's OK because
+         # _parse_coordinate_arg goes and checks that the frames match between
+         # the first and all the others
+-        if (isinstance(arg, (collections.Sequence, np.ndarray)) and
++        if (isinstance(arg, (collections.abc.Sequence, np.ndarray)) and
+              len(args) == 1 and len(arg) > 0):
+             arg = arg[0]
+ 
+@@ -1966,7 +1966,7 @@ def _parse_coordinate_arg(coords, frame, units, init_kwargs):
+         # 2-d array of coordinate values.  Handle specially for efficiency.
+         values = coords.transpose()  # Iterates over repr attrs
+ 
+-    elif isinstance(coords, (collections.Sequence, np.ndarray)):
++    elif isinstance(coords, (collections.abc.Sequence, np.ndarray)):
+         # Handles list-like input.
+ 
+         vals = []
+diff --git a/astropy/extern/configobj/configobj.py b/astropy/extern/configobj/configobj.py
+index 0c02b9b7a..cfbc490d9 100755
+--- a/astropy/extern/configobj/configobj.py
++++ b/astropy/extern/configobj/configobj.py
+@@ -16,7 +16,7 @@
+ import os
+ import re
+ import sys
+-import collections
++from collections.abc import Mapping
+ 
+ from codecs import BOM_UTF8, BOM_UTF16, BOM_UTF16_BE, BOM_UTF16_LE
+ 
+@@ -594,7 +594,7 @@ class Section(dict):
+             if key not in self:
+                 self.sections.append(key)
+             dict.__setitem__(self, key, value)
+-        elif isinstance(value, collections.Mapping) and not unrepr:
++        elif isinstance(value, Mapping) and not unrepr:
+             # First create the new depth level,
+             # then create the section
+             if key not in self:
+@@ -801,8 +801,8 @@ class Section(dict):
+         ConfigObj({'section1': {'option1': 'False', 'subsection': {'more_options': 'False'}}})
+         """
+         for key, val in list(indict.items()):
+-            if (key in self and isinstance(self[key], collections.Mapping) and
+-                                isinstance(val, collections.Mapping)):
++            if (key in self and isinstance(self[key], Mapping) and
++                                isinstance(val, Mapping)):
+                 self[key].merge(val)
+             else:
+                 self[key] = val
+@@ -2434,7 +2434,7 @@ def flatten_errors(cfg, res, levels=None, results=None):
+     for (key, val) in list(res.items()):
+         if val == True:
+             continue
+-        if isinstance(cfg.get(key), collections.Mapping):
++        if isinstance(cfg.get(key), Mapping):
+             # Go down one level
+             levels.append(key)
+             flatten_errors(cfg[key], val, levels, results)
+diff --git a/astropy/io/ascii/misc.py b/astropy/io/ascii/misc.py
+index 0f2ca0178..e6b8cb5f1 100644
+--- a/astropy/io/ascii/misc.py
++++ b/astropy/io/ascii/misc.py
+@@ -95,10 +95,10 @@ def sortmore(*args, **kw):
+     if globalkey is None:
+         globalkey = lambda *x: 0
+ 
+-    if not isinstance(globalkey, collections.Callable):
++    if not isinstance(globalkey, collections.abc.Callable):
+         raise ValueError('globalkey needs to be callable')
+ 
+-    if isinstance(key, collections.Callable):
++    if isinstance(key, collections.abc.Callable):
+         k = lambda x: (globalkey(*x), key(x[0]))
+     elif isinstance(key, tuple):
+         key = (k if k else lambda x: 0 for k in key)
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index aa65c5c22..6737e0b2a 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -1905,7 +1905,7 @@ class Header:
+ 
+ 
+ collections.MutableSequence.register(Header)
+-collections.MutableMapping.register(Header)
++collections.abc.MutableMapping.register(Header)
+ 
+ 
+ class _CardAccessor:
+@@ -1976,8 +1976,8 @@ class _CardAccessor:
+         return False
+ 
+ 
+-collections.Mapping.register(_CardAccessor)
+-collections.Sequence.register(_CardAccessor)
++collections.abc.Mapping.register(_CardAccessor)
++collections.abc.Sequence.register(_CardAccessor)
+ 
+ 
+ class _HeaderComments(_CardAccessor):
+diff --git a/astropy/table/np_utils.py b/astropy/table/np_utils.py
+index 1ee73c485..b4cb7119c 100644
+--- a/astropy/table/np_utils.py
++++ b/astropy/table/np_utils.py
+@@ -146,7 +146,7 @@ def common_dtype(cols):
+ 
+ def _check_for_sequence_of_structured_arrays(arrays):
+     err = '`arrays` arg must be a sequence (e.g. list) of structured arrays'
+-    if not isinstance(arrays, collections.Sequence):
++    if not isinstance(arrays, collections.abc.Sequence):
+         raise TypeError(err)
+     for array in arrays:
+         # Must be structured array
+diff --git a/astropy/table/operations.py b/astropy/table/operations.py
+index dea57bc2a..d9815657b 100644
+--- a/astropy/table/operations.py
++++ b/astropy/table/operations.py
+@@ -41,7 +41,7 @@ def _get_list_of_tables(tables):
+     from .table import Table, Row
+ 
+     # Make sure we have a list of things
+-    if not isinstance(tables, collections.Sequence):
++    if not isinstance(tables, collections.abc.Sequence):
+         tables = [tables]
+ 
+     # Make sure each thing is a Table or Row
+@@ -753,7 +753,7 @@ def _join(left, right, keys=None, join_type='inner',
+                     .format(out_name, out[out_name].__class__.__name__))
+ 
+     # If col_name_map supplied as a dict input, then update.
+-    if isinstance(_col_name_map, collections.Mapping):
++    if isinstance(_col_name_map, collections.abc.Mapping):
+         _col_name_map.update(col_name_map)
+ 
+     return out
+@@ -862,7 +862,7 @@ def _vstack(arrays, join_type='outer', col_name_map=None, metadata_conflicts='wa
+             idx0 = idx1
+ 
+     # If col_name_map supplied as a dict input, then update.
+-    if isinstance(_col_name_map, collections.Mapping):
++    if isinstance(_col_name_map, collections.abc.Mapping):
+         _col_name_map.update(col_name_map)
+ 
+     return out
+@@ -960,7 +960,7 @@ def _hstack(arrays, join_type='outer', uniq_col_name='{col_name}_{table_name}',
+                 out[out_name] = array[name][:n_rows]
+ 
+     # If col_name_map supplied as a dict input, then update.
+-    if isinstance(_col_name_map, collections.Mapping):
++    if isinstance(_col_name_map, collections.abc.Mapping):
+         _col_name_map.update(col_name_map)
+ 
+     return out
+diff --git a/astropy/table/row.py b/astropy/table/row.py
+index 1aa2d6c5d..ecaed9b9e 100644
+--- a/astropy/table/row.py
++++ b/astropy/table/row.py
+@@ -178,4 +178,4 @@ class Row:
+         return str(self).encode('utf-8')
+ 
+ 
+-collections.Sequence.register(Row)
++collections.abc.Sequence.register(Row)
+diff --git a/astropy/units/decorators.py b/astropy/units/decorators.py
+index 8bece5a85..a7ac743e4 100644
+--- a/astropy/units/decorators.py
++++ b/astropy/units/decorators.py
+@@ -220,7 +220,7 @@ class QuantityInput:
+             # Call the original function with any equivalencies in force.
+             with add_enabled_equivalencies(self.equivalencies):
+                 return_ = wrapped_function(*func_args, **func_kwargs)
+-            if wrapped_signature.return_annotation is not inspect.Signature.empty:
++            if wrapped_signature.return_annotation not in (inspect.Signature.empty, None):
+                 return return_.to(wrapped_signature.return_annotation)
+             else:
+                 return return_
+diff --git a/astropy/units/tests/py3_test_quantity_annotations.py b/astropy/units/tests/py3_test_quantity_annotations.py
+deleted file mode 100644
+index 4956b0ec1..000000000
+--- a/astropy/units/tests/py3_test_quantity_annotations.py
++++ /dev/null
+@@ -1,287 +0,0 @@
+-# -*- coding: utf-8 -*-
+-# Licensed under a 3-clause BSD style license - see LICENSE.rst
+-
+-from functools import wraps
+-from textwrap import dedent
+-
+-import pytest
+-
+-from ... import units as u  # pylint: disable=W0611
+-
+-
+-def py3only(func):
+-    @wraps(func)
+-    def wrapper(*args, **kwargs):
+-        src = func(*args, **kwargs)
+-        code = compile(dedent(src), __file__, 'exec')
+-        # This uses an unqualified exec statement illegally in Python 2,
+-        # but perfectly allowed in Python 3 so in fact we eval the exec
+-        # call :)
+-        eval('exec(code)')
+-
+-    return wrapper
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.arcsec"),
+-                         ("'angle'", "'angle'")])
+-def test_args3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 1*u.arcsec)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert solary.unit == u.arcsec
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.arcsec"),
+-                         ("'angle'", "'angle'")])
+-def test_args_noconvert3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input()
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.deg, 1*u.arcmin)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.deg
+-    assert solary.unit == u.arcmin
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit", [
+-                         "u.arcsec", "'angle'"])
+-def test_args_nonquantity3(solarx_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 100)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, int)
+-
+-    assert solarx.unit == u.arcsec
+-    """.format(solarx_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.eV"),
+-                         ("'angle'", "'energy'")])
+-def test_arg_equivalencies3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input(equivalencies=u.mass_energy())
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary+(10*u.J)  # Add an energy to check equiv is working
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 100*u.gram)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert solary.unit == u.gram
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_wrong_unit3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    with pytest.raises(u.UnitsError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, 100*u.km)
+-
+-    str_to = str({1})
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' must be in units convertible to '{{0}}'.".format(str_to)
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_not_quantity3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    with pytest.raises(TypeError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, 100)
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' has no 'unit' attribute. You may want to pass in an astropy Quantity instead."
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-def test_decorator_override():
+-    src = """
+-    @u.quantity_input(solarx=u.arcsec)
+-    def myfunc_args(solarx: u.km, solary: u.arcsec):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 1*u.arcsec)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert solary.unit == u.arcsec
+-    """
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwargs3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary, myk: {1}=1*u.arcsec):
+-        return solarx, solary, myk
+-
+-    solarx, solary, myk = myfunc_args(1*u.arcsec, 100, myk=100*u.deg)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, int)
+-    assert isinstance(myk, u.Quantity)
+-
+-    assert myk.unit == u.deg
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_unused_kwargs3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary, myk: {1}=1*u.arcsec, myk2=1000):
+-        return solarx, solary, myk, myk2
+-
+-    solarx, solary, myk, myk2 = myfunc_args(1*u.arcsec, 100, myk=100*u.deg, myk2=10)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, int)
+-    assert isinstance(myk, u.Quantity)
+-    assert isinstance(myk2, int)
+-
+-    assert myk.unit == u.deg
+-    assert myk2 == 10
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,energy", [
+-                         ("u.arcsec", "u.eV"),
+-                         ("'angle'", "'energy'")])
+-def test_kwarg_equivalencies3(solarx_unit, energy):
+-    src = """
+-    @u.quantity_input(equivalencies=u.mass_energy())
+-    def myfunc_args(solarx: {0}, energy: {1}=10*u.eV):
+-        return solarx, energy+(10*u.J)  # Add an energy to check equiv is working
+-
+-    solarx, energy = myfunc_args(1*u.arcsec, 100*u.gram)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(energy, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert energy.unit == u.gram
+-    """.format(solarx_unit, energy)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwarg_wrong_unit3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}=10*u.deg):
+-        return solarx, solary
+-
+-    with pytest.raises(u.UnitsError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, solary=100*u.km)
+-
+-    str_to = str({1})
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' must be in units convertible to '{{0}}'.".format(str_to)
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwarg_not_quantity3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}=10*u.deg):
+-        return solarx, solary
+-
+-    with pytest.raises(TypeError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, solary=100)
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' has no 'unit' attribute. You may want to pass in an astropy Quantity instead."
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwarg_default3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}=10*u.deg):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec)
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-def test_return_annotation():
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: u.arcsec) -> u.deg:
+-        return solarx
+-
+-    solarx = myfunc_args(1*u.arcsec)
+-    assert solarx.unit is u.deg
+-    """
+-    return src
+diff --git a/astropy/units/tests/test_quantity_decorator.py b/astropy/units/tests/test_quantity_decorator.py
+index 1ab5d3648..8ba76e727 100644
+--- a/astropy/units/tests/test_quantity_decorator.py
++++ b/astropy/units/tests/test_quantity_decorator.py
+@@ -5,8 +5,6 @@ import pytest
+ 
+ from ... import units as u
+ 
+-from .py3_test_quantity_annotations import *
+-
+ # list of pairs (target unit/physical type, input unit)
+ x_inputs = [(u.arcsec, u.deg), ('angle', u.deg),
+             (u.kpc/u.Myr, u.km/u.s), ('speed', u.km/u.s),
+diff --git a/astropy/utils/metadata.py b/astropy/utils/metadata.py
+index f5cc22aa3..4ece2b480 100644
+--- a/astropy/utils/metadata.py
++++ b/astropy/utils/metadata.py
+@@ -407,7 +407,7 @@ class MetaData:
+         if value is None:
+             instance._meta = OrderedDict()
+         else:
+-            if isinstance(value, collections.Mapping):
++            if isinstance(value, collections.abc.Mapping):
+                 if self.copy:
+                     instance._meta = deepcopy(value)
+                 else:
+2026-11-09 16:01:33,440 - INFO - Eval script for astropy__astropy-7336 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/astropy__astropy-7336/eval.sh; copying to container...
+2026-11-09 16:01:40,770 - INFO - Test runtime: 7.26 seconds
+2026-11-09 16:01:40,771 - INFO - Test output for astropy__astropy-7336 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/astropy__astropy-7336/test_output.txt
+2026-11-09 16:01:40,863 - INFO - Git diff after:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index aea009f09..1dce1f7ac 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -334,6 +334,8 @@ astropy.time
+ astropy.units
+ ^^^^^^^^^^^^^
+ 
++- ``u.quantity_input`` no longer errors if the return annotation for a function is ``None``. [#7336]
++
+ astropy.utils
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py
+index 988776fd1..9c734124a 100644
+--- a/astropy/coordinates/sky_coordinate.py
++++ b/astropy/coordinates/sky_coordinate.py
+@@ -1796,7 +1796,7 @@ def _get_frame(args, kwargs):
+         # to allow the first argument to set the class.  That's OK because
+         # _parse_coordinate_arg goes and checks that the frames match between
+         # the first and all the others
+-        if (isinstance(arg, (collections.Sequence, np.ndarray)) and
++        if (isinstance(arg, (collections.abc.Sequence, np.ndarray)) and
+              len(args) == 1 and len(arg) > 0):
+             arg = arg[0]
+ 
+@@ -1966,7 +1966,7 @@ def _parse_coordinate_arg(coords, frame, units, init_kwargs):
+         # 2-d array of coordinate values.  Handle specially for efficiency.
+         values = coords.transpose()  # Iterates over repr attrs
+ 
+-    elif isinstance(coords, (collections.Sequence, np.ndarray)):
++    elif isinstance(coords, (collections.abc.Sequence, np.ndarray)):
+         # Handles list-like input.
+ 
+         vals = []
+diff --git a/astropy/extern/configobj/configobj.py b/astropy/extern/configobj/configobj.py
+index 0c02b9b7a..cfbc490d9 100755
+--- a/astropy/extern/configobj/configobj.py
++++ b/astropy/extern/configobj/configobj.py
+@@ -16,7 +16,7 @@
+ import os
+ import re
+ import sys
+-import collections
++from collections.abc import Mapping
+ 
+ from codecs import BOM_UTF8, BOM_UTF16, BOM_UTF16_BE, BOM_UTF16_LE
+ 
+@@ -594,7 +594,7 @@ class Section(dict):
+             if key not in self:
+                 self.sections.append(key)
+             dict.__setitem__(self, key, value)
+-        elif isinstance(value, collections.Mapping) and not unrepr:
++        elif isinstance(value, Mapping) and not unrepr:
+             # First create the new depth level,
+             # then create the section
+             if key not in self:
+@@ -801,8 +801,8 @@ class Section(dict):
+         ConfigObj({'section1': {'option1': 'False', 'subsection': {'more_options': 'False'}}})
+         """
+         for key, val in list(indict.items()):
+-            if (key in self and isinstance(self[key], collections.Mapping) and
+-                                isinstance(val, collections.Mapping)):
++            if (key in self and isinstance(self[key], Mapping) and
++                                isinstance(val, Mapping)):
+                 self[key].merge(val)
+             else:
+                 self[key] = val
+@@ -2434,7 +2434,7 @@ def flatten_errors(cfg, res, levels=None, results=None):
+     for (key, val) in list(res.items()):
+         if val == True:
+             continue
+-        if isinstance(cfg.get(key), collections.Mapping):
++        if isinstance(cfg.get(key), Mapping):
+             # Go down one level
+             levels.append(key)
+             flatten_errors(cfg[key], val, levels, results)
+diff --git a/astropy/io/ascii/misc.py b/astropy/io/ascii/misc.py
+index 0f2ca0178..e6b8cb5f1 100644
+--- a/astropy/io/ascii/misc.py
++++ b/astropy/io/ascii/misc.py
+@@ -95,10 +95,10 @@ def sortmore(*args, **kw):
+     if globalkey is None:
+         globalkey = lambda *x: 0
+ 
+-    if not isinstance(globalkey, collections.Callable):
++    if not isinstance(globalkey, collections.abc.Callable):
+         raise ValueError('globalkey needs to be callable')
+ 
+-    if isinstance(key, collections.Callable):
++    if isinstance(key, collections.abc.Callable):
+         k = lambda x: (globalkey(*x), key(x[0]))
+     elif isinstance(key, tuple):
+         key = (k if k else lambda x: 0 for k in key)
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index aa65c5c22..6737e0b2a 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -1905,7 +1905,7 @@ class Header:
+ 
+ 
+ collections.MutableSequence.register(Header)
+-collections.MutableMapping.register(Header)
++collections.abc.MutableMapping.register(Header)
+ 
+ 
+ class _CardAccessor:
+@@ -1976,8 +1976,8 @@ class _CardAccessor:
+         return False
+ 
+ 
+-collections.Mapping.register(_CardAccessor)
+-collections.Sequence.register(_CardAccessor)
++collections.abc.Mapping.register(_CardAccessor)
++collections.abc.Sequence.register(_CardAccessor)
+ 
+ 
+ class _HeaderComments(_CardAccessor):
+diff --git a/astropy/table/np_utils.py b/astropy/table/np_utils.py
+index 1ee73c485..b4cb7119c 100644
+--- a/astropy/table/np_utils.py
++++ b/astropy/table/np_utils.py
+@@ -146,7 +146,7 @@ def common_dtype(cols):
+ 
+ def _check_for_sequence_of_structured_arrays(arrays):
+     err = '`arrays` arg must be a sequence (e.g. list) of structured arrays'
+-    if not isinstance(arrays, collections.Sequence):
++    if not isinstance(arrays, collections.abc.Sequence):
+         raise TypeError(err)
+     for array in arrays:
+         # Must be structured array
+diff --git a/astropy/table/operations.py b/astropy/table/operations.py
+index dea57bc2a..d9815657b 100644
+--- a/astropy/table/operations.py
++++ b/astropy/table/operations.py
+@@ -41,7 +41,7 @@ def _get_list_of_tables(tables):
+     from .table import Table, Row
+ 
+     # Make sure we have a list of things
+-    if not isinstance(tables, collections.Sequence):
++    if not isinstance(tables, collections.abc.Sequence):
+         tables = [tables]
+ 
+     # Make sure each thing is a Table or Row
+@@ -753,7 +753,7 @@ def _join(left, right, keys=None, join_type='inner',
+                     .format(out_name, out[out_name].__class__.__name__))
+ 
+     # If col_name_map supplied as a dict input, then update.
+-    if isinstance(_col_name_map, collections.Mapping):
++    if isinstance(_col_name_map, collections.abc.Mapping):
+         _col_name_map.update(col_name_map)
+ 
+     return out
+@@ -862,7 +862,7 @@ def _vstack(arrays, join_type='outer', col_name_map=None, metadata_conflicts='wa
+             idx0 = idx1
+ 
+     # If col_name_map supplied as a dict input, then update.
+-    if isinstance(_col_name_map, collections.Mapping):
++    if isinstance(_col_name_map, collections.abc.Mapping):
+         _col_name_map.update(col_name_map)
+ 
+     return out
+@@ -960,7 +960,7 @@ def _hstack(arrays, join_type='outer', uniq_col_name='{col_name}_{table_name}',
+                 out[out_name] = array[name][:n_rows]
+ 
+     # If col_name_map supplied as a dict input, then update.
+-    if isinstance(_col_name_map, collections.Mapping):
++    if isinstance(_col_name_map, collections.abc.Mapping):
+         _col_name_map.update(col_name_map)
+ 
+     return out
+diff --git a/astropy/table/row.py b/astropy/table/row.py
+index 1aa2d6c5d..ecaed9b9e 100644
+--- a/astropy/table/row.py
++++ b/astropy/table/row.py
+@@ -178,4 +178,4 @@ class Row:
+         return str(self).encode('utf-8')
+ 
+ 
+-collections.Sequence.register(Row)
++collections.abc.Sequence.register(Row)
+diff --git a/astropy/units/decorators.py b/astropy/units/decorators.py
+index 8bece5a85..a7ac743e4 100644
+--- a/astropy/units/decorators.py
++++ b/astropy/units/decorators.py
+@@ -220,7 +220,7 @@ class QuantityInput:
+             # Call the original function with any equivalencies in force.
+             with add_enabled_equivalencies(self.equivalencies):
+                 return_ = wrapped_function(*func_args, **func_kwargs)
+-            if wrapped_signature.return_annotation is not inspect.Signature.empty:
++            if wrapped_signature.return_annotation not in (inspect.Signature.empty, None):
+                 return return_.to(wrapped_signature.return_annotation)
+             else:
+                 return return_
+diff --git a/astropy/units/tests/py3_test_quantity_annotations.py b/astropy/units/tests/py3_test_quantity_annotations.py
+deleted file mode 100644
+index 4956b0ec1..000000000
+--- a/astropy/units/tests/py3_test_quantity_annotations.py
++++ /dev/null
+@@ -1,287 +0,0 @@
+-# -*- coding: utf-8 -*-
+-# Licensed under a 3-clause BSD style license - see LICENSE.rst
+-
+-from functools import wraps
+-from textwrap import dedent
+-
+-import pytest
+-
+-from ... import units as u  # pylint: disable=W0611
+-
+-
+-def py3only(func):
+-    @wraps(func)
+-    def wrapper(*args, **kwargs):
+-        src = func(*args, **kwargs)
+-        code = compile(dedent(src), __file__, 'exec')
+-        # This uses an unqualified exec statement illegally in Python 2,
+-        # but perfectly allowed in Python 3 so in fact we eval the exec
+-        # call :)
+-        eval('exec(code)')
+-
+-    return wrapper
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.arcsec"),
+-                         ("'angle'", "'angle'")])
+-def test_args3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 1*u.arcsec)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert solary.unit == u.arcsec
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.arcsec"),
+-                         ("'angle'", "'angle'")])
+-def test_args_noconvert3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input()
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.deg, 1*u.arcmin)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.deg
+-    assert solary.unit == u.arcmin
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit", [
+-                         "u.arcsec", "'angle'"])
+-def test_args_nonquantity3(solarx_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 100)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, int)
+-
+-    assert solarx.unit == u.arcsec
+-    """.format(solarx_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.eV"),
+-                         ("'angle'", "'energy'")])
+-def test_arg_equivalencies3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input(equivalencies=u.mass_energy())
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary+(10*u.J)  # Add an energy to check equiv is working
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 100*u.gram)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert solary.unit == u.gram
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_wrong_unit3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    with pytest.raises(u.UnitsError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, 100*u.km)
+-
+-    str_to = str({1})
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' must be in units convertible to '{{0}}'.".format(str_to)
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_not_quantity3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}):
+-        return solarx, solary
+-
+-    with pytest.raises(TypeError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, 100)
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' has no 'unit' attribute. You may want to pass in an astropy Quantity instead."
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-def test_decorator_override():
+-    src = """
+-    @u.quantity_input(solarx=u.arcsec)
+-    def myfunc_args(solarx: u.km, solary: u.arcsec):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec, 1*u.arcsec)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert solary.unit == u.arcsec
+-    """
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwargs3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary, myk: {1}=1*u.arcsec):
+-        return solarx, solary, myk
+-
+-    solarx, solary, myk = myfunc_args(1*u.arcsec, 100, myk=100*u.deg)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, int)
+-    assert isinstance(myk, u.Quantity)
+-
+-    assert myk.unit == u.deg
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_unused_kwargs3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary, myk: {1}=1*u.arcsec, myk2=1000):
+-        return solarx, solary, myk, myk2
+-
+-    solarx, solary, myk, myk2 = myfunc_args(1*u.arcsec, 100, myk=100*u.deg, myk2=10)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(solary, int)
+-    assert isinstance(myk, u.Quantity)
+-    assert isinstance(myk2, int)
+-
+-    assert myk.unit == u.deg
+-    assert myk2 == 10
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,energy", [
+-                         ("u.arcsec", "u.eV"),
+-                         ("'angle'", "'energy'")])
+-def test_kwarg_equivalencies3(solarx_unit, energy):
+-    src = """
+-    @u.quantity_input(equivalencies=u.mass_energy())
+-    def myfunc_args(solarx: {0}, energy: {1}=10*u.eV):
+-        return solarx, energy+(10*u.J)  # Add an energy to check equiv is working
+-
+-    solarx, energy = myfunc_args(1*u.arcsec, 100*u.gram)
+-
+-    assert isinstance(solarx, u.Quantity)
+-    assert isinstance(energy, u.Quantity)
+-
+-    assert solarx.unit == u.arcsec
+-    assert energy.unit == u.gram
+-    """.format(solarx_unit, energy)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwarg_wrong_unit3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}=10*u.deg):
+-        return solarx, solary
+-
+-    with pytest.raises(u.UnitsError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, solary=100*u.km)
+-
+-    str_to = str({1})
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' must be in units convertible to '{{0}}'.".format(str_to)
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwarg_not_quantity3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}=10*u.deg):
+-        return solarx, solary
+-
+-    with pytest.raises(TypeError) as e:
+-        solarx, solary = myfunc_args(1*u.arcsec, solary=100)
+-    assert str(e.value) == "Argument 'solary' to function 'myfunc_args' has no 'unit' attribute. You may want to pass in an astropy Quantity instead."
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-@pytest.mark.parametrize("solarx_unit,solary_unit", [
+-                         ("u.arcsec", "u.deg"),
+-                         ("'angle'", "'angle'")])
+-def test_kwarg_default3(solarx_unit, solary_unit):
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: {0}, solary: {1}=10*u.deg):
+-        return solarx, solary
+-
+-    solarx, solary = myfunc_args(1*u.arcsec)
+-    """.format(solarx_unit, solary_unit)
+-    return src
+-
+-
+-@py3only
+-def test_return_annotation():
+-    src = """
+-    @u.quantity_input
+-    def myfunc_args(solarx: u.arcsec) -> u.deg:
+-        return solarx
+-
+-    solarx = myfunc_args(1*u.arcsec)
+-    assert solarx.unit is u.deg
+-    """
+-    return src
+diff --git a/astropy/units/tests/test_quantity_decorator.py b/astropy/units/tests/test_quantity_decorator.py
+index 1ab5d3648..8ba76e727 100644
+--- a/astropy/units/tests/test_quantity_decorator.py
++++ b/astropy/units/tests/test_quantity_decorator.py
+@@ -5,8 +5,6 @@ import pytest
+ 
+ from ... import units as u
+ 
+-from .py3_test_quantity_annotations import *
+-
+ # list of pairs (target unit/physical type, input unit)
+ x_inputs = [(u.arcsec, u.deg), ('angle', u.deg),
+             (u.kpc/u.Myr, u.km/u.s), ('speed', u.km/u.s),
+diff --git a/astropy/utils/metadata.py b/astropy/utils/metadata.py
+index f5cc22aa3..4ece2b480 100644
+--- a/astropy/utils/metadata.py
++++ b/astropy/utils/metadata.py
+@@ -407,7 +407,7 @@ class MetaData:
+         if value is None:
+             instance._meta = OrderedDict()
+         else:
+-            if isinstance(value, collections.Mapping):
++            if isinstance(value, collections.abc.Mapping):
+                 if self.copy:
+                     instance._meta = deepcopy(value)
+                 else:
+2026-11-09 16:01:40,863 - INFO - Grading answer for astropy__astropy-7336...
+2026-11-09 16:01:40,870 - INFO - report: {'astropy__astropy-7336': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/units/tests/test_quantity_annotations.py::test_return_annotation_none'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/units/tests/test_quantity_annotations.py::test_args3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_args3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_args_noconvert3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_args_noconvert3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_args_nonquantity3[solarx_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_args_nonquantity3[angle]', 'astropy/units/tests/test_quantity_annotations.py::test_arg_equivalencies3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_arg_equivalencies3[angle-energy]', 'astropy/units/tests/test_quantity_annotations.py::test_wrong_unit3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_wrong_unit3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_not_quantity3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_not_quantity3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_decorator_override', 'astropy/units/tests/test_quantity_annotations.py::test_kwargs3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_kwargs3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_unused_kwargs3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_unused_kwargs3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_equivalencies3[solarx_unit0-energy0]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_equivalencies3[angle-energy]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_wrong_unit3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_wrong_unit3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_not_quantity3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_not_quantity3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_default3[solarx_unit0-solary_unit0]', 'astropy/units/tests/test_quantity_annotations.py::test_kwarg_default3[angle-angle]', 'astropy/units/tests/test_quantity_annotations.py::test_return_annotation', 'astropy/units/tests/test_quantity_decorator.py::test_args[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[0-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[0-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[1-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[1-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[1-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[0-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[2-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[2-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[2-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[2-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[1-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[0-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[3-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[3-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[3-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[3-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[4-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[4-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[4-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[4-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[4]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[4]', 'astropy/units/tests/test_quantity_decorator.py::test_args[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[5-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[5-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[5-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[5-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[5]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[5]', 'astropy/units/tests/test_quantity_decorator.py::test_args[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[6-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[6-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[6-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[6-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[6]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[6]', 'astropy/units/tests/test_quantity_decorator.py::test_args[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[7-3]', 'astropy/units/tests/test_quantity_decorator.py::test_args[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[7-2]', 'astropy/units/tests/test_quantity_decorator.py::test_args[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[7-1]', 'astropy/units/tests/test_quantity_decorator.py::test_args[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_wrong_unit[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_not_quantity[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_unused_kwargs[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_wrong_unit[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_not_quantity[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_default[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_input[7-0]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[7]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[7]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[2]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[2]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[1]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[1]', 'astropy/units/tests/test_quantity_decorator.py::test_args_nonquantity[0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwargs_extra[0]', 'astropy/units/tests/test_quantity_decorator.py::test_arg_equivalencies[x_unit0-y_unit0]', 'astropy/units/tests/test_quantity_decorator.py::test_arg_equivalencies[angle-energy]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_equivalencies[x_unit0-energy_unit0]', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_equivalencies[angle-energy]', 'astropy/units/tests/test_quantity_decorator.py::test_no_equivalent', 'astropy/units/tests/test_quantity_decorator.py::test_kwarg_invalid_physical_type', 'astropy/units/tests/test_quantity_decorator.py::test_default_value_check', 'astropy/units/tests/test_quantity_decorator.py::test_args_None', 'astropy/units/tests/test_quantity_decorator.py::test_args_None_kwarg'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-7336: resolved: True
+2026-11-09 16:01:40,871 - INFO - Attempting to stop container sweb.eval.astropy__astropy-7336.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 16:01:57,067 - INFO - Container sweb.eval.astropy__astropy-7336.verified_full_glm53_deepseek-harness_R1933 stopped successfully.
+2026-11-09 16:01:57,067 - INFO - Attempting to remove container sweb.eval.astropy__astropy-7336.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 16:01:57,110 - INFO - Container sweb.eval.astropy__astropy-7336.verified_full_glm53_deepseek-harness_R1933 removed successfully.

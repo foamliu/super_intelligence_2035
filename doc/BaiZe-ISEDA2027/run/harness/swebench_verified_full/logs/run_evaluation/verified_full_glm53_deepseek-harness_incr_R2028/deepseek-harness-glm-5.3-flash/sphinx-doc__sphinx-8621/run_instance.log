@@ -1,0 +1,240 @@
+2026-11-10 18:16:39,123 - INFO - Creating container for sphinx-doc__sphinx-8621...
+2026-11-10 18:16:39,148 - INFO - Container for sphinx-doc__sphinx-8621 created: 60ed7d62aa81efb12d7d43ddb8b20fc9c77b54a4872853d1f000ec314d2e010c
+2026-11-10 18:16:39,934 - INFO - Container for sphinx-doc__sphinx-8621 started: 60ed7d62aa81efb12d7d43ddb8b20fc9c77b54a4872853d1f000ec314d2e010c
+2026-11-10 18:16:39,936 - INFO - Intermediate patch for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/sphinx-doc__sphinx-8621/patch.diff, now applying to container...
+2026-11-10 18:16:40,075 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/builders/html/transforms.py...
+Checking patch tests/test_markup.py...
+Applied patch sphinx/builders/html/transforms.py cleanly.
+Applied patch tests/test_markup.py cleanly.
+
+2026-11-10 18:16:40,462 - INFO - Git diff before:
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e9..85473ebc7 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -9,7 +9,7 @@
+ """
+ 
+ import re
+-from typing import Any, Dict
++from typing import Any, Dict, List, Tuple
+ 
+ from docutils import nodes
+ 
+@@ -34,6 +34,11 @@ class KeyboardTransform(SphinxPostTransform):
+             -
+             <literal class="kbd">
+                 x
++
++    The characters ``-``, ``+`` and ``^`` are only treated as separators
++    when they are placed between two keystrokes.  If they are placed at
++    a keystroke position (ex. ``-``, ``+``, ``^`` or ``Shift-+``), they
++    are considered a part of the keystroke.
+     """
+     default_priority = 400
+     builders = ('html',)
+@@ -42,21 +47,50 @@ class KeyboardTransform(SphinxPostTransform):
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+         for node in self.document.traverse(matcher):  # type: nodes.literal
+-            parts = self.pattern.split(node[-1].astext())
+-            if len(parts) == 1:
++            parts = self._split_keystroke(node[-1].astext())
++            if len(parts) == 1 and parts[0][0] == 'key':
++                # a single keystroke (ex. '-', '+', '^'); no separators
+                 continue
+ 
+             node.pop()
+-            while parts:
+-                key = parts.pop(0)
+-                node += nodes.literal('', key, classes=["kbd"])
+-
+-                try:
++            for kind, value in parts:
++                if kind == 'key':
++                    node += nodes.literal('', value, classes=["kbd"])
++                else:
+                     # key separator (ex. -, +, ^)
+-                    sep = parts.pop(0)
+-                    node += nodes.Text(sep)
+-                except IndexError:
+-                    pass
++                    node += nodes.Text(value)
++
++    def _split_keystroke(self, text: str) -> List[Tuple[str, str]]:
++        """Split the keystroke into keys and separators.
++
++        It returns a list of tuples like ``[('key', 'Control'),
++        ('sep', '-'), ('key', 'x')]``.  The separators are whitespace
++        or one of ``-``, ``+`` and ``^`` characters placed between
++        keystrokes.  If they are placed at a keystroke position, they
++        are treated as a part of a keystroke.
++        """
++        parts = self.pattern.split(text)
++        items: List[Tuple[str, str]] = []
++        pending = parts[0]  # a keystroke under construction
++
++        for i in range(1, len(parts), 2):
++            sep, following = parts[i], parts[i + 1]
++            if sep in ('-', '+', '^') and not pending:
++                # This separator is placed at a keystroke position
++                # (ex. the '+' in 'Shift-+').  So it is a part of the
++                # following keystroke.
++                pending += sep + following
++            else:
++                # a separator between keystrokes (ex. the '-' in 'Control-x')
++                if pending:
++                    items.append(('key', pending))
++                items.append(('sep', sep))
++                pending = following
++
++        if pending:
++            items.append(('key', pending))
++
++        return items
+ 
+ 
+ def setup(app: Sphinx) -> Dict[str, Any]:
+diff --git a/tests/test_markup.py b/tests/test_markup.py
+index a2bcb2dc1..b8f1a6739 100644
+--- a/tests/test_markup.py
++++ b/tests/test_markup.py
+@@ -251,6 +251,38 @@ def get_verifier(verify, verify_re):
+          '</kbd></p>'),
+         '\\sphinxkeyboard{\\sphinxupquote{Control+X}}',
+     ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`-`',
++        '<p><kbd class="kbd docutils literal notranslate">-</kbd></p>',
++        r'\\sphinxkeyboard{\\sphinxupquote{-}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`+`',
++        '<p><kbd class="kbd docutils literal notranslate">+</kbd></p>',
++        r'\\sphinxkeyboard{\\sphinxupquote{\+}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`^`',
++        '<p><kbd class="kbd docutils literal notranslate">^</kbd></p>',
++        r'\\sphinxkeyboard{\\sphinxupquote{\^}}',
++    ),
++    (
++        # kbd role; separator and keystroke characters
++        'verify',
++        ':kbd:`Shift-+`',
++        ('<p><kbd class="kbd docutils literal notranslate">'
++         '<kbd class="kbd docutils literal notranslate">Shift</kbd>'
++         '-'
++         '<kbd class="kbd docutils literal notranslate">+</kbd>'
++         '</kbd></p>'),
++        r'\\sphinxkeyboard{\\sphinxupquote{Shift-\+}}',
++    ),
+     (
+         # kbd role
+         'verify',
+2026-11-10 18:16:40,465 - INFO - Eval script for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/sphinx-doc__sphinx-8621/eval.sh; copying to container...
+2026-11-10 18:16:46,122 - INFO - Test runtime: 5.58 seconds
+2026-11-10 18:16:46,123 - INFO - Test output for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/sphinx-doc__sphinx-8621/test_output.txt
+2026-11-10 18:16:46,180 - INFO - Git diff after:
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e9..85473ebc7 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -9,7 +9,7 @@
+ """
+ 
+ import re
+-from typing import Any, Dict
++from typing import Any, Dict, List, Tuple
+ 
+ from docutils import nodes
+ 
+@@ -34,6 +34,11 @@ class KeyboardTransform(SphinxPostTransform):
+             -
+             <literal class="kbd">
+                 x
++
++    The characters ``-``, ``+`` and ``^`` are only treated as separators
++    when they are placed between two keystrokes.  If they are placed at
++    a keystroke position (ex. ``-``, ``+``, ``^`` or ``Shift-+``), they
++    are considered a part of the keystroke.
+     """
+     default_priority = 400
+     builders = ('html',)
+@@ -42,21 +47,50 @@ class KeyboardTransform(SphinxPostTransform):
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+         for node in self.document.traverse(matcher):  # type: nodes.literal
+-            parts = self.pattern.split(node[-1].astext())
+-            if len(parts) == 1:
++            parts = self._split_keystroke(node[-1].astext())
++            if len(parts) == 1 and parts[0][0] == 'key':
++                # a single keystroke (ex. '-', '+', '^'); no separators
+                 continue
+ 
+             node.pop()
+-            while parts:
+-                key = parts.pop(0)
+-                node += nodes.literal('', key, classes=["kbd"])
+-
+-                try:
++            for kind, value in parts:
++                if kind == 'key':
++                    node += nodes.literal('', value, classes=["kbd"])
++                else:
+                     # key separator (ex. -, +, ^)
+-                    sep = parts.pop(0)
+-                    node += nodes.Text(sep)
+-                except IndexError:
+-                    pass
++                    node += nodes.Text(value)
++
++    def _split_keystroke(self, text: str) -> List[Tuple[str, str]]:
++        """Split the keystroke into keys and separators.
++
++        It returns a list of tuples like ``[('key', 'Control'),
++        ('sep', '-'), ('key', 'x')]``.  The separators are whitespace
++        or one of ``-``, ``+`` and ``^`` characters placed between
++        keystrokes.  If they are placed at a keystroke position, they
++        are treated as a part of a keystroke.
++        """
++        parts = self.pattern.split(text)
++        items: List[Tuple[str, str]] = []
++        pending = parts[0]  # a keystroke under construction
++
++        for i in range(1, len(parts), 2):
++            sep, following = parts[i], parts[i + 1]
++            if sep in ('-', '+', '^') and not pending:
++                # This separator is placed at a keystroke position
++                # (ex. the '+' in 'Shift-+').  So it is a part of the
++                # following keystroke.
++                pending += sep + following
++            else:
++                # a separator between keystrokes (ex. the '-' in 'Control-x')
++                if pending:
++                    items.append(('key', pending))
++                items.append(('sep', sep))
++                pending = following
++
++        if pending:
++            items.append(('key', pending))
++
++        return items
+ 
+ 
+ def setup(app: Sphinx) -> Dict[str, Any]:
+2026-11-10 18:16:46,180 - INFO - Git diff changed after running eval script
+2026-11-10 18:16:46,180 - INFO - Grading answer for sphinx-doc__sphinx-8621...
+2026-11-10 18:16:46,198 - INFO - report: {'sphinx-doc__sphinx-8621': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_markup.py::test_inline[verify-:kbd:`Alt+^`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`-`-<p><kbd'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_markup.py::test_inline[verify-:rfc:`2324`-<p><span', 'tests/test_markup.py::test_inline[verify-:rfc:`2324#id1`-<p><span', 'tests/test_markup.py::test_inline[verify_re-``code', 'tests/test_markup.py::test_inline[verify-:menuselection:`a', 'tests/test_markup.py::test_inline[verify-:menuselection:`&Foo', 'tests/test_markup.py::test_inline[verify-:guilabel:`&Foo', 'tests/test_markup.py::test_inline[verify-:guilabel:`Foo`-<p><span', 'tests/test_markup.py::test_inline[verify-:kbd:`space`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`Control+X`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`M-x', 'tests/test_markup.py::test_inline[verify_re-:option:`--with-option`-<p><code(', 'tests/test_markup.py::test_inline[verify-"John"-<p>\\u201cJohn\\u201d</p>-\\u201cJohn\\u201d]', 'tests/test_markup.py::test_inline[verify-``"John"``-<p><code', 'tests/test_markup.py::test_inline[verify-:manpage:`mp(1)`-<p><em', 'tests/test_markup.py::test_inline[verify-\\u0393\\\\\\\\\\u221e$-None-\\u0393\\\\textbackslash{}\\\\(\\\\infty\\\\)\\\\$]', 'tests/test_markup.py::test_inline[verify-::\\n\\n', 'tests/test_markup.py::test_inline[verify_re-`test', 'tests/test_markup.py::test_inline[verify-term\\n', 'tests/test_markup.py::test_inline[verify-term', 'tests/test_markup.py::test_inline[verify-..', 'tests/test_markup.py::test_inline_docutils16[verify-4', 'tests/test_markup.py::test_inline_for_unicode_latex_engine[verify-::\\n\\n', 'tests/test_markup.py::test_samp_role', 'tests/test_markup.py::test_download_role', 'tests/test_markup.py::test_XRefRole', 'tests/test_markup.py::test_rst_prolog', 'tests/test_markup.py::test_keep_warnings_is_True', 'tests/test_markup.py::test_keep_warnings_is_False', 'tests/test_markup.py::test_compact_refonly_bullet_list', 'tests/test_markup.py::test_default_role1', 'tests/test_markup.py::test_default_role2'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8621: resolved: True
+2026-11-10 18:16:46,200 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 18:17:02,256 - INFO - Container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_deepseek-harness_incr_R2028 stopped successfully.
+2026-11-10 18:17:02,256 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 18:17:02,300 - INFO - Container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_deepseek-harness_incr_R2028 removed successfully.

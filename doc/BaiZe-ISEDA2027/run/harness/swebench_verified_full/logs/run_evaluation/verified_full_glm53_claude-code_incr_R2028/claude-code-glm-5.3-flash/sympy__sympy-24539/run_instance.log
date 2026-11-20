@@ -1,0 +1,66 @@
+2026-11-10 14:24:23,370 - INFO - Creating container for sympy__sympy-24539...
+2026-11-10 14:24:23,400 - INFO - Container for sympy__sympy-24539 created: 8c05a277f4cff169913f85b39fca79fe084ce8455f4f645cd9cd8fb69cc8cb7f
+2026-11-10 14:24:24,593 - INFO - Container for sympy__sympy-24539 started: 8c05a277f4cff169913f85b39fca79fe084ce8455f4f645cd9cd8fb69cc8cb7f
+2026-11-10 14:24:24,595 - INFO - Intermediate patch for sympy__sympy-24539 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/sympy__sympy-24539/patch.diff, now applying to container...
+2026-11-10 14:24:24,686 - INFO - >>>>> Applied Patch:
+Checking patch sympy/polys/rings.py...
+Checking patch sympy/polys/tests/test_rings.py...
+Applied patch sympy/polys/rings.py cleanly.
+Applied patch sympy/polys/tests/test_rings.py cleanly.
+
+2026-11-10 14:24:25,364 - INFO - Git diff before:
+diff --git a/sympy/polys/rings.py b/sympy/polys/rings.py
+index 12bd2fc920..be6e35d06d 100644
+--- a/sympy/polys/rings.py
++++ b/sympy/polys/rings.py
+@@ -618,7 +618,7 @@ def set_ring(self, new_ring):
+     def as_expr(self, *symbols):
+         if symbols and len(symbols) != self.ring.ngens:
+             raise ValueError("not enough symbols, expected %s got %s" % (self.ring.ngens, len(symbols)))
+-        else:
++        elif not symbols:
+             symbols = self.ring.symbols
+ 
+         return expr_from_dict(self.as_expr_dict(), *symbols)
+diff --git a/sympy/polys/tests/test_rings.py b/sympy/polys/tests/test_rings.py
+index b3962136a3..7aad1aa0fd 100644
+--- a/sympy/polys/tests/test_rings.py
++++ b/sympy/polys/tests/test_rings.py
+@@ -265,6 +265,12 @@ def test_PolyElement_as_expr():
+     assert f != g
+     assert f.as_expr(X, Y, Z) == g
+ 
++    X, Y, Z = symbols("u,v,w")
++    g = 3*X**2*Y - X*Y*Z + 7*Z**3 + 1
++
++    assert f != g
++    assert f.as_expr(X, Y, Z) == g
++
+     raises(ValueError, lambda: f.as_expr(X))
+ 
+     R, = ring("", ZZ)
+2026-11-10 14:24:25,366 - INFO - Eval script for sympy__sympy-24539 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/sympy__sympy-24539/eval.sh; copying to container...
+2026-11-10 14:24:29,677 - INFO - Test runtime: 4.25 seconds
+2026-11-10 14:24:29,678 - INFO - Test output for sympy__sympy-24539 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/sympy__sympy-24539/test_output.txt
+2026-11-10 14:24:29,740 - INFO - Git diff after:
+diff --git a/sympy/polys/rings.py b/sympy/polys/rings.py
+index 12bd2fc920..be6e35d06d 100644
+--- a/sympy/polys/rings.py
++++ b/sympy/polys/rings.py
+@@ -618,7 +618,7 @@ def set_ring(self, new_ring):
+     def as_expr(self, *symbols):
+         if symbols and len(symbols) != self.ring.ngens:
+             raise ValueError("not enough symbols, expected %s got %s" % (self.ring.ngens, len(symbols)))
+-        else:
++        elif not symbols:
+             symbols = self.ring.symbols
+ 
+         return expr_from_dict(self.as_expr_dict(), *symbols)
+2026-11-10 14:24:29,740 - INFO - Git diff changed after running eval script
+2026-11-10 14:24:29,740 - INFO - Grading answer for sympy__sympy-24539...
+2026-11-10 14:24:29,741 - INFO - report: {'sympy__sympy-24539': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_PolyElement_as_expr'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_PolyRing___init__', 'test_PolyRing___hash__', 'test_PolyRing___eq__', 'test_PolyRing_ring_new', 'test_PolyRing_drop', 'test_PolyRing___getitem__', 'test_PolyRing_is_', 'test_PolyRing_add', 'test_PolyRing_mul', 'test_sring', 'test_PolyElement___hash__', 'test_PolyElement___eq__', 'test_PolyElement__lt_le_gt_ge__', 'test_PolyElement__str__', 'test_PolyElement_copy', 'test_PolyElement_from_expr', 'test_PolyElement_degree', 'test_PolyElement_tail_degree', 'test_PolyElement_degrees', 'test_PolyElement_tail_degrees', 'test_PolyElement_coeff', 'test_PolyElement_LC', 'test_PolyElement_LM', 'test_PolyElement_LT', 'test_PolyElement_leading_monom', 'test_PolyElement_leading_term', 'test_PolyElement_terms', 'test_PolyElement_monoms', 'test_PolyElement_coeffs', 'test_PolyElement___add__', 'test_PolyElement___sub__', 'test_PolyElement___mul__', 'test_PolyElement___truediv__', 'test_PolyElement___pow__', 'test_PolyElement_div', 'test_PolyElement_rem', 'test_PolyElement_deflate', 'test_PolyElement_clear_denoms', 'test_PolyElement_cofactors', 'test_PolyElement_gcd', 'test_PolyElement_cancel', 'test_PolyElement_max_norm', 'test_PolyElement_l1_norm', 'test_PolyElement_diff', 'test_PolyElement___call__', 'test_PolyElement_evaluate', 'test_PolyElement_subs', 'test_PolyElement_compose', 'test_PolyElement_is_', 'test_PolyElement_drop', 'test_PolyElement_pdiv', 'test_PolyElement_gcdex', 'test_PolyElement_subresultants', 'test_PolyElement_resultant', 'test_PolyElement_discriminant', 'test_PolyElement_decompose', 'test_PolyElement_shift', 'test_PolyElement_sturm', 'test_PolyElement_gff_list', 'test_PolyElement_sqf_norm', 'test_PolyElement_sqf_list', 'test_PolyElement_factor_list'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-24539: resolved: True
+2026-11-10 14:24:29,742 - INFO - Attempting to stop container sweb.eval.sympy__sympy-24539.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 14:24:46,232 - INFO - Container sweb.eval.sympy__sympy-24539.verified_full_glm53_claude-code_incr_R2028 stopped successfully.
+2026-11-10 14:24:46,232 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24539.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 14:24:46,272 - INFO - Container sweb.eval.sympy__sympy-24539.verified_full_glm53_claude-code_incr_R2028 removed successfully.

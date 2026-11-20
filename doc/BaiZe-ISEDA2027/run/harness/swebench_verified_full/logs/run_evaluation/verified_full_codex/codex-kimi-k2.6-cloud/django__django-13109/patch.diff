@@ -1,0 +1,70 @@
+diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py
+index d517d7269b..c2aea9c730 100644
+--- a/django/db/models/fields/related.py
++++ b/django/db/models/fields/related.py
+@@ -914,7 +914,7 @@ class ForeignKey(ForeignObject):
+             return
+ 
+         using = router.db_for_read(self.remote_field.model, instance=model_instance)
+-        qs = self.remote_field.model._default_manager.using(using).filter(
++        qs = self.remote_field.model._base_manager.using(using).filter(
+             **{self.remote_field.field_name: value}
+         )
+         qs = qs.complex_filter(self.get_limit_choices_to())
+diff --git a/tests/custom_managers/models.py b/tests/custom_managers/models.py
+index 14222bfaf3..b3a2a55622 100644
+--- a/tests/custom_managers/models.py
++++ b/tests/custom_managers/models.py
+@@ -217,3 +217,21 @@ class AbstractPerson(models.Model):
+ 
+ class PersonFromAbstract(AbstractPerson):
+     pass
++
++
++class RestrictedFKTarget(models.Model):
++    name = models.CharField(max_length=50)
++
++
++class RestrictedFKModel(models.Model):
++    name = models.CharField(max_length=50)
++    is_public = models.BooleanField(default=False)
++    target = models.ForeignKey(RestrictedFKTarget, models.CASCADE)
++
++    objects = RestrictedManager()
++    plain_manager = models.Manager()
++
++
++class ModelWithRestrictedFK(models.Model):
++    name = models.CharField(max_length=50)
++    restricted = models.ForeignKey(RestrictedFKModel, models.CASCADE)
+diff --git a/tests/custom_managers/tests.py b/tests/custom_managers/tests.py
+index 8e5ab1418f..c858bddb55 100644
+--- a/tests/custom_managers/tests.py
++++ b/tests/custom_managers/tests.py
+@@ -5,7 +5,7 @@ from .models import (
+     Book, Car, CustomManager, CustomQuerySet, DeconstructibleCustomManager,
+     FastCarAsBase, FastCarAsDefault, FunPerson, OneToOneRestrictedModel,
+     Person, PersonFromAbstract, PersonManager, PublishedBookManager,
+-    RelatedModel, RestrictedModel,
++    ModelWithRestrictedFK, RelatedModel, RestrictedFKModel, RestrictedFKTarget, RestrictedModel,
+ )
+ 
+ 
+@@ -669,3 +669,17 @@ class CustomManagersRegressTestCase(TestCase):
+         qs_custom = Person.custom_init_queryset_manager.all()
+         qs_default = Person.objects.all()
+         self.assertQuerysetEqual(qs_custom, qs_default)
++
++    def test_foreign_key_validate_uses_base_manager(self):
++        """
++        ForeignKey.validate() should use the base manager so that forms
++        which override the queryset to include hidden instances can still
++        validate.
++        """
++        target = RestrictedFKTarget.objects.create(name="target")
++        hidden = RestrictedFKModel.plain_manager.create(
++            name="hidden", is_public=False, target=target,
++        )
++        fk_field = ModelWithRestrictedFK._meta.get_field("restricted")
++        # Validation should succeed because _base_manager sees all instances.
++        self.assertIsNone(fk_field.validate(hidden.pk, None))

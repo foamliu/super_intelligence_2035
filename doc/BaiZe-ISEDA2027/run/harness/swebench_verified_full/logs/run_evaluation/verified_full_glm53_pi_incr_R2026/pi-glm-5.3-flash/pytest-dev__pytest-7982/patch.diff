@@ -1,0 +1,65 @@
+diff --git a/changelog/8016.bugfix.rst b/changelog/8016.bugfix.rst
+new file mode 100644
+index 0000000..9826e21
+--- /dev/null
++++ b/changelog/8016.bugfix.rst
+@@ -0,0 +1 @@
++Fixed symlinked directories not being collected, a regression in pytest 6.1.0.
+diff --git a/src/_pytest/assertion/rewrite.py b/src/_pytest/assertion/rewrite.py
+index 6497267..360b199 100644
+--- a/src/_pytest/assertion/rewrite.py
++++ b/src/_pytest/assertion/rewrite.py
+@@ -349,6 +349,7 @@ def _rewrite_test(fn: Path, config: Config) -> Tuple[os.stat_result, types.CodeT
+         source = f.read()
+     tree = ast.parse(source, filename=fn_)
+     rewrite_asserts(tree, source, fn_, config)
++    ast.fix_missing_locations(tree)  # TEMP-COMPAT
+     co = compile(tree, fn_, "exec", dont_inherit=True)
+     return stat, co
+ 
+diff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py
+index f0bdb14..b96cba0 100644
+--- a/src/_pytest/pathlib.py
++++ b/src/_pytest/pathlib.py
+@@ -558,7 +558,7 @@ def visit(
+     entries = sorted(os.scandir(path), key=lambda entry: entry.name)
+     yield from entries
+     for entry in entries:
+-        if entry.is_dir(follow_symlinks=False) and recurse(entry):
++        if entry.is_dir() and recurse(entry):
+             yield from visit(entry.path, recurse)
+ 
+ 
+diff --git a/testing/test_collection.py b/testing/test_collection.py
+index 841aa35..64b0c67 100644
+--- a/testing/test_collection.py
++++ b/testing/test_collection.py
+@@ -1178,6 +1178,28 @@ def test_collect_symlink_out_of_tree(testdir):
+     assert result.ret == 0
+ 
+ 
++def test_collect_symlinked_dir(testdir):
++    """Ensure that a symlinked directory is collected (#8016)."""
++    real = testdir.tmpdir.join("real")
++    real.ensure(dir=True)
++    real.join("test_real.py").write(
++        textwrap.dedent(
++            """
++            def test_nodeid(request):
++                # Should contain the symlink name, not the real path.
++                assert request.node.nodeid == "symlink/test_real.py::test_nodeid"
++            """
++        )
++    )
++
++    symlink = testdir.tmpdir.join("symlink")
++    symlink_or_skip(real, symlink)
++    # Collect the parent directory, so the symlink is encountered as an entry.
++    result = testdir.runpytest("-v")
++    result.stdout.fnmatch_lines(["symlink/test_real.py::test_nodeid PASSED*"])
++    assert result.ret == 0
++
++
+ def test_collectignore_via_conftest(testdir):
+     """collect_ignore in parent conftest skips importing child (issue #4592)."""
+     tests = testdir.mkpydir("tests")

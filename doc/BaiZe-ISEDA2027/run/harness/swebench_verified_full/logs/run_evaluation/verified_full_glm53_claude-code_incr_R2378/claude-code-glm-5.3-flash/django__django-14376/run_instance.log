@@ -1,0 +1,115 @@
+2026-11-13 15:22:48,011 - INFO - Creating container for django__django-14376...
+2026-11-13 15:22:48,030 - INFO - Container for django__django-14376 created: 460153218aa8e448e453485f68d6324d67a6a887f9d177157f8e2066ec5a1398
+2026-11-13 15:22:48,972 - INFO - Container for django__django-14376 started: 460153218aa8e448e453485f68d6324d67a6a887f9d177157f8e2066ec5a1398
+2026-11-13 15:22:48,974 - INFO - Intermediate patch for django__django-14376 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2378/claude-code-glm-5.3-flash/django__django-14376/patch.diff, now applying to container...
+2026-11-13 15:22:49,140 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/mysql/base.py...
+Checking patch django/db/backends/mysql/client.py...
+Checking patch tests/dbshell/test_mysql.py...
+Applied patch django/db/backends/mysql/base.py cleanly.
+Applied patch django/db/backends/mysql/client.py cleanly.
+Applied patch tests/dbshell/test_mysql.py cleanly.
+
+2026-11-13 15:22:50,652 - INFO - Git diff before:
+diff --git a/django/db/backends/mysql/base.py b/django/db/backends/mysql/base.py
+index 2c62182d31..8b28a60485 100644
+--- a/django/db/backends/mysql/base.py
++++ b/django/db/backends/mysql/base.py
+@@ -200,9 +200,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+         if settings_dict['USER']:
+             kwargs['user'] = settings_dict['USER']
+         if settings_dict['NAME']:
+-            kwargs['db'] = settings_dict['NAME']
++            kwargs['database'] = settings_dict['NAME']
+         if settings_dict['PASSWORD']:
+-            kwargs['passwd'] = settings_dict['PASSWORD']
++            kwargs['password'] = settings_dict['PASSWORD']
+         if settings_dict['HOST'].startswith('/'):
+             kwargs['unix_socket'] = settings_dict['HOST']
+         elif settings_dict['HOST']:
+diff --git a/django/db/backends/mysql/client.py b/django/db/backends/mysql/client.py
+index 95442a32b0..eb8b8c7cd5 100644
+--- a/django/db/backends/mysql/client.py
++++ b/django/db/backends/mysql/client.py
+@@ -8,11 +8,14 @@ class DatabaseClient(BaseDatabaseClient):
+     def settings_to_cmd_args_env(cls, settings_dict, parameters):
+         args = [cls.executable_name]
+         env = None
+-        db = settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
++        db = settings_dict['OPTIONS'].get(
++            'database',
++            settings_dict['OPTIONS'].get('db', settings_dict['NAME']),
++        )
+         user = settings_dict['OPTIONS'].get('user', settings_dict['USER'])
+         password = settings_dict['OPTIONS'].get(
+             'password',
+-            settings_dict['OPTIONS'].get('passwd', settings_dict['PASSWORD'])
++            settings_dict['OPTIONS'].get('passwd', settings_dict['PASSWORD']),
+         )
+         host = settings_dict['OPTIONS'].get('host', settings_dict['HOST'])
+         port = settings_dict['OPTIONS'].get('port', settings_dict['PORT'])
+diff --git a/tests/dbshell/test_mysql.py b/tests/dbshell/test_mysql.py
+index c3ecc6503b..1b7b72eb60 100644
+--- a/tests/dbshell/test_mysql.py
++++ b/tests/dbshell/test_mysql.py
+@@ -58,9 +58,9 @@ class MySqlDbshellCommandTestCase(SimpleTestCase):
+                 'HOST': 'settinghost',
+                 'PORT': settings_port,
+                 'OPTIONS': {
+-                    'db': 'optiondbname',
++                    'database': 'optiondbname',
+                     'user': 'optionuser',
+-                    'passwd': 'optionpassword',
++                    'password': 'optionpassword',
+                     'host': 'optionhost',
+                     'port': options_port,
+                 },
+2026-11-13 15:22:50,655 - INFO - Eval script for django__django-14376 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2378/claude-code-glm-5.3-flash/django__django-14376/eval.sh; copying to container...
+2026-11-13 15:22:57,989 - INFO - Test runtime: 7.27 seconds
+2026-11-13 15:22:57,992 - INFO - Test output for django__django-14376 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2378/claude-code-glm-5.3-flash/django__django-14376/test_output.txt
+2026-11-13 15:22:58,069 - INFO - Git diff after:
+diff --git a/django/db/backends/mysql/base.py b/django/db/backends/mysql/base.py
+index 2c62182d31..8b28a60485 100644
+--- a/django/db/backends/mysql/base.py
++++ b/django/db/backends/mysql/base.py
+@@ -200,9 +200,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+         if settings_dict['USER']:
+             kwargs['user'] = settings_dict['USER']
+         if settings_dict['NAME']:
+-            kwargs['db'] = settings_dict['NAME']
++            kwargs['database'] = settings_dict['NAME']
+         if settings_dict['PASSWORD']:
+-            kwargs['passwd'] = settings_dict['PASSWORD']
++            kwargs['password'] = settings_dict['PASSWORD']
+         if settings_dict['HOST'].startswith('/'):
+             kwargs['unix_socket'] = settings_dict['HOST']
+         elif settings_dict['HOST']:
+diff --git a/django/db/backends/mysql/client.py b/django/db/backends/mysql/client.py
+index 95442a32b0..eb8b8c7cd5 100644
+--- a/django/db/backends/mysql/client.py
++++ b/django/db/backends/mysql/client.py
+@@ -8,11 +8,14 @@ class DatabaseClient(BaseDatabaseClient):
+     def settings_to_cmd_args_env(cls, settings_dict, parameters):
+         args = [cls.executable_name]
+         env = None
+-        db = settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
++        db = settings_dict['OPTIONS'].get(
++            'database',
++            settings_dict['OPTIONS'].get('db', settings_dict['NAME']),
++        )
+         user = settings_dict['OPTIONS'].get('user', settings_dict['USER'])
+         password = settings_dict['OPTIONS'].get(
+             'password',
+-            settings_dict['OPTIONS'].get('passwd', settings_dict['PASSWORD'])
++            settings_dict['OPTIONS'].get('passwd', settings_dict['PASSWORD']),
+         )
+         host = settings_dict['OPTIONS'].get('host', settings_dict['HOST'])
+         port = settings_dict['OPTIONS'].get('port', settings_dict['PORT'])
+2026-11-13 15:22:58,069 - INFO - Git diff changed after running eval script
+2026-11-13 15:22:58,069 - INFO - Grading answer for django__django-14376...
+2026-11-13 15:22:58,072 - INFO - report: {'django__django-14376': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_options_non_deprecated_keys_preferred (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_options_override_settings_proper_values (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_parameters (dbshell.test_mysql.MySqlDbshellCommandTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_basic_params_specified_in_settings (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_can_connect_using_sockets (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_crash_password_does_not_leak (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_fails_with_keyerror_on_incomplete_config (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_options_charset (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_ssl_certificate_is_added (dbshell.test_mysql.MySqlDbshellCommandTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14376: resolved: True
+2026-11-13 15:22:58,074 - INFO - Attempting to stop container sweb.eval.django__django-14376.verified_full_glm53_claude-code_incr_R2378...
+2026-11-13 15:23:14,112 - INFO - Container sweb.eval.django__django-14376.verified_full_glm53_claude-code_incr_R2378 stopped successfully.
+2026-11-13 15:23:14,112 - INFO - Attempting to remove container sweb.eval.django__django-14376.verified_full_glm53_claude-code_incr_R2378...
+2026-11-13 15:23:14,156 - INFO - Container sweb.eval.django__django-14376.verified_full_glm53_claude-code_incr_R2378 removed successfully.

@@ -1,0 +1,73 @@
+diff --git a/astropy/wcs/wcsapi/wrappers/sliced_wcs.py b/astropy/wcs/wcsapi/wrappers/sliced_wcs.py
+index d7605b0..1a4080a 100644
+--- a/astropy/wcs/wcsapi/wrappers/sliced_wcs.py
++++ b/astropy/wcs/wcsapi/wrappers/sliced_wcs.py
+@@ -246,12 +246,15 @@ class SlicedLowLevelWCS(BaseWCSWrapper):
+         world_arrays = tuple(map(np.asanyarray, world_arrays))
+         world_arrays_new = []
+         iworld_curr = -1
++        dropped_values = self.dropped_world_dimensions.get('value', [])
++        i_dropped = 0
+         for iworld in range(self._wcs.world_n_dim):
+             if iworld in self._world_keep:
+                 iworld_curr += 1
+                 world_arrays_new.append(world_arrays[iworld_curr])
+             else:
+-                world_arrays_new.append(1.)
++                world_arrays_new.append(dropped_values[i_dropped])
++                i_dropped += 1
+ 
+         world_arrays_new = np.broadcast_arrays(*world_arrays_new)
+         pixel_arrays = list(self._wcs.world_to_pixel_values(*world_arrays_new))
+diff --git a/astropy/wcs/wcsapi/wrappers/tests/test_sliced_wcs.py b/astropy/wcs/wcsapi/wrappers/tests/test_sliced_wcs.py
+index a354114..e2d6c35 100644
+--- a/astropy/wcs/wcsapi/wrappers/tests/test_sliced_wcs.py
++++ b/astropy/wcs/wcsapi/wrappers/tests/test_sliced_wcs.py
+@@ -899,3 +899,47 @@ def test_pixel_to_world_values_different_int_types():
+     for int_coord, np64_coord in zip(int_sliced.pixel_to_world_values(*pixel_arrays),
+                                      np64_sliced.pixel_to_world_values(*pixel_arrays)):
+         assert all(int_coord == np64_coord)
++
++
++def test_sliced_wcs_coupled_world_to_pixel():
++    # Regression test for issue where world_to_pixel_values on a SlicedLowLevelWCS
++    # returned incorrect results when the dropped world dimension was coupled to
++    # a kept pixel dimension via the PC matrix.
++    header = {
++        'WCSAXES': 3,
++        'CRPIX1': 50.5,
++        'CRPIX2': 13.0,
++        'CRPIX3': 1.0,
++        'PC1_1': 0.0,
++        'PC1_2': -1.0,
++        'PC1_3': 0.0,
++        'PC2_1': 1.0,
++        'PC2_2': 0.0,
++        'PC2_3': -1.0,
++        'CDELT1': 5,
++        'CDELT2': 5,
++        'CDELT3': 0.055,
++        'CUNIT1': 'arcsec',
++        'CUNIT2': 'arcsec',
++        'CUNIT3': 'Angstrom',
++        'CTYPE1': 'HPLN-TAN',
++        'CTYPE2': 'HPLT-TAN',
++        'CTYPE3': 'WAVE',
++        'CRVAL1': 0.0,
++        'CRVAL2': 0.0,
++        'CRVAL3': 1.05,
++    }
++    wcs = WCS(header=header)
++    sliced_wcs = SlicedLowLevelWCS(wcs, 0)
++
++    # pixel_to_world_values at the central spatial pixel and first spectral slice
++    world = sliced_wcs.pixel_to_world_values(49.5, 12.0)
++    assert_allclose(world, (0.0, 0.0), atol=1e-10)
++
++    # world_to_pixel_values should round-trip correctly
++    pixel = sliced_wcs.world_to_pixel_values(*world)
++    assert_allclose(pixel, (49.5, 12.0), atol=1e-10)
++
++    # Also check that the result matches the full WCS for the kept dimensions
++    full_pixel = wcs.world_to_pixel_values(*world, 1.05e-10)
++    assert_allclose(pixel, full_pixel[:2], atol=1e-10)

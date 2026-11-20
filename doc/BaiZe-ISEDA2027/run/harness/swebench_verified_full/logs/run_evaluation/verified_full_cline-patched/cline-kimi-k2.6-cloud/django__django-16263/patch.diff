@@ -1,0 +1,240 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 9735ce10c..876539540 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -550,9 +550,104 @@ class Query(BaseExpression):
+         Perform a COUNT() query using the current filter constraints.
+         """
+         obj = self.clone()
++        obj.strip_unused_annotations()
+         obj.add_annotation(Count("*"), alias="__count", is_summary=True)
+         return obj.get_aggregation(using, ["__count"])["__count"]
+ 
++    def strip_unused_annotations(self):
++        """
++        Remove annotations that are not referenced by filters, other
++        annotations, or ordering.
++        """
++        if not self.annotations:
++            return
++
++        used_annotations = set()
++
++        # Collect annotations referenced by the WHERE clause.
++        if self.where:
++            used_annotations.update(
++                self._get_annotation_refs_from_expression(self.where)
++            )
++
++        # Collect annotations referenced by ORDER BY.
++        for item in self.order_by:
++            if isinstance(item, str):
++                if item.startswith("-"):
++                    item = item[1:]
++                if item in self.annotations:
++                    used_annotations.add(item)
++            elif hasattr(item, "get_source_expressions"):
++                used_annotations.update(
++                    self._get_annotation_refs_from_expression(item)
++                )
++
++        # Collect annotations referenced by GROUP BY.
++        if isinstance(self.group_by, tuple):
++            for item in self.group_by:
++                used_annotations.update(
++                    self._get_annotation_refs_from_expression(item)
++                )
++
++        # Transitively include annotations referenced by kept annotations.
++        to_process = list(used_annotations)
++        while to_process:
++            alias = to_process.pop()
++            if alias not in self.annotations:
++                continue
++            annotation = self.annotations[alias]
++            refs = self._get_annotation_refs_from_expression(annotation)
++            for ref in refs:
++                if ref not in used_annotations and ref in self.annotations:
++                    used_annotations.add(ref)
++                    to_process.append(ref)
++
++        # Remove unused annotations.
++        for alias in list(self.annotations):
++            if alias not in used_annotations:
++                del self.annotations[alias]
++
++        # Update annotation_select_mask if set.
++        if self.annotation_select_mask is not None:
++            self.annotation_select_mask.intersection_update(used_annotations)
++            self._annotation_select_cache = None
++
++    def _get_annotation_refs_from_expression(self, expr, seen=None):
++        """
++        Return a set of annotation aliases referenced by the given expression.
++        """
++        if seen is None:
++            seen = set()
++        expr_id = id(expr)
++        if expr_id in seen:
++            return set()
++        seen.add(expr_id)
++
++        refs = set()
++        # Check if expr IS an annotation.
++        for alias, annotation in self.annotations.items():
++            if expr is annotation:
++                refs.add(alias)
++
++        if isinstance(expr, Ref):
++            refs.add(expr.refs)
++        elif isinstance(expr, F):
++            if expr.name in self.annotations:
++                refs.add(expr.name)
++        elif hasattr(expr, "get_source_expressions"):
++            for source in expr.get_source_expressions():
++                if source is not None:
++                    refs.update(
++                        self._get_annotation_refs_from_expression(source, seen)
++                    )
++        elif isinstance(expr, (tuple, list)):
++            for item in expr:
++                refs.update(
++                    self._get_annotation_refs_from_expression(item, seen)
++                )
++
++        return refs
++
+     def has_filters(self):
+         return self.where
+ 
+diff --git a/tests/annotations/tests.py b/tests/annotations/tests.py
+index d05af552b..4f3549fac 100644
+--- a/tests/annotations/tests.py
++++ b/tests/annotations/tests.py
+@@ -1410,3 +1410,99 @@ class AliasTests(TestCase):
+         )
+         with self.assertRaisesMessage(ValueError, msg):
+             Book.objects.alias(**{crafted_alias: Value(1)})
++class AnnotationCountTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.a1 = Author.objects.create(name="Adrian Holovaty", age=34)
++        cls.a2 = Author.objects.create(name="Jacob Kaplan-Moss", age=35)
++        cls.b1 = Book.objects.create(
++            isbn="159059725",
++            pages=447,
++            rating=4.5,
++            price=Decimal("30.00"),
++            contact=cls.a1,
++            publisher=Publisher.objects.create(name="Apress", num_awards=3),
++            pubdate="2007-12-01",
++        )
++        cls.b1.authors.add(cls.a1, cls.a2)
++
++    def test_count_strips_unused_annotations(self):
++        """
++        count() should strip unused annotations to avoid unnecessary
++        subqueries / GROUP BY clauses.
++        """
++        qs = Book.objects.annotate(num_authors=Count("authors"))
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_keeps_annotations_used_in_filter(self):
++        """
++        count() should keep annotations that are referenced by filters.
++        """
++        qs = Book.objects.annotate(num_authors=Count("authors")).filter(
++            num_authors__gte=1
++        )
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_keeps_annotations_used_in_order_by(self):
++        """
++        count() should keep annotations that are referenced by ordering.
++        """
++        qs = Book.objects.annotate(num_authors=Count("authors")).order_by(
++            "num_authors"
++        )
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_keeps_annotations_used_in_order_by_desc(self):
++        qs = Book.objects.annotate(num_authors=Count("authors")).order_by(
++            "-num_authors"
++        )
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_keeps_annotations_used_in_expression_order_by(self):
++        qs = Book.objects.annotate(num_authors=Count("authors")).order_by(
++            F("num_authors")
++        )
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_keeps_transitively_referenced_annotations(self):
++        """
++        count() should keep annotations referenced by other kept annotations.
++        """
++        qs = Book.objects.annotate(
++            num_authors=Count("authors"),
++            double_num_authors=F("num_authors") * 2,
++        ).filter(double_num_authors__gte=2)
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_strips_unused_with_distinct(self):
++        qs = Book.objects.annotate(num_authors=Count("authors")).distinct()
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_strips_unused_with_used_annotation(self):
++        """
++        count() should strip unused annotations even when other annotations
++        are used in filters.
++        """
++        qs = Book.objects.annotate(
++            num_authors=Count("authors"),
++            total_pages=F("pages"),
++        ).filter(total_pages__gte=400)
++        self.assertEqual(qs.count(), 1)
++
++    def test_count_strips_unused_annotations_sql(self):
++        """
++        count() should not include unused annotations in the generated SQL.
++        """
++        from django.db import connection
++        from django.test.utils import CaptureQueriesContext
++
++        with CaptureQueriesContext(connection) as captured_queries:
++            Book.objects.annotate(num_authors=Count("authors")).count()
++        self.assertEqual(len(captured_queries), 1)
++        sql = captured_queries[0]["sql"]
++        # The unused annotation should not appear in the SQL.
++        self.assertNotIn("num_authors", sql)
++
++    def test_count_strips_unused_with_slice(self):
++        qs = Book.objects.annotate(num_authors=Count("authors"))[:1]
++        self.assertEqual(qs.count(), 1)
+diff --git a/tests/runtests.py b/tests/runtests.py
+index b67898839..1179373e0 100755
+--- a/tests/runtests.py
++++ b/tests/runtests.py
+@@ -28,10 +28,18 @@ else:
+     from django.test.runner import get_max_test_processes, parallel_type
+     from django.test.selenium import SeleniumTestCaseBase
+     from django.test.utils import NullTimeKeeper, TimeKeeper, get_runner
+-    from django.utils.deprecation import (
+-        RemovedInDjango50Warning,
+-        RemovedInDjango51Warning,
+-    )
++    try:
++        from django.utils.deprecation import (
++            RemovedInDjango50Warning,
++            RemovedInDjango51Warning,
++        )
++    except ImportError:
++        class RemovedInDjango50Warning(PendingDeprecationWarning):
++            pass
++
++        class RemovedInDjango51Warning(PendingDeprecationWarning):
++            pass
++
+     from django.utils.log import DEFAULT_LOGGING
+ 
+ try:

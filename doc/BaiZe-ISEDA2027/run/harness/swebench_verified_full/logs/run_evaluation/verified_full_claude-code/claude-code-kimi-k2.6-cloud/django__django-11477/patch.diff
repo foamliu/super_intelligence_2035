@@ -1,0 +1,91 @@
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..d1598cd6e1 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -172,7 +172,8 @@ def translate_url(url, lang_code):
+         to_be_reversed = "%s:%s" % (match.namespace, match.url_name) if match.namespace else match.url_name
+         with override(lang_code):
+             try:
+-                url = reverse(to_be_reversed, args=match.args, kwargs=match.kwargs)
++                kwargs = {k: v for k, v in match.kwargs.items() if v is not None}
++                url = reverse(to_be_reversed, args=match.args, kwargs=kwargs)
+             except NoReverseMatch:
+                 pass
+             else:
+diff --git a/tests/i18n/patterns/locale/en/LC_MESSAGES/django.mo b/tests/i18n/patterns/locale/en/LC_MESSAGES/django.mo
+index ec7644b504..741a21f332 100644
+Binary files a/tests/i18n/patterns/locale/en/LC_MESSAGES/django.mo and b/tests/i18n/patterns/locale/en/LC_MESSAGES/django.mo differ
+diff --git a/tests/i18n/patterns/locale/en/LC_MESSAGES/django.po b/tests/i18n/patterns/locale/en/LC_MESSAGES/django.po
+index 9a14a80ceb..8c2681b6f5 100644
+--- a/tests/i18n/patterns/locale/en/LC_MESSAGES/django.po
++++ b/tests/i18n/patterns/locale/en/LC_MESSAGES/django.po
+@@ -32,6 +32,10 @@ msgstr "^users/$"
+ msgid "^account/"
+ msgstr "^account/"
+ 
++#: urls/default.py:20
++msgid "^optional/(?P<arg1>[\\w-]+)/(?:(?P<arg2>[\\w-]+)/)?$"
++msgstr "^optional/(?P<arg1>[\\w-]+)/(?:(?P<arg2>[\\w-]+)/)?$"
++
+ #: urls/namespace.py:9 urls/wrong_namespace.py:10
+ msgid "^register/$"
+ msgstr "^register/$"
+diff --git a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo
+index 5eac50466c..ab8ec73ba6 100644
+Binary files a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo and b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo differ
+diff --git a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
+index a938e3371d..9ba17a6e8c 100644
+--- a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
++++ b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
+@@ -33,6 +33,10 @@ msgstr "^gebruikers/$"
+ msgid "^account/"
+ msgstr "^profiel/"
+ 
++#: urls/default.py:20
++msgid "^optional/(?P<arg1>[\\w-]+)/(?:(?P<arg2>[\\w-]+)/)?$"
++msgstr "^optioneel/(?P<arg1>[\\w-]+)/(?:(?P<arg2>[\\w-]+)/)?$"
++
+ #: urls/namespace.py:9 urls/wrong_namespace.py:10
+ msgid "^register/$"
+ msgstr "^registreren/$"
+diff --git a/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.mo b/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.mo
+index 1d7b346c27..deb3211715 100644
+Binary files a/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.mo and b/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.mo differ
+diff --git a/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.po b/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.po
+index fd3388e4b0..5328aa8b64 100644
+--- a/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.po
++++ b/tests/i18n/patterns/locale/pt_BR/LC_MESSAGES/django.po
+@@ -33,6 +33,10 @@ msgstr "^usuarios/$"
+ msgid "^account/"
+ msgstr "^conta/"
+ 
++#: urls/default.py:20
++msgid "^optional/(?P<arg1>[\\w-]+)/(?:(?P<arg2>[\\w-]+)/)?$"
++msgstr "^opcional/(?P<arg1>[\\w-]+)/(?:(?P<arg2>[\\w-]+)/)?$"
++
+ #: urls/namespace.py:9 urls/wrong_namespace.py:10
+ msgid "^register/$"
+ msgstr "^registre-se/$"
+diff --git a/tests/i18n/patterns/tests.py b/tests/i18n/patterns/tests.py
+index 6ed2c4ffeb..0d0eafca71 100644
+--- a/tests/i18n/patterns/tests.py
++++ b/tests/i18n/patterns/tests.py
+@@ -157,6 +157,8 @@ class URLTranslationTests(URLTestCaseBase):
+             self.assertEqual(translate_url('/en/account/register/', 'nl'), '/nl/profiel/registreren/')
+             # path() URL pattern
+             self.assertEqual(translate_url('/en/account/register-as-path/', 'nl'), '/nl/profiel/registreren-als-pad/')
++            # Optional named groups (missing arg2)
++            self.assertEqual(translate_url('/en/optional/foo/', 'nl'), '/nl/optioneel/foo/')
+             self.assertEqual(translation.get_language(), 'en')
+ 
+         with translation.override('nl'):
+diff --git a/tests/i18n/patterns/urls/default.py b/tests/i18n/patterns/urls/default.py
+index b0c2f2585e..9525d24118 100644
+--- a/tests/i18n/patterns/urls/default.py
++++ b/tests/i18n/patterns/urls/default.py
+@@ -17,4 +17,5 @@ urlpatterns += i18n_patterns(
+     path('prefixed.xml', view, name='prefixed_xml'),
+     re_path(_(r'^users/$'), view, name='users'),
+     re_path(_(r'^account/'), include('i18n.patterns.urls.namespace', namespace='account')),
++    re_path(_(r'^optional/(?P<arg1>[\w-]+)/(?:(?P<arg2>[\w-]+)/)?$'), view, name='optional'),
+ )

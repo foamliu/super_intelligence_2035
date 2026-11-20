@@ -1,0 +1,10 @@
+diff --git a/index.rst b/index.rst
+new file mode 100644
+index 000000000..12f1007a3
+--- /dev/null
++++ b/index.rst
+@@ -0,0 +1,4 @@
++Demo
++====
++
++.. inheritance-diagram:: my_package.my_class_1 my_package.my_class_2

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-18763",
+    "model_name_or_path": "pi-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py\nindex 8743723e..58d9b2a2 100644\n--- a/sympy/printing/latex.py\n+++ b/sympy/printing/latex.py\n@@ -698,7 +698,8 @@ def _print_Derivative(self, expr):\n \n     def _print_Subs(self, subs):\n         expr, old, new = subs.args\n-        latex_expr = self._print(expr)\n+        latex_expr = self.parenthesize(expr, PRECEDENCE[\"Mul\"],\n+                                       strict=True)\n         latex_old = (self._print(e) for e in old)\n         latex_new = (self._print(e) for e in new)\n         latex_subs = r'\\\\ '.join(\ndiff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py\nindex 3d387cf0..6ec95f4e 100644\n--- a/sympy/printing/tests/test_latex.py\n+++ b/sympy/printing/tests/test_latex.py\n@@ -675,6 +675,8 @@ def test_latex_derivatives():\n def test_latex_subs():\n     assert latex(Subs(x*y, (\n         x, y), (1, 2))) == r'\\left. x y \\right|_{\\substack{ x=1\\\\ y=2 }}'\n+    assert latex(3*Subs(-x + y, (x,), (1,))) == \\\n+        r'3 \\left. \\left(- x + y\\right) \\right|_{\\substack{ x=1 }}'\n \n \n def test_latex_integrals():\n"
+  }
+]

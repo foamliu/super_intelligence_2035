@@ -1,0 +1,45 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 00000000..91759554
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,20 @@
++import numpy as np
++import warnings
++warnings.filterwarnings('ignore')
++if not hasattr(np, 'int'):
++    np.int = int
++if not hasattr(np, 'float'):
++    np.float = float
++if not hasattr(np, 'bool'):
++    np.bool = bool
++if not hasattr(np, 'object'):
++    np.object = object
++if not hasattr(np, 'complex'):
++    np.complex = complex
++import scipy.optimize.linesearch
++if not hasattr(scipy.optimize.linesearch, 'line_search_wolfe2'):
++    from scipy.optimize._linesearch import line_search_wolfe2
++    scipy.optimize.linesearch.line_search_wolfe2 = line_search_wolfe2
++if not hasattr(scipy.optimize.linesearch, 'line_search_wolfe1'):
++    from scipy.optimize._linesearch import line_search_wolfe1
++    scipy.optimize.linesearch.line_search_wolfe1 = line_search_wolfe1
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e59..831c0a67 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,9 +890,12 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED else None
++                          for i in tree_.feature]
+     else:
+-        feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
++        feature_names_ = ["feature_{}".format(i) if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+ 
+     export_text.report = ""
+ 

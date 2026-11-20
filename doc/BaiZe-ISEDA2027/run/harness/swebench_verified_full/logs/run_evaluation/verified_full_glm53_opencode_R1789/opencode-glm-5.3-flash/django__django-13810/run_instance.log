@@ -1,0 +1,109 @@
+2026-11-07 21:15:53,654 - INFO - Creating container for django__django-13810...
+2026-11-07 21:15:53,685 - INFO - Container for django__django-13810 created: 8f2f62a1d4dcf77856dc688053c93e335da2fb1cacf4b2835426766eea5eca5d
+2026-11-07 21:15:54,636 - INFO - Container for django__django-13810 started: 8f2f62a1d4dcf77856dc688053c93e335da2fb1cacf4b2835426766eea5eca5d
+2026-11-07 21:15:54,638 - INFO - Intermediate patch for django__django-13810 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-13810/patch.diff, now applying to container...
+2026-11-07 21:15:54,757 - INFO - >>>>> Applied Patch:
+Checking patch django/core/handlers/base.py...
+Checking patch docs/releases/3.2.txt...
+Checking patch tests/middleware_exceptions/tests.py...
+Applied patch django/core/handlers/base.py cleanly.
+Applied patch docs/releases/3.2.txt cleanly.
+Applied patch tests/middleware_exceptions/tests.py cleanly.
+
+2026-11-07 21:15:56,211 - INFO - Git diff before:
+diff --git a/django/core/handlers/base.py b/django/core/handlers/base.py
+index 8e8c3da06a..be8a114eb1 100644
+--- a/django/core/handlers/base.py
++++ b/django/core/handlers/base.py
+@@ -51,11 +51,11 @@ class BaseHandler:
+                 middleware_is_async = middleware_can_async
+             try:
+                 # Adapt handler, if needed.
+-                handler = self.adapt_method_mode(
++                adapted_handler = self.adapt_method_mode(
+                     middleware_is_async, handler, handler_is_async,
+                     debug=settings.DEBUG, name='middleware %s' % middleware_path,
+                 )
+-                mw_instance = middleware(handler)
++                mw_instance = middleware(adapted_handler)
+             except MiddlewareNotUsed as exc:
+                 if settings.DEBUG:
+                     if str(exc):
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index 8cd77ffad0..d4769851c5 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -724,3 +724,9 @@ Miscellaneous
+   deprecated as ``python-memcached`` has some problems and seems to be
+   unmaintained. Use ``django.core.cache.backends.memcached.PyMemcacheCache``
+   or ``django.core.cache.backends.memcached.PyLibMCCache`` instead.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.1 where ``MiddlewareNotUsed`` leaves undesired side
++  effects when loading middleware in ASGI context (:ticket:`32249`).
+diff --git a/tests/middleware_exceptions/tests.py b/tests/middleware_exceptions/tests.py
+index 8b019ba524..313b827b0d 100644
+--- a/tests/middleware_exceptions/tests.py
++++ b/tests/middleware_exceptions/tests.py
+@@ -282,6 +282,15 @@ class MiddlewareSyncAsyncTests(SimpleTestCase):
+         self.assertEqual(response.content, b'OK')
+         self.assertEqual(response.status_code, 200)
+ 
++    @override_settings(MIDDLEWARE=[
++        'middleware_exceptions.middleware.SyncAndAsyncMiddleware',
++        'middleware_exceptions.tests.MyMiddleware',
++        'middleware_exceptions.middleware.SyncAndAsyncMiddleware',
++    ])
++    async def test_middleware_not_used_is_not_a_side_effect(self):
++        response = await self.async_client.get('/middleware_exceptions/view/')
++        self.assertEqual(response.content, b'OK')
++
+ 
+ @override_settings(ROOT_URLCONF='middleware_exceptions.urls')
+ class AsyncMiddlewareTests(SimpleTestCase):
+2026-11-07 21:15:56,213 - INFO - Eval script for django__django-13810 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-13810/eval.sh; copying to container...
+2026-11-07 21:16:02,480 - INFO - Test runtime: 6.19 seconds
+2026-11-07 21:16:02,482 - INFO - Test output for django__django-13810 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-13810/test_output.txt
+2026-11-07 21:16:02,558 - INFO - Git diff after:
+diff --git a/django/core/handlers/base.py b/django/core/handlers/base.py
+index 8e8c3da06a..be8a114eb1 100644
+--- a/django/core/handlers/base.py
++++ b/django/core/handlers/base.py
+@@ -51,11 +51,11 @@ class BaseHandler:
+                 middleware_is_async = middleware_can_async
+             try:
+                 # Adapt handler, if needed.
+-                handler = self.adapt_method_mode(
++                adapted_handler = self.adapt_method_mode(
+                     middleware_is_async, handler, handler_is_async,
+                     debug=settings.DEBUG, name='middleware %s' % middleware_path,
+                 )
+-                mw_instance = middleware(handler)
++                mw_instance = middleware(adapted_handler)
+             except MiddlewareNotUsed as exc:
+                 if settings.DEBUG:
+                     if str(exc):
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index 8cd77ffad0..d4769851c5 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -724,3 +724,9 @@ Miscellaneous
+   deprecated as ``python-memcached`` has some problems and seems to be
+   unmaintained. Use ``django.core.cache.backends.memcached.PyMemcacheCache``
+   or ``django.core.cache.backends.memcached.PyLibMCCache`` instead.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.1 where ``MiddlewareNotUsed`` leaves undesired side
++  effects when loading middleware in ASGI context (:ticket:`32249`).
+2026-11-07 21:16:02,558 - INFO - Git diff changed after running eval script
+2026-11-07 21:16:02,558 - INFO - Grading answer for django__django-13810...
+2026-11-07 21:16:02,559 - INFO - report: {'django__django-13810': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_async_and_sync_middleware_chain_async_call (middleware_exceptions.tests.MiddlewareNotUsedTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_missing_root_urlconf (middleware_exceptions.tests.RootUrlconfTests)', 'test_do_not_log_when_debug_is_false (middleware_exceptions.tests.MiddlewareNotUsedTests)', 'test_log (middleware_exceptions.tests.MiddlewareNotUsedTests)', 'test_log_custom_message (middleware_exceptions.tests.MiddlewareNotUsedTests)', 'test_raise_exception (middleware_exceptions.tests.MiddlewareNotUsedTests)', 'test_exception_in_middleware_converted_before_prior_middleware (middleware_exceptions.tests.MiddlewareTests)', 'test_exception_in_render_passed_to_process_exception (middleware_exceptions.tests.MiddlewareTests)', 'test_process_template_response (middleware_exceptions.tests.MiddlewareTests)', 'test_process_template_response_returns_none (middleware_exceptions.tests.MiddlewareTests)', 'test_process_view_return_none (middleware_exceptions.tests.MiddlewareTests)', 'test_process_view_return_response (middleware_exceptions.tests.MiddlewareTests)', 'test_response_from_process_exception_short_circuits_remainder (middleware_exceptions.tests.MiddlewareTests)', 'test_response_from_process_exception_when_return_response (middleware_exceptions.tests.MiddlewareTests)', 'test_templateresponse_from_process_view_passed_to_process_template_response (middleware_exceptions.tests.MiddlewareTests)', 'test_templateresponse_from_process_view_rendered (middleware_exceptions.tests.MiddlewareTests)', 'test_view_exception_converted_before_middleware (middleware_exceptions.tests.MiddlewareTests)', 'test_view_exception_handled_by_process_exception (middleware_exceptions.tests.MiddlewareTests)', 'test_async_and_sync_middleware_async_call (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_async_and_sync_middleware_sync_call (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_async_middleware (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_async_middleware_async (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_not_sync_or_async_middleware (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_sync_decorated_middleware (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_sync_middleware (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_sync_middleware_async (middleware_exceptions.tests.MiddlewareSyncAsyncTests)', 'test_exception_in_async_render_passed_to_process_exception (middleware_exceptions.tests.AsyncMiddlewareTests)', 'test_exception_in_render_passed_to_process_exception (middleware_exceptions.tests.AsyncMiddlewareTests)', 'test_process_template_response (middleware_exceptions.tests.AsyncMiddlewareTests)', 'test_process_template_response_returns_none (middleware_exceptions.tests.AsyncMiddlewareTests)', 'test_process_view_return_response (middleware_exceptions.tests.AsyncMiddlewareTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13810: resolved: True
+2026-11-07 21:16:02,561 - INFO - Attempting to stop container sweb.eval.django__django-13810.verified_full_glm53_opencode_R1789...
+2026-11-07 21:16:18,821 - INFO - Container sweb.eval.django__django-13810.verified_full_glm53_opencode_R1789 stopped successfully.
+2026-11-07 21:16:18,821 - INFO - Attempting to remove container sweb.eval.django__django-13810.verified_full_glm53_opencode_R1789...
+2026-11-07 21:16:18,867 - INFO - Container sweb.eval.django__django-13810.verified_full_glm53_opencode_R1789 removed successfully.

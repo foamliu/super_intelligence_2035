@@ -1,0 +1,78 @@
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index d9c9b0db0..25d5ef407 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -689,8 +689,13 @@ class QuerySet:
+         """
+         assert not self.query.is_sliced, \
+             "Cannot use 'limit' or 'offset' with in_bulk"
+-        if field_name != 'pk' and not self.model._meta.get_field(field_name).unique:
+-            raise ValueError("in_bulk()'s field_name must be a unique field but %r isn't." % field_name)
++        if field_name != 'pk':
++            field = self.model._meta.get_field(field_name)
++            if not field.unique and not any(
++                constraint.fields == (field_name,)
++                for constraint in self.model._meta.total_unique_constraints
++            ):
++                raise ValueError("in_bulk()'s field_name must be a unique field but %r isn't." % field_name)
+         if id_list is not None:
+             if not id_list:
+                 return {}
+diff --git a/tests/lookup/models.py b/tests/lookup/models.py
+index fbc9fa606..5f4f29df4 100644
+--- a/tests/lookup/models.py
++++ b/tests/lookup/models.py
+@@ -108,3 +108,12 @@ class Freebie(models.Model):
+         to_fields=['id', 'product'],
+         on_delete=models.CASCADE,
+     )
++
++
++class ArticleWithUniqueConstraintSlug(models.Model):
++    slug = models.SlugField()
++
++    class Meta:
++        constraints = [
++            models.UniqueConstraint(fields=['slug'], name='%(app_label)s_%(class)s_slug_unq')
++        ]
+diff --git a/tests/lookup/tests.py b/tests/lookup/tests.py
+index baefdf970..404d1304c 100644
+--- a/tests/lookup/tests.py
++++ b/tests/lookup/tests.py
+@@ -11,7 +11,8 @@ from django.test import TestCase, skipUnlessDBFeature
+ from django.utils.deprecation import RemovedInDjango40Warning
+ 
+ from .models import (
+-    Article, Author, Freebie, Game, IsNullWithNoneAsRHS, Player, Season, Tag,
++    Article, ArticleWithUniqueConstraintSlug, Author, Freebie, Game,
++    IsNullWithNoneAsRHS, Player, Season, Tag,
+ )
+ 
+ 
+@@ -72,7 +73,8 @@ class LookupTests(TestCase):
+         cls.t2.articles.add(cls.a3, cls.a4, cls.a5)
+         cls.t3 = Tag.objects.create(name='Tag 3')
+         cls.t3.articles.add(cls.a5, cls.a6, cls.a7)
+-
++        cls.a8 = ArticleWithUniqueConstraintSlug.objects.create(slug='a8')
++        cls.a9 = ArticleWithUniqueConstraintSlug.objects.create(slug='a9')
+     def test_exists(self):
+         # We can use .exists() to check that there are some
+         self.assertTrue(Article.objects.exists())
+@@ -194,6 +196,16 @@ class LookupTests(TestCase):
+         with self.assertRaisesMessage(ValueError, msg):
+             Article.objects.in_bulk([self.au1], field_name='author')
+ 
++    def test_in_bulk_unique_constraint(self):
++        self.assertEqual(
++            ArticleWithUniqueConstraintSlug.objects.in_bulk(
++                [self.a8.slug, self.a9.slug], field_name='slug',
++            ),
++            {
++                self.a8.slug: self.a8,
++                self.a9.slug: self.a9,
++            }
++        )
+     def test_values(self):
+         # values() returns a list of dictionaries instead of object instances --
+         # and you can specify which fields you want to retrieve.

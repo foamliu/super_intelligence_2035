@@ -1,0 +1,81 @@
+diff --git a/sphinx/application.py b/sphinx/application.py
+index 385b74d..776db7b 100644
+--- a/sphinx/application.py
++++ b/sphinx/application.py
+@@ -293,7 +293,7 @@ class Sphinx:
+                 if catalog.domain == 'sphinx' and catalog.is_outdated():
+                     catalog.write_mo(self.config.language)
+ 
+-            locale_dirs = [None, path.join(package_dir, 'locale')] + list(repo.locale_dirs)
++            locale_dirs = list(repo.locale_dirs) + [path.join(package_dir, 'locale'), None]
+             self.translator, has_translation = locale.init(locale_dirs, self.config.language)
+             if has_translation or self.config.language == 'en':
+                 # "en" never needs to be translated
+diff --git a/tests/roots/test-intl-override-builtin/conf.py b/tests/roots/test-intl-override-builtin/conf.py
+new file mode 100644
+index 0000000..2971b6d
+--- /dev/null
++++ b/tests/roots/test-intl-override-builtin/conf.py
+@@ -0,0 +1,4 @@
++project = 'Test'
++language = 'da'
++locale_dirs = ['locale']
++numfig = True
+diff --git a/tests/roots/test-intl-override-builtin/index.rst b/tests/roots/test-intl-override-builtin/index.rst
+new file mode 100644
+index 0000000..c1397fa
+--- /dev/null
++++ b/tests/roots/test-intl-override-builtin/index.rst
+@@ -0,0 +1,12 @@
++Test
++====
++
++.. figure:: https://example.com/image.png
++   :alt: alt text
++
++   Caption text
++
++.. code-block:: python
++   :caption: Code caption
++
++   print("hello")
+diff --git a/tests/roots/test-intl-override-builtin/locale/da/LC_MESSAGES/sphinx.po b/tests/roots/test-intl-override-builtin/locale/da/LC_MESSAGES/sphinx.po
+new file mode 100644
+index 0000000..e2a24ed
+--- /dev/null
++++ b/tests/roots/test-intl-override-builtin/locale/da/LC_MESSAGES/sphinx.po
+@@ -0,0 +1,9 @@
++msgid ""
++msgstr ""
++"Content-Type: text/plain; charset=UTF-8\n"
++
++msgid "Fig. %s"
++msgstr "CUSTOM_FIG %s"
++
++msgid "Listing %s"
++msgstr "CUSTOM_LISTING %s"
+diff --git a/tests/test_intl_override.py b/tests/test_intl_override.py
+new file mode 100644
+index 0000000..5283679
+--- /dev/null
++++ b/tests/test_intl_override.py
+@@ -0,0 +1,19 @@
++"""
++    test_intl_override
++    ~~~~~~~~~~~~~~~~~~
++
++    Test that user-provided message catalogs can override built-in translations.
++
++    :copyright: Copyright 2007-2020 by the Sphinx team, see AUTHORS.
++    :license: BSD, see LICENSE for details.
++"""
++
++import pytest
++
++
++@pytest.mark.sphinx(testroot='intl-override-builtin', buildername='html')
++def test_override_builtin_translations(app):
++    app.build()
++    result = (app.outdir / 'index.html').read_text()
++    assert 'CUSTOM_FIG 1' in result
++    assert 'CUSTOM_LISTING 1' in result

@@ -1,0 +1,34 @@
+diff --git a/sympy/codegen/ast.py b/sympy/codegen/ast.py
+index a02714b1..7257d395 100644
+--- a/sympy/codegen/ast.py
++++ b/sympy/codegen/ast.py
+@@ -907,6 +907,17 @@ def _construct_text(cls, text):
+     def _sympystr(self, printer, *args, **kwargs):
+         return self.text
+ 
++    @property
++    def func(self):
++        def _func(*args, **kwargs):
++            if args or kwargs:
++                return self.__class__(*args, **kwargs)
++            return self.__class__(self.text)
++        return _func
++
++    def __getnewargs__(self):
++        return (self.text,)
++
+ 
+ class QuotedString(String):
+     """ Represents a string which should be printed with quotes. """
+diff --git a/sympy/codegen/tests/test_ast.py b/sympy/codegen/tests/test_ast.py
+index 00c5d4cf..8cf3aeab 100644
+--- a/sympy/codegen/tests/test_ast.py
++++ b/sympy/codegen/tests/test_ast.py
+@@ -266,6 +266,7 @@ def test_String():
+     assert st.is_Atom
+     assert st == String('foobar')
+     assert st.text == 'foobar'
++    assert st.func(*st.args) == st
+     assert st.func(**st.kwargs()) == st
+ 
+ 

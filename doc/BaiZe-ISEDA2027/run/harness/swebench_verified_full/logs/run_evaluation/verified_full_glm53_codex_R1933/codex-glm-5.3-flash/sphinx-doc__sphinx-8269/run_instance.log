@@ -1,0 +1,130 @@
+2026-11-09 04:55:06,630 - INFO - Creating container for sphinx-doc__sphinx-8269...
+2026-11-09 04:55:06,686 - INFO - Container for sphinx-doc__sphinx-8269 created: e271403f85a0aae4830aaf39ff5cb2529501202a9c877e1d540643fdbea511dc
+2026-11-09 04:55:07,789 - INFO - Container for sphinx-doc__sphinx-8269 started: e271403f85a0aae4830aaf39ff5cb2529501202a9c877e1d540643fdbea511dc
+2026-11-09 04:55:07,791 - INFO - Intermediate patch for sphinx-doc__sphinx-8269 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/sphinx-doc__sphinx-8269/patch.diff, now applying to container...
+2026-11-09 04:55:07,908 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/builders/linkcheck.py...
+Checking patch tests/roots/test-linkcheck-anchor-error/conf.py...
+Checking patch tests/roots/test-linkcheck-anchor-error/links.txt...
+Checking patch tests/test_build_linkcheck.py...
+Applied patch sphinx/builders/linkcheck.py cleanly.
+Applied patch tests/roots/test-linkcheck-anchor-error/conf.py cleanly.
+Applied patch tests/roots/test-linkcheck-anchor-error/links.txt cleanly.
+Applied patch tests/test_build_linkcheck.py cleanly.
+
+2026-11-09 04:55:08,302 - INFO - Git diff before:
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index 9b54afc7c..1083e82ec 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -166,6 +166,7 @@ class CheckExternalLinksBuilder(Builder):
+                     # Read the whole document and see if #anchor exists
+                     response = requests.get(req_url, stream=True, config=self.app.config,
+                                             auth=auth_info, **kwargs)
++                    response.raise_for_status()
+                     found = check_anchor(response, unquote(anchor))
+ 
+                     if not found:
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index 7d85f10c5..de62bb074 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -11,7 +11,11 @@
+ import json
+ import re
+ from unittest import mock
++
+ import pytest
++import requests
++
++from sphinx.util import requests as sphinx_requests
+ 
+ 
+ @pytest.mark.sphinx('linkcheck', testroot='linkcheck', freshenv=True)
+@@ -107,6 +111,23 @@ def test_anchors_ignored(app, status, warning):
+     assert not content
+ 
+ 
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-anchor-error',
++                    freshenv=True)
++def test_anchor_http_error(app, status, warning):
++    response = requests.Response()
++    response.status_code = 404
++    response.url = 'https://localhost:7777/doesnotexist'
++    response.reason = 'Not Found'
++
++    with mock.patch.object(sphinx_requests, 'get', return_value=response):
++        app.builder.build_all()
++
++    content = (app.outdir / 'output.txt').read_text()
++    assert ('https://localhost:7777/doesnotexist#does-not-exist: '
++            '404 Client Error: Not Found for url: '
++            'https://localhost:7777/doesnotexist') in content
++
++
+ @pytest.mark.sphinx(
+     'linkcheck', testroot='linkcheck', freshenv=True,
+     confoverrides={'linkcheck_auth': [
+2026-11-09 04:55:08,305 - INFO - Eval script for sphinx-doc__sphinx-8269 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/sphinx-doc__sphinx-8269/eval.sh; copying to container...
+2026-11-09 04:55:11,742 - INFO - Test runtime: 3.37 seconds
+2026-11-09 04:55:11,744 - INFO - Test output for sphinx-doc__sphinx-8269 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/sphinx-doc__sphinx-8269/test_output.txt
+2026-11-09 04:55:12,112 - INFO - Git diff after:
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index 9b54afc7c..1083e82ec 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -166,6 +166,7 @@ class CheckExternalLinksBuilder(Builder):
+                     # Read the whole document and see if #anchor exists
+                     response = requests.get(req_url, stream=True, config=self.app.config,
+                                             auth=auth_info, **kwargs)
++                    response.raise_for_status()
+                     found = check_anchor(response, unquote(anchor))
+ 
+                     if not found:
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index 7d85f10c5..de62bb074 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -11,7 +11,11 @@
+ import json
+ import re
+ from unittest import mock
++
+ import pytest
++import requests
++
++from sphinx.util import requests as sphinx_requests
+ 
+ 
+ @pytest.mark.sphinx('linkcheck', testroot='linkcheck', freshenv=True)
+@@ -107,6 +111,23 @@ def test_anchors_ignored(app, status, warning):
+     assert not content
+ 
+ 
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-anchor-error',
++                    freshenv=True)
++def test_anchor_http_error(app, status, warning):
++    response = requests.Response()
++    response.status_code = 404
++    response.url = 'https://localhost:7777/doesnotexist'
++    response.reason = 'Not Found'
++
++    with mock.patch.object(sphinx_requests, 'get', return_value=response):
++        app.builder.build_all()
++
++    content = (app.outdir / 'output.txt').read_text()
++    assert ('https://localhost:7777/doesnotexist#does-not-exist: '
++            '404 Client Error: Not Found for url: '
++            'https://localhost:7777/doesnotexist') in content
++
++
+ @pytest.mark.sphinx(
+     'linkcheck', testroot='linkcheck', freshenv=True,
+     confoverrides={'linkcheck_auth': [
+2026-11-09 04:55:12,112 - INFO - Grading answer for sphinx-doc__sphinx-8269...
+2026-11-09 04:55:12,115 - INFO - report: {'sphinx-doc__sphinx-8269': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False, 'infra_failure_reason': 'no_tests_collected'}}
+Result for sphinx-doc__sphinx-8269: resolved: False
+2026-11-09 04:55:12,116 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_codex_R1933...
+2026-11-09 04:55:28,408 - INFO - Container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_codex_R1933 stopped successfully.
+2026-11-09 04:55:28,409 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_codex_R1933...
+2026-11-09 04:55:28,448 - INFO - Container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_codex_R1933 removed successfully.

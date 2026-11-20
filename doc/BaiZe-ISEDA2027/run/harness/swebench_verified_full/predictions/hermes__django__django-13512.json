@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13512",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/forms/fields.py b/django/forms/fields.py\nindex 9de2c60b..8235aaac 100644\n--- a/django/forms/fields.py\n+++ b/django/forms/fields.py\n@@ -1258,7 +1258,7 @@ class JSONField(CharField):\n     def prepare_value(self, value):\n         if isinstance(value, InvalidJSONInput):\n             return value\n-        return json.dumps(value, cls=self.encoder)\n+        return json.dumps(value, cls=self.encoder, ensure_ascii=False)\n \n     def has_changed(self, initial, data):\n         if super().has_changed(initial, data):\ndiff --git a/tests/forms_tests/field_tests/test_jsonfield.py b/tests/forms_tests/field_tests/test_jsonfield.py\nindex 915b180d..4bf7e408 100644\n--- a/tests/forms_tests/field_tests/test_jsonfield.py\n+++ b/tests/forms_tests/field_tests/test_jsonfield.py\n@@ -30,6 +30,10 @@ class JSONFieldTest(SimpleTestCase):\n         self.assertEqual(field.prepare_value(None), 'null')\n         self.assertEqual(field.prepare_value('foo'), '\"foo\"')\n \n+    def test_prepare_value_unicode(self):\n+        field = JSONField()\n+        self.assertEqual(field.prepare_value({'a': '\u4e2d\u56fd'}), '{\"a\": \"\u4e2d\u56fd\"}')\n+\n     def test_widget(self):\n         field = JSONField()\n         self.assertIsInstance(field.widget, Textarea)\n"
+  }
+]

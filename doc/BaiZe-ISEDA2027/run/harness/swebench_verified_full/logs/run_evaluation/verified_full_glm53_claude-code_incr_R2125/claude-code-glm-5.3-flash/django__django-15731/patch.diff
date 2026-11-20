@@ -1,0 +1,54 @@
+diff --git a/django/db/models/manager.py b/django/db/models/manager.py
+index e37e56cd17..467e79f9b9 100644
+--- a/django/db/models/manager.py
++++ b/django/db/models/manager.py
+@@ -1,5 +1,6 @@
+ import copy
+ import inspect
++from functools import wraps
+ from importlib import import_module
+ 
+ from django.db import router
+@@ -81,11 +82,10 @@ class BaseManager:
+     @classmethod
+     def _get_queryset_methods(cls, queryset_class):
+         def create_method(name, method):
++            @wraps(method)
+             def manager_method(self, *args, **kwargs):
+                 return getattr(self.get_queryset(), name)(*args, **kwargs)
+ 
+-            manager_method.__name__ = method.__name__
+-            manager_method.__doc__ = method.__doc__
+             return manager_method
+ 
+         new_methods = {}
+diff --git a/tests/managers_regress/tests.py b/tests/managers_regress/tests.py
+index 33192a1699..485f703076 100644
+--- a/tests/managers_regress/tests.py
++++ b/tests/managers_regress/tests.py
+@@ -1,3 +1,5 @@
++import inspect
++
+ from django.db import models
+ from django.template import Context, Template
+ from django.test import SimpleTestCase, TestCase, override_settings
+@@ -169,6 +171,19 @@ class ManagersRegressionTests(TestCase):
+         relation = related.test_fk.create()
+         self.assertEqual(related.test_fk.get(), relation)
+ 
++    def test_manager_method_signature(self):
++        # Manager methods copied from the queryset should expose the
++        # signature of the wrapped method to introspection.
++        queryset_method = models.QuerySet.bulk_create
++        manager_method = RelatedModel.objects.bulk_create
++        queryset_signature = inspect.signature(queryset_method)
++        expected_signature = queryset_signature.replace(
++            parameters=list(queryset_signature.parameters.values())[1:]
++        )
++        self.assertEqual(inspect.signature(manager_method), expected_signature)
++        self.assertEqual(manager_method.__name__, queryset_method.__name__)
++        self.assertEqual(manager_method.__doc__, queryset_method.__doc__)
++
+ 
+ @isolate_apps("managers_regress")
+ class TestManagerInheritance(SimpleTestCase):

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-13372",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/core/evalf.py b/sympy/core/evalf.py\nindex 72a5fba..f349087 100644\n--- a/sympy/core/evalf.py\n+++ b/sympy/core/evalf.py\n@@ -1301,12 +1301,16 @@ def evalf(x, prec, options):\n             elif re.is_number:\n                 re = re._to_mpmath(prec, allow_ints=False)._mpf_\n                 reprec = prec\n+            else:\n+                raise NotImplementedError\n             if im == 0:\n                 im = None\n                 imprec = None\n             elif im.is_number:\n                 im = im._to_mpmath(prec, allow_ints=False)._mpf_\n                 imprec = prec\n+            else:\n+                raise NotImplementedError\n             r = re, im, reprec, imprec\n         except AttributeError:\n             raise NotImplementedError\ndiff --git a/sympy/core/tests/test_evalf.py b/sympy/core/tests/test_evalf.py\nindex 4ac3d5c..e4537e9 100644\n--- a/sympy/core/tests/test_evalf.py\n+++ b/sympy/core/tests/test_evalf.py\n@@ -411,6 +411,12 @@ def test_evalf_mul():\n     assert NS(product(1 + sqrt(n)*I, (n, 1, 500)), 1) == '5.e+567 + 2.e+568*I'\n \n \n+def test_evalf_mul_arg_order():\n+    # issue 13059\n+    assert Mul(Max(0, y), x, evaluate=False).evalf() == x*Max(0, y)\n+    assert Mul(x, Max(0, y), evaluate=False).evalf() == x*Max(0, y)\n+\n+\n def test_scaled_zero():\n     a, b = (([0], 1, 100, 1), -1)\n     assert scaled_zero(100) == (a, b)\n"
+  }
+]

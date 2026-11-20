@@ -1,0 +1,72 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index abc6f79a15..8c43c1a746 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -5,7 +5,7 @@ be executed through ``django-admin`` or ``manage.py``).
+ import argparse
+ import os
+ import sys
+-from argparse import ArgumentParser, HelpFormatter
++from argparse import ArgumentParser, HelpFormatter, _SubParsersAction
+ from io import TextIOBase
+ 
+ import django
+@@ -43,6 +43,25 @@ class SystemCheckError(CommandError):
+     pass
+ 
+ 
++class DjangoSubParsersAction(_SubParsersAction):
++    """
++    Custom subparsers action that passes `missing_args_message` and
++    `called_from_command_line` to subparsers.
++    """
++
++    def __init__(
++        self, *, missing_args_message=None, called_from_command_line=None, **kwargs
++    ):
++        self._missing_args_message = missing_args_message
++        self._called_from_command_line = called_from_command_line
++        super().__init__(**kwargs)
++
++    def add_parser(self, name, **kwargs):
++        kwargs.setdefault("missing_args_message", self._missing_args_message)
++        kwargs.setdefault("called_from_command_line", self._called_from_command_line)
++        return super().add_parser(name, **kwargs)
++
++
+ class CommandParser(ArgumentParser):
+     """
+     Customized ArgumentParser class to improve some error messages and prevent
+@@ -56,6 +75,12 @@ class CommandParser(ArgumentParser):
+         self.missing_args_message = missing_args_message
+         self.called_from_command_line = called_from_command_line
+         super().__init__(**kwargs)
++        self.register("action", "parsers", DjangoSubParsersAction)
++
++    def add_subparsers(self, **kwargs):
++        kwargs.setdefault("missing_args_message", self.missing_args_message)
++        kwargs.setdefault("called_from_command_line", self.called_from_command_line)
++        return super().add_subparsers(**kwargs)
+ 
+     def parse_args(self, args=None, namespace=None):
+         # Catch missing argument for a better error message
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e40632385c..f20349400e 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -406,6 +406,15 @@ class CommandTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             management.call_command("subparser_dest", subcommand="foo", bar=12)
+ 
++    def test_subparser_missing_required_argument(self):
++        """
++        Missing arguments to subparsers raise CommandError with proper
++        formatting (not SystemExit).
++        """
++        msg = "Error: the following arguments are required: bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser", "foo")
++
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = "some epilog text"

@@ -1,0 +1,53 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 54f3258ea..4772b29b0 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1029,7 +1029,12 @@ class Query(BaseExpression):
+             for a, j in self.alias_map.items()
+             if (reuse is None or a in reuse) and j.equals(join)
+         ]
+-        if reuse_aliases:
++        if join.filtered_relation:
++            for reuse_alias in reuse_aliases:
++                if join.filtered_relation == self.alias_map[reuse_alias].filtered_relation:
++                    self.ref_alias(reuse_alias)
++                    return reuse_alias
++        elif reuse_aliases:
+             if join.table_alias in reuse_aliases:
+                 reuse_alias = join.table_alias
+             else:
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 790a90d9e..b8e84e71c 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -224,6 +224,30 @@ class FilteredRelationTests(TestCase):
+             [self.author1],
+         )
+ 
++    def test_multiple_filtered_relation(self):
++        qs = (
++            Author.objects.alias(
++                book_alice=FilteredRelation(
++                    "book", condition=Q(book__title__iexact="poem by alice")
++                ),
++                book_jane=FilteredRelation(
++                    "book", condition=Q(book__title__iexact="the book by jane a")
++                ),
++            )
++            .annotate(
++                book_alice_title=F("book_alice__title"),
++                book_jane_title=F("book_jane__title"),
++            )
++            .values("book_alice_title", "book_jane_title")
++        )
++        self.assertCountEqual(
++            qs,
++            [
++                {"book_alice_title": "Poem by Alice", "book_jane_title": None},
++                {"book_alice_title": None, "book_jane_title": "The book by Jane A"},
++            ],
++        )
++
+     def test_multiple_times(self):
+         self.assertSequenceEqual(
+             Author.objects.annotate(

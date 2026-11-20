@@ -1,0 +1,11 @@
+{
+  "harness": "opencode",
+  "run_id": "verified_full_glm53_opencode_incr_R2192",
+  "round": "R2192",
+  "n": 1,
+  "resolved": [
+    "sympy__sympy-19040"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

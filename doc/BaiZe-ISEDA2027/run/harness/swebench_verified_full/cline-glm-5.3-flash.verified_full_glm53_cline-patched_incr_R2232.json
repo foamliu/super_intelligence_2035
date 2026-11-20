@@ -1,0 +1,12 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2232",
+  "round": "R2232",
+  "n": 2,
+  "resolved": [
+    "sphinx-doc__sphinx-8638",
+    "sphinx-doc__sphinx-8721"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

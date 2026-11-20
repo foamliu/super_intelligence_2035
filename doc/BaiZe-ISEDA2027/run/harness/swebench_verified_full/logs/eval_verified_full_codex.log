@@ -1,0 +1,17 @@
+275 instances already run, skipping...
+No instances to run.
+Total instances: 275
+Instances submitted: 275
+Instances completed: 275
+Instances incomplete: 0
+Instances resolved: 217
+Instances unresolved: 58
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 9
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 4
+Unremoved images: 275
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+
+[stderr]

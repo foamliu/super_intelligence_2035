@@ -1,0 +1,32 @@
+diff --git a/lib/mpl_toolkits/mplot3d/axes3d.py b/lib/mpl_toolkits/mplot3d/axes3d.py
+index 9db44b799..5479bc1af 100644
+--- a/lib/mpl_toolkits/mplot3d/axes3d.py
++++ b/lib/mpl_toolkits/mplot3d/axes3d.py
+@@ -387,6 +387,8 @@ class Axes3D(Axes):
+ 
+     @martist.allow_rasterization
+     def draw(self, renderer):
++        if not self.get_visible():
++            return
+         self._unstale_viewLim()
+ 
+         # draw the background patch
+diff --git a/lib/mpl_toolkits/tests/test_mplot3d.py b/lib/mpl_toolkits/tests/test_mplot3d.py
+index 966eb50b2..b30a73492 100644
+--- a/lib/mpl_toolkits/tests/test_mplot3d.py
++++ b/lib/mpl_toolkits/tests/test_mplot3d.py
+@@ -851,6 +851,14 @@ def test_axes3d_rotated():
+     ax.view_init(90, 45, 0)  # look down, rotated. Should be square
+ 
+ 
++@check_figures_equal(extensions=['png'])
++def test_axes3d_set_visible(fig_test, fig_ref):
++    # a hidden 3d Axes should not be drawn at all (issue #20351)
++    ax = fig_test.add_subplot(projection='3d')
++    ax.scatter(1, 1, 1)
++    ax.set_visible(False)
++
++
+ def test_plotsurface_1d_raises():
+     x = np.linspace(0.5, 10, num=100)
+     y = np.linspace(0.5, 10, num=100)

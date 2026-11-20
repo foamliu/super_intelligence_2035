@@ -1,0 +1,41 @@
+{
+    "total_instances": 2,
+    "submitted_instances": 2,
+    "completed_instances": 1,
+    "resolved_instances": 0,
+    "unresolved_instances": 1,
+    "infra_failure_instances": 0,
+    "ambiguous_failure_instances": 1,
+    "empty_patch_instances": 0,
+    "error_instances": 1,
+    "completed_ids": [
+        "django__django-16950"
+    ],
+    "incomplete_ids": [],
+    "empty_patch_ids": [],
+    "submitted_ids": [
+        "django__django-16950",
+        "matplotlib__matplotlib-23314"
+    ],
+    "resolved_ids": [],
+    "unresolved_ids": [
+        "django__django-16950"
+    ],
+    "infra_failure_ids": [],
+    "ambiguous_failure_ids": [
+        "matplotlib__matplotlib-23314"
+    ],
+    "failure_reasons": {
+        "matplotlib__matplotlib-23314": "tests_timed_out"
+    },
+    "error_ids": [
+        "matplotlib__matplotlib-23314"
+    ],
+    "schema_version": 2,
+    "unstopped_instances": 0,
+    "unstopped_containers": [],
+    "unremoved_images": [
+        "swebench/sweb.eval.x86_64.django_1776_django-16950:latest",
+        "swebench/sweb.eval.x86_64.matplotlib_1776_matplotlib-23314:latest"
+    ]
+}

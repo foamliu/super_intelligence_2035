@@ -1,0 +1,84 @@
+2026-10-30 15:33:41,765 - INFO - Creating container for django__django-12209...
+2026-10-30 15:33:41,800 - INFO - Container for django__django-12209 created: d6a370140314862391d1b5f831e86ee5f4bb5077a4be010474a56111174ab37a
+2026-10-30 15:33:42,656 - INFO - Container for django__django-12209 started: d6a370140314862391d1b5f831e86ee5f4bb5077a4be010474a56111174ab37a
+2026-10-30 15:33:42,658 - INFO - Intermediate patch for django__django-12209 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12209/patch.diff, now applying to container...
+2026-10-30 15:33:42,890 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+Checking patch tests/basic/tests.py...
+Applied patch django/db/models/base.py cleanly.
+Applied patch tests/basic/tests.py cleanly.
+
+2026-10-30 15:33:44,312 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..844c01e95e 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,6 +849,7 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+             self._meta.pk.default and
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e1..d18d0f7344 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -139,6 +139,14 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_primary_with_default_raw(self):
++        # When loading fixtures (raw=True), an UPDATE should be attempted
++        # if the primary key already exists, not forced INSERT.
++        obj = PrimaryKeyWithDefault.objects.create()
++        obj2 = PrimaryKeyWithDefault(pk=obj.pk)
++        obj2.save_base(raw=True)
++        self.assertEqual(PrimaryKeyWithDefault.objects.count(), 1)
++
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):
+2026-10-30 15:33:44,314 - INFO - Eval script for django__django-12209 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12209/eval.sh; copying to container...
+2026-10-30 15:33:52,312 - INFO - Test runtime: 7.92 seconds
+2026-10-30 15:33:52,313 - INFO - Test output for django__django-12209 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12209/test_output.txt
+2026-10-30 15:33:52,386 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..844c01e95e 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,6 +849,7 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+             self._meta.pk.default and
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e1..d18d0f7344 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -139,6 +139,14 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_primary_with_default_raw(self):
++        # When loading fixtures (raw=True), an UPDATE should be attempted
++        # if the primary key already exists, not forced INSERT.
++        obj = PrimaryKeyWithDefault.objects.create()
++        obj2 = PrimaryKeyWithDefault(pk=obj.pk)
++        obj2.save_base(raw=True)
++        self.assertEqual(PrimaryKeyWithDefault.objects.count(), 1)
++
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):
+2026-10-30 15:33:52,387 - INFO - Grading answer for django__django-12209...
+2026-10-30 15:33:52,388 - INFO - report: {'django__django-12209': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['partial(func, *args, **keywords) - new function with partial application'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12209: resolved: True
+2026-10-30 15:33:52,390 - INFO - Attempting to stop container sweb.eval.django__django-12209.verified_full_opencode...
+2026-10-30 15:34:08,271 - INFO - Container sweb.eval.django__django-12209.verified_full_opencode stopped successfully.
+2026-10-30 15:34:08,271 - INFO - Attempting to remove container sweb.eval.django__django-12209.verified_full_opencode...
+2026-10-30 15:34:08,332 - INFO - Container sweb.eval.django__django-12209.verified_full_opencode removed successfully.

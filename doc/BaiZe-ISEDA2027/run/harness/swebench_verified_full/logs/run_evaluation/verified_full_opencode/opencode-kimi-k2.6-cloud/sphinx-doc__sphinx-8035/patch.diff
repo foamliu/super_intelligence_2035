@@ -1,0 +1,246 @@
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 8c3509c3..3bc1a48f 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -123,17 +123,22 @@ def bool_option(arg: Any) -> bool:
+     return True
+ 
+ 
+-def merge_special_members_option(options: Dict) -> None:
+-    """Merge :special-members: option to :members: option."""
+-    if 'special-members' in options and options['special-members'] is not ALL:
++def merge_members_option(options: Dict, option_name: str) -> None:
++    """Merge *option_name* option to :members: option."""
++    if option_name in options and options[option_name] is not ALL:
+         if options.get('members') is ALL:
+             pass
+         elif options.get('members'):
+-            for member in options['special-members']:
++            for member in options[option_name]:
+                 if member not in options['members']:
+                     options['members'].append(member)
+         else:
+-            options['members'] = options['special-members']
++            options['members'] = options[option_name]
++
++
++def merge_special_members_option(options: Dict) -> None:
++    """Merge :special-members: option to :members: option."""
++    merge_members_option(options, 'special-members')
+ 
+ 
+ # Some useful event listener factories for autodoc-process-docstring.
+@@ -649,15 +654,25 @@ class Documenter:
+             elif (namespace, membername) in attr_docs:
+                 if want_all and isprivate:
+                     # ignore members whose name starts with _ by default
+-                    keep = self.options.private_members
++                    if self.options.private_members is ALL:
++                        keep = True
++                    elif self.options.private_members:
++                        keep = membername in self.options.private_members
++                    else:
++                        keep = False
+                 else:
+                     # keep documented attributes
+                     keep = True
+                 isattr = True
+             elif want_all and isprivate:
+                 # ignore members whose name starts with _ by default
+-                keep = self.options.private_members and \
+-                    (has_doc or self.options.undoc_members)
++                if self.options.private_members is ALL:
++                    keep = has_doc or self.options.undoc_members
++                elif self.options.private_members:
++                    keep = membername in self.options.private_members and \
++                        (has_doc or self.options.undoc_members)
++                else:
++                    keep = False
+             else:
+                 if self.options.members is ALL and is_filtered_inherited_member(membername):
+                     keep = False
+@@ -859,13 +874,14 @@ class ModuleDocumenter(Documenter):
+         'show-inheritance': bool_option, 'synopsis': identity,
+         'platform': identity, 'deprecated': bool_option,
+         'member-order': member_order_option, 'exclude-members': members_set_option,
+-        'private-members': bool_option, 'special-members': members_option,
++        'private-members': members_option, 'special-members': members_option,
+         'imported-members': bool_option, 'ignore-module-all': bool_option
+     }  # type: Dict[str, Callable]
+ 
+     def __init__(self, *args: Any) -> None:
+         super().__init__(*args)
+         merge_special_members_option(self.options)
++        merge_members_option(self.options, 'private-members')
+         self.__all__ = None
+ 
+     @classmethod
+@@ -1279,7 +1295,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type:
+         'noindex': bool_option, 'inherited-members': inherited_members_option,
+         'show-inheritance': bool_option, 'member-order': member_order_option,
+         'exclude-members': members_set_option,
+-        'private-members': bool_option, 'special-members': members_option,
++        'private-members': members_option, 'special-members': members_option,
+     }  # type: Dict[str, Callable]
+ 
+     _signature_class = None  # type: Any
+@@ -1288,6 +1304,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type:
+     def __init__(self, *args: Any) -> None:
+         super().__init__(*args)
+         merge_special_members_option(self.options)
++        merge_members_option(self.options, 'private-members')
+ 
+     @classmethod
+     def can_document_member(cls, member: Any, membername: str, isattr: bool, parent: Any
+diff --git a/tests/roots/test-ext-autodoc/target/specific_private.py b/tests/roots/test-ext-autodoc/target/specific_private.py
+new file mode 100644
+index 00000000..22210778
+--- /dev/null
++++ b/tests/roots/test-ext-autodoc/target/specific_private.py
+@@ -0,0 +1,26 @@
++def _private_one():
++    """First private function."""
++
++
++def _private_two():
++    """Second private function."""
++
++
++def public_one():
++    """Public function."""
++
++
++class MyClass:
++    """My class."""
++
++    def public_method(self):
++        """Public method."""
++
++    def _private_method_one(self):
++        """First private method."""
++
++    def _private_method_two(self):
++        """Second private method."""
++
++    _private_attr_one = None  #: First private attr
++    _private_attr_two = None  #: Second private attr
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index f4cadd3a..5519de58 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -60,3 +60,115 @@ def test_private_field_and_private_members(app):
+         '   :meta private:',
+         '',
+     ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_specific_private_members_module(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None,
++               "private-members": "_private_one"}
++    actual = do_autodoc(app, 'module', 'target.specific_private', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.specific_private',
++        '',
++        '',
++        '.. py:class:: MyClass()',
++        '   :module: target.specific_private',
++        '',
++        '   My class.',
++        '',
++        '',
++        '   .. py:method:: MyClass.public_method()',
++        '      :module: target.specific_private',
++        '',
++        '      Public method.',
++        '',
++        '',
++        '.. py:function:: _private_one()',
++        '   :module: target.specific_private',
++        '',
++        '   First private function.',
++        '',
++        '',
++        '.. py:function:: public_one()',
++        '   :module: target.specific_private',
++        '',
++        '   Public function.',
++        '',
++    ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_specific_private_members_module_only_private(app):
++    app.config.autoclass_content = 'class'
++    options = {"private-members": "_private_one"}
++    actual = do_autodoc(app, 'module', 'target.specific_private', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.specific_private',
++        '',
++        '',
++        '.. py:function:: _private_one()',
++        '   :module: target.specific_private',
++        '',
++        '   First private function.',
++        '',
++    ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_specific_private_members_class(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None,
++               "private-members": "_private_method_one"}
++    actual = do_autodoc(app, 'class', 'target.specific_private.MyClass', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: MyClass()',
++        '   :module: target.specific_private',
++        '',
++        '   My class.',
++        '',
++        '',
++        '   .. py:method:: MyClass._private_method_one()',
++        '      :module: target.specific_private',
++        '',
++        '      First private method.',
++        '',
++        '',
++        '   .. py:method:: MyClass.public_method()',
++        '      :module: target.specific_private',
++        '',
++        '      Public method.',
++        '',
++    ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_specific_private_members_class_attr(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None,
++               "private-members": "_private_attr_one"}
++    actual = do_autodoc(app, 'class', 'target.specific_private.MyClass', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: MyClass()',
++        '   :module: target.specific_private',
++        '',
++        '   My class.',
++        '',
++        '',
++        '   .. py:attribute:: MyClass._private_attr_one',
++        '      :module: target.specific_private',
++        '      :value: None',
++        '',
++        '      First private attr',
++        '',
++        '',
++        '   .. py:method:: MyClass.public_method()',
++        '      :module: target.specific_private',
++        '',
++        '      Public method.',
++        '',
++    ]

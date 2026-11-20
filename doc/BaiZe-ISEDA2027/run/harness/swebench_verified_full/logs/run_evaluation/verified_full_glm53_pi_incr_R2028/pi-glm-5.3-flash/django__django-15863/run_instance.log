@@ -1,0 +1,70 @@
+2026-11-10 14:46:50,824 - INFO - Creating container for django__django-15863...
+2026-11-10 14:46:50,836 - INFO - Container for django__django-15863 created: 7066c63503398b32347efd6f685c52c4d023eddf242086aa2367194b58ca75c6
+2026-11-10 14:46:51,388 - INFO - Container for django__django-15863 started: 7066c63503398b32347efd6f685c52c4d023eddf242086aa2367194b58ca75c6
+2026-11-10 14:46:51,390 - INFO - Intermediate patch for django__django-15863 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2028/pi-glm-5.3-flash/django__django-15863/patch.diff, now applying to container...
+2026-11-10 14:46:51,473 - INFO - >>>>> Applied Patch:
+Checking patch django/template/defaultfilters.py...
+Checking patch tests/template_tests/filter_tests/test_floatformat.py...
+Applied patch django/template/defaultfilters.py cleanly.
+Applied patch tests/template_tests/filter_tests/test_floatformat.py cleanly.
+
+2026-11-10 14:46:52,547 - INFO - Git diff before:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 7a5b28d159..23c3a08c67 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -151,7 +151,7 @@ def floatformat(text, arg=-1):
+             use_l10n = False
+             arg = arg[:-1] or -1
+     try:
+-        input_val = repr(text)
++        input_val = str(text)
+         d = Decimal(input_val)
+     except InvalidOperation:
+         try:
+diff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py
+index 8dc69b2437..4133d60f2f 100644
+--- a/tests/template_tests/filter_tests/test_floatformat.py
++++ b/tests/template_tests/filter_tests/test_floatformat.py
+@@ -74,6 +74,16 @@ class FunctionTests(SimpleTestCase):
+         self.assertEqual(floatformat(1.5e-15, -20), "0.00000000000000150000")
+         self.assertEqual(floatformat(1.00000000000000015, 16), "1.0000000000000002")
+ 
++    def test_decimal_numbers(self):
++        self.assertEqual(
++            floatformat(Decimal("42.12345678901234567890"), 20),
++            "42.12345678901234567890",
++        )
++        self.assertEqual(
++            floatformat(Decimal("42.12345678901234567890"), -20),
++            "42.12345678901234567890",
++        )
++
+     def test_force_grouping(self):
+         with translation.override("en"):
+             self.assertEqual(floatformat(10000, "g"), "10,000")
+2026-11-10 14:46:52,550 - INFO - Eval script for django__django-15863 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2028/pi-glm-5.3-flash/django__django-15863/eval.sh; copying to container...
+2026-11-10 14:46:57,681 - INFO - Test runtime: 5.08 seconds
+2026-11-10 14:46:57,684 - INFO - Test output for django__django-15863 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2028/pi-glm-5.3-flash/django__django-15863/test_output.txt
+2026-11-10 14:46:57,739 - INFO - Git diff after:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 7a5b28d159..23c3a08c67 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -151,7 +151,7 @@ def floatformat(text, arg=-1):
+             use_l10n = False
+             arg = arg[:-1] or -1
+     try:
+-        input_val = repr(text)
++        input_val = str(text)
+         d = Decimal(input_val)
+     except InvalidOperation:
+         try:
+2026-11-10 14:46:57,739 - INFO - Git diff changed after running eval script
+2026-11-10 14:46:57,739 - INFO - Grading answer for django__django-15863...
+2026-11-10 14:46:57,739 - INFO - report: {'django__django-15863': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_inputs (template_tests.filter_tests.test_floatformat.FunctionTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_floatformat01 (template_tests.filter_tests.test_floatformat.FloatformatTests)', 'test_floatformat02 (template_tests.filter_tests.test_floatformat.FloatformatTests)', 'test_float_dunder_method (template_tests.filter_tests.test_floatformat.FunctionTests)', 'test_force_grouping (template_tests.filter_tests.test_floatformat.FunctionTests)', 'test_infinity (template_tests.filter_tests.test_floatformat.FunctionTests)', '#15789', 'test_negative_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests)', 'test_unlocalize (template_tests.filter_tests.test_floatformat.FunctionTests)', 'test_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15863: resolved: True
+2026-11-10 14:46:57,741 - INFO - Attempting to stop container sweb.eval.django__django-15863.verified_full_glm53_pi_incr_R2028...
+2026-11-10 14:47:14,088 - INFO - Container sweb.eval.django__django-15863.verified_full_glm53_pi_incr_R2028 stopped successfully.
+2026-11-10 14:47:14,089 - INFO - Attempting to remove container sweb.eval.django__django-15863.verified_full_glm53_pi_incr_R2028...
+2026-11-10 14:47:14,120 - INFO - Container sweb.eval.django__django-15863.verified_full_glm53_pi_incr_R2028 removed successfully.

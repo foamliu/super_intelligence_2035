@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-9320",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py\nindex a40a2107..69b42edc 100644\n--- a/sphinx/cmd/quickstart.py\n+++ b/sphinx/cmd/quickstart.py\n@@ -90,6 +90,8 @@ class ValidationError(Exception):\n \n def is_path(x: str) -> str:\n     x = path.expanduser(x)\n+    if not x:\n+        return x\n     if not path.isdir(x):\n         raise ValidationError(__(\"Please enter a valid path name.\"))\n     return x\ndiff --git a/tests/test_quickstart.py b/tests/test_quickstart.py\nindex 94144ef2..f1f42544 100644\n--- a/tests/test_quickstart.py\n+++ b/tests/test_quickstart.py\n@@ -250,3 +250,15 @@ def test_extensions(tempdir):\n     ns = {}\n     exec(conffile.read_text(), ns)\n     assert ns['extensions'] == ['foo', 'bar', 'baz']\n+\n+\n+def test_enter_to_exit_when_conf_py_exists(tempdir):\n+    (tempdir / 'conf.py').write_text('')\n+    answers = {\n+        'Root path': tempdir,\n+        'Please enter a new root path': '',\n+    }\n+    qs.term_input = mock_input(answers, needanswer=True)\n+    d = {}\n+    with pytest.raises(SystemExit):\n+        qs.ask_user(d)\n"
+  }
+]

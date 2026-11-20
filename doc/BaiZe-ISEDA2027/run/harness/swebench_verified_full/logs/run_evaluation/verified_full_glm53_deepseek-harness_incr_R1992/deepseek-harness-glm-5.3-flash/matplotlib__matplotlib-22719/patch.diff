@@ -1,0 +1,15 @@
+diff --git a/_harness/sitecustomize.py b/_harness/sitecustomize.py
+new file mode 100644
+index 00000000..12349a8f
+--- /dev/null
++++ b/_harness/sitecustomize.py
+@@ -0,0 +1,9 @@
++import os, sys
++_local = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib', 'mpl_toolkits'))
++mt = sys.modules.get('mpl_toolkits')
++if mt is not None and hasattr(mt, '__path__'):
++    # _NamespacePath supports in-place mutation via append? use re-assignment safe approach
++    try:
++        mt.__path__ = [_local]  # plain list; loses namespace mechanics but fine here
++    except Exception:
++        pass

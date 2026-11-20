@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-23262",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/utilities/lambdify.py b/sympy/utilities/lambdify.py\nindex da67263b..e13822f3 100644\n--- a/sympy/utilities/lambdify.py\n+++ b/sympy/utilities/lambdify.py\n@@ -961,7 +961,10 @@ def _recursive_to_string(doprint, arg):\n             left, right = \"()\"\n         else:\n             raise NotImplementedError(\"unhandled type: %s, %s\" % (type(arg), arg))\n-        return left +', '.join(_recursive_to_string(doprint, e) for e in arg) + right\n+        inner = ', '.join(_recursive_to_string(doprint, e) for e in arg)\n+        if isinstance(arg, tuple) and len(arg) == 1:\n+            inner += ','\n+        return left + inner + right\n     elif isinstance(arg, str):\n         return arg\n     else:\ndiff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py\nindex 023c2fb5..a38a212c 100644\n--- a/sympy/utilities/tests/test_lambdify.py\n+++ b/sympy/utilities/tests/test_lambdify.py\n@@ -97,6 +97,15 @@ def test_nested_args():\n     assert f3(10, [[[52]], 31], 44) == [10, 52, 31, 44]\n \n \n+def test_tuple_args():\n+    f = lambdify([], tuple([1]))\n+    assert f() == (1,)\n+    assert isinstance(f(), tuple)\n+\n+    f2 = lambdify([], tuple([1, 2]))\n+    assert f2() == (1, 2)\n+\n+\n def test_str_args():\n     f = lambdify('x,y,z', 'z,y,x')\n     assert f(3, 2, 1) == (1, 2, 3)\n"
+  }
+]

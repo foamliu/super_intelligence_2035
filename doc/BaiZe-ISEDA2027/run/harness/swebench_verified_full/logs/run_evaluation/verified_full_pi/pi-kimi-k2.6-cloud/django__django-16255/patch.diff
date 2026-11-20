@@ -1,0 +1,92 @@
+diff --git a/django/contrib/sitemaps/__init__.py b/django/contrib/sitemaps/__init__.py
+index 27756d9d96..b40ad806ed 100644
+--- a/django/contrib/sitemaps/__init__.py
++++ b/django/contrib/sitemaps/__init__.py
+@@ -168,7 +168,7 @@ class Sitemap:
+         if callable(self.lastmod):
+             try:
+                 return max([self.lastmod(item) for item in self.items()])
+-            except TypeError:
++            except (TypeError, ValueError):
+                 return None
+         else:
+             return self.lastmod
+diff --git a/tests/sitemaps_tests/test_http.py b/tests/sitemaps_tests/test_http.py
+index 4a269b8737..978ec2b585 100644
+--- a/tests/sitemaps_tests/test_http.py
++++ b/tests/sitemaps_tests/test_http.py
+@@ -506,9 +506,22 @@ class HTTPSitemapTests(SitemapTestsBase):
+         )
+         self.assertXMLEqual(index_response.content.decode(), expected_content_index)
+         self.assertXMLEqual(sitemap_response.content.decode(), expected_content_sitemap)
++    def test_callable_lastmod_empty(self):
++        """
++        Sitemap with no items but callable `lastmod` doesn't raise ValueError.
++        """
++        index_response = self.client.get("/callable-lastmod-empty/index.xml")
++        sitemap_response = self.client.get("/callable-lastmod-empty/sitemap.xml")
++        self.assertNotIn("Last-Modified", index_response)
++        self.assertNotIn("Last-Modified", sitemap_response)
++        expected_content_index = """<?xml version="1.0" encoding="UTF-8"?>
++        <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
++        <sitemap><loc>http://example.com/simple/sitemap-callable-lastmod.xml</loc></sitemap>
++        </sitemapindex>
++        """
++        self.assertXMLEqual(index_response.content.decode(), expected_content_index)
++        self.assertEqual(sitemap_response.status_code, 200)
+ 
+-
+-# RemovedInDjango50Warning
+ class DeprecatedTests(SitemapTestsBase):
+     @override_settings(
+         TEMPLATES=[
+diff --git a/tests/sitemaps_tests/urls/http.py b/tests/sitemaps_tests/urls/http.py
+index 9a468de476..e6867687e9 100644
+--- a/tests/sitemaps_tests/urls/http.py
++++ b/tests/sitemaps_tests/urls/http.py
+@@ -113,9 +113,17 @@ class CallableLastmodFullSitemap(Sitemap):
+     def lastmod(self, obj):
+         return obj.lastmod
+ 
++class CallableLastmodEmptySitemap(Sitemap):
++    """No items but `lastmod` is callable."""
++    location = "/location/"
++
++    def items(self):
++        return []
++
++    def lastmod(self, obj):
++        return datetime(2013, 3, 13, 10, 0, 0)
+ 
+ class GetLatestLastmodNoneSiteMap(Sitemap):
+-    changefreq = "never"
+     priority = 0.5
+     location = "/location/"
+ 
+@@ -232,6 +240,9 @@ callable_lastmod_partial_sitemap = {
+ callable_lastmod_full_sitemap = {
+     "callable-lastmod": CallableLastmodFullSitemap,
+ }
++callable_lastmod_empty_sitemap = {
++    "callable-lastmod": CallableLastmodEmptySitemap,
++}
+ 
+ urlpatterns = [
+     path("simple/index.xml", views.index, {"sitemaps": simple_sitemaps}),
+@@ -417,6 +428,16 @@ urlpatterns = [
+         views.sitemap,
+         {"sitemaps": callable_lastmod_full_sitemap},
+     ),
++    path(
++        "callable-lastmod-empty/index.xml",
++        views.index,
++        {"sitemaps": callable_lastmod_empty_sitemap},
++    ),
++    path(
++        "callable-lastmod-empty/sitemap.xml",
++        views.sitemap,
++        {"sitemaps": callable_lastmod_empty_sitemap},
++    ),
+     path(
+         "generic-lastmod/index.xml",
+         views.index,

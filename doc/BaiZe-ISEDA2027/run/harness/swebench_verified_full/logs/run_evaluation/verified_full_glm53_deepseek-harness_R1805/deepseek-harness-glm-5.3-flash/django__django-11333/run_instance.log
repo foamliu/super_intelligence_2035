@@ -1,0 +1,154 @@
+2026-11-07 23:20:27,256 - INFO - Creating container for django__django-11333...
+2026-11-07 23:20:27,295 - INFO - Container for django__django-11333 created: 19521a16c1b5a1666f74546ed6fcfbe5549c625837e1f3a26aabc0f496ba8e1f
+2026-11-07 23:20:27,874 - INFO - Container for django__django-11333 started: 19521a16c1b5a1666f74546ed6fcfbe5549c625837e1f3a26aabc0f496ba8e1f
+2026-11-07 23:20:27,876 - INFO - Intermediate patch for django__django-11333 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1805/deepseek-harness-glm-5.3-flash/django__django-11333/patch.diff, now applying to container...
+2026-11-07 23:20:28,014 - INFO - >>>>> Applied Patch:
+Checking patch django/urls/base.py...
+Checking patch django/urls/resolvers.py...
+Checking patch tests/view_tests/views.py...
+Applied patch django/urls/base.py cleanly.
+Applied patch django/urls/resolvers.py cleanly.
+Applied patch tests/view_tests/views.py cleanly.
+
+2026-11-07 23:20:29,150 - INFO - Git diff before:
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..dd9b2e4c22 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -7,7 +7,7 @@ from django.utils.functional import lazy
+ from django.utils.translation import override
+ 
+ from .exceptions import NoReverseMatch, Resolver404
+-from .resolvers import get_ns_resolver, get_resolver
++from .resolvers import _get_cached_resolver, get_ns_resolver, get_resolver
+ from .utils import get_callable
+ 
+ # SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
+@@ -92,7 +92,7 @@ reverse_lazy = lazy(reverse, str)
+ 
+ def clear_url_caches():
+     get_callable.cache_clear()
+-    get_resolver.cache_clear()
++    _get_cached_resolver.cache_clear()
+     get_ns_resolver.cache_clear()
+ 
+ 
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..b6d6d67d56 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,10 +64,25 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
++def _get_cached_resolver(urlconf=None):
++    return URLResolver(RegexPattern(r'^/'), urlconf)
++
++
+ def get_resolver(urlconf=None):
++    """
++    Return the URLResolver for the given urlconf, or the default one if
++    urlconf is None.
++
++    The URLResolver is memoized by urlconf. Callers commonly pass the result
++    of get_urlconf(), which is None until set_urlconf() is called (e.g. when
++    the first request is handled) and settings.ROOT_URLCONF afterwards, so
++    resolve None to settings.ROOT_URLCONF *before* the memoized lookup. This
++    keeps the cache key stable and avoids constructing (and expensively
++    populating) a second, duplicate URLResolver keyed on None.
++    """
+     if urlconf is None:
+         urlconf = settings.ROOT_URLCONF
+-    return URLResolver(RegexPattern(r'^/'), urlconf)
++    return _get_cached_resolver(urlconf)
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+diff --git a/tests/view_tests/views.py b/tests/view_tests/views.py
+index ce0079a355..d364d128a7 100644
+--- a/tests/view_tests/views.py
++++ b/tests/view_tests/views.py
+@@ -55,6 +55,8 @@ def raises403(request):
+ 
+ 
+ def raises404(request):
++    # Pass urlconf=None explicitly to exercise get_resolver(None), which must
++    # return the same cached resolver as get_resolver() -- see #31884.
+     resolver = get_resolver(None)
+     resolver.resolve('/not-in-urls')
+2026-11-07 23:20:29,152 - INFO - Eval script for django__django-11333 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1805/deepseek-harness-glm-5.3-flash/django__django-11333/eval.sh; copying to container...
+2026-11-07 23:20:35,506 - INFO - Test runtime: 6.25 seconds
+2026-11-07 23:20:35,509 - INFO - Test output for django__django-11333 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1805/deepseek-harness-glm-5.3-flash/django__django-11333/test_output.txt
+2026-11-07 23:20:35,608 - INFO - Git diff after:
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..dd9b2e4c22 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -7,7 +7,7 @@ from django.utils.functional import lazy
+ from django.utils.translation import override
+ 
+ from .exceptions import NoReverseMatch, Resolver404
+-from .resolvers import get_ns_resolver, get_resolver
++from .resolvers import _get_cached_resolver, get_ns_resolver, get_resolver
+ from .utils import get_callable
+ 
+ # SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
+@@ -92,7 +92,7 @@ reverse_lazy = lazy(reverse, str)
+ 
+ def clear_url_caches():
+     get_callable.cache_clear()
+-    get_resolver.cache_clear()
++    _get_cached_resolver.cache_clear()
+     get_ns_resolver.cache_clear()
+ 
+ 
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..b6d6d67d56 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,10 +64,25 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
++def _get_cached_resolver(urlconf=None):
++    return URLResolver(RegexPattern(r'^/'), urlconf)
++
++
+ def get_resolver(urlconf=None):
++    """
++    Return the URLResolver for the given urlconf, or the default one if
++    urlconf is None.
++
++    The URLResolver is memoized by urlconf. Callers commonly pass the result
++    of get_urlconf(), which is None until set_urlconf() is called (e.g. when
++    the first request is handled) and settings.ROOT_URLCONF afterwards, so
++    resolve None to settings.ROOT_URLCONF *before* the memoized lookup. This
++    keeps the cache key stable and avoids constructing (and expensively
++    populating) a second, duplicate URLResolver keyed on None.
++    """
+     if urlconf is None:
+         urlconf = settings.ROOT_URLCONF
+-    return URLResolver(RegexPattern(r'^/'), urlconf)
++    return _get_cached_resolver(urlconf)
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+diff --git a/tests/view_tests/views.py b/tests/view_tests/views.py
+index ce0079a355..d364d128a7 100644
+--- a/tests/view_tests/views.py
++++ b/tests/view_tests/views.py
+@@ -55,6 +55,8 @@ def raises403(request):
+ 
+ 
+ def raises404(request):
++    # Pass urlconf=None explicitly to exercise get_resolver(None), which must
++    # return the same cached resolver as get_resolver() -- see #31884.
+     resolver = get_resolver(None)
+     resolver.resolve('/not-in-urls')
+2026-11-07 23:20:35,609 - INFO - Grading answer for django__django-11333...
+2026-11-07 23:20:35,610 - INFO - report: {'django__django-11333': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_resolver_cache_default__root_urlconf (urlpatterns.test_resolvers.ResolverCacheTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_str (urlpatterns.test_resolvers.RegexPatternTests)', 'test_str (urlpatterns.test_resolvers.RoutePatternTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11333: resolved: True
+2026-11-07 23:20:35,611 - INFO - Attempting to stop container sweb.eval.django__django-11333.verified_full_glm53_deepseek-harness_R1805...
+2026-11-07 23:20:51,686 - INFO - Container sweb.eval.django__django-11333.verified_full_glm53_deepseek-harness_R1805 stopped successfully.
+2026-11-07 23:20:51,687 - INFO - Attempting to remove container sweb.eval.django__django-11333.verified_full_glm53_deepseek-harness_R1805...
+2026-11-07 23:20:51,740 - INFO - Container sweb.eval.django__django-11333.verified_full_glm53_deepseek-harness_R1805 removed successfully.

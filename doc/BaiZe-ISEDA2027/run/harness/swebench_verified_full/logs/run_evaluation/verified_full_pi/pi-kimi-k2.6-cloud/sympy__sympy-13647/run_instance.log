@@ -1,0 +1,111 @@
+2026-10-30 17:03:31,059 - INFO - Creating container for sympy__sympy-13647...
+2026-10-30 17:03:31,084 - INFO - Container for sympy__sympy-13647 created: deb98dcf02ab5f39a1d4133a47ccdb3616b0b5c66d4c10d11dcf6e08e2091d9a
+2026-10-30 17:03:32,254 - INFO - Container for sympy__sympy-13647 started: deb98dcf02ab5f39a1d4133a47ccdb3616b0b5c66d4c10d11dcf6e08e2091d9a
+2026-10-30 17:03:32,256 - INFO - Intermediate patch for sympy__sympy-13647 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-13647/patch.diff, now applying to container...
+2026-10-30 17:03:32,396 - INFO - >>>>> Applied Patch:
+Checking patch sympy/matrices/common.py...
+warning: sympy/matrices/common.py has type 100755, expected 100644
+Checking patch sympy/matrices/tests/test_commonmatrix.py...
+warning: sympy/matrices/tests/test_commonmatrix.py has type 100755, expected 100644
+Checking patch sympy/matrices/tests/test_matrices.py...
+warning: sympy/matrices/tests/test_matrices.py has type 100755, expected 100644
+Applied patch sympy/matrices/common.py cleanly.
+Applied patch sympy/matrices/tests/test_commonmatrix.py cleanly.
+Applied patch sympy/matrices/tests/test_matrices.py cleanly.
+
+2026-10-30 17:03:32,990 - INFO - Git diff before:
+diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py
+index 056d9bc49..4aa75e4d7 100755
+--- a/sympy/matrices/common.py
++++ b/sympy/matrices/common.py
+@@ -86,7 +86,7 @@ def entry(i, j):
+                 return self[i, j]
+             elif pos <= j < pos + other.cols:
+                 return other[i, j - pos]
+-            return self[i, j - pos - other.cols]
++            return self[i, j - other.cols]
+ 
+         return self._new(self.rows, self.cols + other.cols,
+                          lambda i, j: entry(i, j))
+diff --git a/sympy/matrices/tests/test_commonmatrix.py b/sympy/matrices/tests/test_commonmatrix.py
+index 8dc4d717c..858a1a27a 100755
+--- a/sympy/matrices/tests/test_commonmatrix.py
++++ b/sympy/matrices/tests/test_commonmatrix.py
+@@ -32,6 +32,9 @@ def eye_Shaping(n):
+ 
+ def zeros_Shaping(n):
+     return ShapingOnlyMatrix(n, n, lambda i, j: 0)
++def ones_Shaping(rows, cols):
++    return ShapingOnlyMatrix(rows, cols, lambda i, j: 1)
++
+ 
+ class PropertiesOnlyMatrix(_MinimalMatrix, MatrixProperties):
+     pass
+@@ -200,6 +203,10 @@ def test_col_insert():
+         l = [0, 0, 0]
+         l.insert(i, 4)
+         assert flatten(zeros_Shaping(3).col_insert(i, c4).row(0).tolist()) == l
++    # test that columns are inserted at the correct position
++    M = eye_Shaping(3)
++    V = ones_Shaping(3, 2)
++    assert M.col_insert(1, V) == Matrix([[1, 1, 1, 0, 0], [0, 1, 1, 1, 0], [0, 1, 1, 0, 1]])
+ 
+ def test_extract():
+     m = ShapingOnlyMatrix(4, 3, lambda i, j: i*3 + j)
+diff --git a/sympy/matrices/tests/test_matrices.py b/sympy/matrices/tests/test_matrices.py
+index 78bd30fc8..0429e4dde 100755
+--- a/sympy/matrices/tests/test_matrices.py
++++ b/sympy/matrices/tests/test_matrices.py
+@@ -2233,7 +2233,10 @@ def test_col_insert():
+         l = [0, 0, 0]
+         l.insert(i, 4)
+         assert flatten(zeros(3).col_insert(i, c4).row(0).tolist()) == l
+-
++    # test that columns are inserted at the correct position
++    M = eye(3)
++    V = ones(3, 2)
++    assert M.col_insert(1, V) == Matrix([[1, 1, 1, 0, 0], [0, 1, 1, 1, 0], [0, 1, 1, 0, 1]])
+ 
+ def test_normalized():
+     assert Matrix([3, 4]).normalized() == \
+2026-10-30 17:03:32,993 - INFO - Eval script for sympy__sympy-13647 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-13647/eval.sh; copying to container...
+2026-10-30 17:03:43,960 - INFO - Test runtime: 10.89 seconds
+2026-10-30 17:03:43,963 - INFO - Test output for sympy__sympy-13647 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-13647/test_output.txt
+2026-10-30 17:03:44,058 - INFO - Git diff after:
+diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py
+index 056d9bc49..4aa75e4d7 100755
+--- a/sympy/matrices/common.py
++++ b/sympy/matrices/common.py
+@@ -86,7 +86,7 @@ def entry(i, j):
+                 return self[i, j]
+             elif pos <= j < pos + other.cols:
+                 return other[i, j - pos]
+-            return self[i, j - pos - other.cols]
++            return self[i, j - other.cols]
+ 
+         return self._new(self.rows, self.cols + other.cols,
+                          lambda i, j: entry(i, j))
+diff --git a/sympy/matrices/tests/test_matrices.py b/sympy/matrices/tests/test_matrices.py
+index 78bd30fc8..0429e4dde 100755
+--- a/sympy/matrices/tests/test_matrices.py
++++ b/sympy/matrices/tests/test_matrices.py
+@@ -2233,7 +2233,10 @@ def test_col_insert():
+         l = [0, 0, 0]
+         l.insert(i, 4)
+         assert flatten(zeros(3).col_insert(i, c4).row(0).tolist()) == l
+-
++    # test that columns are inserted at the correct position
++    M = eye(3)
++    V = ones(3, 2)
++    assert M.col_insert(1, V) == Matrix([[1, 1, 1, 0, 0], [0, 1, 1, 1, 0], [0, 1, 1, 0, 1]])
+ 
+ def test_normalized():
+     assert Matrix([3, 4]).normalized() == \
+2026-10-30 17:03:44,058 - INFO - Git diff changed after running eval script
+2026-10-30 17:03:44,058 - INFO - Grading answer for sympy__sympy-13647...
+2026-10-30 17:03:44,064 - INFO - report: {'sympy__sympy-13647': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_col_insert'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test__MinimalMatrix', 'test_vec', 'test_tolist', 'test_row_col_del', 'test_get_diag_blocks1', 'test_get_diag_blocks2', 'test_shape', 'test_reshape', 'test_row_col', 'test_row_join', 'test_col_join', 'test_row_insert', 'test_extract', 'test_hstack', 'test_vstack', 'test_atoms', 'test_free_symbols', 'test_has', 'test_is_anti_symmetric', 'test_diagonal_symmetrical', 'test_is_hermitian', 'test_is_Identity', 'test_is_symbolic', 'test_is_upper', 'test_is_lower', 'test_is_square', 'test_is_symmetric', 'test_is_hessenberg', 'test_is_zero', 'test_values', 'test_applyfunc', 'test_adjoint', 'test_as_real_imag', 'test_conjugate', 'test_doit', 'test_evalf', 'test_expand', 'test_replace', 'test_replace_map', 'test_simplify', 'test_subs', 'test_trace', 'test_xreplace', 'test_permute', 'test_abs', 'test_add', 'test_multiplication', 'test_power', 'test_neg', 'test_sub', 'test_div', 'test_det', 'test_adjugate', 'test_cofactor_and_minors', 'test_charpoly', 'test_row_op', 'test_col_op', 'test_is_echelon', 'test_echelon_form', 'test_rref', 'test_eye', 'test_ones', 'test_zeros', 'test_diag', 'test_jordan_block', 'test_columnspace', 'test_rowspace', 'test_nullspace', 'test_eigenvals', 'test_eigenvects', 'test_left_eigenvects', 'test_diagonalize', 'test_is_diagonalizable', 'test_jordan_form', 'test_singular_values', 'test_integrate'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-13647: resolved: True
+2026-10-30 17:03:44,065 - INFO - Attempting to stop container sweb.eval.sympy__sympy-13647.verified_full_pi...
+2026-10-30 17:04:00,505 - INFO - Container sweb.eval.sympy__sympy-13647.verified_full_pi stopped successfully.
+2026-10-30 17:04:00,505 - INFO - Attempting to remove container sweb.eval.sympy__sympy-13647.verified_full_pi...
+2026-10-30 17:04:00,554 - INFO - Container sweb.eval.sympy__sympy-13647.verified_full_pi removed successfully.

@@ -1,0 +1,97 @@
+2026-11-02 08:23:37,055 - INFO - Creating container for pytest-dev__pytest-7571...
+2026-11-02 08:23:37,081 - INFO - Container for pytest-dev__pytest-7571 created: 0ed29ff7973407dc08ee0827cc11b9a4e32db012bef18ed98be3ea141395bbc6
+2026-11-02 08:23:38,361 - INFO - Container for pytest-dev__pytest-7571 started: 0ed29ff7973407dc08ee0827cc11b9a4e32db012bef18ed98be3ea141395bbc6
+2026-11-02 08:23:38,364 - INFO - Intermediate patch for pytest-dev__pytest-7571 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/pytest-dev__pytest-7571/patch.diff, now applying to container...
+2026-11-02 08:23:38,537 - INFO - >>>>> Applied Patch:
+/tmp/patch.diff:120: trailing whitespace.
+# Import after path modification  
+/tmp/patch.diff:180: trailing whitespace.
+# Test that set_level + at_level doesn't break _finalize  
+/tmp/patch.diff:188: trailing whitespace.
+    
+Checking patch src/_pytest/logging.py...
+Checking patch test_caplog_level.py...
+Checking patch test_caplog_level2.py...
+Checking patch test_exact_bug_repro.py...
+Checking patch test_repro.py...
+Checking patch test_repro_manual.py...
+Checking patch test_repro_manual2.py...
+Applied patch src/_pytest/logging.py cleanly.
+Applied patch test_caplog_level.py cleanly.
+Applied patch test_caplog_level2.py cleanly.
+Applied patch test_exact_bug_repro.py cleanly.
+Applied patch test_repro.py cleanly.
+Applied patch test_repro_manual.py cleanly.
+Applied patch test_repro_manual2.py cleanly.
+warning: 3 lines add whitespace errors.
+
+2026-11-02 08:23:38,717 - INFO - Git diff before:
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2f2..8bdb83202 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -346,6 +346,7 @@ class LogCaptureFixture:
+         self._item = item
+         # dict of log name -> log level
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
++        self._initial_handler_level = None  # type: Optional[int]
+ 
+     def _finalize(self) -> None:
+         """Finalizes the fixture.
+@@ -353,6 +354,8 @@ class LogCaptureFixture:
+         This restores the log levels changed by :meth:`set_level`.
+         """
+         # restore log levels
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
+@@ -433,6 +436,8 @@ class LogCaptureFixture:
+         logger_obj = logging.getLogger(logger)
+         # save the original log-level to restore it during teardown
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         logger_obj.setLevel(level)
+         self.handler.setLevel(level)
+2026-11-02 08:23:38,721 - INFO - Eval script for pytest-dev__pytest-7571 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/pytest-dev__pytest-7571/eval.sh; copying to container...
+2026-11-02 08:23:47,374 - INFO - Test runtime: 8.58 seconds
+2026-11-02 08:23:47,377 - INFO - Test output for pytest-dev__pytest-7571 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/pytest-dev__pytest-7571/test_output.txt
+2026-11-02 08:23:47,450 - INFO - Git diff after:
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2f2..8bdb83202 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -346,6 +346,7 @@ class LogCaptureFixture:
+         self._item = item
+         # dict of log name -> log level
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
++        self._initial_handler_level = None  # type: Optional[int]
+ 
+     def _finalize(self) -> None:
+         """Finalizes the fixture.
+@@ -353,6 +354,8 @@ class LogCaptureFixture:
+         This restores the log levels changed by :meth:`set_level`.
+         """
+         # restore log levels
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
+@@ -433,6 +436,8 @@ class LogCaptureFixture:
+         logger_obj = logging.getLogger(logger)
+         # save the original log-level to restore it during teardown
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         logger_obj.setLevel(level)
+         self.handler.setLevel(level)
+2026-11-02 08:23:47,450 - INFO - Grading answer for pytest-dev__pytest-7571...
+2026-11-02 08:23:47,455 - INFO - report: {'pytest-dev__pytest-7571': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/logging/test_fixture.py::test_change_level_undos_handler_level'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/logging/test_fixture.py::test_change_level', 'testing/logging/test_fixture.py::test_with_statement', 'testing/logging/test_fixture.py::test_log_access', 'testing/logging/test_fixture.py::test_messages', 'testing/logging/test_fixture.py::test_record_tuples', 'testing/logging/test_fixture.py::test_unicode', 'testing/logging/test_fixture.py::test_clear', 'testing/logging/test_fixture.py::test_caplog_captures_for_all_stages', 'testing/logging/test_fixture.py::test_fixture_help', 'testing/logging/test_fixture.py::test_change_level_undo', 'testing/logging/test_fixture.py::test_ini_controls_global_log_level', 'testing/logging/test_fixture.py::test_caplog_can_override_global_log_level', 'testing/logging/test_fixture.py::test_caplog_captures_despite_exception', 'testing/logging/test_fixture.py::test_log_report_captures_according_to_config_option_upon_failure'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-7571: resolved: True
+2026-11-02 08:23:47,457 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-7571.verified_full_codex...
+2026-11-02 08:24:03,466 - INFO - Container sweb.eval.pytest-dev__pytest-7571.verified_full_codex stopped successfully.
+2026-11-02 08:24:03,466 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-7571.verified_full_codex...
+2026-11-02 08:24:03,510 - INFO - Container sweb.eval.pytest-dev__pytest-7571.verified_full_codex removed successfully.

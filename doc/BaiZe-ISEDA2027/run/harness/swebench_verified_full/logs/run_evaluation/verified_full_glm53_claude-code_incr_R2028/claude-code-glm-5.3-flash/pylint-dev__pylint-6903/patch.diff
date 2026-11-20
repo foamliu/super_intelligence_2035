@@ -1,0 +1,67 @@
+diff --git a/pylint/lint/run.py b/pylint/lint/run.py
+index a7e5d5574..7c339543e 100644
+--- a/pylint/lint/run.py
++++ b/pylint/lint/run.py
+@@ -58,6 +58,11 @@ def _query_cpu() -> int | None:
+             cpu_shares = int(file.read().rstrip())
+         # For AWS, gives correct value * 1024.
+         avail_cpu = int(cpu_shares / 1024)
++    # In containers running in Kubernetes the cpu.shares value can be very low,
++    # resulting in a calculated cpu count of 0. This would crash pylint, so we
++    # make sure at least one cpu is used.
++    if avail_cpu == 0:
++        avail_cpu = 1
+     return avail_cpu
+ 
+ 
+diff --git a/tests/lint/unittest_lint.py b/tests/lint/unittest_lint.py
+index 3dbde39ce..2f0b5aece 100644
+--- a/tests/lint/unittest_lint.py
++++ b/tests/lint/unittest_lint.py
+@@ -20,6 +20,8 @@ from os import chdir, getcwd
+ from os.path import abspath, dirname, join, sep
+ from pathlib import Path
+ from shutil import rmtree
++from typing import Any
++from unittest import mock
+ 
+ import platformdirs
+ import pytest
+@@ -39,6 +41,7 @@ from pylint.constants import (
+ )
+ from pylint.exceptions import InvalidMessageError
+ from pylint.lint import PyLinter
++from pylint.lint import run as lint_run
+ from pylint.lint.utils import fix_import_path
+ from pylint.message import Message
+ from pylint.reporters import text
+@@ -836,6 +839,29 @@ def test_multiprocessing(jobs: int) -> None:
+     assert len(messages) == len(set(messages))
+ 
+ 
++def test_query_cpu() -> None:
++    """Check that the number of cpu used is never 0.
++
++    In some containerized environments (e.g. Kubernetes) the values in
++    the cgroup files can result in a calculated cpu count of 0, which
++    would crash multiprocessing. See https://github.com/PyCQA/pylint/issues/6908
++    """
++    # The values reported in the issue: cpu.cfs_quota_us is -1 so
++    # cpu.shares is used, which is 2 -> int(2 / 1024) == 0.
++    with mock.patch.object(lint_run.Path, "is_file", return_value=True):
++        cgroup_files = {
++            "/sys/fs/cgroup/cpu/cpu.cfs_quota_us": "-1",
++            "/sys/fs/cgroup/cpu/cpu.cfs_period_us": "100000",
++            "/sys/fs/cgroup/cpu/cpu.shares": "2",
++        }
++
++        def _mock_open(path: str, *args: Any, **kwargs: Any) -> Any:
++            return mock.mock_open(read_data=cgroup_files[str(path)])()
++
++        with mock.patch("builtins.open", side_effect=_mock_open):
++            assert lint_run._query_cpu() == 1
++
++
+ def test_filename_with__init__(initialized_linter: PyLinter) -> None:
+     # This tracks a regression where a file whose name ends in __init__.py,
+     # such as flycheck__init__.py, would accidentally lead to linting the

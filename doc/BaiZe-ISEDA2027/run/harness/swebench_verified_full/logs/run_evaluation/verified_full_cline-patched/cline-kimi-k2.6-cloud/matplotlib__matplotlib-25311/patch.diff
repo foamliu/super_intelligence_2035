@@ -1,0 +1,63 @@
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index 1dee8a23d..31946ba4e 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -1514,6 +1514,19 @@ class DraggableBase:
+                 'button_release_event', self.on_release),
+         ]
+ 
++    def __getstate__(self):
++        state = self.__dict__.copy()
++        # Remove unpicklable canvas and callback ids.
++        state['canvas'] = None
++        state['cids'] = []
++        # Remove transient state.
++        state.pop('background', None)
++        state.pop('_c1', None)
++        state['got_artist'] = False
++        state.pop('mouse_x', None)
++        state.pop('mouse_y', None)
++        return state
++
+     def on_motion(self, evt):
+         if self._check_still_parented() and self.got_artist:
+             dx = evt.x - self.mouse_x
+@@ -1562,6 +1575,8 @@ class DraggableBase:
+ 
+     def disconnect(self):
+         """Disconnect the callbacks."""
++        if self.canvas is None:
++            return
+         for cid in self.cids:
+             self.canvas.mpl_disconnect(cid)
+         try:
+diff --git a/lib/matplotlib/tests/test_pickle.py b/lib/matplotlib/tests/test_pickle.py
+index ec6bdcc2f..f5b57b293 100644
+--- a/lib/matplotlib/tests/test_pickle.py
++++ b/lib/matplotlib/tests/test_pickle.py
+@@ -167,6 +167,25 @@ def test_no_pyplot():
+     pickle.dump(fig, BytesIO(), pickle.HIGHEST_PROTOCOL)
+ 
+ 
++def test_pickle_draggable_legend_and_annotation():
++    fig, ax = plt.subplots()
++    ax.plot([0, 1], [0, 1], label='line')
++    leg = ax.legend()
++    leg.set_draggable(True)
++    ann = ax.annotate('test', xy=(0.5, 0.5))
++    ann.draggable(True)
++    pkl = BytesIO()
++    pickle.dump(fig, pkl, pickle.HIGHEST_PROTOCOL)
++    loaded = pickle.loads(pkl.getbuffer())
++    # Check that the legend and annotation are still marked as draggable.
++    assert loaded.axes[0].get_legend().get_draggable()
++    assert loaded.axes[0].texts[0]._draggable is not None
++    # Should be able to disable dragging without error.
++    loaded.axes[0].get_legend().set_draggable(False)
++    loaded.axes[0].texts[0].draggable(False)
++    plt.close(loaded)
++
++
+ def test_renderer():
+     from matplotlib.backends.backend_agg import RendererAgg
+     renderer = RendererAgg(10, 20, 30)

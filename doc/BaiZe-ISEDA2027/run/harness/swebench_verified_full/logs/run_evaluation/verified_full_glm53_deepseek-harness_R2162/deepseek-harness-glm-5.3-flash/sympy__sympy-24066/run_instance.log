@@ -1,0 +1,84 @@
+2026-11-11 08:49:08,907 - INFO - Creating container for sympy__sympy-24066...
+2026-11-11 08:49:10,282 - INFO - Removed existing container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162
+2026-11-11 08:49:10,300 - INFO - Container for sympy__sympy-24066 created: 9192906c8deccba7d1933accfc534c9db3b23368f8f294b530d754d4fa4f4da8
+2026-11-11 08:49:11,581 - INFO - Container for sympy__sympy-24066 started: 9192906c8deccba7d1933accfc534c9db3b23368f8f294b530d754d4fa4f4da8
+2026-11-11 08:49:11,584 - INFO - Intermediate patch for sympy__sympy-24066 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R2162/deepseek-harness-glm-5.3-flash/sympy__sympy-24066/patch.diff, now applying to container...
+2026-11-11 08:49:11,723 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/units/tests/test_quantities.py...
+warning: sympy/physics/units/tests/test_quantities.py has type 100755, expected 100644
+Checking patch sympy/physics/units/unitsystem.py...
+warning: sympy/physics/units/unitsystem.py has type 100755, expected 100644
+Applied patch sympy/physics/units/tests/test_quantities.py cleanly.
+Applied patch sympy/physics/units/unitsystem.py cleanly.
+
+2026-11-11 08:49:12,214 - INFO - Git diff before:
+diff --git a/sympy/physics/units/tests/test_quantities.py b/sympy/physics/units/tests/test_quantities.py
+index 25a68c7be5..44f446eed9 100755
+--- a/sympy/physics/units/tests/test_quantities.py
++++ b/sympy/physics/units/tests/test_quantities.py
+@@ -540,6 +540,15 @@ def test_issue_20288():
+     expr = 1 + exp(u**2/v**2)
+     assert SI._collect_factor_and_dimension(expr) == (1 + E, Dimension(1))
+ 
++def test_issue_24076():
++    from sympy.physics.units import second, ohm, farad
++    from sympy.physics.units.systems.si import dimsys_SI
++    expr = second/(ohm*farad)
++    dim = SI._collect_factor_and_dimension(expr)[1]
++    assert dimsys_SI.is_dimensionless(dim)
++    assert SI._collect_factor_and_dimension(
++        100 + exp(expr)) == (exp(1) + 100, Dimension(1))
++
+ 
+ def test_prefixed_property():
+     assert not meter.is_prefixed
+diff --git a/sympy/physics/units/unitsystem.py b/sympy/physics/units/unitsystem.py
+index 3daf84c108..3320a79561 100755
+--- a/sympy/physics/units/unitsystem.py
++++ b/sympy/physics/units/unitsystem.py
+@@ -192,8 +192,9 @@ def _collect_factor_and_dimension(self, expr):
+         elif isinstance(expr, Function):
+             fds = [self._collect_factor_and_dimension(
+                 arg) for arg in expr.args]
+-            return (expr.func(*(f[0] for f in fds)),
+-                    *(d[1] for d in fds))
++            dims = [Dimension(1) if self.get_dimension_system(
++            ).is_dimensionless(d[1]) else d[1] for d in fds]
++            return (expr.func(*(f[0] for f in fds)), *dims)
+         elif isinstance(expr, Dimension):
+             return S.One, expr
+         else:
+2026-11-11 08:49:12,216 - INFO - Eval script for sympy__sympy-24066 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R2162/deepseek-harness-glm-5.3-flash/sympy__sympy-24066/eval.sh; copying to container...
+2026-11-11 08:49:19,771 - INFO - Test runtime: 7.47 seconds
+2026-11-11 08:49:19,773 - INFO - Test output for sympy__sympy-24066 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R2162/deepseek-harness-glm-5.3-flash/sympy__sympy-24066/test_output.txt
+2026-11-11 08:49:19,829 - INFO - Git diff after:
+diff --git a/sympy/physics/units/unitsystem.py b/sympy/physics/units/unitsystem.py
+index 3daf84c108..3320a79561 100755
+--- a/sympy/physics/units/unitsystem.py
++++ b/sympy/physics/units/unitsystem.py
+@@ -192,8 +192,9 @@ def _collect_factor_and_dimension(self, expr):
+         elif isinstance(expr, Function):
+             fds = [self._collect_factor_and_dimension(
+                 arg) for arg in expr.args]
+-            return (expr.func(*(f[0] for f in fds)),
+-                    *(d[1] for d in fds))
++            dims = [Dimension(1) if self.get_dimension_system(
++            ).is_dimensionless(d[1]) else d[1] for d in fds]
++            return (expr.func(*(f[0] for f in fds)), *dims)
+         elif isinstance(expr, Dimension):
+             return S.One, expr
+         else:
+2026-11-11 08:49:19,829 - INFO - Git diff changed after running eval script
+2026-11-11 08:49:19,830 - INFO - Grading answer for sympy__sympy-24066...
+2026-11-11 08:49:19,834 - INFO - report: {'sympy__sympy-24066': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_24062'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_str_repr', 'test_eq', 'test_convert_to', 'test_Quantity_definition', 'test_abbrev', 'test_print', 'test_Quantity_eq', 'test_add_sub', 'test_quantity_abs', 'test_check_unit_consistency', 'test_mul_div', 'test_units', 'test_issue_quart', 'test_issue_5565', 'test_find_unit', 'test_Quantity_derivative', 'test_quantity_postprocessing', 'test_factor_and_dimension', 'test_dimensional_expr_of_derivative', 'test_get_dimensional_expr_with_function', 'test_binary_information', 'test_conversion_with_2_nonstandard_dimensions', 'test_eval_subs', 'test_issue_14932', 'test_issue_14547', 'test_deprecated_quantity_methods', 'test_issue_22164', 'test_issue_22819', 'test_issue_20288', 'test_prefixed_property'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-24066: resolved: True
+2026-11-11 08:49:19,835 - INFO - Attempting to stop container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162...
+2026-11-11 08:49:36,063 - INFO - Container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162 stopped successfully.
+2026-11-11 08:49:36,063 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162...
+2026-11-11 08:49:36,106 - INFO - Container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162 removed successfully.
+1 08:49:10,287 - INFO - Failed to stop container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162: Command '['docker', 'stop', '--time=15', '8e1c143c782e6ba2e18ca10279096175fb5a44b65c97aa41c71f51882bc63e1e']' returned non-zero exit status 1.. Trying to forcefully kill...
+2026-11-11 08:49:10,287 - INFO - Forcefully killing container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162...
+2026-11-11 08:49:10,309 - INFO - Failed to kill container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162: Error response from daemon: cannot kill container: 8e1c143c782e6ba2e18ca10279096175fb5a44b65c97aa41c71f51882bc63e1e: No such container: 8e1c143c782e6ba2e18ca10279096175fb5a44b65c97aa41c71f51882bc63e1e
+
+2026-11-11 08:49:10,309 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162...
+2026-11-11 08:49:10,343 - INFO - Container sweb.eval.sympy__sympy-24066.verified_full_glm53_deepseek-harness_R2162 removed successfully.

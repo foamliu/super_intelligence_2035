@@ -1,0 +1,79 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index c1a76584f0..319f1b4177 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -863,6 +863,12 @@ class ExpressionWrapper(Expression):
+     def get_source_expressions(self):
+         return [self.expression]
+ 
++    def get_group_by_cols(self, alias=None):
++        expr = self.expression
++        while isinstance(expr, ExpressionWrapper):
++            expr = expr.expression
++        return expr.get_group_by_cols(alias)
++
+     def as_sql(self, compiler, connection):
+         return self.expression.as_sql(compiler, connection)
+ 
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 72bca4f205..652eafc35f 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -663,6 +663,57 @@ class BasicExpressionsTests(TestCase):
+         # contain nested aggregates.
+         self.assertNotIn('GROUP BY', sql)
+ 
++    def test_group_by_expression_wrapper_with_constant(self):
++        # A constant expression wrapped in ExpressionWrapper() must not be
++        # added to the GROUP BY clause (#31880).
++        qs = Company.objects.annotate(
++            expr_res=ExpressionWrapper(Value(3), output_field=IntegerField()),
++        ).values('expr_res', 'name').annotate(sum=Sum('num_employees'))
++        with self.assertNumQueries(1) as ctx:
++            self.assertCountEqual(list(qs), [
++                {'expr_res': 3, 'name': 'Example Inc.', 'sum': 2300},
++                {'expr_res': 3, 'name': 'Foobar Ltd.', 'sum': 3},
++                {'expr_res': 3, 'name': 'Test GmbH', 'sum': 32},
++            ])
++        sql = ctx.captured_queries[0]['sql']
++        group_by = sql.split('GROUP BY', 1)[1]
++        self.assertNotIn('3', group_by)
++
++    def test_group_by_nested_expression_wrapper_with_constant(self):
++        # Nested ExpressionWrapper() around a constant expression must not be
++        # added to the GROUP BY clause (#31880).
++        qs = Company.objects.annotate(
++            expr_res=ExpressionWrapper(
++                ExpressionWrapper(Value(3), output_field=IntegerField()),
++                output_field=IntegerField(),
++            ),
++        ).values('expr_res', 'name').annotate(sum=Sum('num_employees'))
++        with self.assertNumQueries(1) as ctx:
++            self.assertCountEqual(list(qs), [
++                {'expr_res': 3, 'name': 'Example Inc.', 'sum': 2300},
++                {'expr_res': 3, 'name': 'Foobar Ltd.', 'sum': 3},
++                {'expr_res': 3, 'name': 'Test GmbH', 'sum': 32},
++            ])
++        sql = ctx.captured_queries[0]['sql']
++        group_by = sql.split('GROUP BY', 1)[1]
++        self.assertNotIn('3', group_by)
++
++    def test_group_by_expression_wrapper(self):
++        # Expressions other than constants wrapped in ExpressionWrapper() are
++        # still added to the GROUP BY clause.
++        qs = Company.objects.annotate(
++            expr_res=ExpressionWrapper(
++                F('num_employees') + Value(1),
++                output_field=IntegerField(),
++            ),
++        ).values('expr_res').annotate(sum=Sum('num_chairs'))
++        with self.assertNumQueries(1):
++            self.assertCountEqual(list(qs), [
++                {'expr_res': 2301, 'sum': 5},
++                {'expr_res': 4, 'sum': 4},
++                {'expr_res': 33, 'sum': 1},
++            ])
++
+     def test_explicit_output_field(self):
+         class FuncA(Func):
+             output_field = CharField()

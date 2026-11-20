@@ -1,0 +1,7 @@
+diff --git a/changelog/7126.bugfix.rst b/changelog/7126.bugfix.rst
+new file mode 100644
+index 0000000..4873685
+--- /dev/null
++++ b/changelog/7126.bugfix.rst
+@@ -0,0 +1 @@
++Fix crash with ``BytesWarning`` when using ``--setup-show`` with a bytes parameter.

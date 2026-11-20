@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-14672",
+    "model_name_or_path": "claude-code-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/fields/reverse_related.py b/django/db/models/fields/reverse_related.py\nindex ccc2223a5f..65950590e2 100644\n--- a/django/db/models/fields/reverse_related.py\n+++ b/django/db/models/fields/reverse_related.py\n@@ -310,7 +310,7 @@ class ManyToManyRel(ForeignObjectRel):\n     def identity(self):\n         return super().identity + (\n             self.through,\n-            self.through_fields,\n+            make_hashable(self.through_fields),\n             self.db_constraint,\n         )\n \ndiff --git a/tests/m2m_through/tests.py b/tests/m2m_through/tests.py\nindex 6262596dd0..e8b5221f2d 100644\n--- a/tests/m2m_through/tests.py\n+++ b/tests/m2m_through/tests.py\n@@ -381,6 +381,16 @@ class M2mThroughTests(TestCase):\n             attrgetter('name')\n         )\n \n+    def test_through_fields_identity(self):\n+        \"\"\"\n+        A ManyToManyRel with list through_fields can be hashed (used e.g. in\n+        model checks).\n+        \"\"\"\n+        self.assertEqual(\n+            hash(Event._meta.get_field('invitees').remote_field),\n+            hash(Event._meta.get_field('invitees').remote_field),\n+        )\n+\n \n class M2mThroughReferentialTests(TestCase):\n     def test_self_referential_empty_qs(self):\n"
+  }
+]

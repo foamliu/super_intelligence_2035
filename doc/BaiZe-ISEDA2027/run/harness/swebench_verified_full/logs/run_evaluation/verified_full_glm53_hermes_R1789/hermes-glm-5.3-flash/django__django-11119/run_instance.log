@@ -1,0 +1,66 @@
+2026-11-07 22:44:31,499 - INFO - Creating container for django__django-11119...
+2026-11-07 22:44:31,528 - INFO - Container for django__django-11119 created: 15aa864712b9ed52f7c38bb4dd6ef84f04e8c60890df9cae178d9a98f857ac23
+2026-11-07 22:44:32,483 - INFO - Container for django__django-11119 started: 15aa864712b9ed52f7c38bb4dd6ef84f04e8c60890df9cae178d9a98f857ac23
+2026-11-07 22:44:32,485 - INFO - Intermediate patch for django__django-11119 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11119/patch.diff, now applying to container...
+2026-11-07 22:44:32,630 - INFO - >>>>> Applied Patch:
+Checking patch django/template/engine.py...
+Checking patch tests/template_tests/test_engine.py...
+Applied patch django/template/engine.py cleanly.
+Applied patch tests/template_tests/test_engine.py cleanly.
+
+2026-11-07 22:44:33,565 - INFO - Git diff before:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+diff --git a/tests/template_tests/test_engine.py b/tests/template_tests/test_engine.py
+index 2bb8601fbb..b975ea87b4 100644
+--- a/tests/template_tests/test_engine.py
++++ b/tests/template_tests/test_engine.py
+@@ -21,6 +21,13 @@ class RenderToStringTest(SimpleTestCase):
+             'obj:test\n',
+         )
+ 
++    def test_autoescape_off(self):
++        engine = Engine(dirs=[TEMPLATE_DIR], autoescape=False)
++        self.assertEqual(
++            engine.render_to_string('test_context.html', {'obj': '<script>'}),
++            'obj:<script>\n',
++        )
++
+ 
+ class GetDefaultTests(SimpleTestCase):
+2026-11-07 22:44:33,568 - INFO - Eval script for django__django-11119 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11119/eval.sh; copying to container...
+2026-11-07 22:44:40,230 - INFO - Test runtime: 6.57 seconds
+2026-11-07 22:44:40,232 - INFO - Test output for django__django-11119 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11119/test_output.txt
+2026-11-07 22:44:40,316 - INFO - Git diff after:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+2026-11-07 22:44:40,316 - INFO - Git diff changed after running eval script
+2026-11-07 22:44:40,316 - INFO - Grading answer for django__django-11119...
+2026-11-07 22:44:40,317 - INFO - report: {'django__django-11119': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_autoescape_off (template_tests.test_engine.RenderToStringTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_cached_loader_priority (template_tests.test_engine.LoaderTests)', 'test_loader_priority (template_tests.test_engine.LoaderTests)', 'test_origin (template_tests.test_engine.LoaderTests)', 'test_basic_context (template_tests.test_engine.RenderToStringTest)', 'test_multiple_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_no_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_single_engine_configured (template_tests.test_engine.GetDefaultTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11119: resolved: True
+2026-11-07 22:44:40,318 - INFO - Attempting to stop container sweb.eval.django__django-11119.verified_full_glm53_hermes_R1789...
+2026-11-07 22:44:56,614 - INFO - Container sweb.eval.django__django-11119.verified_full_glm53_hermes_R1789 stopped successfully.
+2026-11-07 22:44:56,614 - INFO - Attempting to remove container sweb.eval.django__django-11119.verified_full_glm53_hermes_R1789...
+2026-11-07 22:44:56,663 - INFO - Container sweb.eval.django__django-11119.verified_full_glm53_hermes_R1789 removed successfully.

@@ -1,0 +1,7 @@
+diff --git a/astropy_helpers b/astropy_helpers
+index 32b440b5..7f11678c 160000
+--- a/astropy_helpers
++++ b/astropy_helpers
+@@ -1 +1 @@
+-Subproject commit 32b440b52f4c60592148b3254c7ddbf14df3c6e0
++Subproject commit 7f11678c03286f72acc9bab77868dabaeb368fda

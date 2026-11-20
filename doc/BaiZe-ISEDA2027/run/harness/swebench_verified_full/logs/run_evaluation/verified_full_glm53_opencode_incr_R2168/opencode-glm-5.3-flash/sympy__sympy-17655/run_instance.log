@@ -1,0 +1,121 @@
+2026-11-11 12:21:21,529 - INFO - Creating container for sympy__sympy-17655...
+2026-11-11 12:21:21,558 - INFO - Container for sympy__sympy-17655 created: dbffdc1ea7a7b372a0e03561d70fbdd4326ffad3f83d5bdda810b6b56a0c6b13
+2026-11-11 12:21:22,408 - INFO - Container for sympy__sympy-17655 started: dbffdc1ea7a7b372a0e03561d70fbdd4326ffad3f83d5bdda810b6b56a0c6b13
+2026-11-11 12:21:22,410 - INFO - Intermediate patch for sympy__sympy-17655 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2168/opencode-glm-5.3-flash/sympy__sympy-17655/patch.diff, now applying to container...
+2026-11-11 12:21:22,593 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/numbers.py...
+warning: sympy/core/numbers.py has type 100755, expected 100644
+Checking patch sympy/geometry/point.py...
+warning: sympy/geometry/point.py has type 100755, expected 100644
+Checking patch sympy/geometry/tests/test_point.py...
+warning: sympy/geometry/tests/test_point.py has type 100755, expected 100644
+Applied patch sympy/core/numbers.py cleanly.
+Applied patch sympy/geometry/point.py cleanly.
+Applied patch sympy/geometry/tests/test_point.py cleanly.
+
+2026-11-11 12:21:23,120 - INFO - Git diff before:
+diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
+index c82993e2b0..01258aa9a7 100755
+--- a/sympy/core/numbers.py
++++ b/sympy/core/numbers.py
+@@ -752,7 +752,8 @@ def __mul__(self, other):
+                     return S.NegativeInfinity
+                 else:
+                     return S.Infinity
+-        elif isinstance(other, Tuple):
++        elif not isinstance(other, Expr):
++            # e.g. Tuple, Point: let the other object handle it
+             return NotImplemented
+         return AtomicExpr.__mul__(self, other)
+ 
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 7c978c47be..ee679a556b 100755
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -278,6 +278,10 @@ def __mul__(self, factor):
+         coords = [simplify(x*factor) for x in self.args]
+         return Point(coords, evaluate=False)
+ 
++    def __rmul__(self, factor):
++        """Multiply a factor by point's coordinates."""
++        return self.__mul__(factor)
++
+     def __neg__(self):
+         """Negate the point."""
+         coords = [-x for x in self.args]
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index 475d1d403f..7d6ea9a1ca 100755
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -26,7 +26,6 @@ def test_point():
+     assert p2.y == y2
+     assert (p3 + p4) == p4
+     assert (p2 - p1) == Point(y1 - x1, y2 - x2)
+-    assert p4*5 == Point(5, 5)
+     assert -p2 == Point(-y1, -y2)
+     raises(ValueError, lambda: Point(3, I))
+     raises(ValueError, lambda: Point(2*I, I))
+@@ -92,6 +91,7 @@ def test_point():
+ 
+     assert p4 * 5 == Point(5, 5)
+     assert p4 / 5 == Point(0.2, 0.2)
++    assert 5 * p4 == Point(5, 5)
+ 
+     raises(ValueError, lambda: Point(0, 0) + 10)
+ 
+@@ -140,7 +140,6 @@ def test_point3D():
+     assert p2.y == y2
+     assert (p3 + p4) == p4
+     assert (p2 - p1) == Point3D(y1 - x1, y2 - x2, y3 - x3)
+-    assert p4*5 == Point3D(5, 5, 5)
+     assert -p2 == Point3D(-y1, -y2, -y3)
+ 
+     assert Point(34.05, sqrt(3)) == Point(Rational(681, 20), sqrt(3))
+@@ -169,6 +168,7 @@ def test_point3D():
+ 
+     assert p4 * 5 == Point3D(5, 5, 5)
+     assert p4 / 5 == Point3D(0.2, 0.2, 0.2)
++    assert 5 * p4 == Point3D(5, 5, 5)
+ 
+     raises(ValueError, lambda: Point3D(0, 0, 0) + 10)
+2026-11-11 12:21:23,123 - INFO - Eval script for sympy__sympy-17655 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2168/opencode-glm-5.3-flash/sympy__sympy-17655/eval.sh; copying to container...
+2026-11-11 12:21:40,572 - INFO - Test runtime: 17.37 seconds
+2026-11-11 12:21:40,575 - INFO - Test output for sympy__sympy-17655 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2168/opencode-glm-5.3-flash/sympy__sympy-17655/test_output.txt
+2026-11-11 12:21:40,639 - INFO - Git diff after:
+diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
+index c82993e2b0..01258aa9a7 100755
+--- a/sympy/core/numbers.py
++++ b/sympy/core/numbers.py
+@@ -752,7 +752,8 @@ def __mul__(self, other):
+                     return S.NegativeInfinity
+                 else:
+                     return S.Infinity
+-        elif isinstance(other, Tuple):
++        elif not isinstance(other, Expr):
++            # e.g. Tuple, Point: let the other object handle it
+             return NotImplemented
+         return AtomicExpr.__mul__(self, other)
+ 
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 7c978c47be..ee679a556b 100755
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -278,6 +278,10 @@ def __mul__(self, factor):
+         coords = [simplify(x*factor) for x in self.args]
+         return Point(coords, evaluate=False)
+ 
++    def __rmul__(self, factor):
++        """Multiply a factor by point's coordinates."""
++        return self.__mul__(factor)
++
+     def __neg__(self):
+         """Negate the point."""
+         coords = [-x for x in self.args]
+2026-11-11 12:21:40,639 - INFO - Git diff changed after running eval script
+2026-11-11 12:21:40,639 - INFO - Grading answer for sympy__sympy-17655...
+2026-11-11 12:21:40,643 - INFO - report: {'sympy__sympy-17655': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_point', 'test_point3D'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Point2D', 'test_issue_9214', 'test_issue_11617', 'test_transform', 'test_concyclic_doctest_bug', 'test_arguments', 'test_unit', 'test_dot', 'test__normalize_dimension'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17655: resolved: True
+2026-11-11 12:21:40,644 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17655.verified_full_glm53_opencode_incr_R2168...
+2026-11-11 12:21:56,768 - INFO - Container sweb.eval.sympy__sympy-17655.verified_full_glm53_opencode_incr_R2168 stopped successfully.
+2026-11-11 12:21:56,768 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17655.verified_full_glm53_opencode_incr_R2168...
+2026-11-11 12:21:56,818 - INFO - Container sweb.eval.sympy__sympy-17655.verified_full_glm53_opencode_incr_R2168 removed successfully.

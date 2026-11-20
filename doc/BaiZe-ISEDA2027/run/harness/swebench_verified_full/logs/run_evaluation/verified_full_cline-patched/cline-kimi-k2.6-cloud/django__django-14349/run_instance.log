@@ -1,0 +1,99 @@
+2026-10-30 16:16:52,881 - INFO - Creating container for django__django-14349...
+2026-10-30 16:16:57,209 - INFO - Removed existing container sweb.eval.django__django-14349.verified_full_cline-patched
+2026-10-30 16:16:57,223 - INFO - Container for django__django-14349 created: c1f591825af55e4248316a5ee66c34bfd0141a39a4225ebd421e96feef146cdc
+2026-10-30 16:17:04,401 - INFO - Container for django__django-14349 started: c1f591825af55e4248316a5ee66c34bfd0141a39a4225ebd421e96feef146cdc
+2026-10-30 16:17:04,402 - INFO - Intermediate patch for django__django-14349 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14349/patch.diff, now applying to container...
+2026-10-30 16:17:04,546 - INFO - >>>>> Applied Patch:
+Checking patch django/core/validators.py...
+Applied patch django/core/validators.py cleanly.
+
+2026-10-30 16:17:05,446 - INFO - Git diff before:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a385819510..5a18abe092 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -105,6 +105,10 @@ class URLValidator(RegexValidator):
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
++        # Reject URLs containing CR/LF/tab for consistent validation across
++        # Python versions (bpo-43882).
++        if '\n' in value or '\r' in value or '\t' in value:
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         # Then check full URL
+         try:
+@@ -126,7 +130,11 @@ class URLValidator(RegexValidator):
+                 raise
+         else:
+             # Now verify IPv6 in the netloc part
+-            host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', urlsplit(value).netloc)
++            try:
++                netloc = urlsplit(value).netloc
++            except ValueError:
++                raise ValidationError(self.message, code=self.code, params={'value': value})
++            host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', netloc)
+             if host_match:
+                 potential_ip = host_match[1]
+                 try:
+@@ -138,7 +146,11 @@ class URLValidator(RegexValidator):
+         # section 3.1. It's defined to be 255 bytes or less, but this includes
+         # one byte for the length of the name and one byte for the trailing dot
+         # that's used to indicate absolute names in DNS.
+-        if len(urlsplit(value).hostname) > 253:
++        try:
++            hostname = urlsplit(value).hostname
++        except ValueError:
++            raise ValidationError(self.message, code=self.code, params={'value': value})
++        if len(hostname) > 253:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
+2026-10-30 16:17:05,448 - INFO - Eval script for django__django-14349 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14349/eval.sh; copying to container...
+2026-10-30 16:17:12,288 - INFO - Test runtime: 6.71 seconds
+2026-10-30 16:17:12,293 - INFO - Test output for django__django-14349 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14349/test_output.txt
+2026-10-30 16:17:12,411 - INFO - Git diff after:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a385819510..5a18abe092 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -105,6 +105,10 @@ class URLValidator(RegexValidator):
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
++        # Reject URLs containing CR/LF/tab for consistent validation across
++        # Python versions (bpo-43882).
++        if '\n' in value or '\r' in value or '\t' in value:
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         # Then check full URL
+         try:
+@@ -126,7 +130,11 @@ class URLValidator(RegexValidator):
+                 raise
+         else:
+             # Now verify IPv6 in the netloc part
+-            host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', urlsplit(value).netloc)
++            try:
++                netloc = urlsplit(value).netloc
++            except ValueError:
++                raise ValidationError(self.message, code=self.code, params={'value': value})
++            host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', netloc)
+             if host_match:
+                 potential_ip = host_match[1]
+                 try:
+@@ -138,7 +146,11 @@ class URLValidator(RegexValidator):
+         # section 3.1. It's defined to be 255 bytes or less, but this includes
+         # one byte for the length of the name and one byte for the trailing dot
+         # that's used to indicate absolute names in DNS.
+-        if len(urlsplit(value).hostname) > 253:
++        try:
++            hostname = urlsplit(value).hostname
++        except ValueError:
++            raise ValidationError(self.message, code=self.code, params={'value': value})
++        if len(hostname) > 253:
+             raise ValidationError(self.message, code=self.code, params={'value': value})
+2026-10-30 16:17:12,412 - INFO - Grading answer for django__django-14349...
+2026-10-30 16:17:12,413 - INFO - report: {'django__django-14349': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_validators (validators.tests.TestValidators)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_domain_whitelist (validators.tests.DeprecationTests)', 'test_domain_whitelist_access_warning (validators.tests.DeprecationTests)', 'test_domain_whitelist_set_warning (validators.tests.DeprecationTests)', 'test_whitelist (validators.tests.DeprecationTests)', 'test_whitelist_warning (validators.tests.DeprecationTests)', 'test_basic_equality (validators.tests.TestValidatorEquality)', 'test_decimal_equality (validators.tests.TestValidatorEquality)', 'test_email_equality (validators.tests.TestValidatorEquality)', 'test_file_extension_equality (validators.tests.TestValidatorEquality)', 'test_prohibit_null_characters_validator_equality (validators.tests.TestValidatorEquality)', 'test_regex_equality (validators.tests.TestValidatorEquality)', 'test_regex_equality_blank (validators.tests.TestValidatorEquality)', 'test_regex_equality_nocache (validators.tests.TestValidatorEquality)', 'test_max_length_validator_message (validators.tests.TestValidators)', 'test_message_dict (validators.tests.TestValidators)', 'test_message_list (validators.tests.TestValidators)', 'test_regex_validator_flags (validators.tests.TestValidators)', 'test_single_message (validators.tests.TestValidators)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14349: resolved: True
+2026-10-30 16:17:12,414 - INFO - Attempting to stop container sweb.eval.django__django-14349.verified_full_cline-patched...
+2026-10-30 16:17:31,195 - INFO - Container sweb.eval.django__django-14349.verified_full_cline-patched stopped successfully.
+2026-10-30 16:17:31,195 - INFO - Attempting to remove container sweb.eval.django__django-14349.verified_full_cline-patched...
+2026-10-30 16:17:31,239 - INFO - Container sweb.eval.django__django-14349.verified_full_cline-patched removed successfully.

@@ -1,0 +1,27 @@
+=== incr_eval R1039 START Sat Oct 31 11:31:10 AM CST 2026 ===
+cline-patched: merged 442 patches
+[Sat Oct 31 11:31:10 AM CST 2026] === cline-patched eval START 1 instances: scikit-learn__scikit-learn-14710  ===
+/usr/bin/python3: Error while finding module specification for 'swebench.harness.run_evaluation' (ModuleNotFoundError: No module named 'swebench')
+[Sat Oct 31 11:31:10 AM CST 2026] === cline-patched eval DONE ===
+opencode: merged 488 patches
+[Sat Oct 31 11:31:10 AM CST 2026] === opencode eval START 1 instances: scikit-learn__scikit-learn-14710  ===
+/usr/bin/python3: Error while finding module specification for 'swebench.harness.run_evaluation' (ModuleNotFoundError: No module named 'swebench')
+[Sat Oct 31 11:31:10 AM CST 2026] === opencode eval DONE ===
+claude-code: merged 302 patches
+[Sat Oct 31 11:31:10 AM CST 2026] === claude-code eval START 1 instances: django__django-12708  ===
+/usr/bin/python3: Error while finding module specification for 'swebench.harness.run_evaluation' (ModuleNotFoundError: No module named 'swebench')
+[Sat Oct 31 11:31:10 AM CST 2026] === claude-code eval DONE ===
+codex: merged 194 patches
+[Sat Oct 31 11:31:10 AM CST 2026] === codex eval START 1 instances: django__django-11490  ===
+/usr/bin/python3: Error while finding module specification for 'swebench.harness.run_evaluation' (ModuleNotFoundError: No module named 'swebench')
+[Sat Oct 31 11:31:10 AM CST 2026] === codex eval DONE ===
+[Sat Oct 31 11:31:10 AM CST 2026] === regen summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=325 failed=116 infra=1)
+  opencode: unchanged (n=488 resolved=394 failed=93 infra=1)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: unchanged (n=301 resolved=229 failed=72 infra=0)
+  codex: unchanged (n=192 resolved=151 failed=41 infra=0)
+  hermes: unchanged (n=23 resolved=16 failed=7 infra=0)
+  deepseek-harness: unchanged (n=32 resolved=26 failed=6 infra=0)
+=== incr_eval R1039 DONE Sat Oct 31 11:31:11 AM CST 2026 ===

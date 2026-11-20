@@ -1,0 +1,132 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 686e75c979..7478ba2e8c 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -504,6 +504,12 @@ class SQLCompiler:
+             if combinator:
+                 if not getattr(features, 'supports_select_{}'.format(combinator)):
+                     raise NotSupportedError('{} is not supported on this database backend.'.format(combinator))
++                # If the outer query is empty, e.g. QuerySet.none() was called
++                # on a combined queryset, the whole combined query is empty,
++                # because the outer query's WHERE clause, which holds the
++                # NothingNode, is ignored when compiling combined queries.
++                if self.query.is_empty():
++                    raise EmptyResultSet
+                 result, params = self.get_combinator_sql(combinator, self.query.combinator_all)
+             else:
+                 distinct_fields, distinct_params = self.get_distinct()
+diff --git a/edge_cases.py b/edge_cases.py
+new file mode 100644
+index 0000000000..a39bc053ee
+--- /dev/null
++++ b/edge_cases.py
+@@ -0,0 +1,75 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++)
++django.setup()
++
++from django.core.exceptions import EmptyResultSet
++from django.db import models, connection
++
++class Number(models.Model):
++    num = models.IntegerField()
++
++    class Meta:
++        app_label = 'queries'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++
++Number.objects.bulk_create(Number(num=i) for i in range(10))
++
++qs1 = Number.objects.filter(num__lte=1)
++qs2 = Number.objects.filter(num__gte=8)
++combined = qs1.union(qs2)
++
++# 1. none() on combined queryset is empty.
++assert list(combined.none().values_list('num', flat=True)) == []
++assert combined.none().count() == 0
++assert not combined.none().exists()
++assert combined.none().first() is None
++
++# 2. none() on intersection/difference combined querysets is empty.
++assert list(qs1.intersection(qs2).none()) == []
++assert list(qs1.difference(qs2).none()) == []
++
++# 3. none()'d combined queryset used as an operand is elided (union semantics).
++assert sorted(n.num for n in combined.none().union(Number.objects.filter(num=5))) == [5]
++assert sorted(n.num for n in qs1.union(qs2.none())) == [0, 1]
++# A none()'d simple queryset combined after the fact still elides.
++assert sorted(n.num for n in Number.objects.none().union(qs1)) == [0, 1]
++
++# 4. none()'d combined queryset as a subquery.
++assert list(Number.objects.filter(num__in=combined.none())) == []
++assert [n.num for n in Number.objects.exclude(num__in=combined.none()).order_by('pk')] == list(range(10))
++
++# 5. values()/values_list() on none()'d combined queryset.
++assert list(combined.none().values('num')) == []
++assert list(combined.none().values_list('num', flat=True)) == []
++
++# 6. Zero-length slices of combined querysets stay empty.
++assert list(combined[3:3]) == []
++assert list(combined[:0]) == []
++
++# 7. str() of a none()'d combined query raises EmptyResultSet, consistent
++#    with a none()'d simple query.
++try:
++    str(combined.none().query)
++    raise SystemExit('expected EmptyResultSet')
++except EmptyResultSet:
++    pass
++try:
++    str(Number.objects.none().query)
++    raise SystemExit('expected EmptyResultSet')
++except EmptyResultSet:
++    pass
++
++# 8. Non-empty combined querysets are unaffected.
++assert sorted(n.num for n in combined) == [0, 1, 8, 9]
++assert combined.count() == 4
++assert combined.exists()
++
++print('All edge cases OK')
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 9c6fd474ca..4678bc4799 100644
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -99,6 +99,29 @@ class QuerySetSetOperationTests(TestCase):
+         self.assertEqual(len(qs2.union(qs2)), 0)
+         self.assertEqual(len(qs3.union(qs3)), 0)
+ 
++    def test_none_on_combined_queryset(self):
++        qs1 = Number.objects.filter(num__lte=1)
++        qs2 = Number.objects.filter(num__gte=8)
++        combined = qs1.union(qs2)
++        self.assertEqual(len(combined.none()), 0)
++        self.assertEqual(combined.none().count(), 0)
++        self.assertFalse(combined.none().exists())
++
++    def test_union_with_none_on_combined_queryset(self):
++        qs1 = Number.objects.filter(num__lte=1)
++        qs2 = Number.objects.filter(num__gte=8)
++        qs3 = Number.objects.filter(num=5)
++        combined = qs1.union(qs2)
++        self.assertNumbersEqual(combined.none().union(qs3), [5], ordered=False)
++
++    @skipUnlessDBFeature('supports_select_intersection')
++    def test_intersection_with_none_on_combined_queryset(self):
++        qs1 = Number.objects.filter(num__lte=1)
++        qs2 = Number.objects.filter(num__gte=8)
++        qs3 = Number.objects.filter(num=5)
++        combined = qs1.union(qs2)
++        self.assertEqual(len(combined.none().intersection(qs3)), 0)
++
+     def test_limits(self):
+         qs1 = Number.objects.all()
+         qs2 = Number.objects.all()

@@ -1,0 +1,242 @@
+2026-10-30 15:37:40,341 - INFO - Creating container for django__django-14034...
+2026-10-30 15:37:40,365 - INFO - Container for django__django-14034 created: 043b466b4e2f0e9acc3a2d212901710a27e506ecae20612d0b2ae277938dcb4a
+2026-10-30 15:37:41,121 - INFO - Container for django__django-14034 started: 043b466b4e2f0e9acc3a2d212901710a27e506ecae20612d0b2ae277938dcb4a
+2026-10-30 15:37:41,123 - INFO - Intermediate patch for django__django-14034 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-14034/patch.diff, now applying to container...
+2026-10-30 15:37:41,287 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/boundfield.py...
+Checking patch tests/forms_tests/field_tests/test_multivaluefield.py...
+Checking patch tests/forms_tests/tests/test_forms.py...
+Applied patch django/forms/boundfield.py cleanly.
+Applied patch tests/forms_tests/field_tests/test_multivaluefield.py cleanly.
+Applied patch tests/forms_tests/tests/test_forms.py cleanly.
+
+2026-10-30 15:37:42,745 - INFO - Git diff before:
+diff --git a/django/forms/boundfield.py b/django/forms/boundfield.py
+index a061f15f87..3e92cba549 100644
+--- a/django/forms/boundfield.py
++++ b/django/forms/boundfield.py
+@@ -2,7 +2,7 @@ import re
+ 
+ from django.core.exceptions import ValidationError
+ from django.forms.utils import flatatt, pretty_name
+-from django.forms.widgets import Textarea, TextInput
++from django.forms.widgets import MultiWidget, Textarea, TextInput
+ from django.utils.functional import cached_property
+ from django.utils.html import conditional_escape, format_html, html_safe
+ from django.utils.safestring import mark_safe
+@@ -233,7 +233,17 @@ class BoundField:
+         widget = widget or self.field.widget
+         attrs = dict(attrs)  # Copy attrs to avoid modifying the argument.
+         if widget.use_required_attribute(self.initial) and self.field.required and self.form.use_required_attribute:
+-            attrs['required'] = True
++            # MultiValueField has require_all_fields: if False, fall back
++            # on subfields.
++            if (
++                hasattr(self.field, 'require_all_fields') and
++                not self.field.require_all_fields and
++                isinstance(self.field.widget, MultiWidget)
++            ):
++                for subfield, subwidget in zip(self.field.fields, widget.widgets):
++                    subwidget.attrs['required'] = subwidget.use_required_attribute(self.initial) and subfield.required
++            else:
++                attrs['required'] = True
+         if self.field.disabled:
+             attrs['disabled'] = True
+         return attrs
+diff --git a/tests/forms_tests/field_tests/test_multivaluefield.py b/tests/forms_tests/field_tests/test_multivaluefield.py
+index 29287d0b01..22e0892f68 100644
+--- a/tests/forms_tests/field_tests/test_multivaluefield.py
++++ b/tests/forms_tests/field_tests/test_multivaluefield.py
+@@ -10,6 +10,20 @@ from django.test import SimpleTestCase
+ beatles = (('J', 'John'), ('P', 'Paul'), ('G', 'George'), ('R', 'Ringo'))
+ 
+ 
++class PartiallyRequiredField(MultiValueField):
++    def compress(self, data_list):
++        return ','.join(data_list) if data_list else None
++
++
++class PartiallyRequiredForm(Form):
++    f = PartiallyRequiredField(
++        fields=(CharField(required=True), CharField(required=False)),
++        required=True,
++        require_all_fields=False,
++        widget=MultiWidget(widgets=[TextInput(), TextInput()]),
++    )
++
++
+ class ComplexMultiWidget(MultiWidget):
+     def __init__(self, attrs=None):
+         widgets = (
+@@ -172,3 +186,11 @@ class MultiValueFieldTest(SimpleTestCase):
+         })
+         form.is_valid()
+         self.assertEqual(form.cleaned_data['field1'], 'some text,JP,2007-04-25 06:24:00')
++
++    def test_render_required_attributes(self):
++        form = PartiallyRequiredForm({'f_0': 'Hello', 'f_1': ''})
++        self.assertTrue(form.is_valid())
++        self.assertInHTML('<input type="text" name="f_0" value="Hello" required id="id_f_0">', form.as_p())
++        self.assertInHTML('<input type="text" name="f_1" id="id_f_1">', form.as_p())
++        form = PartiallyRequiredForm({'f_0': '', 'f_1': ''})
++        self.assertFalse(form.is_valid())
+diff --git a/tests/forms_tests/tests/test_forms.py b/tests/forms_tests/tests/test_forms.py
+index 0fe0749294..212af2ad14 100644
+--- a/tests/forms_tests/tests/test_forms.py
++++ b/tests/forms_tests/tests/test_forms.py
+@@ -10,9 +10,10 @@ from django.forms import (
+     BooleanField, CharField, CheckboxSelectMultiple, ChoiceField, DateField,
+     DateTimeField, EmailField, FileField, FileInput, FloatField, Form,
+     HiddenInput, ImageField, IntegerField, MultipleChoiceField,
+-    MultipleHiddenInput, MultiValueField, NullBooleanField, PasswordInput,
+-    RadioSelect, Select, SplitDateTimeField, SplitHiddenDateTimeWidget,
+-    Textarea, TextInput, TimeField, ValidationError, forms,
++    MultipleHiddenInput, MultiValueField, MultiWidget, NullBooleanField,
++    PasswordInput, RadioSelect, Select, SplitDateTimeField,
++    SplitHiddenDateTimeWidget, Textarea, TextInput, TimeField, ValidationError,
++    forms,
+ )
+ from django.forms.renderers import DjangoTemplates, get_default_renderer
+ from django.forms.utils import ErrorList
+@@ -3102,6 +3103,39 @@ Good luck picking a username that doesn&#x27;t already exist.</p>
+         with self.assertRaisesMessage(ValidationError, "'Enter a valid country code.'"):
+             f.clean(['61', '287654321', '123', 'Home'])
+ 
++    def test_multivalue_optional_subfields_rendering(self):
++        class PhoneWidget(MultiWidget):
++            def __init__(self, attrs=None):
++                widgets = [TextInput(), TextInput()]
++                super().__init__(widgets, attrs)
++
++            def decompress(self, value):
++                return [None, None]
++
++        class PhoneField(MultiValueField):
++            def __init__(self, *args, **kwargs):
++                fields = [CharField(), CharField(required=False)]
++                super().__init__(fields, *args, **kwargs)
++
++        class PhoneForm(Form):
++            phone1 = PhoneField(widget=PhoneWidget)
++            phone2 = PhoneField(widget=PhoneWidget, required=False)
++            phone3 = PhoneField(widget=PhoneWidget, require_all_fields=False)
++            phone4 = PhoneField(
++                widget=PhoneWidget, required=False, require_all_fields=False,
++            )
++
++        form = PhoneForm(auto_id=False)
++        self.assertHTMLEqual(
++            form.as_p(),
++            """
++            <p>Phone1:<input type="text" name="phone1_0" required><input type="text" name="phone1_1" required></p>
++            <p>Phone2:<input type="text" name="phone2_0"><input type="text" name="phone2_1"></p>
++            <p>Phone3:<input type="text" name="phone3_0" required><input type="text" name="phone3_1"></p>
++            <p>Phone4:<input type="text" name="phone4_0"><input type="text" name="phone4_1"></p>
++            """,
++        )
++
+     def test_custom_empty_values(self):
+         """
+         Form fields can customize what is considered as an empty value
+2026-10-30 15:37:42,747 - INFO - Eval script for django__django-14034 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-14034/eval.sh; copying to container...
+2026-10-30 15:37:50,038 - INFO - Test runtime: 7.22 seconds
+2026-10-30 15:37:50,038 - INFO - Test output for django__django-14034 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-14034/test_output.txt
+2026-10-30 15:37:50,117 - INFO - Git diff after:
+diff --git a/django/forms/boundfield.py b/django/forms/boundfield.py
+index a061f15f87..3e92cba549 100644
+--- a/django/forms/boundfield.py
++++ b/django/forms/boundfield.py
+@@ -2,7 +2,7 @@ import re
+ 
+ from django.core.exceptions import ValidationError
+ from django.forms.utils import flatatt, pretty_name
+-from django.forms.widgets import Textarea, TextInput
++from django.forms.widgets import MultiWidget, Textarea, TextInput
+ from django.utils.functional import cached_property
+ from django.utils.html import conditional_escape, format_html, html_safe
+ from django.utils.safestring import mark_safe
+@@ -233,7 +233,17 @@ class BoundField:
+         widget = widget or self.field.widget
+         attrs = dict(attrs)  # Copy attrs to avoid modifying the argument.
+         if widget.use_required_attribute(self.initial) and self.field.required and self.form.use_required_attribute:
+-            attrs['required'] = True
++            # MultiValueField has require_all_fields: if False, fall back
++            # on subfields.
++            if (
++                hasattr(self.field, 'require_all_fields') and
++                not self.field.require_all_fields and
++                isinstance(self.field.widget, MultiWidget)
++            ):
++                for subfield, subwidget in zip(self.field.fields, widget.widgets):
++                    subwidget.attrs['required'] = subwidget.use_required_attribute(self.initial) and subfield.required
++            else:
++                attrs['required'] = True
+         if self.field.disabled:
+             attrs['disabled'] = True
+         return attrs
+diff --git a/tests/forms_tests/tests/test_forms.py b/tests/forms_tests/tests/test_forms.py
+index 0fe0749294..212af2ad14 100644
+--- a/tests/forms_tests/tests/test_forms.py
++++ b/tests/forms_tests/tests/test_forms.py
+@@ -10,9 +10,10 @@ from django.forms import (
+     BooleanField, CharField, CheckboxSelectMultiple, ChoiceField, DateField,
+     DateTimeField, EmailField, FileField, FileInput, FloatField, Form,
+     HiddenInput, ImageField, IntegerField, MultipleChoiceField,
+-    MultipleHiddenInput, MultiValueField, NullBooleanField, PasswordInput,
+-    RadioSelect, Select, SplitDateTimeField, SplitHiddenDateTimeWidget,
+-    Textarea, TextInput, TimeField, ValidationError, forms,
++    MultipleHiddenInput, MultiValueField, MultiWidget, NullBooleanField,
++    PasswordInput, RadioSelect, Select, SplitDateTimeField,
++    SplitHiddenDateTimeWidget, Textarea, TextInput, TimeField, ValidationError,
++    forms,
+ )
+ from django.forms.renderers import DjangoTemplates, get_default_renderer
+ from django.forms.utils import ErrorList
+@@ -3102,6 +3103,39 @@ Good luck picking a username that doesn&#x27;t already exist.</p>
+         with self.assertRaisesMessage(ValidationError, "'Enter a valid country code.'"):
+             f.clean(['61', '287654321', '123', 'Home'])
+ 
++    def test_multivalue_optional_subfields_rendering(self):
++        class PhoneWidget(MultiWidget):
++            def __init__(self, attrs=None):
++                widgets = [TextInput(), TextInput()]
++                super().__init__(widgets, attrs)
++
++            def decompress(self, value):
++                return [None, None]
++
++        class PhoneField(MultiValueField):
++            def __init__(self, *args, **kwargs):
++                fields = [CharField(), CharField(required=False)]
++                super().__init__(fields, *args, **kwargs)
++
++        class PhoneForm(Form):
++            phone1 = PhoneField(widget=PhoneWidget)
++            phone2 = PhoneField(widget=PhoneWidget, required=False)
++            phone3 = PhoneField(widget=PhoneWidget, require_all_fields=False)
++            phone4 = PhoneField(
++                widget=PhoneWidget, required=False, require_all_fields=False,
++            )
++
++        form = PhoneForm(auto_id=False)
++        self.assertHTMLEqual(
++            form.as_p(),
++            """
++            <p>Phone1:<input type="text" name="phone1_0" required><input type="text" name="phone1_1" required></p>
++            <p>Phone2:<input type="text" name="phone2_0"><input type="text" name="phone2_1"></p>
++            <p>Phone3:<input type="text" name="phone3_0" required><input type="text" name="phone3_1"></p>
++            <p>Phone4:<input type="text" name="phone4_0"><input type="text" name="phone4_1"></p>
++            """,
++        )
++
+     def test_custom_empty_values(self):
+         """
+         Form fields can customize what is considered as an empty value
+2026-10-30 15:37:50,117 - INFO - Git diff changed after running eval script
+2026-10-30 15:37:50,117 - INFO - Grading answer for django__django-14034...
+2026-10-30 15:37:50,118 - INFO - report: {'django__django-14034': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_render_required_attributes (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_bad_choice (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_clean (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_clean_disabled_multivalue (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_disabled_has_changed (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_as_table (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_as_table_data (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_cleaned_data (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', "Test when the first widget's data has changed.", "Test when the last widget's data has changed. This ensures that it is", 'test_has_changed_no_initial (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_has_changed_same (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'If insufficient data is provided, None is substituted.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14034: resolved: True
+2026-10-30 15:37:50,119 - INFO - Attempting to stop container sweb.eval.django__django-14034.verified_full_opencode...
+2026-10-30 15:38:05,905 - INFO - Container sweb.eval.django__django-14034.verified_full_opencode stopped successfully.
+2026-10-30 15:38:05,905 - INFO - Attempting to remove container sweb.eval.django__django-14034.verified_full_opencode...
+2026-10-30 15:38:05,955 - INFO - Container sweb.eval.django__django-14034.verified_full_opencode removed successfully.

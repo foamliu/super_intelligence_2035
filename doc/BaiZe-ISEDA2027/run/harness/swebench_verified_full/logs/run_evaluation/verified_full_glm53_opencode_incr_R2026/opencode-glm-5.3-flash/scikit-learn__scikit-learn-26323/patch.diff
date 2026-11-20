@@ -1,0 +1,53 @@
+diff --git a/sklearn/compose/_column_transformer.py b/sklearn/compose/_column_transformer.py
+index 4eddd12b..3a89f0d6 100644
+--- a/sklearn/compose/_column_transformer.py
++++ b/sklearn/compose/_column_transformer.py
+@@ -303,6 +303,9 @@ class ColumnTransformer(TransformerMixin, _BaseComposition):
+         for trans in transformers:
+             _safe_set_output(trans, transform=transform)
+ 
++        if self.remainder not in {"passthrough", "drop"}:
++            _safe_set_output(self.remainder, transform=transform)
++
+         return self
+ 
+     def get_params(self, deep=True):
+diff --git a/sklearn/compose/tests/test_column_transformer.py b/sklearn/compose/tests/test_column_transformer.py
+index b9c8f583..79c70c16 100644
+--- a/sklearn/compose/tests/test_column_transformer.py
++++ b/sklearn/compose/tests/test_column_transformer.py
+@@ -20,6 +20,7 @@ from sklearn.compose import (
+     make_column_selector,
+ )
+ from sklearn.exceptions import NotFittedError
++from sklearn.feature_selection import VarianceThreshold
+ from sklearn.preprocessing import FunctionTransformer
+ from sklearn.preprocessing import StandardScaler, Normalizer, OneHotEncoder
+ 
+@@ -1965,6 +1966,26 @@ def test_column_transformer_set_output(verbose_feature_names_out, remainder):
+     assert_array_equal(X_trans.index, df_test.index)
+ 
+ 
++def test_column_transformer_set_output_remainder():
++    """Check that set_output sets the output of the remainder estimator.
++
++    Non-regression test for:
++    https://github.com/scikit-learn/scikit-learn/issues/26238
++    """
++    pd = pytest.importorskip("pandas")
++    df = pd.DataFrame({"a": [True, False, True], "b": [1, 2, 3]})
++    ct = make_column_transformer(
++        (VarianceThreshold(), make_column_selector(dtype_include=bool)),
++        remainder=VarianceThreshold(),
++        verbose_feature_names_out=False,
++    )
++    ct.set_output(transform="pandas")
++    X_trans = ct.fit_transform(df)
++    assert isinstance(X_trans, pd.DataFrame)
++    assert_array_equal(X_trans.columns, ["a", "b"])
++    assert_array_equal(X_trans.to_numpy(), df.to_numpy())
++
++
+ @pytest.mark.parametrize("remainder", ["drop", "passthrough"])
+ @pytest.mark.parametrize("fit_transform", [True, False])
+ def test_column_transform_set_output_mixed(remainder, fit_transform):

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-18189",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/solvers/diophantine.py b/sympy/solvers/diophantine.py\nindex 6092e35d..b43f5c1d 100644\n--- a/sympy/solvers/diophantine.py\n+++ b/sympy/solvers/diophantine.py\n@@ -182,7 +182,7 @@ def diophantine(eq, param=symbols(\"t\", integer=True), syms=None,\n             if syms != var:\n                 dict_sym_index = dict(zip(syms, range(len(syms))))\n                 return {tuple([t[dict_sym_index[i]] for i in var])\n-                            for t in diophantine(eq, param)}\n+                            for t in diophantine(eq, param, permute=permute)}\n         n, d = eq.as_numer_denom()\n         if n.is_number:\n             return set()\ndiff --git a/sympy/solvers/tests/test_diophantine.py b/sympy/solvers/tests/test_diophantine.py\nindex e4e8972a..9598eca2 100644\n--- a/sympy/solvers/tests/test_diophantine.py\n+++ b/sympy/solvers/tests/test_diophantine.py\n@@ -909,6 +909,12 @@ def test_diophantine_permute_sign():\n     soln = set([(-1, -1), (-1, 2), (1, -2), (1, 1)])\n     assert diophantine(10*x**2 + 12*x*y + 12*y**2 - 34, permute=True) == soln\n \n+    # issue 18186: results should not depend on the order of syms\n+    eq = a**4 + b**4 - (2**4 + 3**4)\n+    complete_soln = set(signed_permutations((2, 3)))\n+    assert diophantine(eq, syms=(a, b), permute=True) == complete_soln\n+    assert diophantine(eq, syms=(b, a), permute=True) == complete_soln\n+\n \n @XFAIL\n def test_not_implemented():\n"
+  }
+]

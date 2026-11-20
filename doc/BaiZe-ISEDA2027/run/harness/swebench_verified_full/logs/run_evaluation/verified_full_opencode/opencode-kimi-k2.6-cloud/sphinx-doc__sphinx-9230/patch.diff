@@ -1,0 +1,119 @@
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367eb..9a7c8244 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -35,6 +35,40 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_name(fieldarg: str) -> Tuple[str, str]:
++    """Split *fieldarg* into type and name, respecting bracket nesting.
++
++    The name is the last whitespace-separated token that is not inside
++    any brackets.  Everything before it is the type.
++    """
++    depth = 0
++    tokens = []
++    start = 0
++    in_token = False
++    for i, c in enumerate(fieldarg):
++        if c in '([{':
++            depth += 1
++        elif c in ')]}':
++            depth -= 1
++        elif depth == 0 and c.isspace():
++            if in_token:
++                tokens.append((start, i))
++                in_token = False
++        elif depth == 0:
++            if not in_token:
++                start = i
++                in_token = True
++    if in_token:
++        tokens.append((start, len(fieldarg)))
++
++    if len(tokens) >= 2:
++        name_start, name_end = tokens[-1]
++        argname = fieldarg[name_start:name_end]
++        argtype = fieldarg[:name_start].rstrip()
++        return argtype, argname
++    raise ValueError
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -298,7 +332,7 @@ class DocFieldTransformer:
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+                 try:
+-                    argtype, argname = fieldarg.split(None, 1)
++                    argtype, argname = _split_type_and_name(fieldarg)
+                 except ValueError:
+                     pass
+                 else:
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae..74b52455 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,10 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    try:
++        from types import Union as types_Union
++    except ImportError:
++        from types import UnionType as types_Union
+ else:
+     types_Union = None
+ 
+diff --git a/tests/test_util_docfields.py b/tests/test_util_docfields.py
+new file mode 100644
+index 00000000..a199178f
+--- /dev/null
++++ b/tests/test_util_docfields.py
+@@ -0,0 +1,43 @@
++"""Tests for sphinx.util.docfields."""
++
++import pytest
++
++from sphinx.util.docfields import _split_type_and_name
++
++
++@pytest.mark.parametrize(
++    'fieldarg, argtype, argname',
++    [
++        # simple type
++        ('int foo', 'int', 'foo'),
++        # type with spaces inside brackets
++        ('dict(str, str) foo', 'dict(str, str)', 'foo'),
++        ('Union[str, int] foo', 'Union[str, int]', 'foo'),
++        ('Callable[[int, str], bool] foo', 'Callable[[int, str], bool]', 'foo'),
++        ('list[dict[str, int]] foo', 'list[dict[str, int]]', 'foo'),
++        # with *args / **kwargs
++        ('int *args', 'int', '*args'),
++        ('int **kwargs', 'int', '**kwargs'),
++        # nested brackets
++        ('foo[bar(baz, qux)] name', 'foo[bar(baz, qux)]', 'name'),
++    ],
++)
++def test_split_type_and_name(fieldarg, argtype, argname):
++    assert _split_type_and_name(fieldarg) == (argtype, argname)
++
++
++@pytest.mark.parametrize(
++    'fieldarg',
++    [
++        # no type (single token)
++        'foo',
++        '*args',
++        '**kwargs',
++        'foo[bar]',
++        'dict(str, str)',
++        '',
++    ],
++)
++def test_split_type_and_name_no_type(fieldarg):
++    with pytest.raises(ValueError):
++        _split_type_and_name(fieldarg)

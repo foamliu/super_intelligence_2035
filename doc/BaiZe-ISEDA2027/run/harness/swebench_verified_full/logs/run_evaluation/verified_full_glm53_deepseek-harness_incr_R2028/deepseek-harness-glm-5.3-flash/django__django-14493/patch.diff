@@ -1,0 +1,50 @@
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index f957a667b2..720767aa9e 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -261,6 +261,7 @@ class HashedFilesMixin:
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
++        substitutions = False
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+diff --git a/tests/staticfiles_tests/storage.py b/tests/staticfiles_tests/storage.py
+index 79f406ca6c..eac4fe5a45 100644
+--- a/tests/staticfiles_tests/storage.py
++++ b/tests/staticfiles_tests/storage.py
+@@ -97,3 +97,7 @@ class ExtraPatternsStorage(ManifestStaticFilesStorage):
+ class NoneHashStorage(ManifestStaticFilesStorage):
+     def file_hash(self, name, content=None):
+         return None
++
++
++class ZeroPostProcessPassesStorage(ManifestStaticFilesStorage):
++    max_post_process_passes = 0
+diff --git a/tests/staticfiles_tests/test_storage.py b/tests/staticfiles_tests/test_storage.py
+index db655f2453..f992129673 100644
+--- a/tests/staticfiles_tests/test_storage.py
++++ b/tests/staticfiles_tests/test_storage.py
+@@ -463,6 +463,21 @@ class TestCollectionNoneHashStorage(CollectionTestCase):
+         self.assertEqual(relpath, 'cached/styles.css')
+ 
+ 
++@override_settings(
++    STATICFILES_STORAGE='staticfiles_tests.storage.ZeroPostProcessPassesStorage'
++)
++class TestCollectionZeroPostProcessPassesStorage(CollectionTestCase):
++    hashed_file_path = hashed_file_path
++
++    def test_zero_post_process_passes(self):
++        """
++        ManifestStaticFilesStorage with max_post_process_passes = 0 doesn't
++        crash (#32917).
++        """
++        relpath = self.hashed_file_path("cached/styles.css")
++        self.assertEqual(relpath, "cached/styles.5e0040571e1a.css")
++
++
+ @override_settings(STATICFILES_STORAGE='staticfiles_tests.storage.SimpleStorage')
+ class TestCollectionSimpleStorage(CollectionTestCase):
+     hashed_file_path = hashed_file_path

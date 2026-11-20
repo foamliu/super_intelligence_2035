@@ -1,0 +1,116 @@
+2026-10-30 17:00:59,173 - INFO - Creating container for sphinx-doc__sphinx-8265...
+2026-10-30 17:00:59,209 - INFO - Container for sphinx-doc__sphinx-8265 created: 8d7e735a871f5b9fadf4c557fa3f0f7cb0c56ffa75a4590bcfa935a97785d992
+2026-10-30 17:01:00,875 - INFO - Container for sphinx-doc__sphinx-8265 started: 8d7e735a871f5b9fadf4c557fa3f0f7cb0c56ffa75a4590bcfa935a97785d992
+2026-10-30 17:01:00,877 - INFO - Intermediate patch for sphinx-doc__sphinx-8265 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8265/patch.diff, now applying to container...
+2026-10-30 17:01:01,002 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/pycode/ast.py...
+Checking patch tests/test_pycode_ast.py...
+Applied patch sphinx/pycode/ast.py cleanly.
+Applied patch tests/test_pycode_ast.py cleanly.
+
+2026-10-30 17:01:01,427 - INFO - Git diff before:
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11c..5c5b644a2 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,17 +166,32 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
+-        return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
++        def is_simple_tuple(slice_value):
++            # when unparsing a non-empty tuple, the parentheses can be safely
++            # omitted if there aren't any elements that explicitly requires
++            # parentheses (such as starred expressions).
++            return (
++                isinstance(slice_value, ast.Tuple)
++                and slice_value.elts
++                and not any(isinstance(elt, ast.Starred) for elt in slice_value.elts)
++            )
++        if is_simple_tuple(node.slice):
++            slice_str = ", ".join(self.visit(e) for e in node.slice.elts)
++        else:
++            slice_str = self.visit(node.slice)
++        return "%s[%s]" % (self.visit(node.value), slice_str)
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+         else:
+             return "()"
+-
+     if sys.version_info >= (3, 6):
+         def visit_Constant(self, node: ast.Constant) -> str:
+             if node.value is Ellipsis:
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 9b12d24d5..32a784b74 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -53,7 +53,7 @@ from sphinx.pycode import ast
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+-    ("(1, 2, 3)", "1, 2, 3"),                   # Tuple
++    ("(1, 2, 3)", "(1, 2, 3)"),                   # Tuple
+     ("()", "()"),                               # Tuple (empty)
+ ])
+ def test_unparse(source, expected):
+2026-10-30 17:01:01,430 - INFO - Eval script for sphinx-doc__sphinx-8265 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8265/eval.sh; copying to container...
+2026-10-30 17:01:05,031 - INFO - Test runtime: 3.52 seconds
+2026-10-30 17:01:05,034 - INFO - Test output for sphinx-doc__sphinx-8265 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8265/test_output.txt
+2026-10-30 17:01:05,106 - INFO - Git diff after:
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11c..5c5b644a2 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,17 +166,32 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
+-        return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
++        def is_simple_tuple(slice_value):
++            # when unparsing a non-empty tuple, the parentheses can be safely
++            # omitted if there aren't any elements that explicitly requires
++            # parentheses (such as starred expressions).
++            return (
++                isinstance(slice_value, ast.Tuple)
++                and slice_value.elts
++                and not any(isinstance(elt, ast.Starred) for elt in slice_value.elts)
++            )
++        if is_simple_tuple(node.slice):
++            slice_str = ", ".join(self.visit(e) for e in node.slice.elts)
++        else:
++            slice_str = self.visit(node.slice)
++        return "%s[%s]" % (self.visit(node.value), slice_str)
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+         else:
+             return "()"
+-
+     if sys.version_info >= (3, 6):
+         def visit_Constant(self, node: ast.Constant) -> str:
+             if node.value is Ellipsis:
+2026-10-30 17:01:05,106 - INFO - Git diff changed after running eval script
+2026-10-30 17:01:05,106 - INFO - Grading answer for sphinx-doc__sphinx-8265...
+2026-10-30 17:01:05,109 - INFO - report: {'sphinx-doc__sphinx-8265': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[(1,'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[a', 'tests/test_pycode_ast.py::test_unparse[os.path-os.path]', 'tests/test_pycode_ast.py::test_unparse[1', "tests/test_pycode_ast.py::test_unparse[b'bytes'-b'bytes']", 'tests/test_pycode_ast.py::test_unparse[object()-object()]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_0]', "tests/test_pycode_ast.py::test_unparse[{'key1':", 'tests/test_pycode_ast.py::test_unparse[...-...]', 'tests/test_pycode_ast.py::test_unparse[Tuple[int,', 'tests/test_pycode_ast.py::test_unparse[~', 'tests/test_pycode_ast.py::test_unparse[lambda', 'tests/test_pycode_ast.py::test_unparse[[1,', 'tests/test_pycode_ast.py::test_unparse[sys-sys]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_1]', 'tests/test_pycode_ast.py::test_unparse[not', 'tests/test_pycode_ast.py::test_unparse[{1,', "tests/test_pycode_ast.py::test_unparse['str'-'str']", 'tests/test_pycode_ast.py::test_unparse[+', 'tests/test_pycode_ast.py::test_unparse[-', 'tests/test_pycode_ast.py::test_unparse[()-()]', 'tests/test_pycode_ast.py::test_unparse_None', 'tests/test_pycode_ast.py::test_unparse_py38'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8265: resolved: True
+2026-10-30 17:01:05,110 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8265.verified_full_pi...
+2026-10-30 17:01:21,110 - INFO - Container sweb.eval.sphinx-doc__sphinx-8265.verified_full_pi stopped successfully.
+2026-10-30 17:01:21,110 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8265.verified_full_pi...
+2026-10-30 17:01:21,146 - INFO - Container sweb.eval.sphinx-doc__sphinx-8265.verified_full_pi removed successfully.

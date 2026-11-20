@@ -1,0 +1,60 @@
+2026-11-10 17:05:13,737 - INFO - Creating container for sympy__sympy-14711...
+2026-11-10 17:05:13,782 - INFO - Container for sympy__sympy-14711 created: 772a0c6d956e59a7cff360365dcc29d0d39884056a0f15046b6832a11fea4edc
+2026-11-10 17:05:14,864 - INFO - Container for sympy__sympy-14711 started: 772a0c6d956e59a7cff360365dcc29d0d39884056a0f15046b6832a11fea4edc
+2026-11-10 17:05:14,866 - INFO - Intermediate patch for sympy__sympy-14711 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/sympy__sympy-14711/patch.diff, now applying to container...
+2026-11-10 17:05:15,051 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/vector/tests/test_vector.py...
+Checking patch sympy/physics/vector/vector.py...
+Applied patch sympy/physics/vector/tests/test_vector.py cleanly.
+Applied patch sympy/physics/vector/vector.py cleanly.
+
+2026-11-10 17:05:15,610 - INFO - Git diff before:
+diff --git a/sympy/physics/vector/tests/test_vector.py b/sympy/physics/vector/tests/test_vector.py
+index 828a25f3c..a49dbb4aa 100644
+--- a/sympy/physics/vector/tests/test_vector.py
++++ b/sympy/physics/vector/tests/test_vector.py
+@@ -13,6 +13,8 @@ def test_Vector():
+     assert A.y != A.z
+     assert A.z != A.x
+ 
++    assert A.x + 0 == A.x
++
+     v1 = x*A.x + y*A.y + z*A.z
+     v2 = x**2*A.x + y**2*A.y + z**2*A.z
+     v3 = v1 + v2
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..884911921 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+2026-11-10 17:05:15,613 - INFO - Eval script for sympy__sympy-14711 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/sympy__sympy-14711/eval.sh; copying to container...
+2026-11-10 17:05:22,810 - INFO - Test runtime: 7.11 seconds
+2026-11-10 17:05:22,812 - INFO - Test output for sympy__sympy-14711 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/sympy__sympy-14711/test_output.txt
+2026-11-10 17:05:22,866 - INFO - Git diff after:
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..884911921 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+2026-11-10 17:05:22,866 - INFO - Git diff changed after running eval script
+2026-11-10 17:05:22,866 - INFO - Grading answer for sympy__sympy-14711...
+2026-11-10 17:05:22,867 - INFO - report: {'sympy__sympy-14711': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Vector'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Vector_diffs', 'test_vector_var_in_dcm'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-14711: resolved: True
+2026-11-10 17:05:22,868 - INFO - Attempting to stop container sweb.eval.sympy__sympy-14711.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 17:05:38,395 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_glm53_hermes_incr_R2028 stopped successfully.
+2026-11-10 17:05:38,395 - INFO - Attempting to remove container sweb.eval.sympy__sympy-14711.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 17:05:38,442 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_glm53_hermes_incr_R2028 removed successfully.

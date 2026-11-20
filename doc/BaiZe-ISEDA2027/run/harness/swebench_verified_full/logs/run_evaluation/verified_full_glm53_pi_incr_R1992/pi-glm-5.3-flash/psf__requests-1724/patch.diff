@@ -1,0 +1,33 @@
+diff --git a/requests/models.py b/requests/models.py
+index f82f56a..d87ad10 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -307,7 +307,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         """Prepares the given HTTP method."""
+         self.method = method
+         if self.method is not None:
+-            self.method = self.method.upper()
++            self.method = to_native_string(self.method).upper()
+ 
+     def prepare_url(self, url, params):
+         """Prepares the given HTTP URL."""
+diff --git a/test_requests.py b/test_requests.py
+index a593db3..0d505ae 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -389,6 +389,15 @@ class RequestsTestCase(unittest.TestCase):
+     def test_unicode_header_name(self):
+         requests.put(httpbin('put'), headers={str('Content-Type'): 'application/octet-stream'}, data='\xff') # compat.str is unicode.
+ 
++    def test_unicode_method_name(self):
++        files = {'file': open('test_requests.py', 'rb')}
++        try:
++            response = requests.request(
++                method=u'POST', url=httpbin('post'), files=files)
++        finally:
++            files['file'].close()
++        assert response.status_code == 200
++
+     def test_urlencoded_get_query_multivalued_param(self):
+ 
+         r = requests.get(httpbin('get'), params=dict(test=['foo', 'baz']))

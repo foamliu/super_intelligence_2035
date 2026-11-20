@@ -1,0 +1,19 @@
+487 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [30:16<00:00, 1816.71s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:16<00:00, 1816.71s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:16<00:00, 1816.71s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 488
+Instances submitted: 488
+Instances completed: 487
+Instances incomplete: 0
+Instances resolved: 394
+Instances unresolved: 93
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 13
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 488
+Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json

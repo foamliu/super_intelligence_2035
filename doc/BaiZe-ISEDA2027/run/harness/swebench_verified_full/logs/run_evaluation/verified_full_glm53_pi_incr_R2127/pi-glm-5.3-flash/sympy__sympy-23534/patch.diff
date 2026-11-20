@@ -1,0 +1,28 @@
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c1..569c7eb8 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,8 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
+-
++            result.append(symbols(name, cls=cls, **args))
+         return type(names)(result)
+ 
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c20..54843f72 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -34,6 +34,9 @@ def test_Symbol():
+     c, d = symbols('c,d', cls=Dummy)
+     assert isinstance(c, Dummy)
+     assert isinstance(d, Dummy)
++    (c, d), (e, f) = symbols(('c,d', 'e,f'), cls=Dummy)
++    assert isinstance(c, Dummy) and isinstance(d, Dummy)
++    assert isinstance(e, Dummy) and isinstance(f, Dummy)
+     raises(TypeError, lambda: Symbol())
+ 
+ 

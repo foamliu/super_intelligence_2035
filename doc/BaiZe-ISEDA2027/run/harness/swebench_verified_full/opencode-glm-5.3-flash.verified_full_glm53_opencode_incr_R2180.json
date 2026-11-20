@@ -1,0 +1,11 @@
+{
+  "harness": "opencode",
+  "run_id": "verified_full_glm53_opencode_incr_R2180",
+  "round": "R2180",
+  "n": 1,
+  "resolved": [
+    "pytest-dev__pytest-5840"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

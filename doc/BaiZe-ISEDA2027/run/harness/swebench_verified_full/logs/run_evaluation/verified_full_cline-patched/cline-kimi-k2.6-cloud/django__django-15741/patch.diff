@@ -1,0 +1,33 @@
+diff --git a/django/utils/formats.py b/django/utils/formats.py
+index 3f38322d8..ff90433be 100644
+--- a/django/utils/formats.py
++++ b/django/utils/formats.py
+@@ -111,6 +111,7 @@ def get_format(format_type, lang=None, use_l10n=None):
+             use_l10n = settings._USE_L10N_INTERNAL
+         except AttributeError:
+             use_l10n = settings.USE_L10N
++    format_type = str(format_type)
+     if use_l10n and lang is None:
+         lang = get_language()
+     cache_key = (format_type, lang)
+diff --git a/tests/i18n/tests.py b/tests/i18n/tests.py
+index 0093181f6..9e7b41908 100644
+--- a/tests/i18n/tests.py
++++ b/tests/i18n/tests.py
+@@ -572,6 +572,16 @@ class FormattingTests(SimpleTestCase):
+                     ),
+                 )
+ 
++    def test_get_format_lazy_string(self):
++        """
++        get_format() accepts a lazy string as the format_type parameter.
++        """
++        reset_format_cache()
++        self.assertEqual(get_format(gettext_lazy("DATE_FORMAT")), "N j, Y")
++        # Test again with a cached value.
++        self.assertEqual(get_format(gettext_lazy("DATE_FORMAT")), "N j, Y")
++        reset_format_cache()
++
+     def test_locale_independent(self):
+         """
+         Localization of numbers

@@ -1,0 +1,73 @@
+diff --git a/sympy/parsing/tests/test_latex.py b/sympy/parsing/tests/test_latex.py
+index f5c61cde..67122de6 100644
+--- a/sympy/parsing/tests/test_latex.py
++++ b/sympy/parsing/tests/test_latex.py
+@@ -319,3 +319,16 @@ def test_failing_not_parseable():
+     for latex_str in FAILING_BAD_STRINGS:
+         with raises(LaTeXParsingError):
+             parse_latex(latex_str)
++
++
++def test_frac_printing():
++    # https://github.com/sympy/sympy/issues/22061
++    # nested fractions must keep the denominator bracketed when printed
++    from sympy.parsing.latex import parse_latex
++    from sympy import simplify
++    expr = parse_latex(r"\frac{\frac{a^3+b}{c}}{\frac{1}{c^2}}")
++    assert str(expr) == "((a**3 + b)/c)/(1/(c**2))"
++    # the parsed expression must still be mathematically correct
++    assert simplify(expr - c*(a**3 + b)) == 0
++    assert str(parse_latex(r"\frac{x}{\frac{1}{4}}")) == "x/(1/4)"
++    assert str(parse_latex(r"\frac{a}{\frac{1}{2}}")) == "a/(1/2)"
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd4..f8b2c782 100644
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -287,6 +287,15 @@ def _print_Mul(self, expr):
+             dfactors = pre + [self.parenthesize(a, prec, strict=False)
+                 for a in d]
+ 
++            # parenthesize denominator factors that are themselves negative
++            # powers since they print as 1/... and would otherwise give
++            # ambiguous output like 1/1/(c**2) for 1*(1/c**2)**(-1)
++            # (this happens for unevaluated products built when parsing
++            # nested fractions, see issue #22061)
++            for j, a in enumerate(d):
++                if isinstance(a, Pow) and a.exp.is_negative:
++                    dfactors[j + len(pre)] = "(%s)" % dfactors[j + len(pre)]
++
+             n = '*'.join(nfactors)
+             d = '*'.join(dfactors)
+             if len(dfactors) > 1:
+@@ -336,6 +345,13 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif isinstance(item.base, Pow) and \
++                            item.base.exp.is_negative:
++                        # To avoid situations like #22061, i.e. when the
++                        # base is itself an inverse power, as with
++                        # unevaluated products like x*(1/c**2)**(-1)
++                        # built when parsing nested fractions
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 690b1a8b..5d4776a3 100644
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -252,6 +252,13 @@ def test_Mul():
+     # For issue 14160
+     assert str(Mul(-2, x, Pow(Mul(y,y,evaluate=False), -1, evaluate=False),
+                                                 evaluate=False)) == '-2*x/(y*y)'
++    # For issue 22061: a denominator that is itself an inverse power must
++    # remain bracketed (as produced by parsing nested fractions)
++    p = Pow(Pow(y, 2, evaluate=False), -1, evaluate=False)
++    assert str(Mul(x, Pow(p, -1, evaluate=False), evaluate=False)) == \
++        'x/(1/(y**2))'
++    assert str(Mul(S.One, Pow(p, -1, evaluate=False), evaluate=False)) == \
++        '1/(1/(y**2))'
+ 
+ 
+     class CustomClass1(Expr):

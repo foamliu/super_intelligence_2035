@@ -1,0 +1,21 @@
+diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py
+index ab475f7..f97b947 100644
+--- a/astropy/coordinates/sky_coordinate.py
++++ b/astropy/coordinates/sky_coordinate.py
+@@ -871,6 +871,16 @@ class SkyCoord(ShapedLikeNDArray):
+         Overrides getattr to return coordinates that this can be transformed
+         to, based on the alias attr in the primary transform graph.
+         """
++        # If the attribute is defined on the class (e.g. a property or method
++        # on a subclass), calling super().__getattribute__ will properly
++        # trigger the attribute access and let any exception from it propagate.
++        # This prevents masking AttributeError from property getters (e.g. a
++        # property that accesses a non-existent attribute) with a misleading
++        # AttributeError about the property itself.
++        for cls in type(self).__mro__:
++            if attr in cls.__dict__:
++                return super().__getattribute__(attr)
++
+         if "_sky_coord_frame" in self.__dict__:
+             if self._is_name(attr):
+                 return self  # Should this be a deepcopy of self?

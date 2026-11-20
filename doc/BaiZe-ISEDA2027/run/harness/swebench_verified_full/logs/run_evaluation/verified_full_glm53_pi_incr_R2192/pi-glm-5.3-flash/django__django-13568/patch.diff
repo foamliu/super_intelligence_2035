@@ -1,0 +1,61 @@
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..0712f88eb5 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -52,7 +52,13 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and cls._meta.get_field(
++        cls.USERNAME_FIELD
++    ).name not in {
++        field_name
++        for constraint in cls._meta.total_unique_constraints
++        for field_name in constraint.fields
++    }:
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+diff --git a/tests/auth_tests/test_checks.py b/tests/auth_tests/test_checks.py
+index cfaa4063f8..964fbd67b3 100644
+--- a/tests/auth_tests/test_checks.py
++++ b/tests/auth_tests/test_checks.py
+@@ -85,6 +85,37 @@ class UserModelChecksTests(SimpleTestCase):
+                 ),
+             ])
+ 
++    @override_settings(AUTH_USER_MODEL='auth_tests.Model')
++    def test_username_unique_with_model_constraint(self):
++        class Model(AbstractBaseUser):
++            username = models.CharField(max_length=30)
++            USERNAME_FIELD = 'username'
++
++            class Meta:
++                constraints = [
++                    models.UniqueConstraint(fields=['username'], name='user_username_unq')
++                ]
++
++        self.assertEqual(checks.run_checks(app_configs=self.apps.get_app_configs()), [])
++
++    @override_settings(AUTH_USER_MODEL='auth_tests.Model')
++    def test_username_non_unique_with_partial_unique_constraint(self):
++        class Model(AbstractBaseUser):
++            username = models.CharField(max_length=30)
++            USERNAME_FIELD = 'username'
++
++            class Meta:
++                constraints = [
++                    models.UniqueConstraint(
++                        fields=['username'],
++                        condition=models.Q(username__contains='@'),
++                        name='user_username_partial_unq',
++                    ),
++                ]
++
++        errors = checks.run_checks(app_configs=self.apps.get_app_configs())
++        self.assertEqual([error.id for error in errors], ['auth.E003'])
++
+     @override_settings(AUTH_USER_MODEL='auth_tests.BadUser')
+     def test_is_anonymous_authenticated_methods(self):
+         """

@@ -1,0 +1,64 @@
+diff --git a/django/db/migrations/writer.py b/django/db/migrations/writer.py
+index a59f0c8dc..a61233e81 100644
+--- a/django/db/migrations/writer.py
++++ b/django/db/migrations/writer.py
+@@ -175,7 +175,9 @@ class MigrationWriter:
+ 
+         # Sort imports by the package / module to be imported (the part after
+         # "from" in "from ... import ..." or after "import" in "import ...").
+-        sorted_imports = sorted(imports, key=lambda i: i.split()[1])
++        # Group "import" statements before "from" statements to follow
++        # the Django coding style and isort defaults.
++        sorted_imports = sorted(imports, key=lambda i: (i.split()[0] != "import", i.split()[1]))
+         items["imports"] = "\n".join(sorted_imports) + "\n" if imports else ""
+         if migration_imports:
+             items["imports"] += (
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index 1c11c68e9..27d2149b0 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -1,4 +1,5 @@
+ import datetime
++import time
+ import decimal
+ import enum
+ import functools
+@@ -922,6 +923,38 @@ class WriterTests(SimpleTestCase):
+             output,
+         )
+ 
++    def test_sorted_imports_module_before_from(self):
++        """
++        Import statements are placed before from statements to follow
++        the Django coding style and isort defaults.
++        """
++        migration = type(
++            "Migration",
++            (migrations.Migration,),
++            {
++                "operations": [
++                    migrations.AddField(
++                        "mymodel",
++                        "myfield",
++                        models.DateTimeField(
++                            default=datetime.datetime(2012, 1, 1, 1, 1),
++                        ),
++                    ),
++                    migrations.AddField(
++                        "mymodel",
++                        "anotherfield",
++                        models.IntegerField(default=time.time),
++                    ),
++                ]
++            },
++        )
++        writer = MigrationWriter(migration)
++        output = writer.as_string()
++        self.assertIn(
++            "import datetime\nimport time\nfrom django.db import migrations, models\n",
++            output,
++        )
++
+     def test_migration_file_header_comments(self):
+         """
+         Test comments at top of file.

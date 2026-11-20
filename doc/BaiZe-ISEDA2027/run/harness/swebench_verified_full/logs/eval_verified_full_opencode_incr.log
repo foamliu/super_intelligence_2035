@@ -1,0 +1,78 @@
+447 instances already run, skipping...
+Running 20 instances...
+  0%|          | 0/20 [00:00<?, ?it/s]  5%|▌         | 1/20 [00:28<08:57, 28.29s/it]1 ran successfully, 0 failed:   5%|▌         | 1/20 [00:28<08:57, 28.29s/it]1 ran successfully, 0 failed:  10%|█         | 2/20 [00:31<04:44, 15.83s/it]2 ran successfully, 0 failed:  10%|█         | 2/20 [00:31<04:44, 15.83s/it]2 ran successfully, 0 failed:  15%|█▌        | 3/20 [00:31<03:00, 10.60s/it]3 ran successfully, 0 failed:  15%|█▌        | 3/20 [00:31<03:00, 10.60s/it]3 ran successfully, 0 failed:  20%|██        | 4/20 [00:33<02:15,  8.44s/it]4 ran successfully, 0 failed:  20%|██        | 4/20 [00:33<02:15,  8.44s/it]4 ran successfully, 0 failed:  25%|██▌       | 5/20 [00:34<01:44,  6.96s/it]5 ran successfully, 0 failed:  25%|██▌       | 5/20 [00:34<01:44,  6.96s/it]5 ran successfully, 0 failed:  30%|███       | 6/20 [00:40<01:33,  6.69s/it]6 ran successfully, 0 failed:  30%|███       | 6/20 [00:40<01:33,  6.69s/it]6 ran successfully, 0 failed:  35%|███▌      | 7/20 [00:59<01:50,  8.48s/it]7 ran successfully, 0 failed:  35%|███▌      | 7/20 [00:59<01:50,  8.48s/it]7 ran successfully, 0 failed:  40%|████      | 8/20 [01:13<01:49,  9.13s/it]8 ran successfully, 0 failed:  40%|████      | 8/20 [01:13<01:49,  9.13s/it]8 ran successfully, 0 failed:  45%|████▌     | 9/20 [01:35<01:57, 10.64s/it]9 ran successfully, 0 failed:  45%|████▌     | 9/20 [01:35<01:57, 10.64s/it]9 ran successfully, 0 failed:  50%|█████     | 10/20 [01:51<01:51, 11.15s/it]10 ran successfully, 0 failed:  50%|█████     | 10/20 [01:51<01:51, 11.15s/it]10 ran successfully, 0 failed:  55%|█████▌    | 11/20 [02:06<01:43, 11.47s/it]11 ran successfully, 0 failed:  55%|█████▌    | 11/20 [02:06<01:43, 11.47s/it]11 ran successfully, 0 failed:  60%|██████    | 12/20 [02:10<01:27, 10.91s/it]12 ran successfully, 0 failed:  60%|██████    | 12/20 [02:10<01:27, 10.91s/it]12 ran successfully, 0 failed:  65%|██████▌   | 13/20 [02:57<01:35, 13.69s/it]13 ran successfully, 0 failed:  65%|██████▌   | 13/20 [02:57<01:35, 13.69s/it]13 ran successfully, 0 failed:  70%|███████   | 14/20 [03:13<01:22, 13.82s/it]14 ran successfully, 0 failed:  70%|███████   | 14/20 [03:13<01:22, 13.82s/it]14 ran successfully, 0 failed:  75%|███████▌  | 15/20 [03:14<01:04, 13.00s/it]15 ran successfully, 0 failed:  75%|███████▌  | 15/20 [03:14<01:04, 13.00s/it]15 ran successfully, 0 failed:  80%|████████  | 16/20 [03:17<00:49, 12.34s/it]16 ran successfully, 0 failed:  80%|████████  | 16/20 [03:17<00:49, 12.34s/it]16 ran successfully, 0 failed:  85%|████████▌ | 17/20 [03:29<00:36, 12.33s/it]17 ran successfully, 0 failed:  85%|████████▌ | 17/20 [03:29<00:36, 12.33s/it]17 ran successfully, 0 failed:  90%|█████████ | 18/20 [03:38<00:24, 12.13s/it]18 ran successfully, 0 failed:  90%|█████████ | 18/20 [03:38<00:24, 12.13s/it]18 ran successfully, 0 failed:  95%|█████████▌| 19/20 [03:46<00:11, 11.94s/it]19 ran successfully, 0 failed:  95%|█████████▌| 19/20 [03:46<00:11, 11.94s/it]19 ran successfully, 0 failed: 100%|██████████| 20/20 [32:28<00:00, 97.40s/it]20 ran successfully, 0 failed: 100%|██████████| 20/20 [32:28<00:00, 97.40s/it]20 ran successfully, 0 failed: 100%|██████████| 20/20 [32:28<00:00, 97.40s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 467
+Instances submitted: 467
+Instances completed: 466
+Instances incomplete: 0
+Instances resolved: 383
+Instances unresolved: 83
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 12
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 467
+Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json
+466 instances already run, skipping...
+Running 7 instances...
+  0%|          | 0/7 [00:00<?, ?it/s] 14%|█▍        | 1/7 [01:35<09:35, 95.95s/it]1 ran successfully, 0 failed:  14%|█▍        | 1/7 [01:35<09:35, 95.95s/it]1 ran successfully, 0 failed:  29%|██▊       | 2/7 [01:36<04:00, 48.10s/it]2 ran successfully, 0 failed:  29%|██▊       | 2/7 [01:36<04:00, 48.10s/it]2 ran successfully, 0 failed:  43%|████▎     | 3/7 [01:40<02:14, 33.60s/it]3 ran successfully, 0 failed:  43%|████▎     | 3/7 [01:40<02:14, 33.60s/it]3 ran successfully, 0 failed:  57%|█████▋    | 4/7 [01:50<01:22, 27.59s/it]4 ran successfully, 0 failed:  57%|█████▋    | 4/7 [01:50<01:22, 27.59s/it]4 ran successfully, 0 failed:  71%|███████▏  | 5/7 [02:42<01:05, 32.57s/it]5 ran successfully, 0 failed:  71%|███████▏  | 5/7 [02:42<01:05, 32.57s/it]5 ran successfully, 0 failed:  86%|████████▌ | 6/7 [02:47<00:27, 27.99s/it]6 ran successfully, 0 failed:  86%|████████▌ | 6/7 [02:47<00:27, 27.99s/it]6 ran successfully, 0 failed: 100%|██████████| 7/7 [30:18<00:00, 259.84s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [30:18<00:00, 259.84s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [30:18<00:00, 259.84s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 473
+Instances submitted: 473
+Instances completed: 472
+Instances incomplete: 0
+Instances resolved: 388
+Instances unresolved: 84
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 12
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 473
+Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json
+472 instances already run, skipping...
+Running 16 instances...
+  0%|          | 0/16 [00:00<?, ?it/s]  6%|▋         | 1/16 [00:23<05:57, 23.80s/it]1 ran successfully, 0 failed:   6%|▋         | 1/16 [00:23<05:57, 23.80s/it]473 instances already run, skipping...
+Running 15 instances...
+  0%|          | 0/15 [00:00<?, ?it/s]  7%|▋         | 1/15 [00:48<11:18, 48.49s/it]1 ran successfully, 0 failed:   7%|▋         | 1/15 [00:48<11:18, 48.49s/it]1 ran successfully, 0 failed:  13%|█▎        | 2/15 [01:09<07:32, 34.79s/it]2 ran successfully, 0 failed:  13%|█▎        | 2/15 [01:09<07:32, 34.79s/it]2 ran successfully, 0 failed:  20%|██        | 3/15 [01:10<04:42, 23.53s/it]3 ran successfully, 0 failed:  20%|██        | 3/15 [01:10<04:42, 23.53s/it]3 ran successfully, 0 failed:  27%|██▋       | 4/15 [01:13<03:22, 18.41s/it]4 ran successfully, 0 failed:  27%|██▋       | 4/15 [01:13<03:22, 18.41s/it]4 ran successfully, 0 failed:  33%|███▎      | 5/15 [01:55<03:50, 23.03s/it]5 ran successfully, 0 failed:  33%|███▎      | 5/15 [01:55<03:50, 23.03s/it]5 ran successfully, 0 failed:  40%|████      | 6/15 [01:57<02:55, 19.54s/it]6 ran successfully, 0 failed:  40%|████      | 6/15 [01:57<02:55, 19.54s/it]6 ran successfully, 0 failed:  47%|████▋     | 7/15 [02:05<02:23, 17.91s/it]7 ran successfully, 0 failed:  47%|████▋     | 7/15 [02:05<02:23, 17.91s/it]8 ran successfully, 0 failed:  53%|█████▎    | 8/15 [02:05<01:49, 15.68s/it]8 ran successfully, 0 failed:  60%|██████    | 9/15 [02:14<01:29, 14.98s/it]9 ran successfully, 0 failed:  60%|██████    | 9/15 [02:14<01:29, 14.98s/it]10 ran successfully, 0 failed:  67%|██████▋   | 10/15 [02:24<01:12, 14.47s/it]10 ran successfully, 0 failed:  67%|██████▋   | 10/15 [02:30<01:15, 15.00s/it]10 ran successfully, 0 failed:  73%|███████▎  | 11/15 [02:30<00:54, 13.70s/it]11 ran successfully, 0 failed:  73%|███████▎  | 11/15 [02:30<00:54, 13.70s/it]11 ran successfully, 0 failed:  80%|████████  | 12/15 [03:00<00:45, 15.06s/it]12 ran successfully, 0 failed:  80%|████████  | 12/15 [03:00<00:45, 15.06s/it]12 ran successfully, 0 failed:  87%|████████▋ | 13/15 [03:34<00:32, 16.47s/it]13 ran successfully, 0 failed:  87%|████████▋ | 13/15 [03:34<00:32, 16.47s/it]13 ran successfully, 0 failed:  93%|█████████▎| 14/15 [03:41<00:15, 15.81s/it]14 ran successfully, 0 failed:  93%|█████████▎| 14/15 [03:41<00:15, 15.81s/it]14 ran successfully, 0 failed: 100%|██████████| 15/15 [32:22<00:00, 129.52s/it]15 ran successfully, 0 failed: 100%|██████████| 15/15 [32:22<00:00, 129.52s/it]15 ran successfully, 0 failed: 100%|██████████| 15/15 [32:22<00:00, 129.52s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 488
+Instances submitted: 488
+Instances completed: 487
+Instances incomplete: 0
+Instances resolved: 394
+Instances unresolved: 93
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 13
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 488
+Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json
+487 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [30:16<00:00, 1816.58s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:16<00:00, 1816.58s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:16<00:00, 1816.58s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 488
+Instances submitted: 488
+Instances completed: 487
+Instances incomplete: 0
+Instances resolved: 394
+Instances unresolved: 93
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 13
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 488
+Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json

@@ -1,0 +1,44 @@
+2026-11-09 07:27:08,684 - INFO - Creating container for scikit-learn__scikit-learn-14141...
+2026-11-09 07:27:08,708 - INFO - Container for scikit-learn__scikit-learn-14141 created: 7375b6746420b329954dcb63252c0d1bcf57d7fb6ac3077992b693488434ac99
+2026-11-09 07:27:10,149 - INFO - Container for scikit-learn__scikit-learn-14141 started: 7375b6746420b329954dcb63252c0d1bcf57d7fb6ac3077992b693488434ac99
+2026-11-09 07:27:10,151 - INFO - Intermediate patch for scikit-learn__scikit-learn-14141 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14141/patch.diff, now applying to container...
+2026-11-09 07:27:10,238 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/utils/_show_versions.py...
+Applied patch sklearn/utils/_show_versions.py cleanly.
+
+2026-11-09 07:27:10,618 - INFO - Git diff before:
+diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py
+index e5d3141bf..d13f28b00 100644
+--- a/sklearn/utils/_show_versions.py
++++ b/sklearn/utils/_show_versions.py
+@@ -46,6 +46,7 @@ def _get_deps_info():
+         "numpy",
+         "scipy",
+         "Cython",
++        "joblib",
+         "pandas",
+         "matplotlib",
+     ]
+2026-11-09 07:27:10,621 - INFO - Eval script for scikit-learn__scikit-learn-14141 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14141/eval.sh; copying to container...
+2026-11-09 07:27:14,966 - INFO - Test runtime: 4.27 seconds
+2026-11-09 07:27:14,968 - INFO - Test output for scikit-learn__scikit-learn-14141 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14141/test_output.txt
+2026-11-09 07:27:15,038 - INFO - Git diff after:
+diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py
+index e5d3141bf..d13f28b00 100644
+--- a/sklearn/utils/_show_versions.py
++++ b/sklearn/utils/_show_versions.py
+@@ -46,6 +46,7 @@ def _get_deps_info():
+         "numpy",
+         "scipy",
+         "Cython",
++        "joblib",
+         "pandas",
+         "matplotlib",
+     ]
+2026-11-09 07:27:15,038 - INFO - Grading answer for scikit-learn__scikit-learn-14141...
+2026-11-09 07:27:15,039 - INFO - report: {'scikit-learn__scikit-learn-14141': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/utils/tests/test_show_versions.py::test_get_deps_info'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/utils/tests/test_show_versions.py::test_get_sys_info', 'sklearn/utils/tests/test_show_versions.py::test_show_versions_with_blas'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14141: resolved: True
+2026-11-09 07:27:15,041 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_hermes_R1933...
+2026-11-09 07:27:31,466 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:27:31,467 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_hermes_R1933...
+2026-11-09 07:27:31,491 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_hermes_R1933 removed successfully.

@@ -1,0 +1,13 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2289b",
+  "round": "R2289b",
+  "n": 2,
+  "resolved": [
+    "astropy__astropy-14995"
+  ],
+  "failed": [
+    "django__django-10097"
+  ],
+  "infra_or_quota": []
+}

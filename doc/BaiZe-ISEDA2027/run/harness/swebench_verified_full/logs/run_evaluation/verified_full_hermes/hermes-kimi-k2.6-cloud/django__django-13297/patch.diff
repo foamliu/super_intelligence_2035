@@ -1,0 +1,36 @@
+diff --git a/django/utils/functional.py b/django/utils/functional.py
+index 6d38f932f9..1c81e35484 100644
+--- a/django/utils/functional.py
++++ b/django/utils/functional.py
+@@ -344,6 +344,11 @@ class LazyObject:
+     __len__ = new_method_proxy(len)
+     __contains__ = new_method_proxy(operator.contains)
+ 
++    def __conform__(self, protocol):
++        if self._wrapped is empty:
++            self._setup()
++        return self._wrapped
++
+ 
+ def unpickle_lazyobject(wrapped):
+     """
+diff --git a/tests/utils_tests/test_lazyobject.py b/tests/utils_tests/test_lazyobject.py
+index e5bccc6362..e6dceba748 100644
+--- a/tests/utils_tests/test_lazyobject.py
++++ b/tests/utils_tests/test_lazyobject.py
+@@ -367,6 +367,15 @@ class SimpleLazyObjectTestCase(LazyObjectTestCase):
+         self.assertEqual(len(lazy_list), 5)
+         self.assertEqual(len(lazy_set), 4)
+ 
++    def test_sqlite_parameter(self):
++        import sqlite3
++        lazy_value = SimpleLazyObject(lambda: 'test_value')
++        conn = sqlite3.connect(':memory:')
++        cursor = conn.cursor()
++        cursor.execute('SELECT ?', [lazy_value])
++        self.assertEqual(cursor.fetchone(), ('test_value',))
++        conn.close()
++
+ 
+ class BaseBaz:
+     """

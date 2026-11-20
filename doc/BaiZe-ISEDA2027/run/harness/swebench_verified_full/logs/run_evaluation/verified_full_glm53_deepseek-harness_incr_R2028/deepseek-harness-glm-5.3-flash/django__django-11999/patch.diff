@@ -1,0 +1,64 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..44ad3da5fa 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,12 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            if not getattr(cls, 'get_%s_display' % self.name, None):
++                setattr(
++                    cls,
++                    'get_%s_display' % self.name,
++                    partialmethod(cls._get_FIELD_display, field=self),
++                )
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..d88121774d 100644
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -68,6 +68,17 @@ class WhizIterEmpty(models.Model):
+     c = models.CharField(choices=iter(()), blank=True, max_length=1)
+ 
+ 
++class WhizOverridden(models.Model):
++    CHOICES = [
++        ('a', 'a'),
++        ('b', 'b'),
++    ]
++    foo = models.CharField(choices=CHOICES, max_length=1)
++
++    def get_foo_display(self):
++        return 'Overridden'
++
++
+ class Choiceful(models.Model):
+     no_choices = models.IntegerField(null=True)
+     empty_choices = models.IntegerField(choices=(), null=True)
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 0d6e930b06..88a8d867df 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -8,6 +8,7 @@ from django.utils.functional import lazy
+ 
+ from .models import (
+     Bar, Choiceful, Foo, RenamedField, VerboseNameField, Whiz, WhizDelayed,
++    WhizOverridden,
+     WhizIter, WhizIterEmpty,
+ )
+ 
+@@ -162,6 +163,10 @@ class GetFieldDisplayTests(SimpleTestCase):
+         self.assertEqual(Whiz(c='').get_c_display(), '')        # Empty value
+         self.assertEqual(WhizDelayed(c=0).get_c_display(), 'Other')  # Delayed choices
+ 
++    def test_overriding_FIELD_display(self):
++        """get_FOO_display() can be overridden."""
++        self.assertEqual(WhizOverridden(foo='a').get_foo_display(), 'Overridden')
++
+     def test_get_FIELD_display_translated(self):
+         """A translated display value is coerced to str."""
+         val = Whiz(c=5).get_c_display()

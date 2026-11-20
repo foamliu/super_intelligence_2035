@@ -1,0 +1,67 @@
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e27..45bea36 100644
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c8..910cc0d 100644
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -52,7 +52,14 @@ compound_models = {
+     'cm7': (map2 | p2 & sh1,
+             (np.array([False, True]),
+              np.array([[True, False], [False, True]]))
+-            )
++            ),
++    'nested_cm': (models.Pix2Sky_TAN() & (models.Linear1D(10) & models.Linear1D(5)),
++                  (np.array([False, False, True, True]),
++                   np.array([[True, True, False, False],
++                             [True, True, False, False],
++                             [False, False, True, False],
++                             [False, False, False, True]]))
++                  )
+ }
+ 
+ 
+@@ -112,6 +119,33 @@ def test_cstack():
+                               [0, 0, 1]])
+                     )
+ 
++    # Test with ndarray inputs (nested compound models)
++    left = np.array([[1, 0], [0, 1]])
++    right = np.array([[1, 0], [0, 1]])
++    result = _cstack(left, right)
++    assert_allclose(result,
++                    np.array([[1, 0, 0, 0],
++                              [0, 1, 0, 0],
++                              [0, 0, 1, 0],
++                              [0, 0, 0, 1]])
++                    )
++
++    # Test with mixed Model and ndarray
++    result = _cstack(rot, left)
++    assert_allclose(result,
++                    np.array([[1, 1, 0, 0],
++                              [1, 1, 0, 0],
++                              [0, 0, 1, 0],
++                              [0, 0, 0, 1]])
++                    )
++    result = _cstack(left, rot)
++    assert_allclose(result,
++                    np.array([[1, 0, 0, 0],
++                              [0, 1, 0, 0],
++                              [0, 0, 1, 1],
++                              [0, 0, 1, 1]])
++                    )
++
+ 
+ def test_arith_oper():
+     # Models as inputs

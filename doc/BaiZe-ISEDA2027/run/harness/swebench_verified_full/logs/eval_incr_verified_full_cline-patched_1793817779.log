@@ -1,0 +1,56 @@
+Running 18 instances...
+All instances run.
+Total instances: 18
+Instances submitted: 18
+Instances completed: 18
+Instances incomplete: 0
+Instances resolved: 12
+Instances unresolved: 6
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 2
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 7
+Unremoved images: 18
+Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
+
+[stderr]
+
+  0%|          | 0/18 [00:00<?, ?it/s]
+  6%|▌         | 1/18 [00:22<06:22, 22.51s/it]
+1 ran successfully, 0 failed:   6%|▌         | 1/18 [00:22<06:22, 22.51s/it]
+1 ran successfully, 0 failed:  11%|█         | 2/18 [00:47<06:21, 23.87s/it]
+2 ran successfully, 0 failed:  11%|█         | 2/18 [00:47<06:21, 23.87s/it]
+2 ran successfully, 0 failed:  17%|█▋        | 3/18 [01:13<06:08, 24.60s/it]
+3 ran successfully, 0 failed:  17%|█▋        | 3/18 [01:13<06:08, 24.60s/it]
+3 ran successfully, 0 failed:  22%|██▏       | 4/18 [01:41<05:53, 25.25s/it]
+4 ran successfully, 0 failed:  22%|██▏       | 4/18 [01:41<05:53, 25.25s/it]
+4 ran successfully, 0 failed:  28%|██▊       | 5/18 [02:07<05:30, 25.42s/it]
+5 ran successfully, 0 failed:  28%|██▊       | 5/18 [02:07<05:30, 25.42s/it]
+5 ran successfully, 0 failed:  33%|███▎      | 6/18 [02:35<05:10, 25.89s/it]
+6 ran successfully, 0 failed:  33%|███▎      | 6/18 [02:35<05:10, 25.89s/it]
+6 ran successfully, 0 failed:  39%|███▉      | 7/18 [03:02<04:46, 26.04s/it]
+7 ran successfully, 0 failed:  39%|███▉      | 7/18 [03:02<04:46, 26.04s/it]
+7 ran successfully, 0 failed:  44%|████▍     | 8/18 [03:35<04:29, 26.92s/it]
+8 ran successfully, 0 failed:  44%|████▍     | 8/18 [03:35<04:29, 26.92s/it]
+8 ran successfully, 0 failed:  50%|█████     | 9/18 [05:07<05:07, 34.15s/it]
+9 ran successfully, 0 failed:  50%|█████     | 9/18 [05:07<05:07, 34.15s/it]
+9 ran successfully, 0 failed:  56%|█████▌    | 10/18 [07:42<06:10, 46.27s/it]
+10 ran successfully, 0 failed:  56%|█████▌    | 10/18 [07:42<06:10, 46.27s/it]
+10 ran successfully, 0 failed:  61%|██████    | 11/18 [08:09<05:11, 44.50s/it]
+11 ran successfully, 0 failed:  61%|██████    | 11/18 [08:09<05:11, 44.50s/it]
+11 ran successfully, 0 failed:  67%|██████▋   | 12/18 [08:34<04:17, 42.88s/it]
+12 ran successfully, 0 failed:  67%|██████▋   | 12/18 [08:34<04:17, 42.88s/it]
+12 ran successfully, 0 failed:  72%|███████▏  | 13/18 [09:02<03:28, 41.73s/it]
+13 ran successfully, 0 failed:  72%|███████▏  | 13/18 [09:02<03:28, 41.73s/it]
+13 ran successfully, 0 failed:  78%|███████▊  | 14/18 [09:28<02:42, 40.60s/it]
+14 ran successfully, 0 failed:  78%|███████▊  | 14/18 [09:28<02:42, 40.60s/it]
+14 ran successfully, 0 failed:  83%|████████▎ | 15/18 [09:54<01:58, 39.65s/it]
+15 ran successfully, 0 failed:  83%|████████▎ | 15/18 [09:54<01:58, 39.65s/it]
+15 ran successfully, 0 failed:  89%|████████▉ | 16/18 [10:22<01:17, 38.89s/it]
+16 ran successfully, 0 failed:  89%|████████▉ | 16/18 [10:22<01:17, 38.89s/it]
+16 ran successfully, 0 failed:  94%|█████████▍| 17/18 [10:49<00:38, 38.21s/it]
+17 ran successfully, 0 failed:  94%|█████████▍| 17/18 [10:49<00:38, 38.21s/it]
+17 ran successfully, 0 failed: 100%|██████████| 18/18 [11:15<00:00, 37.53s/it]
+18 ran successfully, 0 failed: 100%|██████████| 18/18 [11:15<00:00, 37.53s/it]
+18 ran successfully, 0 failed: 100%|██████████| 18/18 [11:15<00:00, 37.53s/it]

@@ -1,0 +1,85 @@
+diff --git a/_stubs/asgiref/__init__.py b/_stubs/asgiref/__init__.py
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/_stubs/asgiref/local.py b/_stubs/asgiref/local.py
+new file mode 100644
+index 0000000000..0edec1032b
+--- /dev/null
++++ b/_stubs/asgiref/local.py
+@@ -0,0 +1,3 @@
++class Local:
++    def __init__(self, *args, **kwargs):
++        pass
+diff --git a/_stubs/asgiref/sync.py b/_stubs/asgiref/sync.py
+new file mode 100644
+index 0000000000..ea23a4f15c
+--- /dev/null
++++ b/_stubs/asgiref/sync.py
+@@ -0,0 +1,4 @@
++def sync_to_async(func, *args, **kwargs):
++    return func
++def async_to_sync(func, *args, **kwargs):
++    return func
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 0000000000..fd54508149
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,57 @@
++import django
++from django.conf import settings
++settings.configure()
++django.setup()
++
++from django.forms import Form, CharField, MultiValueField, MultiWidget
++
++
++class MF(MultiValueField):
++    widget = MultiWidget
++
++    def __init__(self):
++        fields = [
++            CharField(required=False),
++            CharField(required=True),
++        ]
++        widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++        super().__init__(
++            fields=fields,
++            widget=widget,
++            require_all_fields=False,
++            required=False,
++        )
++
++    def compress(self, value):
++        return []
++
++
++class F(Form):
++    mf = MF()
++
++
++f = F({'mf_0': '', 'mf_1': ''})
++print('all empty -> is_valid():', f.is_valid(), f.errors)
++assert not f.is_valid(), 'Expected invalid: a required sub-field is empty'
++
++f = F({'mf_0': 'xxx', 'mf_1': ''})
++print('one filled -> is_valid():', f.is_valid(), f.errors)
++assert not f.is_valid()
++
++# Non-required sub-fields, all empty: should still be valid (unchanged behavior)
++class MF2(MF):
++    def __init__(self):
++        fields = [CharField(required=False), CharField(required=False)]
++        widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++        super(MF, self).__init__(
++            fields=fields, widget=widget, require_all_fields=False, required=False,
++        )
++
++class F2(Form):
++    mf = MF2()
++
++f = F2({'mf_0': '', 'mf_1': ''})
++print('all empty, no required sub-fields -> is_valid():', f.is_valid(), f.errors)
++assert f.is_valid()
++
++print('OK')

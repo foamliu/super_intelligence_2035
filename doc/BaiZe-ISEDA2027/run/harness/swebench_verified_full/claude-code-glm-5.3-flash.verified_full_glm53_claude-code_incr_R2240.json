@@ -1,0 +1,11 @@
+{
+  "harness": "claude-code",
+  "run_id": "verified_full_glm53_claude-code_incr_R2240",
+  "round": "R2240",
+  "n": 1,
+  "resolved": [
+    "sphinx-doc__sphinx-11445"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

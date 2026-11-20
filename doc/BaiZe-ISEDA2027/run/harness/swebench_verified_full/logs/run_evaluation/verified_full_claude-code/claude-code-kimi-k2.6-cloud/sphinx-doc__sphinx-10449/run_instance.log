@@ -1,0 +1,95 @@
+2026-10-30 17:24:19,824 - INFO - Creating container for sphinx-doc__sphinx-10449...
+2026-10-30 17:24:19,863 - INFO - Container for sphinx-doc__sphinx-10449 created: ca110ba3540ce3c8f121f7ef27f0b685caecbcddc1dce5340e847f00daf298e8
+2026-10-30 17:24:24,417 - INFO - Container for sphinx-doc__sphinx-10449 started: ca110ba3540ce3c8f121f7ef27f0b685caecbcddc1dce5340e847f00daf298e8
+2026-10-30 17:24:24,419 - INFO - Intermediate patch for sphinx-doc__sphinx-10449 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-10449/patch.diff, now applying to container...
+2026-10-30 17:24:24,565 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/typehints.py...
+Checking patch tests/test_ext_autodoc_configs.py...
+Applied patch sphinx/ext/autodoc/typehints.py cleanly.
+Applied patch tests/test_ext_autodoc_configs.py cleanly.
+
+2026-10-30 17:24:25,087 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index 06768168e..b91d2f6c1 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -28,8 +28,9 @@ def record_typehints(app: Sphinx, objtype: str, name: str, obj: Any,
+             for param in sig.parameters.values():
+                 if param.annotation is not param.empty:
+                     annotation[param.name] = typing.stringify(param.annotation, mode)
+-            if sig.return_annotation is not sig.empty:
+-                annotation['return'] = typing.stringify(sig.return_annotation, mode)
++            if objtype not in ('class', 'exception'):
++                if sig.return_annotation is not sig.empty:
++                    annotation['return'] = typing.stringify(sig.return_annotation, mode)
+     except (TypeError, ValueError):
+         pass
+ 
+diff --git a/tests/test_ext_autodoc_configs.py b/tests/test_ext_autodoc_configs.py
+index fdb82b1b9..506729dee 100644
+--- a/tests/test_ext_autodoc_configs.py
++++ b/tests/test_ext_autodoc_configs.py
+@@ -1041,9 +1041,6 @@ def test_autodoc_typehints_description_with_documented_init(app):
+             '   Parameters:\n'
+             '      **x** (*int*) --\n'
+             '\n'
+-            '   Return type:\n'
+-            '      None\n'
+-            '\n'
+             '   __init__(x)\n'
+             '\n'
+             '      Init docstring.\n'
+@@ -1111,6 +1108,26 @@ def test_autodoc_typehints_description_for_invalid_node(app):
+     restructuredtext.parse(app, text)  # raises no error
+ 
+ 
++@pytest.mark.sphinx('text', testroot='ext-autodoc',
++                    confoverrides={'autodoc_typehints': "description"})
++def test_autodoc_typehints_description_for_class_no_return_type(app):
++    # see issue #9575
++    # autodoc_typehints_description_target should not add a return type
++    # to the class description since classes don't have a meaningful return type.
++    (app.srcdir / 'index.rst').write_text(
++        '.. autoclass:: target.typehints._ClassWithDocumentedInit\n',
++        encoding='utf8'
++    )
++    app.build()
++    context = (app.outdir / 'index.txt').read_text(encoding='utf8')
++    assert ('class target.typehints._ClassWithDocumentedInit(x)\n'
++            '\n'
++            '   Class docstring.\n'
++            '\n'
++            '   Parameters:\n'
++            '      **x** (*int*) --\n' == context)
++
++
+ @pytest.mark.sphinx('text', testroot='ext-autodoc',
+                     confoverrides={'autodoc_typehints': "both"})
+ def test_autodoc_typehints_both(app):
+2026-10-30 17:24:25,092 - INFO - Eval script for sphinx-doc__sphinx-10449 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-10449/eval.sh; copying to container...
+2026-10-30 17:24:31,103 - INFO - Test runtime: 5.91 seconds
+2026-10-30 17:24:31,107 - INFO - Test output for sphinx-doc__sphinx-10449 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-10449/test_output.txt
+2026-10-30 17:24:31,193 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index 06768168e..b91d2f6c1 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -28,8 +28,9 @@ def record_typehints(app: Sphinx, objtype: str, name: str, obj: Any,
+             for param in sig.parameters.values():
+                 if param.annotation is not param.empty:
+                     annotation[param.name] = typing.stringify(param.annotation, mode)
+-            if sig.return_annotation is not sig.empty:
+-                annotation['return'] = typing.stringify(sig.return_annotation, mode)
++            if objtype not in ('class', 'exception'):
++                if sig.return_annotation is not sig.empty:
++                    annotation['return'] = typing.stringify(sig.return_annotation, mode)
+     except (TypeError, ValueError):
+         pass
+2026-10-30 17:24:31,193 - INFO - Git diff changed after running eval script
+2026-10-30 17:24:31,193 - INFO - Grading answer for sphinx-doc__sphinx-10449...
+2026-10-30 17:24:31,199 - INFO - report: {'sphinx-doc__sphinx-10449': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autoclass_content_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_mixed', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_new', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_inherit_docstrings', 'tests/test_ext_autodoc_configs.py::test_autodoc_docstring_signature', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_init', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_both', 'tests/test_ext_autodoc_configs.py::test_mocked_module_imports', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_signature', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none_for_overload', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_no_undoc', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_no_undoc_doc_rtype', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init_no_undoc', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init_no_undoc_doc_rtype', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_for_invalid_node', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_and_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_format_fully_qualified', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_format_fully_qualified_for_class_alias', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_format_fully_qualified_for_generic_alias', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_format_fully_qualified_for_newtype_alias', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options_with_values'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-10449: resolved: True
+2026-10-30 17:24:31,200 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-10449.verified_full_claude-code...
+2026-10-30 17:24:47,267 - INFO - Container sweb.eval.sphinx-doc__sphinx-10449.verified_full_claude-code stopped successfully.
+2026-10-30 17:24:47,267 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-10449.verified_full_claude-code...
+2026-10-30 17:24:47,350 - INFO - Container sweb.eval.sphinx-doc__sphinx-10449.verified_full_claude-code removed successfully.

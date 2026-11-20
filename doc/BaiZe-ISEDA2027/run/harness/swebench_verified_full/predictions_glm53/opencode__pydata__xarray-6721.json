@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-6721",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/xarray/core/common.py b/xarray/core/common.py\nindex 3c328f4..a3636cb 100644\n--- a/xarray/core/common.py\n+++ b/xarray/core/common.py\n@@ -2023,7 +2023,7 @@ def get_chunksizes(\n \n     chunks: dict[Any, tuple[int, ...]] = {}\n     for v in variables:\n-        if hasattr(v.data, \"chunks\"):\n+        if hasattr(v._data, \"chunks\"):\n             for dim, c in v.chunksizes.items():\n                 if dim in chunks and c != chunks[dim]:\n                     raise ValueError(\ndiff --git a/xarray/tests/test_backends.py b/xarray/tests/test_backends.py\nindex bbfae73..13ecda8 100644\n--- a/xarray/tests/test_backends.py\n+++ b/xarray/tests/test_backends.py\n@@ -1743,6 +1743,16 @@ class ZarrBase(CFEncodedBase):\n             with self.open(store_target, **open_kwargs) as ds:\n                 assert_equal(ds, expected)\n \n+    def test_chunks_does_not_load_data(self):\n+        # https://github.com/pydata/xarray/issues/6621\n+        expected = create_test_data()\n+        with self.roundtrip(expected) as actual:\n+            assert actual.chunks == {}\n+            assert actual.chunksizes == {}\n+            for k, v in actual.variables.items():\n+                # accessing chunks should not load the data into memory\n+                assert v._in_memory == (k in actual.dims)\n+\n     @requires_dask\n     def test_auto_chunk(self):\n         original = create_test_data().chunk()\n"
+  }
+]

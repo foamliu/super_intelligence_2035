@@ -1,0 +1,9 @@
+
+=== deepseek-harness: incr_eval ['pytest-dev__pytest-8399'] ===
+[17:21:40] deepseek-harness: merged 270 -> predictions/predictions_deepseek-harness.json
+[17:21:40] deepseek-harness: launching eval (workers=1, timeout=1800, run_id=verified_full_deepseek-harness_incr_R1649)...
+[17:22:11] deepseek-harness: eval done rc=0
+[17:22:11] deepseek-harness pytest-dev__pytest-8399: RESOLVED (from logs/run_evaluation/verified_full_deepseek-harness_incr_R1649/deepseek-harness-kimi-k2.6-cloud/pytest-dev__pytest-8399/report.json)
+[17:22:11] deepseek-harness: final resolved=212 failed=58 infra=0 no_patch=6 n=276
+
+R1649 done in 31.8s

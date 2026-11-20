@@ -1,0 +1,49 @@
+=== incr_eval R1095 START Sat Oct 31 11:09:12 PM CST 2026 ===
+claude-code: merged 332 patches
+[Sat Oct 31 11:09:13 PM CST 2026] === claude-code eval START ids=django__django-13741 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.84s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.84s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.84s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 1
+Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
+[Sat Oct 31 11:09:42 PM CST 2026] === claude-code eval DONE ===
+deepseek-harness: merged 53 patches
+[Sat Oct 31 11:09:42 PM CST 2026] === deepseek-harness eval START ids=django__django-10973 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.88s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.88s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.88s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[Sat Oct 31 11:10:09 PM CST 2026] === deepseek-harness eval DONE ===
+[Sat Oct 31 11:10:09 PM CST 2026] === regen summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: WROTE eval_claude-code.json  n=332 resolved=256 failed=76 infra=0
+  codex: unchanged (n=214 resolved=168 failed=46 infra=0)
+  hermes: unchanged (n=40 resolved=30 failed=10 infra=0)
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=53 resolved=42 failed=11 infra=0
+=== incr_eval R1095 DONE Sat Oct 31 11:10:10 PM CST 2026 ===

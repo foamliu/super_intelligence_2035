@@ -1,0 +1,75 @@
+diff --git a/django/contrib/contenttypes/fields.py b/django/contrib/contenttypes/fields.py
+index ed98ecb48..6098b71a3 100644
+--- a/django/contrib/contenttypes/fields.py
++++ b/django/contrib/contenttypes/fields.py
+@@ -202,7 +202,7 @@ class GenericForeignKey(FieldCacheMixin):
+             else:
+                 model = self.get_content_type(id=ct_id,
+                                               using=obj._state.db).model_class()
+-                return (model._meta.pk.get_prep_value(getattr(obj, self.fk_field)),
++                return (model._meta.pk.to_python(getattr(obj, self.fk_field)),
+                         model)
+ 
+         return (
+diff --git a/tests/contenttypes_tests/models.py b/tests/contenttypes_tests/models.py
+index eeab6296e..7e812d128 100644
+--- a/tests/contenttypes_tests/models.py
++++ b/tests/contenttypes_tests/models.py
+@@ -1,3 +1,4 @@
++import uuid
+ from urllib.parse import quote
+ 
+ from django.contrib.contenttypes.fields import (
+@@ -136,3 +137,14 @@ class ModelWithM2MToSite(models.Model):
+ 
+     def get_absolute_url(self):
+         return '/title/%s/' % quote(self.title)
++
++
++class UUIDModel(models.Model):
++    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
++
++
++class UUIDAnswer(models.Model):
++    text = models.CharField(max_length=200)
++    content_type = models.ForeignKey(ContentType, models.CASCADE)
++    object_id = models.CharField(max_length=255)
++    question = GenericForeignKey('content_type', 'object_id')
+diff --git a/tests/contenttypes_tests/test_fields.py b/tests/contenttypes_tests/test_fields.py
+index ce5e244df..9d0a5cb23 100644
+--- a/tests/contenttypes_tests/test_fields.py
++++ b/tests/contenttypes_tests/test_fields.py
+@@ -1,11 +1,12 @@
+ import json
+ 
+ from django.contrib.contenttypes.fields import GenericForeignKey
++from django.contrib.contenttypes.models import ContentType
+ from django.db import models
+ from django.test import SimpleTestCase, TestCase
+ from django.test.utils import isolate_apps
+ 
+-from .models import Answer, Question
++from .models import Answer, Question, UUIDAnswer, UUIDModel
+ 
+ 
+ @isolate_apps('contenttypes_tests')
+@@ -33,3 +34,19 @@ class GenericRelationTests(TestCase):
+         answer2 = Answer.objects.create(question=question)
+         result = json.loads(Question.answer_set.field.value_to_string(question))
+         self.assertCountEqual(result, [answer1.pk, answer2.pk])
++
++
++class GenericForeignKeyPrefetchTests(TestCase):
++
++    def test_prefetch_related_with_uuid_pk(self):
++        uuid_model = UUIDModel.objects.create()
++        UUIDAnswer.objects.create(
++            text='uuid answer',
++            content_type=ContentType.objects.get_for_model(UUIDModel),
++            object_id=uuid_model.pk,
++        )
++        answers = UUIDAnswer.objects.prefetch_related('question')
++        with self.assertNumQueries(2):
++            self.assertEqual(
++                [answer.question for answer in answers], [uuid_model]
++            )

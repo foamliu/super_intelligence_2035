@@ -1,0 +1,11 @@
+diff --git a/doc/api/next_api_changes/behavior/24570-GL.rst b/doc/api/next_api_changes/behavior/24570-GL.rst
+new file mode 100644
+index 000000000..4ab0f5d1b
+--- /dev/null
++++ b/doc/api/next_api_changes/behavior/24570-GL.rst
+@@ -0,0 +1,5 @@
++``HPacker`` alignment with **bottom** or **top** are now correct
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Previously, the **bottom** and **top** alignments were swapped.
++This has been corrected so that the alignments correspond appropriately.

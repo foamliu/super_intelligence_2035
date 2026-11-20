@@ -1,0 +1,184 @@
+2026-10-30 17:31:22,238 - INFO - Creating container for sympy__sympy-24661...
+2026-10-30 17:31:22,305 - INFO - Container for sympy__sympy-24661 created: 15ced57db4351af9237ec19a927671ee8b542012ae0a5e9edbabc6bda471518d
+2026-10-30 17:31:25,700 - INFO - Container for sympy__sympy-24661 started: 15ced57db4351af9237ec19a927671ee8b542012ae0a5e9edbabc6bda471518d
+2026-10-30 17:31:25,711 - INFO - Intermediate patch for sympy__sympy-24661 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-24661/patch.diff, now applying to container...
+2026-10-30 17:31:25,865 - INFO - >>>>> Applied Patch:
+Checking patch sympy/parsing/sympy_parser.py...
+Checking patch sympy/parsing/tests/test_sympy_parser.py...
+Applied patch sympy/parsing/sympy_parser.py cleanly.
+Applied patch sympy/parsing/tests/test_sympy_parser.py cleanly.
+
+2026-10-30 17:31:26,341 - INFO - Git diff before:
+diff --git a/sympy/parsing/sympy_parser.py b/sympy/parsing/sympy_parser.py
+index 52711d1324..8562fd4795 100644
+--- a/sympy/parsing/sympy_parser.py
++++ b/sympy/parsing/sympy_parser.py
+@@ -1118,6 +1118,14 @@ class EvaluateFalseTransformer(ast.NodeTransformer):
+         'cosh', 'coth', 'csch', 'sech', 'sinh', 'tanh',
+         'exp', 'ln', 'log', 'sqrt', 'cbrt',
+     )
++    relationals = {
++        ast.Lt: 'Lt',
++        ast.Gt: 'Gt',
++        ast.LtE: 'Le',
++        ast.GtE: 'Ge',
++        ast.Eq: 'Eq',
++        ast.NotEq: 'Ne',
++    }
+ 
+     def flatten(self, args, func):
+         result = []
+@@ -1186,6 +1194,34 @@ def visit_BinOp(self, node):
+             return new_node
+         return node
+ 
++    def visit_Compare(self, node):
++        if all(op.__class__ in self.relationals for op in node.ops):
++            new_node = self.generic_visit(node)
++            rels = []
++            left = self.visit(new_node.left)
++            for op, comparator in zip(new_node.ops, new_node.comparators):
++                sympy_class = self.relationals[op.__class__]
++                right = self.visit(comparator)
++                rel = ast.Call(
++                    func=ast.Name(id=sympy_class, ctx=ast.Load()),
++                    args=[left, right],
++                    keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                    starargs=None,
++                    kwargs=None
++                )
++                rels.append(rel)
++                left = right
++            if len(rels) == 1:
++                return rels[0]
++            return ast.Call(
++                func=ast.Name(id='And', ctx=ast.Load()),
++                args=rels,
++                keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                starargs=None,
++                kwargs=None
++            )
++        return node
++
+     def visit_Call(self, node):
+         new_node = self.generic_visit(node)
+         if isinstance(node.func, ast.Name) and node.func.id in self.functions:
+diff --git a/sympy/parsing/tests/test_sympy_parser.py b/sympy/parsing/tests/test_sympy_parser.py
+index 7c43e1fce3..1123d2d947 100644
+--- a/sympy/parsing/tests/test_sympy_parser.py
++++ b/sympy/parsing/tests/test_sympy_parser.py
+@@ -6,7 +6,7 @@
+ import types
+ 
+ from sympy.assumptions import Q
+-from sympy.core import Symbol, Function, Float, Rational, Integer, I, Mul, Pow, Eq
++from sympy.core import Symbol, Function, Float, Rational, Integer, I, Mul, Pow, Eq, Lt, Gt, Le, Ge, Ne
+ from sympy.functions import exp, factorial, factorial2, sin, Min, Max
+ from sympy.logic import And
+ from sympy.series import Limit
+@@ -359,3 +359,39 @@ def test_issue_22822():
+     raises(ValueError, lambda: parse_expr('x', {'': 1}))
+     data = {'some_parameter': None}
+     assert parse_expr('some_parameter is None', data) is True
++
++
++def test_relational_evaluate_false():
++    # Test that relationals respect evaluate=False
++    # See issue #22305 and #22098
++    x, y = Symbol('x'), Symbol('y')
++
++    # Simple comparisons
++    assert parse_expr('1 < 2', evaluate=False) == Lt(1, 2, evaluate=False)
++    assert parse_expr('1 > 2', evaluate=False) == Gt(1, 2, evaluate=False)
++    assert parse_expr('1 <= 2', evaluate=False) == Le(1, 2, evaluate=False)
++    assert parse_expr('1 >= 2', evaluate=False) == Ge(1, 2, evaluate=False)
++    assert parse_expr('1 == 2', evaluate=False) == Eq(1, 2, evaluate=False)
++    assert parse_expr('1 != 2', evaluate=False) == Ne(1, 2, evaluate=False)
++
++    # Comparisons with symbols
++    assert parse_expr('x < y', evaluate=False) == Lt(x, y, evaluate=False)
++    assert parse_expr('x > y', evaluate=False) == Gt(x, y, evaluate=False)
++    assert parse_expr('x <= y', evaluate=False) == Le(x, y, evaluate=False)
++    assert parse_expr('x >= y', evaluate=False) == Ge(x, y, evaluate=False)
++    assert parse_expr('x == y', evaluate=False) == Eq(x, y, evaluate=False)
++    assert parse_expr('x != y', evaluate=False) == Ne(x, y, evaluate=False)
++
++    # Chained comparisons
++    assert parse_expr('1 < 2 < 3', evaluate=False) == \
++        And(Lt(1, 2, evaluate=False), Lt(2, 3, evaluate=False), evaluate=False)
++    assert parse_expr('1 < 2 <= 3', evaluate=False) == \
++        And(Lt(1, 2, evaluate=False), Le(2, 3, evaluate=False), evaluate=False)
++    assert parse_expr('1 == 2 == 3', evaluate=False) == \
++        And(Eq(1, 2, evaluate=False), Eq(2, 3, evaluate=False), evaluate=False)
++
++    # Verify that evaluate=True still works
++    assert parse_expr('1 < 2', evaluate=True) == True
++    assert parse_expr('1 > 2', evaluate=True) == False
++    assert parse_expr('1 == 2', evaluate=True) == False
++    assert parse_expr('1 != 2', evaluate=True) == True
+2026-10-30 17:31:26,355 - INFO - Eval script for sympy__sympy-24661 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-24661/eval.sh; copying to container...
+2026-10-30 17:31:30,495 - INFO - Test runtime: 4.04 seconds
+2026-10-30 17:31:30,497 - INFO - Test output for sympy__sympy-24661 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-24661/test_output.txt
+2026-10-30 17:31:30,546 - INFO - Git diff after:
+diff --git a/sympy/parsing/sympy_parser.py b/sympy/parsing/sympy_parser.py
+index 52711d1324..8562fd4795 100644
+--- a/sympy/parsing/sympy_parser.py
++++ b/sympy/parsing/sympy_parser.py
+@@ -1118,6 +1118,14 @@ class EvaluateFalseTransformer(ast.NodeTransformer):
+         'cosh', 'coth', 'csch', 'sech', 'sinh', 'tanh',
+         'exp', 'ln', 'log', 'sqrt', 'cbrt',
+     )
++    relationals = {
++        ast.Lt: 'Lt',
++        ast.Gt: 'Gt',
++        ast.LtE: 'Le',
++        ast.GtE: 'Ge',
++        ast.Eq: 'Eq',
++        ast.NotEq: 'Ne',
++    }
+ 
+     def flatten(self, args, func):
+         result = []
+@@ -1186,6 +1194,34 @@ def visit_BinOp(self, node):
+             return new_node
+         return node
+ 
++    def visit_Compare(self, node):
++        if all(op.__class__ in self.relationals for op in node.ops):
++            new_node = self.generic_visit(node)
++            rels = []
++            left = self.visit(new_node.left)
++            for op, comparator in zip(new_node.ops, new_node.comparators):
++                sympy_class = self.relationals[op.__class__]
++                right = self.visit(comparator)
++                rel = ast.Call(
++                    func=ast.Name(id=sympy_class, ctx=ast.Load()),
++                    args=[left, right],
++                    keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                    starargs=None,
++                    kwargs=None
++                )
++                rels.append(rel)
++                left = right
++            if len(rels) == 1:
++                return rels[0]
++            return ast.Call(
++                func=ast.Name(id='And', ctx=ast.Load()),
++                args=rels,
++                keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                starargs=None,
++                kwargs=None
++            )
++        return node
++
+     def visit_Call(self, node):
+         new_node = self.generic_visit(node)
+         if isinstance(node.func, ast.Name) and node.func.id in self.functions:
+2026-10-30 17:31:30,546 - INFO - Git diff changed after running eval script
+2026-10-30 17:31:30,546 - INFO - Grading answer for sympy__sympy-24661...
+2026-10-30 17:31:30,547 - INFO - report: {'sympy__sympy-24661': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_24288'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_sympy_parser', 'test_rationalize', 'test_factorial_fail', 'test_repeated_fail', 'test_repeated_dot_only', 'test_local_dict', 'test_local_dict_split_implmult', 'test_local_dict_symbol_to_fcn', 'test_global_dict', 'test_no_globals', 'test_issue_2515', 'test_issue_7663', 'test_recursive_evaluate_false_10560', 'test_function_evaluate_false', 'test_issue_10773', 'test_split_symbols', 'test_split_symbols_function', 'test_functional_exponent', 'test_match_parentheses_implicit_multiplication', 'test_convert_equals_signs', 'test_parse_function_issue_3539', 'test_split_symbols_numeric', 'test_unicode_names', 'test_python3_features', 'test_issue_19501', 'test_parsing_definitions', 'test_builtins'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-24661: resolved: True
+2026-10-30 17:31:30,549 - INFO - Attempting to stop container sweb.eval.sympy__sympy-24661.verified_full_claude-code...
+2026-10-30 17:31:46,323 - INFO - Container sweb.eval.sympy__sympy-24661.verified_full_claude-code stopped successfully.
+2026-10-30 17:31:46,323 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24661.verified_full_claude-code...
+2026-10-30 17:31:46,463 - INFO - Container sweb.eval.sympy__sympy-24661.verified_full_claude-code removed successfully.

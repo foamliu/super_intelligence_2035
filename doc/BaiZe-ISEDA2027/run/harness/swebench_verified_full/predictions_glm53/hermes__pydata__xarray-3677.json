@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-3677",
+    "model_name_or_path": "hermes-glm-5.3-flash",
+    "model_patch": "diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py\nindex ac0a923..d597ec8 100644\n--- a/xarray/core/dataset.py\n+++ b/xarray/core/dataset.py\n@@ -3604,6 +3604,7 @@ class Dataset(Mapping, ImplementsDatasetReduce, DataWithCoords):\n             If any variables conflict (see ``compat``).\n         \"\"\"\n         _check_inplace(inplace)\n+        other = other.to_dataset() if isinstance(other, xr.DataArray) else other\n         merge_result = dataset_merge_method(\n             self,\n             other,\ndiff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py\nindex c1e6c7a..6c8f3f6 100644\n--- a/xarray/tests/test_merge.py\n+++ b/xarray/tests/test_merge.py\n@@ -3,6 +3,7 @@ import pytest\n \n import xarray as xr\n from xarray.core import dtypes, merge\n+from xarray.testing import assert_identical\n \n from . import raises_regex\n from .test_dataset import create_test_data\n@@ -253,3 +254,9 @@ class TestMergeMethod:\n         with pytest.raises(xr.MergeError):\n             ds3 = xr.Dataset({\"a\": (\"y\", [2, 3]), \"y\": [1, 2]})\n             ds1.merge(ds3, compat=\"no_conflicts\")\n+\n+    def test_merge_dataarray(self):\n+        ds = xr.Dataset({\"a\": 0})\n+        da = xr.DataArray(data=1, name=\"b\")\n+\n+        assert_identical(ds.merge(da), xr.merge([ds, da]))\n"
+  }
+]

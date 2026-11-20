@@ -1,0 +1,55 @@
+diff --git a/sympy/polys/sqfreetools.py b/sympy/polys/sqfreetools.py
+index 1783a774..130f8201 100644
+--- a/sympy/polys/sqfreetools.py
++++ b/sympy/polys/sqfreetools.py
+@@ -17,7 +17,7 @@
+     dmp_raise, dmp_inject,
+     dup_convert)
+ from sympy.polys.densetools import (
+-    dup_diff, dmp_diff,
++    dup_diff, dmp_diff, dmp_diff_in,
+     dup_shift, dmp_compose,
+     dup_monic, dmp_ground_monic,
+     dup_primitive, dmp_ground_primitive)
+@@ -252,7 +252,9 @@ def dmp_sqf_part(f, u, K):
+     if K.is_negative(dmp_ground_LC(f, u, K)):
+         f = dmp_neg(f, u, K)
+ 
+-    gcd = dmp_gcd(f, dmp_diff(f, 1, u, K), u, K)
++    gcd = f
++    for i in range(u + 1):
++        gcd = dmp_gcd(gcd, dmp_diff_in(f, 1, i, u, K), u, K)
+     sqf = dmp_quo(f, gcd, u, K)
+ 
+     if K.is_Field:
+diff --git a/sympy/polys/tests/test_polytools.py b/sympy/polys/tests/test_polytools.py
+index b0b4cd61..48e00e87 100644
+--- a/sympy/polys/tests/test_polytools.py
++++ b/sympy/polys/tests/test_polytools.py
+@@ -58,7 +58,7 @@
+ from sympy.core.basic import _aresame
+ from sympy.core.compatibility import iterable
+ from sympy.core.mul import _keep_coeff
+-from sympy.testing.pytest import raises, XFAIL, warns_deprecated_sympy
++from sympy.testing.pytest import raises, warns_deprecated_sympy
+ 
+ from sympy.abc import a, b, c, d, p, q, t, w, x, y, z
+ from sympy import MatrixSymbol, Matrix
+@@ -3249,12 +3249,16 @@ def test_poly_matching_consistency():
+     assert Poly(x, x) * I == Poly(I*x, x)
+ 
+ 
+-@XFAIL
+ def test_issue_5786():
+     assert expand(factor(expand(
+         (x - I*y)*(z - I*t)), extension=[I])) == -I*t*x - t*y + x*z - I*y*z
+ 
+ 
++def test_issue_18895():
++    assert factor(x*y - x - y + 1, extension=[I]) == (x - 1)*(y - 1)
++    assert factor(expand((x - 1)*(y - 1)), extension=True) == (x - 1)*(y - 1)
++
++
+ def test_noncommutative():
+     class foo(Expr):
+         is_commutative=False

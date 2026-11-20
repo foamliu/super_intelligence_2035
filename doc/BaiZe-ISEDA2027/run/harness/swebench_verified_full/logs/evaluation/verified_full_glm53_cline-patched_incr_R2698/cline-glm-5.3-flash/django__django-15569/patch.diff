@@ -1,0 +1,49 @@
+diff --git a/django/db/models/query_utils.py b/django/db/models/query_utils.py
+index 0caa165e15..6917820604 100644
+--- a/django/db/models/query_utils.py
++++ b/django/db/models/query_utils.py
+@@ -217,6 +217,7 @@ class RegisterLookupMixin:
+         if lookup_name is None:
+             lookup_name = lookup.lookup_name
+         del cls.class_lookups[lookup_name]
++        cls._clear_cached_lookups()
+ 
+ 
+ def select_related_descend(field, restricted, requested, load_fields, reverse=False):
+diff --git a/stub_asgiref/asgiref/sync.py b/stub_asgiref/asgiref/sync.py
+new file mode 100644
+index 0000000000..e8b7d0425e
+--- /dev/null
++++ b/stub_asgiref/asgiref/sync.py
+@@ -0,0 +1,31 @@
++"""Minimal asgiref.sync stub (test-environment only, not part of Django)."""
++import asyncio
++import functools
++
++
++def iscoroutinefunction(func):
++    return asyncio.iscoroutinefunction(func)
++
++
++def async_to_sync(func):
++    @functools.wraps(func)
++    def wrapper(*args, **kwargs):
++        return asyncio.run(func(*args, **kwargs))
++
++    return wrapper
++
++
++def sync_to_async(func):
++    @functools.wraps(func)
++    async def wrapper(*args, **kwargs):
++        return func(*args, **kwargs)
++
++    return wrapper
++
++
++class ThreadSensitiveContext:
++    async def __aenter__(self):
++        return self
++
++    async def __aexit__(self, exc_type, exc_value, traceback):
++        pass

@@ -1,0 +1,74 @@
+2026-10-30 15:53:21,934 - INFO - Creating container for sphinx-doc__sphinx-7454...
+2026-10-30 15:53:21,962 - INFO - Container for sphinx-doc__sphinx-7454 created: 205fb045b62a39ba5117057d8fcb29c2937ad31a90e02d1aae3e2000e142ff8d
+2026-10-30 15:53:22,840 - INFO - Container for sphinx-doc__sphinx-7454 started: 205fb045b62a39ba5117057d8fcb29c2937ad31a90e02d1aae3e2000e142ff8d
+2026-10-30 15:53:22,842 - INFO - Intermediate patch for sphinx-doc__sphinx-7454 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-7454/patch.diff, now applying to container...
+2026-10-30 15:53:23,034 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-10-30 15:53:23,439 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 893bb0a22..fa1a74109 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -71,8 +71,12 @@ pairindextypes = {
+ def _parse_annotation(annotation: str) -> List[Node]:
+     """Parse type annotation."""
+     def make_xref(text: str) -> addnodes.pending_xref:
++        if text == 'None':
++            reftype = 'obj'
++        else:
++            reftype = 'class'
+         return pending_xref('', nodes.Text(text),
+-                            refdomain='py', reftype='class', reftarget=text)
++                            refdomain='py', reftype=reftype, reftarget=text)
+ 
+     def unparse(node: ast.AST) -> List[Node]:
+         if isinstance(node, ast.Attribute):
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index dc3d51d0a..826346d77 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -266,6 +266,10 @@ def test_parse_annotation():
+                           [pending_xref, "int"],
+                           [desc_sig_punctuation, "]"]))
+ 
++    doctree = _parse_annotation("None")
++    assert_node(doctree, ([pending_xref, "None"],))
++    assert doctree[0]['reftype'] == 'obj'
++
+ 
+ def test_pyfunction_signature(app):
+     text = ".. py:function:: hello(name: str) -> str"
+2026-10-30 15:53:23,442 - INFO - Eval script for sphinx-doc__sphinx-7454 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-7454/eval.sh; copying to container...
+2026-10-30 15:53:28,108 - INFO - Test runtime: 4.59 seconds
+2026-10-30 15:53:28,119 - INFO - Test output for sphinx-doc__sphinx-7454 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-7454/test_output.txt
+2026-10-30 15:53:28,284 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 893bb0a22..fa1a74109 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -71,8 +71,12 @@ pairindextypes = {
+ def _parse_annotation(annotation: str) -> List[Node]:
+     """Parse type annotation."""
+     def make_xref(text: str) -> addnodes.pending_xref:
++        if text == 'None':
++            reftype = 'obj'
++        else:
++            reftype = 'class'
+         return pending_xref('', nodes.Text(text),
+-                            refdomain='py', reftype='class', reftarget=text)
++                            refdomain='py', reftype=reftype, reftarget=text)
+ 
+     def unparse(node: ast.AST) -> List[Node]:
+         if isinstance(node, ast.Attribute):
+2026-10-30 15:53:28,284 - INFO - Git diff changed after running eval script
+2026-10-30 15:53:28,284 - INFO - Grading answer for sphinx-doc__sphinx-7454...
+2026-10-30 15:53:28,292 - INFO - report: {'sphinx-doc__sphinx-7454': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_parse_annotation'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7454: resolved: True
+2026-10-30 15:53:28,294 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7454.verified_full_opencode...
+2026-10-30 15:53:44,203 - INFO - Container sweb.eval.sphinx-doc__sphinx-7454.verified_full_opencode stopped successfully.
+2026-10-30 15:53:44,204 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7454.verified_full_opencode...
+2026-10-30 15:53:44,273 - INFO - Container sweb.eval.sphinx-doc__sphinx-7454.verified_full_opencode removed successfully.

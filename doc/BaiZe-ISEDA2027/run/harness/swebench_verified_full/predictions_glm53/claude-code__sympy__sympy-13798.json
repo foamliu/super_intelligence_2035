@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-13798",
+    "model_name_or_path": "claude-code-glm-5.3-flash",
+    "model_patch": ""
+  }
+]

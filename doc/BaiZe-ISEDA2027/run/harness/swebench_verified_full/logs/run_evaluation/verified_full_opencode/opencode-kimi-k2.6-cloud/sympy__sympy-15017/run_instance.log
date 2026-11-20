@@ -1,0 +1,140 @@
+2026-10-30 15:56:52,127 - INFO - Creating container for sympy__sympy-15017...
+2026-10-30 15:56:52,147 - INFO - Container for sympy__sympy-15017 created: 02bcdf9c4f5c8a0f15e171e01b6fb6547c98a88888811878f22e5aa7feee2c79
+2026-10-30 15:56:53,196 - INFO - Container for sympy__sympy-15017 started: 02bcdf9c4f5c8a0f15e171e01b6fb6547c98a88888811878f22e5aa7feee2c79
+2026-10-30 15:56:53,207 - INFO - Intermediate patch for sympy__sympy-15017 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-15017/patch.diff, now applying to container...
+2026-10-30 15:56:53,342 - INFO - >>>>> Applied Patch:
+Checking patch sympy/tensor/array/dense_ndim_array.py...
+Checking patch sympy/tensor/array/sparse_ndim_array.py...
+Checking patch sympy/tensor/array/tests/test_immutable_ndim_array.py...
+Applied patch sympy/tensor/array/dense_ndim_array.py cleanly.
+Applied patch sympy/tensor/array/sparse_ndim_array.py cleanly.
+Applied patch sympy/tensor/array/tests/test_immutable_ndim_array.py cleanly.
+
+2026-10-30 15:56:53,909 - INFO - Git diff before:
+diff --git a/sympy/tensor/array/dense_ndim_array.py b/sympy/tensor/array/dense_ndim_array.py
+index 9be94a863..979071275 100644
+--- a/sympy/tensor/array/dense_ndim_array.py
++++ b/sympy/tensor/array/dense_ndim_array.py
+@@ -149,7 +149,7 @@ def _new(cls, iterable, shape, **kwargs):
+         self._shape = shape
+         self._array = list(flat_list)
+         self._rank = len(shape)
+-        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+         return self
+ 
+     def __setitem__(self, index, value):
+@@ -174,7 +174,7 @@ def _new(cls, iterable, shape, **kwargs):
+         self._shape = shape
+         self._array = list(flat_list)
+         self._rank = len(shape)
+-        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+         return self
+ 
+     def __setitem__(self, index, value):
+diff --git a/sympy/tensor/array/sparse_ndim_array.py b/sympy/tensor/array/sparse_ndim_array.py
+index 72b5d5129..0cf329a01 100644
+--- a/sympy/tensor/array/sparse_ndim_array.py
++++ b/sympy/tensor/array/sparse_ndim_array.py
+@@ -130,7 +130,7 @@ def __new__(cls, iterable=None, shape=None, **kwargs):
+ 
+         shape, flat_list = cls._handle_ndarray_creation_inputs(iterable, shape, **kwargs)
+         shape = Tuple(*map(_sympify, shape))
+-        loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+ 
+         # Sparse array:
+         if isinstance(flat_list, (dict, Dict)):
+@@ -167,7 +167,7 @@ def __new__(cls, iterable=None, shape=None, **kwargs):
+         self = object.__new__(cls)
+         self._shape = shape
+         self._rank = len(shape)
+-        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+ 
+         # Sparse array:
+         if isinstance(flat_list, (dict, Dict)):
+diff --git a/sympy/tensor/array/tests/test_immutable_ndim_array.py b/sympy/tensor/array/tests/test_immutable_ndim_array.py
+index 5a576c44f..030efb6e2 100644
+--- a/sympy/tensor/array/tests/test_immutable_ndim_array.py
++++ b/sympy/tensor/array/tests/test_immutable_ndim_array.py
+@@ -73,11 +73,20 @@ def test_ndim_array_initiation():
+ 
+     from sympy.abc import x
+     rank_zero_array = ImmutableDenseNDimArray(x)
+-    assert len(rank_zero_array) == 0
++    assert len(rank_zero_array) == 1
+     assert rank_zero_array.shape == ()
+     assert rank_zero_array.rank() == 0
+     assert rank_zero_array[()] == x
+-    raises(ValueError, lambda: rank_zero_array[0])
++    assert rank_zero_array[0] == x
++    raises(ValueError, lambda: rank_zero_array[1])
++
++    rank_zero_sparse_array = ImmutableSparseNDimArray(x)
++    assert len(rank_zero_sparse_array) == 1
++    assert rank_zero_sparse_array.shape == ()
++    assert rank_zero_sparse_array.rank() == 0
++    assert rank_zero_sparse_array[()] == x
++    assert rank_zero_sparse_array[0] == x
++    raises(ValueError, lambda: rank_zero_sparse_array[1])
+ 
+ 
+ def test_reshape():
+2026-10-30 15:56:53,911 - INFO - Eval script for sympy__sympy-15017 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-15017/eval.sh; copying to container...
+2026-10-30 15:56:57,659 - INFO - Test runtime: 3.67 seconds
+2026-10-30 15:56:57,661 - INFO - Test output for sympy__sympy-15017 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-15017/test_output.txt
+2026-10-30 15:56:57,720 - INFO - Git diff after:
+diff --git a/sympy/tensor/array/dense_ndim_array.py b/sympy/tensor/array/dense_ndim_array.py
+index 9be94a863..979071275 100644
+--- a/sympy/tensor/array/dense_ndim_array.py
++++ b/sympy/tensor/array/dense_ndim_array.py
+@@ -149,7 +149,7 @@ def _new(cls, iterable, shape, **kwargs):
+         self._shape = shape
+         self._array = list(flat_list)
+         self._rank = len(shape)
+-        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+         return self
+ 
+     def __setitem__(self, index, value):
+@@ -174,7 +174,7 @@ def _new(cls, iterable, shape, **kwargs):
+         self._shape = shape
+         self._array = list(flat_list)
+         self._rank = len(shape)
+-        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+         return self
+ 
+     def __setitem__(self, index, value):
+diff --git a/sympy/tensor/array/sparse_ndim_array.py b/sympy/tensor/array/sparse_ndim_array.py
+index 72b5d5129..0cf329a01 100644
+--- a/sympy/tensor/array/sparse_ndim_array.py
++++ b/sympy/tensor/array/sparse_ndim_array.py
+@@ -130,7 +130,7 @@ def __new__(cls, iterable=None, shape=None, **kwargs):
+ 
+         shape, flat_list = cls._handle_ndarray_creation_inputs(iterable, shape, **kwargs)
+         shape = Tuple(*map(_sympify, shape))
+-        loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+ 
+         # Sparse array:
+         if isinstance(flat_list, (dict, Dict)):
+@@ -167,7 +167,7 @@ def __new__(cls, iterable=None, shape=None, **kwargs):
+         self = object.__new__(cls)
+         self._shape = shape
+         self._rank = len(shape)
+-        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 0
++        self._loop_size = functools.reduce(lambda x,y: x*y, shape) if shape else 1
+ 
+         # Sparse array:
+         if isinstance(flat_list, (dict, Dict)):
+2026-10-30 15:56:57,720 - INFO - Git diff changed after running eval script
+2026-10-30 15:56:57,720 - INFO - Grading answer for sympy__sympy-15017...
+2026-10-30 15:56:57,721 - INFO - report: {'sympy__sympy-15017': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_ndim_array_initiation'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_reshape', 'test_iterator', 'test_sparse', 'test_calculation', 'test_ndim_array_converting', 'test_converting_functions', 'test_equality', 'test_arithmetic', 'test_higher_dimenions', 'test_rebuild_immutable_arrays', 'test_slices', 'test_diff_and_applyfunc', 'test_op_priority', 'test_symbolic_indexing'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-15017: resolved: True
+2026-10-30 15:56:57,723 - INFO - Attempting to stop container sweb.eval.sympy__sympy-15017.verified_full_opencode...
+2026-10-30 15:57:13,943 - INFO - Container sweb.eval.sympy__sympy-15017.verified_full_opencode stopped successfully.
+2026-10-30 15:57:13,943 - INFO - Attempting to remove container sweb.eval.sympy__sympy-15017.verified_full_opencode...
+2026-10-30 15:57:13,986 - INFO - Container sweb.eval.sympy__sympy-15017.verified_full_opencode removed successfully.

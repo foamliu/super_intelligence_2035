@@ -1,0 +1,56 @@
+diff --git a/django/db/migrations/writer.py b/django/db/migrations/writer.py
+index a59f0c8dc..13c2b973f 100644
+--- a/django/db/migrations/writer.py
++++ b/django/db/migrations/writer.py
+@@ -173,9 +173,11 @@ class MigrationWriter:
+         else:
+             imports.add("from django.db import migrations")
+ 
+-        # Sort imports by the package / module to be imported (the part after
+-        # "from" in "from ... import ..." or after "import" in "import ...").
+-        sorted_imports = sorted(imports, key=lambda i: i.split()[1])
++        # Sort imports by import style (import statements first, then from
++        # statements), then alphabetically by the package / module to be imported.
++        sorted_imports = sorted(
++            imports, key=lambda i: (i.split()[0] == "from", i.split()[1]),
++        )
+         items["imports"] = "\n".join(sorted_imports) + "\n" if imports else ""
+         if migration_imports:
+             items["imports"] += (
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index 1c11c68e9..0ff0f879a 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -922,6 +922,32 @@ class WriterTests(SimpleTestCase):
+             output,
+         )
+ 
++    def test_sorted_imports_with_from_before_import(self):
++        """
++        #24155 - Import module statements should be placed before
++        from module import objects, even if the module name comes after
++        alphabetically.
++        """
++        migration = type(
++            "Migration",
++            (migrations.Migration,),
++            {
++                "operations": [
++                    migrations.AddField(
++                        "mymodel",
++                        "myfield",
++                        models.UUIDField(default=uuid.uuid4()),
++                    ),
++                ]
++            },
++        )
++        writer = MigrationWriter(migration)
++        output = writer.as_string()
++        self.assertIn(
++            "import uuid\nfrom django.db import migrations, models\n",
++            output,
++        )
++
+     def test_migration_file_header_comments(self):
+         """
+         Test comments at top of file.

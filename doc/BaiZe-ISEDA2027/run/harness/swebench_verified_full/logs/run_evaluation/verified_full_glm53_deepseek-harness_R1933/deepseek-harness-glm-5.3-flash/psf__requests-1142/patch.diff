@@ -1,0 +1,61 @@
+diff --git a/HISTORY.rst b/HISTORY.rst
+index a3491a1..f8b2c00 100644
+--- a/HISTORY.rst
++++ b/HISTORY.rst
+@@ -6,6 +6,9 @@ History
+ 1.1.0 (2013-01-10)
+ ++++++++++++++++++
+ 
++- Don't send ``Content-Length: 0`` on bodyless requests (e.g. GET),
++  which broke some servers (e.g. amazon.com).
++
+ - CHUNKED REQUESTS
+ - Support for iterable response bodies
+ - Assume servers persist redirect params
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..b817dae 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -377,7 +377,11 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+                     else:
+                         content_type = 'application/x-www-form-urlencoded'
+ 
+-            self.prepare_content_length(body)
++            # Only set Content-Length if there is a body. Sending a
++            # Content-Length header on requests without a body (e.g. GET)
++            # breaks some servers (e.g. amazon.com).
++            if body:
++                self.prepare_content_length(body)
+ 
+             # Add content-type if it wasn't explicitly provided.
+             if (content_type) and (not 'content-type' in self.headers):
+@@ -386,7 +390,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+diff --git a/test_requests.py b/test_requests.py
+index c974e98..b9b17b6 100644
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -58,6 +58,17 @@ class RequestsTestCase(unittest.TestCase):
+         assert pr.body == 'life=42'
+ 
+ 
++    def test_no_content_length_for_bodyless_requests(self):
++        """Content-Length must not be sent on requests without a body
++        (e.g. GET), since some servers (e.g. amazon.com) reject it."""
++        request = requests.Request('GET', 'http://example.com/').prepare()
++        self.assertNotIn('Content-Length', request.headers)
++
++    def test_content_length_set_for_bodied_requests(self):
++        request = requests.Request('POST', 'http://example.com/',
++                                   data={'life': '42'}).prepare()
++        self.assertEqual(request.headers['Content-Length'], str(len(request.body)))
++
+     def test_path_is_not_double_encoded(self):
+         request = requests.Request('GET', "http://0.0.0.0/get/test case").prepare()
+ 

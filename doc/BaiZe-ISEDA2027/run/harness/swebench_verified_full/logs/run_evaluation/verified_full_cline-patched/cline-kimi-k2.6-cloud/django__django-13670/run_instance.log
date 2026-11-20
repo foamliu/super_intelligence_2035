@@ -1,0 +1,73 @@
+2026-10-30 16:15:50,119 - INFO - Creating container for django__django-13670...
+2026-10-30 16:15:51,479 - INFO - Removed existing container sweb.eval.django__django-13670.verified_full_cline-patched
+2026-10-30 16:15:51,511 - INFO - Container for django__django-13670 created: a32a10d8adb9a3fb86dcfa187a77881b91c2dff70ad94c6a9c2008ce4fe7e4ba
+2026-10-30 16:15:53,542 - INFO - Container for django__django-13670 started: a32a10d8adb9a3fb86dcfa187a77881b91c2dff70ad94c6a9c2008ce4fe7e4ba
+2026-10-30 16:15:53,544 - INFO - Intermediate patch for django__django-13670 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13670/patch.diff, now applying to container...
+2026-10-30 16:15:53,680 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/dateformat.py...
+Checking patch tests/utils_tests/test_dateformat.py...
+Applied patch django/utils/dateformat.py cleanly.
+Applied patch tests/utils_tests/test_dateformat.py cleanly.
+
+2026-10-30 16:15:54,556 - INFO - Git diff before:
+diff --git a/django/utils/dateformat.py b/django/utils/dateformat.py
+index afd36d79e0..526414363b 100644
+--- a/django/utils/dateformat.py
++++ b/django/utils/dateformat.py
+@@ -326,7 +326,7 @@ class DateFormat(TimeFormat):
+ 
+     def y(self):
+         "Year, 2 digits; e.g. '99'"
+-        return str(self.data.year)[2:]
++        return '%02d' % (self.data.year % 100)
+ 
+     def Y(self):
+         "Year, 4 digits; e.g. '1999'"
+diff --git a/tests/utils_tests/test_dateformat.py b/tests/utils_tests/test_dateformat.py
+index d050ac4352..373acbaa42 100644
+--- a/tests/utils_tests/test_dateformat.py
++++ b/tests/utils_tests/test_dateformat.py
+@@ -105,6 +105,12 @@ class DateFormatTests(SimpleTestCase):
+         self.assertEqual(dateformat.format(my_birthday, 'Y'), '1979')
+         self.assertEqual(dateformat.format(my_birthday, 'z'), '189')
+ 
++    def test_year_two_digit(self):
++        # Ticket #32007 -- Years < 1000
++        self.assertEqual(dateformat.format(datetime(123, 4, 5, 6, 7), 'y'), '23')
++        self.assertEqual(dateformat.format(datetime(99, 4, 5, 6, 7), 'y'), '99')
++        self.assertEqual(dateformat.format(datetime(9, 4, 5, 6, 7), 'y'), '09')
++
+     def test_dateformat(self):
+         my_birthday = datetime(1979, 7, 8, 22, 00)
+2026-10-30 16:15:54,557 - INFO - Eval script for django__django-13670 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13670/eval.sh; copying to container...
+2026-10-30 16:16:01,244 - INFO - Test runtime: 6.58 seconds
+2026-10-30 16:16:01,248 - INFO - Test output for django__django-13670 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13670/test_output.txt
+2026-10-30 16:16:01,339 - INFO - Git diff after:
+diff --git a/django/utils/dateformat.py b/django/utils/dateformat.py
+index afd36d79e0..526414363b 100644
+--- a/django/utils/dateformat.py
++++ b/django/utils/dateformat.py
+@@ -326,7 +326,7 @@ class DateFormat(TimeFormat):
+ 
+     def y(self):
+         "Year, 2 digits; e.g. '99'"
+-        return str(self.data.year)[2:]
++        return '%02d' % (self.data.year % 100)
+ 
+     def Y(self):
+         "Year, 4 digits; e.g. '1999'"
+2026-10-30 16:16:01,339 - INFO - Git diff changed after running eval script
+2026-10-30 16:16:01,339 - INFO - Grading answer for django__django-13670...
+2026-10-30 16:16:01,340 - INFO - report: {'django__django-13670': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_year_before_1000 (utils_tests.test_dateformat.DateFormatTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_am_pm (utils_tests.test_dateformat.DateFormatTests)', 'test_date (utils_tests.test_dateformat.DateFormatTests)', 'test_date_formats (utils_tests.test_dateformat.DateFormatTests)', 'test_dateformat (utils_tests.test_dateformat.DateFormatTests)', 'test_datetime_with_local_tzinfo (utils_tests.test_dateformat.DateFormatTests)', 'test_datetime_with_tzinfo (utils_tests.test_dateformat.DateFormatTests)', 'test_day_of_year_leap (utils_tests.test_dateformat.DateFormatTests)', 'test_empty_format (utils_tests.test_dateformat.DateFormatTests)', 'test_epoch (utils_tests.test_dateformat.DateFormatTests)', 'test_futuredates (utils_tests.test_dateformat.DateFormatTests)', 'test_invalid_time_format_specifiers (utils_tests.test_dateformat.DateFormatTests)', 'test_microsecond (utils_tests.test_dateformat.DateFormatTests)', 'test_naive_ambiguous_datetime (utils_tests.test_dateformat.DateFormatTests)', 'test_naive_datetime (utils_tests.test_dateformat.DateFormatTests)', 'test_r_format_with_non_en_locale (utils_tests.test_dateformat.DateFormatTests)', 'test_time_formats (utils_tests.test_dateformat.DateFormatTests)', 'test_timezones (utils_tests.test_dateformat.DateFormatTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13670: resolved: True
+2026-10-30 16:16:01,342 - INFO - Attempting to stop container sweb.eval.django__django-13670.verified_full_cline-patched...
+2026-10-30 16:16:18,420 - INFO - Container sweb.eval.django__django-13670.verified_full_cline-patched stopped successfully.
+2026-10-30 16:16:18,420 - INFO - Attempting to remove container sweb.eval.django__django-13670.verified_full_cline-patched...
+2026-10-30 16:16:18,477 - INFO - Container sweb.eval.django__django-13670.verified_full_cline-patched removed successfully.
+to stop container sweb.eval.django__django-13670.verified_full_cline-patched...
+2026-10-30 16:15:51,575 - INFO - Failed to stop container sweb.eval.django__django-13670.verified_full_cline-patched: Command '['docker', 'stop', '--time=15', '20797fdaff7830888c3e4d5ad80c8e9927466929e19eeabdfac0f4dbdef86046']' returned non-zero exit status 1.. Trying to forcefully kill...
+2026-10-30 16:15:51,575 - INFO - Forcefully killing container sweb.eval.django__django-13670.verified_full_cline-patched...
+2026-10-30 16:15:51,669 - INFO - Failed to kill container sweb.eval.django__django-13670.verified_full_cline-patched: Error response from daemon: cannot kill container: 20797fdaff7830888c3e4d5ad80c8e9927466929e19eeabdfac0f4dbdef86046: No such container: 20797fdaff7830888c3e4d5ad80c8e9927466929e19eeabdfac0f4dbdef86046
+
+2026-10-30 16:15:51,669 - INFO - Attempting to remove container sweb.eval.django__django-13670.verified_full_cline-patched...
+2026-10-30 16:15:51,770 - INFO - Container sweb.eval.django__django-13670.verified_full_cline-patched removed successfully.

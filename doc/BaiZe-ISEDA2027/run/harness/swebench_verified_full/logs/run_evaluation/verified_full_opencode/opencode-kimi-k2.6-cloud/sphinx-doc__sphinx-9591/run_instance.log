@@ -1,0 +1,138 @@
+2026-10-30 15:55:01,287 - INFO - Creating container for sphinx-doc__sphinx-9591...
+2026-10-30 15:55:01,322 - INFO - Container for sphinx-doc__sphinx-9591 created: f4537af69b36f5bf8726c68dbc3aa537be3ccb26b6ad7ed096f7cffa9d8bde54
+2026-10-30 15:55:03,174 - INFO - Container for sphinx-doc__sphinx-9591 started: f4537af69b36f5bf8726c68dbc3aa537be3ccb26b6ad7ed096f7cffa9d8bde54
+2026-10-30 15:55:03,176 - INFO - Intermediate patch for sphinx-doc__sphinx-9591 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-9591/patch.diff, now applying to container...
+2026-10-30 15:55:03,274 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch tests/roots/test-domain-py/module.rst...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch tests/roots/test-domain-py/module.rst cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-10-30 15:55:03,684 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index e8330e81c..9875a9f4b 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -861,7 +861,8 @@ class PyProperty(PyObject):
+ 
+         typ = self.options.get('type')
+         if typ:
+-            signode += addnodes.desc_annotation(typ, ': ' + typ)
++            annotations = _parse_annotation(typ, self.env)
++            signode += addnodes.desc_annotation(typ, '', nodes.Text(': '), *annotations)
+ 
+         return fullname, prefix
+ 
+diff --git a/tests/roots/test-domain-py/module.rst b/tests/roots/test-domain-py/module.rst
+index 4a2806812..91984e3ae 100644
+--- a/tests/roots/test-domain-py/module.rst
++++ b/tests/roots/test-domain-py/module.rst
+@@ -43,6 +43,10 @@ module
+    :type  y: tuple(str, float)
+    :rtype:   list
+ 
++.. py:property:: prop2
++
++   :type: ModTopLevel
++
+ .. py:attribute:: attr1
+ 
+    :type: ModTopLevel
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 8b72f8b7a..754d6a652 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -120,8 +120,9 @@ def test_domain_py_xrefs(app, status, warning):
+     assert_refnode(refnodes[12], False, False, 'float', 'class')
+     assert_refnode(refnodes[13], False, False, 'list', 'class')
+     assert_refnode(refnodes[14], False, False, 'ModTopLevel', 'class')
+-    assert_refnode(refnodes[15], False, False, 'index', 'doc', domain='std')
+-    assert len(refnodes) == 16
++    assert_refnode(refnodes[15], False, False, 'ModTopLevel', 'class')
++    assert_refnode(refnodes[16], False, False, 'index', 'doc', domain='std')
++    assert len(refnodes) == 17
+ 
+     doctree = app.env.get_doctree('module_option')
+     refnodes = list(doctree.traverse(pending_xref))
+@@ -207,6 +208,17 @@ def test_resolve_xref_for_properties(app, status, warning):
+             'prop</span> <span class="pre">attribute</span></code></a>' in content)
+ 
+ 
++@pytest.mark.sphinx('html', testroot='domain-py')
++def test_resolve_xref_for_property_type_annotation(app, status, warning):
++    app.builder.build_all()
++
++    content = (app.outdir / 'module.html').read_text()
++    assert ('<a class="reference internal" href="#module_a.submodule.ModTopLevel"'
++            ' title="module_a.submodule.ModTopLevel">'
++            '<code class="xref py py-class docutils literal notranslate"><span class="pre">'
++            'ModTopLevel</span></code></a>' in content)
++
++
+ @pytest.mark.sphinx('dummy', testroot='domain-py')
+ def test_domain_py_find_obj(app, status, warning):
+ 
+@@ -833,14 +845,16 @@ def test_pyproperty(app):
+                 entries=[('single', 'prop1 (Class property)', 'Class.prop1', '', None)])
+     assert_node(doctree[1][1][1], ([desc_signature, ([desc_annotation, "abstract property "],
+                                                      [desc_name, "prop1"],
+-                                                     [desc_annotation, ": str"])],
+-                                   [desc_content, ()]))
++                                                     [desc_annotation, (": ",
++                                                                        [pending_xref, "str"])])],
++                                    [desc_content, ()]))
+     assert_node(doctree[1][1][2], addnodes.index,
+                 entries=[('single', 'prop2 (Class property)', 'Class.prop2', '', None)])
+     assert_node(doctree[1][1][3], ([desc_signature, ([desc_annotation, "class property "],
+                                                      [desc_name, "prop2"],
+-                                                     [desc_annotation, ": str"])],
+-                                   [desc_content, ()]))
++                                                     [desc_annotation, (": ",
++                                                                        [pending_xref, "str"])])],
++                                    [desc_content, ()]))
+     assert 'Class.prop1' in domain.objects
+     assert domain.objects['Class.prop1'] == ('index', 'Class.prop1', 'property', False)
+     assert 'Class.prop2' in domain.objects
+2026-10-30 15:55:03,686 - INFO - Eval script for sphinx-doc__sphinx-9591 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-9591/eval.sh; copying to container...
+2026-10-30 15:55:10,375 - INFO - Test runtime: 6.63 seconds
+2026-10-30 15:55:10,377 - INFO - Test output for sphinx-doc__sphinx-9591 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-9591/test_output.txt
+2026-10-30 15:55:10,453 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index e8330e81c..9875a9f4b 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -861,7 +861,8 @@ class PyProperty(PyObject):
+ 
+         typ = self.options.get('type')
+         if typ:
+-            signode += addnodes.desc_annotation(typ, ': ' + typ)
++            annotations = _parse_annotation(typ, self.env)
++            signode += addnodes.desc_annotation(typ, '', nodes.Text(': '), *annotations)
+ 
+         return fullname, prefix
+ 
+diff --git a/tests/roots/test-domain-py/module.rst b/tests/roots/test-domain-py/module.rst
+index 4a2806812..91984e3ae 100644
+--- a/tests/roots/test-domain-py/module.rst
++++ b/tests/roots/test-domain-py/module.rst
+@@ -43,6 +43,10 @@ module
+    :type  y: tuple(str, float)
+    :rtype:   list
+ 
++.. py:property:: prop2
++
++   :type: ModTopLevel
++
+ .. py:attribute:: attr1
+ 
+    :type: ModTopLevel
+2026-10-30 15:55:10,453 - INFO - Git diff changed after running eval script
+2026-10-30 15:55:10,453 - INFO - Grading answer for sphinx-doc__sphinx-9591...
+2026-10-30 15:55:10,470 - INFO - report: {'sphinx-doc__sphinx-9591': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_pyproperty'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs_abbreviations', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_domain_py_canonical', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_parse_annotation', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_pyfunction_with_number_literals', 'tests/test_domain_py.py::test_pyfunction_with_union_type_operator', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pydata_with_union_type_operator', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pyclass_options', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_canonical', 'tests/test_domain_py.py::test_canonical_definition_overrides', 'tests/test_domain_py.py::test_canonical_definition_skip', 'tests/test_domain_py.py::test_canonical_duplicated', 'tests/test_domain_py.py::test_info_field_list', 'tests/test_domain_py.py::test_info_field_list_piped_type', 'tests/test_domain_py.py::test_info_field_list_var', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_domain_py.py::test_noindexentry', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names_disabled', 'tests/test_domain_py.py::test_warn_missing_reference'], 'failure': ['tests/test_domain_py.py::test_domain_py_xrefs']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9591: resolved: False
+2026-10-30 15:55:10,472 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9591.verified_full_opencode...
+2026-10-30 15:55:27,002 - INFO - Container sweb.eval.sphinx-doc__sphinx-9591.verified_full_opencode stopped successfully.
+2026-10-30 15:55:27,002 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9591.verified_full_opencode...
+2026-10-30 15:55:27,039 - INFO - Container sweb.eval.sphinx-doc__sphinx-9591.verified_full_opencode removed successfully.

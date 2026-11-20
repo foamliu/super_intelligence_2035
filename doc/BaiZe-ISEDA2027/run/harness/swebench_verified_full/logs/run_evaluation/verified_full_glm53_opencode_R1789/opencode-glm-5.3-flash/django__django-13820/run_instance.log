@@ -1,0 +1,109 @@
+2026-11-07 21:16:18,874 - INFO - Creating container for django__django-13820...
+2026-11-07 21:16:18,891 - INFO - Container for django__django-13820 created: fa1b7855f32c03c9e31ce97c7f11c12ec39d70ae095a241763fd09c9e41e9ea7
+2026-11-07 21:16:19,839 - INFO - Container for django__django-13820 started: fa1b7855f32c03c9e31ce97c7f11c12ec39d70ae095a241763fd09c9e41e9ea7
+2026-11-07 21:16:19,842 - INFO - Intermediate patch for django__django-13820 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-13820/patch.diff, now applying to container...
+2026-11-07 21:16:20,006 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/loader.py...
+Checking patch tests/migrations/test_loader.py...
+Checking patch tests/migrations/test_migrations_no_file/0001_initial.py...
+Checking patch tests/migrations/test_migrations_no_file/__init__.py...
+Applied patch django/db/migrations/loader.py cleanly.
+Applied patch tests/migrations/test_loader.py cleanly.
+Applied patch tests/migrations/test_migrations_no_file/0001_initial.py cleanly.
+Applied patch tests/migrations/test_migrations_no_file/__init__.py cleanly.
+
+2026-11-07 21:16:21,331 - INFO - Git diff before:
+diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py
+index 95a5062ec9..e32fb23a7d 100644
+--- a/django/db/migrations/loader.py
++++ b/django/db/migrations/loader.py
+@@ -88,15 +88,16 @@ class MigrationLoader:
+                     continue
+                 raise
+             else:
+-                # Empty directories are namespaces.
+-                # getattr() needed on PY36 and older (replace w/attribute access).
+-                if getattr(module, '__file__', None) is None:
+-                    self.unmigrated_apps.add(app_config.label)
+-                    continue
+                 # Module is not a package (e.g. migrations.py).
+                 if not hasattr(module, '__path__'):
+                     self.unmigrated_apps.add(app_config.label)
+                     continue
++                # Empty directories are namespaces. namespace packages are not
++                # runnable, and even if they were, we'd not want to execute
++                # them.
++                if not isinstance(module.__path__, list):
++                    self.unmigrated_apps.add(app_config.label)
++                    continue
+                 # Force a reload if it's already loaded (tests need this)
+                 if was_loaded:
+                     reload(module)
+diff --git a/tests/migrations/test_loader.py b/tests/migrations/test_loader.py
+index 27a052ddac..84d1468d7d 100644
+--- a/tests/migrations/test_loader.py
++++ b/tests/migrations/test_loader.py
+@@ -1,5 +1,6 @@
+ import compileall
+ import os
++from importlib import import_module
+ 
+ from django.db import connection, connections
+ from django.db.migrations.exceptions import (
+@@ -512,6 +513,19 @@ class LoaderTests(TestCase):
+         migrations = [name for app, name in loader.disk_migrations if app == 'migrations']
+         self.assertEqual(migrations, [])
+ 
++    @override_settings(MIGRATION_MODULES={'migrations': 'migrations.test_migrations_no_file'})
++    def test_loading_package_without_file(self):
++        """Migrations can be loaded from a package without __file__."""
++        module = import_module('migrations.test_migrations_no_file')
++        __file__ = module.__file__
++        del module.__file__
++        try:
++            loader = MigrationLoader(connection)
++            loader.load_disk()
++            self.assertIn(('migrations', '0001_initial'), loader.disk_migrations)
++        finally:
++            module.__file__ = __file__
++
+ 
+ class PycLoaderTests(MigrationTestBase):
+2026-11-07 21:16:21,334 - INFO - Eval script for django__django-13820 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-13820/eval.sh; copying to container...
+2026-11-07 21:16:28,282 - INFO - Test runtime: 6.83 seconds
+2026-11-07 21:16:28,284 - INFO - Test output for django__django-13820 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-13820/test_output.txt
+2026-11-07 21:16:28,342 - INFO - Git diff after:
+diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py
+index 95a5062ec9..e32fb23a7d 100644
+--- a/django/db/migrations/loader.py
++++ b/django/db/migrations/loader.py
+@@ -88,15 +88,16 @@ class MigrationLoader:
+                     continue
+                 raise
+             else:
+-                # Empty directories are namespaces.
+-                # getattr() needed on PY36 and older (replace w/attribute access).
+-                if getattr(module, '__file__', None) is None:
+-                    self.unmigrated_apps.add(app_config.label)
+-                    continue
+                 # Module is not a package (e.g. migrations.py).
+                 if not hasattr(module, '__path__'):
+                     self.unmigrated_apps.add(app_config.label)
+                     continue
++                # Empty directories are namespaces. namespace packages are not
++                # runnable, and even if they were, we'd not want to execute
++                # them.
++                if not isinstance(module.__path__, list):
++                    self.unmigrated_apps.add(app_config.label)
++                    continue
+                 # Force a reload if it's already loaded (tests need this)
+                 if was_loaded:
+                     reload(module)
+2026-11-07 21:16:28,343 - INFO - Git diff changed after running eval script
+2026-11-07 21:16:28,343 - INFO - Grading answer for django__django-13820...
+2026-11-07 21:16:28,344 - INFO - report: {'django__django-13820': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_loading_package_without__file__ (migrations.test_loader.LoaderTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_apply (migrations.test_loader.RecorderTests)', 'test_invalid (migrations.test_loader.PycLoaderTests)', 'test_valid (migrations.test_loader.PycLoaderTests)', 'test_check_consistent_history (migrations.test_loader.LoaderTests)', 'test_check_consistent_history_squashed (migrations.test_loader.LoaderTests)', 'test_explicit_missing_module (migrations.test_loader.LoaderTests)', "Files prefixed with underscore, tilde, or dot aren't loaded.", 'test_load (migrations.test_loader.LoaderTests)', 'test_load_empty_dir (migrations.test_loader.LoaderTests)', 'test_load_import_error (migrations.test_loader.LoaderTests)', 'test_load_module_file (migrations.test_loader.LoaderTests)', 'test_load_unmigrated_dependency (migrations.test_loader.LoaderTests)', 'Migration directories without an __init__.py file are ignored.', 'Tests loading a squashed migration', 'Tests loading a complex set of squashed migrations', 'test_loading_squashed_complex_multi_apps (migrations.test_loader.LoaderTests)', 'test_loading_squashed_complex_multi_apps_partially_applied (migrations.test_loader.LoaderTests)', 'Tests loading a complex but erroneous set of squashed migrations', 'Tests loading a squashed migration with a new migration referencing it', 'test_marked_as_migrated (migrations.test_loader.LoaderTests)', 'test_marked_as_unmigrated (migrations.test_loader.LoaderTests)', 'Tests prefix name matching', 'test_plan_handles_repeated_migrations (migrations.test_loader.LoaderTests)', 'test_run_before (migrations.test_loader.LoaderTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13820: resolved: True
+2026-11-07 21:16:28,345 - INFO - Attempting to stop container sweb.eval.django__django-13820.verified_full_glm53_opencode_R1789...
+2026-11-07 21:16:44,527 - INFO - Container sweb.eval.django__django-13820.verified_full_glm53_opencode_R1789 stopped successfully.
+2026-11-07 21:16:44,528 - INFO - Attempting to remove container sweb.eval.django__django-13820.verified_full_glm53_opencode_R1789...
+2026-11-07 21:16:44,595 - INFO - Container sweb.eval.django__django-13820.verified_full_glm53_opencode_R1789 removed successfully.

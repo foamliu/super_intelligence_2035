@@ -1,0 +1,42 @@
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index f957a667b2..720767aa9e 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -261,6 +261,7 @@ class HashedFilesMixin:
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
++        substitutions = False
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+diff --git a/tests/staticfiles_tests/test_storage.py b/tests/staticfiles_tests/test_storage.py
+index db655f2453..f125c81cb4 100644
+--- a/tests/staticfiles_tests/test_storage.py
++++ b/tests/staticfiles_tests/test_storage.py
+@@ -497,6 +497,25 @@ class CustomStaticFilesStorage(storage.StaticFilesStorage):
+         super().__init__(*args, **kwargs)
+ 
+ 
++class ZeroMaxPostProcessPassesStorage(storage.ManifestStaticFilesStorage):
++    """
++    Used in TestCollectionZeroMaxPostProcessPasses.
++    """
++    max_post_process_passes = 0
++
++
++@override_settings(
++    STATICFILES_STORAGE='staticfiles_tests.test_storage.ZeroMaxPostProcessPassesStorage',
++)
++class TestCollectionZeroMaxPostProcessPasses(CollectionTestCase):
++    """
++    A storage subclass with max_post_process_passes set to 0 shouldn't
++    crash when running collectstatic (#32829).
++    """
++    def test_max_post_process_passes_0(self):
++        self.assertFileContains('test.txt', 'Can we find')
++
++
+ @unittest.skipIf(sys.platform == 'win32', "Windows only partially supports chmod.")
+ class TestStaticFilePermissions(CollectionTestCase):
+ 

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13158",
+    "model_name_or_path": "claude-code-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex c913267476..0d52619c62 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -1777,6 +1777,10 @@ class Query(BaseExpression):\n \n     def set_empty(self):\n         self.where.add(NothingNode(), AND)\n+        # Remove the combinator (e.g. union) if any, because it would ignore\n+        # the empty where clause.\n+        self.combinator = None\n+        self.combinator_all = None\n \n     def is_empty(self):\n         return any(isinstance(c, NothingNode) for c in self.where.children)\n"
+  }
+]

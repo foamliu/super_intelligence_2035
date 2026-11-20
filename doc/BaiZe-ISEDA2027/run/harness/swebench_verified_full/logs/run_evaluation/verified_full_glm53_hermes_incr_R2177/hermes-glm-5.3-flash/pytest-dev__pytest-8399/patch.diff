@@ -1,0 +1,54 @@
+diff --git a/changelog/8393.bugfix.rst b/changelog/8393.bugfix.rst
+new file mode 100644
+index 000000000..1c9c0e9d9
+--- /dev/null
++++ b/changelog/8393.bugfix.rst
+@@ -0,0 +1 @@
++Fix a regression in pytest 6.0/6.1: :ref:`--fixtures` (without ``-v``) again hides the automatically-generated ``unittest`` fixtures like ``unittest_setUpClass_fixture_Tests`` -- their names now start with an underscore again.
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 719eb4e88..ea7074baf 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -144,7 +144,7 @@ def _make_xunit_fixture(
+         scope=scope,
+         autouse=True,
+         # Use a unique name to speed up lookup.
+-        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
++        name=str(f"_unittest_{setup_name}_fixture_{obj.__qualname__}"),  # type: ignore
+     )
+     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+         if _is_skipped(self):
+diff --git a/testing/test_unittest.py b/testing/test_unittest.py
+index 69bafc26d..4252d8f6b 100644
+--- a/testing/test_unittest.py
++++ b/testing/test_unittest.py
+@@ -993,6 +993,29 @@ def test_class_method_containing_test_issue1558(pytester: Pytester) -> None:
+     reprec.assertoutcome(passed=1)
+ 
+ 
++def test_setupclass_fixture_is_private(pytester: Pytester) -> None:
++    """#8393: the auto-use fixture generated for unittest setUpClass is
++    "private" (name starts with an underscore), so it is not shown by
++    --fixtures unless -v is given."""
++    pytester.makepyfile(
++        test_foo="""
++        import unittest
++
++        class MyTestCase(unittest.TestCase):
++            @classmethod
++            def setUpClass(cls):
++                pass
++
++            def test_1(self):
++                pass
++    """
++    )
++    result = pytester.runpytest("--fixtures")
++    result.stdout.no_fnmatch_line("*_unittest_setUpClass_fixture_*")
++    result = pytester.runpytest("--fixtures", "-v")
++    result.stdout.fnmatch_lines(["*_unittest_setUpClass_fixture_MyTestCase*"])
++
++
+ @pytest.mark.parametrize("base", ["builtins.object", "unittest.TestCase"])
+ def test_usefixtures_marker_on_unittest(base, pytester: Pytester) -> None:
+     """#3498"""

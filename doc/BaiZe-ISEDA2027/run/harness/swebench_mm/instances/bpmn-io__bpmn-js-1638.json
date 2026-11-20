@@ -1,0 +1,26 @@
+{
+  "base_commit": "574a674381d6449b509396b6d17c4ca94674ea1c",
+  "created_at": "2022-04-22T09:29:55Z",
+  "eval_type": "fail_only",
+  "image": "swebench/sweb.eval.x86_64.bpmn-io_1776_bpmn-js-1638:latest",
+  "image_assets": {
+    "patch": [],
+    "problem_statement": [
+      "https://user-images.githubusercontent.com/21984219/164674929-c8e344a5-71d1-4cab-8611-b4cd5ef87a02.gif"
+    ],
+    "test_patch": []
+  },
+  "instance_id": "bpmn-io__bpmn-js-1638",
+  "log_parser": "parse_log_bpmn_js",
+  "repo": "bpmn-io/bpmn-js",
+  "version": "9.0",
+  "patch": "diff --git a/lib/features/label-editing/cmd/UpdateLabelHandler.js b/lib/features/label-editing/cmd/UpdateLabelHandler.js\nindex 35159c2a18..692da3d163 100644\n--- a/lib/features/label-editing/cmd/UpdateLabelHandler.js\n+++ b/lib/features/label-editing/cmd/UpdateLabelHandler.js\n@@ -44,7 +44,7 @@ export default function UpdateLabelHandler(modeling, textRenderer, bpmnFactory)\n     }\n \n     if (!text && di.label) {\n-      di.label = null;\n+      delete di.label;\n     }\n   }\n \n",
+  "test_patch": "diff --git a/test/spec/features/modeling/UpdateLabelSpec.js b/test/spec/features/modeling/UpdateLabelSpec.js\nindex 7bbac540f2..a6cecb36a1 100644\n--- a/test/spec/features/modeling/UpdateLabelSpec.js\n+++ b/test/spec/features/modeling/UpdateLabelSpec.js\n@@ -247,7 +247,7 @@ describe('features/modeling - update label', function() {\n \n       // then\n       expect(task_2.businessObject.name).to.equal('');\n-      expect(task_2.di.label).not.to.exist;\n+      expect(task_2.di).not.to.have.property('label');\n     }));\n \n   });\n",
+  "eval_script": "#!/bin/bash\nset -uxo pipefail\ncd /testbed\ngit config --global --add safe.directory /testbed\nsource $NVM_DIR/nvm.sh\ngit status\ngit show\ngit -c core.fileMode=false diff 574a674381d6449b509396b6d17c4ca94674ea1c\ngit checkout 574a674381d6449b509396b6d17c4ca94674ea1c test/spec/features/modeling/UpdateLabelSpec.js\ngit apply -v - <<'EOF_114329324912'\ndiff --git a/test/spec/features/modeling/UpdateLabelSpec.js b/test/spec/features/modeling/UpdateLabelSpec.js\nindex 7bbac540f2..a6cecb36a1 100644\n--- a/test/spec/features/modeling/UpdateLabelSpec.js\n+++ b/test/spec/features/modeling/UpdateLabelSpec.js\n@@ -247,7 +247,7 @@ describe('features/modeling - update label', function() {\n \n       // then\n       expect(task_2.businessObject.name).to.equal('');\n-      expect(task_2.di.label).not.to.exist;\n+      expect(task_2.di).not.to.have.property('label');\n     }));\n \n   });\n\nEOF_114329324912\nif ! git diff --quiet HEAD -- package.json 2>/dev/null; then echo \"package.json changed by patch; re-syncing dependencies\"; export PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true; if [ -f yarn.lock ]; then timeout 900 yarn install --silent > /dev/null 2>&1 || true; else timeout 900 npm install --silent > /dev/null 2>&1 || true; fi; chmod -R a+rX node_modules > /dev/null 2>&1 || true; fi\n: '>>>>> Start Test Output'\nsed -i \"s|process.env.CHROME_BIN = require('puppeteer').executablePath();|process.env.CHROME_BIN = '/usr/bin/google-chrome-stable';|\" test/config/karma.unit.js ; sed -i \"/module.exports = function(karma) {/i \\\\\nvar customLaunchers = { \\\\\n  ChromeNoSandbox: { \\\\\n    base: 'ChromeHeadless', \\\\\n    flags: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] \\\\\n  } \\\\\n}; \\\\\nbrowsers = ['ChromeNoSandbox']; \\\\\n\" test/config/karma.unit.js ; sed -i \"/browsers,/a \\\\    customLaunchers,\" test/config/karma.unit.js ; PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable su chromeuser -c \"./node_modules/.bin/karma start test/config/karma.unit.js --no-colors\"\n: '>>>>> End Test Output'\ngit checkout 574a674381d6449b509396b6d17c4ca94674ea1c test/spec/features/modeling/UpdateLabelSpec.js\n",
+  "problem_statement": "`Label` property exists after clearing the name\n__Describe the Bug__\r\n\r\nWhen I remove the Label of a Task, the di still has the property `label: null`. This causes issues with other tools, e.g. with linting:\r\n\r\n![Recording 2022-04-22 at 10 13 44](https://user-images.githubusercontent.com/21984219/164674929-c8e344a5-71d1-4cab-8611-b4cd5ef87a02.gif)\r\n\r\n\r\n__Steps to Reproduce__\r\n\r\n1. Remove the label of a Task\r\n2. `di.label` exists and is `null`\r\n\r\n__Expected Behavior__\r\n\r\n`di.label` does not exist\r\n\r\n\r\n__Additional Context__\r\n\r\nThis was introduced with support for embedded label DIs: https://github.com/bpmn-io/bpmn-js/issues/1540\r\n\r\nCf. [discussion in the forum](https://forum.bpmn.io/t/clearing-labels-results-in-errors-during-bpmnlint-run/7497)\r\n\r\n__Environment__\r\n\r\n - Browser: Chrome 100\r\n - OS: Ubuntu\r\n - Library version: master\n",
+  "hints_text": "",
+  "FAIL_TO_PASS": [
+    "features/modeling - update label embedded labels should delete label of task "
+  ],
+  "PASS_TO_PASS": []
+}

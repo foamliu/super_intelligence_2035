@@ -1,0 +1,36 @@
+
+=== codex: django__django-12276 ===
+  merged 103 real preds -> predictions_glm53/predictions_codex_glm53.json
+  [17:54:34] launching eval ...
+
+=== codex: django__django-12276 ===
+  merged 103 real preds -> predictions_glm53/predictions_codex_glm53.json
+  [17:55:40] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_codex_R2184.log)
+  django__django-12276: failed (capability)
+  [17:56:17] codex: eval updated (resolved=69, failed=34, infra=0)
+
+=== pi: django__django-13343 ===
+  merged 198 real preds -> predictions_glm53/predictions_pi_glm53.json
+  [17:56:17] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_pi_R2184.log)
+  django__django-13343: failed (capability)
+  [17:56:53] pi: eval updated (resolved=143, failed=54, infra=2)
+
+=== hermes: sphinx-doc__sphinx-7985 ===
+  merged 401 real preds -> predictions_glm53/predictions_hermes_glm53.json
+  [17:56:53] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_hermes_R2184.log)
+  sphinx-doc__sphinx-7985: failed (capability)
+  [17:57:27] hermes: eval updated (resolved=357, failed=44, infra=1)
+
+=== incr_eval R2184 complete in 106.4s ===

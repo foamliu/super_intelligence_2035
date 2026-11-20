@@ -1,0 +1,116 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5f07a4208a..1025833078 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -2010,28 +2010,29 @@ class ModelAdmin(BaseModelAdmin):
+                 request.POST, request.FILES, queryset=modified_objects
+             )
+             if formset.is_valid():
+-                changecount = 0
+-                for form in formset.forms:
+-                    if form.has_changed():
+-                        obj = self.save_form(request, form, change=True)
+-                        self.save_model(request, obj, form, change=True)
+-                        self.save_related(request, form, formsets=[], change=True)
+-                        change_msg = self.construct_change_message(request, form, None)
+-                        self.log_change(request, obj, change_msg)
+-                        changecount += 1
+-
+-                if changecount:
+-                    msg = ngettext(
+-                        "%(count)s %(name)s was changed successfully.",
+-                        "%(count)s %(name)s were changed successfully.",
+-                        changecount,
+-                    ) % {
+-                        "count": changecount,
+-                        "name": model_ngettext(self.opts, changecount),
+-                    }
+-                    self.message_user(request, msg, messages.SUCCESS)
++                with transaction.atomic(using=router.db_for_write(self.model)):
++                    changecount = 0
++                    for form in formset.forms:
++                        if form.has_changed():
++                            obj = self.save_form(request, form, change=True)
++                            self.save_model(request, obj, form, change=True)
++                            self.save_related(request, form, formsets=[], change=True)
++                            change_msg = self.construct_change_message(request, form, None)
++                            self.log_change(request, obj, change_msg)
++                            changecount += 1
++
++                    if changecount:
++                        msg = ngettext(
++                            "%(count)s %(name)s was changed successfully.",
++                            "%(count)s %(name)s were changed successfully.",
++                            changecount,
++                        ) % {
++                            "count": changecount,
++                            "name": model_ngettext(self.opts, changecount),
++                        }
++                        self.message_user(request, msg, messages.SUCCESS)
+ 
+-                return HttpResponseRedirect(request.get_full_path())
++                    return HttpResponseRedirect(request.get_full_path())
+ 
+         # Handle GET -- construct a formset for display.
+         elif cl.list_editable and self.has_change_permission(request):
+diff --git a/tests/admin_changelist/tests.py b/tests/admin_changelist/tests.py
+index b85d5383cd..c9e77204bd 100644
+--- a/tests/admin_changelist/tests.py
++++ b/tests/admin_changelist/tests.py
+@@ -1,5 +1,5 @@
+ import datetime
+-
++from unittest.mock import patch
+ from django.contrib import admin
+ from django.contrib.admin.models import LogEntry
+ from django.contrib.admin.options import IncorrectLookupParameters
+@@ -1072,6 +1072,49 @@ class ChangeListTests(TestCase):
+         # No new swallows were created.
+         self.assertEqual(len(Swallow.objects.all()), 4)
+ 
++    def test_list_editable_atomic(self):
++        """list_editable saves are wrapped in a transaction."""
++        a = Swallow.objects.create(origin="Swallow A", load=4, speed=1)
++        b = Swallow.objects.create(origin="Swallow B", load=2, speed=2)
++
++        superuser = self._create_superuser("superuser")
++        self.client.force_login(superuser)
++        changelist_url = reverse("admin:admin_changelist_swallow_changelist")
++
++        call_count = 0
++
++        def failing_save_model(self, request, obj, form, change):
++            nonlocal call_count
++            call_count += 1
++            if call_count > 1:
++                raise RuntimeError("Deliberate failure")
++            return SwallowAdmin.save_model(self, request, obj, form, change)
++
++        data = {
++            "form-TOTAL_FORMS": "2",
++            "form-INITIAL_FORMS": "2",
++            "form-MIN_NUM_FORMS": "0",
++            "form-MAX_NUM_FORMS": "1000",
++            "form-0-uuid": str(a.pk),
++            "form-1-uuid": str(b.pk),
++            "form-0-load": "9.0",
++            "form-0-speed": "9.0",
++            "form-1-load": "5.0",
++            "form-1-speed": "5.0",
++            "_save": "Save",
++        }
++
++        with patch.object(SwallowAdmin, "save_model", failing_save_model):
++            with self.assertRaises(RuntimeError):
++                self.client.post(changelist_url, data)
++
++        a.refresh_from_db()
++        b.refresh_from_db()
++        self.assertEqual(a.load, 4)
++        self.assertEqual(a.speed, 1)
++        self.assertEqual(b.load, 2)
++        self.assertEqual(b.speed, 2)
++
+     def test_get_edited_object_ids(self):
+         a = Swallow.objects.create(origin="Swallow A", load=4, speed=1)
+         b = Swallow.objects.create(origin="Swallow B", load=2, speed=2)

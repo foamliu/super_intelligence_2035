@@ -1,0 +1,65 @@
+2026-10-30 18:47:45,340 - INFO - Creating container for sympy__sympy-14711...
+2026-10-30 18:47:45,410 - INFO - Container for sympy__sympy-14711 created: c0460aec1d1339644de7b44502bcd26bdabddcb728b41964587dfb8c0754eeb3
+2026-10-30 18:47:47,083 - INFO - Container for sympy__sympy-14711 started: c0460aec1d1339644de7b44502bcd26bdabddcb728b41964587dfb8c0754eeb3
+2026-10-30 18:47:47,088 - INFO - Intermediate patch for sympy__sympy-14711 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14711/patch.diff, now applying to container...
+2026-10-30 18:47:47,209 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/vector/tests/test_vector.py...
+Checking patch sympy/physics/vector/vector.py...
+Applied patch sympy/physics/vector/tests/test_vector.py cleanly.
+Applied patch sympy/physics/vector/vector.py cleanly.
+
+2026-10-30 18:47:47,605 - INFO - Git diff before:
+diff --git a/sympy/physics/vector/tests/test_vector.py b/sympy/physics/vector/tests/test_vector.py
+index 828a25f3c..5b43ad4f4 100644
+--- a/sympy/physics/vector/tests/test_vector.py
++++ b/sympy/physics/vector/tests/test_vector.py
+@@ -58,6 +58,13 @@ def test_Vector():
+     v6 = x*A.x + y*A.y + z*A.z
+     assert v6.free_symbols(A) == {x,y,z}
+ 
++    #Test that adding 0 to a Vector works
++    assert A.x + 0 == A.x
++    assert 0 + A.x == A.x
++    assert A.x - 0 == A.x
++    assert 0 - A.x == -A.x
++    assert sum([A.x, 0*A.x]) == A.x
++
+ 
+ def test_Vector_diffs():
+     q1, q2, q3, q4 = dynamicsymbols('q1 q2 q3 q4')
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..884911921 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+2026-10-30 18:47:47,608 - INFO - Eval script for sympy__sympy-14711 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14711/eval.sh; copying to container...
+2026-10-30 18:47:54,067 - INFO - Test runtime: 6.40 seconds
+2026-10-30 18:47:54,075 - INFO - Test output for sympy__sympy-14711 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14711/test_output.txt
+2026-10-30 18:47:54,145 - INFO - Git diff after:
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..884911921 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+2026-10-30 18:47:54,145 - INFO - Git diff changed after running eval script
+2026-10-30 18:47:54,145 - INFO - Grading answer for sympy__sympy-14711...
+2026-10-30 18:47:54,155 - INFO - report: {'sympy__sympy-14711': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Vector'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Vector_diffs', 'test_vector_var_in_dcm'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-14711: resolved: True
+2026-10-30 18:47:54,163 - INFO - Attempting to stop container sweb.eval.sympy__sympy-14711.verified_full_cline-patched...
+2026-10-30 18:48:10,239 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_cline-patched stopped successfully.
+2026-10-30 18:48:10,239 - INFO - Attempting to remove container sweb.eval.sympy__sympy-14711.verified_full_cline-patched...
+2026-10-30 18:48:10,303 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_cline-patched removed successfully.

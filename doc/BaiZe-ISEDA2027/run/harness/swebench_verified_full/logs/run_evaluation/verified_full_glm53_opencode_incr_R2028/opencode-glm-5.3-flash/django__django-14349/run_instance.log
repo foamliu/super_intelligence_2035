@@ -1,0 +1,92 @@
+2026-11-10 12:02:16,888 - INFO - Creating container for django__django-14349...
+2026-11-10 12:02:16,917 - INFO - Container for django__django-14349 created: 7514563360a9da4c29d0e38de7e0f0a8e125e5f50b3c37bfaf320dfdcbc1a01f
+2026-11-10 12:02:17,861 - INFO - Container for django__django-14349 started: 7514563360a9da4c29d0e38de7e0f0a8e125e5f50b3c37bfaf320dfdcbc1a01f
+2026-11-10 12:02:17,864 - INFO - Intermediate patch for django__django-14349 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-14349/patch.diff, now applying to container...
+2026-11-10 12:02:18,002 - INFO - >>>>> Applied Patch:
+Checking patch django/core/validators.py...
+Applied patch django/core/validators.py cleanly.
+
+2026-11-10 12:02:19,565 - INFO - Git diff before:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a385819510..aed41f51f4 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -15,6 +15,10 @@ from django.utils.translation import gettext_lazy as _, ngettext_lazy
+ # These values, if given to validate(), will trigger the self.required check.
+ EMPTY_VALUES = (None, '', [], (), {})
+ 
++# URLValidator rejects values containing these characters, since urlsplit() on
++# Python versions with a fix for bpo-43882 strips them before parsing.
++unsafe_characters = _lazy_re_compile(r'[\t\n\r]')
++
+ 
+ @deconstructible
+ class RegexValidator:
+@@ -101,6 +105,8 @@ class URLValidator(RegexValidator):
+     def __call__(self, value):
+         if not isinstance(value, str):
+             raise ValidationError(self.message, code=self.code, params={'value': value})
++        if unsafe_characters.search(value):
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+         # Check if the scheme is valid.
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+@@ -126,7 +132,10 @@ class URLValidator(RegexValidator):
+                 raise
+         else:
+             # Now verify IPv6 in the netloc part
+-            host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', urlsplit(value).netloc)
++            try:
++                host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', urlsplit(value).netloc)
++            except ValueError:  # for example, "Invalid IPv6 URL"
++                raise ValidationError(self.message, code=self.code, params={'value': value})
+             if host_match:
+                 potential_ip = host_match[1]
+                 try:
+2026-11-10 12:02:19,569 - INFO - Eval script for django__django-14349 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-14349/eval.sh; copying to container...
+2026-11-10 12:02:26,474 - INFO - Test runtime: 6.84 seconds
+2026-11-10 12:02:26,476 - INFO - Test output for django__django-14349 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-14349/test_output.txt
+2026-11-10 12:02:26,563 - INFO - Git diff after:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index a385819510..aed41f51f4 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -15,6 +15,10 @@ from django.utils.translation import gettext_lazy as _, ngettext_lazy
+ # These values, if given to validate(), will trigger the self.required check.
+ EMPTY_VALUES = (None, '', [], (), {})
+ 
++# URLValidator rejects values containing these characters, since urlsplit() on
++# Python versions with a fix for bpo-43882 strips them before parsing.
++unsafe_characters = _lazy_re_compile(r'[\t\n\r]')
++
+ 
+ @deconstructible
+ class RegexValidator:
+@@ -101,6 +105,8 @@ class URLValidator(RegexValidator):
+     def __call__(self, value):
+         if not isinstance(value, str):
+             raise ValidationError(self.message, code=self.code, params={'value': value})
++        if unsafe_characters.search(value):
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+         # Check if the scheme is valid.
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+@@ -126,7 +132,10 @@ class URLValidator(RegexValidator):
+                 raise
+         else:
+             # Now verify IPv6 in the netloc part
+-            host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', urlsplit(value).netloc)
++            try:
++                host_match = re.search(r'^\[(.+)\](?::\d{2,5})?$', urlsplit(value).netloc)
++            except ValueError:  # for example, "Invalid IPv6 URL"
++                raise ValidationError(self.message, code=self.code, params={'value': value})
+             if host_match:
+                 potential_ip = host_match[1]
+                 try:
+2026-11-10 12:02:26,564 - INFO - Grading answer for django__django-14349...
+2026-11-10 12:02:26,570 - INFO - report: {'django__django-14349': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_validators (validators.tests.TestValidators)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_domain_whitelist (validators.tests.DeprecationTests)', 'test_domain_whitelist_access_warning (validators.tests.DeprecationTests)', 'test_domain_whitelist_set_warning (validators.tests.DeprecationTests)', 'test_whitelist (validators.tests.DeprecationTests)', 'test_whitelist_warning (validators.tests.DeprecationTests)', 'test_basic_equality (validators.tests.TestValidatorEquality)', 'test_decimal_equality (validators.tests.TestValidatorEquality)', 'test_email_equality (validators.tests.TestValidatorEquality)', 'test_file_extension_equality (validators.tests.TestValidatorEquality)', 'test_prohibit_null_characters_validator_equality (validators.tests.TestValidatorEquality)', 'test_regex_equality (validators.tests.TestValidatorEquality)', 'test_regex_equality_blank (validators.tests.TestValidatorEquality)', 'test_regex_equality_nocache (validators.tests.TestValidatorEquality)', 'test_max_length_validator_message (validators.tests.TestValidators)', 'test_message_dict (validators.tests.TestValidators)', 'test_message_list (validators.tests.TestValidators)', 'test_regex_validator_flags (validators.tests.TestValidators)', 'test_single_message (validators.tests.TestValidators)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14349: resolved: True
+2026-11-10 12:02:26,571 - INFO - Attempting to stop container sweb.eval.django__django-14349.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:02:42,960 - INFO - Container sweb.eval.django__django-14349.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 12:02:42,960 - INFO - Attempting to remove container sweb.eval.django__django-14349.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:02:43,001 - INFO - Container sweb.eval.django__django-14349.verified_full_glm53_opencode_incr_R2028 removed successfully.

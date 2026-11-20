@@ -1,0 +1,81 @@
+diff --git a/django/db/models/fields/related_descriptors.py b/django/db/models/fields/related_descriptors.py
+index d5aa968400..fd9944aaaa 100644
+--- a/django/db/models/fields/related_descriptors.py
++++ b/django/db/models/fields/related_descriptors.py
+@@ -376,8 +376,9 @@ class ReverseOneToOneDescriptor:
+         # Since we're going to assign directly in the cache,
+         # we must manage the reverse relation cache manually.
+         for rel_obj in queryset:
+-            instance = instances_dict[rel_obj_attr(rel_obj)]
+-            self.related.field.set_cached_value(rel_obj, instance)
++            if not self.related.field.is_cached(rel_obj):
++                instance = instances_dict[rel_obj_attr(rel_obj)]
++                self.related.field.set_cached_value(rel_obj, instance)
+         return queryset, rel_obj_attr, instance_attr, True, self.related.get_cache_name(), False
+ 
+     def __get__(self, instance, cls=None):
+@@ -646,8 +647,9 @@ def create_reverse_many_to_one_manager(superclass, rel):
+             # Since we just bypassed this class' get_queryset(), we must manage
+             # the reverse relation manually.
+             for rel_obj in queryset:
+-                instance = instances_dict[rel_obj_attr(rel_obj)]
+-                setattr(rel_obj, self.field.name, instance)
++                if not self.field.is_cached(rel_obj):
++                    instance = instances_dict[rel_obj_attr(rel_obj)]
++                    setattr(rel_obj, self.field.name, instance)
+             cache_name = self.field.remote_field.get_cache_name()
+             return queryset, rel_obj_attr, instance_attr, False, cache_name, False
+ 
+diff --git a/tests/prefetch_related/tests.py b/tests/prefetch_related/tests.py
+index 4ea7fccd5e..ca45c36446 100644
+--- a/tests/prefetch_related/tests.py
++++ b/tests/prefetch_related/tests.py
+@@ -1614,3 +1614,48 @@ class ReadPrefetchedObjectsCacheTests(TestCase):
+         with self.assertNumQueries(4):
+             # AuthorWithAge -> Author -> FavoriteAuthors, Book
+             self.assertSequenceEqual(authors, [self.author1, self.author2])
++
++
++class NestedPrefetchTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        house = House.objects.create(name='Big house', address='123 Main St')
++        cls.room = Room.objects.create(name='Kitchen', house=house)
++
++    def test_nested_prefetch_is_not_overwritten_by_related_object(self):
++        """
++        The prefetched relationship is used rather than populating the reverse
++        relationship from the parent, when prefetching a set of child objects
++        related to a set of parent objects and the child queryset itself
++        specifies a prefetch back to the parent.
++        """
++        queryset = House.objects.only('name').prefetch_related(
++            Prefetch('rooms', queryset=Room.objects.prefetch_related(
++                Prefetch('house', queryset=House.objects.only('address')),
++            )),
++        )
++        with self.assertNumQueries(3):
++            house = queryset.first()
++
++        self.assertIs(Room.house.is_cached(self.room), True)
++        with self.assertNumQueries(0):
++            house.rooms.first().house.address
++
++    def test_nested_prefetch_onetoone_is_not_overwritten_by_related_object(self):
++        queryset = Room.objects.only('house').prefetch_related(
++            Prefetch(
++                'main_room_of',
++                queryset=House.objects.prefetch_related(
++                    Prefetch('main_room', queryset=Room.objects.only('name')),
++                ),
++            ),
++        )
++        with self.assertNumQueries(3):
++            room = queryset.first()
++
++        self.assertIsNot(room.main_room_of.main_room, room)
++        self.assertEqual(
++            room.main_room_of.main_room.get_deferred_fields(), {'house_id'}
++        )
++        with self.assertNumQueries(0):
++            room.main_room_of.main_room.name

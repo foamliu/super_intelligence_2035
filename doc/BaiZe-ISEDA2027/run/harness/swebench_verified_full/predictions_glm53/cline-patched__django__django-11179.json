@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-11179",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py\nindex 92fe4affb9..3a462f1c4c 100644\n--- a/django/db/models/deletion.py\n+++ b/django/db/models/deletion.py\n@@ -277,6 +277,7 @@ class Collector:\n             if self.can_fast_delete(instance):\n                 with transaction.mark_for_rollback_on_error():\n                     count = sql.DeleteQuery(model).delete_batch([instance.pk], self.using)\n+                setattr(instance, model._meta.pk.attname, None)\n                 return count, {model._meta.label: count}\n \n         with transaction.atomic(using=self.using, savepoint=False):\ndiff --git a/tests/delete/tests.py b/tests/delete/tests.py\nindex 55eeb226ea..deba66c9fc 100644\n--- a/tests/delete/tests.py\n+++ b/tests/delete/tests.py\n@@ -439,6 +439,11 @@ class DeletionTests(TestCase):\n \n class FastDeleteTests(TestCase):\n \n+    def test_fast_delete_instance_set_pk_to_none(self):\n+        instance = Base.objects.create()\n+        instance.delete()\n+        self.assertIsNone(instance.pk)\n+\n     def test_fast_delete_fk(self):\n         u = User.objects.create(\n             avatar=Avatar.objects.create()\n"
+  }
+]

@@ -1,0 +1,179 @@
+2026-11-11 09:29:05,694 - INFO - Creating container for matplotlib__matplotlib-22865...
+2026-11-11 09:29:05,710 - INFO - Container for matplotlib__matplotlib-22865 created: e8f1c8a0844464cafd576535159590869c0aea29a96ca4416e1facbea8c8e22d
+2026-11-11 09:29:06,323 - INFO - Container for matplotlib__matplotlib-22865 started: e8f1c8a0844464cafd576535159590869c0aea29a96ca4416e1facbea8c8e22d
+2026-11-11 09:29:06,324 - INFO - Intermediate patch for matplotlib__matplotlib-22865 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2164/cline-glm-5.3-flash/matplotlib__matplotlib-22865/patch.diff, now applying to container...
+2026-11-11 09:29:06,524 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/colorbar.py...
+Checking patch lib/matplotlib/tests/test_colorbar.py...
+Applied patch lib/matplotlib/colorbar.py cleanly.
+Applied patch lib/matplotlib/tests/test_colorbar.py cleanly.
+
+2026-11-11 09:29:08,460 - INFO - Git diff before:
+diff --git a/lib/matplotlib/colorbar.py b/lib/matplotlib/colorbar.py
+index c59b0ac815..f40ad50b7e 100644
+--- a/lib/matplotlib/colorbar.py
++++ b/lib/matplotlib/colorbar.py
+@@ -651,8 +651,31 @@ class Colorbar:
+             if not self.drawedges:
+                 if len(self._y) >= self.n_rasterize:
+                     self.solids.set_rasterized(True)
+-        self.dividers.set_segments(
+-            np.dstack([X, Y])[1:-1] if self.drawedges else [])
++        self._update_dividers()
++
++    def _update_dividers(self):
++        if not self.drawedges:
++            self.dividers.set_segments([])
++            return
++        # Place all *internal* dividers.
++        if self.orientation == 'vertical':
++            lims = self.ax.get_ylim()
++            bounds = (lims[0] < self._y) & (self._y < lims[1])
++        else:
++            lims = self.ax.get_xlim()
++            bounds = (lims[0] < self._y) & (self._y < lims[1])
++        y = self._y[bounds]
++        # And then add outer dividers if extensions are on.
++        if self._extend_lower():
++            y = np.insert(y, 0, lims[0])
++        if self._extend_upper():
++            y = np.append(y, lims[1])
++        X, Y = np.meshgrid([0, 1], y)
++        if self.orientation == 'vertical':
++            segments = np.dstack([X, Y])
++        else:
++            segments = np.dstack([Y, X])
++        self.dividers.set_segments(segments)
+ 
+     def _add_solids_patches(self, X, Y, C, mappable):
+         hatches = mappable.hatches * len(C)  # Have enough hatches.
+@@ -756,7 +779,8 @@ class Colorbar:
+                 zorder=np.nextafter(self.ax.patch.zorder, -np.inf))
+             self.ax.add_patch(patch)
+             self._extend_patches.append(patch)
+-        return
++
++        self._update_dividers()
+ 
+     def add_lines(self, *args, **kwargs):
+         """
+diff --git a/lib/matplotlib/tests/test_colorbar.py b/lib/matplotlib/tests/test_colorbar.py
+index ae3ab92c0d..10e5513eff 100644
+--- a/lib/matplotlib/tests/test_colorbar.py
++++ b/lib/matplotlib/tests/test_colorbar.py
+@@ -1,6 +1,7 @@
+ import numpy as np
+ import pytest
+ 
++import matplotlib as mpl
+ from matplotlib import cm
+ import matplotlib.colors as mcolors
+ 
+@@ -1037,3 +1038,50 @@ def test_title_text_loc():
+     # colorbar axes, including its extend triangles....
+     assert (cb.ax.title.get_window_extent(fig.canvas.get_renderer()).ymax >
+             cb.ax.spines['outline'].get_window_extent().ymax)
++
++
++@image_comparison(['extend_drawedges.png'], remove_text=True, style='mpl20')
++def test_colorbar_extend_drawedges():
++    params = [
++        ('both', 1, [[[1.1, 0], [1.1, 1]],
++                     [[2, 0], [2, 1]],
++                     [[2.9, 0], [2.9, 1]]]),
++        ('min', 0, [[[1.1, 0], [1.1, 1]],
++                    [[2, 0], [2, 1]]]),
++        ('max', 0, [[[2, 0], [2, 1]],
++                    [[2.9, 0], [2.9, 1]]]),
++        ('neither', -1, [[[2, 0], [2, 1]]]),
++    ]
++
++    plt.rcParams['axes.linewidth'] = 2
++
++    fig = plt.figure(figsize=(10, 4))
++    subfigs = fig.subfigures(1, 2)
++
++    for orientation, subfig in zip(['horizontal', 'vertical'], subfigs):
++        if orientation == 'horizontal':
++            axs = subfig.subplots(4, 1)
++        else:
++            axs = subfig.subplots(1, 4)
++        fig.subplots_adjust(left=0.05, bottom=0.05, right=0.95, top=0.95)
++
++        for ax, (extend, coloroffset, res) in zip(axs, params):
++            cmap = mpl.colormaps["viridis"]
++            bounds = np.arange(5)
++            nb_colors = len(bounds) + coloroffset
++            colors = cmap(np.linspace(100, 255, nb_colors).astype(int))
++            cmap, norm = mcolors.from_levels_and_colors(bounds, colors,
++                                                        extend=extend)
++
++            cbar = Colorbar(ax, cmap=cmap, norm=norm, orientation=orientation,
++                            drawedges=True)
++            # Set limits such that only two colours are visible, and the
++            # dividers would be outside the Axes, to ensure that a) they are
++            # not drawn outside, and b) a divider still appears between the
++            # main colour and the extension.
++            if orientation == 'horizontal':
++                ax.set_xlim(1.1, 2.9)
++            else:
++                ax.set_ylim(1.1, 2.9)
++                res = np.array(res)[:, :, [1, 0]]
++            np.testing.assert_array_equal(cbar.dividers.get_segments(), res)
+2026-11-11 09:29:08,463 - INFO - Eval script for matplotlib__matplotlib-22865 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2164/cline-glm-5.3-flash/matplotlib__matplotlib-22865/eval.sh; copying to container...
+2026-11-11 09:29:25,451 - INFO - Test runtime: 16.91 seconds
+2026-11-11 09:29:25,453 - INFO - Test output for matplotlib__matplotlib-22865 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2164/cline-glm-5.3-flash/matplotlib__matplotlib-22865/test_output.txt
+2026-11-11 09:29:25,535 - INFO - Git diff after:
+diff --git a/lib/matplotlib/colorbar.py b/lib/matplotlib/colorbar.py
+index c59b0ac815..f40ad50b7e 100644
+--- a/lib/matplotlib/colorbar.py
++++ b/lib/matplotlib/colorbar.py
+@@ -651,8 +651,31 @@ class Colorbar:
+             if not self.drawedges:
+                 if len(self._y) >= self.n_rasterize:
+                     self.solids.set_rasterized(True)
+-        self.dividers.set_segments(
+-            np.dstack([X, Y])[1:-1] if self.drawedges else [])
++        self._update_dividers()
++
++    def _update_dividers(self):
++        if not self.drawedges:
++            self.dividers.set_segments([])
++            return
++        # Place all *internal* dividers.
++        if self.orientation == 'vertical':
++            lims = self.ax.get_ylim()
++            bounds = (lims[0] < self._y) & (self._y < lims[1])
++        else:
++            lims = self.ax.get_xlim()
++            bounds = (lims[0] < self._y) & (self._y < lims[1])
++        y = self._y[bounds]
++        # And then add outer dividers if extensions are on.
++        if self._extend_lower():
++            y = np.insert(y, 0, lims[0])
++        if self._extend_upper():
++            y = np.append(y, lims[1])
++        X, Y = np.meshgrid([0, 1], y)
++        if self.orientation == 'vertical':
++            segments = np.dstack([X, Y])
++        else:
++            segments = np.dstack([Y, X])
++        self.dividers.set_segments(segments)
+ 
+     def _add_solids_patches(self, X, Y, C, mappable):
+         hatches = mappable.hatches * len(C)  # Have enough hatches.
+@@ -756,7 +779,8 @@ class Colorbar:
+                 zorder=np.nextafter(self.ax.patch.zorder, -np.inf))
+             self.ax.add_patch(patch)
+             self._extend_patches.append(patch)
+-        return
++
++        self._update_dividers()
+ 
+     def add_lines(self, *args, **kwargs):
+         """
+2026-11-11 09:29:25,535 - INFO - Git diff changed after running eval script
+2026-11-11 09:29:25,535 - INFO - Grading answer for matplotlib__matplotlib-22865...
+2026-11-11 09:29:25,537 - INFO - report: {'matplotlib__matplotlib-22865': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[both-1-res0]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[min-0-res1]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[max-0-res2]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_shape[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_length[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[min-expected0-horizontal]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[min-expected0-vertical]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[max-expected1-horizontal]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[max-expected1-vertical]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[both-expected2-horizontal]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[both-expected2-vertical]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_positioning[png-True]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_positioning[png-False]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_single_ax_panchor_false', 'lib/matplotlib/tests/test_colorbar.py::test_contour_colorbar[png]', 'lib/matplotlib/tests/test_colorbar.py::test_gridspec_make_colorbar[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_single_scatter[png]', 'lib/matplotlib/tests/test_colorbar.py::test_remove_from_figure[no', 'lib/matplotlib/tests/test_colorbar.py::test_remove_from_figure[with', 'lib/matplotlib/tests/test_colorbar.py::test_remove_from_figure_cl', 'lib/matplotlib/tests/test_colorbar.py::test_colorbarbase', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_closed_patch[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_ticks', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_minorticks_on_off', 'lib/matplotlib/tests/test_colorbar.py::test_cbar_minorticks_for_rc_xyminortickvisible', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_autoticks', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_autotickslog', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_get_ticks', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_lognorm_extension[both]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_lognorm_extension[min]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_lognorm_extension[max]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_powernorm_extension', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_axes_kw', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_log_minortick_labels', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_renorm', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_format[%4.2e]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_format[{x:.2e}]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_scale_reset', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_get_ticks_2', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_inverted_ticks', 'lib/matplotlib/tests/test_colorbar.py::test_mappable_no_alpha', 'lib/matplotlib/tests/test_colorbar.py::test_mappable_2d_alpha', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_label', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_int[clim0]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_int[clim1]', 'lib/matplotlib/tests/test_colorbar.py::test_anchored_cbar_position_using_specgrid', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_change_lim_scale[png]', 'lib/matplotlib/tests/test_colorbar.py::test_axes_handles_same_functions[png]', 'lib/matplotlib/tests/test_colorbar.py::test_inset_colorbar_layout', 'lib/matplotlib/tests/test_colorbar.py::test_twoslope_colorbar[png]', 'lib/matplotlib/tests/test_colorbar.py::test_remove_cb_whose_mappable_has_no_figure[png]', 'lib/matplotlib/tests/test_colorbar.py::test_aspects', 'lib/matplotlib/tests/test_colorbar.py::test_proportional_colorbars[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[neither--1-res3]', 'lib/matplotlib/tests/test_colorbar.py::test_negative_boundarynorm', 'lib/matplotlib/tests/test_colorbar.py::test_boundaries[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_no_warning_rcparams_grid_true', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_set_formatter_locator', 'lib/matplotlib/tests/test_colorbar.py::test_offset_text_loc', 'lib/matplotlib/tests/test_colorbar.py::test_title_text_loc'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-22865: resolved: True
+2026-11-11 09:29:25,539 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-22865.verified_full_glm53_cline-patched_incr_R2164...

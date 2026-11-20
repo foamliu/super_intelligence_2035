@@ -1,0 +1,85 @@
+diff --git a/django/core/management/commands/makemigrations.py b/django/core/management/commands/makemigrations.py
+index 2e97d9064..3d216e3fb 100644
+--- a/django/core/management/commands/makemigrations.py
++++ b/django/core/management/commands/makemigrations.py
+@@ -70,7 +70,10 @@ class Command(BaseCommand):
+             "--check",
+             action="store_true",
+             dest="check_changes",
+-            help="Exit with a non-zero status if model changes are missing migrations.",
++            help=(
++                "Exit with a non-zero status if model changes are missing migrations "
++                "and do not actually write them."
++            ),
+         )
+         parser.add_argument(
+             "--scriptable",
+@@ -111,6 +114,8 @@ class Command(BaseCommand):
+             raise CommandError("The migration name must be a valid Python identifier.")
+         self.include_header = options["include_header"]
+         check_changes = options["check_changes"]
++        if check_changes:
++            self.dry_run = True
+         self.scriptable = options["scriptable"]
+         self.update = options["update"]
+         # If logs and prompts are diverted to stderr, remove the ERROR style.
+diff --git a/docs/ref/django-admin.txt b/docs/ref/django-admin.txt
+index af27e0afb..b6314412d 100644
+--- a/docs/ref/django-admin.txt
++++ b/docs/ref/django-admin.txt
+@@ -822,8 +822,8 @@ Generate migration files without Django version and timestamp header.
+ 
+ .. django-admin-option:: --check
+ 
+-Makes ``makemigrations`` exit with a non-zero status when model changes without
+-migrations are detected.
++Exits with a non-zero status if model changes without migrations are detected
++and does not actually write the migrations.
+ 
+ .. django-admin-option:: --scriptable
+ 
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index 2520d1436..7b4a07c4e 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -322,6 +322,10 @@ Miscellaneous
+ * The ``autofocus`` HTML attribute in the admin search box is removed as it can
+   be confusing for screen readers.
+ 
++* The :djadminopt:`makemigrations --check` option no longer writes migration
++  files. Use the :djadminopt:`makemigrations --dry-run` option if you want to
++  see the migrations that would be written.
++
+ .. _deprecated-features-4.2:
+ 
+ Features deprecated in 4.2
+diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
+index 9900c7a35..57136531e 100644
+--- a/tests/migrations/test_commands.py
++++ b/tests/migrations/test_commands.py
+@@ -2389,11 +2389,23 @@ class MakeMigrationsTests(MigrationTestBase):
+     def test_makemigrations_check(self):
+         """
+         makemigrations --check should exit with a non-zero status when
+-        there are changes to an app requiring migrations.
++        there are changes to an app requiring migrations, without actually
++        writing the migrations.
+         """
+-        with self.temporary_migration_module():
++        with self.temporary_migration_module() as migration_dir:
++            # Ensure the migration directory exists for listing.
++            if not os.path.isdir(migration_dir):
++                os.makedirs(migration_dir, exist_ok=True)
++                open(os.path.join(migration_dir, "__init__.py"), "a").close()
++            # Store original files (excluding pycache) to compare after.
++            original_files = {
++                f for f in os.listdir(migration_dir) if f != "__pycache__"
++            }
+             with self.assertRaises(SystemExit):
+                 call_command("makemigrations", "--check", "migrations", verbosity=0)
++            # No new files should be created when using --check.
++            new_files = {f for f in os.listdir(migration_dir) if f != "__pycache__"}
++            self.assertCountEqual(new_files, original_files)
+ 
+         with self.temporary_migration_module(
+             module="migrations.test_migrations_no_changes"

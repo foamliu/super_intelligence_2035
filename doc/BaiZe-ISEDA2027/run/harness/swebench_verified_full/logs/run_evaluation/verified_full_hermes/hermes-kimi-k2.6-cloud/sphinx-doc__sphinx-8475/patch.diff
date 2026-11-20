@@ -1,0 +1,68 @@
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index 1dc0337c..4104fe65 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -20,7 +20,7 @@ from urllib.parse import unquote, urlparse
+ 
+ from docutils import nodes
+ from docutils.nodes import Node
+-from requests.exceptions import HTTPError
++from requests.exceptions import HTTPError, TooManyRedirects
+ 
+ from sphinx.application import Sphinx
+ from sphinx.builders import Builder
+@@ -172,7 +172,7 @@ class CheckExternalLinksBuilder(Builder):
+                                                  config=self.app.config, auth=auth_info,
+                                                  **kwargs)
+                         response.raise_for_status()
+-                    except HTTPError:
++                    except (HTTPError, TooManyRedirects):
+                         # retry with GET request if that fails, some servers
+                         # don't like HEAD requests.
+                         response = requests.get(req_url, stream=True, config=self.app.config,
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index c09c81fe..e6b42b22 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -274,6 +274,41 @@ def test_follows_redirects_on_GET(app, capsys):
+     )
+ 
+ 
++def make_infinite_redirect_handler():
++    class InfiniteRedirectOnHeadHandler(http.server.BaseHTTPRequestHandler):
++        def do_HEAD(self):
++            self.send_response(302, "Found")
++            self.send_header("Location", "http://localhost:7777/")
++            self.end_headers()
++
++        def do_GET(self):
++            if self.path == "/?redirected=1":
++                self.send_response(204, "No content")
++            else:
++                self.send_response(302, "Found")
++                self.send_header("Location", "http://localhost:7777/?redirected=1")
++            self.end_headers()
++
++        def log_date_time_string(self):
++            """Strip date and time from logged messages for assertions."""
++            return ""
++
++    return InfiniteRedirectOnHeadHandler
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-localserver', freshenv=True)
++def test_TooManyRedirects_on_HEAD(app, capsys):
++    with http_server(make_infinite_redirect_handler()):
++        app.builder.build_all()
++    stdout, stderr = capsys.readouterr()
++    content = (app.outdir / 'output.txt').read_text()
++    assert content == (
++        "index.rst:1: [redirected with Found] "
++        "http://localhost:7777/ to http://localhost:7777/?redirected=1\n"
++    )
++    assert "GET /?redirected=1 HTTP/1.1\" 204 -" in stderr
++
++
+ class OKHandler(http.server.BaseHTTPRequestHandler):
+     def do_HEAD(self):
+         self.send_response(200, "OK")

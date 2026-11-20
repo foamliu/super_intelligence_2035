@@ -1,0 +1,94 @@
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index fd4584e..9788936 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index 2135089..b604063 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 1b8005e..5c08eef 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -507,7 +507,13 @@ def _eval_evalf(self, prec):
+             func = getattr(mpmath, fname)
+         except (AttributeError, KeyError):
+             try:
+-                return Float(self._imp_(*self.args), prec)
++                result = self._imp_(*self.args)
++                try:
++                    result = result.evalf(prec)
++                except (AttributeError, TypeError, ValueError):
++                    result = Float(result, prec)
++                if getattr(result, 'is_number', True):
++                    return result
+             except (AttributeError, TypeError, ValueError):
+                 return
+ 
+diff --git a/sympy/core/tests/test_evalf.py b/sympy/core/tests/test_evalf.py
+index 1d63f9e..20ff97d 100644
+--- a/sympy/core/tests/test_evalf.py
++++ b/sympy/core/tests/test_evalf.py
+@@ -325,6 +325,11 @@ def test_implemented_function_evalf():
+     assert str(f(2)) == "f(2)"
+     assert f(2).evalf() == 3
+     assert f(x).evalf() == f(x)
++    # test nested implemented functions (issue from stackoverflow)
++    g = implemented_function('g', lambda x: x ** 2)
++    h = implemented_function('h', lambda x: 2 * x)
++    assert g(h(2)).evalf() == 16
++    assert g(h(x)).evalf() == g(h(x))
+     del f._imp_     # XXX: due to caching _imp_ would influence all other tests
+ 
+ 
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index f7fdc18..c10dc6a 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+ import collections
++from collections.abc import Callable
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+ from sympy.core.expr import Expr
+@@ -1765,7 +1766,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d..6268b99 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 

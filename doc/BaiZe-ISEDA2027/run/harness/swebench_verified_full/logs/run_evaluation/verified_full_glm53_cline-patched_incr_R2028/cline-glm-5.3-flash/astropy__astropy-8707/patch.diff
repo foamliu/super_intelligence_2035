@@ -1,0 +1,126 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 3dc79416..27ddf8f3 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -181,6 +181,10 @@ astropy.io.misc
+ astropy.io.fits
+ ^^^^^^^^^^^^^^^
+ 
++- ``Header.fromstring`` and ``Card.fromstring`` now accept ``bytes`` input on
++  Python 3, in keeping with the behavior of ``Header.fromfile`` for files
++  opened in binary mode. [#8700]
++
+ astropy.io.registry
+ ^^^^^^^^^^^^^^^^^^^
+ 
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d7..b4b36f18 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,8 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import (_str_to_num, _is_int, translate, _words_group,
++                   decode_ascii)
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -547,12 +548,17 @@ class Card(_Verify):
+     @classmethod
+     def fromstring(cls, image):
+         """
+-        Construct a `Card` object from a (raw) string. It will pad the string
+-        if it is not the length of a card image (80 columns).  If the card
+-        image is longer than 80 columns, assume it contains ``CONTINUE``
+-        card(s).
++        Construct a `Card` object from a (raw) string or bytes. It will pad
++        the string if it is not the length of a card image (80 columns).  If
++        the card image is longer than 80 columns, assume it contains
++        ``CONTINUE`` card(s).
+         """
+ 
++        if isinstance(image, bytes):
++            # Accept bytes input for convenience, since FITS card images
++            # contain only ASCII text
++            image = decode_ascii(image)
++
+         card = cls()
+         card._image = _pad(image)
+         card._verified = False
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d5..8e7e9314 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,7 +334,7 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
++        data : str or bytes
+            String containing the entire header.
+ 
+         sep : str, optional
+@@ -350,6 +350,15 @@ class Header:
+ 
+         cards = []
+ 
++        if isinstance(data, bytes):
++            # Accept bytes input for convenience, since FITS headers contain
++            # only ASCII text; this mirrors the behavior of `Header.fromfile`,
++            # which supports files opened in either text or binary mode
++            data = decode_ascii(data)
++
++        if isinstance(sep, bytes):
++            sep = decode_ascii(sep)
++
+         # If the card separator contains characters that may validly appear in
+         # a card, the only way to unambiguously distinguish between cards is to
+         # require that they be Card.length long.  However, if the separator
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index 7c1725ae..6eaf83c0 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -841,6 +841,41 @@ class TestHeaderFunctions(FitsTestCase):
+         for c in header.cards:
+             assert c.value == fits.card.UNDEFINED
+ 
++    def test_header_fromstring_bytes(self):
++        """
++        Regression test for https://github.com/astropy/astropy/issues/8698
++
++        `Header.fromstring` should accept bytes input as well as str, just
++        as `Header.fromfile` supports files opened in either text or binary
++        mode.
++        """
++
++        hstr = str(fits.Header([('SIMPLE', True), ('NAXIS', 0)]))
++
++        header = fits.Header.fromstring(encode_ascii(hstr))
++        assert header['SIMPLE'] is True
++        assert header['NAXIS'] == 0
++        assert str(header) == hstr
++
++        # The same should hold true when a card separator is used
++        hstr = 'SIMPLE  =                    T\nNAXIS   =                    0'
++        header = fits.Header.fromstring(encode_ascii(hstr), sep='\n')
++        assert header['SIMPLE'] is True
++        assert header['NAXIS'] == 0
++
++    def test_card_fromstring_bytes(self):
++        """
++        Regression test for https://github.com/astropy/astropy/issues/8698
++
++        `Card.fromstring` should accept bytes input as well as str.
++        """
++
++        image = 'SIMPLE  =                    T'
++        card = fits.Card.fromstring(encode_ascii(image))
++        assert card.keyword == 'SIMPLE'
++        assert card.value is True
++        assert str(card) == _pad(image)
++
+     def test_set_comment_only(self):
+         header = fits.Header([('A', 'B', 'C')])
+         header.set('A', comment='D')

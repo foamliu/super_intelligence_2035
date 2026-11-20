@@ -1,0 +1,140 @@
+2026-11-10 18:11:31,810 - INFO - Creating container for pytest-dev__pytest-10051...
+2026-11-10 18:11:31,833 - INFO - Container for pytest-dev__pytest-10051 created: c9c82f5334464b048644246ba58f3ff1e1e3b9ff2cffc59e9bf18605ce5f8fd0
+2026-11-10 18:11:32,589 - INFO - Container for pytest-dev__pytest-10051 started: c9c82f5334464b048644246ba58f3ff1e1e3b9ff2cffc59e9bf18605ce5f8fd0
+2026-11-10 18:11:32,591 - INFO - Intermediate patch for pytest-dev__pytest-10051 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/pytest-dev__pytest-10051/patch.diff, now applying to container...
+2026-11-10 18:11:32,704 - INFO - >>>>> Applied Patch:
+Checking patch changelog/9989.bugfix.rst...
+Checking patch src/_pytest/logging.py...
+Checking patch testing/logging/test_fixture.py...
+Applied patch changelog/9989.bugfix.rst cleanly.
+Applied patch src/_pytest/logging.py cleanly.
+Applied patch testing/logging/test_fixture.py cleanly.
+
+2026-11-10 18:11:32,851 - INFO - Git diff before:
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index a4f4214b1..79441ef36 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -342,7 +342,7 @@ class LogCaptureHandler(logging_StreamHandler):
+         super().emit(record)
+ 
+     def reset(self) -> None:
+-        self.records = []
++        self.records.clear()
+         self.stream = StringIO()
+ 
+     def handleError(self, record: logging.LogRecord) -> None:
+@@ -547,10 +547,6 @@ class LoggingPlugin:
+             get_option_ini(config, "log_auto_indent"),
+         )
+         self.log_level = get_log_level_for_setting(config, "log_level")
+-        self.caplog_handler = LogCaptureHandler()
+-        self.caplog_handler.setFormatter(self.formatter)
+-        self.report_handler = LogCaptureHandler()
+-        self.report_handler.setFormatter(self.formatter)
+ 
+         # File logging.
+         self.log_file_level = get_log_level_for_setting(config, "log_file_level")
+@@ -687,15 +683,17 @@ class LoggingPlugin:
+ 
+     def _runtest_for(self, item: nodes.Item, when: str) -> Generator[None, None, None]:
+         """Implement the internals of the pytest_runtest_xxx() hooks."""
++        caplog_handler = LogCaptureHandler()
++        caplog_handler.setFormatter(self.formatter)
++        report_handler = LogCaptureHandler()
++        report_handler.setFormatter(self.formatter)
+         with catching_logs(
+-            self.caplog_handler,
++            caplog_handler,
+             level=self.log_level,
+         ) as caplog_handler, catching_logs(
+-            self.report_handler,
++            report_handler,
+             level=self.log_level,
+         ) as report_handler:
+-            caplog_handler.reset()
+-            report_handler.reset()
+             item.stash[caplog_records_key][when] = caplog_handler.records
+             item.stash[caplog_handler_key] = caplog_handler
+ 
+diff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py
+index bcb20de58..9bc14d3e9 100644
+--- a/testing/logging/test_fixture.py
++++ b/testing/logging/test_fixture.py
+@@ -151,6 +151,19 @@ def test_clear(caplog):
+     assert not caplog.text
+ 
+ 
++def test_clear_restores_caplog_get_records_consistency(caplog) -> None:
++    def verify_consistency() -> None:
++        assert caplog.get_records("call") == caplog.records
++
++    verify_consistency()
++    logging.warning("test")
++    verify_consistency()
++    caplog.clear()
++    verify_consistency()
++    logging.warning("test2")
++    verify_consistency()
++
++
+ @pytest.fixture
+ def logging_during_setup_and_teardown(caplog):
+     caplog.set_level("INFO")
+2026-11-10 18:11:32,852 - INFO - Eval script for pytest-dev__pytest-10051 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/pytest-dev__pytest-10051/eval.sh; copying to container...
+2026-11-10 18:11:39,850 - INFO - Test runtime: 6.94 seconds
+2026-11-10 18:11:39,851 - INFO - Test output for pytest-dev__pytest-10051 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/pytest-dev__pytest-10051/test_output.txt
+2026-11-10 18:11:39,921 - INFO - Git diff after:
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index a4f4214b1..79441ef36 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -342,7 +342,7 @@ class LogCaptureHandler(logging_StreamHandler):
+         super().emit(record)
+ 
+     def reset(self) -> None:
+-        self.records = []
++        self.records.clear()
+         self.stream = StringIO()
+ 
+     def handleError(self, record: logging.LogRecord) -> None:
+@@ -547,10 +547,6 @@ class LoggingPlugin:
+             get_option_ini(config, "log_auto_indent"),
+         )
+         self.log_level = get_log_level_for_setting(config, "log_level")
+-        self.caplog_handler = LogCaptureHandler()
+-        self.caplog_handler.setFormatter(self.formatter)
+-        self.report_handler = LogCaptureHandler()
+-        self.report_handler.setFormatter(self.formatter)
+ 
+         # File logging.
+         self.log_file_level = get_log_level_for_setting(config, "log_file_level")
+@@ -687,15 +683,17 @@ class LoggingPlugin:
+ 
+     def _runtest_for(self, item: nodes.Item, when: str) -> Generator[None, None, None]:
+         """Implement the internals of the pytest_runtest_xxx() hooks."""
++        caplog_handler = LogCaptureHandler()
++        caplog_handler.setFormatter(self.formatter)
++        report_handler = LogCaptureHandler()
++        report_handler.setFormatter(self.formatter)
+         with catching_logs(
+-            self.caplog_handler,
++            caplog_handler,
+             level=self.log_level,
+         ) as caplog_handler, catching_logs(
+-            self.report_handler,
++            report_handler,
+             level=self.log_level,
+         ) as report_handler:
+-            caplog_handler.reset()
+-            report_handler.reset()
+             item.stash[caplog_records_key][when] = caplog_handler.records
+             item.stash[caplog_handler_key] = caplog_handler
+2026-11-10 18:11:39,922 - INFO - Git diff changed after running eval script
+2026-11-10 18:11:39,922 - INFO - Grading answer for pytest-dev__pytest-10051...
+2026-11-10 18:11:39,926 - INFO - report: {'pytest-dev__pytest-10051': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/logging/test_fixture.py::test_clear_for_call_stage'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/logging/test_fixture.py::test_change_level', 'testing/logging/test_fixture.py::test_with_statement', 'testing/logging/test_fixture.py::test_log_access', 'testing/logging/test_fixture.py::test_messages', 'testing/logging/test_fixture.py::test_record_tuples', 'testing/logging/test_fixture.py::test_unicode', 'testing/logging/test_fixture.py::test_clear', 'testing/logging/test_fixture.py::test_caplog_captures_for_all_stages', 'testing/logging/test_fixture.py::test_fixture_help', 'testing/logging/test_fixture.py::test_change_level_undo', 'testing/logging/test_fixture.py::test_change_level_undos_handler_level', 'testing/logging/test_fixture.py::test_ini_controls_global_log_level', 'testing/logging/test_fixture.py::test_caplog_can_override_global_log_level', 'testing/logging/test_fixture.py::test_caplog_captures_despite_exception', 'testing/logging/test_fixture.py::test_log_report_captures_according_to_config_option_upon_failure'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-10051: resolved: True
+2026-11-10 18:11:39,928 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-10051.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 18:11:56,222 - INFO - Container sweb.eval.pytest-dev__pytest-10051.verified_full_glm53_deepseek-harness_incr_R2028 stopped successfully.
+2026-11-10 18:11:56,222 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-10051.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 18:11:56,255 - INFO - Container sweb.eval.pytest-dev__pytest-10051.verified_full_glm53_deepseek-harness_incr_R2028 removed successfully.

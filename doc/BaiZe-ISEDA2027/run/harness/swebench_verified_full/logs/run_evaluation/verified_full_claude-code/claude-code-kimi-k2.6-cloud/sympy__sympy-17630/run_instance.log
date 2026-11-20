@@ -1,0 +1,95 @@
+2026-10-30 17:28:33,679 - INFO - Creating container for sympy__sympy-17630...
+2026-10-30 17:28:33,712 - INFO - Container for sympy__sympy-17630 created: 9bfca0d03abe3d27659433f66ac0130dbda2027fe04ddcf96eddce13d6f2368d
+2026-10-30 17:28:34,564 - INFO - Container for sympy__sympy-17630 started: 9bfca0d03abe3d27659433f66ac0130dbda2027fe04ddcf96eddce13d6f2368d
+2026-10-30 17:28:34,566 - INFO - Intermediate patch for sympy__sympy-17630 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-17630/patch.diff, now applying to container...
+2026-10-30 17:28:34,680 - INFO - >>>>> Applied Patch:
+Checking patch sympy/matrices/expressions/matexpr.py...
+warning: sympy/matrices/expressions/matexpr.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/tests/test_blockmatrix.py...
+warning: sympy/matrices/expressions/tests/test_blockmatrix.py has type 100755, expected 100644
+Applied patch sympy/matrices/expressions/matexpr.py cleanly.
+Applied patch sympy/matrices/expressions/tests/test_blockmatrix.py cleanly.
+
+2026-10-30 17:28:35,057 - INFO - Git diff before:
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index fd1e6d970a..220cdbc8ff 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -627,7 +627,10 @@ def _postprocessor(expr):
+                 # manipulate them like non-commutative scalars.
+                 return cls._from_args(nonmatrices + [mat_class(*matrices).doit(deep=False)])
+ 
+-        return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        if nonmatrices:
++            return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        else:
++            return mat_class(*matrices).doit(deep=False)
+     return _postprocessor
+ 
+ 
+diff --git a/sympy/matrices/expressions/tests/test_blockmatrix.py b/sympy/matrices/expressions/tests/test_blockmatrix.py
+index 1e1033affc..fd6ddf006c 100755
+--- a/sympy/matrices/expressions/tests/test_blockmatrix.py
++++ b/sympy/matrices/expressions/tests/test_blockmatrix.py
+@@ -3,7 +3,7 @@
+     BlockMatrix, bc_dist, bc_matadd, bc_transpose, bc_inverse,
+     blockcut, reblock_2x2, deblock)
+ from sympy.matrices.expressions import (MatrixSymbol, Identity,
+-        Inverse, trace, Transpose, det)
++        Inverse, trace, Transpose, det, ZeroMatrix)
+ from sympy.matrices import (
+     Matrix, ImmutableMatrix, ImmutableSparseMatrix)
+ from sympy.core import Tuple, symbols, Expr
+@@ -222,3 +222,26 @@ def test_block_collapse_type():
+     assert block_collapse(Transpose(bm1)).__class__ == BlockDiagMatrix
+     assert bc_transpose(Transpose(bm1)).__class__ == BlockDiagMatrix
+     assert bc_inverse(Inverse(bm1)).__class__ == BlockDiagMatrix
++
++
++def test_issue_17624():
++    # block_collapse with ZeroMatrix blocks
++    a = MatrixSymbol("a", 2, 2)
++    z = ZeroMatrix(2, 2)
++    b = BlockMatrix([[a, z], [z, z]])
++
++    result = b._blockmul(b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
++
++    result = b._blockmul(b)._blockmul(b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
++
++    result = block_collapse(b * b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
++
++    result = block_collapse(b * b * b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
+2026-10-30 17:28:35,059 - INFO - Eval script for sympy__sympy-17630 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-17630/eval.sh; copying to container...
+2026-10-30 17:28:39,618 - INFO - Test runtime: 4.47 seconds
+2026-10-30 17:28:39,621 - INFO - Test output for sympy__sympy-17630 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-17630/test_output.txt
+2026-10-30 17:28:39,699 - INFO - Git diff after:
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index fd1e6d970a..220cdbc8ff 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -627,7 +627,10 @@ def _postprocessor(expr):
+                 # manipulate them like non-commutative scalars.
+                 return cls._from_args(nonmatrices + [mat_class(*matrices).doit(deep=False)])
+ 
+-        return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        if nonmatrices:
++            return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        else:
++            return mat_class(*matrices).doit(deep=False)
+     return _postprocessor
+2026-10-30 17:28:39,699 - INFO - Git diff changed after running eval script
+2026-10-30 17:28:39,699 - INFO - Grading answer for sympy__sympy-17630...
+2026-10-30 17:28:39,702 - INFO - report: {'sympy__sympy-17630': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_17624', 'test_zero_matrix_add'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_bc_matmul', 'test_bc_matadd', 'test_bc_transpose', 'test_bc_dist_diag', 'test_block_plus_ident', 'test_BlockMatrix', 'test_block_collapse_explicit_matrices', 'test_BlockMatrix_trace', 'test_BlockMatrix_Determinant', 'test_squareBlockMatrix', 'test_BlockDiagMatrix', 'test_blockcut', 'test_reblock_2x2', 'test_deblock', 'test_sort_key', 'test_matadd_sympify', 'test_matadd_of_matrices', 'test_doit_args', 'test_generic_identity'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17630: resolved: True
+2026-10-30 17:28:39,709 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17630.verified_full_claude-code...
+2026-10-30 17:28:55,372 - INFO - Container sweb.eval.sympy__sympy-17630.verified_full_claude-code stopped successfully.
+2026-10-30 17:28:55,372 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17630.verified_full_claude-code...
+2026-10-30 17:28:55,406 - INFO - Container sweb.eval.sympy__sympy-17630.verified_full_claude-code removed successfully.

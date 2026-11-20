@@ -1,0 +1,87 @@
+diff --git a/sphinx/util/inspect.py b/sphinx/util/inspect.py
+index a415a707..33e2348b 100644
+--- a/sphinx/util/inspect.py
++++ b/sphinx/util/inspect.py
+@@ -457,6 +457,11 @@ def object_description(object: Any) -> str:
+         else:
+             return "frozenset({%s})" % ", ".join(object_description(x)
+                                                  for x in sorted_values)
++    if isinstance(object, enum.Enum):
++        try:
++            return str(object)
++        except Exception as exc:
++            raise ValueError from exc
+     try:
+         s = repr(object)
+     except Exception as exc:
+diff --git a/tests/roots/test-ext-autodoc/target/enums.py b/tests/roots/test-ext-autodoc/target/enums.py
+index c69455fb..c2e695d2 100644
+--- a/tests/roots/test-ext-autodoc/target/enums.py
++++ b/tests/roots/test-ext-autodoc/target/enums.py
+@@ -21,3 +21,8 @@ class EnumCls(enum.Enum):
+     def say_goodbye(cls):
+         """a classmethod says good-bye to you."""
+         pass
++
++
++def ugly_enum_func(e: EnumCls = EnumCls.val1) -> None:
++    """A function with an enum default value."""
++    pass
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 4c16886b..a43e386f 100644
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -1461,6 +1461,19 @@ def test_enum_class(app):
+     ]
+ 
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_enum_function(app):
++    actual = do_autodoc(app, 'function', 'target.enums.ugly_enum_func')
++    assert list(actual) == [
++        '',
++        '.. py:function:: ugly_enum_func(e: target.enums.EnumCls = EnumCls.val1) -> None',
++        '   :module: target.enums',
++        '',
++        '   A function with an enum default value.',
++        ''
++    ]
++
++
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_descriptor_class(app):
+     options = {"members": 'CustomDataDescriptor,CustomDataDescriptor2'}
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index de4ad923..77998d77 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -516,6 +516,29 @@ def test_dict_customtype():
+     assert "<CustomType(2)>: 2" in description
+ 
+ 
++def test_object_description_enum():
++    import enum
++
++    class MyEnum(enum.Enum):
++        ValueA = 10
++        ValueB = 20
++
++    assert inspect.object_description(MyEnum.ValueA) == 'MyEnum.ValueA'
++    assert inspect.object_description(MyEnum.ValueB) == 'MyEnum.ValueB'
++
++    class MyIntEnum(enum.IntEnum):
++        ValueA = 10
++
++    assert inspect.object_description(MyIntEnum.ValueA) == 'MyIntEnum.ValueA'
++
++    class MyFlag(enum.Flag):
++        A = 1
++        B = 2
++
++    assert inspect.object_description(MyFlag.A) == 'MyFlag.A'
++    assert inspect.object_description(MyFlag.A | MyFlag.B) == 'MyFlag.B|A'
++
++
+ def test_getslots():
+     class Foo:
+         pass

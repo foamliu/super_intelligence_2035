@@ -1,0 +1,47 @@
+diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py
+index ad4d7d96..fe66cac8 100644
+--- a/sympy/printing/latex.py
++++ b/sympy/printing/latex.py
+@@ -156,11 +156,14 @@ def __init__(self, settings=None):
+             "times": r" \times "
+         }
+ 
+-        self._settings['mul_symbol_latex'] = \
+-            mul_symbol_table[self._settings['mul_symbol']]
+-
+-        self._settings['mul_symbol_latex_numbers'] = \
+-            mul_symbol_table[self._settings['mul_symbol'] or 'dot']
++        mul_symbol = self._settings['mul_symbol']
++        if mul_symbol in mul_symbol_table:
++            self._settings['mul_symbol_latex'] = mul_symbol_table[mul_symbol]
++            self._settings['mul_symbol_latex_numbers'] = \
++                mul_symbol_table[mul_symbol or 'dot']
++        else:
++            self._settings['mul_symbol_latex'] = mul_symbol
++            self._settings['mul_symbol_latex_numbers'] = mul_symbol
+ 
+         self._delim_dict = {'(': ')', '[': ']'}
+ 
+@@ -2155,7 +2158,7 @@ def latex(expr, **settings):
+     \frac{1}{2 \pi} \int r\, dr
+ 
+     mul_symbol: The symbol to use for multiplication. Can be one of None,
+-    "ldot", "dot", or "times".
++    "ldot", "dot", "times", or an arbitrary string.
+ 
+     >>> print(latex((2*tau)**sin(Rational(7,2)), mul_symbol="times"))
+     \left(2 \times \tau\right)^{\sin{\left (\frac{7}{2} \right )}}
+diff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py
+index ef4724e9..87241992 100644
+--- a/sympy/printing/tests/test_latex.py
++++ b/sympy/printing/tests/test_latex.py
+@@ -991,6 +991,9 @@ def test_latex_mul_symbol():
+     assert latex(4*x, mul_symbol='dot') == "4 \\cdot x"
+     assert latex(4*x, mul_symbol='ldot') == r"4 \,.\, x"
+ 
++    assert latex(4*x, mul_symbol=r'\,') == r"4 \, x"
++    assert latex(4*4**x, mul_symbol=r'\,') == r"4 \, 4^{x}"
++
+ 
+ def test_latex_issue_4381():
+     y = 4*4**log(2)

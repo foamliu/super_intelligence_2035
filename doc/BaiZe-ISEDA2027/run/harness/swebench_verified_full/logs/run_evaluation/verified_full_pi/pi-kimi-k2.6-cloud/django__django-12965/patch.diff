@@ -1,0 +1,35 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 29e33c075..7b417ee83 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1423,6 +1423,9 @@ class SQLDeleteCompiler(SQLCompiler):
+         Create the SQL for this query. Return the SQL string and list of
+         parameters.
+         """
++        # Ensure the base table is in the query so that single_alias is
++        # computed correctly.
++        self.query.get_initial_alias()
+         if self.single_alias:
+             return self._as_sql(self.query)
+         innerq = self.query.clone()
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index c32ebba83..5de1c228d 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -638,6 +638,16 @@ class FastDeleteTests(TestCase):
+         self.assertEqual(User.objects.count(), 1)
+         self.assertTrue(User.objects.filter(pk=u2.pk).exists())
+ 
++    def test_fast_delete_no_subquery(self):
++        """
++        Fast deleting a simple queryset shouldn't generate a subquery.
++        """
++        User.objects.create()
++        with self.assertNumQueries(1) as ctx:
++            User.objects.all().delete()
++        sql = ctx.captured_queries[0]['sql']
++        self.assertNotIn('SELECT', sql)
++
+     def test_fast_delete_instance_set_pk_none(self):
+         u = User.objects.create()
+         # User can be fast-deleted.

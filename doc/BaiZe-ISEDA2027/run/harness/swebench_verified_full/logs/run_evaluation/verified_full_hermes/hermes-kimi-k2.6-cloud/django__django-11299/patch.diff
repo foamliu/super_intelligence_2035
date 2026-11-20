@@ -1,0 +1,39 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index b99f03cd8..766f5713b 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1338,7 +1338,9 @@ class Query(BaseExpression):
+             if isinstance(child, Node):
+                 child_clause, needed_inner = self._add_q(
+                     child, used_aliases, branch_negated,
+-                    current_negated, allow_joins, split_subq)
++                    current_negated, allow_joins, split_subq,
++                    simple_col=simple_col,
++                )
+                 joinpromoter.add_votes(needed_inner)
+             else:
+                 child_clause, needed_inner = self.build_filter(
+diff --git a/tests/queries/test_query.py b/tests/queries/test_query.py
+index bef79c992..1fa05e2ef 100644
+--- a/tests/queries/test_query.py
++++ b/tests/queries/test_query.py
+@@ -91,3 +91,19 @@ class TestQuery(SimpleTestCase):
+         self.assertIsInstance(b_isnull, RelatedIsNull)
+         self.assertIsInstance(b_isnull.lhs, SimpleCol)
+         self.assertEqual(b_isnull.lhs.target, ObjectC._meta.get_field('objectb'))
++
++    def test_check_constraint_with_nested_q(self):
++        """
++        Nested Q objects in OR clauses should use SimpleCol consistently.
++        """
++        query = Query(Item)
++        where = query.build_where(Q(modified__gt=F('created')) | Q(name='foo'))
++        # Both children should use SimpleCol.
++        modified_gt = where.children[0]
++        self.assertIsInstance(modified_gt.lhs, SimpleCol)
++        self.assertEqual(modified_gt.lhs.target, Item._meta.get_field('modified'))
++        self.assertIsInstance(modified_gt.rhs, SimpleCol)
++        self.assertEqual(modified_gt.rhs.target, Item._meta.get_field('created'))
++        name_eq = where.children[1]
++        self.assertIsInstance(name_eq.lhs, SimpleCol)
++        self.assertEqual(name_eq.lhs.target, Item._meta.get_field('name'))

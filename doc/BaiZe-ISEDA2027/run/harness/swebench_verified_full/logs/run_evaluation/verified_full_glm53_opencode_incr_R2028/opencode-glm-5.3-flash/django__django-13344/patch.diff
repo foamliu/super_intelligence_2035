@@ -1,0 +1,126 @@
+diff --git a/django/contrib/sessions/middleware.py b/django/contrib/sessions/middleware.py
+index 95ad30ce7f..963df33fee 100644
+--- a/django/contrib/sessions/middleware.py
++++ b/django/contrib/sessions/middleware.py
+@@ -14,8 +14,7 @@ class SessionMiddleware(MiddlewareMixin):
+     #   def __init__(self, get_response):
+     def __init__(self, get_response=None):
+         self._get_response_none_deprecation(get_response)
+-        self.get_response = get_response
+-        self._async_check()
++        super().__init__(get_response)
+         engine = import_module(settings.SESSION_ENGINE)
+         self.SessionStore = engine.SessionStore
+ 
+diff --git a/django/middleware/cache.py b/django/middleware/cache.py
+index e92f768fa3..99cf4d87bc 100644
+--- a/django/middleware/cache.py
++++ b/django/middleware/cache.py
+@@ -70,7 +70,7 @@ class UpdateCacheMiddleware(MiddlewareMixin):
+         self.key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
+         self.cache_alias = settings.CACHE_MIDDLEWARE_ALIAS
+         self.cache = caches[self.cache_alias]
+-        self.get_response = get_response
++        super().__init__(get_response)
+ 
+     def _should_update_cache(self, request, response):
+         return hasattr(request, '_cache_update_cache') and request._cache_update_cache
+@@ -132,7 +132,7 @@ class FetchFromCacheMiddleware(MiddlewareMixin):
+         self.key_prefix = settings.CACHE_MIDDLEWARE_KEY_PREFIX
+         self.cache_alias = settings.CACHE_MIDDLEWARE_ALIAS
+         self.cache = caches[self.cache_alias]
+-        self.get_response = get_response
++        super().__init__(get_response)
+ 
+     def process_request(self, request):
+         """
+@@ -174,7 +174,7 @@ class CacheMiddleware(UpdateCacheMiddleware, FetchFromCacheMiddleware):
+     #   def __init__(self, get_response, cache_timeout=None, page_timeout=None, **kwargs):
+     def __init__(self, get_response=None, cache_timeout=None, page_timeout=None, **kwargs):
+         self._get_response_none_deprecation(get_response)
+-        self.get_response = get_response
++        super().__init__(get_response)
+         # We need to differentiate between "provided, but using default value",
+         # and "not provided". If the value is provided using a default, then
+         # we fall back to system defaults. If it is not provided at all,
+diff --git a/django/middleware/security.py b/django/middleware/security.py
+index 035c329efb..8bfd615dae 100644
+--- a/django/middleware/security.py
++++ b/django/middleware/security.py
+@@ -19,7 +19,7 @@ class SecurityMiddleware(MiddlewareMixin):
+         self.redirect_host = settings.SECURE_SSL_HOST
+         self.redirect_exempt = [re.compile(r) for r in settings.SECURE_REDIRECT_EXEMPT]
+         self.referrer_policy = settings.SECURE_REFERRER_POLICY
+-        self.get_response = get_response
++        super().__init__(get_response)
+ 
+     def process_request(self, request):
+         path = request.path.lstrip("/")
+diff --git a/tests/asgi/tests.py b/tests/asgi/tests.py
+index 2ec493085e..fdb15675cc 100644
+--- a/tests/asgi/tests.py
++++ b/tests/asgi/tests.py
+@@ -11,9 +11,11 @@ from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
+ from django.core.asgi import get_asgi_application
+ from django.core.signals import request_finished, request_started
+ from django.db import close_old_connections
++from django.http import HttpResponse
+ from django.test import (
+     AsyncRequestFactory, SimpleTestCase, modify_settings, override_settings,
+ )
++from django.utils.deprecation import MiddlewareMixin
+ from django.utils.http import http_date
+ 
+ from .urls import test_filename
+@@ -21,6 +23,15 @@ from .urls import test_filename
+ TEST_STATIC_ROOT = Path(__file__).parent / 'project' / 'static'
+ 
+ 
++class ProcessResponseMiddleware(MiddlewareMixin):
++    """Record the type of the response received by process_response()."""
++    process_response_types = []
++
++    def process_response(self, request, response):
++        self.process_response_types.append(type(response))
++        return response
++
++
+ @skipIf(sys.platform == 'win32' and (3, 8, 0) < sys.version_info < (3, 8, 1), 'https://bugs.python.org/issue38563')
+ @override_settings(ROOT_URLCONF='asgi.urls')
+ class ASGITest(SimpleTestCase):
+@@ -200,6 +211,35 @@ class ASGITest(SimpleTestCase):
+         self.assertEqual(response_body['type'], 'http.response.body')
+         self.assertEqual(response_body['body'], b'')
+ 
++    async def test_coroutine_not_passed_to_process_response(self):
++        """
++        A coroutine must not be passed to the first middleware's
++        process_response() (Refs: #32193).
++        """
++        ProcessResponseMiddleware.process_response_types.clear()
++        with override_settings(
++            MIDDLEWARE=[
++                'asgi.tests.ProcessResponseMiddleware',
++                'django.middleware.security.SecurityMiddleware',
++            ],
++        ):
++            application = get_asgi_application()
++            scope = self.async_request_factory._base_scope(path='/')
++            communicator = ApplicationCommunicator(application, scope)
++            await communicator.send_input({'type': 'http.request'})
++            response_start = await communicator.receive_output()
++            self.assertEqual(response_start['type'], 'http.response.start')
++            self.assertEqual(response_start['status'], 200)
++            response_body = await communicator.receive_output()
++            self.assertEqual(response_body['type'], 'http.response.body')
++            self.assertEqual(response_body['body'], b'Hello World!')
++            # Allow response.close() to finish.
++            await communicator.wait()
++        self.assertEqual(
++            ProcessResponseMiddleware.process_response_types,
++            [HttpResponse],
++        )
++
+     async def test_request_lifecycle_signals_dispatched_with_thread_sensitive(self):
+         class SignalHandler:
+             """Track threads handler is dispatched on."""

@@ -1,0 +1,141 @@
+2026-10-30 22:57:49,563 - INFO - Creating container for django__django-11239...
+2026-10-30 22:57:49,607 - INFO - Container for django__django-11239 created: 6686b247f38ebda1af5a7c5757edc2ac2a8c1316ce6d3fe6ad6647de02448af5
+2026-10-30 22:57:51,863 - INFO - Container for django__django-11239 started: 6686b247f38ebda1af5a7c5757edc2ac2a8c1316ce6d3fe6ad6647de02448af5
+2026-10-30 22:57:51,865 - INFO - Intermediate patch for django__django-11239 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11239/patch.diff, now applying to container...
+2026-10-30 22:57:51,976 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/postgresql/client.py...
+Checking patch tests/dbshell/test_postgresql.py...
+Applied patch django/db/backends/postgresql/client.py cleanly.
+Applied patch tests/dbshell/test_postgresql.py cleanly.
+
+2026-10-30 22:57:53,483 - INFO - Git diff before:
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index cf4df76882..aa34e87498 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -30,6 +30,14 @@ class DatabaseClient(BaseDatabaseClient):
+         subprocess_env = os.environ.copy()
+         if passwd:
+             subprocess_env['PGPASSWORD'] = str(passwd)
++        if conn_params.get('sslmode'):
++            subprocess_env['PGSSLMODE'] = str(conn_params['sslmode'])
++        if conn_params.get('sslrootcert'):
++            subprocess_env['PGSSLROOTCERT'] = str(conn_params['sslrootcert'])
++        if conn_params.get('sslcert'):
++            subprocess_env['PGSSLCERT'] = str(conn_params['sslcert'])
++        if conn_params.get('sslkey'):
++            subprocess_env['PGSSLKEY'] = str(conn_params['sslkey'])
+         try:
+             # Allow SIGINT to pass to psql to abort queries.
+             signal.signal(signal.SIGINT, signal.SIG_IGN)
+diff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py
+index a33e7f6482..1ac7ad7cce 100644
+--- a/tests/dbshell/test_postgresql.py
++++ b/tests/dbshell/test_postgresql.py
+@@ -94,3 +94,75 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+             DatabaseClient.runshell_db({})
+         # dbshell restores the original handler.
+         self.assertEqual(sigint_handler, signal.getsignal(signal.SIGINT))
++
++    def test_ssl(self):
++        def _mock_subprocess_run(*args, env=os.environ, **kwargs):
++            self.subprocess_args = list(*args)
++            self.pgsslmode = env.get('PGSSLMODE')
++            self.pgsslrootcert = env.get('PGSSLROOTCERT')
++            self.pgsslcert = env.get('PGSSLCERT')
++            self.pgsslkey = env.get('PGSSLKEY')
++            return subprocess.CompletedProcess(self.subprocess_args, 0)
++        with mock.patch('subprocess.run', new=_mock_subprocess_run):
++            DatabaseClient.runshell_db({
++                'database': 'dbname',
++                'sslmode': 'verify-ca',
++                'sslrootcert': '/path/to/ca.crt',
++                'sslcert': '/path/to/client.crt',
++                'sslkey': '/path/to/client.key',
++            })
++        self.assertEqual(self.subprocess_args, ['psql', 'dbname'])
++        self.assertEqual(self.pgsslmode, 'verify-ca')
++        self.assertEqual(self.pgsslrootcert, '/path/to/ca.crt')
++        self.assertEqual(self.pgsslcert, '/path/to/client.crt')
++        self.assertEqual(self.pgsslkey, '/path/to/client.key')
++
++    def test_ssl_with_password(self):
++        def _mock_subprocess_run(*args, env=os.environ, **kwargs):
++            self.subprocess_args = list(*args)
++            self.pgpassword = env.get('PGPASSWORD')
++            self.pgsslmode = env.get('PGSSLMODE')
++            self.pgsslrootcert = env.get('PGSSLROOTCERT')
++            self.pgsslcert = env.get('PGSSLCERT')
++            self.pgsslkey = env.get('PGSSLKEY')
++            return subprocess.CompletedProcess(self.subprocess_args, 0)
++        with mock.patch('subprocess.run', new=_mock_subprocess_run):
++            DatabaseClient.runshell_db({
++                'database': 'dbname',
++                'user': 'someuser',
++                'password': 'somepassword',
++                'host': 'somehost',
++                'port': '444',
++                'sslmode': 'verify-full',
++                'sslrootcert': '/path/to/ca.crt',
++                'sslcert': '/path/to/client.crt',
++                'sslkey': '/path/to/client.key',
++            })
++        self.assertEqual(
++            self.subprocess_args,
++            ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
++        )
++        self.assertEqual(self.pgpassword, 'somepassword')
++        self.assertEqual(self.pgsslmode, 'verify-full')
++        self.assertEqual(self.pgsslrootcert, '/path/to/ca.crt')
++        self.assertEqual(self.pgsslcert, '/path/to/client.crt')
++        self.assertEqual(self.pgsslkey, '/path/to/client.key')
++
++    def test_no_ssl(self):
++        def _mock_subprocess_run(*args, env=os.environ, **kwargs):
++            self.subprocess_args = list(*args)
++            self.pgsslmode = env.get('PGSSLMODE')
++            self.pgsslrootcert = env.get('PGSSLROOTCERT')
++            self.pgsslcert = env.get('PGSSLCERT')
++            self.pgsslkey = env.get('PGSSLKEY')
++            return subprocess.CompletedProcess(self.subprocess_args, 0)
++        with mock.patch('subprocess.run', new=_mock_subprocess_run):
++            DatabaseClient.runshell_db({
++                'database': 'dbname',
++                'user': 'someuser',
++            })
++        self.assertEqual(self.subprocess_args, ['psql', '-U', 'someuser', 'dbname'])
++        self.assertIsNone(self.pgsslmode)
++        self.assertIsNone(self.pgsslrootcert)
++        self.assertIsNone(self.pgsslcert)
++        self.assertIsNone(self.pgsslkey)
+2026-10-30 22:57:53,486 - INFO - Eval script for django__django-11239 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11239/eval.sh; copying to container...
+2026-10-30 22:58:00,543 - INFO - Test runtime: 6.99 seconds
+2026-10-30 22:58:00,551 - INFO - Test output for django__django-11239 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11239/test_output.txt
+2026-10-30 22:58:00,660 - INFO - Git diff after:
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index cf4df76882..aa34e87498 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -30,6 +30,14 @@ class DatabaseClient(BaseDatabaseClient):
+         subprocess_env = os.environ.copy()
+         if passwd:
+             subprocess_env['PGPASSWORD'] = str(passwd)
++        if conn_params.get('sslmode'):
++            subprocess_env['PGSSLMODE'] = str(conn_params['sslmode'])
++        if conn_params.get('sslrootcert'):
++            subprocess_env['PGSSLROOTCERT'] = str(conn_params['sslrootcert'])
++        if conn_params.get('sslcert'):
++            subprocess_env['PGSSLCERT'] = str(conn_params['sslcert'])
++        if conn_params.get('sslkey'):
++            subprocess_env['PGSSLKEY'] = str(conn_params['sslkey'])
+         try:
+             # Allow SIGINT to pass to psql to abort queries.
+             signal.signal(signal.SIGINT, signal.SIG_IGN)
+2026-10-30 22:58:00,661 - INFO - Git diff changed after running eval script
+2026-10-30 22:58:00,661 - INFO - Grading answer for django__django-11239...
+2026-10-30 22:58:00,661 - INFO - report: {'django__django-11239': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_ssl_certificate (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_accent (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_basic (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_column (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_nopass (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'SIGINT is ignored in Python and passed to psql to abort quries.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11239: resolved: True
+2026-10-30 22:58:00,667 - INFO - Attempting to stop container sweb.eval.django__django-11239.verified_full_claude-code...
+2026-10-30 22:58:16,923 - INFO - Container sweb.eval.django__django-11239.verified_full_claude-code stopped successfully.
+2026-10-30 22:58:16,923 - INFO - Attempting to remove container sweb.eval.django__django-11239.verified_full_claude-code...
+2026-10-30 22:58:17,013 - INFO - Container sweb.eval.django__django-11239.verified_full_claude-code removed successfully.

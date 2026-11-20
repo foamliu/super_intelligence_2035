@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-15161",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": ""
+  }
+]

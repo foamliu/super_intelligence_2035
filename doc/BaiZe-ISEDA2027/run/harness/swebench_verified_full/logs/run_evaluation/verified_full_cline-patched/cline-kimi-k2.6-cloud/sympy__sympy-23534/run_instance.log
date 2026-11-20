@@ -1,0 +1,75 @@
+2026-10-31 02:24:35,446 - INFO - Creating container for sympy__sympy-23534...
+2026-10-31 02:24:35,538 - INFO - Container for sympy__sympy-23534 created: d3b7b2a678fe03831c80dadb64915e2820ea081d42103b1458c45e93cf51e687
+2026-10-31 02:24:37,593 - INFO - Container for sympy__sympy-23534 started: d3b7b2a678fe03831c80dadb64915e2820ea081d42103b1458c45e93cf51e687
+2026-10-31 02:24:37,595 - INFO - Intermediate patch for sympy__sympy-23534 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-23534/patch.diff, now applying to container...
+2026-10-31 02:24:37,767 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/symbol.py...
+Checking patch sympy/core/tests/test_symbol.py...
+Applied patch sympy/core/symbol.py cleanly.
+Applied patch sympy/core/tests/test_symbol.py cleanly.
+
+2026-10-31 02:24:38,576 - INFO - Git diff before:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c2083..d3d930f07b 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -336,6 +336,22 @@ def test_symbols_become_functions_issue_3539():
+     raises(TypeError, lambda: phi(t))
+ 
+ 
++def test_symbols_nested_tuple_cls():
++    # issue: symbols with cls=Function doesn't work with nested tuples
++    from sympy.core.function import FunctionClass, Function
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert all(isinstance(sym, FunctionClass) for sym in q)
++    assert all(isinstance(sym, FunctionClass) for sym in u)
++    # also test with a list
++    q, u = symbols(['q:2', 'u:2'], cls=Function)
++    assert all(isinstance(sym, FunctionClass) for sym in q)
++    assert all(isinstance(sym, FunctionClass) for sym in u)
++    # also test with a single tuple of plain names
++    f, g = symbols(('f', 'g'), cls=Function)
++    assert isinstance(f, FunctionClass)
++    assert isinstance(g, FunctionClass)
++
++
+ def test_unicode():
+     xu = Symbol('x')
+     x = Symbol('x')
+2026-10-31 02:24:38,579 - INFO - Eval script for sympy__sympy-23534 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-23534/eval.sh; copying to container...
+2026-10-31 02:24:43,587 - INFO - Test runtime: 4.93 seconds
+2026-10-31 02:24:43,595 - INFO - Test output for sympy__sympy-23534 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-23534/test_output.txt
+2026-10-31 02:24:43,686 - INFO - Git diff after:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+2026-10-31 02:24:43,686 - INFO - Git diff changed after running eval script
+2026-10-31 02:24:43,686 - INFO - Grading answer for sympy__sympy-23534...
+2026-10-31 02:24:43,687 - INFO - report: {'sympy__sympy-23534': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_symbols'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Str', 'test_Symbol', 'test_Dummy', 'test_Dummy_force_dummy_index', 'test_lt_gt', 'test_no_len', 'test_ineq_unequal', 'test_Wild_properties', 'test_symbols_become_functions_issue_3539', 'test_unicode', 'test_uniquely_named_symbol_and_Symbol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23534: resolved: True
+2026-10-31 02:24:43,688 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23534.verified_full_cline-patched...
+2026-10-31 02:25:00,917 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_cline-patched stopped successfully.
+2026-10-31 02:25:00,917 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23534.verified_full_cline-patched...
+2026-10-31 02:25:00,969 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_cline-patched removed successfully.

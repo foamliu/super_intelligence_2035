@@ -1,0 +1,72 @@
+2026-11-10 04:00:30,154 - INFO - Creating container for django__django-16950...
+2026-11-10 04:00:30,179 - INFO - Container for django__django-16950 created: 739dc570151561355afa9f2e3442513434144d949c17e149ef0908b74a765e8d
+2026-11-10 04:00:30,517 - INFO - Container for django__django-16950 started: 739dc570151561355afa9f2e3442513434144d949c17e149ef0908b74a765e8d
+2026-11-10 04:00:30,520 - INFO - Intermediate patch for django__django-16950 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2026/opencode-glm-5.3-flash/django__django-16950/patch.diff, now applying to container...
+2026-11-10 04:00:30,668 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/models.py...
+Applied patch django/forms/models.py cleanly.
+
+2026-11-10 04:00:31,904 - INFO - Git diff before:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..326bf84dad 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1178,7 +1178,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+             else:
+                 to_field = self.instance._meta.pk
+             if to_field.has_default():
+-                setattr(self.instance, to_field.attname, None)
++                kwargs["initial"] = None
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+ 
+@@ -1352,9 +1352,11 @@ class InlineForeignKeyField(Field):
+         self.to_field = to_field
+         if self.parent_instance is not None:
+             if self.to_field:
+-                kwargs["initial"] = getattr(self.parent_instance, self.to_field)
++                kwargs.setdefault(
++                    "initial", getattr(self.parent_instance, self.to_field)
++                )
+             else:
+-                kwargs["initial"] = self.parent_instance.pk
++                kwargs.setdefault("initial", self.parent_instance.pk)
+         kwargs["required"] = False
+         super().__init__(*args, **kwargs)
+2026-11-10 04:00:31,906 - INFO - Eval script for django__django-16950 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2026/opencode-glm-5.3-flash/django__django-16950/eval.sh; copying to container...
+2026-11-10 04:00:38,110 - INFO - Test runtime: 6.13 seconds
+2026-11-10 04:00:38,111 - INFO - Test output for django__django-16950 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2026/opencode-glm-5.3-flash/django__django-16950/test_output.txt
+2026-11-10 04:00:38,160 - INFO - Git diff after:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..326bf84dad 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1178,7 +1178,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+             else:
+                 to_field = self.instance._meta.pk
+             if to_field.has_default():
+-                setattr(self.instance, to_field.attname, None)
++                kwargs["initial"] = None
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+ 
+@@ -1352,9 +1352,11 @@ class InlineForeignKeyField(Field):
+         self.to_field = to_field
+         if self.parent_instance is not None:
+             if self.to_field:
+-                kwargs["initial"] = getattr(self.parent_instance, self.to_field)
++                kwargs.setdefault(
++                    "initial", getattr(self.parent_instance, self.to_field)
++                )
+             else:
+-                kwargs["initial"] = self.parent_instance.pk
++                kwargs.setdefault("initial", self.parent_instance.pk)
+         kwargs["required"] = False
+         super().__init__(*args, **kwargs)
+2026-11-10 04:00:38,160 - INFO - Grading answer for django__django-16950...
+2026-11-10 04:00:38,161 - INFO - report: {'django__django-16950': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ["If form data is provided, a parent's auto-generated alternate key is"], 'failure': []}, 'PASS_TO_PASS': {'success': ["#24377 - If we're adding a new object, a parent's auto-generated pk", '#24958 - Variant of test_inlineformset_factory_nulls_default_pks for'], 'failure': ['#24377 - Inlines with a model field default should ignore that default']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16950: resolved: False
+2026-11-10 04:00:38,163 - INFO - Attempting to stop container sweb.eval.django__django-16950.verified_full_glm53_opencode_incr_R2026...
+2026-11-10 04:00:53,823 - INFO - Container sweb.eval.django__django-16950.verified_full_glm53_opencode_incr_R2026 stopped successfully.
+2026-11-10 04:00:53,824 - INFO - Attempting to remove container sweb.eval.django__django-16950.verified_full_glm53_opencode_incr_R2026...
+2026-11-10 04:00:53,860 - INFO - Container sweb.eval.django__django-16950.verified_full_glm53_opencode_incr_R2026 removed successfully.

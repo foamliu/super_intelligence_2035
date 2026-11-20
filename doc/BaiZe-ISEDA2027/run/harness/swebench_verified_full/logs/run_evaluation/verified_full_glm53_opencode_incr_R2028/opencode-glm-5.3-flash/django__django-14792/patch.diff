@@ -1,0 +1,45 @@
+diff --git a/django/db/backends/sqlite3/base.py b/django/db/backends/sqlite3/base.py
+index a64190f0d0..0efa1222b8 100644
+--- a/django/db/backends/sqlite3/base.py
++++ b/django/db/backends/sqlite3/base.py
+@@ -431,17 +431,22 @@ def _sqlite_datetime_parse(dt, tzname=None, conn_tzname=None):
+     except (TypeError, ValueError):
+         return None
+     if conn_tzname:
+-        dt = dt.replace(tzinfo=pytz.timezone(conn_tzname))
++        conn_tz = pytz.timezone(conn_tzname)
++        dt = dt.replace(tzinfo=conn_tz)
++        conn_tzname = timezone._get_timezone_name(conn_tz)
+     if tzname is not None and tzname != conn_tzname:
+         sign_index = tzname.find('+') + tzname.find('-') + 1
+         if sign_index > -1:
+             sign = tzname[sign_index]
+             tzname, offset = tzname.split(sign)
+             if offset:
+-                hours, minutes = offset.split(':')
++                if ':' in offset:
++                    hours, minutes = offset.split(':')
++                else:
++                    hours, minutes = offset, '0'
+                 offset_delta = datetime.timedelta(hours=int(hours), minutes=int(minutes))
+                 dt += offset_delta if sign == '+' else -offset_delta
+-        dt = timezone.localtime(dt, pytz.timezone(tzname))
++        dt = timezone.localtime(dt, pytz.timezone(tzname) if tzname else pytz.utc)
+     return dt
+ 
+ 
+diff --git a/django/utils/timezone.py b/django/utils/timezone.py
+index bb2b6b9594..ca237ce0d8 100644
+--- a/django/utils/timezone.py
++++ b/django/utils/timezone.py
+@@ -73,7 +73,9 @@ def get_current_timezone_name():
+ 
+ def _get_timezone_name(timezone):
+     """Return the name of ``timezone``."""
+-    return str(timezone)
++    if isinstance(timezone, str):
++        return timezone
++    return timezone.tzname(None) or str(timezone)
+ 
+ # Timezone selection functions.
+ 

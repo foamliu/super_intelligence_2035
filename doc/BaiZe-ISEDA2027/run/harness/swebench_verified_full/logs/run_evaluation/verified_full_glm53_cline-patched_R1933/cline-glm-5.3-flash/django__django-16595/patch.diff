@@ -1,0 +1,71 @@
+diff --git a/django/db/migrations/operations/fields.py b/django/db/migrations/operations/fields.py
+index cd3aab43a..4f3d4c7fc 100644
+--- a/django/db/migrations/operations/fields.py
++++ b/django/db/migrations/operations/fields.py
+@@ -251,6 +251,10 @@ class AlterField(FieldOperation):
+             operation
+         ):
+             return [operation]
++        elif isinstance(operation, AlterField) and self.is_same_field_operation(
++            operation
++        ):
++            return [operation]
+         elif (
+             isinstance(operation, RenameField)
+             and self.is_same_field_operation(operation)
+diff --git a/docs/releases/5.0.txt b/docs/releases/5.0.txt
+index 84689f223..71e076f08 100644
+--- a/docs/releases/5.0.txt
++++ b/docs/releases/5.0.txt
+@@ -176,7 +176,9 @@ Management Commands
+ Migrations
+ ~~~~~~~~~~
+ 
+-* ...
++* The migration optimizer now reduces multiple
++  :class:`~django.db.migrations.operations.AlterField` operations on the same
++  field to a single operation.
+ 
+ Models
+ ~~~~~~
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 6485009eb..54267fa54 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -822,6 +822,36 @@ class OptimizerTests(SimpleTestCase):
+             ],
+         )
+ 
++    def test_alter_field_alter_field(self):
++        """
++        AlterField should absorb AlterField of the same field.
++        """
++        self.assertOptimizesTo(
++            [
++                migrations.AlterField("Foo", "age", models.IntegerField()),
++                migrations.AlterField("Foo", "age", models.FloatField(default=2.4)),
++            ],
++            [
++                migrations.AlterField("Foo", "age", models.FloatField(default=2.4)),
++            ],
++        )
++        self.assertOptimizesTo(
++            [
++                migrations.AlterField("Foo", "age", models.IntegerField()),
++                migrations.AlterField("Foo", "age", models.IntegerField()),
++                migrations.AlterField("Foo", "age", models.IntegerField()),
++            ],
++            [
++                migrations.AlterField("Foo", "age", models.IntegerField()),
++            ],
++        )
++        self.assertDoesNotOptimize(
++            [
++                migrations.AlterField("Foo", "age", models.IntegerField()),
++                migrations.AlterField("Foo", "name", models.IntegerField()),
++            ]
++        )
++
+     def _test_create_alter_foo_field(self, alter):
+         """
+         CreateModel, AlterFooTogether/AlterOrderWithRespectTo followed by an

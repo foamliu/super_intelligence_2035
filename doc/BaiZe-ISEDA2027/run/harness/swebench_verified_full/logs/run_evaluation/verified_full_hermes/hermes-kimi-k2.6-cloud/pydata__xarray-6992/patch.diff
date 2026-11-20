@@ -1,0 +1,38 @@
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index 620f32f8..2fbf8904 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -4177,7 +4177,7 @@ class Dataset(
+         }
+         variables.update(new_variables)
+ 
+-        coord_names = set(new_variables) | self._coord_names
++        coord_names = set(new_variables) | self._coord_names - set(drop_variables)
+ 
+         return self._replace(variables, coord_names=coord_names, indexes=indexes)
+ 
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index fc2806c7..b6437264 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3253,6 +3253,20 @@ class TestDataset:
+         with pytest.raises(ValueError, match=r".*not coordinates with an index"):
+             ds.reset_index("y")
+ 
++    def test_reset_index_multiindex_level_drop(self) -> None:
++        # GH regression test: reset_index(drop=True) on a non-dim multi-index level
++        ds = Dataset(coords={"a": ("x", [1, 2, 3]), "b": ("x", ["a", "b", "c"])})
++        ds = ds.set_index(z=["a", "b"])
++
++        # drop=True should remove the index and the levels from coord_names
++        obj = ds.reset_index("z", drop=True)
++        assert "z" not in obj._coord_names
++        assert "z" not in obj.coords
++        assert "a" in obj.coords
++        assert "b" in obj.coords
++        assert len(obj.data_vars) == 0
++        assert obj.dims == {"z": 3}
++
+     def test_reset_index_keep_attrs(self) -> None:
+         coord_1 = DataArray([1, 2], dims=["coord_1"], attrs={"attrs": True})
+         ds = Dataset({}, {"coord_1": coord_1})

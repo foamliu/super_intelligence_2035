@@ -1,0 +1,79 @@
+2026-10-30 16:00:52,996 - INFO - Creating container for sympy__sympy-24066...
+2026-10-30 16:00:53,024 - INFO - Container for sympy__sympy-24066 created: a6f149129c9bc7223df3f177aecdd81933cd529e001058592484cb83810d9566
+2026-10-30 16:00:53,914 - INFO - Container for sympy__sympy-24066 started: a6f149129c9bc7223df3f177aecdd81933cd529e001058592484cb83810d9566
+2026-10-30 16:00:53,916 - INFO - Intermediate patch for sympy__sympy-24066 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-24066/patch.diff, now applying to container...
+2026-10-30 16:00:54,024 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/units/tests/test_quantities.py...
+warning: sympy/physics/units/tests/test_quantities.py has type 100755, expected 100644
+Checking patch sympy/physics/units/unitsystem.py...
+warning: sympy/physics/units/unitsystem.py has type 100755, expected 100644
+Applied patch sympy/physics/units/tests/test_quantities.py cleanly.
+Applied patch sympy/physics/units/unitsystem.py cleanly.
+
+2026-10-30 16:00:54,803 - INFO - Git diff before:
+diff --git a/sympy/physics/units/tests/test_quantities.py b/sympy/physics/units/tests/test_quantities.py
+index 25a68c7be5..b2c9139245 100755
+--- a/sympy/physics/units/tests/test_quantities.py
++++ b/sympy/physics/units/tests/test_quantities.py
+@@ -13,7 +13,7 @@
+ from sympy.physics.units import (amount_of_substance, area, convert_to, find_unit,
+                                  volume, kilometer, joule, molar_gas_constant,
+                                  vacuum_permittivity, elementary_charge, volt,
+-                                 ohm)
++                                 ohm, farad)
+ from sympy.physics.units.definitions import (amu, au, centimeter, coulomb,
+     day, foot, grams, hour, inch, kg, km, m, meter, millimeter,
+     minute, quart, s, second, speed_of_light, bit,
+@@ -541,6 +541,14 @@ def test_issue_20288():
+     assert SI._collect_factor_and_dimension(expr) == (1 + E, Dimension(1))
+ 
+ 
++def test_issue_24066():
++    expr = second / (ohm * farad)
++    dim = SI._collect_factor_and_dimension(expr)[1]
++    assert SI.get_dimension_system().is_dimensionless(dim)
++    buggy_expr = 100 + exp(expr)
++    assert SI._collect_factor_and_dimension(buggy_expr) == (100 + exp(1), Dimension(1))
++
++
+ def test_prefixed_property():
+     assert not meter.is_prefixed
+     assert not joule.is_prefixed
+diff --git a/sympy/physics/units/unitsystem.py b/sympy/physics/units/unitsystem.py
+index 3daf84c108..3d40a1a32f 100755
+--- a/sympy/physics/units/unitsystem.py
++++ b/sympy/physics/units/unitsystem.py
+@@ -192,6 +192,8 @@ def _collect_factor_and_dimension(self, expr):
+         elif isinstance(expr, Function):
+             fds = [self._collect_factor_and_dimension(
+                 arg) for arg in expr.args]
++            if all(self.get_dimension_system().is_dimensionless(d[1]) for d in fds):
++                return (expr.func(*(f[0] for f in fds)), Dimension(1))
+             return (expr.func(*(f[0] for f in fds)),
+                     *(d[1] for d in fds))
+         elif isinstance(expr, Dimension):
+2026-10-30 16:00:54,817 - INFO - Eval script for sympy__sympy-24066 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-24066/eval.sh; copying to container...
+2026-10-30 16:01:01,347 - INFO - Test runtime: 6.43 seconds
+2026-10-30 16:01:01,349 - INFO - Test output for sympy__sympy-24066 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-24066/test_output.txt
+2026-10-30 16:01:01,391 - INFO - Git diff after:
+diff --git a/sympy/physics/units/unitsystem.py b/sympy/physics/units/unitsystem.py
+index 3daf84c108..3d40a1a32f 100755
+--- a/sympy/physics/units/unitsystem.py
++++ b/sympy/physics/units/unitsystem.py
+@@ -192,6 +192,8 @@ def _collect_factor_and_dimension(self, expr):
+         elif isinstance(expr, Function):
+             fds = [self._collect_factor_and_dimension(
+                 arg) for arg in expr.args]
++            if all(self.get_dimension_system().is_dimensionless(d[1]) for d in fds):
++                return (expr.func(*(f[0] for f in fds)), Dimension(1))
+             return (expr.func(*(f[0] for f in fds)),
+                     *(d[1] for d in fds))
+         elif isinstance(expr, Dimension):
+2026-10-30 16:01:01,391 - INFO - Git diff changed after running eval script
+2026-10-30 16:01:01,391 - INFO - Grading answer for sympy__sympy-24066...
+2026-10-30 16:01:01,401 - INFO - report: {'sympy__sympy-24066': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_24062'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_str_repr', 'test_eq', 'test_convert_to', 'test_Quantity_definition', 'test_abbrev', 'test_print', 'test_Quantity_eq', 'test_add_sub', 'test_quantity_abs', 'test_check_unit_consistency', 'test_mul_div', 'test_units', 'test_issue_quart', 'test_issue_5565', 'test_find_unit', 'test_Quantity_derivative', 'test_quantity_postprocessing', 'test_factor_and_dimension', 'test_dimensional_expr_of_derivative', 'test_get_dimensional_expr_with_function', 'test_binary_information', 'test_conversion_with_2_nonstandard_dimensions', 'test_eval_subs', 'test_issue_14932', 'test_issue_14547', 'test_deprecated_quantity_methods', 'test_issue_22164', 'test_issue_22819', 'test_issue_20288', 'test_prefixed_property'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-24066: resolved: True
+2026-10-30 16:01:01,415 - INFO - Attempting to stop container sweb.eval.sympy__sympy-24066.verified_full_opencode...
+2026-10-30 16:01:17,293 - INFO - Container sweb.eval.sympy__sympy-24066.verified_full_opencode stopped successfully.
+2026-10-30 16:01:17,294 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24066.verified_full_opencode...
+2026-10-30 16:01:17,387 - INFO - Container sweb.eval.sympy__sympy-24066.verified_full_opencode removed successfully.

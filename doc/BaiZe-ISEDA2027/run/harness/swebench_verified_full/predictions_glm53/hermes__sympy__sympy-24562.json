@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-24562",
+    "model_name_or_path": "hermes-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 52f7ea45ad..dcc7d6a4fd 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1627,18 +1627,21 @@ def __new__(cls, p, q=None, gcd=None):\n \n         if not isinstance(p, SYMPY_INTS):\n             p = Rational(p)\n-            q *= p.q\n-            p = p.p\n         else:\n             p = int(p)\n \n         if not isinstance(q, SYMPY_INTS):\n             q = Rational(q)\n-            p *= q.q\n-            q = q.p\n         else:\n             q = int(q)\n \n+        if isinstance(q, Rational):\n+            p *= q.q\n+            q = q.p\n+        if isinstance(p, Rational):\n+            q *= p.q\n+            p = p.p\n+\n         # p and q are now ints\n         if q == 0:\n             if p == 0:\n"
+  }
+]

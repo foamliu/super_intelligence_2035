@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13590",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex 4648daf395..ad84e32d43 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -1077,6 +1077,16 @@ class Query(BaseExpression):\n         elif isinstance(value, (list, tuple)):\n             # The items of the iterable may be expressions and therefore need\n             # to be resolved independently.\n+            if hasattr(type(value), '_fields'):\n+                # Named tuples don't have a copy constructor that accepts an\n+                # iterable, so the resolved values must be expanded into\n+                # individual positional arguments instead.\n+                return type(value)(\n+                    *(\n+                        self.resolve_lookup_value(sub_value, can_reuse, allow_joins)\n+                        for sub_value in value\n+                    )\n+                )\n             return type(value)(\n                 self.resolve_lookup_value(sub_value, can_reuse, allow_joins)\n                 for sub_value in value\n"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-16950",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/python3-django_2%3a3.2.12-2ubuntu1.29_all.deb b/python3-django_2%3a3.2.12-2ubuntu1.29_all.deb\nnew file mode 100644\nindex 0000000000..6d2956233d\nBinary files /dev/null and b/python3-django_2%3a3.2.12-2ubuntu1.29_all.deb differ\n"
+  }
+]

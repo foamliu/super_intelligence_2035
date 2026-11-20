@@ -1,0 +1,47 @@
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index fd1e6d97..220cdbc8 100644
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -627,7 +627,10 @@ def _postprocessor(expr):
+                 # manipulate them like non-commutative scalars.
+                 return cls._from_args(nonmatrices + [mat_class(*matrices).doit(deep=False)])
+ 
+-        return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        if nonmatrices:
++            return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        else:
++            return mat_class(*matrices).doit(deep=False)
+     return _postprocessor
+ 
+ 
+diff --git a/sympy/matrices/expressions/tests/test_blockmatrix.py b/sympy/matrices/expressions/tests/test_blockmatrix.py
+index 1e1033af..d8070ee2 100644
+--- a/sympy/matrices/expressions/tests/test_blockmatrix.py
++++ b/sympy/matrices/expressions/tests/test_blockmatrix.py
+@@ -2,7 +2,7 @@
+     block_collapse, bc_matmul, bc_block_plus_ident, BlockDiagMatrix,
+     BlockMatrix, bc_dist, bc_matadd, bc_transpose, bc_inverse,
+     blockcut, reblock_2x2, deblock)
+-from sympy.matrices.expressions import (MatrixSymbol, Identity,
++from sympy.matrices.expressions import (MatrixSymbol, Identity, ZeroMatrix,
+         Inverse, trace, Transpose, det)
+ from sympy.matrices import (
+     Matrix, ImmutableMatrix, ImmutableSparseMatrix)
+@@ -222,3 +222,17 @@ def test_block_collapse_type():
+     assert block_collapse(Transpose(bm1)).__class__ == BlockDiagMatrix
+     assert bc_transpose(Transpose(bm1)).__class__ == BlockDiagMatrix
+     assert bc_inverse(Inverse(bm1)).__class__ == BlockDiagMatrix
++def test_issue_17633():
++    a = MatrixSymbol("a", 2, 2)
++    z = ZeroMatrix(2, 2)
++    b = BlockMatrix([[a, z], [z, z]])
++    # block_collapse of b*b*b should work and preserve ZeroMatrix blocks
++    result = block_collapse(b * b * b)
++    assert result.blocks[0, 1] == ZeroMatrix(2, 2)
++    assert result.blocks[1, 0] == ZeroMatrix(2, 2)
++    assert result.blocks[1, 1] == ZeroMatrix(2, 2)
++    # _blockmul should also work twice
++    result = b._blockmul(b)._blockmul(b)
++    assert result.blocks[0, 1] == ZeroMatrix(2, 2)
++    assert result.blocks[1, 0] == ZeroMatrix(2, 2)
++    assert result.blocks[1, 1] == ZeroMatrix(2, 2)

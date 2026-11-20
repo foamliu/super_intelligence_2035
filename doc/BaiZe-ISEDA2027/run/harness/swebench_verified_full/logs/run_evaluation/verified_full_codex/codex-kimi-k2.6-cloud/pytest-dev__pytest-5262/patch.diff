@@ -1,0 +1,39 @@
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7f..4587155 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -447,6 +447,10 @@ class EncodedFile(object):
+         """Ensure that file.name is a string."""
+         return repr(self.buffer)
+ 
++    @property
++    def mode(self):
++        return getattr(self.buffer, "mode", "").replace("b", "")
++
+     def __getattr__(self, name):
+         return getattr(object.__getattribute__(self, "buffer"), name)
+ 
+diff --git a/test_encodedfile_mode.py b/test_encodedfile_mode.py
+new file mode 100644
+index 0000000..d0d32a3
+--- /dev/null
++++ b/test_encodedfile_mode.py
+@@ -0,0 +1,18 @@
++from _pytest.capture import EncodedFile
++import tempfile
++
++f = tempfile.TemporaryFile(mode='w+b')
++try:
++    ef = EncodedFile(f, 'utf-8')
++    assert 'b' not in ef.mode, "mode should not contain 'b', got %r" % ef.mode
++    # Ensure write with str works
++    ef.write('hello')
++    # Ensure write with bytes fails on py3
++    try:
++        ef.write(b'world')
++        print('ERROR: bytes write should fail')
++    except TypeError:
++        pass
++    print('OK')
++finally:
++    f.close()

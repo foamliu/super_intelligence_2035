@@ -1,0 +1,30 @@
+[R1307] start 17:32:13
+[R1307] === merge hermes predictions ===
+hermes: 132 patches merged, 132 eval IDs
+[R1307] === hermes eval START django__django-14170 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:26<00:00, 26.34s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.34s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.34s/it]
+[R1307] start 17:32:51
+[R1307] === merge hermes predictions ===
+hermes: 132 patches merged, 132 eval IDs
+[R1307] === hermes eval START django__django-14170 ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[R1307] === hermes eval DONE rc=0 ===
+[R1307] === regen eval summaries for hermes ===
+regen_eval_summaries: hermes
+  hermes: WROTE eval_hermes.json  n=132 resolved=103 failed=29 infra=0
+[R1307] ALL DONE 17:32:55

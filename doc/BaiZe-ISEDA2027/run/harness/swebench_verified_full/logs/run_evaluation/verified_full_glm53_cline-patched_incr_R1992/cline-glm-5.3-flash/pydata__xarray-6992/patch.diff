@@ -1,0 +1,64 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 36f523d..0c61773 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -37,6 +37,9 @@ Deprecations
+ Bug fixes
+ ~~~~~~~~~
+ 
++- Fix ``Dataset.reset_index`` (and ``DataArray.reset_index``) with ``drop=True``
++  leaving stale coordinate names in the dataset, which broke e.g. the
++  ``Dataset`` repr and ``len(ds.data_vars)`` (:issue:`6989`).
+ - Allow decoding of 0 sized datetimes(:issue:`1329`, :pull:`6882`)
+   By `Deepak Cherian <https://github.com/dcherian>`_.
+ - Make sure DataArray.name is always a string when used as label for plotting.
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index 620f32f..0b02774 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -4177,7 +4177,7 @@ class Dataset(
+         }
+         variables.update(new_variables)
+ 
+-        coord_names = set(new_variables) | self._coord_names
++        coord_names = self._coord_names - set(drop_variables) | set(new_variables)
+ 
+         return self._replace(variables, coord_names=coord_names, indexes=indexes)
+ 
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index fc2806c..cb16f82 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3253,6 +3253,32 @@ class TestDataset:
+         with pytest.raises(ValueError, match=r".*not coordinates with an index"):
+             ds.reset_index("y")
+ 
++    def test_reset_index_drop(self) -> None:
++        ds = create_test_multiindex()
++        mindex = ds["x"].to_index()
++        indexes = [mindex.get_level_values(n) for n in mindex.names]
++        coords = {idx.name: ("x", idx) for idx in indexes}
++        expected = Dataset({}, coords=coords)
++
++        obj = ds.reset_index("x", drop=True)
++        assert_identical(obj, expected, check_default_indexes=False)
++        assert len(obj.xindexes) == 0
++
++        # regression test for GH6989: dropping an index should not leave its
++        # name in Dataset._coord_names (more coord names than variables broke
++        # e.g. the repr and len(ds.data_vars))
++        ds = Dataset(coords={"a": ("x", [1, 2, 3]), "b": ("x", ["a", "b", "c"])})
++        obj = ds.set_index(z=["a", "b"]).reset_index("z", drop=True)
++        assert len(obj.data_vars) == 0
++        assert list(obj.coords) == ["a", "b"]
++        repr(obj)  # should not raise
++
++        # dropping a single level of a multi-index
++        obj = ds.set_index(z=["a", "b"]).reset_index("a", drop=True)
++        assert len(obj.data_vars) == 0
++        assert set(obj.coords) == {"z", "b"}
++        repr(obj)  # should not raise
++
+     def test_reset_index_keep_attrs(self) -> None:
+         coord_1 = DataArray([1, 2], dims=["coord_1"], attrs={"attrs": True})
+         ds = Dataset({}, {"coord_1": coord_1})

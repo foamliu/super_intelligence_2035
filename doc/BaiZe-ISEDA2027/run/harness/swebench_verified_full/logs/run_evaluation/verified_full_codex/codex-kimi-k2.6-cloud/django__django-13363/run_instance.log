@@ -1,0 +1,140 @@
+2026-10-30 17:40:45,306 - INFO - Creating container for django__django-13363...
+2026-10-30 17:40:45,345 - INFO - Container for django__django-13363 created: d8eee81f8ad7a232484cf005067ecd1c2ec5373b49c9f76fa7988c47e1ec43c5
+2026-10-30 17:40:57,412 - INFO - Container for django__django-13363 started: d8eee81f8ad7a232484cf005067ecd1c2ec5373b49c9f76fa7988c47e1ec43c5
+2026-10-30 17:40:57,416 - INFO - Intermediate patch for django__django-13363 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13363/patch.diff, now applying to container...
+2026-10-30 17:40:58,079 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/functions/datetime.py...
+Checking patch tests/db_functions/datetime/test_extract_trunc.py...
+Applied patch django/db/models/functions/datetime.py cleanly.
+Applied patch tests/db_functions/datetime/test_extract_trunc.py cleanly.
+
+2026-10-30 17:40:59,150 - INFO - Git diff before:
+diff --git a/django/db/models/functions/datetime.py b/django/db/models/functions/datetime.py
+index b6594b043b..6828980733 100644
+--- a/django/db/models/functions/datetime.py
++++ b/django/db/models/functions/datetime.py
+@@ -292,7 +292,7 @@ class TruncDate(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to date rather than truncate to date.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
++        tzname = self.get_tzname()
+         sql = connection.ops.datetime_cast_date_sql(lhs, tzname)
+         return sql, lhs_params
+ 
+@@ -305,7 +305,7 @@ class TruncTime(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to time rather than truncate to time.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
++        tzname = self.get_tzname()
+         sql = connection.ops.datetime_cast_time_sql(lhs, tzname)
+         return sql, lhs_params
+ 
+diff --git a/tests/db_functions/datetime/test_extract_trunc.py b/tests/db_functions/datetime/test_extract_trunc.py
+index f8ebb81cb5..b440297f2a 100644
+--- a/tests/db_functions/datetime/test_extract_trunc.py
++++ b/tests/db_functions/datetime/test_extract_trunc.py
+@@ -689,9 +689,6 @@ class DateFunctionTests(TestCase):
+         test_datetime_kind('minute')
+         test_datetime_kind('second')
+ 
+-        qs = DTModel.objects.filter(start_datetime__date=Trunc('start_datetime', 'day', output_field=DateField()))
+-        self.assertEqual(qs.count(), 2)
+-
+     def test_trunc_none(self):
+         self.create_model(None, None)
+         for t in (Trunc('start_datetime', 'year'), Trunc('start_date', 'year'), Trunc('start_time', 'hour')):
+@@ -883,6 +880,7 @@ class DateFunctionTests(TestCase):
+         self.create_model(None, None)
+         self.assertIsNone(DTModel.objects.annotate(truncated=TruncTime('start_datetime')).first().truncated)
+ 
++
+     def test_trunc_day_func(self):
+         start_datetime = datetime(2015, 6, 15, 14, 30, 50, 321)
+         end_datetime = truncate_to(datetime(2016, 6, 15, 14, 10, 50, 123), 'day')
+@@ -1224,5 +1222,51 @@ class DateFunctionWithTimeZoneTests(DateFunctionTests):
+         test_datetime_kind('minute')
+         test_datetime_kind('second')
+ 
++
++    def test_trunc_date_func_with_timezone(self):
++        """
++        TruncDate should support the tzinfo parameter.
++        """
++        start_datetime = datetime(2015, 6, 15, 23, 30, 50, 321)
++        end_datetime = datetime(2015, 6, 15, 0, 30, 50, 321)
++        start_datetime = timezone.make_aware(start_datetime, is_dst=False)
++        end_datetime = timezone.make_aware(end_datetime, is_dst=False)
++        self.create_model(start_datetime, end_datetime)
++        self.create_model(end_datetime, start_datetime)
++
++        melb = pytz.timezone('Australia/Melbourne')
++        self.assertQuerysetEqual(
++            DTModel.objects.annotate(
++                extracted=TruncDate('start_datetime', tzinfo=melb)
++            ).order_by('start_datetime'),
++            [
++                (end_datetime, end_datetime.astimezone(melb).date()),
++                (start_datetime, start_datetime.astimezone(melb).date()),
++            ],
++            lambda m: (m.start_datetime, m.extracted)
++        )
++
++    def test_trunc_time_func_with_timezone(self):
++        """
++        TruncTime should support the tzinfo parameter.
++        """
++        start_datetime = datetime(2015, 6, 15, 23, 30, 50, 321)
++        end_datetime = datetime(2015, 6, 15, 0, 30, 50, 321)
++        start_datetime = timezone.make_aware(start_datetime, is_dst=False)
++        end_datetime = timezone.make_aware(end_datetime, is_dst=False)
++        self.create_model(start_datetime, end_datetime)
++        self.create_model(end_datetime, start_datetime)
++
++        melb = pytz.timezone('Australia/Melbourne')
++        self.assertQuerysetEqual(
++            DTModel.objects.annotate(
++                extracted=TruncTime('start_datetime', tzinfo=melb)
++            ).order_by('start_datetime'),
++            [
++                (end_datetime, end_datetime.astimezone(melb).time()),
++                (start_datetime, start_datetime.astimezone(melb).time()),
++            ],
++            lambda m: (m.start_datetime, m.extracted)
++        )
+         qs = DTModel.objects.filter(start_datetime__date=Trunc('start_datetime', 'day', output_field=DateField()))
+         self.assertEqual(qs.count(), 2)
+2026-10-30 17:40:59,159 - INFO - Eval script for django__django-13363 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13363/eval.sh; copying to container...
+2026-10-30 17:41:05,991 - INFO - Test runtime: 6.39 seconds
+2026-10-30 17:41:05,998 - INFO - Test output for django__django-13363 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13363/test_output.txt
+2026-10-30 17:41:06,109 - INFO - Git diff after:
+diff --git a/django/db/models/functions/datetime.py b/django/db/models/functions/datetime.py
+index b6594b043b..6828980733 100644
+--- a/django/db/models/functions/datetime.py
++++ b/django/db/models/functions/datetime.py
+@@ -292,7 +292,7 @@ class TruncDate(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to date rather than truncate to date.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
++        tzname = self.get_tzname()
+         sql = connection.ops.datetime_cast_date_sql(lhs, tzname)
+         return sql, lhs_params
+ 
+@@ -305,7 +305,7 @@ class TruncTime(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to time rather than truncate to time.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
++        tzname = self.get_tzname()
+         sql = connection.ops.datetime_cast_time_sql(lhs, tzname)
+         return sql, lhs_params
+2026-10-30 17:41:06,109 - INFO - Git diff changed after running eval script
+2026-10-30 17:41:06,109 - INFO - Grading answer for django__django-13363...
+2026-10-30 17:41:06,116 - INFO - report: {'django__django-13363': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_trunc_timezone_applied_before_truncation (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_extract_day_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_duration_unsupported_lookups (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_duration_without_native_duration_field (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_hour_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_iso_weekday_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_iso_year_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_iso_year_func_boundaries (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_minute_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_month_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_none (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_quarter_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_quarter_func_boundaries (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_second_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_week_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_week_func_boundaries (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_weekday_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_year_exact_lookup (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_year_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_year_greaterthan_lookup (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_year_lessthan_lookup (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_date_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_date_none (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_day_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_hour_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_minute_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_month_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_none (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_quarter_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_second_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_subquery_with_parameters (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_time_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_time_none (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_week_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_trunc_year_func (db_functions.datetime.test_extract_trunc.DateFunctionTests)', 'test_extract_day_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_duration_unsupported_lookups (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_duration_without_native_duration_field (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_func_explicit_timezone_priority (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_func_with_timezone (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_hour_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_iso_weekday_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_iso_year_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_iso_year_func_boundaries (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_minute_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_month_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_none (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_quarter_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_quarter_func_boundaries (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_second_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_week_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_week_func_boundaries (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_weekday_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_year_exact_lookup (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_year_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_year_greaterthan_lookup (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_extract_year_lessthan_lookup (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_ambiguous_and_invalid_times (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_date_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_date_none (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_day_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_func_with_timezone (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_hour_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_minute_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_month_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_none (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_quarter_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_second_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_subquery_with_parameters (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_time_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_time_none (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_week_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)', 'test_trunc_year_func (db_functions.datetime.test_extract_trunc.DateFunctionWithTimeZoneTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13363: resolved: True
+2026-10-30 17:41:06,121 - INFO - Attempting to stop container sweb.eval.django__django-13363.verified_full_codex...
+2026-10-30 17:41:21,769 - INFO - Container sweb.eval.django__django-13363.verified_full_codex stopped successfully.
+2026-10-30 17:41:21,769 - INFO - Attempting to remove container sweb.eval.django__django-13363.verified_full_codex...
+2026-10-30 17:41:21,873 - INFO - Container sweb.eval.django__django-13363.verified_full_codex removed successfully.

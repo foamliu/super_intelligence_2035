@@ -1,0 +1,71 @@
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index 9b54afc..1083e82 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -166,6 +166,7 @@ class CheckExternalLinksBuilder(Builder):
+                     # Read the whole document and see if #anchor exists
+                     response = requests.get(req_url, stream=True, config=self.app.config,
+                                             auth=auth_info, **kwargs)
++                    response.raise_for_status()
+                     found = check_anchor(response, unquote(anchor))
+ 
+                     if not found:
+diff --git a/tests/roots/test-linkcheck-anchor-for-http-status/conf.py b/tests/roots/test-linkcheck-anchor-for-http-status/conf.py
+new file mode 100644
+index 0000000..2a35d69
+--- /dev/null
++++ b/tests/roots/test-linkcheck-anchor-for-http-status/conf.py
+@@ -0,0 +1 @@
++master_doc = 'index'
+diff --git a/tests/roots/test-linkcheck-anchor-for-http-status/index.rst b/tests/roots/test-linkcheck-anchor-for-http-status/index.rst
+new file mode 100644
+index 0000000..82ee562
+--- /dev/null
++++ b/tests/roots/test-linkcheck-anchor-for-http-status/index.rst
+@@ -0,0 +1,4 @@
++Test
++====
++
++`foo <https://example.com/notfound.txt#anchor>`_
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index 7d85f10..b82981f 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -160,3 +160,37 @@ def test_linkcheck_request_headers(app, status, warning):
+                 assert headers["X-Secret"] == "open sesami"
+             else:
+                 assert headers["Accept"] == "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
++
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-anchor-for-http-status', freshenv=True)
++def test_linkcheck_anchor_http_status(app, status, warning):
++    import requests as real_requests
++
++    class MockResponse:
++        status_code = 404
++        url = 'https://example.com/notfound.txt'
++        history = []
++
++        def iter_content(self, chunk_size=1, decode_unicode=False):
++            yield b'<html></html>'
++
++        def raise_for_status(self):
++            err = real_requests.exceptions.HTTPError(
++                '404 Client Error: Not Found for url: https://example.com/notfound.txt'
++            )
++            err.response = self
++            raise err
++
++    def mock_get(url, **kwargs):
++        return MockResponse()
++
++    with mock.patch('sphinx.builders.linkcheck.requests.get', mock_get):
++        app.builder.build_all()
++
++    assert (app.outdir / 'output.txt').exists()
++    content = (app.outdir / 'output.txt').read_text()
++    print(content)
++
++    assert 'Anchor' not in content
++    assert '404 Client Error: Not Found for url: https://example.com/notfound.txt' in content

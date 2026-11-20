@@ -1,0 +1,38 @@
+[incr-eval 02:52:51] Starting incr_eval_all R2722
+[incr-eval 02:52:51] --- cline ---
+[incr-eval 02:52:51] cline: unevaluated real_patch=4 empty_patch=0
+[incr-eval 02:52:51] cline: merged 4 new patches -> predictions_cline-patched_new_R2722.json
+[incr-eval 02:52:51] cline: EVAL 4 instances -> run_id=verified_full_glm53_cline-patched_incr_R2722
+[incr-eval 02:56:25] cline: eval rc=0
+[incr-eval 02:56:25]   mwaskom__seaborn-3069: RESOLVED
+[incr-eval 02:56:25]   psf__requests-1142: RESOLVED
+[incr-eval 02:56:25]   psf__requests-1724: FAILED
+[incr-eval 02:56:25]   psf__requests-1766: FAILED
+[incr-eval 02:56:25] cline: cumulative n=416 resolved=283 failed=133 infra=0 empty_patch=36 total_pred=414 -> eval_glm53_cline-patched.json
+[incr-eval 02:56:25] --- codex ---
+[incr-eval 02:56:25] codex: unevaluated real_patch=1 empty_patch=1
+[incr-eval 02:56:25] codex: merged 1 new patches -> predictions_codex_new_R2722.json
+[incr-eval 02:56:25] codex: EVAL 1 instances -> run_id=verified_full_glm53_codex_incr_R2722
+[incr-eval 02:56:59] codex: eval rc=0
+[incr-eval 02:56:59]   django__django-15499: RESOLVED
+[incr-eval 02:56:59]   django__django-15503: EMPTY PATCH -> failed
+[incr-eval 02:56:59] codex: cumulative n=271 resolved=103 failed=168 infra=0 empty_patch=112 total_pred=264 -> eval_glm53_codex.json
+[incr-eval 02:56:59] --- cc ---
+[incr-eval 02:56:59] cc: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:56:59] cc: nothing to do
+[incr-eval 02:56:59] --- deepseek ---
+[incr-eval 02:56:59] deepseek: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:56:59] deepseek: nothing to do
+[incr-eval 02:56:59] --- pi ---
+[incr-eval 02:56:59] pi: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:56:59] pi: nothing to do
+[incr-eval 02:56:59] --- opencode ---
+[incr-eval 02:56:59] opencode: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:56:59] opencode: nothing to do
+[incr-eval 02:56:59] --- hermes ---
+[incr-eval 02:56:59] hermes: unevaluated real_patch=0 empty_patch=0
+[incr-eval 02:56:59] hermes: nothing to do
+[incr-eval 02:56:59] === SUMMARY ===
+[incr-eval 02:56:59] cline: resolved=283 failed=133 infra=0 n=416 (new_real=4 new_empty=0)
+[incr-eval 02:56:59] codex: resolved=103 failed=168 infra=0 n=271 (new_real=1 new_empty=1)
+[incr-eval 02:56:59] DONE

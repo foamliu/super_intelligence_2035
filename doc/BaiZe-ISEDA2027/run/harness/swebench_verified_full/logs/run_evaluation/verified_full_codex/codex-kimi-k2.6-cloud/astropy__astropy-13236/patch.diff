@@ -1,0 +1,43 @@
+diff --git a/astropy/table/table.py b/astropy/table/table.py
+index 5afe212..0352bfa 100644
+--- a/astropy/table/table.py
++++ b/astropy/table/table.py
+@@ -1243,6 +1243,13 @@ class Table:
+         # mixin class
+         if (not isinstance(data, Column) and not data_is_mixin
+                 and isinstance(data, np.ndarray) and len(data.dtype) > 1):
++            warnings.warn(
++                'In a future version, a structured array will be added as a '
++                'Column rather than being converted to an NdarrayMixin. '
++                'To keep the current behavior, wrap the array in '
++                'astropy.table.NdarrayMixin before adding it to the table.',
++                FutureWarning,
++                stacklevel=3)
+             data = data.view(NdarrayMixin)
+             data_is_mixin = True
+ 
+diff --git a/astropy/table/tests/test_mixin.py b/astropy/table/tests/test_mixin.py
+index 2fdcd20..942ac98 100644
+--- a/astropy/table/tests/test_mixin.py
++++ b/astropy/table/tests/test_mixin.py
+@@ -712,10 +712,16 @@ def test_ndarray_mixin():
+     d = np.arange(8, dtype='i8').reshape(4, 2).view(NdarrayMixin)
+ 
+     # Add one during initialization and the next as a new column.
+-    t = Table([a], names=['a'])
+-    t['b'] = b
+-    t['c'] = c
+-    t['d'] = d
++    with pytest.warns(FutureWarning,
++                      match='In a future version, a structured array will be added as a Column'):
++        t = Table([a], names=['a'])
++    with pytest.warns(FutureWarning,
++                      match='In a future version, a structured array will be added as a Column'):
++        t['b'] = b
++    with pytest.warns(FutureWarning,
++                      match='In a future version, a structured array will be added as a Column'):
++        t['c'] = c
++    t['d'] = d  # Already NdarrayMixin, no warning
+ 
+     assert isinstance(t['a'], NdarrayMixin)
+ 

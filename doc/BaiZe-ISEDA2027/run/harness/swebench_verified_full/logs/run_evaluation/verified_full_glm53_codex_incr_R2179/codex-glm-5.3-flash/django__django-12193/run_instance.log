@@ -1,0 +1,98 @@
+2026-11-11 16:07:16,264 - INFO - Creating container for django__django-12193...
+2026-11-11 16:07:17,271 - INFO - Removed existing container sweb.eval.django__django-12193.verified_full_glm53_codex_incr_R2179
+2026-11-11 16:07:17,291 - INFO - Container for django__django-12193 created: d106c7b7d3cc3c2823a933909239858ebc9804a680412b6389654b911ddcba42
+2026-11-11 16:07:18,021 - INFO - Container for django__django-12193 started: d106c7b7d3cc3c2823a933909239858ebc9804a680412b6389654b911ddcba42
+2026-11-11 16:07:18,022 - INFO - Intermediate patch for django__django-12193 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2179/codex-glm-5.3-flash/django__django-12193/patch.diff, now applying to container...
+2026-11-11 16:07:18,169 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/widgets.py...
+Checking patch tests/forms_tests/widget_tests/test_checkboxinput.py...
+Checking patch tests/postgres_tests/test_array.py...
+Applied patch django/forms/widgets.py cleanly.
+Applied patch tests/forms_tests/widget_tests/test_checkboxinput.py cleanly.
+Applied patch tests/postgres_tests/test_array.py cleanly.
+
+2026-11-11 16:07:19,038 - INFO - Git diff before:
+diff --git a/django/forms/widgets.py b/django/forms/widgets.py
+index 6fe220bea7..0b25787ebc 100644
+--- a/django/forms/widgets.py
++++ b/django/forms/widgets.py
+@@ -522,8 +522,7 @@ class CheckboxInput(Input):
+ 
+     def get_context(self, name, value, attrs):
+         if self.check_test(value):
+-            if attrs is None:
+-                attrs = {}
++            attrs = {} if attrs is None else attrs.copy()
+             attrs['checked'] = True
+         return super().get_context(name, value, attrs)
+ 
+diff --git a/tests/forms_tests/widget_tests/test_checkboxinput.py b/tests/forms_tests/widget_tests/test_checkboxinput.py
+index 6483b7f211..8b1305b4c3 100644
+--- a/tests/forms_tests/widget_tests/test_checkboxinput.py
++++ b/tests/forms_tests/widget_tests/test_checkboxinput.py
+@@ -21,6 +21,14 @@ class CheckboxInputTest(WidgetTest):
+             html='<input checked type="checkbox" name="is_cool">'
+         )
+ 
++    def test_render_true_does_not_mutate_attrs(self):
++        attrs = {'class': 'foo'}
++        self.check_html(
++            self.widget, 'is_cool', True, attrs=attrs,
++            html='<input checked class="foo" type="checkbox" name="is_cool">',
++        )
++        self.assertEqual(attrs, {'class': 'foo'})
++
+     def test_render_value(self):
+         """
+         Using any value that's not in ('', None, False, True) will check the
+diff --git a/tests/postgres_tests/test_array.py b/tests/postgres_tests/test_array.py
+index 481d93f830..251d234221 100644
+--- a/tests/postgres_tests/test_array.py
++++ b/tests/postgres_tests/test_array.py
+@@ -1001,6 +1001,21 @@ class TestSplitFormField(PostgreSQLSimpleTestCase):
+             </tr>
+         ''')
+ 
++    def test_rendering_boolean(self):
++        class SplitForm(forms.Form):
++            array = SplitArrayField(forms.BooleanField(required=False), size=3)
++
++        self.assertHTMLEqual(str(SplitForm(initial={'array': [True, False, True]})), '''
++            <tr>
++                <th><label for="id_array_0">Array:</label></th>
++                <td>
++                    <input checked id="id_array_0" name="array_0" type="checkbox">
++                    <input id="id_array_1" name="array_1" type="checkbox">
++                    <input checked id="id_array_2" name="array_2" type="checkbox">
++                </td>
++            </tr>
++        ''')
++
+     def test_invalid_char_length(self):
+         field = SplitArrayField(forms.CharField(max_length=2), size=3)
+         with self.assertRaises(exceptions.ValidationError) as cm:
+2026-11-11 16:07:19,041 - INFO - Eval script for django__django-12193 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2179/codex-glm-5.3-flash/django__django-12193/eval.sh; copying to container...
+2026-11-11 16:07:25,639 - INFO - Test runtime: 6.53 seconds
+2026-11-11 16:07:25,641 - INFO - Test output for django__django-12193 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2179/codex-glm-5.3-flash/django__django-12193/test_output.txt
+2026-11-11 16:07:25,743 - INFO - Git diff after:
+diff --git a/django/forms/widgets.py b/django/forms/widgets.py
+index 6fe220bea7..0b25787ebc 100644
+--- a/django/forms/widgets.py
++++ b/django/forms/widgets.py
+@@ -522,8 +522,7 @@ class CheckboxInput(Input):
+ 
+     def get_context(self, name, value, attrs):
+         if self.check_test(value):
+-            if attrs is None:
+-                attrs = {}
++            attrs = {} if attrs is None else attrs.copy()
+             attrs['checked'] = True
+         return super().get_context(name, value, attrs)
+2026-11-11 16:07:25,743 - INFO - Git diff changed after running eval script
+2026-11-11 16:07:25,744 - INFO - Grading answer for django__django-12193...
+2026-11-11 16:07:25,750 - INFO - report: {'django__django-12193': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_get_context_does_not_mutate_attrs (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_render_check_exception (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_check_test (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_empty (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_false (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_int (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_none (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_true (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_render_value (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_value_from_datadict (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_value_from_datadict_string_int (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)', 'test_value_omitted_from_data (forms_tests.widget_tests.test_checkboxinput.CheckboxInputTest)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12193: resolved: True
+2026-11-11 16:07:25,752 - INFO - Attempting to stop container sweb.eval.django__django-12193.verified_full_glm53_codex_incr_R2179...
+2026-11-11 16:07:41,874 - INFO - Container sweb.eval.django__django-12193.verified_full_glm53_codex_incr_R2179 stopped successfully.
+2026-11-11 16:07:41,874 - INFO - Attempting to remove container sweb.eval.django__django-12193.verified_full_glm53_codex_incr_R2179...
+2026-11-11 16:07:41,934 - INFO - Container sweb.eval.django__django-12193.verified_full_glm53_codex_incr_R2179 removed successfully.

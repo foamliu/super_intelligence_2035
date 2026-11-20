@@ -1,0 +1,47 @@
+{
+    "id": "8dfa0d08-6ca2-4cf5-81fb-66a900c76820",
+    "started_at": "2026-10-19T13:25:41.353685",
+    "updated_at": "2026-10-19T06:19:43.748104Z",
+    "finished_at": null,
+    "n_total_trials": 5,
+    "stats": {
+        "n_completed_trials": 3,
+        "n_errored_trials": 1,
+        "n_running_trials": 0,
+        "n_pending_trials": 2,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "opencode__tb_pilot_dataset_3AvdVI": {
+                "n_trials": 3,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.3333333333333333
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "bn-fit-modify__PBqH39a"
+                        ],
+                        "0.0": [
+                            "break-filter-js-from-html__T3uMMm3",
+                            "chess-best-move__6q8f5Gq"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "AgentTimeoutError": [
+                        "break-filter-js-from-html__T3uMMm3"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

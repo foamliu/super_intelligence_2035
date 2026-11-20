@@ -1,0 +1,229 @@
+2026-10-30 16:12:30,899 - INFO - Creating container for django__django-11555...
+2026-10-30 16:12:34,375 - INFO - Removed existing container sweb.eval.django__django-11555.verified_full_cline-patched
+2026-10-30 16:12:34,392 - INFO - Container for django__django-11555 created: e54cc44585dd8eabc533a813a6db584ccefe2af38989d4c7f39e1130fabbe6e3
+2026-10-30 16:12:41,849 - INFO - Container for django__django-11555 started: e54cc44585dd8eabc533a813a6db584ccefe2af38989d4c7f39e1130fabbe6e3
+2026-10-30 16:12:41,850 - INFO - Intermediate patch for django__django-11555 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-11555/patch.diff, now applying to container...
+2026-10-30 16:12:42,016 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/ordering/models.py...
+/tmp/patch.diff:81: new blank line at EOF.
++
+Checking patch tests/ordering/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/ordering/models.py cleanly.
+Applied patch tests/ordering/tests.py cleanly.
+warning: 1 line adds whitespace errors.
+
+2026-10-30 16:12:43,345 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index eaccc96d7d..76c92ac0b9 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -5,7 +5,7 @@ from itertools import chain
+ 
+ from django.core.exceptions import EmptyResultSet, FieldError
+ from django.db.models.constants import LOOKUP_SEP
+-from django.db.models.expressions import OrderBy, Random, RawSQL, Ref, Value
++from django.db.models.expressions import F, OrderBy, OuterRef, Random, RawSQL, Ref, Value
+ from django.db.models.functions import Cast
+ from django.db.models.query_utils import QueryWrapper, select_related_descend
+ from django.db.models.sql.constants import (
+@@ -697,6 +697,28 @@ class SQLCompiler:
+                     params.append(p)
+         return result, params
+ 
++    def _resolve_ordering_expression(self, expression, opts, alias):
++        if isinstance(expression, F) and not isinstance(expression, OuterRef):
++            field_list = expression.name.split(LOOKUP_SEP)
++            join_info = self.query.setup_joins(field_list, opts, alias)
++            targets, final_alias, joins = self.query.trim_joins(
++                join_info.targets, join_info.joins, join_info.path,
++            )
++            if len(targets) > 1:
++                raise FieldError(
++                    "Referencing multicolumn fields with F() objects "
++                    "isn't supported"
++                )
++            return join_info.transform_function(targets[0], final_alias)
++        if hasattr(expression, 'get_source_expressions'):
++            expression = expression.copy()
++            expression.set_source_expressions([
++                self._resolve_ordering_expression(expr, opts, alias)
++                if expr is not None else None
++                for expr in expression.get_source_expressions()
++            ])
++        return expression
++
+     def find_ordering_name(self, name, opts, alias=None, default_order='ASC',
+                            already_seen=None):
+         """
+@@ -704,6 +726,17 @@ class SQLCompiler:
+         not be) and column name for ordering by the given 'name' parameter.
+         The 'name' is of the form 'field1__field2__...__fieldN'.
+         """
++        if hasattr(name, 'resolve_expression'):
++            if isinstance(name, Value):
++                # output_field must be resolved for constants.
++                name = Cast(name, name.output_field)
++            if not isinstance(name, OrderBy):
++                name = name.asc()
++            name = self._resolve_ordering_expression(name, opts, alias)
++            if not self.query.standard_ordering:
++                name = name.copy()
++                name.reverse_ordering()
++            return [(name, False)]
+         name, order = get_order_dir(name, default_order)
+         descending = order == 'DESC'
+         pieces = name.split(LOOKUP_SEP)
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+index 8b71983c44..fe1b896f5b 100644
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -59,3 +59,16 @@ class Reference(models.Model):
+ 
+     class Meta:
+         ordering = ('article',)
++
++
++class OrderedByExpressionAuthor(models.Model):
++    name = models.CharField(max_length=63, null=True, blank=True)
++
++    class Meta:
++        ordering = (OrderBy(models.F('name')),)
++
++
++class OrderedByExpressionArticle(models.Model):
++    author = models.ForeignKey(OrderedByExpressionAuthor, models.SET_NULL, null=True)
++    headline = models.CharField(max_length=100)
++
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+index 18c32d6d5f..830c3882b1 100644
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -9,7 +9,10 @@ from django.db.models.functions import Upper
+ from django.test import TestCase
+ from django.utils.deprecation import RemovedInDjango31Warning
+ 
+-from .models import Article, Author, OrderedByFArticle, Reference
++from .models import (
++    Article, Author, OrderedByExpressionArticle, OrderedByExpressionAuthor,
++    OrderedByFArticle, Reference,
++)
+ 
+ 
+ class OrderingTests(TestCase):
+@@ -462,6 +465,42 @@ class OrderingTests(TestCase):
+             attrgetter('headline')
+         )
+ 
++    def test_related_ordering_by_expression(self):
++        """
++        Ordering by a relation uses the related model's Meta.ordering even
++        when it contains expressions.
++        """
++        author_1 = OrderedByExpressionAuthor.objects.create(name='Name 1')
++        author_2 = OrderedByExpressionAuthor.objects.create(name='Name 2')
++        article_1 = OrderedByExpressionArticle.objects.create(
++            headline='Article 1', author=author_1,
++        )
++        article_2 = OrderedByExpressionArticle.objects.create(
++            headline='Article 2', author=author_2,
++        )
++        self.assertSequenceEqual(
++            OrderedByExpressionArticle.objects.order_by('author'),
++            [article_1, article_2],
++        )
++
++    def test_related_ordering_by_expression_reverse(self):
++        """
++        Ordering by a relation uses the related model's Meta.ordering even
++        when it contains expressions and the queryset is reversed.
++        """
++        author_1 = OrderedByExpressionAuthor.objects.create(name='Name 1')
++        author_2 = OrderedByExpressionAuthor.objects.create(name='Name 2')
++        article_1 = OrderedByExpressionArticle.objects.create(
++            headline='Article 1', author=author_1,
++        )
++        article_2 = OrderedByExpressionArticle.objects.create(
++            headline='Article 2', author=author_2,
++        )
++        self.assertSequenceEqual(
++            OrderedByExpressionArticle.objects.order_by('author').reverse(),
++            [article_2, article_1],
++        )
++
+     def test_deprecated_values_annotate(self):
+         msg = (
+             "Article QuerySet won't use Meta.ordering in Django 3.1. Add "
+2026-10-30 16:12:43,347 - INFO - Eval script for django__django-11555 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-11555/eval.sh; copying to container...
+2026-10-30 16:12:49,897 - INFO - Test runtime: 6.46 seconds
+2026-10-30 16:12:49,899 - INFO - Test output for django__django-11555 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-11555/test_output.txt
+2026-10-30 16:12:49,959 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index eaccc96d7d..76c92ac0b9 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -5,7 +5,7 @@ from itertools import chain
+ 
+ from django.core.exceptions import EmptyResultSet, FieldError
+ from django.db.models.constants import LOOKUP_SEP
+-from django.db.models.expressions import OrderBy, Random, RawSQL, Ref, Value
++from django.db.models.expressions import F, OrderBy, OuterRef, Random, RawSQL, Ref, Value
+ from django.db.models.functions import Cast
+ from django.db.models.query_utils import QueryWrapper, select_related_descend
+ from django.db.models.sql.constants import (
+@@ -697,6 +697,28 @@ class SQLCompiler:
+                     params.append(p)
+         return result, params
+ 
++    def _resolve_ordering_expression(self, expression, opts, alias):
++        if isinstance(expression, F) and not isinstance(expression, OuterRef):
++            field_list = expression.name.split(LOOKUP_SEP)
++            join_info = self.query.setup_joins(field_list, opts, alias)
++            targets, final_alias, joins = self.query.trim_joins(
++                join_info.targets, join_info.joins, join_info.path,
++            )
++            if len(targets) > 1:
++                raise FieldError(
++                    "Referencing multicolumn fields with F() objects "
++                    "isn't supported"
++                )
++            return join_info.transform_function(targets[0], final_alias)
++        if hasattr(expression, 'get_source_expressions'):
++            expression = expression.copy()
++            expression.set_source_expressions([
++                self._resolve_ordering_expression(expr, opts, alias)
++                if expr is not None else None
++                for expr in expression.get_source_expressions()
++            ])
++        return expression
++
+     def find_ordering_name(self, name, opts, alias=None, default_order='ASC',
+                            already_seen=None):
+         """
+@@ -704,6 +726,17 @@ class SQLCompiler:
+         not be) and column name for ordering by the given 'name' parameter.
+         The 'name' is of the form 'field1__field2__...__fieldN'.
+         """
++        if hasattr(name, 'resolve_expression'):
++            if isinstance(name, Value):
++                # output_field must be resolved for constants.
++                name = Cast(name, name.output_field)
++            if not isinstance(name, OrderBy):
++                name = name.asc()
++            name = self._resolve_ordering_expression(name, opts, alias)
++            if not self.query.standard_ordering:
++                name = name.copy()
++                name.reverse_ordering()
++            return [(name, False)]
+         name, order = get_order_dir(name, default_order)
+         descending = order == 'DESC'
+         pieces = name.split(LOOKUP_SEP)
+2026-10-30 16:12:49,959 - INFO - Git diff changed after running eval script
+2026-10-30 16:12:49,959 - INFO - Grading answer for django__django-11555...
+2026-10-30 16:12:49,960 - INFO - report: {'django__django-11555': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_default_ordering (ordering.tests.OrderingTests)', 'F expressions can be used in Meta.ordering.', 'test_default_ordering_override (ordering.tests.OrderingTests)', 'test_deprecated_values_annotate (ordering.tests.OrderingTests)', 'test_extra_ordering (ordering.tests.OrderingTests)', 'test_extra_ordering_quoting (ordering.tests.OrderingTests)', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_constant_value_without_output_field (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'test_order_by_f_expression_duplicates (ordering.tests.OrderingTests)', 'test_order_by_fk_attname (ordering.tests.OrderingTests)', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'test_order_by_override (ordering.tests.OrderingTests)', 'test_order_by_pk (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', 'test_random_ordering (ordering.tests.OrderingTests)', 'test_related_ordering_duplicate_table_reference (ordering.tests.OrderingTests)', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'test_reversed_ordering (ordering.tests.OrderingTests)', 'test_stop_slicing (ordering.tests.OrderingTests)', 'test_stop_start_slicing (ordering.tests.OrderingTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11555: resolved: True
+2026-10-30 16:12:49,962 - INFO - Attempting to stop container sweb.eval.django__django-11555.verified_full_cline-patched...
+2026-10-30 16:13:08,845 - INFO - Container sweb.eval.django__django-11555.verified_full_cline-patched stopped successfully.
+2026-10-30 16:13:08,846 - INFO - Attempting to remove container sweb.eval.django__django-11555.verified_full_cline-patched...
+2026-10-30 16:13:08,894 - INFO - Container sweb.eval.django__django-11555.verified_full_cline-patched removed successfully.

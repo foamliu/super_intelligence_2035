@@ -1,0 +1,28 @@
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index f541ec0a9..ced0419c6 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -213,8 +213,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+-        if node.elts:
++        if len(node.elts) > 1:
+             return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
++        elif node.elts:
++            return "(%s,)" % self.visit(node.elts[0])
+         else:
+             return "()"
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index e80062351..70fa7f686 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -54,6 +54,7 @@ from sphinx.pycode import ast
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+     ("(1, 2, 3)", "(1, 2, 3)"),                   # Tuple
++    ("(1,)", "(1,)"),                             # Tuple (single element)
+     ("()", "()"),                               # Tuple (empty)
+ ])
+ def test_unparse(source, expected):

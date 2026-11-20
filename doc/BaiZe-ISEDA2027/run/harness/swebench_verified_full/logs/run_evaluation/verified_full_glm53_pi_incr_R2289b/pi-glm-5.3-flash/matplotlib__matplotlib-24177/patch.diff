@@ -1,0 +1,44 @@
+diff --git a/lib/matplotlib/axes/_base.py b/lib/matplotlib/axes/_base.py
+index 4f805e017..d658bb46e 100644
+--- a/lib/matplotlib/axes/_base.py
++++ b/lib/matplotlib/axes/_base.py
+@@ -2433,8 +2433,11 @@ class _AxesBase(martist.Artist):
+         p = patch.get_path()
+         # Get all vertices on the path
+         # Loop through each segment to get extrema for Bezier curve sections
++        # Don't simplify the path; simplification is a lossy rendering
++        # optimization that can remove extreme vertices (e.g. the peak of a
++        # step histogram), which would result in incorrect data limits.
+         vertices = []
+-        for curve, code in p.iter_bezier():
++        for curve, code in p.iter_bezier(simplify=False):
+             # Get distance along the curve of any extrema
+             _, dzeros = curve.axis_aligned_extrema()
+             # Calculate vertices of start, end and any extrema in between
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index bd7940a59..5d28ed4f7 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -4234,6 +4234,22 @@ def test_hist_step_bottom_geometry():
+     assert_array_equal(polygon.get_xy(), xy)
+ 
+ 
++def test_hist_step_autoscale():
++    # gh 24087: The data limits of a step histogram used to be computed from
++    # the simplified path, which can drop the peak of the histogram (e.g.
++    # when density=True makes the step heights small), resulting in wrong
++    # autoscaling.
++    x = np.arange(100)
++    weights = np.ones(100)
++    weights[50] = 1.001  # peak barely above its neighbors
++    fig, ax = plt.subplots()
++    n, bins, patches = ax.hist(x, bins=np.arange(101), weights=weights,
++                               density=True, histtype='step')
++    assert ax.dataLim.y1 == pytest.approx(n.max())
++    fig.canvas.draw()  # run the requested autoscale
++    assert ax.get_ylim()[1] >= n.max()
++
++
+ def test_hist_stacked_stepfilled_geometry():
+     bins = [0, 1, 2, 3]
+     data_1 = [0, 0, 1, 1, 1, 2]

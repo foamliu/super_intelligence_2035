@@ -1,0 +1,45 @@
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bb..b23f4eb8 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -66,6 +66,13 @@ def split_super_sub(text):
+     if m:
+         name, sub = m.groups()
+         subs.insert(0, sub)
++    elif name and name[-1].isdigit():
++        i = len(name) - 1
++        while i >= 0 and name[i].isdigit():
++            i -= 1
++        if i >= 0 and name[:i+1].isalpha():
++            name, sub = name[:i+1], name[i+1:]
++            subs.insert(0, sub)
+ 
+     return name, supers, subs
+ 
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775..461c7f36 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -277,6 +277,8 @@ def test_upretty_multiindex():
+     assert upretty( Symbol('Y00') ) == 'Y₀₀'
+     assert upretty( Symbol('Y_00') ) == 'Y₀₀'
+     assert upretty( Symbol('F^+-') ) == 'F⁺⁻'
++    assert upretty( Symbol('ω0') ) == 'ω₀'
++    assert upretty( Symbol('Ω1') ) == 'Ω₁'
+ 
+ 
+ def test_upretty_sub_super():
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8..1cf77c1c 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -30,6 +30,9 @@ def test_super_sub():
+     assert split_super_sub("alpha_11") == ("alpha", [], ["11"])
+     assert split_super_sub("alpha_11_11") == ("alpha", [], ["11", "11"])
+     assert split_super_sub("") == ("", [], [])
++    assert split_super_sub("ω0") == ("ω", [], ["0"])
++    assert split_super_sub("ω12") == ("ω", [], ["12"])
++    assert split_super_sub("Ω0") == ("Ω", [], ["0"])
+ 
+ 
+ def test_requires_partial():

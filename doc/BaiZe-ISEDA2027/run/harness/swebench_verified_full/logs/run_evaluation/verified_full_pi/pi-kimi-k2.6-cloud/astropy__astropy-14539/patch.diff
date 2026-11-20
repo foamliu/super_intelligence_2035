@@ -1,0 +1,41 @@
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b..d3608ef0 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -1449,7 +1449,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif "P" in col.format or "Q" in col.format:
+                 diffs = (
+                     [
+                         idx
+diff --git a/astropy/io/fits/tests/test_diff.py b/astropy/io/fits/tests/test_diff.py
+index adfebe6a..db080c39 100644
+--- a/astropy/io/fits/tests/test_diff.py
++++ b/astropy/io/fits/tests/test_diff.py
+@@ -419,6 +419,23 @@ class TestDiff(FitsTestCase):
+         assert diff.diff_ratio == 0
+         assert diff.diff_total == 0
+ 
++    def test_identical_tables_with_q_format_vla(self):
++        # Regression test for https://github.com/astropy/astropy/issues/14612
++        c1 = Column("A", format="QD", array=[[0], [0, 0]])
++        ta = BinTableHDU.from_columns([c1])
++        tb = BinTableHDU.from_columns([c1.copy()])
++
++        diff = TableDataDiff(ta.data, tb.data)
++        assert diff.identical
++        assert diff.diff_total == 0
++
++        # Also test via FITSDiff on the same file
++        ta.writeto(self.temp("test_q_vla.fits"))
++        diff_file = FITSDiff(
++            self.temp("test_q_vla.fits"), self.temp("test_q_vla.fits")
++        )
++        assert diff_file.identical
++
+     def test_diff_empty_tables(self):
+         """
+         Regression test for https://aeon.stsci.edu/ssb/trac/pyfits/ticket/178

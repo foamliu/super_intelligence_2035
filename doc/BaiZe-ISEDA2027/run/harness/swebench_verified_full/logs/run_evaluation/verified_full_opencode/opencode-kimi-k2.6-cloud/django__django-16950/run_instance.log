@@ -1,0 +1,104 @@
+2026-10-30 15:44:08,876 - INFO - Creating container for django__django-16950...
+2026-10-30 15:44:08,898 - INFO - Container for django__django-16950 created: cdabc4d9f83a3bcd9d6296840ed1f0f5b6deb5a0b4427a42ad4180e85807c987
+2026-10-30 15:44:09,661 - INFO - Container for django__django-16950 started: cdabc4d9f83a3bcd9d6296840ed1f0f5b6deb5a0b4427a42ad4180e85807c987
+2026-10-30 15:44:09,664 - INFO - Intermediate patch for django__django-16950 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16950/patch.diff, now applying to container...
+2026-10-30 15:44:09,788 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/models.py...
+Checking patch tests/model_formsets/test_uuid.py...
+Applied patch django/forms/models.py cleanly.
+Applied patch tests/model_formsets/test_uuid.py cleanly.
+
+2026-10-30 15:44:11,235 - INFO - Git diff before:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..c16550abe2 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1178,7 +1178,10 @@ class BaseInlineFormSet(BaseModelFormSet):
+             else:
+                 to_field = self.instance._meta.pk
+             if to_field.has_default():
+-                setattr(self.instance, to_field.attname, None)
++                if to_field.primary_key:
++                    setattr(self.instance, to_field.attname, None)
++                else:
++                    kwargs["initial"] = None
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+ 
+@@ -1350,7 +1353,7 @@ class InlineForeignKeyField(Field):
+         self.parent_instance = parent_instance
+         self.pk_field = pk_field
+         self.to_field = to_field
+-        if self.parent_instance is not None:
++        if self.parent_instance is not None and "initial" not in kwargs:
+             if self.to_field:
+                 kwargs["initial"] = getattr(self.parent_instance, self.to_field)
+             else:
+diff --git a/tests/model_formsets/test_uuid.py b/tests/model_formsets/test_uuid.py
+index 2097bde82b..1bb7ce5469 100644
+--- a/tests/model_formsets/test_uuid.py
++++ b/tests/model_formsets/test_uuid.py
+@@ -91,3 +91,26 @@ class InlineFormsetTests(TestCase):
+         )
+         formset = FormSet()
+         self.assertIsNone(formset.forms[0].fields["parent"].initial)
++
++    def test_inlineformset_factory_alternate_key_relation_submit(self):
++        """
++        Non-pk UUID alternate keys should not be nulled out on submit,
++        as the inline needs the value to set its foreign key.
++        """
++        FormSet = inlineformset_factory(
++            ParentWithUUIDAlternateKey, ChildRelatedViaAK, fields="__all__"
++        )
++        formset = FormSet(
++            {
++                "childrelatedviaak_set-TOTAL_FORMS": 1,
++                "childrelatedviaak_set-INITIAL_FORMS": 0,
++                "childrelatedviaak_set-MAX_NUM_FORMS": "",
++                "childrelatedviaak_set-0-name": "Test Child",
++            }
++        )
++        self.assertTrue(formset.is_valid())
++        parent = formset.instance
++        parent.save()
++        instances = formset.save()
++        self.assertEqual(len(instances), 1)
++        self.assertEqual(instances[0].parent_id, parent.uuid)
+2026-10-30 15:44:11,238 - INFO - Eval script for django__django-16950 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16950/eval.sh; copying to container...
+2026-10-30 15:44:19,359 - INFO - Test runtime: 8.02 seconds
+2026-10-30 15:44:19,361 - INFO - Test output for django__django-16950 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16950/test_output.txt
+2026-10-30 15:44:19,431 - INFO - Git diff after:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..c16550abe2 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1178,7 +1178,10 @@ class BaseInlineFormSet(BaseModelFormSet):
+             else:
+                 to_field = self.instance._meta.pk
+             if to_field.has_default():
+-                setattr(self.instance, to_field.attname, None)
++                if to_field.primary_key:
++                    setattr(self.instance, to_field.attname, None)
++                else:
++                    kwargs["initial"] = None
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+ 
+@@ -1350,7 +1353,7 @@ class InlineForeignKeyField(Field):
+         self.parent_instance = parent_instance
+         self.pk_field = pk_field
+         self.to_field = to_field
+-        if self.parent_instance is not None:
++        if self.parent_instance is not None and "initial" not in kwargs:
+             if self.to_field:
+                 kwargs["initial"] = getattr(self.parent_instance, self.to_field)
+             else:
+2026-10-30 15:44:19,432 - INFO - Git diff changed after running eval script
+2026-10-30 15:44:19,432 - INFO - Grading answer for django__django-16950...
+2026-10-30 15:44:19,433 - INFO - report: {'django__django-16950': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ["If form data is provided, a parent's auto-generated alternate key is"], 'failure': []}, 'PASS_TO_PASS': {'success': ['#24377 - Inlines with a model field default should ignore that default', "#24377 - If we're adding a new object, a parent's auto-generated pk", '#24958 - Variant of test_inlineformset_factory_nulls_default_pks for'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16950: resolved: True
+2026-10-30 15:44:19,434 - INFO - Attempting to stop container sweb.eval.django__django-16950.verified_full_opencode...
+2026-10-30 15:44:36,836 - INFO - Container sweb.eval.django__django-16950.verified_full_opencode stopped successfully.
+2026-10-30 15:44:36,836 - INFO - Attempting to remove container sweb.eval.django__django-16950.verified_full_opencode...
+2026-10-30 15:44:36,879 - INFO - Container sweb.eval.django__django-16950.verified_full_opencode removed successfully.

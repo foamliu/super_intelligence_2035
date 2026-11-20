@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-11964",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/enums.py b/django/db/models/enums.py\nindex bbe362a6ab..ae20ef6d93 100644\n--- a/django/db/models/enums.py\n+++ b/django/db/models/enums.py\n@@ -60,7 +60,13 @@ class ChoicesMeta(enum.EnumMeta):\n \n class Choices(enum.Enum, metaclass=ChoicesMeta):\n     \"\"\"Class for creating enumerated choices.\"\"\"\n-    pass\n+\n+    def __str__(self):\n+        \"\"\"\n+        Use value when cast to str, so that Choices set as model instance\n+        attributes are rendered as expected in templates and similar contexts.\n+        \"\"\"\n+        return str(self.value)\n \n \n class IntegerChoices(int, Choices):\ndiff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py\nindex 6b4bd6e7fd..a4c7557d14 100644\n--- a/tests/model_enums/tests.py\n+++ b/tests/model_enums/tests.py\n@@ -143,6 +143,10 @@ class ChoicesTests(SimpleTestCase):\n                 APPLE = 1, 'Apple'\n                 PINEAPPLE = 1, 'Pineapple'\n \n+    def test_str(self):\n+        self.assertEqual(str(Suit.DIAMOND), '1')\n+        self.assertEqual(str(YearInSchool.FRESHMAN), 'FR')\n+\n \n class Separator(bytes, models.Choices):\n     FS = b'\\x1c', 'File Separator'\n"
+  }
+]

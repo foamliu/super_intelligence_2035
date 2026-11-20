@@ -1,0 +1,68 @@
+2026-11-10 10:45:33,617 - INFO - Creating container for sympy__sympy-23824...
+2026-11-10 10:45:33,660 - INFO - Container for sympy__sympy-23824 created: e266126547b7e3b9d877a471fb0f3ee8cef0ea45434eed32ef9ceefd9d84a227
+2026-11-10 10:45:34,218 - INFO - Container for sympy__sympy-23824 started: e266126547b7e3b9d877a471fb0f3ee8cef0ea45434eed32ef9ceefd9d84a227
+2026-11-10 10:45:34,220 - INFO - Intermediate patch for sympy__sympy-23824 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2028/codex-glm-5.3-flash/sympy__sympy-23824/patch.diff, now applying to container...
+2026-11-10 10:45:34,406 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/hep/gamma_matrices.py...
+Checking patch sympy/physics/hep/tests/test_gamma_matrices.py...
+Applied patch sympy/physics/hep/gamma_matrices.py cleanly.
+Applied patch sympy/physics/hep/tests/test_gamma_matrices.py cleanly.
+
+2026-11-10 10:45:35,294 - INFO - Git diff before:
+diff --git a/sympy/physics/hep/gamma_matrices.py b/sympy/physics/hep/gamma_matrices.py
+index 23284e4a92..5db561c6be 100644
+--- a/sympy/physics/hep/gamma_matrices.py
++++ b/sympy/physics/hep/gamma_matrices.py
+@@ -694,7 +694,7 @@ def kahane_simplify(expression):
+ 
+     # If `first_dum_pos` is not zero, it means that there are trailing free gamma
+     # matrices in front of `expression`, so multiply by them:
+-    for i in range(0, first_dum_pos):
++    for i in reversed(range(first_dum_pos)):
+         [ri.insert(0, free_pos[i]) for ri in resulting_indices]
+ 
+     resulting_expr = S.Zero
+diff --git a/sympy/physics/hep/tests/test_gamma_matrices.py b/sympy/physics/hep/tests/test_gamma_matrices.py
+index 27509803f2..ee2ede56f6 100644
+--- a/sympy/physics/hep/tests/test_gamma_matrices.py
++++ b/sympy/physics/hep/tests/test_gamma_matrices.py
+@@ -257,6 +257,14 @@ def test_kahane_simplify1():
+     t = (G(mu)*G(nu)*G(rho)*G(sigma)*G(-mu))
+     r = kahane_simplify(t)
+     assert r.equals(-2*G(sigma)*G(rho)*G(nu))
++
++    t = G(mu)*G(-mu)*G(rho)*G(sigma)
++    r = kahane_simplify(t)
++    assert r.equals(4*G(rho)*G(sigma))
++
++    t = G(rho)*G(sigma)*G(mu)*G(-mu)
++    r = kahane_simplify(t)
++    assert r.equals(4*G(rho)*G(sigma))
+     t = (G(mu)*G(nu)*G(rho)*G(sigma)*G(-mu))
+     r = kahane_simplify(t)
+     assert r.equals(-2*G(sigma)*G(rho)*G(nu))
+2026-11-10 10:45:35,297 - INFO - Eval script for sympy__sympy-23824 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2028/codex-glm-5.3-flash/sympy__sympy-23824/eval.sh; copying to container...
+2026-11-10 10:45:47,290 - INFO - Test runtime: 11.94 seconds
+2026-11-10 10:45:47,292 - INFO - Test output for sympy__sympy-23824 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2028/codex-glm-5.3-flash/sympy__sympy-23824/test_output.txt
+2026-11-10 10:45:47,358 - INFO - Git diff after:
+diff --git a/sympy/physics/hep/gamma_matrices.py b/sympy/physics/hep/gamma_matrices.py
+index 23284e4a92..5db561c6be 100644
+--- a/sympy/physics/hep/gamma_matrices.py
++++ b/sympy/physics/hep/gamma_matrices.py
+@@ -694,7 +694,7 @@ def kahane_simplify(expression):
+ 
+     # If `first_dum_pos` is not zero, it means that there are trailing free gamma
+     # matrices in front of `expression`, so multiply by them:
+-    for i in range(0, first_dum_pos):
++    for i in reversed(range(first_dum_pos)):
+         [ri.insert(0, free_pos[i]) for ri in resulting_indices]
+ 
+     resulting_expr = S.Zero
+2026-11-10 10:45:47,358 - INFO - Git diff changed after running eval script
+2026-11-10 10:45:47,358 - INFO - Grading answer for sympy__sympy-23824...
+2026-11-10 10:45:47,358 - INFO - report: {'sympy__sympy-23824': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_kahane_simplify1'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_kahane_algorithm', 'test_gamma_matrix_class'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23824: resolved: True
+2026-11-10 10:45:47,360 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23824.verified_full_glm53_codex_incr_R2028...
+2026-11-10 10:46:03,329 - INFO - Container sweb.eval.sympy__sympy-23824.verified_full_glm53_codex_incr_R2028 stopped successfully.
+2026-11-10 10:46:03,330 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23824.verified_full_glm53_codex_incr_R2028...
+2026-11-10 10:46:03,389 - INFO - Container sweb.eval.sympy__sympy-23824.verified_full_glm53_codex_incr_R2028 removed successfully.

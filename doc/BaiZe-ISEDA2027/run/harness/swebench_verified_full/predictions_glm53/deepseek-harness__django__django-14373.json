@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-14373",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/django/utils/dateformat.py b/django/utils/dateformat.py\nindex 38e89c47bb..7185c6921c 100644\n--- a/django/utils/dateformat.py\n+++ b/django/utils/dateformat.py\n@@ -314,7 +314,7 @@ class DateFormat(TimeFormat):\n \n     def Y(self):\n         \"Year, 4 digits; e.g. '1999'\"\n-        return self.data.year\n+        return '%04d' % self.data.year\n \n     def z(self):\n         \"\"\"Day of the year, i.e. 1 to 366.\"\"\"\ndiff --git a/tests/utils_tests/test_dateformat.py b/tests/utils_tests/test_dateformat.py\nindex c6d3ded80f..4d9c55d446 100644\n--- a/tests/utils_tests/test_dateformat.py\n+++ b/tests/utils_tests/test_dateformat.py\n@@ -105,6 +105,13 @@ class DateFormatTests(SimpleTestCase):\n         self.assertEqual(dateformat.format(my_birthday, 'Y'), '1979')\n         self.assertEqual(dateformat.format(my_birthday, 'z'), '189')\n \n+    def test_Y_format_year_before_1000(self):\n+        # Regression test for #33976 (zero-padding of years < 1000)\n+        self.assertEqual(dateformat.format(datetime(1, 1, 1), 'Y'), '0001')\n+        self.assertEqual(dateformat.format(datetime(99, 1, 1), 'Y'), '0099')\n+        self.assertEqual(dateformat.format(datetime(999, 12, 31), 'Y'), '0999')\n+        self.assertEqual(dateformat.format(datetime(101, 3, 5), 'Y'), '0101')\n+\n     def test_dateformat(self):\n         my_birthday = datetime(1979, 7, 8, 22, 00)\n \n"
+  }
+]

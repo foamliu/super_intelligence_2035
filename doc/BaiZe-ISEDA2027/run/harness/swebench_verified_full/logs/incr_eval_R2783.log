@@ -1,0 +1,6 @@
+[incr-eval 19:59:00] === incr_eval R2783 start ===
+
+=== cline R2783 ===
+new instances: 2 ['sympy__sympy-24066', 'sympy__sympy-24661']
+[incr-eval 19:59:00] cline: merged 2 new patches -> predictions_cline-patched_new_R2783.json
+[incr-eval 19:59:00] cline: EVAL 2 instances -> run_id=verified_full_glm53_cline-patched_incr_R2783

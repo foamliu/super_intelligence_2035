@@ -1,0 +1,77 @@
+diff --git a/lib/matplotlib/cbook.py b/lib/matplotlib/cbook.py
+index c9699b2e2..5474e783f 100644
+--- a/lib/matplotlib/cbook.py
++++ b/lib/matplotlib/cbook.py
+@@ -846,6 +846,18 @@ class Grouper:
+         siblings = self._mapping.get(weakref.ref(a), [weakref.ref(a)])
+         return [x() for x in siblings]
+ 
++    def __getstate__(self):
++        self.clean()
++        return [[x for x in group if x is not None] for group in self]
++
++    def __setstate__(self, state):
++        self._mapping = {}
++        for group in state:
++            refs = [weakref.ref(x) for x in group if x is not None]
++            if refs:
++                for ref in refs:
++                    self._mapping[ref] = refs
++
+ 
+ class GrouperView:
+     """Immutable view over a `.Grouper`."""
+diff --git a/lib/matplotlib/tests/test_cbook.py b/lib/matplotlib/tests/test_cbook.py
+index aa5c999b7..06f96a96a 100644
+--- a/lib/matplotlib/tests/test_cbook.py
++++ b/lib/matplotlib/tests/test_cbook.py
+@@ -597,6 +597,25 @@ def test_grouper_private():
+         assert mapping[ref(o)] is base_set
+ 
+ 
++def test_grouper_pickle():
++    class Dummy:
++        pass
++
++    class Container:
++        def __init__(self):
++            self.objs = [Dummy() for _ in range(5)]
++            self.g = cbook.Grouper()
++            self.g.join(*self.objs)
++
++    c = Container()
++    c2 = pickle.loads(pickle.dumps(c))
++    groups = list(c2.g)
++    assert len(groups) == 1
++    assert set(groups[0]) == set(c2.objs)
++    for other in c2.objs[1:]:
++        assert c2.g.joined(c2.objs[0], other)
++
++
+ def test_flatiter():
+     x = np.arange(5)
+     it = x.flat
+diff --git a/lib/matplotlib/tests/test_figure.py b/lib/matplotlib/tests/test_figure.py
+index 80d80f969..43dadebc4 100644
+--- a/lib/matplotlib/tests/test_figure.py
++++ b/lib/matplotlib/tests/test_figure.py
+@@ -1542,6 +1542,19 @@ def test_unpickle_with_device_pixel_ratio():
+     assert fig2.dpi == 42
+ 
+ 
++def test_pickle_align_labels():
++    fig = Figure()
++    ax1 = fig.add_subplot(211)
++    ax2 = fig.add_subplot(212)
++    ax1.plot([0, 1], [2, 3])
++    ax1.set_ylabel('speed')
++    ax2.plot([0, 1], [2, 3])
++    ax2.set_ylabel('acc')
++    fig.align_labels()
++    fig2 = pickle.loads(pickle.dumps(fig))
++    assert len(fig2.axes) == 2
++
++
+ def test_gridspec_no_mutate_input():
+     gs = {'left': .1}
+     gs_orig = dict(gs)

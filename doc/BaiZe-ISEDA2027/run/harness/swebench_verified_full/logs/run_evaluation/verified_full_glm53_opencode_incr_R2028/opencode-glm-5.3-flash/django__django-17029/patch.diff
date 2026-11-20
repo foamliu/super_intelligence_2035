@@ -1,0 +1,43 @@
+diff --git a/django/apps/registry.py b/django/apps/registry.py
+index 0683f3ad3c..481dd1fc86 100644
+--- a/django/apps/registry.py
++++ b/django/apps/registry.py
+@@ -376,6 +376,7 @@ class Apps:
+         # Call expire cache on each model. This will purge
+         # the relation tree and the fields cache.
+         self.get_models.cache_clear()
++        self.get_swappable_settings_name.cache_clear()
+         if self.ready:
+             # Circumvent self.get_models() to prevent that the cache is refilled.
+             # This particularly prevents that an empty value is cached while cloning.
+diff --git a/tests/apps/tests.py b/tests/apps/tests.py
+index 9f989c5d9a..60f1411690 100644
+--- a/tests/apps/tests.py
++++ b/tests/apps/tests.py
+@@ -6,7 +6,7 @@ from django.contrib.admin.models import LogEntry
+ from django.core.exceptions import AppRegistryNotReady, ImproperlyConfigured
+ from django.db import models
+ from django.test import SimpleTestCase, override_settings
+-from django.test.utils import extend_sys_path, isolate_apps
++from django.test.utils import extend_sys_path, isolate_apps, isolate_lru_cache
+ 
+ from .models import SoAlternative, TotallyNormal, new_apps
+ from .one_config_app.apps import OneConfig
+@@ -52,6 +52,17 @@ class AppsTests(SimpleTestCase):
+         self.assertIs(apps.ready_event.is_set(), True)
+         self.assertIs(Apps().ready_event.is_set(), True)
+ 
++    def test_clear_cache_get_swappable_settings_name(self):
++        with isolate_lru_cache(apps.get_swappable_settings_name):
++            apps.get_swappable_settings_name("auth.user")
++            self.assertEqual(
++                apps.get_swappable_settings_name.cache_info().currsize, 1
++            )
++            apps.clear_cache()
++            self.assertEqual(
++                apps.get_swappable_settings_name.cache_info().currsize, 0
++            )
++
+     def test_bad_app_config(self):
+         """
+         Tests when INSTALLED_APPS contains an incorrect app config.

@@ -1,0 +1,35 @@
+=== hermes eval R1064b START Sat Oct 31 04:43:03 PM CST 2026 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:52<00:00, 52.55s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:52<00:00, 52.55s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:52<00:00, 52.55s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+=== hermes eval R1064b DONE Sat Oct 31 04:44:00 PM CST 2026 ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: unchanged (n=313 resolved=241 failed=72 infra=0)
+  codex: WROTE eval_codex.json  n=202 resolved=158 failed=44 infra=0
+  hermes: WROTE eval_hermes.json  n=31 resolved=24 failed=7 infra=0
+  deepseek-harness: unchanged (n=38 resolved=30 failed=8 infra=0)
+written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15374B)
+  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=326
+  opencode     done=500/500 patch=488 no_patch=2 infra=0 eval=Y resolved=395
+  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
+  claude-code  done=402/500 patch=314 no_patch=82 infra=0 eval=Y resolved=241
+  codex        done=465/500 patch=202 no_patch=73 infra=185 eval=Y resolved=158
+  hermes       done=48/500 patch=30 no_patch=18 infra=0 eval=Y resolved=24
+  deepseek-harness done=164/500 patch=36 no_patch=4 infra=112 eval=Y resolved=30
+=== R1064b ALL DONE Sat Oct 31 04:44:00 PM CST 2026 ===

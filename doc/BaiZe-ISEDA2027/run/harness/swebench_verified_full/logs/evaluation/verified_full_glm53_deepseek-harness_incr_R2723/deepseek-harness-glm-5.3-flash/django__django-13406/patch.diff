@@ -1,0 +1,34 @@
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index b48d0df9c0..85cd8311a7 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -210,6 +210,8 @@ class QuerySet:
+ 
+     @query.setter
+     def query(self, value):
++        if value.values_select:
++            self._iterable_class = ValuesIterable
+         self._query = value
+ 
+     def as_manager(cls):
+diff --git a/tests/queryset_pickle/tests.py b/tests/queryset_pickle/tests.py
+index a58e45caed..bfd644bcb3 100644
+--- a/tests/queryset_pickle/tests.py
++++ b/tests/queryset_pickle/tests.py
+@@ -118,6 +118,16 @@ class PickleabilityTestCase(TestCase):
+             Event.objects.select_related('group').order_by('title').values_list('title', 'group__name')
+         )
+ 
++    def test_pickle_values_queryset_query(self):
++        # A query created via values().annotate() that is unpickled and
++        # assigned to the query of a new queryset should return dicts, not
++        # model instances (#32921).
++        qs = Happening.objects.values('name').annotate(total=models.Sum('number1'))
++        dumped = pickle.dumps(qs.query)
++        reloaded_qs = Happening.objects.all()
++        reloaded_qs.query = pickle.loads(dumped)
++        self.assertEqual(list(reloaded_qs), list(qs))
++
+     def test_pickle_prefetch_related_idempotence(self):
+         g = Group.objects.create(name='foo')
+         groups = Group.objects.prefetch_related('event_set')

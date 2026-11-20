@@ -1,0 +1,74 @@
+2026-11-07 22:47:32,551 - INFO - Creating container for django__django-11206...
+2026-11-07 22:47:32,574 - INFO - Container for django__django-11206 created: 85db1bf92940627299f9a8f1c94a967927dd1f7d6c786b4c89b487aca28ccf09
+2026-11-07 22:47:33,430 - INFO - Container for django__django-11206 started: 85db1bf92940627299f9a8f1c94a967927dd1f7d6c786b4c89b487aca28ccf09
+2026-11-07 22:47:33,432 - INFO - Intermediate patch for django__django-11206 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11206/patch.diff, now applying to container...
+2026-11-07 22:47:33,546 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/numberformat.py...
+Checking patch tests/utils_tests/test_numberformat.py...
+Applied patch django/utils/numberformat.py cleanly.
+Applied patch tests/utils_tests/test_numberformat.py cleanly.
+
+2026-11-07 22:47:34,542 - INFO - Git diff before:
+diff --git a/django/utils/numberformat.py b/django/utils/numberformat.py
+index 88b35fc435..961a60e37d 100644
+--- a/django/utils/numberformat.py
++++ b/django/utils/numberformat.py
+@@ -27,6 +27,14 @@ def format(number, decimal_sep, decimal_pos=None, grouping=0, thousand_sep='',
+     # sign
+     sign = ''
+     if isinstance(number, Decimal):
++
++        if decimal_pos is not None:
++            # If the provided number is too small to affect any of the visible
++            # decimal places, consider it equal to '0'.
++            cutoff = Decimal('0.' + '1'.rjust(decimal_pos, '0'))
++            if abs(number) < cutoff:
++                number = Decimal('0')
++
+         # Format values with more than 200 digits (an arbitrary cutoff) using
+         # scientific notation to avoid high memory usage in {:f}'.format().
+         _, digits, exponent = number.as_tuple()
+diff --git a/tests/utils_tests/test_numberformat.py b/tests/utils_tests/test_numberformat.py
+index 3d656025ab..1dac45e890 100644
+--- a/tests/utils_tests/test_numberformat.py
++++ b/tests/utils_tests/test_numberformat.py
+@@ -94,7 +94,7 @@ class TestNumberFormat(SimpleTestCase):
+             ('1e-10', 8, '0.00000000'),
+             ('1e-11', 8, '0.00000000'),
+             ('1' + ('0' * 300), 3, '1.000e+300'),
+-            ('0.{}1234'.format('0' * 299), 3, '1.234e-300'),
++            ('0.{}1234'.format('0' * 299), 3, '0.000'),
+         ]
+         for value, decimal_pos, expected_value in tests:
+             with self.subTest(value=value):
+2026-11-07 22:47:34,545 - INFO - Eval script for django__django-11206 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11206/eval.sh; copying to container...
+2026-11-07 22:47:40,863 - INFO - Test runtime: 6.26 seconds
+2026-11-07 22:47:40,865 - INFO - Test output for django__django-11206 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11206/test_output.txt
+2026-11-07 22:47:40,961 - INFO - Git diff after:
+diff --git a/django/utils/numberformat.py b/django/utils/numberformat.py
+index 88b35fc435..961a60e37d 100644
+--- a/django/utils/numberformat.py
++++ b/django/utils/numberformat.py
+@@ -27,6 +27,14 @@ def format(number, decimal_sep, decimal_pos=None, grouping=0, thousand_sep='',
+     # sign
+     sign = ''
+     if isinstance(number, Decimal):
++
++        if decimal_pos is not None:
++            # If the provided number is too small to affect any of the visible
++            # decimal places, consider it equal to '0'.
++            cutoff = Decimal('0.' + '1'.rjust(decimal_pos, '0'))
++            if abs(number) < cutoff:
++                number = Decimal('0')
++
+         # Format values with more than 200 digits (an arbitrary cutoff) using
+         # scientific notation to avoid high memory usage in {:f}'.format().
+         _, digits, exponent = number.as_tuple()
+2026-11-07 22:47:40,961 - INFO - Git diff changed after running eval script
+2026-11-07 22:47:40,961 - INFO - Grading answer for django__django-11206...
+2026-11-07 22:47:40,962 - INFO - report: {'django__django-11206': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_decimal_numbers (utils_tests.test_numberformat.TestNumberFormat)', 'test_decimal_subclass (utils_tests.test_numberformat.TestNumberFormat)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_float_numbers (utils_tests.test_numberformat.TestNumberFormat)', 'test_format_number (utils_tests.test_numberformat.TestNumberFormat)', 'test_format_string (utils_tests.test_numberformat.TestNumberFormat)', 'test_large_number (utils_tests.test_numberformat.TestNumberFormat)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11206: resolved: True
+2026-11-07 22:47:40,963 - INFO - Attempting to stop container sweb.eval.django__django-11206.verified_full_glm53_hermes_R1789...
+2026-11-07 22:47:57,263 - INFO - Container sweb.eval.django__django-11206.verified_full_glm53_hermes_R1789 stopped successfully.
+2026-11-07 22:47:57,264 - INFO - Attempting to remove container sweb.eval.django__django-11206.verified_full_glm53_hermes_R1789...
+2026-11-07 22:47:57,316 - INFO - Container sweb.eval.django__django-11206.verified_full_glm53_hermes_R1789 removed successfully.

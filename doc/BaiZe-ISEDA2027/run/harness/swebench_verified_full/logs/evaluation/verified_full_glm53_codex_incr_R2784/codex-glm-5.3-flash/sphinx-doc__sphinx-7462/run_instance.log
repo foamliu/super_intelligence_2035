@@ -1,0 +1,155 @@
+2026-11-19 20:21:20,993 - INFO - Creating container for sphinx-doc__sphinx-7462...
+2026-11-19 20:21:21,015 - INFO - Container for sphinx-doc__sphinx-7462 created: 57e3ab0c7f1582cfe408f41f26fc786cec0308d8c74281cd81e2d600ecb224a0
+2026-11-19 20:21:21,728 - INFO - Container for sphinx-doc__sphinx-7462 started: 57e3ab0c7f1582cfe408f41f26fc786cec0308d8c74281cd81e2d600ecb224a0
+2026-11-19 20:21:21,730 - INFO - Intermediate patch for sphinx-doc__sphinx-7462 written to logs/evaluation/verified_full_glm53_codex_incr_R2784/codex-glm-5.3-flash/sphinx-doc__sphinx-7462/patch.diff, now applying to container...
+2026-11-19 20:21:21,884 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch sphinx/pycode/ast.py...
+Checking patch tests/test_domain_py.py...
+Checking patch tests/test_pycode_ast.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch sphinx/pycode/ast.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+Applied patch tests/test_pycode_ast.py cleanly.
+
+2026-11-19 20:21:22,326 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 3ca730e30..1adc81c17 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -100,7 +100,8 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if node.elts:
++                result.pop()
+             result.append(addnodes.desc_sig_punctuation('', ']'))
+             return result
+         elif isinstance(node, ast.Module):
+@@ -118,7 +119,11 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if node.elts:
++                result.pop()
++            else:
++                result.append(addnodes.desc_sig_punctuation('', '('))
++                result.append(addnodes.desc_sig_punctuation('', ')'))
+             return result
+         else:
+             raise SyntaxError  # unsupported syntax
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 4d8aa8955..fb2a7152d 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -114,7 +114,10 @@ def unparse(node: ast.AST) -> str:
+     elif isinstance(node, ast.UnaryOp):
+         return "%s %s" % (unparse(node.op), unparse(node.operand))
+     elif isinstance(node, ast.Tuple):
+-        return ", ".join(unparse(e) for e in node.elts)
++        if node.elts:
++            return ", ".join(unparse(e) for e in node.elts)
++        else:
++            return "()"
+     elif sys.version_info > (3, 6) and isinstance(node, ast.Constant):
+         # this branch should be placed at last
+         return repr(node.value)
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index cc3d3cf53..b8b9e25b3 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -255,6 +255,13 @@ def test_parse_annotation():
+                           [pending_xref, "int"],
+                           [desc_sig_punctuation, "]"]))
+ 
++    doctree = _parse_annotation("Tuple[()]")
++    assert_node(doctree, ([pending_xref, "Tuple"],
++                          [desc_sig_punctuation, "["],
++                          [desc_sig_punctuation, "("],
++                          [desc_sig_punctuation, ")"],
++                          [desc_sig_punctuation, "]"]))
++
+     doctree = _parse_annotation("Callable[[int, int], int]")
+     assert_node(doctree, ([pending_xref, "Callable"],
+                           [desc_sig_punctuation, "["],
+@@ -745,9 +752,8 @@ def test_modindex_common_prefix(app):
+                 IndexEntry('sphinx.builders.html', 2, 'index', 'module-sphinx.builders.html', '', '', '')]),  # NOQA
+          ('c', [IndexEntry('sphinx.config', 0, 'index', 'module-sphinx.config', '', '', '')]),
+          ('d', [IndexEntry('docutils', 0, 'index', 'module-docutils', '', '', '')]),
+-         ('s', [IndexEntry('sphinx', 0, 'index', 'module-sphinx', '', '', ''),
+-                IndexEntry('sphinx_intl', 0, 'index', 'module-sphinx_intl', '', '', '')])],
++        ('s', [IndexEntry('sphinx', 0, 'index', 'module-sphinx', '', '', ''),
++               IndexEntry('sphinx_intl', 0, 'index', 'module-sphinx_intl', '', '', '')])],
+         True
+     )
+ 
+-
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 117feb8f7..85dee50d1 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -50,6 +50,7 @@ from sphinx.pycode import ast
+     ("{1, 2, 3}", "{1, 2, 3}"),                 # Set
+     ("a - b", "a - b"),                         # Sub
+     ("'str'", "'str'"),                         # Str
++    ("Tuple[()]", "Tuple[()]"),                 # Subscript with empty Tuple
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+2026-11-19 20:21:22,328 - INFO - Eval script for sphinx-doc__sphinx-7462 written to logs/evaluation/verified_full_glm53_codex_incr_R2784/codex-glm-5.3-flash/sphinx-doc__sphinx-7462/eval.sh; copying to container...
+2026-11-19 20:21:27,610 - INFO - Test runtime: 5.18 seconds
+2026-11-19 20:21:27,611 - INFO - Test output for sphinx-doc__sphinx-7462 written to logs/evaluation/verified_full_glm53_codex_incr_R2784/codex-glm-5.3-flash/sphinx-doc__sphinx-7462/test_output.txt
+2026-11-19 20:21:27,710 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 3ca730e30..1adc81c17 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -100,7 +100,8 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if node.elts:
++                result.pop()
+             result.append(addnodes.desc_sig_punctuation('', ']'))
+             return result
+         elif isinstance(node, ast.Module):
+@@ -118,7 +119,11 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if node.elts:
++                result.pop()
++            else:
++                result.append(addnodes.desc_sig_punctuation('', '('))
++                result.append(addnodes.desc_sig_punctuation('', ')'))
+             return result
+         else:
+             raise SyntaxError  # unsupported syntax
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 4d8aa8955..fb2a7152d 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -114,7 +114,10 @@ def unparse(node: ast.AST) -> str:
+     elif isinstance(node, ast.UnaryOp):
+         return "%s %s" % (unparse(node.op), unparse(node.operand))
+     elif isinstance(node, ast.Tuple):
+-        return ", ".join(unparse(e) for e in node.elts)
++        if node.elts:
++            return ", ".join(unparse(e) for e in node.elts)
++        else:
++            return "()"
+     elif sys.version_info > (3, 6) and isinstance(node, ast.Constant):
+         # this branch should be placed at last
+         return repr(node.value)
+2026-11-19 20:21:27,710 - INFO - Git diff changed after running eval script
+2026-11-19 20:21:27,710 - INFO - Grading answer for sphinx-doc__sphinx-7462...
+2026-11-19 20:21:27,733 - INFO - report: {'sphinx-doc__sphinx-7462': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_parse_annotation', 'tests/test_pycode_ast.py::test_unparse[()-()]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_pycode_ast.py::test_unparse[a', 'tests/test_pycode_ast.py::test_unparse[os.path-os.path]', 'tests/test_pycode_ast.py::test_unparse[1', "tests/test_pycode_ast.py::test_unparse[b'bytes'-b'bytes']", 'tests/test_pycode_ast.py::test_unparse[object()-object()]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_0]', "tests/test_pycode_ast.py::test_unparse[{'key1':", 'tests/test_pycode_ast.py::test_unparse[...-...]', 'tests/test_pycode_ast.py::test_unparse[Tuple[int,', 'tests/test_pycode_ast.py::test_unparse[~', 'tests/test_pycode_ast.py::test_unparse[lambda', 'tests/test_pycode_ast.py::test_unparse[[1,', 'tests/test_pycode_ast.py::test_unparse[sys-sys]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_1]', 'tests/test_pycode_ast.py::test_unparse[not', 'tests/test_pycode_ast.py::test_unparse[{1,', "tests/test_pycode_ast.py::test_unparse['str'-'str']", 'tests/test_pycode_ast.py::test_unparse[+', 'tests/test_pycode_ast.py::test_unparse[-', 'tests/test_pycode_ast.py::test_unparse[(1,', 'tests/test_pycode_ast.py::test_unparse_None', 'tests/test_pycode_ast.py::test_unparse_py38'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7462: resolved: True
+2026-11-19 20:21:27,735 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7462.verified_full_glm53_codex_incr_R2784...
+2026-11-19 20:21:43,872 - INFO - Container sweb.eval.sphinx-doc__sphinx-7462.verified_full_glm53_codex_incr_R2784 stopped successfully.
+2026-11-19 20:21:43,873 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7462.verified_full_glm53_codex_incr_R2784...
+2026-11-19 20:21:43,909 - INFO - Container sweb.eval.sphinx-doc__sphinx-7462.verified_full_glm53_codex_incr_R2784 removed successfully.

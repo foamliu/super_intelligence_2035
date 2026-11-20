@@ -1,0 +1,171 @@
+2026-10-30 16:56:27,766 - INFO - Creating container for django__django-15814...
+2026-10-30 16:56:27,807 - INFO - Container for django__django-15814 created: 0d0df55771ced36174d2b11ea1451556a8d47ddfca0c29673c12d427aff1b1ef
+2026-10-30 16:56:31,185 - INFO - Container for django__django-15814 started: 0d0df55771ced36174d2b11ea1451556a8d47ddfca0c29673c12d427aff1b1ef
+2026-10-30 16:56:31,187 - INFO - Intermediate patch for django__django-15814 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-15814/patch.diff, now applying to container...
+2026-10-30 16:56:31,334 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/query.py...
+warning: django/db/models/sql/query.py has type 100755, expected 100644
+Checking patch tests/defer/models.py...
+warning: tests/defer/models.py has type 100755, expected 100644
+Checking patch tests/defer/tests.py...
+warning: tests/defer/tests.py has type 100755, expected 100644
+Applied patch django/db/models/sql/query.py cleanly.
+Applied patch tests/defer/models.py cleanly.
+Applied patch tests/defer/tests.py cleanly.
+
+2026-10-30 16:56:32,971 - INFO - Git diff before:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 33cc636b22..cbcf74aac2 100755
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -745,9 +745,9 @@ class Query(BaseExpression):
+                     name = self._filtered_relations[name].relation_name
+                 source = opts.get_field(name)
+                 if is_reverse_o2o(source):
+-                    cur_model = source.related_model
++                    cur_model = source.related_model._meta.concrete_model
+                 else:
+-                    cur_model = source.remote_field.model
++                    cur_model = source.remote_field.model._meta.concrete_model
+                 opts = cur_model._meta
+                 # Even if we're "just passing through" this model, we must add
+                 # both the current model's pk and the related reference field
+diff --git a/tests/defer/models.py b/tests/defer/models.py
+index 6de2e2af97..f47e999e33 100755
+--- a/tests/defer/models.py
++++ b/tests/defer/models.py
+@@ -32,6 +32,16 @@ class ChildProxy(Child):
+         proxy = True
+ 
+ 
++class SecondaryProxy(Secondary):
++    class Meta:
++        proxy = True
++
++
++class PrimaryToProxy(models.Model):
++    name = models.CharField(max_length=50)
++    proxy_related = models.ForeignKey(SecondaryProxy, models.CASCADE)
++
++
+ class RefreshPrimaryProxy(Primary):
+     class Meta:
+         proxy = True
+diff --git a/tests/defer/tests.py b/tests/defer/tests.py
+index d2cff258b4..146b0da833 100755
+--- a/tests/defer/tests.py
++++ b/tests/defer/tests.py
+@@ -6,8 +6,10 @@ from .models import (
+     Child,
+     ChildProxy,
+     Primary,
++    PrimaryToProxy,
+     RefreshPrimaryProxy,
+     Secondary,
++    SecondaryProxy,
+     ShadowChild,
+ )
+ 
+@@ -255,6 +257,19 @@ class TestDefer2(AssertionMixin, TestCase):
+         self.assertEqual(child.name, "p1")
+         self.assertEqual(child.value, "xx")
+ 
++    def test_only_select_related_to_proxy_model(self):
++        """
++        select_related() followed by only() on a FK to a proxy model doesn't
++        crash. See #33751.
++        """
++        secondary = Secondary.objects.create(first="x1", second="y2")
++        PrimaryToProxy.objects.create(name="p1", proxy_related=secondary)
++        obj = PrimaryToProxy.objects.select_related("proxy_related").only(
++            "proxy_related__first"
++        ).get()
++        self.assertEqual(obj.proxy_related.first, "x1")
++        self.assert_delayed(obj, 1)
++
+     def test_defer_inheritance_pk_chaining(self):
+         """
+         When an inherited model is fetched from the DB, its PK is also fetched.
+2026-10-30 16:56:32,974 - INFO - Eval script for django__django-15814 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-15814/eval.sh; copying to container...
+2026-10-30 16:56:42,321 - INFO - Test runtime: 9.27 seconds
+2026-10-30 16:56:42,326 - INFO - Test output for django__django-15814 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-15814/test_output.txt
+2026-10-30 16:56:42,432 - INFO - Git diff after:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 33cc636b22..cbcf74aac2 100755
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -745,9 +745,9 @@ class Query(BaseExpression):
+                     name = self._filtered_relations[name].relation_name
+                 source = opts.get_field(name)
+                 if is_reverse_o2o(source):
+-                    cur_model = source.related_model
++                    cur_model = source.related_model._meta.concrete_model
+                 else:
+-                    cur_model = source.remote_field.model
++                    cur_model = source.remote_field.model._meta.concrete_model
+                 opts = cur_model._meta
+                 # Even if we're "just passing through" this model, we must add
+                 # both the current model's pk and the related reference field
+diff --git a/tests/defer/models.py b/tests/defer/models.py
+index 6de2e2af97..f47e999e33 100755
+--- a/tests/defer/models.py
++++ b/tests/defer/models.py
+@@ -32,6 +32,16 @@ class ChildProxy(Child):
+         proxy = True
+ 
+ 
++class SecondaryProxy(Secondary):
++    class Meta:
++        proxy = True
++
++
++class PrimaryToProxy(models.Model):
++    name = models.CharField(max_length=50)
++    proxy_related = models.ForeignKey(SecondaryProxy, models.CASCADE)
++
++
+ class RefreshPrimaryProxy(Primary):
+     class Meta:
+         proxy = True
+diff --git a/tests/defer/tests.py b/tests/defer/tests.py
+index d2cff258b4..146b0da833 100755
+--- a/tests/defer/tests.py
++++ b/tests/defer/tests.py
+@@ -6,8 +6,10 @@ from .models import (
+     Child,
+     ChildProxy,
+     Primary,
++    PrimaryToProxy,
+     RefreshPrimaryProxy,
+     Secondary,
++    SecondaryProxy,
+     ShadowChild,
+ )
+ 
+@@ -255,6 +257,19 @@ class TestDefer2(AssertionMixin, TestCase):
+         self.assertEqual(child.name, "p1")
+         self.assertEqual(child.value, "xx")
+ 
++    def test_only_select_related_to_proxy_model(self):
++        """
++        select_related() followed by only() on a FK to a proxy model doesn't
++        crash. See #33751.
++        """
++        secondary = Secondary.objects.create(first="x1", second="y2")
++        PrimaryToProxy.objects.create(name="p1", proxy_related=secondary)
++        obj = PrimaryToProxy.objects.select_related("proxy_related").only(
++            "proxy_related__first"
++        ).get()
++        self.assertEqual(obj.proxy_related.first, "x1")
++        self.assert_delayed(obj, 1)
++
+     def test_defer_inheritance_pk_chaining(self):
+         """
+         When an inherited model is fetched from the DB, its PK is also fetched.
+2026-10-30 16:56:42,432 - INFO - Grading answer for django__django-15814...
+2026-10-30 16:56:42,444 - INFO - report: {'django__django-15814': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_select_related_only (proxy_models.tests.ProxyModelTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_abstract_base_with_model_fields (proxy_models.tests.ProxyModelTests)', 'Creating a Person makes them accessible through the MyPerson proxy.', 'A new MyPerson also shows up as a standard Person.', 'test_concrete_model (proxy_models.tests.ProxyModelTests)', 'test_content_type (proxy_models.tests.ProxyModelTests)', 'Correct type when querying a proxy of proxy', 'test_eq (proxy_models.tests.ProxyModelTests)', 'test_filter_proxy_relation_reverse (proxy_models.tests.ProxyModelTests)', "The StatusPerson models should have its own table (it's using ORM-level", 'test_myperson_manager (proxy_models.tests.ProxyModelTests)', 'test_new_fields (proxy_models.tests.ProxyModelTests)', 'test_no_base_classes (proxy_models.tests.ProxyModelTests)', 'Person is not proxied by StatusPerson subclass.', 'test_otherperson_manager (proxy_models.tests.ProxyModelTests)', 'test_permissions_created (proxy_models.tests.ProxyModelTests)', 'test_proxy_bug (proxy_models.tests.ProxyModelTests)', 'Proxy objects can be deleted', 'test_proxy_for_model (proxy_models.tests.ProxyModelTests)', "Proxy models are included in the ancestors for a model's DoesNotExist", 'test_proxy_load_from_fixture (proxy_models.tests.ProxyModelTests)', 'Test save signals for proxy models', 'test_proxy_update (proxy_models.tests.ProxyModelTests)', 'The MyPerson model should be generating the same database queries as', 'We can still use `select_related()` to include related models in our', 'test_swappable (proxy_models.tests.ProxyModelTests)', 'test_too_many_concrete_classes (proxy_models.tests.ProxyModelTests)', 'test_user_proxy_models (proxy_models.tests.ProxyModelTests)', 'Test if admin gives warning about cascade deleting models referenced', 'Test if the admin delete page shows the correct string representation'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15814: resolved: True
+2026-10-30 16:56:42,446 - INFO - Attempting to stop container sweb.eval.django__django-15814.verified_full_pi...
+2026-10-30 16:56:58,458 - INFO - Container sweb.eval.django__django-15814.verified_full_pi stopped successfully.
+2026-10-30 16:56:58,458 - INFO - Attempting to remove container sweb.eval.django__django-15814.verified_full_pi...
+2026-10-30 16:56:58,517 - INFO - Container sweb.eval.django__django-15814.verified_full_pi removed successfully.

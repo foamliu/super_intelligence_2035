@@ -1,0 +1,51 @@
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index bbe362a6ab..92b78dfb07 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -60,7 +60,12 @@ class ChoicesMeta(enum.EnumMeta):
+ 
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+-    pass
++
++    def __str__(self):
++        """
++        Use value when cast to str, instead of the enum value.
++        """
++        return str(self.value)
+ 
+ 
+ class IntegerChoices(int, Choices):
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 70297b5311..520c7754c3 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -271,6 +271,11 @@ Miscellaneous
+ * ``django.utils.decorators.classproperty()`` decorator is moved to
+   ``django.utils.functional.classproperty()``.
+ 
++* ``str()`` of ``django.db.models.enums.Choices`` subclasses, e.g.
++  ``TextChoices`` and ``IntegerChoices``, now returns the value of the enum
++  member rather than its name, e.g. ``'first'`` instead of
++  ``'MyChoice.FIRST_CHOICE'``.
++
+ .. _deprecated-features-3.1:
+ 
+ Features deprecated in 3.1
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index 6b4bd6e7fd..5dfe11788a 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -121,6 +121,12 @@ class ChoicesTests(SimpleTestCase):
+         self.assertIn('FR', YearInSchool)
+         self.assertNotIn('XX', YearInSchool)
+ 
++    def test_integerchoices_str(self):
++        self.assertEqual(str(Suit.DIAMOND), '1')
++
++    def test_textchoices_str(self):
++        self.assertEqual(str(YearInSchool.FRESHMAN), 'FR')
++
+     def test_textchoices_blank_value(self):
+         class BlankStr(models.TextChoices):
+             EMPTY = '', '(Empty)'

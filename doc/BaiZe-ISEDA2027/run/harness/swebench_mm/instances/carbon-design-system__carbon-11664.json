@@ -1,0 +1,51 @@
+{
+  "base_commit": "fb5b0a687039b736b83ab54f28187ad75caf63a2",
+  "created_at": "2022-06-22T17:36:42Z",
+  "eval_type": "pass_and_fail",
+  "image": "swebench/sweb.eval.x86_64.carbon-design-system_1776_carbon-11664:latest",
+  "image_assets": {
+    "patch": [],
+    "problem_statement": [
+      "https://user-images.githubusercontent.com/129546/174988265-d157fa95-6b52-4937-80e8-0bfd86784945.png"
+    ],
+    "test_patch": []
+  },
+  "instance_id": "carbon-design-system__carbon-11664",
+  "log_parser": "parse_log_carbon",
+  "repo": "carbon-design-system/carbon",
+  "version": "16.15",
+  "patch": "diff --git a/packages/react/src/components/OverflowMenu/OverflowMenu.js b/packages/react/src/components/OverflowMenu/OverflowMenu.js\nindex 11c2dddfc250..52388ed70e57 100644\n--- a/packages/react/src/components/OverflowMenu/OverflowMenu.js\n+++ b/packages/react/src/components/OverflowMenu/OverflowMenu.js\n@@ -248,7 +248,6 @@ class OverflowMenu extends Component {\n     onOpen: () => {},\n     menuOffset: getMenuOffset,\n     menuOffsetFlip: getMenuOffset,\n-    light: false,\n     selectorPrimaryFocus: '[data-overflow-menu-primary-focus]',\n   };\n \n",
+  "test_patch": "diff --git a/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap b/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap\nindex 641b65f4603e..6d7c331937aa 100644\n--- a/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap\n+++ b/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap\n@@ -2435,7 +2435,6 @@ exports[`DataTable should render 1`] = `\n                   flipped={true}\n                   focusTrap={true}\n                   iconDescription=\"Settings\"\n-                  light={false}\n                   menuOffset={[Function]}\n                   menuOffsetFlip={[Function]}\n                   onClick={[Function]}\n@@ -3454,7 +3453,6 @@ exports[`DataTable sticky header should render 1`] = `\n                   flipped={true}\n                   focusTrap={true}\n                   iconDescription=\"Settings\"\n-                  light={false}\n                   menuOffset={[Function]}\n                   menuOffsetFlip={[Function]}\n                   onClick={[Function]}\ndiff --git a/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap b/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\nindex 43abd6295109..ec44aa7cd091 100644\n--- a/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\n+++ b/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\n@@ -21,7 +21,6 @@ exports[`DataTable.TableToolbarMenu should render 1`] = `\n     flipped={true}\n     focusTrap={true}\n     iconDescription=\"Add\"\n-    light={false}\n     menuOffset={[Function]}\n     menuOffsetFlip={[Function]}\n     onClick={[Function]}\n",
+  "eval_script": "#!/bin/bash\nset -uxo pipefail\ncd /testbed\ngit config --global --add safe.directory /testbed\nsource $NVM_DIR/nvm.sh\ngit status\ngit show\ngit -c core.fileMode=false diff fb5b0a687039b736b83ab54f28187ad75caf63a2\nmkdir -p node_modules/accessibility-checker/lib/engine 2>/dev/null || true\ngit checkout fb5b0a687039b736b83ab54f28187ad75caf63a2 packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\ngit apply -v - <<'EOF_114329324912'\ndiff --git a/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap b/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap\nindex 641b65f4603e..6d7c331937aa 100644\n--- a/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap\n+++ b/packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap\n@@ -2435,7 +2435,6 @@ exports[`DataTable should render 1`] = `\n                   flipped={true}\n                   focusTrap={true}\n                   iconDescription=\"Settings\"\n-                  light={false}\n                   menuOffset={[Function]}\n                   menuOffsetFlip={[Function]}\n                   onClick={[Function]}\n@@ -3454,7 +3453,6 @@ exports[`DataTable sticky header should render 1`] = `\n                   flipped={true}\n                   focusTrap={true}\n                   iconDescription=\"Settings\"\n-                  light={false}\n                   menuOffset={[Function]}\n                   menuOffsetFlip={[Function]}\n                   onClick={[Function]}\ndiff --git a/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap b/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\nindex 43abd6295109..ec44aa7cd091 100644\n--- a/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\n+++ b/packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\n@@ -21,7 +21,6 @@ exports[`DataTable.TableToolbarMenu should render 1`] = `\n     flipped={true}\n     focusTrap={true}\n     iconDescription=\"Add\"\n-    light={false}\n     menuOffset={[Function]}\n     menuOffsetFlip={[Function]}\n     onClick={[Function]}\n\nEOF_114329324912\nif ! git diff --quiet HEAD -- package.json 2>/dev/null; then echo \"package.json changed by patch; re-syncing dependencies\"; export PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true; if [ -f yarn.lock ]; then timeout 900 yarn install --silent > /dev/null 2>&1 || true; else timeout 900 npm install --silent > /dev/null 2>&1 || true; fi; chmod -R a+rX node_modules > /dev/null 2>&1 || true; fi\n: '>>>>> Start Test Output'\nyarn test --maxWorkers=4 packages/react/src/components/DataTable/\n: '>>>>> End Test Output'\ngit checkout fb5b0a687039b736b83ab54f28187ad75caf63a2 packages/react/src/components/DataTable/__tests__/__snapshots__/DataTable-test.js.snap packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarMenu-test.js.snap\n",
+  "problem_statement": "[Bug]: OverflowMenu warns for light prop being deprecated despite light prop not being used\n### Package\n\n@carbon/react\n\n### Browser\n\nChrome, Safari, Firefox, Edge\n\n### Package version\n\n1.5.0\n\n### React version\n\n18\n\n### Description\n\nI have the following sample code\r\n\r\n```\r\n  <OverflowMenu ariaLabel=\"Some label\">\r\n    <OverflowMenuItem itemText=\"Lorem\" />\r\n    <OverflowMenuItem itemText=\"Ipsum\" />\r\n  </OverflowMenu>\r\n```\r\n\r\nand I receive the following warning in the browser, \r\n\r\n> Warning: The `light` prop for `OverflowMenu` is no longer needed and has been deprecated. It will be removed in the next major release. Use the Layer component instead.\r\n\r\nSince I don't set the `light` property, I expect no warning to be shown.\r\n\r\nWhile this is mostly an annoyance and has no real functional impact, we check for console warnings in our unit test suite - hence more than just annoying for us \n\n### Reproduction/example\n\nhttps://stackblitz.com/edit/github-lfgvb8?file=src/App.jsx\n\n### Steps to reproduce\n\nOpen the stackblitz link and also open the devtools console - you'll see \r\n\r\n<img width=\"494\" alt=\"image\" src=\"https://user-images.githubusercontent.com/129546/174988265-d157fa95-6b52-4937-80e8-0bfd86784945.png\">\r\n\n\n### Code of Conduct\n\n- [X] I agree to follow this project's [Code of Conduct](https://github.com/carbon-design-system/carbon/blob/f555616971a03fd454c0f4daea184adf41fff05b/.github/CODE_OF_CONDUCT.md)\n- [X] I checked the [current issues](https://github.com/carbon-design-system/carbon/issues) for duplicate problems\n",
+  "hints_text": "",
+  "FAIL_TO_PASS": [
+    "packages/react/src/components/DataTable/__tests__/TableToolbarMenu-test.js",
+    "packages/react/src/components/DataTable/__tests__/DataTable-test.js"
+  ],
+  "PASS_TO_PASS": [
+    "packages/react/src/components/DataTable/state/__tests__/sorting-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableBody-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableHead-test.js",
+    "packages/react/src/components/DataTable/state/__tests__/getDerivedStateFromProps-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableBatchAction-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableExpandHeader-test.js",
+    "packages/react/src/components/DataTable/__tests__/exports-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableRow-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableCell-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableSelectRow-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableToolbar-test.js",
+    "packages/react/src/components/DataTable/tools/__tests__/cells-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableExpandRow-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableToolbarSearch-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableToolbarContent-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableActionList-test.js",
+    "packages/react/src/components/DataTable/tools/__tests__/sorting-test.js",
+    "packages/react/src/components/DataTable/__tests__/Table-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableBatchActions-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableHeader-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableSelectAll-test.js",
+    "packages/react/src/components/DataTable/tools/__tests__/normalize-test.js",
+    "packages/react/src/components/DataTable/__tests__/TableContainer-test.js"
+  ]
+}

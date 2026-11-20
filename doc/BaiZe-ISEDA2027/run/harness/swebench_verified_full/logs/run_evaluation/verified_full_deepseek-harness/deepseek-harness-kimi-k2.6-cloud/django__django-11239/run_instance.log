@@ -1,0 +1,195 @@
+2026-11-01 02:32:58,029 - INFO - Creating container for django__django-11239...
+2026-11-01 02:32:58,051 - INFO - Container for django__django-11239 created: c8a92d8e72e91011fed73a55c117a1aaf26824868f7e1825a507f41211b02910
+2026-11-01 02:32:58,605 - INFO - Container for django__django-11239 started: c8a92d8e72e91011fed73a55c117a1aaf26824868f7e1825a507f41211b02910
+2026-11-01 02:32:58,607 - INFO - Intermediate patch for django__django-11239 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-11239/patch.diff, now applying to container...
+2026-11-01 02:32:58,757 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/postgresql/client.py...
+Checking patch tests/dbshell/test_postgresql.py...
+Applied patch django/db/backends/postgresql/client.py cleanly.
+Applied patch tests/dbshell/test_postgresql.py cleanly.
+
+2026-11-01 02:32:59,963 - INFO - Git diff before:
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index cf4df76882..0efe0d47f0 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -17,6 +17,10 @@ class DatabaseClient(BaseDatabaseClient):
+         dbname = conn_params.get('database', '')
+         user = conn_params.get('user', '')
+         passwd = conn_params.get('password', '')
++        sslmode = conn_params.get('sslmode', '')
++        sslrootcert = conn_params.get('sslrootcert', '')
++        sslcert = conn_params.get('sslcert', '')
++        sslkey = conn_params.get('sslkey', '')
+ 
+         if user:
+             args += ['-U', user]
+@@ -30,6 +34,14 @@ class DatabaseClient(BaseDatabaseClient):
+         subprocess_env = os.environ.copy()
+         if passwd:
+             subprocess_env['PGPASSWORD'] = str(passwd)
++        if sslmode:
++            subprocess_env['PGSSLMODE'] = str(sslmode)
++        if sslrootcert:
++            subprocess_env['PGSSLROOTCERT'] = str(sslrootcert)
++        if sslcert:
++            subprocess_env['PGSSLCERT'] = str(sslcert)
++        if sslkey:
++            subprocess_env['PGSSLKEY'] = str(sslkey)
+         try:
+             # Allow SIGINT to pass to psql to abort queries.
+             signal.signal(signal.SIGINT, signal.SIG_IGN)
+diff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py
+index a33e7f6482..5251d6b297 100644
+--- a/tests/dbshell/test_postgresql.py
++++ b/tests/dbshell/test_postgresql.py
+@@ -14,15 +14,21 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+         That function invokes the runshell command, while mocking
+         subprocess.run(). It returns a 2-tuple with:
+         - The command line list
+-        - The the value of the PGPASSWORD environment variable, or None.
++        - A dictionary of the relevant environment variables.
+         """
+         def _mock_subprocess_run(*args, env=os.environ, **kwargs):
+             self.subprocess_args = list(*args)
+-            self.pgpassword = env.get('PGPASSWORD')
++            self.subprocess_env = {
++                'PGPASSWORD': env.get('PGPASSWORD'),
++                'PGSSLMODE': env.get('PGSSLMODE'),
++                'PGSSLROOTCERT': env.get('PGSSLROOTCERT'),
++                'PGSSLCERT': env.get('PGSSLCERT'),
++                'PGSSLKEY': env.get('PGSSLKEY'),
++            }
+             return subprocess.CompletedProcess(self.subprocess_args, 0)
+         with mock.patch('subprocess.run', new=_mock_subprocess_run):
+             DatabaseClient.runshell_db(dbinfo)
+-        return self.subprocess_args, self.pgpassword
++        return self.subprocess_args, self.subprocess_env
+ 
+     def test_basic(self):
+         self.assertEqual(
+@@ -34,7 +40,13 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'port': '444',
+             }), (
+                 ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
+-                'somepassword',
++                {
++                    'PGPASSWORD': 'somepassword',
++                    'PGSSLMODE': None,
++                    'PGSSLROOTCERT': None,
++                    'PGSSLCERT': None,
++                    'PGSSLKEY': None,
++                },
+             )
+         )
+ 
+@@ -47,7 +59,13 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'port': '444',
+             }), (
+                 ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
+-                None,
++                {
++                    'PGPASSWORD': None,
++                    'PGSSLMODE': None,
++                    'PGSSLROOTCERT': None,
++                    'PGSSLCERT': None,
++                    'PGSSLKEY': None,
++                },
+             )
+         )
+ 
+@@ -61,7 +79,13 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'port': '444',
+             }), (
+                 ['psql', '-U', 'some:user', '-h', '::1', '-p', '444', 'dbname'],
+-                'some:password',
++                {
++                    'PGPASSWORD': 'some:password',
++                    'PGSSLMODE': None,
++                    'PGSSLROOTCERT': None,
++                    'PGSSLCERT': None,
++                    'PGSSLKEY': None,
++                },
+             )
+         )
+ 
+@@ -77,7 +101,37 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'port': '444',
+             }), (
+                 ['psql', '-U', username, '-h', 'somehost', '-p', '444', 'dbname'],
+-                password,
++                {
++                    'PGPASSWORD': password,
++                    'PGSSLMODE': None,
++                    'PGSSLROOTCERT': None,
++                    'PGSSLCERT': None,
++                    'PGSSLKEY': None,
++                },
++            )
++        )
++
++    def test_ssl(self):
++        self.assertEqual(
++            self._run_it({
++                'database': 'dbname',
++                'user': 'someuser',
++                'password': 'somepassword',
++                'host': 'somehost',
++                'port': '444',
++                'sslmode': 'verify-ca',
++                'sslrootcert': '/path/to/rootcert.crt',
++                'sslcert': '/path/to/cert.crt',
++                'sslkey': '/path/to/key.key',
++            }), (
++                ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
++                {
++                    'PGPASSWORD': 'somepassword',
++                    'PGSSLMODE': 'verify-ca',
++                    'PGSSLROOTCERT': '/path/to/rootcert.crt',
++                    'PGSSLCERT': '/path/to/cert.crt',
++                    'PGSSLKEY': '/path/to/key.key',
++                },
+             )
+         )
+2026-11-01 02:32:59,967 - INFO - Eval script for django__django-11239 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-11239/eval.sh; copying to container...
+2026-11-01 02:33:06,174 - INFO - Test runtime: 6.13 seconds
+2026-11-01 02:33:06,177 - INFO - Test output for django__django-11239 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-11239/test_output.txt
+2026-11-01 02:33:06,261 - INFO - Git diff after:
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index cf4df76882..0efe0d47f0 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -17,6 +17,10 @@ class DatabaseClient(BaseDatabaseClient):
+         dbname = conn_params.get('database', '')
+         user = conn_params.get('user', '')
+         passwd = conn_params.get('password', '')
++        sslmode = conn_params.get('sslmode', '')
++        sslrootcert = conn_params.get('sslrootcert', '')
++        sslcert = conn_params.get('sslcert', '')
++        sslkey = conn_params.get('sslkey', '')
+ 
+         if user:
+             args += ['-U', user]
+@@ -30,6 +34,14 @@ class DatabaseClient(BaseDatabaseClient):
+         subprocess_env = os.environ.copy()
+         if passwd:
+             subprocess_env['PGPASSWORD'] = str(passwd)
++        if sslmode:
++            subprocess_env['PGSSLMODE'] = str(sslmode)
++        if sslrootcert:
++            subprocess_env['PGSSLROOTCERT'] = str(sslrootcert)
++        if sslcert:
++            subprocess_env['PGSSLCERT'] = str(sslcert)
++        if sslkey:
++            subprocess_env['PGSSLKEY'] = str(sslkey)
+         try:
+             # Allow SIGINT to pass to psql to abort queries.
+             signal.signal(signal.SIGINT, signal.SIG_IGN)
+2026-11-01 02:33:06,261 - INFO - Git diff changed after running eval script
+2026-11-01 02:33:06,261 - INFO - Grading answer for django__django-11239...
+2026-11-01 02:33:06,264 - INFO - report: {'django__django-11239': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_ssl_certificate (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_accent (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_basic (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_column (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_nopass (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'SIGINT is ignored in Python and passed to psql to abort quries.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11239: resolved: True
+2026-11-01 02:33:06,267 - INFO - Attempting to stop container sweb.eval.django__django-11239.verified_full_deepseek-harness...
+2026-11-01 02:33:21,813 - INFO - Container sweb.eval.django__django-11239.verified_full_deepseek-harness stopped successfully.
+2026-11-01 02:33:21,813 - INFO - Attempting to remove container sweb.eval.django__django-11239.verified_full_deepseek-harness...
+2026-11-01 02:33:21,878 - INFO - Container sweb.eval.django__django-11239.verified_full_deepseek-harness removed successfully.

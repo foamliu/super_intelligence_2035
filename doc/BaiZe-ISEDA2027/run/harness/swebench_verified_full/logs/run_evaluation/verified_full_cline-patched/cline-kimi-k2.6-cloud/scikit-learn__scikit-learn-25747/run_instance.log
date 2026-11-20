@@ -1,0 +1,159 @@
+2026-10-30 16:29:12,385 - INFO - Creating container for scikit-learn__scikit-learn-25747...
+2026-10-30 16:29:12,434 - INFO - Container for scikit-learn__scikit-learn-25747 created: 3c993c017e26d512ecaf609919705345b5cd4ef73af92ae803cd4d94393a1021
+2026-10-30 16:29:13,443 - INFO - Container for scikit-learn__scikit-learn-25747 started: 3c993c017e26d512ecaf609919705345b5cd4ef73af92ae803cd4d94393a1021
+2026-10-30 16:29:13,445 - INFO - Intermediate patch for scikit-learn__scikit-learn-25747 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-25747/patch.diff, now applying to container...
+2026-10-30 16:29:13,735 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/tests/test_pipeline.py...
+warning: sklearn/tests/test_pipeline.py has type 100755, expected 100644
+Checking patch sklearn/utils/_set_output.py...
+warning: sklearn/utils/_set_output.py has type 100755, expected 100644
+Checking patch sklearn/utils/tests/test_set_output.py...
+warning: sklearn/utils/tests/test_set_output.py has type 100755, expected 100644
+Applied patch sklearn/tests/test_pipeline.py cleanly.
+Applied patch sklearn/utils/_set_output.py cleanly.
+Applied patch sklearn/utils/tests/test_set_output.py cleanly.
+
+2026-10-30 16:29:14,177 - INFO - Git diff before:
+diff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py
+index fa7fa2ad2..cef62f653 100755
+--- a/sklearn/tests/test_pipeline.py
++++ b/sklearn/tests/test_pipeline.py
+@@ -1620,6 +1620,37 @@ def test_feature_union_set_output():
+     assert_array_equal(X_trans.index, X_test.index)
+ 
+ 
++def test_feature_union_set_output_transform_changed_n_rows():
++    """Test feature union with set_output API when a transformer changes n_rows.
++
++    Non-regression test for gh-25730.
++    """
++    pd = pytest.importorskip("pandas")
++
++    class GroupSumTransformer(BaseEstimator, TransformerMixin):
++        def fit(self, X, y=None):
++            return self
++
++        def transform(self, X):
++            return X.groupby("group").sum().reset_index(drop=True)
++
++        def get_feature_names_out(self, input_features=None):
++            return np.asarray(["a", "b"], dtype=object)
++
++    X = pd.DataFrame(
++        {"a": [1, 1, 2, 2], "b": [3, 3, 4, 4], "group": [0, 0, 1, 1]}
++    )
++    union = FeatureUnion(
++        [
++            ("group_sum", GroupSumTransformer()),
++        ]
++    )
++    union.set_output(transform="pandas")
++    X_trans = union.fit_transform(X)
++    assert isinstance(X_trans, pd.DataFrame)
++    assert_array_equal(X_trans.columns, union.get_feature_names_out())
++
++
+ def test_feature_union_getitem():
+     """Check FeatureUnion.__getitem__ returns expected results."""
+     scalar = StandardScaler()
+diff --git a/sklearn/utils/_set_output.py b/sklearn/utils/_set_output.py
+index 335773c6a..d27df0005 100755
+--- a/sklearn/utils/_set_output.py
++++ b/sklearn/utils/_set_output.py
+@@ -55,7 +55,7 @@ def _wrap_in_pandas_container(
+     if isinstance(data_to_wrap, pd.DataFrame):
+         if columns is not None:
+             data_to_wrap.columns = columns
+-        if index is not None:
++        if index is not None and len(index) == len(data_to_wrap):
+             data_to_wrap.index = index
+         return data_to_wrap
+ 
+diff --git a/sklearn/utils/tests/test_set_output.py b/sklearn/utils/tests/test_set_output.py
+index ac73ca094..3327b1405 100755
+--- a/sklearn/utils/tests/test_set_output.py
++++ b/sklearn/utils/tests/test_set_output.py
+@@ -36,6 +36,17 @@ def test__wrap_in_pandas_container_dense_update_columns_and_index():
+     assert_array_equal(new_df.index, new_index)
+ 
+ 
++def test__wrap_in_pandas_container_mismatched_index():
++    """Check that _wrap_in_pandas_container preserves index when lengths mismatch."""
++    pd = pytest.importorskip("pandas")
++    X_df = pd.DataFrame([[1, 0, 3], [0, 0, 1]], columns=["a", "b", "c"])
++    new_index = [10, 12, 14]
++
++    new_df = _wrap_in_pandas_container(X_df, columns=None, index=new_index)
++    assert_array_equal(new_df.columns, X_df.columns)
++    assert_array_equal(new_df.index, X_df.index)
++
++
+ def test__wrap_in_pandas_container_error_validation():
+     """Check errors in _wrap_in_pandas_container."""
+     X = np.asarray([[1, 0, 3], [0, 0, 1]])
+2026-10-30 16:29:14,181 - INFO - Eval script for scikit-learn__scikit-learn-25747 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-25747/eval.sh; copying to container...
+2026-10-30 16:29:20,515 - INFO - Test runtime: 6.28 seconds
+2026-10-30 16:29:20,526 - INFO - Test output for scikit-learn__scikit-learn-25747 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-25747/test_output.txt
+2026-10-30 16:29:21,046 - INFO - Git diff after:
+diff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py
+index fa7fa2ad2..cef62f653 100755
+--- a/sklearn/tests/test_pipeline.py
++++ b/sklearn/tests/test_pipeline.py
+@@ -1620,6 +1620,37 @@ def test_feature_union_set_output():
+     assert_array_equal(X_trans.index, X_test.index)
+ 
+ 
++def test_feature_union_set_output_transform_changed_n_rows():
++    """Test feature union with set_output API when a transformer changes n_rows.
++
++    Non-regression test for gh-25730.
++    """
++    pd = pytest.importorskip("pandas")
++
++    class GroupSumTransformer(BaseEstimator, TransformerMixin):
++        def fit(self, X, y=None):
++            return self
++
++        def transform(self, X):
++            return X.groupby("group").sum().reset_index(drop=True)
++
++        def get_feature_names_out(self, input_features=None):
++            return np.asarray(["a", "b"], dtype=object)
++
++    X = pd.DataFrame(
++        {"a": [1, 1, 2, 2], "b": [3, 3, 4, 4], "group": [0, 0, 1, 1]}
++    )
++    union = FeatureUnion(
++        [
++            ("group_sum", GroupSumTransformer()),
++        ]
++    )
++    union.set_output(transform="pandas")
++    X_trans = union.fit_transform(X)
++    assert isinstance(X_trans, pd.DataFrame)
++    assert_array_equal(X_trans.columns, union.get_feature_names_out())
++
++
+ def test_feature_union_getitem():
+     """Check FeatureUnion.__getitem__ returns expected results."""
+     scalar = StandardScaler()
+diff --git a/sklearn/utils/_set_output.py b/sklearn/utils/_set_output.py
+index 335773c6a..d27df0005 100755
+--- a/sklearn/utils/_set_output.py
++++ b/sklearn/utils/_set_output.py
+@@ -55,7 +55,7 @@ def _wrap_in_pandas_container(
+     if isinstance(data_to_wrap, pd.DataFrame):
+         if columns is not None:
+             data_to_wrap.columns = columns
+-        if index is not None:
++        if index is not None and len(index) == len(data_to_wrap):
+             data_to_wrap.index = index
+         return data_to_wrap
+2026-10-30 16:29:21,047 - INFO - Git diff changed after running eval script
+2026-10-30 16:29:21,047 - INFO - Grading answer for scikit-learn__scikit-learn-25747...
+2026-10-30 16:29:21,053 - INFO - report: {'scikit-learn__scikit-learn-25747': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/utils/tests/test_set_output.py::test_set_output_pandas_keep_index']}, 'PASS_TO_PASS': {'success': ['sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_dense', 'sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_dense_update_columns_and_index', 'sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_error_validation', 'sklearn/utils/tests/test_set_output.py::test__safe_set_output', 'sklearn/utils/tests/test_set_output.py::test_set_output_mixin', 'sklearn/utils/tests/test_set_output.py::test__safe_set_output_error', 'sklearn/utils/tests/test_set_output.py::test_set_output_method', 'sklearn/utils/tests/test_set_output.py::test_set_output_method_error', 'sklearn/utils/tests/test_set_output.py::test__get_output_config', 'sklearn/utils/tests/test_set_output.py::test_get_output_auto_wrap_false', 'sklearn/utils/tests/test_set_output.py::test_auto_wrap_output_keys_errors_with_incorrect_input', 'sklearn/utils/tests/test_set_output.py::test_set_output_mixin_custom_mixin', 'sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_column_errors', 'sklearn/utils/tests/test_set_output.py::test_set_output_mro'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-25747: resolved: False
+2026-10-30 16:29:21,059 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_cline-patched...
+2026-10-30 16:29:43,993 - INFO - Container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_cline-patched stopped successfully.
+2026-10-30 16:29:43,993 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_cline-patched...
+2026-10-30 16:29:44,055 - INFO - Container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_cline-patched removed successfully.

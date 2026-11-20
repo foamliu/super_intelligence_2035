@@ -1,0 +1,120 @@
+2026-10-30 20:57:25,774 - INFO - Creating container for matplotlib__matplotlib-26342...
+2026-10-30 20:57:25,847 - INFO - Container for matplotlib__matplotlib-26342 created: 89f4611005de5bc752d6db6e821252bc90cbe6c570e33b7edc655a415ebd348a
+2026-10-30 20:57:27,952 - INFO - Container for matplotlib__matplotlib-26342 started: 89f4611005de5bc752d6db6e821252bc90cbe6c570e33b7edc655a415ebd348a
+2026-10-30 20:57:27,953 - INFO - Intermediate patch for matplotlib__matplotlib-26342 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-26342/patch.diff, now applying to container...
+2026-10-30 20:57:28,120 - INFO - >>>>> Applied Patch:
+Checking patch doc/users/next_whats_new/contourset_set_paths.rst...
+Checking patch lib/matplotlib/contour.py...
+Checking patch lib/matplotlib/contour.pyi...
+Checking patch lib/matplotlib/tests/test_contour.py...
+Applied patch doc/users/next_whats_new/contourset_set_paths.rst cleanly.
+Applied patch lib/matplotlib/contour.py cleanly.
+Applied patch lib/matplotlib/contour.pyi cleanly.
+Applied patch lib/matplotlib/tests/test_contour.py cleanly.
+
+2026-10-30 20:57:29,285 - INFO - Git diff before:
+diff --git a/lib/matplotlib/contour.py b/lib/matplotlib/contour.py
+index 3f84250b64..bc20fbdc46 100644
+--- a/lib/matplotlib/contour.py
++++ b/lib/matplotlib/contour.py
+@@ -985,6 +985,21 @@ class ContourSet(ContourLabeler, mcoll.Collection):
+               and hasattr(self._transform, '_as_mpl_transform')):
+             self._transform = self._transform._as_mpl_transform(self.axes)
+         return self._transform
++    def set_paths(self, paths):
++        """
++        Set the paths of the contour.
++
++        Parameters
++        ----------
++        paths : list of `.Path`
++            The paths to use for the contour.  The length of *paths* should
++            match the number of contour levels (for line contours) or the
++            number of levels minus one (for filled contours).
++        """
++        self._paths = paths
++        self.stale = True
++        if hasattr(self, "_old_style_split_collections"):
++            del self._old_style_split_collections
+ 
+     def __getstate__(self):
+         state = self.__dict__.copy()
+diff --git a/lib/matplotlib/contour.pyi b/lib/matplotlib/contour.pyi
+index c7179637a1..ca1c5fbade 100644
+--- a/lib/matplotlib/contour.pyi
++++ b/lib/matplotlib/contour.pyi
+@@ -120,6 +120,7 @@ class ContourSet(ContourLabeler, Collection):
+         Literal["solid", "dashed", "dashdot", "dotted"] |
+         Iterable[Literal["solid", "dashed", "dashdot", "dotted"]]
+     ): ...
++    def set_paths(self, paths: Sequence[Path]) -> None: ...
+ 
+     def __init__(
+         self,
+diff --git a/lib/matplotlib/tests/test_contour.py b/lib/matplotlib/tests/test_contour.py
+index b6ddb2830a..4e47df0419 100644
+--- a/lib/matplotlib/tests/test_contour.py
++++ b/lib/matplotlib/tests/test_contour.py
+@@ -823,3 +823,12 @@ def test_deprecated_apis():
+         assert_array_equal(cs.tcolors, [c.get_edgecolor() for c in colls])
+     with pytest.warns(mpl.MatplotlibDeprecationWarning, match="tlinewidths"):
+         assert cs.tlinewidths == [c.get_linewidth() for c in colls]
++
++
++def test_contour_set_paths():
++    cs = plt.contour(np.arange(16).reshape((4, 4)))
++    paths = cs.get_paths()
++    assert len(paths) == len(cs.levels)
++    new_paths = [p.deepcopy() for p in paths]
++    cs.set_paths(new_paths)
++    assert cs.get_paths() == new_paths
+2026-10-30 20:57:29,287 - INFO - Eval script for matplotlib__matplotlib-26342 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-26342/eval.sh; copying to container...
+2026-10-30 20:59:03,399 - INFO - Test runtime: 94.02 seconds
+2026-10-30 20:59:03,401 - INFO - Test output for matplotlib__matplotlib-26342 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-26342/test_output.txt
+2026-10-30 20:59:03,458 - INFO - Git diff after:
+diff --git a/lib/matplotlib/contour.py b/lib/matplotlib/contour.py
+index 3f84250b64..bc20fbdc46 100644
+--- a/lib/matplotlib/contour.py
++++ b/lib/matplotlib/contour.py
+@@ -985,6 +985,21 @@ class ContourSet(ContourLabeler, mcoll.Collection):
+               and hasattr(self._transform, '_as_mpl_transform')):
+             self._transform = self._transform._as_mpl_transform(self.axes)
+         return self._transform
++    def set_paths(self, paths):
++        """
++        Set the paths of the contour.
++
++        Parameters
++        ----------
++        paths : list of `.Path`
++            The paths to use for the contour.  The length of *paths* should
++            match the number of contour levels (for line contours) or the
++            number of levels minus one (for filled contours).
++        """
++        self._paths = paths
++        self.stale = True
++        if hasattr(self, "_old_style_split_collections"):
++            del self._old_style_split_collections
+ 
+     def __getstate__(self):
+         state = self.__dict__.copy()
+diff --git a/lib/matplotlib/contour.pyi b/lib/matplotlib/contour.pyi
+index c7179637a1..ca1c5fbade 100644
+--- a/lib/matplotlib/contour.pyi
++++ b/lib/matplotlib/contour.pyi
+@@ -120,6 +120,7 @@ class ContourSet(ContourLabeler, Collection):
+         Literal["solid", "dashed", "dashdot", "dotted"] |
+         Iterable[Literal["solid", "dashed", "dashdot", "dotted"]]
+     ): ...
++    def set_paths(self, paths: Sequence[Path]) -> None: ...
+ 
+     def __init__(
+         self,
+2026-10-30 20:59:03,458 - INFO - Git diff changed after running eval script
+2026-10-30 20:59:03,458 - INFO - Grading answer for matplotlib__matplotlib-26342...
+2026-10-30 20:59:03,461 - INFO - report: {'matplotlib__matplotlib-26342': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['lib/matplotlib/tests/test_contour.py::test_contour_set_paths[png]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_contour.py::test_contour_shape_1d_valid', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_2d_valid', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args0-Length', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args1-Length', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args2-Number', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args3-Number', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args4-Shapes', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args5-Shapes', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args6-Inputs', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args7-Input', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args8-Input', 'lib/matplotlib/tests/test_contour.py::test_contour_shape_error[args9-Input', 'lib/matplotlib/tests/test_contour.py::test_contour_no_valid_levels', 'lib/matplotlib/tests/test_contour.py::test_contour_Nlevels', 'lib/matplotlib/tests/test_contour.py::test_contour_manual_labels[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_manual_labels[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contour_manual_labels[pdf-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_manual_labels[pdf-True]', 'lib/matplotlib/tests/test_contour.py::test_given_colors_levels_and_extends[png-False]', 'lib/matplotlib/tests/test_contour.py::test_given_colors_levels_and_extends[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contour_datetime_axis[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_datetime_axis[png-True]', 'lib/matplotlib/tests/test_contour.py::test_labels[png-False]', 'lib/matplotlib/tests/test_contour.py::test_labels[png-True]', 'lib/matplotlib/tests/test_contour.py::test_label_contour_start', 'lib/matplotlib/tests/test_contour.py::test_corner_mask[png-False]', 'lib/matplotlib/tests/test_contour.py::test_corner_mask[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contourf_decreasing_levels', 'lib/matplotlib/tests/test_contour.py::test_contourf_symmetric_locator', 'lib/matplotlib/tests/test_contour.py::test_circular_contour_warning', 'lib/matplotlib/tests/test_contour.py::test_clabel_zorder[True-123-1234]', 'lib/matplotlib/tests/test_contour.py::test_clabel_zorder[False-123-1234]', 'lib/matplotlib/tests/test_contour.py::test_clabel_zorder[True-123-None]', 'lib/matplotlib/tests/test_contour.py::test_clabel_zorder[False-123-None]', 'lib/matplotlib/tests/test_contour.py::test_contourf_log_extension[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contourf_log_extension[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contour_addlines[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_addlines[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contour_uneven[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_uneven[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contour_linewidth[1.23-None-None-1.23]', 'lib/matplotlib/tests/test_contour.py::test_contour_linewidth[1.23-4.24-None-4.24]', 'lib/matplotlib/tests/test_contour.py::test_contour_linewidth[1.23-4.24-5.02-5.02]', 'lib/matplotlib/tests/test_contour.py::test_label_nonagg', 'lib/matplotlib/tests/test_contour.py::test_contour_closed_line_loop[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_closed_line_loop[png-True]', 'lib/matplotlib/tests/test_contour.py::test_quadcontourset_reuse', 'lib/matplotlib/tests/test_contour.py::test_contour_manual[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_manual[png-True]', 'lib/matplotlib/tests/test_contour.py::test_contour_line_start_on_corner_edge[png-False]', 'lib/matplotlib/tests/test_contour.py::test_contour_line_start_on_corner_edge[png-True]', 'lib/matplotlib/tests/test_contour.py::test_find_nearest_contour', 'lib/matplotlib/tests/test_contour.py::test_find_nearest_contour_no_filled', 'lib/matplotlib/tests/test_contour.py::test_contour_autolabel_beyond_powerlimits', 'lib/matplotlib/tests/test_contour.py::test_contourf_legend_elements', 'lib/matplotlib/tests/test_contour.py::test_contour_legend_elements', 'lib/matplotlib/tests/test_contour.py::test_algorithm_name[mpl2005-Mpl2005ContourGenerator]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_name[mpl2014-Mpl2014ContourGenerator]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_name[serial-SerialContourGenerator]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_name[threaded-ThreadedContourGenerator]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_name[invalid-None]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_supports_corner_mask[mpl2005]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_supports_corner_mask[mpl2014]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_supports_corner_mask[serial]', 'lib/matplotlib/tests/test_contour.py::test_algorithm_supports_corner_mask[threaded]', 'lib/matplotlib/tests/test_contour.py::test_all_algorithms[png-False]', 'lib/matplotlib/tests/test_contour.py::test_all_algorithms[png-True]', 'lib/matplotlib/tests/test_contour.py::test_subfigure_clabel', 'lib/matplotlib/tests/test_contour.py::test_linestyles[solid]', 'lib/matplotlib/tests/test_contour.py::test_linestyles[dashed]', 'lib/matplotlib/tests/test_contour.py::test_linestyles[dashdot]', 'lib/matplotlib/tests/test_contour.py::test_linestyles[dotted]', 'lib/matplotlib/tests/test_contour.py::test_negative_linestyles[solid]', 'lib/matplotlib/tests/test_contour.py::test_negative_linestyles[dashed]', 'lib/matplotlib/tests/test_contour.py::test_negative_linestyles[dashdot]', 'lib/matplotlib/tests/test_contour.py::test_negative_linestyles[dotted]', 'lib/matplotlib/tests/test_contour.py::test_contour_remove', 'lib/matplotlib/tests/test_contour.py::test_contour_no_args', 'lib/matplotlib/tests/test_contour.py::test_contour_clip_path', 'lib/matplotlib/tests/test_contour.py::test_bool_autolevel', 'lib/matplotlib/tests/test_contour.py::test_all_nan'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-26342: resolved: True
+2026-10-30 20:59:03,462 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-26342.verified_full_pi...
+2026-10-30 20:59:19,200 - INFO - Container sweb.eval.matplotlib__matplotlib-26342.verified_full_pi stopped successfully.
+2026-10-30 20:59:19,200 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-26342.verified_full_pi...
+2026-10-30 20:59:19,245 - INFO - Container sweb.eval.matplotlib__matplotlib-26342.verified_full_pi removed successfully.

@@ -1,0 +1,160 @@
+2026-10-30 15:51:21,962 - INFO - Creating container for scikit-learn__scikit-learn-14629...
+2026-10-30 15:51:21,991 - INFO - Container for scikit-learn__scikit-learn-14629 created: 4d107312957da75d21685b5740e8f66d7aed560d8b68ae7b41ca52ebba5c0602
+2026-10-30 15:51:22,698 - INFO - Container for scikit-learn__scikit-learn-14629 started: 4d107312957da75d21685b5740e8f66d7aed560d8b68ae7b41ca52ebba5c0602
+2026-10-30 15:51:22,699 - INFO - Intermediate patch for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14629/patch.diff, now applying to container...
+2026-10-30 15:51:22,842 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/model_selection/tests/test_validation.py...
+Checking patch sklearn/multioutput.py...
+Checking patch sklearn/tests/test_multioutput.py...
+Applied patch sklearn/model_selection/tests/test_validation.py cleanly.
+Applied patch sklearn/multioutput.py cleanly.
+Applied patch sklearn/tests/test_multioutput.py cleanly.
+
+2026-10-30 15:51:23,298 - INFO - Git diff before:
+diff --git a/sklearn/model_selection/tests/test_validation.py b/sklearn/model_selection/tests/test_validation.py
+index 6fa2e4fee..9a55b8862 100644
+--- a/sklearn/model_selection/tests/test_validation.py
++++ b/sklearn/model_selection/tests/test_validation.py
+@@ -70,6 +70,7 @@ from io import StringIO
+ from sklearn.base import BaseEstimator
+ from sklearn.base import clone
+ from sklearn.multiclass import OneVsRestClassifier
++from sklearn.multioutput import MultiOutputClassifier
+ from sklearn.utils import shuffle
+ from sklearn.datasets import make_classification
+ from sklearn.datasets import make_multilabel_classification
+@@ -889,6 +890,17 @@ def test_cross_val_predict_predict_log_proba_shape():
+     assert preds.shape == (150, 3)
+ 
+ 
++def test_cross_val_predict_multioutput_predict_proba():
++    X, Y = make_multilabel_classification(random_state=0)
++    clf = MultiOutputClassifier(RandomForestClassifier(n_estimators=5,
++                                                        random_state=0))
++    preds = cross_val_predict(clf, X, Y, cv=3, method='predict_proba')
++    assert isinstance(preds, list)
++    assert len(preds) == Y.shape[1]
++    for i in range(Y.shape[1]):
++        assert preds[i].shape == (X.shape[0], len(np.unique(Y[:, i])))
++
++
+ def test_cross_val_predict_input_types():
+     iris = load_iris()
+     X, y = iris.data, iris.target
+diff --git a/sklearn/multioutput.py b/sklearn/multioutput.py
+index 463b72d40..a3cc3e181 100644
+--- a/sklearn/multioutput.py
++++ b/sklearn/multioutput.py
+@@ -318,6 +318,8 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):
+ 
+     Attributes
+     ----------
++    classes_ : list of arrays of shape (n_classes,)
++        Class labels for each output.
+     estimators_ : list of ``n_output`` estimators
+         Estimators used for predictions.
+     """
+@@ -325,6 +327,12 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):
+     def __init__(self, estimator, n_jobs=None):
+         super().__init__(estimator, n_jobs)
+ 
++    def fit(self, X, y, sample_weight=None):
++        super().fit(X, y, sample_weight)
++        self.classes_ = [estimator.classes_
++                         for estimator in self.estimators_]
++        return self
++
+     def predict_proba(self, X):
+         """Probability estimates.
+         Returns prediction probabilities for each class of each output.
+diff --git a/sklearn/tests/test_multioutput.py b/sklearn/tests/test_multioutput.py
+index e70048a7f..068cca5ea 100644
+--- a/sklearn/tests/test_multioutput.py
++++ b/sklearn/tests/test_multioutput.py
+@@ -276,6 +276,18 @@ def test_multi_output_classification():
+                            list(predict_proba[i]))
+ 
+ 
++def test_multi_output_classifier_classes_attribute():
++    forest = RandomForestClassifier(n_estimators=10, random_state=1)
++    multi_target_forest = MultiOutputClassifier(forest)
++    multi_target_forest.fit(X, y)
++
++    assert hasattr(multi_target_forest, 'classes_')
++    assert len(multi_target_forest.classes_) == n_outputs
++    for i in range(n_outputs):
++        assert_array_equal(multi_target_forest.classes_[i],
++                           np.unique(y[:, i]))
++
++
+ def test_multiclass_multioutput_estimator():
+     # test to check meta of meta estimators
+     svc = LinearSVC(random_state=0)
+2026-10-30 15:51:23,301 - INFO - Eval script for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14629/eval.sh; copying to container...
+2026-10-30 15:51:36,299 - INFO - Test runtime: 12.92 seconds
+2026-10-30 15:51:36,303 - INFO - Test output for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14629/test_output.txt
+2026-10-30 15:51:36,448 - INFO - Git diff after:
+diff --git a/sklearn/model_selection/tests/test_validation.py b/sklearn/model_selection/tests/test_validation.py
+index 6fa2e4fee..9a55b8862 100644
+--- a/sklearn/model_selection/tests/test_validation.py
++++ b/sklearn/model_selection/tests/test_validation.py
+@@ -70,6 +70,7 @@ from io import StringIO
+ from sklearn.base import BaseEstimator
+ from sklearn.base import clone
+ from sklearn.multiclass import OneVsRestClassifier
++from sklearn.multioutput import MultiOutputClassifier
+ from sklearn.utils import shuffle
+ from sklearn.datasets import make_classification
+ from sklearn.datasets import make_multilabel_classification
+@@ -889,6 +890,17 @@ def test_cross_val_predict_predict_log_proba_shape():
+     assert preds.shape == (150, 3)
+ 
+ 
++def test_cross_val_predict_multioutput_predict_proba():
++    X, Y = make_multilabel_classification(random_state=0)
++    clf = MultiOutputClassifier(RandomForestClassifier(n_estimators=5,
++                                                        random_state=0))
++    preds = cross_val_predict(clf, X, Y, cv=3, method='predict_proba')
++    assert isinstance(preds, list)
++    assert len(preds) == Y.shape[1]
++    for i in range(Y.shape[1]):
++        assert preds[i].shape == (X.shape[0], len(np.unique(Y[:, i])))
++
++
+ def test_cross_val_predict_input_types():
+     iris = load_iris()
+     X, y = iris.data, iris.target
+diff --git a/sklearn/multioutput.py b/sklearn/multioutput.py
+index 463b72d40..a3cc3e181 100644
+--- a/sklearn/multioutput.py
++++ b/sklearn/multioutput.py
+@@ -318,6 +318,8 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):
+ 
+     Attributes
+     ----------
++    classes_ : list of arrays of shape (n_classes,)
++        Class labels for each output.
+     estimators_ : list of ``n_output`` estimators
+         Estimators used for predictions.
+     """
+@@ -325,6 +327,12 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):
+     def __init__(self, estimator, n_jobs=None):
+         super().__init__(estimator, n_jobs)
+ 
++    def fit(self, X, y, sample_weight=None):
++        super().fit(X, y, sample_weight)
++        self.classes_ = [estimator.classes_
++                         for estimator in self.estimators_]
++        return self
++
+     def predict_proba(self, X):
+         """Probability estimates.
+         Returns prediction probabilities for each class of each output.
+2026-10-30 15:51:36,448 - INFO - Git diff changed after running eval script
+2026-10-30 15:51:36,448 - INFO - Grading answer for scikit-learn__scikit-learn-14629...
+2026-10-30 15:51:36,456 - INFO - report: {'scikit-learn__scikit-learn-14629': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator1]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tests/test_multioutput.py::test_multi_target_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_one_target', 'sklearn/tests/test_multioutput.py::test_multi_target_sparse_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights_api', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weight_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_parallelism', 'sklearn/tests/test_multioutput.py::test_multi_output_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_no_first_classes_exception', 'sklearn/tests/test_multioutput.py::test_multi_output_classification', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_exceptions', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_linear_svc', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_sparse_data', 'sklearn/tests/test_multioutput.py::test_classifier_chain_vs_independent_models', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict_with_sparse_data_and_cv', 'sklearn/tests/test_multioutput.py::test_base_chain_random_order', 'sklearn/tests/test_multioutput.py::test_base_chain_crossval_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator0]', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator2]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14629: resolved: True
+2026-10-30 15:51:36,462 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_opencode...
+2026-10-30 15:51:59,434 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_opencode stopped successfully.
+2026-10-30 15:51:59,434 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_opencode...
+2026-10-30 15:51:59,469 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_opencode removed successfully.

@@ -1,0 +1,76 @@
+2026-11-10 10:01:10,122 - INFO - Creating container for scikit-learn__scikit-learn-13439...
+2026-11-10 10:01:10,141 - INFO - Container for scikit-learn__scikit-learn-13439 created: 417390f6f833932f29385de7a4cf4fe32cdafd42fced7dd463fb4fe4cc984c61
+2026-11-10 10:01:10,871 - INFO - Container for scikit-learn__scikit-learn-13439 started: 417390f6f833932f29385de7a4cf4fe32cdafd42fced7dd463fb4fe4cc984c61
+2026-11-10 10:01:10,873 - INFO - Intermediate patch for scikit-learn__scikit-learn-13439 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-13439/patch.diff, now applying to container...
+2026-11-10 10:01:11,038 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/pipeline.py...
+warning: sklearn/pipeline.py has type 100755, expected 100644
+Checking patch sklearn/tests/test_pipeline.py...
+warning: sklearn/tests/test_pipeline.py has type 100755, expected 100644
+Applied patch sklearn/pipeline.py cleanly.
+Applied patch sklearn/tests/test_pipeline.py cleanly.
+
+2026-11-10 10:01:11,466 - INFO - Git diff before:
+diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py
+index 7eaf9a46f..b6b9ad91f 100755
+--- a/sklearn/pipeline.py
++++ b/sklearn/pipeline.py
+@@ -199,6 +199,10 @@ class Pipeline(_BaseComposition):
+             if trans is not None and trans != 'passthrough':
+                 yield idx, name, trans
+ 
++    def __len__(self):
++        """Returns the length of the Pipeline"""
++        return len(self.steps)
++
+     def __getitem__(self, ind):
+         """Returns a sub-pipeline or a single esimtator in the pipeline
+ 
+diff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py
+index 8d6fe8f70..ab5575c21 100755
+--- a/sklearn/tests/test_pipeline.py
++++ b/sklearn/tests/test_pipeline.py
+@@ -552,6 +552,17 @@ def test_pipeline_index():
+     assert_raises(KeyError, lambda: pipe['foobar'])
+ 
+ 
++def test_pipeline_len():
++    # See issue #13349
++    pipe = Pipeline([('transf1', Transf()),
++                     ('transf2', Transf()),
++                     ('clf', FitParamT())])
++    assert len(pipe) == 3
++    pipe = Pipeline([('transf1', Transf()),
++                     ('clf', FitParamT())])
++    assert len(pipe) == 2
++
++
+ def test_set_pipeline_steps():
+     transf1 = Transf()
+     transf2 = Transf()
+2026-11-10 10:01:11,469 - INFO - Eval script for scikit-learn__scikit-learn-13439 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-13439/eval.sh; copying to container...
+2026-11-10 10:01:17,784 - INFO - Test runtime: 6.22 seconds
+2026-11-10 10:01:17,787 - INFO - Test output for scikit-learn__scikit-learn-13439 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-13439/test_output.txt
+2026-11-10 10:01:17,841 - INFO - Git diff after:
+diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py
+index 7eaf9a46f..b6b9ad91f 100755
+--- a/sklearn/pipeline.py
++++ b/sklearn/pipeline.py
+@@ -199,6 +199,10 @@ class Pipeline(_BaseComposition):
+             if trans is not None and trans != 'passthrough':
+                 yield idx, name, trans
+ 
++    def __len__(self):
++        """Returns the length of the Pipeline"""
++        return len(self.steps)
++
+     def __getitem__(self, ind):
+         """Returns a sub-pipeline or a single esimtator in the pipeline
+2026-11-10 10:01:17,841 - INFO - Git diff changed after running eval script
+2026-11-10 10:01:17,841 - INFO - Grading answer for scikit-learn__scikit-learn-13439...
+2026-11-10 10:01:17,845 - INFO - report: {'scikit-learn__scikit-learn-13439': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tests/test_pipeline.py::test_make_pipeline_memory'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tests/test_pipeline.py::test_pipeline_init', 'sklearn/tests/test_pipeline.py::test_pipeline_init_tuple', 'sklearn/tests/test_pipeline.py::test_pipeline_methods_anova', 'sklearn/tests/test_pipeline.py::test_pipeline_fit_params', 'sklearn/tests/test_pipeline.py::test_pipeline_sample_weight_supported', 'sklearn/tests/test_pipeline.py::test_pipeline_sample_weight_unsupported', 'sklearn/tests/test_pipeline.py::test_pipeline_raise_set_params_error', 'sklearn/tests/test_pipeline.py::test_pipeline_methods_pca_svm', 'sklearn/tests/test_pipeline.py::test_pipeline_methods_preprocessing_svm', 'sklearn/tests/test_pipeline.py::test_fit_predict_on_pipeline', 'sklearn/tests/test_pipeline.py::test_fit_predict_on_pipeline_without_fit_predict', 'sklearn/tests/test_pipeline.py::test_fit_predict_with_intermediate_fit_params', 'sklearn/tests/test_pipeline.py::test_predict_with_predict_params', 'sklearn/tests/test_pipeline.py::test_feature_union', 'sklearn/tests/test_pipeline.py::test_make_union', 'sklearn/tests/test_pipeline.py::test_make_union_kwargs', 'sklearn/tests/test_pipeline.py::test_pipeline_transform', 'sklearn/tests/test_pipeline.py::test_pipeline_fit_transform', 'sklearn/tests/test_pipeline.py::test_pipeline_slice', 'sklearn/tests/test_pipeline.py::test_pipeline_index', 'sklearn/tests/test_pipeline.py::test_set_pipeline_steps', 'sklearn/tests/test_pipeline.py::test_pipeline_named_steps', 'sklearn/tests/test_pipeline.py::test_pipeline_correctly_adjusts_steps[None]', 'sklearn/tests/test_pipeline.py::test_pipeline_correctly_adjusts_steps[passthrough]', 'sklearn/tests/test_pipeline.py::test_set_pipeline_step_passthrough[None]', 'sklearn/tests/test_pipeline.py::test_set_pipeline_step_passthrough[passthrough]', 'sklearn/tests/test_pipeline.py::test_pipeline_ducktyping', 'sklearn/tests/test_pipeline.py::test_make_pipeline', 'sklearn/tests/test_pipeline.py::test_feature_union_weights', 'sklearn/tests/test_pipeline.py::test_feature_union_parallel', 'sklearn/tests/test_pipeline.py::test_feature_union_feature_names', 'sklearn/tests/test_pipeline.py::test_classes_property', 'sklearn/tests/test_pipeline.py::test_set_feature_union_steps', 'sklearn/tests/test_pipeline.py::test_set_feature_union_step_drop[drop]', 'sklearn/tests/test_pipeline.py::test_set_feature_union_step_drop[None]', 'sklearn/tests/test_pipeline.py::test_step_name_validation', 'sklearn/tests/test_pipeline.py::test_set_params_nested_pipeline', 'sklearn/tests/test_pipeline.py::test_pipeline_wrong_memory', 'sklearn/tests/test_pipeline.py::test_pipeline_with_cache_attribute', 'sklearn/tests/test_pipeline.py::test_pipeline_memory'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13439: resolved: True
+2026-11-10 10:01:17,847 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13439.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:01:33,674 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13439.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 10:01:33,674 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13439.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:01:33,710 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13439.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

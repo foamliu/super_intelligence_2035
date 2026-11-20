@@ -1,0 +1,65 @@
+2026-11-18 16:27:51,908 - INFO - Creating container for django__django-11179...
+2026-11-18 16:27:51,928 - INFO - Container for django__django-11179 created: 252a19195419579d53b44c00ec7a89069b7611b3dc6169e9808302ceb1f6f720
+2026-11-18 16:27:52,610 - INFO - Container for django__django-11179 started: 252a19195419579d53b44c00ec7a89069b7611b3dc6169e9808302ceb1f6f720
+2026-11-18 16:27:52,613 - INFO - Intermediate patch for django__django-11179 written to logs/evaluation/verified_full_glm53_codex_incr_R2683/codex-glm-5.3-flash/django__django-11179/patch.diff, now applying to container...
+2026-11-18 16:27:52,726 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/deletion.py...
+warning: django/db/models/deletion.py has type 100755, expected 100644
+Checking patch tests/delete/tests.py...
+warning: tests/delete/tests.py has type 100755, expected 100644
+Applied patch django/db/models/deletion.py cleanly.
+Applied patch tests/delete/tests.py cleanly.
+
+2026-11-18 16:27:53,468 - INFO - Git diff before:
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index 92fe4affb9..3a462f1c4c 100755
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -277,6 +277,7 @@ class Collector:
+             if self.can_fast_delete(instance):
+                 with transaction.mark_for_rollback_on_error():
+                     count = sql.DeleteQuery(model).delete_batch([instance.pk], self.using)
++                setattr(instance, model._meta.pk.attname, None)
+                 return count, {model._meta.label: count}
+ 
+         with transaction.atomic(using=self.using, savepoint=False):
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index 55eeb226ea..0df3ab67f7 100755
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -208,6 +208,11 @@ class DeletionTests(TestCase):
+ 
+         models.signals.pre_delete.disconnect(pre_delete)
+ 
++    def test_instance_pk_is_set_to_none_after_delete(self):
++        instance = R.objects.create()
++        instance.delete()
++        self.assertIsNone(instance.pk)
++
+     def test_deletion_order(self):
+         pre_delete_order = []
+         post_delete_order = []
+2026-11-18 16:27:53,470 - INFO - Eval script for django__django-11179 written to logs/evaluation/verified_full_glm53_codex_incr_R2683/codex-glm-5.3-flash/django__django-11179/eval.sh; copying to container...
+2026-11-18 16:28:01,718 - INFO - Test runtime: 8.19 seconds
+2026-11-18 16:28:01,723 - INFO - Test output for django__django-11179 written to logs/evaluation/verified_full_glm53_codex_incr_R2683/codex-glm-5.3-flash/django__django-11179/test_output.txt
+2026-11-18 16:28:01,788 - INFO - Git diff after:
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index 92fe4affb9..3a462f1c4c 100755
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -277,6 +277,7 @@ class Collector:
+             if self.can_fast_delete(instance):
+                 with transaction.mark_for_rollback_on_error():
+                     count = sql.DeleteQuery(model).delete_batch([instance.pk], self.using)
++                setattr(instance, model._meta.pk.attname, None)
+                 return count, {model._meta.label: count}
+ 
+         with transaction.atomic(using=self.using, savepoint=False):
+2026-11-18 16:28:01,788 - INFO - Git diff changed after running eval script
+2026-11-18 16:28:01,788 - INFO - Grading answer for django__django-11179...
+2026-11-18 16:28:01,798 - INFO - report: {'django__django-11179': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_fast_delete_instance_set_pk_none (delete.tests.FastDeleteTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_fast_delete_empty_no_update_can_self_select (delete.tests.FastDeleteTests)', 'test_fast_delete_fk (delete.tests.FastDeleteTests)', 'test_fast_delete_inheritance (delete.tests.FastDeleteTests)', 'test_fast_delete_joined_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_large_batch (delete.tests.FastDeleteTests)', 'test_fast_delete_m2m (delete.tests.FastDeleteTests)', 'test_fast_delete_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_revm2m (delete.tests.FastDeleteTests)', 'test_auto (delete.tests.OnDeleteTests)', 'test_auto_nullable (delete.tests.OnDeleteTests)', 'test_cascade (delete.tests.OnDeleteTests)', 'test_cascade_from_child (delete.tests.OnDeleteTests)', 'test_cascade_from_parent (delete.tests.OnDeleteTests)', 'test_cascade_nullable (delete.tests.OnDeleteTests)', 'test_do_nothing (delete.tests.OnDeleteTests)', 'test_do_nothing_qscount (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_down (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_up (delete.tests.OnDeleteTests)', 'test_o2o_setnull (delete.tests.OnDeleteTests)', 'test_protect (delete.tests.OnDeleteTests)', 'test_setdefault (delete.tests.OnDeleteTests)', 'test_setdefault_none (delete.tests.OnDeleteTests)', 'test_setnull (delete.tests.OnDeleteTests)', 'test_setnull_from_child (delete.tests.OnDeleteTests)', 'test_setnull_from_parent (delete.tests.OnDeleteTests)', 'test_setvalue (delete.tests.OnDeleteTests)', 'test_bulk (delete.tests.DeletionTests)', 'test_can_defer_constraint_checks (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents_relationships (delete.tests.DeletionTests)', 'test_deletion_order (delete.tests.DeletionTests)', 'test_hidden_related (delete.tests.DeletionTests)', 'test_instance_update (delete.tests.DeletionTests)', 'test_large_delete (delete.tests.DeletionTests)', 'test_large_delete_related (delete.tests.DeletionTests)', 'test_m2m (delete.tests.DeletionTests)', 'test_model_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_proxied_model_duplicate_queries (delete.tests.DeletionTests)', 'test_queryset_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_relational_post_delete_signals_happen_before_parent_object (delete.tests.DeletionTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11179: resolved: True
+2026-11-18 16:28:01,800 - INFO - Attempting to stop container sweb.eval.django__django-11179.verified_full_glm53_codex_incr_R2683...
+2026-11-18 16:28:17,796 - INFO - Container sweb.eval.django__django-11179.verified_full_glm53_codex_incr_R2683 stopped successfully.
+2026-11-18 16:28:17,796 - INFO - Attempting to remove container sweb.eval.django__django-11179.verified_full_glm53_codex_incr_R2683...
+2026-11-18 16:28:17,839 - INFO - Container sweb.eval.django__django-11179.verified_full_glm53_codex_incr_R2683 removed successfully.

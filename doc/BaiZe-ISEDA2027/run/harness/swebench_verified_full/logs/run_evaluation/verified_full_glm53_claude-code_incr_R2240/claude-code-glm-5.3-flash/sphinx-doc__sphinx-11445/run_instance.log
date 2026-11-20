@@ -1,0 +1,55 @@
+2026-11-12 07:30:12,271 - INFO - Creating container for sphinx-doc__sphinx-11445...
+2026-11-12 07:30:12,297 - INFO - Container for sphinx-doc__sphinx-11445 created: f40a098349d44b301186389d1afdddad70c13c0535efb3e38f0aa9e0bff4e5e7
+2026-11-12 07:30:13,023 - INFO - Container for sphinx-doc__sphinx-11445 started: f40a098349d44b301186389d1afdddad70c13c0535efb3e38f0aa9e0bff4e5e7
+2026-11-12 07:30:13,024 - INFO - Intermediate patch for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2240/claude-code-glm-5.3-flash/sphinx-doc__sphinx-11445/patch.diff, now applying to container...
+2026-11-12 07:30:13,162 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/rst.py...
+warning: sphinx/util/rst.py has type 100755, expected 100644
+Applied patch sphinx/util/rst.py cleanly.
+
+2026-11-12 07:30:13,695 - INFO - Git diff before:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..7077a4b25 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,12 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++# Pattern for regular field list field markers (e.g. ':author: me'), used to
++# detect docinfo blocks at the start of a document. It mirrors the field marker
++# pattern used by docutils (``Body.patterns['field_marker']``), so that lines
++# that docutils would not parse as fields -- such as section titles containing
++# a role (e.g. ':mod:`mypackage`') -- are not mistaken for docinfo.
++docinfo_re = re.compile(r':(?![: ])([^:\\]|\\.|:(?!([ `]|$)))*(?<! ):( +|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+2026-11-12 07:30:13,698 - INFO - Eval script for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2240/claude-code-glm-5.3-flash/sphinx-doc__sphinx-11445/eval.sh; copying to container...
+2026-11-12 07:30:19,744 - INFO - Test runtime: 5.93 seconds
+2026-11-12 07:30:19,747 - INFO - Test output for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2240/claude-code-glm-5.3-flash/sphinx-doc__sphinx-11445/test_output.txt
+2026-11-12 07:30:19,801 - INFO - Git diff after:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..7077a4b25 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,12 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++# Pattern for regular field list field markers (e.g. ':author: me'), used to
++# detect docinfo blocks at the start of a document. It mirrors the field marker
++# pattern used by docutils (``Body.patterns['field_marker']``), so that lines
++# that docutils would not parse as fields -- such as section titles containing
++# a role (e.g. ':mod:`mypackage`') -- are not mistaken for docinfo.
++docinfo_re = re.compile(r':(?![: ])([^:\\]|\\.|:(?!([ `]|$)))*(?<! ):( +|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+2026-11-12 07:30:19,801 - INFO - Grading answer for sphinx-doc__sphinx-11445...
+2026-11-12 07:30:19,805 - INFO - report: {'sphinx-doc__sphinx-11445': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_with_newline', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_without_newline'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_util_rst.py::test_escape', 'tests/test_util_rst.py::test_append_epilog', 'tests/test_util_rst.py::test_prepend_prolog', 'tests/test_util_rst.py::test_prepend_prolog_with_CR', 'tests/test_util_rst.py::test_prepend_prolog_without_CR', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections', 'tests/test_util_rst.py::test_textwidth', 'tests/test_util_rst.py::test_heading'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-11445: resolved: True
+2026-11-12 07:30:19,807 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-11445.verified_full_glm53_claude-code_incr_R2240...
+2026-11-12 07:30:35,820 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_glm53_claude-code_incr_R2240 stopped successfully.
+2026-11-12 07:30:35,820 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-11445.verified_full_glm53_claude-code_incr_R2240...
+2026-11-12 07:30:35,872 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_glm53_claude-code_incr_R2240 removed successfully.

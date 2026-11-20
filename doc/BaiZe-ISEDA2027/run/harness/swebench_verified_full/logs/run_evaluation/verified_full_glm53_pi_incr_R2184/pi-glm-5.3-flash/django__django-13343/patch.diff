@@ -1,0 +1,54 @@
+diff --git a/django/db/models/fields/files.py b/django/db/models/fields/files.py
+index e10a5bb6d9..db2450a738 100644
+--- a/django/db/models/fields/files.py
++++ b/django/db/models/fields/files.py
+@@ -229,6 +229,8 @@ class FileField(Field):
+ 
+         self.storage = storage or default_storage
+         if callable(self.storage):
++            # Hold a reference to the callable for deconstruct().
++            self._storage_callable = self.storage
+             self.storage = self.storage()
+             if not isinstance(self.storage, Storage):
+                 raise TypeError(
+@@ -279,7 +281,7 @@ class FileField(Field):
+             del kwargs["max_length"]
+         kwargs['upload_to'] = self.upload_to
+         if self.storage is not default_storage:
+-            kwargs['storage'] = self.storage
++            kwargs['storage'] = getattr(self, '_storage_callable', self.storage)
+         return name, path, args, kwargs
+ 
+     def get_internal_type(self):
+diff --git a/tests/field_deconstruction/tests.py b/tests/field_deconstruction/tests.py
+index bf00aa44e2..f8c47a4bef 100644
+--- a/tests/field_deconstruction/tests.py
++++ b/tests/field_deconstruction/tests.py
+@@ -1,4 +1,5 @@
+ from django.apps import apps
++from django.core.files.storage import FileSystemStorage
+ from django.db import models
+ from django.test import SimpleTestCase, override_settings
+ from django.test.utils import isolate_lru_cache
+@@ -174,6 +175,13 @@ class FieldDeconstructionTests(SimpleTestCase):
+         self.assertEqual(args, [])
+         self.assertEqual(kwargs, {"upload_to": "foo/bar", "max_length": 200})
+ 
++    def test_file_field_callable_storage(self):
++        field = models.FileField(upload_to="foo/bar", storage=callable_storage)
++        name, path, args, kwargs = field.deconstruct()
++        self.assertEqual(path, "django.db.models.FileField")
++        self.assertEqual(args, [])
++        self.assertEqual(kwargs, {"upload_to": "foo/bar", "storage": callable_storage})
++
+     def test_file_path_field(self):
+         field = models.FilePathField(match=r".*\.txt$")
+         name, path, args, kwargs = field.deconstruct()
+@@ -525,3 +533,7 @@ class FieldDeconstructionTests(SimpleTestCase):
+         name, path, args, kwargs = field.deconstruct()
+         self.assertEqual(args, [])
+         self.assertEqual(kwargs, {'editable': True})
++
++
++def callable_storage():
++    return FileSystemStorage()

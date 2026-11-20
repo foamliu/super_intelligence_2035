@@ -1,0 +1,72 @@
+[R1309] start 18:03:10
+[R1309] === merge codex predictions ===
+codex: 274 patches merged, 274 eval IDs
+[R1309] === codex eval START sphinx-doc__sphinx-10466 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.37s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.37s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.37s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 4
+Unremoved images: 1
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[R1309] === codex eval DONE rc=0 ===
+[R1309] === regen eval summaries for codex ===
+regen_eval_summaries: codex
+  codex: WROTE eval_codex.json  n=274 resolved=216 failed=58 infra=0
+[R1309] === merge hermes predictions ===
+hermes: 135 patches merged, 135 eval IDs
+[R1309] === hermes eval START django__django-14311,django__django-14315 ===
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 863, in <module>
+    main(**vars(args))
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 756, in main
+    full_dataset = load_instances(dataset_name, split, instance_ids, task_repo)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 528, in load_instances
+    return load_swebench_dataset(dataset_name, split, instance_ids)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/utils.py", line 178, in load_swebench_dataset
+    raise ValueError(
+ValueError: Some instance IDs not found in dataset!
+Missing IDs:
+django__django-14311,django__django-14315
+Warning: Missing predictions for 1 instance IDs.
+[R1309] === hermes eval DONE rc=1 ===
+[R1309] === regen eval summaries for hermes ===
+regen_eval_summaries: hermes
+  hermes: unchanged (n=133 resolved=104 failed=29 infra=0)
+[R1309] === merge deepseek-harness predictions ===
+deepseek-harness: 121 patches merged, 121 eval IDs
+[R1309] === deepseek-harness eval START django__django-13933 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.02s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.02s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.02s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[R1309] === deepseek-harness eval DONE rc=0 ===
+[R1309] === regen eval summaries for deepseek-harness ===
+regen_eval_summaries: deepseek-harness
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=121 resolved=100 failed=21 infra=0
+[R1309] ALL DONE 18:04:10

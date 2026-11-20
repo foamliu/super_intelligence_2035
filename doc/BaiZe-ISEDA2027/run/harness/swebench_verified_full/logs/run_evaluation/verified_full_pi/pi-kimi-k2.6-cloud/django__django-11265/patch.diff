@@ -1,0 +1,51 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index d69c24419b..73737aed14 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1666,6 +1666,7 @@ class Query(BaseExpression):
+             filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
+         # Generate the inner query.
+         query = Query(self.model)
++        query._filtered_relations = self._filtered_relations.copy()
+         query.add_filter(filter_expr)
+         query.clear_ordering(True)
+         # Try to have as simple as possible subquery -> trim leading joins from
+@@ -2122,6 +2123,8 @@ class Query(BaseExpression):
+         for trimmed_paths, path in enumerate(all_paths):
+             if path.m2m:
+                 break
++            if path.filtered_relation:
++                break
+             if self.alias_map[lookup_tables[trimmed_paths + 1]].join_type == LOUTER:
+                 contains_louter = True
+             alias = lookup_tables[trimmed_paths]
+@@ -2142,7 +2145,10 @@ class Query(BaseExpression):
+         # Lets still see if we can trim the first join from the inner query
+         # (that is, self). We can't do this for LEFT JOINs because we would
+         # miss those rows that have nothing on the outer side.
+-        if self.alias_map[lookup_tables[trimmed_paths + 1]].join_type != LOUTER:
++        if getattr(all_paths[trimmed_paths], 'filtered_relation', None):
++            select_fields = [self.model._meta.pk]
++            select_alias = self.base_table
++        elif self.alias_map[lookup_tables[trimmed_paths + 1]].join_type != LOUTER:
+             select_fields = [r[0] for r in join_field.related_fields]
+             select_alias = lookup_tables[trimmed_paths + 1]
+             self.unref_alias(lookup_tables[trimmed_paths])
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 5e85dff16c..0372d02408 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -97,6 +97,13 @@ class FilteredRelationTests(TestCase):
+             ).filter(book_alice__isnull=False),
+             [self.author1]
+         )
++    def test_with_join_exclude(self):
++        self.assertSequenceEqual(
++            Author.objects.annotate(
++                book_alice=FilteredRelation('book', condition=Q(book__title__iexact='poem by alice')),
++            ).exclude(book_alice__isnull=False),
++            [self.author2]
++        )
+ 
+     def test_with_join_and_complex_condition(self):
+         self.assertSequenceEqual(

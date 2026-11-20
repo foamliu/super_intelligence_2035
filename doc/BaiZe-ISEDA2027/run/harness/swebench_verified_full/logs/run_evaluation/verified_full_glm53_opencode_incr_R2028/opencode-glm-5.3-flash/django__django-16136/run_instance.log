@@ -1,0 +1,150 @@
+2026-11-10 12:29:12,837 - INFO - Creating container for django__django-16136...
+2026-11-10 12:29:12,875 - INFO - Container for django__django-16136 created: 8020a2e0026b95ba0399f3eb2c2be09b9c836c0efb32f8c341437524c6e4287c
+2026-11-10 12:29:13,734 - INFO - Container for django__django-16136 started: 8020a2e0026b95ba0399f3eb2c2be09b9c836c0efb32f8c341437524c6e4287c
+2026-11-10 12:29:13,736 - INFO - Intermediate patch for django__django-16136 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-16136/patch.diff, now applying to container...
+2026-11-10 12:29:13,968 - INFO - >>>>> Applied Patch:
+Checking patch django/views/generic/base.py...
+Checking patch tests/generic_views/test_base.py...
+Applied patch django/views/generic/base.py cleanly.
+Applied patch tests/generic_views/test_base.py cleanly.
+
+2026-11-10 12:29:15,435 - INFO - Git diff before:
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..3a3afb0c73 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -148,7 +148,16 @@ class View:
+             request.path,
+             extra={"status_code": 405, "request": request},
+         )
+-        return HttpResponseNotAllowed(self._allowed_methods())
++        response = HttpResponseNotAllowed(self._allowed_methods())
++
++        if self.view_is_async:
++
++            async def func():
++                return response
++
++            return func()
++        else:
++            return response
+ 
+     def options(self, request, *args, **kwargs):
+         """Handle responding to requests for the OPTIONS HTTP verb."""
+diff --git a/tests/generic_views/test_base.py b/tests/generic_views/test_base.py
+index b139d1089b..a18dd9b63a 100644
+--- a/tests/generic_views/test_base.py
++++ b/tests/generic_views/test_base.py
+@@ -28,6 +28,11 @@ class PostOnlyView(View):
+         return HttpResponse("This view only accepts POST")
+ 
+ 
++class AsyncPostOnlyView(View):
++    async def post(self, request):
++        return HttpResponse("This view only accepts POST")
++
++
+ class CustomizableView(SimpleView):
+     parameter = {}
+ 
+@@ -240,6 +245,25 @@ class ViewTest(SimpleTestCase):
+         response_allows = set(response.headers["Allow"].split(", "))
+         self.assertEqual(set(expected_methods + ("OPTIONS",)), response_allows)
+ 
++    async def test_async_post_only_view_get_not_allowed(self):
++        """
++        A view implementing an async handler responds to disallowed methods
++        with an awaitable 405 response (#33904).
++        """
++        response = await AsyncPostOnlyView.as_view()(self.rf.get("/"))
++        self.assertEqual(response.status_code, 405)
++        self._assert_allows(response, "POST")
++
++    async def test_async_post_only_view_post_allowed(self):
++        response = await AsyncPostOnlyView.as_view()(self.rf.post("/"))
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(response.content, b"This view only accepts POST")
++
++    async def test_async_options(self):
++        response = await AsyncPostOnlyView.as_view()(self.rf.options("/"))
++        self.assertEqual(response.status_code, 200)
++        self._assert_allows(response, "POST")
++
+     def test_args_kwargs_request_on_self(self):
+         """
+         Test a view only has args, kwargs & request once `as_view`
+2026-11-10 12:29:15,438 - INFO - Eval script for django__django-16136 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-16136/eval.sh; copying to container...
+2026-11-10 12:29:22,192 - INFO - Test runtime: 6.68 seconds
+2026-11-10 12:29:22,194 - INFO - Test output for django__django-16136 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-16136/test_output.txt
+2026-11-10 12:29:22,256 - INFO - Git diff after:
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..3a3afb0c73 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -148,7 +148,16 @@ class View:
+             request.path,
+             extra={"status_code": 405, "request": request},
+         )
+-        return HttpResponseNotAllowed(self._allowed_methods())
++        response = HttpResponseNotAllowed(self._allowed_methods())
++
++        if self.view_is_async:
++
++            async def func():
++                return response
++
++            return func()
++        else:
++            return response
+ 
+     def options(self, request, *args, **kwargs):
+         """Handle responding to requests for the OPTIONS HTTP verb."""
+diff --git a/tests/generic_views/test_base.py b/tests/generic_views/test_base.py
+index b139d1089b..a18dd9b63a 100644
+--- a/tests/generic_views/test_base.py
++++ b/tests/generic_views/test_base.py
+@@ -28,6 +28,11 @@ class PostOnlyView(View):
+         return HttpResponse("This view only accepts POST")
+ 
+ 
++class AsyncPostOnlyView(View):
++    async def post(self, request):
++        return HttpResponse("This view only accepts POST")
++
++
+ class CustomizableView(SimpleView):
+     parameter = {}
+ 
+@@ -240,6 +245,25 @@ class ViewTest(SimpleTestCase):
+         response_allows = set(response.headers["Allow"].split(", "))
+         self.assertEqual(set(expected_methods + ("OPTIONS",)), response_allows)
+ 
++    async def test_async_post_only_view_get_not_allowed(self):
++        """
++        A view implementing an async handler responds to disallowed methods
++        with an awaitable 405 response (#33904).
++        """
++        response = await AsyncPostOnlyView.as_view()(self.rf.get("/"))
++        self.assertEqual(response.status_code, 405)
++        self._assert_allows(response, "POST")
++
++    async def test_async_post_only_view_post_allowed(self):
++        response = await AsyncPostOnlyView.as_view()(self.rf.post("/"))
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(response.content, b"This view only accepts POST")
++
++    async def test_async_options(self):
++        response = await AsyncPostOnlyView.as_view()(self.rf.options("/"))
++        self.assertEqual(response.status_code, 200)
++        self._assert_allows(response, "POST")
++
+     def test_args_kwargs_request_on_self(self):
+         """
+         Test a view only has args, kwargs & request once `as_view`
+2026-11-10 12:29:22,256 - INFO - Grading answer for django__django-16136...
+2026-11-10 12:29:22,257 - INFO - report: {'django__django-16136': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_http_method_not_allowed_responds_correctly (async.tests.ViewTests)', 'test_mixed_views_raise_error (async.tests.ViewTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ["View and by extension any subclasses that don't define handlers are", 'test_options_handler_responds_correctly (async.tests.ViewTests)', 'test_views_are_correctly_marked (async.tests.ViewTests)', 'test_caches_local (async.tests.CacheTest)', 'test_async_unsafe (async.tests.AsyncUnsafeTest)', 'Utility class which turns an awaitable that only works on the thread with', 'test_get_async_connection (async.tests.DatabaseConnectionTest)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16136: resolved: True
+2026-11-10 12:29:22,259 - INFO - Attempting to stop container sweb.eval.django__django-16136.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:29:38,097 - INFO - Container sweb.eval.django__django-16136.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 12:29:38,098 - INFO - Attempting to remove container sweb.eval.django__django-16136.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:29:38,159 - INFO - Container sweb.eval.django__django-16136.verified_full_glm53_opencode_incr_R2028 removed successfully.

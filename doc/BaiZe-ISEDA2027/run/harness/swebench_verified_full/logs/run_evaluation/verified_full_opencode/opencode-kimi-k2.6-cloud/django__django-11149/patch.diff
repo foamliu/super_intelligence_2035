@@ -1,0 +1,100 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 880a2cc17..98d5d9242 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -2111,42 +2111,46 @@ class InlineModelAdmin(BaseModelAdmin):
+             queryset = queryset.none()
+         return queryset
+ 
++    def _get_related_model_opts(self):
++        opts = self.opts
++        # The model was auto-created as intermediary for a many-to-many
++        # relationship; find the target model.
++        for field in opts.fields:
++            if field.remote_field and field.remote_field.model != self.parent_model:
++                opts = field.remote_field.model._meta
++                break
++        return opts
++
+     def has_add_permission(self, request, obj):
+         if self.opts.auto_created:
+-            # We're checking the rights to an auto-created intermediate model,
+-            # which doesn't have its own individual permissions. The user needs
+-            # to have the view permission for the related model in order to
+-            # be able to do anything with the intermediate model.
+-            return self.has_view_permission(request, obj)
++            # The user needs to have the change permission for the related
++            # model in order to be able to add intermediate model instances.
++            opts = self._get_related_model_opts()
++            codename = get_permission_codename('change', opts)
++            return request.user.has_perm("%s.%s" % (opts.app_label, codename))
+         return super().has_add_permission(request)
+ 
+     def has_change_permission(self, request, obj=None):
+         if self.opts.auto_created:
+-            # We're checking the rights to an auto-created intermediate model,
+-            # which doesn't have its own individual permissions. The user needs
+-            # to have the view permission for the related model in order to
+-            # be able to do anything with the intermediate model.
+-            return self.has_view_permission(request, obj)
++            # The user needs to have the change permission for the related
++            # model in order to be able to change intermediate model instances.
++            opts = self._get_related_model_opts()
++            codename = get_permission_codename('change', opts)
++            return request.user.has_perm("%s.%s" % (opts.app_label, codename))
+         return super().has_change_permission(request)
+ 
+     def has_delete_permission(self, request, obj=None):
+         if self.opts.auto_created:
+-            # We're checking the rights to an auto-created intermediate model,
+-            # which doesn't have its own individual permissions. The user needs
+-            # to have the view permission for the related model in order to
+-            # be able to do anything with the intermediate model.
+-            return self.has_view_permission(request, obj)
++            # The user needs to have the change permission for the related
++            # model in order to be able to delete intermediate model instances.
++            opts = self._get_related_model_opts()
++            codename = get_permission_codename('change', opts)
++            return request.user.has_perm("%s.%s" % (opts.app_label, codename))
+         return super().has_delete_permission(request, obj)
+ 
+     def has_view_permission(self, request, obj=None):
+         if self.opts.auto_created:
+-            opts = self.opts
+-            # The model was auto-created as intermediary for a many-to-many
+-            # Many-relationship; find the target model.
+-            for field in opts.fields:
+-                if field.remote_field and field.remote_field.model != self.parent_model:
+-                    opts = field.remote_field.model._meta
+-                    break
++            opts = self._get_related_model_opts()
+             return (
+                 request.user.has_perm('%s.%s' % (opts.app_label, get_permission_codename('view', opts))) or
+                 request.user.has_perm('%s.%s' % (opts.app_label, get_permission_codename('change', opts)))
+diff --git a/tests/admin_inlines/tests.py b/tests/admin_inlines/tests.py
+index 5272d44f3..ad3e17ee8 100644
+--- a/tests/admin_inlines/tests.py
++++ b/tests/admin_inlines/tests.py
+@@ -682,6 +682,22 @@ class TestInlinePermissions(TestCase):
+         )
+         self.assertContains(response, 'id="id_Author_books-0-DELETE"')
+ 
++    def test_inline_change_m2m_view_perm(self):
++        permission = Permission.objects.get(codename='view_book', content_type=self.book_ct)
++        self.user.user_permissions.add(permission)
++        response = self.client.get(self.author_change_url)
++        # We have view perm on books, so we can view but not add/change/delete inlines.
++        self.assertContains(response, '<h2>Author-book relationships</h2>')
++        self.assertContains(response, '<input type="hidden" id="id_Author_books-TOTAL_FORMS" '
++                            'value="1" name="Author_books-TOTAL_FORMS">', html=True)
++        self.assertContains(
++            response,
++            '<input type="hidden" id="id_Author_books-0-id" value="%i" '
++            'name="Author_books-0-id">' % self.author_book_auto_m2m_intermediate_id,
++            html=True
++        )
++        self.assertNotContains(response, 'id="id_Author_books-0-DELETE"')
++
+     def test_inline_change_fk_add_perm(self):
+         permission = Permission.objects.get(codename='add_inner2', content_type=self.inner_ct)
+         self.user.user_permissions.add(permission)

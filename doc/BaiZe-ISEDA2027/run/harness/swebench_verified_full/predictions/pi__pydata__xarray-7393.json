@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-7393",
+    "model_name_or_path": "pi-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/xarray/core/indexing.py b/xarray/core/indexing.py\nindex ba93718..593d9cf 100644\n--- a/xarray/core/indexing.py\n+++ b/xarray/core/indexing.py\n@@ -1532,7 +1532,12 @@ class PandasMultiIndexingAdapter(PandasIndexingAdapter):\n \n     def __array__(self, dtype: DTypeLike = None) -> np.ndarray:\n         if self.level is not None:\n-            return self.array.get_level_values(self.level).values\n+            arr = self.array.get_level_values(self.level).values\n+            if dtype is None:\n+                dtype = self.dtype\n+            if dtype is not None:\n+                arr = np.asarray(arr, dtype=dtype)\n+            return arr\n         else:\n             return super().__array__(dtype)\n \ndiff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py\nindex 6ab4c40..4e7ab37 100644\n--- a/xarray/tests/test_dataset.py\n+++ b/xarray/tests/test_dataset.py\n@@ -3467,6 +3467,11 @@ class TestDataset:\n         assert_identical(expected, actual)\n         assert list(actual.xindexes) == [\"z\", \"y\", \"x\"]\n \n+    def test_stack_preserves_dtype(self) -> None:\n+        ds = Dataset(coords={\"a\": np.array([0], dtype=\"i4\")})\n+        stacked = ds.stack(b=(\"a\",))\n+        assert stacked[\"a\"].values.dtype == ds[\"a\"].values.dtype\n+\n     @pytest.mark.parametrize(\n         \"create_index,expected_keys\",\n         [\n"
+  }
+]

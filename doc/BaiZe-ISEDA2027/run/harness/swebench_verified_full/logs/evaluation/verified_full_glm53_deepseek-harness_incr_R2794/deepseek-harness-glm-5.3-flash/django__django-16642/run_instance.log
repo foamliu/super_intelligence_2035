@@ -1,0 +1,62 @@
+2026-11-19 23:22:29,817 - INFO - Creating container for django__django-16642...
+2026-11-19 23:22:29,840 - INFO - Container for django__django-16642 created: 6901c9718b05f0c74fb4542c154a948044c2f7e28a61973baa4b9ce6ee4c779a
+2026-11-19 23:22:30,533 - INFO - Container for django__django-16642 started: 6901c9718b05f0c74fb4542c154a948044c2f7e28a61973baa4b9ce6ee4c779a
+2026-11-19 23:22:30,535 - INFO - Intermediate patch for django__django-16642 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2794/deepseek-harness-glm-5.3-flash/django__django-16642/patch.diff, now applying to container...
+2026-11-19 23:22:30,702 - INFO - >>>>> Applied Patch:
+Checking patch django/http/response.py...
+Checking patch tests/responses/test_fileresponse.py...
+Applied patch django/http/response.py cleanly.
+Applied patch tests/responses/test_fileresponse.py cleanly.
+
+2026-11-19 23:22:32,240 - INFO - Git diff before:
+diff --git a/django/http/response.py b/django/http/response.py
+index f62dec8ce9..026df23022 100644
+--- a/django/http/response.py
++++ b/django/http/response.py
+@@ -610,6 +610,8 @@ class FileResponse(StreamingHttpResponse):
+                 # uncompressing files.
+                 content_type = {
+                     "bzip2": "application/x-bzip",
++                    "compress": "application/x-compress",
++                    "br": "application/x-brotli",
+                     "gzip": "application/gzip",
+                     "xz": "application/x-xz",
+                 }.get(encoding, content_type)
+diff --git a/tests/responses/test_fileresponse.py b/tests/responses/test_fileresponse.py
+index 952fe4dd7c..a4e4e0c643 100644
+--- a/tests/responses/test_fileresponse.py
++++ b/tests/responses/test_fileresponse.py
+@@ -255,6 +255,8 @@ class FileResponseTests(SimpleTestCase):
+             (".tar.gz", "application/gzip"),
+             (".tar.bz2", "application/x-bzip"),
+             (".tar.xz", "application/x-xz"),
++            (".tar.Z", "application/x-compress"),
++            (".tar.br", "application/x-brotli"),
+         )
+         for extension, mimetype in test_tuples:
+             with self.subTest(ext=extension):
+2026-11-19 23:22:32,242 - INFO - Eval script for django__django-16642 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2794/deepseek-harness-glm-5.3-flash/django__django-16642/eval.sh; copying to container...
+2026-11-19 23:22:39,671 - INFO - Test runtime: 7.37 seconds
+2026-11-19 23:22:39,673 - INFO - Test output for django__django-16642 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2794/deepseek-harness-glm-5.3-flash/django__django-16642/test_output.txt
+2026-11-19 23:22:39,757 - INFO - Git diff after:
+diff --git a/django/http/response.py b/django/http/response.py
+index f62dec8ce9..026df23022 100644
+--- a/django/http/response.py
++++ b/django/http/response.py
+@@ -610,6 +610,8 @@ class FileResponse(StreamingHttpResponse):
+                 # uncompressing files.
+                 content_type = {
+                     "bzip2": "application/x-bzip",
++                    "compress": "application/x-compress",
++                    "br": "application/x-brotli",
+                     "gzip": "application/gzip",
+                     "xz": "application/x-xz",
+                 }.get(encoding, content_type)
+2026-11-19 23:22:39,757 - INFO - Git diff changed after running eval script
+2026-11-19 23:22:39,757 - INFO - Grading answer for django__django-16642...
+2026-11-19 23:22:39,759 - INFO - report: {'django__django-16642': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['If compressed responses are served with the uncompressed Content-Type'], 'failure': []}, 'PASS_TO_PASS': {'success': ['Headers are set correctly with a buffer when an absolute filename is', 'test_content_disposition_buffer (responses.test_fileresponse.FileResponseTests.test_content_disposition_buffer)', 'test_content_disposition_buffer_attachment (responses.test_fileresponse.FileResponseTests.test_content_disposition_buffer_attachment)', 'test_content_disposition_buffer_explicit_filename (responses.test_fileresponse.FileResponseTests.test_content_disposition_buffer_explicit_filename)', 'test_content_disposition_escaping (responses.test_fileresponse.FileResponseTests.test_content_disposition_escaping)', 'test_content_disposition_file (responses.test_fileresponse.FileResponseTests.test_content_disposition_file)', 'test_content_length_buffer (responses.test_fileresponse.FileResponseTests.test_content_length_buffer)', 'test_content_length_file (responses.test_fileresponse.FileResponseTests.test_content_length_file)', 'test_content_length_nonzero_starting_position_buffer (responses.test_fileresponse.FileResponseTests.test_content_length_nonzero_starting_position_buffer)', 'test_content_length_nonzero_starting_position_file (responses.test_fileresponse.FileResponseTests.test_content_length_nonzero_starting_position_file)', 'test_content_length_nonzero_starting_position_file_seekable_no_tell (responses.test_fileresponse.FileResponseTests.test_content_length_nonzero_starting_position_file_seekable_no_tell)', 'test_content_type_buffer (responses.test_fileresponse.FileResponseTests.test_content_type_buffer)', 'test_content_type_buffer_explicit (responses.test_fileresponse.FileResponseTests.test_content_type_buffer_explicit)', 'test_content_type_buffer_explicit_default (responses.test_fileresponse.FileResponseTests.test_content_type_buffer_explicit_default)', 'test_content_type_buffer_named (responses.test_fileresponse.FileResponseTests.test_content_type_buffer_named)', 'test_content_type_file (responses.test_fileresponse.FileResponseTests.test_content_type_file)', 'test_file_from_named_pipe_response (responses.test_fileresponse.FileResponseTests.test_file_from_named_pipe_response)', 'test_repr (responses.test_fileresponse.FileResponseTests.test_repr)', 'test_response_buffer (responses.test_fileresponse.FileResponseTests.test_response_buffer)', 'test_response_nonzero_starting_position (responses.test_fileresponse.FileResponseTests.test_response_nonzero_starting_position)', 'test_unicode_attachment (responses.test_fileresponse.FileResponseTests.test_unicode_attachment)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16642: resolved: True
+2026-11-19 23:22:39,761 - INFO - Attempting to stop container sweb.eval.django__django-16642.verified_full_glm53_deepseek-harness_incr_R2794...
+2026-11-19 23:22:56,039 - INFO - Container sweb.eval.django__django-16642.verified_full_glm53_deepseek-harness_incr_R2794 stopped successfully.
+2026-11-19 23:22:56,039 - INFO - Attempting to remove container sweb.eval.django__django-16642.verified_full_glm53_deepseek-harness_incr_R2794...
+2026-11-19 23:22:56,079 - INFO - Container sweb.eval.django__django-16642.verified_full_glm53_deepseek-harness_incr_R2794 removed successfully.

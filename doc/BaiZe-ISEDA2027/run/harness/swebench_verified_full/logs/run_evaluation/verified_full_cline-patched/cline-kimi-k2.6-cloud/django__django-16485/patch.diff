@@ -1,0 +1,28 @@
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 23c3a08c6..de95c592a 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -184,6 +184,7 @@ def floatformat(text, arg=-1):
+     units = len(tupl[1])
+     units += -tupl[2] if m else tupl[2]
+     prec = abs(p) + units + 1
++    prec = max(1, prec)
+ 
+     # Avoid conversion to scientific notation by accessing `sign`, `digits`,
+     # and `exponent` from Decimal.as_tuple() directly.
+diff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py
+index 361a888ce..6fbb37eeb 100644
+--- a/tests/template_tests/filter_tests/test_floatformat.py
++++ b/tests/template_tests/filter_tests/test_floatformat.py
+@@ -151,3 +151,11 @@ class FunctionTests(SimpleTestCase):
+             self.assertEqual(floatformat(15.2042, "-3"), "15.204")
+             self.assertEqual(floatformat(Decimal("1.2345"), 2), "1.23")
+             self.assertEqual(floatformat(Decimal("15.2042"), -3), "15.204")
++
++    def test_zero_decimal_with_trailing_zeros(self):
++        self.assertEqual(floatformat("0.00", 0), "0")
++        self.assertEqual(floatformat(Decimal("0.00"), 0), "0")
++        self.assertEqual(floatformat(Decimal("0E-10"), 0), "0")
++        self.assertEqual(floatformat(Decimal("-0.00"), 0), "0")
++        self.assertEqual(floatformat(Decimal("0.00"), 2), "0.00")
++        self.assertEqual(floatformat(Decimal("0.00"), -1), "0")

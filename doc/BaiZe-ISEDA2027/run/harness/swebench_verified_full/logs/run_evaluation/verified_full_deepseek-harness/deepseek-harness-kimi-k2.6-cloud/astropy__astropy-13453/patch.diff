@@ -1,0 +1,37 @@
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf22..3ec988a 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -353,7 +353,9 @@ class HTML(core.BaseReader):
+         if isinstance(self.data.fill_values, tuple):
+             self.data.fill_values = [self.data.fill_values]
+ 
++        self.data.cols = cols
+         self.data._set_fill_values(cols)
++        self.data._set_col_formats()
+ 
+         lines = []
+ 
+diff --git a/astropy/io/ascii/tests/test_html.py b/astropy/io/ascii/tests/test_html.py
+index 0515efa..c345256 100644
+--- a/astropy/io/ascii/tests/test_html.py
++++ b/astropy/io/ascii/tests/test_html.py
+@@ -728,3 +728,18 @@ def test_read_html_unicode():
+                 '</table>']
+     dat = Table.read(table_in, format='ascii.html')
+     assert np.all(dat['col1'] == ['Δ', 'Δ'])
++
++
++@pytest.mark.skipif('not HAS_BS4')
++def test_write_table_html_formats():
++    """
++    Test that the formats keyword is respected when writing HTML.
++    Regression test for https://github.com/astropy/astropy/issues/13519
++    """
++    from io import StringIO
++    t = Table([(1.23875234858e-24, 3.2348748432e-15), (2, 4)], names=('a', 'b'))
++    with StringIO() as sp:
++        t.write(sp, format='html', formats={'a': lambda x: f'{x:.2e}'})
++        result = sp.getvalue()
++    assert '1.24e-24' in result
++    assert '3.23e-15' in result

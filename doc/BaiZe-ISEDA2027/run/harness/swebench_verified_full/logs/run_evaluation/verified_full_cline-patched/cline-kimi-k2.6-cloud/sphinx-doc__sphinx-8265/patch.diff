@@ -1,0 +1,78 @@
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11..3ab6056b 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,14 +166,29 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
+-        return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
++        slice_node = node.slice
++        if isinstance(slice_node, ast.Index):
++            slice_node = slice_node.value
++        if isinstance(slice_node, ast.Tuple):
++            if slice_node.elts:
++                slice_str = ", ".join(self.visit(e) for e in slice_node.elts)
++                if len(slice_node.elts) == 1:
++                    slice_str += ","
++            else:
++                slice_str = "()"
++        else:
++            slice_str = self.visit(node.slice)
++        return "%s[%s]" % (self.visit(node.value), slice_str)
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+         else:
+             return "()"
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 9b12d24d..d98918e2 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -53,8 +53,12 @@ from sphinx.pycode import ast
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+-    ("(1, 2, 3)", "1, 2, 3"),                   # Tuple
+-    ("()", "()"),                               # Tuple (empty)
++    ("(1, 2, 3)", "(1, 2, 3)"),                   # Tuple
++    ("(1,)", "(1,)"),                             # Tuple (single element)
++    ("()", "()"),                                 # Tuple (empty)
++    ("[(1, 2), (3, 4)]", "[(1, 2), (3, 4)]"),     # List containing tuples
++    ("{(1, 2), (3, 4)}", "{(1, 2), (3, 4)}"),     # Set containing tuples
++    ("a[1, 2]", "a[1, 2]"),                       # Subscript with tuple slice
+ ])
+ def test_unparse(source, expected):
+     module = ast.parse(source)
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index c21eaaa1..cb4ac8c3 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -292,7 +292,8 @@ def test_signature_from_str_basic():
+ def test_signature_from_str_default_values():
+     signature = ('(a=0, b=0.0, c="str", d=b"bytes", e=..., f=True, '
+                  'g=[1, 2, 3], h={"a": 1}, i={1, 2, 3}, '
+-                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT)')
++                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT, '
++                 'n=(1, 2, 3), o=(1,))')
+     sig = inspect.signature_from_str(signature)
+     assert sig.parameters['a'].default == '0'
+     assert sig.parameters['b'].default == '0.0'
+@@ -307,6 +308,8 @@ def test_signature_from_str_default_values():
+     assert sig.parameters['k'].default == 'None'
+     assert sig.parameters['l'].default == 'object()'
+     assert sig.parameters['m'].default == 'foo.bar.CONSTANT'
++    assert sig.parameters['n'].default == '(1, 2, 3)'
++    assert sig.parameters['o'].default == '(1,)'
+ 
+ 
+ def test_signature_from_str_annotations():

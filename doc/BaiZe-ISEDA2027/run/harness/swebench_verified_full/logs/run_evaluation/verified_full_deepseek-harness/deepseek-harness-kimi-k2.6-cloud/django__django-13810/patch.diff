@@ -1,0 +1,64 @@
+diff --git a/django/core/handlers/base.py b/django/core/handlers/base.py
+index 8e8c3da0..be8a114e 100644
+--- a/django/core/handlers/base.py
++++ b/django/core/handlers/base.py
+@@ -51,11 +51,11 @@ class BaseHandler:
+                 middleware_is_async = middleware_can_async
+             try:
+                 # Adapt handler, if needed.
+-                handler = self.adapt_method_mode(
++                adapted_handler = self.adapt_method_mode(
+                     middleware_is_async, handler, handler_is_async,
+                     debug=settings.DEBUG, name='middleware %s' % middleware_path,
+                 )
+-                mw_instance = middleware(handler)
++                mw_instance = middleware(adapted_handler)
+             except MiddlewareNotUsed as exc:
+                 if settings.DEBUG:
+                     if str(exc):
+diff --git a/tests/middleware_exceptions/middleware.py b/tests/middleware_exceptions/middleware.py
+index 9fb9726b..161d7f53 100644
+--- a/tests/middleware_exceptions/middleware.py
++++ b/tests/middleware_exceptions/middleware.py
+@@ -130,3 +130,14 @@ class NotSyncOrAsyncMiddleware(BaseMiddleware):
+ 
+     def __call__(self, request):
+         return self.get_response(request)
++
++
++class MiddlewareNotUsedMiddleware:
++    """Middleware that raises MiddlewareNotUsed."""
++    sync_capable = True
++    async_capable = False
++    def __init__(self, get_response):
++        from django.core.exceptions import MiddlewareNotUsed
++        raise MiddlewareNotUsed('not used')
++    def __call__(self, request):
++        return self.get_response(request)
+diff --git a/tests/middleware_exceptions/tests.py b/tests/middleware_exceptions/tests.py
+index 8b019ba5..df1417b1 100644
+--- a/tests/middleware_exceptions/tests.py
++++ b/tests/middleware_exceptions/tests.py
+@@ -339,3 +339,22 @@ class AsyncMiddlewareTests(SimpleTestCase):
+     async def test_process_view_return_response(self):
+         response = await self.async_client.get('/middleware_exceptions/view/')
+         self.assertEqual(response.content, b'Processed view normal_view')
++
++
++@override_settings(
++    DEBUG=True,
++    ROOT_URLCONF='middleware_exceptions.urls',
++)
++class MiddlewareNotUsedAsyncTests(SimpleTestCase):
++    @override_settings(MIDDLEWARE=[
++        'middleware_exceptions.middleware.PaymentMiddleware',
++        'middleware_exceptions.middleware.MiddlewareNotUsedMiddleware',
++        'middleware_exceptions.middleware.async_payment_middleware',
++    ])
++    async def test_middleware_not_used_async_context(self):
++        """
++        MiddlewareNotUsed should not corrupt the middleware chain when
++        raised in ASGI context with mixed sync/async middleware.
++        """
++        response = await self.async_client.get('/middleware_exceptions/view/')
++        self.assertEqual(response.status_code, 402)

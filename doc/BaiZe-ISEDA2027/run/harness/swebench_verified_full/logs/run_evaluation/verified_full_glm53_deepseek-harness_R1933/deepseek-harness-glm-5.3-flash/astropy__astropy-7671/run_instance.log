@@ -1,0 +1,90 @@
+2026-11-09 16:01:57,116 - INFO - Creating container for astropy__astropy-7671...
+2026-11-09 16:01:57,169 - INFO - Container for astropy__astropy-7671 created: e3870c5d5afd3c37ed5edb174ab2f671cfbc8305d9a4d27a53ebb49ccb129b21
+2026-11-09 16:01:58,691 - INFO - Container for astropy__astropy-7671 started: e3870c5d5afd3c37ed5edb174ab2f671cfbc8305d9a4d27a53ebb49ccb129b21
+2026-11-09 16:01:58,693 - INFO - Intermediate patch for astropy__astropy-7671 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/astropy__astropy-7671/patch.diff, now applying to container...
+2026-11-09 16:01:58,912 - INFO - >>>>> Applied Patch:
+Checking patch astropy/utils/introspection.py...
+Checking patch astropy/utils/tests/test_introspection.py...
+Applied patch astropy/utils/introspection.py cleanly.
+Applied patch astropy/utils/tests/test_introspection.py cleanly.
+
+2026-11-09 16:01:59,688 - INFO - Git diff before:
+diff --git a/astropy/utils/introspection.py b/astropy/utils/introspection.py
+index 3e784f9fc..e437b40c8 100644
+--- a/astropy/utils/introspection.py
++++ b/astropy/utils/introspection.py
+@@ -4,6 +4,7 @@
+ 
+ 
+ import inspect
++import re
+ import types
+ import importlib
+ from distutils.version import LooseVersion
+@@ -139,6 +140,14 @@ def minversion(module, version, inclusive=True, version_path='__version__'):
+     else:
+         have_version = resolve_name(module.__name__, version_path)
+ 
++    # LooseVersion raises a TypeError when strings like dev, rc1 are part
++    # of the version number. Match the dotted numbers only. Regex taken
++    # from PEP440, https://www.python.org/dev/peps/pep-0440/, Appendix B
++    expr = '^([1-9]\\d*!)?(0|[1-9]\\d*)(\\.(0|[1-9]\\d*))*'
++    m = re.match(expr, version)
++    if m:
++        version = m.group(0)
++
+     if inclusive:
+         return LooseVersion(have_version) >= LooseVersion(version)
+     else:
+diff --git a/astropy/utils/tests/test_introspection.py b/astropy/utils/tests/test_introspection.py
+index d8262d458..99dd9de73 100644
+--- a/astropy/utils/tests/test_introspection.py
++++ b/astropy/utils/tests/test_introspection.py
+@@ -67,7 +67,7 @@ def test_minversion():
+     from types import ModuleType
+     test_module = ModuleType(str("test_module"))
+     test_module.__version__ = '0.12.2'
+-    good_versions = ['0.12', '0.12.1', '0.12.0.dev']
++    good_versions = ['0.12', '0.12.1', '0.12.0.dev', '0.12dev']
+     bad_versions = ['1', '1.2rc1']
+     for version in good_versions:
+         assert minversion(test_module, version)
+2026-11-09 16:01:59,691 - INFO - Eval script for astropy__astropy-7671 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/astropy__astropy-7671/eval.sh; copying to container...
+2026-11-09 16:02:04,951 - INFO - Test runtime: 5.17 seconds
+2026-11-09 16:02:04,954 - INFO - Test output for astropy__astropy-7671 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/astropy__astropy-7671/test_output.txt
+2026-11-09 16:02:05,017 - INFO - Git diff after:
+diff --git a/astropy/utils/introspection.py b/astropy/utils/introspection.py
+index 3e784f9fc..e437b40c8 100644
+--- a/astropy/utils/introspection.py
++++ b/astropy/utils/introspection.py
+@@ -4,6 +4,7 @@
+ 
+ 
+ import inspect
++import re
+ import types
+ import importlib
+ from distutils.version import LooseVersion
+@@ -139,6 +140,14 @@ def minversion(module, version, inclusive=True, version_path='__version__'):
+     else:
+         have_version = resolve_name(module.__name__, version_path)
+ 
++    # LooseVersion raises a TypeError when strings like dev, rc1 are part
++    # of the version number. Match the dotted numbers only. Regex taken
++    # from PEP440, https://www.python.org/dev/peps/pep-0440/, Appendix B
++    expr = '^([1-9]\\d*!)?(0|[1-9]\\d*)(\\.(0|[1-9]\\d*))*'
++    m = re.match(expr, version)
++    if m:
++        version = m.group(0)
++
+     if inclusive:
+         return LooseVersion(have_version) >= LooseVersion(version)
+     else:
+2026-11-09 16:02:05,018 - INFO - Git diff changed after running eval script
+2026-11-09 16:02:05,018 - INFO - Grading answer for astropy__astropy-7671...
+2026-11-09 16:02:05,019 - INFO - report: {'astropy__astropy-7671': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/utils/tests/test_introspection.py::test_minversion'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/utils/tests/test_introspection.py::test_pkg_finder', 'astropy/utils/tests/test_introspection.py::test_find_current_mod', 'astropy/utils/tests/test_introspection.py::test_find_mod_objs'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-7671: resolved: True
+2026-11-09 16:02:05,020 - INFO - Attempting to stop container sweb.eval.astropy__astropy-7671.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 16:02:20,878 - INFO - Container sweb.eval.astropy__astropy-7671.verified_full_glm53_deepseek-harness_R1933 stopped successfully.
+2026-11-09 16:02:20,878 - INFO - Attempting to remove container sweb.eval.astropy__astropy-7671.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 16:02:20,918 - INFO - Container sweb.eval.astropy__astropy-7671.verified_full_glm53_deepseek-harness_R1933 removed successfully.

@@ -1,0 +1,44 @@
+diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py
+index ac0b62d0bf..ea88c54b0d 100644
+--- a/django/db/models/aggregates.py
++++ b/django/db/models/aggregates.py
+@@ -68,7 +68,7 @@ class Aggregate(Func):
+         return []
+ 
+     def as_sql(self, compiler, connection, **extra_context):
+-        extra_context['distinct'] = 'DISTINCT' if self.distinct else ''
++        extra_context['distinct'] = 'DISTINCT ' if self.distinct else ''
+         if self.filter:
+             if connection.features.supports_aggregate_filter_clause:
+                 filter_sql, filter_params = self.filter.as_sql(compiler, connection)
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 8cac90f020..c0a116203a 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -5,8 +5,8 @@ from decimal import Decimal
+ from django.core.exceptions import FieldError
+ from django.db import connection
+ from django.db.models import (
+-    Avg, Count, DecimalField, DurationField, F, FloatField, Func, IntegerField,
+-    Max, Min, Sum, Value,
++    Avg, Case, Count, DecimalField, DurationField, F, FloatField, Func,
++    IntegerField, Max, Min, Sum, Value, When,
+ )
+ from django.test import TestCase
+ from django.test.utils import Approximate, CaptureQueriesContext
+@@ -395,6 +395,15 @@ class AggregateTestCase(TestCase):
+         sql = ctx.captured_queries[0]['sql']
+         self.assertIn('SELECT COUNT(*) ', sql)
+ 
++    def test_count_case_distinct(self):
++        qs = Author.objects.annotate(
++            age_count=Count(Case(When(age__gte=35, then=1)), distinct=True),
++        )
++        with self.assertNumQueries(1) as ctx:
++            self.assertEqual([a.age_count for a in qs.order_by('pk')], [0, 1, 1, 0, 1, 0, 0, 1, 1])
++        sql = ctx.captured_queries[0]['sql']
++        self.assertIn('COUNT(DISTINCT CASE WHEN ', sql)
++
+     def test_non_grouped_annotation_not_in_group_by(self):
+         """
+         An annotation not included in values() before an aggregate should be

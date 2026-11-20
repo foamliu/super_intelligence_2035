@@ -1,0 +1,384 @@
+2026-10-30 16:32:00,930 - INFO - Creating container for sympy__sympy-12419...
+2026-10-30 16:32:12,165 - INFO - Removed existing container sweb.eval.sympy__sympy-12419.verified_full_cline-patched
+2026-10-30 16:32:12,190 - INFO - Container for sympy__sympy-12419 created: 86e38eb659562368c1a7bf02b22dfedc4adc633e405c35c7a77e42a826c315ca
+2026-10-30 16:32:20,662 - INFO - Container for sympy__sympy-12419 started: 86e38eb659562368c1a7bf02b22dfedc4adc633e405c35c7a77e42a826c315ca
+2026-10-30 16:32:20,663 - INFO - Intermediate patch for sympy__sympy-12419 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-12419/patch.diff, now applying to container...
+2026-10-30 16:32:20,755 - INFO - >>>>> Applied Patch:
+Checking patch sympy/assumptions/sathandlers.py...
+warning: sympy/assumptions/sathandlers.py has type 100755, expected 100644
+Checking patch sympy/concrete/summations.py...
+warning: sympy/concrete/summations.py has type 100755, expected 100644
+Checking patch sympy/concrete/tests/test_sums_products.py...
+warning: sympy/concrete/tests/test_sums_products.py has type 100755, expected 100644
+Checking patch sympy/core/basic.py...
+warning: sympy/core/basic.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/diagonal.py...
+warning: sympy/matrices/expressions/diagonal.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/matexpr.py...
+warning: sympy/matrices/expressions/matexpr.py has type 100755, expected 100644
+Checking patch sympy/matrices/matrices.py...
+warning: sympy/matrices/matrices.py has type 100755, expected 100644
+Checking patch sympy/plotting/plot.py...
+warning: sympy/plotting/plot.py has type 100755, expected 100644
+Checking patch sympy/tensor/indexed.py...
+warning: sympy/tensor/indexed.py has type 100755, expected 100644
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/concrete/summations.py cleanly.
+Applied patch sympy/concrete/tests/test_sums_products.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/matrices/expressions/diagonal.py cleanly.
+Applied patch sympy/matrices/expressions/matexpr.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+Applied patch sympy/tensor/indexed.py cleanly.
+
+2026-10-30 16:32:21,174 - INFO - Git diff before:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/concrete/summations.py b/sympy/concrete/summations.py
+index 372487664..c6c436758 100755
+--- a/sympy/concrete/summations.py
++++ b/sympy/concrete/summations.py
+@@ -866,6 +866,20 @@ def eval_sum(f, limits):
+                     return None
+                 newargs.append((newexpr, arg.cond))
+             return f.func(*newargs)
++        else:
++            # Check if the first branch's condition is equivalent to the
++            # summation interval. In that case, the Piecewise simplifies
++            # to just the first branch's expression over the entire range.
++            from sympy.sets import Interval
++            from sympy.logic.boolalg import And
++            interval_rel = Interval(a, b).as_relational(i)
++            first_expr, first_cond = f.args[0]
++            if first_cond == interval_rel:
++                return eval_sum(first_expr, limits)
++            if isinstance(first_cond, And) and isinstance(interval_rel, And):
++                if set(rel.canonical for rel in first_cond.args) == \
++                        set(rel.canonical for rel in interval_rel.args):
++                    return eval_sum(first_expr, limits)
+ 
+     if f.has(KroneckerDelta) and _has_simple_delta(f, limits[0]):
+         return deltasummation(f, limits)
+diff --git a/sympy/concrete/tests/test_sums_products.py b/sympy/concrete/tests/test_sums_products.py
+index 1e3a81141..e1d3c6d2d 100755
+--- a/sympy/concrete/tests/test_sums_products.py
++++ b/sympy/concrete/tests/test_sums_products.py
+@@ -570,7 +570,7 @@ def test_Sum_doit():
+     # issue 2597
+     nmax = symbols('N', integer=True, positive=True)
+     pw = Piecewise((1, And(S(1) <= n, n <= nmax)), (0, True))
+-    assert Sum(pw, (n, 1, nmax)).doit() == Sum(pw, (n, 1, nmax))
++    assert Sum(pw, (n, 1, nmax)).doit() == nmax
+ 
+     q, s = symbols('q, s')
+     assert summation(1/n**(2*s), (n, 1, oo)) == Piecewise((zeta(2*s), 2*s > 1),
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..394c634b7 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,9 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/expressions/diagonal.py b/sympy/matrices/expressions/diagonal.py
+index a0dc57a35..4203936da 100755
+--- a/sympy/matrices/expressions/diagonal.py
++++ b/sympy/matrices/expressions/diagonal.py
+@@ -2,13 +2,14 @@
+ 
+ from sympy.matrices.expressions import MatrixExpr
+ from sympy.core import S
++from sympy.functions.special.tensor_functions import KroneckerDelta
+ 
+ class DiagonalMatrix(MatrixExpr):
+     arg = property(lambda self: self.args[0])
+     shape = property(lambda self: (self.arg.shape[0], self.arg.shape[0]))
+ 
+     def _entry(self, i, j):
+-        return S.Zero if i != j else self.arg[i, 0]
++        return KroneckerDelta(i, j) * self.arg[i, 0]
+ 
+ class DiagonalOf(MatrixExpr):
+     arg = property(lambda self: self.args[0])
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..1cb0cf4df 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -476,10 +476,8 @@ def conjugate(self):
+         return self
+ 
+     def _entry(self, i, j):
+-        if i == j:
+-            return S.One
+-        else:
+-            return S.Zero
++        from sympy.functions.special.tensor_functions import KroneckerDelta
++        return KroneckerDelta(i, j)
+ 
+     def _eval_determinant(self):
+         return S.One
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index b6808b58d..a2780d021 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+ import collections
++try:
++    collections_Callable = collections.abc.Callable
++except AttributeError:
++    collections_Callable = collections.Callable
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+ from sympy.core.expr import Expr
+@@ -1903,7 +1907,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections_Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..87b607fc8 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/tensor/indexed.py b/sympy/tensor/indexed.py
+index c8b958ea5..bac044a92 100755
+--- a/sympy/tensor/indexed.py
++++ b/sympy/tensor/indexed.py
+@@ -108,6 +108,10 @@
+ from __future__ import print_function, division
+ 
+ import collections
++try:
++    collections_Iterable = collections.abc.Iterable
++except AttributeError:
++    collections_Iterable = collections.Iterable
+ 
+ from sympy.core.sympify import _sympify
+ from sympy.functions.special.tensor_functions import KroneckerDelta
+@@ -153,7 +157,7 @@ def __new__(cls, base, *args, **kw_args):
+             raise TypeError(filldedent("""
+                 Indexed expects string, Symbol, or IndexedBase as base."""))
+         args = list(map(sympify, args))
+-        if isinstance(base, (NDimArray, collections.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
++        if isinstance(base, (NDimArray, collections_Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
+             return base[args]
+         return Expr.__new__(cls, base, *args, **kw_args)
+2026-10-30 16:32:21,176 - INFO - Eval script for sympy__sympy-12419 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-12419/eval.sh; copying to container...
+2026-10-30 16:32:26,202 - INFO - Test runtime: 4.97 seconds
+2026-10-30 16:32:26,208 - INFO - Test output for sympy__sympy-12419 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-12419/test_output.txt
+2026-10-30 16:32:26,426 - INFO - Git diff after:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/concrete/summations.py b/sympy/concrete/summations.py
+index 372487664..c6c436758 100755
+--- a/sympy/concrete/summations.py
++++ b/sympy/concrete/summations.py
+@@ -866,6 +866,20 @@ def eval_sum(f, limits):
+                     return None
+                 newargs.append((newexpr, arg.cond))
+             return f.func(*newargs)
++        else:
++            # Check if the first branch's condition is equivalent to the
++            # summation interval. In that case, the Piecewise simplifies
++            # to just the first branch's expression over the entire range.
++            from sympy.sets import Interval
++            from sympy.logic.boolalg import And
++            interval_rel = Interval(a, b).as_relational(i)
++            first_expr, first_cond = f.args[0]
++            if first_cond == interval_rel:
++                return eval_sum(first_expr, limits)
++            if isinstance(first_cond, And) and isinstance(interval_rel, And):
++                if set(rel.canonical for rel in first_cond.args) == \
++                        set(rel.canonical for rel in interval_rel.args):
++                    return eval_sum(first_expr, limits)
+ 
+     if f.has(KroneckerDelta) and _has_simple_delta(f, limits[0]):
+         return deltasummation(f, limits)
+diff --git a/sympy/concrete/tests/test_sums_products.py b/sympy/concrete/tests/test_sums_products.py
+index 1e3a81141..e1d3c6d2d 100755
+--- a/sympy/concrete/tests/test_sums_products.py
++++ b/sympy/concrete/tests/test_sums_products.py
+@@ -570,7 +570,7 @@ def test_Sum_doit():
+     # issue 2597
+     nmax = symbols('N', integer=True, positive=True)
+     pw = Piecewise((1, And(S(1) <= n, n <= nmax)), (0, True))
+-    assert Sum(pw, (n, 1, nmax)).doit() == Sum(pw, (n, 1, nmax))
++    assert Sum(pw, (n, 1, nmax)).doit() == nmax
+ 
+     q, s = symbols('q, s')
+     assert summation(1/n**(2*s), (n, 1, oo)) == Piecewise((zeta(2*s), 2*s > 1),
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..394c634b7 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,9 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/expressions/diagonal.py b/sympy/matrices/expressions/diagonal.py
+index a0dc57a35..4203936da 100755
+--- a/sympy/matrices/expressions/diagonal.py
++++ b/sympy/matrices/expressions/diagonal.py
+@@ -2,13 +2,14 @@
+ 
+ from sympy.matrices.expressions import MatrixExpr
+ from sympy.core import S
++from sympy.functions.special.tensor_functions import KroneckerDelta
+ 
+ class DiagonalMatrix(MatrixExpr):
+     arg = property(lambda self: self.args[0])
+     shape = property(lambda self: (self.arg.shape[0], self.arg.shape[0]))
+ 
+     def _entry(self, i, j):
+-        return S.Zero if i != j else self.arg[i, 0]
++        return KroneckerDelta(i, j) * self.arg[i, 0]
+ 
+ class DiagonalOf(MatrixExpr):
+     arg = property(lambda self: self.args[0])
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..1cb0cf4df 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -476,10 +476,8 @@ def conjugate(self):
+         return self
+ 
+     def _entry(self, i, j):
+-        if i == j:
+-            return S.One
+-        else:
+-            return S.Zero
++        from sympy.functions.special.tensor_functions import KroneckerDelta
++        return KroneckerDelta(i, j)
+ 
+     def _eval_determinant(self):
+         return S.One
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index b6808b58d..a2780d021 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+ import collections
++try:
++    collections_Callable = collections.abc.Callable
++except AttributeError:
++    collections_Callable = collections.Callable
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+ from sympy.core.expr import Expr
+@@ -1903,7 +1907,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections_Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..87b607fc8 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/tensor/indexed.py b/sympy/tensor/indexed.py
+index c8b958ea5..bac044a92 100755
+--- a/sympy/tensor/indexed.py
++++ b/sympy/tensor/indexed.py
+@@ -108,6 +108,10 @@
+ from __future__ import print_function, division
+ 
+ import collections
++try:
++    collections_Iterable = collections.abc.Iterable
++except AttributeError:
++    collections_Iterable = collections.Iterable
+ 
+ from sympy.core.sympify import _sympify
+ from sympy.functions.special.tensor_functions import KroneckerDelta
+@@ -153,7 +157,7 @@ def __new__(cls, base, *args, **kw_args):
+             raise TypeError(filldedent("""
+                 Indexed expects string, Symbol, or IndexedBase as base."""))
+         args = list(map(sympify, args))
+-        if isinstance(base, (NDimArray, collections.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
++        if isinstance(base, (NDimArray, collections_Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
+             return base[args]
+         return Expr.__new__(cls, base, *args, **kw_args)
+2026-10-30 16:32:26,426 - INFO - Grading answer for sympy__sympy-12419...
+2026-10-30 16:32:26,430 - INFO - report: {'sympy__sympy-12419': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Identity'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_shape', 'test_matexpr', 'test_subs', 'test_ZeroMatrix', 'test_ZeroMatrix_doit', 'test_Identity_doit', 'test_addition', 'test_multiplication', 'test_MatPow', 'test_MatrixSymbol', 'test_dense_conversion', 'test_free_symbols', 'test_zero_matmul', 'test_matadd_simplify', 'test_matmul_simplify', 'test_invariants', 'test_indexing', 'test_single_indexing', 'test_MatrixElement_commutative', 'test_MatrixSymbol_determinant', 'test_MatrixElement_diff', 'test_MatrixElement_doit', 'test_identity_powers', 'test_Zero_power', 'test_matrixelement_diff'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-12419: resolved: True
+2026-10-30 16:32:26,434 - INFO - Attempting to stop container sweb.eval.sympy__sympy-12419.verified_full_cline-patched...
+2026-10-30 16:32:46,237 - INFO - Container sweb.eval.sympy__sympy-12419.verified_full_cline-patched stopped successfully.
+2026-10-30 16:32:46,238 - INFO - Attempting to remove container sweb.eval.sympy__sympy-12419.verified_full_cline-patched...
+2026-10-30 16:32:46,273 - INFO - Container sweb.eval.sympy__sympy-12419.verified_full_cline-patched removed successfully.

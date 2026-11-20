@@ -1,0 +1,169 @@
+2026-11-13 05:43:17,915 - INFO - Creating container for django__django-14034...
+2026-11-13 05:43:17,936 - INFO - Container for django__django-14034 created: db2e5571071e176388f35c73889ef7d0d3a522df738d46b68f1ee2e718ba40aa
+2026-11-13 05:43:18,964 - INFO - Container for django__django-14034 started: db2e5571071e176388f35c73889ef7d0d3a522df738d46b68f1ee2e718ba40aa
+2026-11-13 05:43:18,966 - INFO - Intermediate patch for django__django-14034 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2334/cline-glm-5.3-flash/django__django-14034/patch.diff, now applying to container...
+2026-11-13 05:43:19,088 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/fields.py...
+Checking patch tests/forms_tests/field_tests/test_multivaluefield.py...
+Checking patch tests/forms_tests/tests/test_forms.py...
+Applied patch django/forms/fields.py cleanly.
+Applied patch tests/forms_tests/field_tests/test_multivaluefield.py cleanly.
+Applied patch tests/forms_tests/tests/test_forms.py cleanly.
+
+2026-11-13 05:43:20,544 - INFO - Git diff before:
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 65d6a9ec82..f10e78e589 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -1025,14 +1025,19 @@ class MultiValueField(Field):
+             if not value or not [v for v in value if v not in self.empty_values]:
+                 if self.required:
+                     raise ValidationError(self.error_messages['required'], code='required')
+-                else:
++                elif not any(field.required for field in self.fields):
++                    # If neither the MultiValueField nor any of its subfields
++                    # is required, an empty value compresses to the empty
++                    # value. Otherwise, required subfields are validated below.
+                     return self.compress([])
+         else:
+             raise ValidationError(self.error_messages['invalid'], code='invalid')
+         for i, field in enumerate(self.fields):
+             try:
+                 field_value = value[i]
+-            except IndexError:
++            except (IndexError, TypeError):
++                # IndexError for a too-short list, TypeError for a
++                # non-subscriptable value such as None.
+                 field_value = None
+             if field_value in self.empty_values:
+                 if self.require_all_fields:
+diff --git a/tests/forms_tests/field_tests/test_multivaluefield.py b/tests/forms_tests/field_tests/test_multivaluefield.py
+index 29287d0b01..d23d66ac2b 100644
+--- a/tests/forms_tests/field_tests/test_multivaluefield.py
++++ b/tests/forms_tests/field_tests/test_multivaluefield.py
+@@ -90,6 +90,47 @@ class MultiValueFieldTest(SimpleTestCase):
+         with self.assertRaisesMessage(ValidationError, msg):
+             self.field.clean(['some text', ['JP']])
+ 
++    def test_required_subfields_when_field_not_required(self):
++        """
++        Required subfields are validated even when the MultiValueField itself
++        is not required (#28144).
++        """
++        class MF(MultiValueField):
++            widget = MultiWidget
++
++            def __init__(self):
++                fields = [
++                    CharField(required=False),
++                    CharField(required=True),
++                ]
++                widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++                super().__init__(
++                    fields=fields, widget=widget, require_all_fields=False,
++                    required=False,
++                )
++
++            def compress(self, data_list):
++                return data_list
++
++        msg = "'Enter a complete value.'"
++        with self.assertRaisesMessage(ValidationError, msg):
++            MF().clean(['', ''])
++        with self.assertRaisesMessage(ValidationError, msg):
++            MF().clean(None)
++        self.assertEqual(['xxx', 'yyy'], MF().clean(['xxx', 'yyy']))
++
++        class F(Form):
++            mf = MF()
++
++        form = F({'mf_0': '', 'mf_1': ''})
++        self.assertFalse(form.is_valid())
++        self.assertEqual(form.errors, {'mf': ['Enter a complete value.']})
++        form = F({'mf_0': 'xxx', 'mf_1': ''})
++        self.assertFalse(form.is_valid())
++        form = F({'mf_0': 'xxx', 'mf_1': 'yyy'})
++        self.assertIs(form.is_valid(), True)
++        self.assertEqual(form.cleaned_data['mf'], ['xxx', 'yyy'])
++
+     def test_has_changed_no_initial(self):
+         self.assertTrue(self.field.has_changed(None, ['some text', ['J', 'P'], ['2007-04-25', '6:24:00']]))
+ 
+diff --git a/tests/forms_tests/tests/test_forms.py b/tests/forms_tests/tests/test_forms.py
+index 0fe0749294..e7573452f1 100644
+--- a/tests/forms_tests/tests/test_forms.py
++++ b/tests/forms_tests/tests/test_forms.py
+@@ -3091,9 +3091,12 @@ Good luck picking a username that doesn&#x27;t already exist.</p>
+         # For an optional `MultiValueField` with `require_all_fields=False`, we
+         # don't get any `required` error but we still get `incomplete` errors.
+         f = PhoneField(required=False, require_all_fields=False)
+-        self.assertIsNone(f.clean(''))
+-        self.assertIsNone(f.clean(None))
+-        self.assertIsNone(f.clean([]))
++        with self.assertRaisesMessage(ValidationError, "'Enter a complete value.', 'Enter an extension.'"):
++            f.clean('')
++        with self.assertRaisesMessage(ValidationError, "'Enter a complete value.', 'Enter an extension.'"):
++            f.clean(None)
++        with self.assertRaisesMessage(ValidationError, "'Enter a complete value.', 'Enter an extension.'"):
++            f.clean([])
+         with self.assertRaisesMessage(ValidationError, "'Enter a complete value.'"):
+             f.clean(['+61'])
+         self.assertEqual('+61.287654321 ext. 123 (label: )', f.clean(['+61', '287654321', '123']))
+2026-11-13 05:43:20,547 - INFO - Eval script for django__django-14034 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2334/cline-glm-5.3-flash/django__django-14034/eval.sh; copying to container...
+2026-11-13 05:43:27,913 - INFO - Test runtime: 7.30 seconds
+2026-11-13 05:43:27,915 - INFO - Test output for django__django-14034 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2334/cline-glm-5.3-flash/django__django-14034/test_output.txt
+2026-11-13 05:43:27,987 - INFO - Git diff after:
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 65d6a9ec82..f10e78e589 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -1025,14 +1025,19 @@ class MultiValueField(Field):
+             if not value or not [v for v in value if v not in self.empty_values]:
+                 if self.required:
+                     raise ValidationError(self.error_messages['required'], code='required')
+-                else:
++                elif not any(field.required for field in self.fields):
++                    # If neither the MultiValueField nor any of its subfields
++                    # is required, an empty value compresses to the empty
++                    # value. Otherwise, required subfields are validated below.
+                     return self.compress([])
+         else:
+             raise ValidationError(self.error_messages['invalid'], code='invalid')
+         for i, field in enumerate(self.fields):
+             try:
+                 field_value = value[i]
+-            except IndexError:
++            except (IndexError, TypeError):
++                # IndexError for a too-short list, TypeError for a
++                # non-subscriptable value such as None.
+                 field_value = None
+             if field_value in self.empty_values:
+                 if self.require_all_fields:
+diff --git a/tests/forms_tests/tests/test_forms.py b/tests/forms_tests/tests/test_forms.py
+index 0fe0749294..e7573452f1 100644
+--- a/tests/forms_tests/tests/test_forms.py
++++ b/tests/forms_tests/tests/test_forms.py
+@@ -3091,9 +3091,12 @@ Good luck picking a username that doesn&#x27;t already exist.</p>
+         # For an optional `MultiValueField` with `require_all_fields=False`, we
+         # don't get any `required` error but we still get `incomplete` errors.
+         f = PhoneField(required=False, require_all_fields=False)
+-        self.assertIsNone(f.clean(''))
+-        self.assertIsNone(f.clean(None))
+-        self.assertIsNone(f.clean([]))
++        with self.assertRaisesMessage(ValidationError, "'Enter a complete value.', 'Enter an extension.'"):
++            f.clean('')
++        with self.assertRaisesMessage(ValidationError, "'Enter a complete value.', 'Enter an extension.'"):
++            f.clean(None)
++        with self.assertRaisesMessage(ValidationError, "'Enter a complete value.', 'Enter an extension.'"):
++            f.clean([])
+         with self.assertRaisesMessage(ValidationError, "'Enter a complete value.'"):
+             f.clean(['+61'])
+         self.assertEqual('+61.287654321 ext. 123 (label: )', f.clean(['+61', '287654321', '123']))
+2026-11-13 05:43:27,987 - INFO - Git diff changed after running eval script
+2026-11-13 05:43:27,987 - INFO - Grading answer for django__django-14034...
+2026-11-13 05:43:27,990 - INFO - report: {'django__django-14034': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_render_required_attributes (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)']}, 'PASS_TO_PASS': {'success': ['test_bad_choice (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_clean (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_clean_disabled_multivalue (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_disabled_has_changed (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_as_table (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_as_table_data (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_cleaned_data (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', "Test when the first widget's data has changed.", "Test when the last widget's data has changed. This ensures that it is", 'test_has_changed_no_initial (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_has_changed_same (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'If insufficient data is provided, None is substituted.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14034: resolved: False
+2026-11-13 05:43:27,992 - INFO - Attempting to stop container sweb.eval.django__django-14034.verified_full_glm53_cline-patched_incr_R2334...
+2026-11-13 05:43:44,188 - INFO - Container sweb.eval.django__django-14034.verified_full_glm53_cline-patched_incr_R2334 stopped successfully.
+2026-11-13 05:43:44,188 - INFO - Attempting to remove container sweb.eval.django__django-14034.verified_full_glm53_cline-patched_incr_R2334...
+2026-11-13 05:43:44,239 - INFO - Container sweb.eval.django__django-14034.verified_full_glm53_cline-patched_incr_R2334 removed successfully.

@@ -1,0 +1,45 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f03107..898f2fa3 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,10 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        inds = [self._print(i) for i in expr.indices]
++        return "%s[%s]" % (self._print(expr.base.label), ", ".join(inds))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index f1a9a378..91420826 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -11,6 +11,7 @@
+ from sympy.printing.pycode import (
+     MpmathPrinter, NumPyPrinter, PythonCodePrinter, pycode, SciPyPrinter
+ )
++from sympy.tensor import IndexedBase
+ from sympy.utilities.pytest import raises
+ 
+ x, y, z = symbols('x y z')
+@@ -92,6 +93,17 @@ def test_issue_14283():
+     assert prntr.doprint(zoo) == "float('nan')"
+     assert prntr.doprint(-oo) == "float('-inf')"
+ 
++
++def test_Indexed():
++    p = IndexedBase('p')
++    i, j = symbols('i j')
++    prntr = PythonCodePrinter()
++
++    assert prntr.doprint(p[0]) == 'p[0]'
++    assert prntr.doprint(p[0, 1]) == 'p[0, 1]'
++    assert prntr.doprint(p[i, j]) == 'p[i, j]'
++    assert NumPyPrinter().doprint(p[0, 1]) == 'p[0, 1]'
++
+ def test_NumPyPrinter_print_seq():
+     n = NumPyPrinter()
+ 

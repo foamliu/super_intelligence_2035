@@ -1,0 +1,77 @@
+2026-10-30 16:45:22,484 - INFO - Creating container for astropy__astropy-14539...
+2026-10-30 16:45:22,514 - INFO - Container for astropy__astropy-14539 created: 787beb969b1d9777d947c4c11e80a4e2241b1d5fe166327685615948bbd2749d
+2026-10-30 16:45:23,222 - INFO - Container for astropy__astropy-14539 started: 787beb969b1d9777d947c4c11e80a4e2241b1d5fe166327685615948bbd2749d
+2026-10-30 16:45:23,224 - INFO - Intermediate patch for astropy__astropy-14539 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/astropy__astropy-14539/patch.diff, now applying to container...
+2026-10-30 16:45:23,352 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/diff.py...
+Checking patch astropy/io/fits/tests/test_diff.py...
+Applied patch astropy/io/fits/diff.py cleanly.
+Applied patch astropy/io/fits/tests/test_diff.py cleanly.
+
+2026-10-30 16:45:24,176 - INFO - Git diff before:
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b8..d3608ef01 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -1449,7 +1449,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif "P" in col.format or "Q" in col.format:
+                 diffs = (
+                     [
+                         idx
+diff --git a/astropy/io/fits/tests/test_diff.py b/astropy/io/fits/tests/test_diff.py
+index adfebe6a5..db080c399 100644
+--- a/astropy/io/fits/tests/test_diff.py
++++ b/astropy/io/fits/tests/test_diff.py
+@@ -419,6 +419,23 @@ class TestDiff(FitsTestCase):
+         assert diff.diff_ratio == 0
+         assert diff.diff_total == 0
+ 
++    def test_identical_tables_with_q_format_vla(self):
++        # Regression test for https://github.com/astropy/astropy/issues/14612
++        c1 = Column("A", format="QD", array=[[0], [0, 0]])
++        ta = BinTableHDU.from_columns([c1])
++        tb = BinTableHDU.from_columns([c1.copy()])
++
++        diff = TableDataDiff(ta.data, tb.data)
++        assert diff.identical
++        assert diff.diff_total == 0
++
++        # Also test via FITSDiff on the same file
++        ta.writeto(self.temp("test_q_vla.fits"))
++        diff_file = FITSDiff(
++            self.temp("test_q_vla.fits"), self.temp("test_q_vla.fits")
++        )
++        assert diff_file.identical
++
+     def test_diff_empty_tables(self):
+         """
+         Regression test for https://aeon.stsci.edu/ssb/trac/pyfits/ticket/178
+2026-10-30 16:45:24,179 - INFO - Eval script for astropy__astropy-14539 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/astropy__astropy-14539/eval.sh; copying to container...
+2026-10-30 16:46:24,126 - INFO - Test runtime: 59.87 seconds
+2026-10-30 16:46:24,128 - INFO - Test output for astropy__astropy-14539 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/astropy__astropy-14539/test_output.txt
+2026-10-30 16:46:24,190 - INFO - Git diff after:
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b8..d3608ef01 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -1449,7 +1449,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif "P" in col.format or "Q" in col.format:
+                 diffs = (
+                     [
+                         idx
+2026-10-30 16:46:24,190 - INFO - Git diff changed after running eval script
+2026-10-30 16:46:24,190 - INFO - Grading answer for astropy__astropy-14539...
+2026-10-30 16:46:24,197 - INFO - report: {'astropy__astropy-14539': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_tables', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_data'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_headers', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_slightly_different_headers', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_common_keywords', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_count', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keywords', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_values', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_comments', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_values_with_duplicate', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_asymmetric_duplicate_keywords', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_floating_point_rtol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_floating_point_atol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blanks', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blank_cards[HeaderDiff]', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blank_cards[HDUDiff]', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blank_cards[FITSDiff]', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_hdus', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_keyword_values', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_keyword_comments', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_trivial_identical_images', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_within_relative_tolerance', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_within_absolute_tolerance', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_within_rtol_and_atol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_not_identical_within_rtol_and_atol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_comp_image_hdus', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_dimensions', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_pixels', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_diff_empty_tables', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_table_fields', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_field_names', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_field_counts', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_rows', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_files_basic', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_partially_identical_files1', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_partially_identical_files2', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_partially_identical_files3', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_diff_nans', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_file_output_from_path_string', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_file_output_overwrite_safety', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_file_output_overwrite_success', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_rawdatadiff_nodiff', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_rawdatadiff_dimsdiff', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_rawdatadiff_bytesdiff', 'astropy/io/fits/tests/test_diff.py::test_fitsdiff_hdu_name', 'astropy/io/fits/tests/test_diff.py::test_fitsdiff_no_hdu_name', 'astropy/io/fits/tests/test_diff.py::test_fitsdiff_with_names', 'astropy/io/fits/tests/test_diff.py::test_rawdatadiff_diff_with_rtol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14539: resolved: True
+2026-10-30 16:46:24,199 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14539.verified_full_pi...
+2026-10-30 16:46:39,913 - INFO - Container sweb.eval.astropy__astropy-14539.verified_full_pi stopped successfully.
+2026-10-30 16:46:39,913 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14539.verified_full_pi...
+2026-10-30 16:46:39,969 - INFO - Container sweb.eval.astropy__astropy-14539.verified_full_pi removed successfully.

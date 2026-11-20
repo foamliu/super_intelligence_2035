@@ -1,0 +1,153 @@
+2026-11-09 04:57:45,142 - INFO - Creating container for django__django-13964...
+2026-11-09 04:57:45,163 - INFO - Container for django__django-13964 created: 676600299b761105ab24a5f58070c315eb54738e9769b78c817888e8091f2426
+2026-11-09 04:57:47,167 - INFO - Container for django__django-13964 started: 676600299b761105ab24a5f58070c315eb54738e9769b78c817888e8091f2426
+2026-11-09 04:57:47,169 - INFO - Intermediate patch for django__django-13964 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-13964/patch.diff, now applying to container...
+2026-11-09 04:57:47,272 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+warning: django/db/models/base.py has type 100755, expected 100644
+Checking patch docs/releases/4.0.txt...
+warning: docs/releases/4.0.txt has type 100755, expected 100644
+Checking patch tests/many_to_one/models.py...
+warning: tests/many_to_one/models.py has type 100755, expected 100644
+Checking patch tests/many_to_one/tests.py...
+warning: tests/many_to_one/tests.py has type 100755, expected 100644
+Applied patch django/db/models/base.py cleanly.
+Applied patch docs/releases/4.0.txt cleanly.
+Applied patch tests/many_to_one/models.py cleanly.
+Applied patch tests/many_to_one/tests.py cleanly.
+
+2026-11-09 04:57:48,700 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 2428218696..76b9104c01 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,10 +933,10 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                elif getattr(self, field.attname) in field.target_field.empty_values:
+                     # Use pk from related object if it has been saved after
+                     # an assignment.
+-                    setattr(self, field.attname, obj.pk)
++                    setattr(self, field.attname, getattr(obj, field.target_field.attname))
+                 # If the relationship's pk/to_field was changed, clear the
+                 # cached relationship.
+                 if getattr(obj, field.target_field.attname) != getattr(self, field.attname):
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index b7b0eec1b2..4c00081629 100755
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -351,3 +351,10 @@ to remove usage of these features.
+ * The ``{% ifequal %}`` and ``{% ifnotequal %}`` template tags are removed.
+ 
+ * The ``DEFAULT_HASHING_ALGORITHM`` transitional setting is removed.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.2 where saving a child object with a parent that has
++  a non-numeric primary key, set on the child before the parent's primary key
++  was assigned, resulted in data loss (:ticket:`32401`).
+diff --git a/tests/many_to_one/models.py b/tests/many_to_one/models.py
+index e9f8fbff76..1393e72aba 100755
+--- a/tests/many_to_one/models.py
++++ b/tests/many_to_one/models.py
+@@ -114,3 +114,11 @@ class School(models.Model):
+ 
+ class Student(models.Model):
+     school = models.ForeignKey(School, models.CASCADE)
++
++
++class Product(models.Model):
++    sku = models.CharField(primary_key=True, max_length=50)
++
++
++class Order(models.Model):
++    product = models.ForeignKey(Product, models.CASCADE)
+diff --git a/tests/many_to_one/tests.py b/tests/many_to_one/tests.py
+index 3c7cd0c3fa..176ca988c6 100755
+--- a/tests/many_to_one/tests.py
++++ b/tests/many_to_one/tests.py
+@@ -8,8 +8,8 @@ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+     Article, Category, Child, ChildNullableParent, City, Country, District,
+-    First, Parent, Record, Relation, Reporter, School, Student, Third,
+-    ToFieldChild,
++    First, Order, Parent, Product, Record, Relation, Reporter, School, Student,
++    Third, ToFieldChild,
+ )
+ 
+ 
+@@ -549,6 +549,26 @@ class ManyToOneTests(TestCase):
+         self.assertEqual(child.parent, parent)
+         self.assertEqual(child.parent_id, parent.name)
+ 
++    def test_save_fk_after_parent_with_non_numeric_pk(self):
++        with transaction.atomic():
++            order = Order()
++            order.product = Product()
++            order.product.sku = 'foo'
++            order.product.save()
++            order.save()
++        self.assertEqual(order.product_id, 'foo')
++        self.assertTrue(Order.objects.filter(product_id='foo').exists())
++        self.assertTrue(Order.objects.filter(product=order.product).exists())
++
++    def test_save_fk_after_parent_with_non_numeric_pk_set_before_assignment(self):
++        with transaction.atomic():
++            order = Order()
++            order.product = Product(sku='foo')
++            order.product.save()
++            order.save()
++        self.assertEqual(order.product_id, 'foo')
++        self.assertTrue(Order.objects.filter(product=order.product).exists())
++
+     def test_fk_to_bigautofield(self):
+         ch = City.objects.create(name='Chicago')
+         District.objects.create(city=ch, name='Far South')
+2026-11-09 04:57:48,702 - INFO - Eval script for django__django-13964 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-13964/eval.sh; copying to container...
+2026-11-09 04:57:53,870 - INFO - Test runtime: 5.10 seconds
+2026-11-09 04:57:53,876 - INFO - Test output for django__django-13964 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-13964/test_output.txt
+2026-11-09 04:57:53,958 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 2428218696..76b9104c01 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,10 +933,10 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                elif getattr(self, field.attname) in field.target_field.empty_values:
+                     # Use pk from related object if it has been saved after
+                     # an assignment.
+-                    setattr(self, field.attname, obj.pk)
++                    setattr(self, field.attname, getattr(obj, field.target_field.attname))
+                 # If the relationship's pk/to_field was changed, clear the
+                 # cached relationship.
+                 if getattr(obj, field.target_field.attname) != getattr(self, field.attname):
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index b7b0eec1b2..4c00081629 100755
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -351,3 +351,10 @@ to remove usage of these features.
+ * The ``{% ifequal %}`` and ``{% ifnotequal %}`` template tags are removed.
+ 
+ * The ``DEFAULT_HASHING_ALGORITHM`` transitional setting is removed.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.2 where saving a child object with a parent that has
++  a non-numeric primary key, set on the child before the parent's primary key
++  was assigned, resulted in data loss (:ticket:`32401`).
+2026-11-09 04:57:53,959 - INFO - Git diff changed after running eval script
+2026-11-09 04:57:53,959 - INFO - Grading answer for django__django-13964...
+2026-11-09 04:57:53,970 - INFO - report: {'django__django-13964': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_save_fk_after_parent_with_non_numeric_pk_set_on_child (many_to_one.tests.ManyToOneTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_add (many_to_one.tests.ManyToOneTests)', 'test_add_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_add_remove_set_by_pk_raises (many_to_one.tests.ManyToOneTests)', 'test_add_then_remove_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_assign (many_to_one.tests.ManyToOneTests)', 'test_assign_fk_id_none (many_to_one.tests.ManyToOneTests)', 'test_assign_fk_id_value (many_to_one.tests.ManyToOneTests)', 'test_cached_foreign_key_with_to_field_not_cleared_by_save (many_to_one.tests.ManyToOneTests)', 'Model.save() invalidates stale ForeignKey relations after a primary key', 'test_clear_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_create (many_to_one.tests.ManyToOneTests)', 'test_create_relation_with_gettext_lazy (many_to_one.tests.ManyToOneTests)', 'test_deepcopy_and_circular_references (many_to_one.tests.ManyToOneTests)', 'test_delete (many_to_one.tests.ManyToOneTests)', 'test_explicit_fk (many_to_one.tests.ManyToOneTests)', 'test_fk_assignment_and_related_object_cache (many_to_one.tests.ManyToOneTests)', 'test_fk_instantiation_outside_model (many_to_one.tests.ManyToOneTests)', 'test_fk_to_bigautofield (many_to_one.tests.ManyToOneTests)', 'test_fk_to_smallautofield (many_to_one.tests.ManyToOneTests)', 'test_get (many_to_one.tests.ManyToOneTests)', 'test_hasattr_related_object (many_to_one.tests.ManyToOneTests)', 'test_manager_class_caching (many_to_one.tests.ManyToOneTests)', 'test_multiple_foreignkeys (many_to_one.tests.ManyToOneTests)', 'test_related_object (many_to_one.tests.ManyToOneTests)', 'test_relation_unsaved (many_to_one.tests.ManyToOneTests)', 'test_remove_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_reverse_assignment_deprecation (many_to_one.tests.ManyToOneTests)', 'test_reverse_foreign_key_instance_to_field_caching (many_to_one.tests.ManyToOneTests)', 'test_reverse_selects (many_to_one.tests.ManyToOneTests)', 'test_save_nullable_fk_after_parent (many_to_one.tests.ManyToOneTests)', 'test_save_nullable_fk_after_parent_with_to_field (many_to_one.tests.ManyToOneTests)', 'test_select_related (many_to_one.tests.ManyToOneTests)', 'test_selects (many_to_one.tests.ManyToOneTests)', 'test_set (many_to_one.tests.ManyToOneTests)', 'test_set_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_values_list_exception (many_to_one.tests.ManyToOneTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13964: resolved: True
+2026-11-09 04:57:53,971 - INFO - Attempting to stop container sweb.eval.django__django-13964.verified_full_glm53_opencode_R1933...
+2026-11-09 04:58:10,616 - INFO - Container sweb.eval.django__django-13964.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 04:58:10,616 - INFO - Attempting to remove container sweb.eval.django__django-13964.verified_full_glm53_opencode_R1933...
+2026-11-09 04:58:10,650 - INFO - Container sweb.eval.django__django-13964.verified_full_glm53_opencode_R1933 removed successfully.

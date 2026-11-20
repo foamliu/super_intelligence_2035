@@ -1,0 +1,39 @@
+diff --git a/changelog/7486.bugfix.rst b/changelog/7486.bugfix.rst
+new file mode 100644
+index 0000000..bbde1b8
+--- /dev/null
++++ b/changelog/7486.bugfix.rst
+@@ -0,0 +1 @@
++Dynamically adding an ``xfail`` mark to a test (for example via ``request.node.add_marker``) during its execution is taken into account again when computing the final outcome of the test, as it was before pytest 6.0.0.
+diff --git a/src/_pytest/skipping.py b/src/_pytest/skipping.py
+index 335e109..d38983d 100644
+--- a/src/_pytest/skipping.py
++++ b/src/_pytest/skipping.py
+@@ -256,6 +256,11 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
+ 
+     yield
+ 
++    # The test run may have added an xfail mark dynamically.
++    xfailed = item._store.get(xfailed_key, None)
++    if xfailed is None:
++        item._store[xfailed_key] = xfailed = evaluate_xfail_marks(item)
++
+ 
+ @hookimpl(hookwrapper=True)
+ def pytest_runtest_makereport(item: Item, call: CallInfo[None]):
+diff --git a/testing/test_skipping.py b/testing/test_skipping.py
+index 8fceb37..bb8f236 100644
+--- a/testing/test_skipping.py
++++ b/testing/test_skipping.py
+@@ -544,6 +544,11 @@ class TestXFail:
+         result.stdout.fnmatch_lines(["*1 failed*" if strict else "*1 xpassed*"])
+         assert result.ret == (1 if strict else 0)
+ 
++    def test_xfail_test_add_marker(self, request):
++        mark = pytest.mark.xfail(reason="xfail")
++        request.node.add_marker(mark)
++        assert 0
++
+ 
+ class TestXFailwithSetupTeardown:
+     def test_failing_setup_issue9(self, testdir):

@@ -1,0 +1,42 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 0f53d9c30b..0ce7de02c6 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -2524,7 +2524,7 @@ class AutoFieldMeta(type):
+         return isinstance(instance, self._subclasses) or super().__instancecheck__(instance)
+ 
+     def __subclasscheck__(self, subclass):
+-        return subclass in self._subclasses or super().__subclasscheck__(subclass)
++        return issubclass(subclass, self._subclasses) or super().__subclasscheck__(subclass)
+ 
+ 
+ class AutoField(AutoFieldMixin, IntegerField, metaclass=AutoFieldMeta):
+diff --git a/tests/model_options/models/__init__.py b/tests/model_options/models/__init__.py
+index e69de29bb2..d39ce9f9d5 100644
+--- a/tests/model_options/models/__init__.py
++++ b/tests/model_options/models/__init__.py
+@@ -0,0 +1,5 @@
++from django.db import models
++
++
++class MyBigAutoField(models.BigAutoField):
++    pass
+diff --git a/tests/model_options/test_default_pk.py b/tests/model_options/test_default_pk.py
+index b678848916..1a21e4225b 100644
+--- a/tests/model_options/test_default_pk.py
++++ b/tests/model_options/test_default_pk.py
+@@ -66,6 +66,14 @@ class TestDefaultPK(SimpleTestCase):
+             class Model(models.Model):
+                 pass
+ 
++    @isolate_apps('model_options.apps.ModelDefaultPKConfig')
++    @override_settings(DEFAULT_AUTO_FIELD='model_options.models.MyBigAutoField')
++    def test_default_auto_field_setting_subclass(self):
++        class Model(models.Model):
++            pass
++
++        self.assertIsInstance(Model._meta.pk, models.BigAutoField)
++
+     @isolate_apps('model_options.apps.ModelDefaultPKConfig')
+     @override_settings(DEFAULT_AUTO_FIELD='django.db.models.SmallAutoField')
+     def test_default_auto_field_setting(self):

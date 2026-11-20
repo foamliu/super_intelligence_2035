@@ -1,0 +1,344 @@
+2026-10-30 15:53:05,647 - INFO - Creating container for sphinx-doc__sphinx-10673...
+2026-10-30 15:53:05,682 - INFO - Container for sphinx-doc__sphinx-10673 created: 37d2ef9e88722df5bdd981a813bf0151a2fefea46fa661c2d39bd7da8b81bd5e
+2026-10-30 15:53:06,398 - INFO - Container for sphinx-doc__sphinx-10673 started: 37d2ef9e88722df5bdd981a813bf0151a2fefea46fa661c2d39bd7da8b81bd5e
+2026-10-30 15:53:06,404 - INFO - Intermediate patch for sphinx-doc__sphinx-10673 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-10673/patch.diff, now applying to container...
+2026-10-30 15:53:06,550 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/directives/other.py...
+Checking patch sphinx/environment/adapters/toctree.py...
+Checking patch sphinx/environment/collectors/toctree.py...
+Checking patch tests/roots/test-toctree-special/conf.py...
+Checking patch tests/roots/test-toctree-special/index.rst...
+Checking patch tests/test_environment_toctree.py...
+Applied patch sphinx/directives/other.py cleanly.
+Applied patch sphinx/environment/adapters/toctree.py cleanly.
+Applied patch sphinx/environment/collectors/toctree.py cleanly.
+Applied patch tests/roots/test-toctree-special/conf.py cleanly.
+Applied patch tests/roots/test-toctree-special/index.rst cleanly.
+Applied patch tests/test_environment_toctree.py cleanly.
+
+2026-10-30 15:53:07,005 - INFO - Git diff before:
+diff --git a/sphinx/directives/other.py b/sphinx/directives/other.py
+index 35e16e623..4349ce70f 100644
+--- a/sphinx/directives/other.py
++++ b/sphinx/directives/other.py
+@@ -11,6 +11,7 @@ from docutils.parsers.rst.directives.misc import Include as BaseInclude
+ from sphinx import addnodes
+ from sphinx.domains.changeset import VersionChange  # NOQA  # for compatibility
+ from sphinx.locale import _, __
++from sphinx.environment.adapters.toctree import SPECIAL_TOC_ENTRIES
+ from sphinx.util import docname_join, logging, url_re
+ from sphinx.util.docutils import SphinxDirective
+ from sphinx.util.matching import Matcher, patfilter
+@@ -119,16 +120,20 @@ class TocTree(SphinxDirective):
+                 if url_re.match(ref) or ref == 'self':
+                     toctree['entries'].append((title, ref))
+                 elif docname not in self.env.found_docs:
+-                    if excluded(self.env.doc2path(docname, False)):
++                    if ref in SPECIAL_TOC_ENTRIES:
++                        toctree['entries'].append((title, ref))
++                    elif excluded(self.env.doc2path(docname, False)):
+                         message = __('toctree contains reference to excluded document %r')
+                         subtype = 'excluded'
++                        logger.warning(message, docname, type='toc', subtype=subtype,
++                                       location=toctree)
++                        self.env.note_reread()
+                     else:
+                         message = __('toctree contains reference to nonexisting document %r')
+                         subtype = 'not_readable'
+-
+-                    logger.warning(message, docname, type='toc', subtype=subtype,
+-                                   location=toctree)
+-                    self.env.note_reread()
++                        logger.warning(message, docname, type='toc', subtype=subtype,
++                                       location=toctree)
++                        self.env.note_reread()
+                 else:
+                     if docname in all_docnames:
+                         all_docnames.remove(docname)
+diff --git a/sphinx/environment/adapters/toctree.py b/sphinx/environment/adapters/toctree.py
+index 9678e3c7c..92e2b1832 100644
+--- a/sphinx/environment/adapters/toctree.py
++++ b/sphinx/environment/adapters/toctree.py
+@@ -6,7 +6,8 @@ from docutils import nodes
+ from docutils.nodes import Element, Node
+ 
+ from sphinx import addnodes
+-from sphinx.locale import __
++from sphinx.errors import NoUri
++from sphinx.locale import _, __
+ from sphinx.util import logging, url_re
+ from sphinx.util.matching import Matcher
+ from sphinx.util.nodes import clean_astext, process_only_nodes
+@@ -18,6 +19,13 @@ if TYPE_CHECKING:
+ 
+ logger = logging.getLogger(__name__)
+ 
++#: Special toctree entries that refer to generated pages instead of source documents.
++SPECIAL_TOC_ENTRIES = {
++    'genindex': ('genindex', _('Index')),
++    'modindex': ('py-modindex', _('Module Index')),
++    'search': ('search', _('Search Page')),
++}
++
+ 
+ class TocTree:
+     def __init__(self, env: "BuildEnvironment") -> None:
+@@ -139,6 +147,21 @@ class TocTree:
+                         item = nodes.list_item('', para)
+                         # don't show subitems
+                         toc = nodes.bullet_list('', item)
++                    elif ref in SPECIAL_TOC_ENTRIES:
++                        special_docname, special_title = SPECIAL_TOC_ENTRIES[ref]
++                        try:
++                            builder.get_relative_uri(docname, special_docname)
++                        except NoUri:
++                            continue
++                        if title is None:
++                            title = special_title
++                        reference = nodes.reference('', '', internal=True,
++                                                    refuri=special_docname,
++                                                    anchorname='',
++                                                    *[nodes.Text(title)])
++                        para = addnodes.compact_paragraph('', '', reference)
++                        item = nodes.list_item('', para)
++                        toc = nodes.bullet_list('', item)
+                     else:
+                         if ref in parents:
+                             logger.warning(__('circular toctree references '
+diff --git a/sphinx/environment/collectors/toctree.py b/sphinx/environment/collectors/toctree.py
+index 52a8fd8d1..ccca114a3 100644
+--- a/sphinx/environment/collectors/toctree.py
++++ b/sphinx/environment/collectors/toctree.py
+@@ -8,7 +8,7 @@ from docutils.nodes import Element, Node
+ from sphinx import addnodes
+ from sphinx.application import Sphinx
+ from sphinx.environment import BuildEnvironment
+-from sphinx.environment.adapters.toctree import TocTree
++from sphinx.environment.adapters.toctree import SPECIAL_TOC_ENTRIES, TocTree
+ from sphinx.environment.collectors import EnvironmentCollector
+ from sphinx.locale import __
+ from sphinx.transforms import SphinxContentsFilter
+@@ -259,6 +259,9 @@ class TocTreeCollector(EnvironmentCollector):
+                         if url_re.match(subdocname) or subdocname == 'self':
+                             # don't mess with those
+                             continue
++                        if subdocname in SPECIAL_TOC_ENTRIES:
++                            # don't mess with special generated pages
++                            continue
+ 
+                         _walk_doc(subdocname, secnum)
+                 elif isinstance(subnode, nodes.Element):
+diff --git a/tests/test_environment_toctree.py b/tests/test_environment_toctree.py
+index 60a9826fd..547d3371c 100644
+--- a/tests/test_environment_toctree.py
++++ b/tests/test_environment_toctree.py
+@@ -346,3 +346,41 @@ def test_get_toctree_for_includehidden(app):
+ 
+     assert_node(toctree[2],
+                 [bullet_list, list_item, compact_paragraph, reference, "baz"])
++
++
++@pytest.mark.sphinx('html', testroot='toctree-special')
++def test_toctree_special_entries(app, warning):
++    app.build()
++    assert not warning.getvalue()
++
++    # check the raw toctree node
++    doctree = app.env.get_doctree('index')
++    toctreenode = list(doctree.findall(addnodes.toctree))[0]
++    assert toctreenode['entries'] == [
++        (None, 'genindex'),
++        (None, 'modindex'),
++        (None, 'search'),
++    ]
++    assert toctreenode['includefiles'] == []
++
++    # check the resolved toctree
++    toctree = TocTree(app.env).get_toctree_for('index', app.builder, collapse=False)
++    assert_node(toctree,
++                [compact_paragraph, bullet_list])
++    assert len(toctree[0]) == 3
++    assert_node(toctree[0][0],
++                [list_item, compact_paragraph, reference, "Index"])
++    assert_node(toctree[0][0][0][0], reference, refuri="genindex.html")
++    assert_node(toctree[0][1],
++                [list_item, compact_paragraph, reference, "Module Index"])
++    assert_node(toctree[0][1][0][0], reference, refuri="py-modindex.html")
++    assert_node(toctree[0][2],
++                [list_item, compact_paragraph, reference, "Search Page"])
++    assert_node(toctree[0][2][0][0], reference, refuri="search.html")
++
++
++@pytest.mark.sphinx('latex', testroot='toctree-special')
++def test_toctree_special_entries_latex(app, warning):
++    app.build()
++    # special entries are skipped in LaTeX output
++    assert not warning.getvalue()
+2026-10-30 15:53:07,011 - INFO - Eval script for sphinx-doc__sphinx-10673 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-10673/eval.sh; copying to container...
+2026-10-30 15:53:10,823 - INFO - Test runtime: 3.75 seconds
+2026-10-30 15:53:10,831 - INFO - Test output for sphinx-doc__sphinx-10673 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-10673/test_output.txt
+2026-10-30 15:53:10,911 - INFO - Git diff after:
+diff --git a/sphinx/directives/other.py b/sphinx/directives/other.py
+index 35e16e623..4349ce70f 100644
+--- a/sphinx/directives/other.py
++++ b/sphinx/directives/other.py
+@@ -11,6 +11,7 @@ from docutils.parsers.rst.directives.misc import Include as BaseInclude
+ from sphinx import addnodes
+ from sphinx.domains.changeset import VersionChange  # NOQA  # for compatibility
+ from sphinx.locale import _, __
++from sphinx.environment.adapters.toctree import SPECIAL_TOC_ENTRIES
+ from sphinx.util import docname_join, logging, url_re
+ from sphinx.util.docutils import SphinxDirective
+ from sphinx.util.matching import Matcher, patfilter
+@@ -119,16 +120,20 @@ class TocTree(SphinxDirective):
+                 if url_re.match(ref) or ref == 'self':
+                     toctree['entries'].append((title, ref))
+                 elif docname not in self.env.found_docs:
+-                    if excluded(self.env.doc2path(docname, False)):
++                    if ref in SPECIAL_TOC_ENTRIES:
++                        toctree['entries'].append((title, ref))
++                    elif excluded(self.env.doc2path(docname, False)):
+                         message = __('toctree contains reference to excluded document %r')
+                         subtype = 'excluded'
++                        logger.warning(message, docname, type='toc', subtype=subtype,
++                                       location=toctree)
++                        self.env.note_reread()
+                     else:
+                         message = __('toctree contains reference to nonexisting document %r')
+                         subtype = 'not_readable'
+-
+-                    logger.warning(message, docname, type='toc', subtype=subtype,
+-                                   location=toctree)
+-                    self.env.note_reread()
++                        logger.warning(message, docname, type='toc', subtype=subtype,
++                                       location=toctree)
++                        self.env.note_reread()
+                 else:
+                     if docname in all_docnames:
+                         all_docnames.remove(docname)
+diff --git a/sphinx/environment/adapters/toctree.py b/sphinx/environment/adapters/toctree.py
+index 9678e3c7c..92e2b1832 100644
+--- a/sphinx/environment/adapters/toctree.py
++++ b/sphinx/environment/adapters/toctree.py
+@@ -6,7 +6,8 @@ from docutils import nodes
+ from docutils.nodes import Element, Node
+ 
+ from sphinx import addnodes
+-from sphinx.locale import __
++from sphinx.errors import NoUri
++from sphinx.locale import _, __
+ from sphinx.util import logging, url_re
+ from sphinx.util.matching import Matcher
+ from sphinx.util.nodes import clean_astext, process_only_nodes
+@@ -18,6 +19,13 @@ if TYPE_CHECKING:
+ 
+ logger = logging.getLogger(__name__)
+ 
++#: Special toctree entries that refer to generated pages instead of source documents.
++SPECIAL_TOC_ENTRIES = {
++    'genindex': ('genindex', _('Index')),
++    'modindex': ('py-modindex', _('Module Index')),
++    'search': ('search', _('Search Page')),
++}
++
+ 
+ class TocTree:
+     def __init__(self, env: "BuildEnvironment") -> None:
+@@ -139,6 +147,21 @@ class TocTree:
+                         item = nodes.list_item('', para)
+                         # don't show subitems
+                         toc = nodes.bullet_list('', item)
++                    elif ref in SPECIAL_TOC_ENTRIES:
++                        special_docname, special_title = SPECIAL_TOC_ENTRIES[ref]
++                        try:
++                            builder.get_relative_uri(docname, special_docname)
++                        except NoUri:
++                            continue
++                        if title is None:
++                            title = special_title
++                        reference = nodes.reference('', '', internal=True,
++                                                    refuri=special_docname,
++                                                    anchorname='',
++                                                    *[nodes.Text(title)])
++                        para = addnodes.compact_paragraph('', '', reference)
++                        item = nodes.list_item('', para)
++                        toc = nodes.bullet_list('', item)
+                     else:
+                         if ref in parents:
+                             logger.warning(__('circular toctree references '
+diff --git a/sphinx/environment/collectors/toctree.py b/sphinx/environment/collectors/toctree.py
+index 52a8fd8d1..ccca114a3 100644
+--- a/sphinx/environment/collectors/toctree.py
++++ b/sphinx/environment/collectors/toctree.py
+@@ -8,7 +8,7 @@ from docutils.nodes import Element, Node
+ from sphinx import addnodes
+ from sphinx.application import Sphinx
+ from sphinx.environment import BuildEnvironment
+-from sphinx.environment.adapters.toctree import TocTree
++from sphinx.environment.adapters.toctree import SPECIAL_TOC_ENTRIES, TocTree
+ from sphinx.environment.collectors import EnvironmentCollector
+ from sphinx.locale import __
+ from sphinx.transforms import SphinxContentsFilter
+@@ -259,6 +259,9 @@ class TocTreeCollector(EnvironmentCollector):
+                         if url_re.match(subdocname) or subdocname == 'self':
+                             # don't mess with those
+                             continue
++                        if subdocname in SPECIAL_TOC_ENTRIES:
++                            # don't mess with special generated pages
++                            continue
+ 
+                         _walk_doc(subdocname, secnum)
+                 elif isinstance(subnode, nodes.Element):
+diff --git a/tests/test_environment_toctree.py b/tests/test_environment_toctree.py
+index 60a9826fd..547d3371c 100644
+--- a/tests/test_environment_toctree.py
++++ b/tests/test_environment_toctree.py
+@@ -346,3 +346,41 @@ def test_get_toctree_for_includehidden(app):
+ 
+     assert_node(toctree[2],
+                 [bullet_list, list_item, compact_paragraph, reference, "baz"])
++
++
++@pytest.mark.sphinx('html', testroot='toctree-special')
++def test_toctree_special_entries(app, warning):
++    app.build()
++    assert not warning.getvalue()
++
++    # check the raw toctree node
++    doctree = app.env.get_doctree('index')
++    toctreenode = list(doctree.findall(addnodes.toctree))[0]
++    assert toctreenode['entries'] == [
++        (None, 'genindex'),
++        (None, 'modindex'),
++        (None, 'search'),
++    ]
++    assert toctreenode['includefiles'] == []
++
++    # check the resolved toctree
++    toctree = TocTree(app.env).get_toctree_for('index', app.builder, collapse=False)
++    assert_node(toctree,
++                [compact_paragraph, bullet_list])
++    assert len(toctree[0]) == 3
++    assert_node(toctree[0][0],
++                [list_item, compact_paragraph, reference, "Index"])
++    assert_node(toctree[0][0][0][0], reference, refuri="genindex.html")
++    assert_node(toctree[0][1],
++                [list_item, compact_paragraph, reference, "Module Index"])
++    assert_node(toctree[0][1][0][0], reference, refuri="py-modindex.html")
++    assert_node(toctree[0][2],
++                [list_item, compact_paragraph, reference, "Search Page"])
++    assert_node(toctree[0][2][0][0], reference, refuri="search.html")
++
++
++@pytest.mark.sphinx('latex', testroot='toctree-special')
++def test_toctree_special_entries_latex(app, warning):
++    app.build()
++    # special entries are skipped in LaTeX output
++    assert not warning.getvalue()
+2026-10-30 15:53:10,911 - INFO - Grading answer for sphinx-doc__sphinx-10673...
+2026-10-30 15:53:10,924 - INFO - report: {'sphinx-doc__sphinx-10673': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False, 'infra_failure_reason': 'no_tests_collected'}}
+Result for sphinx-doc__sphinx-10673: resolved: False
+2026-10-30 15:53:10,933 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-10673.verified_full_opencode...
+2026-10-30 15:53:26,569 - INFO - Container sweb.eval.sphinx-doc__sphinx-10673.verified_full_opencode stopped successfully.
+2026-10-30 15:53:26,569 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-10673.verified_full_opencode...
+2026-10-30 15:53:26,613 - INFO - Container sweb.eval.sphinx-doc__sphinx-10673.verified_full_opencode removed successfully.

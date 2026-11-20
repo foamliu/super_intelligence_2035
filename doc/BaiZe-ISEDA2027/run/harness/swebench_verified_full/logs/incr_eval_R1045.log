@@ -1,0 +1,52 @@
+=== incr_eval R1045 START Sat Oct 31 01:03:39 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sat Oct 31 01:03:39 PM CST 2026] === re-merge claude-code predictions (avoid stale merge) ===
+claude-code: 306 patches merged, 306 eval IDs
+[Sat Oct 31 01:03:40 PM CST 2026] === claude-code eval START 306 instances (stable run_id skips already-done) ===
+305 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.52s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.52s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.52s/it]
+All instances run.
+Total instances: 306
+Instances submitted: 306
+Instances completed: 306
+Instances incomplete: 0
+Instances resolved: 234
+Instances unresolved: 72
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 11
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 306
+Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
+[Sat Oct 31 01:05:07 PM CST 2026] === re-merge hermes predictions (avoid stale merge) ===
+hermes: 26 patches merged, 26 eval IDs
+[Sat Oct 31 01:05:07 PM CST 2026] === hermes eval START 26 instances (stable run_id skips already-done) ===
+25 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [01:49<00:00, 109.53s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:49<00:00, 109.53s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:49<00:00, 109.53s/it]
+All instances run.
+Total instances: 26
+Instances submitted: 26
+Instances completed: 26
+Instances incomplete: 0
+Instances resolved: 19
+Instances unresolved: 7
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 26
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sat Oct 31 01:07:01 PM CST 2026] === hermes eval DONE rc=0 ===
+[Sat Oct 31 01:07:01 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: WROTE eval_claude-code.json  n=306 resolved=234 failed=72 infra=0
+  codex: unchanged (n=197 resolved=156 failed=41 infra=0)
+  hermes: WROTE eval_hermes.json  n=26 resolved=19 failed=7 infra=0
+  deepseek-harness: unchanged (n=33 resolved=27 failed=6 infra=0)
+=== incr_eval R1045 DONE Sat Oct 31 01:07:02 PM CST 2026 ===

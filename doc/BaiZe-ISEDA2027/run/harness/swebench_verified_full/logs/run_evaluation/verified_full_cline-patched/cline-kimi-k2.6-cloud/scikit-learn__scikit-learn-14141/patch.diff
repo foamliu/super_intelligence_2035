@@ -1,0 +1,36 @@
+diff --git a/ISSUE_TEMPLATE.md b/ISSUE_TEMPLATE.md
+index c8ce3e49..f33a5752 100644
+--- a/ISSUE_TEMPLATE.md
++++ b/ISSUE_TEMPLATE.md
+@@ -51,6 +51,7 @@ import sys; print("Python", sys.version)
+ import numpy; print("NumPy", numpy.__version__)
+ import scipy; print("SciPy", scipy.__version__)
+ import sklearn; print("Scikit-Learn", sklearn.__version__)
++import joblib; print("Joblib", joblib.__version__)
+ -->
+ 
+ 
+diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py
+index e5d3141b..bb6194dd 100644
+--- a/sklearn/utils/_show_versions.py
++++ b/sklearn/utils/_show_versions.py
+@@ -45,6 +45,7 @@ def _get_deps_info():
+         "sklearn",
+         "numpy",
+         "scipy",
++        "joblib",
+         "Cython",
+         "pandas",
+         "matplotlib",
+diff --git a/sklearn/utils/tests/test_show_versions.py b/sklearn/utils/tests/test_show_versions.py
+index 31153c96..b6f28072 100644
+--- a/sklearn/utils/tests/test_show_versions.py
++++ b/sklearn/utils/tests/test_show_versions.py
+@@ -20,6 +20,7 @@ def test_get_deps_info():
+     assert 'sklearn' in deps_info
+     assert 'numpy' in deps_info
+     assert 'scipy' in deps_info
++    assert 'joblib' in deps_info
+     assert 'Cython' in deps_info
+     assert 'pandas' in deps_info
+     assert 'matplotlib' in deps_info

@@ -1,0 +1,116 @@
+2026-11-19 08:41:12,893 - INFO - Creating container for django__django-14580...
+2026-11-19 08:41:12,954 - INFO - Container for django__django-14580 created: 482c0c9e577eff57c256cb27f82dd8eed788988d1dc2b78b945df1cfca25add9
+2026-11-19 08:41:14,120 - INFO - Container for django__django-14580 started: 482c0c9e577eff57c256cb27f82dd8eed788988d1dc2b78b945df1cfca25add9
+2026-11-19 08:41:14,122 - INFO - Intermediate patch for django__django-14580 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2750/deepseek-harness-glm-5.3-flash/django__django-14580/patch.diff, now applying to container...
+2026-11-19 08:41:14,254 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/serializer.py...
+warning: django/db/migrations/serializer.py has type 100755, expected 100644
+Checking patch tests/migrations/test_writer.py...
+warning: tests/migrations/test_writer.py has type 100755, expected 100644
+Applied patch django/db/migrations/serializer.py cleanly.
+Applied patch tests/migrations/test_writer.py cleanly.
+
+2026-11-19 08:41:15,687 - INFO - Git diff before:
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index e19c881cda..b6fe7add6c 100755
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -273,12 +273,12 @@ class TupleSerializer(BaseSequenceSerializer):
+ class TypeSerializer(BaseSerializer):
+     def serialize(self):
+         special_cases = [
+-            (models.Model, "models.Model", []),
+-            (type(None), 'type(None)', []),
++            (models.Model, "models.Model", {"from django.db import models"}),
++            (type(None), 'type(None)', set()),
+         ]
+         for case, string, imports in special_cases:
+             if case is self.value:
+-                return string, set(imports)
++                return string, imports
+         if hasattr(self.value, "__module__"):
+             module = self.value.__module__
+             if module == builtins.__name__:
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index a590ff4398..c2b43419ef 100755
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -33,6 +33,10 @@ class DeconstructibleInstances:
+         return ('DeconstructibleInstances', [], {})
+ 
+ 
++class MyMixin:
++    pass
++
++
+ class Money(decimal.Decimal):
+     def deconstruct(self):
+         return (
+@@ -658,6 +662,12 @@ class WriterTests(SimpleTestCase):
+     def test_serialize_type_none(self):
+         self.assertSerializedEqual(type(None))
+ 
++    def test_serialize_model(self):
++        self.assertEqual(
++            MigrationWriter.serialize(models.Model),
++            ("models.Model", {"from django.db import models"}),
++        )
++
+     def test_simple_migration(self):
+         """
+         Tests serializing a simple migration.
+@@ -691,6 +701,22 @@ class WriterTests(SimpleTestCase):
+         result = self.safe_exec(output)
+         self.assertIn("Migration", result)
+ 
++    def test_migration_include_models_import(self):
++        """
++        A migration that references models (e.g. via CreateModel bases)
++        includes a models import.
++        """
++        migration = type("Migration", (migrations.Migration,), {
++            "operations": [
++                migrations.CreateModel("MyModel", [], bases=(MyMixin, models.Model)),
++            ],
++            "dependencies": [],
++        })
++        writer = MigrationWriter(migration)
++        output = writer.as_string()
++        self.assertIn("from django.db import migrations, models\n", output)
++        self.assertIn("bases=(migrations.test_writer.MyMixin, models.Model)", output)
++
+     def test_migration_path(self):
+         test_apps = [
+             'migrations.migrations_test_apps.normal',
+2026-11-19 08:41:15,690 - INFO - Eval script for django__django-14580 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2750/deepseek-harness-glm-5.3-flash/django__django-14580/eval.sh; copying to container...
+2026-11-19 08:41:26,326 - INFO - Test runtime: 10.56 seconds
+2026-11-19 08:41:26,330 - INFO - Test output for django__django-14580 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2750/deepseek-harness-glm-5.3-flash/django__django-14580/test_output.txt
+2026-11-19 08:41:26,405 - INFO - Git diff after:
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index e19c881cda..b6fe7add6c 100755
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -273,12 +273,12 @@ class TupleSerializer(BaseSequenceSerializer):
+ class TypeSerializer(BaseSerializer):
+     def serialize(self):
+         special_cases = [
+-            (models.Model, "models.Model", []),
+-            (type(None), 'type(None)', []),
++            (models.Model, "models.Model", {"from django.db import models"}),
++            (type(None), 'type(None)', set()),
+         ]
+         for case, string, imports in special_cases:
+             if case is self.value:
+-                return string, set(imports)
++                return string, imports
+         if hasattr(self.value, "__module__"):
+             module = self.value.__module__
+             if module == builtins.__name__:
+2026-11-19 08:41:26,405 - INFO - Git diff changed after running eval script
+2026-11-19 08:41:26,405 - INFO - Grading answer for django__django-14580...
+2026-11-19 08:41:26,416 - INFO - report: {'django__django-14580': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_serialize_type_model (migrations.test_writer.WriterTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_args_kwargs_signature (migrations.test_writer.OperationWriterTests)', 'test_args_signature (migrations.test_writer.OperationWriterTests)', 'test_empty_signature (migrations.test_writer.OperationWriterTests)', 'test_expand_args_signature (migrations.test_writer.OperationWriterTests)', 'test_kwargs_signature (migrations.test_writer.OperationWriterTests)', 'test_multiline_args_signature (migrations.test_writer.OperationWriterTests)', 'test_nested_args_signature (migrations.test_writer.OperationWriterTests)', 'test_nested_operation_expand_args_signature (migrations.test_writer.OperationWriterTests)', 'test_custom_operation (migrations.test_writer.WriterTests)', 'test_deconstruct_class_arguments (migrations.test_writer.WriterTests)', 'Test comments at top of file.', 'test_migration_path (migrations.test_writer.WriterTests)', "django.db.models shouldn't be imported if unused.", 'test_register_non_serializer (migrations.test_writer.WriterTests)', 'test_register_serializer (migrations.test_writer.WriterTests)', 'test_serialize_builtin_types (migrations.test_writer.WriterTests)', 'test_serialize_builtins (migrations.test_writer.WriterTests)', 'test_serialize_choices (migrations.test_writer.WriterTests)', 'Ticket #22943: Test serialization of class-based validators, including', 'test_serialize_collections (migrations.test_writer.WriterTests)', 'Make sure compiled regex can be serialized.', 'test_serialize_constants (migrations.test_writer.WriterTests)', 'test_serialize_datetime (migrations.test_writer.WriterTests)', 'Ticket #22679: makemigrations generates invalid code for (an empty', 'test_serialize_enums (migrations.test_writer.WriterTests)', 'test_serialize_fields (migrations.test_writer.WriterTests)', 'test_serialize_frozensets (migrations.test_writer.WriterTests)', 'test_serialize_functions (migrations.test_writer.WriterTests)', 'test_serialize_functools_partial (migrations.test_writer.WriterTests)', 'test_serialize_functools_partialmethod (migrations.test_writer.WriterTests)', 'test_serialize_iterators (migrations.test_writer.WriterTests)', 'test_serialize_lazy_objects (migrations.test_writer.WriterTests)', "A reference in a local scope can't be serialized.", 'test_serialize_managers (migrations.test_writer.WriterTests)', 'test_serialize_multiline_strings (migrations.test_writer.WriterTests)', 'test_serialize_nested_class (migrations.test_writer.WriterTests)', 'test_serialize_numbers (migrations.test_writer.WriterTests)', 'test_serialize_path_like (migrations.test_writer.WriterTests)', 'test_serialize_pathlib (migrations.test_writer.WriterTests)', 'test_serialize_range (migrations.test_writer.WriterTests)', 'test_serialize_set (migrations.test_writer.WriterTests)', 'test_serialize_settings (migrations.test_writer.WriterTests)', 'test_serialize_strings (migrations.test_writer.WriterTests)', 'test_serialize_timedelta (migrations.test_writer.WriterTests)', 'test_serialize_type_none (migrations.test_writer.WriterTests)', 'An unbound method used within a class body can be serialized.', 'test_serialize_uuid (migrations.test_writer.WriterTests)', 'Tests serializing a simple migration.', '#24155 - Tests ordering of imports.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14580: resolved: True
+2026-11-19 08:41:26,418 - INFO - Attempting to stop container sweb.eval.django__django-14580.verified_full_glm53_deepseek-harness_incr_R2750...
+2026-11-19 08:41:42,827 - INFO - Container sweb.eval.django__django-14580.verified_full_glm53_deepseek-harness_incr_R2750 stopped successfully.
+2026-11-19 08:41:42,827 - INFO - Attempting to remove container sweb.eval.django__django-14580.verified_full_glm53_deepseek-harness_incr_R2750...
+2026-11-19 08:41:42,868 - INFO - Container sweb.eval.django__django-14580.verified_full_glm53_deepseek-harness_incr_R2750 removed successfully.

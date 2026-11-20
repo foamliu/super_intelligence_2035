@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-4075",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py\nindex 996d2e4..a4bd93e 100644\n--- a/xarray/core/weighted.py\n+++ b/xarray/core/weighted.py\n@@ -107,7 +107,9 @@ class Weighted:\n             )\n \n         self.obj = obj\n-        self.weights = weights\n+        # Make sure boolean weights are integer so that dot(mask, weights)\n+        # returns a numeric sum instead of a boolean.\n+        self.weights = weights.astype(int) if weights.dtype == bool else weights\n \n     @staticmethod\n     def _reduce(\ndiff --git a/xarray/tests/test_weighted.py b/xarray/tests/test_weighted.py\nindex 2453121..f8bded4 100644\n--- a/xarray/tests/test_weighted.py\n+++ b/xarray/tests/test_weighted.py\n@@ -74,6 +74,23 @@ def test_weighted_sum_equal_weights(da, factor, skipna):\n     assert_equal(expected, result)\n \n \n+@pytest.mark.parametrize(\"as_dataset\", (True, False))\n+def test_weighted_bool_weights(as_dataset):\n+    # GH #4007\n+    data = DataArray([1.0, 1.0, 1.0])\n+    weights = DataArray(np.array([1, 1, 0], dtype=bool))\n+\n+    if as_dataset:\n+        data = data.to_dataset(name=\"data\")\n+        expected = data.assign(data=1.0)\n+    else:\n+        expected = DataArray(1.0)\n+\n+    result = data.weighted(weights).mean()\n+\n+    assert_equal(expected, result)\n+\n+\n @pytest.mark.parametrize(\n     (\"weights\", \"expected\"), (([1, 2], 5), ([0, 2], 4), ([0, 0], 0))\n )\n"
+  }
+]

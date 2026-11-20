@@ -1,0 +1,296 @@
+2026-11-10 18:14:17,172 - INFO - Creating container for sphinx-doc__sphinx-7590...
+2026-11-10 18:14:17,201 - INFO - Container for sphinx-doc__sphinx-7590 created: f43210dde2ac293ec4c3b1202ccdb78e614937cb11fe4b6d72e21f83eb8217f1
+2026-11-10 18:14:17,699 - INFO - Container for sphinx-doc__sphinx-7590 started: f43210dde2ac293ec4c3b1202ccdb78e614937cb11fe4b6d72e21f83eb8217f1
+2026-11-10 18:14:17,702 - INFO - Intermediate patch for sphinx-doc__sphinx-7590 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/sphinx-doc__sphinx-7590/patch.diff, now applying to container...
+2026-11-10 18:14:17,822 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/domains/cpp.py...
+Checking patch sphinx/util/cfamily.py...
+Checking patch tests/test_domain_cpp.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/domains/cpp.py cleanly.
+Applied patch sphinx/util/cfamily.py cleanly.
+Applied patch tests/test_domain_cpp.py cleanly.
+
+2026-11-10 18:14:18,251 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 3942c4240..77ec26521 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -29,6 +29,7 @@ Deprecated
+ Features added
+ --------------
+ 
++* #7572: C++, support user-defined literals in expressions
+ * LaTeX: Make the ``toplevel_sectioning`` setting optional in LaTeX theme
+ * LaTeX: Allow to override papersize and pointsize from LaTeX themes
+ * LaTeX: Add :confval:`latex_theme_options` to override theme options
+diff --git a/sphinx/domains/cpp.py b/sphinx/domains/cpp.py
+index fe52d881d..bbc5feedb 100644
+--- a/sphinx/domains/cpp.py
++++ b/sphinx/domains/cpp.py
+@@ -838,6 +838,25 @@ class ASTNumberLiteral(ASTLiteral):
+         signode.append(nodes.Text(txt, txt))
+ 
+ 
++class ASTUserDefinedLiteral(ASTLiteral):
++    def __init__(self, literal: ASTLiteral, suffix: str) -> None:
++        self.literal = literal
++        self.suffix = suffix
++
++    def _stringify(self, transform: StringifyTransform) -> str:
++        return transform(self.literal) + self.suffix
++
++    def get_id(self, version: int) -> str:
++        # wrap the literal in a unary plus
++        # 'ps' is the code for a unary plus
++        return "ps" + self.literal.get_id(version)
++
++    def describe_signature(self, signode: TextElement, mode: str,
++                           env: "BuildEnvironment", symbol: "Symbol") -> None:
++        self.literal.describe_signature(signode, mode, env, symbol)
++        signode.append(nodes.emphasis(self.suffix, self.suffix))
++
++
+ class ASTStringLiteral(ASTLiteral):
+     def __init__(self, data: str) -> None:
+         self.data = data
+@@ -4664,10 +4683,20 @@ class DefinitionParser(BaseParser):
+             if self.match(regex):
+                 while self.current_char in 'uUlLfF':
+                     self.pos += 1
+-                return ASTNumberLiteral(self.definition[pos:self.pos])
++                lit = ASTNumberLiteral(self.definition[pos:self.pos])
++                # user-defined literal
++                m = self.match(identifier_re)
++                if m is not None:
++                    return ASTUserDefinedLiteral(lit, m.group(0))
++                return lit
+ 
+         string = self._parse_string()
+         if string is not None:
++            # user-defined literal
++            m = self.match(identifier_re)
++            if m is not None:
++                lit = ASTStringLiteral(string)
++                return ASTUserDefinedLiteral(lit, m.group(0))
+             return ASTStringLiteral(string)
+ 
+         # character-literal
+@@ -4675,14 +4704,18 @@ class DefinitionParser(BaseParser):
+             prefix = self.last_match.group(1)  # may be None when no prefix
+             data = self.last_match.group(2)
+             try:
+-                return ASTCharLiteral(prefix, data)
++                lit = ASTCharLiteral(prefix, data)
+             except UnicodeDecodeError as e:
+                 self.fail("Can not handle character literal. Internal error was: %s" % e)
+             except UnsupportedMultiCharacterCharLiteral:
+                 self.fail("Can not handle character literal"
+                           " resulting in multiple decoded characters.")
++            # user-defined literal
++            m = self.match(identifier_re)
++            if m is not None:
++                return ASTUserDefinedLiteral(lit, m.group(0))
++            return lit
+ 
+-        # TODO: user-defined lit
+         return None
+ 
+     def _parse_fold_or_paren_expression(self) -> ASTExpression:
+diff --git a/sphinx/util/cfamily.py b/sphinx/util/cfamily.py
+index 790a492a5..cf61b021d 100644
+--- a/sphinx/util/cfamily.py
++++ b/sphinx/util/cfamily.py
+@@ -32,7 +32,7 @@ anon_identifier_re = re.compile(r'(@[a-zA-Z0-9_])[a-zA-Z0-9_]*\b')
+ identifier_re = re.compile(r'''(?x)
+     (   # This 'extends' _anon_identifier_re with the ordinary identifiers,
+         # make sure they are in sync.
+-        (~?\b[a-zA-Z_])  # ordinary identifiers
++        (?:~?\b)?[a-zA-Z_]  # ordinary identifiers
+     |   (@[a-zA-Z0-9_])  # our extension for names of anonymous entities
+     )
+     [a-zA-Z0-9_]*\b
+@@ -281,14 +281,14 @@ class BaseParser:
+     def warn(self, msg: str) -> None:
+         logger.warning(msg, location=self.location)
+ 
+-    def match(self, regex: Pattern) -> bool:
++    def match(self, regex: Pattern) -> Match:
+         match = regex.match(self.definition, self.pos)
+         if match is not None:
+             self._previous_state = (self.pos, self.last_match)
+             self.pos = match.end()
+             self.last_match = match
+-            return True
+-        return False
++            return match
++        return None
+ 
+     def skip_string(self, string: str) -> bool:
+         strlen = len(string)
+@@ -298,7 +298,7 @@ class BaseParser:
+         return False
+ 
+     def skip_word(self, word: str) -> bool:
+-        return self.match(re.compile(r'\b%s\b' % re.escape(word)))
++        return bool(self.match(re.compile(r'\b%s\b' % re.escape(word))))
+ 
+     def skip_ws(self) -> bool:
+         return self.match(_whitespace_re)
+diff --git a/tests/test_domain_cpp.py b/tests/test_domain_cpp.py
+index 9db741ae5..59e48d288 100644
+--- a/tests/test_domain_cpp.py
++++ b/tests/test_domain_cpp.py
+@@ -176,7 +176,13 @@ def test_expressions():
+         exprCheck(p + "'\\U0001f34c'", t + "127820")
+         exprCheck(p + "'\\U0001F34C'", t + "127820")
+ 
+-    # TODO: user-defined lit
++    # user-defined literals
++    exprCheck('6.62607015e-34q_J', 'psL6.62607015e-34E')
++    exprCheck('1q_s', 'psL1E')
++    exprCheck('10_km', 'psL10E')
++    exprCheck('5q', 'psL5E')
++    exprCheck('"abc"_x', 'psLA3_KcE')
++    exprCheck("u8'a'_x", 'psc97')
+     exprCheck('(... + Ns)', '(... + Ns)', id4='flpl2Ns')
+     exprCheck('(Ns + ...)', '(Ns + ...)', id4='frpl2Ns')
+     exprCheck('(Ns + ... + 0)', '(Ns + ... + 0)', id4='fLpl2NsL0E')
+2026-11-10 18:14:18,254 - INFO - Eval script for sphinx-doc__sphinx-7590 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/sphinx-doc__sphinx-7590/eval.sh; copying to container...
+2026-11-10 18:14:29,032 - INFO - Test runtime: 10.70 seconds
+2026-11-10 18:14:29,034 - INFO - Test output for sphinx-doc__sphinx-7590 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/sphinx-doc__sphinx-7590/test_output.txt
+2026-11-10 18:14:29,201 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 3942c4240..77ec26521 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -29,6 +29,7 @@ Deprecated
+ Features added
+ --------------
+ 
++* #7572: C++, support user-defined literals in expressions
+ * LaTeX: Make the ``toplevel_sectioning`` setting optional in LaTeX theme
+ * LaTeX: Allow to override papersize and pointsize from LaTeX themes
+ * LaTeX: Add :confval:`latex_theme_options` to override theme options
+diff --git a/sphinx/domains/cpp.py b/sphinx/domains/cpp.py
+index fe52d881d..bbc5feedb 100644
+--- a/sphinx/domains/cpp.py
++++ b/sphinx/domains/cpp.py
+@@ -838,6 +838,25 @@ class ASTNumberLiteral(ASTLiteral):
+         signode.append(nodes.Text(txt, txt))
+ 
+ 
++class ASTUserDefinedLiteral(ASTLiteral):
++    def __init__(self, literal: ASTLiteral, suffix: str) -> None:
++        self.literal = literal
++        self.suffix = suffix
++
++    def _stringify(self, transform: StringifyTransform) -> str:
++        return transform(self.literal) + self.suffix
++
++    def get_id(self, version: int) -> str:
++        # wrap the literal in a unary plus
++        # 'ps' is the code for a unary plus
++        return "ps" + self.literal.get_id(version)
++
++    def describe_signature(self, signode: TextElement, mode: str,
++                           env: "BuildEnvironment", symbol: "Symbol") -> None:
++        self.literal.describe_signature(signode, mode, env, symbol)
++        signode.append(nodes.emphasis(self.suffix, self.suffix))
++
++
+ class ASTStringLiteral(ASTLiteral):
+     def __init__(self, data: str) -> None:
+         self.data = data
+@@ -4664,10 +4683,20 @@ class DefinitionParser(BaseParser):
+             if self.match(regex):
+                 while self.current_char in 'uUlLfF':
+                     self.pos += 1
+-                return ASTNumberLiteral(self.definition[pos:self.pos])
++                lit = ASTNumberLiteral(self.definition[pos:self.pos])
++                # user-defined literal
++                m = self.match(identifier_re)
++                if m is not None:
++                    return ASTUserDefinedLiteral(lit, m.group(0))
++                return lit
+ 
+         string = self._parse_string()
+         if string is not None:
++            # user-defined literal
++            m = self.match(identifier_re)
++            if m is not None:
++                lit = ASTStringLiteral(string)
++                return ASTUserDefinedLiteral(lit, m.group(0))
+             return ASTStringLiteral(string)
+ 
+         # character-literal
+@@ -4675,14 +4704,18 @@ class DefinitionParser(BaseParser):
+             prefix = self.last_match.group(1)  # may be None when no prefix
+             data = self.last_match.group(2)
+             try:
+-                return ASTCharLiteral(prefix, data)
++                lit = ASTCharLiteral(prefix, data)
+             except UnicodeDecodeError as e:
+                 self.fail("Can not handle character literal. Internal error was: %s" % e)
+             except UnsupportedMultiCharacterCharLiteral:
+                 self.fail("Can not handle character literal"
+                           " resulting in multiple decoded characters.")
++            # user-defined literal
++            m = self.match(identifier_re)
++            if m is not None:
++                return ASTUserDefinedLiteral(lit, m.group(0))
++            return lit
+ 
+-        # TODO: user-defined lit
+         return None
+ 
+     def _parse_fold_or_paren_expression(self) -> ASTExpression:
+diff --git a/sphinx/util/cfamily.py b/sphinx/util/cfamily.py
+index 790a492a5..cf61b021d 100644
+--- a/sphinx/util/cfamily.py
++++ b/sphinx/util/cfamily.py
+@@ -32,7 +32,7 @@ anon_identifier_re = re.compile(r'(@[a-zA-Z0-9_])[a-zA-Z0-9_]*\b')
+ identifier_re = re.compile(r'''(?x)
+     (   # This 'extends' _anon_identifier_re with the ordinary identifiers,
+         # make sure they are in sync.
+-        (~?\b[a-zA-Z_])  # ordinary identifiers
++        (?:~?\b)?[a-zA-Z_]  # ordinary identifiers
+     |   (@[a-zA-Z0-9_])  # our extension for names of anonymous entities
+     )
+     [a-zA-Z0-9_]*\b
+@@ -281,14 +281,14 @@ class BaseParser:
+     def warn(self, msg: str) -> None:
+         logger.warning(msg, location=self.location)
+ 
+-    def match(self, regex: Pattern) -> bool:
++    def match(self, regex: Pattern) -> Match:
+         match = regex.match(self.definition, self.pos)
+         if match is not None:
+             self._previous_state = (self.pos, self.last_match)
+             self.pos = match.end()
+             self.last_match = match
+-            return True
+-        return False
++            return match
++        return None
+ 
+     def skip_string(self, string: str) -> bool:
+         strlen = len(string)
+@@ -298,7 +298,7 @@ class BaseParser:
+         return False
+ 
+     def skip_word(self, word: str) -> bool:
+-        return self.match(re.compile(r'\b%s\b' % re.escape(word)))
++        return bool(self.match(re.compile(r'\b%s\b' % re.escape(word))))
+ 
+     def skip_ws(self) -> bool:
+         return self.match(_whitespace_re)
+2026-11-10 18:14:29,202 - INFO - Git diff changed after running eval script
+2026-11-10 18:14:29,202 - INFO - Grading answer for sphinx-doc__sphinx-7590...
+2026-11-10 18:14:29,265 - INFO - report: {'sphinx-doc__sphinx-7590': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/test_domain_cpp.py::test_expressions']}, 'PASS_TO_PASS': {'success': ['tests/test_domain_cpp.py::test_fundamental_types', 'tests/test_domain_cpp.py::test_type_definitions', 'tests/test_domain_cpp.py::test_concept_definitions', 'tests/test_domain_cpp.py::test_member_definitions', 'tests/test_domain_cpp.py::test_function_definitions', 'tests/test_domain_cpp.py::test_operators', 'tests/test_domain_cpp.py::test_class_definitions', 'tests/test_domain_cpp.py::test_union_definitions', 'tests/test_domain_cpp.py::test_enum_definitions', 'tests/test_domain_cpp.py::test_anon_definitions', 'tests/test_domain_cpp.py::test_templates', 'tests/test_domain_cpp.py::test_template_args', 'tests/test_domain_cpp.py::test_initializers', 'tests/test_domain_cpp.py::test_attributes', 'tests/test_domain_cpp.py::test_xref_parsing', 'tests/test_domain_cpp.py::test_build_domain_cpp_multi_decl_lookup', 'tests/test_domain_cpp.py::test_build_domain_cpp_warn_template_param_qualified_name', 'tests/test_domain_cpp.py::test_build_domain_cpp_backslash_ok', 'tests/test_domain_cpp.py::test_build_domain_cpp_semicolon', 'tests/test_domain_cpp.py::test_build_domain_cpp_anon_dup_decl', 'tests/test_domain_cpp.py::test_build_domain_cpp_misuse_of_roles', 'tests/test_domain_cpp.py::test_build_domain_cpp_with_add_function_parentheses_is_True', 'tests/test_domain_cpp.py::test_build_domain_cpp_with_add_function_parentheses_is_False', 'tests/test_domain_cpp.py::test_xref_consistency'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7590: resolved: False
+2026-11-10 18:14:29,267 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7590.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 18:14:45,341 - INFO - Container sweb.eval.sphinx-doc__sphinx-7590.verified_full_glm53_deepseek-harness_incr_R2028 stopped successfully.
+2026-11-10 18:14:45,342 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7590.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 18:14:45,377 - INFO - Container sweb.eval.sphinx-doc__sphinx-7590.verified_full_glm53_deepseek-harness_incr_R2028 removed successfully.

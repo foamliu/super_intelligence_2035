@@ -1,0 +1,58 @@
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 982816be..91bb2f3c 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -320,6 +320,15 @@ class RenameModel(ModelOperation):
+         new_model = to_state.apps.get_model(app_label, self.new_name)
+         if self.allow_migrate_model(schema_editor.connection.alias, new_model):
+             old_model = from_state.apps.get_model(app_label, self.old_name)
++            # If the table name hasn't changed, this is a noop.
++            if (
++                old_model._meta.db_table == new_model._meta.db_table or
++                (
++                    schema_editor.connection.features.ignores_table_name_case and
++                    old_model._meta.db_table.lower() == new_model._meta.db_table.lower()
++                )
++            ):
++                return
+             # Move the main table
+             schema_editor.alter_db_table(
+                 new_model,
+diff --git a/tests/migrations/test_operations.py b/tests/migrations/test_operations.py
+index 11961a1f..9872a091 100644
+--- a/tests/migrations/test_operations.py
++++ b/tests/migrations/test_operations.py
+@@ -671,6 +671,33 @@ class OperationTests(OperationTestBase):
+         self.assertNotIn(('migrations', 'bar'), state.models)
+         self.assertIn(('migrations', 'foo'), state.models)
+ 
++    def test_rename_model_with_db_table(self):
++        """
++        RenameModel with db_table defined must be a noop.
++        """
++        app_label = "test_rename_model_with_db_table"
++        project_state = self.set_up_test_model(app_label, related_model=True, db_table='custom_table')
++        operation = migrations.RenameModel("Pony", "Horse")
++        new_state = project_state.clone()
++        operation.state_forwards(app_label, new_state)
++        # The table should still be 'custom_table' after the rename.
++        self.assertTableExists("custom_table")
++        self.assertTableNotExists("%s_horse" % app_label)
++        # RenameModel with db_table must be a noop.
++        with connection.schema_editor() as editor, self.assertNumQueries(0):
++            operation.database_forwards(app_label, editor, project_state, new_state)
++        self.assertTableExists("custom_table")
++        self.assertTableNotExists("%s_horse" % app_label)
++        if connection.features.supports_foreign_keys:
++            self.assertFKExists("%s_rider" % app_label, ["pony_id"], ("custom_table", "id"))
++        # Backwards must also be a noop.
++        with connection.schema_editor() as editor, self.assertNumQueries(0):
++            operation.database_backwards(app_label, editor, new_state, project_state)
++        self.assertTableExists("custom_table")
++        self.assertTableNotExists("%s_pony" % app_label)
++        if connection.features.supports_foreign_keys:
++            self.assertFKExists("%s_rider" % app_label, ["pony_id"], ("custom_table", "id"))
++
+     def test_rename_model_with_self_referential_fk(self):
+         """
+         Tests the RenameModel operation on model with self referential FK.

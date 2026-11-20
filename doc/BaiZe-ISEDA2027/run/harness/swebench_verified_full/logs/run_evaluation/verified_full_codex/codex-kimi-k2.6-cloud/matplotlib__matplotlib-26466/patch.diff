@@ -1,0 +1,26 @@
+diff --git a/lib/matplotlib/patches.py b/lib/matplotlib/patches.py
+index 92dc55940..a78367e87 100644
+--- a/lib/matplotlib/patches.py
++++ b/lib/matplotlib/patches.py
+@@ -4147,7 +4147,7 @@ default: 'arc3'
+         super().__init__(**kwargs)
+ 
+         if posA is not None and posB is not None and path is None:
+-            self._posA_posB = [posA, posB]
++            self._posA_posB = [tuple(posA), tuple(posB)]
+ 
+             if connectionstyle is None:
+                 connectionstyle = "arc3"
+diff --git a/lib/matplotlib/text.py b/lib/matplotlib/text.py
+index d4922fc51..2951122a5 100644
+--- a/lib/matplotlib/text.py
++++ b/lib/matplotlib/text.py
+@@ -1456,7 +1456,7 @@ class _AnnotationBase:
+                  xycoords='data',
+                  annotation_clip=None):
+ 
+-        self.xy = xy
++        self.xy = tuple(xy)
+         self.xycoords = xycoords
+         self.set_annotation_clip(annotation_clip)
+ 

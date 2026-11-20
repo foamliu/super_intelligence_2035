@@ -1,0 +1,210 @@
+diff --git a/ChangeLog b/ChangeLog
+index c2b1382..ddf03b3 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -11,6 +11,13 @@ Release date: TBA
+ 
+ * astroid has been upgraded to 2.6.0
+ 
++* Use type hints in pyreverse: the type of a class attribute is now
++  inferred from its annotation when possible, e.g. ``self.attr = arg``
++  with ``arg: str`` or ``self.attr: int = 3`` now display ``attr : Optional[str]``
++  and ``attr : int`` in the generated diagrams.
++
++  Closes #2291
++
+ * ``setuptools_scm`` has been removed and replaced by ``tbump`` in order to not
+   have hidden runtime dependencies to setuptools
+ 
+diff --git a/classes.dot b/classes.dot
+new file mode 100644
+index 0000000..6b2ccf8
+--- /dev/null
++++ b/classes.dot
+@@ -0,0 +1,4 @@
++digraph "classes" {
++charset="utf-8"
++rankdir=BT
++}
+diff --git a/pylint/pyreverse/diagrams.py b/pylint/pyreverse/diagrams.py
+index bf9f67a..7b0ed95 100644
+--- a/pylint/pyreverse/diagrams.py
++++ b/pylint/pyreverse/diagrams.py
+@@ -122,7 +122,10 @@ class ClassDiagram(Figure, FilterMixIn):
+             if isinstance(node, astroid.Instance):
+                 node = node._proxied
+             if (
+-                isinstance(node, astroid.ClassDef)
++                isinstance(
++                    node,
++                    (astroid.ClassDef, astroid.Name, astroid.Subscript, astroid.BinOp),
++                )
+                 and hasattr(node, "name")
+                 and not self.has_node(node)
+             ):
+diff --git a/pylint/pyreverse/inspector.py b/pylint/pyreverse/inspector.py
+index 8fa1220..ce3f07e 100644
+--- a/pylint/pyreverse/inspector.py
++++ b/pylint/pyreverse/inspector.py
+@@ -218,8 +218,7 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+                     self.visit_module(frame)
+ 
+             current = frame.locals_type[node.name]
+-            values = set(node.infer())
+-            frame.locals_type[node.name] = list(set(current) | values)
++            frame.locals_type[node.name] = list(set(current) | utils.infer_node(node))
+         except astroid.InferenceError:
+             pass
+ 
+@@ -230,9 +229,10 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         handle instance_attrs_type
+         """
+         try:
+-            values = set(node.infer())
+             current = set(parent.instance_attrs_type[node.attrname])
+-            parent.instance_attrs_type[node.attrname] = list(current | values)
++            parent.instance_attrs_type[node.attrname] = list(
++                current | utils.infer_node(node)
++            )
+         except astroid.InferenceError:
+             pass
+ 
+diff --git a/pylint/pyreverse/utils.py b/pylint/pyreverse/utils.py
+index a24d227..c6779fe 100644
+--- a/pylint/pyreverse/utils.py
++++ b/pylint/pyreverse/utils.py
+@@ -20,6 +20,8 @@ import os
+ import re
+ import sys
+ 
++import astroid
++
+ RCFILE = ".pyreverserc"
+ 
+ 
+@@ -213,3 +215,70 @@ class LocalsVisitor(ASTWalker):
+         if methods[1] is not None:
+             return methods[1](node)
+         return None
++
++
++def get_annotation_label(ann):
++    """get the label of an annotation node"""
++    if isinstance(ann, astroid.nodes.Name) and ann.name is not None:
++        return ann.name
++    if isinstance(ann, astroid.nodes.NodeNG):
++        return ann.as_string()
++    return ""
++
++
++def get_annotation(node):
++    """Return the annotation for `node`.
++
++    The annotation is looked for in annotated assignments
++    (``self.attr: int = ...``) and in assignments of annotated
++    function arguments (``self.attr = arg``). The label of the
++    annotation is stored in its `name` attribute so it can be
++    displayed in the diagram.
++    """
++    ann = None
++    if isinstance(node.parent, astroid.nodes.AnnAssign):
++        ann = node.parent.annotation
++    elif isinstance(node, astroid.nodes.AssignAttr):
++        init_method = node.parent.parent
++        try:
++            annotations = dict(zip(init_method.locals, init_method.args.annotations))
++            ann = annotations.get(node.parent.value.name)
++        except AttributeError:
++            pass
++    else:
++        return ann
++
++    try:
++        default, *_ = node.infer()
++    except astroid.InferenceError:
++        default = ""
++
++    label = get_annotation_label(ann)
++    if ann:
++        label = (
++            rf"Optional[{label}]"
++            if getattr(default, "value", "value") is None
++            and not label.startswith("Optional")
++            else label
++        )
++    if label:
++        ann.name = label
++    return ann
++
++
++def infer_node(node):
++    """Return a set containing the node annotation if it exists
++    otherwise return a set of the inferred types using the NodeNG.infer method.
++    """
++
++    ann = get_annotation(node)
++    try:
++        if ann:
++            if isinstance(ann, astroid.nodes.Subscript) or (
++                isinstance(ann, astroid.nodes.BinOp) and ann.op == "|"
++            ):
++                return {ann}
++            return set(ann.infer())
++        return set(node.infer())
++    except astroid.InferenceError:
++        return {ann} if ann else set()
+diff --git a/tests/regrtest_data/typehints_pyreverse/__init__.py b/tests/regrtest_data/typehints_pyreverse/__init__.py
+new file mode 100644
+index 0000000..37815aa
+--- /dev/null
++++ b/tests/regrtest_data/typehints_pyreverse/__init__.py
+@@ -0,0 +1,22 @@
++"""Module used to test the use of type hints by pyreverse."""
++
++from typing import Optional
++
++
++class Annotated:
++    """Class with type hints on its attributes."""
++
++    def __init__(self, param: str = None):
++        self.param = param
++        self.annotated: int = 42
++        self.bare: float
++        self.optional: Optional[str] = None
++        self.forward: "Annotated" = None
++        self.inferred = "inferred"
++
++
++class Plain:
++    """Class without any type hint."""
++
++    def __init__(self, value):
++        self.value = value
+diff --git a/tests/unittest_pyreverse_diadefs.py b/tests/unittest_pyreverse_diadefs.py
+index beb1f75..f2d65bc 100644
+--- a/tests/unittest_pyreverse_diadefs.py
++++ b/tests/unittest_pyreverse_diadefs.py
+@@ -197,3 +197,22 @@ def test_regression_dataclasses_inference(HANDLER):
+     special = "regrtest_data.dataclasses_pyreverse.InventoryItem"
+     cd = cdg.class_diagram(path, special)
+     assert cd.title == special
++
++
++def test_type_hints_are_used_for_attributes(HANDLER):
++    """PEP 484 type hints should be used to display attribute types."""
++    project_path = Path("regrtest_data") / "typehints_pyreverse"
++    project = get_project(str(project_path))
++
++    cdg = ClassDiadefGenerator(Linker(project), HANDLER)
++    cd = cdg.class_diagram(project, "regrtest_data.typehints_pyreverse.Annotated")
++    cd.extract_relationships()
++    attrs = {obj.title: obj.attrs for obj in cd.classes()}
++    assert attrs["Annotated"] == [
++        "annotated : int",
++        "bare : float",
++        "forward : str",
++        "inferred : str",
++        "optional : Optional[str]",
++        "param : Optional[str]",
++    ]

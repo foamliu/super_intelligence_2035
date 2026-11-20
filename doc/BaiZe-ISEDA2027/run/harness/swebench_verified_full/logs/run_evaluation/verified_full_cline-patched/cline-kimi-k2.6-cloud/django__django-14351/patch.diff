@@ -1,0 +1,40 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 6629a1fd5..1c64d6bdd 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1062,6 +1062,9 @@ class Query(BaseExpression):
+             if col.alias in self.external_aliases
+         ]
+ 
++    def get_group_by_cols(self, alias=None):
++        return []
++
+     def as_sql(self, compiler, connection):
+         sql, params = self.get_compiler(connection=connection).as_sql()
+         if self.subquery:
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 49123396d..fe14d9724 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -1340,3 +1340,21 @@ class AggregateTestCase(TestCase):
+             ('Stuart Russell', 1),
+             ('Peter Norvig', 2),
+         ], lambda a: (a.name, a.contact_count), ordered=False)
++
++    def test_aggregation_with_q_object_or_and_in_subquery(self):
++        """
++        A Q object __or__'d with a related __in lookup containing a QuerySet
++        should not include the subquery in GROUP BY with all columns selected.
++        Regression test for a bug where the subquery's select clause expanded
++        to all default columns when used inside an OR'd Q object in HAVING.
++        """
++        from django.db.models import Q
++        author_qs = Author.objects.filter(age__gt=20)
++        books = Book.objects.annotate(
++            num_authors=Count('authors')
++        ).filter(
++            Q(contact__in=author_qs) | Q(num_authors__gt=0)
++        )
++        # Should not raise ProgrammingError about subquery returning multiple columns
++        self.assertEqual(books.count(), 6)
++        self.assertCountEqual(books, [self.b1, self.b2, self.b3, self.b4, self.b5, self.b6])

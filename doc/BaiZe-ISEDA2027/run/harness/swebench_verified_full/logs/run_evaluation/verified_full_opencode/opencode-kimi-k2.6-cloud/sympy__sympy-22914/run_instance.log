@@ -1,0 +1,54 @@
+2026-10-30 16:00:30,633 - INFO - Creating container for sympy__sympy-22914...
+2026-10-30 16:00:30,654 - INFO - Container for sympy__sympy-22914 created: a7ed5ccec40e71876cfdbf9adcbb7853ad75f1314c8940ee52eaf2a969202ca6
+2026-10-30 16:00:32,373 - INFO - Container for sympy__sympy-22914 started: a7ed5ccec40e71876cfdbf9adcbb7853ad75f1314c8940ee52eaf2a969202ca6
+2026-10-30 16:00:32,378 - INFO - Intermediate patch for sympy__sympy-22914 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-22914/patch.diff, now applying to container...
+2026-10-30 16:00:32,514 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/pycode.py...
+Applied patch sympy/printing/pycode.py cleanly.
+
+2026-10-30 16:00:33,274 - INFO - Git diff before:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index 3a72ab606c..b4364113c6 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -465,6 +465,12 @@ def _print_Symbol(self, expr):
+         else:
+             return name
+ 
++    def _print_Min(self, expr):
++        return "min({})".format(", ".join(self._print(arg) for arg in expr.args))
++
++    def _print_Max(self, expr):
++        return "max({})".format(", ".join(self._print(arg) for arg in expr.args))
++
+     _print_lowergamma = CodePrinter._print_not_supported
+     _print_uppergamma = CodePrinter._print_not_supported
+     _print_fresnelc = CodePrinter._print_not_supported
+2026-10-30 16:00:33,275 - INFO - Eval script for sympy__sympy-22914 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-22914/eval.sh; copying to container...
+2026-10-30 16:00:37,072 - INFO - Test runtime: 3.74 seconds
+2026-10-30 16:00:37,073 - INFO - Test output for sympy__sympy-22914 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-22914/test_output.txt
+2026-10-30 16:00:37,149 - INFO - Git diff after:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index 3a72ab606c..b4364113c6 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -465,6 +465,12 @@ def _print_Symbol(self, expr):
+         else:
+             return name
+ 
++    def _print_Min(self, expr):
++        return "min({})".format(", ".join(self._print(arg) for arg in expr.args))
++
++    def _print_Max(self, expr):
++        return "max({})".format(", ".join(self._print(arg) for arg in expr.args))
++
+     _print_lowergamma = CodePrinter._print_not_supported
+     _print_uppergamma = CodePrinter._print_not_supported
+     _print_fresnelc = CodePrinter._print_not_supported
+2026-10-30 16:00:37,149 - INFO - Grading answer for sympy__sympy-22914...
+2026-10-30 16:00:37,150 - INFO - report: {'sympy__sympy-22914': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_PythonCodePrinter'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_PythonCodePrinter_standard', 'test_MpmathPrinter', 'test_NumPyPrinter', 'test_SciPyPrinter', 'test_pycode_reserved_words', 'test_sqrt', 'test_frac', 'test_printmethod', 'test_codegen_ast_nodes', 'test_issue_14283', 'test_NumPyPrinter_print_seq', 'test_issue_16535_16536', 'test_Integral', 'test_fresnel_integrals', 'test_beta', 'test_airy', 'test_airy_prime'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-22914: resolved: True
+2026-10-30 16:00:37,152 - INFO - Attempting to stop container sweb.eval.sympy__sympy-22914.verified_full_opencode...
+2026-10-30 16:00:52,915 - INFO - Container sweb.eval.sympy__sympy-22914.verified_full_opencode stopped successfully.
+2026-10-30 16:00:52,915 - INFO - Attempting to remove container sweb.eval.sympy__sympy-22914.verified_full_opencode...
+2026-10-30 16:00:52,967 - INFO - Container sweb.eval.sympy__sympy-22914.verified_full_opencode removed successfully.

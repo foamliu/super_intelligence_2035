@@ -1,0 +1,178 @@
+2026-10-30 16:16:18,657 - INFO - Creating container for django__django-14122...
+2026-10-30 16:16:18,686 - INFO - Container for django__django-14122 created: 45b3096ffaa2d691e22610ad019afaf2a3315b0fd70038261c2a53e8cc0b52ee
+2026-10-30 16:16:24,300 - INFO - Container for django__django-14122 started: 45b3096ffaa2d691e22610ad019afaf2a3315b0fd70038261c2a53e8cc0b52ee
+2026-10-30 16:16:24,302 - INFO - Intermediate patch for django__django-14122 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14122/patch.diff, now applying to container...
+2026-10-30 16:16:24,412 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/aggregation_regress/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/aggregation_regress/tests.py cleanly.
+
+2026-10-30 16:16:25,278 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709d..1bd4364c63 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -122,13 +122,19 @@ class SQLCompiler:
+             # by reference.
+             if expr in ref_sources:
+                 continue
++            # Skip expressions from Meta.ordering as they must not affect
++            # GROUP BY queries.
++            if getattr(expr, '_meta_ordering', False):
++                continue
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+         for expr, (sql, params, is_ref) in order_by:
+             # Skip References to the select clause, as all expressions in the
+             # select clause are already part of the group by.
+-            if not is_ref:
++            # Also skip expressions from Meta.ordering as they must not affect
++            # GROUP BY queries.
++            if not is_ref and not getattr(expr, '_meta_ordering', False):
+                 expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+@@ -359,11 +365,16 @@ class SQLCompiler:
+                     order_by.append((
+                         OrderBy(Ref(col, RawSQL(*self.query.extra[col])), descending=descending),
+                         True))
++        if self._meta_ordering:
++            for expr, is_ref in order_by:
++                expr._meta_ordering = True
+         result = []
+         seen = set()
+ 
+         for expr, is_ref in order_by:
+             resolved = expr.resolve_expression(self.query, allow_joins=True, reuse=None)
++            if getattr(expr, '_meta_ordering', False):
++                resolved._meta_ordering = True
+             if self.query.combinator and self.select:
+                 src = resolved.get_source_expressions()[0]
+                 expr_src = expr.get_source_expressions()[0]
+@@ -409,6 +420,10 @@ class SQLCompiler:
+         if self.query.distinct and not self.query.distinct_fields:
+             select_sql = [t[1] for t in select]
+             for expr, (sql, params, is_ref) in order_by:
++                # Skip expressions from Meta.ordering when used in GROUP BY
++                # queries, as they must not affect them.
++                if self.query.group_by and getattr(expr, '_meta_ordering', False):
++                    continue
+                 without_ordering = self.ordering_parts.search(sql)[1]
+                 if not is_ref and (without_ordering, params) not in select_sql:
+                     extra_select.append((expr, (without_ordering, params), None))
+diff --git a/tests/aggregation_regress/tests.py b/tests/aggregation_regress/tests.py
+index 877e7b49a7..0629d6bc41 100644
+--- a/tests/aggregation_regress/tests.py
++++ b/tests/aggregation_regress/tests.py
+@@ -1525,6 +1525,20 @@ class AggregationTests(TestCase):
+             allow_distinct = True
+         DistinctAggregate('foo', distinct=True)
+ 
++    def test_meta_ordering_not_in_group_by(self):
++        # Book has Meta.ordering = ('name',). Meta.ordering must not affect
++        # GROUP BY queries.
++        result = list(Book.objects.values('publisher').annotate(total=Count('id')))
++        self.assertCountEqual(
++            [(r['publisher'], r['total']) for r in result],
++            [
++                (self.p1.id, 2),
++                (self.p2.id, 1),
++                (self.p3.id, 2),
++                (self.p4.id, 1),
++            ]
++        )
++
+ 
+ class JoinPromotionTests(TestCase):
+     def test_ticket_21150(self):
+2026-10-30 16:16:25,280 - INFO - Eval script for django__django-14122 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14122/eval.sh; copying to container...
+2026-10-30 16:16:31,833 - INFO - Test runtime: 6.50 seconds
+2026-10-30 16:16:31,837 - INFO - Test output for django__django-14122 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14122/test_output.txt
+2026-10-30 16:16:31,918 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709d..1bd4364c63 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -122,13 +122,19 @@ class SQLCompiler:
+             # by reference.
+             if expr in ref_sources:
+                 continue
++            # Skip expressions from Meta.ordering as they must not affect
++            # GROUP BY queries.
++            if getattr(expr, '_meta_ordering', False):
++                continue
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+         for expr, (sql, params, is_ref) in order_by:
+             # Skip References to the select clause, as all expressions in the
+             # select clause are already part of the group by.
+-            if not is_ref:
++            # Also skip expressions from Meta.ordering as they must not affect
++            # GROUP BY queries.
++            if not is_ref and not getattr(expr, '_meta_ordering', False):
+                 expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+@@ -359,11 +365,16 @@ class SQLCompiler:
+                     order_by.append((
+                         OrderBy(Ref(col, RawSQL(*self.query.extra[col])), descending=descending),
+                         True))
++        if self._meta_ordering:
++            for expr, is_ref in order_by:
++                expr._meta_ordering = True
+         result = []
+         seen = set()
+ 
+         for expr, is_ref in order_by:
+             resolved = expr.resolve_expression(self.query, allow_joins=True, reuse=None)
++            if getattr(expr, '_meta_ordering', False):
++                resolved._meta_ordering = True
+             if self.query.combinator and self.select:
+                 src = resolved.get_source_expressions()[0]
+                 expr_src = expr.get_source_expressions()[0]
+@@ -409,6 +420,10 @@ class SQLCompiler:
+         if self.query.distinct and not self.query.distinct_fields:
+             select_sql = [t[1] for t in select]
+             for expr, (sql, params, is_ref) in order_by:
++                # Skip expressions from Meta.ordering when used in GROUP BY
++                # queries, as they must not affect them.
++                if self.query.group_by and getattr(expr, '_meta_ordering', False):
++                    continue
+                 without_ordering = self.ordering_parts.search(sql)[1]
+                 if not is_ref and (without_ordering, params) not in select_sql:
+                     extra_select.append((expr, (without_ordering, params), None))
+diff --git a/tests/aggregation_regress/tests.py b/tests/aggregation_regress/tests.py
+index 877e7b49a7..0629d6bc41 100644
+--- a/tests/aggregation_regress/tests.py
++++ b/tests/aggregation_regress/tests.py
+@@ -1525,6 +1525,20 @@ class AggregationTests(TestCase):
+             allow_distinct = True
+         DistinctAggregate('foo', distinct=True)
+ 
++    def test_meta_ordering_not_in_group_by(self):
++        # Book has Meta.ordering = ('name',). Meta.ordering must not affect
++        # GROUP BY queries.
++        result = list(Book.objects.values('publisher').annotate(total=Count('id')))
++        self.assertCountEqual(
++            [(r['publisher'], r['total']) for r in result],
++            [
++                (self.p1.id, 2),
++                (self.p2.id, 1),
++                (self.p3.id, 2),
++                (self.p4.id, 1),
++            ]
++        )
++
+ 
+ class JoinPromotionTests(TestCase):
+     def test_ticket_21150(self):
+2026-10-30 16:16:31,918 - INFO - Grading answer for django__django-14122...
+2026-10-30 16:16:31,920 - INFO - report: {'django__django-14122': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_default_ordering_does_not_affect_group_by (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['By default, Article.objects.all() orders by pub_date descending, then', 'F expressions can be used in Meta.ordering.', 'Override ordering with order_by, which is in the same format as the', "Ordering can be based on fields included from an 'extra' clause", 'If the extra clause uses an SQL keyword for a name, it will be', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'A column may only be included once (the first occurrence) so we check', 'ordering by a foreign key by its attribute name prevents the query', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'Only the last order_by has any effect (since they each override any', "'pk' works as an ordering option in Meta.", 'test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)', 'test_order_by_self_referential_fk (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', "Use '?' to order randomly.", 'An ordering referencing a model with an ordering referencing a model', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'Ordering can be reversed using the reverse() method on a queryset.', "Use the 'stop' part of slicing notation to limit the results.", "Use the 'stop' and 'start' parts of slicing notation to offset the"], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14122: resolved: True
+2026-10-30 16:16:31,921 - INFO - Attempting to stop container sweb.eval.django__django-14122.verified_full_cline-patched...
+2026-10-30 16:16:51,299 - INFO - Container sweb.eval.django__django-14122.verified_full_cline-patched stopped successfully.
+2026-10-30 16:16:51,299 - INFO - Attempting to remove container sweb.eval.django__django-14122.verified_full_cline-patched...
+2026-10-30 16:16:51,352 - INFO - Container sweb.eval.django__django-14122.verified_full_cline-patched removed successfully.

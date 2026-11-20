@@ -1,0 +1,48 @@
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c1..2aca8bab 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c20..db5bc3f6 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,5 +1,6 @@
+ from sympy.core.numbers import (I, Rational, pi)
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
++from sympy.core.function import Function, UndefinedFunction
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+ from sympy.core.sympify import sympify  # can't import as S yet
+ from sympy.core.symbol import uniquely_named_symbol, _symbol, Str
+@@ -336,6 +337,23 @@ def test_symbols_become_functions_issue_3539():
+     raises(TypeError, lambda: phi(t))
+ 
+ 
++def test_symbols_iterable_cls():
++    # issue 23530: cls argument should be preserved when names is an iterable
++    f, g = symbols('f,g', cls=Function)
++    assert isinstance(f, UndefinedFunction)
++    assert isinstance(g, UndefinedFunction)
++
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert isinstance(q[0], UndefinedFunction)
++    assert isinstance(q[1], UndefinedFunction)
++    assert isinstance(u[0], UndefinedFunction)
++    assert isinstance(u[1], UndefinedFunction)
++
++    a, b = symbols(['a:2', 'b:2'], cls=Function)
++    assert isinstance(a[0], UndefinedFunction)
++    assert isinstance(b[0], UndefinedFunction)
++
++
+ def test_unicode():
+     xu = Symbol('x')
+     x = Symbol('x')

@@ -1,0 +1,64 @@
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index 3a506543a..e9b2a1c4e 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -475,9 +475,14 @@ class HPacker(PackerBase):
+             return 2 * pad, 2 * pad, pad, pad, []
+ 
+         hd_list = [(h, yd) for w, h, xd, yd in whd_list]
++        # _get_aligned_offsets assumes vertical alignment terminology,
++        # where "top" means align to the lower edge and "bottom" means
++        # align to the higher edge. For HPacker, we want the opposite,
++        # so swap "top" and "bottom".
++        align = {"top": "bottom", "bottom": "top"}.get(self.align, self.align)
+         height, ydescent, yoffsets = _get_aligned_offsets(hd_list,
+                                                           self.height,
+-                                                          self.align)
++                                                          align)
+ 
+         pack_list = [w for w, h, xd, yd in whd_list]
+         width, xoffsets_ = _get_packed_offsets(pack_list, self.width,
+diff --git a/lib/matplotlib/tests/test_offsetbox.py b/lib/matplotlib/tests/test_offsetbox.py
+index 02756ff55..e683805ab 100644
+--- a/lib/matplotlib/tests/test_offsetbox.py
++++ b/lib/matplotlib/tests/test_offsetbox.py
+@@ -12,8 +12,8 @@ import matplotlib.lines as mlines
+ from matplotlib.backend_bases import MouseButton, MouseEvent
+ 
+ from matplotlib.offsetbox import (
+-    AnchoredOffsetbox, AnnotationBbox, AnchoredText, DrawingArea, OffsetBox,
+-    OffsetImage, TextArea, _get_packed_offsets)
++    AnchoredOffsetbox, AnnotationBbox, AnchoredText, DrawingArea, HPacker,
++    OffsetBox, OffsetImage, TextArea, _get_packed_offsets)
+ 
+ 
+ @image_comparison(['offsetbox_clipping'], remove_text=True)
+@@ -335,3 +335,28 @@ def test_arrowprops_copied():
+                         arrowprops=arrowprops)
+     assert ab.arrowprops is not ab
+     assert arrowprops["relpos"] == (.3, .7)
++
++
++def test_hpacker_align():
++    # Check that top/bottom alignment in HPacker works correctly.
++    # Regression test for https://github.com/matplotlib/matplotlib/issues/24553
++    fig, ax = plt.subplots()
++    fig.canvas.draw()
++    renderer = fig.canvas.get_renderer()
++
++    da1 = DrawingArea(10, 20)
++    da2 = DrawingArea(10, 30)
++
++    hpack = HPacker(children=[da1, da2], pad=0, sep=0, align="top")
++    w, h, xd, yd, offsets = hpack.get_extent_offsets(renderer)
++    # With align="top", the tops of both children should be aligned.
++    tops = [oy + ch for (ox, oy), (cw, ch, cxd, cyd) in
++            zip(offsets, [da1.get_extent(renderer), da2.get_extent(renderer)])]
++    assert_allclose(tops, [tops[0], tops[0]])
++
++    hpack = HPacker(children=[da1, da2], pad=0, sep=0, align="bottom")
++    w, h, xd, yd, offsets = hpack.get_extent_offsets(renderer)
++    # With align="bottom", the bottoms of both children should be aligned.
++    bottoms = [oy - cyd for (ox, oy), (cw, ch, cxd, cyd) in
++               zip(offsets, [da1.get_extent(renderer), da2.get_extent(renderer)])]
++    assert_allclose(bottoms, [bottoms[0], bottoms[0]])

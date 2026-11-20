@@ -1,0 +1,158 @@
+2026-11-10 12:00:04,479 - INFO - Creating container for django__django-14122...
+2026-11-10 12:00:04,509 - INFO - Container for django__django-14122 created: 80aa40bac4d24c24b7736e690016271cb07cba9389fce5ec2bcd72c94781f67c
+2026-11-10 12:00:05,335 - INFO - Container for django__django-14122 started: 80aa40bac4d24c24b7736e690016271cb07cba9389fce5ec2bcd72c94781f67c
+2026-11-10 12:00:05,339 - INFO - Intermediate patch for django__django-14122 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-14122/patch.diff, now applying to container...
+2026-11-10 12:00:05,485 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/queries/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/queries/tests.py cleanly.
+
+2026-11-10 12:00:06,922 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709d..781c2ea1ac 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -100,6 +100,8 @@ class SQLCompiler:
+         if self.query.group_by is None:
+             return []
+         expressions = []
++        if self._meta_ordering:
++            order_by = None
+         if self.query.group_by is not True:
+             # If the group by is set to a list (by .values() call most likely),
+             # then we need to add everything in it to the GROUP BY clause.
+@@ -125,11 +127,12 @@ class SQLCompiler:
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+-        for expr, (sql, params, is_ref) in order_by:
+-            # Skip References to the select clause, as all expressions in the
+-            # select clause are already part of the group by.
+-            if not is_ref:
+-                expressions.extend(expr.get_group_by_cols())
++        if order_by:
++            for expr, (sql, params, is_ref) in order_by:
++                # Skip References to the select clause, as all expressions in
++                # the select clause are already part of the group by.
++                if not is_ref:
++                    expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+             expressions.append(expr)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index b9b0a72686..5d20eacb42 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -1977,6 +1977,32 @@ class QuerysetOrderedTests(unittest.TestCase):
+         self.assertIs(qs.order_by('name').ordered, True)
+ 
+ 
++class MetaOrderingGroupByTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.extra1 = ExtraInfo.objects.create(info='extra1')
++        cls.extra2 = ExtraInfo.objects.create(info='extra2')
++        Author.objects.create(name='a1', num=1, extra=cls.extra1)
++        Author.objects.create(name='a2', num=2, extra=cls.extra1)
++        Author.objects.create(name='a3', num=3, extra=cls.extra2)
++
++    def test_meta_ordering_not_in_group_by(self):
++        """
++        Meta.ordering fields are not included in the GROUP BY clause (#32577).
++        """
++        qs = Author.objects.values('extra__info').annotate(cnt=Count('id'))
++        self.assertCountEqual(
++            qs,
++            [{'extra__info': 'extra1', 'cnt': 2}, {'extra__info': 'extra2', 'cnt': 1}],
++        )
++
++    def test_meta_ordering_fields_not_in_group_by_sql(self):
++        qs = Author.objects.values('extra__info').annotate(cnt=Count('id'))
++        sql = str(qs.query)
++        group_by = sql[sql.upper().index('GROUP BY'):]
++        self.assertNotIn(connection.ops.quote_name('name'), group_by)
++
++
+ @skipUnlessDBFeature('allow_sliced_subqueries_with_in')
+ class SubqueryTests(TestCase):
+     @classmethod
+2026-11-10 12:00:06,925 - INFO - Eval script for django__django-14122 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-14122/eval.sh; copying to container...
+2026-11-10 12:00:14,216 - INFO - Test runtime: 7.22 seconds
+2026-11-10 12:00:14,218 - INFO - Test output for django__django-14122 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-14122/test_output.txt
+2026-11-10 12:00:14,304 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709d..781c2ea1ac 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -100,6 +100,8 @@ class SQLCompiler:
+         if self.query.group_by is None:
+             return []
+         expressions = []
++        if self._meta_ordering:
++            order_by = None
+         if self.query.group_by is not True:
+             # If the group by is set to a list (by .values() call most likely),
+             # then we need to add everything in it to the GROUP BY clause.
+@@ -125,11 +127,12 @@ class SQLCompiler:
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+-        for expr, (sql, params, is_ref) in order_by:
+-            # Skip References to the select clause, as all expressions in the
+-            # select clause are already part of the group by.
+-            if not is_ref:
+-                expressions.extend(expr.get_group_by_cols())
++        if order_by:
++            for expr, (sql, params, is_ref) in order_by:
++                # Skip References to the select clause, as all expressions in
++                # the select clause are already part of the group by.
++                if not is_ref:
++                    expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+             expressions.append(expr)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index b9b0a72686..5d20eacb42 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -1977,6 +1977,32 @@ class QuerysetOrderedTests(unittest.TestCase):
+         self.assertIs(qs.order_by('name').ordered, True)
+ 
+ 
++class MetaOrderingGroupByTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.extra1 = ExtraInfo.objects.create(info='extra1')
++        cls.extra2 = ExtraInfo.objects.create(info='extra2')
++        Author.objects.create(name='a1', num=1, extra=cls.extra1)
++        Author.objects.create(name='a2', num=2, extra=cls.extra1)
++        Author.objects.create(name='a3', num=3, extra=cls.extra2)
++
++    def test_meta_ordering_not_in_group_by(self):
++        """
++        Meta.ordering fields are not included in the GROUP BY clause (#32577).
++        """
++        qs = Author.objects.values('extra__info').annotate(cnt=Count('id'))
++        self.assertCountEqual(
++            qs,
++            [{'extra__info': 'extra1', 'cnt': 2}, {'extra__info': 'extra2', 'cnt': 1}],
++        )
++
++    def test_meta_ordering_fields_not_in_group_by_sql(self):
++        qs = Author.objects.values('extra__info').annotate(cnt=Count('id'))
++        sql = str(qs.query)
++        group_by = sql[sql.upper().index('GROUP BY'):]
++        self.assertNotIn(connection.ops.quote_name('name'), group_by)
++
++
+ @skipUnlessDBFeature('allow_sliced_subqueries_with_in')
+ class SubqueryTests(TestCase):
+     @classmethod
+2026-11-10 12:00:14,304 - INFO - Grading answer for django__django-14122...
+2026-11-10 12:00:14,305 - INFO - report: {'django__django-14122': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_default_ordering_does_not_affect_group_by (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['By default, Article.objects.all() orders by pub_date descending, then', 'F expressions can be used in Meta.ordering.', 'Override ordering with order_by, which is in the same format as the', "Ordering can be based on fields included from an 'extra' clause", 'If the extra clause uses an SQL keyword for a name, it will be', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'A column may only be included once (the first occurrence) so we check', 'ordering by a foreign key by its attribute name prevents the query', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'Only the last order_by has any effect (since they each override any', "'pk' works as an ordering option in Meta.", 'test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)', 'test_order_by_self_referential_fk (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', "Use '?' to order randomly.", 'An ordering referencing a model with an ordering referencing a model', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'Ordering can be reversed using the reverse() method on a queryset.', "Use the 'stop' part of slicing notation to limit the results.", "Use the 'stop' and 'start' parts of slicing notation to offset the"], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14122: resolved: True
+2026-11-10 12:00:14,307 - INFO - Attempting to stop container sweb.eval.django__django-14122.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:00:30,504 - INFO - Container sweb.eval.django__django-14122.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 12:00:30,504 - INFO - Attempting to remove container sweb.eval.django__django-14122.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:00:30,558 - INFO - Container sweb.eval.django__django-14122.verified_full_glm53_opencode_incr_R2028 removed successfully.

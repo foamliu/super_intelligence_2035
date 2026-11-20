@@ -1,0 +1,82 @@
+2026-10-30 17:28:15,692 - INFO - Creating container for sympy__sympy-16766...
+2026-10-30 17:28:15,712 - INFO - Container for sympy__sympy-16766 created: da3a4fdd0261c2654f8fa72151dacde1d9910f9971e86c443b0a4859de53af86
+2026-10-30 17:28:16,670 - INFO - Container for sympy__sympy-16766 started: da3a4fdd0261c2654f8fa72151dacde1d9910f9971e86c443b0a4859de53af86
+2026-10-30 17:28:16,672 - INFO - Intermediate patch for sympy__sympy-16766 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-16766/patch.diff, now applying to container...
+2026-10-30 17:28:16,756 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/pycode.py...
+Checking patch sympy/printing/tests/test_pycode.py...
+Applied patch sympy/printing/pycode.py cleanly.
+Applied patch sympy/printing/tests/test_pycode.py cleanly.
+
+2026-10-30 17:28:17,265 - INFO - Git diff before:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f031073..898f2fa3f 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,10 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        inds = [self._print(i) for i in expr.indices]
++        return "%s[%s]" % (self._print(expr.base.label), ", ".join(inds))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index f1a9a3789..914208263 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -11,6 +11,7 @@
+ from sympy.printing.pycode import (
+     MpmathPrinter, NumPyPrinter, PythonCodePrinter, pycode, SciPyPrinter
+ )
++from sympy.tensor import IndexedBase
+ from sympy.utilities.pytest import raises
+ 
+ x, y, z = symbols('x y z')
+@@ -92,6 +93,17 @@ def test_issue_14283():
+     assert prntr.doprint(zoo) == "float('nan')"
+     assert prntr.doprint(-oo) == "float('-inf')"
+ 
++
++def test_Indexed():
++    p = IndexedBase('p')
++    i, j = symbols('i j')
++    prntr = PythonCodePrinter()
++
++    assert prntr.doprint(p[0]) == 'p[0]'
++    assert prntr.doprint(p[0, 1]) == 'p[0, 1]'
++    assert prntr.doprint(p[i, j]) == 'p[i, j]'
++    assert NumPyPrinter().doprint(p[0, 1]) == 'p[0, 1]'
++
+ def test_NumPyPrinter_print_seq():
+     n = NumPyPrinter()
+2026-10-30 17:28:17,266 - INFO - Eval script for sympy__sympy-16766 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-16766/eval.sh; copying to container...
+2026-10-30 17:28:20,968 - INFO - Test runtime: 3.64 seconds
+2026-10-30 17:28:20,969 - INFO - Test output for sympy__sympy-16766 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-16766/test_output.txt
+2026-10-30 17:28:21,016 - INFO - Git diff after:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f031073..898f2fa3f 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,10 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        inds = [self._print(i) for i in expr.indices]
++        return "%s[%s]" % (self._print(expr.base.label), ", ".join(inds))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+2026-10-30 17:28:21,016 - INFO - Git diff changed after running eval script
+2026-10-30 17:28:21,016 - INFO - Grading answer for sympy__sympy-16766...
+2026-10-30 17:28:21,019 - INFO - report: {'sympy__sympy-16766': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_PythonCodePrinter'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_MpmathPrinter', 'test_NumPyPrinter', 'test_SciPyPrinter', 'test_pycode_reserved_words', 'test_printmethod', 'test_codegen_ast_nodes', 'test_issue_14283'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-16766: resolved: True
+2026-10-30 17:28:21,027 - INFO - Attempting to stop container sweb.eval.sympy__sympy-16766.verified_full_claude-code...
+2026-10-30 17:28:36,798 - INFO - Container sweb.eval.sympy__sympy-16766.verified_full_claude-code stopped successfully.
+2026-10-30 17:28:36,798 - INFO - Attempting to remove container sweb.eval.sympy__sympy-16766.verified_full_claude-code...
+2026-10-30 17:28:36,838 - INFO - Container sweb.eval.sympy__sympy-16766.verified_full_claude-code removed successfully.

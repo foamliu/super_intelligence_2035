@@ -1,0 +1,62 @@
+diff --git a/django/utils/dateformat.py b/django/utils/dateformat.py
+index afd36d79..13ad7bd2 100644
+--- a/django/utils/dateformat.py
++++ b/django/utils/dateformat.py
+@@ -325,8 +325,8 @@ class DateFormat(TimeFormat):
+         return self.data.isocalendar()[1]
+ 
+     def y(self):
+-        "Year, 2 digits; e.g. '99'"
+-        return str(self.data.year)[2:]
++        "Year, 2 digits with leading zeros; e.g. '01', '99'"
++        return '%02d' % (self.data.year % 100)
+ 
+     def Y(self):
+         "Year, 4 digits; e.g. '1999'"
+diff --git a/docs/ref/templates/builtins.txt b/docs/ref/templates/builtins.txt
+index 1c79f3a2..6845b60e 100644
+--- a/docs/ref/templates/builtins.txt
++++ b/docs/ref/templates/builtins.txt
+@@ -1379,7 +1379,7 @@ Format character  Description                               Example output
+                   style. Proprietary extension.
+ ``t``             Number of days in the given month.        ``28`` to ``31``
+ **Year**
+-``y``             Year, 2 digits.                           ``'99'``
++``y``             Year, 2 digits with leading zeros.        ``'01'``, ``'99'``
+ ``Y``             Year, 4 digits.                           ``'1999'``
+ ``L``             Boolean for whether it's a leap year.     ``True`` or ``False``
+ ``o``             ISO-8601 week-numbering year,             ``'1999'``
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index 0a12e216..65446369 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -539,6 +539,11 @@ Miscellaneous
+ * The undocumented ``SpatiaLiteOperations.proj4_version()`` method is renamed
+   to ``proj_version()``.
+ 
++* The ``y`` format character of :tfilter:`date` and :tfilter:`time` template
++  filters and the :func:`~django.utils.dateformat.format` function now pads
++  the year with a leading zero, e.g. ``'01'`` for the year 1, to be consistent
++  with PHP and Python's ``strftime()``.
++
+ * Minified JavaScript files are no longer included with the admin. If you
+   require these files to be minified, consider using a third party app or
+   external build tool. The minified vendored JavaScript files packaged with the
+diff --git a/tests/utils_tests/test_dateformat.py b/tests/utils_tests/test_dateformat.py
+index d050ac43..13fdd333 100644
+--- a/tests/utils_tests/test_dateformat.py
++++ b/tests/utils_tests/test_dateformat.py
+@@ -116,6 +116,13 @@ class DateFormatTests(SimpleTestCase):
+         the_future = datetime(2100, 10, 25, 0, 00)
+         self.assertEqual(dateformat.format(the_future, r'Y'), '2100')
+ 
++    def test_y_format_year_before_1000(self):
++        self.assertEqual(dateformat.format(datetime(1, 1, 1), 'y'), '01')
++        self.assertEqual(dateformat.format(datetime(123, 4, 5, 6, 7), 'y'), '23')
++        self.assertEqual(dateformat.format(datetime(999, 12, 31), 'y'), '99')
++        self.assertEqual(dateformat.format(datetime(2000, 1, 1), 'y'), '00')
++        self.assertEqual(dateformat.format(datetime(1979, 7, 8, 22, 00), 'y'), '79')
++
+     def test_day_of_year_leap(self):
+         self.assertEqual(dateformat.format(datetime(2000, 12, 31), 'z'), '366')
+ 

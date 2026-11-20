@@ -1,0 +1,78 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index abc6f79a1..03f4a84f9 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -71,6 +71,24 @@ class CommandParser(ArgumentParser):
+         else:
+             raise CommandError("Error: %s" % message)
+ 
++    def add_subparsers(self, **kwargs):
++        if "parser_class" not in kwargs:
++            kwargs["parser_class"] = type(self)
++        subparsers = super().add_subparsers(**kwargs)
++        if issubclass(subparsers._parser_class, CommandParser):
++            subparser_kwargs = {
++                "missing_args_message": self.missing_args_message,
++                "called_from_command_line": self.called_from_command_line,
++            }
++            original_add_parser = subparsers.add_parser
++
++            def add_parser(name, **parser_kwargs):
++                for key, value in subparser_kwargs.items():
++                    parser_kwargs.setdefault(key, value)
++                return original_add_parser(name, **parser_kwargs)
++
++            subparsers.add_parser = add_parser
++        return subparsers
+ 
+ def handle_default_options(options):
+     """
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e40632385..26e5bd0ca 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -406,6 +406,28 @@ class CommandTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             management.call_command("subparser_dest", subcommand="foo", bar=12)
+ 
++    def test_subparser_retains_error_formatting(self):
++        """Subparsers inherit called_from_command_line and missing_args_message."""
++        from django.core.management.base import CommandParser
++
++        parser = CommandParser(
++            called_from_command_line=True, missing_args_message="test_msg"
++        )
++        subparsers = parser.add_subparsers()
++        sub = subparsers.add_parser("foo")
++        self.assertIs(sub.called_from_command_line, True)
++        self.assertEqual(sub.missing_args_message, "test_msg")
++
++        # Explicit overrides work.
++        sub2 = subparsers.add_parser("bar", called_from_command_line=False)
++        self.assertIs(sub2.called_from_command_line, False)
++        self.assertEqual(sub2.missing_args_message, "test_msg")
++
++        # Nested subparsers also inherit.
++        nested = sub.add_subparsers()
++        sub3 = nested.add_parser("baz")
++        self.assertIs(sub3.called_from_command_line, True)
++        self.assertEqual(sub3.missing_args_message, "test_msg")
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = "some epilog text"
+@@ -468,6 +490,15 @@ class CommandRunTests(AdminScriptTestCase):
+         self.assertNoOutput(err)
+         self.assertEqual(out.strip(), "Set foo")
+ 
++    def test_subparser_error_formatting(self):
++        """Missing arguments in subparsers show usage, not a traceback."""
++        self.write_settings("settings.py", apps=["user_commands"])
++        out, err = self.run_manage(["subparser", "foo"])
++        self.assertNoOutput(out)
++        self.assertIn("usage:", err)
++        self.assertIn("the following arguments are required: bar", err)
++        self.assertNotIn("Traceback", err)
++
+ 
+ class UtilsTests(SimpleTestCase):
+     def test_no_existent_external_program(self):

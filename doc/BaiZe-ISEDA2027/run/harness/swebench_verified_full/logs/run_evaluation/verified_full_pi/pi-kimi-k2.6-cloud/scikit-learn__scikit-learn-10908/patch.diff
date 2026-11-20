@@ -1,0 +1,35 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 22fbd3f..3d5a983 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -558,6 +558,17 @@ def test_feature_names():
+     for idx, name in enumerate(feature_names):
+         assert_equal(idx, cv.vocabulary_.get(name))
+ 
++def test_feature_names_unfitted_vocabulary():
++    """Test get_feature_names on unfitted vectorizers with vocabulary."""
++    vocabulary = ['pizza', 'beer', 'salad']
++    cv = CountVectorizer(vocabulary=vocabulary)
++    feature_names = cv.get_feature_names()
++    assert_array_equal(feature_names, vocabulary)
++
++    tv = TfidfVectorizer(vocabulary=vocabulary)
++    feature_names = tv.get_feature_names()
++    assert_array_equal(feature_names, vocabulary)
++
+ 
+ def test_vectorizer_max_features():
+     vec_factories = (
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index 9b1ebd6..d282cb4 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -993,6 +993,8 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+ 
+     def get_feature_names(self):
+         """Array mapping from feature integer indices to feature name"""
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
+         self._check_vocabulary()
+ 
+         return [t for t, i in sorted(six.iteritems(self.vocabulary_),

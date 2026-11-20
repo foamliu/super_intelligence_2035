@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-26323",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sklearn/compose/_column_transformer.py b/sklearn/compose/_column_transformer.py\nindex 4eddd12b..910d1d36 100644\n--- a/sklearn/compose/_column_transformer.py\n+++ b/sklearn/compose/_column_transformer.py\n@@ -275,8 +275,8 @@ class ColumnTransformer(TransformerMixin, _BaseComposition):\n     def set_output(self, *, transform=None):\n         \"\"\"Set the output container when `\"transform\"` and `\"fit_transform\"` are called.\n \n-        Calling `set_output` will set the output of all estimators in `transformers`\n-        and `transformers_`.\n+        Calling `set_output` will set the output of all estimators in `transformers`,\n+        `transformers_`, and `remainder`.\n \n         Parameters\n         ----------\n@@ -303,6 +303,9 @@ class ColumnTransformer(TransformerMixin, _BaseComposition):\n         for trans in transformers:\n             _safe_set_output(trans, transform=transform)\n \n+        if self.remainder not in {\"passthrough\", \"drop\"}:\n+            _safe_set_output(self.remainder, transform=transform)\n+\n         return self\n \n     def get_params(self, deep=True):\n"
+  }
+]

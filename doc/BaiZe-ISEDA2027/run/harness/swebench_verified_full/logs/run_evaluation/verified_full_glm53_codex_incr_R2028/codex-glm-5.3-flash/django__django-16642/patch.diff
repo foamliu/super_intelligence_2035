@@ -1,0 +1,31 @@
+diff --git a/django/http/response.py b/django/http/response.py
+index f62dec8ce9..340d53df7d 100644
+--- a/django/http/response.py
++++ b/django/http/response.py
+@@ -609,8 +609,10 @@ class FileResponse(StreamingHttpResponse):
+                 # Encoding isn't set to prevent browsers from automatically
+                 # uncompressing files.
+                 content_type = {
++                    "br": "application/x-brotli",
+                     "bzip2": "application/x-bzip",
+                     "gzip": "application/gzip",
++                    "compress": "application/x-compress",
+                     "xz": "application/x-xz",
+                 }.get(encoding, content_type)
+                 self.headers["Content-Type"] = (
+diff --git a/tests/responses/test_fileresponse.py b/tests/responses/test_fileresponse.py
+index 952fe4dd7c..0ace88d39f 100644
+--- a/tests/responses/test_fileresponse.py
++++ b/tests/responses/test_fileresponse.py
+@@ -252,9 +252,11 @@ class FileResponseTests(SimpleTestCase):
+         uncompress the file, which is most probably not wanted.
+         """
+         test_tuples = (
++            (".Z", "application/x-compress"),
+             (".tar.gz", "application/gzip"),
+             (".tar.bz2", "application/x-bzip"),
+             (".tar.xz", "application/x-xz"),
++            (".br", "application/x-brotli"),
+         )
+         for extension, mimetype in test_tuples:
+             with self.subTest(ext=extension):

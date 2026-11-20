@@ -1,0 +1,9 @@
+[incr-eval 23:29:50] === incr_eval R1603b for deepseek-harness: ['psf__requests-1724', 'psf__requests-1766'] ===
+[incr-eval 23:29:50] merged 226/234 predictions -> predictions/predictions_deepseek-harness.json
+[incr-eval 23:29:50] EVAL deepseek-harness on 2 instances: ['psf__requests-1724', 'psf__requests-1766']
+[incr-eval 23:31:16] eval finished rc=0; log -> logs/eval_incr_verified_full_deepseek-harness_R1603b_1793806276.log
+[incr-eval 23:31:16] psf__requests-1724: FAILED
+[incr-eval 23:31:16] psf__requests-1766: FAILED
+[incr-eval 23:31:16] updated reports/eval_deepseek-harness.json: resolved=185 failed=41 infra=0 no_patch=8 n=234
+[incr-eval 23:31:16] === incr_eval R1603b DONE (130s) ===
+DONE (21s) ===

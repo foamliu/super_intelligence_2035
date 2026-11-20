@@ -1,0 +1,243 @@
+2026-11-09 06:37:51,818 - INFO - Creating container for django__django-12209...
+2026-11-09 06:37:51,834 - INFO - Container for django__django-12209 created: 994013f9042eef2e0e367c37e02bcffccd5312b9d391ba5ad19adabbe7159465
+2026-11-09 06:37:52,740 - INFO - Container for django__django-12209 started: 994013f9042eef2e0e367c37e02bcffccd5312b9d391ba5ad19adabbe7159465
+2026-11-09 06:37:52,742 - INFO - Intermediate patch for django__django-12209 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-12209/patch.diff, now applying to container...
+2026-11-09 06:37:52,845 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+Checking patch docs/ref/models/instances.txt...
+Checking patch docs/releases/3.0.2.txt...
+Checking patch docs/releases/3.0.txt...
+Checking patch tests/serializers/models/data.py...
+Checking patch tests/serializers/test_data.py...
+Applied patch django/db/models/base.py cleanly.
+Applied patch docs/ref/models/instances.txt cleanly.
+Applied patch docs/releases/3.0.2.txt cleanly.
+Applied patch docs/releases/3.0.txt cleanly.
+Applied patch tests/serializers/models/data.py cleanly.
+Applied patch tests/serializers/test_data.py cleanly.
+
+2026-11-09 06:37:54,274 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..844c01e95e 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,6 +849,7 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+             self._meta.pk.default and
+diff --git a/docs/ref/models/instances.txt b/docs/ref/models/instances.txt
+index 9345bc0fe0..db2933e902 100644
+--- a/docs/ref/models/instances.txt
++++ b/docs/ref/models/instances.txt
+@@ -465,8 +465,9 @@ How Django knows to UPDATE vs. INSERT
+ 
+ You may have noticed Django database objects use the same ``save()`` method
+ for creating and changing objects. Django abstracts the need to use ``INSERT``
+-or ``UPDATE`` SQL statements. Specifically, when you call ``save()``, Django
+-follows this algorithm:
++or ``UPDATE`` SQL statements. Specifically, when you call ``save()`` and the
++object's primary key attribute does **not** define a
++:attr:`~django.db.models.Field.default`, Django follows this algorithm:
+ 
+ * If the object's primary key attribute is set to a value that evaluates to
+   ``True`` (i.e., a value other than ``None`` or the empty string), Django
+@@ -475,6 +476,11 @@ follows this algorithm:
+   didn't update anything (e.g. if primary key is set to a value that doesn't
+   exist in the database), Django executes an ``INSERT``.
+ 
++If the object's primary key attribute defines a
++:attr:`~django.db.models.Field.default` then Django executes an ``UPDATE`` if
++it is an existing model instance and primary key is set to a value that exists
++in the database. Otherwise, Django executes an ``INSERT``.
++
+ The one gotcha here is that you should be careful not to specify a primary-key
+ value explicitly when saving new objects, if you cannot guarantee the
+ primary-key value is unused. For more on this nuance, see `Explicitly specifying
+diff --git a/docs/releases/3.0.2.txt b/docs/releases/3.0.2.txt
+index ebb85d1f46..e232fa81f8 100644
+--- a/docs/releases/3.0.2.txt
++++ b/docs/releases/3.0.2.txt
+@@ -18,3 +18,7 @@ Bugfixes
+ * Fixed a regression in Django 3.0 that caused a migration crash on PostgreSQL
+   10+ when adding a foreign key and changing data in the same migration
+   (:ticket:`31106`).
++
++* Fixed a regression in Django 3.0 where loading fixtures crashed for models
++  defining a :attr:`~django.db.models.Field.default` for the primary key
++  (:ticket:`31071`).
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index 435755f732..f133c58654 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -372,6 +372,27 @@ Tests
+ Backwards incompatible changes in 3.0
+ =====================================
+ 
++``Model.save()`` when providing a default for the primary key
++-------------------------------------------------------------
++
++:meth:`.Model.save` no longer attempts to find a row when saving a new
++``Model`` instance and a default value for the primary key is provided, and
++always performs a single ``INSERT`` query. In older Django versions,
++``Model.save()`` performed either an ``INSERT`` or an ``UPDATE`` based on
++whether or not the row exists.
++
++This makes calling ``Model.save()`` while providing a default primary key value
++equivalent to passing :ref:`force_insert=True <ref-models-force-insert>` to
++model's ``save()``. Attempts to use a new ``Model`` instance to update an
++existing row will result in an ``IntegrityError``.
++
++In order to update an existing model for a specific primary key value, use the
++:meth:`~django.db.models.query.QuerySet.update_or_create` method or
++``QuerySet.filter(pk=…).update(…)`` instead. For example::
++
++    >>> MyModel.objects.update_or_create(pk=existing_pk, defaults={'name': 'new name'})
++    >>> MyModel.objects.filter(pk=existing_pk).update(name='new name')
++
+ Database backend API
+ --------------------
+ 
+diff --git a/tests/serializers/models/data.py b/tests/serializers/models/data.py
+index 89564f756c..eaa2aa60e6 100644
+--- a/tests/serializers/models/data.py
++++ b/tests/serializers/models/data.py
+@@ -4,6 +4,8 @@ The following classes are for testing basic data marshalling, including
+ NULL values, where allowed.
+ The basic idea is to have a model for each Django data type.
+ """
++import uuid
++
+ from django.contrib.contenttypes.fields import (
+     GenericForeignKey, GenericRelation,
+ )
+@@ -257,6 +259,10 @@ class UUIDData(models.Model):
+     data = models.UUIDField(primary_key=True)
+ 
+ 
++class UUIDDefaultData(models.Model):
++    data = models.UUIDField(primary_key=True, default=uuid.uuid4)
++
++
+ class FKToUUID(models.Model):
+     data = models.ForeignKey(UUIDData, models.CASCADE)
+ 
+diff --git a/tests/serializers/test_data.py b/tests/serializers/test_data.py
+index 493da7e7cc..1ddba02565 100644
+--- a/tests/serializers/test_data.py
++++ b/tests/serializers/test_data.py
+@@ -26,7 +26,7 @@ from .models import (
+     ModifyingSaveData, NullBooleanData, O2OData, PositiveBigIntegerData,
+     PositiveIntegerData, PositiveIntegerPKData, PositiveSmallIntegerData,
+     PositiveSmallIntegerPKData, SlugData, SlugPKData, SmallData, SmallPKData,
+-    Tag, TextData, TimeData, UniqueAnchor, UUIDData,
++    Tag, TextData, TimeData, UniqueAnchor, UUIDData, UUIDDefaultData,
+ )
+ from .tests import register_tests
+ 
+@@ -351,6 +351,7 @@ The end."""),
+     # (pk_obj, 790, XMLPKData, "<foo></foo>"),
+     (pk_obj, 791, UUIDData, uuid_obj),
+     (fk_obj, 792, FKToUUID, uuid_obj),
++    (pk_obj, 793, UUIDDefaultData, uuid_obj),
+ 
+     (data_obj, 800, AutoNowDateTimeData, datetime.datetime(2006, 6, 16, 10, 42, 37)),
+     (data_obj, 810, ModifyingSaveData, 42),
+2026-11-09 06:37:54,276 - INFO - Eval script for django__django-12209 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-12209/eval.sh; copying to container...
+2026-11-09 06:38:02,876 - INFO - Test runtime: 8.54 seconds
+2026-11-09 06:38:02,878 - INFO - Test output for django__django-12209 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-12209/test_output.txt
+2026-11-09 06:38:02,939 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..844c01e95e 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,6 +849,7 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+             self._meta.pk.default and
+diff --git a/docs/ref/models/instances.txt b/docs/ref/models/instances.txt
+index 9345bc0fe0..db2933e902 100644
+--- a/docs/ref/models/instances.txt
++++ b/docs/ref/models/instances.txt
+@@ -465,8 +465,9 @@ How Django knows to UPDATE vs. INSERT
+ 
+ You may have noticed Django database objects use the same ``save()`` method
+ for creating and changing objects. Django abstracts the need to use ``INSERT``
+-or ``UPDATE`` SQL statements. Specifically, when you call ``save()``, Django
+-follows this algorithm:
++or ``UPDATE`` SQL statements. Specifically, when you call ``save()`` and the
++object's primary key attribute does **not** define a
++:attr:`~django.db.models.Field.default`, Django follows this algorithm:
+ 
+ * If the object's primary key attribute is set to a value that evaluates to
+   ``True`` (i.e., a value other than ``None`` or the empty string), Django
+@@ -475,6 +476,11 @@ follows this algorithm:
+   didn't update anything (e.g. if primary key is set to a value that doesn't
+   exist in the database), Django executes an ``INSERT``.
+ 
++If the object's primary key attribute defines a
++:attr:`~django.db.models.Field.default` then Django executes an ``UPDATE`` if
++it is an existing model instance and primary key is set to a value that exists
++in the database. Otherwise, Django executes an ``INSERT``.
++
+ The one gotcha here is that you should be careful not to specify a primary-key
+ value explicitly when saving new objects, if you cannot guarantee the
+ primary-key value is unused. For more on this nuance, see `Explicitly specifying
+diff --git a/docs/releases/3.0.2.txt b/docs/releases/3.0.2.txt
+index ebb85d1f46..e232fa81f8 100644
+--- a/docs/releases/3.0.2.txt
++++ b/docs/releases/3.0.2.txt
+@@ -18,3 +18,7 @@ Bugfixes
+ * Fixed a regression in Django 3.0 that caused a migration crash on PostgreSQL
+   10+ when adding a foreign key and changing data in the same migration
+   (:ticket:`31106`).
++
++* Fixed a regression in Django 3.0 where loading fixtures crashed for models
++  defining a :attr:`~django.db.models.Field.default` for the primary key
++  (:ticket:`31071`).
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index 435755f732..f133c58654 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -372,6 +372,27 @@ Tests
+ Backwards incompatible changes in 3.0
+ =====================================
+ 
++``Model.save()`` when providing a default for the primary key
++-------------------------------------------------------------
++
++:meth:`.Model.save` no longer attempts to find a row when saving a new
++``Model`` instance and a default value for the primary key is provided, and
++always performs a single ``INSERT`` query. In older Django versions,
++``Model.save()`` performed either an ``INSERT`` or an ``UPDATE`` based on
++whether or not the row exists.
++
++This makes calling ``Model.save()`` while providing a default primary key value
++equivalent to passing :ref:`force_insert=True <ref-models-force-insert>` to
++model's ``save()``. Attempts to use a new ``Model`` instance to update an
++existing row will result in an ``IntegrityError``.
++
++In order to update an existing model for a specific primary key value, use the
++:meth:`~django.db.models.query.QuerySet.update_or_create` method or
++``QuerySet.filter(pk=…).update(…)`` instead. For example::
++
++    >>> MyModel.objects.update_or_create(pk=existing_pk, defaults={'name': 'new name'})
++    >>> MyModel.objects.filter(pk=existing_pk).update(name='new name')
++
+ Database backend API
+ --------------------
+2026-11-09 06:38:02,939 - INFO - Git diff changed after running eval script
+2026-11-09 06:38:02,939 - INFO - Grading answer for django__django-12209...
+2026-11-09 06:38:02,940 - INFO - report: {'django__django-12209': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['partial(func, *args, **keywords) - new function with partial application'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12209: resolved: True
+2026-11-09 06:38:02,941 - INFO - Attempting to stop container sweb.eval.django__django-12209.verified_full_glm53_hermes_R1933...
+2026-11-09 06:38:19,182 - INFO - Container sweb.eval.django__django-12209.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 06:38:19,182 - INFO - Attempting to remove container sweb.eval.django__django-12209.verified_full_glm53_hermes_R1933...
+2026-11-09 06:38:19,232 - INFO - Container sweb.eval.django__django-12209.verified_full_glm53_hermes_R1933 removed successfully.

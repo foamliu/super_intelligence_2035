@@ -1,0 +1,71 @@
+=== incr_eval R1175b START Sun Nov  1 02:47:10 PM CST 2026 ===
+[Sun Nov  1 02:47:10 PM CST 2026] === pi django__django-11149 eval ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+[Sun Nov  1 02:47:14 PM CST 2026] === pi eval DONE ===
+[Sun Nov  1 02:47:14 PM CST 2026] === hermes django__django-10914 eval ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]=== incr_eval R1175b START Sun Nov  1 02:47:58 PM CST 2026 ===
+[Sun Nov  1 02:47:58 PM CST 2026] === pi django__django-11149 eval ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+[Sun Nov  1 02:48:02 PM CST 2026] === pi eval DONE ===
+[Sun Nov  1 02:48:02 PM CST 2026] === hermes django__django-10914 eval ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 3
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sun Nov  1 02:48:06 PM CST 2026] === hermes eval DONE ===
+[Sun Nov  1 02:48:06 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=495 resolved=399 failed=96 infra=0)
+  pi: WROTE eval_pi.json  n=418 resolved=303 failed=115 infra=0
+  claude-code: unchanged (n=344 resolved=263 failed=81 infra=0)
+  codex: unchanged (n=227 resolved=178 failed=49 infra=0)
+  hermes: WROTE eval_hermes.json  n=73 resolved=55 failed=18 infra=0
+  deepseek-harness: unchanged (n=75 resolved=59 failed=16 infra=0)
+[Sun Nov  1 02:48:06 PM CST 2026] === gen report HTML ===
+  pi           done=500/500 patch=418 no_patch=15 infra=59 eval=Y resolved=303
+  claude-code  done=500/500 patch=344 no_patch=79 infra=70 eval=Y resolved=263
+  codex        done=500/500 patch=227 no_patch=71 infra=197 eval=Y resolved=178
+  hermes       done=108/500 patch=72 no_patch=35 infra=0 eval=Y resolved=55
+  deepseek-harness done=224/500 patch=73 no_patch=4 infra=118 eval=Y resolved=59
+=== incr_eval R1175b DONE Sun Nov  1 02:48:07 PM CST 2026 ===

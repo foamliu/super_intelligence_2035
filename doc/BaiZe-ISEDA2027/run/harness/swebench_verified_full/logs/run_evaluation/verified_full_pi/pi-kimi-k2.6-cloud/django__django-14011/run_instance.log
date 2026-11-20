@@ -1,0 +1,113 @@
+2026-11-01 17:18:36,595 - INFO - Creating container for django__django-14011...
+2026-11-01 17:18:36,615 - INFO - Container for django__django-14011 created: 706300ff16a32ed62f1768db17c16628f8926f1c765c29cc1238dbc9eb63626d
+2026-11-01 17:18:37,253 - INFO - Container for django__django-14011 started: 706300ff16a32ed62f1768db17c16628f8926f1c765c29cc1238dbc9eb63626d
+2026-11-01 17:18:37,256 - INFO - Intermediate patch for django__django-14011 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14011/patch.diff, now applying to container...
+2026-11-01 17:18:37,370 - INFO - >>>>> Applied Patch:
+Checking patch django/test/testcases.py...
+Checking patch tests/servers/test_liveserverthread.py...
+Applied patch django/test/testcases.py cleanly.
+Applied patch tests/servers/test_liveserverthread.py cleanly.
+
+2026-11-01 17:18:38,597 - INFO - Git diff before:
+diff --git a/django/test/testcases.py b/django/test/testcases.py
+index 92f566b7b0..7d22515b80 100644
+--- a/django/test/testcases.py
++++ b/django/test/testcases.py
+@@ -1473,10 +1473,18 @@ class _MediaFilesHandler(FSFilesHandler):
+         return settings.MEDIA_URL
+ 
+ 
++class _LiveServerThreadedWSGIServer(ThreadedWSGIServer):
++    def process_request_thread(self, request, client_address):
++        try:
++            super().process_request_thread(request, client_address)
++        finally:
++            connections.close_all()
++
++
+ class LiveServerThread(threading.Thread):
+     """Thread for running a live http server while the tests are running."""
+ 
+-    server_class = ThreadedWSGIServer
++    server_class = _LiveServerThreadedWSGIServer
+ 
+     def __init__(self, host, static_handler, connections_override=None, port=0):
+         self.host = host
+diff --git a/tests/servers/test_liveserverthread.py b/tests/servers/test_liveserverthread.py
+index 09b6ca08c8..cbe6864af1 100644
+--- a/tests/servers/test_liveserverthread.py
++++ b/tests/servers/test_liveserverthread.py
+@@ -31,6 +31,28 @@ class LiveServerThreadTest(TransactionTestCase):
+         finally:
+             conn.dec_thread_sharing()
+ 
++    def test_worker_thread_closes_connections(self):
++        from unittest.mock import patch
++
++        class MockRequest:
++            def shutdown(self, flag):
++                pass
++
++            def close(self):
++                pass
++
++        class TestServer(LiveServerThread.server_class):
++            def finish_request(self, request, client_address):
++                pass
++
++        server = TestServer(('127.0.0.1', 0), object)
++        try:
++            with patch.object(connections, 'close_all') as mock_close_all:
++                server.process_request_thread(MockRequest(), None)
++                mock_close_all.assert_called_once()
++        finally:
++            server.server_close()
++
+     def test_server_class(self):
+         class FakeServer:
+             def __init__(*args, **kwargs):
+2026-11-01 17:18:38,601 - INFO - Eval script for django__django-14011 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14011/eval.sh; copying to container...
+2026-11-01 17:18:47,024 - INFO - Test runtime: 8.34 seconds
+2026-11-01 17:18:47,026 - INFO - Test output for django__django-14011 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-14011/test_output.txt
+2026-11-01 17:18:47,105 - INFO - Git diff after:
+diff --git a/tests/servers/test_liveserverthread.py b/tests/servers/test_liveserverthread.py
+index 09b6ca08c8..cbe6864af1 100644
+--- a/tests/servers/test_liveserverthread.py
++++ b/tests/servers/test_liveserverthread.py
+@@ -31,6 +31,28 @@ class LiveServerThreadTest(TransactionTestCase):
+         finally:
+             conn.dec_thread_sharing()
+ 
++    def test_worker_thread_closes_connections(self):
++        from unittest.mock import patch
++
++        class MockRequest:
++            def shutdown(self, flag):
++                pass
++
++            def close(self):
++                pass
++
++        class TestServer(LiveServerThread.server_class):
++            def finish_request(self, request, client_address):
++                pass
++
++        server = TestServer(('127.0.0.1', 0), object)
++        try:
++            with patch.object(connections, 'close_all') as mock_close_all:
++                server.process_request_thread(MockRequest(), None)
++                mock_close_all.assert_called_once()
++        finally:
++            server.server_close()
++
+     def test_server_class(self):
+         class FakeServer:
+             def __init__(*args, **kwargs):
+2026-11-01 17:18:47,105 - INFO - Git diff changed after running eval script
+2026-11-01 17:18:47,105 - INFO - Grading answer for django__django-14011...
+2026-11-01 17:18:47,107 - INFO - report: {'django__django-14011': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_live_server_url_is_class_property (servers.tests.LiveServerAddress)', 'Data written to the database by a view can be read.', 'Fixtures are properly loaded and visible to the live server thread.', 'test_check_model_instance_from_subview (servers.tests.LiveServerThreadedTests)', 'test_view_calls_subview (servers.tests.LiveServerThreadedTests)', 'test_404 (servers.tests.LiveServerViews)', 'A HTTP 1.1 server is supposed to support keep-alive. Since our', 'test_environ (servers.tests.LiveServerViews)', 'test_keep_alive_connection_clears_previous_request_data (servers.tests.LiveServerViews)', 'See `test_closes_connection_without_content_length` for details. This', 'test_media_files (servers.tests.LiveServerViews)', 'LiveServerTestCase reports a 404 status code when HTTP client', 'Launched server serves with HTTP 1.1.', 'test_static_files (servers.tests.LiveServerViews)', 'test_view (servers.tests.LiveServerViews)', 'Each LiveServerTestCase binds to a unique port or fails to start a', "LiveServerTestCase.port customizes the server's port."]}, 'PASS_TO_PASS': {'success': ['test_set_up_class (servers.tests.LiveServerTestCaseSetupTest)', 'Contrast to'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14011: resolved: False
+2026-11-01 17:18:47,109 - INFO - Attempting to stop container sweb.eval.django__django-14011.verified_full_pi...
+2026-11-01 17:19:03,116 - INFO - Container sweb.eval.django__django-14011.verified_full_pi stopped successfully.
+2026-11-01 17:19:03,116 - INFO - Attempting to remove container sweb.eval.django__django-14011.verified_full_pi...
+2026-11-01 17:19:03,167 - INFO - Container sweb.eval.django__django-14011.verified_full_pi removed successfully.

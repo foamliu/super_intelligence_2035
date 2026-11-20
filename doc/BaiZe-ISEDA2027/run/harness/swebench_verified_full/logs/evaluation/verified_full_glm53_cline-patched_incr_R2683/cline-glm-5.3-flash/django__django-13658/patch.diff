@@ -1,0 +1,44 @@
+diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py
+index 1ba093e51f..4e30a28f33 100644
+--- a/django/core/management/__init__.py
++++ b/django/core/management/__init__.py
+@@ -344,7 +344,12 @@ class ManagementUtility:
+         # Preprocess options to extract --settings and --pythonpath.
+         # These options could affect the commands that are available, so they
+         # must be processed early.
+-        parser = CommandParser(usage='%(prog)s subcommand [options] [args]', add_help=False, allow_abbrev=False)
++        parser = CommandParser(
++            prog=self.prog_name,
++            usage='%(prog)s subcommand [options] [args]',
++            add_help=False,
++            allow_abbrev=False,
++        )
+         parser.add_argument('--settings')
+         parser.add_argument('--pythonpath')
+         parser.add_argument('args', nargs='*')  # catch-all
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index 9262e2717a..80c5b184e4 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -70,6 +70,21 @@ class CommandTests(SimpleTestCase):
+             dance.Command.requires_system_checks = '__all__'
+         self.assertIn("CommandError", stderr.getvalue())
+ 
++    def test_prog_name(self):
++        """
++        ManagementUtility uses the program name from the passed argv, rather
++        than from sys.argv, when instantiating CommandParser (#32974).
++        """
++        dance.Command.requires_system_checks = []
++        try:
++            with mock.patch('sys.argv', [None]), captured_stderr() as stderr:
++                with self.assertRaises(SystemExit) as cm:
++                    management.ManagementUtility(['manage.py', 'dance', '--example=raise']).execute()
++            self.assertEqual(cm.exception.code, 3)
++        finally:
++            dance.Command.requires_system_checks = '__all__'
++        self.assertIn("CommandError", stderr.getvalue())
++
+     def test_no_translations_deactivate_translations(self):
+         """
+         When the Command handle method is decorated with @no_translations,

@@ -1,0 +1,31 @@
+=== incr_eval_1route R1487 START Wed Nov  4 12:59:00 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov  4 12:59:00 AM CST 2026] === merge hermes predictions ===
+hermes: 222 real patches merged
+[Wed Nov  4 12:59:00 AM CST 2026] === hermes eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.98s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.98s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.98s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 9
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Wed Nov  4 12:59:28 AM CST 2026] === hermes eval DONE ===
+[Wed Nov  4 12:59:28 AM CST 2026] === regen eval summaries ===
+regen_eval_summaries: hermes
+  hermes: WROTE eval_hermes.json  n=301 resolved=176 failed=46 infra=0 no_patch=79)
+[Wed Nov  4 12:59:28 AM CST 2026] === gen report HTML ===
+  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
+  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
+  codex        done=500/500 patch=323 no_patch=111 infra=61 eval=Y resolved=256
+  hermes       done=487/500 patch=221 no_patch=79 infra=185 eval=Y resolved=176
+  deepseek-harness done=372/500 patch=170 no_patch=3 infra=120 eval=Y resolved=143
+=== incr_eval_1route R1487 DONE Wed Nov  4 12:59:28 AM CST 2026 ===

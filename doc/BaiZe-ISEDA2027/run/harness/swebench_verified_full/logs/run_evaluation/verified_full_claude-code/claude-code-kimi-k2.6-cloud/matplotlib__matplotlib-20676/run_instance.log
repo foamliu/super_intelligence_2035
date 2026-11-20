@@ -1,0 +1,76 @@
+2026-10-30 17:11:58,645 - INFO - Creating container for matplotlib__matplotlib-20676...
+2026-10-30 17:11:58,682 - INFO - Container for matplotlib__matplotlib-20676 created: 5a894f438a7ce7ab1ff0152608f649e4640bf435422e4d9b5943303f8a14b35d
+2026-10-30 17:11:59,395 - INFO - Container for matplotlib__matplotlib-20676 started: 5a894f438a7ce7ab1ff0152608f649e4640bf435422e4d9b5943303f8a14b35d
+2026-10-30 17:11:59,398 - INFO - Intermediate patch for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/matplotlib__matplotlib-20676/patch.diff, now applying to container...
+2026-10-30 17:11:59,558 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/widgets.py...
+Applied patch lib/matplotlib/widgets.py cleanly.
+
+2026-10-30 17:12:01,159 - INFO - Git diff before:
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d4..2294e74a7 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2366,11 +2366,20 @@ class ToolLineHandles:
+             line_props = {}
+         line_props.update({'visible': False, 'animated': useblit})
+ 
+-        line_fun = ax.axvline if self.direction == 'horizontal' else ax.axhline
++        if self.direction == 'horizontal':
++            self.artists = [
++                Line2D([p, p], [0, 1], transform=ax.get_xaxis_transform(),
++                       **line_props)
++                for p in positions]
++        else:
++            self.artists = [
++                Line2D([0, 1], [p, p], transform=ax.get_yaxis_transform(),
++                       **line_props)
++                for p in positions]
++        for artist in self.artists:
++            ax.add_line(artist)
+         self._line_props = line_props
+ 
+-        self.artists = [line_fun(p, **line_props) for p in positions]
+-
+     @property
+     def positions(self):
+         """Positions of the handle in data coordinates."""
+2026-10-30 17:12:01,161 - INFO - Eval script for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/matplotlib__matplotlib-20676/eval.sh; copying to container...
+2026-10-30 17:12:15,931 - INFO - Test runtime: 14.68 seconds
+2026-10-30 17:12:15,933 - INFO - Test output for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/matplotlib__matplotlib-20676/test_output.txt
+2026-10-30 17:12:16,017 - INFO - Git diff after:
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d4..2294e74a7 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2366,11 +2366,20 @@ class ToolLineHandles:
+             line_props = {}
+         line_props.update({'visible': False, 'animated': useblit})
+ 
+-        line_fun = ax.axvline if self.direction == 'horizontal' else ax.axhline
++        if self.direction == 'horizontal':
++            self.artists = [
++                Line2D([p, p], [0, 1], transform=ax.get_xaxis_transform(),
++                       **line_props)
++                for p in positions]
++        else:
++            self.artists = [
++                Line2D([0, 1], [p, p], transform=ax.get_yaxis_transform(),
++                       **line_props)
++                for p in positions]
++        for artist in self.artists:
++            ax.add_line(artist)
+         self._line_props = line_props
+ 
+-        self.artists = [line_fun(p, **line_props) for p in positions]
+-
+     @property
+     def positions(self):
+         """Positions of the handle in data coordinates."""
+2026-10-30 17:12:16,017 - INFO - Grading answer for matplotlib__matplotlib-20676...
+2026-10-30 17:12:16,019 - INFO - report: {'matplotlib__matplotlib-20676': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['lib/matplotlib/tests/test_widgets.py::test_span_selector_bound[horizontal]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_bound[vertical]']}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_widgets.py::test_rectangle_drag[True-new_center0]', 'lib/matplotlib/tests/test_widgets.py::test_rectangle_drag[False-new_center1]', 'lib/matplotlib/tests/test_widgets.py::test_ellipse', 'lib/matplotlib/tests/test_widgets.py::test_rectangle_handles', 'lib/matplotlib/tests/test_widgets.py::test_span_selector', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_drag[True]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_drag[False]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_direction', 'lib/matplotlib/tests/test_widgets.py::test_tool_line_handle', 'lib/matplotlib/tests/test_widgets.py::test_lasso_selector', 'lib/matplotlib/tests/test_widgets.py::test_CheckButtons', 'lib/matplotlib/tests/test_widgets.py::test_TextBox', 'lib/matplotlib/tests/test_widgets.py::test_check_radio_buttons_image[png]', 'lib/matplotlib/tests/test_widgets.py::test_check_bunch_of_radio_buttons[png]', 'lib/matplotlib/tests/test_widgets.py::test_slider_slidermin_slidermax_invalid', 'lib/matplotlib/tests/test_widgets.py::test_slider_slidermin_slidermax', 'lib/matplotlib/tests/test_widgets.py::test_slider_valmin_valmax', 'lib/matplotlib/tests/test_widgets.py::test_slider_valstep_snapping', 'lib/matplotlib/tests/test_widgets.py::test_slider_horizontal_vertical', 'lib/matplotlib/tests/test_widgets.py::test_range_slider[horizontal]', 'lib/matplotlib/tests/test_widgets.py::test_range_slider[vertical]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[True-True]', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[True-False]', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[False-True]', 'lib/matplotlib/tests/test_widgets.py::test_rect_visibility[png]', 'lib/matplotlib/tests/test_widgets.py::test_rect_visibility[pdf]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[1]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[2]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[3]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove_first_point', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_redraw'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-20676: resolved: False
+2026-10-30 17:12:16,021 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-20676.verified_full_claude-code...
+2026-10-30 17:12:31,808 - INFO - Container sweb.eval.matplotlib__matplotlib-20676.verified_full_claude-code stopped successfully.
+2026-10-30 17:12:31,808 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-20676.verified_full_claude-code...
+2026-10-30 17:12:31,850 - INFO - Container sweb.eval.matplotlib__matplotlib-20676.verified_full_claude-code removed successfully.

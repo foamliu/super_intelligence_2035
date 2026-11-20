@@ -1,0 +1,86 @@
+2026-10-30 16:10:24,623 - INFO - Creating container for astropy__astropy-13033...
+2026-10-30 16:10:28,623 - INFO - Removed existing container sweb.eval.astropy__astropy-13033.verified_full_cline-patched
+2026-10-30 16:10:28,651 - INFO - Container for astropy__astropy-13033 created: 195312b8f62a784a44d1580409875b4a2bca9e95d69c1f80f06e918e9474645d
+2026-10-30 16:10:47,556 - INFO - Container for astropy__astropy-13033 started: 195312b8f62a784a44d1580409875b4a2bca9e95d69c1f80f06e918e9474645d
+2026-10-30 16:10:47,557 - INFO - Intermediate patch for astropy__astropy-13033 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-13033/patch.diff, now applying to container...
+2026-10-30 16:10:47,690 - INFO - >>>>> Applied Patch:
+Checking patch astropy/timeseries/core.py...
+Checking patch astropy/timeseries/tests/test_sampled.py...
+Applied patch astropy/timeseries/core.py cleanly.
+Applied patch astropy/timeseries/tests/test_sampled.py cleanly.
+
+2026-10-30 16:10:48,136 - INFO - Git diff before:
+diff --git a/astropy/timeseries/core.py b/astropy/timeseries/core.py
+index c279f35f8..dc9fec728 100644
+--- a/astropy/timeseries/core.py
++++ b/astropy/timeseries/core.py
+@@ -76,9 +76,31 @@ class BaseTimeSeries(QTable):
+ 
+             elif self.colnames[:len(required_columns)] != required_columns:
+ 
+-                raise ValueError("{} object is invalid - expected '{}' "
+-                                 "as the first column{} but found '{}'"
+-                                 .format(self.__class__.__name__, required_columns[0], plural, self.colnames[0]))
++                if len(self.colnames) > 0 and self.colnames[0] != required_columns[0]:
++                    raise ValueError("{} object is invalid - expected '{}' "
++                                     "as the first column{} but found '{}'"
++                                     .format(self.__class__.__name__, required_columns[0], plural, self.colnames[0]))
++
++                elif len(self.colnames) < len(required_columns):
++                    missing = required_columns[len(self.colnames):]
++                    plural_missing = 's' if len(missing) > 1 else ''
++                    raise ValueError("{} object is invalid - missing required column{}: {}"
++                                     .format(self.__class__.__name__, plural_missing, ', '.join(f"'{c}'" for c in missing)))
++
++                else:
++                    for i, (actual, required) in enumerate(zip(self.colnames, required_columns)):
++                        if actual != required:
++                            if i == 0:
++                                ordinal = 'first'
++                            elif i == 1:
++                                ordinal = 'second'
++                            elif i == 2:
++                                ordinal = 'third'
++                            else:
++                                ordinal = f'{i + 1}th'
++                            raise ValueError("{} object is invalid - expected '{}' "
++                                             "as the {} column but found '{}'"
++                                             .format(self.__class__.__name__, required, ordinal, actual))
+ 
+             if (self._required_columns_relax
+                     and self._required_columns == self.colnames[:len(self._required_columns)]):
+diff --git a/astropy/timeseries/tests/test_sampled.py b/astropy/timeseries/tests/test_sampled.py
+index bcc06d929..5f25838bf 100644
+--- a/astropy/timeseries/tests/test_sampled.py
++++ b/astropy/timeseries/tests/test_sampled.py
+@@ -395,6 +395,16 @@ def test_required_columns():
+     assert exc.value.args[0] == ("TimeSeries object is invalid - expected "
+                                  "'time' as the first column but found 'banana'")
+ 
++    # Test that removing a non-first required column gives a meaningful error
++    ts2 = TimeSeries(time=INPUT_TIME,
++                     data=[[10, 2, 3]],
++                     names=['flux'])
++    ts2._required_columns = ['time', 'flux']
++    with pytest.raises(ValueError) as exc:
++        ts2.remove_column('flux')
++    assert exc.value.args[0] == ("TimeSeries object is invalid - missing "
++                                 "required column: 'flux'")
++
+ 
+ @pytest.mark.parametrize('cls', [BoxLeastSquares, LombScargle])
+ def test_periodogram(cls):
+2026-10-30 16:10:48,137 - INFO - Eval script for astropy__astropy-13033 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-13033/eval.sh; copying to container...
+2026-10-30 16:10:24,660 - INFO - Test runtime: 29.78 seconds
+2026-10-30 16:10:24,666 - INFO - Test output for astropy__astropy-13033 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-13033/test_output.txt
+2026-10-30 16:10:24,729 - INFO - Git diff after:
+FailedPrecondition: container 2d447edd4e65765b1f8d09d4086b6bfe604e3d55217cf519a273cc3cbd830863 init process is not running: failed precondition
+2026-10-30 16:10:24,729 - INFO - Git diff changed after running eval script
+2026-10-30 16:10:24,729 - INFO - Grading answer for astropy__astropy-13033...
+2026-10-30 16:10:24,741 - INFO - report: {'astropy__astropy-13033': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False}}
+Result for astropy__astropy-13033: resolved: False
+2026-10-30 16:10:24,742 - INFO - Attempting to stop container sweb.eval.astropy__astropy-13033.verified_full_cline-patched...
+2026-10-30 16:10:28,564 - INFO - Container sweb.eval.astropy__astropy-13033.verified_full_cline-patched stopped successfully.
+2026-10-30 16:10:28,564 - INFO - Attempting to remove container sweb.eval.astropy__astropy-13033.verified_full_cline-patched...
+2026-10-30 16:10:28,588 - INFO - Failed to remove container sweb.eval.astropy__astropy-13033.verified_full_cline-patched: Command '['docker', 'rm', '--force', '2d447edd4e65765b1f8d09d4086b6bfe604e3d55217cf519a273cc3cbd830863']' returned non-zero exit status 1.
+Command output: None

@@ -1,0 +1,26 @@
+
+=== claude-code: sympy__sympy-23824 ===
+  merged 261 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [14:26:15] launching eval ...
+
+=== claude-code: sympy__sympy-23824 ===
+  merged 261 real preds -> predictions_glm53/predictions_claude-code_glm53.json
+  [14:27:04] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_claude-code_R2269.log)
+  sympy__sympy-23824: RESOLVED
+  [14:27:14] claude-code: eval updated (resolved=213, failed=51, infra=2)
+
+=== pi: matplotlib__matplotlib-13989 ===
+  merged 242 real preds -> predictions_glm53/predictions_pi_glm53.json
+  [14:27:14] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_pi_R2269.log)
+  matplotlib__matplotlib-13989: RESOLVED
+  [14:28:36] pi: eval updated (resolved=183, failed=64, infra=0)
+
+=== incr_eval R2269 complete in 91.8s ===

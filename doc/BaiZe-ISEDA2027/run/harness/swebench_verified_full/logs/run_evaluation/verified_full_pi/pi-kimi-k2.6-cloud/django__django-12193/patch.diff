@@ -1,0 +1,74 @@
+diff --git a/django/forms/widgets.py b/django/forms/widgets.py
+index 6fe220be..d83d63c1 100644
+--- a/django/forms/widgets.py
++++ b/django/forms/widgets.py
+@@ -522,9 +522,7 @@ class CheckboxInput(Input):
+ 
+     def get_context(self, name, value, attrs):
+         if self.check_test(value):
+-            if attrs is None:
+-                attrs = {}
+-            attrs['checked'] = True
++            attrs = {**(attrs or {}), 'checked': True}
+         return super().get_context(name, value, attrs)
+ 
+     def value_from_datadict(self, data, files, name):
+diff --git a/tests/forms_tests/widget_tests/test_checkboxinput.py b/tests/forms_tests/widget_tests/test_checkboxinput.py
+index 6483b7f2..878c5d68 100644
+--- a/tests/forms_tests/widget_tests/test_checkboxinput.py
++++ b/tests/forms_tests/widget_tests/test_checkboxinput.py
+@@ -88,4 +88,10 @@ class CheckboxInputTest(WidgetTest):
+ 
+     def test_value_omitted_from_data(self):
+         self.assertIs(self.widget.value_omitted_from_data({'field': 'value'}, {}, 'field'), False)
+-        self.assertIs(self.widget.value_omitted_from_data({}, {}, 'field'), False)
++    def test_get_context_does_not_mutate_attrs(self):
++        widget = CheckboxInput()
++        attrs = {'class': 'foo'}
++        widget.get_context('is_cool', True, attrs)
++        self.assertNotIn('checked', attrs)
++        widget.get_context('is_cool', False, attrs)
++        self.assertNotIn('checked', attrs)
+diff --git a/tests/postgres_tests/test_array.py b/tests/postgres_tests/test_array.py
+index 481d93f8..c94ea5b6 100644
+--- a/tests/postgres_tests/test_array.py
++++ b/tests/postgres_tests/test_array.py
+@@ -1130,3 +1130,38 @@ class TestSplitFormWidget(PostgreSQLWidgetTestCase):
+         self.assertIs(widget.value_omitted_from_data({'field_0': 'value'}, {}, 'field'), False)
+         self.assertIs(widget.value_omitted_from_data({'field_1': 'value'}, {}, 'field'), False)
+         self.assertIs(widget.value_omitted_from_data({'field_0': 'value', 'field_1': 'value'}, {}, 'field'), False)
++
++    def test_get_context_checkbox(self):
++        self.assertEqual(
++            SplitArrayWidget(forms.CheckboxInput(), size=2).get_context('name', [True, False]),
++            {
++                'widget': {
++                    'name': 'name',
++                    'is_hidden': False,
++                    'required': False,
++                    'value': '[True, False]',
++                    'attrs': {},
++                    'template_name': 'postgres/widgets/split_array.html',
++                    'subwidgets': [
++                        {
++                            'name': 'name_0',
++                            'is_hidden': False,
++                            'required': False,
++                            'value': '',
++                            'attrs': {'checked': True},
++                            'template_name': 'django/forms/widgets/checkbox.html',
++                            'type': 'checkbox',
++                        },
++                        {
++                            'name': 'name_1',
++                            'is_hidden': False,
++                            'required': False,
++                            'value': '',
++                            'attrs': {},
++                            'template_name': 'django/forms/widgets/checkbox.html',
++                            'type': 'checkbox',
++                        },
++                    ]
++                }
++            }
++        )

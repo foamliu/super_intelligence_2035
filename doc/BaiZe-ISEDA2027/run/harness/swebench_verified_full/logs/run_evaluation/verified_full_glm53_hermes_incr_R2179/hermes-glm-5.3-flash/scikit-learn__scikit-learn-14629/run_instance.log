@@ -1,0 +1,121 @@
+2026-11-11 16:11:12,771 - INFO - Creating container for scikit-learn__scikit-learn-14629...
+2026-11-11 16:11:12,844 - INFO - Container for scikit-learn__scikit-learn-14629 created: 177b41fe9402cc82ee24731b41a5e4ca7f6f134f7387b2e9f7f875d16a1e09f1
+2026-11-11 16:11:13,702 - INFO - Container for scikit-learn__scikit-learn-14629 started: 177b41fe9402cc82ee24731b41a5e4ca7f6f134f7387b2e9f7f875d16a1e09f1
+2026-11-11 16:11:13,705 - INFO - Intermediate patch for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2179/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14629/patch.diff, now applying to container...
+2026-11-11 16:11:13,857 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/multioutput.py...
+Checking patch sklearn/tests/test_multioutput.py...
+Applied patch sklearn/multioutput.py cleanly.
+Applied patch sklearn/tests/test_multioutput.py cleanly.
+
+2026-11-11 16:11:14,329 - INFO - Git diff before:
+diff --git a/sklearn/multioutput.py b/sklearn/multioutput.py
+index 463b72d40..696244aae 100644
+--- a/sklearn/multioutput.py
++++ b/sklearn/multioutput.py
+@@ -168,6 +168,9 @@ class MultiOutputEstimator(BaseEstimator, MetaEstimatorMixin,
+             delayed(_fit_estimator)(
+                 self.estimator, X, y[:, i], sample_weight)
+             for i in range(y.shape[1]))
++        if is_classifier(self):
++            self.classes_ = [estimator.classes_
++                             for estimator in self.estimators_]
+         return self
+ 
+     def predict(self, X):
+@@ -320,6 +323,9 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):
+     ----------
+     estimators_ : list of ``n_output`` estimators
+         Estimators used for predictions.
++
++    classes_ : list of arrays of shape (n_classes,) for each output
++        Class labels for each output.
+     """
+ 
+     def __init__(self, estimator, n_jobs=None):
+diff --git a/sklearn/tests/test_multioutput.py b/sklearn/tests/test_multioutput.py
+index e70048a7f..65c6fc4c4 100644
+--- a/sklearn/tests/test_multioutput.py
++++ b/sklearn/tests/test_multioutput.py
+@@ -28,7 +28,7 @@ from sklearn.multioutput import MultiOutputRegressor
+ from sklearn.svm import LinearSVC
+ from sklearn.base import ClassifierMixin
+ from sklearn.utils import shuffle
+-from sklearn.model_selection import GridSearchCV
++from sklearn.model_selection import GridSearchCV, cross_val_predict
+ 
+ 
+ def test_multi_target_regression():
+@@ -527,3 +527,36 @@ def test_base_chain_crossval_fit_and_predict():
+             assert jaccard_score(Y, Y_pred_cv, average='samples') > .4
+         else:
+             assert mean_squared_error(Y, Y_pred_cv) < .25
++
++
++@pytest.mark.parametrize(
++    'estimator',
++    [RandomForestClassifier(n_estimators=2),
++     MultiOutputClassifier(RandomForestClassifier(n_estimators=2)),
++     ClassifierChain(RandomForestClassifier(n_estimators=2))]
++)
++def test_multi_output_classes_(estimator):
++    # Tests classes_ attribute of multioutput classifiers
++    # RandomForestClassifier supports multioutput out-of-the-box
++    estimator.fit(X, y)
++    assert isinstance(estimator.classes_, list)
++    assert len(estimator.classes_) == n_outputs
++    for estimator_classes, expected_classes in zip(classes,
++                                                   estimator.classes_):
++        assert_array_equal(estimator_classes, expected_classes)
++
++
++def test_multioutput_classifier_cross_val_predict_predict_proba():
++    # Non-regression test for #13438: cross_val_predict with
++    # method='predict_proba' used to fail with MultiOutputClassifier
++    # because it had no classes_ attribute.
++    X, Y = datasets.make_multilabel_classification(n_samples=50,
++                                                   random_state=0)
++    clf = MultiOutputClassifier(RandomForestClassifier(n_estimators=5,
++                                                       random_state=0))
++    predictions = cross_val_predict(clf, X, Y, cv=3,
++                                    method='predict_proba')
++    assert len(predictions) == Y.shape[1]
++    for i_label, label_predictions in enumerate(predictions):
++        n_classes_label = len(np.unique(Y[:, i_label]))
++        assert label_predictions.shape == (X.shape[0], n_classes_label)
+2026-11-11 16:11:14,331 - INFO - Eval script for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2179/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14629/eval.sh; copying to container...
+2026-11-11 16:11:24,287 - INFO - Test runtime: 9.87 seconds
+2026-11-11 16:11:24,289 - INFO - Test output for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2179/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14629/test_output.txt
+2026-11-11 16:11:24,343 - INFO - Git diff after:
+diff --git a/sklearn/multioutput.py b/sklearn/multioutput.py
+index 463b72d40..696244aae 100644
+--- a/sklearn/multioutput.py
++++ b/sklearn/multioutput.py
+@@ -168,6 +168,9 @@ class MultiOutputEstimator(BaseEstimator, MetaEstimatorMixin,
+             delayed(_fit_estimator)(
+                 self.estimator, X, y[:, i], sample_weight)
+             for i in range(y.shape[1]))
++        if is_classifier(self):
++            self.classes_ = [estimator.classes_
++                             for estimator in self.estimators_]
+         return self
+ 
+     def predict(self, X):
+@@ -320,6 +323,9 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):
+     ----------
+     estimators_ : list of ``n_output`` estimators
+         Estimators used for predictions.
++
++    classes_ : list of arrays of shape (n_classes,) for each output
++        Class labels for each output.
+     """
+ 
+     def __init__(self, estimator, n_jobs=None):
+2026-11-11 16:11:24,343 - INFO - Git diff changed after running eval script
+2026-11-11 16:11:24,343 - INFO - Grading answer for scikit-learn__scikit-learn-14629...
+2026-11-11 16:11:24,345 - INFO - report: {'scikit-learn__scikit-learn-14629': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator1]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tests/test_multioutput.py::test_multi_target_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_one_target', 'sklearn/tests/test_multioutput.py::test_multi_target_sparse_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights_api', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weight_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_parallelism', 'sklearn/tests/test_multioutput.py::test_multi_output_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_no_first_classes_exception', 'sklearn/tests/test_multioutput.py::test_multi_output_classification', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_exceptions', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_linear_svc', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_sparse_data', 'sklearn/tests/test_multioutput.py::test_classifier_chain_vs_independent_models', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict_with_sparse_data_and_cv', 'sklearn/tests/test_multioutput.py::test_base_chain_random_order', 'sklearn/tests/test_multioutput.py::test_base_chain_crossval_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator0]', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator2]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14629: resolved: True
+2026-11-11 16:11:24,347 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_glm53_hermes_incr_R2179...
+2026-11-11 16:11:40,415 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_glm53_hermes_incr_R2179 stopped successfully.
+2026-11-11 16:11:40,415 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_glm53_hermes_incr_R2179...
+2026-11-11 16:11:40,455 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_glm53_hermes_incr_R2179 removed successfully.

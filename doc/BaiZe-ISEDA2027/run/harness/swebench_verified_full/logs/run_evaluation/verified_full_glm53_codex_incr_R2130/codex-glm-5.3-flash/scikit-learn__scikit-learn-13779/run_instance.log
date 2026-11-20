@@ -1,0 +1,82 @@
+2026-11-11 00:44:33,438 - INFO - Creating container for scikit-learn__scikit-learn-13779...
+2026-11-11 00:44:33,488 - INFO - Container for scikit-learn__scikit-learn-13779 created: 3cca37b4b6b1cbdced393fde0c4b0e0571dceeac548b3de53b999f28a57daa3d
+2026-11-11 00:44:35,779 - INFO - Container for scikit-learn__scikit-learn-13779 started: 3cca37b4b6b1cbdced393fde0c4b0e0571dceeac548b3de53b999f28a57daa3d
+2026-11-11 00:44:35,780 - INFO - Intermediate patch for scikit-learn__scikit-learn-13779 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2130/codex-glm-5.3-flash/scikit-learn__scikit-learn-13779/patch.diff, now applying to container...
+2026-11-11 00:44:35,970 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/tests/test_voting.py...
+warning: sklearn/ensemble/tests/test_voting.py has type 100755, expected 100644
+Checking patch sklearn/ensemble/voting.py...
+warning: sklearn/ensemble/voting.py has type 100755, expected 100644
+Applied patch sklearn/ensemble/tests/test_voting.py cleanly.
+Applied patch sklearn/ensemble/voting.py cleanly.
+
+2026-11-11 00:44:36,325 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/tests/test_voting.py b/sklearn/ensemble/tests/test_voting.py
+index 2a19bc9a6..8d2550ac2 100755
+--- a/sklearn/ensemble/tests/test_voting.py
++++ b/sklearn/ensemble/tests/test_voting.py
+@@ -170,6 +170,11 @@ def test_weights_regressor():
+     ereg_equal_pred = ereg_weights_equal.predict(X_r_test)
+     assert_almost_equal(ereg_none_pred, ereg_equal_pred, decimal=2)
+ 
++    ereg_weights_none.set_params(median=None)
++    ereg_weights_none.fit(X_r_train, y_r_train,
++                          sample_weight=np.ones((len(y_r_train),)))
++    assert len(ereg_weights_none.estimators_) == 2
++
+ 
+ @pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
+ @pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
+@@ -347,6 +352,14 @@ def test_sample_weight():
+     msg = ('Underlying estimator \'knn\' does not support sample weights.')
+     assert_raise_message(ValueError, msg, eclf3.fit, X, y, sample_weight)
+ 
++    # Setting an estimator to None should not affect sample weight support
++    # validation.
++    eclf4 = VotingClassifier(estimators=[('lr', clf1), ('svc', clf3)],
++                             voting='soft')
++    eclf4.set_params(lr=None)
++    eclf4.fit(X, y, sample_weight=np.ones((len(y),)))
++    assert len(eclf4.estimators_) == 1
++
+ 
+ def test_sample_weight_kwargs():
+     """Check that VotingClassifier passes sample_weight as kwargs"""
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180c..d8e14b152 100755
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,6 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
++                if step is None:
++                    continue
+                 if not has_fit_parameter(step, 'sample_weight'):
+                     raise ValueError('Underlying estimator \'%s\' does not'
+                                      ' support sample weights.' % name)
+2026-11-11 00:44:36,327 - INFO - Eval script for scikit-learn__scikit-learn-13779 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2130/codex-glm-5.3-flash/scikit-learn__scikit-learn-13779/eval.sh; copying to container...
+2026-11-11 00:44:43,496 - INFO - Test runtime: 7.07 seconds
+2026-11-11 00:44:43,498 - INFO - Test output for scikit-learn__scikit-learn-13779 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2130/codex-glm-5.3-flash/scikit-learn__scikit-learn-13779/test_output.txt
+2026-11-11 00:44:43,578 - INFO - Git diff after:
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180c..d8e14b152 100755
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,6 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
++                if step is None:
++                    continue
+                 if not has_fit_parameter(step, 'sample_weight'):
+                     raise ValueError('Underlying estimator \'%s\' does not'
+                                      ' support sample weights.' % name)
+2026-11-11 00:44:43,578 - INFO - Git diff changed after running eval script
+2026-11-11 00:44:43,578 - INFO - Grading answer for scikit-learn__scikit-learn-13779...
+2026-11-11 00:44:43,584 - INFO - report: {'scikit-learn__scikit-learn-13779': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/ensemble/tests/test_voting.py::test_none_estimator_with_weights[X0-y0-voter0]', 'sklearn/ensemble/tests/test_voting.py::test_none_estimator_with_weights[X1-y1-voter1]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/ensemble/tests/test_voting.py::test_estimator_init', 'sklearn/ensemble/tests/test_voting.py::test_predictproba_hardvoting', 'sklearn/ensemble/tests/test_voting.py::test_notfitted', 'sklearn/ensemble/tests/test_voting.py::test_majority_label_iris', 'sklearn/ensemble/tests/test_voting.py::test_tie_situation', 'sklearn/ensemble/tests/test_voting.py::test_weights_iris', 'sklearn/ensemble/tests/test_voting.py::test_weights_regressor', 'sklearn/ensemble/tests/test_voting.py::test_predict_on_toy_problem', 'sklearn/ensemble/tests/test_voting.py::test_predict_proba_on_toy_problem', 'sklearn/ensemble/tests/test_voting.py::test_multilabel', 'sklearn/ensemble/tests/test_voting.py::test_gridsearch', 'sklearn/ensemble/tests/test_voting.py::test_parallel_fit', 'sklearn/ensemble/tests/test_voting.py::test_sample_weight', 'sklearn/ensemble/tests/test_voting.py::test_sample_weight_kwargs', 'sklearn/ensemble/tests/test_voting.py::test_set_params', 'sklearn/ensemble/tests/test_voting.py::test_set_estimator_none', 'sklearn/ensemble/tests/test_voting.py::test_estimator_weights_format', 'sklearn/ensemble/tests/test_voting.py::test_transform'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13779: resolved: True
+2026-11-11 00:44:43,586 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_codex_incr_R2130...
+2026-11-11 00:44:59,997 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_codex_incr_R2130 stopped successfully.
+2026-11-11 00:44:59,997 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_codex_incr_R2130...
+2026-11-11 00:45:00,031 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_codex_incr_R2130 removed successfully.

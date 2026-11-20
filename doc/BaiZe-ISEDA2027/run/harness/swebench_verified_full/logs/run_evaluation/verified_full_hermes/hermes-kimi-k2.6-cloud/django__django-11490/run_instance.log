@@ -1,0 +1,48 @@
+2026-11-01 23:47:43,598 - INFO - Creating container for django__django-11490...
+2026-11-01 23:47:43,652 - INFO - Container for django__django-11490 created: 36ed4acbdae71fe127bb8775d7bc68babc013da97cb84a936b9cb8bc3bbd590a
+2026-11-01 23:47:44,324 - INFO - Container for django__django-11490 started: 36ed4acbdae71fe127bb8775d7bc68babc013da97cb84a936b9cb8bc3bbd590a
+2026-11-01 23:47:44,326 - INFO - Intermediate patch for django__django-11490 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-11490/patch.diff, now applying to container...
+2026-11-01 23:47:44,452 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+
+2026-11-01 23:47:45,275 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc760..3d2f6706b9 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -426,6 +426,9 @@ class SQLCompiler:
+                 # must have the same columns list. Set the selects defined on
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
++                    # If the combined query doesn't have its select list set
++                    # yet, clone it to avoid mutating the original query.
++                    compiler = compiler.query.clone().get_compiler(self.using, self.connection)
+                     compiler.query.set_values((
+                         *self.query.extra_select,
+                         *self.query.values_select,
+2026-11-01 23:47:45,278 - INFO - Eval script for django__django-11490 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-11490/eval.sh; copying to container...
+2026-11-01 23:47:51,877 - INFO - Test runtime: 6.54 seconds
+2026-11-01 23:47:51,880 - INFO - Test output for django__django-11490 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-11490/test_output.txt
+2026-11-01 23:47:51,961 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc760..3d2f6706b9 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -426,6 +426,9 @@ class SQLCompiler:
+                 # must have the same columns list. Set the selects defined on
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
++                    # If the combined query doesn't have its select list set
++                    # yet, clone it to avoid mutating the original query.
++                    compiler = compiler.query.clone().get_compiler(self.using, self.connection)
+                     compiler.query.set_values((
+                         *self.query.extra_select,
+                         *self.query.values_select,
+2026-11-01 23:47:51,961 - INFO - Grading answer for django__django-11490...
+2026-11-01 23:47:51,964 - INFO - report: {'django__django-11490': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_union_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_combining_multiple_models (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_difference (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_intersection (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_union (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_union_empty_result (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_difference_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_difference_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_intersection_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_intersection_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_limits (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_order_raises_on_non_selected_column (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering_by_f_expression (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_qs_with_subcompound_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_difference (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_intersection (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_union (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_distinct (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_extra_and_values_list (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_two_annotated_values_list (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_unsupported_ordering_slicing_raises_db_error (queries.test_qs_combinators.QuerySetSetOperationTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11490: resolved: True
+2026-11-01 23:47:51,966 - INFO - Attempting to stop container sweb.eval.django__django-11490.verified_full_hermes...
+2026-11-01 23:48:08,263 - INFO - Container sweb.eval.django__django-11490.verified_full_hermes stopped successfully.
+2026-11-01 23:48:08,263 - INFO - Attempting to remove container sweb.eval.django__django-11490.verified_full_hermes...
+2026-11-01 23:48:08,314 - INFO - Container sweb.eval.django__django-11490.verified_full_hermes removed successfully.

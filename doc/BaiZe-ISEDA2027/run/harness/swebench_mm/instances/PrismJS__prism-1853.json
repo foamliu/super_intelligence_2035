@@ -1,0 +1,37 @@
+{
+  "base_commit": "2f9c9261bc1454899266929711d5842a3675e467",
+  "created_at": "2019-04-01T09:13:31Z",
+  "eval_type": "pass_and_fail",
+  "image": "swebench/sweb.eval.x86_64.prismjs_1776_prism-1853:latest",
+  "image_assets": {
+    "patch": [],
+    "problem_statement": [
+      "https://user-images.githubusercontent.com/24775744/55315159-55a5b580-549e-11e9-9789-1c0e7ac3356f.png"
+    ],
+    "test_patch": []
+  },
+  "instance_id": "PrismJS__prism-1853",
+  "log_parser": "parse_log_prismjs",
+  "repo": "PrismJS/prism",
+  "version": "1.16",
+  "patch": "diff --git a/components/prism-json.js b/components/prism-json.js\nindex 5f4017913d..2352c38a17 100644\n--- a/components/prism-json.js\n+++ b/components/prism-json.js\n@@ -1,5 +1,4 @@\n Prism.languages.json = {\n-\t'comment': /\\/\\/.*|\\/\\*[\\s\\S]*?(?:\\*\\/|$)/,\n \t'property': {\n \t\tpattern: /\"(?:\\\\.|[^\\\\\"\\r\\n])*\"(?=\\s*:)/,\n \t\tgreedy: true\n@@ -8,6 +7,7 @@ Prism.languages.json = {\n \t\tpattern: /\"(?:\\\\.|[^\\\\\"\\r\\n])*\"(?!\\s*:)/,\n \t\tgreedy: true\n \t},\n+\t'comment': /\\/\\/.*|\\/\\*[\\s\\S]*?(?:\\*\\/|$)/,\n \t'number': /-?\\d+\\.?\\d*(e[+-]?\\d+)?/i,\n \t'punctuation': /[{}[\\],]/,\n \t'operator': /:/,\ndiff --git a/components/prism-json.min.js b/components/prism-json.min.js\nindex 6ea539dfa1..b67c29fe94 100644\n--- a/components/prism-json.min.js\n+++ b/components/prism-json.min.js\n@@ -1,1 +1,1 @@\n-Prism.languages.json={comment:/\\/\\/.*|\\/\\*[\\s\\S]*?(?:\\*\\/|$)/,property:{pattern:/\"(?:\\\\.|[^\\\\\"\\r\\n])*\"(?=\\s*:)/,greedy:!0},string:{pattern:/\"(?:\\\\.|[^\\\\\"\\r\\n])*\"(?!\\s*:)/,greedy:!0},number:/-?\\d+\\.?\\d*(e[+-]?\\d+)?/i,punctuation:/[{}[\\],]/,operator:/:/,boolean:/\\b(?:true|false)\\b/,null:{pattern:/\\bnull\\b/,alias:\"keyword\"}};\n\\ No newline at end of file\n+Prism.languages.json={property:{pattern:/\"(?:\\\\.|[^\\\\\"\\r\\n])*\"(?=\\s*:)/,greedy:!0},string:{pattern:/\"(?:\\\\.|[^\\\\\"\\r\\n])*\"(?!\\s*:)/,greedy:!0},comment:/\\/\\/.*|\\/\\*[\\s\\S]*?(?:\\*\\/|$)/,number:/-?\\d+\\.?\\d*(e[+-]?\\d+)?/i,punctuation:/[{}[\\],]/,operator:/:/,boolean:/\\b(?:true|false)\\b/,null:{pattern:/\\bnull\\b/,alias:\"keyword\"}};\n\\ No newline at end of file\n",
+  "test_patch": "diff --git a/tests/languages/json/issue1852.test b/tests/languages/json/issue1852.test\nnew file mode 100644\nindex 0000000000..5ed99c0e01\n--- /dev/null\n+++ b/tests/languages/json/issue1852.test\n@@ -0,0 +1,27 @@\n+{\r\n+\t\"A\": \"/*\",\r\n+\t\"B\": \"B\",\r\n+\t\"C\": \"C\"\r\n+}\r\n+\r\n+----------------------------------------------------\r\n+\r\n+[\r\n+\t[\"punctuation\", \"{\"],\r\n+\t[\"property\", \"\\\"A\\\"\"],\r\n+\t[\"operator\", \":\"],\r\n+\t[\"string\", \"\\\"/*\\\"\"],\r\n+\t[\"punctuation\", \",\"],\r\n+\t[\"property\", \"\\\"B\\\"\"],\r\n+\t[\"operator\", \":\"],\r\n+\t[\"string\", \"\\\"B\\\"\"],\r\n+\t[\"punctuation\", \",\"],\r\n+\t[\"property\", \"\\\"C\\\"\"],\r\n+\t[\"operator\", \":\"],\r\n+\t[\"string\", \"\\\"C\\\"\"],\r\n+\t[\"punctuation\", \"}\"]\r\n+]\r\n+\r\n+----------------------------------------------------\r\n+\r\n+Checks for issue #1852.\r\n",
+  "eval_script": "#!/bin/bash\nset -uxo pipefail\ncd /testbed\ngit config --global --add safe.directory /testbed\nsource $NVM_DIR/nvm.sh\ngit status\ngit show\ngit -c core.fileMode=false diff 2f9c9261bc1454899266929711d5842a3675e467\nrm -f tests/languages/json/issue1852.test\ngit apply -v - <<'EOF_114329324912'\ndiff --git a/tests/languages/json/issue1852.test b/tests/languages/json/issue1852.test\nnew file mode 100644\nindex 0000000000..5ed99c0e01\n--- /dev/null\n+++ b/tests/languages/json/issue1852.test\n@@ -0,0 +1,27 @@\n+{\r\n+\t\"A\": \"/*\",\r\n+\t\"B\": \"B\",\r\n+\t\"C\": \"C\"\r\n+}\r\n+\r\n+----------------------------------------------------\r\n+\r\n+[\r\n+\t[\"punctuation\", \"{\"],\r\n+\t[\"property\", \"\\\"A\\\"\"],\r\n+\t[\"operator\", \":\"],\r\n+\t[\"string\", \"\\\"/*\\\"\"],\r\n+\t[\"punctuation\", \",\"],\r\n+\t[\"property\", \"\\\"B\\\"\"],\r\n+\t[\"operator\", \":\"],\r\n+\t[\"string\", \"\\\"B\\\"\"],\r\n+\t[\"punctuation\", \",\"],\r\n+\t[\"property\", \"\\\"C\\\"\"],\r\n+\t[\"operator\", \":\"],\r\n+\t[\"string\", \"\\\"C\\\"\"],\r\n+\t[\"punctuation\", \"}\"]\r\n+]\r\n+\r\n+----------------------------------------------------\r\n+\r\n+Checks for issue #1852.\r\n\nEOF_114329324912\nif ! git diff --quiet HEAD -- package.json 2>/dev/null; then echo \"package.json changed by patch; re-syncing dependencies\"; export PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true; if [ -f yarn.lock ]; then timeout 900 yarn install --silent > /dev/null 2>&1 || true; else timeout 900 npm install --silent > /dev/null 2>&1 || true; fi; chmod -R a+rX node_modules > /dev/null 2>&1 || true; fi\n: '>>>>> Start Test Output'\n./node_modules/.bin/mocha tests/run.js --reporter json --language json\n: '>>>>> End Test Output'\nrm -f tests/languages/json/issue1852.test\n",
+  "problem_statement": "/* breaks JSON tokenization\n**Information**\r\n- Language: [JSON]\r\n- Plugins: [none]\r\n\r\nDoes the problem still occur in the latest version of Prism? Yes\r\n\r\n**Description**\r\nI'm logging server response as JSON. The HTTP header `Accept: */*` triggers this problem.\r\n\r\n![broken_tokenization](https://user-images.githubusercontent.com/24775744/55315159-55a5b580-549e-11e9-9789-1c0e7ac3356f.png)\r\n\r\n\r\n**Code snippet**\r\n\r\n<details>\r\n<summary>The code being highlighted incorrectly.</summary>\r\n\r\n```\r\n{\r\n  \"A\": \"/*\",\r\n  \"B\": \"B\",\r\n  \"C\": \"C\"\r\n}\r\n```\r\n\r\n</details>\r\n\n",
+  "hints_text": "Redefining `Prism.languages.json.comment` solves my problem, but I'm still posting the issue to see if this was intended or not.\nThis is definitely a bug which is probably caused by #1492.\r\n\r\n> Redefining Prism.languages.json.comment solves my problem\r\n\r\nWhat does 'redefining' mean? Do you change or delete `comment`?\n> What does 'redefining' mean? Do you change or delete `comment`?\r\n\r\nYes, I changed `comment` as all of my code are standard `json` without comment.",
+  "FAIL_TO_PASS": [
+    "Testing language 'json' – should pass test case 'issue1852'"
+  ],
+  "PASS_TO_PASS": [
+    "Testing language 'json+http' – should pass test case 'json_inclusion'",
+    "Testing language 'json' – should pass test case 'comment_feature'",
+    "Testing language 'json' – should pass test case 'string_feature'",
+    "Testing language 'json' – should pass test case 'null_feature'",
+    "Testing language 'json' – should pass test case 'boolean_feature'",
+    "Testing language 'json+http' – should pass test case 'json-suffix_inclusion'",
+    "Testing language 'json' – should pass test case 'punctuation_feature'",
+    "Testing language 'json' – should pass test case 'property_feature'",
+    "Testing language 'json' – should pass test case 'operator_feature'",
+    "Testing language 'json' – should pass test case 'number_feature'"
+  ]
+}

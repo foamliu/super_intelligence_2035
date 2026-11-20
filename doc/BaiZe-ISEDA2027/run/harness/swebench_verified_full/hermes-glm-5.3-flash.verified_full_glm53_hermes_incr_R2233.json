@@ -1,0 +1,16 @@
+{
+  "harness": "hermes",
+  "run_id": "verified_full_glm53_hermes_incr_R2233",
+  "round": "R2233",
+  "n": 6,
+  "resolved": [
+    "matplotlib__matplotlib-26208",
+    "matplotlib__matplotlib-26291",
+    "matplotlib__matplotlib-26342",
+    "matplotlib__matplotlib-26466",
+    "pydata__xarray-6599",
+    "pydata__xarray-7393"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

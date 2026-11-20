@@ -1,0 +1,68 @@
+diff --git a/ChangeLog b/ChangeLog
+index a0f12a7..322f9e0 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -13,6 +13,11 @@ Release date: TBA
+ 
+   Closes #1548
+ 
++* Fix a false positive for ``unused-import`` when an import is only used in a
++  type comment with a qualified name, e.g. ``x = ...  # type: abc.ABC``.
++
++  Closes #4639
++
+ * astroid has been upgraded to 2.6.0
+ 
+ * Fix false positive ``useless-type-doc`` on ignored argument using ``pylint.extensions.docparams``
+diff --git a/pylint/checkers/variables.py b/pylint/checkers/variables.py
+index 3ddafd5..9f64456 100644
+--- a/pylint/checkers/variables.py
++++ b/pylint/checkers/variables.py
+@@ -1826,6 +1826,16 @@ class VariablesChecker(BaseChecker):
+             self._type_annotation_names.append(type_annotation.name)
+             return
+ 
++        if isinstance(type_annotation, astroid.Attribute):
++            # e.g. ``type: abc.ABC``, or ``type: typing.Optional``
++            # Store the name of the root of the attribute expression, e.g. ``abc``
++            expr = type_annotation.expr
++            while isinstance(expr, astroid.Attribute):
++                expr = expr.expr
++            if isinstance(expr, astroid.Name):
++                self._type_annotation_names.append(expr.name)
++            return
++
+         if not isinstance(type_annotation, astroid.Subscript):
+             return
+ 
+diff --git a/tests/functional/u/unused/unused_typing_imports.py b/tests/functional/u/unused/unused_typing_imports.py
+index 7de4e41..8778687 100644
+--- a/tests/functional/u/unused/unused_typing_imports.py
++++ b/tests/functional/u/unused/unused_typing_imports.py
+@@ -5,6 +5,8 @@ The problem was that we weren't handling keyword-only arguments annotations,
+ which means we were never processing them.
+ """
+ 
++import abc
++import collections
+ import re
+ import typing
+ from collections import Counter as CollectionCounter
+@@ -83,3 +85,17 @@ def unused_reassigned_import(counter):
+     # type: (CollectionCounter) -> int
+     print(counter)
+     return 42
++
++
++def unused_qualified_type_comment():
++    # Regression test for https://github.com/PyCQA/pylint/issues/4639
++    # Imports used in qualified names in type comments should not
++    # be flagged as unused.
++    a_module = ...  # type: abc.ABC
++    another = ...  # type: collections.OrderedDict
++    return a_module, another
++
++
++def unused_qualified_type_comment_from_import():
++    other = ...  # type: ABC
++    return other

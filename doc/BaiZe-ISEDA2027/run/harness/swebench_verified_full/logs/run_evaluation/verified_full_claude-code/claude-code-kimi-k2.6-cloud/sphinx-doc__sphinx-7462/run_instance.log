@@ -1,0 +1,67 @@
+2026-10-30 17:24:47,374 - INFO - Creating container for sphinx-doc__sphinx-7462...
+2026-10-30 17:24:47,409 - INFO - Container for sphinx-doc__sphinx-7462 created: 2f9126a7242a95125b7e9ef6f2dfe7cc4b25c51e4f9c24ad8978e140e88bb443
+2026-10-30 17:24:59,043 - INFO - Container for sphinx-doc__sphinx-7462 started: 2f9126a7242a95125b7e9ef6f2dfe7cc4b25c51e4f9c24ad8978e140e88bb443
+2026-10-30 17:24:59,045 - INFO - Intermediate patch for sphinx-doc__sphinx-7462 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-7462/patch.diff, now applying to container...
+2026-10-30 17:24:59,795 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-10-30 17:25:00,603 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 3ca730e30..f1a03c15d 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -118,7 +118,8 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if len(node.elts) > 0:
++                result.pop()
+             return result
+         else:
+             raise SyntaxError  # unsupported syntax
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index cc3d3cf53..a687df09e 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -272,6 +272,11 @@ def test_parse_annotation():
+     assert_node(doctree, ([pending_xref, "None"],))
+     assert_node(doctree[0], pending_xref, refdomain="py", reftype="obj", reftarget="None")
+ 
++    # empty tuple type
++    doctree = _parse_annotation("Tuple[()]")
++    assert_node(doctree, ([pending_xref, "Tuple"],
++                          [desc_sig_punctuation, "["],
++                          [desc_sig_punctuation, "]"]))
+ 
+ 
+ def test_pyfunction_signature(app):
+2026-10-30 17:25:00,608 - INFO - Eval script for sphinx-doc__sphinx-7462 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-7462/eval.sh; copying to container...
+2026-10-30 17:25:05,459 - INFO - Test runtime: 4.65 seconds
+2026-10-30 17:25:05,461 - INFO - Test output for sphinx-doc__sphinx-7462 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-7462/test_output.txt
+2026-10-30 17:25:05,605 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 3ca730e30..f1a03c15d 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -118,7 +118,8 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if len(node.elts) > 0:
++                result.pop()
+             return result
+         else:
+             raise SyntaxError  # unsupported syntax
+2026-10-30 17:25:05,606 - INFO - Git diff changed after running eval script
+2026-10-30 17:25:05,606 - INFO - Grading answer for sphinx-doc__sphinx-7462...
+2026-10-30 17:25:05,623 - INFO - report: {'sphinx-doc__sphinx-7462': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/test_domain_py.py::test_parse_annotation', 'tests/test_pycode_ast.py::test_unparse[()-()]']}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_pycode_ast.py::test_unparse[a', 'tests/test_pycode_ast.py::test_unparse[os.path-os.path]', 'tests/test_pycode_ast.py::test_unparse[1', "tests/test_pycode_ast.py::test_unparse[b'bytes'-b'bytes']", 'tests/test_pycode_ast.py::test_unparse[object()-object()]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_0]', "tests/test_pycode_ast.py::test_unparse[{'key1':", 'tests/test_pycode_ast.py::test_unparse[...-...]', 'tests/test_pycode_ast.py::test_unparse[Tuple[int,', 'tests/test_pycode_ast.py::test_unparse[~', 'tests/test_pycode_ast.py::test_unparse[lambda', 'tests/test_pycode_ast.py::test_unparse[[1,', 'tests/test_pycode_ast.py::test_unparse[sys-sys]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_1]', 'tests/test_pycode_ast.py::test_unparse[not', 'tests/test_pycode_ast.py::test_unparse[{1,', "tests/test_pycode_ast.py::test_unparse['str'-'str']", 'tests/test_pycode_ast.py::test_unparse[+', 'tests/test_pycode_ast.py::test_unparse[-', 'tests/test_pycode_ast.py::test_unparse[(1,', 'tests/test_pycode_ast.py::test_unparse_None', 'tests/test_pycode_ast.py::test_unparse_py38'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7462: resolved: False
+2026-10-30 17:25:05,632 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7462.verified_full_claude-code...
+2026-10-30 17:25:21,899 - INFO - Container sweb.eval.sphinx-doc__sphinx-7462.verified_full_claude-code stopped successfully.
+2026-10-30 17:25:21,899 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7462.verified_full_claude-code...
+2026-10-30 17:25:21,948 - INFO - Container sweb.eval.sphinx-doc__sphinx-7462.verified_full_claude-code removed successfully.

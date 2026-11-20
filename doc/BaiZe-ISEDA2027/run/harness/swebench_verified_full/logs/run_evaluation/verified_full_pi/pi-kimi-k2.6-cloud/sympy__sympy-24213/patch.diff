@@ -1,0 +1,38 @@
+diff --git a/sympy/physics/units/tests/test_quantities.py b/sympy/physics/units/tests/test_quantities.py
+index c1830ba5f..682077325 100644
+--- a/sympy/physics/units/tests/test_quantities.py
++++ b/sympy/physics/units/tests/test_quantities.py
+@@ -372,6 +372,20 @@ def test_factor_and_dimension():
+     expr = v_w1**(v_w2/v_w1)
+     assert ((Rational(3, 2))**Rational(4, 3), (length/time)**Rational(4, 3)) == \
+         SI._collect_factor_and_dimension(expr)
++    # Equivalent dimensions in addition (e.g. velocity = acceleration*time):
++    v1 = Quantity('v1_test')
++    SI.set_quantity_dimension(v1, length/time)
++    SI.set_quantity_scale_factor(v1, 2*meter/second)
++    a1 = Quantity('a1_test')
++    SI.set_quantity_dimension(a1, length/time**2)
++    SI.set_quantity_scale_factor(a1, -9.8*meter/second**2)
++    t1 = Quantity('t1_test')
++    SI.set_quantity_dimension(t1, time)
++    SI.set_quantity_scale_factor(t1, 5*second)
++    expr = a1*t1 + v1
++    factor, dim = SI._collect_factor_and_dimension(expr)
++    assert factor == -47
++    assert SI.get_dimension_system().equivalent_dims(dim, length/time)
+ 
+     with warns_deprecated_sympy():
+         assert (3000, Dimension(1)) == Quantity._collect_factor_and_dimension(3000)
+diff --git a/sympy/physics/units/unitsystem.py b/sympy/physics/units/unitsystem.py
+index a436880c4..5705c821c 100644
+--- a/sympy/physics/units/unitsystem.py
++++ b/sympy/physics/units/unitsystem.py
+@@ -175,7 +175,7 @@ def _collect_factor_and_dimension(self, expr):
+             for addend in expr.args[1:]:
+                 addend_factor, addend_dim = \
+                     self._collect_factor_and_dimension(addend)
+-                if dim != addend_dim:
++                if not self.get_dimension_system().equivalent_dims(dim, addend_dim):
+                     raise ValueError(
+                         'Dimension of "{}" is {}, '
+                         'but it should be {}'.format(

@@ -1,0 +1,58 @@
+diff --git a/test_json_in.py b/test_json_in.py
+new file mode 100644
+index 0000000000..b111c201de
+--- /dev/null
++++ b/test_json_in.py
+@@ -0,0 +1,26 @@
++import os
++import sys
++
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tests'))
++
++os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'test_settings')
++
++import django
++django.setup()
++
++from django.db import connection
++
++with connection.cursor() as cursor:
++    cursor.execute("SELECT JSON_EXTRACT('{\"key\": \"hello\"}', '$.key') IN ('\"hello\"')")
++    print('IN ("hello"):', cursor.fetchone()[0])
++    cursor.execute("SELECT JSON_EXTRACT('{\"key\": \"hello\"}', '$.key') IN ('hello')")
++    print("IN ('hello'):", cursor.fetchone()[0])
++    cursor.execute("SELECT JSON_EXTRACT('{\"key\": true}', '$.key') IN ('true')")
++    print("IN ('true'):", cursor.fetchone()[0])
++    cursor.execute("SELECT JSON_EXTRACT('{\"key\": true}', '$.key') = 'true'")
++    print("= 'true':", cursor.fetchone()[0])
++    cursor.execute("SELECT JSON_EXTRACT('{\"key\": null}', '$.key') IN ('null')")
++    print("IN ('null'):", cursor.fetchone()[0])
++    cursor.execute("SELECT JSON_EXTRACT('{\"key\": null}', '$.key') IS NULL")
++    print("IS NULL:", cursor.fetchone()[0])
+diff --git a/test_settings.py b/test_settings.py
+new file mode 100644
+index 0000000000..060be8c04e
+--- /dev/null
++++ b/test_settings.py
+@@ -0,0 +1,20 @@
++import os
++
++BASE_DIR = os.path.dirname(os.path.abspath(__file__))
++
++SECRET_KEY = 'test-secret-key'
++
++DATABASES = {
++    'default': {
++        'ENGINE': 'django.db.backends.sqlite3',
++        'NAME': ':memory:',
++    }
++}
++
++INSTALLED_APPS = [
++    'django.contrib.contenttypes',
++    'django.contrib.auth',
++    'model_fields',
++]
++
++DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

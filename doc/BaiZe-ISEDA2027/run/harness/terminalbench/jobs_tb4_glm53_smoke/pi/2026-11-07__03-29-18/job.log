@@ -1,0 +1,7 @@
+Task terminal-bench/bun-sourcemap-leak: Configured runtime overrides apply only to the agent environment and are not propagated to separate verifier environments (extra_docker_compose: /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml). Bake grading dependencies into the verifier image under tests/ or declare required agent outputs as artifacts.
+Agent 'pi' does not declare an options_model; leftover kwargs are ignored
+Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
+Command outputs captured
+Running command: npm install -g --ignore-scripts @fleetagent/pi-coding-agent@latest 2>&1 | tail -5
+Command outputs captured
+Collecting main service artifacts

@@ -1,0 +1,249 @@
+2026-10-30 16:19:43,751 - INFO - Creating container for django__django-15957...
+2026-10-30 16:19:45,003 - INFO - Removed existing container sweb.eval.django__django-15957.verified_full_cline-patched
+2026-10-30 16:19:45,026 - INFO - Container for django__django-15957 created: 335a08756966d972cc9cc6bea7e2299674545727a9d38feb1425cfbb41541ca0
+2026-10-30 16:19:50,846 - INFO - Container for django__django-15957 started: 335a08756966d972cc9cc6bea7e2299674545727a9d38feb1425cfbb41541ca0
+2026-10-30 16:19:50,847 - INFO - Intermediate patch for django__django-15957 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-15957/patch.diff, now applying to container...
+2026-10-30 16:19:51,149 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/query.py...
+Checking patch tests/prefetch_related/tests.py...
+Checking patch tests/queryset_pickle/tests.py...
+Applied patch django/db/models/query.py cleanly.
+Applied patch tests/prefetch_related/tests.py cleanly.
+Applied patch tests/queryset_pickle/tests.py cleanly.
+
+2026-10-30 16:19:52,173 - INFO - Git diff before:
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index be0deb90b0..60ec015910 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -2155,12 +2155,20 @@ class Prefetch:
+             raise ValueError(
+                 "Prefetch querysets cannot use raw(), values(), and values_list()."
+             )
++        if queryset is not None and queryset.query.is_sliced:
++            self.queryset = queryset._chain()
++            self.queryset.query.clear_limits()
++            self._queryset_low_mark = queryset.query.low_mark
++            self._queryset_high_mark = queryset.query.high_mark
++        else:
++            self.queryset = queryset
++            self._queryset_low_mark = 0
++            self._queryset_high_mark = None
+         if to_attr:
+             self.prefetch_to = LOOKUP_SEP.join(
+                 lookup.split(LOOKUP_SEP)[:-1] + [to_attr]
+             )
+ 
+-        self.queryset = queryset
+         self.to_attr = to_attr
+ 
+     def __getstate__(self):
+@@ -2499,6 +2507,8 @@ def prefetch_one_level(instances, prefetcher, lookup, level):
+     for obj in instances:
+         instance_attr_val = instance_attr(obj)
+         vals = rel_obj_cache.get(instance_attr_val, [])
++        if lookup._queryset_high_mark is not None or lookup._queryset_low_mark:
++            vals = vals[lookup._queryset_low_mark : lookup._queryset_high_mark]
+ 
+         if single:
+             val = vals[0] if vals else None
+diff --git a/tests/prefetch_related/tests.py b/tests/prefetch_related/tests.py
+index 1ac17fde73..f415669f60 100644
+--- a/tests/prefetch_related/tests.py
++++ b/tests/prefetch_related/tests.py
+@@ -961,6 +961,110 @@ class CustomPrefetchTests(TestCase):
+             list(person.houses.all().all()),
+         )
+ 
++    def test_custom_qs_sliced(self):
++        # Reverse FK with to_attr.
++        houses = House.objects.prefetch_related(
++            Prefetch(
++                "rooms",
++                queryset=Room.objects.all()[:2],
++                to_attr="first_two_rooms",
++            )
++        )
++        for house in houses:
++            self.assertEqual(len(house.first_two_rooms), 2)
++            self.assertEqual(
++                house.first_two_rooms,
++                list(house.rooms.all()[:2]),
++            )
++
++        # Reverse FK without to_attr (manager).
++        houses = House.objects.prefetch_related(
++            Prefetch("rooms", queryset=Room.objects.all()[:2])
++        )
++        for house in houses:
++            self.assertEqual(len(list(house.rooms.all())), 2)
++            self.assertEqual(
++                list(house.rooms.all()),
++                list(house.rooms.all()[:2]),
++            )
++
++        # M2M with to_attr.
++        persons = Person.objects.prefetch_related(
++            Prefetch(
++                "houses",
++                queryset=House.objects.all()[:1],
++                to_attr="first_house",
++            )
++        )
++        for person in persons:
++            self.assertEqual(len(person.first_house), 1)
++            self.assertEqual(
++                person.first_house,
++                list(person.houses.all()[:1]),
++            )
++
++        # M2M without to_attr (manager).
++        persons = Person.objects.prefetch_related(
++            Prefetch("houses", queryset=House.objects.all()[:1])
++        )
++        for person in persons:
++            self.assertEqual(len(list(person.houses.all())), 1)
++            self.assertEqual(
++                list(person.houses.all()),
++                list(person.houses.all()[:1]),
++            )
++
++        # Offset slice.
++        houses = House.objects.prefetch_related(
++            Prefetch(
++                "rooms",
++                queryset=Room.objects.all()[1:3],
++                to_attr="offset_rooms",
++            )
++        )
++        for house in houses:
++            self.assertEqual(len(house.offset_rooms), 2)
++            self.assertEqual(
++                house.offset_rooms,
++                list(house.rooms.all()[1:3]),
++            )
++
++        # Empty slice.
++        houses = House.objects.prefetch_related(
++            Prefetch(
++                "rooms",
++                queryset=Room.objects.all()[:0],
++                to_attr="no_rooms",
++            )
++        )
++        for house in houses:
++            self.assertEqual(house.no_rooms, [])
++
++        # Sliced queryset with filter.
++        houses = House.objects.prefetch_related(
++            Prefetch(
++                "rooms",
++                queryset=Room.objects.filter(name__contains="room")[:1],
++                to_attr="filtered_room",
++            )
++        )
++        for house in houses:
++            self.assertEqual(len(house.filtered_room), 1)
++            self.assertIn("room", house.filtered_room[0].name)
++
++        # Nested prefetch with sliced queryset.
++        houses = House.objects.prefetch_related(
++            Prefetch(
++                "rooms",
++                queryset=Room.objects.prefetch_related("house")[:2],
++                to_attr="first_two_rooms",
++            )
++        )
++        for house in houses:
++            self.assertEqual(len(house.first_two_rooms), 2)
++            for room in house.first_two_rooms:
++                self.assertEqual(room.house, house)
++
+     def test_nested_prefetch_related_are_not_overwritten(self):
+         # Regression test for #24873
+         houses_2 = House.objects.prefetch_related(Prefetch("rooms"))
+diff --git a/tests/queryset_pickle/tests.py b/tests/queryset_pickle/tests.py
+index 337c5193ce..7b527659b8 100644
+--- a/tests/queryset_pickle/tests.py
++++ b/tests/queryset_pickle/tests.py
+@@ -170,6 +170,14 @@ class PickleabilityTestCase(TestCase):
+         groups2 = pickle.loads(pickle.dumps(groups))
+         self.assertSequenceEqual(groups2.filter(id__gte=0), [g])
+ 
++    def test_pickle_prefetch_sliced_queryset(self):
++        g = Group.objects.create(name="foo")
++        groups = Group.objects.prefetch_related(
++            models.Prefetch("event_set", queryset=Event.objects.order_by("id")[:1])
++        )
++        groups2 = pickle.loads(pickle.dumps(groups))
++        self.assertSequenceEqual(groups2.filter(id__gte=0), [g])
++
+     def test_pickle_prefetch_queryset_not_evaluated(self):
+         Group.objects.create(name="foo")
+         groups = Group.objects.prefetch_related(
+2026-10-30 16:19:52,175 - INFO - Eval script for django__django-15957 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-15957/eval.sh; copying to container...
+2026-10-30 16:19:59,847 - INFO - Test runtime: 7.37 seconds
+2026-10-30 16:19:59,850 - INFO - Test output for django__django-15957 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-15957/test_output.txt
+2026-10-30 16:20:00,169 - INFO - Git diff after:
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index be0deb90b0..60ec015910 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -2155,12 +2155,20 @@ class Prefetch:
+             raise ValueError(
+                 "Prefetch querysets cannot use raw(), values(), and values_list()."
+             )
++        if queryset is not None and queryset.query.is_sliced:
++            self.queryset = queryset._chain()
++            self.queryset.query.clear_limits()
++            self._queryset_low_mark = queryset.query.low_mark
++            self._queryset_high_mark = queryset.query.high_mark
++        else:
++            self.queryset = queryset
++            self._queryset_low_mark = 0
++            self._queryset_high_mark = None
+         if to_attr:
+             self.prefetch_to = LOOKUP_SEP.join(
+                 lookup.split(LOOKUP_SEP)[:-1] + [to_attr]
+             )
+ 
+-        self.queryset = queryset
+         self.to_attr = to_attr
+ 
+     def __getstate__(self):
+@@ -2499,6 +2507,8 @@ def prefetch_one_level(instances, prefetcher, lookup, level):
+     for obj in instances:
+         instance_attr_val = instance_attr(obj)
+         vals = rel_obj_cache.get(instance_attr_val, [])
++        if lookup._queryset_high_mark is not None or lookup._queryset_low_mark:
++            vals = vals[lookup._queryset_low_mark : lookup._queryset_high_mark]
+ 
+         if single:
+             val = vals[0] if vals else None
+diff --git a/tests/queryset_pickle/tests.py b/tests/queryset_pickle/tests.py
+index 337c5193ce..7b527659b8 100644
+--- a/tests/queryset_pickle/tests.py
++++ b/tests/queryset_pickle/tests.py
+@@ -170,6 +170,14 @@ class PickleabilityTestCase(TestCase):
+         groups2 = pickle.loads(pickle.dumps(groups))
+         self.assertSequenceEqual(groups2.filter(id__gte=0), [g])
+ 
++    def test_pickle_prefetch_sliced_queryset(self):
++        g = Group.objects.create(name="foo")
++        groups = Group.objects.prefetch_related(
++            models.Prefetch("event_set", queryset=Event.objects.order_by("id")[:1])
++        )
++        groups2 = pickle.loads(pickle.dumps(groups))
++        self.assertSequenceEqual(groups2.filter(id__gte=0), [g])
++
+     def test_pickle_prefetch_queryset_not_evaluated(self):
+         Group.objects.create(name="foo")
+         groups = Group.objects.prefetch_related(
+2026-10-30 16:20:00,171 - INFO - Git diff changed after running eval script
+2026-10-30 16:20:00,171 - INFO - Grading answer for django__django-15957...
+2026-10-30 16:20:00,173 - INFO - report: {'django__django-15957': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_foreignkey_reverse (prefetch_related.tests.PrefetchLimitTests)', 'test_m2m_forward (prefetch_related.tests.PrefetchLimitTests)', 'test_m2m_reverse (prefetch_related.tests.PrefetchLimitTests)', 'test_reverse_ordering (prefetch_related.tests.PrefetchLimitTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['The prefetched relationship is used rather than populating the reverse', 'test_bug (prefetch_related.tests.Ticket19607Tests)', 'When intermediary results are prefetched without a destination', 'In-bulk does correctly prefetch objects by not using .iterator()', 'test_prefetch_nullable (prefetch_related.tests.NullableTest)', 'test_traverse_nullable (prefetch_related.tests.NullableTest)', 'test_bug (prefetch_related.tests.Ticket21410Tests)', 'test_bug (prefetch_related.tests.Ticket21760Tests)', 'test_m2m_then_m2m (prefetch_related.tests.DefaultManagerTests)', 'test_order (prefetch_related.tests.LookupOrderingTest)', 'test_foreignkey (prefetch_related.tests.ForeignKeyToFieldTest)', 'test_m2m (prefetch_related.tests.ForeignKeyToFieldTest)', 'test_m2m_manager_reused (prefetch_related.tests.ForeignKeyToFieldTest)', 'test_basic (prefetch_related.tests.RawQuerySetTests)', 'test_clear (prefetch_related.tests.RawQuerySetTests)', 'test_prefetch_before_raw (prefetch_related.tests.RawQuerySetTests)', 'test_using_is_honored_custom_qs (prefetch_related.tests.MultiDbTests)', 'test_using_is_honored_fkey (prefetch_related.tests.MultiDbTests)', 'test_using_is_honored_inheritance (prefetch_related.tests.MultiDbTests)', 'test_using_is_honored_m2m (prefetch_related.tests.MultiDbTests)', 'test_child_link_prefetch (prefetch_related.tests.MultiTableInheritanceTest)', 'test_foreignkey (prefetch_related.tests.MultiTableInheritanceTest)', 'test_foreignkey_to_inherited (prefetch_related.tests.MultiTableInheritanceTest)', 'test_m2m_to_inheriting_model (prefetch_related.tests.MultiTableInheritanceTest)', 'test_parent_link_prefetch (prefetch_related.tests.MultiTableInheritanceTest)', 'test_add_clears_prefetched_objects (prefetch_related.tests.DirectPrefetchedObjectCacheReuseTests)', "Nested prefetch_related() shouldn't trigger duplicate queries for the same", 'test_detect_is_fetched_with_to_attr (prefetch_related.tests.DirectPrefetchedObjectCacheReuseTests)', 'test_prefetch_reverse_foreign_key (prefetch_related.tests.DirectPrefetchedObjectCacheReuseTests)', 'test_remove_clears_prefetched_objects (prefetch_related.tests.DirectPrefetchedObjectCacheReuseTests)', 'test_charfield_GFK (prefetch_related.tests.GenericRelationTests)', 'test_custom_queryset (prefetch_related.tests.GenericRelationTests)', 'test_deleted_GFK (prefetch_related.tests.GenericRelationTests)', 'test_generic_relation (prefetch_related.tests.GenericRelationTests)', 'test_nullable_GFK (prefetch_related.tests.GenericRelationTests)', 'test_prefetch_GFK (prefetch_related.tests.GenericRelationTests)', 'test_prefetch_GFK_fk_pk (prefetch_related.tests.GenericRelationTests)', 'test_prefetch_GFK_nonint_pk (prefetch_related.tests.GenericRelationTests)', 'test_prefetch_GFK_uuid_pk (prefetch_related.tests.GenericRelationTests)', "A 'content_object' can be traversed with prefetch_related() and", 'test_attribute_error (prefetch_related.tests.PrefetchRelatedTests)', 'test_bool (prefetch_related.tests.PrefetchRelatedTests)', 'test_clear (prefetch_related.tests.PrefetchRelatedTests)', 'test_count (prefetch_related.tests.PrefetchRelatedTests)', 'test_exists (prefetch_related.tests.PrefetchRelatedTests)', 'Related filtering of prefetched querysets is deferred on m2m and', 'A m2m relation can be followed after a relation like ForeignKey that', 'test_foreignkey_forward (prefetch_related.tests.PrefetchRelatedTests)', 'test_foreignkey_reverse (prefetch_related.tests.PrefetchRelatedTests)', 'test_forward_m2m_to_attr_conflict (prefetch_related.tests.PrefetchRelatedTests)', 'Objects retrieved with .get() get the prefetch behavior.', 'Regression test for #20242 - QuerySet "in" didn\'t work the first time', 'test_invalid_final_lookup (prefetch_related.tests.PrefetchRelatedTests)', 'test_len (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_forward (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_prefetching_iterator_with_chunks (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_prefetching_iterator_without_chunks (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_prefetching_iterator_without_chunks_warning (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_reverse (prefetch_related.tests.PrefetchRelatedTests)', 'A m2m can be followed through another m2m.', 'test_m2m_then_m2m_object_ids (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_then_reverse_fk_object_ids (prefetch_related.tests.PrefetchRelatedTests)', 'test_m2m_then_reverse_one_to_one_object_ids (prefetch_related.tests.PrefetchRelatedTests)', 'test_named_values_list (prefetch_related.tests.PrefetchRelatedTests)', 'test_onetoone_reverse_no_match (prefetch_related.tests.PrefetchRelatedTests)', 'A model (Bio) with a OneToOneField primary key (author) that references', 'test_overriding_prefetch (prefetch_related.tests.PrefetchRelatedTests)', 'test_prefetch_eq (prefetch_related.tests.PrefetchRelatedTests)', 'test_reverse_m2m_to_attr_conflict (prefetch_related.tests.PrefetchRelatedTests)', 'A m2m relation can be followed after going through the select_related', 'test_survives_clone (prefetch_related.tests.PrefetchRelatedTests)', 'test_ambiguous (prefetch_related.tests.CustomPrefetchTests)', 'test_custom_qs (prefetch_related.tests.CustomPrefetchTests)', 'Related filtering of prefetched querysets is deferred until necessary.', 'test_generic_rel (prefetch_related.tests.CustomPrefetchTests)', 'test_m2m (prefetch_related.tests.CustomPrefetchTests)', 'test_m2m_through_fk (prefetch_related.tests.CustomPrefetchTests)', 'test_m2m_through_gfk (prefetch_related.tests.CustomPrefetchTests)', 'test_nested_prefetch_related_are_not_overwritten (prefetch_related.tests.CustomPrefetchTests)', 'Nested prefetches whose name clashes with descriptor names', 'test_o2m_through_m2m (prefetch_related.tests.CustomPrefetchTests)', 'test_raw_queryset (prefetch_related.tests.CustomPrefetchTests)', 'test_reverse_m2m (prefetch_related.tests.CustomPrefetchTests)', 'test_to_attr_cached_property (prefetch_related.tests.CustomPrefetchTests)', 'test_to_attr_doesnt_cache_through_attr_as_list (prefetch_related.tests.CustomPrefetchTests)', 'test_traverse_multiple_items_property (prefetch_related.tests.CustomPrefetchTests)', 'test_traverse_qs (prefetch_related.tests.CustomPrefetchTests)', 'test_traverse_single_item_property (prefetch_related.tests.CustomPrefetchTests)', 'test_values_queryset (prefetch_related.tests.CustomPrefetchTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15957: resolved: True
+2026-10-30 16:20:00,174 - INFO - Attempting to stop container sweb.eval.django__django-15957.verified_full_cline-patched...
+2026-10-30 16:20:16,794 - INFO - Container sweb.eval.django__django-15957.verified_full_cline-patched stopped successfully.
+2026-10-30 16:20:16,794 - INFO - Attempting to remove container sweb.eval.django__django-15957.verified_full_cline-patched...
+2026-10-30 16:20:16,843 - INFO - Container sweb.eval.django__django-15957.verified_full_cline-patched removed successfully.

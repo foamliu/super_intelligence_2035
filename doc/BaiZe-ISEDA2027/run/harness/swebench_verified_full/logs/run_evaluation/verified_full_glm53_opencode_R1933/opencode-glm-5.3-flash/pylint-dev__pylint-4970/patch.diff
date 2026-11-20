@@ -1,0 +1,65 @@
+diff --git a/ChangeLog b/ChangeLog
+index 97af302..1e5109d 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -10,6 +10,10 @@ Release date: TBA
+ ..
+   Put new features here and also in 'doc/whatsnew/2.11.rst'
+ 
++* Setting ``min-similarity-lines`` to ``0`` now disables the duplicate code check entirely.
++
++  Closes #5991
++
+ * The python3 porting mode checker and it's ``py3k`` option were removed. You can still find it in older pylint
+   versions.
+ 
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c8..b3d6bbd 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -390,6 +390,8 @@ class Similar:
+ 
+     def run(self) -> None:
+         """start looking for similarities and display results on stdout"""
++        if self.min_lines == 0:
++            return
+         self._display_sims(self._compute_sims())
+ 
+     def _compute_sims(self) -> List[Tuple[int, Set[LinesChunkLimits_T]]]:
+@@ -830,6 +832,8 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+     def close(self):
+         """compute and display similarities on closing (i.e. end of parsing)"""
++        if self.min_lines == 0:
++            return
+         total = sum(len(lineset) for lineset in self.linesets)
+         duplicated = 0
+         stats = self.stats
+diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
+index 4ddf202..9768f4e 100644
+--- a/tests/checkers/unittest_similar.py
++++ b/tests/checkers/unittest_similar.py
+@@ -339,6 +339,23 @@ TOTAL lines=62 duplicates=5 percent=8.06
+     )
+ 
+ 
++def test_duplicates_disabled() -> None:
++    output = StringIO()
++    with redirect_stdout(output), pytest.raises(SystemExit) as ex:
++        similar.Run(["--duplicates", "0", SIMILAR1, SIMILAR2])
++    assert ex.value.code == 0
++    assert output.getvalue().strip() == ""
++
++
++def test_min_similarity_lines_zero_disables_check() -> None:
++    linter = PyLinter(reporter=Reporter())
++    linter.register_checker(similar.SimilarChecker(linter))
++    linter.global_set_option("min-similarity-lines", 0)
++    linter.open()
++    linter.check([SIMILAR1, SIMILAR2])
++    assert "R0801" not in linter.reporter.message_ids
++
++
+ def test_lines_without_meaningful_content_do_not_trigger_similarity() -> None:
+     output = StringIO()
+     with redirect_stdout(output), pytest.raises(SystemExit) as ex:

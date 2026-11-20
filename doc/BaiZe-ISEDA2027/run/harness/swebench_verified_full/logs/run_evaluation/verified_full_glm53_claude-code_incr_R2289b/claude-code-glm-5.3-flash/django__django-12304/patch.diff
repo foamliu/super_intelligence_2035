@@ -1,0 +1,78 @@
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..a3da54562f 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -31,6 +31,10 @@ class ChoicesMeta(enum.EnumMeta):
+         # that is passed in as "self" as the value to use when looking up the
+         # label in the choices.
+         cls.label = property(lambda self: cls._value2label_map_.get(self.value))
++        # Because Django templates render callables with no arguments, add
++        # do_not_call_in_templates to the class to prevent the enumeration
++        # classes from being called in templates.
++        cls.do_not_call_in_templates = True
+         return enum.unique(cls)
+ 
+     def __contains__(cls, member):
+diff --git a/docs/ref/models/fields.txt b/docs/ref/models/fields.txt
+index d321506d99..2a460b5b76 100644
+--- a/docs/ref/models/fields.txt
++++ b/docs/ref/models/fields.txt
+@@ -226,6 +226,10 @@ modifications:
+ * The use of :func:`enum.unique()` is enforced to ensure that values cannot be
+   defined multiple times. This is unlikely to be expected in choices for a
+   field.
++* Because enumeration types are callable, ``do_not_call_in_templates`` is set
++  to ``True`` on the classes to allow their use in templates, e.g.::
++
++    {% if student.year_in_school == YearInSchool.FRESHMAN %}
+ 
+ Note that using ``YearInSchool.SENIOR``, ``YearInSchool['SENIOR']``, or
+ ``YearInSchool('SR')`` to access or lookup enum members work as expected, as do
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 3def8920cc..95a8783e95 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -244,6 +244,10 @@ Models
+   :meth:`~.RelatedManager.set` methods now accept callables as values in the
+   ``through_defaults`` argument.
+ 
++* The new :attr:`~django.db.models.Field.choices` enumeration types, e.g.
++  ``models.TextChoices``, are now usable in templates because they are no
++  longer called by the template engine.
++
+ Pagination
+ ~~~~~~~~~~
+ 
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479de..c5346bd5e3 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -4,6 +4,7 @@ import ipaddress
+ import uuid
+ 
+ from django.db import models
++from django.template import Context, Template
+ from django.test import SimpleTestCase
+ from django.utils.functional import Promise
+ from django.utils.translation import gettext_lazy as _
+@@ -149,6 +150,20 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_templates(self):
++        template = Template(
++            '{% if suit == Suit.CLUB %}{{ suit.label }}{% endif %}'
++            '{% if year_in_school == YearInSchool.SENIOR %}'
++            '{{ year_in_school.label }}{% endif %}'
++        )
++        context = Context({
++            'suit': Suit.CLUB,
++            'year_in_school': YearInSchool.SENIOR,
++            'Suit': Suit,
++            'YearInSchool': YearInSchool,
++        })
++        self.assertEqual(template.render(context), 'ClubSenior')
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'

@@ -1,0 +1,136 @@
+2026-10-30 16:13:59,506 - INFO - Creating container for django__django-13033...
+2026-10-30 16:13:59,557 - INFO - Container for django__django-13033 created: 409967b6331028ed114d7bd92d59b4b9bb6dd5fc6ecb150078a1f0c4eb94fd62
+2026-10-30 16:14:09,716 - INFO - Container for django__django-13033 started: 409967b6331028ed114d7bd92d59b4b9bb6dd5fc6ecb150078a1f0c4eb94fd62
+2026-10-30 16:14:09,718 - INFO - Intermediate patch for django__django-13033 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13033/patch.diff, now applying to container...
+2026-10-30 16:14:09,823 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+warning: django/db/models/sql/compiler.py has type 100755, expected 100644
+Checking patch tests/ordering/models.py...
+warning: tests/ordering/models.py has type 100755, expected 100644
+Checking patch tests/ordering/tests.py...
+warning: tests/ordering/tests.py has type 100755, expected 100644
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/ordering/models.py cleanly.
+Applied patch tests/ordering/tests.py cleanly.
+
+2026-10-30 16:14:10,870 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index abbb1e37cb..a3f58a6f34 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -727,7 +727,7 @@ class SQLCompiler:
+         # If we get to this point and the field is a relation to another model,
+         # append the default ordering for that model unless it is the pk
+         # shortcut or the attribute name of the field that is specified.
+-        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != name and name != 'pk':
++        if field.is_relation and opts.ordering and pieces[-1] not in (field.attname, 'pk'):
+             # Firstly, avoid infinite loops.
+             already_seen = already_seen or set()
+             join_tuple = tuple(getattr(self.query.alias_map[j], 'join_cols', None) for j in joins)
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+index 2efb743e44..e41159c753 100755
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -59,3 +59,15 @@ class Reference(models.Model):
+ 
+     class Meta:
+         ordering = ('article',)
++
++
++class Node(models.Model):
++    parent = models.ForeignKey('self', models.SET_NULL, null=True)
++    name = models.CharField(max_length=100)
++
++    class Meta:
++        ordering = ('-name',)
++
++
++class NodeReference(models.Model):
++    node = models.ForeignKey(Node, models.CASCADE)
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+index a9cc729c45..8b8cde905c 100755
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -8,7 +8,10 @@ from django.db.models import (
+ from django.db.models.functions import Upper
+ from django.test import TestCase
+ 
+-from .models import Article, Author, ChildArticle, OrderedByFArticle, Reference
++from .models import (
++    Article, Author, ChildArticle, Node, NodeReference, OrderedByFArticle,
++    Reference,
++)
+ 
+ 
+ class OrderingTests(TestCase):
+@@ -343,6 +346,45 @@ class OrderingTests(TestCase):
+             attrgetter("headline")
+         )
+ 
++    def test_order_by_multipart_fk_attname(self):
++        """
++        ordering by a foreign key by its attribute name in a multi-part lookup
++        prevents the query from inheriting its related model ordering option.
++        """
++        for i in range(1, 5):
++            author = Author.objects.get(pk=i)
++            article = getattr(self, "a%d" % (5 - i))
++            article.author = author
++            article.save(update_fields={'author'})
++
++        qs = Reference.objects.order_by('article__author_id')
++        # No extra join should be created (just Reference -> Article).
++        self.assertEqual(str(qs.query).count('JOIN'), 1)
++        self.assertNotIn('DESC', str(qs.query).split('ORDER BY')[-1])
++
++    def test_order_by_self_referential_fk_attname(self):
++        """
++        ordering by a self-referential foreign key by its attribute name
++        prevents the query from inheriting its related model ordering option.
++        """
++        n1 = Node.objects.create(name='n1')
++        n2 = Node.objects.create(name='n2', parent=n1)
++        n3 = Node.objects.create(name='n3', parent=n2)
++        NodeReference.objects.create(node=n1)
++        NodeReference.objects.create(node=n2)
++        NodeReference.objects.create(node=n3)
++
++        qs = NodeReference.objects.order_by('node__parent_id')
++        # No extra self-join should be created (just NodeReference -> Node).
++        self.assertEqual(str(qs.query).count('JOIN'), 1)
++        self.assertQuerysetEqual(
++            qs, [
++                '<NodeReference: NodeReference object (%s)>' % n1.pk,
++                '<NodeReference: NodeReference object (%s)>' % n2.pk,
++                '<NodeReference: NodeReference object (%s)>' % n3.pk,
++            ]
++        )
++
+     def test_order_by_f_expression(self):
+         self.assertQuerysetEqual(
+             Article.objects.order_by(F('headline')), [
+2026-10-30 16:14:10,873 - INFO - Eval script for django__django-13033 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13033/eval.sh; copying to container...
+2026-10-30 16:14:18,719 - INFO - Test runtime: 7.78 seconds
+2026-10-30 16:14:18,728 - INFO - Test output for django__django-13033 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13033/test_output.txt
+2026-10-30 16:14:18,785 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index abbb1e37cb..a3f58a6f34 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -727,7 +727,7 @@ class SQLCompiler:
+         # If we get to this point and the field is a relation to another model,
+         # append the default ordering for that model unless it is the pk
+         # shortcut or the attribute name of the field that is specified.
+-        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != name and name != 'pk':
++        if field.is_relation and opts.ordering and pieces[-1] not in (field.attname, 'pk'):
+             # Firstly, avoid infinite loops.
+             already_seen = already_seen or set()
+             join_tuple = tuple(getattr(self.query.alias_map[j], 'join_cols', None) for j in joins)
+2026-10-30 16:14:18,785 - INFO - Git diff changed after running eval script
+2026-10-30 16:14:18,785 - INFO - Grading answer for django__django-13033...
+2026-10-30 16:14:18,796 - INFO - report: {'django__django-13033': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_order_by_self_referential_fk (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_default_ordering (ordering.tests.OrderingTests)', 'F expressions can be used in Meta.ordering.', 'test_default_ordering_override (ordering.tests.OrderingTests)', 'test_extra_ordering (ordering.tests.OrderingTests)', 'test_extra_ordering_quoting (ordering.tests.OrderingTests)', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_constant_value_without_output_field (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'test_order_by_f_expression_duplicates (ordering.tests.OrderingTests)', 'test_order_by_fk_attname (ordering.tests.OrderingTests)', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'test_order_by_override (ordering.tests.OrderingTests)', 'test_order_by_pk (ordering.tests.OrderingTests)', 'test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', 'test_random_ordering (ordering.tests.OrderingTests)', 'test_related_ordering_duplicate_table_reference (ordering.tests.OrderingTests)', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'test_reversed_ordering (ordering.tests.OrderingTests)', 'test_stop_slicing (ordering.tests.OrderingTests)', 'test_stop_start_slicing (ordering.tests.OrderingTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13033: resolved: True
+2026-10-30 16:14:18,797 - INFO - Attempting to stop container sweb.eval.django__django-13033.verified_full_cline-patched...
+2026-10-30 16:14:38,220 - INFO - Container sweb.eval.django__django-13033.verified_full_cline-patched stopped successfully.
+2026-10-30 16:14:38,220 - INFO - Attempting to remove container sweb.eval.django__django-13033.verified_full_cline-patched...
+2026-10-30 16:14:38,279 - INFO - Container sweb.eval.django__django-13033.verified_full_cline-patched removed successfully.

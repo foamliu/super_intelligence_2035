@@ -1,0 +1,128 @@
+2026-11-12 06:33:45,322 - INFO - Creating container for pytest-dev__pytest-7205...
+2026-11-12 06:33:45,342 - INFO - Container for pytest-dev__pytest-7205 created: 555d753fc1bc5760b80475faa5a8b950234f996b809e9b27214414e3f2648619
+2026-11-12 06:33:46,418 - INFO - Container for pytest-dev__pytest-7205 started: 555d753fc1bc5760b80475faa5a8b950234f996b809e9b27214414e3f2648619
+2026-11-12 06:33:46,420 - INFO - Intermediate patch for pytest-dev__pytest-7205 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2235/hermes-glm-5.3-flash/pytest-dev__pytest-7205/patch.diff, now applying to container...
+2026-11-12 06:33:46,539 - INFO - >>>>> Applied Patch:
+Checking patch changelog/7126.bugfix.rst...
+Checking patch src/_pytest/setuponly.py...
+Checking patch testing/test_setuponly.py...
+Applied patch changelog/7126.bugfix.rst cleanly.
+Applied patch src/_pytest/setuponly.py cleanly.
+Applied patch testing/test_setuponly.py cleanly.
+
+2026-11-12 06:33:46,722 - INFO - Git diff before:
+diff --git a/src/_pytest/setuponly.py b/src/_pytest/setuponly.py
+index c9cc589ff..9e4cd9519 100644
+--- a/src/_pytest/setuponly.py
++++ b/src/_pytest/setuponly.py
+@@ -1,4 +1,5 @@
+ import pytest
++from _pytest._io.saferepr import saferepr
+ 
+ 
+ def pytest_addoption(parser):
+@@ -66,7 +67,7 @@ def _show_fixture_action(fixturedef, msg):
+             tw.write(" (fixtures used: {})".format(", ".join(deps)))
+ 
+     if hasattr(fixturedef, "cached_param"):
+-        tw.write("[{}]".format(fixturedef.cached_param))
++        tw.write("[{}]".format(saferepr(fixturedef.cached_param, maxsize=42)))
+ 
+     tw.flush()
+ 
+diff --git a/testing/test_setuponly.py b/testing/test_setuponly.py
+index e26a33dee..221c32a31 100644
+--- a/testing/test_setuponly.py
++++ b/testing/test_setuponly.py
+@@ -1,3 +1,5 @@
++import sys
++
+ import pytest
+ from _pytest.config import ExitCode
+ 
+@@ -146,10 +148,10 @@ def test_show_fixtures_with_parameters(testdir, mode):
+ 
+     result.stdout.fnmatch_lines(
+         [
+-            "SETUP    S arg_same?foo?",
+-            "TEARDOWN S arg_same?foo?",
+-            "SETUP    S arg_same?bar?",
+-            "TEARDOWN S arg_same?bar?",
++            "SETUP    S arg_same?'foo'?",
++            "TEARDOWN S arg_same?'foo'?",
++            "SETUP    S arg_same?'bar'?",
++            "TEARDOWN S arg_same?'bar'?",
+         ]
+     )
+ 
+@@ -179,7 +181,7 @@ def test_show_fixtures_with_parameter_ids(testdir, mode):
+     assert result.ret == 0
+ 
+     result.stdout.fnmatch_lines(
+-        ["SETUP    S arg_same?spam?", "SETUP    S arg_same?ham?"]
++        ["SETUP    S arg_same?'spam'?", "SETUP    S arg_same?'ham'?"]
+     )
+ 
+ 
+@@ -198,7 +200,9 @@ def test_show_fixtures_with_parameter_ids_function(testdir, mode):
+     result = testdir.runpytest(mode, p)
+     assert result.ret == 0
+ 
+-    result.stdout.fnmatch_lines(["*SETUP    F foobar?FOO?", "*SETUP    F foobar?BAR?"])
++    result.stdout.fnmatch_lines(
++        ["*SETUP    F foobar?'FOO'?", "*SETUP    F foobar?'BAR'?"]
++    )
+ 
+ 
+ def test_dynamic_fixture_request(testdir):
+@@ -292,3 +296,20 @@ def test_setup_show_with_KeyboardInterrupt_in_test(testdir):
+         ]
+     )
+     assert result.ret == ExitCode.INTERRUPTED
++
++
++def test_show_fixture_action_with_bytes(testdir):
++    # Issue 7126, BytesWarning when using --setup-show with bytes parameter
++    test_file = testdir.makepyfile(
++        """
++        import pytest
++
++        @pytest.mark.parametrize('data', [b'Hello World'])
++        def test_data(data):
++            pass
++        """
++    )
++    result = testdir.run(
++        sys.executable, "-bb", "-m", "pytest", "--setup-show", str(test_file)
++    )
++    assert result.ret == 0
+2026-11-12 06:33:46,725 - INFO - Eval script for pytest-dev__pytest-7205 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2235/hermes-glm-5.3-flash/pytest-dev__pytest-7205/eval.sh; copying to container...
+2026-11-12 06:33:54,436 - INFO - Test runtime: 7.63 seconds
+2026-11-12 06:33:54,438 - INFO - Test output for pytest-dev__pytest-7205 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2235/hermes-glm-5.3-flash/pytest-dev__pytest-7205/test_output.txt
+2026-11-12 06:33:54,521 - INFO - Git diff after:
+diff --git a/src/_pytest/setuponly.py b/src/_pytest/setuponly.py
+index c9cc589ff..9e4cd9519 100644
+--- a/src/_pytest/setuponly.py
++++ b/src/_pytest/setuponly.py
+@@ -1,4 +1,5 @@
+ import pytest
++from _pytest._io.saferepr import saferepr
+ 
+ 
+ def pytest_addoption(parser):
+@@ -66,7 +67,7 @@ def _show_fixture_action(fixturedef, msg):
+             tw.write(" (fixtures used: {})".format(", ".join(deps)))
+ 
+     if hasattr(fixturedef, "cached_param"):
+-        tw.write("[{}]".format(fixturedef.cached_param))
++        tw.write("[{}]".format(saferepr(fixturedef.cached_param, maxsize=42)))
+ 
+     tw.flush()
+2026-11-12 06:33:54,521 - INFO - Git diff changed after running eval script
+2026-11-12 06:33:54,521 - INFO - Grading answer for pytest-dev__pytest-7205...
+2026-11-12 06:33:54,527 - INFO - report: {'pytest-dev__pytest-7205': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/test_setuponly.py::test_show_fixtures_with_parameters[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids_function[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_parameters[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids_function[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_parameters[--setup-show]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids[--setup-show]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids_function[--setup-show]', 'testing/test_setuponly.py::test_show_fixture_action_with_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/test_setuponly.py::test_show_only_active_fixtures[--setup-only]', 'testing/test_setuponly.py::test_show_different_scopes[--setup-only]', 'testing/test_setuponly.py::test_show_nested_fixtures[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_autouse[--setup-only]', 'testing/test_setuponly.py::test_show_only_active_fixtures[--setup-plan]', 'testing/test_setuponly.py::test_show_different_scopes[--setup-plan]', 'testing/test_setuponly.py::test_show_nested_fixtures[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_autouse[--setup-plan]', 'testing/test_setuponly.py::test_show_only_active_fixtures[--setup-show]', 'testing/test_setuponly.py::test_show_different_scopes[--setup-show]', 'testing/test_setuponly.py::test_show_nested_fixtures[--setup-show]', 'testing/test_setuponly.py::test_show_fixtures_with_autouse[--setup-show]', 'testing/test_setuponly.py::test_dynamic_fixture_request', 'testing/test_setuponly.py::test_capturing', 'testing/test_setuponly.py::test_show_fixtures_and_execute_test', 'testing/test_setuponly.py::test_setup_show_with_KeyboardInterrupt_in_test'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-7205: resolved: True
+2026-11-12 06:33:54,528 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-7205.verified_full_glm53_hermes_incr_R2235...
+2026-11-12 06:34:10,662 - INFO - Container sweb.eval.pytest-dev__pytest-7205.verified_full_glm53_hermes_incr_R2235 stopped successfully.
+2026-11-12 06:34:10,663 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-7205.verified_full_glm53_hermes_incr_R2235...
+2026-11-12 06:34:10,707 - INFO - Container sweb.eval.pytest-dev__pytest-7205.verified_full_glm53_hermes_incr_R2235 removed successfully.

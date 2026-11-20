@@ -1,0 +1,14 @@
+{
+  "harness": "pi",
+  "run_id": "verified_full_glm53_pi_incr_R2298",
+  "round": "R2298",
+  "n": 3,
+  "resolved": [
+    "matplotlib__matplotlib-26342",
+    "psf__requests-1142"
+  ],
+  "failed": [
+    "matplotlib__matplotlib-26466"
+  ],
+  "infra_or_quota": []
+}

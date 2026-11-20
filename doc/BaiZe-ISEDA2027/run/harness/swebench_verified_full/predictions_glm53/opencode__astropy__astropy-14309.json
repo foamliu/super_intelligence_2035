@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "astropy__astropy-14309",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/astropy/io/fits/connect.py b/astropy/io/fits/connect.py\nindex 4b6150f4..1674df10 100644\n--- a/astropy/io/fits/connect.py\n+++ b/astropy/io/fits/connect.py\n@@ -69,7 +69,10 @@ def is_fits(origin, filepath, fileobj, *args, **kwargs):\n             (\".fits\", \".fits.gz\", \".fit\", \".fit.gz\", \".fts\", \".fts.gz\")\n         ):\n             return True\n-    return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))\n+    if len(args):\n+        return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))\n+    else:\n+        return False\n \n \n def _decode_mixins(tbl):\n"
+  }
+]

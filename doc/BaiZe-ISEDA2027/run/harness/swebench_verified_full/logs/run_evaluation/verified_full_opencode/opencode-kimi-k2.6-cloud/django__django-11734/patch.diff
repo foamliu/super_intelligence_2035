@@ -1,0 +1,59 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 35f3c5e1ea..bf3c02d7e1 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1703,7 +1703,10 @@ class Query(BaseExpression):
+         """
+         filter_lhs, filter_rhs = filter_expr
+         if isinstance(filter_rhs, F):
+-            filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
++            if isinstance(filter_rhs, OuterRef):
++                filter_expr = (filter_lhs, OuterRef(filter_rhs))
++            else:
++                filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
+         # Generate the inner query.
+         query = Query(self.model)
+         query._filtered_relations = self._filtered_relations
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 668d5e6ad6..12c30e1add 100644
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -1,9 +1,9 @@
+ from django.db import connection
+-from django.db.models import Exists, F, IntegerField, OuterRef, Value
++from django.db.models import Exists, F, IntegerField, OuterRef, Q, Value
+ from django.db.utils import DatabaseError, NotSupportedError
+ from django.test import TestCase, skipIfDBFeature, skipUnlessDBFeature
+ 
+-from .models import Number, ReservedName
++from .models import Item, Number, ReservedName
+ 
+ 
+ @skipUnlessDBFeature('supports_select_union')
+@@ -285,3 +285,26 @@ class QuerySetSetOperationTests(TestCase):
+                         msg % (operation, combinator),
+                     ):
+                         getattr(getattr(qs, combinator)(qs), operation)()
++
++
++class OuterRefExcludeTests(TestCase):
++    def test_exists_exclude(self):
++        # Regression test for #30739.
++        qs = Number.objects.annotate(
++            foo=Exists(
++                Item.objects.filter(tags__category_id=OuterRef('pk'))
++            )
++        ).filter(foo=True)
++        self.assertIn('"queries_number"', str(qs.query))
++        qs = Number.objects.annotate(
++            foo=Exists(
++                Item.objects.exclude(tags__category_id=OuterRef('pk'))
++            )
++        ).filter(foo=True)
++        self.assertIn('"queries_number"', str(qs.query))
++        qs = Number.objects.annotate(
++            foo=Exists(
++                Item.objects.filter(~Q(tags__category_id=OuterRef('pk')))
++            )
++        ).filter(foo=True)
++        self.assertIn('"queries_number"', str(qs.query))

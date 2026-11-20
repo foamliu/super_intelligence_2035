@@ -1,0 +1,119 @@
+diff --git a/django/contrib/admin/filters.py b/django/contrib/admin/filters.py
+index d65e01d5e..3654b2be1 100644
+--- a/django/contrib/admin/filters.py
++++ b/django/contrib/admin/filters.py
+@@ -194,11 +194,17 @@ class RelatedFieldListFilter(FieldListFilter):
+         return [self.lookup_kwarg, self.lookup_kwarg_isnull]
+ 
+     def field_choices(self, field, request, model_admin):
++        ordering = self._get_ordering(field, request, model_admin)
++        return field.get_choices(include_blank=False, ordering=ordering)
++
++    def _get_ordering(self, field, request, model_admin):
+         ordering = ()
+         related_admin = model_admin.admin_site._registry.get(field.remote_field.model)
+         if related_admin is not None:
+             ordering = related_admin.get_ordering(request)
+-        return field.get_choices(include_blank=False, ordering=ordering)
++        if not ordering:
++            ordering = field.remote_field.model._meta.ordering
++        return ordering
+ 
+     def choices(self, changelist):
+         yield {
+@@ -419,4 +425,5 @@ FieldListFilter.register(lambda f: True, AllValuesFieldListFilter)
+ class RelatedOnlyFieldListFilter(RelatedFieldListFilter):
+     def field_choices(self, field, request, model_admin):
+         pk_qs = model_admin.get_queryset(request).distinct().values_list('%s__pk' % self.field_path, flat=True)
+-        return field.get_choices(include_blank=False, limit_choices_to={'pk__in': pk_qs})
++        ordering = self._get_ordering(field, request, model_admin)
++        return field.get_choices(include_blank=False, limit_choices_to={'pk__in': pk_qs}, ordering=ordering)
+diff --git a/tests/admin_filters/models.py b/tests/admin_filters/models.py
+index ae78282d3..d874074ec 100644
+--- a/tests/admin_filters/models.py
++++ b/tests/admin_filters/models.py
+@@ -50,6 +50,9 @@ class Employee(models.Model):
+     department = models.ForeignKey(Department, models.CASCADE, to_field="code")
+     name = models.CharField(max_length=100)
+ 
++    class Meta:
++        ordering = ['name']
++
+     def __str__(self):
+         return self.name
+ 
+diff --git a/tests/admin_filters/tests.py b/tests/admin_filters/tests.py
+index 4ff7d012e..f6fc7af7c 100644
+--- a/tests/admin_filters/tests.py
++++ b/tests/admin_filters/tests.py
+@@ -591,6 +591,20 @@ class ListFiltersTests(TestCase):
+         expected = [(self.john.pk, 'John Blue'), (self.jack.pk, 'Jack Red')]
+         self.assertEqual(filterspec.lookup_choices, expected)
+ 
++    def test_relatedfieldlistfilter_foreignkey_ordering_fallback(self):
++        """RelatedFieldListFilter ordering falls back to Model._meta.ordering."""
++        class BookAdmin(ModelAdmin):
++            list_filter = ('employee',)
++
++        modeladmin = BookAdmin(Book, site)
++
++        request = self.request_factory.get('/')
++        request.user = self.alfred
++        changelist = modeladmin.get_changelist_instance(request)
++        filterspec = changelist.get_filters(request)[0][0]
++        expected = [(self.jack.pk, 'Jack Red'), (self.john.pk, 'John Blue')]
++        self.assertEqual(filterspec.lookup_choices, expected)
++
+     def test_relatedfieldlistfilter_manytomany(self):
+         modeladmin = BookAdmin(Book, site)
+ 
+@@ -741,6 +755,49 @@ class ListFiltersTests(TestCase):
+         expected = [(self.bob.pk, 'bob'), (self.lisa.pk, 'lisa')]
+         self.assertEqual(sorted(filterspec.lookup_choices), sorted(expected))
+ 
++    def test_relatedonlyfieldlistfilter_foreignkey_ordering(self):
++        """RelatedOnlyFieldListFilter ordering respects ModelAdmin.ordering."""
++        class EmployeeAdminWithOrdering(ModelAdmin):
++            ordering = ('-name',)
++
++        class BookAdmin(ModelAdmin):
++            list_filter = (('employee', RelatedOnlyFieldListFilter),)
++
++        self.djangonaut_book.employee = self.john
++        self.djangonaut_book.save()
++        self.bio_book.employee = self.jack
++        self.bio_book.save()
++
++        site.register(Employee, EmployeeAdminWithOrdering)
++        self.addCleanup(lambda: site.unregister(Employee))
++        modeladmin = BookAdmin(Book, site)
++
++        request = self.request_factory.get('/')
++        request.user = self.alfred
++        changelist = modeladmin.get_changelist_instance(request)
++        filterspec = changelist.get_filters(request)[0][0]
++        expected = [(self.john.pk, 'John Blue'), (self.jack.pk, 'Jack Red')]
++        self.assertEqual(filterspec.lookup_choices, expected)
++
++    def test_relatedonlyfieldlistfilter_foreignkey_ordering_fallback(self):
++        """RelatedOnlyFieldListFilter ordering falls back to Model._meta.ordering."""
++        class BookAdmin(ModelAdmin):
++            list_filter = (('employee', RelatedOnlyFieldListFilter),)
++
++        self.djangonaut_book.employee = self.john
++        self.djangonaut_book.save()
++        self.bio_book.employee = self.jack
++        self.bio_book.save()
++
++        modeladmin = BookAdmin(Book, site)
++
++        request = self.request_factory.get('/')
++        request.user = self.alfred
++        changelist = modeladmin.get_changelist_instance(request)
++        filterspec = changelist.get_filters(request)[0][0]
++        expected = [(self.jack.pk, 'Jack Red'), (self.john.pk, 'John Blue')]
++        self.assertEqual(filterspec.lookup_choices, expected)
++
+     def test_listfilter_genericrelation(self):
+         django_bookmark = Bookmark.objects.create(url='https://www.djangoproject.com/')
+         python_bookmark = Bookmark.objects.create(url='https://www.python.org/')

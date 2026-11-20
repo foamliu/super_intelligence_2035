@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-11163",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/django/forms/models.py b/django/forms/models.py\nindex d157c291ef..5edbbd376f 100644\n--- a/django/forms/models.py\n+++ b/django/forms/models.py\n@@ -83,7 +83,7 @@ def model_to_dict(instance, fields=None, exclude=None):\n     for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):\n         if not getattr(f, 'editable', False):\n             continue\n-        if fields and f.name not in fields:\n+        if fields is not None and f.name not in fields:\n             continue\n         if exclude and f.name in exclude:\n             continue\ndiff --git a/tests/model_forms/tests.py b/tests/model_forms/tests.py\nindex f4f3169bc1..9082d4ca76 100644\n--- a/tests/model_forms/tests.py\n+++ b/tests/model_forms/tests.py\n@@ -188,6 +188,12 @@ class ModelFormBaseTest(TestCase):\n         field_dict = fields_for_model(Person, fields=())\n         self.assertEqual(len(field_dict), 0)\n \n+    def test_empty_fields_to_model_to_dict(self):\n+        \"\"\"An argument of fields=[] to model_to_dict should return an empty dict\"\"\"\n+        instance = Person.objects.create(name='Jane Doe')\n+        self.assertEqual(model_to_dict(instance, fields=[]), {})\n+        self.assertEqual(model_to_dict(instance, fields=()), {})\n+\n     def test_empty_fields_on_modelform(self):\n         \"\"\"\n         No fields on a ModelForm should actually result in no fields.\n"
+  }
+]

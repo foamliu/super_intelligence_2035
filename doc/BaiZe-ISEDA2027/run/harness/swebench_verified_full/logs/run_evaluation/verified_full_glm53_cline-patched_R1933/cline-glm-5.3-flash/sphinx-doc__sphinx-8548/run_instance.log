@@ -1,0 +1,91 @@
+2026-11-09 12:42:11,338 - INFO - Creating container for sphinx-doc__sphinx-8548...
+2026-11-09 12:42:11,387 - INFO - Container for sphinx-doc__sphinx-8548 created: d234e5e84c558ec3770db6e0304eca9a6bef5b7542a5c88f9c28a8f36dcef5f9
+2026-11-09 12:42:12,237 - INFO - Container for sphinx-doc__sphinx-8548 started: d234e5e84c558ec3770db6e0304eca9a6bef5b7542a5c88f9c28a8f36dcef5f9
+2026-11-09 12:42:12,239 - INFO - Intermediate patch for sphinx-doc__sphinx-8548 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8548/patch.diff, now applying to container...
+2026-11-09 12:42:12,376 - INFO - >>>>> Applied Patch:
+Checking patch repro_741.py...
+/tmp/patch.diff:120: new blank line at EOF.
++
+Applied patch repro_741.py cleanly.
+warning: 1 line adds whitespace errors.
+
+2026-11-09 12:42:12,877 - INFO - Git diff before:
+
+2026-11-09 12:42:12,880 - INFO - Eval script for sphinx-doc__sphinx-8548 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8548/eval.sh; copying to container...
+2026-11-09 12:42:17,386 - INFO - Test runtime: 4.44 seconds
+2026-11-09 12:42:17,392 - INFO - Test output for sphinx-doc__sphinx-8548 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8548/test_output.txt
+2026-11-09 12:42:17,441 - INFO - Git diff after:
+diff --git a/tests/test_ext_autodoc_autoclass.py b/tests/test_ext_autodoc_autoclass.py
+index c36305de3..6130f233a 100644
+--- a/tests/test_ext_autodoc_autoclass.py
++++ b/tests/test_ext_autodoc_autoclass.py
+@@ -51,6 +51,61 @@ def test_classes(app):
+     ]
+ 
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_instance_variable(app):
++    options = {'members': True}
++    actual = do_autodoc(app, 'class', 'target.instance_variable.Bar', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: Bar()',
++        '   :module: target.instance_variable',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr2',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr3',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++    ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_inherited_instance_variable(app):
++    options = {'members': True,
++               'inherited-members': True}
++    actual = do_autodoc(app, 'class', 'target.instance_variable.Bar', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: Bar()',
++        '   :module: target.instance_variable',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr1',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring foo',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr2',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++        '',
++        '   .. py:attribute:: Bar.attr3',
++        '      :module: target.instance_variable',
++        '',
++        '      docstring bar',
++        '',
++    ]
++
++
+ def test_decorators(app):
+     actual = do_autodoc(app, 'class', 'target.decorator.Baz')
+     assert list(actual) == [
+2026-11-09 12:42:17,441 - INFO - Git diff changed after running eval script
+2026-11-09 12:42:17,441 - INFO - Grading answer for sphinx-doc__sphinx-8548...
+2026-11-09 12:42:17,443 - INFO - report: {'sphinx-doc__sphinx-8548': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/test_ext_autodoc_autoclass.py::test_inherited_instance_variable']}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_autoclass.py::test_classes', 'tests/test_ext_autodoc_autoclass.py::test_instance_variable', 'tests/test_ext_autodoc_autoclass.py::test_decorators', 'tests/test_ext_autodoc_autoclass.py::test_slots_attribute', 'tests/test_ext_autodoc_autoclass.py::test_show_inheritance_for_subclass_of_generic_type'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8548: resolved: False
+2026-11-09 12:42:17,444 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8548.verified_full_glm53_cline-patched_R1933...
+2026-11-09 12:42:33,787 - INFO - Container sweb.eval.sphinx-doc__sphinx-8548.verified_full_glm53_cline-patched_R1933 stopped successfully.
+2026-11-09 12:42:33,787 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8548.verified_full_glm53_cline-patched_R1933...
+2026-11-09 12:42:33,878 - INFO - Container sweb.eval.sphinx-doc__sphinx-8548.verified_full_glm53_cline-patched_R1933 removed successfully.

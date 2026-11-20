@@ -1,0 +1,70 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 13a6809dd8..f41e86079e 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -446,6 +446,10 @@ class Query(BaseExpression):
+         # those operations must be done in a subquery so that the query
+         # aggregates on the limit and/or distinct results instead of applying
+         # the distinct and limit after the aggregation.
++        #
++        # If the query contains existing window function annotations they must
++        # be isolated in a subquery as aggregate function calls cannot contain
++        # window function calls.
+         if (
+             isinstance(self.group_by, tuple)
+             or self.is_sliced
+@@ -454,6 +458,10 @@ class Query(BaseExpression):
+             or qualify
+             or self.distinct
+             or self.combinator
++            or any(
++                getattr(annotation, "contains_over_clause", False)
++                for annotation in self.annotations.values()
++            )
+         ):
+             from django.db.models.sql.subqueries import AggregateQuery
+ 
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 366b8434e5..e4313110f4 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -28,6 +28,7 @@ from django.db.models import (
+     Value,
+     Variance,
+     When,
++    Window,
+ )
+ from django.db.models.expressions import Func, RawSQL
+ from django.db.models.functions import (
+@@ -1267,6 +1268,31 @@ class AggregateTestCase(TestCase):
+                 avg_age=Avg(F("age_agg")),
+             )
+ 
++    @skipUnlessDBFeature("supports_over_clause")
++    def test_aggregate_over_window(self):
++        qs = Author.objects.annotate(
++            cumul_age=Window(Sum("age"), order_by=F("age").asc()),
++        )
++        aggregate = qs.aggregate(
++            age_total=Sum("age"),
++            cumul_age_total=Sum("cumul_age"),
++        )
++        self.assertEqual(aggregate, {"age_total": 337, "cumul_age_total": 1500})
++
++    @skipUnlessDBFeature("supports_over_clause")
++    def test_aggregate_over_window_with_coalesce(self):
++        qs = Author.objects.annotate(
++            cumul_age=Coalesce(
++                Window(Sum("age"), order_by=F("age").asc()),
++                Value(0),
++            ),
++        )
++        aggregate = qs.aggregate(
++            age_total=Sum("age"),
++            cumul_age_total=Sum("cumul_age"),
++        )
++        self.assertEqual(aggregate, {"age_total": 337, "cumul_age_total": 1500})
++
+     def test_annotated_aggregate_over_annotated_aggregate(self):
+         with self.assertRaisesMessage(
+             FieldError, "Cannot compute Sum('id__max'): 'id__max' is an aggregate"

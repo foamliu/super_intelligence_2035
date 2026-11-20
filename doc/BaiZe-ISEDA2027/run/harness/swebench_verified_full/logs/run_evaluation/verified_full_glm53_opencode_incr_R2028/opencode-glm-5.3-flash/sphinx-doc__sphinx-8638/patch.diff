@@ -1,0 +1,62 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 000e2e8d..5afe2993 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -354,7 +354,7 @@ class PyObject(ObjectDescription):
+                             'keyword', 'kwarg', 'kwparam'),
+                      typerolename='class', typenames=('paramtype', 'type'),
+                      can_collapse=True),
+-        PyTypedField('variable', label=_('Variables'), rolename='obj',
++        PyTypedField('variable', label=_('Variables'),
+                      names=('var', 'ivar', 'cvar'),
+                      typerolename='class', typenames=('vartype',),
+                      can_collapse=True),
+diff --git a/tests/roots/test-domain-py-ivar/conf.py b/tests/roots/test-domain-py-ivar/conf.py
+new file mode 100644
+index 00000000..a45d22e2
+--- /dev/null
++++ b/tests/roots/test-domain-py-ivar/conf.py
+@@ -0,0 +1 @@
++exclude_patterns = ['_build']
+diff --git a/tests/roots/test-domain-py-ivar/index.rst b/tests/roots/test-domain-py-ivar/index.rst
+new file mode 100644
+index 00000000..afc7d090
+--- /dev/null
++++ b/tests/roots/test-domain-py-ivar/index.rst
+@@ -0,0 +1,14 @@
++ivar
++====
++
++.. py:module:: pkg.a
++
++.. py:data:: limit
++   :module: pkg.b
++
++   A global variable in another module.
++
++.. py:class:: Foo
++
++   :ivar limit: instance variable of Foo
++   :vartype limit: int
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index e0c69051..2c0cb243 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -208,6 +208,17 @@ def test_domain_py_find_obj(app, status, warning):
+               ('roles', 'NestedParentA.NestedChildA.subchild_1', 'method', False))])
+ 
+ 
++@pytest.mark.sphinx('dummy', testroot='domain-py-ivar')
++def test_domain_py_ivar_not_linked(app, status, warning):
++    """Instance variables in docstrings must not be linked to other
++    variables of the same name in the project (issue #5923)."""
++    app.builder.build_all()
++
++    doctree = app.env.get_doctree('index')
++    refnodes = list(doctree.traverse(pending_xref))
++    assert [n for n in refnodes if n['reftarget'] == 'limit'] == []
++
++
+ def test_get_full_qualified_name():
+     env = Mock(domaindata={})
+     domain = PythonDomain(env)

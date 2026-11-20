@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-6938",
+    "model_name_or_path": "hermes-glm-5.3-flash",
+    "model_patch": "diff --git a/xarray/core/variable.py b/xarray/core/variable.py\nindex 5827b90..93576e4 100644\n--- a/xarray/core/variable.py\n+++ b/xarray/core/variable.py\n@@ -2879,9 +2879,9 @@ class IndexVariable(Variable):\n     def _data_equals(self, other):\n         return self.to_index().equals(other.to_index())\n \n-    def to_index_variable(self):\n+    def to_index_variable(self) -> IndexVariable:\n         \"\"\"Return this variable as an xarray.IndexVariable\"\"\"\n-        return self\n+        return self.copy()\n \n     to_coord = utils.alias(to_index_variable, \"to_coord\")\n \ndiff --git a/xarray/tests/test_variable.py b/xarray/tests/test_variable.py\nindex 21b8b11..6048ebc 100644\n--- a/xarray/tests/test_variable.py\n+++ b/xarray/tests/test_variable.py\n@@ -2422,6 +2422,15 @@ class TestIndexVariable(VariableSubclassobjects):\n     def test_coarsen_2d(self):\n         super().test_coarsen_2d()\n \n+    def test_to_index_variable_copy(self) -> None:\n+        # to_index_variable should return a copy\n+        # https://github.com/pydata/xarray/issues/6931\n+        a = IndexVariable(\"x\", [\"a\"])\n+        b = a.to_index_variable()\n+        assert a is not b\n+        b.dims = (\"y\",)\n+        assert a.dims == (\"x\",)\n+\n \n class TestAsCompatibleData:\n     def test_unchanged_types(self):\n"
+  }
+]

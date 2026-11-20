@@ -1,0 +1,91 @@
+2026-11-09 04:57:17,699 - INFO - Creating container for django__django-13925...
+2026-11-09 04:57:17,763 - INFO - Container for django__django-13925 created: df98ceda93423eb22d1fe4bc98d01e7716903cc397dab67b332674563592b41f
+2026-11-09 04:57:19,112 - INFO - Container for django__django-13925 started: df98ceda93423eb22d1fe4bc98d01e7716903cc397dab67b332674563592b41f
+2026-11-09 04:57:19,114 - INFO - Intermediate patch for django__django-13925 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-13925/patch.diff, now applying to container...
+2026-11-09 04:57:19,250 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+warning: django/db/models/base.py has type 100755, expected 100644
+Checking patch tests/check_framework/test_model_checks.py...
+warning: tests/check_framework/test_model_checks.py has type 100755, expected 100644
+Applied patch django/db/models/base.py cleanly.
+Applied patch tests/check_framework/test_model_checks.py cleanly.
+
+2026-11-09 04:57:20,656 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 4038859cfa..70bac6404a 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1299,6 +1299,7 @@ class Model(metaclass=ModelBase):
+     def _check_default_pk(cls):
+         if (
+             cls._meta.pk.auto_created and
++            not cls._meta.pk.model._meta.parents and
+             not settings.is_overridden('DEFAULT_AUTO_FIELD') and
+             not cls._meta.app_config._is_default_auto_field_overridden
+         ):
+diff --git a/tests/check_framework/test_model_checks.py b/tests/check_framework/test_model_checks.py
+index d4342ada07..1d10b755c0 100755
+--- a/tests/check_framework/test_model_checks.py
++++ b/tests/check_framework/test_model_checks.py
+@@ -408,6 +408,37 @@ class ModelDefaultAutoFieldTests(SimpleTestCase):
+ 
+         self.assertEqual(checks.run_checks(app_configs=self.apps.get_app_configs()), [])
+ 
++    def test_inherited_pk(self):
++        class Model(models.Model):
++            pass
++
++        class SubModel(Model):
++            pass
++
++        self.assertEqual(checks.run_checks(app_configs=self.apps.get_app_configs()), [
++            Warning(
++                "Auto-created primary key used when not defining a primary "
++                "key type, by default 'django.db.models.AutoField'.",
++                hint=(
++                    "Configure the DEFAULT_AUTO_FIELD setting or the "
++                    "CheckDefaultPKConfig.default_auto_field attribute to "
++                    "point to a subclass of AutoField, e.g. "
++                    "'django.db.models.BigAutoField'."
++                ),
++                obj=Model,
++                id='models.W042',
++            ),
++        ])
++
++    def test_inherited_explicit_pk(self):
++        class Model(models.Model):
++            id = models.AutoField(primary_key=True)
++
++        class SubModel(Model):
++            pass
++
++        self.assertEqual(checks.run_checks(app_configs=self.apps.get_app_configs()), [])
++
+     @isolate_apps('check_framework.apps.CheckPKConfig', kwarg_name='apps')
+     def test_app_default_auto_field(self, apps):
+         class ModelWithPkViaAppConfig(models.Model):
+2026-11-09 04:57:20,659 - INFO - Eval script for django__django-13925 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-13925/eval.sh; copying to container...
+2026-11-09 04:57:25,699 - INFO - Test runtime: 4.98 seconds
+2026-11-09 04:57:25,705 - INFO - Test output for django__django-13925 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-13925/test_output.txt
+2026-11-09 04:57:25,798 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 4038859cfa..70bac6404a 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1299,6 +1299,7 @@ class Model(metaclass=ModelBase):
+     def _check_default_pk(cls):
+         if (
+             cls._meta.pk.auto_created and
++            not cls._meta.pk.model._meta.parents and
+             not settings.is_overridden('DEFAULT_AUTO_FIELD') and
+             not cls._meta.app_config._is_default_auto_field_overridden
+         ):
+2026-11-09 04:57:25,798 - INFO - Git diff changed after running eval script
+2026-11-09 04:57:25,798 - INFO - Grading answer for django__django-13925...
+2026-11-09 04:57:25,810 - INFO - report: {'django__django-13925': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_auto_created_inherited_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_explicit_inherited_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_app_default_auto_field (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_auto_created_inherited_parent_link (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_auto_created_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_default_auto_field_setting (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_explicit_inherited_parent_link (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_explicit_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_collision_abstract_model (check_framework.test_model_checks.IndexNameTests)', 'test_collision_across_apps (check_framework.test_model_checks.IndexNameTests)', 'test_collision_in_different_models (check_framework.test_model_checks.IndexNameTests)', 'test_collision_in_same_model (check_framework.test_model_checks.IndexNameTests)', 'test_no_collision_abstract_model_interpolation (check_framework.test_model_checks.IndexNameTests)', 'test_no_collision_across_apps_interpolation (check_framework.test_model_checks.IndexNameTests)', 'test_collision_abstract_model (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_across_apps (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_in_different_models (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_in_same_model (check_framework.test_model_checks.ConstraintNameTests)', 'test_no_collision_abstract_model_interpolation (check_framework.test_model_checks.ConstraintNameTests)', 'test_no_collision_across_apps_interpolation (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_across_apps (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_collision_across_apps_database_routers_installed (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_collision_in_same_app (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_collision_in_same_app_database_routers_installed (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_no_collision_for_proxy_models (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_no_collision_for_unmanaged_models (check_framework.test_model_checks.DuplicateDBTableTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13925: resolved: True
+2026-11-09 04:57:25,812 - INFO - Attempting to stop container sweb.eval.django__django-13925.verified_full_glm53_opencode_R1933...
+2026-11-09 04:57:42,422 - INFO - Container sweb.eval.django__django-13925.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 04:57:42,422 - INFO - Attempting to remove container sweb.eval.django__django-13925.verified_full_glm53_opencode_R1933...
+2026-11-09 04:57:42,467 - INFO - Container sweb.eval.django__django-13925.verified_full_glm53_opencode_R1933 removed successfully.

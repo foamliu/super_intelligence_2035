@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "matplotlib__matplotlib-23314",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/lib/mpl_toolkits/mplot3d/axes3d.py b/lib/mpl_toolkits/mplot3d/axes3d.py\nindex 9db44b79..5479bc1a 100644\n--- a/lib/mpl_toolkits/mplot3d/axes3d.py\n+++ b/lib/mpl_toolkits/mplot3d/axes3d.py\n@@ -387,6 +387,8 @@ class Axes3D(Axes):\n \n     @martist.allow_rasterization\n     def draw(self, renderer):\n+        if not self.get_visible():\n+            return\n         self._unstale_viewLim()\n \n         # draw the background patch\ndiff --git a/lib/mpl_toolkits/tests/test_mplot3d.py b/lib/mpl_toolkits/tests/test_mplot3d.py\nindex 966eb50b..4d2a5442 100644\n--- a/lib/mpl_toolkits/tests/test_mplot3d.py\n+++ b/lib/mpl_toolkits/tests/test_mplot3d.py\n@@ -1736,3 +1736,14 @@ def test_view_init_vertical_axis(\n         tickdir_expected = tickdirs_expected[i]\n         tickdir_actual = axis._get_tickdir()\n         np.testing.assert_array_equal(tickdir_expected, tickdir_actual)\n+\n+\n+def test_3d_set_visible():\n+    \"\"\"Test that set_visible(False) works for 3D axes.\"\"\"\n+    fig, (ax1, ax2) = plt.subplots(1, 2, subplot_kw={'projection': '3d'})\n+    ax1.scatter(1, 1, 1)\n+    ax2.scatter(1, 1, 1, c='r')\n+    ax1.set_visible(False)\n+    assert not ax1.get_visible()\n+    assert ax2.get_visible()\n+    fig.canvas.draw()\n"
+  }
+]

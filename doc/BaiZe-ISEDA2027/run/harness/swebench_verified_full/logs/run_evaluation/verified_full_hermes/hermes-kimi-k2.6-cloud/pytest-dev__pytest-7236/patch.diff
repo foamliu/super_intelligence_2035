@@ -1,0 +1,119 @@
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 773f545..9f1f5d2 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -115,13 +115,14 @@ class TestCaseFunction(Function):
+     def setup(self):
+         # a bound method to be called during teardown() if set (see 'runtest()')
+         self._explicit_tearDown = None
++        self._tearDown_was_called = False
+         self._testcase = self.parent.obj(self.name)
+         self._obj = getattr(self._testcase, self.name)
+         if hasattr(self, "_request"):
+             self._request._fillfixtures()
+ 
+     def teardown(self):
+-        if self._explicit_tearDown is not None:
++        if self._explicit_tearDown is not None and self._tearDown_was_called:
+             self._explicit_tearDown()
+             self._explicit_tearDown = None
+         self._testcase = None
+@@ -222,7 +223,12 @@ class TestCaseFunction(Function):
+             # when absolutely needed
+             if self.config.getoption("usepdb"):
+                 self._explicit_tearDown = self._testcase.tearDown
+-                setattr(self._testcase, "tearDown", lambda *args: None)
++                self._tearDown_was_called = False
++
++                def _noop_tearDown(*args):
++                    self._tearDown_was_called = True
++
++                setattr(self._testcase, "tearDown", _noop_tearDown)
+ 
+             # we need to update the actual bound method with self.obj, because
+             # wrap_pytest_function_for_tracing replaces self.obj by a wrapper
+diff --git a/test_fix_verify.py b/test_fix_verify.py
+new file mode 100644
+index 0000000..11611ae
+--- /dev/null
++++ b/test_fix_verify.py
+@@ -0,0 +1,31 @@
++import unittest
++import sys
++import pytest
++
++# Capture whether tearDown was called
++tearDown_calls = []
++
++class MyTestCase(unittest.TestCase):
++    def tearDown(self):
++        tearDown_calls.append(self.id())
++
++    @unittest.skip("hello")
++    def test_skipped(self):
++        pass
++
++    def test_passing(self):
++        pass
++
++    def test_failing(self):
++        self.fail("boom")
++
++
++def test_skipped_no_teardown_with_pdb():
++    # This should be verified manually or via subprocess with --pdb
++    pass
++
++
++if __name__ == "__main__":
++    # Simulate what happens with --pdb by calling the test functions directly
++    # through pytest
++    sys.exit(pytest.main([__file__, "-v", "--assert=plain"]))
+diff --git a/test_repro.py b/test_repro.py
+new file mode 100644
+index 0000000..4da4e86
+--- /dev/null
++++ b/test_repro.py
+@@ -0,0 +1,11 @@
++import unittest
++import sys
++
++class MyTestCase(unittest.TestCase):
++    def setUp(self):
++        pass
++    @unittest.skip("hello")
++    def test_one(self):
++        pass
++    def tearDown(self):
++        print("TEARDOWN_CALLED", file=sys.stderr)
+diff --git a/test_repro2.py b/test_repro2.py
+new file mode 100644
+index 0000000..82ee4e0
+--- /dev/null
++++ b/test_repro2.py
+@@ -0,0 +1,10 @@
++import unittest
++import sys
++
++class MyTestCase(unittest.TestCase):
++    def tearDown(self):
++        print("TEARDOWN_CALLED", file=sys.stderr)
++    def test_one(self):
++        print("TEST_ONE", file=sys.stderr)
++    def test_two(self):
++        print("TEST_TWO", file=sys.stderr)
+diff --git a/test_repro3.py b/test_repro3.py
+new file mode 100644
+index 0000000..f1dd902
+--- /dev/null
++++ b/test_repro3.py
+@@ -0,0 +1,9 @@
++import unittest
++import sys
++
++class MyTestCase(unittest.TestCase):
++    def tearDown(self):
++        print("TEARDOWN_CALLED", file=sys.stderr)
++    def test_one(self):
++        print("TEST_ONE_FAILING", file=sys.stderr)
++        self.fail("boom")

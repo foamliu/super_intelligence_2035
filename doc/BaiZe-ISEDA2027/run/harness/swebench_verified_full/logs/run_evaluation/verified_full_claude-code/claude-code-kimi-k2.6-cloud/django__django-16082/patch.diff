@@ -1,0 +1,44 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 5e3c7cab8..978138b86 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -533,6 +533,8 @@ _connector_combinations = [
+             Combinable.SUB,
+             Combinable.MUL,
+             Combinable.DIV,
++            Combinable.MOD,
++            Combinable.POW,
+         )
+     },
+     # Bitwise operators.
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 39e6c18b1..02767ba2e 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1539,6 +1539,26 @@ class ExpressionOperatorTests(TestCase):
+             Number.objects.get(pk=self.n.pk).float, Approximate(536.308, places=3)
+         )
+ 
++    def test_modulo_decimal_output_field(self):
++        # Modulo with DecimalField and IntegerField resolves output_field.
++        expr = Value(Decimal("1.5"), output_field=DecimalField()) % Value(
++            2, output_field=IntegerField()
++        )
++        self.assertIsInstance(expr.output_field, DecimalField)
++
++    def test_righthand_modulo_decimal(self):
++        # RH Modulo of IntegerField and DecimalField.
++        n = Number.objects.create(integer=5, decimal_value=Decimal("9.5"))
++        Number.objects.filter(pk=n.pk).update(decimal_value=F("integer") % F("decimal_value"))
++        self.assertEqual(Number.objects.get(pk=n.pk).decimal_value, Decimal("5"))
++
++    def test_power_decimal_output_field(self):
++        # Power with DecimalField and IntegerField resolves output_field.
++        expr = Value(Decimal("1.5"), output_field=DecimalField()) ** Value(
++            2, output_field=IntegerField()
++        )
++        self.assertIsInstance(expr.output_field, DecimalField)
++
+ 
+ class FTimeDeltaTests(TestCase):
+     @classmethod

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "astropy__astropy-7606",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/astropy/units/core.py b/astropy/units/core.py\nindex e9bd986d..0ee8cf86 100644\n--- a/astropy/units/core.py\n+++ b/astropy/units/core.py\n@@ -1710,7 +1710,10 @@ class UnrecognizedUnit(IrreducibleUnit):\n         _unrecognized_operator\n \n     def __eq__(self, other):\n-        other = Unit(other, parse_strict='silent')\n+        try:\n+            other = Unit(other, parse_strict='silent')\n+        except (ValueError, UnitsError, TypeError):\n+            return False\n         return isinstance(other, UnrecognizedUnit) and self.name == other.name\n \n     def __ne__(self, other):\ndiff --git a/astropy/units/tests/test_units.py b/astropy/units/tests/test_units.py\nindex 000c12d2..386240c6 100644\n--- a/astropy/units/tests/test_units.py\n+++ b/astropy/units/tests/test_units.py\n@@ -197,6 +197,11 @@ def test_unknown_unit3():\n     with pytest.raises(TypeError):\n         unit5 = u.Unit(None)\n \n+    # Comparing with None (or anything that cannot be converted to a unit)\n+    # should return False rather than raise TypeError (regression test for #5680)\n+    assert (unit == None) is False\n+    assert (unit != None) is True\n+\n \n @raises(TypeError)\n def test_invalid_scale():\n"
+  }
+]

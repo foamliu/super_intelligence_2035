@@ -1,0 +1,442 @@
+2026-10-30 22:55:21,747 - INFO - Creating container for psf__requests-1921...
+2026-10-30 22:55:21,793 - INFO - Container for psf__requests-1921 created: 26d275014e1b8fd78b057b34cd849900fb0e400d9409f280869be14eaf354a89
+2026-10-30 22:55:24,185 - INFO - Container for psf__requests-1921 started: 26d275014e1b8fd78b057b34cd849900fb0e400d9409f280869be14eaf354a89
+2026-10-30 22:55:24,187 - INFO - Intermediate patch for psf__requests-1921 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/psf__requests-1921/patch.diff, now applying to container...
+2026-10-30 22:55:24,298 - INFO - >>>>> Applied Patch:
+Checking patch requests/cookies.py...
+Checking patch requests/models.py...
+Checking patch requests/packages/urllib3/_collections.py...
+Checking patch requests/sessions.py...
+Checking patch requests/structures.py...
+Checking patch requests/utils.py...
+Checking patch test_requests.py...
+Applied patch requests/cookies.py cleanly.
+Applied patch requests/models.py cleanly.
+Applied patch requests/packages/urllib3/_collections.py cleanly.
+Applied patch requests/sessions.py cleanly.
+Applied patch requests/structures.py cleanly.
+Applied patch requests/utils.py cleanly.
+Applied patch test_requests.py cleanly.
+
+2026-10-30 22:55:24,353 - INFO - Git diff before:
+diff --git a/requests/cookies.py b/requests/cookies.py
+index 831c49c..c459ef5 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -7,7 +7,10 @@ requests.utils imports from here, so be careful with imports.
+ """
+ 
+ import time
+-import collections
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from .compat import cookielib, urlparse, urlunparse, Morsel
+ 
+ try:
+@@ -156,7 +159,7 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index cd232e6..ef10cb5 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -7,7 +7,10 @@ requests.models
+ This module contains the primary objects that power Requests.
+ """
+ 
+-import collections
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import datetime
+ 
+ from io import BytesIO, UnsupportedOperation
+@@ -161,10 +164,10 @@ class RequestHooksMixin(object):
+         if event not in self.hooks:
+             raise ValueError('Unsupported event specified, with event name "%s"' % (event))
+ 
+-        if isinstance(hook, collections.Callable):
++        if isinstance(hook, Callable):
+             self.hooks[event].append(hook)
+         elif hasattr(hook, '__iter__'):
+-            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
++            self.hooks[event].extend(h for h in hook if isinstance(h, Callable))
+ 
+     def deregister_hook(self, event, hook):
+         """Deregister a previously registered hook.
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index 5907b0d..2bf6657 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,11 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++
+ try:
+     from threading import RLock
+ except ImportError: # Platform-specific: No threads available
+@@ -15,8 +19,7 @@ except ImportError: # Platform-specific: No threads available
+         def __exit__(self, exc_type, exc_value, traceback):
+             pass
+ 
+-
+-try: # Python 2.7+
++try:
+     from collections import OrderedDict
+ except ImportError:
+     from .packages.ordered_dict import OrderedDict
+diff --git a/requests/sessions.py b/requests/sessions.py
+index a023e4e..b01b745 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -9,7 +9,10 @@ requests (cookies, auth, proxies).
+ 
+ """
+ import os
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ from datetime import datetime
+ 
+ from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
+@@ -52,6 +55,12 @@ def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+         return request_setting
+ 
+     merged_setting = dict_class(to_key_val_list(session_setting))
++
++    # Remove keys that are set to None in the session setting.
++    for (k, v) in list(merged_setting.items()):
++        if v is None:
++            del merged_setting[k]
++
+     merged_setting.update(to_key_val_list(request_setting))
+ 
+     # Remove keys that are set to None.
+diff --git a/requests/structures.py b/requests/structures.py
+index a175913..dadd0f5 100644
+--- a/requests/structures.py
++++ b/requests/structures.py
+@@ -5,13 +5,16 @@ requests.structures
+ ~~~~~~~~~~~~~~~~~~~
+ 
+ Data structures that power Requests.
+-
+ """
+ 
+ import os
+-import collections
+ from itertools import islice
+ 
++try:
++    from collections.abc import MutableMapping, Mapping
++except ImportError:
++    from collections import MutableMapping, Mapping
++
+ 
+ class IteratorProxy(object):
+     """docstring for IteratorProxy"""
+@@ -34,7 +37,7 @@ class IteratorProxy(object):
+         return "".join(islice(self.i, None, n))
+ 
+ 
+-class CaseInsensitiveDict(collections.MutableMapping):
++class CaseInsensitiveDict(MutableMapping):
+     """
+     A case-insensitive ``dict``-like object.
+ 
+@@ -60,7 +63,6 @@ class CaseInsensitiveDict(collections.MutableMapping):
+     If the constructor, ``.update``, or equality comparison
+     operations are given keys that have equal ``.lower()``s, the
+     behavior is undefined.
+-
+     """
+     def __init__(self, data=None, **kwargs):
+         self._store = dict()
+@@ -94,7 +96,7 @@ class CaseInsensitiveDict(collections.MutableMapping):
+         )
+ 
+     def __eq__(self, other):
+-        if isinstance(other, collections.Mapping):
++        if isinstance(other, Mapping):
+             other = CaseInsensitiveDict(other)
+         else:
+             return NotImplemented
+@@ -121,7 +123,6 @@ class LookupDict(dict):
+ 
+     def __getitem__(self, key):
+         # We allow fall-through here, so values default to None
+-
+         return self.__dict__.get(key, None)
+ 
+     def get(self, key, default=None):
+diff --git a/requests/utils.py b/requests/utils.py
+index 7b7ff0a..ab119a7 100644
+--- a/requests/utils.py
++++ b/requests/utils.py
+@@ -11,7 +11,10 @@ that are also useful for external consumption.
+ 
+ import cgi
+ import codecs
+-import collections
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ import io
+ import os
+ import platform
+@@ -160,7 +163,7 @@ def to_key_val_list(value):
+     if isinstance(value, (str, bytes, bool, int)):
+         raise ValueError('cannot encode objects that are not 2-tuples')
+ 
+-    if isinstance(value, collections.Mapping):
++    if isinstance(value, Mapping):
+         value = value.items()
+ 
+     return list(value)
+diff --git a/test_requests.py b/test_requests.py
+index 3d7cdaa..7ce5e44 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -804,6 +804,20 @@ class RequestsTestCase(unittest.TestCase):
+         r = s.get(httpbin('get'), headers={'FOO': None})
+         assert 'foo' not in r.request.headers
+ 
++    def test_session_header_none_removes_header(self):
++        s = requests.Session()
++        s.headers['Accept-Encoding'] = None
++        r = requests.Request('GET', 'http://example.com')
++        p = s.prepare_request(r)
++        assert 'Accept-Encoding' not in p.headers
++
++    def test_session_header_none_can_be_overridden(self):
++        s = requests.Session()
++        s.headers['X-Custom'] = None
++        r = requests.Request('GET', 'http://example.com', headers={'X-Custom': 'value'})
++        p = s.prepare_request(r)
++        assert p.headers['X-Custom'] == 'value'
++
+     def test_params_are_merged_case_sensitive(self):
+         s = requests.Session()
+         s.params['foo'] = 'bar'
+2026-10-30 22:55:24,356 - INFO - Eval script for psf__requests-1921 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/psf__requests-1921/eval.sh; copying to container...
+2026-10-30 22:56:14,284 - INFO - Test runtime: 49.88 seconds
+2026-10-30 22:56:14,287 - INFO - Test output for psf__requests-1921 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/psf__requests-1921/test_output.txt
+2026-10-30 22:56:14,369 - INFO - Git diff after:
+diff --git a/requests/cookies.py b/requests/cookies.py
+index 831c49c..c459ef5 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -7,7 +7,10 @@ requests.utils imports from here, so be careful with imports.
+ """
+ 
+ import time
+-import collections
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from .compat import cookielib, urlparse, urlunparse, Morsel
+ 
+ try:
+@@ -156,7 +159,7 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index cd232e6..ef10cb5 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -7,7 +7,10 @@ requests.models
+ This module contains the primary objects that power Requests.
+ """
+ 
+-import collections
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import datetime
+ 
+ from io import BytesIO, UnsupportedOperation
+@@ -161,10 +164,10 @@ class RequestHooksMixin(object):
+         if event not in self.hooks:
+             raise ValueError('Unsupported event specified, with event name "%s"' % (event))
+ 
+-        if isinstance(hook, collections.Callable):
++        if isinstance(hook, Callable):
+             self.hooks[event].append(hook)
+         elif hasattr(hook, '__iter__'):
+-            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
++            self.hooks[event].extend(h for h in hook if isinstance(h, Callable))
+ 
+     def deregister_hook(self, event, hook):
+         """Deregister a previously registered hook.
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index 5907b0d..2bf6657 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,11 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++
+ try:
+     from threading import RLock
+ except ImportError: # Platform-specific: No threads available
+@@ -15,8 +19,7 @@ except ImportError: # Platform-specific: No threads available
+         def __exit__(self, exc_type, exc_value, traceback):
+             pass
+ 
+-
+-try: # Python 2.7+
++try:
+     from collections import OrderedDict
+ except ImportError:
+     from .packages.ordered_dict import OrderedDict
+diff --git a/requests/sessions.py b/requests/sessions.py
+index a023e4e..b01b745 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -9,7 +9,10 @@ requests (cookies, auth, proxies).
+ 
+ """
+ import os
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ from datetime import datetime
+ 
+ from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
+@@ -52,6 +55,12 @@ def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+         return request_setting
+ 
+     merged_setting = dict_class(to_key_val_list(session_setting))
++
++    # Remove keys that are set to None in the session setting.
++    for (k, v) in list(merged_setting.items()):
++        if v is None:
++            del merged_setting[k]
++
+     merged_setting.update(to_key_val_list(request_setting))
+ 
+     # Remove keys that are set to None.
+diff --git a/requests/structures.py b/requests/structures.py
+index a175913..dadd0f5 100644
+--- a/requests/structures.py
++++ b/requests/structures.py
+@@ -5,13 +5,16 @@ requests.structures
+ ~~~~~~~~~~~~~~~~~~~
+ 
+ Data structures that power Requests.
+-
+ """
+ 
+ import os
+-import collections
+ from itertools import islice
+ 
++try:
++    from collections.abc import MutableMapping, Mapping
++except ImportError:
++    from collections import MutableMapping, Mapping
++
+ 
+ class IteratorProxy(object):
+     """docstring for IteratorProxy"""
+@@ -34,7 +37,7 @@ class IteratorProxy(object):
+         return "".join(islice(self.i, None, n))
+ 
+ 
+-class CaseInsensitiveDict(collections.MutableMapping):
++class CaseInsensitiveDict(MutableMapping):
+     """
+     A case-insensitive ``dict``-like object.
+ 
+@@ -60,7 +63,6 @@ class CaseInsensitiveDict(collections.MutableMapping):
+     If the constructor, ``.update``, or equality comparison
+     operations are given keys that have equal ``.lower()``s, the
+     behavior is undefined.
+-
+     """
+     def __init__(self, data=None, **kwargs):
+         self._store = dict()
+@@ -94,7 +96,7 @@ class CaseInsensitiveDict(collections.MutableMapping):
+         )
+ 
+     def __eq__(self, other):
+-        if isinstance(other, collections.Mapping):
++        if isinstance(other, Mapping):
+             other = CaseInsensitiveDict(other)
+         else:
+             return NotImplemented
+@@ -121,7 +123,6 @@ class LookupDict(dict):
+ 
+     def __getitem__(self, key):
+         # We allow fall-through here, so values default to None
+-
+         return self.__dict__.get(key, None)
+ 
+     def get(self, key, default=None):
+diff --git a/requests/utils.py b/requests/utils.py
+index 7b7ff0a..ab119a7 100644
+--- a/requests/utils.py
++++ b/requests/utils.py
+@@ -11,7 +11,10 @@ that are also useful for external consumption.
+ 
+ import cgi
+ import codecs
+-import collections
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ import io
+ import os
+ import platform
+@@ -160,7 +163,7 @@ def to_key_val_list(value):
+     if isinstance(value, (str, bytes, bool, int)):
+         raise ValueError('cannot encode objects that are not 2-tuples')
+ 
+-    if isinstance(value, collections.Mapping):
++    if isinstance(value, Mapping):
+         value = value.items()
+ 
+     return list(value)
+2026-10-30 22:56:14,370 - INFO - Git diff changed after running eval script
+2026-10-30 22:56:14,370 - INFO - Grading answer for psf__requests-1921...
+2026-10-30 22:56:14,402 - INFO - report: {'psf__requests-1921': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_DIGESTAUTH_WRONG_HTTP_401_GET', 'test_requests.py::RequestsTestCase::test_POSTBIN_GET_POST_FILES', 'test_requests.py::RequestsTestCase::test_basicauth_with_netrc', 'test_requests.py::RequestsTestCase::test_cookie_persists_via_api', 'test_requests.py::RequestsTestCase::test_headers_on_session_with_None_are_not_sent', 'test_requests.py::RequestsTestCase::test_uppercase_scheme_redirect'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_DIGESTAUTH_QUOTES_QOP_VALUE', 'test_requests.py::RequestsTestCase::test_DIGEST_AUTH_RETURNS_COOKIE', 'test_requests.py::RequestsTestCase::test_DIGEST_STREAM', 'test_requests.py::RequestsTestCase::test_HTTP_200_OK_GET_WITH_MIXED_PARAMS', 'test_requests.py::RequestsTestCase::test_HTTP_200_OK_GET_WITH_PARAMS', 'test_requests.py::RequestsTestCase::test_HTTP_200_OK_HEAD', 'test_requests.py::RequestsTestCase::test_HTTP_200_OK_PUT', 'test_requests.py::RequestsTestCase::test_HTTP_302_ALLOW_REDIRECT_GET', 'test_requests.py::RequestsTestCase::test_POSTBIN_GET_POST_FILES_WITH_DATA', 'test_requests.py::RequestsTestCase::test_autoset_header_values_are_native', 'test_requests.py::RequestsTestCase::test_basic_building', 'test_requests.py::RequestsTestCase::test_can_send_nonstring_objects_with_files', 'test_requests.py::RequestsTestCase::test_cannot_send_unprepared_requests', 'test_requests.py::RequestsTestCase::test_cookie_as_dict_items', 'test_requests.py::RequestsTestCase::test_cookie_as_dict_keeps_items', 'test_requests.py::RequestsTestCase::test_cookie_as_dict_keeps_len', 'test_requests.py::RequestsTestCase::test_cookie_as_dict_keys', 'test_requests.py::RequestsTestCase::test_cookie_as_dict_values', 'test_requests.py::RequestsTestCase::test_cookie_parameters', 'test_requests.py::RequestsTestCase::test_cookie_quote_wrapped', 'test_requests.py::RequestsTestCase::test_cookie_removed_on_expire', 'test_requests.py::RequestsTestCase::test_custom_content_type', 'test_requests.py::RequestsTestCase::test_decompress_gzip', 'test_requests.py::RequestsTestCase::test_different_encodings_dont_break_post', 'test_requests.py::RequestsTestCase::test_entry_points', 'test_requests.py::RequestsTestCase::test_fixes_1329', 'test_requests.py::RequestsTestCase::test_generic_cookiejar_works', 'test_requests.py::RequestsTestCase::test_get_auth_from_url', 'test_requests.py::RequestsTestCase::test_get_auth_from_url_encoded_hashes', 'test_requests.py::RequestsTestCase::test_get_auth_from_url_encoded_spaces', 'test_requests.py::RequestsTestCase::test_get_auth_from_url_not_encoded_spaces', 'test_requests.py::RequestsTestCase::test_get_auth_from_url_percent_chars', 'test_requests.py::RequestsTestCase::test_header_keys_are_native', 'test_requests.py::RequestsTestCase::test_header_remove_is_case_insensitive', 'test_requests.py::RequestsTestCase::test_hook_receives_request_arguments', 'test_requests.py::RequestsTestCase::test_http_error', 'test_requests.py::RequestsTestCase::test_invalid_url', 'test_requests.py::RequestsTestCase::test_links', 'test_requests.py::RequestsTestCase::test_long_authinfo_in_url', 'test_requests.py::RequestsTestCase::test_no_content_length', 'test_requests.py::RequestsTestCase::test_oddball_schemes_dont_check_URLs', 'test_requests.py::RequestsTestCase::test_param_cookiejar_works', 'test_requests.py::RequestsTestCase::test_params_are_added_before_fragment', 'test_requests.py::RequestsTestCase::test_params_are_merged_case_sensitive', 'test_requests.py::RequestsTestCase::test_path_is_not_double_encoded', 'test_requests.py::RequestsTestCase::test_prepared_request_hook', 'test_requests.py::RequestsTestCase::test_request_and_response_are_pickleable', 'test_requests.py::RequestsTestCase::test_request_cookie_overrides_session_cookie', 'test_requests.py::RequestsTestCase::test_request_cookies_not_persisted', 'test_requests.py::RequestsTestCase::test_request_ok_set', 'test_requests.py::RequestsTestCase::test_requests_in_history_are_not_overridden', 'test_requests.py::RequestsTestCase::test_response_is_iterable', 'test_requests.py::RequestsTestCase::test_session_hooks_are_overriden_by_request_hooks', 'test_requests.py::RequestsTestCase::test_session_hooks_are_used_with_no_request_hooks', 'test_requests.py::RequestsTestCase::test_session_pickling', 'test_requests.py::RequestsTestCase::test_set_cookie_on_301', 'test_requests.py::RequestsTestCase::test_status_raising', 'test_requests.py::RequestsTestCase::test_time_elapsed_blank', 'test_requests.py::RequestsTestCase::test_transport_adapter_ordering', 'test_requests.py::RequestsTestCase::test_unicode_get', 'test_requests.py::RequestsTestCase::test_unicode_header_name', 'test_requests.py::RequestsTestCase::test_unicode_method_name', 'test_requests.py::RequestsTestCase::test_unicode_multipart_post', 'test_requests.py::RequestsTestCase::test_unicode_multipart_post_fieldnames', 'test_requests.py::RequestsTestCase::test_urlencoded_get_query_multivalued_param', 'test_requests.py::RequestsTestCase::test_user_agent_transfers', 'test_requests.py::TestContentEncodingDetection::test_html4_pragma', 'test_requests.py::TestContentEncodingDetection::test_html_charset', 'test_requests.py::TestContentEncodingDetection::test_none', 'test_requests.py::TestContentEncodingDetection::test_precedence', 'test_requests.py::TestContentEncodingDetection::test_xhtml_pragma', 'test_requests.py::TestContentEncodingDetection::test_xml', 'test_requests.py::TestCaseInsensitiveDict::test_contains', 'test_requests.py::TestCaseInsensitiveDict::test_delitem', 'test_requests.py::TestCaseInsensitiveDict::test_docstring_example', 'test_requests.py::TestCaseInsensitiveDict::test_equality', 'test_requests.py::TestCaseInsensitiveDict::test_fixes_649', 'test_requests.py::TestCaseInsensitiveDict::test_get', 'test_requests.py::TestCaseInsensitiveDict::test_getitem', 'test_requests.py::TestCaseInsensitiveDict::test_iter', 'test_requests.py::TestCaseInsensitiveDict::test_iterable_init', 'test_requests.py::TestCaseInsensitiveDict::test_kwargs_init', 'test_requests.py::TestCaseInsensitiveDict::test_len', 'test_requests.py::TestCaseInsensitiveDict::test_lower_items', 'test_requests.py::TestCaseInsensitiveDict::test_mapping_init', 'test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case', 'test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case', 'test_requests.py::TestCaseInsensitiveDict::test_setdefault', 'test_requests.py::TestCaseInsensitiveDict::test_update', 'test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged', 'test_requests.py::UtilsTestCase::test_address_in_network', 'test_requests.py::UtilsTestCase::test_dotted_netmask', 'test_requests.py::UtilsTestCase::test_get_auth_from_url', 'test_requests.py::UtilsTestCase::test_get_environ_proxies', 'test_requests.py::UtilsTestCase::test_get_environ_proxies_ip_ranges', 'test_requests.py::UtilsTestCase::test_is_ipv4_address', 'test_requests.py::UtilsTestCase::test_is_valid_cidr', 'test_requests.py::UtilsTestCase::test_super_len_io_streams', 'test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int', 'test_requests.py::TestMorselToCookieExpires::test_expires_invalid_str', 'test_requests.py::TestMorselToCookieExpires::test_expires_none', 'test_requests.py::TestMorselToCookieExpires::test_expires_valid_str', 'test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str', 'test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int'], 'failure': ['test_requests.py::RequestsTestCase::test_mixed_case_scheme_acceptable', 'test_requests.py::RequestsTestCase::test_prepared_from_session', 'test_requests.py::RequestsTestCase::test_pyopenssl_redirect']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for psf__requests-1921: resolved: False
+2026-10-30 22:56:14,405 - INFO - Attempting to stop container sweb.eval.psf__requests-1921.verified_full_pi...
+2026-10-30 22:56:30,034 - INFO - Container sweb.eval.psf__requests-1921.verified_full_pi stopped successfully.
+2026-10-30 22:56:30,035 - INFO - Attempting to remove container sweb.eval.psf__requests-1921.verified_full_pi...
+2026-10-30 22:56:30,072 - INFO - Container sweb.eval.psf__requests-1921.verified_full_pi removed successfully.

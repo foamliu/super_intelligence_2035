@@ -1,0 +1,95 @@
+2026-10-30 15:57:52,498 - INFO - Creating container for sympy__sympy-17630...
+2026-10-30 15:57:52,521 - INFO - Container for sympy__sympy-17630 created: 408d7a0197c8e1da5f20d4b5cad9eb5721e53fd4b98c694e4dad2be23275478f
+2026-10-30 15:57:53,867 - INFO - Container for sympy__sympy-17630 started: 408d7a0197c8e1da5f20d4b5cad9eb5721e53fd4b98c694e4dad2be23275478f
+2026-10-30 15:57:53,874 - INFO - Intermediate patch for sympy__sympy-17630 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-17630/patch.diff, now applying to container...
+2026-10-30 15:57:54,030 - INFO - >>>>> Applied Patch:
+Checking patch sympy/matrices/expressions/blockmatrix.py...
+warning: sympy/matrices/expressions/blockmatrix.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/tests/test_blockmatrix.py...
+warning: sympy/matrices/expressions/tests/test_blockmatrix.py has type 100755, expected 100644
+Applied patch sympy/matrices/expressions/blockmatrix.py cleanly.
+Applied patch sympy/matrices/expressions/tests/test_blockmatrix.py cleanly.
+
+2026-10-30 15:57:54,727 - INFO - Git diff before:
+diff --git a/sympy/matrices/expressions/blockmatrix.py b/sympy/matrices/expressions/blockmatrix.py
+index 95302a05ca..757de6981c 100755
+--- a/sympy/matrices/expressions/blockmatrix.py
++++ b/sympy/matrices/expressions/blockmatrix.py
+@@ -164,7 +164,16 @@ def structurally_equal(self, other):
+     def _blockmul(self, other):
+         if (isinstance(other, BlockMatrix) and
+                 self.colblocksizes == other.rowblocksizes):
+-            return BlockMatrix(self.blocks*other.blocks)
++            result = []
++            for i in range(self.blockshape[0]):
++                row = []
++                for j in range(other.blockshape[1]):
++                    block = self.blocks[i, 0] * other.blocks[0, j]
++                    for k in range(1, self.blockshape[1]):
++                        block = block + self.blocks[i, k] * other.blocks[k, j]
++                    row.append(block)
++                result.append(row)
++            return BlockMatrix(result)
+ 
+         return self * other
+ 
+diff --git a/sympy/matrices/expressions/tests/test_blockmatrix.py b/sympy/matrices/expressions/tests/test_blockmatrix.py
+index 1e1033affc..2e6a342e85 100755
+--- a/sympy/matrices/expressions/tests/test_blockmatrix.py
++++ b/sympy/matrices/expressions/tests/test_blockmatrix.py
+@@ -3,7 +3,7 @@
+     BlockMatrix, bc_dist, bc_matadd, bc_transpose, bc_inverse,
+     blockcut, reblock_2x2, deblock)
+ from sympy.matrices.expressions import (MatrixSymbol, Identity,
+-        Inverse, trace, Transpose, det)
++        Inverse, trace, Transpose, det, ZeroMatrix)
+ from sympy.matrices import (
+     Matrix, ImmutableMatrix, ImmutableSparseMatrix)
+ from sympy.core import Tuple, symbols, Expr
+@@ -23,6 +23,13 @@
+ def test_bc_matmul():
+     assert bc_matmul(H*b1*b2*G) == BlockMatrix([[(H*G*G + H*H*H)*G]])
+ 
++def test_bc_matmul_with_ZeroMatrix():
++    # issue: block multiplication with ZeroMatrix blocks fails
++    a = MatrixSymbol('a', 2, 2)
++    z = ZeroMatrix(2, 2)
++    b = BlockMatrix([[a, z], [z, z]])
++    assert block_collapse(b * b * b) == BlockMatrix([[a**3, z], [z, z]])
++
+ def test_bc_matadd():
+     assert bc_matadd(BlockMatrix([[G, H]]) + BlockMatrix([[H, H]])) == \
+             BlockMatrix([[G+H, H+H]])
+2026-10-30 15:57:54,730 - INFO - Eval script for sympy__sympy-17630 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-17630/eval.sh; copying to container...
+2026-10-30 15:57:59,770 - INFO - Test runtime: 4.96 seconds
+2026-10-30 15:57:59,773 - INFO - Test output for sympy__sympy-17630 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-17630/test_output.txt
+2026-10-30 15:57:59,841 - INFO - Git diff after:
+diff --git a/sympy/matrices/expressions/blockmatrix.py b/sympy/matrices/expressions/blockmatrix.py
+index 95302a05ca..757de6981c 100755
+--- a/sympy/matrices/expressions/blockmatrix.py
++++ b/sympy/matrices/expressions/blockmatrix.py
+@@ -164,7 +164,16 @@ def structurally_equal(self, other):
+     def _blockmul(self, other):
+         if (isinstance(other, BlockMatrix) and
+                 self.colblocksizes == other.rowblocksizes):
+-            return BlockMatrix(self.blocks*other.blocks)
++            result = []
++            for i in range(self.blockshape[0]):
++                row = []
++                for j in range(other.blockshape[1]):
++                    block = self.blocks[i, 0] * other.blocks[0, j]
++                    for k in range(1, self.blockshape[1]):
++                        block = block + self.blocks[i, k] * other.blocks[k, j]
++                    row.append(block)
++                result.append(row)
++            return BlockMatrix(result)
+ 
+         return self * other
+2026-10-30 15:57:59,841 - INFO - Git diff changed after running eval script
+2026-10-30 15:57:59,841 - INFO - Grading answer for sympy__sympy-17630...
+2026-10-30 15:57:59,844 - INFO - report: {'sympy__sympy-17630': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_17624'], 'failure': ['test_zero_matrix_add']}, 'PASS_TO_PASS': {'success': ['test_bc_matmul', 'test_bc_matadd', 'test_bc_transpose', 'test_bc_dist_diag', 'test_block_plus_ident', 'test_BlockMatrix', 'test_block_collapse_explicit_matrices', 'test_BlockMatrix_trace', 'test_BlockMatrix_Determinant', 'test_squareBlockMatrix', 'test_BlockDiagMatrix', 'test_blockcut', 'test_reblock_2x2', 'test_deblock', 'test_sort_key', 'test_matadd_sympify', 'test_matadd_of_matrices', 'test_doit_args', 'test_generic_identity'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17630: resolved: False
+2026-10-30 15:57:59,846 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17630.verified_full_opencode...
+2026-10-30 15:58:15,818 - INFO - Container sweb.eval.sympy__sympy-17630.verified_full_opencode stopped successfully.
+2026-10-30 15:58:15,819 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17630.verified_full_opencode...
+2026-10-30 15:58:15,857 - INFO - Container sweb.eval.sympy__sympy-17630.verified_full_opencode removed successfully.

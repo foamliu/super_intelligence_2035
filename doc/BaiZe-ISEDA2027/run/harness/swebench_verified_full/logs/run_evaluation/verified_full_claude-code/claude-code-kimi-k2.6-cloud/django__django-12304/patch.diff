@@ -1,0 +1,29 @@
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143dda..642d84921 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -8,6 +8,8 @@ __all__ = ['Choices', 'IntegerChoices', 'TextChoices']
+ class ChoicesMeta(enum.EnumMeta):
+     """A metaclass for creating a enum choices."""
+ 
++    do_not_call_in_templates = True
++
+     def __new__(metacls, classname, bases, classdict):
+         labels = []
+         for key in classdict._member_names:
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479d..158ce1975 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -149,6 +149,11 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_do_not_call_in_templates(self):
++        for test in [Gender, Suit, YearInSchool, Vehicle]:
++            with self.subTest(test=test):
++                self.assertTrue(test.do_not_call_in_templates)
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'

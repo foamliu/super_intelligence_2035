@@ -1,0 +1,108 @@
+2026-11-04 07:45:13,979 - INFO - Creating container for django__django-16901...
+2026-11-04 07:45:14,039 - INFO - Container for django__django-16901 created: 2f6c278e8ce1337d8dbc92cbc9fdf16cba4d0f315d88c5fbe72c4d5d2b023c62
+2026-11-04 07:45:14,831 - INFO - Container for django__django-16901 started: 2f6c278e8ce1337d8dbc92cbc9fdf16cba4d0f315d88c5fbe72c4d5d2b023c62
+2026-11-04 07:45:14,834 - INFO - Intermediate patch for django__django-16901 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-16901/patch.diff, now applying to container...
+2026-11-04 07:45:15,007 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/where.py...
+Checking patch tests/xor_lookups/tests.py...
+Applied patch django/db/models/sql/where.py cleanly.
+Applied patch tests/xor_lookups/tests.py cleanly.
+
+2026-11-04 07:45:16,489 - INFO - Git diff before:
+diff --git a/django/db/models/sql/where.py b/django/db/models/sql/where.py
+index aaab1730b7..755023b44a 100644
+--- a/django/db/models/sql/where.py
++++ b/django/db/models/sql/where.py
+@@ -6,6 +6,7 @@ from functools import reduce
+ 
+ from django.core.exceptions import EmptyResultSet, FullResultSet
+ from django.db.models.expressions import Case, When
++from django.db.models.functions.math import Mod
+ from django.db.models.lookups import Exact
+ from django.utils import tree
+ from django.utils.functional import cached_property
+@@ -129,13 +130,13 @@ class WhereNode(tree.Node):
+             # Convert if the database doesn't support XOR:
+             #   a XOR b XOR c XOR ...
+             # to:
+-            #   (a OR b OR c OR ...) AND (a + b + c + ...) == 1
++            #   (a OR b OR c OR ...) AND (a + b + c + ...) % 2 == 1
+             lhs = self.__class__(self.children, OR)
+             rhs_sum = reduce(
+                 operator.add,
+                 (Case(When(c, then=1), default=0) for c in self.children),
+             )
+-            rhs = Exact(1, rhs_sum)
++            rhs = Exact(1, Mod(rhs_sum, 2))
+             return self.__class__([lhs, rhs], AND, self.negated).as_sql(
+                 compiler, connection
+             )
+diff --git a/tests/xor_lookups/tests.py b/tests/xor_lookups/tests.py
+index a9cdf9cb31..82a15eb301 100644
+--- a/tests/xor_lookups/tests.py
++++ b/tests/xor_lookups/tests.py
+@@ -65,3 +65,24 @@ class XorLookupsTests(TestCase):
+             Number.objects.filter(Q(pk__in=[]) ^ Q(num__gte=5)),
+             self.numbers[5:],
+         )
++
++    def test_xor_parity(self):
++        """XOR with more than 2 conditions should use parity (odd count), not exactly-one."""
++        n = self.numbers[0]
++        # Odd number of identical conditions → should match (parity)
++        self.assertCountEqual(
++            Number.objects.filter(Q(pk=n.pk) ^ Q(pk=n.pk) ^ Q(pk=n.pk)),
++            [n],
++        )
++        # Even number of identical conditions → should not match
++        self.assertCountEqual(
++            Number.objects.filter(Q(pk=n.pk) ^ Q(pk=n.pk) ^ Q(pk=n.pk) ^ Q(pk=n.pk)),
++            [],
++        )
++        # Five identical conditions → should match (odd)
++        self.assertCountEqual(
++            Number.objects.filter(
++                Q(pk=n.pk) ^ Q(pk=n.pk) ^ Q(pk=n.pk) ^ Q(pk=n.pk) ^ Q(pk=n.pk)
++            ),
++            [n],
++        )
+2026-11-04 07:45:16,491 - INFO - Eval script for django__django-16901 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-16901/eval.sh; copying to container...
+2026-11-04 07:45:23,706 - INFO - Test runtime: 7.15 seconds
+2026-11-04 07:45:23,707 - INFO - Test output for django__django-16901 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-16901/test_output.txt
+2026-11-04 07:45:23,787 - INFO - Git diff after:
+diff --git a/django/db/models/sql/where.py b/django/db/models/sql/where.py
+index aaab1730b7..755023b44a 100644
+--- a/django/db/models/sql/where.py
++++ b/django/db/models/sql/where.py
+@@ -6,6 +6,7 @@ from functools import reduce
+ 
+ from django.core.exceptions import EmptyResultSet, FullResultSet
+ from django.db.models.expressions import Case, When
++from django.db.models.functions.math import Mod
+ from django.db.models.lookups import Exact
+ from django.utils import tree
+ from django.utils.functional import cached_property
+@@ -129,13 +130,13 @@ class WhereNode(tree.Node):
+             # Convert if the database doesn't support XOR:
+             #   a XOR b XOR c XOR ...
+             # to:
+-            #   (a OR b OR c OR ...) AND (a + b + c + ...) == 1
++            #   (a OR b OR c OR ...) AND (a + b + c + ...) % 2 == 1
+             lhs = self.__class__(self.children, OR)
+             rhs_sum = reduce(
+                 operator.add,
+                 (Case(When(c, then=1), default=0) for c in self.children),
+             )
+-            rhs = Exact(1, rhs_sum)
++            rhs = Exact(1, Mod(rhs_sum, 2))
+             return self.__class__([lhs, rhs], AND, self.negated).as_sql(
+                 compiler, connection
+             )
+2026-11-04 07:45:23,788 - INFO - Git diff changed after running eval script
+2026-11-04 07:45:23,788 - INFO - Grading answer for django__django-16901...
+2026-11-04 07:45:23,790 - INFO - report: {'django__django-16901': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_filter_multiple (xor_lookups.tests.XorLookupsTests.test_filter_multiple)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_empty_in (xor_lookups.tests.XorLookupsTests.test_empty_in)', 'test_exclude (xor_lookups.tests.XorLookupsTests.test_exclude)', 'test_filter (xor_lookups.tests.XorLookupsTests.test_filter)', 'test_filter_negated (xor_lookups.tests.XorLookupsTests.test_filter_negated)', 'test_pk_q (xor_lookups.tests.XorLookupsTests.test_pk_q)', 'test_stages (xor_lookups.tests.XorLookupsTests.test_stages)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16901: resolved: True
+2026-11-04 07:45:23,792 - INFO - Attempting to stop container sweb.eval.django__django-16901.verified_full_deepseek-harness...
+2026-11-04 07:45:39,555 - INFO - Container sweb.eval.django__django-16901.verified_full_deepseek-harness stopped successfully.
+2026-11-04 07:45:39,555 - INFO - Attempting to remove container sweb.eval.django__django-16901.verified_full_deepseek-harness...
+2026-11-04 07:45:39,599 - INFO - Container sweb.eval.django__django-16901.verified_full_deepseek-harness removed successfully.

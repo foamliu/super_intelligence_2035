@@ -1,0 +1,74 @@
+diff --git a/lib/matplotlib/axis.py b/lib/matplotlib/axis.py
+index c0e706e2b3..a9b5219847 100644
+--- a/lib/matplotlib/axis.py
++++ b/lib/matplotlib/axis.py
+@@ -2255,7 +2255,9 @@ class XAxis(Axis):
+             transform=mtransforms.blended_transform_factory(
+                 self.axes.transAxes, mtransforms.IdentityTransform()),
+             fontsize=mpl.rcParams['xtick.labelsize'],
+-            color=mpl.rcParams['xtick.color'],
++            color=mpl.rcParams['xtick.labelcolor']
++            if mpl.rcParams['xtick.labelcolor'] == 'inherit'
++            else mpl.rcParams['xtick.color'],
+         )
+         self.offset_text_position = 'bottom'
+ 
+@@ -2515,7 +2517,9 @@ class YAxis(Axis):
+             transform=mtransforms.blended_transform_factory(
+                 self.axes.transAxes, mtransforms.IdentityTransform()),
+             fontsize=mpl.rcParams['ytick.labelsize'],
+-            color=mpl.rcParams['ytick.color'],
++            color=mpl.rcParams['ytick.labelcolor']
++            if mpl.rcParams['ytick.labelcolor'] == 'inherit'
++            else mpl.rcParams['ytick.color'],
+         )
+         self.offset_text_position = 'left'
+ 
+diff --git a/repro_offsettext.py b/repro_offsettext.py
+new file mode 100644
+index 0000000000..40cb0f5e40
+--- /dev/null
++++ b/repro_offsettext.py
+@@ -0,0 +1,42 @@
++import matplotlib
++matplotlib.use("Agg")
++import matplotlib.pyplot as plt
++
++# Case 1: bug report repro — ytick.labelcolor = red should color offsetText red
++plt.rcParams.update({'ytick.labelcolor': 'red'})
++fig = plt.figure()
++ax = fig.add_subplot(1, 1, 1)
++ax.plot([1.01e9, 1.02e9, 1.03e9])
++c = ax.yaxis.offsetText.get_color()
++print("ytick.labelcolor=red -> offsetText color:", c)
++assert c == 'red', f"expected red, got {c}"
++
++# Case 2: xtick.labelcolor
++plt.rcParams.update({'xtick.labelcolor': 'blue'})
++fig = plt.figure()
++ax = fig.add_subplot(1, 1, 1)
++ax.plot([1.01e9, 1.02e9, 1.03e9])
++c = ax.xaxis.offsetText.get_color()
++print("xtick.labelcolor=blue -> offsetText color:", c)
++assert c == 'blue', f"expected blue, got {c}"
++
++# Case 3: default 'inherit' -> offsetText keeps tick color
++plt.rcParams.update({'ytick.labelcolor': 'inherit', 'ytick.color': 'green'})
++fig = plt.figure()
++ax = fig.add_subplot(1, 1, 1)
++ax.plot([1.01e9, 1.02e9, 1.03e9])
++c = ax.yaxis.offsetText.get_color()
++print("labelcolor=inherit, ytick.color=green -> offsetText color:", c)
++assert c == 'green', f"expected green, got {c}"
++
++# Case 4: default rcParams untouched -> offsetText follows tick color
++plt.rcParams.update(plt.rcParamsDefault)
++matplotlib.use("Agg")
++fig = plt.figure()
++ax = fig.add_subplot(1, 1, 1)
++ax.plot([1.01e9, 1.02e9, 1.03e9])
++c = ax.yaxis.offsetText.get_color()
++print("default -> offsetText color:", c)
++assert c == matplotlib.rcParams['ytick.color'], f"expected {matplotlib.rcParams['ytick.color']}, got {c}"
++
++print("ALL OK")

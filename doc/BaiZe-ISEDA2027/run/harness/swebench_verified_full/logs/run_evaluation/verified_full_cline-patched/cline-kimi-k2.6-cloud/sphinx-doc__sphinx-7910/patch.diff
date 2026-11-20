@@ -1,0 +1,78 @@
+diff --git a/sphinx/ext/napoleon/__init__.py b/sphinx/ext/napoleon/__init__.py
+index 10b1ff3a..efd2c138 100644
+--- a/sphinx/ext/napoleon/__init__.py
++++ b/sphinx/ext/napoleon/__init__.py
+@@ -438,7 +438,12 @@ def _skip_member(app: Sphinx, what: str, name: str, obj: Any,
+                         mod_path = cls_path.split('.')
+                         cls = functools.reduce(getattr, mod_path, mod)
+                     else:
+-                        cls = obj.__globals__[cls_path]
++                        try:
++                            cls = obj.__globals__[cls_path]
++                        except KeyError:
++                            import importlib
++                            mod = importlib.import_module(obj.__module__)
++                            cls = getattr(mod, cls_path)
+                 except Exception:
+                     cls_is_owner = False
+                 else:
+diff --git a/tests/test_ext_napoleon.py b/tests/test_ext_napoleon.py
+index 7c337975..e0fca230 100644
+--- a/tests/test_ext_napoleon.py
++++ b/tests/test_ext_napoleon.py
+@@ -9,6 +9,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
++import functools
+ import sys
+ from collections import namedtuple
+ from unittest import TestCase, mock
+@@ -70,6 +71,35 @@ class SampleError(Exception):
+ SampleNamedTuple = namedtuple('SampleNamedTuple', 'user_id block_type def_id')
+ 
+ 
++def _decorator(func):
++    @functools.wraps(func)
++    def wrapper(*args, **kwargs):
++        return func(*args, **kwargs)
++    return wrapper
++
++
++# Create a decorator whose wrapper has a different __globals__
++# to simulate a decorator imported from another module.
++_decorator_globals = {'functools': functools, '__builtins__': __builtins__}
++exec('''
++import functools
++
++def _foreign_decorator(func):
++    @functools.wraps(func)
++    def wrapper(*args, **kwargs):
++        return func(*args, **kwargs)
++    return wrapper
++''', _decorator_globals)
++_foreign_decorator = _decorator_globals['_foreign_decorator']
++
++
++class DecoratedInitClass:
++    @_foreign_decorator
++    def __init__(self):
++        """DecoratedInitClass.__init__.DOCSTRING"""
++        pass
++
++
+ class ProcessDocstringTest(TestCase):
+     def test_modify_in_place(self):
+         lines = ['Summary line.',
+@@ -205,3 +235,11 @@ class SkipMemberTest(TestCase):
+     def test_module_special_undoc(self):
+         self.assertSkip('module', '__special_undoc__', __special_undoc__, True,
+                         'napoleon_include_special_with_doc')
++
++    def test_decorated_init(self):
++        app = mock.Mock()
++        app.config = Config()
++        app.config.napoleon_include_init_with_doc = True
++        result = _skip_member(app, 'class', '__init__',
++                              DecoratedInitClass.__init__, False, mock.Mock())
++        self.assertIs(result, False)

@@ -1,0 +1,14 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc76..3d2f6706b 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -426,6 +426,9 @@ class SQLCompiler:
+                 # must have the same columns list. Set the selects defined on
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
++                    # If the combined query doesn't have its select list set
++                    # yet, clone it to avoid mutating the original query.
++                    compiler = compiler.query.clone().get_compiler(self.using, self.connection)
+                     compiler.query.set_values((
+                         *self.query.extra_select,
+                         *self.query.values_select,

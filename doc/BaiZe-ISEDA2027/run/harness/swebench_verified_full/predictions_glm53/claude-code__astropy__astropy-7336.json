@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "astropy__astropy-7336",
+    "model_name_or_path": "claude-code-glm-5.3-flash",
+    "model_patch": "diff --git a/astropy/units/decorators.py b/astropy/units/decorators.py\nindex 8bece5a8..4cccf551 100644\n--- a/astropy/units/decorators.py\n+++ b/astropy/units/decorators.py\n@@ -221,7 +221,10 @@ class QuantityInput:\n             with add_enabled_equivalencies(self.equivalencies):\n                 return_ = wrapped_function(*func_args, **func_kwargs)\n             if wrapped_signature.return_annotation is not inspect.Signature.empty:\n-                return return_.to(wrapped_signature.return_annotation)\n+                if return_ is not None:\n+                    return return_.to(wrapped_signature.return_annotation)\n+                else:\n+                    return return_\n             else:\n                 return return_\n \ndiff --git a/astropy/units/tests/py3_test_quantity_annotations.py b/astropy/units/tests/py3_test_quantity_annotations.py\nindex 4956b0ec..7c42e51d 100644\n--- a/astropy/units/tests/py3_test_quantity_annotations.py\n+++ b/astropy/units/tests/py3_test_quantity_annotations.py\n@@ -285,3 +285,15 @@ def test_return_annotation():\n     assert solarx.unit is u.deg\n     \"\"\"\n     return src\n+\n+\n+@py3only\n+def test_return_annotation_none():\n+    src = \"\"\"\n+    @u.quantity_input\n+    def myfunc_args(solarx: u.arcsec) -> None:\n+        pass\n+\n+    assert myfunc_args(1*u.arcsec) is None\n+    \"\"\"\n+    return src\n"
+  }
+]

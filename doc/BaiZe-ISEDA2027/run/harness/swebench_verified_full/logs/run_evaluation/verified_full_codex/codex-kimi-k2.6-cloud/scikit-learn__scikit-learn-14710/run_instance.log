@@ -1,0 +1,113 @@
+2026-11-02 13:22:36,606 - INFO - Creating container for scikit-learn__scikit-learn-14710...
+2026-11-02 13:22:36,626 - INFO - Container for scikit-learn__scikit-learn-14710 created: ba2702d0406855c89de76c032946b6f5d8db757c54523844042b28d27c2091a2
+2026-11-02 13:22:37,555 - INFO - Container for scikit-learn__scikit-learn-14710 started: ba2702d0406855c89de76c032946b6f5d8db757c54523844042b28d27c2091a2
+2026-11-02 13:22:37,556 - INFO - Intermediate patch for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/patch.diff, now applying to container...
+2026-11-02 13:22:37,706 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py...
+Checking patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py...
+Applied patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py cleanly.
+Applied patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py cleanly.
+
+2026-11-02 13:22:38,014 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..3170e4000 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd5..149b3ce13 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -415,3 +415,26 @@ def test_infinite_values_missing_values():
+ 
+     assert stump_clf.fit(X, y_isinf).score(X, y_isinf) == 1
+     assert stump_clf.fit(X, y_isnan).score(X, y_isnan) == 1
++
++
++def test_early_stopping_with_string_targets():
++    # Make sure HistGradientBoostingClassifier works with string targets
++    # when early stopping is on. Non-regression test for issue #14769.
++    X = np.random.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++    gb = HistGradientBoostingClassifier(n_iter_no_change=10)
++    gb.fit(X, y)
++    assert gb.classes_[0] == 'x'
++    assert gb.classes_[1] == 'y'
++
++
++def test_early_stopping_with_string_targets_and_scorer():
++    # Make sure HistGradientBoostingClassifier works with string targets
++    # when early stopping is on and scoring is not 'loss'. Non-regression
++    # test for issue #14769.
++    X = np.random.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++    gb = HistGradientBoostingClassifier(n_iter_no_change=10, scoring='accuracy')
++    gb.fit(X, y)
++    assert gb.classes_[0] == 'x'
++    assert gb.classes_[1] == 'y'
+2026-11-02 13:22:38,016 - INFO - Eval script for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/eval.sh; copying to container...
+2026-11-02 13:36:22,189 - INFO - Test runtime: 824.11 seconds
+2026-11-02 13:36:22,190 - INFO - Test output for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/test_output.txt
+2026-11-02 13:36:22,229 - INFO - Git diff after:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..3170e4000 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd5..5de49ef74 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -415,3 +415,14 @@ def test_infinite_values_missing_values():
+ 
+     assert stump_clf.fit(X, y_isinf).score(X, y_isinf) == 1
+     assert stump_clf.fit(X, y_isnan).score(X, y_isnan) == 1
++
++
++@pytest.mark.parametrize("scoring", [None, 'loss'])
++def test_string_target_early_stopping(scoring):
++    # Regression tests for #14709 where the targets need to be encoded before
++    # to compute the score
++    rng = np.random.RandomState(42)
++    X = rng.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++    gbrt = HistGradientBoostingClassifier(n_iter_no_change=10, scoring=scoring)
++    gbrt.fit(X, y)
+2026-11-02 13:36:22,229 - INFO - Git diff changed after running eval script
+2026-11-02 13:36:22,229 - INFO - Grading answer for scikit-learn__scikit-learn-14710...
+2026-11-02 13:36:22,233 - INFO - report: {'scikit-learn__scikit-learn-14710': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False}}
+Result for scikit-learn__scikit-learn-14710: resolved: False
+2026-11-02 13:36:22,235 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_codex...
+2026-11-02 13:36:37,918 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_codex stopped successfully.
+2026-11-02 13:36:37,918 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_codex...
+2026-11-02 13:36:37,955 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_codex removed successfully.

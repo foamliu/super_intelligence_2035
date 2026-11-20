@@ -1,0 +1,29 @@
+diff --git a/astropy/units/core.py b/astropy/units/core.py
+index e9bd986d..0ee8cf86 100644
+--- a/astropy/units/core.py
++++ b/astropy/units/core.py
+@@ -1710,7 +1710,10 @@ class UnrecognizedUnit(IrreducibleUnit):
+         _unrecognized_operator
+ 
+     def __eq__(self, other):
+-        other = Unit(other, parse_strict='silent')
++        try:
++            other = Unit(other, parse_strict='silent')
++        except (ValueError, UnitsError, TypeError):
++            return False
+         return isinstance(other, UnrecognizedUnit) and self.name == other.name
+ 
+     def __ne__(self, other):
+diff --git a/astropy/units/tests/test_units.py b/astropy/units/tests/test_units.py
+index 000c12d2..e5549ab1 100644
+--- a/astropy/units/tests/test_units.py
++++ b/astropy/units/tests/test_units.py
+@@ -729,6 +729,8 @@ def test_compare_with_none():
+     # because that doesn't trigger the bug.  See #3108.
+     assert not (u.m == None)  # nopep8
+     assert u.m != None  # nopep8
++    assert not (u.Unit('asdf', parse_strict='silent') == None)  # nopep8
++    assert u.Unit('asdf', parse_strict='silent') != None  # nopep8
+ 
+ 
+ def test_validate_power_detect_fraction():

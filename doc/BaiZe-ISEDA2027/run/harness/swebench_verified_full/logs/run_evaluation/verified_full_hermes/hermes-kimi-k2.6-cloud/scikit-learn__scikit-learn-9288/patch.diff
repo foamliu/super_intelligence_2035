@@ -1,0 +1,102 @@
+diff --git a/reproduce.py b/reproduce.py
+new file mode 100644
+index 00000000..d76534ee
+--- /dev/null
++++ b/reproduce.py
+@@ -0,0 +1,11 @@
++from sklearn.cluster import KMeans
++from sklearn.datasets import make_blobs
++
++# Generate some data
++X, y = make_blobs(n_samples=10000, centers=10, n_features=2, random_state=2)
++
++# Run KMeans with various n_jobs values
++for n_jobs in range(1, 5):
++    kmeans = KMeans(n_clusters=10, random_state=2, n_jobs=n_jobs)
++    kmeans.fit(X)
++    print('(n_jobs={}) kmeans.inertia_ = {}'.format(n_jobs, kmeans.inertia_))
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 00000000..e05e05c4
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,7 @@
++import numpy as np
++if not hasattr(np, 'float'):
++    np.float = float
++    np.int = int
++    np.bool = bool
++    np.object = object
++    np.complex = complex
+diff --git a/sklearn/cluster/k_means_.py b/sklearn/cluster/k_means_.py
+index b7fbdf7d..fda89ffa 100644
+--- a/sklearn/cluster/k_means_.py
++++ b/sklearn/cluster/k_means_.py
+@@ -360,6 +360,8 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+     else:
+         raise ValueError("Algorithm must be 'auto', 'full' or 'elkan', got"
+                          " %s" % str(algorithm))
++    # parallelisation of k-means runs
++    seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+     if effective_n_jobs(n_jobs) == 1:
+         # For a single thread, less memory is needed if we just store one set
+         # of the best results (as opposed to one set per run per thread).
+@@ -369,7 +371,7 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 X, sample_weight, n_clusters, max_iter=max_iter, init=init,
+                 verbose=verbose, precompute_distances=precompute_distances,
+                 tol=tol, x_squared_norms=x_squared_norms,
+-                random_state=random_state)
++                random_state=seeds[it])
+             # determine if these results are the best so far
+             if best_inertia is None or inertia < best_inertia:
+                 best_labels = labels.copy()
+@@ -377,8 +379,6 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 best_inertia = inertia
+                 best_n_iter = n_iter_
+     else:
+-        # parallelisation of k-means runs
+-        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+         results = Parallel(n_jobs=n_jobs, verbose=0)(
+             delayed(kmeans_single)(X, sample_weight, n_clusters,
+                                    max_iter=max_iter, init=init,
+diff --git a/sklearn/utils/optimize.py b/sklearn/utils/optimize.py
+index 8ad17172..73a456b2 100644
+--- a/sklearn/utils/optimize.py
++++ b/sklearn/utils/optimize.py
+@@ -15,7 +15,10 @@ significant speedups.
+ 
+ import numpy as np
+ import warnings
+-from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
++try:
++    from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
++except ImportError:
++    from scipy.optimize._linesearch import line_search_wolfe2, line_search_wolfe1
+ 
+ from ..exceptions import ConvergenceWarning
+ 
+diff --git a/test_regression_n_jobs.py b/test_regression_n_jobs.py
+new file mode 100644
+index 00000000..89cbbb45
+--- /dev/null
++++ b/test_regression_n_jobs.py
+@@ -0,0 +1,19 @@
++"""Regression test for KMeans n_jobs=1 vs n_jobs>1 inconsistency."""
++import numpy as np
++from sklearn.cluster import KMeans
++from sklearn.datasets import make_blobs
++
++def test_kmeans_n_jobs_consistency():
++    X, y = make_blobs(n_samples=1000, centers=10, n_features=2, random_state=42)
++    inertias = []
++    for n_jobs in (1, 2, 4):
++        km = KMeans(n_clusters=10, random_state=42, n_init=5, n_jobs=n_jobs)
++        km.fit(X)
++        inertias.append(km.inertia_)
++    # All inertias should be identical
++    assert inertias[0] == inertias[1]
++    assert inertias[0] == inertias[2]
++
++if __name__ == '__main__':
++    test_kmeans_n_jobs_consistency()
++    print("OK")

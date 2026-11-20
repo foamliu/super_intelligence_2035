@@ -1,0 +1,71 @@
+2026-10-30 20:57:25,778 - INFO - Creating container for pallets__flask-5014...
+2026-10-30 20:57:25,843 - INFO - Container for pallets__flask-5014 created: b52baa77d62a631f60090e67ea0a2e943b0bf6ceb78c61da4227836686c06056
+2026-10-30 20:57:27,951 - INFO - Container for pallets__flask-5014 started: b52baa77d62a631f60090e67ea0a2e943b0bf6ceb78c61da4227836686c06056
+2026-10-30 20:57:27,953 - INFO - Intermediate patch for pallets__flask-5014 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pallets__flask-5014/patch.diff, now applying to container...
+2026-10-30 20:57:28,121 - INFO - >>>>> Applied Patch:
+Checking patch src/flask/blueprints.py...
+Checking patch tests/test_blueprints.py...
+Applied patch src/flask/blueprints.py cleanly.
+Applied patch tests/test_blueprints.py cleanly.
+
+2026-10-30 20:57:28,223 - INFO - Git diff before:
+diff --git a/src/flask/blueprints.py b/src/flask/blueprints.py
+index eb50585d..f06b0f90 100644
+--- a/src/flask/blueprints.py
++++ b/src/flask/blueprints.py
+@@ -190,9 +190,11 @@ class Blueprint(Scaffold):
+             root_path=root_path,
+         )
+ 
++        if not name:
++            raise ValueError("'name' may not be empty.")
++
+         if "." in name:
+             raise ValueError("'name' may not contain a dot '.' character.")
+-
+         self.name = name
+         self.url_prefix = url_prefix
+         self.subdomain = subdomain
+diff --git a/tests/test_blueprints.py b/tests/test_blueprints.py
+index d46b769b..de6c1cac 100644
+--- a/tests/test_blueprints.py
++++ b/tests/test_blueprints.py
+@@ -256,6 +256,10 @@ def test_dotted_name_not_allowed(app, client):
+         flask.Blueprint("app.ui", __name__)
+ 
+ 
++def test_empty_name_not_allowed(app, client):
++    with pytest.raises(ValueError):
++        flask.Blueprint("", __name__)
++
+ def test_dotted_names_from_app(app, client):
+     test = flask.Blueprint("test", __name__)
+2026-10-30 20:57:28,224 - INFO - Eval script for pallets__flask-5014 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pallets__flask-5014/eval.sh; copying to container...
+2026-10-30 20:57:34,239 - INFO - Test runtime: 5.96 seconds
+2026-10-30 20:57:34,240 - INFO - Test output for pallets__flask-5014 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pallets__flask-5014/test_output.txt
+2026-10-30 20:57:34,304 - INFO - Git diff after:
+diff --git a/src/flask/blueprints.py b/src/flask/blueprints.py
+index eb50585d..f06b0f90 100644
+--- a/src/flask/blueprints.py
++++ b/src/flask/blueprints.py
+@@ -190,9 +190,11 @@ class Blueprint(Scaffold):
+             root_path=root_path,
+         )
+ 
++        if not name:
++            raise ValueError("'name' may not be empty.")
++
+         if "." in name:
+             raise ValueError("'name' may not contain a dot '.' character.")
+-
+         self.name = name
+         self.url_prefix = url_prefix
+         self.subdomain = subdomain
+2026-10-30 20:57:34,305 - INFO - Git diff changed after running eval script
+2026-10-30 20:57:34,305 - INFO - Grading answer for pallets__flask-5014...
+2026-10-30 20:57:34,307 - INFO - report: {'pallets__flask-5014': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_blueprints.py::test_empty_name_not_allowed'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_blueprints.py::test_blueprint_specific_error_handling', 'tests/test_blueprints.py::test_blueprint_specific_user_error_handling', 'tests/test_blueprints.py::test_blueprint_app_error_handling', 'tests/test_blueprints.py::test_blueprint_prefix_slash[-/-/]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/--/]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/-/-/]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo--/foo]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo/--/foo/]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[-/bar-/bar]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo/-/bar-/foo/bar]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo/-bar-/foo/bar]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo-/bar-/foo/bar]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo/-//bar-/foo/bar]', 'tests/test_blueprints.py::test_blueprint_prefix_slash[/foo//-/bar-/foo/bar]', 'tests/test_blueprints.py::test_blueprint_url_defaults', 'tests/test_blueprints.py::test_blueprint_url_processors', 'tests/test_blueprints.py::test_templates_and_static', 'tests/test_blueprints.py::test_default_static_max_age', 'tests/test_blueprints.py::test_templates_list', 'tests/test_blueprints.py::test_dotted_name_not_allowed', 'tests/test_blueprints.py::test_dotted_names_from_app', 'tests/test_blueprints.py::test_empty_url_defaults', 'tests/test_blueprints.py::test_route_decorator_custom_endpoint', 'tests/test_blueprints.py::test_route_decorator_custom_endpoint_with_dots', 'tests/test_blueprints.py::test_endpoint_decorator', 'tests/test_blueprints.py::test_template_filter', 'tests/test_blueprints.py::test_add_template_filter', 'tests/test_blueprints.py::test_template_filter_with_name', 'tests/test_blueprints.py::test_add_template_filter_with_name', 'tests/test_blueprints.py::test_template_filter_with_template', 'tests/test_blueprints.py::test_template_filter_after_route_with_template', 'tests/test_blueprints.py::test_add_template_filter_with_template', 'tests/test_blueprints.py::test_template_filter_with_name_and_template', 'tests/test_blueprints.py::test_add_template_filter_with_name_and_template', 'tests/test_blueprints.py::test_template_test', 'tests/test_blueprints.py::test_add_template_test', 'tests/test_blueprints.py::test_template_test_with_name', 'tests/test_blueprints.py::test_add_template_test_with_name', 'tests/test_blueprints.py::test_template_test_with_template', 'tests/test_blueprints.py::test_template_test_after_route_with_template', 'tests/test_blueprints.py::test_add_template_test_with_template', 'tests/test_blueprints.py::test_template_test_with_name_and_template', 'tests/test_blueprints.py::test_add_template_test_with_name_and_template', 'tests/test_blueprints.py::test_context_processing', 'tests/test_blueprints.py::test_template_global', 'tests/test_blueprints.py::test_request_processing', 'tests/test_blueprints.py::test_app_request_processing', 'tests/test_blueprints.py::test_app_url_processors', 'tests/test_blueprints.py::test_nested_blueprint', 'tests/test_blueprints.py::test_nested_callback_order', 'tests/test_blueprints.py::test_nesting_url_prefixes[/parent-/child-None-None]', 'tests/test_blueprints.py::test_nesting_url_prefixes[/parent-None-None-/child]', 'tests/test_blueprints.py::test_nesting_url_prefixes[None-None-/parent-/child]', 'tests/test_blueprints.py::test_nesting_url_prefixes[/other-/something-/parent-/child]', 'tests/test_blueprints.py::test_nesting_subdomains', 'tests/test_blueprints.py::test_child_and_parent_subdomain', 'tests/test_blueprints.py::test_unique_blueprint_names', 'tests/test_blueprints.py::test_self_registration', 'tests/test_blueprints.py::test_blueprint_renaming'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pallets__flask-5014: resolved: True
+2026-10-30 20:57:34,309 - INFO - Attempting to stop container sweb.eval.pallets__flask-5014.verified_full_pi...
+2026-10-30 20:57:50,226 - INFO - Container sweb.eval.pallets__flask-5014.verified_full_pi stopped successfully.
+2026-10-30 20:57:50,226 - INFO - Attempting to remove container sweb.eval.pallets__flask-5014.verified_full_pi...
+2026-10-30 20:57:50,265 - INFO - Container sweb.eval.pallets__flask-5014.verified_full_pi removed successfully.

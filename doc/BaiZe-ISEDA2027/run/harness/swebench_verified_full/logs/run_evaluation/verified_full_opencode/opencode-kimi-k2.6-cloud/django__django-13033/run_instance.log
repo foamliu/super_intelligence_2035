@@ -1,0 +1,114 @@
+2026-10-30 15:34:51,135 - INFO - Creating container for django__django-13033...
+2026-10-30 15:34:51,186 - INFO - Container for django__django-13033 created: 8af3d5db265550afd582920e3fb490da7f8b1292e1f41dcd3f86a3db53ed4f71
+2026-10-30 15:34:53,302 - INFO - Container for django__django-13033 started: 8af3d5db265550afd582920e3fb490da7f8b1292e1f41dcd3f86a3db53ed4f71
+2026-10-30 15:34:53,304 - INFO - Intermediate patch for django__django-13033 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-13033/patch.diff, now applying to container...
+2026-10-30 15:34:53,444 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+warning: django/db/models/sql/compiler.py has type 100755, expected 100644
+Checking patch tests/queries/tests.py...
+warning: tests/queries/tests.py has type 100755, expected 100644
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/queries/tests.py cleanly.
+
+2026-10-30 15:34:54,866 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index abbb1e37cb..edc283d94c 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -727,7 +727,7 @@ class SQLCompiler:
+         # If we get to this point and the field is a relation to another model,
+         # append the default ordering for that model unless it is the pk
+         # shortcut or the attribute name of the field that is specified.
+-        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != name and name != 'pk':
++        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != pieces[-1] and pieces[-1] != 'pk':
+             # Firstly, avoid infinite loops.
+             already_seen = already_seen or set()
+             join_tuple = tuple(getattr(self.query.alias_map[j], 'join_cols', None) for j in joins)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index eeb8a5e591..e8d502a43e 100755
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -2690,6 +2690,27 @@ class ConditionalTests(TestCase):
+             []
+         )
+ 
++    def test_order_by_fk_attname(self):
++        # Ordering by the _id of a FK should order by the local column value,
++        # not apply the related model's default ordering (#32114).
++        qs_id = Annotation.objects.order_by('tag__parent_id')
++        qs_pk = Annotation.objects.order_by('tag__parent__id')
++        self.assertEqual(str(qs_id.query).count('JOIN'), str(qs_pk.query).count('JOIN'))
++        order_by_id = str(qs_id.query).split('ORDER BY')[-1]
++        self.assertIn('parent_id', order_by_id)
++        self.assertNotIn('name', order_by_id)
++
++        qs_desc = Annotation.objects.order_by('-tag__parent_id')
++        order_by_desc = str(qs_desc.query).split('ORDER BY')[-1]
++        self.assertIn('parent_id', order_by_desc)
++        self.assertNotIn('name', order_by_desc)
++
++        # Ordering by the relation name itself still uses default ordering.
++        qs_rel = Annotation.objects.order_by('tag__parent')
++        self.assertEqual(str(qs_rel.query).count('JOIN'), 2)
++        order_by_rel = str(qs_rel.query).split('ORDER BY')[-1]
++        self.assertIn('name', order_by_rel)
++
+     # When grouping without specifying ordering, we add an explicit "ORDER BY NULL"
+     # portion in MySQL to prevent unnecessary sorting.
+     @skipUnlessDBFeature('requires_explicit_null_ordering_when_grouping')
+2026-10-30 15:34:54,868 - INFO - Eval script for django__django-13033 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-13033/eval.sh; copying to container...
+2026-10-30 15:35:03,218 - INFO - Test runtime: 8.28 seconds
+2026-10-30 15:35:03,220 - INFO - Test output for django__django-13033 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-13033/test_output.txt
+2026-10-30 15:35:03,309 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index abbb1e37cb..edc283d94c 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -727,7 +727,7 @@ class SQLCompiler:
+         # If we get to this point and the field is a relation to another model,
+         # append the default ordering for that model unless it is the pk
+         # shortcut or the attribute name of the field that is specified.
+-        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != name and name != 'pk':
++        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != pieces[-1] and pieces[-1] != 'pk':
+             # Firstly, avoid infinite loops.
+             already_seen = already_seen or set()
+             join_tuple = tuple(getattr(self.query.alias_map[j], 'join_cols', None) for j in joins)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index eeb8a5e591..e8d502a43e 100755
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -2690,6 +2690,27 @@ class ConditionalTests(TestCase):
+             []
+         )
+ 
++    def test_order_by_fk_attname(self):
++        # Ordering by the _id of a FK should order by the local column value,
++        # not apply the related model's default ordering (#32114).
++        qs_id = Annotation.objects.order_by('tag__parent_id')
++        qs_pk = Annotation.objects.order_by('tag__parent__id')
++        self.assertEqual(str(qs_id.query).count('JOIN'), str(qs_pk.query).count('JOIN'))
++        order_by_id = str(qs_id.query).split('ORDER BY')[-1]
++        self.assertIn('parent_id', order_by_id)
++        self.assertNotIn('name', order_by_id)
++
++        qs_desc = Annotation.objects.order_by('-tag__parent_id')
++        order_by_desc = str(qs_desc.query).split('ORDER BY')[-1]
++        self.assertIn('parent_id', order_by_desc)
++        self.assertNotIn('name', order_by_desc)
++
++        # Ordering by the relation name itself still uses default ordering.
++        qs_rel = Annotation.objects.order_by('tag__parent')
++        self.assertEqual(str(qs_rel.query).count('JOIN'), 2)
++        order_by_rel = str(qs_rel.query).split('ORDER BY')[-1]
++        self.assertIn('name', order_by_rel)
++
+     # When grouping without specifying ordering, we add an explicit "ORDER BY NULL"
+     # portion in MySQL to prevent unnecessary sorting.
+     @skipUnlessDBFeature('requires_explicit_null_ordering_when_grouping')
+2026-10-30 15:35:03,310 - INFO - Grading answer for django__django-13033...
+2026-10-30 15:35:03,321 - INFO - report: {'django__django-13033': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_order_by_self_referential_fk (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_default_ordering (ordering.tests.OrderingTests)', 'F expressions can be used in Meta.ordering.', 'test_default_ordering_override (ordering.tests.OrderingTests)', 'test_extra_ordering (ordering.tests.OrderingTests)', 'test_extra_ordering_quoting (ordering.tests.OrderingTests)', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_constant_value_without_output_field (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'test_order_by_f_expression_duplicates (ordering.tests.OrderingTests)', 'test_order_by_fk_attname (ordering.tests.OrderingTests)', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'test_order_by_override (ordering.tests.OrderingTests)', 'test_order_by_pk (ordering.tests.OrderingTests)', 'test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', 'test_random_ordering (ordering.tests.OrderingTests)', 'test_related_ordering_duplicate_table_reference (ordering.tests.OrderingTests)', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'test_reversed_ordering (ordering.tests.OrderingTests)', 'test_stop_slicing (ordering.tests.OrderingTests)', 'test_stop_start_slicing (ordering.tests.OrderingTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13033: resolved: True
+2026-10-30 15:35:03,324 - INFO - Attempting to stop container sweb.eval.django__django-13033.verified_full_opencode...
+2026-10-30 15:35:19,343 - INFO - Container sweb.eval.django__django-13033.verified_full_opencode stopped successfully.
+2026-10-30 15:35:19,343 - INFO - Attempting to remove container sweb.eval.django__django-13033.verified_full_opencode...
+2026-10-30 15:35:19,398 - INFO - Container sweb.eval.django__django-13033.verified_full_opencode removed successfully.

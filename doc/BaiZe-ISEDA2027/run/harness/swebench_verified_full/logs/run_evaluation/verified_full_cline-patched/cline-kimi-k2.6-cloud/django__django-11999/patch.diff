@@ -1,0 +1,59 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..411a7c4e40 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,9 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            if not getattr(cls, 'get_%s_display' % self.name, None):
++                setattr(cls, 'get_%s_display' % self.name,
++                        partialmethod(cls._get_FIELD_display, field=self))
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..49a22b7a78 100644
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -76,6 +76,13 @@ class Choiceful(models.Model):
+     empty_choices_text = models.TextField(choices=())
+ 
+ 
++class FooBar(models.Model):
++    foo_bar = models.CharField(_("foo"), choices=[(1, 'foo'), (2, 'bar')], max_length=20)
++
++    def get_foo_bar_display(self):
++        return "something"
++
++
+ class BigD(models.Model):
+     d = models.DecimalField(max_digits=32, decimal_places=30)
+ 
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 0d6e930b06..9b3f288ec0 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -7,7 +7,7 @@ from django.test import SimpleTestCase, TestCase
+ from django.utils.functional import lazy
+ 
+ from .models import (
+-    Bar, Choiceful, Foo, RenamedField, VerboseNameField, Whiz, WhizDelayed,
++    Bar, Choiceful, Foo, FooBar, RenamedField, VerboseNameField, Whiz, WhizDelayed,
+     WhizIter, WhizIterEmpty,
+ )
+ 
+@@ -186,6 +186,11 @@ class GetFieldDisplayTests(SimpleTestCase):
+         self.assertIsNone(WhizIterEmpty(c=None).c)         # Blank value
+         self.assertEqual(WhizIterEmpty(c='').c, '')        # Empty value
+ 
++    def test_get_FIELD_display_overridden(self):
++        """Overriding get_FIELD_display() on a model is allowed."""
++        self.assertEqual(FooBar(foo_bar=1).get_foo_bar_display(), 'something')
++        self.assertEqual(FooBar(foo_bar=2).get_foo_bar_display(), 'something')
++
+ 
+ class GetChoicesTests(SimpleTestCase):
+ 

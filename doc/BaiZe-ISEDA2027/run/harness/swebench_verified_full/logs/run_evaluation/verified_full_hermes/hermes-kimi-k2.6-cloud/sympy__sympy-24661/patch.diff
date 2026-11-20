@@ -1,0 +1,82 @@
+diff --git a/sympy/parsing/sympy_parser.py b/sympy/parsing/sympy_parser.py
+index 52711d13..76b65f7b 100644
+--- a/sympy/parsing/sympy_parser.py
++++ b/sympy/parsing/sympy_parser.py
+@@ -10,6 +10,7 @@
+ from io import StringIO
+ import builtins
+ import types
++from functools import reduce
+ from typing import Tuple as tTuple, Dict as tDict, Any, Callable, \
+     List, Optional, Union as tUnion
+ 
+@@ -1119,6 +1120,41 @@ class EvaluateFalseTransformer(ast.NodeTransformer):
+         'exp', 'ln', 'log', 'sqrt', 'cbrt',
+     )
+ 
++    relational_operators = {
++        ast.Eq: 'Eq',
++        ast.NotEq: 'Ne',
++        ast.Lt: 'Lt',
++        ast.LtE: 'Le',
++        ast.Gt: 'Gt',
++        ast.GtE: 'Ge',
++    }
++
++    def visit_Compare(self, node):
++        def reducer(acc, op_right):
++            result, left = acc
++            op, right = op_right
++            if op.__class__ not in self.relational_operators:
++                raise ValueError("Only equation or inequality operators are supported")
++            new = ast.Call(
++                func=ast.Name(
++                    id=self.relational_operators[op.__class__], ctx=ast.Load()
++                ),
++                args=[self.visit(left), self.visit(right)],
++                keywords=[ast.keyword(arg="evaluate", value=ast.NameConstant(value=False, ctx=ast.Load()))],
++            )
++            return result + [new], right
++
++        args, _ = reduce(
++            reducer, zip(node.ops, node.comparators), ([], node.left)
++        )
++        if len(args) == 1:
++            return args[0]
++        return ast.Call(
++            func=ast.Name(id=self.operators[ast.BitAnd], ctx=ast.Load()),
++            args=args,
++            keywords=[ast.keyword(arg="evaluate", value=ast.NameConstant(value=False, ctx=ast.Load()))],
++        )
++
+     def flatten(self, args, func):
+         result = []
+         for arg in args:
+diff --git a/sympy/parsing/tests/test_sympy_parser.py b/sympy/parsing/tests/test_sympy_parser.py
+index 7c43e1fc..4ceab1b7 100644
+--- a/sympy/parsing/tests/test_sympy_parser.py
++++ b/sympy/parsing/tests/test_sympy_parser.py
+@@ -274,6 +274,23 @@ def test_convert_equals_signs():
+         transformations=transformations) == Eq(Eq(2*y, x), False)
+ 
+ 
++def test_relational_evaluate_false():
++    # See issues #22305 and #22098
++    from sympy import Lt, Gt, Le, Ge, Eq, Ne
++    assert parse_expr('1 < 2', evaluate=False) == Lt(1, 2, evaluate=False)
++    assert parse_expr('1 > 2', evaluate=False) == Gt(1, 2, evaluate=False)
++    assert parse_expr('1 <= 2', evaluate=False) == Le(1, 2, evaluate=False)
++    assert parse_expr('1 >= 2', evaluate=False) == Ge(1, 2, evaluate=False)
++    assert parse_expr('1 == 2', evaluate=False) == Eq(1, 2, evaluate=False)
++    assert parse_expr('1 != 2', evaluate=False) == Ne(1, 2, evaluate=False)
++    # chained
++    assert parse_expr('1 < 2 < 3', evaluate=False) == \
++        Lt(1, 2, evaluate=False) & Lt(2, 3, evaluate=False)
++    # make sure evaluate=True still evaluates
++    assert parse_expr('1 < 2', evaluate=True) == True
++    assert parse_expr('1 == 2', evaluate=True) == False
++
++
+ def test_parse_function_issue_3539():
+     x = Symbol('x')
+     f = Function('f')

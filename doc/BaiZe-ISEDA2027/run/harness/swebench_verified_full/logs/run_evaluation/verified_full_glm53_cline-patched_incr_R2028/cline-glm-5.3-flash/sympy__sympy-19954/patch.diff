@@ -1,0 +1,58 @@
+diff --git a/sympy/combinatorics/perm_groups.py b/sympy/combinatorics/perm_groups.py
+index de94ddabb..752abafee 100644
+--- a/sympy/combinatorics/perm_groups.py
++++ b/sympy/combinatorics/perm_groups.py
+@@ -2198,14 +2198,16 @@ def _number_blocks(blocks):
+                 for i, r in enumerate(rep_blocks):
+                     if len(r) > len(rep) and rep.issubset(r):
+                         # i-th block system is not minimal
+-                        del num_blocks[i], blocks[i]
+-                        to_remove.append(rep_blocks[i])
++                        to_remove.append(i)
+                     elif len(r) < len(rep) and r.issubset(rep):
+                         # the system being checked is not minimal
+                         minimal = False
+                         break
+                 # remove non-minimal representative blocks
+-                rep_blocks = [r for r in rep_blocks if r not in to_remove]
++                # (delete in reverse order so the remaining
++                # indices stay valid)
++                for i in reversed(to_remove):
++                    del num_blocks[i], blocks[i], rep_blocks[i]
+ 
+                 if minimal and num_block not in num_blocks:
+                     blocks.append(block)
+diff --git a/sympy/combinatorics/tests/test_perm_groups.py b/sympy/combinatorics/tests/test_perm_groups.py
+index 7ab099365..89dad1728 100644
+--- a/sympy/combinatorics/tests/test_perm_groups.py
++++ b/sympy/combinatorics/tests/test_perm_groups.py
+@@ -521,6 +521,13 @@ def test_minimal_blocks():
+     P = PermutationGroup(Permutation(0, 3))
+     assert P.minimal_blocks() == False
+ 
++    # this used to raise an IndexError when multiple non-minimal
++    # block systems had to be removed in a single pass
++    P = DihedralGroup(18)
++    blocks = P.minimal_blocks()
++    assert len(blocks) == 2
++    assert sorted(len(set(b)) for b in blocks) == [6, 9]
++
+ 
+ def test_max_div():
+     S = SymmetricGroup(10)
+@@ -863,6 +870,15 @@ def test_sylow_subgroup():
+     S = P.sylow_subgroup(3)
+     assert S.order() == 3
+ 
++    # both of these used to raise an IndexError in minimal_blocks()
++    P = DihedralGroup(18)
++    S = P.sylow_subgroup(2)
++    assert S.order() == 4
++
++    P = DihedralGroup(2*25)
++    S = P.sylow_subgroup(2)
++    assert S.order() == 4
++
+     P = PermutationGroup(Permutation(1, 5)(2, 4), Permutation(0, 1, 2, 3, 4, 5), Permutation(0, 2))
+     S = P.sylow_subgroup(3)
+     assert S.order() == 9

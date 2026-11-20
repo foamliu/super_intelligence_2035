@@ -1,0 +1,81 @@
+diff --git a/django/core/management/commands/inspectdb.py b/django/core/management/commands/inspectdb.py
+index f9b4bfb4..e9bf053d 100644
+--- a/django/core/management/commands/inspectdb.py
++++ b/django/core/management/commands/inspectdb.py
+@@ -57,6 +57,8 @@ class Command(BaseCommand):
+             yield 'from %s import models' % self.db_module
+             known_models = []
+             table_info = connection.introspection.get_table_list(cursor)
++            table_column_to_field_name = {}
++            table_primary_keys = {}
+ 
+             # Determine types of tables and/or views to be introspected.
+             types = {'t'}
+@@ -128,6 +130,20 @@ class Command(BaseCommand):
+                             field_type = '%s(%s' % (rel_type, rel_to)
+                         else:
+                             field_type = "%s('%s'" % (rel_type, rel_to)
++                        ref_table_name = relations[column_name][1]
++                        ref_column_name = relations[column_name][0]
++                        if ref_table_name == table_name:
++                            ref_pk_column = primary_key_column
++                        elif ref_table_name in table_primary_keys:
++                            ref_pk_column = table_primary_keys[ref_table_name]
++                        else:
++                            ref_pk_column = connection.introspection.get_primary_key_column(cursor, ref_table_name)
++                        if ref_column_name != ref_pk_column:
++                            if ref_table_name in table_column_to_field_name:
++                                to_field = table_column_to_field_name[ref_table_name].get(ref_column_name, ref_column_name)
++                            else:
++                                to_field, _, _ = self.normalize_col_name(ref_column_name, [], False)
++                            extra_params['to_field'] = to_field
+                     else:
+                         # Calling `get_field_type` to get the field type string and any
+                         # additional parameters and notes.
+@@ -168,6 +184,8 @@ class Command(BaseCommand):
+                     if comment_notes:
+                         field_desc += '  # ' + ' '.join(comment_notes)
+                     yield '    %s' % field_desc
++                table_column_to_field_name[table_name] = column_to_field_name
++                table_primary_keys[table_name] = primary_key_column
+                 is_view = any(info.name == table_name and info.type == 'v' for info in table_info)
+                 is_partition = any(info.name == table_name and info.type == 'p' for info in table_info)
+                 yield from self.get_meta(table_name, constraints, column_to_field_name, is_view, is_partition)
+diff --git a/tests/inspectdb/models.py b/tests/inspectdb/models.py
+index 4d2c224d..4d79c709 100644
+--- a/tests/inspectdb/models.py
++++ b/tests/inspectdb/models.py
+@@ -109,3 +109,11 @@ class UniqueTogether(models.Model):
+             ('from_field', 'field1'),
+             ('non_unique', 'non_unique_0'),
+         ]
++
++
++class FooReference(models.Model):
++    other_id = models.IntegerField(unique=True)
++
++
++class BarReference(models.Model):
++    other = models.ForeignKey(FooReference, models.CASCADE, to_field='other_id')
+diff --git a/tests/inspectdb/tests.py b/tests/inspectdb/tests.py
+index 8be16811..99406375 100644
+--- a/tests/inspectdb/tests.py
++++ b/tests/inspectdb/tests.py
+@@ -204,6 +204,17 @@ class InspectDBTestCase(TestCase):
+             output,
+         )
+ 
++    @skipUnlessDBFeature('can_introspect_foreign_keys')
++    def test_foreign_key_to_field(self):
++        """Foreign keys to non-primary-key fields are introspected with to_field."""
++        out = StringIO()
++        call_command('inspectdb', 'inspectdb_fooreference', 'inspectdb_barreference', stdout=out)
++        output = out.getvalue()
++        self.assertIn(
++            "other = models.ForeignKey(InspectdbFooreference, models.DO_NOTHING, to_field='other_id')",
++            output,
++        )
++
+     def test_digits_column_name_introspection(self):
+         """Introspection of column names consist/start with digits (#16536/#17676)"""
+         char_field_type = connection.features.introspected_field_types['CharField']

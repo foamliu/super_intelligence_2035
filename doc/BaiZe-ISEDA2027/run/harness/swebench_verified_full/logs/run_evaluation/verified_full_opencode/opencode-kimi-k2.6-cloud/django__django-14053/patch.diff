@@ -1,0 +1,70 @@
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index 494890cc2..86f5ca0c6 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -226,24 +226,33 @@ class HashedFilesMixin:
+             path for path in paths
+             if matches_patterns(path, self._patterns)
+         ]
++        # Track final post-process results to yield each file exactly once.
++        processed_results = {}
++
+         # Do a single pass first. Post-process all files once, then repeat for
+         # adjustable files.
+         for name, hashed_name, processed, _ in self._post_process(paths, adjustable_paths, hashed_files):
+-            yield name, hashed_name, processed
++            # Keep the first exception for each file.
++            if name not in processed_results or not isinstance(processed_results[name][2], Exception):
++                processed_results[name] = (name, hashed_name, processed)
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+-                yield name, hashed_name, processed
++                if subst and (name not in processed_results or not isinstance(processed_results[name][2], Exception)):
++                    processed_results[name] = (name, hashed_name, processed)
+                 substitutions = substitutions or subst
+ 
+             if not substitutions:
+                 break
+ 
+         if substitutions:
+-            yield 'All', None, RuntimeError('Max post-process passes exceeded.')
++            processed_results['All'] = ('All', None, RuntimeError('Max post-process passes exceeded.'))
++
++        # Yield each file exactly once with its final result.
++        yield from processed_results.values()
+ 
+         # Store the processed paths
+         self.hashed_files.update(hashed_files)
+diff --git a/tests/staticfiles_tests/test_storage.py b/tests/staticfiles_tests/test_storage.py
+index dc45a0b83..bdc506906 100644
+--- a/tests/staticfiles_tests/test_storage.py
++++ b/tests/staticfiles_tests/test_storage.py
+@@ -205,6 +205,24 @@ class TestHashedFiles:
+         self.assertIn(os.path.join('test', 'nonascii.css'), stats['post_processed'])
+         self.assertPostCondition()
+ 
++    def test_post_process_yields_once(self):
++        """
++        post_process() yields each file exactly once.
++        """
++        found_files = {}
++        for finder in finders.get_finders():
++            for path, finder_storage in finder.list(['*.ignoreme']):
++                if getattr(finder_storage, 'prefix', None):
++                    prefixed_path = os.path.join(finder_storage.prefix, path)
++                else:
++                    prefixed_path = path
++                if prefixed_path not in found_files:
++                    found_files[prefixed_path] = (finder_storage, path)
++
++        results = list(storage.staticfiles_storage.post_process(found_files))
++        names = [name for name, hashed_name, processed in results]
++        self.assertEqual(len(names), len(set(names)))
++
+     def test_css_import_case_insensitive(self):
+         relpath = self.hashed_file_path("cached/styles_insensitive.css")
+         self.assertEqual(relpath, "cached/styles_insensitive.3fa427592a53.css")

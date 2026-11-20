@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-10908",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py\nindex 22fbd3f1..59315809 100644\n--- a/sklearn/feature_extraction/tests/test_text.py\n+++ b/sklearn/feature_extraction/tests/test_text.py\n@@ -558,6 +558,11 @@ def test_feature_names():\n     for idx, name in enumerate(feature_names):\n         assert_equal(idx, cv.vocabulary_.get(name))\n \n+    # test that get_feature_names() works when the vocabulary is given as a\n+    # parameter, without a prior call to fit\n+    cv = CountVectorizer(vocabulary=['pizza', 'beer'])\n+    assert_array_equal(['pizza', 'beer'], cv.get_feature_names())\n+\n \n def test_vectorizer_max_features():\n     vec_factories = (\ndiff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py\nindex 9b1ebd63..d282cb41 100644\n--- a/sklearn/feature_extraction/text.py\n+++ b/sklearn/feature_extraction/text.py\n@@ -993,6 +993,8 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):\n \n     def get_feature_names(self):\n         \"\"\"Array mapping from feature integer indices to feature name\"\"\"\n+        if not hasattr(self, 'vocabulary_'):\n+            self._validate_vocabulary()\n         self._check_vocabulary()\n \n         return [t for t, i in sorted(six.iteritems(self.vocabulary_),\n"
+  }
+]

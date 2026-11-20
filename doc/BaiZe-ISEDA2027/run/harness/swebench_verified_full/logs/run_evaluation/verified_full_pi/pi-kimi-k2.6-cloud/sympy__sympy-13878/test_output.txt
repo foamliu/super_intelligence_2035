@@ -1,0 +1,1066 @@
++ source /opt/miniconda3/bin/activate
+++ _CONDA_ROOT=/opt/miniconda3
+++ . /opt/miniconda3/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ '[' -z '' ']'
++++ export CONDA_SHLVL=0
++++ CONDA_SHLVL=0
++++ '[' -n '' ']'
++++++ dirname /opt/miniconda3/bin/conda
+++++ dirname /opt/miniconda3/bin
++++ PATH=/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export PATH
++++ '[' -z '' ']'
++++ PS1=
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1=
++++ __conda_exe shell.posix activate
++++ /opt/miniconda3/bin/conda shell.posix activate
+++ ask_conda='PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ eval 'PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++++ PS1='(base) '
++++ export PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export CONDA_PREFIX=/opt/miniconda3
++++ CONDA_PREFIX=/opt/miniconda3
++++ export CONDA_SHLVL=1
++++ CONDA_SHLVL=1
++++ export CONDA_DEFAULT_ENV=base
++++ CONDA_DEFAULT_ENV=base
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
++ conda activate testbed
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate testbed
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate testbed
+++ /opt/miniconda3/bin/conda shell.posix activate testbed
++ ask_conda='PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_1='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++ eval 'PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_1='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ PS1='(testbed) '
+++ export PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ export CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ export CONDA_SHLVL=2
+++ CONDA_SHLVL=2
+++ export CONDA_DEFAULT_ENV=testbed
+++ CONDA_DEFAULT_ENV=testbed
+++ export 'CONDA_PROMPT_MODIFIER=(testbed) '
+++ CONDA_PROMPT_MODIFIER='(testbed) '
+++ export CONDA_PREFIX_1=/opt/miniconda3
+++ CONDA_PREFIX_1=/opt/miniconda3
+++ export CONDA_EXE=/opt/miniconda3/bin/conda
+++ CONDA_EXE=/opt/miniconda3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ cd /testbed
++ git config --global --add safe.directory /testbed
++ cd /testbed
++ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   sympy/assumptions/sathandlers.py
+	modified:   sympy/core/basic.py
+	modified:   sympy/core/containers.py
+	modified:   sympy/core/function.py
+	modified:   sympy/matrices/matrices.py
+	modified:   sympy/matrices/sparse.py
+	modified:   sympy/plotting/plot.py
+	modified:   sympy/stats/crv_types.py
+	modified:   sympy/stats/tests/test_continuous_rv.py
+	modified:   sympy/vector/coordsysrect.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
++ git show
+commit ce735e0d3b1a8dffbceb1950d18c29ec1fdbb923
+Author: SWE-bench <setup@swebench.com>
+Date:   Thu Aug 13 03:56:42 2026 +0000
+
+    SWE-bench
++ git -c core.fileMode=false diff 7b127bdf71a36d85216315f80c1b54d22b060818
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..881a5f9ba 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index d4ca323e0..b42fd1d75 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,7 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++from collections.abc import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..a9b8948eb 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -14,6 +14,7 @@
+ from sympy.utilities.iterables import iterable
+ 
+ import collections
++from collections.abc import MutableSet
+ 
+ 
+ class Tuple(Basic):
+@@ -268,7 +269,7 @@ def _sorted_args(self):
+         return tuple(sorted(self.args, key=default_sort_key))
+ 
+ 
+-class OrderedSet(collections.MutableSet):
++class OrderedSet(MutableSet):
+     def __init__(self, iterable=None):
+         if iterable:
+             self.map = collections.OrderedDict((item, None) for item in iterable)
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 01ac21ed3..1230ab77f 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -59,6 +59,7 @@
+ 
+ import inspect
+ import collections
++from collections.abc import Iterable
+ 
+ def _coeff_isneg(a):
+     """Return True if the leading Number is negative.
+@@ -1238,7 +1239,7 @@ def __new__(cls, expr, *variables, **kwargs):
+             if unhandled_non_symbol:
+                 obj = None
+             else:
+-                if isinstance(v, (collections.Iterable, Tuple, MatrixCommon, NDimArray)):
++                if isinstance(v, (Iterable, Tuple, MatrixCommon, NDimArray)):
+                     deriv_fun = derive_by_array
+                     is_symbol = True
+                 else:
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index 91611b8c0..678b9a71b 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+ import collections
++from collections.abc import Callable
+ from sympy.assumptions.refine import refine
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+@@ -2045,7 +2046,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 7701cbc17..c684df5dc 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -15,6 +15,7 @@
+ from .matrices import MatrixBase, ShapeError, a2idx
+ from .dense import Matrix
+ import collections
++from collections.abc import Callable
+ 
+ 
+ class SparseMatrix(MatrixBase):
+@@ -53,7 +54,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237d1..0b959a43a 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/stats/crv_types.py b/sympy/stats/crv_types.py
+index fff7da80a..84718f798 100644
+--- a/sympy/stats/crv_types.py
++++ b/sympy/stats/crv_types.py
+@@ -47,7 +47,7 @@
+ 
+ from sympy import (log, sqrt, pi, S, Dummy, Interval, sympify, gamma,
+                    Piecewise, And, Eq, binomial, factorial, Sum, floor, Abs,
+-                   Lambda, Basic, lowergamma, erf, erfc, I)
++                   Lambda, Basic, lowergamma, uppergamma, erf, erfc, I, hyper, asin)
+ from sympy import beta as beta_fn
+ from sympy import cos, exp, besseli
+ from sympy.stats.crv import (SingleContinuousPSpace, SingleContinuousDistribution,
+@@ -153,6 +153,10 @@ class ArcsinDistribution(SingleContinuousDistribution):
+     def pdf(self, x):
+         return 1/(pi*sqrt((x - self.a)*(self.b - x)))
+ 
++    def _cdf(self, x):
++        return Piecewise((S.Zero, x < self.a),
++                         (2*asin(sqrt((x - self.a)/(self.b - self.a)))/pi, x <= self.b),
++                         (S.One, True))
+ def Arcsin(name, a=0, b=1):
+     r"""
+     Create a Continuous Random Variable with an arcsin distribution.
+@@ -670,6 +674,11 @@ def pdf(self, x):
+         p, a, b = self.p, self.a, self.b
+         return a*p/x*((x/b)**(a*p)/(((x/b)**a + 1)**(p + 1)))
+ 
++    def _cdf(self, x):
++        p, a, b = self.p, self.a, self.b
++        return Piecewise((((x/b)**(-a) + 1)**(-p), x >= 0),
++                         (S.Zero, True))
++
+ 
+ def Dagum(name, p, a, b):
+     r"""
+@@ -786,7 +795,7 @@ def Erlang(name, k, l):
+     .. [2] http://mathworld.wolfram.com/ErlangDistribution.html
+     """
+ 
+-    return rv(name, GammaDistribution, (k, 1/l))
++    return rv(name, GammaDistribution, (k, S(1)/l))
+ 
+ #-------------------------------------------------------------------------------
+ # Exponential distribution -----------------------------------------------------
+@@ -1042,6 +1051,11 @@ def pdf(self, x):
+         a, s, m = self.a, self.s, self.m
+         return a/s * ((x-m)/s)**(-1-a) * exp(-((x-m)/s)**(-a))
+ 
++    def _cdf(self, x):
++        a, s, m = self.a, self.s, self.m
++        return Piecewise((exp(-((x-m)/s)**(-a)), x >= m),
++                         (S.Zero, True))
++
+ def Frechet(name, a, s=1, m=0):
+     r"""
+     Create a continuous random variable with a Frechet distribution.
+@@ -1108,6 +1122,11 @@ def pdf(self, x):
+         k, theta = self.k, self.theta
+         return x**(k - 1) * exp(-x/theta) / (gamma(k)*theta**k)
+ 
++    def _cdf(self, x):
++        k, theta = self.k, self.theta
++        return Piecewise((lowergamma(k, x/theta)/gamma(k), x >= 0),
++                         (S.Zero, True))
++
+     def sample(self):
+         return random.gammavariate(self.k, self.theta)
+ 
+@@ -1200,6 +1219,11 @@ def pdf(self, x):
+         a, b = self.a, self.b
+         return b**a/gamma(a) * x**(-a-1) * exp(-b/x)
+ 
++    def _cdf(self, x):
++        a, b = self.a, self.b
++        return Piecewise((uppergamma(a, b/x)/gamma(a), x >= 0),
++                         (S.Zero, True))
++
+ def GammaInverse(name, a, b):
+     r"""
+     Create a continuous random variable with an inverse Gamma distribution.
+@@ -1385,6 +1409,12 @@ def pdf(self, x):
+         a, b = self.a, self.b
+         return a * b * x**(a-1) * (1-x**a)**(b-1)
+ 
++    def _cdf(self, x):
++        a, b = self.a, self.b
++        return Piecewise((S.Zero, x < 0),
++                         (1 - (1 - x**a)**b, x <= 1),
++                         (S.One, True))
++
+ def Kumaraswamy(name, a, b):
+     r"""
+     Create a Continuous Random Variable with a Kumaraswamy distribution.
+@@ -1445,6 +1475,11 @@ def pdf(self, x):
+         mu, b = self.mu, self.b
+         return 1/(2*b)*exp(-Abs(x - mu)/b)
+ 
++    def _cdf(self, x):
++        mu, b = self.mu, self.b
++        return Piecewise((exp((x - mu)/b)/2, x < mu),
++                         (1 - exp(-(x - mu)/b)/2, True))
++
+ 
+ def Laplace(name, mu, b):
+     r"""
+@@ -1501,6 +1536,10 @@ def pdf(self, x):
+         mu, s = self.mu, self.s
+         return exp(-(x - mu)/s)/(s*(1 + exp(-(x - mu)/s))**2)
+ 
++    def _cdf(self, x):
++        mu, s = self.mu, self.s
++        return 1/(1 + exp(-(x - mu)/s))
++
+ 
+ def Logistic(name, mu, s):
+     r"""
+@@ -1711,6 +1750,11 @@ def pdf(self, x):
+         mu, omega = self.mu, self.omega
+         return 2*mu**mu/(gamma(mu)*omega**mu)*x**(2*mu - 1)*exp(-mu/omega*x**2)
+ 
++    def _cdf(self, x):
++        mu, omega = self.mu, self.omega
++        return Piecewise((lowergamma(mu, mu*x**2/omega)/gamma(mu), x >= 0),
++                         (S.Zero, True))
++
+ 
+ def Nakagami(name, mu, omega):
+     r"""
+@@ -2227,6 +2271,11 @@ def pdf(self, x):
+         nu = self.nu
+         return 1/(sqrt(nu)*beta_fn(S(1)/2, nu/2))*(1 + x**2/nu)**(-(nu + 1)/2)
+ 
++    def _cdf(self, x):
++        nu = self.nu
++        return S.Half + x*gamma((nu + 1)/2)/(sqrt(pi*nu)*gamma(nu/2))*\
++               hyper((S.Half, (nu + 1)/2), (S(3)/2,), -x**2/nu)
++
+ 
+ def StudentT(name, nu):
+     r"""
+@@ -2554,6 +2603,13 @@ def pdf(self, x):
+         return 1/factorial(
+             n - 1)*Sum((-1)**k*binomial(n, k)*(x - k)**(n - 1), (k, 0, floor(x)))
+ 
++    def _cdf(self, x):
++        n = self.n
++        k = Dummy("k")
++        return Piecewise((S.Zero, x < 0),
++                         (1/factorial(n)*Sum((-1)**k*binomial(n, k)*(x - k)**n, (k, 0, floor(x))), x <= n),
++                         (S.One, True))
++
+ 
+ 
+ def UniformSum(name, n):
+@@ -2773,7 +2829,6 @@ def pdf(self, x):
+         R = self.R
+         return 2/(pi*R**2)*sqrt(R**2 - x**2)
+ 
+-
+ def WignerSemicircle(name, R):
+     r"""
+     Create a continuous random variable with a Wigner semicircle distribution.
+diff --git a/sympy/stats/tests/test_continuous_rv.py b/sympy/stats/tests/test_continuous_rv.py
+index b831f291e..81058011a 100644
+--- a/sympy/stats/tests/test_continuous_rv.py
++++ b/sympy/stats/tests/test_continuous_rv.py
+@@ -15,7 +15,7 @@
+ from sympy import (Symbol, Abs, exp, S, N, pi, simplify, Interval, erf, erfc,
+                    Eq, log, lowergamma, Sum, symbols, sqrt, And, gamma, beta,
+                    Piecewise, Integral, sin, cos, besseli, factorial, binomial,
+-                   floor, expand_func, Rational, I)
++                   floor, expand_func, Rational, I, diff)
+ 
+ 
+ from sympy.stats.crv_types import NormalDistribution
+@@ -313,10 +313,8 @@ def test_gamma():
+ 
+     X = Gamma('x', k, theta)
+     assert density(X)(x) == x**(k - 1)*theta**(-k)*exp(-x/theta)/gamma(k)
+-    assert cdf(X, meijerg=True)(z) == Piecewise(
+-            (-k*lowergamma(k, 0)/gamma(k + 1) +
+-                k*lowergamma(k, z/theta)/gamma(k + 1), z >= 0),
+-            (0, True))
++    assert cdf(X)(z) == Piecewise((lowergamma(k, z/theta)/gamma(k), z >= 0),
++                                  (0, True))
+     # assert simplify(variance(X)) == k*theta**2  # handled numerically below
+     assert E(X) == moment(X, 1)
+ 
+@@ -711,21 +709,31 @@ def test_issue_10003():
+ 
+ def test_precomputed_cdf():
+     x = symbols("x", real=True, finite=True)
+-    mu = symbols("mu", real=True, finite=True)
+-    sigma, xm, alpha = symbols("sigma xm alpha", positive=True, finite=True)
+-    n = symbols("n", integer=True, positive=True, finite=True)
+     distribs = [
+-            Normal("X", mu, sigma),
+-            Pareto("P", xm, alpha),
+-            ChiSquared("C", n),
+-            Exponential("E", sigma),
+-            # LogNormal("L", mu, sigma),
++            (Normal("X", 0, 1), S.Half),
++            (Pareto("P", 1, 1), 2),
++            (ChiSquared("C", 1), 1),
++            (Exponential("E", 1), 1),
++            (Arcsin("A", 0, 1), S.Half),
++            (Dagum("D", S(1)/3, S(1)/5, 2), 1),
++            (Erlang("Erl", 1, 1), 1),
++            (Frechet("F", S(4)/3, 1, 2), 3),
++            (Gamma("G", S(1)/10, 2), 1),
++            (GammaInverse("GI", S(5)/7, 2), 1),
++            (Kumaraswamy("K", S(1)/123, 5), S(1)/3),
++            (Laplace("L", 2, 3), 5),
++            (Logistic("Log", 1, S(1)/10), 2),
++            (Nakagami("N", S(7)/3, 1), 2),
++            (StudentT("T", 10), 2),
+     ]
+-    for X in distribs:
+-        compdiff = cdf(X)(x) - simplify(X.pspace.density.compute_cdf()(x))
+-        compdiff = simplify(compdiff.rewrite(erfc))
+-        assert compdiff == 0
+-
++    for X, pt in distribs:
++        d1 = density(X)(x)
++        d2 = diff(cdf(X)(x), x)
++        assert abs(N(d1.subs(x, pt)) - N(d2.subs(x, pt))) < 1e-10
++
++    # UniformSum CDF involves Sum with floor, differentiate directly doesn't work well
++    X = UniformSum("US", 5)
++    assert abs(N(cdf(X)(2)) - S(9)/40) < 1e-10
+ def test_issue_13324():
+     X = Uniform('X', 0, 1)
+     assert E(X, X > Rational(1,2)) == Rational(3,4)
+diff --git a/sympy/vector/coordsysrect.py b/sympy/vector/coordsysrect.py
+index baf290e8a..cbc69505f 100644
+--- a/sympy/vector/coordsysrect.py
++++ b/sympy/vector/coordsysrect.py
+@@ -12,6 +12,7 @@
+ from sympy.vector.orienters import (Orienter, AxisOrienter, BodyOrienter,
+                                     SpaceOrienter, QuaternionOrienter)
+ import collections
++from collections.abc import Callable
+ 
+ 
+ def CoordSysCartesian(*args, **kwargs):
+@@ -84,7 +85,7 @@ def __new__(cls, name, transformation=None, parent=None, location=None,
+                 else:
+                     transformation = Lambda(transformation[0],
+                                             transformation[1])
+-            elif isinstance(transformation, collections.Callable):
++            elif isinstance(transformation, Callable):
+                 x1, x2, x3 = symbols('x1 x2 x3', cls=Dummy)
+                 transformation = Lambda((x1, x2, x3),
+                                         transformation(x1, x2, x3))
++ source /opt/miniconda3/bin/activate
+++ _CONDA_ROOT=/opt/miniconda3
+++ . /opt/miniconda3/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ '[' -z x ']'
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1='(testbed) '
++++ __conda_exe shell.posix activate
++++ /opt/miniconda3/bin/conda shell.posix activate
+++ ask_conda='PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''3'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_PREFIX_2='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ eval 'PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''3'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_PREFIX_2='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++++ PS1='(base) '
++++ export PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export CONDA_PREFIX=/opt/miniconda3
++++ CONDA_PREFIX=/opt/miniconda3
++++ export CONDA_SHLVL=3
++++ CONDA_SHLVL=3
++++ export CONDA_DEFAULT_ENV=base
++++ CONDA_DEFAULT_ENV=base
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_PREFIX_2=/opt/miniconda3/envs/testbed
++++ CONDA_PREFIX_2=/opt/miniconda3/envs/testbed
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
++ conda activate testbed
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate testbed
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate testbed
+++ /opt/miniconda3/bin/conda shell.posix activate testbed
++ ask_conda='PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''4'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_3='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++ eval 'PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''4'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_3='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ PS1='(testbed) '
+++ export PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ export CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ export CONDA_SHLVL=4
+++ CONDA_SHLVL=4
+++ export CONDA_DEFAULT_ENV=testbed
+++ CONDA_DEFAULT_ENV=testbed
+++ export 'CONDA_PROMPT_MODIFIER=(testbed) '
+++ CONDA_PROMPT_MODIFIER='(testbed) '
+++ export CONDA_PREFIX_3=/opt/miniconda3
+++ CONDA_PREFIX_3=/opt/miniconda3
+++ export CONDA_EXE=/opt/miniconda3/bin/conda
+++ CONDA_EXE=/opt/miniconda3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ python -m pip install -e .
+Obtaining file:///testbed
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Requirement already satisfied: mpmath>=0.19 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from sympy==1.1.2.dev0) (1.3.0)
+Installing collected packages: sympy
+  Attempting uninstall: sympy
+    Found existing installation: sympy 1.1.2.dev0
+    Uninstalling sympy-1.1.2.dev0:
+      Successfully uninstalled sympy-1.1.2.dev0
+  DEPRECATION: Legacy editable install of sympy==1.1.2.dev0 from file:///testbed (setup.py develop) is deprecated. pip 25.0 will enforce this behaviour change. A possible replacement is to add a pyproject.toml or enable --use-pep517, and use setuptools >= 64. If the resulting installation is not behaving as expected, try using --config-settings editable_mode=compat. Please consult the setuptools documentation for more information. Discussion can be found at https://github.com/pypa/pip/issues/11457
+  Running setup.py develop for sympy
+Successfully installed sympy
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
++ git checkout 7b127bdf71a36d85216315f80c1b54d22b060818 sympy/stats/tests/test_continuous_rv.py
+Updated 1 path from cd5cc788a
++ git apply -v -
+Checking patch sympy/stats/tests/test_continuous_rv.py...
+Applied patch sympy/stats/tests/test_continuous_rv.py cleanly.
++ : '>>>>> Start Test Output'
++ PYTHONWARNINGS=ignore::UserWarning,ignore::SyntaxWarning
++ bin/test -C --verbose sympy/stats/tests/test_continuous_rv.py
+============================= test process starts ==============================
+executable:         /opt/miniconda3/envs/testbed/bin/python  (3.9.20-final-0) [CPython]
+architecture:       64-bit
+cache:              no
+ground types:       python 
+numpy:              None
+random seed:        23114154
+hash randomization: on (PYTHONHASHSEED=2351338199)
+
+sympy/stats/tests/test_continuous_rv.py[63] 
+test_single_normal ok
+test_conditional_1d f
+test_ContinuousDomain ok
+test_multiple_normal Slow w
+test_symbolic Slow w
+test_cdf E
+test_characteristic_function ok
+test_sample ok
+test_ContinuousRV ok
+test_arcsin ok
+test_benini ok
+test_beta ok
+test_betaprime ok
+test_cauchy ok
+test_chi ok
+test_chi_noncentral ok
+test_chi_squared ok
+test_dagum ok
+test_erlang F
+test_exponential E
+test_f_distribution ok
+test_fisher_z ok
+test_frechet ok
+test_gamma E
+test_gamma_inverse F
+test_gompertz ok
+test_gumbel ok
+test_kumaraswamy ok
+test_laplace ok
+test_logistic ok
+test_lognormal ok
+test_maxwell ok
+test_nakagami F
+test_pareto ok
+test_pareto_numeric ok
+test_raised_cosine ok
+test_rayleigh ok
+test_shiftedgompertz ok
+test_studentt ok
+test_trapezoidal ok
+test_triangular f
+test_quadratic_u ok
+test_uniform ok
+test_uniform_P ok
+test_uniformsum f
+test_von_mises ok
+test_weibull ok
+test_weibull_numeric ok
+test_wignersemicircle ok
+test_prefab_sampling ok
+test_input_value_assertions ok
+test_unevaluated f
+test_probability_unevaluated ok
+test_density_unevaluated ok
+test_NormalDistribution ok
+test_random_parameters ok
+test_random_parameters_given ok
+test_conjugate_priors ok
+test_difficult_univariate ok
+test_issue_10003 ok
+test_precomputed_cdf E
+test_long_precomputed_cdf ok
+test_issue_13324 ok                                                       [FAIL]
+
+
+________________________________ slowest tests _________________________________
+test_weibull_numeric - Took 12.804 seconds
+test_precomputed_cdf - Took 13.470 seconds
+test_weibull - Took 13.831 seconds
+test_cdf - Took 33.636 seconds
+________________________________________________________________________________
+_______________ sympy/stats/tests/test_continuous_rv.py:test_cdf _______________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 134, in test_cdf
+    assert P(Y > 3) == 1 - d(3)
+  File "/testbed/sympy/stats/rv.py", line 647, in probability
+    return result.doit()
+  File "/testbed/sympy/integrals/integrals.py", line 510, in doit
+    ret = try_meijerg(function, xab)
+  File "/testbed/sympy/integrals/integrals.py", line 482, in try_meijerg
+    res = meijerint_definite(function, x, a, b)
+  File "/testbed/sympy/integrals/meijerint.py", line 1820, in meijerint_definite
+    res = _meijerint_definite_2(f.subs(x, x + split)
+  File "/testbed/sympy/integrals/meijerint.py", line 1911, in _meijerint_definite_2
+    res = _meijerint_definite_3(g, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1923, in _meijerint_definite_3
+    res = _meijerint_definite_4(f, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 2010, in _meijerint_definite_4
+    return _my_unpolarify(hyperexpand(res)), cond
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2473, in hyperexpand
+    return f.replace(hyper, do_replace).replace(meijerg, do_meijer)
+  File "/testbed/sympy/core/basic.py", line 1413, in replace
+    rv = bottom_up(self, rec_replace, atoms=True)
+  File "/testbed/sympy/simplify/simplify.py", line 1040, in bottom_up
+    args = tuple([bottom_up(a, F, atoms, nonbasic)
+  File "/testbed/sympy/simplify/simplify.py", line 1040, in <listcomp>
+    args = tuple([bottom_up(a, F, atoms, nonbasic)
+  File "/testbed/sympy/simplify/simplify.py", line 1044, in bottom_up
+    rv = F(rv)
+  File "/testbed/sympy/core/basic.py", line 1398, in rec_replace
+    new = _value(expr, result)
+  File "/testbed/sympy/core/basic.py", line 1341, in <lambda>
+    _value = lambda expr, result: value(*expr.args)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2469, in do_meijer
+    r = _meijergexpand(G_Function(ap[0], ap[1], bq[0], bq[1]), z,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2347, in _meijergexpand
+    slater1, cond1 = do_slater(func.an, func.bm, func.ap, func.bq, z, z0)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2280, in do_slater
+    hyp = _hyperexpand(Hyper_Function(nap, nbq), harg, ops,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 1983, in _hyperexpand
+    _collection = FormulaCollection()
+  File "/testbed/sympy/simplify/hyperexpand.py", line 806, in __init__
+    add_formulae(self.formulae)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 118, in add_formulae
+    add((), (), exp(z))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 108, in add
+    formulae.append(Formula(func, z, res, (a, b, c)))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 728, in __init__
+    self._compute_basis(res)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 710, in _compute_basis
+    self.M = m.row_insert(n, -Matrix([l])/poly.all_coeffs()[0])
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2116, in __truediv__
+    return self.__div__(other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 1972, in __div__
+    return self * (S.One / other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2026, in __mul__
+    if not isinstance(other, collections.Iterable):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/collections/__init__.py", line 62, in __getattr__
+    warnings.warn("Using or importing the ABCs from 'collections' instead "
+DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+________________________________________________________________________________
+___________ sympy/stats/tests/test_continuous_rv.py:test_exponential ___________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 295, in test_exponential
+    assert P(X > 1) == exp(-rate)
+  File "/testbed/sympy/stats/rv.py", line 647, in probability
+    return result.doit()
+  File "/testbed/sympy/integrals/integrals.py", line 510, in doit
+    ret = try_meijerg(function, xab)
+  File "/testbed/sympy/integrals/integrals.py", line 482, in try_meijerg
+    res = meijerint_definite(function, x, a, b)
+  File "/testbed/sympy/integrals/meijerint.py", line 1820, in meijerint_definite
+    res = _meijerint_definite_2(f.subs(x, x + split)
+  File "/testbed/sympy/integrals/meijerint.py", line 1911, in _meijerint_definite_2
+    res = _meijerint_definite_3(g, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1923, in _meijerint_definite_3
+    res = _meijerint_definite_4(f, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 2010, in _meijerint_definite_4
+    return _my_unpolarify(hyperexpand(res)), cond
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2473, in hyperexpand
+    return f.replace(hyper, do_replace).replace(meijerg, do_meijer)
+  File "/testbed/sympy/core/basic.py", line 1413, in replace
+    rv = bottom_up(self, rec_replace, atoms=True)
+  File "/testbed/sympy/simplify/simplify.py", line 1040, in bottom_up
+    args = tuple([bottom_up(a, F, atoms, nonbasic)
+  File "/testbed/sympy/simplify/simplify.py", line 1040, in <listcomp>
+    args = tuple([bottom_up(a, F, atoms, nonbasic)
+  File "/testbed/sympy/simplify/simplify.py", line 1044, in bottom_up
+    rv = F(rv)
+  File "/testbed/sympy/core/basic.py", line 1398, in rec_replace
+    new = _value(expr, result)
+  File "/testbed/sympy/core/basic.py", line 1341, in <lambda>
+    _value = lambda expr, result: value(*expr.args)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2469, in do_meijer
+    r = _meijergexpand(G_Function(ap[0], ap[1], bq[0], bq[1]), z,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2347, in _meijergexpand
+    slater1, cond1 = do_slater(func.an, func.bm, func.ap, func.bq, z, z0)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2280, in do_slater
+    hyp = _hyperexpand(Hyper_Function(nap, nbq), harg, ops,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 1983, in _hyperexpand
+    _collection = FormulaCollection()
+  File "/testbed/sympy/simplify/hyperexpand.py", line 806, in __init__
+    add_formulae(self.formulae)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 118, in add_formulae
+    add((), (), exp(z))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 108, in add
+    formulae.append(Formula(func, z, res, (a, b, c)))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 728, in __init__
+    self._compute_basis(res)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 710, in _compute_basis
+    self.M = m.row_insert(n, -Matrix([l])/poly.all_coeffs()[0])
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2116, in __truediv__
+    return self.__div__(other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 1972, in __div__
+    return self * (S.One / other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2026, in __mul__
+    if not isinstance(other, collections.Iterable):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/collections/__init__.py", line 62, in __getattr__
+    warnings.warn("Using or importing the ABCs from 'collections' instead "
+DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+________________________________________________________________________________
+______________ sympy/stats/tests/test_continuous_rv.py:test_gamma ______________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 333, in test_gamma
+    assert cdf(X, meijerg=True)(z) == Piecewise(
+  File "/testbed/sympy/stats/rv.py", line 760, in cdf
+    result = pspace(expr).compute_cdf(expr, **kwargs)
+  File "/testbed/sympy/stats/crv.py", line 429, in compute_cdf
+    return Lambda(z, self.distribution.cdf(z, **kwargs))
+  File "/testbed/sympy/stats/crv.py", line 220, in cdf
+    return self.compute_cdf(**kwargs)(x)
+  File "/testbed/sympy/stats/crv.py", line 206, in compute_cdf
+    cdf = integrate(pdf, (x, left_bound, z), **kwargs)
+  File "/testbed/sympy/integrals/integrals.py", line 1351, in integrate
+    return integral.doit(deep=False, meijerg=meijerg, conds=conds,
+  File "/testbed/sympy/integrals/integrals.py", line 526, in doit
+    antideriv = self._eval_integral(
+  File "/testbed/sympy/integrals/integrals.py", line 964, in _eval_integral
+    h = meijerint_indefinite(g, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1612, in meijerint_indefinite
+    res = _meijerint_indefinite_1(f.subs(x, x + a), x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1677, in _meijerint_indefinite_1
+    r = hyperexpand(r.subs(t, a*x**b), place=place)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2473, in hyperexpand
+    return f.replace(hyper, do_replace).replace(meijerg, do_meijer)
+  File "/testbed/sympy/core/basic.py", line 1413, in replace
+    rv = bottom_up(self, rec_replace, atoms=True)
+  File "/testbed/sympy/simplify/simplify.py", line 1044, in bottom_up
+    rv = F(rv)
+  File "/testbed/sympy/core/basic.py", line 1398, in rec_replace
+    new = _value(expr, result)
+  File "/testbed/sympy/core/basic.py", line 1341, in <lambda>
+    _value = lambda expr, result: value(*expr.args)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2469, in do_meijer
+    r = _meijergexpand(G_Function(ap[0], ap[1], bq[0], bq[1]), z,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2347, in _meijergexpand
+    slater1, cond1 = do_slater(func.an, func.bm, func.ap, func.bq, z, z0)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2280, in do_slater
+    hyp = _hyperexpand(Hyper_Function(nap, nbq), harg, ops,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 1983, in _hyperexpand
+    _collection = FormulaCollection()
+  File "/testbed/sympy/simplify/hyperexpand.py", line 806, in __init__
+    add_formulae(self.formulae)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 118, in add_formulae
+    add((), (), exp(z))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 108, in add
+    formulae.append(Formula(func, z, res, (a, b, c)))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 728, in __init__
+    self._compute_basis(res)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 710, in _compute_basis
+    self.M = m.row_insert(n, -Matrix([l])/poly.all_coeffs()[0])
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2116, in __truediv__
+    return self.__div__(other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 1972, in __div__
+    return self * (S.One / other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2026, in __mul__
+    if not isinstance(other, collections.Iterable):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/collections/__init__.py", line 62, in __getattr__
+    warnings.warn("Using or importing the ABCs from 'collections' instead "
+DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+________________________________________________________________________________
+_________ sympy/stats/tests/test_continuous_rv.py:test_precomputed_cdf _________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 766, in test_precomputed_cdf
+    compdiff = cdf(X)(x) - simplify(X.pspace.density.compute_cdf()(x))
+  File "/testbed/sympy/stats/crv.py", line 206, in compute_cdf
+    cdf = integrate(pdf, (x, left_bound, z), **kwargs)
+  File "/testbed/sympy/integrals/integrals.py", line 1351, in integrate
+    return integral.doit(deep=False, meijerg=meijerg, conds=conds,
+  File "/testbed/sympy/integrals/integrals.py", line 510, in doit
+    ret = try_meijerg(function, xab)
+  File "/testbed/sympy/integrals/integrals.py", line 482, in try_meijerg
+    res = meijerint_definite(function, x, a, b)
+  File "/testbed/sympy/integrals/meijerint.py", line 1773, in meijerint_definite
+    return meijerint_definite(f.subs(x, -x), x, -b, -a)
+  File "/testbed/sympy/integrals/meijerint.py", line 1840, in meijerint_definite
+    res = _meijerint_definite_2(f, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1911, in _meijerint_definite_2
+    res = _meijerint_definite_3(g, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1923, in _meijerint_definite_3
+    res = _meijerint_definite_4(f, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1981, in _meijerint_definite_4
+    gs = _rewrite2(f, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1587, in _rewrite2
+    g1 = _rewrite_single(fac1, x, recursive)
+  File "/testbed/sympy/integrals/meijerint.py", line 1514, in _rewrite_single
+    F, strip, _ = mellin_transform(f, x, s, integrator=my_integrator,
+  File "/testbed/sympy/integrals/transforms.py", line 351, in mellin_transform
+    return MellinTransform(f, x, s).doit(**hints)
+  File "/testbed/sympy/integrals/transforms.py", line 116, in doit
+    return self._compute_transform(self.function,
+  File "/testbed/sympy/integrals/transforms.py", line 294, in _compute_transform
+    return _mellin_transform(f, x, s, **hints)
+  File "/testbed/sympy/integrals/transforms.py", line 195, in wrapper
+    res = func(*args, **kwargs)
+  File "/testbed/sympy/integrals/transforms.py", line 219, in _mellin_transform
+    F = integrator(x**(s - 1) * f, x)
+  File "/testbed/sympy/integrals/meijerint.py", line 1509, in my_integrator
+    res = _my_unpolarify(hyperexpand(res, rewrite='nonrepsmall'))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2473, in hyperexpand
+    return f.replace(hyper, do_replace).replace(meijerg, do_meijer)
+  File "/testbed/sympy/core/basic.py", line 1413, in replace
+    rv = bottom_up(self, rec_replace, atoms=True)
+  File "/testbed/sympy/simplify/simplify.py", line 1040, in bottom_up
+    args = tuple([bottom_up(a, F, atoms, nonbasic)
+  File "/testbed/sympy/simplify/simplify.py", line 1040, in <listcomp>
+    args = tuple([bottom_up(a, F, atoms, nonbasic)
+  File "/testbed/sympy/simplify/simplify.py", line 1044, in bottom_up
+    rv = F(rv)
+  File "/testbed/sympy/core/basic.py", line 1398, in rec_replace
+    new = _value(expr, result)
+  File "/testbed/sympy/core/basic.py", line 1341, in <lambda>
+    _value = lambda expr, result: value(*expr.args)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2469, in do_meijer
+    r = _meijergexpand(G_Function(ap[0], ap[1], bq[0], bq[1]), z,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2347, in _meijergexpand
+    slater1, cond1 = do_slater(func.an, func.bm, func.ap, func.bq, z, z0)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 2280, in do_slater
+    hyp = _hyperexpand(Hyper_Function(nap, nbq), harg, ops,
+  File "/testbed/sympy/simplify/hyperexpand.py", line 1983, in _hyperexpand
+    _collection = FormulaCollection()
+  File "/testbed/sympy/simplify/hyperexpand.py", line 806, in __init__
+    add_formulae(self.formulae)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 118, in add_formulae
+    add((), (), exp(z))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 108, in add
+    formulae.append(Formula(func, z, res, (a, b, c)))
+  File "/testbed/sympy/simplify/hyperexpand.py", line 728, in __init__
+    self._compute_basis(res)
+  File "/testbed/sympy/simplify/hyperexpand.py", line 710, in _compute_basis
+    self.M = m.row_insert(n, -Matrix([l])/poly.all_coeffs()[0])
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2116, in __truediv__
+    return self.__div__(other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 1972, in __div__
+    return self * (S.One / other)
+  File "/testbed/sympy/core/decorators.py", line 132, in binary_op_wrapper
+    return func(self, other)
+  File "/testbed/sympy/matrices/common.py", line 2026, in __mul__
+    if not isinstance(other, collections.Iterable):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/collections/__init__.py", line 62, in __getattr__
+    warnings.warn("Using or importing the ABCs from 'collections' instead "
+DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+
+________________________________________________________________________________
+_____________ sympy/stats/tests/test_continuous_rv.py:test_erlang ______________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 280, in test_erlang
+    assert cdf(X)(x) == Piecewise((lowergamma(k, l*x)/gamma(k), x > 0),
+AssertionError
+________________________________________________________________________________
+__________ sympy/stats/tests/test_continuous_rv.py:test_gamma_inverse __________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 355, in test_gamma_inverse
+    assert cdf(X)(x) == Piecewise((uppergamma(a, b/x)/gamma(a), x > 0), (0, True))
+AssertionError
+________________________________________________________________________________
+____________ sympy/stats/tests/test_continuous_rv.py:test_nakagami _____________
+  File "/testbed/sympy/stats/tests/test_continuous_rv.py", line 452, in test_nakagami
+    assert cdf(X)(x) == Piecewise(
+AssertionError
+
+ tests finished: 50 passed, 3 failed, 2 skipped, 4 expected to fail, 
+4 exceptions, in 127.95 seconds 
+DO *NOT* COMMIT!
++ SWEBENCH_TEST_EXIT_CODE=1
++ : '>>>>> End Test Output'
++ echo '>>>>> Test Exit Code: 1'
++ git checkout 7b127bdf71a36d85216315f80c1b54d22b060818 sympy/stats/tests/test_continuous_rv.py
+>>>>> Test Exit Code: 1
+Updated 1 path from cd5cc788a

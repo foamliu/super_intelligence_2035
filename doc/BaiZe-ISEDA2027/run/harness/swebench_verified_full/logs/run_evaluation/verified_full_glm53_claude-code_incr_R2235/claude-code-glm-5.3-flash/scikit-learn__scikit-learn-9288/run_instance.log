@@ -1,0 +1,183 @@
+2026-11-12 06:28:55,592 - INFO - Creating container for scikit-learn__scikit-learn-9288...
+2026-11-12 06:28:55,611 - INFO - Container for scikit-learn__scikit-learn-9288 created: 385299c82ce0ac5280b5eee7b94a51d12b590c5e4120582d6e6da76cc7ab43b4
+2026-11-12 06:28:56,130 - INFO - Container for scikit-learn__scikit-learn-9288 started: 385299c82ce0ac5280b5eee7b94a51d12b590c5e4120582d6e6da76cc7ab43b4
+2026-11-12 06:28:56,132 - INFO - Intermediate patch for scikit-learn__scikit-learn-9288 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2235/claude-code-glm-5.3-flash/scikit-learn__scikit-learn-9288/patch.diff, now applying to container...
+2026-11-12 06:28:56,262 - INFO - >>>>> Applied Patch:
+Checking patch doc/whats_new/v0.22.rst...
+Checking patch sklearn/cluster/k_means_.py...
+Checking patch sklearn/cluster/tests/test_k_means.py...
+Applied patch doc/whats_new/v0.22.rst cleanly.
+Applied patch sklearn/cluster/k_means_.py cleanly.
+Applied patch sklearn/cluster/tests/test_k_means.py cleanly.
+
+2026-11-12 06:28:56,728 - INFO - Git diff before:
+diff --git a/doc/whats_new/v0.22.rst b/doc/whats_new/v0.22.rst
+index 7be27894a..c4fd15647 100644
+--- a/doc/whats_new/v0.22.rst
++++ b/doc/whats_new/v0.22.rst
+@@ -24,6 +24,10 @@ random sampling procedures.
+ - :class:`decomposition.SparsePCA` where `normalize_components` has no effect
+   due to deprecation.
+ 
++- :class:`cluster.KMeans` where the random number generator is now consumed
++  consistently for any value of `n_jobs`, fixing slightly different results
++  between `n_jobs=1` and `n_jobs > 1`. |Fix|
++
+ - :class:`linear_model.Ridge` when `X` is sparse. |Fix|
+ 
+ Details are listed in the changelog below.
+@@ -278,6 +282,11 @@ Changelog
+ :mod:`sklearn.cluster`
+ ......................
+ 
++- |Fix| Fixed a bug in :class:`cluster.KMeans` where results would differ
++  depending on the value of `n_jobs`, due to the random state being consumed
++  differently in the sequential and parallel code paths. KMeans now gives the
++  same result for any value of `n_jobs`. :pr:`11139` by :user:`Kernc <kernc>`.
++
+ - |Enhancement| :class:`cluster.SpectralClustering` now accepts a ``n_components``
+   parameter. This parameter extends `SpectralClustering` class functionality to
+   match `spectral_clustering`.
+diff --git a/sklearn/cluster/k_means_.py b/sklearn/cluster/k_means_.py
+index b7fbdf7da..58559026d 100644
+--- a/sklearn/cluster/k_means_.py
++++ b/sklearn/cluster/k_means_.py
+@@ -360,16 +360,21 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+     else:
+         raise ValueError("Algorithm must be 'auto', 'full' or 'elkan', got"
+                          " %s" % str(algorithm))
++    # The random state is initialized once per run to ensure that the
++    # results are the same whether n_jobs is 1 or > 1. Note that the
++    # random_state is used to draw the seeds of the k-means++ init and
++    # therefore needs to be different for each run.
++    seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+     if effective_n_jobs(n_jobs) == 1:
+         # For a single thread, less memory is needed if we just store one set
+         # of the best results (as opposed to one set per run per thread).
+-        for it in range(n_init):
++        for i in range(n_init):
+             # run a k-means once
+             labels, inertia, centers, n_iter_ = kmeans_single(
+                 X, sample_weight, n_clusters, max_iter=max_iter, init=init,
+                 verbose=verbose, precompute_distances=precompute_distances,
+                 tol=tol, x_squared_norms=x_squared_norms,
+-                random_state=random_state)
++                random_state=seeds[i])
+             # determine if these results are the best so far
+             if best_inertia is None or inertia < best_inertia:
+                 best_labels = labels.copy()
+@@ -378,7 +383,6 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 best_n_iter = n_iter_
+     else:
+         # parallelisation of k-means runs
+-        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+         results = Parallel(n_jobs=n_jobs, verbose=0)(
+             delayed(kmeans_single)(X, sample_weight, n_clusters,
+                                    max_iter=max_iter, init=init,
+diff --git a/sklearn/cluster/tests/test_k_means.py b/sklearn/cluster/tests/test_k_means.py
+index 362b0a914..7c8e3832c 100644
+--- a/sklearn/cluster/tests/test_k_means.py
++++ b/sklearn/cluster/tests/test_k_means.py
+@@ -239,6 +239,27 @@ def test_k_means_plus_plus_init_2_jobs():
+     _check_fitted_model(km)
+ 
+ 
++@if_safe_multiprocessing_with_blas
++def test_k_means_n_jobs_consistency():
++    # Non-regression test for #10865: KMeans should give the same results
++    # whether n_jobs is 1 or > 1.
++    rng = np.random.RandomState(0)
++    X = rng.normal(size=(50, 3))
++
++    kmeans = KMeans(n_clusters=3, random_state=0)
++    result_1_job = kmeans.fit(X)
++    inertia_1_job = result_1_job.inertia_
++    labels_1_job = result_1_job.labels_.copy()
++    centers_1_job = result_1_job.cluster_centers_.copy()
++
++    for n_jobs in [2, 3]:
++        kmeans = KMeans(n_clusters=3, random_state=0, n_jobs=n_jobs)
++        kmeans.fit(X)
++        assert_almost_equal(inertia_1_job, kmeans.inertia_)
++        assert_array_equal(labels_1_job, kmeans.labels_)
++        assert_array_almost_equal(centers_1_job, kmeans.cluster_centers_)
++
++
+ def test_k_means_precompute_distances_flag():
+     # check that a warning is raised if the precompute_distances flag is not
+     # supported
+2026-11-12 06:28:56,730 - INFO - Eval script for scikit-learn__scikit-learn-9288 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2235/claude-code-glm-5.3-flash/scikit-learn__scikit-learn-9288/eval.sh; copying to container...
+2026-11-12 06:29:10,594 - INFO - Test runtime: 13.78 seconds
+2026-11-12 06:29:10,595 - INFO - Test output for scikit-learn__scikit-learn-9288 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2235/claude-code-glm-5.3-flash/scikit-learn__scikit-learn-9288/test_output.txt
+2026-11-12 06:29:10,671 - INFO - Git diff after:
+diff --git a/doc/whats_new/v0.22.rst b/doc/whats_new/v0.22.rst
+index 7be27894a..c4fd15647 100644
+--- a/doc/whats_new/v0.22.rst
++++ b/doc/whats_new/v0.22.rst
+@@ -24,6 +24,10 @@ random sampling procedures.
+ - :class:`decomposition.SparsePCA` where `normalize_components` has no effect
+   due to deprecation.
+ 
++- :class:`cluster.KMeans` where the random number generator is now consumed
++  consistently for any value of `n_jobs`, fixing slightly different results
++  between `n_jobs=1` and `n_jobs > 1`. |Fix|
++
+ - :class:`linear_model.Ridge` when `X` is sparse. |Fix|
+ 
+ Details are listed in the changelog below.
+@@ -278,6 +282,11 @@ Changelog
+ :mod:`sklearn.cluster`
+ ......................
+ 
++- |Fix| Fixed a bug in :class:`cluster.KMeans` where results would differ
++  depending on the value of `n_jobs`, due to the random state being consumed
++  differently in the sequential and parallel code paths. KMeans now gives the
++  same result for any value of `n_jobs`. :pr:`11139` by :user:`Kernc <kernc>`.
++
+ - |Enhancement| :class:`cluster.SpectralClustering` now accepts a ``n_components``
+   parameter. This parameter extends `SpectralClustering` class functionality to
+   match `spectral_clustering`.
+diff --git a/sklearn/cluster/k_means_.py b/sklearn/cluster/k_means_.py
+index b7fbdf7da..58559026d 100644
+--- a/sklearn/cluster/k_means_.py
++++ b/sklearn/cluster/k_means_.py
+@@ -360,16 +360,21 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+     else:
+         raise ValueError("Algorithm must be 'auto', 'full' or 'elkan', got"
+                          " %s" % str(algorithm))
++    # The random state is initialized once per run to ensure that the
++    # results are the same whether n_jobs is 1 or > 1. Note that the
++    # random_state is used to draw the seeds of the k-means++ init and
++    # therefore needs to be different for each run.
++    seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+     if effective_n_jobs(n_jobs) == 1:
+         # For a single thread, less memory is needed if we just store one set
+         # of the best results (as opposed to one set per run per thread).
+-        for it in range(n_init):
++        for i in range(n_init):
+             # run a k-means once
+             labels, inertia, centers, n_iter_ = kmeans_single(
+                 X, sample_weight, n_clusters, max_iter=max_iter, init=init,
+                 verbose=verbose, precompute_distances=precompute_distances,
+                 tol=tol, x_squared_norms=x_squared_norms,
+-                random_state=random_state)
++                random_state=seeds[i])
+             # determine if these results are the best so far
+             if best_inertia is None or inertia < best_inertia:
+                 best_labels = labels.copy()
+@@ -378,7 +383,6 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 best_n_iter = n_iter_
+     else:
+         # parallelisation of k-means runs
+-        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+         results = Parallel(n_jobs=n_jobs, verbose=0)(
+             delayed(kmeans_single)(X, sample_weight, n_clusters,
+                                    max_iter=max_iter, init=init,
+2026-11-12 06:29:10,671 - INFO - Git diff changed after running eval script
+2026-11-12 06:29:10,671 - INFO - Grading answer for scikit-learn__scikit-learn-9288...
+2026-11-12 06:29:10,675 - INFO - report: {'scikit-learn__scikit-learn-9288': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/cluster/tests/test_k_means.py::test_result_of_kmeans_equal_in_diff_n_jobs'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/cluster/tests/test_k_means.py::test_kmeans_results[float32-dense-full]', 'sklearn/cluster/tests/test_k_means.py::test_kmeans_results[float32-dense-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_kmeans_results[float32-sparse-full]', 'sklearn/cluster/tests/test_k_means.py::test_kmeans_results[float64-dense-full]', 'sklearn/cluster/tests/test_k_means.py::test_kmeans_results[float64-dense-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_kmeans_results[float64-sparse-full]', 'sklearn/cluster/tests/test_k_means.py::test_elkan_results[normal]', 'sklearn/cluster/tests/test_k_means.py::test_elkan_results[blobs]', 'sklearn/cluster/tests/test_k_means.py::test_labels_assignment_and_inertia', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_update_consistency', 'sklearn/cluster/tests/test_k_means.py::test_k_means_new_centers', 'sklearn/cluster/tests/test_k_means.py::test_k_means_plus_plus_init_2_jobs', 'sklearn/cluster/tests/test_k_means.py::test_k_means_precompute_distances_flag', 'sklearn/cluster/tests/test_k_means.py::test_k_means_plus_plus_init_not_precomputed', 'sklearn/cluster/tests/test_k_means.py::test_k_means_random_init_not_precomputed', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init[random-dense]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init[random-sparse]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init[k-means++-dense]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init[k-means++-sparse]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init[init2-dense]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init[init2-sparse]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_n_init', 'sklearn/cluster/tests/test_k_means.py::test_k_means_explicit_init_shape[KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_explicit_init_shape[MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fortran_aligned_data', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-asarray-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-asarray-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-asarray-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-asarray-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-csr_matrix-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-csr_matrix-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-csr_matrix-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[0-2-1e-07-csr_matrix-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-asarray-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-asarray-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-asarray-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-asarray-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-csr_matrix-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-csr_matrix-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-csr_matrix-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[1-2-0.1-csr_matrix-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-asarray-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-asarray-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-asarray-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-asarray-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-csr_matrix-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-csr_matrix-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-csr_matrix-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[3-300-1e-07-csr_matrix-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-asarray-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-asarray-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-asarray-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-asarray-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-csr_matrix-float32-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-csr_matrix-float32-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-csr_matrix-float64-full]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_fit_predict[4-300-0.1-csr_matrix-float64-elkan]', 'sklearn/cluster/tests/test_k_means.py::test_mb_kmeans_verbose', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_init_with_large_k', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init_multiple_runs_with_explicit_centers', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init[random-dense]', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init[random-sparse]', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init[k-means++-dense]', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init[k-means++-sparse]', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init[init2-dense]', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_k_means_init[init2-sparse]', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_sensible_reassign_fit', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_sensible_reassign_partial_fit', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_reassign', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_with_many_reassignments', 'sklearn/cluster/tests/test_k_means.py::test_sparse_mb_k_means_callable_init', 'sklearn/cluster/tests/test_k_means.py::test_mini_batch_k_means_random_init_partial_fit', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_default_init_size', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_tol', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_set_init_size', 'sklearn/cluster/tests/test_k_means.py::test_k_means_invalid_init[KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_invalid_init[MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_copyx', 'sklearn/cluster/tests/test_k_means.py::test_k_means_non_collapsed', 'sklearn/cluster/tests/test_k_means.py::test_score[full]', 'sklearn/cluster/tests/test_k_means.py::test_score[elkan]', 'sklearn/cluster/tests/test_k_means.py::test_predict[random-dense-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[random-dense-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[random-sparse-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[random-sparse-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[k-means++-dense-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[k-means++-dense-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[k-means++-sparse-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[k-means++-sparse-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[init2-dense-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[init2-dense-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[init2-sparse-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict[init2-sparse-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_predict_minibatch_dense_sparse[random]', 'sklearn/cluster/tests/test_k_means.py::test_predict_minibatch_dense_sparse[k-means++]', 'sklearn/cluster/tests/test_k_means.py::test_predict_minibatch_dense_sparse[init2]', 'sklearn/cluster/tests/test_k_means.py::test_int_input', 'sklearn/cluster/tests/test_k_means.py::test_transform', 'sklearn/cluster/tests/test_k_means.py::test_fit_transform', 'sklearn/cluster/tests/test_k_means.py::test_predict_equal_labels[full]', 'sklearn/cluster/tests/test_k_means.py::test_predict_equal_labels[elkan]', 'sklearn/cluster/tests/test_k_means.py::test_full_vs_elkan', 'sklearn/cluster/tests/test_k_means.py::test_n_init', 'sklearn/cluster/tests/test_k_means.py::test_k_means_function', 'sklearn/cluster/tests/test_k_means.py::test_x_squared_norms_init_centroids', 'sklearn/cluster/tests/test_k_means.py::test_max_iter_error', 'sklearn/cluster/tests/test_k_means.py::test_float_precision[False-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_float_precision[False-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_float_precision[True-KMeans]', 'sklearn/cluster/tests/test_k_means.py::test_float_precision[True-MiniBatchKMeans]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init_centers', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init_fitted_centers[dense]', 'sklearn/cluster/tests/test_k_means.py::test_k_means_init_fitted_centers[sparse]', 'sklearn/cluster/tests/test_k_means.py::test_sparse_validate_centers', 'sklearn/cluster/tests/test_k_means.py::test_less_centers_than_unique_points', 'sklearn/cluster/tests/test_k_means.py::test_weighted_vs_repeated', 'sklearn/cluster/tests/test_k_means.py::test_unit_weights_vs_no_weights', 'sklearn/cluster/tests/test_k_means.py::test_scaled_weights', 'sklearn/cluster/tests/test_k_means.py::test_sample_weight_length', 'sklearn/cluster/tests/test_k_means.py::test_check_normalize_sample_weight', 'sklearn/cluster/tests/test_k_means.py::test_iter_attribute', 'sklearn/cluster/tests/test_k_means.py::test_k_means_empty_cluster_relocated', 'sklearn/cluster/tests/test_k_means.py::test_minibatch_kmeans_partial_fit_int_data'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-9288: resolved: True
+2026-11-12 06:29:10,680 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-9288.verified_full_glm53_claude-code_incr_R2235...
+2026-11-12 06:29:26,760 - INFO - Container sweb.eval.scikit-learn__scikit-learn-9288.verified_full_glm53_claude-code_incr_R2235 stopped successfully.
+2026-11-12 06:29:26,760 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-9288.verified_full_glm53_claude-code_incr_R2235...
+2026-11-12 06:29:26,805 - INFO - Container sweb.eval.scikit-learn__scikit-learn-9288.verified_full_glm53_claude-code_incr_R2235 removed successfully.

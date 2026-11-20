@@ -1,0 +1,39 @@
+diff --git a/django/db/models/fields/files.py b/django/db/models/fields/files.py
+index 7a99b12691..6f596ddbcd 100644
+--- a/django/db/models/fields/files.py
++++ b/django/db/models/fields/files.py
+@@ -295,7 +295,7 @@ class FileField(Field):
+         if kwargs.get("max_length") == 100:
+             del kwargs["max_length"]
+         kwargs["upload_to"] = self.upload_to
+-        if self.storage is not default_storage:
++        if self.storage is not default_storage or hasattr(self, "_storage_callable"):
+             kwargs["storage"] = getattr(self, "_storage_callable", self.storage)
+         return name, path, args, kwargs
+ 
+diff --git a/tests/file_storage/tests.py b/tests/file_storage/tests.py
+index 4616aad10a..507131cff3 100644
+--- a/tests/file_storage/tests.py
++++ b/tests/file_storage/tests.py
+@@ -1018,6 +1018,21 @@ class FieldCallableFileStorageTests(SimpleTestCase):
+         storage = kwargs["storage"]
+         self.assertIs(storage, callable_storage)
+ 
++    def test_deconstruction_default_storage_callable(self):
++        """
++        Deconstructing gives the original callable even when it returns
++        default_storage.
++        """
++        from django.core.files.storage import default_storage
++
++        def default_storage_callable():
++            return default_storage
++
++        field = FileField(storage=default_storage_callable)
++        *_, kwargs = field.deconstruct()
++        self.assertIn("storage", kwargs)
++        self.assertIs(kwargs["storage"], default_storage_callable)
++
+ 
+ # Tests for a race condition on file saving (#4948).
+ # This is written in such a way that it'll always pass on platforms

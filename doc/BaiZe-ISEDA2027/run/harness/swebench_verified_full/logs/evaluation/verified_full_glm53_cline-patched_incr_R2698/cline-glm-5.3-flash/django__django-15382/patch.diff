@@ -1,0 +1,123 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 81f8f79c71..6cd2d58c0a 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1210,14 +1210,20 @@ class Exists(Subquery):
+         return clone
+ 
+     def as_sql(self, compiler, connection, template=None, **extra_context):
+-        query = self.query.exists(using=connection.alias)
+-        sql, params = super().as_sql(
+-            compiler,
+-            connection,
+-            template=template,
+-            query=query,
+-            **extra_context,
+-        )
++        try:
++            query = self.query.exists(using=connection.alias)
++            sql, params = super().as_sql(
++                compiler,
++                connection,
++                template=template,
++                query=query,
++                **extra_context,
++            )
++        except EmptyResultSet:
++            if not self.negated:
++                raise
++            # A negated Exists() over an empty queryset is always True.
++            return compiler.compile(Value(True))
+         if self.negated:
+             sql = 'NOT {}'.format(sql)
+         return sql, params
+diff --git a/stub_asgiref/asgiref/sync.py b/stub_asgiref/asgiref/sync.py
+new file mode 100644
+index 0000000000..71d49c02cc
+--- /dev/null
++++ b/stub_asgiref/asgiref/sync.py
+@@ -0,0 +1,30 @@
++"""Minimal sync helpers for the stub asgiref package (test environment only)."""
++import asyncio
++import functools
++
++
++def async_to_sync(func):
++    @functools.wraps(func)
++    def wrapper(*args, **kwargs):
++        return asyncio.run(func(*args, **kwargs))
++    return wrapper
++
++
++def sync_to_async(func):
++    if asyncio.iscoroutinefunction(func):
++        return func
++
++    @functools.wraps(func)
++    async def wrapper(*args, **kwargs):
++        return func(*args, **kwargs)
++    return wrapper
++
++
++class ThreadSensitiveContext:
++    """No-op thread sensitive context for the stub package."""
++
++    async def __aenter__(self):
++        return self
++
++    async def __aexit__(self, exc_type, exc_value, traceback):
++        return None
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 5cf9dd1ea5..7f5fcb23c8 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1887,6 +1887,17 @@ class ValueTests(TestCase):
+ 
+ 
+ class ExistsTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.experiment = Experiment.objects.create(
++            name='Experiment 1',
++            assigned=datetime.date(2010, 6, 25),
++            completed=datetime.date(2010, 6, 27),
++            estimated_time=datetime.timedelta(2),
++            start=datetime.datetime(2010, 6, 25, 12, 15, 30, 747000),
++            end=datetime.datetime(2010, 6, 27, 12, 15, 30, 747000),
++        )
++
+     def test_optimizations(self):
+         with CaptureQueriesContext(connection) as context:
+             list(Experiment.objects.values(exists=Exists(
+@@ -1905,6 +1916,31 @@ class ExistsTests(TestCase):
+         )
+         self.assertNotIn('ORDER BY', captured_sql)
+ 
++    def test_filter_with_empty_queryset(self):
++        # A negated Exists() over an empty queryset matches everything, so
++        # the other conditions of the WHERE clause must be preserved.
++        qs = Experiment.objects.filter(
++            ~Exists(Experiment.objects.none()),
++            name='Experiment 1',
++        )
++        self.assertEqual(qs.get(), self.experiment)
++
++    def test_negated_empty_queryset(self):
++        experiments = Experiment.objects.filter(~Exists(Experiment.objects.none()))
++        self.assertEqual(experiments.get(), self.experiment)
++
++    def test_disjunction_with_negated_empty_queryset(self):
++        experiments = Experiment.objects.filter(
++            ~Exists(Experiment.objects.none()) | Q(name='Experiment 2'),
++        )
++        self.assertEqual(experiments.get(), self.experiment)
++
++    def test_negated_exists_in_select(self):
++        experiments = Experiment.objects.annotate(
++            exists=~Exists(Experiment.objects.none()),
++        )
++        self.assertEqual(experiments.get().exists, True)
++
+ 
+ class FieldTransformTests(TestCase):
+ 

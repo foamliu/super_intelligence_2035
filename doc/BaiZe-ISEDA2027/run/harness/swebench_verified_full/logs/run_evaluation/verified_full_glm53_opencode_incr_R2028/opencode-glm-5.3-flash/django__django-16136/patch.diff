@@ -1,0 +1,64 @@
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..3a3afb0c73 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -148,7 +148,16 @@ class View:
+             request.path,
+             extra={"status_code": 405, "request": request},
+         )
+-        return HttpResponseNotAllowed(self._allowed_methods())
++        response = HttpResponseNotAllowed(self._allowed_methods())
++
++        if self.view_is_async:
++
++            async def func():
++                return response
++
++            return func()
++        else:
++            return response
+ 
+     def options(self, request, *args, **kwargs):
+         """Handle responding to requests for the OPTIONS HTTP verb."""
+diff --git a/tests/generic_views/test_base.py b/tests/generic_views/test_base.py
+index b139d1089b..a18dd9b63a 100644
+--- a/tests/generic_views/test_base.py
++++ b/tests/generic_views/test_base.py
+@@ -28,6 +28,11 @@ class PostOnlyView(View):
+         return HttpResponse("This view only accepts POST")
+ 
+ 
++class AsyncPostOnlyView(View):
++    async def post(self, request):
++        return HttpResponse("This view only accepts POST")
++
++
+ class CustomizableView(SimpleView):
+     parameter = {}
+ 
+@@ -240,6 +245,25 @@ class ViewTest(SimpleTestCase):
+         response_allows = set(response.headers["Allow"].split(", "))
+         self.assertEqual(set(expected_methods + ("OPTIONS",)), response_allows)
+ 
++    async def test_async_post_only_view_get_not_allowed(self):
++        """
++        A view implementing an async handler responds to disallowed methods
++        with an awaitable 405 response (#33904).
++        """
++        response = await AsyncPostOnlyView.as_view()(self.rf.get("/"))
++        self.assertEqual(response.status_code, 405)
++        self._assert_allows(response, "POST")
++
++    async def test_async_post_only_view_post_allowed(self):
++        response = await AsyncPostOnlyView.as_view()(self.rf.post("/"))
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(response.content, b"This view only accepts POST")
++
++    async def test_async_options(self):
++        response = await AsyncPostOnlyView.as_view()(self.rf.options("/"))
++        self.assertEqual(response.status_code, 200)
++        self._assert_allows(response, "POST")
++
+     def test_args_kwargs_request_on_self(self):
+         """
+         Test a view only has args, kwargs & request once `as_view`

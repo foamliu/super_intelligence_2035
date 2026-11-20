@@ -1,0 +1,88 @@
+diff --git a/sklearn/model_selection/_search.py b/sklearn/model_selection/_search.py
+index 99d6096..fdabcd7 100644
+--- a/sklearn/model_selection/_search.py
++++ b/sklearn/model_selection/_search.py
+@@ -17,6 +17,7 @@ from collections import Mapping, namedtuple, defaultdict, Sequence, Iterable
+ from functools import partial, reduce
+ from itertools import product
+ import operator
++import time
+ import warnings
+ 
+ import numpy as np
+@@ -767,9 +768,14 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+             self.best_estimator_ = clone(base_estimator).set_params(
+                 **self.best_params_)
+             if y is not None:
++                refit_start_time = time.time()
+                 self.best_estimator_.fit(X, y, **fit_params)
++                refit_end_time = time.time()
+             else:
++                refit_start_time = time.time()
+                 self.best_estimator_.fit(X, **fit_params)
++                refit_end_time = time.time()
++            self.refit_time_ = refit_end_time - refit_start_time
+ 
+         # Store the only scorer not as a dict for single metric evaluation
+         self.scorer_ = scorers if self.multimetric_ else scorers['score']
+@@ -1066,6 +1072,11 @@ class GridSearchCV(BaseSearchCV):
+         For multi-metric evaluation, this is present only if ``refit`` is
+         specified.
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     scorer_ : function or a dict
+         Scorer function used on the held out data to choose the best
+         parameters for the model.
+@@ -1377,6 +1388,11 @@ class RandomizedSearchCV(BaseSearchCV):
+         For multi-metric evaluation, this is not available if ``refit`` is
+         ``False``. See ``refit`` parameter for more information.
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     scorer_ : function or a dict
+         Scorer function used on the held out data to choose the best
+         parameters for the model.
+diff --git a/sklearn/model_selection/tests/test_search.py b/sklearn/model_selection/tests/test_search.py
+index f436c7b..b2ee672 100644
+--- a/sklearn/model_selection/tests/test_search.py
++++ b/sklearn/model_selection/tests/test_search.py
+@@ -23,6 +23,7 @@ from sklearn.utils.testing import assert_warns_message
+ from sklearn.utils.testing import assert_no_warnings
+ from sklearn.utils.testing import assert_raise_message
+ from sklearn.utils.testing import assert_false, assert_true
++from sklearn.utils.testing import assert_greater_equal
+ from sklearn.utils.testing import assert_array_equal
+ from sklearn.utils.testing import assert_array_almost_equal
+ from sklearn.utils.testing import assert_almost_equal
+@@ -640,6 +641,24 @@ def test_refit():
+     clf.fit(X, y)
+ 
+ 
++def test_refit_time():
++    # Check that the refit_time_ is present and greater than zero
++    X, y = make_blobs(n_samples=100, centers=2, random_state=0)
++
++    for refit in (True, 'accuracy'):
++        clf = GridSearchCV(LinearSVC(random_state=0), {'C': [1, 10]},
++                           scoring="accuracy", refit=refit)
++        clf.fit(X, y)
++        assert_true(hasattr(clf, 'refit_time_'))
++        assert_greater_equal(clf.refit_time_, 0)
++
++    # refit_time_ should not be present when refit=False
++    clf = GridSearchCV(LinearSVC(random_state=0), {'C': [1, 10]},
++                       scoring="accuracy", refit=False)
++    clf.fit(X, y)
++    assert_false(hasattr(clf, 'refit_time_'))
++
++
+ def test_gridsearch_nd():
+     # Pass X as list in GridSearchCV
+     X_4d = np.arange(10 * 5 * 3 * 2).reshape(10, 5, 3, 2)

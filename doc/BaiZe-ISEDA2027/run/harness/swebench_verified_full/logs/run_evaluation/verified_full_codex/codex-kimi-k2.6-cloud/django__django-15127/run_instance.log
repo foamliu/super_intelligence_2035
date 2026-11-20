@@ -1,0 +1,110 @@
+2026-10-30 17:44:37,552 - INFO - Creating container for django__django-15127...
+2026-10-30 17:44:37,588 - INFO - Container for django__django-15127 created: 07c2ac0bc5231ff49747ce447361ec110b446a828fd727d01d35c3b03895003e
+2026-10-30 17:44:41,609 - INFO - Container for django__django-15127 started: 07c2ac0bc5231ff49747ce447361ec110b446a828fd727d01d35c3b03895003e
+2026-10-30 17:44:41,611 - INFO - Intermediate patch for django__django-15127 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-15127/patch.diff, now applying to container...
+2026-10-30 17:44:41,722 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/messages/storage/base.py...
+Checking patch tests/messages_tests/base.py...
+Applied patch django/contrib/messages/storage/base.py cleanly.
+Applied patch tests/messages_tests/base.py cleanly.
+
+2026-10-30 17:44:42,529 - INFO - Git diff before:
+diff --git a/django/contrib/messages/storage/base.py b/django/contrib/messages/storage/base.py
+index 01422066a6..3b5aeb6a07 100644
+--- a/django/contrib/messages/storage/base.py
++++ b/django/contrib/messages/storage/base.py
+@@ -1,9 +1,18 @@
+ from django.conf import settings
+ from django.contrib.messages import constants, utils
++from django.core.signals import setting_changed
++from django.dispatch import receiver
+ 
+ LEVEL_TAGS = utils.get_level_tags()
+ 
+ 
++@receiver(setting_changed)
++def update_level_tags(**kwargs):
++    if kwargs['setting'] == 'MESSAGE_TAGS':
++        global LEVEL_TAGS
++        LEVEL_TAGS = utils.get_level_tags()
++
++
+ class Message:
+     """
+     Represent an actual message that can be stored in any of the supported
+diff --git a/tests/messages_tests/base.py b/tests/messages_tests/base.py
+index 9dad08e6c7..09ba7a84d7 100644
+--- a/tests/messages_tests/base.py
++++ b/tests/messages_tests/base.py
+@@ -23,17 +23,7 @@ def add_level_messages(storage):
+ 
+ 
+ class override_settings_tags(override_settings):
+-    def enable(self):
+-        super().enable()
+-        # LEVEL_TAGS is a constant defined in the
+-        # django.contrib.messages.storage.base module, so after changing
+-        # settings.MESSAGE_TAGS, update that constant also.
+-        self.old_level_tags = base.LEVEL_TAGS
+-        base.LEVEL_TAGS = utils.get_level_tags()
+-
+-    def disable(self):
+-        super().disable()
+-        base.LEVEL_TAGS = self.old_level_tags
++    pass
+ 
+ 
+ class BaseTests:
+@@ -381,3 +371,17 @@ class BaseTests:
+         add_level_messages(storage)
+         tags = [msg.tags for msg in storage]
+         self.assertEqual(tags, ['info', 'custom', 'extra-tag', '', 'bad', 'success'])
++
++    @override_settings(MESSAGE_TAGS={
++        constants.INFO: 'info',
++        constants.DEBUG: '',
++        constants.WARNING: '',
++        constants.ERROR: 'bad',
++        29: 'custom',
++    })
++    def test_custom_tags_override_settings(self):
++        storage = self.get_storage()
++        storage.level = 0
++        add_level_messages(storage)
++        tags = [msg.tags for msg in storage]
++        self.assertEqual(tags, ['info', 'custom', 'extra-tag', '', 'bad', 'success'])
+2026-10-30 17:44:42,532 - INFO - Eval script for django__django-15127 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-15127/eval.sh; copying to container...
+2026-10-30 17:44:49,111 - INFO - Test runtime: 6.49 seconds
+2026-10-30 17:44:49,117 - INFO - Test output for django__django-15127 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-15127/test_output.txt
+2026-10-30 17:44:49,189 - INFO - Git diff after:
+diff --git a/django/contrib/messages/storage/base.py b/django/contrib/messages/storage/base.py
+index 01422066a6..3b5aeb6a07 100644
+--- a/django/contrib/messages/storage/base.py
++++ b/django/contrib/messages/storage/base.py
+@@ -1,9 +1,18 @@
+ from django.conf import settings
+ from django.contrib.messages import constants, utils
++from django.core.signals import setting_changed
++from django.dispatch import receiver
+ 
+ LEVEL_TAGS = utils.get_level_tags()
+ 
+ 
++@receiver(setting_changed)
++def update_level_tags(**kwargs):
++    if kwargs['setting'] == 'MESSAGE_TAGS':
++        global LEVEL_TAGS
++        LEVEL_TAGS = utils.get_level_tags()
++
++
+ class Message:
+     """
+     Represent an actual message that can be stored in any of the supported
+2026-10-30 17:44:49,189 - INFO - Git diff changed after running eval script
+2026-10-30 17:44:49,189 - INFO - Grading answer for django__django-15127...
+2026-10-30 17:44:49,189 - INFO - report: {'django__django-15127': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_override_settings_level_tags (messages_tests.tests.TestLevelTags)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_eq (messages_tests.tests.MessageTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15127: resolved: True
+2026-10-30 17:44:49,191 - INFO - Attempting to stop container sweb.eval.django__django-15127.verified_full_codex...
+2026-10-30 17:45:06,847 - INFO - Container sweb.eval.django__django-15127.verified_full_codex stopped successfully.
+2026-10-30 17:45:06,847 - INFO - Attempting to remove container sweb.eval.django__django-15127.verified_full_codex...
+2026-10-30 17:45:06,895 - INFO - Container sweb.eval.django__django-15127.verified_full_codex removed successfully.

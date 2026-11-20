@@ -1,0 +1,33 @@
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18b..34998270 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py
+index ebcb3892..50466fe1 100644
+--- a/sklearn/tests/test_base.py
++++ b/sklearn/tests/test_base.py
+@@ -119,6 +119,15 @@ def test_clone_2():
+     assert_false(hasattr(new_selector, "own_attribute"))
+ 
+ 
++def test_clone_estimator_types():
++    # Check that clone accepts estimator types as parameters.
++    estimator = MyEstimator(l1=StandardScaler)
++    cloned_estimator = clone(estimator)
++
++    assert estimator is not cloned_estimator
++    assert cloned_estimator.l1 is StandardScaler
++
++
+ def test_clone_buggy():
+     # Check that clone raises an error on buggy estimators.
+     buggy = Buggy()

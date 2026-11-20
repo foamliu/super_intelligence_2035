@@ -1,0 +1,349 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 822968ef5..a321d46f4 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1299,6 +1299,8 @@ class When(Expression):
+         template_params = extra_context
+         sql_params = []
+         condition_sql, condition_params = compiler.compile(self.condition)
++        if not condition_sql:
++            condition_sql = "1=1"
+         template_params["condition"] = condition_sql
+         sql_params.extend(condition_params)
+         result_sql, result_params = compiler.compile(self.result)
+diff --git a/test_fix.py b/test_fix.py
+new file mode 100644
+index 000000000..bd935cf29
+--- /dev/null
++++ b/test_fix.py
+@@ -0,0 +1,47 @@
++import os, sys
++sys.path.insert(0, "/dev/shm/harness_verified_full/workdirs/codex/django_django")
++
++os.environ["DJANGO_SETTINGS_MODULE"] = "test_sqlite"
++
++import django
++from django.conf import settings
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++    SECRET_KEY="test",
++    USE_TZ=True,
++)
++django.setup()
++
++from django.db import connection
++from django.db.models import Case, When, Value, BooleanField, Q
++from django.db import models
++
++class User(models.Model):
++    class Meta:
++        app_label = "tests"
++    id = models.AutoField(primary_key=True)
++
++# Create table and data
++with connection.schema_editor() as editor:
++    editor.create_model(User)
++
++with connection.cursor() as cursor:
++    cursor.execute("INSERT INTO tests_user (id) VALUES (1), (2), (3)")
++
++# Test the bug
++qs = User.objects.annotate(
++    _a=Case(
++        When(~Q(pk__in=[]), then=Value(True)),
++        default=Value(False),
++        output_field=BooleanField(),
++    )
++).order_by("-_a").values("pk")
++
++print("Query:", str(qs.query))
++try:
++    result = list(qs)
++    print("Success!", result)
++except Exception as e:
++    print(f"Error: {type(e).__name__}: {e}")
+diff --git a/test_fix2.py b/test_fix2.py
+new file mode 100644
+index 000000000..74e196c90
+--- /dev/null
++++ b/test_fix2.py
+@@ -0,0 +1,89 @@
++import os, sys
++sys.path.insert(0, "/dev/shm/harness_verified_full/workdirs/codex/django_django")
++
++os.environ["DJANGO_SETTINGS_MODULE"] = "test_sqlite"
++
++import django
++from django.conf import settings
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++    SECRET_KEY="test",
++    USE_TZ=True,
++)
++django.setup()
++
++from django.db import connection
++from django.db.models import Case, When, Value, BooleanField, Q
++from django.db import models
++
++class User(models.Model):
++    class Meta:
++        app_label = "tests"
++    id = models.AutoField(primary_key=True)
++
++with connection.schema_editor() as editor:
++    editor.create_model(User)
++
++with connection.cursor() as cursor:
++    cursor.execute("INSERT INTO tests_user (id) VALUES (1), (2), (3)")
++
++# Test 1: ~Q(pk__in=[]) should match all rows
++print("Test 1: ~Q(pk__in=[]) matches all rows")
++qs = User.objects.annotate(
++    _a=Case(
++        When(~Q(pk__in=[]), then=Value(True)),
++        default=Value(False),
++        output_field=BooleanField(),
++    )
++).order_by("-_a").values("pk")
++result = list(qs)
++print("Result:", result)
++assert len(result) == 3
++print("PASSED\n")
++
++# Test 2: Q(pk__in=[]) should not match any row, default should be used
++print("Test 2: Q(pk__in=[]) matches no rows, default used")
++qs = User.objects.annotate(
++    _a=Case(
++        When(Q(pk__in=[]), then=Value(True)),
++        default=Value(False),
++        output_field=BooleanField(),
++    )
++).order_by("-_a").values("pk", "_a")
++result = list(qs)
++print("Result:", result)
++# Since Q(pk__in=[]) raises EmptyResultSet, the WHEN is skipped, so _a should be False for all
++assert all(r["_a"] == False for r in result)
++print("PASSED\n")
++
++# Test 3: Normal condition still works
++print("Test 3: Normal Q(pk__in=[1,2]) condition")
++qs = User.objects.annotate(
++    _a=Case(
++        When(Q(pk__in=[1, 2]), then=Value(True)),
++        default=Value(False),
++        output_field=BooleanField(),
++    )
++).order_by("-_a").values("pk", "_a")
++result = list(qs)
++print("Result:", result)
++assert any(r["_a"] == True for r in result)
++print("PASSED\n")
++
++# Test 4: ~Q(pk__in=[1,2]) should match pk=3
++print("Test 4: ~Q(pk__in=[1,2]) should match pk=3")
++qs = User.objects.annotate(
++    _a=Case(
++        When(~Q(pk__in=[1, 2]), then=Value(True)),
++        default=Value(False),
++        output_field=BooleanField(),
++    )
++).order_by("-_a").values("pk", "_a")
++result = list(qs)
++print("Result:", result)
++assert result[0]["pk"] == 3 and result[0]["_a"] == True
++print("PASSED\n")
++
++print("All tests passed!")
+diff --git a/test_repro.py b/test_repro.py
+new file mode 100644
+index 000000000..cc7fdb4da
+--- /dev/null
++++ b/test_repro.py
+@@ -0,0 +1,52 @@
++import os
++import sys
++
++sys.path.insert(0, "/dev/shm/harness_verified_full/workdirs/codex/django_django")
++
++os.environ["DJANGO_SETTINGS_MODULE"] = "test_sqlite"
++
++import django
++from django.conf import settings
++
++# Configure settings before django.setup()
++settings.configure(
++    DEBUG=True,
++    DATABASES={
++        "default": {
++            "ENGINE": "django.db.backends.sqlite3",
++            "NAME": ":memory:",
++        }
++    },
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++    SECRET_KEY="test",
++    USE_TZ=True,
++)
++
++django.setup()
++
++from django.db import connection
++from django.db.models import Case, When, Value, BooleanField, Q
++from django.db import models
++
++# Create the table manually for reproduction
++with connection.schema_editor() as editor:
++    class User(models.Model):
++        class Meta:
++            app_label = "tests"
++        id = models.AutoField(primary_key=True)
++    editor.create_model(User)
++
++# This should work but crashes with a syntax error
++try:
++    qs = User.objects.annotate(
++        _a=Case(
++            When(~Q(pk__in=[]), then=Value(True)),
++            default=Value(False),
++            output_field=BooleanField(),
++        )
++    ).order_by("-_a").values("pk")
++    print("Query:", str(qs.query))
++    result = list(qs)
++    print("Success!", result)
++except Exception as e:
++    print(f"Error: {type(e).__name__}: {e}")
+diff --git a/test_repro2.py b/test_repro2.py
+new file mode 100644
+index 000000000..840e5a04e
+--- /dev/null
++++ b/test_repro2.py
+@@ -0,0 +1,54 @@
++import os
++import sys
++sys.path.insert(0, "/dev/shm/harness_verified_full/workdirs/codex/django_django")
++
++os.environ["DJANGO_SETTINGS_MODULE"] = "test_sqlite"
++
++import django
++from django.conf import settings
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++    SECRET_KEY="test",
++    USE_TZ=True,
++)
++django.setup()
++
++from django.db import connection
++from django.db.models import Q
++from django.db.models.sql import Query
++
++# Let's see what the Q compiles to
++q = ~Q(pk__in=[])
++print("Q object:", q)
++print("Q negated:", q.negated)
++print("Q connector:", q.connector)
++print("Q children:", q.children)
++
++# Create a dummy query to compile against
++from django.db import models
++class Dummy(models.Model):
++    class Meta:
++        app_label = "tests"
++    id = models.AutoField(primary_key=True)
++
++query = Dummy.objects.all().query
++query.get_compiler(connection=connection)
++
++# Resolve the Q expression
++resolved = q.resolve_expression(query)
++print("Resolved type:", type(resolved))
++print("Resolved:", resolved)
++print("Resolved negated:", resolved.negated)
++print("Resolved connector:", resolved.connector)
++print("Resolved children:", resolved.children)
++
++# Compile it
++compiler = query.get_compiler(connection=connection)
++try:
++    sql, params = compiler.compile(resolved)
++    print("SQL:", repr(sql))
++    print("Params:", params)
++except Exception as e:
++    print(f"Compile error: {type(e).__name__}: {e}")
+diff --git a/test_repro3.py b/test_repro3.py
+new file mode 100644
+index 000000000..e3ccc89a1
+--- /dev/null
++++ b/test_repro3.py
+@@ -0,0 +1,64 @@
++import os
++import sys
++sys.path.insert(0, "/dev/shm/harness_verified_full/workdirs/codex/django_django")
++
++os.environ["DJANGO_SETTINGS_MODULE"] = "test_sqlite"
++
++import django
++from django.conf import settings
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++    SECRET_KEY="test",
++    USE_TZ=True,
++)
++django.setup()
++
++from django.db import connection
++from django.db.models import Q
++from django.db.models.sql import Query
++from django.core.exceptions import EmptyResultSet
++
++# Create a dummy query to compile against
++from django.db import models
++class Dummy(models.Model):
++    class Meta:
++        app_label = "tests"
++    id = models.AutoField(primary_key=True)
++
++query = Dummy.objects.all().query
++compiler = query.get_compiler(connection=connection)
++
++# Test Q(pk__in=[])
++q_empty = Q(pk__in=[])
++print("Q(pk__in=[]):", q_empty)
++resolved_empty = q_empty.resolve_expression(query)
++print("Resolved empty:", resolved_empty)
++try:
++    sql, params = compiler.compile(resolved_empty)
++    print("SQL empty:", repr(sql), params)
++except EmptyResultSet as e:
++    print("EmptyResultSet for Q(pk__in=[])")
++
++# Test ~Q(pk__in=[])
++q_neg = ~Q(pk__in=[])
++print("\n~Q(pk__in=[]):", q_neg)
++resolved_neg = q_neg.resolve_expression(query)
++print("Resolved neg:", resolved_neg)
++print("Resolved neg type:", type(resolved_neg))
++try:
++    sql, params = compiler.compile(resolved_neg)
++    print("SQL neg:", repr(sql), params)
++except EmptyResultSet as e:
++    print("EmptyResultSet for ~Q(pk__in=[])")
++
++# Now test with a fresh compiler
++print("\n--- Fresh compiler ---")
++query2 = Dummy.objects.all().query
++compiler2 = query2.get_compiler(connection=connection)
++try:
++    sql, params = compiler2.compile(resolved_neg)
++    print("SQL neg fresh:", repr(sql), params)
++except EmptyResultSet as e:
++    print("EmptyResultSet for ~Q(pk__in=[]) fresh")

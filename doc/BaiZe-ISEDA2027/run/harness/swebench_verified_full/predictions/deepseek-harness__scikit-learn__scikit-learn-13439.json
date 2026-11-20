@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-13439",
+    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py\nindex 7eaf9a46..b1e7e1dc 100644\n--- a/sklearn/pipeline.py\n+++ b/sklearn/pipeline.py\n@@ -219,6 +219,10 @@ class Pipeline(_BaseComposition):\n             return self.named_steps[ind]\n         return est\n \n+    def __len__(self):\n+        \"\"\"Returns the length of the Pipeline.\"\"\"\n+        return len(self.steps)\n+\n     @property\n     def _estimator_type(self):\n         return self.steps[-1][1]._estimator_type\ndiff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py\nindex 8d6fe8f7..42a944f2 100644\n--- a/sklearn/tests/test_pipeline.py\n+++ b/sklearn/tests/test_pipeline.py\n@@ -552,6 +552,16 @@ def test_pipeline_index():\n     assert_raises(KeyError, lambda: pipe['foobar'])\n \n \n+def test_pipeline_len():\n+    transf = Transf()\n+    clf = FitParamT()\n+    pipe = Pipeline([('transf', transf), ('clf', clf)])\n+    assert len(pipe) == 2\n+    assert pipe[:len(pipe)] is not None\n+    # len should work with slicing\n+    assert pipe[:len(pipe)].steps == pipe.steps\n+\n+\n def test_set_pipeline_steps():\n     transf1 = Transf()\n     transf2 = Transf()\n"
+  }
+]

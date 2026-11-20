@@ -1,0 +1,16 @@
+[incr-eval 02:45:23] === incr_eval R2320 start ===
+[incr-eval 02:45:23] cline: 0 new instances, skip
+[incr-eval 02:45:23] codex: 0 new instances, skip
+[incr-eval 02:45:23] opencode: 0 new instances, skip
+
+=== claude-code R2320 ===
+new instances: 1 ['django__django-16256']
+[incr-eval 02:45:23] claude-code: merged 1 new patches -> predictions_claude-code_new_R2320.json
+[incr-eval 02:45:23] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2320
+[incr-eval 02:45:27] claude-code: eval rc=0
+[incr-eval 02:45:27]   django__django-16256: RESOLVED
+[incr-eval 02:45:27] claude-code: cumulative n=295 resolved=241 failed=52 infra=2 -> eval_glm53_claude-code.json
+[incr-eval 02:45:27] pi: 0 new instances, skip
+[incr-eval 02:45:27] hermes: 0 new instances, skip
+[incr-eval 02:45:27] deepseek: 0 new instances, skip
+[incr-eval 02:45:27] === incr_eval R2320 done: 1 instances, +1resolved +0failed +0infra ===

@@ -1,0 +1,66 @@
+2026-10-31 02:58:59,116 - INFO - Creating container for django__django-11333...
+2026-10-31 02:58:59,194 - INFO - Container for django__django-11333 created: 5595286476f73100a765edcaaea1f60e48e5ada827c6e7bb9a397c1fdbbf8abc
+2026-10-31 02:59:01,362 - INFO - Container for django__django-11333 started: 5595286476f73100a765edcaaea1f60e48e5ada827c6e7bb9a397c1fdbbf8abc
+2026-10-31 02:59:01,365 - INFO - Intermediate patch for django__django-11333 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11333/patch.diff, now applying to container...
+2026-10-31 02:59:01,510 - INFO - >>>>> Applied Patch:
+Checking patch django/urls/resolvers.py...
+Applied patch django/urls/resolvers.py cleanly.
+
+2026-10-31 02:59:03,166 - INFO - Git diff before:
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..2d42d99e69 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,10 +64,17 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
++def _get_resolver(urlconf):
++    return URLResolver(RegexPattern(r'^/'), urlconf)
++
++
+ def get_resolver(urlconf=None):
+     if urlconf is None:
+         urlconf = settings.ROOT_URLCONF
+-    return URLResolver(RegexPattern(r'^/'), urlconf)
++    return _get_resolver(urlconf)
++
++
++get_resolver.cache_clear = _get_resolver.cache_clear
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+2026-10-31 02:59:03,170 - INFO - Eval script for django__django-11333 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11333/eval.sh; copying to container...
+2026-10-31 02:59:09,842 - INFO - Test runtime: 6.59 seconds
+2026-10-31 02:59:09,845 - INFO - Test output for django__django-11333 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11333/test_output.txt
+2026-10-31 02:59:09,926 - INFO - Git diff after:
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..2d42d99e69 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,10 +64,17 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
++def _get_resolver(urlconf):
++    return URLResolver(RegexPattern(r'^/'), urlconf)
++
++
+ def get_resolver(urlconf=None):
+     if urlconf is None:
+         urlconf = settings.ROOT_URLCONF
+-    return URLResolver(RegexPattern(r'^/'), urlconf)
++    return _get_resolver(urlconf)
++
++
++get_resolver.cache_clear = _get_resolver.cache_clear
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+2026-10-31 02:59:09,926 - INFO - Grading answer for django__django-11333...
+2026-10-31 02:59:09,927 - INFO - report: {'django__django-11333': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_resolver_cache_default__root_urlconf (urlpatterns.test_resolvers.ResolverCacheTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_str (urlpatterns.test_resolvers.RegexPatternTests)', 'test_str (urlpatterns.test_resolvers.RoutePatternTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11333: resolved: True
+2026-10-31 02:59:09,929 - INFO - Attempting to stop container sweb.eval.django__django-11333.verified_full_claude-code...
+2026-10-31 02:59:26,149 - INFO - Container sweb.eval.django__django-11333.verified_full_claude-code stopped successfully.
+2026-10-31 02:59:26,149 - INFO - Attempting to remove container sweb.eval.django__django-11333.verified_full_claude-code...
+2026-10-31 02:59:26,200 - INFO - Container sweb.eval.django__django-11333.verified_full_claude-code removed successfully.

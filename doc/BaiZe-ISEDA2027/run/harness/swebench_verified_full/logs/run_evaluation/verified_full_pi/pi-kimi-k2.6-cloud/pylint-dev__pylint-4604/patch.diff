@@ -1,0 +1,45 @@
+diff --git a/pylint/checkers/variables.py b/pylint/checkers/variables.py
+index 3ddafd5..42ce0ee 100644
+--- a/pylint/checkers/variables.py
++++ b/pylint/checkers/variables.py
+@@ -1826,6 +1826,13 @@ class VariablesChecker(BaseChecker):
+             self._type_annotation_names.append(type_annotation.name)
+             return
+ 
++        if isinstance(type_annotation, astroid.Attribute):
++            self._type_annotation_names.extend(
++                annotation.name
++                for annotation in type_annotation.nodes_of_class(astroid.Name)
++            )
++            return
++
+         if not isinstance(type_annotation, astroid.Subscript):
+             return
+ 
+diff --git a/tests/functional/u/unused/unused_typing_imports.py b/tests/functional/u/unused/unused_typing_imports.py
+index 7de4e41..5a05730 100644
+--- a/tests/functional/u/unused/unused_typing_imports.py
++++ b/tests/functional/u/unused/unused_typing_imports.py
+@@ -5,6 +5,7 @@ The problem was that we weren't handling keyword-only arguments annotations,
+ which means we were never processing them.
+ """
+ 
++import abc
+ import re
+ import typing
+ from collections import Counter as CollectionCounter
+@@ -23,7 +24,6 @@ from typing import (
+     Tuple,
+ )
+ 
+-
+ def func1(arg: Optional[Callable]=None):
+     return arg
+ 
+@@ -83,3 +83,6 @@ def unused_reassigned_import(counter):
+     # type: (CollectionCounter) -> int
+     print(counter)
+     return 42
++
++X = ...  # type: abc.ABC
++Y = ...  # type: ABC

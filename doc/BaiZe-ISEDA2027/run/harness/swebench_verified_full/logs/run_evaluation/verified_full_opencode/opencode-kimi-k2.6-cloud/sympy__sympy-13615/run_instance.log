@@ -1,0 +1,149 @@
+2026-10-30 15:55:53,518 - INFO - Creating container for sympy__sympy-13615...
+2026-10-30 15:55:53,537 - INFO - Container for sympy__sympy-13615 created: 648913e3fc1351f7b25376a1f5e64051a400698593a5aaed3c2d69ff304d403f
+2026-10-30 15:55:59,062 - INFO - Container for sympy__sympy-13615 started: 648913e3fc1351f7b25376a1f5e64051a400698593a5aaed3c2d69ff304d403f
+2026-10-30 15:55:59,064 - INFO - Intermediate patch for sympy__sympy-13615 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-13615/patch.diff, now applying to container...
+2026-10-30 15:55:59,216 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/basic.py...
+Checking patch sympy/sets/sets.py...
+Checking patch sympy/sets/tests/test_sets.py...
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/sets/sets.py cleanly.
+Applied patch sympy/sets/tests/test_sets.py cleanly.
+
+2026-10-30 15:55:59,727 - INFO - Git diff before:
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index d4ca323e0..099b074cb 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/sets/sets.py b/sympy/sets/sets.py
+index 917717bb7..3d567ca7c 100644
+--- a/sympy/sets/sets.py
++++ b/sympy/sets/sets.py
+@@ -999,9 +999,25 @@ def _complement(self, other):
+             return Union(a, b)
+ 
+         if isinstance(other, FiniteSet):
+-            nums = [m for m in other.args if m.is_number]
+-            if nums == []:
+-                return None
++            not_in = []
++            unknown = []
++            for el in other:
++                c = sympify(self.contains(el))
++                if c is S.true:
++                    pass
++                elif c is S.false:
++                    not_in.append(el)
++                else:
++                    unknown.append(el)
++            if unknown:
++                comp = Complement(FiniteSet(*unknown), self, evaluate=False)
++                if not_in:
++                    return Union(FiniteSet(*not_in), comp, evaluate=False)
++                return comp
++            elif not_in:
++                return FiniteSet(*not_in)
++            else:
++                return EmptySet()
+ 
+         return Set._complement(self, other)
+ 
+diff --git a/sympy/sets/tests/test_sets.py b/sympy/sets/tests/test_sets.py
+index 8c59d85b2..3377927ce 100644
+--- a/sympy/sets/tests/test_sets.py
++++ b/sympy/sets/tests/test_sets.py
+@@ -944,6 +944,22 @@ def test_issue_9956():
+     assert Interval(-oo, oo).contains(1) is S.true
+ 
+ 
++def test_complement_mixed_symbols_numbers():
++    # issue: Complement doesn't work when input is a mixture of Symbols and numbers
++    a = FiniteSet(x, y, 2)
++    b = Interval(-10, 10)
++    assert Complement(a, b) == Complement(FiniteSet(x, y), b, evaluate=False)
++
++    a = FiniteSet(x, 20)
++    assert Complement(a, b) == Union(FiniteSet(20), Complement(FiniteSet(x), b, evaluate=False), evaluate=False)
++
++    a = FiniteSet(2)
++    assert Complement(a, b) == EmptySet()
++
++    a = FiniteSet(x)
++    assert Complement(a, b) == Complement(FiniteSet(x), b, evaluate=False)
++
++
+ def test_issue_Symbol_inter():
+     i = Interval(0, oo)
+     r = S.Reals
+2026-10-30 15:55:59,738 - INFO - Eval script for sympy__sympy-13615 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-13615/eval.sh; copying to container...
+2026-10-30 15:56:59,178 - INFO - Test runtime: 59.32 seconds
+2026-10-30 15:56:59,194 - INFO - Test output for sympy__sympy-13615 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-13615/test_output.txt
+2026-10-30 15:56:59,272 - INFO - Git diff after:
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index d4ca323e0..099b074cb 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/sets/sets.py b/sympy/sets/sets.py
+index 917717bb7..3d567ca7c 100644
+--- a/sympy/sets/sets.py
++++ b/sympy/sets/sets.py
+@@ -999,9 +999,25 @@ def _complement(self, other):
+             return Union(a, b)
+ 
+         if isinstance(other, FiniteSet):
+-            nums = [m for m in other.args if m.is_number]
+-            if nums == []:
+-                return None
++            not_in = []
++            unknown = []
++            for el in other:
++                c = sympify(self.contains(el))
++                if c is S.true:
++                    pass
++                elif c is S.false:
++                    not_in.append(el)
++                else:
++                    unknown.append(el)
++            if unknown:
++                comp = Complement(FiniteSet(*unknown), self, evaluate=False)
++                if not_in:
++                    return Union(FiniteSet(*not_in), comp, evaluate=False)
++                return comp
++            elif not_in:
++                return FiniteSet(*not_in)
++            else:
++                return EmptySet()
+ 
+         return Set._complement(self, other)
+2026-10-30 15:56:59,272 - INFO - Git diff changed after running eval script
+2026-10-30 15:56:59,272 - INFO - Grading answer for sympy__sympy-13615...
+2026-10-30 15:56:59,273 - INFO - report: {'sympy__sympy-13615': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Complement'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_imageset', 'test_interval_arguments', 'test_interval_symbolic_end_points', 'test_union', 'test_union_iter', 'test_difference', 'test_complement', 'test_intersect', 'test_intersection', 'test_issue_9623', 'test_is_disjoint', 'test_ProductSet_of_single_arg_is_arg', 'test_interval_subs', 'test_interval_to_mpi', 'test_measure', 'test_is_subset', 'test_is_proper_subset', 'test_is_superset', 'test_is_proper_superset', 'test_contains', 'test_interval_symbolic', 'test_union_contains', 'test_is_number', 'test_Interval_is_left_unbounded', 'test_Interval_is_right_unbounded', 'test_Interval_as_relational', 'test_Finite_as_relational', 'test_Union_as_relational', 'test_Intersection_as_relational', 'test_EmptySet', 'test_finite_basic', 'test_powerset', 'test_product_basic', 'test_real', 'test_supinf', 'test_universalset', 'test_Union_of_ProductSets_shares', 'test_Interval_free_symbols', 'test_image_interval', 'test_image_piecewise', 'test_image_FiniteSet', 'test_image_Union', 'test_image_EmptySet', 'test_issue_5724_7680', 'test_boundary', 'test_boundary_Union', 'test_boundary_ProductSet', 'test_boundary_ProductSet_line', 'test_is_open', 'test_is_closed', 'test_closure', 'test_interior', 'test_issue_7841', 'test_Eq', 'test_SymmetricDifference', 'test_issue_9536', 'test_issue_9637', 'test_issue_9808', 'test_issue_9956', 'test_issue_Symbol_inter', 'test_issue_11827', 'test_issue_10113', 'test_issue_10248', 'test_issue_9447', 'test_issue_10337', 'test_issue_10326', 'test_issue_2799', 'test_issue_9706', 'test_issue_8257', 'test_issue_10931'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-13615: resolved: True
+2026-10-30 15:56:59,275 - INFO - Attempting to stop container sweb.eval.sympy__sympy-13615.verified_full_opencode...
+2026-10-30 15:57:15,462 - INFO - Container sweb.eval.sympy__sympy-13615.verified_full_opencode stopped successfully.
+2026-10-30 15:57:15,462 - INFO - Attempting to remove container sweb.eval.sympy__sympy-13615.verified_full_opencode...
+2026-10-30 15:57:15,551 - INFO - Container sweb.eval.sympy__sympy-13615.verified_full_opencode removed successfully.

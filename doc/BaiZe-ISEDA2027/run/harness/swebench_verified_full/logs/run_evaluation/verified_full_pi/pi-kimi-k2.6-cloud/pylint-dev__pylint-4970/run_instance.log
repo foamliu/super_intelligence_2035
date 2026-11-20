@@ -1,0 +1,131 @@
+2026-10-28 12:36:32,576 - INFO - Creating container for pylint-dev__pylint-4970...
+2026-10-28 12:36:32,600 - INFO - Container for pylint-dev__pylint-4970 created: 78e1cd68e93de71f097388fec4d584f042e1f3393f1a1b060c8d24ec90bca176
+2026-10-28 12:36:33,071 - INFO - Container for pylint-dev__pylint-4970 started: 78e1cd68e93de71f097388fec4d584f042e1f3393f1a1b060c8d24ec90bca176
+2026-10-28 12:36:33,074 - INFO - Intermediate patch for pylint-dev__pylint-4970 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pylint-dev__pylint-4970/patch.diff, now applying to container...
+2026-10-28 12:36:33,187 - INFO - >>>>> Applied Patch:
+Checking patch pylint/checkers/similar.py...
+Checking patch tests/checkers/unittest_similar.py...
+Applied patch pylint/checkers/similar.py cleanly.
+Applied patch tests/checkers/unittest_similar.py cleanly.
+
+2026-10-28 12:36:33,387 - INFO - Git diff before:
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c89..cbbdc734 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -390,8 +390,9 @@ class Similar:
+ 
+     def run(self) -> None:
+         """start looking for similarities and display results on stdout"""
++        if self.min_lines == 0:
++            return
+         self._display_sims(self._compute_sims())
+-
+     def _compute_sims(self) -> List[Tuple[int, Set[LinesChunkLimits_T]]]:
+         """compute similarities in appended files"""
+         no_duplicates: Dict[int, List[Set[LinesChunkLimits_T]]] = defaultdict(list)
+@@ -739,7 +740,7 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. Setting this to 0 will disable the check.",
+             },
+         ),
+         (
+@@ -830,6 +831,8 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+     def close(self):
+         """compute and display similarities on closing (i.e. end of parsing)"""
++        if self.min_lines == 0:
++            return
+         total = sum(len(lineset) for lineset in self.linesets)
+         duplicated = 0
+         stats = self.stats
+@@ -848,7 +851,6 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+             duplicated += num * (len(couples) - 1)
+         stats["nb_duplicated_lines"] = duplicated
+         stats["percent_duplicated_lines"] = total and duplicated * 100.0 / total
+-
+     def get_map_data(self):
+         """Passthru override"""
+         return Similar.get_map_data(self)
+diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
+index 4ddf2029..a69071e2 100644
+--- a/tests/checkers/unittest_similar.py
++++ b/tests/checkers/unittest_similar.py
+@@ -369,6 +369,21 @@ TOTAL lines=50 duplicates=14 percent=28.00
+ """
+         ).strip()
+     )
++def test_min_similarity_lines_zero() -> None:
++    output = StringIO()
++    with redirect_stdout(output), pytest.raises(SystemExit) as ex:
++        similar.Run(["--duplicates", "0", SIMILAR1, SIMILAR2])
++    assert ex.value.code == 0
++    assert output.getvalue().strip() == ""
++
++
++def test_min_similarity_lines_zero_checker() -> None:
++    linter = PyLinter(reporter=Reporter())
++    checker = similar.SimilarChecker(linter)
++    linter.register_checker(checker)
++    checker.set_option("min-similarity-lines", 0)
++    linter.check([SIMILAR1, SIMILAR2])
++    assert not linter.reporter.messages
+ 
+ 
+ def test_help() -> None:
+2026-10-28 12:36:33,389 - INFO - Eval script for pylint-dev__pylint-4970 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pylint-dev__pylint-4970/eval.sh; copying to container...
+2026-10-28 12:36:36,861 - INFO - Test runtime: 3.39 seconds
+2026-10-28 12:36:36,862 - INFO - Test output for pylint-dev__pylint-4970 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pylint-dev__pylint-4970/test_output.txt
+2026-10-28 12:36:36,928 - INFO - Git diff after:
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c89..cbbdc734 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -390,8 +390,9 @@ class Similar:
+ 
+     def run(self) -> None:
+         """start looking for similarities and display results on stdout"""
++        if self.min_lines == 0:
++            return
+         self._display_sims(self._compute_sims())
+-
+     def _compute_sims(self) -> List[Tuple[int, Set[LinesChunkLimits_T]]]:
+         """compute similarities in appended files"""
+         no_duplicates: Dict[int, List[Set[LinesChunkLimits_T]]] = defaultdict(list)
+@@ -739,7 +740,7 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. Setting this to 0 will disable the check.",
+             },
+         ),
+         (
+@@ -830,6 +831,8 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+     def close(self):
+         """compute and display similarities on closing (i.e. end of parsing)"""
++        if self.min_lines == 0:
++            return
+         total = sum(len(lineset) for lineset in self.linesets)
+         duplicated = 0
+         stats = self.stats
+@@ -848,7 +851,6 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+             duplicated += num * (len(couples) - 1)
+         stats["nb_duplicated_lines"] = duplicated
+         stats["percent_duplicated_lines"] = total and duplicated * 100.0 / total
+-
+     def get_map_data(self):
+         """Passthru override"""
+         return Similar.get_map_data(self)
+2026-10-28 12:36:36,928 - INFO - Git diff changed after running eval script
+2026-10-28 12:36:36,928 - INFO - Grading answer for pylint-dev__pylint-4970...
+2026-10-28 12:36:36,932 - INFO - report: {'pylint-dev__pylint-4970': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/checkers/unittest_similar.py::test_set_duplicate_lines_to_zero'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/checkers/unittest_similar.py::test_ignore_comments', 'tests/checkers/unittest_similar.py::test_ignore_docstrings', 'tests/checkers/unittest_similar.py::test_ignore_imports', 'tests/checkers/unittest_similar.py::test_multiline_imports', 'tests/checkers/unittest_similar.py::test_ignore_multiline_imports', 'tests/checkers/unittest_similar.py::test_ignore_signatures_fail', 'tests/checkers/unittest_similar.py::test_ignore_signatures_pass', 'tests/checkers/unittest_similar.py::test_ignore_signatures_class_methods_fail', 'tests/checkers/unittest_similar.py::test_ignore_signatures_class_methods_pass', 'tests/checkers/unittest_similar.py::test_ignore_signatures_empty_functions_fail', 'tests/checkers/unittest_similar.py::test_ignore_signatures_empty_functions_pass', 'tests/checkers/unittest_similar.py::test_no_hide_code_with_imports', 'tests/checkers/unittest_similar.py::test_ignore_nothing', 'tests/checkers/unittest_similar.py::test_lines_without_meaningful_content_do_not_trigger_similarity', 'tests/checkers/unittest_similar.py::test_help', 'tests/checkers/unittest_similar.py::test_no_args', 'tests/checkers/unittest_similar.py::test_get_map_data'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pylint-dev__pylint-4970: resolved: True
+2026-10-28 12:36:36,933 - INFO - Attempting to stop container sweb.eval.pylint-dev__pylint-4970.verified_full_pi...
+2026-10-28 12:36:52,380 - INFO - Container sweb.eval.pylint-dev__pylint-4970.verified_full_pi stopped successfully.
+2026-10-28 12:36:52,380 - INFO - Attempting to remove container sweb.eval.pylint-dev__pylint-4970.verified_full_pi...
+2026-10-28 12:36:52,420 - INFO - Container sweb.eval.pylint-dev__pylint-4970.verified_full_pi removed successfully.

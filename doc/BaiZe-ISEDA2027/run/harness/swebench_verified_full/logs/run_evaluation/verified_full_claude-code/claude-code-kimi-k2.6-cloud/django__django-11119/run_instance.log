@@ -1,0 +1,66 @@
+2026-10-30 21:00:21,376 - INFO - Creating container for django__django-11119...
+2026-10-30 21:00:21,445 - INFO - Container for django__django-11119 created: 78c3cb9ab2020e01e6896b302f59c568f93fb6ce229661a39912573357d55c0b
+2026-10-30 21:00:23,718 - INFO - Container for django__django-11119 started: 78c3cb9ab2020e01e6896b302f59c568f93fb6ce229661a39912573357d55c0b
+2026-10-30 21:00:23,720 - INFO - Intermediate patch for django__django-11119 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11119/patch.diff, now applying to container...
+2026-10-30 21:00:23,868 - INFO - >>>>> Applied Patch:
+Checking patch django/template/engine.py...
+Checking patch tests/template_tests/test_engine.py...
+Applied patch django/template/engine.py cleanly.
+Applied patch tests/template_tests/test_engine.py cleanly.
+
+2026-10-30 21:00:25,342 - INFO - Git diff before:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+diff --git a/tests/template_tests/test_engine.py b/tests/template_tests/test_engine.py
+index 2bb8601fbb..2ba4aa4862 100644
+--- a/tests/template_tests/test_engine.py
++++ b/tests/template_tests/test_engine.py
+@@ -21,6 +21,13 @@ class RenderToStringTest(SimpleTestCase):
+             'obj:test\n',
+         )
+ 
++    def test_autoescape(self):
++        engine = Engine(dirs=[TEMPLATE_DIR], autoescape=False)
++        self.assertEqual(
++            engine.render_to_string('test_context.html', {'obj': '<script>'}),
++            'obj:<script>\n',
++        )
++
+ 
+ class GetDefaultTests(SimpleTestCase):
+2026-10-30 21:00:25,345 - INFO - Eval script for django__django-11119 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11119/eval.sh; copying to container...
+2026-10-30 21:00:32,061 - INFO - Test runtime: 6.63 seconds
+2026-10-30 21:00:32,063 - INFO - Test output for django__django-11119 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11119/test_output.txt
+2026-10-30 21:00:32,147 - INFO - Git diff after:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+2026-10-30 21:00:32,147 - INFO - Git diff changed after running eval script
+2026-10-30 21:00:32,147 - INFO - Grading answer for django__django-11119...
+2026-10-30 21:00:32,148 - INFO - report: {'django__django-11119': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_autoescape_off (template_tests.test_engine.RenderToStringTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_cached_loader_priority (template_tests.test_engine.LoaderTests)', 'test_loader_priority (template_tests.test_engine.LoaderTests)', 'test_origin (template_tests.test_engine.LoaderTests)', 'test_basic_context (template_tests.test_engine.RenderToStringTest)', 'test_multiple_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_no_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_single_engine_configured (template_tests.test_engine.GetDefaultTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11119: resolved: True
+2026-10-30 21:00:32,150 - INFO - Attempting to stop container sweb.eval.django__django-11119.verified_full_claude-code...
+2026-10-30 21:00:48,051 - INFO - Container sweb.eval.django__django-11119.verified_full_claude-code stopped successfully.
+2026-10-30 21:00:48,052 - INFO - Attempting to remove container sweb.eval.django__django-11119.verified_full_claude-code...
+2026-10-30 21:00:48,107 - INFO - Container sweb.eval.django__django-11119.verified_full_claude-code removed successfully.

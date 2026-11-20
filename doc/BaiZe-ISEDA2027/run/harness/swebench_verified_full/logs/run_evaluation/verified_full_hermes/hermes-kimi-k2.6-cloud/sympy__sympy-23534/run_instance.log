@@ -1,0 +1,79 @@
+2026-11-01 03:12:25,018 - INFO - Creating container for sympy__sympy-23534...
+2026-11-01 03:12:25,039 - INFO - Container for sympy__sympy-23534 created: d42bd45f23894c4445edbf4372d902e727f0e83ccf6790e984bca29c28adc1ce
+2026-11-01 03:12:25,768 - INFO - Container for sympy__sympy-23534 started: d42bd45f23894c4445edbf4372d902e727f0e83ccf6790e984bca29c28adc1ce
+2026-11-01 03:12:25,771 - INFO - Intermediate patch for sympy__sympy-23534 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-23534/patch.diff, now applying to container...
+2026-11-01 03:12:25,929 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/symbol.py...
+Checking patch sympy/core/tests/test_symbol.py...
+Applied patch sympy/core/symbol.py cleanly.
+Applied patch sympy/core/tests/test_symbol.py cleanly.
+
+2026-11-01 03:12:26,559 - INFO - Git diff before:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c2083..58b4e174c2 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -3,6 +3,7 @@
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+ from sympy.core.sympify import sympify  # can't import as S yet
+ from sympy.core.symbol import uniquely_named_symbol, _symbol, Str
++from sympy.core.function import Function
+ 
+ from sympy.testing.pytest import raises
+ from sympy.core.symbol import disambiguate
+@@ -336,6 +337,18 @@ def test_symbols_become_functions_issue_3539():
+     raises(TypeError, lambda: phi(t))
+ 
+ 
++def test_symbols_iterable_cls():
++    f, g = symbols(('f', 'g'), cls=Function)
++    assert callable(f) and isinstance(f, type)
++    assert callable(g) and isinstance(g, type)
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert all(callable(x) and isinstance(x, type) for x in q)
++    assert all(callable(x) and isinstance(x, type) for x in u)
++    a, b = symbols(['a', 'b'], cls=Function)
++    assert callable(a) and isinstance(a, type)
++    assert callable(b) and isinstance(b, type)
++
++
+ def test_unicode():
+     xu = Symbol('x')
+     x = Symbol('x')
+2026-11-01 03:12:26,563 - INFO - Eval script for sympy__sympy-23534 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-23534/eval.sh; copying to container...
+2026-11-01 03:12:32,542 - INFO - Test runtime: 5.88 seconds
+2026-11-01 03:12:32,544 - INFO - Test output for sympy__sympy-23534 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-23534/test_output.txt
+2026-11-01 03:12:32,596 - INFO - Git diff after:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+2026-11-01 03:12:32,596 - INFO - Git diff changed after running eval script
+2026-11-01 03:12:32,596 - INFO - Grading answer for sympy__sympy-23534...
+2026-11-01 03:12:32,597 - INFO - report: {'sympy__sympy-23534': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_symbols'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Str', 'test_Symbol', 'test_Dummy', 'test_Dummy_force_dummy_index', 'test_lt_gt', 'test_no_len', 'test_ineq_unequal', 'test_Wild_properties', 'test_symbols_become_functions_issue_3539', 'test_unicode', 'test_uniquely_named_symbol_and_Symbol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23534: resolved: True
+2026-11-01 03:12:32,599 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23534.verified_full_hermes...
+2026-11-01 03:12:47,992 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_hermes stopped successfully.
+2026-11-01 03:12:47,992 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23534.verified_full_hermes...
+2026-11-01 03:12:48,053 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_hermes removed successfully.
