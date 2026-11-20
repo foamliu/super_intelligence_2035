@@ -30465,3 +30465,101 @@ echo "=== DONE 282 | $(date "+%F %T") ==="
 
 === DONE 282 | 2026-11-20 10:07:22 ===
 ```
+
+---
+
+## RUN_ID 283 · 2026-11-20 10:37:06 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+echo "host=$(hostname)  date=$(date "+%F %T")"
+echo
+echo "[1] .29 可达性"
+ping -c 2 -W 2 10.239.2.29 2>&1 | tail -3
+( timeout 3 bash -c "</dev/tcp/10.239.2.29/22" ) >/dev/null 2>&1 && echo "  tcp22=OPEN" || echo "  tcp22=CLOSED_OR_TIMEOUT"
+timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no 10.239.2.29 "echo SSH_OK; hostname; uptime" 2>&1 | tail -3 | sed "s/^/  ssh| /"
+echo
+echo "[2] 共享副本 git（两机同一块 NFS）"
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+git -C "$R" log -1 --date=iso --format="  HEAD %ad %h" 2>&1 | cut -c1-110
+echo "  left-right(origin...HEAD)=$(git -C "$R" rev-list --left-right --count origin/main...HEAD 2>/dev/null | tr "\t" " ")"
+echo "  staged=$(git -C "$R" diff --cached --name-only 2>/dev/null | wc -l) unstaged=$(git -C "$R" diff --name-only 2>/dev/null | wc -l) untracked=$(git -C "$R" ls-files -o --exclude-standard 2>/dev/null | wc -l)"
+[ -f "$R/.git/index.lock" ] && stat -c "  LOCK %y %s %n" "$R/.git/index.lock"
+git -C "$R" log -1 --date=iso --format="  last_pretrain_commit=%ad %h" -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null
+git -C "$R" log -1 --date=iso --format="  last_harness_commit=%ad %h" -- doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md 2>/dev/null
+echo
+echo "[3] 共享副本上近 60 分钟被改动的 run/ 文件（= 是否有 agent 还在写）"
+L=$(find "$R/doc/BaiZe-ISEDA2027/run" -type f -mmin -60 2>/dev/null | head -8)
+if [ -n "$L" ]; then echo "$L" | sed "s/^/  /"; else echo "  无（60 分钟内 run/ 零写入）"; fi
+echo
+echo "[4] /nas_train 近 3 小时被写过的文件（checkpoint / 训练日志痕迹，最多 8 条）"
+L=$(timeout 60 find /nas_train/app.e0031982 -maxdepth 6 -type f -mmin -180 2>/dev/null | head -8)
+if [ -n "$L" ]; then echo "$L" | sed "s/^/  /"; else echo "  无（3 小时内 /nas_train 零写入 → 训练已停）"; fi
+echo
+echo "[5] /nas_train 近 1 小时内 >50MB 的新写入（最多 5 条，看是否还在存 ckpt）"
+L=$(timeout 60 find /nas_train/app.e0031982 -maxdepth 7 -type f -size +50M -mmin -60 2>/dev/null | head -5)
+if [ -n "$L" ]; then echo "$L" | sed "s/^/  /"; else echo "  无"; fi
+echo
+echo "[6] .12 中继自身"
+ps -eo pid,etime,args | grep "[o]ps_relay" | cut -c1-110 | head -3 | sed "s/^/  /"
+tail -n 4 /tmp/baize_ops_relay.12.log 2>/dev/null | cut -c1-140 | sed "s/^/  relay12| /"
+echo
+echo "（全部只读：未 kill / 未重启 / 未改 .29 / 未改共享副本）"
+'
+echo
+echo "[0] 本令只投 .12（TARGET: 12）；实际执行机 = $(hostname)"
+eval "$BODY"
+echo
+echo "=== DONE 283 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] 本令只投 .12（TARGET: 12）；实际执行机 = whag0pgpuap12
+host=whag0pgpuap12  date=2026-11-20 10:37:06
+
+[1] .29 可达性
+--- 10.239.2.29 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1029ms
+rtt min/avg/max/mdev = 0.148/146.711/293.275/146.563 ms
+  tcp22=OPEN
+
+[2] 共享副本 git（两机同一块 NFS）
+  HEAD 2026-11-20 10:36:49 +0800 e7085e875
+  left-right(origin...HEAD)=0 0
+  staged=0 unstaged=0 untracked=35
+  last_pretrain_commit=2026-11-20 01:22:50 +0800 7429ce457
+  last_harness_commit=2026-11-20 01:13:39 +0800 a272b2721
+
+[3] 共享副本上近 60 分钟被改动的 run/ 文件（= 是否有 agent 还在写）
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/.gitignore
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/daily-memories-data/2026-11-20.md
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/daily-memories-vision/.gitignore
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/inbox.md
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/outbox.md
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.12
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/reports/report_s1s2_split_data_v3_zh.html
+  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+
+[4] /nas_train 近 3 小时被写过的文件（checkpoint / 训练日志痕迹，最多 8 条）
+  无（3 小时内 /nas_train 零写入 → 训练已停）
+
+[5] /nas_train 近 1 小时内 >50MB 的新写入（最多 5 条，看是否还在存 ckpt）
+  无
+
+[6] .12 中继自身
+   293084       02:23 bash ./ops_relay_v2.sh
+  1032513 26-15:05:04 bash ./ops_relay_v2.sh
+  relay12| [relay-12] RUN_ID=277 executed, exit=0, appended to outbox.
+  relay12| [relay-12] RUN_ID=281 executed, exit=0, appended to outbox.
+  relay12| ./ops_relay_v2.sh: line 77: 2377718 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+  relay12| [relay-12] RUN_ID=282 executed, exit=0, appended to outbox.
+
+（全部只读：未 kill / 未重启 / 未改 .29 / 未改共享副本）
+
+=== DONE 283 | 2026-11-20 10:39:29 ===
+```
