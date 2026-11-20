@@ -3502,3 +3502,15 @@
 | 2026-11-20 | 吉利星越 L PLUS 12 月上市 / 大众 ID. Buzz Beach 露营车 / OPPO Pad Air6 开售 / 绿联 60W 充电器 | IT之家 | W:not-news（第 314 轮 · 硬件销售通告） | https://www.ithome.com/1/029/756.htm |
 | 2026-11-20 | Newzoo：《GTA 6》首周收入预测 / 《GTA 6》两个「简单模式」开关 | IT之家 | W:not-news（第 314 轮 · 预测与设置解析） | https://www.ithome.com/1/029/696.htm |
 | 2026-11-20 | IT早报 1120 / Epic 喜加一 / 名创优品营销稿 | IT之家 | W:not-news（第 314 轮 · 聚合与促销） | https://www.ithome.com/1/029/755.htm |
+| 2026-11-20 | 腾讯混元 Hy4 正式开源（770B/49B/100 万 Token） | IT之家 | news | https://www.ithome.com/1/029/841.htm |
+| 2026-11-20 | 育碧成立 Motherbrain 游戏 AI 子公司 | IT之家 / VGC | news | https://www.ithome.com/1/029/795.htm |
+| 2026-11-20 | 充电设施（枪）2539.1 万个 +36.2% | IT之家 / 国家能源局 | news | https://www.ithome.com/1/029/832.htm |
+| 2026-11-20 | 充电设施 2539.1 万个（中新网同题） | 中新网 | news | https://www.chinanews.com.cn/sh/2026/11-20/10735117.shtml |
+| 2026-11-20 | 6G Q/V 频段最高码速率验证（丽江站） | 中新网 / 中国之声 | news | https://www.chinanews.com.cn/gn/2026/11-20/10735142.shtml |
+| 2026-11-20 | 三星电子 2027 高管调整：崔元俊接 MX | IT之家 | news | https://www.ithome.com/1/029/837.htm |
+| 2026-11-20 | Meta Quest 3D 电影售卖/租赁 150 部 | IT之家 | news | https://www.ithome.com/1/029/818.htm |
+| 2026-11-20 | 英伟达回应数据泄露疑云 | IT之家 / BleepingComputer | W:not-news（第 315 轮 · 说法待核实） | https://www.ithome.com/1/029/801.htm |
+| 2026-11-20 | 腾讯向百度索赔 1 亿元（仙逆盗版） | IT之家 | W:not-news（第 315 轮 · 司法个案不入） | https://www.ithome.com/1/029/813.htm |
+| 2026-11-20 | 字节否认张楠/谢欣离职 / 三星 Gauss 4 代码 / One UI 9.5 天气 AI / 三星安卓笔记本 | IT之家 | W:not-news（第 315 轮 · 否认式回应与爆料） | https://www.ithome.com/1/029/839.htm |
+| 2026-11-20 | 华为云 CloudRobo 组队 | 量子位 | W:not-news（第 315 轮 · 厂商稿） | https://www.qbitai.com/2026/11/511426.html |
+| 2026-11-20 | 汽车/硬件通告与爆料 25 条（850/836/835/834/831/828/824/820/817/825/827/822/815/807/806/804/800/799/794/792/790/778/823/829/808/803） | IT之家 | W:not-news（第 315 轮 · 销量通告与爆料） | https://www.ithome.com/1/029/850.htm |
