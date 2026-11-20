@@ -1,5 +1,56 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+### 🔴 用户令 · 2026-11-20 21:1x（**第一步：把 baseline 做扎实** —— 先钉死「MiniCPM5-2B 作为 cline 底模在 158 题得多少分、错在哪」，其余一切让路）
+
+> **用户原话**：「第一步需要把 baseline 做扎实，也就是 MiniCPM5-2B 作为 cline 底模后，能在 158 题得多少分，哪些地方出错，这个根本问题需要先搞清楚。」
+>
+> **为什么现在做**：上一轮评审件 `reports/report_posttrain_selfplay_plan_zh.html`（2026-11-20 21:05）已指出——若基线口径不干净，后面 SFT / RL / 合成题的每一个 Δ 都不可解释。本轮先把地基打完；该件里的 Gate-0 与造题线**顺延到本轮之后**。
+
+#### A. 必须先承认的三条现状（写进报告首屏，不许含糊）
+
+1. **现有 `3.04% ± 0.83%` 不是 base 模型**——它是 `SFT v39 global_step_105`。**MiniCPM5-2B 原模型作为 cline 底模的 5-run 数字，至今不存在。**
+2. **`6.84% ± 6.12%` 是混合口径**：run1 = 18.99% 为 ws-only 锚点（分母仅 36 个 ws 段），run2–5 为 recovered 口径；剔除 run1 后 recovered 4-run = **3.80% ± 0.90**。⇒ 报告必须同时给「混合 5-run」与「recovered 4-run」，**主结论用后者**。
+3. **量尺本身有 bug**：`format_cline_cli_output.py:163` 只读 `ws/pyAether_code`、丢 no-ws 代码（历史 run2/3/4 因此假跌到 0%）。已知该 bug 造成的偏差可达 **+15pp**（18.99% vs 2.5–4.4%），**比任何模型效应都大**。
+
+#### B. 五道验收项（全过才算「baseline 扎实」）
+
+1. **身份证明**（防「报告里的模型 ≠ 实际服务的模型」）：`curl $EP/v1/models` 取返回 id；`ps -o args=` 取 serve 进程的 `--model/--served-model-name` 与 ckpt 路径 + mtime；再采固定 prompt 指纹（同一 prompt 采样 3 次，记输出 md5 + 首 32 token）。报告写 `requested_model` / `served_model` / `ckpt_path` / `fingerprint` 四字段，**任一不一致 ⇒ 判 fail 并停跑**（历史已出现过 `final_report.model_name=zhulong_deepseek_v32` 陈旧标签）。
+2. **量尺一致性**：同一 batch 的 jsonl，分别用「原始抽取」与「`rca_recover_extract.py` 回补」两条路径评分，**两者差值必须作为「量尺误差」写进报告**；正式数字用修复后口径。**抽取器源头修复优先于事后回补**。
+3. **打分器噪声**：`run_eval.py` 是纯打分（读已执行结果），对**同一份 jsonl 重评 10 次**，报 Pass@1 的 mean ± sd。判据：**同一臂两次独立 run 的差值应 < 2 × judge_sd**；否则说明协议不稳，先修协议再谈模型。
+4. **执行确定性**：抽 10 个已判定题（5 PASS / 5 FAIL），同一份代码在沙盒各跑 10 次，报**判决翻转率**（历史实测 direct 2/79 vs rescue 0/79）。
+5. **逐题画像**（回答「哪些地方出错」）：题级 pass 率分布（0/5…5/5）、fail_mode 五分类、四指标（是否进入 agent 回路 / 工具调用数 / 报错率 / 是否真的查过 RAG）。⚠️ **必须用 MiniCPM5 自己的数据重做**，不得沿用 `r83_difficulty_analysis.json` 里基于 DeepSeek 的 fail_mode 分布。
+
+#### C. 臂矩阵（先做 A0 / A1 两臂，其它等这两臂干净了再说）
+
+| 臂 | 底模 | 口径 | 用途 |
+|:--|:--|:--|:--|
+| **A0** | **MiniCPM5-2B 原模型**（GPU4 `:8098` 现成 standby，不占别人卡） | `.17` 口径（无 RAG / 无沙盒 MCP） | **用户要的那个数字** |
+| **A1** | SFT v39 `global_step_105` | 同上，**同一把尺** | 分离「SFT 带来的增量」 |
+| A2/A3（暂缓） | +RAG / +沙盒 MCP | 36.15 口径 | 分离环境杠杆；**待 zhulong 当前 batch 跑完再排**（它正在 36.15 用 cline + providers.json） |
+
+- 两臂同：158 题 / Pass@1 / `-p 8 -n` / 2500s / 5-run / 同一抽取器 / 同一 fail_mode 分类器。
+- **串行纪律**：`providers.json` 是共享单例，与 vision 的评测**不得并发**；起跑前 `pgrep -f run_cline_script` + `ss -tlnp | grep -E ':(30|80)'` 自检，发现他线在跑就等。
+
+#### D. 分段交付与时间盒（每段结束写一行 MEMORY，不要攒到最后）
+
+- **Stage 1（≤2h，零 codegen）**：B1 身份四证 + B3 judge 噪声（复用历史 jsonl 重评 10 次）+ B2 量尺差值（复用历史 batch）→ 产出 `baseline_measurement_audit.json`。
+- **Stage 2（单 run）**：A0 跑 **1 个 run**，出**逐题画像**（B5）。这是回答「错在哪」的最小代价，先出结论再决定要不要 5-run。
+- **Stage 3（5-run）**：A0 补满 5-run；A1 同尺 5-run → 出正式基线表。
+- 任一段发现 B1 失败或 judge 噪声过大 ⇒ **停、先报，不许硬跑 5-run**。
+
+#### E. 交付物
+
+1. `reports/report_posttrain_baseline_nailed_zh.html`（**新增里程碑文件**，中文）：首屏三句 + A/B/C/D 全表 + 逐题画像 + 口径六元组 + 全部落盘路径。
+2. 逐题 JSON：`baseline_<arm>_run<N>_pertask.json`（每题的 pass 次数 / fail_mode / 工具调用统计）。
+3. `MEMORY_POSTTRAIN.md` 顶部写入**预注册**（臂、判据、时间戳）；跑完不许改判据。
+
+#### F. 🚫 本轮禁止
+
+- 🚫 在五道验收项过之前起任何 GRPO / SFT / 造题 / 合成题池（`report_posttrain_selfplay_plan_zh.html` 的 Gate-0 一并顺延）。
+- 🚫 改 158 题面 / `check.py` / 评测协议 / 超时 / `-p` 并发。
+- 🚫 把 `3.04%` 说成「base 模型的结果」；把 `6.84%` 说成「干净 5-run」。
+- 🚫 跨口径比较（`.17` vs `36.15`、ws-only vs recovered、1-run vs 5-run）不标注就写进论文。
+
 ### 🔴 用户令 · 2026-11-19（**GPU 分配调整：收缩到 GPU 4-5**）
 
 > **.17 GPU 分配**：**GPU 4-5 → posttrain**，GPU 6-7 → vision。
