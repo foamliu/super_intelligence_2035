@@ -1335,3 +1335,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795069253162_62why.messages.json	hktklin	hfeg0plg87	111	layout_virtuoso	case	EDA-Eval-DesignFlow-TapPcellBot-001	2026-11-20 15:21	
 1795049723270_htijd	e0047600	hfeg0pjn200	285	physical_verify	case	EDA-Eval-DesignFlow-GdsRailLabelRestore-001	2026-11-20 16:31	r862 physical_verify GDS tiling vdd/vss rail label restore-original matrix reframe; k=15 static source-analysis judge; gold=solve.py PASS + 6 neg FAIL distinct
 1795001912028_iludo	cuij	hfeg0plg86	79	physical_verify	case	EDA-Eval-DesignFlow-DrcRunsetAutoConfigAnalyze-001	2026-11-20 17:41	
+1792761048382_vtpfh					case	EDA-Eval-DesignFlow-SpfLayerCoupleCapAnalyze-001	2026-11-20 18:31	revival: D parked 11-05 peek_D270 unfit(analysis-only=weak); 2026-11-15 reaudit parasitic-analysis legit; C-domain physical_verify SPF parsing, D misjudged shard; r866 档B reframe k=15
