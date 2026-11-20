@@ -1,5 +1,21 @@
 # BAIZE_VISION_TASK.md
 
+### 🔴 用户令 · 2026-11-20 16:2x（写 vision 工作总报告）
+
+> **写一份 vision 线的整体工作报告（中文 HTML 单文件）**，交付到 `run/reports/report_vision_overall_work_zh.html`。
+>
+> **覆盖范围**（从最早到现在，按时间线组织）：
+> 1. **波形 RL 探索（CPU 阶段，.12）**：v2–v5 系列，v5 统计显著正结果（A16%→B37%→C53% p=0.0009），CPU 冒烟/50步实验，报告 `report_vision_cot_vqa_result_zh.html`
+> 2. **VQA SSH 桥接通道**：从 .17 到 36.15 的反向 SSH 桥建通、三端口健康检查、watchdog 自愈
+> 3. **WaveView 真题挖掘与自测**：到 36.15 挖 273→225→10 带图题；三段 V0/V1/V2 评测；MLLM-as-VQA 价值验证
+> 4. **EDA-Eval-DesignFlow-WaveView 子集构建**：自主构建 225 行子集；全队列 546 行 V0/V1/V2 对比（V0=11.0% / V1=15.4% / V2=17.6%，McNemar V0vsV2 p=0.008）
+> 5. **GPU 迁回训练（Option B）**：Qwen3.5-2B 完整 MLLM（不剥离视觉塔）LoRA 微调；SFT 3-seed 74.4%、RFT2 90%、GRPO 86.7%（负结果如实记录）；GRPO 诊断（reward 饱和、仅 2/224 步有梯度）
+> 6. **posttrain loop 排障**：诊断 DEAD 根因、worktree 隔离 git 推送协议
+>
+> **格式要求**：中文、单文件 HTML、0 外链、0 script、内联 SVG 图表、关键数字卡片、每节有数据表格、诚实性声明。从已有的各阶段报告和落盘 JSON 中提取真实数字，不要编造。
+>
+> **验收标准**：报告 push 到 origin，`git cat-file -e origin/main:run/reports/report_vision_overall_work_zh.html` OK。
+
 ### 📦 §用户令·2026-11-20 08:4x（诊断 posttrain loop 存活性 + 修 git 推送）✅ 已交付（wake#1702/1703/1704：posttrain loop **DEAD** 确认·`baize_posttrain_loop.sh` worktree 隔离 `git_sync_and_push()` 改造 + 13 段白名单 + `bash -n` PASS·报告 `run/reports/report_posttrain_loop_git_diag_zh.html` 19002B·5 交付文件全 ON origin `f831265a9`（`merge-base --is-ancestor` EXIT0）·未重启/未 kill/未 reset --hard/未声称一次过 push·待运维带正确 PATH 重启 loop）→ 详见报告 + `MEMORY_VISION.md` wake#1702/1703/1704；原文指令见 git history commit `f831265a9`。需要时再读。
 
 ### 📦 §用户令·2026-11-16 21:2x（vision 自行到 36.15 挖 waveview case）✅ 已交付（wake#1461：273 双判→225 可判分→10 带图可跑；交付 waveview_cases_mined.jsonl + report_vision_waveview_mining_zh.html + mine_3615.py）→ 原文见 `run/ARCHIVE_OPERATOR_VISION.md`「归档 · 2026-11-19 §A」。需要时再读。
