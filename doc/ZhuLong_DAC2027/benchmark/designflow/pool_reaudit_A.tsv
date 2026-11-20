@@ -130,7 +130,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1792841088751_bg11w	congyi	10.129.32.75	77	eda_other	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	background-task query Q&A,thin
 1789449816263_xinm9.messages.json	e0025522	hfeg0plg103	208	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	canned trigger(启动业务场景:仿真与验证)
 1789868617686_y7550.messages.json	t0002470	hfeg0plg76	197	eda_other	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	filter JSON for non-REF/RFM,analysis-on-file难hidden-B
-1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'analyze netlist diff Q&A weak'作废;待深读:netlist diff analysis,若有具体diff/instance gold可specificity-oracle,需核
+1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	旧判:weak(Q&A非produce)	可造(已造r848)	旧判'analyze netlist diff Q&A weak'作废(11-15 analysis-Q&A合法);r848深读143msgs确认10类diff gold齐全(timestamp/view/module增删改/primitive类型/library迁移/port/delay_buf/parameter-mostype/合理性),真实/rundata网表Permission denied→B档synthesized reframe(自包含网表片段+analyze_netlist_diff.py+diff_report.json,hidden-B反硬编),case_id=NetlistVersionDiffAnalyzeProduce-001 digital k=18/18
 1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	183	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	produce-intent但agent 0 write tool_calls+ref .v perm-denied,无gold
 1793240477462_vf2q3					旧判:duplicate/已覆盖	不可造(已覆盖dup)	dup of OdtErrScan-001(gbzuy)
 1794187704615_bmqho					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	dir-comparison Q&A depends on private verilog_lib_trans dirs,not self-contained

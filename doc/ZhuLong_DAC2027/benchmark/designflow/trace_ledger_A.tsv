@@ -376,7 +376,7 @@
 1792841088751_bg11w	congyi	10.129.32.75	77	eda_other	parked		2026-11-11 16:34	r383 peek weak: 1792841088751_bg11w congyi U#0=background-task query Q&A
 1789449816263_xinm9.messages.json	e0025522	hfeg0plg103	208	digital	parked		2026-11-11 17:10	U#0=启动业务场景:仿真与验证 generic flow-driving, 11/09scan direct peek r384
 1789868617686_y7550.messages.json	t0002470	hfeg0plg76	197	eda_other	parked		2026-11-11 17:10	U#0=filter JSON for non-REF/RFM/SRE/SRX, analysis-on-file hard to hidden-B, r384
-1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	parked		2026-11-11 17:10	U#0=analyze netlist diff between 2 paths, analysis Q&A weak, r384
+1792043028504_5szsv.messages.json	alanji	hfeg0pgn145	194	digital	case	NetlistVersionDiffAnalyzeProduce-001	2026-11-20 10:01	U#0=analyze netlist diff between 2 paths, analysis Q&A weak, r384
 1792053321007_ux82s.messages.json	gracew	hfeg0pkn004	183	digital	parked		2026-11-11 17:10	U#2=write similar .v pattern (produce-intent) BUT 0 write tool_calls (agent never produced deliverable) + ref .v files permission-denied, NOT VIABLE, r384
 1792548360759_l8989	tongfanl	hfhds201	0	digital	case	EDA-Eval-DesignFlow-ReadExpdataWireAudit-001	2026-11-15 19:19	r582 deepread done (l8989_ddr5_readcmd_expdata.md), B-synth ReadExpdataWireAudit-001 viable next-round fast-path, budget-constrained this round | r663-merged-dup-notes: r385 mc10-29-slice peek: 
 1793240477462_vf2q3					parked		2026-11-15 15:07	r571 deepread: ODT error scanner (scan_odt.py) duplicates existing OdtErrScan-001 (gbzuy trace, same task pattern) | r663-merged-dup-notes: r385 mc10-29-slice peek: 
