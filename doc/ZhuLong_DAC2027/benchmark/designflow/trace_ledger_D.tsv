@@ -57,7 +57,7 @@
 1786504317615_fkprl.messages.json	e0014566	hfeg0plg58	633	schematic_netlist	parked		2026-11-03 08:43	cross-shard dup: shard B already parked fkprl 2026-10-31 as layout_virtuoso (RTEXT/RNODE dup w/ LayoutVirtuoso-001)
 1792463960005_7frw8.messages.json					parked		2026-11-03 08:33	aether check&save infra debug (non-design)
 1789350621467_fymcr.messages.json					parked		2026-11-03 08:33	autocell pcell.tcl gen + skill-creation (physical+skill, non-D)
-1789954294975_4chsl.messages.json					parked		2026-11-03 08:33	verilog/SystemVerilog netlist analysis (digital, non-D analog)
+1789954294975_4chsl.messages.json					case	EDA-Eval-DesignFlow-RowCtrlModInvProduce-001	2026-11-20 16:26	r1008 revival: 11-15 reaudit, schematic_netlist comprehension Q&A (U#0 分析row_ctrl功能), old D-park verilog=non-D 是旧 D-purity 偏好非硬筛; C-shard also parked wrong-shard=D; netlist.sv real Aether text export portable -> A=real netlist, produce-script inventory (12 断言, ref PASS+3neg FAIL)
 1793155371052_v59v8.messages.json					parked		2026-11-03 08:33	python UI script for cdslck lock files (non-EDA design)
 1793005343621_45gjq.messages.json					parked		2026-11-03 08:33	pdk/techfile infra (non-D)
 1785498914896_8du7m.messages.json					parked		2026-11-03 08:33	physical layout virtuoso/gds/calibre (non-D)
