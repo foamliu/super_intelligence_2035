@@ -30365,3 +30365,103 @@ drwxr-x--- 2 app.e0031982 app.adm 4096 2026-11-17_12:49:38 1794890977723_ujuxk
   now=2026-11-17 22:39:31
 === DONE 281 ===
 ```
+
+---
+
+## RUN_ID 282 · 2026-11-20 10:04:22 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+H=$(hostname)
+echo "host=$H  date=$(date "+%F %T")"
+echo "uptime: $(uptime | sed "s/^ *//")"
+echo "load1/5/15: $(cut -d" " -f1-3 /proc/loadavg 2>/dev/null)"
+echo
+echo "[1] loop 进程（已排除 cline 误匹配：loop 把整份任务书当参数传给 cline，-f 会假阳性）"
+for pat in baize_pretrain_loop.sh baize_harness_loop.sh baize_posttrain_loop.sh baize_data_loop.sh baize_vision_loop.sh; do
+  L=$(ps -eo pid,ppid,etime,pcpu,stat,args | grep -F -- "$pat" | grep -v -e grep -e cline -e ops_relay -e "bash -c" | cut -c1-150)
+  if [ -n "$L" ]; then echo "  [$pat] 命中:"; echo "$L" | sed "s/^/    /"; else echo "  [$pat] 无"; fi
+done
+echo
+echo "[2] cline 进程（计数 + 明细）"
+echo "  count=$(ps -eo args | grep -F -- "cline" | grep -vc -e grep -e ops_relay)"
+ps -eo pid,ppid,etime,pcpu,args | grep -F -- "cline" | grep -v -e grep -e ops_relay | cut -c1-120 | head -6 | sed "s/^/  /"
+echo
+echo "[3] 日志 mtime / size（判定 loop 最后活动时间）"
+for f in /tmp/baize_pretrain_loop.log /tmp/pretrain_loop.log /tmp/baize_harness_loop.log /tmp/harness_loop.log /tmp/baize_posttrain_loop.log /tmp/baize_ops_relay.29.log /tmp/baize_ops_relay.12.log; do
+  [ -f "$f" ] && stat -c "  %y  %8s  %n" "$f"
+done
+ls -t /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/logs/*.log 2>/dev/null | head -4 | while read -r f; do stat -c "  %y  %8s  %n" "$f"; done
+echo
+echo "[4] pretrain loop 日志尾 12 行"
+f=$(ls -t /tmp/baize_pretrain_loop.log /tmp/pretrain_loop*.log 2>/dev/null | head -1)
+if [ -n "${f:-}" ] && [ -f "$f" ]; then
+  echo "  file=$f  lines=$(wc -l < "$f")"
+  tail -n 12 "$f" | sed "s/\x1b\[[0-9;]*m//g" | cut -c1-170 | sed "s/^/    | /"
+else echo "  未找到 pretrain loop 日志"; fi
+echo
+echo "[5] harness loop 日志尾 12 行"
+f=$(ls -t /tmp/baize_harness_loop.log /tmp/harness_loop*.log 2>/dev/null | head -1)
+if [ -n "${f:-}" ] && [ -f "$f" ]; then
+  echo "  file=$f  lines=$(wc -l < "$f")"
+  tail -n 12 "$f" | sed "s/\x1b\[[0-9;]*m//g" | cut -c1-170 | sed "s/^/    | /"
+else echo "  未找到 harness loop 日志"; fi
+echo
+echo "[6] 两条 loop 的失效模式计数 + 最后 loop/push 行"
+for f in /tmp/baize_pretrain_loop.log /tmp/baize_harness_loop.log; do
+  [ -f "$f" ] || continue
+  echo "  $f"
+  for p in "push FAILED" "pull --rebase FAILED" "push deferred" "index.lock" "TASK_MD missing" "no available LLM" "abort"; do
+    printf "    %-22s %s\n" "$p" "$(grep -a -c -- "$p" "$f" 2>/dev/null)"
+  done
+  grep -a -E "^\[loop\]|^\[push\]" "$f" | tail -3 | sed "s/\x1b\[[0-9;]*m//g" | cut -c1-165 | sed "s/^/      last| /"
+done
+echo
+echo "[7] GPU / 训练进程（pretrain 是否还在训）"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | sed "s/^/  /"
+echo "  torchrun=$(ps -eo args | grep -F torchrun | grep -vc -e grep)  pretrain_gpt=$(ps -eo args | grep -F "pretrain_gpt" | grep -vc -e grep)"
+ps -eo pid,etime,pcpu,args | grep -F "pretrain_gpt" | grep -v grep | cut -c1-130 | head -2 | sed "s/^/  /"
+echo
+echo "[8] 系统资源 / 磁盘"
+free -g 2>/dev/null | sed -n "1,2p" | sed "s/^/  /"
+df -h /nas_train /nas_data 2>/dev/null | sed "s/^/  /"
+echo
+echo "[9] 共享副本 git（只读）"
+if cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null && [ -d .git ]; then
+  echo "  HEAD=$(git rev-parse --short HEAD 2>/dev/null)  $(git log -1 --date=iso --format="%ad %s" 2>/dev/null | cut -c1-110)"
+  echo "  left-right(origin...HEAD)=$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null | tr "\t" " ")"
+  echo "  staged=$(git diff --cached --name-only 2>/dev/null | wc -l) unstaged=$(git diff --name-only 2>/dev/null | wc -l) untracked=$(git ls-files -o --exclude-standard 2>/dev/null | wc -l)"
+  [ -f .git/index.lock ] && stat -c "  LOCK %y %s %n" .git/index.lock
+  git log -1 --date=iso --format="  last_pretrain_commit=%ad %h" -- doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md 2>/dev/null
+  git log -1 --date=iso --format="  last_harness_commit=%ad %h" -- doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md 2>/dev/null
+else echo "  共享副本不可达"; fi
+echo
+echo "[10] 中继自身"
+ps -eo pid,etime,args | grep "[o]ps_relay" | cut -c1-120 | head -3 | sed "s/^/  /"
+tail -n 4 /tmp/baize_ops_relay.29.log 2>/dev/null | cut -c1-150 | sed "s/^/  relay29| /"
+echo
+echo "（以上全部只读；未 kill / 未重启 / 未改文件）"
+'
+TAG=$(hostname | sed -n "s/.*\([0-9][0-9]\)$/\1/p")
+echo
+if [ "${TAG:-}" = "29" ]; then
+  echo "[0] 本机 = .29，直接体检"
+  eval "$BODY"
+else
+  echo "[0] 本机 = ${TAG:-?}（非 .29）→ ssh 10.239.2.29 只读代采"
+  echo "$BODY" | timeout 180 ssh -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=no 10.239.2.29 "bash -s" 2>&1 | sed "s/^/  /"
+fi
+echo
+echo "=== DONE 282 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] 本机 = 12（非 .29）→ ssh 10.239.2.29 只读代采
+
+=== DONE 282 | 2026-11-20 10:07:22 ===
+```
