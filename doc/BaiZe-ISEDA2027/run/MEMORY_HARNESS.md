@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **R2820 · 2026-11-21 03:2x — 16:3x 解冻令·监控轮#12·Step2.3 MM 2×3 predict RUNNING健康(1043/2880·+25·has_patch958·patch率91.9%)**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活(12.1h·ppid1·etimes43622·log零越界)✅ ②mem avail1410G≥512G✅ ③load30.72/224✅ ④pretrain step7.02s(iter266290 #2782 03:16·末8步均7021ms·max7093ms)≤7.4s✅ ⑤无失控进程✅(MM predict全nice19·最高pcpu98.9%opencode·无>8000%·RSS均<620MB无>50GB). **Step1护栏持续 LIVE**: predict_guarded.sh ulimit200GiB·OMP8·nice19/ionice3✅·docker eval mem128g/cpu16 patch✅·guard守护LIVE✅·docker ps无eval容器. **Step2.1 COMPLETE**(pi500/dsh332/codex442quota)·**Step2.2 backlog=0**✅(dsh195/500=39.0%). **Step2.3 MM 6路全RUN健康**(predictions_2x3·每路480题·JSON实测): oc_doubao343/318·cline_doubao295/288·oc_dsh137/128·cline_dsh94/79·oc_kimi91/79·cline_kimi83/66=1043/2880(+25自R2819)·has_patch958(+23·patch率91.9%)·doubao最快·kimi/dsh最慢(API等待)·判据全绿·ETA慢(护栏串行·报告明写). 无新eval结果→7way报告不REGEN. 📦 TASK32.9KB MEMORY13.2KB
+> 🆕 **R2821 · 2026-11-21 03:4x — 16:3x 解冻令·监控轮#13·Step2.3 MM 2×3 predict RUNNING健康(1060/2880·+17·has_patch975·patch率91.9%)**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活(12.5h·ppid1·etimes44863·log零越界=仅1行启动)✅ ②mem avail1406G≥512G✅ ③load29.29/224✅ ④pretrain step~7.03s(#2784 03:32)≤7.4s✅ ⑤无失控进程✅(MM predict全nice19·最高pcpu105%opencode·无>8000%·RSS均<760MB无>50GB). **Step1护栏持续 LIVE**: predict_guarded.sh ulimit200GiB·OMP8·nice19/ionice3✅·docker eval mem128g/cpu16 patch✅·guard守护LIVE✅·docker ps无运行中eval容器(仅旧Exited). **Step2.1 COMPLETE**(pi500/dsh332/codex442quota)·**Step2.2 backlog=0**✅(dsh195/500=39.0%). **Step2.3 MM 6路全RUN健康**(progress_2x3·每路480题·JSON实测·attempted/has_patch): oc_doubao350/325·cline_doubao299/292·oc_dsh138/129·cline_dsh95/80·oc_kimi92/80·cline_kimi86/69=1060/2880(+17自R2820)·has_patch975(+17·patch率91.9%)·doubao最快(350/299)·kimi/dsh最慢(86-95·API等待)·attempted分类clean(0 quota/429·少量infra在kimi/dsh路)·判据全绿·ETA慢(护栏串行·报告明写). 无新eval结果→7way报告不REGEN. 📦 TASK32.9KB MEMORY13.2KB
+> 📦 R2820 流水已归档 → daily-memories-harness/2026-11-21.md（16:3x解冻令·监控轮#12·Step2.3 MM 1043/2880(+25)·has_patch958·判据全绿·guard PID931671零越界·pretrain7.02s·mem1410G·load30.72·WAITING=1）。需要时再读。
 > 📦 R2819 流水已归档 → daily-memories-harness/2026-11-21.md（16:3x解冻令·监控轮#11·Step2.3 MM 1018/2880(+23)·has_patch935·判据全绿·guard PID931671零越界·pretrain6.98s·mem1410G·load31.16·WAITING=1）。需要时再读。
 > 📦 R2818 流水已归档 → daily-memories-harness/2026-11-21.md（16:3x解冻令·监控轮#10·Step2.3 MM 995/2880(+17)·has_patch912·判据全绿·guard PID931671零越界·pretrain7.06s·mem1413G·load26.16·WAITING=1）。需要时再读。
 > 📦 R2816 流水已归档 → daily-memories-harness/2026-11-21.md（16:3x解冻令·监控轮#8·Step2.3 MM 940/2880(+25)·has_patch857·判据全绿·guard PID931671零越界·pretrain7.05s·mem1421G·load26.86·WAITING=1）。需要时再读。
@@ -38,16 +39,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        16:3x 解冻令·Step 1✅·Step 2.1 predict COMPLETE(pi500/dsh332/codex442quota)·Step 2.2 incr_eval backlog=0✅·Step 2.3 MM 2×3 predict 6路 RUNNING(1043/2880)
+PHASE:        16:3x 解冻令·Step 1✅·Step 2.1 predict COMPLETE(pi500/dsh332/codex442quota)·Step 2.2 incr_eval backlog=0✅·Step 2.3 MM 2×3 predict 6路 RUNNING(1060/2880)
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(swebench_guarded_eval.py docker mem128g/cpu16 monkey-patch HARD VERIFIED✅·predict_guarded.sh ulimit200GiB+OMP8+nice19/ionice3✅·guard PID931671✅)·**Step 2.1 Verified predict COMPLETE**: pi500/500·dsh332/500·codex442/500(quota)·**Step 2.2 incr_eval backlog=0**(deepseek+pi全评测)·**7way报告REGEN R2808**(cline303/pi247/dsh195/codex115)·**Step 2.3 MM 2×3 predict 6路 RUNNING**(1043/2880·has_patch958)·TASK归档14:5x+08:2x已搬ARCHIVE✅
-当前动作:     R2820: 监控轮#12·MM 2×3 predict 6路全RUN健康(1043/2880·+25·has_patch958·patch率91.9%)·判据全绿(load30.72/mem1410G/pretrain7.02s/guard PID931671零越界)·无新eval结果→7way报告不REGEN·doubao最快(343/295)·kimi/dsh最慢(83/94·API等待)
+当前动作:     R2821: 监控轮#13·MM 2×3 predict 6路全RUN健康(1060/2880·+17·has_patch975·patch率91.9%)·判据全绿(load29.29/mem1406G/pretrain~7.03s/guard PID931671零越界)·无新eval结果→7way报告不REGEN·doubao最快(350/299)·kimi/dsh最慢(86-95·API等待)
 下一步:       ①监控MM 2×3 predict 6路(pretrain≤7.4s·mem≥512G·load≤120·越界降载/暂停)→②MM predict完成→③MM eval(has_patch958走guarded容器CPU限·串行)→④codex quota恢复后rerun 256 quota_blocked+predict 442→500→⑤deepseek predict 4 no-patch refill(低价值可选)
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK32.9KB（✅<40KB硬限·略>32KB软限·14:5x/08:2x已归档）/ MEMORY13.2KB（✅≤32KB·R2819及更早指针已折叠）
  SWE-bench Verified Pass%(分母恒500·incr_eval backlog=0): hermes444/500=88.8%·opencode415/500=83.0%·cline303/500=60.6%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%·（MM 2×3 predict 6路 RUNNING·1043/2880 attempted·序贯重跑中）
  真实 Pass% (layer-A/B, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
-   SWE-bench Multimodal 2×3 predict(RUNNING·R2808重启·480题/路·RUN=wall_s存在): opencode×doubao343·cline×doubao295·opencode×deepseek137·opencode×kimi91·cline×deepseek94·cline×kimi83=1043/2880·has_patch958·6路全RUN健康(nice19/ionice3/ulimit200GiB)·序贮位[oc_doubao318·cline_doubao288·oc_dsh128·cline_dsh79·oc_kimi79·cline_kimi66]
+   SWE-bench Multimodal 2×3 predict(RUNNING·R2808重启·480题/路·attempted/has_patch): opencode×doubao350/325·cline×doubao299/292·opencode×deepseek138/129·opencode×kimi92/80·cline×deepseek95/80·cline×kimi86/69=1060/2880·has_patch975·6路全RUN健康(nice19/ionice3/ulimit200GiB)
   research日报11-19 harness建议: ①完成判据三分法 ②MM判分格式合法率vs正确率分两列+四组分组 ③20480生成上限写进评测配置 ④两档prompting分任务族报分 → 解冻后纳入(来自 research 日报 2026-11-19)
 ## 启动说明（首次唤醒）
 

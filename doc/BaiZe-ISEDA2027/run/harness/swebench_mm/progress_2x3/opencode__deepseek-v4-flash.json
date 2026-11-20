@@ -1882,9 +1882,16 @@
   "bpmn-io__bpmn-js-1151": {
     "instance_id": "bpmn-io__bpmn-js-1151",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1744.6,
+    "rc": 0,
+    "model_patch_len": 3000,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ences initialization**: Added `eventBus.on('commandStack.elements.paste.preExecute', ...)` to properly initialize references before each paste (replacing the unfired `copyPaste.pasteElements` event).\n",
+    "stderr_tail": "rect by reviewing the code\n\u001b[0m\n\u001b[0m→ \u001b[0mRead node_modules/diagram-js/lib/features/modeling/cmd/PasteHandler.js\u001b[90m [limit=30, offset=88]\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/copy-paste/BpmnCopyPaste.js\n"
   },
   "bpmn-io__bpmn-js-1168": {
     "instance_id": "bpmn-io__bpmn-js-1168",

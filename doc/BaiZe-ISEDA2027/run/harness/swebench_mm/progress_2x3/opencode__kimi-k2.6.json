@@ -1208,9 +1208,16 @@
   "PrismJS__prism-3351": {
     "instance_id": "PrismJS__prism-3351",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1764.7,
+    "rc": 0,
+    "model_patch_len": 1841,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nside generic type parameters.\n\n**Added test:** `tests/languages/java/issue3394.test` to prevent regression.\n\n**Verification:** All existing tests pass (919 language tests, 2387 pattern tests, etc.).\n",
+    "stderr_tail": "passing|ERROR)\"\n297 passing (233ms)\n  5 passing (15ms)\n  24 passing (92ms)\n  277 passing (119ms)\n  919 passing (1s)\n  2387 passing (3s)\n  2799 passing (14s)\n  18 passing (82ms)\n  8 passing (8ms)\n\u001b[0m\n"
   },
   "PrismJS__prism-3355": {
     "instance_id": "PrismJS__prism-3355",
