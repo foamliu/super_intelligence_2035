@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posttrain 5-Run 通过率剧变分析报告</title>
+<style>
+body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333;line-height:1.8}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#1a1a2e;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:40px}
+h3{color:#16213e;margin-top:25px}
+h4{color:#0f3460;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:center}
+th{background:#16213e;color:#fff;font-weight:bold}
+tr:nth-child(even){background:#f2f2f2}
+tr:hover{background:#e8e8e8}
+.hr{background:#ffe0e0!important;color:#c00;font-weight:bold}
+.hg{background:#e0ffe0!important;color:#080;font-weight:bold}
+.hy{background:#fff8e0!important;color:#880;font-weight:bold}
+.note{background:#e8f4fd;border-left:4px solid #2196F3;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+.warn{background:#fff3e0;border-left:4px solid #FF9800;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+.danger{background:#ffebee;border-left:4px solid #f44336;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+.ok{background:#e8f5e9;border-left:4px solid #4CAF50;padding:10px 15px;margin:15px 0;border-radius:0 4px 4px 0}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-family:"Fira Code","Consolas",monospace;font-size:13px;color:#c7254e}
+pre{background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:12px;overflow-x:auto;font-size:13px;line-height:1.5}
+.sb{display:inline-block;background:#16213e;color:#fff;padding:8px 16px;border-radius:6px;margin:5px;font-size:15px}
+.sb .l{font-size:12px;opacity:.8}
+.sb .v{font-size:20px;font-weight:bold}
+.bc{width:100%;background:#e0e0e0;border-radius:4px;height:24px;margin:5px 0;overflow:hidden}
+.bf{height:100%;display:flex;align-items:center;padding-left:8px;color:#fff;font-size:12px;font-weight:bold}
+.bp{background:#4CAF50}
+.toc{background:#fff;border:1px solid #ddd;border-radius:8px;padding:15px 25px;margin:20px 0}
+.toc ol{margin:0;padding-left:20px}
+.toc li{margin:5px 0}
+.toc a{color:#16213e;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.ft{margin-top:50px;padding-top:15px;border-top:1px solid #ccc;font-size:12px;color:#888;text-align:center}
+</style>
+</head>
+<body>
+<h1>Posttrain 5-Run 通过率剧变分析报告</h1>
+<p style="color:#666">模型: minicpm5-2b-sft-v39-final | Benchmark: EDA-Eval-PyAether-158 | Agent: zhulong (cline CLI) | 日期: 2026-11-19</p>
+
+<div class="toc">
+<h3>目录</h3>
+<ol>
+<li><a href="#ov">概述</a></li>
+<li><a href="#cfg">实验配置</a></li>
+<li><a href="#res">五次运行结果汇总</a></li>
+<li><a href="#var">通过率剧变原因分析</a></li>
+<li><a href="#err">错误类型深度分析</a></li>
+<li><a href="#con">任务级一致性分析</a></li>
+<li><a href="#sta">统计结论</a></li>
+<li><a href="#rec">建议</a></li>
+</ol>
+</div>
+
+<h2 id="ov">1. 概述</h2>
+<p>本报告对 posttrain 基线 5 次运行（EDA-Eval-PyAether-158, 158 任务）的通过率剧变进行深度归因分析。五次运行的通过率从最低 4.43% 到最高 59.49%，跨越 <strong>13 倍</strong>。经分析，通过率剧变由 <strong>两个独立因素</strong> 共同导致：</p>
+<ol>
+<li><strong>代码提取格式 Bug</strong>（基础设施层）：<code>format_cline_cli_output.py</code> 脚本路径不匹配，导致 Run1-2 仅能提取约 25% 任务的代码进行评测，大量可正确通过的任务被"隐形跳过"。</li>
+<li><strong>代码生成质量波动</strong>（模型层）：同一模型、同一配置下，不同运行批次生成的代码质量差异巨大。Run2 批次出现大量语法错误和 API 幻觉，代码生成成功率仅 19.6%，而 Run3-5 批次接近 100%。</li>
+</ol>
+<div class="danger"><strong>核心发现：</strong>Run2 是"双重异常值"——同时受格式 Bug 和代码生成质量崩塌两个因素影响。修复格式 Bug 后（Run3-5），通过率稳定在 56.96% ± 2.19%，方差仅 3.8 个百分点。</div>
+
+<h2 id="cfg">2. 实验配置</h2>
+<table>
+<tr><th>配置项</th><th>值</th></tr>
+<tr><td>模型</td><td>minicpm5-2b-sft-v39-final</td></tr>
+<tr><td>模型服务</td><td>反向隧道 18096 → .17:8096</td></tr>
+<tr><td>Agent</td><td>zhulong (cline CLI, headless)</td></tr>
+<tr><td>Benchmark</td><td>EDA-Eval-PyAether-v20260311.jsonl (158 tasks)</td></tr>
+<tr><td>并行度</td><td>8</td></tr>
+<tr><td>运行脚本</td><td><code>run_cline_script.sh -p 8 -n</code></td></tr>
+<tr><td>PreToolUse Hook</td><td>启用（防泄题）</td></tr>
+<tr><td>评测框架</td><td>EDA-Eval-Framework (sandbox on .75)</td></tr>
+</table>
+<p>五次运行均使用上述完全相同的配置。唯一的变量是代码提取脚本 <code>format_cline_cli_output.py</code> 在 Run3 前修复了一个路径 Bug（详见第 4 节）。</p>
+
+<h2 id="res">3. 五次运行结果汇总</h2>
+<table>
+<tr><th>Run</th><th>日期</th><th>Batch ID</th><th>评测任务数</th><th>通过数</th><th>Pass@1</th><th>已评测通过率</th><th>代码生成成功</th><th>格式脚本</th></tr>
+<tr><td>Run1</td><td>11-14</td><td>未知</td><td class="hr">36</td><td>30</td><td class="hy">18.99%</td><td>83.3%</td><td class="hr">0*</td><td>旧版</td></tr>
+<tr><td>Run2</td><td>11-17</td><td>2026_1117_143628</td><td class="hr">43</td><td>7</td><td class="hr">4.43%</td><td>16.3%</td><td class="hr">31/158</td><td>旧版</td></tr>
+<tr><td>Run3</td><td>11-17</td><td>2026_1117_212705</td><td class="hg">158</td><td>94</td><td class="hg">59.49%</td><td>59.5%</td><td class="hg">158/158</td><td>修复版</td></tr>
+<tr><td>Run4</td><td>11-18</td><td>2026_1118_183147</td><td class="hg">156</td><td>88</td><td>55.70%</td><td>56.4%</td><td class="hg">156/158</td><td>修复版</td></tr>
+<tr><td>Run5</td><td>11-18</td><td>2026_1118_102651</td><td class="hg">157</td><td>88</td><td>55.70%</td><td>56.1%</td><td class="hg">157/158</td><td>修复版</td></tr>
+</table>
+<p><small>* Run1 的 completed_code_generation.jsonl 记录 0 成功（全部标记 fail，completion 填 "pass"），但实际 36 个任务的代码被提取并执行。旧版脚本对部分任务能找到代码（当 cline agent 恰好使用 ws/ 子目录时），但对状态字段标记不准确。</small></p>
+
+<h3>通过率可视化</h3>
+<p><strong>Run1:</strong> 30/158 = 18.99%</p>
+<div class="bc"><div class="bf bp" style="width:19%">19.0%</div></div>
+<p><strong>Run2:</strong> 7/158 = 4.43%</p>
+<div class="bc"><div class="bf bp" style="width:4.4%">4.4%</div></div>
+<p><strong>Run3:</strong> 94/158 = 59.49%</p>
+<div class="bc"><div class="bf bp" style="width:59.5%">59.5%</div></div>
+<p><strong>Run4:</strong> 88/158 = 55.70%</p>
+<div class="bc"><div class="bf bp" style="width:55.7%">55.7%</div></div>
+<p><strong>Run5:</strong> 88/158 = 55.70%</p>
+<div class="bc"><div class="bf bp" style="width:55.7%">55.7%</div></div>
+
+<h2 id="var">4. 通过率剧变原因分析</h2>
+
+<h3>4.1 Run1 → Run2: 模型非确定性 (18.99% → 4.43%)</h3>
+<h4>4.1.1 基本情况</h4>
+<table>
+<tr><th>指标</th><th>Run1</th><th>Run2</th><th>变化</th></tr>
+<tr><td>评测任务数</td><td>36</td><td>43</td><td>+7</td></tr>
+<tr><td>通过数</td><td>30</td><td>7</td><td class="hr">-23</td></tr>
+<tr><td>已评测通过率</td><td>83.3%</td><td>16.3%</td><td class="hr">-67.0pp</td></tr>
+<tr><td>格式脚本</td><td colspan="2">均为旧版（有Bug）</td><td>无变化</td></tr>
+</table>
+
+<h4>4.1.2 原因分析</h4>
+<p>Run1 和 Run2 均使用旧版格式提取脚本，因此格式 Bug 不是两者差异的原因。两次运行的区别完全来自 <strong>模型代码生成质量的非确定性波动</strong>。</p>
+
+<p><strong>任务级对比（11 个重叠任务）：</strong></p>
+<table>
+<tr><th>结果</th><th>任务数</th><th>占比</th></tr>
+<tr><td>Run1 通过 & Run2 通过</td><td>0</td><td>0%</td></tr>
+<tr><td class="hr">Run1 通过 & Run2 失败</td><td>9</td><td>81.8%</td></tr>
+<tr><td>Run1 失败 & Run2 通过</td><td>0</td><td>0%</td></tr>
+<tr><td>两次均失败</td><td>2</td><td>18.2%</td></tr>
+</table>
+<p>在 11 个重叠任务中，Run1 通过的 9 个任务在 Run2 <strong>全部失败</strong>，而 Run2 没有任何一个任务能"翻盘"通过。这说明 Run2 的代码质量出现了 <strong>系统性退化</strong>，不是个别任务的随机波动。</p>
+
+<p><strong>错误类型对比：</strong></p>
+<ul>
+<li>Run1 的 6 个失败任务：5 个断言失败（代码能运行但逻辑错），1 个类型错误——属于"正常失败"。</li>
+<li>Run2 的 36 个失败任务：<strong>9 个语法错误</strong>（SyntaxError）+ <strong>12 个属性错误</strong>（AttributeError，模型幻觉了不存在的 pyAether API）——合计 21/36 = 58% 是"代码根本无法运行"的硬性错误。</li>
+</ul>
+
+<div class="warn"><strong>结论：</strong>Run1 → Run2 的通过率下降（18.99% → 4.43%）是 <strong>纯模型非确定性</strong> 导致的。同一模型、同一配置下，Run2 批次生成的代码出现了大量语法错误和 API 幻觉，代码质量系统性退化。这与格式 Bug 无关——两次运行都受同一格式 Bug 影响，但 Run2 的代码本身就更差。</div>
+
+<h3>4.2 Run2 → Run3: 格式Bug修复 + 代码生成质量恢复 (4.43% → 59.49%)</h3>
+<h4>4.2.1 两个独立变化</h4>
+<p>Run2 到 Run3 之间发生了 <strong>两个独立变化</strong>，共同导致了通过率的 13 倍跃升：</p>
+<table>
+<tr><th>变化</th><th>影响</th><th>贡献估计</th></tr>
+<tr><td>① <strong>格式提取 Bug 修复</strong></td><td>评测任务数 43 → 158（+115）</td><td>约 +68 个新通过任务</td></tr>
+<tr><td>② <strong>代码生成质量恢复</strong></td><td>生成成功 31/158 → 158/158</td><td>约 +21 个新通过任务</td></tr>
+</table>
+
+<h4>4.2.2 格式提取 Bug 详解</h4>
+<div class="danger"><strong>Bug 描述：</strong><code>format_cline_cli_output.py</code> 脚本在提取 cline agent 生成的代码时，查找路径为 <code>code/&lt;task&gt;/ws/pyAether_code/*.py</code>。但 zhulong agent 实际将代码写入 <code>code/&lt;task&gt;/pyAether_code/*.py</code>（无 <code>ws/</code> 中间层）。</div>
+
+<p><strong>Bug 影响：</strong>当 cline agent 恰好在工作目录中创建了 <code>ws/</code> 子目录时，代码能被找到；否则代码被"隐形跳过"，任务不会进入评测。</p>
+
+<table>
+<tr><th>Run</th><th>格式脚本</th><th>评测任务数</th><th>占 158 比例</th><th>被跳过</th></tr>
+<tr><td>Run1</td><td>旧版</td><td>36</td><td class="hr">22.8%</td><td>122</td></tr>
+<tr><td>Run2</td><td>旧版</td><td>43</td><td class="hr">27.2%</td><td>115</td></tr>
+<tr><td>Run3</td><td>修复版</td><td>158</td><td class="hg">100%</td><td>0</td></tr>
+<tr><td>Run4</td><td>修复版</td><td>156</td><td class="hg">98.7%</td><td>2</td></tr>
+<tr><td>Run5</td><td>修复版</td><td>157</td><td class="hg">99.4%</td><td>1</td></tr>
+</table>
+
+<p><strong>修复方式：</strong>在 <code>format_cline_cli_output.py</code> 中添加 fallback 路径：当 <code>ws/pyAether_code/</code> 不存在时，查找 <code>pyAether_code/</code>（无 <code>ws/</code>）。</p>
+
+<p><strong>被跳过任务的通过率：</strong>以 Run3 为参照，Run2 因 Bug 跳过的 115 个任务中有 68 个在 Run3 中通过（59.1%）。Bug 不仅减少了评测任务数，还 <strong>系统性低估</strong> 了模型的真实能力——被跳过的任务中有近六成是可以通过的。</p>
+
+<h4>4.2.3 代码生成质量恢复</h4>
+<p>即使使用修复后的格式脚本重新提取 Run2 批次的代码，代码生成成功率也仅有 31/158（19.6%），远低于 Run3 的 158/158（100%）。</p>
+
+<table>
+<tr><th>Batch</th><th>生成成功</th><th>成功率</th><th>平均代码长度</th><th>语法错误数</th></tr>
+<tr><td class="hr">Run2 (2026_1117_143628)</td><td>31/158</td><td class="hr">19.6%</td><td>1,783 chars</td><td class="hr">9</td></tr>
+<tr><td class="hg">Run3 (2026_1117_212705)</td><td>158/158</td><td class="hg">100%</td><td>3,281 chars</td><td>1</td></tr>
+<tr><td class="hg">Run4 (2026_1118_183147)</td><td>156/158</td><td class="hg">98.7%</td><td>~3,300 chars</td><td>0</td></tr>
+<tr><td class="hg">Run5 (2026_1118_102651)</td><td>157/158</td><td class="hg">99.4%</td><td>3,346 chars</td><td>1</td></tr>
+</table>
+
+<p>Run2 批次的代码不仅成功数少，平均代码长度也更短（1,783 vs 3,281 字符），说明 cline agent 在该批次中生成的代码既不完整又质量差。9 个语法错误包括：</p>
+<ul>
+<li><code>invalid syntax</code>（5 例）——模型生成了无法解析的 Python 代码</li>
+<li><code>positional argument follows keyword argument</code>（1 例）——函数调用参数顺序错误</li>
+<li><code>expression cannot contain assignment, perhaps you meant "=="?</code>（1 例）——混淆赋值与比较</li>
+<li><code>EOF while scanning triple-quoted string literal</code>（1 例）——字符串未闭合</li>
+</ul>
+
+<h4>4.2.4 两因素贡献分解</h4>
+<p>对 Run2 → Run3 的 87 个新增通过任务（7 → 94）进行分解：</p>
+<table>
+<tr><th>来源</th><th>任务数</th><th>说明</th></tr>
+<tr><td>格式Bug修复：新增评测任务中通过</td><td>68</td><td>Run2 因Bug跳过的 115 个任务中，68 个在 Run3 通过</td></tr>
+<tr><td>代码质量恢复：重叠任务中由败转胜</td><td>21</td><td>43 个重叠任务中，Run2 通过 7 个，Run3 通过 26 个</td></tr>
+<tr><td>非确定性波动：Run2通过但Run3失败</td><td>-2</td><td>少量任务因非确定性从通过变为失败</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>+87</strong></td><td>7 → 94</td></tr>
+</table>
+<div class="note"><strong>归因：</strong>格式 Bug 修复贡献约 68 个通过任务（78%），代码生成质量恢复贡献约 21 个通过任务（24%），非确定性波动导致 -2 个（-2%）。两个因素大致是 <strong>4:1 的贡献比</strong>。</div>
+
+<h3>4.3 Run3-5: 稳定基线 (56.96% ± 2.19%)</h3>
+<p>修复格式 Bug 后的三次运行通过率高度一致：</p>
+<div>
+<span class="sb"><span class="l">Mean</span> <span class="v">56.96%</span></span>
+<span class="sb"><span class="l">Std</span> <span class="v">2.19%</span></span>
+<span class="sb"><span class="l">Range</span> <span class="v">3.80pp</span></span>
+<span class="sb"><span class="l">CV</span> <span class="v">3.8%</span></span>
+</div>
+<p>变异系数（CV）仅 3.8%，说明修复后的评测管道稳定可靠，通过率波动完全来自模型的正常非确定性。</p>
+
+<h2 id="err">5. 错误类型深度分析</h2>
+<h3>5.1 各 Run 错误类型分布</h3>
+<table>
+<tr><th>错误类型</th><th>Run1 (6失败)</th><th>Run2 (36失败)</th><th>Run3 (64失败)</th><th>Run4 (68失败)</th><th>Run5 (69失败)</th></tr>
+<tr><td>断言失败（逻辑错）</td><td>5 (83.3%)</td><td class="hr">5 (13.9%)</td><td>29 (45.3%)</td><td>36 (52.9%)</td><td>38 (55.1%)</td></tr>
+<tr><td>类型错误</td><td>1 (16.7%)</td><td>4 (11.1%)</td><td>15 (23.4%)</td><td>17 (25.0%)</td><td>15 (21.7%)</td></tr>
+<tr><td class="hr">属性错误(API幻觉)</td><td>0</td><td class="hr">12 (33.3%)</td><td>14 (21.9%)</td><td>12 (17.6%)</td><td>11 (15.9%)</td></tr>
+<tr><td class="hr">语法错误</td><td>0</td><td class="hr">9 (25.0%)</td><td>1 (1.6%)</td><td>0</td><td>1 (1.4%)</td></tr>
+<tr><td>名称错误</td><td>0</td><td>4 (11.1%)</td><td>1 (1.6%)</td><td>1 (1.5%)</td><td>1 (1.4%)</td></tr>
+<tr><td>导入错误</td><td>0</td><td>1 (2.8%)</td><td>1 (1.6%)</td><td>0</td><td>0</td></tr>
+<tr><td>值错误</td><td>0</td><td>1 (2.8%)</td><td>2 (3.1%)</td><td>0</td><td>1 (1.4%)</td></tr>
+<tr><td>其他</td><td>0</td><td>0</td><td>1 (1.6%)</td><td>2 (2.9%)</td><td>2 (2.9%)</td></tr>
+</table>
+
+<h3>5.2 硬性错误 vs 软性错误</h3>
+<ul>
+<li><strong>硬性错误</strong>（代码无法运行）：语法错误 + 属性错误(API幻觉) + 名称错误 + 导入错误</li>
+<li><strong>软性错误</strong>（代码能运行但结果错）：断言失败 + 类型错误 + 值错误</li>
+</ul>
+<table>
+<tr><th>Run</th><th>硬性错误占比</th><th>软性错误占比</th><th>诊断</th></tr>
+<tr><td>Run1</td><td>0%</td><td>100%</td><td>正常失败</td></tr>
+<tr><td class="hr">Run2</td><td class="hr">72.2%</td><td>27.8%</td><td class="hr">代码生成质量崩塌</td></tr>
+<tr><td>Run3</td><td>26.6%</td><td>73.4%</td><td>正常失败</td></tr>
+<tr><td>Run4</td><td>19.1%</td><td>80.9%</td><td>正常失败</td></tr>
+<tr><td>Run5</td><td>18.8%</td><td>81.2%</td><td>正常失败</td></tr>
+</table>
+<div class="danger"><strong>Run2 异常诊断：</strong>72.2% 的失败是"代码根本无法运行"的硬性错误。正常运行的语法错误率应 &lt;2%，Run2 高达 25%。这表明模型在 Run2 批次中出现了 <strong>系统性的代码生成能力退化</strong>，可能原因包括：模型服务状态波动、推理温度异常、或 cline agent 工作环境干扰（如磁盘空间不足、并发进程冲突等）。</div>
+
+<h3>5.3 Run2 语法错误任务的跨 Run 表现</h3>
+<p>Run2 中 8 个语法错误任务在其他 Run 中的表现，可用于区分"Run2 专属退化"与"任务本身困难"：</p>
+<table>
+<tr><th>Task ID</th><th>Run1</th><th>Run2</th><th>Run3</th><th>Run5</th><th>诊断</th></tr>
+<tr><td>...-053</td><td>未评测</td><td class="hr">语法错误</td><td class="hg">通过</td><td class="hg">通过</td><td>Run2专属退化</td></tr>
+<tr><td>...-102</td><td class="hg">通过</td><td class="hr">语法错误</td><td class="hg">通过</td><td class="hg">通过</td><td>Run2专属退化</td></tr>
+<tr><td>...-148</td><td class="hg">通过</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+<tr><td>...-063</td><td class="hg">通过</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+<tr><td>...-113</td><td>未评测</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+<tr><td>...-118</td><td>失败</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+<tr><td>...-119</td><td>未评测</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+<tr><td>...-129</td><td>未评测</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+<tr><td>...-146</td><td>未评测</td><td class="hr">语法错误</td><td>失败</td><td>失败</td><td>困难任务</td></tr>
+</table>
+<p>8 个语法错误中，2 个（053, 102）在 Run3 和 Run5 均通过——这 2 个任务的语法错误是 <strong>Run2 专属的模型退化</strong>，正常情况下模型能生成正确代码。其余 6 个在所有 Run 中均失败，属于 <strong>模型能力不足的困难任务</strong>，但在 Run2 中退化为了语法错误（正常 Run 中是断言/类型错误）。</p>
+
+<h2 id="con">6. 任务级一致性分析</h2>
+<h3>6.1 修复后 Run 间一致性 (Run3 vs Run4 vs Run5)</h3>
+<table>
+<tr><th>对比</th><th>重叠任务</th><th>均通过</th><th>仅A通过</th><th>仅B通过</th><th>均失败</th><th>一致率</th></tr>
+<tr><td>Run3 vs Run4</td><td>156</td><td>77</td><td>16</td><td>11</td><td>52</td><td>82.7%</td></tr>
+<tr><td>Run3 vs Run5</td><td>157</td><td>78</td><td>15</td><td>10</td><td>54</td><td>84.1%</td></tr>
+<tr><td>Run4 vs Run5</td><td>155</td><td>76</td><td>11</td><td>11</td><td>57</td><td>85.8%</td></tr>
+</table>
+<p>修复后三次运行的 pairwise 一致率在 82-86% 之间，属于可接受范围。不一致的任务主要是模型非确定性导致的边界翻转。</p>
+
+<h3>6.2 三 Run 一致性分类 (155 个共同任务)</h3>
+<table>
+<tr><th>类别</th><th>任务数</th><th>占比</th><th>含义</th></tr>
+<tr><td class="hg">稳定通过 (3/3)</td><td>69</td><td>44.5%</td><td>模型可靠解决的任务</td></tr>
+<tr><td>稳定失败 (0/3)</td><td>49</td><td>31.6%</td><td>模型能力不足的任务</td></tr>
+<tr><td class="hy">不稳定 (1-2/3)</td><td>37</td><td>23.9%</td><td>边界任务，受非确定性影响</td></tr>
+</table>
+<div class="note"><strong>解读：</strong>44.5% 的任务模型能稳定通过，31.6% 稳定失败，23.9% 是"翻转任务"——这些任务的通过与否取决于模型在该次推理中的具体路径选择。这 37 个翻转任务是提升模型能力的关键发力点：如果能将其中一半稳定为通过，Pass@1 可从 ~57% 提升至 ~69%。</div>
+
+<h3>6.3 Run2 vs Run3 重叠任务分析 (43 个重叠)</h3>
+<table>
+<tr><th>结果</th><th>任务数</th><th>说明</th></tr>
+<tr><td>均通过</td><td>5</td><td>两次都生成正确代码</td></tr>
+<tr><td class="hg">Run2失败, Run3通过</td><td>21</td><td>代码质量恢复</td></tr>
+<tr><td class="hr">Run2通过, Run3失败</td><td>2</td><td>非确定性翻转</td></tr>
+<tr><td>均失败</td><td>15</td><td>模型能力不足</td></tr>
+</table>
+<p>在 43 个重叠任务中，Run3 比 Run2 多通过 19 个任务（26 vs 7）。这 21 个"由败转胜"的任务是代码生成质量恢复的直接证据——同一任务，Run2 生成的代码有语法错误或 API 幻觉，Run3 生成的代码正确通过。</p>
+
+<h2 id="sta">7. 统计结论</h2>
+<h3>7.1 五次运行统计汇总</h3>
+<table>
+<tr><th>统计量</th><th>全部 5 Run</th><th>修复后 3 Run (Run3-5)</th></tr>
+<tr><td>Mean</td><td>38.86%</td><td class="hg">56.96%</td></tr>
+<tr><td>Std</td><td>25.36%</td><td class="hg">2.19%</td></tr>
+<tr><td>Min</td><td>4.43%</td><td>55.70%</td></tr>
+<tr><td>Max</td><td>59.49%</td><td>59.49%</td></tr>
+<tr><td>Range</td><td>55.06pp</td><td class="hg">3.80pp</td></tr>
+<tr><td>CV</td><td>65.3%</td><td class="hg">3.8%</td></tr>
+</table>
+
+<div class="danger"><strong>结论：</strong>包含 Run1-2 的 5 Run 统计（mean=38.86%, std=25.36%）<strong>不可引用</strong>，因为 Run1-2 受格式 Bug 影响，评测任务数仅为 36 和 43（应评测 158）。修复后的 3 Run 统计（mean=56.96%, std=2.19%）是可信的基线。</div>
+
+<h3>7.2 可信基线</h3>
+<div class="ok">
+<strong>Posttrain Baseline (EDA-Eval-PyAether-158):</strong><br>
+Pass@1 = <strong>56.96% ± 2.19%</strong> (3-run, post-fix)<br>
+模型: minicpm5-2b-sft-v39-final | Agent: zhulong (cline CLI) | 日期: 2026-11-17~18
+</div>
+
+<h3>7.3 Run2 异常根因推测</h3>
+<p>Run2 批次（2026_1117_143628, 生成于 11/17 14:36）的代码生成质量崩塌（19.6% 成功率, 9 个语法错误）可能由以下因素导致：</p>
+<ul>
+<li><strong>模型服务状态波动</strong>：反向隧道 18096→.17:8096 在该时段可能不稳定，导致推理质量下降</li>
+<li><strong>并发干扰</strong>：记忆记录显示该时段存在 posttrain agent 冲突（cline PID 1967844），可能影响了 cline agent 的工作环境</li>
+<li><strong>磁盘空间压力</strong>：/home 分区当时已达 94%，可能影响 cline agent 写入临时文件</li>
+<li><strong>纯模型非确定性</strong>：小模型（2B 参数）在特定 prompt 上的输出方差较大，可能在某些批次中出现系统性退化</li>
+</ul>
+<p>由于缺乏该时段的模型服务日志和 cline agent 详细运行日志，无法确定具体根因。但 Run3-5 的稳定性（CV=3.8%）表明这是一个 <strong>偶发事件</strong>，而非持续性问题。</p>
+
+<h2 id="rec">8. 建议</h2>
+<h3>8.1 短期</h3>
+<ul>
+<li><strong>引用修复后基线</strong>：论文中使用 56.96% ± 2.19%（3-run）作为 posttrain baseline，不包含 Run1-2</li>
+<li><strong>补充 Run6</strong>：再跑 1-2 次确认基线稳定性，使 std 更可信（3-run 的 std 统计效力较弱）</li>
+<li><strong>记录模型服务日志</strong>：在后续运行中记录模型推理延迟、token 吞吐量等指标，以便检测类似 Run2 的异常</li>
+<li><strong>增加代码生成质量检查</strong>：在 Step 5-6 之后增加语法检查（如 <code>py_compile</code>），及时检测语法错误率异常</li>
+</ul>
+<h3>8.2 中期</h3>
+<ul>
+<li><strong>分析 37 个翻转任务</strong>：这些任务是提升 Pass@1 的关键发力点。分析其失败模式（是 API 知识缺失、逻辑错误、还是边界条件处理不当？），针对性改进 SFT 数据</li>
+<li><strong>分析 49 个稳定失败任务</strong>：这些是模型能力不足的硬骨头。按错误类型分类，评估哪些可通过更多训练数据解决，哪些需要更强的推理能力</li>
+<li><strong>降低 API 幻觉率</strong>：Run3-5 中仍有 11-14 个属性错误（AttributeError），说明模型对 pyAether API 的知识不够准确。可在 SFT 数据中增加更多 pyAether API 使用示例</li>
+</ul>
+<h3>8.3 评测管道改进</h3>
+<ul>
+<li><strong>代码提取路径检查</strong>：在 <code>format_cline_cli_output.py</code> 中增加日志，记录每个任务的代码提取路径（ws/pyAether_code/ 或 pyAether_code/），便于审计</li>
+<li><strong>评测覆盖率检查</strong>：在 Step 7 后增加检查：评测任务数 / 总任务数 应 ≥ 98%，否则报警</li>
+<li><strong>语法错误率监控</strong>：如果某次运行的语法错误率 &gt; 5%，标记为"异常运行"并触发排查</li>
+</ul>
+
+<div class="ft">
+Posttrain 5-Run 通过率剧变分析报告 | 生成日期: 2026-11-19 | 模型: minicpm5-2b-sft-v39-final | Benchmark: EDA-Eval-PyAether-158
+</div>
+</body>
+</html>
