@@ -2,6 +2,9 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-20 (R60) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R60 刷新点：iter ~263.4k(263410)/700k(37.6%) step~7.06s(末8步均值~7057ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2696/4950=54.5% ETA~20.0h ~115B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=32.1✅ .29 load=27.3✅ / /nas_user 43T✅ / 全量 live numbers 同步 R60 (v3.23: MM-web 52.0%→54.5%, step 7035ms→7057ms, iter 263.3k(263300)→263.4k(263410), .12 load 30.3→32.1, .29 load 29.5→27.3, ETA 21.0h→20.0h, 110.1B→115B) / commit+push**。
+
+
 > 🟢 **心跳 · 2026-11-20 (R59) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R59 刷新点：iter ~263.3k(263300)/700k(37.6%) step~7.04s(末8步均值~7035ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2572/4950=52.0% ETA~21.0h ~110.1B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=30.3✅ .29 load=29.5✅ / /nas_user 43T✅ / 全量 live numbers 同步 R59 (v3.22: MM-web 51.0%→52.0%, step 7041ms→7035ms, iter 263.1k(263140)→263.3k(263300), .12 load 28.3→30.3, .29 load 25.8→29.5, ETA 21.4h→21.0h, 108.3B→110.1B) / commit+push**。
 
 > 🟢 **心跳 · 2026-11-20 (R58) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R58 刷新点：iter ~263.1k(263140)/700k(37.6%) step~7.04s(末8步均值~7041ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 2526/4950=51.0% ETA~21.4h ~108.3B tok(log 逐 shard sum 实测,ETA持续下降) / Math-Reasoning ✅完成(2226 parquet,0inc) / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=28.3✅ .29 load=25.8✅ / /nas_user 43T✅ / 全量 live numbers 同步 R58 (v3.21: MM-web 49.8%→51.0%, step 7021ms→7041ms, iter 262.9k(262920)→263.1k(263140), .12 load 27.6→28.3, .29 load 25.6→25.8, ETA 22.0h→21.4h, 105.7B→108.3B) / commit+push**。
@@ -103,11 +106,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词2572/4950=52.0%) Nemotron✅(193/193=100%完成,195.4B tok) → WAITING=0
-已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv(10源/含finemath);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(多次刷新/pushed R9-R59);✅MegaMath-web下载DONE(4950parquet/826GB);✅Code-Reasoning下载DONE(1635parquet/3.0TB/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2226parquet/0inc);✅DATA_MAPPING.md D1节更新
-当前动作:     PC-5 MegaMath-web分词(2572/4950=52.0%/ETA~21.0h/~110.1B tok/PID3028119/nice19/ionice3/RAYON=8); Nemotron✅完成; Math-Reasoning✅完成(2226parquet/0inc); Code-Reasoning✅完成; .12 load=30.3✅<120 .29 load=29.5✅; /nas_user 43T可用✅; pretrain训练正常(iter~263.3k/step~7.04s)
-下一步:       ①更新main版blend TSV(加入Nemotron源,下调megamath prop/epoch从1.69降到~0.62) ②等MegaMath-web分词完成(~21h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议
-阻塞:         无(所有后台任务nice19/ionice3;.12 load 30.3<120✅不挤pretrain;.29 load 29.5✅;/nas_user 43T可用✅>5T红线)
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词2696/4950=54.5%) Nemotron✅(193/193=100%完成,195.4B tok) → WAITING=0
+已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv(10源/含finemath);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(多次刷新/pushed R9-R60);✅MegaMath-web下载DONE(4950parquet/826GB);✅Code-Reasoning下载DONE(1635parquet/3.0TB/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2226parquet/0inc);✅DATA_MAPPING.md D1节更新
+当前动作:     PC-5 MegaMath-web分词(2696/4950=54.5%/ETA~20.0h/~115B tok/PID3028119/nice19/ionice3/RAYON=8); Nemotron✅完成; Math-Reasoning✅完成(2226parquet/0inc); Code-Reasoning✅完成; .12 load=32.1✅<120 .29 load=27.3✅; /nas_user 43T可用✅; pretrain训练正常(iter~263.4k/step~7.06s)
+下一步:       ①更新main版blend TSV(加入Nemotron源,下调megamath prop/epoch从1.69降到~0.62) ②等MegaMath-web分词完成(~20h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议
+阻塞:         无(所有后台任务nice19/ionice3;.12 load 32.1<120✅不挤pretrain;.29 load 27.3✅;/nas_user 43T可用✅>5T红线)
 ERROR_COUNT:  0
 未完成指令:   无(PC-1~PC-4已交付;PC-5分词已启动;3个后台任务运行中)→WAITING=0
 ```
