@@ -42,59 +42,130 @@ KEYS_TXT="$GIT_ROOT/doc/keys.txt"
 LLM_STATE="/tmp/baize_posttrain_llm_idx"
 [ -f "$SCRIPT_DIR/llm_rotate.sh" ] && . "$SCRIPT_DIR/llm_rotate.sh"
 
+# posttrain 白名单（用户令 2026-11-20 08:4x）。rca_*/bpt_* 已核验为 posttrain 专属
+# （bpt_zhulong_* = posttrain 对 zhulong run 的归因分析，非 zhulong 文件），无跨线重叠。
+_pt_in_whitelist() {
+    case "$1" in
+        "$REL/MEMORY_POSTTRAIN.md"|"$REL/EXPERIMENTS_POSTTRAIN.md"|"$REL/BAIZE_POSTTRAIN_TASK.md"|"$REL/ARCHIVE_OPERATOR_POSTTRAIN.md") return 0;;
+        "$REL/daily-memories-posttrain"/*) return 0;;
+        "$REL/baize_posttrain_"*) return 0;;
+        "$REL/bpt_"*) return 0;;
+        "$REL/POSTTRAIN_"*) return 0;;
+        "$REL/posttrain_"*) return 0;;
+        "$REL/attribution_3615_run"*) return 0;;
+        "$REL/rca_"*) return 0;;
+        "$REL/reports/report_posttrain_"*) return 0;;
+        "doc/BaiZe-ISEDA2027/reports/report_posttrain_"*) return 0;;
+        "doc/BaiZe-ISEDA2027/reports/archive/posttrain"/*) return 0;;
+        *) return 1;;
+    esac
+}
+
+# worktree 隔离提交+推送（RCA: run/vision/SHARED_REPO_GIT_PROTOCOL_RCA.md，镜像 vision_line_commit.sh）。
+# 共享工作树对 git 写只读；提交一律进 /tmp/gitpush_posttrain 的 detached worktree，只 add 白名单。
+#   1) fetch origin/main  2) detached worktree（独立 index，不动共享 HEAD/index/WT）
+#   3) 把共享 WT 的白名单路径拷进 worktree  4) 只 add 这些路径（不用 -A；.gitignore 仍生效）
+#   5) commit + push HEAD:main（rebase 重试）  6) merge-base --is-ancestor 复验（不信退出码）
+#   7) reset --mixed 对齐共享 HEAD（index.lock 守卫：有锁则跳过，不删别线锁）
+# 失败一律 return（跳过本轮，不抛错——loop 仅 set -u）。
 git_sync_and_push() {
-    local now last counts behind ahead
+    local now last
     now=$(date +%s)
     last=0
     [ -f "$LAST_PUSH" ] && last="$(cat "$LAST_PUSH" 2>/dev/null || echo 0)"
     if [ $((now - last)) -lt "$PUSH_INTERVAL" ]; then
         return
     fi
-    echo "[push] $(date '+%F %T') push interval reached, syncing ..."
+    echo "[push] $(date '+%F %T') push interval reached, syncing (worktree-isolated) ..."
     cd "$GIT_ROOT" || return
 
-    # 1) 先同步远端（共享工作副本：别的 agent 可能已经 pull 过，此处通常是 no-op）
-    if ! timeout 120 git fetch origin; then
+    if ! timeout 120 git fetch origin main; then
         echo "[push] fetch FAILED (network?) - skip this cycle."
         return
     fi
-    counts="$(git rev-list --left-right --count origin/main...HEAD 2>/dev/null || echo '0 0')"
-    behind="$(echo "$counts" | awk '{print $1}')"
-    ahead="$(echo "$counts" | awk '{print $2}')"
-    echo "[push] ahead=${ahead:-0} behind=${behind:-0}"
-    if [ "${behind:-0}" -gt 0 ]; then
-        if git pull --rebase --autostash origin main; then
-            echo "[push] pull --rebase OK."
+
+    # 收集共享树里 changed+untracked 路径，与白名单求交
+    local CHANGED P PATHS=()
+    mapfile -t CHANGED < <(git diff --name-only HEAD; git ls-files --others --exclude-standard)
+    for P in "${CHANGED[@]}"; do
+        if _pt_in_whitelist "$P"; then PATHS+=("$P"); fi
+    done
+
+    if [ "${#PATHS[@]}" -eq 0 ]; then
+        echo "[push] nothing of ours to commit (posttrain territory clean vs HEAD)."
+        if [ ! -f "$GIT_ROOT/.git/index.lock" ]; then
+            git reset --mixed origin/main >/dev/null 2>&1 || true
+            echo "[push] shared HEAD realigned to origin/main: $(git rev-parse --short HEAD)"
         else
-            echo "[push] pull --rebase FAILED (conflict?) - aborting rebase, skip this cycle."
-            git rebase --abort >/dev/null 2>&1 || true
+            echo "[push] index.lock held -- skip realign (another git op in progress)."
+        fi
+        date +%s > "$LAST_PUSH"
+        return
+    fi
+
+    local WT
+    WT="$(mktemp -d /tmp/gitpush_posttrain.XXXXXX)"
+    echo "[push] shipping ${#PATHS[@]} posttrain path(s) via worktree $WT"
+    if ! git worktree add --detach "$WT" origin/main >/dev/null 2>&1; then
+        echo "[push] worktree add FAILED - skip this cycle."
+        rm -rf "$WT"
+        return
+    fi
+    # 把共享 WT 的改动文件拷进 worktree（保留相对路径）
+    local p
+    for p in "${PATHS[@]}"; do
+        if [ -e "$p" ]; then
+            mkdir -p "$WT/$(dirname "$p")"
+            cp -a -- "$p" "$WT/$p"
+        fi
+    done
+    git -C "$WT" add -- "${PATHS[@]}" 2>/dev/null || true
+
+    if git -C "$WT" diff --cached --quiet 2>/dev/null; then
+        echo "[push] nothing staged (content identical to origin)."
+    else
+        if ! git -C "$WT" commit -m "posttrain auto-commit $(date '+%F %T')" >/dev/null 2>&1; then
+            echo "[push] commit FAILED - skip this cycle."
+            git worktree remove --force "$WT" 2>/dev/null || true; rm -rf "$WT"
+            return
+        fi
+        local NEWC pushed attempt
+        NEWC="$(git -C "$WT" rev-parse HEAD)"
+        pushed=0
+        for attempt in 1 2 3 4 5; do
+            git -C "$WT" fetch origin main >/dev/null 2>&1 || true
+            git -C "$WT" rebase origin/main >/dev/null 2>&1 || { git -C "$WT" rebase --abort 2>/dev/null || true; }
+            NEWC="$(git -C "$WT" rev-parse HEAD)"
+            if git -C "$WT" push origin HEAD:main 2>&1; then
+                pushed=1; break
+            fi
+            echo "[push] push attempt $attempt rejected (origin advancing); retry after re-fetch+rebase ..."
+            sleep 3
+        done
+        if [ "$pushed" = 1 ]; then
+            echo "[push] push OK ($NEWC)."
+        else
+            echo "[push] push FAILED after retries - skip realign this cycle."
+            git worktree remove --force "$WT" 2>/dev/null || true; rm -rf "$WT"
+            return
+        fi
+        git fetch origin main >/dev/null 2>&1 || true
+        if git merge-base --is-ancestor "$NEWC" origin/main 2>/dev/null; then
+            echo "[push] VERIFIED on origin/main: $NEWC"
+        else
+            echo "[push] WARNING: $NEWC NOT on origin/main after push - DO NOT realign."
+            git worktree remove --force "$WT" 2>/dev/null || true; rm -rf "$WT"
             return
         fi
     fi
+    git worktree remove --force "$WT" 2>/dev/null || true; rm -rf "$WT"
 
-    # 2) 只提交本任务自己的文件（避免卷入其他任务的在途文件）
-    #    逐项判存在后再 add（git add 只要有一个 pathspec 不匹配就整体失败）
-    for p in "$REL/MEMORY_POSTTRAIN.md" "$REL/EXPERIMENTS_POSTTRAIN.md" \
-             "$REL/BAIZE_POSTTRAIN_TASK.md" "$REL/daily-memories-posttrain" \
-             "$REL/baize_posttrain_anneal.sh" "$REL/baize_posttrain_sft.sh" \
-             "$REL/baize_posttrain_rl_grpo.sh" "$REL/baize_posttrain_eval.sh"; do
-        [ -e "$p" ] && git add -- "$p"
-    done
-    if git diff --cached --quiet; then
-        echo "[push] nothing of ours to commit."
+    # 对齐共享 HEAD（mixed：保留工作树，重置 index+HEAD），让别线 git pull --ff-only 一次过
+    if [ -f "$GIT_ROOT/.git/index.lock" ]; then
+        echo "[push] index.lock held by another process -- skip realign (safe; will align next call)."
     else
-        if git commit -m "posttrain auto-commit $(date '+%F %T')" >/dev/null 2>&1; then
-            echo "[push] committed."
-        else
-            echo "[push] commit failed."
-        fi
-    fi
-
-    # 3) 推送
-    if git push origin main 2>&1; then
-        echo "[push] push OK."
-    else
-        echo "[push] push FAILED (will retry next cycle)."
+        git reset --mixed origin/main >/dev/null 2>&1 || echo "[push] reset --mixed failed (non-fatal)"
+        echo "[push] shared HEAD realigned to origin/main: $(git rev-parse --short HEAD)"
     fi
     date +%s > "$LAST_PUSH"
 }
