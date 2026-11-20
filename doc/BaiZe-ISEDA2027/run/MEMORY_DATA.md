@@ -2,6 +2,9 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-21 (R85) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R85 刷新点：iter ~267.94k(267940)/700k(38.3%) step~7.14s(末14步均值~7141ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 3569/4950=72.1% ETA~12.3h ~151.6B tok(log 逐 shard sum 实测,ETA持续下降) / Nemotron-CC-Math ✅完成(193/193,195.4B tok,0errors) / Math-Reasoning ✅完成(2228/2228,0inc) / Code-Reasoning ✅完成(1637/1637,0inc) / MegaMath-web下载✅完成(4950/4950,0inc) / latest ckpt=266k / .12 load=29.54✅ .29 load=30.14✅ / /nas_user 42T✅ / 全量 live numbers 同步 R85 (v3.49: MM-web 70.8%→72.1%, step 7070ms→7141ms, iter 267590→267940, ETA 12.8h→12.3h, 148.8B→151.6B) / v2 preserved / commit+push**。
+
+
 > 🟢 **心跳 · 2026-11-21 (R84) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R84 刷新点：iter ~267.59k(267590)/700k(38.2%) step~7.07s(末12步均值~7070ms,持续向好<7.4s✅) / 350k~11-28 700k~12-26 / MegaMath-web 分词 3505/4950=70.8% ETA~12.8h ~148.8B tok(log 逐 shard sum 实测,ETA持续下降) / Nemotron-CC-Math ✅完成(193/193,195.4B tok,0errors) / Math-Reasoning ✅完成(2228/2228,0inc) / Code-Reasoning ✅完成(1637/1637,0inc) / MegaMath-web下载✅完成(4950/4950,0inc) / latest ckpt=266k / .12 load=30.76✅ .29 load=28.15✅ / /nas_user 42T✅ / 全量 live numbers 同步 R84 (v3.48: MM-web 69.6%→70.8%, step 7096ms→7070ms, iter 267290→267590, ETA 13.3h→12.8h, 146.3B→148.8B) / v2 preserved / commit+push**。
 
 
@@ -119,13 +122,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词3505/4950=70.8%) Nemotron✅(193/193=100%完成,195.4B tok) → WAITING=0
-已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv(10源/含finemath);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(多次刷新/pushed R9-R83);✅MegaMath-web下载DONE(4950parquet/826GB);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md D1节更新
-当前动作:     PC-5 MegaMath-web分词(3505/4950=70.8%/ETA~12.8h/~148.8B tok/nice19/ionice3/RAYON=8); Nemotron✅完成; Math-Reasoning✅完成(2228parquet/0inc); Code-Reasoning✅完成(1637/0inc); .12 load=30.76✅<120 .29 load≈28.15✅; /nas_user 42T可用✅; pretrain训练正常(iter~267.59k/step~7.07s/latest ckpt=266k)
-下一步:       ①更新main版blend TSV(加入Nemotron源,下调megamath prop/epoch从1.69降到~0.62) ②等MegaMath-web分词完成(~12.8h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议
-阻塞:         无(所有后台任务nice19/ionice3;.12 load 30.76<120✅不挤pretrain;.29 load 28.15✅;/nas_user 42T可用✅>5T红线)
+PHASE:        S2前置工作执行中 — PC-1✅ PC-2✅(全5subset) PC-3✅ PC-4✅(含finemath) PC-5🔄(MegaMath-web分词3569/4950=72.1%) Nemotron✅(193/193=100%完成,195.4B tok) → WAITING=0
+已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(5benchmark/9277tasks);✅PC-4 blend_s2_preblend.tsv(10源/含finemath);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(多次刷新/pushed R9-R85);✅MegaMath-web下载DONE(4950parquet/826GB);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md D1节更新
+当前动作:     PC-5 MegaMath-web分词(3569/4950=72.1%/ETA~12.3h/~151.6B tok/nice19/ionice3/RAYON=8); Nemotron✅完成; Math-Reasoning✅完成(2228parquet/0inc); Code-Reasoning✅完成(1637/0inc); .12 load=29.54✅<120 .29 load≈30.14✅; /nas_user 42T可用✅; pretrain训练正常(iter~267.94k/step~7.14s/latest ckpt=266k)
+下一步:       ①更新main版blend TSV(加入Nemotron源,下调megamath prop/epoch从1.69降到~0.62) ②等MegaMath-web分词完成(~12.3h)→加入blend TSV ③全部完成后逐源13-gram污染扫描 ④转告pretrain线SEED=5678建议
+阻塞:         无(所有后台任务nice19/ionice3;.12 load 29.54<120✅不挤pretrain;.29 load 30.14✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
-未完成指令:   无(PC-1~PC-4已交付;PC-5分词进行中70.8%;1个后台任务运行中)→WAITING=0
+未完成指令:   无(PC-1~PC-4已交付;PC-5分词进行中72.1%;1个后台任务运行中)→WAITING=0
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）
