@@ -1673,16 +1673,29 @@
   "alibaba-fusion__next-4021": {
     "instance_id": "alibaba-fusion__next-4021",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 3577,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "alibaba-fusion__next-4182": {
     "instance_id": "alibaba-fusion__next-4182",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 801.5,
+    "rc": 0,
+    "model_patch_len": 875,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ct/cascader-select.jsx:599-601` — if `instance` or `instance.overlay` is falsy (as with v2), return early. The cascader height calculation becomes a no-op for v2, but the component no longer crashes.\n",
+    "stderr_tail": "2 matches\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mcd /dev/shm/harness_mm_2x3/workdirs/opencode__deepseek-v4-flash/alibaba-fusion_next && npx eslint src/cascader-select/cascader-select.jsx 2>&1 | head -30\n(no output)\n\u001b[0m\n"
   },
   "alibaba-fusion__next-665": {
     "instance_id": "alibaba-fusion__next-665",

@@ -1026,23 +1026,44 @@
   "PrismJS__prism-2703": {
     "instance_id": "PrismJS__prism-2703",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 144.8,
+    "rc": 0,
+    "model_patch_len": 4731,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`tests/languages/fsharp/issue2715.test` — new regression test\n\n## Verification\nAll 12 F# language tests pass, including both existing comment tests and the new regression test for the `(*)` operator.\n",
+    "stderr_tail": "re'\n    ✓ – should pass test case 'string_feature'\n\n  Testing language 'fsharp!+xml-doc'\n    ✓ – should pass test case 'inclusion'\n\n\n  12 passing (38ms)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead components/prism-fsharp.js\n"
   },
   "PrismJS__prism-2705": {
     "instance_id": "PrismJS__prism-2705",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 698.2,
+    "rc": 0,
+    "model_patch_len": 3955,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "avascript.js`\n- `prism.js`\n- Added regression test: `tests/languages/javascript/template-string-after-regex.test`\n\n**Verification:** All 1,816 language tests pass (including the new regression test).\n",
+    "stderr_tail": ":\n  (use \"git add <file>...\" to include in what will be committed)\n\ttests/languages/javascript/template-string-after-regex.test\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\n\u001b[0m\n"
   },
   "PrismJS__prism-2713": {
     "instance_id": "PrismJS__prism-2713",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 471.4,
+    "rc": 0,
+    "model_patch_len": 1339,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rification\nAll 1817 language tests pass, including the new test. The fix is minimal and correctly handles both `$`-prefixed and `$`-suffixed identifiers without affecting normal keyword highlighting.\n",
+    "stderr_tail": " ✓ - should known all aliases\n\n  Testing language aliases of 'yang'\n    ✓ - should known all aliases\n\n  Testing language aliases of 'zig'\n    ✓ - should known all aliases\n\n\n  254 passing (196ms)\n\u001b[0m\n"
   },
   "PrismJS__prism-2754": {
     "instance_id": "PrismJS__prism-2754",

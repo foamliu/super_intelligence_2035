@@ -928,16 +928,30 @@
   "PrismJS__prism-2295": {
     "instance_id": "PrismJS__prism-2295",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 850.5,
+    "rc": 0,
+    "model_patch_len": 4730,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "r single-segment package names\\n\\n### Verification\\nAll **1,577 language tests pass**, including Java and Scala (which extends Java).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-2348": {
     "instance_id": "PrismJS__prism-2348",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1089.9,
+    "rc": 1,
+    "model_patch_len": 1711,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "52,\"outputTokens\":34575,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":1086394,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-20T17:42:21.665Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "PrismJS__prism-2622": {
     "instance_id": "PrismJS__prism-2622",
