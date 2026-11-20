@@ -15,16 +15,16 @@
   "generated": "2026-11-19T02:30:00+08:00",
   "hits_total": 37112,
   "hosts": 614,
-  "mc10": 2517,
-  "mc100": 1500,
-  "mc1000": 5,
-  "mc15": 3519,
-  "mc20": 2220,
+  "mc10": 4065,
+  "mc100": 1752,
+  "mc1000": 6,
+  "mc15": 3806,
+  "mc20": 3580,
   "mc25": 2376,
-  "mc30": 1980,
-  "mc300": 364,
-  "mc5": 4587,
-  "mc500": 460,
+  "mc30": 3216,
+  "mc300": 411,
+  "mc5": 4483,
+  "mc500": 117,
   "mc5_recompute": {
     "auto_stop": {
       "consecutive_zero_case_rounds": 0,
@@ -72,11 +72,12 @@
     "verdict": "r718: mc>=5 ADOPTED. mc>=5 fresh=310 (vs mc>=10 fresh=136, +174). r382 mc>=5 useless EXPIRED under 6959-dedup scan. Next: select from candidates_mc5.tsv, report A-domain vs cross-domain ratio + case count each round."
   },
   "mc_matrix": {
-    "a_pure_mc10": 130,
-    "all_shard_mc10": 4149,
-    "round": "r804",
-    "shard_A_pool_mc10_broad": 2517,
-    "src": "ssh_eda_search_20261120_145529/summary.tsv"
+    "a_pure_mc10_fresh": 646,
+    "all_shard_mc10": 4065,
+    "all_shard_mc10_fresh": 771,
+    "round": "r870",
+    "shard_A_pool_mc10_broad": 3658,
+    "src": "summary_1120_reconstructed.tsv"
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -166,25 +167,25 @@
     "to": "designflow/summary_1113.tsv"
   },
   "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261116_072610/summary.tsv",
-  "prev_sessions": 1141,
+  "prev_sessions": 5457,
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261120_145529/summary.tsv",
   "scan_rows": 44991,
   "scan_sha256": "(pending)",
   "scansync": {
-    "scan_dir": "ssh_eda_search_20261120_145529",
-    "raw_rows": 38323,
+    "calibrated_transfer": "r870 DONE via eda_flow run_code on .75 (5.4MB summary_1120.tsv -> slug dedup 5457 -> trace_ledger mc-matrix local)",
     "dedup_sessions": 5457,
-    "unreachable": 26,
-    "unreachable_pct": 3.72,
-    "scan_duration_sec": 210,
-    "runner": "/home/e0031982/eda_scan_runner_r860.py (recreated r860)",
+    "denominator_note": "st[mc10] was 2517 (11-19 shard-A fresh, mislabeled as pool) -> 4065 (11-20 ALL-pool calibrated, per scansync design mc<N>=ALL-pool). Coverage 418/4065=10.3% (was 418/2517=16.6% under stale fresh denom). mc_matrix.src=summary_1120_calibrated.tsv (local reconstructed, enables _pool_members filtering).",
     "raw_mc10": 4065,
     "raw_mc20": 3580,
     "raw_mc30": 3216,
-    "note": "raw awk overcounts vs ledger dedup (11-19 raw mc10=3986 vs calibrated=2517); mc10/mc20/mc30 denominators NOT updated pending trace_ledger mc-matrix on local summary_1120.tsv transfer next round",
-    "updated_at": "2026-11-20T15:05:09+08:00"
+    "raw_rows": 38323,
+    "scan_dir": "ssh_eda_search_20261120_145529",
+    "scan_duration_sec": 210,
+    "unreachable": 26,
+    "unreachable_pct": 3.72,
+    "updated_at": "2026-11-20T19:45:00+08:00"
   },
-  "sessions": 1141,
+  "sessions": 5457,
   "shard_mc": {
     "A": 10,
     "B": 10,
@@ -277,7 +278,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-20 13:13",
+  "updated_at": "2026-11-20 19:46",
   "users_mc10": 1200,
   "users_mc100": 182,
   "users_mc30": 401,
