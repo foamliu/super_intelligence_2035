@@ -30563,3 +30563,94 @@ rtt min/avg/max/mdev = 0.148/146.711/293.275/146.563 ms
 
 === DONE 283 | 2026-11-20 10:39:29 ===
 ```
+
+---
+
+## RUN_ID 284 · 2026-11-20 10:41:22 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+BODY='
+set -u
+echo "host=$(hostname)  date=$(date "+%F %T")"
+echo
+echo "[1] SSH banner 探针（能拿到 banner = sshd 进程还在接受连接）"
+B=$(timeout 12 bash -c "exec 3<>/dev/tcp/10.239.2.29/22; head -c 64 <&3" 2>/dev/null)
+if [ -n "${B:-}" ]; then echo "  banner=$B"; else echo "  banner=NONE（12s 内未返回 SSH banner → sshd 未响应）"; fi
+echo
+echo "[2] 长超时 ssh（240s）：一次性拿 uptime/load/GPU/进程"
+timeout 240 ssh -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=no -o ServerAliveInterval=15 -o ServerAliveCountMax=4 10.239.2.29 "uptime; echo LOAD=$(cut -d\" \" -f1-3 /proc/loadavg); free -g | head -2; nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader; echo ---procs---; ps -eo pid,etime,pcpu,args | grep -e baize_ -e torchrun -e pretrain | grep -v grep | cut -c1-120 | head -12" 2>&1 | tail -25 | sed "s/^/  ssh| /"
+echo "  ssh_rc=$?"
+echo
+echo "[3] 若 [2] 失败：ssh -vv 看握手停在哪一步（最后 12 行）"
+timeout 40 ssh -vv -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no 10.239.2.29 "true" 2>&1 | tail -12 | cut -c1-150 | sed "s/^/  vv| /"
+echo
+echo "[4] NFS 上最后的 checkpoint / 目录时间（判断训练是否停在某步）"
+timeout 60 find /nas_train/app.e0031982 -maxdepth 7 -type d -name "iter_*" -printf "%TY-%Tm-%Td %TH:%TM  %p\n" 2>/dev/null | sort | tail -4 | sed "s/^/  /"
+echo
+echo "[5] /nas_train 近 24h / 6h / 1h 写入文件数（同一块盘，两机都能看到）"
+for m in 1440 360 60; do printf "  last_%smin=%s\n" "$m" "$(timeout 60 find /nas_train/app.e0031982 -maxdepth 6 -type f -mmin -$m 2>/dev/null | wc -l)"; done
+echo
+echo "[6] .12 中继实例与日志尾"
+ps -eo pid,etime,args | grep "[o]ps_relay" | cut -c1-110 | sed "s/^/  /"
+tail -n 6 /tmp/baize_ops_relay.12.log 2>/dev/null | cut -c1-150 | sed "s/^/  relay12| /"
+echo
+echo "（只读：未 kill / 未重启 / 未改 .29 / 未改共享副本）"
+'
+echo
+echo "[0] TARGET: 12；执行机 = $(hostname)"
+eval "$BODY"
+echo
+echo "=== DONE 284 | $(date "+%F %T") ==="
+```
+
+**输出**
+```
+
+[0] TARGET: 12；执行机 = whag0pgpuap12
+host=whag0pgpuap12  date=2026-11-20 10:41:22
+
+[1] SSH banner 探针（能拿到 banner = sshd 进程还在接受连接）
+  banner=NONE（12s 内未返回 SSH banner → sshd 未响应）
+
+[2] 长超时 ssh（240s）：一次性拿 uptime/load/GPU/进程
+cut: '"': No such file or directory
+  ssh| Timeout, server 10.239.2.29 not responding.
+  ssh_rc=0
+
+[3] 若 [2] 失败：ssh -vv 看握手停在哪一步（最后 12 行）
+  vv| debug1: Will attempt key: /home/app.e0031982/.ssh/id_ecdsa 
+  vv| debug1: Will attempt key: /home/app.e0031982/.ssh/id_ecdsa_sk 
+  vv| debug1: Will attempt key: /home/app.e0031982/.ssh/id_ed25519 
+  vv| debug1: Will attempt key: /home/app.e0031982/.ssh/id_ed25519_sk 
+  vv| debug1: Will attempt key: /home/app.e0031982/.ssh/id_xmss 
+  vv| debug1: Will attempt key: /home/app.e0031982/.ssh/id_dsa 
+  vv| debug2: pubkey_prepare: done
+  vv| debug1: SSH2_MSG_EXT_INFO received
+  vv| debug1: kex_input_ext_info: server-sig-algs=<ssh-ed25519,sk-ssh-ed25519@openssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ecds
+  vv| debug1: kex_input_ext_info: publickey-hostbound@openssh.com=<0>
+  vv| debug2: service_accept: ssh-userauth
+  vv| debug1: SSH2_MSG_SERVICE_ACCEPT received
+
+[4] NFS 上最后的 checkpoint / 目录时间（判断训练是否停在某步）
+
+[5] /nas_train 近 24h / 6h / 1h 写入文件数（同一块盘，两机都能看到）
+  last_1440min=0
+  last_360min=0
+  last_60min=0
+
+[6] .12 中继实例与日志尾
+   605150       08:20 bash ./ops_relay_v2.sh
+  1032513 26-15:15:17 bash ./ops_relay_v2.sh
+  relay12| [relay-12] RUN_ID=276 executed, exit=0, appended to outbox.
+  relay12| [relay-12] RUN_ID=277 executed, exit=0, appended to outbox.
+  relay12| [relay-12] RUN_ID=281 executed, exit=0, appended to outbox.
+  relay12| ./ops_relay_v2.sh: line 77: 2377718 Bus error               timeout 60 git fetch origin > /dev/null 2>&1
+  relay12| [relay-12] RUN_ID=282 executed, exit=0, appended to outbox.
+  relay12| [relay-12] RUN_ID=283 executed, exit=0, appended to outbox.
+
+（只读：未 kill / 未重启 / 未改 .29 / 未改共享副本）
+
+=== DONE 284 | 2026-11-20 10:49:42 ===
+```
