@@ -1,6 +1,8 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
 WAITING: 0
+> 🟢 **心跳 · 2026-11-20 (R44) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R44 刷新点：iter ~260k(260120)/700k(37.1%) step~7.1s(baseline,末12步全<7.4s) / pretrain 从 260k ckpt 恢复重启(~14:42,根因=hf-hub 2.4.0遮蔽conda env,已修PYTHONNOUSERSITE=1) / 350k~11-28 700k~12-26 / MegaMath-web 分词 1922/4950=38.8% ETA~20.7h ~80.7B tok(log 逐 shard sum 实测) / Math-Reasoning 97.5% (2173/2228) 2inc / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=27.25✅ / /nas_user 43T✅ / 全量 live numbers 同步 R44 (v3.7: MM-web 37.7%→38.8%, step 7.0s→7.1s, ETA 26.3h→20.7h, .12 load 19.65→27.25) / commit+push**。
+
 > 🟢 **心跳 · 2026-11-20 (R43) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R43 刷新点：iter ~260k/700k(37.1%) step~7.0s(baseline) / ⚠️ pretrain 从 260k ckpt 恢复重启(~01:22停~14:42重启,损~1.4k步,影响极小) / 350k~11-28 700k~12-26(原12-25,因iter回归+1天) / MegaMath-web 分词 1866/4950=37.7% ETA~26.3h ~78.4B tok(log 逐 shard sum 实测) / Math-Reasoning 97.5% (2173/2228) 2inc / Code-Reasoning✅ / Nemotron✅(193/193,195.4B tok) / .12 load=19.65✅ / /nas_user 43T✅ / 全量 live numbers 同步 R43 (v3.6: 18处数值刷新, iter 267k→260k, MM-web 32.3%→37.7%, Math-Reasoning 92.8%→97.5%, 700k 12-25→12-26) / commit+push**。
 > 🟢 **心跳 · 2026-11-20 (R41) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R41 刷新点：iter ~267k/700k(38.1%) step~7.0s(baseline) / 350k 切换点 ~11-28 / MegaMath-web 下载 ✅完成(4950/4950,0inc) / MegaMath-web 分词 1600/4950=32.3% ETA~27.8h ~65.9B tok(log 逐 shard sum 实测) / Math-Reasoning 92.8% (2069/2228) 2inc / Code-Reasoning ✅完成(0inc) / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=8.30✅ / /nas_user 43T✅ / 全量 live numbers 同步 R41 / commit+push**。
 
