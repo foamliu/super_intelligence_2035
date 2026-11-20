@@ -1,7 +1,7 @@
 # MEMORY_DATA.md — BaiZe 正式训练数据准备 · 运行时状态
 
 WAITING: 0
-> 🟢 **心跳 · 2026-11-20 (R40) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R40 刷新点：iter ~265k/700k(37.8%) step~8.0s(baseline~7.0s) / 350k 切换点 ~11-28 / MegaMath-web 下载 ✅完成(4950/4950,0inc) / MegaMath-web 分词 1543/4950=31.2% ETA~28.1h ~63.1B tok(json 逐文件 sum 实测) / Math-Reasoning 92.0% (2051/2228) 2inc / Code-Reasoning ✅完成(0inc) / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=9.90✅ / /nas_user 43T✅ / 全量 live numbers 同步 R40 / commit+push**。
+> 🟢 **心跳 · 2026-11-20 (R41) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R41 刷新点：iter ~267k/700k(38.1%) step~7.0s(baseline) / 350k 切换点 ~11-28 / MegaMath-web 下载 ✅完成(4950/4950,0inc) / MegaMath-web 分词 1600/4950=32.3% ETA~27.8h ~65.9B tok(log 逐 shard sum 实测) / Math-Reasoning 92.8% (2069/2228) 2inc / Code-Reasoning ✅完成(0inc) / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=8.30✅ / /nas_user 43T✅ / 全量 live numbers 同步 R41 / commit+push**。
 
 > 🟢 **心跳 · 2026-11-20 (R38) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R38 刷新点：iter ~265k/700k(37.8%) step~8.0s(baseline~7.0s) / 350k 切换点 ~11-28 / MegaMath-web 分词 1436/4950=29.0% ETA~28.3h ~57.5B tok(MANIFEST 实测 sum) / Math-Reasoning 90.4% (2011/2228) 2inc ETA~4h / Code-Reasoning ✅完成(0inc) / Nemotron-CC-Math ✅ 完成 (193/193, 195.4B tok) / .12 load=11.57✅ / /nas_user 43T✅ / 全量 live numbers 同步 R38 / commit+push**。
 
