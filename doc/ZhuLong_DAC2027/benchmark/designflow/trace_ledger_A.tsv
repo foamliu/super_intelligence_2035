@@ -32,7 +32,7 @@
 1790231178116_c4owo	johnl	hfeg0pfn119	27	digital	case	EDA-Eval-DesignFlow-CombSynthClean-001	2026-11-03 05:03	
 1793070113162_5pv45	ray1lei	hfeg0pkn004	32	eda_other	case	EDA-Eval-DesignFlow-SPFCoupling-001	2026-11-03 06:13	
 1791362457881_awgyg	hbpeng	hfeg0pkn005	445	eda_other	case	EDA-Eval-DesignFlow-EmXlsModel-001	2026-11-03 07:48	
-1792497366260_giuwf					parked		2026-11-03 08:04	surveyed r37: file-discovery/inventory task (find .lib/cells.yaml/.cline libs). Not design_flow delivery. 5 user turns all filesystem listing Q&A.
+1792497366260_giuwf					case	EDA-Eval-DesignFlow-LibInventoryManifestProduce-001	2026-11-21 06:22	surveyed r37: file-discovery/inventory task (find .lib/cells.yaml/.cline libs). Not design_flow delivery. 5 user turns all filesystem listing Q&A.
 1792572105701_exwpt					parked		2026-11-03 08:04	surveyed r37: single user turn '/anasimpro-gui-start' slash-command, not a task. 45 msgs, innovus:57 incidental.
 1793089887669_4c5ws					parked		2026-11-03 08:04	surveyed r37: pure Q&A/consultation (how to view png, install bcompare, list LP tools by flow stage, spyglass vs VCLP/CLP). No delivery. 67 msgs.
 1793078585671_z2knw					parked		2026-11-03 08:04	surveyed r37: resume-prior-stuck-session ('最近的一个对话卡死了...你继续干'), finesim MatrixRun analog sim. A-rule② violation (depends on prior state), gold fuzzy. 136 msgs.

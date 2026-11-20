@@ -21,7 +21,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1964914156_it6n4	e0039102	hfeg0pkn002	-	verification	不可造(find-file too thin for >=8 cond)	不可造	内容原因(交互太薄无 gold)，注：旧理由引「>=8 cond」门槛仍有效(§4.3 硬闸门未废)，维持 parked
 1792490325235_wvhcg					旧判:wrong-shard/跨域	不可造(跨域defer)	旧判'not design_flow'作废(file-discovery 11-15合法);重判A域不可造:内容=layout_aether/tech-db discovery=C域. defer C
 1789090020843_b9bop					旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	canned trigger(启动业务场景:时序分析)+仅2 user-text msg,非真实用户意图(任务初衷§真实性)
-1792497366260_giuwf					旧判:weak(Q&A非produce)	不可造(待深读)	旧判'file-discovery不可造'作废(retrieval合法);待深读:lib-inventory(.lib/cells.yaml/.cline)可reframe produce-task manifest,需核trace是否有可复用脚本/结构化gold
+1792497366260_giuwf	johnl	hfeg0pkn001	24	eda_other	旧判:weak(Q&A非produce)	可造(已造r887)	r887 deepread+synthesize: B档 synthesized produce-task lib_inventory.py (CLI --root/--patterns/--skip-dirs/--include-hidden/--output → manifest.json), fixture A=tree_A 25文件 faithful compact重建(trace Primelib/innovus/.cline/hidden/skip-dirs结构), hidden B=sram_compiler/tapeout_backup 21文件 base64内联check.py SUT不可见, k=18/18 ref PASS+5neg全FAIL+§4.9三假FAIL. 旧判 r37 'file-discovery非design_flow'作废(11-15 retrieval/inventory合法). 域归属=eda_other(文件清单工具非pg_layout)
 1792572105701_exwpt					旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	单turn /anasimpro-gui-start slash-command,非真实任务
 1793089887669_4c5ws					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	旧判'pure Q&A'作废;重判#2:多主题散问(png/bcompare/LP工具/spyglass vs VCLP),无单一结构化gold,prose check stub-pass
 1793078585671_z2knw					旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	resume-prior-stuck-session(继续干)+finesim MatrixRun,A-rule②path-dependency依赖前序状态非自包含
