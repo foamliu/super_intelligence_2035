@@ -4529,9 +4529,16 @@
   "eslint__eslint-9436": {
     "instance_id": "eslint__eslint-9436",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 232.4,
+    "rc": 0,
+    "model_patch_len": 990,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "thing(true ? 1 : 0);`, error is reported at line 5, column 11 to column 15 (just the `true` part)\n3. NodeType remains \"IfStatement\" and \"ConditionalExpression\" as expected for backward compatibility.\n",
+    "stderr_tail": "ontext.report({ node: node.test, message: \"Unexpected constant condition.\" });\n+        context.report({ node, loc: node.test.loc, message: \"Unexpected constant condition.\" });\n     }\n }\n \n /**\n\n\u001b[0m\n"
   },
   "grommet__grommet-2061": {
     "instance_id": "grommet__grommet-2061",

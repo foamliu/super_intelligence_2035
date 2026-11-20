@@ -1152,9 +1152,16 @@
   "PrismJS__prism-3001": {
     "instance_id": "PrismJS__prism-3001",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 355.7,
+    "rc": 0,
+    "model_patch_len": 3373,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " highlights both keywords\\n  - ✅ `const` is unaffected (handled separately by JavaScript's keyword pattern which already had `\\\\b`)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "PrismJS__prism-3050": {
     "instance_id": "PrismJS__prism-3050",
